@@ -476,9 +476,9 @@ void TDirect3DDrawer::StartUpdate(void)
 
 	//	Clear surface
 	if (clear)
-		RenderDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0, 0);
-	else
-		RenderDevice->Clear(0, NULL, D3DCLEAR_ZBUFFER, 0, 1.0, 0);
+	{
+		RenderDevice->Clear(0, NULL, D3DCLEAR_TARGET, 0, 1.0, 0);
+	}
 
 	//	Setup texture filtering
 	if (tex_linear)
@@ -550,49 +550,33 @@ void TDirect3DDrawer::Setup2D(void)
 //
 //==========================================================================
 
-void TDirect3DDrawer::SetupView(int x, int y, int width, int height, float fovx, float fovy)
+void TDirect3DDrawer::SetupView(const refdef_t *rd)
 {
-	//	Setup viewport
-	memset(&viewData, 0, sizeof(D3DVIEWPORT7));
-	viewData.dwX = x;
-	viewData.dwY = y;
-	viewData.dwWidth  = width;
-	viewData.dwHeight = height;
-	viewData.dvMinZ = 0;
-	viewData.dvMaxZ = 1;
-
-	//	Setup projection
-	memset(&matProj, 0, sizeof(D3DMATRIX));
-	matProj(0, 0) = 1 / fovx;
-	matProj(1, 1) = 1 / fovy;
-#if 0
-	matProj(2, 2) = 1;
-	matProj(3, 2) = -0.1;
-#else
-	float zFar = 8192.0;
-	float zNear = 1.0;
-	float Q;
-    Q = zFar / (zFar - zNear);
-    matProj(2, 2) = Q;
-    matProj(3, 2) = -Q * zNear;
-#endif
-	matProj(2, 3) = 1;
-}
-
-//==========================================================================
-//
-//	TDirect3DDrawer::SetupFrame
-//
-//==========================================================================
-
-void TDirect3DDrawer::SetupFrame(void)
-{
-	if (viewwidth != ScreenWidth)
+	if (rd->drawworld && rd->width != ScreenWidth)
 	{
 		R_DrawViewBorder();
 	}
 
+	//	Setup viewport
+	memset(&viewData, 0, sizeof(D3DVIEWPORT7));
+	viewData.dwX = rd->x;
+	viewData.dwY = rd->y;
+	viewData.dwWidth  = rd->width;
+	viewData.dwHeight = rd->height;
+	viewData.dvMinZ = 0;
+	viewData.dvMaxZ = 1;
     RenderDevice->SetViewport(&viewData);
+
+	//	Setup projection
+	memset(&matProj, 0, sizeof(D3DMATRIX));
+	matProj(0, 0) = 1 / rd->fovx;
+	matProj(1, 1) = 1 / rd->fovy;
+	float zFar = 8192.0;
+	float zNear = 1.0;
+	float Q = zFar / (zFar - zNear);
+    matProj(2, 2) = Q;
+    matProj(3, 2) = -Q * zNear;
+	matProj(2, 3) = 1;
 	RenderDevice->SetTransform(D3DTRANSFORMSTATE_PROJECTION, &matProj);
 
 	// The view matrix defines the position and orientation of the camera.
@@ -623,6 +607,8 @@ void TDirect3DDrawer::SetupFrame(void)
 	RenderDevice->SetRenderState(D3DRENDERSTATE_FOGENABLE, r_use_fog ? TRUE : FALSE);
 
 	memset(light_chain, 0, sizeof(light_chain));
+
+	RenderDevice->Clear(0, NULL, D3DCLEAR_ZBUFFER, 0, 1.0, 0);
 }
 
 //==========================================================================
@@ -1722,9 +1708,12 @@ ostream &operator << (ostream &str, const LPDDPIXELFORMAT pf)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/07 16:46:23  dj_jl
+//	Added player models, skins and weapon
+//
 //	Revision 1.5  2001/08/04 17:29:54  dj_jl
 //	Fixed fog, beautification
-//
+//	
 //	Revision 1.4  2001/08/01 17:40:09  dj_jl
 //	Fixed check for sprite sorting, beautification
 //	

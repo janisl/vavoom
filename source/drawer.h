@@ -88,6 +88,17 @@ struct particle_t
 	int			user_fields[7];
 };
 
+struct refdef_t
+{
+	int			x;
+ 	int			y;
+ 	int			width;
+ 	int			height;
+ 	float		fovx;
+ 	float		fovy;
+	boolean		drawworld;
+};
+
 class TDrawer
 {
  public:
@@ -108,8 +119,7 @@ class TDrawer
 	virtual void DoWipe(int) = 0;
 
 	//	Rendring stuff
-	virtual void SetupView(int, int, int, int, float, float) = 0;
-	virtual void SetupFrame(void) = 0;
+	virtual void SetupView(const refdef_t*) = 0;
 	virtual void WorldDrawing(void) = 0;
 	virtual void EndView(void) = 0;
 
@@ -124,7 +134,7 @@ class TDrawer
 	virtual void DrawSkyPolygon(TVec*, int, int, float, int, float) = 0;
 	virtual void DrawMaskedPolygon(TVec*, int, int, int) = 0;
 	virtual void DrawSpritePolygon(TVec*, int, int, int, dword) = 0;
-	virtual void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, int, dword, int, bool) = 0;
+	virtual void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, const char*, dword, int, bool) = 0;
 
 	//	Particles
 	virtual void StartParticles(void) = 0;
@@ -157,9 +167,12 @@ extern TDrawer			*_Direct3DDrawer;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/07 16:46:23  dj_jl
+//	Added player models, skins and weapon
+//
 //	Revision 1.5  2001/08/04 17:29:11  dj_jl
 //	Added depth hack for weapon models
-//
+//	
 //	Revision 1.4  2001/08/01 17:42:22  dj_jl
 //	Fixed sprite lump drawing in player setup menu, beautification
 //	

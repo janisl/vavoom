@@ -108,8 +108,7 @@ class TOpenGLDrawer : public TDrawer
 	void DoWipe(int);
 
 	//	Rendering stuff
-	void SetupView(int, int, int, int, float, float);
-	void SetupFrame(void);
+	void SetupView(const refdef_t*);
 	void WorldDrawing(void);
 	void EndView(void);
 
@@ -125,7 +124,7 @@ class TOpenGLDrawer : public TDrawer
 	void DrawSkyPolygon(TVec*, int, int, float, int, float);
 	void DrawMaskedPolygon(TVec*, int, int, int);
 	void DrawSpritePolygon(TVec*, int, int, int, dword);
-	void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, int, dword, int, bool);
+	void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, const char*, dword, int, bool);
 
 	//	Particles
 	void StartParticles(void);
@@ -147,13 +146,6 @@ class TOpenGLDrawer : public TDrawer
 	void EndAutomap(void);
 
  private:
-	int			view_x;
-	int			view_y;
-	int			view_w;
-	int			view_h;
-	float		view_fovx;
-	float		view_fovy;
-
 	GLint		maxTexSize;
 	bool		texturesGenerated;
 
@@ -247,10 +239,13 @@ class TOpenGLDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/07 16:46:23  dj_jl
+//	Added player models, skins and weapon
+//
 //	Revision 1.5  2001/08/04 17:31:16  dj_jl
 //	Added depth hack for weapon models
 //	Added support for multitexture extensions
-//
+//	
 //	Revision 1.4  2001/08/01 17:33:58  dj_jl
 //	Fixed drawing of spite lump for player setup menu, beautification
 //	

@@ -334,7 +334,7 @@ void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
 	// calculate the distance before other stuff so that we can throw out
 	// sounds that are beyond the hearing range.
 	dist = 0;
-	if (origin_id && origin_id != cl.origin_id)
+	if (origin_id && origin_id != cl.clientnum + 1)
 		dist = CalcDist(origin);
 	if (dist >= MAX_SND_DIST)
 	{
@@ -530,7 +530,7 @@ void S_UpdateSfx(void)
 			continue;
 		}
 
-		if (Channel[i].origin_id == cl.origin_id)
+		if (Channel[i].origin_id == cl.clientnum + 1)
 		{
 			//	Nothing to update
 			continue;
@@ -641,9 +641,12 @@ boolean S_GetSoundPlayingInfo(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/07 16:46:23  dj_jl
+//	Added player models, skins and weapon
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

@@ -105,7 +105,11 @@ struct trans_sprite_t
 	TVec		taxis;
 	TVec		texorg;
 	int			translucency;
-	int			translation;
+	union
+	{
+		int		translation;
+		char	*skin;
+	};
 	int			type;
 	float		dist;
 	dword		light;
@@ -386,7 +390,7 @@ void R_DrawTranslucentPoly(TVec *sv, int count, int lump,
 		if (spr.type == 2)
 		{
 			Drawer->DrawAliasModel(spr.dv[0], ((TAVec*)spr.dv)[1],
-				(model_t*)spr.surf, spr.lump, spr.translation,
+				(model_t*)spr.surf, spr.lump, spr.skin,
 				spr.light, spr.translucency - 1, false);
 		}
 		else if (spr.type)
@@ -443,7 +447,7 @@ extern TCvarI		r_chasecam;
 
 static void RenderSprite(clmobj_t *thing)
 {
-	if (thing == &cl_mobjs[cl.origin_id] && !r_chasecam)
+	if (thing == &cl_mobjs[cl.clientnum + 1] && !r_chasecam)
 	{
 		//	Don't draw client's mobj
 		return;
@@ -617,8 +621,8 @@ static void RenderSprite(clmobj_t *thing)
 	TVec start = -spriteoffset[lump] * sprright;
 	TVec end = (spritewidth[lump] - spriteoffset[lump]) * sprright;
 
-	TVec topdelta = (spritetopoffset[lump] - thing->floorclip) * sprup;
-	TVec botdelta = (spritetopoffset[lump] - thing->floorclip - spriteheight[lump]) * sprup;
+	TVec topdelta = spritetopoffset[lump] * sprup;
+	TVec botdelta = (spritetopoffset[lump] - spriteheight[lump]) * sprup;
 
 	sv[0] = sprorigin + start + botdelta;
 	sv[1] = sprorigin + start + topdelta;
@@ -664,13 +668,94 @@ static void RenderSprite(clmobj_t *thing)
 
 //==========================================================================
 //
+//	RenderTranslucentAliasModel
+//
+//==========================================================================
+
+void RenderTranslucentAliasModel(model_t *model, char *skin, dword light, clmobj_t *mobj)
+{
+	int i;
+
+	float dist = fabs(DotProduct(mobj->origin - vieworg, viewforward));
+	int found = -1;
+	float best_dist = -1;
+	for (i = 0; i < MAX_TRANS_SPRITES; i++)
+	{
+		trans_sprite_t &spr = trans_sprites[i];
+		if (!spr.translucency)
+		{
+			spr.dv = trans_sprite_verts + 4 * i;
+			spr.dv[0] = mobj->origin;
+			((TAVec*)spr.dv)[1] = mobj->angles;
+			spr.surf = (surface_t*)model;
+			spr.lump = mobj->alias_frame;
+			spr.light = light;
+			spr.translucency = mobj->translucency + 1;
+			spr.dist = dist;
+			spr.type = 2;
+			spr.skin = skin;
+			return;
+		}
+		if (spr.dist > best_dist)
+		{
+			found = i;
+			best_dist = spr.dist;
+		}
+	}
+	if (best_dist > dist)
+	{
+		//	All slots are full, draw and replace a far away sprite
+		trans_sprite_t &spr = trans_sprites[found];
+		r_normal = spr.normal;
+		r_dist = spr.pdist;
+		r_saxis = spr.saxis;
+		r_taxis = spr.taxis;
+		r_texorg = spr.texorg;
+		r_surface = spr.surf;
+		if (spr.type == 2)
+		{
+			Drawer->DrawAliasModel(spr.dv[0], ((TAVec*)spr.dv)[1],
+				(model_t*)spr.surf, spr.lump, spr.skin,
+				spr.light, spr.translucency - 1, false);
+		}
+		else if (spr.type)
+		{
+			Drawer->DrawSpritePolygon(spr.dv, spr.lump,
+				spr.translucency - 1, spr.translation, spr.light);
+		}
+		else
+		{
+			Drawer->DrawMaskedPolygon(spr.dv, spr.count, spr.lump,
+				spr.translucency - 1);
+			if (spr.count > 4)
+				Z_Free(spr.dv);
+		}
+		spr.dv = trans_sprite_verts + 4 * i;
+		spr.dv[0] = mobj->origin;
+		((TAVec*)spr.dv)[1] = mobj->angles;
+		spr.surf = (surface_t*)model;
+		spr.lump = mobj->alias_frame;
+		spr.light = light;
+		spr.translucency = mobj->translucency + 1;
+		spr.skin = skin;
+		spr.dist = dist;
+		spr.type = 2;
+		return;
+	}
+	Drawer->DrawAliasModel(mobj->origin, mobj->angles, model,
+		mobj->alias_frame, skin, light, mobj->translucency, false);
+}
+
+//==========================================================================
+//
 //	RenderAliasModel
 //
 //==========================================================================
 
 static void RenderAliasModel(clmobj_t *mobj)
 {
-	if (mobj == &cl_mobjs[cl.origin_id] && !r_chasecam)
+	if (!r_chasecam && (mobj == &cl_mobjs[cl.clientnum + 1] ||
+		mobj == &cl_weapon_mobjs[cl.clientnum + 1]))
 	{
 		//	Don't draw client's mobj
 		return;
@@ -682,6 +767,7 @@ static void RenderAliasModel(clmobj_t *mobj)
 		return;
 	}
 
+	//	Setup lighting
 	dword light;
 	if (mobj->frame & FF_FULLBRIGHT || fixedlight)
 	{
@@ -692,79 +778,16 @@ static void RenderAliasModel(clmobj_t *mobj)
 		light = R_LightPoint(mobj->origin);
 	}
 
+	//	Draw it
 	if (mobj->translucency)
 	{
-		int i;
-
-		float dist = fabs(DotProduct(mobj->origin - vieworg, viewforward));
-		int found = -1;
-		float best_dist = -1;
-		for (i = 0; i < MAX_TRANS_SPRITES; i++)
-		{
-			trans_sprite_t &spr = trans_sprites[i];
-			if (!spr.translucency)
-			{
-				spr.dv = trans_sprite_verts + 4 * i;
-				spr.dv[0] = mobj->origin;
-				((TAVec*)spr.dv)[1] = mobj->angles;
-				spr.surf = (surface_t*)mobj->alias_model;
-				spr.lump = mobj->alias_frame;
-				spr.light = light;
-				spr.translucency = mobj->translucency + 1;
-				spr.dist = dist;
-				spr.type = 2;
-				spr.translation = mobj->alias_skinnum;
-				return;
-			}
-			if (spr.dist > best_dist)
-			{
-				found = i;
-				best_dist = spr.dist;
-			}
-		}
-		if (best_dist > dist)
-		{
-			//	All slots are full, draw and replace a far away sprite
-			trans_sprite_t &spr = trans_sprites[found];
-			r_normal = spr.normal;
-			r_dist = spr.pdist;
-			r_saxis = spr.saxis;
-			r_taxis = spr.taxis;
-			r_texorg = spr.texorg;
-			r_surface = spr.surf;
-			if (spr.type == 2)
-			{
-				Drawer->DrawAliasModel(spr.dv[0], ((TAVec*)spr.dv)[1],
-					(model_t*)spr.surf, spr.lump, spr.translation,
-					spr.light, spr.translucency - 1, false);
-			}
-			else if (spr.type)
-			{
-				Drawer->DrawSpritePolygon(spr.dv, spr.lump,
-					spr.translucency - 1, spr.translation, spr.light);
-			}
-			else
-			{
-				Drawer->DrawMaskedPolygon(spr.dv, spr.count, spr.lump,
-					spr.translucency - 1);
-				if (spr.count > 4)
-					Z_Free(spr.dv);
-			}
-			spr.dv = trans_sprite_verts + 4 * i;
-			spr.dv[0] = mobj->origin;
-			((TAVec*)spr.dv)[1] = mobj->angles;
-			spr.surf = (surface_t*)mobj->alias_model;
-			spr.lump = mobj->alias_frame;
-			spr.light = light;
-			spr.translucency = mobj->translucency + 1;
-			spr.translation = mobj->alias_skinnum;
-			spr.dist = dist;
-			spr.type = 2;
-			return;
-		}
+		RenderTranslucentAliasModel(mobj->alias_model, mobj->skin, light, mobj);
 	}
-	Drawer->DrawAliasModel(mobj->origin, mobj->angles, mobj->alias_model,
-		mobj->alias_frame, mobj->alias_skinnum, light, mobj->translucency, false);
+	else
+	{
+		Drawer->DrawAliasModel(mobj->origin, mobj->angles, mobj->alias_model,
+			mobj->alias_frame, mobj->skin, light, 0, false);
+	}
 }
 
 //==========================================================================
@@ -793,6 +816,17 @@ void R_RenderMobjs(void)
 			else
 			{
 	    	    RenderSprite(&cl_mobjs[i]);
+			}
+		}
+	}
+
+	if (r_models)
+	{
+		for (i = 0; i < MAXPLAYERS; i++)
+		{
+			if (cl_weapon_mobjs[i].in_use && cl_weapon_mobjs[i].alias_model)
+			{
+				RenderAliasModel(&cl_weapon_mobjs[i]);
 			}
 		}
 	}
@@ -836,7 +870,7 @@ void R_DrawTranslucentPolys(void)
 			if (spr.type == 2)
 			{
 				Drawer->DrawAliasModel(spr.dv[0], ((TAVec*)spr.dv)[1],
-					(model_t*)spr.surf, spr.lump, spr.translation,
+					(model_t*)spr.surf, spr.lump, spr.skin,
 					spr.light, spr.translucency - 1, false);
 			}
 			else if (spr.type)
@@ -905,7 +939,7 @@ static void RenderPSprite(cl_pspdef_t* psp)
 
 	float sprx = 160.0 - psp->sx + spriteoffset[lump];
 	float spry = 100.0 - psp->sy + spritetopoffset[lump];
-	if (viewheight == ScreenHeight)
+	if (refdef.height == ScreenHeight)
 	{
 		spry -= cl.pspriteSY;
 	}
@@ -974,7 +1008,7 @@ static void RenderViewModel(cl_pspdef_t *psp)
 	}
 
 	Drawer->DrawAliasModel(origin, angles, psp->alias_model,
-		psp->alias_frame, 0, light, cl.translucency, true);
+		psp->alias_frame, NULL, light, cl.translucency, true);
 }
 
 //==========================================================================
@@ -1069,9 +1103,12 @@ void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot, int transla
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/07 16:46:23  dj_jl
+//	Added player models, skins and weapon
+//
 //	Revision 1.5  2001/08/04 17:29:11  dj_jl
 //	Added depth hack for weapon models
-//
+//	
 //	Revision 1.4  2001/08/01 17:33:58  dj_jl
 //	Fixed drawing of spite lump for player setup menu, beautification
 //	

@@ -84,6 +84,9 @@ int						boffs;
 
 int						bppindex;
 
+int						viewwidth;
+int						viewheight;
+
 float					centerxfrac;
 float					centeryfrac;
 float					xprojection;
@@ -120,6 +123,7 @@ static TCvarF			d_mipscale("d_mipscale", "1");
 static float			basemip[NUM_MIPS - 1] = {1.0, 0.5 * 0.8, 0.25 * 0.8};
 
 static byte*			r_backscreen = NULL;
+static int				viewarea;
 
 // CODE --------------------------------------------------------------------
 
@@ -386,59 +390,71 @@ void TSoftwareDrawer::StartUpdate(void)
 //
 //==========================================================================
 
-void TSoftwareDrawer::SetupView(int x, int y, int width, int height, float fovx, float fovy)
+void TSoftwareDrawer::SetupView(const refdef_t *rd)
 {
-    centerxfrac = (float)(width / 2) - 0.5;
-    centeryfrac = (float)(height / 2) - 0.5;
+	int			i;
 
-	xprojection = (float)(width / 2) / fovx;
-	yprojection = (float)(height / 2) / fovy;
+	//	Setup projection
+    centerxfrac = (float)(rd->width / 2) - 0.5;
+    centeryfrac = (float)(rd->height / 2) - 0.5;
 
-	xscaleshrink = (float)(width - 6) / 2 / fovx;
-	yscaleshrink = xscaleshrink * PixelAspect;
+	xprojection = (float)(rd->width / 2) / rd->fovx;
+	yprojection = (float)(rd->height / 2) / rd->fovy;
 
-	scale_for_mip = xprojection;
-	if (yprojection > xprojection)
-		scale_for_mip = yprojection;
-
-	d_pix_min = width / 320;
-	if (d_pix_min < 1)
-		d_pix_min = 1;
-
-	d_pix_max = (int)((float)width / (320.0 / 4.0) + 0.5);
-	d_pix_shift = 8 - (int)((float)width / 320.0 + 0.5);
-	if (d_pix_max < 1)
-		d_pix_max = 1;
-
-	if (PixelAspect > 1.4)
-		d_y_aspect_shift = 1;
-	else
-		d_y_aspect_shift = 0;
-
-	d_particle_right = width - d_pix_max;
-	d_particle_top = height - (d_pix_max << d_y_aspect_shift);
+	viewwidth = rd->width;
+	viewheight = rd->height;
 
     // Preclaculate all row offsets.
-    for (int i = 0; i < height; i++)
+    for (i = 0; i < rd->height; i++)
 	{
-		ylookup[i] = x + (height - 1 - i + y) * ScreenWidth;
+		ylookup[i] = rd->x + (rd->height - 1 - i + rd->y) * ScreenWidth;
 	}
 
-	// draw the border
-	InitViewBorder();
-}
-
-//==========================================================================
-//
-//	TSoftwareDrawer::SetupFrame
-//
-//==========================================================================
-
-void TSoftwareDrawer::SetupFrame(void)
-{
-	if (viewwidth != ScreenWidth)
+	if (rd->drawworld)
 	{
-		EraseViewBorder();
+		scale_for_mip = xprojection;
+		if (yprojection > xprojection)
+			scale_for_mip = yprojection;
+
+		//	Setup for particles
+		xscaleshrink = (float)(rd->width - 6) / 2 / rd->fovx;
+		yscaleshrink = xscaleshrink * PixelAspect;
+
+		d_pix_min = rd->width / 320;
+		if (d_pix_min < 1)
+			d_pix_min = 1;
+
+		d_pix_max = (int)((float)rd->width / (320.0 / 4.0) + 0.5);
+		d_pix_shift = 8 - (int)((float)rd->width / 320.0 + 0.5);
+		if (d_pix_max < 1)
+			d_pix_max = 1;
+
+		if (PixelAspect > 1.4)
+			d_y_aspect_shift = 1;
+		else
+			d_y_aspect_shift = 0;
+
+		d_particle_right = rd->width - d_pix_max;
+		d_particle_top = rd->height - (d_pix_max << d_y_aspect_shift);
+
+		// draw the border
+		if (rd->width * rd->height != viewarea)
+		{
+			InitViewBorder();
+			viewarea = rd->width * rd->height;
+		}
+		else if (rd->width != ScreenWidth)
+		{
+			EraseViewBorder();
+		}
+	}
+	else
+	{
+		//	Since world will be not drawn we must clear z-buffer
+		for (i = 0; i < viewheight; i++)
+		{
+			memset(zbuffer + ylookup[i], 0, viewwidth * 2);
+		}
 	}
 
 #ifdef USEASM
@@ -475,7 +491,7 @@ void TSoftwareDrawer::SetupFrame(void)
 	else if (d_minmip < 0)
 		d_minmip = 0;
 
-	for (int i = 0; i < (NUM_MIPS - 1); i++)
+	for (i = 0; i < (NUM_MIPS - 1); i++)
 		d_scalemip[i] = basemip[i] * d_mipscale;
 
 	// make FDIV fast. This reduces timing precision after we've been running
@@ -571,9 +587,12 @@ void *TSoftwareDrawer::ReadScreen(int *bpp, bool *bot2top)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/07 16:46:23  dj_jl
+//	Added player models, skins and weapon
+//
 //	Revision 1.4  2001/08/02 17:45:37  dj_jl
 //	Added support for colored lit and translucent models
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

@@ -116,9 +116,7 @@ extern TVec				vieworg;
 extern TVec				viewforward;
 extern TVec				viewright;
 extern TVec				viewup;
-
-extern int				viewwidth;
-extern int				viewheight;
+extern TAVec			viewangles;
 
 extern bool				r_use_fog;
 
@@ -152,9 +150,12 @@ extern rgb_t			SkinPal[256];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/07 16:46:23  dj_jl
+//	Added player models, skins and weapon
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

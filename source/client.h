@@ -95,8 +95,7 @@ struct client_static_t
 
 struct client_state_t
 {
-	int				clientnum;
-	int				origin_id;		// cl_mobjs[cl.origin_id] = player
+	int				clientnum;		// cl_mobjs[cl.clientnum] = player
 
 	int				pclass;			// player class type
 
@@ -253,9 +252,12 @@ extern TProgs			clpr;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/07 16:46:23  dj_jl
+//	Added player models, skins and weapon
+//
 //	Revision 1.3  2001/07/31 17:10:21  dj_jl
 //	Localizing demo loop
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

@@ -201,10 +201,9 @@ void TOpenGLDrawer::StartUpdate(void)
 {
 	glFinish();
 	if (clear)
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	else
-		glClear(GL_DEPTH_BUFFER_BIT);
-
+	{
+		glClear(GL_COLOR_BUFFER_BIT);
+	}
 	Setup2D();
 }
 
@@ -214,31 +213,17 @@ void TOpenGLDrawer::StartUpdate(void)
 //
 //==========================================================================
 
-void TOpenGLDrawer::SetupView(int x, int y, int width, int height, float fovx, float fovy)
+void TOpenGLDrawer::SetupView(const refdef_t *rd)
 {
-	view_x = x;
-	view_y = ScreenHeight - height - y;
-	view_w = width;
-	view_h = height;
-	view_fovx = fovx;
-	view_fovy = fovy;
-}
-
-//==========================================================================
-//
-//	TOpenGLDrawer::SetupFrame
-//
-//==========================================================================
-
-void TOpenGLDrawer::SetupFrame(void)
-{
-	if (viewwidth != ScreenWidth)
+	if (rd->drawworld && rd->width != ScreenWidth)
 	{
 		// 	Draws the border around the view for different size windows
 		R_DrawViewBorder();
 	}
 
-	glViewport(view_x, view_y, view_w, view_h);
+	glViewport(rd->x, ScreenHeight - rd->height - rd->y, rd->width, rd->height);
+
+	glClear(GL_DEPTH_BUFFER_BIT);
 	
 	glMatrixMode(GL_PROJECTION);		// Select The Projection Matrix
 	glLoadIdentity();					// Reset The Projection Matrix
@@ -246,10 +231,10 @@ void TOpenGLDrawer::SetupFrame(void)
 	GLdouble zNear = 1.0;
 	GLdouble zFar =	8192.0;
 
-	GLdouble xmax = zNear * view_fovx;
+	GLdouble xmax = zNear * rd->fovx;
 	GLdouble xmin = -xmax;
 
-	GLdouble ymax = zNear * view_fovy;
+	GLdouble ymax = zNear * rd->fovy;
 	GLdouble ymin = -ymax;
 
 	glFrustum(xmin, xmax, ymin, ymax, zNear, zFar);
@@ -259,9 +244,9 @@ void TOpenGLDrawer::SetupFrame(void)
 	glLoadIdentity();
 	glRotatef(-90, 1, 0, 0);
 	glRotatef(90, 0, 0, 1);
-	glRotatef(-BAM2DEG(cl.viewangles.roll), 1, 0, 0);
-	glRotatef(-BAM2DEG(cl.viewangles.pitch), 0, 1, 0);
-	glRotatef(-BAM2DEG(cl.viewangles.yaw), 0, 0, 1);
+	glRotatef(-BAM2DEG(viewangles.roll), 1, 0, 0);
+	glRotatef(-BAM2DEG(viewangles.pitch), 0, 1, 0);
+	glRotatef(-BAM2DEG(viewangles.yaw), 0, 0, 1);
 	glTranslatef(-vieworg.x, -vieworg.y, -vieworg.z);
 
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
@@ -383,9 +368,12 @@ void TOpenGLDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/07 16:46:23  dj_jl
+//	Added player models, skins and weapon
+//
 //	Revision 1.4  2001/08/04 17:32:04  dj_jl
 //	Added support for multitexture extensions
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

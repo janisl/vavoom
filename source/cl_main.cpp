@@ -59,6 +59,8 @@ boolean			precache = true;        // if true, load all graphics at start
 TCvarS			cl_name("name", "PLAYER", CVAR_ARCHIVE | CVAR_USERINFO);
 TCvarI			cl_color("color", "0", CVAR_ARCHIVE | CVAR_USERINFO);
 TCvarI			cl_class("class", "0", CVAR_ARCHIVE | CVAR_USERINFO);
+TCvarS			cl_model("model", "", CVAR_ARCHIVE | CVAR_USERINFO);
+TCvarS			cl_skin("skin", "", CVAR_ARCHIVE | CVAR_USERINFO);
 
 dlight_t		cl_dlights[MAX_DLIGHTS];
 
@@ -517,10 +519,13 @@ COMMAND(Say)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/07 16:46:23  dj_jl
+//	Added player models, skins and weapon
+//
 //	Revision 1.4  2001/08/04 17:25:14  dj_jl
 //	Moved title / demo loop to progs
 //	Removed shareware / ExtendedWAD from engine
-//
+//	
 //	Revision 1.3  2001/07/31 17:10:21  dj_jl
 //	Localizing demo loop
 //	

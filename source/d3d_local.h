@@ -99,8 +99,7 @@ class TDirect3DDrawer : public TDrawer
 	void DoWipe(int);
 
 	//	Rendering stuff
-	void SetupView(int, int, int, int, float, float);
-	void SetupFrame(void);
+	void SetupView(const refdef_t*);
 	void WorldDrawing(void);
 	void EndView(void);
 
@@ -116,7 +115,7 @@ class TDirect3DDrawer : public TDrawer
 	void DrawSkyPolygon(TVec*, int, int, float, int, float);
 	void DrawMaskedPolygon(TVec*, int, int, int);
 	void DrawSpritePolygon(TVec*, int, int, int, dword);
-	void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, int, dword, int, bool);
+	void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, const char*, dword, int, bool);
 
 	//	Particles
 	void StartParticles(void);
@@ -261,9 +260,12 @@ class TDirect3DDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/07 16:46:23  dj_jl
+//	Added player models, skins and weapon
+//
 //	Revision 1.5  2001/08/04 17:29:11  dj_jl
 //	Added depth hack for weapon models
-//
+//	
 //	Revision 1.4  2001/08/01 17:33:58  dj_jl
 //	Fixed drawing of spite lump for player setup menu, beautification
 //	

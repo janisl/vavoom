@@ -790,7 +790,7 @@ void TDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump,
 //==========================================================================
 
 void TDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
-	model_t *model, int frame, int skinnum, dword light, int translucency,
+	model_t *model, int frame, const char *skin, dword light, int translucency,
 	bool is_view_model)
 {
 	mmdl_t				*pmdl;
@@ -871,13 +871,15 @@ void TDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	matWorld = matTmp * matWorld;
 	RenderDevice->SetTransform(D3DTRANSFORMSTATE_WORLD, &matWorld);
 
-	if ((skinnum >= pmdl->numskins) || (skinnum < 0))
+	if (skin && *skin)
 	{
-		cond << "no such skin # " << skinnum << endl;
-		skinnum = 0;
+		SetSkin(skin);
 	}
-	pskindesc = (mskin_t *)((byte *)pmdl + pmdl->ofsskins) + skinnum;
-	SetSkin(pskindesc->name);
+	else
+	{
+		pskindesc = (mskin_t *)((byte *)pmdl + pmdl->ofsskins);
+		SetSkin(pskindesc->name);
+	}
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_SHADEMODE, D3DSHADE_GOURAUD);
 	if (translucency)
@@ -1003,9 +1005,12 @@ void TDirect3DDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/07 16:46:23  dj_jl
+//	Added player models, skins and weapon
+//
 //	Revision 1.5  2001/08/04 17:29:11  dj_jl
 //	Added depth hack for weapon models
-//
+//	
 //	Revision 1.4  2001/08/01 17:36:11  dj_jl
 //	Added alpha test to the particle drawing
 //	

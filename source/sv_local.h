@@ -247,7 +247,6 @@ struct mobj_base_t
 	int			alias_frame;
     int			translucency;	// translucency, in percents
     int			translation;	// player color translation
-	float		floorclip;		// value to use for floor clipping
 	int			effects;		// dynamic lights, trails
 };
 
@@ -316,10 +315,13 @@ inline subsector_t* SV_PointInSubsector(float x, float y)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/07 16:46:23  dj_jl
+//	Added player models, skins and weapon
+//
 //	Revision 1.4  2001/08/04 17:25:14  dj_jl
 //	Moved title / demo loop to progs
 //	Removed shareware / ExtendedWAD from engine
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

@@ -32,6 +32,25 @@
 
 // TYPES -------------------------------------------------------------------
 
+// Client side Map Object definition.
+struct clmobjbase_t
+{
+	TVec		origin;	// position
+	TAVec		angles;	// orientation
+
+	int			spritetype;
+    int			sprite;	// used to find patch_t and flip value
+    int			frame;	// might be ORed with FF_FULLBRIGHT
+
+	int			model_index;
+	int			alias_frame;
+
+    int			translucency;
+    int			translation;
+
+	int			effects;
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 void CL_ClearInput(void);
@@ -47,13 +66,15 @@ void CL_SignonReply(void);
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 clmobj_t		cl_mobjs[MAX_MOBJS];
-clmobj_t		cl_mo_base[MAX_MOBJS];
+clmobj_t		cl_weapon_mobjs[MAXPLAYERS];
+clPlayerInfo_t	clPlayerInfo[MAXPLAYERS];
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static model_t	*model_precache[1024];
+static clmobjbase_t		cl_mo_base[MAX_MOBJS];
+static model_t			*model_precache[1024];
 
 // CODE --------------------------------------------------------------------
 
@@ -63,6 +84,7 @@ void CL_Clear(void)
 	memset(&cl_level, 0, sizeof(level));
 	memset(cl_mobjs, 0, sizeof(cl_mobjs));
 	memset(cl_mo_base, 0, sizeof(cl_mo_base));
+	memset(cl_weapon_mobjs, 0, sizeof(cl_weapon_mobjs));
 	memset(cl_dlights, 0, sizeof(cl_dlights));
 	memset(scores, 0, sizeof(scores));
 	CL_ClearInput();
@@ -77,7 +99,7 @@ void CL_Clear(void)
 	}
 }
 
-static void CL_ReadMobjBase(clmobj_t &mobj)
+static void CL_ReadMobjBase(clmobjbase_t &mobj)
 {
 	mobj.origin.x = net_msg.ReadShort();
 	mobj.origin.y = net_msg.ReadShort();
@@ -89,7 +111,6 @@ static void CL_ReadMobjBase(clmobj_t &mobj)
 	mobj.frame = (word)net_msg.ReadShort();
 	mobj.translucency = net_msg.ReadByte();
 	mobj.translation = net_msg.ReadByte();
-	mobj.floorclip = net_msg.ReadShort();
 	mobj.effects = net_msg.ReadByte();
 	mobj.model_index = net_msg.ReadShort();
 	mobj.alias_frame = net_msg.ReadByte();
@@ -106,7 +127,7 @@ static void CL_ParseBaseline(void)
 	CL_ReadMobjBase(cl_mo_base[i]);
 }
 
-static void CL_ReadMobj(int bits, clmobj_t &mobj, const clmobj_t &base)
+static void CL_ReadMobj(int bits, clmobj_t &mobj, const clmobjbase_t &base, int i)
 {
 	if (bits & MOB_X)
 		mobj.origin.x = net_msg.ReadShort();
@@ -155,10 +176,6 @@ static void CL_ReadMobj(int bits, clmobj_t &mobj, const clmobj_t &base)
 		mobj.translation = net_msg.ReadByte();
 	else
 		mobj.translation = base.translation;
-	if (bits & MOB_FLOORCLIP)
-		mobj.floorclip = net_msg.ReadShort();
-	else
-		mobj.floorclip = base.floorclip;
 	if (bits & MOB_EFFECTS)
 		mobj.effects = net_msg.ReadByte();
 	else
@@ -167,7 +184,16 @@ static void CL_ReadMobj(int bits, clmobj_t &mobj, const clmobj_t &base)
 		mobj.model_index = net_msg.ReadShort();
 	else
 		mobj.model_index = base.model_index;
-	mobj.alias_model = model_precache[mobj.model_index];
+	if (i < cl.maxclients + 1 && clPlayerInfo[i - 1].model)
+	{
+		mobj.alias_model = clPlayerInfo[i - 1].model;
+		strcpy(mobj.skin, clPlayerInfo[i - 1].skin);
+	}
+	else
+	{
+		mobj.alias_model = model_precache[mobj.model_index];
+		mobj.skin[0] = 0;
+	}
 	if (mobj.model_index && (bits & MOB_FRAME))
 		mobj.alias_frame = net_msg.ReadByte();
 	else
@@ -188,10 +214,49 @@ static void CL_ParseUpdateMobj(void)
 	else
 		i = net_msg.ReadByte();
 
-	CL_ReadMobj(bits, cl_mobjs[i], cl_mo_base[i]);
+	CL_ReadMobj(bits, cl_mobjs[i], cl_mo_base[i], i);
 
-	//	A dummy thinker marking mobjs in use
+	//	Marking mobj in use
 	cl_mobjs[i].in_use = true;
+
+	if (bits & MOB_WEAPON && i < cl.maxclients + 1 && clPlayerInfo[i - 1].weapon_model)
+	{
+		clmobj_t &ent = cl_mobjs[i];
+		clmobj_t &wpent = cl_weapon_mobjs[i];
+
+		wpent.in_use = true;
+		wpent.origin = ent.origin;
+		wpent.angles = ent.angles;
+		wpent.alias_model = model_precache[net_msg.ReadShort()];
+		wpent.alias_frame = 1;
+		wpent.translucency = ent.translucency;
+
+		mmdl_t *pmdl = (mmdl_t*)Mod_Extradata(clPlayerInfo[i - 1].weapon_model);
+		int frame = ent.alias_frame;
+		if ((frame >= pmdl->numframes) || (frame < 0))
+		{
+			frame = 0;
+		}
+		mtriangle_t *ptris = (mtriangle_t*)((byte*)pmdl + pmdl->ofstris);
+		mframe_t *pframe = (mframe_t*)((byte*)pmdl + pmdl->ofsframes +
+			frame * pmdl->framesize);
+		trivertx_t *pverts = (trivertx_t *)(pframe + 1);
+		TVec p[3];
+		for (int vi = 0; vi < 3; vi++)
+		{
+			p[vi].x = pverts[ptris[0].vertindex[vi]].v[0] * pframe->scale[0] + pframe->scale_origin[0];
+			p[vi].y = pverts[ptris[0].vertindex[vi]].v[1] * pframe->scale[1] + pframe->scale_origin[1];
+			p[vi].z = pverts[ptris[0].vertindex[vi]].v[2] * pframe->scale[2] + pframe->scale_origin[2];
+		}
+		TVec md_forward, md_left, md_up;
+		AngleVectors(ent.angles, md_forward, md_left, md_up);
+		md_left = -md_left;
+		wpent.origin += md_forward * p[0].x + md_left * p[0].y + md_up * p[0].z;
+		TAVec wangles;
+		VectorAngles(p[1] - p[0], wangles);
+		wpent.angles.yaw += wangles.yaw;
+		wpent.angles.pitch += wangles.pitch;
+	}
 }
 
 //==========================================================================
@@ -271,7 +336,6 @@ static void CL_ParseViewData(void)
 	net_msg >> cl.vieworg.x
 			>> cl.vieworg.y
 			>> cl.vieworg.z;
-	cl.origin_id = net_msg.ReadShort();
 	cl.extralight = net_msg.ReadByte();
 	cl.fixedcolormap = net_msg.ReadByte();
 	cl.palette = net_msg.ReadByte();
@@ -411,6 +475,11 @@ static void CL_ParseTime()
 	for (i = 0; i < MAX_MOBJS; i++)
 	{
 		cl_mobjs[i].in_use = false;
+	}
+
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		cl_weapon_mobjs[i].in_use = false;
 	}
 
 	net_msg >> new_time;
@@ -570,8 +639,55 @@ static void	CL_ParseModelList(void)
 //
 //==========================================================================
 
-static void CL_ReadFromUserInfo(int)
+static void CL_ReadFromUserInfo(int i)
 {
+	clPlayerInfo[i].model = NULL;
+	clPlayerInfo[i].weapon_model = NULL;
+	clPlayerInfo[i].skin[0] = 0;
+
+	char *modelname = Info_ValueForKey(scores[i].userinfo, "model");
+	if (!*modelname)
+	{
+		//	Default model
+		return;
+	}
+
+	//	Find model
+	char *name = va("models/players/%s/tris.md2", modelname);
+	if (!FL_FindFile(name, NULL))
+	{
+		if (Cvar_Value("r_models"))
+		{
+			con << "Can't find model " << name << endl;
+		}
+		return;
+	}
+	clPlayerInfo[i].model = Mod_FindName(name);
+
+	//	Search for weapon model
+	name = va("models/players/%s/weapon.md2", modelname);
+	if (FL_FindFile(name, NULL))
+	{
+		clPlayerInfo[i].weapon_model = Mod_FindName(name);
+	}
+	else
+	{
+		con << "Can't find weapon model " << name << endl;
+	}
+
+	char *skinname = Info_ValueForKey(scores[i].userinfo, "skin");
+	if (*skinname)
+	{
+		name = va("models/players/%s/%s", modelname, skinname);
+		if (FL_FindFile(name, NULL))
+		{
+			strcpy(clPlayerInfo[i].skin, name);
+		}
+		else
+		{
+			con << "Can't find skin " << name << endl;
+		}
+	}
 }
 
 //==========================================================================
@@ -915,9 +1031,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/07 16:46:23  dj_jl
+//	Added player models, skins and weapon
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

@@ -678,18 +678,19 @@ void SetSkin(const char *name)
 //
 //==========================================================================
 
-void R_AliasSetupSkin(int skinnum)
+void R_AliasSetupSkin(const char *skin)
 {
 	mskin_t		*pskins;
 
-	if ((skinnum >= pmdl->numskins) || (skinnum < 0))
+	if (skin && *skin)
 	{
-		cond << "R_AliasSetupSkin: no such skin # " << skinnum << endl;
-		skinnum = 0;
+		SetSkin(skin);
 	}
-
-	pskins = (mskin_t *)((byte *)pmdl + pmdl->ofsskins);
-	SetSkin(pskins[skinnum].name);
+	else
+	{
+		pskins = (mskin_t *)((byte *)pmdl + pmdl->ofsskins);
+		SetSkin(pskins[0].name);
+	}
 	r_affinetridesc.skinwidth = pmdl->skinwidth;
 	r_affinetridesc.skinheight = pmdl->skinheight;
 }
@@ -797,7 +798,7 @@ void R_AliasSetupFrame(int frame)
 //==========================================================================
 
 void R_AliasDrawModel(const TAVec &angles, model_t *model, int frame,
-	int skinnum, dword light, int translucency, bool is_view_model)
+	const char *skin, dword light, int translucency, bool is_view_model)
 {
 	finalvert_t		finalverts[MAXALIASVERTS +
 						((CACHE_SIZE - 1) / sizeof(finalvert_t)) + 1];
@@ -816,7 +817,7 @@ void R_AliasDrawModel(const TAVec &angles, model_t *model, int frame,
 
 	pmdl = (mmdl_t *)Mod_Extradata(model);
 
-	R_AliasSetupSkin(skinnum);
+	R_AliasSetupSkin(skin);
 	R_AliasSetUpTransform(angles, frame, a_trivial_accept);
 	R_AliasSetupLighting(light);
 	R_AliasSetupFrame(frame);
@@ -846,7 +847,7 @@ void R_AliasDrawModel(const TAVec &angles, model_t *model, int frame,
 //==========================================================================
 
 void TSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
-	model_t *model, int frame, int skinnum, dword light, int translucency,
+	model_t *model, int frame, const char *skin, dword light, int translucency,
 	bool is_view_model)
 {
 	modelorg = vieworg - origin;
@@ -858,15 +859,18 @@ void TSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 		return;
 	}
 
-	R_AliasDrawModel(angles, model, frame, skinnum, light, translucency, is_view_model);
+	R_AliasDrawModel(angles, model, frame, skin, light, translucency, is_view_model);
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/07 16:46:23  dj_jl
+//	Added player models, skins and weapon
+//
 //	Revision 1.5  2001/08/04 17:29:11  dj_jl
 //	Added depth hack for weapon models
-//
+//	
 //	Revision 1.4  2001/08/02 17:45:37  dj_jl
 //	Added support for colored lit and translucent models
 //	

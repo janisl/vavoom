@@ -715,7 +715,7 @@ void TOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump,
 //==========================================================================
 
 void TOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
-	model_t *model, int frame, int skinnum, dword light, int translucency,
+	model_t *model, int frame, const char *skin, dword light, int translucency,
 	bool is_view_model)
 {
 	mmdl_t		*pmdl;
@@ -773,13 +773,15 @@ void TOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	glTranslatef(framedesc->scale_origin[0], framedesc->scale_origin[1], framedesc->scale_origin[2]);
 	glScalef(framedesc->scale[0], framedesc->scale[1], framedesc->scale[2]);
 
-	if ((skinnum >= pmdl->numskins) || (skinnum < 0))
+	if (skin && *skin)
 	{
-		cond << "no such skin # " << skinnum << endl;
-		skinnum = 0;
+		SetSkin(skin);
 	}
-	pskindesc = (mskin_t *)((byte *)pmdl + pmdl->ofsskins) + skinnum;
-	SetSkin(pskindesc->name);
+	else
+	{
+		pskindesc = (mskin_t *)((byte *)pmdl + pmdl->ofsskins);
+		SetSkin(pskindesc->name);
+	}
 
 	glShadeModel(GL_SMOOTH);
 	if (translucency)
@@ -891,10 +893,13 @@ void TOpenGLDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/07 16:46:23  dj_jl
+//	Added player models, skins and weapon
+//
 //	Revision 1.5  2001/08/04 17:31:16  dj_jl
 //	Added depth hack for weapon models
 //	Added support for multitexture extensions
-//
+//	
 //	Revision 1.4  2001/08/01 17:36:11  dj_jl
 //	Added alpha test to the particle drawing
 //	

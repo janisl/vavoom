@@ -238,7 +238,9 @@ mobj_t *SV_SpawnMobj(void)
     mobj->function = (think_t)P_MobjThinker;
     P_AddThinker(mobj);
 
-	for (i = 1; i < MAX_MOBJS; i++)
+	//	Client treats first objects as player objects and will use
+	// models and skins from player info
+	for (i = svs.max_clients + 1; i < MAX_MOBJS; i++)
 	{
 		if (!sv_mobjs[i] && (sv_mo_free_time[i] < 1.0 ||
 			level.time - sv_mo_free_time[i] > 2.0))
@@ -271,7 +273,7 @@ int	SV_GetMobjBits(mobj_t &mobj, mobj_base_t &base)
 		bits |=	MOB_X;
 	if (fabs(base.origin.y - mobj.origin.y) >= 1.0)
 		bits |=	MOB_Y;
-	if (fabs(base.origin.z - mobj.origin.z) >= 1.0)
+	if (fabs(base.origin.z - (mobj.origin.z - mobj.floorclip)) >= 1.0)
 		bits |=	MOB_Z;
 	if ((base.angles.yaw & 0xff000000) != (mobj.angles.yaw & 0xff000000))
 		bits |=	MOB_ANGLE;
@@ -287,8 +289,6 @@ int	SV_GetMobjBits(mobj_t &mobj, mobj_base_t &base)
 		bits |=	MOB_TRANSLUC;
 	if (base.translation != mobj.translation)
 		bits |=	MOB_TRANSL;
-	if (fabs(base.floorclip - mobj.floorclip) >= 1.0)
-		bits |=	MOB_FLOORCLIP;
 	if (base.effects != mobj.effects)
 		bits |= MOB_EFFECTS;
 	if (base.model_index != mobj.model_index)
@@ -312,7 +312,7 @@ void SV_WriteMobj(int bits, mobj_t &mobj, TMessage &msg)
 	if (bits & MOB_Y)
 		msg << (word)mobj.origin.y;
 	if (bits & MOB_Z)
-		msg << (word)mobj.origin.z;
+		msg << (word)(mobj.origin.z - mobj.floorclip);
 	if (bits & MOB_ANGLE)
 		msg << (byte)(mobj.angles.yaw >> 24);
 	if (bits & MOB_ANGLEP)
@@ -327,14 +327,14 @@ void SV_WriteMobj(int bits, mobj_t &mobj, TMessage &msg)
 		msg << (byte)mobj.translucency;
 	if (bits & MOB_TRANSL)
 		msg << (byte)mobj.translation;
-	if (bits & MOB_FLOORCLIP)
-		msg << (word)mobj.floorclip;
 	if (bits & MOB_EFFECTS)
 		msg << (byte)mobj.effects;
 	if (bits & MOB_MODEL)
 		msg << (word)mobj.model_index;
 	if (mobj.model_index && (bits & MOB_FRAME))
 		msg << (byte)mobj.alias_frame;
+	if (bits & MOB_WEAPON)
+		msg << (word)mobj.player->weapon_model;
 }
 
 //==========================================================================
@@ -399,7 +399,7 @@ void SV_CreateBaseline(void)
 
 		base.origin.x = mobj.origin.x;
 		base.origin.y = mobj.origin.y;
-		base.origin.z = mobj.origin.z;
+		base.origin.z = mobj.origin.z - mobj.floorclip;
 		base.angles.yaw = mobj.angles.yaw;
 		base.angles.pitch = mobj.angles.pitch;
 		base.angles.roll = mobj.angles.roll;
@@ -408,7 +408,6 @@ void SV_CreateBaseline(void)
 		base.frame = mobj.frame;
 		base.translucency = mobj.translucency;
 		base.translation = mobj.translation;
-		base.floorclip = mobj.floorclip;
 		base.effects = mobj.effects;
 		base.model_index = mobj.model_index;
 		base.alias_frame = mobj.alias_frame;
@@ -417,7 +416,7 @@ void SV_CreateBaseline(void)
 					<< (word)i
 					<< (word)mobj.origin.x
 					<< (word)mobj.origin.y
-					<< (word)mobj.origin.z
+					<< (word)(mobj.origin.z - mobj.floorclip)
 					<< (byte)(mobj.angles.yaw >> 24)
 					<< (byte)(mobj.angles.pitch >> 24)
 					<< (byte)(mobj.angles.roll >> 24)
@@ -425,7 +424,6 @@ void SV_CreateBaseline(void)
 					<< (word)mobj.frame
 					<< (byte)mobj.translucency
 					<< (byte)mobj.translation
-					<< (word)mobj.floorclip
 					<< (byte)mobj.effects
 					<< (word)mobj.model_index
 					<< (byte)mobj.alias_frame;
@@ -451,6 +449,10 @@ int GetOriginNum(degenmobj_t *origin)
 	{
 		if (origin == sv_mobjs[i])
 		{
+			if (sv_mobjs[i]->player)
+			{
+				return (sv_mobjs[i]->player - players) + 1;
+			}
 			return i;
 		}
 	}
@@ -622,7 +624,6 @@ void SV_WriteViewData(player_t &player, TMessage &msg)
 		<< player.vieworg.x
 		<< player.vieworg.y
 		<< player.vieworg.z
-		<< (short)GetOriginNum(player.mo)
 		<< (byte)player.extralight
 		<< (byte)player.fixedcolormap
 		<< (byte)player.palette
@@ -689,10 +690,25 @@ void SV_WriteViewData(player_t &player, TMessage &msg)
 void SV_UpdateMobj(int i, TMessage &msg)
 {
 	int		bits;
+	int		sendnum;
 
 	bits = SV_GetMobjBits(*sv_mobjs[i], sv_mo_base[i]);
 
-	if (i > 255)
+	if (sv_mobjs[i]->player)
+	{
+		sendnum = (sv_mobjs[i]->player - players) + 1;
+		//	Clear look angles, because they must not affect model orientation
+		bits &= ~(MOB_ANGLEP | MOB_ANGLER);
+		if (sv_mobjs[i]->player->weapon_model)
+		{
+			bits |= MOB_WEAPON;
+		}
+	}
+	else
+	{
+		sendnum = i;
+	}
+	if (sendnum > 255)
 		bits |=	MOB_BIG_NUM;
 	if (bits > 255)
 		bits |=	MOB_MORE_BITS;
@@ -703,9 +719,9 @@ void SV_UpdateMobj(int i, TMessage &msg)
 	else
 		msg << (byte)bits;
 	if (bits & MOB_BIG_NUM)
-		msg << (word)i;
+		msg << (word)sendnum;
 	else
-		msg << (byte)i;
+		msg << (byte)sendnum;
 
 	SV_WriteMobj(bits, *sv_mobjs[i], msg);
 	return;
@@ -993,10 +1009,10 @@ void SV_SendReliable(void)
 		if (!players[i].active)
 			continue;
 
+		players[i].message << sv_reliable;
+
 		if (!players[i].spawned)
 			continue;
-
-		players[i].message << sv_reliable;
 
 		for (j = 0; j < long_stats; j++)
 		{
@@ -1180,7 +1196,7 @@ void SV_RunClients(void)
     	// pause if in menu or console and at least one tic has been run
 #ifdef CLIENT
 		if (players[i].spawned && !sv.intermission && !paused &&
-			(netgame || !(MN_Active() || consolestate || messageToPrint)))
+			(netgame || !(MN_Active() || C_Active() || messageToPrint)))
 #else
 		if (players[i].spawned && !sv.intermission && !paused)
 #endif
@@ -1220,7 +1236,7 @@ void SV_Ticker(void)
 	{
 	    // pause if in menu or console
 #ifdef CLIENT
-		if (!paused && (netgame || !(MN_Active() || consolestate || messageToPrint)))
+		if (!paused && (netgame || !(MN_Active() || C_Active() || messageToPrint)))
 #else
 		if (!paused)
 #endif
@@ -2408,9 +2424,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/07 16:46:23  dj_jl
+//	Added player models, skins and weapon
+//
 //	Revision 1.5  2001/08/04 17:32:39  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.4  2001/08/02 17:46:38  dj_jl
 //	Added sending info about changed textures to new clients
 //	

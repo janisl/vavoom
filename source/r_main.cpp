@@ -53,13 +53,11 @@ extern boolean			precache;        // if true, load all graphics at start
 
 int						screenblocks = 0;
 
-int						viewwidth;
-int						viewheight;
-
 TVec					vieworg;
 TVec					viewforward;
 TVec					viewright;
 TVec					viewup;
+TAVec					viewangles;
 
 // bumped light from gun blasts
 int                     extralight;
@@ -77,6 +75,8 @@ TDrawer					*_OpenGLDrawer = NULL;
 TDrawer					*_Direct3DDrawer = NULL;
 
 bool					r_back2front;
+
+refdef_t				refdef;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -180,39 +180,36 @@ static void R_ExecuteSetViewSize(void)
 	}
 	old_fov = fov;
 
-	int		viewwindowx;
-	int		viewwindowy;
-
     if (screenblocks > 10)
     {
-        viewwidth = ScreenWidth;
-        viewheight = ScreenHeight;
-		viewwindowy = 0;
+        refdef.width = ScreenWidth;
+        refdef.height = ScreenHeight;
+		refdef.y = 0;
     }
     else
     {
-        viewwidth = screenblocks * ScreenWidth / 10;
-        viewheight = (screenblocks * (ScreenHeight - SB_REALHEIGHT) / 10);
-		viewwindowy = (ScreenHeight - SB_REALHEIGHT - viewheight) >> 1;
+        refdef.width = screenblocks * ScreenWidth / 10;
+        refdef.height = (screenblocks * (ScreenHeight - SB_REALHEIGHT) / 10);
+		refdef.y = (ScreenHeight - SB_REALHEIGHT - refdef.height) >> 1;
     }
-    viewwindowx = (ScreenWidth - viewwidth) >> 1;
+    refdef.x = (ScreenWidth - refdef.width) >> 1;
 
-	float fovx = tan(DEG2RAD(fov) / 2);
-	float fovy = fovx * viewheight / viewwidth / PixelAspect;
-
-	Drawer->SetupView(viewwindowx, viewwindowy, viewwidth, viewheight, fovx, fovy);
+	refdef.fovx = tan(DEG2RAD(fov) / 2);
+	refdef.fovy = refdef.fovx * refdef.height / refdef.width / PixelAspect;
 
 	// left side clip
-	clip_base[0] = Normalize(TVec(1, 1.0 / fovx, 0));
+	clip_base[0] = Normalize(TVec(1, 1.0 / refdef.fovx, 0));
 	
 	// right side clip
-	clip_base[1] = Normalize(TVec(1, -1.0 / fovx, 0));
+	clip_base[1] = Normalize(TVec(1, -1.0 / refdef.fovx, 0));
 	
 	// top side clip
-	clip_base[2] = Normalize(TVec(1, 0, -1.0 / fovy));
+	clip_base[2] = Normalize(TVec(1, 0, -1.0 / refdef.fovy));
 	
 	// bottom side clip
-	clip_base[3] = Normalize(TVec(1, 0, 1.0 / fovy));
+	clip_base[3] = Normalize(TVec(1, 0, 1.0 / refdef.fovy));
+
+	refdef.drawworld = true;
 }
 
 //==========================================================================
@@ -248,6 +245,8 @@ static void R_TransformFrustum(void)
 TCvarI			r_chasecam("r_chasecam", "0", CVAR_ARCHIVE);
 TCvarF			r_chase_dist("r_chase_dist", "32.0", CVAR_ARCHIVE);
 TCvarF			r_chase_up("r_chase_up", "32.0", CVAR_ARCHIVE);
+TCvarF			r_chase_right("r_chase_right", "0", CVAR_ARCHIVE);
+TCvarI			r_chase_front("r_chase_front", "0", CVAR_ARCHIVE);
 
 static void R_SetupFrame(void)
 {
@@ -258,12 +257,20 @@ static void R_SetupFrame(void)
 		R_ExecuteSetViewSize();
     }
 
-	AngleVectors(cl.viewangles, viewforward, viewright, viewup);
+	viewangles = cl.viewangles;
+	if (r_chasecam && r_chase_front)
+	{
+		//	This is used to see how weapon looks in player's hands
+		viewangles.yaw += ANG180;
+		viewangles.pitch = -viewangles.pitch;
+	}
+	AngleVectors(viewangles, viewforward, viewright, viewup);
 
 	if (r_chasecam)
 	{
-		vieworg = cl_mobjs[cl.origin_id].origin + TVec(0.0, 0.0, 32.0)
-			- r_chase_dist * viewforward + r_chase_up * viewup;
+		vieworg = cl_mobjs[cl.clientnum + 1].origin + TVec(0.0, 0.0, 32.0)
+			- r_chase_dist * viewforward + r_chase_up * viewup
+			+ r_chase_right * viewright;
 	}
 	else
 	{
@@ -287,7 +294,8 @@ static void R_SetupFrame(void)
 	}
 
 	r_viewleaf = CL_PointInSubsector(cl.vieworg.x, cl.vieworg.y);
-	Drawer->SetupFrame();
+
+	Drawer->SetupView(&refdef);
 }
 
 //==========================================================================
@@ -560,9 +568,12 @@ COMMAND(TimeRefresh)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/07 16:46:23  dj_jl
+//	Added player models, skins and weapon
+//
 //	Revision 1.4  2001/08/04 17:28:26  dj_jl
 //	Removed game.h
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	
