@@ -921,6 +921,7 @@ static void ParseDef(TType *type, bool IsNative)
 	TType *ctype = CheckForType();
 	if (ctype)
 	{
+		ParseWarning("External function declaration");
 		TK_Expect(PU_DCOLON, ERR_NONE);
 		if (tk_Token != TK_IDENTIFIER)
 		{
@@ -1181,6 +1182,8 @@ static void ParseDef(TType *type, bool IsNative)
 
 	if (TK_Check(PU_LBRACE))
 	{
+		if (!ctype)
+			dprintf("Global function %s\n", *Name);
 		if (functions[num].first_statement)
 		{
 			ERR_Exit(ERR_FUNCTION_REDECLARED, true, "Function: %s", *Name);
@@ -1199,7 +1202,8 @@ static void ParseDef(TType *type, bool IsNative)
 	{
 		//  Funkcijas prototips
 		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-		return;
+		if (!IsNative)
+			ParseWarning("Prototype");
 	}
 }
 
@@ -1366,6 +1370,7 @@ void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 	else
 	{
 		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+		ParseWarning("Func prototype");
 	}
 }
 
@@ -1712,10 +1717,13 @@ void PA_Parse(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2002/11/02 17:11:13  dj_jl
+//	New style classes.
+//
 //	Revision 1.24  2002/09/07 16:36:38  dj_jl
 //	Support bool in function args and return type.
 //	Removed support for typedefs.
-//
+//	
 //	Revision 1.23  2002/08/24 14:45:38  dj_jl
 //	2 pass compiling.
 //	

@@ -1,10 +1,12 @@
 ifdef DJGPP
 EXE=.exe
+LIBS=-lstdcxx
 else
 EXE=
+LIBS=-lstdc++
 endif
 
-CFLAGS = -Wall -O3 -ffast-math -fomit-frame-pointer -mpentiumpro
+CFLAGS = -Wall -O3 -ffast-math -fomit-frame-pointer -march=pentiumpro
 
 OBJS = \
 	cmdlib.o \
@@ -14,6 +16,7 @@ OBJS = \
 	info.o \
 	name.o \
 	parse.o \
+	parse1.o \
 	pcode.o \
 	token.o \
 	types.o \
@@ -33,7 +36,7 @@ CPP_OBJS = \
 all: ../bin/vcc$(EXE)
 
 ../bin/vcc$(EXE): $(OBJS) vcpp/libcpp.a
-	gcc -s -o $@ $^
+	gcc -s -o $@ $^ $(LIBS)
 
 vcpp/libcpp.a: $(CPP_OBJS)
 	ar rc $@ $^

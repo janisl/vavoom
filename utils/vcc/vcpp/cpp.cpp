@@ -43,6 +43,8 @@ size_t cpp_main(char *srcf, void **dst_buf)
 	unsetsource();
 	fflush(stderr);
 	setbuf(stderr, NULL);
+    if (nerrs)
+    	exit(1);
 	*dst_buf = output_buf;
 	return output_size;
 }

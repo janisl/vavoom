@@ -1,5 +1,5 @@
 
-                              VCC version 1.11
+                              VCC version 1.14
                               ****************
 
 ============================================================================
@@ -80,7 +80,7 @@ DOS box.
     Copyright
 ============================================================================
 
-  VCC is Copyright (C) 2000-2001 JÆnis Legzdi·ý. It is based on acc (Action
+  VCC is Copyright (C) 2000-2002 JÆnis Legzdi·ý. It is based on acc (Action
 Code Compiler for Hexen scripts) and qcc (Quake C Compiler).
   All trademarks are the propriety of their owners.
 

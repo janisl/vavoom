@@ -87,20 +87,31 @@ int main(int argc, char **argv)
 
 	dprintf("Preprocessing\n");
 	size = cpp_main(SourceFileName, &buf);
+	int preptime = time(0);
+	dprintf("Preprocessing in %02d:%02d\n",
+		(preptime - starttime) / 60, (preptime - starttime) % 60);
 	TK_OpenSource(buf, size);
 #ifdef USE_2_PASSES
 	CurrentPass = 1;
 	Pass1::PA_Parse();
 	TK_Restart();
 #endif
+	int pass1time = time(0);
+	dprintf("Pass 1 in %02d:%02d\n",
+		(pass1time - preptime) / 60, (pass1time - preptime) % 60);
 	CurrentPass = 2;
 	Pass2::PA_Parse();
+	int pass2time = time(0);
+	dprintf("Pass 2 in %02d:%02d\n",
+		(pass2time - pass1time) / 60, (pass2time - pass1time) % 60);
 	TK_CloseSource();
 	PC_WriteObject(ObjectFileName);
 	ERR_RemoveErrorFile();
 	DumpAsm();
 	FName::StaticExit();
 	endtime = time(0);
+	dprintf("Wrote in %02d:%02d\n",
+		(endtime - pass2time) / 60, (endtime - pass2time) % 60);
 	dprintf("Time elapsed: %02d:%02d\n",
 		(endtime - starttime) / 60, (endtime - starttime) % 60);
 	return 0;
@@ -300,9 +311,12 @@ int dprintf(const char *text, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/11/02 17:11:13  dj_jl
+//	New style classes.
+//
 //	Revision 1.13  2002/08/24 14:45:38  dj_jl
 //	2 pass compiling.
-//
+//	
 //	Revision 1.12  2002/01/11 08:17:31  dj_jl
 //	Added name subsystem, removed support for unsigned ints
 //	

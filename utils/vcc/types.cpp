@@ -999,7 +999,10 @@ void ParseClass(void)
 	if (TK_Check(PU_SEMICOLON))
 		OldStyle = false;
 	else
+	{
 		TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+		ParseWarning("Old style %s", *class_type->Name);
+	}
 	while (OldStyle ? !TK_Check(PU_RBRACE) : !TK_Check(KW_DEFAULTPROPERTIES))
 	{
 		if (ClassAddfields && TK_Check(KW_ADDFIELDS))
@@ -2496,10 +2499,13 @@ field_t* CheckForField(FName Name, TType *t, bool check_aux)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2002/11/02 17:11:13  dj_jl
+//	New style classes.
+//
 //	Revision 1.28  2002/09/07 16:36:38  dj_jl
 //	Support bool in function args and return type.
 //	Removed support for typedefs.
-//
+//	
 //	Revision 1.27  2002/08/24 14:45:38  dj_jl
 //	2 pass compiling.
 //	
