@@ -373,8 +373,8 @@ void TProgs::Load(const char *AName)
 	{
 		FBuiltinInfo *B;
 
-		if (Functions[i].NumParms > 8)
-			Sys_Error("Function has more than 8 params");
+		if (Functions[i].NumParms > 16)
+			Sys_Error("Function has more than 16 params");
 		for (B = FBuiltinInfo::Builtins; B; B = B->Next)
 		{
 			if (Functions[i].OuterClass == B->OuterClass &&
@@ -1720,9 +1720,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.32  2004/12/22 07:37:21  dj_jl
+//	Increased argument count limit.
+//
 //	Revision 1.31  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
-//
+//	
 //	Revision 1.30  2002/11/02 17:09:55  dj_jl
 //	Some debugging stuff.
 //	
