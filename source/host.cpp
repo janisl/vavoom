@@ -28,9 +28,6 @@
 #include "gamedefs.h"
 #include "cl_local.h"
 
-void OnHostEndGame(void);
-void OnHostError(void);
-
 //#define PROGS_PROFILE
 
 void CL_Init(void);
@@ -90,7 +87,6 @@ double			oldrealtime;
 int				host_framecount;
 
 Game_t			Game;
-boolean 		ExtendedWAD = false;	// true if episodes 4 and 5 present
 
 boolean 		DevMaps;				// true = Map development mode
 char*			DevMapsDir = "";		// development maps directory
@@ -107,7 +103,6 @@ static TCvarF	host_framerate("framerate", "0");
 
 static double	last_time;
 
-TCvarI	shareware("ShareWare", "0");			// true if only episode 1 present
 static TCvarI	respawnparm("RespawnMonsters", "0");	// checkparm of -respawn
 static TCvarI	randomclass("RandomClass", "0");		// checkparm of -randclass
 static TCvarI	fastparm("Fast", "0");				// checkparm of -fast
@@ -221,55 +216,6 @@ void Host_Shutdown(void)
 
 //==========================================================================
 //
-//  CheckWadVersion
-//
-//==========================================================================
-
-static void CheckWadVersion(void)
-{
-	//	Check for Doom registered and extended versions
-    if ((Game == Doom) && !(int)shareware)
-	{
-		char name1[23][12]=
-		{
-	    	"e2m1","e2m2","e2m3","e2m4","e2m5","e2m6","e2m7","e2m8","e2m9",
-	    	"e3m1","e3m3","e3m3","e3m4","e3m5","e3m6","e3m7","e3m8","e3m9",
-	    	"dphoof","bfgga0","heada1","cybra1","spida1d1"
-		};
-        char name2[9][8] = { "e4m1","e4m2","e4m3","e4m4","e4m5","e4m6","e4m7","e4m8","e4m9"};
-		int i;
-
-    	for (i = 0;i < 23; i++)
-			if (W_CheckNumForName(name1[i]) < 0)
-	    		Sys_Error("\nThis is not the registered version.");
-
-        ExtendedWAD = true;
-        for (i = 0;i < 9; i++)
-		{
-            if (W_CheckNumForName(name2[i]) < 0)
-			{
-                ExtendedWAD = false;
-                break;
-			}
-		}
-	}
-
-	//	Check for Heretic shareware and extended versions
-	if (Game == Heretic)
-    {
-		if (W_CheckNumForName("E2M1") == -1)
-		{ // Can't find episode 2 maps, must be the shareware WAD
-			shareware = 1;
-		}
-		else if(W_CheckNumForName("EXTENDED") != -1)
-		{ // Found extended lump, must be the extended WAD
-			ExtendedWAD = true;
-		}
-	}
-}
-
-//==========================================================================
-//
 //	Host_Init
 //
 //==========================================================================
@@ -309,8 +255,6 @@ void Host_Init(void)
 #endif
 
 	W_InitMultipleFiles(wadfiles);
-
-	CheckWadVersion();
 
 #ifdef CLIENT
 	IN_Init();
@@ -562,7 +506,7 @@ void Host_EndGame(const char *message, ...)
 		Sys_Error("Host_EndGame: %s\n", string);	// dedicated servers exit
 	
 	CL_Disconnect();
-	OnHostEndGame();
+	clpr.Exec("OnHostEndGame");
 
 	longjmp(host_abort, 1);
 #else
@@ -611,7 +555,7 @@ void Host_Error(const char *error, ...)
 		Sys_Error("Host_Error: %s\n", string);	// dedicated servers exit
 
 	CL_Disconnect();
-	OnHostError();
+	clpr.Exec("OnHostError");
 	C_StartFull();
 
 	inerror = false;
@@ -728,9 +672,13 @@ COMMAND(Quit)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/04 17:25:14  dj_jl
+//	Moved title / demo loop to progs
+//	Removed shareware / ExtendedWAD from engine
+//
 //	Revision 1.3  2001/07/31 17:07:41  dj_jl
 //	Changes for filesystem and localising demo loop
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

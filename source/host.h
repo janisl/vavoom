@@ -29,6 +29,15 @@
 
 // TYPES -------------------------------------------------------------------
 
+enum Game_t
+{
+ 	Doom,
+    Doom2,
+    Heretic,
+    Hexen,
+	Strife	//	Just a test, not a true support
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void Host_Init(void);
@@ -44,7 +53,6 @@ void Host_Error(const char *error, ...)
 extern TCvarI		developer;
 
 extern Game_t		Game;
-extern boolean		ExtendedWAD;// true if main WAD is the extended version
 
 extern boolean 		DevMaps;	// true = Map development mode
 extern char*		DevMapsDir;	// development maps directory
@@ -60,9 +68,13 @@ extern int			host_framecount;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/04 17:25:14  dj_jl
+//	Moved title / demo loop to progs
+//	Removed shareware / ExtendedWAD from engine
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

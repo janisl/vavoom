@@ -28,8 +28,6 @@
 #include "gamedefs.h"
 #include "cl_local.h"
 
-void StopDemoLoop(void);
-
 // MACROS ------------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
@@ -424,7 +422,7 @@ void CL_EstablishConnection(char *host)
 	}
 	cond << "CL_EstablishConnection: connected to " << host << endl;
 	
-	StopDemoLoop();
+	clpr.Exec("StopDemoLoop");
 	cls.state = ca_connected;
 	cls.signon = 0;				// need all the signon messages before playing
 //	cls.message.Clear();
@@ -466,8 +464,6 @@ COMMAND(Disconnect)
 #ifdef SERVER
 	SV_ShutdownServer(false);
 #endif
-
-	CmdBuf << "StartDemos\n";
 }
 
 #ifndef SERVER
@@ -521,9 +517,13 @@ COMMAND(Say)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/04 17:25:14  dj_jl
+//	Moved title / demo loop to progs
+//	Removed shareware / ExtendedWAD from engine
+//
 //	Revision 1.3  2001/07/31 17:10:21  dj_jl
 //	Localizing demo loop
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

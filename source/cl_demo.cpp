@@ -37,13 +37,13 @@
 
 #include "gamedefs.h"
 
-void CL_Disconnect(void);
-
 // MACROS ------------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
+
+void CL_Disconnect(void);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -51,418 +51,11 @@ void CL_Disconnect(void);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern TCvarI	shareware;
-
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-// demo loop control
-int				demosequence;	// -1 = don't play demos
-
-float			pagetime;
-int				page_pic;
-
 // CODE --------------------------------------------------------------------
-
-//==========================================================================
-//
-//
-//
-//==========================================================================
-namespace DoomTitle
-{
-//==========================================================================
-//
-//	AdvanceDemo
-//
-//	This cycles through the demo sequences.
-//
-//==========================================================================
-
-void AdvanceDemo(void)
-{
-	demosequence++;
-    if (Game == Doom && ExtendedWAD)
-		demosequence %= 7;
-    else
-		demosequence %= 6;
-    
-    switch (demosequence)
-    {
-      case 0:
-		page_pic = R_RegisterPic("TITLEPIC", PIC_PATCH);
-if (Game == Doom)
-{
-		pagetime = 170.0 / 35.0;
-		S_StartSong("D_INTRO", P_GetCDTitleTrack(), false);
-}
-else
-{
-		pagetime = 11.0;
-		S_StartSong("D_DM2TTL", P_GetCDTitleTrack(), false);
-}
-		break;
-
-      case 1:
-		CmdBuf << "PlayDemo demo1\n";
-		break;
-
-      case 2:
-		pagetime = 200.0 / 35.0;
-		page_pic = R_RegisterPic("CREDIT", PIC_PATCH);
-		break;
-
-      case 3:
-		CmdBuf << "PlayDemo demo2\n";
-		break;
-
-      case 4:
-if (Game == Doom)
-{
-		pagetime = 200.0 / 35.0;
-		if (ExtendedWAD)
-		{
-			page_pic = R_RegisterPic("CREDIT", PIC_PATCH);
-		}
-		else
-		{
-			page_pic = R_RegisterPic("HELP2", PIC_PATCH);
-		}
-}
-else
-{
-		pagetime = 11.0;
-		page_pic = R_RegisterPic("TITLEPIC", PIC_PATCH);
-		S_StartSong("D_DM2TTL", P_GetCDTitleTrack(), false);
-}
-		break;
-
-      case 5:
-		CmdBuf << "PlayDemo demo3\n";
-		break;
-
-        // THE DEFINITIVE DOOM Special Edition demo
-      case 6:
-		CmdBuf << "PlayDemo demo4\n";
-		break;
-    }
-}
-
-}
-
-//==========================================================================
-//
-//
-//
-//==========================================================================
-namespace HereticTitle
-{
-//==========================================================================
-//
-//	AdvanceDemo
-//
-//	This cycles through the demo sequences.
-//
-//==========================================================================
-
-void AdvanceDemo(void)
-{
-	demosequence++;
-	demosequence %= 6;
-    
-    switch (demosequence)
-    {
-      case 0:
-		pagetime = 10.0;
-		page_pic = R_RegisterPic("TITLE", PIC_RAW);
-		S_StartSong("MUS_TITL", P_GetCDTitleTrack(), false);
-		break;
-
-      case 1:
-		CmdBuf << "PlayDemo demo1\n";
-		break;
-
-      case 2:
-		pagetime = 200.0 / 35.0;
-		page_pic = R_RegisterPic("CREDIT", PIC_RAW);
-		break;
-
-      case 3:
-		CmdBuf << "PlayDemo demo2\n";
-		break;
-
-      case 4:
-		pagetime = 200.0 / 35.0;
-		if (shareware)
-		{
-			page_pic = R_RegisterPic("ORDER", PIC_RAW);
-		}
-		else
-		{
-			page_pic = R_RegisterPic("CREDIT", PIC_RAW);
-		}
-		break;
-
-      case 5:
-		CmdBuf << "PlayDemo demo3\n";
-		break;
-    }
-}
-
-}
-
-//==========================================================================
-//
-//
-//
-//==========================================================================
-namespace HexenTitle
-{
-//==========================================================================
-//
-//	AdvanceDemo
-//
-//	This cycles through the demo sequences.
-//
-//==========================================================================
-
-void AdvanceDemo(void)
-{
-	demosequence++;
-	demosequence %= 6;
-    
-    switch (demosequence)
-    {
-      case 0:
-		pagetime = 490.0 / 35.0;
-		page_pic = R_RegisterPic("TITLE", PIC_RAW);
-		S_StartSong("hexen", P_GetCDTitleTrack(), true);
-		break;
-
-      case 1:
-		CmdBuf << "PlayDemo demo1\n";
-		break;
-
-      case 2:
-		pagetime = 200.0 / 35.0;
-		page_pic = R_RegisterPic("CREDIT", PIC_RAW);
-		break;
-
-      case 3:
-		CmdBuf << "PlayDemo demo2\n";
-		break;
-
-      case 4:
-		pagetime = 200.0 / 35.0;
-		page_pic = R_RegisterPic("CREDIT", PIC_RAW);
-		break;
-
-      case 5:
-		CmdBuf << "PlayDemo demo3\n";
-		break;
-    }
-}
-
-}
-
-//==========================================================================
-//
-//
-//
-//==========================================================================
-namespace StrifeTitle
-{
-//==========================================================================
-//
-//	AdvanceDemo
-//
-//	This cycles through the demo sequences.
-//
-//==========================================================================
-
-void AdvanceDemo(void)
-{
-	demosequence++;
-	demosequence %= 4;
-    
-    switch (demosequence)
-    {
-      case 0:
-		pagetime = 170.0 / 35.0;
-		page_pic = R_RegisterPic("TITLEPIC", PIC_PATCH);
-  		S_StartSong("D_STRIFE", P_GetCDTitleTrack(), false);
-		break;
-
-      case 1:
-		CmdBuf << "PlayDemo demo1\n";
-		break;
-
-      case 2:
-		pagetime = 200.0 / 35.0;
-		page_pic = R_RegisterPic("CREDIT", PIC_PATCH);
-		break;
-
-      case 3:
-		CmdBuf << "PlayDemo demo2\n";
-		break;
-    }
-}
-
-}
-
-//==========================================================================
-//
-//	AdvanceDemo
-//
-//	This cycles through the demo sequences.
-//
-//==========================================================================
-
-void AdvanceDemo(void)
-{
-	switch (Game)
-	{
-	 case Doom:
-	 case Doom2: DoomTitle::AdvanceDemo(); break;
-	 case Heretic: HereticTitle::AdvanceDemo(); break;
-	 case Hexen: HexenTitle::AdvanceDemo(); break;
-	 case Strife: StrifeTitle::AdvanceDemo(); break;
-	}
-}
-
-//==========================================================================
-//
-//	COMMAND StartDemos
-//
-//==========================================================================
-
-COMMAND(StartDemos)
-{
-#ifdef SERVER
-	if (sv.active)
-		return;
-#endif
-    demosequence = -1;
-	AdvanceDemo();
-}
-
-//==========================================================================
-//
-//	G_ForceTitle
-//
-//==========================================================================
-
-void G_ForceTitle(void)
-{
-	CL_Disconnect();
-
-   	switch (Game)
-	{
-	 case Doom:
-		pagetime = 5.0;
-		page_pic = R_RegisterPic("TITLEPIC", PIC_PATCH);
-		break;
-	 case Doom2:
-		pagetime = 11.0;
-		page_pic = R_RegisterPic("TITLEPIC", PIC_PATCH);
-		break;
-	 case Heretic:
-		pagetime = 10.0;
-		page_pic = R_RegisterPic("TITLE", PIC_RAW);
-		break;
-	 case Hexen:
-		pagetime = 14.0;
-		page_pic = R_RegisterPic("TITLE", PIC_RAW);
-		break;
-	 case Strife:
-		pagetime = 11.0;
-		page_pic = R_RegisterPic("TITLEPIC", PIC_PATCH);
-		break;
-	}
-}
-
-//==========================================================================
-//
-//	G_PageDrawer
-//
-//==========================================================================
-
-void G_PageDrawer(void)
-{
-	pagetime -= host_frametime;
-    if (demosequence != -1 && !MN_Active() && !consolestate &&
-    	!messageToPrint && pagetime < 0.0)
-	{
-		AdvanceDemo();
-	}
-
-	R_DrawPic(0, 0, page_pic);
-	if (Game > Doom2)
-    {
-		if (demosequence == 1)
-		{
-			R_DrawPic(4, 160, R_RegisterPic("ADVISOR", PIC_PATCH));
-		}
-	}
-}
-
-//==========================================================================
-//
-//	OnHostEndGame
-//
-//==========================================================================
-
-void OnHostEndGame(void)
-{
-	if (demosequence != -1)
-		AdvanceDemo();
-	G_ForceTitle();
-}
-
-//==========================================================================
-//
-//	OnHostError
-//
-//==========================================================================
-
-void OnHostError(void)
-{
-	demosequence = -1;
-	G_ForceTitle();
-}
-
-//==========================================================================
-//
-//	StopDemoLoop
-//
-//==========================================================================
-
-void StopDemoLoop(void)
-{
-	demosequence = -1;			// not in the demo loop now
-}
-
-//==========================================================================
-//
-//	OnDemoFailed
-//
-//==========================================================================
-
-void OnDemoFailed(void)
-{
-#if 0
-	demosequence = -1;		// stop demo loop
-#else
-	AdvanceDemo();
-#endif
-}
-
-//**************************************************************************
-//
-//
-//
-//**************************************************************************
 
 //==========================================================================
 //
@@ -768,7 +361,6 @@ COMMAND(PlayDemo)
 	if (!cls.demofile)
 	{
 		con << "ERROR: couldn't open.\n";
-		OnDemoFailed();
 		return;
 	}
 
@@ -778,7 +370,6 @@ COMMAND(PlayDemo)
 	{
 		fclose(cls.demofile);
 		con << "ERROR: not a Vavoom demo.\n";
-		OnDemoFailed();
 		return;
 	}
 
@@ -820,9 +411,13 @@ COMMAND(TimeDemo)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/04 17:25:14  dj_jl
+//	Moved title / demo loop to progs
+//	Removed shareware / ExtendedWAD from engine
+//
 //	Revision 1.3  2001/07/31 17:10:21  dj_jl
 //	Localizing demo loop
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
