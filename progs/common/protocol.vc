@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-#define PROTOCOL_VERSION	7
+#define PROTOCOL_VERSION	8
 
 enum
 {
@@ -87,6 +87,7 @@ enum
 	svc_line_transluc,
 	svc_sec_transluc,
 	svc_extra_floor,
+	svc_swap_planes,
 
 	svc_static_light,
 	svc_static_light_rgb,
@@ -133,6 +134,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/11 08:04:26  dj_jl
+//  Added support for EDGE 3D floors
+//
 //  Revision 1.7  2002/01/07 12:19:56  dj_jl
 //  Changed copyright year
 //

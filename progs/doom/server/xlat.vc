@@ -244,6 +244,143 @@ void TranslateLine(line_t * line)
 		return;
 	}
 
+	switch (oldspec)
+	{
+	// Doom Legacy 3D floors
+	case 281:
+	case 289:
+	case 300:
+	//case 301:
+	// EDGE 3D floors
+	case 400:
+	case 401:
+	case 402:
+	case 403:
+	case 404:
+	case 405:
+	case 406:
+	case 407:
+	case 408:
+	case 413:
+	case 414:
+	case 415:
+	case 416:
+	case 417:
+		if (line->frontsector->floorheight < line->frontsector->ceilingheight)
+		{
+			SwapPlanes(line->frontsector);
+		}
+		break;
+	}
+	switch (oldspec)
+ 	{
+ 	case 281:
+	case 289:
+		line->special = 160;
+		return;
+	case 300:
+		line->special = 160;
+		line->frontsector->floor.translucency = 50;
+		line->frontsector->ceiling.translucency = 50;
+		return;
+	// Doesn't work
+	/*case 301:
+		line->special = 160;
+		line->frontsector->params.contents = CONTENTS_WATER;
+		line->frontsector->floor.translucency = 50;
+		line->frontsector->ceiling.translucency = 50;
+		line->frontsector->ceiling.flags = 7;
+		line->frontsector->floor.flags = 7;
+		return;*/
+	// EDGE 3D floors
+	case 400:
+		line->special = 160;
+		return;
+	case 401:
+		line->special = 160;
+		return;
+	case 402:
+		line->special = 160;
+		return;
+	case 403:
+		line->special = 160;
+		line->frontsector->params.contents = CONTENTS_WATER;
+		line->frontsector->ceiling.flags = 7;
+		line->frontsector->floor.flags = 7;
+		return;
+	case 404:
+		line->special = 160;
+		line->frontsector->params.contents = CONTENTS_WATER;
+		line->frontsector->floor.translucency = 20;
+		line->frontsector->ceiling.translucency = 20;
+		line->frontsector->ceiling.flags = 7;
+		line->frontsector->floor.flags = 7;
+		return;
+	case 405:
+		line->special = 160;
+		line->frontsector->params.contents = CONTENTS_WATER;
+		line->frontsector->floor.translucency = 40;
+		line->frontsector->ceiling.translucency = 40;
+		line->frontsector->ceiling.flags = 7;
+		line->frontsector->floor.flags = 7;
+		return;
+	case 406:
+		line->special = 160;
+		line->frontsector->params.contents = CONTENTS_WATER;
+		line->frontsector->floor.translucency = 60;
+		line->frontsector->ceiling.translucency = 60;
+		line->frontsector->ceiling.flags = 7;
+		line->frontsector->floor.flags = 7;
+		return;
+	case 407:
+		line->special = 160;
+		line->frontsector->params.contents = CONTENTS_WATER;
+		line->frontsector->floor.translucency = 80;
+		line->frontsector->ceiling.translucency = 80;
+		line->frontsector->ceiling.flags = 7;
+		line->frontsector->floor.flags = 7;
+		return;
+	case 408:
+		line->special = 160;
+		line->frontsector->params.contents = CONTENTS_WATER;
+		line->frontsector->floor.translucency = 100;
+		line->frontsector->ceiling.translucency = 100;
+		line->frontsector->ceiling.flags = 7;
+		line->frontsector->floor.flags = 7;
+		return;
+	case 413:
+		line->special = 160;
+		return;
+	case 414:
+		line->special = 160;
+		line->frontsector->floor.translucency = 20;
+		line->frontsector->ceiling.translucency = 20;
+		line->frontsector->ceiling.flags = SPF_NOBLOCKSIGHT;
+		line->frontsector->floor.flags = SPF_NOBLOCKSIGHT;
+		return;
+	case 415:
+		line->special = 160;
+		line->frontsector->floor.translucency = 40;
+		line->frontsector->ceiling.translucency = 40;
+		line->frontsector->ceiling.flags = SPF_NOBLOCKSIGHT;
+		line->frontsector->floor.flags = SPF_NOBLOCKSIGHT;
+		return;
+	case 416:
+		line->special = 160;
+		line->frontsector->floor.translucency = 60;
+		line->frontsector->ceiling.translucency = 60;
+		line->frontsector->ceiling.flags = SPF_NOBLOCKSIGHT;
+		line->frontsector->floor.flags = SPF_NOBLOCKSIGHT;
+		return;
+	case 417:
+		line->special = 160;
+		line->frontsector->floor.translucency = 80;
+		line->frontsector->ceiling.translucency = 80;
+		line->frontsector->ceiling.flags = SPF_NOBLOCKSIGHT;
+		line->frontsector->floor.flags = SPF_NOBLOCKSIGHT;
+		return;
+	}
+
 	if (line->special >= NUM_SPECIALS)
 	{
 		line->special = 0;
@@ -331,6 +468,9 @@ void TranslateLevel(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/01/11 08:04:26  dj_jl
+//  Added support for EDGE 3D floors
+//
 //  Revision 1.5  2002/01/07 12:21:11  dj_jl
 //  Changed copyright year
 //
