@@ -89,8 +89,8 @@ struct surf_t
 
 extern "C"
 {
-void D_EmitEdge(const TVec&, const TVec&);
 void D_ClipEdge(const TVec&, const TVec&, TClipPlane*, int);
+void D_GenerateSpans(void);
 }
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
@@ -143,16 +143,16 @@ surf_t			*surface_p, *surf_max;
 edge_t			*newedges[MAXSCREENHEIGHT];
 edge_t			*removeedges[MAXSCREENHEIGHT];
 
+edge_t			edge_head;
+edge_t			edge_tail;
+
+espan_t			*span_p, *max_span_p;
+
+int				current_iv;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static espan_t	*span_p, *max_span_p;
-
 static int		r_currentkey;
-
-static int		current_iv;
-
-static edge_t	edge_head;
-static edge_t	edge_tail;
 
 static int		outofsurfs;
 static int		outofedges;
@@ -189,17 +189,6 @@ void D_BeginEdgeFrame(void)
 
 //==========================================================================
 //
-//	D_ClearPolys
-//
-//==========================================================================
-
-void D_ClearPolys(void)
-{
-	D_BeginEdgeFrame();
-}
-
-//==========================================================================
-//
 //	TransformVector
 //
 //==========================================================================
@@ -219,7 +208,7 @@ void TransformVector(const TVec &in, TVec &out)
 //
 //==========================================================================
 
-extern "C" void D_EmitEdge(const TVec &pv0, const TVec &pv1)
+static void D_EmitEdge(const TVec &pv0, const TVec &pv1)
 {
 	edge_t		*edge, *pcheck;
 	int			u_check;
@@ -353,8 +342,6 @@ extern "C" void D_EmitEdge(const TVec &pv0, const TVec &pv1)
 	removeedges[v2] = edge;
 }
 
-#endif
-
 //==========================================================================
 //
 //	D_ClipEdge
@@ -439,6 +426,8 @@ extern "C" void D_ClipEdge(const TVec &v0, const TVec &v1,
 	D_EmitEdge(v0, v1);
 }
 
+#endif
+
 //==========================================================================
 //
 //	TSoftwareDrawer::DrawPolygon
@@ -476,7 +465,7 @@ void TSoftwareDrawer::DrawPolygon(TVec *cv, int count, int, int clipflags)
 	}
 	if (d_lastvertvalid)
 	{
-		D_EmitEdge(firstvert, firstvert);
+		D_ClipEdge(firstvert, firstvert, NULL, 0);
 	}
 
 	if (!r_emited)
@@ -536,7 +525,7 @@ void TSoftwareDrawer::DrawSkyPolygon(TVec *cv, int count,
 	}
 	if (d_lastvertvalid)
 	{
-		D_EmitEdge(firstvert, firstvert);
+		D_ClipEdge(firstvert, firstvert, NULL, 0);
 	}
 
 	if (!r_emited)
@@ -575,7 +564,7 @@ void TSoftwareDrawer::DrawSkyPolygon(TVec *cv, int count,
 //
 //==========================================================================
 
-void D_InsertNewEdges(edge_t *edgestoadd, edge_t *edgelist)
+static void D_InsertNewEdges(edge_t *edgestoadd, edge_t *edgelist)
 {
 	edge_t	*next_edge;
 
@@ -612,7 +601,7 @@ addedge:
 //
 //==========================================================================
 
-void D_RemoveEdges(edge_t *pedge)
+static void D_RemoveEdges(edge_t *pedge)
 {
 	do
 	{
@@ -627,7 +616,7 @@ void D_RemoveEdges(edge_t *pedge)
 //
 //==========================================================================
 
-void D_StepActiveU(edge_t *pedge, edge_t *tail)
+static void D_StepActiveU(edge_t *pedge, edge_t *tail)
 {
 	edge_t		*pnext_edge, *pwedge;
 
@@ -666,13 +655,15 @@ void D_StepActiveU(edge_t *pedge, edge_t *tail)
 	}
 }
 
+#ifndef USEASM
+
 //==========================================================================
 //
 //	D_LeadingEdge
 //
 //==========================================================================
 
-void D_LeadingEdge(edge_t *edge)
+static void D_LeadingEdge(edge_t *edge)
 {
 	espan_t			*span;
 	surf_t			*surf, *surf2;
@@ -693,17 +684,10 @@ void D_LeadingEdge(edge_t *edge)
 			if (surf->key < surf2->key)
 				goto newtop;
 
-continue_search:
-
 			do
 			{
 				surf2 = surf2->next;
-			} while (surf->key > surf2->key);
-
-			if (surf->key == surf2->key)
-			{
-				goto continue_search;
-			}
+			} while (surf->key >= surf2->key);
 
 			goto gotposition;
 
@@ -740,7 +724,7 @@ gotposition:
 //
 //==========================================================================
 
-void D_TrailingEdge(surf_t *surf, edge_t *edge)
+static void D_TrailingEdge(surf_t *surf, edge_t *edge)
 {
 	espan_t			*span;
 	int				iu;
@@ -779,7 +763,7 @@ void D_TrailingEdge(surf_t *surf, edge_t *edge)
 //
 //==========================================================================
 
-void D_CleanupSpan(void)
+static void D_CleanupSpan(void)
 {
 	surf_t	*surf;
 	int		iu;
@@ -813,7 +797,7 @@ void D_CleanupSpan(void)
 //
 //==========================================================================
 
-void D_GenerateSpans(void)
+extern "C" void D_GenerateSpans(void)
 {
 	edge_t			*edge;
 	surf_t			*surf;
@@ -841,6 +825,8 @@ void D_GenerateSpans(void)
 
 	D_CleanupSpan();
 }
+
+#endif
 
 //==========================================================================
 //
@@ -931,7 +917,7 @@ static void D_CalcGradients(surface_t *pface, int miplevel, const TVec &modelorg
 //
 //==========================================================================
 
-void D_DrawSurfaces(void)
+static void D_DrawSurfaces(void)
 {
 	surfcache_t		*cache;
 	int				miplevel;
@@ -1081,9 +1067,12 @@ void TSoftwareDrawer::WorldDrawing(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/21 17:22:28  dj_jl
+//	Optimized rendering with some asm
+//
 //	Revision 1.4  2001/08/15 17:13:05  dj_jl
 //	Implemented D_EmitEdge in asm
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

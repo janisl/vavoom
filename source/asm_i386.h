@@ -252,6 +252,7 @@
 .extern	C(viewwidth)
 .extern	C(viewheight)
 
+.extern	C(view_clipplanes)
 .extern	C(viewforward)
 .extern	C(viewright)
 .extern	C(viewup)
@@ -267,10 +268,14 @@
 .extern	C(d_lastvertvalid)
 .extern	C(firstvert)
 .extern	C(edge_p)
+.extern	C(edge_head)
+.extern	C(edge_tail)
 .extern	C(surfaces)
 .extern	C(surface_p)
 .extern	C(newedges)
 .extern	C(removeedges)
+.extern	C(span_p)
+.extern	C(current_iv)
 
 .extern	C(r_lightptr)
 .extern	C(r_lightptrr)
@@ -376,6 +381,7 @@
 .extern	C(adivtab)
 
 //	External variables for progs
+.extern	C(pr_strings)
 .extern	C(pr_globals)
 .extern	C(pr_stackPtr)
 .extern	C(pr_statements)
@@ -392,9 +398,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/08/21 17:22:28  dj_jl
+//	Optimized rendering with some asm
+//
 //	Revision 1.7  2001/08/15 17:44:41  dj_jl
 //	Added missing externs
-//
+//	
 //	Revision 1.6  2001/08/15 17:12:23  dj_jl
 //	Optimized model drawing
 //	
