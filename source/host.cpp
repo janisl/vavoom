@@ -81,8 +81,6 @@ int				host_framecount;
 
 boolean			host_initialized = false;
 
-char			*host_error_string;
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static TCvarF	host_framerate("framerate", "0");
@@ -96,6 +94,8 @@ static TCvarI	fastparm("Fast", "0");				// checkparm of -fast
 static TCvarI	show_time("show_time", "0");
 
 static TCvarS	configfile("configfile", "config.cfg", CVAR_ARCHIVE);
+
+static char		*host_error_string;
 
 // CODE --------------------------------------------------------------------
 
@@ -558,6 +558,17 @@ void Host_CoreDump(const char *fmt, ...)
 
 //==========================================================================
 //
+//	Host_GetCoreDump
+//
+//==========================================================================
+
+const char *Host_GetCoreDump(void)
+{
+	return host_error_string ? host_error_string : "";
+}
+
+//==========================================================================
+//
 //	Host_Shutdown
 //
 //	Return to default system state
@@ -593,9 +604,12 @@ void Host_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2002/04/11 16:40:57  dj_jl
+//	Safe core dumps.
+//
 //	Revision 1.19  2002/02/22 18:09:51  dj_jl
 //	Some improvements, beautification.
-//
+//	
 //	Revision 1.18  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	
