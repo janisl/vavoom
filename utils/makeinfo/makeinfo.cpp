@@ -239,8 +239,8 @@ void WriteMobjInfo(void)
 		fprintf(f, "class %s:%s\n", mt_names[i], parent);
 		fprintf(f, "{\n");
 
-		//  ------------ Constructor -------------
-		fprintf(f, "\t%s(void)\n", mt_names[i]);
+		//  ------------ DefaultProperties -------------
+		fprintf(f, "\tdefaultproperties\n");
 		fprintf(f, "\t{\n");
 
 		if (mobjinfo[i].classname)
@@ -265,8 +265,7 @@ void WriteMobjInfo(void)
 			fprintf(f, "\t\tspeed = %.1f;\n", 35.0 * (mobjinfo[i].speed < 100 ? (float)mobjinfo[i].speed : (float)mobjinfo[i].speed / (float)FRACUNIT));
 		if (mobjinfo[i].reactiontime)
         {
-        	fprintf(f, "\t\tif (gameskill != sk_nightmare)\n");
-			fprintf(f, "\t\t\treactiontime = %d;\n", mobjinfo[i].reactiontime);
+			fprintf(f, "\t\treactiontime = %d;\n", mobjinfo[i].reactiontime);
 		}
 		if (mobjinfo[i].painchance)
 			fprintf(f, "\t\tpainchance = %d;\n", mobjinfo[i].painchance);
@@ -678,9 +677,12 @@ int main(int argc, char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/12/03 19:28:41  dj_jl
+//	Using defaultproperties, not constructors
+//
 //	Revision 1.8  2001/11/09 14:40:32  dj_jl
 //	Initialization in constructors
-//
+//	
 //	Revision 1.7  2001/10/22 17:28:02  dj_jl
 //	Removed mobjinfo index constants
 //	
