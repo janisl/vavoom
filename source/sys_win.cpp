@@ -25,6 +25,7 @@
 
 // HEADER FILES ------------------------------------------------------------
 
+#define INITGUID
 #include "WinLocal.h"
 #include <objbase.h>
 #include <mmsystem.h>
@@ -34,6 +35,14 @@
 #include <io.h>
 #include <direct.h>
 #include <sys/stat.h>
+
+//	Generate all GUIDs
+#define DIRECTINPUT_VERSION		0x0500
+#include <dinput.h>
+#include <d3d.h>
+#include <dsound.h>
+#include <dmusici.h>
+#include <eax.h>
 
 // MACROS ------------------------------------------------------------------
 
@@ -278,10 +287,12 @@ bool Sys_DirExists(const char *path)
 
 void Sys_MakeCodeWriteable(unsigned long startaddr, unsigned long length)
 {
+	guard(Sys_MakeCodeWriteable);
 	DWORD  flOldProtect;
 
 	if (!VirtualProtect((LPVOID)startaddr, length, PAGE_READWRITE, &flOldProtect))
    		Sys_Error("Protection change failed\n");
+	unguard;
 }
 
 //**************************************************************************
@@ -858,9 +869,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2002/06/14 15:38:52  dj_jl
+//	All GUIDs are declared here.
+//
 //	Revision 1.17  2002/04/11 16:40:57  dj_jl
 //	Safe core dumps.
-//
+//	
 //	Revision 1.16  2002/02/22 18:09:52  dj_jl
 //	Some improvements, beautification.
 //	
