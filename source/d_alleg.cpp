@@ -26,7 +26,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include <allegro.h>
-#include <allegro/aintern.h>
+#include <allegro/internal/aintern.h>
 #include "d_local.h"
 
 // MACROS ------------------------------------------------------------------
@@ -313,9 +313,12 @@ void TSoftwareDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/12/01 17:41:33  dj_jl
+//	Changes for Allegro 3.9.40
+//
 //	Revision 1.6  2001/10/27 07:47:52  dj_jl
 //	Public gamma variables
-//
+//	
 //	Revision 1.5  2001/09/12 17:32:10  dj_jl
 //	Made my_create_bitmap static
 //	
