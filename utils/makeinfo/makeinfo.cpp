@@ -374,6 +374,13 @@ void WriteMobjInfo(void)
 #endif
         flags2 &= ~(MF2_DONTDRAW);
 
+#if defined HERETIC || defined HEXEN
+		//	Add passmobj flag to all missiles and invert it
+		if (flags & MF_MISSILE)
+			flags2 |= MF2_PASSMOBJ;
+		flags2 ^= MF2_PASSMOBJ;
+#endif
+
         //	Flags
 		if (flags)
         {
@@ -754,9 +761,12 @@ int main(int argc, char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/01/24 18:21:20  dj_jl
+//	Inverted passmobj flag
+//
 //	Revision 1.16  2002/01/17 18:18:12  dj_jl
 //	Renamed all map object classes
-//
+//	
 //	Revision 1.15  2002/01/15 18:28:58  dj_jl
 //	Some property names with logical words starting with capital letter.
 //	

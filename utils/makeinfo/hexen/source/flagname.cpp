@@ -79,7 +79,7 @@ char* flagnames2[32] =
     "MF2_PUSHABLE",
     "MF2_SLIDE",
     "MF2_ONMOBJ",
-    "MF2_PASSMOBJ",
+    "MF2_NOPASSMOBJ",
     "MF2_CANNOTPUSH",
 	"MF2_DROPPED",
     "MF2_BOSS",
@@ -106,9 +106,12 @@ char* flagnames2[32] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/01/24 18:21:20  dj_jl
+//	Inverted passmobj flag
+//
 //	Revision 1.4  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/09/20 16:34:58  dj_jl
 //	Beautification
 //	
