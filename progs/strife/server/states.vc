@@ -104,7 +104,7 @@ __states__(Actor)
 	S_186('GRAP', 1, 3.0 / 35.0, S_185) { A_26(); }
 	S_187('UBAM', 0, 3.0 / 35.0, S_188) { A_26(); }
 	S_188('UBAM', 1, 3.0 / 35.0, S_187) { A_26(); }
-	S_189('BNG2', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_190) { A_27(); }
+	S_189('BNG2', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_190) { A_Unknown27(); }
 	S_190('BNG2', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_191) { }
 	S_191('BNG2', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_192) { }
 	S_192('BNG2', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_193) { }
@@ -113,7 +113,7 @@ __states__(Actor)
 	S_195('BNG2', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_196) { }
 	S_196('BNG2', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_197) { }
 	S_197('BNG2', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
-	S_198('BNG4', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_199) { A_27(); }
+	S_198('BNG4', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_199) { A_Unknown27(); }
 	S_199('BNG4', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_200) { }
 	S_200('BNG4', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_201) { }
 	S_201('BNG4', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_202) { }
@@ -127,14 +127,6 @@ __states__(Actor)
 	S_209('BNG4', 11 | FF_FULLBRIGHT, 3.0 / 35.0, S_210) { }
 	S_210('BNG4', 12 | FF_FULLBRIGHT, 3.0 / 35.0, S_211) { }
 	S_211('BNG4', 13 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
-	S_212('BNG3', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_213) { A_27(); }
-	S_213('BNG3', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_214) { }
-	S_214('BNG3', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_215) { }
-	S_215('BNG3', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_216) { }
-	S_216('BNG3', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_217) { }
-	S_217('BNG3', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_218) { }
-	S_218('BNG3', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_219) { }
-	S_219('BNG3', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
 	S_220('BNG3', 0, 1.0 / 35.0, S_NULL) { A_28(); }
 	S_221('BNG3', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_222) { A_Explode2(); }
 	S_222('BNG3', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_223) { A_26(); }
@@ -149,7 +141,7 @@ __states__(Actor)
 	S_231('FLBE', 8 | FF_FULLBRIGHT, 2.0 / 35.0, S_232) { A_30(); }
 	S_232('FLBE', 9 | FF_FULLBRIGHT, 2.0 / 35.0, S_233) { }
 	S_233('FLBE', 10 | FF_FULLBRIGHT, 2.0 / 35.0, S_NULL) { }
-	S_234('XPRK', 0, 1.0 / 35.0, S_NULL) { A_31(); }
+	S_234('XPRK', 0, 1.0 / 35.0, S_NULL) { A_Unknown31(); }
 	S_235('OCLW', 0, 2.0 / 35.0, S_235) { A_32(); }
 	S_236('CCLW', 0, 6.0 / 35.0, S_NULL) { }
 	S_237('TEND', 0, 20.0 / 35.0, S_NULL) { }
@@ -400,12 +392,6 @@ __states__(Actor)
 	S_1182('SECR', 13, 5.0 / 35.0, S_1183) { }
 	S_1183('SECR', 14, 5.0 / 35.0, S_1184) { A_111(); }
 	S_1184('SECR', 15, -1.0, S_NULL) { }
-	S_1185('XPRK', 0, -1.0, S_NULL) { }
-	S_1186('XPRK', 0, 1.0 / 35.0, S_212) { A_31(); }
-	S_1187('TARG', 0, -1.0, S_NULL) { }
-	S_1188('RING', 0, -1.0, S_NULL) { }
-	S_1189('EARS', 0, -1.0, S_NULL) { }
-	S_1190('COMM', 0, -1.0, S_NULL) { }
 	S_1191('BOOM', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_1192) { A_112(); }
 	S_1192('BOOM', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_1193) { A_110(); }
 	S_1193('BOOM', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_1194) { A_113(); }
@@ -441,7 +427,6 @@ __states__(Actor)
 	S_1230('TOPR', 0, -1.0, S_NULL) { }
 	S_1231('COUP', 0, 5.0 / 35.0, S_1232) { }
 	S_1232('COUP', 1, 5.0 / 35.0, S_1231) { }
-	S_1233('COUP', 2, -1.0, S_1232) { }
 	S_1234('BUBB', 0, 4.0 / 35.0, S_1234) { A_ActiveSound(); }
 	S_1235('BUBF', 0, 4.0 / 35.0, S_1235) { A_ActiveSound(); }
 	S_1236('BUBC', 0, 4.0 / 35.0, S_1236) { A_ActiveSound(); }
@@ -449,12 +434,7 @@ __states__(Actor)
 	S_1238('SPDL', 0, 5.0 / 35.0, S_1239) { A_ActiveSound(); }
 	S_1239('SPDL', 1, 5.0 / 35.0, S_1240) { A_ActiveSound(); }
 	S_1240('SPDL', 2, 5.0 / 35.0, S_1238) { A_ActiveSound(); }
-	S_1241('TOKN', 0, -1.0, S_NULL) { }
-	S_1242('OTOK', 0, -1.0, S_NULL) { }
-	S_1243('HELT', 0, -1.0, S_NULL) { }
-	S_1244('GUNT', 0, -1.0, S_NULL) { }
-	S_1245('FULL', 0, 35.0 / 35.0, S_1246) { }
-	S_1246('FULL', 1, 35.0 / 35.0, S_1245) { }
+	S_TOKENS('TOKN', 0, -1.0, S_NULL) { }
 	S_MEAT_1('MEAT', 0, 700.0 / 35.0, S_NULL) { }
 	S_MEAT_2('MEAT', 1, 700.0 / 35.0, S_NULL) { }
 	S_MEAT_3('MEAT', 2, 700.0 / 35.0, S_NULL) { }
@@ -500,11 +480,6 @@ __states__(Actor)
 	S_1289('FFOT', 2, 9.0 / 35.0, S_1290) { }
 	S_1290('FFOT', 3, 9.0 / 35.0, S_NULL) { }
 	S_1291('DIE1', 0, -1.0, S_NULL) { }
-	S_1292('BEAC', 0, -1.0, S_NULL) { }
-	S_1293('BEAC', 0, 30.0 / 35.0, S_1294) { }
-	S_1294('BEAC', 0, 160.0 / 35.0, S_1293) { A_115(); }
-	S_1295('ARM1', 0, -1.0, S_NULL) { }
-	S_1296('ARM2', 0, -1.0, S_NULL) { }
 	S_1297('BARW', 0, -1.0, S_NULL) { }
 	S_1298('BARW', 1, 2.0 / 35.0, S_1299) { A_Scream(); }
 	S_1299('BARW', 2, 2.0 / 35.0, S_1300) { }
@@ -558,83 +533,13 @@ __states__(Actor)
 	S_1347('TRHO', 0, -1.0, S_NULL) { }
 	S_1348('WATR', 0, -1.0, S_NULL) { }
 	S_1349('MUGG', 0, -1.0, S_NULL) { }
-	S_1350('FUSL', 0, -1.0, S_NULL) { }
-	S_1351('CRD1', 0, -1.0, S_NULL) { }
-	S_1352('CRD2', 0, -1.0, S_NULL) { }
-	S_1353('TPAS', 0, -1.0, S_NULL) { }
-	S_1354('KY1G', 0, -1.0, S_NULL) { }
-	S_1355('KY2S', 0, -1.0, S_NULL) { }
-	S_1356('KY3B', 0, -1.0, S_NULL) { }
-	S_1357('HAND', 0, -1.0, S_NULL) { }
 	S_1358('CRYS', 0, 16.0 / 35.0, S_1359) { A_ActiveSound(); }
 	S_1359('CRYS', 1, 5.0 / 35.0, S_1360) { A_ActiveSound(); }
 	S_1360('CRYS', 2, 4.0 / 35.0, S_1361) { A_ActiveSound(); }
 	S_1361('CRYS', 3, 4.0 / 35.0, S_1362) { A_ActiveSound(); }
 	S_1362('CRYS', 4, 4.0 / 35.0, S_1363) { A_ActiveSound(); }
 	S_1363('CRYS', 5, 4.0 / 35.0, S_1358) { A_ActiveSound(); }
-	S_1364('PRIS', 0, -1.0, S_NULL) { }
-	S_1365('PWR1', 0, -1.0, S_NULL) { }
-	S_1366('PWR2', 0, -1.0, S_NULL) { }
-	S_1367('PWR3', 0, -1.0, S_NULL) { }
-	S_1368('ORAC', 0, -1.0, S_NULL) { }
-	S_1369('GYID', 0, -1.0, S_NULL) { }
-	S_1370('FUBR', 0, -1.0, S_NULL) { }
-	S_1371('WARE', 0, -1.0, S_NULL) { }
-	S_1372('RCRY', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
-	S_1373('BCRY', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
-	S_1374('CHAP', 0, -1.0, S_NULL) { }
-	S_1375('TUNL', 0, -1.0, S_NULL) { }
-	S_1376('BLTK', 0, -1.0, S_NULL) { }
-	S_1377('SECK', 0, -1.0, S_NULL) { }
-	S_1378('MINE', 0, -1.0, S_NULL) { }
-	S_1379('REBL', 0, -1.0, S_NULL) { }
-	S_1380('PROC', 0, -1.0, S_NULL) { }
 	S_1381('ANKH', 0, -1.0, S_NULL) { }
-	S_1382('GOID', 0, -1.0, S_NULL) { }
-	S_1383('STMP', 0, -1.0, S_NULL) { }
-	S_1384('MDKT', 0, -1.0, S_NULL) { }
-	S_1385('COIN', 0, -1.0, S_NULL) { }
-	S_1386('CRED', 0, -1.0, S_NULL) { }
-	S_1387('SACK', 0, -1.0, S_NULL) { }
-	S_1388('CHST', 0, -1.0, S_NULL) { }
-	S_1389('SHD1', 0, 17.0 / 35.0, S_1390) { A_Unknown56(); }
-	S_1390('SHD1', 0, 17.0 / 35.0, S_1391) { A_Unknown64(); }
-	S_1391('SHD1', 0, 17.0 / 35.0, S_1392) { A_Unknown55(); }
-	S_1392('SHD1', 0, 17.0 / 35.0, S_1389) { A_Unknown64(); }
-	S_1393('MASK', 0, -1.0, S_NULL) { }
-	S_1394('UNIF', 0, -1.0, S_NULL) { }
-	S_1395('OFIC', 0, -1.0, S_NULL) { }
-	S_1396('PMAP', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_1397) { }
-	S_1397('PMAP', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_1396) { }
-	S_1398('PMUP', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_1399) { }
-	S_1399('PMUP', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_1398) { }
-	S_1400('BLIT', 0, -1.0, S_NULL) { }
-	S_1401('BBOX', 0, -1.0, S_NULL) { }
-	S_1402('MSSL', 0, -1.0, S_NULL) { }
-	S_1403('ROKT', 0, -1.0, S_NULL) { }
-	S_1404('BRY1', 0, 6.0 / 35.0, S_1405) { }
-	S_1405('BRY1', 1, 6.0 / 35.0, S_1404) { }
-	S_1406('CPAC', 0, 6.0 / 35.0, S_1407) { }
-	S_1407('CPAC', 1, 6.0 / 35.0, S_1406) { }
-	S_1408('PQRL', 0, -1.0, S_NULL) { }
-	S_1409('XQRL', 0, -1.0, S_NULL) { }
-	S_1410('GRN1', 0, -1.0, S_NULL) { }
-	S_1411('GRN2', 0, -1.0, S_NULL) { }
-	S_1412('BKPK', 0, -1.0, S_NULL) { }
-	S_1413('RELC', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
-	S_1414('RIFL', 0, -1.0, S_NULL) { }
-	S_1415('RIFL', 1, -1.0, S_NULL) { }
-	S_1416('FLAM', 0, -1.0, S_NULL) { }
-	S_1417('BFLM', 0, -1.0, S_NULL) { }
-	S_1418('MMSL', 0, -1.0, S_NULL) { }
-	S_1419('TRPD', 0, -1.0, S_NULL) { }
-	S_1420('GRND', 0, -1.0, S_NULL) { }
-	S_1421('CBOW', 0, -1.0, S_NULL) { }
-	S_1422('SIGL', 0, -1.0, S_NULL) { }
-	S_1423('SIGL', 1, -1.0, S_NULL) { }
-	S_1424('SIGL', 2, -1.0, S_NULL) { }
-	S_1425('SIGL', 3, -1.0, S_NULL) { }
-	S_1426('SIGL', 4, -1.0, S_NULL) { }
 	S_1427('LITE', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
 	S_1428('CNDL', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
 	S_1429('CLBR', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
@@ -731,9 +636,12 @@ __states__(Actor)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/06/22 07:18:44  dj_jl
+//	Seperated all pickup items.
+//
 //	Revision 1.11  2002/05/03 17:12:52  dj_jl
 //	S_NULL defined in Entity.
-//
+//	
 //	Revision 1.10  2002/04/27 17:04:55  dj_jl
 //	Merged all creatures.
 //	

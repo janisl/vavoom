@@ -1,0 +1,2398 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+//**************************************************************************
+//
+//	MedPatch
+//
+//**************************************************************************
+
+class MedPatch:Pickup
+	__mobjinfo__(2011)
+{
+
+__states__
+{
+	S_MED_PATCH('STMP', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 125;//124
+	ClassName = 'Med_patch';
+	Mass = 20.0;
+	IdleState = S_MED_PATCH;
+}
+
+}
+
+//**************************************************************************
+//
+//	MedicalKit
+//
+//**************************************************************************
+
+class MedicalKit:Pickup
+	__mobjinfo__(2012)
+{
+
+__states__
+{
+	S_MEDICAL_KIT('MDKT', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 126;//125
+	ClassName = 'Medical_kit';
+	Mass = 15.0;
+	IdleState = S_MEDICAL_KIT;
+}
+
+}
+
+//**************************************************************************
+//
+//	SurgeryKit
+//
+//**************************************************************************
+
+class SurgeryKit:Pickup
+	__mobjinfo__(83)
+{
+
+__states__
+{
+	S_FULL_HEALTH('FULL', 0, 35.0 / 35.0, S_FULL_HEALTH2) { }
+	S_FULL_HEALTH2('FULL', 1, 35.0 / 35.0, S_FULL_HEALTH) { }
+}
+
+defaultproperties
+{
+	ConversationID = 127;//126
+#ifdef TEASER
+	ClassName = 'full_health';
+#else
+	ClassName = 'Surgery_Kit';
+#endif
+	Mass = 5.0;
+	IdleState = S_FULL_HEALTH;
+}
+
+}
+
+//**************************************************************************
+//
+//	DegninOre
+//
+//**************************************************************************
+
+class DegninOre:Pickup
+	__mobjinfo__(59)
+{
+
+__states__
+{
+	S_ORE('XPRK', 0, -1.0, S_NULL) { }
+	S_ORE_X('XPRK', 0, 1.0 / 35.0, S_ORE_X1) { A_Unknown31(); }
+	S_ORE_X1('BNG3', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X2) { A_Unknown27(); }
+	S_ORE_X2('BNG3', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X3) { }
+	S_ORE_X3('BNG3', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X4) { }
+	S_ORE_X4('BNG3', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X5) { }
+	S_ORE_X5('BNG3', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X6) { }
+	S_ORE_X6('BNG3', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X7) { }
+	S_ORE_X7('BNG3', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X8) { }
+	S_ORE_X8('BNG3', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 128;//127
+#ifdef TEASER
+	ClassName = 'Thalite_Ore';
+#else
+	ClassName = 'Degnin_Ore';
+#endif
+	Health = 10;
+	Radius = 16.0;
+	Height = 8.0;
+#ifdef TEASER
+	Mass = 4.0;
+#else
+	Mass = 10.0;
+#endif
+	bSolid = true;
+	bShootable = true;
+	bUnknown4 = true;
+	bNoBlood = true;
+	IdleState = S_ORE;
+	DeathState = S_ORE_X;
+	DeathSound = 'Explode';
+}
+
+}
+
+//**************************************************************************
+//
+//	MetalArmor
+//
+//**************************************************************************
+
+class MetalArmor:Pickup
+	__mobjinfo__(2019)
+{
+
+__states__
+{
+	S_METAL_ARMOR('ARM1', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 129;//128
+	ClassName = 'Metal_Armor';
+	Mass = 3.0;
+	IdleState = S_METAL_ARMOR;
+}
+
+}
+
+//**************************************************************************
+//
+//	LeatherArmor
+//
+//**************************************************************************
+
+class LeatherArmor:Pickup
+	__mobjinfo__(2018)
+{
+
+__states__
+{
+	S_LEATHER_ARMOR('ARM2', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 130;//129
+	ClassName = 'Leather_Armor';
+	Mass = 5.0;
+	IdleState = S_LEATHER_ARMOR;
+}
+
+}
+
+//**************************************************************************
+//
+//	Base_Key
+//
+//**************************************************************************
+
+class Base_Key:Pickup
+#ifndef TEASER
+	__mobjinfo__(230)
+#endif
+{
+
+#ifndef TEASER
+__states__
+{
+	S_BASE_KEY('FUSL', 0, -1.0, S_NULL) { }
+}
+#endif
+
+defaultproperties
+{
+	ConversationID = 133;//132
+	ClassName = 'Base_Key';
+#ifdef TEASER
+	IdleState = S_TOKENS;
+#else
+	bNoDeathmatch = true;
+	IdleState = S_BASE_KEY;
+#endif
+}
+
+}
+
+//**************************************************************************
+//
+//	Govs_Key
+//
+//**************************************************************************
+
+class Govs_Key:Pickup
+{
+
+#ifndef TEASER
+__states__
+{
+	S_GOVS_KEY('REBL', 0, -1.0, S_NULL) { }
+}
+#endif
+
+defaultproperties
+{
+	ConversationID = 134;//133
+#ifdef TEASER
+	ClassName = 'Rebel_Key';
+	IdleState = S_TOKENS;
+#else
+	ClassName = 'Govs_Key';
+	IdleState = S_GOVS_KEY;
+#endif
+}
+
+}
+
+//**************************************************************************
+//
+//	Passcard
+//
+//**************************************************************************
+
+class Passcard:Pickup
+	__mobjinfo__(185)
+{
+
+__states__
+{
+	S_PASSCARD('TPAS', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 135;//134
+	ClassName = 'Passcard';
+	bNoDeathmatch = true;
+	IdleState = S_PASSCARD;
+}
+
+}
+
+//**************************************************************************
+//
+//	ID_Badge
+//
+//**************************************************************************
+
+class ID_Badge:Pickup
+	__mobjinfo__(184)
+{
+
+__states__
+{
+	S_ID_BADGE('CRD1', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 136;//135
+	ClassName = 'ID_Badge';
+	bNoDeathmatch = true;
+	IdleState = S_ID_BADGE;
+}
+
+}
+
+//**************************************************************************
+//
+//	Prison_Key
+//
+//**************************************************************************
+
+class Prison_Key:Pickup
+{
+
+__states__
+{
+	S_PRISON_KEY('PRIS', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 137;//136
+	ClassName = 'Prison_Key';
+#ifndef TEASER
+	StepSpeed = 11.0;
+	bUnknown5 = true;
+#endif
+	IdleState = S_PRISON_KEY;
+}
+
+}
+
+//**************************************************************************
+//
+//	Severed_Hand
+//
+//**************************************************************************
+
+class Severed_Hand:Pickup
+	__mobjinfo__(91)
+{
+
+__states__
+{
+	S_SEVERED_KEY('HAND', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 138;//137
+	ClassName = 'Severed_Hand';
+#ifndef TEASER
+	StepSpeed = 12.0;
+	bUnknown5 = true;
+#endif
+	bNoDeathmatch = true;
+	IdleState = S_SEVERED_KEY;
+}
+
+}
+
+//**************************************************************************
+//
+//	Power1_Key
+//
+//**************************************************************************
+
+class Power1_Key:Pickup
+{
+
+__states__
+{
+	S_POWER1_KEY('PWR1', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 139;//138
+	ClassName = 'Power1_Key';
+	IdleState = S_POWER1_KEY;
+}
+
+}
+
+//**************************************************************************
+//
+//	Power2_Key
+//
+//**************************************************************************
+
+class Power2_Key:Pickup
+{
+
+__states__
+{
+	S_POWER2_KEY('PWR2', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 140;//139
+	ClassName = 'Power2_Key';
+	IdleState = S_POWER2_KEY;
+}
+
+}
+
+//**************************************************************************
+//
+//	Power3_Key
+//
+//**************************************************************************
+
+class Power3_Key:Pickup
+{
+
+__states__
+{
+	S_POWER3_KEY('PWR3', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 141;//140
+	ClassName = 'Power3_Key';
+	IdleState = S_POWER3_KEY;
+}
+
+}
+
+//**************************************************************************
+//
+//	Gold_Key
+//
+//**************************************************************************
+
+class Gold_Key:Pickup
+	__mobjinfo__(40)
+{
+
+__states__
+{
+	S_GOLD_KEY('KY1G', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 142;//141
+	ClassName = 'Gold_Key';
+	bNoDeathmatch = true;
+	IdleState = S_GOLD_KEY;
+}
+
+}
+
+//**************************************************************************
+//
+//	ID_Card
+//
+//**************************************************************************
+
+class ID_Card:Pickup
+	__mobjinfo__(13)
+{
+
+__states__
+{
+	S_ID_CARD('CRD2', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 143;//142
+	ClassName = 'ID_Card';
+	bNoDeathmatch = true;
+	IdleState = S_ID_CARD;
+}
+
+}
+
+//**************************************************************************
+//
+//	Silver_Key
+//
+//**************************************************************************
+
+class Silver_Key:Pickup
+	__mobjinfo__(38)
+{
+
+__states__
+{
+	S_SILVER_KEY('KY2S', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 144;//143
+	ClassName = 'Silver_Key';
+	bNoDeathmatch = true;
+	IdleState = S_SILVER_KEY;
+}
+
+}
+
+//**************************************************************************
+//
+//	Oracle_Key
+//
+//**************************************************************************
+
+class Oracle_Key:Pickup
+	__mobjinfo__(61)
+{
+
+__states__
+{
+	S_ORACLE_KEY('ORAC', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 145;//144
+	ClassName = 'Oracle_Key';
+	bNoDeathmatch = true;
+	IdleState = S_ORACLE_KEY;
+}
+
+}
+
+//**************************************************************************
+//
+//	Military_ID
+//
+//**************************************************************************
+
+class Military_ID:Pickup
+{
+
+__states__
+{
+	S_MILITARY_ID('GYID', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 146;//145
+	ClassName = 'Military_ID';
+	IdleState = S_MILITARY_ID;
+}
+
+}
+
+//**************************************************************************
+//
+//	Order_Key
+//
+//**************************************************************************
+
+class Order_Key:Pickup
+	__mobjinfo__(86)
+{
+
+__states__
+{
+	S_ORDER_KEY('FUBR', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 147;//146
+	ClassName = 'Order_Key';
+	bNoDeathmatch = true;
+	IdleState = S_ORDER_KEY;
+}
+
+}
+
+//**************************************************************************
+//
+//	Warehouse_Key
+//
+//**************************************************************************
+
+class Warehouse_Key:Pickup
+	__mobjinfo__(166)
+{
+
+__states__
+{
+	S_WAREHOUSE_KEY('WARE', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 148;//147
+	ClassName = 'Warehouse_Key';
+	bNoDeathmatch = true;
+	IdleState = S_WAREHOUSE_KEY;
+}
+
+}
+
+//**************************************************************************
+//
+//	Brass_Key
+//
+//**************************************************************************
+
+class Brass_Key:Pickup
+	__mobjinfo__(39)
+{
+
+__states__
+{
+	S_BRASS_KEY('KY3B', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 149;//148
+	ClassName = 'Brass_Key';
+	bNoDeathmatch = true;
+	IdleState = S_BRASS_KEY;
+}
+
+}
+
+//**************************************************************************
+//
+//	Red_Crystal_Key
+//
+//**************************************************************************
+
+class Red_Crystal_Key:Pickup
+	__mobjinfo__(192)
+{
+
+__states__
+{
+#ifdef TEASER
+	S_RED_CRYSTAL_KEY('RCRY', 0, -1.0, S_NULL) { }
+#else
+	S_RED_CRYSTAL_KEY('RCRY', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
+#endif
+}
+
+defaultproperties
+{
+	ConversationID = 150;//149
+	ClassName = 'Red_Crystal_Key';
+	bNoDeathmatch = true;
+	IdleState = S_RED_CRYSTAL_KEY;
+}
+
+}
+
+//**************************************************************************
+//
+//	Blue_Crystal_Key
+//
+//**************************************************************************
+
+class Blue_Crystal_Key:Pickup
+	__mobjinfo__(193)
+{
+
+__states__
+{
+#ifdef TEASER
+	S_BLUE_CRYSTAL_KEY('BCRY', 0, -1.0, S_NULL) { }
+#else
+	S_BLUE_CRYSTAL_KEY('BCRY', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
+#endif
+}
+
+defaultproperties
+{
+	ConversationID = 151;//150
+	ClassName = 'Blue_Crystal_Key';
+	bNoDeathmatch = true;
+	IdleState = S_BLUE_CRYSTAL_KEY;
+}
+
+}
+
+//**************************************************************************
+//
+//	Chapel_Key
+//
+//**************************************************************************
+
+class Chapel_Key:Pickup
+	__mobjinfo__(195)
+{
+
+__states__
+{
+	S_CHAPEL_KEY('CHAP', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 152;//151
+	ClassName = 'Chapel_Key';
+	bNoDeathmatch = true;
+	IdleState = S_CHAPEL_KEY;
+}
+
+}
+
+//**************************************************************************
+//
+//	Catacomb_Key
+//
+//**************************************************************************
+
+class Catacomb_Key:Pickup
+{
+
+__states__
+{
+	S_CATACOMB_KEY('TUNL', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 153;//152
+#ifdef TEASER
+	ClassName = 'Tunnel_Key';
+#else
+	ClassName = 'Catacomb_Key';
+	StepSpeed = 28.0;
+	bUnknown5 = true;
+#endif
+	IdleState = S_CATACOMB_KEY;
+}
+
+}
+
+//**************************************************************************
+//
+//	Security_Key
+//
+//**************************************************************************
+
+class Security_Key:Pickup
+{
+
+#ifndef TEASER
+__states__
+{
+	S_SECURITY_KEY('SECK', 0, -1.0, S_NULL) { }
+}
+#endif
+
+defaultproperties
+{
+	ConversationID = 154;//153
+	ClassName = 'Security_Key';
+#ifdef TEASER
+	IdleState = S_MAULER_KEY;
+#else
+	IdleState = S_SECURITY_KEY;
+#endif
+}
+
+}
+
+//**************************************************************************
+//
+//	Core_Key
+//
+//**************************************************************************
+
+class Core_Key:Pickup
+#ifndef TEASER
+	__mobjinfo__(236)
+#endif
+{
+
+#ifndef TEASER
+__states__
+{
+	S_CORE_KEY('GOID', 0, -1.0, S_NULL) { }
+}
+#endif
+
+defaultproperties
+{
+	ConversationID = 155;//154
+#ifdef TEASER
+	ClassName = 'New_Key1';
+	IdleState = S_MAULER_KEY;
+#else
+	ClassName = 'Core_Key';
+	bNoDeathmatch = true;
+	IdleState = S_CORE_KEY;
+#endif
+}
+
+}
+
+//**************************************************************************
+//
+//	Mauler_Key
+//
+//**************************************************************************
+
+class Mauler_Key:Pickup
+#ifndef TEASER
+	__mobjinfo__(233)
+#endif
+{
+
+__states__
+{
+	S_MAULER_KEY('BLTK', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 156;//155
+#ifdef TEASER
+	ClassName = 'New_Key2';
+#else
+	ClassName = 'Mauler_Key';
+	bNoDeathmatch = true;
+#endif
+	IdleState = S_MAULER_KEY;
+}
+
+}
+
+//**************************************************************************
+//
+//	Factory_Key
+//
+//**************************************************************************
+
+class Factory_Key:Pickup
+	__mobjinfo__(234)
+{
+
+#ifndef TEASER
+__states__
+{
+	S_FACTORY_KEY('PROC', 0, -1.0, S_NULL) { }
+}
+#endif
+
+defaultproperties
+{
+	ConversationID = 157;//156
+#ifdef TEASER
+	ClassName = 'New_Key3';
+	IdleState = S_MAULER_KEY;
+#else
+	ClassName = 'Factory_Key';
+	bNoDeathmatch = true;
+	IdleState = S_FACTORY_KEY;
+#endif
+}
+
+}
+
+//**************************************************************************
+//
+//	Mine_Key
+//
+//**************************************************************************
+
+class Mine_Key:Pickup
+#ifndef TEASER
+	__mobjinfo__(235)
+#endif
+{
+
+#ifndef TEASER
+__states__
+{
+	S_MINE_KEY('MINE', 0, -1.0, S_NULL) { }
+}
+#endif
+
+defaultproperties
+{
+	ConversationID = 158;//157
+#ifdef TEASER
+	ClassName = 'New_Key4';
+	IdleState = S_MAULER_KEY;
+#else
+	ClassName = 'MINE_KEY';
+	bNoDeathmatch = true;
+	IdleState = S_MINE_KEY;
+#endif
+}
+
+}
+
+//**************************************************************************
+//
+//	New_Key5
+//
+//**************************************************************************
+
+class New_Key5:Pickup
+{
+
+defaultproperties
+{
+	ConversationID = 159;//158
+	ClassName = 'New_Key5';
+	IdleState = S_MAULER_KEY;
+}
+
+}
+
+//**************************************************************************
+//
+//	Shadow_armor
+//
+//**************************************************************************
+
+class Shadow_armor:Pickup
+	__mobjinfo__(2024)
+{
+
+__states__
+{
+	S_SHADOW_ARMOR1('SHD1', 0, 17.0 / 35.0, S_SHADOW_ARMOR2) { A_Unknown56(); }
+	S_SHADOW_ARMOR2('SHD1', 0, 17.0 / 35.0, S_SHADOW_ARMOR3) { A_Unknown64(); }
+	S_SHADOW_ARMOR3('SHD1', 0, 17.0 / 35.0, S_SHADOW_ARMOR4) { A_Unknown55(); }
+	S_SHADOW_ARMOR4('SHD1', 0, 17.0 / 35.0, S_SHADOW_ARMOR1) { A_Unknown64(); }
+}
+
+defaultproperties
+{
+	ConversationID = 160;//159
+	ClassName = 'Shadow_armor';
+	Mass = 2.0;
+	IdleState = S_SHADOW_ARMOR1;
+}
+
+}
+
+//**************************************************************************
+//
+//	Environmental_Suit
+//
+//**************************************************************************
+
+class Environmental_Suit:Pickup
+	__mobjinfo__(2025)
+{
+
+__states__
+{
+	S_ENV_SUIT('MASK', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 161;//160
+	ClassName = 'Environmental_Suit';
+	Mass = 5.0;
+	IdleState = S_ENV_SUIT;
+}
+
+}
+
+//**************************************************************************
+//
+//	Guard_Uniform
+//
+//**************************************************************************
+
+class Guard_Uniform:Pickup
+	__mobjinfo__(90)
+{
+
+__states__
+{
+	S_GUARD_UNIFORM('UNIF', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 162;//161
+	ClassName = 'Guard_Uniform';
+#ifndef TEASER
+	StepSpeed = 15.0;
+	bUnknown5 = true;
+#endif
+	IdleState = S_GUARD_UNIFORM;
+}
+
+}
+
+//**************************************************************************
+//
+//	Officers_Uniform
+//
+//**************************************************************************
+
+class Officers_Uniform:Pickup
+	__mobjinfo__(52)
+{
+
+__states__
+{
+	S_OFFICERS_UNIFORM('OFIC', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 163;//162
+	ClassName = 'Officer\'s_Uniform';
+	bNoDeathmatch = true;
+	IdleState = S_OFFICERS_UNIFORM;
+}
+
+}
+
+//**************************************************************************
+//
+//	Map
+//
+//**************************************************************************
+
+class Map:Pickup
+	__mobjinfo__(2026)
+{
+
+__states__
+{
+	S_MAP_1('PMAP', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_MAP_2) { }
+	S_MAP_2('PMAP', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_MAP_1) { }
+}
+
+defaultproperties
+{
+	ConversationID = 164;//163
+#ifdef TEASER
+	ClassName = 'Map';
+#else
+	ClassName = 'map';
+#endif
+	IdleState = S_MAP_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	Scanner
+//
+//**************************************************************************
+
+class Scanner:Pickup
+	__mobjinfo__(2027)
+{
+
+__states__
+{
+	S_SCANNER_1('PMUP', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_SCANNER_2) { }
+	S_SCANNER_2('PMUP', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SCANNER_1) { }
+}
+
+defaultproperties
+{
+	ConversationID = 165;//164
+#ifdef TEASER
+	ClassName = 'Map-Radar';
+#else
+	ClassName = 'scanner';
+	Mass = 1.0;
+#endif
+	IdleState = S_SCANNER_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	Teleporter_Beacon
+//
+//**************************************************************************
+
+class Teleporter_Beacon:Pickup
+	__mobjinfo__(10)
+{
+
+__states__
+{
+	S_BEACON('BEAC', 0, -1.0, S_NULL) { }
+	S_BEACON_1('BEAC', 0, 30.0 / 35.0, S_BEACON_2) { }
+	S_BEACON_2('BEAC', 0, 160.0 / 35.0, S_BEACON_1) { A_SummonRebel(); }
+}
+
+defaultproperties
+{
+	ConversationID = 166;//293
+#ifdef TEASER
+	ClassName = 'Teleportor_Beacon';
+#else
+	ClassName = 'Teleporter_Beacon';
+#endif
+	Health = 5;
+	Radius = 16.0;
+	Height = 8.0;
+	Mass = 3.0;
+	bDropped = true;
+	IdleState = S_BEACON;
+	SeeState = S_BEACON_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	Targeter
+//
+//**************************************************************************
+
+class Targeter:Pickup
+	__mobjinfo__(207)
+{
+
+__states__
+{
+	S_TARGETER('TARG', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 167;//173
+	ClassName = 'Targeter';
+#ifndef TEASER
+	Mass = 5.0;
+#endif
+	IdleState = S_TARGETER;
+}
+
+}
+
+//**************************************************************************
+//
+//	Coin
+//
+//**************************************************************************
+
+class Coin:Pickup
+	__mobjinfo__(93)
+{
+
+__states__
+{
+	S_COIN('COIN', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 168;//165
+	ClassName = 'coin';
+	Mass = 99999.0;
+	bDropped = true;
+#ifndef TEASER
+	bNoDeathmatch = true;
+#endif
+	IdleState = S_COIN;
+}
+
+}
+
+//**************************************************************************
+//
+//	Gold10
+//
+//**************************************************************************
+
+class Gold10:Pickup
+	__mobjinfo__(138)
+{
+
+__states__
+{
+	S_GOLD10('CRED', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 169;//166
+	ClassName = '10_gold';
+	bDropped = true;
+#ifndef TEASER
+	bNoDeathmatch = true;
+#endif
+	IdleState = S_GOLD10;
+}
+
+}
+
+//**************************************************************************
+//
+//	Gold25
+//
+//**************************************************************************
+
+class Gold25:Pickup
+	__mobjinfo__(139)
+{
+
+__states__
+{
+	S_GOLD25('SACK', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 170;//167
+	ClassName = '25_gold';
+	bDropped = true;
+#ifndef TEASER
+	bNoDeathmatch = true;
+#endif
+	IdleState = S_GOLD25;
+}
+
+}
+
+//**************************************************************************
+//
+//	Gold50
+//
+//**************************************************************************
+
+class Gold50:Pickup
+	__mobjinfo__(140)
+{
+
+__states__
+{
+	S_GOLD50('CHST', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 171;//168
+	ClassName = '50_gold';
+	bDropped = true;
+#ifndef TEASER
+	bNoDeathmatch = true;
+#endif
+	IdleState = S_GOLD50;
+}
+
+}
+
+#ifndef TEASER
+//**************************************************************************
+//
+//	Gold300
+//
+//**************************************************************************
+
+class Gold300:Pickup
+{
+
+defaultproperties
+{
+	ConversationID = 172;
+	ClassName = '300_gold';
+	StepSpeed = 3.0;
+	bUnknown5 = true;
+	bDropped = true;
+	IdleState = S_TOKENS;
+}
+
+}
+#endif
+
+//**************************************************************************
+//
+//	Ring
+//
+//**************************************************************************
+
+class Ring:Pickup
+{
+
+__states__
+{
+	S_RING('RING', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 173;//169
+	ClassName = 'ring';
+#ifndef TEASER
+	StepSpeed = 1.0;
+	bUnknown5 = true;
+#endif
+	IdleState = S_RING;
+}
+
+}
+
+//**************************************************************************
+//
+//	Offering_Chalice
+//
+//**************************************************************************
+
+class Offering_Chalice:Pickup
+	__mobjinfo__(205)
+{
+
+__states__
+{
+	S_CHALICE('RELC', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 174;//170
+	ClassName = 'Offering_Chalice';
+	Radius = 10.0;
+	Height = 8.0;
+#ifndef TEASER
+	StepSpeed = 2.0;
+	bUnknown5 = true;
+#endif
+	bDropped = true;
+	IdleState = S_CHALICE;
+}
+
+}
+
+//**************************************************************************
+//
+//	Ear
+//
+//**************************************************************************
+
+class Ear:Pickup
+{
+
+__states__
+{
+	S_EAR('EARS', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 175;//171
+	ClassName = 'ear';
+#ifndef TEASER
+	StepSpeed = 9.0;
+	bUnknown5 = true;
+#endif
+	IdleState = S_EAR;
+}
+
+}
+
+//**************************************************************************
+//
+//	Communicator
+//
+//**************************************************************************
+
+class Communicator:Pickup
+	__mobjinfo__(206)
+{
+
+__states__
+{
+	S_COMMUNICATOR('COMM', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 176;//172
+	ClassName = 'Communicator';
+	bNoDeathmatch = true;
+	IdleState = S_COMMUNICATOR;
+}
+
+}
+
+//**************************************************************************
+//
+//	HEGrenade_Rounds
+//
+//**************************************************************************
+
+class HEGrenade_Rounds:Pickup
+	__mobjinfo__(152)
+{
+
+__states__
+{
+	S_GRENADE_HE('GRN1', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 177;//174
+	ClassName = 'HE-Grenade_Rounds';
+	IdleState = S_GRENADE_HE;
+}
+
+}
+
+//**************************************************************************
+//
+//	PhosphorusGrenade_Rounds
+//
+//**************************************************************************
+
+class PhosphorusGrenade_Rounds:Pickup
+	__mobjinfo__(153)
+{
+
+__states__
+{
+	S_GRENADE_FIRE('GRN2', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 178;//175
+#ifdef TEASER
+	ClassName = 'Fire-Grenade_Rounds';
+#else
+	ClassName = 'Phosphorus-Grenade_Rounds';
+#endif
+	IdleState = S_GRENADE_FIRE;
+}
+
+}
+
+#ifdef TEASER
+//**************************************************************************
+//
+//	GasGrenade_Rounds
+//
+//**************************************************************************
+
+class GasGrenade_Rounds:Pickup
+	__mobjinfo__(84)
+{
+
+__states__
+{
+	S_GRENADE_GAS('GASG', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 176;
+	ClassName = 'Gas-Grenade_Rounds';
+	IdleState = S_GRENADE_GAS;
+}
+
+}
+#endif
+
+//**************************************************************************
+//
+//	Clip_of_bullets
+//
+//**************************************************************************
+
+class Clip_of_bullets:Pickup
+	__mobjinfo__(2007)
+{
+
+__states__
+{
+	S_BULLETS('BLIT', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 179;//177
+#ifdef TEASER
+	ClassName = 'bullets';
+#else
+	ClassName = 'clip_of_bullets';
+#endif
+	IdleState = S_BULLETS;
+}
+
+}
+
+//**************************************************************************
+//
+//	Ammo1
+//
+//**************************************************************************
+
+class Ammo1:Pickup
+	__mobjinfo__(2048)
+{
+
+__states__
+{
+	S_AMMO('BBOX', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 180;//178
+	ClassName = 'ammo';
+	IdleState = S_AMMO;
+}
+
+}
+
+//**************************************************************************
+//
+//	Mini_missiles
+//
+//**************************************************************************
+
+class Mini_missiles:Pickup
+	__mobjinfo__(2010)
+{
+
+__states__
+{
+	S_MINI_MISSILES('MSSL', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 181;//179
+#ifdef TEASER
+	ClassName = 'rocket';
+#else
+	ClassName = 'mini_missiles';
+#endif
+	IdleState = S_MINI_MISSILES;
+}
+
+}
+
+//**************************************************************************
+//
+//	Crate_of_missiles
+//
+//**************************************************************************
+
+class Crate_of_missiles:Pickup
+	__mobjinfo__(2046)
+{
+
+__states__
+{
+	S_CRATE_OF_MISSILES('ROKT', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 182;//180
+#ifdef TEASER
+	ClassName = 'box_of_rockets';
+#else
+	ClassName = 'crate_of_missiles';
+#endif
+	IdleState = S_CRATE_OF_MISSILES;
+}
+
+}
+
+//**************************************************************************
+//
+//	Energy_pod
+//
+//**************************************************************************
+
+class Energy_pod:Pickup
+	__mobjinfo__(2047)
+{
+
+__states__
+{
+	S_ENERGY_POD_1('BRY1', 0, 6.0 / 35.0, S_ENERGY_POD_2) { }
+	S_ENERGY_POD_2('BRY1', 1, 6.0 / 35.0, S_ENERGY_POD_1) { }
+}
+
+defaultproperties
+{
+	ConversationID = 183;//181
+	ClassName = 'energy_pod';
+	IdleState = S_ENERGY_POD_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	Energy_pack
+//
+//**************************************************************************
+
+class Energy_pack:Pickup
+	__mobjinfo__(17)
+{
+
+__states__
+{
+	S_ENERGY_PACK_1('CPAC', 0, 6.0 / 35.0, S_ENERGY_PACK_2) { }
+	S_ENERGY_PACK_2('CPAC', 1, 6.0 / 35.0, S_ENERGY_PACK_1) { }
+}
+
+defaultproperties
+{
+	ConversationID = 184;//182
+	ClassName = 'energy_pack';
+	IdleState = S_ENERGY_PACK_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	Poison_bolts
+//
+//**************************************************************************
+
+class Poison_bolts:Pickup
+	__mobjinfo__(115)
+{
+
+__states__
+{
+	S_ARROWS_POISON('PQRL', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 185;//183
+#ifdef TEASER
+	ClassName = 'poison_arrows';
+#else
+	ClassName = 'poison_bolts';
+#endif
+	IdleState = S_ARROWS_POISON;
+}
+
+}
+
+//**************************************************************************
+//
+//	Electric_bolts
+//
+//**************************************************************************
+
+class Electric_bolts:Pickup
+	__mobjinfo__(114)
+{
+
+__states__
+{
+	S_ARROWS_ELECTRIC('XQRL', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 186;//184
+#ifdef TEASER
+	ClassName = 'electric_arrows';
+#else
+	ClassName = 'electric_bolts';
+#endif
+	IdleState = S_ARROWS_ELECTRIC;
+}
+
+}
+
+//**************************************************************************
+//
+//	Ammo_satchel
+//
+//**************************************************************************
+
+class Ammo_satchel:Pickup
+	__mobjinfo__(183)
+{
+
+__states__
+{
+	S_BACKPACK('BKPK', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 187;//185
+#ifdef TEASER
+	ClassName = 'Back_pack';
+#else
+	ClassName = 'ammo_satchel';
+#endif
+	IdleState = S_BACKPACK;
+}
+
+}
+
+//**************************************************************************
+//
+//	Assault_gun
+//
+//**************************************************************************
+
+class Assault_gun:Pickup
+	__mobjinfo__(2002)
+{
+
+__states__
+{
+	S_ASSAULT_GUN1('RIFL', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 188;//186
+	ClassName = 'assault_gun';
+	IdleState = S_ASSAULT_GUN1;
+}
+
+}
+
+//**************************************************************************
+//
+//	Assault_gun2
+//
+//**************************************************************************
+
+class Assault_gun2:Pickup
+	__mobjinfo__(2006)
+{
+
+__states__
+{
+	S_ASSAULT_GUN2('RIFL', 1, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 189;//187
+#ifdef TEASER
+	ClassName = 'pulse_rifle';
+#else
+	ClassName = 'assault_gun';
+#endif
+	IdleState = S_ASSAULT_GUN2;
+}
+
+}
+
+//**************************************************************************
+//
+//	Flame_thrower
+//
+//**************************************************************************
+
+class Flame_thrower:Pickup
+	__mobjinfo__(2005)
+{
+
+__states__
+{
+	S_FLAME_THROWER('FLAM', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 190;//188
+	ClassName = 'flame_thrower';
+	IdleState = S_FLAME_THROWER;
+}
+
+}
+
+//**************************************************************************
+//
+//	Flame_thrower_Parts
+//
+//**************************************************************************
+
+class Flame_thrower_Parts:Pickup
+{
+
+__states__
+{
+	S_FLAME_THROWER_PARTS('BFLM', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 191;//189
+#ifdef TEASER
+	ClassName = 'flame_thrower_Parts';
+#else
+	ClassName = 'flame_thrower_parts';
+#endif
+	IdleState = S_FLAME_THROWER_PARTS;
+}
+
+}
+
+//**************************************************************************
+//
+//	Mini_missile_launcher
+//
+//**************************************************************************
+
+class Mini_missile_launcher:Pickup
+	__mobjinfo__(2003)
+{
+
+__states__
+{
+	S_MISSILE_LAUNCHER('MMSL', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 192;//190
+#ifdef TEASER
+	ClassName = 'missile_gun';
+#else
+	ClassName = 'mini_missile_launcher';
+#endif
+	IdleState = S_MISSILE_LAUNCHER;
+}
+
+}
+
+//**************************************************************************
+//
+//	Mauler
+//
+//**************************************************************************
+
+class Mauler:Pickup
+	__mobjinfo__(2004)
+{
+
+__states__
+{
+	S_MAULER('TRPD', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 193;//191
+#ifdef TEASER
+	ClassName = 'blaster';
+#else
+	ClassName = 'mauler';
+#endif
+	IdleState = S_MAULER;
+}
+
+}
+
+//**************************************************************************
+//
+//	Crossbow
+//
+//**************************************************************************
+
+class Crossbow:Pickup
+	__mobjinfo__(2001)
+{
+
+__states__
+{
+	S_CROSSBOW('CBOW', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 194;//192
+	ClassName = 'crossbow';
+	IdleState = S_CROSSBOW;
+}
+
+}
+
+//**************************************************************************
+//
+//	Grenade_launcher
+//
+//**************************************************************************
+
+class Grenade_launcher:Pickup
+	__mobjinfo__(154)
+{
+
+__states__
+{
+	S_GRENADE_LAUNCHER('GRND', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 195;//193
+	ClassName = 'Grenade_launcher';
+	IdleState = S_GRENADE_LAUNCHER;
+}
+
+}
+
+//**************************************************************************
+//
+//	Sigil1
+//
+//**************************************************************************
+
+class Sigil1:Pickup
+	__mobjinfo__(77)
+{
+
+__states__
+{
+	S_SIGIL_1('SIGL', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 196;//194
+	ClassName = 'SIGIL';
+	IdleState = S_SIGIL_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	Sigil2
+//
+//**************************************************************************
+
+class Sigil2:Pickup
+	__mobjinfo__(78)
+{
+
+__states__
+{
+	S_SIGIL_2('SIGL', 1, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 197;//195
+	ClassName = 'SIGIL';
+	IdleState = S_SIGIL_2;
+}
+
+}
+
+//**************************************************************************
+//
+//	Sigil3
+//
+//**************************************************************************
+
+class Sigil3:Pickup
+	__mobjinfo__(79)
+{
+
+__states__
+{
+	S_SIGIL_3('SIGL', 2, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 198;//196
+	ClassName = 'SIGIL';
+	IdleState = S_SIGIL_3;
+}
+
+}
+
+//**************************************************************************
+//
+//	Sigil4
+//
+//**************************************************************************
+
+class Sigil4:Pickup
+	__mobjinfo__(80)
+{
+
+__states__
+{
+	S_SIGIL_4('SIGL', 3, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 199;//197
+	ClassName = 'SIGIL';
+	IdleState = S_SIGIL_4;
+}
+
+}
+
+//**************************************************************************
+//
+//	Sigil5
+//
+//**************************************************************************
+
+class Sigil5:Pickup
+	__mobjinfo__(81)
+{
+
+__states__
+{
+	S_SIGIL_5('SIGL', 4, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 200;//198
+	ClassName = 'SIGIL';
+	IdleState = S_SIGIL_5;
+}
+
+}
+
+//**************************************************************************
+//
+//	BrokenPowerCoupling
+//
+//**************************************************************************
+
+class BrokenPowerCoupling:Pickup
+	__mobjinfo__(226)
+{
+
+__states__
+{
+	S_BROKEN_POWER_COUPLING('COUP', 2, -1.0, S_1232) { }
+}
+
+defaultproperties
+{
+	ConversationID = 289;//287
+#ifdef TEASER
+	ClassName = 'POWER_COUPLING';
+#else
+	ClassName = 'BROKEN_POWER_COUPLING';
+#endif
+	Health = 40;
+	Radius = 16.0;
+	Height = 8.0;
+	Mass = 1.0;
+#ifndef TEASER
+	Speed = 17920.0;
+	bUnknown5 = true;
+#endif
+	bDropped = true;
+	IdleState = S_BROKEN_POWER_COUPLING;
+}
+
+}
+
+//**************************************************************************
+//
+//	Ammo2
+//
+//**************************************************************************
+
+class Ammo2:Pickup
+{
+
+defaultproperties
+{
+	ConversationID = 298;//297
+	ClassName = 'Ammo';
+	IdleState = S_TOKENS;
+}
+
+}
+
+//**************************************************************************
+//
+//	Health1
+//
+//**************************************************************************
+
+class Health1:Pickup
+{
+
+defaultproperties
+{
+	ConversationID = 299;//298
+	ClassName = 'Health';
+	IdleState = S_TOKENS;
+}
+
+}
+
+//**************************************************************************
+//
+//	Info1
+//
+//**************************************************************************
+
+class Info1:Pickup
+{
+
+defaultproperties
+{
+	ConversationID = 300;//299
+	ClassName = 'info';
+	IdleState = S_TOKENS;
+}
+
+}
+
+//**************************************************************************
+//
+//	Alarm1
+//
+//**************************************************************************
+
+class Alarm1:Pickup
+{
+
+defaultproperties
+{
+	ConversationID = 301;//300
+	ClassName = 'alarm';
+	IdleState = S_TOKENS;
+}
+
+}
+
+//**************************************************************************
+//
+//	ConversationItem302
+//
+//**************************************************************************
+
+class ConversationItem302:Pickup
+{
+
+defaultproperties
+{
+	ConversationID = 302;//301
+	IdleState = S_TOKENS;
+}
+
+}
+
+//**************************************************************************
+//
+//	ConversationItem303
+//
+//**************************************************************************
+
+class ConversationItem303:Pickup
+{
+
+defaultproperties
+{
+	ConversationID = 303;//302
+	IdleState = S_TOKENS;
+}
+
+}
+
+//**************************************************************************
+//
+//	Prison_pass
+//
+//**************************************************************************
+
+class Prison_pass:Pickup
+{
+
+defaultproperties
+{
+	ConversationID = 304;//303
+	ClassName = 'Prison_pass';
+#ifndef TEASER
+	StepSpeed = 10.0;
+	bUnknown5 = true;
+#endif
+	IdleState = S_TOKENS;
+}
+
+}
+
+//**************************************************************************
+//
+//	ConversationItem305
+//
+//**************************************************************************
+
+class ConversationItem305:Pickup
+{
+
+defaultproperties
+{
+	ConversationID = 305;//304
+	IdleState = S_TOKENS;
+}
+
+}
+
+//**************************************************************************
+//
+//	ConversationItem306
+//
+//**************************************************************************
+
+class ConversationItem306:Pickup
+{
+
+defaultproperties
+{
+	ConversationID = 306;//305
+	IdleState = S_TOKENS;
+}
+
+}
+
+#ifndef TEASER
+//**************************************************************************
+//
+//	ConversationItem307
+//
+//**************************************************************************
+
+class ConversationItem307:Pickup
+{
+
+defaultproperties
+{
+	ConversationID = 307;
+	IdleState = S_TOKENS;
+}
+
+}
+#endif
+
+//**************************************************************************
+//
+//	Report
+//
+//**************************************************************************
+
+class Report:Pickup
+{
+
+defaultproperties
+{
+	ConversationID = 308;//306
+	ClassName = 'report';
+	IdleState = S_TOKENS;
+}
+
+}
+
+//**************************************************************************
+//
+//	Toughness
+//
+//**************************************************************************
+
+class Toughness:Pickup
+{
+
+__states__
+{
+	S_TOUGHNESS('HELT', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 309;//307
+	ClassName = 'Toughness';
+	IdleState = S_TOUGHNESS;
+}
+
+}
+
+//**************************************************************************
+//
+//	Accuracy
+//
+//**************************************************************************
+
+class Accuracy:Pickup
+{
+
+__states__
+{
+	S_ACCURACY('GUNT', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 310;//308
+	ClassName = 'Accuracy';
+	IdleState = S_ACCURACY;
+}
+
+}
+
+//**************************************************************************
+//
+//	Oracle_Pass
+//
+//**************************************************************************
+
+class Oracle_Pass:Pickup
+{
+
+#ifndef TEASER
+__states__
+{
+	S_ORACLE_PASS('OTOK', 0, -1.0, S_NULL) { }
+}
+#endif
+
+defaultproperties
+{
+	ConversationID = 311;//309
+	ClassName = 'Oracle_Pass';
+#ifdef TEASER
+	IdleState = S_TOKENS;
+#else
+	StepSpeed = 18.0;
+	bUnknown5 = true;
+	IdleState = S_ORACLE_PASS;
+#endif
+}
+
+}
+
+#ifndef TEASER
+//**************************************************************************
+//
+//	ConversationItem343
+//
+//**************************************************************************
+
+class ConversationItem343:Pickup
+{
+
+defaultproperties
+{
+	ConversationID = 343;
+	IdleState = S_TOKENS;
+}
+
+}
+#endif
+
+#ifdef TEASER
+#else
+#endif
+
+#ifndef TEASER
+#endif
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/06/22 07:18:43  dj_jl
+//  Seperated all pickup items.
+//
+//**************************************************************************
