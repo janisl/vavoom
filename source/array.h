@@ -56,10 +56,6 @@ public:
 	{
 		return ArrayNum;
 	}
-	void SetTag(EZoneTag ATag)
-	{
-		Tag = ATag;
-	}
 	void InsertZeroed(int Index, int Count, int ElementSize)
 	{
 		Insert(Index, Count, ElementSize);
@@ -108,7 +104,7 @@ public:
 		ArrayMax = Slack;
 		Realloc(ElementSize);
 	}
-	FArray(void) : Data(NULL), ArrayNum(0), ArrayMax(0), Tag(PU_STRING)
+	FArray(void) : Data(NULL), ArrayNum(0), ArrayMax(0)
 	{}
 	FArray(ENoInit)
 	{}
@@ -149,7 +145,7 @@ protected:
 			}
 			else
 			{
-				Data = Z_Malloc(ArrayMax * ElementSize, Tag, 0);
+				Data = Z_Malloc(ArrayMax * ElementSize, PU_STRING, 0);
 			}
 		}
 		else
@@ -161,15 +157,14 @@ protected:
 			}
 		}
 	}
-	FArray(int InNum, int ElementSize, EZoneTag ATag)
-		: Data(NULL), ArrayNum(InNum), ArrayMax(InNum), Tag(ATag)
+	FArray(int InNum, int ElementSize)
+		: Data(NULL), ArrayNum(InNum), ArrayMax(InNum)
 	{
 		Realloc(ElementSize);
 	}
 	void *Data;
 	int ArrayNum;
 	int ArrayMax;
-	EZoneTag Tag;
 };
 
 //
@@ -181,11 +176,11 @@ public:
 	typedef T ElementType;
 	TArray(void) : FArray()
 	{}
-	TArray(int InNum, EZoneTag ATag = PU_STRING) 
-		: FArray(InNum, sizeof(T), ATag)
+	TArray(int InNum) 
+		: FArray(InNum, sizeof(T))
 	{}
-	TArray(const TArray& Other, EZoneTag ATag = PU_STRING)
-		: FArray(Other.ArrayNum, sizeof(T), ATag)
+	TArray(const TArray& Other)
+		: FArray(Other.ArrayNum, sizeof(T))
 	{
 		ArrayNum = 0;
 		for (int i = 0; i < Other.ArrayNum; i++)
@@ -541,7 +536,7 @@ public:
 	{
 		if (!Right)
 		{
-			char* Tmp = strstr(**this, SubStr);
+			const char* Tmp = strstr(**this, SubStr);
 			return Tmp ? (Tmp - **this) : -1;
 		}
 		else
@@ -609,9 +604,12 @@ private:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2002/01/12 18:03:28  dj_jl
+//	Removed zone tag
+//
 //	Revision 1.3  2002/01/11 18:24:01  dj_jl
 //	Added dynamic strings
-//
+//	
 //	Revision 1.2  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	
