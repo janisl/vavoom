@@ -1105,11 +1105,11 @@ PF(MSG_ReadLong)
 
 //==========================================================================
 //
-//	PF_Spawn
+//	PF_SpawnObject
 //
 //==========================================================================
 
-PF(Spawn)
+PF(SpawnObject)
 {
 	VClass *Class;
 	VObject *Outer;
@@ -3137,7 +3137,7 @@ builtin_info_t BuiltinInfo[] =
 	_(CmdBuf_AddText),
 	_(Info_ValueForKey),
 	_(WadLumpPresent),
-	_(Spawn),
+	_(SpawnObject),
 	_M(Object, Destroy),
 	_M(Object, IsA),
 	_M(Object, IsDestroyed),
@@ -3283,9 +3283,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.35  2002/03/02 17:27:48  dj_jl
+//	Renamed builtin Spawn to SpawnObject
+//
 //	Revision 1.34  2002/02/26 17:53:08  dj_jl
 //	Fixes for menus.
-//
+//	
 //	Revision 1.33  2002/02/22 18:09:52  dj_jl
 //	Some improvements, beautification.
 //	
