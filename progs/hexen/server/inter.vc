@@ -98,8 +98,6 @@
 #define BONUSADD 	6
 
 void SetFighterAxe(player_t * player);
-void P_HideSpecialThing(mobj_t * thing);
-void SetDormantArtifact(mobj_t * arti);
 void P_RemoveMobj(mobj_t * mobj);
 
 float ArmorMax[NUMCLASSES] = { 20.0, 18.0, 16.0, 1.0 };
@@ -306,7 +304,7 @@ void Actor::TryPickupWeapon(int weaponClass, int weaponType,
 	{
 		if (deathmatch && !weapon.bDropped)
 		{
-			P_HideSpecialThing(&weapon);
+			weapon.HideSpecial();
 		}
 		else
 		{
@@ -391,7 +389,7 @@ void Actor::TryPickupWeaponPiece(int matchClass, int pieceValue,
 	{
 		if (deathmatch && !pieceMobj.bDropped)
 		{
-			P_HideSpecialThing(&pieceMobj);
+			pieceMobj.HideSpecial();
 		}
 		else
 		{
@@ -687,7 +685,7 @@ void Actor::TryPickupArtifact(int artifactType, Actor artifact)
 		Player->BonusCount += BONUSADD;
 		if (artifactType < arti_firstpuzzitem)
 		{
-			SetDormantArtifact(&artifact);
+			artifact.SetDormantArtifact();
 			artifact.PlaySound('PickupArtifact', CHAN_ITEM);
 			cprint(Player, "%s\n", artifactMessages[artifactType]);
 		}
@@ -999,7 +997,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		// Only remove keys in single player game
 		if (deathmatch && respawn && !bDropped)
 		{
-			P_HideSpecialThing(this);
+			HideSpecial();
 		}
 		else
 		{
@@ -1013,6 +1011,9 @@ void Actor::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.15  2002/02/22 18:00:22  dj_jl
 //  A lots of the renaming, beautification.
 //

@@ -60,8 +60,6 @@ void mobj_t::Archive(void)
 	{
 		Enemy = none;
 	}
-//	MobjToNum(& &Enemy);
-//	MobjToNum(& &Owner);
 
 	switch (Class)
 	{
@@ -114,7 +112,6 @@ void mobj_t::Archive(void)
 	default:
 		break;
 	}
-	SpecialCID = ClassIDToNum(SpecialCID);
 }
 
 //==========================================================================
@@ -125,8 +122,6 @@ void mobj_t::Archive(void)
 
 void mobj_t::Unarchive(void)
 {
-//	NumToMobj(& &Enemy);
-//	NumToMobj(& &Owner);
 	switch (Class)
 	{
 		// Just	SpecialMobj1
@@ -156,17 +151,14 @@ void mobj_t::Unarchive(void)
 	default:
 		break;
 	}
-	SpecialCID = NumToClassID(SpecialCID);
-	SightSound = UnarchiveName(SightSound);
-	ActiveSound = UnarchiveName(ActiveSound);
-	AttackSound = UnarchiveName(AttackSound);
-	PainSound = UnarchiveName(PainSound);
-	DeathSound = UnarchiveName(DeathSound);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/26 17:49:49  dj_jl
+//  no message
+//
 //  Revision 1.13  2002/02/22 18:00:23  dj_jl
 //  A lots of the renaming, beautification.
 //

@@ -123,7 +123,9 @@ void Actor::A_KoraxChase(void)
 	int search;
 	int args[3];
 
-	args[0] = args[1] = args[2] = 0;
+	args[0] = 0;
+	args[1] = 0;
+	args[2] = 0;
 	if ((!Special2) && (Health <= (SpawnHealth / 2)))
 	{
 		search = 0;
@@ -190,7 +192,6 @@ void Actor::A_KoraxDecide(void)
 
 void Actor::KoraxFire1(classid type)
 {
-	mobj_t *mo;
 	float ang;
 	float x, y, z;
 
@@ -198,7 +199,7 @@ void Actor::KoraxFire1(classid type)
 	x = Origin.x + KORAX_ARM_EXTENSION_SHORT * cos(ang);
 	y = Origin.y + KORAX_ARM_EXTENSION_SHORT * sin(ang);
 	z = Origin.z - FloorClip + KORAX_ARM1_HEIGHT;
-	mo = SpawnKoraxMissile(x, y, z, this, &Enemy, type);
+	SpawnKoraxMissile(vector(x, y, z), Enemy, type);
 }
 
 //============================================================================
@@ -207,7 +208,6 @@ void Actor::KoraxFire1(classid type)
 
 void Actor::KoraxFire2(classid type)
 {
-	mobj_t *mo;
 	float ang;
 	float x, y, z;
 
@@ -215,7 +215,7 @@ void Actor::KoraxFire2(classid type)
 	x = Origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
 	y = Origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
 	z = Origin.z - FloorClip + KORAX_ARM2_HEIGHT;
-	mo = SpawnKoraxMissile(x, y, z, this, &Enemy, type);
+	SpawnKoraxMissile(vector(x, y, z), Enemy, type);
 }
 
 //============================================================================
@@ -224,7 +224,6 @@ void Actor::KoraxFire2(classid type)
 
 void Actor::KoraxFire3(classid type)
 {
-	mobj_t *mo;
 	float ang;
 	float x, y, z;
 
@@ -232,7 +231,7 @@ void Actor::KoraxFire3(classid type)
 	x = Origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
 	y = Origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
 	z = Origin.z - FloorClip + KORAX_ARM3_HEIGHT;
-	mo = SpawnKoraxMissile(x, y, z, this, &Enemy, type);
+	SpawnKoraxMissile(vector(x, y, z), Enemy, type);
 }
 
 //============================================================================
@@ -241,7 +240,6 @@ void Actor::KoraxFire3(classid type)
 
 void Actor::KoraxFire4(classid type)
 {
-	mobj_t *mo;
 	float ang;
 	float x, y, z;
 
@@ -249,7 +247,7 @@ void Actor::KoraxFire4(classid type)
 	x = Origin.x + KORAX_ARM_EXTENSION_SHORT * cos(ang);
 	y = Origin.y + KORAX_ARM_EXTENSION_SHORT * sin(ang);
 	z = Origin.z - FloorClip + KORAX_ARM4_HEIGHT;
-	mo = SpawnKoraxMissile(x, y, z, this, &Enemy, type);
+	SpawnKoraxMissile(vector(x, y, z), Enemy, type);
 }
 
 //============================================================================
@@ -258,7 +256,6 @@ void Actor::KoraxFire4(classid type)
 
 void Actor::KoraxFire5(classid type)
 {
-	mobj_t *mo;
 	float ang;
 	float x, y, z;
 
@@ -266,7 +263,7 @@ void Actor::KoraxFire5(classid type)
 	x = Origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
 	y = Origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
 	z = Origin.z - FloorClip + KORAX_ARM5_HEIGHT;
-	mo = SpawnKoraxMissile(x, y, z, this, &Enemy, type);
+	SpawnKoraxMissile(vector(x, y, z), Enemy, type);
 }
 
 //============================================================================
@@ -275,7 +272,6 @@ void Actor::KoraxFire5(classid type)
 
 void Actor::KoraxFire6(classid type)
 {
-	mobj_t *mo;
 	float ang;
 	float x, y, z;
 
@@ -283,7 +279,7 @@ void Actor::KoraxFire6(classid type)
 	x = Origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
 	y = Origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
 	z = Origin.z - FloorClip + KORAX_ARM6_HEIGHT;
-	mo = SpawnKoraxMissile(x, y, z, this, &Enemy, type);
+	SpawnKoraxMissile(vector(x, y, z), Enemy, type);
 }
 
 //============================================================================
@@ -348,7 +344,9 @@ void Actor::A_KoraxCommand(void)
 	int numcommands;
 	int args[3];
 
-	args[0] = args[1] = args[2] = 0;
+	args[0] = 0;
+	args[1] = 0;
+	args[2] = 0;
 	PlaySound('KoraxCommand', CHAN_VOICE);
 
 	// Shoot stream of lightning to ceiling
@@ -427,29 +425,31 @@ void Actor::KSpiritInit(Actor korax)
 
 void Actor::A_KoraxBonePop(void)
 {
-	mobj_t *mo;
+	Actor mo;
 	int args[3];
 
-	args[0] = args[1] = args[2] = 0;
+	args[0] = 0;
+	args[1] = 0;
+	args[2] = 0;
 	// Spawn 6 spirits equalangularly
-	mo = SpawnMissileAngle(this, KoraxSpirit1, 60.0 * 0.0, 5.0);
+	mo = SpawnMissileAngle(KoraxSpirit1, 60.0 * 0.0, 5.0 * 35.0);
 	if (mo)
-		mo->KSpiritInit(self);
-	mo = SpawnMissileAngle(this, KoraxSpirit2, 60.0 * 1.0, 5.0);
+		mo.KSpiritInit(self);
+	mo = SpawnMissileAngle(KoraxSpirit2, 60.0 * 1.0, 5.0 * 35.0);
 	if (mo)
-		mo->KSpiritInit(self);
-	mo = SpawnMissileAngle(this, KoraxSpirit3, 60.0 * 2.0, 5.0);
+		mo.KSpiritInit(self);
+	mo = SpawnMissileAngle(KoraxSpirit3, 60.0 * 2.0, 5.0 * 35.0);
 	if (mo)
-		mo->KSpiritInit(self);
-	mo = SpawnMissileAngle(this, KoraxSpirit4, 60.0 * 3.0, 5.0);
+		mo.KSpiritInit(self);
+	mo = SpawnMissileAngle(KoraxSpirit4, 60.0 * 3.0, 5.0 * 35.0);
 	if (mo)
-		mo->KSpiritInit(self);
-	mo = SpawnMissileAngle(this, KoraxSpirit5, 60.0 * 4.0, 5.0);
+		mo.KSpiritInit(self);
+	mo = SpawnMissileAngle(KoraxSpirit5, 60.0 * 4.0, 5.0 * 35.0);
 	if (mo)
-		mo->KSpiritInit(self);
-	mo = SpawnMissileAngle(this, KoraxSpirit6, 60.0 * 5.0, 5.0);
+		mo.KSpiritInit(self);
+	mo = SpawnMissileAngle(KoraxSpirit6, 60.0 * 5.0, 5.0 * 35.0);
 	if (mo)
-		mo->KSpiritInit(self);
+		mo.KSpiritInit(self);
 
 	StartACS(255, 0, &args[0], self, NULL, 0);	// Death script
 }
@@ -475,7 +475,7 @@ void Actor::A_KSpiritSeeker(float thresh, float turnMax)
 	{
 		return;
 	}
-	dir = P_FaceMobj(this, tempTarget, &delta);
+	dir = FaceActor(*tempTarget, &delta);
 	if (delta > thresh)
 	{
 		delta /= 2.0;
@@ -626,6 +626,9 @@ void Actor::A_KBolt(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.16  2002/02/22 18:00:22  dj_jl
 //  A lots of the renaming, beautification.
 //

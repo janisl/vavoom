@@ -87,7 +87,7 @@ void Actor::A_PainShootSkull(float angle)
 		return;
 	}
 
-	newmobj->target = target;
+	newmobj->Enemy = Enemy;
 	newmobj->A_SkullAttack();
 }
 
@@ -101,7 +101,7 @@ void Actor::A_PainShootSkull(float angle)
 
 void Actor::A_PainAttack(void)
 {
-	if (!target)
+	if (!Enemy)
 		return;
 
 	A_FaceTarget();
@@ -141,6 +141,9 @@ void Actor::A_PainDie(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/26 17:49:47  dj_jl
+//  no message
+//
 //  Revision 1.15  2002/02/14 19:20:57  dj_jl
 //  Renamed Entity properties to new naming style
 //

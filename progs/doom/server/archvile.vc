@@ -104,7 +104,7 @@ void Actor::A_VileChase(void)
 	int bx;
 	int by;
 
-	mobj_t *temp;
+	Actor temp;
 
 	if (MoveDir != DI_NODIR)
 	{
@@ -127,10 +127,10 @@ void Actor::A_VileChase(void)
 				if (!P_BlockThingsIterator(bx, by, PIT_VileCheck))
 				{
 					// got one!
-					temp = target;
-					target = &CorpseHit;
+					temp = Enemy;
+					Enemy = CorpseHit;
 					A_FaceTarget();
-					target = temp;
+					Enemy = temp;
 
 					SetState(S_VILE_HEAL1);
 					CorpseHit.PlaySound('Slop', CHAN_BODY);
@@ -144,7 +144,7 @@ void Actor::A_VileChase(void)
 					CorpseHit.bCorpse = false;
 #endif
 					CorpseHit.Health = CorpseHit.SpawnHealth;
-					CorpseHit.target = NULL;
+					CorpseHit.Enemy = none;
 
 					return;
 				}
@@ -180,17 +180,17 @@ void Actor::A_VileTarget(void)
 {
 	mobj_t *fog;
 
-	if (!target)
+	if (!Enemy)
 		return;
 
 	A_FaceTarget();
 
-	fog = P_SpawnMobj(target->Origin.x, target->Origin.x,
-		target->Origin.z, ArchvileFire);
+	fog = P_SpawnMobj(Enemy.Origin.x, Enemy.Origin.x,
+		Enemy.Origin.z, ArchvileFire);
 
-	tracer = fog;
-	fog->target = this;
-	fog->tracer = target;
+	Owner = *fog;//FIXME!!!!!!!
+	fog->Owner = self;
+	fog->Enemy = Enemy;
 	Actor(*fog).A_Fire();
 }
 
@@ -206,26 +206,26 @@ void Actor::A_VileAttack(void)
 {
 	mobj_t *fire;
 
-	if (!target)
+	if (!Enemy)
 		return;
 
 	A_FaceTarget();
 
-	if (!P_CheckSight(self, *target))
+	if (!P_CheckSight(self, Enemy))
 		return;
 
 	PlaySound('BarrelExplode', CHAN_WEAPON);
-	target->Damage(self, self, 20);
-	target->Velocity.z = 1000.0 / target->Mass * 35.0;
+	Enemy.Damage(self, self, 20);
+	Enemy.Velocity.z = 1000.0 / Enemy.Mass * 35.0;
 
-	fire = tracer;
+	fire = &Owner;//FIXME!!!!!!
 
 	if (!fire)
 		return;
 
 	// move the fire between the vile and the player
-	fire->Origin.x = target->Origin.x - 24.0 * cos(Angles.yaw);
-	fire->Origin.y = target->Origin.y - 24.0 * sin(Angles.yaw);
+	fire->Origin.x = Enemy.Origin.x - 24.0 * cos(Angles.yaw);
+	fire->Origin.y = Enemy.Origin.y - 24.0 * sin(Angles.yaw);
 	P_RadiusAttack(fire, this, 70, 0, 0);
 }
 
@@ -253,20 +253,17 @@ void Actor::A_StartFire(void)
 
 void Actor::A_Fire(void)
 {
-	mobj_t *dest;
-
-	dest = tracer;
-	if (!dest)
+	if (!Enemy)
 		return;
 
 	// don't move it if the vile lost sight
-	if (!P_CheckSight(*target, *dest))
+	if (!P_CheckSight(Owner, Enemy))
 		return;
 
 	P_UnsetThingPosition(self);
-	Origin.x = dest->Origin.x + 24.0 * cos(dest->Angles.yaw);
-	Origin.y = dest->Origin.y + 24.0 * sin(dest->Angles.yaw);
-	Origin.z = dest->Origin.z;
+	Origin.x = Enemy.Origin.x + 24.0 * cos(Enemy.Angles.yaw);
+	Origin.y = Enemy.Origin.y + 24.0 * sin(Enemy.Angles.yaw);
+	Origin.z = Enemy.Origin.z;
 	P_SetThingPosition(self);
 }
 
@@ -326,6 +323,9 @@ void Actor::A_FireCrackle(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/26 17:49:47  dj_jl
+//  no message
+//
 //  Revision 1.18  2002/02/22 18:00:06  dj_jl
 //  A lots of the renaming, beautification.
 //

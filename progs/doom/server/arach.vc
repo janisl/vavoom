@@ -61,13 +61,13 @@ void Actor::A_BabyMetal(void)
 
 void Actor::A_BspiAttack(void)
 {
-	if (!target)
+	if (!Enemy)
 		return;
 
 	A_FaceTarget();
 
 	// launch a missile
-	SpawnMissile(this, target, ArachnotronPlasma);
+	SpawnMissile(this, &Enemy, ArachnotronPlasma);
 }
 
 #else
@@ -87,6 +87,9 @@ void Actor::A_BspiAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/02/26 17:49:47  dj_jl
+//  no message
+//
 //  Revision 1.10  2002/02/22 18:00:06  dj_jl
 //  A lots of the renaming, beautification.
 //

@@ -47,24 +47,27 @@ void Actor::A_HeadAttack(void)
 {
 	int damage;
 
-	if (!target)
+	if (!Enemy)
 		return;
 
 	A_FaceTarget();
 	if (CheckMeleeRange())
 	{
 		damage = (P_Random() % 6 + 1) * 10;
-		target->Damage(self, self, damage);
+		Enemy.Damage(self, self, damage);
 		return;
 	}
 
 	// launch a missile
-	SpawnMissile(this, target, CacodemonMissile);
+	SpawnMissile(this, &Enemy, CacodemonMissile);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/02/26 17:49:47  dj_jl
+//  no message
+//
 //  Revision 1.9  2002/01/25 18:04:33  dj_jl
 //  Many global functions made Actor functions
 //

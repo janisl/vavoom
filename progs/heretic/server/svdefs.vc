@@ -251,9 +251,10 @@ class Actor:Entity
 	int SpawnHealth;
 	int GibsHealth;
 
-	// Thing being chased/attacked (or NULL),
-	// also the originator for missiles.
-	mobj_t *target;
+	// Thing being chased/attacked (or NULL).
+	Actor Enemy;
+	// The originator for missiles.
+	Actor Owner;
 
 	int Special1;	// Special info
 	int Special2;	// Special info
@@ -301,9 +302,26 @@ class Actor:Entity
 	void Think(void);
 	void Archive(void);
 	void Unarchive(void);
-	void OnMapSpawn(mthing_t *mthing);
 
+	int GetFloorType(void);
+	void SetOrigin2(TVec origin);
+	void OnMapSpawn(mthing_t *mthing);
+	int FaceActor(Actor target, float * delta);
+	void ExplodeMissile(void);
+	void Kill(Actor source);
+	void MinotaurSlam(Actor Other);
+	void TouchWhirlwind(Actor Other);
+	boolean ChickenMorphPlayer(void);
+	boolean ChickenMorph(void);
+	boolean AutoUseChaosDevice(void);
+	void AutoUseHealth(int saveHealth);
 	void Damage(Actor inflictor, Actor source, int damage);
+	void SpawnBloodSplatter(TVec org);
+	void SpawnRipperBlood(void);
+	int HitFloorEffect(void);
+	void FloorBounceMissile(void);
+	void Thrust(float angle, float move);
+	void NightmareRespawn(void);
 
 	// Physics
 	void SlideMove(void);
@@ -809,6 +827,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.22  2002/02/22 18:00:19  dj_jl
 //  A lots of the renaming, beautification.
 //

@@ -317,7 +317,34 @@ class Actor:Entity
 
 	void Think(void);
 
+	int GetFloorType(void);
+	void SetOrigin2(TVec origin);
+	void OnMapSpawn(mthing_t *mthing);
+	//void Remove(void);
+	int HitFloorType(void);
+	void FloorBounceMissile(void);
+	void Thrust(float angle, float move);
+	int FaceActor(Actor target, float *delta);
+	void MonsterFallingDamage(void);
+	Actor ActiveMinotaur(void);
+	void Kill(Actor source);
+	void MinotaurSlam(Actor source);
+	boolean MorphPlayer(void);
+	boolean MorphMonster(void);
+	void AutoUseHealth(int saveHealth);
+
 	void Damage(Actor inflictor, Actor source, int damage);
+	void FallingDamage(void);
+	void PoisonDamage(Actor source, int damage, boolean playPainSound);
+	void PoisonPlayer(Actor poisoner, int poison);
+	void SpawnBloodSplatter(TVec org);
+	void SpawnBloodSplatter2(TVec org);
+	void SpawnRipperBlood(void);
+	boolean SinkIntoFloor(void);
+	boolean RaiseFromFloor(void);
+	void SpawnDirt(float radius);
+	void HideSpecial(void);
+	void SetDormantArtifact(void);
 
 	boolean Activate(void);
 	boolean Deactivate(void);
@@ -343,7 +370,21 @@ class Actor:Entity
 
 	void Archive(void);
 	void Unarchive(void);
-	void OnMapSpawn(mthing_t *mthing);
+
+	boolean CheckMissileSpawn(void);
+	Actor SpawnMissile(Actor dest, classid type);
+	Actor SpawnMissileXYZ(TVec org, Actor dest, classid type);
+	Actor SpawnMissileAngle(classid type, float angle, float momz);
+	Actor SpawnMissileAngleSpeed(classid type, float angle, float momz,
+		float speed);
+	Actor SpawnKoraxMissile(TVec org, Actor dest, classid type);
+	boolean SeekerMissile(float thresh, float turnMax);
+	Actor SpawnPlayerMissile(classid type);
+	Actor SpawnPlayerMissileAngle(classid type, float angle);
+	Actor SpawnPlayerMissileAngleXYZ(TVec org, classid type, float angle);
+	boolean ExplodeMissile(void);
+
+	boolean HeightClip(void);
 
 	boolean CheckMeleeRange(void);
 	boolean CheckMeleeRange2(void);
@@ -1009,6 +1050,9 @@ name door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/02/26 17:49:49  dj_jl
+//  no message
+//
 //  Revision 1.22  2002/02/22 18:00:24  dj_jl
 //  A lots of the renaming, beautification.
 //

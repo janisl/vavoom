@@ -632,7 +632,9 @@ void IM_InitSingleStats(void)
 	interstate = 0;
 	skipintermission = 0;
 	sp_state = 1;
-	cnt_kills[0] = cnt_items[0] = cnt_secret[0] = -1;
+	cnt_kills[0] = -1;
+	cnt_items[0] = -1;
+	cnt_secret[0] = -1;
 	cnt_time = -1;
 	cnt_pause = 1.0;
 }
@@ -786,7 +788,10 @@ void IM_InitCooperativeStats(void)
 		if (!scores[i].active)
 			continue;
 
-		cnt_kills[i] = cnt_items[i] = cnt_secret[i] = cnt_frags[i] = 0;
+		cnt_kills[i] = 0;
+		cnt_items[i] = 0;
+		cnt_secret[i] = 0;
+		cnt_frags[i] = 0;
 	}
 }
 
@@ -1733,6 +1738,9 @@ void IM_Start(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/02/26 17:49:47  dj_jl
+//  no message
+//
 //  Revision 1.6  2002/01/11 18:19:40  dj_jl
 //  Started to use names in progs
 //

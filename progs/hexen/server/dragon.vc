@@ -60,7 +60,7 @@ void Actor::DragonSeek(float thresh, float turnMax)
 	{
 		return;
 	}
-	dir = P_FaceMobj(this, tempTarget, &delta);
+	dir = FaceActor(*tempTarget, &delta);
 	if (delta > thresh)
 	{
 		delta /= 2.0;
@@ -113,7 +113,7 @@ void Actor::DragonSeek(float thresh, float turnMax)
 			}
 			else if (P_Random() < 128 && CheckMissileRange())
 			{
-				SpawnMissile(this, tempTarget, DragonMissile);
+				SpawnMissile(*tempTarget, DragonMissile);
 				PlaySound('DragonAttack', CHAN_WEAPON);
 			}
 			Enemy = oldEnemy;
@@ -255,7 +255,7 @@ void Actor::A_DragonFlap(void)
 
 void Actor::A_DragonAttack(void)
 {
-	SpawnMissile(this, &Enemy, DragonMissile);
+	SpawnMissile(Enemy, DragonMissile);
 }
 
 //============================================================================
@@ -317,6 +317,9 @@ void Actor::A_DragonFX2(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.19  2002/02/22 18:00:21  dj_jl
 //  A lots of the renaming, beautification.
 //

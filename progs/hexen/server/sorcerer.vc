@@ -237,27 +237,26 @@ void Actor::A_SorcUpdateBallAngle(void)
 
 void Actor::A_SorcOffense1(void)
 {
-	mobj_t *mo;
+	Actor mo;
 	float ang1, ang2;
-	mobj_t *parent = &Owner;
 
 	ang1 = AngleMod360(Angles.yaw + 70.0);
 	ang2 = AngleMod360(Angles.yaw - 70.0);
-	mo = SpawnMissileAngle(parent, SorcererFX1, ang1, 0.0);
+	mo = Owner.SpawnMissileAngle(SorcererFX1, ang1, 0.0);
 	if (mo)
 	{
-		mo->Owner = *parent;
-		mo->SpecialMobj1 = &parent->Enemy;
-		mo->Args[4] = BOUNCE_TIME_UNIT;
-		mo->Args[3] = 15;	// Bounce time in seconds
+		mo.Owner = Owner;
+		mo.SpecialMobj1 = &Owner.Enemy;
+		mo.Args[4] = BOUNCE_TIME_UNIT;
+		mo.Args[3] = 15;	// Bounce time in seconds
 	}
-	mo = SpawnMissileAngle(parent, SorcererFX1, ang2, 0.0);
+	mo = Owner.SpawnMissileAngle(SorcererFX1, ang2, 0.0);
 	if (mo)
 	{
-		mo->Owner = *parent;
-		mo->SpecialMobj1 = &parent->Enemy;
-		mo->Args[4] = BOUNCE_TIME_UNIT;
-		mo->Args[3] = 15;	// Bounce time in seconds
+		mo.Owner = Owner;
+		mo.SpecialMobj1 = &Owner.Enemy;
+		mo.Args[4] = BOUNCE_TIME_UNIT;
+		mo.Args[3] = 15;	// Bounce time in seconds
 	}
 }
 
@@ -272,25 +271,23 @@ void Actor::A_SorcOffense1(void)
 void Actor::A_SorcOffense2(void)
 {
 	float ang1;
-	mobj_t *mo;
+	Actor mo;
 	float delta, index;
-	mobj_t *parent = &Owner;
-	mobj_t *dest = &parent->Enemy;
 	float dist;
 
 	index = itof(Args[4]) * 360.0 / 256.0;
 	Args[4] = (Args[4] + 15) & 0xff;
 	delta = sin(index) * SORCFX4_SPREAD_ANGLE;
 	ang1 = AngleMod360(Angles.yaw + delta);
-	mo = SpawnMissileAngle(parent, SorcererFX4, ang1, 0.0);
+	mo = Owner.SpawnMissileAngle(SorcererFX4, ang1, 0.0);
 	if (mo)
 	{
-		mo->Special2 = 35 * 5 / 2;	// 5 seconds
-		dist = MobjDist2(*dest, *mo);
-		dist = dist / mo->Speed;
+		mo.Special2 = 35 * 5 / 2;	// 5 seconds
+		dist = MobjDist2(Owner.Enemy, mo);
+		dist = dist / mo.Speed;
 		if (dist < 1.0)
 			dist = 1.0;
-		mo->Velocity.z = (dest->Origin.z - mo->Origin.z) / dist;
+		mo.Velocity.z = (Owner.Enemy.Origin.z - mo.Origin.z) / dist;
 	}
 }
 
@@ -304,51 +301,50 @@ void Actor::A_SorcOffense2(void)
 
 void Actor::A_CastSorcererSpell(void)
 {
-	mobj_t *mo;
-	classid spell = Class;
+	Actor mo;
 	float ang1, ang2;
 	float z;
-	mobj_t *parent = &Owner;
 
 	PlayFullVolumeSound('SorcererSpellCast', CHAN_VOICE);
 
 	// Put sorcerer into throw spell animation
-	if (parent->Health > 0)
-		parent->SetStateNF(S_SORC_ATTACK4);
+	if (Owner.Health > 0)
+		Owner.SetStateNF(S_SORC_ATTACK4);
 
-	switch (spell)
+	switch (Class)
 	{
 	case SorcererBall1:	// Offensive
 		A_SorcOffense1();
 		break;
 	case SorcererBall2:	// Defensive
-		z = parent->Origin.z - parent->FloorClip + SORC_DEFENSE_HEIGHT;
-		mo = P_SpawnMobj(Origin.x, Origin.y, z, SorcererFX2);
-		parent->bInvulnerable = true;
-		parent->bReflective = true;
-		parent->Args[0] = SORC_DEFENSE_TIME;
+		z = Owner.Origin.z - Owner.FloorClip + SORC_DEFENSE_HEIGHT;
+		mo = SpawnActor(vector(Origin.x, Origin.y, z), SorcererFX2);
+		Owner.bInvulnerable = true;
+		Owner.bReflective = true;
+		Owner.Args[0] = SORC_DEFENSE_TIME;
 		if (mo)
-			mo->Owner = *parent;
+			mo.Owner = Owner;
 		break;
 	case SorcererBall3:	// Reinforcements
 		ang1 = AngleMod360(Angles.yaw - 45.0);
 		ang2 = AngleMod360(Angles.yaw + 45.0);
 		if (Health < (SpawnHealth / 3))
-		{	// Spawn 2 at a time
-			mo = SpawnMissileAngle(parent, SorcererFX3, ang1, 4.0);
+		{
+			// Spawn 2 at a time
+			mo = Owner.SpawnMissileAngle(SorcererFX3, ang1, 4.0);
 			if (mo)
-				mo->Owner = *parent;
-			mo = SpawnMissileAngle(parent, SorcererFX3, ang2, 4.0);
+				mo.Owner = Owner;
+			mo = Owner.SpawnMissileAngle(SorcererFX3, ang2, 4.0);
 			if (mo)
-				mo->Owner = *parent;
+				mo.Owner = Owner;
 		}
 		else
 		{
 			if (P_Random() < 128)
 				ang1 = ang2;
-			mo = SpawnMissileAngle(parent, SorcererFX3, ang1, 4.0);
+			mo = Owner.SpawnMissileAngle(SorcererFX3, ang1, 4.0);
 			if (mo)
-				mo->Owner = *parent;
+				mo.Owner = Owner;
 		}
 		break;
 	default:
@@ -610,7 +606,7 @@ void Actor::A_BounceCheck(void)
 void Actor::A_SorcFX1Seek(void)
 {
 	A_BounceCheck();
-	SeekerMissile(this, 2.0, 6.0);
+	SeekerMissile(2.0, 6.0);
 }
 
 //============================================================================
@@ -769,6 +765,9 @@ void Actor::A_SorcFX4Check(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/02/26 17:49:49  dj_jl
+//  no message
+//
 //  Revision 1.20  2002/02/22 18:00:23  dj_jl
 //  A lots of the renaming, beautification.
 //

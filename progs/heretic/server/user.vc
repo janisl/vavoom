@@ -46,7 +46,6 @@ void PlayerUseArtifact(player_t * player, int arti);
 void PlayerNextArtifact(player_t * player);
 void PlayerRemoveArtifact(player_t * player, int slot);
 
-int P_HitFloor(mobj_t * thing);
 boolean P_Teleport(mobj_t * thing, float x, float y, float angle);
 boolean G_CheckSpot(int playernum, mthing_t * mthing);
 void P_SpawnPlayer(mthing_t * mthing);
@@ -432,14 +431,14 @@ void PlayerInSpecialSector(player_t * player)
 		if (!(level->tictime & 15))
 		{
 			player->mo->Damage(*LavaInflictor, none, 5);
-			P_HitFloor(player->mo);
+			player->mo->HitFloorEffect();
 		}
 		break;
 	case 16:	// Damage_LavaHefty
 		if (!(level->tictime & 15))
 		{
 			player->mo->Damage(*LavaInflictor, none, 8);
-			P_HitFloor(player->mo);
+			player->mo->HitFloorEffect();
 		}
 		break;
 	case 4:	// Scroll_EastLavaDamage
@@ -447,7 +446,7 @@ void PlayerInSpecialSector(player_t * player)
 		if (!(level->tictime & 15))
 		{
 			player->mo->Damage(*LavaInflictor, none, 5);
-			P_HitFloor(player->mo);
+			player->mo->HitFloorEffect();
 		}
 		break;
 	case 9:	// SecretArea
@@ -1397,6 +1396,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.25  2002/02/22 18:00:19  dj_jl
 //  A lots of the renaming, beautification.
 //

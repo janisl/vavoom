@@ -49,8 +49,6 @@ boolean EV_SilentLineTeleport(line_t *line, int side, Actor *thing, int id,
 void InitLava(void);
 void CloseWeapons(void);
 
-void P_ThrustMobj(mobj_t * mo, float angle, float move);
-
 // DATA DECLARATIONS -------------------------------------------------------
 
 //
@@ -270,7 +268,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 72: // Thrust Mobj
 		if (!side) // Only thrust on side 0
 		{
-			P_ThrustMobj(mo, itof(args[0]) * (90.0 / 64.0), itof(args[1]));
+			mo->Thrust(itof(args[0]) * (90.0 / 64.0), itof(args[1]));
 			buttonSuccess = 1;
 		}
 		break;
@@ -831,6 +829,9 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.15  2002/02/22 18:00:18  dj_jl
 //  A lots of the renaming, beautification.
 //

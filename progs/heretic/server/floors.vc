@@ -1003,7 +1003,8 @@ int EV_BuildPillar(line_t * line, int *args, boolean crush)
 		Pillar.sector = sec;
 		if (!args[2])
 		{
-			Pillar.ceilingSpeed = Pillar.floorSpeed = itof(args[1]) * 4.0;
+			Pillar.floorSpeed = itof(args[1]) * 4.0;
+			Pillar.ceilingSpeed = Pillar.floorSpeed;
 		}
 		else if (newHeight - sec->floorheight >
 			sec->ceilingheight - newHeight)
@@ -1138,7 +1139,7 @@ void Think(void)
 		if (scale <= 0.0)
 		{
 			// Remove
-			sector->floorheight = originalHeight;
+			sector->floor.dist = originalHeight;
 			P_ChangeSector(sector, true);
 			sector->SpecialData = none;
 			TagFinished(sector->tag);
@@ -1158,7 +1159,7 @@ void Think(void)
 		break;
 	}
 	accumulator += accSpeed * frametime;
-	sector->floorheight = originalHeight +
+	sector->floor.dist = originalHeight +
 		FloatBobOffsets[ftoi(accumulator) & 63] * scale;
 	P_ChangeSector(sector, true);
 }
@@ -1193,7 +1194,7 @@ boolean EV_StartFloorWaggle(int tag, int height, int speed, int offset,
 		Waggle = NewSpecialThinker(FloorWaggle);
 		sector->SpecialData = Waggle;
 		Waggle.sector = sector;
-		Waggle.originalHeight = sector->floorheight;
+		Waggle.originalHeight = sector->floor.dist;
 		Waggle.accumulator = itof(offset);
 		Waggle.accSpeed = itof(speed) / 2.0;
 		Waggle.scale = 0.0;
@@ -1209,6 +1210,9 @@ boolean EV_StartFloorWaggle(int tag, int height, int speed, int offset,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.10  2002/01/15 08:12:26  dj_jl
 //  Replaced some pointers with references
 //

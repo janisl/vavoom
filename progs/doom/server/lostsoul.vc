@@ -47,19 +47,22 @@
 
 void Actor::A_SkullAttack(void)
 {
-	if (!target)
+	if (!Enemy)
 		return;
 
 	bSkullFly = true;
 
 	PlaySound(AttackSound, CHAN_VOICE);
 	A_FaceTarget();
-	Velocity = Normalize(MobjCenter((*target)) - Origin) * SKULLSPEED;
+	Velocity = Normalize(MobjCenter(Enemy) - Origin) * SKULLSPEED;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/26 17:49:47  dj_jl
+//  no message
+//
 //  Revision 1.13  2002/02/22 18:00:08  dj_jl
 //  A lots of the renaming, beautification.
 //

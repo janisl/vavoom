@@ -296,8 +296,9 @@ class Actor:Entity
 	name ClassName;
 
 	// Thing being chased/attacked (or NULL),
+	Actor Enemy;
 	// also the originator for missiles.
-	mobj_t *target;
+	Actor Owner;
 
 	int MissileDamage;	// For missiles
 
@@ -329,8 +330,6 @@ class Actor:Entity
 	boolean Touch(MapObject Other);
 
 	void Think(void);
-	void Archive(void);
-	void Unarchive(void);
 	void OnMapSpawn(mthing_t *mthing);
 
 	void Damage(Actor inflictor, Actor source, int damage);
@@ -560,6 +559,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/02/26 17:49:49  dj_jl
+//  no message
+//
 //  Revision 1.21  2002/02/22 18:00:26  dj_jl
 //  A lots of the renaming, beautification.
 //

@@ -183,7 +183,7 @@ boolean EV_ThingProjectile(int *args, boolean gravity)
 			newMobj->bNoGravity = false;
 			newMobj->bLowGravity = true;
 		}
-		if (CheckMissileSpawn(newMobj))
+		if (newMobj->CheckMissileSpawn())
 		{
 			success = true;
 		}
@@ -220,7 +220,7 @@ boolean EV_ThingSpawn(int *args, boolean fog)
 		if (newMobj->bFloatBob)
 		{
 			newMobj->Origin.z = mobj->Origin.z - mobj->FloorZ;
-			SetOrigin(newMobj, newMobj->Origin);
+			newMobj->SetOrigin2(newMobj->Origin);
 		}
 		if (P_TestMobjLocation(newMobj) == false)
 		{
@@ -560,6 +560,9 @@ int ThingCount(int type, int tid)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/02/26 17:49:49  dj_jl
+//  no message
+//
 //  Revision 1.22  2002/02/22 18:00:24  dj_jl
 //  A lots of the renaming, beautification.
 //

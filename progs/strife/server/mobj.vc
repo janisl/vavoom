@@ -443,7 +443,7 @@ mobj_t *SpawnMissile(mobj_t * source, mobj_t * dest, classid type)
 	if (th->SightSound)
 		th->PlaySound(th->SightSound, CHAN_VOICE);
 
-	th->target = source;	// where it came from
+	th->Owner = *source;	// where it came from
 
 	dir = dest->Origin - source->Origin;
 	// fuzzy player
@@ -668,7 +668,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 	{
 		// if not intent on another player,
 		// chase after this one
-		target = &source;
+		Enemy = source;
 		Threshold = BASETHRESHOLD;
 		if (StateNum == SpawnState && SeeState != S_NULL)
 		{
@@ -934,6 +934,9 @@ void P_ThrustMobj(mobj_t * mo, float angle, float move)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.33  2002/02/26 17:49:49  dj_jl
+//  no message
+//
 //  Revision 1.32  2002/02/22 18:00:25  dj_jl
 //  A lots of the renaming, beautification.
 //

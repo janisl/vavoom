@@ -1131,7 +1131,7 @@ void Weapon::A_FirePhoenixPL2(void)
 	z = pmo->Origin.z + 26.0 - sin(Player->mo->Angles.pitch);
 	z -= pmo->FloorClip;
 	mo = P_SpawnMobj(x, y, z, PhoenixFX2);
-	mo->target = pmo;
+	mo->Owner = *pmo;
 	mo->Angles.yaw = pmo->Angles.yaw;
 	mo->Angles.pitch = pmo->Angles.pitch;
 	AngleVector(&mo->Angles, &dir);
@@ -1178,7 +1178,7 @@ void A_FireMacePL1B(mobj_t * actor)
 	ball->Velocity.z =
 		(2.0 + 173.0 * -tan(player->mo->Angles.pitch) / 32.0) * 35.0;
 	angle = pmo->Angles.yaw;
-	ball->target = pmo;
+	ball->Owner = *pmo;
 	ball->Angles.yaw = angle;
 	ball->Origin.z += 173.0 * -tan(player->mo->Angles.pitch) / 16.0;
 	ball->Velocity.x = pmo->Velocity.x / 2.0 + ball->Speed * cos(angle);
@@ -1369,7 +1369,7 @@ void Actor::A_SpawnRippers(void)
 	{
 		ripper = P_SpawnMobj(Origin.x, Origin.y, Origin.z, Ripper);
 		angle = itof(i) * 45.0;
-		ripper->target = target;
+		ripper->Owner = Owner;
 		ripper->Angles.yaw = angle;
 		ripper->Velocity.x = ripper->Speed * cos(angle);
 		ripper->Velocity.y = ripper->Speed * sin(angle);
@@ -1497,7 +1497,7 @@ void Actor::A_SkullRodStorm(void)
 	case 3: rain_type = RainPlayer4; break;
 	}
 	mo = P_SpawnMobj(x, y, ONCEILINGZ, rain_type);
-	mo->target = target;
+	mo->Owner = Owner;
 	mo->Velocity.x = 0.00001;	// Force collision detection
 	mo->Velocity.z = -mo->Speed;
 	mo->Special2 = Special2;	// Transfer player number
@@ -1523,7 +1523,7 @@ void Actor::A_RainImpact(void)
 	}
 	else if (P_Random() < 40)
 	{
-		P_HitFloor(this);
+		HitFloorEffect();
 	}
 }
 
@@ -1619,7 +1619,7 @@ void Actor::A_MacePL1Check(void)
 
 void Actor::A_MaceBallImpact(void)
 {
-	if ((Origin.z <= FloorZ) && (P_HitFloor(this) != FLOOR_SOLID))
+	if ((Origin.z <= FloorZ) && (HitFloorEffect() != FLOOR_SOLID))
 	{
 		// Landed in some sort of liquid
 		P_RemoveMobj(this);
@@ -1654,7 +1654,7 @@ void Actor::A_MaceBallImpact2(void)
 	mobj_t *tiny;
 	float angle;
 
-	if ((Origin.z <= FloorZ) && (P_HitFloor(this) != FLOOR_SOLID))
+	if ((Origin.z <= FloorZ) && (HitFloorEffect() != FLOOR_SOLID))
 	{
 		// Landed in some sort of liquid
 		P_RemoveMobj(this);
@@ -1676,7 +1676,7 @@ void Actor::A_MaceBallImpact2(void)
 
 		tiny = P_SpawnMobj(Origin.x, Origin.y, Origin.z, MaceFX3);
 		angle = AngleMod360(Angles.yaw + 90.0);
-		tiny->target = target;
+		tiny->Owner = Owner;
 		tiny->Angles.yaw = angle;
 		tiny->Velocity.x =
 			Velocity.x / 2.0 + (Velocity.z - 35.0) * cos(angle);
@@ -1687,7 +1687,7 @@ void Actor::A_MaceBallImpact2(void)
 
 		tiny = P_SpawnMobj(Origin.x, Origin.y, Origin.z, MaceFX3);
 		angle = AngleMod360(Angles.yaw - 90.0);
-		tiny->target = target;
+		tiny->Owner = Owner;
 		tiny->Angles.yaw = angle;
 		tiny->Velocity.x =
 			Velocity.x / 2.0 + (Velocity.z - 35.0) * cos(angle);
@@ -1712,7 +1712,7 @@ void Actor::A_DeathBallImpact(void)
 	int newAngle;
 	TAVec angles;
 
-	if ((Origin.z <= FloorZ) && (P_HitFloor(this) != FLOOR_SOLID))
+	if ((Origin.z <= FloorZ) && (HitFloorEffect() != FLOOR_SOLID))
 	{
 		// Landed in some sort of liquid
 		P_RemoveMobj(this);
@@ -1747,7 +1747,7 @@ void Actor::A_DeathBallImpact(void)
 			for (i = 0; i < 16; i++)
 			{
 				AimLineAttack(this, &angles, 10.0 * 64.0);
-				if (linetarget && target != linetarget)
+				if (linetarget && Owner != *linetarget)
 				{
 					SpecialMobj1 = linetarget;
 					angle = atan2(linetarget->Origin.y - Origin.y,
@@ -1778,6 +1778,9 @@ void Actor::A_DeathBallImpact(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.19  2002/02/22 18:00:19  dj_jl
 //  A lots of the renaming, beautification.
 //

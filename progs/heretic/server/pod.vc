@@ -66,7 +66,7 @@ void Actor::A_MakePod(void)
 		return;
 	}
 	mo->SetState(S_POD_GROW1);
-	P_ThrustMobj(mo, Random() * 360.0, 4.5);
+	mo->Thrust(Random() * 360.0, 4.5);
 	mo->PlaySound('PodNew', CHAN_VOICE);
 	Special1++;	// Increment generated pod count
 	mo->SpecialMobj2 = this;	// Link the generator to the pod
@@ -94,7 +94,7 @@ void Actor::A_PodPain(void)
 	for (i = 0; i < count; i++)
 	{
 		goo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + 48.0, PodGoo);
-		goo->target = this;
+		goo->Owner = self;
 		goo->Velocity.x = (Random() - Random()) * 2.0 * 35.0;
 		goo->Velocity.y = (Random() - Random()) * 2.0 * 35.0;
 		goo->Velocity.z = (0.5 + Random() * 2.0) * 35.0;
@@ -124,6 +124,9 @@ void Actor::A_RemovePod(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.14  2002/02/22 18:00:18  dj_jl
 //  A lots of the renaming, beautification.
 //

@@ -73,7 +73,7 @@ void Actor::A_ThrustInitUp(void)
 
 void Actor::A_ThrustInitDn(void)
 {
-	mobj_t *mo;
+	Actor dirt;
 
 	Special2 = 5;	// Raise speed
 	Args[0] = 0;	// Mark as down
@@ -83,8 +83,8 @@ void Actor::A_ThrustInitDn(void)
 	bFloorClip = true;
 	//Flags2 = 0;
 	Translucency = 100;
-	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, DirtClump);
-	SpecialMobj1 = mo;
+	dirt = SpawnActor(Origin, DirtClump);
+	SpecialMobj1 = &dirt;
 }
 
 //==========================================================================
@@ -95,7 +95,7 @@ void Actor::A_ThrustInitDn(void)
 
 void Actor::A_ThrustRaise(void)
 {
-	if (RaiseMobj(this))
+	if (RaiseFromFloor())
 	{
 		// Reached it's target height
 		Args[0] = 1;
@@ -114,7 +114,7 @@ void Actor::A_ThrustRaise(void)
 
 	// Spawn some dirt
 	if (P_Random() < 40)
-		SpawnDirt(this, Radius);
+		SpawnDirt(Radius);
 	Special2++;	// Increase raise speed
 }
 
@@ -126,7 +126,7 @@ void Actor::A_ThrustRaise(void)
 
 void Actor::A_ThrustLower(void)
 {
-	if (SinkMobj(this))
+	if (SinkIntoFloor())
 	{
 		Args[0] = 0;
 		if (Args[1])
@@ -162,6 +162,9 @@ void Actor::A_ThrustImpale(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/02/26 17:49:49  dj_jl
+//  no message
+//
 //  Revision 1.12  2002/02/22 18:00:24  dj_jl
 //  A lots of the renaming, beautification.
 //

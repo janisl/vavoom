@@ -65,7 +65,7 @@ void Actor::A_CentaurAttack2(void)
 	{
 		return;
 	}
-	SpawnMissile(this, &Enemy, CentaurMissile);
+	SpawnMissile(Enemy, CentaurMissile);
 	PlaySound('CentaurLeaderAttack', CHAN_WEAPON);
 }
 
@@ -171,6 +171,9 @@ void Actor::A_CheckFloor(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.18  2002/02/22 18:00:21  dj_jl
 //  A lots of the renaming, beautification.
 //

@@ -44,18 +44,13 @@ void ArtiBlastRadius(player_t * player);
 void PlayerUseArtifact(player_t * player, int arti);
 void PlayerNextArtifact(player_t * player);
 void PlayerRemoveArtifact(player_t * player, int slot);
-void P_PoisonDamage(player_t * player, mobj_t * source, int damage,
-
-	boolean playPainSound);
 void P_RemoveMobjFromTIDList(mobj_t * mobj);
 boolean P_TeleportMove(mobj_t * thing, float x, float y);
 boolean P_Teleport(mobj_t * thing, float x, float y, float angle,
-
 	boolean useFog);
 boolean G_CheckSpot(int playernum, mthing_t * mthing);
 boolean P_UsePuzzleItem(player_t * player, int itemType);
 void P_UseLines(player_t * player);
-int P_GetThingFloorType(mobj_t * thing);
 
 mobj_t *LavaInflictor;
 
@@ -124,7 +119,7 @@ void MovePlayer(player_t * player)
 	}
 	if (!(player->Powers[pw_flight]
 			&& !(player->mo->Origin.z <= player->mo->FloorZ))
-		&& P_GetThingFloorType(player->mo) == FLOOR_ICE)	// Friction_Low
+		&& player->mo->GetFloorType() == FLOOR_ICE)	// Friction_Low
 	{
 		forward *= 0.5;
 		side *= 0.5;
@@ -352,7 +347,7 @@ void ThrustPlayer(player_t * player, float angle, float move)
 {
 	if (!(player->Powers[pw_flight]
 			&& !(player->mo->Origin.z <= player->mo->FloorZ))
-		&& P_GetThingFloorType(player->mo) == FLOOR_ICE)	// Friction_Low
+		&& player->mo->GetFloorType() == FLOOR_ICE)	// Friction_Low
 	{
 		move *= 0.5;
 	}
@@ -794,7 +789,7 @@ void PlayerThink(player_t * player)
 	{
 		PlayerInSpecialSector(player);
 	}
-	if ((floorType = P_GetThingFloorType(player->mo)) != FLOOR_SOLID)
+	if ((floorType = player->mo->GetFloorType()) != FLOOR_SOLID)
 	{
 		PlayerOnSpecialFlat(player, floorType);
 	}
@@ -961,7 +956,7 @@ void PlayerThink(player_t * player)
 		{
 			player->PoisonCount = 0;
 		}
-		P_PoisonDamage(player, player->Poisoner, 1, true);
+		player->mo->PoisonDamage(*player->Poisoner, 1, true);
 	}
 
 	if (player->DamageCount)
@@ -1978,6 +1973,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/02/26 17:49:49  dj_jl
+//  no message
+//
 //  Revision 1.27  2002/02/22 18:00:25  dj_jl
 //  A lots of the renaming, beautification.
 //

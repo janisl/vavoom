@@ -205,7 +205,7 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 	if (th->SightSound)
 		th->PlaySound(th->SightSound, CHAN_VOICE);
 
-	th->target = source;
+	th->Owner = *source;
 	avcpy(angles, th->Angles);
 	AngleVector(&angles, &vforward);
 	th->Velocity = vforward * th->Speed;
@@ -218,6 +218,9 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/26 17:49:49  dj_jl
+//  no message
+//
 //  Revision 1.19  2002/02/22 18:00:26  dj_jl
 //  A lots of the renaming, beautification.
 //

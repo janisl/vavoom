@@ -46,12 +46,7 @@
 boolean Actor::UpdateChicken(int tics)
 {
 	mobj_t *fog;
-	float x;
-	float y;
-	float z;
 	classid moType;
-	float angle;
-	mobj_t *targ;
 	mobj_t *mo;
 
 	Special1 -= tics;
@@ -60,13 +55,8 @@ boolean Actor::UpdateChicken(int tics)
 		return false;
 	}
 	moType = SpecialCID;
-	x = Origin.x;
-	y = Origin.y;
-	z = Origin.z;
-	angle = Angles.yaw;
-	targ = target;
 	P_UnsetThingPosition(self);
-	mo = P_SpawnMobj(x, y, z, moType);
+	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, moType);
 	if (P_TestMobjLocation(mo) == false)
 	{
 		// Didn't fit
@@ -75,10 +65,10 @@ boolean Actor::UpdateChicken(int tics)
 		mo->Special1 = 5 * 35;	// Next try in 5 seconds
 		return false;
 	}
+	mo->Angles.yaw = Angles.yaw;
+	mo->Enemy = Enemy;
 	SetState(S_FREETARGMOBJ);
-	mo->Angles.yaw = angle;
-	mo->target = targ;
-	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, TeleportFog);
+	fog = P_SpawnMobj(Origin.x, Origin.y, Origin.z + TELEFOGHEIGHT, TeleportFog);
 	fog->PlaySound('Teleport', CHAN_VOICE);
 	return true;
 }
@@ -123,7 +113,7 @@ void Actor::A_Feathers(void)
 {
 	int i;
 	int count;
-	mobj_t *mo;
+	Actor mo;
 
 	if (Health > 0)
 	{
@@ -137,12 +127,12 @@ void Actor::A_Feathers(void)
 	}
 	for (i = 0; i < count; i++)
 	{
-		mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + 20.0, Feather);
-		mo->target = this;
-		mo->Velocity.x = (Random() - Random()) * 35.0;
-		mo->Velocity.y = (Random() - Random()) * 35.0;
-		mo->Velocity.z = (1.0 + Random() * 2.0) * 35.0;
-		mo->SetState(S_FEATHER1 + (P_Random() & 7));
+		mo = SpawnActor(Origin + vector(0.0, 0.0, 20.0), Feather);
+		mo.Owner = self;
+		mo.Velocity.x = (Random() - Random()) * 35.0;
+		mo.Velocity.y = (Random() - Random()) * 35.0;
+		mo.Velocity.z = (1.0 + Random() * 2.0) * 35.0;
+		mo.SetState(S_FEATHER1 + (P_Random() & 7));
 	}
 }
 
@@ -158,13 +148,13 @@ void Actor::A_ChicAttack(void)
 	{
 		return;
 	}
-	if (!target)
+	if (!Enemy)
 	{
 		return;
 	}
 	if (CheckMeleeRange())
 	{
-		target->Damage(self, self, 1 + (P_Random() & 1));
+		Enemy.Damage(self, self, 1 + (P_Random() & 1));
 	}
 }
 
@@ -186,6 +176,9 @@ void Actor::A_ChicPain(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.16  2002/02/22 18:00:15  dj_jl
 //  A lots of the renaming, beautification.
 //

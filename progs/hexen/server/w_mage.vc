@@ -43,12 +43,12 @@
 
 void Weapon::A_MWandAttack(void)
 {
-	mobj_t *mo;
+	Actor mo;
 
-	mo = SpawnPlayerMissile(Player->mo, MageWandMissile);
+	mo = Player->mo->SpawnPlayerMissile(MageWandMissile);
 	if (mo)
 	{
-		mo->bBlaster = true;
+		mo.bBlaster = true;
 	}
 	Player->mo->PlaySound('MageWandFire', CHAN_WEAPON);
 }
@@ -65,7 +65,7 @@ void Weapon::A_FireConePL1(void)
 	int damage;
 	int i;
 	mobj_t *pmo;
-	mobj_t *mo;
+	Actor mo;
 	int conedone = false;
 
 	pmo = Player->mo;
@@ -92,14 +92,14 @@ void Weapon::A_FireConePL1(void)
 	// didn't find any creatures, so fire projectiles
 	if (!conedone)
 	{
-		mo = SpawnPlayerMissile(pmo, ShardMissile);
+		mo = pmo->SpawnPlayerMissile(ShardMissile);
 		if (mo)
 		{
-			mo->Special1 = SHARDSPAWN_LEFT | SHARDSPAWN_DOWN | SHARDSPAWN_UP
+			mo.Special1 = SHARDSPAWN_LEFT | SHARDSPAWN_DOWN | SHARDSPAWN_UP
 				| SHARDSPAWN_RIGHT;
-			mo->Special2 = 3;	// Set sperm count (levels of reproductivity)
-			mo->Owner = *pmo;
-			mo->Args[0] = 3;	// Mark Initial shard as super damage
+			mo.Special2 = 3;	// Set sperm count (levels of reproductivity)
+			mo.Owner = *pmo;
+			mo.Args[0] = 3;	// Mark Initial shard as super damage
 		}
 	}
 }
@@ -112,7 +112,7 @@ void Weapon::A_FireConePL1(void)
 
 void Actor::A_ShedShard(void)
 {
-	mobj_t *mo;
+	Actor mo;
 	int spawndir = Special1;
 	int spermcount = Special2;
 
@@ -124,64 +124,64 @@ void Actor::A_ShedShard(void)
 	// every so many calls, spawn a new missile in it's set directions
 	if (spawndir & SHARDSPAWN_LEFT)
 	{
-		mo = SpawnMissileAngleSpeed(this, ShardMissile,
-			Angles.yaw + (45.0 / 9.0), 0.0, itof(20 + 2 * spermcount));
+		mo = SpawnMissileAngleSpeed(ShardMissile,
+			Angles.yaw + (45.0 / 9.0), 0.0, itof(20 + 2 * spermcount) * 35.0);
 		if (mo)
 		{
-			mo->Special1 = SHARDSPAWN_LEFT;
-			mo->Special2 = spermcount;
-			mo->Velocity.z = Velocity.z;
-			mo->Owner = Owner;
-			mo->Args[0] = (spermcount == 3) ? 2 : 0;
+			mo.Special1 = SHARDSPAWN_LEFT;
+			mo.Special2 = spermcount;
+			mo.Velocity.z = Velocity.z;
+			mo.Owner = Owner;
+			mo.Args[0] = (spermcount == 3) ? 2 : 0;
 		}
 	}
 	if (spawndir & SHARDSPAWN_RIGHT)
 	{
-		mo = SpawnMissileAngleSpeed(this, ShardMissile,
-			Angles.yaw - (45.0 / 9.0), 0.0, itof(20 + 2 * spermcount));
+		mo = SpawnMissileAngleSpeed(ShardMissile,
+			Angles.yaw - (45.0 / 9.0), 0.0, itof(20 + 2 * spermcount) * 35.0);
 		if (mo)
 		{
-			mo->Special1 = SHARDSPAWN_RIGHT;
-			mo->Special2 = spermcount;
-			mo->Velocity.z = Velocity.z;
-			mo->Owner = Owner;
-			mo->Args[0] = (spermcount == 3) ? 2 : 0;
+			mo.Special1 = SHARDSPAWN_RIGHT;
+			mo.Special2 = spermcount;
+			mo.Velocity.z = Velocity.z;
+			mo.Owner = Owner;
+			mo.Args[0] = (spermcount == 3) ? 2 : 0;
 		}
 	}
 	if (spawndir & SHARDSPAWN_UP)
 	{
-		mo = SpawnMissileAngleSpeed(this, ShardMissile, Angles.yaw,
-			0.0, itof(15 + 2 * spermcount));
+		mo = SpawnMissileAngleSpeed(ShardMissile, Angles.yaw,
+			0.0, itof(15 + 2 * spermcount) * 35.0);
 		if (mo)
 		{
-			mo->Velocity.z = Velocity.z;
-			mo->Origin.z += 8.0;
+			mo.Velocity.z = Velocity.z;
+			mo.Origin.z += 8.0;
 			if (spermcount & 1)	// Every other reproduction
-				mo->Special1 =
+				mo.Special1 =
 					SHARDSPAWN_UP | SHARDSPAWN_LEFT | SHARDSPAWN_RIGHT;
 			else
-				mo->Special1 = SHARDSPAWN_UP;
-			mo->Special2 = spermcount;
-			mo->Owner = Owner;
-			mo->Args[0] = (spermcount == 3) ? 2 : 0;
+				mo.Special1 = SHARDSPAWN_UP;
+			mo.Special2 = spermcount;
+			mo.Owner = Owner;
+			mo.Args[0] = (spermcount == 3) ? 2 : 0;
 		}
 	}
 	if (spawndir & SHARDSPAWN_DOWN)
 	{
-		mo = SpawnMissileAngleSpeed(this, ShardMissile, Angles.yaw,
-			0.0, itof(15 + 2 * spermcount));
+		mo = SpawnMissileAngleSpeed(ShardMissile, Angles.yaw,
+			0.0, itof(15 + 2 * spermcount) * 35.0);
 		if (mo)
 		{
-			mo->Velocity.z = Velocity.z;
-			mo->Origin.z -= 4.0;
+			mo.Velocity.z = Velocity.z;
+			mo.Origin.z -= 4.0;
 			if (spermcount & 1)	// Every other reproduction
-				mo->Special1 =
+				mo.Special1 =
 					SHARDSPAWN_DOWN | SHARDSPAWN_LEFT | SHARDSPAWN_RIGHT;
 			else
-				mo->Special1 = SHARDSPAWN_DOWN;
-			mo->Special2 = spermcount;
-			mo->Owner = Owner;
-			mo->Args[0] = (spermcount == 3) ? 2 : 0;
+				mo.Special1 = SHARDSPAWN_DOWN;
+			mo.Special2 = spermcount;
+			mo.Owner = Owner;
+			mo.Args[0] = (spermcount == 3) ? 2 : 0;
 		}
 	}
 }
@@ -209,22 +209,22 @@ void Weapon::A_LightningReady(void)
 
 void Weapon::A_MLightningAttack(void)
 {
-	mobj_t *fmo;
-	mobj_t *cmo;
+	Actor fmo;
+	Actor cmo;
 
-	fmo = SpawnPlayerMissile(Player->mo, LightningFloor);
-	cmo = SpawnPlayerMissile(Player->mo, LightningCeiling);
+	fmo = Player->mo->SpawnPlayerMissile(LightningFloor);
+	cmo = Player->mo->SpawnPlayerMissile(LightningCeiling);
 	if (fmo)
 	{
-		fmo->SpecialMobj1 = NULL;
-		fmo->SpecialMobj2 = cmo;
-		fmo->A_LightningZap();
+		fmo.SpecialMobj1 = NULL;
+		fmo.SpecialMobj2 = &cmo;
+		fmo.A_LightningZap();
 	}
 	if (cmo)
 	{
-		cmo->SpecialMobj1 = NULL;	// mobj that it will track
-		cmo->SpecialMobj2 = fmo;
-		cmo->A_LightningZap();
+		cmo.SpecialMobj1 = NULL;	// mobj that it will track
+		cmo.SpecialMobj2 = &fmo;
+		cmo.A_LightningZap();
 	}
 	Player->mo->PlaySound('MageLightningFire', CHAN_WEAPON);
 	Player->Mana[MANA_2] -= WeaponManaUse(Player->PClass,
@@ -262,19 +262,19 @@ void Actor::A_LightningClip(void)
 		zigZag = P_Random();
 		if ((zigZag > 128 && Special1 < 2) || Special1 < -2)
 		{
-			P_ThrustMobj(this, Angles.yaw + 90.0, ZAGSPEED);
+			Thrust(Angles.yaw + 90.0, ZAGSPEED);
 			if (cMo)
 			{
-				P_ThrustMobj(cMo, Angles.yaw + 90.0, ZAGSPEED);
+				cMo->Thrust(Angles.yaw + 90.0, ZAGSPEED);
 			}
 			Special1++;
 		}
 		else
 		{
-			P_ThrustMobj(this, Angles.yaw - 90.0, ZAGSPEED);
+			Thrust(Angles.yaw - 90.0, ZAGSPEED);
 			if (cMo)
 			{
-				P_ThrustMobj(cMo, cMo->Angles.yaw - 90.0, ZAGSPEED);
+				cMo->Thrust(cMo->Angles.yaw - 90.0, ZAGSPEED);
 			}
 			Special1--;
 		}
@@ -283,7 +283,7 @@ void Actor::A_LightningClip(void)
 	{
 		if (targ->Health <= 0)
 		{
-			P_ExplodeMissile(this);
+			ExplodeMissile();
 		}
 		else
 		{
@@ -291,7 +291,7 @@ void Actor::A_LightningClip(void)
 				targ->Origin.x - Origin.x);
 			Velocity.x = 0.0;
 			Velocity.y = 0.0;
-			P_ThrustMobj(this, Angles.yaw, Speed * frametime / 2.0);
+			Thrust(Angles.yaw, Speed * frametime / 2.0);
 		}
 	}
 }
@@ -362,7 +362,7 @@ void Actor::A_ZapMimic(void)
 	{
 		if (mo->StateNum >= mo->DeathState || mo->StateNum == S_FREETARGMOBJ)
 		{
-			P_ExplodeMissile(this);
+			ExplodeMissile();
 		}
 		else
 		{
@@ -404,7 +404,7 @@ void Actor::A_LightningRemove(void)
 	if (mo)
 	{
 		mo->SpecialMobj2 = NULL;
-		P_ExplodeMissile(mo);
+		mo->ExplodeMissile();
 	}
 }
 
@@ -416,13 +416,13 @@ void Actor::A_LightningRemove(void)
 
 void Weapon::MStaffSpawn(float angle)
 {
-	mobj_t *mo;
+	Actor mo;
 
-	mo = SpawnPlayerMissileAngle(Player->mo, MageStaffFX2, angle);
+	mo = Player->mo->SpawnPlayerMissileAngle(MageStaffFX2, angle);
 	if (mo)
 	{
-		mo->Owner = *Player->mo;
-		mo->SpecialMobj1 = &mo->RoughMonsterSearch(10);
+		mo.Owner = *Player->mo;
+		mo.SpecialMobj1 = &mo.RoughMonsterSearch(10);
 	}
 }
 
@@ -512,12 +512,15 @@ void Actor::A_MStaffTrack(void)
 	{
 		SpecialMobj1 = &RoughMonsterSearch(10);
 	}
-	SeekerMissile(this, 2.0, 10.0);
+	SeekerMissile(2.0, 10.0);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/02/26 17:49:49  dj_jl
+//  no message
+//
 //  Revision 1.20  2002/02/22 18:00:25  dj_jl
 //  A lots of the renaming, beautification.
 //

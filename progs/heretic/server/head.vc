@@ -44,7 +44,7 @@
 void Actor::A_HeadAttack(void)
 {
 	int i;
-	mobj_t *fire;
+	Actor fire;
 	mobj_t *baseFire;
 	mobj_t *mo;
 	int randAttack;
@@ -55,56 +55,55 @@ void Actor::A_HeadAttack(void)
 	// Whirlwind    (close 40% : far 20%)
 	// Distance threshold = 8 cells
 
-	if (!target)
+	if (!Enemy)
 	{
 		return;
 	}
 	A_FaceTarget();
 	if (CheckMeleeRange())
 	{
-		target->Damage(self, self, HITDICE(6));
+		Enemy.Damage(self, self, HITDICE(6));
 		return;
 	}
-	dist = MobjDist2(self, *target) > 8.0 * 64.0;
+	dist = MobjDist2(self, Enemy) > 8.0 * 64.0;
 	randAttack = P_Random();
 	if (randAttack < (dist ? 150 : 50))
 	{
 		// Ice ball
-		SpawnMissile(this, target, HeadMissile1);
+		SpawnMissile(this, &Enemy, HeadMissile1);
 		PlaySound('HeadAttack2', CHAN_WEAPON);
 	}
 	else if (randAttack < (dist ? 200 : 150))
 	{
 		// Fire column
-		baseFire = SpawnMissile(this, target, HeadMissile3);
+		baseFire = SpawnMissile(this, &Enemy, HeadMissile3);
 		if (baseFire != NULL)
 		{
 			baseFire->SetState(S_HEADFX3_4);	// Don't grow
 			for (i = 0; i < 5; i++)
 			{
-				fire = P_SpawnMobj(baseFire->Origin.x, baseFire->Origin.y,
-					baseFire->Origin.z, HeadMissile3);
+				fire = SpawnActor(baseFire->Origin, HeadMissile3);
 				if (i == 0)
 				{
 					PlaySound('HeadAttack1', CHAN_WEAPON);
 				}
-				fire->target = baseFire->target;
-				fire->Angles.yaw = baseFire->Angles.yaw;
-				fire->Velocity = baseFire->Velocity;
-				fire->MissileDamage = 0;
-				fire->Health = (i + 1) * 2;
-				CheckMissileSpawn(fire);
+				fire.Owner = baseFire->Owner;
+				fire.Angles.yaw = baseFire->Angles.yaw;
+				fire.Velocity = baseFire->Velocity;
+				fire.MissileDamage = 0;
+				fire.Health = (i + 1) * 2;
+				CheckMissileSpawn(&fire);
 			}
 		}
 	}
 	else
 	{
 		// Whirlwind
-		mo = SpawnMissile(this, target, WhirlWind);
+		mo = SpawnMissile(this, &Enemy, WhirlWind);
 		if (mo != NULL)
 		{
 			mo->Origin.z -= 32.0;
-			mo->SpecialMobj1 = target;
+			mo->SpecialMobj1 = &Enemy;
 			mo->Special2 = 50;	// Timer for active sound
 			mo->Health = 20 * TICRATE;	// Duration
 			PlaySound('HeadAttack3', CHAN_WEAPON);
@@ -122,18 +121,18 @@ void Actor::A_HeadIceImpact(void)
 {
 	int i;
 	float angle;
-	mobj_t *shard;
+	Actor shard;
 
 	for (i = 0; i < 8; i++)
 	{
-		shard = P_SpawnMobj(Origin.x, Origin.y, Origin.z, HeadMissile2);
+		shard = SpawnActor(Origin, HeadMissile2);
 		angle = itof(i) * 45.0;
-		shard->target = target;
-		shard->Angles.yaw = angle;
-		shard->Velocity.x = shard->Speed * cos(angle);
-		shard->Velocity.y = shard->Speed * sin(angle);
-		shard->Velocity.z = -0.6 * 35.0;
-		CheckMissileSpawn(shard);
+		shard.Owner = Owner;
+		shard.Angles.yaw = angle;
+		shard.Velocity.x = shard.Speed * cos(angle);
+		shard.Velocity.y = shard.Speed * sin(angle);
+		shard.Velocity.z = -0.6 * 35.0;
+		CheckMissileSpawn(&shard);
 	}
 }
 
@@ -184,6 +183,9 @@ void Actor::A_WhirlwindSeek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.18  2002/02/22 18:00:16  dj_jl
 //  A lots of the renaming, beautification.
 //

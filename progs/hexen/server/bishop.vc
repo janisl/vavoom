@@ -64,16 +64,16 @@ void Actor::A_BishopDoBlur(void)
 	Special1 = (P_Random() & 3) + 3;	// P_Random number of blurs
 	if (P_Random() < 120)
 	{
-		P_ThrustMobj(this, AngleMod360(Angles.yaw + 90.0), 11.0);
+		Thrust(AngleMod360(Angles.yaw + 90.0), 11.0);
 	}
 	else if (P_Random() > 125)
 	{
-		P_ThrustMobj(this, AngleMod360(Angles.yaw - 90.0), 11.0);
+		Thrust(AngleMod360(Angles.yaw - 90.0), 11.0);
 	}
 	else
 	{
 		// Thrust forward
-		P_ThrustMobj(this, Angles.yaw, 11.0);
+		Thrust(Angles.yaw, 11.0);
 	}
 	PlaySound('BishopBlur', CHAN_VOICE);
 }
@@ -152,7 +152,7 @@ void Actor::A_BishopAttack(void)
 
 void Actor::A_BishopAttack2(void)
 {
-	mobj_t *mo;
+	Actor mo;
 
 	if (!Enemy || !Special1)
 	{
@@ -160,11 +160,11 @@ void Actor::A_BishopAttack2(void)
 		SetState(S_BISHOP_WALK1);
 		return;
 	}
-	mo = SpawnMissile(this, &Enemy, BishopMissile);
+	mo = SpawnMissile(Enemy, BishopMissile);
 	if (mo)
 	{
-		mo->SpecialMobj1 = &Enemy;
-		mo->Special2 = 16;	// High word == x/y, Low word == z
+		mo.SpecialMobj1 = &Enemy;
+		mo.Special2 = 16;	// High word == x/y, Low word == z
 	}
 	Special1--;
 }
@@ -256,12 +256,15 @@ void Actor::A_BishopMissileWeave(void)
 
 void Actor::A_BishopMissileSeek(void)
 {
-	SeekerMissile(this, 2.0, 3.0);
+	SeekerMissile(2.0, 3.0);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.18  2002/02/22 18:00:20  dj_jl
 //  A lots of the renaming, beautification.
 //

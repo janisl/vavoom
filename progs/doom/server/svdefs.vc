@@ -211,12 +211,10 @@ class Actor:Entity
 	int SpawnHealth;
 	int GibsHealth;
 
-	// Thing being chased/attacked (or NULL),
-	// also the originator for missiles.
-	mobj_t *target;
-
-	// Thing being chased/attacked for tracers.
-	mobj_t *tracer;
+	// Thing being chased/attacked (or NULL).
+	Actor Enemy;
+	// The originator for missiles.
+	Actor Owner;
 
 	// Player number last looked for.
 	int LastLook;
@@ -255,8 +253,6 @@ class Actor:Entity
 	boolean Touch(MapObject Other);
 
 	void Think(void);
-	void Archive(void);
-	void Unarchive(void);
 	void OnMapSpawn(mthing_t *mthing);
 
 	void Damage(Actor inflictor, Actor source, int damage);
@@ -689,6 +685,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/02/26 17:49:47  dj_jl
+//  no message
+//
 //  Revision 1.22  2002/02/22 18:00:14  dj_jl
 //  A lots of the renaming, beautification.
 //

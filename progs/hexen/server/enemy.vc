@@ -484,7 +484,7 @@ void Actor::A_Explode(void)
 	P_RadiusAttack(this, &Owner, damage, distance, damageSelf);
 	if (Origin.z <= FloorZ + distance && Class != PoisonCloud)
 	{
-		P_HitFloor(this);
+		HitFloorType();
 	}
 }
 
@@ -597,7 +597,7 @@ void Actor::A_IceSetTics(void)
 	int floor;
 
 	StateTime = 2.0 + Random() * 2.0;
-	floor = P_GetThingFloorType(this);
+	floor = GetFloorType();
 	if (floor == FLOOR_LAVA)
 	{
 		StateTime /= 4.0;
@@ -868,6 +868,9 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.21  2002/02/22 18:00:21  dj_jl
 //  A lots of the renaming, beautification.
 //

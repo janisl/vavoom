@@ -831,7 +831,7 @@ void Weapon::A_FireGrenade(void)
 	if (mo->SightSound)
 		mo->PlaySound(mo->SightSound, CHAN_VOICE);
 
-	mo->target = Player->mo;
+	mo->_target = Player->mo;
 
 	//  See which target is to be aimed at
 	if (Player->mo->Angles.pitch)
@@ -918,7 +918,7 @@ void Actor::A_BFGSpray(void)
 
 		// target is the originator (player)
 		//  of the missile
-		AimLineAttack(target, aimAng, 16.0 * 64.0);
+		AimLineAttack(&Owner, aimAng, 16.0 * 64.0);
 		if (!linetarget)
 		{
 			continue;
@@ -938,13 +938,16 @@ void Actor::A_BFGSpray(void)
 		for (j = 0; j < 15; j++)
 			damage += (P_Random() & 7) + 1;
 
-		linetarget->Damage(*target, *target, damage);
+		linetarget->Damage(Owner, Owner, damage);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/26 17:49:47  dj_jl
+//  no message
+//
 //  Revision 1.19  2002/02/22 18:00:14  dj_jl
 //  A lots of the renaming, beautification.
 //

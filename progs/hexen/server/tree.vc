@@ -54,7 +54,7 @@ void Actor::A_LeafSpawn(void)
 			P_Random() & 1 ? Leaf2 : Leaf1);
 		if (mo)
 		{
-			P_ThrustMobj(mo, Angles.yaw, Random() * 2.0 + 3.0);
+			mo->Thrust(Angles.yaw, Random() * 2.0 + 3.0);
 			mo->Owner = self;
 			mo->Special1 = 0;
 		}
@@ -94,13 +94,13 @@ void Actor::A_LeafCheck(void)
 	{
 		if (!Velocity.x && !Velocity.y)
 		{
-			P_ThrustMobj(this, Owner.Angles.yaw, Random() * 2.0 + 1.0);
+			Thrust(Owner.Angles.yaw, Random() * 2.0 + 1.0);
 		}
 		return;
 	}
 	SetState(S_LEAF1_8);
 	Velocity.z = (Random() * 2.0 + 1.0) * 35.0;
-	P_ThrustMobj(this, Owner.Angles.yaw, Random() * 2.0 + 2.0);
+	Thrust(Owner.Angles.yaw, Random() * 2.0 + 2.0);
 	bMissile = true;
 }
 
@@ -130,6 +130,9 @@ void Actor::A_TreeDeath(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/26 17:49:49  dj_jl
+//  no message
+//
 //  Revision 1.13  2002/02/22 18:00:24  dj_jl
 //  A lots of the renaming, beautification.
 //

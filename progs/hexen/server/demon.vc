@@ -57,7 +57,7 @@ void Actor::A_DemonAttack1(void)
 
 void Actor::A_DemonAttack2(void)
 {
-	mobj_t *mo;
+	Actor mo;
 	classid fireBall;
 
 	if (Class == Demon)
@@ -68,10 +68,10 @@ void Actor::A_DemonAttack2(void)
 	{
 		fireBall = Demon2Missile;
 	}
-	mo = SpawnMissile(this, &Enemy, fireBall);
+	mo = SpawnMissile(Enemy, fireBall);
 	if (mo)
 	{
-		mo->Origin.z += 30.0;
+		mo.Origin.z += 30.0;
 		PlaySound('DemonMissileFire', CHAN_WEAPON);
 	}
 }
@@ -195,6 +195,9 @@ void Actor::A_Demon2Death(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.16  2002/02/22 18:00:21  dj_jl
 //  A lots of the renaming, beautification.
 //

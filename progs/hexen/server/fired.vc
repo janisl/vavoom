@@ -211,11 +211,13 @@ void Actor::A_FiredChase(void)
 
 void Actor::A_FiredAttack(void)
 {
-	mobj_t *mo;
+	Actor mo;
 
-	mo = SpawnMissile(this, &Enemy, FireDemonMissile);
+	mo = SpawnMissile(Enemy, FireDemonMissile);
 	if (mo)
+	{
 		PlaySound('FireDemonAttack', CHAN_WEAPON);
+	}
 }
 
 //============================================================================
@@ -262,6 +264,9 @@ void Actor::A_SmBounce(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.18  2002/02/22 18:00:21  dj_jl
 //  A lots of the renaming, beautification.
 //

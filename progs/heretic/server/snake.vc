@@ -43,14 +43,14 @@
 
 void Actor::A_SnakeAttack(void)
 {
-	if (!target)
+	if (!Enemy)
 	{
 		SetState(S_SNAKE_WALK1);
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	A_FaceTarget();
-	SpawnMissile(this, target, SnakeProjectileA);
+	SpawnMissile(this, &Enemy, SnakeProjectileA);
 }
 
 //==========================================================================
@@ -61,19 +61,22 @@ void Actor::A_SnakeAttack(void)
 
 void Actor::A_SnakeAttack2(void)
 {
-	if (!target)
+	if (!Enemy)
 	{
 		SetState(S_SNAKE_WALK1);
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	A_FaceTarget();
-	SpawnMissile(this, target, SnakeProjectileB);
+	SpawnMissile(this, &Enemy, SnakeProjectileB);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.11  2002/02/22 18:00:18  dj_jl
 //  A lots of the renaming, beautification.
 //

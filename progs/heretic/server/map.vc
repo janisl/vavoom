@@ -539,7 +539,7 @@ boolean ShootHitPlane(sec_plane_t * plane)
 	lineend += 4.0 * plane->normal;
 
 	// Spawn bullet puffs.
-	SpawnPuff(lineend.x, lineend.y, lineend.z);
+	SpawnPuff(lineend);
 
 	// don't go any farther
 	return false;
@@ -665,7 +665,7 @@ boolean PTR_ShootTraverse(intercept_t * in)
 		hit_point -= 4.0 * shoot_dir;
 
 		// Spawn bullet puffs.
-		SpawnPuff(hit_point.x, hit_point.y, hit_point.z);
+		SpawnPuff(hit_point);
 
 		// don't go any farther
 		return false;
@@ -710,7 +710,7 @@ boolean PTR_ShootTraverse(intercept_t * in)
 	}
 	else
 	{
-		SpawnPuff(hit_point.x, hit_point.y, hit_point.z);
+		SpawnPuff(hit_point);
 	}
 	if (la_damage)
 	{
@@ -723,7 +723,7 @@ boolean PTR_ShootTraverse(intercept_t * in)
 			MSG_WriteShort(ftoi(hit_point.z));
 			MSG_WriteByte(la_damage > 255 ? 255 : la_damage);
 
-			P_BloodSplatter(hit_point.x, hit_point.y, hit_point.z, &th);
+			th.SpawnBloodSplatter(hit_point);
 		}
 		th.Damage(*shoot_thing, *shoot_thing, la_damage);
 	}
@@ -840,9 +840,9 @@ void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage, int distance,
 	xh = MapBlock(spot->Origin.x + dist - level->bmaporgx);
 	xl = MapBlock(spot->Origin.x - dist - level->bmaporgx);
 	bombspot = spot;
-	if (spot->Class == Pod && spot->target)
+	if (spot->Class == Pod && spot->Owner)
 	{
-		bombsource = spot->target;
+		bombsource = &spot->Owner;
 	}
 	else
 	{
@@ -858,6 +858,9 @@ void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage, int distance,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.21  2002/02/22 18:00:16  dj_jl
 //  A lots of the renaming, beautification.
 //

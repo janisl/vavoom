@@ -92,7 +92,7 @@ void Actor::A_BrainSpit(void)
 
 	// spawn brain missile
 	newmobj = SpawnMissile(this, targ, SpawnShot);
-	newmobj->target = targ;
+	newmobj->Enemy = *targ;
 	newmobj->ReactionCount = ftoi((targ->Origin.y - Origin.y) /
 		newmobj->Velocity.y / newmobj->StateTime);
 
@@ -218,7 +218,7 @@ void Actor::A_SpawnFly(void)
 	if (--ReactionCount)
 		return;	// still flying
 
-	targ = target;
+	targ = &Enemy;
 
 	// First spawn teleport fog.
 	fog = P_SpawnMobj(targ->Origin.x, targ->Origin.y, targ->Origin.z,
@@ -312,6 +312,9 @@ void Actor::A_SpawnFly(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/26 17:49:47  dj_jl
+//  no message
+//
 //  Revision 1.15  2002/02/22 18:00:06  dj_jl
 //  A lots of the renaming, beautification.
 //

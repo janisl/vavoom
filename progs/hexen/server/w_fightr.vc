@@ -81,7 +81,7 @@ void Weapon::A_FPunchAttack(void)
 			}
 			if (linetarget->bCountKill || linetarget->bIsPlayer)
 			{
-				P_ThrustMobj(linetarget, angles.yaw, power);
+				linetarget->Thrust(angles.yaw, power);
 			}
 			AdjustPlayerAngle(pmo);
 			break;
@@ -112,7 +112,7 @@ void Weapon::A_FPunchAttack(void)
 			}
 			if (linetarget->bCountKill || linetarget->bIsPlayer)
 			{
-				P_ThrustMobj(linetarget, angles.yaw, power);
+				linetarget->Thrust(angles.yaw, power);
 			}
 			AdjustPlayerAngle(pmo);
 			break;
@@ -186,7 +186,7 @@ void Weapon::A_FAxeAttack(void)
 			}
 			if (linetarget->bCountKill || linetarget->bIsPlayer)
 			{
-				P_ThrustMobj(linetarget, angles.yaw, power);
+				linetarget->Thrust(angles.yaw, power);
 			}
 			AdjustPlayerAngle(pmo);
 			useMana++;
@@ -204,7 +204,7 @@ void Weapon::A_FAxeAttack(void)
 			}
 			if (linetarget->bCountKill || linetarget->bIsPlayer)
 			{
-				P_ThrustMobj(linetarget, angles.yaw, power);
+				linetarget->Thrust(angles.yaw, power);
 			}
 			AdjustPlayerAngle(pmo);
 			useMana++;
@@ -271,7 +271,7 @@ void Weapon::A_FHammerAttack(void)
 			AdjustPlayerAngle(pmo);
 			if (linetarget->bCountKill || linetarget->bIsPlayer)
 			{
-				P_ThrustMobj(linetarget, angles.yaw, power);
+				linetarget->Thrust(angles.yaw, power);
 			}
 			pmo->Special1 = false;	// Don't throw a hammer
 			break;
@@ -289,7 +289,7 @@ void Weapon::A_FHammerAttack(void)
 			AdjustPlayerAngle(pmo);
 			if (linetarget->bCountKill || linetarget->bIsPlayer)
 			{
-				P_ThrustMobj(linetarget, angles.yaw, power);
+				linetarget->Thrust(angles.yaw, power);
 			}
 			pmo->Special1 = false;	// Don't throw a hammer
 			break;
@@ -333,7 +333,7 @@ void Weapon::A_FHammerAttack(void)
 
 void Weapon::A_FHammerThrow(void)
 {
-	mobj_t *mo;
+	Actor mo;
 
 	if (!Player->mo->Special1)
 	{
@@ -341,10 +341,10 @@ void Weapon::A_FHammerThrow(void)
 	}
 	Player->Mana[MANA_2] -=
 		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
-	mo = SpawnPlayerMissile(Player->mo, HammerMissile);
+	mo = Player->mo->SpawnPlayerMissile(HammerMissile);
 	if (mo)
 	{
-		mo->Special1 = 0;
+		mo.Special1 = 0;
 	}
 }
 
@@ -363,20 +363,16 @@ void Weapon::A_FSwordAttack(void)
 	Player->Mana[MANA_2] -=
 		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
 	pmo = Player->mo;
-	SpawnPlayerMissileAngleXYZ(pmo, pmo->Origin.x, pmo->Origin.y,
-		pmo->Origin.z - 10.0, FighterSwordMissile,
-		AngleMod360(pmo->Angles.yaw + 45.0 / 4.0));
-	SpawnPlayerMissileAngleXYZ(pmo, pmo->Origin.x, pmo->Origin.y,
-		pmo->Origin.z - 5.0, FighterSwordMissile,
-		AngleMod360(pmo->Angles.yaw + 45.0 / 8.0));
-	SpawnPlayerMissileAngleXYZ(pmo, pmo->Origin.x, pmo->Origin.y,
-		pmo->Origin.z, FighterSwordMissile, pmo->Angles.yaw);
-	SpawnPlayerMissileAngleXYZ(pmo, pmo->Origin.x, pmo->Origin.y,
-		pmo->Origin.z + 5.0, FighterSwordMissile,
-		AngleMod360(pmo->Angles.yaw - 45.0 / 8.0));
-	SpawnPlayerMissileAngleXYZ(pmo, pmo->Origin.x, pmo->Origin.y,
-		pmo->Origin.z + 10.0, FighterSwordMissile,
-		AngleMod360(pmo->Angles.yaw - 45.0 / 4.0));
+	pmo->SpawnPlayerMissileAngleXYZ(pmo->Origin + vector(0.0, 0.0, -10.0),
+		FighterSwordMissile, AngleMod360(pmo->Angles.yaw + 45.0 / 4.0));
+	pmo->SpawnPlayerMissileAngleXYZ(pmo->Origin + vector(0.0, 0.0, -5.0),
+		FighterSwordMissile, AngleMod360(pmo->Angles.yaw + 45.0 / 8.0));
+	pmo->SpawnPlayerMissileAngleXYZ(pmo->Origin, FighterSwordMissile,
+		pmo->Angles.yaw);
+	pmo->SpawnPlayerMissileAngleXYZ(pmo->Origin + vector(0.0, 0.0, 5.0),
+		FighterSwordMissile, AngleMod360(pmo->Angles.yaw - 45.0 / 8.0));
+	pmo->SpawnPlayerMissileAngleXYZ(pmo->Origin + vector(0.0, 0.0, 10.0),
+		FighterSwordMissile, AngleMod360(pmo->Angles.yaw - 45.0 / 4.0));
 	pmo->PlaySound('FighterSwordFire', CHAN_WEAPON);
 }
 
@@ -401,6 +397,9 @@ void Actor::A_FSwordFlames(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/26 17:49:49  dj_jl
+//  no message
+//
 //  Revision 1.15  2002/02/22 18:00:25  dj_jl
 //  A lots of the renaming, beautification.
 //

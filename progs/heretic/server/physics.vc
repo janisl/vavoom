@@ -562,22 +562,22 @@ void Actor::XYMovement(void)
 		case 40:
 		case 41:
 		case 42:	// Wind_East
-			P_ThrustMobj(this, 0.0, windTab[special - 40]);
+			Thrust(0.0, windTab[special - 40]);
 			break;
 		case 43:
 		case 44:
 		case 45:	// Wind_North
-			P_ThrustMobj(this, 90.0, windTab[special - 43]);
+			Thrust(90.0, windTab[special - 43]);
 			break;
 		case 46:
 		case 47:
 		case 48:	// Wind_South
-			P_ThrustMobj(this, 270.0, windTab[special - 46]);
+			Thrust(270.0, windTab[special - 46]);
 			break;
 		case 49:
 		case 50:
 		case 51:	// Wind_West
-			P_ThrustMobj(this, 180.0, windTab[special - 49]);
+			Thrust(180.0, windTab[special - 49]);
 			break;
 		}
 	}
@@ -612,7 +612,8 @@ void Actor::XYMovement(void)
 		{
 			ptryx = Origin.x + xmove;
 			ptryy = Origin.y + ymove;
-			xmove = ymove = 0.0;
+			xmove = 0.0;
+			ymove = 0.0;
 		}
 		if (!P_TryMove(this, ptryx, ptryy))
 		{
@@ -639,7 +640,7 @@ void Actor::XYMovement(void)
 					}
 					return;
 				}
-				P_ExplodeMissile(this);
+				ExplodeMissile();
 			}
 			//else if (crashstate)
 			//{
@@ -738,13 +739,13 @@ void Actor::FakeZMovement(void)
 	//  adjust height
 	//
 	tzorg.z += Velocity.z * frametime;
-	if (bFloat && target)
+	if (bFloat && Enemy)
 	{
-		// float down towards target if too close
+		// float down towards enemy if too close
 		if (!bSkullFly && !bInFloat)
 		{
-			dist = MobjDist2(self, *target);
-			delta = target->Origin.z + Height / 2.0 - tzorg.z;
+			dist = MobjDist2(self, Enemy);
+			delta = Enemy.Origin.z + Height / 2.0 - tzorg.z;
 			if (delta < 0.0 && dist < -(delta * 3.0))
 				tzorg.z -= FLOATSPEED * frametime;
 			else if (delta > 0.0 && dist < (delta * 3.0))
@@ -845,13 +846,13 @@ void Actor::ZMovement(void)
 	// adjust height
 	//
 	Origin.z += Velocity.z * frametime;
-	if (bFloat && target)
+	if (bFloat && Enemy)
 	{
-		// float down towards target if too close
+		// float down towards enemy if too close
 		if (!bSkullFly && !bInFloat)
 		{
-			dist = MobjDist(self, *target);
-			delta = target->Origin.z + Height / 2.0 - Origin.z;
+			dist = MobjDist(self, Enemy);
+			delta = Enemy.Origin.z + Height / 2.0 - Origin.z;
 			if (delta < 0.0 && dist < -(delta * 3.0))
 				Origin.z -= FLOATSPEED * frametime;
 			else if (delta > 0.0 && dist < (delta * 3.0))
@@ -875,7 +876,7 @@ void Actor::ZMovement(void)
 			Origin.z = FloorZ;
 			if (bFloorBounce)
 			{
-				P_FloorBounceMissile(this);
+				FloorBounceMissile();
 				return;
 			}
 			else if (Class == MinotaurFloorFire)
@@ -885,14 +886,14 @@ void Actor::ZMovement(void)
 			}
 			else
 			{
-				P_ExplodeMissile(this);
+				ExplodeMissile();
 				return;
 			}
 		}
 		if (Origin.z - Velocity.z * frametime > FloorZ)
 		{
 			// Spawn splashes, etc.
-			P_HitFloor(this);
+			HitFloorEffect();
 		}
 		Origin.z = FloorZ;
 		if (vdot < -0.1)
@@ -942,7 +943,7 @@ void Actor::ZMovement(void)
 				}
 				return;
 			}
-			P_ExplodeMissile(this);
+			ExplodeMissile();
 			return;
 		}
 	}
@@ -980,7 +981,7 @@ boolean Actor::BlasterPhysics(void)
 				if (!P_TryMove(this, Origin.x + xfrac, Origin.y + yfrac))
 				{
 					// Blocked move
-					P_ExplodeMissile(this);
+					ExplodeMissile();
 					return !IsDestroyed();
 				}
 			}
@@ -989,15 +990,15 @@ boolean Actor::BlasterPhysics(void)
 			{
 				// Hit the floor
 				Origin.z = FloorZ;
-				P_HitFloor(this);
-				P_ExplodeMissile(this);
+				HitFloorEffect();
+				ExplodeMissile();
 				return !IsDestroyed();
 			}
 			if (Origin.z + Height > CeilingZ)
 			{
 				// Hit the ceiling
 				Origin.z = CeilingZ - Height;
-				P_ExplodeMissile(this);
+				ExplodeMissile();
 				return !IsDestroyed();
 			}
 			if (changexy && (P_Random() < 64))
@@ -1151,13 +1152,16 @@ void Actor::Think(void)
 		{
 			return;
 		}
-		P_NightmareRespawn(this);
+		NightmareRespawn();
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.22  2002/02/22 18:00:17  dj_jl
 //  A lots of the renaming, beautification.
 //

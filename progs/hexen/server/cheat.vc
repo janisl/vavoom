@@ -199,7 +199,7 @@ void Cheat_Morph(void)
 	}
 	else
 	{
-		P_MorphPlayer(&players[0]);
+		players[0].mo->MorphPlayer();
 	}
 	cprint(&players[0], "SQUEAL!!\n");
 }
@@ -266,6 +266,9 @@ void Cheat_Class(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.12  2002/02/22 18:00:21  dj_jl
 //  A lots of the renaming, beautification.
 //

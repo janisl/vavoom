@@ -226,7 +226,7 @@ void Cheat_Morph(void)
 			cprint(&players[0], "CHICKEN OFF\n");
 		}
 	}
-	else if (ChickenMorphPlayer(&players[0]))
+	else if (players[0].mo->ChickenMorphPlayer())
 	{
 		cprint(&players[0], "CHICKEN ON\n");
 	}
@@ -267,6 +267,9 @@ void Cheat_Class(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.10  2002/02/22 18:00:15  dj_jl
 //  A lots of the renaming, beautification.
 //

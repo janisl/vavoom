@@ -93,7 +93,7 @@ void Actor::A_Quake(void)
 {
 	float an;
 	player_t *pl;
-	mobj_t *victim;
+	Actor victim;
 	int richters = Args[0];
 	int playnum;
 	int dist;
@@ -106,23 +106,23 @@ void Actor::A_Quake(void)
 			if (!pl->bActive || !pl->bSpawned)
 				continue;
 
-			victim = pl->mo;
-			dist = ftoi(MobjDist(self, *victim)) >> 6;
+			victim = *pl->mo;
+			dist = ftoi(MobjDist(self, victim)) >> 6;
 			// Tested in tile units (64 pixels)
 			if (dist < Args[3])	// In tremor radius
 			{
 				pl->LocalQuakeHappening = richters;
 			}
 			// Check if in damage radius
-			if ((dist < Args[2]) && (victim->Origin.z <= victim->FloorZ))
+			if ((dist < Args[2]) && (victim.Origin.z <= victim.FloorZ))
 			{
 				if (P_Random() < 50)
 				{
-					victim->Damage(none, none, HITDICE(1));
+					victim.Damage(none, none, HITDICE(1));
 				}
 				// Thrust player around
-				an = victim->Angles.yaw + Random() * 256.0;
-				P_ThrustMobj(victim, an, itof(richters) / 2.0);
+				an = victim.Angles.yaw + Random() * 256.0;
+				victim.Thrust(an, itof(richters) / 2.0);
 			}
 		}
 	}
@@ -139,6 +139,9 @@ void Actor::A_Quake(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/02/26 17:49:49  dj_jl
+//  no message
+//
 //  Revision 1.14  2002/02/22 18:00:23  dj_jl
 //  A lots of the renaming, beautification.
 //

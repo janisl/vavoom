@@ -182,7 +182,7 @@ boolean P_Teleport(mobj_t * thing, float x, float y, float angle)
 		thing->ReactionTime = 0.5;
 	}
 	thing->Angles.yaw = angle;
-	if (thing->bFootClip && P_GetThingFloorType(thing) != FLOOR_SOLID)
+	if (thing->bFootClip && thing->GetFloorType() != FLOOR_SOLID)
 	{
 		thing->FloorClip = FOOTCLIPSIZE;
 	}
@@ -347,6 +347,9 @@ boolean EV_SilentLineTeleport(line_t *line, int side, Actor *thing, int id,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.19  2002/02/22 18:00:19  dj_jl
 //  A lots of the renaming, beautification.
 //

@@ -203,14 +203,14 @@ void Actor::A_FSwordAttack2(void)
 {
 	float angle = Angles.yaw;
 
-	SpawnMissileAngle(this, FighterSwordMissile,
+	SpawnMissileAngle(FighterSwordMissile,
 		AngleMod360(angle + 45.0 / 4.0), 0.0);
-	SpawnMissileAngle(this, FighterSwordMissile,
+	SpawnMissileAngle(FighterSwordMissile,
 		AngleMod360(angle + 45.0 / 8.0), 0.0);
-	SpawnMissileAngle(this, FighterSwordMissile, angle, 0.0);
-	SpawnMissileAngle(this, FighterSwordMissile,
+	SpawnMissileAngle(FighterSwordMissile, angle, 0.0);
+	SpawnMissileAngle(FighterSwordMissile,
 		AngleMod360(angle - 45.0 / 8.0), 0.0);
-	SpawnMissileAngle(this, FighterSwordMissile,
+	SpawnMissileAngle(FighterSwordMissile,
 		AngleMod360(angle - 45.0 / 4.0), 0.0);
 	PlaySound('FighterSwordFire', CHAN_WEAPON);
 }
@@ -238,7 +238,7 @@ void Actor::A_FighterAttack(void)
 
 void Actor::A_CHolyAttack3(void)
 {
-	SpawnMissile(this, &Enemy, HolyMissile);
+	SpawnMissile(Enemy, HolyMissile);
 	PlaySound('HolySymbolFire', CHAN_WEAPON);
 }
 
@@ -263,13 +263,13 @@ void Actor::A_ClericAttack(void)
 
 void Actor::MStaffSpawn2(float angle)
 {
-	mobj_t *mo;
+	Actor mo;
 
-	mo = SpawnMissileAngle(this, MageStaffFX2, angle, 0.0);
+	mo = SpawnMissileAngle(MageStaffFX2, angle, 0.0);
 	if (mo)
 	{
-		mo->Owner = self;
-		mo->SpecialMobj1 = &mo->RoughMonsterSearch(10);
+		mo.Owner = self;
+		mo.SpecialMobj1 = &mo.RoughMonsterSearch(10);
 	}
 }
 
@@ -306,6 +306,9 @@ void Actor::A_MageAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.17  2002/02/22 18:00:21  dj_jl
 //  A lots of the renaming, beautification.
 //

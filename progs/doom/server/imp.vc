@@ -47,7 +47,7 @@ void Actor::A_TroopAttack(void)
 {
 	int damage;
 
-	if (!target)
+	if (!Enemy)
 		return;
 
 	A_FaceTarget();
@@ -55,17 +55,20 @@ void Actor::A_TroopAttack(void)
 	{
 		PlaySound('ImpAttack', CHAN_WEAPON);
 		damage = (P_Random() % 8 + 1) * 3;
-		target->Damage(self, self, damage);
+		Enemy.Damage(self, self, damage);
 		return;
 	}
 
 	// launch a missile
-	SpawnMissile(this, target, ImpMissile);
+	SpawnMissile(this, &Enemy, ImpMissile);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/26 17:49:47  dj_jl
+//  no message
+//
 //  Revision 1.13  2002/02/22 18:00:07  dj_jl
 //  A lots of the renaming, beautification.
 //

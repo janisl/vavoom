@@ -103,25 +103,25 @@ void Actor::A_Srcr1Attack(void)
 	TAVec ang;
 	float angle;
 
-	if (!target)
+	if (!Enemy)
 	{
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		target->Damage(self, self, HITDICE(8));
+		Enemy.Damage(self, self, HITDICE(8));
 		return;
 	}
 	if (Health > (SpawnHealth / 3) * 2)
 	{
 		// Spit one fireball
-		SpawnMissile(this, target, Sorcerer1Missile);
+		SpawnMissile(this, &Enemy, Sorcerer1Missile);
 	}
 	else
 	{
 		// Spit three fireballs
-		mo = SpawnMissile(this, target, Sorcerer1Missile);
+		mo = SpawnMissile(this, &Enemy, Sorcerer1Missile);
 		if (mo)
 		{
 			VectorAngles(&mo->Velocity, &ang);
@@ -180,13 +180,13 @@ void Actor::A_SorZap(void)
 
 void Actor::A_SorcererRise(void)
 {
-	mobj_t *mo;
+	Actor mo;
 
 	bSolid = false;
-	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, Sorcerer2);
-	mo->SetState(S_SOR2_RISE1);
-	mo->Angles.yaw = Angles.yaw;
-	mo->target = target;
+	mo = SpawnActor(Origin, Sorcerer2);
+	mo.SetState(S_SOR2_RISE1);
+	mo.Angles.yaw = Angles.yaw;
+	mo.Enemy = Enemy;
 }
 
 //==========================================================================
@@ -222,11 +222,9 @@ void Actor::DSparilTeleport(void)
 	int i;
 	float x;
 	float y;
-	float prevX;
-	float prevY;
-	float prevZ;
+	TVec PrevOrg;
 	TVec dir;
-	mobj_t *mo;
+	Actor fog;
 
 	if (!BossSpotCount)
 	{	// No spots
@@ -241,13 +239,11 @@ void Actor::DSparilTeleport(void)
 		dir = BossSpot[i % BossSpotCount] - Origin;
 	}
 	while (Length(dir) < 128.0);
-	prevX = Origin.x;
-	prevY = Origin.y;
-	prevZ = Origin.z;
+	PrevOrg = Origin;
 	if (P_TeleportMove(this, x, y))
 	{
-		mo = P_SpawnMobj(prevX, prevY, prevZ, Sorcerer2TeleFade);
-		mo->PlaySound('Teleport', CHAN_VOICE);
+		fog = SpawnActor(PrevOrg, Sorcerer2TeleFade);
+		fog.PlaySound('Teleport', CHAN_VOICE);
 		SetState(S_SOR2_TELE1);
 		PlaySound('Teleport', CHAN_VOICE);
 		Origin.z = FloorZ;
@@ -317,14 +313,14 @@ void Actor::A_Srcr2Attack(void)
 {
 	int chance;
 
-	if (!target)
+	if (!Enemy)
 	{
 		return;
 	}
 	PlayFullVolumeSound(AttackSound, CHAN_AUTO);
 	if (CheckMeleeRange())
 	{
-		target->Damage(self, self, HITDICE(20));
+		Enemy.Damage(self, self, HITDICE(20));
 		return;
 	}
 	chance = Health < SpawnHealth / 2 ? 96 : 48;
@@ -339,7 +335,7 @@ void Actor::A_Srcr2Attack(void)
 	else
 	{
 		// Blue bolt
-		SpawnMissile(this, target, Sorcerer2Missile1);
+		SpawnMissile(this, &Enemy, Sorcerer2Missile1);
 	}
 }
 
@@ -412,14 +408,14 @@ void Actor::A_SorDBon(void)
 void Actor::A_BlueSpark(void)
 {
 	int i;
-	mobj_t *mo;
+	Actor spark;
 
 	for (i = 0; i < 2; i++)
 	{
-		mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, Sorcerer2MissileSpark);
-		mo->Velocity.x = (Random() - Random()) * 2.0 * 35.0;
-		mo->Velocity.y = (Random() - Random()) * 2.0 * 35.0;
-		mo->Velocity.z = (1.0 + Random()) * 35.0;
+		spark = SpawnActor(Origin, Sorcerer2MissileSpark);
+		spark.Velocity.x = (Random() - Random()) * 2.0 * 35.0;
+		spark.Velocity.y = (Random() - Random()) * 2.0 * 35.0;
+		spark.Velocity.z = (1.0 + Random()) * 35.0;
 	}
 }
 
@@ -431,27 +427,30 @@ void Actor::A_BlueSpark(void)
 
 void Actor::A_GenWizard(void)
 {
-	mobj_t *mo;
-	mobj_t *fog;
+	Actor mo;
+	Actor fog;
 
-	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, Wizard);
-	mo->Origin.z = Origin.z - mo->Height / 2.0;
-	if (!P_TestMobjLocation(mo))
+	mo = SpawnActor(Origin, Wizard);
+	mo.Origin.z = Origin.z - mo.Height / 2.0;
+	if (!P_TestMobjLocation(&mo))
 	{
 		// Didn't fit
-		P_RemoveMobj(mo);
+		P_RemoveMobj(&mo);
 		return;
 	}
 	Velocity = vector(0.0, 0.0, 0.0);
 	SetState(DeathState);
 	bMissile = false;
-	fog = P_SpawnMobj(Origin.x, Origin.y, Origin.z, TeleportFog);
-	fog->PlaySound('Teleport', CHAN_VOICE);
+	fog = SpawnActor(Origin, TeleportFog);
+	fog.PlaySound('Teleport', CHAN_VOICE);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.19  2002/02/22 18:00:18  dj_jl
 //  A lots of the renaming, beautification.
 //

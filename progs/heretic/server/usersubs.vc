@@ -368,7 +368,7 @@ void ArtiFireBomb(player_t * player)
 		player->mo->Origin.z - player->mo->FloorClip,
 		FireBomb);
 
-	mo->target = player->mo;
+	mo->Owner = *player->mo;
 }
 
 //==========================================================================
@@ -461,6 +461,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.21  2002/02/22 18:00:19  dj_jl
 //  A lots of the renaming, beautification.
 //

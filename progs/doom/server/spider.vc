@@ -51,7 +51,7 @@ void Actor::A_SpidRefire(void)
 	if (P_Random() < 10)
 		return;
 
-	if (!target || target->Health <= 0 || !P_CheckSight(self, *target))
+	if (!Enemy || Enemy.Health <= 0 || !P_CheckSight(self, Enemy))
 	{
 		SetState(SeeState);
 	}
@@ -60,6 +60,9 @@ void Actor::A_SpidRefire(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/02/26 17:49:47  dj_jl
+//  no message
+//
 //  Revision 1.8  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

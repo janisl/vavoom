@@ -276,8 +276,9 @@ void DeathPlayerThink(player_t * player)
 	CalcHeight(player);
 
 	if (player->Attacker && player->Attacker != player->mo)
-	{	// Watch killer
-		dir = P_FaceMobj(player->mo, player->Attacker, &delta);
+	{
+		// Watch killer
+		dir = player->mo->FaceActor(*player->Attacker, &delta);
 		if (delta < 10.0)
 		{
 			// Looking at killer, so fade damage and poison counters
@@ -357,14 +358,14 @@ mobj_t *SpawnSpeedMobj(mobj_t * pmo)
 
 void ArtiPig(mobj_t * mo)
 {
-	SpawnPlayerMissile(mo, EggMissile);
-	SpawnPlayerMissileAngle(mo, EggMissile,
+	mo->SpawnPlayerMissile(EggMissile);
+	mo->SpawnPlayerMissileAngle(EggMissile,
 		AngleMod360(mo->Angles.yaw - 45.0 / 6.0));
-	SpawnPlayerMissileAngle(mo, EggMissile,
+	mo->SpawnPlayerMissileAngle(EggMissile,
 		AngleMod360(mo->Angles.yaw + 45.0 / 6.0));
-	SpawnPlayerMissileAngle(mo, EggMissile,
+	mo->SpawnPlayerMissileAngle(EggMissile,
 		AngleMod360(mo->Angles.yaw - 45.0 / 3.0));
-	SpawnPlayerMissileAngle(mo, EggMissile,
+	mo->SpawnPlayerMissileAngle(EggMissile,
 		AngleMod360(mo->Angles.yaw + 45.0 / 3.0));
 }
 
@@ -376,14 +377,14 @@ void ArtiPig(mobj_t * mo)
 
 void ArtiSummon(player_t * player)
 {
-	mobj_t *mo;
+	Actor mo;
 
-	mo = SpawnPlayerMissile(player->mo, SummonMissile);
+	mo = player->mo->SpawnPlayerMissile(SummonMissile);
 	if (mo)
 	{
-		mo->Owner = *player->mo;
-		mo->SpecialMobj1 = player->mo;
-		mo->Velocity.z = 5.0 * 35.0;
+		mo.Owner = *player->mo;
+		mo.SpecialMobj1 = player->mo;
+		mo.Velocity.z = 5.0 * 35.0;
 	}
 }
 
@@ -432,12 +433,12 @@ void ArtiPoisonBag(player_t * player)
 			bomb->Velocity.z =
 				(4.0 + 173.0 * -tan(player->mo->Angles.pitch) / 16.0) * 35.0;
 			bomb->Origin.z += 173.0 * -tan(player->mo->Angles.pitch) / 16.0;
-			P_ThrustMobj(bomb, bomb->Angles.yaw, bomb->Speed * frametime);
+			bomb->Thrust(bomb->Angles.yaw, bomb->Speed * frametime);
 			bomb->Velocity.x += player->mo->Velocity.x / 2.0;
 			bomb->Velocity.y += player->mo->Velocity.y / 2.0;
 			bomb->Owner = *player->mo;
 			bomb->StateTime -= Random() * 0.1;
-			CheckMissileSpawn(bomb);
+			bomb->CheckMissileSpawn();
 		}
 	}
 }
@@ -450,12 +451,12 @@ void ArtiPoisonBag(player_t * player)
 
 void ArtiTeleportOther(player_t * player)
 {
-	mobj_t *mo;
+	Actor mo;
 
-	mo = SpawnPlayerMissile(player->mo, TeleportOtherFX1);
+	mo = player->mo->SpawnPlayerMissile(TeleportOtherFX1);
 	if (mo)
 	{
-		mo->Owner = *player->mo;
+		mo.Owner = *player->mo;
 	}
 }
 
@@ -672,6 +673,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/02/26 17:49:49  dj_jl
+//  no message
+//
 //  Revision 1.20  2002/02/22 18:00:25  dj_jl
 //  A lots of the renaming, beautification.
 //

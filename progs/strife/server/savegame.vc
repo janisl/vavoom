@@ -44,36 +44,12 @@ void UnarchivePlayer(player_t * player)
 	player->Attacker = NULL;
 }
 
-//==========================================================================
-//
-//  mobj_t::Archive
-//
-//==========================================================================
-
-void mobj_t::Archive(void)
-{
-	MobjToNum(&target);
-}
-
-//==========================================================================
-//
-//  mobj_t::Unarchive
-//
-//==========================================================================
-
-void mobj_t::Unarchive(void)
-{
-	NumToMobj(&target);
-	SightSound = UnarchiveName(SightSound);
-	ActiveSound = UnarchiveName(ActiveSound);
-	AttackSound = UnarchiveName(AttackSound);
-	PainSound = UnarchiveName(PainSound);
-	DeathSound = UnarchiveName(DeathSound);
-}
-
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/26 17:49:49  dj_jl
+//  no message
+//
 //  Revision 1.11  2002/02/22 18:00:26  dj_jl
 //  A lots of the renaming, beautification.
 //

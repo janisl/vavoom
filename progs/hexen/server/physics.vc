@@ -43,8 +43,6 @@
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
-boolean P_ExplodeMissile(Actor * mo);
-
 // DATA DECLARATIONS -------------------------------------------------------
 
 // CODE --------------------------------------------------------------------
@@ -499,7 +497,7 @@ void Actor::UpdateVelocity(void)
 		{
 			Velocity -= Velocity * FRICTION_FLY * frametime;
 		}
-		else if (P_GetThingFloorType(this) == FLOOR_ICE)
+		else if (GetFloorType() == FLOOR_ICE)
 		{
 			Velocity -= Velocity * FRICTION_LOW * frametime;
 		}
@@ -548,7 +546,7 @@ boolean Actor::HitMobj(void)
 			else
 			{
 				// Struck a player/creature
-				return P_ExplodeMissile(this);
+				return ExplodeMissile();
 			}
 		}
 		if (Actor(tmtrace.BlockingMobj).bReflective)
@@ -604,7 +602,7 @@ boolean Actor::HitMobj(void)
 			}
 		}
 		// Explode a missile
-		return P_ExplodeMissile(this);
+		return ExplodeMissile();
 	}
 	else
 	{
@@ -680,7 +678,7 @@ boolean Actor::HitLine(void)
 			}
 			else if (Class == HolyFX)
 			{
-				if (!P_ExplodeMissile(this))
+				if (!ExplodeMissile())
 				{
 					return false;
 				}
@@ -692,7 +690,7 @@ boolean Actor::HitLine(void)
 			}
 			return true;
 		}
-		if (!P_ExplodeMissile(this))
+		if (!ExplodeMissile())
 		{
 			return false;
 		}
@@ -734,22 +732,22 @@ boolean Actor::XYMovement(void)
 		case 40:
 		case 41:
 		case 42:	// Wind_East
-			P_ThrustMobj(this, 0.0, windTab[special - 40]);
+			Thrust(0.0, windTab[special - 40]);
 			break;
 		case 43:
 		case 44:
 		case 45:	// Wind_North
-			P_ThrustMobj(this, 90.0, windTab[special - 43]);
+			Thrust(90.0, windTab[special - 43]);
 			break;
 		case 46:
 		case 47:
 		case 48:	// Wind_South
-			P_ThrustMobj(this, 270.0, windTab[special - 46]);
+			Thrust(270.0, windTab[special - 46]);
 			break;
 		case 49:
 		case 50:
 		case 51:	// Wind_West
-			P_ThrustMobj(this, 180.0, windTab[special - 49]);
+			Thrust(180.0, windTab[special - 49]);
 			break;
 		}
 	}
@@ -982,14 +980,14 @@ boolean Actor::HitFloor(void)
 		Origin.z = FloorZ;
 		if (bFloorBounce)
 		{
-			P_FloorBounceMissile(this);
+			FloorBounceMissile();
 			return true;
 		}
 		else if (Class == HolyFX)
 		{
 			// The spirit struck the ground
 			Velocity.z = 0.0;
-			P_HitFloor(this);
+			HitFloorType();
 			return true;
 		}
 		else if (Class == MinotaurFloorFire1 || Class == LightningFloor)
@@ -999,8 +997,8 @@ boolean Actor::HitFloor(void)
 		}
 		else
 		{
-			P_HitFloor(this);
-			return P_ExplodeMissile(this);
+			HitFloorType();
+			return ExplodeMissile();
 		}
 	}
 
@@ -1009,13 +1007,13 @@ boolean Actor::HitFloor(void)
 	{
 		if (vdot < -23.0 * 35.0)
 		{
-			P_MonsterFallingDamage(this);
+			MonsterFallingDamage();
 		}
 	}
 	if (Origin.z - Velocity.z * frametime > FloorZ)
 	{
 		// Spawn splashes, etc.
-		P_HitFloor(this);
+		HitFloorType();
 	}
 	Origin.z = FloorZ;
 	if (vdot < -0.1)
@@ -1035,7 +1033,7 @@ boolean Actor::HitFloor(void)
 				Player->DeltaViewHeight = vdot * frametime / 8.0;
 				if (vdot < -23.0 * 35.0)
 				{
-					P_FallingDamage(Player);
+					FallingDamage();
 					P_NoiseAlert(this, this);
 				}
 				else if (vdot < -GRAVITY * 0.375
@@ -1057,8 +1055,7 @@ boolean Actor::HitFloor(void)
 						break;
 					}
 				}
-				else if ((P_GetThingFloorType(this) < FLOOR_LIQUID) &&
-					(!Player->MorphTics))
+				else if (GetFloorType() < FLOOR_LIQUID && !Player->MorphTics)
 				{
 					PlaySound('PlayerLand', CHAN_BODY);
 				}
@@ -1131,7 +1128,7 @@ boolean Actor::HitCeiling(void)
 			}
 			else if (Class == HolyFX)
 			{
-				return P_ExplodeMissile(this);
+				return ExplodeMissile();
 			}
 			else
 			{
@@ -1140,7 +1137,7 @@ boolean Actor::HitCeiling(void)
 			}
 			return true;
 		}
-		return P_ExplodeMissile(this);
+		return ExplodeMissile();
 	}
 	if (bSkullFly)
 	{
@@ -1234,7 +1231,7 @@ void Actor::PlayerLandedOnThing(void)
 	Player->DeltaViewHeight = Velocity.z * frametime / 8.0;
 	if (Velocity.z < -23.0 * 35.0)
 	{
-		P_FallingDamage(Player);
+		FallingDamage();
 		P_NoiseAlert(this, this);
 	}
 	else if (Velocity.z < -GRAVITY * 0.375 && !Player->MorphTics)
@@ -1292,7 +1289,7 @@ boolean Actor::BlasterPhysics(void)
 				if (!P_TryMove(this, Origin.x + xfrac, Origin.y + yfrac))
 				{
 					// Blocked move
-					return P_ExplodeMissile(this);
+					return ExplodeMissile();
 				}
 			}
 			Origin.z += zfrac;
@@ -1300,14 +1297,14 @@ boolean Actor::BlasterPhysics(void)
 			{
 				// Hit the floor
 				Origin.z = FloorZ;
-				P_HitFloor(this);
-				return P_ExplodeMissile(this);
+				HitFloorType();
+				return ExplodeMissile();
 			}
 			if (Origin.z + Height > CeilingZ)
 			{
 				// Hit the ceiling
 				Origin.z = CeilingZ - Height;
-				return P_ExplodeMissile(this);
+				return ExplodeMissile();
 			}
 			if (changexy)
 			{
@@ -1477,6 +1474,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/02/26 17:49:49  dj_jl
+//  no message
+//
 //  Revision 1.25  2002/02/22 18:00:23  dj_jl
 //  A lots of the renaming, beautification.
 //

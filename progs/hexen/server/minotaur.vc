@@ -348,7 +348,7 @@ void Actor::A_MinotaurDecide(void)
 
 void Actor::A_MinotaurAtk2(void)
 {
-	mobj_t *mo;
+	Actor mo;
 	float angle;
 	float momz;
 
@@ -361,18 +361,18 @@ void Actor::A_MinotaurAtk2(void)
 		Enemy.Damage(self, self, HITDICE(3));
 		return;
 	}
-	mo = SpawnMissile(this, &Enemy, MinotaurMissile);
+	mo = SpawnMissile(Enemy, MinotaurMissile);
 	if (mo)
 	{
-		momz = mo->Velocity.z * frametime;
-		angle = mo->Angles.yaw;
-		SpawnMissileAngle(this, MinotaurMissile,
+		momz = mo.Velocity.z;
+		angle = mo.Angles.yaw;
+		SpawnMissileAngle(MinotaurMissile,
 			AngleMod360(angle - (45.0 / 8.0)), momz);
-		SpawnMissileAngle(this, MinotaurMissile,
+		SpawnMissileAngle(MinotaurMissile,
 			AngleMod360(angle + (45.0 / 8.0)), momz);
-		SpawnMissileAngle(this, MinotaurMissile,
+		SpawnMissileAngle(MinotaurMissile,
 			AngleMod360(angle - (45.0 / 16.0)), momz);
-		SpawnMissileAngle(this, MinotaurMissile,
+		SpawnMissileAngle(MinotaurMissile,
 			AngleMod360(angle + (45.0 / 16.0)), momz);
 	}
 }
@@ -387,7 +387,7 @@ void Actor::A_MinotaurAtk2(void)
 
 void Actor::A_MinotaurAtk3(void)
 {
-	mobj_t *mo;
+	Actor mo;
 
 	if (!Enemy)
 	{
@@ -404,10 +404,10 @@ void Actor::A_MinotaurAtk3(void)
 	}
 	else
 	{
-		mo = SpawnMissile(this, &Enemy, MinotaurFloorFire1);
-		if (mo != NULL)
+		mo = SpawnMissile(Enemy, MinotaurFloorFire1);
+		if (mo)
 		{
-			mo->PlaySound('MaulatorHamHit', CHAN_VOICE);
+			mo.PlaySound('MaulatorHamHit', CHAN_VOICE);
 		}
 	}
 	if (P_Random() < 192 && Special2 == 0)
@@ -493,7 +493,7 @@ void Actor::A_MntrFloorFire(void)
 		Origin.y + (Random() - Random()) * 4.0, ONFLOORZ, MinotaurFloorFire2);
 	mo->Owner = Owner;
 	mo->Velocity.x = 0.00001;	// Force block checking
-	CheckMissileSpawn(mo);
+	mo->CheckMissileSpawn();
 }
 
 //============================================================================
@@ -510,6 +510,9 @@ void Actor::A_SmokePuffExit(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/02/26 17:49:49  dj_jl
+//  no message
+//
 //  Revision 1.22  2002/02/22 18:00:22  dj_jl
 //  A lots of the renaming, beautification.
 //

@@ -50,7 +50,7 @@ void Actor::A_SPosAttack(void)
 	TVec aimDir;
 	TVec dir;
 
-	if (!target)
+	if (!Enemy)
 		return;
 
 	PlaySound('ShotgunFire', CHAN_WEAPON);
@@ -70,6 +70,9 @@ void Actor::A_SPosAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/26 17:49:47  dj_jl
+//  no message
+//
 //  Revision 1.13  2002/02/22 18:00:14  dj_jl
 //  A lots of the renaming, beautification.
 //

@@ -481,13 +481,11 @@ void Actor::A_SerpentMeleeAttack(void)
 
 void Actor::A_SerpentMissileAttack(void)
 {
-	mobj_t *mo;
-
 	if (!Enemy)
 	{
 		return;
 	}
-	mo = SpawnMissile(this, &Enemy, SerpentMissile);
+	SpawnMissile(Enemy, SerpentMissile);
 }
 
 //============================================================================
@@ -550,9 +548,9 @@ void Actor::A_SerpentHeadCheck(void)
 {
 	if (Origin.z <= FloorZ)
 	{
-		if (P_GetThingFloorType(this) >= FLOOR_LIQUID)
+		if (GetFloorType() >= FLOOR_LIQUID)
 		{
-			P_HitFloor(this);
+			HitFloorType();
 			SetState(S_NULL);
 		}
 		else
@@ -598,6 +596,9 @@ void Actor::A_DelayGib(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/26 17:49:49  dj_jl
+//  no message
+//
 //  Revision 1.19  2002/02/22 18:00:23  dj_jl
 //  A lots of the renaming, beautification.
 //

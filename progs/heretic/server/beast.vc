@@ -43,17 +43,17 @@
 
 void Actor::A_BeastAttack(void)
 {
-	if (!target)
+	if (!Enemy)
 	{
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		target->Damage(self, self, HITDICE(3));
+		Enemy.Damage(self, self, HITDICE(3));
 		return;
 	}
-	SpawnMissile(this, target, BeastBall);
+	SpawnMissile(this, &Enemy, BeastBall);
 }
 
 //==========================================================================
@@ -64,22 +64,23 @@ void Actor::A_BeastAttack(void)
 
 void Actor::A_BeastPuff(void)
 {
-	float i1;
-	float i2;
-	float i3;
+	TVec org;
 
 	if (P_Random() > 64)
 	{
-		i1 = Origin.x + (Random() - Random()) * 4.0;
-		i2 = Origin.y + (Random() - Random()) * 4.0;
-		i3 = Origin.z + (Random() - Random()) * 4.0;
-		P_SpawnMobj(i1, i2, i3, Puffy);
+		org.x = Origin.x + (Random() - Random()) * 4.0;
+		org.y = Origin.y + (Random() - Random()) * 4.0;
+		org.z = Origin.z + (Random() - Random()) * 4.0;
+		SpawnActor(org, Puffy);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.14  2002/02/22 18:00:15  dj_jl
 //  A lots of the renaming, beautification.
 //

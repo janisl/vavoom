@@ -434,7 +434,8 @@ boolean Actor::XYMovement(void)
 		{
 			ptryx = Origin.x + xmove;
 			ptryy = Origin.y + ymove;
-			xmove = ymove = 0.0;
+			xmove = 0.0;
+			ymove = 0.0;
 		}
 
 		if (!P_TryMove(this, ptryx, ptryy))
@@ -547,14 +548,14 @@ void Actor::ZMovement(void)
 	// adjust height
 	Origin.z += Velocity.z * frametime;
 
-	if (bFloat && target)
+	if (bFloat && Enemy)
 	{
-		// float down towards target if too close
+		// float down towards enemy if too close
 		if (!bSkullFly && !bInFloat)
 		{
-			dist = MobjDist2(self, *target);
+			dist = MobjDist2(self, Enemy);
 
-			delta = target->Origin.z + Height / 2.0 - Origin.z;
+			delta = Enemy.Origin.z + Height / 2.0 - Origin.z;
 
 			if (delta < 0.0 && dist < -(delta * 3.0))
 				Origin.z -= FLOATSPEED * frametime;
@@ -819,13 +820,13 @@ void Actor::FakeZMovement(void)
 	//  adjust height
 	//
 	tzorg.z += Velocity.z * frametime;
-	if (bFloat && target)
+	if (bFloat && Enemy)
 	{
-		// float down towards target if too close
+		// float down towards enemy if too close
 		if (!bSkullFly && !bInFloat)
 		{
-			dist = MobjDist2(self, *target);
-			delta = target->Origin.z + Height / 2.0 - tzorg.z;
+			dist = MobjDist2(self, Enemy);
+			delta = Enemy.Origin.z + Height / 2.0 - tzorg.z;
 			if (delta < 0.0 && dist < -(delta * 3.0))
 				tzorg.z -= FLOATSPEED * frametime;
 			else if (delta > 0.0 && dist < (delta * 3.0))
@@ -1052,6 +1053,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/02/26 17:49:49  dj_jl
+//  no message
+//
 //  Revision 1.20  2002/02/22 18:00:26  dj_jl
 //  A lots of the renaming, beautification.
 //

@@ -403,7 +403,7 @@ boolean Actor::StepMove(void)
 	{
 		if (Origin.z > FloorZ)
 		{
-			P_HitFloor(this);
+			HitFloorType();
 		}
 		Origin.z = FloorZ;
 	}
@@ -808,6 +808,9 @@ Actor Actor::RoughMonsterSearch(int distance)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.15  2002/02/22 18:00:20  dj_jl
 //  A lots of the renaming, beautification.
 //

@@ -93,7 +93,8 @@ void StartLevelLoading(void)
 void EndLevelLoading(void)
 {
 	// clear special respawning que
-	iquehead = iquetail = 0;
+	iquehead = 0;
+	iquetail = 0;
 }
 
 //==========================================================================
@@ -112,6 +113,9 @@ void main(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2002/02/26 17:49:47  dj_jl
+//  no message
+//
 //  Revision 1.2  2002/01/07 12:21:11  dj_jl
 //  Changed copyright year
 //

@@ -65,12 +65,12 @@ boolean Actor::Touch(MapObject InOther)
 	// missiles can hit other things
 	if (bMissile)
 	{
-		if (target && (target->Class == Other.Class ||
-			(target->Class == HellKnight && Other.Class == BaronOfHell) ||
-			(target->Class == BaronOfHell && Other.Class == HellKnight)))
+		if (Owner && (Owner.Class == Other.Class ||
+			(Owner.Class == HellKnight && Other.Class == BaronOfHell) ||
+			(Owner.Class == BaronOfHell && Other.Class == HellKnight)))
 		{
 			// Don't hit same species as originator.
-			if (Other == *target)
+			if (Other == Owner)
 				return true;
 
 			if (Other.Class != PlayerPawn)
@@ -89,7 +89,7 @@ boolean Actor::Touch(MapObject InOther)
 
 		// damage / explode
 		damage = ((P_Random() % 8) + 1) * MissileDamage;
-		Other.Damage(self, *target, damage);
+		Other.Damage(self, Owner, damage);
 		// don't traverse any more
 		return false;
 	}
@@ -239,6 +239,9 @@ void P_ThrustMobj(mobj_t * mo, float angle, float move)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/26 17:49:47  dj_jl
+//  no message
+//
 //  Revision 1.19  2002/02/22 18:00:11  dj_jl
 //  A lots of the renaming, beautification.
 //

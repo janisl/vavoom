@@ -43,13 +43,13 @@
 
 void Actor::A_KnightAttack(void)
 {
-	if (!target)
+	if (!Enemy)
 	{
 		return;
 	}
 	if (CheckMeleeRange())
 	{
-		target->Damage(self, self, HITDICE(3));
+		Enemy.Damage(self, self, HITDICE(3));
 		PlaySound('KnightAttack2', CHAN_WEAPON);
 		return;
 	}
@@ -58,11 +58,11 @@ void Actor::A_KnightAttack(void)
 	if (Class == KnightGhost || P_Random() < 40)
 	{
 		// Red axe
-		SpawnMissile(this, target, KnightRedAxe);
+		SpawnMissile(this, &Enemy, KnightRedAxe);
 		return;
 	}
 	// Green axe
-	SpawnMissile(this, target, KnightAxe);
+	SpawnMissile(this, &Enemy, KnightAxe);
 }
 
 //==========================================================================
@@ -73,18 +73,21 @@ void Actor::A_KnightAttack(void)
 
 void Actor::A_DripBlood(void)
 {
-	mobj_t *mo;
+	Actor mo;
 
-	mo = P_SpawnMobj(Origin.x + (Random() - Random()) * 8.0,
-		Origin.y + (Random() - Random()) * 8.0, Origin.z, Blood);
-	mo->Velocity.x = (Random() - Random()) * 4.0 * 35.0;
-	mo->Velocity.y = (Random() - Random()) * 4.0 * 35.0;
-	mo->bLowGravity = true;
+	mo = SpawnActor(Origin + vector((Random() - Random()) * 8.0,
+		(Random() - Random()) * 8.0, 0.0), Blood);
+	mo.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+	mo.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+	mo.bLowGravity = true;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.18  2002/02/22 18:00:16  dj_jl
 //  A lots of the renaming, beautification.
 //

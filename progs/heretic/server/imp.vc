@@ -43,14 +43,14 @@
 
 void Actor::A_ImpMeAttack(void)
 {
-	if (!target)
+	if (!Enemy)
 	{
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		target->Damage(self, self, 5 + (P_Random() & 7));
+		Enemy.Damage(self, self, 5 + (P_Random() & 7));
 	}
 }
 
@@ -62,29 +62,31 @@ void Actor::A_ImpMeAttack(void)
 
 void Actor::A_ImpMsAttack(void)
 {
-	mobj_t *dest;
-	float an;
-	float dist;
-
-	if (!target || P_Random() > 64)
+	if (!Enemy || P_Random() > 64)
 	{
 		SetState(SeeState);
 		return;
 	}
-	dest = target;
 	bSkullFly = true;
 	PlaySound(AttackSound, CHAN_WEAPON);
 	A_FaceTarget();
+#if 0
+	float an;
+	float dist;
+
 	an = Angles.yaw;
 	Velocity.x = 12.0 * cos(an) * 35.0;
 	Velocity.y = 12.0 * sin(an) * 35.0;
-	dist = MobjDist2(*dest, self);
-	dist = dist / 12.0;
+	dist = MobjDist2(Enemy, self);
+	dist = dist / (12.0 * 35.0);
 	if (dist < 1.0)
 	{
 		dist = 1.0;
 	}
-	Velocity.z = (dest->Origin.z + dest->Height / 2.0 - Origin.z) / dist;
+	Velocity.z = (Enemy.Origin.z + Enemy.Height / 2.0 - Origin.z) / dist;
+#else
+	Velocity = Normalize(MobjCenter(Enemy) - Origin) * 12.0 * 35.0;
+#endif
 }
 
 //==========================================================================
@@ -97,17 +99,17 @@ void Actor::A_ImpMsAttack(void)
 
 void Actor::A_ImpMsAttack2(void)
 {
-	if (!target)
+	if (!Enemy)
 	{
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		target->Damage(self, self, 5 + (P_Random() & 7));
+		Enemy.Damage(self, self, 5 + (P_Random() & 7));
 		return;
 	}
-	SpawnMissile(this, target, ImpBall);
+	SpawnMissile(this, &Enemy, ImpBall);
 }
 
 //==========================================================================
@@ -163,16 +165,16 @@ void Actor::A_ImpXDeath2(void)
 
 void Actor::A_ImpExplode(void)
 {
-	mobj_t *mo;
+	Actor mo;
 
-	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, ImpChunk1);
-	mo->Velocity.x = (Random() - Random()) * 4.0 * 35.0;
-	mo->Velocity.y = (Random() - Random()) * 4.0 * 35.0;
-	mo->Velocity.z = 9.0 * 35.0;
-	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, ImpChunk2);
-	mo->Velocity.x = (Random() - Random()) * 4.0 * 35.0;
-	mo->Velocity.y = (Random() - Random()) * 4.0 * 35.0;
-	mo->Velocity.z = 9.0 * 35.0;
+	mo = SpawnActor(Origin, ImpChunk1);
+	mo.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+	mo.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+	mo.Velocity.z = 9.0 * 35.0;
+	mo = SpawnActor(Origin, ImpChunk2);
+	mo.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+	mo.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+	mo.Velocity.z = 9.0 * 35.0;
 	if (Special1 == 666)
 	{
 		// Extreme death crash
@@ -183,6 +185,9 @@ void Actor::A_ImpExplode(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.18  2002/02/22 18:00:16  dj_jl
 //  A lots of the renaming, beautification.
 //

@@ -47,16 +47,16 @@ boolean Actor::CheckMeleeRange(void)
 {
 	float dist;
 
-	if (!target)
+	if (!Enemy)
 	{
 		return false;
 	}
-	dist = MobjDist(*target, self);
+	dist = MobjDist(Enemy, self);
 	if (dist >= MELEERANGE)
 	{
 		return false;
 	}
-	if (!P_CheckSight(self, *target))
+	if (!P_CheckSight(self, Enemy))
 	{
 		return false;
 	}
@@ -73,7 +73,7 @@ boolean Actor::CheckMissileRange(void)
 {
 	float dist;
 
-	if (!P_CheckSight(self, *target))
+	if (!P_CheckSight(self, Enemy))
 	{
 		return false;
 	}
@@ -88,7 +88,7 @@ boolean Actor::CheckMissileRange(void)
 		// Don't attack yet
 		return false;
 	}
-	dist = MobjDist(self, *target) - 64.0;
+	dist = MobjDist(self, Enemy) - 64.0;
 	if (!MeleeState)
 	{
 		// No melee attack, so fire more frequently
@@ -178,7 +178,7 @@ boolean Actor::LookForMonsters(void)
 			continue;
 		}
 		// Found a target monster
-		target = &mo;
+		Enemy = mo;
 		return true;
 	}
 	return false;
@@ -254,7 +254,7 @@ boolean Actor::LookForPlayers(boolean allaround)
 				return false;
 			}
 		}
-		target = P->mo;
+		Enemy = *P->mo;
 		return true;
 	}
 	return false;
@@ -329,7 +329,7 @@ boolean Actor::StepMove(void)
 	{
 		if (Origin.z > FloorZ)
 		{
-			P_HitFloor(this);
+			HitFloorEffect();
 		}
 		Origin.z = FloorZ;
 	}
@@ -369,14 +369,14 @@ void Actor::NewChaseDir(void)
 	int d[3];
 	int tdir, olddir, turnaround;
 
-	if (!target)
-		Error("NewChaseDir: called with no target");
+	if (!Enemy)
+		Error("NewChaseDir: called with no Enemy");
 
 	olddir = MoveDir;
 	turnaround = opposite[olddir];
 
-	deltax = target->Origin.x - Origin.x;
-	deltay = target->Origin.y - Origin.y;
+	deltax = Enemy.Origin.x - Origin.x;
+	deltay = Enemy.Origin.y - Origin.y;
 	if (deltax > 10.0)
 		d[1] = DI_EAST;
 	else if (deltax < -10.0)
@@ -472,6 +472,9 @@ void Actor::NewChaseDir(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.19  2002/02/22 18:00:15  dj_jl
 //  A lots of the renaming, beautification.
 //

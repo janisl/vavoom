@@ -43,14 +43,14 @@
 
 void Actor::A_MummyAttack(void)
 {
-	if (!target)
+	if (!Enemy)
 	{
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		target->Damage(self, self, HITDICE(2));
+		Enemy.Damage(self, self, HITDICE(2));
 		PlaySound('MumyAttack2', CHAN_WEAPON);
 		return;
 	}
@@ -69,19 +69,19 @@ void Actor::A_MummyAttack2(void)
 {
 	mobj_t *mo;
 
-	if (!target)
+	if (!Enemy)
 	{
 		return;
 	}
 	if (CheckMeleeRange())
 	{
-		target->Damage(self, self, HITDICE(2));
+		Enemy.Damage(self, self, HITDICE(2));
 		return;
 	}
-	mo = SpawnMissile(this, target, MummyMissile);
+	mo = SpawnMissile(this, &Enemy, MummyMissile);
 	if (mo)
 	{
-		mo->SpecialMobj1 = target;
+		mo->SpecialMobj1 = &Enemy;
 	}
 }
 
@@ -93,10 +93,10 @@ void Actor::A_MummyAttack2(void)
 
 void Actor::A_MummySoul(void)
 {
-	mobj_t *mo;
+	Actor mo;
 
-	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + 10.0, MummySoul);
-	mo->Velocity.z = 1.0 * 35.0;
+	mo = SpawnActor(Origin + vector(0.0, 0.0, 10.0), MummySoul);
+	mo.Velocity.z = 1.0 * 35.0;
 }
 
 //==========================================================================
@@ -113,6 +113,9 @@ void Actor::A_MummyFX1Seek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.16  2002/02/22 18:00:17  dj_jl
 //  A lots of the renaming, beautification.
 //

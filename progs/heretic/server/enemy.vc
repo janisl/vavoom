@@ -40,11 +40,11 @@ void Actor::A_Look(void)
 
 	if (targ && targ.bShootable)
 	{
-		target = &targ;
+		Enemy = targ;
 
 		if (bAmbush)
 		{
-			if (!P_CheckSight(self, *target))
+			if (!P_CheckSight(self, Enemy))
 			{
 				if (!LookForPlayers(false))
 					return;
@@ -94,7 +94,7 @@ void Actor::A_Chase(void)
 	// modify target threshold
 	if (Threshold)
 	{
-		if (!target || target->Health <= 0)
+		if (!Enemy || Enemy.Health <= 0)
 		{
 			Threshold = 0;
 		}
@@ -130,12 +130,12 @@ void Actor::A_Chase(void)
 		}
 	}
 
-	if (!target || !target->bShootable)
+	if (!Enemy || !Enemy.bShootable)
 	{
-		// look for a new target
+		// look for a new enemy
 		if (LookForPlayers(true))
 		{
-			return;	// got a new target
+			return;	// got a new enemy
 		}
 		SetState(SpawnState);
 		return;
@@ -180,7 +180,7 @@ void Actor::A_Chase(void)
 	// possibly choose another target
 	if (netgame && !Threshold)
 	{
-		if (!P_CheckSight(self, *target))
+		if (!P_CheckSight(self, Enemy))
 		{
 			if (LookForPlayers(true))
 				return;	// got a new target
@@ -219,15 +219,14 @@ void Actor::A_Chase(void)
 
 void Actor::A_FaceTarget(void)
 {
-	if (!target)
+	if (!Enemy)
 		return;
 
 	bAmbush = false;
 
-	Angles.yaw = atan2(target->Origin.y - Origin.y,
-		target->Origin.x - Origin.x);
+	Angles.yaw = atan2(Enemy.Origin.y - Origin.y, Enemy.Origin.x - Origin.x);
 
-	if (target->Translucency)
+	if (Enemy.Translucency)
 	{
 		Angles.yaw = AngleMod360(Angles.yaw + (Random() - Random()) * 45.0);
 	}
@@ -339,8 +338,8 @@ void Actor::A_Explode(void)
 	default:
 		break;
 	}
-	P_RadiusAttack(this, target, damage, 0, 0);
-	P_HitFloor(this);
+	P_RadiusAttack(this, &Owner, damage, 0, 0);
+	HitFloorEffect();
 	if (Class == FireBomb)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
@@ -634,6 +633,9 @@ void Actor::A_ContMobjSound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.20  2002/02/22 18:00:16  dj_jl
 //  A lots of the renaming, beautification.
 //

@@ -151,7 +151,8 @@ void Weapon::A_CStaffCheck(void)
 			{
 				newLife = Player->Health + (damage >> 3);
 				newLife = newLife > 100 ? 100 : newLife;
-				pmo->Health = Player->Health = newLife;
+				pmo->Health = newLife;
+				Player->Health = newLife;
 				SetPsprite(Player, ps_weapon, S_CSTAFFATK2_1);
 			}
 			Player->Mana[MANA_1] -=
@@ -190,23 +191,23 @@ void Weapon::A_CStaffCheck(void)
 
 void Weapon::A_CStaffAttack(void)
 {
-	mobj_t *mo;
+	Actor mo;
 	mobj_t *pmo;
 
 	Player->Mana[MANA_1] -=
 		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
 	pmo = Player->mo;
-	mo = SpawnPlayerMissileAngle(pmo, ClericStaffMissile,
+	mo = pmo->SpawnPlayerMissileAngle(ClericStaffMissile,
 		pmo->Angles.yaw - (45.0 / 15.0));
 	if (mo)
 	{
-		mo->Special2 = 32;
+		mo.Special2 = 32;
 	}
-	mo = SpawnPlayerMissileAngle(pmo, ClericStaffMissile,
+	mo = pmo->SpawnPlayerMissileAngle(ClericStaffMissile,
 		pmo->Angles.yaw + (45.0 / 15.0));
 	if (mo)
 	{
-		mo->Special2 = 0;
+		mo.Special2 = 0;
 	}
 	Player->mo->PlaySound('ClericCStaffFire', CHAN_WEAPON);
 }
@@ -242,13 +243,13 @@ void Actor::A_CStaffMissileSlither(void)
 
 void Weapon::A_CFlameAttack(void)
 {
-	mobj_t *mo;
+	Actor mo;
 
-	mo = SpawnPlayerMissile(Player->mo, ClericFlameMissile);
+	mo = Player->mo->SpawnPlayerMissile(ClericFlameMissile);
 	if (mo)
 	{
-		mo->bBlaster = true;
-		mo->Special1 = 2;
+		mo.bBlaster = true;
+		mo.Special1 = 2;
 	}
 
 	Player->Mana[MANA_2] -=
@@ -352,13 +353,11 @@ void Actor::A_CFlamePuff(void)
 
 void Weapon::A_CHolyAttack(void)
 {
-	mobj_t *mo;
-
 	Player->Mana[MANA_1] -=
 		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
 	Player->Mana[MANA_2] -=
 		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
-	mo = SpawnPlayerMissile(Player->mo, HolyMissile);
+	Player->mo->SpawnPlayerMissile(HolyMissile);
 	Player->DamageCount = 0;
 	Player->BonusCount = 0;
 	Player->WeaponPalette = STARTHOLYPAL;
@@ -426,7 +425,7 @@ void Actor::A_CHolyAttack2(void)
 		mo->Origin.z = Origin.z;
 		mo->Angles.yaw = AngleMod360(Angles.yaw +
 			(45.0 + 45.0 / 2.0) - 45.0 * itof(j));
-		P_ThrustMobj(mo, mo->Angles.yaw, mo->Speed * frametime);
+		mo->Thrust(mo->Angles.yaw, mo->Speed * frametime);
 		mo->Owner = Owner;
 		mo->Args[0] = 10;	// initial turn value
 		mo->Args[1] = 0;	// initial look angle
@@ -510,7 +509,7 @@ void Actor::CHolySeekerMissile(float thresh, float turnMax)
 		CHolyFindTarget();
 		return;
 	}
-	dir = P_FaceMobj(this, targ, &delta);
+	dir = FaceActor(*targ, &delta);
 	if (delta > thresh)
 	{
 		delta /= 2.0;
@@ -741,6 +740,9 @@ void Actor::A_CHolySpawnPuff(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/26 17:49:49  dj_jl
+//  no message
+//
 //  Revision 1.18  2002/02/22 18:00:25  dj_jl
 //  A lots of the renaming, beautification.
 //

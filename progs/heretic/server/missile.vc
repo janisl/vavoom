@@ -51,7 +51,7 @@ int CheckMissileSpawn(mobj_t * missile)
 	missile->Origin += missile->Velocity * 0.0142857143;
 	if (!P_TryMove(missile, missile->Origin.x, missile->Origin.y))
 	{
-		P_ExplodeMissile(missile);
+		missile->ExplodeMissile();
 		return false;
 	}
 	return true;
@@ -97,7 +97,7 @@ mobj_t *SpawnMissile(mobj_t * source, mobj_t * dest, classid type)
 	{
 		th->PlaySound(th->SightSound, CHAN_VOICE);
 	}
-	th->target = source;	// Originator
+	th->Owner = *source;	// Originator
 	dir = dest->Origin - source->Origin;
 	if (dest->Translucency)
 	{
@@ -147,7 +147,7 @@ mobj_t *SpawnMissileAngles(mobj_t * source, classid type, float yaw,
 	{
 		mo->PlaySound(mo->SightSound, CHAN_VOICE);
 	}
-	mo->target = source;	// Originator
+	mo->Owner = *source;	// Originator
 	mo->Angles.yaw = yaw;
 	mo->Angles.pitch = pitch;
 	AngleVector(&mo->Angles, &dir);
@@ -196,7 +196,7 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 	{
 		MissileMobj->PlaySound(MissileMobj->SightSound, CHAN_VOICE);
 	}
-	MissileMobj->target = source;
+	MissileMobj->Owner = *source;
 	MissileMobj->Angles = angles;
 	AngleVector(&angles, &vforward);
 	MissileMobj->Velocity = vforward * MissileMobj->Speed;
@@ -213,7 +213,7 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 	if (!P_TryMove(MissileMobj, MissileMobj->Origin.x, MissileMobj->Origin.y))
 	{
 		// Exploded immediately
-		P_ExplodeMissile(MissileMobj);
+		MissileMobj->ExplodeMissile();
 		return NULL;
 	}
 	return MissileMobj;
@@ -261,7 +261,7 @@ mobj_t *SpawnPlayerMissileAngle(mobj_t * source, classid type, float angle)
 	{
 		th->PlaySound(th->SightSound, CHAN_VOICE);
 	}
-	th->target = source;
+	th->Owner = *source;
 	th->Angles = angles;
 	AngleVector(&angles, &vforward);
 	th->Velocity = vforward * th->Speed;
@@ -296,7 +296,7 @@ boolean P_SeekerMissile(mobj_t * actor, float thresh, float turnMax)
 		actor->SpecialMobj1 = NULL;
 		return false;
 	}
-	dir = P_FaceMobj(actor, target, &delta);
+	dir = actor->FaceActor(*target, &delta);
 	if (delta > thresh)
 	{
 		delta /= 2.0;
@@ -334,6 +334,9 @@ boolean P_SeekerMissile(mobj_t * actor, float thresh, float turnMax)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.17  2002/02/22 18:00:17  dj_jl
 //  A lots of the renaming, beautification.
 //

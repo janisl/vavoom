@@ -47,18 +47,18 @@
 
 void Actor::A_MinotaurAtk1(void)
 {
-	if (!target)
+	if (!Enemy)
 	{
 		return;
 	}
 	PlaySound('StaffHit2', CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		target->Damage(self, self, HITDICE(4));
-		if (target->bIsPlayer)
+		Enemy.Damage(self, self, HITDICE(4));
+		if (Enemy.bIsPlayer)
 		{
 			// Squish the player
-			target->Player->DeltaViewHeight = -16.0;
+			Enemy.Player->DeltaViewHeight = -16.0;
 		}
 	}
 }
@@ -75,14 +75,14 @@ void Actor::A_MinotaurDecide(void)
 {
 	float dist;
 
-	if (!target)
+	if (!Enemy)
 	{
 		return;
 	}
 	PlaySound('MinotaurSight', CHAN_VOICE);
-	dist = MobjDist(self, *target);
-	if (target->Origin.z + target->Height > Origin.z &&
-		target->Origin.z + target->Height < Origin.z + Height &&
+	dist = MobjDist(self, Enemy);
+	if (Enemy.Origin.z + Enemy.Height > Origin.z &&
+		Enemy.Origin.z + Enemy.Height < Origin.z + Height &&
 		dist < 8.0 * 64.0 && dist > 1.0 * 64.0 && P_Random() < 150)
 	{
 		// Charge attack
@@ -90,10 +90,10 @@ void Actor::A_MinotaurDecide(void)
 		SetStateNF(S_MNTR_ATK4_1);
 		bSkullFly = true;
 		A_FaceTarget();
-		Velocity = Normalize(target->Origin - Origin) * MNTR_CHARGE_SPEED;
+		Velocity = Normalize(Enemy.Origin - Origin) * MNTR_CHARGE_SPEED;
 		Special1 = 35 / 2;	// Charge duration
 	}
-	else if (target->Origin.z == target->FloorZ &&
+	else if (Enemy.Origin.z == Enemy.FloorZ &&
 		dist < 9.0 * 64.0 && P_Random() < 220)
 	{
 		// Floor fire attack
@@ -123,17 +123,17 @@ void Actor::A_MinotaurAtk2(void)
 	float angle;
 	TAVec ang;
 
-	if (!target)
+	if (!Enemy)
 	{
 		return;
 	}
 	PlaySound('MinotaurAttack2', CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		target->Damage(self, self, HITDICE(5));
+		Enemy.Damage(self, self, HITDICE(5));
 		return;
 	}
-	mo = SpawnMissile(this, target, MinotaurMissile);
+	mo = SpawnMissile(this, &Enemy, MinotaurMissile);
 	if (mo)
 	{
 		mo->PlaySound('MinotaurAttack2', CHAN_WEAPON);
@@ -162,22 +162,22 @@ void Actor::A_MinotaurAtk3(void)
 {
 	mobj_t *mo;
 
-	if (!target)
+	if (!Enemy)
 	{
 		return;
 	}
 	if (CheckMeleeRange())
 	{
-		target->Damage(self, self, HITDICE(5));
-		if (target->Player)
+		Enemy.Damage(self, self, HITDICE(5));
+		if (Enemy.Player)
 		{
 			// Squish the player
-			target->Player->DeltaViewHeight = -16.0;
+			Enemy.Player->DeltaViewHeight = -16.0;
 		}
 	}
 	else
 	{
-		mo = SpawnMissile(this, target, MinotaurFloorFire);
+		mo = SpawnMissile(this, &Enemy, MinotaurFloorFire);
 		if (mo != NULL)
 		{
 			mo->PlaySound('MinotaurAttack1', CHAN_VOICE);
@@ -198,12 +198,12 @@ void Actor::A_MinotaurAtk3(void)
 
 void Actor::A_MinotaurCharge(void)
 {
-	mobj_t *puff;
+	Actor puff;
 
 	if (Special1)
 	{
-		puff = P_SpawnMobj(Origin.x, Origin.y, Origin.z, PhoenixPuff);
-		puff->Velocity.z = 2.0 * 35.0;
+		puff = SpawnActor(Origin, PhoenixPuff);
+		puff.Velocity.z = 2.0 * 35.0;
 		Special1--;
 	}
 	else
@@ -221,22 +221,25 @@ void Actor::A_MinotaurCharge(void)
 
 void Actor::A_MntrFloorFire(void)
 {
-	mobj_t *mo;
+	Actor mo;
 	float i1;
 	float i2;
 
 	Origin.z = FloorZ;
 	i1 = Origin.x + (Random() - Random()) * 4.0;
 	i2 = Origin.y + (Random() - Random()) * 4.0;
-	mo = P_SpawnMobj(i1, i2, ONFLOORZ, MinotaurFloorFire2);
-	mo->target = target;
-	mo->Velocity.x = 0.00001;	// Force block checking
-	CheckMissileSpawn(mo);
+	mo = SpawnActor(vector(i1, i2, ONFLOORZ), MinotaurFloorFire2);
+	mo.Owner = Owner;
+	mo.Velocity.x = 0.00001;	// Force block checking
+	CheckMissileSpawn(&mo);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.20  2002/02/22 18:00:16  dj_jl
 //  A lots of the renaming, beautification.
 //

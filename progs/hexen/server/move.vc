@@ -313,7 +313,7 @@ boolean Actor::Touch(MapObject InOther)
 			if (!Other.bNoBlood && !Other.bReflective && !Other.bInvulnerable)
 			{
 				// Ok to spawn some blood
-				P_RipperBlood(this);
+				SpawnRipperBlood();
 			}
 			damage = ((P_Random() & 3) + 2) * MissileDamage;
 			Other.Damage(self, Owner, damage);
@@ -338,7 +338,7 @@ boolean Actor::Touch(MapObject InOther)
 				!(Class == TeleportOtherFX4) &&
 				!(Class == TeleportOtherFX5) && (P_Random() < 192))
 			{
-				P_BloodSplatter(Origin.x, Origin.y, Origin.z, &Other);
+				Other.SpawnBloodSplatter(Origin);
 			}
 			Other.Damage(self, Owner, damage);
 		}
@@ -539,7 +539,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	if (thing->bFloorClip)
 	{
 		if (thing->Origin.z == thing->Sector->floorheight &&
-			P_GetThingFloorType(thing) >= FLOOR_LIQUID)
+			thing->GetFloorType() >= FLOOR_LIQUID)
 		{
 			thing->FloorClip = 10.0;
 		}
@@ -588,6 +588,9 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/02/26 17:49:49  dj_jl
+//  no message
+//
 //  Revision 1.21  2002/02/22 18:00:23  dj_jl
 //  A lots of the renaming, beautification.
 //

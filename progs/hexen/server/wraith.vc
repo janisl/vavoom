@@ -77,13 +77,13 @@ void Actor::A_WraithRaiseInit(void)
 
 void Actor::A_WraithRaise(void)
 {
-	if (RaiseMobj(this))
+	if (RaiseFromFloor())
 	{
 		// Reached it's target height
 		SetState(S_WRAITH_CHASE1);
 	}
 
-	SpawnDirt(this, Radius);
+	SpawnDirt(Radius);
 }
 
 //============================================================================
@@ -268,9 +268,9 @@ void Actor::A_WraithMelee(void)
 
 void Actor::A_WraithMissile(void)
 {
-	mobj_t *mo;
+	Actor mo;
 
-	mo = SpawnMissile(this, &Enemy, WraithMissile);
+	mo = SpawnMissile(Enemy, WraithMissile);
 	if (mo)
 	{
 		PlaySound('WraithMissileFire', CHAN_WEAPON);
@@ -280,6 +280,9 @@ void Actor::A_WraithMissile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/26 17:49:49  dj_jl
+//  no message
+//
 //  Revision 1.17  2002/02/22 18:00:25  dj_jl
 //  A lots of the renaming, beautification.
 //

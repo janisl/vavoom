@@ -1005,7 +1005,8 @@ int EV_BuildPillar(line_t * line, int *args, boolean crush)
 		Pillar.sector = sec;
 		if (!args[2])
 		{
-			Pillar.ceilingSpeed = Pillar.floorSpeed = itof(args[1]) * 4.0;
+			Pillar.floorSpeed = itof(args[1]) * 4.0;
+			Pillar.ceilingSpeed = Pillar.floorSpeed;
 		}
 		else if (newHeight - sec->floorheight >
 			sec->ceilingheight - newHeight)
@@ -1211,6 +1212,9 @@ boolean EV_StartFloorWaggle(int tag, int height, int speed, int offset,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/26 17:49:49  dj_jl
+//  no message
+//
 //  Revision 1.11  2002/01/15 08:12:26  dj_jl
 //  Replaced some pointers with references
 //

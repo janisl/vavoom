@@ -46,57 +46,57 @@ classid PuffType;
 
 //===========================================================================
 //
-//  P_GetThingFloorType
+//  Actor::GetFloorType
 //
 //===========================================================================
 
-int P_GetThingFloorType(mobj_t * thing)
+int Actor::GetFloorType(void)
 {
-	return TerrainType(thing->Floor->pic);
+	return TerrainType(Floor->pic);
 }
 
 //==========================================================================
 //
-//  SetOrigin
+//  Actor::SetOrigin2
 //
 //==========================================================================
 
-void SetOrigin(mobj_t * mobj, TVec origin)
+void Actor::SetOrigin2(TVec origin)
 {
 	float space;
 
-	mobj->Origin = origin;
+	Origin = origin;
 	// Set subsector and/or block links.
-	P_SetThingPosition(*mobj);
+	P_SetThingPosition(self);
 	if (origin.z == ONFLOORZ)
 	{
-		mobj->Origin.z = mobj->FloorZ;
+		Origin.z = FloorZ;
 	}
 	else if (origin.z == ONCEILINGZ)
 	{
-		mobj->Origin.z = mobj->CeilingZ - mobj->Height;
+		Origin.z = CeilingZ - Height;
 	}
 	else if (origin.z == FLOATRANDZ)
 	{
-		space = mobj->CeilingZ - mobj->Height - mobj->FloorZ;
+		space = CeilingZ - Height - FloorZ;
 		if (space > 48.0)
 		{
 			space -= 40.0;
-			mobj->Origin.z = space * Random() + mobj->FloorZ + 40.0;
+			Origin.z = space * Random() + FloorZ + 40.0;
 		}
 		else
 		{
-			mobj->Origin.z = mobj->FloorZ;
+			Origin.z = FloorZ;
 		}
 	}
-	if (mobj->bFootClip && P_GetThingFloorType(mobj) != FLOOR_SOLID &&
-		mobj->FloorZ == mobj->Sector->floorheight)
+	if (bFootClip && GetFloorType() != FLOOR_SOLID &&
+		FloorZ == Sector->floorheight)
 	{
-		mobj->FloorClip = FOOTCLIPSIZE;
+		FloorClip = FOOTCLIPSIZE;
 	}
 	else
 	{
-		mobj->FloorClip = 0.0;
+		FloorClip = 0.0;
 	}
 }
 
@@ -183,7 +183,7 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 		{
 			z = ONFLOORZ;
 		}
-		SetOrigin(this, vector(x, y, z));
+		SetOrigin2(vector(x, y, z));
 		if (bFloatBob)
 		{
 			// Seed random starting index for bobbing motion
@@ -231,8 +231,25 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 	}
 	else
 	{
-		SetOrigin(this, Origin);
+		SetOrigin2(Origin);
 	}
+}
+
+//===========================================================================
+//
+//  SpawnActor
+//
+//===========================================================================
+
+Actor SpawnActor(TVec AOrigin, classid type)
+{
+	Actor A;
+
+	A = Actor(NewMobjThinker(type));
+
+	A.Origin = AOrigin;
+	A.OnMapSpawn(NULL);
+	return A;
 }
 
 //===========================================================================
@@ -266,7 +283,7 @@ void P_RemoveMobj(mobj_t * mobj)
 
 //===========================================================================
 //
-//  P_FaceMobj
+//  Actor::FaceActor
 //
 //  Returns 1 if 'source' needs to turn clockwise, or 0 if 'source' needs
 // to turn counter clockwise.  'delta' is set to the amount 'source'
@@ -274,15 +291,14 @@ void P_RemoveMobj(mobj_t * mobj)
 //
 //===========================================================================
 
-int P_FaceMobj(mobj_t * source, mobj_t * target, float * delta)
+int Actor::FaceActor(Actor Other, float * delta)
 {
 	float diff;
 	float angle1;
 	float angle2;
 
-	angle1 = source->Angles.yaw;
-	angle2 = atan2(target->Origin.y - source->Origin.y,
-		target->Origin.x - source->Origin.x);
+	angle1 = Angles.yaw;
+	angle2 = atan2(Other.Origin.y - Origin.y, Other.Origin.x - Origin.x);
 	if (angle2 > angle1)
 	{
 		diff = AngleMod360(angle2 - angle1);
@@ -315,270 +331,254 @@ int P_FaceMobj(mobj_t * source, mobj_t * target, float * delta)
 
 //===========================================================================
 //
-//  P_ExplodeMissile
+//  Actor::ExplodeMissile
 //
 //===========================================================================
 
-void P_ExplodeMissile(mobj_t * mo)
+void Actor::ExplodeMissile(void)
 {
-	if (mo->Class == WhirlWind)
+	if (Class == WhirlWind)
 	{
-		if (++mo->Special2 < 60)
+		if (++Special2 < 60)
 		{
 			return;
 		}
 	}
-	mo->Velocity = vector(0.0, 0.0, 0.0);
-	mo->SetState(mo->DeathState);
-	//mo->tics -= P_Random()&3;
-	mo->bMissile = false;
-	if (mo->DeathSound)
+	Velocity = vector(0.0, 0.0, 0.0);
+	SetState(DeathState);
+	//tics -= P_Random()&3;
+	bMissile = false;
+	if (DeathSound)
 	{
-		mo->PlaySound(mo->DeathSound, CHAN_VOICE);
+		PlaySound(DeathSound, CHAN_VOICE);
 	}
-	if (mo->Effects & EF_DLIGHT_MASK)
+	if (Effects & EF_DLIGHT_MASK)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion);
-		MSG_WriteByte(mo->Effects & EF_DLIGHT_MASK);
-		MSG_WriteShort(ftoi(mo->Origin.x));
-		MSG_WriteShort(ftoi(mo->Origin.y));
-		MSG_WriteShort(ftoi(mo->Origin.z));
-		mo->Effects &= ~EF_DLIGHT_MASK;
+		MSG_WriteByte(Effects & EF_DLIGHT_MASK);
+		MSG_WriteShort(ftoi(Origin.x));
+		MSG_WriteShort(ftoi(Origin.y));
+		MSG_WriteShort(ftoi(Origin.z));
+		Effects &= ~EF_DLIGHT_MASK;
 	}
 }
 
 //==========================================================================
 //
-//  P_KillMobj
+//  Actor::Kill
 //
 //==========================================================================
 
-void P_KillMobj(mobj_t * source, mobj_t * target)
+void Actor::Kill(Actor source)
 {
-	target->bShootable = false;
-	target->bNoGravity = false;
-	target->bFloat = false;
-	target->bSkullFly = false;
-	target->bDropOff = true;
-	target->bCorpse = true;
-	target->bNoPassMobj = true;
-	target->Height /= 4.0;
-	if (source && source->bIsPlayer)
+	bShootable = false;
+	bNoGravity = false;
+	bFloat = false;
+	bSkullFly = false;
+	bDropOff = true;
+	bCorpse = true;
+	bNoPassMobj = true;
+	Height /= 4.0;
+	if (source && source.bIsPlayer)
 	{
-		if (target->bCountKill)
+		if (bCountKill)
 		{
 			// Count for intermission
-			source->Player->KillCount++;
+			source.Player->KillCount++;
 		}
-		if (target->bIsPlayer)
+		if (bIsPlayer)
 		{
-			if (source->Player->bIsBot)
+			if (source.Player->bIsBot)
 			{
-				source->Player->Bot.Killed(*target);
+				source.Player->Bot.Killed(self);
 			}
 
-			if (target->Player->bIsBot)
+			if (Player->bIsBot)
 			{
-				target->Player->Bot.Died(*source);
+				Player->Bot.Died(source);
 			}
 
 			// Frag stuff
-			if (target == source)
+			if (self == source)
 			{
 				// Self-frag
-				target->Player->Frags[P_GetPlayerNum(target->Player)]--;
+				Player->Frags[P_GetPlayerNum(Player)]--;
 			}
 			else
 			{
-				source->Player->Frags[P_GetPlayerNum(target->Player)]++;
-				source->PlaySound('Frag', CHAN_ITEM);
-				if (source->Player->ChickenTics)
+				source.Player->Frags[P_GetPlayerNum(Player)]++;
+				source.PlaySound('Frag', CHAN_ITEM);
+				if (source.Player->ChickenTics)
 				{
 					// Make a super chicken
-					source->GivePower(pw_weaponlevel2);
+					source.GivePower(pw_weaponlevel2);
 				}
 			}
 		}
 	}
-	else if (!netgame && target->bCountKill)
+	else if (!netgame && bCountKill)
 	{
 		// Count all monster deaths
 		players[0].KillCount++;
 	}
-	if (target->bIsPlayer)
+	if (bIsPlayer)
 	{
 		if (!source)
 		{
 			// Self-frag
-			target->Player->Frags[P_GetPlayerNum(target->Player)]--;
+			Player->Frags[P_GetPlayerNum(Player)]--;
 		}
-		target->bSolid = false;
-		target->bFly = false;
-		target->Player->Powers[pw_flight] = 0;
-		target->Player->Powers[pw_weaponlevel2] = 0;
-		target->Player->PlayerState = PST_DEAD;
-		DropWeapon(target->Player);
-		if (target->bFireDamage)
+		bSolid = false;
+		bFly = false;
+		Player->Powers[pw_flight] = 0;
+		Player->Powers[pw_weaponlevel2] = 0;
+		Player->PlayerState = PST_DEAD;
+		DropWeapon(Player);
+		if (bFireDamage)
 		{
 			// Player flame death
-			target->SetState(S_PLAY_FDTH1);
+			SetState(S_PLAY_FDTH1);
 			return;
 		}
 	}
-	if (target->Health < target->GibsHealth && target->GibsDeathState)
+	if (Health < GibsHealth && GibsDeathState)
 	{
 		// Extreme death
-		target->SetState(target->GibsDeathState);
+		SetState(GibsDeathState);
 	}
 	else
 	{
 		// Normal death
-		target->SetState(target->DeathState);
+		SetState(DeathState);
 	}
-	target->StateTime -= Random() * 0.1;
+	StateTime -= Random() * 0.1;
 }
 
 //==========================================================================
 //
-//  P_MinotaurSlam
+//  Actor::MinotaurSlam
 //
 //==========================================================================
 
-void P_MinotaurSlam(mobj_t * source, mobj_t * target)
+void Actor::MinotaurSlam(Actor Other)
 {
 	float angle;
 	float thrust;
 
-	angle = atan2(target->Origin.y - source->Origin.y,
-		target->Origin.x - source->Origin.x);
+	angle = atan2(Other.Origin.y - Origin.y, Other.Origin.x - Origin.x);
 	thrust = 16.0 + Random() * 4.0;
-	target->Velocity.x += thrust * cos(angle) * 35.0;
-	target->Velocity.y += thrust * sin(angle) * 35.0;
-	target->Damage(none, none, HITDICE(6));
-	if (target->Player)
+	Other.Velocity.x += thrust * cos(angle) * 35.0;
+	Other.Velocity.y += thrust * sin(angle) * 35.0;
+	Other.Damage(none, none, HITDICE(6));
+	if (Other.Player)
 	{
-		target->ReactionTime = 0.4 + Random() * 0.2;
+		Other.ReactionTime = 0.4 + Random() * 0.2;
 	}
 }
 
 //==========================================================================
 //
-//  P_TouchWhirlwind
+//  Actor::TouchWhirlwind
 //
 //==========================================================================
 
-void P_TouchWhirlwind(mobj_t * target)
+void Actor::TouchWhirlwind(Actor Other)
 {
 	float randVal;
 
-	target->Angles.yaw = AngleMod360(target->Angles.yaw +
+	Other.Angles.yaw = AngleMod360(Other.Angles.yaw +
 		(Random() - Random()) * 45.0 / 2.0);
-	target->Velocity.x += (Random() - Random()) * 4.0 * 35.0;
-	target->Velocity.y += (Random() - Random()) * 4.0 * 35.0;
-	if (level->tictime & 16 && !target->bBoss)
+	Other.Velocity.x += (Random() - Random()) * 4.0 * 35.0;
+	Other.Velocity.y += (Random() - Random()) * 4.0 * 35.0;
+	if (level->tictime & 16 && !Other.bBoss)
 	{
 		randVal = Random() * 4.0;
 		if (randVal > 2.5)
 		{
 			randVal = 2.5;
 		}
-		target->Velocity.z += randVal * 35.0;
-		if (target->Velocity.z > 12.0 * 35.0)
+		Other.Velocity.z += randVal * 35.0;
+		if (Other.Velocity.z > 12.0 * 35.0)
 		{
-			target->Velocity.z = 12.0 * 35.0;
+			Other.Velocity.z = 12.0 * 35.0;
 		}
 	}
 	if (!(level->tictime & 7))
 	{
-		target->Damage(none, none, 3);
+		Other.Damage(none, none, 3);
 	}
 }
 
 //==========================================================================
 //
-//  ChickenMorphPlayer
+//  Actor::ChickenMorphPlayer
 //
 //  Returns true if the player gets turned into a chicken.
 //
 //==========================================================================
 
-boolean ChickenMorphPlayer(player_t * player)
+boolean Actor::ChickenMorphPlayer(void)
 {
-	mobj_t *pmo;
-	mobj_t *fog;
-	mobj_t *chicken;
-	float x;
-	float y;
-	float z;
-	float angle;
-	boolean OldbFly;
+	Actor fog;
+	Actor chicken;
 
-	if (player->ChickenTics)
+	if (Player->ChickenTics)
 	{
-		if ((player->ChickenTics < ftoi(CHICKENTIME * 35.0) - TICRATE)
-			&& !player->Powers[pw_weaponlevel2])
+		if ((Player->ChickenTics < ftoi(CHICKENTIME * 35.0) - TICRATE) &&
+			!Player->Powers[pw_weaponlevel2])
 		{
 			// Make a super chicken
-			player->mo->GivePower(pw_weaponlevel2);
+			GivePower(pw_weaponlevel2);
 		}
 		return false;
 	}
-	if (player->Powers[pw_invulnerability])
+	if (Player->Powers[pw_invulnerability])
 	{
 		// Immune when invulnerable
 		return false;
 	}
-	pmo = player->mo;
-	x = pmo->Origin.x;
-	y = pmo->Origin.y;
-	z = pmo->Origin.z;
-	angle = pmo->Angles.yaw;
-	OldbFly = pmo->bFly;
-	pmo->SetState(S_FREETARGMOBJ);
-	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, TeleportFog);
-	fog->PlaySound('Teleport', CHAN_VOICE);
-	chicken = P_SpawnMobj(x, y, z, ChickenPlayer);
-	chicken->Special1 = player->ReadyWeapon;
-	chicken->Angles.yaw = angle;
-	chicken->Player = player;
-	chicken->bIsPlayer = true;
-	chicken->Health = MAXCHICKENHEALTH;
-	player->Health = chicken->Health;
-	player->mo = chicken;
-	player->ArmorPoints = player->ArmorType = 0;
-	player->Powers[pw_invisibility] = 0;
-	player->Powers[pw_weaponlevel2] = 0;
-	chicken->bFly = OldbFly;
-	player->ChickenTics = ftoi(CHICKENTIME * 35.0);
-	ActivateBeak(player);
+
+	fog = SpawnActor(Origin + vector(0.0, 0.0, TELEFOGHEIGHT), TeleportFog);
+	fog.PlaySound('Teleport', CHAN_VOICE);
+
+	chicken = SpawnActor(Origin, ChickenPlayer);
+	chicken.Special1 = Player->ReadyWeapon;
+	chicken.Angles.yaw = Angles.yaw;
+	chicken.Player = Player;
+	chicken.bIsPlayer = true;
+	chicken.Health = MAXCHICKENHEALTH;
+	Player->Health = chicken.Health;
+	Player->mo = &chicken;
+	Player->ArmorPoints = 0;
+	Player->ArmorType = 0;
+	Player->Powers[pw_invisibility] = 0;
+	Player->Powers[pw_weaponlevel2] = 0;
+	chicken.bFly = bFly;
+	Player->ChickenTics = ftoi(CHICKENTIME * 35.0);
+	ActivateBeak(Player);
+
+	SetState(S_FREETARGMOBJ);
+
 	return true;
 }
 
 //==========================================================================
 //
-//  P_ChickenMorph
+//  Actor::ChickenMorph
 //
 //==========================================================================
 
-boolean P_ChickenMorph(mobj_t * actor)
+boolean Actor::ChickenMorph(void)
 {
-	mobj_t *fog;
-	mobj_t *chicken;
-	mobj_t *target;
-	classid moType;
-	float x;
-	float y;
-	float z;
-	float angle;
-	int ghost;
+	Actor fog;
+	Actor chicken;
 
-	if (actor->bIsPlayer)
+	if (bIsPlayer)
 	{
 		return false;
 	}
-	moType = actor->Class;
-	switch (moType)
+	switch (Class)
 	{
 	case Pod:
 	case Chicken:
@@ -590,41 +590,39 @@ boolean P_ChickenMorph(mobj_t * actor)
 	default:
 		break;
 	}
-	x = actor->Origin.x;
-	y = actor->Origin.y;
-	z = actor->Origin.z;
-	angle = actor->Angles.yaw;
-	ghost = actor->Translucency;
-	target = actor->target;
-	actor->SetState(S_FREETARGMOBJ);
-	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, TeleportFog);
-	fog->PlaySound('Teleport', CHAN_VOICE);
-	chicken = P_SpawnMobj(x, y, z, Chicken);
-	chicken->SpecialCID = moType;
-	chicken->Special1 = ftoi(CHICKENTIME * 35.0) + P_Random();
-	chicken->Translucency = ghost;
-	chicken->target = target;
-	chicken->Angles.yaw = angle;
+
+	fog = SpawnActor(Origin + vector(0.0, 0.0, TELEFOGHEIGHT), TeleportFog);
+	fog.PlaySound('Teleport', CHAN_VOICE);
+
+	chicken = SpawnActor(Origin, Chicken);
+	chicken.SpecialCID = Class;
+	chicken.Special1 = ftoi(CHICKENTIME * 35.0) + P_Random();
+	chicken.Translucency = Translucency;
+	chicken.Enemy = Enemy;
+	chicken.Angles.yaw = Angles.yaw;
+
+	SetState(S_FREETARGMOBJ);
+
 	return true;
 }
 
 //==========================================================================
 //
-//  P_AutoUseChaosDevice
+//  Actor::AutoUseChaosDevice
 //
 //==========================================================================
 
-boolean P_AutoUseChaosDevice(player_t * player)
+boolean Actor::AutoUseChaosDevice(void)
 {
 	int i;
 
-	for (i = 0; i < player->InventorySlotNum; i++)
+	for (i = 0; i < Player->InventorySlotNum; i++)
 	{
-		if (player->Inventory[i].type == arti_teleport)
+		if (Player->Inventory[i].type == arti_teleport)
 		{
-			PlayerUseArtifact(player, arti_teleport);
-			player->mo->Health = (player->mo->Health + 1) / 2;
-			player->Health = player->mo->Health;
+			PlayerUseArtifact(Player, arti_teleport);
+			Health = (Health + 1) / 2;
+			Player->Health = Health;
 			return true;
 		}
 	}
@@ -633,11 +631,11 @@ boolean P_AutoUseChaosDevice(player_t * player)
 
 //==========================================================================
 //
-//  P_AutoUseHealth
+//  Actor::AutoUseHealth
 //
 //==========================================================================
 
-void P_AutoUseHealth(player_t * player, int saveHealth)
+void Actor::AutoUseHealth(int saveHealth)
 {
 	int i;
 	int count;
@@ -646,18 +644,19 @@ void P_AutoUseHealth(player_t * player, int saveHealth)
 	int superCount;
 	int superSlot;
 
-	normalCount = superCount = 0;
-	for (i = 0; i < player->InventorySlotNum; i++)
+	normalCount = 0;
+	superCount = 0;
+	for (i = 0; i < Player->InventorySlotNum; i++)
 	{
-		if (player->Inventory[i].type == arti_health)
+		if (Player->Inventory[i].type == arti_health)
 		{
 			normalSlot = i;
-			normalCount = player->Inventory[i].count;
+			normalCount = Player->Inventory[i].count;
 		}
-		else if (player->Inventory[i].type == arti_superhealth)
+		else if (Player->Inventory[i].type == arti_superhealth)
 		{
 			superSlot = i;
-			superCount = player->Inventory[i].count;
+			superCount = Player->Inventory[i].count;
 		}
 	}
 	if ((gameskill == sk_baby) && (normalCount * 25 >= saveHealth))
@@ -666,8 +665,8 @@ void P_AutoUseHealth(player_t * player, int saveHealth)
 		count = (saveHealth + 24) / 25;
 		for (i = 0; i < count; i++)
 		{
-			player->Health += 25;
-			PlayerRemoveArtifact(player, normalSlot);
+			Player->Health += 25;
+			PlayerRemoveArtifact(Player, normalSlot);
 		}
 	}
 	else if (superCount * 100 >= saveHealth)
@@ -676,8 +675,8 @@ void P_AutoUseHealth(player_t * player, int saveHealth)
 		count = (saveHealth + 99) / 100;
 		for (i = 0; i < count; i++)
 		{
-			player->Health += 100;
-			PlayerRemoveArtifact(player, superSlot);
+			Player->Health += 100;
+			PlayerRemoveArtifact(Player, superSlot);
 		}
 	}
 	else if ((gameskill == sk_baby)
@@ -688,20 +687,20 @@ void P_AutoUseHealth(player_t * player, int saveHealth)
 		saveHealth -= count * 25;
 		for (i = 0; i < count; i++)
 		{
-			player->Health += 25;
-			PlayerRemoveArtifact(player, normalSlot);
+			Player->Health += 25;
+			PlayerRemoveArtifact(Player, normalSlot);
 		}
 		count = (saveHealth + 99) / 100;
 		for (i = 0; i < count; i++)
 		{
-			player->Health += 100;
+			Player->Health += 100;
 			//  I found a bug. There must be used superSlot, not normalSlot.
 			//  Also if player used all quartz flasks, superSlot may be
 			// invalid, so it must be found again.
-			PlayerRemoveArtifact(player, superSlot);
+			PlayerRemoveArtifact(Player, superSlot);
 		}
 	}
-	player->mo->Health = player->Health;
+	Health = Player->Health;
 }
 
 //==========================================================================
@@ -757,21 +756,21 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 		case EggMissile:
 			if (bIsPlayer)
 			{
-				ChickenMorphPlayer(Player);
+				ChickenMorphPlayer();
 			}
 			else
 			{
-				P_ChickenMorph(this);
+				ChickenMorph();
 			}
 			return;	// Always return
 		case WhirlWind:
-			P_TouchWhirlwind(this);
+			inflictor.TouchWhirlwind(self);
 			return;
 		case Minotaur:
 			if (inflictor.bSkullFly)
 			{
 				// Slam only when in charge mode
-				P_MinotaurSlam(&inflictor, this);
+				inflictor.MinotaurSlam(self);
 				return;
 			}
 			break;
@@ -789,7 +788,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 					// Can't hurt invulnerable players
 					break;
 				}
-				if (P_AutoUseChaosDevice(Player))
+				if (AutoUseChaosDevice())
 				{
 					// Player was saved using chaos device
 					return;
@@ -900,7 +899,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 			&& ((gameskill == sk_baby) || deathmatch) && !Player->ChickenTics)
 		{
 			// Try to use some inventory health
-			P_AutoUseHealth(Player, damage - Health + 1);
+			AutoUseHealth(damage - Health + 1);
 		}
 		Player->Health -= damage;	// mirror mobj health here for Dave
 		if (Player->Health < 0)
@@ -926,7 +925,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 		if (Class == Pod && source && source.Class != Pod)
 		{
 			// Make sure players get frags for chain-reaction kills
-			target = &source;
+			Owner = source;
 		}
 		if (bIsPlayer && inflictor && !Player->ChickenTics)
 		{
@@ -938,7 +937,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 				bFireDamage = true;
 			}
 		}
-		P_KillMobj(&source, this);
+		Kill(source);
 		return;
 	}
 	if ((P_Random() < PainChance) && !bSkullFly)
@@ -952,7 +951,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 	{
 		// Target actor is not intent on another actor,
 		// so make him chase after source
-		target = &source;
+		Enemy = source;
 		Threshold = BASETHRESHOLD;
 		if (StateNum == SpawnState && SeeState != S_NULL)
 		{
@@ -967,25 +966,25 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 //
 //==========================================================================
 
-void SpawnPuff(float x, float y, float z)
+void SpawnPuff(TVec org)
 {
-	mobj_t *puff;
+	Actor puff;
 
-	z += (Random() - Random()) * 4.0;
-	puff = P_SpawnMobj(x, y, z, PuffType);
-	if (puff->AttackSound)
+	org.z += (Random() - Random()) * 4.0;
+	puff = SpawnActor(org, PuffType);
+	if (puff.AttackSound)
 	{
-		puff->PlaySound(puff->AttackSound, CHAN_VOICE);
+		puff.PlaySound(puff.AttackSound, CHAN_VOICE);
 	}
 	switch (PuffType)
 	{
 	case BeakPuff:
 	case StaffPuff:
-		puff->Velocity.z = 1.0 * 35.0;
+		puff.Velocity.z = 1.0 * 35.0;
 		break;
 	case GauntletPuff1:
 	case GauntletPuff2:
-		puff->Velocity.z = 0.8 * 35.0;
+		puff.Velocity.z = 0.8 * 35.0;
 	default:
 		break;
 	}
@@ -994,57 +993,57 @@ void SpawnPuff(float x, float y, float z)
 		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion);
 		MSG_WriteByte(EF_DL_WHITE);
-		MSG_WriteShort(ftoi(x));
-		MSG_WriteShort(ftoi(y));
-		MSG_WriteShort(ftoi(z));
+		MSG_WriteShort(ftoi(org.x));
+		MSG_WriteShort(ftoi(org.y));
+		MSG_WriteShort(ftoi(org.z));
 	}
 	if (PuffType == BlasterFX1)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion);
 		MSG_WriteByte(EF_DL_BLUE);
-		MSG_WriteShort(ftoi(x));
-		MSG_WriteShort(ftoi(y));
-		MSG_WriteShort(ftoi(z));
+		MSG_WriteShort(ftoi(org.x));
+		MSG_WriteShort(ftoi(org.y));
+		MSG_WriteShort(ftoi(org.z));
 	}
 }
 
 //==========================================================================
 //
-//  P_BloodSplatter
+//  Actor::SpawnBloodSplatter
 //
 //==========================================================================
 
-void P_BloodSplatter(float x, float y, float z, mobj_t * originator)
+void Actor::SpawnBloodSplatter(TVec org)
 {
-	mobj_t *mo;
+	Actor mo;
 
-	mo = P_SpawnMobj(x, y, z, BloodSplatter);
-	mo->target = originator;
-	mo->Velocity.x = (Random() - Random()) * 2.0 * 35.0;
-	mo->Velocity.y = (Random() - Random()) * 2.0 * 35.0;
-	mo->Velocity.z = 2.0 * 35.0;
+	mo = SpawnActor(org, BloodSplatter);
+	mo.Owner = self;
+	mo.Velocity.x = (Random() - Random()) * 2.0 * 35.0;
+	mo.Velocity.y = (Random() - Random()) * 2.0 * 35.0;
+	mo.Velocity.z = 2.0 * 35.0;
 }
 
 //==========================================================================
 //
-//  P_RipperBlood
+//  Actor::SpawnRipperBlood
 //
 //==========================================================================
 
-void P_RipperBlood(mobj_t * mo)
+void Actor::SpawnRipperBlood(void)
 {
-	mobj_t *th;
-	float x, y, z;
+	Actor th;
+	TVec org;
 
-	x = mo->Origin.x + (Random() - Random()) * 16.0;
-	y = mo->Origin.y + (Random() - Random()) * 16.0;
-	z = mo->Origin.z + (Random() - Random()) * 16.0;
-	th = P_SpawnMobj(x, y, z, Blood);
-	th->bNoGravity = true;
-	th->Velocity.x = mo->Velocity.x / 2.0;
-	th->Velocity.y = mo->Velocity.y / 2.0;
-	th->StateTime += Random() * 0.1;
+	org.x = Origin.x + (Random() - Random()) * 16.0;
+	org.y = Origin.y + (Random() - Random()) * 16.0;
+	org.z = Origin.z + (Random() - Random()) * 16.0;
+	th = SpawnActor(org, Blood);
+	th.bNoGravity = true;
+	th.Velocity.x = Velocity.x / 2.0;
+	th.Velocity.y = Velocity.y / 2.0;
+	th.StateTime += Random() * 0.1;
 }
 
 //==========================================================================
@@ -1259,43 +1258,40 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 
 //==========================================================================
 //
-//  P_HitFloor
+//  Actor::HitFloorEffect
 //
 //==========================================================================
 
-int P_HitFloor(mobj_t * thing)
+int Actor::HitFloorEffect(void)
 {
 	mobj_t *mo;
 
-	if (thing->FloorZ != thing->Sector->floorheight)
+	if (FloorZ != Sector->floorheight)
 	{
 		// don't splash if landing on the edge above water/lava/etc....
 		return FLOOR_SOLID;
 	}
-	switch (P_GetThingFloorType(thing))
+	switch (GetFloorType())
 	{
 	case FLOOR_WATER:
-		P_SpawnMobj(thing->Origin.x, thing->Origin.y, ONFLOORZ, SplashBase);
-		mo = P_SpawnMobj(thing->Origin.x, thing->Origin.y, ONFLOORZ, Splash);
-		mo->target = thing;
+		P_SpawnMobj(Origin.x, Origin.y, ONFLOORZ, SplashBase);
+		mo = P_SpawnMobj(Origin.x, Origin.y, ONFLOORZ, Splash);
+		mo->Owner = self;
 		mo->Velocity.x = (Random() - Random()) * 35.0;
 		mo->Velocity.y = (Random() - Random()) * 35.0;
 		mo->Velocity.z = (2.0 + Random()) * 35.0;
 		mo->PlaySound('WaterSplash', CHAN_VOICE);
 		return FLOOR_WATER;
 	case FLOOR_LAVA:
-		P_SpawnMobj(thing->Origin.x, thing->Origin.y, ONFLOORZ, LavaSplash);
-		mo = P_SpawnMobj(thing->Origin.x, thing->Origin.y, ONFLOORZ,
-			LavaSmoke);
+		P_SpawnMobj(Origin.x, Origin.y, ONFLOORZ, LavaSplash);
+		mo = P_SpawnMobj(Origin.x, Origin.y, ONFLOORZ, LavaSmoke);
 		mo->Velocity.z = (1.0 + Random() / 2.0) * 35.0;
 		mo->PlaySound('Burn', CHAN_VOICE);
 		return FLOOR_LAVA;
 	case FLOOR_SLUDGE:
-		P_SpawnMobj(thing->Origin.x, thing->Origin.y, ONFLOORZ,
-			SludgeSplash);
-		mo = P_SpawnMobj(thing->Origin.x, thing->Origin.y, ONFLOORZ,
-			SludgeChunk);
-		mo->target = thing;
+		P_SpawnMobj(Origin.x, Origin.y, ONFLOORZ, SludgeSplash);
+		mo = P_SpawnMobj(Origin.x, Origin.y, ONFLOORZ, SludgeChunk);
+		mo->Owner = self;
 		mo->Velocity.x = (Random() - Random()) * 35.0;
 		mo->Velocity.y = (Random() - Random()) * 35.0;
 		mo->Velocity.z = (1.0 + Random()) * 35.0;
@@ -1306,26 +1302,26 @@ int P_HitFloor(mobj_t * thing)
 
 //===========================================================================
 //
-//  P_FloorBounceMissile
+//  Actor::FloorBounceMissile
 //
 //===========================================================================
 
-void P_FloorBounceMissile(mobj_t * mo)
+void Actor::FloorBounceMissile(void)
 {
-	mo->Velocity.z = -mo->Velocity.z;
-	mo->SetState(mo->DeathState);
+	Velocity.z = -Velocity.z;
+	SetState(DeathState);
 }
 
 //===========================================================================
 //
-//  P_ThrustMobj
+//  Actor::Thrust
 //
 //===========================================================================
 
-void P_ThrustMobj(mobj_t * mo, float angle, float move)
+void Actor::Thrust(float angle, float move)
 {
-	mo->Velocity.x += move * cos(angle) * 35.0;
-	mo->Velocity.y += move * sin(angle) * 35.0;
+	Velocity.x += move * cos(angle) * 35.0;
+	Velocity.y += move * sin(angle) * 35.0;
 }
 
 //**************************************************************************
@@ -1407,24 +1403,24 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 
 //===========================================================================
 //
-//  P_NightmareRespawn
+//  Actor::NightmareRespawn
 //
 //===========================================================================
 
-void P_NightmareRespawn(mobj_t * mobj)
+void Actor::NightmareRespawn(void)
 {
 	float x, y, z;
 	mobj_t *mo;
 	mthing_t *mthing;
 
-	x = mobj->SpawnSpot.x;
-	y = mobj->SpawnSpot.y;
+	x = SpawnSpot.x;
+	y = SpawnSpot.y;
 
-	if (!CheckPosition(*mobj, vector(x, y, ONFLOORZ)))
+	if (!CheckPosition(self, vector(x, y, ONFLOORZ)))
 		return;	// somthing is occupying it's position
 
 	// spawn a teleport fog at old spot
-	mo = P_SpawnMobj(mobj->Origin.x, mobj->Origin.y, ONFLOORZ, TeleportFog);
+	mo = P_SpawnMobj(Origin.x, Origin.y, ONFLOORZ, TeleportFog);
 	mo->Origin.z += TELEFOGHEIGHT;
 	mo->PlaySound('Teleport', CHAN_VOICE);
 
@@ -1434,15 +1430,15 @@ void P_NightmareRespawn(mobj_t * mobj)
 	mo->PlaySound('Teleport', CHAN_VOICE);
 
 	// spawn the new monster
-	mthing = &mobj->SpawnSpot;
+	mthing = &SpawnSpot;
 
 	// spawn it
-	if (mobj->bSpawnCeiling)
+	if (bSpawnCeiling)
 		z = ONCEILINGZ;
 	else
 		z = ONFLOORZ;
-	mo = P_SpawnMobj(x, y, z, mobj->Class);
-	CopyMThing(&mobj->SpawnSpot, &mo->SpawnSpot);
+	mo = P_SpawnMobj(x, y, z, Class);
+	CopyMThing(&SpawnSpot, &mo->SpawnSpot);
 	mo->Angles.yaw = itof(45 * (mthing->angle / 45));
 	if (mthing->options & MTF_AMBUSH)
 		mo->bAmbush = true;
@@ -1450,12 +1446,15 @@ void P_NightmareRespawn(mobj_t * mobj)
 	mo->ReactionCount = 18;
 
 	// remove the old monster
-	P_RemoveMobj(mobj);
+	P_RemoveMobj(this);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.35  2002/02/26 17:49:48  dj_jl
+//  no message
+//
 //  Revision 1.34  2002/02/22 18:00:17  dj_jl
 //  A lots of the renaming, beautification.
 //

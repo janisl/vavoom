@@ -49,12 +49,12 @@ int P_CheckMeleeRange(mobj_t * actor)
 	mobj_t *pl;
 	float dist;
 
-	if (!actor->target)
+	if (!actor->Enemy)
 	{
 		return false;
 	}
 
-	pl = actor->target;
+	pl = &actor->Enemy;
 	dist = MobjDist(*pl, *actor);
 
 	if (dist >= MELEERANGE - 20.0 + pl->Radius)
@@ -62,7 +62,7 @@ int P_CheckMeleeRange(mobj_t * actor)
 		return false;
 	}
 
-	if (!P_CheckSight(*actor, *actor->target))
+	if (!P_CheckSight(*actor, actor->Enemy))
 	{
 		return false;
 	}
@@ -80,7 +80,7 @@ int P_CheckMissileRange(mobj_t * actor)
 {
 	float dist;
 
-	if (!P_CheckSight(*actor, *actor->target))
+	if (!P_CheckSight(*actor, actor->Enemy))
 	{
 		return false;
 	}
@@ -99,7 +99,7 @@ int P_CheckMissileRange(mobj_t * actor)
 	}
 
 	// OPTIMIZE: get this from a global checksight
-	dist = MobjDist(*actor, *actor->target) - 64.0;
+	dist = MobjDist(*actor, actor->Enemy) - 64.0;
 
 	if (!actor->MeleeState)
 		dist -= 128.0;	// no melee attack, so fire more
@@ -206,7 +206,7 @@ boolean P_LookForMonsters(mobj_t * actor, boolean allaround)
 			}
 		}
 
-		actor->target = &mo;
+		actor->Enemy = mo;
 		return true;
 	}
 	return false;
@@ -279,7 +279,7 @@ boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
 			}
 		}
 
-		actor->target = player->mo;
+		actor->Enemy = *player->mo;
 		return true;
 	}
 
@@ -398,16 +398,16 @@ void P_NewChaseDir(mobj_t * actor)
 
 	int turnaround;
 
-	if (!actor->target)
+	if (!actor->Enemy)
 	{
-		Error("P_NewChaseDir: called with no target");
+		Error("P_NewChaseDir: called with no Enemy");
 	}
 
 	olddir = actor->MoveDir;
 	turnaround = opposite[olddir];
 
-	deltax = actor->target->Origin.x - actor->Origin.x;
-	deltay = actor->target->Origin.y - actor->Origin.y;
+	deltax = actor->Enemy.Origin.x - actor->Origin.x;
+	deltay = actor->Enemy.Origin.y - actor->Origin.y;
 
 	if (deltax > 10.0)
 		d[1] = DI_EAST;
@@ -513,6 +513,9 @@ void P_NewChaseDir(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/02/26 17:49:49  dj_jl
+//  no message
+//
 //  Revision 1.14  2002/02/22 18:00:25  dj_jl
 //  A lots of the renaming, beautification.
 //
