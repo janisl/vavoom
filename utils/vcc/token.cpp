@@ -971,6 +971,38 @@ static void ProcessSpecialToken(void)
 
 //==========================================================================
 //
+// ProcessFileName
+//
+//==========================================================================
+
+static void ProcessFileName(void)
+{
+	int len = 0;
+	NextChr();
+	while (Chr != '\"')
+	{
+		if (len >= MAX_QUOTED_LENGTH - 1)
+		{
+			ERR_Exit(ERR_STRING_TOO_LONG, true, NULL);
+		}
+		if (Chr == EOF_CHARACTER)
+		{
+			ERR_Exit(ERR_EOF_IN_STRING, true, NULL);
+		}
+		if (IncLineNumber)
+		{
+			ERR_Exit(ERR_NEW_LINE_INSIDE_QUOTE, true, NULL);
+		}
+		TokenStringBuffer[len] = Chr;
+		NextChr();
+		len++;
+	}
+	TokenStringBuffer[len] = 0;
+	NextChr();
+}
+
+//==========================================================================
+//
 // TK_NextToken
 //
 //==========================================================================
@@ -1010,7 +1042,7 @@ void TK_NextToken(void)
 				{
 					ERR_Exit(ERR_NONE, false, "Bad directive.");
 				}
-				ProcessQuoteToken();
+				ProcessFileName();
 				strcpy(tk_SourceName, tk_String);
 
 				//	Karodzi·us ignorñ
@@ -1137,9 +1169,12 @@ void TK_Expect(Punctuation punct, error_t error)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/01/15 18:29:36  dj_jl
+//	no message
+//
 //	Revision 1.13  2002/01/11 08:17:31  dj_jl
 //	Added name subsystem, removed support for unsigned ints
-//
+//	
 //	Revision 1.12  2002/01/07 12:31:36  dj_jl
 //	Changed copyright year
 //	

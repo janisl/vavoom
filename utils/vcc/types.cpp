@@ -1046,6 +1046,10 @@ field_t* ParseField(TType *t)
 		return ParseField(t->aux_type);
 	}
 	ParseError(ERR_NOT_A_FIELD, "Identifier: %s", *tk_Name);
+	if (tk_Token == TK_IDENTIFIER)
+	{
+		TK_NextToken();
+	}
 	return NULL;
 }
 
@@ -1355,9 +1359,12 @@ void AddVirtualTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2002/01/15 18:29:36  dj_jl
+//	no message
+//
 //	Revision 1.17  2002/01/11 08:17:31  dj_jl
 //	Added name subsystem, removed support for unsigned ints
-//
+//	
 //	Revision 1.16  2002/01/07 12:31:36  dj_jl
 //	Changed copyright year
 //	
