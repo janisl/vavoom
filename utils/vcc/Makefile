@@ -6,7 +6,7 @@ EXE=
 INSTALLDIR=/usr/local/bin
 endif
 
-CFLAGS = -Wall -O3 -ffast-math -fomit-frame-pointer -fno-rtti -fno-exceptions -mpentiumpro
+CFLAGS = -Wall -O3 -ffast-math -fomit-frame-pointer -mpentiumpro
 
 OBJS = \
 	cmdlib.o \
