@@ -80,6 +80,7 @@ server_vars_t	svvars;
 int				validcount = 1;
 
 bool			sv_loading = false;
+int				sv_load_num_players;
 
 VBasePlayer*	GPlayersBase[MAXPLAYERS];
 
@@ -2426,7 +2427,10 @@ COMMAND(Begin)
 		return;
 	}
 
-	sv_loading = false;
+	if (!netgame || svs.num_connected == sv_load_num_players)
+	{
+		sv_loading = false;
+	}
 
 	sv_player->bSpawned = true;
 
@@ -2981,9 +2985,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.63  2005/03/28 07:24:36  dj_jl
+//	Saving a net game.
+//
 //	Revision 1.62  2005/03/16 15:04:44  dj_jl
 //	More work on line specials.
-//
+//	
 //	Revision 1.61  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
 //	

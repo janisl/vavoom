@@ -52,7 +52,7 @@
    	sprintf(_name, "%s/saves/%s.vs%d", fl_gamedir, _map, _slot)
 
 #define SAVE_DESCRIPTION_LENGTH		24
-#define SAVE_VERSION_TEXT			"Version 1.16.1"
+#define SAVE_VERSION_TEXT			"Version 1.17"
 #define SAVE_VERSION_TEXT_LENGTH	16
 
 // TYPES -------------------------------------------------------------------
@@ -86,6 +86,7 @@ void CL_Disconnect(void);
 extern VEntity		**sv_mobjs;
 extern mobj_base_t	*sv_mo_base;
 extern bool			sv_loading;
+extern int			sv_load_num_players;
 extern TMessage		sv_signon;
 
 extern boolean		in_secret;
@@ -501,14 +502,20 @@ static void UnarchivePlayers(void)
 	int		i;
 
 	AssertSegment(ASEG_PLAYERS);
+	sv_load_num_players = 0;
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
 		byte Active = GET_BYTE;
 		GPlayersBase[i]->bActive = Active;
 		if (Active)
+		{
 			svvars.Players[i] = GPlayersBase[i];
+			sv_load_num_players++;
+		}
 		else
+		{
 			svvars.Players[i] = NULL;
+		}
 	}
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
@@ -1410,9 +1417,9 @@ COMMAND(Save)
 		return;
 	}
 
-	if (netgame)
+	if (deathmatch)
 	{
-		GCon->Log("Can't save in net game");
+		GCon->Log("Can't save in deathmatch game");
 		return;
 	}
 
@@ -1424,6 +1431,7 @@ COMMAND(Save)
 
 	if (sv.intermission)
 	{
+		GCon->Log("You can't save while in intermission!");
 		return;
 	}
 
@@ -1454,9 +1462,9 @@ COMMAND(Load)
 	{
 		return;
 	}
-	if (netgame)
+	if (deathmatch)
 	{
-		GCon->Log("Can't load in net game");
+		GCon->Log("Can't load in deathmatch game");
 		return;
 	}
 
@@ -1484,9 +1492,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.39  2005/03/28 07:24:36  dj_jl
+//	Saving a net game.
+//
 //	Revision 1.38  2005/01/24 12:56:58  dj_jl
 //	Saving of level time.
-//
+//	
 //	Revision 1.37  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
 //	
