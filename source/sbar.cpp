@@ -69,12 +69,12 @@ static picinfo_t		sb_pic_info[1024];
 static void SB_LoadPatches(void)
 {
 	int		i;
-    int		num;
+    char	**names;
 
-	num = clpr.GlobalNumForName("sb_patch_names");
-    for (i = 0; clpr.GetGlobal(i + num); i++)
+	names = (char**)clpr.GlobalAddr("sb_patch_names");
+    for (i = 0; names[i][0]; i++)
     {
-    	sb_pics[i] = R_RegisterPic(clpr.GetString(clpr.GetGlobal(num + i)), PIC_PATCH);
+    	sb_pics[i] = R_RegisterPic(names[i], PIC_PATCH);
 		R_GetPicInfo(sb_pics[i], &sb_pic_info[i]);
     }
 }
@@ -449,9 +449,12 @@ void SB_Start(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/21 17:39:22  dj_jl
+//	Real string pointers in progs
+//
 //	Revision 1.4  2001/08/15 17:08:15  dj_jl
 //	Fixed Strife status bar
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

@@ -39,8 +39,8 @@
 #define _(name)				{#name, PF_##name}
 #define __(name)			{#name, name}
 
-#define PROG_TO_STR(ofs)	(pr_strings + ofs)
-#define STR_TO_PROG(str)	(str - pr_strings)
+#define PROG_TO_STR(ofs)	((char*)(ofs))
+#define STR_TO_PROG(str)	(int(str))
 
 // TYPES -------------------------------------------------------------------
 
@@ -54,8 +54,6 @@ enum
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
-
-char* PR_GetString(int ofs);
 
 int GetMobjNum(mobj_t *mobj);
 mobj_t* SetMobjPtr(int archiveNum);
@@ -303,7 +301,7 @@ static void PF_GetCvar(void)
 	int		name;
 
     name = Pop();
-    Push(Cvar_Value(PR_GetString(name)));
+    Push(Cvar_Value(PROG_TO_STR(name)));
 }
 
 //==========================================================================
@@ -319,7 +317,7 @@ static void PF_SetCvar(void)
 
     value = Pop();
     name = Pop();
-    Cvar_Set(PR_GetString(name), value);
+    Cvar_Set(PROG_TO_STR(name), value);
 }
 
 //==========================================================================
@@ -1642,7 +1640,7 @@ static void PF_GetSoundID(void)
 	int		str;
 
     str = Pop();
-	Push(S_GetSoundID(PR_GetString(str)));
+	Push(S_GetSoundID(PROG_TO_STR(str)));
 }
 
 //==========================================================================
@@ -1658,7 +1656,7 @@ static void PF_StartSequence(void)
 
     name = Pop();
     mobj = (mobj_t*)Pop();
-	SV_StartSequence(mobj, PR_GetString(name));
+	SV_StartSequence(mobj, PROG_TO_STR(name));
 }
 
 //==========================================================================
@@ -2474,7 +2472,7 @@ static void PF_Cmd_CheckParm(void)
 	int		str;
 
     str = Pop();
-    Push(Cmd_CheckParm(PR_GetString(str)));
+    Push(Cmd_CheckParm(PROG_TO_STR(str)));
 }
 
 //==========================================================================
@@ -2892,9 +2890,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/21 17:39:22  dj_jl
+//	Real string pointers in progs
+//
 //	Revision 1.5  2001/08/17 17:43:40  dj_jl
 //	LINUX fixes
-//
+//	
 //	Revision 1.4  2001/08/15 17:21:47  dj_jl
 //	Added model drawing for menu
 //	

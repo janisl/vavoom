@@ -31,7 +31,7 @@
 // MACROS ------------------------------------------------------------------
 
 #define PROG_MAGIC		"VPRG"
-#define PROG_VERSION	8
+#define PROG_VERSION	9
 
 // TYPES -------------------------------------------------------------------
 
@@ -167,34 +167,35 @@ enum
 	OPC_VISCALEVAR_DROP,
 	OPC_RETURNL,
 	OPC_RETURNV,
+	OPC_PUSHSTRING,
 
 	NUM_OPCODES
 };
 
 struct dprograms_t
 {
-	char	magic[4];		// "VPRG"
+	char	magic[4];		//	"VPRG"
 	int		version;
 
-	int		ofs_strings;    //  pirmÆ virkne ir tukýa
+	int		ofs_strings;    //	First string is empty
 	int		num_strings;
 
 	int		ofs_statements;
-	int		num_statements;	//	Instrukcija 0 ir kõÝda
+	int		num_statements;	//	Instruction 0 is error
 
 	int		ofs_globals;
 	int		num_globals;
 
 	int		ofs_functions;
-	int		num_functions;	//  Funkcija 0 ir tukýa
+	int		num_functions;	//	Function 0 is empty
 	
 	int		ofs_globaldefs;
 	int		num_globaldefs;
 
-	int		pad1;	//  Rezervñts
+	int		ofs_globalinfo;
     int		num_builtins;
 
-	int		pad2;
+	int		pad2;	//	Reserved
 	int		pad3;
 };
 
@@ -223,9 +224,12 @@ struct globaldef_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/21 17:39:22  dj_jl
+//	Real string pointers in progs
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

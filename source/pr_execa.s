@@ -241,6 +241,7 @@ LOPCODE_TABLE:
 	.long	LOPC_VISCALEVAR_DROP
 	.long	LOPC_RETURNL
 	.long	LOPC_RETURNV
+	.long	LOPC_PUSHSTRING
 
 	Align4
 LINC_STATEMENT_POINTER:
@@ -1935,6 +1936,21 @@ LOPC_VISCALEVAR_DROP:
 
 //**************************************************************************
 
+	//	Push string
+	Align4
+LOPC_PUSHSTRING:
+	movl	(%edi),%eax
+	addl	C(pr_strings),%eax
+	movl	%eax,(%esi)
+	addl	$4,%edi
+	addl	$4,%esi
+	//	Go to the next statement
+	movl	(%edi),%eax
+	addl	$4,%edi
+	jmp		*LOPCODE_TABLE(,%eax,4)
+
+//**************************************************************************
+
     //	Return from function returning dword sized value
 	Align4
 LOPC_RETURNL:
@@ -1969,9 +1985,12 @@ LEND_RUN_FUNCTION:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/21 17:39:22  dj_jl
+//	Real string pointers in progs
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

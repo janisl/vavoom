@@ -1717,7 +1717,7 @@ void SV_SendServerInfo(player_t *player)
 		<< (short)numsprites;
 	for (i = 0; i < numsprites; i++)
 	{
-		msg << svpr.GetString(svpr.GetGlobal(num + i));
+		msg << (char*)svpr.GetGlobal(num + i);
 	}
 
 	int nummodels = svpr.GetGlobal("num_models");
@@ -1726,7 +1726,7 @@ void SV_SendServerInfo(player_t *player)
 		<< (short)nummodels;
 	for (i = 1; i < nummodels; i++)
 	{
-		msg << svpr.GetString(svpr.GetGlobal(num + i));
+		msg << (char*)svpr.GetGlobal(num + i);
 	}
 
 	msg << (byte)svc_signonnum
@@ -2441,9 +2441,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/08/21 17:39:22  dj_jl
+//	Real string pointers in progs
+//
 //	Revision 1.7  2001/08/15 17:08:59  dj_jl
 //	Fixed finale
-//
+//	
 //	Revision 1.6  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
 //	
