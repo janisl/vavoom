@@ -105,8 +105,6 @@ static int		joyymove;
 
 static int		impulse_cmd;
 
-static bool		roll_centering;
-
 static TCvarI	allways_run("allways_run", "1", CVAR_ARCHIVE);
 static TCvarI	artiskip("artiskip", "1", CVAR_ARCHIVE);	// whether shift-enter skips an artifact
 
@@ -119,10 +117,12 @@ static TCvarF	cl_movespeedkey("cl_movespeedkey", "2.0", CVAR_ARCHIVE);
 
 static TCvarF	cl_yawspeed("cl_yawspeed", "140", CVAR_ARCHIVE);
 static TCvarF	cl_pitchspeed("cl_pitchspeed", "150", CVAR_ARCHIVE);
-static TCvarF	cl_rollspeed("cl_rollspeed", "32", CVAR_ARCHIVE);
 static TCvarF	cl_pitchdriftspeed("cl_pitchdriftspeed", "270", CVAR_ARCHIVE);
 
 static TCvarF	cl_anglespeedkey("cl_anglespeedkey", "1.5", CVAR_ARCHIVE);
+
+static TCvarF	cl_deathroll("cl_deathroll", "75", CVAR_ARCHIVE);
+static TCvarF	cl_deathrollspeed("cl_deathrollspeed", "80", CVAR_ARCHIVE);
 
 static TCvarF	mouse_x_sensitivity("mouse_x_sensitivity", "3.0", CVAR_ARCHIVE);
 static TCvarF	mouse_y_sensitivity("mouse_y_sensitivity", "3.0", CVAR_ARCHIVE);
@@ -161,8 +161,6 @@ BUTTON(Button8)
 BUTTON(Speed)
 BUTTON(Strafe)
 BUTTON(MouseLook)
-BUTTON(TiltLeft)
-BUTTON(TiltRight)
 
 // CODE --------------------------------------------------------------------
 
@@ -330,11 +328,6 @@ COMMAND(ToggleAlwaysRun)
 //
 //==========================================================================
 
-COMMAND(CenterTilt)
-{
-	roll_centering = true;
-}
-
 void V_StartPitchDrift(void)
 {
 	cl.centering = true;
@@ -426,39 +419,18 @@ static void AdjustAngles(void)
 	//	ROLL
 	if (cl.health <= 0)
  	{
- 		if (cl.viewangles.roll >= 0 && cl.viewangles.roll < 75)
+ 		if (cl.viewangles.roll >= 0 && cl.viewangles.roll < cl_deathroll)
 		{
-			cl.viewangles.roll += 80 * host_frametime;
+			cl.viewangles.roll += cl_deathrollspeed * host_frametime;
 		}
- 		if (cl.viewangles.roll < 0 && cl.viewangles.roll > -75)
+ 		if (cl.viewangles.roll < 0 && cl.viewangles.roll > -cl_deathroll)
 		{
-			cl.viewangles.roll -= 80 * host_frametime;
+			cl.viewangles.roll -= cl_deathrollspeed * host_frametime;
 		}
-		roll_centering = false;
 	}
 	else
 	{
-    	cl.viewangles.roll += KeyTiltRight.KeyState() * cl_rollspeed * speed;
-    	cl.viewangles.roll -= KeyTiltLeft.KeyState() * cl_rollspeed * speed;
-		if (roll_centering)
-		{
-			if (fabs(cl.viewangles.roll) < cl_rollspeed * host_frametime)
-			{
-				cl.viewangles.roll = 0;
-				roll_centering = false;
-			}
-			else
-			{
-				if (cl.viewangles.roll > 0)
-				{
-					cl.viewangles.roll -= cl_rollspeed * host_frametime;
-				}
-				else if (cl.viewangles.roll < 0)
-				{
-					cl.viewangles.roll += cl_rollspeed * host_frametime;
-				}
-			}
-		}
+		cl.viewangles.roll = 0.0;
 	}
 
 	//	Check angles
@@ -724,9 +696,12 @@ void CL_ClearInput(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/01/04 18:21:16  dj_jl
+//	Fixed tilted death view
+//
 //	Revision 1.5  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
-//
+//	
 //	Revision 1.4  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	
