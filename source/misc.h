@@ -40,6 +40,7 @@ int M_CheckParm(const char* check);
 
 //	Endianess handling
 void M_InitByteOrder(void);
+extern bool GBigEndian;
 extern short (*LittleShort)(short);
 extern short (*BigShort)(short);
 extern int (*LittleLong)(int);
@@ -63,9 +64,12 @@ extern char**	myargv;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/02/15 19:10:32  dj_jl
+//	Added GBigEndian
+//
 //	Revision 1.5  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2001/08/04 17:25:14  dj_jl
 //	Moved title / demo loop to progs
 //	Removed shareware / ExtendedWAD from engine

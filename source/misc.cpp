@@ -177,6 +177,7 @@ int M_CheckParm(const char *check)
 //
 //==========================================================================
 
+bool GBigEndian;
 short (*LittleShort)(short);
 short (*BigShort)(short);
 int (*LittleLong)(int);
@@ -224,6 +225,7 @@ void M_InitByteOrder(void)
 	// set the byte swapping variables in a portable manner
 	if (*(short *)swaptest == 1)
 	{
+		GBigEndian = false;
 		BigShort = ShortSwap;
 		LittleShort = ShortNoSwap;
 		BigLong = LongSwap;
@@ -233,6 +235,7 @@ void M_InitByteOrder(void)
 	}
 	else
 	{
+		GBigEndian = true;
 		BigShort = ShortNoSwap;
 		LittleShort = ShortSwap;
 		BigLong = LongNoSwap;
@@ -382,9 +385,12 @@ int PassFloat(float f)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/02/15 19:10:32  dj_jl
+//	Added GBigEndian
+//
 //	Revision 1.9  2002/01/28 18:41:16  dj_jl
 //	Fixed response files
-//
+//	
 //	Revision 1.8  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	
