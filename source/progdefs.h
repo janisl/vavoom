@@ -28,7 +28,7 @@
 // MACROS ------------------------------------------------------------------
 
 #define PROG_MAGIC		"VPRG"
-#define PROG_VERSION	10
+#define PROG_VERSION	11
 
 // TYPES -------------------------------------------------------------------
 
@@ -246,7 +246,8 @@ struct dclassinfo_t
 		char*	name;
 	};
 	int		vtable;
-	int		size;
+	short	size;
+	short	num_methods;
 	int		parent;
 };
 
@@ -259,9 +260,12 @@ struct dclassinfo_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/12/27 17:40:06  dj_jl
+//	Added method count to VClass, changed version number
+//
 //	Revision 1.8  2001/12/18 19:03:16  dj_jl
 //	A lots of work on VObject
-//
+//	
 //	Revision 1.7  2001/12/12 19:27:46  dj_jl
 //	Added dynamic cast
 //	
