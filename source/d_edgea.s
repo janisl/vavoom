@@ -521,7 +521,7 @@ LPoint0IsClipped:
 	flds	4(%edi)
 	fsubs	4(%esi)
 	flds	8(%edi)
-	fsub	8(%esi)			// z | y | x | f
+	fsubs	8(%esi)			// z | y | x | f
 	fxch	%st(2)			// x | y | z | f
 	fmul	%st(3),%st(0)	// x | y | z | f
 	fxch	%st(1)			// y | x | z | f
@@ -580,7 +580,7 @@ LPoint1IsClipped:
 	flds	4(%edi)
 	fsubs	4(%esi)
 	flds	8(%edi)
-	fsub	8(%esi)			// z | y | x | f
+	fsubs	8(%esi)			// z | y | x | f
 	fxch	%st(2)			// x | y | z | f
 	fmul	%st(3),%st(0)	// x | y | z | f
 	fxch	%st(1)			// y | x | z | f
@@ -775,9 +775,12 @@ LResetSurfacesLoop:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/07/15 17:52:49  dj_jl
+//	Fixed fsub problem.
+//
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/12/12 19:24:38  dj_jl
 //	Fixed clipping
 //	
