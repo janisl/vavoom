@@ -720,6 +720,20 @@ void R_AnimateSurfaces(void)
 
 	R_AnimateSky();
 }
+
+//==========================================================================
+//
+//	R_TextureAnimation
+//
+//==========================================================================
+
+int R_TextureAnimation(int tex)
+{
+	if (tex & TEXF_FLAT)
+		return TEXF_FLAT | flattranslation[tex & ~TEXF_FLAT];
+	else
+		return texturetranslation[tex];
+}
 #endif
 
 //==========================================================================
@@ -950,9 +964,12 @@ void R_DrawShadowedPic(int x, int y, int handle)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/21 17:46:08  dj_jl
+//	Added R_TextureAnimation, made SetTexture recognize flats
+//
 //	Revision 1.5  2001/08/15 17:21:14  dj_jl
 //	Removed game dependency
-//
+//	
 //	Revision 1.4  2001/08/01 17:33:58  dj_jl
 //	Fixed drawing of spite lump for player setup menu, beautification
 //	

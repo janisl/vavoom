@@ -344,10 +344,18 @@ void TDirect3DDrawer::GenerateTexture(int texnum)
 
 void TDirect3DDrawer::SetTexture(int tex)
 {
-	if (!RenderDevice)
+	if (tex & TEXF_FLAT)
+	{
+		SetFlat(tex);
 		return;
+	}
 
-	tex = texturetranslation[tex];
+	if (!RenderDevice)
+	{
+		return;
+	}
+
+	tex = R_TextureAnimation(tex);
 
     if (!texturedata[tex])
 		GenerateTexture(tex);
@@ -356,74 +364,6 @@ void TDirect3DDrawer::SetTexture(int tex)
 	tex_iw = textureiw[tex];
 	tex_ih = textureih[tex];
 }
-
-//==========================================================================
-//
-//	GenerateSkyTexture
-//
-//==========================================================================
-
-#if 0
-static void GenerateSkyTexture(int texnum)
-{
-    byte*			block;
-    texdef_t*		texture;
-    texpatch_t*		patch;	
-    patch_t*		realpatch;
-    int				x;
-    int				x1;
-    int				x2;
-    int				i;
-    column_t*		patchcol;
-	int				wtimes;
-	int				htimes;
-
-    texture = textures[texnum];
-
-    block = (byte*)Z_Malloc(1024 * 256, PU_STATIC, (void**)&skytexturedata[texnum]);
-	memset(block, TRANSPARENT_COLOR, 1024 * 256);
-
-    // Composite the columns together.
-    patch = texture->patches;
-
-	wtimes = 1024 / texture->width;
-	htimes = 256 / texture->height;
-
-    for (i = 0; i < texture->patchcount; i++, patch++)
-    {
-		realpatch = (patch_t*)W_CacheLumpNum(patch->patch, PU_CACHE);
-		x1 = patch->originx;
-		x2 = x1 + LittleShort(realpatch->width);
-
-		if (x1 < 0)
-	    	x = 0;
-		else
-	    	x = x1;
-	
-		if (x2 > texture->width)
-	    	x2 = texture->width;
-
-		for ( ; x < x2; x++)
-		{
-	    	patchcol = (column_t *)((byte *)realpatch
-				    + LittleLong(realpatch->columnofs[x - x1]));
-			for (int ht = 0; ht < htimes; ht++)
-			{
-				for (int wt = 0; wt < wtimes; wt++)
-				{
-			    	DrawColumnInCache(patchcol, block + wt * texture->width +
-			    		ht * texture->height * 1024, x, patch->originy,
-			    		1024, texture->height);
-				}
-			}
-		}
-    }
-
-    // Now that the texture has been built in column cache,
-    //  it is purgable from zone memory.
-    Z_ChangeTag(block, PU_CACHE);
-}
-#endif
 
 //==========================================================================
 //
@@ -442,16 +382,7 @@ void TDirect3DDrawer::SetSkyTexture(int tex, bool double_sky)
 		saved = pal8_to16[0];
 		pal8_to16[0] = 0;
 	}
-#if 0
-	tex = texturetranslation[tex];
-
-    if (!skytexturedata[tex])
-		GenerateSkyTexture(tex);
-
-    ds_source = skytexturedata[tex];
-#else
 	SetTexture(tex);
-#endif
 	if (double_sky)
 	{
 		pal8_to16[0] = saved;
@@ -493,8 +424,8 @@ void TDirect3DDrawer::SetFlat(int num)
 	if (!RenderDevice)
 		return;
 
+	num = R_TextureAnimation(num);
 	num &= ~TEXF_FLAT;
-	num = flattranslation[num];
 
 	if (!flatdata[num])
 	{
@@ -930,9 +861,12 @@ void TDirect3DDrawer::SetSkin(const char *name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/21 17:46:08  dj_jl
+//	Added R_TextureAnimation, made SetTexture recognize flats
+//
 //	Revision 1.4  2001/08/02 17:47:44  dj_jl
 //	Support skins with non-power of 2 dimensions
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

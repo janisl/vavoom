@@ -155,7 +155,7 @@ surfcache_t *D_CacheSurface(surface_t *surface, int miplevel)
 	//
 	// if the surface is animating or flashing, flush the cache
 	//
-	texture = D_TextureAnimation(surface->texinfo->pic);
+	texture = R_TextureAnimation(surface->texinfo->pic);
 	
 	//
 	// see if the cache holds apropriate data
@@ -215,14 +215,7 @@ surfcache_t *D_CacheSurface(surface_t *surface, int miplevel)
 	
 	surfrowbytes = surfwidth * PixelBytes;
 
-	if (texture & TEXF_FLAT)
-	{
-		Drawer->SetFlat(texture);
-	}
-	else
-	{
-		Drawer->SetTexture(texture);
-	}
+	Drawer->SetTexture(texture);
 	mt = miptexture;
 	
 	r_source = (byte *)mt + mt->offsets[miplevel];
@@ -1867,9 +1860,12 @@ void D_DrawSurfaceBlock32RGB_mip3(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/21 17:46:08  dj_jl
+//	Added R_TextureAnimation, made SetTexture recognize flats
+//
 //	Revision 1.4  2001/08/02 17:41:19  dj_jl
 //	Added new asm for 32-bits
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

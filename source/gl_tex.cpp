@@ -26,6 +26,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gl_local.h"
+#include <GL/glu.h>
 
 // MACROS ------------------------------------------------------------------
 
@@ -279,7 +280,7 @@ void TOpenGLDrawer::GenerateTexture(int texnum)
 		}
 	}
 
-	gluBuild2DMipmaps(GL_TEXTURE_2D, 4, texture->width, texture->height, GL_RGBA, GL_UNSIGNED_BYTE, block);
+	BuildMipmaps(texture->width, texture->height, block);
 
 	Z_Free(block);
 	texture_sent[texnum] = true;
@@ -295,7 +296,13 @@ void TOpenGLDrawer::GenerateTexture(int texnum)
 
 void TOpenGLDrawer::SetTexture(int tex)
 {
-	tex = texturetranslation[tex];
+	if (tex & TEXF_FLAT)
+	{
+		SetFlat(tex);
+		return;
+	}
+
+	tex = R_TextureAnimation(tex);
 
 	glBindTexture(GL_TEXTURE_2D, texture_id[tex]);
 	if (!texture_sent[tex])
@@ -314,13 +321,13 @@ void TOpenGLDrawer::SetTexture(int tex)
 	}
 	else if (tex_linear)
 	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
 	else
 	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	}
 	tex_iw = texture_iw[tex];
 	tex_ih = texture_ih[tex];
@@ -348,13 +355,13 @@ void TOpenGLDrawer::SetSkyTexture(int tex, bool double_sky)
 	// No mipmaping for sky
 	if (tex_linear)
 	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
 	else
 	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	}
 }
 
@@ -372,7 +379,7 @@ void TOpenGLDrawer::GenerateFlat(int num)
 	{
 		block[i] = pal8_to24[data[i]];
 	}
-	gluBuild2DMipmaps(GL_TEXTURE_2D, 4, 64, 64, GL_RGBA, GL_UNSIGNED_BYTE, block);
+	BuildMipmaps(64, 64, block);
 	Z_Free(block);
 	flat_sent[num] = true;
 }
@@ -385,8 +392,8 @@ void TOpenGLDrawer::GenerateFlat(int num)
 
 void TOpenGLDrawer::SetFlat(int num)
 {
+	num = R_TextureAnimation(num);
 	num &= ~TEXF_FLAT;
-	num = flattranslation[num];
 
 	glBindTexture(GL_TEXTURE_2D, flat_id[num]);
 
@@ -406,13 +413,13 @@ void TOpenGLDrawer::SetFlat(int num)
 	}
 	else if (tex_linear)
 	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
 	else
 	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	}
 	tex_iw = 1.0 / 64.0;
 	tex_ih = 1.0 / 64.0;
@@ -460,7 +467,7 @@ void TOpenGLDrawer::GenerateSprite(int lump)
 	}
 
 	// Generate The Texture
-	gluBuild2DMipmaps(GL_TEXTURE_2D, 4, p2w, p2h, GL_RGBA, GL_UNSIGNED_BYTE, block);
+	BuildMipmaps(p2w, p2h, block);
 	sprite_sent[lump] = true;
 
 	Z_Free(block);
@@ -514,7 +521,7 @@ void TOpenGLDrawer::GenerateTranslatedSprite(int lump, int slot, int translation
 	}
 
 	// Generate The Texture
-	gluBuild2DMipmaps(GL_TEXTURE_2D, 4, p2w, p2h, GL_RGBA, GL_UNSIGNED_BYTE, block);
+	BuildMipmaps(p2w, p2h, block);
 
 	Z_Free(block);
 	Z_ChangeTag(patch, PU_CACHE);
@@ -551,13 +558,13 @@ void TOpenGLDrawer::SetSpriteLump(int lump, int translation)
 					}
 					else if (tex_linear)
 					{
-						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+						glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+						glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 					}
 					else
 					{
-						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+						glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+						glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 					}
 					tex_iw = trspriw[i];
 					tex_ih = trsprih[i];
@@ -588,13 +595,13 @@ void TOpenGLDrawer::SetSpriteLump(int lump, int translation)
 		}
 		else if (tex_linear)
 		{
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		}
 		else
 		{
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		}
 		tex_iw = trspriw[avail];
 		tex_ih = trsprih[avail];
@@ -618,13 +625,13 @@ void TOpenGLDrawer::SetSpriteLump(int lump, int translation)
 		}
 		else if (tex_linear)
 		{
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		}
 		else
 		{
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		}
 		tex_iw = spriteiw[lump];
 		tex_ih = spriteih[lump];
@@ -660,13 +667,13 @@ void TOpenGLDrawer::SetPic(int handle)
 
 	if (tex_linear)
 	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
 	else
 	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	}
 }
 
@@ -832,7 +839,7 @@ void TOpenGLDrawer::SetSkin(const char *name)
 		{
 			buf[i] = pal8_to24[SkinData[i]];
 		}
-		gluBuild2DMipmaps(GL_TEXTURE_2D, 4, SkinWidth, SkinHeight, GL_RGBA, GL_UNSIGNED_BYTE, buf);
+		BuildMipmaps(SkinWidth, SkinHeight, buf);
 		Z_Free(buf);
 		Z_Free(SkinData);
 	}
@@ -848,22 +855,36 @@ void TOpenGLDrawer::SetSkin(const char *name)
 	}
 	else if (tex_linear)
 	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
 	else
 	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	}
+}
+
+//==========================================================================
+//
+//	TOpenGLDrawer::BuildMipmaps
+//
+//==========================================================================
+
+void TOpenGLDrawer::BuildMipmaps(int w, int h, rgba_t *block)
+{
+	gluBuild2DMipmaps(GL_TEXTURE_2D, 4, w, h, GL_RGBA, GL_UNSIGNED_BYTE, block);
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/21 17:46:08  dj_jl
+//	Added R_TextureAnimation, made SetTexture recognize flats
+//
 //	Revision 1.4  2001/08/01 17:30:31  dj_jl
 //	Fixed translated sprites
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

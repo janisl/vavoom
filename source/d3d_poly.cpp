@@ -410,14 +410,7 @@ void TDirect3DDrawer::DrawPolygon(TVec *cv, int count, int texture, int)
 			(surf->lightlevel << 8) | surf->lightlevel;
 	}
 
-	if (texture & TEXF_FLAT)
-	{
-		SetFlat(texture);
-	}
-	else
-	{
-		SetTexture(texture);
-	}
+	SetTexture(texture);
 
 	for (i = 0; i < count; i++)
 	{
@@ -514,14 +507,7 @@ void TDirect3DDrawer::WorldDrawing(void)
 				tex_iw = 1.0 / 256.0;
 				tex_ih = 1.0 / 256.0;
 #else
-				if (tex->pic & TEXF_FLAT)
-				{
-					SetFlat(tex->pic);
-				}
-				else
-				{
-					SetTexture(tex->pic);
-				}
+				SetTexture(tex->pic);
 #endif
 				for (i = 0; i < surf->count; i++)
 				{
@@ -690,14 +676,7 @@ void TDirect3DDrawer::DrawMaskedPolygon(TVec *cv, int count,
 	int			i, r, g, b, alpha, w, h, size, l;
 	surface_t	*surf = r_surface;
 
-	if (texture & TEXF_FLAT)
-	{
-		SetFlat(texture);
-	}
-	else
-	{
-		SetTexture(texture);
-	}
+	SetTexture(texture);
 
 	R_BuildLightMap(surf, 0);
 	w = (surf->extents[0] >> 4) + 1;
@@ -1005,9 +984,12 @@ void TDirect3DDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/08/21 17:46:08  dj_jl
+//	Added R_TextureAnimation, made SetTexture recognize flats
+//
 //	Revision 1.6  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
-//
+//	
 //	Revision 1.5  2001/08/04 17:29:11  dj_jl
 //	Added depth hack for weapon models
 //	

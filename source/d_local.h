@@ -234,9 +234,8 @@ void D_DrawParticle_32(particle_t *pparticle);
 
 void TransformVector(const TVec &in, TVec &out);
 
-void D_ClearPolys(void);
+void D_BeginEdgeFrame(void);
 void D_FlushSpriteCache(void);
-int D_TextureAnimation(int);
 
 int D_SurfaceCacheForRes(int, int, int);
 void D_InitCaches(void*, int);
@@ -507,9 +506,12 @@ inline byte GetColB(dword col)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/08/21 17:46:08  dj_jl
+//	Added R_TextureAnimation, made SetTexture recognize flats
+//
 //	Revision 1.7  2001/08/15 17:15:55  dj_jl
 //	Drawer API changes, removed wipes
-//
+//	
 //	Revision 1.6  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
 //	

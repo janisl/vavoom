@@ -91,15 +91,15 @@ struct pic_info_t
 
 void R_DrawViewBorder(void);
 
-bool R_BuildLightMap(surface_t *surf, int shift);
+bool R_BuildLightMap(surface_t*, int);
+
+int R_TextureAnimation(int);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern int				numtextures;
 extern texdef_t**		textures;
-extern int*				texturetranslation;
 extern int*				flatlumps;
-extern int*				flattranslation;
 extern int				numspritelumps;
 extern int*				spritelumps;
 extern int*				spritewidth;
@@ -150,9 +150,12 @@ extern rgb_t			SkinPal[256];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/21 17:46:08  dj_jl
+//	Added R_TextureAnimation, made SetTexture recognize flats
+//
 //	Revision 1.4  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

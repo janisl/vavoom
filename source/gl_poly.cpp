@@ -370,14 +370,7 @@ void TOpenGLDrawer::DrawPolygon(TVec *cv, int count, int texture, int)
 		}
 	}
 
-	if (texture & TEXF_FLAT)
-	{
-		SetFlat(texture);
-	}
-	else
-	{
-		SetTexture(texture);
-	}
+	SetTexture(texture);
 
 	if (lightmaped)
 	{
@@ -432,8 +425,8 @@ void TOpenGLDrawer::WorldDrawing(void)
 
 			SelectTexture(1);
 			glBindTexture(GL_TEXTURE_2D, lmap_id[lb]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 			if (block_changed[lb])
 			{
@@ -448,14 +441,7 @@ void TOpenGLDrawer::WorldDrawing(void)
 				surf = cache->surf;
 				tex = surf->texinfo;
 
-				if (tex->pic & TEXF_FLAT)
-				{
-					SetFlat(tex->pic);
-				}
-				else
-				{
-					SetTexture(tex->pic);
-				}
+				SetTexture(tex->pic);
 				glBegin(GL_POLYGON);
 				for (i = 0; i < surf->count; i++)
 				{
@@ -494,8 +480,8 @@ void TOpenGLDrawer::WorldDrawing(void)
 			}
 
 			glBindTexture(GL_TEXTURE_2D, lmap_id[lb]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 			if (block_changed[lb])
 			{
@@ -603,14 +589,7 @@ void TOpenGLDrawer::DrawMaskedPolygon(TVec *cv, int count,
 	double		iscale;
 	surface_t	*surf = r_surface;
 
-	if (texture & TEXF_FLAT)
-	{
-		SetFlat(texture);
-	}
-	else
-	{
-		SetTexture(texture);
-	}
+	SetTexture(texture);
 	glEnable(GL_ALPHA_TEST);
 	if (translucency)
 	{
@@ -846,13 +825,13 @@ void TOpenGLDrawer::StartParticles(void)
 	glBindTexture(GL_TEXTURE_2D, particle_texture);
 	if (tex_linear)
 	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
 	else
 	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	}
 	glEnable(GL_BLEND);
 	glEnable(GL_ALPHA_TEST);
@@ -893,9 +872,12 @@ void TOpenGLDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/08/21 17:46:08  dj_jl
+//	Added R_TextureAnimation, made SetTexture recognize flats
+//
 //	Revision 1.6  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
-//
+//	
 //	Revision 1.5  2001/08/04 17:31:16  dj_jl
 //	Added depth hack for weapon models
 //	Added support for multitexture extensions
