@@ -499,7 +499,7 @@ void VDefaultSoundDevice::PlayVoice(const char *Name)
 
 	Channel[chan].origin_id = 0;
 	Channel[chan].origin = TVec(0 , 0, 0);
-	Channel[chan].channel = channel;
+	Channel[chan].channel = 1;
 	Channel[chan].velocity = TVec(0, 0, 0);
 	Channel[chan].sound_id = VOICE_SOUND_ID;
 	Channel[chan].priority = priority;
@@ -767,9 +767,12 @@ bool VDefaultSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/08/05 17:20:32  dj_jl
+//	Fixed voices.
+//
 //	Revision 1.11  2002/07/27 18:10:11  dj_jl
 //	Implementing Strife conversations.
-//
+//	
 //	Revision 1.10  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
 //	
