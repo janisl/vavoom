@@ -207,6 +207,20 @@ void Actor::A_FaceTarget(void)
 
 //==========================================================================
 //
+//	Actor::A_ActiveSound
+//
+//==========================================================================
+
+void Actor::A_ActiveSound(void)
+{
+	if (ActiveSound)
+	{
+		PlaySound(ActiveSound, CHAN_AUTO);
+	}
+}
+
+//==========================================================================
+//
 //  Actor::A_Pain
 //
 //==========================================================================
@@ -229,7 +243,6 @@ void Actor::A_Pain(void)
 
 void Actor::A_Explode(void)
 {
-	Translucency = 50;
 	RadiusAttack(128, 0, 0);
 }
 
@@ -302,6 +315,9 @@ void Actor::A_PlayerScream(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/04/27 17:04:54  dj_jl
+//  Merged all creatures.
+//
 //  Revision 1.19  2002/03/20 19:07:47  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

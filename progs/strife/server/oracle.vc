@@ -1,0 +1,118 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+//**************************************************************************
+//**************************************************************************
+//
+//	Oracle
+//
+//**************************************************************************
+//**************************************************************************
+
+class Oracle:Pawn
+	__mobjinfo__(199)
+{
+
+__states__
+{
+	S_ORACLE('ORCL', 0, -1.0, S_NULL) { }
+#ifdef TEASER
+	S_ORACLE_DIE1('ORCL', 1, 4.0 / 35.0, S_ORACLE_DIE2) { }
+	S_ORACLE_DIE2('ORCL', 2, 4.0 / 35.0, S_ORACLE_DIE3) { }
+	S_ORACLE_DIE3('ORCL', 3, 4.0 / 35.0, S_ORACLE_DIE4) { }
+	S_ORACLE_DIE4('ORCL', 4, 4.0 / 35.0, S_ORACLE_DIE5) { }
+	S_ORACLE_DIE5('ORCL', 5, 4.0 / 35.0, S_ORACLE_DIE6) { }
+	S_ORACLE_DIE6('ORCL', 6, 4.0 / 35.0, S_ORACLE_DIE7) { }
+	S_ORACLE_DIE7('ORCL', 7, -1.0, S_NULL) { }
+	S_ORACLE_DIE8('ORCL', 8, 8.0 / 35.0, S_ORACLE_DIE9) { A_OracleDeath(); }
+	S_ORACLE_DIE9('ORCL', 9, 8.0 / 35.0, S_ORACLE_DIE10) { A_Scream(); }
+	S_ORACLE_DIE10('ORCL', 10, 8.0 / 35.0, S_ORACLE_DIE11) { }
+	S_ORACLE_DIE11('ORCL', 11, 7.0 / 35.0, S_ORACLE_DIE12) { A_Fall(); }
+	S_ORACLE_DIE12('ORCL', 12, 7.0 / 35.0, S_ORACLE_DIE13) { }
+	S_ORACLE_DIE13('ORCL', 13, 7.0 / 35.0, S_ORACLE_DIE14) { }
+	S_ORACLE_DIE14('ORCL', 14, 6.0 / 35.0, S_ORACLE_DIE15) { }
+	S_ORACLE_DIE15('ORCL', 15, 6.0 / 35.0, S_ORACLE_DIE16) { }
+#else
+	S_ORACLE_DIE1('ORCL', 1, 5.0 / 35.0, S_ORACLE_DIE2) { }
+	S_ORACLE_DIE2('ORCL', 2, 5.0 / 35.0, S_ORACLE_DIE3) { }
+	S_ORACLE_DIE3('ORCL', 3, 5.0 / 35.0, S_ORACLE_DIE4) { }
+	S_ORACLE_DIE4('ORCL', 4, 5.0 / 35.0, S_ORACLE_DIE5) { }
+	S_ORACLE_DIE5('ORCL', 5, 5.0 / 35.0, S_ORACLE_DIE6) { }
+	S_ORACLE_DIE6('ORCL', 6, 5.0 / 35.0, S_ORACLE_DIE7) { }
+	S_ORACLE_DIE7('ORCL', 7, 5.0 / 35.0, S_ORACLE_DIE8) { }
+	S_ORACLE_DIE8('ORCL', 8, 5.0 / 35.0, S_ORACLE_DIE9) { }
+	S_ORACLE_DIE9('ORCL', 9, 5.0 / 35.0, S_ORACLE_DIE10) { }
+	S_ORACLE_DIE10('ORCL', 10, 5.0 / 35.0, S_ORACLE_DIE11) { }
+	S_ORACLE_DIE11('ORCL', 11, 5.0 / 35.0, S_ORACLE_DIE12) { A_Fall(); }
+	S_ORACLE_DIE12('ORCL', 12, 5.0 / 35.0, S_ORACLE_DIE13) { }
+	S_ORACLE_DIE13('ORCL', 13, 5.0 / 35.0, S_ORACLE_DIE14) { A_OracleDeath(); }
+	S_ORACLE_DIE14('ORCL', 14, 5.0 / 35.0, S_ORACLE_DIE15) { }
+	S_ORACLE_DIE15('ORCL', 15, 5.0 / 35.0, S_ORACLE_DIE16) { }
+#endif
+	S_ORACLE_DIE16('ORCL', 16, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+#ifdef TEASER
+	ConversationID = 63;
+#else
+	ConversationID = 65;
+#endif
+	ClassName = 'ORACLE';
+#ifdef TEASER
+	Health = 31;
+#else
+	Health = 1;
+#endif
+	Radius = 15.0;
+	Height = 56.0;
+	Mass = 100.0;
+#ifdef TEASER
+	PainChance = 200;
+#endif
+	bNoBlood = true;
+#ifndef TEASER
+	bNoDeathmatch = true;
+#endif
+	SpawnState = S_ORACLE;
+#ifdef TEASER
+	PainState = S_ORACLE_DIE1;
+	DyingState = S_ORACLE_DIE1;
+	DeathState = S_ORACLE_DIE8;
+#else
+	DeathState = S_ORACLE_DIE1;
+#endif
+}
+
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/04/27 17:04:54  dj_jl
+//  Merged all creatures.
+//
+//**************************************************************************

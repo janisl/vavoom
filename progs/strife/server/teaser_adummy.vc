@@ -35,7 +35,7 @@ void Actor::A_26(void)
 void Actor::A_27(void)
 {
 }
-void Actor::A_28(void)
+void Actor::A_Explode2(void)
 {
 }
 void Actor::A_29(void)
@@ -44,7 +44,7 @@ void Actor::A_29(void)
 void Actor::A_30(void)
 {
 }
-void Actor::A_31(void)
+void Actor::A_Unknown24(void)
 {
 }
 void Actor::A_32(void)
@@ -59,148 +59,124 @@ void Actor::A_34(void)
 void Actor::A_35(void)
 {
 }
-void Actor::A_36(void)
-{
-}
 void Actor::A_37(void)
 {
 }
-void Actor::A_38(void)
+void Actor::A_XDying(void)
 {
 }
-void Actor::A_42(void)
+void Actor::A_Stand(void)
 {
 }
-void Actor::A_43(void)
+void Actor::A_Burn(void)
 {
 }
-void Actor::A_44(void)
+void Actor::A_Walk(void)
 {
 }
-void Actor::A_45(void)
+void Actor::A_Dying(void)
 {
 }
-void Actor::A_46(void)
+void Actor::A_PeasantAttack(void)
 {
 }
-void Actor::A_48(void)
+void Actor::A_ResetHealth(void)
 {
 }
-void Actor::A_49(void)
-{
-}
-void Actor::A_50(void)
-{
-}
-void Actor::A_51(void)
-{
-}
-void Actor::A_52(void)
-{
-}
-void Actor::A_53(void)
-{
-}
-void Actor::A_54(void)
+void Actor::A_AcolyteArmorPain(void)
 {
 }
 void Actor::A_55(void)
 {
 }
-void Actor::A_56(void)
+void Actor::A_Unknown55(void)
 {
 }
-void Actor::A_57(void)
+void Actor::A_Unknown56(void)
 {
 }
-void Actor::A_58(void)
+void Actor::A_CheckRefire(void)
 {
 }
-void Actor::A_59(void)
+void Actor::A_RiffleAttack(void)
 {
 }
-void Actor::A_60(void)
+void Actor::A_MacilDeath(void)
 {
 }
-void Actor::A_61(void)
+void Actor::A_RobotMelee(void)
 {
 }
-void Actor::A_62(void)
+void Actor::A_RobotMissile(void)
 {
 }
-void Actor::A_63(void)
+void Actor::A_Unknown64(void)
 {
 }
-void Actor::A_64(void)
+void Actor::A_AcolyteChase(void)
 {
 }
-void Actor::A_65(void)
+void Actor::A_CrusaderAttack1(void)
 {
 }
-void Actor::A_66(void)
+void Actor::A_CrusaderAttack2(void)
 {
 }
-void Actor::A_67(void)
+void Actor::A_CrusaderAttack3(void)
 {
 }
-void Actor::A_68(void)
+void Actor::A_CrusaderAttack4(void)
 {
 }
-void Actor::A_69(void)
+void Actor::A_Unknown72(void)
 {
 }
-void Actor::A_70(void)
+void Actor::A_BishopAttack(void)
 {
 }
-void Actor::A_71(void)
+void Actor::A_BishopDeath(void)
 {
 }
-void Actor::A_72(void)
+void Actor::A_TemplarAttack(void)
 {
 }
-void Actor::A_73(void)
+void Actor::A_OracleDeath(void)
 {
 }
-void Actor::A_74(void)
+void Actor::A_FlightChase(void)
 {
 }
-void Actor::A_75(void)
+void Actor::A_SpecterMelee(void)
 {
 }
-void Actor::A_76(void)
+void Actor::A_LoremasterAttack(void)
 {
 }
-void Actor::A_77(void)
+void Actor::A_LoremasterDeath(void)
 {
 }
-void Actor::A_78(void)
+void Actor::A_SpecterAttack(void)
 {
 }
-void Actor::A_79(void)
+void Actor::A_SpecterDying(void)
 {
 }
-void Actor::A_80(void)
+void Actor::A_Specter2Attack(void)
 {
 }
-void Actor::A_81(void)
+void Actor::A_Specter3Attack(void)
 {
 }
-void Actor::A_82(void)
+void Actor::A_Specter4Attack(void)
 {
 }
-void Actor::A_83(void)
+void Actor::A_Specter5Attack(void)
 {
 }
-void Actor::A_84(void)
+void Actor::A_EntityAttack(void)
 {
 }
-void Actor::A_85(void)
-{
-}
-void Actor::A_86(void)
-{
-}
-void Actor::A_87(void)
+void Actor::A_EntityDeath(void)
 {
 }
 void Actor::A_88(void)
@@ -215,49 +191,49 @@ void Actor::A_90(void)
 void Actor::A_91(void)
 {
 }
-void Actor::A_92(void)
+void Actor::A_SentinelAttack(void)
 {
 }
-void Actor::A_93(void)
+void Actor::A_StalkerInit(void)
 {
 }
-void Actor::A_94(void)
+void Actor::A_StalkerChase2(void)
 {
 }
-void Actor::A_95(void)
+void Actor::A_StalkerChase(void)
 {
 }
-void Actor::A_96(void)
+void Actor::A_StalkerAttack(void)
 {
 }
-void Actor::A_97(void)
+void Actor::A_StalkerLand(void)
 {
 }
-void Actor::A_98(void)
+void Actor::A_InquisitorChase(void)
 {
 }
-void Actor::A_99(void)
+void Actor::A_InquisitorChase2(void)
 {
 }
-void Actor::A_100(void)
+void Actor::A_InquisitorAttack2(void)
 {
 }
-void Actor::A_101(void)
+void Actor::A_InquisitorInitJump(void)
 {
 }
-void Actor::A_102(void)
+void Actor::A_InquisitorJump(void)
 {
 }
-void Actor::A_103(void)
+void Actor::A_ProgrammerMelee(void)
 {
 }
-void Actor::A_104(void)
+void Actor::A_ProgrammerDeath(void)
 {
 }
 void Actor::A_105(void)
 {
 }
-void Actor::A_106(void)
+void Actor::A_CheckAlarm(void)
 {
 }
 void Actor::A_107(void)
@@ -282,6 +258,9 @@ void Actor::A_112(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2002/04/27 17:04:55  dj_jl
+//  Merged all creatures.
+//
 //  Revision 1.1  2002/04/22 17:22:32  dj_jl
 //  Retail Strife data.
 //

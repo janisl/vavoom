@@ -1,0 +1,118 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+//**************************************************************************
+//**************************************************************************
+//
+//	Loremaster
+//
+//**************************************************************************
+//**************************************************************************
+
+class Loremaster:Pawn
+	__mobjinfo__(12)
+{
+
+__states__
+{
+	S_LOREMASTER_LOOK1('PRST', 0, 10.0 / 35.0, S_LOREMASTER_LOOK2) { A_Look(); }
+	S_LOREMASTER_LOOK2('PRST', 1, 10.0 / 35.0, S_LOREMASTER_LOOK1) { A_FlightChase(); }
+	S_LOREMASTER_RUN1('PRST', 0, 4.0 / 35.0, S_LOREMASTER_RUN2) { A_Chase(); }
+	S_LOREMASTER_RUN2('PRST', 0, 4.0 / 35.0, S_LOREMASTER_RUN3) { A_FlightChase(); }
+	S_LOREMASTER_RUN3('PRST', 1, 4.0 / 35.0, S_LOREMASTER_RUN4) { A_Chase(); }
+	S_LOREMASTER_RUN4('PRST', 1, 4.0 / 35.0, S_LOREMASTER_RUN5) { A_FlightChase(); }
+	S_LOREMASTER_RUN5('PRST', 2, 4.0 / 35.0, S_LOREMASTER_RUN6) { A_Chase(); }
+	S_LOREMASTER_RUN6('PRST', 2, 4.0 / 35.0, S_LOREMASTER_RUN7) { A_FlightChase(); }
+	S_LOREMASTER_RUN7('PRST', 3, 4.0 / 35.0, S_LOREMASTER_RUN8) { A_Chase(); }
+	S_LOREMASTER_RUN8('PRST', 3, 4.0 / 35.0, S_LOREMASTER_RUN1) { A_FlightChase(); }
+	S_LOREMASTER_ATK1_1('PRST', 4, 4.0 / 35.0, S_LOREMASTER_ATK1_2) { A_FaceTarget(); }
+	S_LOREMASTER_ATK1_2('PRST', 5, 4.0 / 35.0, S_LOREMASTER_ATK1_3) { A_SpecterMelee(); }
+	S_LOREMASTER_ATK1_3('PRST', 4, 4.0 / 35.0, S_LOREMASTER_RUN1) { A_FlightChase(); }
+	S_LOREMASTER_ATK2_1('PRST', 4, 4.0 / 35.0, S_LOREMASTER_ATK2_2) { A_FaceTarget(); }
+	S_LOREMASTER_ATK2_2('PRST', 5, 4.0 / 35.0, S_LOREMASTER_ATK2_3) { A_LoremasterAttack(); }
+	S_LOREMASTER_ATK2_3('PRST', 4, 4.0 / 35.0, S_LOREMASTER_RUN1) { A_FlightChase(); }
+	S_LOREMASTER_DIE1('PDED', 0, 6.0 / 35.0, S_LOREMASTER_DIE2) { }
+	S_LOREMASTER_DIE2('PDED', 1, 6.0 / 35.0, S_LOREMASTER_DIE3) { A_Scream(); }
+	S_LOREMASTER_DIE3('PDED', 2, 6.0 / 35.0, S_LOREMASTER_DIE4) { }
+	S_LOREMASTER_DIE4('PDED', 3, 6.0 / 35.0, S_LOREMASTER_DIE5) { A_Fall(); }
+	S_LOREMASTER_DIE5('PDED', 4, 6.0 / 35.0, S_LOREMASTER_DIE6) { }
+	S_LOREMASTER_DIE6('PDED', 5, 5.0 / 35.0, S_LOREMASTER_DIE7) { }
+	S_LOREMASTER_DIE7('PDED', 6, 5.0 / 35.0, S_LOREMASTER_DIE8) { }
+	S_LOREMASTER_DIE8('PDED', 7, 5.0 / 35.0, S_LOREMASTER_DIE9) { }
+	S_LOREMASTER_DIE9('PDED', 8, 5.0 / 35.0, S_LOREMASTER_DIE10) { }
+	S_LOREMASTER_DIE10('PDED', 9, 5.0 / 35.0, S_LOREMASTER_DIE11) { }
+	S_LOREMASTER_DIE11('PDED', 8, 5.0 / 35.0, S_LOREMASTER_DIE12) { }
+	S_LOREMASTER_DIE12('PDED', 9, 5.0 / 35.0, S_LOREMASTER_DIE13) { }
+	S_LOREMASTER_DIE13('PDED', 8, 5.0 / 35.0, S_LOREMASTER_DIE15) { }
+	S_LOREMASTER_DIE14('PDED', 9, 5.0 / 35.0, S_LOREMASTER_DIE15) { }
+	S_LOREMASTER_DIE15('PDED', 10, 5.0 / 35.0, S_LOREMASTER_DIE16) { }
+	S_LOREMASTER_DIE16('PDED', 11, 5.0 / 35.0, S_LOREMASTER_DIE17) { }
+	S_LOREMASTER_DIE17('PDED', 12, 4.0 / 35.0, S_LOREMASTER_DIE18) { }
+	S_LOREMASTER_DIE18('PDED', 13, 4.0 / 35.0, S_LOREMASTER_DIE19) { }
+	S_LOREMASTER_DIE19('PDED', 14, 4.0 / 35.0, S_LOREMASTER_DIE20) { }
+	S_LOREMASTER_DIE20('PDED', 15, 4.0 / 35.0, S_LOREMASTER_DIE21) { }
+	S_LOREMASTER_DIE21('PDED', 16, 4.0 / 35.0, S_LOREMASTER_DIE22) { A_LoremasterDeath(); }
+	S_LOREMASTER_DIE22('PDED', 17, 4.0 / 35.0, S_LOREMASTER_DIE23) { }
+	S_LOREMASTER_DIE23('PDED', 18, 4.0 / 35.0, S_LOREMASTER_DIE24) { }
+	S_LOREMASTER_DIE24('PDED', 19, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ClassName = 'PRIEST';
+	Health = 800;
+	Radius = 15.0;
+	Height = 56.0;
+	Mass = 100.0;
+	StepSpeed = 10.0;
+	bNoGravity = true;
+	bUnknown5 = true;
+	bFloat = true;
+	bUnknown4 = true;
+	bNoBlood = true;
+#ifndef TEASER
+	bNoDeathmatch = true;
+#endif
+	SpawnState = S_LOREMASTER_LOOK1;
+	SeeState = S_LOREMASTER_RUN1;
+	MeleeState = S_LOREMASTER_ATK1_1;
+	MissileState = S_LOREMASTER_ATK2_1;
+	DeathState = S_LOREMASTER_DIE1;
+	SightSound = 'LoremasterSight';
+	ActiveSound = 'LoremasterActive';
+	AttackSound = 'ReaverBlade';
+	PainSound = 'LoremasterPain';
+	DeathSound = 'Slop';
+}
+
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/04/27 17:04:54  dj_jl
+//  Merged all creatures.
+//
+//**************************************************************************

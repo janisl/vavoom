@@ -197,7 +197,7 @@ class Actor:Entity
 	int MeleeState;
 	int MissileState;
 	int PainState;
-	int CrashState;
+	int DyingState;
 	int DeathState;
 	int GibsDeathState;
 
@@ -216,10 +216,11 @@ class Actor:Entity
 	bool bJustAttacked;		// take at least one step before attacking
 	bool bSpawnCeiling;		// hang from ceiling instead of floor
 	// movement flags
-	bool bPickUp;			// for players to pick up items
+	bool bUnknown6;
+	bool bUnknown5;
 	bool bSlide;			// keep info about sliding along walls
 	bool bUnknown4;
-	bool bMissile;		// don't hit same species, explode on block
+	bool bMissile;			// don't hit same species, explode on block
 	bool bDropped;			// dropped by a demon, not level spawned
 	bool bNoBlood;			// don't bleed when shot (use puff)
 	bool bCorpse;			// don't stop moving halfway off a step
@@ -236,6 +237,7 @@ class Actor:Entity
 	bool bActivatePCross;	// can activate projectile cross lines
 	bool bDormant;			// thing is dormant
 	bool bWaterJump;
+	bool bNoDeathmatch;
 
 	//  Params
 	float Speed;
@@ -270,6 +272,9 @@ class Actor:Entity
 	// Movement direction, movement generation (zig-zagging).
 	int MoveDir;	// 0-7
 	int MoveCount;	// when 0, select a new dir
+
+	// Identifier in conversation scripts, originaly index into mobjinfo.
+	int ConversationID;
 
 	void HideSpecial(void);
 	void TouchSpecial(Actor Toucher);
@@ -315,97 +320,89 @@ class Actor:Entity
 	boolean TryWalk(void);
 	void NewChaseDir(void);
 
-	void A_Look(void);
-	void A_Chase(void);
-	void A_FaceTarget(void);
-	void A_Explode(void);
-	void A_XScream(void);
-
 #ifdef TEASER
 	// Action functions
 	void A_24(void);
 	void A_25(void);
 	void A_26(void);
 	void A_27(void);
-	void A_28(void);
+	void A_Explode2(void);
 	void A_29(void);
 	void A_30(void);
-	void A_31(void);
+	void A_Unknown24(void);
 	void A_32(void);
 	void A_33(void);
 	void A_34(void);
 	void A_35(void);
-	void A_36(void);
+	void A_ActiveSound(void);
 	void A_37(void);
-	void A_38(void);
+	void A_Explode(void);
 	void A_Pain(void);
 	void A_PlayerScream(void);
 	void A_Fall(void);
-	void A_42(void);
-	void A_43(void);
-	void A_44(void);
-	void A_45(void);
-	void A_46(void);
+	void A_XDying(void);
+	void A_XScream(void);
+	void A_Stand(void);
 	void A_Scream(void);
-	void A_48(void);
-	void A_49(void);
-	void A_50(void);
-	void A_51(void);
-	void A_52(void);
-	void A_53(void);
-	void A_54(void);
+	void A_Burn(void);
+	void A_Walk(void);
+	void A_Dying(void);
+	void A_FaceTarget(void);
+	void A_PeasantAttack(void);
+	void A_ResetHealth(void);
+	void A_AcolyteArmorPain(void);
 	void A_55(void);
-	void A_56(void);
-	void A_57(void);
-	void A_58(void);
-	void A_59(void);
-	void A_60(void);
-	void A_61(void);
-	void A_62(void);
-	void A_63(void);
-	void A_64(void);
-	void A_65(void);
-	void A_66(void);
-	void A_67(void);
-	void A_68(void);
-	void A_69(void);
-	void A_70(void);
-	void A_71(void);
-	void A_72(void);
-	void A_73(void);
-	void A_74(void);
-	void A_75(void);
-	void A_76(void);
-	void A_77(void);
-	void A_78(void);
-	void A_79(void);
-	void A_80(void);
-	void A_81(void);
-	void A_82(void);
-	void A_83(void);
-	void A_84(void);
-	void A_85(void);
-	void A_86(void);
-	void A_87(void);
+	void A_Unknown55(void);
+	void A_Unknown56(void);
+	void A_Look(void);
+	void A_Chase(void);
+	void A_CheckRefire(void);
+	void A_RiffleAttack(void);
+	void A_MacilDeath(void);
+	void A_RobotMelee(void);
+	void A_RobotMissile(void);
+	void A_Unknown64(void);
+	void A_AcolyteChase(void);
+	void A_CrusaderAttack1(void);
+	void A_CrusaderAttack2(void);
+	void A_CrusaderAttack3(void);
+	void A_CrusaderAttack4(void);
+	void A_Unknown72(void);
+	void A_BishopAttack(void);
+	void A_BishopDeath(void);
+	void A_TemplarAttack(void);
+	void A_OracleDeath(void);
+	void A_FlightChase(void);
+	void A_SpecterMelee(void);
+	void A_LoremasterAttack(void);
+	void A_LoremasterDeath(void);
+	void A_SpecterAttack(void);
+	void A_SpecterDying(void);
+	void A_Specter2Attack(void);
+	void A_Specter3Attack(void);
+	void A_Specter4Attack(void);
+	void A_Specter5Attack(void);
+	void A_EntityAttack(void);
+	void A_EntityDeath(void);
 	void A_88(void);
 	void A_89(void);
 	void A_90(void);
 	void A_91(void);
-	void A_92(void);
-	void A_93(void);
-	void A_94(void);
-	void A_95(void);
-	void A_96(void);
-	void A_97(void);
-	void A_98(void);
-	void A_99(void);
-	void A_100(void);
-	void A_101(void);
-	void A_102(void);
-	void A_103(void);
-	void A_104(void);
+	void A_SentinelAttack(void);
+	void A_StalkerInit(void);
+	void A_StalkerChase2(void);
+	void A_StalkerChase(void);
+	void A_StalkerAttack(void);
+	void A_StalkerLand(void);
+	void A_InquisitorChase(void);
+	void A_InquisitorChase2(void);
+	void A_InquisitorAttack2(void);
+	void A_InquisitorInitJump(void);
+	void A_InquisitorJump(void);
+	void A_ProgrammerMelee(void);
+	void A_ProgrammerDeath(void);
 	void A_105(void);
-	void A_106(void);
+	void A_CheckAlarm(void);
 	void A_107(void);
 	void A_108(void);
 	void A_109(void);
@@ -413,91 +410,89 @@ class Actor:Entity
 	void A_111(void);
 	void A_112(void);
 #else
-	void A_24(void);
+	void A_Unknown24(void);
 	void A_25(void);
 	void A_26(void);
 	void A_27(void);
 	void A_28(void);
-	void A_29(void);
+	void A_Explode2(void);
 	void A_30(void);
 	void A_31(void);
 	void A_32(void);
 	void A_33(void);
 	void A_34(void);
-	void A_35(void);
+	void A_ActiveSound(void);
 	void A_36(void);
-	void A_37(void);
+	void A_Explode(void);
 	void A_Pain(void);
 	void A_PlayerScream(void);
 	void A_Fall(void);
-	void A_41(void);
-	void A_42(void);
-	void A_43(void);
-	void A_44(void);
-	void A_45(void);
+	void A_XDying(void);
+	void A_XScream(void);
+	void A_Stand(void);
 	void A_Scream(void);
-	void A_47(void);
-	void A_48(void);
-	void A_49(void);
-	void A_50(void);
-	void A_51(void);
-	void A_52(void);
-	void A_53(void);
+	void A_Burn(void);
+	void A_Walk(void);
+	void A_Dying(void);
+	void A_FaceTarget(void);
+	void A_PeasantAttack(void);
+	void A_ResetHealth(void);
+	void A_AcolyteArmorPain(void);
 	void A_54(void);
-	void A_55(void);
-	void A_56(void);
-	void A_57(void);
-	void A_58(void);
-	void A_59(void);
-	void A_60(void);
-	void A_61(void);
-	void A_62(void);
-	void A_63(void);
-	void A_64(void);
-	void A_65(void);
-	void A_66(void);
-	void A_67(void);
-	void A_68(void);
-	void A_69(void);
-	void A_70(void);
-	void A_71(void);
-	void A_72(void);
-	void A_73(void);
-	void A_74(void);
-	void A_75(void);
-	void A_76(void);
-	void A_77(void);
-	void A_78(void);
-	void A_79(void);
-	void A_80(void);
-	void A_81(void);
-	void A_82(void);
-	void A_83(void);
-	void A_84(void);
-	void A_85(void);
-	void A_86(void);
-	void A_87(void);
-	void A_88(void);
+	void A_Unknown55(void);
+	void A_Unknown56(void);
+	void A_Look(void);
+	void A_Chase(void);
+	void A_CheckRefire(void);
+	void A_RiffleAttack(void);
+	void A_MacilDeath(void);
+	void A_RobotMelee(void);
+	void A_RobotMissile(void);
+	void A_Unknown64(void);
+	void A_AcolyteChase(void);
+	void A_AcolyteDeath(void);
+	void A_TemplarAttack(void);
+	void A_CrusaderAttack1(void);
+	void A_CrusaderAttack2(void);
+	void A_CrusaderAttack3(void);
+	void A_CrusaderAttack4(void);
+	void A_Unknown72(void);
+	void A_BishopAttack(void);
+	void A_BishopDeath(void);
+	void A_OracleDeath(void);
+	void A_FlightChase(void);
+	void A_SpecterMelee(void);
+	void A_LoremasterAttack(void);
+	void A_LoremasterDeath(void);
+	void A_SpecterAttack(void);
+	void A_SpecterDying(void);
+	void A_SpecterDeath(void);
+	void A_Specter2Attack(void);
+	void A_Specter3Attack(void);
+	void A_Specter4Attack(void);
+	void A_Specter5Attack(void);
+	void A_EntityAttack(void);
+	void A_EntityDeath(void);
 	void A_89(void);
 	void A_90(void);
 	void A_91(void);
 	void A_92(void);
-	void A_93(void);
-	void A_94(void);
-	void A_95(void);
-	void A_96(void);
-	void A_97(void);
-	void A_98(void);
-	void A_99(void);
-	void A_100(void);
-	void A_101(void);
-	void A_102(void);
-	void A_103(void);
-	void A_104(void);
-	void A_105(void);
-	void A_106(void);
+	void A_SentinelAttack(void);
+	void A_StalkerInit(void);
+	void A_StalkerChase2(void);
+	void A_StalkerChase(void);
+	void A_StalkerAttack(void);
+	void A_StalkerLand(void);
+	void A_InquisitorChase(void);
+	void A_InquisitorChase2(void);
+	void A_InquisitorAttack2(void);
+	void A_InquisitorInitJump(void);
+	void A_InquisitorJump(void);
+	void A_InquisitorDropArms(void);
+	void A_ProgrammerMelee(void);
+	void A_ProgrammerDeath(void);
 	void A_107(void);
-	void A_108(void);
+	void A_CheckAlarm(void);
 	void A_109(void);
 	void A_110(void);
 	void A_111(void);
@@ -513,9 +508,28 @@ class Actor:Entity
 	}
 }
 
-class PlayerPawn:Actor
+class Pawn:Actor
+{
+	bool bCkeckNoMonsters;
+
+	void OnMapSpawn(mthing_t *mthing);
+
+	defaultproperties
+	{
+		ReactionCount = 8;
+		bSolid = true;
+		bShootable = true;
+		bCountKill = true;
+		bCkeckNoMonsters = true;
+		bActivateMCross = true;
+	}
+}
+
+class PlayerPawn:Pawn
 	abstract
 {
+	int Attack2State;
+
 	boolean GiveAmmo(int ammo, int num);
 	boolean GiveWeapon(int weapon, boolean dropped);
 	boolean GiveBody(int num);
@@ -543,6 +557,10 @@ class PlayerPawn:Actor
 
 	defaultproperties
 	{
+		ReactionCount = 0;
+		bCountKill = false;
+		bCkeckNoMonsters = false;
+		bActivateMCross = false;
 	}
 }
 
@@ -654,6 +672,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.31  2002/04/27 17:04:55  dj_jl
+//  Merged all creatures.
+//
 //  Revision 1.30  2002/04/22 17:22:32  dj_jl
 //  Retail Strife data.
 //

@@ -658,9 +658,9 @@ void Actor::ApplyFriction(void)
 			int sn;
 
 			// if in a walking frame, stop moving
-			sn = StateNum;
-			if (sn >= S_PLAY_RUN1 && sn <= S_PLAY_RUN4)
-				SetState(S_PLAY);
+			sn = StateNum - SeeState;
+			if (sn >= 0 && sn < 4)
+				SetState(SpawnState);
 		}
 		Velocity = vector(0.0, 0.0, 0.0);
 	}
@@ -839,6 +839,9 @@ void Actor::Tick(float deltaTime)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/04/27 17:04:54  dj_jl
+//  Merged all creatures.
+//
 //  Revision 1.26  2002/04/11 16:50:54  dj_jl
 //  Made TryMove native, Tick function.
 //

@@ -1,0 +1,120 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+//**************************************************************************
+//**************************************************************************
+//
+//	Programmer
+//
+//**************************************************************************
+//**************************************************************************
+
+class Programmer:Pawn
+	__mobjinfo__(71)
+{
+
+__states__
+{
+	S_PROGRAMMER_LOOK1('PRGR', 0, 5.0 / 35.0, S_PROGRAMMER_LOOK2) { A_Look(); }
+	S_PROGRAMMER_LOOK2('PRGR', 0, 1.0 / 35.0, S_PROGRAMMER_LOOK1) { A_FlightChase(); }
+	S_PROGRAMMER_RUN1('PRGR', 0, 160.0 / 35.0, S_PROGRAMMER_RUN2) { A_FlightChase(); }
+	S_PROGRAMMER_RUN2('PRGR', 1, 5.0 / 35.0, S_PROGRAMMER_RUN3) { A_FlightChase(); }
+	S_PROGRAMMER_RUN3('PRGR', 2, 5.0 / 35.0, S_PROGRAMMER_RUN4) { A_FlightChase(); }
+	S_PROGRAMMER_RUN4('PRGR', 3, 5.0 / 35.0, S_PROGRAMMER_RUN5) { A_FlightChase(); }
+	S_PROGRAMMER_RUN5('PRGR', 4, 2.0 / 35.0, S_PROGRAMMER_RUN6) { A_FlightChase(); }
+	S_PROGRAMMER_RUN6('PRGR', 5, 2.0 / 35.0, S_PROGRAMMER_RUN7) { A_FlightChase(); }
+	S_PROGRAMMER_RUN7('PRGR', 4, 3.0 / 35.0, S_PROGRAMMER_RUN8) { A_Chase(); }
+	S_PROGRAMMER_RUN8('PRGR', 5, 3.0 / 35.0, S_PROGRAMMER_RUN5) { A_Chase(); }
+	S_PROGRAMMER_ATK1_1('PRGR', 4, 2.0 / 35.0, S_PROGRAMMER_ATK1_2) { A_FlightChase(); }
+	S_PROGRAMMER_ATK1_2('PRGR', 5, 3.0 / 35.0, S_PROGRAMMER_ATK1_3) { A_FlightChase(); }
+	S_PROGRAMMER_ATK1_3('PRGR', 4, 3.0 / 35.0, S_PROGRAMMER_ATK1_4) { A_FaceTarget(); }
+	S_PROGRAMMER_ATK1_4('PRGR', 5, 4.0 / 35.0, S_PROGRAMMER_RUN5) { A_ProgrammerMelee(); }
+	S_PROGRAMMER_ATK2_1('PRGR', 6, 5.0 / 35.0, S_PROGRAMMER_ATK2_2) { A_FaceTarget(); }
+	S_PROGRAMMER_ATK2_2('PRGR', 7, 5.0 / 35.0, S_PROGRAMMER_ATK2_3) { A_FlightChase(); }
+	S_PROGRAMMER_ATK2_3('PRGR', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_ATK2_4) { A_FaceTarget(); }
+	S_PROGRAMMER_ATK2_4('PRGR', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_RUN5) { A_SpecterAttack(); }
+	S_PROGRAMMER_PAIN1('PRGR', 10, 5.0 / 35.0, S_PROGRAMMER_PAIN2) { A_Pain(); }
+	S_PROGRAMMER_PAIN2('PRGR', 11, 5.0 / 35.0, S_PROGRAMMER_RUN5) { A_FlightChase(); }
+	S_PROGRAMMER_DIE1('PRGR', 11 | FF_FULLBRIGHT, 7.0 / 35.0, S_PROGRAMMER_DIE2) { A_XDying(); }
+	S_PROGRAMMER_DIE2('PRGR', 12 | FF_FULLBRIGHT, 7.0 / 35.0, S_PROGRAMMER_DIE3) { A_Scream(); }
+	S_PROGRAMMER_DIE3('PRGR', 13 | FF_FULLBRIGHT, 7.0 / 35.0, S_PROGRAMMER_DIE4) { A_XDying(); }
+	S_PROGRAMMER_DIE4('PRGR', 14 | FF_FULLBRIGHT, 7.0 / 35.0, S_PROGRAMMER_DIE5) { A_Fall(); }
+	S_PROGRAMMER_DIE5('PRGR', 15 | FF_FULLBRIGHT, 7.0 / 35.0, S_PROGRAMMER_DIE6) { A_XDying(); }
+	S_PROGRAMMER_DIE6('PRGR', 16 | FF_FULLBRIGHT, 7.0 / 35.0, S_PROGRAMMER_DIE7) { A_ProgrammerDeath(); }
+	S_PROGRAMMER_DIE7('PRGR', 17 | FF_FULLBRIGHT, 7.0 / 35.0, S_PROGRAMMER_DIE8) { }
+	S_PROGRAMMER_DIE8('PRGR', 18 | FF_FULLBRIGHT, 6.0 / 35.0, S_PROGRAMMER_DIE9) { }
+	S_PROGRAMMER_DIE9('PRGR', 19 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_DIE10) { }
+	S_PROGRAMMER_DIE10('PRGR', 20 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_DIE11) { }
+	S_PROGRAMMER_DIE11('PRGR', 21 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_DIE12) { }
+	S_PROGRAMMER_DIE12('PRGR', 22 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_DIE13) { }
+#ifdef TEASER
+	S_PROGRAMMER_DIE13('PRGR', 23 | FF_FULLBRIGHT, 64.0 / 35.0, S_PROGRAMMER_DIE14) { }
+#else
+	S_PROGRAMMER_DIE13('PRGR', 23 | FF_FULLBRIGHT, 32.0 / 35.0, S_PROGRAMMER_DIE14) { }
+#endif
+	S_PROGRAMMER_DIE14('PRGR', 23 | FF_FULLBRIGHT, -1.0, S_NULL) { A_Unknown72(); }
+}
+
+defaultproperties
+{
+	Health = 1100;
+	Radius = 45.0;
+	Height = 60.0;
+	Mass = 800.0;
+	StepSpeed = 26.0;
+#ifdef TEASER
+	PainChance = 64;
+#else
+	PainChance = 50;
+#endif
+	MissileDamage = 4;
+	bNoGravity = true;
+	bUnknown5 = true;
+	bFloat = true;
+	bNoBlood = true;
+#ifndef TEASER
+	bNoDeathmatch = true;
+#endif
+	SpawnState = S_PROGRAMMER_LOOK1;
+	SeeState = S_PROGRAMMER_RUN1;
+	MeleeState = S_PROGRAMMER_ATK1_1;
+	MissileState = S_PROGRAMMER_ATK2_1;
+	PainState = S_PROGRAMMER_PAIN1;
+	DeathState = S_PROGRAMMER_DIE1;
+	ActiveSound = 'ProgrammerActive';
+	AttackSound = 'ReaverBlade';
+	PainSound = 'ProgrammerPain';
+	DeathSound = 'CrusaderDeath';
+}
+
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/04/27 17:04:55  dj_jl
+//  Merged all creatures.
+//
+//**************************************************************************

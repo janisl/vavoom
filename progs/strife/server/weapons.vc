@@ -246,7 +246,7 @@ void FireWeapon(player_t * player)
 		return;
 	}
 
-	player->MO.SetState(S_PLAY_ATK1);
+	player->MO.SetState(player->MO.MissileState);
 	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).AttackState);
 	P_NoiseAlert(player->MO, player->MO);
 }
@@ -271,10 +271,10 @@ void Weapon::A_WeaponReady(void)
 	float angle;
 
 	// get out of attack state
-	if (Player->MO.StateNum == S_PLAY_ATK1 ||
-		Player->MO.StateNum == S_PLAY_ATK2)
+	if (Player->MO.StateNum == Player->MO.MissileState ||
+		Player->MO.StateNum == PlayerPawn(Player->MO).Attack2State)
 	{
-		Player->MO.SetState(S_PLAY);
+		Player->MO.SetState(Player->MO.SpawnState);
 	}
 
 /*    if (Player->ReadyWeapon == wp_chainsaw && statenum == S_SAW)
@@ -421,7 +421,7 @@ void Weapon::A_CheckReload(void)
 
 void Weapon::A_GunFlash(void)
 {
-	Player->MO.SetState(S_PLAY_ATK2);
+	Player->MO.SetState(PlayerPawn(Player->MO).Attack2State);
 	SetPsprite(Player, ps_flash, Weapon(Player->ViewEnts[ps_weapon]).FlashState);
 }
 
@@ -499,11 +499,22 @@ void A_Punch(void)
 	// turn to face target
 	if (linetarget)
 	{
-		Player->MO.PlaySound('Punch', CHAN_WEAPON);
+		if (linetarget.bNoBlood)
+		{
+			Player->MO.PlaySound('PunchHitMetal', CHAN_WEAPON);
+		}
+		else
+		{
+			Player->MO.PlaySound('PunchHitMeat', CHAN_WEAPON);
+		}
 		Player->MO.Angles.yaw =
 			atan2(linetarget.Origin.y - Player->MO.Origin.y,
 			linetarget.Origin.x - Player->MO.Origin.x);
 		Player->bFixAngle = true;
+	}
+	else
+	{
+		Player->MO.PlaySound('PunchMiss', CHAN_WEAPON);
 	}
 }
 
@@ -883,6 +894,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/04/27 17:04:55  dj_jl
+//  Merged all creatures.
+//
 //  Revision 1.18  2002/04/22 17:22:33  dj_jl
 //  Retail Strife data.
 //

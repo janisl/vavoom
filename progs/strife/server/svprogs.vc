@@ -77,11 +77,38 @@
 #include "adummy.vc"
 #endif
 
+#include "player.vc"
+#include "merchant.vc"
+#include "peasant.vc"
+#include "beggar.vc"
+#include "rebel.vc"
+#include "acolyte.vc"
+#include "turret.vc"
+#include "stalker.vc"
+#include "sentinel.vc"
+#include "reaver.vc"
+#include "templar.vc"
+#include "crusader.vc"
+#include "inquisitor.vc"
+#include "programmer.vc"
+#include "bishop.vc"
+#include "oracle.vc"
+#include "macil.vc"
+#include "loremaster.vc"
+#include "specter.vc"
+#include "entboss.vc"
+#include "subent.vc"
+#include "rat.vc"
+#include "prayer.vc"
+
 #include "svmain.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/04/27 17:04:55  dj_jl
+//  Merged all creatures.
+//
 //  Revision 1.13  2002/04/22 17:22:32  dj_jl
 //  Retail Strife data.
 //

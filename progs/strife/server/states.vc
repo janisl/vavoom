@@ -72,7 +72,7 @@ __states__(Actor)
 	S_150('POW3', 5, 3.0 / 35.0, S_151) { }
 	S_151('POW3', 6, 3.0 / 35.0, S_152) { }
 	S_152('POW3', 7, 3.0 / 35.0, S_NULL) { }
-	S_153('ZAP1', 1, 3.0 / 35.0, S_155) { A_24(); }
+	S_153('ZAP1', 1, 3.0 / 35.0, S_155) { A_Unknown24(); }
 	S_154('ZAP1', 0, 3.0 / 35.0, S_155) { A_25(); }
 	S_155('ZAP1', 1, 3.0 / 35.0, S_156) { }
 	S_156('ZAP1', 2, 3.0 / 35.0, S_157) { }
@@ -140,13 +140,13 @@ __states__(Actor)
 	S_218('BNG3', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_219) { }
 	S_219('BNG3', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
 	S_220('BNG3', 0, 1.0 / 35.0, S_NULL) { A_28(); }
-	S_221('BNG3', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_222) { A_29(); }
+	S_221('BNG3', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_222) { A_Explode2(); }
 	S_222('BNG3', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_223) { A_26(); }
 	S_223('FLBE', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_224) { A_30(); }
 	S_224('FLBE', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_225) { A_26(); }
-	S_225('FLBE', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_226) { A_29(); }
+	S_225('FLBE', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_226) { A_Explode2(); }
 	S_226('FLBE', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_227) { A_26(); }
-	S_227('FLBE', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_228) { A_29(); }
+	S_227('FLBE', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_228) { A_Explode2(); }
 	S_228('FLBE', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_229) { A_26(); }
 	S_229('FLBE', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_226) { A_30(); }
 	S_230('FLBE', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_231) { }
@@ -160,8 +160,8 @@ __states__(Actor)
 	S_238('MICR', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_238) { A_33(); }
 	S_239('MISS', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_240) { A_33(); }
 	S_240('MISS', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_239) { A_34(); }
-	S_241('AROW', 0, 10.0 / 35.0, S_241) { A_35(); }
-	S_242('ARWP', 0, 10.0 / 35.0, S_242) { A_35(); }
+	S_241('AROW', 0, 10.0 / 35.0, S_241) { A_ActiveSound(); }
+	S_242('ARWP', 0, 10.0 / 35.0, S_242) { A_ActiveSound(); }
 	S_243('AROW', 0, 1.0 / 35.0, S_NULL) { }
 	S_244('TORP', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_245) { }
 	S_245('TORP', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_246) { }
@@ -176,7 +176,7 @@ __states__(Actor)
 	S_254('TWAV', 1 | FF_FULLBRIGHT, 9.0 / 35.0, S_255) { }
 	S_255('TWAV', 2 | FF_FULLBRIGHT, 9.0 / 35.0, S_NULL) { }
 	S_256('MISL', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_258) { }
-	S_257('MISL', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_258) { A_37(); }
+	S_257('MISL', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_258) { A_Explode(); }
 	S_258('MISL', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_259) { }
 	S_259('MISL', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_260) { }
 	S_260('MISL', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_261) { }
@@ -206,141 +206,55 @@ __states__(Actor)
 	S_284('SHRD', 3, 128.0 / 35.0, S_NULL) { }
 	S_285('SHRD', 4, 128.0 / 35.0, S_NULL) { }
 	S_286('SHRD', 5, 128.0 / 35.0, S_NULL) { }
-	S_PLAY('PLAY', 0, -1.0, S_NULL) { }
-	S_PLAY_RUN1('PLAY', 0, 4.0 / 35.0, S_PLAY_RUN2) { }
-	S_PLAY_RUN2('PLAY', 1, 4.0 / 35.0, S_PLAY_RUN3) { }
-	S_PLAY_RUN3('PLAY', 2, 4.0 / 35.0, S_PLAY_RUN4) { }
-	S_PLAY_RUN4('PLAY', 3, 4.0 / 35.0, S_PLAY_RUN1) { }
-	S_PLAY_ATK1('PLAY', 4, 12.0 / 35.0, S_PLAY) { }
-	S_PLAY_ATK2('PLAY', 5, 6.0 / 35.0, S_PLAY_ATK1) { }
-	S_PLAY_PAIN('PLAY', 16, 4.0 / 35.0, S_PLAY_PAIN2) { A_Pain(); }
-	S_PLAY_PAIN2('PLAY', 16, 4.0 / 35.0, S_PLAY) { }
-	S_PLAY_DIE1('PLAY', 6, 4.0 / 35.0, S_PLAY_DIE2) { }
-	S_PLAY_DIE2('PLAY', 7, 3.0 / 35.0, S_PLAY_DIE3) { A_PlayerScream(); }
-	S_PLAY_DIE3('PLAY', 8, 3.0 / 35.0, S_PLAY_DIE4) { A_Fall(); }
-	S_PLAY_DIE4('PLAY', 9, 4.0 / 35.0, S_PLAY_DIE5) { }
-	S_PLAY_DIE5('PLAY', 10, 4.0 / 35.0, S_PLAY_DIE6) { }
-	S_PLAY_DIE6('PLAY', 11, 4.0 / 35.0, S_PLAY_DIE7) { }
-	S_PLAY_DIE7('PLAY', 12, 4.0 / 35.0, S_PLAY_DIE8) { }
-	S_PLAY_DIE8('PLAY', 13, 4.0 / 35.0, S_PLAY_DIE9) { }
-	S_PLAY_DIE9('PLAY', 14, 4.0 / 35.0, S_PLAY_DIE10) { }
 	S_PLAY_DIE10('PLAY', 15, 700.0 / 35.0, S_PLAY_XDIE8) { }
-	S_PLAY_XDIE1('RGIB', 0, 5.0 / 35.0, S_PLAY_XDIE2) { A_41(); }
-	S_PLAY_XDIE2('RGIB', 1, 5.0 / 35.0, S_PLAY_XDIE3) { A_42(); }
-	S_PLAY_XDIE3('RGIB', 2, 5.0 / 35.0, S_PLAY_XDIE4) { A_Fall(); }
-	S_PLAY_XDIE4('RGIB', 3, 5.0 / 35.0, S_PLAY_XDIE5) { A_41(); }
-	S_PLAY_XDIE5('RGIB', 4, 5.0 / 35.0, S_PLAY_XDIE6) { A_41(); }
-	S_PLAY_XDIE6('RGIB', 5, 5.0 / 35.0, S_PLAY_XDIE7) { A_41(); }
-	S_PLAY_XDIE7('RGIB', 6, 5.0 / 35.0, S_PLAY_XDIE8) { A_41(); }
 	S_PLAY_XDIE8('RGIB', 7, 1400.0 / 35.0, S_NULL) { }
-	S_MERCHANDER_YES1('MRYS', 0, 30.0 / 35.0, S_MERCHANDER_STAND1) { }
-	S_MERCHANDER_NO1('MRNO', 0, 6.0 / 35.0, S_MERCHANDER_NO2) { }
-	S_MERCHANDER_NO2('MRNO', 1, 6.0 / 35.0, S_MERCHANDER_NO3) { }
-	S_MERCHANDER_NO3('MRNO', 2, 10.0 / 35.0, S_MERCHANDER_NO4) { }
-	S_MERCHANDER_NO4('MRNO', 1, 6.0 / 35.0, S_MERCHANDER_NO5) { }
-	S_MERCHANDER_NO5('MRNO', 0, 6.0 / 35.0, S_MERCHANDER_STAND1) { }
-	S_MERCHANDER_STAND1('MRST', 0, 10.0 / 35.0, S_MERCHANDER_STAND1) { A_43(); }
-	S_MERCHANDER_LOOK1('MRLK', 0, 30.0 / 35.0, S_MERCHANDER_STAND1) { A_35(); }
-	S_MERCHANDER_LOOK2('MRLK', 1, 30.0 / 35.0, S_MERCHANDER_STAND1) { }
-	S_MERCHANDER_BD1('MRBD', 0, 4.0 / 35.0, S_MERCHANDER_BD2) { }
-	S_MERCHANDER_BD2('MRBD', 1, 4.0 / 35.0, S_MERCHANDER_BD3) { }
-	S_MERCHANDER_BD3('MRBD', 2, 4.0 / 35.0, S_MERCHANDER_BD4) { }
-	S_MERCHANDER_BD4('MRBD', 3, 4.0 / 35.0, S_MERCHANDER_BD5) { }
-	S_MERCHANDER_BD5('MRBD', 4, 4.0 / 35.0, S_MERCHANDER_BD6) { }
-	S_MERCHANDER_BD6('MRBD', 3, 4.0 / 35.0, S_MERCHANDER_BD7) { }
-	S_MERCHANDER_BD7('MRBD', 2, 4.0 / 35.0, S_MERCHANDER_BD8) { }
-	S_MERCHANDER_BD8('MRBD', 1, 4.0 / 35.0, S_MERCHANDER_BD9) { }
-	S_MERCHANDER_BD9('MRBD', 0, 5.0 / 35.0, S_MERCHANDER_BD10) { }
-	S_MERCHANDER_BD10('MRBD', 5, 6.0 / 35.0, S_MERCHANDER_STAND1) { }
-	S_MERCHANDER_PAIN1('MRPN', 0, 3.0 / 35.0, S_MERCHANDER_PAIN2) { }
-	S_MERCHANDER_PAIN2('MRPN', 1, 3.0 / 35.0, S_MERCHANDER_PAIN3) { A_Pain(); }
-	S_MERCHANDER_PAIN3('MRPN', 2, 3.0 / 35.0, S_MERCHANDER_PAIN4) { }
-	S_MERCHANDER_PAIN4('MRPN', 3, 9.0 / 35.0, S_MERCHANDER_PAIN5) { A_44(); }
-	S_MERCHANDER_PAIN5('MRPN', 2, 4.0 / 35.0, S_MERCHANDER_PAIN6) { }
-	S_MERCHANDER_PAIN6('MRPN', 1, 3.0 / 35.0, S_MERCHANDER_PAIN7) { }
-	S_MERCHANDER_PAIN7('MRPN', 0, 3.0 / 35.0, S_MERCHANDER_STAND1) { A_45(); }
-	S_MERCHANDER_GT1('MRGT', 0, 5.0 / 35.0, S_MERCHANDER_GT2) { }
-	S_MERCHANDER_GT2('MRGT', 1, 5.0 / 35.0, S_MERCHANDER_GT3) { }
-	S_MERCHANDER_GT3('MRGT', 2, 5.0 / 35.0, S_MERCHANDER_GT4) { }
-	S_MERCHANDER_GT4('MRGT', 3, 5.0 / 35.0, S_MERCHANDER_GT5) { }
-	S_MERCHANDER_GT5('MRGT', 4, 5.0 / 35.0, S_MERCHANDER_GT6) { }
-	S_MERCHANDER_GT6('MRGT', 5, 5.0 / 35.0, S_MERCHANDER_GT7) { }
-	S_MERCHANDER_GT7('MRGT', 6, 5.0 / 35.0, S_MERCHANDER_GT8) { }
-	S_MERCHANDER_GT8('MRGT', 7, 5.0 / 35.0, S_MERCHANDER_GT9) { }
-	S_MERCHANDER_GT9('MRGT', 8, 5.0 / 35.0, S_MERCHANDER_STAND1) { }
-	S_349('BURN', 0, 3.0 / 35.0, S_350) { A_Scream(); }
-	S_350('BURN', 1, 3.0 / 35.0, S_351) { A_47(); }
-	S_351('BURN', 2, 3.0 / 35.0, S_352) { A_48(); }
-	S_352('BURN', 3, 3.0 / 35.0, S_353) { A_Fall(); }
-	S_353('BURN', 4, 5.0 / 35.0, S_354) { A_47(); }
-	S_354('BURN', 5, 5.0 / 35.0, S_355) { A_48(); }
-	S_355('BURN', 6, 5.0 / 35.0, S_356) { A_48(); }
-	S_356('BURN', 7, 5.0 / 35.0, S_357) { A_48(); }
-	S_357('BURN', 8, 5.0 / 35.0, S_358) { A_47(); }
-	S_358('BURN', 9, 5.0 / 35.0, S_359) { A_48(); }
-	S_359('BURN', 10, 5.0 / 35.0, S_360) { A_48(); }
-	S_360('BURN', 11, 5.0 / 35.0, S_361) { A_48(); }
-	S_361('BURN', 12, 3.0 / 35.0, S_362) { A_47(); }
-	S_362('BURN', 13, 3.0 / 35.0, S_363) { }
-	S_363('BURN', 14, 5.0 / 35.0, S_364) { }
-	S_364('BURN', 15, 5.0 / 35.0, S_365) { }
-	S_365('BURN', 16, 5.0 / 35.0, S_366) { }
-	S_366('BURN', 15, 5.0 / 35.0, S_367) { }
-	S_367('BURN', 16, 5.0 / 35.0, S_368) { }
-	S_368('BURN', 17, 7.0 / 35.0, S_369) { }
-	S_369('BURN', 18, 7.0 / 35.0, S_370) { }
-	S_370('BURN', 19, 7.0 / 35.0, S_371) { }
-	S_371('BURN', 20, 7.0 / 35.0, S_372) { }
-	S_372('BURN', 21, 700.0 / 35.0, S_NULL) { A_49(); }
-	S_373('DISR', 0, 5.0 / 35.0, S_374) { }
-	S_374('DISR', 1, 5.0 / 35.0, S_375) { }
-	S_375('DISR', 2, 5.0 / 35.0, S_376) { }
-	S_376('DISR', 3, 5.0 / 35.0, S_377) { A_Fall(); }
-	S_377('DISR', 4, 5.0 / 35.0, S_378) { }
-	S_378('DISR', 5, 5.0 / 35.0, S_379) { }
-	S_379('DISR', 6, 4.0 / 35.0, S_380) { }
-	S_380('DISR', 7, 4.0 / 35.0, S_381) { }
-	S_381('DISR', 8, 4.0 / 35.0, S_382) { }
-	S_382('DISR', 9, 4.0 / 35.0, S_1250) { }
-	S_PEASANT_STAND('PEAS', 0, 10.0 / 35.0, S_PEASANT_STAND) { A_43(); }
-	S_PEASANT_WALK1('PEAS', 0, 5.0 / 35.0, S_PEASANT_WALK2) { A_48(); }
-	S_PEASANT_WALK2('PEAS', 0, 5.0 / 35.0, S_PEASANT_WALK3) { A_48(); }
-	S_PEASANT_WALK3('PEAS', 1, 5.0 / 35.0, S_PEASANT_WALK4) { A_48(); }
-	S_PEASANT_WALK4('PEAS', 1, 5.0 / 35.0, S_PEASANT_WALK5) { A_48(); }
-	S_PEASANT_WALK5('PEAS', 2, 5.0 / 35.0, S_PEASANT_WALK6) { A_48(); }
-	S_PEASANT_WALK6('PEAS', 2, 5.0 / 35.0, S_PEASANT_WALK7) { A_48(); }
-	S_PEASANT_WALK7('PEAS', 3, 5.0 / 35.0, S_PEASANT_WALK8) { A_48(); }
-	S_PEASANT_WALK8('PEAS', 3, 5.0 / 35.0, S_PEASANT_STAND) { A_48(); }
-	S_PEASANT_ATK1('PEAS', 4, 10.0 / 35.0, S_PEASANT_ATK2) { A_50(); }
-	S_PEASANT_ATK2('PEAS', 5, 8.0 / 35.0, S_PEASANT_ATK3) { A_51(); }
-	S_PEASANT_ATK3('PEAS', 4, 8.0 / 35.0, S_PEASANT_WALK1) { }
-	S_PEASANT_PAIN1('PEAS', 14, 3.0 / 35.0, S_PEASANT_PAIN2) { }
-	S_PEASANT_PAIN2('PEAS', 14, 3.0 / 35.0, S_PEASANT_ATK1) { A_Pain(); }
-	S_PEASANT_DIE1('PEAS', 6, 5.0 / 35.0, S_PEASANT_DIE2) { }
-	S_PEASANT_DIE2('PEAS', 7, 10.0 / 35.0, S_PEASANT_DIE3) { A_49(); }
-	S_PEASANT_DIE3('PEAS', 8, 6.0 / 35.0, S_PEASANT_DIE2) { }
-	S_PEASANT_DIE4('PEAS', 6, 5.0 / 35.0, S_PEASANT_DIE5) { }
-	S_PEASANT_DIE5('PEAS', 7, 5.0 / 35.0, S_PEASANT_DIE6) { A_Scream(); }
-	S_PEASANT_DIE6('PEAS', 8, 6.0 / 35.0, S_PEASANT_DIE7) { }
-	S_PEASANT_DIE7('PEAS', 9, 5.0 / 35.0, S_PEASANT_DIE8) { A_Fall(); }
-	S_PEASANT_DIE8('PEAS', 10, 5.0 / 35.0, S_PEASANT_DIE9) { }
-	S_PEASANT_DIE9('PEAS', 11, 6.0 / 35.0, S_PEASANT_DIE10) { }
-	S_PEASANT_DIE10('PEAS', 12, 8.0 / 35.0, S_PEASANT_DIE11) { }
+	S_BURN1('BURN', 0, 3.0 / 35.0, S_BURN2) { A_Scream(); }
+	S_BURN2('BURN', 1, 3.0 / 35.0, S_BURN3) { A_Burn(); }
+	S_BURN3('BURN', 2, 3.0 / 35.0, S_BURN4) { A_Walk(); }
+	S_BURN4('BURN', 3, 3.0 / 35.0, S_BURN5) { A_Fall(); }
+	S_BURN5('BURN', 4, 5.0 / 35.0, S_BURN6) { A_Burn(); }
+	S_BURN6('BURN', 5, 5.0 / 35.0, S_BURN7) { A_Walk(); }
+	S_BURN7('BURN', 6, 5.0 / 35.0, S_BURN8) { A_Walk(); }
+	S_BURN8('BURN', 7, 5.0 / 35.0, S_BURN9) { A_Walk(); }
+	S_BURN9('BURN', 8, 5.0 / 35.0, S_BURN10) { A_Burn(); }
+	S_BURN10('BURN', 9, 5.0 / 35.0, S_BURN11) { A_Walk(); }
+	S_BURN11('BURN', 10, 5.0 / 35.0, S_BURN12) { A_Walk(); }
+	S_BURN12('BURN', 11, 5.0 / 35.0, S_BURN13) { A_Walk(); }
+	S_BURN13('BURN', 12, 3.0 / 35.0, S_BURN14) { A_Burn(); }
+	S_BURN14('BURN', 13, 3.0 / 35.0, S_BURN15) { }
+	S_BURN15('BURN', 14, 5.0 / 35.0, S_BURN16) { }
+	S_BURN16('BURN', 15, 5.0 / 35.0, S_BURN17) { }
+	S_BURN17('BURN', 16, 5.0 / 35.0, S_BURN18) { }
+	S_BURN18('BURN', 15, 5.0 / 35.0, S_BURN19) { }
+	S_BURN19('BURN', 16, 5.0 / 35.0, S_BURN20) { }
+	S_BURN20('BURN', 17, 7.0 / 35.0, S_BURN21) { }
+	S_BURN21('BURN', 18, 7.0 / 35.0, S_BURN22) { }
+	S_BURN22('BURN', 19, 7.0 / 35.0, S_BURN23) { }
+	S_BURN23('BURN', 20, 7.0 / 35.0, S_BURN24) { }
+	S_BURN24('BURN', 21, 700.0 / 35.0, S_NULL) { A_Dying(); }
+	S_DISRUPT1('DISR', 0, 5.0 / 35.0, S_DISRUPT2) { }
+	S_DISRUPT2('DISR', 1, 5.0 / 35.0, S_DISRUPT3) { }
+	S_DISRUPT3('DISR', 2, 5.0 / 35.0, S_DISRUPT4) { }
+	S_DISRUPT4('DISR', 3, 5.0 / 35.0, S_DISRUPT5) { A_Fall(); }
+	S_DISRUPT5('DISR', 4, 5.0 / 35.0, S_DISRUPT6) { }
+	S_DISRUPT6('DISR', 5, 5.0 / 35.0, S_DISRUPT7) { }
+	S_DISRUPT7('DISR', 6, 4.0 / 35.0, S_DISRUPT8) { }
+	S_DISRUPT8('DISR', 7, 4.0 / 35.0, S_DISRUPT9) { }
+	S_DISRUPT9('DISR', 8, 4.0 / 35.0, S_DISRUPT10) { }
+	S_DISRUPT10('DISR', 9, 4.0 / 35.0, S_MEAT_4) { }
 	S_PEASANT_DIE11('PEAS', 13, 1400.0 / 35.0, S_PEASANT_XDIE9) { }
-	S_PEASANT_XDIE1('GIBS', 12, 5.0 / 35.0, S_PEASANT_XDIE2) { A_41(); }
-	S_PEASANT_XDIE2('GIBS', 13, 5.0 / 35.0, S_PEASANT_XDIE3) { A_42(); }
+	S_PEASANT_XDIE1('GIBS', 12, 5.0 / 35.0, S_PEASANT_XDIE2) { A_XDying(); }
+	S_PEASANT_XDIE2('GIBS', 13, 5.0 / 35.0, S_PEASANT_XDIE3) { A_XScream(); }
 	S_PEASANT_XDIE3('GIBS', 14, 5.0 / 35.0, S_PEASANT_XDIE4) { A_Fall(); }
-	S_PEASANT_XDIE4('GIBS', 15, 4.0 / 35.0, S_PEASANT_XDIE5) { A_41(); }
-	S_PEASANT_XDIE5('GIBS', 16, 4.0 / 35.0, S_PEASANT_XDIE6) { A_41(); }
-	S_PEASANT_XDIE6('GIBS', 17, 4.0 / 35.0, S_PEASANT_XDIE7) { A_41(); }
-	S_PEASANT_XDIE7('GIBS', 18, 4.0 / 35.0, S_PEASANT_XDIE8) { A_41(); }
+	S_PEASANT_XDIE4('GIBS', 15, 4.0 / 35.0, S_PEASANT_XDIE5) { A_XDying(); }
+	S_PEASANT_XDIE5('GIBS', 16, 4.0 / 35.0, S_PEASANT_XDIE6) { A_XDying(); }
+	S_PEASANT_XDIE6('GIBS', 17, 4.0 / 35.0, S_PEASANT_XDIE7) { A_XDying(); }
+	S_PEASANT_XDIE7('GIBS', 18, 4.0 / 35.0, S_PEASANT_XDIE8) { A_XDying(); }
 	S_PEASANT_XDIE8('GIBS', 19, 4.0 / 35.0, S_PEASANT_XDIE9) { }
 	S_PEASANT_XDIE9('GIBS', 20, 5.0 / 35.0, S_PEASANT_XDIE10) { }
 	S_PEASANT_XDIE10('GIBS', 21, 1400.0 / 35.0, S_NULL) { }
-	S_PEASANT2_STAND('PEAS', 0, 5.0 / 35.0, S_PEASANT2_STAND) { A_52(); }
-	S_PEASANT2_PAIN('AGRD', 0, 5.0 / 35.0, S_PEASANT2_PAIN) { A_52(); }
-	S_420('ARMR', 0, -1.0, S_NULL) { }
-	S_421('ARMR', 0, -1.0, S_NULL) { A_53(); }
+	S_PEASANT2_STAND('PEAS', 0, 5.0 / 35.0, S_PEASANT2_STAND) { A_ResetHealth(); }
+	S_PEASANT2_PAIN('AGRD', 0, 5.0 / 35.0, S_PEASANT2_PAIN) { A_ResetHealth(); }
 	S_422('PLAY', 0, 175.0 / 35.0, S_422) { A_54(); }
 	S_423('SACR', 0, -1.0, S_NULL) { }
 	S_424('TNK1', 0, 15.0 / 35.0, S_425) { }
@@ -361,124 +275,7 @@ __states__(Actor)
 	S_439('TNK6', 0, 15.0 / 35.0, S_440) { }
 	S_440('TNK6', 1, 11.0 / 35.0, S_441) { }
 	S_441('TNK6', 2, 40.0 / 35.0, S_439) { }
-	S_442('NEAL', 0, 15.0 / 35.0, S_443) { A_35(); }
-	S_443('NEAL', 1, 40.0 / 35.0, S_442) { A_35(); }
-	S_444('NEAL', 2, 5.0 / 35.0, S_445) { A_55(); }
-	S_445('NEAL', 1, 4.0 / 35.0, S_446) { A_Pain(); }
-	S_446('NEAL', 2, 5.0 / 35.0, S_442) { A_56(); }
-	S_447('NEAL', 1, 6.0 / 35.0, S_448) { }
-	S_448('NEAL', 2, 13.0 / 35.0, S_447) { A_49(); }
-	S_449('NEAL', 3, 5.0 / 35.0, S_450) { }
-	S_450('NEAL', 4, 5.0 / 35.0, S_451) { A_Scream(); }
-	S_451('NEAL', 5, 6.0 / 35.0, S_452) { }
-	S_452('NEAL', 6, 5.0 / 35.0, S_453) { A_Fall(); }
-	S_453('NEAL', 7, 5.0 / 35.0, S_454) { }
-	S_454('NEAL', 8, 6.0 / 35.0, S_455) { }
-	S_455('NEAL', 9, -1.0, S_NULL) { }
-	S_BEGGAR_STAND('BEGR', 0, 10.0 / 35.0, S_BEGGAR_STAND) { A_57(); }
-	S_BEGGAR_WALK1('BEGR', 0, 4.0 / 35.0, S_BEGGAR_WALK2) { A_48(); }
-	S_BEGGAR_WALK2('BEGR', 0, 4.0 / 35.0, S_BEGGAR_WALK3) { A_48(); }
-	S_BEGGAR_WALK3('BEGR', 1, 4.0 / 35.0, S_BEGGAR_WALK4) { A_48(); }
-	S_BEGGAR_WALK4('BEGR', 1, 4.0 / 35.0, S_BEGGAR_WALK5) { A_48(); }
-	S_BEGGAR_WALK5('BEGR', 2, 4.0 / 35.0, S_BEGGAR_WALK6) { A_48(); }
-	S_BEGGAR_WALK6('BEGR', 2, 4.0 / 35.0, S_BEGGAR_WALK1) { A_48(); }
-	S_BEGGAR_ATK1('BEGR', 3, 8.0 / 35.0, S_BEGGAR_ATK2) { }
-	S_BEGGAR_ATK2('BEGR', 4, 8.0 / 35.0, S_BEGGAR_ATK3) { A_51(); }
-	S_BEGGAR_ATK3('BEGR', 4, 1.0 / 35.0, S_BEGGAR_ATK4) { A_58(); }
-	S_BEGGAR_ATK4('BEGR', 3, 8.0 / 35.0, S_BEGGAR_ATK1) { A_59(); }
-	S_BEGGAR_PAIN1('BEGR', 0, 3.0 / 35.0, S_BEGGAR_PAIN2) { A_Pain(); }
-	S_BEGGAR_PAIN2('BEGR', 0, 3.0 / 35.0, S_BEGGAR_ATK1) { A_58(); }
-	S_BEGGAR_DIE1('BEGR', 5, 4.0 / 35.0, S_BEGGAR_DIE2) { }
-	S_BEGGAR_DIE2('BEGR', 6, 4.0 / 35.0, S_BEGGAR_DIE3) { A_Scream(); }
-	S_BEGGAR_DIE3('BEGR', 7, 4.0 / 35.0, S_BEGGAR_DIE4) { }
-	S_BEGGAR_DIE4('BEGR', 8, 4.0 / 35.0, S_BEGGAR_DIE5) { A_Fall(); }
-	S_BEGGAR_DIE5('BEGR', 9, 4.0 / 35.0, S_BEGGAR_DIE6) { }
-	S_BEGGAR_DIE6('BEGR', 10, 4.0 / 35.0, S_BEGGAR_DIE7) { }
-	S_BEGGAR_DIE7('BEGR', 11, 4.0 / 35.0, S_BEGGAR_DIE8) { }
-	S_BEGGAR_DIE8('BEGR', 12, 4.0 / 35.0, S_BEGGAR_DIE9) { }
-	S_BEGGAR_DIE9('BEGR', 13, -1.0, S_NULL) { }
-	S_BEGGAR_XDIE1('BEGR', 5, 5.0 / 35.0, S_PEASANT_XDIE2) { A_41(); }
-	S_479('HMN1', 15, 5.0 / 35.0, S_479) { A_43(); }
-	S_480('HMN1', 16, 8.0 / 35.0, S_479) { }
-	S_481('HMN1', 17, 8.0 / 35.0, S_479) { }
-	S_482('HMN1', 0, 6.0 / 35.0, S_483) { A_48(); }
-	S_483('HMN1', 1, 6.0 / 35.0, S_484) { A_48(); }
-	S_484('HMN1', 2, 6.0 / 35.0, S_485) { A_48(); }
-	S_485('HMN1', 3, 6.0 / 35.0, S_486) { A_48(); }
-	S_486('HMN1', 0, 6.0 / 35.0, S_487) { A_48(); }
-	S_487('HMN1', 1, 6.0 / 35.0, S_488) { A_48(); }
-	S_488('HMN1', 2, 6.0 / 35.0, S_489) { A_48(); }
-	S_489('HMN1', 3, 6.0 / 35.0, S_479) { A_48(); }
-	S_490('HMN1', 0, 3.0 / 35.0, S_491) { A_58(); }
-	S_491('HMN1', 0, 3.0 / 35.0, S_492) { A_58(); }
-	S_492('HMN1', 1, 3.0 / 35.0, S_493) { A_58(); }
-	S_493('HMN1', 1, 3.0 / 35.0, S_494) { A_58(); }
-	S_494('HMN1', 2, 3.0 / 35.0, S_495) { A_58(); }
-	S_495('HMN1', 2, 3.0 / 35.0, S_496) { A_58(); }
-	S_496('HMN1', 3, 3.0 / 35.0, S_497) { A_58(); }
-	S_497('HMN1', 3, 3.0 / 35.0, S_490) { A_58(); }
-	S_498('HMN1', 4, 10.0 / 35.0, S_499) { A_50(); }
-	S_499('HMN1', 5 | FF_FULLBRIGHT, 10.0 / 35.0, S_500) { A_60(); }
-	S_500('HMN1', 4, 10.0 / 35.0, S_490) { A_60(); }
-	S_501('HMN1', 14, 3.0 / 35.0, S_502) { }
-	S_502('HMN1', 14, 3.0 / 35.0, S_490) { A_Pain(); }
-	S_503('HMN1', 6, 5.0 / 35.0, S_504) { }
-	S_504('HMN1', 7, 5.0 / 35.0, S_505) { A_Scream(); }
-	S_505('HMN1', 8, 3.0 / 35.0, S_506) { A_Fall(); }
-	S_506('HMN1', 9, 4.0 / 35.0, S_507) { }
-	S_507('HMN1', 10, 3.0 / 35.0, S_508) { }
-	S_508('HMN1', 11, 3.0 / 35.0, S_509) { }
-	S_509('HMN1', 12, 3.0 / 35.0, S_510) { }
-	S_510('HMN1', 13, -1.0, S_NULL) { }
-	S_511('RGIB', 0, 4.0 / 35.0, S_512) { A_41(); }
-	S_512('RGIB', 1, 4.0 / 35.0, S_513) { A_42(); }
-	S_513('RGIB', 2, 3.0 / 35.0, S_514) { A_Fall(); }
-	S_514('RGIB', 3, 3.0 / 35.0, S_515) { A_41(); }
-	S_515('RGIB', 4, 3.0 / 35.0, S_516) { A_41(); }
-	S_516('RGIB', 5, 3.0 / 35.0, S_517) { A_41(); }
-	S_517('RGIB', 6, 3.0 / 35.0, S_518) { }
-	S_518('RGIB', 7, 1400.0 / 35.0, S_NULL) { }
-	S_519('LEDR', 2, 5.0 / 35.0, S_519) { A_43(); }
-	S_520('LEDR', 0, 8.0 / 35.0, S_519) { }
-	S_521('LEDR', 1, 8.0 / 35.0, S_519) { }
-	S_522('LEAD', 0, 6.0 / 35.0, S_523) { A_48(); }
-	S_523('LEAD', 1, 6.0 / 35.0, S_524) { A_48(); }
-	S_524('LEAD', 2, 6.0 / 35.0, S_525) { A_48(); }
-	S_525('LEAD', 3, 6.0 / 35.0, S_519) { A_48(); }
-	S_526('LEAD', 0, 3.0 / 35.0, S_527) { A_58(); }
-	S_527('LEAD', 0, 3.0 / 35.0, S_528) { A_58(); }
-	S_528('LEAD', 1, 3.0 / 35.0, S_529) { A_58(); }
-	S_529('LEAD', 1, 3.0 / 35.0, S_530) { A_58(); }
-	S_530('LEAD', 2, 3.0 / 35.0, S_531) { A_58(); }
-	S_531('LEAD', 2, 3.0 / 35.0, S_532) { A_58(); }
-	S_532('LEAD', 3, 3.0 / 35.0, S_533) { A_58(); }
-	S_533('LEAD', 3, 3.0 / 35.0, S_526) { A_58(); }
-	S_534('LEAD', 4, 2.0 / 35.0, S_535) { A_50(); }
-	S_535('LEAD', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_536) { A_60(); }
-	S_536('LEAD', 4, 1.0 / 35.0, S_534) { A_59(); }
-	S_537('LEAD', 24, 3.0 / 35.0, S_538) { }
-	S_538('LEAD', 24, 3.0 / 35.0, S_526) { A_Pain(); }
-	S_539('LEAD', 4, 4.0 / 35.0, S_540) { A_50(); }
-	S_540('LEAD', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_541) { A_60(); }
-	S_541('LEAD', 4, 2.0 / 35.0, S_539) { A_59(); }
-	S_542('LEAD', 6, 5.0 / 35.0, S_543) { }
-	S_543('LEAD', 7, 5.0 / 35.0, S_544) { A_Scream(); }
-	S_544('LEAD', 8, 4.0 / 35.0, S_545) { }
-	S_545('LEAD', 9, 4.0 / 35.0, S_546) { }
-	S_546('LEAD', 10, 3.0 / 35.0, S_547) { }
-	S_547('LEAD', 11, 3.0 / 35.0, S_548) { A_Fall(); }
-	S_548('LEAD', 12, 3.0 / 35.0, S_549) { }
-	S_549('LEAD', 13, 3.0 / 35.0, S_550) { }
-	S_550('LEAD', 14, 3.0 / 35.0, S_551) { }
-	S_551('LEAD', 15, 3.0 / 35.0, S_552) { }
-	S_552('LEAD', 16, 3.0 / 35.0, S_553) { }
-	S_553('LEAD', 17, 3.0 / 35.0, S_554) { }
-	S_554('LEAD', 18, 3.0 / 35.0, S_555) { }
-	S_555('LEAD', 19, 3.0 / 35.0, S_556) { }
-	S_556('LEAD', 20, 3.0 / 35.0, S_557) { }
-	S_557('LEAD', 21, 3.0 / 35.0, S_558) { }
-	S_558('LEAD', 22, 3.0 / 35.0, S_559) { A_61(); }
-	S_559('LEAD', 23, -1.0, S_NULL) { }
+	S_REBEL_DIE8('HMN1', 13, -1.0, S_NULL) { }
 	S_560('PUFY', 1, 4.0 / 35.0, S_561) { }
 	S_561('PUFY', 2, 4.0 / 35.0, S_562) { }
 	S_562('PUFY', 1, 4.0 / 35.0, S_563) { }
@@ -486,273 +283,22 @@ __states__(Actor)
 	S_564('PUFY', 3, 4.0 / 35.0, S_NULL) { }
 	S_565('MICR', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_566) { A_34(); }
 	S_566('MICR', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_565) { A_34(); }
-	S_567('ROB1', 0, 10.0 / 35.0, S_568) { A_57(); }
-	S_568('ROB1', 0, 10.0 / 35.0, S_567) { A_57(); }
-	S_569('ROB1', 1, 3.0 / 35.0, S_570) { A_58(); }
-	S_570('ROB1', 1, 3.0 / 35.0, S_571) { A_58(); }
-	S_571('ROB1', 2, 3.0 / 35.0, S_572) { A_58(); }
-	S_572('ROB1', 2, 3.0 / 35.0, S_573) { A_58(); }
-	S_573('ROB1', 3, 3.0 / 35.0, S_574) { A_58(); }
-	S_574('ROB1', 3, 3.0 / 35.0, S_575) { A_58(); }
-	S_575('ROB1', 4, 3.0 / 35.0, S_576) { A_58(); }
-	S_576('ROB1', 4, 3.0 / 35.0, S_569) { A_58(); }
-	S_577('ROB1', 7, 6.0 / 35.0, S_578) { A_50(); }
-	S_578('ROB1', 8, 8.0 / 35.0, S_579) { A_62(); }
-	S_579('ROB1', 7, 6.0 / 35.0, S_569) { }
-	S_580('ROB1', 5, 8.0 / 35.0, S_581) { A_50(); }
-	S_581('ROB1', 6 | FF_FULLBRIGHT, 11.0 / 35.0, S_569) { A_63(); }
-	S_582('ROB1', 0, 2.0 / 35.0, S_583) { }
-	S_583('ROB1', 0, 2.0 / 35.0, S_569) { A_Pain(); }
-	S_584('ROB1', 9 | FF_FULLBRIGHT, 6.0 / 35.0, S_585) { }
-	S_585('ROB1', 10 | FF_FULLBRIGHT, 6.0 / 35.0, S_586) { A_Scream(); }
-	S_586('ROB1', 11 | FF_FULLBRIGHT, 5.0 / 35.0, S_587) { }
-	S_587('ROB1', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_588) { A_Fall(); }
-	S_588('ROB1', 13 | FF_FULLBRIGHT, 5.0 / 35.0, S_589) { }
-	S_589('ROB1', 14 | FF_FULLBRIGHT, 5.0 / 35.0, S_590) { }
-	S_590('ROB1', 15 | FF_FULLBRIGHT, 5.0 / 35.0, S_591) { }
-	S_591('ROB1', 16 | FF_FULLBRIGHT, 6.0 / 35.0, S_592) { A_24(); }
-	S_592('ROB1', 17, -1.0, S_NULL) { }
-	S_593('ROB1', 11 | FF_FULLBRIGHT, 5.0 / 35.0, S_594) { A_41(); }
-	S_594('ROB1', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_595) { A_42(); }
-	S_595('ROB1', 13 | FF_FULLBRIGHT, 5.0 / 35.0, S_596) { A_41(); }
-	S_596('ROB1', 14 | FF_FULLBRIGHT, 5.0 / 35.0, S_597) { A_Fall(); }
-	S_597('ROB1', 15 | FF_FULLBRIGHT, 5.0 / 35.0, S_598) { A_41(); }
-	S_598('ROB1', 16 | FF_FULLBRIGHT, 5.0 / 35.0, S_599) { A_24(); }
-	S_599('ROB1', 17, -1.0, S_NULL) { }
-	S_600('AGRD', 0, 5.0 / 35.0, S_600) { A_43(); }
-	S_601('AGRD', 1, 8.0 / 35.0, S_600) { A_56(); }
-	S_602('AGRD', 3, 8.0 / 35.0, S_600) { }
-	S_603('AGRD', 0, 5.0 / 35.0, S_604) { A_48(); }
-	S_604('AGRD', 1, 5.0 / 35.0, S_605) { A_48(); }
-	S_605('AGRD', 2, 5.0 / 35.0, S_606) { A_48(); }
-	S_606('AGRD', 3, 5.0 / 35.0, S_607) { A_48(); }
-	S_607('AGRD', 0, 5.0 / 35.0, S_608) { A_48(); }
-	S_608('AGRD', 1, 5.0 / 35.0, S_609) { A_48(); }
-	S_609('AGRD', 2, 5.0 / 35.0, S_610) { A_48(); }
-	S_610('AGRD', 3, 5.0 / 35.0, S_600) { A_48(); }
-	S_611('AGRD', 0, 6.0 / 35.0, S_613) { A_64(); }
-	S_612('AGRD', 0, 6.0 / 35.0, S_613) { A_65(); }
-	S_613('AGRD', 1, 6.0 / 35.0, S_614) { A_58(); }
-	S_614('AGRD', 2, 6.0 / 35.0, S_615) { A_58(); }
-	S_615('AGRD', 3, 6.0 / 35.0, S_612) { A_58(); }
-	S_616('AGRD', 4, 8.0 / 35.0, S_617) { A_50(); }
-	S_617('AGRD', 5, 4.0 / 35.0, S_618) { A_60(); }
-	S_618('AGRD', 4, 4.0 / 35.0, S_619) { A_60(); }
-	S_619('AGRD', 5, 6.0 / 35.0, S_612) { A_60(); }
-	S_620('AGRD', 14, 0.0 / 35.0, S_621) { A_55(); }
-	S_621('AGRD', 14, 8.0 / 35.0, S_611) { A_Pain(); }
-	S_622('AGRD', 14, 8.0 / 35.0, S_612) { A_Pain(); }
-	S_623('AGRD', 6, 4.0 / 35.0, S_624) { }
-	S_624('AGRD', 7, 4.0 / 35.0, S_625) { A_Scream(); }
-	S_625('AGRD', 8, 4.0 / 35.0, S_626) { }
-	S_626('AGRD', 9, 3.0 / 35.0, S_627) { }
-	S_627('AGRD', 10, 3.0 / 35.0, S_628) { A_Fall(); }
-	S_628('AGRD', 11, 3.0 / 35.0, S_629) { }
-	S_629('AGRD', 12, 3.0 / 35.0, S_630) { A_66(); }
-	S_630('AGRD', 13, 1400.0 / 35.0, S_641) { }
-	S_631('GIBS', 0, 5.0 / 35.0, S_632) { A_Fall(); }
-	S_632('GIBS', 1, 5.0 / 35.0, S_633) { A_41(); }
-	S_633('GIBS', 2, 5.0 / 35.0, S_634) { A_41(); }
-	S_634('GIBS', 3, 4.0 / 35.0, S_635) { A_41(); }
-	S_635('GIBS', 4, 4.0 / 35.0, S_636) { A_42(); }
-	S_636('GIBS', 5, 4.0 / 35.0, S_637) { A_41(); }
-	S_637('GIBS', 6, 4.0 / 35.0, S_638) { }
-	S_638('GIBS', 7, 4.0 / 35.0, S_639) { }
-	S_639('GIBS', 8, 5.0 / 35.0, S_640) { }
-	S_640('GIBS', 9, 5.0 / 35.0, S_641) { A_66(); }
-	S_641('GIBS', 10, 5.0 / 35.0, S_642) { }
-	S_642('GIBS', 11, 1400.0 / 35.0, S_NULL) { }
-	S_643('PGRD', 0, 5.0 / 35.0, S_643) { A_43(); }
-	S_644('PGRD', 1, 10.0 / 35.0, S_643) { }
-	S_645('PGRD', 2, 10.0 / 35.0, S_643) { }
-	S_646('PGRD', 1, 10.0 / 35.0, S_643) { A_48(); }
-	S_647('PGRD', 0, 3.0 / 35.0, S_648) { A_58(); }
-	S_648('PGRD', 0, 3.0 / 35.0, S_649) { A_58(); }
-	S_649('PGRD', 1, 3.0 / 35.0, S_650) { A_58(); }
-	S_650('PGRD', 1, 3.0 / 35.0, S_651) { A_58(); }
-	S_651('PGRD', 2, 3.0 / 35.0, S_652) { A_58(); }
-	S_652('PGRD', 2, 3.0 / 35.0, S_653) { A_58(); }
-	S_653('PGRD', 3, 3.0 / 35.0, S_654) { A_58(); }
-	S_654('PGRD', 3, 3.0 / 35.0, S_647) { A_58(); }
-	S_655('PGRD', 4, 8.0 / 35.0, S_656) { A_50(); }
-	S_656('PGRD', 5, 8.0 / 35.0, S_647) { A_62(); }
-	S_657('PGRD', 6 | FF_FULLBRIGHT, 8.0 / 35.0, S_658) { A_50(); }
-	S_658('PGRD', 7 | FF_FULLBRIGHT, 8.0 / 35.0, S_647) { A_67(); }
-	S_659('PGRD', 0, 2.0 / 35.0, S_660) { }
-	S_660('PGRD', 0, 2.0 / 35.0, S_647) { A_Pain(); }
-	S_661('PGRD', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_662) { A_41(); }
-	S_662('PGRD', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_663) { A_Scream(); }
-	S_663('PGRD', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_664) { A_41(); }
-	S_664('PGRD', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_665) { A_Fall(); }
-	S_665('PGRD', 12 | FF_FULLBRIGHT, 4.0 / 35.0, S_666) { }
-	S_666('PGRD', 13 | FF_FULLBRIGHT, 4.0 / 35.0, S_667) { }
-	S_667('PGRD', 14, 4.0 / 35.0, S_668) { A_41(); }
-	S_668('PGRD', 15, 4.0 / 35.0, S_669) { }
-	S_669('PGRD', 16, 4.0 / 35.0, S_670) { }
-	S_670('PGRD', 17, 4.0 / 35.0, S_671) { }
-	S_671('PGRD', 18, 3.0 / 35.0, S_672) { }
-	S_672('PGRD', 19, 3.0 / 35.0, S_673) { }
-	S_673('PGRD', 20, 3.0 / 35.0, S_674) { }
-	S_674('PGRD', 21, 3.0 / 35.0, S_675) { }
-	S_675('PGRD', 22, 3.0 / 35.0, S_676) { }
-	S_676('PGRD', 23, 3.0 / 35.0, S_677) { }
-	S_677('PGRD', 24, 3.0 / 35.0, S_678) { }
-	S_678('PGRD', 25, 3.0 / 35.0, S_679) { }
-	S_679('PGRD', 26, 3.0 / 35.0, S_680) { }
-	S_680('PGRD', 27, -1.0, S_NULL) { }
-	S_681('ROB2', 16, 10.0 / 35.0, S_681) { A_57(); }
-	S_682('ROB2', 0, 3.0 / 35.0, S_683) { A_58(); }
-	S_683('ROB2', 0, 3.0 / 35.0, S_684) { A_58(); }
-	S_684('ROB2', 1, 3.0 / 35.0, S_685) { A_58(); }
-	S_685('ROB2', 1, 3.0 / 35.0, S_686) { A_58(); }
-	S_686('ROB2', 2, 3.0 / 35.0, S_687) { A_58(); }
-	S_687('ROB2', 2, 3.0 / 35.0, S_688) { A_58(); }
-	S_688('ROB2', 3, 3.0 / 35.0, S_689) { A_58(); }
-	S_689('ROB2', 3, 3.0 / 35.0, S_682) { A_58(); }
-	S_690('ROB2', 4, 3.0 / 35.0, S_691) { A_50(); }
-	S_691('ROB2', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_692) { A_68(); }
-	S_692('ROB2', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_693) { A_69(); }
-	S_693('ROB2', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_694) { A_69(); }
-	S_694('ROB2', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_695) { A_69(); }
-	S_695('ROB2', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_696) { A_69(); }
-	S_696('ROB2', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_697) { A_70(); }
-	S_697('ROB2', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_698) { A_70(); }
-	S_698('ROB2', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_699) { A_70(); }
-	S_699('ROB2', 5, 2.0 / 35.0, S_690) { A_71(); }
-	S_700('ROB2', 3, 1.0 / 35.0, S_682) { A_Pain(); }
-	S_701('ROB2', 6, 3.0 / 35.0, S_702) { A_Scream(); }
-	S_702('ROB2', 7, 5.0 / 35.0, S_703) { A_41(); }
-	S_703('ROB2', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_704) { A_41(); }
-	S_704('ROB2', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_705) { A_37(); }
-	S_705('ROB2', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_706) { A_Fall(); }
-	S_706('ROB2', 11, 4.0 / 35.0, S_707) { A_37(); }
-	S_707('ROB2', 12, 4.0 / 35.0, S_708) { A_41(); }
-	S_708('ROB2', 13, 4.0 / 35.0, S_709) { A_41(); }
-	S_709('ROB2', 14, 4.0 / 35.0, S_710) { A_37(); }
-	S_710('ROB2', 15, -1.0, S_NULL) { A_72(); }
-	S_711('MLDR', 0, 10.0 / 35.0, S_711) { A_57(); }
-	S_712('MLDR', 0, 3.0 / 35.0, S_713) { A_58(); }
-	S_713('MLDR', 0, 3.0 / 35.0, S_714) { A_58(); }
-	S_714('MLDR', 1, 3.0 / 35.0, S_715) { A_58(); }
-	S_715('MLDR', 1, 3.0 / 35.0, S_716) { A_58(); }
-	S_716('MLDR', 2, 3.0 / 35.0, S_717) { A_58(); }
-	S_717('MLDR', 2, 3.0 / 35.0, S_718) { A_58(); }
-	S_718('MLDR', 3, 3.0 / 35.0, S_719) { A_58(); }
-	S_719('MLDR', 3, 3.0 / 35.0, S_712) { A_58(); }
-	S_720('MLDR', 4, 3.0 / 35.0, S_721) { A_50(); }
-	S_721('MLDR', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_712) { A_73(); }
-	S_722('MLDR', 3, 1.0 / 35.0, S_712) { A_Pain(); }
-	S_723('MLDR', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_724) { }
-	S_724('MLDR', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_725) { A_Scream(); }
-	S_725('MLDR', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_726) { A_41(); }
-	S_726('MLDR', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_727) { A_37(); }
-	S_727('MLDR', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_728) { }
-	S_728('MLDR', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_729) { }
-	S_729('MLDR', 12 | FF_FULLBRIGHT, 4.0 / 35.0, S_730) { A_Fall(); }
-	S_730('MLDR', 13 | FF_FULLBRIGHT, 4.0 / 35.0, S_731) { }
-	S_731('MLDR', 14 | FF_FULLBRIGHT, 4.0 / 35.0, S_732) { A_41(); }
-	S_732('MLDR', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_733) { }
-	S_733('MLDR', 16 | FF_FULLBRIGHT, 4.0 / 35.0, S_734) { A_41(); }
-	S_734('MLDR', 17 | FF_FULLBRIGHT, 4.0 / 35.0, S_735) { }
-	S_735('MLDR', 18 | FF_FULLBRIGHT, 4.0 / 35.0, S_736) { A_41(); }
-	S_736('MLDR', 19 | FF_FULLBRIGHT, 4.0 / 35.0, S_737) { }
-	S_737('MLDR', 20 | FF_FULLBRIGHT, 4.0 / 35.0, S_738) { A_41(); }
-	S_738('MLDR', 21, 4.0 / 35.0, S_NULL) { A_74(); }
-	S_739('ORCL', 0, -1.0, S_NULL) { }
-	S_740('ORCL', 1, 5.0 / 35.0, S_741) { }
-	S_741('ORCL', 2, 5.0 / 35.0, S_742) { }
-	S_742('ORCL', 3, 5.0 / 35.0, S_743) { }
-	S_743('ORCL', 4, 5.0 / 35.0, S_744) { }
-	S_744('ORCL', 5, 5.0 / 35.0, S_745) { }
-	S_745('ORCL', 6, 5.0 / 35.0, S_746) { }
-	S_746('ORCL', 7, 5.0 / 35.0, S_747) { }
-	S_747('ORCL', 8, 5.0 / 35.0, S_748) { }
-	S_748('ORCL', 9, 5.0 / 35.0, S_749) { }
-	S_749('ORCL', 10, 5.0 / 35.0, S_750) { }
-	S_750('ORCL', 11, 5.0 / 35.0, S_751) { A_Fall(); }
-	S_751('ORCL', 12, 5.0 / 35.0, S_752) { }
-	S_752('ORCL', 13, 5.0 / 35.0, S_753) { A_75(); }
-	S_753('ORCL', 14, 5.0 / 35.0, S_754) { }
-	S_754('ORCL', 15, 5.0 / 35.0, S_755) { }
-	S_755('ORCL', 16, -1.0, S_NULL) { }
-	S_756('PRST', 0, 10.0 / 35.0, S_757) { A_57(); }
-	S_757('PRST', 1, 10.0 / 35.0, S_756) { A_76(); }
-	S_758('PRST', 0, 4.0 / 35.0, S_759) { A_58(); }
-	S_759('PRST', 0, 4.0 / 35.0, S_760) { A_76(); }
-	S_760('PRST', 1, 4.0 / 35.0, S_761) { A_58(); }
-	S_761('PRST', 1, 4.0 / 35.0, S_762) { A_76(); }
-	S_762('PRST', 2, 4.0 / 35.0, S_763) { A_58(); }
-	S_763('PRST', 2, 4.0 / 35.0, S_764) { A_76(); }
-	S_764('PRST', 3, 4.0 / 35.0, S_765) { A_58(); }
-	S_765('PRST', 3, 4.0 / 35.0, S_758) { A_76(); }
-	S_766('PRST', 4, 4.0 / 35.0, S_767) { A_50(); }
-	S_767('PRST', 5, 4.0 / 35.0, S_768) { A_77(); }
-	S_768('PRST', 4, 4.0 / 35.0, S_758) { A_76(); }
-	S_769('PRST', 4, 4.0 / 35.0, S_770) { A_50(); }
-	S_770('PRST', 5, 4.0 / 35.0, S_771) { A_78(); }
-	S_771('PRST', 4, 4.0 / 35.0, S_758) { A_76(); }
-	S_772('PDED', 0, 6.0 / 35.0, S_773) { }
-	S_773('PDED', 1, 6.0 / 35.0, S_774) { A_Scream(); }
-	S_774('PDED', 2, 6.0 / 35.0, S_775) { }
-	S_775('PDED', 3, 6.0 / 35.0, S_776) { A_Fall(); }
-	S_776('PDED', 4, 6.0 / 35.0, S_777) { }
-	S_777('PDED', 5, 5.0 / 35.0, S_778) { }
-	S_778('PDED', 6, 5.0 / 35.0, S_779) { }
-	S_779('PDED', 7, 5.0 / 35.0, S_780) { }
-	S_780('PDED', 8, 5.0 / 35.0, S_781) { }
-	S_781('PDED', 9, 5.0 / 35.0, S_782) { }
-	S_782('PDED', 8, 5.0 / 35.0, S_783) { }
-	S_783('PDED', 9, 5.0 / 35.0, S_784) { }
-	S_784('PDED', 8, 5.0 / 35.0, S_786) { }
-	S_785('PDED', 9, 5.0 / 35.0, S_786) { }
-	S_786('PDED', 10, 5.0 / 35.0, S_787) { }
-	S_787('PDED', 11, 5.0 / 35.0, S_788) { }
-	S_788('PDED', 12, 4.0 / 35.0, S_789) { }
-	S_789('PDED', 13, 4.0 / 35.0, S_790) { }
-	S_790('PDED', 14, 4.0 / 35.0, S_791) { }
-	S_791('PDED', 15, 4.0 / 35.0, S_792) { }
-	S_792('PDED', 16, 4.0 / 35.0, S_793) { A_79(); }
-	S_793('PDED', 17, 4.0 / 35.0, S_794) { }
-	S_794('PDED', 18, 4.0 / 35.0, S_795) { }
-	S_795('PDED', 19, -1.0, S_NULL) { }
-	S_796('ALN1', 0, 10.0 / 35.0, S_797) { A_57(); }
-	S_797('ALN1', 1, 10.0 / 35.0, S_796) { A_76(); }
-	S_798('ALN1', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_799) { A_58(); }
-	S_799('ALN1', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_800) { A_58(); }
-	S_800('ALN1', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_801) { A_76(); }
-	S_801('ALN1', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_802) { A_58(); }
-	S_802('ALN1', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_803) { A_58(); }
-	S_803('ALN1', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_804) { A_58(); }
-	S_804('ALN1', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_805) { A_76(); }
-	S_805('ALN1', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_806) { A_58(); }
-	S_806('ALN1', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_807) { A_58(); }
-	S_807('ALN1', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_808) { A_58(); }
-	S_808('ALN1', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_798) { A_76(); }
-	S_809('ALN1', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_810) { A_50(); }
-	S_810('ALN1', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_811) { A_77(); }
-	S_811('ALN1', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_800) { }
-	S_812('ALN1', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_813) { A_50(); }
-	S_813('ALN1', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_814) { A_80(); }
-	S_814('ALN1', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_808) { }
-	S_815('ALN1', 9, 2.0 / 35.0, S_804) { A_Pain(); }
-	S_816('AL1P', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_817) { A_81(); }
-	S_817('AL1P', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_818) { A_Scream(); }
-	S_818('AL1P', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_819) { A_81(); }
-	S_819('AL1P', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_820) { }
-	S_820('AL1P', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_821) { }
-	S_821('AL1P', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_822) { A_81(); }
-	S_822('AL1P', 6 | FF_FULLBRIGHT, 6.0 / 35.0, S_823) { }
-	S_823('AL1P', 7 | FF_FULLBRIGHT, 6.0 / 35.0, S_824) { A_81(); }
-	S_824('AL1P', 8 | FF_FULLBRIGHT, 6.0 / 35.0, S_825) { }
-	S_825('AL1P', 9 | FF_FULLBRIGHT, 6.0 / 35.0, S_826) { }
-	S_826('AL1P', 10 | FF_FULLBRIGHT, 6.0 / 35.0, S_827) { }
-	S_827('AL1P', 11 | FF_FULLBRIGHT, 5.0 / 35.0, S_828) { }
-	S_828('AL1P', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_829) { }
-	S_829('AL1P', 13 | FF_FULLBRIGHT, 5.0 / 35.0, S_830) { A_82(); }
-	S_830('AL1P', 14 | FF_FULLBRIGHT, 5.0 / 35.0, S_831) { }
-	S_831('AL1P', 15 | FF_FULLBRIGHT, 5.0 / 35.0, S_832) { }
-	S_832('AL1P', 16 | FF_FULLBRIGHT, 5.0 / 35.0, S_833) { }
-	S_833('AL1P', 17 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { A_72(); }
+	S_REAVER_DIE9('ROB1', 17, -1.0, S_NULL) { }
+	S_ACOLYTE_DIE8('AGRD', 13, 1400.0 / 35.0, S_ACOLYTE_XDIE11) { }
+	S_ACOLYTE_XDIE1('GIBS', 0, 5.0 / 35.0, S_ACOLYTE_XDIE2) { A_Fall(); }
+	S_ACOLYTE_XDIE2('GIBS', 1, 5.0 / 35.0, S_ACOLYTE_XDIE3) { A_XDying(); }
+	S_ACOLYTE_XDIE3('GIBS', 2, 5.0 / 35.0, S_ACOLYTE_XDIE4) { A_XDying(); }
+	S_ACOLYTE_XDIE4('GIBS', 3, 4.0 / 35.0, S_ACOLYTE_XDIE5) { A_XDying(); }
+	S_ACOLYTE_XDIE5('GIBS', 4, 4.0 / 35.0, S_ACOLYTE_XDIE6) { A_XScream(); }
+	S_ACOLYTE_XDIE6('GIBS', 5, 4.0 / 35.0, S_ACOLYTE_XDIE7) { A_XDying(); }
+	S_ACOLYTE_XDIE7('GIBS', 6, 4.0 / 35.0, S_ACOLYTE_XDIE8) { }
+	S_ACOLYTE_XDIE8('GIBS', 7, 4.0 / 35.0, S_ACOLYTE_XDIE9) { }
+	S_ACOLYTE_XDIE9('GIBS', 8, 5.0 / 35.0, S_ACOLYTE_XDIE10) { }
+	S_ACOLYTE_XDIE10('GIBS', 9, 5.0 / 35.0, S_ACOLYTE_XDIE11) { A_AcolyteDeath(); }
+	S_ACOLYTE_XDIE11('GIBS', 10, 5.0 / 35.0, S_ACOLYTE_XDIE12) { }
+	S_ACOLYTE_XDIE12('GIBS', 11, 1400.0 / 35.0, S_NULL) { }
+	S_CRUSADER_DIE9('ROB2', 14, 4.0 / 35.0, S_CRUSADER_DIE10) { A_Explode(); }
+	S_CRUSADER_DIE10('ROB2', 15, -1.0, S_NULL) { A_Unknown72(); }
 	S_834('NODE', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_835) { }
 	S_835('NODE', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_836) { }
 	S_836('NODE', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_837) { }
@@ -771,114 +317,8 @@ __states__(Actor)
 	S_849('MTHD', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_850) { }
 	S_850('MTHD', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_851) { }
 	S_851('MTHD', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
-	S_852('ALN1', 5, 4.0 / 35.0, S_853) { A_50(); }
-	S_853('ALN1', 8, 4.0 / 35.0, S_854) { A_83(); }
-	S_854('ALN1', 4, 4.0 / 35.0, S_808) { }
-	S_855('ALN1', 0, 5.0 / 35.0, S_856) { A_76(); }
-	S_856('ALN1', 1, 5.0 / 35.0, S_857) { A_76(); }
-	S_857('ALN1', 2, 5.0 / 35.0, S_858) { A_76(); }
-	S_858('ALN1', 3, 5.0 / 35.0, S_859) { A_76(); }
-	S_859('ALN1', 4, 5.0 / 35.0, S_860) { A_76(); }
-	S_860('ALN1', 5, 5.0 / 35.0, S_861) { A_76(); }
-	S_861('ALN1', 6, 5.0 / 35.0, S_862) { A_76(); }
-	S_862('ALN1', 7, 5.0 / 35.0, S_863) { A_76(); }
-	S_863('ALN1', 8, 5.0 / 35.0, S_864) { A_76(); }
-	S_864('ALN1', 9, 5.0 / 35.0, S_865) { A_76(); }
-	S_865('ALN1', 10, 5.0 / 35.0, S_855) { A_76(); }
-	S_866('ALN1', 0, 5.0 / 35.0, S_867) { A_58(); }
-	S_867('ALN1', 1, 5.0 / 35.0, S_868) { A_58(); }
-	S_868('ALN1', 2, 5.0 / 35.0, S_869) { A_76(); }
-	S_869('ALN1', 3, 5.0 / 35.0, S_870) { A_58(); }
-	S_870('ALN1', 4, 5.0 / 35.0, S_871) { A_58(); }
-	S_871('ALN1', 5, 5.0 / 35.0, S_872) { A_58(); }
-	S_872('ALN1', 6, 5.0 / 35.0, S_873) { A_76(); }
-	S_873('ALN1', 7, 5.0 / 35.0, S_874) { A_58(); }
-	S_874('ALN1', 8, 5.0 / 35.0, S_875) { A_58(); }
-	S_875('ALN1', 9, 5.0 / 35.0, S_876) { A_58(); }
-	S_876('ALN1', 10, 5.0 / 35.0, S_866) { A_76(); }
-	S_877('ALN1', 9, 4.0 / 35.0, S_878) { A_50(); }
-	S_878('ALN1', 8, 4.0 / 35.0, S_879) { A_77(); }
-	S_879('ALN1', 2, 4.0 / 35.0, S_868) { }
-	S_880('ALN1', 5, 4.0 / 35.0, S_881) { A_50(); }
-	S_881('ALN1', 8, 4.0 / 35.0, S_882) { A_84(); }
-	S_882('ALN1', 4, 4.0 / 35.0, S_876) { }
-	S_883('ALN1', 9, 2.0 / 35.0, S_872) { A_Pain(); }
-	S_884('ALN1', 5, 4.0 / 35.0, S_885) { A_50(); }
-	S_885('ALN1', 8, 4.0 / 35.0, S_886) { A_85(); }
-	S_886('ALN1', 4, 4.0 / 35.0, S_808) { }
-	S_887('ALN1', 5, 4.0 / 35.0, S_888) { A_50(); }
-	S_888('ALN1', 8, 4.0 / 35.0, S_889) { A_86(); }
-	S_889('ALN1', 4, 4.0 / 35.0, S_808) { }
-	S_890('MNAM', 0, 100.0 / 35.0, S_891) { A_76(); }
-	S_891('MNAM', 1 | FF_FULLBRIGHT, 60.0 / 35.0, S_892) { A_76(); }
-	S_892('MNAM', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_893) { A_76(); }
-	S_893('MNAM', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_894) { A_76(); }
-	S_894('MNAM', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_895) { A_76(); }
-	S_895('MNAM', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_896) { A_76(); }
-	S_896('MNAM', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_897) { A_76(); }
-	S_897('MNAM', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_898) { A_76(); }
-	S_898('MNAM', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_899) { A_76(); }
-	S_899('MNAM', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_900) { A_76(); }
-	S_900('MNAM', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_901) { A_76(); }
-	S_901('MNAM', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_902) { A_76(); }
-	S_902('MNAL', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_903) { A_57(); }
-	S_903('MNAL', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_902) { A_76(); }
-	S_904('MNAL', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_905) { A_58(); }
-	S_905('MNAL', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_906) { A_58(); }
-	S_906('MNAL', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_907) { A_76(); }
-	S_907('MNAL', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_908) { A_58(); }
-	S_908('MNAL', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_909) { A_58(); }
-	S_909('MNAL', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_910) { A_58(); }
-	S_910('MNAL', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_911) { A_76(); }
-	S_911('MNAL', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_912) { A_58(); }
-	S_912('MNAL', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_913) { A_58(); }
-	S_913('MNAL', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_914) { A_58(); }
-	S_914('MNAL', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_904) { A_76(); }
-	S_915('MNAL', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_916) { A_50(); }
-	S_916('MNAL', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_917) { A_77(); }
-	S_917('MNAL', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_906) { }
-	S_918('MNAL', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_919) { A_50(); }
-	S_919('MNAL', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_920) { A_87(); }
-	S_920('MNAL', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_914) { }
-	S_921('MNAL', 9 | FF_FULLBRIGHT, 2.0 / 35.0, S_910) { A_Pain(); }
-	S_922('MNAL', 11 | FF_FULLBRIGHT, 7.0 / 35.0, S_923) { A_81(); }
-	S_923('MNAL', 12 | FF_FULLBRIGHT, 7.0 / 35.0, S_924) { A_Scream(); }
-	S_924('MNAL', 13 | FF_FULLBRIGHT, 7.0 / 35.0, S_925) { A_81(); }
-	S_925('MNAL', 14 | FF_FULLBRIGHT, 7.0 / 35.0, S_926) { A_81(); }
-	S_926('MNAL', 15 | FF_FULLBRIGHT, 7.0 / 35.0, S_927) { A_82(); }
-	S_927('MNAL', 16 | FF_FULLBRIGHT, 64.0 / 35.0, S_928) { A_81(); }
-	S_928('MNAL', 16 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { A_88(); }
-	S_929('MNAL', 17 | FF_FULLBRIGHT, 10.0 / 35.0, S_929) { A_57(); }
-	S_930('MNAL', 17 | FF_FULLBRIGHT, 5.0 / 35.0, S_931) { A_76(); }
-	S_931('MNAL', 18 | FF_FULLBRIGHT, 5.0 / 35.0, S_932) { A_58(); }
-	S_932('MNAL', 19 | FF_FULLBRIGHT, 5.0 / 35.0, S_933) { A_58(); }
-	S_933('MNAL', 20 | FF_FULLBRIGHT, 5.0 / 35.0, S_934) { A_76(); }
-	S_934('MNAL', 21 | FF_FULLBRIGHT, 5.0 / 35.0, S_935) { A_58(); }
-	S_935('MNAL', 22 | FF_FULLBRIGHT, 5.0 / 35.0, S_930) { A_76(); }
-	S_936('MNAL', 18 | FF_FULLBRIGHT, 4.0 / 35.0, S_937) { A_50(); }
-	S_937('MNAL', 17 | FF_FULLBRIGHT, 4.0 / 35.0, S_938) { A_77(); }
-	S_938('MNAL', 19 | FF_FULLBRIGHT, 4.0 / 35.0, S_931) { A_76(); }
-	S_939('MNAL', 22 | FF_FULLBRIGHT, 4.0 / 35.0, S_940) { A_50(); }
-	S_940('MNAL', 20 | FF_FULLBRIGHT, 4.0 / 35.0, S_941) { A_83(); }
-	S_941('MNAL', 21 | FF_FULLBRIGHT, 4.0 / 35.0, S_934) { A_76(); }
-	S_942('MNAL', 17 | FF_FULLBRIGHT, 2.0 / 35.0, S_930) { A_Pain(); }
-	S_943('MDTH', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_944) { A_Scream(); }
-	S_944('MDTH', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_945) { A_41(); }
-	S_945('MDTH', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_946) { A_Fall(); }
-	S_946('MDTH', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_947) { A_41(); }
-	S_947('MDTH', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_948) { A_41(); }
-	S_948('MDTH', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_949) { A_41(); }
-	S_949('MDTH', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_950) { A_41(); }
-	S_950('MDTH', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_951) { A_41(); }
-	S_951('MDTH', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_952) { A_41(); }
-	S_952('MDTH', 9 | FF_FULLBRIGHT, 3.0 / 35.0, S_953) { A_41(); }
-	S_953('MDTH', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_954) { A_41(); }
-	S_954('MDTH', 11 | FF_FULLBRIGHT, 3.0 / 35.0, S_955) { A_41(); }
-	S_955('MDTH', 12 | FF_FULLBRIGHT, 3.0 / 35.0, S_956) { A_41(); }
-	S_956('MDTH', 13 | FF_FULLBRIGHT, 3.0 / 35.0, S_957) { A_41(); }
-	S_957('MDTH', 14 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { A_72(); }
 	S_958('NEST', 0, -1.0, S_NULL) { }
-	S_959('PODD', 0, 60.0 / 35.0, S_959) { A_57(); }
+	S_959('PODD', 0, 60.0 / 35.0, S_959) { A_Look(); }
 	S_960('PODD', 0, 360.0 / 35.0, S_961) { }
 	S_961('PODD', 1, 9.0 / 35.0, S_962) { A_Fall(); }
 	S_962('PODD', 2, 9.0 / 35.0, S_963) { }
@@ -914,139 +354,10 @@ __states__(Actor)
 	S_992('ZOT2', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_993) { A_34(); }
 	S_993('ZOT2', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_994) { A_34(); }
 	S_994('ZOT2', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_990) { A_34(); }
-	S_995('SEWR', 0, 10.0 / 35.0, S_995) { A_57(); }
-	S_996('SEWR', 0, 6.0 / 35.0, S_997) { A_76(); }
-	S_997('SEWR', 0, 6.0 / 35.0, S_996) { A_58(); }
-	S_998('SEWR', 1, 4.0 / 35.0, S_999) { A_50(); }
-	S_999('SEWR', 2 | FF_FULLBRIGHT, 8.0 / 35.0, S_1000) { A_93(); }
-	S_1000('SEWR', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_999) { A_59(); }
-	S_1001('SEWR', 3, 5.0 / 35.0, S_1000) { A_Pain(); }
-	S_1002('SEWR', 3, 7.0 / 35.0, S_1003) { A_Fall(); }
-	S_1003('SEWR', 4 | FF_FULLBRIGHT, 8.0 / 35.0, S_1004) { A_41(); }
-	S_1004('SEWR', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_1005) { A_Scream(); }
-	S_1005('SEWR', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_1006) { A_41(); }
-	S_1006('SEWR', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_1007) { A_41(); }
-	S_1007('SEWR', 8, 4.0 / 35.0, S_1008) { }
-	S_1008('SEWR', 9, 5.0 / 35.0, S_NULL) { }
-	S_1009('SPID', 0, 1.0 / 35.0, S_1009) { A_94(); }
-	S_1010('SPID', 0, 10.0 / 35.0, S_1010) { A_57(); }
-	S_1011('SPID', 9, 10.0 / 35.0, S_1011) { A_57(); }
-	S_1012('SPID', 0, 1.0 / 35.0, S_1013) { A_95(); }
-	S_1013('SPID', 0, 3.0 / 35.0, S_1014) { A_58(); }
-	S_1014('SPID', 1, 3.0 / 35.0, S_1015) { A_58(); }
-	S_1015('SPID', 1, 3.0 / 35.0, S_1016) { A_58(); }
-	S_1016('SPID', 2, 3.0 / 35.0, S_1017) { A_96(); }
-	S_1017('SPID', 2, 3.0 / 35.0, S_1012) { A_58(); }
-	S_1018('SPID', 9, 3.0 / 35.0, S_1019) { A_50(); }
-	S_1019('SPID', 10, 3.0 / 35.0, S_1027) { A_97(); }
-	S_1020('SPID', 2, 2.0 / 35.0, S_1021) { A_98(); }
-	S_1021('SPID', 8, 3.0 / 35.0, S_1022) { }
-	S_1022('SPID', 7, 3.0 / 35.0, S_1023) { }
-	S_1023('SPID', 6, 3.0 / 35.0, S_1024) { }
-	S_1024('SPID', 5, 3.0 / 35.0, S_1025) { }
-	S_1025('SPID', 4, 3.0 / 35.0, S_1026) { }
-	S_1026('SPID', 3, 3.0 / 35.0, S_1018) { }
-	S_1027('SPID', 9, 3.0 / 35.0, S_1028) { A_96(); }
-	S_1028('SPID', 9, 3.0 / 35.0, S_1029) { A_58(); }
-	S_1029('SPID', 10, 3.0 / 35.0, S_1030) { A_58(); }
-	S_1030('SPID', 10, 3.0 / 35.0, S_1031) { A_58(); }
-	S_1031('SPID', 11, 3.0 / 35.0, S_1032) { A_96(); }
-	S_1032('SPID', 11, 3.0 / 35.0, S_1027) { A_58(); }
-	S_1033('SPID', 11, 1.0 / 35.0, S_1012) { A_Pain(); }
-	S_1034('SPID', 14, 4.0 / 35.0, S_1035) { }
-	S_1035('SPID', 15, 4.0 / 35.0, S_1036) { A_Scream(); }
-	S_1036('SPID', 16, 4.0 / 35.0, S_1037) { }
-	S_1037('SPID', 17, 4.0 / 35.0, S_1038) { }
-	S_1038('SPID', 18, 4.0 / 35.0, S_1039) { }
-	S_1039('SPID', 19, 4.0 / 35.0, S_1040) { }
-	S_1040('SPID', 20, 4.0 / 35.0, S_1041) { A_Fall(); }
-	S_1041('SPID', 21, 4.0 / 35.0, S_1042) { }
-	S_1042('SPID', 22, 4.0 / 35.0, S_1043) { }
-	S_1043('SPID', 23 | FF_FULLBRIGHT, 4.0 / 35.0, S_1044) { }
-	S_1044('SPID', 24 | FF_FULLBRIGHT, 4.0 / 35.0, S_1045) { }
-	S_1045('SPID', 25 | FF_FULLBRIGHT, 4.0 / 35.0, S_1046) { }
-	S_1046('SPID', 26 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
-	S_1047('ROB3', 0, 10.0 / 35.0, S_1048) { A_57(); }
-	S_1048('ROB3', 1, 10.0 / 35.0, S_1047) { A_57(); }
-	S_1049('ROB3', 1, 3.0 / 35.0, S_1050) { A_99(); }
-	S_1050('ROB3', 1, 3.0 / 35.0, S_1051) { A_58(); }
-	S_1051('ROB3', 2, 4.0 / 35.0, S_1052) { A_58(); }
-	S_1052('ROB3', 2, 4.0 / 35.0, S_1053) { A_58(); }
-	S_1053('ROB3', 3, 4.0 / 35.0, S_1054) { A_58(); }
-	S_1054('ROB3', 3, 4.0 / 35.0, S_1055) { A_58(); }
-	S_1055('ROB3', 4, 3.0 / 35.0, S_1056) { A_99(); }
-	S_1056('ROB3', 4, 3.0 / 35.0, S_1049) { A_100(); }
-	S_1057('ROB3', 0, 2.0 / 35.0, S_1058) { A_100(); }
-	S_1058('ROB3', 5, 6.0 / 35.0, S_1059) { A_50(); }
-	S_1059('ROB3', 6 | FF_FULLBRIGHT, 8.0 / 35.0, S_1060) { A_63(); }
-	S_1060('ROB3', 6, 8.0 / 35.0, S_1049) { A_63(); }
-	S_1061('ROB3', 10, 12.0 / 35.0, S_1062) { A_50(); }
-	S_1062('ROB3', 9 | FF_FULLBRIGHT, 6.0 / 35.0, S_1063) { A_101(); }
-	S_1063('ROB3', 10, 12.0 / 35.0, S_1049) { }
-	S_1064('ROB3', 7 | FF_FULLBRIGHT, 8.0 / 35.0, S_1065) { A_102(); }
-	S_1065('ROB3', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_1066) { A_103(); }
-	S_1066('ROB3', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_1065) { A_103(); }
-	S_1067('ROB3', 11, 4.0 / 35.0, S_1068) { A_41(); }
-	S_1068('ROB3', 12, 4.0 / 35.0, S_1069) { A_Scream(); }
-	S_1069('ROB3', 13, 4.0 / 35.0, S_1070) { A_41(); }
-	S_1070('ROB3', 14 | FF_FULLBRIGHT, 4.0 / 35.0, S_1071) { A_29(); }
-	S_1071('ROB3', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_1072) { A_41(); }
-	S_1072('ROB3', 16 | FF_FULLBRIGHT, 4.0 / 35.0, S_1073) { A_Fall(); }
-	S_1073('ROB3', 17, 4.0 / 35.0, S_1074) { A_41(); }
-	S_1074('ROB3', 18, 4.0 / 35.0, S_1075) { A_41(); }
-	S_1075('ROB3', 19, 4.0 / 35.0, S_1076) { A_41(); }
-	S_1076('ROB3', 20, 4.0 / 35.0, S_1077) { A_41(); }
-	S_1077('ROB3', 21, 4.0 / 35.0, S_1078) { A_41(); }
-	S_1078('ROB3', 22 | FF_FULLBRIGHT, 4.0 / 35.0, S_1079) { A_29(); }
-	S_1079('ROB3', 23 | FF_FULLBRIGHT, 4.0 / 35.0, S_1080) { A_41(); }
-	S_1080('ROB3', 24 | FF_FULLBRIGHT, 4.0 / 35.0, S_1081) { A_41(); }
-	S_1081('ROB3', 25, 4.0 / 35.0, S_1082) { A_41(); }
-	S_1082('ROB3', 26, 4.0 / 35.0, S_1083) { A_41(); }
-	S_1083('ROB3', 27, 3.0 / 35.0, S_1084) { A_41(); }
-	S_1084('ROB3', 28 | FF_FULLBRIGHT, 3.0 / 35.0, S_1085) { A_29(); }
-	S_1085('RBB3', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_1086) { A_104(); }
-	S_1086('RBB3', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_1087) { A_41(); }
-	S_1087('RBB3', 2, 3.0 / 35.0, S_1088) { A_41(); }
-	S_1088('RBB3', 3, 3.0 / 35.0, S_1089) { A_41(); }
-	S_1089('RBB3', 4, -1.0, S_NULL) { A_72(); }
 	S_1090('RBB3', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_1091) { }
 	S_1091('RBB3', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_1092) { }
 	S_1092('RBB3', 7, -1.0, S_NULL) { }
-	S_1093('PRGR', 0, 5.0 / 35.0, S_1094) { A_57(); }
-	S_1094('PRGR', 0, 1.0 / 35.0, S_1093) { A_76(); }
-	S_1095('PRGR', 0, 160.0 / 35.0, S_1096) { A_76(); }
-	S_1096('PRGR', 1, 5.0 / 35.0, S_1097) { A_76(); }
-	S_1097('PRGR', 2, 5.0 / 35.0, S_1098) { A_76(); }
-	S_1098('PRGR', 3, 5.0 / 35.0, S_1099) { A_76(); }
-	S_1099('PRGR', 4, 2.0 / 35.0, S_1100) { A_76(); }
-	S_1100('PRGR', 5, 2.0 / 35.0, S_1101) { A_76(); }
-	S_1101('PRGR', 4, 3.0 / 35.0, S_1102) { A_58(); }
-	S_1102('PRGR', 5, 3.0 / 35.0, S_1099) { A_58(); }
-	S_1103('PRGR', 4, 2.0 / 35.0, S_1104) { A_76(); }
-	S_1104('PRGR', 5, 3.0 / 35.0, S_1105) { A_76(); }
-	S_1105('PRGR', 4, 3.0 / 35.0, S_1106) { A_50(); }
-	S_1106('PRGR', 5, 4.0 / 35.0, S_1099) { A_105(); }
-	S_1107('PRGR', 6, 5.0 / 35.0, S_1108) { A_50(); }
-	S_1108('PRGR', 7, 5.0 / 35.0, S_1109) { A_76(); }
-	S_1109('PRGR', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_1110) { A_50(); }
-	S_1110('PRGR', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_1099) { A_80(); }
-	S_1111('PRGR', 10, 5.0 / 35.0, S_1112) { A_Pain(); }
-	S_1112('PRGR', 11, 5.0 / 35.0, S_1099) { A_76(); }
-	S_1113('PRGR', 11 | FF_FULLBRIGHT, 7.0 / 35.0, S_1114) { A_41(); }
-	S_1114('PRGR', 12 | FF_FULLBRIGHT, 7.0 / 35.0, S_1115) { A_Scream(); }
-	S_1115('PRGR', 13 | FF_FULLBRIGHT, 7.0 / 35.0, S_1116) { A_41(); }
-	S_1116('PRGR', 14 | FF_FULLBRIGHT, 7.0 / 35.0, S_1117) { A_Fall(); }
-	S_1117('PRGR', 15 | FF_FULLBRIGHT, 7.0 / 35.0, S_1118) { A_41(); }
-	S_1118('PRGR', 16 | FF_FULLBRIGHT, 7.0 / 35.0, S_1119) { A_106(); }
-	S_1119('PRGR', 17 | FF_FULLBRIGHT, 7.0 / 35.0, S_1120) { }
-	S_1120('PRGR', 18 | FF_FULLBRIGHT, 6.0 / 35.0, S_1121) { }
-	S_1121('PRGR', 19 | FF_FULLBRIGHT, 5.0 / 35.0, S_1122) { }
-	S_1122('PRGR', 20 | FF_FULLBRIGHT, 5.0 / 35.0, S_1123) { }
-	S_1123('PRGR', 21 | FF_FULLBRIGHT, 5.0 / 35.0, S_1124) { }
-	S_1124('PRGR', 22 | FF_FULLBRIGHT, 5.0 / 35.0, S_1125) { }
-	S_1125('PRGR', 23 | FF_FULLBRIGHT, 32.0 / 35.0, S_1126) { }
-	S_1126('PRGR', 23 | FF_FULLBRIGHT, -1.0, S_NULL) { A_72(); }
-	S_1127('BASE', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_1128) { A_24(); }
+	S_1127('BASE', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_1128) { A_Unknown24(); }
 	S_1128('BASE', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_1129) { }
 	S_1129('BASE', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_1130) { }
 	S_1130('BASE', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_1131) { }
@@ -1063,27 +374,16 @@ __states__(Actor)
 	S_1141('FRBL', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_1142) { }
 	S_1142('FRBL', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_1143) { }
 	S_1143('FRBL', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
-	S_1144('KLAX', 0, 5.0 / 35.0, S_1144) { A_108(); }
+	S_1144('KLAX', 0, 5.0 / 35.0, S_1144) { A_CheckAlarm(); }
 	S_1145('KLAX', 1, 6.0 / 35.0, S_1146) { A_109(); }
 	S_1146('KLAX', 2, 60.0 / 35.0, S_1145) { }
-	S_1147('TURT', 0, 5.0 / 35.0, S_1147) { A_108(); }
-	S_1148('TURT', 0, 2.0 / 35.0, S_1148) { A_58(); }
-	S_1149('TURT', 1, 4.0 / 35.0, S_1150) { A_60(); }
-	S_1150('TURT', 3, 3.0 / 35.0, S_1151) { A_59(); }
-	S_1151('TURT', 0, 4.0 / 35.0, S_1149) { A_59(); }
-	S_1152('BALL', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_1153) { }
-	S_1153('BALL', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_1154) { }
-	S_1154('BALL', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_1155) { }
-	S_1155('BALL', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_1156) { }
-	S_1156('BALL', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_1157) { }
-	S_1157('TURT', 2, -1.0, S_NULL) { }
 	S_1158('PSTN', 0, 8.0 / 35.0, S_1159) { }
 	S_1159('PSTN', 1, 8.0 / 35.0, S_1158) { }
 	S_1160('PSTN', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_1161) { A_Scream(); }
 	S_1161('PSTN', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_1162) { A_Fall(); }
 	S_1162('PSTN', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_1163) { A_110(); }
 	S_1163('PSTN', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_1164) { A_111(); }
-	S_1164('PSTN', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_1165) { A_41(); }
+	S_1164('PSTN', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_1165) { A_XDying(); }
 	S_1165('PSTN', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_1166) { }
 	S_1166('PSTN', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_1167) { A_111(); }
 	S_1167('PSTN', 7, 4.0 / 35.0, S_1168) { }
@@ -1095,7 +395,7 @@ __states__(Actor)
 	S_1173('SECR', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_1174) { A_111(); }
 	S_1174('SECR', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_1175) { A_Fall(); }
 	S_1175('SECR', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_1176) { A_110(); }
-	S_1176('SECR', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_1177) { A_41(); }
+	S_1176('SECR', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_1177) { A_XDying(); }
 	S_1177('SECR', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_1178) { A_111(); }
 	S_1178('SECR', 9, 5.0 / 35.0, S_1179) { }
 	S_1179('SECR', 10, 5.0 / 35.0, S_1180) { A_111(); }
@@ -1135,15 +435,8 @@ __states__(Actor)
 	S_1213('BOOM', 22 | FF_FULLBRIGHT, 3.0 / 35.0, S_1214) { }
 	S_1214('BOOM', 23 | FF_FULLBRIGHT, 3.0 / 35.0, S_1215) { }
 	S_1215('BOOM', 24 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
-	S_1216('RATT', 0, 10.0 / 35.0, S_1216) { A_57(); }
-	S_1217('RATT', 0, 4.0 / 35.0, S_1218) { A_58(); }
-	S_1218('RATT', 0, 4.0 / 35.0, S_1219) { A_58(); }
-	S_1219('RATT', 1, 4.0 / 35.0, S_1220) { A_58(); }
-	S_1220('RATT', 1, 4.0 / 35.0, S_1217) { A_58(); }
-	S_1221('RATT', 0, 8.0 / 35.0, S_1222) { A_48(); }
-	S_1222('RATT', 1, 4.0 / 35.0, S_1217) { A_48(); }
-	S_1223('HOGN', 0, 2.0 / 35.0, S_1223) { A_52(); }
-	S_1224('HOGN', 1, 1.0 / 35.0, S_1225) { A_52(); }
+	S_1223('HOGN', 0, 2.0 / 35.0, S_1223) { A_ResetHealth(); }
+	S_1224('HOGN', 1, 1.0 / 35.0, S_1225) { A_ResetHealth(); }
 	S_1225('HOGN', 2, 1.0 / 35.0, S_1223) { A_Pain(); }
 	S_1226('DEAD', 0, -1.0, S_NULL) { }
 	S_1227('SBAN', 0, -1.0, S_NULL) { }
@@ -1153,39 +446,39 @@ __states__(Actor)
 	S_1231('COUP', 0, 5.0 / 35.0, S_1232) { }
 	S_1232('COUP', 1, 5.0 / 35.0, S_1231) { }
 	S_1233('COUP', 2, -1.0, S_1232) { }
-	S_1234('BUBB', 0, 4.0 / 35.0, S_1234) { A_35(); }
-	S_1235('BUBF', 0, 4.0 / 35.0, S_1235) { A_35(); }
-	S_1236('BUBC', 0, 4.0 / 35.0, S_1236) { A_35(); }
-	S_1237('ASPR', 0, 4.0 / 35.0, S_1237) { A_35(); }
-	S_1238('SPDL', 0, 5.0 / 35.0, S_1239) { A_35(); }
-	S_1239('SPDL', 1, 5.0 / 35.0, S_1240) { A_35(); }
-	S_1240('SPDL', 2, 5.0 / 35.0, S_1238) { A_35(); }
+	S_1234('BUBB', 0, 4.0 / 35.0, S_1234) { A_ActiveSound(); }
+	S_1235('BUBF', 0, 4.0 / 35.0, S_1235) { A_ActiveSound(); }
+	S_1236('BUBC', 0, 4.0 / 35.0, S_1236) { A_ActiveSound(); }
+	S_1237('ASPR', 0, 4.0 / 35.0, S_1237) { A_ActiveSound(); }
+	S_1238('SPDL', 0, 5.0 / 35.0, S_1239) { A_ActiveSound(); }
+	S_1239('SPDL', 1, 5.0 / 35.0, S_1240) { A_ActiveSound(); }
+	S_1240('SPDL', 2, 5.0 / 35.0, S_1238) { A_ActiveSound(); }
 	S_1241('TOKN', 0, -1.0, S_NULL) { }
 	S_1242('OTOK', 0, -1.0, S_NULL) { }
 	S_1243('HELT', 0, -1.0, S_NULL) { }
 	S_1244('GUNT', 0, -1.0, S_NULL) { }
 	S_1245('FULL', 0, 35.0 / 35.0, S_1246) { }
 	S_1246('FULL', 1, 35.0 / 35.0, S_1245) { }
-	S_1247('MEAT', 0, 700.0 / 35.0, S_NULL) { }
-	S_1248('MEAT', 1, 700.0 / 35.0, S_NULL) { }
-	S_1249('MEAT', 2, 700.0 / 35.0, S_NULL) { }
-	S_1250('MEAT', 3, 700.0 / 35.0, S_NULL) { }
-	S_1251('MEAT', 4, 700.0 / 35.0, S_NULL) { }
-	S_1252('MEAT', 5, 700.0 / 35.0, S_NULL) { }
-	S_1253('MEAT', 6, 700.0 / 35.0, S_NULL) { }
-	S_1254('MEAT', 7, 700.0 / 35.0, S_NULL) { }
-	S_1255('MEAT', 8, 700.0 / 35.0, S_NULL) { }
-	S_1256('MEAT', 9, 700.0 / 35.0, S_NULL) { }
-	S_1257('MEAT', 10, 700.0 / 35.0, S_NULL) { }
-	S_1258('MEAT', 11, 700.0 / 35.0, S_NULL) { }
-	S_1259('MEAT', 12, 700.0 / 35.0, S_NULL) { }
-	S_1260('MEAT', 13, 700.0 / 35.0, S_NULL) { }
-	S_1261('MEAT', 14, 700.0 / 35.0, S_NULL) { }
-	S_1262('MEAT', 15, 700.0 / 35.0, S_NULL) { }
-	S_1263('MEAT', 16, 700.0 / 35.0, S_NULL) { }
-	S_1264('MEAT', 17, 700.0 / 35.0, S_NULL) { }
-	S_1265('MEAT', 18, 700.0 / 35.0, S_NULL) { }
-	S_1266('MEAT', 19, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_1('MEAT', 0, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_2('MEAT', 1, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_3('MEAT', 2, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_4('MEAT', 3, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_5('MEAT', 4, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_6('MEAT', 5, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_7('MEAT', 6, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_8('MEAT', 7, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_9('MEAT', 8, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_10('MEAT', 9, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_11('MEAT', 10, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_12('MEAT', 11, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_13('MEAT', 12, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_14('MEAT', 13, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_15('MEAT', 14, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_16('MEAT', 15, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_17('MEAT', 16, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_18('MEAT', 17, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_19('MEAT', 18, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_20('MEAT', 19, 700.0 / 35.0, S_NULL) { }
 	S_1267('JUNK', 0, 700.0 / 35.0, S_NULL) { }
 	S_1268('JUNK', 1, 700.0 / 35.0, S_NULL) { }
 	S_1269('JUNK', 2, 700.0 / 35.0, S_NULL) { }
@@ -1229,7 +522,7 @@ __states__(Actor)
 	S_1307('BART', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_1308) { }
 	S_1308('BART', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_1309) { }
 	S_1309('BART', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_1310) { A_Fall(); }
-	S_1310('BART', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_1311) { A_37(); }
+	S_1310('BART', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_1311) { A_Explode(); }
 	S_1311('BART', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_1312) { }
 	S_1312('BART', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_1313) { }
 	S_1313('BART', 8 | FF_FULLBRIGHT, 2.0 / 35.0, S_1314) { }
@@ -1277,12 +570,12 @@ __states__(Actor)
 	S_1355('KY2S', 0, -1.0, S_NULL) { }
 	S_1356('KY3B', 0, -1.0, S_NULL) { }
 	S_1357('HAND', 0, -1.0, S_NULL) { }
-	S_1358('CRYS', 0, 16.0 / 35.0, S_1359) { A_35(); }
-	S_1359('CRYS', 1, 5.0 / 35.0, S_1360) { A_35(); }
-	S_1360('CRYS', 2, 4.0 / 35.0, S_1361) { A_35(); }
-	S_1361('CRYS', 3, 4.0 / 35.0, S_1362) { A_35(); }
-	S_1362('CRYS', 4, 4.0 / 35.0, S_1363) { A_35(); }
-	S_1363('CRYS', 5, 4.0 / 35.0, S_1358) { A_35(); }
+	S_1358('CRYS', 0, 16.0 / 35.0, S_1359) { A_ActiveSound(); }
+	S_1359('CRYS', 1, 5.0 / 35.0, S_1360) { A_ActiveSound(); }
+	S_1360('CRYS', 2, 4.0 / 35.0, S_1361) { A_ActiveSound(); }
+	S_1361('CRYS', 3, 4.0 / 35.0, S_1362) { A_ActiveSound(); }
+	S_1362('CRYS', 4, 4.0 / 35.0, S_1363) { A_ActiveSound(); }
+	S_1363('CRYS', 5, 4.0 / 35.0, S_1358) { A_ActiveSound(); }
 	S_1364('PRIS', 0, -1.0, S_NULL) { }
 	S_1365('PWR1', 0, -1.0, S_NULL) { }
 	S_1366('PWR2', 0, -1.0, S_NULL) { }
@@ -1308,10 +601,10 @@ __states__(Actor)
 	S_1386('CRED', 0, -1.0, S_NULL) { }
 	S_1387('SACK', 0, -1.0, S_NULL) { }
 	S_1388('CHST', 0, -1.0, S_NULL) { }
-	S_1389('SHD1', 0, 17.0 / 35.0, S_1390) { A_56(); }
-	S_1390('SHD1', 0, 17.0 / 35.0, S_1391) { A_64(); }
-	S_1391('SHD1', 0, 17.0 / 35.0, S_1392) { A_55(); }
-	S_1392('SHD1', 0, 17.0 / 35.0, S_1389) { A_64(); }
+	S_1389('SHD1', 0, 17.0 / 35.0, S_1390) { A_Unknown56(); }
+	S_1390('SHD1', 0, 17.0 / 35.0, S_1391) { A_Unknown64(); }
+	S_1391('SHD1', 0, 17.0 / 35.0, S_1392) { A_Unknown55(); }
+	S_1392('SHD1', 0, 17.0 / 35.0, S_1389) { A_Unknown64(); }
 	S_1393('MASK', 0, -1.0, S_NULL) { }
 	S_1394('UNIF', 0, -1.0, S_NULL) { }
 	S_1395('OFIC', 0, -1.0, S_NULL) { }
@@ -1356,10 +649,10 @@ __states__(Actor)
 	S_1434('ROK2', 0, -1.0, S_NULL) { }
 	S_1435('ROK3', 0, -1.0, S_NULL) { }
 	S_1436('ROK4', 0, -1.0, S_NULL) { }
-	S_1437('LOGG', 0, 5.0 / 35.0, S_1438) { A_35(); }
-	S_1438('LOGG', 1, 5.0 / 35.0, S_1439) { A_35(); }
-	S_1439('LOGG', 2, 5.0 / 35.0, S_1440) { A_35(); }
-	S_1440('LOGG', 3, 5.0 / 35.0, S_1437) { A_35(); }
+	S_1437('LOGG', 0, 5.0 / 35.0, S_1438) { A_ActiveSound(); }
+	S_1438('LOGG', 1, 5.0 / 35.0, S_1439) { A_ActiveSound(); }
+	S_1439('LOGG', 2, 5.0 / 35.0, S_1440) { A_ActiveSound(); }
+	S_1440('LOGG', 3, 5.0 / 35.0, S_1437) { A_ActiveSound(); }
 	S_1441('RUB1', 0, -1.0, S_NULL) { }
 	S_1442('RUB2', 0, -1.0, S_NULL) { }
 	S_1443('RUB3', 0, -1.0, S_NULL) { }
@@ -1390,15 +683,15 @@ __states__(Actor)
 	S_1468('TLMP', 0, -1.0, S_NULL) { }
 	S_1469('TLMP', 1, -1.0, S_NULL) { }
 	S_1470('TRAY', 0, -1.0, S_NULL) { }
-	S_1471('APOW', 0, 4.0 / 35.0, S_1471) { A_35(); }
+	S_1471('APOW', 0, 4.0 / 35.0, S_1471) { A_ActiveSound(); }
 	S_1472('AFED', 0, -1.0, S_NULL) { }
-	S_1473('DRIP', 0, 6.0 / 35.0, S_1474) { A_35(); }
+	S_1473('DRIP', 0, 6.0 / 35.0, S_1474) { A_ActiveSound(); }
 	S_1474('DRIP', 1, 4.0 / 35.0, S_1475) { }
 	S_1475('DRIP', 2, 4.0 / 35.0, S_1476) { }
-	S_1476('DRIP', 3, 4.0 / 35.0, S_1477) { A_35(); }
+	S_1476('DRIP', 3, 4.0 / 35.0, S_1477) { A_ActiveSound(); }
 	S_1477('DRIP', 4, 4.0 / 35.0, S_1478) { }
 	S_1478('DRIP', 5, 4.0 / 35.0, S_1479) { }
-	S_1479('DRIP', 6, 4.0 / 35.0, S_1480) { A_35(); }
+	S_1479('DRIP', 6, 4.0 / 35.0, S_1480) { A_ActiveSound(); }
 	S_1480('DRIP', 7, 4.0 / 35.0, S_1473) { }
 	S_1481('CDRP', 0, 10.0 / 35.0, S_1482) { }
 	S_1482('CDRP', 1, 8.0 / 35.0, S_1483) { }
@@ -1411,11 +704,11 @@ __states__(Actor)
 	S_1489('SPLH', 4, 4.0 / 35.0, S_1490) { }
 	S_1490('SPLH', 5, 4.0 / 35.0, S_1491) { }
 	S_1491('SPLH', 6, 4.0 / 35.0, S_1492) { }
-	S_1492('SPLH', 7, 4.0 / 35.0, S_1485) { A_35(); }
+	S_1492('SPLH', 7, 4.0 / 35.0, S_1485) { A_ActiveSound(); }
 	S_1493('WTFT', 0, 4.0 / 35.0, S_1494) { }
 	S_1494('WTFT', 1, 4.0 / 35.0, S_1495) { }
 	S_1495('WTFT', 2, 4.0 / 35.0, S_1496) { }
-	S_1496('WTFT', 3, 4.0 / 35.0, S_1493) { A_35(); }
+	S_1496('WTFT', 3, 4.0 / 35.0, S_1493) { A_ActiveSound(); }
 	S_1497('HERT', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_1498) { }
 	S_1498('HERT', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_1499) { }
 	S_1499('HERT', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_1497) { }
@@ -1442,9 +735,12 @@ __states__(Actor)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/04/27 17:04:55  dj_jl
+//	Merged all creatures.
+//
 //	Revision 1.9  2002/04/22 17:22:32  dj_jl
 //	Retail Strife data.
-//
+//	
 //	Revision 1.8  2002/03/02 17:37:22  dj_jl
 //	Weapon classes
 //	
