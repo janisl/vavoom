@@ -61,12 +61,9 @@ void mobj_t::Archive(void)
 	corpse = Flags & MF_CORPSE;
 	if (corpse)
 	{
-		target = &Actor(MobjToNum(none));
+		target = NULL;
 	}
-	else
-	{
-		target = &Actor(MobjToNum(*target));
-	}
+	MobjToNum(&target);
 
 	switch (Class)
 	{
@@ -81,12 +78,9 @@ void mobj_t::Archive(void)
 	case MageStaffFX2:
 		if (corpse)
 		{
-			specialmobj1 = &Actor(MobjToNum(none));
+			specialmobj1 = NULL;
 		}
-		else
-		{
-			specialmobj1 = &Actor(MobjToNum(*specialmobj1));
-		}
+		MobjToNum(&specialmobj1);
 		break;
 
 		// Just specialmobj2
@@ -94,12 +88,9 @@ void mobj_t::Archive(void)
 	case LightningZap:
 		if (corpse)
 		{
-			specialmobj2 = &Actor(MobjToNum(none));
+			specialmobj2 = NULL;
 		}
-		else
-		{
-			specialmobj2 = &Actor(MobjToNum(*specialmobj2));
-		}
+		MobjToNum(&specialmobj2);
 		break;
 
 		// Both specialmobj1 and specialmobj2
@@ -107,13 +98,13 @@ void mobj_t::Archive(void)
 	case LightningCeiling:
 		if (corpse)
 		{
-			specialmobj1 = &Actor(MobjToNum(none));
-			specialmobj2 = &Actor(MobjToNum(none));
+			specialmobj1 = NULL;
+			specialmobj2 = NULL;
 		}
 		else
 		{
-			specialmobj1 = &Actor(MobjToNum(*specialmobj1));
-			specialmobj2 = &Actor(MobjToNum(*specialmobj2));
+			MobjToNum(&specialmobj1);
+			MobjToNum(&specialmobj2);
 		}
 		break;
 
@@ -136,7 +127,7 @@ void mobj_t::Archive(void)
 
 void mobj_t::Unarchive(void)
 {
-	target = &Actor(NumToMobj(*target));
+	NumToMobj(&target);
 	switch (Class)
 	{
 		// Just specialmobj1
@@ -147,20 +138,20 @@ void mobj_t::Unarchive(void)
 	case ThrustFloorDown:
 	case Minotaur:
 	case SorcererFX1:
-		specialmobj1 = &Actor(NumToMobj(*specialmobj1));
+		NumToMobj(&specialmobj1);
 		break;
 
 		// Just special2
 	case LightningFloor:
 	case LightningZap:
-		specialmobj2 = &Actor(NumToMobj(*specialmobj2));
+		NumToMobj(&specialmobj2);
 		break;
 
 		// Both special1 and special2
 	case HolyTail:
 	case LightningCeiling:
-		specialmobj1 = &Actor(NumToMobj(*specialmobj1));
-		specialmobj2 = &Actor(NumToMobj(*specialmobj2));
+		NumToMobj(&specialmobj1);
+		NumToMobj(&specialmobj2);
 		break;
 
 	default:
@@ -177,6 +168,9 @@ void mobj_t::Unarchive(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/29 18:08:56  dj_jl
+//  Fixed saving
+//
 //  Revision 1.10  2002/01/28 18:50:19  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

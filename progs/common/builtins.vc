@@ -460,8 +460,8 @@ native void PolyobjStopSequence(polyobj_t * mobj);
 
 native sector_t *SectorToNum(sector_t * sector);
 native sector_t *NumToSector(sector_t * sector);
-native MapObject MobjToNum(MapObject mobj);
-native MapObject NumToMobj(MapObject mobj);
+native void MobjToNum(void *mobj);
+native void NumToMobj(void *mobj);
 native classid ClassIDToNum(classid cid);
 native classid NumToClassID(classid cid);
 native name UnarchiveName(name Name);
@@ -491,6 +491,9 @@ native void MSG_SelectClientMsg(int msgtype, player_t * client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2002/01/29 18:08:54  dj_jl
+//  Fixed saving
+//
 //  Revision 1.28  2002/01/28 18:50:17  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

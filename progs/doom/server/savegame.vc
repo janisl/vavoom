@@ -52,8 +52,8 @@ void UnarchivePlayer(player_t * player)
 
 void Actor::Archive(void)
 {
-	tracer = &Actor(MobjToNum(*tracer));
-	target = &Actor(MobjToNum(*target));
+	MobjToNum(&tracer);
+	MobjToNum(&target);
 }
 
 //==========================================================================
@@ -64,8 +64,8 @@ void Actor::Archive(void)
 
 void Actor::Unarchive(void)
 {
-	tracer = &Actor(NumToMobj(*tracer));
-	target = &Actor(NumToMobj(*target));
+	NumToMobj(&tracer);
+	NumToMobj(&target);
 	SightSound = UnarchiveName(SightSound);
 	ActiveSound = UnarchiveName(ActiveSound);
 	AttackSound = UnarchiveName(AttackSound);
@@ -76,6 +76,9 @@ void Actor::Unarchive(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/29 18:08:56  dj_jl
+//  Fixed saving
+//
 //  Revision 1.8  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.
