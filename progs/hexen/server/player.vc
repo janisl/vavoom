@@ -1,0 +1,279 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+//**************************************************************************
+//**************************************************************************
+//
+//	PlayerFighter
+//
+//**************************************************************************
+//**************************************************************************
+
+class PlayerFighter:PlayerPawn
+{
+
+__states__
+{
+	S_FPLAY('PLAY', 0, -1.0, S_NULL) { }
+	S_FPLAY_RUN1('PLAY', 0, 4.0 / 35.0, S_FPLAY_RUN2) { }
+	S_FPLAY_RUN2('PLAY', 1, 4.0 / 35.0, S_FPLAY_RUN3) { }
+	S_FPLAY_RUN3('PLAY', 2, 4.0 / 35.0, S_FPLAY_RUN4) { }
+	S_FPLAY_RUN4('PLAY', 3, 4.0 / 35.0, S_FPLAY_RUN1) { }
+	S_FPLAY_ATK1('PLAY', 4, 8.0 / 35.0, S_FPLAY_ATK2) { }
+	S_FPLAY_ATK2('PLAY', 5, 8.0 / 35.0, S_FPLAY) { }
+	S_FPLAY_PAIN('PLAY', 6, 4.0 / 35.0, S_FPLAY_PAIN2) { }
+	S_FPLAY_PAIN2('PLAY', 6, 4.0 / 35.0, S_FPLAY) { A_Pain(); }
+	S_FPLAY_DIE1('PLAY', 7, 6.0 / 35.0, S_FPLAY_DIE2) { }
+	S_FPLAY_DIE2('PLAY', 8, 6.0 / 35.0, S_FPLAY_DIE3) { A_Scream(); }
+	S_FPLAY_DIE3('PLAY', 9, 6.0 / 35.0, S_FPLAY_DIE4) { }
+	S_FPLAY_DIE4('PLAY', 10, 6.0 / 35.0, S_FPLAY_DIE5) { }
+	S_FPLAY_DIE5('PLAY', 11, 6.0 / 35.0, S_FPLAY_DIE6) { A_NoBlocking(); }
+	S_FPLAY_DIE6('PLAY', 12, 6.0 / 35.0, S_FPLAY_DIE7) { }
+	S_FPLAY_DIE7('PLAY', 13, -1.0, S_NULL) { A_AddPlayerCorpse(); }
+	S_FPLAY_XDIE1('PLAY', 14, 5.0 / 35.0, S_FPLAY_XDIE2) { A_Scream(); }
+	S_FPLAY_XDIE2('PLAY', 15, 5.0 / 35.0, S_FPLAY_XDIE3) { A_SkullPop(); }
+	S_FPLAY_XDIE3('PLAY', 17, 5.0 / 35.0, S_FPLAY_XDIE4) { A_NoBlocking(); }
+	S_FPLAY_XDIE4('PLAY', 18, 5.0 / 35.0, S_FPLAY_XDIE5) { }
+	S_FPLAY_XDIE5('PLAY', 19, 5.0 / 35.0, S_FPLAY_XDIE6) { }
+	S_FPLAY_XDIE6('PLAY', 20, 5.0 / 35.0, S_FPLAY_XDIE7) { }
+	S_FPLAY_XDIE7('PLAY', 21, 5.0 / 35.0, S_FPLAY_XDIE8) { }
+	S_FPLAY_XDIE8('PLAY', 22, -1.0, S_NULL) { A_AddPlayerCorpse(); }
+	S_FPLAY_ICE('PLAY', 23, 5.0 / 35.0, S_FPLAY_ICE2) { A_FreezeDeath(); }
+	S_FPLAY_ICE2('PLAY', 23, 1.0 / 35.0, S_FPLAY_ICE2) { A_FreezeDeathChunks(); }
+}
+
+defaultproperties
+{
+	Health = 100;
+	GibsHealth = -50;
+	Radius = 16.0;
+	Height = 64.0;
+	Mass = 100.0;
+	PainChance = 255;
+	bPickUp = true;
+	SpawnState = S_FPLAY;
+	SeeState = S_FPLAY_RUN1;
+	MissileState = S_FPLAY_ATK1;
+	AttackEndState = S_FPLAY_ATK2;
+	PainState = S_FPLAY_PAIN;
+	DeathState = S_FPLAY_DIE1;
+	GibsDeathState = S_FPLAY_XDIE1;
+	IceDeathState = S_FPLAY_ICE;
+	PainSound = 'PlayerFighterPain';
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	PlayerCleric
+//
+//**************************************************************************
+//**************************************************************************
+
+class PlayerCleric:PlayerPawn
+{
+
+__states__
+{
+	S_CPLAY('CLER', 0, -1.0, S_NULL) { }
+	S_CPLAY_RUN1('CLER', 0, 4.0 / 35.0, S_CPLAY_RUN2) { }
+	S_CPLAY_RUN2('CLER', 1, 4.0 / 35.0, S_CPLAY_RUN3) { }
+	S_CPLAY_RUN3('CLER', 2, 4.0 / 35.0, S_CPLAY_RUN4) { }
+	S_CPLAY_RUN4('CLER', 3, 4.0 / 35.0, S_CPLAY_RUN1) { }
+	S_CPLAY_ATK1('CLER', 4, 6.0 / 35.0, S_CPLAY_ATK2) { }
+	S_CPLAY_ATK2('CLER', 5, 6.0 / 35.0, S_CPLAY_ATK3) { }
+	S_CPLAY_ATK3('CLER', 6, 6.0 / 35.0, S_CPLAY) { }
+	S_CPLAY_PAIN('CLER', 7, 4.0 / 35.0, S_CPLAY_PAIN2) { }
+	S_CPLAY_PAIN2('CLER', 7, 4.0 / 35.0, S_CPLAY) { A_Pain(); }
+	S_CPLAY_DIE1('CLER', 8, 6.0 / 35.0, S_CPLAY_DIE2) { }
+	S_CPLAY_DIE2('CLER', 10, 6.0 / 35.0, S_CPLAY_DIE3) { A_Scream(); }
+	S_CPLAY_DIE3('CLER', 11, 6.0 / 35.0, S_CPLAY_DIE4) { }
+	S_CPLAY_DIE4('CLER', 11, 6.0 / 35.0, S_CPLAY_DIE5) { }
+	S_CPLAY_DIE5('CLER', 12, 6.0 / 35.0, S_CPLAY_DIE6) { A_NoBlocking(); }
+	S_CPLAY_DIE6('CLER', 13, 6.0 / 35.0, S_CPLAY_DIE7) { }
+	S_CPLAY_DIE7('CLER', 14, 6.0 / 35.0, S_CPLAY_DIE8) { }
+	S_CPLAY_DIE8('CLER', 15, 6.0 / 35.0, S_CPLAY_DIE9) { }
+	S_CPLAY_DIE9('CLER', 16, -1.0, S_NULL) { A_AddPlayerCorpse(); }
+	S_CPLAY_XDIE1('CLER', 17, 5.0 / 35.0, S_CPLAY_XDIE2) { A_Scream(); }
+	S_CPLAY_XDIE2('CLER', 18, 5.0 / 35.0, S_CPLAY_XDIE3) { }
+	S_CPLAY_XDIE3('CLER', 19, 5.0 / 35.0, S_CPLAY_XDIE4) { A_NoBlocking(); }
+	S_CPLAY_XDIE4('CLER', 20, 5.0 / 35.0, S_CPLAY_XDIE5) { }
+	S_CPLAY_XDIE5('CLER', 21, 5.0 / 35.0, S_CPLAY_XDIE6) { }
+	S_CPLAY_XDIE6('CLER', 22, 5.0 / 35.0, S_CPLAY_XDIE7) { }
+	S_CPLAY_XDIE7('CLER', 23, 5.0 / 35.0, S_CPLAY_XDIE8) { }
+	S_CPLAY_XDIE8('CLER', 24, 5.0 / 35.0, S_CPLAY_XDIE9) { }
+	S_CPLAY_XDIE9('CLER', 25, 5.0 / 35.0, S_CPLAY_XDIE10) { }
+	S_CPLAY_XDIE10('CLER', 26, -1.0, S_NULL) { A_AddPlayerCorpse(); }
+	S_CPLAY_ICE('CLER', 27, 5.0 / 35.0, S_CPLAY_ICE2) { A_FreezeDeath(); }
+	S_CPLAY_ICE2('CLER', 27, 1.0 / 35.0, S_CPLAY_ICE2) { A_FreezeDeathChunks(); }
+}
+
+defaultproperties
+{
+	Health = 100;
+	GibsHealth = -50;
+	Radius = 16.0;
+	Height = 64.0;
+	Mass = 100.0;
+	PainChance = 255;
+	bPickUp = true;
+	SpawnState = S_CPLAY;
+	SeeState = S_CPLAY_RUN1;
+	MissileState = S_CPLAY_ATK1;
+	AttackEndState = S_CPLAY_ATK3;
+	PainState = S_CPLAY_PAIN;
+	DeathState = S_CPLAY_DIE1;
+	GibsDeathState = S_CPLAY_XDIE1;
+	IceDeathState = S_CPLAY_ICE;
+	PainSound = 'PlayerClericPain';
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	PlayerMage
+//
+//**************************************************************************
+//**************************************************************************
+
+class PlayerMage:PlayerPawn
+{
+
+__states__
+{
+	S_MPLAY('MAGE', 0, -1.0, S_NULL) { }
+	S_MPLAY_RUN1('MAGE', 0, 4.0 / 35.0, S_MPLAY_RUN2) { }
+	S_MPLAY_RUN2('MAGE', 1, 4.0 / 35.0, S_MPLAY_RUN3) { }
+	S_MPLAY_RUN3('MAGE', 2, 4.0 / 35.0, S_MPLAY_RUN4) { }
+	S_MPLAY_RUN4('MAGE', 3, 4.0 / 35.0, S_MPLAY_RUN1) { }
+	S_MPLAY_ATK1('MAGE', 4, 8.0 / 35.0, S_MPLAY_ATK2) { }
+	S_MPLAY_ATK2('MAGE', 5 | FF_FULLBRIGHT, 8.0 / 35.0, S_MPLAY) { }
+	S_MPLAY_PAIN('MAGE', 6, 4.0 / 35.0, S_MPLAY_PAIN2) { }
+	S_MPLAY_PAIN2('MAGE', 6, 4.0 / 35.0, S_MPLAY) { A_Pain(); }
+	S_MPLAY_DIE1('MAGE', 7, 6.0 / 35.0, S_MPLAY_DIE2) { }
+	S_MPLAY_DIE2('MAGE', 8, 6.0 / 35.0, S_MPLAY_DIE3) { A_Scream(); }
+	S_MPLAY_DIE3('MAGE', 9, 6.0 / 35.0, S_MPLAY_DIE4) { }
+	S_MPLAY_DIE4('MAGE', 10, 6.0 / 35.0, S_MPLAY_DIE5) { }
+	S_MPLAY_DIE5('MAGE', 11, 6.0 / 35.0, S_MPLAY_DIE6) { A_NoBlocking(); }
+	S_MPLAY_DIE6('MAGE', 12, 6.0 / 35.0, S_MPLAY_DIE7) { }
+	S_MPLAY_DIE7('MAGE', 13, -1.0, S_NULL) { A_AddPlayerCorpse(); }
+	S_MPLAY_XDIE1('MAGE', 14, 5.0 / 35.0, S_MPLAY_XDIE2) { A_Scream(); }
+	S_MPLAY_XDIE2('MAGE', 15, 5.0 / 35.0, S_MPLAY_XDIE3) { }
+	S_MPLAY_XDIE3('MAGE', 17, 5.0 / 35.0, S_MPLAY_XDIE4) { A_NoBlocking(); }
+	S_MPLAY_XDIE4('MAGE', 18, 5.0 / 35.0, S_MPLAY_XDIE5) { }
+	S_MPLAY_XDIE5('MAGE', 19, 5.0 / 35.0, S_MPLAY_XDIE6) { }
+	S_MPLAY_XDIE6('MAGE', 20, 5.0 / 35.0, S_MPLAY_XDIE7) { }
+	S_MPLAY_XDIE7('MAGE', 21, 5.0 / 35.0, S_MPLAY_XDIE8) { }
+	S_MPLAY_XDIE8('MAGE', 22, 5.0 / 35.0, S_MPLAY_XDIE9) { }
+	S_MPLAY_XDIE9('MAGE', 23, -1.0, S_NULL) { A_AddPlayerCorpse(); }
+	S_MPLAY_ICE('MAGE', 24, 5.0 / 35.0, S_MPLAY_ICE2) { A_FreezeDeath(); }
+	S_MPLAY_ICE2('MAGE', 24, 1.0 / 35.0, S_MPLAY_ICE2) { A_FreezeDeathChunks(); }
+}
+
+defaultproperties
+{
+	Health = 100;
+	GibsHealth = -50;
+	Radius = 16.0;
+	Height = 64.0;
+	Mass = 100.0;
+	PainChance = 255;
+	bPickUp = true;
+	SpawnState = S_MPLAY;
+	SeeState = S_MPLAY_RUN1;
+	MissileState = S_MPLAY_ATK1;
+	AttackEndState = S_MPLAY_ATK2;
+	PainState = S_MPLAY_PAIN;
+	DeathState = S_MPLAY_DIE1;
+	GibsDeathState = S_MPLAY_XDIE1;
+	IceDeathState = S_MPLAY_ICE;
+	PainSound = 'PlayerMagePain';
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	PlayerPig
+//
+//**************************************************************************
+//**************************************************************************
+
+class PlayerPig:PlayerPawn
+{
+
+__states__
+{
+	S_PIGPLAY('PIGY', 0, -1.0, S_NULL) { }
+	S_PIGPLAY_RUN1('PIGY', 0, 3.0 / 35.0, S_PIGPLAY_RUN2) { }
+	S_PIGPLAY_RUN2('PIGY', 1, 3.0 / 35.0, S_PIGPLAY_RUN3) { }
+	S_PIGPLAY_RUN3('PIGY', 2, 3.0 / 35.0, S_PIGPLAY_RUN4) { }
+	S_PIGPLAY_RUN4('PIGY', 3, 3.0 / 35.0, S_PIGPLAY_RUN1) { }
+	S_PIGPLAY_ATK1('PIGY', 0, 12.0 / 35.0, S_PIGPLAY) { }
+	S_PIGPLAY_PAIN('PIGY', 3, 4.0 / 35.0, S_PIGPLAY) { A_PigPain(); }
+	S_PIGPLAY_DIE1('PIGY', 4, 4.0 / 35.0, S_PIGPLAY_DIE2) { A_Scream(); }
+	S_PIGPLAY_DIE2('PIGY', 5, 3.0 / 35.0, S_PIGPLAY_DIE3) { A_NoBlocking(); }
+	S_PIGPLAY_DIE3('PIGY', 6, 4.0 / 35.0, S_PIGPLAY_DIE4) { A_QueueCorpse(); }
+	S_PIGPLAY_DIE4('PIGY', 7, 3.0 / 35.0, S_PIGPLAY_DIE5) { }
+	S_PIGPLAY_DIE5('PIGY', 8, 4.0 / 35.0, S_PIGPLAY_DIE6) { }
+	S_PIGPLAY_DIE6('PIGY', 9, 4.0 / 35.0, S_PIGPLAY_DIE7) { }
+	S_PIGPLAY_DIE7('PIGY', 10, 4.0 / 35.0, S_PIGPLAY_DIE8) { }
+	S_PIGPLAY_DIE8('PIGY', 11, -1.0, S_NULL) { }
+	S_PIGPLAY_ICE('PIGY', 12, 5.0 / 35.0, S_PIGPLAY_ICE2) { A_FreezeDeath(); }
+	S_PIGPLAY_ICE2('PIGY', 12, 1.0 / 35.0, S_PIGPLAY_ICE2) { A_FreezeDeathChunks(); }
+}
+
+defaultproperties
+{
+	Health = 100;
+	Radius = 16.0;
+	Height = 24.0;
+	Mass = 100.0;
+	PainChance = 255;
+	SpawnState = S_PIGPLAY;
+	SeeState = S_PIGPLAY_RUN1;
+	MissileState = S_PIGPLAY_ATK1;
+	AttackEndState = S_PIGPLAY_ATK1;
+	PainState = S_PIGPLAY_PAIN;
+	DeathState = S_PIGPLAY_DIE1;
+	IceDeathState = S_PIGPLAY_ICE;
+	PainSound = 'PigPain';
+	DeathSound = 'PigDeath';
+}
+
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/03/04 18:29:45  dj_jl
+//  Added module for player classes
+//
+//**************************************************************************
