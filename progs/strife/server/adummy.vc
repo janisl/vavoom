@@ -118,7 +118,6 @@ void Actor::A_58(void)
 }
 void Actor::A_59(void)
 {
-	A_Chase();
 }
 void Actor::A_60(void)
 {
@@ -283,6 +282,9 @@ void Actor::A_112(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/03/28 18:31:59  dj_jl
+//  Beautification.
+//
 //  Revision 1.8  2002/03/02 17:41:13  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //
