@@ -604,12 +604,8 @@ void TDirect3DDrawer::GeneratePicFromPatch(int handle)
 	patch_t *patch = (patch_t*)W_CacheLumpName(pic_list[handle].name, PU_STATIC);
 	int w = LittleShort(patch->width);
 	int h = LittleShort(patch->height);
-	int p2w = ToPowerOf2(w);
-	int p2h = ToPowerOf2(h);
-	piciw[handle] = 1.0 / (float)p2w;
-	picih[handle] = 1.0 / (float)p2h;
 
-    rgba_t *block = (rgba_t*)Z_Calloc(p2w * p2h * 4, PU_HIGH, 0);
+    rgba_t *block = (rgba_t*)Z_Calloc(w * h * 4, PU_HIGH, 0);
 	rgba_t *pal = r_palette[pic_list[handle].palnum];
 	int black = r_black_color[pic_list[handle].palnum];
 
@@ -622,20 +618,22 @@ void TDirect3DDrawer::GeneratePicFromPatch(int handle)
 	    while (column->topdelta != 0xff)
 	    {
 		    byte* source = (byte *)column + 3;
-		    rgba_t* dest = block + x + column->topdelta * p2w;
+		    rgba_t* dest = block + x + column->topdelta * w;
 			int count = column->length;
 
 	    	while (count--)
 	    	{
 				*dest = pal[*source ? *source : black];
 				source++;
-				dest += p2w;
+				dest += w;
 	    	}
 			column = (column_t *)((byte *)column + column->length + 4);
 	    }
 	}
 
-	picdata[handle] = UploadTextureNoMip(p2w, p2h, block);
+	picdata[handle] = UploadTextureNoMip(w, h, block);
+	piciw[handle] = 1.0 / float(w);
+	picih[handle] = 1.0 / float(h);
 	Z_Free(block);
 	Z_ChangeTag(patch, PU_CACHE);
 }
@@ -841,7 +839,7 @@ void TDirect3DDrawer::ResampleTexture(int widthin, int heightin,
 		}
 	}
 #else
-	if (sx < 1.0 && sy < 1.0)
+	if (sx <= 1.0 && sy <= 1.0)
 	{
 		/* magnify both width and height:  use weighted sample of 4 pixels */
 		int i0, i1, j0, j1;
@@ -1145,9 +1143,12 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureNoMip(int width, int height, 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/09/20 15:59:43  dj_jl
+//	Fixed resampling when one dimansion doesn't change
+//
 //	Revision 1.9  2001/09/14 16:48:22  dj_jl
 //	Switched to DirectX 8
-//
+//	
 //	Revision 1.8  2001/08/30 17:37:39  dj_jl
 //	Using linear texture resampling
 //	

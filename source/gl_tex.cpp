@@ -580,20 +580,8 @@ void TOpenGLDrawer::GeneratePicFromPatch(int handle)
 	patch_t *patch = (patch_t*)W_CacheLumpName(pic_list[handle].name, PU_STATIC);
 	int w = LittleShort(patch->width);
 	int h = LittleShort(patch->height);
-	int outw;
-	int outh;
-	if (w == 320 && h == 200)
-	{
-		outw = w;
-		outh = h;
-	}
-	else
-	{
-		outw = ToPowerOf2(w);
-		outh = ToPowerOf2(h);
-	}
 
-	rgba_t *block = (rgba_t*)Z_Calloc(4 * outw * outh);
+	rgba_t *block = (rgba_t*)Z_Calloc(4 * w * h);
 	rgba_t *pal = r_palette[pic_list[handle].palnum];
 	int black = r_black_color[pic_list[handle].palnum];
 
@@ -606,25 +594,25 @@ void TOpenGLDrawer::GeneratePicFromPatch(int handle)
 		while (column->topdelta != 0xff)
 		{
 			byte* source = (byte *)column + 3;
-			rgba_t* dest = block + x + column->topdelta * outw;
+			rgba_t* dest = block + x + column->topdelta * w;
 			int count = column->length;
 
 			while (count--)
 			{
 				*dest = pal[*source ? *source : black];
 				source++;
-				dest += outw;
+				dest += w;
 			}
 			column = (column_t *)((byte *)column + column->length + 4);
 		}
 	}
 
-	UploadTextureNoMip(outw, outh, block);
+	UploadTextureNoMip(w, h, block);
 	Z_Free(block);
 	Z_ChangeTag(patch, PU_CACHE);
 
-	pic_iw[handle] = 1.0 / float(outw);
-	pic_ih[handle] = 1.0 / float(outh);
+	pic_iw[handle] = 1.0 / float(w);
+	pic_ih[handle] = 1.0 / float(h);
 	pic_sent[handle] = true;
 }
 
@@ -755,7 +743,7 @@ void TOpenGLDrawer::ResampleTexture(int widthin, int heightin,
 		}
 	}
 #else
-	if (sx < 1.0 && sy < 1.0)
+	if (sx <= 1.0 && sy <= 1.0)
 	{
 		/* magnify both width and height:  use weighted sample of 4 pixels */
 		int i0, i1, j0, j1;
@@ -988,9 +976,12 @@ void TOpenGLDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/09/20 15:59:43  dj_jl
+//	Fixed resampling when one dimansion doesn't change
+//
 //	Revision 1.8  2001/08/30 17:37:39  dj_jl
 //	Using linear texture resampling
-//
+//	
 //	Revision 1.7  2001/08/24 17:05:44  dj_jl
 //	Beautification
 //	
