@@ -99,9 +99,9 @@ mobj_t *SpawnMissile(mobj_t * source, mobj_t * dest, classid type)
 	}
 	z -= source->FloorClip;
 	th = P_SpawnMobj(source->Origin.x, source->Origin.y, z, type);
-	if (th->sound_sight)
+	if (th->SightSound)
 	{
-		StartSound(*th, th->sound_sight, CHAN_VOICE);
+		StartSoundName(*th, th->SightSound, CHAN_VOICE);
 	}
 	th->target = source;	// Originator
 	dir = dest->Origin - source->Origin;
@@ -132,9 +132,9 @@ mobj_t *SpawnMissileXYZ(float x, float y, float z, mobj_t * source,
 
 	z -= source->FloorClip;
 	th = P_SpawnMobj(x, y, z, type);
-	if (th->sound_sight)
+	if (th->SightSound)
 	{
-		StartSound(*th, th->sound_sight, CHAN_VOICE);
+		StartSoundName(*th, th->SightSound, CHAN_VOICE);
 	}
 	th->target = source;	// Originator
 	dir = dest->Origin - source->Origin;
@@ -183,9 +183,9 @@ mobj_t *SpawnMissileAngle(mobj_t * source, classid type, float angle,
 	}
 	z -= source->FloorClip;
 	mo = P_SpawnMobj(source->Origin.x, source->Origin.y, z, type);
-	if (mo->sound_sight)
+	if (mo->SightSound)
 	{
-		StartSound(*mo, mo->sound_sight, CHAN_VOICE);
+		StartSoundName(*mo, mo->SightSound, CHAN_VOICE);
 	}
 	mo->target = source;	// Originator
 	mo->Angles.yaw = angle;
@@ -213,7 +213,7 @@ mobj_t *SpawnMissileAngleSpeed(mobj_t * source, classid type, float angle,
 	z = source->Origin.z;
 	z -= source->FloorClip;
 	mo = P_SpawnMobj(source->Origin.x, source->Origin.y, z, type);
-	if (mo->sound_sight)
+	if (mo->SightSound)
 	{
 		//StartSound(mo, mo->info->seesound);
 	}
@@ -239,9 +239,9 @@ mobj_t *SpawnKoraxMissile(float x, float y, float z,
 
 	z -= source->FloorClip;
 	th = P_SpawnMobj(x, y, z, type);
-	if (th->sound_sight)
+	if (th->SightSound)
 	{
-		StartSound(*th, th->sound_sight, CHAN_VOICE);
+		StartSoundName(*th, th->SightSound, CHAN_VOICE);
 	}
 	th->target = source;	// Originator
 	dir = dest->Origin - vector(x, y, z);
@@ -371,7 +371,7 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 		z -= source->FloorClip;
 	}
 	MissileMobj = P_SpawnMobj(x, y, z, type);
-	if (MissileMobj->sound_sight)
+	if (MissileMobj->SightSound)
 	{
 		//StartSound(MissileMobj, MissileMobj->info->seesound);
 	}
@@ -526,9 +526,9 @@ boolean P_ExplodeMissile(mobj_t * mo)
 		StartSoundName(none, 'SorcererHeadScream', CHAN_AUTO);
 		break;
 	default:
-		if (mo->sound_death)
+		if (mo->DeathSound)
 		{
-			StartSound(*mo, mo->sound_death, CHAN_VOICE);
+			StartSoundName(*mo, mo->DeathSound, CHAN_VOICE);
 		}
 		break;
 	}
@@ -548,6 +548,9 @@ boolean P_ExplodeMissile(mobj_t * mo)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/16 16:26:55  dj_jl
+//  Removed precalculated sound IDs
+//
 //  Revision 1.18  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

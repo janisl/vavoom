@@ -34,7 +34,6 @@
 void Actor::A_Look(void)
 {
 	Actor targ;
-	int sound;
 
 	threshold = 0;	// any shot will wake up
 	targ = Actor(Sector->SoundTarget);
@@ -59,29 +58,48 @@ void Actor::A_Look(void)
 	}
 
 	// go into chase state
-	if (sound_sight)
+	if (SightSound)
 	{
-		int sfx_posit = GetSoundID('ZombieSight1');
-		int sfx_bgsit = GetSoundID('ImpSight1');
+		name sound;
 
-		sound = sound_sight;
-		if (sound >= sfx_posit && sound <= sfx_posit + 2)
+		sound = SightSound;
+		if (sound == 'ZombieSight1' || sound == 'ZombieSight2' ||
+			sound == 'ZombieSight3')
 		{
-			sound = sfx_posit + P_Random() % 3;
+			switch (P_Random() % 3)
+			{
+			case 0:
+				sound = 'ZombieSight1';
+				break;
+			case 1:
+				sound = 'ZombieSight2';
+				break;
+			case 2:
+				sound = 'ZombieSight3';
+				break;
+			}
 		}
-		if (sound == sfx_bgsit || sound == sfx_bgsit + 1)
+		if (sound == 'ImpSight1' || sound == 'ImpSight2')
 		{
-			sound = sfx_bgsit + P_Random() % 2;
+			switch (P_Random() % 2)
+			{
+			case 0:
+				sound = 'ImpSight1';
+				break;
+			case 1:
+				sound = 'ImpSight2';
+				break;
+			}
 		}
 
 		if (Class == SpiderMastermind || Class == Cyberdemon)
 		{
 			// Full volume
-			StartSound(none, sound, CHAN_VOICE);
+			StartSoundName(none, sound, CHAN_VOICE);
 		}
 		else
 		{
-			StartSound(self, sound, CHAN_VOICE);
+			StartSoundName(self, sound, CHAN_VOICE);
 		}
 	}
 
@@ -175,9 +193,9 @@ void Actor::A_Chase(void)
 	// check for melee attack
 	if (MeleeState && CheckMeleeRange())
 	{
-		if (sound_attack)
+		if (AttackSound)
 		{
-			StartSound(self, sound_attack, CHAN_WEAPON);
+			StartSoundName(self, AttackSound, CHAN_WEAPON);
 		}
 		SetState(MeleeState);
 		return;
@@ -214,9 +232,9 @@ void Actor::A_Chase(void)
 	}
 
 	// make active sound
-	if (sound_active && P_Random() < 3)
+	if (ActiveSound && P_Random() < 3)
 	{
-		StartSound(self, sound_active, CHAN_VOICE);
+		StartSoundName(self, ActiveSound, CHAN_VOICE);
 	}
 }
 
@@ -256,9 +274,9 @@ void Actor::A_Pain(void)
 		Effects &= ~EF_DLIGHT_MASK;
 	}
 
-	if (sound_pain)
+	if (PainSound)
 	{
-		StartSound(self, sound_pain, CHAN_VOICE);
+		StartSoundName(self, PainSound, CHAN_VOICE);
 	}
 }
 
@@ -296,38 +314,55 @@ void Actor::A_Explode(void)
 
 void Actor::A_Scream(void)
 {
-	int sound;
-
 	//  Remove muzzle flash
 	if ((Effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
 	{
 		Effects &= ~EF_DLIGHT_MASK;
 	}
 
-	if (sound_death)
+	if (DeathSound)
 	{
-		int sfx_podth = GetSoundID('ZombieDeath1');
-		int sfx_bgdth = GetSoundID('ImpDeath1');
+		name sound;
 
-		sound = sound_death;
-		if (sound >= sfx_podth && sound <= sfx_podth + 2)
+		sound = DeathSound;
+		if (sound == 'ZombieDeath1' || sound == 'ZombieDeath2' ||
+			sound == 'ZombieDeath3')
 		{
-			sound = sfx_podth + P_Random() % 3;
+			switch (P_Random() % 3)
+			{
+			case 0:
+				sound = 'ZombieDeath1';
+				break;
+			case 1:
+				sound = 'ZombieDeath2';
+				break;
+			case 2:
+				sound = 'ZombieDeath3';
+				break;
+			}
 		}
-		if (sound == sfx_bgdth || sound == sfx_bgdth + 1)
+		if (sound == 'ImpDeath1' || sound == 'ImpDeath2')
 		{
-			sound = sfx_bgdth + P_Random() % 2;
+			switch (P_Random() % 2)
+			{
+			case 0:
+				sound = 'ImpDeath1';
+				break;
+			case 1:
+				sound = 'ImpDeath2';
+				break;
+			}
 		}
 
 		// Check for bosses.
 		if (Class == SpiderMastermind || Class == Cyberdemon)
 		{
 			// full volume
-			StartSound(none, sound, CHAN_VOICE);
+			StartSoundName(none, sound, CHAN_VOICE);
 		}
 		else
 		{
-			StartSound(self, sound, CHAN_VOICE);
+			StartSoundName(self, sound, CHAN_VOICE);
 		}
 	}
 }
@@ -560,6 +595,9 @@ void Actor::A_BossDeath(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/16 16:26:55  dj_jl
+//  Removed precalculated sound IDs
+//
 //  Revision 1.18  2002/02/14 19:20:57  dj_jl
 //  Renamed Entity properties to new naming style
 //

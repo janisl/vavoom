@@ -205,9 +205,9 @@ void Actor::A_MinotaurChase(void)
 	// Melee attack
 	if (MeleeState && CheckMeleeRange())
 	{
-		if (sound_attack)
+		if (AttackSound)
 		{
-			StartSound(self, sound_attack, CHAN_WEAPON);
+			StartSoundName(self, AttackSound, CHAN_WEAPON);
 		}
 		SetState(MeleeState);
 		return;
@@ -227,9 +227,9 @@ void Actor::A_MinotaurChase(void)
 	}
 
 	// Active sound
-	if (sound_active && P_Random() < 6)
+	if (ActiveSound && P_Random() < 6)
 	{
-		StartSound(self, sound_active, CHAN_VOICE);
+		StartSoundName(self, ActiveSound, CHAN_VOICE);
 	}
 
 }
@@ -511,6 +511,9 @@ void Actor::A_SmokePuffExit(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/02/16 16:26:55  dj_jl
+//  Removed precalculated sound IDs
+//
 //  Revision 1.20  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

@@ -52,7 +52,7 @@ void Actor::A_SkullAttack(void)
 
 	bSkullFly = true;
 
-	StartSound(self, sound_attack, CHAN_VOICE);
+	StartSoundName(self, AttackSound, CHAN_VOICE);
 	A_FaceTarget();
 	Velocity = Normalize(MobjCenter((*target)) - Origin) * SKULLSPEED;
 }
@@ -60,6 +60,9 @@ void Actor::A_SkullAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/16 16:26:55  dj_jl
+//  Removed precalculated sound IDs
+//
 //  Revision 1.11  2002/02/14 19:20:57  dj_jl
 //  Renamed Entity properties to new naming style
 //

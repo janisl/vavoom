@@ -202,8 +202,8 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 
 	th = P_SpawnMobj(x, y, z, type);
 
-	if (th->sound_sight)
-		StartSound(*th, th->sound_sight, CHAN_VOICE);
+	if (th->SightSound)
+		StartSoundName(*th, th->SightSound, CHAN_VOICE);
 
 	th->target = source;
 	avcpy(angles, th->Angles);
@@ -218,6 +218,9 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/16 16:26:56  dj_jl
+//  Removed precalculated sound IDs
+//
 //  Revision 1.17  2002/02/14 19:21:00  dj_jl
 //  Renamed Entity properties to new naming style
 //

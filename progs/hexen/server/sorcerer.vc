@@ -748,7 +748,7 @@ void Actor::A_SpawnBishop(void)
 void Actor::A_SorcererBishopEntry(void)
 {
 	P_SpawnMobj(Origin.x, Origin.y, Origin.z, SorcererFX3Explosion);
-	StartSound(self, sound_sight, CHAN_VOICE);
+	StartSoundName(self, SightSound, CHAN_VOICE);
 }
 
 //============================================================================
@@ -770,6 +770,9 @@ void Actor::A_SorcFX4Check(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/16 16:26:56  dj_jl
+//  Removed precalculated sound IDs
+//
 //  Revision 1.18  2002/02/14 19:20:59  dj_jl
 //  Renamed Entity properties to new naming style
 //

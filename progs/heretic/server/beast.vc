@@ -47,7 +47,7 @@ void Actor::A_BeastAttack(void)
 	{
 		return;
 	}
-	StartSound(self, sound_attack, CHAN_WEAPON);
+	StartSoundName(self, AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(3));
@@ -80,6 +80,9 @@ void Actor::A_BeastPuff(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/02/16 16:26:55  dj_jl
+//  Removed precalculated sound IDs
+//
 //  Revision 1.12  2002/02/14 19:20:57  dj_jl
 //  Renamed Entity properties to new naming style
 //

@@ -113,9 +113,9 @@ void Actor::A_SerpentChase(void)
 	//
 	if (MeleeState && CheckMeleeRange())
 	{
-		if (sound_attack)
+		if (AttackSound)
 		{
-			StartSound(self, sound_attack, CHAN_WEAPON);
+			StartSoundName(self, AttackSound, CHAN_WEAPON);
 		}
 		SetState(MeleeState);
 		return;
@@ -149,9 +149,9 @@ void Actor::A_SerpentChase(void)
 	//
 	// make active sound
 	//
-	if (sound_active && P_Random() < 3)
+	if (ActiveSound && P_Random() < 3)
 	{
-		StartSound(self, sound_active, CHAN_VOICE);
+		StartSoundName(self, ActiveSound, CHAN_VOICE);
 	}
 }
 
@@ -407,9 +407,9 @@ void Actor::A_SerpentWalk(void)
 	//
 	if (MeleeState && CheckMeleeRange())
 	{
-		if (sound_attack)
+		if (AttackSound)
 		{
-			StartSound(self, sound_attack, CHAN_WEAPON);
+			StartSoundName(self, AttackSound, CHAN_WEAPON);
 		}
 		SetState(S_SERPENT_ATK1);
 		return;
@@ -598,6 +598,9 @@ void Actor::A_DelayGib(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/16 16:26:55  dj_jl
+//  Removed precalculated sound IDs
+//
 //  Revision 1.17  2002/02/14 19:20:59  dj_jl
 //  Renamed Entity properties to new naming style
 //

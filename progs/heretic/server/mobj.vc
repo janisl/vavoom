@@ -134,12 +134,6 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 	state_t *st;
 
 	spawnhealth = Health;
-	sound_sight = GetSoundID(SightSound);
-	sound_active = GetSoundID(ActiveSound);
-	sound_attack = GetSoundID(AttackSound);
-	sound_pain = GetSoundID(PainSound);
-	sound_death = GetSoundID(DeathSound);
-
 	bCheckLineBlocking = false;
 	bCheckLineBlockMonsters = false;
 	if (!bMissile)
@@ -338,9 +332,9 @@ void P_ExplodeMissile(mobj_t * mo)
 	mo->SetState(mo->DeathState);
 	//mo->tics -= P_Random()&3;
 	mo->bMissile = false;
-	if (mo->sound_death)
+	if (mo->DeathSound)
 	{
-		StartSound(*mo, mo->sound_death, CHAN_VOICE);
+		StartSoundName(*mo, mo->DeathSound, CHAN_VOICE);
 	}
 	if (mo->Effects & EF_DLIGHT_MASK)
 	{
@@ -978,9 +972,9 @@ void SpawnPuff(float x, float y, float z)
 
 	z += (Random() - Random()) * 4.0;
 	puff = P_SpawnMobj(x, y, z, PuffType);
-	if (puff->sound_attack)
+	if (puff->AttackSound)
 	{
-		StartSound(*puff, puff->sound_attack, CHAN_VOICE);
+		StartSoundName(*puff, puff->AttackSound, CHAN_VOICE);
 	}
 	switch (PuffType)
 	{
@@ -1461,6 +1455,9 @@ void P_NightmareRespawn(mobj_t * mobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.33  2002/02/16 16:26:55  dj_jl
+//  Removed precalculated sound IDs
+//
 //  Revision 1.32  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

@@ -25,6 +25,8 @@
 
 // MACROS ------------------------------------------------------------------
 
+#define STEPSIZE	16.0
+
 // CONSTANTS ---------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
@@ -414,7 +416,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	{
 		if (!BlockingMobj || BlockingMobj->bIsPlayer || !thing->bIsPlayer ||
 			BlockingMobj->Origin.z + BlockingMobj->Height - thing->Origin.z >
-			24.0
+			STEPSIZE
 			|| (BlockingMobj->Sector->ceilingheight -
 		   (BlockingMobj->Origin.z + BlockingMobj->Height) < thing->Height)
 			|| (tmceilingz - (BlockingMobj->Origin.z + BlockingMobj->Height) <
@@ -441,11 +443,11 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 			return false;
 		}
 
-		if (!thing->bTeleport && tmfloorz - thing->Origin.z > 24.0)
+		if (!thing->bTeleport && tmfloorz - thing->Origin.z > STEPSIZE)
 			return false;	// too big a step up
 
 		if (!thing->bDropOff && !thing->bFloat &&
-			tmfloorz - tmdropoffz > 24.0)
+			tmfloorz - tmdropoffz > STEPSIZE)
 			return false;	// don't stand over a dropoff
 	}
 
@@ -507,6 +509,9 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/16 16:26:56  dj_jl
+//  Removed precalculated sound IDs
+//
 //  Revision 1.19  2002/02/14 19:21:00  dj_jl
 //  Renamed Entity properties to new naming style
 //

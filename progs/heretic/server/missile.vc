@@ -93,9 +93,9 @@ mobj_t *SpawnMissile(mobj_t * source, mobj_t * dest, classid type)
 	}
 	z -= source->FloorClip;
 	th = P_SpawnMobj(source->Origin.x, source->Origin.y, z, type);
-	if (th->sound_sight)
+	if (th->SightSound)
 	{
-		StartSound(*th, th->sound_sight, CHAN_VOICE);
+		StartSoundName(*th, th->SightSound, CHAN_VOICE);
 	}
 	th->target = source;	// Originator
 	dir = dest->Origin - source->Origin;
@@ -143,9 +143,9 @@ mobj_t *SpawnMissileAngles(mobj_t * source, classid type, float yaw,
 	}
 	z -= source->FloorClip;
 	mo = P_SpawnMobj(source->Origin.x, source->Origin.y, z, type);
-	if (mo->sound_sight)
+	if (mo->SightSound)
 	{
-		StartSound(*mo, mo->sound_sight, CHAN_VOICE);
+		StartSoundName(*mo, mo->SightSound, CHAN_VOICE);
 	}
 	mo->target = source;	// Originator
 	mo->Angles.yaw = yaw;
@@ -192,9 +192,9 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 	z = source->Origin.z + 32.0 - tan(source->Angles.pitch);
 	z -= source->FloorClip;
 	MissileMobj = P_SpawnMobj(x, y, z, type);
-	if (MissileMobj->sound_sight)
+	if (MissileMobj->SightSound)
 	{
-		StartSound(*MissileMobj, MissileMobj->sound_sight, CHAN_VOICE);
+		StartSoundName(*MissileMobj, MissileMobj->SightSound, CHAN_VOICE);
 	}
 	MissileMobj->target = source;
 	MissileMobj->Angles = angles;
@@ -257,9 +257,9 @@ mobj_t *SpawnPlayerMissileAngle(mobj_t * source, classid type, float angle)
 	z = source->Origin.z + 4.0 * 8.0 - tan(source->Angles.pitch);
 	z -= source->FloorClip;
 	th = P_SpawnMobj(x, y, z, type);
-	if (th->sound_sight)
+	if (th->SightSound)
 	{
-		StartSound(*th, th->sound_sight, CHAN_VOICE);
+		StartSoundName(*th, th->SightSound, CHAN_VOICE);
 	}
 	th->target = source;
 	th->Angles = angles;
@@ -334,6 +334,9 @@ boolean P_SeekerMissile(mobj_t * actor, float thresh, float turnMax)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/16 16:26:55  dj_jl
+//  Removed precalculated sound IDs
+//
 //  Revision 1.15  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

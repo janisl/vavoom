@@ -102,7 +102,7 @@ boolean PTR_SlideTraverse(intercept_t * in)
 
 		if (open && (open->range >= slidemo.Height) &&	//  fits
 			(open->top - slidemo.Origin.z >= slidemo.Height) &&	// mobj is not too high
-			(open->bottom - slidemo.Origin.z <= 24.0))	// not too big a step up
+			(open->bottom - slidemo.Origin.z <= STEPSIZE))	// not too big a step up
 		{
 			// this line doesn't block movement
 			return true;
@@ -947,7 +947,7 @@ boolean Actor::Physics(void)
 				{
 					PlayerLandedOnThing();
 				}
-				if (onmo.Origin.z + onmo.Height - Origin.z <= 24.0)
+				if (onmo.Origin.z + onmo.Height - Origin.z <= STEPSIZE)
 				{
 					Player->viewheight -= onmo.Origin.z + onmo.Height
 						- Origin.z;
@@ -1053,6 +1053,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/16 16:26:56  dj_jl
+//  Removed precalculated sound IDs
+//
 //  Revision 1.18  2002/02/14 19:21:00  dj_jl
 //  Renamed Entity properties to new naming style
 //

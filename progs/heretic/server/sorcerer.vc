@@ -107,7 +107,7 @@ void Actor::A_Srcr1Attack(void)
 	{
 		return;
 	}
-	StartSound(self, sound_attack, CHAN_WEAPON);
+	StartSoundName(self, AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(8));
@@ -321,7 +321,7 @@ void Actor::A_Srcr2Attack(void)
 	{
 		return;
 	}
-	StartSound(none, sound_attack, CHAN_AUTO);
+	StartSoundName(none, AttackSound, CHAN_AUTO);
 	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(20));
@@ -452,6 +452,9 @@ void Actor::A_GenWizard(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/16 16:26:55  dj_jl
+//  Removed precalculated sound IDs
+//
 //  Revision 1.17  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

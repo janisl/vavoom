@@ -168,9 +168,9 @@ boolean EV_ThingProjectile(int *args, boolean gravity)
 	{
 		newMobj = P_SpawnMobj(mobj->Origin.x, mobj->Origin.y,
 			mobj->Origin.z, moType);
-		if (newMobj->sound_sight)
+		if (newMobj->SightSound)
 		{
-			StartSound(*newMobj, newMobj->sound_sight, CHAN_VOICE);
+			StartSoundName(*newMobj, newMobj->SightSound, CHAN_VOICE);
 		}
 		newMobj->target = mobj;	// Originator
 		newMobj->Angles.yaw = angle;
@@ -560,6 +560,9 @@ int ThingCount(int type, int tid)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/02/16 16:26:56  dj_jl
+//  Removed precalculated sound IDs
+//
 //  Revision 1.20  2002/02/14 19:20:59  dj_jl
 //  Renamed Entity properties to new naming style
 //

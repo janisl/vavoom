@@ -58,16 +58,16 @@ void Actor::A_Look(void)
 	}
 
 	// go into chase state
-	if (sound_sight)
+	if (SightSound)
 	{
 		if (bBoss)
 		{
 			// Full volume
-			StartSound(none, sound_sight, CHAN_VOICE);
+			StartSoundName(none, SightSound, CHAN_VOICE);
 		}
 		else
 		{
-			StartSound(none, sound_sight, CHAN_VOICE);
+			StartSoundName(none, SightSound, CHAN_VOICE);
 		}
 	}
 
@@ -155,9 +155,9 @@ void Actor::A_Chase(void)
 	// check for melee attack
 	if (MeleeState && CheckMeleeRange())
 	{
-		if (sound_attack)
+		if (AttackSound)
 		{
-			StartSound(self, sound_attack, CHAN_WEAPON);
+			StartSoundName(self, AttackSound, CHAN_WEAPON);
 		}
 		SetState(MeleeState);
 		return;
@@ -194,24 +194,24 @@ void Actor::A_Chase(void)
 	}
 
 	// make active sound
-	if (sound_active && P_Random() < 3)
+	if (ActiveSound && P_Random() < 3)
 	{
 		if (Class == Bishop && P_Random() < 128)
 		{
-			StartSound(self, sound_sight, CHAN_VOICE);
+			StartSoundName(self, SightSound, CHAN_VOICE);
 		}
 		else if (Class == Pig)
 		{
-			StartSound(self, GetSoundID('PigActive1') + (P_Random() & 1),
-				CHAN_VOICE);
+			StartSoundName(self, (P_Random() & 1) ? 'PigActive2' :
+				'PigActive1', CHAN_VOICE);
 		}
 		else if (bBoss)
 		{
-			StartSound(none, sound_active, CHAN_VOICE);
+			StartSoundName(none, ActiveSound, CHAN_VOICE);
 		}
 		else
 		{
-			StartSound(self, sound_active, CHAN_VOICE);
+			StartSoundName(self, ActiveSound, CHAN_VOICE);
 		}
 	}
 }
@@ -246,9 +246,9 @@ void Actor::A_FaceTarget(void)
 
 void Actor::A_Pain(void)
 {
-	if (sound_pain)
+	if (PainSound)
 	{
-		StartSound(self, sound_pain, CHAN_VOICE);
+		StartSoundName(self, PainSound, CHAN_VOICE);
 	}
 }
 
@@ -291,7 +291,7 @@ void Actor::A_Scream(void)
 	{
 		if (Player->morphTics)
 		{
-			StartSound(self, sound_death, CHAN_VOICE);
+			StartSoundName(self, DeathSound, CHAN_VOICE);
 		}
 		else
 		{
@@ -361,7 +361,7 @@ void Actor::A_Scream(void)
 	}
 	else
 	{
-		StartSound(self, sound_death, CHAN_VOICE);
+		StartSoundName(self, DeathSound, CHAN_VOICE);
 	}
 }
 
@@ -835,6 +835,9 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/16 16:26:55  dj_jl
+//  Removed precalculated sound IDs
+//
 //  Revision 1.19  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

@@ -59,9 +59,9 @@ void A_Look(mobj_t * actor)
 	}
 
 	// go into chase state
-	if (actor->sound_sight)
+	if (actor->SightSound)
 	{
-		StartSound(*actor, actor->sound_sight, CHAN_VOICE);
+		StartSoundName(*actor, actor->SightSound, CHAN_VOICE);
 	}
 
 	actor->SetState(actor->SeeState);
@@ -69,126 +69,117 @@ void A_Look(mobj_t * actor)
 
 //==========================================================================
 //
-//  A_Chase
+//  Actor::A_Chase
 //
 //  Actor has a melee attack, so it tries to close as fast as possible
 //
 //==========================================================================
 
-void A_Chase(mobj_t * actor)
+void Actor::A_Chase(void)
 {
 	float delta;
 
-	if (actor->ReactionCount)
+	if (ReactionCount)
 	{
-		actor->ReactionCount--;
+		ReactionCount--;
 	}
 
 	// modify target threshold
-	if (actor->threshold)
+	if (threshold)
 	{
-		if (!actor->target || actor->target->Health <= 0)
+		if (!target || target->Health <= 0)
 		{
-			actor->threshold = 0;
+			threshold = 0;
 		}
 		else
 		{
-			actor->threshold--;
+			threshold--;
 		}
 	}
 
-/*	if (fastparm)
-	{ // Monsters move faster in nightmare mode
-		actor->tics -= actor->tics / 2;
-		if (actor->tics < 3)
-		{
-			actor->tics = 3;
-		}
-	}
-*/
 	// turn towards movement direction if not there yet
-	if (actor->movedir < 8)
+	if (movedir < 8)
 	{
-		actor->Angles.yaw = itof(ftoi(actor->Angles.yaw / 45.0)) * 45.0;
-		delta = AngleMod180(actor->Angles.yaw - itof(actor->movedir) * 45.0);
+		Angles.yaw = itof(ftoi(Angles.yaw / 45.0)) * 45.0;
+		delta = AngleMod180(Angles.yaw - itof(movedir) * 45.0);
 
 		if (delta > 0.0)
 		{
-			actor->Angles.yaw = AngleMod360(actor->Angles.yaw - 45.0);
+			Angles.yaw = AngleMod360(Angles.yaw - 45.0);
 		}
 		else if (delta < 0.0)
 		{
-			actor->Angles.yaw = AngleMod360(actor->Angles.yaw + 45.0);
+			Angles.yaw = AngleMod360(Angles.yaw + 45.0);
 		}
 	}
 
-	if (!actor->target || !actor->target->bShootable)
+	if (!target || !target->bShootable)
 	{
 		// look for a new target
-		if (P_LookForPlayers(actor, true))
+		if (P_LookForPlayers(this, true))
 		{
 			return;	// got a new target
 		}
-		actor->SetState(actor->SpawnState);
+		SetState(SpawnState);
 		return;
 	}
 
 	// do not attack twice in a row
-	if (actor->bJustAttacked)
+	if (bJustAttacked)
 	{
-		actor->bJustAttacked = false;
+		bJustAttacked = false;
 		if (!fastparm)
 		{
-			P_NewChaseDir(actor);
+			P_NewChaseDir(this);
 		}
 		return;
 	}
 
 	// check for melee attack
-	if (actor->MeleeState && P_CheckMeleeRange(actor))
+	if (MeleeState && P_CheckMeleeRange(this))
 	{
-		if (actor->sound_attack)
+		if (AttackSound)
 		{
-			StartSound(*actor, actor->sound_attack, CHAN_WEAPON);
+			StartSoundName(self, AttackSound, CHAN_WEAPON);
 		}
-		actor->SetState(actor->MeleeState);
+		SetState(MeleeState);
 		return;
 	}
 
 	// check for missile attack
-	if (actor->MissileState)
+	if (MissileState)
 	{
-		if (fastparm || !actor->movecount)
+		if (fastparm || !movecount)
 		{
-			if (P_CheckMissileRange(actor))
+			if (P_CheckMissileRange(this))
 			{
-				actor->SetState(actor->MissileState);
-				actor->bJustAttacked = true;
+				SetState(MissileState);
+				bJustAttacked = true;
 				return;
 			}
 		}
 	}
 
 	// possibly choose another target
-	if (netgame && !actor->threshold)
+	if (netgame && !threshold)
 	{
-		if (!P_CheckSight(*actor, *actor->target))
+		if (!P_CheckSight(self, *target))
 		{
-			if (P_LookForPlayers(actor, true))
+			if (P_LookForPlayers(this, true))
 				return;	// got a new target
 		}
 	}
 
 	// chase towards player
-	if (--actor->movecount < 0 || !P_Move(actor))
+	if (--movecount < 0 || !P_Move(this))
 	{
-		P_NewChaseDir(actor);
+		P_NewChaseDir(this);
 	}
 
 	// make active sound
-	if (actor->sound_active && P_Random() < 3)
+	if (ActiveSound && P_Random() < 3)
 	{
-		StartSound(*actor, actor->sound_active, CHAN_VOICE);
+		StartSoundName(self, ActiveSound, CHAN_VOICE);
 	}
 }
 
@@ -223,9 +214,9 @@ void A_FaceTarget(mobj_t * actor)
 
 void Actor::A_Pain(void)
 {
-	if (sound_pain)
+	if (PainSound)
 	{
-		StartSound(self, sound_pain, CHAN_VOICE);
+		StartSoundName(self, PainSound, CHAN_VOICE);
 	}
 }
 
@@ -253,9 +244,9 @@ void A_Explode(mobj_t * thingy)
 
 void Actor::A_Scream(void)
 {
-	if (sound_death)
+	if (DeathSound)
 	{
-		StartSound(self, sound_death, CHAN_VOICE);
+		StartSoundName(self, DeathSound, CHAN_VOICE);
 	}
 }
 
@@ -312,6 +303,9 @@ void Actor::A_PlayerScream(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/02/16 16:26:56  dj_jl
+//  Removed precalculated sound IDs
+//
 //  Revision 1.14  2002/02/14 19:20:59  dj_jl
 //  Renamed Entity properties to new naming style
 //

@@ -47,7 +47,7 @@ void Actor::A_MummyAttack(void)
 	{
 		return;
 	}
-	StartSound(self, sound_attack, CHAN_WEAPON);
+	StartSoundName(self, AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(2));
@@ -113,6 +113,9 @@ void Actor::A_MummyFX1Seek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/02/16 16:26:55  dj_jl
+//  Removed precalculated sound IDs
+//
 //  Revision 1.14  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

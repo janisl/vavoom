@@ -463,9 +463,9 @@ boolean Actor::XYMovement(void)
 							Angles.yaw = angle;
 							Velocity.x = speed * cos(angle);
 							Velocity.y = speed * sin(angle);
-							if (sound_pain)
+							if (PainSound)
 							{
-								StartSound(self, sound_pain, CHAN_VOICE);
+								StartSoundName(self, PainSound, CHAN_VOICE);
 							}
 						}
 						else
@@ -478,9 +478,9 @@ boolean Actor::XYMovement(void)
 					{
 						// Struck a wall
 						BounceWall(BOUNCE_VAL);
-						if (sound_pain)
+						if (PainSound)
 						{
-							StartSound(self, sound_pain, CHAN_VOICE);
+							StartSoundName(self, PainSound, CHAN_VOICE);
 						}
 					}
 					if (IsDestroyed())
@@ -594,9 +594,9 @@ void Actor::ZMovement(void)
 				P_ExplodeMissile(this);
 				return;
 			}
-			if (bBounce && sound_pain && Length(Velocity) > 256.0)
+			if (bBounce && PainSound && Length(Velocity) > 256.0)
 			{
-				StartSound(self, sound_pain, CHAN_VOICE);
+				StartSoundName(self, PainSound, CHAN_VOICE);
 			}
 		}
 	}
@@ -623,9 +623,9 @@ void Actor::ZMovement(void)
 				P_ExplodeMissile(this);
 				return;
 			}
-			if (bBounce && sound_pain && Length(Velocity) > 256.0)
+			if (bBounce && PainSound && Length(Velocity) > 256.0)
 			{
-				StartSound(self, sound_pain, CHAN_VOICE);
+				StartSoundName(self, PainSound, CHAN_VOICE);
 			}
 		}
 	}
@@ -1036,6 +1036,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/02/16 16:26:55  dj_jl
+//  Removed precalculated sound IDs
+//
 //  Revision 1.20  2002/02/14 19:20:57  dj_jl
 //  Renamed Entity properties to new naming style
 //

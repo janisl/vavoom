@@ -538,9 +538,9 @@ boolean Actor::HitMobj(void)
 				Angles.yaw = angle;
 				Velocity.x = speed * cos(angle);
 				Velocity.y = speed * sin(angle);
-				if (sound_sight)
+				if (SightSound)
 				{
-					StartSound(self, sound_sight, CHAN_VOICE);
+					StartSoundName(self, SightSound, CHAN_VOICE);
 				}
 				return true;
 			}
@@ -659,9 +659,9 @@ boolean Actor::HitLine(void)
 			case SorcererFX1:
 				break;
 			default:
-				if (sound_sight)
+				if (SightSound)
 				{
-					StartSound(self, sound_sight, CHAN_VOICE);
+					StartSoundName(self, SightSound, CHAN_VOICE);
 				}
 				break;
 			}
@@ -1115,9 +1115,9 @@ boolean Actor::HitCeiling(void)
 			// Reverse momentum here for ceiling bounce
 			Velocity -= vdot * Ceiling->normal;
 
-			if (sound_sight)
+			if (SightSound)
 			{
-				StartSound(self, sound_sight, CHAN_VOICE);
+				StartSoundName(self, SightSound, CHAN_VOICE);
 			}
 			return true;
 		}
@@ -1479,6 +1479,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/02/16 16:26:55  dj_jl
+//  Removed precalculated sound IDs
+//
 //  Revision 1.23  2002/02/14 19:20:59  dj_jl
 //  Renamed Entity properties to new naming style
 //

@@ -169,6 +169,7 @@ void Actor::A_58(void)
 }
 void Actor::A_59(void)
 {
+	A_Chase();
 }
 void Actor::A_60(void)
 {
@@ -333,6 +334,9 @@ void Actor::A_112(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/02/16 16:26:56  dj_jl
+//  Removed precalculated sound IDs
+//
 //  Revision 1.6  2002/01/07 12:27:41  dj_jl
 //  Changed copyright year
 //

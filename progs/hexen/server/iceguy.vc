@@ -111,7 +111,7 @@ void Actor::A_IceGuyAttack(void)
 		Origin.y + Radius / 2.0 * sin(an),
 		Origin.z + 40.0, this, target, IceGuyMissile);
 
-	StartSound(self, sound_attack, CHAN_WEAPON);
+	StartSoundName(self, AttackSound, CHAN_WEAPON);
 }
 
 //============================================================================
@@ -162,6 +162,9 @@ void Actor::A_IceGuyDie(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/16 16:26:55  dj_jl
+//  Removed precalculated sound IDs
+//
 //  Revision 1.11  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

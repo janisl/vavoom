@@ -58,16 +58,16 @@ void Actor::A_Look(void)
 	}
 
 	// go into chase state
-	if (sound_sight)
+	if (SightSound)
 	{
 		if (bBoss)
 		{
 			// Full volume
-			StartSound(none, sound_sight, CHAN_VOICE);
+			StartSoundName(none, SightSound, CHAN_VOICE);
 		}
 		else
 		{
-			StartSound(self, sound_sight, CHAN_VOICE);
+			StartSoundName(self, SightSound, CHAN_VOICE);
 		}
 	}
 
@@ -155,9 +155,9 @@ void Actor::A_Chase(void)
 	// check for melee attack
 	if (MeleeState && CheckMeleeRange())
 	{
-		if (sound_attack)
+		if (AttackSound)
 		{
-			StartSound(self, sound_attack, CHAN_WEAPON);
+			StartSoundName(self, AttackSound, CHAN_WEAPON);
 		}
 		SetState(MeleeState);
 		return;
@@ -194,19 +194,19 @@ void Actor::A_Chase(void)
 	}
 
 	// make active sound
-	if (sound_active && P_Random() < 3)
+	if (ActiveSound && P_Random() < 3)
 	{
 		if (Class == Wizard && P_Random() < 128)
 		{
-			StartSound(self, sound_sight, CHAN_VOICE);
+			StartSoundName(self, SightSound, CHAN_VOICE);
 		}
 		else if (Class == Sorcerer2)
 		{
-			StartSound(none, sound_active, CHAN_VOICE);
+			StartSoundName(none, ActiveSound, CHAN_VOICE);
 		}
 		else
 		{
-			StartSound(self, sound_active, CHAN_VOICE);
+			StartSoundName(self, ActiveSound, CHAN_VOICE);
 		}
 	}
 }
@@ -241,9 +241,9 @@ void Actor::A_FaceTarget(void)
 
 void Actor::A_Pain(void)
 {
-	if (sound_pain)
+	if (PainSound)
 	{
-		StartSound(self, sound_pain, CHAN_VOICE);
+		StartSoundName(self, PainSound, CHAN_VOICE);
 	}
 }
 
@@ -284,7 +284,7 @@ void Actor::A_Scream(void)
 	case Sorcerer1:
 	case Minotaur:
 		// Make boss death sounds full volume
-		StartSound(none, sound_death, CHAN_VOICE);
+		StartSoundName(none, DeathSound, CHAN_VOICE);
 		break;
 	case PlayerEntity:
 		// Handle the different player death screams
@@ -294,7 +294,7 @@ void Actor::A_Scream(void)
 		}
 		else if (Health > -50)
 		{	// Normal death sound
-			StartSound(self, sound_death, CHAN_VOICE);
+			StartSoundName(self, DeathSound, CHAN_VOICE);
 		}
 		else if (Health > -100)
 		{	// Crazy death sound
@@ -306,7 +306,7 @@ void Actor::A_Scream(void)
 		}
 		break;
 	default:
-		StartSound(self, sound_death, CHAN_VOICE);
+		StartSoundName(self, DeathSound, CHAN_VOICE);
 		break;
 	}
 }
@@ -634,6 +634,9 @@ void Actor::A_ContMobjSound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/16 16:26:55  dj_jl
+//  Removed precalculated sound IDs
+//
 //  Revision 1.18  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

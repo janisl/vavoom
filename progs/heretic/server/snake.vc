@@ -48,7 +48,7 @@ void Actor::A_SnakeAttack(void)
 		SetState(S_SNAKE_WALK1);
 		return;
 	}
-	StartSound(self, sound_attack, CHAN_WEAPON);
+	StartSoundName(self, AttackSound, CHAN_WEAPON);
 	A_FaceTarget();
 	SpawnMissile(this, target, SnakeProjectileA);
 }
@@ -66,7 +66,7 @@ void Actor::A_SnakeAttack2(void)
 		SetState(S_SNAKE_WALK1);
 		return;
 	}
-	StartSound(self, sound_attack, CHAN_WEAPON);
+	StartSoundName(self, AttackSound, CHAN_WEAPON);
 	A_FaceTarget();
 	SpawnMissile(this, target, SnakeProjectileB);
 }
@@ -74,6 +74,9 @@ void Actor::A_SnakeAttack2(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/02/16 16:26:55  dj_jl
+//  Removed precalculated sound IDs
+//
 //  Revision 1.9  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.
