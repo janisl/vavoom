@@ -46,7 +46,7 @@ class Thing0:Actor
 		Mass = 10000.0;
 		ReactionCount = 8;
 		bShootable = true;
-		bNoClient = true;
+		bHidden = true;
 		SpawnState = S_1295;
 		DeathState = S_239;
 	}
@@ -54,11 +54,11 @@ class Thing0:Actor
 
 //==========================================================================
 //
-//	PlayerEntity
+//	PlayerPawn
 //
 //==========================================================================
 
-class PlayerEntity:Actor
+class PlayerPawn:Actor
 {
 	defaultproperties
 	{
@@ -1425,7 +1425,7 @@ class Thing30:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bShootable = true;
-		bNoClient = true;
+		bHidden = true;
 		SpawnState = S_424;
 		ActiveSound = 'Sound54';
 	}
@@ -4567,7 +4567,7 @@ class TeleportSpot:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bNoClient = true;
+		bHidden = true;
 		bNoBlockmap = true;
 	}
 };
@@ -9012,9 +9012,12 @@ class Quest6:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2002/02/22 18:00:25  dj_jl
+//	A lots of the renaming, beautification.
+//
 //	Revision 1.21  2002/02/14 19:20:59  dj_jl
 //	Renamed Entity properties to new naming style
-//
+//	
 //	Revision 1.20  2002/02/06 17:28:53  dj_jl
 //	Replaced Actor flags with boolean variables.
 //	

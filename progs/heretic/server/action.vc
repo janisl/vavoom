@@ -39,7 +39,7 @@ void Actor::A_RestoreSpecialThing1(void)
 		RepositionMace(this);
 	}
 	Translucency -= 100;
-	StartSoundName(self, 'Respawn', CHAN_VOICE);
+	PlaySound('Respawn', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -86,7 +86,7 @@ void Actor::A_RestoreArtifact(void)
 {
 	bSpecial = true;
 	SetState(SpawnState);
-	StartSoundName(self, 'Respawn', CHAN_VOICE);
+	PlaySound('Respawn', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -129,10 +129,10 @@ void Actor::A_ESound(void)
 	switch (Class)
 	{
 	case SoundWaterfall:
-		StartSoundName(self, 'Waterfall', CHAN_VOICE);
+		PlaySound('Waterfall', CHAN_VOICE);
 		break;
 	case SoundWind:
-		StartSoundName(self, 'Wind', CHAN_VOICE);
+		PlaySound('Wind', CHAN_VOICE);
 		break;
 	}
 }
@@ -140,6 +140,9 @@ void Actor::A_ESound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/02/22 18:00:15  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.14  2002/02/14 19:20:57  dj_jl
 //  Renamed Entity properties to new naming style
 //

@@ -35,7 +35,7 @@ void Actor::A_Look(void)
 {
 	Actor targ;
 
-	threshold = 0;	// any shot will wake up
+	Threshold = 0;	// any shot will wake up
 	targ = Actor(Sector->SoundTarget);
 
 	if (targ && targ.bShootable)
@@ -95,11 +95,11 @@ void Actor::A_Look(void)
 		if (Class == SpiderMastermind || Class == Cyberdemon)
 		{
 			// Full volume
-			StartSoundName(none, sound, CHAN_VOICE);
+			PlayFullVolumeSound(sound, CHAN_VOICE);
 		}
 		else
 		{
-			StartSoundName(self, sound, CHAN_VOICE);
+			PlaySound(sound, CHAN_VOICE);
 		}
 	}
 
@@ -130,15 +130,15 @@ void Actor::A_Chase(void)
 	}
 
 	// modify target threshold
-	if (threshold)
+	if (Threshold)
 	{
 		if (!target || target->Health <= 0)
 		{
-			threshold = 0;
+			Threshold = 0;
 		}
 		else
 		{
-			threshold--;
+			Threshold--;
 		}
 	}
 
@@ -152,11 +152,11 @@ void Actor::A_Chase(void)
 	}
 */
 	// turn towards movement direction if not there yet
-	if (movedir < 8)
+	if (MoveDir < 8)
 	{
 		Angles.yaw = itof(ftoi(Angles.yaw / 45.0)) * 45.0;
 
-		delta = AngleMod180(Angles.yaw - itof(movedir) * 45.0);
+		delta = AngleMod180(Angles.yaw - itof(MoveDir) * 45.0);
 
 		if (delta > 0.0)
 		{
@@ -195,7 +195,7 @@ void Actor::A_Chase(void)
 	{
 		if (AttackSound)
 		{
-			StartSoundName(self, AttackSound, CHAN_WEAPON);
+			PlaySound(AttackSound, CHAN_WEAPON);
 		}
 		SetState(MeleeState);
 		return;
@@ -204,7 +204,7 @@ void Actor::A_Chase(void)
 	// check for missile attack
 	if (MissileState)
 	{
-		if (fastparm || !movecount)
+		if (fastparm || !MoveCount)
 		{
 			if (CheckMissileRange())
 			{
@@ -216,7 +216,7 @@ void Actor::A_Chase(void)
 	}
 
 	// possibly choose another target
-	if (netgame && !threshold)
+	if (netgame && !Threshold)
 	{
 		if (!P_CheckSight(self, *target))
 		{
@@ -226,7 +226,7 @@ void Actor::A_Chase(void)
 	}
 
 	// chase towards player
-	if (--movecount < 0 || !StepMove())
+	if (--MoveCount < 0 || !StepMove())
 	{
 		NewChaseDir();
 	}
@@ -234,7 +234,7 @@ void Actor::A_Chase(void)
 	// make active sound
 	if (ActiveSound && P_Random() < 3)
 	{
-		StartSoundName(self, ActiveSound, CHAN_VOICE);
+		PlaySound(ActiveSound, CHAN_VOICE);
 	}
 }
 
@@ -276,7 +276,7 @@ void Actor::A_Pain(void)
 
 	if (PainSound)
 	{
-		StartSoundName(self, PainSound, CHAN_VOICE);
+		PlaySound(PainSound, CHAN_VOICE);
 	}
 }
 
@@ -358,11 +358,11 @@ void Actor::A_Scream(void)
 		if (Class == SpiderMastermind || Class == Cyberdemon)
 		{
 			// full volume
-			StartSoundName(none, sound, CHAN_VOICE);
+			PlayFullVolumeSound(sound, CHAN_VOICE);
 		}
 		else
 		{
-			StartSoundName(self, sound, CHAN_VOICE);
+			PlaySound(sound, CHAN_VOICE);
 		}
 	}
 }
@@ -383,7 +383,7 @@ void Actor::A_XScream(void)
 		Effects &= ~EF_DLIGHT_MASK;
 	}
 
-	StartSoundName(self, 'Slop', CHAN_BODY);
+	PlaySound('Slop', CHAN_BODY);
 }
 
 //==========================================================================
@@ -431,7 +431,7 @@ void Actor::A_PlayerScream(void)
 	}
 #endif
 
-	StartSoundName(self, sound, CHAN_VOICE);
+	PlaySound(sound, CHAN_VOICE);
 }
 
 #ifndef DOOM2
@@ -487,7 +487,7 @@ void Actor::A_BossDeath(void)
 
 	// make sure there is a player alive for victory
 	for (i = 0; i < MAXPLAYERS; i++)
-		if (players[i].spawned && players[i].health > 0)
+		if (players[i].bSpawned && players[i].Health > 0)
 			break;
 
 	if (i == MAXPLAYERS)
@@ -559,7 +559,7 @@ void Actor::A_BossDeath(void)
 
 	// make sure there is a player alive for victory
 	for (i = 0; i < MAXPLAYERS; i++)
-		if (players[i].spawned && players[i].health > 0)
+		if (players[i].bSpawned && players[i].Health > 0)
 			break;
 
 	if (i == MAXPLAYERS)
@@ -595,6 +595,9 @@ void Actor::A_BossDeath(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/22 18:00:07  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.19  2002/02/16 16:26:55  dj_jl
 //  Removed precalculated sound IDs
 //

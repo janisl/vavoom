@@ -54,12 +54,12 @@ boolean Actor::UpdateChicken(int tics)
 	mobj_t *targ;
 	mobj_t *mo;
 
-	special1 -= tics;
-	if (special1 > 0)
+	Special1 -= tics;
+	if (Special1 > 0)
 	{
 		return false;
 	}
-	moType = specialcid;
+	moType = SpecialCID;
 	x = Origin.x;
 	y = Origin.y;
 	z = Origin.z;
@@ -72,14 +72,14 @@ boolean Actor::UpdateChicken(int tics)
 		// Didn't fit
 		P_RemoveMobj(mo);
 		P_SetThingPosition(self);
-		mo->special1 = 5 * 35;	// Next try in 5 seconds
+		mo->Special1 = 5 * 35;	// Next try in 5 seconds
 		return false;
 	}
 	SetState(S_FREETARGMOBJ);
 	mo->Angles.yaw = angle;
 	mo->target = targ;
 	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, TeleportFog);
-	StartSoundName(*fog, 'Teleport', CHAN_VOICE);
+	fog->PlaySound('Teleport', CHAN_VOICE);
 	return true;
 }
 
@@ -180,12 +180,15 @@ void Actor::A_ChicPain(void)
 	{
 		return;
 	}
-	StartSoundName(self, PainSound, CHAN_VOICE);
+	PlaySound(PainSound, CHAN_VOICE);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/22 18:00:15  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.15  2002/02/16 16:26:55  dj_jl
 //  Removed precalculated sound IDs
 //

@@ -63,47 +63,19 @@ boolean P_TestMobjLocation(mobj_t * mobj)
 	return false;
 }
 
-//**************************************************************************
-//
-//
-//
-//**************************************************************************
-
-mobj_t *tmthing;
-TVec tmpos;
-float tmbbox[4];
-float tmfloorz;
-float tmceilingz;
-float tmdropoffz;
-sec_plane_t *tmfloor;
-sec_plane_t *tmceiling;
-
-// keep track of special lines as they are hit,
-// but don't process them until the move is proven valid
-#define MAXSPECIALCROSS	32
-
-boolean floatok;	// if true, move would be ok if
-					// within tmfloorz - tmceilingz
-float saved_tmfloorz;
-
-// keep track of the line that lowers the ceiling,
-// so missiles don't explode against sky hack walls
-line_t *ceilingline;
-
-line_t *spechit[MAXSPECIALCROSS];
-int numspechit;
-
 //==========================================================================
 //
 //	Actor::Touch
 //
 //==========================================================================
 
-boolean	Actor::Touch(Actor Other)
+boolean	Actor::Touch(MapObject InOther)
 {
 	boolean solid;
 	int damage;
+	Actor Other;
 
+	Other = Actor(InOther);
 	if (!Other.bSolid && !Other.bSpecial && !Other.bShootable)
 		return true;
 
@@ -135,7 +107,7 @@ boolean	Actor::Touch(Actor Other)
 				// Don't missile self
 				return true;
 			}
-			if (Other.Class != PlayerEntity)
+			if (Other.Class != PlayerPawn)
 			{
 				// Hit same species as originator, explode, no damage
 				return false;
@@ -155,7 +127,7 @@ boolean	Actor::Touch(Actor Other)
 				// Ok to spawn some blood
 				P_RipperBlood(this);
 			}
-			StartSoundName(self, 'RipSlop', CHAN_VOICE);
+			PlaySound('RipSlop', CHAN_VOICE);
 			damage = ((P_Random() & 3) + 2) * MissileDamage;
 			Other.Damage(self, *target, damage);
 			if (Other.bPushable && !bCannotPush)
@@ -164,7 +136,7 @@ boolean	Actor::Touch(Actor Other)
 				Other.Velocity.x += Velocity.x / 4.0;
 				Other.Velocity.y += Velocity.y / 4.0;
 			}
-			numspechit = 0;
+//WTAT A FUCK IS THIS???????			numspechit = 0;
 			return true;
 		}
 		// Do damage
@@ -199,276 +171,9 @@ boolean	Actor::Touch(Actor Other)
 	return !Other.bSolid;
 }
 
-//==========================================================================
-//
-//	PIT_CheckRelThing
-//
-//==========================================================================
-
-boolean PIT_CheckRelThing(MapObject Other)
-{
-	float blockdist;
-
-	blockdist = Other.Radius + tmthing->Radius;
-
-	if (fabs(Other.Origin.x - tmpos.x) >= blockdist
-		|| fabs(Other.Origin.y - tmpos.y) >= blockdist)
-	{
-		// didn't hit it
-		return true;
-	}
-
-	// don't clip against self
-	if (Other == *tmthing)
-		return true;
-
-	if (!tmthing->bNoPassMobj || Actor(Other).bSpecial)
-	{
-		// check if a mobj passed over/under another object
-		if ((tmthing->Class == Imp || tmthing->Class == Wizard)
-			&& (Other.Class == Imp || Other.Class == Wizard))
-		{
-			// don't let imps/wizards fly over other imps/wizards
-			return false;
-		}
-		if (tmthing->Origin.z > Other.Origin.z + Other.Height)
-		{
-			return true;
-		}
-		if (tmthing->Origin.z + tmthing->Height < Other.Origin.z)
-		{
-			// under thing
-			return true;
-		}
-	}
-
-	return tmthing->Touch(Actor(Other));
-}
-
-//==========================================================================
-//
-//	BlockedByLine
-//
-//==========================================================================
-
-void BlockedByLine(Actor * tmthing, line_t * ld)
-{
-}
-
-//==========================================================================
-//
-//	PIT_CheckRelLine
-//
-//  Adjusts tmfloorz and tmceilingz as lines are contacted
-//
-//==========================================================================
-
-boolean PIT_CheckRelLine(line_t * ld)
-{
-	TVec hit_point;
-	opening_t *open;
-
-	if (tmbbox[BOXRIGHT] <= ld->bbox[BOXLEFT] ||
-		tmbbox[BOXLEFT] >= ld->bbox[BOXRIGHT] ||
-		tmbbox[BOXTOP] <= ld->bbox[BOXBOTTOM] ||
-		tmbbox[BOXBOTTOM] >= ld->bbox[BOXTOP])
-		return true;
-
-	if (P_BoxOnLineSide(&tmbbox[0], ld) != -1)
-		return true;
-
-	// A line has been hit
-
-	// The moving thing's destination position will cross
-	// the given line.
-	// If this should not be allowed, return false.
-	// If the line is special, keep track of it
-	// to process later if the move is proven ok.
-	// NOTE: specials are NOT sorted by order,
-	// so two special lines that are only 8 pixels apart
-	// could be crossed in either order.
-
-	if (!ld->backsector)
-	{
-		// One sided line
-		BlockedByLine(tmthing, ld);
-		return false;
-	}
-
-	if (tmthing->bCheckLineBlocking && ld->flags & ML_BLOCKING)
-	{
-		// Explicitly blocking everything
-		BlockedByLine(tmthing, ld);
-		return false;
-	}
-
-	if (tmthing->bCheckLineBlockMonsters && ld->flags & ML_BLOCKMONSTERS)
-	{
-		// Block monsters only
-		BlockedByLine(tmthing, ld);
-		return false;
-	}
-	if (tmthing->bMissile)
-	{
-		// Missiles can trigger impact specials
-		if (ld->special)
-		{
-			spechit[numspechit] = ld;
-			numspechit++;
-		}
-	}
-
-	// set openrange, opentop, openbottom
-	hit_point =
-		tmpos - (DotProduct(tmpos, ld->normal) - ld->dist) * ld->normal;
-	open = LineOpenings(ld, hit_point);
-	open = FindOpening(open, cptrace.Pos.z, cptrace.Pos.z + tmthing->Height);
-
-	if (open)
-	{
-		// adjust floor / ceiling heights
-		if (!(open->ceiling->flags & SPF_NOBLOCKING)
-			&& open->top < tmceilingz)
-		{
-			tmceiling = open->ceiling;
-			tmceilingz = open->top;
-			ceilingline = ld;
-		}
-
-		if (!(open->floor->flags & SPF_NOBLOCKING) && open->bottom > tmfloorz)
-		{
-			tmfloor = open->floor;
-			tmfloorz = open->bottom;
-		}
-
-		if (open->lowfloor < tmdropoffz)
-			tmdropoffz = open->lowfloor;
-	}
-	else
-	{
-		tmceilingz = tmfloorz;
-	}
-
-	// if contacted a special line, add it to the list
-	if (ld->special)
-	{
-		if (numspechit >= 32)
-		{
-//          cond << "Spechit overflow\n";
-		}
-		else
-		{
-			spechit[numspechit] = ld;
-			numspechit++;
-		}
-	}
-
-	return true;
-}
-
-//==========================================================================
-//
-//  P_CheckRelPosition
-//
-//  This is purely informative, nothing is modified
-// (except things picked up).
-// 
-// in:
-//  a mobj_t (can be valid or invalid)
-//  a position to be checked
-//   (doesn't need to be related to the mobj_t->x,y)
-//
-// during:
-//  special things are touched if MF_PICKUP
-//  early out on solid lines?
-//
-// out:
-//  newsubsec
-//	FloorZ
-//	CeilingZ
-//  tmdropoffz
-//   the lowest point contacted
-//   (monsters won't move to a dropoff)
-//  speciallines[]
-//  numspeciallines
-//
-//==========================================================================
-
-boolean P_CheckRelPosition(mobj_t * thing, float x, float y)
-{
-	int xl;
-	int xh;
-	int yl;
-	int yh;
-	int bx;
-	int by;
-	subsector_t *newsubsec;
-	sec_region_t *gap;
-	sec_region_t *reg;
-
-	tmthing = thing;
-
-	tmpos = vector(x, y, thing->Origin.z);
-
-	tmbbox[BOXTOP] = y + tmthing->Radius;
-	tmbbox[BOXBOTTOM] = y - tmthing->Radius;
-	tmbbox[BOXRIGHT] = x + tmthing->Radius;
-	tmbbox[BOXLEFT] = x - tmthing->Radius;
-
-	newsubsec = PointInSubsector(x, y);
-	ceilingline = NULL;
-
-	// The base floor / ceiling is from the subsector
-	// that contains the point.
-	// Any contacted lines the step closer together
-	// will adjust them.
-	gap = FindThingGap(newsubsec->sector->botregion, tmpos, tmpos.z,
-		tmpos.z + thing->Height);
-	reg = gap;
-	while (reg->prev && reg->floor->flags & SPF_NOBLOCKING)
-		reg = reg->prev;
-	tmfloor = reg->floor;
-	tmfloorz = tmdropoffz = GetPlanePointZ(reg->floor, tmpos);
-	reg = gap;
-	while (reg->next && reg->ceiling->flags & SPF_NOBLOCKING)
-		reg = reg->next;
-	tmceiling = reg->ceiling;
-	tmceilingz = GetPlanePointZ(reg->ceiling, tmpos);
-
-	(*validcount)++;
-	numspechit = 0;
-
-	if (thing->bNoClip)
-		return true;
-
-	// Check things first, possibly picking things up.
-	// The bounding box is extended by MAXRADIUS
-	// because mobj_ts are grouped into mapblocks
-	// based on their origin point, and can overlap
-	// into adjacent blocks by up to MAXRADIUS units.
-	xl = MapBlock(tmbbox[BOXLEFT] - level->bmaporgx - MAXRADIUS);
-	xh = MapBlock(tmbbox[BOXRIGHT] - level->bmaporgx + MAXRADIUS);
-	yl = MapBlock(tmbbox[BOXBOTTOM] - level->bmaporgy - MAXRADIUS);
-	yh = MapBlock(tmbbox[BOXTOP] - level->bmaporgy + MAXRADIUS);
-
-	for (bx = xl; bx <= xh; bx++)
-		for (by = yl; by <= yh; by++)
-			if (!P_BlockThingsIterator(bx, by, PIT_CheckRelThing))
-				return false;
-
-	// check lines
-	xl = MapBlock(tmbbox[BOXLEFT] - level->bmaporgx);
-	xh = MapBlock(tmbbox[BOXRIGHT] - level->bmaporgx);
-	yl = MapBlock(tmbbox[BOXBOTTOM] - level->bmaporgy);
-	yh = MapBlock(tmbbox[BOXTOP] - level->bmaporgy);
-
-	for (bx = xl; bx <= xh; bx++)
-		for (by = yl; by <= yh; by++)
-			if (!P_BlockLinesIterator(bx, by, PIT_CheckRelLine))
-				return false;
-
-	return true;
-}
+boolean floatok;	// if true, move would be ok if
+					// within tmtrace.FloorZ - tmtrace.CeilingZ
+float saved_tmfloorz;
 
 //==========================================================================
 //
@@ -478,14 +183,14 @@ boolean P_CheckRelPosition(mobj_t * thing, float x, float y)
 
 void PushLine(mobj_t * thing)
 {
-	if (numspechit && thing->bMissile &&
+	if (tmtrace.NumSpecHit && thing->bMissile &&
 		thing->target && thing->target->bIsPlayer)
 	{
 		int i;
 
-		for (i = numspechit - 1; i >= 0; i--)
+		for (i = tmtrace.NumSpecHit - 1; i >= 0; i--)
 		{
-			P_ActivateLine(spechit[i], thing->target, 0, SPAC_IMPACT);
+			P_ActivateLine(tmtrace.SpecHit[i], thing->target, 0, SPAC_IMPACT);
 		}
 	}
 }
@@ -509,7 +214,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 
 	check = P_CheckRelPosition(thing, x, y);
 	floatok = false;
-	saved_tmfloorz = tmfloorz;
+	saved_tmfloorz = tmtrace.FloorZ;
 	if (!check)
 	{
 		PushLine(thing);
@@ -518,7 +223,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 
 	if (!thing->bNoClip)
 	{
-		if (tmceilingz - tmfloorz < thing->Height)
+		if (tmtrace.CeilingZ - tmtrace.FloorZ < thing->Height)
 		{
 			// Doesn't fit
 			PushLine(thing);
@@ -528,7 +233,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 		floatok = true;
 
 		if (!thing->bTeleport &&
-			tmceilingz - thing->Origin.z < thing->Height && !thing->bFly)
+			tmtrace.CeilingZ - thing->Origin.z < thing->Height && !thing->bFly)
 		{
 			// mobj must lower itself to fit
 			PushLine(thing);
@@ -536,13 +241,13 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 		}
 		if (thing->bFly)
 		{
-			if (thing->Origin.z + thing->Height > tmceilingz)
+			if (thing->Origin.z + thing->Height > tmtrace.CeilingZ)
 			{
 				thing->Velocity.z = -8.0 * 35.0;
 				return false;
 			}
-			else if (thing->Origin.z < tmfloorz &&
-				tmfloorz - tmdropoffz > 24.0)
+			else if (thing->Origin.z < tmtrace.FloorZ &&
+				tmtrace.FloorZ - tmtrace.DropOffZ > 24.0)
 			{
 				thing->Velocity.z = 8.0 * 35.0;
 				return false;
@@ -551,18 +256,18 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 		if (!thing->bTeleport &&
 			// The Minotaur floor fire can step up any amount
 			thing->Class != MinotaurFloorFire &&
-			tmfloorz - thing->Origin.z > 24.0)
+			tmtrace.FloorZ - thing->Origin.z > 24.0)
 		{
 			// Too big a step up
 			PushLine(thing);
 			return false;
 		}
-		if (thing->bMissile && tmfloorz > thing->Origin.z)
+		if (thing->bMissile && tmtrace.FloorZ > thing->Origin.z)
 		{
 			PushLine(thing);
 		}
 		if (!thing->bDropOff && !thing->bFloat &&
-			tmfloorz - tmdropoffz > 24.0)
+			tmtrace.FloorZ - tmtrace.DropOffZ > 24.0)
 		{
 			// Can't move over a dropoff
 			return false;
@@ -578,10 +283,10 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	thing->Origin.y = y;
 
 	P_SetThingPosition(*thing);
-	thing->Floor = tmfloor;
-	thing->Ceiling = tmceiling;
-	thing->FloorZ = tmfloorz;
-	thing->CeilingZ = tmceilingz;
+	thing->Floor = tmtrace.Floor;
+	thing->Ceiling = tmtrace.Ceiling;
+	thing->FloorZ = tmtrace.FloorZ;
+	thing->CeilingZ = tmtrace.CeilingZ;
 
 	if (thing->bFootClip && P_GetThingFloorType(thing) != FLOOR_SOLID)
 	{
@@ -597,11 +302,11 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	//
 	if (!thing->bNoClip && !thing->bTeleport)
 	{
-		while (numspechit > 0)
+		while (tmtrace.NumSpecHit > 0)
 		{
-			numspechit--;
+			tmtrace.NumSpecHit--;
 			// see if the line was crossed
-			ld = spechit[numspechit];
+			ld = tmtrace.SpecHit[tmtrace.NumSpecHit];
 			side = PointOnPlaneSide(thing->Origin, ld);
 			oldside = PointOnPlaneSide(oldorg, ld);
 			if (side != oldside)
@@ -636,6 +341,9 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/02/22 18:00:17  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.20  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

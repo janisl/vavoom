@@ -26,8 +26,8 @@
 //============================================================================
 // Fire Demon AI
 //
-// special1         index into floatbob
-// special2         whether strafing or not
+// Special1         index into floatbob
+// Special2         whether strafing or not
 //============================================================================
 
 // MACROS ------------------------------------------------------------------
@@ -81,15 +81,15 @@ void Actor::A_FiredSpawnRock(void)
 	mo = SpawnActor(rockOrg, rtype);
 	if (mo)
 	{
-		mo.target = this;
+		mo.Owner = self;
 		mo.Velocity.x = (Random() - 0.5) * 4.0 * 35.0;
 		mo.Velocity.y = (Random() - 0.5) * 4.0 * 35.0;
 		mo.Velocity.z = Random() * 4.0 * 35.0;
-		mo.special1 = 2;	// Number bounces
+		mo.Special1 = 2;	// Number bounces
 	}
 
 	// Initialize fire demon
-	special2 = 0;
+	Special2 = 0;
 	bJustAttacked = false;
 }
 
@@ -116,18 +116,18 @@ void Actor::A_FiredRocks(void)
 
 void Actor::A_FiredChase(void)
 {
-	int weaveindex = special1;
+	int weaveindex = Special1;
 	float ang;
 	float dist;
 
 	if (ReactionCount)
 		ReactionCount--;
-	if (threshold)
-		threshold--;
+	if (Threshold)
+		Threshold--;
 
 	// Float up and down
 	Origin.z += FloatBobOffsets[weaveindex];
-	special1 = (weaveindex + 2) & 63;
+	Special1 = (weaveindex + 2) & 63;
 
 	// Insure it stays above certain height
 	if (Origin.z < FloorZ + 64.0)
@@ -135,37 +135,37 @@ void Actor::A_FiredChase(void)
 		Origin.z += 2.0;
 	}
 
-	if (!target || !target->bShootable)
+	if (!Enemy || !Enemy.bShootable)
 	{
-		// Invalid target
+		// Invalid enemy
 		LookForPlayers(true);
 		return;
 	}
 
 	// Strafe
-	if (special2 > 0)
+	if (Special2 > 0)
 	{
-		special2--;
+		Special2--;
 	}
 	else
 	{
-		special2 = 0;
+		Special2 = 0;
 		Velocity.x = 0.0;
 		Velocity.y = 0.0;
-		dist = MobjDist(self, *target);
+		dist = MobjDist(self, Enemy);
 		if (dist < FIREDEMON_ATTACK_RANGE)
 		{
 			if (P_Random() < 30)
 			{
-				ang = atan2(target->Origin.y - Origin.y,
-					target->Origin.x - Origin.x);
+				ang = atan2(Enemy.Origin.y - Origin.y,
+					Enemy.Origin.x - Origin.x);
 				if (P_Random() < 128)
 					ang = AngleMod360(ang + 90.0);
 				else
 					ang = AngleMod360(ang - 90.0);
 				Velocity.x = 8.0 * cos(ang) * 35.0;
 				Velocity.y = 8.0 * sin(ang) * 35.0;
-				special2 = 3;	// strafe time
+				Special2 = 3;	// strafe time
 			}
 		}
 	}
@@ -173,9 +173,9 @@ void Actor::A_FiredChase(void)
 	FaceMovementDirection();
 
 	// Normal movement
-	if (!special2)
+	if (!Special2)
 	{
-		if (--movecount < 0 || !StepMove())
+		if (--MoveCount < 0 || !StepMove())
 		{
 			NewChaseDir();
 		}
@@ -199,7 +199,7 @@ void Actor::A_FiredChase(void)
 	// make active sound
 	if (ActiveSound && P_Random() < 3)
 	{
-		StartSoundName(self, ActiveSound, CHAN_VOICE);
+		PlaySound(ActiveSound, CHAN_VOICE);
 	}
 }
 
@@ -213,9 +213,9 @@ void Actor::A_FiredAttack(void)
 {
 	mobj_t *mo;
 
-	mo = SpawnMissile(this, target, FireDemonMissile);
+	mo = SpawnMissile(this, &Enemy, FireDemonMissile);
 	if (mo)
-		StartSoundName(self, 'FireDemonAttack', CHAN_WEAPON);
+		PlaySound('FireDemonAttack', CHAN_WEAPON);
 }
 
 //============================================================================
@@ -262,6 +262,9 @@ void Actor::A_SmBounce(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/22 18:00:21  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.17  2002/02/16 16:26:55  dj_jl
 //  Removed precalculated sound IDs
 //

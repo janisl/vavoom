@@ -266,7 +266,6 @@ class Actor:Entity
 	// movement flags
 	bool bDropOff;			// allow jumps from high places
 	bool bPickUp;			// for players to pick up items
-	bool bNoClip;			// player cheat
 	bool bSlide;			// keep info about sliding along walls
 	bool bFloat;			// allow moves to any height, no gravity
 	bool bTeleport;			// don't cross lines or look at heights
@@ -278,7 +277,6 @@ class Actor:Entity
 							// auto float to target's height
 	bool bCountKill;		// count towards intermission kill total
 	bool bCountItem;		// count towards intermission item total
-	bool bSkullFly;			// skull in flight
 	bool bUnknown1;
 	bool bUnknown2;
 	bool bUnknown3;
@@ -293,7 +291,7 @@ class Actor:Entity
 	float Speed;
 	float StepSpeed;
 	int PainChance;
-	int spawnhealth;
+	int SpawnHealth;
 	int GibsHealth;
 	name ClassName;
 
@@ -304,10 +302,10 @@ class Actor:Entity
 	int MissileDamage;	// For missiles
 
 	// Player number last looked for.
-	int lastlook;
+	int LastLook;
 
 	// For nightmare respawn.
-	mthing_t spawnpoint;
+	mthing_t SpawnSpot;
 
 	// Reaction time: if non 0, don't attack yet.
 	int ReactionCount;
@@ -316,19 +314,19 @@ class Actor:Entity
 
 	// If >0, the target will be chased
 	// no matter what (even if shot)
-	int threshold;
+	int Threshold;
 
 	// Movement direction, movement generation (zig-zagging).
-	int movedir;	// 0-7
-	int movecount;	// when 0, select a new dir
+	int MoveDir;	// 0-7
+	int MoveCount;	// when 0, select a new dir
 
 	//  Water
-	int waterlevel;
-	int watertype;
+	int WaterLevel;
+	int WaterType;
 
 	void TouchSpecial(Actor Toucher);
 
-	boolean Touch(Actor Other);
+	boolean Touch(MapObject Other);
 
 	void Think(void);
 	void Archive(void);
@@ -475,60 +473,60 @@ class Weapon:ViewEntity
 
 addfields player_t
 {
-	int ammo[NUMAMMO];
-	int ready_ammo;
+	int Ammo[NUMAMMO];
+	int ReadyAmmo;
 
-	boolean weaponowned[NUMWEAPONS];
+	boolean WeaponOwned[NUMWEAPONS];
 
-	int armorpoints;
+	int ArmorPoints;
 
-	int keys;
+	int Keys;
 
-	boolean backpack;
+	boolean Backpack;
 
-	int readyweapon;
+	int ReadyWeapon;
 
 	// For screen flashing (red or bright).
-	int damagecount;
-	int bonuscount;
+	int DamageCount;
+	int BonusCount;
 
 	// Bit flags, for cheats and debug.
 	// See cheat_t, above.
-	int cheats;
+	int Cheats;
 
 	// Power ups. invinc and invis are tic counters.
-	int powers[NUMPOWERS];
+	int Powers[NUMPOWERS];
 
 	// Base height above floor for viewz.
-	float viewheight;
+	float ViewHeight;
 	// Bob/squat speed.
-	float deltaviewheight;
+	float DeltaViewHeight;
 	// bounded/scaled total momentum.
-	float bob;
+	float Bob;
 
 	// Refired shots are less accurate.
-	int refire;
+	int Refire;
 
 	// Is wp_nochange if not changing.
-	int pendingweapon;
+	int PendingWeapon;
 
-	int w_ammo;
-	int w_upstate;
-	int w_downstate;
-	int w_readystate;
-	int w_atkstate;
-	int w_holdatkstate;
-	int w_flashstate;
+	int w_Ammo;
+	int w_UpState;
+	int w_DownState;
+	int w_ReadyState;
+	int w_AttackState;
+	int w_HoldAttackState;
+	int w_FlashState;
 
 	// Who did damage (NULL for floors/ceilings).
-	mobj_t *attacker;
+	mobj_t *Attacker;
 
-	int jumpTics;
+	int JumpTics;
 
 	// Armor type is 0-2.
-	int armortype;
+	int ArmorType;
 
-	TVec movedir;
+	TVec MoveDir;
 };
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
@@ -562,6 +560,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/02/22 18:00:26  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.20  2002/02/16 16:27:44  dj_jl
 //  Added bool variables
 //

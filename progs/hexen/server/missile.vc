@@ -101,9 +101,9 @@ mobj_t *SpawnMissile(mobj_t * source, mobj_t * dest, classid type)
 	th = P_SpawnMobj(source->Origin.x, source->Origin.y, z, type);
 	if (th->SightSound)
 	{
-		StartSoundName(*th, th->SightSound, CHAN_VOICE);
+		th->PlaySound(th->SightSound, CHAN_VOICE);
 	}
-	th->target = source;	// Originator
+	th->Owner = *source;	// Originator
 	dir = dest->Origin - source->Origin;
 	if (dest->Translucency)
 	{	// Invisible target
@@ -134,9 +134,9 @@ mobj_t *SpawnMissileXYZ(float x, float y, float z, mobj_t * source,
 	th = P_SpawnMobj(x, y, z, type);
 	if (th->SightSound)
 	{
-		StartSoundName(*th, th->SightSound, CHAN_VOICE);
+		th->PlaySound(th->SightSound, CHAN_VOICE);
 	}
-	th->target = source;	// Originator
+	th->Owner = *source;	// Originator
 	dir = dest->Origin - source->Origin;
 	if (dest->Translucency)
 	{	// Invisible target
@@ -185,9 +185,9 @@ mobj_t *SpawnMissileAngle(mobj_t * source, classid type, float angle,
 	mo = P_SpawnMobj(source->Origin.x, source->Origin.y, z, type);
 	if (mo->SightSound)
 	{
-		StartSoundName(*mo, mo->SightSound, CHAN_VOICE);
+		mo->PlaySound(mo->SightSound, CHAN_VOICE);
 	}
-	mo->target = source;	// Originator
+	mo->Owner = *source;	// Originator
 	mo->Angles.yaw = angle;
 	mo->Velocity.x = mo->Speed * cos(angle);
 	mo->Velocity.y = mo->Speed * sin(angle);
@@ -213,11 +213,7 @@ mobj_t *SpawnMissileAngleSpeed(mobj_t * source, classid type, float angle,
 	z = source->Origin.z;
 	z -= source->FloorClip;
 	mo = P_SpawnMobj(source->Origin.x, source->Origin.y, z, type);
-	if (mo->SightSound)
-	{
-		//StartSound(mo, mo->info->seesound);
-	}
-	mo->target = source;	// Originator
+	mo->Owner = *source;	// Originator
 	mo->Angles.yaw = angle;
 	mo->Velocity.x = ticspeed * cos(angle) * 35.0;
 	mo->Velocity.y = ticspeed * sin(angle) * 35.0;
@@ -241,9 +237,9 @@ mobj_t *SpawnKoraxMissile(float x, float y, float z,
 	th = P_SpawnMobj(x, y, z, type);
 	if (th->SightSound)
 	{
-		StartSoundName(*th, th->SightSound, CHAN_VOICE);
+		th->PlaySound(th->SightSound, CHAN_VOICE);
 	}
-	th->target = source;	// Originator
+	th->Owner = *source;	// Originator
 	dir = dest->Origin - vector(x, y, z);
 	if (dest->Translucency)
 	{	// Invisible target
@@ -259,7 +255,7 @@ mobj_t *SpawnKoraxMissile(float x, float y, float z,
 //
 //  SeekerMissile
 //
-//  The missile specialmobj1 field must be mobj_t *target.  Returns true if
+//  The missile specialmobj1 field must be mobj_t Enemy.  Returns true if
 // target was tracked, false if not.
 //
 //==========================================================================
@@ -272,7 +268,7 @@ boolean SeekerMissile(mobj_t * actor, float thresh, float turnMax)
 	float angle;
 	mobj_t *target;
 
-	target = actor->specialmobj1;
+	target = actor->SpecialMobj1;
 	if (!target)
 	{
 		return false;
@@ -280,7 +276,7 @@ boolean SeekerMissile(mobj_t * actor, float thresh, float turnMax)
 	if (!target->bShootable)
 	{
 		// Target died
-		actor->specialmobj1 = NULL;
+		actor->SpecialMobj1 = NULL;
 		return false;
 	}
 	dir = P_FaceMobj(actor, target, &delta);
@@ -371,11 +367,7 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 		z -= source->FloorClip;
 	}
 	MissileMobj = P_SpawnMobj(x, y, z, type);
-	if (MissileMobj->SightSound)
-	{
-		//StartSound(MissileMobj, MissileMobj->info->seesound);
-	}
-	MissileMobj->target = source;
+	MissileMobj->Owner = *source;
 	avcpy(angles, MissileMobj->Angles);
 	AngleVector(&angles, &vforward);
 	MissileMobj->Velocity = vforward * MissileMobj->Speed;
@@ -441,11 +433,7 @@ mobj_t *SpawnPlayerMissileAngle(mobj_t * source, classid type, float angle)
 	z = source->Origin.z + 4.0 * 8.0 - tan(source->Angles.pitch);
 	z -= source->FloorClip;
 	th = P_SpawnMobj(x, y, z, type);
-//  if(th->info->seesound)
-//  {
-//      StartSound(th, th->info->seesound);
-//  }
-	th->target = source;
+	th->Owner = *source;
 	avcpy(angles, th->Angles);
 	AngleVector(&angles, &vforward);
 	th->Velocity = vforward * th->Speed;
@@ -488,11 +476,7 @@ mobj_t *SpawnPlayerMissileAngleXYZ(mobj_t * source, float x, float y,
 	z += 4.0 * 8.0 - tan(source->Angles.pitch);
 	z -= source->FloorClip;
 	th = P_SpawnMobj(x, y, z, type);
-//  if(th->info->seesound)
-//  {
-//      StartSound(th, th->info->seesound);
-//  }
-	th->target = source;
+	th->Owner = *source;
 	avcpy(angles, th->Angles);
 	AngleVector(&angles, &vforward);
 	th->Velocity = vforward * th->Speed;
@@ -520,15 +504,15 @@ boolean P_ExplodeMissile(mobj_t * mo)
 	case SorcererBall1:
 	case SorcererBall2:
 	case SorcererBall3:
-		StartSoundName(none, 'SorcererBigBallExplode', CHAN_AUTO);
+		mo->PlayFullVolumeSound('SorcererBigBallExplode', CHAN_AUTO);
 		break;
 	case SorcererFX1:
-		StartSoundName(none, 'SorcererHeadScream', CHAN_AUTO);
+		mo->PlayFullVolumeSound('SorcererHeadScream', CHAN_AUTO);
 		break;
 	default:
 		if (mo->DeathSound)
 		{
-			StartSoundName(*mo, mo->DeathSound, CHAN_VOICE);
+			mo->PlaySound(mo->DeathSound, CHAN_VOICE);
 		}
 		break;
 	}
@@ -548,6 +532,9 @@ boolean P_ExplodeMissile(mobj_t * mo)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/22 18:00:22  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.19  2002/02/16 16:26:55  dj_jl
 //  Removed precalculated sound IDs
 //

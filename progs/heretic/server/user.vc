@@ -32,6 +32,7 @@ float air_control = 1.0 / 256.0;
 #define NUMREDPALS		8
 #define NUMBONUSPALS	4
 
+void SetWeapon(player_t *player, int NewWeapon);
 void SetPlayerRunState(player_t * player);
 void WeaponLevel2Fade(player_t * player);
 boolean UndoPlayerChicken(player_t * player);
@@ -89,7 +90,7 @@ float PSpriteSY[NUMWEAPONS] = {
 
 void ThrustPlayer(player_t * player, float angle, float move)
 {
-	if (player->powers[pw_flight]
+	if (player->Powers[pw_flight]
 		&& !(player->mo->Origin.z <= player->mo->FloorZ))
 	{
 		player->mo->Velocity.x += move * cos(angle) * frametime;
@@ -126,65 +127,65 @@ void CalcHeight(player_t * player)
 	// OPTIMIZE: tablify angle
 	// Note: a LUT allows for effects
 	//  like a ramp with low health.
-	player->bob = (player->mo->Velocity.x * player->mo->Velocity.x
+	player->Bob = (player->mo->Velocity.x * player->mo->Velocity.x
 		+ player->mo->Velocity.y * player->mo->Velocity.y)
 		* frametime * frametime;
 
-	player->bob /= 4.0;
-	if (player->bob > MAXBOB)
-		player->bob = MAXBOB;
+	player->Bob /= 4.0;
+	if (player->Bob > MAXBOB)
+		player->Bob = MAXBOB;
 
 	if (player->mo->bFly && !onground)
 	{
-		player->bob = 0.5;
+		player->Bob = 0.5;
 	}
 
 	angle = 180.0 * 35.0 / 10.0 * level->time;
-	bob = player->bob / 2.0 * sin(angle);
+	bob = player->Bob / 2.0 * sin(angle);
 
 	// move viewheight
-	if (player->playerstate == PST_LIVE)
+	if (player->PlayerState == PST_LIVE)
 	{
-		player->viewheight += player->deltaviewheight;
+		player->ViewHeight += player->DeltaViewHeight;
 
-		if (player->viewheight > VIEWHEIGHT)
+		if (player->ViewHeight > VIEWHEIGHT)
 		{
-			player->viewheight = VIEWHEIGHT;
-			player->deltaviewheight = 0.0;
+			player->ViewHeight = VIEWHEIGHT;
+			player->DeltaViewHeight = 0.0;
 		}
 
-		if (player->viewheight < VIEWHEIGHT / 2.0)
+		if (player->ViewHeight < VIEWHEIGHT / 2.0)
 		{
-			player->viewheight = VIEWHEIGHT / 2.0;
-			if (player->deltaviewheight <= 0.0)
-				player->deltaviewheight = 0.00001;
+			player->ViewHeight = VIEWHEIGHT / 2.0;
+			if (player->DeltaViewHeight <= 0.0)
+				player->DeltaViewHeight = 0.00001;
 		}
 
-		if (player->deltaviewheight)
+		if (player->DeltaViewHeight)
 		{
-			player->deltaviewheight += 0.25;
-			if (!player->deltaviewheight)
-				player->deltaviewheight = 0.00001;
+			player->DeltaViewHeight += 0.25;
+			if (!player->DeltaViewHeight)
+				player->DeltaViewHeight = 0.00001;
 		}
 	}
-	if (player->chickenTics)
+	if (player->ChickenTics)
 	{
-		player->vieworg.z = player->mo->Origin.z + player->viewheight - 20.0;
+		player->ViewOrg.z = player->mo->Origin.z + player->ViewHeight - 20.0;
 	}
 	else
 	{
-		player->vieworg.z = player->mo->Origin.z + player->viewheight + bob;
+		player->ViewOrg.z = player->mo->Origin.z + player->ViewHeight + bob;
 	}
-	if (player->playerstate != PST_DEAD &&
+	if (player->PlayerState != PST_DEAD &&
 		player->mo->Origin.z <= player->mo->FloorZ)
 	{
-		player->vieworg.z -= player->mo->FloorClip;
+		player->ViewOrg.z -= player->mo->FloorClip;
 	}
-	if (player->vieworg.z < player->mo->FloorZ + 4.0)
-		player->vieworg.z = player->mo->FloorZ + 4.0;
+	if (player->ViewOrg.z < player->mo->FloorZ + 4.0)
+		player->ViewOrg.z = player->mo->FloorZ + 4.0;
 
-	if (player->vieworg.z > player->mo->CeilingZ - 4.0)
-		player->vieworg.z = player->mo->CeilingZ - 4.0;
+	if (player->ViewOrg.z > player->mo->CeilingZ - 4.0)
+		player->ViewOrg.z = player->mo->CeilingZ - 4.0;
 }
 
 //==========================================================================
@@ -204,10 +205,10 @@ void MovePlayer(player_t * player)
 	onground = (player->mo->Origin.z <= player->mo->FloorZ) ||
 		player->mo->bOnMobj;
 
-	forward = player->forwardmove * 5.0;
-	side = player->sidemove * 5.0;
+	forward = player->ForwardMove * 5.0;
+	side = player->SideMove * 5.0;
 
-	if (player->chickenTics)
+	if (player->ChickenTics)
 	{
 		// Chicken speed
 		forward *= 1.2;
@@ -233,12 +234,12 @@ void MovePlayer(player_t * player)
 		SetPlayerRunState(player);
 	}
 
-	fly = player->flymove / 16.0;
-	if (fly && player->powers[pw_flight])
+	fly = player->FlyMove / 16.0;
+	if (fly && player->Powers[pw_flight])
 	{
-		if (player->flymove != TOCENTER)
+		if (player->FlyMove != TOCENTER)
 		{
-			player->flyheight = fly * 2.0;
+			player->FlyHeight = fly * 2.0;
 			if (!player->mo->bFly)
 			{
 				player->mo->bFly = true;
@@ -262,16 +263,16 @@ void MovePlayer(player_t * player)
 	}
 	if (player->mo->bFly)
 	{
-		player->mo->Velocity.z = player->flyheight * 35.0;
-		if (player->flyheight)
+		player->mo->Velocity.z = player->FlyHeight * 35.0;
+		if (player->FlyHeight)
 		{
-			player->flyheight /= 2.0;
+			player->FlyHeight /= 2.0;
 		}
 	}
 
-	if ((player->buttons & BT_JUMP) && onground && !player->jumpTics)
+	if ((player->Buttons & BT_JUMP) && onground && !player->JumpTics)
 	{
-		if (player->chickenTics)
+		if (player->ChickenTics)
 		{
 			//  Smaller momentum because chicken haves smaller mass
 			player->mo->Velocity.z = 6.0 * 35.0;
@@ -281,7 +282,7 @@ void MovePlayer(player_t * player)
 			player->mo->Velocity.z = 9.0 * 35.0;
 		}
 		player->mo->bOnMobj = false;
-		player->jumpTics = 18;
+		player->JumpTics = 18;
 	}
 }
 
@@ -309,7 +310,7 @@ void CheckWaterJump(player_t * player)
 		// solid at waist
 		start.z = player->mo->Origin.z + player->mo->Height;
 		end = start + vforward * 24.0;
-		player->movedir = trace_plane_normal * -50.0;
+		player->MoveDir = trace_plane_normal * -50.0;
 		if (TraceLine(start, end))
 		{
 			// open at eye level
@@ -342,9 +343,9 @@ void WaterMove(player_t * player)
 
 	AngleVectors(&player->mo->Angles, &vforward, &vright, &vup);
 
-	forward = player->forwardmove;
-	side = player->sidemove;
-	if (player->chickenTics)
+	forward = player->ForwardMove;
+	side = player->SideMove;
+	if (player->ChickenTics)
 	{
 		// Chicken speed
 		forward *= 1.2;
@@ -364,11 +365,11 @@ void WaterMove(player_t * player)
 		SetPlayerRunState(player);
 	}
 
-	if (player->buttons & BT_JUMP)
+	if (player->Buttons & BT_JUMP)
 	{
-		if (player->mo->watertype == CONTENTS_WATER)
+		if (player->mo->WaterType == CONTENTS_WATER)
 			player->mo->Velocity.z = 100.0;
-		else if (player->mo->watertype == CONTENTS_SLUDGE)
+		else if (player->mo->WaterType == CONTENTS_SLUDGE)
 			player->mo->Velocity.z = 80.0;
 		else
 			player->mo->Velocity.z = 50.0;
@@ -384,13 +385,13 @@ void WaterMove(player_t * player)
 
 void WaterJump(player_t * player)
 {
-	if (!player->mo->ReactionTime || !player->mo->waterlevel)
+	if (!player->mo->ReactionTime || !player->mo->WaterLevel)
 	{
 		player->mo->bWaterJump = false;
 		player->mo->ReactionTime = 0.0;
 	}
-	player->mo->Velocity.x = player->movedir.x;
-	player->mo->Velocity.y = player->movedir.y;
+	player->mo->Velocity.x = player->MoveDir.x;
+	player->mo->Velocity.y = player->MoveDir.y;
 }
 
 //==========================================================================
@@ -450,7 +451,7 @@ void PlayerInSpecialSector(player_t * player)
 		}
 		break;
 	case 9:	// SecretArea
-		player->secretcount++;
+		player->SecretCount++;
 		sector->special = 0;
 		centerprint(player, "You found a secret area");
 		break;
@@ -530,11 +531,11 @@ void PlayerInSpecialSector(player_t * player)
 
 void PlayerInContents(player_t * player)
 {
-	if (!player->mo->waterlevel)
+	if (!player->mo->WaterLevel)
 	{
 		return;
 	}
-	switch (player->mo->watertype)
+	switch (player->mo->WaterType)
 	{
 	case CONTENTS_LAVA:
 		if (!(level->tictime & 15))
@@ -562,9 +563,9 @@ void PlayerImpulse(player_t * player)
 {
 	int impulse;
 
-	impulse = player->impulse;
-	player->impulse = 0;
-	player->arti = 0;
+	impulse = player->Impulse;
+	player->Impulse = 0;
+	player->Arti = 0;
 
 	if (impulse <= NUMWEAPONS)
 	{
@@ -574,17 +575,17 @@ void PlayerImpulse(player_t * player)
 		// psprite can do it (A_WeaponReady), so it doesn't happen in
 		// the middle of an attack.
 		newweapon = impulse - 1;
-		if (newweapon == wp_staff && player->weaponowned[wp_gauntlets]
-			&& !(player->readyweapon == wp_gauntlets))
+		if (newweapon == wp_staff && player->WeaponOwned[wp_gauntlets]
+			&& !(player->ReadyWeapon == wp_gauntlets))
 		{
 			newweapon = wp_gauntlets;
 		}
-		if (player->weaponowned[newweapon]
-			&& newweapon != player->readyweapon)
+		if (player->WeaponOwned[newweapon]
+			&& newweapon != player->ReadyWeapon)
 		{
 			if (WeaponInShareware[newweapon] || !shareware)
 			{
-				player->pendingweapon = newweapon;
+				player->PendingWeapon = newweapon;
 			}
 		}
 	}
@@ -603,9 +604,9 @@ void PlayerImpulse(player_t * player)
 	// Heretic artifact hot keys
 	else if (impulse == 11)
 	{
-		if (!player->powers[pw_weaponlevel2])
+		if (!player->Powers[pw_weaponlevel2])
 		{
-			player->arti = arti_tomeofpower;
+			player->Arti = arti_tomeofpower;
 		}
 	}
 	else if (impulse == 16)
@@ -613,10 +614,10 @@ void PlayerImpulse(player_t * player)
 		player->mo->Damage(none, none, 10000);
 	}
 
-	if (player->arti)
+	if (player->Arti)
 	{
 		// Use an artifact
-		PlayerUseArtifact(player, player->arti);
+		PlayerUseArtifact(player, player->Arti);
 	}
 }
 
@@ -630,40 +631,40 @@ void PlayerThink(player_t * player)
 {
 	int i;
 
-	if (player->is_bot)
+	if (player->bIsBot)
 	{
 		player->Bot.Think();
 	}
 
 	// Copy view angles
-	player->mo->Angles = player->viewangles;
+	player->mo->Angles = player->ViewAngles;
 
 	// fixme: do this in the cheat code
-	if (player->cheats & CF_NOCLIP)
+	if (player->Cheats & CF_NOCLIP)
 		player->mo->bNoClip = true;
 	else
 		player->mo->bNoClip = false;
 
 	if (player->mo->bJustAttacked)
 	{
-		player->forwardmove = 100.0;
-		player->sidemove = 0.0;
+		player->ForwardMove = 100.0;
+		player->SideMove = 0.0;
 		player->mo->bJustAttacked = false;
 	}
 
 	InventoryTick(player);
 
-	if (player->playerstate == PST_DEAD)
+	if (player->PlayerState == PST_DEAD)
 	{
 		DeathPlayerThink(player);
 		return;
 	}
 
-	if (player->jumpTics)
+	if (player->JumpTics)
 	{
-		player->jumpTics--;
+		player->JumpTics--;
 	}
-	if (player->chickenTics)
+	if (player->ChickenTics)
 	{
 		ChickenPlayerThink(player);
 	}
@@ -681,7 +682,7 @@ void PlayerThink(player_t * player)
 	}
 	else
 	{
-		if (player->mo->waterlevel > 1)
+		if (player->mo->WaterLevel > 1)
 			WaterMove(player);
 		else
 			MovePlayer(player);
@@ -694,34 +695,34 @@ void PlayerThink(player_t * player)
 	PlayerInContents(player);
 
 	// Check for weapon change.
-	if (player->impulse)
+	if (player->Impulse)
 	{
 		PlayerImpulse(player);
 	}
 
 	// check for use
-	if (player->buttons & BT_USE)
+	if (player->Buttons & BT_USE)
 	{
-		if (!player->usedown)
+		if (!player->bUseDown)
 		{
 			P_UseLines(player);
-			player->usedown = true;
+			player->bUseDown = true;
 		}
 	}
 	else
 	{
-		player->usedown = false;
+		player->bUseDown = false;
 	}
 
 	// Chicken counter
-	if (player->chickenTics)
+	if (player->ChickenTics)
 	{
-		if (player->chickenPeck)
+		if (player->ChickenPeck)
 		{
 			// Chicken attack counter
-			player->chickenPeck -= 3;
+			player->ChickenPeck -= 3;
 		}
-		if (!--player->chickenTics)
+		if (!--player->ChickenTics)
 		{
 			// Attempt to undo the chicken
 			UndoPlayerChicken(player);
@@ -733,19 +734,19 @@ void PlayerThink(player_t * player)
 
 	// Counters, time dependend power ups.
 
-	if (player->powers[pw_invulnerability])
-		player->powers[pw_invulnerability]--;
+	if (player->Powers[pw_invulnerability])
+		player->Powers[pw_invulnerability]--;
 
-	if (player->powers[pw_invisibility])
-		if (!--player->powers[pw_invisibility])
+	if (player->Powers[pw_invisibility])
+		if (!--player->Powers[pw_invisibility])
 			player->mo->Translucency = 0;
 
-	if (player->powers[pw_infrared])
-		player->powers[pw_infrared]--;
+	if (player->Powers[pw_infrared])
+		player->Powers[pw_infrared]--;
 
-	if (player->powers[pw_flight])
+	if (player->Powers[pw_flight])
 	{
-		if (!--player->powers[pw_flight])
+		if (!--player->Powers[pw_flight])
 		{
 			if (player->mo->Origin.z != player->mo->FloorZ)
 			{
@@ -757,122 +758,122 @@ void PlayerThink(player_t * player)
 		}
 	}
 
-	if (player->powers[pw_weaponlevel2])
+	if (player->Powers[pw_weaponlevel2])
 	{
-		if (!--player->powers[pw_weaponlevel2])
+		if (!--player->Powers[pw_weaponlevel2])
 		{
 			WeaponLevel2Fade(player);
 		}
 	}
 
-	if (player->damagecount)
-		player->damagecount--;
+	if (player->DamageCount)
+		player->DamageCount--;
 
-	if (player->bonuscount)
-		player->bonuscount--;
+	if (player->BonusCount)
+		player->BonusCount--;
 
 	// Handling colormaps.
-	if (player->powers[pw_invulnerability])
+	if (player->Powers[pw_invulnerability])
 	{
-		if (player->powers[pw_invulnerability] > 4 * 32
-			|| (player->powers[pw_invulnerability] & 8))
-			player->fixedcolormap = INVERSECOLORMAP;
+		if (player->Powers[pw_invulnerability] > 4 * 32
+			|| (player->Powers[pw_invulnerability] & 8))
+			player->FixedColormap = INVERSECOLORMAP;
 		else
-			player->fixedcolormap = 0;
+			player->FixedColormap = 0;
 	}
-	else if (player->powers[pw_infrared])
+	else if (player->Powers[pw_infrared])
 	{
-		if (player->powers[pw_infrared] <= ftoi(BLINKTHRESHOLD * 35.0))
+		if (player->Powers[pw_infrared] <= ftoi(BLINKTHRESHOLD * 35.0))
 		{
-			if (player->powers[pw_infrared] & 8)
+			if (player->Powers[pw_infrared] & 8)
 			{
-				player->fixedcolormap = 0;
+				player->FixedColormap = 0;
 			}
 			else
 			{
-				player->fixedcolormap = 1;
+				player->FixedColormap = 1;
 			}
 		}
 		else if (!(level->tictime & 16))
 		{
-			if (player->newtorch)
+			if (player->NewTorch)
 			{
-				if (player->fixedcolormap + player->newtorchdelta > 7
-					|| player->fixedcolormap + player->newtorchdelta < 1
-					|| player->newtorch == player->fixedcolormap)
+				if (player->FixedColormap + player->NewTorchDelta > 7 ||
+					player->FixedColormap + player->NewTorchDelta < 1 ||
+					player->FixedColormap == player->NewTorch)
 				{
-					player->newtorch = 0;
+					player->NewTorch = 0;
 				}
 				else
 				{
-					player->fixedcolormap += player->newtorchdelta;
+					player->FixedColormap += player->NewTorchDelta;
 				}
 			}
 			else
 			{
-				player->newtorch = (P_Random() & 7) + 1;
-				player->newtorchdelta =
-					(player->newtorch ==
-					player->fixedcolormap) ? 0 : ((player->newtorch >
-						player->fixedcolormap) ? 1 : -1);
+				player->NewTorch = (P_Random() & 7) + 1;
+				player->NewTorchDelta =
+					(player->NewTorch ==
+					player->FixedColormap) ? 0 : ((player->NewTorch >
+						player->FixedColormap) ? 1 : -1);
 			}
 		}
 	}
 	else
-		player->fixedcolormap = 0;
+		player->FixedColormap = 0;
 }
 
 //==========================================================================
 //
 //  SB_PaletteFlash
 //
-//  sets the new palette based upon current values of player->damagecount
-// and player->bonuscount
+//  sets the new palette based upon current values of player->DamageCount
+// and player->BonusCount
 //
 //==========================================================================
 
 void SB_PaletteFlash(player_t * player)
 {
-	player->cshifts[CSHIFT_CONTENTS] = 0;
-	if (player->mo->waterlevel == 3)
+	player->CShifts[CSHIFT_CONTENTS] = 0;
+	if (player->mo->WaterLevel == 3)
 	{
-		switch (player->mo->watertype)
+		switch (player->mo->WaterType)
 		{
 		case CONTENTS_WATER:
-			player->cshifts[CSHIFT_CONTENTS] = CSHIFT(130, 80, 50, 128);
+			player->CShifts[CSHIFT_CONTENTS] = CSHIFT(130, 80, 50, 128);
 			break;
 
 		case CONTENTS_SLUDGE:
-			player->cshifts[CSHIFT_CONTENTS] = CSHIFT(128, 160, 128, 150);
+			player->CShifts[CSHIFT_CONTENTS] = CSHIFT(128, 160, 128, 150);
 			break;
 
 		case CONTENTS_LAVA:
-			player->cshifts[CSHIFT_CONTENTS] = CSHIFT(255, 80, 0, 150);
+			player->CShifts[CSHIFT_CONTENTS] = CSHIFT(255, 80, 0, 150);
 			break;
 		}
 	}
 
-	if (player->damagecount)
+	if (player->DamageCount)
 	{
-		player->palette = (player->damagecount + 7) >> 3;
-		if (player->palette >= NUMREDPALS)
+		player->Palette = (player->DamageCount + 7) >> 3;
+		if (player->Palette >= NUMREDPALS)
 		{
-			player->palette = NUMREDPALS - 1;
+			player->Palette = NUMREDPALS - 1;
 		}
-		player->palette += STARTREDPALS;
+		player->Palette += STARTREDPALS;
 	}
-	else if (player->bonuscount)
+	else if (player->BonusCount)
 	{
-		player->palette = (player->bonuscount + 7) >> 3;
-		if (player->palette >= NUMBONUSPALS)
+		player->Palette = (player->BonusCount + 7) >> 3;
+		if (player->Palette >= NUMBONUSPALS)
 		{
-			player->palette = NUMBONUSPALS - 1;
+			player->Palette = NUMBONUSPALS - 1;
 		}
-		player->palette += STARTBONUSPALS;
+		player->Palette += STARTBONUSPALS;
 	}
 	else
 	{
-		player->palette = 0;
+		player->Palette = 0;
 	}
 }
 
@@ -884,50 +885,50 @@ void SB_PaletteFlash(player_t * player)
 
 void SetViewPos(player_t * player)
 {
-	player->vieworg.x = player->mo->Origin.x;
-	player->vieworg.y = player->mo->Origin.y;
+	player->ViewOrg.x = player->mo->Origin.x;
+	player->ViewOrg.y = player->mo->Origin.y;
 
-	player->viewangles = player->mo->Angles;
+	player->ViewAngles = player->mo->Angles;
 
-	if (player->chickenTics && player->chickenPeck)
+	if (player->ChickenTics && player->ChickenPeck)
 	{
 		// Set chicken attack view position
-		player->vieworg.x +=
-			itof(player->chickenPeck) * cos(player->mo->Angles.yaw);
-		player->vieworg.y +=
-			itof(player->chickenPeck) * sin(player->mo->Angles.yaw);
+		player->ViewOrg.x +=
+			itof(player->ChickenPeck) * cos(player->mo->Angles.yaw);
+		player->ViewOrg.y +=
+			itof(player->ChickenPeck) * sin(player->mo->Angles.yaw);
 	}
 
 	SB_PaletteFlash(player);
 
-	player->stats.flags = player->keys;
-	if (player->cheats & CF_GODMODE)
-		player->stats.flags |= SBF_GOD_MODE;
-	if (player->powers[pw_flight])
+	player->Stats.flags = player->Keys;
+	if (player->Cheats & CF_GODMODE)
+		player->Stats.flags |= SBF_GOD_MODE;
+	if (player->Powers[pw_flight])
 	{
-		if (player->powers[pw_flight] > ftoi(BLINKTHRESHOLD * 35.0)
-			|| !(player->powers[pw_flight] & 16))
+		if (player->Powers[pw_flight] > ftoi(BLINKTHRESHOLD * 35.0)
+			|| !(player->Powers[pw_flight] & 16))
 		{
-			player->stats.flags |= SBF_POWER_FLIGHT;
+			player->Stats.flags |= SBF_POWER_FLIGHT;
 		}
 	}
-	if (player->powers[pw_weaponlevel2] && !player->chickenTics)
+	if (player->Powers[pw_weaponlevel2] && !player->ChickenTics)
 	{
-		if (player->powers[pw_weaponlevel2] > ftoi(BLINKTHRESHOLD * 35.0)
-			|| !(player->powers[pw_weaponlevel2] & 16))
+		if (player->Powers[pw_weaponlevel2] > ftoi(BLINKTHRESHOLD * 35.0)
+			|| !(player->Powers[pw_weaponlevel2] & 16))
 		{
-			player->stats.flags |= SBF_POWER_BOOK;
+			player->Stats.flags |= SBF_POWER_BOOK;
 		}
 	}
 	if (player->mo->bFly)
 	{
-		player->stats.flags |= SBF_IN_FLIGHT;
+		player->Stats.flags |= SBF_IN_FLIGHT;
 	}
 
-	if (player->readyweapon > 0 && player->readyweapon < 7)
-		player->stats.readyammo = player->ammo[player->w_ammo];
+	if (player->ReadyWeapon > 0 && player->ReadyWeapon < 7)
+		player->Stats.readyammo = player->Ammo[player->w_Ammo];
 	else
-		player->stats.readyammo = 0;
+		player->Stats.readyammo = 0;
 }
 
 //==========================================================================
@@ -959,12 +960,11 @@ void ArtiTele(player_t * player)
 		destAngle = itof(45 * (level->playerstarts[0].angle / 45));
 	}
 	P_Teleport(player->mo, destX, destY, destAngle);
-	if (player->chickenTics)
+	if (player->ChickenTics)
 	{
 		// Teleporting away will undo any morph effects
 		UndoPlayerChicken(player);
 	}
-	//StartSoundName(NULL, sfx2_wpnup); // Full volume laugh
 }
 
 //==========================================================================
@@ -1051,16 +1051,16 @@ void PlayerUseArtifact(player_t * player, int arti)
 {
 	int i;
 
-	for (i = 0; i < player->inventorySlotNum; i++)
+	for (i = 0; i < player->InventorySlotNum; i++)
 	{
-		if (player->inventory[i].type == arti)
+		if (player->Inventory[i].type == arti)
 		{
 			// Found match - try to use
 			if (UseArtifact(player, arti))
 			{
 				// Artifact was used - remove it from inventory
 				PlayerRemoveArtifact(player, i);
-				StartSoundName(*player->mo, 'UseArtifact', CHAN_ITEM);
+				player->mo->PlaySound('UseArtifact', CHAN_ITEM);
 				player->ArtifactFlash = 4;
 			}
 			else
@@ -1081,28 +1081,28 @@ void PlayerUseArtifact(player_t * player, int arti)
 
 void PlayerNextArtifact(player_t * player)
 {
-	player->inv_ptr--;
-	if (player->inv_ptr < 6)
+	player->InvPtr--;
+	if (player->InvPtr < 6)
 	{
-		player->curpos--;
-		if (player->curpos < 0)
+		player->InvCurPos--;
+		if (player->InvCurPos < 0)
 		{
-			player->curpos = 0;
+			player->InvCurPos = 0;
 		}
 	}
-	if (player->inv_ptr < 0)
+	if (player->InvPtr < 0)
 	{
-		player->inv_ptr = player->inventorySlotNum - 1;
-		if (player->inv_ptr < 6)
+		player->InvPtr = player->InventorySlotNum - 1;
+		if (player->InvPtr < 6)
 		{
-			player->curpos = player->inv_ptr;
+			player->InvCurPos = player->InvPtr;
 		}
 		else
 		{
-			player->curpos = 6;
+			player->InvCurPos = 6;
 		}
 	}
-	player->readyArtifact = player->inventory[player->inv_ptr].type;
+	player->ReadyArtifact = player->Inventory[player->InvPtr].type;
 }
 
 //==========================================================================
@@ -1115,37 +1115,37 @@ void PlayerRemoveArtifact(player_t * player, int slot)
 {
 	int i;
 
-	player->artifactCount--;
-	if (!(--player->inventory[slot].count))
+	player->ArtifactCount--;
+	if (!(--player->Inventory[slot].count))
 	{
 		// Used last of a type - compact the artifact list
-		player->readyArtifact = arti_none;
-		player->inventory[slot].type = arti_none;
-		for (i = slot + 1; i < player->inventorySlotNum; i++)
+		player->ReadyArtifact = arti_none;
+		player->Inventory[slot].type = arti_none;
+		for (i = slot + 1; i < player->InventorySlotNum; i++)
 		{
-			player->inventory[i - 1].type = player->inventory[i].type;
-			player->inventory[i - 1].count = player->inventory[i].count;
+			player->Inventory[i - 1].type = player->Inventory[i].type;
+			player->Inventory[i - 1].count = player->Inventory[i].count;
 		}
-		player->inventorySlotNum--;
-		// Set position markers and get next readyArtifact
-		player->inv_ptr--;
-		if (player->inv_ptr < 6)
+		player->InventorySlotNum--;
+		// Set position markers and get next ReadyArtifact
+		player->InvPtr--;
+		if (player->InvPtr < 6)
 		{
-			player->curpos--;
-			if (player->curpos < 0)
+			player->InvCurPos--;
+			if (player->InvCurPos < 0)
 			{
-				player->curpos = 0;
+				player->InvCurPos = 0;
 			}
 		}
-		if (player->inv_ptr >= player->inventorySlotNum)
+		if (player->InvPtr >= player->InventorySlotNum)
 		{
-			player->inv_ptr = player->inventorySlotNum - 1;
+			player->InvPtr = player->InventorySlotNum - 1;
 		}
-		if (player->inv_ptr < 0)
+		if (player->InvPtr < 0)
 		{
-			player->inv_ptr = 0;
+			player->InvPtr = 0;
 		}
-		player->readyArtifact = player->inventory[player->inv_ptr].type;
+		player->ReadyArtifact = player->Inventory[player->InvPtr].type;
 	}
 }
 
@@ -1168,18 +1168,17 @@ void G_PlayerReborn(int player)
 	ClearPlayer(p);
 	p->Bot = b;
 
-	p->usedown = p->attackdown = true;	// don't do anything immediately 
-	p->playerstate = PST_LIVE;
-	p->health = MAXHEALTH;
-	p->readyweapon = p->pendingweapon = wp_goldwand;
-	weaponinfo[wp_goldwand] (p);
-	p->pspriteSY = PSpriteSY[p->readyweapon];
-	p->weaponowned[wp_staff] = true;
-	p->weaponowned[wp_goldwand] = true;
-	p->ammo[am_goldwand] = 50;
+	p->bUseDown = true;	// don't do anything immediately
+	p->bAttackDown = true;
+	p->PlayerState = PST_LIVE;
+	p->Health = MAXHEALTH;
+	p->WeaponOwned[wp_staff] = true;
+	p->WeaponOwned[wp_goldwand] = true;
+	p->Ammo[am_goldwand] = 50;
+	SetWeapon(p, wp_goldwand);
 
-	p->inv_ptr = 0;	// reset the inventory pointer
-	p->curpos = 0;
+	p->InvPtr = 0;	// reset the inventory pointer
+	p->InvCurPos = 0;
 }
 
 //==========================================================================
@@ -1199,33 +1198,32 @@ void G_PlayerExitMap(int player, boolean clusterChange)
 
 	for (i = 0; i < NUMPOWERS; i++)
 	{
-		p->powers[i] = 0;
+		p->Powers[i] = 0;
 	}
 	if (clusterChange)
 	{
-		p->keys = 0;
+		p->Keys = 0;
 	}
-	if (p->chickenTics)
+	if (p->ChickenTics)
 	{
-		p->readyweapon = p->mo->special1;	// Restore weapon
-		weaponinfo[p->readyweapon] (p);
-		p->pspriteSY = PSpriteSY[p->readyweapon];
-		p->chickenTics = 0;
+		SetWeapon(p, p->mo->Special1);	// Restore weapon
+		p->ChickenTics = 0;
 	}
+	p->Items = 0;
 	p->mo->Angles.pitch = 0.0;
 	p->mo->Translucency = 0;	// cancel invisibility
-	p->extralight = 0;	// cancel gun flashes 
-	p->fixedcolormap = 0;	// cancel ir gogles 
-	p->damagecount = 0;	// no palette changes 
-	p->bonuscount = 0;
-	p->rain1 = NULL;
-	p->rain2 = NULL;
+	p->ExtraLight = 0;	// cancel gun flashes
+	p->FixedColormap = 0;	// cancel ir gogles
+	p->DamageCount = 0;	// no palette changes 
+	p->BonusCount = 0;
+	p->Rain1 = NULL;
+	p->Rain2 = NULL;
 
-	for (i = 0; i < p->inventorySlotNum; i++)
+	for (i = 0; i < p->InventorySlotNum; i++)
 	{
-		p->inventory[i].count = 1;
+		p->Inventory[i].count = 1;
 	}
-	p->artifactCount = p->inventorySlotNum;
+	p->ArtifactCount = p->InventorySlotNum;
 
 	if (!deathmatch)
 	{
@@ -1329,10 +1327,10 @@ void NetGameReborn(int playernum)
 void SpawnClient(int i)
 {
 	players[i].ViewEnts[ps_weapon] = Spawn(Weapon, none);
-	players[i].ViewEnts[ps_weapon].player = &players[i];
+	players[i].ViewEnts[ps_weapon].Player = &players[i];
 	players[i].ViewEnts[ps_flash] = Spawn(Weapon, none);
-	players[i].ViewEnts[ps_flash].player = &players[i];
-	if (players[i].is_bot)
+	players[i].ViewEnts[ps_flash].Player = &players[i];
+	if (players[i].bIsBot)
 	{
 		players[i].Bot = Spawn(BotPlayer, none);
 		players[i].Bot.player = &players[i];
@@ -1378,7 +1376,7 @@ void DisconnectClient(player_t * player)
 		}
 	}
 	bprint("%s left the game\n", ARR2STR(player->Name));
-	StartSoundName(none, 'Chat', CHAN_AUTO);
+	player->mo->PlayFullVolumeSound('Chat', CHAN_AUTO);
 }
 
 //==========================================================================
@@ -1389,16 +1387,19 @@ void DisconnectClient(player_t * player)
 
 void UserinfoChanged(player_t * player)
 {
-	if (!player->spawned)
+	if (!player->bSpawned)
 	{
 		return;
 	}
-	player->mo->Translation = player->color;
+	player->mo->Translation = player->Color;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/02/22 18:00:19  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.24  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

@@ -44,7 +44,7 @@ class TLavaInflictor:Actor
 
 	defaultproperties
 	{
-		bNoClient = true;
+		bHidden = true;
 		bNoBlockmap = true;
 		bFireDamage = true;
 		bNoDamageThrust = true;
@@ -73,12 +73,12 @@ void ChickenPlayerThink(player_t * player)
 {
 	mobj_t *pmo;
 
-	if (player->health > 0)
+	if (player->Health > 0)
 	{
 		// Handle beak movement
 		UpdateBeak(player, player->ViewEnts[ps_weapon]);
 	}
-	if (player->chickenTics & 15)
+	if (player->ChickenTics & 15)
 	{
 		return;
 	}
@@ -99,7 +99,7 @@ void ChickenPlayerThink(player_t * player)
 	if (P_Random() < 48)
 	{
 		// Just noise
-		StartSoundName(*pmo, 'ChickenAttack', CHAN_VOICE);
+		pmo->PlaySound('ChickenAttack', CHAN_VOICE);
 	}
 }
 
@@ -127,20 +127,20 @@ boolean UndoPlayerChicken(player_t * player)
 	y = pmo->Origin.y;
 	z = pmo->Origin.z;
 	angle = pmo->Angles.yaw;
-	weapon = pmo->special1;
+	weapon = pmo->Special1;
 	OldbFly = pmo->bFly;
-	mo = P_SpawnMobj(x, y, z, PlayerEntity);
+	mo = P_SpawnMobj(x, y, z, PlayerPawn);
 	if (!P_TestMobjLocation(mo))
 	{
 		// Didn't fit
 		P_RemoveMobj(mo);
 		P_SetThingPosition(*pmo);
-		player->chickenTics = 2 * 35;
+		player->ChickenTics = 2 * 35;
 		return false;
 	}
 	pmo->SetState(S_FREETARGMOBJ);
 	// Set color translation
-	mo->Translation = player->color;
+	mo->Translation = player->Color;
 	mo->Angles.yaw = angle;
 	mo->Player = player;
 	mo->bIsPlayer = true;
@@ -150,13 +150,14 @@ boolean UndoPlayerChicken(player_t * player)
 		mo->bFly = true;
 		mo->bNoGravity = true;
 	}
-	player->chickenTics = 0;
-	player->powers[pw_weaponlevel2] = 0;
-	player->health = mo->Health = MAXHEALTH;
+	player->ChickenTics = 0;
+	player->Powers[pw_weaponlevel2] = 0;
+	mo->Health = MAXHEALTH;
+	player->Health = mo->Health;
 	player->mo = mo;
 	fog = P_SpawnMobj(x + 20.0 * cos(angle), y + 20.0 * sin(angle),
 		z + TELEFOGHEIGHT, TeleportFog);
-	StartSoundName(*fog, 'Teleport', CHAN_VOICE);
+	fog->PlaySound('Teleport', CHAN_VOICE);
 	PostChickenWeapon(player, weapon);
 	return true;
 }
@@ -169,7 +170,7 @@ boolean UndoPlayerChicken(player_t * player)
 
 void SetPlayerRunState(player_t * player)
 {
-	if (player->chickenTics)
+	if (player->ChickenTics)
 	{
 		if (player->mo->StateNum == S_CHICPLAY)
 		{
@@ -206,8 +207,8 @@ void DeathPlayerThink(player_t * player)
 	if (player->mo->Class == BloodySkull)
 	{
 		// Flying bloody skull
-		player->viewheight = 6.0;
-		player->deltaviewheight = 0.0;
+		player->ViewHeight = 6.0;
+		player->DeltaViewHeight = 0.0;
 		//player->damagecount = 20;
 		if (onground)
 		{
@@ -230,11 +231,11 @@ void DeathPlayerThink(player_t * player)
 	}
 	else
 	{	// Fall to ground
-		player->deltaviewheight = 0.0;
-		if (player->viewheight > 6.0)
-			player->viewheight -= 1.0;
-		if (player->viewheight < 6.0)
-			player->viewheight = 6.0;
+		player->DeltaViewHeight = 0.0;
+		if (player->ViewHeight > 6.0)
+			player->ViewHeight -= 1.0;
+		if (player->ViewHeight < 6.0)
+			player->ViewHeight = 6.0;
 #ifdef FIXME
 		if (player->lookdir > 0)
 		{
@@ -252,18 +253,18 @@ void DeathPlayerThink(player_t * player)
 	}
 	CalcHeight(player);
 
-	if (player->attacker && player->attacker != player->mo)
+	if (player->Attacker && player->Attacker != player->mo)
 	{
-		angle = atan2(player->attacker->Origin.y - player->mo->Origin.y,
-			player->attacker->Origin.x - player->mo->Origin.x);
+		angle = atan2(player->Attacker->Origin.y - player->mo->Origin.y,
+			player->Attacker->Origin.x - player->mo->Origin.x);
 		delta = AngleMod180(angle - player->mo->Angles.yaw);
 		if (delta < 5.0 && delta > -5.0)
 		{
 			// Looking at killer, so fade damage flash down
 			player->mo->Angles.yaw = angle;
-			if (player->damagecount)
+			if (player->DamageCount)
 			{
-				player->damagecount--;
+				player->DamageCount--;
 			}
 		}
 		else if (delta > 0.0)
@@ -271,25 +272,25 @@ void DeathPlayerThink(player_t * player)
 		else
 			player->mo->Angles.yaw -= 5.0;
 	}
-	else if (player->damagecount)
+	else if (player->DamageCount)
 	{
-		player->damagecount--;
+		player->DamageCount--;
 	}
 
-	if (player->buttons & BT_USE)
+	if (player->Buttons & BT_USE)
 	{
 		mobj_t *mo;
 
-		player->newtorch = 0;
-		player->newtorchdelta = 0;
-		player->palette = 0;
-		player->curpos = 0;
-		player->inv_ptr = 0;
-		player->playerstate = PST_REBORN;
+		player->NewTorch = 0;
+		player->NewTorchDelta = 0;
+		player->Palette = 0;
+		player->InvCurPos = 0;
+		player->InvPtr = 0;
+		player->PlayerState = PST_REBORN;
 		// Let the mobj know the player has entered the reborn state.  Some
 		// mobjs need to know when it's ok to remove themselves.
 		mo = player->mo;
-		mo->special2 = 666;
+		mo->Special2 = 666;
 	}
 }
 
@@ -320,7 +321,7 @@ void ArtiEgg(mobj_t * mo)
 
 boolean ArtiTomeOfPower(player_t * player)
 {
-	if (player->chickenTics)
+	if (player->ChickenTics)
 	{
 		// Attempt to undo chicken
 		if (UndoPlayerChicken(player) == false)
@@ -331,8 +332,8 @@ boolean ArtiTomeOfPower(player_t * player)
 		else
 		{
 			// Succeeded
-			player->chickenTics = 0;
-			StartSoundName(*player->mo, 'PickupWeapon', CHAN_ITEM);
+			player->ChickenTics = 0;
+			player->mo->PlaySound('PickupWeapon', CHAN_ITEM);
 		}
 	}
 	else
@@ -341,11 +342,11 @@ boolean ArtiTomeOfPower(player_t * player)
 		{
 			return false;
 		}
-		if (player->readyweapon == wp_staff)
+		if (player->ReadyWeapon == wp_staff)
 		{
 			SetPsprite(player, ps_weapon, S_STAFFREADY2_1);
 		}
-		else if (player->readyweapon == wp_gauntlets)
+		else if (player->ReadyWeapon == wp_gauntlets)
 		{
 			SetPsprite(player, ps_weapon, S_GAUNTLETREADY2_1);
 		}
@@ -391,7 +392,7 @@ void P_SetDormantArtifact(mobj_t * arti)
 		// Don't respawn
 		arti->SetState(S_DEADARTI1);
 	}
-	StartSoundName(*arti, 'PickupArtifact', CHAN_ITEM);
+	arti->PlaySound('PickupArtifact', CHAN_ITEM);
 }
 
 //==========================================================================
@@ -452,7 +453,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 
 	mo = P_SpawnMobj(x + 20.0 * cos(an), y + 20.0 * sin(an),
 		ss->sector->floorheight + TELEFOGHEIGHT, TeleportFog);
-	StartSoundName(*mo, 'Teleport', CHAN_VOICE);
+	mo->PlaySound('Teleport', CHAN_VOICE);
 
 	return true;
 }
@@ -460,6 +461,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/02/22 18:00:19  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.20  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

@@ -95,7 +95,7 @@ mobj_t *SpawnMissile(mobj_t * source, mobj_t * dest, classid type)
 	th = P_SpawnMobj(source->Origin.x, source->Origin.y, z, type);
 	if (th->SightSound)
 	{
-		StartSoundName(*th, th->SightSound, CHAN_VOICE);
+		th->PlaySound(th->SightSound, CHAN_VOICE);
 	}
 	th->target = source;	// Originator
 	dir = dest->Origin - source->Origin;
@@ -145,7 +145,7 @@ mobj_t *SpawnMissileAngles(mobj_t * source, classid type, float yaw,
 	mo = P_SpawnMobj(source->Origin.x, source->Origin.y, z, type);
 	if (mo->SightSound)
 	{
-		StartSoundName(*mo, mo->SightSound, CHAN_VOICE);
+		mo->PlaySound(mo->SightSound, CHAN_VOICE);
 	}
 	mo->target = source;	// Originator
 	mo->Angles.yaw = yaw;
@@ -194,7 +194,7 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 	MissileMobj = P_SpawnMobj(x, y, z, type);
 	if (MissileMobj->SightSound)
 	{
-		StartSoundName(*MissileMobj, MissileMobj->SightSound, CHAN_VOICE);
+		MissileMobj->PlaySound(MissileMobj->SightSound, CHAN_VOICE);
 	}
 	MissileMobj->target = source;
 	MissileMobj->Angles = angles;
@@ -259,7 +259,7 @@ mobj_t *SpawnPlayerMissileAngle(mobj_t * source, classid type, float angle)
 	th = P_SpawnMobj(x, y, z, type);
 	if (th->SightSound)
 	{
-		StartSoundName(*th, th->SightSound, CHAN_VOICE);
+		th->PlaySound(th->SightSound, CHAN_VOICE);
 	}
 	th->target = source;
 	th->Angles = angles;
@@ -285,7 +285,7 @@ boolean P_SeekerMissile(mobj_t * actor, float thresh, float turnMax)
 	float angle;
 	mobj_t *target;
 
-	target = actor->specialmobj1;
+	target = actor->SpecialMobj1;
 	if (!target)
 	{
 		return false;
@@ -293,7 +293,7 @@ boolean P_SeekerMissile(mobj_t * actor, float thresh, float turnMax)
 	if (!target->bShootable)
 	{
 		// Target died
-		actor->specialmobj1 = NULL;
+		actor->SpecialMobj1 = NULL;
 		return false;
 	}
 	dir = P_FaceMobj(actor, target, &delta);
@@ -334,6 +334,9 @@ boolean P_SeekerMissile(mobj_t * actor, float thresh, float turnMax)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/22 18:00:17  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.16  2002/02/16 16:26:55  dj_jl
 //  Removed precalculated sound IDs
 //

@@ -43,7 +43,7 @@
 //      special1    true == removing from world
 //
 //  Child
-//      target      pointer to center mobj
+//      Owner       pointer to center mobj
 //      args[0]     angle of ball
 //
 //==========================================================================
@@ -190,14 +190,14 @@ float orbitTableY[256] = {
 
 void Actor::A_BridgeOrbit(void)
 {
-	if (target->special1)
+	if (Owner.Special1)
 	{
 		SetState(S_NULL);
 	}
 	Args[0] += 3;
-	Origin.x = target->Origin.x + orbitTableX[Args[0] & 255];
-	Origin.y = target->Origin.y + orbitTableY[Args[0] & 255];
-	Origin.z = target->Origin.z;
+	Origin.x = Owner.Origin.x + orbitTableX[Args[0] & 255];
+	Origin.y = Owner.Origin.y + orbitTableY[Args[0] & 255];
+	Origin.z = Owner.Origin.z;
 }
 
 //==========================================================================
@@ -209,33 +209,29 @@ void Actor::A_BridgeOrbit(void)
 void Actor::A_BridgeInit(void)
 {
 	int startangle;
-	mobj_t *ball1;
-	mobj_t *ball2;
-	mobj_t *ball3;
-	float cx, cy, cz;
+	Actor ball1;
+	Actor ball2;
+	Actor ball3;
 
-	cx = Origin.x;
-	cy = Origin.y;
-	cz = Origin.z;
 	startangle = P_Random();
-	special1 = 0;
+	Special1 = 0;
 
 	// Spawn triad into world
-	ball1 = P_SpawnMobj(cx, cy, cz, BridgeBall);
-	ball1->Args[0] = startangle;
-	ball1->target = this;
+	ball1 = SpawnActor(Origin, BridgeBall);
+	ball1.Args[0] = startangle;
+	ball1.Owner = self;
 
-	ball2 = P_SpawnMobj(cx, cy, cz, BridgeBall);
-	ball2->Args[0] = (startangle + 85) & 255;
-	ball2->target = this;
+	ball2 = SpawnActor(Origin, BridgeBall);
+	ball2.Args[0] = (startangle + 85) & 255;
+	ball2.Owner = self;
 
-	ball3 = P_SpawnMobj(cx, cy, cz, BridgeBall);
-	ball3->Args[0] = (startangle + 170) & 255;
-	ball3->target = this;
+	ball3 = SpawnActor(Origin, BridgeBall);
+	ball3.Args[0] = (startangle + 170) & 255;
+	ball3.Owner = self;
 
-	Actor(*ball1).A_BridgeOrbit();
-	Actor(*ball2).A_BridgeOrbit();
-	Actor(*ball3).A_BridgeOrbit();
+	ball1.A_BridgeOrbit();
+	ball2.A_BridgeOrbit();
+	ball3.A_BridgeOrbit();
 }
 
 //==========================================================================
@@ -246,7 +242,7 @@ void Actor::A_BridgeInit(void)
 
 void Actor::A_BridgeRemove(void)
 {
-	special1 = true;	// Removing the bridge
+	Special1 = true;	// Removing the bridge
 	bSolid = false;
 	SetState(S_FREE_BRIDGE1);
 }
@@ -254,6 +250,9 @@ void Actor::A_BridgeRemove(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/02/22 18:00:20  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.14  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

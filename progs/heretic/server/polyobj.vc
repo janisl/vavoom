@@ -50,8 +50,6 @@ addfields polyobj_t
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
-boolean P_CheckRelPosition(mobj_t * thing, float x, float y);
-
 // DATA DECLARATIONS -------------------------------------------------------
 
 // CODE --------------------------------------------------------------------
@@ -642,6 +640,9 @@ boolean PolyBusy(int polyobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/02/22 18:00:18  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.8  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

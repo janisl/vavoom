@@ -56,7 +56,7 @@ void Actor::A_PosAttack(void)
 	dir = AimLineAttack(this, Angles, MISSILERANGE);
 	VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 
-	StartSoundName(self, 'PistolFire', CHAN_WEAPON);
+	PlaySound('PistolFire', CHAN_WEAPON);
 
 	damage = ((P_Random() % 5) + 1) * 3;
 
@@ -68,6 +68,9 @@ void Actor::A_PosAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/02/22 18:00:15  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.12  2002/02/14 19:20:57  dj_jl
 //  Renamed Entity properties to new naming style
 //

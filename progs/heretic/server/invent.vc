@@ -43,24 +43,24 @@
 
 void InventoryLeft(player_t * player)
 {
-	if (!player->inventoryTics)
+	if (!player->InventoryTics)
 	{
-		player->inventoryTics = 5 * 35;
+		player->InventoryTics = 5 * 35;
 		return;
 	}
 
-	player->inventoryTics = 5 * 35;
-	player->inv_ptr--;
-	if (player->inv_ptr < 0)
+	player->InventoryTics = 5 * 35;
+	player->InvPtr--;
+	if (player->InvPtr < 0)
 	{
-		player->inv_ptr = 0;
+		player->InvPtr = 0;
 	}
 	else
 	{
-		player->curpos--;
-		if (player->curpos < 0)
+		player->InvCurPos--;
+		if (player->InvCurPos < 0)
 		{
-			player->curpos = 0;
+			player->InvCurPos = 0;
 		}
 	}
 }
@@ -73,26 +73,26 @@ void InventoryLeft(player_t * player)
 
 void InventoryRight(player_t * player)
 {
-	if (!player->inventoryTics)
+	if (!player->InventoryTics)
 	{
-		player->inventoryTics = 5 * 35;
+		player->InventoryTics = 5 * 35;
 		return;
 	}
 
-	player->inventoryTics = 5 * 35;
-	player->inv_ptr++;
-	if (player->inv_ptr >= player->inventorySlotNum)
+	player->InventoryTics = 5 * 35;
+	player->InvPtr++;
+	if (player->InvPtr >= player->InventorySlotNum)
 	{
-		player->inv_ptr--;
-		if (player->inv_ptr < 0)
-			player->inv_ptr = 0;
+		player->InvPtr--;
+		if (player->InvPtr < 0)
+			player->InvPtr = 0;
 	}
 	else
 	{
-		player->curpos++;
-		if (player->curpos > 6)
+		player->InvCurPos++;
+		if (player->InvCurPos > 6)
 		{
-			player->curpos = 6;
+			player->InvCurPos = 6;
 		}
 	}
 }
@@ -105,15 +105,15 @@ void InventoryRight(player_t * player)
 
 void InventoryUse(player_t * player)
 {
-	player->readyArtifact = player->inventory[player->inv_ptr].type;
+	player->ReadyArtifact = player->Inventory[player->InvPtr].type;
 	// flag to denote that it's okay to use an artifact
-	if (player->inventoryTics)
+	if (player->InventoryTics)
 	{
-		player->inventoryTics = 0;
+		player->InventoryTics = 0;
 	}
 	else
 	{
-		player->arti = player->readyArtifact;
+		player->Arti = player->ReadyArtifact;
 	}
 }
 
@@ -126,12 +126,12 @@ void InventoryUse(player_t * player)
 void InventoryTick(player_t * player)
 {
 	// turn inventory off after a certain amount of time
-	if (player->inventoryTics)
+	if (player->InventoryTics)
 	{
-		player->inventoryTics--;
-		if (!player->inventoryTics)
+		player->InventoryTics--;
+		if (!player->InventoryTics)
 		{
-			player->readyArtifact = player->inventory[player->inv_ptr].type;
+			player->ReadyArtifact = player->Inventory[player->InvPtr].type;
 		}
 	}
 	if (player->ArtifactFlash)
@@ -143,6 +143,9 @@ void InventoryTick(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/02/22 18:00:16  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.6  2002/01/17 18:15:53  dj_jl
 //  Renamed all map object classes
 //

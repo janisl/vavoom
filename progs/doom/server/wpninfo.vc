@@ -42,7 +42,7 @@ void set_weapon_supershotgun(player_t *player);
 void set_weapon_grenade(player_t *player);
 #endif
 
-weapon_func_t	weaponinfo[] =
+weapon_func_t weaponinfo[] =
 {
 	set_weapon_fist,
 	set_weapon_pistol,
@@ -87,14 +87,14 @@ __states__
 
 void set_weapon_fist(player_t *player)
 {
-	player->w_ammo = am_noammo;
-	player->w_upstate = S_PUNCHUP;
-	player->w_downstate = S_PUNCHDOWN;
-	player->w_readystate = S_PUNCH;
-	player->w_atkstate = S_PUNCH1;
-	player->w_holdatkstate = S_NULL;
-	player->w_flashstate = S_NULL;
-	player->weapon_model = 0;
+	player->w_Ammo = am_noammo;
+	player->w_UpState = S_PUNCHUP;
+	player->w_DownState = S_PUNCHDOWN;
+	player->w_ReadyState = S_PUNCH;
+	player->w_AttackState = S_PUNCH1;
+	player->w_HoldAttackState = S_NULL;
+	player->w_FlashState = S_NULL;
+	player->WeaponModel = 0;
 }
 
 //==========================================================================
@@ -105,14 +105,14 @@ void set_weapon_fist(player_t *player)
 
 void set_weapon_pistol(player_t *player)
 {
-	player->w_ammo = am_clip;
-	player->w_upstate = S_PISTOLUP;
-	player->w_downstate = S_PISTOLDOWN;
-	player->w_readystate = S_PISTOL;
-	player->w_atkstate = S_PISTOL1;
-	player->w_holdatkstate = S_NULL;
-	player->w_flashstate = S_PISTOLFLASH;
-	player->weapon_model = states[S_WEAPON].model_index;
+	player->w_Ammo = am_clip;
+	player->w_UpState = S_PISTOLUP;
+	player->w_DownState = S_PISTOLDOWN;
+	player->w_ReadyState = S_PISTOL;
+	player->w_AttackState = S_PISTOL1;
+	player->w_HoldAttackState = S_NULL;
+	player->w_FlashState = S_PISTOLFLASH;
+	player->WeaponModel = states[S_WEAPON].model_index;
 }
 
 //==========================================================================
@@ -123,14 +123,14 @@ void set_weapon_pistol(player_t *player)
 
 void set_weapon_shotgun(player_t *player)
 {
-	player->w_ammo = am_shell;
-	player->w_upstate = S_SGUNUP;
-	player->w_downstate = S_SGUNDOWN;
-	player->w_readystate = S_SGUN;
-	player->w_atkstate = S_SGUN1;
-	player->w_holdatkstate = S_NULL;
-	player->w_flashstate = S_SGUNFLASH1;
-	player->weapon_model = states[S_SHOT].model_index;
+	player->w_Ammo = am_shell;
+	player->w_UpState = S_SGUNUP;
+	player->w_DownState = S_SGUNDOWN;
+	player->w_ReadyState = S_SGUN;
+	player->w_AttackState = S_SGUN1;
+	player->w_HoldAttackState = S_NULL;
+	player->w_FlashState = S_SGUNFLASH1;
+	player->WeaponModel = states[S_SHOT].model_index;
 }
 
 //==========================================================================
@@ -141,14 +141,14 @@ void set_weapon_shotgun(player_t *player)
 
 void set_weapon_chaingun(player_t *player)
 {
-	player->w_ammo = am_clip;
-	player->w_upstate = S_CHAINUP;
-	player->w_downstate = S_CHAINDOWN;
-	player->w_readystate = S_CHAIN;
-	player->w_atkstate = S_CHAIN1;
-	player->w_holdatkstate = S_NULL;
-	player->w_flashstate = S_CHAINFLASH1;
-	player->weapon_model = states[S_MGUN].model_index;
+	player->w_Ammo = am_clip;
+	player->w_UpState = S_CHAINUP;
+	player->w_DownState = S_CHAINDOWN;
+	player->w_ReadyState = S_CHAIN;
+	player->w_AttackState = S_CHAIN1;
+	player->w_HoldAttackState = S_NULL;
+	player->w_FlashState = S_CHAINFLASH1;
+	player->WeaponModel = states[S_MGUN].model_index;
 }
 
 //==========================================================================
@@ -159,14 +159,14 @@ void set_weapon_chaingun(player_t *player)
 
 void set_weapon_missile(player_t *player)
 {
-	player->w_ammo = am_misl;
-	player->w_upstate = S_MISSILEUP;
-	player->w_downstate = S_MISSILEDOWN;
-	player->w_readystate = S_MISSILE;
-	player->w_atkstate = S_MISSILE1;
-	player->w_holdatkstate = S_NULL;
-	player->w_flashstate = S_MISSILEFLASH1;
-	player->weapon_model = states[S_LAUN].model_index;
+	player->w_Ammo = am_misl;
+	player->w_UpState = S_MISSILEUP;
+	player->w_DownState = S_MISSILEDOWN;
+	player->w_ReadyState = S_MISSILE;
+	player->w_AttackState = S_MISSILE1;
+	player->w_HoldAttackState = S_NULL;
+	player->w_FlashState = S_MISSILEFLASH1;
+	player->WeaponModel = states[S_LAUN].model_index;
 }
 
 //==========================================================================
@@ -177,14 +177,14 @@ void set_weapon_missile(player_t *player)
 
 void set_weapon_plasma(player_t *player)
 {
-	player->w_ammo = am_cell;
-	player->w_upstate = S_PLASMAUP;
-	player->w_downstate = S_PLASMADOWN;
-	player->w_readystate = S_PLASMA;
-	player->w_atkstate = S_PLASMA1;
-	player->w_holdatkstate = S_NULL;
-	player->w_flashstate = S_PLASMAFLASH1;
-	player->weapon_model = states[S_PLAS].model_index;
+	player->w_Ammo = am_cell;
+	player->w_UpState = S_PLASMAUP;
+	player->w_DownState = S_PLASMADOWN;
+	player->w_ReadyState = S_PLASMA;
+	player->w_AttackState = S_PLASMA1;
+	player->w_HoldAttackState = S_NULL;
+	player->w_FlashState = S_PLASMAFLASH1;
+	player->WeaponModel = states[S_PLAS].model_index;
 }
 
 //==========================================================================
@@ -195,14 +195,14 @@ void set_weapon_plasma(player_t *player)
 
 void set_weapon_bfg(player_t *player)
 {
-	player->w_ammo = am_cell;
-	player->w_upstate = S_BFGUP;
-	player->w_downstate = S_BFGDOWN;
-	player->w_readystate = S_BFG;
-	player->w_atkstate = S_BFG1;
-	player->w_holdatkstate = S_NULL;
-	player->w_flashstate = S_BFGFLASH1;
-	player->weapon_model = states[S_BFUG].model_index;
+	player->w_Ammo = am_cell;
+	player->w_UpState = S_BFGUP;
+	player->w_DownState = S_BFGDOWN;
+	player->w_ReadyState = S_BFG;
+	player->w_AttackState = S_BFG1;
+	player->w_HoldAttackState = S_NULL;
+	player->w_FlashState = S_BFGFLASH1;
+	player->WeaponModel = states[S_BFUG].model_index;
 }
 
 //==========================================================================
@@ -213,14 +213,14 @@ void set_weapon_bfg(player_t *player)
 
 void set_weapon_chainsaw(player_t *player)
 {
-	player->w_ammo = am_noammo;
-	player->w_upstate = S_SAWUP;
-	player->w_downstate = S_SAWDOWN;
-	player->w_readystate = S_SAW;
-	player->w_atkstate = S_SAW1;
-	player->w_holdatkstate = S_NULL;
-	player->w_flashstate = S_NULL;
-	player->weapon_model = states[S_CSAW].model_index;
+	player->w_Ammo = am_noammo;
+	player->w_UpState = S_SAWUP;
+	player->w_DownState = S_SAWDOWN;
+	player->w_ReadyState = S_SAW;
+	player->w_AttackState = S_SAW1;
+	player->w_HoldAttackState = S_NULL;
+	player->w_FlashState = S_NULL;
+	player->WeaponModel = states[S_CSAW].model_index;
 }
 
 //==========================================================================
@@ -231,22 +231,25 @@ void set_weapon_chainsaw(player_t *player)
 
 void set_weapon_supershotgun(player_t *player)
 {
-	player->w_ammo = am_shell;
-	player->w_upstate = S_DSGUNUP;
-	player->w_downstate = S_DSGUNDOWN;
-	player->w_readystate = S_DSGUN;
-	player->w_atkstate = S_DSGUN1;
-	player->w_holdatkstate = S_NULL;
-	player->w_flashstate = S_DSGUNFLASH1;
-	player->weapon_model = states[S_SHOT2].model_index;
+	player->w_Ammo = am_shell;
+	player->w_UpState = S_DSGUNUP;
+	player->w_DownState = S_DSGUNDOWN;
+	player->w_ReadyState = S_DSGUN;
+	player->w_AttackState = S_DSGUN1;
+	player->w_HoldAttackState = S_NULL;
+	player->w_FlashState = S_DSGUNFLASH1;
+	player->WeaponModel = states[S_SHOT2].model_index;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/02/22 18:00:15  dj_jl
+//	A lots of the renaming, beautification.
+//
 //	Revision 1.8  2002/01/12 17:58:03  dj_jl
 //	New style state functions
-//
+//	
 //	Revision 1.7  2002/01/11 18:19:40  dj_jl
 //	Started to use names in progs
 //	

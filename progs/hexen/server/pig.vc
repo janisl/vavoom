@@ -49,18 +49,18 @@ int Actor::UpdateMorphedMonster(int tics)
 	TVec oldOrigin;
 	classid originalClass;
 	float oldAngle;
-	mobj_t *oldTarget;
+	Actor oldEnemy;
 	int oldSpecial;
 	int oldTID;
 	int oldArgs[5];
 	Actor mo;
 
-	special1 -= tics;
-	if (special1 > 0)
+	Special1 -= tics;
+	if (Special1 > 0)
 	{
 		return false;
 	}
-	originalClass = specialcid;
+	originalClass = SpecialCID;
 	switch (originalClass)
 	{
 	case WraithBuried:	// These must remain morphed
@@ -73,7 +73,7 @@ int Actor::UpdateMorphedMonster(int tics)
 	}
 	oldOrigin = Origin;
 	oldAngle = Angles.yaw;
-	oldTarget = target;
+	oldEnemy = Enemy;
 	oldSpecial = Special;
 	oldTID = TID;
 	oldArgs[0] = Args[0];
@@ -90,13 +90,13 @@ int Actor::UpdateMorphedMonster(int tics)
 		// Didn't fit
 		P_RemoveMobj(&mo);
 		P_SetThingPosition(self);
-		mo.special1 = 5 * 35;	// Next try in 5 seconds
+		mo.Special1 = 5 * 35;	// Next try in 5 seconds
 		return false;
 	}
 	P_RemoveMobjFromTIDList(this);
 	SetState(S_FREETARGMOBJ);
 	mo.Angles.yaw = oldAngle;
-	mo.target = oldTarget;
+	mo.Enemy = oldEnemy;
 	mo.TID = oldTID;
 	mo.Special = oldSpecial;
 	mo.Args[0] = oldArgs[0];
@@ -107,7 +107,7 @@ int Actor::UpdateMorphedMonster(int tics)
 	P_InsertMobjIntoTIDList(&mo, oldTID);
 	fog = SpawnActor(oldOrigin + vector(0.0, 0.0, TELEFOGHEIGHT),
 		TeleportFog);
-	StartSoundName(fog, 'Teleport', CHAN_VOICE);
+	fog.PlaySound('Teleport', CHAN_VOICE);
 	return true;
 }
 
@@ -153,14 +153,14 @@ void Actor::A_PigAttack(void)
 	{
 		return;
 	}
-	if (!target)
+	if (!Enemy)
 	{
 		return;
 	}
 	if (CheckMeleeRange())
 	{
-		target->Damage(self, self, 2 + (P_Random() & 1));
-		StartSoundName(self, 'PigAttack', CHAN_VOICE);
+		Enemy.Damage(self, self, 2 + (P_Random() & 1));
+		PlaySound('PigAttack', CHAN_VOICE);
 	}
 }
 
@@ -182,6 +182,9 @@ void Actor::A_PigPain(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/22 18:00:23  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.17  2002/02/14 19:20:59  dj_jl
 //  Renamed Entity properties to new naming style
 //

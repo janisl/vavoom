@@ -76,7 +76,7 @@ void Actor::A_WizAtk3(void)
 	{
 		return;
 	}
-	StartSoundName(self, AttackSound, CHAN_WEAPON);
+	PlaySound(AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(4));
@@ -108,6 +108,9 @@ void Actor::A_GhostOff(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/22 18:00:20  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.16  2002/02/16 16:26:55  dj_jl
 //  Removed precalculated sound IDs
 //

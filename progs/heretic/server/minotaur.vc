@@ -51,14 +51,14 @@ void Actor::A_MinotaurAtk1(void)
 	{
 		return;
 	}
-	StartSoundName(self, 'StaffHit2', CHAN_WEAPON);
+	PlaySound('StaffHit2', CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(4));
 		if (target->bIsPlayer)
 		{
 			// Squish the player
-			target->Player->deltaviewheight = -16.0;
+			target->Player->DeltaViewHeight = -16.0;
 		}
 	}
 }
@@ -79,7 +79,7 @@ void Actor::A_MinotaurDecide(void)
 	{
 		return;
 	}
-	StartSoundName(self, 'MinotaurSight', CHAN_VOICE);
+	PlaySound('MinotaurSight', CHAN_VOICE);
 	dist = MobjDist(self, *target);
 	if (target->Origin.z + target->Height > Origin.z &&
 		target->Origin.z + target->Height < Origin.z + Height &&
@@ -91,14 +91,14 @@ void Actor::A_MinotaurDecide(void)
 		bSkullFly = true;
 		A_FaceTarget();
 		Velocity = Normalize(target->Origin - Origin) * MNTR_CHARGE_SPEED;
-		special1 = 35 / 2;	// Charge duration
+		Special1 = 35 / 2;	// Charge duration
 	}
 	else if (target->Origin.z == target->FloorZ &&
 		dist < 9.0 * 64.0 && P_Random() < 220)
 	{
 		// Floor fire attack
 		SetState(S_MNTR_ATK3_1);
-		special2 = 0;
+		Special2 = 0;
 	}
 	else
 	{
@@ -127,7 +127,7 @@ void Actor::A_MinotaurAtk2(void)
 	{
 		return;
 	}
-	StartSoundName(self, 'MinotaurAttack2', CHAN_WEAPON);
+	PlaySound('MinotaurAttack2', CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(5));
@@ -136,7 +136,7 @@ void Actor::A_MinotaurAtk2(void)
 	mo = SpawnMissile(this, target, MinotaurMissile);
 	if (mo)
 	{
-		StartSoundName(*mo, 'MinotaurAttack2', CHAN_WEAPON);
+		mo->PlaySound('MinotaurAttack2', CHAN_WEAPON);
 		VectorAngles(&mo->Velocity, &ang);
 		angle = mo->Angles.yaw;
 		SpawnMissileAngles(this, MinotaurMissile,
@@ -172,7 +172,7 @@ void Actor::A_MinotaurAtk3(void)
 		if (target->Player)
 		{
 			// Squish the player
-			target->Player->deltaviewheight = -16.0;
+			target->Player->DeltaViewHeight = -16.0;
 		}
 	}
 	else
@@ -180,13 +180,13 @@ void Actor::A_MinotaurAtk3(void)
 		mo = SpawnMissile(this, target, MinotaurFloorFire);
 		if (mo != NULL)
 		{
-			StartSoundName(*mo, 'MinotaurAttack1', CHAN_VOICE);
+			mo->PlaySound('MinotaurAttack1', CHAN_VOICE);
 		}
 	}
-	if (P_Random() < 192 && special2 == 0)
+	if (P_Random() < 192 && Special2 == 0)
 	{
 		SetState(S_MNTR_ATK3_4);
-		special2 = 1;
+		Special2 = 1;
 	}
 }
 
@@ -200,11 +200,11 @@ void Actor::A_MinotaurCharge(void)
 {
 	mobj_t *puff;
 
-	if (special1)
+	if (Special1)
 	{
 		puff = P_SpawnMobj(Origin.x, Origin.y, Origin.z, PhoenixPuff);
 		puff->Velocity.z = 2.0 * 35.0;
-		special1--;
+		Special1--;
 	}
 	else
 	{
@@ -237,6 +237,9 @@ void Actor::A_MntrFloorFire(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/22 18:00:16  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.19  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

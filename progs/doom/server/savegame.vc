@@ -41,7 +41,7 @@ void ArchivePlayer(player_t * player)
 
 void UnarchivePlayer(player_t * player)
 {
-	player->attacker = NULL;
+	player->Attacker = NULL;
 }
 
 //==========================================================================
@@ -76,6 +76,9 @@ void Actor::Unarchive(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/02/22 18:00:13  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.9  2002/01/29 18:08:56  dj_jl
 //  Fixed saving
 //

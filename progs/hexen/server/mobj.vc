@@ -49,7 +49,6 @@ mobj_t *P_SpawnMobj(float x, float y, float z, classid type);
 
 classid PuffType;
 mobj_t *PuffSpawned;
-mobj_t *BlockingMobj;
 mobj_t *linetarget;	// who got hit (or NULL)
 
 int PStateNormal[NUMCLASSES] = {
@@ -173,7 +172,7 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 {
 	state_t *st;
 
-	spawnhealth = Health;
+	SpawnHealth = Health;
 	bCheckLineBlocking = false;
 	bCheckLineBlockMonsters = false;
 	if (!bMissile)
@@ -190,7 +189,7 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 		ReactionCount = 0;
 	}
 
-	lastlook = P_Random() % MAXPLAYERS;
+	LastLook = P_Random() % MAXPLAYERS;
 
 	// Set the state, but do not use P_SetMobjState, because action
 	// routines can't be called yet.  If the spawnstate has an action
@@ -254,7 +253,7 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 		{
 			// Seed random starting index for bobbing motion
 			Health = P_Random();
-			special1f = mthing->height;
+			Special1f = mthing->height;
 		}
 		if (StateTime > 0.0)
 		{
@@ -390,13 +389,13 @@ int P_HitFloor(mobj_t * thing)
 				SplashBase);
 			if (mo)
 				mo->FloorClip += SMALLSPLASHCLIP;
-			StartSoundName(*mo, 'Ambient10', CHAN_VOICE);	// small drip
+			mo->PlaySound('Ambient10', CHAN_VOICE);	// small drip
 		}
 		else
 		{
 			mo = P_SpawnMobj(thing->Origin.x, thing->Origin.y, ONFLOORZ,
 				Splash);
-			mo->target = thing;
+			mo->Owner = *thing;
 			mo->Velocity.x = (Random() - Random()) * 35.0;
 			mo->Velocity.y = (Random() - Random()) * 35.0;
 			mo->Velocity.z = (2.0 + Random()) * 35.0;
@@ -404,7 +403,7 @@ int P_HitFloor(mobj_t * thing)
 				SplashBase);
 			if (thing->bIsPlayer)
 				P_NoiseAlert(thing, thing);
-			StartSoundName(*mo, 'WaterSplash', CHAN_VOICE);
+			mo->PlaySound('WaterSplash', CHAN_VOICE);
 		}
 		return FLOOR_WATER;
 	case FLOOR_LAVA:
@@ -425,7 +424,7 @@ int P_HitFloor(mobj_t * thing)
 			if (thing->bIsPlayer)
 				P_NoiseAlert(thing, thing);
 		}
-		StartSoundName(*mo, 'LavaSizzle', CHAN_VOICE);
+		mo->PlaySound('LavaSizzle', CHAN_VOICE);
 		if (thing->bIsPlayer && level->tictime & 31)
 		{
 			thing->Damage(*LavaInflictor, none, 5);
@@ -443,7 +442,7 @@ int P_HitFloor(mobj_t * thing)
 		{
 			mo = P_SpawnMobj(thing->Origin.x, thing->Origin.y, ONFLOORZ,
 				SludgeChunk);
-			mo->target = thing;
+			mo->Owner = *thing;
 			mo->Velocity.x = (Random() - Random()) * 35.0;
 			mo->Velocity.y = (Random() - Random()) * 35.0;
 			mo->Velocity.z = (1.0 + Random()) * 35.0;
@@ -452,7 +451,7 @@ int P_HitFloor(mobj_t * thing)
 			if (thing->bIsPlayer)
 				P_NoiseAlert(thing, thing);
 		}
-		StartSoundName(*mo, 'SludgeGloop', CHAN_VOICE);
+		mo->PlaySound('SludgeGloop', CHAN_VOICE);
 		return FLOOR_SLUDGE;
 	}
 	return FLOOR_SOLID;
@@ -516,10 +515,10 @@ void P_FloorBounceMissile(mobj_t * mo)
 		case SorcererBall2:
 		case SorcererBall3:
 			if (!mo->Args[0])
-				StartSoundName(*mo, mo->SightSound, CHAN_VOICE);
+				mo->PlaySound(mo->SightSound, CHAN_VOICE);
 			break;
 		default:
-			StartSoundName(*mo, mo->SightSound, CHAN_VOICE);
+			mo->PlaySound(mo->SightSound, CHAN_VOICE);
 			break;
 		}
 	}
@@ -637,7 +636,7 @@ mobj_t *ActiveMinotaur(player_t * master)
 			continue;
 		if ((level->tictime - mo.Args[0]) >= ftoi(MAULATORTIME * 35.0))
 			continue;
-		plr = mo.specialmobj1->Player;
+		plr = mo.SpecialMobj1->Player;
 		if (plr == master)
 			return &mo;
 	}
@@ -681,51 +680,53 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 	{	// Check for frag changes
 		if (target->bIsPlayer)
 		{
-			if (source->Player->is_bot)
+			if (source->Player->bIsBot)
 			{
 				source->Player->Bot.Killed(*target);
 			}
 
-			if (target->Player->is_bot)
+			if (target->Player->bIsBot)
 			{
 				target->Player->Bot.Died(*source);
 			}
 
 			if (target == source)
 			{	// Self-frag
-				target->Player->frags[P_GetPlayerNum(target->Player)]--;
+				target->Player->Frags[P_GetPlayerNum(target->Player)]--;
 			}
 			else
 			{
-				source->Player->frags[P_GetPlayerNum(target->Player)]++;
+				source->Player->Frags[P_GetPlayerNum(target->Player)]++;
 			}
 		}
 	}
 	if (target->bIsPlayer)
-	{	// Player death
+	{
+		// Player death
 		if (!source)
 		{	// Self-frag
-			target->Player->frags[P_GetPlayerNum(target->Player)]--;
+			target->Player->Frags[P_GetPlayerNum(target->Player)]--;
 		}
 		target->bSolid = false;
 		target->bFly = false;
-		target->Player->powers[pw_flight] = 0;
-		target->Player->playerstate = PST_DEAD;
+		target->Player->Powers[pw_flight] = 0;
+		target->Player->PlayerState = PST_DEAD;
 		DropWeapon(target->Player);
 		if (target->bFireDamage)
-		{	// Player flame death
-			switch (target->Player->pclass)
+		{
+			// Player flame death
+			switch (target->Player->PClass)
 			{
 			case PCLASS_FIGHTER:
-				StartSoundName(*target, 'PlayerFighterBurnDeath', CHAN_VOICE);
+				target->PlaySound('PlayerFighterBurnDeath', CHAN_VOICE);
 				target->SetState(S_PLAY_F_FDTH1);
 				return;
 			case PCLASS_CLERIC:
-				StartSoundName(*target, 'PlayerClericBurnDeath', CHAN_VOICE);
+				target->PlaySound('PlayerClericBurnDeath', CHAN_VOICE);
 				target->SetState(S_PLAY_C_FDTH1);
 				return;
 			case PCLASS_MAGE:
-				StartSoundName(*target, 'PlayerMageBurnDeath', CHAN_VOICE);
+				target->PlaySound('PlayerMageBurnDeath', CHAN_VOICE);
 				target->SetState(S_PLAY_M_FDTH1);
 				return;
 			default:
@@ -737,7 +738,7 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 			// Player ice death
 			target->Translation = 0;	//no translation
 			target->bIceCorpse  = true;
-			switch (target->Player->pclass)
+			switch (target->Player->PClass)
 			{
 			case PCLASS_FIGHTER:
 				target->SetState(S_FPLAY_ICE);
@@ -760,19 +761,19 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 	{
 		if (target->Class == FighterBoss)
  		{
-			StartSoundName(*target, 'PlayerFighterBurnDeath', CHAN_VOICE);
+			target->PlaySound('PlayerFighterBurnDeath', CHAN_VOICE);
 			target->SetState(S_PLAY_F_FDTH1);
 			return;
  		}
  		if (target->Class == ClericBoss)
 		{
-			StartSoundName(*target, 'PlayerClericBurnDeath', CHAN_VOICE);
+			target->PlaySound('PlayerClericBurnDeath', CHAN_VOICE);
 			target->SetState(S_PLAY_C_FDTH1);
 			return;
 		}
 		if (target->Class == MageBoss)
 		{
-			StartSoundName(*target, 'PlayerMageBurnDeath', CHAN_VOICE);
+			target->PlaySound('PlayerMageBurnDeath', CHAN_VOICE);
 			target->SetState(S_PLAY_M_FDTH1);
 			return;
 		}
@@ -780,7 +781,7 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 		{
 			target->SetState(S_ZTREEDES_X1);
 			target->Height = 24.0;
-			StartSoundName(*target, 'TreeExplode', CHAN_VOICE);
+			target->PlaySound('TreeExplode', CHAN_VOICE);
 			return;
 		}
 	}
@@ -834,12 +835,12 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 
 	if (target->Class == Minotaur)
 	{
-		master = target->specialmobj1;
+		master = target->SpecialMobj1;
 		if (master->Health > 0)
 		{
 			if (!ActiveMinotaur(master->Player))
 			{
-				master->Player->powers[pw_minotaur] = 0;
+				master->Player->Powers[pw_minotaur] = 0;
 			}
 		}
 	}
@@ -913,11 +914,11 @@ boolean P_MorphPlayer(player_t * player)
 	boolean OldbFly;
 	int i;
 
-	if (player->powers[pw_invulnerability])
+	if (player->Powers[pw_invulnerability])
 	{	// Immune when invulnerable
 		return (false);
 	}
-	if (player->morphTics)
+	if (player->MorphTics)
 	{	// Player is already a beast
 		return false;
 	}
@@ -929,20 +930,21 @@ boolean P_MorphPlayer(player_t * player)
 	OldbFly = pmo->bFly;
 	pmo->SetState(S_FREETARGMOBJ);
 	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, TeleportFog);
-	StartSoundName(*fog, 'Teleport', CHAN_VOICE);
+	fog->PlaySound('Teleport', CHAN_VOICE);
 	beastMo = P_SpawnMobj(x, y, z, PlayerPig);
-	beastMo->special1 = player->readyweapon;
+	beastMo->Special1 = player->ReadyWeapon;
 	beastMo->Angles.yaw = angle;
 	beastMo->Player = player;
-	player->health = beastMo->Health = MAXMORPHHEALTH;
+	beastMo->Health = MAXMORPHHEALTH;
+	player->Health = beastMo->Health;
 	player->mo = beastMo;
 	for (i = 0; i < NUMARMOR; i++)
 	{
-		player->armorpoints[i] = 0.0;
+		player->ArmorPoints[i] = 0.0;
 	}
-	player->pclass = PCLASS_PIG;
+	player->PClass = PCLASS_PIG;
 	beastMo->bFly = OldbFly;
-	player->morphTics = ftoi(MORPHTIME * 35.0);
+	player->MorphTics = ftoi(MORPHTIME * 35.0);
 	ActivateMorphWeapon(player);
 	return true;
 }
@@ -964,7 +966,7 @@ boolean P_MorphMonster(mobj_t * actor)
 	float z;
 	int ghost;
 	int tid;
-	mobj_t *target;
+	Actor oldEnemy;
 	float angle;
 	int special;
 	int args[5];
@@ -994,23 +996,23 @@ boolean P_MorphMonster(mobj_t * actor)
 	z = actor->Origin.z;
 	ghost = actor->Translucency;
 	tid = actor->TID;
-	target = actor->target;
+	oldEnemy = actor->Enemy;
 	angle = actor->Angles.yaw;
 	special = actor->Special;
 	for (i = 0; i < 5; i++)
 	{
 		args[i] = actor->Args[i];
 	}
-	specialmobj1 = actor->specialmobj1;
+	specialmobj1 = actor->SpecialMobj1;
 	P_RemoveMobjFromTIDList(actor);
 	actor->SetState(S_FREETARGMOBJ);
 	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, TeleportFog);
-	StartSoundName(*fog, 'Teleport', CHAN_VOICE);
+	fog->PlaySound('Teleport', CHAN_VOICE);
 	monster = P_SpawnMobj(x, y, z, Pig);
-	monster->specialcid = moType;
-	monster->special1 = ftoi(MORPHTIME * 35.0) + P_Random();
+	monster->SpecialCID = moType;
+	monster->Special1 = ftoi(MORPHTIME * 35.0) + P_Random();
 	monster->Translucency = ghost;
-	monster->target = target;
+	monster->Enemy = oldEnemy;
 	monster->Angles.yaw = angle;
 	monster->TID = tid;
 	monster->Special = special;
@@ -1028,7 +1030,7 @@ boolean P_MorphMonster(mobj_t * actor)
 		{
 			if (!ActiveMinotaur(master->Player))
 			{
-				master->Player->powers[pw_minotaur] = 0;
+				master->Player->Powers[pw_minotaur] = 0;
 			}
 		}
 	}
@@ -1051,17 +1053,17 @@ void P_AutoUseHealth(player_t * player, int saveHealth)
 	int superSlot = 0;
 
 	normalCount = superCount = 0;
-	for (i = 0; i < player->inventorySlotNum; i++)
+	for (i = 0; i < player->InventorySlotNum; i++)
 	{
-		if (player->inventory[i].type == arti_health)
+		if (player->Inventory[i].type == arti_health)
 		{
 			normalSlot = i;
-			normalCount = player->inventory[i].count;
+			normalCount = player->Inventory[i].count;
 		}
-		else if (player->inventory[i].type == arti_superhealth)
+		else if (player->Inventory[i].type == arti_superhealth)
 		{
 			superSlot = i;
-			superCount = player->inventory[i].count;
+			superCount = player->Inventory[i].count;
 		}
 	}
 	if ((gameskill == sk_baby) && (normalCount * 25 >= saveHealth))
@@ -1070,7 +1072,7 @@ void P_AutoUseHealth(player_t * player, int saveHealth)
 		count = (saveHealth + 24) / 25;
 		for (i = 0; i < count; i++)
 		{
-			player->health += 25;
+			player->Health += 25;
 			PlayerRemoveArtifact(player, normalSlot);
 		}
 	}
@@ -1080,7 +1082,7 @@ void P_AutoUseHealth(player_t * player, int saveHealth)
 		count = (saveHealth + 99) / 100;
 		for (i = 0; i < count; i++)
 		{
-			player->health += 100;
+			player->Health += 100;
 			PlayerRemoveArtifact(player, superSlot);
 		}
 	}
@@ -1092,18 +1094,18 @@ void P_AutoUseHealth(player_t * player, int saveHealth)
 		saveHealth -= count * 25;
 		for (i = 0; i < count; i++)
 		{
-			player->health += 25;
+			player->Health += 25;
 			PlayerRemoveArtifact(player, normalSlot);
 		}
 		count = (saveHealth + 99) / 100;
 		for (i = 0; i < count; i++)
 		{
-			player->health += 100;
+			player->Health += 100;
 			// The same as in HERETIC
 			PlayerRemoveArtifact(player, normalSlot);
 		}
 	}
-	player->mo->Health = player->health;
+	player->mo->Health = player->Health;
 }
 
 //==========================================================================
@@ -1170,8 +1172,8 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 	}
 	if (bIsPlayer)
 	{
-		if (damage < 1000 && ((Player->cheats & CF_GODMODE)
-				|| Player->powers[pw_invulnerability]))
+		if (damage < 1000 && ((Player->Cheats & CF_GODMODE)
+				|| Player->Powers[pw_invulnerability]))
 		{
 			return;
 		}
@@ -1228,7 +1230,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 			damage >>= 1;
 			break;
 		case ShardMissile:
-			switch (inflictor.special2)
+			switch (inflictor.Special2)
 			{
 			case 3:
 				damage <<= 3;
@@ -1264,12 +1266,12 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 		case PoisonCloud:
 			if (bIsPlayer)
 			{
-				if (Player->poisoncount < 4)
+				if (Player->PoisonCount < 4)
 				{
 					P_PoisonDamage(Player, &source,
 						15 + (P_Random() & 15), false);	// Don't play painsound
 					P_PoisonPlayer(Player, &source, 50);
-					StartSoundName(self, 'PlayerPoisonCough', CHAN_VOICE);
+					PlaySound('PlayerPoisonCough', CHAN_VOICE);
 				}
 				return;
 			}
@@ -1305,11 +1307,11 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 	//
 	if (bIsPlayer)
 	{
-		savedPercent = AutoArmorSave[Player->pclass]
-			+ Player->armorpoints[ARMOR_ARMOR]
-			+ Player->armorpoints[ARMOR_SHIELD]
-			+ Player->armorpoints[ARMOR_HELMET]
-			+ Player->armorpoints[ARMOR_AMULET];
+		savedPercent = AutoArmorSave[Player->PClass]
+			+ Player->ArmorPoints[ARMOR_ARMOR]
+			+ Player->ArmorPoints[ARMOR_SHIELD]
+			+ Player->ArmorPoints[ARMOR_HELMET]
+			+ Player->ArmorPoints[ARMOR_AMULET];
 		if (savedPercent)
 		{
 			// armor absorbed some damage
@@ -1319,13 +1321,13 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 			}
 			for (i = 0; i < NUMARMOR; i++)
 			{
-				if (Player->armorpoints[i])
+				if (Player->ArmorPoints[i])
 				{
-					Player->armorpoints[i] -= itof(damage) *
-						ArmorIncrement[Player->pclass * NUMARMOR + i] / 300.0;
-					if (Player->armorpoints[i] < 2.0)
+					Player->ArmorPoints[i] -= itof(damage) *
+						ArmorIncrement[Player->PClass * NUMARMOR + i] / 300.0;
+					if (Player->ArmorPoints[i] < 2.0)
 					{
-						Player->armorpoints[i] = 0.0;
+						Player->ArmorPoints[i] = 0.0;
 					}
 				}
 			}
@@ -1336,22 +1338,22 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 			}
 			damage -= ftoi(saved);
 		}
-		if (damage >= Player->health
-			&& ((gameskill == sk_baby) || deathmatch) && !Player->morphTics)
+		if (damage >= Player->Health
+			&& ((gameskill == sk_baby) || deathmatch) && !Player->MorphTics)
 		{
 			// Try to use some inventory health
 			P_AutoUseHealth(Player, damage - Health + 1);
 		}
-		Player->health -= damage;	// mirror mobj health here for Dave
-		if (Player->health < 0)
+		Player->Health -= damage;	// mirror mobj health here for Dave
+		if (Player->Health < 0)
 		{
-			Player->health = 0;
+			Player->Health = 0;
 		}
-		Player->attacker = &source;
-		Player->damagecount += damage;	// add damage after armor / invuln
-		if (Player->damagecount > 100)
+		Player->Attacker = &source;
+		Player->DamageCount += damage;	// add damage after armor / invuln
+		if (Player->DamageCount > 100)
 		{
-			Player->damagecount = 100;	// teleport stomp does 10k points...
+			Player->DamageCount = 100;	// teleport stomp does 10k points...
 		}
 	}
 
@@ -1367,7 +1369,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 			// check for special fire damage or ice damage deaths
 			if (inflictor.bFireDamage)
 			{
-				if (bIsPlayer && !Player->morphTics)
+				if (bIsPlayer && !Player->MorphTics)
 				{
 					// Check for flame death
 					if (Health > -50 && damage > 25)
@@ -1388,7 +1390,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 		if (source && (source.Class == Minotaur))
 		{
 			// Minotaur's kills go to his master
-			master = source.specialmobj1;
+			master = source.SpecialMobj1;
 			// Make sure still alive and not a pointer to fighter head
 			if (master->bIsPlayer && (master->Player->mo == master))
 			{
@@ -1396,7 +1398,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 			}
 		}
 		if (source && (source.bIsPlayer) &&
-			(source.Player->readyweapon == WP_FOURTH))
+			(source.Player->ReadyWeapon == WP_FOURTH))
 		{
 			// Always extreme death from fourth weapon
 			Health = -5000;
@@ -1425,7 +1427,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 						(Class == CentaurLeader) ||
 						(Class == Ettin))
 					{
-						StartSoundName(self, 'PuppyBeat', CHAN_VOICE);
+						PlaySound('PuppyBeat', CHAN_VOICE);
 					}
 				}
 			}
@@ -1443,26 +1445,25 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 						(Class == CentaurLeader) ||
 						(Class == Ettin))
 					{
-						StartSoundName(self, 'PuppyBeat', CHAN_VOICE);
+						PlaySound('PuppyBeat', CHAN_VOICE);
 					}
 				}
 			}
 		}
 	}
 	ReactionCount = 0;	// we're awake now...
-	if (!threshold && source && !source.bBoss &&
+	if (!Threshold && source && !source.bBoss &&
 		!(Class == Bishop) && !(Class == Minotaur))
 	{
 		// Target actor is not intent on another actor,
 		// so make him chase after source
-		if ((Class == Centaur && source.Class == CentaurLeader)
-			|| (Class == CentaurLeader
-				&& source.Class == Centaur))
+		if ((Class == Centaur && source.Class == CentaurLeader) ||
+			(Class == CentaurLeader && source.Class == Centaur))
 		{
 			return;
 		}
-		target = &source;
-		threshold = BASETHRESHOLD;
+		Enemy = source;
+		Threshold = BASETHRESHOLD;
 		if (StateNum == SpawnState && SeeState != S_NULL)
 		{
 			SetState(SeeState);
@@ -1498,7 +1499,7 @@ void P_FallingDamage(player_t * player)
 		// No-death threshold
 		damage = player->mo->Health - 1;
 	}
-	StartSoundName(*player->mo, 'PlayerLand', CHAN_BODY);
+	player->mo->PlaySound('PlayerLand', CHAN_BODY);
 	player->mo->Damage(none, none, damage);
 }
 
@@ -1510,15 +1511,15 @@ void P_FallingDamage(player_t * player)
 
 void P_PoisonPlayer(player_t * player, mobj_t * poisoner, int poison)
 {
-	if ((player->cheats & CF_GODMODE) || player->powers[pw_invulnerability])
+	if ((player->Cheats & CF_GODMODE) || player->Powers[pw_invulnerability])
 	{
 		return;
 	}
-	player->poisoncount += poison;
-	player->poisoner = poisoner;
-	if (player->poisoncount > 100)
+	player->PoisonCount += poison;
+	player->Poisoner = poisoner;
+	if (player->PoisonCount > 100)
 	{
-		player->poisoncount = 100;
+		player->PoisonCount = 100;
 	}
 }
 
@@ -1551,22 +1552,22 @@ void P_PoisonDamage(player_t * player, mobj_t * source, int damage,
 		// Take half damage in trainer mode
 		damage >>= 1;
 	}
-	if (damage < 1000 && ((player->cheats & CF_GODMODE)
-			|| player->powers[pw_invulnerability]))
+	if (damage < 1000 && ((player->Cheats & CF_GODMODE)
+			|| player->Powers[pw_invulnerability]))
 	{
 		return;
 	}
-	if (damage >= player->health
-		&& ((gameskill == sk_baby) || deathmatch) && !player->morphTics)
+	if (damage >= player->Health
+		&& ((gameskill == sk_baby) || deathmatch) && !player->MorphTics)
 	{	// Try to use some inventory health
-		P_AutoUseHealth(player, damage - player->health + 1);
+		P_AutoUseHealth(player, damage - player->Health + 1);
 	}
-	player->health -= damage;	// mirror mobj health here for Dave
-	if (player->health < 0)
+	player->Health -= damage;	// mirror mobj health here for Dave
+	if (player->Health < 0)
 	{
-		player->health = 0;
+		player->Health = 0;
 	}
-	player->attacker = source;
+	player->Attacker = source;
 
 	//
 	// do the damage
@@ -1575,8 +1576,8 @@ void P_PoisonDamage(player_t * player, mobj_t * source, int damage,
 	if (target->Health <= 0)
 	{
 		// Death
-		target->special1 = damage;
-		if (player && inflictor && !player->morphTics)
+		target->Special1 = damage;
+		if (player && inflictor && !player->MorphTics)
 		{
 			// Check for flame death
 			if (inflictor->bFireDamage &&
@@ -1613,11 +1614,11 @@ void SpawnPuff(float x, float y, float z)
 	if (linetarget && puff->SightSound)
 	{
 		// Hit thing sound
-		StartSoundName(*puff, puff->SightSound, CHAN_VOICE);
+		puff->PlaySound(puff->SightSound, CHAN_VOICE);
 	}
 	else if (puff->AttackSound)
 	{
-		StartSoundName(*puff, puff->AttackSound, CHAN_VOICE);
+		puff->PlaySound(puff->AttackSound, CHAN_VOICE);
 	}
 	switch (PuffType)
 	{
@@ -1642,7 +1643,7 @@ void P_BloodSplatter(float x, float y, float z, mobj_t * originator)
 	mobj_t *mo;
 
 	mo = P_SpawnMobj(x, y, z, BloodSplatter);
-	mo->target = originator;
+	mo->Owner = *originator;
 	mo->Velocity.x = (Random() - Random()) * 4.0 * 35.0;
 	mo->Velocity.y = (Random() - Random()) * 4.0 * 35.0;
 	mo->Velocity.z = 3.0 * 35.0;
@@ -1660,7 +1661,7 @@ void P_BloodSplatter2(float x, float y, float z, mobj_t * originator)
 
 	mo = P_SpawnMobj(x + (Random() - 0.5) * 8.0,
 		y + (Random() - 0.5) * 8.0, z, AxeBlood);
-	mo->target = originator;
+	mo->Owner = *originator;
 }
 
 //==========================================================================
@@ -1733,7 +1734,7 @@ int RaiseMobj(mobj_t * actor)
 			break;
 		case ThrustFloorDown:
 		case ThrustFloorUp:
-			actor->FloorClip -= itof(actor->special2);
+			actor->FloorClip -= itof(actor->Special2);
 			break;
 		default:
 			actor->FloorClip -= 2.0;
@@ -1865,19 +1866,18 @@ void G_PlayerReborn(int player)
 	ClearPlayer(p);
 	p->Bot = B;
 
-	p->pclass = p->baseclass;
+	p->PClass = p->BaseClass;
 
-	p->usedown = p->attackdown = true;	// don't do anything immediately
-	p->playerstate = PST_LIVE;
-	p->health = MAXHEALTH;
-	p->readyweapon = p->pendingweapon = WP_FIRST;
-	weaponinfo[p->readyweapon * NUMCLASSES + p->pclass] (p);
-	p->pspriteSY = PSpriteSY[p->pclass * NUMWEAPONS + p->readyweapon];
-	p->weaponowned[WP_FIRST] = true;
-	players[player].localQuakeHappening = false;
+	p->bUseDown = true;	// don't do anything immediately
+	p->bAttackDown = true;
+	p->PlayerState = PST_LIVE;
+	p->Health = MAXHEALTH;
+	p->WeaponOwned[WP_FIRST] = true;
+	SetWeapon(p, WP_FIRST);
+	p->LocalQuakeHappening = 0;
 
-	p->inv_ptr = 0;	// reset the inventory pointer
-	p->curpos = 0;
+	p->InvPtr = 0;	// reset the inventory pointer
+	p->InvCurPos = 0;
 }
 
 //==========================================================================
@@ -1896,34 +1896,34 @@ void P_SpawnPlayer(mthing_t * mthing)
 	mobj_t *mobj;
 
 	p = &players[mthing->type - 1];
-	if (!p->active)
+	if (!p->bActive)
 	{
 		// Not playing
 		return;
 	}
 
-	if (p->playerstate == PST_REBORN)
+	if (p->PlayerState == PST_REBORN)
 	{
 		G_PlayerReborn(mthing->type - 1);
 	}
 	if (randomclass && deathmatch)
 	{
-		p->pclass = P_Random() % 3;
-		if (p->pclass == p->baseclass)
+		p->PClass = P_Random() % 3;
+		if (p->PClass == p->BaseClass)
 		{
-			p->pclass = (p->pclass + 1) % 3;
+			p->PClass = (p->PClass + 1) % 3;
 		}
-		p->baseclass = p->pclass;
+		p->BaseClass = p->PClass;
 		SB_Start();
 	}
 	else
 	{
-		p->pclass = p->baseclass;
+		p->PClass = p->BaseClass;
 	}
 	x = mthing->x;
 	y = mthing->y;
 	z = ONFLOORZ;
-	switch (p->pclass)
+	switch (p->PClass)
 	{
 	case PCLASS_FIGHTER:
 		mobj = P_SpawnMobj(x, y, z, PlayerFighter);
@@ -1942,29 +1942,29 @@ void P_SpawnPlayer(mthing_t * mthing)
 	mobj->Angles.yaw = itof(45 * (mthing->angle / 45));
 	mobj->Player = p;
 	mobj->bIsPlayer = true;
-	mobj->Health = p->health;
+	mobj->Health = p->Health;
 	p->mo = mobj;
-	p->playerstate = PST_LIVE;
-	p->refire = 0;
-	p->damagecount = 0;
-	p->bonuscount = 0;
-	p->poisoncount = 0;
-	p->morphTics = 0;
-	p->extralight = 0;
-	p->fixedcolormap = 0;
-	p->viewheight = VIEWHEIGHT;
-	p->viewangles = mobj->Angles;
-	p->fixangle = true;
+	p->PlayerState = PST_LIVE;
+	p->Refire = 0;
+	p->DamageCount = 0;
+	p->BonusCount = 0;
+	p->PoisonCount = 0;
+	p->MorphTics = 0;
+	p->ExtraLight = 0;
+	p->FixedColormap = 0;
+	p->ViewHeight = VIEWHEIGHT;
+	p->ViewAngles = mobj->Angles;
+	p->bFixAngle = true;
 	SetupPsprites(p);
 	if (deathmatch)
 	{
 		// Give all keys in death match mode
-		p->keys = 2047;
+		p->Keys = 2047;
 	}
 
 	// Set translation table data
 	SetPlayerColor(p);
-	if (p->is_bot)
+	if (p->bIsBot)
 	{
 		p->Bot.OnSpawn();
 	}
@@ -2313,6 +2313,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.34  2002/02/22 18:00:22  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.33  2002/02/16 16:26:55  dj_jl
 //  Removed precalculated sound IDs
 //

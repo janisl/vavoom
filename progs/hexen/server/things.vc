@@ -170,9 +170,9 @@ boolean EV_ThingProjectile(int *args, boolean gravity)
 			mobj->Origin.z, moType);
 		if (newMobj->SightSound)
 		{
-			StartSoundName(*newMobj, newMobj->SightSound, CHAN_VOICE);
+			newMobj->PlaySound(newMobj->SightSound, CHAN_VOICE);
 		}
-		newMobj->target = mobj;	// Originator
+		newMobj->Owner = *mobj;	// Originator
 		newMobj->Angles.yaw = angle;
 		newMobj->Velocity.x = speed * cos(angle) * 35.0;
 		newMobj->Velocity.y = speed * sin(angle) * 35.0;
@@ -234,12 +234,12 @@ boolean EV_ThingSpawn(int *args, boolean fog)
 			{
 				fogMobj = P_SpawnMobj(mobj->Origin.x, mobj->Origin.y,
 					mobj->Origin.z + TELEFOGHEIGHT, TeleportFog);
-				StartSoundName(*fogMobj, 'Teleport', CHAN_VOICE);
+				fogMobj->PlaySound('Teleport', CHAN_VOICE);
 			}
 			newMobj->bDropped = true;	// Don't respawn
 			if (newMobj->bFloatBob)
 			{
-				newMobj->special1f = newMobj->Origin.z - newMobj->FloorZ;
+				newMobj->Special1f = newMobj->Origin.z - newMobj->FloorZ;
 			}
 			success = true;
 		}
@@ -271,12 +271,12 @@ boolean Actor::Activate(void)
 	case ZTWinedTorch:
 	case ZTWinedTorchUnlit:
 		SetState(S_ZTWINEDTORCH_1);
-		StartSoundName(self, 'Ignite', CHAN_VOICE);
+		PlaySound('Ignite', CHAN_VOICE);
 		break;
 	case ZWallTorch:
 	case ZWallTorchUnlit:
 		SetState(S_ZWALLTORCH1);
-		StartSoundName(self, 'Ignite', CHAN_VOICE);
+		PlaySound('Ignite', CHAN_VOICE);
 		break;
 	case ZGemPedestal:
 		SetState(S_ZGEMPEDESTAL2);
@@ -288,7 +288,7 @@ boolean Actor::Activate(void)
 	case ThrustFloorDown:
 		if (Args[0] == 0)
 		{
-			StartSoundName(self, 'ThrustSpikeLower', CHAN_VOICE);
+			PlaySound('ThrustSpikeLower', CHAN_VOICE);
 			Translucency = 0;
 			if (Args[1])
 				SetState(S_BTHRUSTRAISE1);
@@ -299,7 +299,7 @@ boolean Actor::Activate(void)
 	case ZFireBull:
 	case ZFireBullUnlit:
 		SetState(S_ZFIREBULL_BIRTH);
-		StartSoundName(self, 'Ignite', CHAN_VOICE);
+		PlaySound('Ignite', CHAN_VOICE);
 		break;
 	case ZBell:
 		if (Health > 0)
@@ -310,14 +310,14 @@ boolean Actor::Activate(void)
 	case ZCauldron:
 	case ZCauldronUnlit:
 		SetState(S_ZCAULDRON1);
-		StartSoundName(self, 'Ignite', CHAN_VOICE);
+		PlaySound('Ignite', CHAN_VOICE);
 		break;
 	case FlameSmall:
-		StartSoundName(self, 'Ignite', CHAN_VOICE);
+		PlaySound('Ignite', CHAN_VOICE);
 		SetState(S_FLAME_SMALL1);
 		break;
 	case FlameLarge:
-		StartSoundName(self, 'Ignite', CHAN_VOICE);
+		PlaySound('Ignite', CHAN_VOICE);
 		SetState(S_FLAME_LARGE1);
 		break;
 	case BatSpawner:
@@ -387,7 +387,7 @@ boolean Actor::Deactivate(void)
 	case ThrustFloorDown:
 		if (Args[0] == 1)
 		{
-			StartSoundName(self, 'ThrustSpikeRaise', CHAN_VOICE);
+			PlaySound('ThrustSpikeRaise', CHAN_VOICE);
 			if (Args[1])
 				SetState(S_BTHRUSTLOWER);
 			else
@@ -560,6 +560,9 @@ int ThingCount(int type, int tid)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/02/22 18:00:24  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.21  2002/02/16 16:26:56  dj_jl
 //  Removed precalculated sound IDs
 //

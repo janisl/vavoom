@@ -45,7 +45,7 @@ class MapSpot:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bNoClient = true;
+		bHidden = true;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
@@ -979,7 +979,7 @@ class FogSpawner:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Translucency = 100;
-		bNoClient = true;
+		bHidden = true;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		bFloatBob = true;
@@ -1090,7 +1090,7 @@ class QuakeFocus:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Translucency = 100;
-		bNoClient = true;
+		bHidden = true;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		SpawnState = S_QUAKE_ACTIVE1;
@@ -4312,7 +4312,7 @@ class ZLeafSpawner:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Translucency = 100;
-		bNoClient = true;
+		bHidden = true;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZLEAFSPAWNER;
@@ -5408,7 +5408,7 @@ class TeleportSpot:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bNoClient = true;
+		bHidden = true;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 	}
@@ -8816,7 +8816,7 @@ class SoundWind:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bNoClient = true;
+		bHidden = true;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		SpawnState = S_SND_WIND1;
@@ -8839,7 +8839,7 @@ class SoundWaterfall:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bNoClient = true;
+		bHidden = true;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		SpawnState = S_SND_WATERFALL;
@@ -10347,7 +10347,7 @@ class BatSpawner:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Translucency = 100;
-		bNoClient = true;
+		bHidden = true;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
@@ -10383,9 +10383,12 @@ class Bat:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2002/02/22 18:00:22  dj_jl
+//	A lots of the renaming, beautification.
+//
 //	Revision 1.22  2002/02/14 19:20:58  dj_jl
 //	Renamed Entity properties to new naming style
-//
+//	
 //	Revision 1.21  2002/02/06 17:28:53  dj_jl
 //	Replaced Actor flags with boolean variables.
 //	

@@ -26,8 +26,8 @@
 //============================================================================
 // Wraith Variables
 //
-//  special1                Internal index into floatbob
-//  special2
+//  Special1                Internal index into floatbob
+//	Special2
 //============================================================================
 
 // MACROS ------------------------------------------------------------------
@@ -51,7 +51,7 @@
 void Actor::A_WraithInit(void)
 {
 	Origin.z += 48.0;
-	special1 = 0;	// index into floatbob
+	Special1 = 0;	// index into floatbob
 }
 
 //============================================================================
@@ -128,7 +128,7 @@ void Actor::A_WraithFX2(void)
 			mo->Velocity.z = 0.0;
 			mo->Velocity.x = (Random() / 2.0 + 1.0) * cos(angle) * 35.0;
 			mo->Velocity.y = (Random() / 2.0 + 1.0) * sin(angle) * 35.0;
-			mo->target = this;
+			mo->Owner = self;
 			mo->FloorClip = 10.0;
 		}
 	}
@@ -156,7 +156,7 @@ void Actor::A_WraithFX3(void)
 			mo->Origin.x += (Random() - 0.5) * 8.0;
 			mo->Origin.y += (Random() - 0.5) * 8.0;
 			mo->Origin.z += Random() * 4.0;
-			mo->target = this;
+			mo->Owner = self;
 		}
 	}
 }
@@ -204,7 +204,7 @@ void Actor::A_WraithFX4(void)
 			mo.Origin.x += (Random() - 0.5) * 16.0;
 			mo.Origin.y += (Random() - 0.5) * 16.0;
 			mo.Origin.z += Random() * 4.0;
-			mo.target = this;
+			mo.Owner = self;
 		}
 	}
 	if (spawn5)
@@ -215,7 +215,7 @@ void Actor::A_WraithFX4(void)
 			mo.Origin.x += (Random() - 0.5) * 8.0;
 			mo.Origin.y += (Random() - 0.5) * 8.0;
 			mo.Origin.z += Random() * 4.0;
-			mo.target = this;
+			mo.Owner = self;
 		}
 	}
 }
@@ -228,10 +228,10 @@ void Actor::A_WraithFX4(void)
 
 void Actor::A_WraithChase(void)
 {
-	int weaveindex = special1;
+	int weaveindex = Special1;
 
 	Origin.z += FloatBobOffsets[weaveindex];
-	special1 = (weaveindex + 2) & 63;
+	Special1 = (weaveindex + 2) & 63;
 //  if (actor->FloorClip > 0)
 //  {
 //      SetState(S_WRAITH_RAISE2);
@@ -251,11 +251,11 @@ void Actor::A_WraithMelee(void)
 {
 	int amount;
 
-	// Steal health from target and give to player
+	// Steal health from enemy and give to player
 	if (CheckMeleeRange() && (P_Random() < 220))
 	{
 		amount = HITDICE(2);
-		target->Damage(self, self, amount);
+		Enemy.Damage(self, self, amount);
 		Health += amount;
 	}
 }
@@ -270,16 +270,19 @@ void Actor::A_WraithMissile(void)
 {
 	mobj_t *mo;
 
-	mo = SpawnMissile(this, target, WraithMissile);
+	mo = SpawnMissile(this, &Enemy, WraithMissile);
 	if (mo)
 	{
-		StartSoundName(self, 'WraithMissileFire', CHAN_WEAPON);
+		PlaySound('WraithMissileFire', CHAN_WEAPON);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/22 18:00:25  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.16  2002/02/14 19:20:59  dj_jl
 //  Renamed Entity properties to new naming style
 //

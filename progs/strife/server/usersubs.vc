@@ -92,7 +92,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 
 	mo = P_SpawnMobj(x + 20.0 * cos(an), y + 20.0 * sin(an),
 		ss->sector->floorheight, TeleportFog);
-	StartSoundName(*mo, 'Teleport', CHAN_VOICE);	// don't start sound on first frame
+	mo->PlaySound('Teleport', CHAN_VOICE);	// don't start sound on first frame
 
 	return true;
 }
@@ -118,35 +118,35 @@ void P_SpawnPlayer(mthing_t * mthing)
 	p = &players[mthing->type - 1];
 
 	// not playing?
-	if (!p->active)
+	if (!p->bActive)
 		return;
 
-	if (p->playerstate == PST_REBORN)
+	if (p->PlayerState == PST_REBORN)
 		G_PlayerReborn(mthing->type - 1);
 
 	x = mthing->x;
 	y = mthing->y;
 	z = ONFLOORZ;
-	mobj = P_SpawnMobj(x, y, z, PlayerEntity);
+	mobj = P_SpawnMobj(x, y, z, PlayerPawn);
 
 	// set color translations for player sprites
-	mobj->Translation = p->color;
+	mobj->Translation = p->Color;
 
 	mobj->Angles.yaw = itof(45 * (mthing->angle / 45));
 	mobj->Player = p;
 	mobj->bIsPlayer = true;
-	mobj->Health = p->health;
+	mobj->Health = p->Health;
 
 	p->mo = mobj;
-	p->playerstate = PST_LIVE;
-	p->refire = 0;
-	p->damagecount = 0;
-	p->bonuscount = 0;
-	p->extralight = 0;
-	p->fixedcolormap = 0;
-	p->viewheight = VIEWHEIGHT;
-	p->viewangles = mobj->Angles;
-	p->fixangle = true;
+	p->PlayerState = PST_LIVE;
+	p->Refire = 0;
+	p->DamageCount = 0;
+	p->BonusCount = 0;
+	p->ExtraLight = 0;
+	p->FixedColormap = 0;
+	p->ViewHeight = VIEWHEIGHT;
+	p->ViewAngles = mobj->Angles;
+	p->bFixAngle = true;
 
 	// setup gun psprite
 	SetupPsprites(p);
@@ -154,7 +154,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 	// give all cards in death match mode
 	if (deathmatch)
 	{
-		p->keys = 0x3f;
+		p->Keys = 0x3f;
 	}
 
 	// wake up the status bar
@@ -203,7 +203,7 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 	th = P_SpawnMobj(x, y, z, type);
 
 	if (th->SightSound)
-		StartSoundName(*th, th->SightSound, CHAN_VOICE);
+		th->PlaySound(th->SightSound, CHAN_VOICE);
 
 	th->target = source;
 	avcpy(angles, th->Angles);
@@ -218,6 +218,9 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/22 18:00:26  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.18  2002/02/16 16:26:56  dj_jl
 //  Removed precalculated sound IDs
 //

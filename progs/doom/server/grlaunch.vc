@@ -44,7 +44,7 @@ class weapon_grenade_launcher:Actor
 	{
 		Radius = 20.0;
 		Height = 16.0;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_GLAUNCH;
 	}
 };
@@ -76,7 +76,10 @@ class missile_grenade:Actor
 		Mass = 100.0;
 		Speed = 600.0;
 		MissileDamage = 20;
-		Flags = MF_NOBLOCKMAP | MF_DROPOFF | MF_MISSILE | MF_BOUNCE;
+		bNoBlockmap = true;
+		bDropOff = true;
+ 		bMissile = true;
+ 		bBounce = true;
 		SpawnState = S_GRENADE;
 		DeathState = S_EXPLODE1;
 		SightSound = 'LauncherFire';
@@ -108,19 +111,22 @@ __states__(Weapon)
 
 void set_weapon_grenade(player_t * player)
 {
-	player->w_ammo = am_misl;
-	player->w_upstate = S_GRENLAUNCHUP;
-	player->w_downstate = S_GRENLAUNCHDOWN;
-	player->w_readystate = S_GRENLAUNCH;
-	player->w_atkstate = S_GRENLAUNCH1;
-	player->w_holdatkstate = S_NULL;
-	player->w_flashstate = S_GRENLAUNCHFLASH1;
-	player->weapon_model = 0;
+	player->w_Ammo = am_misl;
+	player->w_UpState = S_GRENLAUNCHUP;
+	player->w_DownState = S_GRENLAUNCHDOWN;
+	player->w_ReadyState = S_GRENLAUNCH;
+	player->w_AttackState = S_GRENLAUNCH1;
+	player->w_HoldAttackState = S_NULL;
+	player->w_FlashState = S_GRENLAUNCHFLASH1;
+	player->WeaponModel = 0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/22 18:00:07  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.11  2002/02/06 17:28:51  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

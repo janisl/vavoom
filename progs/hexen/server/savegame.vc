@@ -44,8 +44,8 @@ void ArchivePlayer(player_t * player)
 
 void UnarchivePlayer(player_t * player)
 {
-	player->attacker = NULL;
-	player->poisoner = NULL;
+	player->Attacker = NULL;
+	player->Poisoner = NULL;
 }
 
 //==========================================================================
@@ -56,18 +56,16 @@ void UnarchivePlayer(player_t * player)
 
 void mobj_t::Archive(void)
 {
-	boolean corpse;
-
-	corpse = bCorpse;
-	if (corpse)
+	if (bCorpse)
 	{
-		target = NULL;
+		Enemy = none;
 	}
-	MobjToNum(&target);
+//	MobjToNum(& &Enemy);
+//	MobjToNum(& &Owner);
 
 	switch (Class)
 	{
-		// Just specialmobj1
+		// Just	SpecialMobj1
 	case BishopMissile:
 	case HolyFX:
 	case Dragon:
@@ -76,47 +74,47 @@ void mobj_t::Archive(void)
 	case Minotaur:
 	case SorcererFX1:
 	case MageStaffFX2:
-		if (corpse)
+		if (bCorpse)
 		{
-			specialmobj1 = NULL;
+			SpecialMobj1 = NULL;
 		}
-		MobjToNum(&specialmobj1);
+		MobjToNum(&SpecialMobj1);
 		break;
 
 		// Just specialmobj2
 	case LightningFloor:
 	case LightningZap:
-		if (corpse)
+		if (bCorpse)
 		{
-			specialmobj2 = NULL;
+			SpecialMobj2 = NULL;
 		}
-		MobjToNum(&specialmobj2);
+		MobjToNum(&SpecialMobj2);
 		break;
 
-		// Both specialmobj1 and specialmobj2
+		// Both SpecialMobj1 and SpecialMobj2
 	case HolyTail:
 	case LightningCeiling:
-		if (corpse)
+		if (bCorpse)
 		{
-			specialmobj1 = NULL;
-			specialmobj2 = NULL;
+			SpecialMobj1 = NULL;
+			SpecialMobj2 = NULL;
 		}
 		else
 		{
-			MobjToNum(&specialmobj1);
-			MobjToNum(&specialmobj2);
+			MobjToNum(&SpecialMobj1);
+			MobjToNum(&SpecialMobj2);
 		}
 		break;
 
 		// Miscellaneous
 	case Korax:
-		special1 = 0;	// Searching index
+		Special1 = 0;	// Searching index
 		break;
 
 	default:
 		break;
 	}
-	specialcid = ClassIDToNum(specialcid);
+	SpecialCID = ClassIDToNum(SpecialCID);
 }
 
 //==========================================================================
@@ -127,10 +125,11 @@ void mobj_t::Archive(void)
 
 void mobj_t::Unarchive(void)
 {
-	NumToMobj(&target);
+//	NumToMobj(& &Enemy);
+//	NumToMobj(& &Owner);
 	switch (Class)
 	{
-		// Just specialmobj1
+		// Just	SpecialMobj1
 	case BishopMissile:
 	case HolyFX:
 	case Dragon:
@@ -138,26 +137,26 @@ void mobj_t::Unarchive(void)
 	case ThrustFloorDown:
 	case Minotaur:
 	case SorcererFX1:
-		NumToMobj(&specialmobj1);
+		NumToMobj(&SpecialMobj1);
 		break;
 
 		// Just special2
 	case LightningFloor:
 	case LightningZap:
-		NumToMobj(&specialmobj2);
+		NumToMobj(&SpecialMobj2);
 		break;
 
 		// Both special1 and special2
 	case HolyTail:
 	case LightningCeiling:
-		NumToMobj(&specialmobj1);
-		NumToMobj(&specialmobj2);
+		NumToMobj(&SpecialMobj1);
+		NumToMobj(&SpecialMobj2);
 		break;
 
 	default:
 		break;
 	}
-	specialcid = NumToClassID(specialcid);
+	SpecialCID = NumToClassID(SpecialCID);
 	SightSound = UnarchiveName(SightSound);
 	ActiveSound = UnarchiveName(ActiveSound);
 	AttackSound = UnarchiveName(AttackSound);
@@ -168,6 +167,9 @@ void mobj_t::Unarchive(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/02/22 18:00:23  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.12  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

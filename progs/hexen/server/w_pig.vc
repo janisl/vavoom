@@ -48,21 +48,21 @@ void Weapon::A_SnoutAttack(void)
 	TVec vforward;
 
 	damage = 3 + (P_Random() & 3);
-	avcpy(player->mo->Angles, angles);
-	AimLineAttack(player->mo, &angles, MELEERANGE);
+	avcpy(Player->mo->Angles, angles);
+	AimLineAttack(Player->mo, &angles, MELEERANGE);
 	PuffType = SnoutPuff;
 	PuffSpawned = NULL;
 	AngleVector(&angles, &vforward);
-	LineAttack(player->mo, &vforward, MELEERANGE, damage);
-	StartSound(*player->mo, GetSoundID('PigActive1') + (P_Random() & 1),
+	LineAttack(Player->mo, &vforward, MELEERANGE, damage);
+	Player->mo->PlaySound((P_Random() & 1) ? 'PigActive2' : 'PigActive1',
 		CHAN_VOICE);
 	if (linetarget)
 	{
-		AdjustPlayerAngle(player->mo);
+		AdjustPlayerAngle(Player->mo);
 		if (PuffSpawned)
 		{
 			// Bit something
-			StartSoundName(*player->mo, 'PigAttack', CHAN_VOICE);
+			Player->mo->PlaySound('PigAttack', CHAN_VOICE);
 		}
 	}
 }
@@ -70,6 +70,9 @@ void Weapon::A_SnoutAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/02/22 18:00:25  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.12  2002/02/14 19:20:59  dj_jl
 //  Renamed Entity properties to new naming style
 //

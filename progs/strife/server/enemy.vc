@@ -36,7 +36,7 @@ void A_Look(mobj_t * actor)
 	Actor targ;
 	int sound;
 
-	actor->threshold = 0;	// any shot will wake up
+	actor->Threshold = 0;	// any shot will wake up
 	targ = Actor(actor->Sector->SoundTarget);
 
 	if (targ && targ.bShootable)
@@ -61,7 +61,7 @@ void A_Look(mobj_t * actor)
 	// go into chase state
 	if (actor->SightSound)
 	{
-		StartSoundName(*actor, actor->SightSound, CHAN_VOICE);
+		actor->PlaySound(actor->SightSound, CHAN_VOICE);
 	}
 
 	actor->SetState(actor->SeeState);
@@ -85,23 +85,23 @@ void Actor::A_Chase(void)
 	}
 
 	// modify target threshold
-	if (threshold)
+	if (Threshold)
 	{
 		if (!target || target->Health <= 0)
 		{
-			threshold = 0;
+			Threshold = 0;
 		}
 		else
 		{
-			threshold--;
+			Threshold--;
 		}
 	}
 
 	// turn towards movement direction if not there yet
-	if (movedir < 8)
+	if (MoveDir < 8)
 	{
 		Angles.yaw = itof(ftoi(Angles.yaw / 45.0)) * 45.0;
-		delta = AngleMod180(Angles.yaw - itof(movedir) * 45.0);
+		delta = AngleMod180(Angles.yaw - itof(MoveDir) * 45.0);
 
 		if (delta > 0.0)
 		{
@@ -140,7 +140,7 @@ void Actor::A_Chase(void)
 	{
 		if (AttackSound)
 		{
-			StartSoundName(self, AttackSound, CHAN_WEAPON);
+			PlaySound(AttackSound, CHAN_WEAPON);
 		}
 		SetState(MeleeState);
 		return;
@@ -149,7 +149,7 @@ void Actor::A_Chase(void)
 	// check for missile attack
 	if (MissileState)
 	{
-		if (fastparm || !movecount)
+		if (fastparm || !MoveCount)
 		{
 			if (P_CheckMissileRange(this))
 			{
@@ -161,7 +161,7 @@ void Actor::A_Chase(void)
 	}
 
 	// possibly choose another target
-	if (netgame && !threshold)
+	if (netgame && !Threshold)
 	{
 		if (!P_CheckSight(self, *target))
 		{
@@ -171,7 +171,7 @@ void Actor::A_Chase(void)
 	}
 
 	// chase towards player
-	if (--movecount < 0 || !P_Move(this))
+	if (--MoveCount < 0 || !P_Move(this))
 	{
 		P_NewChaseDir(this);
 	}
@@ -179,7 +179,7 @@ void Actor::A_Chase(void)
 	// make active sound
 	if (ActiveSound && P_Random() < 3)
 	{
-		StartSoundName(self, ActiveSound, CHAN_VOICE);
+		PlaySound(ActiveSound, CHAN_VOICE);
 	}
 }
 
@@ -216,7 +216,7 @@ void Actor::A_Pain(void)
 {
 	if (PainSound)
 	{
-		StartSoundName(self, PainSound, CHAN_VOICE);
+		PlaySound(PainSound, CHAN_VOICE);
 	}
 }
 
@@ -246,7 +246,7 @@ void Actor::A_Scream(void)
 {
 	if (DeathSound)
 	{
-		StartSoundName(self, DeathSound, CHAN_VOICE);
+		PlaySound(DeathSound, CHAN_VOICE);
 	}
 }
 
@@ -260,7 +260,7 @@ void Actor::A_Scream(void)
 
 void A_XScream(mobj_t * actor)
 {
-	StartSoundName(*actor, 'Slop', CHAN_VOICE);
+	actor->PlaySound('Slop', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -297,12 +297,15 @@ void Actor::A_PlayerScream(void)
 		sound = 'PlayerExtremeDeath';
 	}
 
-	StartSoundName(self, sound, CHAN_VOICE);
+	PlaySound(sound, CHAN_VOICE);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/22 18:00:25  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.15  2002/02/16 16:26:56  dj_jl
 //  Removed precalculated sound IDs
 //

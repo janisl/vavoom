@@ -52,42 +52,42 @@ void Weapon::A_CMaceAttack(void)
 	PuffType = HammerPuff;
 	for (i = 0; i < 16; i++)
 	{
-		angles = player->mo->Angles;
+		angles = Player->mo->Angles;
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
-		AimLineAttack(player->mo, &angles, 2.0 * MELEERANGE);
+		AimLineAttack(Player->mo, &angles, 2.0 * MELEERANGE);
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (LineAttack(player->mo, &vforward, 2.0 * MELEERANGE, damage))
+			if (LineAttack(Player->mo, &vforward, 2.0 * MELEERANGE, damage))
 			{
-				StartSoundName(*player->mo, 'FighterHammerMiss', CHAN_WEAPON);
+				Player->mo->PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
-			AdjustPlayerAngle(player->mo);
+			AdjustPlayerAngle(Player->mo);
 			return;
 		}
-		angles = player->mo->Angles;
+		angles = Player->mo->Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
-		AimLineAttack(player->mo, &angles, 2.0 * MELEERANGE);
+		AimLineAttack(Player->mo, &angles, 2.0 * MELEERANGE);
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (LineAttack(player->mo, &vforward, 2.0 * MELEERANGE, damage))
+			if (LineAttack(Player->mo, &vforward, 2.0 * MELEERANGE, damage))
 			{
-				StartSoundName(*player->mo, 'FighterHammerMiss', CHAN_WEAPON);
+				Player->mo->PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
-			AdjustPlayerAngle(player->mo);
+			AdjustPlayerAngle(Player->mo);
 			return;
 		}
 	}
 	// didn't find any creatures, so try to strike any walls
-	player->mo->special1 = 0;
+	Player->mo->Special1 = 0;
 
-	avcpy(player->mo->Angles, angles);
-	AimLineAttack(player->mo, &angles, MELEERANGE);
+	avcpy(Player->mo->Angles, angles);
+	AimLineAttack(Player->mo, &angles, MELEERANGE);
 	AngleVector(&angles, &vforward);
-	if (LineAttack(player->mo, &vforward, MELEERANGE, damage))
+	if (LineAttack(Player->mo, &vforward, MELEERANGE, damage))
 	{
-		StartSoundName(*player->mo, 'FighterHammerMiss', CHAN_WEAPON);
+		Player->mo->PlaySound('FighterHammerMiss', CHAN_WEAPON);
 	}
 }
 
@@ -99,7 +99,7 @@ void Weapon::A_CMaceAttack(void)
 
 void Weapon::A_CStaffInitBlink(void)
 {
-	player->mo->special1 = (P_Random() >> 1) + 20;
+	Player->mo->Special1 = (P_Random() >> 1) + 20;
 }
 
 //============================================================================
@@ -110,10 +110,10 @@ void Weapon::A_CStaffInitBlink(void)
 
 void Weapon::A_CStaffCheckBlink(void)
 {
-	if (!--player->mo->special1)
+	if (!--Player->mo->Special1)
 	{
-		SetPsprite(player, ps_weapon, S_CSTAFFBLINK1);
-		player->mo->special1 = (P_Random() + 50) >> 2;
+		SetPsprite(Player, ps_weapon, S_CSTAFFBLINK1);
+		Player->mo->Special1 = (P_Random() + 50) >> 2;
 	}
 }
 
@@ -132,7 +132,7 @@ void Weapon::A_CStaffCheck(void)
 	TAVec angles;
 	TVec vforward;
 
-	pmo = player->mo;
+	pmo = Player->mo;
 	damage = 20 + (P_Random() & 15);
 	PuffType = ClericStaffPuff;
 	for (i = 0; i < 3; i++)
@@ -149,18 +149,18 @@ void Weapon::A_CStaffCheck(void)
 			if ((linetarget->bIsPlayer || linetarget->bCountKill) &&
 				!linetarget->bDormant && !linetarget->bInvulnerable)
 			{
-				newLife = player->health + (damage >> 3);
+				newLife = Player->Health + (damage >> 3);
 				newLife = newLife > 100 ? 100 : newLife;
-				pmo->Health = player->health = newLife;
-				SetPsprite(player, ps_weapon, S_CSTAFFATK2_1);
+				pmo->Health = Player->Health = newLife;
+				SetPsprite(Player, ps_weapon, S_CSTAFFATK2_1);
 			}
-			player->mana[MANA_1] -=
-				WeaponManaUse(player->pclass, player->readyweapon);
+			Player->Mana[MANA_1] -=
+				WeaponManaUse(Player->PClass, Player->ReadyWeapon);
 			break;
 		}
 		angles = pmo->Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
-		AimLineAttack(player->mo, &angles, 3.0 * MELEERANGE / 2.0);
+		AimLineAttack(Player->mo, &angles, 3.0 * MELEERANGE / 2.0);
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
@@ -169,13 +169,14 @@ void Weapon::A_CStaffCheck(void)
 				linetarget->Origin.x - pmo->Origin.x);
 			if (linetarget->bIsPlayer || linetarget->bCountKill)
 			{
-				newLife = player->health + (damage >> 4);
+				newLife = Player->Health + (damage >> 4);
 				newLife = newLife > 100 ? 100 : newLife;
-				pmo->Health = player->health = newLife;
-				SetPsprite(player, ps_weapon, S_CSTAFFATK2_1);
+				pmo->Health = newLife;
+				Player->Health = pmo->Health;
+				SetPsprite(Player, ps_weapon, S_CSTAFFATK2_1);
 			}
-			player->mana[MANA_1] -=
-				WeaponManaUse(player->pclass, player->readyweapon);
+			Player->Mana[MANA_1] -=
+				WeaponManaUse(Player->PClass, Player->ReadyWeapon);
 			break;
 		}
 	}
@@ -192,22 +193,22 @@ void Weapon::A_CStaffAttack(void)
 	mobj_t *mo;
 	mobj_t *pmo;
 
-	player->mana[MANA_1] -=
-		WeaponManaUse(player->pclass, player->readyweapon);
-	pmo = player->mo;
+	Player->Mana[MANA_1] -=
+		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
+	pmo = Player->mo;
 	mo = SpawnPlayerMissileAngle(pmo, ClericStaffMissile,
 		pmo->Angles.yaw - (45.0 / 15.0));
 	if (mo)
 	{
-		mo->special2 = 32;
+		mo->Special2 = 32;
 	}
 	mo = SpawnPlayerMissileAngle(pmo, ClericStaffMissile,
 		pmo->Angles.yaw + (45.0 / 15.0));
 	if (mo)
 	{
-		mo->special2 = 0;
+		mo->Special2 = 0;
 	}
-	StartSoundName(*player->mo, 'ClericCStaffFire', CHAN_WEAPON);
+	Player->mo->PlaySound('ClericCStaffFire', CHAN_WEAPON);
 }
 
 //============================================================================
@@ -222,7 +223,7 @@ void Actor::A_CStaffMissileSlither(void)
 	int weaveXY;
 	float angle;
 
-	weaveXY = special2;
+	weaveXY = Special2;
 	angle = AngleMod360(Angles.yaw + 90.0);
 	newX = Origin.x - cos(angle) * FloatBobOffsets[weaveXY];
 	newY = Origin.y - sin(angle) * FloatBobOffsets[weaveXY];
@@ -230,7 +231,7 @@ void Actor::A_CStaffMissileSlither(void)
 	newX += cos(angle) * FloatBobOffsets[weaveXY];
 	newY += sin(angle) * FloatBobOffsets[weaveXY];
 	P_TryMove(this, newX, newY);
-	special2 = weaveXY;
+	Special2 = weaveXY;
 }
 
 //============================================================================
@@ -243,16 +244,16 @@ void Weapon::A_CFlameAttack(void)
 {
 	mobj_t *mo;
 
-	mo = SpawnPlayerMissile(player->mo, ClericFlameMissile);
+	mo = SpawnPlayerMissile(Player->mo, ClericFlameMissile);
 	if (mo)
 	{
-		mo->blaster = true;
-		mo->special1 = 2;
+		mo->bBlaster = true;
+		mo->Special1 = 2;
 	}
 
-	player->mana[MANA_2] -=
-		WeaponManaUse(player->pclass, player->readyweapon);
-	StartSoundName(*player->mo, 'ClericFlameFire', CHAN_WEAPON);
+	Player->Mana[MANA_2] -=
+		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
+	Player->mo->PlaySound('ClericFlameFire', CHAN_WEAPON);
 }
 
 //============================================================================
@@ -272,8 +273,8 @@ void Actor::A_CFlameMissile(void)
 	mobj_t *bmo;
 
 	A_UnHideThing();
-	StartSoundName(self, 'ClericFlameExplode', CHAN_VOICE);
-	bmo = BlockingMobj;
+	PlaySound('ClericFlameExplode', CHAN_VOICE);
+	bmo = &tmtrace.BlockingMobj;
 	if (bmo && bmo->bShootable)
 	{
 		// Hit something, so spawn the flame circle around the thing
@@ -287,9 +288,11 @@ void Actor::A_CFlameMissile(void)
 			if (mo)
 			{
 				mo->Angles.yaw = an;
-				mo->target = target;
-				mo->Velocity.x = mo->special1f = FLAMESPEED * cos(an);
-				mo->Velocity.y = mo->special2f = FLAMESPEED * sin(an);
+				mo->Owner = Owner;
+				mo->Velocity.x = FLAMESPEED * cos(an);
+				mo->Velocity.y = FLAMESPEED * sin(an);
+				mo->Special1f = mo->Velocity.x;
+				mo->Special2f = mo->Velocity.y;
 				mo->StateTime -= Random() * 0.1;
 			}
 			mo = P_SpawnMobj(bmo->Origin.x - dist * cos(an),
@@ -298,9 +301,11 @@ void Actor::A_CFlameMissile(void)
 			if (mo)
 			{
 				mo->Angles.yaw = AngleMod360(180.0 + an);
-				mo->target = target;
-				mo->Velocity.x = mo->special1f = -FLAMESPEED * cos(an);
-				mo->Velocity.y = mo->special2f = -FLAMESPEED * sin(an);
+				mo->Owner = Owner;
+				mo->Velocity.x = -FLAMESPEED * cos(an);
+				mo->Velocity.y = -FLAMESPEED * sin(an);
+				mo->Special1f = mo->Velocity.x;
+				mo->Special2f = mo->Velocity.y;
 				mo->StateTime -= Random() * 0.1;
 			}
 		}
@@ -321,8 +326,8 @@ void Actor::A_CFlameRotate(void)
 	float an;
 
 	an = AngleMod360(Angles.yaw + 90.0);
-	Velocity.x = special1f + FLAMEROTSPEED * cos(an);
-	Velocity.y = special2f + FLAMEROTSPEED * sin(an);
+	Velocity.x = Special1f + FLAMEROTSPEED * cos(an);
+	Velocity.y = Special2f + FLAMEROTSPEED * sin(an);
 	Angles.yaw = AngleMod360(Angles.yaw + 90.0 / 15.0);
 }
 
@@ -336,7 +341,7 @@ void Actor::A_CFlamePuff(void)
 {
 	A_UnHideThing();
 	Velocity = vector(0.0, 0.0, 0.0);
-	StartSoundName(self, 'ClericFlameExplode', CHAN_VOICE);
+	PlaySound('ClericFlameExplode', CHAN_VOICE);
 }
 
 //============================================================================
@@ -349,15 +354,15 @@ void Weapon::A_CHolyAttack(void)
 {
 	mobj_t *mo;
 
-	player->mana[MANA_1] -=
-		WeaponManaUse(player->pclass, player->readyweapon);
-	player->mana[MANA_2] -=
-		WeaponManaUse(player->pclass, player->readyweapon);
-	mo = SpawnPlayerMissile(player->mo, HolyMissile);
-	player->damagecount = 0;
-	player->bonuscount = 0;
-	player->weapon_palette = STARTHOLYPAL;
-	StartSoundName(*player->mo, 'HolySymbolFire', CHAN_WEAPON);
+	Player->Mana[MANA_1] -=
+		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
+	Player->Mana[MANA_2] -=
+		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
+	mo = SpawnPlayerMissile(Player->mo, HolyMissile);
+	Player->DamageCount = 0;
+	Player->BonusCount = 0;
+	Player->WeaponPalette = STARTHOLYPAL;
+	Player->mo->PlaySound('HolySymbolFire', CHAN_WEAPON);
 }
 
 //============================================================================
@@ -370,13 +375,13 @@ void Weapon::A_CHolyPalette(void)
 {
 	int pal;
 
-	pal = STARTHOLYPAL + statenum - S_CHOLYATK_6;
+	pal = STARTHOLYPAL + StateNum - S_CHOLYATK_6;
 	if (pal == STARTHOLYPAL + 3)
 	{
 		// reset back to original playpal
 		pal = 0;
 	}
-	player->weapon_palette = pal;
+	Player->WeaponPalette = pal;
 }
 
 //============================================================================
@@ -405,16 +410,16 @@ void Actor::A_CHolyAttack2(void)
 		switch (j)
 		{	// float bob index
 		case 0:
-			mo->special2 = P_Random() & 7;	// upper-left
+			mo->Special2 = P_Random() & 7;	// upper-left
 			break;
 		case 1:
-			mo->special2 = 32 + (P_Random() & 7);	// upper-right
+			mo->Special2 = 32 + (P_Random() & 7);	// upper-right
 			break;
 		case 2:
-			mo->special2 = (32 + (P_Random() & 7)) << 16;	// lower-left
+			mo->Special2 = (32 + (P_Random() & 7)) << 16;	// lower-left
 			break;
 		case 3:
-			mo->special2 =
+			mo->Special2 =
 				((32 + (P_Random() & 7)) << 16) + 32 + (P_Random() & 7);
 			break;
 		}
@@ -422,7 +427,7 @@ void Actor::A_CHolyAttack2(void)
 		mo->Angles.yaw = AngleMod360(Angles.yaw +
 			(45.0 + 45.0 / 2.0) - 45.0 * itof(j));
 		P_ThrustMobj(mo, mo->Angles.yaw, mo->Speed * frametime);
-		mo->target = target;
+		mo->Owner = Owner;
 		mo->Args[0] = 10;	// initial turn value
 		mo->Args[1] = 0;	// initial look angle
 		if (deathmatch)
@@ -432,23 +437,23 @@ void Actor::A_CHolyAttack2(void)
 		}
 		if (linetarget)
 		{
-			mo->specialmobj1 = linetarget;
+			mo->SpecialMobj1 = linetarget;
 			mo->bNoClip = true;
 			mo->bSkullFly = true;
 			mo->bMissile = false;
 		}
 		tail = P_SpawnMobj(mo->Origin.x, mo->Origin.y, mo->Origin.z,
 			HolyTail);
-		tail->specialmobj2 = mo;	// parent
+		tail->SpecialMobj2 = mo;	// parent
 		for (i = 1; i < 3; i++)
 		{
 			next = P_SpawnMobj(mo->Origin.x, mo->Origin.y, mo->Origin.z,
 				HolyTail);
 			next->SetState(next->SpawnState + 1);
-			tail->specialmobj1 = next;
+			tail->SpecialMobj1 = next;
 			tail = next;
 		}
-		tail->specialmobj1 = NULL;	// last tail bit
+		tail->SpecialMobj1 = NULL;	// last tail bit
 	}
 }
 
@@ -465,7 +470,7 @@ void Actor::CHolyFindTarget(void)
 	targ = RoughMonsterSearch(6);
 	if (targ)
 	{
-		specialmobj1 = &targ;
+		SpecialMobj1 = &targ;
 		bNoClip = true;
 		bSkullFly = true;
 		bMissile = false;
@@ -490,7 +495,7 @@ void Actor::CHolySeekerMissile(float thresh, float turnMax)
 	float newZ;
 	float deltaZ;
 
-	targ = specialmobj1;
+	targ = SpecialMobj1;
 	if (!targ)
 	{
 		return;
@@ -498,7 +503,7 @@ void Actor::CHolySeekerMissile(float thresh, float turnMax)
 	if (!targ->bShootable || (!targ->bCountKill && !targ->bIsPlayer))
 	{
 		// Target died/target isn't a player or creature
-		specialmobj1 = NULL;
+		SpecialMobj1 = NULL;
 		bNoClip = false;
 		bSkullFly = false;
 		bMissile = true;
@@ -568,8 +573,8 @@ void Actor::CHolyWeave(void)
 	int weaveXY, weaveZ;
 	float angle;
 
-	weaveXY = special2 >> 16;
-	weaveZ = special2 & 0xFFFF;
+	weaveXY = Special2 >> 16;
+	weaveZ = Special2 & 0xFFFF;
 	angle = AngleMod360(Angles.yaw + 90.0);
 	newX = Origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	newY = Origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
@@ -580,7 +585,7 @@ void Actor::CHolyWeave(void)
 	Origin.z -= FloatBobOffsets[weaveZ] * 2.0;
 	weaveZ = (weaveZ + (P_Random() % 5)) & 63;
 	Origin.z += FloatBobOffsets[weaveZ] * 2.0;
-	special2 = weaveZ + (weaveXY << 16);
+	Special2 = weaveZ + (weaveXY << 16);
 }
 
 //============================================================================
@@ -601,7 +606,7 @@ void Actor::A_CHolySeek(void)
 		StateTime -= Random() * 0.1;
 		return;
 	}
-	if (specialmobj1)
+	if (SpecialMobj1)
 	{
 		CHolySeekerMissile(itof(Args[0]), itof(Args[0]) * 2.0);
 		if (!((level->tictime + 7) & 15))
@@ -623,9 +628,9 @@ void Actor::A_CHolyCheckScream(void)
 	A_CHolySeek();
 	if (P_Random() < 20)
 	{
-		StartSoundName(self, 'SpiritActive', CHAN_VOICE);
+		PlaySound('SpiritActive', CHAN_VOICE);
 	}
-	if (!specialmobj1)
+	if (!SpecialMobj1)
 	{
 		CHolyFindTarget();
 	}
@@ -643,7 +648,7 @@ void Actor::CHolyTailFollow(float dist)
 	float an;
 	float oldDistance, newDistance;
 
-	child = specialmobj1;
+	child = SpecialMobj1;
 	if (child)
 	{
 		an = atan2(child->Origin.y - Origin.y,
@@ -684,7 +689,7 @@ void Actor::CHolyTailRemove(void)
 {
 	mobj_t *child;
 
-	child = specialmobj1;
+	child = SpecialMobj1;
 	if (child)
 	{
 		child->CHolyTailRemove();
@@ -702,7 +707,7 @@ void Actor::A_CHolyTail(void)
 {
 	mobj_t *parent;
 
-	parent = specialmobj2;
+	parent = SpecialMobj2;
 
 	if (parent)
 	{
@@ -736,6 +741,9 @@ void Actor::A_CHolySpawnPuff(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/22 18:00:25  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.17  2002/02/14 19:20:59  dj_jl
 //  Renamed Entity properties to new naming style
 //

@@ -53,7 +53,7 @@ void Actor::A_SPosAttack(void)
 	if (!target)
 		return;
 
-	StartSoundName(self, 'ShotgunFire', CHAN_WEAPON);
+	PlaySound('ShotgunFire', CHAN_WEAPON);
 	A_FaceTarget();
 	aimDir = AimLineAttack(this, Angles, MISSILERANGE);
 	for (i = 0; i < 3; i++)
@@ -70,6 +70,9 @@ void Actor::A_SPosAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/02/22 18:00:14  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.12  2002/02/14 19:20:57  dj_jl
 //  Renamed Entity properties to new naming style
 //

@@ -43,8 +43,8 @@
 
 void Cheat_God(void)
 {
-	players[0].cheats ^= CF_GODMODE;
-	if (players[0].cheats & CF_GODMODE)
+	players[0].Cheats ^= CF_GODMODE;
+	if (players[0].Cheats & CF_GODMODE)
 	{
 		cprint(&players[0], "GOD MODE ON\n");
 	}
@@ -62,8 +62,8 @@ void Cheat_God(void)
 
 void Cheat_NoClip(void)
 {
-	players[0].cheats ^= CF_NOCLIP;
-	if (players[0].cheats & CF_NOCLIP)
+	players[0].Cheats ^= CF_NOCLIP;
+	if (players[0].Cheats & CF_NOCLIP)
 	{
 		cprint(&players[0], "NO CLIPPING ON\n");
 	}
@@ -87,35 +87,37 @@ void Cheat_Gimme(void)
 
 		for (i = 0; i < NUMARMOR; i++)
 		{
-			players[0].armorpoints[i] =
-				ArmorIncrement[players[0].pclass * NUMARMOR + i];
+			players[0].ArmorPoints[i] =
+				ArmorIncrement[players[0].PClass * NUMARMOR + i];
 		}
 		for (i = 0; i < NUMWEAPONS; i++)
 		{
-			players[0].weaponowned[i] = true;
+			players[0].WeaponOwned[i] = true;
 		}
 		for (i = 0; i < NUMMANA; i++)
 		{
-			players[0].mana[i] = MAX_MANA;
+			players[0].Mana[i] = MAX_MANA;
 		}
-		players[0].pieces = 7;
+		players[0].Pieces = 7;
 		cprint(&players[0], "ALL WEAPONS\n");
 	}
 	if (Cmd_CheckParm("health"))
 	{
-		if (players[0].morphTics)
+		if (players[0].MorphTics)
 		{
-			players[0].health = players[0].mo->Health = MAXMORPHHEALTH;
+			players[0].mo->Health = MAXMORPHHEALTH;
+			players[0].Health = players[0].mo->Health;
 		}
 		else
 		{
-			players[0].health = players[0].mo->Health = MAXHEALTH;
+			players[0].mo->Health = MAXHEALTH;
+			players[0].Health = players[0].mo->Health;
 		}
 		cprint(&players[0], "FULL HEALTH\n");
 	}
 	if (Cmd_CheckParm("keys"))
 	{
-		players[0].keys = 2047;
+		players[0].Keys = 2047;
 		cprint(&players[0], "ALL KEYS\n");
 	}
 	if (Cmd_CheckParm("artifacts"))
@@ -191,7 +193,7 @@ void Cheat_KillAll(void)
 
 void Cheat_Morph(void)
 {
-	if (players[0].morphTics)
+	if (players[0].MorphTics)
 	{
 		UndoPlayerMorph(&players[0]);
 	}
@@ -212,16 +214,16 @@ void Cheat_NoWeapons(void)
 {
 	int i;
 
-	if (players[0].morphTics)
+	if (players[0].MorphTics)
 	{
 		return;
 	}
 	for (i = 1; i < 4; i++)
 	{
-		players[0].weaponowned[i] = false;
+		players[0].WeaponOwned[i] = false;
 	}
-	players[0].pendingweapon = WP_FIRST;
-	players[0].pieces = 0;
+	players[0].PendingWeapon = WP_FIRST;
+	players[0].Pieces = 0;
 	cprint(&players[0], "CHEATER - YOU DON'T DESERVE WEAPONS\n");
 }
 
@@ -236,7 +238,7 @@ void Cheat_Class(void)
 	int i;
 	int pclass;
 
-	if (players[0].morphTics)
+	if (players[0].MorphTics)
 	{	// don't change class if the player is morphed
 		return;
 	}
@@ -251,12 +253,12 @@ void Cheat_Class(void)
 		cprint(&players[0], "INVALID PLAYER CLASS\n");
 		return;
 	}
-	players[0].pclass = pclass;
+	players[0].PClass = pclass;
 	for (i = 0; i < NUMARMOR; i++)
 	{
-		players[0].armorpoints[i] = 0.0;
+		players[0].ArmorPoints[i] = 0.0;
 	}
-	players[0].baseclass = pclass;
+	players[0].BaseClass = pclass;
 	PostMorphWeapon(&players[0], WP_FIRST);
 	SB_Start();
 }
@@ -264,6 +266,9 @@ void Cheat_Class(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/22 18:00:21  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.11  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

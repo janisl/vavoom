@@ -47,14 +47,14 @@ void Actor::A_MummyAttack(void)
 	{
 		return;
 	}
-	StartSoundName(self, AttackSound, CHAN_WEAPON);
+	PlaySound(AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(2));
-		StartSoundName(self, 'MumyAttack2', CHAN_WEAPON);
+		PlaySound('MumyAttack2', CHAN_WEAPON);
 		return;
 	}
-	StartSoundName(self, 'MumyAttack1', CHAN_WEAPON);
+	PlaySound('MumyAttack1', CHAN_WEAPON);
 }
 
 //==========================================================================
@@ -81,7 +81,7 @@ void Actor::A_MummyAttack2(void)
 	mo = SpawnMissile(this, target, MummyMissile);
 	if (mo)
 	{
-		mo->specialmobj1 = target;
+		mo->SpecialMobj1 = target;
 	}
 }
 
@@ -113,6 +113,9 @@ void Actor::A_MummyFX1Seek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/22 18:00:17  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.15  2002/02/16 16:26:55  dj_jl
 //  Removed precalculated sound IDs
 //

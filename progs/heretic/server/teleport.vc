@@ -140,22 +140,22 @@ boolean P_Teleport(mobj_t * thing, float x, float y, float angle)
 	if (thing->bIsPlayer)
 	{
 		player = thing->Player;
-		if (player->powers[pw_flight] && aboveFloor)
+		if (player->Powers[pw_flight] && aboveFloor)
 		{
 			thing->Origin.z = thing->FloorZ + aboveFloor;
 			if (thing->Origin.z + thing->Height > thing->CeilingZ)
 			{
 				thing->Origin.z = thing->CeilingZ - thing->Height;
 			}
-			player->vieworg.z = thing->Origin.z + player->viewheight;
+			player->ViewOrg.z = thing->Origin.z + player->ViewHeight;
 		}
 		else
 		{
 			thing->Origin.z = thing->FloorZ;
-			player->vieworg.z = thing->Origin.z + player->viewheight;
+			player->ViewOrg.z = thing->Origin.z + player->ViewHeight;
 			thing->Angles.pitch = 0.0;
 		}
-		player->fixangle = true;
+		player->bFixAngle = true;
 	}
 	else if (thing->bMissile)
 	{
@@ -172,11 +172,11 @@ boolean P_Teleport(mobj_t * thing, float x, float y, float angle)
 	// Spawn teleport fog at source and destination
 	fogDelta = thing->bMissile ? 0.0 : TELEFOGHEIGHT;
 	fog = P_SpawnMobj(oldx, oldy, oldz + fogDelta, TeleportFog);
-	StartSoundName(*fog, 'Teleport', CHAN_VOICE);
+	fog->PlaySound('Teleport', CHAN_VOICE);
 	fog = P_SpawnMobj(x + 20.0 * cos(angle),
 		y + 20.0 * sin(angle), thing->Origin.z + fogDelta, TeleportFog);
-	StartSoundName(*fog, 'Teleport', CHAN_VOICE);
-	if (thing->bIsPlayer && !thing->Player->powers[pw_weaponlevel2])
+	fog->PlaySound('Teleport', CHAN_VOICE);
+	if (thing->bIsPlayer && !thing->Player->Powers[pw_weaponlevel2])
 	{
 		// Freeze player for about .5 sec
 		thing->ReactionTime = 0.5;
@@ -326,18 +326,18 @@ boolean EV_SilentLineTeleport(line_t *line, int side, Actor *thing, int id,
 		if (thing->bIsPlayer)
 		{
 			// Save the current deltaviewheight, used in stepping
-			float deltaviewheight = thing->Player->deltaviewheight;
+			float DeltaViewHeight = thing->Player->DeltaViewHeight;
 
-			// Clear deltaviewheight, since we don't want any changes now
-			thing->Player->deltaviewheight = 0.0;
+			// Clear DeltaViewHeight, since we don't want any changes now
+			thing->Player->DeltaViewHeight = 0.0;
 
 			// Set player's view according to the newly set parameters
 			CalcHeight(thing->Player);
 
 			// Reset the delta to have the same dynamics as before
-			thing->Player->deltaviewheight = deltaviewheight;
+			thing->Player->DeltaViewHeight = DeltaViewHeight;
 
-			thing->Player->fixangle = true;
+			thing->Player->bFixAngle = true;
 		}
 		return true;
 	}
@@ -347,6 +347,9 @@ boolean EV_SilentLineTeleport(line_t *line, int side, Actor *thing, int id,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/22 18:00:19  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.18  2002/02/16 16:21:48  dj_jl
 //  Added line teleporters
 //

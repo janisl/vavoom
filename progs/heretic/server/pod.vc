@@ -50,7 +50,7 @@ void Actor::A_MakePod(void)
 	float y;
 	float z;
 
-	if (special1 == MAX_GEN_PODS)
+	if (Special1 == MAX_GEN_PODS)
 	{
 		// Too many generated pods
 		return;
@@ -67,9 +67,9 @@ void Actor::A_MakePod(void)
 	}
 	mo->SetState(S_POD_GROW1);
 	P_ThrustMobj(mo, Random() * 360.0, 4.5);
-	StartSoundName(*mo, 'PodNew', CHAN_VOICE);
-	special1++;	// Increment generated pod count
-	mo->specialmobj2 = this;	// Link the generator to the pod
+	mo->PlaySound('PodNew', CHAN_VOICE);
+	Special1++;	// Increment generated pod count
+	mo->SpecialMobj2 = this;	// Link the generator to the pod
 }
 
 //==========================================================================
@@ -111,12 +111,12 @@ void Actor::A_RemovePod(void)
 {
 	mobj_t *mo;
 
-	if (specialmobj2)
+	if (SpecialMobj2)
 	{
-		mo = specialmobj2;
-		if (mo->special1 > 0)
+		mo = SpecialMobj2;
+		if (mo->Special1 > 0)
 		{
-			mo->special1--;
+			mo->Special1--;
 		}
 	}
 }
@@ -124,6 +124,9 @@ void Actor::A_RemovePod(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/22 18:00:18  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.13  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

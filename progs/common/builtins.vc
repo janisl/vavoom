@@ -448,7 +448,6 @@ native void SectorStopSequence(sector_t * sector);
 native void PolyobjStartSequence(polyobj_t * mobj, name sequence);
 native void PolyobjStopSequence(polyobj_t * mobj);
 
-#define StartSoundName(origin, Name, channel)	StartSound(origin, GetSoundID(Name), channel)
 #define SectorStartSoundName(sec, Name, channel)	SectorStartSound(sec, GetSoundID(Name), channel)
 
 //
@@ -488,6 +487,9 @@ native void MSG_SelectClientMsg(int msgtype, player_t * client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.31  2002/02/22 18:00:04  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.30  2002/02/02 19:17:25  dj_jl
 //  Replacing pointers with references, beautification.
 //

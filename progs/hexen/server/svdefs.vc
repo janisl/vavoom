@@ -211,7 +211,6 @@ class Actor:Entity
 	// movement flags
 	bool bDropOff;			// allow jumps from high places
 	bool bPickUp;			// for players to pick up items
-	bool bNoClip;			// player cheat
 	bool bFloat;			// allow moves to any height, no gravity
 	bool bTeleport;			// don't cross lines or look at heights
 	bool bMissile;			// don't hit same species, explode on block
@@ -221,7 +220,6 @@ class Actor:Entity
 							// auto float to target's height
 	bool bCountKill;		// count towards intermission kill total
 	bool bIceCorpse;		// a frozen corpse (for blasting)
-	bool bSkullFly;			// skull in flight
 	bool bLowGravity;		// alternate gravity setting
 	bool bWindThrust;		// gets pushed around by the wind specials
 	bool bFloorBounce;		// bounces off the floor
@@ -255,33 +253,33 @@ class Actor:Entity
 	bool bSeekerMissile;	// is a seeker (for reflection)
 	bool bReflective;		// reflects missiles
 	bool bWaterJump;
+	bool bBlaster;
 
 	//  Params
 	float Mass;
 	float Speed;
 	float StepSpeed;
 	int PainChance;
-	int spawnhealth;
+	int SpawnHealth;
 	int GibsHealth;
 
-	// Thing being chased/attacked (or NULL),
-	// also the originator for missiles.
-	Actor *target;
+	// Thing being chased/attacked (or none).
+	Actor Enemy;
+	// The originator for missiles.
+	Actor Owner;
 
-	int special1;	// Special info
-	int special2;	// Special info
-	float special1f;
-	float special2f;
-	Actor *specialmobj1;
-	Actor *specialmobj2;
-	classid specialcid;
+	int Special1;	// Special info
+	int Special2;	// Special info
+	float Special1f;
+	float Special2f;
+	Actor *SpecialMobj1;
+	Actor *SpecialMobj2;
+	classid SpecialCID;
 
 	int MissileDamage;	// For missiles
 
-	boolean blaster;
-
 	// Player number last looked for.
-	int lastlook;
+	int LastLook;
 
 	// Reaction time: if non 0, don't attack yet.
 	int ReactionCount;
@@ -290,15 +288,15 @@ class Actor:Entity
 
 	// If >0, the target will be chased
 	// no matter what (even if shot)
-	int threshold;
+	int Threshold;
 
 	// Movement direction, movement generation (zig-zagging).
-	int movedir;	// 0-7
-	int movecount;	// when 0, select a new dir
+	int MoveDir;	// 0-7
+	int MoveCount;	// when 0, select a new dir
 
 	//  Water
-	int waterlevel;
-	int watertype;
+	int WaterLevel;
+	int WaterType;
 
 	boolean GiveMana(int mana, int count);
 	void TryPickupWeapon(int weaponClass, int weaponType,
@@ -313,7 +311,7 @@ class Actor:Entity
 	void TryPickupArtifact(int artifactType, Actor artifact);
 	void TouchSpecial(Actor Toucher);
 
-	boolean Touch(Actor Other);
+	boolean Touch(MapObject Other);
 	void CheckForPushSpecial(line_t * line, int side);
 	void BlockedByLine(line_t * ld);
 
@@ -604,6 +602,8 @@ class Actor:Entity
 
 class Weapon:ViewEntity
 {
+	void MStaffSpawn(float angle);
+
 	void A_Light0(void);
 	void A_WeaponReady(void);
 	void A_Lower(void);
@@ -844,86 +844,86 @@ addfields player_t
 	//  FIRST FIELDS ARE STATS THAT ARE SENT TO CLIENT FOR STATUS BAR
 	//
 
-	sb_stats_t stats;
+	sb_stats_t Stats;
 
-	float armorpoints[NUMARMOR];
+	float ArmorPoints[NUMARMOR];
 
-	int inventoryTics;
+	int InventoryTics;
 
 	int ArtifactFlash;
-	int readyArtifact;
-	int inv_ptr;
-	int curpos;
-	int inventorySlotNum;
-	inventory_t inventory[NUMARTIFACTS];
+	int ReadyArtifact;
+	int InvPtr;
+	int InvCurPos;
+	int InventorySlotNum;
+	inventory_t Inventory[NUMARTIFACTS];
 
-	int mana[NUMMANA];
+	int Mana[NUMMANA];
 
 	//
 	//  ----------
 	//
 
-	int keys;
+	int Keys;
 
 	// Power ups. invinc and invis are tic counters.
-	int powers[NUMPOWERS];
+	int Powers[NUMPOWERS];
 
-	int arti;	// artitype_t to use
+	int Arti;	// artitype_t to use
 
 	// Base height above floor for viewz.
-	float viewheight;
+	float ViewHeight;
 	// Bob/squat speed.
-	float deltaviewheight;
+	float DeltaViewHeight;
 	// bounded/scaled total momentum.
-	float bob;
+	float Bob;
 
-	float flyheight;
+	float FlyHeight;
 
-	int artifactCount;
+	int ArtifactCount;
 
 	// Bit flags, for cheats and debug.
 	// See cheat_t, above.
-	int cheats;
+	int Cheats;
 
 	// Refired shots are less accurate.
-	int refire;
+	int Refire;
 
-	int pieces;	// Fourth Weapon pieces
+	int Pieces;	// Fourth Weapon pieces
 
 	// Is wp_nochange if not changing.
-	int pendingweapon;
-	int readyweapon;
+	int PendingWeapon;
+	int ReadyWeapon;
 
-	int w_mana;
-	int w_upstate;
-	int w_downstate;
-	int w_readystate;
-	int w_atkstate;
-	int w_holdatkstate;
-	int w_flashstate;
+	int w_Mana;
+	int w_UpState;
+	int w_DownState;
+	int w_ReadyState;
+	int w_AttackState;
+	int w_HoldAttackState;
+	int w_FlashState;
 
-	boolean weaponowned[NUMWEAPONS];
+	boolean WeaponOwned[NUMWEAPONS];
 
 	// Who did damage (NULL for floors/ceilings).
-	Actor *attacker;
+	Actor *Attacker;
 
 	// For screen flashing (red or bright).
-	int damagecount;
-	int bonuscount;
+	int DamageCount;
+	int BonusCount;
 
-	int poisoncount;	// screen flash for poison damage
-	Actor *poisoner;	// NULL for non-player mobjs
+	int PoisonCount;	// screen flash for poison damage
+	Actor *Poisoner;	// NULL for non-player mobjs
 
-	int jumpTics;
-	int localQuakeHappening;
+	int JumpTics;
+	int LocalQuakeHappening;
 
-	int newtorch;	// used in the torch flicker effect.
-	int newtorchdelta;
+	int NewTorch;	// used in the torch flicker effect.
+	int NewTorchDelta;
 
-	int weapon_palette;
-	int morphTics;	// player is a pig if > 0
+	int WeaponPalette;
+	int MorphTics;	// player is a pig if > 0
 
-	TVec movedir;
+	TVec MoveDir;
 
 	BotPlayer Bot;
 };
@@ -1009,6 +1009,9 @@ name door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/02/22 18:00:24  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.21  2002/02/16 16:27:44  dj_jl
 //  Added bool variables
 //

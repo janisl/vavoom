@@ -513,7 +513,7 @@ class PodGenerator:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bNoClient = true;
+		bHidden = true;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		SpawnState = S_PODGENERATOR;
@@ -1284,7 +1284,7 @@ class TeleGlitGen:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bNoClient = true;
+		bHidden = true;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
@@ -1308,7 +1308,7 @@ class TeleGlitGen2:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bNoClient = true;
+		bHidden = true;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
@@ -1398,7 +1398,7 @@ class TeleportSpot:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bNoClient = true;
+		bHidden = true;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 	}
@@ -2430,11 +2430,11 @@ class BloodSplatter:Actor
 
 //==========================================================================
 //
-//	PlayerEntity
+//	PlayerPawn
 //
 //==========================================================================
 
-class PlayerEntity:Actor
+class PlayerPawn:Actor
 {
 	defaultproperties
 	{
@@ -4463,7 +4463,7 @@ class SoundWind:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bNoClient = true;
+		bHidden = true;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		SpawnState = S_SND_WIND;
@@ -4486,7 +4486,7 @@ class SoundWaterfall:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bNoClient = true;
+		bHidden = true;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		SpawnState = S_SND_WATERFALL;
@@ -4496,9 +4496,12 @@ class SoundWaterfall:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2002/02/22 18:00:17  dj_jl
+//	A lots of the renaming, beautification.
+//
 //	Revision 1.22  2002/02/14 19:20:58  dj_jl
 //	Renamed Entity properties to new naming style
-//
+//	
 //	Revision 1.21  2002/02/06 17:28:52  dj_jl
 //	Replaced Actor flags with boolean variables.
 //	

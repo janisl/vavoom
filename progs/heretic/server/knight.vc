@@ -50,11 +50,11 @@ void Actor::A_KnightAttack(void)
 	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(3));
-		StartSoundName(self, 'KnightAttack2', CHAN_WEAPON);
+		PlaySound('KnightAttack2', CHAN_WEAPON);
 		return;
 	}
 	// Throw axe
-	StartSoundName(self, AttackSound, CHAN_WEAPON);
+	PlaySound(AttackSound, CHAN_WEAPON);
 	if (Class == KnightGhost || P_Random() < 40)
 	{
 		// Red axe
@@ -85,6 +85,9 @@ void Actor::A_DripBlood(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/22 18:00:16  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.17  2002/02/16 16:26:55  dj_jl
 //  Removed precalculated sound IDs
 //

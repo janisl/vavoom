@@ -85,112 +85,112 @@ boolean CheckLock(mobj_t * user, int lock)
 	switch (lock)
 	{
 	case 2:	// Blue Lock
-		if (!(player->keys & (1 << it_bluecard)))
+		if (!(player->Keys & (1 << it_bluecard)))
 		{
 			centerprint(player, "You need a blue keycard");
-			StartSoundName(*player->mo, 'PlayerLand', CHAN_VOICE);
+			player->mo->PlaySound('PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
 
 	case 1:	// Red Lock
-		if (!(player->keys & (1 << it_redcard)))
+		if (!(player->Keys & (1 << it_redcard)))
 		{
 			centerprint(player, "You need a red keycard");
-			StartSoundName(*player->mo, 'PlayerLand', CHAN_VOICE);
+			player->mo->PlaySound('PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
 
 	case 3:	// Yellow Lock
-		if (!(player->keys & (1 << it_yellowcard)))
+		if (!(player->Keys & (1 << it_yellowcard)))
 		{
 			centerprint(player, "You need a yellow keycard");
-			StartSoundName(*player->mo, 'PlayerLand', CHAN_VOICE);
+			player->mo->PlaySound('PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
 
 	case 5:	// Blue Lock
-		if (!(player->keys & (1 << it_blueskull)))
+		if (!(player->Keys & (1 << it_blueskull)))
 		{
 			centerprint(player, "You need a blue skullkey");
-			StartSoundName(*player->mo, 'PlayerLand', CHAN_VOICE);
+			player->mo->PlaySound('PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
 
 	case 4:	// Red Lock
-		if (!(player->keys & (1 << it_redskull)))
+		if (!(player->Keys & (1 << it_redskull)))
 		{
 			centerprint(player, "You need a red skullkey");
-			StartSoundName(*player->mo, 'PlayerLand', CHAN_VOICE);
+			player->mo->PlaySound('PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
 
 	case 6:	// Yellow Lock
-		if (!(player->keys & (1 << it_yellowskull)))
+		if (!(player->Keys & (1 << it_yellowskull)))
 		{
 			centerprint(player, "You need a yellow skullkey");
-			StartSoundName(*player->mo, 'PlayerLand', CHAN_VOICE);
+			player->mo->PlaySound('PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
 
 	case 100:	// Any key
 	case 128 + 100:	// Any key
-		if (!player->keys)
+		if (!player->Keys)
 		{
 			centerprint(player, "You need any key");
-			StartSoundName(*player->mo, 'PlayerLand', CHAN_VOICE);
+			player->mo->PlaySound('PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
 
 	case 110:	// All keys
-		if (player->keys != 0x3f)
+		if (player->Keys != 0x3f)
 		{
 			centerprint(player, "You need all keycards and skullkeys");
-			StartSoundName(*player->mo, 'PlayerLand', CHAN_VOICE);
+			player->mo->PlaySound('PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
 
 	case 128 + 2:	// Blue Lock
-		if (!(player->keys & ((1 << it_bluecard) | (1 << it_blueskull))))
+		if (!(player->Keys & ((1 << it_bluecard) | (1 << it_blueskull))))
 		{
 			centerprint(player, "You need a blue key");
-			StartSoundName(*player->mo, 'PlayerLand', CHAN_VOICE);
+			player->mo->PlaySound('PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
 
 	case 128 + 1:	// Red Lock
-		if (!(player->keys & ((1 << it_redcard) | (1 << it_redskull))))
+		if (!(player->Keys & ((1 << it_redcard) | (1 << it_redskull))))
 		{
 			centerprint(player, "You need a red key");
-			StartSoundName(*player->mo, 'PlayerLand', CHAN_VOICE);
+			player->mo->PlaySound('PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
 
 	case 128 + 3:	// Yellow Lock
-		if (!(player->keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
+		if (!(player->Keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
 		{
 			centerprint(player, "You need a yellow key");
-			StartSoundName(*player->mo, 'PlayerLand', CHAN_VOICE);
+			player->mo->PlaySound('PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
 
 	case 128 + 101:	// All keys
-		if (!(player->keys & ((1 << it_bluecard) | (1 << it_blueskull))) ||
-			!(player->keys & ((1 << it_redcard) | (1 << it_redskull))) ||
-			!(player->keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
+		if (!(player->Keys & ((1 << it_bluecard) | (1 << it_blueskull))) ||
+			!(player->Keys & ((1 << it_redcard) | (1 << it_redskull))) ||
+			!(player->Keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
 		{
 			centerprint(player, "You need all keys");
-			StartSoundName(*player->mo, 'PlayerLand', CHAN_VOICE);
+			player->mo->PlaySound('PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -426,7 +426,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 74:	// Teleport_NewMap
 		if (side == 0)
 		{	// Only teleport when crossing the front side of a line
-			if (!(mo && mo->bIsPlayer && mo->Player->playerstate == PST_DEAD))	// Players must be alive to teleport
+			if (!(mo && mo->bIsPlayer && mo->Player->PlayerState == PST_DEAD))	// Players must be alive to teleport
 			{
 				G_Completed(args[0], args[1]);
 				buttonSuccess = true;
@@ -436,7 +436,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 75:	// Teleport_EndGame
 		if (side == 0)
 		{	// Only teleport when crossing the front side of a line
-			if (!(mo && mo->bIsPlayer && mo->Player->playerstate == PST_DEAD))	// Players must be alive to teleport
+			if (!(mo && mo->bIsPlayer && mo->Player->PlayerState == PST_DEAD))	// Players must be alive to teleport
 			{
 				buttonSuccess = true;
 				if (deathmatch)
@@ -757,7 +757,6 @@ void P_SpawnSpecials(boolean spawn_thinkers)
 		}
 	}
 
-print("Trans\n");
 	//	Process translucent lines
 	for (i = 0; i < level->numlines; i++)
 	{
@@ -783,7 +782,6 @@ print("Trans\n");
 		}
 		level->lines[i].special = 0;
 	}
-print("Done\n");
 }
 
 //==========================================================================
@@ -939,6 +937,9 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/22 18:00:14  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.13  2002/02/16 16:23:46  dj_jl
 //  Added line teleporters and translucent lines
 //

@@ -26,8 +26,8 @@
 //===========================================================================
 //
 // Korax Variables
-//  special1    last teleport destination
-//  special2    set if "below half" script not yet run
+//  Special1    last teleport destination
+//  Special2    set if "below half" script not yet run
 //
 // Korax Scripts (reserved)
 //  249     Tell scripts that we are below half health
@@ -107,7 +107,7 @@ void Actor::A_KoraxStep(void)
 
 void Actor::A_KoraxStep2(void)
 {
-	StartSoundName(none, 'KoraxStep', CHAN_BODY);
+	PlayFullVolumeSound('KoraxStep', CHAN_BODY);
 	A_Chase();
 }
 
@@ -124,7 +124,7 @@ void Actor::A_KoraxChase(void)
 	int args[3];
 
 	args[0] = args[1] = args[2] = 0;
-	if ((!special2) && (Health <= (spawnhealth / 2)))
+	if ((!Special2) && (Health <= (SpawnHealth / 2)))
 	{
 		search = 0;
 		spot = P_FindMobjFromTID(KORAX_FIRST_TELEPORT_TID, &search);
@@ -135,12 +135,12 @@ void Actor::A_KoraxChase(void)
 		}
 
 		StartACS(249, 0, &args[0], self, NULL, 0);
-		special2 = 1;	// Don't run again
+		Special2 = 1;	// Don't run again
 
 		return;
 	}
 
-	if (!target)
+	if (!Enemy)
 		return;
 	if (P_Random() < 30)
 	{
@@ -148,15 +148,15 @@ void Actor::A_KoraxChase(void)
 	}
 	else if (P_Random() < 30)
 	{
-		StartSoundName(none, 'KoraxActive', CHAN_VOICE);
+		PlayFullVolumeSound('KoraxActive', CHAN_VOICE);
 	}
 
 	// Teleport away
-	if (Health < (spawnhealth >> 1))
+	if (Health < (SpawnHealth >> 1))
 	{
 		if (P_Random() < 10)
 		{
-			spot = P_FindMobjFromTID(KORAX_TELEPORT_TID, &special1);
+			spot = P_FindMobjFromTID(KORAX_TELEPORT_TID, &Special1);
 			if (spot)
 			{
 				P_Teleport(this, spot->Origin.x, spot->Origin.y,
@@ -198,7 +198,7 @@ void Actor::KoraxFire1(classid type)
 	x = Origin.x + KORAX_ARM_EXTENSION_SHORT * cos(ang);
 	y = Origin.y + KORAX_ARM_EXTENSION_SHORT * sin(ang);
 	z = Origin.z - FloorClip + KORAX_ARM1_HEIGHT;
-	mo = SpawnKoraxMissile(x, y, z, this, target, type);
+	mo = SpawnKoraxMissile(x, y, z, this, &Enemy, type);
 }
 
 //============================================================================
@@ -215,7 +215,7 @@ void Actor::KoraxFire2(classid type)
 	x = Origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
 	y = Origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
 	z = Origin.z - FloorClip + KORAX_ARM2_HEIGHT;
-	mo = SpawnKoraxMissile(x, y, z, this, target, type);
+	mo = SpawnKoraxMissile(x, y, z, this, &Enemy, type);
 }
 
 //============================================================================
@@ -232,7 +232,7 @@ void Actor::KoraxFire3(classid type)
 	x = Origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
 	y = Origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
 	z = Origin.z - FloorClip + KORAX_ARM3_HEIGHT;
-	mo = SpawnKoraxMissile(x, y, z, this, target, type);
+	mo = SpawnKoraxMissile(x, y, z, this, &Enemy, type);
 }
 
 //============================================================================
@@ -249,7 +249,7 @@ void Actor::KoraxFire4(classid type)
 	x = Origin.x + KORAX_ARM_EXTENSION_SHORT * cos(ang);
 	y = Origin.y + KORAX_ARM_EXTENSION_SHORT * sin(ang);
 	z = Origin.z - FloorClip + KORAX_ARM4_HEIGHT;
-	mo = SpawnKoraxMissile(x, y, z, this, target, type);
+	mo = SpawnKoraxMissile(x, y, z, this, &Enemy, type);
 }
 
 //============================================================================
@@ -266,7 +266,7 @@ void Actor::KoraxFire5(classid type)
 	x = Origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
 	y = Origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
 	z = Origin.z - FloorClip + KORAX_ARM5_HEIGHT;
-	mo = SpawnKoraxMissile(x, y, z, this, target, type);
+	mo = SpawnKoraxMissile(x, y, z, this, &Enemy, type);
 }
 
 //============================================================================
@@ -283,7 +283,7 @@ void Actor::KoraxFire6(classid type)
 	x = Origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
 	y = Origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
 	z = Origin.z - FloorClip + KORAX_ARM6_HEIGHT;
-	mo = SpawnKoraxMissile(x, y, z, this, target, type);
+	mo = SpawnKoraxMissile(x, y, z, this, &Enemy, type);
 }
 
 //============================================================================
@@ -297,7 +297,7 @@ void Actor::A_KoraxMissile(void)
 	classid mtype;
 	name sound;
 
-	StartSoundName(self, 'KoraxAttack', CHAN_VOICE);
+	PlaySound('KoraxAttack', CHAN_VOICE);
 
 	switch (P_Random() % 6)
 	{
@@ -328,7 +328,7 @@ void Actor::A_KoraxMissile(void)
 	}
 
 	// Fire all 6 missiles at once
-	StartSoundName(none, sound, CHAN_VOICE);
+	PlayFullVolumeSound(sound, CHAN_VOICE);
 	KoraxFire1(mtype);
 	KoraxFire2(mtype);
 	KoraxFire3(mtype);
@@ -349,7 +349,7 @@ void Actor::A_KoraxCommand(void)
 	int args[3];
 
 	args[0] = args[1] = args[2] = 0;
-	StartSoundName(self, 'KoraxCommand', CHAN_VOICE);
+	PlaySound('KoraxCommand', CHAN_VOICE);
 
 	// Shoot stream of lightning to ceiling
 	ang = AngleMod360(Angles.yaw - 90.0);
@@ -358,7 +358,7 @@ void Actor::A_KoraxCommand(void)
 	z = Origin.z + KORAX_COMMAND_HEIGHT;
 	P_SpawnMobj(x, y, z, KoraxBolt);
 
-	if (Health <= (spawnhealth >> 1))
+	if (Health <= (SpawnHealth >> 1))
 	{
 		numcommands = 5;
 	}
@@ -401,22 +401,22 @@ void Actor::KSpiritInit(Actor korax)
 
 	Health = KORAX_SPIRIT_LIFETIME;
 
-	specialmobj1 = &korax;	// Swarm around korax
-	special2 = 32 + (P_Random() & 7);	// Float bob index
+	SpecialMobj1 = &korax;	// Swarm around korax
+	Special2 = 32 + (P_Random() & 7);	// Float bob index
 	Args[0] = 10;	// initial turn value
 	Args[1] = 0;	// initial look angle
 
 	// Spawn a tail for spirit
 	tail = P_SpawnMobj(Origin.x, Origin.y, Origin.z, HolyTail);
-	tail->specialmobj2 = this;	// parent
+	tail->SpecialMobj2 = this;	// parent
 	for (i = 1; i < 3; i++)
 	{
 		next = P_SpawnMobj(Origin.x, Origin.y, Origin.z, HolyTail);
 		next->SetState(next->SpawnState + 1);
-		tail->specialmobj1 = next;
+		tail->SpecialMobj1 = next;
 		tail = next;
 	}
-	tail->specialmobj1 = NULL;	// last tail bit
+	tail->SpecialMobj1 = NULL;	// last tail bit
 }
 
 //============================================================================
@@ -470,7 +470,7 @@ void Actor::A_KSpiritSeeker(float thresh, float turnMax)
 	float newZ;
 	float deltaZ;
 
-	tempTarget = specialmobj1;
+	tempTarget = SpecialMobj1;
 	if (tempTarget == NULL)
 	{
 		return;
@@ -538,8 +538,8 @@ void Actor::A_KSpiritWeave(void)
 	int weaveXY, weaveZ;
 	float angle;
 
-	weaveXY = special2 >> 16;
-	weaveZ = special2 & 0xFFFF;
+	weaveXY = Special2 >> 16;
+	weaveZ = Special2 & 0xFFFF;
 	angle = AngleMod360(Angles.yaw + 90.0);
 	newX = Origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	newY = Origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
@@ -550,7 +550,7 @@ void Actor::A_KSpiritWeave(void)
 	Origin.z -= FloatBobOffsets[weaveZ] * 2.0;
 	weaveZ = (weaveZ + (P_Random() % 5)) & 63;
 	Origin.z += FloatBobOffsets[weaveZ] * 2.0;
-	special2 = weaveZ + (weaveXY << 16);
+	Special2 = weaveZ + (weaveXY << 16);
 }
 
 //============================================================================
@@ -563,19 +563,19 @@ void Actor::A_KSpiritRoam(void)
 {
 	if (Health-- <= 0)
 	{
-		StartSoundName(self, 'SpiritDie', CHAN_VOICE);
+		PlaySound('SpiritDie', CHAN_VOICE);
 		SetState(S_KSPIRIT_DEATH1);
 	}
 	else
 	{
-		if (specialmobj1)
+		if (SpecialMobj1)
 		{
 			A_KSpiritSeeker(itof(Args[0]), itof(Args[0]) * 2.0);
 		}
 		A_KSpiritWeave();
 		if (P_Random() < 50)
 		{
-			StartSoundName(none, 'SpiritActive', CHAN_VOICE);
+			PlayFullVolumeSound('SpiritActive', CHAN_VOICE);
 		}
 	}
 }
@@ -599,7 +599,7 @@ void Actor::A_KBoltRaise(void)
 		mo = P_SpawnMobj(Origin.x, Origin.y, z, KoraxBolt);
 		if (mo)
 		{
-			mo->special1 = KORAX_BOLT_LIFETIME;
+			mo->Special1 = KORAX_BOLT_LIFETIME;
 		}
 	}
 	else
@@ -617,7 +617,7 @@ void Actor::A_KBoltRaise(void)
 void Actor::A_KBolt(void)
 {
 	// Countdown lifetime
-	if (special1-- <= 0)
+	if (Special1-- <= 0)
 	{
 		SetState(S_NULL);
 	}
@@ -626,6 +626,9 @@ void Actor::A_KBolt(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/22 18:00:22  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.15  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

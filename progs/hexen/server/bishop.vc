@@ -61,7 +61,7 @@ void Actor::A_BishopDecide(void)
 
 void Actor::A_BishopDoBlur(void)
 {
-	special1 = (P_Random() & 3) + 3;	// P_Random number of blurs
+	Special1 = (P_Random() & 3) + 3;	// P_Random number of blurs
 	if (P_Random() < 120)
 	{
 		P_ThrustMobj(this, AngleMod360(Angles.yaw + 90.0), 11.0);
@@ -75,7 +75,7 @@ void Actor::A_BishopDoBlur(void)
 		// Thrust forward
 		P_ThrustMobj(this, Angles.yaw, 11.0);
 	}
-	StartSoundName(self, 'BishopBlur', CHAN_VOICE);
+	PlaySound('BishopBlur', CHAN_VOICE);
 }
 
 //============================================================================
@@ -88,7 +88,7 @@ void Actor::A_BishopSpawnBlur(void)
 {
 	mobj_t *mo;
 
-	if (!--special1)
+	if (!--Special1)
 	{
 		Velocity.x = 0.0;
 		Velocity.y = 0.0;
@@ -116,9 +116,9 @@ void Actor::A_BishopSpawnBlur(void)
 
 void Actor::A_BishopChase(void)
 {
-	Origin.z -= FloatBobOffsets[special2] / 2.0;
-	special2 = (special2 + 4) & 63;
-	Origin.z += FloatBobOffsets[special2] / 2.0;
+	Origin.z -= FloatBobOffsets[Special2] / 2.0;
+	Special2 = (Special2 + 4) & 63;
+	Origin.z += FloatBobOffsets[Special2] / 2.0;
 }
 
 //============================================================================
@@ -129,17 +129,17 @@ void Actor::A_BishopChase(void)
 
 void Actor::A_BishopAttack(void)
 {
-	if (!target)
+	if (!Enemy)
 	{
 		return;
 	}
-	StartSoundName(self, AttackSound, CHAN_WEAPON);
+	PlaySound(AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		target->Damage(self, self, HITDICE(4));
+		Enemy.Damage(self, self, HITDICE(4));
 		return;
 	}
-	special1 = (P_Random() & 3) + 5;
+	Special1 = (P_Random() & 3) + 5;
 }
 
 //============================================================================
@@ -154,19 +154,19 @@ void Actor::A_BishopAttack2(void)
 {
 	mobj_t *mo;
 
-	if (!target || !special1)
+	if (!Enemy || !Special1)
 	{
-		special1 = 0;
+		Special1 = 0;
 		SetState(S_BISHOP_WALK1);
 		return;
 	}
-	mo = SpawnMissile(this, target, BishopMissile);
+	mo = SpawnMissile(this, &Enemy, BishopMissile);
 	if (mo)
 	{
-		mo->specialmobj1 = target;
-		mo->special2 = 16;	// High word == x/y, Low word == z
+		mo->SpecialMobj1 = &Enemy;
+		mo->Special2 = 16;	// High word == x/y, Low word == z
 	}
-	special1--;
+	Special1--;
 }
 
 //============================================================================
@@ -233,8 +233,8 @@ void Actor::A_BishopMissileWeave(void)
 	int weaveXY, weaveZ;
 	float angle;
 
-	weaveXY = special2 >> 16;
-	weaveZ = special2 & 0xFFFF;
+	weaveXY = Special2 >> 16;
+	weaveZ = Special2 & 0xFFFF;
 	angle = AngleMod360(Angles.yaw + 90.0);
 	newX = Origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 2.0;
 	newY = Origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 2.0;
@@ -245,7 +245,7 @@ void Actor::A_BishopMissileWeave(void)
 	Origin.z -= FloatBobOffsets[weaveZ];
 	weaveZ = (weaveZ + 2) & 63;
 	Origin.z += FloatBobOffsets[weaveZ];
-	special2 = weaveZ + (weaveXY << 16);
+	Special2 = weaveZ + (weaveXY << 16);
 }
 
 //============================================================================
@@ -262,6 +262,9 @@ void Actor::A_BishopMissileSeek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/22 18:00:20  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.17  2002/02/16 16:26:55  dj_jl
 //  Removed precalculated sound IDs
 //

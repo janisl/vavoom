@@ -375,28 +375,28 @@ boolean Actor::CheckWater(void)
 	point = Origin;
 	point.z += 1.0;
 
-	waterlevel = 0;
-	watertype = CONTENTS_EMPTY;
+	WaterLevel = 0;
+	WaterType = CONTENTS_EMPTY;
 	cont = PointContents(Sector, point);
 	if (cont >= CONTENTS_WATER)
 	{
-		watertype = cont;
-		waterlevel = 1;
+		WaterType = cont;
+		WaterLevel = 1;
 		point.z = Origin.z + Height * 0.5;
 		cont = PointContents(Sector, point);
 		if (cont >= CONTENTS_WATER)
 		{
-			waterlevel = 2;
+			WaterLevel = 2;
 			if (bIsPlayer)
 			{
-				point = Player->vieworg;
+				point = Player->ViewOrg;
 				cont = PointContents(Sector, point);
 				if (cont >= CONTENTS_WATER)
-					waterlevel = 3;
+					WaterLevel = 3;
 			}
 		}
 	}
-	return waterlevel > 1;
+	return WaterLevel > 1;
 }
 
 //==========================================================================
@@ -417,7 +417,7 @@ void Actor::UpdateVelocity(void)
 
 	if (Origin.z > FloorZ || Floor->normal.z < 0.7)
 	{
-		if (waterlevel < 2)
+		if (WaterLevel < 2)
 		{
 			if (bLowGravity)
 			{
@@ -449,7 +449,7 @@ void Actor::UpdateVelocity(void)
 		return;
 	}
 
-	if (Origin.z > FloorZ && waterlevel < 2 && !bFly && !bOnMobj)
+	if (Origin.z > FloorZ && WaterLevel < 2 && !bFly && !bOnMobj)
 	{
 		// No friction when falling
 		return;
@@ -482,12 +482,12 @@ void Actor::UpdateVelocity(void)
 	if (Velocity.x > -STOPSPEED && Velocity.x < STOPSPEED &&
 		Velocity.y > -STOPSPEED && Velocity.y < STOPSPEED &&
 		Velocity.z > -STOPSPEED && Velocity.z < STOPSPEED &&
-		(!bIsPlayer || (!Player->forwardmove && !Player->sidemove)))
+		(!bIsPlayer || (!Player->ForwardMove && !Player->SideMove)))
 	{
 		// If in a walking frame, stop moving
 		if (bIsPlayer)
 		{
-			if (Player->chickenTics)
+			if (Player->ChickenTics)
 			{
 				int sn;
 
@@ -512,7 +512,7 @@ void Actor::UpdateVelocity(void)
 	}
 	else
 	{
-		if (waterlevel > 1)
+		if (WaterLevel > 1)
 		{
 			Velocity -= Velocity * FRICTION_WATER * frametime;
 		}
@@ -625,8 +625,8 @@ void Actor::XYMovement(void)
 			else if (bMissile)
 			{
 				// Explode a missile
-				if (ceilingline && ceilingline->backsector &&
-					ceilingline->backsector->ceiling.pic == skyflatnum)
+				if (tmtrace.CeilingLine && tmtrace.CeilingLine->backsector &&
+					tmtrace.CeilingLine->backsector->ceiling.pic == skyflatnum)
 				{
 					// Hack to prevent missiles exploding against the sky
 					if (Class == BloodySkull)
@@ -836,9 +836,9 @@ void Actor::ZMovement(void)
 	//
 	if (bIsPlayer && Origin.z < FloorZ)
 	{
-		Player->viewheight -= FloorZ - Origin.z;
-		Player->deltaviewheight =
-			(VIEWHEIGHT - Player->viewheight) / 8.0;
+		Player->ViewHeight -= FloorZ - Origin.z;
+		Player->DeltaViewHeight =
+			(VIEWHEIGHT - Player->ViewHeight) / 8.0;
 	}
 
 	//
@@ -899,8 +899,8 @@ void Actor::ZMovement(void)
 		{
 			if (bIsPlayer && vdot < -GRAVITY * 0.25 && !bFly)	// squat down
 			{
-				Player->deltaviewheight = vdot * frametime / 8.0;
-				StartSoundName(self, 'PlayerLand', CHAN_BODY);
+				Player->DeltaViewHeight = vdot * frametime / 8.0;
+				PlaySound('PlayerLand', CHAN_BODY);
 //FIXME             Player->centering = true;
 			}
 			Velocity -= vdot * Floor->normal;
@@ -1024,7 +1024,7 @@ boolean Actor::Physics(void)
 {
 	Actor onmo;
 
-	if (blaster)
+	if (bBlaster)
 	{
 		return BlasterPhysics();
 	}
@@ -1075,10 +1075,10 @@ boolean Actor::Physics(void)
 						Origin.z += onmo.FloorZ - onmo.Origin.z;
 						if (onmo.bIsPlayer)
 						{
-							onmo.Player->viewheight -=
+							onmo.Player->ViewHeight -=
 								onmo.FloorZ - onmo.Origin.z;
-							onmo.Player->deltaviewheight =
-								(VIEWHEIGHT - onmo.Player->viewheight) / 8.0;
+							onmo.Player->DeltaViewHeight =
+								(VIEWHEIGHT - onmo.Player->ViewHeight) / 8.0;
 						}
 						onmo.Origin.z = onmo.FloorZ;
 					}
@@ -1138,8 +1138,8 @@ void Actor::Think(void)
 		{
 			return;
 		}
-		movecount++;
-		if (movecount < 12 * 35)
+		MoveCount++;
+		if (MoveCount < 12 * 35)
 		{
 			return;
 		}
@@ -1158,6 +1158,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/02/22 18:00:17  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.21  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

@@ -106,11 +106,11 @@ void Actor::A_VileChase(void)
 
 	mobj_t *temp;
 
-	if (movedir != DI_NODIR)
+	if (MoveDir != DI_NODIR)
 	{
 		// check for corpses to raise
-		viletryx = Origin.x + StepSpeed * xspeed[movedir];
-		viletryy = Origin.y + StepSpeed * yspeed[movedir];
+		viletryx = Origin.x + StepSpeed * xspeed[MoveDir];
+		viletryy = Origin.y + StepSpeed * yspeed[MoveDir];
 		vileobj = self;
 
 		xl = MapBlock(viletryx - level->bmaporgx - MAXRADIUS * 2.0);
@@ -133,7 +133,7 @@ void Actor::A_VileChase(void)
 					target = temp;
 
 					SetState(S_VILE_HEAL1);
-					StartSoundName(CorpseHit, 'Slop', CHAN_BODY);
+					CorpseHit.PlaySound('Slop', CHAN_BODY);
 
 					CorpseHit.SetState(CorpseHit.RaiseState);
 					CorpseHit.Height *= 4.0;
@@ -143,7 +143,7 @@ void Actor::A_VileChase(void)
 					CorpseHit.bSolid = true;
 					CorpseHit.bCorpse = false;
 #endif
-					CorpseHit.Health = CorpseHit.spawnhealth;
+					CorpseHit.Health = CorpseHit.SpawnHealth;
 					CorpseHit.target = NULL;
 
 					return;
@@ -165,7 +165,7 @@ void Actor::A_VileChase(void)
 
 void Actor::A_VileStart(void)
 {
-	StartSoundName(self, 'ArchVileAttack', CHAN_WEAPON);
+	PlaySound('ArchVileAttack', CHAN_WEAPON);
 }
 
 //==========================================================================
@@ -214,7 +214,7 @@ void Actor::A_VileAttack(void)
 	if (!P_CheckSight(self, *target))
 		return;
 
-	StartSoundName(self, 'BarrelExplode', CHAN_WEAPON);
+	PlaySound('BarrelExplode', CHAN_WEAPON);
 	target->Damage(self, self, 20);
 	target->Velocity.z = 1000.0 / target->Mass * 35.0;
 
@@ -239,7 +239,7 @@ void Actor::A_VileAttack(void)
 
 void Actor::A_StartFire(void)
 {
-	StartSoundName(self, 'FlameStart', CHAN_VOICE);
+	PlaySound('FlameStart', CHAN_VOICE);
 	A_Fire();
 }
 
@@ -280,7 +280,7 @@ void Actor::A_Fire(void)
 
 void Actor::A_FireCrackle(void)
 {
-	StartSoundName(self, 'Flame', CHAN_VOICE);
+	PlaySound('Flame', CHAN_VOICE);
 	A_Fire();
 }
 
@@ -326,6 +326,9 @@ void Actor::A_FireCrackle(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/22 18:00:06  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.17  2002/02/14 19:20:57  dj_jl
 //  Renamed Entity properties to new naming style
 //

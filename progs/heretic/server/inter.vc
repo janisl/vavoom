@@ -156,8 +156,8 @@ boolean Actor::GiveAmmo(int ammo, int count)
 	{
 		Error("GiveAmmo: bad type %i", ammo);
 	}
-	max = Player->backpack ? maxammo[ammo] * 2 : maxammo[ammo];
-	if (Player->ammo[ammo] == max)
+	max = Player->Backpack ? maxammo[ammo] * 2 : maxammo[ammo];
+	if (Player->Ammo[ammo] == max)
 	{
 		return false;
 	}
@@ -166,12 +166,12 @@ boolean Actor::GiveAmmo(int ammo, int count)
 		// extra ammo in baby mode and nightmare mode
 		count += count >> 1;
 	}
-	prevAmmo = Player->ammo[ammo];
+	prevAmmo = Player->Ammo[ammo];
 
-	Player->ammo[ammo] += count;
-	if (Player->ammo[ammo] > max)
+	Player->Ammo[ammo] += count;
+	if (Player->Ammo[ammo] > max)
 	{
-		Player->ammo[ammo] = max;
+		Player->Ammo[ammo] = max;
 	}
 	if (prevAmmo)
 	{
@@ -179,12 +179,12 @@ boolean Actor::GiveAmmo(int ammo, int count)
 		// ammo of the type just given
 		return true;
 	}
-	if (Player->readyweapon == wp_staff ||
-		Player->readyweapon == wp_gauntlets)
+	if (Player->ReadyWeapon == wp_staff ||
+		Player->ReadyWeapon == wp_gauntlets)
 	{
-		if (Player->weaponowned[GetAmmoChange[ammo]])
+		if (Player->WeaponOwned[GetAmmoChange[ammo]])
 		{
-			Player->pendingweapon = GetAmmoChange[ammo];
+			Player->PendingWeapon = GetAmmoChange[ammo];
 		}
 	}
 	return true;
@@ -206,30 +206,30 @@ boolean Actor::GiveWeapon(int weapon)
 	if (netgame && !deathmatch)
 	{
 		// Cooperative net-game
-		if (Player->weaponowned[weapon])
+		if (Player->WeaponOwned[weapon])
 		{
 			return false;
 		}
-		Player->bonuscount += BONUSADD;
-		Player->weaponowned[weapon] = true;
+		Player->BonusCount += BONUSADD;
+		Player->WeaponOwned[weapon] = true;
 		GiveAmmo(weapon_ammo_type[weapon], GetWeaponAmmo[weapon]);
-		Player->pendingweapon = weapon;
-		StartSoundName(self, 'PickupWeapon', CHAN_ITEM);
+		Player->PendingWeapon = weapon;
+		PlaySound('PickupWeapon', CHAN_ITEM);
 		return false;
 	}
 	gaveAmmo = GiveAmmo(weapon_ammo_type[weapon], GetWeaponAmmo[weapon]);
-	if (Player->weaponowned[weapon])
+	if (Player->WeaponOwned[weapon])
 	{
 		gaveWeapon = false;
 	}
 	else
 	{
 		gaveWeapon = true;
-		Player->weaponowned[weapon] = true;
-		if (WeaponValue[weapon] > WeaponValue[Player->readyweapon])
+		Player->WeaponOwned[weapon] = true;
+		if (WeaponValue[weapon] > WeaponValue[Player->ReadyWeapon])
 		{
 			// Only switch to more powerful weapons
-			Player->pendingweapon = weapon;
+			Player->PendingWeapon = weapon;
 		}
 	}
 	return (gaveWeapon || gaveAmmo);
@@ -248,20 +248,20 @@ boolean Actor::GiveBody(int num)
 	int max;
 
 	max = MAXHEALTH;
-	if (Player->chickenTics)
+	if (Player->ChickenTics)
 	{
 		max = MAXCHICKENHEALTH;
 	}
-	if (Player->health >= max)
+	if (Player->Health >= max)
 	{
 		return false;
 	}
-	Player->health += num;
-	if (Player->health > max)
+	Player->Health += num;
+	if (Player->Health > max)
 	{
-		Player->health = max;
+		Player->Health = max;
 	}
-	Health = Player->health;
+	Health = Player->Health;
 	return true;
 }
 
@@ -278,12 +278,12 @@ boolean Actor::GiveArmor(int armortype)
 	int hits;
 
 	hits = armortype * 100;
-	if (Player->armorpoints >= hits)
+	if (Player->ArmorPoints >= hits)
 	{
 		return false;
 	}
-	Player->armortype = armortype;
-	Player->armorpoints = hits;
+	Player->ArmorType = armortype;
+	Player->ArmorPoints = hits;
 	return true;
 }
 
@@ -295,12 +295,12 @@ boolean Actor::GiveArmor(int armortype)
 
 boolean Actor::GiveKey(int key)
 {
-	if ((Player->keys & (1 << key)))
+	if ((Player->Keys & (1 << key)))
 	{
 		return false;
 	}
-	Player->bonuscount = BONUSADD;
-	Player->keys |= 1 << key;
+	Player->BonusCount = BONUSADD;
+	Player->Keys |= 1 << key;
 	return true;
 }
 
@@ -316,66 +316,66 @@ boolean Actor::GivePower(int power)
 {
 	if (power == pw_invulnerability)
 	{
-		if (Player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		if (Player->Powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
 		{
 			// Already have it
 			return false;
 		}
-		Player->powers[power] = ftoi(INVULNTIME * 35.0);
+		Player->Powers[power] = ftoi(INVULNTIME * 35.0);
 		return true;
 	}
 	if (power == pw_weaponlevel2)
 	{
-		if (Player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		if (Player->Powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
 		{
 			// Already have it
 			return false;
 		}
-		Player->powers[power] = ftoi(WPNLEV2TIME * 35.0);
+		Player->Powers[power] = ftoi(WPNLEV2TIME * 35.0);
 		return true;
 	}
 	if (power == pw_invisibility)
 	{
-		if (Player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		if (Player->Powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
 		{
 			// Already have it
 			return false;
 		}
-		Player->powers[power] = ftoi(INVISTIME * 35.0);
+		Player->Powers[power] = ftoi(INVISTIME * 35.0);
 		Translucency = 33;
 		return true;
 	}
 	if (power == pw_flight)
 	{
-		if (Player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		if (Player->Powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
 		{
 			// Already have it
 			return false;
 		}
-		Player->powers[power] = ftoi(FLIGHTTIME * 35.0);
+		Player->Powers[power] = ftoi(FLIGHTTIME * 35.0);
 		bFly = true;
 		bNoGravity = true;
 		if (Origin.z <= FloorZ)
 		{
-			Player->flyheight = 10.0;	// thrust the player in the air a bit
+			Player->FlyHeight = 10.0;	// thrust the player in the air a bit
 		}
 		return true;
 	}
 	if (power == pw_infrared)
 	{
-		if (Player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		if (Player->Powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
 		{
 			// Already have it
 			return false;
 		}
-		Player->powers[power] = ftoi(INFRATIME * 35.0);
+		Player->Powers[power] = ftoi(INFRATIME * 35.0);
 		return true;
 	}
-	if (Player->powers[power])
+	if (Player->Powers[power])
 	{
 		return false;	// already got it
 	}
-	Player->powers[power] = 1;
+	Player->Powers[power] = 1;
 	return true;
 }
 
@@ -387,11 +387,11 @@ boolean Actor::GivePower(int power)
 
 boolean Actor::GiveItem(int item)
 {
-	if (Player->items & item)
+	if (Player->Items & item)
 	{
 		return false;	// already got it
 	}
-	Player->items |= item;
+	Player->Items |= item;
 	return true;
 }
 
@@ -408,33 +408,33 @@ boolean Actor::GiveArtifact(int arti, Actor mo)
 	int i;
 
 	i = 0;
-	while (Player->inventory[i].type != arti && i < Player->inventorySlotNum)
+	while (Player->Inventory[i].type != arti && i < Player->InventorySlotNum)
 	{
 		i++;
 	}
-	if (i == Player->inventorySlotNum)
+	if (i == Player->InventorySlotNum)
 	{
-		Player->inventory[i].count = 1;
-		Player->inventory[i].type = arti;
-		Player->inventorySlotNum++;
+		Player->Inventory[i].count = 1;
+		Player->Inventory[i].type = arti;
+		Player->InventorySlotNum++;
 	}
 	else
 	{
-		if (Player->inventory[i].count >= 16)
+		if (Player->Inventory[i].count >= 16)
 		{
 			// Player already has 16 of this item
 			return false;
 		}
-		Player->inventory[i].count++;
+		Player->Inventory[i].count++;
 	}
-	if (Player->artifactCount == 0)
+	if (Player->ArtifactCount == 0)
 	{
-		Player->readyArtifact = arti;
+		Player->ReadyArtifact = arti;
 	}
-	Player->artifactCount++;
+	Player->ArtifactCount++;
 	if (mo && mo.bCountItem)
 	{
-		Player->itemcount++;
+		Player->ItemCount++;
 	}
 	return true;
 }
@@ -488,7 +488,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		cprint(Toucher.Player, "%s\n", TXT_ITEMSHIELD2);
 		break;
 	case 'BAGH':	// Item_BagOfHolding
-		Toucher.Player->backpack = true;
+		Toucher.Player->Backpack = true;
 		Toucher.GiveAmmo(am_goldwand, AMMO_GWND_WIMPY);
 		Toucher.GiveAmmo(am_blaster, AMMO_BLSR_WIMPY);
 		Toucher.GiveAmmo(am_crossbow, AMMO_CBOW_WIMPY);
@@ -752,7 +752,7 @@ void Actor::TouchSpecial(Actor Toucher)
 	}
 	if (bCountItem)
 	{
-		Toucher.Player->itemcount++;
+		Toucher.Player->ItemCount++;
 	}
 	if (deathmatch && respawn && !bDropped)
 	{
@@ -762,13 +762,16 @@ void Actor::TouchSpecial(Actor Toucher)
 	{
 		P_RemoveMobj(&self);
 	}
-	Toucher.Player->bonuscount += BONUSADD;
-	StartSoundName(Toucher, sound, CHAN_ITEM);
+	Toucher.Player->BonusCount += BONUSADD;
+	Toucher.PlaySound(sound, CHAN_ITEM);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/22 18:00:16  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.13  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

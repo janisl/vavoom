@@ -47,7 +47,7 @@
 
 void Actor::A_BabyMetal(void)
 {
-	StartSoundName(self, 'BabyWalk', CHAN_BODY);
+	PlaySound('BabyWalk', CHAN_BODY);
 	A_Chase();
 }
 
@@ -87,6 +87,9 @@ void Actor::A_BspiAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/02/22 18:00:06  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.9  2002/01/28 18:50:17  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

@@ -137,10 +137,10 @@ boolean P_ThingHeightClip(mobj_t * thing)
 	P_CheckRelPosition(thing, thing->Origin.x, thing->Origin.y);
 	// what about stranding a monster partially off an edge?
 
-	thing->Floor = tmfloor;
-	thing->Ceiling = tmceiling;
-	thing->FloorZ = tmfloorz;
-	thing->CeilingZ = tmceilingz;
+	thing->Floor = tmtrace.Floor;
+	thing->Ceiling = tmtrace.Ceiling;
+	thing->FloorZ = tmtrace.FloorZ;
+	thing->CeilingZ = tmtrace.CeilingZ;
 
 	if (onfloor)
 	{
@@ -276,7 +276,6 @@ boolean PTR_UseTraverse(intercept_t * in)
 		open = FindOpening(open, hit_point.z, hit_point.z + usething->Height);
 		if (!open)
 		{
-			//StartSoundName (usething, sfx2_noway);
 			return false;	// can't use through a wall
 		}
 		return true;	// not a special line, but keep checking
@@ -695,7 +694,7 @@ boolean PTR_ShootTraverse(intercept_t * in)
 	hit_point -= 10.0 * shoot_dir;
 
 	//  check for physical attacks on a ghost
-	if (th.Translucency && shoot_thing->Player->readyweapon == wp_staff)
+	if (th.Translucency && shoot_thing->Player->ReadyWeapon == wp_staff)
 	{
 		return true;
 	}
@@ -707,7 +706,7 @@ boolean PTR_ShootTraverse(intercept_t * in)
 
 		mo = P_SpawnMobj(hit_point.x, hit_point.y, hit_point.z,
 			BlasterPuff2);
-		StartSoundName(*mo, 'BlasterFire', CHAN_VOICE);
+		mo->PlaySound('BlasterFire', CHAN_VOICE);
 	}
 	else
 	{
@@ -859,6 +858,9 @@ void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage, int distance,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/02/22 18:00:16  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.20  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

@@ -45,7 +45,7 @@ void Actor::A_EttinAttack(void)
 {
 	if (CheckMeleeRange())
 	{
-		target->Damage(self, self, HITDICE(2));
+		Enemy.Damage(self, self, HITDICE(2));
 	}
 }
 
@@ -65,13 +65,16 @@ void Actor::A_DropMace(void)
 		mo->Velocity.x = (Random() - 0.5) * 8.0 * 35.0;
 		mo->Velocity.y = (Random() - 0.5) * 8.0 * 35.0;
 		mo->Velocity.z = (10.0 + Random() * 4.0) * 35.0;
-		mo->target = this;
+		mo->Owner = self;
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/02/22 18:00:21  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.12  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

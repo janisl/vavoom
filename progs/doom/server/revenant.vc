@@ -50,7 +50,7 @@ void Actor::A_SkelWhoosh(void)
 	if (!target)
 		return;
 	A_FaceTarget();
-	StartSoundName(self, 'RavenantSwing', CHAN_WEAPON);
+	PlaySound('RavenantSwing', CHAN_WEAPON);
 }
 
 //==========================================================================
@@ -73,7 +73,7 @@ void Actor::A_SkelFist(void)
 	if (CheckMeleeRange())
 	{
 		damage = ((P_Random() % 10) + 1) * 6;
-		StartSoundName(self, 'RavenantPunch', CHAN_WEAPON);
+		PlaySound('RavenantPunch', CHAN_WEAPON);
 		target->Damage(self, self, damage);
 	}
 }
@@ -180,6 +180,9 @@ void Actor::A_Tracer(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/02/22 18:00:13  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.6  2002/02/14 19:20:57  dj_jl
 //  Renamed Entity properties to new naming style
 //

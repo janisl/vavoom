@@ -117,11 +117,11 @@ boolean CheckedLockedDoor(mobj_t * mo, int lock)
 	{
 		return true;
 	}
-	if (!(mo->Player->keys & (1 << (lock - 1))))
+	if (!(mo->Player->Keys & (1 << (lock - 1))))
 	{
 		centerprint(mo->Player, "YOU NEED THE %s",
 			TextKeyMessages[lock - 1]);
-		StartSoundName(*mo, 'DoorLocked', CHAN_ITEM);
+		mo->PlaySound('DoorLocked', CHAN_ITEM);
 		return false;
 	}
 	return true;
@@ -376,7 +376,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 74:	// Teleport_NewMap
 		if (side == 0)
 		{	// Only teleport when crossing the front side of a line
-			if (!(mo && mo->bIsPlayer && mo->Player->playerstate == PST_DEAD))	// Players must be alive to teleport
+			if (!(mo && mo->bIsPlayer && mo->Player->PlayerState == PST_DEAD))	// Players must be alive to teleport
 			{
 				G_Completed(args[0], args[1]);
 				buttonSuccess = true;
@@ -386,7 +386,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 75:	// Teleport_EndGame
 		if (side == 0)
 		{	// Only teleport when crossing the front side of a line
-			if (!(mo && mo->bIsPlayer && mo->Player->playerstate == PST_DEAD))	// Players must be alive to teleport
+			if (!(mo && mo->bIsPlayer && mo->Player->PlayerState == PST_DEAD))	// Players must be alive to teleport
 			{
 				buttonSuccess = true;
 				if (deathmatch)
@@ -569,6 +569,7 @@ void P_SpawnSpecials(boolean spawn_thinkers)
 {
 	sector_t *sector;
 	int i;
+	int j;
 
 	if (spawn_thinkers)
 	{
@@ -682,6 +683,32 @@ void P_SpawnSpecials(boolean spawn_thinkers)
 			break;
 		}
 	}
+
+	//	Process translucent lines
+	for (i = 0; i < level->numlines; i++)
+	{
+		if (level->lines[i].special != 208)
+		{
+			continue;
+		}
+
+		int trans = (255 - level->lines[i].arg2) * 100 / 255;
+		if (level->lines[i].arg1)
+		{
+			for (j = 0; j < TaggedLineCount; j++)
+			{
+				if (TaggedLines[j].lineTag == level->lines[i].arg1)
+				{
+					SetLineTransluc(TaggedLines[j].line, trans);
+				}
+			}
+		}
+		else
+		{
+			SetLineTransluc(&level->lines[i], trans);
+		}
+		level->lines[i].special = 0;
+	}
 }
 
 //==========================================================================
@@ -719,6 +746,9 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/22 18:00:23  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.16  2002/02/16 16:23:46  dj_jl
 //  Added line teleporters and translucent lines
 //

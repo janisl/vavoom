@@ -52,7 +52,7 @@ void Actor::A_BruisAttack(void)
 
 	if (CheckMeleeRange())
 	{
-		StartSoundName(self, 'ImpAttack', CHAN_WEAPON);
+		PlaySound('ImpAttack', CHAN_WEAPON);
 		damage = (P_Random() % 8 + 1) * 10;
 		target->Damage(self, self, damage);
 		return;
@@ -65,6 +65,9 @@ void Actor::A_BruisAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/02/22 18:00:08  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.12  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

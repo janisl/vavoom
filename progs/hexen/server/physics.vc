@@ -381,28 +381,28 @@ boolean Actor::CheckWater(void)
 	point = Origin;
 	point.z += 1.0;
 
-	waterlevel = 0;
-	watertype = CONTENTS_EMPTY;
+	WaterLevel = 0;
+	WaterType = CONTENTS_EMPTY;
 	cont = PointContents(Sector, point);
 	if (cont >= CONTENTS_WATER)
 	{
-		watertype = cont;
-		waterlevel = 1;
+		WaterType = cont;
+		WaterLevel = 1;
 		point.z = Origin.z + Height * 0.5;
 		cont = PointContents(Sector, point);
 		if (cont >= CONTENTS_WATER)
 		{
-			waterlevel = 2;
+			WaterLevel = 2;
 			if (bIsPlayer)
 			{
-				point = Player->vieworg;
+				point = Player->ViewOrg;
 				cont = PointContents(Sector, point);
 				if (cont >= CONTENTS_WATER)
-					waterlevel = 3;
+					WaterLevel = 3;
 			}
 		}
 	}
-	return waterlevel > 1;
+	return WaterLevel > 1;
 }
 
 //==========================================================================
@@ -417,7 +417,7 @@ void Actor::UpdateVelocity(void)
 	// 45 degrees)
 	if (Origin.z > FloorZ || Floor->normal.z < 0.7)
 	{
-		if (waterlevel < 2)
+		if (WaterLevel < 2)
 		{
 			if (bLowGravity)
 			{
@@ -440,7 +440,7 @@ void Actor::UpdateVelocity(void)
 	{
 		return;
 	}
-	if (Origin.z > FloorZ && waterlevel < 2 && !bFly && !bOnMobj)
+	if (Origin.z > FloorZ && WaterLevel < 2 && !bFly && !bOnMobj)
 	{
 		// No friction when falling
 		if (Class != BlastEffect)
@@ -473,17 +473,17 @@ void Actor::UpdateVelocity(void)
 	if (Velocity.x > -STOPSPEED && Velocity.x < STOPSPEED &&
 		Velocity.y > -STOPSPEED && Velocity.y < STOPSPEED &&
 		Velocity.z > -STOPSPEED && Velocity.z < STOPSPEED &&
-		(!bIsPlayer || (!Player->forwardmove && !Player->sidemove)))
+		(!bIsPlayer || (!Player->ForwardMove && !Player->SideMove)))
 	{
 		// If in a walking frame, stop moving
 		if (bIsPlayer)
 		{
 			int sn;
 
-			sn = StateNum - PStateRun[Player->pclass];
+			sn = StateNum - PStateRun[Player->PClass];
 			if (sn >= 0 && sn < 4)
 			{
-				SetState(PStateNormal[Player->pclass]);
+				SetState(PStateNormal[Player->PClass]);
 			}
 		}
 		Velocity.x = 0.0;
@@ -491,7 +491,7 @@ void Actor::UpdateVelocity(void)
 	}
 	else
 	{
-		if (waterlevel >= 2)
+		if (WaterLevel >= 2)
 		{
 			Velocity -= Velocity * FRICTION_WATER * frametime;
 		}
@@ -524,14 +524,15 @@ boolean Actor::HitMobj(void)
 	{
 		if (bFloorBounce)
 		{
-			if (BlockingMobj->bReflective ||
-				(!BlockingMobj->bIsPlayer && !BlockingMobj->bCountKill))
+			if (Actor(tmtrace.BlockingMobj).bReflective ||
+				(!tmtrace.BlockingMobj.bIsPlayer &&
+				!Actor(tmtrace.BlockingMobj).bCountKill))
 			{
 				float speed;
 
 				angle = AngleMod360(
-					atan2(Origin.y - BlockingMobj->Origin.y,
-						Origin.x - BlockingMobj->Origin.x) +
+					atan2(Origin.y - tmtrace.BlockingMobj.Origin.y,
+						Origin.x - tmtrace.BlockingMobj.Origin.x) +
 						Random() * 16.0 - 8.0);
 				speed = Length(Velocity);
 				speed = speed * 0.75;
@@ -540,7 +541,7 @@ boolean Actor::HitMobj(void)
 				Velocity.y = speed * sin(angle);
 				if (SightSound)
 				{
-					StartSoundName(self, SightSound, CHAN_VOICE);
+					PlaySound(SightSound, CHAN_VOICE);
 				}
 				return true;
 			}
@@ -550,20 +551,20 @@ boolean Actor::HitMobj(void)
 				return P_ExplodeMissile(this);
 			}
 		}
-		if (BlockingMobj->bReflective)
+		if (Actor(tmtrace.BlockingMobj).bReflective)
 		{
 			int explode = false;
 
-			angle = atan2(Origin.y - BlockingMobj->Origin.y,
-				Origin.x - BlockingMobj->Origin.x);
+			angle = atan2(Origin.y - tmtrace.BlockingMobj.Origin.y,
+				Origin.x - tmtrace.BlockingMobj.Origin.x);
 
 			// Change angle for delflection/reflection
-			switch (BlockingMobj->Class)
+			switch (tmtrace.BlockingMobj.Class)
 			{
 			case Centaur:
 			case CentaurLeader:
 				if (fabs(AngleMod180(angle -
-					BlockingMobj->Angles.yaw)) > 45.0 * 45.0 / 32.0)
+					tmtrace.BlockingMobj.Angles.yaw)) > 45.0 * 45.0 / 32.0)
 				{
 					explode = true;
 					break;
@@ -596,9 +597,9 @@ boolean Actor::HitMobj(void)
 //				Velocity.z = -Velocity.z;
 				if (bSeekerMissile)
 				{
-					specialmobj1 = target;
+					SpecialMobj1 = &Owner;
 				}
-				target = BlockingMobj;
+				Owner = tmtrace.BlockingMobj;
 				return true;
 			}
 		}
@@ -661,7 +662,7 @@ boolean Actor::HitLine(void)
 			default:
 				if (SightSound)
 				{
-					StartSoundName(self, SightSound, CHAN_VOICE);
+					PlaySound(SightSound, CHAN_VOICE);
 				}
 				break;
 			}
@@ -669,8 +670,8 @@ boolean Actor::HitLine(void)
 		}
 
 		// Explode a missile
-		if (ceilingline && ceilingline->backsector
-			&& ceilingline->backsector->ceiling.pic == skyflatnum)
+		if (tmtrace.CeilingLine && tmtrace.CeilingLine->backsector &&
+			tmtrace.CeilingLine->backsector->ceiling.pic == skyflatnum)
 		{
 			// Hack to prevent missiles exploding against the sky
 			if (Class == BloodySkull)
@@ -789,7 +790,7 @@ boolean Actor::XYMovement(void)
 		if (!P_TryMove(this, ptryx, ptryy))
 		{
 			// Blocked move
-			if (BlockingMobj)
+			if (tmtrace.BlockingMobj)
 			{
 				return HitMobj();
 			}
@@ -885,13 +886,13 @@ void Actor::FakeZMovement(void)
 	//  adjust height
 	//
 	tzorg.z += Velocity.z * frametime;
-	if (bFloat && target)
+	if (bFloat && Enemy)
 	{
-		// float down towards target if too close
+		// float down towards enemy if too close
 		if (!bSkullFly && !bInFloat)
 		{
-			dist = MobjDist2(self, *target);
-			delta = target->Origin.z + Height / 2.0 - tzorg.z;
+			dist = MobjDist2(self, Enemy);
+			delta = Enemy.Origin.z + Height / 2.0 - tzorg.z;
 			if (delta < 0.0 && dist < -(delta * 3.0))
 				tzorg.z -= FLOATSPEED * frametime;
 			else if (delta > 0.0 && dist < (delta * 3.0))
@@ -1027,42 +1028,39 @@ boolean Actor::HitFloor(void)
 		}
 		if (bIsPlayer)
 		{
-			Player->jumpTics = 7;	// delay any jumping for a short time
+			Player->JumpTics = 7;	// delay any jumping for a short time
 			if (vdot < -GRAVITY * 0.25 && !bFly)
 			{
 				// squat down
-				Player->deltaviewheight = vdot * frametime / 8.0;
+				Player->DeltaViewHeight = vdot * frametime / 8.0;
 				if (vdot < -23.0 * 35.0)
 				{
 					P_FallingDamage(Player);
 					P_NoiseAlert(this, this);
 				}
 				else if (vdot < -GRAVITY * 0.375
-					&& !Player->morphTics)
+					&& !Player->MorphTics)
 				{
-					StartSoundName(self, 'PlayerLand', CHAN_BODY);
-					switch (Player->pclass)
+					PlaySound('PlayerLand', CHAN_BODY);
+					switch (Player->PClass)
 					{
 					case PCLASS_FIGHTER:
-						StartSoundName(self, 'PlayerFighterGrunt',
-							CHAN_VOICE);
+						PlaySound('PlayerFighterGrunt', CHAN_VOICE);
 						break;
 					case PCLASS_CLERIC:
-						StartSoundName(self, 'PlayerClericGrunt',
-							CHAN_VOICE);
+						PlaySound('PlayerClericGrunt', CHAN_VOICE);
 						break;
 					case PCLASS_MAGE:
-						StartSoundName(self, 'PlayerMageGrunt',
-							CHAN_VOICE);
+						PlaySound('PlayerMageGrunt', CHAN_VOICE);
 						break;
 					default:
 						break;
 					}
 				}
 				else if ((P_GetThingFloorType(this) < FLOOR_LIQUID) &&
-					(!Player->morphTics))
+					(!Player->MorphTics))
 				{
-					StartSoundName(self, 'PlayerLand', CHAN_BODY);
+					PlaySound('PlayerLand', CHAN_BODY);
 				}
 //FIXME				Player->centering = true;
 			}
@@ -1117,7 +1115,7 @@ boolean Actor::HitCeiling(void)
 
 			if (SightSound)
 			{
-				StartSoundName(self, SightSound, CHAN_VOICE);
+				PlaySound(SightSound, CHAN_VOICE);
 			}
 			return true;
 		}
@@ -1168,20 +1166,20 @@ boolean Actor::ZMovement(void)
 	//
 	if (bIsPlayer && Origin.z < FloorZ)
 	{
-		Player->viewheight -= FloorZ - Origin.z;
-		Player->deltaviewheight = (VIEWHEIGHT - Player->viewheight) / 8.0;
+		Player->ViewHeight -= FloorZ - Origin.z;
+		Player->DeltaViewHeight = (VIEWHEIGHT - Player->ViewHeight) / 8.0;
 	}
 	//
 	// adjust height
 	//
 	Origin.z += Velocity.z * frametime;
-	if (bFloat && target)
+	if (bFloat && Enemy)
 	{
-		// float down towards target if too close
+		// float down towards enemy if too close
 		if (!bSkullFly && !bInFloat)
 		{
-			dist = MobjDist2(self, *target);
-			delta = target->Origin.z + Height / 2.0 - Origin.z;
+			dist = MobjDist2(self, Enemy);
+			delta = Enemy.Origin.z + Height / 2.0 - Origin.z;
 			if (delta < 0.0 && dist < -delta * 3.0)
 				Origin.z -= FLOATSPEED * frametime;
 			else if (delta > 0.0 && dist < delta * 3.0)
@@ -1233,33 +1231,33 @@ void Actor::ResetBlasted(void)
 
 void Actor::PlayerLandedOnThing(void)
 {
-	Player->deltaviewheight = Velocity.z * frametime / 8.0;
+	Player->DeltaViewHeight = Velocity.z * frametime / 8.0;
 	if (Velocity.z < -23.0 * 35.0)
 	{
 		P_FallingDamage(Player);
 		P_NoiseAlert(this, this);
 	}
-	else if (Velocity.z < -GRAVITY * 0.375 && !Player->morphTics)
+	else if (Velocity.z < -GRAVITY * 0.375 && !Player->MorphTics)
 	{
-		StartSoundName(self, 'PlayerLand', CHAN_BODY);
-		switch (Player->pclass)
+		PlaySound('PlayerLand', CHAN_BODY);
+		switch (Player->PClass)
 		{
 		case PCLASS_FIGHTER:
-			StartSoundName(self, 'PlayerFighterGrunt', CHAN_VOICE);
+			PlaySound('PlayerFighterGrunt', CHAN_VOICE);
 			break;
 		case PCLASS_CLERIC:
-			StartSoundName(self, 'PlayerClericGrunt', CHAN_VOICE);
+			PlaySound('PlayerClericGrunt', CHAN_VOICE);
 			break;
 		case PCLASS_MAGE:
-			StartSoundName(self, 'PlayerMageGrunt', CHAN_VOICE);
+			PlaySound('PlayerMageGrunt', CHAN_VOICE);
 			break;
 		default:
 			break;
 		}
 	}
-	else if (!Player->morphTics)
+	else if (!Player->MorphTics)
 	{
-		StartSoundName(self, 'PlayerLand', CHAN_BODY);
+		PlaySound('PlayerLand', CHAN_BODY);
 	}
 //FIXME Player->centering = true;
 }
@@ -1322,9 +1320,9 @@ boolean Actor::BlasterPhysics(void)
 					}
 					P_SpawnMobj(Origin.x, Origin.y, z, MageWandSmoke);
 				}
-				else if (Class != MageWandMissile && !--special1)
+				else if (Class != MageWandMissile && !--Special1)
 				{
-					special1 = 4;
+					Special1 = 4;
 					z = Origin.z - 12.0;
 					if (z < FloorZ)
 					{
@@ -1352,7 +1350,7 @@ boolean Actor::Physics(void)
 {
 	Actor onmo;
 
-	if (blaster)
+	if (bBlaster)
 	{
 		return BlasterPhysics();
 	}
@@ -1362,7 +1360,7 @@ boolean Actor::Physics(void)
 		UpdateVelocity();
 
 	// Handle X and Y momentums
-	BlockingMobj = NULL;
+	tmtrace.BlockingMobj = none;
 	if (Velocity.x || Velocity.y)
 	{
 		if (!XYMovement())
@@ -1389,9 +1387,9 @@ boolean Actor::Physics(void)
 	if (bFloatBob)
 	{
 		// Floating item bobbing motion (special1 is height)
-		Origin.z = FloorZ + special1f + FloatBobOffsets[(Health++) & 63];
+		Origin.z = FloorZ + Special1f + FloatBobOffsets[(Health++) & 63];
 	}
-	else if ((Origin.z != FloorZ) || Velocity.z || BlockingMobj)
+	else if ((Origin.z != FloorZ) || Velocity.z || tmtrace.BlockingMobj)
 	{
 		// Handle Z momentum and gravity
 		if (!bNoPassMobj)
@@ -1417,10 +1415,10 @@ boolean Actor::Physics(void)
 					}
 					if (onmo.Origin.z + onmo.Height - Origin.z <= 24.0)
 					{
-						Player->viewheight -=
+						Player->ViewHeight -=
 							onmo.Origin.z + onmo.Height - Origin.z;
-						Player->deltaviewheight =
-							(VIEWHEIGHT - Player->viewheight) / 8.0;
+						Player->DeltaViewHeight =
+							(VIEWHEIGHT - Player->ViewHeight) / 8.0;
 						Origin.z = onmo.Origin.z + onmo.Height;
 						bOnMobj = true;
 						Velocity.z = 0.0;
@@ -1479,6 +1477,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/02/22 18:00:23  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.24  2002/02/16 16:26:55  dj_jl
 //  Removed precalculated sound IDs
 //

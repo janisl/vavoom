@@ -173,8 +173,7 @@ boolean Actor::LookForMonsters(boolean allaround)
 		if (mo == self)
 			continue;
 
-		if (mo.Class != LostSoul && mo.Class != PlayerEntity &&
-			!mo.bCountKill)
+		if (mo.Class != LostSoul && mo.Class != PlayerPawn && !mo.bCountKill)
 			continue;
 
 		if (!P_CheckSight(self, mo))
@@ -279,25 +278,25 @@ boolean Actor::LookForPlayers(boolean allaround)
 		return LookForMonsters(allaround);
 	}
 
-	if (!netgame && players[0].spawned && players[0].health <= 0)
+	if (!netgame && players[0].bSpawned && players[0].Health <= 0)
 	{
 		return LookForMonsters2(allaround);
 	}
 
 	c = 0;
-	stop = (lastlook - 1) & 3;
+	stop = (LastLook - 1) & 3;
 
-	for (;; lastlook = (lastlook + 1) & (MAXPLAYERS - 1))
+	for (;; LastLook = (LastLook + 1) & (MAXPLAYERS - 1))
 	{
-		if (lastlook == stop)
+		if (LastLook == stop)
 		{
 			// done looking
 			return false;
 		}
 
-		P = &players[lastlook];
+		P = &players[LastLook];
 
-		if (!P->active)
+		if (!P->bActive)
 			continue;
 
 		if (c++ == 2)
@@ -306,10 +305,10 @@ boolean Actor::LookForPlayers(boolean allaround)
 			return false;
 		}
 
-		if (!P->spawned || !P->mo)
+		if (!P->bSpawned || !P->mo)
 			continue;	//  not spawned yet
 
-		if (P->health <= 0)
+		if (P->Health <= 0)
 			continue;	// dead
 
 		if (!P_CheckSight(self, *P->mo))
@@ -352,16 +351,16 @@ boolean Actor::StepMove(void)
 	line_t *ld;
 	boolean good;
 
-	if (movedir == DI_NODIR)
+	if (MoveDir == DI_NODIR)
 		return false;
 
 #ifdef RANGECHECK
-	if (movedir >= 8 || movedir < 0)
-		Error("Weird movedir!");
+	if (MoveDir >= 8 || MoveDir < 0)
+		Error("Weird MoveDir!");
 #endif
 
-	tryx = Origin.x + StepSpeed * xspeed[movedir];
-	tryy = Origin.y + StepSpeed * yspeed[movedir];
+	tryx = Origin.x + StepSpeed * xspeed[MoveDir];
+	tryy = Origin.y + StepSpeed * yspeed[MoveDir];
 
 	if (!P_TryMove(this, tryx, tryy))
 	{
@@ -378,14 +377,14 @@ boolean Actor::StepMove(void)
 			return true;
 		}
 
-		if (!numspechit)
+		if (!tmtrace.NumSpecHit)
 			return false;
 
-		movedir = DI_NODIR;
+		MoveDir = DI_NODIR;
 		good = false;
-		while (numspechit--)
+		while (tmtrace.NumSpecHit--)
 		{
-			ld = spechit[numspechit];
+			ld = tmtrace.SpecHit[tmtrace.NumSpecHit];
 			// if the special is not a door
 			// that can be opened,
 			// return false
@@ -426,7 +425,7 @@ boolean Actor::TryWalk(void)
 		return false;
 	}
 
-	movecount = P_Random() & 15;
+	MoveCount = P_Random() & 15;
 	return true;
 }
 
@@ -453,7 +452,7 @@ void Actor::NewChaseDir(void)
 		Error("P_NewChaseDir: called with no target");
 	}
 
-	olddir = movedir;
+	olddir = MoveDir;
 	turnaround = opposite[olddir];
 
 	deltax = target->Origin.x - Origin.x;
@@ -476,8 +475,8 @@ void Actor::NewChaseDir(void)
 	// try direct route
 	if (d[1] != DI_NODIR && d[2] != DI_NODIR)
 	{
-		movedir = diags[((deltay < 0.0) << 1) + (deltax > 0.0)];
-		if (movedir != turnaround && TryWalk())
+		MoveDir = diags[((deltay < 0.0) << 1) + (deltax > 0.0)];
+		if (MoveDir != turnaround && TryWalk())
 			return;
 	}
 
@@ -496,7 +495,7 @@ void Actor::NewChaseDir(void)
 
 	if (d[1] != DI_NODIR)
 	{
-		movedir = d[1];
+		MoveDir = d[1];
 		if (TryWalk())
 		{
 			// either moved forward or attacked
@@ -506,7 +505,7 @@ void Actor::NewChaseDir(void)
 
 	if (d[2] != DI_NODIR)
 	{
-		movedir = d[2];
+		MoveDir = d[2];
 
 		if (TryWalk())
 			return;
@@ -516,7 +515,7 @@ void Actor::NewChaseDir(void)
 	// so pick another direction.
 	if (olddir != DI_NODIR)
 	{
-		movedir = olddir;
+		MoveDir = olddir;
 
 		if (TryWalk())
 			return;
@@ -529,7 +528,7 @@ void Actor::NewChaseDir(void)
 		{
 			if (tdir != turnaround)
 			{
-				movedir = tdir;
+				MoveDir = tdir;
 
 				if (TryWalk())
 					return;
@@ -542,7 +541,7 @@ void Actor::NewChaseDir(void)
 		{
 			if (tdir != turnaround)
 			{
-				movedir = tdir;
+				MoveDir = tdir;
 
 				if (TryWalk())
 					return;
@@ -552,17 +551,20 @@ void Actor::NewChaseDir(void)
 
 	if (turnaround != DI_NODIR)
 	{
-		movedir = turnaround;
+		MoveDir = turnaround;
 		if (TryWalk())
 			return;
 	}
 
-	movedir = DI_NODIR;	// can not move
+	MoveDir = DI_NODIR;	// can not move
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/22 18:00:05  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.13  2002/02/14 19:20:57  dj_jl
 //  Renamed Entity properties to new naming style
 //

@@ -72,6 +72,20 @@ float MaceSpot_y[MAX_MACE_SPOTS];
 //
 //****************************************************************************
 
+//==========================================================================
+//
+//	SetWeapon
+//
+//==========================================================================
+
+void SetWeapon(player_t *player, int NewWeapon)
+{
+	player->ReadyWeapon = NewWeapon;
+	player->PendingWeapon = wp_nochange;
+	weaponinfo[NewWeapon] (player);
+	player->PSpriteSY = PSpriteSY[NewWeapon];
+}
+
 //===========================================================================
 //
 //  OpenWeapons
@@ -156,44 +170,7 @@ void CloseWeapons(void)
 
 void SetPsprite(player_t * player, int position, int stnum)
 {
-	ViewEntity e;
-	state_t *state;
-
-	e = player->ViewEnts[position];
-	do
-	{
-		if (!stnum)
-		{
-			// Object removed itself.
-			e.statenum = 0;
-			break;
-		}
-		state = &states[stnum];
-		e.time = state->time;	// could be 0
-		e.sprite = state->sprite;
-		e.frame = state->frame;
-		e.model_index = state->model_index;
-		e.alias_frame = state->model_frame;
-		e.statenum = state->statenum;
-		e.nextstate = state->nextstate;
-		if (state->misc1)
-		{
-			// Set coordinates.
-			e.sx = state->misc1;
-			e.sy = state->misc2;
-		}
-		if (state->function)
-		{
-			// Call action routine.
-			state->function(e);
-			if (!e.statenum)
-			{
-				break;
-			}
-		}
-		stnum = e.nextstate;
-	}
-	while (!e.time);	// An initial state of 0 could cycle through.
+	player->ViewEnts[position].SetState(stnum);
 }
 
 //===========================================================================
@@ -206,21 +183,19 @@ void SetPsprite(player_t * player, int position, int stnum)
 
 void BringUpWeapon(player_t * player)
 {
-	player->pspriteSY = PSpriteSY[player->readyweapon];
-	weaponinfo[player->readyweapon] (player);
-	if (player->readyweapon == wp_gauntlets)
+	SetWeapon(player, player->ReadyWeapon);
+	if (player->ReadyWeapon == wp_gauntlets)
 	{
-		StartSoundName(*player->mo, 'GauntletActive', CHAN_WEAPON);
+		player->mo->PlaySound('GauntletActive', CHAN_WEAPON);
 	}
-	player->pendingweapon = wp_nochange;
-	player->ViewEnts[ps_weapon].sy = WEAPONBOTTOM;
-	if (player->powers[pw_weaponlevel2])
+	player->ViewEnts[ps_weapon].SY = WEAPONBOTTOM;
+	if (player->Powers[pw_weaponlevel2])
 	{
-		SetPsprite(player, ps_weapon, player->w2_upstate);
+		SetPsprite(player, ps_weapon, player->w2_UpState);
 	}
 	else
 	{
-		SetPsprite(player, ps_weapon, player->w_upstate);
+		SetPsprite(player, ps_weapon, player->w_UpState);
 	}
 }
 
@@ -234,13 +209,13 @@ void BringUpWeapon(player_t * player)
 
 void DropWeapon(player_t * player)
 {
-	if (player->powers[pw_weaponlevel2])
+	if (player->Powers[pw_weaponlevel2])
 	{
-		SetPsprite(player, ps_weapon, player->w2_downstate);
+		SetPsprite(player, ps_weapon, player->w2_DownState);
 	}
 	else
 	{
-		SetPsprite(player, ps_weapon, player->w_downstate);
+		SetPsprite(player, ps_weapon, player->w_DownState);
 	}
 }
 
@@ -259,7 +234,7 @@ void SetupPsprites(player_t * player)
 	// Remove all  ViewEnts
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
-		player->ViewEnts[i].statenum = 0;
+		player->ViewEnts[i].StateNum = 0;
 	}
 	// Spawn the ready weapon
 	BringUpWeapon(player);
@@ -281,22 +256,22 @@ void MovePsprites(player_t * player)
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
 		e = player->ViewEnts[i];
-		if (e.statenum)	// a null state means not active
+		if (e.StateNum)	// a null state means not active
 		{
 			// drop tic count and possibly change state
-			if (e.time != -1.0)	// a -1 tic count never changes
+			if (e.StateTime != -1.0)	// a -1 tic count never changes
 			{
-				e.time -= frametime;
-				if (e.time <= 0.0)
+				e.StateTime -= frametime;
+				if (e.StateTime <= 0.0)
 				{
-					e.time = 0.0;
-					SetPsprite(player, i, e.nextstate);
+					e.StateTime = 0.0;
+					SetPsprite(player, i, e.NextState);
 				}
 			}
 		}
 	}
-	player->ViewEnts[ps_flash].sx = player->ViewEnts[ps_weapon].sx;
-	player->ViewEnts[ps_flash].sy = player->ViewEnts[ps_weapon].sy;
+	player->ViewEnts[ps_flash].SX = player->ViewEnts[ps_weapon].SX;
+	player->ViewEnts[ps_flash].SY = player->ViewEnts[ps_weapon].SY;
 }
 
 //===========================================================================
@@ -314,8 +289,8 @@ boolean CheckAmmo(player_t * player)
 	int *ammoUse;
 	int count;
 
-	ammo = player->w_ammo;
-	if (player->powers[pw_weaponlevel2] && !deathmatch)
+	ammo = player->w_Ammo;
+	if (player->Powers[pw_weaponlevel2] && !deathmatch)
 	{
 		ammoUse = &WeaponAmmoUsePL2[0];
 	}
@@ -323,60 +298,60 @@ boolean CheckAmmo(player_t * player)
 	{
 		ammoUse = &WeaponAmmoUsePL1[0];
 	}
-	count = ammoUse[player->readyweapon];
-	if (ammo == am_noammo || player->ammo[ammo] >= count)
+	count = ammoUse[player->ReadyWeapon];
+	if (ammo == am_noammo || player->Ammo[ammo] >= count)
 	{
 		return true;
 	}
 	// out of ammo, pick a weapon to change to
 	do
 	{
-		if (player->weaponowned[wp_skullrod]
-			&& player->ammo[am_skullrod] > ammoUse[wp_skullrod])
+		if (player->WeaponOwned[wp_skullrod]
+			&& player->Ammo[am_skullrod] > ammoUse[wp_skullrod])
 		{
-			player->pendingweapon = wp_skullrod;
+			player->PendingWeapon = wp_skullrod;
 		}
-		else if (player->weaponowned[wp_blaster]
-			&& player->ammo[am_blaster] > ammoUse[wp_blaster])
+		else if (player->WeaponOwned[wp_blaster]
+			&& player->Ammo[am_blaster] > ammoUse[wp_blaster])
 		{
-			player->pendingweapon = wp_blaster;
+			player->PendingWeapon = wp_blaster;
 		}
-		else if (player->weaponowned[wp_crossbow]
-			&& player->ammo[am_crossbow] > ammoUse[wp_crossbow])
+		else if (player->WeaponOwned[wp_crossbow]
+			&& player->Ammo[am_crossbow] > ammoUse[wp_crossbow])
 		{
-			player->pendingweapon = wp_crossbow;
+			player->PendingWeapon = wp_crossbow;
 		}
-		else if (player->weaponowned[wp_mace]
-			&& player->ammo[am_mace] > ammoUse[wp_mace])
+		else if (player->WeaponOwned[wp_mace]
+			&& player->Ammo[am_mace] > ammoUse[wp_mace])
 		{
-			player->pendingweapon = wp_mace;
+			player->PendingWeapon = wp_mace;
 		}
-		else if (player->ammo[am_goldwand] > ammoUse[wp_goldwand])
+		else if (player->Ammo[am_goldwand] > ammoUse[wp_goldwand])
 		{
-			player->pendingweapon = wp_goldwand;
+			player->PendingWeapon = wp_goldwand;
 		}
-		else if (player->weaponowned[wp_gauntlets])
+		else if (player->WeaponOwned[wp_gauntlets])
 		{
-			player->pendingweapon = wp_gauntlets;
+			player->PendingWeapon = wp_gauntlets;
 		}
-		else if (player->weaponowned[wp_phoenixrod]
-			&& player->ammo[am_phoenixrod] > ammoUse[wp_phoenixrod])
+		else if (player->WeaponOwned[wp_phoenixrod]
+			&& player->Ammo[am_phoenixrod] > ammoUse[wp_phoenixrod])
 		{
-			player->pendingweapon = wp_phoenixrod;
+			player->PendingWeapon = wp_phoenixrod;
 		}
 		else
 		{
-			player->pendingweapon = wp_staff;
+			player->PendingWeapon = wp_staff;
 		}
 	}
-	while (player->pendingweapon == wp_nochange);
-	if (player->powers[pw_weaponlevel2])
+	while (player->PendingWeapon == wp_nochange);
+	if (player->Powers[pw_weaponlevel2])
 	{
-		SetPsprite(player, ps_weapon, player->w2_downstate);
+		SetPsprite(player, ps_weapon, player->w2_DownState);
 	}
 	else
 	{
-		SetPsprite(player, ps_weapon, player->w_downstate);
+		SetPsprite(player, ps_weapon, player->w_DownState);
 	}
 	return false;
 }
@@ -431,22 +406,22 @@ void FireWeapon(player_t * player)
 		return;
 	}
 	player->mo->SetState(S_PLAY_ATK2);
-	if (player->powers[pw_weaponlevel2])
+	if (player->Powers[pw_weaponlevel2])
 	{
-		attackState = player->refire ? player->w2_holdatkstate
-			: player->w2_atkstate;
+		attackState = player->Refire ? player->w2_HoldAttackState
+			: player->w2_AttackState;
 	}
 	else
 	{
-		attackState = player->refire ? player->w_holdatkstate
-			: player->w_atkstate;
+		attackState = player->Refire ? player->w_HoldAttackState
+			: player->w_AttackState;
 	}
 	SetPsprite(player, ps_weapon, attackState);
 	P_NoiseAlert(player->mo, player->mo);
-	if (player->readyweapon == wp_gauntlets && !player->refire)
+	if (player->ReadyWeapon == wp_gauntlets && !player->Refire)
 	{
 		// Play the sound for the initial gauntlet attack
-		StartSoundName(*player->mo, 'GauntletUse', CHAN_WEAPON);
+		player->mo->PlaySound('GauntletUse', CHAN_WEAPON);
 	}
 }
 
@@ -458,11 +433,8 @@ void FireWeapon(player_t * player)
 
 void ActivateBeak(player_t * player)
 {
-	player->pendingweapon = wp_nochange;
-	player->readyweapon = wp_beak;
-	weaponinfo[wp_beak] (player);
-	player->pspriteSY = PSpriteSY[player->readyweapon];
-	player->ViewEnts[ps_weapon].sy = WEAPONTOP;
+	SetWeapon(player, wp_beak);
+	player->ViewEnts[ps_weapon].SY = WEAPONTOP;
 	SetPsprite(player, ps_weapon, S_BEAKREADY);
 }
 
@@ -478,12 +450,9 @@ void PostChickenWeapon(player_t * player, int weapon)
 	{	// Should never happen
 		weapon = wp_staff;
 	}
-	player->pendingweapon = wp_nochange;
-	player->readyweapon = weapon;
-	weaponinfo[weapon] (player);
-	player->pspriteSY = PSpriteSY[player->readyweapon];
-	player->ViewEnts[ps_weapon].sy = WEAPONBOTTOM;
-	SetPsprite(player, ps_weapon, player->w_upstate);
+	SetWeapon(player, weapon);
+	player->ViewEnts[ps_weapon].SY = WEAPONBOTTOM;
+	SetPsprite(player, ps_weapon, player->w_UpState);
 }
 
 //===========================================================================
@@ -494,7 +463,7 @@ void PostChickenWeapon(player_t * player, int weapon)
 
 void UpdateBeak(player_t * player, ViewEntity e)
 {
-	e.sy = WEAPONTOP + itof(player->chickenPeck) / 2.0;
+	e.SY = WEAPONTOP + itof(player->ChickenPeck) / 2.0;
 }
 
 //===========================================================================
@@ -505,18 +474,18 @@ void UpdateBeak(player_t * player, ViewEntity e)
 
 void WeaponLevel2Fade(player_t * player)
 {
-	if ((player->readyweapon == wp_phoenixrod) &&
-		(player->ViewEnts[ps_weapon].statenum != S_PHOENIXREADY) &&
-		(player->ViewEnts[ps_weapon].statenum != S_PHOENIXUP))
+	if ((player->ReadyWeapon == wp_phoenixrod) &&
+		(player->ViewEnts[ps_weapon].StateNum != S_PHOENIXREADY) &&
+		(player->ViewEnts[ps_weapon].StateNum != S_PHOENIXUP))
 	{
 		SetPsprite(player, ps_weapon, S_PHOENIXREADY);
-		player->ammo[am_phoenixrod] -= USE_PHRD_AMMO_2;
-		player->refire = 0;
+		player->Ammo[am_phoenixrod] -= USE_PHRD_AMMO_2;
+		player->Refire = 0;
 	}
-	else if ((player->readyweapon == wp_gauntlets)
-		|| (player->readyweapon == wp_staff))
+	else if ((player->ReadyWeapon == wp_gauntlets)
+		|| (player->ReadyWeapon == wp_staff))
 	{
-		player->pendingweapon = player->readyweapon;
+		player->PendingWeapon = player->ReadyWeapon;
 	}
 }
 
@@ -538,62 +507,62 @@ void Weapon::A_WeaponReady(void)
 {
 	float angle;
 
-	if (player->chickenTics)
+	if (Player->ChickenTics)
 	{
 		// Change to the chicken beak
-		ActivateBeak(player);
+		ActivateBeak(Player);
 		return;
 	}
 	// Change player from attack state
-	if (player->mo->StateNum == S_PLAY_ATK1 ||
-		player->mo->StateNum == S_PLAY_ATK2)
+	if (Player->mo->StateNum == S_PLAY_ATK1 ||
+		Player->mo->StateNum == S_PLAY_ATK2)
 	{
-		player->mo->SetState(S_PLAY);
+		Player->mo->SetState(S_PLAY);
 	}
 	// Check for staff PL2 active sound
-	if ((player->readyweapon == wp_staff) &&
-		(statenum == S_STAFFREADY2_1) && P_Random() < 128)
+	if ((Player->ReadyWeapon == wp_staff) &&
+		(StateNum == S_STAFFREADY2_1) && P_Random() < 128)
 	{
-		StartSoundName(*player->mo, 'StaffActive', CHAN_WEAPON);
+		Player->mo->PlaySound('StaffActive', CHAN_WEAPON);
 	}
 	// Put the weapon away if the player has a pending weapon or has
 	// died.
-	if (player->pendingweapon != wp_nochange || !player->health)
+	if (Player->PendingWeapon != wp_nochange || !Player->Health)
 	{
-		if (player->powers[pw_weaponlevel2])
+		if (Player->Powers[pw_weaponlevel2])
 		{
-			SetPsprite(player, ps_weapon, player->w2_downstate);
+			SetPsprite(Player, ps_weapon, Player->w2_DownState);
 		}
 		else
 		{
-			SetPsprite(player, ps_weapon, player->w_downstate);
+			SetPsprite(Player, ps_weapon, Player->w_DownState);
 		}
 		return;
 	}
 
 	// Check for fire.  The phoenix rod does not auto fire.
-	if (player->buttons & BT_ATTACK)
+	if (Player->Buttons & BT_ATTACK)
 	{
-		if (!player->attackdown || (player->readyweapon != wp_phoenixrod))
+		if (!Player->bAttackDown || (Player->ReadyWeapon != wp_phoenixrod))
 		{
-			player->attackdown = true;
-			FireWeapon(player);
+			Player->bAttackDown = true;
+			FireWeapon(Player);
 			return;
 		}
 	}
 	else
 	{
-		player->attackdown = false;
+		Player->bAttackDown = false;
 	}
 
 	// Bob the weapon based on movement speed.
 	angle = AngleMod360(180.0 * level->time);
-	sx = 1.0 + player->bob * cos(angle);
+	SX = 1.0 + Player->Bob * cos(angle);
 	if (angle >= 180.0)
 	{
 		angle -= 180.0;
 	}
-	sy = WEAPONTOP + player->bob * sin(angle);
+	SY = WEAPONTOP + Player->Bob * sin(angle);
 }
 
 //===========================================================================
@@ -604,28 +573,28 @@ void Weapon::A_WeaponReady(void)
 
 void Weapon::A_BeakReady(void)
 {
-	if (player->buttons & BT_ATTACK)
+	if (Player->Buttons & BT_ATTACK)
 	{
 		// Chicken beak attack
-		player->attackdown = true;
-		player->mo->SetState(S_CHICPLAY_ATK1);
-		if (player->powers[pw_weaponlevel2])
+		Player->bAttackDown = true;
+		Player->mo->SetState(S_CHICPLAY_ATK1);
+		if (Player->Powers[pw_weaponlevel2])
 		{
-			SetPsprite(player, ps_weapon, S_BEAKATK2_1);
+			SetPsprite(Player, ps_weapon, S_BEAKATK2_1);
 		}
 		else
 		{
-			SetPsprite(player, ps_weapon, S_BEAKATK1_1);
+			SetPsprite(Player, ps_weapon, S_BEAKATK1_1);
 		}
-		P_NoiseAlert(player->mo, player->mo);
+		P_NoiseAlert(Player->mo, Player->mo);
 	}
 	else
 	{
-		if (player->mo->StateNum == S_CHICPLAY_ATK1)
+		if (Player->mo->StateNum == S_CHICPLAY_ATK1)
 		{	// Take out of attack state
-			player->mo->SetState(S_CHICPLAY);
+			Player->mo->SetState(S_CHICPLAY);
 		}
-		player->attackdown = false;
+		Player->bAttackDown = false;
 	}
 }
 
@@ -637,33 +606,33 @@ void Weapon::A_BeakReady(void)
 
 void Weapon::A_Lower(void)
 {
-	if (player->chickenTics)
+	if (Player->ChickenTics)
 	{
-		sy = WEAPONBOTTOM;
+		SY = WEAPONBOTTOM;
 	}
 	else
 	{
-		sy += LOWERSPEED;
+		SY += LOWERSPEED;
 	}
-	if (sy < WEAPONBOTTOM)
+	if (SY < WEAPONBOTTOM)
 	{
 		// Not lowered all the way yet
 		return;
 	}
-	if (player->playerstate == PST_DEAD)
+	if (Player->PlayerState == PST_DEAD)
 	{
 		// Player is dead, so don't bring up a pending weapon
-		sy = WEAPONBOTTOM;
+		SY = WEAPONBOTTOM;
 		return;
 	}
-	if (!player->health)
+	if (!Player->Health)
 	{
 		// Player is dead, so keep the weapon off screen
-		SetPsprite(player, ps_weapon, S_NULL);
+		SetPsprite(Player, ps_weapon, S_NULL);
 		return;
 	}
-	player->readyweapon = player->pendingweapon;
-	BringUpWeapon(player);
+	Player->ReadyWeapon = Player->PendingWeapon;
+	BringUpWeapon(Player);
 }
 
 //===========================================================================
@@ -674,20 +643,20 @@ void Weapon::A_Lower(void)
 
 void Weapon::A_Raise(void)
 {
-	sy -= RAISESPEED;
-	if (sy > WEAPONTOP)
+	SY -= RAISESPEED;
+	if (SY > WEAPONTOP)
 	{
 		// Not raised all the way yet
 		return;
 	}
-	sy = WEAPONTOP;
-	if (player->powers[pw_weaponlevel2])
+	SY = WEAPONTOP;
+	if (Player->Powers[pw_weaponlevel2])
 	{
-		SetPsprite(player, ps_weapon, player->w2_readystate);
+		SetPsprite(Player, ps_weapon, Player->w2_ReadyState);
 	}
 	else
 	{
-		SetPsprite(player, ps_weapon, player->w_readystate);
+		SetPsprite(Player, ps_weapon, Player->w_ReadyState);
 	}
 }
 
@@ -699,8 +668,8 @@ void Weapon::A_Raise(void)
 
 void Weapon::A_BeakRaise(void)
 {
-	sy = WEAPONTOP;
-	SetPsprite(player, ps_weapon, player->w_readystate);
+	SY = WEAPONTOP;
+	SetPsprite(Player, ps_weapon, Player->w_ReadyState);
 }
 
 //===========================================================================
@@ -713,16 +682,16 @@ void Weapon::A_BeakRaise(void)
 
 void Weapon::A_ReFire(void)
 {
-	if ((player->buttons & BT_ATTACK)
-		&& player->pendingweapon == wp_nochange && player->health)
+	if ((Player->Buttons & BT_ATTACK)
+		&& Player->PendingWeapon == wp_nochange && Player->Health)
 	{
-		player->refire++;
-		FireWeapon(player);
+		Player->Refire++;
+		FireWeapon(Player);
 	}
 	else
 	{
-		player->refire = 0;
-		CheckAmmo(player);
+		Player->Refire = 0;
+		CheckAmmo(Player);
 	}
 }
 
@@ -734,7 +703,7 @@ void Weapon::A_ReFire(void)
 
 void Weapon::A_Light0(void)
 {
-	player->extralight = 0;
+	Player->ExtraLight = 0;
 }
 
 //****************************************************************************
@@ -756,20 +725,19 @@ void Weapon::A_StaffAttackPL1(void)
 	TVec vforward;
 
 	damage = 5 + (P_Random() & 15);
-	avcpy(player->mo->Angles, angles);
+	avcpy(Player->mo->Angles, angles);
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	AimLineAttack(player->mo, &angles, MELEERANGE);
+	AimLineAttack(Player->mo, &angles, MELEERANGE);
 	AngleVector(&angles, &vforward);
 	PuffType = StaffPuff;
-	LineAttack(player->mo, &vforward, MELEERANGE, damage);
+	LineAttack(Player->mo, &vforward, MELEERANGE, damage);
 	if (linetarget)
 	{
-		//StartSoundName(player->mo, sfx_stfhit);
 		// turn to face target
-		player->mo->Angles.yaw =
-			atan2(linetarget->Origin.y - player->mo->Origin.y,
-			linetarget->Origin.x - player->mo->Origin.x);
+		Player->mo->Angles.yaw =
+			atan2(linetarget->Origin.y - Player->mo->Origin.y,
+			linetarget->Origin.x - Player->mo->Origin.x);
 	}
 }
 
@@ -788,21 +756,20 @@ void Weapon::A_StaffAttackPL2(void)
 	// P_inter.c:DamageMobj() handles target momentums
 	damage = 18 + (P_Random() & 63);
 
-	avcpy(player->mo->Angles, angles);
+	avcpy(Player->mo->Angles, angles);
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	AimLineAttack(player->mo, &angles, MELEERANGE);
+	AimLineAttack(Player->mo, &angles, MELEERANGE);
 	AngleVector(&angles, &vforward);
 	PuffType = StaffPuff2;
-	LineAttack(player->mo, &vforward, MELEERANGE, damage);
+	LineAttack(Player->mo, &vforward, MELEERANGE, damage);
 	if (linetarget)
 	{
-		//StartSoundName(player->mo, sfx_stfpow);
 		// turn to face target
-		player->mo->Angles.yaw =
-			atan2(linetarget->Origin.y - player->mo->Origin.y,
-			linetarget->Origin.x - player->mo->Origin.x);
-		player->fixangle = 1;
+		Player->mo->Angles.yaw =
+			atan2(linetarget->Origin.y - Player->mo->Origin.y,
+			linetarget->Origin.x - Player->mo->Origin.x);
+		Player->bFixAngle = true;
 	}
 }
 
@@ -822,10 +789,10 @@ void Weapon::A_GauntletAttack(void)
 	TAVec angles;
 	TVec vforward;
 
-	sx = Random() * 4.0 - 2.0;
-	sy = WEAPONTOP + Random() * 4.0;
-	angles = player->mo->Angles;
-	if (player->powers[pw_weaponlevel2])
+	SX = Random() * 4.0 - 2.0;
+	SY = WEAPONTOP + Random() * 4.0;
+	angles = Player->mo->Angles;
+	if (Player->Powers[pw_weaponlevel2])
 	{
 		damage = HITDICE(2);
 		dist = 4.0 * MELEERANGE;
@@ -841,58 +808,58 @@ void Weapon::A_GauntletAttack(void)
 			(Random() - Random()) * 45.0 / 8.0);
 		PuffType = GauntletPuff1;
 	}
-	AimLineAttack(player->mo, &angles, dist);
+	AimLineAttack(Player->mo, &angles, dist);
 	AngleVector(&angles, &vforward);
-	LineAttack(player->mo, &vforward, dist, damage);
+	LineAttack(Player->mo, &vforward, dist, damage);
 	if (!linetarget)
 	{
 		if (P_Random() > 64)
 		{
-			player->extralight = !player->extralight;
+			Player->ExtraLight = !Player->ExtraLight;
 		}
-		StartSoundName(*player->mo, 'GauntletFull', CHAN_WEAPON);
+		Player->mo->PlaySound('GauntletFull', CHAN_WEAPON);
 		return;
 	}
 	randVal = P_Random();
 	if (randVal < 64)
 	{
-		player->extralight = 0;
+		Player->ExtraLight = 0;
 	}
 	else if (randVal < 160)
 	{
-		player->extralight = 1;
+		Player->ExtraLight = 1;
 	}
 	else
 	{
-		player->extralight = 2;
+		Player->ExtraLight = 2;
 	}
-	if (player->powers[pw_weaponlevel2])
+	if (Player->Powers[pw_weaponlevel2])
 	{
-		player->mo->GiveBody(damage >> 1);
-		StartSoundName(*player->mo, 'GauntletHit2', CHAN_WEAPON);
+		Player->mo->GiveBody(damage >> 1);
+		Player->mo->PlaySound('GauntletHit2', CHAN_WEAPON);
 	}
 	else
 	{
-		StartSoundName(*player->mo, 'GauntletHit', CHAN_WEAPON);
+		Player->mo->PlaySound('GauntletHit', CHAN_WEAPON);
 	}
 	// turn to face target
-	angle = atan2(linetarget->Origin.y - player->mo->Origin.y,
-		linetarget->Origin.x - player->mo->Origin.x);
-	if (AngleMod360(angle - player->mo->Angles.yaw) > 180.0)
+	angle = atan2(linetarget->Origin.y - Player->mo->Origin.y,
+		linetarget->Origin.x - Player->mo->Origin.x);
+	if (AngleMod360(angle - Player->mo->Angles.yaw) > 180.0)
 	{
-		if (AngleMod360(angle - player->mo->Angles.yaw) < 360.0 - 90.0 / 20.0)
-			player->mo->Angles.yaw = AngleMod360(angle + 90.0 / 21.0);
+		if (AngleMod360(angle - Player->mo->Angles.yaw) < 360.0 - 90.0 / 20.0)
+			Player->mo->Angles.yaw = AngleMod360(angle + 90.0 / 21.0);
 		else
-			player->mo->Angles.yaw = AngleMod360(player->mo->Angles.yaw - 90.0 / 20.0);
+			Player->mo->Angles.yaw = AngleMod360(Player->mo->Angles.yaw - 90.0 / 20.0);
 	}
 	else
 	{
-		if (AngleMod360(angle - player->mo->Angles.yaw) > 90.0 / 20.0)
-			player->mo->Angles.yaw = AngleMod360(angle - 90.0 / 21.0);
+		if (AngleMod360(angle - Player->mo->Angles.yaw) > 90.0 / 20.0)
+			Player->mo->Angles.yaw = AngleMod360(angle - 90.0 / 21.0);
 		else
-			player->mo->Angles.yaw = AngleMod360(player->mo->Angles.yaw + 90.0 / 20.0);
+			Player->mo->Angles.yaw = AngleMod360(Player->mo->Angles.yaw + 90.0 / 20.0);
 	}
-	player->mo->bJustAttacked = true;
+	Player->mo->bJustAttacked = true;
 }
 
 //===========================================================================
@@ -908,11 +875,11 @@ void Weapon::A_FireGoldWandPL1(void)
 	TAVec angles;
 	TVec vforward;
 
-	mo = player->mo;
-	player->ammo[am_goldwand] -= USE_GWND_AMMO_1;
+	mo = Player->mo;
+	Player->Ammo[am_goldwand] -= USE_GWND_AMMO_1;
 	damage = 7 + (P_Random() & 7);
 	BulletSlope(mo, &angles);
-	if (player->refire)
+	if (Player->Refire)
 	{
 		angles.yaw = AngleMod360(angles.yaw +
 			(Random() - Random()) * 45.0 / 8.0);
@@ -920,7 +887,7 @@ void Weapon::A_FireGoldWandPL1(void)
 	AngleVector(&angles, &vforward);
 	PuffType = GoldWandPuff1;
 	LineAttack(mo, &vforward, MISSILERANGE, damage);
-	StartSoundName(*player->mo, 'GoldWandFire', CHAN_WEAPON);
+	Player->mo->PlaySound('GoldWandFire', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -938,8 +905,8 @@ void Weapon::A_FireGoldWandPL2(void)
 	TAVec angles;
 	TVec vforward;
 
-	mo = player->mo;
-	player->ammo[am_goldwand] -=
+	mo = Player->mo;
+	Player->Ammo[am_goldwand] -=
 		deathmatch ? USE_GWND_AMMO_1 : USE_GWND_AMMO_2;
 	PuffType = GoldWandPuff2;
 	BulletSlope(mo, &angles);
@@ -955,7 +922,7 @@ void Weapon::A_FireGoldWandPL2(void)
 		LineAttack(mo, &vforward, MISSILERANGE, damage);
 		angles.yaw = AngleMod360(angles.yaw + (((45.0 / 8.0) * 2.0) / 4.0));
 	}
-	StartSoundName(*player->mo, 'GoldWandFire', CHAN_WEAPON);
+	Player->mo->PlaySound('GoldWandFire', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -968,8 +935,8 @@ void Weapon::A_FireCrossbowPL1(void)
 {
 	mobj_t *pmo;
 
-	pmo = player->mo;
-	player->ammo[am_crossbow] -= USE_CBOW_AMMO_1;
+	pmo = Player->mo;
+	Player->Ammo[am_crossbow] -= USE_CBOW_AMMO_1;
 	SpawnPlayerMissile(pmo, CrossbowFX1);
 	SpawnPlayerMissileAngle(pmo, CrossbowFX3,
 		AngleMod360(pmo->Angles.yaw - (45.0 / 10.0)));
@@ -987,8 +954,8 @@ void Weapon::A_FireCrossbowPL2(void)
 {
 	mobj_t *pmo;
 
-	pmo = player->mo;
-	player->ammo[am_crossbow] -=
+	pmo = Player->mo;
+	Player->Ammo[am_crossbow] -=
 		deathmatch ? USE_CBOW_AMMO_1 : USE_CBOW_AMMO_2;
 	SpawnPlayerMissile(pmo, CrossbowFX2);
 	SpawnPlayerMissileAngle(pmo, CrossbowFX2,
@@ -1015,12 +982,12 @@ void Weapon::A_FireBlasterPL1(void)
 	TAVec angles;
 	TVec vforward;
 
-	mo = player->mo;
-	StartSoundName(*mo, 'GoldWandFire', CHAN_WEAPON);
-	player->ammo[am_blaster] -= USE_BLSR_AMMO_1;
+	mo = Player->mo;
+	mo->PlaySound('GoldWandFire', CHAN_WEAPON);
+	Player->Ammo[am_blaster] -= USE_BLSR_AMMO_1;
 	BulletSlope(mo, &angles);
 	damage = HITDICE(4);
-	if (player->refire)
+	if (Player->Refire)
 	{
 		angles.yaw = AngleMod360(angles.yaw +
 			(Random() - Random()) * 45.0 / 8.0);
@@ -1028,7 +995,7 @@ void Weapon::A_FireBlasterPL1(void)
 	PuffType = BlasterPuff1;
 	AngleVector(&angles, &vforward);
 	LineAttack(mo, &vforward, MISSILERANGE, damage);
-	StartSoundName(*player->mo, 'BlasterFire', CHAN_WEAPON);
+	Player->mo->PlaySound('BlasterFire', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -1041,14 +1008,14 @@ void Weapon::A_FireBlasterPL2(void)
 {
 	mobj_t *mo;
 
-	player->ammo[am_blaster] -=
+	Player->Ammo[am_blaster] -=
 		deathmatch ? USE_BLSR_AMMO_1 : USE_BLSR_AMMO_2;
-	mo = SpawnPlayerMissile(player->mo, BlasterFX1);
+	mo = SpawnPlayerMissile(Player->mo, BlasterFX1);
 	if (mo)
 	{
-		mo->blaster = true;
+		mo->bBlaster = true;
 	}
-	StartSoundName(*player->mo, 'BlasterFire', CHAN_WEAPON);
+	Player->mo->PlaySound('BlasterFire', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -1061,12 +1028,12 @@ void Weapon::A_FireSkullRodPL1(void)
 {
 	mobj_t *mo;
 
-	if (player->ammo[am_skullrod] < USE_SKRD_AMMO_1)
+	if (Player->Ammo[am_skullrod] < USE_SKRD_AMMO_1)
 	{
 		return;
 	}
-	player->ammo[am_skullrod] -= USE_SKRD_AMMO_1;
-	mo = SpawnPlayerMissile(player->mo, HornRodMissile1);
+	Player->Ammo[am_skullrod] -= USE_SKRD_AMMO_1;
+	mo = SpawnPlayerMissile(Player->mo, HornRodMissile1);
 	// Randomize the first frame
 	if (mo && P_Random() > 128)
 	{
@@ -1086,27 +1053,27 @@ void Weapon::A_FireSkullRodPL1(void)
 
 void Weapon::A_FireSkullRodPL2(void)
 {
-	player->ammo[am_skullrod] -=
+	Player->Ammo[am_skullrod] -=
 		deathmatch ? USE_SKRD_AMMO_1 : USE_SKRD_AMMO_2;
-	SpawnPlayerMissile(player->mo, HornRodMissile2);
+	SpawnPlayerMissile(Player->mo, HornRodMissile2);
 	// Use MissileMobj instead of the return value from
 	// SpawnPlayerMissile because we need to give info to the mobj
 	// even if it exploded immediately.
 	if (netgame)
 	{
 		// Multi-player game
-		MissileMobj->special2 = P_GetPlayerNum(player);
+		MissileMobj->Special2 = P_GetPlayerNum(Player);
 	}
 	else
 	{
 		// Always use red missiles in single player games
-		MissileMobj->special2 = 2;
+		MissileMobj->Special2 = 2;
 	}
 	if (linetarget)
 	{
-		MissileMobj->specialmobj1 = linetarget;
+		MissileMobj->SpecialMobj1 = linetarget;
 	}
-	StartSoundName(*MissileMobj, 'SkullRodFire2', CHAN_WEAPON);
+	MissileMobj->PlaySound('SkullRodFire2', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -1119,10 +1086,10 @@ void Weapon::A_FirePhoenixPL1(void)
 {
 	TVec vforward;
 
-	player->ammo[am_phoenixrod] -= USE_PHRD_AMMO_1;
-	SpawnPlayerMissile(player->mo, PhoenixFX1);
-	AngleVector(&player->mo->Angles, &vforward);
-	player->mo->Velocity -= vforward * 140.0;
+	Player->Ammo[am_phoenixrod] -= USE_PHRD_AMMO_1;
+	SpawnPlayerMissile(Player->mo, PhoenixFX1);
+	AngleVector(&Player->mo->Angles, &vforward);
+	Player->mo->Velocity -= vforward * 140.0;
 }
 
 //===========================================================================
@@ -1133,7 +1100,7 @@ void Weapon::A_FirePhoenixPL1(void)
 
 void Weapon::A_InitPhoenixPL2(void)
 {
-	player->flamecount = ftoi(FLAME_THROWER_TIME * 35.0);
+	Player->FlameCount = ftoi(FLAME_THROWER_TIME * 35.0);
 }
 
 //===========================================================================
@@ -1151,17 +1118,17 @@ void Weapon::A_FirePhoenixPL2(void)
 	TVec dir;
 	float x, y, z;
 
-	if (--player->flamecount == 0)
+	if (--Player->FlameCount == 0)
 	{
 		// Out of flame
-		SetPsprite(player, ps_weapon, S_PHOENIXATK2_4);
-		player->refire = 0;
+		SetPsprite(Player, ps_weapon, S_PHOENIXATK2_4);
+		Player->Refire = 0;
 		return;
 	}
-	pmo = player->mo;
+	pmo = Player->mo;
 	x = pmo->Origin.x + (Random() - Random()) * 2.0;
 	y = pmo->Origin.y + (Random() - Random()) * 2.0;
-	z = pmo->Origin.z + 26.0 - sin(player->mo->Angles.pitch);
+	z = pmo->Origin.z + 26.0 - sin(Player->mo->Angles.pitch);
 	z -= pmo->FloorClip;
 	mo = P_SpawnMobj(x, y, z, PhoenixFX2);
 	mo->target = pmo;
@@ -1169,9 +1136,9 @@ void Weapon::A_FirePhoenixPL2(void)
 	mo->Angles.pitch = pmo->Angles.pitch;
 	AngleVector(&mo->Angles, &dir);
 	mo->Velocity = pmo->Velocity + mo->Speed * dir;
-	if (!player->refire || !(level->tictime % 38))
+	if (!Player->Refire || !(level->tictime % 38))
 	{
-		StartSoundName(*player->mo, 'PhoenixHit2', CHAN_WEAPON);
+		Player->mo->PlaySound('PhoenixHit2', CHAN_WEAPON);
 	}
 	CheckMissileSpawn(mo);
 }
@@ -1184,7 +1151,7 @@ void Weapon::A_FirePhoenixPL2(void)
 
 void Weapon::A_ShutdownPhoenixPL2(void)
 {
-	player->ammo[am_phoenixrod] -= USE_PHRD_AMMO_2;
+	Player->Ammo[am_phoenixrod] -= USE_PHRD_AMMO_2;
 }
 
 //===========================================================================
@@ -1200,11 +1167,11 @@ void A_FireMacePL1B(mobj_t * actor)
 	mobj_t *ball;
 	float angle;
 
-	if (player->ammo[am_mace] < USE_MACE_AMMO_1)
+	if (player->Ammo[am_mace] < USE_MACE_AMMO_1)
 	{
 		return;
 	}
-	player->ammo[am_mace] -= USE_MACE_AMMO_1;
+	player->Ammo[am_mace] -= USE_MACE_AMMO_1;
 	pmo = player->mo;
 	ball = P_SpawnMobj(pmo->Origin.x, pmo->Origin.y, pmo->Origin.z + 28.0
 		- pmo->FloorClip, MaceFX2);
@@ -1216,7 +1183,7 @@ void A_FireMacePL1B(mobj_t * actor)
 	ball->Origin.z += 173.0 * -tan(player->mo->Angles.pitch) / 16.0;
 	ball->Velocity.x = pmo->Velocity.x / 2.0 + ball->Speed * cos(angle);
 	ball->Velocity.y = pmo->Velocity.y / 2.0 + ball->Speed * sin(angle);
-	StartSoundName(*ball, 'MaceFire', CHAN_WEAPON);
+	ball->PlaySound('MaceFire', CHAN_WEAPON);
 	CheckMissileSpawn(ball);
 }
 
@@ -1232,21 +1199,21 @@ void Weapon::A_FireMacePL1(void)
 
 	if (P_Random() < 28)
 	{
-		A_FireMacePL1B(player->mo);
+		A_FireMacePL1B(Player->mo);
 		return;
 	}
-	if (player->ammo[am_mace] < USE_MACE_AMMO_1)
+	if (Player->Ammo[am_mace] < USE_MACE_AMMO_1)
 	{
 		return;
 	}
-	player->ammo[am_mace] -= USE_MACE_AMMO_1;
-	sx = Random() * 4.0 - 2.0;
-	sy = WEAPONTOP + Random() * 4.0;
-	ball = SpawnPlayerMissileAngle(player->mo, MaceFX1,
-		AngleMod360(player->mo->Angles.yaw + (Random() - 0.5) * 45.0 / 4.0));
+	Player->Ammo[am_mace] -= USE_MACE_AMMO_1;
+	SX = Random() * 4.0 - 2.0;
+	SY = WEAPONTOP + Random() * 4.0;
+	ball = SpawnPlayerMissileAngle(Player->mo, MaceFX1,
+		AngleMod360(Player->mo->Angles.yaw + (Random() - 0.5) * 45.0 / 4.0));
 	if (ball)
 	{
-		ball->special1 = 16;	// tics till dropoff
+		ball->Special1 = 16;	// tics till dropoff
 	}
 }
 
@@ -1260,20 +1227,20 @@ void Weapon::A_FireMacePL2(void)
 {
 	mobj_t *mo;
 
-	player->ammo[am_mace] -= deathmatch ? USE_MACE_AMMO_1 : USE_MACE_AMMO_2;
-	mo = SpawnPlayerMissile(player->mo, MaceFX4);
+	Player->Ammo[am_mace] -= deathmatch ? USE_MACE_AMMO_1 : USE_MACE_AMMO_2;
+	mo = SpawnPlayerMissile(Player->mo, MaceFX4);
 	if (mo)
 	{
-		mo->Velocity.x += player->mo->Velocity.x;
-		mo->Velocity.y += player->mo->Velocity.y;
+		mo->Velocity.x += Player->mo->Velocity.x;
+		mo->Velocity.y += Player->mo->Velocity.y;
 		mo->Velocity.z =
-			(2.0 + 173.0 * -tan(player->mo->Angles.pitch) / 32.0) * 35.0;
+			(2.0 + 173.0 * -tan(Player->mo->Angles.pitch) / 32.0) * 35.0;
 		if (linetarget)
 		{
-			mo->specialmobj1 = linetarget;
+			mo->SpecialMobj1 = linetarget;
 		}
 	}
-	StartSoundName(*player->mo, 'MaceFire', CHAN_WEAPON);
+	Player->mo->PlaySound('MaceFire', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -1287,24 +1254,36 @@ void Weapon::A_BeakAttackPL1(void)
 	int damage;
 	TAVec angles;
 	TVec vforward;
+	name SoundName;
 
 	damage = 1 + (P_Random() & 3);
-	avcpy(player->mo->Angles, angles);
-	AimLineAttack(player->mo, &angles, MELEERANGE);
+	avcpy(Player->mo->Angles, angles);
+	AimLineAttack(Player->mo, &angles, MELEERANGE);
 	PuffType = BeakPuff;
 	AngleVector(&angles, &vforward);
-	LineAttack(player->mo, &vforward, MELEERANGE, damage);
+	LineAttack(Player->mo, &vforward, MELEERANGE, damage);
 	if (linetarget)
 	{
-		player->mo->Angles.yaw =
-			atan2(linetarget->Origin.y - player->mo->Origin.y,
-			linetarget->Origin.x - player->mo->Origin.x);
-		player->fixangle = 1;
+		Player->mo->Angles.yaw =
+			atan2(linetarget->Origin.y - Player->mo->Origin.y,
+			linetarget->Origin.x - Player->mo->Origin.x);
+		Player->bFixAngle = true;
 	}
-	StartSound(*player->mo, GetSoundID('ChickenPeak1') + (P_Random() % 3),
-		CHAN_VOICE);
-	player->chickenPeck = 12;
-	time -= Random() * 0.25;
+	switch (P_Random() % 3)
+	{
+	case 0:
+		SoundName = 'ChickenPeak1';
+		break;
+	case 1:
+		SoundName = 'ChickenPeak2';
+		break;
+	case 2:
+		SoundName = 'ChickenPeak3';
+		break;
+	}
+	Player->mo->PlaySound(SoundName, CHAN_VOICE);
+	Player->ChickenPeck = 12;
+	StateTime -= Random() * 0.25;
 }
 
 //===========================================================================
@@ -1318,24 +1297,36 @@ void Weapon::A_BeakAttackPL2(void)
 	int damage;
 	TAVec angles;
 	TVec vforward;
+	name SoundName;
 
 	damage = HITDICE(4);
-	avcpy(player->mo->Angles, angles);
-	AimLineAttack(player->mo, &angles, MELEERANGE);
+	avcpy(Player->mo->Angles, angles);
+	AimLineAttack(Player->mo, &angles, MELEERANGE);
 	PuffType = BeakPuff;
 	AngleVector(&angles, &vforward);
-	LineAttack(player->mo, &vforward, MELEERANGE, damage);
+	LineAttack(Player->mo, &vforward, MELEERANGE, damage);
 	if (linetarget)
 	{
-		player->mo->Angles.yaw =
-			atan2(linetarget->Origin.y - player->mo->Origin.y,
-			linetarget->Origin.x - player->mo->Origin.x);
-		player->fixangle = 1;
+		Player->mo->Angles.yaw =
+			atan2(linetarget->Origin.y - Player->mo->Origin.y,
+			linetarget->Origin.x - Player->mo->Origin.x);
+		Player->bFixAngle = true;
 	}
-	StartSound(*player->mo, GetSoundID('ChickenPeak1') + (P_Random() % 3),
-		CHAN_VOICE);
-	player->chickenPeck = 12;
-	time -= Random() * 0.125;
+	switch (P_Random() % 3)
+	{
+	case 0:
+		SoundName = 'ChickenPeak1';
+		break;
+	case 1:
+		SoundName = 'ChickenPeak2';
+		break;
+	case 2:
+		SoundName = 'ChickenPeak3';
+		break;
+	}
+	Player->mo->PlaySound(SoundName, CHAN_VOICE);
+	Player->ChickenPeck = 12;
+	StateTime -= Random() * 0.125;
 }
 
 //****************************************************************************
@@ -1408,46 +1399,46 @@ void Actor::A_AddPlayerRain(void)
 	int playerNum;
 	player_t *player;
 
-	playerNum = netgame ? special2 : 0;
+	playerNum = netgame ? Special2 : 0;
 	player = &players[playerNum];
-	if (!player->active)
+	if (!player->bActive)
 	{
 		// Player left the game
 		return;
 	}
-	if (player->health <= 0)
+	if (player->Health <= 0)
 	{
 		// Player is dead
 		return;
 	}
-	if (player->rain1 && player->rain2)
+	if (player->Rain1 && player->Rain2)
 	{
 		// Terminate an active rain
-		if (player->rain1->Health < player->rain2->Health)
+		if (player->Rain1->Health < player->Rain2->Health)
 		{
-			if (player->rain1->Health > 16)
+			if (player->Rain1->Health > 16)
 			{
-				player->rain1->Health = 16;
+				player->Rain1->Health = 16;
 			}
-			player->rain1 = NULL;
+			player->Rain1 = NULL;
 		}
 		else
 		{
-			if (player->rain2->Health > 16)
+			if (player->Rain2->Health > 16)
 			{
-				player->rain2->Health = 16;
+				player->Rain2->Health = 16;
 			}
-			player->rain2 = NULL;
+			player->Rain2 = NULL;
 		}
 	}
 	// Add rain mobj to list
-	if (player->rain1)
+	if (player->Rain1)
 	{
-		player->rain2 = this;
+		player->Rain2 = this;
 	}
 	else
 	{
-		player->rain1 = this;
+		player->Rain1 = this;
 	}
 }
 
@@ -1469,25 +1460,25 @@ void Actor::A_SkullRodStorm(void)
 	if (Health-- == 0)
 	{
 		SetState(S_NULL);
-		playerNum = netgame ? special2 : 0;
+		playerNum = netgame ? Special2 : 0;
 		player = &players[playerNum];
-		if (!player->active)
+		if (!player->bActive)
 		{
 			// Player left the game
 			return;
 		}
-		if (player->health <= 0)
+		if (player->Health <= 0)
 		{
 			// Player is dead
 			return;
 		}
-		if (player->rain1 == this)
+		if (player->Rain1 == this)
 		{
-			player->rain1 = NULL;
+			player->Rain1 = NULL;
 		}
-		else if (player->rain2 == this)
+		else if (player->Rain2 == this)
 		{
-			player->rain2 = NULL;
+			player->Rain2 = NULL;
 		}
 		return;
 	}
@@ -1498,7 +1489,7 @@ void Actor::A_SkullRodStorm(void)
 	}
 	x = Origin.x + Random() * 128.0 - 64.0;
 	y = Origin.y + Random() * 128.0 - 64.0;
-	switch (special2)
+	switch (Special2)
 	{
 	case 0: rain_type = RainPlayer1; break;
 	case 1: rain_type = RainPlayer2; break;
@@ -1509,13 +1500,13 @@ void Actor::A_SkullRodStorm(void)
 	mo->target = target;
 	mo->Velocity.x = 0.00001;	// Force collision detection
 	mo->Velocity.z = -mo->Speed;
-	mo->special2 = special2;	// Transfer player number
+	mo->Special2 = Special2;	// Transfer player number
 	CheckMissileSpawn(mo);
-	if (!(special1 & 31))
+	if (!(Special1 & 31))
 	{
-		StartSoundName(self, 'SkullRodRain', CHAN_VOICE);
+		PlaySound('SkullRodRain', CHAN_VOICE);
 	}
-	special1++;
+	Special1++;
 }
 
 //===========================================================================
@@ -1528,7 +1519,7 @@ void Actor::A_RainImpact(void)
 {
 	if (Origin.z > FloorZ)
 	{
-		SetState(S_RAINAIRXPLR1_1 + special2);
+		SetState(S_RAINAIRXPLR1_1 + Special2);
 	}
 	else if (P_Random() < 40)
 	{
@@ -1603,16 +1594,16 @@ void Actor::A_MacePL1Check(void)
 {
 	float angle;
 
-	if (special1 == 0)
+	if (Special1 == 0)
 	{
 		return;
 	}
-	special1 -= 4;
-	if (special1 > 0)
+	Special1 -= 4;
+	if (Special1 > 0)
 	{
 		return;
 	}
-	special1 = 0;
+	Special1 = 0;
 	bLowGravity = true;
 	angle = Angles.yaw;
 	Velocity.x = 7.0 * cos(angle) * 35.0;
@@ -1641,14 +1632,14 @@ void Actor::A_MaceBallImpact(void)
 		Velocity.z = Velocity.z * 192.0 / 256.0;
 		bFloorBounce = false;
 		SetState(SpawnState);
-		StartSoundName(self, 'Bounce', CHAN_VOICE);
+		PlaySound('Bounce', CHAN_VOICE);
 	}
 	else
 	{
 		// Explode
 		bNoGravity = true;
 		bLowGravity = false;
-		StartSoundName(self, 'MaceHit', CHAN_VOICE);
+		PlaySound('MaceHit', CHAN_VOICE);
 	}
 }
 
@@ -1731,13 +1722,13 @@ void Actor::A_DeathBallImpact(void)
 	{
 		// Bounce
 		newAngle = false;
-		targ = specialmobj1;
+		targ = SpecialMobj1;
 		if (targ)
 		{
 			if (!targ->bShootable)
 			{
 				// Target died
-				specialmobj1 = NULL;
+				SpecialMobj1 = NULL;
 			}
 			else
 			{
@@ -1758,7 +1749,7 @@ void Actor::A_DeathBallImpact(void)
 				AimLineAttack(this, &angles, 10.0 * 64.0);
 				if (linetarget && target != linetarget)
 				{
-					specialmobj1 = linetarget;
+					SpecialMobj1 = linetarget;
 					angle = atan2(linetarget->Origin.y - Origin.y,
 						linetarget->Origin.x - Origin.x);
 					newAngle = true;
@@ -1774,19 +1765,22 @@ void Actor::A_DeathBallImpact(void)
 			Velocity.y = Speed * sin(angle);
 		}
 		SetState(SpawnState);
-		StartSoundName(self, 'PlatformStop', CHAN_VOICE);
+		PlaySound('PlatformStop', CHAN_VOICE);
 	}
 	else
 	{	// Explode
 		bNoGravity = true;
 		bLowGravity = false;
-		StartSoundName(self, 'PhoenixHit', CHAN_VOICE);
+		PlaySound('PhoenixHit', CHAN_VOICE);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/22 18:00:19  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.18  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

@@ -28,7 +28,7 @@
 // Thrust floor stuff
 //
 // Thrust Spike Variables
-//      specialmobj1    pointer to dirt clump mobj
+//      SpecialMobj1    pointer to dirt clump mobj
 //      special2        speed of raise
 //      args[0]     0 = lowered,  1 = raised
 //      args[1]     0 = normal,   1 = bloody
@@ -54,7 +54,7 @@
 
 void Actor::A_ThrustInitUp(void)
 {
-	special2 = 5;	// Raise speed
+	Special2 = 5;	// Raise speed
 	Args[0] = 1;	// Mark as up
 	FloorClip = 0.0;
 	bSolid = true;
@@ -62,7 +62,7 @@ void Actor::A_ThrustInitUp(void)
 	bNoTeleport = true;
 	bFloorClip = true;
 	//Flags2 = 0;
-	specialmobj1 = NULL;
+	SpecialMobj1 = NULL;
 }
 
 //==========================================================================
@@ -75,7 +75,7 @@ void Actor::A_ThrustInitDn(void)
 {
 	mobj_t *mo;
 
-	special2 = 5;	// Raise speed
+	Special2 = 5;	// Raise speed
 	Args[0] = 0;	// Mark as down
 	FloorClip = Height;
 	//Flags = 0;
@@ -84,7 +84,7 @@ void Actor::A_ThrustInitDn(void)
 	//Flags2 = 0;
 	Translucency = 100;
 	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, DirtClump);
-	specialmobj1 = mo;
+	SpecialMobj1 = mo;
 }
 
 //==========================================================================
@@ -106,16 +106,16 @@ void Actor::A_ThrustRaise(void)
 	}
 
 	// Lose the dirt clump
-	if ((FloorClip < Height) && specialmobj1)
+	if ((FloorClip < Height) && SpecialMobj1)
 	{
-		P_RemoveMobj(specialmobj1);
-		specialmobj1 = NULL;
+		P_RemoveMobj(SpecialMobj1);
+		SpecialMobj1 = NULL;
 	}
 
 	// Spawn some dirt
 	if (P_Random() < 40)
 		SpawnDirt(this, Radius);
-	special2++;	// Increase raise speed
+	Special2++;	// Increase raise speed
 }
 
 //==========================================================================
@@ -162,6 +162,9 @@ void Actor::A_ThrustImpale(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/22 18:00:24  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.11  2002/02/14 19:20:59  dj_jl
 //  Renamed Entity properties to new naming style
 //

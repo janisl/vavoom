@@ -45,7 +45,7 @@
 
 void Actor::A_Hoof(void)
 {
-	StartSoundName(self, 'CyberWalk1', CHAN_BODY);
+	PlaySound('CyberWalk1', CHAN_BODY);
 	A_Chase();
 }
 
@@ -59,7 +59,7 @@ void Actor::A_Hoof(void)
 
 void Actor::A_Metal(void)
 {
-	StartSoundName(self, 'CyberWalk2', CHAN_BODY);
+	PlaySound('CyberWalk2', CHAN_BODY);
 	A_Chase();
 }
 
@@ -83,6 +83,9 @@ void Actor::A_CyberAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/02/22 18:00:07  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.9  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

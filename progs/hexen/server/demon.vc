@@ -45,7 +45,7 @@ void Actor::A_DemonAttack1(void)
 {
 	if (CheckMeleeRange())
 	{
-		target->Damage(self, self, HITDICE(2));
+		Enemy.Damage(self, self, HITDICE(2));
 	}
 }
 
@@ -68,11 +68,11 @@ void Actor::A_DemonAttack2(void)
 	{
 		fireBall = Demon2Missile;
 	}
-	mo = SpawnMissile(this, target, fireBall);
+	mo = SpawnMissile(this, &Enemy, fireBall);
 	if (mo)
 	{
 		mo->Origin.z += 30.0;
-		StartSoundName(self, 'DemonMissileFire', CHAN_WEAPON);
+		PlaySound('DemonMissileFire', CHAN_WEAPON);
 	}
 }
 
@@ -94,7 +94,7 @@ void Actor::A_DemonDeath(void)
 		mo->Velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->Velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->Velocity.z = 8.0 * 35.0;
-		mo->target = this;
+		mo->Owner = self;
 	}
 	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + 45.0, DemonChunk2);
 	if (mo)
@@ -103,7 +103,7 @@ void Actor::A_DemonDeath(void)
 		mo->Velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->Velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->Velocity.z = 8.0 * 35.0;
-		mo->target = this;
+		mo->Owner = self;
 	}
 	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + 45.0, DemonChunk3);
 	if (mo)
@@ -112,7 +112,7 @@ void Actor::A_DemonDeath(void)
 		mo->Velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->Velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->Velocity.z = 8.0 * 35.0;
-		mo->target = this;
+		mo->Owner = self;
 	}
 	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + 45.0, DemonChunk4);
 	if (mo)
@@ -121,7 +121,7 @@ void Actor::A_DemonDeath(void)
 		mo->Velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->Velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->Velocity.z = 8.0 * 35.0;
-		mo->target = this;
+		mo->Owner = self;
 	}
 	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + 45.0, DemonChunk5);
 	if (mo)
@@ -130,7 +130,7 @@ void Actor::A_DemonDeath(void)
 		mo->Velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->Velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->Velocity.z = 8.0 * 35.0;
-		mo->target = this;
+		mo->Owner = self;
 	}
 }
 
@@ -152,7 +152,7 @@ void Actor::A_Demon2Death(void)
 		mo->Velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->Velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->Velocity.z = 8.0 * 35.0;
-		mo->target = this;
+		mo->Owner = self;
 	}
 	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + 45.0, Demon2Chunk2);
 	if (mo)
@@ -161,7 +161,7 @@ void Actor::A_Demon2Death(void)
 		mo->Velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->Velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->Velocity.z = 8.0 * 35.0;
-		mo->target = this;
+		mo->Owner = self;
 	}
 	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + 45.0, Demon2Chunk3);
 	if (mo)
@@ -170,7 +170,7 @@ void Actor::A_Demon2Death(void)
 		mo->Velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->Velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->Velocity.z = 8.0 * 35.0;
-		mo->target = this;
+		mo->Owner = self;
 	}
 	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + 45.0, Demon2Chunk4);
 	if (mo)
@@ -179,7 +179,7 @@ void Actor::A_Demon2Death(void)
 		mo->Velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->Velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->Velocity.z = 8.0 * 35.0;
-		mo->target = this;
+		mo->Owner = self;
 	}
 	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + 45.0, Demon2Chunk5);
 	if (mo)
@@ -188,13 +188,16 @@ void Actor::A_Demon2Death(void)
 		mo->Velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->Velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->Velocity.z = 8.0 * 35.0;
-		mo->target = this;
+		mo->Owner = self;
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/22 18:00:21  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.15  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

@@ -26,7 +26,7 @@
 //===========================================================================
 // Bat Spawner Variables
 //  special1    frequency counter
-//  special2    
+//  Special2    
 //  args[0]     frequency of spawn (1=fastest, 10=slowest)
 //  args[1]     spread angle (0..255)
 //  args[2]     
@@ -34,7 +34,7 @@
 //  args[4]     turn amount per move (in degrees)
 //
 // Bat Variables
-//  special2    lifetime counter
+//  Special2    lifetime counter
 //  args[4]     turn amount per move (in degrees)
 //===========================================================================
 
@@ -58,7 +58,7 @@
 
 void Actor::A_BatSpawnInit(void)
 {
-	special1 = 0;	// Frequency count
+	Special1 = 0;	// Frequency count
 }
 
 //===========================================================================
@@ -74,9 +74,9 @@ void Actor::A_BatSpawn(void)
 	float angle;
 
 	// Countdown until next spawn
-	if (special1-- > 0)
+	if (Special1-- > 0)
 		return;
-	special1 = Args[0];	// Reset frequency count
+	Special1 = Args[0];	// Reset frequency count
 
 	delta = itof(Args[1]);
 	if (delta == 0.0)
@@ -88,8 +88,8 @@ void Actor::A_BatSpawn(void)
 	{
 		mo->Args[0] = P_Random() & 63;	// floatbob index
 		mo->Args[4] = Args[4];	// turn degrees
-		mo->special2 = Args[3] << 3;	// Set lifetime
-		mo->target = this;
+		mo->Special2 = Args[3] << 3;	// Set lifetime
+		mo->Owner = self;
 	}
 }
 
@@ -104,11 +104,11 @@ void Actor::A_BatMove(void)
 	float newangle;
 	float newSpeed;
 
-	if (special2 < 0)
+	if (Special2 < 0)
 	{
 		SetState(DeathState);
 	}
-	special2 -= 2;	// Called every 2 tics
+	Special2 -= 2;	// Called every 2 tics
 
 	if (P_Random() < 128)
 	{
@@ -125,16 +125,19 @@ void Actor::A_BatMove(void)
 	Velocity.y = newSpeed * sin(newangle);
 
 	if (P_Random() < 15)
-		StartSoundName(self, 'BatScream', CHAN_VOICE);
+		PlaySound('BatScream', CHAN_VOICE);
 
 	// Handle Z movement
-	Origin.z = target->Origin.z + 2.0 * FloatBobOffsets[Args[0]];
+	Origin.z = Owner.Origin.z + 2.0 * FloatBobOffsets[Args[0]];
 	Args[0] = (Args[0] + 3) & 63;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/22 18:00:20  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.13  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

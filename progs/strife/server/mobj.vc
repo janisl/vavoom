@@ -118,13 +118,13 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 {
 	state_t *st;
 
-	spawnhealth = Health;
+	SpawnHealth = Health;
 	bCheckLineBlocking = false;
 	bCheckLineBlockMonsters = false;
 	if (!bMissile)
 	{
 		bCheckLineBlocking = true;
-		if (Class != PlayerEntity)
+		if (Class != PlayerPawn)
 		{
 			bCheckLineBlockMonsters = true;
 		}
@@ -135,7 +135,7 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 		ReactionCount = 0;
 	}
 
-	lastlook = P_Random() % MAXPLAYERS;
+	LastLook = P_Random() % MAXPLAYERS;
 	// do not set the state with P_SetMobjState,
 	// because action routines can not be called yet
 	st = &states[SpawnState];
@@ -154,7 +154,7 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 		float y;
 		float z;
 
-		CopyMThing(mthing, &spawnpoint);
+		CopyMThing(mthing, &SpawnSpot);
 
 		x = mthing->x;
 		y = mthing->y;
@@ -400,7 +400,7 @@ void P_ExplodeMissile(mobj_t * mo)
 	mo->bMissile = false;
 
 	if (mo->DeathSound)
-		StartSoundName(*mo, mo->DeathSound, CHAN_VOICE);
+		mo->PlaySound(mo->DeathSound, CHAN_VOICE);
 }
 
 //==========================================================================
@@ -441,7 +441,7 @@ mobj_t *SpawnMissile(mobj_t * source, mobj_t * dest, classid type)
 		source->Origin.z + 32.0, type);
 
 	if (th->SightSound)
-		StartSoundName(*th, th->SightSound, CHAN_VOICE);
+		th->PlaySound(th->SightSound, CHAN_VOICE);
 
 	th->target = source;	// where it came from
 
@@ -487,26 +487,26 @@ void KillMobj(mobj_t * source, mobj_t * target)
 	{
 		// count for intermission
 		if (target->bCountKill)
-			source->Player->killcount++;
+			source->Player->KillCount++;
 
 		if (target->bIsPlayer)
-			source->Player->frags[P_GetPlayerNum(target->Player)]++;
+			source->Player->Frags[P_GetPlayerNum(target->Player)]++;
 	}
 	else if (!netgame && target->bCountKill)
 	{
 		// count all monster deaths,
 		// even those caused by other monsters
-		players[0].killcount++;
+		players[0].KillCount++;
 	}
 
 	if (target->bIsPlayer)
 	{
 		// count environment kills against you
 		if (!source)
-			target->Player->frags[P_GetPlayerNum(target->Player)]++;
+			target->Player->Frags[P_GetPlayerNum(target->Player)]++;
 
 		target->bSolid = false;
-		target->Player->playerstate = PST_DEAD;
+		target->Player->PlayerState = PST_DEAD;
 		DropWeapon(target->Player);
 #ifdef FIXME
 		if (target->Player == &players[consoleplayer] && automapactive)
@@ -615,37 +615,37 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 
 		// Below certain threshold,
 		// ignore damage in GOD mode, or with INVUL power.
-		if (damage < 1000 && ((Player->cheats & CF_GODMODE)
-			|| Player->powers[pw_invulnerability]))
+		if (damage < 1000 && ((Player->Cheats & CF_GODMODE)
+			|| Player->Powers[pw_invulnerability]))
 		{
 			return;
 		}
 
-		if (Player->armortype)
+		if (Player->ArmorType)
 		{
-			if (Player->armortype == 1)
+			if (Player->ArmorType == 1)
 				saved = damage / 3;
 			else
 				saved = damage / 2;
 
-			if (Player->armorpoints <= saved)
+			if (Player->ArmorPoints <= saved)
 			{
 				// armor is used up
-				saved = Player->armorpoints;
-				Player->armortype = 0;
+				saved = Player->ArmorPoints;
+				Player->ArmorType = 0;
 			}
-			Player->armorpoints -= saved;
+			Player->ArmorPoints -= saved;
 			damage -= saved;
 		}
-		Player->health -= damage;	// mirror mobj health here for Dave
-		if (Player->health < 0)
-			Player->health = 0;
+		Player->Health -= damage;	// mirror mobj health here for Dave
+		if (Player->Health < 0)
+			Player->Health = 0;
 
-		Player->attacker = &source;
-		Player->damagecount += damage;	// add damage after armor / invuln
+		Player->Attacker = &source;
+		Player->DamageCount += damage;	// add damage after armor / invuln
 
-		if (Player->damagecount > 100)
-			Player->damagecount = 100;	// teleport stomp does 10k points...
+		if (Player->DamageCount > 100)
+			Player->DamageCount = 100;	// teleport stomp does 10k points...
 	}
 
 	// do the damage    
@@ -664,12 +664,12 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 
 	ReactionCount = 0;	// we're awake now...
 
-	if ((!threshold) && source && source != self)
+	if ((!Threshold) && source && source != self)
 	{
 		// if not intent on another player,
 		// chase after this one
 		target = &source;
-		threshold = BASETHRESHOLD;
+		Threshold = BASETHRESHOLD;
 		if (StateNum == SpawnState && SeeState != S_NULL)
 		{
 			SetState(SeeState);
@@ -687,7 +687,7 @@ void P_RemoveMobj(mobj_t * mobj)
 {
 	if (mobj->bSpecial && !mobj->bDropped)
 	{
-		CopyMThing(&mobj->spawnpoint, &itemrespawnque[iquehead]);
+		CopyMThing(&mobj->SpawnSpot, &itemrespawnque[iquehead]);
 		itemrespawntime[iquehead] = level->tictime;
 		iquehead = (iquehead + 1) & (ITEMQUESIZE - 1);
 
@@ -736,7 +736,7 @@ void P_RespawnSpecials(void)
 
 	// spawn a teleport fog at the new spot
 	mo = P_SpawnMobj(x, y, ONFLOORZ, ItemRespawnFog);
-	StartSoundName(*mo, 'ItemRespawn', CHAN_VOICE);
+	mo->PlaySound('ItemRespawn', CHAN_VOICE);
 
 	// find which type to spawn
 	for (i = 0; i < num_mobj_types; i++)
@@ -754,7 +754,7 @@ void P_RespawnSpecials(void)
 		z = ONFLOORZ;
 
 	mo = P_SpawnMobj(x, y, z, mobjinfo[i].class_id);
-	CopyMThing(mthing, &mo->spawnpoint);
+	CopyMThing(mthing, &mo->SpawnSpot);
 	mo->Angles.yaw = itof(45 * (mthing->angle / 45));
 
 	// pull it from the que
@@ -775,8 +775,8 @@ void P_NightmareRespawn(mobj_t * mobj)
 	mobj_t *mo;
 	mthing_t *mthing;
 
-	x = mobj->spawnpoint.x;
-	y = mobj->spawnpoint.y;
+	x = mobj->SpawnSpot.x;
+	y = mobj->SpawnSpot.y;
 
 	// somthing is occupying it's position?
 	if (!CheckPosition(*mobj, vector(x, y, ONFLOORZ)))
@@ -787,15 +787,15 @@ void P_NightmareRespawn(mobj_t * mobj)
 	mo = P_SpawnMobj(mobj->Origin.x, mobj->Origin.y, ONFLOORZ, TeleportFog);
 
 	// initiate teleport sound
-	StartSoundName(*mo, 'Teleport', CHAN_BODY);
+	mo->PlaySound('Teleport', CHAN_BODY);
 
 	// spawn a teleport fog at the new spot
 	mo = P_SpawnMobj(x, y, ONFLOORZ, TeleportFog);
 
-	StartSoundName(*mo, 'Teleport', CHAN_BODY);
+	mo->PlaySound('Teleport', CHAN_BODY);
 
 	// spawn the new monster
-	mthing = &mobj->spawnpoint;
+	mthing = &mobj->SpawnSpot;
 
 	// spawn it
 #ifdef FIXME
@@ -807,7 +807,7 @@ void P_NightmareRespawn(mobj_t * mobj)
 
 	// inherit attributes from deceased one
 	mo = P_SpawnMobj(x, y, z, mobj->Class);
-	CopyMThing(&mobj->spawnpoint, &mo->spawnpoint);
+	CopyMThing(&mobj->SpawnSpot, &mo->SpawnSpot);
 	mo->Angles.yaw = itof(45 * (mthing->angle / 45));
 
 	if (mthing->options & MTF_AMBUSH)
@@ -934,6 +934,9 @@ void P_ThrustMobj(mobj_t * mo, float angle, float move)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.32  2002/02/22 18:00:25  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.31  2002/02/16 16:26:56  dj_jl
 //  Removed precalculated sound IDs
 //

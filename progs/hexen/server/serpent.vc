@@ -53,9 +53,9 @@ void Actor::A_SerpentChase(void)
 	}
 
 	// Modify target threshold
-	if (threshold)
+	if (Threshold)
 	{
-		threshold--;
+		Threshold--;
 	}
 
 	if (gameskill == sk_nightmare)
@@ -71,10 +71,10 @@ void Actor::A_SerpentChase(void)
 	//
 	// turn towards movement direction if not there yet
 	//
-	if (movedir < 8)
+	if (MoveDir < 8)
 	{
 		Angles.yaw = itof(ftoi(Angles.yaw / 45.0)) * 45.0;
-		delta = AngleMod180(Angles.yaw - itof(movedir) * 45.0);
+		delta = AngleMod180(Angles.yaw - itof(MoveDir) * 45.0);
 		if (delta > 0.0)
 		{
 			Angles.yaw = AngleMod360(Angles.yaw - 45.0);
@@ -85,12 +85,12 @@ void Actor::A_SerpentChase(void)
 		}
 	}
 
-	if (!target || !target->bShootable)
+	if (!Enemy || !Enemy.bShootable)
 	{
-		// look for a new target
+		// look for a new enemy
 		if (LookForPlayers(true))
 		{
-			// got a new target
+			// got a new enemy
 			return;
 		}
 		SetState(SpawnState);
@@ -115,19 +115,19 @@ void Actor::A_SerpentChase(void)
 	{
 		if (AttackSound)
 		{
-			StartSoundName(self, AttackSound, CHAN_WEAPON);
+			PlaySound(AttackSound, CHAN_WEAPON);
 		}
 		SetState(MeleeState);
 		return;
 	}
 
 	//
-	// possibly choose another target
+	// possibly choose another enemy
 	//
-	if (netgame && !threshold && !P_CheckSight(self, *target))
+	if (netgame && !Threshold && !P_CheckSight(self, Enemy))
 	{
 		if (LookForPlayers(true))
-			return;	// got a new target
+			return;	// got a new enemy
 	}
 
 	//
@@ -136,7 +136,7 @@ void Actor::A_SerpentChase(void)
 	oldX = Origin.x;
 	oldY = Origin.y;
 	oldFloor = Sector->floor.pic;
-	if (--movecount < 0 || !StepMove())
+	if (--MoveCount < 0 || !StepMove())
 	{
 		NewChaseDir();
 	}
@@ -151,7 +151,7 @@ void Actor::A_SerpentChase(void)
 	//
 	if (ActiveSound && P_Random() < 3)
 	{
-		StartSoundName(self, ActiveSound, CHAN_VOICE);
+		PlaySound(ActiveSound, CHAN_VOICE);
 	}
 }
 
@@ -193,7 +193,7 @@ void Actor::A_SerpentHumpDecide(void)
 		else
 		{
 			SetState(S_SERPENT_HUMP1);
-			StartSoundName(self, 'SerpentActive', CHAN_VOICE);
+			PlaySound('SerpentActive', CHAN_VOICE);
 		}
 	}
 }
@@ -278,7 +278,7 @@ void Actor::A_UnSetShootable(void)
 
 void Actor::A_SerpentBirthScream(void)
 {
-	StartSoundName(self, 'SerpentBirth', CHAN_VOICE);
+	PlaySound('SerpentBirth', CHAN_VOICE);
 }
 
 //============================================================================
@@ -289,7 +289,7 @@ void Actor::A_SerpentBirthScream(void)
 
 void Actor::A_SerpentCheckForAttack(void)
 {
-	if (!target)
+	if (!Enemy)
 	{
 		return;
 	}
@@ -326,7 +326,7 @@ void Actor::A_SerpentCheckForAttack(void)
 
 void Actor::A_SerpentDiveSound(void)
 {
-	StartSoundName(self, 'SerpentActive', CHAN_VOICE);
+	PlaySound('SerpentActive', CHAN_VOICE);
 }
 
 //============================================================================
@@ -347,9 +347,9 @@ void Actor::A_SerpentWalk(void)
 	}
 
 	// Modify target threshold
-	if (threshold)
+	if (Threshold)
 	{
-		threshold--;
+		Threshold--;
 	}
 
 	if (gameskill == sk_nightmare)
@@ -365,10 +365,10 @@ void Actor::A_SerpentWalk(void)
 	//
 	// turn towards movement direction if not there yet
 	//
-	if (movedir < 8)
+	if (MoveDir < 8)
 	{
 		Angles.yaw = itof(ftoi(Angles.yaw / 45.0)) * 45.0;
-		delta = AngleMod180(Angles.yaw - itof(movedir) * 45.0);
+		delta = AngleMod180(Angles.yaw - itof(MoveDir) * 45.0);
 		if (delta > 0.0)
 		{
 			Angles.yaw = AngleMod360(Angles.yaw - 45.0);
@@ -379,7 +379,7 @@ void Actor::A_SerpentWalk(void)
 		}
 	}
 
-	if (!target || !target->bShootable)
+	if (!Enemy || !Enemy.bShootable)
 	{
 		// look for a new target
 		if (LookForPlayers(true))
@@ -409,7 +409,7 @@ void Actor::A_SerpentWalk(void)
 	{
 		if (AttackSound)
 		{
-			StartSoundName(self, AttackSound, CHAN_WEAPON);
+			PlaySound(AttackSound, CHAN_WEAPON);
 		}
 		SetState(S_SERPENT_ATK1);
 		return;
@@ -417,7 +417,7 @@ void Actor::A_SerpentWalk(void)
 	//
 	// possibly choose another target
 	//
-	if (netgame && !threshold && !P_CheckSight(self, *target))
+	if (netgame && !Threshold && !P_CheckSight(self, Enemy))
 	{
 		if (LookForPlayers(true))
 			return;	// got a new target
@@ -426,7 +426,7 @@ void Actor::A_SerpentWalk(void)
 	//
 	// chase towards player
 	//
-	if (--movecount < 0 || !StepMove())
+	if (--MoveCount < 0 || !StepMove())
 	{
 		NewChaseDir();
 	}
@@ -440,7 +440,7 @@ void Actor::A_SerpentWalk(void)
 
 void Actor::A_SerpentChooseAttack(void)
 {
-	if (!target || CheckMeleeRange())
+	if (!Enemy || CheckMeleeRange())
 	{
 		return;
 	}
@@ -458,14 +458,14 @@ void Actor::A_SerpentChooseAttack(void)
 
 void Actor::A_SerpentMeleeAttack(void)
 {
-	if (!target)
+	if (!Enemy)
 	{
 		return;
 	}
 	if (CheckMeleeRange())
 	{
-		target->Damage(self, self, HITDICE(5));
-		StartSoundName(self, 'SerpentMeleeHit', CHAN_WEAPON);
+		Enemy.Damage(self, self, HITDICE(5));
+		PlaySound('SerpentMeleeHit', CHAN_WEAPON);
 	}
 	if (P_Random() < 96)
 	{
@@ -483,11 +483,11 @@ void Actor::A_SerpentMissileAttack(void)
 {
 	mobj_t *mo;
 
-	if (!target)
+	if (!Enemy)
 	{
 		return;
 	}
-	mo = SpawnMissile(this, target, SerpentMissile);
+	mo = SpawnMissile(this, &Enemy, SerpentMissile);
 }
 
 //============================================================================
@@ -598,6 +598,9 @@ void Actor::A_DelayGib(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/22 18:00:23  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.18  2002/02/16 16:26:55  dj_jl
 //  Removed precalculated sound IDs
 //

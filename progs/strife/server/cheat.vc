@@ -43,12 +43,12 @@
 
 void Cheat_God(void)
 {
-	players[0].cheats ^= CF_GODMODE;
-	if (players[0].cheats & CF_GODMODE)
+	players[0].Cheats ^= CF_GODMODE;
+	if (players[0].Cheats & CF_GODMODE)
 	{
 		if (players[0].mo)
 			players[0].mo->Health = GOD_HEALTH;
-		players[0].health = GOD_HEALTH;
+		players[0].Health = GOD_HEALTH;
 		cprint(&players[0], "Degreelessness Mode On\n");
 	}
 	else
@@ -63,9 +63,9 @@ void Cheat_God(void)
 
 void Cheat_NoClip(void)
 {
-	players[0].cheats ^= CF_NOCLIP;
+	players[0].Cheats ^= CF_NOCLIP;
 
-	if (players[0].cheats & CF_NOCLIP)
+	if (players[0].Cheats & CF_NOCLIP)
 		cprint(&players[0], "No Clipping Mode ON\n");
 	else
 		cprint(&players[0], "No Clipping Mode OFF\n");
@@ -227,35 +227,35 @@ void Cheat_Gimme(void)
 
 	// Backpack
 	if (i1 & GIMME_BACKPACK)
-		players[0].backpack = true;
+		players[0].Backpack = true;
 
 	// Ammo
 	if (i1 & GIMME_BULLETS)
-		players[0].ammo[am_clip] =
-			maxammo[am_clip] * (players[0].backpack ? 2 : 1);
+		players[0].Ammo[am_clip] =
+			maxammo[am_clip] * (players[0].Backpack ? 2 : 1);
 	if (i1 & GIMME_SHELLS)
-		players[0].ammo[am_electric_arrow] =
-			maxammo[am_electric_arrow] * (players[0].backpack ? 2 : 1);
+		players[0].Ammo[am_electric_arrow] =
+			maxammo[am_electric_arrow] * (players[0].Backpack ? 2 : 1);
 	if (i1 & GIMME_ROCKETS)
-		players[0].ammo[am_misl] =
-			maxammo[am_misl] * (players[0].backpack ? 2 : 1);
+		players[0].Ammo[am_misl] =
+			maxammo[am_misl] * (players[0].Backpack ? 2 : 1);
 	if (i1 & GIMME_CELLS)
-		players[0].ammo[am_cell] =
-			maxammo[am_cell] * (players[0].backpack ? 2 : 1);
+		players[0].Ammo[am_cell] =
+			maxammo[am_cell] * (players[0].Backpack ? 2 : 1);
 
 	// Keys
 	if (i1 & GIMME_BLUECARD)
-		players[0].keys |= 1 << it_bluecard;
+		players[0].Keys |= 1 << it_bluecard;
 	if (i1 & GIMME_YELLOWCARD)
-		players[0].keys |= 1 << it_yellowcard;
+		players[0].Keys |= 1 << it_yellowcard;
 	if (i1 & GIMME_REDCARD)
-		players[0].keys |= 1 << it_redcard;
+		players[0].Keys |= 1 << it_redcard;
 	if (i1 & GIMME_BLUESKULL)
-		players[0].keys |= 1 << it_blueskull;
+		players[0].Keys |= 1 << it_blueskull;
 	if (i1 & GIMME_YELLOWSKULL)
-		players[0].keys |= 1 << it_yellowskull;
+		players[0].Keys |= 1 << it_yellowskull;
 	if (i1 & GIMME_REDSKULL)
-		players[0].keys |= 1 << it_redskull;
+		players[0].Keys |= 1 << it_redskull;
 
 	// Powers
 	if (i1 & GIMME_INVULNERABILITY)
@@ -274,27 +274,27 @@ void Cheat_Gimme(void)
 		P_GiveItem(&players[0], IT_ALL_MAP);
 
 	// Health
-	if ((i1 & GIMME_HEALTH) && (players[0].health < 100))
+	if ((i1 & GIMME_HEALTH) && (players[0].Health < 100))
 	{
-		players[0].health = 100;
+		players[0].Health = 100;
 		players[0].mo->Health = 100;
 	}
 	if (i1 & GIMME_HEALTH2)
 	{
-		players[0].health = 200;
+		players[0].Health = 200;
 		players[0].mo->Health = 200;
 	}
 
 	// Armor
-	if ((i1 & GIMME_ARMOR) && (players[0].armorpoints < 100))
+	if ((i1 & GIMME_ARMOR) && (players[0].ArmorPoints < 100))
 	{
-		players[0].armortype = 1;
-		players[0].armorpoints = 100;
+		players[0].ArmorType = 1;
+		players[0].ArmorPoints = 100;
 	}
 	if (i1 & GIMME_ARMOR2)
 	{
-		players[0].armortype = 2;
-		players[0].armorpoints = 200;
+		players[0].ArmorType = 2;
+		players[0].ArmorPoints = 200;
 	}
 }
 
@@ -337,6 +337,9 @@ void Cheat_KillAll(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/02/22 18:00:25  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.9  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

@@ -31,11 +31,11 @@
 
 //==========================================================================
 //
-//	PlayerEntity
+//	PlayerPawn
 //
 //==========================================================================
 
-class PlayerEntity:Actor
+class PlayerPawn:Actor
 {
 	defaultproperties
 	{
@@ -1115,7 +1115,7 @@ class BossEye:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bNoClient = true;
+		bHidden = true;
 		bNoBlockmap = true;
 		SpawnState = S_BRAINEYE;
 		SeeState = S_BRAINEYESEE;
@@ -1138,7 +1138,7 @@ class BossTarget:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bNoClient = true;
+		bHidden = true;
 		bNoBlockmap = true;
 	}
 };
@@ -1507,7 +1507,7 @@ class TeleportSpot:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bNoClient = true;
+		bHidden = true;
 		bNoBlockmap = true;
 	}
 };
@@ -3684,9 +3684,12 @@ class BrainStem:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2002/02/22 18:00:10  dj_jl
+//	A lots of the renaming, beautification.
+//
 //	Revision 1.22  2002/02/14 19:20:57  dj_jl
 //	Renamed Entity properties to new naming style
-//
+//	
 //	Revision 1.21  2002/02/06 17:28:51  dj_jl
 //	Replaced Actor flags with boolean variables.
 //	

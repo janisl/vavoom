@@ -58,19 +58,19 @@ void BotPlayer::Think(void)
 {
 	botmo = *player->mo;
 
-	player->forwardmove = 0.0;
-	player->sidemove = 0.0;
-	player->flymove = 0.0;
-	player->buttons = 0;
+	player->ForwardMove = 0.0;
+	player->SideMove = 0.0;
+	player->FlyMove = 0.0;
+	player->Buttons = 0;
 
 	// Don't do anything if we're talking
 //	if (B_Chat(bot))
 //		return;
 
 	// We're dead, so hit space to respawn
-	if (!player->health)
+	if (!player->Health)
 	{
-		player->buttons |= BT_USE;
+		player->Buttons |= BT_USE;
 		return;
 	}
 
@@ -151,8 +151,8 @@ void BotPlayer::Think(void)
 			sidemove = -SIDEWALK;
 	}
 
-	player->sidemove = sidemove;
-	player->forwardmove = forwardmove;
+	player->SideMove = sidemove;
+	player->ForwardMove = forwardmove;
 
 #define DECT(var) \
 	var -= frametime; \
@@ -214,11 +214,11 @@ boolean BotPlayer::CheckItem(Actor item)
 		newItemIsWeapon = true;
 
 		// If we don't have the weapon, pick it up
-		if (!player->weaponowned[weapon])
+		if (!player->WeaponOwned[weapon])
 			return true;
 
 		// If we have no more room for the ammo it gives
-		if (player->ammo[weapon_ammo_type[weapon]] ==
+		if (player->Ammo[weapon_ammo_type[weapon]] ==
 				maxammo[weapon_ammo_type[weapon]])
 			return false;
 
@@ -231,7 +231,7 @@ boolean BotPlayer::CheckItem(Actor item)
 	if (ammo != -1)
 	{
 		// If we have no more room for the ammo it gives
-		if (player->ammo[ammo] >= maxammo[ammo])
+		if (player->Ammo[ammo] >= maxammo[ammo])
 			return false;
 	}
 
@@ -241,10 +241,10 @@ boolean BotPlayer::CheckItem(Actor item)
 	if ((item.Class == ItemSoulSphere || item.Class == ItemMegaSphere) &&
 		(botmo.Health >= 2 * MAXHEALTH))
 		return false;
-	if (item.Class == ItemArmor1 && (player->armorpoints >= 100))
+	if (item.Class == ItemArmor1 && (player->ArmorPoints >= 100))
 		return false;
 	if ((item.Class == ItemArmor2 || item.Class == ItemMegaSphere) &&
-		(player->armorpoints >= 200))
+		(player->ArmorPoints >= 200))
 		return false;
 #if 0
 	if (teamgame.value && item->flags3 & MF3_KEY && !item->bDropped)
@@ -399,25 +399,25 @@ weapontype_t B_ChooseWeapon (skullb_s *bot)
 
 	if (dist <= MELEERANGE)
 	{
-		if (player->weaponowned[wp_supershotgun] && player->ammo[am_shell] >= 2)
+		if (player->WeaponOwned[wp_supershotgun] && player->Ammo[am_shell] >= 2)
 			return wp_supershotgun;
 
-		if (player->weaponowned[wp_plasma] && player->ammo[am_cell] >= 20)
+		if (player->WeaponOwned[wp_plasma] && player->Ammo[am_cell] >= 20)
 			return wp_plasma;
 
-		if (player->weaponowned[wp_railgun] && player->ammo[am_cell] >= 10)
+		if (player->WeaponOwned[wp_railgun] && player->Ammo[am_cell] >= 10)
 			return wp_railgun;
 
-		if (player->weaponowned[wp_chaingun] && player->ammo[am_clip] >= 20)
+		if (player->WeaponOwned[wp_chaingun] && player->Ammo[am_clip] >= 20)
 			return wp_chaingun;
 
 		if (player->powers[pw_strength])
 			return wp_fist;
 
-		if (player->weaponowned[wp_chainsaw])
+		if (player->WeaponOwned[wp_chainsaw])
 			return wp_chainsaw;
 
-		if (player->weaponowned[wp_shotgun] && player->ammo[am_shell])
+		if (player->WeaponOwned[wp_shotgun] && player->Ammo[am_shell])
 			return wp_shotgun;
 
 		// Didn't find anything good
@@ -426,25 +426,25 @@ weapontype_t B_ChooseWeapon (skullb_s *bot)
 
 	else if (dist <= 512*FRACUNIT)
 	{
-		if (player->weaponowned[wp_plasma] && player->ammo[am_cell] >= 20)
+		if (player->WeaponOwned[wp_plasma] && player->Ammo[am_cell] >= 20)
 			return wp_plasma;
 
-		if (player->weaponowned[wp_supershotgun] && player->ammo[am_shell] >= 2)
+		if (player->WeaponOwned[wp_supershotgun] && player->Ammo[am_shell] >= 2)
 			return wp_supershotgun;
 
-		if (player->weaponowned[wp_grenlauncher] && player->ammo[am_misl] >= 2)
+		if (player->WeaponOwned[wp_grenlauncher] && player->Ammo[am_misl] >= 2)
 			return wp_grenlauncher;
 
-		if (player->weaponowned[wp_missile] && player->ammo[am_misl] >= 2)
+		if (player->WeaponOwned[wp_missile] && player->Ammo[am_misl] >= 2)
 			return wp_missile;
 
-		if (player->weaponowned[wp_railgun] && player->ammo[am_cell] >= 10)
+		if (player->WeaponOwned[wp_railgun] && player->Ammo[am_cell] >= 10)
 			return wp_railgun;
 
-		if (player->weaponowned[wp_chaingun] && player->ammo[am_clip])
+		if (player->WeaponOwned[wp_chaingun] && player->Ammo[am_clip])
 			return wp_chaingun;
 
-		if (player->weaponowned[wp_shotgun] && player->ammo[am_shell])
+		if (player->WeaponOwned[wp_shotgun] && player->Ammo[am_shell])
 			return wp_shotgun;
 
 		return player->readyweapon;
@@ -452,22 +452,22 @@ weapontype_t B_ChooseWeapon (skullb_s *bot)
 
 	else
 	{
-		if (player->weaponowned[wp_railgun] && player->ammo[am_cell] >= 10)
+		if (player->WeaponOwned[wp_railgun] && player->Ammo[am_cell] >= 10)
 			return wp_railgun;
 
-		if (player->weaponowned[wp_chaingun] && player->ammo[am_clip])
+		if (player->WeaponOwned[wp_chaingun] && player->Ammo[am_clip])
 			return wp_chaingun;
 
-		if (player->weaponowned[wp_shotgun] && player->ammo[am_shell])
+		if (player->WeaponOwned[wp_shotgun] && player->Ammo[am_shell])
 			return wp_shotgun;
 
-		if (player->weaponowned[wp_plasma] && player->ammo[am_cell] >= 20)
+		if (player->WeaponOwned[wp_plasma] && player->Ammo[am_cell] >= 20)
 			return wp_plasma;
 
-		if (player->weaponowned[wp_missile] && player->ammo[am_misl] >= 2)
+		if (player->WeaponOwned[wp_missile] && player->Ammo[am_misl] >= 2)
 			return wp_missile;
 
-		if (player->weaponowned[wp_grenlauncher] && player->ammo[am_misl] >= 2)
+		if (player->WeaponOwned[wp_grenlauncher] && player->Ammo[am_misl] >= 2)
 			return wp_grenlauncher;
 
 		return player->readyweapon;
@@ -907,7 +907,7 @@ boolean PTR_BotPathTraverse(intercept_t *in)
 			}
 			else if (diffheight <= 48.0 && diffheight >= 24.0)
 			{
-				botmo.Player->buttons |= BT_JUMP;
+				botmo.Player->Buttons |= BT_JUMP;
 			}
 		}
 
@@ -1187,7 +1187,7 @@ void BotPlayer::BotAim(void)
 	*/
 
 	// Fix me: Implement botskill, accuracy, and intelligence
-	switch (player->readyweapon)
+	switch (player->ReadyWeapon)
 	{
 		// Splash weapons
 	case wp_missile:
@@ -1323,7 +1323,7 @@ Actor BotPlayer::FindEnemy(void)
 	// Search for player enemies
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (players[i].spawned /*&& !mo->IsTeammate (players[i].mo)*/ &&
+		if (players[i].bSpawned /*&& !mo->IsTeammate (players[i].mo)*/ &&
 			players[i].mo->Health > 0 && botmo != *players[i].mo)
 		{
 			 //Here's a strange one, when bot is standing still, the P_CheckSight within Check_LOS almost always returns false. tought it should be the same checksight as below but.. (below works) something must be fuckin wierd screded up. 
@@ -1631,7 +1631,7 @@ void BotPlayer::Move(void)
 		if (item)
 		{
 			if (itemIsPowerup ||
-				(itemIsWeapon && player->readyweapon == wp_pistol))
+				(itemIsWeapon && player->ReadyWeapon == wp_pistol))
 			{
 				Roam();
 				return;
@@ -1647,7 +1647,7 @@ void BotPlayer::Move(void)
 		if (!CheckPath(an, 48.0)) // We're blocked, so go the other way!
 			sidemove = -sidemove;
 /*
-		switch (bot->player->readyweapon)
+		switch (bot->player->ReadyWeapon)
 		{
 		case wp_supershotgun:
 
@@ -1655,7 +1655,7 @@ void BotPlayer::Move(void)
 			if (!B_CheckTo(mo, bot->enemy)
 */
 
-		if (CheckTo(enemy.Origin) && dist > combatdist[player->readyweapon])
+		if (CheckTo(enemy.Origin) && dist > combatdist[player->ReadyWeapon])
 			forwardmove = FORWARDRUN;
 		else
 			forwardmove = -FORWARDRUN;
@@ -1722,7 +1722,7 @@ void BotPlayer::Attack(void)
 	if (!Check_LOS(enemy, SHOOTFOV))
 		return;
 
-	switch (player->readyweapon)
+	switch (player->ReadyWeapon)
 	{
 	case wp_chaingun:
 		// Double tap the chaingun for extreme accuracy
@@ -1734,7 +1734,7 @@ void BotPlayer::Attack(void)
 		break;
 	}
 
-	player->buttons |= BT_ATTACK;
+	player->Buttons |= BT_ATTACK;
 }
 
 //==========================================================================
@@ -1753,7 +1753,7 @@ void BotPlayer::Turn(void)
 
 	if (!enemy)
 	{
-		player->viewangles.yaw = GetAngle();
+		player->ViewAngles.yaw = GetAngle();
 		return;
 	}
 
@@ -1793,7 +1793,7 @@ void BotPlayer::Turn(void)
 			distance = -37.5;
 		break;
 	}
-	player->viewangles.yaw = AngleMod360(botmo.Angles.yaw + distance);
+	player->ViewAngles.yaw = AngleMod360(botmo.Angles.yaw + distance);
 }
 
 //==========================================================================
@@ -2208,7 +2208,7 @@ void BotPlayer::OnBeginPlay(void)
 	info.evade = SkillLower(binfo->evade, 4 - botskill);
 	info.anticip = SkillLower(binfo->anticip, 4 - botskill);
 	info.reaction = SkillLower(binfo->reaction, 4 - botskill);
-	strcpy(ARR2STR(player->userinfo), binfo->userinfo);
+	strcpy(ARR2STR(player->UserInfo), binfo->userinfo);
 
 	// Setup combat distance tables
 	if (deathmatch/* || teamgame.value*/)
@@ -2250,6 +2250,9 @@ void BotPlayer::OnSpawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/22 18:00:06  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.13  2002/02/14 19:20:57  dj_jl
 //  Renamed Entity properties to new naming style
 //

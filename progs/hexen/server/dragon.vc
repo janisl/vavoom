@@ -53,9 +53,9 @@ void Actor::DragonSeek(float thresh, float turnMax)
 	float bestAngle;
 	float angleToSpot, angleToTarget;
 	mobj_t *mo;
-	mobj_t *oldTarget;
+	Actor oldEnemy;
 
-	tempTarget = specialmobj1;
+	tempTarget = SpecialMobj1;
 	if (!tempTarget)
 	{
 		return;
@@ -104,30 +104,30 @@ void Actor::DragonSeek(float thresh, float turnMax)
 			atan2(tempTarget->Origin.y - Origin.y,
 			tempTarget->Origin.x - Origin.x))) < 45.0 / 2.0)
 		{
-			oldTarget = target;
-			target = tempTarget;
+			oldEnemy = Enemy;
+			Enemy = *tempTarget;
 			if (CheckMeleeRange())
 			{
-				target->Damage(self, self, HITDICE(10));
-				StartSoundName(self, 'DragonAttack', CHAN_WEAPON);
+				Enemy.Damage(self, self, HITDICE(10));
+				PlaySound('DragonAttack', CHAN_WEAPON);
 			}
 			else if (P_Random() < 128 && CheckMissileRange())
 			{
 				SpawnMissile(this, tempTarget, DragonMissile);
-				StartSoundName(self, 'DragonAttack', CHAN_WEAPON);
+				PlaySound('DragonAttack', CHAN_WEAPON);
 			}
-			target = oldTarget;
+			Enemy = oldEnemy;
 		}
 	}
 	if (dist * 35.0 < 4.0)
 	{
 		// Hit the target thing
-		if (target && P_Random() < 200)
+		if (Enemy && P_Random() < 200)
 		{
 			bestArg = -1;
 			bestAngle = 360.0;
-			angleToTarget = atan2(target->Origin.y - Origin.y,
-				target->Origin.x - Origin.x);
+			angleToTarget = atan2(Enemy.Origin.y - Origin.y,
+				Enemy.Origin.x - Origin.x);
 			for (i = 0; i < 5; i++)
 			{
 				if (!tempTarget->Args[i])
@@ -148,7 +148,7 @@ void Actor::DragonSeek(float thresh, float turnMax)
 			if (bestArg != -1)
 			{
 				search = -1;
-				specialmobj1 = P_FindMobjFromTID(tempTarget->Args[bestArg],
+				SpecialMobj1 = P_FindMobjFromTID(tempTarget->Args[bestArg],
 					&search);
 			}
 		}
@@ -160,7 +160,7 @@ void Actor::DragonSeek(float thresh, float turnMax)
 			}
 			while (!tempTarget->Args[i]);
 			search = -1;
-			specialmobj1 = P_FindMobjFromTID(tempTarget->Args[i], &search);
+			SpecialMobj1 = P_FindMobjFromTID(tempTarget->Args[i], &search);
 		}
 	}
 }
@@ -179,14 +179,14 @@ void Actor::A_DragonInitFlight(void)
 	do
 	{
 		// find the first tid identical to the dragon's tid
-		specialmobj1 = P_FindMobjFromTID(TID, &search);
+		SpecialMobj1 = P_FindMobjFromTID(TID, &search);
 		if (search == -1)
 		{
 			SetState(SpawnState);
 			return;
 		}
 	}
-	while (specialmobj1 == this);
+	while (SpecialMobj1 == this);
 	P_RemoveMobjFromTIDList(this);
 }
 
@@ -201,26 +201,25 @@ void Actor::A_DragonFlight(void)
 	float angle;
 
 	DragonSeek(4.0, 8.0);
-	if (target)
+	if (Enemy)
 	{
-		if (!target->bShootable)
+		if (!Enemy.bShootable)
 		{
-			// target died
-			target = NULL;
+			// enemy died
+			Enemy = none;
 			return;
 		}
-		angle = atan2(target->Origin.y - Origin.y,
-			target->Origin.x - Origin.x);
+		angle = atan2(Enemy.Origin.y - Origin.y, Enemy.Origin.x - Origin.x);
 		if (fabs(AngleMod180(Angles.yaw - angle)) < 45.0 / 2.0
 			&& CheckMeleeRange())
 		{
-			target->Damage(self, self, HITDICE(8));
-			StartSoundName(self, 'DragonAttack', CHAN_WEAPON);
+			Enemy.Damage(self, self, HITDICE(8));
+			PlaySound('DragonAttack', CHAN_WEAPON);
 		}
 		else if (fabs(AngleMod180(Angles.yaw - angle)) <= 20.0)
 		{
 			SetState(MissileState);
-			StartSoundName(self, 'DragonAttack', CHAN_WEAPON);
+			PlaySound('DragonAttack', CHAN_WEAPON);
 		}
 	}
 	else
@@ -240,11 +239,11 @@ void Actor::A_DragonFlap(void)
 	A_DragonFlight();
 	if (P_Random() < 240)
 	{
-		StartSoundName(self, 'DragonWingflap', CHAN_BODY);
+		PlaySound('DragonWingflap', CHAN_BODY);
 	}
 	else
 	{
-		StartSoundName(self, ActiveSound, CHAN_VOICE);
+		PlaySound(ActiveSound, CHAN_VOICE);
 	}
 }
 
@@ -256,7 +255,7 @@ void Actor::A_DragonFlap(void)
 
 void Actor::A_DragonAttack(void)
 {
-	SpawnMissile(this, target, DragonMissile);
+	SpawnMissile(this, &Enemy, DragonMissile);
 }
 
 //============================================================================
@@ -268,7 +267,7 @@ void Actor::A_DragonAttack(void)
 void Actor::A_DragonPain(void)
 {
 	A_Pain();
-	if (!specialmobj1)
+	if (!SpecialMobj1)
 	{
 		// no destination spot yet
 		SetState(S_DRAGON_INIT);
@@ -310,7 +309,7 @@ void Actor::A_DragonFX2(void)
 		if (mo)
 		{
 			mo->StateTime = delay + Random() * 0.2 * itof(i);
-			mo->target = target;
+			mo->Owner = Owner;
 		}
 	}
 }
@@ -318,6 +317,9 @@ void Actor::A_DragonFX2(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/22 18:00:21  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.18  2002/02/16 16:26:55  dj_jl
 //  Removed precalculated sound IDs
 //

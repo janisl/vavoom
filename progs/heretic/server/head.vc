@@ -71,7 +71,7 @@ void Actor::A_HeadAttack(void)
 	{
 		// Ice ball
 		SpawnMissile(this, target, HeadMissile1);
-		StartSoundName(self, 'HeadAttack2', CHAN_WEAPON);
+		PlaySound('HeadAttack2', CHAN_WEAPON);
 	}
 	else if (randAttack < (dist ? 200 : 150))
 	{
@@ -86,7 +86,7 @@ void Actor::A_HeadAttack(void)
 					baseFire->Origin.z, HeadMissile3);
 				if (i == 0)
 				{
-					StartSoundName(self, 'HeadAttack1', CHAN_WEAPON);
+					PlaySound('HeadAttack1', CHAN_WEAPON);
 				}
 				fire->target = baseFire->target;
 				fire->Angles.yaw = baseFire->Angles.yaw;
@@ -104,10 +104,10 @@ void Actor::A_HeadAttack(void)
 		if (mo != NULL)
 		{
 			mo->Origin.z -= 32.0;
-			mo->specialmobj1 = target;
-			mo->special2 = 50;	// Timer for active sound
+			mo->SpecialMobj1 = target;
+			mo->Special2 = 50;	// Timer for active sound
 			mo->Health = 20 * TICRATE;	// Duration
-			StartSoundName(self, 'HeadAttack3', CHAN_WEAPON);
+			PlaySound('HeadAttack3', CHAN_WEAPON);
 		}
 	}
 }
@@ -169,12 +169,12 @@ void Actor::A_WhirlwindSeek(void)
 		bMissile = false;
 		return;
 	}
-	if ((special2 -= 3) < 0)
+	if ((Special2 -= 3) < 0)
 	{
-		special2 = 58 + (P_Random() & 31);
-		StartSoundName(self, 'HeadAttack3', CHAN_WEAPON);
+		Special2 = 58 + (P_Random() & 31);
+		PlaySound('HeadAttack3', CHAN_WEAPON);
 	}
-	if (specialmobj1 && specialmobj1->Translucency)
+	if (SpecialMobj1 && SpecialMobj1->Translucency)
 	{
 		return;
 	}
@@ -184,6 +184,9 @@ void Actor::A_WhirlwindSeek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/22 18:00:16  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.17  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

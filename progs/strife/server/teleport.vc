@@ -134,24 +134,24 @@ int P_Teleport(mobj_t * thing, float x, float y, float angle)
 
 	thing->Origin.z = thing->FloorZ;	//fixme: not needed?
 	if (thing->bIsPlayer)
-		thing->Player->vieworg.z =
-			thing->Origin.z + thing->Player->viewheight;
+		thing->Player->ViewOrg.z =
+			thing->Origin.z + thing->Player->ViewHeight;
 
 	// spawn teleport fog at source and destination
 	fog = P_SpawnMobj(oldx, oldy, oldz, TeleportFog);
-	StartSoundName(*fog, 'Teleport', CHAN_VOICE);
+	fog->PlaySound('Teleport', CHAN_VOICE);
 
 	fog = P_SpawnMobj(x + 20.0 * cos(angle),
 		y + 20.0 * sin(angle), thing->Origin.z, TeleportFog);
 
 	// emit sound, where?
-	StartSoundName(*fog, 'Teleport', CHAN_VOICE);
+	fog->PlaySound('Teleport', CHAN_VOICE);
 
 	// don't move for a bit
 	if (thing->bIsPlayer)
 	{
 		thing->ReactionTime = 0.5;
-		thing->Player->fixangle = true;
+		thing->Player->bFixAngle = true;
 	}
 
 	thing->Angles.yaw = angle;
@@ -283,18 +283,18 @@ boolean EV_SilentLineTeleport(line_t *line, int side, Actor *thing, int id,
 		if (thing->bIsPlayer)
 		{
 			// Save the current deltaviewheight, used in stepping
-			float deltaviewheight = thing->Player->deltaviewheight;
+			float DeltaViewHeight = thing->Player->DeltaViewHeight;
 
-			// Clear deltaviewheight, since we don't want any changes now
-			thing->Player->deltaviewheight = 0.0;
+			// Clear DeltaViewHeight, since we don't want any changes now
+			thing->Player->DeltaViewHeight = 0.0;
 
 			// Set player's view according to the newly set parameters
 			CalcHeight(thing->Player);
 
 			// Reset the delta to have the same dynamics as before
-			thing->Player->deltaviewheight = deltaviewheight;
+			thing->Player->DeltaViewHeight = DeltaViewHeight;
 
-			thing->Player->fixangle = true;
+			thing->Player->bFixAngle = true;
 		}
 		return true;
 	}
@@ -304,6 +304,9 @@ boolean EV_SilentLineTeleport(line_t *line, int side, Actor *thing, int id,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/22 18:00:26  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.18  2002/02/16 16:21:49  dj_jl
 //  Added line teleporters
 //

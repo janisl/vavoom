@@ -35,16 +35,16 @@ void Actor::A_Look(void)
 {
 	Actor targ;
 
-	threshold = 0;	// any shot will wake up
+	Threshold = 0;	// any shot will wake up
 	targ = Actor(Sector->SoundTarget);
 
 	if (targ && targ.bShootable)
 	{
-		target = &targ;
+		Enemy = targ;
 
 		if (bAmbush)
 		{
-			if (!P_CheckSight(self, *target))
+			if (!P_CheckSight(self, Enemy))
 			{
 				if (!LookForPlayers(false))
 					return;
@@ -63,11 +63,11 @@ void Actor::A_Look(void)
 		if (bBoss)
 		{
 			// Full volume
-			StartSoundName(none, SightSound, CHAN_VOICE);
+			PlayFullVolumeSound(SightSound, CHAN_VOICE);
 		}
 		else
 		{
-			StartSoundName(none, SightSound, CHAN_VOICE);
+			PlaySound(SightSound, CHAN_VOICE);
 		}
 	}
 
@@ -92,15 +92,15 @@ void Actor::A_Chase(void)
 	}
 
 	// modify target threshold
-	if (threshold)
+	if (Threshold)
 	{
-		if (!target || target->Health <= 0)
+		if (!Enemy || Enemy.Health <= 0)
 		{
-			threshold = 0;
+			Threshold = 0;
 		}
 		else
 		{
-			threshold--;
+			Threshold--;
 		}
 	}
 
@@ -115,10 +115,10 @@ void Actor::A_Chase(void)
 	}
 
 	// turn towards movement direction if not there yet
-	if (movedir < 8)
+	if (MoveDir < 8)
 	{
 		Angles.yaw = itof(ftoi(Angles.yaw / 45.0)) * 45.0;
-		delta = AngleMod180(Angles.yaw - itof(movedir) * 45.0);
+		delta = AngleMod180(Angles.yaw - itof(MoveDir) * 45.0);
 
 		if (delta > 0.0)
 		{
@@ -130,7 +130,7 @@ void Actor::A_Chase(void)
 		}
 	}
 
-	if (!target || !target->bShootable)
+	if (!Enemy || !Enemy.bShootable)
 	{
 		// look for a new target
 		if (LookForPlayers(true))
@@ -157,7 +157,7 @@ void Actor::A_Chase(void)
 	{
 		if (AttackSound)
 		{
-			StartSoundName(self, AttackSound, CHAN_WEAPON);
+			PlaySound(AttackSound, CHAN_WEAPON);
 		}
 		SetState(MeleeState);
 		return;
@@ -166,7 +166,7 @@ void Actor::A_Chase(void)
 	// check for missile attack
 	if (MissileState)
 	{
-		if (fastparm || !movecount)
+		if (fastparm || !MoveCount)
 		{
 			if (CheckMissileRange())
 			{
@@ -178,9 +178,9 @@ void Actor::A_Chase(void)
 	}
 
 	// possibly choose another target
-	if (netgame && !threshold)
+	if (netgame && !Threshold)
 	{
-		if (!P_CheckSight(self, *target))
+		if (!P_CheckSight(self, Enemy))
 		{
 			if (LookForPlayers(true))
 				return;	// got a new target
@@ -188,7 +188,7 @@ void Actor::A_Chase(void)
 	}
 
 	// chase towards player
-	if (--movecount < 0 || !StepMove())
+	if (--MoveCount < 0 || !StepMove())
 	{
 		NewChaseDir();
 	}
@@ -198,20 +198,20 @@ void Actor::A_Chase(void)
 	{
 		if (Class == Bishop && P_Random() < 128)
 		{
-			StartSoundName(self, SightSound, CHAN_VOICE);
+			PlaySound(SightSound, CHAN_VOICE);
 		}
 		else if (Class == Pig)
 		{
-			StartSoundName(self, (P_Random() & 1) ? 'PigActive2' :
+			PlaySound((P_Random() & 1) ? 'PigActive2' :
 				'PigActive1', CHAN_VOICE);
 		}
 		else if (bBoss)
 		{
-			StartSoundName(none, ActiveSound, CHAN_VOICE);
+			PlayFullVolumeSound(ActiveSound, CHAN_VOICE);
 		}
 		else
 		{
-			StartSoundName(self, ActiveSound, CHAN_VOICE);
+			PlaySound(ActiveSound, CHAN_VOICE);
 		}
 	}
 }
@@ -224,15 +224,15 @@ void Actor::A_Chase(void)
 
 void Actor::A_FaceTarget(void)
 {
-	if (!target)
+	if (!Enemy)
 		return;
 
 	bAmbush = false;
 
-	Angles.yaw = atan2(target->Origin.y - Origin.y,
-		target->Origin.x - Origin.x);
+	Angles.yaw = atan2(Enemy.Origin.y - Origin.y,
+		Enemy.Origin.x - Origin.x);
 
-	if (target->Translucency)
+	if (Enemy.Translucency)
 	{
 		Angles.yaw = AngleMod360(Angles.yaw + (Random() - Random()) * 45.0);
 	}
@@ -248,7 +248,7 @@ void Actor::A_Pain(void)
 {
 	if (PainSound)
 	{
-		StartSoundName(self, PainSound, CHAN_VOICE);
+		PlaySound(PainSound, CHAN_VOICE);
 	}
 }
 
@@ -289,9 +289,9 @@ void Actor::A_Scream(void)
 	StopSound(self, CHAN_AUTO);
 	if (bIsPlayer)
 	{
-		if (Player->morphTics)
+		if (Player->MorphTics)
 		{
-			StartSoundName(self, DeathSound, CHAN_VOICE);
+			PlaySound(DeathSound, CHAN_VOICE);
 		}
 		else
 		{
@@ -299,23 +299,23 @@ void Actor::A_Scream(void)
 			if (Velocity.z <= -39.0 * 35.0)
 			{
 				// Falling splat
-				StartSoundName(self, 'PlayerFallingSplat', CHAN_VOICE);
+				PlaySound('PlayerFallingSplat', CHAN_VOICE);
 			}
 			else if (Health > -50)
 			{
 				// Normal death sound
-				switch (Player->pclass)
+				switch (Player->PClass)
 				{
 				case PCLASS_FIGHTER:
-					StartSoundName(self, 'PlayerFighterNormalDeath',
+					PlaySound('PlayerFighterNormalDeath',
 						CHAN_VOICE);
 					break;
 				case PCLASS_CLERIC:
-					StartSoundName(self, 'PlayerClericNormalDeath',
+					PlaySound('PlayerClericNormalDeath',
 						CHAN_VOICE);
 					break;
 				case PCLASS_MAGE:
-					StartSoundName(self, 'PlayerMageNormalDeath',
+					PlaySound('PlayerMageNormalDeath',
 						CHAN_VOICE);
 					break;
 				}
@@ -323,45 +323,78 @@ void Actor::A_Scream(void)
 			else if (Health > -100)
 			{
 				// Crazy death sound
-				switch (Player->pclass)
+				switch (Player->PClass)
 				{
 				case PCLASS_FIGHTER:
-					StartSoundName(self, 'PlayerFighterCrazyDeath',
+					PlaySound('PlayerFighterCrazyDeath',
 						CHAN_VOICE);
 					break;
 				case PCLASS_CLERIC:
-					StartSoundName(self, 'PlayerClericCrazyDeath',
+					PlaySound('PlayerClericCrazyDeath',
 						CHAN_VOICE);
 					break;
 				case PCLASS_MAGE:
-					StartSoundName(self, 'PlayerMageCrazyDeath', CHAN_VOICE);
+					PlaySound('PlayerMageCrazyDeath', CHAN_VOICE);
 					break;
 				}
 			}
 			else
 			{	// Extreme death sound
-				int sound;
+				name sound;
 
-				switch (Player->pclass)
+				switch (Player->PClass)
 				{
 				case PCLASS_FIGHTER:
-					sound = GetSoundID('PlayerFighterExtreme1Death');
+					switch (P_Random() % 3)
+					{
+					case 0:
+						sound = 'PlayerFighterExtreme1Death';
+						break;
+					case 1:
+						sound = 'PlayerFighterExtreme2Death';
+						break;
+					case 2:
+						sound = 'PlayerFighterExtreme3Death';
+						break;
+					}
 					break;
 				case PCLASS_CLERIC:
-					sound = GetSoundID('PlayerClericExtreme1Death');
+					switch (P_Random() % 3)
+					{
+					case 0:
+						sound = 'PlayerClericExtreme1Death';
+						break;
+					case 1:
+						sound = 'PlayerClericExtreme2Death';
+						break;
+					case 2:
+						sound = 'PlayerClericExtreme3Death';
+						break;
+					}
 					break;
 				case PCLASS_MAGE:
-					sound = GetSoundID('PlayerMageExtreme1Death');
+					switch (P_Random() % 3)
+					{
+					case 0:
+						sound = 'PlayerMageExtreme1Death';
+						break;
+					case 1:
+						sound = 'PlayerMageExtreme2Death';
+						break;
+					case 2:
+						sound = 'PlayerMageExtreme3Death';
+						break;
+					}
 					break;
 				}
-				sound += P_Random() % 3;	// Three different extreme deaths
-				StartSound(self, sound, CHAN_VOICE);
+				// Three different extreme deaths
+				PlaySound(sound, CHAN_VOICE);
 			}
 		}
 	}
 	else
 	{
-		StartSoundName(self, DeathSound, CHAN_VOICE);
+		PlaySound(DeathSound, CHAN_VOICE);
 	}
 }
 
@@ -448,7 +481,7 @@ void Actor::A_Explode(void)
 	default:
 		break;
 	}
-	P_RadiusAttack(this, target, damage, distance, damageSelf);
+	P_RadiusAttack(this, &Owner, damage, distance, damageSelf);
 	if (Origin.z <= FloorZ + distance && Class != PoisonCloud)
 	{
 		P_HitFloor(this);
@@ -511,11 +544,11 @@ void Actor::A_SkullPop(void)
 	mo->bIsPlayer = true;
 	Player = NULL;
 	bIsPlayer = false;
-	special1 = mo->Player->pclass;
+	Special1 = mo->Player->PClass;
 	mo->Health = Health;
 	mo->Angles.yaw = Angles.yaw;
 	mo->Player->mo = mo;
-	mo->Player->damagecount = 32;
+	mo->Player->DamageCount = 32;
 }
 
 //============================================================================
@@ -535,13 +568,13 @@ void Actor::A_FreezeDeath(void)
 	bSlide = true;
 	bNoPassMobj = false;
 	Height *= 4.0;
-	StartSoundName(self, 'FreezeDeath', CHAN_VOICE);
+	PlaySound('FreezeDeath', CHAN_VOICE);
 
 	if (bIsPlayer)
 	{
-		Player->damagecount = 0;
-		Player->poisoncount = 0;
-		Player->bonuscount = 0;
+		Player->DamageCount = 0;
+		Player->PoisonCount = 0;
+		Player->BonusCount = 0;
 	}
 	else
 	{
@@ -591,7 +624,7 @@ void Actor::A_FreezeDeathChunks(void)
 		StateTime = 3.0;
 		return;
 	}
-	StartSoundName(self, 'FreezeShatter', CHAN_VOICE);
+	PlaySound('FreezeShatter', CHAN_VOICE);
 
 	for (i = 12 + (P_Random() & 15); i >= 0; i--)
 	{
@@ -653,7 +686,7 @@ void Actor::A_FreezeDeathChunks(void)
 
 void Actor::A_CheckBurnGone(void)
 {
-	if (special2 == 666)
+	if (Special2 == 666)
 	{
 		SetState(S_PLAY_FDTH20);
 	}
@@ -670,7 +703,7 @@ void Actor::A_CheckSkullFloor(void)
 	if (Origin.z <= FloorZ)
 	{
 		SetState(S_BLOODYSKULLX1);
-		StartSoundName(self, 'Drip', CHAN_VOICE);
+		PlaySound('Drip', CHAN_VOICE);
 	}
 }
 
@@ -682,7 +715,7 @@ void Actor::A_CheckSkullFloor(void)
 
 void Actor::A_CheckSkullDone(void)
 {
-	if (special2 == 666)
+	if (Special2 == 666)
 	{
 		SetState(S_BLOODYSKULLX2);
 	}
@@ -697,7 +730,7 @@ void Actor::A_CheckSkullDone(void)
 void Actor::A_SpeedFade(void)
 {
 	Translucency = 66;
-	SpriteIndex = target->SpriteIndex;
+	SpriteIndex = Owner.SpriteIndex;
 }
 
 //============================================================================
@@ -708,7 +741,7 @@ void Actor::A_SpeedFade(void)
 
 void Actor::A_IceCheckHeadDone(void)
 {
-	if (special2 == 666)
+	if (Special2 == 666)
 	{
 		SetState(S_ICECHUNK_HEAD2);
 	}
@@ -835,6 +868,9 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/02/22 18:00:21  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.20  2002/02/16 16:26:55  dj_jl
 //  Removed precalculated sound IDs
 //

@@ -51,8 +51,8 @@ boolean Actor::GiveAmmo(int ammo, int num)
 	if (ammo < 0 || ammo > NUMAMMO)
 		Error("P_GiveAmmo: bad type %i", ammo);
 
-	max = Player->backpack ? maxammo[ammo] * 2 : maxammo[ammo];
-	if (Player->ammo[ammo] == max)
+	max = Player->Backpack ? maxammo[ammo] * 2 : maxammo[ammo];
+	if (Player->Ammo[ammo] == max)
 		return false;
 
 	if (num)
@@ -67,11 +67,11 @@ boolean Actor::GiveAmmo(int ammo, int num)
 		num <<= 1;
 	}
 
-	oldammo = Player->ammo[ammo];
-	Player->ammo[ammo] += num;
+	oldammo = Player->Ammo[ammo];
+	Player->Ammo[ammo] += num;
 
-	if (Player->ammo[ammo] > max)
-		Player->ammo[ammo] = max;
+	if (Player->Ammo[ammo] > max)
+		Player->Ammo[ammo] = max;
 
 	// If non zero ammo, 
 	// don't change up weapons,
@@ -85,38 +85,38 @@ boolean Actor::GiveAmmo(int ammo, int num)
 	switch (ammo)
 	{
 	case am_clip:
-		if (Player->readyweapon == wp_fist)
+		if (Player->ReadyWeapon == wp_fist)
 		{
-			if (Player->weaponowned[wp_chaingun])
-				Player->pendingweapon = wp_chaingun;
+			if (Player->WeaponOwned[wp_chaingun])
+				Player->PendingWeapon = wp_chaingun;
 			else
-				Player->pendingweapon = wp_pistol;
+				Player->PendingWeapon = wp_pistol;
 		}
 		break;
 
 	case am_shell:
-		if (Player->readyweapon == wp_fist
-			|| Player->readyweapon == wp_pistol)
+		if (Player->ReadyWeapon == wp_fist
+			|| Player->ReadyWeapon == wp_pistol)
 		{
-			if (Player->weaponowned[wp_shotgun])
-				Player->pendingweapon = wp_shotgun;
+			if (Player->WeaponOwned[wp_shotgun])
+				Player->PendingWeapon = wp_shotgun;
 		}
 		break;
 
 	case am_cell:
-		if (Player->readyweapon == wp_fist
-			|| Player->readyweapon == wp_pistol)
+		if (Player->ReadyWeapon == wp_fist
+			|| Player->ReadyWeapon == wp_pistol)
 		{
-			if (Player->weaponowned[wp_plasma])
-				Player->pendingweapon = wp_plasma;
+			if (Player->WeaponOwned[wp_plasma])
+				Player->PendingWeapon = wp_plasma;
 		}
 		break;
 
 	case am_misl:
-		if (Player->readyweapon == wp_fist)
+		if (Player->ReadyWeapon == wp_fist)
 		{
-			if (Player->weaponowned[wp_missile])
-				Player->pendingweapon = wp_missile;
+			if (Player->WeaponOwned[wp_missile])
+				Player->PendingWeapon = wp_missile;
 		}
 	default:
 		break;
@@ -141,19 +141,19 @@ boolean Actor::GiveWeapon(int weapon, boolean dropped)
 	if (netgame && (deathmatch < 2) && !dropped)
 	{
 		// leave placed weapons forever on net games
-		if (Player->weaponowned[weapon])
+		if (Player->WeaponOwned[weapon])
 			return false;
 
-		Player->bonuscount += BONUSADD;
-		Player->weaponowned[weapon] = true;
+		Player->BonusCount += BONUSADD;
+		Player->WeaponOwned[weapon] = true;
 
 		if (deathmatch)
 			GiveAmmo(weapon_ammo_type[weapon], 5);
 		else
 			GiveAmmo(weapon_ammo_type[weapon], 2);
-		Player->pendingweapon = weapon;
+		Player->PendingWeapon = weapon;
 
-		StartSoundName(self, 'PickupWeapon', CHAN_ITEM);
+		PlaySound('PickupWeapon', CHAN_ITEM);
 		return false;
 	}
 
@@ -169,13 +169,13 @@ boolean Actor::GiveWeapon(int weapon, boolean dropped)
 	else
 		gaveammo = false;
 
-	if (Player->weaponowned[weapon])
+	if (Player->WeaponOwned[weapon])
 		gaveweapon = false;
 	else
 	{
 		gaveweapon = true;
-		Player->weaponowned[weapon] = true;
-		Player->pendingweapon = weapon;
+		Player->WeaponOwned[weapon] = true;
+		Player->PendingWeapon = weapon;
 	}
 
 	return (gaveweapon || gaveammo);
@@ -191,13 +191,17 @@ boolean Actor::GiveWeapon(int weapon, boolean dropped)
 
 boolean Actor::GiveBody(int num)
 {
-	if (Player->health >= MAXHEALTH)
+	if (Health >= MAXHEALTH)
+	{
 		return false;
+	}
 
-	Player->health += num;
-	if (Player->health > MAXHEALTH)
-		Player->health = MAXHEALTH;
-	Health = Player->health;
+	Health += num;
+	if (Health > MAXHEALTH)
+	{
+		Health = MAXHEALTH;
+	}
+	Player->Health = Health;
 
 	return true;
 }
@@ -215,11 +219,11 @@ boolean Actor::GiveArmor(int armortype)
 	int hits;
 
 	hits = armortype * 100;
-	if (Player->armorpoints >= hits)
+	if (Player->ArmorPoints >= hits)
 		return false;	// don't pick up
 
-	Player->armortype = armortype;
-	Player->armorpoints = hits;
+	Player->ArmorType = armortype;
+	Player->ArmorPoints = hits;
 
 	return true;
 }
@@ -232,11 +236,11 @@ boolean Actor::GiveArmor(int armortype)
 
 boolean Actor::GiveCard(int card)
 {
-	if (Player->keys & (1 << card))
+	if (Player->Keys & (1 << card))
 		return false;
 
-	Player->bonuscount = BONUSADD;
-	Player->keys |= 1 << card;
+	Player->BonusCount = BONUSADD;
+	Player->Keys |= 1 << card;
 	return true;
 }
 
@@ -248,12 +252,12 @@ boolean Actor::GiveCard(int card)
 
 boolean Actor::GiveItem(int item)
 {
-	if (Player->items & item)
+	if (Player->Items & item)
 	{
 		return false;	// already got it
 	}
 
-	Player->items |= item;
+	Player->Items |= item;
 	return true;
 }
 
@@ -267,40 +271,40 @@ boolean Actor::GivePower(int power)
 {
 	if (power == pw_invulnerability)
 	{
-		Player->powers[power] = ftoi(INVULNTIME * 35.0);
+		Player->Powers[power] = ftoi(INVULNTIME * 35.0);
 		return true;
 	}
 
 	if (power == pw_invisibility)
 	{
-		Player->powers[power] = ftoi(INVISTIME * 35.0);
+		Player->Powers[power] = ftoi(INVISTIME * 35.0);
 		Translucency = 90;
 		return true;
 	}
 
 	if (power == pw_infrared)
 	{
-		Player->powers[power] = ftoi(INFRATIME * 35.0);
+		Player->Powers[power] = ftoi(INFRATIME * 35.0);
 		return true;
 	}
 
 	if (power == pw_ironfeet)
 	{
-		Player->powers[power] = ftoi(IRONTIME * 35.0);
+		Player->Powers[power] = ftoi(IRONTIME * 35.0);
 		return true;
 	}
 
 	if (power == pw_strength)
 	{
 		GiveBody(100);
-		Player->powers[power] = 1;
+		Player->Powers[power] = 1;
 		return true;
 	}
 
-	if (Player->powers[power])
+	if (Player->Powers[power])
 		return false;	// already got it
 
-	Player->powers[power] = 1;
+	Player->Powers[power] = 1;
 	return true;
 }
 
@@ -346,35 +350,35 @@ void Actor::TouchSpecial(Actor Toucher)
 
 		// bonus items
 	case 'BON1':
-		Toucher.Player->health++;	// can go over 100%
-		if (Toucher.Player->health > 200)
-			Toucher.Player->health = 200;
-		Toucher.Health = Toucher.Player->health;
+		Toucher.Player->Health++;	// can go over 100%
+		if (Toucher.Player->Health > 200)
+			Toucher.Player->Health = 200;
+		Toucher.Health = Toucher.Player->Health;
 		cprint(Toucher.Player, "%s\n", GOTHTHBONUS);
 		break;
 
 	case 'BON2':
-		Toucher.Player->armorpoints++;	// can go over 100%
-		if (Toucher.Player->armorpoints > 200)
-			Toucher.Player->armorpoints = 200;
-		if (!Toucher.Player->armortype)
-			Toucher.Player->armortype = 1;
+		Toucher.Player->ArmorPoints++;	// can go over 100%
+		if (Toucher.Player->ArmorPoints > 200)
+			Toucher.Player->ArmorPoints = 200;
+		if (!Toucher.Player->ArmorType)
+			Toucher.Player->ArmorType = 1;
 		cprint(Toucher.Player, "%s\n", GOTARMBONUS);
 		break;
 
 	case 'SOUL':
-		Toucher.Player->health += SOULSPHERE_HEALTH;
-		if (Toucher.Player->health > SOULSPHERE_MAX)
-			Toucher.Player->health = SOULSPHERE_MAX;
-		Toucher.Player->mo->Health = Toucher.Player->health;
+		Toucher.Player->Health += SOULSPHERE_HEALTH;
+		if (Toucher.Player->Health > SOULSPHERE_MAX)
+			Toucher.Player->Health = SOULSPHERE_MAX;
+		Toucher.Player->mo->Health = Toucher.Player->Health;
 		cprint(Toucher.Player, "%s\n", GOTSUPER);
 		sound = 'PickupPower';
 		break;
 
 #ifdef DOOM2
 	case 'MEGA':
-		Toucher.Player->health = MEGASPHERE_HEALTH;
-		Toucher.Health = Toucher.Player->health;
+		Toucher.Player->Health = MEGASPHERE_HEALTH;
+		Toucher.Health = Toucher.Player->Health;
 		Toucher.GiveArmor(2);
 		cprint(Toucher.Player, "%s\n", GOTMSPHERE);
 		sound = 'PickupPower';
@@ -436,7 +440,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		if (!Toucher.GiveBody(25))
 			return;
 
-		if (Toucher.Player->health < 25)
+		if (Toucher.Player->Health < 25)
 			cprint(Toucher.Player, "%s\n", GOTMEDINEED);
 		else
 			cprint(Toucher.Player, "%s\n", GOTMEDIKIT);
@@ -454,8 +458,8 @@ void Actor::TouchSpecial(Actor Toucher)
 		if (!Toucher.GivePower(pw_strength))
 			return;
 		cprint(Toucher.Player, "%s\n", GOTBERSERK);
-		if (Toucher.Player->readyweapon != wp_fist)
-			Toucher.Player->pendingweapon = wp_fist;
+		if (Toucher.Player->ReadyWeapon != wp_fist)
+			Toucher.Player->PendingWeapon = wp_fist;
 		sound = 'PickupPower';
 		break;
 
@@ -546,7 +550,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		break;
 
 	case 'BPAK':
-		Toucher.Player->backpack = true;
+		Toucher.Player->Backpack = true;
 		for (i = 0; i < NUMAMMO; i++)
 		{
 			Toucher.GiveAmmo(i, 1);
@@ -617,15 +621,18 @@ void Actor::TouchSpecial(Actor Toucher)
 	}
 
 	if (bCountItem)
-		Toucher.Player->itemcount++;
+		Toucher.Player->ItemCount++;
 	P_RemoveMobj(this);
-	Toucher.Player->bonuscount += BONUSADD;
-	StartSoundName(Toucher, sound, CHAN_ITEM);
+	Toucher.Player->BonusCount += BONUSADD;
+	Toucher.PlaySound(sound, CHAN_ITEM);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/22 18:00:08  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.13  2002/02/14 19:20:57  dj_jl
 //  Renamed Entity properties to new naming style
 //

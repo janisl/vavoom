@@ -103,7 +103,7 @@ void Actor::A_Quake(void)
 		for (playnum = 0; playnum < MAXPLAYERS; playnum++)
 		{
 			pl = &players[playnum];
-			if (!pl->active || !pl->spawned)
+			if (!pl->bActive || !pl->bSpawned)
 				continue;
 
 			victim = pl->mo;
@@ -111,7 +111,7 @@ void Actor::A_Quake(void)
 			// Tested in tile units (64 pixels)
 			if (dist < Args[3])	// In tremor radius
 			{
-				pl->localQuakeHappening = richters;
+				pl->LocalQuakeHappening = richters;
 			}
 			// Check if in damage radius
 			if ((dist < Args[2]) && (victim->Origin.z <= victim->FloorZ))
@@ -130,7 +130,7 @@ void Actor::A_Quake(void)
 	{
 		for (playnum = 0; playnum < MAXPLAYERS; playnum++)
 		{
-			players[playnum].localQuakeHappening = 0;
+			players[playnum].LocalQuakeHappening = 0;
 		}
 		SetState(S_NULL);
 	}
@@ -139,6 +139,9 @@ void Actor::A_Quake(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/22 18:00:23  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.13  2002/02/14 19:20:59  dj_jl
 //  Renamed Entity properties to new naming style
 //

@@ -450,8 +450,6 @@ struct state_t
 	float time;
 	int statenum;
 	int nextstate;
-	float misc1;
-	float misc2;
 	state_func_t function;
 };
 
@@ -508,11 +506,9 @@ class MapObject:Thinker
 	int ValidCount;
 
 	//	Flags
-	bool bSolid;			// Blocks.
-	bool bNoClient;		// don't update to clients
-							// (invisible but touchable)
-	bool bNoBlockmap;	// don't use the blocklinks
-							// (inert but displayable)
+	bool bSolid;		// Blocks.
+	bool bHidden;		// don't update to clients (invisible but touchable)
+	bool bNoBlockmap;	// don't use the blocklinks (inert but displayable)
 	bool bIsPlayer;		// PLayer or player-bot
 
 	int Health;
@@ -547,18 +543,95 @@ typedef boolean(*thing_iter_func_t) (MapObject);
 
 class ViewEntity:Object
 {
-	int sprite;
-	int frame;
-	int model_index;
-	int alias_frame;
-	int alias_skinnum;
-	float sx;
-	float sy;
-	int statenum;	// a 0 state means not active
-	int nextstate;
-	float time;
-	player_t *player;
-};
+	int SpriteIndex;
+	int SpriteFrame;
+	int ModelIndex;
+	int ModelFrame;
+	int ModelSkinNum;
+	float SX;
+	float SY;
+	int StateNum;	// a 0 state means not active
+	int NextState;
+	float StateTime;
+	player_t *Player;
+
+//===========================================================================
+//
+//  SetState
+//
+//===========================================================================
+
+void SetState(int stnum)
+{
+	state_t *state;
+
+	do
+	{
+		if (!stnum)
+		{
+			// Object removed itself.
+			StateNum = 0;
+			break;
+		}
+		state = &states[stnum];
+		StateTime = state->time;	// could be 0
+		SpriteIndex = state->sprite;
+		SpriteFrame = state->frame;
+		ModelIndex = state->model_index;
+		ModelFrame = state->model_frame;
+		StateNum = state->statenum;
+		NextState = state->nextstate;
+		if (state->function)
+		{
+			// Call action routine.
+			state->function(self);
+			if (!StateNum)
+			{
+				break;
+			}
+		}
+		stnum = NextState;
+	}
+	while (!StateTime);	// An initial state of 0 could cycle through.
+}
+
+//==========================================================================
+//
+//  SetStateNF
+//
+//  Identical to SetState, without calling the action function
+//
+//==========================================================================
+
+void SetStateNF(int stnum)
+{
+	state_t *state;
+
+	do
+	{
+		if (!stnum)
+		{	// Object removed itself.
+			StateNum = 0;
+			break;
+		}
+		state = &states[stnum];
+		StateTime = state->time;	// could be 0
+		SpriteIndex = state->sprite;
+		SpriteFrame = state->frame;
+		ModelIndex = state->model_index;
+		ModelFrame = state->model_frame;
+		StateNum = state->statenum;
+		NextState = state->nextstate;
+		stnum = NextState;
+	}
+	while (!StateTime);	// An initial state of 0 could cycle through.
+}
+
+defaultproperties
+{
+}
+
+}
 
 //
 // Extended player object info: player_t
@@ -567,84 +640,81 @@ class ViewEntity:Object
 #define MAX_MSGLEN	8000
 struct player_t
 {
-	boolean active;
-	boolean spawned;
-	boolean is_bot;
-	void *__netcon;
-	int __message[7];
-	int __msgbuf[MAX_MSGLEN / 4];
-	int __mobj_update_start;
-	float __last_message;
+	bool bActive;
+	bool bSpawned;
+	bool bIsBot;
+	bool bFixAngle;
+	bool bAttackDown;	// True if button down last tic.
+	bool bUseDown;
+	bool bDidSecret;	// True if secret level has been done.
 
-	int userinfo[MAX_INFO_STRING / 4];
+	void *__NetCon;
+	int __Message[7];
+	int __MsgBuf[MAX_MSGLEN / 4];
+	int __MobjUpdateStart;
+	float __LastMessage;
+
+	int UserInfo[MAX_INFO_STRING / 4];
 
 	int Name[MAXNAME / 4];
-	int baseclass;
-	int pclass;	// player class type
-	int color;
+	int BaseClass;
+	int PClass;	// player class type
+	int Color;
 
 	// Copied from cmd, needed for PROGS, which supports only 4 byte ints
-	float forwardmove;	// *2048 for move
-	float sidemove;	// *2048 for move
-	float flymove;	// fly up/down/centering
-	int buttons;	// fire, use
-	int impulse;	// weapon changes, inventory, etc
+	float ForwardMove;	// *2048 for move
+	float SideMove;	// *2048 for move
+	float FlyMove;	// fly up/down/centering
+	int Buttons;	// fire, use
+	int Impulse;	// weapon changes, inventory, etc
 
 	Actor *mo;
-	int playerstate;
+	int PlayerState;
 
 	//  Model of current weapon
-	int weapon_model;
+	int WeaponModel;
 
 	// Determine POV,
 	//  including viewpoint bobbing during movement.
 	// Focal origin above r.z
-	TVec vieworg;
+	TVec ViewOrg;
 
-	TAVec viewangles;
-	boolean fixangle;
+	TAVec ViewAngles;
 
 	// This is only used between levels,
 	// mo->health is used during levels.
-	int health;
+	int Health;
 
-	int items;
+	int Items;
 
 	// Frags, kills of other players.
-	int frags[MAXPLAYERS];
-
-	// True if button down last tic.
-	int attackdown;
-	int usedown;
+	int Frags[MAXPLAYERS];
 
 	// For intermission stats.
-	int killcount;
-	int itemcount;
-	int secretcount;
+	int KillCount;
+	int ItemCount;
+	int SecretCount;
 
 	// So gun flashes light up areas.
-	int extralight;
+	int ExtraLight;
 
 	// For lite-amp and invulnarability powers
-	int fixedcolormap;
+	int FixedColormap;
 
 	// Current PLAYPAL index
 	//  can be set to REDCOLORMAP for pain, etc.
-	int palette;
+	int Palette;
 
 	//  color shifts for damage, powerups and content types
-	int cshifts[NUM_CSHIFTS];
+	int CShifts[NUM_CSHIFTS];
 
 	// Overlay view sprites (gun, etc).
 	ViewEntity ViewEnts[NUMPSPRITES];
-	float pspriteSY;
+	float PSpriteSY;
 
-	// True if secret level has been done.
-	boolean didsecret;
+	int WorldTimer;	// total time the player's been playing
 
-	int worldTimer;	// total time the player's been playing
-
-	int old_stats[96];
+	int OldStats[96];
 
 	//  256 integers for user defined fields in PROGS
 	addfields 256;
@@ -982,6 +1052,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.32  2002/02/22 18:00:05  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.31  2002/02/16 16:27:44  dj_jl
 //  Added bool variables
 //

@@ -44,7 +44,7 @@
 void Weapon::A_FPunchAttack(void)
 {
 	int damage;
-	mobj_t *pmo = player->mo;
+	mobj_t *pmo = Player->mo;
 	float power;
 	int i;
 	TAVec angles;
@@ -60,8 +60,8 @@ void Weapon::A_FPunchAttack(void)
 		AimLineAttack(pmo, &angles, 2.0 * MELEERANGE);
 		if (linetarget)
 		{
-			player->mo->special1++;
-			if (pmo->special1 == 3)
+			Player->mo->Special1++;
+			if (pmo->Special1 == 3)
 			{
 				damage <<= 1;
 				power = 6.0;
@@ -72,11 +72,11 @@ void Weapon::A_FPunchAttack(void)
 			{
 				if (PuffType == HammerPuff)
 				{
-					StartSoundName(*pmo, 'FighterHammerMiss', CHAN_WEAPON);
+					pmo->PlaySound('FighterHammerMiss', CHAN_WEAPON);
 				}
 				else
 				{
-					StartSoundName(*pmo, 'FighterPunchMiss', CHAN_WEAPON);
+					pmo->PlaySound('FighterPunchMiss', CHAN_WEAPON);
 				}
 			}
 			if (linetarget->bCountKill || linetarget->bIsPlayer)
@@ -91,8 +91,8 @@ void Weapon::A_FPunchAttack(void)
 		AimLineAttack(pmo, &angles, 2.0 * MELEERANGE);
 		if (linetarget)
 		{
-			pmo->special1++;
-			if (pmo->special1 == 3)
+			pmo->Special1++;
+			if (pmo->Special1 == 3)
 			{
 				damage <<= 1;
 				power = 6.0;
@@ -103,11 +103,11 @@ void Weapon::A_FPunchAttack(void)
 			{
 				if (PuffType == HammerPuff)
 				{
-					StartSoundName(*pmo, 'FighterHammerMiss', CHAN_WEAPON);
+					pmo->PlaySound('FighterHammerMiss', CHAN_WEAPON);
 				}
 				else
 				{
-					StartSoundName(*pmo, 'FighterPunchMiss', CHAN_WEAPON);
+					pmo->PlaySound('FighterPunchMiss', CHAN_WEAPON);
 				}
 			}
 			if (linetarget->bCountKill || linetarget->bIsPlayer)
@@ -121,22 +121,22 @@ void Weapon::A_FPunchAttack(void)
 	if (i == 16)
 	{
 		// didn't find any creatures, so try to strike any walls
-		pmo->special1 = 0;
+		pmo->Special1 = 0;
 
 		avcpy(pmo->Angles, angles);
 		AimLineAttack(pmo, &angles, MELEERANGE);
 		AngleVector(&angles, &vforward);
 		if (LineAttack(pmo, &vforward, MELEERANGE, damage))
 		{
-			StartSoundName(*pmo, 'FighterPunchMiss', CHAN_WEAPON);
+			pmo->PlaySound('FighterPunchMiss', CHAN_WEAPON);
 		}
 	}
 
-	if (pmo->special1 == 3)
+	if (pmo->Special1 == 3)
 	{
-		pmo->special1 = 0;
-		SetPsprite(player, ps_weapon, S_PUNCHATK2_1);
-		StartSoundName(*pmo, 'FighterGrunt', CHAN_VOICE);
+		pmo->Special1 = 0;
+		SetPsprite(Player, ps_weapon, S_PUNCHATK2_1);
+		pmo->PlaySound('FighterGrunt', CHAN_VOICE);
 	}
 }
 
@@ -150,7 +150,7 @@ void Weapon::A_FPunchAttack(void)
 
 void Weapon::A_FAxeAttack(void)
 {
-	mobj_t *pmo = player->mo;
+	mobj_t *pmo = Player->mo;
 	float power;
 	int damage;
 	int i;
@@ -160,7 +160,7 @@ void Weapon::A_FAxeAttack(void)
 
 	damage = 40 + (P_Random() & 15) + (P_Random() & 7);
 	power = 0.0;
-	if (player->mana[MANA_1] > 0)
+	if (Player->Mana[MANA_1] > 0)
 	{
 		damage <<= 1;
 		power = 6.0;
@@ -182,7 +182,7 @@ void Weapon::A_FAxeAttack(void)
 			AngleVector(&angles, &vforward);
 			if (LineAttack(pmo, &vforward, AXERANGE, damage))
 			{
-				StartSoundName(*pmo, 'FighterHammerMiss', CHAN_WEAPON);
+				pmo->PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
 			if (linetarget->bCountKill || linetarget->bIsPlayer)
 			{
@@ -200,7 +200,7 @@ void Weapon::A_FAxeAttack(void)
 			AngleVector(&angles, &vforward);
 			if (LineAttack(pmo, &vforward, AXERANGE, damage))
 			{
-				StartSoundName(*pmo, 'FighterHammerMiss', CHAN_WEAPON);
+				pmo->PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
 			if (linetarget->bCountKill || linetarget->bIsPlayer)
 			{
@@ -214,24 +214,24 @@ void Weapon::A_FAxeAttack(void)
 	if (i == 16)
 	{
 		// didn't find any creatures, so try to strike any walls
-		pmo->special1 = 0;
+		pmo->Special1 = 0;
 
 		avcpy(pmo->Angles, angles);
 		AimLineAttack(pmo, &angles, MELEERANGE);
 		AngleVector(&angles, &vforward);
 		if (LineAttack(pmo, &vforward, MELEERANGE, damage))
 		{
-			StartSoundName(*pmo, 'FighterHammerMiss', CHAN_WEAPON);
+			pmo->PlaySound('FighterHammerMiss', CHAN_WEAPON);
 		}
 	}
 
 	if (useMana == 2)
 	{
-		player->mana[MANA_1] -=
-			WeaponManaUse(player->pclass, player->readyweapon);
-		if (player->mana[MANA_1] <= 0)
+		Player->Mana[MANA_1] -=
+			WeaponManaUse(Player->PClass, Player->ReadyWeapon);
+		if (Player->Mana[MANA_1] <= 0)
 		{
-			SetPsprite(player, ps_weapon, S_FAXEATK_5);
+			SetPsprite(Player, ps_weapon, S_FAXEATK_5);
 		}
 	}
 }
@@ -246,7 +246,7 @@ void Weapon::A_FAxeAttack(void)
 
 void Weapon::A_FHammerAttack(void)
 {
-	mobj_t *pmo = player->mo;
+	mobj_t *pmo = Player->mo;
 	int damage;
 	float power;
 	int i;
@@ -266,14 +266,14 @@ void Weapon::A_FHammerAttack(void)
 			AngleVector(&angles, &vforward);
 			if (LineAttack(pmo, &vforward, HAMMER_RANGE, damage))
 			{
-				StartSoundName(*pmo, 'FighterHammerMiss', CHAN_WEAPON);
+				pmo->PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
 			AdjustPlayerAngle(pmo);
 			if (linetarget->bCountKill || linetarget->bIsPlayer)
 			{
 				P_ThrustMobj(linetarget, angles.yaw, power);
 			}
-			pmo->special1 = false;	// Don't throw a hammer
+			pmo->Special1 = false;	// Don't throw a hammer
 			break;
 		}
 		avcpy(pmo->Angles, angles);
@@ -284,14 +284,14 @@ void Weapon::A_FHammerAttack(void)
 			AngleVector(&angles, &vforward);
 			if (LineAttack(pmo, &vforward, HAMMER_RANGE, damage))
 			{
-				StartSoundName(*pmo, 'FighterHammerMiss', CHAN_WEAPON);
+				pmo->PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
 			AdjustPlayerAngle(pmo);
 			if (linetarget->bCountKill || linetarget->bIsPlayer)
 			{
 				P_ThrustMobj(linetarget, angles.yaw, power);
 			}
-			pmo->special1 = false;	// Don't throw a hammer
+			pmo->Special1 = false;	// Don't throw a hammer
 			break;
 		}
 	}
@@ -304,23 +304,23 @@ void Weapon::A_FHammerAttack(void)
 		AngleVector(&angles, &vforward);
 		if (LineAttack(pmo, &vforward, HAMMER_RANGE, damage))
 		{
-			StartSoundName(*pmo, 'FighterHammerMiss', CHAN_WEAPON);
+			pmo->PlaySound('FighterHammerMiss', CHAN_WEAPON);
 		}
 		if (PuffSpawned)
 		{
-			pmo->special1 = false;
+			pmo->Special1 = false;
 		}
 		else
 		{
-			pmo->special1 = true;
+			pmo->Special1 = true;
 		}
 	}
 
-	if (player->mana[MANA_2] <
-		WeaponManaUse(player->pclass, player->readyweapon))
+	if (Player->Mana[MANA_2] <
+		WeaponManaUse(Player->PClass, Player->ReadyWeapon))
 	{
 		// Don't spawn a hammer if the player doesn't have enough mana
-		pmo->special1 = false;
+		pmo->Special1 = false;
 	}
 	return;
 }
@@ -335,16 +335,16 @@ void Weapon::A_FHammerThrow(void)
 {
 	mobj_t *mo;
 
-	if (!player->mo->special1)
+	if (!Player->mo->Special1)
 	{
 		return;
 	}
-	player->mana[MANA_2] -=
-		WeaponManaUse(player->pclass, player->readyweapon);
-	mo = SpawnPlayerMissile(player->mo, HammerMissile);
+	Player->Mana[MANA_2] -=
+		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
+	mo = SpawnPlayerMissile(Player->mo, HammerMissile);
 	if (mo)
 	{
-		mo->special1 = 0;
+		mo->Special1 = 0;
 	}
 }
 
@@ -358,11 +358,11 @@ void Weapon::A_FSwordAttack(void)
 {
 	mobj_t *pmo;
 
-	player->mana[MANA_1] -=
-		WeaponManaUse(player->pclass, player->readyweapon);
-	player->mana[MANA_2] -=
-		WeaponManaUse(player->pclass, player->readyweapon);
-	pmo = player->mo;
+	Player->Mana[MANA_1] -=
+		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
+	Player->Mana[MANA_2] -=
+		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
+	pmo = Player->mo;
 	SpawnPlayerMissileAngleXYZ(pmo, pmo->Origin.x, pmo->Origin.y,
 		pmo->Origin.z - 10.0, FighterSwordMissile,
 		AngleMod360(pmo->Angles.yaw + 45.0 / 4.0));
@@ -377,7 +377,7 @@ void Weapon::A_FSwordAttack(void)
 	SpawnPlayerMissileAngleXYZ(pmo, pmo->Origin.x, pmo->Origin.y,
 		pmo->Origin.z + 10.0, FighterSwordMissile,
 		AngleMod360(pmo->Angles.yaw - 45.0 / 4.0));
-	StartSoundName(*pmo, 'FighterSwordFire', CHAN_WEAPON);
+	pmo->PlaySound('FighterSwordFire', CHAN_WEAPON);
 }
 
 //============================================================================
@@ -401,6 +401,9 @@ void Actor::A_FSwordFlames(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/02/22 18:00:25  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.14  2002/02/14 19:20:59  dj_jl
 //  Renamed Entity properties to new naming style
 //

@@ -28,16 +28,16 @@
 //  Sorcerer stuff
 //
 // Sorcerer Variables
-//      special1f       Angle of ball 1 (all others relative to that)
-//      special2        which ball to stop at in stop mode (MT_???)
+//      Special1f       Angle of ball 1 (all others relative to that)
+//      Special2        which ball to stop at in stop mode (MT_???)
 //      Args[0]         Denfense time
 //      Args[1]         Number of full rotations since stopping mode
 //      Args[2]         Target orbit speed for acceleration/deceleration
 //      Args[3]         Movement mode (see SORC_ macros)
 //      Args[4]         Current ball orbit speed
 //  Sorcerer Ball Variables
-//      special1f       Previous angle of ball (for woosh)
-//      special2        Countdown of rapid fire (FX4)
+//      Special1f       Previous angle of ball (for woosh)
+//      Special2        Countdown of rapid fire (FX4)
 //      Args[0]         If set, don't play the bounce sound when bouncing
 //============================================================================
 
@@ -115,28 +115,28 @@ void Actor::A_SorcSpinBalls(void)
 	Args[0] = 0;	// Currently no defense
 	Args[3] = SORC_NORMAL;
 	Args[4] = SORCBALL_INITIAL_SPEED;	// Initial orbit speed
-	special1f = 1.0;
+	Special1f = 1.0;
 	z = Origin.z - FloorClip + Height;
 
 	mo = P_SpawnMobj(Origin.x, Origin.y, z, SorcererBall1);
 	if (mo)
 	{
-		mo->target = this;
-		mo->special2 = SORCFX4_RAPIDFIRE_TIME;
+		mo->Owner = self;
+		mo->Special2 = SORCFX4_RAPIDFIRE_TIME;
 	}
 	mo = P_SpawnMobj(Origin.x, Origin.y, z, SorcererBall2);
 	if (mo)
-		mo->target = this;
+		mo->Owner = self;
 	mo = P_SpawnMobj(Origin.x, Origin.y, z, SorcererBall3);
 	if (mo)
-		mo->target = this;
+		mo->Owner = self;
 }
 
 //============================================================================
 //
 //  Actor::A_StopBalls
 //
-//  Instant stop when rotation gets to ball in special2
+//  Instant stop when rotation gets to ball in   Special2
 // actor is sorcerer
 //
 //============================================================================
@@ -150,15 +150,15 @@ void Actor::A_StopBalls(void)
 
 	if ((Args[0] <= 0) && (chance < 200))
 	{
-		specialcid = SorcererBall2;	// Blue
+		SpecialCID = SorcererBall2;	// Blue
 	}
-	else if ((Health < (spawnhealth >> 1)) && (chance < 200))
+	else if ((Health < (SpawnHealth >> 1)) && (chance < 200))
 	{
-		specialcid = SorcererBall3;	// Green
+		SpecialCID = SorcererBall3;	// Green
 	}
 	else
 	{
-		specialcid = SorcererBall1;	// Yellow
+		SpecialCID = SorcererBall1;	// Yellow
 	}
 }
 
@@ -172,7 +172,7 @@ void Actor::A_StopBalls(void)
 
 void Actor::A_AccelBalls(void)
 {
-	mobj_t *sorc = target;
+	mobj_t *sorc = &Owner;
 
 	if (sorc->Args[4] < sorc->Args[2])
 	{
@@ -199,7 +199,7 @@ void Actor::A_AccelBalls(void)
 
 void Actor::A_DecelBalls(void)
 {
-	mobj_t *sorc = target;
+	mobj_t *sorc = &Owner;
 
 	if (sorc->Args[4] > sorc->Args[2])
 	{
@@ -223,8 +223,7 @@ void Actor::A_SorcUpdateBallAngle(void)
 {
 	if (Class == SorcererBall1)
 	{
-		target->special1f = AngleMod360(target->special1f +
-			itof(target->Args[4]));
+		Owner.Special1f = AngleMod360(Owner.Special1f + itof(Owner.Args[4]));
 	}
 }
 
@@ -240,23 +239,23 @@ void Actor::A_SorcOffense1(void)
 {
 	mobj_t *mo;
 	float ang1, ang2;
-	mobj_t *parent = target;
+	mobj_t *parent = &Owner;
 
 	ang1 = AngleMod360(Angles.yaw + 70.0);
 	ang2 = AngleMod360(Angles.yaw - 70.0);
 	mo = SpawnMissileAngle(parent, SorcererFX1, ang1, 0.0);
 	if (mo)
 	{
-		mo->target = parent;
-		mo->specialmobj1 = parent->target;
+		mo->Owner = *parent;
+		mo->SpecialMobj1 = &parent->Enemy;
 		mo->Args[4] = BOUNCE_TIME_UNIT;
 		mo->Args[3] = 15;	// Bounce time in seconds
 	}
 	mo = SpawnMissileAngle(parent, SorcererFX1, ang2, 0.0);
 	if (mo)
 	{
-		mo->target = parent;
-		mo->specialmobj1 = parent->target;
+		mo->Owner = *parent;
+		mo->SpecialMobj1 = &parent->Enemy;
 		mo->Args[4] = BOUNCE_TIME_UNIT;
 		mo->Args[3] = 15;	// Bounce time in seconds
 	}
@@ -275,8 +274,8 @@ void Actor::A_SorcOffense2(void)
 	float ang1;
 	mobj_t *mo;
 	float delta, index;
-	mobj_t *parent = target;
-	mobj_t *dest = parent->target;
+	mobj_t *parent = &Owner;
+	mobj_t *dest = &parent->Enemy;
 	float dist;
 
 	index = itof(Args[4]) * 360.0 / 256.0;
@@ -286,7 +285,7 @@ void Actor::A_SorcOffense2(void)
 	mo = SpawnMissileAngle(parent, SorcererFX4, ang1, 0.0);
 	if (mo)
 	{
-		mo->special2 = 35 * 5 / 2;	// 5 seconds
+		mo->Special2 = 35 * 5 / 2;	// 5 seconds
 		dist = MobjDist2(*dest, *mo);
 		dist = dist / mo->Speed;
 		if (dist < 1.0)
@@ -309,9 +308,9 @@ void Actor::A_CastSorcererSpell(void)
 	classid spell = Class;
 	float ang1, ang2;
 	float z;
-	mobj_t *parent = target;
+	mobj_t *parent = &Owner;
 
-	StartSoundName(none, 'SorcererSpellCast', CHAN_VOICE);
+	PlayFullVolumeSound('SorcererSpellCast', CHAN_VOICE);
 
 	// Put sorcerer into throw spell animation
 	if (parent->Health > 0)
@@ -329,19 +328,19 @@ void Actor::A_CastSorcererSpell(void)
 		parent->bReflective = true;
 		parent->Args[0] = SORC_DEFENSE_TIME;
 		if (mo)
-			mo->target = parent;
+			mo->Owner = *parent;
 		break;
 	case SorcererBall3:	// Reinforcements
 		ang1 = AngleMod360(Angles.yaw - 45.0);
 		ang2 = AngleMod360(Angles.yaw + 45.0);
-		if (Health < (spawnhealth / 3))
+		if (Health < (SpawnHealth / 3))
 		{	// Spawn 2 at a time
 			mo = SpawnMissileAngle(parent, SorcererFX3, ang1, 4.0);
 			if (mo)
-				mo->target = parent;
+				mo->Owner = *parent;
 			mo = SpawnMissileAngle(parent, SorcererFX3, ang2, 4.0);
 			if (mo)
-				mo->target = parent;
+				mo->Owner = *parent;
 		}
 		else
 		{
@@ -349,7 +348,7 @@ void Actor::A_CastSorcererSpell(void)
 				ang1 = ang2;
 			mo = SpawnMissileAngle(parent, SorcererFX3, ang1, 4.0);
 			if (mo)
-				mo->target = parent;
+				mo->Owner = *parent;
 		}
 		break;
 	default:
@@ -367,15 +366,15 @@ void Actor::A_SorcBallOrbit(void)
 {
 	float x, y;
 	float angle, baseangle;
-	int mode = target->Args[3];
-	mobj_t *parent = target;
+	int mode = Owner.Args[3];
+	mobj_t *parent = &Owner;
 	float dist = parent->Radius - (Radius * 2.0);
-	float prevangle = special1f;
+	float prevangle = Special1f;
 
-	if (target->Health <= 0)
+	if (Owner.Health <= 0)
 		SetState(PainState);
 
-	baseangle = parent->special1f;
+	baseangle = parent->Special1f;
 	switch (Class)
 	{
 	case SorcererBall1:
@@ -407,27 +406,27 @@ void Actor::A_SorcBallOrbit(void)
 		A_SorcUpdateBallAngle();
 		break;
 	case SORC_STOPPING:	// Balls stopping
-		if ((parent->specialcid == Class) &&
+		if ((parent->SpecialCID == Class) &&
 			(parent->Args[1] > SORCBALL_SPEED_ROTATIONS) &&
 			(fabs(AngleMod180(angle - parent->Angles.yaw)) <
 			15.0 * 45.0 / 16.0))
 		{
 			// Can stop now
-			target->Args[3] = SORC_FIRESPELL;
-			target->Args[4] = 0;
+			Owner.Args[3] = SORC_FIRESPELL;
+			Owner.Args[4] = 0;
 			// Set angle so ball angle == sorcerer angle
 			switch (Class)
 			{
 			case SorcererBall1:
-				parent->special1f = AngleMod360(parent->Angles.yaw -
+				parent->Special1f = AngleMod360(parent->Angles.yaw -
 					BALL1_ANGLEOFFSET);
 				break;
 			case SorcererBall2:
-				parent->special1f = AngleMod360(parent->Angles.yaw -
+				parent->Special1f = AngleMod360(parent->Angles.yaw -
 					BALL2_ANGLEOFFSET);
 				break;
 			case SorcererBall3:
-				parent->special1f = AngleMod360(parent->Angles.yaw -
+				parent->Special1f = AngleMod360(parent->Angles.yaw -
 					BALL3_ANGLEOFFSET);
 				break;
 			default:
@@ -440,7 +439,7 @@ void Actor::A_SorcBallOrbit(void)
 		}
 		break;
 	case SORC_FIRESPELL:	// Casting spell
-		if (parent->specialcid == Class)
+		if (parent->SpecialCID == Class)
 		{
 			// Put sorcerer into special throw spell anim
 			if (parent->Health > 0)
@@ -448,8 +447,8 @@ void Actor::A_SorcBallOrbit(void)
 
 			if (Class == SorcererBall1 && P_Random() < 200)
 			{
-				StartSoundName(none, 'SorcererSpellCast', CHAN_VOICE);
-				special2 = SORCFX4_RAPIDFIRE_TIME;
+				PlayFullVolumeSound('SorcererSpellCast', CHAN_VOICE);
+				Special2 = SORCFX4_RAPIDFIRE_TIME;
 				Args[4] = 128;
 				parent->Args[3] = SORC_FIRING_SPELL;
 			}
@@ -461,9 +460,9 @@ void Actor::A_SorcBallOrbit(void)
 		}
 		break;
 	case SORC_FIRING_SPELL:
-		if (parent->specialcid == Class)
+		if (parent->SpecialCID == Class)
 		{
-			if (special2-- <= 0)
+			if (Special2-- <= 0)
 			{
 				// Done rapid firing 
 				parent->Args[3] = SORC_STOPPED;
@@ -487,9 +486,9 @@ void Actor::A_SorcBallOrbit(void)
 	{
 		parent->Args[1]++;	// Bump rotation counter
 		// Completed full rotation - make woosh sound
-		StartSoundName(none, 'SorcererBallWoosh', CHAN_VOICE);
+		PlayFullVolumeSound('SorcererBallWoosh', CHAN_VOICE);
 	}
-	special1f = angle;	// Set previous angle
+	Special1f = angle;	// Set previous angle
 	x = parent->Origin.x + dist * cos(angle);
 	y = parent->Origin.y + dist * sin(angle);
 	Origin.x = x;
@@ -554,14 +553,14 @@ void Actor::A_SpawnFizzle(void)
 
 void Actor::A_SorcBallPop(void)
 {
-	StartSoundName(none, 'SorcererBallPop', CHAN_VOICE);
+	PlayFullVolumeSound('SorcererBallPop', CHAN_VOICE);
 	bNoGravity = false;
 	bLowGravity = true;
 	Velocity.x = (Random() * 10.0 - 5.0) * 35.0;
 	Velocity.y = (Random() * 10.0 - 5.0) * 35.0;
 	Velocity.z = (2.0 + Random() * 3.0) * 35.0;
 	//Not used
-//	special2 = 4 * FRACUNIT;     // Initial bounce factor
+//	Special2 = 4 * FRACUNIT;     // Initial bounce factor
 	Args[4] = BOUNCE_TIME_UNIT;	// Bounce time unit
 	Args[3] = 5;	// Bounce time in seconds
 }
@@ -584,10 +583,10 @@ void Actor::A_BounceCheck(void)
 			case SorcererBall1:
 			case SorcererBall2:
 			case SorcererBall3:
-				StartSoundName(none, 'SorcererBigBallExplode', CHAN_VOICE);
+				PlayFullVolumeSound('SorcererBigBallExplode', CHAN_VOICE);
 				break;
 			case SorcererFX1:
-				StartSoundName(none, 'SorcererHeadScream', CHAN_VOICE);
+				PlayFullVolumeSound('SorcererHeadScream', CHAN_VOICE);
 				break;
 			default:
 				break;
@@ -619,8 +618,8 @@ void Actor::A_SorcFX1Seek(void)
 //============================================================================
 //
 // FX2 Variables
-//      special1f       current angle
-//      special2
+//      Special1f       current angle
+//		Special2
 //      Args[0]     0 = CW,  1 = CCW
 //      Args[1]     
 //============================================================================
@@ -640,17 +639,17 @@ void Actor::A_SorcFX2Split(void)
 	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, SorcererFX2);
 	if (mo)
 	{
-		mo->target = target;
+		mo->Owner = Owner;
 		mo->Args[0] = 0;	// CW
-		mo->special1f = Angles.yaw;	// Set angle
+		mo->Special1f = Angles.yaw;	// Set angle
 		mo->SetStateNF(S_SORCFX2_ORBIT1);
 	}
 	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, SorcererFX2);
 	if (mo)
 	{
-		mo->target = target;
+		mo->Owner = Owner;
 		mo->Args[0] = 1;	// CCW
-		mo->special1f = Angles.yaw;	// Set angle
+		mo->Special1f = Angles.yaw;	// Set angle
 		mo->SetStateNF(S_SORCFX2_ORBIT1);
 	}
 	SetState(S_NULL);
@@ -668,7 +667,7 @@ void Actor::A_SorcFX2Orbit(void)
 {
 	float angle;
 	float x, y, z;
-	mobj_t *parent = target;
+	mobj_t *parent = &Owner;
 	float dist = parent->Radius;
 
 	if ((parent->Health <= 0) ||	// Sorcerer is dead
@@ -690,8 +689,8 @@ void Actor::A_SorcFX2Orbit(void)
 	// Move to new position based on angle
 	if (Args[0])	// Counter clock-wise
 	{
-		special1f = AngleMod360(special1f + 10.0);
-		angle = special1f;
+		Special1f = AngleMod360(Special1f + 10.0);
+		angle = Special1f;
 		x = parent->Origin.x + dist * cos(angle);
 		y = parent->Origin.y + dist * sin(angle);
 		z = parent->Origin.z - parent->FloorClip + SORC_DEFENSE_HEIGHT;
@@ -701,8 +700,8 @@ void Actor::A_SorcFX2Orbit(void)
 	}
 	else	// Clock wise
 	{
-		special1f = AngleMod360(special1f - 10.0);
-		angle = special1f;
+		Special1f = AngleMod360(Special1f - 10.0);
+		angle = Special1f;
 		x = parent->Origin.x + dist * cos(angle);
 		y = parent->Origin.y + dist * sin(angle);
 		z = parent->Origin.z - parent->FloorClip + SORC_DEFENSE_HEIGHT;
@@ -748,7 +747,7 @@ void Actor::A_SpawnBishop(void)
 void Actor::A_SorcererBishopEntry(void)
 {
 	P_SpawnMobj(Origin.x, Origin.y, Origin.z, SorcererFX3Explosion);
-	StartSoundName(self, SightSound, CHAN_VOICE);
+	PlaySound(SightSound, CHAN_VOICE);
 }
 
 //============================================================================
@@ -761,7 +760,7 @@ void Actor::A_SorcererBishopEntry(void)
 
 void Actor::A_SorcFX4Check(void)
 {
-	if (special2-- <= 0)
+	if (Special2-- <= 0)
 	{
 		SetStateNF(DeathState);
 	}
@@ -770,6 +769,9 @@ void Actor::A_SorcFX4Check(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/22 18:00:23  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.19  2002/02/16 16:26:56  dj_jl
 //  Removed precalculated sound IDs
 //

@@ -51,9 +51,9 @@ void Actor::A_PoisonBagInit(void)
 		return;
 	}
 	mo->Velocity.x = 0.00001;	// missile objects must move to impact other objects
-	mo->special1 = 24 + (P_Random() & 7);
-	mo->special2 = 0;
-	mo->target = target;
+	mo->Special1 = 24 + (P_Random() & 7);
+	mo->Special2 = 0;
+	mo->Owner = Owner;
 	mo->Radius = 20.0;
 	mo->Height = 30.0;
 	mo->bNoClip = false;
@@ -67,7 +67,7 @@ void Actor::A_PoisonBagInit(void)
 
 void Actor::A_PoisonBagCheck(void)
 {
-	if (!--special1)
+	if (!--Special1)
 	{
 		SetState(S_POISONCLOUD_X1);
 	}
@@ -85,9 +85,9 @@ void Actor::A_PoisonBagDamage(void)
 
 	A_Explode();
 
-	bobIndex = special2;
+	bobIndex = Special2;
 	Origin.z += FloatBobOffsets[bobIndex] / 16.0;
-	special2 = (bobIndex + 1) & 63;
+	Special2 = (bobIndex + 1) & 63;
 }
 
 //===========================================================================
@@ -104,6 +104,9 @@ void Actor::A_PoisonShroom(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/22 18:00:23  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.11  2002/02/14 19:20:59  dj_jl
 //  Renamed Entity properties to new naming style
 //

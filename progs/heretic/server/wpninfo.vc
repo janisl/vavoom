@@ -71,20 +71,20 @@ int weapon_ammo_type[] = {
 
 void set_weapon_staff(player_t * player)
 {
-	player->w_ammo = am_noammo;
-	player->w_upstate = S_STAFFUP;
-	player->w_downstate = S_STAFFDOWN;
-	player->w_readystate = S_STAFFREADY;
-	player->w_atkstate = S_STAFFATK1_1;
-	player->w_holdatkstate = S_STAFFATK1_1;
-	player->w_flashstate = S_NULL;
-	player->w2_ammo = am_noammo;
-	player->w2_upstate = S_STAFFUP2;
-	player->w2_downstate = S_STAFFDOWN2;
-	player->w2_readystate = S_STAFFREADY2_1;
-	player->w2_atkstate = S_STAFFATK2_1;
-	player->w2_holdatkstate = S_STAFFATK2_1;
-	player->w2_flashstate = S_NULL;
+	player->w_Ammo = am_noammo;
+	player->w_UpState = S_STAFFUP;
+	player->w_DownState = S_STAFFDOWN;
+	player->w_ReadyState = S_STAFFREADY;
+	player->w_AttackState = S_STAFFATK1_1;
+	player->w_HoldAttackState = S_STAFFATK1_1;
+	player->w_FlashState = S_NULL;
+	player->w2_Ammo = am_noammo;
+	player->w2_UpState = S_STAFFUP2;
+	player->w2_DownState = S_STAFFDOWN2;
+	player->w2_ReadyState = S_STAFFREADY2_1;
+	player->w2_AttackState = S_STAFFATK2_1;
+	player->w2_HoldAttackState = S_STAFFATK2_1;
+	player->w2_FlashState = S_NULL;
 }
 
 //==========================================================================
@@ -95,20 +95,20 @@ void set_weapon_staff(player_t * player)
 
 void set_weapon_goldwand(player_t * player)
 {
-	player->w_ammo = am_goldwand;
-	player->w_upstate = S_GOLDWANDUP;
-	player->w_downstate = S_GOLDWANDDOWN;
-	player->w_readystate = S_GOLDWANDREADY;
-	player->w_atkstate = S_GOLDWANDATK1_1;
-	player->w_holdatkstate = S_GOLDWANDATK1_1;
-	player->w_flashstate = S_NULL;
-	player->w2_ammo = am_goldwand;
-	player->w2_upstate = S_GOLDWANDUP;
-	player->w2_downstate = S_GOLDWANDDOWN;
-	player->w2_readystate = S_GOLDWANDREADY;
-	player->w2_atkstate = S_GOLDWANDATK2_1;
-	player->w2_holdatkstate = S_GOLDWANDATK2_1;
-	player->w2_flashstate = S_NULL;
+	player->w_Ammo = am_goldwand;
+	player->w_UpState = S_GOLDWANDUP;
+	player->w_DownState = S_GOLDWANDDOWN;
+	player->w_ReadyState = S_GOLDWANDREADY;
+	player->w_AttackState = S_GOLDWANDATK1_1;
+	player->w_HoldAttackState = S_GOLDWANDATK1_1;
+	player->w_FlashState = S_NULL;
+	player->w2_Ammo = am_goldwand;
+	player->w2_UpState = S_GOLDWANDUP;
+	player->w2_DownState = S_GOLDWANDDOWN;
+	player->w2_ReadyState = S_GOLDWANDREADY;
+	player->w2_AttackState = S_GOLDWANDATK2_1;
+	player->w2_HoldAttackState = S_GOLDWANDATK2_1;
+	player->w2_FlashState = S_NULL;
 }
 
 //==========================================================================
@@ -119,20 +119,20 @@ void set_weapon_goldwand(player_t * player)
 
 void set_weapon_crossbow(player_t * player)
 {
-	player->w_ammo = am_crossbow;
-	player->w_upstate = S_CRBOWUP;
-	player->w_downstate = S_CRBOWDOWN;
-	player->w_readystate = S_CRBOW1;
-	player->w_atkstate = S_CRBOWATK1_1;
-	player->w_holdatkstate = S_CRBOWATK1_1;
-	player->w_flashstate = S_NULL;
-	player->w2_ammo = am_crossbow;
-	player->w2_upstate = S_CRBOWUP;
-	player->w2_downstate = S_CRBOWDOWN;
-	player->w2_readystate = S_CRBOW1;
-	player->w2_atkstate = S_CRBOWATK2_1;
-	player->w2_holdatkstate = S_CRBOWATK2_1;
-	player->w2_flashstate = S_NULL;
+	player->w_Ammo = am_crossbow;
+	player->w_UpState = S_CRBOWUP;
+	player->w_DownState = S_CRBOWDOWN;
+	player->w_ReadyState = S_CRBOW1;
+	player->w_AttackState = S_CRBOWATK1_1;
+	player->w_HoldAttackState = S_CRBOWATK1_1;
+	player->w_FlashState = S_NULL;
+	player->w2_Ammo = am_crossbow;
+	player->w2_UpState = S_CRBOWUP;
+	player->w2_DownState = S_CRBOWDOWN;
+	player->w2_ReadyState = S_CRBOW1;
+	player->w2_AttackState = S_CRBOWATK2_1;
+	player->w2_HoldAttackState = S_CRBOWATK2_1;
+	player->w2_FlashState = S_NULL;
 }
 
 //==========================================================================
@@ -143,20 +143,20 @@ void set_weapon_crossbow(player_t * player)
 
 void set_weapon_blaster(player_t * player)
 {
-	player->w_ammo = am_blaster;
-	player->w_upstate = S_BLASTERUP;
-	player->w_downstate = S_BLASTERDOWN;
-	player->w_readystate = S_BLASTERREADY;
-	player->w_atkstate = S_BLASTERATK1_1;
-	player->w_holdatkstate = S_BLASTERATK1_3;
-	player->w_flashstate = S_NULL;
-	player->w2_ammo = am_blaster;
-	player->w2_upstate = S_BLASTERUP;
-	player->w2_downstate = S_BLASTERDOWN;
-	player->w2_readystate = S_BLASTERREADY;
-	player->w2_atkstate = S_BLASTERATK2_1;
-	player->w2_holdatkstate = S_BLASTERATK2_3;
-	player->w2_flashstate = S_NULL;
+	player->w_Ammo = am_blaster;
+	player->w_UpState = S_BLASTERUP;
+	player->w_DownState = S_BLASTERDOWN;
+	player->w_ReadyState = S_BLASTERREADY;
+	player->w_AttackState = S_BLASTERATK1_1;
+	player->w_HoldAttackState = S_BLASTERATK1_3;
+	player->w_FlashState = S_NULL;
+	player->w2_Ammo = am_blaster;
+	player->w2_UpState = S_BLASTERUP;
+	player->w2_DownState = S_BLASTERDOWN;
+	player->w2_ReadyState = S_BLASTERREADY;
+	player->w2_AttackState = S_BLASTERATK2_1;
+	player->w2_HoldAttackState = S_BLASTERATK2_3;
+	player->w2_FlashState = S_NULL;
 }
 
 //==========================================================================
@@ -167,20 +167,20 @@ void set_weapon_blaster(player_t * player)
 
 void set_weapon_skullrod(player_t * player)
 {
-	player->w_ammo = am_skullrod;
-	player->w_upstate = S_HORNRODUP;
-	player->w_downstate = S_HORNRODDOWN;
-	player->w_readystate = S_HORNRODREADY;
-	player->w_atkstate = S_HORNRODATK1_1;
-	player->w_holdatkstate = S_HORNRODATK1_1;
-	player->w_flashstate = S_NULL;
-	player->w2_ammo = am_skullrod;
-	player->w2_upstate = S_HORNRODUP;
-	player->w2_downstate = S_HORNRODDOWN;
-	player->w2_readystate = S_HORNRODREADY;
-	player->w2_atkstate = S_HORNRODATK2_1;
-	player->w2_holdatkstate = S_HORNRODATK2_1;
-	player->w2_flashstate = S_NULL;
+	player->w_Ammo = am_skullrod;
+	player->w_UpState = S_HORNRODUP;
+	player->w_DownState = S_HORNRODDOWN;
+	player->w_ReadyState = S_HORNRODREADY;
+	player->w_AttackState = S_HORNRODATK1_1;
+	player->w_HoldAttackState = S_HORNRODATK1_1;
+	player->w_FlashState = S_NULL;
+	player->w2_Ammo = am_skullrod;
+	player->w2_UpState = S_HORNRODUP;
+	player->w2_DownState = S_HORNRODDOWN;
+	player->w2_ReadyState = S_HORNRODREADY;
+	player->w2_AttackState = S_HORNRODATK2_1;
+	player->w2_HoldAttackState = S_HORNRODATK2_1;
+	player->w2_FlashState = S_NULL;
 }
 
 //==========================================================================
@@ -191,20 +191,20 @@ void set_weapon_skullrod(player_t * player)
 
 void set_weapon_phoenixrod(player_t * player)
 {
-	player->w_ammo = am_phoenixrod;
-	player->w_upstate = S_PHOENIXUP;
-	player->w_downstate = S_PHOENIXDOWN;
-	player->w_readystate = S_PHOENIXREADY;
-	player->w_atkstate = S_PHOENIXATK1_1;
-	player->w_holdatkstate = S_PHOENIXATK1_1;
-	player->w_flashstate = S_NULL;
-	player->w2_ammo = am_phoenixrod;
-	player->w2_upstate = S_PHOENIXUP;
-	player->w2_downstate = S_PHOENIXDOWN;
-	player->w2_readystate = S_PHOENIXREADY;
-	player->w2_atkstate = S_PHOENIXATK2_1;
-	player->w2_holdatkstate = S_PHOENIXATK2_2;
-	player->w2_flashstate = S_NULL;
+	player->w_Ammo = am_phoenixrod;
+	player->w_UpState = S_PHOENIXUP;
+	player->w_DownState = S_PHOENIXDOWN;
+	player->w_ReadyState = S_PHOENIXREADY;
+	player->w_AttackState = S_PHOENIXATK1_1;
+	player->w_HoldAttackState = S_PHOENIXATK1_1;
+	player->w_FlashState = S_NULL;
+	player->w2_Ammo = am_phoenixrod;
+	player->w2_UpState = S_PHOENIXUP;
+	player->w2_DownState = S_PHOENIXDOWN;
+	player->w2_ReadyState = S_PHOENIXREADY;
+	player->w2_AttackState = S_PHOENIXATK2_1;
+	player->w2_HoldAttackState = S_PHOENIXATK2_2;
+	player->w2_FlashState = S_NULL;
 }
 
 //==========================================================================
@@ -215,20 +215,20 @@ void set_weapon_phoenixrod(player_t * player)
 
 void set_weapon_mace(player_t * player)
 {
-	player->w_ammo = am_mace;
-	player->w_upstate = S_MACEUP;
-	player->w_downstate = S_MACEDOWN;
-	player->w_readystate = S_MACEREADY;
-	player->w_atkstate = S_MACEATK1_1;
-	player->w_holdatkstate = S_MACEATK1_2;
-	player->w_flashstate = S_NULL;
-	player->w2_ammo = am_mace;
-	player->w2_upstate = S_MACEUP;
-	player->w2_downstate = S_MACEDOWN;
-	player->w2_readystate = S_MACEREADY;
-	player->w2_atkstate = S_MACEATK2_1;
-	player->w2_holdatkstate = S_MACEATK2_1;
-	player->w2_flashstate = S_NULL;
+	player->w_Ammo = am_mace;
+	player->w_UpState = S_MACEUP;
+	player->w_DownState = S_MACEDOWN;
+	player->w_ReadyState = S_MACEREADY;
+	player->w_AttackState = S_MACEATK1_1;
+	player->w_HoldAttackState = S_MACEATK1_2;
+	player->w_FlashState = S_NULL;
+	player->w2_Ammo = am_mace;
+	player->w2_UpState = S_MACEUP;
+	player->w2_DownState = S_MACEDOWN;
+	player->w2_ReadyState = S_MACEREADY;
+	player->w2_AttackState = S_MACEATK2_1;
+	player->w2_HoldAttackState = S_MACEATK2_1;
+	player->w2_FlashState = S_NULL;
 }
 
 //==========================================================================
@@ -239,20 +239,20 @@ void set_weapon_mace(player_t * player)
 
 void set_weapon_gauntlets(player_t * player)
 {
-	player->w_ammo = am_noammo;
-	player->w_upstate = S_GAUNTLETUP;
-	player->w_downstate = S_GAUNTLETDOWN;
-	player->w_readystate = S_GAUNTLETREADY;
-	player->w_atkstate = S_GAUNTLETATK1_1;
-	player->w_holdatkstate = S_GAUNTLETATK1_3;
-	player->w_flashstate = S_NULL;
-	player->w2_ammo = am_noammo;
-	player->w2_upstate = S_GAUNTLETUP2;
-	player->w2_downstate = S_GAUNTLETDOWN2;
-	player->w2_readystate = S_GAUNTLETREADY2_1;
-	player->w2_atkstate = S_GAUNTLETATK2_1;
-	player->w2_holdatkstate = S_GAUNTLETATK2_3;
-	player->w2_flashstate = S_NULL;
+	player->w_Ammo = am_noammo;
+	player->w_UpState = S_GAUNTLETUP;
+	player->w_DownState = S_GAUNTLETDOWN;
+	player->w_ReadyState = S_GAUNTLETREADY;
+	player->w_AttackState = S_GAUNTLETATK1_1;
+	player->w_HoldAttackState = S_GAUNTLETATK1_3;
+	player->w_FlashState = S_NULL;
+	player->w2_Ammo = am_noammo;
+	player->w2_UpState = S_GAUNTLETUP2;
+	player->w2_DownState = S_GAUNTLETDOWN2;
+	player->w2_ReadyState = S_GAUNTLETREADY2_1;
+	player->w2_AttackState = S_GAUNTLETATK2_1;
+	player->w2_HoldAttackState = S_GAUNTLETATK2_3;
+	player->w2_FlashState = S_NULL;
 }
 
 //==========================================================================
@@ -263,25 +263,28 @@ void set_weapon_gauntlets(player_t * player)
 
 void set_weapon_beak(player_t * player)
 {
-	player->w_ammo = am_noammo;
-	player->w_upstate = S_BEAKUP;
-	player->w_downstate = S_BEAKDOWN;
-	player->w_readystate = S_BEAKREADY;
-	player->w_atkstate = S_BEAKATK1_1;
-	player->w_holdatkstate = S_BEAKATK1_1;
-	player->w_flashstate = S_NULL;
-	player->w2_ammo = am_noammo;
-	player->w2_upstate = S_BEAKUP;
-	player->w2_downstate = S_BEAKDOWN;
-	player->w2_readystate = S_BEAKREADY;
-	player->w2_atkstate = S_BEAKATK2_1;
-	player->w2_holdatkstate = S_BEAKATK2_1;
-	player->w2_flashstate = S_NULL;
+	player->w_Ammo = am_noammo;
+	player->w_UpState = S_BEAKUP;
+	player->w_DownState = S_BEAKDOWN;
+	player->w_ReadyState = S_BEAKREADY;
+	player->w_AttackState = S_BEAKATK1_1;
+	player->w_HoldAttackState = S_BEAKATK1_1;
+	player->w_FlashState = S_NULL;
+	player->w2_Ammo = am_noammo;
+	player->w2_UpState = S_BEAKUP;
+	player->w2_DownState = S_BEAKDOWN;
+	player->w2_ReadyState = S_BEAKREADY;
+	player->w2_AttackState = S_BEAKATK2_1;
+	player->w2_HoldAttackState = S_BEAKATK2_1;
+	player->w2_FlashState = S_NULL;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/02/22 18:00:20  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.5  2002/01/07 12:23:18  dj_jl
 //  Changed copyright year
 //

@@ -47,25 +47,25 @@ boolean Actor::CheckMeleeRange(void)
 {
 	float dist;
 
-	if (!target)
+	if (!Enemy)
 	{
 		return false;
 	}
-	dist = MobjDist(*target, self);
+	dist = MobjDist(Enemy, self);
 	if (dist >= MELEERANGE)
 	{
 		return false;
 	}
-	if (!P_CheckSight(self, *target))
+	if (!P_CheckSight(self, Enemy))
 	{
 		return false;
 	}
-	if (target->Origin.z > Origin.z + Height)
+	if (Enemy.Origin.z > Origin.z + Height)
 	{
 		// Target is higher than the attacker
 		return false;
 	}
-	else if (Origin.z > target->Origin.z + target->Height)
+	else if (Origin.z > Enemy.Origin.z + Enemy.Height)
 	{
 		// Attacker is higher
 		return false;
@@ -83,25 +83,25 @@ boolean Actor::CheckMeleeRange2(void)
 {
 	float dist;
 
-	if (!target)
+	if (!Enemy)
 	{
 		return false;
 	}
-	dist = MobjDist(*target, self);
+	dist = MobjDist(Enemy, self);
 	if (dist >= MELEERANGE * 2.0 || dist < MELEERANGE)
 	{
 		return false;
 	}
-	if (!P_CheckSight(self, *target))
+	if (!P_CheckSight(self, Enemy))
 	{
 		return false;
 	}
-	if (target->Origin.z > Origin.z + Height)
+	if (Enemy.Origin.z > Origin.z + Height)
 	{
 		// Target is higher than the attacker
 		return false;
 	}
-	else if (Origin.z > target->Origin.z + target->Height)
+	else if (Origin.z > Enemy.Origin.z + Enemy.Height)
 	{
 		// Attacker is higher
 		return false;
@@ -119,7 +119,7 @@ boolean Actor::CheckMissileRange(void)
 {
 	float dist;
 
-	if (!P_CheckSight(self, *target))
+	if (!P_CheckSight(self, Enemy))
 	{
 		return false;
 	}
@@ -134,7 +134,7 @@ boolean Actor::CheckMissileRange(void)
 		// Don't attack yet
 		return false;
 	}
-	dist = MobjDist(self, *target) - 64.0;
+	dist = MobjDist(self, Enemy) - 64.0;
 	if (!MeleeState)
 	{
 		// No melee attack, so fire more frequently
@@ -159,7 +159,7 @@ boolean Actor::CheckMissileRange(void)
 
 void Actor::FaceMovementDirection(void)
 {
-	switch (movedir)
+	switch (MoveDir)
 	{
 	case DI_EAST:
 		Angles.yaw = 0.0;
@@ -237,13 +237,13 @@ boolean Actor::LookForMonsters(void)
 		}
 		if (Class == Minotaur)
 		{
-			if ((mo.Class == Minotaur) && (mo.target != specialmobj1))
+			if ((mo.Class == Minotaur) && (mo.Enemy != *SpecialMobj1))
 			{
 				continue;
 			}
 		}
 		// Found a target monster
-		target = &mo;
+		Enemy = mo;
 		return true;
 	}
 	return false;
@@ -266,28 +266,28 @@ boolean Actor::LookForPlayers(boolean allaround)
 	float an;
 	float dist;
 
-	if (!netgame && players[0].spawned && players[0].health <= 0)
+	if (!netgame && players[0].bSpawned && players[0].Health <= 0)
 	{
 		// Single player game and player is dead, look for monsters
 		return LookForMonsters();
 	}
 	c = 0;
-	stop = (lastlook - 1) & 3;
-	for (;; lastlook = (lastlook + 1) & 3)
+	stop = (LastLook - 1) & (MAXPLAYERS - 1);
+	for (;; LastLook = (LastLook + 1) & (MAXPLAYERS - 1))
 	{
-		if (lastlook == stop)
+		if (LastLook == stop)
 			return false;	// done looking
 
-		if (!players[lastlook].active)
+		if (!players[LastLook].bActive)
 			continue;
 
 		if (c++ == 2)
 			return false;	// done looking
 
-		P = &players[lastlook];
-		if (!P->spawned || !P->mo)
+		P = &players[LastLook];
+		if (!P->bSpawned || !P->mo)
 			continue;	//  not spawned yet
-		if (P->health <= 0)
+		if (P->Health <= 0)
 			continue;	// dead
 		if (!P_CheckSight(self, *P->mo))
 			continue;	// out of sight
@@ -321,12 +321,12 @@ boolean Actor::LookForPlayers(boolean allaround)
 		}
 		if (Class == Minotaur)
 		{
-			if (specialmobj1 == P->mo)
+			if (SpecialMobj1 == P->mo)
 			{
 				continue;	// Don't target master
 			}
 		}
-		target = P->mo;
+		Enemy = *P->mo;
 		return true;
 	}
 	return false;
@@ -350,16 +350,16 @@ boolean Actor::StepMove(void)
 
 	if (bBlasted)
 		return true;
-	if (movedir == DI_NODIR)
+	if (MoveDir == DI_NODIR)
 		return false;
 
 #ifdef RANGECHECK
-	if (movedir >= 8 || movedir < 0)
-		Error("Weird actor->movedir!");
+	if (MoveDir >= 8 || MoveDir < 0)
+		Error("Weird actor->MoveDir!");
 #endif
 
-	tryx = Origin.x + StepSpeed * xspeed[movedir];
-	tryy = Origin.y + StepSpeed * yspeed[movedir];
+	tryx = Origin.x + StepSpeed * xspeed[MoveDir];
+	tryy = Origin.y + StepSpeed * yspeed[MoveDir];
 
 	if (!P_TryMove(this, tryx, tryy))
 	{
@@ -376,14 +376,14 @@ boolean Actor::StepMove(void)
 			return true;
 		}
 
-		if (!numspechit)
+		if (!tmtrace.NumSpecHit)
 			return false;
 
-		movedir = DI_NODIR;
+		MoveDir = DI_NODIR;
 		good = false;
-		while (numspechit--)
+		while (tmtrace.NumSpecHit--)
 		{
-			ld = spechit[numspechit];
+			ld = tmtrace.SpecHit[tmtrace.NumSpecHit];
 			// if the special is not a door
 			// that can be opened,
 			// return false
@@ -427,7 +427,7 @@ boolean Actor::TryWalk(void)
 	{
 		return false;
 	}
-	movecount = P_Random() & 15;
+	MoveCount = P_Random() & 15;
 	return true;
 }
 
@@ -443,14 +443,14 @@ void Actor::NewChaseDir(void)
 	int d[3];
 	int tdir, olddir, turnaround;
 
-	if (!target)
-		Error("NewChaseDir: called with no target");
+	if (!Enemy)
+		Error("NewChaseDir: called with no Enemy");
 
-	olddir = movedir;
+	olddir = MoveDir;
 	turnaround = opposite[olddir];
 
-	deltax = target->Origin.x - Origin.x;
-	deltay = target->Origin.y - Origin.y;
+	deltax = Enemy.Origin.x - Origin.x;
+	deltay = Enemy.Origin.y - Origin.y;
 	if (deltax > 10.0)
 		d[1] = DI_EAST;
 	else if (deltax < -10.0)
@@ -467,8 +467,8 @@ void Actor::NewChaseDir(void)
 	// try direct route
 	if (d[1] != DI_NODIR && d[2] != DI_NODIR)
 	{
-		movedir = diags[((deltay < 0.0) << 1) + (deltax > 0.0)];
-		if (movedir != turnaround && TryWalk())
+		MoveDir = diags[((deltay < 0.0) << 1) + (deltax > 0.0)];
+		if (MoveDir != turnaround && TryWalk())
 			return;
 	}
 
@@ -487,14 +487,14 @@ void Actor::NewChaseDir(void)
 
 	if (d[1] != DI_NODIR)
 	{
-		movedir = d[1];
+		MoveDir = d[1];
 		if (TryWalk())
 			return;	/*either moved forward or attacked */
 	}
 
 	if (d[2] != DI_NODIR)
 	{
-		movedir = d[2];
+		MoveDir = d[2];
 		if (TryWalk())
 			return;
 	}
@@ -503,7 +503,7 @@ void Actor::NewChaseDir(void)
 
 	if (olddir != DI_NODIR)
 	{
-		movedir = olddir;
+		MoveDir = olddir;
 		if (TryWalk())
 			return;
 	}
@@ -514,7 +514,7 @@ void Actor::NewChaseDir(void)
 		{
 			if (tdir != turnaround)
 			{
-				movedir = tdir;
+				MoveDir = tdir;
 				if (TryWalk())
 					return;
 			}
@@ -526,7 +526,7 @@ void Actor::NewChaseDir(void)
 		{
 			if (tdir != turnaround)
 			{
-				movedir = tdir;
+				MoveDir = tdir;
 				if (TryWalk())
 					return;
 			}
@@ -535,12 +535,12 @@ void Actor::NewChaseDir(void)
 
 	if (turnaround != DI_NODIR)
 	{
-		movedir = turnaround;
+		MoveDir = turnaround;
 		if (TryWalk())
 			return;
 	}
 
-	movedir = DI_NODIR;	// can't move
+	MoveDir = DI_NODIR;	// can't move
 }
 
 //===========================================================================
@@ -572,7 +572,7 @@ Actor Actor::RoughBlockCheck(int index)
 					continue;
 				}
 				if ((link.Class == Minotaur) &&
-					(*link.specialmobj1 == self))
+					(*link.SpecialMobj1 == self))
 				{
 					link = Actor(link.BlockMapNext);
 					continue;
@@ -591,7 +591,7 @@ Actor Actor::RoughBlockCheck(int index)
 		}
 		else if (Class == Minotaur)	// looking around minotaur
 		{
-			if (link.bCountKill || (link.bIsPlayer && (link != *specialmobj1)))
+			if (link.bCountKill || (link.bIsPlayer && (link != *SpecialMobj1)))
 			{
 				if (!link.bShootable)
 				{
@@ -604,7 +604,7 @@ Actor Actor::RoughBlockCheck(int index)
 					continue;
 				}
 				if ((link.Class == Minotaur) &&
-					(link.specialmobj1 == specialmobj1))
+					(link.SpecialMobj1 == SpecialMobj1))
 				{
 					link = Actor(link.BlockMapNext);
 					continue;
@@ -623,7 +623,7 @@ Actor Actor::RoughBlockCheck(int index)
 		}
 		else if (Class == MageStaffFX2)	// bloodscourge
 		{
-			if ((link.bCountKill || (link.bIsPlayer && link != *target)) &&
+			if ((link.bCountKill || (link.bIsPlayer && link != Enemy)) &&
 				!link.bDormant)
 			{
 				if (!link.bShootable)
@@ -639,9 +639,9 @@ Actor Actor::RoughBlockCheck(int index)
 				else if (P_CheckSight(self, link))
 				{
 					angle = AngleMod360(atan2(
-						link.Origin.y - target->Origin.y,
-						link.Origin.x - target->Origin.x) -
-						target->Angles.yaw);
+						link.Origin.y - Enemy.Origin.y,
+						link.Origin.x - Enemy.Origin.x) -
+						Enemy.Angles.yaw);
 					if (angle > 226.0 * 360.0 / 256.0 ||
 						angle < 30.0 * 360.0 / 256.0)
 					{
@@ -653,7 +653,7 @@ Actor Actor::RoughBlockCheck(int index)
 		}
 		else	// spirits
 		{
-			if ((link.bCountKill || (link.bIsPlayer && link != *target)) &&
+			if ((link.bCountKill || (link.bIsPlayer && link != Enemy)) &&
 				!link.bDormant)
 			{
 				if (!link.bShootable)
@@ -666,7 +666,7 @@ Actor Actor::RoughBlockCheck(int index)
 					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				if (link == *target)
+				if (link == Enemy)
 				{
 					link = Actor(link.BlockMapNext);
 					continue;
@@ -808,6 +808,9 @@ Actor Actor::RoughMonsterSearch(int distance)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/02/22 18:00:20  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.14  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

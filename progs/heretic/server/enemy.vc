@@ -35,7 +35,7 @@ void Actor::A_Look(void)
 {
 	Actor targ;
 
-	threshold = 0;	// any shot will wake up
+	Threshold = 0;	// any shot will wake up
 	targ = Actor(Sector->SoundTarget);
 
 	if (targ && targ.bShootable)
@@ -63,11 +63,11 @@ void Actor::A_Look(void)
 		if (bBoss)
 		{
 			// Full volume
-			StartSoundName(none, SightSound, CHAN_VOICE);
+			PlayFullVolumeSound(SightSound, CHAN_VOICE);
 		}
 		else
 		{
-			StartSoundName(self, SightSound, CHAN_VOICE);
+			PlaySound(SightSound, CHAN_VOICE);
 		}
 	}
 
@@ -92,15 +92,15 @@ void Actor::A_Chase(void)
 	}
 
 	// modify target threshold
-	if (threshold)
+	if (Threshold)
 	{
 		if (!target || target->Health <= 0)
 		{
-			threshold = 0;
+			Threshold = 0;
 		}
 		else
 		{
-			threshold--;
+			Threshold--;
 		}
 	}
 
@@ -115,10 +115,10 @@ void Actor::A_Chase(void)
 	}
 
 	// turn towards movement direction if not there yet
-	if (movedir < 8)
+	if (MoveDir < 8)
 	{
 		Angles.yaw = itof(ftoi(Angles.yaw / 45.0)) * 45.0;
-		delta = AngleMod180(Angles.yaw - itof(movedir) * 45.0);
+		delta = AngleMod180(Angles.yaw - itof(MoveDir) * 45.0);
 
 		if (delta > 0.0)
 		{
@@ -157,7 +157,7 @@ void Actor::A_Chase(void)
 	{
 		if (AttackSound)
 		{
-			StartSoundName(self, AttackSound, CHAN_WEAPON);
+			PlaySound(AttackSound, CHAN_WEAPON);
 		}
 		SetState(MeleeState);
 		return;
@@ -166,7 +166,7 @@ void Actor::A_Chase(void)
 	// check for missile attack
 	if (MissileState)
 	{
-		if (fastparm || !movecount)
+		if (fastparm || !MoveCount)
 		{
 			if (CheckMissileRange())
 			{
@@ -178,7 +178,7 @@ void Actor::A_Chase(void)
 	}
 
 	// possibly choose another target
-	if (netgame && !threshold)
+	if (netgame && !Threshold)
 	{
 		if (!P_CheckSight(self, *target))
 		{
@@ -188,7 +188,7 @@ void Actor::A_Chase(void)
 	}
 
 	// chase towards player
-	if (--movecount < 0 || !StepMove())
+	if (--MoveCount < 0 || !StepMove())
 	{
 		NewChaseDir();
 	}
@@ -198,15 +198,15 @@ void Actor::A_Chase(void)
 	{
 		if (Class == Wizard && P_Random() < 128)
 		{
-			StartSoundName(self, SightSound, CHAN_VOICE);
+			PlaySound(SightSound, CHAN_VOICE);
 		}
 		else if (Class == Sorcerer2)
 		{
-			StartSoundName(none, ActiveSound, CHAN_VOICE);
+			PlayFullVolumeSound(ActiveSound, CHAN_VOICE);
 		}
 		else
 		{
-			StartSoundName(self, ActiveSound, CHAN_VOICE);
+			PlaySound(ActiveSound, CHAN_VOICE);
 		}
 	}
 }
@@ -243,7 +243,7 @@ void Actor::A_Pain(void)
 {
 	if (PainSound)
 	{
-		StartSoundName(self, PainSound, CHAN_VOICE);
+		PlaySound(PainSound, CHAN_VOICE);
 	}
 }
 
@@ -284,29 +284,29 @@ void Actor::A_Scream(void)
 	case Sorcerer1:
 	case Minotaur:
 		// Make boss death sounds full volume
-		StartSoundName(none, DeathSound, CHAN_VOICE);
+		PlayFullVolumeSound(DeathSound, CHAN_VOICE);
 		break;
-	case PlayerEntity:
+	case PlayerPawn:
 		// Handle the different player death screams
-		if (special1 < 10)
+		if (Special1 < 10)
 		{	// Wimpy death sound
-			StartSoundName(self, 'PlayerWimpyDeath', CHAN_VOICE);
+			PlaySound('PlayerWimpyDeath', CHAN_VOICE);
 		}
 		else if (Health > -50)
 		{	// Normal death sound
-			StartSoundName(self, DeathSound, CHAN_VOICE);
+			PlaySound(DeathSound, CHAN_VOICE);
 		}
 		else if (Health > -100)
 		{	// Crazy death sound
-			StartSoundName(self, 'PlayerCrazyDeath', CHAN_VOICE);
+			PlaySound('PlayerCrazyDeath', CHAN_VOICE);
 		}
 		else
 		{	// Extreme death sound
-			StartSoundName(self, 'PlayerExtremeDeath', CHAN_VOICE);
+			PlaySound('PlayerExtremeDeath', CHAN_VOICE);
 		}
 		break;
 	default:
-		StartSoundName(self, DeathSound, CHAN_VOICE);
+		PlaySound(DeathSound, CHAN_VOICE);
 		break;
 	}
 }
@@ -473,7 +473,7 @@ void Actor::A_SkullPop(void)
 	mo->Health = Health;
 	mo->Angles.yaw = Angles.yaw;
 	mo->Player->mo = mo;
-	mo->Player->damagecount = 32;
+	mo->Player->DamageCount = 32;
 }
 
 //==========================================================================
@@ -484,7 +484,7 @@ void Actor::A_SkullPop(void)
 
 void Actor::A_FlameSnd(void)
 {
-	StartSoundName(self, 'HeadAttack1', CHAN_WEAPON);	// Burn sound
+	PlaySound('HeadAttack1', CHAN_WEAPON);	// Burn sound
 }
 
 //==========================================================================
@@ -495,7 +495,7 @@ void Actor::A_FlameSnd(void)
 
 void Actor::A_CheckBurnGone(void)
 {
-	if (special2 == 666)
+	if (Special2 == 666)
 	{
 		SetState(S_PLAY_FDTH20);
 	}
@@ -523,7 +523,7 @@ void Actor::A_CheckSkullFloor(void)
 
 void Actor::A_CheckSkullDone(void)
 {
-	if (special2 == 666)
+	if (Special2 == 666)
 	{
 		SetState(S_BLOODYSKULLX2);
 	}
@@ -621,10 +621,10 @@ void Actor::A_ContMobjSound(void)
 	switch (Class)
 	{
 	case KnightAxe:
-		StartSoundName(self, 'KnightAttack1', CHAN_VOICE);
+		PlaySound('KnightAttack1', CHAN_VOICE);
 		break;
 	case MummyMissile:
-		StartSoundName(self, 'MumyHeadExplode', CHAN_VOICE);
+		PlaySound('MumyHeadExplode', CHAN_VOICE);
 		break;
 	default:
 		break;
@@ -634,6 +634,9 @@ void Actor::A_ContMobjSound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/22 18:00:16  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.19  2002/02/16 16:26:55  dj_jl
 //  Removed precalculated sound IDs
 //

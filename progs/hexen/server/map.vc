@@ -139,10 +139,10 @@ boolean P_ThingHeightClip(mobj_t * thing)
 	P_CheckRelPosition(thing, thing->Origin.x, thing->Origin.y);
 	// what about stranding a monster partially off an edge?
 
-	thing->FloorZ = tmfloorz;
-	thing->CeilingZ = tmceilingz;
-	thing->Floor = tmfloor;
-	thing->Ceiling = tmceiling;
+	thing->FloorZ = tmtrace.FloorZ;
+	thing->CeilingZ = tmtrace.CeilingZ;
+	thing->Floor = tmtrace.Floor;
+	thing->Ceiling = tmtrace.Ceiling;
 
 	if (onfloor)
 	{
@@ -197,7 +197,7 @@ boolean PIT_ChangeSector(MapObject Other)
 				thing->SetState(S_GIBS1);
 				thing->Height = 0.0;
 				thing->Radius = 0.0;
-				StartSoundName(*thing, 'PlayerFallingSplat', CHAN_VOICE);
+				thing->PlaySound('PlayerFallingSplat', CHAN_VOICE);
 			}
 		}
 		return true;	// keep checking
@@ -295,7 +295,7 @@ boolean PTR_UseTraverse(intercept_t * in)
 		{
 			if (usething->bIsPlayer)
 			{
-				switch (usething->Player->pclass)
+				switch (usething->Player->PClass)
 				{
 				case PCLASS_FIGHTER:
 					sound = 'PlayerFighterFailedUse';
@@ -313,7 +313,7 @@ boolean PTR_UseTraverse(intercept_t * in)
 					sound = 'None';
 					break;
 				}
-				StartSoundName(*usething, sound, CHAN_VOICE);
+				usething->PlaySound(sound, CHAN_VOICE);
 			}
 			return false;	// can't use through a wall
 		}
@@ -322,7 +322,7 @@ boolean PTR_UseTraverse(intercept_t * in)
 			pheight = usething->Origin.z + usething->Height / 2.0;
 			if ((open->top < pheight) || (open->bottom > pheight))
 			{
-				switch (usething->Player->pclass)
+				switch (usething->Player->PClass)
 				{
 				case PCLASS_FIGHTER:
 					sound = 'PlayerFighterFailedUse';
@@ -340,7 +340,7 @@ boolean PTR_UseTraverse(intercept_t * in)
 					sound = 'None';
 					break;
 				}
-				StartSoundName(*usething, sound, CHAN_VOICE);
+				usething->PlaySound(sound, CHAN_VOICE);
 			}
 		}
 		return true;	// not a special line, but keep checking
@@ -419,7 +419,7 @@ boolean PTR_PuzzleItemTraverse(intercept_t * in)
 				sound = 'None';
 				if (PuzzleItemUser->bIsPlayer)
 				{
-					switch (PuzzleItemUser->Player->pclass)
+					switch (PuzzleItemUser->Player->PClass)
 					{
 					case PCLASS_FIGHTER:
 						sound = 'PuzzleFailFighter';
@@ -432,7 +432,7 @@ boolean PTR_PuzzleItemTraverse(intercept_t * in)
 						break;
 					}
 				}
-				StartSoundName(*PuzzleItemUser, sound, CHAN_VOICE);
+				PuzzleItemUser->PlaySound(sound, CHAN_VOICE);
 				return false;	// can't use through a wall
 			}
 			return true;	// Continue searching
@@ -1105,6 +1105,9 @@ void PIT_ThrustSpike(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/02/22 18:00:22  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.20  2002/02/14 19:20:58  dj_jl
 //  Renamed Entity properties to new naming style
 //

@@ -41,7 +41,7 @@ void ArchivePlayer(player_t * player)
 
 void UnarchivePlayer(player_t * player)
 {
-	player->attacker = NULL;
+	player->Attacker = NULL;
 }
 
 //==========================================================================
@@ -53,9 +53,9 @@ void UnarchivePlayer(player_t * player)
 void mobj_t::Archive(void)
 {
 	MobjToNum(&target);
-	MobjToNum(&specialmobj1);
-	MobjToNum(&specialmobj2);
-	specialcid = ClassIDToNum(specialcid);
+	MobjToNum(&SpecialMobj1);
+	MobjToNum(&SpecialMobj2);
+	SpecialCID = ClassIDToNum(SpecialCID);
 }
 
 //==========================================================================
@@ -67,9 +67,9 @@ void mobj_t::Archive(void)
 void mobj_t::Unarchive(void)
 {
 	NumToMobj(&target);
-	NumToMobj(&specialmobj1);
-	NumToMobj(&specialmobj2);
-	specialcid = NumToClassID(specialcid);
+	NumToMobj(&SpecialMobj1);
+	NumToMobj(&SpecialMobj2);
+	SpecialCID = NumToClassID(SpecialCID);
 	SightSound = UnarchiveName(SightSound);
 	ActiveSound = UnarchiveName(ActiveSound);
 	AttackSound = UnarchiveName(AttackSound);
@@ -80,6 +80,9 @@ void mobj_t::Unarchive(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/02/22 18:00:18  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.9  2002/01/29 18:08:56  dj_jl
 //  Fixed saving
 //

@@ -53,7 +53,7 @@ void Actor::A_CPosAttack(void)
 	if (!target)
 		return;
 
-	StartSoundName(self, 'ShotgunFire', CHAN_WEAPON);
+	PlaySound('ShotgunFire', CHAN_WEAPON);
 	A_FaceTarget();
 	dir = AimLineAttack(this, Angles, MISSILERANGE);
 	VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
@@ -102,6 +102,9 @@ void Actor::A_CPosRefire(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/22 18:00:07  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.13  2002/02/14 19:20:57  dj_jl
 //  Renamed Entity properties to new naming style
 //

@@ -43,8 +43,8 @@
 
 void Cheat_God(void)
 {
-	players[0].cheats ^= CF_GODMODE;
-	if (players[0].cheats & CF_GODMODE)
+	players[0].Cheats ^= CF_GODMODE;
+	if (players[0].Cheats & CF_GODMODE)
 	{
 		cprint(&players[0], "GOD MODE ON\n");
 	}
@@ -62,8 +62,8 @@ void Cheat_God(void)
 
 void Cheat_NoClip(void)
 {
-	players[0].cheats ^= CF_NOCLIP;
-	if (players[0].cheats & CF_NOCLIP)
+	players[0].Cheats ^= CF_NOCLIP;
+	if (players[0].Cheats & CF_NOCLIP)
 	{
 		cprint(&players[0], "NO CLIPPING ON\n");
 	}
@@ -85,30 +85,30 @@ void Cheat_Gimme(void)
 	{
 		int i;
 
-		players[0].armorpoints = 200;
-		players[0].armortype = 2;
-		players[0].backpack = true;
+		players[0].ArmorPoints = 200;
+		players[0].ArmorType = 2;
+		players[0].Backpack = true;
 		for (i = 0; i < NUMWEAPONS - 1; i++)
 		{
-			players[0].weaponowned[i] = true;
+			players[0].WeaponOwned[i] = true;
 		}
 		if (shareware)
 		{
-			players[0].weaponowned[wp_skullrod] = false;
-			players[0].weaponowned[wp_phoenixrod] = false;
-			players[0].weaponowned[wp_mace] = false;
+			players[0].WeaponOwned[wp_skullrod] = false;
+			players[0].WeaponOwned[wp_phoenixrod] = false;
+			players[0].WeaponOwned[wp_mace] = false;
 		}
 		for (i = 0; i < 6 /*NUMAMMO2 */ ; i++)
 		{
-			players[0].ammo[i] = maxammo[i] * 2;
+			players[0].Ammo[i] = maxammo[i] * 2;
 		}
 		cprint(&players[0], "ALL WEAPONS\n");
 	}
 	if (Cmd_CheckParm("power"))
 	{
-		if (players[0].powers[pw_weaponlevel2])
+		if (players[0].Powers[pw_weaponlevel2])
 		{
-			players[0].powers[pw_weaponlevel2] = 0;
+			players[0].Powers[pw_weaponlevel2] = 0;
 			cprint(&players[0], "POWER OFF\n");
 		}
 		else
@@ -119,19 +119,21 @@ void Cheat_Gimme(void)
 	}
 	if (Cmd_CheckParm("health"))
 	{
-		if (players[0].chickenTics)
+		if (players[0].ChickenTics)
 		{
-			players[0].health = players[0].mo->Health = MAXCHICKENHEALTH;
+			players[0].mo->Health = MAXCHICKENHEALTH;
+			players[0].Health = players[0].mo->Health;
 		}
 		else
 		{
-			players[0].health = players[0].mo->Health = MAXHEALTH;
+			players[0].mo->Health = MAXHEALTH;
+			players[0].Health = players[0].mo->Health;
 		}
 		cprint(&players[0], "FULL HEALTH\n");
 	}
 	if (Cmd_CheckParm("keys"))
 	{
-		players[0].keys = 7;
+		players[0].Keys = 7;
 		cprint(&players[0], "ALL KEYS\n");
 	}
 	if (Cmd_CheckParm("artifacts"))
@@ -217,7 +219,7 @@ void Cheat_KillAll(void)
 
 void Cheat_Morph(void)
 {
-	if (players[0].chickenTics)
+	if (players[0].ChickenTics)
 	{
 		if (UndoPlayerChicken(&players[0]))
 		{
@@ -240,15 +242,15 @@ void Cheat_NoWeapons(void)
 {
 	int i;
 
-	if (players[0].chickenTics)
+	if (players[0].ChickenTics)
 	{
 		return;
 	}
 	for (i = 1; i < 8; i++)
 	{
-		players[0].weaponowned[i] = false;
+		players[0].WeaponOwned[i] = false;
 	}
-	players[0].pendingweapon = wp_staff;
+	players[0].PendingWeapon = wp_staff;
 	cprint(&players[0], "CHEATER - YOU DON'T DESERVE WEAPONS\n");
 }
 
@@ -265,6 +267,9 @@ void Cheat_Class(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/02/22 18:00:15  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.9  2002/01/25 18:04:34  dj_jl
 //  Many global functions made Actor functions
 //

@@ -245,10 +245,7 @@ int EV_DoDoor(line_t * line, int *args, int type)
 
 boolean CheckLockedDoor(mobj_t * user, int lock)
 {
-	player_t *player;
-
-	player = user->Player;
-	if (!player)
+	if (!user->bIsPlayer)
 	{
 		return false;
 	}
@@ -256,10 +253,10 @@ boolean CheckLockedDoor(mobj_t * user, int lock)
 	{
 		return true;
 	}
-	if (!(player->keys & (1 << (lock - 1))))
+	if (!(user->Player->Keys & (1 << (lock - 1))))
 	{
-		centerprint(player, keymsg[lock - 1]);
-		StartSoundName(*player->mo, 'PlayerLand', CHAN_VOICE);
+		centerprint(user->Player, keymsg[lock - 1]);
+		user->PlaySound('PlayerLand', CHAN_VOICE);
 		return false;
 	}
 	return true;
@@ -382,6 +379,9 @@ void P_SpawnDoorRaiseIn5Mins(sector_t * sec, int secnum)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/22 18:00:16  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.11  2002/02/14 19:20:57  dj_jl
 //  Renamed Entity properties to new naming style
 //

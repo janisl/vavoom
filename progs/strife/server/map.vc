@@ -137,10 +137,10 @@ boolean P_ThingHeightClip(mobj_t * thing)
 	P_CheckRelPosition(thing, thing->Origin.x, thing->Origin.y);
 	// what about stranding a monster partially off an edge?
 
-	thing->Floor = tmfloor;
-	thing->Ceiling = tmceiling;
-	thing->FloorZ = tmfloorz;
-	thing->CeilingZ = tmceilingz;
+	thing->Floor = tmtrace.Floor;
+	thing->Ceiling = tmtrace.Ceiling;
+	thing->FloorZ = tmtrace.FloorZ;
+	thing->CeilingZ = tmtrace.CeilingZ;
 
 	if (onfloor)
 	{
@@ -277,7 +277,7 @@ boolean PTR_UseTraverse(intercept_t * in)
 		open = FindOpening(open, hit_point.z, hit_point.z + usething->Height);
 		if (!open)
 		{
-			StartSoundName(*usething, 'Blocked', CHAN_VOICE);
+			usething->PlaySound('Blocked', CHAN_VOICE);
 
 			// can't use through a wall
 			return false;
@@ -825,6 +825,9 @@ void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage, int distance,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/22 18:00:25  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.19  2002/02/14 19:20:59  dj_jl
 //  Renamed Entity properties to new naming style
 //

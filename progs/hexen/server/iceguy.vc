@@ -82,7 +82,7 @@ void Actor::A_IceGuyChase(void)
 		if (mo)
 		{
 			mo->Velocity = Velocity;
-			mo->target = this;
+			mo->Owner = self;
 		}
 	}
 }
@@ -97,21 +97,21 @@ void Actor::A_IceGuyAttack(void)
 {
 	float an;
 
-	if (!target)
+	if (!Enemy)
 	{
 		return;
 	}
 	an = AngleMod360(Angles.yaw + 90.0);
 	SpawnMissileXYZ(Origin.x + Radius / 2.0 * cos(an),
 		Origin.y + Radius / 2.0 * sin(an),
-		Origin.z + 40.0, this, target, IceGuyMissile);
+		Origin.z + 40.0, this, &Enemy, IceGuyMissile);
 
 	an = AngleMod360(Angles.yaw - 90.0);
 	SpawnMissileXYZ(Origin.x + Radius / 2.0 * cos(an),
 		Origin.y + Radius / 2.0 * sin(an),
-		Origin.z + 40.0, this, target, IceGuyMissile);
+		Origin.z + 40.0, this, &Enemy, IceGuyMissile);
 
-	StartSoundName(self, AttackSound, CHAN_WEAPON);
+	PlaySound(AttackSound, CHAN_WEAPON);
 }
 
 //============================================================================
@@ -141,7 +141,7 @@ void Actor::A_IceGuyMissileExplode(void)
 		mo = SpawnMissileAngle(this, IceGuyMissile2, itof(i) * 45.0, -0.3);
 		if (mo)
 		{
-			mo->target = target;
+			mo->Owner = Owner;
 		}
 	}
 }
@@ -162,6 +162,9 @@ void Actor::A_IceGuyDie(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/02/22 18:00:21  dj_jl
+//  A lots of the renaming, beautification.
+//
 //  Revision 1.12  2002/02/16 16:26:55  dj_jl
 //  Removed precalculated sound IDs
 //
