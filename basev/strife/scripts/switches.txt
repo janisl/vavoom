@@ -14,9 +14,9 @@ COMP12      COMP04B     BreakGlass
 COMP13      COMP12B     BreakGlass
 COMP17      COMP20B     BreakGlass
 COMP21      COMP28B     BreakGlass
-WALTEK09    WALTEKB1    Switch
-WALTEK10    WALTEKB1    Switch
-WALTEK15    WALTEKB1    Switch
+WALTEK09    WALTEKB1    BreakGlass
+WALTEK10    WALTEKB1    BreakGlass
+WALTEK15    WALTEKB1    BreakGlass
 SWFORC01    SWFORC02    Switch
 SWEXIT01    SWEXIT02    Switch
 DORSBK01    DORSBK02    SwitchStone
@@ -33,7 +33,7 @@ SWTRMG01    SWTRMG04    Switch
 SWMETL01    SWMETL02    Switch
 SWWOOD01    SWWOOD02    Switch
 SWTKBL01    SWTKBL02    Switch
-AZWAL21     AZWAL22     Switch
+AZWAL21     AZWAL22     BreakGlass
 SWINDT01    SWINDT02    Switch
 SWRUST01    SWRUST02    Switch
 SWCHAP01    SWCHAP02    Switch
