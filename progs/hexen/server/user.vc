@@ -1151,18 +1151,18 @@ void SetViewPos(player_t * player)
 
 boolean ArtiHealRadius(player_t * player)
 {
-	Actor mo;
+	PlayerPawn P;
 	float dist;
 	int effective = false;
 	int amount;
 
-	FOREACH(Actor, mo)
+	FOREACH(PlayerPawn, P)
 	{
-		if (!mo.bIsPlayer)
+		if (!P.bIsPlayer)
 			continue;
-		if (mo.Health <= 0)
+		if (P.Health <= 0)
 			continue;
-		dist = MobjDist(*player->mo, mo);
+		dist = MobjDist(*player->mo, P);
 		if (dist > HEAL_RADIUS_DIST)
 		{
 			// Out of range
@@ -1172,30 +1172,30 @@ boolean ArtiHealRadius(player_t * player)
 		switch (player->PClass)
 		{
 		case PCLASS_FIGHTER:	// Radius armor boost
-			if ((mo.GiveArmor(ARMOR_ARMOR, 1)) ||
-				(mo.GiveArmor(ARMOR_SHIELD, 1)) ||
-				(mo.GiveArmor(ARMOR_HELMET, 1)) ||
-				(mo.GiveArmor(ARMOR_AMULET, 1)))
+			if ((P.GiveArmor(ARMOR_ARMOR, 1)) ||
+				(P.GiveArmor(ARMOR_SHIELD, 1)) ||
+				(P.GiveArmor(ARMOR_HELMET, 1)) ||
+				(P.GiveArmor(ARMOR_AMULET, 1)))
 			{
 				effective = true;
-				mo.PlaySound('MysticIncant', CHAN_ITEM);
+				P.PlaySound('MysticIncant', CHAN_ITEM);
 			}
 			break;
 		case PCLASS_CLERIC:	// Radius heal
 			amount = 50 + (P_Random() % 50);
-			if (mo.GiveBody(amount))
+			if (P.GiveBody(amount))
 			{
 				effective = true;
-				mo.PlaySound('MysticIncant', CHAN_ITEM);
+				P.PlaySound('MysticIncant', CHAN_ITEM);
 			}
 			break;
 		case PCLASS_MAGE:	// Radius mana boost
 			amount = 50 + (P_Random() % 50);
-			if ((mo.GiveMana(MANA_1, amount)) ||
-				(mo.GiveMana(MANA_2, amount)))
+			if ((P.GiveMana(MANA_1, amount)) ||
+				(P.GiveMana(MANA_2, amount)))
 			{
 				effective = true;
-				mo.PlaySound('MysticIncant', CHAN_ITEM);
+				P.PlaySound('MysticIncant', CHAN_ITEM);
 			}
 			break;
 		case PCLASS_PIG:
@@ -1257,31 +1257,31 @@ boolean UseArtifact(player_t * player, int arti)
 	switch (arti)
 	{
 	case arti_health:
-		if (!player->mo->GiveBody(25))
+		if (!PlayerPawn(*player->mo).GiveBody(25))
 		{
 			return false;
 		}
 		break;
 	case arti_superhealth:
-		if (!player->mo->GiveBody(100))
+		if (!PlayerPawn(*player->mo).GiveBody(100))
 		{
 			return false;
 		}
 		break;
 	case arti_invulnerability:
-		if (!player->mo->GivePower(pw_invulnerability))
+		if (!PlayerPawn(*player->mo).GivePower(pw_invulnerability))
 		{
 			return false;
 		}
 		break;
 	case arti_torch:
-		if (!player->mo->GivePower(pw_infrared))
+		if (!PlayerPawn(*player->mo).GivePower(pw_infrared))
 		{
 			return false;
 		}
 		break;
 	case arti_fly:
-		if (!player->mo->GivePower(pw_flight))
+		if (!PlayerPawn(*player->mo).GivePower(pw_flight))
 		{
 			return false;
 		}
@@ -1315,15 +1315,15 @@ boolean UseArtifact(player_t * player, int arti)
 		ArtiTeleportOther(player);
 		break;
 	case arti_speed:
-		if (!player->mo->GivePower(pw_speed))
+		if (!PlayerPawn(*player->mo).GivePower(pw_speed))
 		{
 			return (false);
 		}
 		break;
 	case arti_boostmana:
-		if (!player->mo->GiveMana(MANA_1, MAX_MANA))
+		if (!PlayerPawn(*player->mo).GiveMana(MANA_1, MAX_MANA))
 		{
-			if (!player->mo->GiveMana(MANA_2, MAX_MANA))
+			if (!PlayerPawn(*player->mo).GiveMana(MANA_2, MAX_MANA))
 			{
 				return false;
 			}
@@ -1331,7 +1331,7 @@ boolean UseArtifact(player_t * player, int arti)
 		}
 		else
 		{
-			player->mo->GiveMana(MANA_2, MAX_MANA);
+			PlayerPawn(*player->mo).GiveMana(MANA_2, MAX_MANA);
 		}
 		break;
 	case arti_boostarmor:
@@ -1339,7 +1339,7 @@ boolean UseArtifact(player_t * player, int arti)
 
 		for (i = 0; i < NUMARMOR; i++)
 		{
-			count += player->mo->GiveArmor(i, 1);	// 1 point per armor type
+			count += PlayerPawn(*player->mo).GiveArmor(i, 1);	// 1 point per armor type
 		}
 		if (!count)
 		{
@@ -1981,6 +1981,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.32  2002/03/12 19:19:18  dj_jl
+//  Pickup classes
+//
 //  Revision 1.31  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

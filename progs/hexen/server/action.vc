@@ -55,45 +55,6 @@ void Actor::A_UnHideThing(void)
 	}
 }
 
-//==========================================================================
-//
-//  Actor::A_RestoreArtifact
-//
-//==========================================================================
-
-void Actor::A_RestoreArtifact(void)
-{
-	bSpecial = true;
-	SetState(SpawnState);
-	PlaySound('Respawn', CHAN_VOICE);
-}
-
-//==========================================================================
-//
-//  Actor::A_RestoreSpecialThing1
-//
-//  Make a special thing visible again.
-//
-//==========================================================================
-
-void Actor::A_RestoreSpecialThing1(void)
-{
-	Translucency -= 100;
-	PlaySound('Respawn', CHAN_VOICE);
-}
-
-//==========================================================================
-//
-//  Actor::A_RestoreSpecialThing2
-//
-//==========================================================================
-
-void Actor::A_RestoreSpecialThing2(void)
-{
-	bSpecial = true;
-	SetState(SpawnState);
-}
-
 //===========================================================================
 //
 //  Actor::A_FlameCheck
@@ -295,6 +256,9 @@ void Actor::A_UnSetInvulnerable(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/03/12 19:19:16  dj_jl
+//  Pickup classes
+//
 //  Revision 1.16  2002/02/22 18:00:20  dj_jl
 //  A lots of the renaming, beautification.
 //

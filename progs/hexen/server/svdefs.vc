@@ -182,6 +182,7 @@ enum
 // TYPES -------------------------------------------------------------------
 
 class Actor:Entity
+	abstract
 {
 	//  States
 	int SpawnState;
@@ -279,19 +280,6 @@ class Actor:Entity
 	// Used by player to freeze a bit after teleporting.
 	float ReactionTime;
 
-	boolean GiveMana(int mana, int count);
-	void TryPickupWeapon(int weaponClass, int weaponType,
-		Actor weapon, string message);
-	void TryPickupWeaponPiece(int matchClass, int pieceValue,
-		Actor pieceMobj);
-	boolean GiveBody(int num);
-	boolean GiveArmor(int armortype, int amount);
-	boolean GiveKey(int key);
-	boolean GivePower(int power);
-	boolean GiveArtifact(int arti);
-	void TryPickupArtifact(int artifactType, Actor artifact);
-	void TouchSpecial(Actor Toucher);
-
 	boolean Touch(MapObject Other);
 	void CheckForPushSpecial(line_t * line, int side);
 	void BlockedByLine(line_t * ld);
@@ -322,8 +310,6 @@ class Actor:Entity
 	void SpawnBloodSplatter2(TVec org);
 	void SpawnRipperBlood(void);
 	void SpawnDirt(float radius);
-	void HideSpecial(void);
-	void SetDormantArtifact(void);
 
 	boolean Activate(void);
 	boolean Deactivate(void);
@@ -392,9 +378,6 @@ class Actor:Entity
 	void A_FlameCheck(void);
 	void A_HideThing(void);
 	void A_UnHideThing(void);
-	void A_RestoreSpecialThing1(void);
-	void A_RestoreSpecialThing2(void);
-	void A_RestoreArtifact(void);
 	void A_Summon(void);
 	void A_TeloSpawnC(void);
 	void A_TeloSpawnB(void);
@@ -412,9 +395,6 @@ class Actor:Entity
 	void A_PoisonBagCheck(void);
 	void A_CheckThrowBomb(void);
 	void A_NoGravity(void);
-	void A_PotteryExplode(void);
-	void A_PotteryChooseBit(void);
-	void A_PotteryCheck(void);
 	void A_CorpseBloodDrip(void);
 	void A_CorpseExplode(void);
 	void A_LeafSpawn(void);
@@ -491,6 +471,7 @@ class Actor:Entity
 }
 
 class Pawn:Actor
+	abstract
 {
 	bool bCheckNoMonsters;		// Don't spawn if monsters are disabled
 
@@ -550,8 +531,16 @@ class Pawn:Actor
 }
 
 class PlayerPawn:Pawn
+	abstract
 {
 	int AttackEndState;
+
+	boolean GiveMana(int mana, int count);
+	boolean GiveBody(int num);
+	boolean GiveArmor(int armortype, int amount);
+	boolean GiveKey(int key);
+	boolean GivePower(int power);
+	boolean GiveArtifact(int arti);
 
 	Actor SpawnPlayerMissile(classid type);
 	Actor SpawnPlayerMissileAngle(classid type, float angle);
@@ -569,16 +558,8 @@ class PlayerPawn:Pawn
 	}
 }
 
-class Pickup:Actor
-{
-	defaultproperties
-	{
-		bSpecial = true;
-		bNoPassMobj = true;
-	}
-}
-
 class Weapon:ViewEntity
+	abstract
 {
 	int Mana;
 	int UpState;
@@ -972,6 +953,9 @@ name door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/03/12 19:19:18  dj_jl
+//  Pickup classes
+//
 //  Revision 1.26  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

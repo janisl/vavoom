@@ -362,105 +362,11 @@ class FlameLarge:Actor
 	}
 };
 
-//==========================================================================
-//
-//	ItemHealingBottle
-//
-//==========================================================================
-
-class ItemHealingBottle:Pickup
-	__mobjinfo__(81)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_ITEM_PTN1_1;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactHealthFlask
-//
-//==========================================================================
-
-class ArtifactHealthFlask:Pickup
-	__mobjinfo__(82)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_ARTI_PTN2_1;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactFly
-//
-//==========================================================================
-
-class ArtifactFly:Pickup
-	__mobjinfo__(83)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_ARTI_SOAR1;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactInvulnerability
-//
-//==========================================================================
-
-class ArtifactInvulnerability:Pickup
-	__mobjinfo__(84)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_ARTI_INVU1;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactSummonMaulator
-//
-//==========================================================================
-
-class ArtifactSummonMaulator:Pickup
-	__mobjinfo__(86)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_ARTI_SUMMON;
-	}
-};
+class ItemHealingBottle;
+class ArtifactHealthFlask;
+class ArtifactFly;
+class ArtifactInvulnerability;
+class ArtifactSummonMaulator;
 
 //==========================================================================
 //
@@ -488,26 +394,7 @@ class SummonMissile:Actor
 
 class ThrustFloorUp;
 class ThrustFloorDown;
-
-//==========================================================================
-//
-//	ArtifactTeleportOther
-//
-//==========================================================================
-
-class ArtifactTeleportOther:Pickup
-	__mobjinfo__(10040)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_ARTI_TELOTHER1;
-	}
-};
+class ArtifactTeleportOther;
 
 //==========================================================================
 //
@@ -1250,26 +1137,7 @@ class StainedGlassShard0:Actor
 	}
 };
 
-//==========================================================================
-//
-//	ArtifactEgg
-//
-//==========================================================================
-
-class ArtifactEgg:Pickup
-	__mobjinfo__(30)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_ARTI_EGGC1;
-	}
-};
-
+class ArtifactEgg;
 //==========================================================================
 //
 //	EggMissile
@@ -1296,26 +1164,7 @@ class EggMissile:Actor
 	}
 };
 
-//==========================================================================
-//
-//	ArtifactSuperHeal
-//
-//==========================================================================
-
-class ArtifactSuperHeal:Pickup
-	__mobjinfo__(32)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_ARTI_SPHL1;
-	}
-};
-
+class ArtifactSuperHeal;
 //==========================================================================
 //
 //	ZWingedStatueNoSkull
@@ -1358,366 +1207,24 @@ class ZGemPedestal:Actor
 	}
 };
 
-//==========================================================================
-//
-//	ArtifactPuzzleSkull
-//
-//==========================================================================
-
-class ArtifactPuzzleSkull:Pickup
-	__mobjinfo__(9002)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bNoGravity = true;
-		SpawnState = S_ARTIPUZZSKULL;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactPuzzleGemBig
-//
-//==========================================================================
-
-class ArtifactPuzzleGemBig:Pickup
-	__mobjinfo__(9003)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bNoGravity = true;
-		SpawnState = S_ARTIPUZZGEMBIG;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactPuzzleGemRed
-//
-//==========================================================================
-
-class ArtifactPuzzleGemRed:Pickup
-	__mobjinfo__(9004)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bNoGravity = true;
-		SpawnState = S_ARTIPUZZGEMRED;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactPuzzleGemGreen1
-//
-//==========================================================================
-
-class ArtifactPuzzleGemGreen1:Pickup
-	__mobjinfo__(9005)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bNoGravity = true;
-		SpawnState = S_ARTIPUZZGEMGREEN1;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactPuzzleGemGreen2
-//
-//==========================================================================
-
-class ArtifactPuzzleGemGreen2:Pickup
-	__mobjinfo__(9009)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bNoGravity = true;
-		SpawnState = S_ARTIPUZZGEMGREEN2;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactPuzzleGemBlue1
-//
-//==========================================================================
-
-class ArtifactPuzzleGemBlue1:Pickup
-	__mobjinfo__(9006)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bNoGravity = true;
-		SpawnState = S_ARTIPUZZGEMBLUE1;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactPuzzleGemBlue2
-//
-//==========================================================================
-
-class ArtifactPuzzleGemBlue2:Pickup
-	__mobjinfo__(9010)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bNoGravity = true;
-		SpawnState = S_ARTIPUZZGEMBLUE2;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactPuzzleBook1
-//
-//==========================================================================
-
-class ArtifactPuzzleBook1:Pickup
-	__mobjinfo__(9007)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bNoGravity = true;
-		SpawnState = S_ARTIPUZZBOOK1;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactPuzzleBook2
-//
-//==========================================================================
-
-class ArtifactPuzzleBook2:Pickup
-	__mobjinfo__(9008)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bNoGravity = true;
-		SpawnState = S_ARTIPUZZBOOK2;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactPuzzleSkull2
-//
-//==========================================================================
-
-class ArtifactPuzzleSkull2:Pickup
-	__mobjinfo__(9014)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bNoGravity = true;
-		SpawnState = S_ARTIPUZZSKULL2;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactPuzzleFWeapon
-//
-//==========================================================================
-
-class ArtifactPuzzleFWeapon:Pickup
-	__mobjinfo__(9015)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bNoGravity = true;
-		SpawnState = S_ARTIPUZZFWEAPON;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactPuzzleCWeapon
-//
-//==========================================================================
-
-class ArtifactPuzzleCWeapon:Pickup
-	__mobjinfo__(9016)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bNoGravity = true;
-		SpawnState = S_ARTIPUZZCWEAPON;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactPuzzleMWeapon
-//
-//==========================================================================
-
-class ArtifactPuzzleMWeapon:Pickup
-	__mobjinfo__(9017)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bNoGravity = true;
-		SpawnState = S_ARTIPUZZMWEAPON;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactPuzzleGear
-//
-//==========================================================================
-
-class ArtifactPuzzleGear:Pickup
-	__mobjinfo__(9018)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bNoGravity = true;
-		SpawnState = S_ARTIPUZZGEAR_1;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactPuzzleGear2
-//
-//==========================================================================
-
-class ArtifactPuzzleGear2:Pickup
-	__mobjinfo__(9019)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bNoGravity = true;
-		SpawnState = S_ARTIPUZZGEAR2_1;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactPuzzleGear3
-//
-//==========================================================================
-
-class ArtifactPuzzleGear3:Pickup
-	__mobjinfo__(9020)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bNoGravity = true;
-		SpawnState = S_ARTIPUZZGEAR3_1;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactPuzzleGear4
-//
-//==========================================================================
-
-class ArtifactPuzzleGear4:Pickup
-	__mobjinfo__(9021)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bNoGravity = true;
-		SpawnState = S_ARTIPUZZGEAR4_1;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactTorch
-//
-//==========================================================================
-
-class ArtifactTorch:Pickup
-	__mobjinfo__(33)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_ARTI_TRCH1;
-	}
-};
-
+class ArtifactPuzzleSkull;
+class ArtifactPuzzleGemBig;
+class ArtifactPuzzleGemRed;
+class ArtifactPuzzleGemGreen1;
+class ArtifactPuzzleGemGreen2;
+class ArtifactPuzzleGemBlue1;
+class ArtifactPuzzleGemBlue2;
+class ArtifactPuzzleBook1;
+class ArtifactPuzzleBook2;
+class ArtifactPuzzleSkull2;
+class ArtifactPuzzleFWeapon;
+class ArtifactPuzzleCWeapon;
+class ArtifactPuzzleMWeapon;
+class ArtifactPuzzleGear;
+class ArtifactPuzzleGear2;
+class ArtifactPuzzleGear3;
+class ArtifactPuzzleGear4;
+class ArtifactTorch;
 //==========================================================================
 //
 //	FireBomb
@@ -1741,46 +1248,8 @@ class FireBomb:Actor
 	}
 };
 
-//==========================================================================
-//
-//	ArtifactTeleport
-//
-//==========================================================================
-
-class ArtifactTeleport:Pickup
-	__mobjinfo__(36)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_ARTI_ATLP1;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactFlechette
-//
-//==========================================================================
-
-class ArtifactFlechette:Pickup
-	__mobjinfo__(8000)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_ARTI_PSBG1;
-	}
-};
-
+class ArtifactTeleport;
+class ArtifactFlechette;
 //==========================================================================
 //
 //	PoisonBag
@@ -1856,106 +1325,11 @@ class ThrowingBomb:Actor
 	}
 };
 
-//==========================================================================
-//
-//	ArtifactSpeedBoots
-//
-//==========================================================================
-
-class ArtifactSpeedBoots:Pickup
-	__mobjinfo__(8002)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_ARTI_BOOTS1;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactBoostMana
-//
-//==========================================================================
-
-class ArtifactBoostMana:Pickup
-	__mobjinfo__(8003)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_ARTI_MANA;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactBoostArmor
-//
-//==========================================================================
-
-class ArtifactBoostArmor:Pickup
-	__mobjinfo__(8041)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_ARTI_ARMOR1;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactBlastRadius
-//
-//==========================================================================
-
-class ArtifactBlastRadius:Pickup
-	__mobjinfo__(10110)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_ARTI_BLAST1;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactHealRadius
-//
-//==========================================================================
-
-class ArtifactHealRadius:Pickup
-	__mobjinfo__(10120)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_ARTI_HEALRAD1;
-	}
-};
-
+class ArtifactSpeedBoots;
+class ArtifactBoostMana;
+class ArtifactBoostArmor;
+class ArtifactBlastRadius;
+class ArtifactHealRadius;
 //==========================================================================
 //
 //	Splash
@@ -3744,111 +3118,10 @@ class ZVasePillar:Actor
 	}
 };
 
-//==========================================================================
-//
-//	Pottery1
-//
-//==========================================================================
-
-class Pottery1:Actor
-	__mobjinfo__(104)
-{
-	defaultproperties
-	{
-		Health = 15;
-		Radius = 10.0;
-		Height = 32.0;
-		Mass = 100.0;
-
-		bSolid = true;
-		bShootable = true;
-		bDropOff = true;
-		bNoBlood = true;
-		bPushable = true;
-		bSlide = true;
-		bTelestomp = true;
-		SpawnState = S_ZPOTTERY1;
-		DeathState = S_ZPOTTERY_EXPLODE;
-	}
-};
-
-//==========================================================================
-//
-//	Pottery2
-//
-//==========================================================================
-
-class Pottery2:Actor
-	__mobjinfo__(105)
-{
-	defaultproperties
-	{
-		Health = 15;
-		Radius = 10.0;
-		Height = 25.0;
-		Mass = 100.0;
-
-		bSolid = true;
-		bShootable = true;
-		bDropOff = true;
-		bNoBlood = true;
-		bPushable = true;
-		bSlide = true;
-		bTelestomp = true;
-		SpawnState = S_ZPOTTERY2;
-		DeathState = S_ZPOTTERY_EXPLODE;
-	}
-};
-
-//==========================================================================
-//
-//	Pottery3
-//
-//==========================================================================
-
-class Pottery3:Actor
-	__mobjinfo__(106)
-{
-	defaultproperties
-	{
-		Health = 15;
-		Radius = 15.0;
-		Height = 25.0;
-		Mass = 100.0;
-
-		bSolid = true;
-		bShootable = true;
-		bDropOff = true;
-		bNoBlood = true;
-		bPushable = true;
-		bSlide = true;
-		bTelestomp = true;
-		SpawnState = S_ZPOTTERY3;
-		DeathState = S_ZPOTTERY_EXPLODE;
-	}
-};
-
-//==========================================================================
-//
-//	PotteryBit
-//
-//==========================================================================
-
-class PotteryBit:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 5.0;
-		Height = 5.0;
-		Mass = 100.0;
-
-		bMissile = true;
-		bNoTeleport = true;
-		SpawnState = S_POTTERYBIT_1;
-		DeathState = S_POTTERYBIT_EX0;
-	}
-};
+class Pottery1;
+class Pottery2;
+class Pottery3;
+class PotteryBit;
 
 //==========================================================================
 //
@@ -5160,25 +4433,7 @@ class PunchPuff:Actor
 	}
 };
 
-//==========================================================================
-//
-//	WeaponFAxe
-//
-//==========================================================================
-
-class WeaponFAxe:Pickup
-	__mobjinfo__(8010)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		SpawnState = S_AXE;
-	}
-};
-
+class WeaponFAxe;
 //==========================================================================
 //
 //	AxePuff
@@ -5254,25 +4509,7 @@ class AxeBlood:Actor
 	}
 };
 
-//==========================================================================
-//
-//	WeaponFHammer
-//
-//==========================================================================
-
-class WeaponFHammer:Pickup
-	__mobjinfo__(123)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		SpawnState = S_HAMM;
-	}
-};
-
+class WeaponFHammer;
 //==========================================================================
 //
 //	HammerMissile
@@ -5384,25 +4621,7 @@ class FighterSwordFlame:Actor
 	}
 };
 
-//==========================================================================
-//
-//	WeaponCSerpentStaff
-//
-//==========================================================================
-
-class WeaponCSerpentStaff:Pickup
-	__mobjinfo__(10)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		SpawnState = S_CSTAFF;
-	}
-};
-
+class WeaponCSerpentStaff;
 //==========================================================================
 //
 //	ClericStaffMissile
@@ -5458,26 +4677,7 @@ class ClericStaffPuff:Actor
 	}
 };
 
-//==========================================================================
-//
-//	WeaponCFlame
-//
-//==========================================================================
-
-class WeaponCFlame:Pickup
-	__mobjinfo__(8009)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bNoGravity = true;
-		SpawnState = S_CFLAME1;
-	}
-};
-
+class WeaponCFlame;
 //==========================================================================
 //
 //	ClericFlameFloor
@@ -5829,26 +5029,7 @@ class MageWandMissile:Actor
 	}
 };
 
-//==========================================================================
-//
-//	WeaponMLightning
-//
-//==========================================================================
-
-class WeaponMLightning:Pickup
-	__mobjinfo__(8040)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bNoGravity = true;
-		SpawnState = S_MW_LIGHTNING1;
-	}
-};
-
+class WeaponMLightning;
 //==========================================================================
 //
 //	LightningCeiling
@@ -6001,186 +5182,15 @@ class MageStaffFX2:Actor
 	}
 };
 
-//==========================================================================
-//
-//	WeaponFSwordPiece1
-//
-//==========================================================================
-
-class WeaponFSwordPiece1:Pickup
-	__mobjinfo__(12)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_FSWORD1;
-	}
-};
-
-//==========================================================================
-//
-//	WeaponFSwordPiece2
-//
-//==========================================================================
-
-class WeaponFSwordPiece2:Pickup
-	__mobjinfo__(13)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_FSWORD2;
-	}
-};
-
-//==========================================================================
-//
-//	WeaponFSwordPiece3
-//
-//==========================================================================
-
-class WeaponFSwordPiece3:Pickup
-	__mobjinfo__(16)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_FSWORD3;
-	}
-};
-
-//==========================================================================
-//
-//	WeaponCHolyPiece1
-//
-//==========================================================================
-
-class WeaponCHolyPiece1:Pickup
-	__mobjinfo__(18)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_CHOLY1;
-	}
-};
-
-//==========================================================================
-//
-//	WeaponCHolyPiece2
-//
-//==========================================================================
-
-class WeaponCHolyPiece2:Pickup
-	__mobjinfo__(19)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_CHOLY2;
-	}
-};
-
-//==========================================================================
-//
-//	WeaponCHolyPiece3
-//
-//==========================================================================
-
-class WeaponCHolyPiece3:Pickup
-	__mobjinfo__(20)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_CHOLY3;
-	}
-};
-
-//==========================================================================
-//
-//	WeaponMStaffPiece1
-//
-//==========================================================================
-
-class WeaponMStaffPiece1:Pickup
-	__mobjinfo__(21)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_MSTAFF1;
-	}
-};
-
-//==========================================================================
-//
-//	WeaponMStaffPiece2
-//
-//==========================================================================
-
-class WeaponMStaffPiece2:Pickup
-	__mobjinfo__(22)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_MSTAFF2;
-	}
-};
-
-//==========================================================================
-//
-//	WeaponMStaffPiece3
-//
-//==========================================================================
-
-class WeaponMStaffPiece3:Pickup
-	__mobjinfo__(23)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_MSTAFF3;
-	}
-};
-
+class WeaponFSwordPiece1;
+class WeaponFSwordPiece2;
+class WeaponFSwordPiece3;
+class WeaponCHolyPiece1;
+class WeaponCHolyPiece2;
+class WeaponCHolyPiece3;
+class WeaponMStaffPiece1;
+class WeaponMStaffPiece2;
+class WeaponMStaffPiece3;
 //==========================================================================
 //
 //	SnoutPuff
@@ -6204,25 +5214,7 @@ class SnoutPuff:Actor
 	}
 };
 
-//==========================================================================
-//
-//	WeaponMCone
-//
-//==========================================================================
-
-class WeaponMCone:Pickup
-	__mobjinfo__(53)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		SpawnState = S_COS1;
-	}
-};
-
+class WeaponMCone;
 //==========================================================================
 //
 //	ShardMissile
@@ -7338,355 +6330,24 @@ class DragonFX2:Actor
 	}
 };
 
-//==========================================================================
-//
-//	ItemArmor1
-//
-//==========================================================================
-
-class ItemArmor1:Pickup
-	__mobjinfo__(8005)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bNoGravity = true;
-		SpawnState = S_ARMOR_1;
-	}
-};
-
-//==========================================================================
-//
-//	ItemArmor2
-//
-//==========================================================================
-
-class ItemArmor2:Pickup
-	__mobjinfo__(8006)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bNoGravity = true;
-		SpawnState = S_ARMOR_2;
-	}
-};
-
-//==========================================================================
-//
-//	ItemArmor3
-//
-//==========================================================================
-
-class ItemArmor3:Pickup
-	__mobjinfo__(8007)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bNoGravity = true;
-		SpawnState = S_ARMOR_3;
-	}
-};
-
-//==========================================================================
-//
-//	ItemArmor4
-//
-//==========================================================================
-
-class ItemArmor4:Pickup
-	__mobjinfo__(8008)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bNoGravity = true;
-		SpawnState = S_ARMOR_4;
-	}
-};
-
-//==========================================================================
-//
-//	ItemManaBlue
-//
-//==========================================================================
-
-class ItemManaBlue:Pickup
-	__mobjinfo__(122)
-{
-	defaultproperties
-	{
-		Health = 10;
-		Radius = 8.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_MANA1_1;
-	}
-};
-
-//==========================================================================
-//
-//	ItemManaGreen
-//
-//==========================================================================
-
-class ItemManaGreen:Pickup
-	__mobjinfo__(124)
-{
-	defaultproperties
-	{
-		Health = 10;
-		Radius = 8.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_MANA2_1;
-	}
-};
-
-//==========================================================================
-//
-//	ItemManaCombined
-//
-//==========================================================================
-
-class ItemManaCombined:Pickup
-	__mobjinfo__(8004)
-{
-	defaultproperties
-	{
-		Health = 20;
-		Radius = 8.0;
-		Height = 32.0;
-		Mass = 100.0;
-		bFloatBob = true;
-		SpawnState = S_MANA3_1;
-	}
-};
-
-//==========================================================================
-//
-//	ItemKey1
-//
-//==========================================================================
-
-class ItemKey1:Pickup
-	__mobjinfo__(8030)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 8.0;
-		Height = 32.0;
-		Mass = 100.0;
-		SpawnState = S_KEY1;
-	}
-};
-
-//==========================================================================
-//
-//	ItemKey2
-//
-//==========================================================================
-
-class ItemKey2:Pickup
-	__mobjinfo__(8031)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 8.0;
-		Height = 32.0;
-		Mass = 100.0;
-		SpawnState = S_KEY2;
-	}
-};
-
-//==========================================================================
-//
-//	ItemKey3
-//
-//==========================================================================
-
-class ItemKey3:Pickup
-	__mobjinfo__(8032)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 8.0;
-		Height = 32.0;
-		Mass = 100.0;
-		SpawnState = S_KEY3;
-	}
-};
-
-//==========================================================================
-//
-//	ItemKey4
-//
-//==========================================================================
-
-class ItemKey4:Pickup
-	__mobjinfo__(8033)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 8.0;
-		Height = 32.0;
-		Mass = 100.0;
-		SpawnState = S_KEY4;
-	}
-};
-
-//==========================================================================
-//
-//	ItemKey5
-//
-//==========================================================================
-
-class ItemKey5:Pickup
-	__mobjinfo__(8034)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 8.0;
-		Height = 32.0;
-		Mass = 100.0;
-		SpawnState = S_KEY5;
-	}
-};
-
-//==========================================================================
-//
-//	ItemKey6
-//
-//==========================================================================
-
-class ItemKey6:Pickup
-	__mobjinfo__(8035)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 8.0;
-		Height = 32.0;
-		Mass = 100.0;
-		SpawnState = S_KEY6;
-	}
-};
-
-//==========================================================================
-//
-//	ItemKey7
-//
-//==========================================================================
-
-class ItemKey7:Pickup
-	__mobjinfo__(8036)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 8.0;
-		Height = 32.0;
-		Mass = 100.0;
-		SpawnState = S_KEY7;
-	}
-};
-
-//==========================================================================
-//
-//	ItemKey8
-//
-//==========================================================================
-
-class ItemKey8:Pickup
-	__mobjinfo__(8037)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 8.0;
-		Height = 32.0;
-		Mass = 100.0;
-		SpawnState = S_KEY8;
-	}
-};
-
-//==========================================================================
-//
-//	ItemKey9
-//
-//==========================================================================
-
-class ItemKey9:Pickup
-	__mobjinfo__(8038)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 8.0;
-		Height = 32.0;
-		Mass = 100.0;
-		SpawnState = S_KEY9;
-	}
-};
-
-//==========================================================================
-//
-//	ItemKeyA
-//
-//==========================================================================
-
-class ItemKeyA:Pickup
-	__mobjinfo__(8039)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 8.0;
-		Height = 32.0;
-		Mass = 100.0;
-		SpawnState = S_KEYA;
-	}
-};
-
-//==========================================================================
-//
-//	ItemKeyB
-//
-//==========================================================================
-
-class ItemKeyB:Pickup
-	__mobjinfo__(8200)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 8.0;
-		Height = 32.0;
-		Mass = 100.0;
-		SpawnState = S_KEYB;
-	}
-};
-
+class ItemArmor1;
+class ItemArmor2;
+class ItemArmor3;
+class ItemArmor4;
+class ItemManaBlue;
+class ItemManaGreen;
+class ItemManaCombined;
+class ItemKey1;
+class ItemKey2;
+class ItemKey3;
+class ItemKey4;
+class ItemKey5;
+class ItemKey6;
+class ItemKey7;
+class ItemKey8;
+class ItemKey9;
+class ItemKeyA;
+class ItemKeyB;
 //==========================================================================
 //
 //	SoundWind
@@ -8669,9 +7330,12 @@ class Bat:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2002/03/12 19:19:16  dj_jl
+//	Pickup classes
+//
 //	Revision 1.26  2002/03/09 17:57:02  dj_jl
 //	Got rid of function pointers, made most of the physics functions native.
-//
+//	
 //	Revision 1.25  2002/03/04 18:31:36  dj_jl
 //	Replaced bNoClip with two seperate flags, beautification.
 //	

@@ -1638,52 +1638,6 @@ void Actor::SpawnDirt(float radius)
 
 //==========================================================================
 //
-//  Actor::HideSpecial
-//
-//==========================================================================
-
-void Actor::HideSpecial(void)
-{
-	bSpecial = false;
-	Translucency += 100;
-	SetState(S_HIDESPECIAL1);
-}
-
-//==========================================================================
-//
-//  Actor::SetDormantArtifact
-//
-//  Removes the bSpecial flag and initiates the artifact pickup animation.
-//
-//==========================================================================
-
-void Actor::SetDormantArtifact(void)
-{
-	bSpecial = false;
-	if (deathmatch && !bDropped)
-	{
-		if (Class == ArtifactInvulnerability)
-		{
-			SetState(S_DORMANTARTI3_1);
-		}
-		else if (Class == ArtifactSummonMaulator || Class == ArtifactFly)
-		{
-			SetState(S_DORMANTARTI2_1);
-		}
-		else
-		{
-			SetState(S_DORMANTARTI1_1);
-		}
-	}
-	else
-	{
-		// Don't respawn
-		SetState(S_DEADARTI1);
-	}
-}
-
-//==========================================================================
-//
 //  G_PlayerReborn
 //
 //  Called after a player dies almost everything is cleared and initialized
@@ -2148,6 +2102,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.39  2002/03/12 19:19:16  dj_jl
+//  Pickup classes
+//
 //  Revision 1.38  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //
