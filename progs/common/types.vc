@@ -43,7 +43,7 @@ class Object
 	classid Class;
 
 	native void Destroy(void);
-	native boolean IsA(classid cid);
+	native boolean IsA(name CheckName);
 	native boolean IsDestroyed(void);
 
 	defaultproperties
@@ -600,7 +600,7 @@ struct player_t
 	int Buttons;	// fire, use
 	int Impulse;	// weapon changes, inventory, etc
 
-	Actor *mo;
+	Actor MO;
 	int PlayerState;
 
 	//  Model of current weapon
@@ -978,6 +978,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.36  2002/03/28 18:18:14  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.35  2002/03/12 19:20:24  dj_jl
 //  Added native and abstract class modifiers
 //

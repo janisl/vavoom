@@ -519,7 +519,7 @@ boolean Actor::ChickenMorphPlayer(void)
 	chicken.bIsPlayer = true;
 	chicken.Health = MAXCHICKENHEALTH;
 	Player->Health = chicken.Health;
-	Player->mo = &chicken;
+	Player->MO = chicken;
 	Player->ArmorPoints = 0;
 	Player->ArmorType = 0;
 	Player->Powers[pw_invisibility] = 0;
@@ -1052,7 +1052,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 	A.Player = p;
 	A.bIsPlayer = true;
 	A.Health = p->Health;
-	p->mo = &A;
+	p->MO = A;
 	p->PlayerState = PST_LIVE;
 	p->Refire = 0;
 	p->DamageCount = 0;
@@ -1420,6 +1420,9 @@ void Actor::NightmareRespawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.39  2002/03/28 18:15:34  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.38  2002/03/20 19:07:46  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

@@ -56,7 +56,7 @@ int botskill = 2;
 
 void BotPlayer::Think(void)
 {
-	botmo = *player->mo;
+	botmo = player->MO;
 
 	player->ForwardMove = 0.0;
 	player->SideMove = 0.0;
@@ -292,8 +292,8 @@ void BotPlayer::SetEnemy(void)
 	}
 #endif
 
-	if (enemy && enemy.Health > 0 && player->mo &&
-		P_CheckSight(*player->mo, enemy))
+	if (enemy && enemy.Health > 0 && player->MO &&
+		P_CheckSight(player->MO, enemy))
 	{
 		return;
 	}
@@ -1360,14 +1360,14 @@ Actor BotPlayer::FindEnemy(void)
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
 		if (players[i].bActive /*&& !mo->IsTeammate (players[i].mo)*/ &&
-			players[i].mo->Health > 0 && botmo != *players[i].mo)
+			players[i].MO.Health > 0 && botmo != players[i].MO)
 		{
 			 //Here's a strange one, when bot is standing still, the P_CheckSight within Check_LOS almost always returns false. tought it should be the same checksight as below but.. (below works) something must be fuckin wierd screded up. 
-			if (Check_LOS(*players[i].mo, vangle))
+			if (Check_LOS(players[i].MO, vangle))
 			{
-				if (P_CheckSight(botmo, *players[i].mo))
+				if (P_CheckSight(botmo, players[i].MO))
 				{
-					temp = MobjDist(*players[i].mo, botmo);
+					temp = MobjDist(players[i].MO, botmo);
 
 #if 0
 					//Too dark?
@@ -1380,7 +1380,7 @@ Actor BotPlayer::FindEnemy(void)
 					if (temp < closest_dist)
 					{
 						closest_dist = temp;
-						target = *players[i].mo;
+						target = players[i].MO;
 					}
 				}
 			}
@@ -2241,6 +2241,9 @@ void BotPlayer::OnSpawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/03/28 18:15:34  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.5  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

@@ -61,7 +61,7 @@ void A_SkullPop(void)
 	_Special1 = A.Player->PClass;
 	A.Health = Health;
 	A.Angles.yaw = Angles.yaw;
-	A.Player->mo = &A;
+	A.Player->MO = A;
 	A.Player->DamageCount = 32;
 }
 
@@ -441,6 +441,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2002/03/28 18:15:35  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.3  2002/03/16 17:47:47  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

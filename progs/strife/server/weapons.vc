@@ -246,9 +246,9 @@ void FireWeapon(player_t * player)
 		return;
 	}
 
-	player->mo->SetState(S_PLAY_ATK1);
+	player->MO.SetState(S_PLAY_ATK1);
 	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).AttackState);
-	P_NoiseAlert(*player->mo, *player->mo);
+	P_NoiseAlert(player->MO, player->MO);
 }
 
 //***************************************************************************
@@ -271,10 +271,10 @@ void Weapon::A_WeaponReady(void)
 	float angle;
 
 	// get out of attack state
-	if (Player->mo->StateNum == S_PLAY_ATK1 ||
-		Player->mo->StateNum == S_PLAY_ATK2)
+	if (Player->MO.StateNum == S_PLAY_ATK1 ||
+		Player->MO.StateNum == S_PLAY_ATK2)
 	{
-		Player->mo->SetState(S_PLAY);
+		Player->MO.SetState(S_PLAY);
 	}
 
 /*    if (Player->ReadyWeapon == wp_chainsaw && statenum == S_SAW)
@@ -421,7 +421,7 @@ void Weapon::A_CheckReload(void)
 
 void Weapon::A_GunFlash(void)
 {
-	Player->mo->SetState(S_PLAY_ATK2);
+	Player->MO.SetState(S_PLAY_ATK2);
 	SetPsprite(Player, ps_flash, Weapon(Player->ViewEnts[ps_weapon]).FlashState);
 }
 
@@ -502,19 +502,19 @@ void A_Punch(void)
 	if (Player->Powers[pw_strength])
 		damage *= 10;
 
-	avcpy(Player->mo->Angles, angles);
+	avcpy(Player->MO.Angles, angles);
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	dir = AimLineAttack(*Player->mo, angles, MELEERANGE);
-	LineAttack(*Player->mo, dir, MELEERANGE, damage);
+	dir = AimLineAttack(Player->MO, angles, MELEERANGE);
+	LineAttack(Player->MO, dir, MELEERANGE, damage);
 
 	// turn to face target
 	if (linetarget)
 	{
-		Player->mo->PlaySound('Punch', CHAN_WEAPON);
-		Player->mo->Angles.yaw =
-			atan2(linetarget.Origin.y - Player->mo->Origin.y,
-			linetarget.Origin.x - Player->mo->Origin.x);
+		Player->MO.PlaySound('Punch', CHAN_WEAPON);
+		Player->MO.Angles.yaw =
+			atan2(linetarget.Origin.y - Player->MO.Origin.y,
+			linetarget.Origin.x - Player->MO.Origin.x);
 		Player->bFixAngle = true;
 	}
 }
@@ -905,6 +905,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/03/28 18:15:35  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.16  2002/03/20 19:07:47  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

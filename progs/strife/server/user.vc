@@ -589,7 +589,7 @@ void PlayerPawn::PlayerTick(float deltaTime)
 
 void PlayerThink(player_t * player)
 {
-	PlayerPawn(*player->mo).PlayerTick(frametime);
+	PlayerPawn(player->MO).PlayerTick(frametime);
 }
 
 //==========================================================================
@@ -690,7 +690,7 @@ void PlayerPawn::SetViewPos(void)
 
 void SetViewPos(player_t * player)
 {
-	PlayerPawn(*player->mo).SetViewPos();
+	PlayerPawn(player->MO).SetViewPos();
 }
 
 //==========================================================================
@@ -741,8 +741,8 @@ void G_PlayerExitMap(int player, boolean clusterChange)
 	p->Keys = 0;
 
 	p->Items = 0;
-	p->mo->Angles.pitch = 0.0;
-	p->mo->Translucency = 0;	// cancel invisibility
+	p->MO.Angles.pitch = 0.0;
+	p->MO.Translucency = 0;	// cancel invisibility
 	p->ExtraLight = 0;	// cancel gun flashes
 	p->FixedColormap = 0;	// cancel ir gogles
 	p->DamageCount = 0;	// no palette changes 
@@ -795,8 +795,8 @@ void NetGameReborn(int playernum)
 	// respawn at the start
 
 	// first dissasociate the corpse
-	players[playernum].mo->Player = NULL;
-	players[playernum].mo->bIsPlayer = false;
+	players[playernum].MO.Player = NULL;
+	players[playernum].MO.bIsPlayer = false;
 
 	// spawn at random spot if in death match
 	if (deathmatch)
@@ -868,11 +868,11 @@ void DisconnectClient(player_t * player)
 {
 	int i;
 
-	if (player->mo)
+	if (player->MO)
 	{
-		player->mo->Player = NULL;
-		player->mo->bIsPlayer = false;
-		player->mo->Damage(none, none, 10000);
+		player->MO.Player = NULL;
+		player->MO.bIsPlayer = false;
+		player->MO.Damage(none, none, 10000);
 	}
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
@@ -883,7 +883,7 @@ void DisconnectClient(player_t * player)
 		}
 	}
 	bprint("%s left the game\n", ARR2STR(player->Name));
-	player->mo->PlayFullVolumeSound('Chat', CHAN_AUTO);
+	player->MO.PlayFullVolumeSound('Chat', CHAN_AUTO);
 }
 
 //==========================================================================
@@ -898,12 +898,15 @@ void UserinfoChanged(player_t * player)
 	{
 		return;
 	}
-	player->mo->Translation = player->Color;
+	player->MO.Translation = player->Color;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/03/28 18:15:35  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.21  2002/03/16 17:48:58  dj_jl
 //  Added PlayerPawn class, beautifucation.
 //

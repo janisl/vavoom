@@ -143,7 +143,7 @@ boolean PlayerPawn::UndoPlayerMorph(void)
 	Player->MorphTics = 0;
 	A.Health = MAXHEALTH;
 	Player->Health = A.Health;
-	Player->mo = &A;
+	Player->MO = A;
 	Player->PClass = Player->BaseClass;
 	SetPlayerColor(Player);
 	PostMorphWeapon(Player, _Special1);
@@ -341,7 +341,7 @@ void PlayerPawn::UseArtiSummon(void)
 	mo = SpawnPlayerMissile(SummonMissile);
 	if (mo)
 	{
-		mo.Owner = self;
+		mo.Instigator = self;
 		mo._SpecialMobj1 = this;
 		mo.Velocity.z = 5.0 * 35.0;
 	}
@@ -365,7 +365,7 @@ void PlayerPawn::UseArtiPoisonBag(void)
 			vector(16.0 * cos(angle), 24.0 * sin(angle), 8.0 - FloorClip));
 		if (bomb)
 		{
-			bomb.Owner = self;
+			bomb.Instigator = self;
 		}
 	}
 	else if (Player->PClass == PCLASS_MAGE)
@@ -374,7 +374,7 @@ void PlayerPawn::UseArtiPoisonBag(void)
 			vector(16.0 * cos(angle), 24.0 * sin(angle), 8.0 - FloorClip));
 		if (bomb)
 		{
-			bomb.Owner = self;
+			bomb.Instigator = self;
 		}
 	}
 	else	// PCLASS_FIGHTER, obviously (also pig, not so obviously)
@@ -391,7 +391,7 @@ void PlayerPawn::UseArtiPoisonBag(void)
 			bomb.Thrust(bomb.Angles.yaw, bomb.Speed * frametime);
 			bomb.Velocity.x += Velocity.x / 2.0;
 			bomb.Velocity.y += Velocity.y / 2.0;
-			bomb.Owner = self;
+			bomb.Instigator = self;
 			bomb.StateTime -= Random() * 0.1;
 			bomb.CheckMissileSpawn();
 		}
@@ -411,7 +411,7 @@ void PlayerPawn::UseArtiTeleportOther(void)
 	mo = SpawnPlayerMissile(TeleportOtherFX1);
 	if (mo)
 	{
-		mo.Owner = self;
+		mo.Instigator = self;
 	}
 }
 
@@ -457,8 +457,8 @@ void Actor::Blast(Actor source, float strength)
 				return;
 				break;
 			case MageStaffFX2:	// Reflect to originator
-				Target = Owner;
-				Owner = source;
+				Enemy = Instigator;
+				Instigator = source;
 				break;
 			default:
 				break;
@@ -466,10 +466,10 @@ void Actor::Blast(Actor source, float strength)
 		}
 		if (Class == HolyFX)
 		{
-			if (Target == source)
+			if (Enemy == source)
 			{
-				Target = Owner;
-				Owner = source;
+				Enemy = Instigator;
+				Instigator = source;
 			}
 		}
 		Velocity.x = BLAST_SPEED * cos(angle) * 35.0;
@@ -590,12 +590,12 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	Actor A;
 	int i;
 
-	if (!players[playernum].mo)
+	if (!players[playernum].MO)
 	{
 		// first spawn of level, before corpses
 		for (i = 0; i < playernum; i++)
-			if (players[i].mo->Origin.x == mthing->x &&
-				players[i].mo->Origin.y == mthing->y)
+			if (players[i].MO.Origin.x == mthing->x &&
+				players[i].MO.Origin.y == mthing->y)
 				return false;
 		return true;
 	}
@@ -603,13 +603,13 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	x = mthing->x;
 	y = mthing->y;
 
-	players[playernum].mo->bNoPassMobj = true;
-	if (!players[playernum].mo->CheckPosition(vector(x, y, ONFLOORZ)))
+	players[playernum].MO.bNoPassMobj = true;
+	if (!players[playernum].MO.CheckPosition(vector(x, y, ONFLOORZ)))
 	{
-		players[playernum].mo->bNoPassMobj = false;
+		players[playernum].MO.bNoPassMobj = false;
 		return false;
 	}
-	players[playernum].mo->bNoPassMobj = false;
+	players[playernum].MO.bNoPassMobj = false;
 
 	// spawn a teleport fog 
 	ss = PointInSubsector(x, y);
@@ -625,6 +625,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/03/28 18:15:35  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.25  2002/03/16 17:47:47  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

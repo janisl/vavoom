@@ -113,7 +113,7 @@ void Cheat_Gimme(void)
 		}
 		else
 		{
-			PlayerPawn(*players[0].mo).UseArtifact(arti_tomeofpower);
+			PlayerPawn(players[0].MO).UseArtifact(arti_tomeofpower);
 			cprint(&players[0], "POWER ON");
 		}
 	}
@@ -121,13 +121,13 @@ void Cheat_Gimme(void)
 	{
 		if (players[0].ChickenTics)
 		{
-			players[0].mo->Health = MAXCHICKENHEALTH;
-			players[0].Health = players[0].mo->Health;
+			players[0].MO.Health = MAXCHICKENHEALTH;
+			players[0].Health = players[0].MO.Health;
 		}
 		else
 		{
-			players[0].mo->Health = MAXHEALTH;
-			players[0].Health = players[0].mo->Health;
+			players[0].MO.Health = MAXHEALTH;
+			players[0].Health = players[0].MO.Health;
 		}
 		cprint(&players[0], "FULL HEALTH");
 	}
@@ -150,7 +150,7 @@ void Cheat_Gimme(void)
 			}
 			for (j = 0; j < 16; j++)
 			{
-				PlayerPawn(*players[0].mo).GiveArtifact(i);
+				PlayerPawn(players[0].MO).GiveArtifact(i);
 			}
 		}
 		cprint(&players[0], "YOU GOT IT");
@@ -221,12 +221,12 @@ void Cheat_Morph(void)
 {
 	if (players[0].ChickenTics)
 	{
-		if (PlayerPawn(*players[0].mo).UndoPlayerChicken())
+		if (PlayerPawn(players[0].MO).UndoPlayerChicken())
 		{
 			cprint(&players[0], "CHICKEN OFF");
 		}
 	}
-	else if (players[0].mo->ChickenMorphPlayer())
+	else if (players[0].MO.ChickenMorphPlayer())
 	{
 		cprint(&players[0], "CHICKEN ON");
 	}
@@ -267,6 +267,9 @@ void Cheat_Class(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/03/28 18:15:34  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.14  2002/03/20 19:07:46  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

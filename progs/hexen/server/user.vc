@@ -732,7 +732,7 @@ void PlayerPawn::PlayerTick(float deltaTime)
 			{
 				speedA.Angles.yaw = Angles.yaw;
 				speedA.Translation = Translation;
-				speedA.Owner = self;
+				speedA.Instigator = self;
 				speedA._Special1 = Player->PClass;
 				if (speedA._Special1 > 2)
 				{
@@ -1002,7 +1002,7 @@ void PlayerPawn::PlayerTick(float deltaTime)
 
 void PlayerThink(player_t * player)
 {
-	PlayerPawn(*player->mo).PlayerTick(frametime);
+	PlayerPawn(player->MO).PlayerTick(frametime);
 }
 
 //==========================================================================
@@ -1147,7 +1147,7 @@ void PlayerPawn::SetViewPos(void)
 
 void SetViewPos(player_t * player)
 {
-	PlayerPawn(*player->mo).SetViewPos();
+	PlayerPawn(player->MO).SetViewPos();
 }
 
 //==========================================================================
@@ -1664,7 +1664,7 @@ void G_PlayerExitMap(int playerNumber, boolean clusterChange)
 			for (i = 0; i < 25; i++)
 			{
 				player->Powers[pw_flight] = 0.0;
-				PlayerPawn(*player->mo).PlayerUseArtifact(arti_fly);
+				PlayerPawn(player->MO).PlayerUseArtifact(arti_fly);
 			}
 			player->Powers[pw_flight] = 0.0;
 		}
@@ -1672,11 +1672,11 @@ void G_PlayerExitMap(int playerNumber, boolean clusterChange)
 
 	if (player->MorphTics)
 	{
-		SetWeapon(player, player->mo->_Special1);	// Restore weapon
+		SetWeapon(player, player->MO._Special1);	// Restore weapon
 		player->MorphTics = 0;
 	}
-	player->mo->Angles.pitch = 0.0;
-	player->mo->Translucency = 0;	// Remove invisibility
+	player->MO.Angles.pitch = 0.0;
+	player->MO.Translucency = 0;	// Remove invisibility
 	player->ExtraLight = 0;	// Remove weapon flashes
 	player->FixedColormap = 0;	// Remove torch
 	player->DamageCount = 0;	// No palette changes
@@ -1731,8 +1731,8 @@ void NetGameReborn(int playernum)
 	// respawn at the start
 
 	// first dissasociate the corpse
-	players[playernum].mo->Player = NULL;
-	players[playernum].mo->bIsPlayer = false;
+	players[playernum].MO.Player = NULL;
+	players[playernum].MO.bIsPlayer = false;
 
 	// spawn at random spot if in death match
 	if (deathmatch)
@@ -1817,24 +1817,24 @@ void NetGameReborn(int playernum)
 
 void SetPlayerColor(player_t * player)
 {
-	player->mo->Translation = 0;
+	player->MO.Translation = 0;
 	if (player->PClass == PCLASS_FIGHTER)
 	{
 		// The first type should be blue, and the third should be the
 		// Fighter's original gold color
 		if (player->Color == 0)
 		{
-			player->mo->Translation = 2;
+			player->MO.Translation = 2;
 		}
 		else if (player->Color != 2)
 		{
-			player->mo->Translation = player->Color;
+			player->MO.Translation = player->Color;
 		}
 	}
 	else if (player->Color)
 	{
 		// Set color translation bits for player sprites
-		player->mo->Translation =
+		player->MO.Translation =
 			player->PClass * (MAXPLAYERS - 1) + player->Color;
 	}
 }
@@ -1925,7 +1925,7 @@ void SpawnClient(int i)
 	}
 
 	// Destroy all things touching players
-	player->mo->TeleportMove(player->mo->Origin);
+	player->MO.TeleportMove(player->MO.Origin);
 }
 
 //==========================================================================
@@ -1943,11 +1943,11 @@ void DisconnectClient(player_t * player)
 		player->Bot.Destroy();
 		player->Bot = none;
 	}
-	if (player->mo)
+	if (player->MO)
 	{
-		player->mo->Player = NULL;
-		player->mo->bIsPlayer = false;
-		player->mo->Damage(none, none, 10000);
+		player->MO.Player = NULL;
+		player->MO.bIsPlayer = false;
+		player->MO.Damage(none, none, 10000);
 	}
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
@@ -1958,7 +1958,7 @@ void DisconnectClient(player_t * player)
 		}
 	}
 	bprint("%s left the game\n", ARR2STR(player->Name));
-	player->mo->PlayFullVolumeSound('Chat', CHAN_AUTO);
+	player->MO.PlayFullVolumeSound('Chat', CHAN_AUTO);
 }
 
 //==========================================================================
@@ -1979,6 +1979,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.34  2002/03/28 18:15:35  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.33  2002/03/16 17:47:47  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

@@ -196,7 +196,7 @@ void BringUpWeapon(player_t * player)
 	SetWeapon(player, player->ReadyWeapon);
 	if (player->ReadyWeapon == wp_gauntlets)
 	{
-		player->mo->PlaySound('GauntletActive', CHAN_WEAPON);
+		player->MO.PlaySound('GauntletActive', CHAN_WEAPON);
 	}
 	player->ViewEnts[ps_weapon].SY = WEAPONBOTTOM;
 	if (player->Powers[pw_weaponlevel2])
@@ -380,7 +380,7 @@ void FireWeapon(player_t * player)
 	{
 		return;
 	}
-	player->mo->SetState(PlayerPawn(*player->mo).Attack2State);
+	player->MO.SetState(PlayerPawn(player->MO).Attack2State);
 	if (player->Powers[pw_weaponlevel2])
 	{
 		attackState = player->Refire ?
@@ -394,11 +394,11 @@ void FireWeapon(player_t * player)
 			Weapon(player->ViewEnts[ps_weapon]).AttackState;
 	}
 	SetPsprite(player, ps_weapon, attackState);
-	P_NoiseAlert(*player->mo, *player->mo);
+	P_NoiseAlert(player->MO, player->MO);
 	if (player->ReadyWeapon == wp_gauntlets && !player->Refire)
 	{
 		// Play the sound for the initial gauntlet attack
-		player->mo->PlaySound('GauntletUse', CHAN_WEAPON);
+		player->MO.PlaySound('GauntletUse', CHAN_WEAPON);
 	}
 }
 
@@ -481,10 +481,10 @@ void Weapon::A_WeaponReady(void)
 		return;
 	}
 	// Change player from attack state
-	if (Player->mo->StateNum == Player->mo->MissileState ||
-		Player->mo->StateNum == PlayerPawn(*Player->mo).Attack2State)
+	if (Player->MO.StateNum == Player->MO.MissileState ||
+		Player->MO.StateNum == PlayerPawn(Player->MO).Attack2State)
 	{
-		Player->mo->SetState(Player->mo->SpawnState);
+		Player->MO.SetState(Player->MO.SpawnState);
 	}
 	// Put the weapon away if the player has a pending weapon or has
 	// died.
@@ -1110,18 +1110,18 @@ void A_StaffAttackPL1(void)
 	TVec dir;
 
 	damage = 5 + (P_Random() & 15);
-	angles = Player->mo->Angles;
+	angles = Player->MO.Angles;
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	dir = AimLineAttack(*Player->mo, angles, MELEERANGE);
+	dir = AimLineAttack(Player->MO, angles, MELEERANGE);
 	PuffType = StaffPuff;
-	LineAttack(*Player->mo, dir, MELEERANGE, damage);
+	LineAttack(Player->MO, dir, MELEERANGE, damage);
 	if (linetarget)
 	{
 		// turn to face target
-		Player->mo->Angles.yaw =
-			atan2(linetarget.Origin.y - Player->mo->Origin.y,
-			linetarget.Origin.x - Player->mo->Origin.x);
+		Player->MO.Angles.yaw =
+			atan2(linetarget.Origin.y - Player->MO.Origin.y,
+			linetarget.Origin.x - Player->MO.Origin.x);
 		Player->bFixAngle = true;
 	}
 }
@@ -1141,18 +1141,18 @@ void A_StaffAttackPL2(void)
 	// P_inter.c:DamageMobj() handles target momentums
 	damage = 18 + (P_Random() & 63);
 
-	angles = Player->mo->Angles;
+	angles = Player->MO.Angles;
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	dir = AimLineAttack(*Player->mo, angles, MELEERANGE);
+	dir = AimLineAttack(Player->MO, angles, MELEERANGE);
 	PuffType = StaffPuff2;
-	LineAttack(*Player->mo, dir, MELEERANGE, damage);
+	LineAttack(Player->MO, dir, MELEERANGE, damage);
 	if (linetarget)
 	{
 		// turn to face target
-		Player->mo->Angles.yaw =
-			atan2(linetarget.Origin.y - Player->mo->Origin.y,
-			linetarget.Origin.x - Player->mo->Origin.x);
+		Player->MO.Angles.yaw =
+			atan2(linetarget.Origin.y - Player->MO.Origin.y,
+			linetarget.Origin.x - Player->MO.Origin.x);
 		Player->bFixAngle = true;
 	}
 }
@@ -1167,7 +1167,7 @@ __states__
 		// Check for staff PL2 active sound
 		if (Random() < 0.5)
 		{
-			Player->mo->PlaySound('StaffActive', CHAN_WEAPON);
+			Player->MO.PlaySound('StaffActive', CHAN_WEAPON);
 		}
 		A_WeaponReady();
 	}
@@ -1252,7 +1252,7 @@ void A_GauntletAttack(void)
 
 	SX = Random() * 4.0 - 2.0;
 	SY = WEAPONTOP + Random() * 4.0;
-	angles = Player->mo->Angles;
+	angles = Player->MO.Angles;
 	if (Player->Powers[pw_weaponlevel2])
 	{
 		damage = HITDICE(2);
@@ -1269,15 +1269,15 @@ void A_GauntletAttack(void)
 			(Random() - Random()) * 45.0 / 8.0);
 		PuffType = GauntletPuff1;
 	}
-	dir = AimLineAttack(*Player->mo, angles, dist);
-	LineAttack(*Player->mo, dir, dist, damage);
+	dir = AimLineAttack(Player->MO, angles, dist);
+	LineAttack(Player->MO, dir, dist, damage);
 	if (!linetarget)
 	{
 		if (P_Random() > 64)
 		{
 			Player->ExtraLight = !Player->ExtraLight;
 		}
-		Player->mo->PlaySound('GauntletFull', CHAN_WEAPON);
+		Player->MO.PlaySound('GauntletFull', CHAN_WEAPON);
 		return;
 	}
 	randVal = P_Random();
@@ -1295,31 +1295,31 @@ void A_GauntletAttack(void)
 	}
 	if (Player->Powers[pw_weaponlevel2])
 	{
-		PlayerPawn(*Player->mo).GiveBody(damage >> 1);
-		Player->mo->PlaySound('GauntletHit2', CHAN_WEAPON);
+		PlayerPawn(Player->MO).GiveBody(damage >> 1);
+		Player->MO.PlaySound('GauntletHit2', CHAN_WEAPON);
 	}
 	else
 	{
-		Player->mo->PlaySound('GauntletHit', CHAN_WEAPON);
+		Player->MO.PlaySound('GauntletHit', CHAN_WEAPON);
 	}
 	// turn to face target
-	angle = atan2(linetarget.Origin.y - Player->mo->Origin.y,
-		linetarget.Origin.x - Player->mo->Origin.x);
-	if (AngleMod360(angle - Player->mo->Angles.yaw) > 180.0)
+	angle = atan2(linetarget.Origin.y - Player->MO.Origin.y,
+		linetarget.Origin.x - Player->MO.Origin.x);
+	if (AngleMod360(angle - Player->MO.Angles.yaw) > 180.0)
 	{
-		if (AngleMod360(angle - Player->mo->Angles.yaw) < 360.0 - 90.0 / 20.0)
-			Player->mo->Angles.yaw = AngleMod360(angle + 90.0 / 21.0);
+		if (AngleMod360(angle - Player->MO.Angles.yaw) < 360.0 - 90.0 / 20.0)
+			Player->MO.Angles.yaw = AngleMod360(angle + 90.0 / 21.0);
 		else
-			Player->mo->Angles.yaw = AngleMod360(Player->mo->Angles.yaw - 90.0 / 20.0);
+			Player->MO.Angles.yaw = AngleMod360(Player->MO.Angles.yaw - 90.0 / 20.0);
 	}
 	else
 	{
-		if (AngleMod360(angle - Player->mo->Angles.yaw) > 90.0 / 20.0)
-			Player->mo->Angles.yaw = AngleMod360(angle - 90.0 / 21.0);
+		if (AngleMod360(angle - Player->MO.Angles.yaw) > 90.0 / 20.0)
+			Player->MO.Angles.yaw = AngleMod360(angle - 90.0 / 21.0);
 		else
-			Player->mo->Angles.yaw = AngleMod360(Player->mo->Angles.yaw + 90.0 / 20.0);
+			Player->MO.Angles.yaw = AngleMod360(Player->MO.Angles.yaw + 90.0 / 20.0);
 	}
-	Player->mo->bJustAttacked = true;
+	Player->MO.bJustAttacked = true;
 }
 
 __states__
@@ -1390,14 +1390,14 @@ void A_FireGoldWandPL1(void)
 
 	Player->Ammo[am_goldwand] -= USE_GWND_AMMO_1;
 	damage = 7 + (P_Random() & 7);
-	dir = Aim(*Player->mo, Player->mo->Angles.yaw, 16.0 * 64.0);
+	dir = Aim(Player->MO, Player->MO.Angles.yaw, 16.0 * 64.0);
 	if (Player->Refire)
 	{
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 8.0);
 	}
 	PuffType = GoldWandPuff1;
-	LineAttack(*Player->mo, dir, MISSILERANGE, damage);
-	Player->mo->PlaySound('GoldWandFire', CHAN_WEAPON);
+	LineAttack(Player->MO, dir, MISSILERANGE, damage);
+	Player->MO.PlaySound('GoldWandFire', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -1417,20 +1417,20 @@ void A_FireGoldWandPL2(void)
 	Player->Ammo[am_goldwand] -=
 		deathmatch ? USE_GWND_AMMO_1 : USE_GWND_AMMO_2;
 	PuffType = GoldWandPuff2;
-	dir = Aim(*Player->mo, Player->mo->Angles.yaw, 16.0 * 64.0);
+	dir = Aim(Player->MO, Player->MO.Angles.yaw, 16.0 * 64.0);
 	VectorAngles(&dir, &angles);
-	Player->mo->SpawnMissileAngles(GoldWandMissile2,
+	Player->MO.SpawnMissileAngles(GoldWandMissile2,
 		AngleMod360(angles.yaw - (45.0 / 8.0)), angles.pitch);
-	Player->mo->SpawnMissileAngles(GoldWandMissile2,
+	Player->MO.SpawnMissileAngles(GoldWandMissile2,
 		AngleMod360(angles.yaw + (45.0 / 8.0)), angles.pitch);
 	VectorRotateAroundZ(&dir, -45.0 / 8.0);
 	for (i = 0; i < 5; i++)
 	{
 		damage = 1 + (P_Random() & 7);
-		LineAttack(*Player->mo, dir, MISSILERANGE, damage);
+		LineAttack(Player->MO, dir, MISSILERANGE, damage);
 		VectorRotateAroundZ(&dir, (45.0 / 8.0) / 2.0);
 	}
-	Player->mo->PlaySound('GoldWandFire', CHAN_WEAPON);
+	Player->MO.PlaySound('GoldWandFire', CHAN_WEAPON);
 }
 
 __states__
@@ -1486,11 +1486,11 @@ class WeaponCrossbow:Weapon
 void A_FireCrossbowPL1(void)
 {
 	Player->Ammo[am_crossbow] -= USE_CBOW_AMMO_1;
-	Player->mo->SpawnPlayerMissile(CrossbowFX1);
-	Player->mo->SpawnPlayerMissileAngle(CrossbowFX3,
-		AngleMod360(Player->mo->Angles.yaw - (45.0 / 10.0)));
-	Player->mo->SpawnPlayerMissileAngle(CrossbowFX3,
-		AngleMod360(Player->mo->Angles.yaw + (45.0 / 10.0)));
+	Player->MO.SpawnPlayerMissile(CrossbowFX1);
+	Player->MO.SpawnPlayerMissileAngle(CrossbowFX3,
+		AngleMod360(Player->MO.Angles.yaw - (45.0 / 10.0)));
+	Player->MO.SpawnPlayerMissileAngle(CrossbowFX3,
+		AngleMod360(Player->MO.Angles.yaw + (45.0 / 10.0)));
 }
 
 //===========================================================================
@@ -1503,15 +1503,15 @@ void A_FireCrossbowPL2(void)
 {
 	Player->Ammo[am_crossbow] -=
 		deathmatch ? USE_CBOW_AMMO_1 : USE_CBOW_AMMO_2;
-	Player->mo->SpawnPlayerMissile(CrossbowFX2);
-	Player->mo->SpawnPlayerMissileAngle(CrossbowFX2,
-		AngleMod360(Player->mo->Angles.yaw - (45.0 / 10.0)));
-	Player->mo->SpawnPlayerMissileAngle(CrossbowFX2,
-		AngleMod360(Player->mo->Angles.yaw + (45.0 / 10.0)));
-	Player->mo->SpawnPlayerMissileAngle(CrossbowFX3,
-		AngleMod360(Player->mo->Angles.yaw - (45.0 / 5.0)));
-	Player->mo->SpawnPlayerMissileAngle(CrossbowFX3,
-		AngleMod360(Player->mo->Angles.yaw + (45.0 / 5.0)));
+	Player->MO.SpawnPlayerMissile(CrossbowFX2);
+	Player->MO.SpawnPlayerMissileAngle(CrossbowFX2,
+		AngleMod360(Player->MO.Angles.yaw - (45.0 / 10.0)));
+	Player->MO.SpawnPlayerMissileAngle(CrossbowFX2,
+		AngleMod360(Player->MO.Angles.yaw + (45.0 / 10.0)));
+	Player->MO.SpawnPlayerMissileAngle(CrossbowFX3,
+		AngleMod360(Player->MO.Angles.yaw - (45.0 / 5.0)));
+	Player->MO.SpawnPlayerMissileAngle(CrossbowFX3,
+		AngleMod360(Player->MO.Angles.yaw + (45.0 / 5.0)));
 }
 
 __states__
@@ -1595,17 +1595,17 @@ void A_FireBlasterPL1(void)
 	float bulletslope;
 	TVec dir;
 
-	Player->mo->PlaySound('GoldWandFire', CHAN_WEAPON);
+	Player->MO.PlaySound('GoldWandFire', CHAN_WEAPON);
 	Player->Ammo[am_blaster] -= USE_BLSR_AMMO_1;
-	dir = Aim(*Player->mo, Player->mo->Angles.yaw, 16.0 * 64.0);
+	dir = Aim(Player->MO, Player->MO.Angles.yaw, 16.0 * 64.0);
 	damage = HITDICE(4);
 	if (Player->Refire)
 	{
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 8.0);
 	}
 	PuffType = BlasterPuff1;
-	LineAttack(*Player->mo, dir, MISSILERANGE, damage);
-	Player->mo->PlaySound('BlasterFire', CHAN_WEAPON);
+	LineAttack(Player->MO, dir, MISSILERANGE, damage);
+	Player->MO.PlaySound('BlasterFire', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -1620,12 +1620,12 @@ void A_FireBlasterPL2(void)
 
 	Player->Ammo[am_blaster] -=
 		deathmatch ? USE_BLSR_AMMO_1 : USE_BLSR_AMMO_2;
-	A = Player->mo->SpawnPlayerMissile(BlasterFX1);
+	A = Player->MO.SpawnPlayerMissile(BlasterFX1);
 	if (A)
 	{
 		A.bBlaster = true;
 	}
-	Player->mo->PlaySound('BlasterFire', CHAN_WEAPON);
+	Player->MO.PlaySound('BlasterFire', CHAN_WEAPON);
 }
 
 __states__
@@ -1691,7 +1691,7 @@ void A_FireSkullRodPL1(void)
 		return;
 	}
 	Player->Ammo[am_skullrod] -= USE_SKRD_AMMO_1;
-	A = Player->mo->SpawnPlayerMissile(HornRodMissile1);
+	A = Player->MO.SpawnPlayerMissile(HornRodMissile1);
 	// Randomize the first frame
 	if (A && P_Random() > 128)
 	{
@@ -1713,7 +1713,7 @@ void A_FireSkullRodPL2(void)
 {
 	Player->Ammo[am_skullrod] -=
 		deathmatch ? USE_SKRD_AMMO_1 : USE_SKRD_AMMO_2;
-	Player->mo->SpawnPlayerMissile(HornRodMissile2);
+	Player->MO.SpawnPlayerMissile(HornRodMissile2);
 	// Use MissileMobj instead of the return value from
 	// SpawnPlayerMissile because we need to give info to the mobj
 	// even if it exploded immediately.
@@ -1811,9 +1811,9 @@ void A_FirePhoenixPL1(void)
 	TVec vforward;
 
 	Player->Ammo[am_phoenixrod] -= USE_PHRD_AMMO_1;
-	Player->mo->SpawnPlayerMissile(PhoenixFX1);
-	AngleVector(&Player->mo->Angles, &vforward);
-	Player->mo->Velocity -= vforward * 140.0;
+	Player->MO.SpawnPlayerMissile(PhoenixFX1);
+	AngleVector(&Player->MO.Angles, &vforward);
+	Player->MO.Velocity -= vforward * 140.0;
 }
 
 //===========================================================================
@@ -1848,19 +1848,19 @@ void A_FirePhoenixPL2(void)
 		Player->Refire = 0;
 		return;
 	}
-	org.x = Player->mo->Origin.x + (Random() - Random()) * 2.0;
-	org.y = Player->mo->Origin.y + (Random() - Random()) * 2.0;
-	org.z = Player->mo->Origin.z + 26.0 - sin(Player->mo->Angles.pitch);
-	org.z -= Player->mo->FloorClip;
+	org.x = Player->MO.Origin.x + (Random() - Random()) * 2.0;
+	org.y = Player->MO.Origin.y + (Random() - Random()) * 2.0;
+	org.z = Player->MO.Origin.z + 26.0 - sin(Player->MO.Angles.pitch);
+	org.z -= Player->MO.FloorClip;
 	A = Spawn(PhoenixFX2, org);
-	A.Instigator = *Player->mo;
-	A.Angles.yaw = Player->mo->Angles.yaw;
-	A.Angles.pitch = Player->mo->Angles.pitch;
+	A.Instigator = Player->MO;
+	A.Angles.yaw = Player->MO.Angles.yaw;
+	A.Angles.pitch = Player->MO.Angles.pitch;
 	AngleVector(&A.Angles, &dir);
-	A.Velocity = Player->mo->Velocity + A.Speed * dir;
+	A.Velocity = Player->MO.Velocity + A.Speed * dir;
 	if (!Player->Refire || !(level->tictime % 38))
 	{
-		Player->mo->PlaySound('PhoenixHit2', CHAN_WEAPON);
+		Player->MO.PlaySound('PhoenixHit2', CHAN_WEAPON);
 	}
 	A.CheckMissileSpawn();
 }
@@ -1938,16 +1938,16 @@ void A_FireMacePL1B(void)
 		return;
 	}
 	Player->Ammo[am_mace] -= USE_MACE_AMMO_1;
-	ball = Spawn(MaceFX2, Player->mo->Origin +
-		vector(0.0, 0.0, 28.0 - Player->mo->FloorClip));
+	ball = Spawn(MaceFX2, Player->MO.Origin +
+		vector(0.0, 0.0, 28.0 - Player->MO.FloorClip));
 	ball.Velocity.z =
-		(2.0 + 173.0 * -tan(Player->mo->Angles.pitch) / 32.0) * 35.0;
-	angle = Player->mo->Angles.yaw;
-	ball.Instigator = *Player->mo;
+		(2.0 + 173.0 * -tan(Player->MO.Angles.pitch) / 32.0) * 35.0;
+	angle = Player->MO.Angles.yaw;
+	ball.Instigator = Player->MO;
 	ball.Angles.yaw = angle;
-	ball.Origin.z += 173.0 * -tan(Player->mo->Angles.pitch) / 16.0;
-	ball.Velocity.x = Player->mo->Velocity.x / 2.0 + ball.Speed * cos(angle);
-	ball.Velocity.y = Player->mo->Velocity.y / 2.0 + ball.Speed * sin(angle);
+	ball.Origin.z += 173.0 * -tan(Player->MO.Angles.pitch) / 16.0;
+	ball.Velocity.x = Player->MO.Velocity.x / 2.0 + ball.Speed * cos(angle);
+	ball.Velocity.y = Player->MO.Velocity.y / 2.0 + ball.Speed * sin(angle);
 	ball.PlaySound('MaceFire', CHAN_WEAPON);
 	ball.CheckMissileSpawn();
 }
@@ -1974,8 +1974,8 @@ void A_FireMacePL1(void)
 	Player->Ammo[am_mace] -= USE_MACE_AMMO_1;
 	SX = Random() * 4.0 - 2.0;
 	SY = WEAPONTOP + Random() * 4.0;
-	ball = Player->mo->SpawnPlayerMissileAngle(MaceFX1,
-		AngleMod360(Player->mo->Angles.yaw + (Random() - 0.5) * 45.0 / 4.0));
+	ball = Player->MO.SpawnPlayerMissileAngle(MaceFX1,
+		AngleMod360(Player->MO.Angles.yaw + (Random() - 0.5) * 45.0 / 4.0));
 	if (ball)
 	{
 		ball.Special1 = 16;	// tics till dropoff
@@ -1993,19 +1993,19 @@ void A_FireMacePL2(void)
 	Actor A;
 
 	Player->Ammo[am_mace] -= deathmatch ? USE_MACE_AMMO_1 : USE_MACE_AMMO_2;
-	A = Player->mo->SpawnPlayerMissile(MaceFX4);
+	A = Player->MO.SpawnPlayerMissile(MaceFX4);
 	if (A)
 	{
-		A.Velocity.x += Player->mo->Velocity.x;
-		A.Velocity.y += Player->mo->Velocity.y;
+		A.Velocity.x += Player->MO.Velocity.x;
+		A.Velocity.y += Player->MO.Velocity.y;
 		A.Velocity.z =
-			(2.0 + 173.0 * -tan(Player->mo->Angles.pitch) / 32.0) * 35.0;
+			(2.0 + 173.0 * -tan(Player->MO.Angles.pitch) / 32.0) * 35.0;
 		if (linetarget)
 		{
 			A.Enemy = linetarget;
 		}
 	}
-	Player->mo->PlaySound('MaceFire', CHAN_WEAPON);
+	Player->MO.PlaySound('MaceFire', CHAN_WEAPON);
 }
 
 __states__
@@ -2082,7 +2082,7 @@ void A_BeakReady(void)
 	{
 		// Chicken beak attack
 		Player->bAttackDown = true;
-		Player->mo->SetState(Player->mo->MissileState);
+		Player->MO.SetState(Player->MO.MissileState);
 		if (Player->Powers[pw_weaponlevel2])
 		{
 			SetState(AttackState2);
@@ -2091,14 +2091,14 @@ void A_BeakReady(void)
 		{
 			SetState(AttackState);
 		}
-		P_NoiseAlert(*Player->mo, *Player->mo);
+		P_NoiseAlert(Player->MO, Player->MO);
 	}
 	else
 	{
-		if (Player->mo->StateNum == Player->mo->MissileState)
+		if (Player->MO.StateNum == Player->MO.MissileState)
 		{
 			// Take out of attack state
-			Player->mo->SetState(Player->mo->SpawnState);
+			Player->MO.SetState(Player->MO.SpawnState);
 		}
 		Player->bAttackDown = false;
 	}
@@ -2118,15 +2118,15 @@ void A_BeakAttackPL1(void)
 	name SoundName;
 
 	damage = 1 + (P_Random() & 3);
-	avcpy(Player->mo->Angles, angles);
-	dir = AimLineAttack(*Player->mo, angles, MELEERANGE);
+	avcpy(Player->MO.Angles, angles);
+	dir = AimLineAttack(Player->MO, angles, MELEERANGE);
 	PuffType = BeakPuff;
-	LineAttack(*Player->mo, dir, MELEERANGE, damage);
+	LineAttack(Player->MO, dir, MELEERANGE, damage);
 	if (linetarget)
 	{
-		Player->mo->Angles.yaw =
-			atan2(linetarget.Origin.y - Player->mo->Origin.y,
-			linetarget.Origin.x - Player->mo->Origin.x);
+		Player->MO.Angles.yaw =
+			atan2(linetarget.Origin.y - Player->MO.Origin.y,
+			linetarget.Origin.x - Player->MO.Origin.x);
 		Player->bFixAngle = true;
 	}
 	switch (P_Random() % 3)
@@ -2141,7 +2141,7 @@ void A_BeakAttackPL1(void)
 		SoundName = 'ChickenPeak3';
 		break;
 	}
-	Player->mo->PlaySound(SoundName, CHAN_VOICE);
+	Player->MO.PlaySound(SoundName, CHAN_VOICE);
 	Player->ChickenPeck = 12;
 	StateTime -= Random() * 0.25;
 }
@@ -2160,15 +2160,15 @@ void A_BeakAttackPL2(void)
 	name SoundName;
 
 	damage = HITDICE(4);
-	avcpy(Player->mo->Angles, angles);
-	dir = AimLineAttack(*Player->mo, angles, MELEERANGE);
+	avcpy(Player->MO.Angles, angles);
+	dir = AimLineAttack(Player->MO, angles, MELEERANGE);
 	PuffType = BeakPuff;
-	LineAttack(*Player->mo, dir, MELEERANGE, damage);
+	LineAttack(Player->MO, dir, MELEERANGE, damage);
 	if (linetarget)
 	{
-		Player->mo->Angles.yaw =
-			atan2(linetarget.Origin.y - Player->mo->Origin.y,
-			linetarget.Origin.x - Player->mo->Origin.x);
+		Player->MO.Angles.yaw =
+			atan2(linetarget.Origin.y - Player->MO.Origin.y,
+			linetarget.Origin.x - Player->MO.Origin.x);
 		Player->bFixAngle = true;
 	}
 	switch (P_Random() % 3)
@@ -2183,7 +2183,7 @@ void A_BeakAttackPL2(void)
 		SoundName = 'ChickenPeak3';
 		break;
 	}
-	Player->mo->PlaySound(SoundName, CHAN_VOICE);
+	Player->MO.PlaySound(SoundName, CHAN_VOICE);
 	Player->ChickenPeck = 12;
 	StateTime -= Random() * 0.125;
 }
@@ -2218,6 +2218,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/03/28 18:15:34  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.24  2002/03/20 19:07:47  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

@@ -76,11 +76,11 @@ void Pawn::A_Look(void)
 
 	if (targ && targ.bShootable)
 	{
-		Target = targ;
+		Enemy = targ;
 
 		if (bAmbush)
 		{
-			if (!P_CheckSight(self, Target))
+			if (!P_CheckSight(self, Enemy))
 			{
 				if (!LookForPlayers(false))
 					return;
@@ -130,7 +130,7 @@ void Pawn::A_Chase(void)
 	// modify target threshold
 	if (Threshold)
 	{
-		if (!Target || Target.Health <= 0)
+		if (!Enemy || Enemy.Health <= 0)
 		{
 			Threshold = 0;
 		}
@@ -166,7 +166,7 @@ void Pawn::A_Chase(void)
 		}
 	}
 
-	if (!Target || !Target.bShootable)
+	if (!Enemy || !Enemy.bShootable)
 	{
 		// look for a new target
 		if (LookForPlayers(true))
@@ -216,7 +216,7 @@ void Pawn::A_Chase(void)
 	// possibly choose another target
 	if (netgame && !Threshold)
 	{
-		if (!P_CheckSight(self, Target))
+		if (!P_CheckSight(self, Enemy))
 		{
 			if (LookForPlayers(true))
 				return;	// got a new target
@@ -260,15 +260,15 @@ void Pawn::A_Chase(void)
 
 void Pawn::A_FaceTarget(void)
 {
-	if (!Target)
+	if (!Enemy)
 		return;
 
 	bAmbush = false;
 
-	Angles.yaw = atan2(Target.Origin.y - Origin.y,
-		Target.Origin.x - Origin.x);
+	Angles.yaw = atan2(Enemy.Origin.y - Origin.y,
+		Enemy.Origin.x - Origin.x);
 
-	if (Target.Translucency)
+	if (Enemy.Translucency)
 	{
 		Angles.yaw = AngleMod360(Angles.yaw + (Random() - Random()) * 45.0);
 	}
@@ -516,7 +516,7 @@ void Actor::A_Explode(void)
 	default:
 		break;
 	}
-	P_RadiusAttack(self, Owner, damage, distance, damageSelf);
+	P_RadiusAttack(self, Instigator, damage, distance, damageSelf);
 	if (Origin.z <= FloorZ + distance && Class != PoisonCloud)
 	{
 		HitFloorType();
@@ -623,7 +623,7 @@ void Pawn::A_FreezeDeathChunks(void)
 	int i;
 	Actor A;
 
-	if (Velocity.x || Velocity.y || Velocity.z)
+	if (Length(Velocity) > 1.0)
 	{
 		StateTime = 3.0;
 		return;
@@ -673,7 +673,7 @@ void Pawn::A_FreezeDeathChunks(void)
 		bIsPlayer = false;
 		A.Health = Health;
 		A.Angles.yaw = Angles.yaw;
-		A.Player->mo = &A;
+		A.Player->MO = A;
 		A.Angles.pitch = 0.0;
 	}
 	RemoveFromTIDList();
@@ -704,7 +704,7 @@ void Actor::A_CheckBurnGone(void)
 void Actor::A_SpeedFade(void)
 {
 	Translucency = 66;
-	SpriteIndex = Owner.SpriteIndex;
+	SpriteIndex = Instigator.SpriteIndex;
 }
 
 //============================================================================
@@ -828,6 +828,9 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/03/28 18:15:34  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.25  2002/03/16 17:47:46  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

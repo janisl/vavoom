@@ -62,12 +62,12 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	int sfxnum;
 	int i;
 
-	if (!players[playernum].mo)
+	if (!players[playernum].MO)
 	{
 		// first spawn of level, before corpses
 		for (i = 0; i < playernum; i++)
-			if (players[i].mo->Origin.x == mthing->x &&
-				players[i].mo->Origin.y == mthing->y)
+			if (players[i].MO.Origin.x == mthing->x &&
+				players[i].MO.Origin.y == mthing->y)
 				return false;
 		return true;
 	}
@@ -75,7 +75,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	x = mthing->x;
 	y = mthing->y;
 
-	if (!players[playernum].mo->CheckPosition(vector(x, y, ONFLOORZ)))
+	if (!players[playernum].MO.CheckPosition(vector(x, y, ONFLOORZ)))
 	{
 		return false;
 	}
@@ -83,7 +83,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	// flush an old corpse if needed 
 	if (bodyqueslot >= BODYQUESIZE)
 		bodyque[bodyqueslot % BODYQUESIZE].Remove();
-	bodyque[bodyqueslot % BODYQUESIZE] = *players[playernum].mo;
+	bodyque[bodyqueslot % BODYQUESIZE] = players[playernum].MO;
 	bodyqueslot++;
 
 	// spawn a teleport fog 
@@ -137,7 +137,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 	A.bIsPlayer = true;
 	A.Health = p->Health;
 
-	p->mo = &A;
+	p->MO = A;
 	p->PlayerState = PST_LIVE;
 	p->Refire = 0;
 	p->DamageCount = 0;
@@ -194,6 +194,9 @@ Actor PlayerPawn::SpawnPlayerMissile(classid type)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/03/28 18:15:35  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.23  2002/03/20 19:07:47  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

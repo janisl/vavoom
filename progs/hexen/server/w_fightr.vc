@@ -45,7 +45,7 @@ int PunchCount;
 
 void A_FPunchAttack(void)
 {
-	Actor Owner = *Player->mo;
+	Actor Owner = Player->MO;
 	int damage;
 	float power;
 	int i;
@@ -200,7 +200,7 @@ int NoMoreManaState;
 
 void A_FAxeAttack(void)
 {
-	Actor Owner = *Player->mo;
+	Actor Owner = Player->MO;
 	float power;
 	int damage;
 	int i;
@@ -449,7 +449,7 @@ bool bThrowHammer;
 
 void A_FHammerAttack(void)
 {
-	Actor Owner = *Player->mo;
+	Actor Owner = Player->MO;
 	int damage;
 	float power;
 	int i;
@@ -542,7 +542,7 @@ void A_FHammerThrow(void)
 	}
 	Player->Mana[MANA_2] -=
 		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
-	PlayerPawn(*Player->mo).SpawnPlayerMissile(HammerMissile);
+	PlayerPawn(Player->MO).SpawnPlayerMissile(HammerMissile);
 }
 
 __states__
@@ -596,7 +596,7 @@ class WeaponFighterSword:Weapon
 
 void A_FSwordAttack(void)
 {
-	PlayerPawn Owner = PlayerPawn(*Player->mo);
+	PlayerPawn Owner = PlayerPawn(Player->MO);
 
 	Player->Mana[MANA_1] -=
 		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
@@ -681,6 +681,9 @@ void Actor::A_FSwordFlames(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/03/28 18:15:35  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.20  2002/03/20 19:07:47  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

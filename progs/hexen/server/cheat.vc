@@ -105,13 +105,13 @@ void Cheat_Gimme(void)
 	{
 		if (players[0].MorphTics)
 		{
-			players[0].mo->Health = MAXMORPHHEALTH;
-			players[0].Health = players[0].mo->Health;
+			players[0].MO.Health = MAXMORPHHEALTH;
+			players[0].Health = players[0].MO.Health;
 		}
 		else
 		{
-			players[0].mo->Health = MAXHEALTH;
-			players[0].Health = players[0].mo->Health;
+			players[0].MO.Health = MAXHEALTH;
+			players[0].Health = players[0].MO.Health;
 		}
 		cprint(&players[0], "FULL HEALTH");
 	}
@@ -129,7 +129,7 @@ void Cheat_Gimme(void)
 		{
 			for (j = 0; j < 25; j++)
 			{
-				PlayerPawn(*players[0].mo).GiveArtifact(i);
+				PlayerPawn(players[0].MO).GiveArtifact(i);
 			}
 		}
 		cprint(&players[0], "ALL ARTIFACTS");
@@ -140,7 +140,7 @@ void Cheat_Gimme(void)
 
 		for (i = arti_firstpuzzitem; i < NUMARTIFACTS; i++)
 		{
-			PlayerPawn(*players[0].mo).GiveArtifact(i);
+			PlayerPawn(players[0].MO).GiveArtifact(i);
 		}
 		cprint(&players[0], "ALL ARTIFACTS");
 	}
@@ -195,11 +195,11 @@ void Cheat_Morph(void)
 {
 	if (players[0].MorphTics)
 	{
-		PlayerPawn(*players[0].mo).UndoPlayerMorph();
+		PlayerPawn(players[0].MO).UndoPlayerMorph();
 	}
 	else
 	{
-		players[0].mo->MorphPlayer();
+		players[0].MO.MorphPlayer();
 	}
 	cprint(&players[0], "SQUEAL!!");
 }
@@ -260,12 +260,16 @@ void Cheat_Class(void)
 	}
 	players[0].BaseClass = pclass;
 	PostMorphWeapon(&players[0], WP_FIRST);
+	SetCvar("class", pclass);
 	SB_Start();
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/03/28 18:15:34  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.15  2002/03/16 17:47:46  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

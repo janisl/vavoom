@@ -369,7 +369,7 @@ int Actor::HitFloorType(void)
 		else
 		{
 			A = Spawn(Splash, vector(Origin.x, Origin.y, ONFLOORZ));
-			A.Owner = self;
+			A.Instigator = self;
 			A.Velocity.x = (Random() - Random()) * 35.0;
 			A.Velocity.y = (Random() - Random()) * 35.0;
 			A.Velocity.z = (2.0 + Random()) * 35.0;
@@ -410,7 +410,7 @@ int Actor::HitFloorType(void)
 		else
 		{
 			A = Spawn(SludgeChunk, vector(Origin.x, Origin.y, ONFLOORZ));
-			A.Owner = self;
+			A.Instigator = self;
 			A.Velocity.x = (Random() - Random()) * 35.0;
 			A.Velocity.y = (Random() - Random()) * 35.0;
 			A.Velocity.z = (1.0 + Random()) * 35.0;
@@ -839,7 +839,7 @@ boolean Actor::MorphPlayer(void)
 	beastMo.bIsPlayer = true;
 	beastMo.Health = MAXMORPHHEALTH;
 	Player->Health = beastMo.Health;
-	Player->mo = &beastMo;
+	Player->MO = beastMo;
 	for (i = 0; i < NUMARMOR; i++)
 	{
 		Player->ArmorPoints[i] = 0.0;
@@ -891,7 +891,7 @@ boolean Actor::MorphMonster(void)
 	monster.SpecialCID = Class;
 	monster._Special1 = ftoi(MORPHTIME * 35.0) + P_Random();
 	monster.Translucency = Translucency;
-	monster.Target = Target;
+	monster.Enemy = Enemy;
 	monster.Angles.yaw = Angles.yaw;
 	monster.TID = TID;
 	monster.Special = Special;
@@ -1280,7 +1280,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 			// Minotaur's kills go to his master
 			master = *source._SpecialMobj1;
 			// Make sure still alive and not a pointer to fighter head
-			if (master.bIsPlayer && (*master.Player->mo == master))
+			if (master.bIsPlayer && (master.Player->MO == master))
 			{
 				source = master;
 			}
@@ -1355,7 +1355,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 		{
 			return;
 		}
-		Target = source;
+		Enemy = source;
 		Pawn(self).Threshold = BASETHRESHOLD;
 		if (StateNum == SpawnState && SeeState != S_NULL)
 		{
@@ -1532,7 +1532,7 @@ void Actor::SpawnBloodSplatter(TVec org)
 	Actor mo;
 
 	mo = Spawn(BloodSplatter, org);
-	mo.Owner = self;
+	mo.Instigator = self;
 	mo.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
 	mo.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
 	mo.Velocity.z = 3.0 * 35.0;
@@ -1551,7 +1551,7 @@ void Actor::SpawnBloodSplatter2(TVec org)
 	org.x += (Random() - 0.5) * 8.0;
 	org.y += (Random() - 0.5) * 8.0;
 	mo = Spawn(AxeBlood, org);
-	mo.Owner = self;
+	mo.Instigator = self;
 }
 
 //==========================================================================
@@ -1717,7 +1717,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 	pp.Player = p;
 	pp.bIsPlayer = true;
 	pp.Health = p->Health;
-	p->mo = &pp;
+	p->MO = pp;
 	p->PlayerState = PST_LIVE;
 	p->Refire = 0;
 	p->DamageCount = 0;
@@ -2087,6 +2087,9 @@ void NoiseAlert(Actor target, Actor emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.41  2002/03/28 18:15:35  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.40  2002/03/16 17:47:47  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

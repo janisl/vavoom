@@ -309,11 +309,11 @@ void P_UseLines(player_t * player)
 	float x2;
 	float y2;
 
-	usething = *player->mo;
+	usething = player->MO;
 
-	AngleVector(&player->mo->Angles, &useDir);
-	x1 = player->mo->Origin.x;
-	y1 = player->mo->Origin.y;
+	AngleVector(&player->MO.Angles, &useDir);
+	x1 = player->MO.Origin.x;
+	y1 = player->MO.Origin.y;
 	x2 = x1 + USERANGE * useDir.x;
 	y2 = y1 + USERANGE * useDir.y;
 	P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES, 'PTR_UseTraverse');
@@ -862,6 +862,9 @@ void Actor::RadiusAttack(int damage, int distance, boolean damageSource)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/03/28 18:15:35  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.23  2002/03/20 19:07:47  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

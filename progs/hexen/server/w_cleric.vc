@@ -51,40 +51,40 @@ void A_CMaceAttack(void)
 	PuffType = HammerPuff;
 	for (i = 0; i < 16; i++)
 	{
-		angles = Player->mo->Angles;
+		angles = Player->MO.Angles;
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
-		AimLineAttack(*Player->mo, &angles, 2.0 * MELEERANGE);
+		AimLineAttack(Player->MO, &angles, 2.0 * MELEERANGE);
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (LineAttack(*Player->mo, vforward, 2.0 * MELEERANGE, damage))
+			if (LineAttack(Player->MO, vforward, 2.0 * MELEERANGE, damage))
 			{
-				Player->mo->PlaySound('FighterHammerMiss', CHAN_WEAPON);
+				Player->MO.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
-			PlayerPawn(*Player->mo).AdjustPlayerAngle();
+			PlayerPawn(Player->MO).AdjustPlayerAngle();
 			return;
 		}
-		angles = Player->mo->Angles;
+		angles = Player->MO.Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
-		AimLineAttack(*Player->mo, &angles, 2.0 * MELEERANGE);
+		AimLineAttack(Player->MO, &angles, 2.0 * MELEERANGE);
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (LineAttack(*Player->mo, vforward, 2.0 * MELEERANGE, damage))
+			if (LineAttack(Player->MO, vforward, 2.0 * MELEERANGE, damage))
 			{
-				Player->mo->PlaySound('FighterHammerMiss', CHAN_WEAPON);
+				Player->MO.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
-			PlayerPawn(*Player->mo).AdjustPlayerAngle();
+			PlayerPawn(Player->MO).AdjustPlayerAngle();
 			return;
 		}
 	}
 	// didn't find any creatures, so try to strike any walls
-	avcpy(Player->mo->Angles, angles);
-	AimLineAttack(*Player->mo, &angles, MELEERANGE);
+	avcpy(Player->MO.Angles, angles);
+	AimLineAttack(Player->MO, &angles, MELEERANGE);
 	AngleVector(&angles, &vforward);
-	if (LineAttack(*Player->mo, vforward, MELEERANGE, damage))
+	if (LineAttack(Player->MO, vforward, MELEERANGE, damage))
 	{
-		Player->mo->PlaySound('FighterHammerMiss', CHAN_WEAPON);
+		Player->MO.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 	}
 }
 
@@ -181,7 +181,7 @@ void A_CStaffCheck(void)
 	TAVec angles;
 	TVec vforward;
 
-	pmo = *Player->mo;
+	pmo = Player->MO;
 	damage = 20 + (P_Random() & 15);
 	PuffType = ClericStaffPuff;
 	for (i = 0; i < 3; i++)
@@ -210,7 +210,7 @@ void A_CStaffCheck(void)
 		}
 		angles = pmo.Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
-		AimLineAttack(*Player->mo, &angles, 3.0 * MELEERANGE / 2.0);
+		AimLineAttack(Player->MO, &angles, 3.0 * MELEERANGE / 2.0);
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
@@ -245,7 +245,7 @@ void A_CStaffAttack(void)
 
 	Player->Mana[MANA_1] -=
 		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
-	playPawn = PlayerPawn(*Player->mo);
+	playPawn = PlayerPawn(Player->MO);
 	mo = playPawn.SpawnPlayerMissileAngle(ClericStaffMissile,
 		playPawn.Angles.yaw - (45.0 / 15.0));
 	if (mo)
@@ -333,7 +333,7 @@ void A_CFlameAttack(void)
 {
 	Actor mo;
 
-	mo = PlayerPawn(*Player->mo).SpawnPlayerMissile(ClericFlameMissile);
+	mo = PlayerPawn(Player->MO).SpawnPlayerMissile(ClericFlameMissile);
 	if (mo)
 	{
 		mo.bBlaster = true;
@@ -342,7 +342,7 @@ void A_CFlameAttack(void)
 
 	Player->Mana[MANA_2] -=
 		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
-	Player->mo->PlaySound('ClericFlameFire', CHAN_WEAPON);
+	Player->MO.PlaySound('ClericFlameFire', CHAN_WEAPON);
 }
 
 __states__
@@ -407,11 +407,11 @@ void A_CHolyAttack(void)
 		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
 	Player->Mana[MANA_2] -=
 		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
-	PlayerPawn(*Player->mo).SpawnPlayerMissile(HolyMissile);
+	PlayerPawn(Player->MO).SpawnPlayerMissile(HolyMissile);
 	Player->DamageCount = 0;
 	Player->BonusCount = 0;
 	Player->WeaponPalette = STARTHOLYPAL;
-	Player->mo->PlaySound('HolySymbolFire', CHAN_WEAPON);
+	Player->MO.PlaySound('HolySymbolFire', CHAN_WEAPON);
 }
 
 //============================================================================
@@ -534,7 +534,7 @@ void Actor::A_CFlameMissile(void)
 			if (A)
 			{
 				A.Angles.yaw = an;
-				A.Owner = Owner;
+				A.Instigator = Instigator;
 				A.Velocity.x = FLAMESPEED * cos(an);
 				A.Velocity.y = FLAMESPEED * sin(an);
 				A.Special1f = A.Velocity.x;
@@ -546,7 +546,7 @@ void Actor::A_CFlameMissile(void)
 			if (A)
 			{
 				A.Angles.yaw = AngleMod360(180.0 + an);
-				A.Owner = Owner;
+				A.Instigator = Instigator;
 				A.Velocity.x = -FLAMESPEED * cos(an);
 				A.Velocity.y = -FLAMESPEED * sin(an);
 				A.Special1f = A.Velocity.x;
@@ -632,7 +632,7 @@ void Actor::A_CHolyAttack2(void)
 		A.Angles.yaw = AngleMod360(Angles.yaw +
 			(45.0 + 45.0 / 2.0) - 45.0 * itof(j));
 		A.Thrust(A.Angles.yaw, A.Speed * frametime);
-		A.Owner = Owner;
+		A.Instigator = Instigator;
 		A.Args[0] = 10;	// initial turn value
 		A.Args[1] = 0;	// initial look angle
 		if (deathmatch)
@@ -642,7 +642,7 @@ void Actor::A_CHolyAttack2(void)
 		}
 		if (linetarget)
 		{
-			A.Target = linetarget;
+			A.Enemy = linetarget;
 			//	Don't colide with world but colide with things, i.e explode
 			A.bColideWithWorld = false;
 			A.bSkullFly = true;
@@ -674,7 +674,7 @@ void Actor::CHolyFindTarget(void)
 	targ = RoughMonsterSearch(6);
 	if (targ)
 	{
-		Target = targ;
+		Enemy = targ;
 		bColideWithWorld = false;
 		bSkullFly = true;
 		bMissile = false;
@@ -698,21 +698,21 @@ void Actor::CHolySeekerMissile(float thresh, float turnMax)
 	float newZ;
 	float deltaZ;
 
-	if (!Target)
+	if (!Enemy)
 	{
 		return;
 	}
-	if (!Target.bShootable || (!Target.bCountKill && !Target.bIsPlayer))
+	if (!Enemy.bShootable || (!Enemy.bCountKill && !Enemy.bIsPlayer))
 	{
 		// Target died/target isn't a player or creature
-		Target = none;
+		Enemy = none;
 		bColideWithWorld = true;
 		bSkullFly = false;
 		bMissile = true;
 		CHolyFindTarget();
 		return;
 	}
-	dir = FaceActor(Target, &delta);
+	dir = FaceActor(Enemy, &delta);
 	if (delta > thresh)
 	{
 		delta /= 2.0;
@@ -736,10 +736,10 @@ void Actor::CHolySeekerMissile(float thresh, float turnMax)
 	Velocity.x = Speed * cos(angle);
 	Velocity.y = Speed * sin(angle);
 	if (!(level->tictime & 15) ||
-		Origin.z > Target.Origin.z + Target.Height ||
-		Origin.z + Height < Target.Origin.z)
+		Origin.z > Enemy.Origin.z + Enemy.Height ||
+		Origin.z + Height < Enemy.Origin.z)
 	{
-		newZ = Target.Origin.z + Random() * Target.Height;
+		newZ = Enemy.Origin.z + Random() * Enemy.Height;
 		deltaZ = newZ - Origin.z;
 		if (fabs(deltaZ) > 15.0)
 		{
@@ -752,7 +752,7 @@ void Actor::CHolySeekerMissile(float thresh, float turnMax)
 				deltaZ = -15.0;
 			}
 		}
-		dist = MobjDist2(Target, self);
+		dist = MobjDist2(Enemy, self);
 		dist = dist / Speed;
 		if (dist < 1.0)
 		{
@@ -808,7 +808,7 @@ void Actor::A_CHolySeek(void)
 		StateTime -= Random() * 0.1;
 		return;
 	}
-	if (Target)
+	if (Enemy)
 	{
 		CHolySeekerMissile(itof(Args[0]), itof(Args[0]) * 2.0);
 		if (!((level->tictime + 7) & 15))
@@ -832,7 +832,7 @@ void Actor::A_CHolyCheckScream(void)
 	{
 		PlaySound('SpiritActive', CHAN_VOICE);
 	}
-	if (!Target)
+	if (!Enemy)
 	{
 		CHolyFindTarget();
 	}
@@ -940,6 +940,9 @@ void Actor::A_CHolySpawnPuff(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/03/28 18:15:35  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.24  2002/03/20 19:07:47  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

@@ -181,7 +181,7 @@ void A_PotteryCheck(void)
 		{
 			continue;
 		}
-		pmo = *players[i].mo;
+		pmo = players[i].MO;
 		if (P_CheckSight(self, pmo) &&
 			(fabs(AngleMod180(atan2(Origin.y - pmo.Origin.y,
 			Origin.x - pmo.Origin.x) - pmo.Angles.yaw)) <= 45.0))
@@ -230,6 +230,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/03/28 18:15:35  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.17  2002/03/16 17:47:47  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

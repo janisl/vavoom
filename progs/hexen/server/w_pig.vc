@@ -49,21 +49,21 @@ void A_SnoutAttack(void)
 	TVec vforward;
 
 	damage = 3 + (P_Random() & 3);
-	avcpy(Player->mo->Angles, angles);
-	AimLineAttack(*Player->mo, &angles, MELEERANGE);
+	avcpy(Player->MO.Angles, angles);
+	AimLineAttack(Player->MO, &angles, MELEERANGE);
 	PuffType = SnoutPuff;
 	PuffSpawned = none;
 	AngleVector(&angles, &vforward);
-	LineAttack(*Player->mo, vforward, MELEERANGE, damage);
-	Player->mo->PlaySound((P_Random() & 1) ? 'PigActive2' : 'PigActive1',
+	LineAttack(Player->MO, vforward, MELEERANGE, damage);
+	Player->MO.PlaySound((P_Random() & 1) ? 'PigActive2' : 'PigActive1',
 		CHAN_VOICE);
 	if (linetarget)
 	{
-		PlayerPawn(*Player->mo).AdjustPlayerAngle();
+		PlayerPawn(Player->MO).AdjustPlayerAngle();
 		if (PuffSpawned)
 		{
 			// Bit something
-			Player->mo->PlaySound('PigAttack', CHAN_VOICE);
+			Player->MO.PlaySound('PigAttack', CHAN_VOICE);
 		}
 	}
 }
@@ -106,6 +106,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/03/28 18:15:35  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.16  2002/03/20 19:07:47  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

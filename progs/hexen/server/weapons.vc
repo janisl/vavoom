@@ -248,10 +248,10 @@ void P_FireWeapon(player_t * player)
 	{
 		return;
 	}
-	player->mo->SetState(player->mo->MissileState);
+	player->MO.SetState(player->MO.MissileState);
 	player->ViewEnts[ps_weapon].SetState(
 		Weapon(player->ViewEnts[ps_weapon]).GetAttackState());
-	NoiseAlert(*player->mo, *player->mo);
+	NoiseAlert(player->MO, player->MO);
 }
 
 //============================================================================
@@ -328,10 +328,10 @@ void Weapon::A_WeaponReady(void)
 	float angle;
 
 	// Change player from attack state
-	if (Player->mo->StateNum >= Player->mo->MissileState &&
-		Player->mo->StateNum <= PlayerPawn(*Player->mo).AttackEndState)
+	if (Player->MO.StateNum >= Player->MO.MissileState &&
+		Player->MO.StateNum <= PlayerPawn(Player->MO).AttackEndState)
 	{
-		Player->mo->SetState(Player->mo->SpawnState);
+		Player->MO.SetState(Player->MO.SpawnState);
 	}
 	// Put the weapon away if the player has a pending weapon or has died.
 	if (Player->PendingWeapon != wp_nochange || !Player->Health)
@@ -457,6 +457,9 @@ void Weapon::A_Light0(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/03/28 18:15:35  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.14  2002/03/16 17:47:47  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

@@ -46,8 +46,8 @@ void Cheat_God(void)
 	players[0].Cheats ^= CF_GODMODE;
 	if (players[0].Cheats & CF_GODMODE)
 	{
-		if (players[0].mo)
-			players[0].mo->Health = GOD_HEALTH;
+		if (players[0].MO)
+			players[0].MO.Health = GOD_HEALTH;
 		players[0].Health = GOD_HEALTH;
 		cprint(&players[0], "Degreelessness Mode On");
 	}
@@ -277,30 +277,30 @@ void Cheat_Gimme(void)
 
 	// Powers
 	if (i1 & GIMME_INVULNERABILITY)
-		players[0].mo->GivePower(pw_invulnerability);
+		players[0].MO.GivePower(pw_invulnerability);
 	if (i1 & GIMME_STRENGTH)
-		players[0].mo->GivePower(pw_strength);
+		players[0].MO.GivePower(pw_strength);
 	if (i1 & GIMME_INVISIBILITY)
-		players[0].mo->GivePower(pw_invisibility);
+		players[0].MO.GivePower(pw_invisibility);
 	if (i1 & GIMME_IRONFEET)
-		players[0].mo->GivePower(pw_ironfeet);
+		players[0].MO.GivePower(pw_ironfeet);
 	if (i1 & GIMME_INFRARED)
-		players[0].mo->GivePower(pw_infrared);
+		players[0].MO.GivePower(pw_infrared);
 
 	//  Items
 	if (i1 & GIMME_ALLMAP)
-		players[0].mo->GiveItem(IT_ALL_MAP);
+		players[0].MO.GiveItem(IT_ALL_MAP);
 
 	// Health
 	if ((i1 & GIMME_HEALTH) && (players[0].Health < 100))
 	{
 		players[0].Health = 100;
-		players[0].mo->Health = 100;
+		players[0].MO.Health = 100;
 	}
 	if (i1 & GIMME_HEALTH2)
 	{
 		players[0].Health = 200;
-		players[0].mo->Health = 200;
+		players[0].MO.Health = 200;
 	}
 
 	// Armor
@@ -355,6 +355,9 @@ void Cheat_KillAll(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/03/28 18:15:34  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.12  2002/03/12 19:21:24  dj_jl
 //  No need for linefeed in client-printing
 //

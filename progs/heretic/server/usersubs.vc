@@ -138,7 +138,7 @@ boolean PlayerPawn::UndoPlayerChicken(void)
 	Player->Powers[pw_weaponlevel2] = 0;
 	A.Health = MAXHEALTH;
 	Player->Health = A.Health;
-	Player->mo = &A;
+	Player->MO = A;
 	PostChickenWeapon(Player, Special1);
 
 	fog = Spawn(TeleportFog, Origin + vector(
@@ -355,12 +355,12 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	Actor A;
 	int i;
 
-	if (!players[playernum].mo)
+	if (!players[playernum].MO)
 	{
 		// first spawn of level, before corpses
 		for (i = 0; i < playernum; i++)
-			if (players[i].mo->Origin.x == mthing->x &&
-				players[i].mo->Origin.y == mthing->y)
+			if (players[i].MO.Origin.x == mthing->x &&
+				players[i].MO.Origin.y == mthing->y)
 				return false;
 		return true;
 	}
@@ -368,13 +368,13 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	x = mthing->x;
 	y = mthing->y;
 
-	players[playernum].mo->bNoPassMobj = true;
-	if (!players[playernum].mo->CheckPosition(vector(x, y, ONFLOORZ)))
+	players[playernum].MO.bNoPassMobj = true;
+	if (!players[playernum].MO.CheckPosition(vector(x, y, ONFLOORZ)))
 	{
-		players[playernum].mo->bNoPassMobj = false;
+		players[playernum].MO.bNoPassMobj = false;
 		return false;
 	}
-	players[playernum].mo->bNoPassMobj = false;
+	players[playernum].MO.bNoPassMobj = false;
 
 	// spawn a teleport fog 
 	ss = PointInSubsector(x, y);
@@ -390,6 +390,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/03/28 18:15:34  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.25  2002/03/20 19:07:47  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

@@ -147,7 +147,7 @@ boolean Actor::LookForMonsters(boolean allaround)
 	float an;
 	float dist;
 
-	if (!P_CheckSight(self, *players[0].mo))
+	if (!P_CheckSight(self, players[0].MO))
 	{
 		return false;	//  Not seen by player
 	}
@@ -233,30 +233,30 @@ boolean Actor::LookForPlayers(boolean allaround)
 			return false;
 		}
 
-		if (!player->bSpawned || !player->mo)
+		if (!player->bSpawned || !player->MO)
 			continue;	//  not spawned yet
 
 		if (player->Health <= 0)
 			continue;	// dead
 
-		if (!P_CheckSight(self, *player->mo))
+		if (!P_CheckSight(self, player->MO))
 			continue;	//  out of sight
 
 		if (!allaround)
 		{
-			an = AngleMod360(atan2(player->mo->Origin.y - Origin.y,
-				player->mo->Origin.x - Origin.x) - Angles.yaw);
+			an = AngleMod360(atan2(player->MO.Origin.y - Origin.y,
+				player->MO.Origin.x - Origin.x) - Angles.yaw);
 
 			if (an > 90.0 && an < 270.0)
 			{
-				dist = MobjDist(*player->mo, self);
+				dist = MobjDist(player->MO, self);
 				// if real close, react anyway
 				if (dist > MELEERANGE)
 					continue;	// behind back
 			}
 		}
 
-		Enemy = *player->mo;
+		Enemy = player->MO;
 		return true;
 	}
 
@@ -490,6 +490,9 @@ void Actor::NewChaseDir(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/03/28 18:15:35  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.18  2002/03/20 19:07:47  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

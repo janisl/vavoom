@@ -49,12 +49,12 @@ void A_MWandAttack(void)
 {
 	Actor mo;
 
-	mo = PlayerPawn(*Player->mo).SpawnPlayerMissile(MageWandMissile);
+	mo = PlayerPawn(Player->MO).SpawnPlayerMissile(MageWandMissile);
 	if (mo)
 	{
 		mo.bBlaster = true;
 	}
-	Player->mo->PlaySound('MageWandFire', CHAN_WEAPON);
+	Player->MO.PlaySound('MageWandFire', CHAN_WEAPON);
 }
 
 __states__
@@ -107,7 +107,7 @@ void A_FireConePL1(void)
 	Actor mo;
 	int conedone = false;
 
-	pmo = *Player->mo;
+	pmo = Player->MO;
 	Player->Mana[MANA_1] -=
 		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
 	pmo.PlaySound('MageShardsFire', CHAN_WEAPON);
@@ -137,7 +137,7 @@ void A_FireConePL1(void)
 			mo._Special1 = SHARDSPAWN_LEFT | SHARDSPAWN_DOWN | SHARDSPAWN_UP
 				| SHARDSPAWN_RIGHT;
 			mo._Special2 = 3;	// Set sperm count (levels of reproductivity)
-			mo.Owner = pmo;
+			mo.Instigator = pmo;
 			mo.Args[0] = 3;	// Mark Initial shard as super damage
 		}
 	}
@@ -193,7 +193,7 @@ void A_LightningReady(void)
 	A_WeaponReady();
 	if (P_Random() < 160)
 	{
-		Player->mo->PlaySound('MageLightningReady', CHAN_WEAPON);
+		Player->MO.PlaySound('MageLightningReady', CHAN_WEAPON);
 	}
 }
 
@@ -208,8 +208,8 @@ void A_MLightningAttack(void)
 	Actor fmo;
 	Actor cmo;
 
-	fmo = PlayerPawn(*Player->mo).SpawnPlayerMissile(LightningFloor);
-	cmo = PlayerPawn(*Player->mo).SpawnPlayerMissile(LightningCeiling);
+	fmo = PlayerPawn(Player->MO).SpawnPlayerMissile(LightningFloor);
+	cmo = PlayerPawn(Player->MO).SpawnPlayerMissile(LightningCeiling);
 	if (fmo)
 	{
 		fmo._SpecialMobj1 = NULL;
@@ -222,7 +222,7 @@ void A_MLightningAttack(void)
 		cmo.SpecialMobj2 = &fmo;
 		cmo.A_LightningZap();
 	}
-	Player->mo->PlaySound('MageLightningFire', CHAN_WEAPON);
+	Player->MO.PlaySound('MageLightningFire', CHAN_WEAPON);
 	Player->Mana[MANA_2] -= WeaponManaUse(Player->PClass,
 		Player->ReadyWeapon);
 }
@@ -302,11 +302,11 @@ void MStaffSpawn(float angle)
 {
 	Actor mo;
 
-	mo = PlayerPawn(*Player->mo).SpawnPlayerMissileAngle(MageStaffFX2, angle);
+	mo = PlayerPawn(Player->MO).SpawnPlayerMissileAngle(MageStaffFX2, angle);
 	if (mo)
 	{
-		mo.Owner = *Player->mo;
-		mo.Target = mo.RoughMonsterSearch(10);
+		mo.Instigator = Player->MO;
+		mo.Enemy = mo.RoughMonsterSearch(10);
 	}
 }
 
@@ -324,12 +324,12 @@ void A_MStaffAttack(void)
 		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
 	Player->Mana[MANA_2] -=
 		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
-	angle = Player->mo->Angles.yaw;
+	angle = Player->MO.Angles.yaw;
 
 	MStaffSpawn(angle);
 	MStaffSpawn(angle - 5.0);
 	MStaffSpawn(angle + 5.0);
-	Player->mo->PlaySound('MageStaffFire', CHAN_WEAPON);
+	Player->MO.PlaySound('MageStaffFire', CHAN_WEAPON);
 	Player->DamageCount = 0;
 	Player->BonusCount = 0;
 	Player->WeaponPalette = STARTSCOURGEPAL;
@@ -460,7 +460,7 @@ void Actor::A_ShedShard(void)
 			mo._Special1 = SHARDSPAWN_LEFT;
 			mo._Special2 = spermcount;
 			mo.Velocity.z = Velocity.z;
-			mo.Owner = Owner;
+			mo.Instigator = Instigator;
 			mo.Args[0] = (spermcount == 3) ? 2 : 0;
 		}
 	}
@@ -473,7 +473,7 @@ void Actor::A_ShedShard(void)
 			mo._Special1 = SHARDSPAWN_RIGHT;
 			mo._Special2 = spermcount;
 			mo.Velocity.z = Velocity.z;
-			mo.Owner = Owner;
+			mo.Instigator = Instigator;
 			mo.Args[0] = (spermcount == 3) ? 2 : 0;
 		}
 	}
@@ -491,7 +491,7 @@ void Actor::A_ShedShard(void)
 			else
 				mo._Special1 = SHARDSPAWN_UP;
 			mo._Special2 = spermcount;
-			mo.Owner = Owner;
+			mo.Instigator = Instigator;
 			mo.Args[0] = (spermcount == 3) ? 2 : 0;
 		}
 	}
@@ -509,7 +509,7 @@ void Actor::A_ShedShard(void)
 			else
 				mo._Special1 = SHARDSPAWN_DOWN;
 			mo._Special2 = spermcount;
-			mo.Owner = Owner;
+			mo.Instigator = Instigator;
 			mo.Args[0] = (spermcount == 3) ? 2 : 0;
 		}
 	}
@@ -614,7 +614,7 @@ void Actor::A_LightningZap(void)
 		A.SpecialMobj2 = this;
 		A.Velocity.x = Velocity.x;
 		A.Velocity.y = Velocity.y;
-		A.Owner = Owner;
+		A.Instigator = Instigator;
 		if (Class == LightningFloor)
 		{
 			A.Velocity.z = 20.0 * 35.0;
@@ -727,9 +727,9 @@ void Actor::A_MStaffWeave(void)
 
 void Actor::A_MStaffTrack(void)
 {
-	if (!Target && (P_Random() < 50))
+	if (!Enemy && (P_Random() < 50))
 	{
-		Target = RoughMonsterSearch(10);
+		Enemy = RoughMonsterSearch(10);
 	}
 	SeekerMissile(2.0, 10.0);
 }
@@ -737,6 +737,9 @@ void Actor::A_MStaffTrack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/03/28 18:15:35  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.24  2002/03/16 17:47:47  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

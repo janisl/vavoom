@@ -46,7 +46,7 @@ void SetWeapon(player_t * player, int NewWeapon)
 	player->ViewEnts[ps_weapon] = SpawnObject(WeaponClasses[NewWeapon], none);
 	player->ViewEnts[ps_weapon].Player = player;
 	player->WeaponModel =
-		FindModel(Weapon(player->ViewEnts[ps_weapon]).ThirdPersonModel);
+		GetModelIndex(Weapon(player->ViewEnts[ps_weapon]).ThirdPersonModel);
 }
 
 //===========================================================================
@@ -72,7 +72,7 @@ void SetPsprite(player_t * player, int position, int stnum)
 void BringUpWeapon(player_t * player)
 {
 	if (player->ReadyWeapon == wp_chainsaw)
-		player->mo->PlaySound('ChainsawStart', CHAN_WEAPON);
+		player->MO.PlaySound('ChainsawStart', CHAN_WEAPON);
 
 	player->PendingWeapon = wp_nochange;
 	player->ViewEnts[ps_weapon].SY = WEAPONBOTTOM;
@@ -308,9 +308,9 @@ void FireWeapon(player_t * player)
 		return;
 	}
 
-	player->mo->SetState(S_PLAY_ATK1);
+	player->MO.SetState(S_PLAY_ATK1);
 	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).AttackState);
-	P_NoiseAlert(*player->mo, *player->mo);
+	P_NoiseAlert(player->MO, player->MO);
 }
 
 //===========================================================================
@@ -359,15 +359,15 @@ void Weapon::A_WeaponReady(void)
 	float angle;
 
 	// get out of attack state
-	if (Player->mo->StateNum == S_PLAY_ATK1 ||
-		Player->mo->StateNum == S_PLAY_ATK2)
+	if (Player->MO.StateNum == S_PLAY_ATK1 ||
+		Player->MO.StateNum == S_PLAY_ATK2)
 	{
-		Player->mo->SetState(S_PLAY);
+		Player->MO.SetState(S_PLAY);
 	}
 
 	if (Player->ReadyWeapon == wp_chainsaw && StateNum == S_SAW)
 	{
-		Player->mo->PlaySound('ChainsawIdle', CHAN_WEAPON);
+		Player->MO.PlaySound('ChainsawIdle', CHAN_WEAPON);
 	}
 
 	// check for change
@@ -511,7 +511,7 @@ void Weapon::A_CheckReload(void)
 
 void Weapon::A_GunFlash(void)
 {
-	Player->mo->SetState(S_PLAY_ATK2);
+	Player->MO.SetState(S_PLAY_ATK2);
 	SetPsprite(Player, ps_flash, FlashState);
 }
 
@@ -524,7 +524,7 @@ void Weapon::A_GunFlash(void)
 void Weapon::A_Light0(void)
 {
 	Player->ExtraLight = 0;
-	Player->mo->Effects &= ~EF_DLIGHT_MASK;
+	Player->MO.Effects &= ~EF_DLIGHT_MASK;
 }
 
 //===========================================================================
@@ -572,19 +572,19 @@ void Weapon::A_Punch(void)
 	if (Player->Powers[pw_strength])
 		damage *= 10;
 
-	aimAngles = Player->mo->Angles;
+	aimAngles = Player->MO.Angles;
 	aimAngles.yaw = AngleMod360(aimAngles.yaw + (Random() -
 		Random()) * 45.0 / 8.0);
-	dir = AimLineAttack(*Player->mo, aimAngles, MELEERANGE);
-	LineAttack(*Player->mo, dir, MELEERANGE, damage);
+	dir = AimLineAttack(Player->MO, aimAngles, MELEERANGE);
+	LineAttack(Player->MO, dir, MELEERANGE, damage);
 
 	// turn to face target
 	if (linetarget)
 	{
-		Player->mo->PlaySound('Punch', CHAN_WEAPON);
-		Player->mo->Angles.yaw = atan2(
-			linetarget.Origin.y - Player->mo->Origin.y,
-			linetarget.Origin.x - Player->mo->Origin.x);
+		Player->MO.PlaySound('Punch', CHAN_WEAPON);
+		Player->MO.Angles.yaw = atan2(
+			linetarget.Origin.y - Player->MO.Origin.y,
+			linetarget.Origin.x - Player->MO.Origin.x);
 		Player->bFixAngle = true;
 	}
 }
@@ -603,40 +603,40 @@ void Weapon::A_Saw(void)
 	TVec dir;
 
 	damage = 2 * (P_Random() % 10 + 1);
-	aimAng = Player->mo->Angles;
+	aimAng = Player->MO.Angles;
 	aimAng.yaw = AngleMod360(aimAng.yaw + (Random() -
 		Random()) * 45.0 / 8.0);
 
 	// use meleerange + 1 se the puff doesn't skip the flash
-	dir = AimLineAttack(*Player->mo, aimAng, MELEERANGE + 0.00001);
-	LineAttack(*Player->mo, dir, MELEERANGE + 0.00001, damage);
+	dir = AimLineAttack(Player->MO, aimAng, MELEERANGE + 0.00001);
+	LineAttack(Player->MO, dir, MELEERANGE + 0.00001, damage);
 
 	if (!linetarget)
 	{
-		Player->mo->PlaySound('ChainsawTriggered', CHAN_WEAPON);
+		Player->MO.PlaySound('ChainsawTriggered', CHAN_WEAPON);
 		return;
 	}
-	Player->mo->PlaySound('ChainsawHit', CHAN_WEAPON);
+	Player->MO.PlaySound('ChainsawHit', CHAN_WEAPON);
 
 	// turn to face target
-	angle = atan2(linetarget.Origin.y - Player->mo->Origin.y,
-		linetarget.Origin.x - Player->mo->Origin.x);
-	if (AngleMod360(angle - Player->mo->Angles.yaw) > 180.0)
+	angle = atan2(linetarget.Origin.y - Player->MO.Origin.y,
+		linetarget.Origin.x - Player->MO.Origin.x);
+	if (AngleMod360(angle - Player->MO.Angles.yaw) > 180.0)
 	{
-		if (AngleMod360(angle - Player->mo->Angles.yaw) < -90.0 / 20.0)
-			Player->mo->Angles.yaw = angle + 90.0 / 21.0;
+		if (AngleMod360(angle - Player->MO.Angles.yaw) < -90.0 / 20.0)
+			Player->MO.Angles.yaw = angle + 90.0 / 21.0;
 		else
-			Player->mo->Angles.yaw = Player->mo->Angles.yaw - 90.0 / 20.0;
+			Player->MO.Angles.yaw = Player->MO.Angles.yaw - 90.0 / 20.0;
 	}
 	else
 	{
-		if (AngleMod360(angle - Player->mo->Angles.yaw) > 90.0 / 20.0)
-			Player->mo->Angles.yaw = angle - 90.0 / 21.0;
+		if (AngleMod360(angle - Player->MO.Angles.yaw) > 90.0 / 20.0)
+			Player->MO.Angles.yaw = angle - 90.0 / 21.0;
 		else
-			Player->mo->Angles.yaw += 90.0 / 20.0;
+			Player->MO.Angles.yaw += 90.0 / 20.0;
 	}
-	Player->mo->Angles.yaw = AngleMod360(Player->mo->Angles.yaw);
-	Player->mo->bJustAttacked = true;
+	Player->MO.Angles.yaw = AngleMod360(Player->MO.Angles.yaw);
+	Player->MO.bJustAttacked = true;
 	Player->bFixAngle = true;
 }
 
@@ -650,16 +650,16 @@ void Weapon::A_FirePistol(void)
 {
 	TVec dir;
 
-	Player->mo->PlaySound('PistolFire', CHAN_WEAPON);
+	Player->MO.PlaySound('PistolFire', CHAN_WEAPON);
 
-	Player->mo->SetState(S_PLAY_ATK2);
+	Player->MO.SetState(S_PLAY_ATK2);
 	Player->Ammo[Ammo]--;
 
 	SetPsprite(Player, ps_flash, FlashState);
 
-	dir = Aim(*Player->mo, 16.0 * 64.0);
-	GunShot(*Player->mo, !Player->Refire, dir);
-	Player->mo->Effects |= EF_DL_MUZZLEFLASH;
+	dir = Aim(Player->MO, 16.0 * 64.0);
+	GunShot(Player->MO, !Player->Refire, dir);
+	Player->MO.Effects |= EF_DL_MUZZLEFLASH;
 }
 
 //===========================================================================
@@ -673,19 +673,19 @@ void Weapon::A_FireShotgun(void)
 	int i;
 	TVec dir;
 
-	Player->mo->PlaySound('ShotgunFire', CHAN_WEAPON);
-	Player->mo->SetState(S_PLAY_ATK2);
+	Player->MO.PlaySound('ShotgunFire', CHAN_WEAPON);
+	Player->MO.SetState(S_PLAY_ATK2);
 
 	Player->Ammo[Ammo]--;
 
 	SetPsprite(Player, ps_flash, FlashState);
 
-	dir = Aim(*Player->mo, 16.0 * 64.0);
+	dir = Aim(Player->MO, 16.0 * 64.0);
 	for (i = 0; i < 7; i++)
 	{
-		GunShot(*Player->mo, false, dir);
+		GunShot(Player->MO, false, dir);
 	}
-	Player->mo->Effects |= EF_DL_MUZZLEFLASH;
+	Player->MO.Effects |= EF_DL_MUZZLEFLASH;
 }
 
 #ifdef DOOM2
@@ -704,14 +704,14 @@ void Weapon::A_FireShotgun2(void)
 	TVec aimDir;
 	TVec dir;
 
-	Player->mo->PlaySound('SuperShotgunFire', CHAN_WEAPON);
-	Player->mo->SetState(S_PLAY_ATK2);
+	Player->MO.PlaySound('SuperShotgunFire', CHAN_WEAPON);
+	Player->MO.SetState(S_PLAY_ATK2);
 
 	Player->Ammo[Ammo] -= 2;
 
 	SetPsprite(Player, ps_flash, FlashState);
 
-	aimDir = Aim(*Player->mo, 16.0 * 64.0);
+	aimDir = Aim(Player->MO, 16.0 * 64.0);
 	for (i = 0; i < 20; i++)
 	{
 		rot.pitch = (Random() - Random()) * 45.0 / 8.0;
@@ -719,9 +719,9 @@ void Weapon::A_FireShotgun2(void)
 		rot.roll = 0.0;
 		dir = RotateDirectionVector(aimDir, rot);
 		damage = 5 * (P_Random() % 3 + 1);
-		LineAttack(*Player->mo, dir, MISSILERANGE, damage);
+		LineAttack(Player->MO, dir, MISSILERANGE, damage);
 	}
-	Player->mo->Effects |= EF_DL_MUZZLEFLASH;
+	Player->MO.Effects |= EF_DL_MUZZLEFLASH;
 }
 
 //===========================================================================
@@ -732,7 +732,7 @@ void Weapon::A_FireShotgun2(void)
 
 void Weapon::A_OpenShotgun2(void)
 {
-	Player->mo->PlaySound('SuperShotgunOpen', CHAN_WEAPON);
+	Player->MO.PlaySound('SuperShotgunOpen', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -743,7 +743,7 @@ void Weapon::A_OpenShotgun2(void)
 
 void Weapon::A_LoadShotgun2(void)
 {
-	Player->mo->PlaySound('SuperShotgunLoad', CHAN_WEAPON);
+	Player->MO.PlaySound('SuperShotgunLoad', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -754,7 +754,7 @@ void Weapon::A_LoadShotgun2(void)
 
 void Weapon::A_CloseShotgun2(void)
 {
-	Player->mo->PlaySound('SuperShotgunClose', CHAN_WEAPON);
+	Player->MO.PlaySound('SuperShotgunClose', CHAN_WEAPON);
 	A_ReFire();
 }
 
@@ -792,19 +792,19 @@ void Weapon::A_FireCGun(void)
 {
 	TVec dir;
 
-	Player->mo->PlaySound('PistolFire', CHAN_WEAPON);
+	Player->MO.PlaySound('PistolFire', CHAN_WEAPON);
 
 	if (!Player->Ammo[Ammo])
 		return;
 
-	Player->mo->SetState(S_PLAY_ATK2);
+	Player->MO.SetState(S_PLAY_ATK2);
 	Player->Ammo[Ammo]--;
 
 	SetPsprite(Player, ps_flash, FlashState + StateNum - S_CHAIN1);
 
-	dir = Aim(*Player->mo, 16.0 * 64.0);
-	GunShot(*Player->mo, !Player->Refire, dir);
-	Player->mo->Effects |= EF_DL_MUZZLEFLASH;
+	dir = Aim(Player->MO, 16.0 * 64.0);
+	GunShot(Player->MO, !Player->Refire, dir);
+	Player->MO.Effects |= EF_DL_MUZZLEFLASH;
 }
 
 //===========================================================================
@@ -816,7 +816,7 @@ void Weapon::A_FireCGun(void)
 void Weapon::A_FireMissile(void)
 {
 	Player->Ammo[Ammo]--;
-	PlayerPawn(*Player->mo).SpawnPlayerMissile(Rocket);
+	PlayerPawn(Player->MO).SpawnPlayerMissile(Rocket);
 }
 
 //===========================================================================
@@ -831,7 +831,7 @@ void Weapon::A_FirePlasma(void)
 
 	SetPsprite(Player, ps_flash, FlashState + (P_Random() & 1));
 
-	PlayerPawn(*Player->mo).SpawnPlayerMissile(PlasmaShot);
+	PlayerPawn(Player->MO).SpawnPlayerMissile(PlasmaShot);
 }
 
 //===========================================================================
@@ -842,7 +842,7 @@ void Weapon::A_FirePlasma(void)
 
 void Weapon::A_BFGsound(void)
 {
-	Player->mo->PlaySound('BFGFire', CHAN_WEAPON);
+	Player->MO.PlaySound('BFGFire', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -854,7 +854,7 @@ void Weapon::A_BFGsound(void)
 void Weapon::A_FireBFG(void)
 {
 	Player->Ammo[Ammo] -= BFGCELLS;
-	PlayerPawn(*Player->mo).SpawnPlayerMissile(BFGShot);
+	PlayerPawn(Player->MO).SpawnPlayerMissile(BFGShot);
 }
 
 //===========================================================================
@@ -908,6 +908,9 @@ void Actor::A_BFGSpray(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/03/28 18:15:34  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.23  2002/03/20 19:07:44  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

@@ -145,7 +145,7 @@ boolean Actor::LookForMonsters(void)
 	int count;
 	Actor mo;
 
-	if (!P_CheckSight(*players[0].mo, self))
+	if (!P_CheckSight(players[0].MO, self))
 	{	// Player can't see monster
 		return false;
 	}
@@ -220,30 +220,30 @@ boolean Actor::LookForPlayers(boolean allaround)
 			return false;	// done looking
 
 		P = &players[LastLook];
-		if (!P->bSpawned || !P->mo)
+		if (!P->bSpawned || !P->MO)
 			continue;	// not spawned yet
 		if (P->Health <= 0)
 			continue;	// dead
-		if (!P_CheckSight(self, *P->mo))
+		if (!P_CheckSight(self, P->MO))
 			continue;	// out of sight
 
 		if (!allaround)
 		{
-			an = AngleMod360(atan2(P->mo->Origin.y - Origin.y,
-				P->mo->Origin.x - Origin.x) - Angles.yaw);
+			an = AngleMod360(atan2(P->MO.Origin.y - Origin.y,
+				P->MO.Origin.x - Origin.x) - Angles.yaw);
 			if (an > 90.0 && an < 270.0)
 			{
-				dist = MobjDist(*P->mo, self);
+				dist = MobjDist(P->MO, self);
 				// if real close, react anyway
 				if (dist > MELEERANGE)
 					continue;	// behind back
 			}
 		}
-		if (P->mo->Translucency)
+		if (P->MO.Translucency)
 		{
 			// Player is invisible
-			if ((MobjDist(*P->mo, self) > 2.0 * MELEERANGE) &&
-				Length(P->mo->Velocity) < 5.0 * 35.0)
+			if ((MobjDist(P->MO, self) > 2.0 * MELEERANGE) &&
+				Length(P->MO.Velocity) < 5.0 * 35.0)
 			{
 				// Player is sneaking - can't detect
 				return false;
@@ -254,7 +254,7 @@ boolean Actor::LookForPlayers(boolean allaround)
 				return false;
 			}
 		}
-		Enemy = *P->mo;
+		Enemy = P->MO;
 		return true;
 	}
 	return false;
@@ -472,6 +472,9 @@ void Actor::NewChaseDir(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/03/28 18:15:34  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.23  2002/03/20 19:07:46  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

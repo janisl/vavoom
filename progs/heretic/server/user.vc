@@ -71,7 +71,7 @@ void PlayerPawn::ThrustPlayer(float angle, float move, float deltaTime)
 		Velocity.x += move * cos(angle) * deltaTime;
 		Velocity.y += move * sin(angle) * deltaTime;
 	}
-	else if (Sector->special == 15)	// Friction_Low
+	else if (Sector->special == 15 + 64)	// Friction_Low
 	{
 		Velocity.x += move / 4.0 * cos(angle) * deltaTime;
 		Velocity.y += move / 4.0 * sin(angle) * deltaTime;
@@ -388,29 +388,38 @@ void PlayerPawn::PlayerInSpecialSector(float deltaTime)
 		// Player is not touching the floor
 		return;
 	}
+
+	if (Sector->special & SECRET_MASK)
+	{
+		// SecretArea
+		Player->SecretCount++;
+		Sector->special &= ~SECRET_MASK;
+		centerprint(Player, "You found a secret area");
+	}
+
 	switch (Sector->special)
 	{
-	case 7:	// Damage_Sludge
+	case 7 + 64:	// Damage_Sludge
 		if (!(level->tictime & 31))
 		{
 			Damage(none, none, 4);
 		}
 		break;
-	case 5:	// Damage_LavaWimpy
+	case 82:	// Damage_LavaWimpy
 		if (!(level->tictime & 15))
 		{
 			Damage(LavaInflictor, none, 5);
 			HitFloorEffect();
 		}
 		break;
-	case 16:	// Damage_LavaHefty
+	case 83:	// Damage_LavaHefty
 		if (!(level->tictime & 15))
 		{
 			Damage(LavaInflictor, none, 8);
 			HitFloorEffect();
 		}
 		break;
-	case 4:	// Scroll_EastLavaDamage
+	case 84:	// Scroll_EastLavaDamage
 		ThrustPlayer(0.0, 1024.0, deltaTime);
 		if (!(level->tictime & 15))
 		{
@@ -418,52 +427,34 @@ void PlayerPawn::PlayerInSpecialSector(float deltaTime)
 			HitFloorEffect();
 		}
 		break;
-	case 9:	// SecretArea
-		Player->SecretCount++;
-		Sector->special = 0;
-		centerprint(Player, "You found a secret area");
-		break;
-	case 11:	// Exit_SuperDamage (DOOM E1M8 finale)
-		/*
-		   player->cheats &= ~CF_GODMODE;
-		   if(!(level->tictime&0x1f))
-		   {
-		   DamageMobj(player->mo, NULL, NULL, 20);
-		   }
-		   if(player->health <= 10)
-		   {
-		   G_ExitLevel();
-		   }
-		 */
-		break;
 
-	case 20:
-	case 21:
-	case 22:
-	case 23:
-	case 24:	// Scroll_East
-		ThrustPlayer(0.0, pushTab[Sector->special - 20], deltaTime);
+	case 20 + 205:
+	case 21 + 205:
+	case 22 + 205:
+	case 23 + 205:
+	case 24 + 205:	// Scroll_East
+		ThrustPlayer(0.0, pushTab[Sector->special - (20 + 205)], deltaTime);
 		break;
-	case 25:
-	case 26:
-	case 27:
-	case 28:
-	case 29:	// Scroll_North
-		ThrustPlayer(90.0, pushTab[Sector->special - 25], deltaTime);
+	case 25 + 205:
+	case 26 + 205:
+	case 27 + 205:
+	case 28 + 205:
+	case 29 + 205:	// Scroll_North
+		ThrustPlayer(90.0, pushTab[Sector->special - (25 + 205)], deltaTime);
 		break;
-	case 30:
-	case 31:
-	case 32:
-	case 33:
-	case 34:	// Scroll_South
-		ThrustPlayer(270.0, pushTab[Sector->special - 30], deltaTime);
+	case 30 + 205:
+	case 31 + 205:
+	case 32 + 205:
+	case 33 + 205:
+	case 34 + 205:	// Scroll_South
+		ThrustPlayer(270.0, pushTab[Sector->special - (30 + 205)], deltaTime);
 		break;
-	case 35:
-	case 36:
-	case 37:
-	case 38:
-	case 39:	// Scroll_West
-		ThrustPlayer(180.0, pushTab[Sector->special - 35], deltaTime);
+	case 35 + 205:
+	case 36 + 205:
+	case 37 + 205:
+	case 38 + 205:
+	case 39 + 205:	// Scroll_West
+		ThrustPlayer(180.0, pushTab[Sector->special - (35 + 205)], deltaTime);
 		break;
 
 	case 40:
@@ -481,7 +472,7 @@ void PlayerPawn::PlayerInSpecialSector(float deltaTime)
 		// Wind specials are handled in (P_mobj):P_XYMovement
 		break;
 
-	case 15:	// Friction_Low
+	case 15 + 64:	// Friction_Low
 		// Only used in (P_mobj):P_XYMovement and (P_user):P_Thrust
 		break;
 
@@ -810,7 +801,7 @@ void PlayerPawn::PlayerTick(float deltaTime)
 
 void PlayerThink(player_t * player)
 {
-	PlayerPawn(*player->mo).PlayerTick(frametime);
+	PlayerPawn(player->MO).PlayerTick(frametime);
 }
 
 //==========================================================================
@@ -932,7 +923,7 @@ void PlayerPawn::SetViewPos(void)
 
 void SetViewPos(player_t * player)
 {
-	PlayerPawn(*player->mo).SetViewPos();
+	PlayerPawn(player->MO).SetViewPos();
 }
 
 //==========================================================================
@@ -1210,12 +1201,12 @@ void G_PlayerExitMap(int player, boolean clusterChange)
 	}
 	if (p->ChickenTics)
 	{
-		SetWeapon(p, p->mo->Special1);	// Restore weapon
+		SetWeapon(p, p->MO.Special1);	// Restore weapon
 		p->ChickenTics = 0;
 	}
 	p->Items = 0;
-	p->mo->Angles.pitch = 0.0;
-	p->mo->Translucency = 0;	// cancel invisibility
+	p->MO.Angles.pitch = 0.0;
+	p->MO.Translucency = 0;	// cancel invisibility
 	p->ExtraLight = 0;	// cancel gun flashes
 	p->FixedColormap = 0;	// cancel ir gogles
 	p->DamageCount = 0;	// no palette changes 
@@ -1233,7 +1224,7 @@ void G_PlayerExitMap(int player, boolean clusterChange)
 	{
 		for (i = 0; i < 16; i++)
 		{
-			PlayerPawn(*p->mo).PlayerUseArtifact(arti_fly);
+			PlayerPawn(p->MO).PlayerUseArtifact(arti_fly);
 		}
 	}
 }
@@ -1284,8 +1275,8 @@ void NetGameReborn(int playernum)
 	// respawn at the start
 
 	// first dissasociate the corpse
-	players[playernum].mo->Player = NULL;
-	players[playernum].mo->bIsPlayer = false;
+	players[playernum].MO.Player = NULL;
+	players[playernum].MO.bIsPlayer = false;
 
 	// spawn at random spot if in death match
 	if (deathmatch)
@@ -1375,11 +1366,11 @@ void DisconnectClient(player_t * player)
 		player->Bot.Destroy();
 		player->Bot = none;
 	}
-	if (player->mo)
+	if (player->MO)
 	{
-		player->mo->Player = NULL;
-		player->mo->bIsPlayer = false;
-		player->mo->Damage(none, none, 10000);
+		player->MO.Player = NULL;
+		player->MO.bIsPlayer = false;
+		player->MO.Damage(none, none, 10000);
 	}
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
@@ -1390,7 +1381,7 @@ void DisconnectClient(player_t * player)
 		}
 	}
 	bprint("%s left the game\n", ARR2STR(player->Name));
-	player->mo->PlayFullVolumeSound('Chat', CHAN_AUTO);
+	player->MO.PlayFullVolumeSound('Chat', CHAN_AUTO);
 }
 
 //==========================================================================
@@ -1405,12 +1396,15 @@ void UserinfoChanged(player_t * player)
 	{
 		return;
 	}
-	player->mo->Translation = player->Color;
+	player->MO.Translation = player->Color;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.31  2002/03/28 18:15:34  dj_jl
+//  Renamed mo in player_t to MO.
+//
 //  Revision 1.30  2002/03/20 19:07:47  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //
