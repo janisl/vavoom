@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:56  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 #ifndef _INFO_H
@@ -50,7 +46,15 @@ struct mobjinfo_t
     int			doomednum;
 };
 
-#ifndef __VCC_H__
-extern mobjinfo_t	*mobjinfo;
 #endif
-#endif
+
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/21 17:52:54  dj_jl
+//	Added support for real string pointers, beautification
+//
+//	Revision 1.2  2001/07/27 14:27:56  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

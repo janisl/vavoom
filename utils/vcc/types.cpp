@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:56  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
@@ -172,7 +168,7 @@ TType *CheckForType(void)
 			return check;
 		}
 	}
-    return NULL;
+	return NULL;
 }
 
 //==========================================================================
@@ -201,9 +197,9 @@ int TypeSize(TType *type)
 void TypeCheckPassable(TType *type)
 {
 	if (TypeSize(type) != 4 && type->type != ev_vector)
-    {
+	{
 		ParseError(ERR_EXPR_TYPE_MISTMATCH);
-    }
+	}
 }
 
 //==========================================================================
@@ -221,9 +217,9 @@ void TypeCheck1(TType *t)
 		ParseError(ERR_VOID_VALUE);
 	}
 	if (TypeSize(t) != 4)
-    {
+	{
 		ParseError(ERR_EXPR_TYPE_MISTMATCH, "Size is not 4");
-    }
+	}
 }
 
 //==========================================================================
@@ -257,26 +253,26 @@ void TypeCheck2(TType *t)
 void TypeCheck3(TType *t1, TType *t2)
 {
 	TypeCheckPassable(t1);
-    TypeCheckPassable(t2);
+	TypeCheckPassable(t2);
 	if (t1 == &type_uint) t1 = &type_int;
 	if (t2 == &type_uint) t2 = &type_int;
 	if (t1 == t2)
-    {
-    	return;
+	{
+		return;
 	}
-    if ((t1->type == ev_function) && (t2->type == ev_function))
-    {
+	if ((t1->type == ev_function) && (t2->type == ev_function))
+	{
 		ParseWarning("Different function types");
 		return;
 	}
-    if ((t1->type == ev_vector) && (t2->type == ev_vector))
-    {
+	if ((t1->type == ev_vector) && (t2->type == ev_vector))
+	{
 		return;
 	}
-    if ((t1->type == ev_pointer) && (t2->type == ev_pointer))
-    {
-    	t1 = t1->aux_type;
-        t2 = t2->aux_type;
+	if ((t1->type == ev_pointer) && (t2->type == ev_pointer))
+	{
+		t1 = t1->aux_type;
+		t2 = t2->aux_type;
 		if (t1 == &type_uint) t1 = &type_int;
 		if (t2 == &type_uint) t2 = &type_int;
 		if (t1 == t2)
@@ -284,9 +280,9 @@ void TypeCheck3(TType *t1, TType *t2)
 			return;
 		}
 		if ((t1 == &type_void) || (t2 == &type_void))
-        {
-        	return;
-        }
+		{
+			return;
+		}
 		if (t1->type == ev_struct && t2->type == ev_struct)
 		{
 			while (t1->aux_type)
@@ -298,7 +294,7 @@ void TypeCheck3(TType *t1, TType *t2)
 				}
 			}
 		}
-    }
+	}
 	ParseError(ERR_EXPR_TYPE_MISTMATCH, " Types %s and %s are not compatible",
 		t1->name, t2->name);
 }
@@ -313,11 +309,11 @@ void ParseStruct(void)
 {
 	field_t		fields[128];
 	field_t		*fi;
-    int			num_fields;
-    int			size;
+	int			num_fields;
+	int			size;
 	int			i;
 	TType		*t;
-    TType		*type;
+	TType		*type;
 	TType		*struct_type;
 
 	struct_type = CheckForType();
@@ -337,14 +333,14 @@ void ParseStruct(void)
 	else
 	{
 		if (tk_Token != TK_IDENTIFIER)
-    	{
-    		ParseError("Struct name expected");
+		{
+			ParseError("Struct name expected");
 		}
 		//  Pievieno pie tipiem
 		struct_type = new TType;
 		memset(struct_type, 0, sizeof(TType));
 		strcpy(struct_type->name, tk_String);
-    	struct_type->type = ev_struct;
+		struct_type->type = ev_struct;
 		struct_type->next = types;
 		types = struct_type;
 		TK_NextToken();
@@ -382,8 +378,8 @@ void ParseStruct(void)
    	struct_type->available_size = 0;
    	struct_type->available_ofs = 0;
 	TK_Expect("{", ERR_MISSING_LBRACE);
-    while (!TK_Check("}"))
-    {
+	while (!TK_Check("}"))
+	{
 		if (TK_Check("addfields"))
 		{
 	   		if (struct_type->available_size)
@@ -398,52 +394,52 @@ void ParseStruct(void)
    			struct_type->available_ofs = size;
 			size += tk_Number * 4;
 			TK_NextToken();
-		    TK_Expect(";", ERR_MISSING_SEMICOLON);
+			TK_Expect(";", ERR_MISSING_SEMICOLON);
 			continue;
 		}
 		type = CheckForType();
-    	if (!type)
-        {
-        	ParseError("Field type expected.");
+		if (!type)
+		{
+			ParseError("Field type expected.");
 		}
 		do
-        {
-        	t = type;
-            while (TK_Check("*"))
-            {
-            	t = MakePointerType(t);
-            }
-	        if (t == &type_void)
-        	{
-    	    	ParseError("Field cannot have void type.");
+		{
+			t = type;
+			while (TK_Check("*"))
+			{
+				t = MakePointerType(t);
 			}
-            if (tk_Token != TK_IDENTIFIER)
-            {
-            	ParseError("Field name expected");
+			if (t == &type_void)
+			{
+				ParseError("Field cannot have void type.");
 			}
-            fi = &fields[num_fields];
-            strcpy(fi->name, tk_String);
-            TK_NextToken();
-            fi->ofs = size;
-            while (TK_Check("["))
-            {
-            	i = EvalConstExpression(ev_int);
+			if (tk_Token != TK_IDENTIFIER)
+			{
+				ParseError("Field name expected");
+			}
+			fi = &fields[num_fields];
+			strcpy(fi->name, tk_String);
+			TK_NextToken();
+			fi->ofs = size;
+			while (TK_Check("["))
+			{
+				i = EvalConstExpression(ev_int);
 				TK_Expect("]", ERR_MISSING_RFIGURESCOPE);
-                t = MakeArrayType(t, i);
-            }
-           	size += TypeSize(t);
-            fi->type = t;
+				t = MakeArrayType(t, i);
+			}
+		   	size += TypeSize(t);
+			fi->type = t;
 			dprintf("Field %d %s, ofs %d, type %d.\n",
-            	num_fields, fi->name, fi->ofs, fi->type);
-            num_fields++;
-        } while (TK_Check(","));
-	    TK_Expect(";", ERR_MISSING_SEMICOLON);
-    }
-    TK_Expect(";", ERR_MISSING_SEMICOLON);
+				num_fields, fi->name, fi->ofs, fi->type);
+			num_fields++;
+		} while (TK_Check(","));
+		TK_Expect(";", ERR_MISSING_SEMICOLON);
+	}
+	TK_Expect(";", ERR_MISSING_SEMICOLON);
 
 	//	Pievieno pie tipa
 	struct_type->fields = new field_t[num_fields];
-    memcpy(struct_type->fields, fields, num_fields * sizeof(*fields));
+	memcpy(struct_type->fields, fields, num_fields * sizeof(*fields));
 	struct_type->numfields = num_fields;
    	struct_type->size = size;
 }
@@ -456,13 +452,13 @@ void ParseStruct(void)
 
 void AddFields(void)
 {
-    TType			*struct_type;
-    TType			*type;
+	TType			*struct_type;
+	TType			*type;
 	field_t			*fi;
-    int				num_fields;
+	int				num_fields;
 	field_t			fields[128];
-    int				size;
-    int				ofs;
+	int				size;
+	int				ofs;
 	int				i;
 	TType			*t;
 
@@ -470,14 +466,14 @@ void AddFields(void)
 	struct_type = CheckForType();
    	if (!struct_type)
 	{
-       	ParseError("Parent type expected.");
+	   	ParseError("Parent type expected.");
 		return;
 	}
 
 	//  PÆrbauda, vai tas ir struktÝras tips
 	if (struct_type->type != ev_struct)
 	{
-     	ParseError("Parent must be a struct.");
+	 	ParseError("Parent must be a struct.");
 		return;
 	}
 
@@ -497,57 +493,57 @@ void AddFields(void)
 
 	//	Pievieno laukus
 	TK_Expect("{", ERR_MISSING_LBRACE);
-    while (!TK_Check("}"))
-    {
+	while (!TK_Check("}"))
+	{
 		type = CheckForType();
-    	if (!type)
-        {
-        	ParseError("Field type expected.");
+		if (!type)
+		{
+			ParseError("Field type expected.");
 			continue;
 		}
 		do
-        {
-        	t = type;
-            while (TK_Check("*"))
-            {
-            	t = MakePointerType(t);
-            }
-	        if (t == &type_void)
-        	{
-    	    	ParseError("Field cannot have void type.");
+		{
+			t = type;
+			while (TK_Check("*"))
+			{
+				t = MakePointerType(t);
 			}
-            if (tk_Token != TK_IDENTIFIER)
-            {
-            	ParseError("Field name expected");
+			if (t == &type_void)
+			{
+				ParseError("Field cannot have void type.");
 			}
-            fi = &fields[num_fields];
-            strcpy(fi->name, tk_String);
-            TK_NextToken();
-            fi->ofs = ofs;
-            while (TK_Check("["))
-            {
-            	i = EvalConstExpression(ev_int);
+			if (tk_Token != TK_IDENTIFIER)
+			{
+				ParseError("Field name expected");
+			}
+			fi = &fields[num_fields];
+			strcpy(fi->name, tk_String);
+			TK_NextToken();
+			fi->ofs = ofs;
+			while (TK_Check("["))
+			{
+				i = EvalConstExpression(ev_int);
 				TK_Expect("]", ERR_MISSING_RFIGURESCOPE);
-                t = MakeArrayType(t, i);
-            }
-           	size -= TypeSize(t);
-           	ofs += TypeSize(t);
+				t = MakeArrayType(t, i);
+			}
+		   	size -= TypeSize(t);
+		   	ofs += TypeSize(t);
 		   	if (size < 0)
 			{
-       			ParseError("Additional fields size overflow.");
+	   			ParseError("Additional fields size overflow.");
 			}
-            fi->type = t;
+			fi->type = t;
 			dprintf("Field %d %s, ofs %d, type %d.\n",
-            	num_fields, fi->name, fi->ofs, fi->type);
-            num_fields++;
-        } while (TK_Check(","));
-	    TK_Expect(";", ERR_MISSING_SEMICOLON);
-    }
-    TK_Expect(";", ERR_MISSING_SEMICOLON);
+				num_fields, fi->name, fi->ofs, fi->type);
+			num_fields++;
+		} while (TK_Check(","));
+		TK_Expect(";", ERR_MISSING_SEMICOLON);
+	}
+	TK_Expect(";", ERR_MISSING_SEMICOLON);
 
 	//	Atjauno TypeInfo
 	struct_type->fields = new field_t[num_fields];
-    memcpy(struct_type->fields, fields, num_fields * sizeof(*fields));
+	memcpy(struct_type->fields, fields, num_fields * sizeof(*fields));
 	struct_type->numfields = num_fields;
    	struct_type->available_size = size;
    	struct_type->available_ofs = ofs;
@@ -563,9 +559,9 @@ void ParseVector(void)
 {
 	field_t		fields[3];
 	field_t		*fi;
-    int			num_fields;
-    int			size;
-    TType		*type;
+	int			num_fields;
+	int			size;
+	TType		*type;
 	TType		*struct_type;
 
 	struct_type = CheckForType();
@@ -585,14 +581,14 @@ void ParseVector(void)
 	else
 	{
 		if (tk_Token != TK_IDENTIFIER)
-    	{
-    		ParseError("Vector type name expected");
+		{
+			ParseError("Vector type name expected");
 		}
 		//  Pievieno pie tipiem
 		struct_type = new TType;
 		memset(struct_type, 0, sizeof(TType));
 		strcpy(struct_type->name, tk_String);
-    	struct_type->type = ev_vector;
+		struct_type->type = ev_vector;
 		struct_type->next = types;
 		types = struct_type;
 		TK_NextToken();
@@ -609,12 +605,12 @@ void ParseVector(void)
 	size = 0;
 
 	TK_Expect("{", ERR_MISSING_LBRACE);
-    while (!TK_Check("}"))
-    {
+	while (!TK_Check("}"))
+	{
 		type = CheckForType();
-    	if (!type)
-        {
-        	ParseError("Field type expected.");
+		if (!type)
+		{
+			ParseError("Field type expected.");
 			continue;
 		}
 		if (type != &type_float)
@@ -623,30 +619,30 @@ void ParseVector(void)
 			continue;
 		}
 		do
-        {
+		{
 			if (num_fields == 3)
 			{
 				ParseError("Vector must have exactly 3 float fields");
 				continue;
 			}
-            if (tk_Token != TK_IDENTIFIER)
-            {
-            	ParseError("Field name expected");
+			if (tk_Token != TK_IDENTIFIER)
+			{
+				ParseError("Field name expected");
 				continue;
 			}
-            fi = &fields[num_fields];
-            strcpy(fi->name, tk_String);
-            TK_NextToken();
-            fi->ofs = size;
-           	size += TypeSize(type);
-            fi->type = type;
+			fi = &fields[num_fields];
+			strcpy(fi->name, tk_String);
+			TK_NextToken();
+			fi->ofs = size;
+		   	size += TypeSize(type);
+			fi->type = type;
 			dprintf("Field %d %s, ofs %d, type %d.\n",
-            	num_fields, fi->name, fi->ofs, fi->type);
-            num_fields++;
-        } while (TK_Check(","));
-	    TK_Expect(";", ERR_MISSING_SEMICOLON);
-    }
-    TK_Expect(";", ERR_MISSING_SEMICOLON);
+				num_fields, fi->name, fi->ofs, fi->type);
+			num_fields++;
+		} while (TK_Check(","));
+		TK_Expect(";", ERR_MISSING_SEMICOLON);
+	}
+	TK_Expect(";", ERR_MISSING_SEMICOLON);
 	if (num_fields != 3)
 	{
 		ParseError("Vector must have exactly 3 float fields");
@@ -654,7 +650,7 @@ void ParseVector(void)
 
 	//	Pievieno pie tipa
 	struct_type->fields = new field_t[num_fields];
-    memcpy(struct_type->fields, fields, num_fields * sizeof(*fields));
+	memcpy(struct_type->fields, fields, num_fields * sizeof(*fields));
 	struct_type->numfields = num_fields;
    	struct_type->size = size;
 }
@@ -667,38 +663,38 @@ void ParseVector(void)
 
 field_t* ParseField(TType *t)
 {
-    field_t		*fi;
+	field_t		*fi;
 	int			i;
 
 	if (t->type != ev_struct && t->type != ev_vector)
-    {
-     	ParseError(ERR_NOT_A_STRUCT, "Base type required.");
+	{
+	 	ParseError(ERR_NOT_A_STRUCT, "Base type required.");
 		return NULL;
-    }
-    if (t->size == -1)
-    {
-     	ParseError("Incomplete type.");
+	}
+	if (t->size == -1)
+	{
+	 	ParseError("Incomplete type.");
 		return NULL;
-    }
+	}
 	fi = t->fields;
 	if (tk_Token != TK_IDENTIFIER)
-    {
-    	ParseError(ERR_INVALID_IDENTIFIER, "%s, field name expacted", tk_String);
+	{
+		ParseError(ERR_INVALID_IDENTIFIER, "%s, field name expacted", tk_String);
 		return NULL;
-    }
+	}
 	for (i = 0; i < t->numfields; i++)
-    {
+	{
 		if (TK_Check(fi[i].name))
-        {
-            return &fi[i];
-        }
-    }
+		{
+			return &fi[i];
+		}
+	}
 	if (t->aux_type)
 	{
 		return ParseField(t->aux_type);
 	}
 	ParseError(ERR_NOT_A_FIELD, "Identifier: %s", tk_String);
-    return NULL;
+	return NULL;
 }
 
 //==========================================================================
@@ -753,13 +749,13 @@ void ParseTypeDef(void)
 		TK_Expect("(", ERR_MISSING_LPAREN);
 		do
 		{
-    		type = CheckForType();
+			type = CheckForType();
 
 			if (!type)
 			{
-        		if (functype.num_params == 0)
-            	{
-            		break;
+				if (functype.num_params == 0)
+				{
+					break;
 				}
 				ParseError(ERR_BAD_VAR_TYPE);
 				continue;
@@ -767,21 +763,21 @@ void ParseTypeDef(void)
 
 			while (TK_Check("*"))
 			{
-           		type = MakePointerType(type);
+		   		type = MakePointerType(type);
 			}
-    	    if (functype.num_params == 0 && type == &type_void)
-        	{
-        		break;
-	        }
+			if (functype.num_params == 0 && type == &type_void)
+			{
+				break;
+			}
 			TypeCheckPassable(type);
 
 			if (functype.num_params == MAX_PARAMS)
 			{
 				ERR_Exit(ERR_PARAMS_OVERFLOW, true, NULL);
 			}
-	   	    if (tk_Token == TK_IDENTIFIER)
-    		{
-	    	    TK_NextToken();
+	   		if (tk_Token == TK_IDENTIFIER)
+			{
+				TK_NextToken();
 			}
 
 			functype.param_types[functype.num_params] = type;
@@ -818,4 +814,13 @@ void ParseTypeDef(void)
 	TK_Expect(";", ERR_MISSING_SEMICOLON);
 }
 
-
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/21 17:52:54  dj_jl
+//	Added support for real string pointers, beautification
+//
+//	Revision 1.2  2001/07/27 14:27:56  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:56  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
@@ -64,7 +60,7 @@ static char* ErrorNames[NUM_ERRORS] =
 	"Internal Error: Break stack overflow.",
 	"Internal Error: Continue stack overflow.",
 	"Internal Error: Case stack overflow.",
-    "Internel Error: Too meny params.",
+	"Internel Error: Too meny params.",
 	"Internal Error: Local vars overflow.",
 	"Internal Error: Statement overflow.",
 	//  Failu kõÝdas
@@ -74,13 +70,13 @@ static char* ErrorNames[NUM_ERRORS] =
 	"Include nesting too deep.",
 	"Radix out of range in integer constant.",
 	"String too long.",
-    "End of file inside quoted string.",
+	"End of file inside quoted string.",
 	"New line inside quoted string.",
-    "Unknown escape char.",
+	"Unknown escape char.",
 	"Identifier too long.",
 	"Bad character.",
-    "Unterminated comment.",
-    "Too meny constants.",
+	"Unterminated comment.",
+	"Too meny constants.",
 	//  Sintakses kõÝdas
 	"Syntax error in constant expression.",
 	"Syntax error in expression.",
@@ -91,36 +87,36 @@ static char* ErrorNames[NUM_ERRORS] =
 	"Missing colon.",
 	"Missing semicolon.",
 	"Incorrect number of arguments.",
-    "Operation with void value.",
+	"Operation with void value.",
 	"Parameter type mistmatch.",
 	"Illegal identifier in expression.",
-    "Bad assignement.",
+	"Bad assignement.",
 	"Misplaced BREAK statement.",
 	"Misplaced CONTINUE statement.",
-    "Unexpected end of file.",
+	"Unexpected end of file.",
 	"Do statement not followed by 'while'.",
-    "Return value expected.",
-    "viod function cannot return a value.",
+	"Return value expected.",
+	"viod function cannot return a value.",
 	"Only 1 DEFAULT per switch allowed.",
 	"Invalid statement.",
 	"Invalid identifier.",
-    "Void variable type",
+	"Void variable type",
 	"Redefined identifier.",
-    "Type mistmatch with previous function declaration",
+	"Type mistmatch with previous function declaration",
 	"Invalid variable type.",
 	"Function redeclared.",
 	"Invalid declarator.",
 	"Invalid directive",
 	"String literal not found.",
-    "Undefined functions",
+	"Undefined functions",
 	"'++' or '--' can be used only on a int variable.",
-    "End of non void function.",
-    "Not a structure pointer.",
-    "Invalid structure field name.",
-    "Missing ']'.",
-    "Invalid operation with array",
-    "Expression type mistmatch",
-    "Pointer to pointer is not allowed.",
+	"End of non void function.",
+	"Not a structure pointer.",
+	"Invalid structure field name.",
+	"Missing ']'.",
+	"Invalid operation with array",
+	"Expression type mistmatch",
+	"Pointer to pointer is not allowed.",
 };
 
 // CODE --------------------------------------------------------------------
@@ -139,8 +135,8 @@ void ERR_Exit(error_t error, boolean info, char *text, ...)
 
 	TK_CloseSource();
 	errFile = fopen(ErrorFileName(), "w");
-    if (errFile)
-    {
+	if (errFile)
+	{
 		fprintf(errFile, "**** ERROR ****\n");
 	}
 	if (info)
@@ -191,7 +187,7 @@ void ParseError(error_t error, const char *text, ...)
 {
 	va_list	argPtr;
 
-    NumErrors++;
+	NumErrors++;
 
 	fprintf(stderr, "%s:%d: ", tk_SourceName, tk_Line);
 	if (error != ERR_NONE)
@@ -206,10 +202,10 @@ void ParseError(error_t error, const char *text, ...)
 	}
 	fputc('\n', stderr);
 
-    if (NumErrors >= 64)
-    {
-    	ERR_Exit(ERR_NONE, false, NULL);
-    }
+	if (NumErrors >= 64)
+	{
+		ERR_Exit(ERR_NONE, false, NULL);
+	}
 }
 
 //==========================================================================
@@ -222,7 +218,7 @@ void ParseError(const char *text, ...)
 {
 	va_list	argPtr;
 
-    NumErrors++;
+	NumErrors++;
 
 	fprintf(stderr, "%s:%d: ", tk_SourceName, tk_Line);
 	va_start(argPtr, text);
@@ -230,11 +226,11 @@ void ParseError(const char *text, ...)
 	va_end(argPtr);
 	fputc('\n', stderr);
 
-    if (NumErrors >= 64)
-    {
+	if (NumErrors >= 64)
+	{
 		TK_CloseSource();
 		exit(1);
-    }
+	}
 }
 
 //==========================================================================
@@ -294,3 +290,13 @@ static char *ErrorFileName(void)
 	return errFileName;
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/21 17:52:54  dj_jl
+//	Added support for real string pointers, beautification
+//
+//	Revision 1.2  2001/07/27 14:27:56  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

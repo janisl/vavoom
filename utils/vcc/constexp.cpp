@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:56  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
@@ -68,19 +64,19 @@ static int ConstExprFactor(void)
 			break;
 
 		case TK_PUNCT:
-        	if (TK_Check("("))
-            {
+			if (TK_Check("("))
+			{
 				ret = EvalConstExpression(ev_int);
 				TK_Expect(")", ERR_BAD_CONST_EXPR);
-            }
-            else if (TK_Check("!"))
-            {
+			}
+			else if (TK_Check("!"))
+			{
 				ret = !ConstExprFactor();
-            }
-            else
-            {
+			}
+			else
+			{
 				ERR_Exit(ERR_BAD_CONST_EXPR, true, "Invalid punct");
-            }
+			}
 			break;
 
 		case TK_IDENTIFIER:
@@ -88,8 +84,8 @@ static int ConstExprFactor(void)
 			if (num != -1)
 			{
 				TK_NextToken();
-	           	ret = Constants[num].value;
-    		}
+			   	ret = Constants[num].value;
+			}
 			else
 			{
 				ERR_Exit(ERR_BAD_CONST_EXPR, true, "Invalid token %d %s", tk_Token, tk_String);
@@ -119,24 +115,24 @@ static int CExprLevJ(void)
 	{
 		ret = -ret;
 	}
-    do
+	do
 	{
-    	if (TK_Check("*"))
-        {
+		if (TK_Check("*"))
+		{
 			ret *= ConstExprFactor();
-        }
-        else if (TK_Check("/"))
-        {
+		}
+		else if (TK_Check("/"))
+		{
 			ret /= ConstExprFactor();
-        }
-        else if (TK_Check("%"))
-        {
+		}
+		else if (TK_Check("%"))
+		{
 			ret %= ConstExprFactor();
-        }
-        else
-        {
-        	return ret;
-        }
+		}
+		else
+		{
+			return ret;
+		}
 	} while (1);
 }
 
@@ -146,20 +142,20 @@ static int CExprLevI(void)
 	int		ret;
 
 	ret = CExprLevJ();
-    do
+	do
 	{
-    	if (TK_Check("+"))
-        {
+		if (TK_Check("+"))
+		{
 			ret += CExprLevJ();
-        }
-        else if (TK_Check("-"))
-        {
+		}
+		else if (TK_Check("-"))
+		{
 			ret -= CExprLevJ();
-        }
-        else
-        {
-        	return ret;
-        }
+		}
+		else
+		{
+			return ret;
+		}
 	} while (1);
 }
 
@@ -169,21 +165,21 @@ static int CExprLevH(void)
 	int		ret;
 
 	ret = CExprLevI();
-    do
-    {
-    	if (TK_Check("<<"))
-        {
+	do
+	{
+		if (TK_Check("<<"))
+		{
 			ret <<= CExprLevI();
-        }
-        else if (TK_Check(">>"))
-        {
+		}
+		else if (TK_Check(">>"))
+		{
 			ret >>= CExprLevI();
-        }
-        else
-        {
-        	return ret;
-        }
-    } while (1);
+		}
+		else
+		{
+			return ret;
+		}
+	} while (1);
 }
 
 // Operatori: < <= > >=
@@ -192,29 +188,29 @@ static int CExprLevG(void)
 	int		ret;
 
 	ret = CExprLevH();
-    do
-    {
-    	if (TK_Check("<"))
-        {
+	do
+	{
+		if (TK_Check("<"))
+		{
 			ret = ret < CExprLevH();
-        }
-        else if (TK_Check("<="))
-        {
+		}
+		else if (TK_Check("<="))
+		{
 			ret = ret <= CExprLevH();
-        }
-        else if (TK_Check(">"))
-        {
+		}
+		else if (TK_Check(">"))
+		{
 			ret = ret > CExprLevH();
-        }
-        else if (TK_Check(">="))
-        {
+		}
+		else if (TK_Check(">="))
+		{
 			ret = ret >= CExprLevH();
-        }
-        else
-        {
-        	return ret;
-        }
-    } while (1);
+		}
+		else
+		{
+			return ret;
+		}
+	} while (1);
 }
 
 // Operatori: == !=
@@ -223,21 +219,21 @@ static int CExprLevF(void)
 	int		ret;
 
 	ret = CExprLevG();
-    do
-    {
-    	if (TK_Check("=="))
-        {
+	do
+	{
+		if (TK_Check("=="))
+		{
 			ret = ret == CExprLevG();
-        }
-        else if (TK_Check("!="))
-        {
+		}
+		else if (TK_Check("!="))
+		{
 			ret = ret != CExprLevG();
-        }
-        else
-        {
-        	return ret;
-        }
-    } while (1);
+		}
+		else
+		{
+			return ret;
+		}
+	} while (1);
 }
 
 // Operators: &
@@ -302,7 +298,7 @@ static int CExprLevA(void)
 	{
 		ret = ret || CExprLevB();
 	}
-    return ret;
+	return ret;
 }
 
 //**************************************************************************
@@ -322,15 +318,15 @@ static float FConstExprFactor(void)
 			TK_NextToken();
 			break;
 		case TK_PUNCT:
-        	if (TK_Check("("))
-            {
+			if (TK_Check("("))
+			{
 				ret = EvalConstExpression(ev_float);
 				TK_Expect(")", ERR_BAD_CONST_EXPR);
-            }
-            else
-            {
+			}
+			else
+			{
 				ERR_Exit(ERR_BAD_CONST_EXPR, true, "Invalid punct");
-            }
+			}
 			break;
 		default:
 			ERR_Exit(ERR_BAD_CONST_EXPR, true, "Invalid token %d %s", tk_Token, tk_String);
@@ -355,20 +351,20 @@ static float FCExprLevJ(void)
 	{
 		ret = -ret;
 	}
-    do
+	do
 	{
-    	if (TK_Check("*"))
-        {
+		if (TK_Check("*"))
+		{
 			ret *= FConstExprFactor();
-        }
-        else if (TK_Check("/"))
-        {
+		}
+		else if (TK_Check("/"))
+		{
 			ret /= FConstExprFactor();
-        }
-        else
-        {
-        	return ret;
-        }
+		}
+		else
+		{
+			return ret;
+		}
 	} while (1);
 }
 
@@ -378,20 +374,20 @@ static float FCExprLevI(void)
 	float		ret;
 
 	ret = FCExprLevJ();
-    do
+	do
 	{
-    	if (TK_Check("+"))
-        {
+		if (TK_Check("+"))
+		{
 			ret += FCExprLevJ();
-        }
-        else if (TK_Check("-"))
-        {
+		}
+		else if (TK_Check("-"))
+		{
 			ret -= FCExprLevJ();
-        }
-        else
-        {
-        	return ret;
-        }
+		}
+		else
+		{
+			return ret;
+		}
 	} while (1);
 }
 
@@ -402,49 +398,49 @@ int EvalConstExpression(int type)
 	int		ret;
 
  	switch (type)
-    {
-     case ev_int:
-     case ev_uint:
+	{
+	 case ev_int:
+	 case ev_uint:
 		return CExprLevA();
 
 	 case ev_float:
-    	return PassFloat(FCExprLevI());
+		return PassFloat(FCExprLevI());
 
-     case ev_string:
-     	if (tk_Token != TK_STRING)
-        {
-        	ERR_Exit(ERR_BAD_CONST_EXPR, true, "String expected");
-        }
+	 case ev_string:
+	 	if (tk_Token != TK_STRING)
+		{
+			ERR_Exit(ERR_BAD_CONST_EXPR, true, "String expected");
+		}
 		ret = FindString(tk_String);
 		TK_NextToken();
-        return ret;
+		return ret;
 
 	 case ev_function:
-        if (TK_Check("NULL"))
-        {
-        	return 0;
+		if (TK_Check("NULL"))
+		{
+			return 0;
 		}
-        else if (tk_Token == TK_IDENTIFIER)
-        {
-        	ret = CheckForFunction(tk_String);
-            if (!ret)
-	        {
-    	    	ERR_Exit(ERR_NONE, true, "%s is not a function", tk_String);
-        	}
+		else if (tk_Token == TK_IDENTIFIER)
+		{
+			ret = CheckForFunction(tk_String);
+			if (!ret)
+			{
+				ERR_Exit(ERR_NONE, true, "%s is not a function", tk_String);
+			}
 			TK_NextToken();
-	        return ret;
-        }
-        else
-        {
-        	ERR_Exit(ERR_NONE, true, "Function name expected");
-        }
-        break;
+			return ret;
+		}
+		else
+		{
+			ERR_Exit(ERR_NONE, true, "Function name expected");
+		}
+		break;
 
 	 default:
-     	ERR_Exit(ERR_NONE, true, "Constant value of this variable type cannot be defined.");
-    }
+	 	ERR_Exit(ERR_NONE, true, "Constant value of this variable type cannot be defined.");
+	}
 
-    return 0;
+	return 0;
 }
 
 //==========================================================================
@@ -458,3 +454,13 @@ float ConstFloatExpression(void)
    	return FCExprLevI();
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/21 17:52:54  dj_jl
+//	Added support for real string pointers, beautification
+//
+//	Revision 1.2  2001/07/27 14:27:56  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

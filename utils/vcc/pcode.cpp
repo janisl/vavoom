@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:56  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
@@ -54,6 +50,7 @@ int*			CodeBuffer;
 int				CodeBufferSize;
 
 int*			globals;
+byte*			globalinfo;
 int				numglobals;
 
 TGlobalDef*		globaldefs;
@@ -85,15 +82,15 @@ static int		urshifta = 0;
 static struct
 {
 	char*	name;
-    int		params;
+	int		params;
 } StatementInfo[NUM_OPCODES] =
 {
 	{"DONE", 0},
 	{"RETURN", 0},
 	{"PUSHNUMBER", 1},
 	{"PUSHPOINTED", 0},
-    {"LOCALADDRESS", 1},
-    {"GLOBALADDRESS", 1},
+	{"LOCALADDRESS", 1},
+	{"GLOBALADDRESS", 1},
 	{"ADD", 0},
 	{"SUBTRACT", 0},
 	{"MULTIPLY", 0},
@@ -124,7 +121,7 @@ static struct
 	{"RSHIFT", 0},
 	{"URSHIFT", 0},
 	{"UNARYMINUS", 0},
-    {"BITINVERSE", 0},
+	{"BITINVERSE", 0},
 	{"CALL", 1},
 	{"GOTO", 1},
 	{"IFGOTO", 1},
@@ -140,19 +137,19 @@ static struct
 	{"MODVAR", 0},
 	{"UDIVVAR", 0},
 	{"UMODVAR", 0},
-    {"ANDVAR", 0},
-    {"ORVAR", 0},
+	{"ANDVAR", 0},
+	{"ORVAR", 0},
 
-    {"XORVAR", 0},
-    {"LSHIFTVAR", 0},
-    {"RSHIFTVAR", 0},
-    {"URSHIFTVAR", 0},
+	{"XORVAR", 0},
+	{"LSHIFTVAR", 0},
+	{"RSHIFTVAR", 0},
+	{"URSHIFTVAR", 0},
 	{"PREINC", 0},
 	{"PREDEC", 0},
-    {"POSTINC", 0},
-    {"POSTDEC", 0},
+	{"POSTINC", 0},
+	{"POSTDEC", 0},
 	{"IFTOPGOTO", 1},
-    {"IFNOTTOPGOTO", 1},
+	{"IFNOTTOPGOTO", 1},
 
 	{"ASSIGN_DROP", 0},
 	{"ADDVAR_DROP", 0},
@@ -162,13 +159,13 @@ static struct
 	{"MODVAR_DROP", 0},
 	{"UDIVVAR_DROP", 0},
 	{"UMODVAR_DROP", 0},
-    {"ANDVAR_DROP", 0},
-    {"ORVAR_DROP", 0},
+	{"ANDVAR_DROP", 0},
+	{"ORVAR_DROP", 0},
 
-    {"XORVAR_DROP", 0},
-    {"LSHIFTVAR_DROP", 0},
-    {"RSHIFTVAR_DROP", 0},
-    {"URSHIFTVAR_DROP", 0},
+	{"XORVAR_DROP", 0},
+	{"LSHIFTVAR_DROP", 0},
+	{"RSHIFTVAR_DROP", 0},
+	{"URSHIFTVAR_DROP", 0},
 	{"INC_DROP", 0},
 	{"DEC_DROP", 0},
 	{"FADD", 0},
@@ -218,6 +215,7 @@ static struct
 	{"VISCALEVAR_DROP", 0},
 	{"RETURNL", 0},
 	{"RETURNV", 0},
+	{"PUSHSTRING", 1},
 };
 
 // CODE --------------------------------------------------------------------
@@ -233,15 +231,16 @@ void PC_Init(void)
 	CodeBuffer = new int[CODE_BUFFER_SIZE];
 	CodeBufferSize = 1;
 	globals = new int[MAX_GLOBALS];
+	globalinfo = new byte[MAX_GLOBALS];
 	numglobals = 1;
 	globaldefs = new TGlobalDef[MAX_GLOBALS];
 	numglobaldefs = 1;
 	globaldefs[0].type = &type_void;
 	functions = new TFunction[MAX_FUNCTIONS];
 	numfunctions = 1;
-    numbuiltins = 1;
+	numbuiltins = 1;
 	functions[0].type = &type_function;
-    strings = new char[MAX_STRINGS_BUF];
+	strings = new char[MAX_STRINGS_BUF];
 	//	1. simbolu virkne ir tukýa
 	StringCount = 1;
 	strofs = 4;
@@ -291,18 +290,18 @@ int FindString(char *str)
 int* AddStatement(int statement)
 {
 	if (CodeBufferSize >= CODE_BUFFER_SIZE)
-    {
-    	ERR_Exit(ERR_NONE, false, "Code buffer overflow.");
-    }
-    if (StatementInfo[statement].params != 0)
-    {
-    	ERR_Exit(ERR_NONE, false, "Opcode doesn't have 0 params");
-    }
+	{
+		ERR_Exit(ERR_NONE, false, "Code buffer overflow.");
+	}
+	if (StatementInfo[statement].params != 0)
+	{
+		ERR_Exit(ERR_NONE, false, "Opcode doesn't have 0 params");
+	}
 
 	if (statement == OPC_DROP)
-    {
-    	switch (undoOpcode)
-        {
+	{
+		switch (undoOpcode)
+		{
 		 case OPC_ASSIGN:
 			statement = OPC_ASSIGN_DROP;
 			break;
@@ -387,18 +386,18 @@ int* AddStatement(int statement)
 
 		 default:
 			break;
-        }
+		}
 
-        if (statement != OPC_DROP)
-        {
-        	UndoStatement();
-        }
-    }
+		if (statement != OPC_DROP)
+		{
+			UndoStatement();
+		}
+	}
 
 	if (statement == OPC_VDROP)
-    {
-    	switch (undoOpcode)
-        {
+	{
+		switch (undoOpcode)
+		{
 		 case OPC_VASSIGN:
 			statement = OPC_VASSIGN_DROP;
 			break;
@@ -421,29 +420,29 @@ int* AddStatement(int statement)
 
 		 default:
 			break;
-        }
+		}
 
-        if (statement != OPC_VDROP)
-        {
-        	UndoStatement();
-        }
-    }
+		if (statement != OPC_VDROP)
+		{
+			UndoStatement();
+		}
+	}
 
 	undoOpcode = statement;
-    undoSize = CodeBufferSize;
+	undoSize = CodeBufferSize;
 
 	CodeBuffer[CodeBufferSize++] = statement;
 
-    if (statement == OPC_UDIVIDE) udiv++;
-    if (statement == OPC_UMODULUS) umod++;
-    if (statement == OPC_ULT) ult++;
-    if (statement == OPC_ULE) ule++;
-    if (statement == OPC_UGT) ugt++;
-    if (statement == OPC_UGE) uge++;
-    if (statement == OPC_URSHIFT) urshift++;
-    if (statement == OPC_UDIVVAR) udiva++;
-    if (statement == OPC_UMODVAR) umoda++;
-    if (statement == OPC_URSHIFTVAR) urshifta++;
+	if (statement == OPC_UDIVIDE) udiv++;
+	if (statement == OPC_UMODULUS) umod++;
+	if (statement == OPC_ULT) ult++;
+	if (statement == OPC_ULE) ule++;
+	if (statement == OPC_UGT) ugt++;
+	if (statement == OPC_UGE) uge++;
+	if (statement == OPC_URSHIFT) urshift++;
+	if (statement == OPC_UDIVVAR) udiva++;
+	if (statement == OPC_UMODVAR) umoda++;
+	if (statement == OPC_URSHIFTVAR) urshifta++;
 	return &CodeBuffer[CodeBufferSize - 1];
 }
 
@@ -456,16 +455,16 @@ int* AddStatement(int statement)
 int* AddStatement(int statement, int parm1)
 {
 	if (CodeBufferSize >= CODE_BUFFER_SIZE)
-    {
-    	ERR_Exit(ERR_NONE, false, "Code buffer overflow.");
-    }
-    if (StatementInfo[statement].params != 1)
-    {
-    	ERR_Exit(ERR_NONE, false, "Opcode does.t have 1 params");
-    }
+	{
+		ERR_Exit(ERR_NONE, false, "Code buffer overflow.");
+	}
+	if (StatementInfo[statement].params != 1)
+	{
+		ERR_Exit(ERR_NONE, false, "Opcode does.t have 1 params");
+	}
 
 	undoOpcode = statement;
-    undoSize = CodeBufferSize;
+	undoSize = CodeBufferSize;
 
 	CodeBuffer[CodeBufferSize++] = statement;
    	CodeBuffer[CodeBufferSize++] = parm1;
@@ -482,16 +481,16 @@ int* AddStatement(int statement, int parm1)
 int* AddStatement(int statement, int parm1, int parm2)
 {
 	if (CodeBufferSize >= CODE_BUFFER_SIZE)
-    {
-    	ERR_Exit(ERR_NONE, false, "Code buffer overflow.");
-    }
-    if (StatementInfo[statement].params != 2)
-    {
-    	ERR_Exit(ERR_NONE, false, "Opcode does.t have 2 params");
-    }
+	{
+		ERR_Exit(ERR_NONE, false, "Code buffer overflow.");
+	}
+	if (StatementInfo[statement].params != 2)
+	{
+		ERR_Exit(ERR_NONE, false, "Opcode does.t have 2 params");
+	}
 
 	undoOpcode = statement;
-    undoSize = CodeBufferSize;
+	undoSize = CodeBufferSize;
 
 	CodeBuffer[CodeBufferSize++] = statement;
    	CodeBuffer[CodeBufferSize++] = parm1;
@@ -509,7 +508,7 @@ int* AddStatement(int statement, int parm1, int parm2)
 int UndoStatement(void)
 {
 	CodeBufferSize = undoSize;
-    return undoOpcode;
+	return undoOpcode;
 }
 
 //==========================================================================
@@ -528,7 +527,7 @@ void PC_WriteObject(char *name)
 	f = fopen(name, "wb");
 	if (!f)
 	{
-        ERR_Exit(ERR_CANT_OPEN_FILE, false, "File: \"%s\".", name);
+		ERR_Exit(ERR_CANT_OPEN_FILE, false, "File: \"%s\".", name);
 	}
 
 	memset(&progs, 0, sizeof(progs));
@@ -542,19 +541,22 @@ void PC_WriteObject(char *name)
 	progs.num_statements = CodeBufferSize;
 	for (i = 0; i < CodeBufferSize; i++)
 	{
-    	int opc;
-    	opc = LittleLong(CodeBuffer[i]);
+		int opc;
+		opc = LittleLong(CodeBuffer[i]);
 		fwrite(&opc, 1, 4, f);
 	}
 
 	progs.ofs_globals = ftell(f);
 	progs.num_globals = numglobals;
 	for (i = 0; i < numglobals; i++)
-    {
-    	int gv;
-    	gv = LittleLong(globals[i]);
+	{
+		int gv;
+		gv = LittleLong(globals[i]);
 		fwrite(&gv, 1, 4, f);
 	}
+
+	progs.ofs_globalinfo = ftell(f);
+	fwrite(globalinfo, 1, numglobals, f);
 
 	progs.ofs_functions = ftell(f);
 	progs.num_functions = numfunctions;
@@ -586,15 +588,16 @@ void PC_WriteObject(char *name)
 	dprintf("Strings    %6d %6d\n", StringCount, strofs);
 	dprintf("Statements %6d %6d\n", CodeBufferSize, CodeBufferSize * 4);
 	dprintf("Globals    %6d %6d\n", numglobals, numglobals * 4);
+	dprintf("Global info       %6d\n", numglobals);
 	dprintf("Functions  %6d %6ld\n", numfunctions, numfunctions * sizeof(dfunction_t));
-    dprintf("Builtins   %6d\n", numbuiltins);
+	dprintf("Builtins   %6d\n", numbuiltins);
 	dprintf("Globaldefs %6d %6ld\n", numglobaldefs, numglobaldefs * sizeof(globaldef_t));
 	dprintf("TOTAL SIZE        %6d\n", (int)ftell(f));
 
 	memcpy(progs.magic, PROG_MAGIC, 4);
 	progs.version = PROG_VERSION;
 	for (i = 0; i < (int)sizeof(progs) / 4; i++)
-    {
+	{
 		((int *)&progs)[i] = LittleLong(((int *)&progs)[i]);
 	}
 	fseek(f, 0, SEEK_SET);
@@ -616,49 +619,49 @@ void PC_WriteObject(char *name)
 static void DumpAsmFunction(int num)
 {
 	int		s;
-    int		st;
-    int		i;
+	int		st;
+	int		i;
 
 	s = functions[num].first_statement;
-    if (s < 0)
-    {
-    	//	IebÝvñtÆ funkcija
-    	dprintf("Builtin Nr. %d\n", -s);
-        return;
-    }
+	if (s < 0)
+	{
+		//	IebÝvñtÆ funkcija
+		dprintf("Builtin Nr. %d\n", -s);
+		return;
+	}
 	do
-    {
-    	//	OperÆcijas kods
-    	st = CodeBuffer[s];
-    	dprintf("%6d: %s ", s, StatementInfo[st].name);
-        s++;
-        if (StatementInfo[st].params >= 1)
-        {
-        	//	1. arguments
-        	dprintf("%6d ", CodeBuffer[s]);
-	        if (st == OPC_CALL)
-    	    {
-            	//	IzsauktÆs funkcijas vÆrds
-        		dprintf("(%s)", strings + functions[CodeBuffer[s]].s_name);
-	        }
-	        s++;
-        }
-        if (StatementInfo[st].params >= 2)
-        {
-        	//	2. arguments
-        	dprintf("%6d ", CodeBuffer[s]);
-	        s++;
-        }
-        dprintf("\n");
+	{
+		//	OperÆcijas kods
+		st = CodeBuffer[s];
+		dprintf("%6d: %s ", s, StatementInfo[st].name);
+		s++;
+		if (StatementInfo[st].params >= 1)
+		{
+			//	1. arguments
+			dprintf("%6d ", CodeBuffer[s]);
+			if (st == OPC_CALL)
+			{
+				//	IzsauktÆs funkcijas vÆrds
+				dprintf("(%s)", strings + functions[CodeBuffer[s]].s_name);
+			}
+			s++;
+		}
+		if (StatementInfo[st].params >= 2)
+		{
+			//	2. arguments
+			dprintf("%6d ", CodeBuffer[s]);
+			s++;
+		}
+		dprintf("\n");
 		for (i=0; i<numfunctions; i++)
-        {
-        	//	Ja nÆkoýÆ komanda ir kÆdas citas funkcijas pirmÆ komanda,
-            // tad ýØ funkcija ir beigusies
-        	if (s == functions[i].first_statement)
-            {
-            	s = CodeBufferSize;
-            }
-        }
+		{
+			//	Ja nÆkoýÆ komanda ir kÆdas citas funkcijas pirmÆ komanda,
+			// tad ýØ funkcija ir beigusies
+			if (s == functions[i].first_statement)
+			{
+				s = CodeBufferSize;
+			}
+		}
 	} while (s < CodeBufferSize);
 }
 
@@ -673,15 +676,25 @@ void PC_DumpAsm(char* name)
 	int		i;
 
 	dprintf("--------------------------------------------\n");
-    dprintf("Dump ASM function %s\n\n", name);
+	dprintf("Dump ASM function %s\n\n", name);
 	for (i=0; i<numfunctions; i++)
-    {
-    	if (!strcmp(name, strings + functions[i].s_name))
-        {
-        	DumpAsmFunction(i);
-            return;
+	{
+		if (!strcmp(name, strings + functions[i].s_name))
+		{
+			DumpAsmFunction(i);
+			return;
 		}
-    }
+	}
 	dprintf("Not found!\n");
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/21 17:52:54  dj_jl
+//	Added support for real string pointers, beautification
+//
+//	Revision 1.2  2001/07/27 14:27:56  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

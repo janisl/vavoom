@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:56  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
@@ -88,7 +84,7 @@ int main(int argc, char **argv)
 	TK_CloseSource();
 	PC_WriteObject(ObjectFileName);
 	ERR_RemoveErrorFile();
-    DumpAsm();
+	DumpAsm();
 	endtime = time(0);
 	dprintf("Time elapsed: %2d:%2d\n",
 		(endtime - starttime) / 60, (endtime - starttime) % 60);
@@ -107,17 +103,17 @@ static void Init(void)
 
 	//	Izveido pagaidu faila v∆rdu
 	tempdir = getenv("TEMP");
-    if (!tempdir)
-    {
-    	tempdir = getenv("TMP");
+	if (!tempdir)
+	{
+		tempdir = getenv("TMP");
 		if (!tempdir)
-        {
-        	tempdir = ".";
+		{
+			tempdir = ".";
 		}
 	}
 	sprintf(TempFileName, "%s/vcc_temp.i", tempdir);
 
-    //	Iznÿcina pagaidu failu, ja t∆ds jau eksistÒ
+	//	Iznÿcina pagaidu failu, ja t∆ds jau eksistÒ
 	remove(TempFileName);
 
 	//	Izveido apstr∆des programmas komandlÿniju
@@ -125,9 +121,9 @@ static void Init(void)
 
 	DebugMode = false;
 	DebugFile = NULL;
-    num_dump_asm = 0;
+	num_dump_asm = 0;
 	TK_Init();
-    PC_Init();
+	PC_Init();
 }
 
 //==========================================================================
@@ -191,8 +187,8 @@ static void ProcessArgs(int ArgCount, char **ArgVector)
 					{
 						DisplayUsage();
 					}
-                	dump_asm_names[num_dump_asm++] = text;
-                    break;
+					dump_asm_names[num_dump_asm++] = text;
+					break;
 				case 'b':
 					if (*text)
 					{
@@ -202,10 +198,10 @@ static void ProcessArgs(int ArgCount, char **ArgVector)
 					break;
 				case 'D':
 				case 'U':
-                case 'I':
+				case 'I':
 					strcat(cpp_params, " ");
-                    strcat(cpp_params, ArgVector[i]);
-                    break;
+					strcat(cpp_params, ArgVector[i]);
+					break;
 				default:
 					DisplayUsage();
 					break;
@@ -239,7 +235,7 @@ static void ProcessArgs(int ArgCount, char **ArgVector)
 		DefaultExtension(ObjectFileName, ".dat");
 	}
 	dprintf("Main source file: %s\n", SourceFileName);
-    dprintf("  Resulting file: %s\n", ObjectFileName);
+	dprintf("  Resulting file: %s\n", ObjectFileName);
 }
 
 //==========================================================================
@@ -271,14 +267,14 @@ static void Preprocess(void)
 	ret = system(cmd_line);
 
 	if (ret)
-    {
-    	if (ret == -1)
-        {
-        	//	SistÒmas kı›da
-        	perror("Preprocessor error");
-        }
+	{
+		if (ret == -1)
+		{
+			//	SistÒmas kı›da
+			perror("Preprocessor error");
+		}
 		exit(1);
-    }
+	}
 }
 
 //==========================================================================
@@ -306,9 +302,9 @@ static void DumpAsm(void)
 	int		i;
 
 	for (i=0; i<num_dump_asm; i++)
-    {
-    	PC_DumpAsm(dump_asm_names[i]);
-    }
+	{
+		PC_DumpAsm(dump_asm_names[i]);
+	}
 }
 
 //==========================================================================
@@ -335,3 +331,13 @@ int dprintf(const char *text, ...)
 	return ret;
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/21 17:52:54  dj_jl
+//	Added support for real string pointers, beautification
+//
+//	Revision 1.2  2001/07/27 14:27:56  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

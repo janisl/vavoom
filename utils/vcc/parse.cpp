@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:56  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
@@ -100,12 +96,12 @@ int CheckForGlobalVar(char* name)
 	int		i;
 
 	for (i=1; i<numglobaldefs; i++)
-    {
-    	if (!strcmp(strings + globaldefs[i].s_name, name))
-        {
-        	return i;
-        }
-    }
+	{
+		if (!strcmp(strings + globaldefs[i].s_name, name))
+		{
+			return i;
+		}
+	}
 	return 0;
 }
 
@@ -120,12 +116,12 @@ int CheckForFunction(char* name)
 	int		i;
 
 	for (i=1; i<numfunctions; i++)
-    {
-    	if (!strcmp(strings + functions[i].s_name, name))
-        {
-        	return i;
-        }
-    }
+	{
+		if (!strcmp(strings + functions[i].s_name, name))
+		{
+			return i;
+		}
+	}
 	return 0;
 }
 
@@ -140,12 +136,12 @@ int CheckForLocalVar(char* name)
 	int		i;
 
 	for (i=1; i<numlocaldefs; i++)
-    {
-    	if (!strcmp(localdefs[i].name, name))
-        {
-        	return i;
-        }
-    }
+	{
+		if (!strcmp(localdefs[i].name, name))
+		{
+			return i;
+		}
+	}
 	return 0;
 }
 
@@ -158,12 +154,12 @@ int CheckForLocalVar(char* name)
 int CheckForConstant(const char *name)
 {
 	for (int i = ConstLookup[(byte)name[0]]; i != -1; i = Constants[i].next)
-    {
-    	if (!strcmp(name, Constants[i].name))
+	{
+		if (!strcmp(name, Constants[i].name))
 		{
-            return i;
+			return i;
 		}
-    }
+	}
 	return -1;
 }
 
@@ -275,12 +271,12 @@ static void ParseStatement(void)
 
 	switch(tk_Token)
 	{
-    	case TK_EOF:
-        	ERR_Exit(ERR_UNEXPECTED_EOF, true, NULL);
-            break;
+		case TK_EOF:
+			ERR_Exit(ERR_UNEXPECTED_EOF, true, NULL);
+			break;
 		case TK_KEYWORD:
-            if (TK_Check("if"))
-            {
+			if (TK_Check("if"))
+			{
 				int*		jumpAddrPtr1;
 				int*		jumpAddrPtr2;
 
@@ -301,13 +297,13 @@ static void ParseStatement(void)
 					*jumpAddrPtr1 = CodeBufferSize;
 				}
 			}
-        	else if (TK_Check("while"))
-            {
+			else if (TK_Check("while"))
+			{
 				int			topAddr;
 				int*		outAddrPtr;
 
 				BreakLevel++;
-                ContinueLevel++;
+				ContinueLevel++;
 				topAddr = CodeBufferSize;
 				TK_Expect("(", ERR_MISSING_LPAREN);
 				TypeCheck1(ParseExpression());
@@ -320,13 +316,13 @@ static void ParseStatement(void)
 				WriteContinues(topAddr);
 				WriteBreaks();
 			}
-            else if (TK_Check("do"))
-            {
+			else if (TK_Check("do"))
+			{
 				int			topAddr;
 				int			exprAddr;
 
 				BreakLevel++;
-                ContinueLevel++;
+				ContinueLevel++;
 				topAddr = CodeBufferSize;
 				ParseStatement();
 				TK_Expect("while", ERR_BAD_DO_STATEMENT);
@@ -339,74 +335,74 @@ static void ParseStatement(void)
 				WriteContinues(exprAddr);
 				WriteBreaks();
 			}
-            else if (TK_Check("for"))
-            {
+			else if (TK_Check("for"))
+			{
 				int*		jumpAddrPtr1;
 				int*		jumpAddrPtr2;
 				int			topAddr;
-                int			contAddr;
+				int			contAddr;
 
 				BreakLevel++;
-                ContinueLevel++;
+				ContinueLevel++;
 				TK_Expect("(", ERR_MISSING_LPAREN);
-                do
-                {
-                	t = ParseExpression();
-                   	AddDrop(t);
+				do
+				{
+					t = ParseExpression();
+				   	AddDrop(t);
 				} while (TK_Check(","));
-                TK_Expect(";", ERR_MISSING_SEMICOLON);
-                topAddr = CodeBufferSize;
-                t = ParseExpression();
-                if (t == &type_void)
-                {
-                	AddStatement(OPC_PUSHNUMBER, 1);
+				TK_Expect(";", ERR_MISSING_SEMICOLON);
+				topAddr = CodeBufferSize;
+				t = ParseExpression();
+				if (t == &type_void)
+				{
+					AddStatement(OPC_PUSHNUMBER, 1);
 				}
-                else
-                {
-                	TypeCheck1(t);
-                }
-                jumpAddrPtr1 = AddStatement(OPC_IFGOTO, 0);
-                jumpAddrPtr2 = AddStatement(OPC_GOTO, 0);
-                TK_Expect(";", ERR_MISSING_SEMICOLON);
-                contAddr = CodeBufferSize;
-                do
-                {
-                	t = ParseExpression();
-                   	AddDrop(t);
+				else
+				{
+					TypeCheck1(t);
+				}
+				jumpAddrPtr1 = AddStatement(OPC_IFGOTO, 0);
+				jumpAddrPtr2 = AddStatement(OPC_GOTO, 0);
+				TK_Expect(";", ERR_MISSING_SEMICOLON);
+				contAddr = CodeBufferSize;
+				do
+				{
+					t = ParseExpression();
+				   	AddDrop(t);
 				} while (TK_Check(","));
-                AddStatement(OPC_GOTO, topAddr);
+				AddStatement(OPC_GOTO, topAddr);
 				TK_Expect(")", ERR_MISSING_RPAREN);
-                *jumpAddrPtr1 = CodeBufferSize;
-                ParseStatement();
-                AddStatement(OPC_GOTO, contAddr);
-                *jumpAddrPtr2 = CodeBufferSize;
-                WriteContinues(contAddr);
-                WriteBreaks();
-            }
-            else if (TK_Check("break"))
-            {
+				*jumpAddrPtr1 = CodeBufferSize;
+				ParseStatement();
+				AddStatement(OPC_GOTO, contAddr);
+				*jumpAddrPtr2 = CodeBufferSize;
+				WriteContinues(contAddr);
+				WriteBreaks();
+			}
+			else if (TK_Check("break"))
+			{
 				AddBreak();
 			}
-            else if (TK_Check("continue"))
-            {
+			else if (TK_Check("continue"))
+			{
 				AddContinue();
 			}
 			else if (TK_Check("return"))
 			{
 				if (TK_Check (";"))
 				{
-                	if (FuncRetType != &type_void)
-                    {
-                    	ERR_Exit(ERR_NO_RET_VALUE, true, NULL);
-                    }
+					if (FuncRetType != &type_void)
+					{
+						ERR_Exit(ERR_NO_RET_VALUE, true, NULL);
+					}
 					AddStatement(OPC_RETURN);
 				}
-                else
-                {
-                	if (FuncRetType == &type_void)
-                    {
-                    	ERR_Exit(ERR_VOID_RET, true, NULL);
-                    }
+				else
+				{
+					if (FuncRetType == &type_void)
+					{
+						ERR_Exit(ERR_VOID_RET, true, NULL);
+					}
 					t = ParseExpression();
 					TK_Expect(";", ERR_MISSING_SEMICOLON);
 					TypeCheck3(t, FuncRetType);
@@ -424,13 +420,13 @@ static void ParseStatement(void)
 					}
 				}
 			}
-            else if (TK_Check("switch"))
-            {
+			else if (TK_Check("switch"))
+			{
 				int*		switcherAddrPtr;
 				int*		outAddrPtr;
-                int			numcases;
+				int			numcases;
 				int			defaultAddress;
-                int			i;
+				int			i;
 				struct
 				{
 					int value;
@@ -443,10 +439,10 @@ static void ParseStatement(void)
 
 				switcherAddrPtr = AddStatement(OPC_GOTO, 0);
 				defaultAddress = 0;
-                numcases = 0;
+				numcases = 0;
 				BreakLevel++;
 
-                TK_Expect("{", ERR_MISSING_LBRACE);
+				TK_Expect("{", ERR_MISSING_LBRACE);
 				do
 				{
 					if (TK_Check("case"))
@@ -459,17 +455,17 @@ static void ParseStatement(void)
 						CaseInfo[numcases].address = CodeBufferSize;
 						numcases++;
 						TK_Expect(":", ERR_MISSING_COLON);
-                        continue;
+						continue;
 					}
-		            if (TK_Check("default"))
-		            {
+					if (TK_Check("default"))
+					{
 						if (defaultAddress)
 						{
 							ERR_Exit(ERR_MULTIPLE_DEFAULT, true, NULL);
 						}
-                        defaultAddress = CodeBufferSize;
+						defaultAddress = CodeBufferSize;
 						TK_Expect(":", ERR_MISSING_COLON);
-                        continue;
+						continue;
 					}
 					ParseStatement();
 				} while (!TK_Check("}"));
@@ -493,19 +489,19 @@ static void ParseStatement(void)
 
 				WriteBreaks();
 			}
-            else
-            {
+			else
+			{
 				ERR_Exit(ERR_INVALID_STATEMENT, true, "Symbol: %s", tk_String);
-            }
+			}
 			break;
 		case TK_PUNCT:
-        	if (TK_Check("{"))
-            {
-            	ParseCompoundStatement();
-                break;
-            }
+			if (TK_Check("{"))
+			{
+				ParseCompoundStatement();
+				break;
+			}
 		default:
-        	t = ParseExpression();
+			t = ParseExpression();
 			AddDrop(t);
 			TK_Expect(";", ERR_MISSING_SEMICOLON);
 			break;
@@ -523,30 +519,30 @@ static void ParseCompoundStatement(void)
 	TType	*type;
 	TType	*t;
 	int		size;
-    int		num_local_defs_on_start;
-    int		num_locals_ofs_on_start;
+	int		num_local_defs_on_start;
+	int		num_locals_ofs_on_start;
 
-    num_local_defs_on_start = numlocaldefs;
-    num_locals_ofs_on_start = localsofs;
+	num_local_defs_on_start = numlocaldefs;
+	num_locals_ofs_on_start = localsofs;
 	do
 	{
-    	type = CheckForType();
-        if (type)
+		type = CheckForType();
+		if (type)
 		{
 			do
 			{
-	        	t = type;
+				t = type;
 				while (TK_Check("*"))
-                {
-                	t = MakePointerType(t);
+				{
+					t = MakePointerType(t);
 				}
 				if (t == &type_void)
-    	        {
+				{
 					ParseError(ERR_BAD_VAR_TYPE, NULL);
-            	}
-        	    if (tk_Token != TK_IDENTIFIER)
-            	{
-            		ParseError(ERR_INVALID_IDENTIFIER, "%s, variable name expected", tk_String);
+				}
+				if (tk_Token != TK_IDENTIFIER)
+				{
+					ParseError(ERR_INVALID_IDENTIFIER, "%s, variable name expected", tk_String);
 					continue;
 				}
 				if (numlocaldefs == MAX_LOCAL_DEFS)
@@ -557,33 +553,33 @@ static void ParseCompoundStatement(void)
 				strcpy(localdefs[numlocaldefs].name, tk_String);
 
 				if (CheckForLocalVar(tk_String))
-			    {
+				{
 					ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Identifier: %s", tk_String);
-			    }
-    	        TK_NextToken();
+				}
+				TK_NextToken();
 
-	            size = 1;
-    	        if (TK_Check("["))
-        	    {
-            		size = EvalConstExpression(ev_int);
-				    t = MakeArrayType(t, size);
-                	TK_Expect("]", ERR_MISSING_RFIGURESCOPE);
-	            }
+				size = 1;
+				if (TK_Check("["))
+				{
+					size = EvalConstExpression(ev_int);
+					t = MakeArrayType(t, size);
+					TK_Expect("]", ERR_MISSING_RFIGURESCOPE);
+				}
 				//  inicializÆcija
 				else if (TK_Check("="))
 				{
-	            	AddStatement(OPC_LOCALADDRESS, localsofs);
-    	        	TType *t1 = ParseExpression();
-                    TypeCheck3(t, t1);
-        	        AddStatement(OPC_ASSIGN);
-                    AddDrop(t1);
+					AddStatement(OPC_LOCALADDRESS, localsofs);
+					TType *t1 = ParseExpression();
+					TypeCheck3(t, t1);
+					AddStatement(OPC_ASSIGN);
+					AddDrop(t1);
 				}
-			    localdefs[numlocaldefs].type = t;
-			    localdefs[numlocaldefs].ofs = localsofs;
+				localdefs[numlocaldefs].type = t;
+				localdefs[numlocaldefs].ofs = localsofs;
 				//  MainØgo skaitu palielina pñc izteiksmes, lai ýo mainØgo
-	            // nebÝtu iespñjams izmantot izteiksmñ
-			    numlocaldefs++;
-			    localsofs += TypeSize(t) / 4;
+				// nebÝtu iespñjams izmantot izteiksmñ
+				numlocaldefs++;
+				localsofs += TypeSize(t) / 4;
 				if (localsofs > 1024)
 				{
 					ParseWarning("Local vars > 1k");
@@ -601,7 +597,7 @@ static void ParseCompoundStatement(void)
 	if (maxlocalsofs < localsofs)
 		maxlocalsofs = localsofs;
 	numlocaldefs = num_local_defs_on_start;
-    localsofs    = num_locals_ofs_on_start;
+	localsofs	= num_locals_ofs_on_start;
 }
 
 //==========================================================================
@@ -642,8 +638,8 @@ static TType* ParseGlobalData(TType *type, int *dst)
 {
 /*	ev_void,
 	ev_int,
-    ev_uint,
-    ev_float,
+	ev_uint,
+	ev_float,
 	ev_string,
 	ev_function,
 	ev_pointer,
@@ -691,6 +687,10 @@ static TType* ParseGlobalData(TType *type, int *dst)
 
 	 default:
 		*dst = EvalConstExpression(type->type);
+		if (type->type == ev_string)
+		{
+			globalinfo[dst - globals] = 1;
+		}
 	}
 	return type;
 }
@@ -736,13 +736,13 @@ static void ParseDef(TType *type, boolean builtin)
 {
 	int			s_name;
 	int			num;
-    TType		*t;
+	TType		*t;
 
 	t = type;
-    while (TK_Check("*"))
-    {
-    	t = MakePointerType(t);
-    }
+	while (TK_Check("*"))
+	{
+		t = MakePointerType(t);
+	}
 	if (tk_Token != TK_IDENTIFIER)
 	{
 		ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
@@ -752,18 +752,18 @@ static void ParseDef(TType *type, boolean builtin)
 
 	if (!TK_Check("("))
 	{
-        if (builtin)
-        {
-        	ERR_Exit(ERR_MISSING_LPAREN, true, NULL);
-        }
-    	do
-        {
-        	if (!s_name)
-            {
-		        t = type;
-                if (TK_Check("*"))
-                {
-                	t = MakePointerType(t);
+		if (builtin)
+		{
+			ERR_Exit(ERR_MISSING_LPAREN, true, NULL);
+		}
+		do
+		{
+			if (!s_name)
+			{
+				t = type;
+				if (TK_Check("*"))
+				{
+					t = MakePointerType(t);
 				}
 				if (tk_Token != TK_IDENTIFIER)
 				{
@@ -772,16 +772,16 @@ static void ParseDef(TType *type, boolean builtin)
 				s_name = FindString(tk_String);
 			}
 		   	if (t == &type_void)
-        	{
-        		ERR_Exit(ERR_VOID_VAR, true, NULL);
-	        }
+			{
+				ERR_Exit(ERR_VOID_VAR, true, NULL);
+			}
 			if (CheckForGlobalVar(strings + s_name) ||
 				CheckForFunction(strings + s_name) ||
 				CheckForConstant(strings + s_name) != -1)
-		    {
-    			ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s",
+			{
+				ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s",
 					strings + s_name);
-		    }
+			}
 			t = ParseArrayDimensions(t);
 			// inicializÆcija
 			if (TK_Check ("="))
@@ -793,11 +793,11 @@ static void ParseDef(TType *type, boolean builtin)
 				ERR_Exit(ERR_NONE, true, "Size of type = 0.");
 			}
 			globaldefs[numglobaldefs].s_name = s_name;
-		    globaldefs[numglobaldefs].type = t;
-		    globaldefs[numglobaldefs].ofs = numglobals;
-		    numglobals += TypeSize(t) / 4;
-		    numglobaldefs++;
-            s_name = 0;
+			globaldefs[numglobaldefs].type = t;
+			globaldefs[numglobaldefs].ofs = numglobals;
+			numglobals += TypeSize(t) / 4;
+			numglobaldefs++;
+			s_name = 0;
 		} while (TK_Check (","));
 		TK_Expect(";", ERR_MISSING_SEMICOLON);
 		return;
@@ -810,9 +810,9 @@ static void ParseDef(TType *type, boolean builtin)
 	ContinueLevel = 0;
 	FuncRetType = t;
 	if (t != &type_void)
-    {
-    	//	Funkcijas atgri÷amajam tipam jÆbÝt void vai arØ ar izmñru 4
-    	TypeCheckPassable(t);
+	{
+		//	Funkcijas atgri÷amajam tipam jÆbÝt void vai arØ ar izmñru 4
+		TypeCheckPassable(t);
 	}
 
 	TType functype;
@@ -822,13 +822,13 @@ static void ParseDef(TType *type, boolean builtin)
 	functype.aux_type = t;
 
 	if (CheckForGlobalVar(strings + s_name))
-    {
-    	ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", strings + s_name);
-    }
+	{
+		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", strings + s_name);
+	}
 	if (CheckForConstant(strings + s_name) != -1)
-    {
-    	ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", strings + s_name);
-    }
+	{
+		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", strings + s_name);
+	}
 
 	do
 	{
@@ -838,105 +838,105 @@ static void ParseDef(TType *type, boolean builtin)
 			break;
 		}
 
-    	type = CheckForType();
+		type = CheckForType();
 
 		if (!type)
 		{
-        	if (numlocaldefs == 1)
-            {
-            	break;
+			if (numlocaldefs == 1)
+			{
+				break;
 			}
 			ERR_Exit(ERR_BAD_VAR_TYPE, true, NULL);
 		}
 		while (TK_Check("*"))
 		{
-           	type = MakePointerType(type);
+		   	type = MakePointerType(type);
 		}
-        if (numlocaldefs == 1 && type == &type_void)
-        {
-        	break;
-        }
+		if (numlocaldefs == 1 && type == &type_void)
+		{
+			break;
+		}
 		TypeCheckPassable(type);
 
 		if (numlocaldefs - 1 == MAX_PARAMS)
 		{
 			ERR_Exit(ERR_PARAMS_OVERFLOW, true, NULL);
 		}
-   	    if (tk_Token != TK_IDENTIFIER)
-    	{
+   		if (tk_Token != TK_IDENTIFIER)
+		{
    			ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
 		}
 		if (CheckForLocalVar(tk_String))
-	    {
+		{
 			ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Identifier: %s", tk_String);
-	    }
+		}
 
 		strcpy(localdefs[numlocaldefs].name, tk_String);
 		localdefs[numlocaldefs].type = type;
-    	localdefs[numlocaldefs].ofs = localsofs;
+		localdefs[numlocaldefs].ofs = localsofs;
 		functype.param_types[functype.num_params] = type;
 		functype.num_params++;
 
-        TK_NextToken();
-	    numlocaldefs++;
-    	localsofs += TypeSize(type) / 4;
+		TK_NextToken();
+		numlocaldefs++;
+		localsofs += TypeSize(type) / 4;
 	} while (TK_Check(","));
 	TK_Expect(")", ERR_MISSING_RPAREN);
 	functype.params_size = localsofs;
 	maxlocalsofs = localsofs;
 
-    num = CheckForFunction(strings + s_name);
+	num = CheckForFunction(strings + s_name);
 	if (num)
-    {
+	{
 		if (builtin && functions[num].first_statement >= 0)
 		{
-       		ERR_Exit(ERR_FUNCTION_REDECLARED, true,
-       				 "Declared function defined as builtin.");
+	   		ERR_Exit(ERR_FUNCTION_REDECLARED, true,
+	   				 "Declared function defined as builtin.");
 		}
 		if (functions[num].type != FindType(&functype))
 		{
-       		ERR_Exit(ERR_TYPE_MISTMATCH, true, NULL);
+	   		ERR_Exit(ERR_TYPE_MISTMATCH, true, NULL);
 		}
 	}
 	else
-    {
+	{
 		num = numfunctions;
 		functions[num].s_name = s_name;
-        if (builtin)
-        {
+		if (builtin)
+		{
 			functions[num].first_statement = -numbuiltins;
-	        numbuiltins++;
+			numbuiltins++;
 		}
-        else
-        {
+		else
+		{
 			functions[num].first_statement = 0;
-        }
+		}
 		functions[num].type = FindType(&functype);
 		numfunctions++;
 	}
 
 	if (TK_Check("{"))
-    {
+	{
 		if (functions[num].first_statement)
-    	{
-    		ERR_Exit(ERR_FUNCTION_REDECLARED, true,
-    				 "Function: %s", strings + s_name);
-	    }
-    	functions[num].first_statement = CodeBufferSize;
+		{
+			ERR_Exit(ERR_FUNCTION_REDECLARED, true,
+					 "Function: %s", strings + s_name);
+		}
+		functions[num].first_statement = CodeBufferSize;
 
-       	ParseCompoundStatement();
+	   	ParseCompoundStatement();
 
 		if (FuncRetType == &type_void)
-    	{
+		{
 			AddStatement(OPC_RETURN);
-	    }
+		}
 		functions[num].num_locals = maxlocalsofs;
-    }
-    else
-    {
+	}
+	else
+	{
 		//  Funkcijas prototips
 		TK_Expect(";", ERR_MISSING_SEMICOLON);
-        return;
+		return;
 	}
 }
 
@@ -955,14 +955,14 @@ void TK_AddConstant(char* name, int value)
 		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", name);
 	}
 	if (numconstants == MAX_CONSTANTS)
-    {
-    	ERR_Exit(ERR_TOO_MENY_CONSTANTS, true, NULL);
-    }
+	{
+		ERR_Exit(ERR_TOO_MENY_CONSTANTS, true, NULL);
+	}
 	strcpy(Constants[numconstants].name, name);
 	Constants[numconstants].value = value;
-    Constants[numconstants].next = ConstLookup[(byte)name[0]];
-    ConstLookup[(byte)name[0]] = numconstants;
-    numconstants++;
+	Constants[numconstants].next = ConstLookup[(byte)name[0]];
+	ConstLookup[(byte)name[0]] = numconstants;
+	numconstants++;
 }
 
 //==========================================================================
@@ -989,55 +989,55 @@ void PA_Parse(void)
 				break;
 			case TK_KEYWORD:
 				type = CheckForType();
-            	if (type)
-                {
+				if (type)
+				{
 					ParseDef(type, false);
-                }
-                else if (TK_Check("extern"))
-                {
+				}
+				else if (TK_Check("extern"))
+				{
 					type = CheckForType();
-	            	if (type)
-    	            {
+					if (type)
+					{
 						ParseDef(type, true);
-            	    }
-	                else
-    	            {
-        	            ERR_Exit(ERR_INVALID_DECLARATOR, true, "Symbol \"%s\"", tk_String);
-            	    }
-                }
-                else if (TK_Check("enum"))
-                {
-                    int		val;
-                    char	name[MAX_IDENTIFIER_LENGTH];
+					}
+					else
+					{
+						ERR_Exit(ERR_INVALID_DECLARATOR, true, "Symbol \"%s\"", tk_String);
+					}
+				}
+				else if (TK_Check("enum"))
+				{
+					int		val;
+					char	name[MAX_IDENTIFIER_LENGTH];
 
 					val = 0;
-                    TK_Expect("{", ERR_MISSING_LBRACE);
-                    do
-                    {
-                    	if (tk_Token != TK_IDENTIFIER)
-                        {
-                        	ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
-                        }
+					TK_Expect("{", ERR_MISSING_LBRACE);
+					do
+					{
+						if (tk_Token != TK_IDENTIFIER)
+						{
+							ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
+						}
 						strcpy(name, tk_String);
-                        TK_NextToken();
-                        if (TK_Check("="))
-                        {
-                        	val = EvalConstExpression(ev_int);
-                        }
+						TK_NextToken();
+						if (TK_Check("="))
+						{
+							val = EvalConstExpression(ev_int);
+						}
 						TK_AddConstant(name, val);
-                        val++;
-                    } while (TK_Check(","));
-                    TK_Expect("}", ERR_MISSING_RBRACE);
-                    TK_Expect(";", ERR_MISSING_SEMICOLON);
-                }
-                else if (TK_Check("struct"))
-                {
-                	ParseStruct();
-                }
-                else if (TK_Check("addfields"))
-                {
-                	AddFields();
-                }
+						val++;
+					} while (TK_Check(","));
+					TK_Expect("}", ERR_MISSING_RBRACE);
+					TK_Expect(";", ERR_MISSING_SEMICOLON);
+				}
+				else if (TK_Check("struct"))
+				{
+					ParseStruct();
+				}
+				else if (TK_Check("addfields"))
+				{
+					AddFields();
+				}
 				else if (TK_Check("vector"))
 				{
 					ParseVector();
@@ -1046,30 +1046,30 @@ void PA_Parse(void)
 				{
 					ParseTypeDef();
 				}
-                else if (TK_Check("__states__"))
-                {
-                   	ParseStates();
-                }
-                else if (TK_Check("__mobjinfo__"))
-                {
-                   	ParseMobjInfo();
-                }
-                else
-                {
-                    ERR_Exit(ERR_INVALID_DECLARATOR, true, "Symbol \"%s\"", tk_String);
-                }
-                break;
+				else if (TK_Check("__states__"))
+				{
+				   	ParseStates();
+				}
+				else if (TK_Check("__mobjinfo__"))
+				{
+				   	ParseMobjInfo();
+				}
+				else
+				{
+					ERR_Exit(ERR_INVALID_DECLARATOR, true, "Symbol \"%s\"", tk_String);
+				}
+				break;
 
 			case TK_IDENTIFIER:
 				type = CheckForType();
-            	if (type)
-                {
+				if (type)
+				{
 					ParseDef(type, false);
-                }
-                else
-                {
-                    ERR_Exit(ERR_INVALID_DECLARATOR, true, "Identifier \"%s\"", tk_String);
-                }
+				}
+				else
+				{
+					ERR_Exit(ERR_INVALID_DECLARATOR, true, "Identifier \"%s\"", tk_String);
+				}
 				break;
 
 			default:
@@ -1078,7 +1078,7 @@ void PA_Parse(void)
 	   	}
 	}
 
-    AddInfoTables();
+	AddInfoTables();
 	// check to make sure all functions prototyped have code
 	done = true;
 	for (i = 1 ; i < numfunctions ; i++)
@@ -1091,12 +1091,22 @@ void PA_Parse(void)
 		}
 	}
 	if (!done)
-    {
+	{
 		ERR_Exit(ERR_UNDEFINED_FUNCTIONS, false, NULL);
-    }
-    if (NumErrors)
-    {
-    	ERR_Exit(ERR_NONE, false, NULL);
-    }
+	}
+	if (NumErrors)
+	{
+		ERR_Exit(ERR_NONE, false, NULL);
+	}
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/21 17:52:54  dj_jl
+//	Added support for real string pointers, beautification
+//
+//	Revision 1.2  2001/07/27 14:27:56  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

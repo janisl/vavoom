@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:56  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
@@ -94,7 +90,7 @@ void InitInfoTables(void)
 	models = new int[MAX_MODELS];
 	num_models = 1; // 0 indicates no-model
 
-    states = new state_t[MAX_STATES];
+	states = new state_t[MAX_STATES];
 	state_name = new ident_t[MAX_STATES];
 	nextstate_name = new ident_t[MAX_STATES];
 	num_states = 0;
@@ -103,44 +99,44 @@ void InitInfoTables(void)
 	num_mobj_types = 0;
 
 	globaldefs[numglobaldefs].s_name = FindString("num_sprite_names");
-    globaldefs[numglobaldefs].type = &type_int;
-    globaldefs[numglobaldefs].ofs = 0;
+	globaldefs[numglobaldefs].type = &type_int;
+	globaldefs[numglobaldefs].ofs = 0;
 	gv_num_sprite_names = numglobaldefs++;
 
 	globaldefs[numglobaldefs].s_name = FindString("sprite_names");
-    globaldefs[numglobaldefs].type = MakeArrayType(&type_int, -1);
-    globaldefs[numglobaldefs].ofs = 0;
-    gv_sprite_names = numglobaldefs++;
+	globaldefs[numglobaldefs].type = MakeArrayType(&type_int, -1);
+	globaldefs[numglobaldefs].ofs = 0;
+	gv_sprite_names = numglobaldefs++;
 
 	globaldefs[numglobaldefs].s_name = FindString("num_models");
-    globaldefs[numglobaldefs].type = &type_int;
-    globaldefs[numglobaldefs].ofs = 0;
+	globaldefs[numglobaldefs].type = &type_int;
+	globaldefs[numglobaldefs].ofs = 0;
 	gv_num_models = numglobaldefs++;
 
 	globaldefs[numglobaldefs].s_name = FindString("models");
-    globaldefs[numglobaldefs].type = MakeArrayType(&type_int, -1);
-    globaldefs[numglobaldefs].ofs = 0;
-    gv_models = numglobaldefs++;
+	globaldefs[numglobaldefs].type = MakeArrayType(&type_int, -1);
+	globaldefs[numglobaldefs].ofs = 0;
+	gv_models = numglobaldefs++;
 
 	globaldefs[numglobaldefs].s_name = FindString("num_states");
-    globaldefs[numglobaldefs].type = &type_int;
-    globaldefs[numglobaldefs].ofs = 0;
-    gv_num_states = numglobaldefs++;
+	globaldefs[numglobaldefs].type = &type_int;
+	globaldefs[numglobaldefs].ofs = 0;
+	gv_num_states = numglobaldefs++;
 
 	globaldefs[numglobaldefs].s_name = FindString("states");
-    globaldefs[numglobaldefs].type = MakeArrayType(&type_state, -1);
-    globaldefs[numglobaldefs].ofs = 0;
-    gv_states = numglobaldefs++;
+	globaldefs[numglobaldefs].type = MakeArrayType(&type_state, -1);
+	globaldefs[numglobaldefs].ofs = 0;
+	gv_states = numglobaldefs++;
 
 	globaldefs[numglobaldefs].s_name = FindString("num_mobj_types");
-    globaldefs[numglobaldefs].type = &type_int;
-    globaldefs[numglobaldefs].ofs = 0;
-    gv_num_mobj_info = numglobaldefs++;
+	globaldefs[numglobaldefs].type = &type_int;
+	globaldefs[numglobaldefs].ofs = 0;
+	gv_num_mobj_info = numglobaldefs++;
 
 	globaldefs[numglobaldefs].s_name = FindString("mobjinfo");
-    globaldefs[numglobaldefs].type = MakeArrayType(&type_mobjinfo, -1);
-    globaldefs[numglobaldefs].ofs = 0;
-    gv_mobj_info = numglobaldefs++;
+	globaldefs[numglobaldefs].type = MakeArrayType(&type_mobjinfo, -1);
+	globaldefs[numglobaldefs].ofs = 0;
+	gv_mobj_info = numglobaldefs++;
 }
 
 //==========================================================================
@@ -155,117 +151,117 @@ void ParseStates(void)
 	int		j;
 
 	TK_Expect("{", ERR_MISSING_LBRACE);
-    while (!TK_Check("}"))
-    {
+	while (!TK_Check("}"))
+	{
 		if (num_states >= MAX_STATES)
-    	{
-    		ERR_Exit(ERR_NONE, true, "States overflow.");
-	    }
+		{
+			ERR_Exit(ERR_NONE, true, "States overflow.");
+		}
 		//	St∆vokıa identifik∆tors
-    	if (tk_Token != TK_IDENTIFIER)
-        {
-        	ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
+		if (tk_Token != TK_IDENTIFIER)
+		{
+			ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
 		}
 		strcpy(state_name[num_states], tk_String);
 		TK_AddConstant(tk_String, num_states);
-        TK_NextToken();
-        TK_Expect("{", ERR_MISSING_LBRACE);
-        //	Nummurs
-        states[num_states].statenum = num_states;
-        //	Spraita v∆rds
+		TK_NextToken();
+		TK_Expect("{", ERR_MISSING_LBRACE);
+		//	Nummurs
+		states[num_states].statenum = num_states;
+		//	Spraita v∆rds
 		if (tk_Token != TK_STRING)
-        {
-        	ERR_Exit(ERR_NONE, true, "Sprite name expected");
-        }
+		{
+			ERR_Exit(ERR_NONE, true, "Sprite name expected");
+		}
 		if (num_states || tk_String[0])
-        {
-	        if (strlen(tk_String) != 4)
-    	    {
-	        	ERR_Exit(ERR_NONE, true, "Invalid sprite name");
-	        }
+		{
+			if (strlen(tk_String) != 4)
+			{
+				ERR_Exit(ERR_NONE, true, "Invalid sprite name");
+			}
 			j = FindString(tk_String);
 			for (i=0; i<num_sprite_names; i++)
 			{
-	       		if (sprite_names[i] == j)
-		        {
-	    	       	break;
+		   		if (sprite_names[i] == j)
+				{
+				   	break;
 				}
 			}
 			if (i == num_sprite_names)
-		    {
-	        	char	snc[12];
+			{
+				char	snc[12];
 
-	    	   	sprite_names[i] = j;
+			   	sprite_names[i] = j;
 				sprintf(snc, "SPR_%s", tk_String);
-	            TK_AddConstant(snc, num_sprite_names);
+				TK_AddConstant(snc, num_sprite_names);
 				num_sprite_names++;
 			}
 			states[num_states].sprite = i;
 		}
-        else
-        {
+		else
+		{
 			states[num_states].sprite = 0;
-        }
+		}
 		TK_NextToken();
-        TK_Expect(",", ERR_NONE);
-        //  Kadrs
-        states[num_states].frame = EvalConstExpression(ev_int);
-        TK_Expect(",", ERR_NONE);
+		TK_Expect(",", ERR_NONE);
+		//  Kadrs
+		states[num_states].frame = EvalConstExpression(ev_int);
+		TK_Expect(",", ERR_NONE);
 		if (tk_Token == TK_STRING)
-        {
+		{
 			//	Modelis
 			j = FindString(tk_String);
 			for (i = 0; i < num_models; i++)
 			{
-	       		if (models[i] == j)
-		        {
-	    	       	break;
+		   		if (models[i] == j)
+				{
+				   	break;
 				}
 			}
 			if (i == num_models)
-		    {
-	    	   	models[i] = j;
+			{
+			   	models[i] = j;
 				num_models++;
 			}
 			states[num_states].model_index = i;
 			TK_NextToken();
-	        TK_Expect(",", ERR_NONE);
-        	//  Kadrs
-    	    states[num_states].model_frame = EvalConstExpression(ev_int);
-	        TK_Expect(",", ERR_NONE);
+			TK_Expect(",", ERR_NONE);
+			//  Kadrs
+			states[num_states].model_frame = EvalConstExpression(ev_int);
+			TK_Expect(",", ERR_NONE);
 		}
 		else
 		{
 			states[num_states].model_index = 0;
-    	    states[num_states].model_frame = 0;
+			states[num_states].model_frame = 0;
 		}
-        //  Taktis
-        states[num_states].time = ConstFloatExpression();
-        TK_Expect(",", ERR_NONE);
-        //	Funkcija
-        states[num_states].function = EvalConstExpression(ev_function);
-        TK_Expect(",", ERR_NONE);
-        //  N∆ko˝ais st∆voklis
-        if (tk_Token != TK_IDENTIFIER)
-        {
-        	ERR_Exit(ERR_NONE, true, NULL);
-        }
+		//  Taktis
+		states[num_states].time = ConstFloatExpression();
+		TK_Expect(",", ERR_NONE);
+		//	Funkcija
+		states[num_states].function = EvalConstExpression(ev_function);
+		TK_Expect(",", ERR_NONE);
+		//  N∆ko˝ais st∆voklis
+		if (tk_Token != TK_IDENTIFIER)
+		{
+			ERR_Exit(ERR_NONE, true, NULL);
+		}
 		strcpy(nextstate_name[num_states], tk_String);
 		TK_NextToken();
-        if (TK_Check(","))
-        {
-	        //	Misc1
-	        states[num_states].misc1 = ConstFloatExpression();
-	        TK_Expect(",", ERR_NONE);
+		if (TK_Check(","))
+		{
+			//	Misc1
+			states[num_states].misc1 = ConstFloatExpression();
+			TK_Expect(",", ERR_NONE);
 			//	Misc2
-	        states[num_states].misc2 = ConstFloatExpression();
+			states[num_states].misc2 = ConstFloatExpression();
 		}
-        else
-        {
-	        states[num_states].misc1 = 0.0;
-	        states[num_states].misc2 = 0.0;
-        }
-        TK_Expect("}", ERR_NONE);
+		else
+		{
+			states[num_states].misc1 = 0.0;
+			states[num_states].misc2 = 0.0;
+		}
+		TK_Expect("}", ERR_NONE);
 
 		num_states++;
 	}
@@ -280,27 +276,27 @@ void ParseStates(void)
 void ParseMobjInfo(void)
 {
 	TK_Expect("{", ERR_MISSING_LBRACE);
-    while (!TK_Check("}"))
-    {
+	while (!TK_Check("}"))
+	{
 		if (num_mobj_types >= MAX_MOBJ_TYPES)
-    	{
-    		ERR_Exit(ERR_NONE, true, "Mobj types overflow.");
-	    }
-    	if (tk_Token != TK_IDENTIFIER)
-        {
-        	ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
+		{
+			ERR_Exit(ERR_NONE, true, "Mobj types overflow.");
 		}
-        TK_AddConstant(tk_String, num_mobj_types);
-        TK_NextToken();
-        TK_Expect("{", ERR_MISSING_LBRACE);
+		if (tk_Token != TK_IDENTIFIER)
+		{
+			ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
+		}
+		TK_AddConstant(tk_String, num_mobj_types);
+		TK_NextToken();
+		TK_Expect("{", ERR_MISSING_LBRACE);
 		//	doomednum
-        mobj_info[num_mobj_types].doomednum = EvalConstExpression(ev_int);
-        TK_Expect(",", ERR_NONE);
+		mobj_info[num_mobj_types].doomednum = EvalConstExpression(ev_int);
+		TK_Expect(",", ERR_NONE);
 		//	spawnfunc
-        mobj_info[num_mobj_types].spawnfunc = EvalConstExpression(ev_function);
-        //	Beigas
-        TK_Expect("}", ERR_MISSING_RBRACE);
-        num_mobj_types++;
+		mobj_info[num_mobj_types].spawnfunc = EvalConstExpression(ev_function);
+		//	Beigas
+		TK_Expect("}", ERR_MISSING_RBRACE);
+		num_mobj_types++;
 	}
 }
 
@@ -313,23 +309,23 @@ void ParseMobjInfo(void)
 static void CheckStates(void)
 {
 	int		i;
-    int		j;
+	int		j;
 
-	for (i=0; i<num_states; i++)
-    {
-		for (j=0; j<num_states; j++)
-        {
-	    	if (!strcmp(nextstate_name[i], state_name[j]))
-    	    {
-        		states[i].nextstate = j;
-                break;
+	for (i = 0; i < num_states; i++)
+	{
+		for (j = 0; j < num_states; j++)
+		{
+			if (!strcmp(nextstate_name[i], state_name[j]))
+			{
+				states[i].nextstate = j;
+				break;
 			}
 		}
 		if (j == num_states)
-        {
-        	ERR_Exit(ERR_NONE, true, "State name %d \"%s\" was not defined",
-	        	i, state_name[i]);
-        }
+		{
+			ERR_Exit(ERR_NONE, true, "State name %d \"%s\" was not defined",
+				i, state_name[i]);
+		}
 	}
 
 }
@@ -340,11 +336,15 @@ static void CheckStates(void)
 //
 //==========================================================================
 
-static void AddInfoData(int globaldef, void *data, int size)
+static void AddInfoData(int globaldef, void *data, int size, bool strings)
 {
-    globaldefs[globaldef].ofs = numglobals;
+	globaldefs[globaldef].ofs = numglobals;
 	memcpy(&globals[numglobals], data, size);
-    numglobals += size / 4;
+	if (strings)
+	{
+		memset(globalinfo + numglobals, 1, size / 4);
+	}
+	numglobals += size / 4;
 }
 
 //==========================================================================
@@ -358,19 +358,30 @@ void AddInfoTables(void)
 	CheckStates();
 
 	//  Pievieno spraitu v∆rdus
-    AddInfoData(gv_num_sprite_names, &num_sprite_names, 4);
-    AddInfoData(gv_sprite_names, sprite_names, 4 * num_sprite_names);
+	AddInfoData(gv_num_sprite_names, &num_sprite_names, 4, false);
+	AddInfoData(gv_sprite_names, sprite_names, 4 * num_sprite_names, true);
 	//  Pievieno modeıus
-    AddInfoData(gv_num_models, &num_models, 4);
-    AddInfoData(gv_models, models, 4 * num_models);
+	AddInfoData(gv_num_models, &num_models, 4, false);
+	AddInfoData(gv_models, models, 4 * num_models, true);
 	//	Pievieno st∆vokıu tabulu
-    AddInfoData(gv_num_states, &num_states, 4);
-    AddInfoData(gv_states, states, num_states * sizeof(*states));
+	AddInfoData(gv_num_states, &num_states, 4, false);
+	AddInfoData(gv_states, states, num_states * sizeof(*states), false);
 	//	Pievieno objektu aprakstu tabulu
-    AddInfoData(gv_num_mobj_info, &num_mobj_types, 4);
-    AddInfoData(gv_mobj_info, mobj_info, num_mobj_types * sizeof(*mobj_info));
+	AddInfoData(gv_num_mobj_info, &num_mobj_types, 4, false);
+	AddInfoData(gv_mobj_info, mobj_info, num_mobj_types * sizeof(*mobj_info), false);
 
 	dprintf("Num sprite names: %d, num states: %d\n",
 				num_sprite_names, num_states);
 	dprintf("Num mobj types: %d\n", num_mobj_types);
 }
+
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/21 17:52:54  dj_jl
+//	Added support for real string pointers, beautification
+//
+//	Revision 1.2  2001/07/27 14:27:56  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

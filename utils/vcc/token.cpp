@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:56  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
@@ -84,7 +80,7 @@ static char			Chr;
 static char* Keywords[] =
 {
 	"__states__",
-    "__mobjinfo__",
+	"__mobjinfo__",
 	"addfields",
 	"break",
 	"case",
@@ -92,16 +88,16 @@ static char* Keywords[] =
 	"default",
 	"do",
 	"else",
-    "enum",
+	"enum",
 	"extern",
-    "float",
+	"float",
 	"for",
 	"function_t",
 	"if",
    	"int",
 	"return",
 	"string",
-    "struct",
+	"struct",
 	"switch",
 	"typedef",
    	"uint",
@@ -112,21 +108,21 @@ static char* Keywords[] =
 
 static char* Punctuations[] =
 {
-    //  Gar∆kiem simboliem j∆but pirms ÿs∆kiem
-    "...", "<<=", ">>=",
+	//  Gar∆kiem simboliem j∆but pirms ÿs∆kiem
+	"...", "<<=", ">>=",
 
-    "+=", "-=", "*=", "/=", "%=", "&=", "|=", "^=",
-    "==", "!=", "<=", ">=",
-    "&&", "||",
-    "<<", ">>",
-    "++", "--",
-    "->",
+	"+=", "-=", "*=", "/=", "%=", "&=", "|=", "^=",
+	"==", "!=", "<=", ">=",
+	"&&", "||",
+	"<<", ">>",
+	"++", "--",
+	"->",
 
-    "<", ">" , "?",
-    "&" , "|", "^", "~", "!",
-    "+", "-", "*", "/", "%", "(", ")",
-    ".", ",", ";", ":",
-    "=", "[", "]", "{", "}"
+	"<", ">" , "?",
+	"&" , "|", "^", "~", "!",
+	"+", "-", "*", "/", "%", "(", ")",
+	".", ",", ";", ":",
+	"=", "[", "]", "{", "}"
 };
 
 // CODE --------------------------------------------------------------------
@@ -176,8 +172,8 @@ void TK_Init(void)
 	IncLineNumber = false;
 	SourceOpen = false;
 	for (i = 0; i < 256; i++)
-    {
-    	ConstLookup[i] = -1;
+	{
+		ConstLookup[i] = -1;
 	}
 	numconstants = 0;
 }
@@ -195,7 +191,7 @@ void TK_OpenSource(char *fileName)
 	//	Princip∆ nav vajadzÿgs aizvÒrt
 	TK_CloseSource();
 
-    //	Iel∆dÒ failu un sagatavojas kompil∆cijai
+	//	Iel∆dÒ failu un sagatavojas kompil∆cijai
 	size = LoadFile(fileName, (void **)&FileStart);
 	SourceOpen = true;
 	FileEnd = FileStart + size;
@@ -281,20 +277,20 @@ static void ProcessNumberToken(void)
 		tk_Number = 10 * tk_Number + (Chr - '0');
 		NextChr();
 	}
-    if (Chr == '.')
-    {
-    	tk_Token = TK_FLOAT;
+	if (Chr == '.')
+	{
+		tk_Token = TK_FLOAT;
 		NextChr(); // Punkts
-        tk_Float = tk_Number;
-        float	fmul = 0.1;
+		tk_Float = tk_Number;
+		float	fmul = 0.1;
 		while (ASCIIToChrCode[(byte)Chr] == CHR_NUMBER)
-        {
-        	tk_Float += (Chr - '0') * fmul;
-            fmul /= 10.0;
-        	NextChr();
-        }
-    	return;
-    }
+		{
+			tk_Float += (Chr - '0') * fmul;
+			fmul /= 10.0;
+			NextChr();
+		}
+		return;
+	}
 	if (Chr == '_')
 	{
 		int radix;
@@ -314,7 +310,7 @@ static void ProcessNumberToken(void)
 			{
 				digit = -1;
 			}
-            else if(digit > '9')
+			else if(digit > '9')
 			{
 				digit = 10 + digit - 'A';
 			}
@@ -326,8 +322,8 @@ static void ProcessNumberToken(void)
 			{
 				digit = -1;
 			}
-        	if (digit != -1)
-            {
+			if (digit != -1)
+			{
 				tk_Number = radix * tk_Number + digit;
 				NextChr();
 			}
@@ -360,7 +356,7 @@ static void ProcessChar(void)
 			ERR_Exit(ERR_EOF_IN_STRING, true, NULL);
 		}
 		if (IncLineNumber)
-       	{
+	   	{
 			ERR_Exit(ERR_NEW_LINE_INSIDE_QUOTE, true, NULL);
 		}
 		if (Chr == 'n')
@@ -396,7 +392,7 @@ static void ProcessQuoteToken(void)
 		ProcessChar();
 		TokenStringBuffer[len] = Chr;
 		NextChr();
-        len++;
+		len++;
 	}
 	TokenStringBuffer[len] = 0;
 	NextChr();
@@ -451,13 +447,13 @@ static void ProcessLetterToken(void)
 	TokenStringBuffer[len] = 0;
 
 	for (i=0; i < (int)(sizeof(Keywords) / sizeof(Keywords[0])); i++)
-    {
-    	if (!strcmp(tk_String, Keywords[i]))
+	{
+		if (!strcmp(tk_String, Keywords[i]))
 		{
-        	tk_Token = TK_KEYWORD;
-            return;
+			tk_Token = TK_KEYWORD;
+			return;
 		}
-    }
+	}
 }
 
 //==========================================================================
@@ -502,10 +498,10 @@ void TK_NextToken(void)
 		TokenStringBuffer[0] = 0;
 		while (Chr == ' ') NextChr();
 		if (NewLine)
-        {
+		{
 			NewLine = false;
-        	if (Chr == '#')
-            {
+			if (Chr == '#')
+			{
 				if (!strncmp(FilePtr, "line", 4))
 				{
 					NextChr();
@@ -513,35 +509,35 @@ void TK_NextToken(void)
 					NextChr();
 					NextChr();
 				}
-            	NextChr();
+				NextChr();
 
-                //	Nolasa lÿnijas numuru
+				//	Nolasa lÿnijas numuru
 				while (Chr == ' ') NextChr();
-            	if (ASCIIToChrCode[(byte)Chr] != CHR_NUMBER)
-                {
-                	ERR_Exit(ERR_NONE, false, "Bad directive.");
-                }
-                ProcessNumberToken();
-                tk_Line = tk_Number - 1;
+				if (ASCIIToChrCode[(byte)Chr] != CHR_NUMBER)
+				{
+					ERR_Exit(ERR_NONE, false, "Bad directive.");
+				}
+				ProcessNumberToken();
+				tk_Line = tk_Number - 1;
 
 				//	Nolasa faila v∆rdu
 				while (Chr == ' ') NextChr();
-            	if (ASCIIToChrCode[(byte)Chr] != CHR_QUOTE)
-                {
-                	ERR_Exit(ERR_NONE, false, "Bad directive.");
-                }
-                ProcessQuoteToken();
-                strcpy(tk_SourceName, tk_String);
+				if (ASCIIToChrCode[(byte)Chr] != CHR_QUOTE)
+				{
+					ERR_Exit(ERR_NONE, false, "Bad directive.");
+				}
+				ProcessQuoteToken();
+				strcpy(tk_SourceName, tk_String);
 
-                //	Karodzi∑us ignorÒ
-            	while (!NewLine)
-                {
-                	NextChr();
-                }
-		    	tk_Token = TK_NONE;
-                continue;
-            }
-        }
+				//	Karodzi∑us ignorÒ
+				while (!NewLine)
+				{
+					NextChr();
+				}
+				tk_Token = TK_NONE;
+				continue;
+			}
+		}
 		switch (ASCIIToChrCode[(byte)Chr])
 		{
 			case CHR_EOF:
@@ -580,10 +576,10 @@ boolean TK_Check(char *string)
 	if (tk_Token != TK_IDENTIFIER && tk_Token != TK_KEYWORD &&
 		tk_Token != TK_PUNCT)
 	{
-    	return false;
+		return false;
 	}
 	if (strcmp(string, TokenStringBuffer))
-    {
+	{
 		return false;
 	}
 
@@ -605,12 +601,22 @@ void TK_Expect(char *string, error_t error)
 	if (tk_Token != TK_IDENTIFIER && tk_Token != TK_KEYWORD &&
 		tk_Token != TK_PUNCT)
 	{
-    	ERR_Exit(error, true, "invalid token type");
-    }
+		ERR_Exit(error, true, "invalid token type");
+	}
 	if (strcmp(string, TokenStringBuffer))
-    {
+	{
 		ERR_Exit(error, true, "expected %s, found %s", string, TokenStringBuffer);
 	}
 	TK_NextToken();
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/21 17:52:54  dj_jl
+//	Added support for real string pointers, beautification
+//
+//	Revision 1.2  2001/07/27 14:27:56  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

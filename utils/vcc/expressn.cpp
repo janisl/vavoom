@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:56  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
@@ -51,18 +47,18 @@ class TOperator
 		ID_POSTINC,
 		ID_POSTDEC,
 		ID_MULTIPLY,
-        ID_DIVIDE,
-        ID_MODULUS,
-    	ID_ADD,
-        ID_SUBTRACT,
-    	ID_LSHIFT,
-        ID_RSHIFT,
-    	ID_LT,
-        ID_LE,
-        ID_GT,
+		ID_DIVIDE,
+		ID_MODULUS,
+		ID_ADD,
+		ID_SUBTRACT,
+		ID_LSHIFT,
+		ID_RSHIFT,
+		ID_LT,
+		ID_LE,
+		ID_GT,
 		ID_GE,
-    	ID_EQ,
-        ID_NE,
+		ID_EQ,
+		ID_NE,
 		ID_ANDBITWISE,
 		ID_XORBITWISE,
 		ID_ORBITWISE,
@@ -169,13 +165,13 @@ class TOpAnd : public TOp2
 	}
 	void Code(void)
 	{
-	    int*		jmppos;
+		int*		jmppos;
 
 		if (op1) op1->Code();
 		jmppos = AddStatement(OPC_IFNOTTOPGOTO, 0);
 		if (op2) op2->Code();
 		AddStatement(OPC_ANDLOGICAL);
-    	*jmppos = CodeBufferSize;
+		*jmppos = CodeBufferSize;
 	}
 };
 
@@ -190,13 +186,13 @@ class TOpOr : public TOp2
 	}
 	void Code(void)
 	{
-	    int*		jmppos;
+		int*		jmppos;
 
 		if (op1) op1->Code();
 		jmppos = AddStatement(OPC_IFTOPGOTO, 0);
 		if (op2) op2->Code();
 		AddStatement(OPC_ORLOGICAL);
-    	*jmppos = CodeBufferSize;
+		*jmppos = CodeBufferSize;
 	}
 };
 
@@ -220,8 +216,8 @@ class TOpCond : public TOp
 	}
 	void Code(void)
 	{
-       	int*	jumppos1;
-       	int*	jumppos2;
+	   	int*	jumppos1;
+	   	int*	jumppos2;
 
 		if (expr) expr->Code();
 		jumppos1 = AddStatement(OPC_IFNOTGOTO, 0);
@@ -345,7 +341,10 @@ class TOpConst : public TOp
 	}
 	void Code(void)
 	{
-		AddStatement(OPC_PUSHNUMBER, val);
+		if (type->type == ev_string)
+			AddStatement(OPC_PUSHSTRING, val);
+		else
+			AddStatement(OPC_PUSHNUMBER, val);
 	}
 
 	int			val;
@@ -729,25 +728,25 @@ TOperator::TOperator(id_t Aopid, TType* Atype, TType* Atype1, TType* Atype2, int
 bool TypeCmp(TType *type1, TType *type2)
 {
 	if (type1 == type2)
-    {
-    	return true;
-	}
-    if ((type1->type == ev_vector) && (type2->type == ev_vector))
-    {
+	{
 		return true;
 	}
-    if ((type1->type == ev_function) && (type2->type == ev_function))
-    {
+	if ((type1->type == ev_vector) && (type2->type == ev_vector))
+	{
+		return true;
+	}
+	if ((type1->type == ev_function) && (type2->type == ev_function))
+	{
 		ParseWarning("Different function types");
 		return true;
 	}
-    if ((type1->type == ev_pointer) && (type2->type == ev_pointer))
-    {
+	if ((type1->type == ev_pointer) && (type2->type == ev_pointer))
+	{
 		if (type1 == &type_void_ptr || type2 == &type_void_ptr)
-        {
-        	return true;
-        }
-    }
+		{
+			return true;
+		}
+	}
 	return false;
 }
 
@@ -809,7 +808,7 @@ static TOp *ParseExpressionPriority0(void)
 		return op;
 
 	 case TK_PUNCT:
-       	if (TK_Check("("))
+	   	if (TK_Check("("))
 		{
 			type = CheckForType();
 			if (type)
@@ -847,7 +846,7 @@ static TOp *ParseExpressionPriority0(void)
 	 case TK_IDENTIFIER:
 		if (TK_Check("NULL"))
 		{
-           	return new TOpConst(0, &type_void_ptr);
+		   	return new TOpConst(0, &type_void_ptr);
 		}
 
 		num = CheckForLocalVar(tk_String);
@@ -863,8 +862,8 @@ static TOp *ParseExpressionPriority0(void)
 		if (num != -1)
 		{
 			TK_NextToken();
-           	return new TOpConst(Constants[num].value, &type_int);
-    	}
+		   	return new TOpConst(Constants[num].value, &type_int);
+		}
 
 		num = CheckForGlobalVar(tk_String);
 		if (num)
@@ -913,7 +912,7 @@ static TOp *ParseExpressionPriority0(void)
 					{
 						if (arg < num_needed_params)
 						{
-		    	            TypeCheck3(op->type, functions[num].type->param_types[arg]);
+							TypeCheck3(op->type, functions[num].type->param_types[arg]);
 						}
 						fop->parms[arg] = op;
 					}
@@ -936,7 +935,7 @@ static TOp *ParseExpressionPriority0(void)
 		break;
 
 	 default:
-       	break;
+	   	break;
 	}
 
 	op = new TOp;
@@ -952,7 +951,7 @@ static TOp *ParseExpressionPriority0(void)
 
 static TOp *ParseExpressionPriority1(void)
 {
-    bool		done;
+	bool		done;
 	TOp			*op;
 	TType		*type;
 	field_t		*field;
@@ -961,13 +960,13 @@ static TOp *ParseExpressionPriority1(void)
 	done = false;
 	do
 	{
-   	    if (TK_Check("->"))
+   		if (TK_Check("->"))
    	   	{
-           	TypeCheck1(op->type);
-        	if (op->type->type != ev_pointer)
-	        {
-   		    	ERR_Exit(ERR_BAD_EXPR, true, NULL);
-           	}
+		   	TypeCheck1(op->type);
+			if (op->type->type != ev_pointer)
+			{
+   				ERR_Exit(ERR_BAD_EXPR, true, NULL);
+		   	}
 			type = op->type->aux_type;
 			field = ParseField(type);
 			if (field)
@@ -975,38 +974,38 @@ static TOp *ParseExpressionPriority1(void)
 				op = new TOpField(op, field->ofs, field->type);
 				op = new TOpPushPointed(op,	field->type);
 			}
-   	    }
-   	    else if (TK_Check("."))
+   		}
+   		else if (TK_Check("."))
    	   	{
 			type = op->type;
-           	if (op->type->type == ev_array || op->type->type == ev_pointer)
+		   	if (op->type->type == ev_array || op->type->type == ev_pointer)
 			{
-               	ERR_Exit(ERR_BAD_EXPR, true, NULL);
+			   	ERR_Exit(ERR_BAD_EXPR, true, NULL);
 			}
-           	op = op->GetAddress();
+		   	op = op->GetAddress();
 			field = ParseField(type);
 			if (field)
 			{
 				op = new TOpField(op, field->ofs, field->type);
 				op = new TOpPushPointed(op,	field->type);
 			}
-   	    }
+   		}
 		else if (TK_Check("["))
 		{
 			TOp *ind;
-        	if (op->type->type == ev_array)
+			if (op->type->type == ev_array)
 			{
-        	    type = op->type->aux_type;
-    	    	op = op->GetAddress();
+				type = op->type->aux_type;
+				op = op->GetAddress();
 			}
 			else if (op->type->type == ev_pointer)
 			{
-               	type = op->type->aux_type;
+			   	type = op->type->aux_type;
 			}
-        	else
+			else
 			{
 				ERR_Exit(ERR_BAD_ARRAY, true, NULL);
-           	}
+		   	}
 			ind = ParseExpressionPriority14();
 			TK_Expect("]", ERR_BAD_ARRAY);
 			op = new TOpArrayIndex(op, ind, type);
@@ -1035,7 +1034,7 @@ static TOp *ParseExpressionPriority1(void)
 					}
 					else
 					{
-	    	            TypeCheck3(op->type, ftype->param_types[arg]);
+						TypeCheck3(op->type, ftype->param_types[arg]);
 						fop->parms[arg] = op;
 					}
 					arg++;
@@ -1073,35 +1072,35 @@ static TOp *ParseExpressionPriority2(void)
 	{
 		if (TK_Check("+"))
 		{
-           	op = ParseExpressionPriority2();
+		   	op = ParseExpressionPriority2();
 			oper = FindOperator(TOperator::ID_UNARYPLUS, op->type, &type_void);
 			return new TOp1(op, oper);
 		}
 
-       	if (TK_Check("-"))
+	   	if (TK_Check("-"))
 		{
-           	op = ParseExpressionPriority2();
+		   	op = ParseExpressionPriority2();
 			oper = FindOperator(TOperator::ID_UNARYMINUS, op->type, &type_void);
 			return new TOp1(op, oper);
 		}
 
-       	if (TK_Check("!"))
+	   	if (TK_Check("!"))
 		{
-           	op = ParseExpressionPriority2();
+		   	op = ParseExpressionPriority2();
 			oper = FindOperator(TOperator::ID_NEGATELOGICAL, op->type, &type_void);
 			return new TOp1(op, oper);
 		}
 
-       	if (TK_Check("~"))
+	   	if (TK_Check("~"))
 		{
-           	op = ParseExpressionPriority2();
+		   	op = ParseExpressionPriority2();
 			oper = FindOperator(TOperator::ID_BITINVERSE, op->type, &type_void);
 			return new TOp1(op, oper);
 		}
 
 		if (TK_Check("&"))
 		{
-           	op = ParseExpressionPriority1();
+		   	op = ParseExpressionPriority1();
 			type = MakePointerType(op->type);
 			op = op->GetAddress();
 			op->type = type;
@@ -1109,22 +1108,22 @@ static TOp *ParseExpressionPriority2(void)
 		}
 		if (TK_Check("*"))
 		{
-           	op = ParseExpressionPriority2();
+		   	op = ParseExpressionPriority2();
 			return new TOpPushPointed(op);
 		}
 
-       	if (TK_Check("++"))
+	   	if (TK_Check("++"))
 		{
-           	op = ParseExpressionPriority2();
+		   	op = ParseExpressionPriority2();
 			type = op->type;
 			op = op->GetAddress();
 			oper = FindOperator(TOperator::ID_PREINC, type, &type_void);
 			return new TOp1(op, oper);
 		}
 
-       	if (TK_Check("--"))
+	   	if (TK_Check("--"))
 		{
-           	op = ParseExpressionPriority2();
+		   	op = ParseExpressionPriority2();
 			type = op->type;
 			op = op->GetAddress();
 			oper = FindOperator(TOperator::ID_PREDEC, type, &type_void);
@@ -1168,32 +1167,32 @@ static TOp *ParseExpressionPriority3(void)
 
 	op1 = ParseExpressionPriority2();
 	done = false;
-    do
-    {
+	do
+	{
    		if (TK_Check("*"))
 		{
-   	    	op2 = ParseExpressionPriority2();
+   			op2 = ParseExpressionPriority2();
 			oper = FindOperator(TOperator::ID_MULTIPLY, op1->type, op2->type);
 			op1 = new TOp2(op1, op2, oper);
-	    }
+		}
    		else if (TK_Check("/"))
 		{
-   	    	op2 = ParseExpressionPriority2();
+   			op2 = ParseExpressionPriority2();
 			oper = FindOperator(TOperator::ID_DIVIDE, op1->type, op2->type);
 			op1 = new TOp2(op1, op2, oper);
-	    }
+		}
    		else if (TK_Check("%"))
 		{
-   	    	op2 = ParseExpressionPriority2();
+   			op2 = ParseExpressionPriority2();
 			oper = FindOperator(TOperator::ID_MODULUS, op1->type, op2->type);
 			op1 = new TOp2(op1, op2, oper);
-	    }
+		}
 		else
 		{
 			done = true;
 		}
 	}
-    while (!done);
+	while (!done);
 	return op1;
 }
 
@@ -1212,26 +1211,26 @@ static TOp *ParseExpressionPriority4(void)
 
 	op1 = ParseExpressionPriority3();
 	done = false;
-    do
-    {
+	do
+	{
    		if (TK_Check("+"))
 		{
-   	    	op2 = ParseExpressionPriority3();
+   			op2 = ParseExpressionPriority3();
 			oper = FindOperator(TOperator::ID_ADD, op1->type, op2->type);
 			op1 = new TOp2(op1, op2, oper);
-	    }
+		}
    		else if (TK_Check("-"))
 		{
-   	    	op2 = ParseExpressionPriority3();
+   			op2 = ParseExpressionPriority3();
 			oper = FindOperator(TOperator::ID_SUBTRACT, op1->type, op2->type);
 			op1 = new TOp2(op1, op2, oper);
-	    }
+		}
 		else
 		{
 			done = true;
 		}
 	}
-    while (!done);
+	while (!done);
 	return op1;
 }
 
@@ -1250,26 +1249,26 @@ static TOp *ParseExpressionPriority5(void)
 
 	op1 = ParseExpressionPriority4();
 	done = false;
-    do
-    {
+	do
+	{
    		if (TK_Check("<<"))
 		{
-   	    	op2 = ParseExpressionPriority4();
+   			op2 = ParseExpressionPriority4();
 			oper = FindOperator(TOperator::ID_LSHIFT, op1->type, op2->type);
 			op1 = new TOp2(op1, op2, oper);
-	    }
+		}
    		else if (TK_Check(">>"))
 		{
-   	    	op2 = ParseExpressionPriority4();
+   			op2 = ParseExpressionPriority4();
 			oper = FindOperator(TOperator::ID_RSHIFT, op1->type, op2->type);
 			op1 = new TOp2(op1, op2, oper);
-	    }
+		}
 		else
 		{
 			done = true;
 		}
 	}
-    while (!done);
+	while (!done);
 	return op1;
 }
 
@@ -1288,38 +1287,38 @@ static TOp* ParseExpressionPriority6(void)
 
 	op1 = ParseExpressionPriority5();
 	done = false;
-    do
-    {
+	do
+	{
    		if (TK_Check("<"))
 		{
-   	    	op2 = ParseExpressionPriority5();
+   			op2 = ParseExpressionPriority5();
 			oper = FindOperator(TOperator::ID_LT, op1->type, op2->type);
 			op1 = new TOp2(op1, op2, oper);
-	    }
+		}
    		else if (TK_Check("<="))
 		{
-   	    	op2 = ParseExpressionPriority5();
+   			op2 = ParseExpressionPriority5();
 			oper = FindOperator(TOperator::ID_LE, op1->type, op2->type);
 			op1 = new TOp2(op1, op2, oper);
-	    }
+		}
    		else if (TK_Check(">"))
 		{
-   	    	op2 = ParseExpressionPriority5();
+   			op2 = ParseExpressionPriority5();
 			oper = FindOperator(TOperator::ID_GT, op1->type, op2->type);
 			op1 = new TOp2(op1, op2, oper);
-	    }
+		}
    		else if (TK_Check(">="))
 		{
-   	    	op2 = ParseExpressionPriority5();
+   			op2 = ParseExpressionPriority5();
 			oper = FindOperator(TOperator::ID_GE, op1->type, op2->type);
 			op1 = new TOp2(op1, op2, oper);
-	    }
+		}
 		else
 		{
 			done = true;
 		}
 	}
-    while (!done);
+	while (!done);
 	return op1;
 }
 
@@ -1338,20 +1337,20 @@ static TOp* ParseExpressionPriority7(void)
 
 	op1 = ParseExpressionPriority6();
 	done = false;
-    do
-    {
+	do
+	{
    		if (TK_Check("=="))
 		{
-   	    	op2 = ParseExpressionPriority6();
+   			op2 = ParseExpressionPriority6();
 			oper = FindOperator(TOperator::ID_EQ, op1->type, op2->type);
 			op1 = new TOp2(op1, op2, oper);
-	    }
+		}
    		else if (TK_Check("!="))
 		{
-   	    	op2 = ParseExpressionPriority6();
+   			op2 = ParseExpressionPriority6();
 			oper = FindOperator(TOperator::ID_NE, op1->type, op2->type);
 			op1 = new TOp2(op1, op2, oper);
-	    }
+		}
 		else
 		{
 			done = true;
@@ -1515,7 +1514,7 @@ static TOp* ParseExpressionPriority14(void)
 		{"^=",	TOperator::ID_XORVAR},
 		{"<<=",	TOperator::ID_LSHIFTVAR},
 		{">>=",	TOperator::ID_RSHIFTVAR},
-        {NULL,	TOperator::NUM_OPERATORS}
+		{NULL,	TOperator::NUM_OPERATORS}
 	};
 	TOperator	*oper;
 	TOp			*op1;
@@ -1529,13 +1528,13 @@ static TOp* ParseExpressionPriority14(void)
 		{
 			type = op1->type;
 			op1 = op1->GetAddress();
-   	    	op2 = ParseExpressionPriority14();
+   			op2 = ParseExpressionPriority14();
 			oper = FindOperator(AssignOps[i].opid, type, op2->type);
 			TypeCheck3(type, op2->type);
-           	op1 = new TOp2(op1, op2, oper);
+		   	op1 = new TOp2(op1, op2, oper);
 			op1->type = type;
 			return op1;
-   	    }
+   		}
 	}
 	return op1;
 }
@@ -1555,3 +1554,13 @@ TType *ParseExpression(void)
 	return t;
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/21 17:52:54  dj_jl
+//	Added support for real string pointers, beautification
+//
+//	Revision 1.2  2001/07/27 14:27:56  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

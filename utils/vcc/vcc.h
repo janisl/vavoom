@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:56  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 #ifndef __VCC_H__
@@ -54,8 +50,8 @@ enum
 {
 	ev_void,
 	ev_int,
-    ev_uint,
-    ev_float,
+	ev_uint,
+	ev_float,
 	ev_string,
 	ev_function,
 	ev_pointer,
@@ -70,7 +66,7 @@ class TType;
 
 struct field_t
 {
-   	char		name[MAX_IDENTIFIER_LENGTH];
+	char		name[MAX_IDENTIFIER_LENGTH];
 	int			ofs;
 	TType		*type;
 };
@@ -95,8 +91,8 @@ class TType
 	int			numfields;
 	field_t		*fields;
 	//	Addfield info
-    int			available_size;
-    int			available_ofs;
+	int			available_size;
+	int			available_ofs;
 
 	//	Function params
 	int			num_params;
@@ -191,7 +187,7 @@ class TFunction
 	int			s_name;
 	int			first_statement;	//	Negatÿvi skaitıi ir ieb›vÒt∆s funkcijas
 	int			num_locals;
-    TType		*type;
+	TType		*type;
 };
 
 class TGlobalDef
@@ -205,15 +201,15 @@ class TGlobalDef
 struct localvardef_t
 {
 	char	name[MAX_IDENTIFIER_LENGTH];
-    TType	*type;
-    int		ofs;
+	TType	*type;
+	int		ofs;
 };
 
 struct constant_t
 {
 	char	name[MAX_IDENTIFIER_LENGTH];
-    int		value;
-    int		next;
+	int		value;
+	int		next;
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -288,6 +284,7 @@ extern int*				CodeBuffer;
 extern int				CodeBufferSize;
 
 extern int*				globals;
+extern byte*			globalinfo;
 extern int				numglobals;
 
 extern TGlobalDef*		globaldefs;
@@ -340,3 +337,14 @@ inline int PassFloat(float f)
 }
 
 #endif
+
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/21 17:52:54  dj_jl
+//	Added support for real string pointers, beautification
+//
+//	Revision 1.2  2001/07/27 14:27:56  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************
