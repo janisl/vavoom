@@ -1,38 +1,31 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.3  2001/07/31 16:57:52  dj_jl
-//**	Checking for shareware/extended wad by the presence of wad lump
-//**
-//**	Revision 1.2  2001/07/27 14:27:51  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**	
 //**************************************************************************
 
 //==========================================================================
 //
-//	AfterUnarchiveThinkers
+//  AfterUnarchiveThinkers
 //
 //==========================================================================
 
@@ -42,42 +35,42 @@ void AfterUnarchiveThinkers(void)
 
 //==========================================================================
 //
-//	G_InitNew
+//  G_InitNew
 //
 //==========================================================================
 
 void G_InitNew(int skill)
 {
-	int		i;
+	int i;
 
-    respawnmonsters = skill == sk_nightmare || GetCvar("RespawnMonsters");
-    nomonsters = GetCvar("NoMonsters");
-    fastparm = skill == sk_nightmare || GetCvar("Fast");
+	respawnmonsters = skill == sk_nightmare || GetCvar("RespawnMonsters");
+	nomonsters = GetCvar("NoMonsters");
+	fastparm = skill == sk_nightmare || GetCvar("Fast");
 
-    if (fastparm && (GetCvar("Fast") || gameskill != sk_nightmare))
-    { 
-		for (i = S_SARG_RUN1 ; i <= S_SARG_PAIN2 ; i++)
-        {
-	    	states[i].time /= 2.0;
+	if (fastparm && (GetCvar("Fast") || gameskill != sk_nightmare))
+	{
+		for (i = S_SARG_RUN1; i <= S_SARG_PAIN2; i++)
+		{
+			states[i].time /= 2.0;
 		}
 #ifdef FIXME
 		mobjinfo[MT_BRUISERSHOT].speed = 700.0;
 		mobjinfo[MT_HEADSHOT].speed = 700.0;
 		mobjinfo[MT_TROOPSHOT].speed = 700.0;
 #endif
-    } 
-    else if (skill != sk_nightmare && gameskill == sk_nightmare) 
-    { 
-		for (i = S_SARG_RUN1 ; i <= S_SARG_PAIN2 ; i++)
-        {
-	    	states[i].time *= 2.0;
+	}
+	else if (skill != sk_nightmare && gameskill == sk_nightmare)
+	{
+		for (i = S_SARG_RUN1; i <= S_SARG_PAIN2; i++)
+		{
+			states[i].time *= 2.0;
 		}
 #ifdef FIXME
 		mobjinfo[MT_BRUISERSHOT].speed = 525.0;
 		mobjinfo[MT_HEADSHOT].speed = 350.0;
 		mobjinfo[MT_TROOPSHOT].speed = 350.0;
 #endif
-    } 
+	}
 }
 
 //==========================================================================
@@ -88,7 +81,7 @@ void G_InitNew(int skill)
 
 void StartLevelLoading(void)
 {
-    bodyqueslot = 0;
+	bodyqueslot = 0;
 }
 
 //==========================================================================
@@ -99,13 +92,13 @@ void StartLevelLoading(void)
 
 void EndLevelLoading(void)
 {
-    // clear special respawning que
-    iquehead = iquetail = 0;
+	// clear special respawning que
+	iquehead = iquetail = 0;
 }
 
 //==========================================================================
 //
-//	main
+//  main
 //
 //==========================================================================
 
@@ -115,3 +108,17 @@ void main(void)
 	shareware = !WadLumpPresent("E2M1");
 #endif
 }
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2001/09/24 17:27:47  dj_jl
+//  Renaming
+//
+//  Revision 1.3  2001/07/31 16:57:52  dj_jl
+//  Checking for shareware/extended wad by the presence of wad lump
+//
+//  Revision 1.2  2001/07/27 14:27:51  dj_jl
+//  Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************
