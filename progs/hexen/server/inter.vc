@@ -565,7 +565,7 @@ class ArtifactFlechette:Artifact
 
 __states__
 {
-	S_ARTI_PSBG1('PSBG', 0, -1.0, S_NULL) { }
+	S_ARTI_PSBG1('PSBG', 0, 'artifact/flechete.md2', 0, -1.0, S_NULL) { }
 }
 
 defaultproperties
@@ -2067,7 +2067,7 @@ class ItemKey5:Key
 
 __states__
 {
-	S_KEY5('KEY5', 0, -1.0, S_NULL) { }
+	S_KEY5('KEY5', 0, 'keys/emerald.md2', 0, -1.0, S_NULL) { }
 }
 
 defaultproperties
@@ -2117,7 +2117,7 @@ class ItemKey7:Key
 
 __states__
 {
-	S_KEY7('KEY7', 0, -1.0, S_NULL) { }
+	S_KEY7('KEY7', 0, 'keys/silver.md2', 0, -1.0, S_NULL) { }
 }
 
 defaultproperties
@@ -3177,6 +3177,9 @@ void Key::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/07/13 07:58:51  dj_jl
+//  Added new models, updated existing ones.
+//
 //  Revision 1.21  2002/05/18 17:00:00  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

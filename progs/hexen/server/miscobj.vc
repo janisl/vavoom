@@ -92,9 +92,9 @@ class FireBomb:Actor
 
 __states__
 {
-	S_FIREBOMB1('PSBG', 0, 20.0 / 35.0, S_FIREBOMB2) { }
-	S_FIREBOMB2('PSBG', 0, 10.0 / 35.0, S_FIREBOMB3) { }
-	S_FIREBOMB3('PSBG', 0, 10.0 / 35.0, S_FIREBOMB4) { }
+	S_FIREBOMB1('PSBG', 0, 'artifact/flechete.md2', 0, 20.0 / 35.0, S_FIREBOMB2) { }
+	S_FIREBOMB2('PSBG', 0, 'artifact/flechete.md2', 0, 10.0 / 35.0, S_FIREBOMB3) { }
+	S_FIREBOMB3('PSBG', 0, 'artifact/flechete.md2', 0, 10.0 / 35.0, S_FIREBOMB4) { }
 	S_FIREBOMB4('PSBG', 1, 4.0 / 35.0, S_FIREBOMB5) { }
 	S_FIREBOMB5('PSBG', 2, 4.0 / 35.0, S_FIREBOMB6) { A_Scream(); }
 	S_FIREBOMB6('XPL1', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBOMB7) { A_Explode(); }
@@ -672,6 +672,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2002/07/13 07:58:51  dj_jl
+//  Added new models, updated existing ones.
+//
 //  Revision 1.1  2002/06/22 07:16:01  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //

@@ -461,10 +461,10 @@ void A_RestoreSpecialThing1(void)
 
 	// Do random mace placement
 	spot = P_Random() % MaceSpotCount;
-	P_UnsetThingPosition(self);
+	UnlinkFromWorld();
 	Origin.x = MaceSpot_x[spot];
 	Origin.y = MaceSpot_y[spot];
-	P_SetThingPosition(self);
+	LinkToWorld();
 	Origin.z = FloorZ;
 
 	::A_RestoreSpecialThing1();
@@ -628,15 +628,15 @@ class ItemKeyYellow:Key
 
 __states__
 {
-	S_CKYY1('CKYY', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY2) { }
-	S_CKYY2('CKYY', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY3) { }
-	S_CKYY3('CKYY', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY4) { }
-	S_CKYY4('CKYY', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY5) { }
-	S_CKYY5('CKYY', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY6) { }
-	S_CKYY6('CKYY', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY7) { }
-	S_CKYY7('CKYY', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY8) { }
-	S_CKYY8('CKYY', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY9) { }
-	S_CKYY9('CKYY', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY1) { }
+	S_CKYY1('CKYY', 0 | FF_FULLBRIGHT, 'keys/yellow.md2', 0, 3.0 / 35.0, S_CKYY2) { }
+	S_CKYY2('CKYY', 1 | FF_FULLBRIGHT, 'keys/yellow.md2', 0, 3.0 / 35.0, S_CKYY3) { }
+	S_CKYY3('CKYY', 2 | FF_FULLBRIGHT, 'keys/yellow.md2', 0, 3.0 / 35.0, S_CKYY4) { }
+	S_CKYY4('CKYY', 3 | FF_FULLBRIGHT, 'keys/yellow.md2', 0, 3.0 / 35.0, S_CKYY5) { }
+	S_CKYY5('CKYY', 4 | FF_FULLBRIGHT, 'keys/yellow.md2', 0, 3.0 / 35.0, S_CKYY6) { }
+	S_CKYY6('CKYY', 5 | FF_FULLBRIGHT, 'keys/yellow.md2', 0, 3.0 / 35.0, S_CKYY7) { }
+	S_CKYY7('CKYY', 6 | FF_FULLBRIGHT, 'keys/yellow.md2', 0, 3.0 / 35.0, S_CKYY8) { }
+	S_CKYY8('CKYY', 7 | FF_FULLBRIGHT, 'keys/yellow.md2', 0, 3.0 / 35.0, S_CKYY9) { }
+	S_CKYY9('CKYY', 8 | FF_FULLBRIGHT, 'keys/yellow.md2', 0, 3.0 / 35.0, S_CKYY1) { }
 }
 
 defaultproperties
@@ -659,7 +659,7 @@ class ItemAmmoGoldWandWimpy:Ammo
 
 __states__
 {
-	S_AMG1('AMG1', 0, -1.0, S_NULL) { }
+	S_AMG1('AMG1', 0, 'ammo/wand1.md2', 0, -1.0, S_NULL) { }
 }
 
 defaultproperties
@@ -684,9 +684,9 @@ class ItemAmmoGoldWandHefty:Ammo
 
 __states__
 {
-	S_AMG2_1('AMG2', 0, 4.0 / 35.0, S_AMG2_2) { }
-	S_AMG2_2('AMG2', 1, 4.0 / 35.0, S_AMG2_3) { }
-	S_AMG2_3('AMG2', 2, 4.0 / 35.0, S_AMG2_1) { }
+	S_AMG2_1('AMG2', 0, 'ammo/wand2.md2', 0, 4.0 / 35.0, S_AMG2_2) { }
+	S_AMG2_2('AMG2', 1, 'ammo/wand2.md2', 0, 4.0 / 35.0, S_AMG2_3) { }
+	S_AMG2_3('AMG2', 2, 'ammo/wand2.md2', 0, 4.0 / 35.0, S_AMG2_1) { }
 }
 
 defaultproperties
@@ -761,7 +761,7 @@ class ItemAmmoCrossbowWimpy:Ammo
 
 __states__
 {
-	S_AMC1('AMC1', 0, -1.0, S_NULL) { }
+	S_AMC1('AMC1', 0, 'ammo/bow1.md2', 0, -1.0, S_NULL) { }
 }
 
 defaultproperties
@@ -786,9 +786,9 @@ class ItemAmmoCrossbowHefty:Ammo
 
 __states__
 {
-	S_AMC2_1('AMC2', 0, 5.0 / 35.0, S_AMC2_2) { }
-	S_AMC2_2('AMC2', 1, 5.0 / 35.0, S_AMC2_3) { }
-	S_AMC2_3('AMC2', 2, 5.0 / 35.0, S_AMC2_1) { }
+	S_AMC2_1('AMC2', 0, 'ammo/bow2.md2', 0, 5.0 / 35.0, S_AMC2_2) { }
+	S_AMC2_2('AMC2', 1, 'ammo/bow2.md2', 0, 5.0 / 35.0, S_AMC2_3) { }
+	S_AMC2_3('AMC2', 2, 'ammo/bow2.md2', 0, 5.0 / 35.0, S_AMC2_1) { }
 }
 
 defaultproperties
@@ -964,6 +964,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2002/07/13 07:58:51  dj_jl
+//  Added new models, updated existing ones.
+//
 //  Revision 1.1  2002/06/22 07:16:00  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //

@@ -63,16 +63,20 @@ __states__
 	S_SARG_RUN1('SARG', 0, 'monsters/demon.md2', 2, 2.0 / 35.0, S_SARG_RUN2) { A_Chase(); }
 	S_SARG_RUN2('SARG', 0, 'monsters/demon.md2', 3, 2.0 / 35.0, S_SARG_RUN3) { A_Chase(); }
 	S_SARG_RUN3('SARG', 1, 'monsters/demon.md2', 4, 2.0 / 35.0, S_SARG_RUN4) { A_Chase(); }
-	S_SARG_RUN4('SARG', 1, 'monsters/demon.md2', 5, 2.0 / 35.0, S_SARG_RUN5) { A_Chase(); }
-	S_SARG_RUN5('SARG', 2, 'monsters/demon.md2', 6, 2.0 / 35.0, S_SARG_RUN6) { A_Chase(); }
-	S_SARG_RUN6('SARG', 2, 'monsters/demon.md2', 7, 2.0 / 35.0, S_SARG_RUN7) { A_Chase(); }
-	S_SARG_RUN7('SARG', 3, 'monsters/demon.md2', 8, 2.0 / 35.0, S_SARG_RUN8) { A_Chase(); }
-	S_SARG_RUN8('SARG', 3, 'monsters/demon.md2', 9, 2.0 / 35.0, S_SARG_RUN1) { A_Chase(); }
-	S_SARG_ATK1('SARG', 4, 'monsters/demon.md2', 10, 8.0 / 35.0, S_SARG_ATK2) { A_FaceTarget(); }
-	S_SARG_ATK2('SARG', 5, 'monsters/demon.md2', 11, 8.0 / 35.0, S_SARG_ATK3) { A_FaceTarget(); }
-	S_SARG_ATK3('SARG', 6, 'monsters/demon.md2', 12, 8.0 / 35.0, S_SARG_RUN1) { A_SargAttack(); }
-	S_SARG_PAIN('SARG', 7, 'monsters/demon.md2', 13, 2.0 / 35.0, S_SARG_PAIN2) { }
-	S_SARG_PAIN2('SARG', 7, 'monsters/demon.md2', 14, 2.0 / 35.0, S_SARG_RUN1) { A_Pain(); }
+	S_SARG_RUN4('SARG', 1, 'monsters/demon.md2', 5, 1.0 / 35.0, S_SARG_RUN45) { A_Chase(); }
+	S_SARG_RUN45('SARG', 1, 'monsters/demon.md2', 6, 1.0 / 35.0, S_SARG_RUN5) { }
+	S_SARG_RUN5('SARG', 2, 'monsters/demon.md2', 7, 2.0 / 35.0, S_SARG_RUN6) { A_Chase(); }
+	S_SARG_RUN6('SARG', 2, 'monsters/demon.md2', 8, 2.0 / 35.0, S_SARG_RUN7) { A_Chase(); }
+	S_SARG_RUN7('SARG', 3, 'monsters/demon.md2', 9, 1.0 / 35.0, S_SARG_RUN78) { A_Chase(); }
+	S_SARG_RUN78('SARG', 3, 'monsters/demon.md2', 10, 1.0 / 35.0, S_SARG_RUN8) { }
+	S_SARG_RUN8('SARG', 3, 'monsters/demon.md2', 11, 2.0 / 35.0, S_SARG_RUN1) { A_Chase(); }
+	S_SARG_ATK1('SARG', 4, 'monsters/demon.md2', 12, 8.0 / 35.0, S_SARG_ATK2) { A_FaceTarget(); }
+	S_SARG_ATK2('SARG', 5, 'monsters/demon.md2', 13, 4.0 / 35.0, S_SARG_ATK3) { A_FaceTarget(); }
+	S_SARG_ATK3('SARG', 5, 'monsters/demon.md2', 14, 4.0 / 35.0, S_SARG_ATK4) { }
+	S_SARG_ATK4('SARG', 6, 'monsters/demon.md2', 15, 4.0 / 35.0, S_SARG_ATK5) { A_SargAttack(); }
+	S_SARG_ATK5('SARG', 6, 'monsters/demon.md2', 16, 4.0 / 35.0, S_SARG_RUN1) { }
+	S_SARG_PAIN('SARG', 7, 'monsters/demon.md2', 17, 2.0 / 35.0, S_SARG_PAIN2) { }
+	S_SARG_PAIN2('SARG', 7, 'monsters/demon.md2', 18, 2.0 / 35.0, S_SARG_RUN1) { A_Pain(); }
 	S_SARG_DIE1('SARG', 8, 'monsters/demondie.md2', 0, 8.0 / 35.0, S_SARG_DIE2) { }
 	S_SARG_DIE2('SARG', 9, 'monsters/demondie.md2', 1, 8.0 / 35.0, S_SARG_DIE3) { A_Scream(); }
 	S_SARG_DIE3('SARG', 10, 'monsters/demondie.md2', 2, 4.0 / 35.0, S_SARG_DIE4) { }
@@ -130,6 +134,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/07/13 07:59:38  dj_jl
+//  Added new models, updated existing ones.
+//
 //  Revision 1.14  2002/06/29 15:54:34  dj_jl
 //  Floatized PainChance.
 //

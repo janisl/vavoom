@@ -172,27 +172,50 @@ void A_KnightAttack(void)
 
 __states__
 {
-	S_KNIGHT_STND1('KNIG', 0, 10.0 / 35.0, S_KNIGHT_STND2) { A_Look(); }
-	S_KNIGHT_STND2('KNIG', 1, 10.0 / 35.0, S_KNIGHT_STND1) { A_Look(); }
-	S_KNIGHT_WALK1('KNIG', 0, 4.0 / 35.0, S_KNIGHT_WALK2) { A_Chase(); }
-	S_KNIGHT_WALK2('KNIG', 1, 4.0 / 35.0, S_KNIGHT_WALK3) { A_Chase(); }
-	S_KNIGHT_WALK3('KNIG', 2, 4.0 / 35.0, S_KNIGHT_WALK4) { A_Chase(); }
-	S_KNIGHT_WALK4('KNIG', 3, 4.0 / 35.0, S_KNIGHT_WALK1) { A_Chase(); }
-	S_KNIGHT_ATK1('KNIG', 4, 10.0 / 35.0, S_KNIGHT_ATK2) { A_FaceTarget(); }
-	S_KNIGHT_ATK2('KNIG', 5, 8.0 / 35.0, S_KNIGHT_ATK3) { A_FaceTarget(); }
-	S_KNIGHT_ATK3('KNIG', 6, 8.0 / 35.0, S_KNIGHT_ATK4) { A_KnightAttack(); }
-	S_KNIGHT_ATK4('KNIG', 4, 10.0 / 35.0, S_KNIGHT_ATK5) { A_FaceTarget(); }
-	S_KNIGHT_ATK5('KNIG', 5, 8.0 / 35.0, S_KNIGHT_ATK6) { A_FaceTarget(); }
-	S_KNIGHT_ATK6('KNIG', 6, 8.0 / 35.0, S_KNIGHT_WALK1) { A_KnightAttack(); }
-	S_KNIGHT_PAIN1('KNIG', 7, 3.0 / 35.0, S_KNIGHT_PAIN2) { }
-	S_KNIGHT_PAIN2('KNIG', 7, 3.0 / 35.0, S_KNIGHT_WALK1) { A_Pain(); }
-	S_KNIGHT_DIE1('KNIG', 8, 6.0 / 35.0, S_KNIGHT_DIE2) { }
-	S_KNIGHT_DIE2('KNIG', 9, 6.0 / 35.0, S_KNIGHT_DIE3) { A_Scream(); }
-	S_KNIGHT_DIE3('KNIG', 10, 6.0 / 35.0, S_KNIGHT_DIE4) { }
-	S_KNIGHT_DIE4('KNIG', 11, 6.0 / 35.0, S_KNIGHT_DIE5) { A_NoBlocking(); }
-	S_KNIGHT_DIE5('KNIG', 12, 6.0 / 35.0, S_KNIGHT_DIE6) { }
-	S_KNIGHT_DIE6('KNIG', 13, 6.0 / 35.0, S_KNIGHT_DIE7) { }
-	S_KNIGHT_DIE7('KNIG', 14, -1.0, S_NULL) { }
+	S_KNIGHT_STND1('KNIG', 0, 'monsters/knight.md2', 0, 2.5 / 35.0, S_KNIGHT_STND2) { A_Look(); }
+	S_KNIGHT_STND2('KNIG', 0, 'monsters/knight.md2', 1, 2.5 / 35.0, S_KNIGHT_STND3) { }
+	S_KNIGHT_STND3('KNIG', 0, 'monsters/knight.md2', 2, 2.5 / 35.0, S_KNIGHT_STND4) { }
+	S_KNIGHT_STND4('KNIG', 0, 'monsters/knight.md2', 3, 2.5 / 35.0, S_KNIGHT_STND5) { }
+	S_KNIGHT_STND5('KNIG', 1, 'monsters/knight.md2', 4, 2.5 / 35.0, S_KNIGHT_STND6) { A_Look(); }
+	S_KNIGHT_STND6('KNIG', 1, 'monsters/knight.md2', 5, 2.5 / 35.0, S_KNIGHT_STND7) { }
+	S_KNIGHT_STND7('KNIG', 1, 'monsters/knight.md2', 6, 2.5 / 35.0, S_KNIGHT_STND8) { }
+	S_KNIGHT_STND8('KNIG', 1, 'monsters/knight.md2', 7, 2.5 / 35.0, S_KNIGHT_STND1) { }
+	S_KNIGHT_WALK1('KNIG', 0, 'monsters/knight.md2', 8, 2.0 / 35.0, S_KNIGHT_WALK2) { A_Chase(); }
+	S_KNIGHT_WALK2('KNIG', 0, 'monsters/knight.md2', 9, 2.0 / 35.0, S_KNIGHT_WALK3) { }
+	S_KNIGHT_WALK3('KNIG', 1, 'monsters/knight.md2', 10, 2.0 / 35.0, S_KNIGHT_WALK4) { A_Chase(); }
+	S_KNIGHT_WALK4('KNIG', 1, 'monsters/knight.md2', 11, 2.0 / 35.0, S_KNIGHT_WALK5) { }
+	S_KNIGHT_WALK5('KNIG', 2, 'monsters/knight.md2', 12, 2.0 / 35.0, S_KNIGHT_WALK6) { A_Chase(); }
+	S_KNIGHT_WALK6('KNIG', 2, 'monsters/knight.md2', 13, 2.0 / 35.0, S_KNIGHT_WALK7) { }
+	S_KNIGHT_WALK7('KNIG', 3, 'monsters/knight.md2', 14, 2.0 / 35.0, S_KNIGHT_WALK8) { A_Chase(); }
+	S_KNIGHT_WALK8('KNIG', 3, 'monsters/knight.md2', 15, 2.0 / 35.0, S_KNIGHT_WALK1) { }
+	S_KNIGHT_ATK1('KNIG', 4, 'monsters/knight.md2', 16, 1.0 / 35.0, S_KNIGHT_ATK2) { A_FaceTarget(); }
+	S_KNIGHT_ATK2('KNIG', 4, 'monsters/knight.md2', 17, 3.0 / 35.0, S_KNIGHT_ATK3) { }
+	S_KNIGHT_ATK3('KNIG', 4, 'monsters/knight.md2', 18, 3.0 / 35.0, S_KNIGHT_ATK4) { }
+	S_KNIGHT_ATK4('KNIG', 4, 'monsters/knight.md2', 19, 3.0 / 35.0, S_KNIGHT_ATK5) { }
+	S_KNIGHT_ATK5('KNIG', 5, 'monsters/knight.md2', 20, 4.0 / 35.0, S_KNIGHT_ATK6) { A_FaceTarget(); }
+	S_KNIGHT_ATK6('KNIG', 5, 'monsters/knight.md2', 21, 4.0 / 35.0, S_KNIGHT_ATK7) { }
+	S_KNIGHT_ATK7('KNIG', 6, 'monsters/knight.md2', 22, 4.0 / 35.0, S_KNIGHT_ATK8) { A_KnightAttack(); }
+	S_KNIGHT_ATK8('KNIG', 6, 'monsters/knight.md2', 23, 4.0 / 35.0, S_KNIGHT_ATK9) { }
+	S_KNIGHT_ATK9('KNIG', 4, 'monsters/knight.md2', 17, 4.0 / 35.0, S_KNIGHT_ATK10) { A_FaceTarget(); }
+	S_KNIGHT_ATK10('KNIG', 4, 'monsters/knight.md2', 18, 3.0 / 35.0, S_KNIGHT_ATK11) { }
+	S_KNIGHT_ATK11('KNIG', 4, 'monsters/knight.md2', 19, 3.0 / 35.0, S_KNIGHT_ATK12) { }
+	S_KNIGHT_ATK12('KNIG', 5, 'monsters/knight.md2', 20, 4.0 / 35.0, S_KNIGHT_ATK13) { A_FaceTarget(); }
+	S_KNIGHT_ATK13('KNIG', 5, 'monsters/knight.md2', 21, 4.0 / 35.0, S_KNIGHT_ATK14) { }
+	S_KNIGHT_ATK14('KNIG', 6, 'monsters/knight.md2', 22, 4.0 / 35.0, S_KNIGHT_ATK15) { A_KnightAttack(); }
+	S_KNIGHT_ATK15('KNIG', 6, 'monsters/knight.md2', 23, 4.0 / 35.0, S_KNIGHT_WALK1) { }
+	S_KNIGHT_PAIN1('KNIG', 7, 'monsters/knight.md2', 24, 3.0 / 35.0, S_KNIGHT_PAIN2) { }
+	S_KNIGHT_PAIN2('KNIG', 7, 'monsters/knight.md2', 25, 3.0 / 35.0, S_KNIGHT_WALK1) { A_Pain(); }
+	S_KNIGHT_DIE1('KNIG', 8, 'monsters/knight.md2', 26, 6.0 / 35.0, S_KNIGHT_DIE2) { }
+	S_KNIGHT_DIE2('KNIG', 9, 'monsters/knight.md2', 27, 6.0 / 35.0, S_KNIGHT_DIE3) { A_Scream(); }
+	S_KNIGHT_DIE3('KNIG', 10, 'monsters/knight.md2', 28, 3.0 / 35.0, S_KNIGHT_DIE4) { }
+	S_KNIGHT_DIE4('KNIG', 10, 'monsters/knight.md2', 29, 3.0 / 35.0, S_KNIGHT_DIE5) { }
+	S_KNIGHT_DIE5('KNIG', 11, 'monsters/knight.md2', 30, 3.0 / 35.0, S_KNIGHT_DIE6) { A_NoBlocking(); }
+	S_KNIGHT_DIE6('KNIG', 11, 'monsters/knight.md2', 31, 3.0 / 35.0, S_KNIGHT_DIE7) { }
+	S_KNIGHT_DIE7('KNIG', 12, 'monsters/knight.md2', 32, 3.0 / 35.0, S_KNIGHT_DIE8) { }
+	S_KNIGHT_DIE8('KNIG', 12, 'monsters/knight.md2', 33, 3.0 / 35.0, S_KNIGHT_DIE9) { }
+	S_KNIGHT_DIE9('KNIG', 13, 'monsters/knight.md2', 34, 3.0 / 35.0, S_KNIGHT_DIE10) { }
+	S_KNIGHT_DIE10('KNIG', 13, 'monsters/knight.md2', 35, 3.0 / 35.0, S_KNIGHT_DIE11) { }
+	S_KNIGHT_DIE11('KNIG', 14, 'monsters/knight.md2', 36, -1.0, S_NULL) { }
 }
 
 defaultproperties
@@ -261,6 +284,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/07/13 07:58:51  dj_jl
+//  Added new models, updated existing ones.
+//
 //  Revision 1.25  2002/06/22 07:16:00  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //
