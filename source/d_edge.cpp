@@ -39,8 +39,8 @@
 
 //	Theoretically cliping can give only 4 new vertexes. In practice due to
 // roundof errors we can get more extra vertexes
-#define NUM_EXTRA_VERTS	16
-#define MAX_STACK_VERTS	64
+#define NUM_EXTRA_VERTS		16
+#define MAX_STACK_VERTS		64
 
 // TYPES -------------------------------------------------------------------
 
@@ -74,6 +74,11 @@ struct surf_t
 	int			texture2;
 	float		offs1;
 	float		offs2;
+
+	// Make size 64 bytes to simplify asm
+	int			reserved1;
+	int			reserved2;
+	int			reserved3;
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -81,6 +86,12 @@ struct surf_t
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
+
+extern "C"
+{
+void D_EmitEdge(const TVec&, const TVec&);
+void D_ClipEdge(const TVec&, const TVec&, TClipPlane*, int);
+}
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -107,11 +118,17 @@ fixed_t			bbextentt;
 
 void*			cacheblock;
 int				cachewidth;
-byte*			ds_transluc;// For translucent spans
-int				ds_transluc16;
+byte*			d_transluc;// For translucent spans
+word			*d_srctranstab;
+word			*d_dsttranstab;
 #endif
 
-// PRIVATE DATA DEFINITIONS ------------------------------------------------
+float			r_nearzi;
+int				r_emited;
+float			d_u1, d_v1;
+int				d_ceilv1;
+int				d_lastvertvalid;
+TVec			firstvert;
 
 edge_t			r_edges[MAX_EDGES];
 edge_t			*edge_p, *edge_max;
@@ -126,36 +143,29 @@ surf_t			*surface_p, *surf_max;
 edge_t			*newedges[MAXSCREENHEIGHT];
 edge_t			*removeedges[MAXSCREENHEIGHT];
 
-espan_t			*span_p, *max_span_p;
+// PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-int				r_currentkey;
+static espan_t	*span_p, *max_span_p;
 
-int				current_iv;
+static int		r_currentkey;
 
-edge_t			edge_head;
-edge_t			edge_tail;
+static int		current_iv;
 
-surf_t			*msurf;
+static edge_t	edge_head;
+static edge_t	edge_tail;
 
 static int		outofsurfs;
 static int		outofedges;
-
-static float	r_nearzi;
-static int		r_emited;
-static float	d_u1, d_v1;
-static int		d_ceilv1;
-static bool		d_lastvertvalid;
-static TVec		firstvert;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	R_BeginEdgeFrame
+//	D_BeginEdgeFrame
 //
 //==========================================================================
 
-void R_BeginEdgeFrame(void)
+void D_BeginEdgeFrame(void)
 {
 	edge_p = r_edges;
 	edge_max = &r_edges[MAX_EDGES];
@@ -185,7 +195,7 @@ void R_BeginEdgeFrame(void)
 
 void D_ClearPolys(void)
 {
-	R_BeginEdgeFrame();
+	D_BeginEdgeFrame();
 }
 
 //==========================================================================
@@ -201,13 +211,15 @@ void TransformVector(const TVec &in, TVec &out)
 	out.z = DotProduct(in, viewforward);
 }
 
+#ifndef USEASM
+
 //==========================================================================
 //
 //	D_EmitEdge
 //
 //==========================================================================
 
-static void D_EmitEdge(const TVec &pv0, const TVec &pv1)
+extern "C" void D_EmitEdge(const TVec &pv0, const TVec &pv1)
 {
 	edge_t		*edge, *pcheck;
 	int			u_check;
@@ -238,14 +250,14 @@ static void D_EmitEdge(const TVec &pv0, const TVec &pv1)
 		u0 = tr.x * z1 * xprojection + centerxfrac;
 		v0 = tr.y * z1 * yprojection + centeryfrac;
 
-		if (u0 < -0.5)
-			u0 = -0.5;
-		if (u0 > viewwidth - 0.5)
-			u0 = viewwidth - 0.5;
-		if (v0 < -0.5)
-			v0 = -0.5;
-		if (v0 > viewheight - 0.5)
-			v0 = viewheight - 0.5;
+		if (u0 < vrectx_adj)
+			u0 = vrectx_adj;
+		if (u0 > vrectw_adj)
+			u0 = vrectw_adj;
+		if (v0 < vrecty_adj)
+			v0 = vrecty_adj;
+		if (v0 > vrecth_adj)
+			v0 = vrecth_adj;
 
 		ceilv0 = (int)ceil(v0);
 	}
@@ -262,14 +274,14 @@ static void D_EmitEdge(const TVec &pv0, const TVec &pv1)
 	u1 = tr.x * z1 * xprojection + centerxfrac;
 	v1 = tr.y * z1 * yprojection + centeryfrac;
 
-	if (u1 < -0.5)
-		u1 = -0.5;
-	if (u1 > viewwidth - 0.5)
-		u1 = viewwidth - 0.5;
-	if (v1 < -0.5)
-		v1 = -0.5;
-	if (v1 > viewheight - 0.5)
-		v1 = viewheight - 0.5;
+	if (u1 < vrectx_adj)
+		u1 = vrectx_adj;
+	if (u1 > vrectw_adj)
+		u1 = vrectw_adj;
+	if (v1 < vrecty_adj)
+		v1 = vrecty_adj;
+	if (v1 > vrecth_adj)
+		v1 = vrecth_adj;
 
 	ceilv1 = (int)ceil(v1);
 
@@ -282,11 +294,6 @@ static void D_EmitEdge(const TVec &pv0, const TVec &pv1)
 	if (ceilv0 == ceilv1)
 	{
 		return;		// horizontal edge
-	}
-	if (edge_p == edge_max)
-	{
-		outofedges++;
-		return;
 	}
 
 	r_emited = true;
@@ -346,13 +353,15 @@ static void D_EmitEdge(const TVec &pv0, const TVec &pv1)
 	removeedges[v2] = edge;
 }
 
+#endif
+
 //==========================================================================
 //
 //	D_ClipEdge
 //
 //==========================================================================
 
-static void D_ClipEdge(const TVec &v0, const TVec &v1,
+extern "C" void D_ClipEdge(const TVec &v0, const TVec &v1,
 	TClipPlane *clip, int clipflags)
 {
 	if (clip)
@@ -445,6 +454,11 @@ void TSoftwareDrawer::DrawPolygon(TVec *cv, int count, int, int clipflags)
 		outofsurfs++;
 		return;
 	}
+	if (edge_p + count + 4 >= edge_max)
+	{
+		outofedges += count;
+		return;
+	}
 
 	for (i = 0; i < 4; i++)
 	{
@@ -500,6 +514,11 @@ void TSoftwareDrawer::DrawSkyPolygon(TVec *cv, int count,
 		outofsurfs++;
 		return;
 	}
+	if (edge_p + count + 4 >= edge_max)
+	{
+		outofedges += count;
+		return;
+	}
 
 	for (i = 0; i < 4; i++)
 	{
@@ -546,7 +565,7 @@ void TSoftwareDrawer::DrawSkyPolygon(TVec *cv, int count,
 
 //==========================================================================
 //
-//	R_InsertNewEdges
+//	D_InsertNewEdges
 //
 //	Adds the edges in the linked list edgestoadd, adding them to the edges
 // in the linked list edgelist.  edgestoadd is assumed to be sorted on u,
@@ -556,7 +575,7 @@ void TSoftwareDrawer::DrawSkyPolygon(TVec *cv, int count,
 //
 //==========================================================================
 
-void R_InsertNewEdges(edge_t *edgestoadd, edge_t *edgelist)
+void D_InsertNewEdges(edge_t *edgestoadd, edge_t *edgelist)
 {
 	edge_t	*next_edge;
 
@@ -589,11 +608,11 @@ addedge:
 
 //==========================================================================
 //
-//	R_RemoveEdges
+//	D_RemoveEdges
 //
 //==========================================================================
 
-void R_RemoveEdges(edge_t *pedge)
+void D_RemoveEdges(edge_t *pedge)
 {
 	do
 	{
@@ -604,11 +623,11 @@ void R_RemoveEdges(edge_t *pedge)
 
 //==========================================================================
 //
-//	R_StepActiveU
+//	D_StepActiveU
 //
 //==========================================================================
 
-void R_StepActiveU(edge_t *pedge, edge_t *tail)
+void D_StepActiveU(edge_t *pedge, edge_t *tail)
 {
 	edge_t		*pnext_edge, *pwedge;
 
@@ -649,11 +668,11 @@ void R_StepActiveU(edge_t *pedge, edge_t *tail)
 
 //==========================================================================
 //
-//	R_LeadingEdge
+//	D_LeadingEdge
 //
 //==========================================================================
 
-void R_LeadingEdge(edge_t *edge)
+void D_LeadingEdge(edge_t *edge)
 {
 	espan_t			*span;
 	surf_t			*surf, *surf2;
@@ -717,11 +736,11 @@ gotposition:
 
 //==========================================================================
 //
-//	R_TrailingEdge
+//	D_TrailingEdge
 //
 //==========================================================================
 
-void R_TrailingEdge(surf_t *surf, edge_t *edge)
+void D_TrailingEdge(surf_t *surf, edge_t *edge)
 {
 	espan_t			*span;
 	int				iu;
@@ -756,11 +775,11 @@ void R_TrailingEdge(surf_t *surf, edge_t *edge)
 
 //==========================================================================
 //
-//	R_CleanupSpan
+//	D_CleanupSpan
 //
 //==========================================================================
 
-void R_CleanupSpan(void)
+void D_CleanupSpan(void)
 {
 	surf_t	*surf;
 	int		iu;
@@ -790,11 +809,11 @@ void R_CleanupSpan(void)
 
 //==========================================================================
 //
-//	R_GenerateSpans
+//	D_GenerateSpans
 //
 //==========================================================================
 
-void R_GenerateSpans(void)
+void D_GenerateSpans(void)
 {
 	edge_t			*edge;
 	surf_t			*surf;
@@ -811,16 +830,16 @@ void R_GenerateSpans(void)
 			// it has a left surface, so a surface is going away for this span
 			surf = &surfaces[edge->surfs[0]];
 
-			R_TrailingEdge(surf, edge);
+			D_TrailingEdge(surf, edge);
 
 			if (!edge->surfs[1])
 				continue;
 		}
 
-		R_LeadingEdge(edge);
+		D_LeadingEdge(edge);
 	}
 
-	R_CleanupSpan();
+	D_CleanupSpan();
 }
 
 //==========================================================================
@@ -1015,10 +1034,10 @@ void TSoftwareDrawer::WorldDrawing(void)
 
 		if (newedges[iv])
 		{
-			R_InsertNewEdges(newedges[iv], edge_head.next);
+			D_InsertNewEdges(newedges[iv], edge_head.next);
 		}
 
-		R_GenerateSpans();
+		D_GenerateSpans();
 
 		//	Flush the span list if we can't be sure we have enough spans
 		// left for the next scan
@@ -1034,10 +1053,10 @@ void TSoftwareDrawer::WorldDrawing(void)
 		}
 
 		if (removeedges[iv])
-			R_RemoveEdges(removeedges[iv]);
+			D_RemoveEdges(removeedges[iv]);
 
 		if (edge_head.next != &edge_tail)
-			R_StepActiveU(edge_head.next, &edge_tail);
+			D_StepActiveU(edge_head.next, &edge_tail);
 	}
 
 	// do the last scan (no need to step or sort or remove on the last scan)
@@ -1048,9 +1067,9 @@ void TSoftwareDrawer::WorldDrawing(void)
 	surfaces[1].spanstate = 1;
 
 	if (newedges[iv])
-		R_InsertNewEdges(newedges[iv], edge_head.next);
+		D_InsertNewEdges(newedges[iv], edge_head.next);
 
-	R_GenerateSpans();
+	D_GenerateSpans();
 
 	// draw whatever's left in the span list
 	D_DrawSurfaces();
@@ -1062,9 +1081,12 @@ void TSoftwareDrawer::WorldDrawing(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/15 17:13:05  dj_jl
+//	Implemented D_EmitEdge in asm
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
