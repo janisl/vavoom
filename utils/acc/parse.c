@@ -288,6 +288,8 @@ static struct ScriptTypes ScriptCounts[] =
 	{ "redreturn",		RED_RETURN_SCRIPTS_BASE,	0 },
 	{ "whitereturn",	WHITE_RETURN_SCRIPTS_BASE,	0 },
 	{ "lightning",		LIGHTNING_SCRIPTS_BASE,		0 },
+	{ "disconnect",		DISCONNECT_SCRIPTS_BASE,	0 },
+	{ "unloading",		UNLOADING_SCRIPTS_BASE,		0 },
 	{ NULL,				-1,							0 }
 };
 
@@ -558,7 +560,35 @@ static void OuterScript(void)
 			} while(tk_Token == TK_COMMA);
 			TK_TokenMustBe(TK_RPAREN, ERR_MISSING_RPAREN);
 		}
-		MS_Message(MSG_DEBUG, "Script type: closed (%d %s)\n",
+		TK_NextToken();
+		switch(tk_Token)
+		{
+		case TK_DISCONNECT:
+			scriptType = DISCONNECT_SCRIPTS_BASE;
+			if(ScriptVarCount != 1)
+			{
+				ERR_Error(ERR_DISCONNECT_NEEDS_1_ARG, YES);
+			}
+			break;
+
+		case TK_OPEN:
+		case TK_RESPAWN:
+		case TK_DEATH:
+		case TK_ENTER:
+		case TK_PICKUP:
+		case TK_BLUERETURN:
+		case TK_REDRETURN:
+		case TK_WHITERETURN:
+		case TK_LIGHTNING:
+		case TK_UNLOADING:
+			ERR_Error(ERR_UNCLOSED_WITH_ARGS, YES);
+			break;
+
+		default:
+			TK_Undo();
+		}
+		MS_Message(MSG_DEBUG, "Script type: %s (%d %s)\n",
+			scriptType == 0 ? "closed" : "disconnect",
 			ScriptVarCount, ScriptVarCount == 1 ? "arg" : "args");
 	}
 	else switch (tk_Token)
@@ -599,6 +629,15 @@ static void OuterScript(void)
 		scriptType = LIGHTNING_SCRIPTS_BASE;
 		break;
 
+	case TK_UNLOADING:
+		scriptType = UNLOADING_SCRIPTS_BASE;
+		break;
+
+	case TK_DISCONNECT:
+		scriptType = DISCONNECT_SCRIPTS_BASE;
+		ERR_Error (ERR_DISCONNECT_NEEDS_1_ARG, YES);
+		break;
+
 	default:
 		ERR_Error(ERR_BAD_SCRIPT_DECL, YES);
 		SkipBraceBlock(0);
@@ -606,7 +645,7 @@ static void OuterScript(void)
 		return;
 	}
 	TK_NextToken();
-	if (tk_Token == TK_NET)
+	if(tk_Token == TK_NET)
 	{
 		scriptNumber += NET_SCRIPT_FLAG;
 		TK_NextToken();

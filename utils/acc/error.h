@@ -140,6 +140,8 @@ typedef enum
 	ERR_NO_NEED_ARRAY_SIZE,
 	ERR_NO_MULTIDIMENSIONS,
 	ERR_NEED_ARRAY_SIZE,
+	ERR_DISCONNECT_NEEDS_1_ARG,
+	ERR_UNCLOSED_WITH_ARGS,
 } error_t;
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

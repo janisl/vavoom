@@ -172,6 +172,8 @@ static struct
 	{ ERR_NO_NEED_ARRAY_SIZE, "Only map arrays need a size." },
 	{ ERR_NO_MULTIDIMENSIONS, "Only map arrays can have more than one dimension." },
 	{ ERR_NEED_ARRAY_SIZE, "Missing array size." },
+	{ ERR_DISCONNECT_NEEDS_1_ARG, "Disconnect scripts must have 1 argument." },
+	{ ERR_UNCLOSED_WITH_ARGS, "Most special scripts must not have arguments." },
 	{ ERR_NONE, NULL }
 };
 

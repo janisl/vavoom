@@ -177,6 +177,8 @@ static struct keyword_s
 	{ "libdefine", TK_LIBDEFINE },
 	{ "bool", TK_BOOL },
 	{ "net", TK_NET },
+	{ "disconnect", TK_DISCONNECT },
+	{ "unloading", TK_UNLOADING },
 };
 
 #define NUM_KEYWORDS (sizeof(Keywords)/sizeof(Keywords[0]))

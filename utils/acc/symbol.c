@@ -150,6 +150,9 @@ static internFuncDef_t InternalFunctions[] =
 	{ "getsectorceilingz", PCD_NOP, PCD_GETSECTORCEILINGZ, 3, 0, 0, YES, NO },
 	{ "getsigilpieces", PCD_NOP, PCD_GETSIGILPIECES, 0, 0, 0, YES, NO },
 	{ "getlevelinfo", PCD_NOP, PCD_GETLEVELINFO, 1, 0, 0, YES, NO },
+	{ "changesky", PCD_NOP, PCD_CHANGESKY, 2, 0, 0, NO, NO },
+	{ "playeringame", PCD_NOP, PCD_PLAYERINGAME, 1, 0, 0, YES, NO },
+	{ "playerisbot", PCD_NOP, PCD_PLAYERISBOT, 1, 0, 0, YES, NO },
 
 	{ NULL, PCD_NOP, PCD_NOP, 0, 0, 0, NO, NO }
 };

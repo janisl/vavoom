@@ -119,6 +119,8 @@ typedef enum
 	TK_LIBDEFINE,		// 'libdefine'
 	TK_BOOL,			// 'bool'
 	TK_NET,				// 'net'
+	TK_DISCONNECT,		// 'disconnect'
+	TK_UNLOADING,		// 'unloading'
 } tokenType_t;
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

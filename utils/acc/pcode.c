@@ -371,7 +371,10 @@ static char *PCDNames[PCODE_COMMAND_COUNT] =
 	"PCD_GETSECTORCEILINGZ",
 	"PCD_LSPEC5RESULT",
 	"PCD_GETSIGILPIECES",
-	"PCD_GELEVELINFO"
+	"PCD_GELEVELINFO",
+	"PCD_CHANGESKY",
+	"PCD_PLAYERINGAME",
+	"PCD_PLAYERISBOT"
 };
 
 // CODE --------------------------------------------------------------------
