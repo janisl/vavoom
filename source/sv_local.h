@@ -386,6 +386,7 @@ void SV_SetLineTexture(int side, int position, int texture);
 void SV_SetLineTransluc(line_t *line, int trans);
 const char *SV_GetMapName(int num);
 int SV_FindModel(const char *name);
+int SV_GetModelIndex(const FName &Name);
 int SV_FindSkin(const char *name);
 
 void SV_ReadMove(void);
@@ -444,9 +445,12 @@ inline subsector_t* SV_PointInSubsector(float x, float y)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2002/03/28 18:05:25  dj_jl
+//	Added SV_GetModelIndex.
+//
 //	Revision 1.23  2002/03/09 18:05:34  dj_jl
 //	Added support for defining native functions outside pr_cmds
-//
+//	
 //	Revision 1.22  2002/02/22 18:09:52  dj_jl
 //	Some improvements, beautification.
 //	
