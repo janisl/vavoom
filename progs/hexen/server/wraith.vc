@@ -24,11 +24,84 @@
 //**************************************************************************
 
 //**************************************************************************
+//
+//	WraithMissile
+//
+//**************************************************************************
+
+class WraithMissile:Projectile
+{
+
+//==========================================================================
+//
+//  A_WraithFX2
+//
+//  Spawns sparkle tail of missile.
+//
+//==========================================================================
+
+void A_WraithFX2(void)
+{
+	Actor A;
+	float angle;
+	int i;
+
+	for (i = 0; i < 2; i++)
+	{
+		A = Spawn(WraithSparkDrip, Origin);
+		if (A)
+		{
+			if (Random() < 0.5)
+			{
+				angle = AngleMod360(Angles.yaw + Random() * 90.0);
+			}
+			else
+			{
+				angle = AngleMod360(Angles.yaw - Random() * 90.0);
+			}
+			A.Velocity.z = 0.0;
+			A.Velocity.x = (Random() / 2.0 + 1.0) * cos(angle) * 35.0;
+			A.Velocity.y = (Random() / 2.0 + 1.0) * sin(angle) * 35.0;
+			A.Instigator = self;
+			A.FloorClip = 10.0;
+		}
+	}
+}
+
+__states__
+{
+	S_WRTHFX_MOVE1('WRBL', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_WRTHFX_MOVE2) { }
+	S_WRTHFX_MOVE2('WRBL', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_WRTHFX_MOVE3) { A_WraithFX2(); }
+	S_WRTHFX_MOVE3('WRBL', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_WRTHFX_MOVE1) { }
+	S_WRTHFX_BOOM1('WRBL', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_BOOM2) { }
+	S_WRTHFX_BOOM2('WRBL', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_BOOM3) { A_WraithFX2(); }
+	S_WRTHFX_BOOM3('WRBL', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_BOOM4) { }
+	S_WRTHFX_BOOM4('WRBL', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_WRTHFX_BOOM5) { A_WraithFX2(); }
+	S_WRTHFX_BOOM5('WRBL', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_WRTHFX_BOOM6) { A_WraithFX2(); }
+	S_WRTHFX_BOOM6('WRBL', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 6.0;
+	Mass = 5.0;
+	Speed = 490.0;
+	MissileDamage = 5;
+	bFloorClip = true;
+	bFireDamage = true;
+	IdleState = S_WRTHFX_MOVE1;
+	DeathState = S_WRTHFX_BOOM1;
+	DeathSound = 'WraithMissileExplode';
+	Effects = EF_DL_RED;
+}
+
+}
+
 //**************************************************************************
 //
 //	Wraith
 //
-//**************************************************************************
 //**************************************************************************
 
 class Wraith:Pawn
@@ -278,11 +351,9 @@ defaultproperties
 }
 
 //**************************************************************************
-//**************************************************************************
 //
 //	WraithBuried
 //
-//**************************************************************************
 //**************************************************************************
 
 class WraithBuried:Wraith
@@ -372,47 +443,11 @@ defaultproperties
 }
 
 //**************************************************************************
-//**************************************************************************
-
-//==========================================================================
-//
-//  Actor::A_WraithFX2
-//
-//  Spawns sparkle tail of missile.
-//
-//==========================================================================
-
-void Actor::A_WraithFX2(void)
-{
-	Actor A;
-	float angle;
-	int i;
-
-	for (i = 0; i < 2; i++)
-	{
-		A = Spawn(WraithSparkDrip, Origin);
-		if (A)
-		{
-			if (Random() < 0.5)
-			{
-				angle = AngleMod360(Angles.yaw + Random() * 90.0);
-			}
-			else
-			{
-				angle = AngleMod360(Angles.yaw - Random() * 90.0);
-			}
-			A.Velocity.z = 0.0;
-			A.Velocity.x = (Random() / 2.0 + 1.0) * cos(angle) * 35.0;
-			A.Velocity.y = (Random() / 2.0 + 1.0) * sin(angle) * 35.0;
-			A.Instigator = self;
-			A.FloorClip = 10.0;
-		}
-	}
-}
-
-//**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/06/14 15:49:45  dj_jl
+//  Added Projectile class.
+//
 //  Revision 1.23  2002/05/18 17:00:00  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

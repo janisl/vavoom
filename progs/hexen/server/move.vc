@@ -89,60 +89,6 @@ boolean Actor::Touch(MapObject InOther)
 				return false;
 			}
 		}
-		else if (Class == HolyFX)
-		{
-			if (Other.bShootable && Other != Instigator)
-			{
-				if (netgame && !deathmatch && Other.bIsPlayer)
-				{
-					// don't attack other co-op players
-					return true;
-				}
-				if (Other.bReflective && (Other.bIsPlayer || Other.bBoss))
-				{
-					Enemy = Instigator;
-					Instigator = Other;
-					return true;
-				}
-				if (Other.bCountKill || Other.bIsPlayer)
-				{
-					Enemy = Other;
-				}
-				if (P_Random() < 96)
-				{
-					damage = 12;
-					if (Other.bIsPlayer || Other.bBoss)
-					{
-						damage = 3;
-						// ghost burns out faster when attacking players/bosses
-						Health -= 6;
-					}
-					Other.Damage(self, Instigator, damage);
-					if (P_Random() < 128)
-					{
-						Spawn(HolyPuff, Origin);
-						PlaySound('SpiritAttack', CHAN_VOICE);
-						if (Other.bCountKill && P_Random() < 128
-							&& !GetSoundPlayingInfo(Other,
-								GetSoundID('PuppyBeat')))
-						{
-							if ((Other.Class == Centaur) ||
-								(Other.Class == CentaurLeader) ||
-								(Other.Class == Ettin))
-							{
-								Other.PlaySound('PuppyBeat', CHAN_VOICE);
-							}
-						}
-					}
-				}
-				if (Other.Health <= 0)
-				{
-					_Special1 = 0;
-					Enemy = none;
-				}
-			}
-			return true;
-		}
 		damage = ((P_Random() % 8) + 1) * MissileDamage;
 		Other.Damage(self, self, damage);
 		bSkullFly = false;
@@ -186,65 +132,7 @@ boolean Actor::Touch(MapObject InOther)
 				return false;
 			}
 		}
-		if (Class == LightningFloor || Class == LightningCeiling)
-		{
-			if (Other.bShootable && Other != Instigator)
-			{
-				if (Other.Mass != 99999.0)
-				{
-					Other.Velocity.x += Velocity.x / 16.0;
-					Other.Velocity.y += Velocity.y / 16.0;
-				}
-				if ((!Other.bIsPlayer && !Other.bBoss)
-					|| !(level->tictime & 1))
-				{
-					if (Other.Class == Centaur ||
-						Other.Class == CentaurLeader)
-					{
-						// Lightning does more damage to centaurs
-						Other.Damage(self, Instigator, 9);
-					}
-					else
-					{
-						Other.Damage(self, Instigator, 3);
-					}
-					if (!(GetSoundPlayingInfo(self,
-								GetSoundID('MageLightningZap'))))
-					{
-						PlaySound('MageLightningZap', CHAN_VOICE);
-					}
-					if (Other.bCountKill && P_Random() < 64
-						&& !GetSoundPlayingInfo(Other,
-							GetSoundID('PuppyBeat')))
-					{
-						if ((Other.Class == Centaur) ||
-							(Other.Class == CentaurLeader) ||
-							(Other.Class == Ettin))
-						{
-							Other.PlaySound('PuppyBeat', CHAN_VOICE);
-						}
-					}
-				}
-				Health--;
-				if (Health <= 0 || Other.Health <= 0)
-				{
-					return false;
-				}
-				if (Class == LightningFloor)
-				{
-					if (SpecialMobj2 && !SpecialMobj2->_SpecialMobj1)
-					{
-						SpecialMobj2->_SpecialMobj1 = &Other;
-					}
-				}
-				else if (!_SpecialMobj1)
-				{
-					_SpecialMobj1 = &Other;
-				}
-			}
-			return true;	// lightning zaps through all sprites
-		}
-		else if (Class == LightningZap)
+		if (Class == LightningZap)
 		{
 			Actor lmo;
 
@@ -256,14 +144,14 @@ boolean Actor::Touch(MapObject InOther)
 					if (lmo.Class == LightningFloor)
 					{
 						if (lmo.SpecialMobj2 &&
-							!lmo.SpecialMobj2->_SpecialMobj1)
+							!lmo.SpecialMobj2->Enemy)
 						{
-							lmo.SpecialMobj2->_SpecialMobj1 = &Other;
+							lmo.SpecialMobj2->Enemy = Other;
 						}
 					}
-					else if (!lmo._SpecialMobj1)
+					else if (!lmo.Enemy)
 					{
-						lmo._SpecialMobj1 = &Other;
+						lmo.Enemy = Other;
 					}
 					if (!(level->tictime & 3))
 					{
@@ -472,6 +360,9 @@ void Actor::HandleFloorclip(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2002/06/14 15:49:45  dj_jl
+//  Added Projectile class.
+//
 //  Revision 1.29  2002/04/11 16:52:16  dj_jl
 //  Made TryMove native.
 //

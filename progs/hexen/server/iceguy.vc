@@ -24,11 +24,111 @@
 //**************************************************************************
 
 //**************************************************************************
+//
+//	IceGuyMissile2
+//
+//**************************************************************************
+
+class IceGuyMissile2:Projectile
+{
+
+__states__
+{
+	S_ICEGUY_FX2_1('ICPR', 13 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICEGUY_FX2_2) { }
+	S_ICEGUY_FX2_2('ICPR', 14 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICEGUY_FX2_3) { }
+	S_ICEGUY_FX2_3('ICPR', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICEGUY_FX2_1) { }
+}
+
+defaultproperties
+{
+	Radius = 4.0;
+	Height = 4.0;
+	Mass = 12.5;
+	Speed = 350.0;
+	MissileDamage = 1;
+	bNoGravity = false;
+	bIceDamage = true;
+	bActivateImpact = false;
+	bActivatePCross = false;
+	IdleState = S_ICEGUY_FX2_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	IceGuyMissile
+//
+//**************************************************************************
+
+class IceGuyMissile:Projectile
+{
+
+//==========================================================================
+//
+//  A_IceGuyMissilePuff
+//
+//==========================================================================
+
+void A_IceGuyMissilePuff(void)
+{
+	Spawn(IceGuyMissilePuff, Origin + vector(0.0, 0.0, 2.0));
+}
+
+//==========================================================================
+//
+//  A_IceGuyMissileExplode
+//
+//==========================================================================
+
+void A_IceGuyMissileExplode(void)
+{
+	Actor mo;
+	int i;
+
+	for (i = 0; i < 8; i++)
+	{
+		mo = SpawnMissileAngle(IceGuyMissile2, itof(i) * 45.0, -0.3 * 35.0);
+		if (mo)
+		{
+			mo.Instigator = Instigator;
+		}
+	}
+}
+
+__states__
+{
+	S_ICEGUY_FX1('ICPR', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICEGUY_FX2) { A_IceGuyMissilePuff(); }
+	S_ICEGUY_FX2('ICPR', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICEGUY_FX3) { A_IceGuyMissilePuff(); }
+	S_ICEGUY_FX3('ICPR', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICEGUY_FX1) { A_IceGuyMissilePuff(); }
+	S_ICEGUY_FX_X1('ICPR', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_ICEGUY_FX_X2) { }
+	S_ICEGUY_FX_X2('ICPR', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_ICEGUY_FX_X3) { A_IceGuyMissileExplode(); }
+	S_ICEGUY_FX_X3('ICPR', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_ICEGUY_FX_X4) { }
+	S_ICEGUY_FX_X4('ICPR', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_ICEGUY_FX_X5) { }
+	S_ICEGUY_FX_X5('ICPR', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 10.0;
+	Speed = 490.0;
+	MissileDamage = 1;
+	bIceDamage = true;
+	bActivateImpact = false;
+	bActivatePCross = false;
+	IdleState = S_ICEGUY_FX1;
+	DeathState = S_ICEGUY_FX_X1;
+	DeathSound = 'IceGuyMissileExplode';
+	Effects = EF_DL_BLUE;
+}
+
+}
+
 //**************************************************************************
 //
 //	IceGuy
 //
-//**************************************************************************
 //**************************************************************************
 
 class IceGuy:Pawn
@@ -176,43 +276,11 @@ defaultproperties
 }
 
 //**************************************************************************
-//**************************************************************************
-
-//==========================================================================
-//
-//  Actor::A_IceGuyMissilePuff
-//
-//==========================================================================
-
-void Actor::A_IceGuyMissilePuff(void)
-{
-	Spawn(IceGuyMissilePuff, Origin + vector(0.0, 0.0, 2.0));
-}
-
-//==========================================================================
-//
-//  Actor::A_IceGuyMissileExplode
-//
-//==========================================================================
-
-void Actor::A_IceGuyMissileExplode(void)
-{
-	Actor mo;
-	int i;
-
-	for (i = 0; i < 8; i++)
-	{
-		mo = SpawnMissileAngle(IceGuyMissile2, itof(i) * 45.0, -0.3 * 35.0);
-		if (mo)
-		{
-			mo.Instigator = Instigator;
-		}
-	}
-}
-
-//**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/06/14 15:49:45  dj_jl
+//  Added Projectile class.
+//
 //  Revision 1.17  2002/05/18 17:00:00  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

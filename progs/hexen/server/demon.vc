@@ -24,11 +24,45 @@
 //**************************************************************************
 
 //**************************************************************************
+//
+//	DemonMissile
+//
+//**************************************************************************
+
+class DemonMissile:Projectile
+{
+
+__states__
+{
+	S_DEMONFX_MOVE1('DMFX', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMONFX_MOVE2) { }
+	S_DEMONFX_MOVE2('DMFX', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMONFX_MOVE3) { }
+	S_DEMONFX_MOVE3('DMFX', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMONFX_MOVE1) { }
+	S_DEMONFX_BOOM1('DMFX', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMONFX_BOOM2) { }
+	S_DEMONFX_BOOM2('DMFX', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMONFX_BOOM3) { }
+	S_DEMONFX_BOOM3('DMFX', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_DEMONFX_BOOM4) { }
+	S_DEMONFX_BOOM4('DMFX', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_DEMONFX_BOOM5) { }
+	S_DEMONFX_BOOM5('DMFX', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 6.0;
+	Speed = 525.0;
+	MissileDamage = 5;
+	bFireDamage = true;
+	IdleState = S_DEMONFX_MOVE1;
+	DeathState = S_DEMONFX_BOOM1;
+	DeathSound = 'DemonMissileExplode';
+	Effects = EF_DL_WHITE;
+}
+
+}
+
 //**************************************************************************
 //
 //	Demon
 //
-//**************************************************************************
 //**************************************************************************
 
 class Demon:Pawn
@@ -194,11 +228,49 @@ defaultproperties
 }
 
 //**************************************************************************
+//
+//	Demon2Missile
+//
+//**************************************************************************
+
+class Demon2Missile:Projectile
+{
+
+__states__
+{
+	S_DEMON2FX_MOVE1('D2FX', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMON2FX_MOVE2) { }
+	S_DEMON2FX_MOVE2('D2FX', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMON2FX_MOVE3) { }
+	S_DEMON2FX_MOVE3('D2FX', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMON2FX_MOVE4) { }
+	S_DEMON2FX_MOVE4('D2FX', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMON2FX_MOVE5) { }
+	S_DEMON2FX_MOVE5('D2FX', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMON2FX_MOVE6) { }
+	S_DEMON2FX_MOVE6('D2FX', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMON2FX_MOVE1) { }
+	S_DEMON2FX_BOOM1('D2FX', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMON2FX_BOOM2) { }
+	S_DEMON2FX_BOOM2('D2FX', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMON2FX_BOOM3) { }
+	S_DEMON2FX_BOOM3('D2FX', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMON2FX_BOOM4) { }
+	S_DEMON2FX_BOOM4('D2FX', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMON2FX_BOOM5) { }
+	S_DEMON2FX_BOOM5('D2FX', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_DEMON2FX_BOOM6) { }
+	S_DEMON2FX_BOOM6('D2FX', 11 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 6.0;
+	Speed = 525.0;
+	MissileDamage = 5;
+	bFireDamage = true;
+	IdleState = S_DEMON2FX_MOVE1;
+	DeathState = S_DEMON2FX_BOOM1;
+	DeathSound = 'DemonMissileExplode';
+	Effects = EF_DL_GREEN;
+}
+
+}
+
 //**************************************************************************
 //
 //	Demon2
 //
-//**************************************************************************
 //**************************************************************************
 
 class Demon2:Demon
@@ -314,11 +386,9 @@ defaultproperties
 }
 
 //**************************************************************************
-//**************************************************************************
 //
 //	DemonMash
 //
-//**************************************************************************
 //**************************************************************************
 
 class DemonMash:Demon
@@ -340,11 +410,9 @@ defaultproperties
 }
 
 //**************************************************************************
-//**************************************************************************
 //
 //	Demon2Mash
 //
-//**************************************************************************
 //**************************************************************************
 
 class Demon2Mash:Demon2
@@ -368,6 +436,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/06/14 15:49:45  dj_jl
+//  Added Projectile class.
+//
 //  Revision 1.20  2002/05/18 17:00:00  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

@@ -76,17 +76,13 @@ void Actor::Archive(void)
 
 		// Just specialmobj2
 	case LightningFloor:
+	case LightningCeiling:
 	case LightningZap:
-		if (bCorpse)
-		{
-			SpecialMobj2 = NULL;
-		}
 		MobjToNum(&SpecialMobj2);
 		break;
 
 		// Both SpecialMobj1 and SpecialMobj2
 	case HolyTail:
-	case LightningCeiling:
 		if (bCorpse)
 		{
 			_SpecialMobj1 = NULL;
@@ -147,6 +143,9 @@ void Actor::Unarchive(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/06/14 15:49:45  dj_jl
+//  Added Projectile class.
+//
 //  Revision 1.17  2002/03/28 18:32:51  dj_jl
 //  Little renaming, some bug fixes.
 //

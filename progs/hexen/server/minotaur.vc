@@ -24,11 +24,153 @@
 //**************************************************************************
 
 //**************************************************************************
+//
+//	MinotaurMissile
+//
+//**************************************************************************
+
+class MinotaurMissile:Projectile
+{
+
+__states__
+{
+	S_MNTRFX1_1('FX12', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_MNTRFX1_2) { }
+	S_MNTRFX1_2('FX12', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_MNTRFX1_1) { }
+	S_MNTRFXI1_1('FX12', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFXI1_2) { }
+	S_MNTRFXI1_2('FX12', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFXI1_3) { }
+	S_MNTRFXI1_3('FX12', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFXI1_4) { }
+	S_MNTRFXI1_4('FX12', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFXI1_5) { }
+	S_MNTRFXI1_5('FX12', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFXI1_6) { }
+	S_MNTRFXI1_6('FX12', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 6.0;
+	Speed = 700.0;
+	MissileDamage = 3;
+	bFireDamage = true;
+	bActivateImpact = false;
+	bActivatePCross = false;
+	IdleState = S_MNTRFX1_1;
+	DeathState = S_MNTRFXI1_1;
+	Effects = EF_DL_WHITE;
+}
+
+}
+
+//**************************************************************************
+//
+//	MinotaurFloorFire
+//
+//**************************************************************************
+
+class MinotaurFloorFire:Projectile
+	abstract
+{
+
+__states__
+{
+	S_MNTRFXI2_1('FX13', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_MNTRFXI2_2) { A_Explode(); }
+	S_MNTRFXI2_2('FX13', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_MNTRFXI2_3) { }
+	S_MNTRFXI2_3('FX13', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_MNTRFXI2_4) { }
+	S_MNTRFXI2_4('FX13', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_MNTRFXI2_5) { }
+	S_MNTRFXI2_5('FX13', 12 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	MissileDamage = 4;
+	bFireDamage = true;
+	bActivateImpact = false;
+	bActivatePCross = false;
+	DeathState = S_MNTRFXI2_1;
+	Effects = EF_DL_WHITE;
+}
+
+}
+
+//**************************************************************************
+//
+//	MinotaurFloorFire2
+//
+//**************************************************************************
+
+class MinotaurFloorFire2:MinotaurFloorFire
+{
+
+__states__
+{
+	S_MNTRFX3_1('FX13', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_MNTRFX3_2) { }
+	S_MNTRFX3_2('FX13', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_MNTRFX3_3) { }
+	S_MNTRFX3_3('FX13', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFX3_4) { }
+	S_MNTRFX3_4('FX13', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFX3_5) { }
+	S_MNTRFX3_5('FX13', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFX3_6) { }
+	S_MNTRFX3_6('FX13', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFX3_7) { }
+	S_MNTRFX3_7('FX13', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_MNTRFX3_8) { }
+	S_MNTRFX3_8('FX13', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_MNTRFX3_9) { }
+	S_MNTRFX3_9('FX13', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 16.0;
+	IdleState = S_MNTRFX3_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	MinotaurFloorFire1
+//
+//**************************************************************************
+
+class MinotaurFloorFire1:MinotaurFloorFire
+{
+
+//============================================================================
+//
+//  A_MntrFloorFire
+//
+//============================================================================
+
+void A_MntrFloorFire(void)
+{
+	Actor A;
+
+	Origin.z = FloorZ;
+	A = Spawn(MinotaurFloorFire2, vector(
+		Origin.x + (Random() - Random()) * 4.0,
+		Origin.y + (Random() - Random()) * 4.0, ONFLOORZ));
+	A.Instigator = Instigator;
+	A.Velocity.x = 0.00001;	// Force block checking
+	A.CheckMissileSpawn();
+}
+
+__states__
+{
+	S_MNTRFX2_1('FX13', 0, 2.0 / 35.0, S_MNTRFX2_1) { A_MntrFloorFire(); }
+}
+
+defaultproperties
+{
+	Radius = 5.0;
+	Height = 12.0;
+	Speed = 490.0;
+	IdleState = S_MNTRFX2_1;
+	// The Minotaur floor fire can step up any amount
+	MaxStepHeight = 99999.0;
+}
+
+}
+
 //**************************************************************************
 //
 //	Minotaur
 //
-//**************************************************************************
 //**************************************************************************
 
 class Minotaur:Pawn
@@ -569,28 +711,12 @@ void Actor::A_Summon(void)
 	}
 }
 
-//============================================================================
-//
-//  Actor::A_MntrFloorFire
-//
-//============================================================================
-
-void Actor::A_MntrFloorFire(void)
-{
-	Actor A;
-
-	Origin.z = FloorZ;
-	A = Spawn(MinotaurFloorFire2, vector(
-		Origin.x + (Random() - Random()) * 4.0,
-		Origin.y + (Random() - Random()) * 4.0, ONFLOORZ));
-	A.Instigator = Instigator;
-	A.Velocity.x = 0.00001;	// Force block checking
-	A.CheckMissileSpawn();
-}
-
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2002/06/14 15:49:45  dj_jl
+//  Added Projectile class.
+//
 //  Revision 1.28  2002/05/18 17:00:00  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

@@ -24,11 +24,44 @@
 //**************************************************************************
 
 //**************************************************************************
+//
+//	FireDemonMissile
+//
+//**************************************************************************
+
+class FireDemonMissile:Projectile
+{
+
+__states__
+{
+	S_FIRED_FX6_1('FDMB', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_FX6_1) { }
+	S_FIRED_FX6_2('FDMB', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_FX6_3) { }
+	S_FIRED_FX6_3('FDMB', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_FX6_4) { }
+	S_FIRED_FX6_4('FDMB', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_FX6_5) { }
+	S_FIRED_FX6_5('FDMB', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 6.0;
+	Mass = 15.0;
+	Speed = 350.0;
+	MissileDamage = 1;
+	bFloorClip = true;
+	bFireDamage = true;
+	IdleState = S_FIRED_FX6_1;
+	DeathState = S_FIRED_FX6_2;
+	DeathSound = 'FireDemonMissileHit';
+	Effects = EF_DL_WHITE;
+}
+
+}
+
 //**************************************************************************
 //
 //	FireDemon
 //
-//**************************************************************************
 //**************************************************************************
 
 class FireDemon:Pawn
@@ -331,6 +364,9 @@ void Actor::A_SmBounce(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/06/14 15:49:45  dj_jl
+//  Added Projectile class.
+//
 //  Revision 1.23  2002/05/18 17:00:00  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

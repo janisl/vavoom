@@ -24,11 +24,9 @@
 //**************************************************************************
 
 //**************************************************************************
-//**************************************************************************
 //
 //	WeaponClericMace
 //
-//**************************************************************************
 //**************************************************************************
 
 class WeaponClericMace:Weapon
@@ -126,11 +124,66 @@ defaultproperties
 }
 
 //**************************************************************************
+//
+//	ClericStaffMissile
+//
+//**************************************************************************
+
+class ClericStaffMissile:Projectile
+{
+
+int WeaveXY;
+
+//============================================================================
+//
+//  A_CStaffMissileSlither
+//
+//============================================================================
+
+void A_CStaffMissileSlither(void)
+{
+	float newX, newY;
+	float angle;
+
+	angle = AngleMod360(Angles.yaw + 90.0);
+	newX = Origin.x - cos(angle) * FloatBobOffsets[WeaveXY];
+	newY = Origin.y - sin(angle) * FloatBobOffsets[WeaveXY];
+	WeaveXY = (WeaveXY + 3) & 63;
+	newX += cos(angle) * FloatBobOffsets[WeaveXY];
+	newY += sin(angle) * FloatBobOffsets[WeaveXY];
+	TryMove(vector(newX, newY, Origin.z));
+}
+
+__states__
+{
+	S_CSTAFF_MISSILE1('CSSF', 3 | FF_FULLBRIGHT, 1.0 / 35.0, S_CSTAFF_MISSILE2) { A_CStaffMissileSlither(); }
+	S_CSTAFF_MISSILE2('CSSF', 3 | FF_FULLBRIGHT, 1.0 / 35.0, S_CSTAFF_MISSILE3) { A_CStaffMissileSlither(); }
+	S_CSTAFF_MISSILE3('CSSF', 4 | FF_FULLBRIGHT, 1.0 / 35.0, S_CSTAFF_MISSILE4) { A_CStaffMissileSlither(); }
+	S_CSTAFF_MISSILE4('CSSF', 4 | FF_FULLBRIGHT, 1.0 / 35.0, S_CSTAFF_MISSILE1) { A_CStaffMissileSlither(); }
+	S_CSTAFF_MISSILE_X1('CSSF', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_CSTAFF_MISSILE_X2) { }
+	S_CSTAFF_MISSILE_X2('CSSF', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_CSTAFF_MISSILE_X3) { }
+	S_CSTAFF_MISSILE_X3('CSSF', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_CSTAFF_MISSILE_X4) { }
+	S_CSTAFF_MISSILE_X4('CSSF', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 12.0;
+	Height = 10.0;
+	Speed = 770.0;
+	MissileDamage = 5;
+	IdleState = S_CSTAFF_MISSILE1;
+	DeathState = S_CSTAFF_MISSILE_X1;
+	DeathSound = 'ClericCStaffExplode';
+	Effects = EF_DL_GREEN;
+}
+
+}
+
 //**************************************************************************
 //
 //	WeaponClericStaff
 //
-//**************************************************************************
 //**************************************************************************
 
 class WeaponClericStaff:Weapon
@@ -250,13 +303,13 @@ void A_CStaffAttack(void)
 		playPawn.Angles.yaw - (45.0 / 15.0));
 	if (mo)
 	{
-		mo._Special2 = 32;
+		ClericStaffMissile(mo).WeaveXY = 32;
 	}
 	mo = playPawn.SpawnPlayerMissileAngle(ClericStaffMissile,
 		playPawn.Angles.yaw + (45.0 / 15.0));
 	if (mo)
 	{
-		mo._Special2 = 0;
+		ClericStaffMissile(mo).WeaveXY = 0;
 	}
 	playPawn.PlaySound('ClericCStaffFire', CHAN_WEAPON);
 }
@@ -313,11 +366,182 @@ defaultproperties
 }
 
 //**************************************************************************
+//
+//	CircleFlame
+//
+//**************************************************************************
+
+class CircleFlame:Projectile
+{
+
+//============================================================================
+//
+//	A_CFlameRotate
+//
+//============================================================================
+
+#define FLAMEROTSPEED	2.0 * 35.0
+
+void A_CFlameRotate(void)
+{
+	float an;
+
+	an = AngleMod360(Angles.yaw + 90.0);
+	Velocity.x = Special1f + FLAMEROTSPEED * cos(an);
+	Velocity.y = Special2f + FLAMEROTSPEED * sin(an);
+	Angles.yaw = AngleMod360(Angles.yaw + 90.0 / 15.0);
+}
+
+__states__
+{
+	S_CIRCLE_FLAME1('CFCF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_CIRCLE_FLAME2) { }
+	S_CIRCLE_FLAME2('CFCF', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_CIRCLE_FLAME3) { A_CFlameRotate(); }
+	S_CIRCLE_FLAME3('CFCF', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_CIRCLE_FLAME4) { }
+	S_CIRCLE_FLAME4('CFCF', 3 | FF_FULLBRIGHT, 1.0 / 35.0, S_CIRCLE_FLAME5) { }
+	S_CIRCLE_FLAME5('CFCF', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_CIRCLE_FLAME6) { }
+	S_CIRCLE_FLAME6('CFCF', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_CIRCLE_FLAME7) { A_CFlameRotate(); }
+	S_CIRCLE_FLAME7('CFCF', 6 | FF_FULLBRIGHT, 1.0 / 35.0, S_CIRCLE_FLAME8) { }
+	S_CIRCLE_FLAME8('CFCF', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_CIRCLE_FLAME9) { }
+	S_CIRCLE_FLAME9('CFCF', 8 | FF_FULLBRIGHT, 2.0 / 35.0, S_CIRCLE_FLAME10) { }
+	S_CIRCLE_FLAME10('CFCF', 9 | FF_FULLBRIGHT, 1.0 / 35.0, S_CIRCLE_FLAME11) { A_CFlameRotate(); }
+	S_CIRCLE_FLAME11('CFCF', 10 | FF_FULLBRIGHT, 2.0 / 35.0, S_CIRCLE_FLAME12) { }
+	S_CIRCLE_FLAME12('CFCF', 11 | FF_FULLBRIGHT, 3.0 / 35.0, S_CIRCLE_FLAME13) { }
+	S_CIRCLE_FLAME13('CFCF', 12 | FF_FULLBRIGHT, 3.0 / 35.0, S_CIRCLE_FLAME14) { }
+	S_CIRCLE_FLAME14('CFCF', 13 | FF_FULLBRIGHT, 2.0 / 35.0, S_CIRCLE_FLAME15) { A_CFlameRotate(); }
+	S_CIRCLE_FLAME15('CFCF', 14 | FF_FULLBRIGHT, 3.0 / 35.0, S_CIRCLE_FLAME16) { }
+	S_CIRCLE_FLAME16('CFCF', 15 | FF_FULLBRIGHT, 2.0 / 35.0, S_NULL) { }
+	S_CIRCLE_FLAME_X1('CFCF', 16 | FF_FULLBRIGHT, 3.0 / 35.0, S_CIRCLE_FLAME_X2) { }
+	S_CIRCLE_FLAME_X2('CFCF', 17 | FF_FULLBRIGHT, 3.0 / 35.0, S_CIRCLE_FLAME_X3) { }
+	S_CIRCLE_FLAME_X3('CFCF', 18 | FF_FULLBRIGHT, 3.0 / 35.0, S_CIRCLE_FLAME_X4) { A_Explode(); }
+	S_CIRCLE_FLAME_X4('CFCF', 19 | FF_FULLBRIGHT, 3.0 / 35.0, S_CIRCLE_FLAME_X5) { }
+	S_CIRCLE_FLAME_X5('CFCF', 20 | FF_FULLBRIGHT, 3.0 / 35.0, S_CIRCLE_FLAME_X6) { }
+	S_CIRCLE_FLAME_X6('CFCF', 21 | FF_FULLBRIGHT, 3.0 / 35.0, S_CIRCLE_FLAME_X7) { }
+	S_CIRCLE_FLAME_X7('CFCF', 22 | FF_FULLBRIGHT, 3.0 / 35.0, S_CIRCLE_FLAME_X8) { }
+	S_CIRCLE_FLAME_X8('CFCF', 23 | FF_FULLBRIGHT, 3.0 / 35.0, S_CIRCLE_FLAME_X9) { }
+	S_CIRCLE_FLAME_X9('CFCF', 24 | FF_FULLBRIGHT, 3.0 / 35.0, S_CIRCLE_FLAME_X10) { }
+	S_CIRCLE_FLAME_X10('CFCF', 25 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 6.0;
+	Height = 16.0;
+	MissileDamage = 2;
+	bFireDamage = true;
+	bActivateImpact = false;
+	bActivatePCross = false;
+	IdleState = S_CIRCLE_FLAME1;
+	DeathState = S_CIRCLE_FLAME_X1;
+	DeathSound = 'ClericFlameCircle';
+	Effects = EF_DL_WHITE;
+}
+
+}
+
+//**************************************************************************
+//
+//	ClericFlameMissile
+//
+//**************************************************************************
+
+class ClericFlameMissile:Projectile
+{
+
+//============================================================================
+//
+//	A_CFlamePuff
+//
+//============================================================================
+
+void A_CFlamePuff(void)
+{
+	A_UnHideThing();
+	Velocity = vector(0.0, 0.0, 0.0);
+	PlaySound('ClericFlameExplode', CHAN_VOICE);
+}
+
+//============================================================================
+//
+//  A_CFlameMissile
+//
+//============================================================================
+
+#define FLAMESPEED		(9.0 / 20.0 * 35.0)
+
+void A_CFlameMissile(void)
+{
+	int i;
+	float an;
+	float dist;
+	Actor A;
+	Actor bmo;
+
+	A_UnHideThing();
+	PlaySound('ClericFlameExplode', CHAN_VOICE);
+	bmo = tmtrace->BlockingMobj;
+	if (bmo && bmo.bShootable)
+	{
+		// Hit something, so spawn the flame circle around the thing
+		dist = bmo.Radius + 18.0;
+		for (i = 0; i < 4; i++)
+		{
+			an = itof(i) * 45.0;
+			A = Spawn(CircleFlame, bmo.Origin +
+				vector(dist * cos(an), dist * sin(an), 5.0));
+			if (A)
+			{
+				A.Angles.yaw = an;
+				A.Instigator = Instigator;
+				A.Velocity.x = FLAMESPEED * cos(an);
+				A.Velocity.y = FLAMESPEED * sin(an);
+				A.Special1f = A.Velocity.x;
+				A.Special2f = A.Velocity.y;
+				A.StateTime -= Random() * 0.1;
+			}
+			A = Spawn(CircleFlame, bmo.Origin +
+				vector(-dist * cos(an), -dist * sin(an), 5.0));
+			if (A)
+			{
+				A.Angles.yaw = AngleMod360(180.0 + an);
+				A.Instigator = Instigator;
+				A.Velocity.x = -FLAMESPEED * cos(an);
+				A.Velocity.y = -FLAMESPEED * sin(an);
+				A.Special1f = A.Velocity.x;
+				A.Special2f = A.Velocity.y;
+				A.StateTime -= Random() * 0.1;
+			}
+		}
+		SetState(S_FLAMEPUFF2_1);
+	}
+}
+
+__states__
+{
+	S_CFLAME_MISSILE1('CFFX', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAME_MISSILE2) { }
+	S_CFLAME_MISSILE2('CFFX', 0, 1.0 / 35.0, S_FLAMEPUFF1) { A_CFlamePuff(); }
+	S_CFLAME_MISSILE_X('CFFX', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_FLAMEPUFF1) { A_CFlameMissile(); }
+}
+
+defaultproperties
+{
+	Radius = 14.0;
+	Height = 8.0;
+	Speed = 7000.0;
+	MissileDamage = 8;
+	Translucency = 100;
+	bFireDamage = true;
+	bBlaster = true;
+	IdleState = S_CFLAME_MISSILE1;
+	DeathState = S_CFLAME_MISSILE_X;
+	Effects = EF_DL_WHITE;
+}
+
+}
+
 //**************************************************************************
 //
 //	WeaponClericFire
 //
-//**************************************************************************
 //**************************************************************************
 
 class WeaponClericFire:Weapon
@@ -336,7 +560,6 @@ void A_CFlameAttack(void)
 	mo = PlayerPawn(Player->MO).SpawnPlayerMissile(ClericFlameMissile);
 	if (mo)
 	{
-		mo.bBlaster = true;
 		mo._Special1 = 2;
 	}
 
@@ -385,11 +608,413 @@ defaultproperties
 }
 
 //**************************************************************************
+//
+//	HolyFX
+//
+//**************************************************************************
+
+class HolyFX:Projectile
+{
+
+int WeaveXY;
+int WeaveZ;
+
+//==========================================================================
+//
+//	Touch
+//
+//==========================================================================
+
+boolean Touch(MapObject InOther)
+{
+	int damage;
+	Actor Other;
+
+	Other = Actor(InOther);
+	if (!Other.bSolid && !Other.bSpecial && !Other.bShootable)
+		return true;
+
+	// Check for skulls slamming into things
+	if (bSkullFly)
+	{
+		if (Other.bShootable && Other != Instigator)
+		{
+			if (netgame && !deathmatch && Other.bIsPlayer)
+			{
+				// don't attack other co-op players
+				return true;
+			}
+			if (Other.bReflective && (Other.bIsPlayer || Other.bBoss))
+			{
+				Enemy = Instigator;
+				Instigator = Other;
+				return true;
+			}
+			if (Other.bCountKill || Other.bIsPlayer)
+			{
+				Enemy = Other;
+			}
+			if (P_Random() < 96)
+			{
+				damage = 12;
+				if (Other.bIsPlayer || Other.bBoss)
+				{
+					damage = 3;
+					// ghost burns out faster when attacking players/bosses
+					Health -= 6;
+				}
+				Other.Damage(self, Instigator, damage);
+				if (P_Random() < 128)
+				{
+					Spawn(HolyPuff, Origin);
+					PlaySound('SpiritAttack', CHAN_VOICE);
+					if (Other.bCountKill && P_Random() < 128
+						&& !GetSoundPlayingInfo(Other,
+							GetSoundID('PuppyBeat')))
+					{
+						if ((Other.Class == Centaur) ||
+							(Other.Class == CentaurLeader) ||
+							(Other.Class == Ettin))
+						{
+							Other.PlaySound('PuppyBeat', CHAN_VOICE);
+						}
+					}
+				}
+			}
+			if (Other.Health <= 0)
+			{
+				Enemy = none;
+			}
+		}
+		return true;
+	}
+	return ::Touch(InOther);
+}
+
+//============================================================================
+//
+//  CHolyFindTarget
+//
+//============================================================================
+
+void CHolyFindTarget(void)
+{
+	Actor targ;
+
+	targ = RoughMonsterSearch(6);
+	if (targ)
+	{
+		Enemy = targ;
+		bColideWithWorld = false;
+		bSkullFly = true;
+		bMissile = false;
+	}
+}
+
+//============================================================================
+//
+//  CHolySeekerMissile
+//
+//  Similar to SeekerMissile, but seeks to a random Z on the target
+//
+//============================================================================
+
+void CHolySeekerMissile(float thresh, float turnMax)
+{
+	int dir;
+	float dist;
+	float delta;
+	float angle;
+	float newZ;
+	float deltaZ;
+
+	if (!Enemy)
+	{
+		return;
+	}
+	if (!Enemy.bShootable || (!Enemy.bCountKill && !Enemy.bIsPlayer))
+	{
+		// Target died/target isn't a player or creature
+		Enemy = none;
+		bColideWithWorld = true;
+		bSkullFly = false;
+		bMissile = true;
+		CHolyFindTarget();
+		return;
+	}
+	dir = FaceActor(Enemy, &delta);
+	if (delta > thresh)
+	{
+		delta /= 2.0;
+		if (delta > turnMax)
+		{
+			delta = turnMax;
+		}
+	}
+	if (dir)
+	{
+		// Turn clockwise
+		Angles.yaw += delta;
+	}
+	else
+	{
+		// Turn counter clockwise
+		Angles.yaw -= delta;
+	}
+	Angles.yaw = AngleMod360(Angles.yaw);
+	angle = Angles.yaw;
+	Velocity.x = Speed * cos(angle);
+	Velocity.y = Speed * sin(angle);
+	if (!(level->tictime & 15) ||
+		Origin.z > Enemy.Origin.z + Enemy.Height ||
+		Origin.z + Height < Enemy.Origin.z)
+	{
+		newZ = Enemy.Origin.z + Random() * Enemy.Height;
+		deltaZ = newZ - Origin.z;
+		if (fabs(deltaZ) > 15.0)
+		{
+			if (deltaZ > 0.0)
+			{
+				deltaZ = 15.0;
+			}
+			else
+			{
+				deltaZ = -15.0;
+			}
+		}
+		dist = MobjDist2(Enemy, self);
+		dist = dist / Speed;
+		if (dist < 1.0)
+		{
+			dist = 1.0;
+		}
+		Velocity.z = deltaZ / dist;
+	}
+	return;
+}
+
+//============================================================================
+//
+//	CHolyWeave
+//
+//============================================================================
+
+void CHolyWeave(void)
+{
+	float newX, newY;
+	float angle;
+
+	angle = AngleMod360(Angles.yaw + 90.0);
+	newX = Origin.x - cos(angle) * FloatBobOffsets[WeaveXY] * 4.0;
+	newY = Origin.y - sin(angle) * FloatBobOffsets[WeaveXY] * 4.0;
+	WeaveXY = (WeaveXY + (P_Random() % 5)) & 63;
+	newX += cos(angle) * FloatBobOffsets[WeaveXY] * 4.0;
+	newY += sin(angle) * FloatBobOffsets[WeaveXY] * 4.0;
+	TryMove(vector(newX, newY, Origin.z));
+	Origin.z -= FloatBobOffsets[WeaveZ] * 2.0;
+	WeaveZ = (WeaveZ + (P_Random() % 5)) & 63;
+	Origin.z += FloatBobOffsets[WeaveZ] * 2.0;
+}
+
+//============================================================================
+//
+//	A_CHolySeek
+//
+//============================================================================
+
+void A_CHolySeek(void)
+{
+	Health--;
+	if (Health <= 0)
+	{
+		Velocity.x /= 4.0;
+		Velocity.y /= 4.0;
+		Velocity.z = 0.0;
+		SetState(DeathState);
+		StateTime -= Random() * 0.1;
+		return;
+	}
+	if (Enemy)
+	{
+		CHolySeekerMissile(itof(Args[0]), itof(Args[0]) * 2.0);
+		if (!((level->tictime + 7) & 15))
+		{
+			Args[0] = 5 + (P_Random() / 20);
+		}
+	}
+	CHolyWeave();
+}
+
+//============================================================================
+//
+//	A_CHolyCheckScream
+//
+//============================================================================
+
+void A_CHolyCheckScream(void)
+{
+	A_CHolySeek();
+	if (P_Random() < 20)
+	{
+		PlaySound('SpiritActive', CHAN_VOICE);
+	}
+	if (!Enemy)
+	{
+		CHolyFindTarget();
+	}
+}
+
+__states__
+{
+	S_HOLY_FX1('SPIR', 0, 2.0 / 35.0, S_HOLY_FX2) { A_CHolySeek(); }
+	S_HOLY_FX2('SPIR', 0, 2.0 / 35.0, S_HOLY_FX3) { A_CHolySeek(); }
+	S_HOLY_FX3('SPIR', 1, 2.0 / 35.0, S_HOLY_FX4) { A_CHolySeek(); }
+	S_HOLY_FX4('SPIR', 1, 2.0 / 35.0, S_HOLY_FX1) { A_CHolyCheckScream(); }
+	S_HOLY_FX_X1('SPIR', 3, 4.0 / 35.0, S_HOLY_FX_X2) { }
+	S_HOLY_FX_X2('SPIR', 4, 4.0 / 35.0, S_HOLY_FX_X3) { A_Scream(); }
+	S_HOLY_FX_X3('SPIR', 5, 4.0 / 35.0, S_HOLY_FX_X4) { }
+	S_HOLY_FX_X4('SPIR', 6, 4.0 / 35.0, S_HOLY_FX_X5) { }
+	S_HOLY_FX_X5('SPIR', 7, 4.0 / 35.0, S_HOLY_FX_X6) { }
+	S_HOLY_FX_X6('SPIR', 8, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 105;
+	Radius = 10.0;
+	Height = 6.0;
+	Speed = 420.0;
+	MissileDamage = 3;
+	Translucency = 33;
+	bRip = true;
+	bSeekerMissile = true;
+	IdleState = S_HOLY_FX1;
+	DeathState = S_HOLY_FX_X1;
+	DeathSound = 'SpiritDie';
+}
+
+}
+
+//**************************************************************************
+//
+//	HolyMissile
+//
+//**************************************************************************
+
+class HolyMissile:Projectile
+{
+
+//============================================================================
+//
+//	A_CHolySpawnPuff
+//
+//============================================================================
+
+void A_CHolySpawnPuff(void)
+{
+	Spawn(HolyMissilePuff, Origin);
+}
+
+//============================================================================
+//
+//  A_CHolyAttack2
+//
+//  Spawns the spirits
+//
+//============================================================================
+
+void A_CHolyAttack2(void)
+{
+	int j;
+	int i;
+	Actor A;
+	Actor tail;
+	Actor next;
+
+	for (j = 0; j < 4; j++)
+	{
+		A = Spawn(HolyFX, Origin);
+		if (!A)
+		{
+			continue;
+		}
+		switch (j)
+		{	// float bob index
+		case 0:
+			HolyFX(A).WeaveZ = P_Random() & 7;	// upper-left
+			break;
+		case 1:
+			HolyFX(A).WeaveZ = 32 + (P_Random() & 7);	// upper-right
+			break;
+		case 2:
+			HolyFX(A).WeaveXY = 32 + (P_Random() & 7);	// lower-left
+			break;
+		case 3:
+			HolyFX(A).WeaveXY = 32 + (P_Random() & 7);
+			HolyFX(A).WeaveZ = 32 + (P_Random() & 7);
+			break;
+		}
+		A.Origin.z = Origin.z;
+		A.Angles.yaw = AngleMod360(Angles.yaw +
+			(45.0 + 45.0 / 2.0) - 45.0 * itof(j));
+		A.Thrust(A.Angles.yaw, A.Speed * frametime);
+		A.Instigator = Instigator;
+		A.Args[0] = 10;	// initial turn value
+		A.Args[1] = 0;	// initial look angle
+		if (deathmatch)
+		{
+			// Ghosts last slightly less longer in DeathMatch
+			A.Health = 85;
+		}
+		if (linetarget)
+		{
+			A.Enemy = linetarget;
+			//	Don't colide with world but colide with things, i.e explode
+			A.bColideWithWorld = false;
+			A.bSkullFly = true;
+			A.bMissile = false;
+		}
+		tail = Spawn(HolyTail, A.Origin);
+		tail.SpecialMobj2 = &A;	// parent
+		for (i = 1; i < 3; i++)
+		{
+			next = Spawn(HolyTail, A.Origin);
+			next.SetState(next.IdleState + 1);
+			tail._SpecialMobj1 = &next;
+			tail = next;
+		}
+		tail._SpecialMobj1 = NULL;	// last tail bit
+	}
+}
+
+__states__
+{
+	S_HOLY_MISSILE1('SPIR', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_HOLY_MISSILE2) { A_CHolySpawnPuff(); }
+	S_HOLY_MISSILE2('SPIR', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_HOLY_MISSILE3) { A_CHolySpawnPuff(); }
+	S_HOLY_MISSILE3('SPIR', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_HOLY_MISSILE4) { A_CHolySpawnPuff(); }
+	S_HOLY_MISSILE4('SPIR', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_HOLY_MISSILE_X) { A_CHolySpawnPuff(); }
+	S_HOLY_MISSILE_X('SPIR', 15 | FF_FULLBRIGHT, 1.0 / 35.0, S_NULL) { A_CHolyAttack2(); }
+}
+
+defaultproperties
+{
+	Radius = 15.0;
+	Height = 8.0;
+	Speed = 1050.0;
+	MissileDamage = 4;
+	bActivateImpact = false;
+	bActivatePCross = false;
+	IdleState = S_HOLY_MISSILE1;
+	DeathState = S_HOLY_MISSILE_X;
+	Effects = EF_DL_WHITE;
+}
+
+}
+
 //**************************************************************************
 //
 //	WeaponClericHoly
 //
-//**************************************************************************
 //**************************************************************************
 
 class WeaponClericHoly:Weapon
@@ -482,364 +1107,6 @@ defaultproperties
 
 //============================================================================
 //
-//  Actor::A_CStaffMissileSlither
-//
-//============================================================================
-
-void Actor::A_CStaffMissileSlither(void)
-{
-	float newX, newY;
-	int weaveXY;
-	float angle;
-
-	weaveXY = _Special2;
-	angle = AngleMod360(Angles.yaw + 90.0);
-	newX = Origin.x - cos(angle) * FloatBobOffsets[weaveXY];
-	newY = Origin.y - sin(angle) * FloatBobOffsets[weaveXY];
-	weaveXY = (weaveXY + 3) & 63;
-	newX += cos(angle) * FloatBobOffsets[weaveXY];
-	newY += sin(angle) * FloatBobOffsets[weaveXY];
-	TryMove(vector(newX, newY, Origin.z));
-	_Special2 = weaveXY;
-}
-
-//============================================================================
-//
-//  Actor::A_CFlameMissile
-//
-//============================================================================
-
-#define FLAMESPEED		(9.0 / 20.0 * 35.0)
-
-void Actor::A_CFlameMissile(void)
-{
-	int i;
-	float an;
-	float dist;
-	Actor A;
-	Actor bmo;
-
-	A_UnHideThing();
-	PlaySound('ClericFlameExplode', CHAN_VOICE);
-	bmo = tmtrace->BlockingMobj;
-	if (bmo && bmo.bShootable)
-	{
-		// Hit something, so spawn the flame circle around the thing
-		dist = bmo.Radius + 18.0;
-		for (i = 0; i < 4; i++)
-		{
-			an = itof(i) * 45.0;
-			A = Spawn(CircleFlame, bmo.Origin +
-				vector(dist * cos(an), dist * sin(an), 5.0));
-			if (A)
-			{
-				A.Angles.yaw = an;
-				A.Instigator = Instigator;
-				A.Velocity.x = FLAMESPEED * cos(an);
-				A.Velocity.y = FLAMESPEED * sin(an);
-				A.Special1f = A.Velocity.x;
-				A.Special2f = A.Velocity.y;
-				A.StateTime -= Random() * 0.1;
-			}
-			A = Spawn(CircleFlame, bmo.Origin +
-				vector(-dist * cos(an), -dist * sin(an), 5.0));
-			if (A)
-			{
-				A.Angles.yaw = AngleMod360(180.0 + an);
-				A.Instigator = Instigator;
-				A.Velocity.x = -FLAMESPEED * cos(an);
-				A.Velocity.y = -FLAMESPEED * sin(an);
-				A.Special1f = A.Velocity.x;
-				A.Special2f = A.Velocity.y;
-				A.StateTime -= Random() * 0.1;
-			}
-		}
-		SetState(S_FLAMEPUFF2_1);
-	}
-}
-
-//============================================================================
-//
-//	Actor::A_CFlameRotate
-//
-//============================================================================
-
-#define FLAMEROTSPEED	2.0 * 35.0
-
-void Actor::A_CFlameRotate(void)
-{
-	float an;
-
-	an = AngleMod360(Angles.yaw + 90.0);
-	Velocity.x = Special1f + FLAMEROTSPEED * cos(an);
-	Velocity.y = Special2f + FLAMEROTSPEED * sin(an);
-	Angles.yaw = AngleMod360(Angles.yaw + 90.0 / 15.0);
-}
-
-//============================================================================
-//
-//	Actor::A_CFlamePuff
-//
-//============================================================================
-
-void Actor::A_CFlamePuff(void)
-{
-	A_UnHideThing();
-	Velocity = vector(0.0, 0.0, 0.0);
-	PlaySound('ClericFlameExplode', CHAN_VOICE);
-}
-
-//============================================================================
-//
-//  Actor::A_CHolyAttack2
-//
-//  Spawns the spirits
-//
-//============================================================================
-
-void Actor::A_CHolyAttack2(void)
-{
-	int j;
-	int i;
-	Actor A;
-	Actor tail;
-	Actor next;
-
-	for (j = 0; j < 4; j++)
-	{
-		A = Spawn(HolyFX, Origin);
-		if (!A)
-		{
-			continue;
-		}
-		switch (j)
-		{	// float bob index
-		case 0:
-			A._Special2 = P_Random() & 7;	// upper-left
-			break;
-		case 1:
-			A._Special2 = 32 + (P_Random() & 7);	// upper-right
-			break;
-		case 2:
-			A._Special2 = (32 + (P_Random() & 7)) << 16;	// lower-left
-			break;
-		case 3:
-			A._Special2 =
-				((32 + (P_Random() & 7)) << 16) + 32 + (P_Random() & 7);
-			break;
-		}
-		A.Origin.z = Origin.z;
-		A.Angles.yaw = AngleMod360(Angles.yaw +
-			(45.0 + 45.0 / 2.0) - 45.0 * itof(j));
-		A.Thrust(A.Angles.yaw, A.Speed * frametime);
-		A.Instigator = Instigator;
-		A.Args[0] = 10;	// initial turn value
-		A.Args[1] = 0;	// initial look angle
-		if (deathmatch)
-		{
-			// Ghosts last slightly less longer in DeathMatch
-			A.Health = 85;
-		}
-		if (linetarget)
-		{
-			A.Enemy = linetarget;
-			//	Don't colide with world but colide with things, i.e explode
-			A.bColideWithWorld = false;
-			A.bSkullFly = true;
-			A.bMissile = false;
-		}
-		tail = Spawn(HolyTail, A.Origin);
-		tail.SpecialMobj2 = &A;	// parent
-		for (i = 1; i < 3; i++)
-		{
-			next = Spawn(HolyTail, A.Origin);
-			next.SetState(next.IdleState + 1);
-			tail._SpecialMobj1 = &next;
-			tail = next;
-		}
-		tail._SpecialMobj1 = NULL;	// last tail bit
-	}
-}
-
-//============================================================================
-//
-//  Actor::CHolyFindTarget
-//
-//============================================================================
-
-void Actor::CHolyFindTarget(void)
-{
-	Actor targ;
-
-	targ = RoughMonsterSearch(6);
-	if (targ)
-	{
-		Enemy = targ;
-		bColideWithWorld = false;
-		bSkullFly = true;
-		bMissile = false;
-	}
-}
-
-//============================================================================
-//
-//  Actor::CHolySeekerMissile
-//
-//  Similar to SeekerMissile, but seeks to a random Z on the target
-//
-//============================================================================
-
-void Actor::CHolySeekerMissile(float thresh, float turnMax)
-{
-	int dir;
-	float dist;
-	float delta;
-	float angle;
-	float newZ;
-	float deltaZ;
-
-	if (!Enemy)
-	{
-		return;
-	}
-	if (!Enemy.bShootable || (!Enemy.bCountKill && !Enemy.bIsPlayer))
-	{
-		// Target died/target isn't a player or creature
-		Enemy = none;
-		bColideWithWorld = true;
-		bSkullFly = false;
-		bMissile = true;
-		CHolyFindTarget();
-		return;
-	}
-	dir = FaceActor(Enemy, &delta);
-	if (delta > thresh)
-	{
-		delta /= 2.0;
-		if (delta > turnMax)
-		{
-			delta = turnMax;
-		}
-	}
-	if (dir)
-	{
-		// Turn clockwise
-		Angles.yaw += delta;
-	}
-	else
-	{
-		// Turn counter clockwise
-		Angles.yaw -= delta;
-	}
-	Angles.yaw = AngleMod360(Angles.yaw);
-	angle = Angles.yaw;
-	Velocity.x = Speed * cos(angle);
-	Velocity.y = Speed * sin(angle);
-	if (!(level->tictime & 15) ||
-		Origin.z > Enemy.Origin.z + Enemy.Height ||
-		Origin.z + Height < Enemy.Origin.z)
-	{
-		newZ = Enemy.Origin.z + Random() * Enemy.Height;
-		deltaZ = newZ - Origin.z;
-		if (fabs(deltaZ) > 15.0)
-		{
-			if (deltaZ > 0.0)
-			{
-				deltaZ = 15.0;
-			}
-			else
-			{
-				deltaZ = -15.0;
-			}
-		}
-		dist = MobjDist2(Enemy, self);
-		dist = dist / Speed;
-		if (dist < 1.0)
-		{
-			dist = 1.0;
-		}
-		Velocity.z = deltaZ / dist;
-	}
-	return;
-}
-
-//============================================================================
-//
-//	Actor::CHolyWeave
-//
-//============================================================================
-
-void Actor::CHolyWeave(void)
-{
-	float newX, newY;
-	int weaveXY, weaveZ;
-	float angle;
-
-	weaveXY = _Special2 >> 16;
-	weaveZ = _Special2 & 0xFFFF;
-	angle = AngleMod360(Angles.yaw + 90.0);
-	newX = Origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
-	newY = Origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
-	weaveXY = (weaveXY + (P_Random() % 5)) & 63;
-	newX += cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
-	newY += sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
-	TryMove(vector(newX, newY, Origin.z));
-	Origin.z -= FloatBobOffsets[weaveZ] * 2.0;
-	weaveZ = (weaveZ + (P_Random() % 5)) & 63;
-	Origin.z += FloatBobOffsets[weaveZ] * 2.0;
-	_Special2 = weaveZ + (weaveXY << 16);
-}
-
-//============================================================================
-//
-//	Actor::A_CHolySeek
-//
-//============================================================================
-
-void Actor::A_CHolySeek(void)
-{
-	Health--;
-	if (Health <= 0)
-	{
-		Velocity.x /= 4.0;
-		Velocity.y /= 4.0;
-		Velocity.z = 0.0;
-		SetState(DeathState);
-		StateTime -= Random() * 0.1;
-		return;
-	}
-	if (Enemy)
-	{
-		CHolySeekerMissile(itof(Args[0]), itof(Args[0]) * 2.0);
-		if (!((level->tictime + 7) & 15))
-		{
-			Args[0] = 5 + (P_Random() / 20);
-		}
-	}
-	CHolyWeave();
-}
-
-//============================================================================
-//
-//	Actor::A_CHolyCheckScream
-//
-//============================================================================
-
-void Actor::A_CHolyCheckScream(void)
-{
-	A_CHolySeek();
-	if (P_Random() < 20)
-	{
-		PlaySound('SpiritActive', CHAN_VOICE);
-	}
-	if (!Enemy)
-	{
-		CHolyFindTarget();
-	}
-}
-
-//============================================================================
-//
 //	Actor::CHolyTailFollow
 //
 //============================================================================
@@ -926,20 +1193,12 @@ void Actor::A_CHolyTail(void)
 	}
 }
 
-//============================================================================
-//
-//	Actor::A_CHolySpawnPuff
-//
-//============================================================================
-
-void Actor::A_CHolySpawnPuff(void)
-{
-	Spawn(HolyMissilePuff, Origin);
-}
-
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/06/14 15:49:45  dj_jl
+//  Added Projectile class.
+//
 //  Revision 1.27  2002/05/18 17:00:00  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

@@ -24,11 +24,76 @@
 //**************************************************************************
 
 //**************************************************************************
+//
+//	DragonMissile
+//
+//**************************************************************************
+
+class DragonMissile:Projectile
+{
+
+//============================================================================
+//
+//	A_DragonFX2
+//
+//============================================================================
+
+void A_DragonFX2(void)
+{
+	Actor A;
+	int i;
+	float delay;
+
+	delay = 0.5 + Random();
+	for (i = 1 + (P_Random() & 3); i; i--)
+	{
+		A = Spawn(DragonFX2, Origin + vector((Random() - 0.5) * 64.0,
+			(Random() - 0.5) * 64.0, (Random() - 0.5) * 16.0));
+		if (A)
+		{
+			A.StateTime = delay + Random() * 0.2 * itof(i);
+			A.Instigator = Instigator;
+		}
+	}
+}
+
+__states__
+{
+	S_DRAGON_FX1_1('DRFX', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_DRAGON_FX1_2) { }
+	S_DRAGON_FX1_2('DRFX', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_DRAGON_FX1_3) { }
+	S_DRAGON_FX1_3('DRFX', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_DRAGON_FX1_4) { }
+	S_DRAGON_FX1_4('DRFX', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_DRAGON_FX1_5) { }
+	S_DRAGON_FX1_5('DRFX', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_DRAGON_FX1_6) { }
+	S_DRAGON_FX1_6('DRFX', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_DRAGON_FX1_1) { }
+	S_DRAGON_FX1_X1('DRFX', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_DRAGON_FX1_X2) { }
+	S_DRAGON_FX1_X2('DRFX', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_DRAGON_FX1_X3) { }
+	S_DRAGON_FX1_X3('DRFX', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_DRAGON_FX1_X4) { }
+	S_DRAGON_FX1_X4('DRFX', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_DRAGON_FX1_X5) { A_DragonFX2(); }
+	S_DRAGON_FX1_X5('DRFX', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_DRAGON_FX1_X6) { }
+	S_DRAGON_FX1_X6('DRFX', 11 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 12.0;
+	Height = 10.0;
+	Speed = 840.0;
+	MissileDamage = 6;
+	bFireDamage = true;
+	bActivateImpact = false;
+	bActivatePCross = false;
+	IdleState = S_DRAGON_FX1_1;
+	DeathState = S_DRAGON_FX1_X1;
+	DeathSound = 'DragonFireballExplode';
+	Effects = EF_DL_WHITE;
+}
+
+}
+
 //**************************************************************************
 //
 //	Dragon
 //
-//**************************************************************************
 //**************************************************************************
 
 class Dragon:Pawn
@@ -332,6 +397,10 @@ defaultproperties
 	bFloat = true;
 	bNoBlood = true;
 	bBoss = true;
+	bFloorClip = false;
+	bTelestomp = false;
+	bActivatePushWall = false;
+	bActivateMCross = false;
 	IdleState = S_DRAGON_LOOK1;
 	SeeState = S_DRAGON_INIT;
 	MissileState = S_DRAGON_ATK1;
@@ -343,46 +412,16 @@ defaultproperties
 	AttackSound = 'DragonAttack';
 	PainSound = 'DragonPain';
 	DeathSound = 'DragonDeath';
-
-	bFloorClip = false;
-	bTelestomp = false;
-	bActivatePushWall = false;
-	bActivateMCross = false;
 }
 
-}
-
-//**************************************************************************
-//**************************************************************************
-
-//============================================================================
-//
-//	Actor::A_DragonFX2
-//
-//============================================================================
-
-void Actor::A_DragonFX2(void)
-{
-	Actor A;
-	int i;
-	float delay;
-
-	delay = 0.5 + Random();
-	for (i = 1 + (P_Random() & 3); i; i--)
-	{
-		A = Spawn(DragonFX2, Origin + vector((Random() - 0.5) * 64.0,
-			(Random() - 0.5) * 64.0, (Random() - 0.5) * 16.0));
-		if (A)
-		{
-			A.StateTime = delay + Random() * 0.2 * itof(i);
-			A.Instigator = Instigator;
-		}
-	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/06/14 15:49:45  dj_jl
+//  Added Projectile class.
+//
 //  Revision 1.24  2002/05/18 17:00:00  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

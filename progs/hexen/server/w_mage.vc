@@ -23,37 +23,56 @@
 //**
 //**************************************************************************
 
-#define SHARDSPAWN_LEFT		1
-#define SHARDSPAWN_RIGHT	2
-#define SHARDSPAWN_UP		4
-#define SHARDSPAWN_DOWN		8
-
 //**************************************************************************
+//
+//	MageWandMissile
+//
+//**************************************************************************
+
+class MageWandMissile:Projectile
+{
+
+__states__
+{
+	S_MWAND_MISSILE1('MWND', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_MWAND_MISSILE2) { }
+	S_MWAND_MISSILE2('MWND', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_MWAND_MISSILE1) { }
+}
+
+defaultproperties
+{
+	Radius = 12.0;
+	Height = 8.0;
+	Speed = 6440.0;
+	MissileDamage = 2;
+	bRip = true;
+	bCannotPush = true;
+	bNoDamageThrust = true;
+	bBlaster = true;
+	IdleState = S_MWAND_MISSILE1;
+	DeathState = S_MWANDPUFF1;
+	Effects = EF_DL_WHITE;
+}
+
+}
+
 //**************************************************************************
 //
 //	WeaponMageWand
 //
 //**************************************************************************
-//**************************************************************************
 
 class WeaponMageWand:Weapon
 {
 
-//============================================================================
+//==========================================================================
 //
 //  A_MWandAttack
 //
-//============================================================================
+//==========================================================================
 
 void A_MWandAttack(void)
 {
-	Actor mo;
-
-	mo = PlayerPawn(Player->MO).SpawnPlayerMissile(MageWandMissile);
-	if (mo)
-	{
-		mo.bBlaster = true;
-	}
+	PlayerPawn(Player->MO).SpawnPlayerMissile(MageWandMissile);
 	Player->MO.PlaySound('MageWandFire', CHAN_WEAPON);
 }
 
@@ -82,11 +101,128 @@ defaultproperties
 }
 
 //**************************************************************************
+//
+//	ShardMissile
+//
+//**************************************************************************
+
+class ShardMissile:Projectile
+{
+
+bool bShardSpawnLeft;
+bool bShardSpawnRight;
+bool bShardSpawnUp;
+bool bShardSpawnDown;
+
+//==========================================================================
+//
+//  A_ShedShard
+//
+//==========================================================================
+
+void A_ShedShard(void)
+{
+	ShardMissile mo;
+	int spermcount = _Special2;
+
+	if (spermcount <= 0)
+		return;	// No sperm left
+	_Special2 = 0;
+	spermcount--;
+
+	// every so many calls, spawn a new missile in it's set directions
+	if (bShardSpawnLeft)
+	{
+		mo = ShardMissile(SpawnMissileAngleSpeed(ShardMissile,
+			Angles.yaw + (45.0 / 9.0), 0.0, itof(20 + 2 * spermcount) * 35.0));
+		if (mo)
+		{
+			mo.bShardSpawnLeft = true;
+			mo._Special2 = spermcount;
+			mo.Velocity.z = Velocity.z;
+			mo.Instigator = Instigator;
+			mo.Args[0] = (spermcount == 3) ? 2 : 0;
+		}
+	}
+	if (bShardSpawnRight)
+	{
+		mo = ShardMissile(SpawnMissileAngleSpeed(ShardMissile,
+			Angles.yaw - (45.0 / 9.0), 0.0, itof(20 + 2 * spermcount) * 35.0));
+		if (mo)
+		{
+			mo.bShardSpawnRight = true;
+			mo._Special2 = spermcount;
+			mo.Velocity.z = Velocity.z;
+			mo.Instigator = Instigator;
+			mo.Args[0] = (spermcount == 3) ? 2 : 0;
+		}
+	}
+	if (bShardSpawnUp)
+	{
+		mo = ShardMissile(SpawnMissileAngleSpeed(ShardMissile, Angles.yaw,
+			0.0, itof(15 + 2 * spermcount) * 35.0));
+		if (mo)
+		{
+			mo.Velocity.z = Velocity.z;
+			mo.Origin.z += 8.0;
+			if (spermcount & 1)	// Every other reproduction
+			{
+				mo.bShardSpawnLeft = true;
+				mo.bShardSpawnRight = true;
+			}
+			mo.bShardSpawnUp = true;
+			mo._Special2 = spermcount;
+			mo.Instigator = Instigator;
+			mo.Args[0] = (spermcount == 3) ? 2 : 0;
+		}
+	}
+	if (bShardSpawnDown)
+	{
+		mo = ShardMissile(SpawnMissileAngleSpeed(ShardMissile, Angles.yaw,
+			0.0, itof(15 + 2 * spermcount) * 35.0));
+		if (mo)
+		{
+			mo.Velocity.z = Velocity.z;
+			mo.Origin.z -= 4.0;
+			if (spermcount & 1)	// Every other reproduction
+			{
+				mo.bShardSpawnLeft = true;
+				mo.bShardSpawnRight = true;
+			}
+			mo.bShardSpawnDown = true;
+			mo._Special2 = spermcount;
+			mo.Instigator = Instigator;
+			mo.Args[0] = (spermcount == 3) ? 2 : 0;
+		}
+	}
+}
+
+__states__
+{
+	S_SHARDFX1_1('SHRD', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_SHARDFX1_2) { }
+	S_SHARDFX1_2('SHRD', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SHARDFX1_3) { A_ShedShard(); }
+	S_SHARDFX1_3('SHRD', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_SHARDFX1_4) { }
+	S_SHARDFX1_4('SHRD', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_SHARDFX1_1) { }
+}
+
+defaultproperties
+{
+	Radius = 13.0;
+	Height = 8.0;
+	Speed = 875.0;
+	MissileDamage = 1;
+	bIceDamage = true;
+	IdleState = S_SHARDFX1_1;
+	DeathState = S_SHARDFXE1_1;
+	DeathSound = 'MageShardsExplode';
+}
+
+}
+
 //**************************************************************************
 //
 //	WeaponMageCone
 //
-//**************************************************************************
 //**************************************************************************
 
 class WeaponMageCone:Weapon
@@ -104,7 +240,7 @@ void A_FireConePL1(void)
 	int damage;
 	int i;
 	Actor pmo;
-	Actor mo;
+	ShardMissile mo;
 	int conedone = false;
 
 	pmo = Player->MO;
@@ -131,11 +267,13 @@ void A_FireConePL1(void)
 	// didn't find any creatures, so fire projectiles
 	if (!conedone)
 	{
-		mo = PlayerPawn(pmo).SpawnPlayerMissile(ShardMissile);
+		mo = ShardMissile(PlayerPawn(pmo).SpawnPlayerMissile(ShardMissile));
 		if (mo)
 		{
-			mo._Special1 = SHARDSPAWN_LEFT | SHARDSPAWN_DOWN | SHARDSPAWN_UP
-				| SHARDSPAWN_RIGHT;
+			mo.bShardSpawnLeft = true;
+			mo.bShardSpawnRight = true;
+			mo.bShardSpawnUp = true;
+			mo.bShardSpawnDown = true;
 			mo._Special2 = 3;	// Set sperm count (levels of reproductivity)
 			mo.Instigator = pmo;
 			mo.Args[0] = 3;	// Mark Initial shard as super damage
@@ -172,21 +310,448 @@ defaultproperties
 }
 
 //**************************************************************************
+//
+//	LightningZap
+//
+//**************************************************************************
+
+class LightningZap:Projectile
+{
+
+//==========================================================================
+//
+//  A_ZapMimic
+//
+//==========================================================================
+
+void A_ZapMimic(void)
+{
+	Actor A;
+
+	A = *SpecialMobj2;
+	if (A)
+	{
+		if (A.StateNum >= A.DeathState || A.StateNum == S_FREETARGMOBJ)
+		{
+			ExplodeMissile();
+		}
+		else
+		{
+			Velocity.x = A.Velocity.x;
+			Velocity.y = A.Velocity.y;
+		}
+	}
+}
+
+__states__
+{
+	S_LIGHTNING_ZAP1('MLFX', 8 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP2) { A_ZapMimic(); }
+	S_LIGHTNING_ZAP2('MLFX', 9 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP3) { A_ZapMimic(); }
+	S_LIGHTNING_ZAP3('MLFX', 10 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP4) { A_ZapMimic(); }
+	S_LIGHTNING_ZAP4('MLFX', 11 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP5) { A_ZapMimic(); }
+	S_LIGHTNING_ZAP5('MLFX', 12 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP1) { A_ZapMimic(); }
+	S_LIGHTNING_ZAP_X1('MLFX', 13 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP_X2) { }
+	S_LIGHTNING_ZAP_X2('MLFX', 14 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP_X3) { }
+	S_LIGHTNING_ZAP_X3('MLFX', 15 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP_X4) { }
+	S_LIGHTNING_ZAP_X4('MLFX', 16 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP_X5) { }
+	S_LIGHTNING_ZAP_X5('MLFX', 17 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP_X6) { }
+	S_LIGHTNING_ZAP_X6('MLFX', 18 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP_X7) { }
+	S_LIGHTNING_ZAP_X7('MLFX', 19 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP_X8) { }
+	S_LIGHTNING_ZAP_X8('MLFX', 20 | FF_FULLBRIGHT, 2.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 15.0;
+	Height = 35.0;
+	MissileDamage = 2;
+	bNoTeleport = false;
+	bActivateImpact = false;
+	bActivatePCross = false;
+	IdleState = S_LIGHTNING_ZAP1;
+	DeathState = S_LIGHTNING_ZAP_X8;
+	Effects = EF_DL_BLUE;
+}
+
+}
+
+//**************************************************************************
+//
+//	LightningMissile
+//
+//**************************************************************************
+
+class LightningMissile:Projectile
+	abstract
+{
+
+int ZigZagCount;	// Only for floor
+
+//==========================================================================
+//
+//	Touch
+//
+//==========================================================================
+
+boolean Touch(MapObject InOther)
+{
+	int damage;
+	Actor Other;
+
+	if (!bMissile)
+	{
+		return false;
+	}
+
+	Other = Actor(InOther);
+	// Check for a non-shootable mobj
+	if (!Other.bShootable || Other.bNonShootable)
+	{
+		return true;
+	}
+
+	// Check for blasted thing running into another
+	if (bBlasted && Other.bShootable)
+	{
+		if (!Other.bBoss && Other.bCountKill)
+		{
+			Other.Velocity.x += Velocity.x;
+			Other.Velocity.y += Velocity.y;
+			if ((Other.Velocity.x + Other.Velocity.y) > 3.0 * 35.0)
+			{
+				damage = (ftoi(Mass) / 100) + 1;
+				Other.Damage(self, self, damage);
+				damage = (ftoi(Other.Mass) / 100) + 1;
+				Damage(Other, Other, damage >> 2);
+			}
+			return false;
+		}
+	}
+
+	if (Other == Instigator)
+	{
+		return true;
+	}
+
+	if (Other.Mass != 99999.0)
+	{
+		Other.Velocity.x += Velocity.x / 16.0;
+		Other.Velocity.y += Velocity.y / 16.0;
+	}
+	if ((!Other.bIsPlayer && !Other.bBoss) || !(level->tictime & 1))
+	{
+		if (Other.Class == Centaur ||
+			Other.Class == CentaurLeader)
+		{
+			// Lightning does more damage to centaurs
+			Other.Damage(self, Instigator, 9);
+		}
+		else
+		{
+			Other.Damage(self, Instigator, 3);
+		}
+		if (!(GetSoundPlayingInfo(self,
+					GetSoundID('MageLightningZap'))))
+		{
+			PlaySound('MageLightningZap', CHAN_VOICE);
+		}
+		if (Other.bCountKill && P_Random() < 64
+			&& !GetSoundPlayingInfo(Other,
+				GetSoundID('PuppyBeat')))
+		{
+			if ((Other.Class == Centaur) ||
+				(Other.Class == CentaurLeader) ||
+				(Other.Class == Ettin))
+			{
+				Other.PlaySound('PuppyBeat', CHAN_VOICE);
+			}
+		}
+	}
+	Health--;
+	if (Health <= 0 || Other.Health <= 0)
+	{
+		return false;
+	}
+	if (Class == LightningFloor)
+	{
+		if (SpecialMobj2 && !SpecialMobj2->Enemy)
+		{
+			SpecialMobj2->Enemy = Other;
+		}
+	}
+	else if (!Enemy)
+	{
+		Enemy = Other;
+	}
+	return true;	// lightning zaps through all sprites
+}
+
+//==========================================================================
+//
+//  A_LightningClip
+//
+//==========================================================================
+
+#define ZAGSPEED		1.0
+
+void A_LightningClip(void)
+{
+	Actor cMo;
+	Actor targ;
+	int zigZag;
+
+	if (Class == LightningFloor)
+	{
+		Origin.z = FloorZ;
+		if (SpecialMobj2)
+			targ = SpecialMobj2->Enemy;
+		else
+			targ = none;
+	}
+	else if (Class == LightningCeiling)
+	{
+		Origin.z = CeilingZ - Height;
+		targ = Enemy;
+	}
+	if (Class == LightningFloor)
+	{
+		// floor lightning zig-zags, and forces the ceiling lightning to mimic
+		cMo = *SpecialMobj2;
+		zigZag = P_Random();
+		if ((zigZag > 128 && ZigZagCount < 2) || ZigZagCount < -2)
+		{
+			Thrust(Angles.yaw + 90.0, ZAGSPEED);
+			if (cMo)
+			{
+				cMo.Thrust(Angles.yaw + 90.0, ZAGSPEED);
+			}
+			ZigZagCount++;
+		}
+		else
+		{
+			Thrust(Angles.yaw - 90.0, ZAGSPEED);
+			if (cMo)
+			{
+				cMo.Thrust(cMo.Angles.yaw - 90.0, ZAGSPEED);
+			}
+			ZigZagCount--;
+		}
+	}
+	if (targ)
+	{
+		if (targ.Health <= 0)
+		{
+			ExplodeMissile();
+		}
+		else
+		{
+			Angles.yaw = atan2(targ.Origin.y - Origin.y,
+				targ.Origin.x - Origin.x);
+			Velocity.x = 0.0;
+			Velocity.y = 0.0;
+			Thrust(Angles.yaw, Speed * frametime / 2.0);
+		}
+	}
+}
+
+//==========================================================================
+//
+//  A_LightningZap
+//
+//==========================================================================
+
+void A_LightningZap(void)
+{
+	Actor A;
+	float deltaZ;
+
+	A_LightningClip();
+
+	Health -= 8;
+	if (Health <= 0)
+	{
+		SetState(DeathState);
+		return;
+	}
+	if (Class == LightningFloor)
+	{
+		deltaZ = 10.0;
+	}
+	else
+	{
+		deltaZ = -10.0;
+	}
+	A = Spawn(LightningZap, Origin + vector((Random() - 0.5) * Radius,
+		(Random() - 0.5) * Radius, deltaZ));
+	if (A)
+	{
+		A.SpecialMobj2 = this;
+		A.Velocity.x = Velocity.x;
+		A.Velocity.y = Velocity.y;
+		A.Instigator = Instigator;
+		if (Class == LightningFloor)
+		{
+			A.Velocity.z = 20.0 * 35.0;
+		}
+		else
+		{
+			A.Velocity.z = -20.0 * 35.0;
+		}
+	}
+	if (Class == LightningFloor && P_Random() < 160)
+	{
+		PlaySound('MageLightningContinuous', CHAN_VOICE);
+	}
+}
+
+//==========================================================================
+//
+//  A_LightningRemove
+//
+//==========================================================================
+
+void A_LightningRemove(void)
+{
+	if (SpecialMobj2)
+	{
+		SpecialMobj2->SpecialMobj2 = NULL;
+		SpecialMobj2->ExplodeMissile();
+	}
+}
+
+defaultproperties
+{
+	Health = 144;
+	Radius = 16.0;
+	Height = 40.0;
+	Speed = 875.0;
+	MissileDamage = 8;
+	Effects = EF_DL_BLUE;
+}
+
+}
+
+//**************************************************************************
+//
+//	LightningFloor
+//
+//**************************************************************************
+
+class LightningFloor:LightningMissile
+{
+
+//==========================================================================
+//
+//  A_LastZap
+//
+//==========================================================================
+
+void A_LastZap(void)
+{
+	Actor A;
+
+	A = Spawn(LightningZap, Origin);
+	if (A)
+	{
+		A.SetState(S_LIGHTNING_ZAP_X1);
+		A.Velocity.z = 40.0 * 35.0;
+	}
+}
+
+__states__
+{
+	S_LIGHTNING_FLOOR1('MLFX', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_FLOOR2) { A_LightningZap(); }
+	S_LIGHTNING_FLOOR2('MLFX', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_FLOOR3) { A_LightningClip(); }
+	S_LIGHTNING_FLOOR3('MLFX', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_FLOOR4) { A_LightningClip(); }
+	S_LIGHTNING_FLOOR4('MLFX', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_FLOOR1) { A_LightningClip(); }
+	S_LIGHTNING_F_X1('MLF2', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_F_X2) { A_LightningRemove(); }
+	S_LIGHTNING_F_X2('MLF2', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_F_X3) { }
+	S_LIGHTNING_F_X3('MLF2', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_F_X4) { }
+	S_LIGHTNING_F_X4('MLF2', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_F_X5) { }
+	S_LIGHTNING_F_X5('MLF2', 9 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_F_X6) { }
+	S_LIGHTNING_F_X6('MLF2', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_F_X7) { }
+	S_LIGHTNING_F_X7('MLF2', 11 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_F_X8) { }
+	S_LIGHTNING_F_X8('MLF2', 12 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_F_X9) { }
+	S_LIGHTNING_F_X9('ACLO', 4, 20.0 / 35.0, S_LIGHTNING_F_X10) { }
+	S_LIGHTNING_F_X10('MLF2', 13 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_F_X11) { }
+	S_LIGHTNING_F_X11('MLF2', 14 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_F_X12) { }
+	S_LIGHTNING_F_X12('MLF2', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTNING_F_X13) { }
+	S_LIGHTNING_F_X13('MLF2', 16 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_F_X14) { }
+	S_LIGHTNING_F_X14('MLF2', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_F_X15) { }
+	S_LIGHTNING_F_X15('MLF2', 16 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTNING_F_X16) { A_LastZap(); }
+	S_LIGHTNING_F_X16('MLF2', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_F_X17) { }
+	S_LIGHTNING_F_X17('MLF2', 14 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_F_X18) { }
+	S_LIGHTNING_F_X18('MLF2', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_F_X19) { }
+	S_LIGHTNING_F_X19('MLF2', 15 | FF_FULLBRIGHT, 1.0 / 35.0, S_FREETARGMOBJ) { A_HideThing(); }
+}
+
+defaultproperties
+{
+	IdleState = S_LIGHTNING_FLOOR1;
+	DeathState = S_LIGHTNING_F_X1;
+	MaxStepHeight = 99999.0;
+}
+
+}
+
+//**************************************************************************
+//
+//	LightningCeiling
+//
+//**************************************************************************
+
+class LightningCeiling:LightningMissile
+{
+
+__states__
+{
+	S_LIGHTNING_CEILING1('MLFX', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_CEILING2) { A_LightningZap(); }
+	S_LIGHTNING_CEILING2('MLFX', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_CEILING3) { A_LightningClip(); }
+	S_LIGHTNING_CEILING3('MLFX', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_CEILING4) { A_LightningClip(); }
+	S_LIGHTNING_CEILING4('MLFX', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_CEILING1) { A_LightningClip(); }
+	S_LIGHTNING_C_X1('MLF2', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_C_X2) { A_LightningRemove(); }
+	S_LIGHTNING_C_X2('MLF2', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_C_X3) { }
+	S_LIGHTNING_C_X3('MLF2', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_C_X4) { }
+	S_LIGHTNING_C_X4('MLF2', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_C_X5) { }
+	S_LIGHTNING_C_X5('MLF2', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_C_X6) { }
+	S_LIGHTNING_C_X6('MLF2', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_C_X7) { }
+	S_LIGHTNING_C_X7('MLF2', 11 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_C_X8) { }
+	S_LIGHTNING_C_X8('MLF2', 12 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_C_X9) { }
+	S_LIGHTNING_C_X9('ACLO', 4, 35.0 / 35.0, S_LIGHTNING_C_X10) { }
+	S_LIGHTNING_C_X10('MLF2', 13 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_C_X11) { }
+	S_LIGHTNING_C_X11('MLF2', 14 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_C_X12) { }
+	S_LIGHTNING_C_X12('MLF2', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTNING_C_X13) { }
+	S_LIGHTNING_C_X13('MLF2', 16 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_C_X14) { }
+	S_LIGHTNING_C_X14('MLF2', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_C_X15) { }
+	S_LIGHTNING_C_X15('MLF2', 16 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTNING_C_X16) { }
+	S_LIGHTNING_C_X16('MLF2', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_C_X17) { }
+	S_LIGHTNING_C_X17('MLF2', 14 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_C_X18) { }
+	S_LIGHTNING_C_X18('MLF2', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTNING_C_X19) { }
+	S_LIGHTNING_C_X19('MLF2', 15 | FF_FULLBRIGHT, 1.0 / 35.0, S_FREETARGMOBJ) { A_HideThing(); }
+}
+
+defaultproperties
+{
+	IdleState = S_LIGHTNING_CEILING1;
+	DeathState = S_LIGHTNING_C_X1;
+}
+
+}
+
 //**************************************************************************
 //
 //	WeaponMageLightning
 //
 //**************************************************************************
-//**************************************************************************
 
 class WeaponMageLightning:Weapon
 {
 
-//============================================================================
+//==========================================================================
 //
 //  A_LightningReady
 //
-//============================================================================
+//==========================================================================
 
 void A_LightningReady(void)
 {
@@ -197,28 +762,27 @@ void A_LightningReady(void)
 	}
 }
 
-//============================================================================
+//==========================================================================
 //
 //  A_MLightningAttack
 //
-//============================================================================
+//==========================================================================
 
 void A_MLightningAttack(void)
 {
-	Actor fmo;
-	Actor cmo;
+	LightningFloor fmo;
+	LightningCeiling cmo;
 
-	fmo = PlayerPawn(Player->MO).SpawnPlayerMissile(LightningFloor);
-	cmo = PlayerPawn(Player->MO).SpawnPlayerMissile(LightningCeiling);
+	fmo = LightningFloor(PlayerPawn(Player->MO).SpawnPlayerMissile(LightningFloor));
+	cmo = LightningCeiling(PlayerPawn(Player->MO).SpawnPlayerMissile(LightningCeiling));
 	if (fmo)
 	{
-		fmo._SpecialMobj1 = NULL;
 		fmo.SpecialMobj2 = &cmo;
 		fmo.A_LightningZap();
 	}
 	if (cmo)
 	{
-		cmo._SpecialMobj1 = NULL;	// mobj that it will track
+		cmo.Enemy = none;	// mobj that it will track
 		cmo.SpecialMobj2 = &fmo;
 		cmo.A_LightningZap();
 	}
@@ -282,21 +846,72 @@ defaultproperties
 }
 
 //**************************************************************************
+//
+//	MageStaffFX2
+//
+//**************************************************************************
+
+class MageStaffFX2:Projectile
+{
+
+//==========================================================================
+//
+//  A_MStaffTrack
+//
+//==========================================================================
+
+void A_MStaffTrack(void)
+{
+	if (!Enemy && (P_Random() < 50))
+	{
+		Enemy = RoughMonsterSearch(10);
+	}
+	SeekerMissile(2.0, 10.0);
+}
+
+__states__
+{
+	S_MSTAFF_FX2_1('MSP2', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_MSTAFF_FX2_2) { A_MStaffTrack(); }
+	S_MSTAFF_FX2_2('MSP2', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_MSTAFF_FX2_3) { A_MStaffTrack(); }
+	S_MSTAFF_FX2_3('MSP2', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_MSTAFF_FX2_4) { A_MStaffTrack(); }
+	S_MSTAFF_FX2_4('MSP2', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_MSTAFF_FX2_1) { A_MStaffTrack(); }
+	S_MSTAFF_FX2_X1('MSP2', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_MSTAFF_FX2_X2) { }
+	S_MSTAFF_FX2_X2('MSP2', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_MSTAFF_FX2_X3) { A_Explode(); }
+	S_MSTAFF_FX2_X3('MSP2', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_MSTAFF_FX2_X4) { }
+	S_MSTAFF_FX2_X4('MSP2', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_MSTAFF_FX2_X5) { }
+	S_MSTAFF_FX2_X5('MSP2', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 20.0;
+	Height = 8.0;
+	Speed = 595.0;
+	MissileDamage = 4;
+	bFireDamage = true;
+	bSeekerMissile = true;
+	IdleState = S_MSTAFF_FX2_1;
+	DeathState = S_MSTAFF_FX2_X1;
+	DeathSound = 'MageStaffExplode';
+	Effects = EF_DL_RED;
+}
+
+}
+
 //**************************************************************************
 //
 //	WeaponMageStaff
 //
 //**************************************************************************
-//**************************************************************************
 
 class WeaponMageStaff:Weapon
 {
 
-//============================================================================
+//==========================================================================
 //
 //	MStaffSpawn
 //
-//============================================================================
+//==========================================================================
 
 void MStaffSpawn(float angle)
 {
@@ -310,11 +925,11 @@ void MStaffSpawn(float angle)
 	}
 }
 
-//============================================================================
+//==========================================================================
 //
 //  A_MStaffAttack
 //
-//============================================================================
+//==========================================================================
 
 void A_MStaffAttack(void)
 {
@@ -335,33 +950,33 @@ void A_MStaffAttack(void)
 	Player->WeaponPalette = STARTSCOURGEPAL;
 }
 
-//============================================================================
+//==========================================================================
 //
 //  A_MStaffPalette1
 //
-//============================================================================
+//==========================================================================
 
 void A_MStaffPalette1(void)
 {
 	Player->WeaponPalette = STARTSCOURGEPAL + 1;
 }
 
-//============================================================================
+//==========================================================================
 //
 //  A_MStaffPalette2
 //
-//============================================================================
+//==========================================================================
 
 void A_MStaffPalette2(void)
 {
 	Player->WeaponPalette = STARTSCOURGEPAL + 2;
 }
 
-//============================================================================
+//==========================================================================
 //
 //  A_MStaffPalette3
 //
-//============================================================================
+//==========================================================================
 
 void A_MStaffPalette3(void)
 {
@@ -431,312 +1046,88 @@ defaultproperties
 }
 
 //**************************************************************************
+//
+//	MageStaffFX
+//
+//	!!!! UNUSED !!!!
+//
 //**************************************************************************
 
-//============================================================================
-//
-//  Actor::A_ShedShard
-//
-//============================================================================
-
-void Actor::A_ShedShard(void)
+class MageStaffFX:Projectile
 {
-	Actor mo;
-	int spawndir = _Special1;
-	int spermcount = _Special2;
 
-	if (spermcount <= 0)
-		return;	// No sperm left
-	_Special2 = 0;
-	spermcount--;
+int WeaveXY;
+int WeaveZ;
 
-	// every so many calls, spawn a new missile in it's set directions
-	if (spawndir & SHARDSPAWN_LEFT)
-	{
-		mo = SpawnMissileAngleSpeed(ShardMissile,
-			Angles.yaw + (45.0 / 9.0), 0.0, itof(20 + 2 * spermcount) * 35.0);
-		if (mo)
-		{
-			mo._Special1 = SHARDSPAWN_LEFT;
-			mo._Special2 = spermcount;
-			mo.Velocity.z = Velocity.z;
-			mo.Instigator = Instigator;
-			mo.Args[0] = (spermcount == 3) ? 2 : 0;
-		}
-	}
-	if (spawndir & SHARDSPAWN_RIGHT)
-	{
-		mo = SpawnMissileAngleSpeed(ShardMissile,
-			Angles.yaw - (45.0 / 9.0), 0.0, itof(20 + 2 * spermcount) * 35.0);
-		if (mo)
-		{
-			mo._Special1 = SHARDSPAWN_RIGHT;
-			mo._Special2 = spermcount;
-			mo.Velocity.z = Velocity.z;
-			mo.Instigator = Instigator;
-			mo.Args[0] = (spermcount == 3) ? 2 : 0;
-		}
-	}
-	if (spawndir & SHARDSPAWN_UP)
-	{
-		mo = SpawnMissileAngleSpeed(ShardMissile, Angles.yaw,
-			0.0, itof(15 + 2 * spermcount) * 35.0);
-		if (mo)
-		{
-			mo.Velocity.z = Velocity.z;
-			mo.Origin.z += 8.0;
-			if (spermcount & 1)	// Every other reproduction
-				mo._Special1 =
-					SHARDSPAWN_UP | SHARDSPAWN_LEFT | SHARDSPAWN_RIGHT;
-			else
-				mo._Special1 = SHARDSPAWN_UP;
-			mo._Special2 = spermcount;
-			mo.Instigator = Instigator;
-			mo.Args[0] = (spermcount == 3) ? 2 : 0;
-		}
-	}
-	if (spawndir & SHARDSPAWN_DOWN)
-	{
-		mo = SpawnMissileAngleSpeed(ShardMissile, Angles.yaw,
-			0.0, itof(15 + 2 * spermcount) * 35.0);
-		if (mo)
-		{
-			mo.Velocity.z = Velocity.z;
-			mo.Origin.z -= 4.0;
-			if (spermcount & 1)	// Every other reproduction
-				mo._Special1 =
-					SHARDSPAWN_DOWN | SHARDSPAWN_LEFT | SHARDSPAWN_RIGHT;
-			else
-				mo._Special1 = SHARDSPAWN_DOWN;
-			mo._Special2 = spermcount;
-			mo.Instigator = Instigator;
-			mo.Args[0] = (spermcount == 3) ? 2 : 0;
-		}
-	}
-}
-
-//============================================================================
+//==========================================================================
 //
-//  Actor::A_LightningClip
+//  A_MStaffWeave
 //
-//============================================================================
+//==========================================================================
 
-#define ZAGSPEED		1.0
-
-void Actor::A_LightningClip(void)
-{
-	Actor cMo;
-	Actor targ;
-	int zigZag;
-
-	if (Class == LightningFloor)
-	{
-		Origin.z = FloorZ;
-		targ = *SpecialMobj2->_SpecialMobj1;
-	}
-	else if (Class == LightningCeiling)
-	{
-		Origin.z = CeilingZ - Height;
-		targ = *_SpecialMobj1;
-	}
-	if (Class == LightningFloor)
-	{
-		// floor lightning zig-zags, and forces the ceiling lightning to mimic
-		cMo = *SpecialMobj2;
-		zigZag = P_Random();
-		if ((zigZag > 128 && _Special1 < 2) || _Special1 < -2)
-		{
-			Thrust(Angles.yaw + 90.0, ZAGSPEED);
-			if (cMo)
-			{
-				cMo.Thrust(Angles.yaw + 90.0, ZAGSPEED);
-			}
-			_Special1++;
-		}
-		else
-		{
-			Thrust(Angles.yaw - 90.0, ZAGSPEED);
-			if (cMo)
-			{
-				cMo.Thrust(cMo.Angles.yaw - 90.0, ZAGSPEED);
-			}
-			_Special1--;
-		}
-	}
-	if (targ)
-	{
-		if (targ.Health <= 0)
-		{
-			ExplodeMissile();
-		}
-		else
-		{
-			Angles.yaw = atan2(targ.Origin.y - Origin.y,
-				targ.Origin.x - Origin.x);
-			Velocity.x = 0.0;
-			Velocity.y = 0.0;
-			Thrust(Angles.yaw, Speed * frametime / 2.0);
-		}
-	}
-}
-
-//============================================================================
-//
-//  Actor::A_LightningZap
-//
-//============================================================================
-
-void Actor::A_LightningZap(void)
-{
-	Actor A;
-	float deltaZ;
-
-	A_LightningClip();
-
-	Health -= 8;
-	if (Health <= 0)
-	{
-		SetState(DeathState);
-		return;
-	}
-	if (Class == LightningFloor)
-	{
-		deltaZ = 10.0;
-	}
-	else
-	{
-		deltaZ = -10.0;
-	}
-	A = Spawn(LightningZap, Origin + vector((Random() - 0.5) * Radius,
-		(Random() - 0.5) * Radius, deltaZ));
-	if (A)
-	{
-		A.SpecialMobj2 = this;
-		A.Velocity.x = Velocity.x;
-		A.Velocity.y = Velocity.y;
-		A.Instigator = Instigator;
-		if (Class == LightningFloor)
-		{
-			A.Velocity.z = 20.0 * 35.0;
-		}
-		else
-		{
-			A.Velocity.z = -20.0 * 35.0;
-		}
-	}
-	if (Class == LightningFloor && P_Random() < 160)
-	{
-		PlaySound('MageLightningContinuous', CHAN_VOICE);
-	}
-}
-
-//============================================================================
-//
-//  Actor::A_ZapMimic
-//
-//============================================================================
-
-void Actor::A_ZapMimic(void)
-{
-	Actor A;
-
-	A = *SpecialMobj2;
-	if (A)
-	{
-		if (A.StateNum >= A.DeathState || A.StateNum == S_FREETARGMOBJ)
-		{
-			ExplodeMissile();
-		}
-		else
-		{
-			Velocity.x = A.Velocity.x;
-			Velocity.y = A.Velocity.y;
-		}
-	}
-}
-
-//============================================================================
-//
-//  Actor::A_LastZap
-//
-//============================================================================
-
-void Actor::A_LastZap(void)
-{
-	Actor A;
-
-	A = Spawn(LightningZap, Origin);
-	if (A)
-	{
-		A.SetState(S_LIGHTNING_ZAP_X1);
-		A.Velocity.z = 40.0 * 35.0;
-	}
-}
-
-//============================================================================
-//
-//  Actor::A_LightningRemove
-//
-//============================================================================
-
-void Actor::A_LightningRemove(void)
-{
-	if (SpecialMobj2)
-	{
-		SpecialMobj2->SpecialMobj2 = NULL;
-		SpecialMobj2->ExplodeMissile();
-	}
-}
-
-//============================================================================
-//
-//  Actor::A_MStaffWeave
-//
-//============================================================================
-
-void Actor::A_MStaffWeave(void)
+void A_MStaffWeave(void)
 {
 	float newX, newY;
-	int weaveXY, weaveZ;
 	float angle;
 
-	weaveXY = _Special2 >> 16;
-	weaveZ = _Special2 & 0xFFFF;
 	angle = AngleMod360(Angles.yaw + 90.0);
-	newX = Origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
-	newY = Origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
-	weaveXY = (weaveXY + 6) & 63;
-	newX += cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
-	newY += sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
+	newX = Origin.x - cos(angle) * FloatBobOffsets[WeaveXY] * 4.0;
+	newY = Origin.y - sin(angle) * FloatBobOffsets[WeaveXY] * 4.0;
+	WeaveXY = (WeaveXY + 6) & 63;
+	newX += cos(angle) * FloatBobOffsets[WeaveXY] * 4.0;
+	newY += sin(angle) * FloatBobOffsets[WeaveXY] * 4.0;
 	TryMove(vector(newX, newY, Origin.z));
-	Origin.z -= FloatBobOffsets[weaveZ] * 2.0;
-	weaveZ = (weaveZ + 3) & 63;
-	Origin.z += FloatBobOffsets[weaveZ] * 2.0;
+	Origin.z -= FloatBobOffsets[WeaveZ] * 2.0;
+	WeaveZ = (WeaveZ + 3) & 63;
+	Origin.z += FloatBobOffsets[WeaveZ] * 2.0;
 	if (Origin.z <= FloorZ)
 	{
 		Origin.z = FloorZ + 1.0;
 	}
-	_Special2 = weaveZ + (weaveXY << 16);
 }
 
-//============================================================================
-//
-//  Actor::A_MStaffTrack
-//
-//============================================================================
-
-void Actor::A_MStaffTrack(void)
+__states__
 {
-	if (!Enemy && (P_Random() < 50))
-	{
-		Enemy = RoughMonsterSearch(10);
-	}
-	SeekerMissile(2.0, 10.0);
+	S_MSTAFF_FX1_1('MSP1', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_MSTAFF_FX1_2) { A_MStaffWeave(); }
+	S_MSTAFF_FX1_2('MSP1', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_MSTAFF_FX1_3) { A_MStaffWeave(); }
+	S_MSTAFF_FX1_3('MSP1', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_MSTAFF_FX1_4) { A_MStaffWeave(); }
+	S_MSTAFF_FX1_4('MSP1', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_MSTAFF_FX1_5) { A_MStaffWeave(); }
+	S_MSTAFF_FX1_5('MSP1', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_MSTAFF_FX1_6) { A_MStaffWeave(); }
+	S_MSTAFF_FX1_6('MSP1', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_MSTAFF_FX1_1) { A_MStaffWeave(); }
+	S_MSTAFF_FX_X1('MSP1', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_MSTAFF_FX_X2) { }
+	S_MSTAFF_FX_X2('MSP1', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_MSTAFF_FX_X3) { A_Explode(); }
+	S_MSTAFF_FX_X3('MSP1', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_MSTAFF_FX_X4) { }
+	S_MSTAFF_FX_X4('MSP1', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_MSTAFF_FX_X5) { }
+	S_MSTAFF_FX_X5('MSP1', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_MSTAFF_FX_X6) { }
+	S_MSTAFF_FX_X6('MSP1', 11 | FF_FULLBRIGHT, 5.0 / 35.0, S_MSTAFF_FX_X7) { }
+	S_MSTAFF_FX_X7('MSP1', 12 | FF_FULLBRIGHT, 4.0 / 35.0, S_MSTAFF_FX_X8) { }
+	S_MSTAFF_FX_X8('MSP1', 13 | FF_FULLBRIGHT, 5.0 / 35.0, S_MSTAFF_FX_X9) { }
+	S_MSTAFF_FX_X9('MSP1', 14 | FF_FULLBRIGHT, 4.0 / 35.0, S_MSTAFF_FX_X10) { }
+	S_MSTAFF_FX_X10('MSP1', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 16.0;
+	Height = 8.0;
+	Speed = 700.0;
+	MissileDamage = 6;
+	bRip = true;
+	bFireDamage = true;
+	IdleState = S_MSTAFF_FX1_1;
+	DeathState = S_MSTAFF_FX_X1;
+	DeathSound = 'MageStaffExplode';
+	Effects = EF_DL_RED;
+}
+
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/06/14 15:49:45  dj_jl
+//  Added Projectile class.
+//
 //  Revision 1.26  2002/04/11 16:52:16  dj_jl
 //  Made TryMove native.
 //

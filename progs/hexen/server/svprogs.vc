@@ -68,8 +68,8 @@
 
 #include "bot.vc"
 
-#include "thrust.vc"
-#include "pottery.vc"
+#include "thrust.vc"	// !!
+#include "pottery.vc"	// !!
 #include "tree.vc"
 #include "bell.vc"
 #include "telo.vc"
@@ -100,6 +100,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/06/14 15:49:45  dj_jl
+//  Added Projectile class.
+//
 //  Revision 1.13  2002/03/16 17:47:47  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

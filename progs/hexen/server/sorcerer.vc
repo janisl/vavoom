@@ -40,28 +40,24 @@
 #define SORC_NORMAL			5
 #define SORC_FIRING_SPELL	6
 
-#define BALL1_ANGLEOFFSET	0.0
-#define BALL2_ANGLEOFFSET	120.0
-#define BALL3_ANGLEOFFSET	240.0
-
-//**************************************************************************
 //**************************************************************************
 //
 //	Sorcerer
 //
-//**************************************************************************
 //**************************************************************************
 
 class Sorcerer:Pawn
 	__mobjinfo__(10080)
 {
 
+bool bBallsSpawned;
+
 //
 // Sorcerer Variables
 //
 
 //      Special1f       Angle of ball 1 (all others relative to that)
-//      Special2        which ball to stop at in stop mode (MT_???)
+//      SpecialCID      which ball to stop at in stop mode (MT_???)
 //      Args[0]         Defense time
 //      Args[1]         Number of full rotations since stopping mode
 //      Args[2]         Target orbit speed for acceleration/deceleration
@@ -92,6 +88,13 @@ void A_SorcSpinBalls(void)
 {
 	Actor ball;
 	TVec org;
+
+	//	To prevent spawning balls more than once.
+	if (bBallsSpawned)
+	{
+		return;
+	}
+	bBallsSpawned = true;
 
 	A_SlowBalls();
 	Args[0] = 0;	// Currently no defense
@@ -269,26 +272,230 @@ defaultproperties
 
 }
 
+//**************************************************************************
+//
+//	SorcererFX1
+//
+//**************************************************************************
 
-//**************************************************************************
-//**************************************************************************
+class SorcererFX1:Projectile
+{
 
 //============================================================================
+//
+//  A_SorcFX1Seek
+//
+//  Yellow spell - offense
+//
+//============================================================================
+
+void A_SorcFX1Seek(void)
+{
+	if (Args[4]-- <= 0)
+	{
+		if (Args[3]-- <= 0)
+		{
+			SetState(DeathState);
+			PlayFullVolumeSound('SorcererHeadScream', CHAN_VOICE);
+		}
+		else
+		{
+			Args[4] = BOUNCE_TIME_UNIT;
+		}
+	}
+
+	SeekerMissile(2.0, 6.0);
+}
+
+__states__
+{
+	S_SORCFX1_1('SBS1', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX1_2) { }
+	S_SORCFX1_2('SBS1', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_SORCFX1_3) { A_SorcFX1Seek(); }
+	S_SORCFX1_3('SBS1', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_SORCFX1_4) { A_SorcFX1Seek(); }
+	S_SORCFX1_4('SBS1', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_SORCFX1_1) { A_SorcFX1Seek(); }
+	S_SORCFX1_D1('FHFX', 18 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX1_D2) { A_Explode(); }
+	S_SORCFX1_D2('FHFX', 18 | FF_FULLBRIGHT, 6.0 / 35.0, S_SORCFX1_D3) { }
+	S_SORCFX1_D3('FHFX', 18 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	GibsHealth = -500;
+	Radius = 5.0;
+	Height = 5.0;
+	Mass = 12.5;
+	Speed = 245.0;
+	bFloorBounce = true;
+	bDropOff = false;
+	bNoGravity = false;
+	bActivateImpact = false;
+	bActivatePCross = false;
+	IdleState = S_SORCFX1_1;
+	DeathState = S_SORCFX1_D1;
+	GibsDeathState = S_SORCFX1_D1;
+	SightSound = 'SorcererBallBounce';
+	Effects = EF_DL_WHITE;
+}
+
+}
+
+//**************************************************************************
+//
+//	SorcererFX3
+//
+//**************************************************************************
+
+class SorcererFX3:Projectile
+{
+
+//============================================================================
+//
+//  A_SorcererBishopEntry
+//
+//============================================================================
+
+void A_SorcererBishopEntry(void)
+{
+	Spawn(SorcererFX3Explosion, Origin);
+	PlaySound(SightSound, CHAN_VOICE);
+}
+
+//============================================================================
+//
+//  A_SpawnBishop
+//
+//  Green spell - spawn bishops
+//
+//============================================================================
+
+void A_SpawnBishop(void)
+{
+	Actor A;
+
+	A = Spawn(Bishop, Origin);
+	if (A)
+	{
+		if (!A.TestLocation())
+		{
+			A.SetState(S_NULL);
+		}
+	}
+	SetState(S_NULL);
+}
+
+__states__
+{
+	S_SORCFX3_1('SBS3', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX3_2) { }
+	S_SORCFX3_2('SBS3', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX3_3) { }
+	S_SORCFX3_3('SBS3', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX3_1) { }
+	S_BISHMORPH1('SBS3', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_BISHMORPHA) { }
+	S_BISHMORPHA('BISH', 15, 4.0 / 35.0, S_BISHMORPHB) { A_SorcererBishopEntry(); }
+	S_BISHMORPHB('BISH', 14, 4.0 / 35.0, S_BISHMORPHC) { }
+	S_BISHMORPHC('BISH', 13, 4.0 / 35.0, S_BISHMORPHD) { }
+	S_BISHMORPHD('BISH', 12, 3.0 / 35.0, S_BISHMORPHE) { }
+	S_BISHMORPHE('BISH', 11, 3.0 / 35.0, S_BISHMORPHF) { }
+	S_BISHMORPHF('BISH', 10, 3.0 / 35.0, S_BISHMORPHG) { }
+	S_BISHMORPHG('BISH', 9, 3.0 / 35.0, S_BISHMORPHH) { }
+	S_BISHMORPHH('BISH', 8, 3.0 / 35.0, S_BISHMORPHI) { }
+	S_BISHMORPHI('BISH', 7, 3.0 / 35.0, S_BISHMORPHJ) { }
+	S_BISHMORPHJ('BISH', 6, 3.0 / 35.0, S_NULL) { A_SpawnBishop(); }
+}
+
+defaultproperties
+{
+	Radius = 22.0;
+	Height = 65.0;
+	Speed = 525.0;
+	bDropOff = false;
+	bNoGravity = false;
+	bActivateImpact = false;
+	bActivatePCross = false;
+	IdleState = S_SORCFX3_1;
+	DeathState = S_BISHMORPH1;
+	SightSound = 'SorcererBishopSpawn';
+	Effects = EF_DL_WHITE;
+}
+
+}
+
+//**************************************************************************
+//
+//	SorcererFX4
+//
+//**************************************************************************
+
+class SorcererFX4:Projectile
+{
+
+//============================================================================
+//
+//  A_SorcFX4Check
+//
+//  FX4 - rapid fire balls
+//
+//============================================================================
+
+void A_SorcFX4Check(void)
+{
+	if (_Special2-- <= 0)
+	{
+		SetState(DeathState);
+	}
+}
+
+__states__
+{
+	S_SORCFX4_1('SBS4', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX4_2) { A_SorcFX4Check(); }
+	S_SORCFX4_2('SBS4', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX4_3) { A_SorcFX4Check(); }
+	S_SORCFX4_3('SBS4', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX4_1) { A_SorcFX4Check(); }
+	S_SORCFX4_D1('SBS4', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX4_D2) { }
+	S_SORCFX4_D2('SBS4', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX4_D3) { A_Explode(); }
+	S_SORCFX4_D3('SBS4', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX4_D4) { }
+	S_SORCFX4_D4('SBS4', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX4_D5) { }
+	S_SORCFX4_D5('SBS4', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 10.0;
+	Speed = 420.0;
+	bDropOff = false;
+	bActivateImpact = false;
+	bActivatePCross = false;
+	IdleState = S_SORCFX4_1;
+	DeathState = S_SORCFX4_D1;
+	DeathSound = 'SorcererBallExplode';
+	Effects = EF_DL_WHITE;
+}
+
+}
+
+//**************************************************************************
+//
+//	SorcererBall
+//
+//**************************************************************************
+
+class SorcererBall:Projectile
+	abstract
+{
+
 //  Sorcerer Ball Variables
 //      Special1f       Previous angle of ball (for woosh)
 //      Special2        Countdown of rapid fire (FX4)
 //      Args[0]         If set, don't play the bounce sound when bouncing
-//============================================================================
+float BallAngleOffset;
 
 //============================================================================
 //
-//  Actor::A_AccelBalls
+//  A_AccelBalls
 //
 //  Increase ball orbit speed - actor is ball
 //
 //============================================================================
 
-void Actor::A_AccelBalls(void)
+void A_AccelBalls(void)
 {
 	Actor sorc = Instigator;
 
@@ -309,13 +516,13 @@ void Actor::A_AccelBalls(void)
 
 //============================================================================
 //
-//  Actor::A_DecelBalls
+//  A_DecelBalls
 //
 //  Decrease ball orbit speed - actor is ball
 //
 //============================================================================
 
-void Actor::A_DecelBalls(void)
+void A_DecelBalls(void)
 {
 	Actor sorc = Instigator;
 
@@ -331,13 +538,13 @@ void Actor::A_DecelBalls(void)
 
 //============================================================================
 //
-//  Actor::A_SorcUpdateBallAngle
+//  A_SorcUpdateBallAngle
 //
 //  Update angle if first ball - actor is ball
 //
 //============================================================================
 
-void Actor::A_SorcUpdateBallAngle(void)
+void A_SorcUpdateBallAngle(void)
 {
 	if (Class == SorcererBall1)
 	{
@@ -347,46 +554,13 @@ void Actor::A_SorcUpdateBallAngle(void)
 
 //============================================================================
 //
-//  Actor::A_SorcOffense1
-//
-//  Actor is ball.
-//
-//============================================================================
-
-void Actor::A_SorcOffense1(void)
-{
-	Actor mo;
-	float ang1, ang2;
-
-	ang1 = AngleMod360(Angles.yaw + 70.0);
-	ang2 = AngleMod360(Angles.yaw - 70.0);
-	mo = Instigator.SpawnMissileAngle(SorcererFX1, ang1, 0.0);
-	if (mo)
-	{
-		mo.Instigator = Instigator;
-		mo.Enemy = Instigator.Enemy;
-		mo.Args[4] = BOUNCE_TIME_UNIT;
-		mo.Args[3] = 15;	// Bounce time in seconds
-	}
-	mo = Instigator.SpawnMissileAngle(SorcererFX1, ang2, 0.0);
-	if (mo)
-	{
-		mo.Instigator = Instigator;
-		mo.Enemy = Instigator.Enemy;
-		mo.Args[4] = BOUNCE_TIME_UNIT;
-		mo.Args[3] = 15;	// Bounce time in seconds
-	}
-}
-
-//============================================================================
-//
-//  Actor::A_SorcOffense2
+//  A_SorcOffense2
 //
 //  Actor is ball
 //
 //============================================================================
 
-void Actor::A_SorcOffense2(void)
+void A_SorcOffense2(void)
 {
 	float ang1;
 	Actor mo;
@@ -411,74 +585,24 @@ void Actor::A_SorcOffense2(void)
 
 //============================================================================
 //
-//  Actor::A_CastSorcererSpell
+//  A_CastSorcererSpell
 //
 //  Actor is ball.
 //
 //============================================================================
 
-void Actor::A_CastSorcererSpell(void)
+void A_CastSorcererSpell(void)
 {
-	Actor mo;
-	float ang1, ang2;
-	float z;
-
-	PlayFullVolumeSound('SorcererSpellCast', CHAN_VOICE);
-
-	// Put sorcerer into throw spell animation
-	if (Instigator.Health > 0)
-		Instigator.SetState(S_SORC_ATTACK4);
-
-	switch (Class)
-	{
-	case SorcererBall1:	// Offensive
-		A_SorcOffense1();
-		break;
-	case SorcererBall2:	// Defensive
-		z = Instigator.Origin.z - Instigator.FloorClip + SORC_DEFENSE_HEIGHT;
-		mo = Spawn(SorcererFX2, vector(Origin.x, Origin.y, z));
-		Instigator.bInvulnerable = true;
-		Instigator.bReflective = true;
-		Instigator.Args[0] = SORC_DEFENSE_TIME;
-		if (mo)
-			mo.Instigator = Instigator;
-		break;
-	case SorcererBall3:	// Reinforcements
-		ang1 = AngleMod360(Angles.yaw - 45.0);
-		ang2 = AngleMod360(Angles.yaw + 45.0);
-		if (Health < (SpawnHealth / 3))
-		{
-			// Spawn 2 at a time
-			mo = Instigator.SpawnMissileAngle(SorcererFX3, ang1, 4.0);
-			if (mo)
-				mo.Instigator = Instigator;
-			mo = Instigator.SpawnMissileAngle(SorcererFX3, ang2, 4.0);
-			if (mo)
-				mo.Instigator = Instigator;
-		}
-		else
-		{
-			if (P_Random() < 128)
-				ang1 = ang2;
-			mo = Instigator.SpawnMissileAngle(SorcererFX3, ang1, 4.0);
-			if (mo)
-				mo.Instigator = Instigator;
-		}
-		break;
-	default:
-		break;
-	}
 }
 
 //============================================================================
 //
-//  Actor::A_SorcBallOrbit
+//  A_SorcBallOrbit
 //
 //============================================================================
 
-void Actor::A_SorcBallOrbit(void)
+void A_SorcBallOrbit(void)
 {
-	float x, y;
 	float angle, baseangle;
 	int mode = Instigator.Args[3];
 	float dist = Instigator.Radius - (Radius * 2.0);
@@ -488,21 +612,7 @@ void Actor::A_SorcBallOrbit(void)
 		SetState(PainState);
 
 	baseangle = Instigator.Special1f;
-	switch (Class)
-	{
-	case SorcererBall1:
-		angle = AngleMod360(baseangle + BALL1_ANGLEOFFSET);
-		break;
-	case SorcererBall2:
-		angle = AngleMod360(baseangle + BALL2_ANGLEOFFSET);
-		break;
-	case SorcererBall3:
-		angle = AngleMod360(baseangle + BALL3_ANGLEOFFSET);
-		break;
-	default:
-//		I_Error("corrupted sorcerer");
-		break;
-	}
+	angle = AngleMod360(baseangle + BallAngleOffset);
 	Angles.yaw = angle;
 
 	switch (mode)
@@ -528,23 +638,8 @@ void Actor::A_SorcBallOrbit(void)
 			Instigator.Args[3] = SORC_FIRESPELL;
 			Instigator.Args[4] = 0;
 			// Set angle so ball angle == sorcerer angle
-			switch (Class)
-			{
-			case SorcererBall1:
-				Instigator.Special1f = AngleMod360(Instigator.Angles.yaw -
-					BALL1_ANGLEOFFSET);
-				break;
-			case SorcererBall2:
-				Instigator.Special1f = AngleMod360(Instigator.Angles.yaw -
-					BALL2_ANGLEOFFSET);
-				break;
-			case SorcererBall3:
-				Instigator.Special1f = AngleMod360(Instigator.Angles.yaw -
-					BALL3_ANGLEOFFSET);
-				break;
-			default:
-				break;
-			}
+			Instigator.Special1f = AngleMod360(Instigator.Angles.yaw -
+				BallAngleOffset);
 		}
 		else
 		{
@@ -558,18 +653,9 @@ void Actor::A_SorcBallOrbit(void)
 			if (Instigator.Health > 0)
 				Instigator.SetState(S_SORC_ATTACK1);
 
-			if (Class == SorcererBall1 && P_Random() < 200)
-			{
-				PlayFullVolumeSound('SorcererSpellCast', CHAN_VOICE);
-				_Special2 = SORCFX4_RAPIDFIRE_TIME;
-				Args[4] = 128;
-				Instigator.Args[3] = SORC_FIRING_SPELL;
-			}
-			else
-			{
-				A_CastSorcererSpell();
-				Instigator.Args[3] = SORC_STOPPED;
-			}
+			PlayFullVolumeSound('SorcererSpellCast', CHAN_VOICE);
+
+			A_CastSorcererSpell();
 		}
 		break;
 	case SORC_FIRING_SPELL:
@@ -602,60 +688,44 @@ void Actor::A_SorcBallOrbit(void)
 		PlayFullVolumeSound('SorcererBallWoosh', CHAN_VOICE);
 	}
 	Special1f = angle;	// Set previous angle
-	x = Instigator.Origin.x + dist * cos(angle);
-	y = Instigator.Origin.y + dist * sin(angle);
-	Origin.x = x;
-	Origin.y = y;
+	Origin.x = Instigator.Origin.x + dist * cos(angle);
+	Origin.y = Instigator.Origin.y + dist * sin(angle);
 	Origin.z = Instigator.Origin.z - Instigator.FloorClip + Instigator.Height;
 }
 
 //============================================================================
 //
-//  Actor::A_SorcBallPop
+//  A_SorcBallPop
 //
 //  Ball death - spawn stuff.
 //
 //============================================================================
 
-void Actor::A_SorcBallPop(void)
+void A_SorcBallPop(void)
 {
 	PlayFullVolumeSound('SorcererBallPop', CHAN_VOICE);
 	bNoGravity = false;
 	Velocity.x = (Random() * 10.0 - 5.0) * 35.0;
 	Velocity.y = (Random() * 10.0 - 5.0) * 35.0;
 	Velocity.z = (2.0 + Random() * 3.0) * 35.0;
-	//Not used
-//	_Special2 = 4 * FRACUNIT;     // Initial bounce factor
 	Args[4] = BOUNCE_TIME_UNIT;	// Bounce time unit
 	Args[3] = 5;	// Bounce time in seconds
 }
 
 //============================================================================
 //
-//  Actor::A_BounceCheck
+//  A_BounceCheck
 //
 //============================================================================
 
-void Actor::A_BounceCheck(void)
+void A_BounceCheck(void)
 {
 	if (Args[4]-- <= 0)
 	{
 		if (Args[3]-- <= 0)
 		{
 			SetState(DeathState);
-			switch (Class)
-			{
-			case SorcererBall1:
-			case SorcererBall2:
-			case SorcererBall3:
-				PlayFullVolumeSound('SorcererBigBallExplode', CHAN_VOICE);
-				break;
-			case SorcererFX1:
-				PlayFullVolumeSound('SorcererHeadScream', CHAN_VOICE);
-				break;
-			default:
-				break;
-			}
+			PlayFullVolumeSound('SorcererBigBallExplode', CHAN_VOICE);
 		}
 		else
 		{
@@ -664,19 +734,292 @@ void Actor::A_BounceCheck(void)
 	}
 }
 
+defaultproperties
+{
+	Radius = 5.0;
+	Height = 5.0;
+	Mass = 12.5;
+	Speed = 350.0;
+	bFloorBounce = true;
+	bDropOff = false;
+	bActivateImpact = false;
+	bActivatePCross = false;
+	SightSound = 'SorcererBallBounce';
+}
+
+}
+
+//**************************************************************************
+//
+//	SorcererBall1
+//
+//**************************************************************************
+
+class SorcererBall1:SorcererBall
+{
+
 //============================================================================
 //
-//  Actor::A_SorcFX1Seek
+//  A_SorcOffense1
 //
-//  Yellow spell - offense
+//  Actor is ball.
 //
 //============================================================================
 
-void Actor::A_SorcFX1Seek(void)
+void A_SorcOffense1(void)
 {
-	A_BounceCheck();
-	SeekerMissile(2.0, 6.0);
+	Actor mo;
+	float ang1, ang2;
+
+	ang1 = AngleMod360(Angles.yaw + 70.0);
+	ang2 = AngleMod360(Angles.yaw - 70.0);
+	mo = Instigator.SpawnMissileAngle(SorcererFX1, ang1, 0.0);
+	if (mo)
+	{
+		mo.Instigator = Instigator;
+		mo.Enemy = Instigator.Enemy;
+		mo.Args[4] = BOUNCE_TIME_UNIT;
+		mo.Args[3] = 15;	// Bounce time in seconds
+	}
+	mo = Instigator.SpawnMissileAngle(SorcererFX1, ang2, 0.0);
+	if (mo)
+	{
+		mo.Instigator = Instigator;
+		mo.Enemy = Instigator.Enemy;
+		mo.Args[4] = BOUNCE_TIME_UNIT;
+		mo.Args[3] = 15;	// Bounce time in seconds
+	}
 }
+
+//============================================================================
+//
+//  A_CastSorcererSpell
+//
+//  Actor is ball.
+//
+//============================================================================
+
+void A_CastSorcererSpell(void)
+{
+	if (P_Random() < 200)
+	{
+		_Special2 = SORCFX4_RAPIDFIRE_TIME;
+		Args[4] = 128;
+		Instigator.Args[3] = SORC_FIRING_SPELL;
+		return;
+	}
+
+	// Put sorcerer into throw spell animation
+	if (Instigator.Health > 0)
+		Instigator.SetState(S_SORC_ATTACK4);
+
+	// Offensive
+	A_SorcOffense1();
+
+	Instigator.Args[3] = SORC_STOPPED;
+}
+
+__states__
+{
+	S_SORCBALL1_1('SBMP', 0, 2.0 / 35.0, S_SORCBALL1_2) { A_SorcBallOrbit(); }
+	S_SORCBALL1_2('SBMP', 1, 2.0 / 35.0, S_SORCBALL1_3) { A_SorcBallOrbit(); }
+	S_SORCBALL1_3('SBMP', 2, 2.0 / 35.0, S_SORCBALL1_4) { A_SorcBallOrbit(); }
+	S_SORCBALL1_4('SBMP', 3, 2.0 / 35.0, S_SORCBALL1_5) { A_SorcBallOrbit(); }
+	S_SORCBALL1_5('SBMP', 4, 2.0 / 35.0, S_SORCBALL1_6) { A_SorcBallOrbit(); }
+	S_SORCBALL1_6('SBMP', 5, 2.0 / 35.0, S_SORCBALL1_7) { A_SorcBallOrbit(); }
+	S_SORCBALL1_7('SBMP', 6, 2.0 / 35.0, S_SORCBALL1_8) { A_SorcBallOrbit(); }
+	S_SORCBALL1_8('SBMP', 7, 2.0 / 35.0, S_SORCBALL1_9) { A_SorcBallOrbit(); }
+	S_SORCBALL1_9('SBMP', 8, 2.0 / 35.0, S_SORCBALL1_0) { A_SorcBallOrbit(); }
+	S_SORCBALL1_0('SBMP', 9, 2.0 / 35.0, S_SORCBALL1_A) { A_SorcBallOrbit(); }
+	S_SORCBALL1_A('SBMP', 10, 2.0 / 35.0, S_SORCBALL1_B) { A_SorcBallOrbit(); }
+	S_SORCBALL1_B('SBMP', 11, 2.0 / 35.0, S_SORCBALL1_C) { A_SorcBallOrbit(); }
+	S_SORCBALL1_C('SBMP', 12, 2.0 / 35.0, S_SORCBALL1_D) { A_SorcBallOrbit(); }
+	S_SORCBALL1_D('SBMP', 13, 2.0 / 35.0, S_SORCBALL1_E) { A_SorcBallOrbit(); }
+	S_SORCBALL1_E('SBMP', 14, 2.0 / 35.0, S_SORCBALL1_F) { A_SorcBallOrbit(); }
+	S_SORCBALL1_F('SBMP', 15, 2.0 / 35.0, S_SORCBALL1_1) { A_SorcBallOrbit(); }
+	S_SORCBALL1_D1('SBMP', 0, 5.0 / 35.0, S_SORCBALL1_D2) { A_SorcBallPop(); }
+	S_SORCBALL1_D2('SBMP', 1, 2.0 / 35.0, S_SORCBALL1_D2) { A_BounceCheck(); }
+	S_SORCBALL1_D5('SBS4', 3, 5.0 / 35.0, S_SORCBALL1_D6) { A_Explode(); }
+	S_SORCBALL1_D6('SBS4', 4, 5.0 / 35.0, S_SORCBALL1_D7) { }
+	S_SORCBALL1_D7('SBS4', 5, 6.0 / 35.0, S_SORCBALL1_D8) { }
+	S_SORCBALL1_D8('SBS4', 6, 6.0 / 35.0, S_SORCBALL1_D9) { }
+	S_SORCBALL1_D9('SBS4', 7, 6.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_SORCBALL1_1;
+	PainState = S_SORCBALL1_D1;
+	DeathState = S_SORCBALL1_D5;
+	BallAngleOffset = 0.0;
+}
+
+}
+
+//**************************************************************************
+//
+//	SorcererBall2
+//
+//**************************************************************************
+
+class SorcererBall2:SorcererBall
+{
+
+//============================================================================
+//
+//  A_CastSorcererSpell
+//
+//	Defensive
+//
+//============================================================================
+
+void A_CastSorcererSpell(void)
+{
+	Actor mo;
+	float z;
+
+	// Put sorcerer into throw spell animation
+	if (Instigator.Health > 0)
+		Instigator.SetState(S_SORC_ATTACK4);
+
+	z = Instigator.Origin.z - Instigator.FloorClip + SORC_DEFENSE_HEIGHT;
+	mo = Spawn(SorcererFX2, vector(Origin.x, Origin.y, z));
+	Instigator.bInvulnerable = true;
+	Instigator.bReflective = true;
+	Instigator.Args[0] = SORC_DEFENSE_TIME;
+	if (mo)
+		mo.Instigator = Instigator;
+
+	Instigator.Args[3] = SORC_STOPPED;
+}
+
+__states__
+{
+	S_SORCBALL2_1('SBMB', 0, 2.0 / 35.0, S_SORCBALL2_2) { A_SorcBallOrbit(); }
+	S_SORCBALL2_2('SBMB', 1, 2.0 / 35.0, S_SORCBALL2_3) { A_SorcBallOrbit(); }
+	S_SORCBALL2_3('SBMB', 2, 2.0 / 35.0, S_SORCBALL2_4) { A_SorcBallOrbit(); }
+	S_SORCBALL2_4('SBMB', 3, 2.0 / 35.0, S_SORCBALL2_5) { A_SorcBallOrbit(); }
+	S_SORCBALL2_5('SBMB', 4, 2.0 / 35.0, S_SORCBALL2_6) { A_SorcBallOrbit(); }
+	S_SORCBALL2_6('SBMB', 5, 2.0 / 35.0, S_SORCBALL2_7) { A_SorcBallOrbit(); }
+	S_SORCBALL2_7('SBMB', 6, 2.0 / 35.0, S_SORCBALL2_8) { A_SorcBallOrbit(); }
+	S_SORCBALL2_8('SBMB', 7, 2.0 / 35.0, S_SORCBALL2_9) { A_SorcBallOrbit(); }
+	S_SORCBALL2_9('SBMB', 8, 2.0 / 35.0, S_SORCBALL2_0) { A_SorcBallOrbit(); }
+	S_SORCBALL2_0('SBMB', 9, 2.0 / 35.0, S_SORCBALL2_A) { A_SorcBallOrbit(); }
+	S_SORCBALL2_A('SBMB', 10, 2.0 / 35.0, S_SORCBALL2_B) { A_SorcBallOrbit(); }
+	S_SORCBALL2_B('SBMB', 11, 2.0 / 35.0, S_SORCBALL2_C) { A_SorcBallOrbit(); }
+	S_SORCBALL2_C('SBMB', 12, 2.0 / 35.0, S_SORCBALL2_D) { A_SorcBallOrbit(); }
+	S_SORCBALL2_D('SBMB', 13, 2.0 / 35.0, S_SORCBALL2_E) { A_SorcBallOrbit(); }
+	S_SORCBALL2_E('SBMB', 14, 2.0 / 35.0, S_SORCBALL2_F) { A_SorcBallOrbit(); }
+	S_SORCBALL2_F('SBMB', 15, 2.0 / 35.0, S_SORCBALL2_1) { A_SorcBallOrbit(); }
+	S_SORCBALL2_D1('SBMB', 0, 5.0 / 35.0, S_SORCBALL2_D2) { A_SorcBallPop(); }
+	S_SORCBALL2_D2('SBMB', 1, 2.0 / 35.0, S_SORCBALL2_D2) { A_BounceCheck(); }
+	S_SORCBALL2_D5('SBS3', 3, 5.0 / 35.0, S_SORCBALL2_D6) { A_Explode(); }
+	S_SORCBALL2_D6('SBS3', 4, 5.0 / 35.0, S_SORCBALL2_D7) { }
+	S_SORCBALL2_D7('SBS3', 5, 6.0 / 35.0, S_SORCBALL2_D8) { }
+	S_SORCBALL2_D8('SBS3', 6, 6.0 / 35.0, S_SORCBALL2_D9) { }
+	S_SORCBALL2_D9('SBS3', 7, 6.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_SORCBALL2_1;
+	PainState = S_SORCBALL2_D1;
+	DeathState = S_SORCBALL2_D5;
+	BallAngleOffset = 120.0;
+}
+
+}
+
+//**************************************************************************
+//
+//	SorcererBall3
+//
+//**************************************************************************
+
+class SorcererBall3:SorcererBall
+{
+
+//============================================================================
+//
+//  A_CastSorcererSpell
+//
+//	Reinforcements
+//
+//============================================================================
+
+void A_CastSorcererSpell(void)
+{
+	Actor mo;
+	float ang1, ang2;
+
+	// Put sorcerer into throw spell animation
+	if (Instigator.Health > 0)
+		Instigator.SetState(S_SORC_ATTACK4);
+
+	ang1 = AngleMod360(Angles.yaw - 45.0);
+	ang2 = AngleMod360(Angles.yaw + 45.0);
+	if (Health < (SpawnHealth / 3))
+	{
+		// Spawn 2 at a time
+		mo = Instigator.SpawnMissileAngle(SorcererFX3, ang1, 4.0);
+		if (mo)
+			mo.Instigator = Instigator;
+		mo = Instigator.SpawnMissileAngle(SorcererFX3, ang2, 4.0);
+		if (mo)
+			mo.Instigator = Instigator;
+	}
+	else
+	{
+		if (P_Random() < 128)
+			ang1 = ang2;
+		mo = Instigator.SpawnMissileAngle(SorcererFX3, ang1, 4.0);
+		if (mo)
+			mo.Instigator = Instigator;
+	}
+
+	Instigator.Args[3] = SORC_STOPPED;
+}
+
+__states__
+{
+	S_SORCBALL3_1('SBMG', 0, 2.0 / 35.0, S_SORCBALL3_2) { A_SorcBallOrbit(); }
+	S_SORCBALL3_2('SBMG', 1, 2.0 / 35.0, S_SORCBALL3_3) { A_SorcBallOrbit(); }
+	S_SORCBALL3_3('SBMG', 2, 2.0 / 35.0, S_SORCBALL3_4) { A_SorcBallOrbit(); }
+	S_SORCBALL3_4('SBMG', 3, 2.0 / 35.0, S_SORCBALL3_5) { A_SorcBallOrbit(); }
+	S_SORCBALL3_5('SBMG', 4, 2.0 / 35.0, S_SORCBALL3_6) { A_SorcBallOrbit(); }
+	S_SORCBALL3_6('SBMG', 5, 2.0 / 35.0, S_SORCBALL3_7) { A_SorcBallOrbit(); }
+	S_SORCBALL3_7('SBMG', 6, 2.0 / 35.0, S_SORCBALL3_8) { A_SorcBallOrbit(); }
+	S_SORCBALL3_8('SBMG', 7, 2.0 / 35.0, S_SORCBALL3_9) { A_SorcBallOrbit(); }
+	S_SORCBALL3_9('SBMG', 8, 2.0 / 35.0, S_SORCBALL3_0) { A_SorcBallOrbit(); }
+	S_SORCBALL3_0('SBMG', 9, 2.0 / 35.0, S_SORCBALL3_A) { A_SorcBallOrbit(); }
+	S_SORCBALL3_A('SBMG', 10, 2.0 / 35.0, S_SORCBALL3_B) { A_SorcBallOrbit(); }
+	S_SORCBALL3_B('SBMG', 11, 2.0 / 35.0, S_SORCBALL3_C) { A_SorcBallOrbit(); }
+	S_SORCBALL3_C('SBMG', 12, 2.0 / 35.0, S_SORCBALL3_D) { A_SorcBallOrbit(); }
+	S_SORCBALL3_D('SBMG', 13, 2.0 / 35.0, S_SORCBALL3_E) { A_SorcBallOrbit(); }
+	S_SORCBALL3_E('SBMG', 14, 2.0 / 35.0, S_SORCBALL3_F) { A_SorcBallOrbit(); }
+	S_SORCBALL3_F('SBMG', 15, 2.0 / 35.0, S_SORCBALL3_1) { A_SorcBallOrbit(); }
+	S_SORCBALL3_D1('SBMG', 0, 5.0 / 35.0, S_SORCBALL3_D2) { A_SorcBallPop(); }
+	S_SORCBALL3_D2('SBMG', 1, 2.0 / 35.0, S_SORCBALL3_D2) { A_BounceCheck(); }
+	S_SORCBALL3_D5('SBS3', 3, 5.0 / 35.0, S_SORCBALL3_D6) { A_Explode(); }
+	S_SORCBALL3_D6('SBS3', 4, 5.0 / 35.0, S_SORCBALL3_D7) { }
+	S_SORCBALL3_D7('SBS3', 5, 6.0 / 35.0, S_SORCBALL3_D8) { }
+	S_SORCBALL3_D8('SBS3', 6, 6.0 / 35.0, S_SORCBALL3_D9) { }
+	S_SORCBALL3_D9('SBS3', 7, 6.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Mass = 100.0;
+	IdleState = S_SORCBALL3_1;
+	PainState = S_SORCBALL3_D1;
+	DeathState = S_SORCBALL3_D5;
+	BallAngleOffset = 240.0;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
 
 //============================================================================
 // Blue spell - defense
@@ -779,60 +1122,12 @@ void Actor::A_SorcFX2Orbit(void)
 	Origin.z = z;
 }
 
-//============================================================================
-//
-//  Actor::A_SpawnBishop
-//
-//  Green spell - spawn bishops
-//
-//============================================================================
-
-void Actor::A_SpawnBishop(void)
-{
-	Actor A;
-
-	A = Spawn(Bishop, Origin);
-	if (A)
-	{
-		if (!A.TestLocation())
-		{
-			A.SetState(S_NULL);
-		}
-	}
-	SetState(S_NULL);
-}
-
-//============================================================================
-//
-//  Actor::A_SorcererBishopEntry
-//
-//============================================================================
-
-void Actor::A_SorcererBishopEntry(void)
-{
-	Spawn(SorcererFX3Explosion, Origin);
-	PlaySound(SightSound, CHAN_VOICE);
-}
-
-//============================================================================
-//
-//  Actor::A_SorcFX4Check
-//
-//  FX4 - rapid fire balls
-//
-//============================================================================
-
-void Actor::A_SorcFX4Check(void)
-{
-	if (_Special2-- <= 0)
-	{
-		SetState(DeathState);
-	}
-}
-
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/06/14 15:49:45  dj_jl
+//  Added Projectile class.
+//
 //  Revision 1.26  2002/05/18 17:00:00  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

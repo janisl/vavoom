@@ -24,11 +24,89 @@
 //**************************************************************************
 
 //**************************************************************************
+//
+//	BishopMissile
+//
+//**************************************************************************
+
+class BishopMissile:Projectile
+{
+
+int WeaveXY;
+int WeaveZ;
+
+//==========================================================================
+//
+//	A_BishopMissileWeave
+//
+//==========================================================================
+
+void A_BishopMissileWeave(void)
+{
+	float newX, newY;
+	float angle;
+
+	angle = AngleMod360(Angles.yaw + 90.0);
+	newX = Origin.x - cos(angle) * FloatBobOffsets[WeaveXY] * 2.0;
+	newY = Origin.y - sin(angle) * FloatBobOffsets[WeaveXY] * 2.0;
+	WeaveXY = (WeaveXY + 2) & 63;
+	newX += cos(angle) * FloatBobOffsets[WeaveXY] * 2.0;
+	newY += sin(angle) * FloatBobOffsets[WeaveXY] * 2.0;
+	TryMove(vector(newX, newY, Origin.z));
+	Origin.z -= FloatBobOffsets[WeaveZ];
+	WeaveZ = (WeaveZ + 2) & 63;
+	Origin.z += FloatBobOffsets[WeaveZ];
+}
+
+//==========================================================================
+//
+//	A_BishopMissileSeek
+//
+//==========================================================================
+
+void A_BishopMissileSeek(void)
+{
+	SeekerMissile(2.0, 3.0);
+}
+
+__states__
+{
+	S_BISHFX1_1('BPFX', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_BISHFX1_2) { A_BishopMissileWeave(); }
+	S_BISHFX1_2('BPFX', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_BISHFX1_3) { A_BishopMissileWeave(); }
+	S_BISHFX1_3('BPFX', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_BISHFX1_4) { A_BishopMissileWeave(); }
+	S_BISHFX1_4('BPFX', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_BISHFX1_5) { A_BishopMissileWeave(); }
+	S_BISHFX1_5('BPFX', 1 | FF_FULLBRIGHT, 0.0 / 35.0, S_BISHFX1_1) { A_BishopMissileSeek(); }
+	S_BISHFXI1_1('BPFX', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_BISHFXI1_2) { }
+	S_BISHFXI1_2('BPFX', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_BISHFXI1_3) { }
+	S_BISHFXI1_3('BPFX', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_BISHFXI1_4) { }
+	S_BISHFXI1_4('BPFX', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_BISHFXI1_5) { }
+	S_BISHFXI1_5('BPFX', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_BISHFXI1_6) { }
+	S_BISHFXI1_6('BPFX', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 6.0;
+	Speed = 350.0;
+	MissileDamage = 1;
+	bSeekerMissile = true;
+	bActivateImpact = false;
+	bActivatePCross = false;
+	IdleState = S_BISHFX1_1;
+	DeathState = S_BISHFXI1_1;
+	DeathSound = 'BishopMissileExplode';
+	Effects = EF_DL_GREEN;
+	WeaveXY = 0;
+	WeaveZ = 16;
+}
+
+}
+
 //**************************************************************************
 //
 //	Bishop
 //
-//**************************************************************************
 //**************************************************************************
 
 class Bishop:Pawn
@@ -168,7 +246,6 @@ void A_BishopAttack2(void)
 	if (mo)
 	{
 		mo.Enemy = Enemy;
-		mo._Special2 = 16;	// High word == x/y, Low word == z
 	}
 	NumToSpawn--;
 }
@@ -293,47 +370,12 @@ void Actor::A_SetAltShadow(void)
 	Translucency = 33;
 }
 
-//==========================================================================
-//
-//	Actor::A_BishopMissileWeave
-//
-//==========================================================================
-
-void Actor::A_BishopMissileWeave(void)
-{
-	float newX, newY;
-	int weaveXY, weaveZ;
-	float angle;
-
-	weaveXY = _Special2 >> 16;
-	weaveZ = _Special2 & 0xFFFF;
-	angle = AngleMod360(Angles.yaw + 90.0);
-	newX = Origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 2.0;
-	newY = Origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 2.0;
-	weaveXY = (weaveXY + 2) & 63;
-	newX += cos(angle) * FloatBobOffsets[weaveXY] * 2.0;
-	newY += sin(angle) * FloatBobOffsets[weaveXY] * 2.0;
-	TryMove(vector(newX, newY, Origin.z));
-	Origin.z -= FloatBobOffsets[weaveZ];
-	weaveZ = (weaveZ + 2) & 63;
-	Origin.z += FloatBobOffsets[weaveZ];
-	_Special2 = weaveZ + (weaveXY << 16);
-}
-
-//==========================================================================
-//
-//	Actor::A_BishopMissileSeek
-//
-//==========================================================================
-
-void Actor::A_BishopMissileSeek(void)
-{
-	SeekerMissile(2.0, 3.0);
-}
-
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/06/14 15:49:45  dj_jl
+//  Added Projectile class.
+//
 //  Revision 1.24  2002/05/18 17:00:00  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //
