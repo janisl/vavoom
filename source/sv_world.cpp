@@ -356,12 +356,11 @@ void SV_LinkToWorld(VMapObject* thing)
 //
 //	The validcount flags are used to avoid checking lines that are marked in
 // multiple mapblocks, so increment validcount before the first call to
-// P_BlockLinesIterator, then make one or more calls to it.
+// SV_BlockLinesIterator, then make one or more calls to it.
 //
 //==========================================================================
 
-boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*),
-	FFunction *prfunc)
+boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*))
 {
     int			offset;
     short*		list;
@@ -394,11 +393,7 @@ boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*),
 						continue;
 					}
 					(*tempSeg)->linedef->validcount = validcount;
-					if (func && !func((*tempSeg)->linedef))
-					{
-						return false;
-					}
-					if (prfunc && !svpr.Exec(prfunc, (int)(*tempSeg)->linedef))
+					if (!func((*tempSeg)->linedef))
 					{
 						return false;
 					}
@@ -419,9 +414,7 @@ boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*),
 
 		ld->validcount = validcount;
 		
-		if (func && !func(ld))
-	    	return false;
-		if (prfunc && !svpr.Exec(prfunc, (int)ld))
+		if (!func(ld))
 	    	return false;
     }
     return true;	// everything was checked
@@ -695,7 +688,7 @@ boolean SV_PathTraverse(float x1, float y1, float x2, float y2,
     {
 		if (flags & PT_ADDLINES)
 		{
-		    if (!SV_BlockLinesIterator(mapx, mapy, PIT_AddLineIntercepts, 0))
+		    if (!SV_BlockLinesIterator(mapx, mapy, PIT_AddLineIntercepts))
 				return false;	// early out
 		}
 	
@@ -995,9 +988,12 @@ int SV_PointContents(const sector_t *sector, const TVec &p)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/03/09 18:07:10  dj_jl
+//	SV_BlockLinesIterator not used by progs anymore
+//
 //	Revision 1.12  2002/02/15 19:12:04  dj_jl
 //	Property namig style change
-//
+//	
 //	Revision 1.11  2002/02/14 19:23:58  dj_jl
 //	Beautification
 //	
