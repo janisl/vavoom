@@ -1387,7 +1387,7 @@ class MenuSList:MenuChoice
 			{
 				LocalSound('MenuSelect');
 				CmdBuf_AddText("connect \"%s\"\n",
-					slist->cache[Cursor].cname);
+					ARR2STR(slist->cache[Cursor].cname));
 			}
 			return true;
 
@@ -1407,6 +1407,9 @@ class MenuSList:MenuChoice
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/07/20 14:45:24  dj_jl
+//  Fixed join game menu.
+//
 //  Revision 1.22  2002/06/14 15:46:45  dj_jl
 //  Added modal window class.
 //
