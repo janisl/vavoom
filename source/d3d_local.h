@@ -193,7 +193,9 @@ class TDirect3DDrawer : public TDrawer
 
 	//	Polygon drawing
 	void DrawPolygon(TVec*, int, int, int);
+	void BeginSky(void);
 	void DrawSkyPolygon(TVec*, int, int, float, int, float);
+	void EndSky(void);
 	void DrawMaskedPolygon(TVec*, int, int, int);
 	void DrawSpritePolygon(TVec*, int, int, int, dword);
 	void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, const char*, dword, int, bool);
@@ -413,9 +415,12 @@ class TDirect3DDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2001/10/09 17:21:39  dj_jl
+//	Added sky begining and ending functions
+//
 //	Revision 1.13  2001/10/04 17:22:05  dj_jl
 //	My overloaded matrix, beautification
-//
+//	
 //	Revision 1.12  2001/09/14 16:48:22  dj_jl
 //	Switched to DirectX 8
 //	

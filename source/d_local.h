@@ -166,7 +166,9 @@ class TSoftwareDrawer : public TDrawer
 
 	//	Polygon drawing
 	void DrawPolygon(TVec*, int, int, int);
+	void BeginSky(void);
 	void DrawSkyPolygon(TVec*, int, int, float, int, float);
+	void EndSky(void);
 	void DrawMaskedPolygon(TVec*, int, int, int);
 	void DrawSpritePolygon(TVec*, int, int, int, dword);
 	void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, const char*, dword, int, bool);
@@ -531,9 +533,12 @@ inline byte GetColB(dword col)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2001/10/09 17:21:39  dj_jl
+//	Added sky begining and ending functions
+//
 //	Revision 1.11  2001/10/04 17:23:29  dj_jl
 //	Got rid of some warnings
-//
+//	
 //	Revision 1.10  2001/09/12 17:31:27  dj_jl
 //	Rectangle drawing and direct update for plugins
 //	

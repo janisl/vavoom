@@ -574,16 +574,12 @@ void TDirect3DDrawer::WorldDrawing(void)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::DrawSkyPolygon
+//	TDirect3DDrawer::BeginSky
 //
 //==========================================================================
 
-void TDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
-	int texture1, float offs1, int texture2, float offs2)
+void TDirect3DDrawer::BeginSky(void)
 {
-	MyD3DVertex		out[256];
-	int				i;
-
 #if DIRECT3D_VERSION >= 0x0800
 	viewData.MinZ = 0.99;
 #else
@@ -595,6 +591,19 @@ void TDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 	{
 		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGENABLE, FALSE);
 	}
+}
+
+//==========================================================================
+//
+//	TDirect3DDrawer::DrawSkyPolygon
+//
+//==========================================================================
+
+void TDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
+	int texture1, float offs1, int texture2, float offs2)
+{
+	MyD3DVertex		out[256];
+	int				i;
 
 	SetSkyTexture(texture1, false);
 	for (i = 0; i < count; i++)
@@ -630,7 +639,16 @@ void TDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 #endif
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 	}
+}
 
+//==========================================================================
+//
+//	TDirect3DDrawer::EndSky
+//
+//==========================================================================
+
+void TDirect3DDrawer::EndSky(void)
+{
 	if (r_use_fog)
 	{
 		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGENABLE, TRUE);
@@ -1003,9 +1021,12 @@ void TDirect3DDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/10/09 17:21:39  dj_jl
+//	Added sky begining and ending functions
+//
 //	Revision 1.12  2001/10/04 17:22:05  dj_jl
 //	My overloaded matrix, beautification
-//
+//	
 //	Revision 1.11  2001/09/14 16:48:22  dj_jl
 //	Switched to DirectX 8
 //	

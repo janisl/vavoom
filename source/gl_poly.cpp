@@ -521,15 +521,12 @@ void TOpenGLDrawer::WorldDrawing(void)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::DrawSkyPolygon
+//	TOpenGLDrawer::BeginSky
 //
 //==========================================================================
 
-void TOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
-	int texture1, float offs1, int texture2, float offs2)
+void TOpenGLDrawer::BeginSky(void)
 {
-	int		i;
-
 	glDepthRange(0.99, 1.0);
 
 	//	Sky polys are alredy translated
@@ -540,6 +537,18 @@ void TOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 	{
 		glDisable(GL_FOG);
 	}
+}
+
+//==========================================================================
+//
+//	TOpenGLDrawer::DrawSkyPolygon
+//
+//==========================================================================
+
+void TOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
+	int texture1, float offs1, int texture2, float offs2)
+{
+	int		i;
 
 	SetSkyTexture(texture1, false);
 	glBegin(GL_POLYGON);
@@ -569,7 +578,16 @@ void TOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 		glEnd();
 		glDisable(GL_BLEND);
 	}
+}
 
+//==========================================================================
+//
+//	TOpenGLDrawer::EndSky
+//
+//==========================================================================
+
+void TOpenGLDrawer::EndSky(void)
+{
 	if (r_use_fog)
 	{
 		glEnable(GL_FOG);
@@ -896,9 +914,12 @@ void TOpenGLDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/10/09 17:21:39  dj_jl
+//	Added sky begining and ending functions
+//
 //	Revision 1.10  2001/10/04 17:23:29  dj_jl
 //	Got rid of some warnings
-//
+//	
 //	Revision 1.9  2001/09/05 12:21:42  dj_jl
 //	Release changes
 //	

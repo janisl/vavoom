@@ -135,7 +135,9 @@ class TDrawer
 
 	//	Polygon drawing
 	virtual void DrawPolygon(TVec*, int, int, int) = 0;
+	virtual void BeginSky(void) = 0;
 	virtual void DrawSkyPolygon(TVec*, int, int, float, int, float) = 0;
+	virtual void EndSky(void) = 0;
 	virtual void DrawMaskedPolygon(TVec*, int, int, int) = 0;
 	virtual void DrawSpritePolygon(TVec*, int, int, int, dword) = 0;
 	virtual void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, const char*, dword, int, bool) = 0;
@@ -172,9 +174,12 @@ extern TDrawer			*_Direct3DDrawer;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/10/09 17:21:39  dj_jl
+//	Added sky begining and ending functions
+//
 //	Revision 1.9  2001/09/12 17:31:27  dj_jl
 //	Rectangle drawing and direct update for plugins
-//
+//	
 //	Revision 1.8  2001/09/05 12:21:42  dj_jl
 //	Release changes
 //	

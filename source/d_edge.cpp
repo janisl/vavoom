@@ -489,6 +489,16 @@ void TSoftwareDrawer::DrawPolygon(TVec *cv, int count, int, int clipflags)
 
 //==========================================================================
 //
+//	TSoftwareDrawer::BeginSky
+//
+//==========================================================================
+
+void TSoftwareDrawer::BeginSky(void)
+{
+}
+
+//==========================================================================
+//
 //	TSoftwareDrawer::DrawSkyPolygon
 //
 //==========================================================================
@@ -550,6 +560,16 @@ void TSoftwareDrawer::DrawSkyPolygon(TVec *cv, int count,
 	surface_p->offs2 = offs2;
 
 	surface_p++;
+}
+
+//==========================================================================
+//
+//	TSoftwareDrawer::EndSky
+//
+//==========================================================================
+
+void TSoftwareDrawer::EndSky(void)
+{
 }
 
 //==========================================================================
@@ -1067,9 +1087,12 @@ void TSoftwareDrawer::WorldDrawing(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/09 17:21:39  dj_jl
+//	Added sky begining and ending functions
+//
 //	Revision 1.5  2001/08/21 17:22:28  dj_jl
 //	Optimized rendering with some asm
-//
+//	
 //	Revision 1.4  2001/08/15 17:13:05  dj_jl
 //	Implemented D_EmitEdge in asm
 //	
