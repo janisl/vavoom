@@ -78,7 +78,7 @@ void CL_DecayLights(void);
 
 void CL_KeepaliveMessage(void);
 
-boolean CL_TraceLine(const TVec &start, const TVec &end);
+bool CL_TraceLine(const TVec &start, const TVec &end);
 
 particle_t *R_NewParticle(void);
 void R_AddStaticLight(const TVec &origin, float radius, dword color);
@@ -117,9 +117,12 @@ extern dlight_t			cl_dlights[MAX_DLIGHTS];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/04/11 16:44:44  dj_jl
+//	Got rid of some warnings.
+//
 //	Revision 1.10  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.9  2001/12/04 18:16:28  dj_jl
 //	Player models and skins handled by server
 //	

@@ -411,10 +411,9 @@ void TOpenGLDrawer::SetSkyTexture(int tex, bool double_sky)
 	}
 	else
 	{
-		rgba_t saved;
+		rgba_t saved = pal8_to24[0];
 		if (double_sky)
 		{
-			saved = pal8_to24[0];
 			pal8_to24[0].a = 0;
 		}
 		SetTexture(tex);
@@ -1169,9 +1168,12 @@ void TOpenGLDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2002/04/11 16:44:44  dj_jl
+//	Got rid of some warnings.
+//
 //	Revision 1.17  2002/03/20 19:09:53  dj_jl
 //	DeepSea tall patches support.
-//
+//	
 //	Revision 1.16  2002/01/11 18:24:44  dj_jl
 //	Added guard macros
 //	

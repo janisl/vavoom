@@ -135,7 +135,7 @@ static bool CheckPlanes(sector_t *sec)
 //
 //==========================================================================
 
-static boolean CheckLine(seg_t* seg)
+static bool CheckLine(seg_t* seg)
 {
     line_t*			line;
     int				s1;
@@ -263,7 +263,7 @@ static boolean CheckLine(seg_t* seg)
 //
 //==========================================================================
 
-static boolean CrossSubsector(int num)
+static bool CrossSubsector(int num)
 {
     subsector_t*	sub;
     int				count;
@@ -310,7 +310,7 @@ static boolean CrossSubsector(int num)
 //
 //==========================================================================
 
-static boolean CrossBSPNode(int bspnum)
+static bool CrossBSPNode(int bspnum)
 {
     node_t*	bsp;
     int		side;
@@ -351,7 +351,7 @@ static boolean CrossBSPNode(int bspnum)
 //
 //==========================================================================
 
-boolean CL_TraceLine(const TVec &start, const TVec &end)
+bool CL_TraceLine(const TVec &start, const TVec &end)
 {
 	cl_validcount++;
 
@@ -375,9 +375,12 @@ boolean CL_TraceLine(const TVec &start, const TVec &end)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/04/11 16:44:44  dj_jl
+//	Got rid of some warnings.
+//
 //	Revision 1.6  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.5  2001/10/27 07:51:27  dj_jl
 //	Beautification
 //	

@@ -154,17 +154,6 @@ static TVec Popv(void)
 
 //==========================================================================
 //
-//	PushName
-//
-//==========================================================================
-
-static void PushName(FName value)
-{
-	*((FName*)pr_stackPtr++) = value;
-}
-
-//==========================================================================
-//
 //	Popf
 //
 //==========================================================================
@@ -2624,7 +2613,7 @@ PF(T_SetDist)
 
 PF(T_SetShadow)
 {
-	boolean		state;
+	bool		state;
 
 	state = Pop();
 	T_SetShadow(state);
@@ -3196,9 +3185,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.38  2002/04/11 16:44:44  dj_jl
+//	Got rid of some warnings.
+//
 //	Revision 1.37  2002/03/28 18:03:53  dj_jl
 //	Added SV_GetModelIndex
-//
+//	
 //	Revision 1.36  2002/03/09 18:05:34  dj_jl
 //	Added support for defining native functions outside pr_cmds
 //	
