@@ -35,8 +35,10 @@
 #include "gl_local.h"
 #include <GL/glx.h>
 
-#ifdef ALLEGRO_XWINDOWS_WITH_XF86DGA
+#if defined(ALLEGRO_XWINDOWS_WITH_XF86DGA) || \
+	defined(ALLEGRO_XWINDOWS_WITH_XF86DGA2)
 #define USE_FULLSCREEN
+#include <X11/extensions/xf86dga.h>
 #endif
 
 // MACROS ------------------------------------------------------------------
@@ -317,33 +319,24 @@ bool VOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 	_xwin.mouse_grabbed = 1;
 
 #ifdef USE_FULLSCREEN
-	// Allow workaround for buggy servers (e.g. 3dfx Voodoo 3/Banshee).
-	if (get_config_int(NULL, "dga_mouse", 1) == 0)
-		_xwin.disable_dga_mouse = 1;
-
-	if (!_xwin.disable_dga_mouse)
+	if (XF86DGAQueryVersion(RenderDisplay, &MajorVersion, &MinorVersion))
 	{
-		if (!XF86DGAQueryVersion(RenderDisplay, &MajorVersion, &MinorVersion))
-		{
-			// unable to query, probalby not supported
-			GCon->Log(NAME_Init, "Failed to detect XF86DGA Mouse");
-			XWarpPointer(RenderDisplay, None, RenderWindow,
-				0, 0, 0, 0, Width / 2, Height / 2);
-		}
-		else
-		{
-			dgamouse = true;
-			_xwin.in_dga_mode = 2;
-			XF86DGADirectVideo(RenderDisplay, RenderScreen, XF86DGADirectMouse);
-			XWarpPointer(RenderDisplay, None, RenderWindow, 0, 0, 0, 0, 0, 0);
-		}
+		dgamouse = true;
+		_xwin.in_dga_mode = 2;
+		XF86DGADirectVideo(RenderDisplay, RenderScreen, XF86DGADirectMouse);
+		XWarpPointer(RenderDisplay, None, RenderWindow, 0, 0, 0, 0, 0, 0);
 	}
 	else
-#endif
 	{
+		// unable to query, probalby not supported
+		GCon->Log(NAME_Init, "Failed to detect XF86DGA Mouse");
 		XWarpPointer(RenderDisplay, None, RenderWindow,
 			0, 0, 0, 0, Width / 2, Height / 2);
 	}
+#else
+	XWarpPointer(RenderDisplay, None, RenderWindow,
+		0, 0, 0, 0, Width / 2, Height / 2);
+#endif
 
 	if (XGrabKeyboard(RenderDisplay, RenderWindow, False,
 		GrabModeAsync, GrabModeAsync, CurrentTime) != GrabSuccess)
@@ -462,9 +455,12 @@ void VOpenGLDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2004/11/22 07:34:06  dj_jl
+//	Updated to match latest Allegro.
+//
 //	Revision 1.10  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
-//
+//	
 //	Revision 1.9  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
 //	
