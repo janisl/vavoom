@@ -28,12 +28,12 @@
 state_action_info_t StateActionInfo[] =
 {
 	{ NULL},
-    { "A_Light0", 1},
-    { "A_WeaponReady", 1},
-    { "A_Lower", 1},
-    { "A_Raise", 1},
-    { "A_Punch", 1},
-    { "A_ReFire", 1},
+	{ "A_Light0", 1},
+	{ "A_WeaponReady", 1},
+	{ "A_Lower", 1},
+	{ "A_Raise", 1},
+	{ "A_Punch", 1},
+	{ "A_ReFire", 1},
 	{ "A_7", 1},
 	{ "A_8", 1},
 	{ "A_9", 1},
@@ -65,16 +65,16 @@ state_action_info_t StateActionInfo[] =
 	{ "A_35", 0},
 	{ "A_36", 0},
 	{ "A_37", 0},
-	{ "A_38", 0},
 	{ "A_Pain", 0},
 	{ "A_PlayerScream", 0},
 	{ "A_Fall", 0},
+	{ "A_41", 0},
 	{ "A_42", 0},
 	{ "A_43", 0},
 	{ "A_44", 0},
 	{ "A_45", 0},
-	{ "A_46", 0},
 	{ "A_Scream", 0},
+	{ "A_47", 0},
 	{ "A_48", 0},
 	{ "A_49", 0},
 	{ "A_50", 0},
@@ -140,15 +140,21 @@ state_action_info_t StateActionInfo[] =
 	{ "A_110", 0},
 	{ "A_111", 0},
 	{ "A_112", 0},
+	{ "A_113", 0},
+	{ "A_114", 0},
+	{ "A_115", 0},
 	{NULL}
 };
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/04/22 17:19:54  dj_jl
+//	Retail Strife data.
+//
 //	Revision 1.5  2002/01/07 12:31:34  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2001/12/12 19:20:31  dj_jl
 //	States using methods
 //	

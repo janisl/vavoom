@@ -43,14 +43,14 @@ char* ammo_names[] =
 
 char* weapon_names[] =
 {
-    "set_weapon_fist",
-    "set_weapon_crossbow",
-    "set_weapon_riffle",
-    "set_weapon_missile",
-    "set_weapon_grenade",
-    "set_weapon_flame",
-    "set_weapon_blaster",
-    "set_weapon_sigil",
+    "WeaponFist",
+    "WeaponCrossbow",
+    "WeaponRiffle",
+    "WeaponMissile",
+    "WeaponGrenade",
+    "WeaponFlamethrower",
+    "WeaponBlaster",
+    "WeaponSigil",
 };
 
 int numweapons = 8;
@@ -134,9 +134,12 @@ weaponinfo_t weaponinfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/04/22 17:19:54  dj_jl
+//	Retail Strife data.
+//
 //	Revision 1.4  2002/01/07 12:31:35  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/09/20 16:35:58  dj_jl
 //	Beautification
 //	

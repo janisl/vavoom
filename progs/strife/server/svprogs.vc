@@ -27,6 +27,8 @@
 //**
 //**************************************************************************
 
+//#define TEASER
+
 #include <server.vc>
 
 #include "../strfdefs.vc"
@@ -48,8 +50,13 @@
 #define Blood		Puff
 
 #include "savegame.vc"
+#ifdef TEASER
+#include "teaser_states.vc"
+#include "teaser_mobjinfo.vc"
+#else
 #include "states.vc"
 #include "mobjinfo.vc"
+#endif
 #include "wpninfo.vc"
 #include "inter.vc"
 #include "user.vc"
@@ -64,13 +71,20 @@
 #include "enemy.vc"
 #include "cheat.vc"
 
+#ifdef TEASER
+#include "teaser_adummy.vc"
+#else
 #include "adummy.vc"
+#endif
 
 #include "svmain.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/04/22 17:22:32  dj_jl
+//  Retail Strife data.
+//
 //  Revision 1.12  2002/03/20 19:07:47  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

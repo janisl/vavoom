@@ -65,7 +65,7 @@ void Actor::A_36(void)
 void Actor::A_37(void)
 {
 }
-void Actor::A_41(void)
+void Actor::A_38(void)
 {
 }
 void Actor::A_42(void)
@@ -80,7 +80,7 @@ void Actor::A_44(void)
 void Actor::A_45(void)
 {
 }
-void Actor::A_47(void)
+void Actor::A_46(void)
 {
 }
 void Actor::A_48(void)
@@ -278,44 +278,11 @@ void Actor::A_111(void)
 void Actor::A_112(void)
 {
 }
-void Actor::A_113(void)
-{
-}
-void Actor::A_114(void)
-{
-}
-void Actor::A_115(void)
-{
-}
 
 //**************************************************************************
 //
 //  $Log$
-//  Revision 1.10  2002/04/22 17:22:31  dj_jl
+//  Revision 1.1  2002/04/22 17:22:32  dj_jl
 //  Retail Strife data.
-//
-//  Revision 1.9  2002/03/28 18:31:59  dj_jl
-//  Beautification.
-//
-//  Revision 1.8  2002/03/02 17:41:13  dj_jl
-//  Renamed Enemy to Target. Beautification.
-//
-//  Revision 1.7  2002/02/16 16:26:56  dj_jl
-//  Removed precalculated sound IDs
-//
-//  Revision 1.6  2002/01/07 12:27:41  dj_jl
-//  Changed copyright year
-//
-//  Revision 1.5  2001/12/12 18:57:42  dj_jl
-//  State functions now are methods of Actor and Weapon classes
-//
-//  Revision 1.4  2001/12/01 18:12:40  dj_jl
-//  self is now a keyword
-//
-//  Revision 1.3  2001/09/24 17:24:10  dj_jl
-//  Beautification
-//
-//  Revision 1.2  2001/07/27 14:27:53  dj_jl
-//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

@@ -47,9 +47,8 @@ class Thing0:Actor
 		ReactionCount = 8;
 		bShootable = true;
 		bHidden = true;
-		bUnknown4 = true;
-		SpawnState = S_1241;
-		DeathState = S_234;
+		SpawnState = S_1295;
+		DeathState = S_239;
 	}
 };
 
@@ -79,8 +78,8 @@ class StrifePlayer:PlayerPawn
 		PainState = S_PLAY_PAIN;
 		DeathState = S_PLAY_DIE1;
 		GibsDeathState = S_PLAY_XDIE1;
-		PainSound = 'Sound11';
-		DeathSound = 'Sound18';
+		PainSound = 'Sound10';
+		DeathSound = 'Sound17';
 	}
 };
 
@@ -117,7 +116,7 @@ class Weapon_Smith:Actor
 		SpawnState = S_MERCHANDER_STAND1;
 		SeeState = S_MERCHANDER_PAIN1;
 		PainState = S_MERCHANDER_PAIN1;
-		PainSound = 'Sound13';
+		PainSound = 'Sound12';
 	}
 };
 
@@ -155,18 +154,18 @@ class Bar_Keep:Actor
 		SpawnState = S_MERCHANDER_STAND1;
 		SeeState = S_MERCHANDER_PAIN1;
 		PainState = S_MERCHANDER_PAIN1;
-		ActiveSound = 'Sound53';
-		PainSound = 'Sound54';
+		ActiveSound = 'Sound52';
+		PainSound = 'Sound53';
 	}
 };
 
 //==========================================================================
 //
-//	Armorer
+//	Amorer
 //
 //==========================================================================
 
-class Armorer:Actor
+class Amorer:Actor
 	__mobjinfo__(73)
 {
 	void OnMapSpawn(mthing_t *mthing)
@@ -181,7 +180,7 @@ class Armorer:Actor
 
 	defaultproperties
 	{
-		ClassName = 'Armorer';
+		ClassName = 'Amorer';
 		Health = 10000000;
 		Radius = 20.0;
 		Height = 56.0;
@@ -194,7 +193,7 @@ class Armorer:Actor
 		SpawnState = S_MERCHANDER_STAND1;
 		SeeState = S_MERCHANDER_PAIN1;
 		PainState = S_MERCHANDER_PAIN1;
-		PainSound = 'Sound13';
+		PainSound = 'Sound12';
 	}
 };
 
@@ -232,7 +231,7 @@ class Medic:Actor
 		SpawnState = S_MERCHANDER_STAND1;
 		SeeState = S_MERCHANDER_PAIN1;
 		PainState = S_MERCHANDER_PAIN1;
-		PainSound = 'Sound13';
+		PainSound = 'Sound12';
 	}
 };
 
@@ -277,11 +276,11 @@ class Thing6:Actor
 		CrashState = S_PEASANT_DIE1;
 		DeathState = S_PEASANT_DIE4;
 		GibsDeathState = S_PEASANT_XDIE1;
-		SightSound = 'Sound48';
-		ActiveSound = 'Sound48';
+		SightSound = 'Sound47';
+		ActiveSound = 'Sound47';
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -326,11 +325,11 @@ class Thing7:Actor
 		CrashState = S_PEASANT_DIE1;
 		DeathState = S_PEASANT_DIE4;
 		GibsDeathState = S_PEASANT_XDIE1;
-		SightSound = 'Sound48';
-		ActiveSound = 'Sound48';
+		SightSound = 'Sound47';
+		ActiveSound = 'Sound47';
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -375,11 +374,11 @@ class Thing8:Actor
 		CrashState = S_PEASANT_DIE1;
 		DeathState = S_PEASANT_DIE4;
 		GibsDeathState = S_PEASANT_XDIE1;
-		SightSound = 'Sound48';
-		ActiveSound = 'Sound48';
+		SightSound = 'Sound47';
+		ActiveSound = 'Sound47';
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -425,11 +424,11 @@ class Thing9:Actor
 		CrashState = S_PEASANT_DIE1;
 		DeathState = S_PEASANT_DIE4;
 		GibsDeathState = S_PEASANT_XDIE1;
-		SightSound = 'Sound48';
-		ActiveSound = 'Sound48';
+		SightSound = 'Sound47';
+		ActiveSound = 'Sound47';
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -475,11 +474,11 @@ class Thing10:Actor
 		CrashState = S_PEASANT_DIE1;
 		DeathState = S_PEASANT_DIE4;
 		GibsDeathState = S_PEASANT_XDIE1;
-		SightSound = 'Sound48';
-		ActiveSound = 'Sound48';
+		SightSound = 'Sound47';
+		ActiveSound = 'Sound47';
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -525,11 +524,11 @@ class Thing11:Actor
 		CrashState = S_PEASANT_DIE1;
 		DeathState = S_PEASANT_DIE4;
 		GibsDeathState = S_PEASANT_XDIE1;
-		SightSound = 'Sound48';
-		ActiveSound = 'Sound48';
+		SightSound = 'Sound47';
+		ActiveSound = 'Sound47';
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -575,11 +574,11 @@ class Thing12:Actor
 		CrashState = S_PEASANT_DIE1;
 		DeathState = S_PEASANT_DIE4;
 		GibsDeathState = S_PEASANT_XDIE1;
-		SightSound = 'Sound48';
-		ActiveSound = 'Sound48';
+		SightSound = 'Sound47';
+		ActiveSound = 'Sound47';
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -625,11 +624,11 @@ class Thing13:Actor
 		CrashState = S_PEASANT_DIE1;
 		DeathState = S_PEASANT_DIE4;
 		GibsDeathState = S_PEASANT_XDIE1;
-		SightSound = 'Sound48';
-		ActiveSound = 'Sound48';
+		SightSound = 'Sound47';
+		ActiveSound = 'Sound47';
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -675,11 +674,11 @@ class Thing14:Actor
 		CrashState = S_PEASANT_DIE1;
 		DeathState = S_PEASANT_DIE4;
 		GibsDeathState = S_PEASANT_XDIE1;
-		SightSound = 'Sound48';
-		ActiveSound = 'Sound48';
+		SightSound = 'Sound47';
+		ActiveSound = 'Sound47';
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -725,11 +724,11 @@ class Thing15:Actor
 		CrashState = S_PEASANT_DIE1;
 		DeathState = S_PEASANT_DIE4;
 		GibsDeathState = S_PEASANT_XDIE1;
-		SightSound = 'Sound48';
-		ActiveSound = 'Sound48';
+		SightSound = 'Sound47';
+		ActiveSound = 'Sound47';
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -775,11 +774,11 @@ class Thing16:Actor
 		CrashState = S_PEASANT_DIE1;
 		DeathState = S_PEASANT_DIE4;
 		GibsDeathState = S_PEASANT_XDIE1;
-		SightSound = 'Sound48';
-		ActiveSound = 'Sound48';
+		SightSound = 'Sound47';
+		ActiveSound = 'Sound47';
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -825,11 +824,11 @@ class Thing17:Actor
 		CrashState = S_PEASANT_DIE1;
 		DeathState = S_PEASANT_DIE4;
 		GibsDeathState = S_PEASANT_XDIE1;
-		SightSound = 'Sound48';
-		ActiveSound = 'Sound48';
+		SightSound = 'Sound47';
+		ActiveSound = 'Sound47';
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -875,11 +874,11 @@ class Thing18:Actor
 		CrashState = S_PEASANT_DIE1;
 		DeathState = S_PEASANT_DIE4;
 		GibsDeathState = S_PEASANT_XDIE1;
-		SightSound = 'Sound48';
-		ActiveSound = 'Sound48';
+		SightSound = 'Sound47';
+		ActiveSound = 'Sound47';
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -925,11 +924,11 @@ class Thing19:Actor
 		CrashState = S_PEASANT_DIE1;
 		DeathState = S_PEASANT_DIE4;
 		GibsDeathState = S_PEASANT_XDIE1;
-		SightSound = 'Sound48';
-		ActiveSound = 'Sound48';
+		SightSound = 'Sound47';
+		ActiveSound = 'Sound47';
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -975,11 +974,11 @@ class Thing20:Actor
 		CrashState = S_PEASANT_DIE1;
 		DeathState = S_PEASANT_DIE4;
 		GibsDeathState = S_PEASANT_XDIE1;
-		SightSound = 'Sound48';
-		ActiveSound = 'Sound48';
+		SightSound = 'Sound47';
+		ActiveSound = 'Sound47';
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -1025,11 +1024,11 @@ class Thing21:Actor
 		CrashState = S_PEASANT_DIE1;
 		DeathState = S_PEASANT_DIE4;
 		GibsDeathState = S_PEASANT_XDIE1;
-		SightSound = 'Sound48';
-		ActiveSound = 'Sound48';
+		SightSound = 'Sound47';
+		ActiveSound = 'Sound47';
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -1075,11 +1074,11 @@ class Thing22:Actor
 		CrashState = S_PEASANT_DIE1;
 		DeathState = S_PEASANT_DIE4;
 		GibsDeathState = S_PEASANT_XDIE1;
-		SightSound = 'Sound48';
-		ActiveSound = 'Sound48';
+		SightSound = 'Sound47';
+		ActiveSound = 'Sound47';
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -1125,11 +1124,11 @@ class Thing23:Actor
 		CrashState = S_PEASANT_DIE1;
 		DeathState = S_PEASANT_DIE4;
 		GibsDeathState = S_PEASANT_XDIE1;
-		SightSound = 'Sound48';
-		ActiveSound = 'Sound48';
+		SightSound = 'Sound47';
+		ActiveSound = 'Sound47';
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -1175,11 +1174,11 @@ class Thing24:Actor
 		CrashState = S_PEASANT_DIE1;
 		DeathState = S_PEASANT_DIE4;
 		GibsDeathState = S_PEASANT_XDIE1;
-		SightSound = 'Sound48';
-		ActiveSound = 'Sound48';
+		SightSound = 'Sound47';
+		ActiveSound = 'Sound47';
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -1225,11 +1224,11 @@ class Thing25:Actor
 		CrashState = S_PEASANT_DIE1;
 		DeathState = S_PEASANT_DIE4;
 		GibsDeathState = S_PEASANT_XDIE1;
-		SightSound = 'Sound48';
-		ActiveSound = 'Sound48';
+		SightSound = 'Sound47';
+		ActiveSound = 'Sound47';
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -1275,11 +1274,11 @@ class Thing26:Actor
 		CrashState = S_PEASANT_DIE1;
 		DeathState = S_PEASANT_DIE4;
 		GibsDeathState = S_PEASANT_XDIE1;
-		SightSound = 'Sound48';
-		ActiveSound = 'Sound48';
+		SightSound = 'Sound47';
+		ActiveSound = 'Sound47';
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -1325,11 +1324,11 @@ class Thing27:Actor
 		CrashState = S_PEASANT_DIE1;
 		DeathState = S_PEASANT_DIE4;
 		GibsDeathState = S_PEASANT_XDIE1;
-		SightSound = 'Sound48';
-		ActiveSound = 'Sound48';
+		SightSound = 'Sound47';
+		ActiveSound = 'Sound47';
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -1367,7 +1366,7 @@ class Thing28:Actor
 		SpawnState = S_PEASANT2_STAND;
 		PainState = S_PEASANT2_PAIN;
 		DeathState = S_PEASANT_XDIE1;
-		DeathSound = 'Sound62';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -1402,10 +1401,10 @@ class Thing29:Actor
 		bShootable = true;
 		bCountKill = true;
 		bActivateMCross = true;
-		SpawnState = S_420;
-		PainState = S_421;
-		DeathState = S_631;
-		DeathSound = 'Sound62';
+		SpawnState = S_422;
+		PainState = S_423;
+		DeathState = S_633;
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -1427,8 +1426,8 @@ class Thing30:Actor
 		ReactionCount = 8;
 		bShootable = true;
 		bHidden = true;
-		SpawnState = S_422;
-		ActiveSound = 'Sound55';
+		SpawnState = S_424;
+		ActiveSound = 'Sound54';
 	}
 };
 
@@ -1449,7 +1448,7 @@ class Thing31:Actor
 		Mass = 50000.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_424;
+		SpawnState = S_426;
 	}
 };
 
@@ -1470,7 +1469,7 @@ class Thing32:Actor
 		Mass = 50000.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_427;
+		SpawnState = S_429;
 	}
 };
 
@@ -1491,7 +1490,7 @@ class Thing33:Actor
 		Mass = 50000.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_430;
+		SpawnState = S_432;
 	}
 };
 
@@ -1512,7 +1511,7 @@ class Thing34:Actor
 		Mass = 50000.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_433;
+		SpawnState = S_435;
 	}
 };
 
@@ -1533,7 +1532,7 @@ class Thing35:Actor
 		Mass = 50000.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_436;
+		SpawnState = S_438;
 	}
 };
 
@@ -1554,7 +1553,7 @@ class Thing36:Actor
 		Mass = 50000.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_439;
+		SpawnState = S_441;
 	}
 };
 
@@ -1587,18 +1586,17 @@ class Thing37:Actor
 		PainChance = 255;
 		bSolid = true;
 		bShootable = true;
-		bUnknown4 = true;
 		bNoBlood = true;
 		bCountKill = true;
 		bActivateMCross = true;
-		SpawnState = S_442;
-		SeeState = S_442;
-		PainState = S_444;
-		CrashState = S_447;
-		DeathState = S_449;
-		ActiveSound = 'Sound101';
-		PainSound = 'Sound102';
-		DeathSound = 'Sound102';
+		SpawnState = S_444;
+		SeeState = S_444;
+		PainState = S_446;
+		CrashState = S_449;
+		DeathState = S_451;
+		ActiveSound = 'Sound99';
+		PainSound = 'Sound100';
+		DeathSound = 'Sound100';
 	}
 };
 
@@ -1644,8 +1642,8 @@ class Beggar1:Actor
 		DeathState = S_BEGGAR_DIE1;
 		GibsDeathState = S_BEGGAR_XDIE1;
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -1691,8 +1689,8 @@ class Beggar2:Actor
 		DeathState = S_BEGGAR_DIE1;
 		GibsDeathState = S_BEGGAR_XDIE1;
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -1738,8 +1736,8 @@ class Beggar3:Actor
 		DeathState = S_BEGGAR_DIE1;
 		GibsDeathState = S_BEGGAR_XDIE1;
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -1785,8 +1783,8 @@ class Beggar4:Actor
 		DeathState = S_BEGGAR_DIE1;
 		GibsDeathState = S_BEGGAR_XDIE1;
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -1832,8 +1830,8 @@ class Beggar5:Actor
 		DeathState = S_BEGGAR_DIE1;
 		GibsDeathState = S_BEGGAR_XDIE1;
 		AttackSound = 'Sound2';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound62';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound61';
 	}
 };
 
@@ -1866,22 +1864,22 @@ class Rebel1:Actor
 		Mass = 100.0;
 		StepSpeed = 8.0;
 		ReactionCount = 8;
-		PainChance = 250;
+		PainChance = 170;
 		bSolid = true;
 		bShootable = true;
 		bCountKill = true;
 		bUnknown1 = true;
 		bActivateMCross = true;
-		SpawnState = S_479;
-		SeeState = S_490;
-		MissileState = S_498;
-		PainState = S_501;
-		DeathState = S_503;
-		GibsDeathState = S_511;
+		SpawnState = S_481;
+		SeeState = S_492;
+		MissileState = S_500;
+		PainState = S_503;
+		DeathState = S_505;
+		GibsDeathState = S_513;
 		SightSound = 'Sound4';
-		ActiveSound = 'Sound48';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound21';
+		ActiveSound = 'Sound47';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound20';
 	}
 };
 
@@ -1914,22 +1912,22 @@ class Rebel2:Actor
 		Mass = 100.0;
 		StepSpeed = 8.0;
 		ReactionCount = 8;
-		PainChance = 250;
+		PainChance = 170;
 		bSolid = true;
 		bShootable = true;
 		bCountKill = true;
 		bUnknown1 = true;
 		bActivateMCross = true;
-		SpawnState = S_479;
-		SeeState = S_490;
-		MissileState = S_498;
-		PainState = S_501;
-		DeathState = S_503;
-		GibsDeathState = S_511;
+		SpawnState = S_481;
+		SeeState = S_492;
+		MissileState = S_500;
+		PainState = S_503;
+		DeathState = S_505;
+		GibsDeathState = S_513;
 		SightSound = 'Sound4';
-		ActiveSound = 'Sound48';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound21';
+		ActiveSound = 'Sound47';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound20';
 	}
 };
 
@@ -1962,22 +1960,22 @@ class Rebel3:Actor
 		Mass = 100.0;
 		StepSpeed = 8.0;
 		ReactionCount = 8;
-		PainChance = 250;
+		PainChance = 170;
 		bSolid = true;
 		bShootable = true;
 		bCountKill = true;
 		bUnknown1 = true;
 		bActivateMCross = true;
-		SpawnState = S_479;
-		SeeState = S_490;
-		MissileState = S_498;
-		PainState = S_501;
-		DeathState = S_503;
-		GibsDeathState = S_511;
+		SpawnState = S_481;
+		SeeState = S_492;
+		MissileState = S_500;
+		PainState = S_503;
+		DeathState = S_505;
+		GibsDeathState = S_513;
 		SightSound = 'Sound4';
-		ActiveSound = 'Sound48';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound21';
+		ActiveSound = 'Sound47';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound20';
 	}
 };
 
@@ -2010,22 +2008,22 @@ class Rebel4:Actor
 		Mass = 100.0;
 		StepSpeed = 8.0;
 		ReactionCount = 8;
-		PainChance = 250;
+		PainChance = 170;
 		bSolid = true;
 		bShootable = true;
 		bCountKill = true;
 		bUnknown1 = true;
 		bActivateMCross = true;
-		SpawnState = S_479;
-		SeeState = S_490;
-		MissileState = S_498;
-		PainState = S_501;
-		DeathState = S_503;
-		GibsDeathState = S_511;
+		SpawnState = S_481;
+		SeeState = S_492;
+		MissileState = S_500;
+		PainState = S_503;
+		DeathState = S_505;
+		GibsDeathState = S_513;
 		SightSound = 'Sound4';
-		ActiveSound = 'Sound48';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound21';
+		ActiveSound = 'Sound47';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound20';
 	}
 };
 
@@ -2058,22 +2056,22 @@ class Rebel5:Actor
 		Mass = 100.0;
 		StepSpeed = 8.0;
 		ReactionCount = 8;
-		PainChance = 250;
+		PainChance = 170;
 		bSolid = true;
 		bShootable = true;
 		bCountKill = true;
 		bUnknown1 = true;
 		bActivateMCross = true;
-		SpawnState = S_479;
-		SeeState = S_490;
-		MissileState = S_498;
-		PainState = S_501;
-		DeathState = S_503;
-		GibsDeathState = S_511;
+		SpawnState = S_481;
+		SeeState = S_492;
+		MissileState = S_500;
+		PainState = S_503;
+		DeathState = S_505;
+		GibsDeathState = S_513;
 		SightSound = 'Sound4';
-		ActiveSound = 'Sound48';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound21';
+		ActiveSound = 'Sound47';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound20';
 	}
 };
 
@@ -2106,22 +2104,22 @@ class Rebel6:Actor
 		Mass = 100.0;
 		StepSpeed = 8.0;
 		ReactionCount = 8;
-		PainChance = 250;
+		PainChance = 170;
 		bSolid = true;
 		bShootable = true;
 		bCountKill = true;
 		bUnknown1 = true;
 		bActivateMCross = true;
-		SpawnState = S_479;
-		SeeState = S_490;
-		MissileState = S_498;
-		PainState = S_501;
-		DeathState = S_503;
-		GibsDeathState = S_511;
+		SpawnState = S_481;
+		SeeState = S_492;
+		MissileState = S_500;
+		PainState = S_503;
+		DeathState = S_505;
+		GibsDeathState = S_513;
 		SightSound = 'Sound4';
-		ActiveSound = 'Sound48';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound21';
+		ActiveSound = 'Sound47';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound20';
 	}
 };
 
@@ -2163,14 +2161,14 @@ class Macil1:Actor
 		bShootable = true;
 		bCountKill = true;
 		bActivateMCross = true;
-		SpawnState = S_519;
-		SeeState = S_526;
-		MissileState = S_534;
-		PainState = S_537;
-		DeathState = S_526;
-		SightSound = 'Sound10';
-		ActiveSound = 'Sound48';
-		PainSound = 'Sound13';
+		SpawnState = S_521;
+		SeeState = S_528;
+		MissileState = S_536;
+		PainState = S_539;
+		DeathState = S_528;
+		SightSound = 'Sound9';
+		ActiveSound = 'Sound47';
+		PainSound = 'Sound12';
 	}
 };
 
@@ -2185,11 +2183,6 @@ class Macil2:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
 		if (nomonsters)
 		{
 			RemoveMobjThinker(self);
@@ -2214,16 +2207,16 @@ class Macil2:Actor
 		bCountKill = true;
 		bUnknown3 = true;
 		bActivateMCross = true;
-		SpawnState = S_519;
-		SeeState = S_526;
-		MissileState = S_539;
-		PainState = S_537;
-		DeathState = S_542;
-		GibsDeathState = S_542;
-		SightSound = 'Sound10';
-		ActiveSound = 'Sound48';
-		PainSound = 'Sound13';
-		DeathSound = 'Sound20';
+		SpawnState = S_521;
+		SeeState = S_528;
+		MissileState = S_541;
+		PainState = S_539;
+		DeathState = S_544;
+		GibsDeathState = S_544;
+		SightSound = 'Sound9';
+		ActiveSound = 'Sound47';
+		PainSound = 'Sound12';
+		DeathSound = 'Sound19';
 	}
 };
 
@@ -2245,8 +2238,8 @@ class Thing51:Actor
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
-		SpawnState = S_560;
-		SightSound = 'Sound73';
+		SpawnState = S_562;
+		SightSound = 'Sound72';
 	}
 };
 
@@ -2285,17 +2278,17 @@ class Thing52:Actor
 		bNoBlood = true;
 		bCountKill = true;
 		bActivateMCross = true;
-		SpawnState = S_567;
-		SeeState = S_569;
-		MeleeState = S_577;
-		MissileState = S_580;
-		PainState = S_582;
-		DeathState = S_584;
-		GibsDeathState = S_593;
-		SightSound = 'Sound93';
-		ActiveSound = 'Sound96';
-		PainSound = 'Sound94';
-		DeathSound = 'Sound95';
+		SpawnState = S_569;
+		SeeState = S_571;
+		MeleeState = S_579;
+		MissileState = S_582;
+		PainState = S_584;
+		DeathState = S_586;
+		GibsDeathState = S_595;
+		SightSound = 'Sound91';
+		ActiveSound = 'Sound94';
+		PainSound = 'Sound92';
+		DeathSound = 'Sound93';
 	}
 };
 
@@ -2333,17 +2326,17 @@ class Acolyte1:Actor
 		bShootable = true;
 		bCountKill = true;
 		bActivateMCross = true;
-		SpawnState = S_600;
-		SeeState = S_612;
-		MissileState = S_616;
-		PainState = S_622;
-		DeathState = S_623;
-		GibsDeathState = S_631;
-		SightSound = 'Sound10';
-		ActiveSound = 'Sound49';
+		SpawnState = S_602;
+		SeeState = S_614;
+		MissileState = S_618;
+		PainState = S_624;
+		DeathState = S_625;
+		GibsDeathState = S_633;
+		SightSound = 'Sound9';
+		ActiveSound = 'Sound48';
 		AttackSound = 'Sound5';
-		PainSound = 'Sound17';
-		DeathSound = 'Sound22';
+		PainSound = 'Sound16';
+		DeathSound = 'Sound21';
 	}
 };
 
@@ -2382,17 +2375,17 @@ class Acolyte2:Actor
 		bShootable = true;
 		bCountKill = true;
 		bActivateMCross = true;
-		SpawnState = S_600;
-		SeeState = S_612;
-		MissileState = S_616;
-		PainState = S_622;
-		DeathState = S_623;
-		GibsDeathState = S_631;
-		SightSound = 'Sound10';
-		ActiveSound = 'Sound50';
+		SpawnState = S_602;
+		SeeState = S_614;
+		MissileState = S_618;
+		PainState = S_624;
+		DeathState = S_625;
+		GibsDeathState = S_633;
+		SightSound = 'Sound9';
+		ActiveSound = 'Sound49';
 		AttackSound = 'Sound5';
-		PainSound = 'Sound17';
-		DeathSound = 'Sound22';
+		PainSound = 'Sound16';
+		DeathSound = 'Sound21';
 	}
 };
 
@@ -2431,17 +2424,17 @@ class Acolyte3:Actor
 		bShootable = true;
 		bCountKill = true;
 		bActivateMCross = true;
-		SpawnState = S_600;
-		SeeState = S_612;
-		MissileState = S_616;
-		PainState = S_622;
-		DeathState = S_623;
-		GibsDeathState = S_631;
-		SightSound = 'Sound10';
-		ActiveSound = 'Sound51';
+		SpawnState = S_602;
+		SeeState = S_614;
+		MissileState = S_618;
+		PainState = S_624;
+		DeathState = S_625;
+		GibsDeathState = S_633;
+		SightSound = 'Sound9';
+		ActiveSound = 'Sound50';
 		AttackSound = 'Sound5';
-		PainSound = 'Sound17';
-		DeathSound = 'Sound22';
+		PainSound = 'Sound16';
+		DeathSound = 'Sound21';
 	}
 };
 
@@ -2480,17 +2473,17 @@ class Acolyte4:Actor
 		bShootable = true;
 		bCountKill = true;
 		bActivateMCross = true;
-		SpawnState = S_600;
-		SeeState = S_612;
-		MissileState = S_616;
-		PainState = S_622;
-		DeathState = S_623;
-		GibsDeathState = S_631;
-		SightSound = 'Sound10';
-		ActiveSound = 'Sound49';
+		SpawnState = S_602;
+		SeeState = S_614;
+		MissileState = S_618;
+		PainState = S_624;
+		DeathState = S_625;
+		GibsDeathState = S_633;
+		SightSound = 'Sound9';
+		ActiveSound = 'Sound48';
 		AttackSound = 'Sound5';
-		PainSound = 'Sound17';
-		DeathSound = 'Sound22';
+		PainSound = 'Sound16';
+		DeathSound = 'Sound21';
 	}
 };
 
@@ -2529,17 +2522,17 @@ class Acolyte5:Actor
 		bShootable = true;
 		bCountKill = true;
 		bActivateMCross = true;
-		SpawnState = S_600;
-		SeeState = S_612;
-		MissileState = S_616;
-		PainState = S_622;
-		DeathState = S_623;
-		GibsDeathState = S_631;
-		SightSound = 'Sound10';
-		ActiveSound = 'Sound50';
+		SpawnState = S_602;
+		SeeState = S_614;
+		MissileState = S_618;
+		PainState = S_624;
+		DeathState = S_625;
+		GibsDeathState = S_633;
+		SightSound = 'Sound9';
+		ActiveSound = 'Sound49';
 		AttackSound = 'Sound5';
-		PainSound = 'Sound17';
-		DeathSound = 'Sound22';
+		PainSound = 'Sound16';
+		DeathSound = 'Sound21';
 	}
 };
 
@@ -2578,17 +2571,17 @@ class Acolyte6:Actor
 		bShootable = true;
 		bCountKill = true;
 		bActivateMCross = true;
-		SpawnState = S_600;
-		SeeState = S_612;
-		MissileState = S_616;
-		PainState = S_622;
-		DeathState = S_623;
-		GibsDeathState = S_631;
-		SightSound = 'Sound10';
-		ActiveSound = 'Sound51';
+		SpawnState = S_602;
+		SeeState = S_614;
+		MissileState = S_618;
+		PainState = S_624;
+		DeathState = S_625;
+		GibsDeathState = S_633;
+		SightSound = 'Sound9';
+		ActiveSound = 'Sound50';
 		AttackSound = 'Sound5';
-		PainSound = 'Sound17';
-		DeathSound = 'Sound22';
+		PainSound = 'Sound16';
+		DeathSound = 'Sound21';
 	}
 };
 
@@ -2599,104 +2592,6 @@ class Acolyte6:Actor
 //==========================================================================
 
 class Acolyte7:Actor
-	__mobjinfo__(232)
-{
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
-	defaultproperties
-	{
-		ClassName = 'ACOLYTE';
-		Health = 60;
-		GibsHealth = -30;
-		Radius = 24.0;
-		Height = 64.0;
-		Mass = 400.0;
-		StepSpeed = 7.0;
-		ReactionCount = 8;
-		PainChance = 150;
-		Translation = 6;
-		bSolid = true;
-		bShootable = true;
-		bCountKill = true;
-		bActivateMCross = true;
-		SpawnState = S_600;
-		SeeState = S_612;
-		MissileState = S_616;
-		PainState = S_622;
-		DeathState = S_623;
-		GibsDeathState = S_631;
-		SightSound = 'Sound10';
-		ActiveSound = 'Sound51';
-		AttackSound = 'Sound5';
-		PainSound = 'Sound17';
-		DeathSound = 'Sound22';
-	}
-};
-
-//==========================================================================
-//
-//	Acolyte8
-//
-//==========================================================================
-
-class Acolyte8:Actor
-	__mobjinfo__(231)
-{
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
-	defaultproperties
-	{
-		ClassName = 'ACOLYTE';
-		Health = 60;
-		GibsHealth = -30;
-		Radius = 24.0;
-		Height = 64.0;
-		Mass = 400.0;
-		StepSpeed = 7.0;
-		ReactionCount = 8;
-		PainChance = 150;
-		Translation = 7;
-		bSolid = true;
-		bShootable = true;
-		bCountKill = true;
-		bActivateMCross = true;
-		SpawnState = S_600;
-		SeeState = S_612;
-		MissileState = S_616;
-		PainState = S_622;
-		DeathState = S_623;
-		GibsDeathState = S_631;
-		SightSound = 'Sound10';
-		ActiveSound = 'Sound51';
-		AttackSound = 'Sound5';
-		PainSound = 'Sound17';
-		DeathSound = 'Sound22';
-	}
-};
-
-//==========================================================================
-//
-//	Acolyte9
-//
-//==========================================================================
-
-class Acolyte9:Actor
 	__mobjinfo__(58)
 {
 	void OnMapSpawn(mthing_t *mthing)
@@ -2724,74 +2619,27 @@ class Acolyte9:Actor
 		bShootable = true;
 		bCountKill = true;
 		bActivateMCross = true;
-		SpawnState = S_600;
-		SeeState = S_611;
-		MissileState = S_616;
-		PainState = S_620;
-		DeathState = S_623;
-		GibsDeathState = S_631;
-		SightSound = 'Sound10';
-		ActiveSound = 'Sound50';
+		SpawnState = S_602;
+		SeeState = S_613;
+		MissileState = S_618;
+		PainState = S_622;
+		DeathState = S_625;
+		GibsDeathState = S_633;
+		SightSound = 'Sound9';
+		ActiveSound = 'Sound49';
 		AttackSound = 'Sound5';
-		PainSound = 'Sound17';
-		DeathSound = 'Sound22';
+		PainSound = 'Sound16';
+		DeathSound = 'Sound21';
 	}
 };
 
 //==========================================================================
 //
-//	Templar
+//	Thing60
 //
 //==========================================================================
 
-class Templar:Actor
-	__mobjinfo__(3003)
-{
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
-	defaultproperties
-	{
-		ClassName = 'TEMPLAR';
-		Health = 300;
-		Radius = 20.0;
-		Height = 60.0;
-		Mass = 500.0;
-		StepSpeed = 8.0;
-		ReactionCount = 8;
-		PainChance = 100;
-		bSolid = true;
-		bShootable = true;
-		bNoBlood = true;
-		bCountKill = true;
-		bActivateMCross = true;
-		SpawnState = S_643;
-		SeeState = S_647;
-		MeleeState = S_655;
-		MissileState = S_657;
-		PainState = S_659;
-		DeathState = S_661;
-		SightSound = 'Sound83';
-		ActiveSound = 'Sound86';
-		PainSound = 'Sound84';
-		DeathSound = 'Sound85';
-	}
-};
-
-//==========================================================================
-//
-//	Thing63
-//
-//==========================================================================
-
-class Thing63:Actor
+class Thing60:Actor
 	__mobjinfo__(3005)
 {
 	void OnMapSpawn(mthing_t *mthing)
@@ -2819,34 +2667,29 @@ class Thing63:Actor
 		bNoBlood = true;
 		bCountKill = true;
 		bActivateMCross = true;
-		SpawnState = S_681;
-		SeeState = S_682;
-		MissileState = S_690;
-		PainState = S_700;
-		DeathState = S_701;
-		SightSound = 'Sound67';
-		ActiveSound = 'Sound68';
-		PainSound = 'Sound65';
-		DeathSound = 'Sound66';
+		SpawnState = S_645;
+		SeeState = S_646;
+		MissileState = S_654;
+		PainState = S_664;
+		DeathState = S_665;
+		SightSound = 'Sound66';
+		ActiveSound = 'Sound67';
+		PainSound = 'Sound64';
+		DeathSound = 'Sound65';
 	}
 };
 
 //==========================================================================
 //
-//	Thing64
+//	Thing61
 //
 //==========================================================================
 
-class Thing64:Actor
+class Thing61:Actor
 	__mobjinfo__(187)
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
 		if (nomonsters)
 		{
 			RemoveMobjThinker(self);
@@ -2870,15 +2713,63 @@ class Thing64:Actor
 		bNoBlood = true;
 		bCountKill = true;
 		bActivateMCross = true;
-		SpawnState = S_711;
-		SeeState = S_712;
-		MissileState = S_720;
-		PainState = S_722;
-		DeathState = S_723;
-		SightSound = 'Sound67';
-		ActiveSound = 'Sound68';
-		PainSound = 'Sound65';
-		DeathSound = 'Sound85';
+		SpawnState = S_674;
+		SeeState = S_675;
+		MissileState = S_683;
+		PainState = S_685;
+		DeathState = S_686;
+		SightSound = 'Sound66';
+		ActiveSound = 'Sound67';
+		PainSound = 'Sound64';
+		DeathSound = 'Sound84';
+	}
+};
+
+//==========================================================================
+//
+//	Enforcer
+//
+//==========================================================================
+
+class Enforcer:Actor
+	__mobjinfo__(3003)
+{
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
+	defaultproperties
+	{
+		ClassName = 'Enforcer';
+		Health = 300;
+		Radius = 20.0;
+		Height = 60.0;
+		Mass = 500.0;
+		StepSpeed = 8.0;
+		ReactionCount = 8;
+		PainChance = 100;
+		bSolid = true;
+		bShootable = true;
+		bUnknown4 = true;
+		bNoBlood = true;
+		bCountKill = true;
+		bActivateMCross = true;
+		SpawnState = S_702;
+		SeeState = S_706;
+		MeleeState = S_714;
+		MissileState = S_716;
+		PainState = S_718;
+		DeathState = S_720;
+		SightSound = 'Sound82';
+		ActiveSound = 'Sound85';
+		PainSound = 'Sound83';
+		DeathSound = 'Sound84';
 	}
 };
 
@@ -2893,11 +2784,6 @@ class Oracle:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
 		if (nomonsters)
 		{
 			RemoveMobjThinker(self);
@@ -2909,18 +2795,21 @@ class Oracle:Actor
 	defaultproperties
 	{
 		ClassName = 'ORACLE';
-		Health = 1;
+		Health = 31;
 		Radius = 15.0;
 		Height = 56.0;
 		Mass = 100.0;
 		ReactionCount = 8;
+		PainChance = 200;
 		bSolid = true;
 		bShootable = true;
 		bNoBlood = true;
 		bCountKill = true;
 		bActivateMCross = true;
-		SpawnState = S_739;
-		DeathState = S_740;
+		SpawnState = S_740;
+		PainState = S_741;
+		CrashState = S_741;
+		DeathState = S_748;
 	}
 };
 
@@ -2935,11 +2824,6 @@ class Priest:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
 		if (nomonsters)
 		{
 			RemoveMobjThinker(self);
@@ -2966,35 +2850,30 @@ class Priest:Actor
 		bNoBlood = true;
 		bCountKill = true;
 		bActivateMCross = true;
-		SpawnState = S_756;
-		SeeState = S_758;
-		MeleeState = S_766;
-		MissileState = S_769;
-		DeathState = S_772;
-		SightSound = 'Sound113';
-		ActiveSound = 'Sound104';
-		AttackSound = 'Sound92';
-		PainSound = 'Sound112';
-		DeathSound = 'Sound20';
+		SpawnState = S_757;
+		SeeState = S_759;
+		MeleeState = S_767;
+		MissileState = S_770;
+		DeathState = S_773;
+		SightSound = 'Sound112';
+		ActiveSound = 'Sound102';
+		AttackSound = 'Sound90';
+		PainSound = 'Sound111';
+		DeathSound = 'Sound19';
 	}
 };
 
 //==========================================================================
 //
-//	Thing67
+//	Thing65
 //
 //==========================================================================
 
-class Thing67:Actor
+class Thing65:Actor
 	__mobjinfo__(129)
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
 		if (nomonsters)
 		{
 			RemoveMobjThinker(self);
@@ -3005,11 +2884,11 @@ class Thing67:Actor
 
 	defaultproperties
 	{
-		Health = 1000;
+		Health = 500;
 		Radius = 64.0;
 		Height = 8.0;
 		Mass = 1000.0;
-		StepSpeed = 12.0;
+		StepSpeed = 10.0;
 		ReactionCount = 8;
 		PainChance = 250;
 		Translucency = 66;
@@ -3024,17 +2903,61 @@ class Thing67:Actor
 		bUnknown2 = true;
 		bUnknown3 = true;
 		bActivateMCross = true;
-		SpawnState = S_796;
-		SeeState = S_798;
-		MeleeState = S_809;
-		MissileState = S_812;
-		PainState = S_815;
-		DeathState = S_816;
-		SightSound = 'Sound126';
-		ActiveSound = 'Sound128';
-		AttackSound = 'Sound92';
-		PainSound = 'Sound127';
-		DeathSound = 'Sound129';
+		SpawnState = S_797;
+		SeeState = S_799;
+		MeleeState = S_810;
+		MissileState = S_813;
+		PainState = S_816;
+		DeathState = S_817;
+		SightSound = 'Sound125';
+		ActiveSound = 'Sound127';
+		AttackSound = 'Sound90';
+		PainSound = 'Sound126';
+		DeathSound = 'Sound128';
+	}
+};
+
+//==========================================================================
+//
+//	Thing66
+//
+//==========================================================================
+
+class Thing66:Actor
+{
+	defaultproperties
+	{
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Translucency = 66;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bUnknown2 = true;
+		SpawnState = S_834;
+	}
+};
+
+//==========================================================================
+//
+//	Thing67
+//
+//==========================================================================
+
+class Thing67:Actor
+{
+	defaultproperties
+	{
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		SpawnState = S_843;
 	}
 };
 
@@ -3054,9 +2977,8 @@ class Thing68:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		bColideWithThings = false;
-		bColideWithWorld = false;
-		SpawnState = S_834;
+		bNoGravity = true;
+		SpawnState = S_850;
 	}
 };
 
@@ -3067,37 +2989,10 @@ class Thing68:Actor
 //==========================================================================
 
 class Thing69:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		bColideWithThings = false;
-		bColideWithWorld = false;
-		SpawnState = S_841;
-	}
-};
-
-//==========================================================================
-//
-//	Thing70
-//
-//==========================================================================
-
-class Thing70:Actor
 	__mobjinfo__(75)
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
 		if (nomonsters)
 		{
 			RemoveMobjThinker(self);
@@ -3108,11 +3003,11 @@ class Thing70:Actor
 
 	defaultproperties
 	{
-		Health = 1200;
+		Health = 500;
 		Radius = 24.0;
 		Height = 8.0;
 		Mass = 1000.0;
-		StepSpeed = 12.0;
+		StepSpeed = 10.0;
 		ReactionCount = 8;
 		PainChance = 50;
 		Translucency = 66;
@@ -3127,17 +3022,71 @@ class Thing70:Actor
 		bUnknown2 = true;
 		bUnknown3 = true;
 		bActivateMCross = true;
-		SpawnState = S_796;
-		SeeState = S_798;
-		MeleeState = S_809;
-		MissileState = S_852;
-		PainState = S_815;
-		DeathState = S_816;
-		SightSound = 'Sound126';
-		ActiveSound = 'Sound128';
-		AttackSound = 'Sound92';
-		PainSound = 'Sound127';
-		DeathSound = 'Sound129';
+		SpawnState = S_861;
+		SeeState = S_863;
+		MeleeState = S_874;
+		MissileState = S_877;
+		PainState = S_880;
+		DeathState = S_817;
+		SightSound = 'Sound125';
+		ActiveSound = 'Sound127';
+		AttackSound = 'Sound90';
+		PainSound = 'Sound126';
+		DeathSound = 'Sound128';
+	}
+};
+
+//==========================================================================
+//
+//	Thing70
+//
+//==========================================================================
+
+class Thing70:Actor
+	__mobjinfo__(76)
+{
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
+	defaultproperties
+	{
+		Health = 500;
+		Radius = 24.0;
+		Height = 8.0;
+		Mass = 1000.0;
+		StepSpeed = 10.0;
+		ReactionCount = 8;
+		PainChance = 50;
+		Translucency = 66;
+		bSpecial = true;
+		bSolid = true;
+		bShootable = true;
+		bNoGravity = true;
+		bPickUp = true;
+		bFloat = true;
+		bUnknown4 = true;
+		bCountKill = true;
+		bUnknown2 = true;
+		bUnknown3 = true;
+		bActivateMCross = true;
+		SpawnState = S_881;
+		SeeState = S_892;
+		MeleeState = S_903;
+		MissileState = S_906;
+		PainState = S_909;
+		DeathState = S_817;
+		SightSound = 'Sound125';
+		ActiveSound = 'Sound127';
+		AttackSound = 'Sound90';
+		PainSound = 'Sound126';
+		DeathSound = 'Sound128';
 	}
 };
 
@@ -3148,15 +3097,118 @@ class Thing70:Actor
 //==========================================================================
 
 class Thing71:Actor
-	__mobjinfo__(76)
+	__mobjinfo__(167)
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
-		if (deathmatch)
+		if (nomonsters)
 		{
 			RemoveMobjThinker(self);
 			return;
 		}
+		::OnMapSpawn(mthing);
+	}
+
+	defaultproperties
+	{
+		Health = 500;
+		Radius = 24.0;
+		Height = 8.0;
+		Mass = 1000.0;
+		StepSpeed = 10.0;
+		ReactionCount = 8;
+		PainChance = 50;
+		Translucency = 66;
+		bSpecial = true;
+		bSolid = true;
+		bShootable = true;
+		bNoGravity = true;
+		bPickUp = true;
+		bFloat = true;
+		bUnknown4 = true;
+		bCountKill = true;
+		bUnknown2 = true;
+		bUnknown3 = true;
+		bActivateMCross = true;
+		SpawnState = S_910;
+		SeeState = S_912;
+		MeleeState = S_923;
+		MissileState = S_926;
+		PainState = S_929;
+		DeathState = S_817;
+		SightSound = 'Sound125';
+		ActiveSound = 'Sound127';
+		AttackSound = 'Sound90';
+		PainSound = 'Sound126';
+		DeathSound = 'Sound128';
+	}
+};
+
+//==========================================================================
+//
+//	Thing72
+//
+//==========================================================================
+
+class Thing72:Actor
+	__mobjinfo__(168)
+{
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
+	defaultproperties
+	{
+		Health = 500;
+		Radius = 24.0;
+		Height = 8.0;
+		Mass = 1000.0;
+		StepSpeed = 10.0;
+		ReactionCount = 8;
+		PainChance = 50;
+		Translucency = 66;
+		bSpecial = true;
+		bSolid = true;
+		bShootable = true;
+		bNoGravity = true;
+		bPickUp = true;
+		bFloat = true;
+		bUnknown4 = true;
+		bCountKill = true;
+		bUnknown2 = true;
+		bUnknown3 = true;
+		bActivateMCross = true;
+		SpawnState = S_930;
+		SeeState = S_932;
+		MeleeState = S_943;
+		MissileState = S_946;
+		PainState = S_949;
+		DeathState = S_817;
+		SightSound = 'Sound125';
+		ActiveSound = 'Sound127';
+		AttackSound = 'Sound90';
+		PainSound = 'Sound126';
+		DeathSound = 'Sound128';
+	}
+};
+
+//==========================================================================
+//
+//	Thing73
+//
+//==========================================================================
+
+class Thing73:Actor
+	__mobjinfo__(128)
+{
+	void OnMapSpawn(mthing_t *mthing)
+	{
 		if (nomonsters)
 		{
 			RemoveMobjThinker(self);
@@ -3168,12 +3220,12 @@ class Thing71:Actor
 	defaultproperties
 	{
 		Health = 1500;
-		Radius = 24.0;
+		Radius = 130.0;
 		Height = 8.0;
 		Mass = 1000.0;
-		StepSpeed = 12.0;
+		StepSpeed = 10.0;
 		ReactionCount = 8;
-		PainChance = 50;
+		PainChance = 255;
 		Translucency = 66;
 		bSpecial = true;
 		bSolid = true;
@@ -3186,134 +3238,16 @@ class Thing71:Actor
 		bUnknown2 = true;
 		bUnknown3 = true;
 		bActivateMCross = true;
-		SpawnState = S_855;
-		SeeState = S_866;
-		MeleeState = S_877;
-		MissileState = S_880;
-		PainState = S_883;
-		DeathState = S_816;
-		SightSound = 'Sound126';
-		ActiveSound = 'Sound128';
-		AttackSound = 'Sound92';
-		PainSound = 'Sound127';
-		DeathSound = 'Sound129';
-	}
-};
-
-//==========================================================================
-//
-//	Thing72
-//
-//==========================================================================
-
-class Thing72:Actor
-	__mobjinfo__(167)
-{
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
-	defaultproperties
-	{
-		Health = 1700;
-		Radius = 24.0;
-		Height = 8.0;
-		Mass = 1000.0;
-		StepSpeed = 12.0;
-		ReactionCount = 8;
-		PainChance = 50;
-		Translucency = 66;
-		bSpecial = true;
-		bSolid = true;
-		bShootable = true;
-		bNoGravity = true;
-		bPickUp = true;
-		bFloat = true;
-		bUnknown4 = true;
-		bCountKill = true;
-		bUnknown2 = true;
-		bUnknown3 = true;
-		bActivateMCross = true;
-		SpawnState = S_796;
-		SeeState = S_798;
-		MeleeState = S_809;
-		MissileState = S_884;
-		PainState = S_815;
-		DeathState = S_816;
-		SightSound = 'Sound126';
-		ActiveSound = 'Sound128';
-		AttackSound = 'Sound92';
-		PainSound = 'Sound127';
-		DeathSound = 'Sound129';
-	}
-};
-
-//==========================================================================
-//
-//	Thing73
-//
-//==========================================================================
-
-class Thing73:Actor
-	__mobjinfo__(168)
-{
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
-	defaultproperties
-	{
-		Health = 2000;
-		Radius = 24.0;
-		Height = 8.0;
-		Mass = 1000.0;
-		StepSpeed = 12.0;
-		ReactionCount = 8;
-		PainChance = 50;
-		Translucency = 66;
-		bSpecial = true;
-		bSolid = true;
-		bShootable = true;
-		bNoGravity = true;
-		bPickUp = true;
-		bFloat = true;
-		bUnknown4 = true;
-		bCountKill = true;
-		bUnknown2 = true;
-		bUnknown3 = true;
-		bActivateMCross = true;
-		SpawnState = S_796;
-		SeeState = S_798;
-		MeleeState = S_809;
-		MissileState = S_887;
-		PainState = S_815;
-		DeathState = S_816;
-		SightSound = 'Sound126';
-		ActiveSound = 'Sound128';
-		AttackSound = 'Sound92';
-		PainSound = 'Sound127';
+		SpawnState = S_950;
+		SeeState = S_964;
+		MeleeState = S_975;
+		MissileState = S_978;
+		PainState = S_981;
+		DeathState = S_982;
+		SightSound = 'Sound124';
+		ActiveSound = 'Sound127';
+		AttackSound = 'Sound90';
+		PainSound = 'Sound126';
 		DeathSound = 'Sound129';
 	}
 };
@@ -3325,15 +3259,9 @@ class Thing73:Actor
 //==========================================================================
 
 class Thing74:Actor
-	__mobjinfo__(128)
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
 		if (nomonsters)
 		{
 			RemoveMobjThinker(self);
@@ -3344,7 +3272,7 @@ class Thing74:Actor
 
 	defaultproperties
 	{
-		Health = 2500;
+		Health = 100;
 		Radius = 130.0;
 		Height = 8.0;
 		Mass = 1000.0;
@@ -3363,17 +3291,17 @@ class Thing74:Actor
 		bUnknown2 = true;
 		bUnknown3 = true;
 		bActivateMCross = true;
-		SpawnState = S_890;
-		SeeState = S_904;
-		MeleeState = S_915;
-		MissileState = S_918;
-		PainState = S_921;
-		DeathState = S_922;
+		SpawnState = S_988;
+		SeeState = S_989;
+		MeleeState = S_995;
+		MissileState = S_998;
+		PainState = S_1001;
+		DeathState = S_1002;
 		SightSound = 'Sound125';
-		ActiveSound = 'Sound128';
-		AttackSound = 'Sound92';
-		PainSound = 'Sound127';
-		DeathSound = 'Sound130';
+		ActiveSound = 'Sound127';
+		AttackSound = 'Sound90';
+		PainSound = 'Sound126';
+		DeathSound = 'Sound128';
 	}
 };
 
@@ -3384,49 +3312,17 @@ class Thing74:Actor
 //==========================================================================
 
 class Thing75:Actor
+	__mobjinfo__(26)
 {
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
 	defaultproperties
 	{
-		Health = 990;
-		Radius = 130.0;
-		Height = 8.0;
-		Mass = 1000.0;
-		StepSpeed = 14.0;
+		Health = 1000;
+		Radius = 84.0;
+		Height = 47.0;
+		Mass = 100.0;
 		ReactionCount = 8;
-		PainChance = 255;
-		Translucency = 66;
-		bSpecial = true;
 		bSolid = true;
-		bShootable = true;
-		bNoGravity = true;
-		bPickUp = true;
-		bFloat = true;
-		bUnknown4 = true;
-		bCountKill = true;
-		bUnknown2 = true;
-		bUnknown3 = true;
-		bActivateMCross = true;
-		SpawnState = S_929;
-		SeeState = S_930;
-		MeleeState = S_936;
-		MissileState = S_939;
-		PainState = S_942;
-		DeathState = S_943;
-		SightSound = 'Sound126';
-		ActiveSound = 'Sound128';
-		AttackSound = 'Sound92';
-		PainSound = 'Sound127';
-		DeathSound = 'Sound129';
+		SpawnState = S_1017;
 	}
 };
 
@@ -3437,27 +3333,19 @@ class Thing75:Actor
 //==========================================================================
 
 class Thing76:Actor
-	__mobjinfo__(26)
+	__mobjinfo__(198)
 {
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
 	defaultproperties
 	{
 		Health = 1000;
-		Radius = 84.0;
-		Height = 47.0;
+		Radius = 25.0;
+		Height = 91.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_958;
+		SpawnState = S_1018;
+		SeeState = S_1019;
+		SightSound = 'Sound19';
 	}
 };
 
@@ -3468,29 +3356,26 @@ class Thing76:Actor
 //==========================================================================
 
 class Thing77:Actor
-	__mobjinfo__(198)
 {
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
 	defaultproperties
 	{
 		Health = 1000;
-		Radius = 25.0;
-		Height = 91.0;
+		Radius = 8.0;
+		Height = 16.0;
 		Mass = 100.0;
+		Speed = 1050.0;
 		ReactionCount = 8;
-		bSolid = true;
-		SpawnState = S_959;
-		SeeState = S_960;
-		SightSound = 'Sound20';
+		MissileDamage = 70;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bUnknown3 = true;
+		bActivateMCross = true;
+		SpawnState = S_1024;
+		DeathState = S_149;
+		SightSound = 'Sound106';
+		DeathSound = 'Sound107';
 	}
 };
 
@@ -3510,17 +3395,17 @@ class Thing78:Actor
 		Mass = 100.0;
 		Speed = 1050.0;
 		ReactionCount = 8;
-		MissileDamage = 70;
+		MissileDamage = 20;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
 		bMissile = true;
 		bUnknown3 = true;
 		bActivateMCross = true;
-		SpawnState = S_965;
-		DeathState = S_153;
-		SightSound = 'Sound107';
-		DeathSound = 'Sound108';
+		SpawnState = S_1024;
+		DeathState = S_149;
+		SightSound = 'Sound106';
+		DeathSound = 'Sound107';
 	}
 };
 
@@ -3540,17 +3425,17 @@ class Thing79:Actor
 		Mass = 100.0;
 		Speed = 1050.0;
 		ReactionCount = 8;
-		MissileDamage = 20;
+		MissileDamage = 70;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
 		bMissile = true;
 		bUnknown3 = true;
 		bActivateMCross = true;
-		SpawnState = S_965;
-		DeathState = S_153;
-		SightSound = 'Sound107';
-		DeathSound = 'Sound108';
+		SpawnState = S_1027;
+		DeathState = S_149;
+		SightSound = 'Sound106';
+		DeathSound = 'Sound107';
 	}
 };
 
@@ -3570,17 +3455,17 @@ class Thing80:Actor
 		Mass = 100.0;
 		Speed = 1050.0;
 		ReactionCount = 8;
-		MissileDamage = 70;
+		MissileDamage = 20;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
 		bMissile = true;
 		bUnknown3 = true;
 		bActivateMCross = true;
-		SpawnState = S_968;
-		DeathState = S_153;
-		SightSound = 'Sound107';
-		DeathSound = 'Sound108';
+		SpawnState = S_1027;
+		DeathState = S_149;
+		SightSound = 'Sound106';
+		DeathSound = 'Sound107';
 	}
 };
 
@@ -3600,17 +3485,17 @@ class Thing81:Actor
 		Mass = 100.0;
 		Speed = 1050.0;
 		ReactionCount = 8;
-		MissileDamage = 20;
+		MissileDamage = 10;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
 		bMissile = true;
 		bUnknown3 = true;
 		bActivateMCross = true;
-		SpawnState = S_968;
-		DeathState = S_153;
-		SightSound = 'Sound107';
-		DeathSound = 'Sound108';
+		SpawnState = S_1024;
+		DeathState = S_149;
+		SightSound = 'Sound106';
+		DeathSound = 'Sound107';
 	}
 };
 
@@ -3625,22 +3510,14 @@ class Thing82:Actor
 	defaultproperties
 	{
 		Health = 1000;
-		Radius = 8.0;
+		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		Speed = 1050.0;
 		ReactionCount = 8;
-		MissileDamage = 10;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
-		bMissile = true;
-		bUnknown3 = true;
-		bActivateMCross = true;
-		SpawnState = S_965;
-		DeathState = S_153;
-		SightSound = 'Sound107';
-		DeathSound = 'Sound108';
+		SpawnState = S_1032;
 	}
 };
 
@@ -3656,13 +3533,21 @@ class Thing83:Actor
 	{
 		Health = 1000;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 40.0;
 		Mass = 100.0;
+		Speed = 630.0;
 		ReactionCount = 8;
+		MissileDamage = 130;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
-		SpawnState = S_973;
+		bMissile = true;
+		bUnknown3 = true;
+		bActivateMCross = true;
+		SpawnState = S_1035;
+		DeathState = S_149;
+		SightSound = 'Sound106';
+		DeathSound = 'Sound107';
 	}
 };
 
@@ -3682,17 +3567,17 @@ class Thing84:Actor
 		Mass = 100.0;
 		Speed = 630.0;
 		ReactionCount = 8;
-		MissileDamage = 130;
+		MissileDamage = 30;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
 		bMissile = true;
 		bUnknown3 = true;
 		bActivateMCross = true;
-		SpawnState = S_976;
-		DeathState = S_155;
-		SightSound = 'Sound107';
-		DeathSound = 'Sound108';
+		SpawnState = S_1035;
+		DeathState = S_149;
+		SightSound = 'Sound106';
+		DeathSound = 'Sound107';
 	}
 };
 
@@ -3703,36 +3588,6 @@ class Thing84:Actor
 //==========================================================================
 
 class Thing85:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 40.0;
-		Mass = 100.0;
-		Speed = 630.0;
-		ReactionCount = 8;
-		MissileDamage = 30;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bMissile = true;
-		bUnknown3 = true;
-		bActivateMCross = true;
-		SpawnState = S_976;
-		DeathState = S_155;
-		SightSound = 'Sound107';
-		DeathSound = 'Sound108';
-	}
-};
-
-//==========================================================================
-//
-//	Thing86
-//
-//==========================================================================
-
-class Thing86:Actor
 {
 	defaultproperties
 	{
@@ -3749,10 +3604,33 @@ class Thing86:Actor
 		bMissile = true;
 		bUnknown3 = true;
 		bActivateMCross = true;
-		SpawnState = S_981;
-		DeathState = S_159;
-		SightSound = 'Sound107';
-		DeathSound = 'Sound108';
+		SpawnState = S_1040;
+		DeathState = S_153;
+		SightSound = 'Sound106';
+		DeathSound = 'Sound107';
+	}
+};
+
+//==========================================================================
+//
+//	Thing86
+//
+//==========================================================================
+
+class Thing86:Actor
+{
+	defaultproperties
+	{
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		Speed = 630.0;
+		ReactionCount = 90;
+		Translucency = 66;
+		bNoBlockmap = true;
+		SpawnState = S_1045;
+		DeathState = S_148;
 	}
 };
 
@@ -3763,59 +3641,6 @@ class Thing86:Actor
 //==========================================================================
 
 class Thing87:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 8.0;
-		Height = 24.0;
-		Mass = 100.0;
-		Speed = 770.0;
-		ReactionCount = 8;
-		MissileDamage = 50;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bMissile = true;
-		bUnknown3 = true;
-		bActivateMCross = true;
-		SpawnState = S_981;
-		DeathState = S_159;
-		SightSound = 'Sound107';
-		DeathSound = 'Sound108';
-	}
-};
-
-//==========================================================================
-//
-//	Thing88
-//
-//==========================================================================
-
-class Thing88:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		Speed = 630.0;
-		ReactionCount = 70;
-		Translucency = 66;
-		bNoBlockmap = true;
-		SpawnState = S_986;
-		DeathState = S_154;
-	}
-};
-
-//==========================================================================
-//
-//	Thing89
-//
-//==========================================================================
-
-class Thing89:Actor
 {
 	defaultproperties
 	{
@@ -3832,20 +3657,20 @@ class Thing89:Actor
 		bMissile = true;
 		bUnknown3 = true;
 		bActivateMCross = true;
-		SpawnState = S_990;
-		DeathState = S_154;
-		SightSound = 'Sound107';
-		DeathSound = 'Sound108';
+		SpawnState = S_1049;
+		DeathState = S_148;
+		SightSound = 'Sound106';
+		DeathSound = 'Sound107';
 	}
 };
 
 //==========================================================================
 //
-//	Thing90
+//	Thing88
 //
 //==========================================================================
 
-class Thing90:Actor
+class Thing88:Actor
 {
 	defaultproperties
 	{
@@ -3862,20 +3687,20 @@ class Thing90:Actor
 		bMissile = true;
 		bUnknown3 = true;
 		bActivateMCross = true;
-		SpawnState = S_990;
-		DeathState = S_154;
-		SightSound = 'Sound107';
-		DeathSound = 'Sound108';
+		SpawnState = S_1049;
+		DeathState = S_148;
+		SightSound = 'Sound106';
+		DeathSound = 'Sound107';
 	}
 };
 
 //==========================================================================
 //
-//	Thing91
+//	Thing89
 //
 //==========================================================================
 
-class Thing91:Actor
+class Thing89:Actor
 	__mobjinfo__(3006)
 {
 	void OnMapSpawn(mthing_t *mthing)
@@ -3907,24 +3732,24 @@ class Thing91:Actor
 		bNoBlood = true;
 		bCountKill = true;
 		bActivateMCross = true;
-		SpawnState = S_995;
-		SeeState = S_996;
-		MissileState = S_998;
-		PainState = S_1001;
-		DeathState = S_1002;
-		SightSound = 'Sound79';
-		ActiveSound = 'Sound81';
-		DeathSound = 'Sound80';
+		SpawnState = S_1054;
+		SeeState = S_1055;
+		MissileState = S_1056;
+		PainState = S_1059;
+		DeathState = S_1060;
+		SightSound = 'Sound78';
+		ActiveSound = 'Sound80';
+		DeathSound = 'Sound79';
 	}
 };
 
 //==========================================================================
 //
-//	Thing92
+//	Thing90
 //
 //==========================================================================
 
-class Thing92:Actor
+class Thing90:Actor
 	__mobjinfo__(186)
 {
 	void OnMapSpawn(mthing_t *mthing)
@@ -3955,26 +3780,26 @@ class Thing92:Actor
 		bNoBlood = true;
 		bCountKill = true;
 		bActivateMCross = true;
-		SpawnState = S_1009;
-		SeeState = S_1012;
-		MeleeState = S_1018;
-		PainState = S_1033;
-		DeathState = S_1034;
-		SightSound = 'Sound97';
-		ActiveSound = 'Sound97';
-		AttackSound = 'Sound100';
-		PainSound = 'Sound100';
-		DeathSound = 'Sound99';
+		SpawnState = S_1067;
+		SeeState = S_1070;
+		MeleeState = S_1076;
+		PainState = S_1091;
+		DeathState = S_1092;
+		SightSound = 'Sound95';
+		ActiveSound = 'Sound95';
+		AttackSound = 'Sound98';
+		PainSound = 'Sound98';
+		DeathSound = 'Sound97';
 	}
 };
 
 //==========================================================================
 //
-//	Thing93
+//	Thing91
 //
 //==========================================================================
 
-class Thing93:Actor
+class Thing91:Actor
 	__mobjinfo__(16)
 {
 	void OnMapSpawn(mthing_t *mthing)
@@ -4001,56 +3826,27 @@ class Thing93:Actor
 		bNoBlood = true;
 		bCountKill = true;
 		bActivateMCross = true;
-		SpawnState = S_1047;
-		SeeState = S_1049;
-		MissileState = S_1057;
-		DeathState = S_1067;
-		SightSound = 'Sound117';
-		ActiveSound = 'Sound116';
-		DeathSound = 'Sound115';
+		SpawnState = S_1105;
+		SeeState = S_1107;
+		MissileState = S_1115;
+		DeathState = S_1125;
+		SightSound = 'Sound116';
+		ActiveSound = 'Sound115';
+		DeathSound = 'Sound114';
 	}
 };
 
 //==========================================================================
 //
-//	Thing94
+//	Thing92
 //
 //==========================================================================
 
-class Thing94:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		StepSpeed = 25.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		bColideWithThings = false;
-		bColideWithWorld = false;
-		bNoBlood = true;
-		SpawnState = S_1090;
-	}
-};
-
-//==========================================================================
-//
-//	Thing95
-//
-//==========================================================================
-
-class Thing95:Actor
+class Thing92:Actor
 	__mobjinfo__(71)
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
 		if (nomonsters)
 		{
 			RemoveMobjThinker(self);
@@ -4067,7 +3863,7 @@ class Thing95:Actor
 		Mass = 800.0;
 		StepSpeed = 26.0;
 		ReactionCount = 8;
-		PainChance = 50;
+		PainChance = 64;
 		MissileDamage = 4;
 		bSolid = true;
 		bShootable = true;
@@ -4077,16 +3873,88 @@ class Thing95:Actor
 		bNoBlood = true;
 		bCountKill = true;
 		bActivateMCross = true;
-		SpawnState = S_1093;
-		SeeState = S_1095;
-		MeleeState = S_1103;
-		MissileState = S_1107;
-		PainState = S_1111;
-		DeathState = S_1113;
-		ActiveSound = 'Sound111';
-		AttackSound = 'Sound92';
-		PainSound = 'Sound110';
-		DeathSound = 'Sound66';
+		SpawnState = S_1146;
+		SeeState = S_1148;
+		MeleeState = S_1156;
+		MissileState = S_1160;
+		PainState = S_1164;
+		DeathState = S_1166;
+		ActiveSound = 'Sound110';
+		AttackSound = 'Sound90';
+		PainSound = 'Sound109';
+		DeathSound = 'Sound65';
+	}
+};
+
+//==========================================================================
+//
+//	Thing93
+//
+//==========================================================================
+
+class Thing93:Actor
+{
+	defaultproperties
+	{
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		bNoBlockmap = true;
+		bNoBlood = true;
+		SpawnState = S_1180;
+	}
+};
+
+//==========================================================================
+//
+//	Thing94
+//
+//==========================================================================
+
+class Thing94:Actor
+{
+	defaultproperties
+	{
+		Health = 1000;
+		Radius = 10.0;
+		Height = 14.0;
+		Mass = 100.0;
+		Speed = 700.0;
+		ReactionCount = 8;
+		MissileDamage = 2;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bActivateMCross = true;
+		SpawnState = S_240;
+		DeathState = S_241;
+		SightSound = 'Sound101';
+		ActiveSound = 'Sound1';
+	}
+};
+
+//==========================================================================
+//
+//	Thing95
+//
+//==========================================================================
+
+class Thing95:Actor
+{
+	defaultproperties
+	{
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		SpawnState = S_242;
+		SightSound = 'Sound102';
 	}
 };
 
@@ -4101,15 +3969,21 @@ class Thing96:Actor
 	defaultproperties
 	{
 		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
+		Radius = 10.0;
+		Height = 14.0;
 		Mass = 100.0;
+		Speed = 700.0;
 		ReactionCount = 8;
+		MissileDamage = 10;
 		bNoBlockmap = true;
-		bColideWithThings = false;
-		bColideWithWorld = false;
-		bNoBlood = true;
-		SpawnState = S_1127;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bActivateMCross = true;
+		SpawnState = S_243;
+		DeathState = S_262;
+		SightSound = 'Sound71';
+		DeathSound = 'Sound6';
 	}
 };
 
@@ -4129,16 +4003,16 @@ class Thing97:Actor
 		Mass = 100.0;
 		Speed = 700.0;
 		ReactionCount = 8;
-		MissileDamage = 2;
+		MissileDamage = 7;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_235;
-		DeathState = S_236;
-		SightSound = 'Sound103';
-		ActiveSound = 'Sound1';
+		SpawnState = S_243;
+		DeathState = S_261;
+		SightSound = 'Sound71';
+		DeathSound = 'Sound6';
 	}
 };
 
@@ -4153,14 +4027,21 @@ class Thing98:Actor
 	defaultproperties
 	{
 		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
+		Radius = 10.0;
+		Height = 14.0;
 		Mass = 100.0;
+		Speed = 700.0;
 		ReactionCount = 8;
+		MissileDamage = 10;
 		bNoBlockmap = true;
 		bNoGravity = true;
-		SpawnState = S_237;
-		SightSound = 'Sound104';
+		bDropOff = true;
+		bMissile = true;
+		bActivateMCross = true;
+		SpawnState = S_244;
+		DeathState = S_262;
+		SightSound = 'Sound71';
+		DeathSound = 'Sound6';
 	}
 };
 
@@ -4176,9 +4057,9 @@ class Thing99:Actor
 	{
 		Health = 1000;
 		Radius = 10.0;
-		Height = 14.0;
+		Height = 10.0;
 		Mass = 100.0;
-		Speed = 700.0;
+		Speed = 1050.0;
 		ReactionCount = 8;
 		MissileDamage = 10;
 		bNoBlockmap = true;
@@ -4186,10 +4067,11 @@ class Thing99:Actor
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_238;
-		DeathState = S_257;
-		SightSound = 'Sound72';
-		DeathSound = 'Sound6';
+		SpawnState = S_246;
+		DeathState = S_148;
+		SightSound = 'Sound1';
+		ActiveSound = 'Sound1';
+		DeathSound = 'Sound68';
 	}
 };
 
@@ -4205,20 +4087,20 @@ class Thing100:Actor
 	{
 		Health = 1000;
 		Radius = 10.0;
-		Height = 14.0;
+		Height = 10.0;
 		Mass = 100.0;
-		Speed = 700.0;
+		Speed = 1050.0;
 		ReactionCount = 8;
-		MissileDamage = 7;
+		MissileDamage = 500;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_238;
-		DeathState = S_256;
-		SightSound = 'Sound72';
-		DeathSound = 'Sound6';
+		SpawnState = S_247;
+		DeathState = S_248;
+		SightSound = 'Sound1';
+		ActiveSound = 'Sound1';
 	}
 };
 
@@ -4234,20 +4116,17 @@ class Thing101:Actor
 	{
 		Health = 1000;
 		Radius = 10.0;
-		Height = 14.0;
+		Height = 8.0;
 		Mass = 100.0;
-		Speed = 700.0;
+		Speed = 1400.0;
 		ReactionCount = 8;
-		MissileDamage = 10;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_239;
-		DeathState = S_257;
-		SightSound = 'Sound72';
-		DeathSound = 'Sound6';
+		SpawnState = S_173;
+		DeathState = S_135;
 	}
 };
 
@@ -4263,21 +4142,19 @@ class Thing102:Actor
 	{
 		Health = 1000;
 		Radius = 10.0;
-		Height = 10.0;
+		Height = 8.0;
 		Mass = 100.0;
-		Speed = 1050.0;
+		Speed = 1400.0;
 		ReactionCount = 8;
-		MissileDamage = 10;
+		MissileDamage = 1;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_241;
-		DeathState = S_154;
-		SightSound = 'Sound1';
-		ActiveSound = 'Sound1';
-		DeathSound = 'Sound69';
+		SpawnState = S_173;
+		DeathState = S_131;
+		SightSound = 'Sound88';
 	}
 };
 
@@ -4292,21 +4169,20 @@ class Thing103:Actor
 	defaultproperties
 	{
 		Health = 1000;
-		Radius = 10.0;
-		Height = 10.0;
-		Mass = 100.0;
-		Speed = 1050.0;
-		ReactionCount = 8;
-		MissileDamage = 500;
+		Radius = 13.0;
+		Height = 13.0;
+		Mass = 20.0;
+		Speed = 525.0;
+		ReactionCount = 30;
+		MissileDamage = 1;
 		bNoBlockmap = true;
-		bNoGravity = true;
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_242;
-		DeathState = S_243;
-		SightSound = 'Sound1';
-		ActiveSound = 'Sound1';
+		SpawnState = S_179;
+		DeathState = S_194;
+		SightSound = 'Sound103';
+		DeathSound = 'Sound104';
 	}
 };
 
@@ -4321,18 +4197,20 @@ class Thing104:Actor
 	defaultproperties
 	{
 		Health = 1000;
-		Radius = 10.0;
-		Height = 8.0;
-		Mass = 100.0;
-		Speed = 1400.0;
-		ReactionCount = 8;
+		Radius = 13.0;
+		Height = 13.0;
+		Mass = 20.0;
+		Speed = 525.0;
+		ReactionCount = 40;
+		MissileDamage = 1;
 		bNoBlockmap = true;
-		bNoGravity = true;
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_179;
-		DeathState = S_140;
+		SpawnState = S_177;
+		DeathState = S_216;
+		SightSound = 'Sound103';
+		DeathSound = 'Sound104';
 	}
 };
 
@@ -4347,20 +4225,20 @@ class Thing105:Actor
 	defaultproperties
 	{
 		Health = 1000;
-		Radius = 10.0;
-		Height = 8.0;
-		Mass = 100.0;
-		Speed = 1400.0;
-		ReactionCount = 8;
+		Radius = 13.0;
+		Height = 13.0;
+		Mass = 20.0;
+		Speed = 525.0;
+		ReactionCount = 40;
 		MissileDamage = 1;
 		bNoBlockmap = true;
-		bNoGravity = true;
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_179;
-		DeathState = S_136;
-		SightSound = 'Sound89';
+		SpawnState = S_181;
+		DeathState = S_230;
+		SightSound = 'Sound103';
+		DeathSound = 'Sound104';
 	}
 };
 
@@ -4377,18 +4255,17 @@ class Thing106:Actor
 		Health = 1000;
 		Radius = 13.0;
 		Height = 13.0;
-		Mass = 20.0;
-		Speed = 525.0;
-		ReactionCount = 30;
-		MissileDamage = 1;
+		Mass = 15.0;
+		Speed = 875.0;
+		ReactionCount = 15;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_185;
-		DeathState = S_198;
-		SightSound = 'Sound105';
-		DeathSound = 'Sound106';
+		SpawnState = S_183;
+		DeathState = S_185;
+		SightSound = 'Sound103';
+		DeathSound = 'Sound104';
 	}
 };
 
@@ -4403,20 +4280,15 @@ class Thing107:Actor
 	defaultproperties
 	{
 		Health = 1000;
-		Radius = 13.0;
-		Height = 13.0;
-		Mass = 20.0;
-		Speed = 525.0;
-		ReactionCount = 40;
-		MissileDamage = 1;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 80;
+		Translucency = 66;
 		bNoBlockmap = true;
-		bDropOff = true;
-		bMissile = true;
-		bActivateMCross = true;
-		SpawnState = S_183;
-		DeathState = S_220;
-		SightSound = 'Sound105';
-		DeathSound = 'Sound106';
+		bNoGravity = true;
+		bUnknown2 = true;
+		SpawnState = S_231;
 	}
 };
 
@@ -4431,19 +4303,13 @@ class Thing108:Actor
 	defaultproperties
 	{
 		Health = 1000;
-		Radius = 13.0;
-		Height = 13.0;
-		Mass = 15.0;
-		Speed = 875.0;
-		ReactionCount = 15;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 120;
 		bNoBlockmap = true;
-		bDropOff = true;
-		bMissile = true;
-		bActivateMCross = true;
-		SpawnState = S_187;
-		DeathState = S_189;
-		SightSound = 'Sound105';
-		DeathSound = 'Sound106';
+		SpawnState = S_217;
+		DeathState = S_226;
 	}
 };
 
@@ -4454,27 +4320,6 @@ class Thing108:Actor
 //==========================================================================
 
 class Thing109:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 120;
-		bNoBlockmap = true;
-		SpawnState = S_221;
-		DeathState = S_230;
-	}
-};
-
-//==========================================================================
-//
-//	Thing110
-//
-//==========================================================================
-
-class Thing110:Actor
 {
 	defaultproperties
 	{
@@ -4490,20 +4335,20 @@ class Thing110:Actor
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_244;
-		DeathState = S_248;
-		SightSound = 'Sound88';
-		DeathSound = 'Sound106';
+		SpawnState = S_249;
+		DeathState = S_253;
+		SightSound = 'Sound87';
+		DeathSound = 'Sound104';
 	}
 };
 
 //==========================================================================
 //
-//	Thing111
+//	Thing110
 //
 //==========================================================================
 
-class Thing111:Actor
+class Thing110:Actor
 {
 	defaultproperties
 	{
@@ -4519,8 +4364,35 @@ class Thing111:Actor
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_253;
-		DeathState = S_255;
+		SpawnState = S_258;
+		DeathState = S_260;
+	}
+};
+
+//==========================================================================
+//
+//	Thing111
+//
+//==========================================================================
+
+class Thing111:Actor
+{
+	defaultproperties
+	{
+		Health = 1000;
+		Radius = 8.0;
+		Height = 11.0;
+		Mass = 10.0;
+		Speed = 525.0;
+		ReactionCount = 8;
+		MissileDamage = 3;
+		bNoBlockmap = true;
+		bDropOff = true;
+		bMissile = true;
+		bActivateMCross = true;
+		SpawnState = S_1188;
+		DeathState = S_1190;
+		SightSound = 'Sound7';
 	}
 };
 
@@ -4537,17 +4409,17 @@ class Thing112:Actor
 		Health = 1000;
 		Radius = 8.0;
 		Height = 11.0;
-		Mass = 10.0;
-		Speed = 525.0;
+		Mass = 50.0;
+		Speed = 1225.0;
 		ReactionCount = 8;
-		MissileDamage = 4;
+		MissileDamage = 1;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_1135;
-		DeathState = S_1138;
-		SightSound = 'Sound8';
+		SpawnState = S_1188;
+		DeathState = S_1190;
+		SightSound = 'Sound7';
 	}
 };
 
@@ -4562,40 +4434,13 @@ class Thing113:Actor
 	defaultproperties
 	{
 		Health = 1000;
-		Radius = 8.0;
-		Height = 11.0;
-		Mass = 50.0;
-		Speed = 1225.0;
-		ReactionCount = 8;
-		MissileDamage = 1;
-		bNoBlockmap = true;
-		bDropOff = true;
-		bMissile = true;
-		bActivateMCross = true;
-		SpawnState = S_1135;
-		DeathState = S_1138;
-		SightSound = 'Sound8';
-	}
-};
-
-//==========================================================================
-//
-//	Thing114
-//
-//==========================================================================
-
-class Thing114:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
-		SpawnState = S_181;
+		SpawnState = S_175;
 	}
 };
 
@@ -4623,6 +4468,27 @@ class Puff:Actor
 
 //==========================================================================
 //
+//	Thing115
+//
+//==========================================================================
+
+class Thing115:Actor
+{
+	defaultproperties
+	{
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		SpawnState = S_140;
+	}
+};
+
+//==========================================================================
+//
 //	Thing116
 //
 //==========================================================================
@@ -4637,28 +4503,7 @@ class Thing116:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		bNoGravity = true;
-		SpawnState = S_145;
-	}
-};
-
-//==========================================================================
-//
-//	Thing117
-//
-//==========================================================================
-
-class Thing117:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		SpawnState = S_165;
+		SpawnState = S_159;
 	}
 };
 
@@ -4729,11 +4574,11 @@ class TeleportSpot:Actor
 
 //==========================================================================
 //
-//	Thing121
+//	Thing120
 //
 //==========================================================================
 
-class Thing121:Actor
+class Thing120:Actor
 	__mobjinfo__(24)
 {
 	defaultproperties
@@ -4747,18 +4592,18 @@ class Thing121:Actor
 		bAmbush = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
-		SpawnState = S_1144;
-		SeeState = S_1145;
+		SpawnState = S_1196;
+		SeeState = S_1197;
 	}
 };
 
 //==========================================================================
 //
-//	Thing122
+//	Thing121
 //
 //==========================================================================
 
-class Thing122:Actor
+class Thing121:Actor
 	__mobjinfo__(27)
 {
 	void OnMapSpawn(mthing_t *mthing)
@@ -4785,12 +4630,38 @@ class Thing122:Actor
 		bNoBlood = true;
 		bCountKill = true;
 		bActivateMCross = true;
-		SpawnState = S_1147;
-		SeeState = S_1148;
-		MissileState = S_1149;
-		PainState = S_1149;
-		DeathState = S_1152;
+		SpawnState = S_1199;
+		SeeState = S_1200;
+		MissileState = S_1201;
+		PainState = S_1201;
+		DeathState = S_1204;
 		DeathSound = 'Sound6';
+	}
+};
+
+//==========================================================================
+//
+//	Thing122
+//
+//==========================================================================
+
+class Thing122:Actor
+	__mobjinfo__(45)
+{
+	defaultproperties
+	{
+		Health = 100;
+		Radius = 20.0;
+		Height = 76.0;
+		Mass = 10000000.0;
+		ReactionCount = 8;
+		bSolid = true;
+		bShootable = true;
+		bUnknown4 = true;
+		bNoBlood = true;
+		SpawnState = S_1210;
+		DeathState = S_1212;
+		DeathSound = 'Sound104';
 	}
 };
 
@@ -4801,34 +4672,6 @@ class Thing122:Actor
 //==========================================================================
 
 class Thing123:Actor
-	__mobjinfo__(45)
-{
-	defaultproperties
-	{
-		Health = 100;
-		Radius = 20.0;
-		Height = 76.0;
-		Mass = 10000000.0;
-		StepSpeed = 16.0;
-		ReactionCount = 8;
-		bSolid = true;
-		bShootable = true;
-		bPickUp = true;
-		bUnknown4 = true;
-		bNoBlood = true;
-		SpawnState = S_1158;
-		DeathState = S_1160;
-		DeathSound = 'Sound106';
-	}
-};
-
-//==========================================================================
-//
-//	Thing124
-//
-//==========================================================================
-
-class Thing124:Actor
 	__mobjinfo__(182)
 {
 	defaultproperties
@@ -4837,16 +4680,14 @@ class Thing124:Actor
 		Radius = 26.0;
 		Height = 128.0;
 		Mass = 100000.0;
-		StepSpeed = 27.0;
 		ReactionCount = 8;
 		bSolid = true;
 		bShootable = true;
-		bPickUp = true;
 		bUnknown4 = true;
 		bNoBlood = true;
-		SpawnState = S_1169;
-		DeathState = S_1173;
-		DeathSound = 'Sound106';
+		SpawnState = S_1221;
+		DeathState = S_1225;
+		DeathSound = 'Sound104';
 	}
 };
 
@@ -4868,7 +4709,7 @@ class MedPatch:Actor
 		Mass = 20.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1383;
+		SpawnState = S_1429;
 	}
 };
 
@@ -4890,57 +4731,57 @@ class MedicalKit:Actor
 		Mass = 15.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1384;
+		SpawnState = S_1430;
 	}
 };
 
 //==========================================================================
 //
-//	SurgeryKit
+//	FullHealth
 //
 //==========================================================================
 
-class SurgeryKit:Actor
+class FullHealth:Actor
 	__mobjinfo__(83)
 {
 	defaultproperties
 	{
-		ClassName = 'Surgery_Kit';
+		ClassName = 'full_health';
 		Health = 1000;
 		Radius = 20.0;
 		Height = 8.0;
 		Mass = 5.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1245;
+		SpawnState = S_1298;
 	}
 };
 
 //==========================================================================
 //
-//	DegninOre
+//	ThaliteOre
 //
 //==========================================================================
 
-class DegninOre:Actor
+class ThaliteOre:Actor
 	__mobjinfo__(59)
 {
 	defaultproperties
 	{
-		ClassName = 'Degnin_Ore';
+		ClassName = 'Thalite_Ore';
 		Health = 10;
 		Radius = 16.0;
 		Height = 8.0;
-		Mass = 10.0;
+		Mass = 4.0;
 		ReactionCount = 8;
 		bSpecial = true;
 		bSolid = true;
 		bShootable = true;
 		bUnknown4 = true;
 		bNoBlood = true;
-		SpawnState = S_1185;
-		DeathState = S_1186;
-		DeathSound = 'Sound106';
+		SpawnState = S_1239;
+		DeathState = S_1240;
+		DeathSound = 'Sound104';
 	}
 };
 
@@ -4962,7 +4803,7 @@ class MetalArmor:Actor
 		Mass = 3.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1295;
+		SpawnState = S_1348;
 	}
 };
 
@@ -4984,7 +4825,27 @@ class LeatherArmor:Actor
 		Mass = 5.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1296;
+		SpawnState = S_1349;
+	}
+};
+
+//==========================================================================
+//
+//	Thing130
+//
+//==========================================================================
+
+class Thing130:Actor
+	__mobjinfo__(2014)
+{
+	defaultproperties
+	{
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		SpawnState = S_1401;
 	}
 };
 
@@ -4995,26 +4856,6 @@ class LeatherArmor:Actor
 //==========================================================================
 
 class Thing131:Actor
-	__mobjinfo__(2014)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1348;
-	}
-};
-
-//==========================================================================
-//
-//	Thing132
-//
-//==========================================================================
-
-class Thing132:Actor
 	__mobjinfo__(164)
 {
 	defaultproperties
@@ -5024,7 +4865,7 @@ class Thing132:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1349;
+		SpawnState = S_1402;
 	}
 };
 
@@ -5035,18 +4876,7 @@ class Thing132:Actor
 //==========================================================================
 
 class Base_Key:Actor
-	__mobjinfo__(230)
 {
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
 	defaultproperties
 	{
 		ClassName = 'Base_Key';
@@ -5056,28 +4886,28 @@ class Base_Key:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1350;
+		SpawnState = S_1295;
 	}
 };
 
 //==========================================================================
 //
-//	Govs_Key
+//	Rebel_Key
 //
 //==========================================================================
 
-class Govs_Key:Actor
+class Rebel_Key:Actor
 {
 	defaultproperties
 	{
-		ClassName = 'Govs_Key';
+		ClassName = 'Rebel_Key';
 		Health = 1000;
 		Radius = 20.0;
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1379;
+		SpawnState = S_1295;
 	}
 };
 
@@ -5109,7 +4939,7 @@ class Passcard:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1353;
+		SpawnState = S_1405;
 	}
 };
 
@@ -5141,7 +4971,7 @@ class ID_Badge:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1351;
+		SpawnState = S_1403;
 	}
 };
 
@@ -5160,11 +4990,9 @@ class Prison_Key:Actor
 		Radius = 20.0;
 		Height = 8.0;
 		Mass = 100.0;
-		StepSpeed = 11.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		bPickUp = true;
-		SpawnState = S_1364;
+		SpawnState = S_1416;
 	}
 };
 
@@ -5194,11 +5022,9 @@ class Severed_Hand:Actor
 		Radius = 20.0;
 		Height = 8.0;
 		Mass = 100.0;
-		StepSpeed = 12.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		bPickUp = true;
-		SpawnState = S_1357;
+		SpawnState = S_1409;
 	}
 };
 
@@ -5219,7 +5045,7 @@ class Power1_Key:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1365;
+		SpawnState = S_1417;
 	}
 };
 
@@ -5240,7 +5066,7 @@ class Power2_Key:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1366;
+		SpawnState = S_1418;
 	}
 };
 
@@ -5261,7 +5087,7 @@ class Power3_Key:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1367;
+		SpawnState = S_1419;
 	}
 };
 
@@ -5293,7 +5119,7 @@ class Gold_Key:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1354;
+		SpawnState = S_1406;
 	}
 };
 
@@ -5325,7 +5151,7 @@ class ID_Card:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1352;
+		SpawnState = S_1404;
 	}
 };
 
@@ -5357,7 +5183,7 @@ class Silver_Key:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1355;
+		SpawnState = S_1407;
 	}
 };
 
@@ -5389,7 +5215,7 @@ class Oracle_Key:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1368;
+		SpawnState = S_1420;
 	}
 };
 
@@ -5410,7 +5236,7 @@ class Military_ID:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1369;
+		SpawnState = S_1421;
 	}
 };
 
@@ -5442,7 +5268,7 @@ class Order_Key:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1370;
+		SpawnState = S_1422;
 	}
 };
 
@@ -5474,7 +5300,7 @@ class Warehouse_Key:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1371;
+		SpawnState = S_1423;
 	}
 };
 
@@ -5506,7 +5332,7 @@ class Brass_Key:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1356;
+		SpawnState = S_1408;
 	}
 };
 
@@ -5538,7 +5364,7 @@ class Red_Crystal_Key:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1372;
+		SpawnState = S_1424;
 	}
 };
 
@@ -5570,7 +5396,7 @@ class Blue_Crystal_Key:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1373;
+		SpawnState = S_1425;
 	}
 };
 
@@ -5602,30 +5428,28 @@ class Chapel_Key:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1374;
+		SpawnState = S_1426;
 	}
 };
 
 //==========================================================================
 //
-//	Catacomb_Key
+//	Tunnel_Key
 //
 //==========================================================================
 
-class Catacomb_Key:Actor
+class Tunnel_Key:Actor
 {
 	defaultproperties
 	{
-		ClassName = 'Catacomb_Key';
+		ClassName = 'Tunnel_Key';
 		Health = 1000;
 		Radius = 20.0;
 		Height = 8.0;
 		Mass = 100.0;
-		StepSpeed = 28.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		bPickUp = true;
-		SpawnState = S_1375;
+		SpawnState = S_1427;
 	}
 };
 
@@ -5646,135 +5470,91 @@ class Security_Key:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1377;
+		SpawnState = S_1428;
 	}
 };
 
 //==========================================================================
 //
-//	Core_Key
+//	New_Key1
 //
 //==========================================================================
 
-class Core_Key:Actor
-	__mobjinfo__(236)
+class New_Key1:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
 	defaultproperties
 	{
-		ClassName = 'Core_Key';
+		ClassName = 'New_Key1';
 		Health = 1000;
 		Radius = 20.0;
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1382;
+		SpawnState = S_1428;
 	}
 };
 
 //==========================================================================
 //
-//	Mauler_Key
+//	New_Key2
 //
 //==========================================================================
 
-class Mauler_Key:Actor
-	__mobjinfo__(233)
+class New_Key2:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
 	defaultproperties
 	{
-		ClassName = 'Mauler_Key';
+		ClassName = 'New_Key2';
 		Health = 1000;
 		Radius = 20.0;
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1376;
+		SpawnState = S_1428;
 	}
 };
 
 //==========================================================================
 //
-//	Factory_Key
+//	New_Key3
 //
 //==========================================================================
 
-class Factory_Key:Actor
-	__mobjinfo__(234)
+class New_Key3:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
 	defaultproperties
 	{
-		ClassName = 'Factory_Key';
+		ClassName = 'New_Key3';
 		Health = 1000;
 		Radius = 20.0;
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1380;
+		SpawnState = S_1428;
 	}
 };
 
 //==========================================================================
 //
-//	Mine_Key
+//	New_Key4
 //
 //==========================================================================
 
-class Mine_Key:Actor
-	__mobjinfo__(235)
+class New_Key4:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
 	defaultproperties
 	{
-		ClassName = 'MINE_KEY';
+		ClassName = 'New_Key4';
 		Health = 1000;
 		Radius = 20.0;
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1378;
+		SpawnState = S_1428;
 	}
 };
 
@@ -5795,7 +5575,7 @@ class New_Key5:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1376;
+		SpawnState = S_1428;
 	}
 };
 
@@ -5817,7 +5597,7 @@ class Shadow_armor:Actor
 		Mass = 2.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1389;
+		SpawnState = S_1435;
 	}
 };
 
@@ -5839,7 +5619,7 @@ class Environmental_Suit:Actor
 		Mass = 5.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1393;
+		SpawnState = S_1439;
 	}
 };
 
@@ -5859,11 +5639,9 @@ class Guard_Uniform:Actor
 		Radius = 20.0;
 		Height = 8.0;
 		Mass = 100.0;
-		StepSpeed = 15.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		bPickUp = true;
-		SpawnState = S_1394;
+		SpawnState = S_1440;
 	}
 };
 
@@ -5895,7 +5673,7 @@ class Officers_Uniform:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1395;
+		SpawnState = S_1441;
 	}
 };
 
@@ -5910,82 +5688,36 @@ class Map:Actor
 {
 	defaultproperties
 	{
-		ClassName = 'map';
+		ClassName = 'Map';
 		Health = 1000;
 		Radius = 20.0;
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1396;
+		SpawnState = S_1442;
 	}
 };
 
 //==========================================================================
 //
-//	Scanner
+//	MapRadar
 //
 //==========================================================================
 
-class Scanner:Actor
+class MapRadar:Actor
 	__mobjinfo__(2027)
 {
 	defaultproperties
 	{
-		ClassName = 'scanner';
+		ClassName = 'Map-Radar';
 		Health = 1000;
 		Radius = 20.0;
 		Height = 8.0;
-		Mass = 1.0;
+		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1398;
-	}
-};
-
-//==========================================================================
-//
-//	Teleporter_Beacon
-//
-//==========================================================================
-
-class Teleporter_Beacon:Actor
-	__mobjinfo__(10)
-{
-	defaultproperties
-	{
-		ClassName = 'Teleporter_Beacon';
-		Health = 5;
-		Radius = 16.0;
-		Height = 8.0;
-		Mass = 3.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bDropped = true;
-		SpawnState = S_1292;
-		SeeState = S_1293;
-	}
-};
-
-//==========================================================================
-//
-//	Targeter
-//
-//==========================================================================
-
-class Targeter:Actor
-	__mobjinfo__(207)
-{
-	defaultproperties
-	{
-		ClassName = 'Targeter';
-		Health = 1000;
-		Radius = 20.0;
-		Height = 8.0;
-		Mass = 5.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		SpawnState = S_1187;
+		SpawnState = S_1444;
 	}
 };
 
@@ -5998,16 +5730,6 @@ class Targeter:Actor
 class Coin:Actor
 	__mobjinfo__(93)
 {
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
 	defaultproperties
 	{
 		ClassName = 'coin';
@@ -6018,7 +5740,7 @@ class Coin:Actor
 		ReactionCount = 8;
 		bSpecial = true;
 		bDropped = true;
-		SpawnState = S_1385;
+		SpawnState = S_1431;
 	}
 };
 
@@ -6031,16 +5753,6 @@ class Coin:Actor
 class Gold10:Actor
 	__mobjinfo__(138)
 {
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
 	defaultproperties
 	{
 		ClassName = '10_gold';
@@ -6051,7 +5763,7 @@ class Gold10:Actor
 		ReactionCount = 8;
 		bSpecial = true;
 		bDropped = true;
-		SpawnState = S_1386;
+		SpawnState = S_1432;
 	}
 };
 
@@ -6064,16 +5776,6 @@ class Gold10:Actor
 class Gold25:Actor
 	__mobjinfo__(139)
 {
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
 	defaultproperties
 	{
 		ClassName = '25_gold';
@@ -6084,7 +5786,7 @@ class Gold25:Actor
 		ReactionCount = 8;
 		bSpecial = true;
 		bDropped = true;
-		SpawnState = S_1387;
+		SpawnState = S_1433;
 	}
 };
 
@@ -6097,16 +5799,6 @@ class Gold25:Actor
 class Gold50:Actor
 	__mobjinfo__(140)
 {
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
 	defaultproperties
 	{
 		ClassName = '50_gold';
@@ -6117,31 +5809,7 @@ class Gold50:Actor
 		ReactionCount = 8;
 		bSpecial = true;
 		bDropped = true;
-		SpawnState = S_1388;
-	}
-};
-
-//==========================================================================
-//
-//	Gold300
-//
-//==========================================================================
-
-class Gold300:Actor
-{
-	defaultproperties
-	{
-		ClassName = '300_gold';
-		Health = 1000;
-		Radius = 20.0;
-		Height = 8.0;
-		Mass = 100.0;
-		StepSpeed = 3.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bPickUp = true;
-		bDropped = true;
-		SpawnState = S_1241;
+		SpawnState = S_1434;
 	}
 };
 
@@ -6160,11 +5828,9 @@ class Ring:Actor
 		Radius = 20.0;
 		Height = 8.0;
 		Mass = 100.0;
-		StepSpeed = 1.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		bPickUp = true;
-		SpawnState = S_1188;
+		SpawnState = S_1241;
 	}
 };
 
@@ -6184,12 +5850,10 @@ class Offering_Chalice:Actor
 		Radius = 10.0;
 		Height = 8.0;
 		Mass = 100.0;
-		StepSpeed = 2.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		bPickUp = true;
 		bDropped = true;
-		SpawnState = S_1413;
+		SpawnState = S_1460;
 	}
 };
 
@@ -6208,11 +5872,9 @@ class Ear:Actor
 		Radius = 20.0;
 		Height = 8.0;
 		Mass = 100.0;
-		StepSpeed = 9.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		bPickUp = true;
-		SpawnState = S_1189;
+		SpawnState = S_1242;
 	}
 };
 
@@ -6244,7 +5906,29 @@ class Communicator:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1190;
+		SpawnState = S_1243;
+	}
+};
+
+//==========================================================================
+//
+//	Targeter
+//
+//==========================================================================
+
+class Targeter:Actor
+	__mobjinfo__(207)
+{
+	defaultproperties
+	{
+		ClassName = 'Targeter';
+		Health = 1000;
+		Radius = 20.0;
+		Height = 8.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		bSpecial = true;
+		SpawnState = S_1244;
 	}
 };
 
@@ -6266,51 +5950,73 @@ class HEGrenade_Rounds:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1410;
+		SpawnState = S_1456;
 	}
 };
 
 //==========================================================================
 //
-//	PhosphorusGrenade_Rounds
+//	FireGrenade_Rounds
 //
 //==========================================================================
 
-class PhosphorusGrenade_Rounds:Actor
+class FireGrenade_Rounds:Actor
 	__mobjinfo__(153)
 {
 	defaultproperties
 	{
-		ClassName = 'Phosphorus-Grenade_Rounds';
+		ClassName = 'Fire-Grenade_Rounds';
 		Health = 1000;
 		Radius = 20.0;
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1411;
+		SpawnState = S_1457;
 	}
 };
 
 //==========================================================================
 //
-//	Clip_of_bullets
+//	GasGrenade_Rounds
 //
 //==========================================================================
 
-class Clip_of_bullets:Actor
-	__mobjinfo__(2007)
+class GasGrenade_Rounds:Actor
+	__mobjinfo__(84)
 {
 	defaultproperties
 	{
-		ClassName = 'clip_of_bullets';
+		ClassName = 'Gas-Grenade_Rounds';
 		Health = 1000;
 		Radius = 20.0;
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1400;
+		SpawnState = S_1458;
+	}
+};
+
+//==========================================================================
+//
+//	Bullets
+//
+//==========================================================================
+
+class Bullets:Actor
+	__mobjinfo__(2007)
+{
+	defaultproperties
+	{
+		ClassName = 'bullets';
+		Health = 1000;
+		Radius = 20.0;
+		Height = 8.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		bSpecial = true;
+		SpawnState = S_1446;
 	}
 };
 
@@ -6332,51 +6038,51 @@ class Ammo1:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1401;
+		SpawnState = S_1447;
 	}
 };
 
 //==========================================================================
 //
-//	Mini_missiles
+//	Rocket
 //
 //==========================================================================
 
-class Mini_missiles:Actor
+class Rocket:Actor
 	__mobjinfo__(2010)
 {
 	defaultproperties
 	{
-		ClassName = 'mini_missiles';
+		ClassName = 'rocket';
 		Health = 1000;
 		Radius = 20.0;
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1402;
+		SpawnState = S_1448;
 	}
 };
 
 //==========================================================================
 //
-//	Crate_of_missiles
+//	Box_of_rockets
 //
 //==========================================================================
 
-class Crate_of_missiles:Actor
+class Box_of_rockets:Actor
 	__mobjinfo__(2046)
 {
 	defaultproperties
 	{
-		ClassName = 'crate_of_missiles';
+		ClassName = 'box_of_rockets';
 		Health = 1000;
 		Radius = 20.0;
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1403;
+		SpawnState = S_1449;
 	}
 };
 
@@ -6398,7 +6104,7 @@ class Energy_pod:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1404;
+		SpawnState = S_1450;
 	}
 };
 
@@ -6420,73 +6126,73 @@ class Energy_pack:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1406;
+		SpawnState = S_1452;
 	}
 };
 
 //==========================================================================
 //
-//	Poison_bolts
+//	Poison_arrows
 //
 //==========================================================================
 
-class Poison_bolts:Actor
+class Poison_arrows:Actor
 	__mobjinfo__(115)
 {
 	defaultproperties
 	{
-		ClassName = 'poison_bolts';
+		ClassName = 'poison_arrows';
 		Health = 1000;
 		Radius = 20.0;
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1408;
+		SpawnState = S_1454;
 	}
 };
 
 //==========================================================================
 //
-//	Electric_bolts
+//	Electric_arrows
 //
 //==========================================================================
 
-class Electric_bolts:Actor
+class Electric_arrows:Actor
 	__mobjinfo__(114)
 {
 	defaultproperties
 	{
-		ClassName = 'electric_bolts';
+		ClassName = 'electric_arrows';
 		Health = 1000;
 		Radius = 20.0;
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1409;
+		SpawnState = S_1455;
 	}
 };
 
 //==========================================================================
 //
-//	Ammo_satchel
+//	Back_pack
 //
 //==========================================================================
 
-class Ammo_satchel:Actor
+class Back_pack:Actor
 	__mobjinfo__(183)
 {
 	defaultproperties
 	{
-		ClassName = 'ammo_satchel';
+		ClassName = 'Back_pack';
 		Health = 1000;
 		Radius = 20.0;
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1412;
+		SpawnState = S_1459;
 	}
 };
 
@@ -6508,29 +6214,29 @@ class Assault_gun:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1414;
+		SpawnState = S_1461;
 	}
 };
 
 //==========================================================================
 //
-//	Assault_gun2
+//	Pulse_rifle
 //
 //==========================================================================
 
-class Assault_gun2:Actor
+class Pulse_rifle:Actor
 	__mobjinfo__(2006)
 {
 	defaultproperties
 	{
-		ClassName = 'assault_gun';
+		ClassName = 'pulse_rifle';
 		Health = 1000;
 		Radius = 20.0;
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1415;
+		SpawnState = S_1462;
 	}
 };
 
@@ -6552,7 +6258,7 @@ class Flame_thrower:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1416;
+		SpawnState = S_1463;
 	}
 };
 
@@ -6566,58 +6272,58 @@ class Flame_thrower_Parts:Actor
 {
 	defaultproperties
 	{
-		ClassName = 'flame_thrower_parts';
+		ClassName = 'flame_thrower_Parts';
 		Health = 1000;
 		Radius = 20.0;
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1417;
+		SpawnState = S_1464;
 	}
 };
 
 //==========================================================================
 //
-//	Mini_missile_launcher
+//	Missile_gun
 //
 //==========================================================================
 
-class Mini_missile_launcher:Actor
+class Missile_gun:Actor
 	__mobjinfo__(2003)
 {
 	defaultproperties
 	{
-		ClassName = 'mini_missile_launcher';
+		ClassName = 'missile_gun';
 		Health = 1000;
 		Radius = 20.0;
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1418;
+		SpawnState = S_1465;
 	}
 };
 
 //==========================================================================
 //
-//	Mauler
+//	Blaster
 //
 //==========================================================================
 
-class Mauler:Actor
+class Blaster:Actor
 	__mobjinfo__(2004)
 {
 	defaultproperties
 	{
-		ClassName = 'mauler';
+		ClassName = 'blaster';
 		Health = 1000;
 		Radius = 20.0;
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1419;
+		SpawnState = S_1466;
 	}
 };
 
@@ -6639,7 +6345,7 @@ class Crossbow:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1421;
+		SpawnState = S_1468;
 	}
 };
 
@@ -6661,7 +6367,7 @@ class Grenade_launcher:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1420;
+		SpawnState = S_1467;
 	}
 };
 
@@ -6683,7 +6389,7 @@ class Sigil1:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1422;
+		SpawnState = S_1469;
 	}
 };
 
@@ -6705,7 +6411,7 @@ class Sigil2:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1423;
+		SpawnState = S_1470;
 	}
 };
 
@@ -6727,7 +6433,7 @@ class Sigil3:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1424;
+		SpawnState = S_1471;
 	}
 };
 
@@ -6749,7 +6455,7 @@ class Sigil4:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1425;
+		SpawnState = S_1472;
 	}
 };
 
@@ -6771,17 +6477,17 @@ class Sigil5:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1426;
+		SpawnState = S_1473;
 	}
 };
 
 //==========================================================================
 //
-//	Thing201
+//	Thing199
 //
 //==========================================================================
 
-class Thing201:Actor
+class Thing199:Actor
 	__mobjinfo__(92)
 {
 	defaultproperties
@@ -6789,18 +6495,15 @@ class Thing201:Actor
 		Health = 50;
 		Radius = 20.0;
 		Height = 16.0;
-		Mass = 99999999.0;
-		StepSpeed = 14.0;
+		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
 		bShootable = true;
-		bNoGravity = true;
-		bPickUp = true;
 		bNoBlood = true;
-		SpawnState = S_1358;
-		DeathState = S_1191;
-		ActiveSound = 'Sound131';
-		DeathSound = 'Sound106';
+		SpawnState = S_1410;
+		DeathState = S_1245;
+		ActiveSound = 'Sound130';
+		DeathSound = 'Sound104';
 	}
 };
 
@@ -6832,27 +6535,27 @@ class Rat_buddy:Actor
 		Mass = 100.0;
 		StepSpeed = 13.0;
 		ReactionCount = 8;
-		bUnknown4 = true;
+		bShootable = true;
 		bNoBlood = true;
 		bCountKill = true;
 		bActivateMCross = true;
-		SpawnState = S_1216;
-		SeeState = S_1217;
-		MeleeState = S_1221;
-		DeathState = S_1263;
-		SightSound = 'Sound56';
-		ActiveSound = 'Sound56';
-		DeathSound = 'Sound56';
+		SpawnState = S_1270;
+		SeeState = S_1271;
+		MeleeState = S_1275;
+		DeathState = S_1316;
+		SightSound = 'Sound55';
+		ActiveSound = 'Sound55';
+		DeathSound = 'Sound55';
 	}
 };
 
 //==========================================================================
 //
-//	Thing203
+//	Thing201
 //
 //==========================================================================
 
-class Thing203:Actor
+class Thing201:Actor
 	__mobjinfo__(82)
 {
 	defaultproperties
@@ -6866,19 +6569,19 @@ class Thing203:Actor
 		bShootable = true;
 		bUnknown4 = true;
 		bNoBlood = true;
-		SpawnState = S_1297;
-		DeathState = S_1298;
-		DeathSound = 'Sound61';
+		SpawnState = S_1350;
+		DeathState = S_1351;
+		DeathSound = 'Sound60';
 	}
 };
 
 //==========================================================================
 //
-//	Thing204
+//	Thing202
 //
 //==========================================================================
 
-class Thing204:Actor
+class Thing202:Actor
 	__mobjinfo__(94)
 {
 	defaultproperties
@@ -6892,19 +6595,19 @@ class Thing204:Actor
 		bShootable = true;
 		bUnknown4 = true;
 		bNoBlood = true;
-		SpawnState = S_1305;
-		DeathState = S_1306;
-		DeathSound = 'Sound7';
+		SpawnState = S_1358;
+		DeathState = S_1359;
+		DeathSound = 'Sound105';
 	}
 };
 
 //==========================================================================
 //
-//	Thing205
+//	Thing203
 //
 //==========================================================================
 
-class Thing205:Actor
+class Thing203:Actor
 	__mobjinfo__(208)
 {
 	defaultproperties
@@ -6919,19 +6622,19 @@ class Thing205:Actor
 		bShootable = true;
 		bUnknown4 = true;
 		bNoBlood = true;
-		SpawnState = S_1223;
-		PainState = S_1224;
+		SpawnState = S_1277;
+		PainState = S_1278;
 		PainSound = 'Sound3';
 	}
 };
 
 //==========================================================================
 //
-//	Thing206
+//	Thing204
 //
 //==========================================================================
 
-class Thing206:Actor
+class Thing204:Actor
 	__mobjinfo__(95)
 {
 	defaultproperties
@@ -6942,17 +6645,17 @@ class Thing206:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1430;
+		SpawnState = S_1477;
 	}
 };
 
 //==========================================================================
 //
-//	Thing207
+//	Thing205
 //
 //==========================================================================
 
-class Thing207:Actor
+class Thing205:Actor
 	__mobjinfo__(96)
 {
 	defaultproperties
@@ -6963,17 +6666,17 @@ class Thing207:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1431;
+		SpawnState = S_1478;
 	}
 };
 
 //==========================================================================
 //
-//	Thing208
+//	Thing206
 //
 //==========================================================================
 
-class Thing208:Actor
+class Thing206:Actor
 	__mobjinfo__(97)
 {
 	defaultproperties
@@ -6984,17 +6687,17 @@ class Thing208:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1432;
+		SpawnState = S_1479;
 	}
 };
 
 //==========================================================================
 //
-//	Thing209
+//	Thing207
 //
 //==========================================================================
 
-class Thing209:Actor
+class Thing207:Actor
 	__mobjinfo__(2028)
 {
 	defaultproperties
@@ -7005,17 +6708,17 @@ class Thing209:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1427;
+		SpawnState = S_1474;
 	}
 };
 
 //==========================================================================
 //
-//	Thing210
+//	Thing208
 //
 //==========================================================================
 
-class Thing210:Actor
+class Thing208:Actor
 	__mobjinfo__(48)
 {
 	defaultproperties
@@ -7026,17 +6729,17 @@ class Thing210:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1504;
+		SpawnState = S_1551;
 	}
 };
 
 //==========================================================================
 //
-//	Thing211
+//	Thing209
 //
 //==========================================================================
 
-class Thing211:Actor
+class Thing209:Actor
 	__mobjinfo__(54)
 {
 	defaultproperties
@@ -7047,17 +6750,17 @@ class Thing211:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1505;
+		SpawnState = S_1552;
 	}
 };
 
 //==========================================================================
 //
-//	Thing212
+//	Thing210
 //
 //==========================================================================
 
-class Thing212:Actor
+class Thing210:Actor
 	__mobjinfo__(55)
 {
 	defaultproperties
@@ -7068,17 +6771,17 @@ class Thing212:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1506;
+		SpawnState = S_1553;
 	}
 };
 
 //==========================================================================
 //
-//	Thing213
+//	Thing211
 //
 //==========================================================================
 
-class Thing213:Actor
+class Thing211:Actor
 	__mobjinfo__(56)
 {
 	defaultproperties
@@ -7089,17 +6792,17 @@ class Thing213:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1507;
+		SpawnState = S_1554;
 	}
 };
 
 //==========================================================================
 //
-//	Thing214
+//	Thing212
 //
 //==========================================================================
 
-class Thing214:Actor
+class Thing212:Actor
 	__mobjinfo__(57)
 {
 	defaultproperties
@@ -7110,17 +6813,17 @@ class Thing214:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1508;
+		SpawnState = S_1555;
 	}
 };
 
 //==========================================================================
 //
-//	Thing215
+//	Thing213
 //
 //==========================================================================
 
-class Thing215:Actor
+class Thing213:Actor
 	__mobjinfo__(227)
 {
 	defaultproperties
@@ -7131,18 +6834,18 @@ class Thing215:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1471;
-		ActiveSound = 'Sound120';
+		SpawnState = S_1518;
+		ActiveSound = 'Sound119';
 	}
 };
 
 //==========================================================================
 //
-//	Thing216
+//	Thing214
 //
 //==========================================================================
 
-class Thing216:Actor
+class Thing214:Actor
 	__mobjinfo__(98)
 {
 	defaultproperties
@@ -7155,17 +6858,17 @@ class Thing216:Actor
 		bSolid = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
-		SpawnState = S_1514;
+		SpawnState = S_1561;
 	}
 };
 
 //==========================================================================
 //
-//	Thing217
+//	Thing215
 //
 //==========================================================================
 
-class Thing217:Actor
+class Thing215:Actor
 	__mobjinfo__(161)
 {
 	defaultproperties
@@ -7178,17 +6881,17 @@ class Thing217:Actor
 		bSolid = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
-		SpawnState = S_1512;
+		SpawnState = S_1559;
 	}
 };
 
 //==========================================================================
 //
-//	Thing218
+//	Thing216
 //
 //==========================================================================
 
-class Thing218:Actor
+class Thing216:Actor
 	__mobjinfo__(160)
 {
 	defaultproperties
@@ -7199,17 +6902,17 @@ class Thing218:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1513;
+		SpawnState = S_1560;
 	}
 };
 
 //==========================================================================
 //
-//	Thing219
+//	Thing217
 //
 //==========================================================================
 
-class Thing219:Actor
+class Thing217:Actor
 	__mobjinfo__(159)
 {
 	defaultproperties
@@ -7222,17 +6925,17 @@ class Thing219:Actor
 		bSolid = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
-		SpawnState = S_1515;
+		SpawnState = S_1562;
 	}
 };
 
 //==========================================================================
 //
-//	Thing220
+//	Thing218
 //
 //==========================================================================
 
-class Thing220:Actor
+class Thing218:Actor
 	__mobjinfo__(162)
 {
 	defaultproperties
@@ -7243,17 +6946,17 @@ class Thing220:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1516;
+		SpawnState = S_1563;
 	}
 };
 
 //==========================================================================
 //
-//	Thing221
+//	Thing219
 //
 //==========================================================================
 
-class Thing221:Actor
+class Thing219:Actor
 	__mobjinfo__(163)
 {
 	defaultproperties
@@ -7264,17 +6967,17 @@ class Thing221:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1517;
+		SpawnState = S_1564;
 	}
 };
 
 //==========================================================================
 //
-//	Thing222
+//	Thing220
 //
 //==========================================================================
 
-class Thing222:Actor
+class Thing220:Actor
 	__mobjinfo__(34)
 {
 	defaultproperties
@@ -7284,17 +6987,17 @@ class Thing222:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1428;
+		SpawnState = S_1475;
 	}
 };
 
 //==========================================================================
 //
-//	Thing223
+//	Thing221
 //
 //==========================================================================
 
-class Thing223:Actor
+class Thing221:Actor
 	__mobjinfo__(35)
 {
 	defaultproperties
@@ -7305,17 +7008,17 @@ class Thing223:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1429;
+		SpawnState = S_1476;
 	}
 };
 
 //==========================================================================
 //
-//	Thing224
+//	Thing222
 //
 //==========================================================================
 
-class Thing224:Actor
+class Thing222:Actor
 	__mobjinfo__(103)
 {
 	defaultproperties
@@ -7326,18 +7029,18 @@ class Thing224:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1473;
-		ActiveSound = 'Sound46';
+		SpawnState = S_1520;
+		ActiveSound = 'Sound45';
 	}
 };
 
 //==========================================================================
 //
-//	Thing225
+//	Thing223
 //
 //==========================================================================
 
-class Thing225:Actor
+class Thing223:Actor
 	__mobjinfo__(104)
 {
 	defaultproperties
@@ -7348,18 +7051,18 @@ class Thing225:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1485;
-		ActiveSound = 'Sound45';
+		SpawnState = S_1532;
+		ActiveSound = 'Sound44';
 	}
 };
 
 //==========================================================================
 //
-//	Thing226
+//	Thing224
 //
 //==========================================================================
 
-class Thing226:Actor
+class Thing224:Actor
 	__mobjinfo__(53)
 {
 	defaultproperties
@@ -7372,17 +7075,17 @@ class Thing226:Actor
 		bNoBlockmap = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
-		SpawnState = S_1481;
+		SpawnState = S_1528;
 	}
 };
 
 //==========================================================================
 //
-//	Thing227
+//	Thing225
 //
 //==========================================================================
 
-class Thing227:Actor
+class Thing225:Actor
 	__mobjinfo__(112)
 {
 	defaultproperties
@@ -7393,18 +7096,18 @@ class Thing227:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1493;
-		ActiveSound = 'Sound47';
+		SpawnState = S_1540;
+		ActiveSound = 'Sound46';
 	}
 };
 
 //==========================================================================
 //
-//	Thing228
+//	Thing226
 //
 //==========================================================================
 
-class Thing228:Actor
+class Thing226:Actor
 	__mobjinfo__(113)
 {
 	defaultproperties
@@ -7415,17 +7118,17 @@ class Thing228:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1497;
+		SpawnState = S_1544;
 	}
 };
 
 //==========================================================================
 //
-//	Thing229
+//	Thing227
 //
 //==========================================================================
 
-class Thing229:Actor
+class Thing227:Actor
 	__mobjinfo__(23)
 {
 	defaultproperties
@@ -7437,17 +7140,17 @@ class Thing229:Actor
 		ReactionCount = 8;
 		Translucency = 66;
 		bNoBlockmap = true;
-		SpawnState = S_1500;
+		SpawnState = S_1547;
 	}
 };
 
 //==========================================================================
 //
-//	Thing230
+//	Thing228
 //
 //==========================================================================
 
-class Thing230:Actor
+class Thing228:Actor
 	__mobjinfo__(22)
 {
 	defaultproperties
@@ -7457,17 +7160,17 @@ class Thing230:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_709;
+		SpawnState = S_673;
 	}
 };
 
 //==========================================================================
 //
-//	Thing231
+//	Thing229
 //
 //==========================================================================
 
-class Thing231:Actor
+class Thing229:Actor
 	__mobjinfo__(15)
 {
 	defaultproperties
@@ -7483,11 +7186,11 @@ class Thing231:Actor
 
 //==========================================================================
 //
-//	Thing232
+//	Thing230
 //
 //==========================================================================
 
-class Thing232:Actor
+class Thing230:Actor
 	__mobjinfo__(18)
 {
 	defaultproperties
@@ -7503,11 +7206,11 @@ class Thing232:Actor
 
 //==========================================================================
 //
-//	Thing233
+//	Thing231
 //
 //==========================================================================
 
-class Thing233:Actor
+class Thing231:Actor
 	__mobjinfo__(21)
 {
 	defaultproperties
@@ -7517,7 +7220,47 @@ class Thing233:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_630;
+		SpawnState = S_632;
+	}
+};
+
+//==========================================================================
+//
+//	Thing232
+//
+//==========================================================================
+
+class Thing232:Actor
+	__mobjinfo__(20)
+{
+	defaultproperties
+	{
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		SpawnState = S_594;
+	}
+};
+
+//==========================================================================
+//
+//	Thing233
+//
+//==========================================================================
+
+class Thing233:Actor
+	__mobjinfo__(19)
+{
+	defaultproperties
+	{
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		SpawnState = S_512;
 	}
 };
 
@@ -7528,7 +7271,7 @@ class Thing233:Actor
 //==========================================================================
 
 class Thing234:Actor
-	__mobjinfo__(20)
+	__mobjinfo__(212)
 {
 	defaultproperties
 	{
@@ -7537,7 +7280,7 @@ class Thing234:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_592;
+		SpawnState = S_425;
 	}
 };
 
@@ -7548,7 +7291,7 @@ class Thing234:Actor
 //==========================================================================
 
 class Thing235:Actor
-	__mobjinfo__(19)
+	__mobjinfo__(54)
 {
 	defaultproperties
 	{
@@ -7557,7 +7300,7 @@ class Thing235:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_510;
+		SpawnState = S_1280;
 	}
 };
 
@@ -7568,16 +7311,17 @@ class Thing235:Actor
 //==========================================================================
 
 class Thing236:Actor
-	__mobjinfo__(212)
+	__mobjinfo__(70)
 {
 	defaultproperties
 	{
 		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
+		Radius = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_423;
+		bSolid = true;
+		SpawnState = S_1372;
 	}
 };
 
@@ -7588,47 +7332,6 @@ class Thing236:Actor
 //==========================================================================
 
 class Thing237:Actor
-	__mobjinfo__(54)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1226;
-	}
-};
-
-//==========================================================================
-//
-//	Thing238
-//
-//==========================================================================
-
-class Thing238:Actor
-	__mobjinfo__(70)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 48.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		SpawnState = S_1319;
-	}
-};
-
-//==========================================================================
-//
-//	Thing239
-//
-//==========================================================================
-
-class Thing239:Actor
 	__mobjinfo__(105)
 {
 	defaultproperties
@@ -7639,18 +7342,18 @@ class Thing239:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1323;
-		ActiveSound = 'Sound24';
+		SpawnState = S_1376;
+		ActiveSound = 'Sound23';
 	}
 };
 
 //==========================================================================
 //
-//	Thing240
+//	Thing238
 //
 //==========================================================================
 
-class Thing240:Actor
+class Thing238:Actor
 	__mobjinfo__(106)
 {
 	defaultproperties
@@ -7661,18 +7364,18 @@ class Thing240:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1327;
-		ActiveSound = 'Sound24';
+		SpawnState = S_1380;
+		ActiveSound = 'Sound23';
 	}
 };
 
 //==========================================================================
 //
-//	Thing241
+//	Thing239
 //
 //==========================================================================
 
-class Thing241:Actor
+class Thing239:Actor
 	__mobjinfo__(107)
 {
 	defaultproperties
@@ -7683,18 +7386,18 @@ class Thing241:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1331;
-		ActiveSound = 'Sound24';
+		SpawnState = S_1384;
+		ActiveSound = 'Sound23';
 	}
 };
 
 //==========================================================================
 //
-//	Thing242
+//	Thing240
 //
 //==========================================================================
 
-class Thing242:Actor
+class Thing240:Actor
 	__mobjinfo__(108)
 {
 	defaultproperties
@@ -7705,17 +7408,17 @@ class Thing242:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1347;
+		SpawnState = S_1400;
 	}
 };
 
 //==========================================================================
 //
-//	Thing243
+//	Thing241
 //
 //==========================================================================
 
-class Thing243:Actor
+class Thing241:Actor
 	__mobjinfo__(109)
 {
 	defaultproperties
@@ -7728,17 +7431,17 @@ class Thing243:Actor
 		bNoBlockmap = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
-		SpawnState = S_1449;
+		SpawnState = S_1496;
 	}
 };
 
 //==========================================================================
 //
-//	Thing244
+//	Thing242
 //
 //==========================================================================
 
-class Thing244:Actor
+class Thing242:Actor
 	__mobjinfo__(28)
 {
 	defaultproperties
@@ -7751,17 +7454,17 @@ class Thing244:Actor
 		bNoBlockmap = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
-		SpawnState = S_1453;
+		SpawnState = S_1500;
 	}
 };
 
 //==========================================================================
 //
-//	Thing245
+//	Thing243
 //
 //==========================================================================
 
-class Thing245:Actor
+class Thing243:Actor
 	__mobjinfo__(110)
 {
 	defaultproperties
@@ -7772,17 +7475,17 @@ class Thing245:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1450;
+		SpawnState = S_1497;
 	}
 };
 
 //==========================================================================
 //
-//	Thing246
+//	Thing244
 //
 //==========================================================================
 
-class Thing246:Actor
+class Thing244:Actor
 	__mobjinfo__(44)
 {
 	defaultproperties
@@ -7793,17 +7496,17 @@ class Thing246:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1451;
+		SpawnState = S_1498;
 	}
 };
 
 //==========================================================================
 //
-//	Thing247
+//	Thing245
 //
 //==========================================================================
 
-class Thing247:Actor
+class Thing245:Actor
 	__mobjinfo__(111)
 {
 	defaultproperties
@@ -7814,17 +7517,17 @@ class Thing247:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1335;
+		SpawnState = S_1388;
 	}
 };
 
 //==========================================================================
 //
-//	Thing248
+//	Thing246
 //
 //==========================================================================
 
-class Thing248:Actor
+class Thing246:Actor
 	__mobjinfo__(43)
 {
 	defaultproperties
@@ -7835,17 +7538,17 @@ class Thing248:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1317;
+		SpawnState = S_1370;
 	}
 };
 
 //==========================================================================
 //
-//	Thing249
+//	Thing247
 //
 //==========================================================================
 
-class Thing249:Actor
+class Thing247:Actor
 	__mobjinfo__(46)
 {
 	defaultproperties
@@ -7856,17 +7559,17 @@ class Thing249:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1318;
+		SpawnState = S_1371;
 	}
 };
 
 //==========================================================================
 //
-//	Thing250
+//	Thing248
 //
 //==========================================================================
 
-class Thing250:Actor
+class Thing248:Actor
 	__mobjinfo__(99)
 {
 	defaultproperties
@@ -7877,17 +7580,17 @@ class Thing250:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1433;
+		SpawnState = S_1480;
 	}
 };
 
 //==========================================================================
 //
-//	Thing251
+//	Thing249
 //
 //==========================================================================
 
-class Thing251:Actor
+class Thing249:Actor
 	__mobjinfo__(100)
 {
 	defaultproperties
@@ -7898,17 +7601,17 @@ class Thing251:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1434;
+		SpawnState = S_1481;
 	}
 };
 
 //==========================================================================
 //
-//	Thing252
+//	Thing250
 //
 //==========================================================================
 
-class Thing252:Actor
+class Thing250:Actor
 	__mobjinfo__(101)
 {
 	defaultproperties
@@ -7919,17 +7622,17 @@ class Thing252:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1435;
+		SpawnState = S_1482;
 	}
 };
 
 //==========================================================================
 //
-//	Thing253
+//	Thing251
 //
 //==========================================================================
 
-class Thing253:Actor
+class Thing251:Actor
 	__mobjinfo__(102)
 {
 	defaultproperties
@@ -7940,17 +7643,17 @@ class Thing253:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1436;
+		SpawnState = S_1483;
 	}
 };
 
 //==========================================================================
 //
-//	Thing254
+//	Thing252
 //
 //==========================================================================
 
-class Thing254:Actor
+class Thing252:Actor
 	__mobjinfo__(215)
 {
 	defaultproperties
@@ -7961,18 +7664,18 @@ class Thing254:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1437;
-		ActiveSound = 'Sound44';
+		SpawnState = S_1484;
+		ActiveSound = 'Sound43';
 	}
 };
 
 //==========================================================================
 //
-//	Thing255
+//	Thing253
 //
 //==========================================================================
 
-class Thing255:Actor
+class Thing253:Actor
 	__mobjinfo__(29)
 {
 	defaultproperties
@@ -7985,17 +7688,17 @@ class Thing255:Actor
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
-		SpawnState = S_1441;
+		SpawnState = S_1488;
 	}
 };
 
 //==========================================================================
 //
-//	Thing256
+//	Thing254
 //
 //==========================================================================
 
-class Thing256:Actor
+class Thing254:Actor
 	__mobjinfo__(30)
 {
 	defaultproperties
@@ -8008,17 +7711,17 @@ class Thing256:Actor
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
-		SpawnState = S_1442;
+		SpawnState = S_1489;
 	}
 };
 
 //==========================================================================
 //
-//	Thing257
+//	Thing255
 //
 //==========================================================================
 
-class Thing257:Actor
+class Thing255:Actor
 	__mobjinfo__(31)
 {
 	defaultproperties
@@ -8031,17 +7734,17 @@ class Thing257:Actor
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
-		SpawnState = S_1443;
+		SpawnState = S_1490;
 	}
 };
 
 //==========================================================================
 //
-//	Thing258
+//	Thing256
 //
 //==========================================================================
 
-class Thing258:Actor
+class Thing256:Actor
 	__mobjinfo__(32)
 {
 	defaultproperties
@@ -8054,17 +7757,17 @@ class Thing258:Actor
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
-		SpawnState = S_1444;
+		SpawnState = S_1491;
 	}
 };
 
 //==========================================================================
 //
-//	Thing259
+//	Thing257
 //
 //==========================================================================
 
-class Thing259:Actor
+class Thing257:Actor
 	__mobjinfo__(36)
 {
 	defaultproperties
@@ -8077,17 +7780,17 @@ class Thing259:Actor
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
-		SpawnState = S_1445;
+		SpawnState = S_1492;
 	}
 };
 
 //==========================================================================
 //
-//	Thing260
+//	Thing258
 //
 //==========================================================================
 
-class Thing260:Actor
+class Thing258:Actor
 	__mobjinfo__(37)
 {
 	defaultproperties
@@ -8100,17 +7803,17 @@ class Thing260:Actor
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
-		SpawnState = S_1446;
+		SpawnState = S_1493;
 	}
 };
 
 //==========================================================================
 //
-//	Thing261
+//	Thing259
 //
 //==========================================================================
 
-class Thing261:Actor
+class Thing259:Actor
 	__mobjinfo__(41)
 {
 	defaultproperties
@@ -8123,17 +7826,17 @@ class Thing261:Actor
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
-		SpawnState = S_1447;
+		SpawnState = S_1494;
 	}
 };
 
 //==========================================================================
 //
-//	Thing262
+//	Thing260
 //
 //==========================================================================
 
-class Thing262:Actor
+class Thing260:Actor
 	__mobjinfo__(42)
 {
 	defaultproperties
@@ -8146,17 +7849,17 @@ class Thing262:Actor
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
-		SpawnState = S_1448;
+		SpawnState = S_1495;
 	}
 };
 
 //==========================================================================
 //
-//	Thing263
+//	Thing261
 //
 //==========================================================================
 
-class Thing263:Actor
+class Thing261:Actor
 	__mobjinfo__(117)
 {
 	defaultproperties
@@ -8169,17 +7872,17 @@ class Thing263:Actor
 		bSolid = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
-		SpawnState = S_1452;
+		SpawnState = S_1499;
 	}
 };
 
 //==========================================================================
 //
-//	Thing264
+//	Thing262
 //
 //==========================================================================
 
-class Thing264:Actor
+class Thing262:Actor
 	__mobjinfo__(47)
 {
 	defaultproperties
@@ -8190,18 +7893,18 @@ class Thing264:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1339;
-		ActiveSound = 'Sound24';
+		SpawnState = S_1392;
+		ActiveSound = 'Sound23';
 	}
 };
 
 //==========================================================================
 //
-//	Thing265
+//	Thing263
 //
 //==========================================================================
 
-class Thing265:Actor
+class Thing263:Actor
 	__mobjinfo__(50)
 {
 	defaultproperties
@@ -8212,18 +7915,18 @@ class Thing265:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1343;
-		ActiveSound = 'Sound24';
+		SpawnState = S_1396;
+		ActiveSound = 'Sound23';
 	}
 };
 
 //==========================================================================
 //
-//	Thing266
+//	Thing264
 //
 //==========================================================================
 
-class Thing266:Actor
+class Thing264:Actor
 	__mobjinfo__(51)
 {
 	defaultproperties
@@ -8234,17 +7937,17 @@ class Thing266:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1454;
+		SpawnState = S_1501;
 	}
 };
 
 //==========================================================================
 //
-//	Thing267
+//	Thing265
 //
 //==========================================================================
 
-class Thing267:Actor
+class Thing265:Actor
 	__mobjinfo__(202)
 {
 	defaultproperties
@@ -8255,17 +7958,17 @@ class Thing267:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1455;
+		SpawnState = S_1502;
 	}
 };
 
 //==========================================================================
 //
-//	Thing268
+//	Thing266
 //
 //==========================================================================
 
-class Thing268:Actor
+class Thing266:Actor
 	__mobjinfo__(203)
 {
 	defaultproperties
@@ -8276,17 +7979,17 @@ class Thing268:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1456;
+		SpawnState = S_1503;
 	}
 };
 
 //==========================================================================
 //
-//	Thing269
+//	Thing267
 //
 //==========================================================================
 
-class Thing269:Actor
+class Thing267:Actor
 	__mobjinfo__(33)
 {
 	defaultproperties
@@ -8297,17 +8000,17 @@ class Thing269:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1457;
+		SpawnState = S_1504;
 	}
 };
 
 //==========================================================================
 //
-//	Thing270
+//	Thing268
 //
 //==========================================================================
 
-class Thing270:Actor
+class Thing268:Actor
 	__mobjinfo__(60)
 {
 	defaultproperties
@@ -8318,17 +8021,17 @@ class Thing270:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1458;
+		SpawnState = S_1505;
 	}
 };
 
 //==========================================================================
 //
-//	Thing271
+//	Thing269
 //
 //==========================================================================
 
-class Thing271:Actor
+class Thing269:Actor
 	__mobjinfo__(62)
 {
 	defaultproperties
@@ -8339,17 +8042,17 @@ class Thing271:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1459;
+		SpawnState = S_1506;
 	}
 };
 
 //==========================================================================
 //
-//	Thing272
+//	Thing270
 //
 //==========================================================================
 
-class Thing272:Actor
+class Thing270:Actor
 	__mobjinfo__(63)
 {
 	defaultproperties
@@ -8360,17 +8063,17 @@ class Thing272:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1460;
+		SpawnState = S_1507;
 	}
 };
 
 //==========================================================================
 //
-//	Thing273
+//	Thing271
 //
 //==========================================================================
 
-class Thing273:Actor
+class Thing271:Actor
 	__mobjinfo__(69)
 {
 	defaultproperties
@@ -8381,17 +8084,17 @@ class Thing273:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1461;
+		SpawnState = S_1508;
 	}
 };
 
 //==========================================================================
 //
-//	Thing274
+//	Thing272
 //
 //==========================================================================
 
-class Thing274:Actor
+class Thing272:Actor
 	__mobjinfo__(165)
 {
 	defaultproperties
@@ -8402,17 +8105,17 @@ class Thing274:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1462;
+		SpawnState = S_1509;
 	}
 };
 
 //==========================================================================
 //
-//	Thing275
+//	Thing273
 //
 //==========================================================================
 
-class Thing275:Actor
+class Thing273:Actor
 	__mobjinfo__(188)
 {
 	defaultproperties
@@ -8423,17 +8126,17 @@ class Thing275:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1463;
+		SpawnState = S_1510;
 	}
 };
 
 //==========================================================================
 //
-//	Thing276
+//	Thing274
 //
 //==========================================================================
 
-class Thing276:Actor
+class Thing274:Actor
 	__mobjinfo__(189)
 {
 	defaultproperties
@@ -8444,17 +8147,17 @@ class Thing276:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1464;
+		SpawnState = S_1511;
 	}
 };
 
 //==========================================================================
 //
-//	Thing277
+//	Thing275
 //
 //==========================================================================
 
-class Thing277:Actor
+class Thing275:Actor
 	__mobjinfo__(190)
 {
 	defaultproperties
@@ -8465,17 +8168,17 @@ class Thing277:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1465;
+		SpawnState = S_1512;
 	}
 };
 
 //==========================================================================
 //
-//	Thing278
+//	Thing276
 //
 //==========================================================================
 
-class Thing278:Actor
+class Thing276:Actor
 	__mobjinfo__(191)
 {
 	defaultproperties
@@ -8486,17 +8189,17 @@ class Thing278:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1466;
+		SpawnState = S_1513;
 	}
 };
 
 //==========================================================================
 //
-//	Thing279
+//	Thing277
 //
 //==========================================================================
 
-class Thing279:Actor
+class Thing277:Actor
 	__mobjinfo__(194)
 {
 	defaultproperties
@@ -8507,17 +8210,17 @@ class Thing279:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1467;
+		SpawnState = S_1514;
 	}
 };
 
 //==========================================================================
 //
-//	Thing280
+//	Thing278
 //
 //==========================================================================
 
-class Thing280:Actor
+class Thing278:Actor
 	__mobjinfo__(196)
 {
 	defaultproperties
@@ -8528,17 +8231,17 @@ class Thing280:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1468;
+		SpawnState = S_1515;
 	}
 };
 
 //==========================================================================
 //
-//	Thing281
+//	Thing279
 //
 //==========================================================================
 
-class Thing281:Actor
+class Thing279:Actor
 	__mobjinfo__(197)
 {
 	defaultproperties
@@ -8549,17 +8252,17 @@ class Thing281:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1469;
+		SpawnState = S_1516;
 	}
 };
 
 //==========================================================================
 //
-//	Thing282
+//	Thing280
 //
 //==========================================================================
 
-class Thing282:Actor
+class Thing280:Actor
 	__mobjinfo__(68)
 {
 	defaultproperties
@@ -8570,17 +8273,17 @@ class Thing282:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1470;
+		SpawnState = S_1517;
 	}
 };
 
 //==========================================================================
 //
-//	Thing283
+//	Thing281
 //
 //==========================================================================
 
-class Thing283:Actor
+class Thing281:Actor
 	__mobjinfo__(228)
 {
 	defaultproperties
@@ -8591,17 +8294,17 @@ class Thing283:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1472;
+		SpawnState = S_1519;
 	}
 };
 
 //==========================================================================
 //
-//	Thing284
+//	Thing282
 //
 //==========================================================================
 
-class Thing284:Actor
+class Thing282:Actor
 	__mobjinfo__(216)
 {
 	defaultproperties
@@ -8612,17 +8315,17 @@ class Thing284:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1227;
+		SpawnState = S_1281;
 	}
 };
 
 //==========================================================================
 //
-//	Thing285
+//	Thing283
 //
 //==========================================================================
 
-class Thing285:Actor
+class Thing283:Actor
 	__mobjinfo__(217)
 {
 	defaultproperties
@@ -8633,17 +8336,17 @@ class Thing285:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1228;
+		SpawnState = S_1282;
 	}
 };
 
 //==========================================================================
 //
-//	Thing286
+//	Thing284
 //
 //==========================================================================
 
-class Thing286:Actor
+class Thing284:Actor
 	__mobjinfo__(218)
 {
 	defaultproperties
@@ -8654,17 +8357,17 @@ class Thing286:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1229;
+		SpawnState = S_1283;
 	}
 };
 
 //==========================================================================
 //
-//	Thing287
+//	Thing285
 //
 //==========================================================================
 
-class Thing287:Actor
+class Thing285:Actor
 	__mobjinfo__(219)
 {
 	defaultproperties
@@ -8675,7 +8378,55 @@ class Thing287:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1230;
+		SpawnState = S_1284;
+	}
+};
+
+//==========================================================================
+//
+//	Thing286
+//
+//==========================================================================
+
+class Thing286:Actor
+	__mobjinfo__(220)
+{
+	defaultproperties
+	{
+		Health = 40;
+		Radius = 16.0;
+		Height = 24.0;
+		Mass = 999999.0;
+		ReactionCount = 8;
+		bSolid = true;
+		bShootable = true;
+		bUnknown4 = true;
+		bDropped = true;
+		bNoBlood = true;
+		SpawnState = S_1285;
+	}
+};
+
+//==========================================================================
+//
+//	PowerCoupling
+//
+//==========================================================================
+
+class PowerCoupling:Actor
+	__mobjinfo__(226)
+{
+	defaultproperties
+	{
+		ClassName = 'POWER_COUPLING';
+		Health = 40;
+		Radius = 16.0;
+		Height = 8.0;
+		Mass = 1.0;
+		ReactionCount = 8;
+		bSpecial = true;
+		bDropped = true;
+		SpawnState = S_1287;
 	}
 };
 
@@ -8686,68 +8437,6 @@ class Thing287:Actor
 //==========================================================================
 
 class Thing288:Actor
-	__mobjinfo__(220)
-{
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
-	defaultproperties
-	{
-		Health = 40;
-		Radius = 17.0;
-		Height = 64.0;
-		Mass = 999999.0;
-		StepSpeed = 6.0;
-		ReactionCount = 8;
-		bSolid = true;
-		bShootable = true;
-		bPickUp = true;
-		bUnknown4 = true;
-		bDropped = true;
-		bNoBlood = true;
-		SpawnState = S_1231;
-	}
-};
-
-//==========================================================================
-//
-//	BrokenPowerCoupling
-//
-//==========================================================================
-
-class BrokenPowerCoupling:Actor
-	__mobjinfo__(226)
-{
-	defaultproperties
-	{
-		ClassName = 'BROKEN_POWER_COUPLING';
-		Health = 40;
-		Radius = 16.0;
-		Height = 8.0;
-		Mass = 1.0;
-		Speed = 17920.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bPickUp = true;
-		bDropped = true;
-		SpawnState = S_1233;
-	}
-};
-
-//==========================================================================
-//
-//	Thing290
-//
-//==========================================================================
-
-class Thing290:Actor
 	__mobjinfo__(221)
 {
 	defaultproperties
@@ -8758,18 +8447,18 @@ class Thing290:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1234;
-		ActiveSound = 'Sound123';
+		SpawnState = S_1288;
+		ActiveSound = 'Sound122';
 	}
 };
 
 //==========================================================================
 //
-//	Thing291
+//	Thing289
 //
 //==========================================================================
 
-class Thing291:Actor
+class Thing289:Actor
 	__mobjinfo__(222)
 {
 	defaultproperties
@@ -8780,18 +8469,18 @@ class Thing291:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1235;
-		ActiveSound = 'Sound124';
+		SpawnState = S_1289;
+		ActiveSound = 'Sound123';
 	}
 };
 
 //==========================================================================
 //
-//	Thing292
+//	Thing290
 //
 //==========================================================================
 
-class Thing292:Actor
+class Thing290:Actor
 	__mobjinfo__(223)
 {
 	defaultproperties
@@ -8804,18 +8493,18 @@ class Thing292:Actor
 		bSolid = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
-		SpawnState = S_1235;
-		ActiveSound = 'Sound122';
+		SpawnState = S_1289;
+		ActiveSound = 'Sound121';
 	}
 };
 
 //==========================================================================
 //
-//	Thing293
+//	Thing291
 //
 //==========================================================================
 
-class Thing293:Actor
+class Thing291:Actor
 	__mobjinfo__(224)
 {
 	defaultproperties
@@ -8826,18 +8515,18 @@ class Thing293:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1237;
-		ActiveSound = 'Sound121';
+		SpawnState = S_1291;
+		ActiveSound = 'Sound120';
 	}
 };
 
 //==========================================================================
 //
-//	Thing294
+//	Thing292
 //
 //==========================================================================
 
-class Thing294:Actor
+class Thing292:Actor
 	__mobjinfo__(225)
 {
 	defaultproperties
@@ -8848,8 +8537,54 @@ class Thing294:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1238;
-		ActiveSound = 'Sound119';
+		SpawnState = S_1292;
+		ActiveSound = 'Sound118';
+	}
+};
+
+//==========================================================================
+//
+//	TeleportorBeacon
+//
+//==========================================================================
+
+class TeleportorBeacon:Actor
+	__mobjinfo__(10)
+{
+	defaultproperties
+	{
+		ClassName = 'Teleportor_Beacon';
+		Health = 5;
+		Radius = 16.0;
+		Height = 8.0;
+		Mass = 3.0;
+		ReactionCount = 8;
+		bSpecial = true;
+		bDropped = true;
+		SpawnState = S_1345;
+		SeeState = S_1346;
+	}
+};
+
+//==========================================================================
+//
+//	Thing294
+//
+//==========================================================================
+
+class Thing294:Actor
+{
+	defaultproperties
+	{
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		bNoBlockmap = true;
+		bColideWithThings = false;
+		bColideWithWorld = false;
+		SpawnState = S_1300;
 	}
 };
 
@@ -8871,7 +8606,7 @@ class Thing295:Actor
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
-		SpawnState = S_1247;
+		SpawnState = S_1320;
 	}
 };
 
@@ -8893,29 +8628,7 @@ class Thing296:Actor
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
-		SpawnState = S_1267;
-	}
-};
-
-//==========================================================================
-//
-//	Thing297
-//
-//==========================================================================
-
-class Thing297:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		bColideWithThings = false;
-		bColideWithWorld = false;
-		SpawnState = S_1287;
+		SpawnState = S_1340;
 	}
 };
 
@@ -8936,7 +8649,7 @@ class Ammo2:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1241;
+		SpawnState = S_1295;
 	}
 };
 
@@ -8957,7 +8670,7 @@ class Health1:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1241;
+		SpawnState = S_1295;
 	}
 };
 
@@ -8978,7 +8691,7 @@ class Info1:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1241;
+		SpawnState = S_1295;
 	}
 };
 
@@ -8999,7 +8712,27 @@ class Alarm1:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1241;
+		SpawnState = S_1295;
+	}
+};
+
+//==========================================================================
+//
+//	Thing301
+//
+//==========================================================================
+
+class Thing301:Actor
+{
+	defaultproperties
+	{
+		Health = 1000;
+		Radius = 20.0;
+		Height = 8.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		bSpecial = true;
+		SpawnState = S_1295;
 	}
 };
 
@@ -9019,27 +8752,7 @@ class Thing302:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Thing303
-//
-//==========================================================================
-
-class Thing303:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 8.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		SpawnState = S_1241;
+		SpawnState = S_1295;
 	}
 };
 
@@ -9058,11 +8771,29 @@ class Prison_pass:Actor
 		Radius = 20.0;
 		Height = 8.0;
 		Mass = 100.0;
-		StepSpeed = 10.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		bPickUp = true;
-		SpawnState = S_1241;
+		SpawnState = S_1295;
+	}
+};
+
+//==========================================================================
+//
+//	Thing304
+//
+//==========================================================================
+
+class Thing304:Actor
+{
+	defaultproperties
+	{
+		Health = 1000;
+		Radius = 20.0;
+		Height = 8.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		bSpecial = true;
+		SpawnState = S_1295;
 	}
 };
 
@@ -9082,47 +8813,7 @@ class Thing305:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Thing306
-//
-//==========================================================================
-
-class Thing306:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 8.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Thing307
-//
-//==========================================================================
-
-class Thing307:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 8.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		SpawnState = S_1241;
+		SpawnState = S_1295;
 	}
 };
 
@@ -9143,7 +8834,7 @@ class Report:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1241;
+		SpawnState = S_1295;
 	}
 };
 
@@ -9164,7 +8855,7 @@ class Toughness:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1243;
+		SpawnState = S_1296;
 	}
 };
 
@@ -9185,7 +8876,7 @@ class Accuracy:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		SpawnState = S_1244;
+		SpawnState = S_1297;
 	}
 };
 
@@ -9204,21 +8895,19 @@ class Oracle_Pass:Actor
 		Radius = 20.0;
 		Height = 8.0;
 		Mass = 100.0;
-		StepSpeed = 18.0;
 		ReactionCount = 8;
 		bSpecial = true;
-		bPickUp = true;
-		SpawnState = S_1242;
+		SpawnState = S_1295;
 	}
 };
 
 //==========================================================================
 //
-//	Thing312
+//	Thing310
 //
 //==========================================================================
 
-class Thing312:Actor
+class Thing310:Actor
 {
 	defaultproperties
 	{
@@ -9227,45 +8916,47 @@ class Thing312:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1241;
+		SpawnState = S_1295;
 	}
 };
 
 //==========================================================================
 //
-//	Thing313
+//	Blown_Up_the_Crystal
 //
 //==========================================================================
 
-class Thing313:Actor
+class Blown_Up_the_Crystal:Actor
 {
 	defaultproperties
 	{
+		ClassName = 'Blown_Up_the_Crystal';
 		Health = 1000;
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1241;
+		SpawnState = S_1295;
 	}
 };
 
 //==========================================================================
 //
-//	Thing314
+//	Blown_Up_the_Gates
 //
 //==========================================================================
 
-class Thing314:Actor
+class Blown_Up_the_Gates:Actor
 {
 	defaultproperties
 	{
+		ClassName = 'Blown_Up_the_Gates';
 		Health = 1000;
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1241;
+		SpawnState = S_1295;
 	}
 };
 
@@ -9285,7 +8976,7 @@ class Quest4:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1241;
+		SpawnState = S_1295;
 	}
 };
 
@@ -9305,7 +8996,7 @@ class Quest5:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1241;
+		SpawnState = S_1295;
 	}
 };
 
@@ -9325,590 +9016,14 @@ class Quest6:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Thing318
-//
-//==========================================================================
-
-class Thing318:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Thing319
-//
-//==========================================================================
-
-class Thing319:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Thing320
-//
-//==========================================================================
-
-class Thing320:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Thing321
-//
-//==========================================================================
-
-class Thing321:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Thing322
-//
-//==========================================================================
-
-class Thing322:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Thing323
-//
-//==========================================================================
-
-class Thing323:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Thing324
-//
-//==========================================================================
-
-class Thing324:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Youve_Blown_Up_the_Crystal
-//
-//==========================================================================
-
-class Youve_Blown_Up_the_Crystal:Actor
-{
-	defaultproperties
-	{
-		ClassName = 'You\'ve_Blown_Up_the_Crystal';
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Thing326
-//
-//==========================================================================
-
-class Thing326:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Youve_Blown_Up_the_Gates
-//
-//==========================================================================
-
-class Youve_Blown_Up_the_Gates:Actor
-{
-	defaultproperties
-	{
-		ClassName = 'You\'ve_Blown_Up_the_Gates';
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Thing328
-//
-//==========================================================================
-
-class Thing328:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Thing329
-//
-//==========================================================================
-
-class Thing329:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Thing330
-//
-//==========================================================================
-
-class Thing330:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Thing331
-//
-//==========================================================================
-
-class Thing331:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	You_Killed_the_Bishop
-//
-//==========================================================================
-
-class You_Killed_the_Bishop:Actor
-{
-	defaultproperties
-	{
-		ClassName = 'You_Killed_the_Bishop!';
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Thing333
-//
-//==========================================================================
-
-class Thing333:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Youve_Killed_The_Oracle
-//
-//==========================================================================
-
-class Youve_Killed_The_Oracle:Actor
-{
-	defaultproperties
-	{
-		ClassName = 'You\'ve_Killed_The_Oracle!';
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	You_Killed_Macil
-//
-//==========================================================================
-
-class You_Killed_Macil:Actor
-{
-	defaultproperties
-	{
-		ClassName = 'You_Killed_Macil!';
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Thing336
-//
-//==========================================================================
-
-class Thing336:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Youve_Killed_The_Loremaster
-//
-//==========================================================================
-
-class Youve_Killed_The_Loremaster:Actor
-{
-	defaultproperties
-	{
-		ClassName = 'You\'ve_Killed_The_Loremaster!';
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Youve_Blown_Up_the_Computer
-//
-//==========================================================================
-
-class Youve_Blown_Up_the_Computer:Actor
-{
-	defaultproperties
-	{
-		ClassName = 'You\'ve_Blown_Up_the_Computer';
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Thing339
-//
-//==========================================================================
-
-class Thing339:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Thing340
-//
-//==========================================================================
-
-class Thing340:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Thing341
-//
-//==========================================================================
-
-class Thing341:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Thing342
-//
-//==========================================================================
-
-class Thing342:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		SpawnState = S_1241;
-	}
-};
-
-//==========================================================================
-//
-//	Thing343
-//
-//==========================================================================
-
-class Thing343:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 8.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		SpawnState = S_1241;
+		SpawnState = S_1295;
 	}
 };
 
 //**************************************************************************
 //
 //	$Log$
-//	Revision 1.26  2002/04/22 17:22:31  dj_jl
+//	Revision 1.1  2002/04/22 17:22:33  dj_jl
 //	Retail Strife data.
-//
-//	Revision 1.25  2002/03/20 19:07:47  dj_jl
-//	Got rid of a lots of legacy, beautification.
-//	
-//	Revision 1.24  2002/03/16 17:48:58  dj_jl
-//	Added PlayerPawn class, beautifucation.
-//	
-//	Revision 1.23  2002/03/04 18:31:36  dj_jl
-//	Replaced bNoClip with two seperate flags, beautification.
-//	
-//	Revision 1.22  2002/02/22 18:00:25  dj_jl
-//	A lots of the renaming, beautification.
-//	
-//	Revision 1.21  2002/02/14 19:20:59  dj_jl
-//	Renamed Entity properties to new naming style
-//	
-//	Revision 1.20  2002/02/06 17:28:53  dj_jl
-//	Replaced Actor flags with boolean variables.
-//	
-//	Revision 1.19  2002/02/02 19:14:08  dj_jl
-//	Fixed things not spawned in deathmatch.
-//	
-//	Revision 1.18  2002/01/29 18:10:31  dj_jl
-//	Added MCROSS and PCROSS flags
-//	
-//	Revision 1.17  2002/01/28 18:50:20  dj_jl
-//	Made some functions Actor members.
-//	Replaced some pointers with references.
-//	
-//	Revision 1.16  2002/01/17 18:15:55  dj_jl
-//	Renamed all map object classes
-//	
-//	Revision 1.15  2002/01/15 18:27:01  dj_jl
-//	Some property names with logical words starting with capital letter.
-//	Moved everything from Entity class into Actor class.
-//	
-//	Revision 1.14  2002/01/12 18:00:48  dj_jl
-//	Sound names initialized as names
-//	
-//	Revision 1.13  2002/01/11 18:19:43  dj_jl
-//	Started to use names in progs
-//	
-//	Revision 1.12  2002/01/07 12:27:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.11  2001/12/27 17:48:28  dj_jl
-//	Removed spawnhealth
-//	
-//	Revision 1.10  2001/12/12 18:57:43  dj_jl
-//	State functions now are methods of Actor and Weapon classes
-//	
-//	Revision 1.9  2001/12/04 18:25:36  dj_jl
-//	Replaced constructors with defaultproperties
-//	
-//	Revision 1.8  2001/11/09 14:37:54  dj_jl
-//	Using constructors
-//	
-//	Revision 1.7  2001/10/22 17:23:13  dj_jl
-//	Floatification of angles
-//	
-//	Revision 1.6  2001/10/18 17:39:34  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.5  2001/10/02 17:42:38  dj_jl
-//	Possibility to declare function's code inside class declaration
-//	
-//	Revision 1.4  2001/09/27 17:08:20  dj_jl
-//	Removed spawn functions, added mobj classes
-//	
-//	Revision 1.3  2001/09/20 16:20:00  dj_jl
-//	Start using object-oriented stuff, beautification
-//	
-//	Revision 1.2  2001/07/27 14:27:53  dj_jl
-//	Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

@@ -25,14 +25,14 @@
 
 #include "../../makeinfo.h"
 
-int nummobjtypes = 316;
+int nummobjtypes = 344;
 
 mobjinfo_t mobjinfo[] =
 {
-	// Thing0
+	// MT_0
 	{
 		25, //doomednum
-		1295, //spawnstate
+		1241, //spawnstate
 		10, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -44,7 +44,7 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		239, //deathstate
+		234, //deathstate
 		0, //xdeathstate
 		0, //deathsound
 		0, //speed
@@ -53,29 +53,29 @@ mobjinfo_t mobjinfo[] =
 		10000, //mass
 		0, //damage
 		0, //activesound
-		12, //flags
+		32780, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// PlayerEntity
+	// MT_1
 	{
 		-1, //doomednum
-		289, //spawnstate
+		287, //spawnstate
 		100, //spawnhealth
-		290, //seestate
+		288, //seestate
 		0, //seesound
 		0, //reactiontime
 		0, //attacksound
-		296, //painstate
+		294, //painstate
 		255, //painchance
-		10, //painsound
+		11, //painsound
 		0, //meleestate
-		294, //missilestate
+		292, //missilestate
 		0, //crashstate
-		298, //deathstate
-		308, //xdeathstate
-		17, //deathsound
+		296, //deathstate
+		306, //xdeathstate
+		18, //deathsound
 		0, //speed
 		1179648, //radius
 		3670016, //height
@@ -87,18 +87,18 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Weapon_Smith
+	// MT_2
 	{
 		116, //doomednum
-		322, //spawnstate
+		320, //spawnstate
 		10000000, //spawnhealth
-		335, //seestate
+		333, //seestate
 		0, //seesound
 		8, //reactiontime
 		0, //attacksound
-		335, //painstate
+		333, //painstate
 		150, //painchance
-		12, //painsound
+		13, //painsound
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
@@ -116,18 +116,18 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Weapon_Smith" //classname
 	},
-	// Bar_Keep
+	// MT_3
 	{
 		72, //doomednum
-		322, //spawnstate
+		320, //spawnstate
 		10000000, //spawnhealth
-		335, //seestate
+		333, //seestate
 		0, //seesound
 		8, //reactiontime
 		0, //attacksound
-		335, //painstate
+		333, //painstate
 		150, //painchance
-		53, //painsound
+		54, //painsound
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
@@ -139,24 +139,24 @@ mobjinfo_t mobjinfo[] =
 		3670016, //height
 		5000, //mass
 		0, //damage
-		52, //activesound
+		53, //activesound
 		1375731718, //flags
 		0, //flags2
 		0, //raisestate
 		"Bar_Keep" //classname
 	},
-	// Amorer
+	// MT_4
 	{
 		73, //doomednum
-		322, //spawnstate
+		320, //spawnstate
 		10000000, //spawnhealth
-		335, //seestate
+		333, //seestate
 		0, //seesound
 		8, //reactiontime
 		0, //attacksound
-		335, //painstate
+		333, //painstate
 		150, //painchance
-		12, //painsound
+		13, //painsound
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
@@ -172,20 +172,20 @@ mobjinfo_t mobjinfo[] =
 		1644167174, //flags
 		0, //flags2
 		0, //raisestate
-		"Amorer" //classname
+		"Armorer" //classname
 	},
-	// Medic
+	// MT_5
 	{
 		74, //doomednum
-		322, //spawnstate
+		320, //spawnstate
 		10000000, //spawnhealth
-		335, //seestate
+		333, //seestate
 		0, //seesound
 		8, //reactiontime
 		0, //attacksound
-		335, //painstate
+		333, //painstate
 		150, //painchance
-		12, //painsound
+		13, //painsound
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
@@ -203,662 +203,662 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Medic" //classname
 	},
-	// Thing6
+	// MT_6
 	{
 		3004, //doomednum
-		385, //spawnstate
+		383, //spawnstate
 		31, //spawnhealth
-		386, //seestate
-		47, //seesound
+		384, //seestate
+		48, //seesound
 		8, //reactiontime
 		2, //attacksound
-		397, //painstate
+		395, //painstate
 		200, //painchance
-		12, //painsound
-		394, //meleestate
+		13, //painsound
+		392, //meleestate
 		0, //missilestate
-		399, //crashstate
-		402, //deathstate
-		410, //xdeathstate
-		61, //deathsound
+		397, //crashstate
+		400, //deathstate
+		408, //xdeathstate
+		62, //deathsound
 		4, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		4194374, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing7
+	// MT_7
 	{
 		130, //doomednum
-		385, //spawnstate
+		383, //spawnstate
 		31, //spawnhealth
-		386, //seestate
-		47, //seesound
+		384, //seestate
+		48, //seesound
 		8, //reactiontime
 		2, //attacksound
-		397, //painstate
+		395, //painstate
 		200, //painchance
-		12, //painsound
-		394, //meleestate
+		13, //painsound
+		392, //meleestate
 		0, //missilestate
-		399, //crashstate
-		402, //deathstate
-		410, //xdeathstate
-		61, //deathsound
+		397, //crashstate
+		400, //deathstate
+		408, //xdeathstate
+		62, //deathsound
 		5, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		4194374, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing8
+	// MT_8
 	{
 		131, //doomednum
-		385, //spawnstate
+		383, //spawnstate
 		31, //spawnhealth
-		386, //seestate
-		47, //seesound
+		384, //seestate
+		48, //seesound
 		8, //reactiontime
 		2, //attacksound
-		397, //painstate
+		395, //painstate
 		200, //painchance
-		12, //painsound
-		394, //meleestate
+		13, //painsound
+		392, //meleestate
 		0, //missilestate
-		399, //crashstate
-		402, //deathstate
-		410, //xdeathstate
-		61, //deathsound
+		397, //crashstate
+		400, //deathstate
+		408, //xdeathstate
+		62, //deathsound
 		5, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		4194374, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing9
+	// MT_9
 	{
 		65, //doomednum
-		385, //spawnstate
+		383, //spawnstate
 		31, //spawnhealth
-		386, //seestate
-		47, //seesound
+		384, //seestate
+		48, //seesound
 		8, //reactiontime
 		2, //attacksound
-		397, //painstate
+		395, //painstate
 		200, //painchance
-		12, //painsound
-		394, //meleestate
+		13, //painsound
+		392, //meleestate
 		0, //missilestate
-		399, //crashstate
-		402, //deathstate
-		410, //xdeathstate
-		61, //deathsound
+		397, //crashstate
+		400, //deathstate
+		408, //xdeathstate
+		62, //deathsound
 		7, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		272629830, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing10
+	// MT_10
 	{
 		132, //doomednum
-		385, //spawnstate
+		383, //spawnstate
 		31, //spawnhealth
-		386, //seestate
-		47, //seesound
+		384, //seestate
+		48, //seesound
 		8, //reactiontime
 		2, //attacksound
-		397, //painstate
+		395, //painstate
 		200, //painchance
-		12, //painsound
-		394, //meleestate
+		13, //painsound
+		392, //meleestate
 		0, //missilestate
-		399, //crashstate
-		402, //deathstate
-		410, //xdeathstate
-		61, //deathsound
+		397, //crashstate
+		400, //deathstate
+		408, //xdeathstate
+		62, //deathsound
 		7, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		272629830, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing11
+	// MT_11
 	{
 		133, //doomednum
-		385, //spawnstate
+		383, //spawnstate
 		31, //spawnhealth
-		386, //seestate
-		47, //seesound
+		384, //seestate
+		48, //seesound
 		8, //reactiontime
 		2, //attacksound
-		397, //painstate
+		395, //painstate
 		200, //painchance
-		12, //painsound
-		394, //meleestate
+		13, //painsound
+		392, //meleestate
 		0, //missilestate
-		399, //crashstate
-		402, //deathstate
-		410, //xdeathstate
-		61, //deathsound
+		397, //crashstate
+		400, //deathstate
+		408, //xdeathstate
+		62, //deathsound
 		7, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		272629830, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing12
+	// MT_12
 	{
 		66, //doomednum
-		385, //spawnstate
+		383, //spawnstate
 		31, //spawnhealth
-		386, //seestate
-		47, //seesound
+		384, //seestate
+		48, //seesound
 		8, //reactiontime
 		2, //attacksound
-		397, //painstate
+		395, //painstate
 		200, //painchance
-		12, //painsound
-		394, //meleestate
+		13, //painsound
+		392, //meleestate
 		0, //missilestate
-		399, //crashstate
-		402, //deathstate
-		410, //xdeathstate
-		61, //deathsound
+		397, //crashstate
+		400, //deathstate
+		408, //xdeathstate
+		62, //deathsound
 		8, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		809500742, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing13
+	// MT_13
 	{
 		134, //doomednum
-		385, //spawnstate
+		383, //spawnstate
 		31, //spawnhealth
-		386, //seestate
-		47, //seesound
+		384, //seestate
+		48, //seesound
 		8, //reactiontime
 		2, //attacksound
-		397, //painstate
+		395, //painstate
 		200, //painchance
-		12, //painsound
-		394, //meleestate
+		13, //painsound
+		392, //meleestate
 		0, //missilestate
-		399, //crashstate
-		402, //deathstate
-		410, //xdeathstate
-		61, //deathsound
+		397, //crashstate
+		400, //deathstate
+		408, //xdeathstate
+		62, //deathsound
 		8, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		809500742, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing14
+	// MT_14
 	{
 		135, //doomednum
-		385, //spawnstate
+		383, //spawnstate
 		31, //spawnhealth
-		386, //seestate
-		47, //seesound
+		384, //seestate
+		48, //seesound
 		8, //reactiontime
 		2, //attacksound
-		397, //painstate
+		395, //painstate
 		200, //painchance
-		12, //painsound
-		394, //meleestate
+		13, //painsound
+		392, //meleestate
 		0, //missilestate
-		399, //crashstate
-		402, //deathstate
-		410, //xdeathstate
-		61, //deathsound
+		397, //crashstate
+		400, //deathstate
+		408, //xdeathstate
+		62, //deathsound
 		8, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		809500742, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing15
+	// MT_15
 	{
 		67, //doomednum
-		385, //spawnstate
+		383, //spawnstate
 		31, //spawnhealth
-		386, //seestate
-		47, //seesound
+		384, //seestate
+		48, //seesound
 		8, //reactiontime
 		2, //attacksound
-		397, //painstate
+		395, //painstate
 		200, //painchance
-		12, //painsound
-		394, //meleestate
+		13, //painsound
+		392, //meleestate
 		0, //missilestate
-		399, //crashstate
-		402, //deathstate
-		410, //xdeathstate
-		61, //deathsound
+		397, //crashstate
+		400, //deathstate
+		408, //xdeathstate
+		62, //deathsound
 		8, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		541065286, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing16
+	// MT_16
 	{
 		136, //doomednum
-		385, //spawnstate
+		383, //spawnstate
 		31, //spawnhealth
-		386, //seestate
-		47, //seesound
+		384, //seestate
+		48, //seesound
 		8, //reactiontime
 		2, //attacksound
-		397, //painstate
+		395, //painstate
 		200, //painchance
-		12, //painsound
-		394, //meleestate
+		13, //painsound
+		392, //meleestate
 		0, //missilestate
-		399, //crashstate
-		402, //deathstate
-		410, //xdeathstate
-		61, //deathsound
+		397, //crashstate
+		400, //deathstate
+		408, //xdeathstate
+		62, //deathsound
 		7, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		541065286, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing17
+	// MT_17
 	{
 		137, //doomednum
-		385, //spawnstate
+		383, //spawnstate
 		31, //spawnhealth
-		386, //seestate
-		47, //seesound
+		384, //seestate
+		48, //seesound
 		8, //reactiontime
 		2, //attacksound
-		397, //painstate
+		395, //painstate
 		200, //painchance
-		12, //painsound
-		394, //meleestate
+		13, //painsound
+		392, //meleestate
 		0, //missilestate
-		399, //crashstate
-		402, //deathstate
-		410, //xdeathstate
-		61, //deathsound
+		397, //crashstate
+		400, //deathstate
+		408, //xdeathstate
+		62, //deathsound
 		8, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		541065286, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing18
+	// MT_18
 	{
 		172, //doomednum
-		385, //spawnstate
+		383, //spawnstate
 		31, //spawnhealth
-		386, //seestate
-		47, //seesound
+		384, //seestate
+		48, //seesound
 		8, //reactiontime
 		2, //attacksound
-		397, //painstate
+		395, //painstate
 		200, //painchance
-		12, //painsound
-		394, //meleestate
+		13, //painsound
+		392, //meleestate
 		0, //missilestate
-		399, //crashstate
-		402, //deathstate
-		410, //xdeathstate
-		61, //deathsound
+		397, //crashstate
+		400, //deathstate
+		408, //xdeathstate
+		62, //deathsound
 		8, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		1077936198, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing19
+	// MT_19
 	{
 		173, //doomednum
-		385, //spawnstate
+		383, //spawnstate
 		31, //spawnhealth
-		386, //seestate
-		47, //seesound
+		384, //seestate
+		48, //seesound
 		8, //reactiontime
 		2, //attacksound
-		397, //painstate
+		395, //painstate
 		200, //painchance
-		12, //painsound
-		394, //meleestate
+		13, //painsound
+		392, //meleestate
 		0, //missilestate
-		399, //crashstate
-		402, //deathstate
-		410, //xdeathstate
-		61, //deathsound
+		397, //crashstate
+		400, //deathstate
+		408, //xdeathstate
+		62, //deathsound
 		8, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		1077936198, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing20
+	// MT_20
 	{
 		174, //doomednum
-		385, //spawnstate
+		383, //spawnstate
 		31, //spawnhealth
-		386, //seestate
-		47, //seesound
+		384, //seestate
+		48, //seesound
 		8, //reactiontime
 		2, //attacksound
-		397, //painstate
+		395, //painstate
 		200, //painchance
-		12, //painsound
-		394, //meleestate
+		13, //painsound
+		392, //meleestate
 		0, //missilestate
-		399, //crashstate
-		402, //deathstate
-		410, //xdeathstate
-		61, //deathsound
+		397, //crashstate
+		400, //deathstate
+		408, //xdeathstate
+		62, //deathsound
 		8, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		1077936198, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing21
+	// MT_21
 	{
 		175, //doomednum
-		385, //spawnstate
+		383, //spawnstate
 		31, //spawnhealth
-		386, //seestate
-		47, //seesound
+		384, //seestate
+		48, //seesound
 		8, //reactiontime
 		2, //attacksound
-		397, //painstate
+		395, //painstate
 		200, //painchance
-		12, //painsound
-		394, //meleestate
+		13, //painsound
+		392, //meleestate
 		0, //missilestate
-		399, //crashstate
-		402, //deathstate
-		410, //xdeathstate
-		61, //deathsound
+		397, //crashstate
+		400, //deathstate
+		408, //xdeathstate
+		62, //deathsound
 		8, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		1614807110, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing22
+	// MT_22
 	{
 		176, //doomednum
-		385, //spawnstate
+		383, //spawnstate
 		31, //spawnhealth
-		386, //seestate
-		47, //seesound
+		384, //seestate
+		48, //seesound
 		8, //reactiontime
 		2, //attacksound
-		397, //painstate
+		395, //painstate
 		200, //painchance
-		12, //painsound
-		394, //meleestate
+		13, //painsound
+		392, //meleestate
 		0, //missilestate
-		399, //crashstate
-		402, //deathstate
-		410, //xdeathstate
-		61, //deathsound
+		397, //crashstate
+		400, //deathstate
+		408, //xdeathstate
+		62, //deathsound
 		8, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		1614807110, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing23
+	// MT_23
 	{
 		177, //doomednum
-		385, //spawnstate
+		383, //spawnstate
 		31, //spawnhealth
-		386, //seestate
-		47, //seesound
+		384, //seestate
+		48, //seesound
 		8, //reactiontime
 		2, //attacksound
-		397, //painstate
+		395, //painstate
 		200, //painchance
-		12, //painsound
-		394, //meleestate
+		13, //painsound
+		392, //meleestate
 		0, //missilestate
-		399, //crashstate
-		402, //deathstate
-		410, //xdeathstate
-		61, //deathsound
+		397, //crashstate
+		400, //deathstate
+		408, //xdeathstate
+		62, //deathsound
 		8, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		1614807110, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing24
+	// MT_24
 	{
 		178, //doomednum
-		385, //spawnstate
+		383, //spawnstate
 		31, //spawnhealth
-		386, //seestate
-		47, //seesound
+		384, //seestate
+		48, //seesound
 		8, //reactiontime
 		2, //attacksound
-		397, //painstate
+		395, //painstate
 		200, //painchance
-		12, //painsound
-		394, //meleestate
+		13, //painsound
+		392, //meleestate
 		0, //missilestate
-		399, //crashstate
-		402, //deathstate
-		410, //xdeathstate
-		61, //deathsound
+		397, //crashstate
+		400, //deathstate
+		408, //xdeathstate
+		62, //deathsound
 		8, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		1346371654, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing25
+	// MT_25
 	{
 		179, //doomednum
-		385, //spawnstate
+		383, //spawnstate
 		31, //spawnhealth
-		386, //seestate
-		47, //seesound
+		384, //seestate
+		48, //seesound
 		8, //reactiontime
 		2, //attacksound
-		397, //painstate
+		395, //painstate
 		200, //painchance
-		12, //painsound
-		394, //meleestate
+		13, //painsound
+		392, //meleestate
 		0, //missilestate
-		399, //crashstate
-		402, //deathstate
-		410, //xdeathstate
-		61, //deathsound
+		397, //crashstate
+		400, //deathstate
+		408, //xdeathstate
+		62, //deathsound
 		8, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		1346371654, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing26
+	// MT_26
 	{
 		180, //doomednum
-		385, //spawnstate
+		383, //spawnstate
 		31, //spawnhealth
-		386, //seestate
-		47, //seesound
+		384, //seestate
+		48, //seesound
 		8, //reactiontime
 		2, //attacksound
-		397, //painstate
+		395, //painstate
 		200, //painchance
-		12, //painsound
-		394, //meleestate
+		13, //painsound
+		392, //meleestate
 		0, //missilestate
-		399, //crashstate
-		402, //deathstate
-		410, //xdeathstate
-		61, //deathsound
+		397, //crashstate
+		400, //deathstate
+		408, //xdeathstate
+		62, //deathsound
 		8, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		1346371654, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing27
+	// MT_27
 	{
 		181, //doomednum
-		385, //spawnstate
+		383, //spawnstate
 		31, //spawnhealth
-		386, //seestate
-		47, //seesound
+		384, //seestate
+		48, //seesound
 		8, //reactiontime
 		2, //attacksound
-		397, //painstate
+		395, //painstate
 		200, //painchance
-		12, //painsound
-		394, //meleestate
+		13, //painsound
+		392, //meleestate
 		0, //missilestate
-		399, //crashstate
-		402, //deathstate
-		410, //xdeathstate
-		61, //deathsound
+		397, //crashstate
+		400, //deathstate
+		408, //xdeathstate
+		62, //deathsound
 		8, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		1883242566, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing28
+	// MT_28
 	{
 		169, //doomednum
-		420, //spawnstate
+		418, //spawnstate
 		31, //spawnhealth
 		0, //seestate
 		0, //seesound
 		8, //reactiontime
 		0, //attacksound
-		421, //painstate
+		419, //painstate
 		0, //painchance
 		0, //painsound
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		410, //deathstate
+		408, //deathstate
 		0, //xdeathstate
-		61, //deathsound
+		62, //deathsound
 		0, //speed
 		1310720, //radius
 		3670016, //height
@@ -870,24 +870,24 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing29
+	// MT_29
 	{
 		201, //doomednum
-		422, //spawnstate
+		420, //spawnstate
 		61, //spawnhealth
 		0, //seestate
 		0, //seesound
 		8, //reactiontime
 		0, //attacksound
-		423, //painstate
+		421, //painstate
 		255, //painchance
 		0, //painsound
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		633, //deathstate
+		631, //deathstate
 		0, //xdeathstate
-		61, //deathsound
+		62, //deathsound
 		0, //speed
 		1310720, //radius
 		3670016, //height
@@ -899,10 +899,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing30
+	// MT_30
 	{
 		170, //doomednum
-		424, //spawnstate
+		422, //spawnstate
 		20, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -922,16 +922,16 @@ mobjinfo_t mobjinfo[] =
 		1048576, //height
 		100, //mass
 		0, //damage
-		54, //activesound
+		55, //activesound
 		12, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing31
+	// MT_31
 	{
 		209, //doomednum
-		426, //spawnstate
+		424, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -957,10 +957,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing32
+	// MT_32
 	{
 		210, //doomednum
-		429, //spawnstate
+		427, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -986,10 +986,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing33
+	// MT_33
 	{
 		211, //doomednum
-		432, //spawnstate
+		430, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -1015,10 +1015,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing34
+	// MT_34
 	{
 		213, //doomednum
-		435, //spawnstate
+		433, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -1044,10 +1044,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing35
+	// MT_35
 	{
 		214, //doomednum
-		438, //spawnstate
+		436, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -1073,10 +1073,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing36
+	// MT_36
 	{
 		229, //doomednum
-		441, //spawnstate
+		439, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -1102,53 +1102,53 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing37
+	// MT_37
 	{
 		204, //doomednum
-		444, //spawnstate
+		442, //spawnstate
 		51, //spawnhealth
-		444, //seestate
+		442, //seestate
 		0, //seesound
 		8, //reactiontime
 		0, //attacksound
-		446, //painstate
+		444, //painstate
 		255, //painchance
-		100, //painsound
+		102, //painsound
 		0, //meleestate
 		0, //missilestate
-		449, //crashstate
-		451, //deathstate
+		447, //crashstate
+		449, //deathstate
 		0, //xdeathstate
-		100, //deathsound
+		102, //deathsound
 		0, //speed
 		393216, //radius
 		393216, //height
 		50000, //mass
 		0, //damage
-		99, //activesound
-		4718598, //flags
+		101, //activesound
+		4751366, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Beggar1
+	// MT_38
 	{
 		141, //doomednum
-		458, //spawnstate
+		456, //spawnstate
 		20, //spawnhealth
-		459, //seestate
+		457, //seestate
 		0, //seesound
 		8, //reactiontime
 		2, //attacksound
-		469, //painstate
+		467, //painstate
 		250, //painchance
-		12, //painsound
-		465, //meleestate
+		13, //painsound
+		463, //meleestate
 		0, //missilestate
 		0, //crashstate
-		471, //deathstate
-		480, //xdeathstate
-		61, //deathsound
+		469, //deathstate
+		478, //xdeathstate
+		62, //deathsound
 		3, //speed
 		1310720, //radius
 		3670016, //height
@@ -1160,24 +1160,24 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Beggar" //classname
 	},
-	// Beggar2
+	// MT_39
 	{
 		155, //doomednum
-		458, //spawnstate
+		456, //spawnstate
 		20, //spawnhealth
-		459, //seestate
+		457, //seestate
 		0, //seesound
 		8, //reactiontime
 		2, //attacksound
-		469, //painstate
+		467, //painstate
 		250, //painchance
-		12, //painsound
-		465, //meleestate
+		13, //painsound
+		463, //meleestate
 		0, //missilestate
 		0, //crashstate
-		471, //deathstate
-		480, //xdeathstate
-		61, //deathsound
+		469, //deathstate
+		478, //xdeathstate
+		62, //deathsound
 		3, //speed
 		1310720, //radius
 		3670016, //height
@@ -1189,24 +1189,24 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Beggar" //classname
 	},
-	// Beggar3
+	// MT_40
 	{
 		156, //doomednum
-		458, //spawnstate
+		456, //spawnstate
 		20, //spawnhealth
-		459, //seestate
+		457, //seestate
 		0, //seesound
 		8, //reactiontime
 		2, //attacksound
-		469, //painstate
+		467, //painstate
 		250, //painchance
-		12, //painsound
-		465, //meleestate
+		13, //painsound
+		463, //meleestate
 		0, //missilestate
 		0, //crashstate
-		471, //deathstate
-		480, //xdeathstate
-		61, //deathsound
+		469, //deathstate
+		478, //xdeathstate
+		62, //deathsound
 		3, //speed
 		1310720, //radius
 		3670016, //height
@@ -1218,24 +1218,24 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Beggar" //classname
 	},
-	// Beggar4
+	// MT_41
 	{
 		157, //doomednum
-		458, //spawnstate
+		456, //spawnstate
 		20, //spawnhealth
-		459, //seestate
+		457, //seestate
 		0, //seesound
 		8, //reactiontime
 		2, //attacksound
-		469, //painstate
+		467, //painstate
 		250, //painchance
-		12, //painsound
-		465, //meleestate
+		13, //painsound
+		463, //meleestate
 		0, //missilestate
 		0, //crashstate
-		471, //deathstate
-		480, //xdeathstate
-		61, //deathsound
+		469, //deathstate
+		478, //xdeathstate
+		62, //deathsound
 		3, //speed
 		1310720, //radius
 		3670016, //height
@@ -1247,24 +1247,24 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Beggar" //classname
 	},
-	// Beggar5
+	// MT_42
 	{
 		158, //doomednum
-		458, //spawnstate
+		456, //spawnstate
 		20, //spawnhealth
-		459, //seestate
+		457, //seestate
 		0, //seesound
 		8, //reactiontime
 		2, //attacksound
-		469, //painstate
+		467, //painstate
 		250, //painchance
-		12, //painsound
-		465, //meleestate
+		13, //painsound
+		463, //meleestate
 		0, //missilestate
 		0, //crashstate
-		471, //deathstate
-		480, //xdeathstate
-		61, //deathsound
+		469, //deathstate
+		478, //xdeathstate
+		62, //deathsound
 		3, //speed
 		1310720, //radius
 		3670016, //height
@@ -1276,196 +1276,196 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Beggar" //classname
 	},
-	// Rebel1
+	// MT_43
 	{
 		9, //doomednum
-		481, //spawnstate
+		479, //spawnstate
 		60, //spawnhealth
-		492, //seestate
+		490, //seestate
 		4, //seesound
 		8, //reactiontime
 		0, //attacksound
-		503, //painstate
-		170, //painchance
-		12, //painsound
+		501, //painstate
+		250, //painchance
+		13, //painsound
 		0, //meleestate
-		500, //missilestate
+		498, //missilestate
 		0, //crashstate
-		505, //deathstate
-		513, //xdeathstate
-		20, //deathsound
+		503, //deathstate
+		511, //xdeathstate
+		21, //deathsound
 		8, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		71303174, //flags
 		0, //flags2
 		0, //raisestate
 		"Rebel" //classname
 	},
-	// Rebel2
+	// MT_44
 	{
 		144, //doomednum
-		481, //spawnstate
+		479, //spawnstate
 		60, //spawnhealth
-		492, //seestate
+		490, //seestate
 		4, //seesound
 		8, //reactiontime
 		0, //attacksound
-		503, //painstate
-		170, //painchance
-		12, //painsound
+		501, //painstate
+		250, //painchance
+		13, //painsound
 		0, //meleestate
-		500, //missilestate
+		498, //missilestate
 		0, //crashstate
-		505, //deathstate
-		513, //xdeathstate
-		20, //deathsound
+		503, //deathstate
+		511, //xdeathstate
+		21, //deathsound
 		8, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		71303174, //flags
 		0, //flags2
 		0, //raisestate
 		"Rebel" //classname
 	},
-	// Rebel3
+	// MT_45
 	{
 		145, //doomednum
-		481, //spawnstate
+		479, //spawnstate
 		60, //spawnhealth
-		492, //seestate
+		490, //seestate
 		4, //seesound
 		8, //reactiontime
 		0, //attacksound
-		503, //painstate
-		170, //painchance
-		12, //painsound
+		501, //painstate
+		250, //painchance
+		13, //painsound
 		0, //meleestate
-		500, //missilestate
+		498, //missilestate
 		0, //crashstate
-		505, //deathstate
-		513, //xdeathstate
-		20, //deathsound
+		503, //deathstate
+		511, //xdeathstate
+		21, //deathsound
 		8, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		71303174, //flags
 		0, //flags2
 		0, //raisestate
 		"Rebel" //classname
 	},
-	// Rebel4
+	// MT_46
 	{
 		149, //doomednum
-		481, //spawnstate
+		479, //spawnstate
 		60, //spawnhealth
-		492, //seestate
+		490, //seestate
 		4, //seesound
 		8, //reactiontime
 		0, //attacksound
-		503, //painstate
-		170, //painchance
-		12, //painsound
+		501, //painstate
+		250, //painchance
+		13, //painsound
 		0, //meleestate
-		500, //missilestate
+		498, //missilestate
 		0, //crashstate
-		505, //deathstate
-		513, //xdeathstate
-		20, //deathsound
+		503, //deathstate
+		511, //xdeathstate
+		21, //deathsound
 		8, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		71303174, //flags
 		0, //flags2
 		0, //raisestate
 		"Rebel" //classname
 	},
-	// Rebel5
+	// MT_47
 	{
 		150, //doomednum
-		481, //spawnstate
+		479, //spawnstate
 		60, //spawnhealth
-		492, //seestate
+		490, //seestate
 		4, //seesound
 		8, //reactiontime
 		0, //attacksound
-		503, //painstate
-		170, //painchance
-		12, //painsound
+		501, //painstate
+		250, //painchance
+		13, //painsound
 		0, //meleestate
-		500, //missilestate
+		498, //missilestate
 		0, //crashstate
-		505, //deathstate
-		513, //xdeathstate
-		20, //deathsound
+		503, //deathstate
+		511, //xdeathstate
+		21, //deathsound
 		8, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		71303174, //flags
 		0, //flags2
 		0, //raisestate
 		"Rebel" //classname
 	},
-	// Rebel6
+	// MT_48
 	{
 		151, //doomednum
-		481, //spawnstate
+		479, //spawnstate
 		60, //spawnhealth
-		492, //seestate
+		490, //seestate
 		4, //seesound
 		8, //reactiontime
 		0, //attacksound
-		503, //painstate
-		170, //painchance
-		12, //painsound
+		501, //painstate
+		250, //painchance
+		13, //painsound
 		0, //meleestate
-		500, //missilestate
+		498, //missilestate
 		0, //crashstate
-		505, //deathstate
-		513, //xdeathstate
-		20, //deathsound
+		503, //deathstate
+		511, //xdeathstate
+		21, //deathsound
 		8, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		71303174, //flags
 		0, //flags2
 		0, //raisestate
 		"Rebel" //classname
 	},
-	// Macil1
+	// MT_49
 	{
 		64, //doomednum
-		521, //spawnstate
+		519, //spawnstate
 		95, //spawnhealth
-		528, //seestate
-		9, //seesound
+		526, //seestate
+		10, //seesound
 		8, //reactiontime
 		0, //attacksound
-		539, //painstate
+		537, //painstate
 		250, //painchance
-		12, //painsound
+		13, //painsound
 		0, //meleestate
-		536, //missilestate
+		534, //missilestate
 		0, //crashstate
-		528, //deathstate
+		526, //deathstate
 		0, //xdeathstate
 		0, //deathsound
 		8, //speed
@@ -1473,48 +1473,48 @@ mobjinfo_t mobjinfo[] =
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
+		48, //activesound
 		37748742, //flags
 		0, //flags2
 		0, //raisestate
 		"MACIL" //classname
 	},
-	// Macil2
+	// MT_50
 	{
 		200, //doomednum
-		521, //spawnstate
+		519, //spawnstate
 		95, //spawnhealth
-		528, //seestate
-		9, //seesound
+		526, //seestate
+		10, //seesound
 		8, //reactiontime
 		0, //attacksound
-		539, //painstate
+		537, //painstate
 		200, //painchance
-		12, //painsound
+		13, //painsound
 		0, //meleestate
-		541, //missilestate
+		539, //missilestate
 		0, //crashstate
-		544, //deathstate
-		544, //xdeathstate
-		19, //deathsound
+		542, //deathstate
+		542, //xdeathstate
+		20, //deathsound
 		8, //speed
 		1310720, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		47, //activesound
-		-2143289338, //flags
+		48, //activesound
+		-2109734906, //flags
 		0, //flags2
 		0, //raisestate
 		"MACIL" //classname
 	},
-	// Thing51
+	// MT_51
 	{
 		-1, //doomednum
-		562, //spawnstate
+		560, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
-		72, //seesound
+		73, //seesound
 		8, //reactiontime
 		0, //attacksound
 		0, //painstate
@@ -1537,341 +1537,399 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing52
+	// MT_52
 	{
 		3001, //doomednum
-		569, //spawnstate
+		567, //spawnstate
 		150, //spawnhealth
-		571, //seestate
-		91, //seesound
+		569, //seestate
+		93, //seesound
 		8, //reactiontime
 		0, //attacksound
-		584, //painstate
+		582, //painstate
 		128, //painchance
-		92, //painsound
-		579, //meleestate
-		582, //missilestate
+		94, //painsound
+		577, //meleestate
+		580, //missilestate
 		0, //crashstate
-		586, //deathstate
-		595, //xdeathstate
-		93, //deathsound
+		584, //deathstate
+		593, //xdeathstate
+		95, //deathsound
 		12, //speed
 		1310720, //radius
 		3932160, //height
 		500, //mass
 		0, //damage
-		94, //activesound
+		96, //activesound
 		4751366, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Acolyte1
+	// MT_53
 	{
 		3002, //doomednum
-		602, //spawnstate
+		600, //spawnstate
 		70, //spawnhealth
-		614, //seestate
-		9, //seesound
+		612, //seestate
+		10, //seesound
 		8, //reactiontime
 		5, //attacksound
-		624, //painstate
+		622, //painstate
 		150, //painchance
-		16, //painsound
+		17, //painsound
 		0, //meleestate
-		618, //missilestate
+		616, //missilestate
 		0, //crashstate
-		625, //deathstate
-		633, //xdeathstate
-		21, //deathsound
-		7, //speed
-		1572864, //radius
-		4194304, //height
-		400, //mass
-		0, //damage
-		48, //activesound
-		4194310, //flags
-		0, //flags2
-		0, //raisestate
-		"ACOLYTE" //classname
-	},
-	// Acolyte2
-	{
-		142, //doomednum
-		602, //spawnstate
-		70, //spawnhealth
-		614, //seestate
-		9, //seesound
-		8, //reactiontime
-		5, //attacksound
-		624, //painstate
-		150, //painchance
-		16, //painsound
-		0, //meleestate
-		618, //missilestate
-		0, //crashstate
-		625, //deathstate
-		633, //xdeathstate
-		21, //deathsound
+		623, //deathstate
+		631, //xdeathstate
+		22, //deathsound
 		7, //speed
 		1572864, //radius
 		4194304, //height
 		400, //mass
 		0, //damage
 		49, //activesound
+		4194310, //flags
+		0, //flags2
+		0, //raisestate
+		"ACOLYTE" //classname
+	},
+	// MT_54
+	{
+		142, //doomednum
+		600, //spawnstate
+		70, //spawnhealth
+		612, //seestate
+		10, //seesound
+		8, //reactiontime
+		5, //attacksound
+		622, //painstate
+		150, //painchance
+		17, //painsound
+		0, //meleestate
+		616, //missilestate
+		0, //crashstate
+		623, //deathstate
+		631, //xdeathstate
+		22, //deathsound
+		7, //speed
+		1572864, //radius
+		4194304, //height
+		400, //mass
+		0, //damage
+		50, //activesound
 		272629766, //flags
 		0, //flags2
 		0, //raisestate
 		"ACOLYTE" //classname
 	},
-	// Acolyte3
+	// MT_55
 	{
 		143, //doomednum
-		602, //spawnstate
+		600, //spawnstate
 		70, //spawnhealth
-		614, //seestate
-		9, //seesound
+		612, //seestate
+		10, //seesound
 		8, //reactiontime
 		5, //attacksound
-		624, //painstate
+		622, //painstate
 		150, //painchance
-		16, //painsound
+		17, //painsound
 		0, //meleestate
-		618, //missilestate
+		616, //missilestate
 		0, //crashstate
-		625, //deathstate
-		633, //xdeathstate
-		21, //deathsound
+		623, //deathstate
+		631, //xdeathstate
+		22, //deathsound
 		7, //speed
 		1572864, //radius
 		4194304, //height
 		400, //mass
 		0, //damage
-		50, //activesound
+		51, //activesound
 		541065222, //flags
 		0, //flags2
 		0, //raisestate
 		"ACOLYTE" //classname
 	},
-	// Acolyte4
+	// MT_56
 	{
 		146, //doomednum
-		602, //spawnstate
+		600, //spawnstate
 		70, //spawnhealth
-		614, //seestate
-		9, //seesound
+		612, //seestate
+		10, //seesound
 		8, //reactiontime
 		5, //attacksound
-		624, //painstate
+		622, //painstate
 		150, //painchance
-		16, //painsound
+		17, //painsound
 		0, //meleestate
-		618, //missilestate
+		616, //missilestate
 		0, //crashstate
-		625, //deathstate
-		633, //xdeathstate
-		21, //deathsound
-		7, //speed
-		1572864, //radius
-		4194304, //height
-		400, //mass
-		0, //damage
-		48, //activesound
-		809500678, //flags
-		0, //flags2
-		0, //raisestate
-		"ACOLYTE" //classname
-	},
-	// Acolyte5
-	{
-		147, //doomednum
-		602, //spawnstate
-		70, //spawnhealth
-		614, //seestate
-		9, //seesound
-		8, //reactiontime
-		5, //attacksound
-		624, //painstate
-		150, //painchance
-		16, //painsound
-		0, //meleestate
-		618, //missilestate
-		0, //crashstate
-		625, //deathstate
-		633, //xdeathstate
-		21, //deathsound
+		623, //deathstate
+		631, //xdeathstate
+		22, //deathsound
 		7, //speed
 		1572864, //radius
 		4194304, //height
 		400, //mass
 		0, //damage
 		49, //activesound
-		1077936134, //flags
+		809500678, //flags
 		0, //flags2
 		0, //raisestate
 		"ACOLYTE" //classname
 	},
-	// Acolyte6
+	// MT_57
 	{
-		148, //doomednum
-		602, //spawnstate
+		147, //doomednum
+		600, //spawnstate
 		70, //spawnhealth
-		614, //seestate
-		9, //seesound
+		612, //seestate
+		10, //seesound
 		8, //reactiontime
 		5, //attacksound
-		624, //painstate
+		622, //painstate
 		150, //painchance
-		16, //painsound
+		17, //painsound
 		0, //meleestate
-		618, //missilestate
+		616, //missilestate
 		0, //crashstate
-		625, //deathstate
-		633, //xdeathstate
-		21, //deathsound
+		623, //deathstate
+		631, //xdeathstate
+		22, //deathsound
 		7, //speed
 		1572864, //radius
 		4194304, //height
 		400, //mass
 		0, //damage
 		50, //activesound
-		1346371590, //flags
+		1077936134, //flags
 		0, //flags2
 		0, //raisestate
 		"ACOLYTE" //classname
 	},
-	// Acolyte7
+	// MT_58
 	{
-		58, //doomednum
-		602, //spawnstate
+		148, //doomednum
+		600, //spawnstate
 		70, //spawnhealth
-		613, //seestate
-		9, //seesound
+		612, //seestate
+		10, //seesound
 		8, //reactiontime
 		5, //attacksound
 		622, //painstate
 		150, //painchance
-		16, //painsound
+		17, //painsound
 		0, //meleestate
-		618, //missilestate
+		616, //missilestate
 		0, //crashstate
-		625, //deathstate
-		633, //xdeathstate
-		21, //deathsound
+		623, //deathstate
+		631, //xdeathstate
+		22, //deathsound
 		7, //speed
 		1572864, //radius
 		4194304, //height
 		400, //mass
 		0, //damage
-		49, //activesound
+		51, //activesound
+		1346371590, //flags
+		0, //flags2
+		0, //raisestate
+		"ACOLYTE" //classname
+	},
+	// MT_59
+	{
+		232, //doomednum
+		600, //spawnstate
+		60, //spawnhealth
+		612, //seestate
+		10, //seesound
+		8, //reactiontime
+		5, //attacksound
+		622, //painstate
+		150, //painchance
+		17, //painsound
+		0, //meleestate
+		616, //missilestate
+		0, //crashstate
+		623, //deathstate
+		631, //xdeathstate
+		22, //deathsound
+		7, //speed
+		1572864, //radius
+		4194304, //height
+		400, //mass
+		0, //damage
+		51, //activesound
+		1614807046, //flags
+		0, //flags2
+		0, //raisestate
+		"ACOLYTE" //classname
+	},
+	// MT_60
+	{
+		231, //doomednum
+		600, //spawnstate
+		60, //spawnhealth
+		612, //seestate
+		10, //seesound
+		8, //reactiontime
+		5, //attacksound
+		622, //painstate
+		150, //painchance
+		17, //painsound
+		0, //meleestate
+		616, //missilestate
+		0, //crashstate
+		623, //deathstate
+		631, //xdeathstate
+		22, //deathsound
+		7, //speed
+		1572864, //radius
+		4194304, //height
+		400, //mass
+		0, //damage
+		51, //activesound
+		1883242502, //flags
+		0, //flags2
+		0, //raisestate
+		"ACOLYTE" //classname
+	},
+	// MT_61
+	{
+		58, //doomednum
+		600, //spawnstate
+		70, //spawnhealth
+		611, //seestate
+		10, //seesound
+		8, //reactiontime
+		5, //attacksound
+		620, //painstate
+		150, //painchance
+		17, //painsound
+		0, //meleestate
+		616, //missilestate
+		0, //crashstate
+		623, //deathstate
+		631, //xdeathstate
+		22, //deathsound
+		7, //speed
+		1572864, //radius
+		4194304, //height
+		400, //mass
+		0, //damage
+		50, //activesound
 		4194310, //flags
 		0, //flags2
 		0, //raisestate
 		"ACOLYTE" //classname
 	},
-	// Thing60
-	{
-		3005, //doomednum
-		645, //spawnstate
-		400, //spawnhealth
-		646, //seestate
-		66, //seesound
-		8, //reactiontime
-		0, //attacksound
-		664, //painstate
-		128, //painchance
-		64, //painsound
-		0, //meleestate
-		654, //missilestate
-		0, //crashstate
-		665, //deathstate
-		0, //xdeathstate
-		65, //deathsound
-		8, //speed
-		2621440, //radius
-		3670016, //height
-		400, //mass
-		0, //damage
-		67, //activesound
-		4751366, //flags
-		0, //flags2
-		0, //raisestate
-		NULL //classname
-	},
-	// Thing61
-	{
-		187, //doomednum
-		674, //spawnstate
-		500, //spawnhealth
-		675, //seestate
-		66, //seesound
-		8, //reactiontime
-		0, //attacksound
-		685, //painstate
-		128, //painchance
-		64, //painsound
-		0, //meleestate
-		683, //missilestate
-		0, //crashstate
-		686, //deathstate
-		0, //xdeathstate
-		84, //deathsound
-		8, //speed
-		2621440, //radius
-		3670016, //height
-		500, //mass
-		0, //damage
-		67, //activesound
-		4751366, //flags
-		0, //flags2
-		0, //raisestate
-		NULL //classname
-	},
-	// Enforcer
+	// MT_62
 	{
 		3003, //doomednum
-		702, //spawnstate
+		643, //spawnstate
 		300, //spawnhealth
-		706, //seestate
-		82, //seesound
+		647, //seestate
+		83, //seesound
 		8, //reactiontime
 		0, //attacksound
-		718, //painstate
+		659, //painstate
 		100, //painchance
-		83, //painsound
-		714, //meleestate
-		716, //missilestate
+		84, //painsound
+		655, //meleestate
+		657, //missilestate
 		0, //crashstate
-		720, //deathstate
+		661, //deathstate
 		0, //xdeathstate
-		84, //deathsound
+		85, //deathsound
 		8, //speed
 		1310720, //radius
 		3932160, //height
 		500, //mass
 		0, //damage
-		85, //activesound
+		86, //activesound
+		4718598, //flags
+		0, //flags2
+		0, //raisestate
+		"TEMPLAR" //classname
+	},
+	// MT_63
+	{
+		3005, //doomednum
+		681, //spawnstate
+		400, //spawnhealth
+		682, //seestate
+		67, //seesound
+		8, //reactiontime
+		0, //attacksound
+		700, //painstate
+		128, //painchance
+		65, //painsound
+		0, //meleestate
+		690, //missilestate
+		0, //crashstate
+		701, //deathstate
+		0, //xdeathstate
+		66, //deathsound
+		8, //speed
+		2621440, //radius
+		3670016, //height
+		400, //mass
+		0, //damage
+		68, //activesound
 		4751366, //flags
 		0, //flags2
 		0, //raisestate
-		"Enforcer" //classname
+		NULL //classname
 	},
-	// Oracle
+	// MT_64
+	{
+		187, //doomednum
+		711, //spawnstate
+		500, //spawnhealth
+		712, //seestate
+		67, //seesound
+		8, //reactiontime
+		0, //attacksound
+		722, //painstate
+		128, //painchance
+		65, //painsound
+		0, //meleestate
+		720, //missilestate
+		0, //crashstate
+		723, //deathstate
+		0, //xdeathstate
+		85, //deathsound
+		8, //speed
+		2621440, //radius
+		3670016, //height
+		500, //mass
+		0, //damage
+		68, //activesound
+		38305798, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_65
 	{
 		199, //doomednum
-		740, //spawnstate
-		31, //spawnhealth
+		739, //spawnstate
+		1, //spawnhealth
 		0, //seestate
 		0, //seesound
 		8, //reactiontime
 		0, //attacksound
-		741, //painstate
-		200, //painchance
+		0, //painstate
+		0, //painchance
 		0, //painsound
 		0, //meleestate
 		0, //missilestate
-		741, //crashstate
-		748, //deathstate
+		0, //crashstate
+		740, //deathstate
 		0, //xdeathstate
 		0, //deathsound
 		0, //speed
@@ -1880,70 +1938,70 @@ mobjinfo_t mobjinfo[] =
 		100, //mass
 		0, //damage
 		0, //activesound
-		4718598, //flags
+		38273030, //flags
 		0, //flags2
 		0, //raisestate
 		"ORACLE" //classname
 	},
-	// Priest
+	// MT_66
 	{
 		12, //doomednum
-		757, //spawnstate
+		756, //spawnstate
 		800, //spawnhealth
-		759, //seestate
-		112, //seesound
+		758, //seestate
+		113, //seesound
 		8, //reactiontime
-		90, //attacksound
+		92, //attacksound
 		0, //painstate
 		0, //painchance
-		111, //painsound
-		767, //meleestate
-		770, //missilestate
+		112, //painsound
+		766, //meleestate
+		769, //missilestate
 		0, //crashstate
-		773, //deathstate
+		772, //deathstate
 		0, //xdeathstate
-		19, //deathsound
+		20, //deathsound
 		10, //speed
 		983040, //radius
 		3670016, //height
 		100, //mass
 		0, //damage
-		102, //activesound
-		4770310, //flags
+		104, //activesound
+		38324742, //flags
 		0, //flags2
 		0, //raisestate
 		"PRIEST" //classname
 	},
-	// Thing65
+	// MT_67
 	{
 		129, //doomednum
-		797, //spawnstate
-		500, //spawnhealth
-		799, //seestate
-		125, //seesound
+		796, //spawnstate
+		1000, //spawnhealth
+		798, //seestate
+		126, //seesound
 		8, //reactiontime
-		90, //attacksound
-		816, //painstate
+		92, //attacksound
+		815, //painstate
 		250, //painchance
-		126, //painsound
-		810, //meleestate
-		813, //missilestate
+		127, //painsound
+		809, //meleestate
+		812, //missilestate
 		0, //crashstate
-		817, //deathstate
+		816, //deathstate
 		0, //xdeathstate
-		128, //deathsound
-		10, //speed
+		129, //deathsound
+		12, //speed
 		4194304, //radius
 		4194304, //height
 		1000, //mass
 		0, //damage
-		127, //activesound
-		-2008757753, //flags
+		128, //activesound
+		-1975203321, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing66
+	// MT_68
 	{
 		-1, //doomednum
 		834, //spawnstate
@@ -1967,15 +2025,15 @@ mobjinfo_t mobjinfo[] =
 		100, //mass
 		0, //damage
 		0, //activesound
-		134480400, //flags
+		33558544, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing67
+	// MT_69
 	{
 		-1, //doomednum
-		843, //spawnstate
+		841, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -1996,218 +2054,189 @@ mobjinfo_t mobjinfo[] =
 		100, //mass
 		0, //damage
 		0, //activesound
-		528, //flags
+		33558544, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing68
-	{
-		-1, //doomednum
-		850, //spawnstate
-		1000, //spawnhealth
-		0, //seestate
-		0, //seesound
-		8, //reactiontime
-		0, //attacksound
-		0, //painstate
-		0, //painchance
-		0, //painsound
-		0, //meleestate
-		0, //missilestate
-		0, //crashstate
-		0, //deathstate
-		0, //xdeathstate
-		0, //deathsound
-		0, //speed
-		1310720, //radius
-		1048576, //height
-		100, //mass
-		0, //damage
-		0, //activesound
-		528, //flags
-		0, //flags2
-		0, //raisestate
-		NULL //classname
-	},
-	// Thing69
+	// MT_70
 	{
 		75, //doomednum
-		861, //spawnstate
-		500, //spawnhealth
-		863, //seestate
-		125, //seesound
+		796, //spawnstate
+		1200, //spawnhealth
+		798, //seestate
+		126, //seesound
 		8, //reactiontime
-		90, //attacksound
-		880, //painstate
+		92, //attacksound
+		815, //painstate
 		50, //painchance
-		126, //painsound
-		874, //meleestate
-		877, //missilestate
+		127, //painsound
+		809, //meleestate
+		852, //missilestate
 		0, //crashstate
-		817, //deathstate
-		0, //xdeathstate
-		128, //deathsound
-		10, //speed
-		1572864, //radius
-		4194304, //height
-		1000, //mass
-		0, //damage
-		127, //activesound
-		-2008757753, //flags
-		0, //flags2
-		0, //raisestate
-		NULL //classname
-	},
-	// Thing70
-	{
-		76, //doomednum
-		881, //spawnstate
-		500, //spawnhealth
-		892, //seestate
-		125, //seesound
-		8, //reactiontime
-		90, //attacksound
-		909, //painstate
-		50, //painchance
-		126, //painsound
-		903, //meleestate
-		906, //missilestate
-		0, //crashstate
-		817, //deathstate
-		0, //xdeathstate
-		128, //deathsound
-		10, //speed
-		1572864, //radius
-		4194304, //height
-		1000, //mass
-		0, //damage
-		127, //activesound
-		-2008757753, //flags
-		0, //flags2
-		0, //raisestate
-		NULL //classname
-	},
-	// Thing71
-	{
-		167, //doomednum
-		910, //spawnstate
-		500, //spawnhealth
-		912, //seestate
-		125, //seesound
-		8, //reactiontime
-		90, //attacksound
-		929, //painstate
-		50, //painchance
-		126, //painsound
-		923, //meleestate
-		926, //missilestate
-		0, //crashstate
-		817, //deathstate
-		0, //xdeathstate
-		128, //deathsound
-		10, //speed
-		1572864, //radius
-		4194304, //height
-		1000, //mass
-		0, //damage
-		127, //activesound
-		-2008757753, //flags
-		0, //flags2
-		0, //raisestate
-		NULL //classname
-	},
-	// Thing72
-	{
-		168, //doomednum
-		930, //spawnstate
-		500, //spawnhealth
-		932, //seestate
-		125, //seesound
-		8, //reactiontime
-		90, //attacksound
-		949, //painstate
-		50, //painchance
-		126, //painsound
-		943, //meleestate
-		946, //missilestate
-		0, //crashstate
-		817, //deathstate
-		0, //xdeathstate
-		128, //deathsound
-		10, //speed
-		1572864, //radius
-		4194304, //height
-		1000, //mass
-		0, //damage
-		127, //activesound
-		-2008757753, //flags
-		0, //flags2
-		0, //raisestate
-		NULL //classname
-	},
-	// Thing73
-	{
-		128, //doomednum
-		950, //spawnstate
-		1500, //spawnhealth
-		964, //seestate
-		124, //seesound
-		8, //reactiontime
-		90, //attacksound
-		981, //painstate
-		255, //painchance
-		126, //painsound
-		975, //meleestate
-		978, //missilestate
-		0, //crashstate
-		982, //deathstate
+		816, //deathstate
 		0, //xdeathstate
 		129, //deathsound
-		10, //speed
-		8519680, //radius
-		13107200, //height
+		12, //speed
+		1572864, //radius
+		4194304, //height
 		1000, //mass
 		0, //damage
-		127, //activesound
-		-2008757753, //flags
+		128, //activesound
+		-1975203321, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing74
+	// MT_71
 	{
-		-1, //doomednum
-		988, //spawnstate
-		100, //spawnhealth
-		989, //seestate
+		76, //doomednum
+		855, //spawnstate
+		1500, //spawnhealth
+		866, //seestate
+		126, //seesound
+		8, //reactiontime
+		92, //attacksound
+		883, //painstate
+		50, //painchance
+		127, //painsound
+		877, //meleestate
+		880, //missilestate
+		0, //crashstate
+		816, //deathstate
+		0, //xdeathstate
+		129, //deathsound
+		12, //speed
+		1572864, //radius
+		4194304, //height
+		1000, //mass
+		0, //damage
+		128, //activesound
+		-1975203321, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_72
+	{
+		167, //doomednum
+		796, //spawnstate
+		1700, //spawnhealth
+		798, //seestate
+		126, //seesound
+		8, //reactiontime
+		92, //attacksound
+		815, //painstate
+		50, //painchance
+		127, //painsound
+		809, //meleestate
+		884, //missilestate
+		0, //crashstate
+		816, //deathstate
+		0, //xdeathstate
+		129, //deathsound
+		12, //speed
+		1572864, //radius
+		4194304, //height
+		1000, //mass
+		0, //damage
+		128, //activesound
+		-1975203321, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_73
+	{
+		168, //doomednum
+		796, //spawnstate
+		2000, //spawnhealth
+		798, //seestate
+		126, //seesound
+		8, //reactiontime
+		92, //attacksound
+		815, //painstate
+		50, //painchance
+		127, //painsound
+		809, //meleestate
+		887, //missilestate
+		0, //crashstate
+		816, //deathstate
+		0, //xdeathstate
+		129, //deathsound
+		12, //speed
+		1572864, //radius
+		4194304, //height
+		1000, //mass
+		0, //damage
+		128, //activesound
+		-1975203321, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_74
+	{
+		128, //doomednum
+		890, //spawnstate
+		2500, //spawnhealth
+		904, //seestate
 		125, //seesound
 		8, //reactiontime
-		90, //attacksound
-		1001, //painstate
+		92, //attacksound
+		921, //painstate
 		255, //painchance
-		126, //painsound
-		995, //meleestate
-		998, //missilestate
+		127, //painsound
+		915, //meleestate
+		918, //missilestate
 		0, //crashstate
-		1002, //deathstate
+		922, //deathstate
 		0, //xdeathstate
-		128, //deathsound
+		130, //deathsound
 		13, //speed
 		8519680, //radius
 		13107200, //height
 		1000, //mass
 		0, //damage
-		127, //activesound
-		-2008757753, //flags
+		128, //activesound
+		-1975203321, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing75
+	// MT_75
+	{
+		-1, //doomednum
+		929, //spawnstate
+		990, //spawnhealth
+		930, //seestate
+		126, //seesound
+		8, //reactiontime
+		92, //attacksound
+		942, //painstate
+		255, //painchance
+		127, //painsound
+		936, //meleestate
+		939, //missilestate
+		0, //crashstate
+		943, //deathstate
+		0, //xdeathstate
+		129, //deathsound
+		14, //speed
+		8519680, //radius
+		13107200, //height
+		1000, //mass
+		0, //damage
+		128, //activesound
+		-1975203321, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_76
 	{
 		26, //doomednum
-		1017, //spawnstate
+		958, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -2228,18 +2257,18 @@ mobjinfo_t mobjinfo[] =
 		100, //mass
 		0, //damage
 		0, //activesound
-		2, //flags
+		33554434, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing76
+	// MT_77
 	{
 		198, //doomednum
-		1018, //spawnstate
+		959, //spawnstate
 		1000, //spawnhealth
-		1019, //seestate
-		19, //seesound
+		960, //seestate
+		20, //seesound
 		8, //reactiontime
 		0, //attacksound
 		0, //painstate
@@ -2257,18 +2286,18 @@ mobjinfo_t mobjinfo[] =
 		100, //mass
 		0, //damage
 		0, //activesound
-		2, //flags
+		33554434, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing77
+	// MT_78
 	{
 		-1, //doomednum
-		1024, //spawnstate
+		965, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
-		106, //seesound
+		107, //seesound
 		8, //reactiontime
 		0, //attacksound
 		0, //painstate
@@ -2277,9 +2306,9 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		149, //deathstate
+		153, //deathstate
 		0, //xdeathstate
-		107, //deathsound
+		108, //deathsound
 		1966080, //speed
 		524288, //radius
 		1048576, //height
@@ -2291,13 +2320,13 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing78
+	// MT_79
 	{
 		-1, //doomednum
-		1024, //spawnstate
+		965, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
-		106, //seesound
+		107, //seesound
 		8, //reactiontime
 		0, //attacksound
 		0, //painstate
@@ -2306,9 +2335,9 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		149, //deathstate
+		153, //deathstate
 		0, //xdeathstate
-		107, //deathsound
+		108, //deathsound
 		1966080, //speed
 		524288, //radius
 		1048576, //height
@@ -2320,13 +2349,13 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing79
+	// MT_80
 	{
 		-1, //doomednum
-		1027, //spawnstate
+		968, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
-		106, //seesound
+		107, //seesound
 		8, //reactiontime
 		0, //attacksound
 		0, //painstate
@@ -2335,9 +2364,9 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		149, //deathstate
+		153, //deathstate
 		0, //xdeathstate
-		107, //deathsound
+		108, //deathsound
 		1966080, //speed
 		524288, //radius
 		1048576, //height
@@ -2349,13 +2378,13 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing80
+	// MT_81
 	{
 		-1, //doomednum
-		1027, //spawnstate
+		968, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
-		106, //seesound
+		107, //seesound
 		8, //reactiontime
 		0, //attacksound
 		0, //painstate
@@ -2364,9 +2393,9 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		149, //deathstate
+		153, //deathstate
 		0, //xdeathstate
-		107, //deathsound
+		108, //deathsound
 		1966080, //speed
 		524288, //radius
 		1048576, //height
@@ -2378,13 +2407,13 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing81
+	// MT_82
 	{
 		-1, //doomednum
-		1024, //spawnstate
+		965, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
-		106, //seesound
+		107, //seesound
 		8, //reactiontime
 		0, //attacksound
 		0, //painstate
@@ -2393,9 +2422,9 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		149, //deathstate
+		153, //deathstate
 		0, //xdeathstate
-		107, //deathsound
+		108, //deathsound
 		1966080, //speed
 		524288, //radius
 		1048576, //height
@@ -2407,10 +2436,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing82
+	// MT_83
 	{
 		-1, //doomednum
-		1032, //spawnstate
+		973, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -2436,13 +2465,13 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing83
+	// MT_84
 	{
 		-1, //doomednum
-		1035, //spawnstate
+		976, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
-		106, //seesound
+		107, //seesound
 		8, //reactiontime
 		0, //attacksound
 		0, //painstate
@@ -2451,9 +2480,9 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		149, //deathstate
+		155, //deathstate
 		0, //xdeathstate
-		107, //deathsound
+		108, //deathsound
 		1179648, //speed
 		1310720, //radius
 		2621440, //height
@@ -2465,13 +2494,13 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing84
+	// MT_85
 	{
 		-1, //doomednum
-		1035, //spawnstate
+		976, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
-		106, //seesound
+		107, //seesound
 		8, //reactiontime
 		0, //attacksound
 		0, //painstate
@@ -2480,9 +2509,9 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		149, //deathstate
+		155, //deathstate
 		0, //xdeathstate
-		107, //deathsound
+		108, //deathsound
 		1179648, //speed
 		1310720, //radius
 		2621440, //height
@@ -2494,13 +2523,13 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing85
+	// MT_86
 	{
 		-1, //doomednum
-		1040, //spawnstate
+		981, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
-		106, //seesound
+		107, //seesound
 		8, //reactiontime
 		0, //attacksound
 		0, //painstate
@@ -2509,9 +2538,9 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		153, //deathstate
+		159, //deathstate
 		0, //xdeathstate
-		107, //deathsound
+		108, //deathsound
 		1441792, //speed
 		524288, //radius
 		1572864, //height
@@ -2523,14 +2552,14 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing86
+	// MT_87
 	{
 		-1, //doomednum
-		1045, //spawnstate
+		981, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
-		0, //seesound
-		90, //reactiontime
+		107, //seesound
+		8, //reactiontime
 		0, //attacksound
 		0, //painstate
 		0, //painchance
@@ -2538,7 +2567,36 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		148, //deathstate
+		159, //deathstate
+		0, //xdeathstate
+		108, //deathsound
+		1441792, //speed
+		524288, //radius
+		1572864, //height
+		100, //mass
+		50, //damage
+		0, //activesound
+		-2147416560, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_88
+	{
+		-1, //doomednum
+		986, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		70, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		154, //deathstate
 		0, //xdeathstate
 		0, //deathsound
 		1179648, //speed
@@ -2552,13 +2610,13 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing87
+	// MT_89
 	{
 		-1, //doomednum
-		1049, //spawnstate
+		990, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
-		106, //seesound
+		107, //seesound
 		8, //reactiontime
 		0, //attacksound
 		0, //painstate
@@ -2567,9 +2625,9 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		148, //deathstate
+		154, //deathstate
 		0, //xdeathstate
-		107, //deathsound
+		108, //deathsound
 		1835008, //speed
 		524288, //radius
 		1048576, //height
@@ -2581,13 +2639,13 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing88
+	// MT_90
 	{
 		-1, //doomednum
-		1049, //spawnstate
+		990, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
-		106, //seesound
+		107, //seesound
 		8, //reactiontime
 		0, //attacksound
 		0, //painstate
@@ -2596,9 +2654,9 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		148, //deathstate
+		154, //deathstate
 		0, //xdeathstate
-		107, //deathsound
+		108, //deathsound
 		1835008, //speed
 		524288, //radius
 		1048576, //height
@@ -2610,126 +2668,155 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing89
+	// MT_91
 	{
 		3006, //doomednum
-		1054, //spawnstate
+		995, //spawnstate
 		100, //spawnhealth
-		1055, //seestate
-		78, //seesound
+		996, //seestate
+		79, //seesound
 		8, //reactiontime
 		0, //attacksound
-		1059, //painstate
+		1001, //painstate
 		255, //painchance
 		0, //painsound
 		0, //meleestate
-		1056, //missilestate
+		998, //missilestate
 		0, //crashstate
-		1060, //deathstate
+		1002, //deathstate
 		0, //xdeathstate
-		79, //deathsound
+		80, //deathsound
 		7, //speed
 		1507328, //radius
 		3473408, //height
 		300, //mass
 		0, //damage
-		80, //activesound
+		81, //activesound
 		4770566, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing90
+	// MT_92
 	{
 		186, //doomednum
-		1067, //spawnstate
+		1009, //spawnstate
 		80, //spawnhealth
-		1070, //seestate
-		95, //seesound
+		1012, //seestate
+		97, //seesound
 		8, //reactiontime
-		98, //attacksound
-		1091, //painstate
+		100, //attacksound
+		1033, //painstate
 		40, //painchance
-		98, //painsound
-		1076, //meleestate
+		100, //painsound
+		1018, //meleestate
 		0, //missilestate
 		0, //crashstate
-		1092, //deathstate
+		1034, //deathstate
 		0, //xdeathstate
-		97, //deathsound
+		99, //deathsound
 		16, //speed
 		2031616, //radius
 		1638400, //height
 		100, //mass
 		0, //damage
-		95, //activesound
+		97, //activesound
 		4753158, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing91
+	// MT_93
 	{
 		16, //doomednum
-		1105, //spawnstate
+		1047, //spawnstate
 		1000, //spawnhealth
-		1107, //seestate
-		116, //seesound
+		1049, //seestate
+		117, //seesound
 		8, //reactiontime
 		0, //attacksound
 		0, //painstate
 		0, //painchance
 		0, //painsound
 		0, //meleestate
-		1115, //missilestate
+		1057, //missilestate
 		0, //crashstate
-		1125, //deathstate
+		1067, //deathstate
 		0, //xdeathstate
-		114, //deathsound
+		115, //deathsound
 		12, //speed
 		2621440, //radius
 		7208960, //height
 		1000, //mass
 		0, //damage
-		115, //activesound
+		116, //activesound
 		4719622, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing92
+	// MT_94
 	{
-		71, //doomednum
-		1146, //spawnstate
-		1100, //spawnhealth
-		1148, //seestate
+		-1, //doomednum
+		1090, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
 		0, //seesound
 		8, //reactiontime
-		90, //attacksound
-		1164, //painstate
-		64, //painchance
-		109, //painsound
-		1156, //meleestate
-		1160, //missilestate
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
 		0, //crashstate
-		1166, //deathstate
+		0, //deathstate
 		0, //xdeathstate
-		65, //deathsound
+		0, //deathsound
+		25, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		528400, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_95
+	{
+		71, //doomednum
+		1093, //spawnstate
+		1100, //spawnhealth
+		1095, //seestate
+		0, //seesound
+		8, //reactiontime
+		92, //attacksound
+		1111, //painstate
+		50, //painchance
+		110, //painsound
+		1103, //meleestate
+		1107, //missilestate
+		0, //crashstate
+		1113, //deathstate
+		0, //xdeathstate
+		66, //deathsound
 		26, //speed
 		2949120, //radius
 		3932160, //height
 		800, //mass
 		4, //damage
-		110, //activesound
-		4737542, //flags
+		111, //activesound
+		38291974, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing93
+	// MT_96
 	{
 		-1, //doomednum
-		1180, //spawnstate
+		1127, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -2750,18 +2837,18 @@ mobjinfo_t mobjinfo[] =
 		100, //mass
 		0, //damage
 		0, //activesound
-		524304, //flags
+		528400, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing94
+	// MT_97
 	{
 		-1, //doomednum
-		240, //spawnstate
+		235, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
-		101, //seesound
+		103, //seesound
 		8, //reactiontime
 		0, //attacksound
 		0, //painstate
@@ -2770,7 +2857,7 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		241, //deathstate
+		236, //deathstate
 		0, //xdeathstate
 		0, //deathsound
 		1310720, //speed
@@ -2784,13 +2871,13 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing95
+	// MT_98
 	{
 		-1, //doomednum
-		242, //spawnstate
+		237, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
-		102, //seesound
+		104, //seesound
 		8, //reactiontime
 		0, //attacksound
 		0, //painstate
@@ -2813,13 +2900,13 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing96
+	// MT_99
 	{
 		-1, //doomednum
-		243, //spawnstate
+		238, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
-		71, //seesound
+		72, //seesound
 		8, //reactiontime
 		0, //attacksound
 		0, //painstate
@@ -2828,7 +2915,7 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		262, //deathstate
+		257, //deathstate
 		0, //xdeathstate
 		6, //deathsound
 		1310720, //speed
@@ -2842,13 +2929,13 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing97
+	// MT_100
 	{
 		-1, //doomednum
-		243, //spawnstate
+		238, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
-		71, //seesound
+		72, //seesound
 		8, //reactiontime
 		0, //attacksound
 		0, //painstate
@@ -2857,7 +2944,7 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		261, //deathstate
+		256, //deathstate
 		0, //xdeathstate
 		6, //deathsound
 		1310720, //speed
@@ -2871,13 +2958,13 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing98
+	// MT_101
 	{
 		-1, //doomednum
-		244, //spawnstate
+		239, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
-		71, //seesound
+		72, //seesound
 		8, //reactiontime
 		0, //attacksound
 		0, //painstate
@@ -2886,7 +2973,7 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		262, //deathstate
+		257, //deathstate
 		0, //xdeathstate
 		6, //deathsound
 		1310720, //speed
@@ -2900,10 +2987,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing99
+	// MT_102
 	{
 		-1, //doomednum
-		246, //spawnstate
+		241, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		1, //seesound
@@ -2915,9 +3002,9 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		148, //deathstate
+		154, //deathstate
 		0, //xdeathstate
-		68, //deathsound
+		69, //deathsound
 		1966080, //speed
 		655360, //radius
 		655360, //height
@@ -2929,10 +3016,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing100
+	// MT_103
 	{
 		-1, //doomednum
-		247, //spawnstate
+		242, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		1, //seesound
@@ -2944,7 +3031,7 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		248, //deathstate
+		243, //deathstate
 		0, //xdeathstate
 		0, //deathsound
 		1966080, //speed
@@ -2958,10 +3045,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing101
+	// MT_104
 	{
 		-1, //doomednum
-		173, //spawnstate
+		179, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -2973,7 +3060,7 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		135, //deathstate
+		140, //deathstate
 		0, //xdeathstate
 		0, //deathsound
 		2621440, //speed
@@ -2987,13 +3074,13 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing102
+	// MT_105
 	{
 		-1, //doomednum
-		173, //spawnstate
+		179, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
-		88, //seesound
+		89, //seesound
 		8, //reactiontime
 		0, //attacksound
 		0, //painstate
@@ -3002,7 +3089,7 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		131, //deathstate
+		136, //deathstate
 		0, //xdeathstate
 		0, //deathsound
 		2621440, //speed
@@ -3016,13 +3103,13 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing103
+	// MT_106
 	{
 		-1, //doomednum
-		179, //spawnstate
+		185, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
-		103, //seesound
+		105, //seesound
 		30, //reactiontime
 		0, //attacksound
 		0, //painstate
@@ -3031,9 +3118,9 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		194, //deathstate
+		198, //deathstate
 		0, //xdeathstate
-		104, //deathsound
+		106, //deathsound
 		983040, //speed
 		851968, //radius
 		851968, //height
@@ -3045,71 +3132,42 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing104
-	{
-		-1, //doomednum
-		177, //spawnstate
-		1000, //spawnhealth
-		0, //seestate
-		103, //seesound
-		40, //reactiontime
-		0, //attacksound
-		0, //painstate
-		0, //painchance
-		0, //painsound
-		0, //meleestate
-		0, //missilestate
-		0, //crashstate
-		216, //deathstate
-		0, //xdeathstate
-		104, //deathsound
-		983040, //speed
-		851968, //radius
-		851968, //height
-		20, //mass
-		1, //damage
-		0, //activesound
-		66576, //flags
-		0, //flags2
-		0, //raisestate
-		NULL //classname
-	},
-	// Thing105
-	{
-		-1, //doomednum
-		181, //spawnstate
-		1000, //spawnhealth
-		0, //seestate
-		103, //seesound
-		40, //reactiontime
-		0, //attacksound
-		0, //painstate
-		0, //painchance
-		0, //painsound
-		0, //meleestate
-		0, //missilestate
-		0, //crashstate
-		230, //deathstate
-		0, //xdeathstate
-		104, //deathsound
-		983040, //speed
-		851968, //radius
-		851968, //height
-		20, //mass
-		1, //damage
-		0, //activesound
-		66576, //flags
-		0, //flags2
-		0, //raisestate
-		NULL //classname
-	},
-	// Thing106
+	// MT_107
 	{
 		-1, //doomednum
 		183, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
-		103, //seesound
+		105, //seesound
+		40, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		220, //deathstate
+		0, //xdeathstate
+		106, //deathsound
+		983040, //speed
+		851968, //radius
+		851968, //height
+		20, //mass
+		1, //damage
+		0, //activesound
+		66576, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_108
+	{
+		-1, //doomednum
+		187, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		105, //seesound
 		15, //reactiontime
 		0, //attacksound
 		0, //painstate
@@ -3118,9 +3176,9 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		185, //deathstate
+		189, //deathstate
 		0, //xdeathstate
-		104, //deathsound
+		106, //deathsound
 		1638400, //speed
 		851968, //radius
 		851968, //height
@@ -3132,14 +3190,159 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing107
+	// MT_109
 	{
 		-1, //doomednum
-		231, //spawnstate
+		221, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
-		80, //reactiontime
+		120, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		230, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		16, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_110
+	{
+		-1, //doomednum
+		244, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		88, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		248, //deathstate
+		0, //xdeathstate
+		106, //deathsound
+		1310720, //speed
+		851968, //radius
+		524288, //height
+		100, //mass
+		1, //damage
+		0, //activesound
+		67088, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_111
+	{
+		-1, //doomednum
+		253, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		255, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		2293760, //speed
+		851968, //radius
+		851968, //height
+		100, //mass
+		10, //damage
+		0, //activesound
+		67088, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_112
+	{
+		-1, //doomednum
+		1135, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		8, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		1138, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		983040, //speed
+		524288, //radius
+		720896, //height
+		10, //mass
+		4, //damage
+		0, //activesound
+		66576, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_113
+	{
+		-1, //doomednum
+		1135, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		8, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		1138, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		2293760, //speed
+		524288, //radius
+		720896, //height
+		50, //mass
+		1, //damage
+		0, //activesound
+		66576, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_114
+	{
+		-1, //doomednum
+		181, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
 		0, //attacksound
 		0, //painstate
 		0, //painchance
@@ -3156,157 +3359,12 @@ mobjinfo_t mobjinfo[] =
 		100, //mass
 		0, //damage
 		0, //activesound
-		134480400, //flags
+		528, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing108
-	{
-		-1, //doomednum
-		217, //spawnstate
-		1000, //spawnhealth
-		0, //seestate
-		0, //seesound
-		120, //reactiontime
-		0, //attacksound
-		0, //painstate
-		0, //painchance
-		0, //painsound
-		0, //meleestate
-		0, //missilestate
-		0, //crashstate
-		226, //deathstate
-		0, //xdeathstate
-		0, //deathsound
-		0, //speed
-		1310720, //radius
-		1048576, //height
-		100, //mass
-		0, //damage
-		0, //activesound
-		16, //flags
-		0, //flags2
-		0, //raisestate
-		NULL //classname
-	},
-	// Thing109
-	{
-		-1, //doomednum
-		249, //spawnstate
-		1000, //spawnhealth
-		0, //seestate
-		87, //seesound
-		8, //reactiontime
-		0, //attacksound
-		0, //painstate
-		0, //painchance
-		0, //painsound
-		0, //meleestate
-		0, //missilestate
-		0, //crashstate
-		253, //deathstate
-		0, //xdeathstate
-		104, //deathsound
-		1310720, //speed
-		851968, //radius
-		524288, //height
-		100, //mass
-		1, //damage
-		0, //activesound
-		67088, //flags
-		0, //flags2
-		0, //raisestate
-		NULL //classname
-	},
-	// Thing110
-	{
-		-1, //doomednum
-		258, //spawnstate
-		1000, //spawnhealth
-		0, //seestate
-		0, //seesound
-		8, //reactiontime
-		0, //attacksound
-		0, //painstate
-		0, //painchance
-		0, //painsound
-		0, //meleestate
-		0, //missilestate
-		0, //crashstate
-		260, //deathstate
-		0, //xdeathstate
-		0, //deathsound
-		2293760, //speed
-		851968, //radius
-		851968, //height
-		100, //mass
-		10, //damage
-		0, //activesound
-		67088, //flags
-		0, //flags2
-		0, //raisestate
-		NULL //classname
-	},
-	// Thing111
-	{
-		-1, //doomednum
-		1188, //spawnstate
-		1000, //spawnhealth
-		0, //seestate
-		7, //seesound
-		8, //reactiontime
-		0, //attacksound
-		0, //painstate
-		0, //painchance
-		0, //painsound
-		0, //meleestate
-		0, //missilestate
-		0, //crashstate
-		1190, //deathstate
-		0, //xdeathstate
-		0, //deathsound
-		983040, //speed
-		524288, //radius
-		720896, //height
-		10, //mass
-		3, //damage
-		0, //activesound
-		66576, //flags
-		0, //flags2
-		0, //raisestate
-		NULL //classname
-	},
-	// Thing112
-	{
-		-1, //doomednum
-		1188, //spawnstate
-		1000, //spawnhealth
-		0, //seestate
-		7, //seesound
-		8, //reactiontime
-		0, //attacksound
-		0, //painstate
-		0, //painchance
-		0, //painsound
-		0, //meleestate
-		0, //missilestate
-		0, //crashstate
-		1190, //deathstate
-		0, //xdeathstate
-		0, //deathsound
-		2293760, //speed
-		524288, //radius
-		720896, //height
-		50, //mass
-		1, //damage
-		0, //activesound
-		66576, //flags
-		0, //flags2
-		0, //raisestate
-		NULL //classname
-	},
-	// Thing113
+	// MT_115
 	{
 		-1, //doomednum
 		175, //spawnstate
@@ -3330,44 +3388,15 @@ mobjinfo_t mobjinfo[] =
 		100, //mass
 		0, //damage
 		0, //activesound
-		528, //flags
-		0, //flags2
-		0, //raisestate
-		NULL //classname
-	},
-	// Puff
-	{
-		-1, //doomednum
-		169, //spawnstate
-		1000, //spawnhealth
-		0, //seestate
-		0, //seesound
-		8, //reactiontime
-		0, //attacksound
-		0, //painstate
-		0, //painchance
-		0, //painsound
-		0, //meleestate
-		0, //missilestate
-		0, //crashstate
-		0, //deathstate
-		0, //xdeathstate
-		0, //deathsound
-		0, //speed
-		1310720, //radius
-		1048576, //height
-		100, //mass
-		0, //damage
-		0, //activesound
 		262672, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing115
+	// MT_116
 	{
 		-1, //doomednum
-		140, //spawnstate
+		145, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -3393,10 +3422,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing116
+	// MT_117
 	{
 		-1, //doomednum
-		159, //spawnstate
+		165, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -3422,10 +3451,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// TeleportFog
+	// MT_118
 	{
 		-1, //doomednum
-		269, //spawnstate
+		264, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -3451,10 +3480,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// ItemRespawnFog
+	// MT_119
 	{
 		-1, //doomednum
-		279, //spawnstate
+		274, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -3480,7 +3509,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// TeleportSpot
+	// MT_120
 	{
 		14, //doomednum
 		0, //spawnstate
@@ -3509,12 +3538,12 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing120
+	// MT_121
 	{
 		24, //doomednum
-		1196, //spawnstate
+		1144, //spawnstate
 		1000, //spawnhealth
-		1197, //seestate
+		1145, //seestate
 		0, //seesound
 		60, //reactiontime
 		0, //attacksound
@@ -3538,22 +3567,22 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing121
+	// MT_122
 	{
 		27, //doomednum
-		1199, //spawnstate
+		1147, //spawnstate
 		125, //spawnhealth
-		1200, //seestate
+		1148, //seestate
 		0, //seesound
 		8, //reactiontime
 		0, //attacksound
-		1201, //painstate
+		1149, //painstate
 		0, //painchance
 		0, //painsound
 		0, //meleestate
-		1201, //missilestate
+		1149, //missilestate
 		0, //crashstate
-		1204, //deathstate
+		1152, //deathstate
 		0, //xdeathstate
 		6, //deathsound
 		0, //speed
@@ -3567,10 +3596,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing122
+	// MT_123
 	{
 		45, //doomednum
-		1210, //spawnstate
+		1158, //spawnstate
 		100, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -3582,24 +3611,24 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		1212, //deathstate
+		1160, //deathstate
 		0, //xdeathstate
-		104, //deathsound
-		0, //speed
+		106, //deathsound
+		16, //speed
 		1310720, //radius
 		4980736, //height
 		10000000, //mass
 		0, //damage
 		0, //activesound
-		557062, //flags
+		559110, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing123
+	// MT_124
 	{
 		182, //doomednum
-		1221, //spawnstate
+		1169, //spawnstate
 		80, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -3611,24 +3640,24 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		1225, //deathstate
+		1173, //deathstate
 		0, //xdeathstate
-		104, //deathsound
-		0, //speed
+		106, //deathsound
+		27, //speed
 		1703936, //radius
 		8388608, //height
 		100000, //mass
 		0, //damage
 		0, //activesound
-		557062, //flags
+		559110, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// MedPatch
+	// MT_125
 	{
 		2011, //doomednum
-		1429, //spawnstate
+		1383, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -3654,10 +3683,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Med_patch" //classname
 	},
-	// MedicalKit
+	// MT_126
 	{
 		2012, //doomednum
-		1430, //spawnstate
+		1384, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -3683,10 +3712,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Medical_kit" //classname
 	},
-	// FullHealth
+	// MT_127
 	{
 		83, //doomednum
-		1298, //spawnstate
+		1245, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -3710,12 +3739,12 @@ mobjinfo_t mobjinfo[] =
 		1, //flags
 		0, //flags2
 		0, //raisestate
-		"full_health" //classname
+		"Surgery_Kit" //classname
 	},
-	// ThaliteOre
+	// MT_128
 	{
 		59, //doomednum
-		1239, //spawnstate
+		1185, //spawnstate
 		10, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -3727,24 +3756,24 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		1240, //deathstate
+		1186, //deathstate
 		0, //xdeathstate
-		104, //deathsound
+		106, //deathsound
 		0, //speed
 		1048576, //radius
 		1048576, //height
-		4, //mass
+		10, //mass
 		0, //damage
 		0, //activesound
 		557063, //flags
 		0, //flags2
 		0, //raisestate
-		"Thalite_Ore" //classname
+		"Degnin_Ore" //classname
 	},
-	// MetalArmor
+	// MT_129
 	{
 		2019, //doomednum
-		1348, //spawnstate
+		1295, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -3770,10 +3799,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Metal_Armor" //classname
 	},
-	// LeatherArmor
+	// MT_130
 	{
 		2018, //doomednum
-		1349, //spawnstate
+		1296, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -3799,10 +3828,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Leather_Armor" //classname
 	},
-	// Thing130
+	// MT_131
 	{
 		2014, //doomednum
-		1401, //spawnstate
+		1348, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -3828,10 +3857,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing131
+	// MT_132
 	{
 		164, //doomednum
-		1402, //spawnstate
+		1349, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -3857,10 +3886,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Base_Key
+	// MT_133
 	{
-		-1, //doomednum
-		1295, //spawnstate
+		230, //doomednum
+		1350, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -3886,10 +3915,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Base_Key" //classname
 	},
-	// Rebel_Key
+	// MT_134
 	{
 		-1, //doomednum
-		1295, //spawnstate
+		1379, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -3913,12 +3942,12 @@ mobjinfo_t mobjinfo[] =
 		33554433, //flags
 		0, //flags2
 		0, //raisestate
-		"Rebel_Key" //classname
+		"Govs_Key" //classname
 	},
-	// Passcard
+	// MT_135
 	{
 		185, //doomednum
-		1405, //spawnstate
+		1353, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -3944,10 +3973,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Passcard" //classname
 	},
-	// ID_Badge
+	// MT_136
 	{
 		184, //doomednum
-		1403, //spawnstate
+		1351, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -3973,10 +4002,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"ID_Badge" //classname
 	},
-	// Prison_Key
+	// MT_137
 	{
 		-1, //doomednum
-		1416, //spawnstate
+		1364, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -3991,21 +4020,21 @@ mobjinfo_t mobjinfo[] =
 		0, //deathstate
 		0, //xdeathstate
 		0, //deathsound
-		0, //speed
+		11, //speed
 		1310720, //radius
 		1048576, //height
 		100, //mass
 		0, //damage
 		0, //activesound
-		33554433, //flags
+		33556481, //flags
 		0, //flags2
 		0, //raisestate
 		"Prison_Key" //classname
 	},
-	// Severed_Hand
+	// MT_138
 	{
 		91, //doomednum
-		1409, //spawnstate
+		1357, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4020,21 +4049,21 @@ mobjinfo_t mobjinfo[] =
 		0, //deathstate
 		0, //xdeathstate
 		0, //deathsound
-		0, //speed
+		12, //speed
 		1310720, //radius
 		1048576, //height
 		100, //mass
 		0, //damage
 		0, //activesound
-		33554433, //flags
+		33556481, //flags
 		0, //flags2
 		0, //raisestate
 		"Severed_Hand" //classname
 	},
-	// Power1_Key
+	// MT_139
 	{
 		-1, //doomednum
-		1417, //spawnstate
+		1365, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4060,10 +4089,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Power1_Key" //classname
 	},
-	// Power2_Key
+	// MT_140
 	{
 		-1, //doomednum
-		1418, //spawnstate
+		1366, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4089,10 +4118,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Power2_Key" //classname
 	},
-	// Power3_Key
+	// MT_141
 	{
 		-1, //doomednum
-		1419, //spawnstate
+		1367, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4118,10 +4147,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Power3_Key" //classname
 	},
-	// Gold_Key
+	// MT_142
 	{
 		40, //doomednum
-		1406, //spawnstate
+		1354, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4147,10 +4176,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Gold_Key" //classname
 	},
-	// ID_Card
+	// MT_143
 	{
 		13, //doomednum
-		1404, //spawnstate
+		1352, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4176,10 +4205,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"ID_Card" //classname
 	},
-	// Silver_Key
+	// MT_144
 	{
 		38, //doomednum
-		1407, //spawnstate
+		1355, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4205,10 +4234,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Silver_Key" //classname
 	},
-	// Oracle_Key
+	// MT_145
 	{
 		61, //doomednum
-		1420, //spawnstate
+		1368, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4234,10 +4263,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Oracle_Key" //classname
 	},
-	// Military_ID
+	// MT_146
 	{
 		-1, //doomednum
-		1421, //spawnstate
+		1369, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4263,10 +4292,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Military_ID" //classname
 	},
-	// Order_Key
+	// MT_147
 	{
 		86, //doomednum
-		1422, //spawnstate
+		1370, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4292,10 +4321,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Order_Key" //classname
 	},
-	// Warehouse_Key
+	// MT_148
 	{
 		166, //doomednum
-		1423, //spawnstate
+		1371, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4321,10 +4350,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Warehouse_Key" //classname
 	},
-	// Brass_Key
+	// MT_149
 	{
 		39, //doomednum
-		1408, //spawnstate
+		1356, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4350,10 +4379,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Brass_Key" //classname
 	},
-	// Red_Crystal_Key
+	// MT_150
 	{
 		192, //doomednum
-		1424, //spawnstate
+		1372, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4379,10 +4408,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Red_Crystal_Key" //classname
 	},
-	// Blue_Crystal_Key
+	// MT_151
 	{
 		193, //doomednum
-		1425, //spawnstate
+		1373, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4408,10 +4437,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Blue_Crystal_Key" //classname
 	},
-	// Chapel_Key
+	// MT_152
 	{
 		195, //doomednum
-		1426, //spawnstate
+		1374, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4437,10 +4466,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Chapel_Key" //classname
 	},
-	// Tunnel_Key
+	// MT_153
 	{
 		-1, //doomednum
-		1427, //spawnstate
+		1375, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4455,21 +4484,21 @@ mobjinfo_t mobjinfo[] =
 		0, //deathstate
 		0, //xdeathstate
 		0, //deathsound
-		0, //speed
+		28, //speed
 		1310720, //radius
 		1048576, //height
 		100, //mass
 		0, //damage
 		0, //activesound
-		33554433, //flags
+		33556481, //flags
 		0, //flags2
 		0, //raisestate
-		"Tunnel_Key" //classname
+		"Catacomb_Key" //classname
 	},
-	// Security_Key
+	// MT_154
 	{
 		-1, //doomednum
-		1428, //spawnstate
+		1377, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4495,10 +4524,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Security_Key" //classname
 	},
-	// New_Key1
+	// MT_155
 	{
-		-1, //doomednum
-		1428, //spawnstate
+		236, //doomednum
+		1382, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4522,12 +4551,12 @@ mobjinfo_t mobjinfo[] =
 		33554433, //flags
 		0, //flags2
 		0, //raisestate
-		"New_Key1" //classname
+		"Core_Key" //classname
 	},
-	// New_Key2
+	// MT_156
 	{
-		-1, //doomednum
-		1428, //spawnstate
+		233, //doomednum
+		1376, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4551,12 +4580,12 @@ mobjinfo_t mobjinfo[] =
 		33554433, //flags
 		0, //flags2
 		0, //raisestate
-		"New_Key2" //classname
+		"Mauler_Key" //classname
 	},
-	// New_Key3
+	// MT_157
 	{
-		-1, //doomednum
-		1428, //spawnstate
+		234, //doomednum
+		1380, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4580,12 +4609,12 @@ mobjinfo_t mobjinfo[] =
 		33554433, //flags
 		0, //flags2
 		0, //raisestate
-		"New_Key3" //classname
+		"Factory_Key" //classname
 	},
-	// New_Key4
+	// MT_158
 	{
-		-1, //doomednum
-		1428, //spawnstate
+		235, //doomednum
+		1378, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4609,12 +4638,12 @@ mobjinfo_t mobjinfo[] =
 		33554433, //flags
 		0, //flags2
 		0, //raisestate
-		"New_Key4" //classname
+		"MINE_KEY" //classname
 	},
-	// New_Key5
+	// MT_159
 	{
 		-1, //doomednum
-		1428, //spawnstate
+		1376, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4640,10 +4669,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"New_Key5" //classname
 	},
-	// Shadow_armor
+	// MT_160
 	{
 		2024, //doomednum
-		1435, //spawnstate
+		1389, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4669,10 +4698,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Shadow_armor" //classname
 	},
-	// Environmental_Suit
+	// MT_161
 	{
 		2025, //doomednum
-		1439, //spawnstate
+		1393, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4698,10 +4727,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Environmental_Suit" //classname
 	},
-	// Guard_Uniform
+	// MT_162
 	{
 		90, //doomednum
-		1440, //spawnstate
+		1394, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4716,21 +4745,21 @@ mobjinfo_t mobjinfo[] =
 		0, //deathstate
 		0, //xdeathstate
 		0, //deathsound
-		0, //speed
+		15, //speed
 		1310720, //radius
 		1048576, //height
 		100, //mass
 		0, //damage
 		0, //activesound
-		1, //flags
+		2049, //flags
 		0, //flags2
 		0, //raisestate
 		"Guard_Uniform" //classname
 	},
-	// Officers_Uniform
+	// MT_163
 	{
 		52, //doomednum
-		1441, //spawnstate
+		1395, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4756,10 +4785,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Officer\\\'s_Uniform" //classname
 	},
-	// Map
+	// MT_164
 	{
 		2026, //doomednum
-		1442, //spawnstate
+		1396, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4783,12 +4812,12 @@ mobjinfo_t mobjinfo[] =
 		1, //flags
 		0, //flags2
 		0, //raisestate
-		"Map" //classname
+		"map" //classname
 	},
-	// MapRadar
+	// MT_165
 	{
 		2027, //doomednum
-		1444, //spawnstate
+		1398, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4806,18 +4835,76 @@ mobjinfo_t mobjinfo[] =
 		0, //speed
 		1310720, //radius
 		1048576, //height
-		100, //mass
+		1, //mass
 		0, //damage
 		0, //activesound
 		1, //flags
 		0, //flags2
 		0, //raisestate
-		"Map-Radar" //classname
+		"scanner" //classname
 	},
-	// Coin
+	// MT_166
+	{
+		10, //doomednum
+		1292, //spawnstate
+		5, //spawnhealth
+		1293, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1048576, //radius
+		1048576, //height
+		3, //mass
+		0, //damage
+		0, //activesound
+		131073, //flags
+		0, //flags2
+		0, //raisestate
+		"Teleporter_Beacon" //classname
+	},
+	// MT_167
+	{
+		207, //doomednum
+		1187, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		5, //mass
+		0, //damage
+		0, //activesound
+		1, //flags
+		0, //flags2
+		0, //raisestate
+		"Targeter" //classname
+	},
+	// MT_168
 	{
 		93, //doomednum
-		1431, //spawnstate
+		1385, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4838,15 +4925,15 @@ mobjinfo_t mobjinfo[] =
 		2147483647, //mass
 		0, //damage
 		0, //activesound
-		131073, //flags
+		33685505, //flags
 		0, //flags2
 		0, //raisestate
 		"coin" //classname
 	},
-	//   Gold10
+	// MT_169
 	{
 		138, //doomednum
-		1432, //spawnstate
+		1386, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4867,15 +4954,15 @@ mobjinfo_t mobjinfo[] =
 		100, //mass
 		0, //damage
 		0, //activesound
-		131073, //flags
+		33685505, //flags
 		0, //flags2
 		0, //raisestate
 		"10_gold" //classname
 	},
-	// Gold25
+	// MT_170
 	{
 		139, //doomednum
-		1433, //spawnstate
+		1387, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4896,15 +4983,15 @@ mobjinfo_t mobjinfo[] =
 		100, //mass
 		0, //damage
 		0, //activesound
-		131073, //flags
+		33685505, //flags
 		0, //flags2
 		0, //raisestate
 		"25_gold" //classname
 	},
-	// Gold50
+	// MT_171
 	{
 		140, //doomednum
-		1434, //spawnstate
+		1388, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4925,12 +5012,12 @@ mobjinfo_t mobjinfo[] =
 		100, //mass
 		0, //damage
 		0, //activesound
-		131073, //flags
+		33685505, //flags
 		0, //flags2
 		0, //raisestate
 		"50_gold" //classname
 	},
-	// Ring
+	// MT_172
 	{
 		-1, //doomednum
 		1241, //spawnstate
@@ -4948,21 +5035,21 @@ mobjinfo_t mobjinfo[] =
 		0, //deathstate
 		0, //xdeathstate
 		0, //deathsound
-		0, //speed
+		3, //speed
 		1310720, //radius
 		1048576, //height
 		100, //mass
 		0, //damage
 		0, //activesound
-		33554433, //flags
+		133121, //flags
 		0, //flags2
 		0, //raisestate
-		"ring" //classname
+		"300_gold" //classname
 	},
-	// Offering_Chalice
+	// MT_173
 	{
-		205, //doomednum
-		1460, //spawnstate
+		-1, //doomednum
+		1188, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -4977,21 +5064,50 @@ mobjinfo_t mobjinfo[] =
 		0, //deathstate
 		0, //xdeathstate
 		0, //deathsound
-		0, //speed
+		1, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		33556481, //flags
+		0, //flags2
+		0, //raisestate
+		"ring" //classname
+	},
+	// MT_174
+	{
+		205, //doomednum
+		1413, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		2, //speed
 		655360, //radius
 		1048576, //height
 		100, //mass
 		0, //damage
 		0, //activesound
-		131073, //flags
+		133121, //flags
 		0, //flags2
 		0, //raisestate
 		"Offering_Chalice" //classname
 	},
-	// Ear
+	// MT_175
 	{
 		-1, //doomednum
-		1242, //spawnstate
+		1189, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5006,21 +5122,21 @@ mobjinfo_t mobjinfo[] =
 		0, //deathstate
 		0, //xdeathstate
 		0, //deathsound
-		0, //speed
+		9, //speed
 		1310720, //radius
 		1048576, //height
 		100, //mass
 		0, //damage
 		0, //activesound
-		1, //flags
+		2049, //flags
 		0, //flags2
 		0, //raisestate
 		"ear" //classname
 	},
-	// Communicator
+	// MT_176
 	{
 		206, //doomednum
-		1243, //spawnstate
+		1190, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5046,39 +5162,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Communicator" //classname
 	},
-	// Targeter
-	{
-		207, //doomednum
-		1244, //spawnstate
-		1000, //spawnhealth
-		0, //seestate
-		0, //seesound
-		8, //reactiontime
-		0, //attacksound
-		0, //painstate
-		0, //painchance
-		0, //painsound
-		0, //meleestate
-		0, //missilestate
-		0, //crashstate
-		0, //deathstate
-		0, //xdeathstate
-		0, //deathsound
-		0, //speed
-		1310720, //radius
-		1048576, //height
-		100, //mass
-		0, //damage
-		0, //activesound
-		1, //flags
-		0, //flags2
-		0, //raisestate
-		"Targeter" //classname
-	},
-	// HEGrenade_Rounds
+	// MT_177
 	{
 		152, //doomednum
-		1456, //spawnstate
+		1410, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5104,10 +5191,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"HE-Grenade_Rounds" //classname
 	},
-	// FireGrenade_Rounds
+	// MT_178
 	{
 		153, //doomednum
-		1457, //spawnstate
+		1411, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5131,41 +5218,12 @@ mobjinfo_t mobjinfo[] =
 		1, //flags
 		0, //flags2
 		0, //raisestate
-		"Fire-Grenade_Rounds" //classname
+		"Phosphorus-Grenade_Rounds" //classname
 	},
-	// GasGrenade_Rounds
-	{
-		84, //doomednum
-		1458, //spawnstate
-		1000, //spawnhealth
-		0, //seestate
-		0, //seesound
-		8, //reactiontime
-		0, //attacksound
-		0, //painstate
-		0, //painchance
-		0, //painsound
-		0, //meleestate
-		0, //missilestate
-		0, //crashstate
-		0, //deathstate
-		0, //xdeathstate
-		0, //deathsound
-		0, //speed
-		1310720, //radius
-		1048576, //height
-		100, //mass
-		0, //damage
-		0, //activesound
-		1, //flags
-		0, //flags2
-		0, //raisestate
-		"Gas-Grenade_Rounds" //classname
-	},
-	// Bullets
+	// MT_179
 	{
 		2007, //doomednum
-		1446, //spawnstate
+		1400, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5189,12 +5247,12 @@ mobjinfo_t mobjinfo[] =
 		1, //flags
 		0, //flags2
 		0, //raisestate
-		"bullets" //classname
+		"clip_of_bullets" //classname
 	},
-	// Ammo1
+	// MT_180
 	{
 		2048, //doomednum
-		1447, //spawnstate
+		1401, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5220,10 +5278,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"ammo" //classname
 	},
-	// Rocket
+	// MT_181
 	{
 		2010, //doomednum
-		1448, //spawnstate
+		1402, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5247,12 +5305,12 @@ mobjinfo_t mobjinfo[] =
 		1, //flags
 		0, //flags2
 		0, //raisestate
-		"rocket" //classname
+		"mini_missiles" //classname
 	},
-	// Box_of_rockets
+	// MT_182
 	{
 		2046, //doomednum
-		1449, //spawnstate
+		1403, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5276,12 +5334,12 @@ mobjinfo_t mobjinfo[] =
 		1, //flags
 		0, //flags2
 		0, //raisestate
-		"box_of_rockets" //classname
+		"crate_of_missiles" //classname
 	},
-	// Energy_pod
+	// MT_183
 	{
 		2047, //doomednum
-		1450, //spawnstate
+		1404, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5307,10 +5365,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"energy_pod" //classname
 	},
-	// Energy_pack
+	// MT_184
 	{
 		17, //doomednum
-		1452, //spawnstate
+		1406, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5336,10 +5394,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"energy_pack" //classname
 	},
-	// Poison_arrows
+	// MT_185
 	{
 		115, //doomednum
-		1454, //spawnstate
+		1408, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5363,12 +5421,12 @@ mobjinfo_t mobjinfo[] =
 		1, //flags
 		0, //flags2
 		0, //raisestate
-		"poison_arrows" //classname
+		"poison_bolts" //classname
 	},
-	// Electric_arrows
+	// MT_186
 	{
 		114, //doomednum
-		1455, //spawnstate
+		1409, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5392,12 +5450,12 @@ mobjinfo_t mobjinfo[] =
 		1, //flags
 		0, //flags2
 		0, //raisestate
-		"electric_arrows" //classname
+		"electric_bolts" //classname
 	},
-	// Back_pack
+	// MT_187
 	{
 		183, //doomednum
-		1459, //spawnstate
+		1412, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5421,12 +5479,12 @@ mobjinfo_t mobjinfo[] =
 		1, //flags
 		0, //flags2
 		0, //raisestate
-		"Back_pack" //classname
+		"ammo_satchel" //classname
 	},
-	// Assault_gun
+	// MT_188
 	{
 		2002, //doomednum
-		1461, //spawnstate
+		1414, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5452,10 +5510,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"assault_gun" //classname
 	},
-	// Pulse_rifle
+	// MT_189
 	{
 		2006, //doomednum
-		1462, //spawnstate
+		1415, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5479,12 +5537,12 @@ mobjinfo_t mobjinfo[] =
 		1, //flags
 		0, //flags2
 		0, //raisestate
-		"pulse_rifle" //classname
+		"assault_gun" //classname
 	},
-	// Flame_thrower
+	// MT_190
 	{
 		2005, //doomednum
-		1463, //spawnstate
+		1416, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5510,10 +5568,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"flame_thrower" //classname
 	},
-	// Flame_thrower_Parts
+	// MT_191
 	{
 		-1, //doomednum
-		1464, //spawnstate
+		1417, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5537,12 +5595,12 @@ mobjinfo_t mobjinfo[] =
 		1, //flags
 		0, //flags2
 		0, //raisestate
-		"flame_thrower_Parts" //classname
+		"flame_thrower_parts" //classname
 	},
-	// Missile_gun
+	// MT_192
 	{
 		2003, //doomednum
-		1465, //spawnstate
+		1418, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5566,12 +5624,12 @@ mobjinfo_t mobjinfo[] =
 		1, //flags
 		0, //flags2
 		0, //raisestate
-		"missile_gun" //classname
+		"mini_missile_launcher" //classname
 	},
-	// Blaster
+	// MT_193
 	{
 		2004, //doomednum
-		1466, //spawnstate
+		1419, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5595,12 +5653,12 @@ mobjinfo_t mobjinfo[] =
 		1, //flags
 		0, //flags2
 		0, //raisestate
-		"blaster" //classname
+		"mauler" //classname
 	},
-	// Crossbow
+	// MT_194
 	{
 		2001, //doomednum
-		1468, //spawnstate
+		1421, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5626,10 +5684,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"crossbow" //classname
 	},
-	// Grenade_launcher
+	// MT_195
 	{
 		154, //doomednum
-		1467, //spawnstate
+		1420, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5655,10 +5713,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Grenade_launcher" //classname
 	},
-	// Sigil1
+	// MT_196
 	{
 		77, //doomednum
-		1469, //spawnstate
+		1422, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5684,10 +5742,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"SIGIL" //classname
 	},
-	// Sigil2
+	// MT_197
 	{
 		78, //doomednum
-		1470, //spawnstate
+		1423, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5713,10 +5771,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"SIGIL" //classname
 	},
-	// Sigil3
+	// MT_198
 	{
 		79, //doomednum
-		1471, //spawnstate
+		1424, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5742,10 +5800,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"SIGIL" //classname
 	},
-	// Sigil4
+	// MT_199
 	{
 		80, //doomednum
-		1472, //spawnstate
+		1425, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5771,10 +5829,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"SIGIL" //classname
 	},
-	// Sigil5
+	// MT_200
 	{
 		81, //doomednum
-		1473, //spawnstate
+		1426, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5800,10 +5858,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"SIGIL" //classname
 	},
-	// Thing199
+	// MT_201
 	{
 		92, //doomednum
-		1410, //spawnstate
+		1358, //spawnstate
 		50, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5815,53 +5873,53 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		1245, //deathstate
+		1191, //deathstate
 		0, //xdeathstate
-		104, //deathsound
-		0, //speed
+		106, //deathsound
+		14, //speed
 		1310720, //radius
 		1048576, //height
-		100, //mass
+		99999999, //mass
 		0, //damage
-		130, //activesound
-		524294, //flags
+		131, //activesound
+		526854, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Rat_buddy
+	// MT_202
 	{
 		85, //doomednum
-		1270, //spawnstate
+		1216, //spawnstate
 		5, //spawnhealth
-		1271, //seestate
-		55, //seesound
+		1217, //seestate
+		56, //seesound
 		8, //reactiontime
 		0, //attacksound
 		0, //painstate
 		0, //painchance
 		0, //painsound
-		1275, //meleestate
+		1221, //meleestate
 		0, //missilestate
 		0, //crashstate
-		1316, //deathstate
+		1263, //deathstate
 		0, //xdeathstate
-		55, //deathsound
+		56, //deathsound
 		13, //speed
 		655360, //radius
 		1048576, //height
 		100, //mass
 		0, //damage
-		55, //activesound
-		4718596, //flags
+		56, //activesound
+		4751360, //flags
 		0, //flags2
 		0, //raisestate
 		"rat_buddy" //classname
 	},
-	// Thing201
+	// MT_203
 	{
 		82, //doomednum
-		1350, //spawnstate
+		1297, //spawnstate
 		10, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5873,9 +5931,9 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		1351, //deathstate
+		1298, //deathstate
 		0, //xdeathstate
-		60, //deathsound
+		61, //deathsound
 		0, //speed
 		655360, //radius
 		2097152, //height
@@ -5887,10 +5945,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing202
+	// MT_204
 	{
 		94, //doomednum
-		1358, //spawnstate
+		1305, //spawnstate
 		30, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5902,9 +5960,9 @@ mobjinfo_t mobjinfo[] =
 		0, //meleestate
 		0, //missilestate
 		0, //crashstate
-		1359, //deathstate
+		1306, //deathstate
 		0, //xdeathstate
-		105, //deathsound
+		7, //deathsound
 		0, //speed
 		655360, //radius
 		2097152, //height
@@ -5916,16 +5974,16 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing203
+	// MT_205
 	{
 		208, //doomednum
-		1277, //spawnstate
+		1223, //spawnstate
 		99999999, //spawnhealth
 		0, //seestate
 		0, //seesound
 		8, //reactiontime
 		0, //attacksound
-		1278, //painstate
+		1224, //painstate
 		255, //painchance
 		3, //painsound
 		0, //meleestate
@@ -5945,10 +6003,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing204
+	// MT_206
 	{
 		95, //doomednum
-		1477, //spawnstate
+		1430, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -5974,10 +6032,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing205
+	// MT_207
 	{
 		96, //doomednum
-		1478, //spawnstate
+		1431, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6003,10 +6061,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing206
+	// MT_208
 	{
 		97, //doomednum
-		1479, //spawnstate
+		1432, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6032,10 +6090,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing207
+	// MT_209
 	{
 		2028, //doomednum
-		1474, //spawnstate
+		1427, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6061,10 +6119,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing208
+	// MT_210
 	{
 		48, //doomednum
-		1551, //spawnstate
+		1504, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6090,10 +6148,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing209
+	// MT_211
 	{
 		54, //doomednum
-		1552, //spawnstate
+		1505, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6119,10 +6177,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing210
+	// MT_212
 	{
 		55, //doomednum
-		1553, //spawnstate
+		1506, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6148,10 +6206,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing211
+	// MT_213
 	{
 		56, //doomednum
-		1554, //spawnstate
+		1507, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6177,10 +6235,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing212
+	// MT_214
 	{
 		57, //doomednum
-		1555, //spawnstate
+		1508, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6206,10 +6264,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing213
+	// MT_215
 	{
 		227, //doomednum
-		1518, //spawnstate
+		1471, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6229,16 +6287,16 @@ mobjinfo_t mobjinfo[] =
 		12582912, //height
 		100, //mass
 		0, //damage
-		119, //activesound
+		120, //activesound
 		2, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing214
+	// MT_216
 	{
 		98, //doomednum
-		1561, //spawnstate
+		1514, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6264,10 +6322,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing215
+	// MT_217
 	{
 		161, //doomednum
-		1559, //spawnstate
+		1512, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6293,10 +6351,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing216
+	// MT_218
 	{
 		160, //doomednum
-		1560, //spawnstate
+		1513, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6322,10 +6380,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing217
+	// MT_219
 	{
 		159, //doomednum
-		1562, //spawnstate
+		1515, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6351,10 +6409,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing218
+	// MT_220
 	{
 		162, //doomednum
-		1563, //spawnstate
+		1516, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6380,10 +6438,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing219
+	// MT_221
 	{
 		163, //doomednum
-		1564, //spawnstate
+		1517, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6409,10 +6467,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing220
+	// MT_222
 	{
 		34, //doomednum
-		1475, //spawnstate
+		1428, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6438,10 +6496,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing221
+	// MT_223
 	{
 		35, //doomednum
-		1476, //spawnstate
+		1429, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6467,97 +6525,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing222
+	// MT_224
 	{
 		103, //doomednum
-		1520, //spawnstate
-		1000, //spawnhealth
-		0, //seestate
-		0, //seesound
-		8, //reactiontime
-		0, //attacksound
-		0, //painstate
-		0, //painchance
-		0, //painsound
-		0, //meleestate
-		0, //missilestate
-		0, //crashstate
-		0, //deathstate
-		0, //xdeathstate
-		0, //deathsound
-		0, //speed
-		1310720, //radius
-		1048576, //height
-		100, //mass
-		0, //damage
-		45, //activesound
-		16, //flags
-		0, //flags2
-		0, //raisestate
-		NULL //classname
-	},
-	// Thing223
-	{
-		104, //doomednum
-		1532, //spawnstate
-		1000, //spawnhealth
-		0, //seestate
-		0, //seesound
-		8, //reactiontime
-		0, //attacksound
-		0, //painstate
-		0, //painchance
-		0, //painsound
-		0, //meleestate
-		0, //missilestate
-		0, //crashstate
-		0, //deathstate
-		0, //xdeathstate
-		0, //deathsound
-		0, //speed
-		1310720, //radius
-		1048576, //height
-		100, //mass
-		0, //damage
-		44, //activesound
-		16, //flags
-		0, //flags2
-		0, //raisestate
-		NULL //classname
-	},
-	// Thing224
-	{
-		53, //doomednum
-		1528, //spawnstate
-		1000, //spawnhealth
-		0, //seestate
-		0, //seesound
-		8, //reactiontime
-		0, //attacksound
-		0, //painstate
-		0, //painchance
-		0, //painsound
-		0, //meleestate
-		0, //missilestate
-		0, //crashstate
-		0, //deathstate
-		0, //xdeathstate
-		0, //deathsound
-		0, //speed
-		1310720, //radius
-		65536, //height
-		100, //mass
-		0, //damage
-		0, //activesound
-		784, //flags
-		0, //flags2
-		0, //raisestate
-		NULL //classname
-	},
-	// Thing225
-	{
-		112, //doomednum
-		1540, //spawnstate
+		1473, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6583,10 +6554,97 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing226
+	// MT_225
+	{
+		104, //doomednum
+		1485, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		45, //activesound
+		16, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_226
+	{
+		53, //doomednum
+		1481, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		65536, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		784, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_227
+	{
+		112, //doomednum
+		1493, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		47, //activesound
+		16, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_228
 	{
 		113, //doomednum
-		1544, //spawnstate
+		1497, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6612,10 +6670,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing227
+	// MT_229
 	{
 		23, //doomednum
-		1547, //spawnstate
+		1500, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6641,10 +6699,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing228
+	// MT_230
 	{
 		22, //doomednum
-		673, //spawnstate
+		709, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6670,10 +6728,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing229
+	// MT_231
 	{
 		15, //doomednum
-		307, //spawnstate
+		305, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6699,10 +6757,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing230
+	// MT_232
 	{
 		18, //doomednum
-		409, //spawnstate
+		407, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6728,10 +6786,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing231
+	// MT_233
 	{
 		21, //doomednum
-		632, //spawnstate
+		630, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6757,10 +6815,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing232
+	// MT_234
 	{
 		20, //doomednum
-		594, //spawnstate
+		592, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6786,10 +6844,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing233
+	// MT_235
 	{
 		19, //doomednum
-		512, //spawnstate
+		510, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6815,10 +6873,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing234
+	// MT_236
 	{
 		212, //doomednum
-		425, //spawnstate
+		423, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6844,10 +6902,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing235
+	// MT_237
 	{
 		54, //doomednum
-		1280, //spawnstate
+		1226, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6873,10 +6931,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing236
+	// MT_238
 	{
 		70, //doomednum
-		1372, //spawnstate
+		1319, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6893,7 +6951,7 @@ mobjinfo_t mobjinfo[] =
 		0, //deathsound
 		0, //speed
 		1048576, //radius
-		2097152, //height
+		3145728, //height
 		100, //mass
 		0, //damage
 		0, //activesound
@@ -6902,10 +6960,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing237
+	// MT_239
 	{
 		105, //doomednum
-		1376, //spawnstate
+		1323, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6925,16 +6983,16 @@ mobjinfo_t mobjinfo[] =
 		1048576, //height
 		100, //mass
 		0, //damage
-		23, //activesound
+		24, //activesound
 		2, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing238
+	// MT_240
 	{
 		106, //doomednum
-		1380, //spawnstate
+		1327, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6954,16 +7012,16 @@ mobjinfo_t mobjinfo[] =
 		2097152, //height
 		100, //mass
 		0, //damage
-		23, //activesound
+		24, //activesound
 		2, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing239
+	// MT_241
 	{
 		107, //doomednum
-		1384, //spawnstate
+		1331, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -6983,16 +7041,16 @@ mobjinfo_t mobjinfo[] =
 		1048576, //height
 		100, //mass
 		0, //damage
-		23, //activesound
+		24, //activesound
 		16, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing240
+	// MT_242
 	{
 		108, //doomednum
-		1400, //spawnstate
+		1347, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7018,10 +7076,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing241
+	// MT_243
 	{
 		109, //doomednum
-		1496, //spawnstate
+		1449, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7047,10 +7105,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing242
+	// MT_244
 	{
 		28, //doomednum
-		1500, //spawnstate
+		1453, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7076,10 +7134,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing243
+	// MT_245
 	{
 		110, //doomednum
-		1497, //spawnstate
+		1450, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7105,10 +7163,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing244
+	// MT_246
 	{
 		44, //doomednum
-		1498, //spawnstate
+		1451, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7134,10 +7192,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing245
+	// MT_247
 	{
 		111, //doomednum
-		1388, //spawnstate
+		1335, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7163,10 +7221,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing246
+	// MT_248
 	{
 		43, //doomednum
-		1370, //spawnstate
+		1317, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7192,10 +7250,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing247
+	// MT_249
 	{
 		46, //doomednum
-		1371, //spawnstate
+		1318, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7221,10 +7279,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing248
+	// MT_250
 	{
 		99, //doomednum
-		1480, //spawnstate
+		1433, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7250,10 +7308,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing249
+	// MT_251
 	{
 		100, //doomednum
-		1481, //spawnstate
+		1434, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7279,10 +7337,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing250
+	// MT_252
 	{
 		101, //doomednum
-		1482, //spawnstate
+		1435, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7308,10 +7366,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing251
+	// MT_253
 	{
 		102, //doomednum
-		1483, //spawnstate
+		1436, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7337,10 +7395,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing252
+	// MT_254
 	{
 		215, //doomednum
-		1484, //spawnstate
+		1437, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7360,16 +7418,16 @@ mobjinfo_t mobjinfo[] =
 		1048576, //height
 		100, //mass
 		0, //damage
-		43, //activesound
+		44, //activesound
 		16, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing253
+	// MT_255
 	{
 		29, //doomednum
-		1488, //spawnstate
+		1441, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7395,10 +7453,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing254
+	// MT_256
 	{
 		30, //doomednum
-		1489, //spawnstate
+		1442, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7424,10 +7482,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing255
+	// MT_257
 	{
 		31, //doomednum
-		1490, //spawnstate
+		1443, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7453,10 +7511,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing256
+	// MT_258
 	{
 		32, //doomednum
-		1491, //spawnstate
+		1444, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7482,10 +7540,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing257
+	// MT_259
 	{
 		36, //doomednum
-		1492, //spawnstate
+		1445, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7511,10 +7569,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing258
+	// MT_260
 	{
 		37, //doomednum
-		1493, //spawnstate
+		1446, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7540,10 +7598,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing259
+	// MT_261
 	{
 		41, //doomednum
-		1494, //spawnstate
+		1447, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7569,10 +7627,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing260
+	// MT_262
 	{
 		42, //doomednum
-		1495, //spawnstate
+		1448, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7598,10 +7656,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing261
+	// MT_263
 	{
 		117, //doomednum
-		1499, //spawnstate
+		1452, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7627,10 +7685,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing262
+	// MT_264
 	{
 		47, //doomednum
-		1392, //spawnstate
+		1339, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7650,16 +7708,16 @@ mobjinfo_t mobjinfo[] =
 		4718592, //height
 		100, //mass
 		0, //damage
-		23, //activesound
+		24, //activesound
 		2, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing263
+	// MT_265
 	{
 		50, //doomednum
-		1396, //spawnstate
+		1343, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7679,16 +7737,16 @@ mobjinfo_t mobjinfo[] =
 		5242880, //height
 		100, //mass
 		0, //damage
-		23, //activesound
+		24, //activesound
 		2, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing264
+	// MT_266
 	{
 		51, //doomednum
-		1501, //spawnstate
+		1454, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7714,10 +7772,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing265
+	// MT_267
 	{
 		202, //doomednum
-		1502, //spawnstate
+		1455, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7743,10 +7801,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing266
+	// MT_268
 	{
 		203, //doomednum
-		1503, //spawnstate
+		1456, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7772,10 +7830,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing267
+	// MT_269
 	{
 		33, //doomednum
-		1504, //spawnstate
+		1457, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7801,10 +7859,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing268
+	// MT_270
 	{
 		60, //doomednum
-		1505, //spawnstate
+		1458, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7830,10 +7888,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing269
+	// MT_271
 	{
 		62, //doomednum
-		1506, //spawnstate
+		1459, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7859,10 +7917,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing270
+	// MT_272
 	{
 		63, //doomednum
-		1507, //spawnstate
+		1460, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7888,10 +7946,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing271
+	// MT_273
 	{
 		69, //doomednum
-		1508, //spawnstate
+		1461, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7917,10 +7975,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing272
+	// MT_274
 	{
 		165, //doomednum
-		1509, //spawnstate
+		1462, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7946,10 +8004,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing273
+	// MT_275
 	{
 		188, //doomednum
-		1510, //spawnstate
+		1463, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -7975,10 +8033,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing274
+	// MT_276
 	{
 		189, //doomednum
-		1511, //spawnstate
+		1464, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8004,10 +8062,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing275
+	// MT_277
 	{
 		190, //doomednum
-		1512, //spawnstate
+		1465, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8033,10 +8091,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing276
+	// MT_278
 	{
 		191, //doomednum
-		1513, //spawnstate
+		1466, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8062,10 +8120,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing277
+	// MT_279
 	{
 		194, //doomednum
-		1514, //spawnstate
+		1467, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8091,10 +8149,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing278
+	// MT_280
 	{
 		196, //doomednum
-		1515, //spawnstate
+		1468, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8120,10 +8178,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing279
+	// MT_281
 	{
 		197, //doomednum
-		1516, //spawnstate
+		1469, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8149,10 +8207,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing280
+	// MT_282
 	{
 		68, //doomednum
-		1517, //spawnstate
+		1470, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8178,10 +8236,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing281
+	// MT_283
 	{
 		228, //doomednum
-		1519, //spawnstate
+		1472, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8207,10 +8265,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing282
+	// MT_284
 	{
 		216, //doomednum
-		1281, //spawnstate
+		1227, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8236,10 +8294,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing283
+	// MT_285
 	{
 		217, //doomednum
-		1282, //spawnstate
+		1228, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8265,10 +8323,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing284
+	// MT_286
 	{
 		218, //doomednum
-		1283, //spawnstate
+		1229, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8294,10 +8352,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing285
+	// MT_287
 	{
 		219, //doomednum
-		1284, //spawnstate
+		1230, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8323,10 +8381,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing286
+	// MT_288
 	{
 		220, //doomednum
-		1285, //spawnstate
+		1231, //spawnstate
 		40, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8341,21 +8399,21 @@ mobjinfo_t mobjinfo[] =
 		0, //deathstate
 		0, //xdeathstate
 		0, //deathsound
-		0, //speed
-		1048576, //radius
-		1572864, //height
+		6, //speed
+		1114112, //radius
+		4194304, //height
 		999999, //mass
 		0, //damage
 		0, //activesound
-		688134, //flags
+		34244614, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// PowerCoupling
+	// MT_289
 	{
 		226, //doomednum
-		1287, //spawnstate
+		1233, //spawnstate
 		40, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8370,21 +8428,21 @@ mobjinfo_t mobjinfo[] =
 		0, //deathstate
 		0, //xdeathstate
 		0, //deathsound
-		0, //speed
+		33554440, //speed
 		1048576, //radius
 		1048576, //height
 		1, //mass
 		0, //damage
 		0, //activesound
-		131073, //flags
+		133121, //flags
 		0, //flags2
 		0, //raisestate
-		"POWER_COUPLING" //classname
+		"BROKEN_POWER_COUPLING" //classname
 	},
-	// Thing288
+	// MT_290
 	{
 		221, //doomednum
-		1288, //spawnstate
+		1234, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8402,35 +8460,6 @@ mobjinfo_t mobjinfo[] =
 		0, //speed
 		1048576, //radius
 		8388608, //height
-		100, //mass
-		0, //damage
-		122, //activesound
-		2, //flags
-		0, //flags2
-		0, //raisestate
-		NULL //classname
-	},
-	// Thing289
-	{
-		222, //doomednum
-		1289, //spawnstate
-		1000, //spawnhealth
-		0, //seestate
-		0, //seesound
-		8, //reactiontime
-		0, //attacksound
-		0, //painstate
-		0, //painchance
-		0, //painsound
-		0, //meleestate
-		0, //missilestate
-		0, //crashstate
-		0, //deathstate
-		0, //xdeathstate
-		0, //deathsound
-		0, //speed
-		1048576, //radius
-		4718592, //height
 		100, //mass
 		0, //damage
 		123, //activesound
@@ -8439,10 +8468,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing290
+	// MT_291
 	{
-		223, //doomednum
-		1289, //spawnstate
+		222, //doomednum
+		1235, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8462,16 +8491,45 @@ mobjinfo_t mobjinfo[] =
 		4718592, //height
 		100, //mass
 		0, //damage
-		121, //activesound
+		124, //activesound
+		2, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_292
+	{
+		223, //doomednum
+		1235, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1048576, //radius
+		4718592, //height
+		100, //mass
+		0, //damage
+		122, //activesound
 		770, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing291
+	// MT_293
 	{
 		224, //doomednum
-		1291, //spawnstate
+		1237, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8491,16 +8549,16 @@ mobjinfo_t mobjinfo[] =
 		8388608, //height
 		100, //mass
 		0, //damage
-		120, //activesound
+		121, //activesound
 		2, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing292
+	// MT_294
 	{
 		225, //doomednum
-		1292, //spawnstate
+		1238, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8520,45 +8578,16 @@ mobjinfo_t mobjinfo[] =
 		3670016, //height
 		100, //mass
 		0, //damage
-		118, //activesound
+		119, //activesound
 		2, //flags
 		0, //flags2
 		0, //raisestate
 		NULL //classname
 	},
-	// TeleportorBeacon
-	{
-		10, //doomednum
-		1345, //spawnstate
-		5, //spawnhealth
-		1346, //seestate
-		0, //seesound
-		8, //reactiontime
-		0, //attacksound
-		0, //painstate
-		0, //painchance
-		0, //painsound
-		0, //meleestate
-		0, //missilestate
-		0, //crashstate
-		0, //deathstate
-		0, //xdeathstate
-		0, //deathsound
-		0, //speed
-		1048576, //radius
-		1048576, //height
-		3, //mass
-		0, //damage
-		0, //activesound
-		131073, //flags
-		0, //flags2
-		0, //raisestate
-		"Teleportor_Beacon" //classname
-	},
-	// Thing294
+	// MT_295
 	{
 		-1, //doomednum
-		1300, //spawnstate
+		1247, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8584,10 +8613,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing295
+	// MT_296
 	{
 		-1, //doomednum
-		1320, //spawnstate
+		1267, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8613,10 +8642,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing296
+	// MT_297
 	{
 		-1, //doomednum
-		1340, //spawnstate
+		1287, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8642,10 +8671,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Ammo2
+	// MT_298
 	{
 		-1, //doomednum
-		1295, //spawnstate
+		1241, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8671,10 +8700,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Ammo" //classname
 	},
-	// Health1
+	// MT_299
 	{
 		-1, //doomednum
-		1295, //spawnstate
+		1241, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8700,10 +8729,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Health" //classname
 	},
-	// Info1
+	// MT_300
 	{
 		-1, //doomednum
-		1295, //spawnstate
+		1241, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8729,10 +8758,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"info" //classname
 	},
-	// Alarm1
+	// MT_301
 	{
 		-1, //doomednum
-		1295, //spawnstate
+		1241, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8758,10 +8787,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"alarm" //classname
 	},
-	// Thing301
+	// MT_302
 	{
 		-1, //doomednum
-		1295, //spawnstate
+		1241, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8787,10 +8816,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing302
+	// MT_303
 	{
 		-1, //doomednum
-		1295, //spawnstate
+		1241, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8816,10 +8845,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Prison_pass
+	// MT_304
 	{
 		-1, //doomednum
-		1295, //spawnstate
+		1241, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8834,21 +8863,21 @@ mobjinfo_t mobjinfo[] =
 		0, //deathstate
 		0, //xdeathstate
 		0, //deathsound
-		0, //speed
+		10, //speed
 		1310720, //radius
 		1048576, //height
 		100, //mass
 		0, //damage
 		0, //activesound
-		1, //flags
+		2049, //flags
 		0, //flags2
 		0, //raisestate
 		"Prison_pass" //classname
 	},
-	// Thing304
+	// MT_305
 	{
 		-1, //doomednum
-		1295, //spawnstate
+		1241, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8874,10 +8903,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Thing305
+	// MT_306
 	{
 		-1, //doomednum
-		1295, //spawnstate
+		1241, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8903,10 +8932,39 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Report
+	// MT_307
 	{
 		-1, //doomednum
-		1295, //spawnstate
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		1, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_308
+	{
+		-1, //doomednum
+		1241, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8932,10 +8990,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"report" //classname
 	},
-	// Toughness
+	// MT_309
 	{
 		-1, //doomednum
-		1296, //spawnstate
+		1243, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8961,10 +9019,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Toughness" //classname
 	},
-	// Accuracy
+	// MT_310
 	{
 		-1, //doomednum
-		1297, //spawnstate
+		1244, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -8990,10 +9048,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Accuracy" //classname
 	},
-	// Oracle_Pass
+	// MT_311
 	{
 		-1, //doomednum
-		1295, //spawnstate
+		1242, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -9008,21 +9066,21 @@ mobjinfo_t mobjinfo[] =
 		0, //deathstate
 		0, //xdeathstate
 		0, //deathsound
-		0, //speed
+		18, //speed
 		1310720, //radius
 		1048576, //height
 		100, //mass
 		0, //damage
 		0, //activesound
-		1, //flags
+		2049, //flags
 		0, //flags2
 		0, //raisestate
 		"Oracle_Pass" //classname
 	},
-	// Thing310
+	// MT_312
 	{
 		-1, //doomednum
-		1295, //spawnstate
+		1241, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -9048,10 +9106,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// Blown_Up_the_Crystal
+	// MT_313
 	{
 		-1, //doomednum
-		1295, //spawnstate
+		1241, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -9075,12 +9133,12 @@ mobjinfo_t mobjinfo[] =
 		0, //flags
 		0, //flags2
 		0, //raisestate
-		"Blown_Up_the_Crystal" //classname
+		NULL //classname
 	},
-	// Blown_Up_the_Gates
+	// MT_314
 	{
 		-1, //doomednum
-		1295, //spawnstate
+		1241, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -9104,12 +9162,12 @@ mobjinfo_t mobjinfo[] =
 		0, //flags
 		0, //flags2
 		0, //raisestate
-		"Blown_Up_the_Gates" //classname
+		NULL //classname
 	},
-	// Quest4
+	// MT_315
 	{
 		-1, //doomednum
-		1295, //spawnstate
+		1241, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -9135,10 +9193,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"quest4" //classname
 	},
-	// Quest5
+	// MT_316
 	{
 		-1, //doomednum
-		1295, //spawnstate
+		1241, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -9164,10 +9222,10 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"quest5" //classname
 	},
-	// Quest6
+	// MT_317
 	{
 		-1, //doomednum
-		1295, //spawnstate
+		1241, //spawnstate
 		1000, //spawnhealth
 		0, //seestate
 		0, //seesound
@@ -9193,14 +9251,771 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"quest6" //classname
 	},
+	// MT_318
+	{
+		-1, //doomednum
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		0, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_319
+	{
+		-1, //doomednum
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		0, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_320
+	{
+		-1, //doomednum
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		0, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_321
+	{
+		-1, //doomednum
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		0, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_322
+	{
+		-1, //doomednum
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		0, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_323
+	{
+		-1, //doomednum
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		0, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_324
+	{
+		-1, //doomednum
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		0, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_325
+	{
+		-1, //doomednum
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		0, //flags
+		0, //flags2
+		0, //raisestate
+		"You\\\'ve_Blown_Up_the_Crystal" //classname
+	},
+	// MT_326
+	{
+		-1, //doomednum
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		0, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_327
+	{
+		-1, //doomednum
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		0, //flags
+		0, //flags2
+		0, //raisestate
+		"You\\\'ve_Blown_Up_the_Gates" //classname
+	},
+	// MT_328
+	{
+		-1, //doomednum
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		0, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_329
+	{
+		-1, //doomednum
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		0, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_330
+	{
+		-1, //doomednum
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		0, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_331
+	{
+		-1, //doomednum
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		0, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_332
+	{
+		-1, //doomednum
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		0, //flags
+		0, //flags2
+		0, //raisestate
+		"You_Killed_the_Bishop!" //classname
+	},
+	// MT_333
+	{
+		-1, //doomednum
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		0, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_334
+	{
+		-1, //doomednum
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		0, //flags
+		0, //flags2
+		0, //raisestate
+		"You\\\'ve_Killed_The_Oracle!" //classname
+	},
+	// MT_335
+	{
+		-1, //doomednum
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		0, //flags
+		0, //flags2
+		0, //raisestate
+		"You_Killed_Macil!" //classname
+	},
+	// MT_336
+	{
+		-1, //doomednum
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		0, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_337
+	{
+		-1, //doomednum
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		0, //flags
+		0, //flags2
+		0, //raisestate
+		"You\\\'ve_Killed_The_Loremaster!" //classname
+	},
+	// MT_338
+	{
+		-1, //doomednum
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		0, //flags
+		0, //flags2
+		0, //raisestate
+		"You\\\'ve_Blown_Up_the_Computer" //classname
+	},
+	// MT_339
+	{
+		-1, //doomednum
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		0, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_340
+	{
+		-1, //doomednum
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		0, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_341
+	{
+		-1, //doomednum
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		0, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_342
+	{
+		-1, //doomednum
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		0, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
+	// MT_343
+	{
+		-1, //doomednum
+		1241, //spawnstate
+		1000, //spawnhealth
+		0, //seestate
+		0, //seesound
+		8, //reactiontime
+		0, //attacksound
+		0, //painstate
+		0, //painchance
+		0, //painsound
+		0, //meleestate
+		0, //missilestate
+		0, //crashstate
+		0, //deathstate
+		0, //xdeathstate
+		0, //deathsound
+		0, //speed
+		1310720, //radius
+		1048576, //height
+		100, //mass
+		0, //damage
+		0, //activesound
+		1, //flags
+		0, //flags2
+		0, //raisestate
+		NULL //classname
+	},
 };
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/04/22 17:19:54  dj_jl
+//	Retail Strife data.
+//
 //	Revision 1.5  2002/01/17 18:18:13  dj_jl
 //	Renamed all map object classes
-//
+//	
 //	Revision 1.4  2002/01/07 12:31:35  dj_jl
 //	Changed copyright year
 //	
