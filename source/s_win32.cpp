@@ -100,6 +100,7 @@ IMPLEMENT_CLASS(VDefaultSoundDevice);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
+static long			prev_sndVol;
 static int			snd_MaxVolume = -1;      // maximum volume for sound
 
 static channel_t	Channel[MAX_VOICES];
@@ -218,6 +219,7 @@ void VDefaultSoundDevice::Init(void)
 		result = PrimarySoundBuffer->SetFormat(&wfx);
 		if (result != DS_OK)
 			Sys_Error("I_InitSound: Failed to set wave format of primary buffer\n%s", DS_Error(result));
+		PrimarySoundBuffer->GetVolume(&prev_sndVol);
 
 		// Get listener interface
 		if (sound3D)
@@ -332,6 +334,7 @@ void VDefaultSoundDevice::Shutdown(void)
 	//	Shutdown sound
 	if (DSound)
 	{
+		PrimarySoundBuffer->SetVolume(prev_sndVol);
 		DSound->Release();
 		DSound = NULL;
 	}
@@ -1206,9 +1209,12 @@ bool VDefaultSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2004/04/15 07:12:58  dj_jl
+//	Restoring sound volume on exit
+//
 //	Revision 1.20  2004/01/09 08:17:44  dj_jl
 //	Fixed repeating voices
-//
+//	
 //	Revision 1.19  2003/03/08 12:08:04  dj_jl
 //	Beautification.
 //	
