@@ -898,11 +898,27 @@ void TDirect3DDrawer::SetSkin(const char *name)
 		}
 		strcpy(skin_name[avail], name);
 		Mod_LoadSkin(name, 0);
-		skin_data[avail] = CreateSurface(SkinWidth, SkinHeight, 16);
-		word *buf = LockSurface(skin_data[avail]);
-		for (i = 0; i < SkinWidth * SkinHeight; i++)
+
+		int w = SkinWidth > maxTexSize ? maxTexSize : ToPowerOf2(SkinWidth);
+		int h = SkinHeight > maxTexSize ? maxTexSize : ToPowerOf2(SkinHeight);
+		if (square_textures)
 		{
-			buf[i] = pal8_to16[SkinData[i]];
+			w = h = MAX(w, h);
+		}
+
+		int sscale = FRACUNIT * SkinWidth / w;
+		int tscale = FRACUNIT * SkinHeight / h;
+
+		skin_data[avail] = CreateSurface(w, h, 16);
+		word *buf = LockSurface(skin_data[avail]);
+		word *dst = buf;
+		for (int t = 0; t < h; t++)
+		{
+			byte *src = SkinData + ((t * tscale) >> FRACBITS) * SkinWidth;
+			for (int s = 0; s < w; s++)
+			{
+				*dst++ = pal8_to16[src[(s * sscale) >> FRACBITS]];
+			}
 		}
 		skin_data[avail]->Unlock(NULL);
 		Z_Free(SkinData);
@@ -914,9 +930,12 @@ void TDirect3DDrawer::SetSkin(const char *name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/02 17:47:44  dj_jl
+//	Support skins with non-power of 2 dimensions
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
