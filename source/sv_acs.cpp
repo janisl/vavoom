@@ -365,6 +365,12 @@ void P_LoadACScripts(boolean spawn_thinkers)
 		ACScriptCount = 0;
 		return;
     }
+	if (GLevel->BehaviorSize < sizeof(acsHeader_t))
+    {
+		GCon->Log("Behavior lump too small");
+		ACScriptCount = 0;
+		return;
+    }
 	header = (acsHeader_t *)GLevel->Behavior;
 	ActionCodeBase = (byte *)header;
 	buffer = (int *)((byte *)header+header->infoOffset);
@@ -1815,9 +1821,12 @@ static int CmdSetLineSpecial(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2004/10/07 06:47:11  dj_jl
+//	Behavior lump size check.
+//
 //	Revision 1.26  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
-//
+//	
 //	Revision 1.25  2003/11/12 16:47:40  dj_jl
 //	Changed player structure into a class
 //	
