@@ -34,6 +34,7 @@ void CreateControlKeyChoices(void)
 	AddControl("Inventory right", "Impulse 14", "");
 	AddControl("Inventory use", "Impulse 15", "");
 	AddControl("Talk key", "ChatMode", "");
+	AddControl("Toggle always run", "ToggleAlwaysRun", "");
 }
 
 defaultproperties
@@ -43,6 +44,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/10/11 06:55:11  dj_jl
+//  Added auto run toggle to controls menu.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //
