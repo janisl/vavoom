@@ -1643,9 +1643,18 @@ int TProgs::GetClassID(const char *name)
 
 ClassBase *TProgs::Spawn(int cid, int tag)
 {
-	ClassBase *Obj = (ClassBase*)Z_Calloc(ClassInfo[cid].size, tag, 0);
-	Obj->vtable = Globals + ClassInfo[cid].vtable;
-	return Obj;
+	try
+	{
+		ClassBase *Obj = (ClassBase*)Z_Calloc(ClassInfo[cid].size, tag, 0);
+		Obj->vtable = Globals + ClassInfo[cid].vtable;
+		Exec(Obj->vtable[4], (int)Obj);
+		return Obj;
+	}
+	catch (...)
+	{
+		dprintf("- TProgs::Spawn\n");
+		throw;
+	}
 }
 
 //==========================================================================
@@ -1656,6 +1665,7 @@ ClassBase *TProgs::Spawn(int cid, int tag)
 
 void TProgs::Destroy(ClassBase *buf)
 {
+	Exec(buf->vtable[5], (int)buf);
 	Z_Free(buf);
 }
 
@@ -1692,9 +1702,12 @@ bool TProgs::CanCast(int fromid, int cid)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/10/27 07:48:25  dj_jl
+//	Added constructors and destructors
+//
 //	Revision 1.8  2001/10/04 17:24:21  dj_jl
 //	Got rid of some warnings
-//
+//	
 //	Revision 1.7  2001/09/25 17:06:22  dj_jl
 //	Added parent's vtable to vtable
 //	
