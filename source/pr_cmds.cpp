@@ -1498,7 +1498,7 @@ PF(RemoveSpecialThinker)
 	VThinker	*spec;
 
     spec = (VThinker*)Pop();
-    spec->Destroy();
+    spec->ConditionalDestroy();
 }
 
 //==========================================================================
@@ -1940,34 +1940,6 @@ PF(NumToSector)
 	    Push((int)&GLevel->Sectors[num]);
 	else
     	Push(0);
-}
-
-//==========================================================================
-//
-//  PF_MobjToNum
-//
-//==========================================================================
-
-PF(MobjToNum)
-{
-	VEntity**	mobj;
-
-    mobj = (VEntity**)Pop();
-    *mobj = (VEntity*)GetMobjNum(*mobj);
-}
-
-//==========================================================================
-//
-//  PF_NumToMobj
-//
-//==========================================================================
-
-PF(NumToMobj)
-{
-	VEntity**	mobj;
-
-	mobj = (VEntity**)Pop();
-    *mobj = SetMobjPtr((int)*mobj);
 }
 
 //==========================================================================
@@ -3112,8 +3084,6 @@ builtin_info_t BuiltinInfo[] =
     //  Savegame archieve / unarchieve utilite functions
     _(SectorToNum),
     _(NumToSector),
-    _(NumToMobj),
-    _(MobjToNum),
 
     _(G_ExitLevel),
     _(G_SecretExitLevel),
@@ -3140,9 +3110,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.45  2003/03/08 12:10:13  dj_jl
+//	API fixes.
+//
 //	Revision 1.44  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.43  2002/08/28 16:41:09  dj_jl
 //	Merged VMapObject with VEntity, some natives.
 //	

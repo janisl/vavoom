@@ -108,7 +108,7 @@ void VWindow::Destroy(void)
 	if (Parent)
 		Parent->RemoveChild(this);
 	if (WinGC)
-		WinGC->Destroy();
+		delete WinGC;
 	Super::Destroy();
 	unguard;
 }
@@ -464,7 +464,7 @@ void VWindow::KillAllChildren(void)
 	guard(VWindow::KillAllChildren);
 	while (FirstChild)
 	{
-		FirstChild->Destroy();
+		delete FirstChild;
 	}
 	unguard;
 }
@@ -635,7 +635,7 @@ inline VWindow *PR_PopWin(void)
 IMPLEMENT_FUNCTION(VWindow, Destroy)
 {
 	VWindow *Self = PR_PopWin();
-	Self->Destroy();
+	delete Self;
 }
 IMPLEMENT_FUNCTION(VWindow, NewChild)
 {
@@ -794,9 +794,12 @@ IMPLEMENT_FUNCTION(VWindow, DestroyAllChildren)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2003/03/08 12:10:13  dj_jl
+//	API fixes.
+//
 //	Revision 1.4  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.3  2002/07/27 18:12:14  dj_jl
 //	Added Selectability flag.
 //	

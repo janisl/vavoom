@@ -120,7 +120,7 @@ void S_Shutdown(void)
 	if (GSoundDevice)
 	{
 		GSoundDevice->Shutdown();
-		GSoundDevice->Destroy();
+		delete GSoundDevice;
 		GSoundDevice = NULL;
 	}
 	unguard;
@@ -329,9 +329,12 @@ void S_UpdateSounds(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2003/03/08 12:10:13  dj_jl
+//	API fixes.
+//
 //	Revision 1.8  2002/07/27 18:10:11  dj_jl
 //	Implementing Strife conversations.
-//
+//	
 //	Revision 1.7  2002/07/23 13:12:00  dj_jl
 //	Some compatibility fixes, beautification.
 //	

@@ -84,7 +84,7 @@ void SV_DestroyAllThinkers(void)
 	guard(SV_DestroyAllThinkers);
 	for (TObjectIterator<VThinker> It; It; ++It)
 	{
-		It->Destroy();
+		delete *It;
 	}
 	VObject::CollectGarbage();
 	unguard;
@@ -153,9 +153,12 @@ void P_Ticker(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2003/03/08 12:10:13  dj_jl
+//	API fixes.
+//
 //	Revision 1.14  2002/07/23 13:10:38  dj_jl
 //	Some fixes for switching to floating-point time.
-//
+//	
 //	Revision 1.13  2002/07/13 07:50:58  dj_jl
 //	Added guarding.
 //	

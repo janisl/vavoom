@@ -51,7 +51,7 @@ struct acsHeader_t
 	int code;
 };
 
-class VACS:public VThinker
+class VACS : public VThinker
 {
 	DECLARE_CLASS(VACS, VThinker, 0)
 	NO_DEFAULT_CONSTRUCTOR(VACS)
@@ -637,7 +637,7 @@ void VACS::Tick(float DeltaTime)
 	{
 		ACSInfo[infoIndex].state = ASTE_INACTIVE;
 		ScriptFinished(number);
-		Destroy();
+		ConditionalDestroy();
 		return;
 	}
 	if (ACSInfo[infoIndex].state != ASTE_RUNNING)
@@ -663,7 +663,7 @@ void VACS::Tick(float DeltaTime)
 	{
 		ACSInfo[infoIndex].state = ASTE_INACTIVE;
 		ScriptFinished(number);
-		Destroy();
+		ConditionalDestroy();
 	}
 }
 
@@ -1814,9 +1814,12 @@ static int CmdSetLineSpecial(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2003/03/08 12:10:13  dj_jl
+//	API fixes.
+//
 //	Revision 1.22  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.21  2002/08/28 16:41:09  dj_jl
 //	Merged VMapObject with VEntity, some natives.
 //	

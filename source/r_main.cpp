@@ -690,7 +690,7 @@ void V_Shutdown(void)
 	if (Drawer)
 	{
 		Drawer->Shutdown();
-		Drawer->Destroy();
+		delete Drawer;
 		Drawer = NULL;
 	}
 	unguard;
@@ -699,9 +699,12 @@ void V_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2003/03/08 12:10:13  dj_jl
+//	API fixes.
+//
 //	Revision 1.23  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.22  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
 //	

@@ -39,7 +39,7 @@
 //
 //	Doubly linked list of actors.
 //
-class VThinker:public VObject
+class VThinker : public VObject
 {
 	DECLARE_CLASS(VThinker, VObject, 0)
 
@@ -109,7 +109,7 @@ class VThinker:public VObject
 
 struct player_t;
 
-class VEntity:public VThinker
+class VEntity : public VThinker
 {
 	DECLARE_CLASS(VEntity, VThinker, 0)
 	NO_DEFAULT_CONSTRUCTOR(VEntity)
@@ -264,7 +264,7 @@ class VEntity:public VThinker
 
 	void Remove(void)
 	{
-		Destroy();
+		ConditionalDestroy();
 	}
 
 	boolean SetState(int state);
@@ -558,9 +558,12 @@ inline subsector_t* SV_PointInSubsector(float x, float y)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2003/03/08 12:10:13  dj_jl
+//	API fixes.
+//
 //	Revision 1.27  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.26  2002/08/28 16:41:09  dj_jl
 //	Merged VMapObject with VEntity, some natives.
 //	
