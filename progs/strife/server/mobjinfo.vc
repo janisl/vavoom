@@ -37,7 +37,7 @@
 
 class MT_0:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_0(void)
 	{
 		health = 10;
 		spawnhealth = health;
@@ -49,7 +49,6 @@ class MT_0:Actor
 		flags = MF_SHOOTABLE|MF_NOSECTOR;
 		spawnstate = S_1295;
 		deathstate = S_239;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -61,7 +60,7 @@ class MT_0:Actor
 
 class MT_PLAYER:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_PLAYER(void)
 	{
 		health = 100;
 		spawnhealth = health;
@@ -79,7 +78,6 @@ class MT_PLAYER:Actor
 		xdeathstate = S_PLAY_XDIE1;
 		sound_pain = GetSoundID("Sound10");
 		sound_death = GetSoundID("Sound17");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -91,13 +89,8 @@ class MT_PLAYER:Actor
 
 class MT_MERCHANDER1:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_MERCHANDER1(void)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Weapon_Smith";
 		health = 10000000;
 		spawnhealth = health;
@@ -112,7 +105,6 @@ class MT_MERCHANDER1:Actor
 		seestate = S_MERCHANDER_PAIN1;
 		painstate = S_MERCHANDER_PAIN1;
 		sound_pain = GetSoundID("Sound12");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -124,15 +116,9 @@ class MT_MERCHANDER1:Actor
 
 class MT_MERCHANDER2:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_MERCHANDER2(void)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Bar_Keep";
-		translation = 5;
 		health = 10000000;
 		spawnhealth = health;
 		radius = 20.0;
@@ -141,13 +127,13 @@ class MT_MERCHANDER2:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 150;
+		translation = 5;
 		flags = MF_SOLID|MF_SHOOTABLE;
 		spawnstate = S_MERCHANDER_STAND1;
 		seestate = S_MERCHANDER_PAIN1;
 		painstate = S_MERCHANDER_PAIN1;
 		sound_active = GetSoundID("Sound52");
 		sound_pain = GetSoundID("Sound53");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -159,15 +145,9 @@ class MT_MERCHANDER2:Actor
 
 class MT_MERCHANDER3:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_MERCHANDER3(void)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Amorer";
-		translation = 6;
 		health = 10000000;
 		spawnhealth = health;
 		radius = 20.0;
@@ -176,12 +156,12 @@ class MT_MERCHANDER3:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 150;
+		translation = 6;
 		flags = MF_SOLID|MF_SHOOTABLE;
 		spawnstate = S_MERCHANDER_STAND1;
 		seestate = S_MERCHANDER_PAIN1;
 		painstate = S_MERCHANDER_PAIN1;
 		sound_pain = GetSoundID("Sound12");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -193,15 +173,9 @@ class MT_MERCHANDER3:Actor
 
 class MT_MERCHANDER4:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_MERCHANDER4(void)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Medic";
-		translation = 7;
 		health = 10000000;
 		spawnhealth = health;
 		radius = 20.0;
@@ -210,12 +184,12 @@ class MT_MERCHANDER4:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 150;
+		translation = 7;
 		flags = MF_SOLID|MF_SHOOTABLE;
 		spawnstate = S_MERCHANDER_STAND1;
 		seestate = S_MERCHANDER_PAIN1;
 		painstate = S_MERCHANDER_PAIN1;
 		sound_pain = GetSoundID("Sound12");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -227,13 +201,8 @@ class MT_MERCHANDER4:Actor
 
 class MT_6:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_6(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		health = 31;
 		spawnhealth = health;
 		gibshealth = -15;
@@ -257,6 +226,15 @@ class MT_6:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -269,13 +247,8 @@ class MT_6:Actor
 
 class MT_7:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_7(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		health = 31;
 		spawnhealth = health;
 		gibshealth = -15;
@@ -299,6 +272,15 @@ class MT_7:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -311,13 +293,8 @@ class MT_7:Actor
 
 class MT_8:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_8(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		health = 31;
 		spawnhealth = health;
 		gibshealth = -15;
@@ -341,6 +318,15 @@ class MT_8:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -353,14 +339,8 @@ class MT_8:Actor
 
 class MT_9:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_9(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translation = 1;
 		health = 31;
 		spawnhealth = health;
 		gibshealth = -15;
@@ -371,6 +351,7 @@ class MT_9:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 200;
+		translation = 1;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_JUSTHIT|MF_COUNTKILL;
 		spawnstate = S_385;
 		seestate = S_386;
@@ -384,6 +365,15 @@ class MT_9:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -396,14 +386,8 @@ class MT_9:Actor
 
 class MT_10:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_10(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translation = 1;
 		health = 31;
 		spawnhealth = health;
 		gibshealth = -15;
@@ -414,6 +398,7 @@ class MT_10:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 200;
+		translation = 1;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_JUSTHIT|MF_COUNTKILL;
 		spawnstate = S_385;
 		seestate = S_386;
@@ -427,6 +412,15 @@ class MT_10:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -439,14 +433,8 @@ class MT_10:Actor
 
 class MT_11:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_11(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translation = 1;
 		health = 31;
 		spawnhealth = health;
 		gibshealth = -15;
@@ -457,6 +445,7 @@ class MT_11:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 200;
+		translation = 1;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_JUSTHIT|MF_COUNTKILL;
 		spawnstate = S_385;
 		seestate = S_386;
@@ -470,6 +459,15 @@ class MT_11:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -482,14 +480,8 @@ class MT_11:Actor
 
 class MT_12:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_12(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translation = 3;
 		health = 31;
 		spawnhealth = health;
 		gibshealth = -15;
@@ -500,6 +492,7 @@ class MT_12:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 200;
+		translation = 3;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_JUSTHIT|MF_COUNTKILL;
 		spawnstate = S_385;
 		seestate = S_386;
@@ -513,6 +506,15 @@ class MT_12:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -525,14 +527,8 @@ class MT_12:Actor
 
 class MT_13:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_13(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translation = 3;
 		health = 31;
 		spawnhealth = health;
 		gibshealth = -15;
@@ -543,6 +539,7 @@ class MT_13:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 200;
+		translation = 3;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_JUSTHIT|MF_COUNTKILL;
 		spawnstate = S_385;
 		seestate = S_386;
@@ -556,6 +553,15 @@ class MT_13:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -568,14 +574,8 @@ class MT_13:Actor
 
 class MT_14:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_14(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translation = 3;
 		health = 31;
 		spawnhealth = health;
 		gibshealth = -15;
@@ -586,6 +586,7 @@ class MT_14:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 200;
+		translation = 3;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_JUSTHIT|MF_COUNTKILL;
 		spawnstate = S_385;
 		seestate = S_386;
@@ -599,6 +600,15 @@ class MT_14:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -611,14 +621,8 @@ class MT_14:Actor
 
 class MT_15:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_15(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translation = 2;
 		health = 31;
 		spawnhealth = health;
 		gibshealth = -15;
@@ -629,6 +633,7 @@ class MT_15:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 200;
+		translation = 2;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_JUSTHIT|MF_COUNTKILL;
 		spawnstate = S_385;
 		seestate = S_386;
@@ -642,6 +647,15 @@ class MT_15:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -654,14 +668,8 @@ class MT_15:Actor
 
 class MT_16:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_16(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translation = 2;
 		health = 31;
 		spawnhealth = health;
 		gibshealth = -15;
@@ -672,6 +680,7 @@ class MT_16:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 200;
+		translation = 2;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_JUSTHIT|MF_COUNTKILL;
 		spawnstate = S_385;
 		seestate = S_386;
@@ -685,6 +694,15 @@ class MT_16:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -697,14 +715,8 @@ class MT_16:Actor
 
 class MT_17:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_17(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translation = 2;
 		health = 31;
 		spawnhealth = health;
 		gibshealth = -15;
@@ -715,6 +727,7 @@ class MT_17:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 200;
+		translation = 2;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_JUSTHIT|MF_COUNTKILL;
 		spawnstate = S_385;
 		seestate = S_386;
@@ -728,6 +741,15 @@ class MT_17:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -740,14 +762,8 @@ class MT_17:Actor
 
 class MT_18:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_18(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translation = 4;
 		health = 31;
 		spawnhealth = health;
 		gibshealth = -15;
@@ -758,6 +774,7 @@ class MT_18:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 200;
+		translation = 4;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_JUSTHIT|MF_COUNTKILL;
 		spawnstate = S_385;
 		seestate = S_386;
@@ -771,6 +788,15 @@ class MT_18:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -783,14 +809,8 @@ class MT_18:Actor
 
 class MT_19:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_19(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translation = 4;
 		health = 31;
 		spawnhealth = health;
 		gibshealth = -15;
@@ -801,6 +821,7 @@ class MT_19:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 200;
+		translation = 4;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_JUSTHIT|MF_COUNTKILL;
 		spawnstate = S_385;
 		seestate = S_386;
@@ -814,6 +835,15 @@ class MT_19:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -826,14 +856,8 @@ class MT_19:Actor
 
 class MT_20:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_20(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translation = 4;
 		health = 31;
 		spawnhealth = health;
 		gibshealth = -15;
@@ -844,6 +868,7 @@ class MT_20:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 200;
+		translation = 4;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_JUSTHIT|MF_COUNTKILL;
 		spawnstate = S_385;
 		seestate = S_386;
@@ -857,6 +882,15 @@ class MT_20:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -869,14 +903,8 @@ class MT_20:Actor
 
 class MT_21:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_21(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translation = 6;
 		health = 31;
 		spawnhealth = health;
 		gibshealth = -15;
@@ -887,6 +915,7 @@ class MT_21:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 200;
+		translation = 6;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_JUSTHIT|MF_COUNTKILL;
 		spawnstate = S_385;
 		seestate = S_386;
@@ -900,6 +929,15 @@ class MT_21:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -912,14 +950,8 @@ class MT_21:Actor
 
 class MT_22:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_22(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translation = 6;
 		health = 31;
 		spawnhealth = health;
 		gibshealth = -15;
@@ -930,6 +962,7 @@ class MT_22:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 200;
+		translation = 6;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_JUSTHIT|MF_COUNTKILL;
 		spawnstate = S_385;
 		seestate = S_386;
@@ -943,6 +976,15 @@ class MT_22:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -955,14 +997,8 @@ class MT_22:Actor
 
 class MT_23:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_23(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translation = 6;
 		health = 31;
 		spawnhealth = health;
 		gibshealth = -15;
@@ -973,6 +1009,7 @@ class MT_23:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 200;
+		translation = 6;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_JUSTHIT|MF_COUNTKILL;
 		spawnstate = S_385;
 		seestate = S_386;
@@ -986,6 +1023,15 @@ class MT_23:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -998,14 +1044,8 @@ class MT_23:Actor
 
 class MT_24:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_24(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translation = 5;
 		health = 31;
 		spawnhealth = health;
 		gibshealth = -15;
@@ -1016,6 +1056,7 @@ class MT_24:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 200;
+		translation = 5;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_JUSTHIT|MF_COUNTKILL;
 		spawnstate = S_385;
 		seestate = S_386;
@@ -1029,6 +1070,15 @@ class MT_24:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -1041,14 +1091,8 @@ class MT_24:Actor
 
 class MT_25:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_25(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translation = 5;
 		health = 31;
 		spawnhealth = health;
 		gibshealth = -15;
@@ -1059,6 +1103,7 @@ class MT_25:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 200;
+		translation = 5;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_JUSTHIT|MF_COUNTKILL;
 		spawnstate = S_385;
 		seestate = S_386;
@@ -1072,6 +1117,15 @@ class MT_25:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -1084,14 +1138,8 @@ class MT_25:Actor
 
 class MT_26:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_26(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translation = 5;
 		health = 31;
 		spawnhealth = health;
 		gibshealth = -15;
@@ -1102,6 +1150,7 @@ class MT_26:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 200;
+		translation = 5;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_JUSTHIT|MF_COUNTKILL;
 		spawnstate = S_385;
 		seestate = S_386;
@@ -1115,6 +1164,15 @@ class MT_26:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -1127,14 +1185,8 @@ class MT_26:Actor
 
 class MT_27:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_27(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translation = 7;
 		health = 31;
 		spawnhealth = health;
 		gibshealth = -15;
@@ -1145,6 +1197,7 @@ class MT_27:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 200;
+		translation = 7;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_JUSTHIT|MF_COUNTKILL;
 		spawnstate = S_385;
 		seestate = S_386;
@@ -1158,6 +1211,15 @@ class MT_27:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -1170,14 +1232,8 @@ class MT_27:Actor
 
 class MT_28:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_28(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translation = 1;
 		health = 31;
 		spawnhealth = health;
 		radius = 20.0;
@@ -1185,11 +1241,21 @@ class MT_28:Actor
 		mass = 100.0;
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
+		translation = 1;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
 		spawnstate = S_420;
 		painstate = S_421;
 		deathstate = S_410;
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -1202,13 +1268,8 @@ class MT_28:Actor
 
 class MT_29:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_29(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		health = 61;
 		spawnhealth = health;
 		radius = 20.0;
@@ -1222,6 +1283,15 @@ class MT_29:Actor
 		painstate = S_423;
 		deathstate = S_633;
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -1234,7 +1304,7 @@ class MT_29:Actor
 
 class MT_30:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_30(void)
 	{
 		health = 20;
 		spawnhealth = health;
@@ -1246,7 +1316,6 @@ class MT_30:Actor
 		flags = MF_SHOOTABLE|MF_NOSECTOR;
 		spawnstate = S_424;
 		sound_active = GetSoundID("Sound54");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1258,7 +1327,7 @@ class MT_30:Actor
 
 class MT_31:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_31(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -1269,7 +1338,6 @@ class MT_31:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_426;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1281,7 +1349,7 @@ class MT_31:Actor
 
 class MT_32:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_32(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -1292,7 +1360,6 @@ class MT_32:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_429;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1304,7 +1371,7 @@ class MT_32:Actor
 
 class MT_33:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_33(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -1315,7 +1382,6 @@ class MT_33:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_432;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1327,7 +1393,7 @@ class MT_33:Actor
 
 class MT_34:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_34(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -1338,7 +1404,6 @@ class MT_34:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_435;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1350,7 +1415,7 @@ class MT_34:Actor
 
 class MT_35:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_35(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -1361,7 +1426,6 @@ class MT_35:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_438;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1373,7 +1437,7 @@ class MT_35:Actor
 
 class MT_36:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_36(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -1384,7 +1448,6 @@ class MT_36:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_441;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1396,13 +1459,8 @@ class MT_36:Actor
 
 class MT_37:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_37(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		health = 51;
 		spawnhealth = health;
 		radius = 6.0;
@@ -1420,6 +1478,15 @@ class MT_37:Actor
 		sound_active = GetSoundID("Sound99");
 		sound_pain = GetSoundID("Sound100");
 		sound_death = GetSoundID("Sound100");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -1432,13 +1499,8 @@ class MT_37:Actor
 
 class MT_38:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_38(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Beggar";
 		health = 20;
 		spawnhealth = health;
@@ -1460,6 +1522,15 @@ class MT_38:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -1472,13 +1543,8 @@ class MT_38:Actor
 
 class MT_39:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_39(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Beggar";
 		health = 20;
 		spawnhealth = health;
@@ -1500,6 +1566,15 @@ class MT_39:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -1512,13 +1587,8 @@ class MT_39:Actor
 
 class MT_40:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_40(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Beggar";
 		health = 20;
 		spawnhealth = health;
@@ -1540,6 +1610,15 @@ class MT_40:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -1552,13 +1631,8 @@ class MT_40:Actor
 
 class MT_41:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_41(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Beggar";
 		health = 20;
 		spawnhealth = health;
@@ -1580,6 +1654,15 @@ class MT_41:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -1592,13 +1675,8 @@ class MT_41:Actor
 
 class MT_42:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_42(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Beggar";
 		health = 20;
 		spawnhealth = health;
@@ -1620,6 +1698,15 @@ class MT_42:Actor
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -1632,13 +1719,8 @@ class MT_42:Actor
 
 class MT_43:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_43(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Rebel";
 		health = 60;
 		spawnhealth = health;
@@ -1661,6 +1743,15 @@ class MT_43:Actor
 		sound_active = GetSoundID("Sound47");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound20");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -1673,13 +1764,8 @@ class MT_43:Actor
 
 class MT_44:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_44(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Rebel";
 		health = 60;
 		spawnhealth = health;
@@ -1702,6 +1788,15 @@ class MT_44:Actor
 		sound_active = GetSoundID("Sound47");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound20");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -1714,13 +1809,8 @@ class MT_44:Actor
 
 class MT_45:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_45(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Rebel";
 		health = 60;
 		spawnhealth = health;
@@ -1743,6 +1833,15 @@ class MT_45:Actor
 		sound_active = GetSoundID("Sound47");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound20");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -1755,13 +1854,8 @@ class MT_45:Actor
 
 class MT_46:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_46(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Rebel";
 		health = 60;
 		spawnhealth = health;
@@ -1784,6 +1878,15 @@ class MT_46:Actor
 		sound_active = GetSoundID("Sound47");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound20");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -1796,13 +1899,8 @@ class MT_46:Actor
 
 class MT_47:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_47(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Rebel";
 		health = 60;
 		spawnhealth = health;
@@ -1825,6 +1923,15 @@ class MT_47:Actor
 		sound_active = GetSoundID("Sound47");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound20");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -1837,13 +1944,8 @@ class MT_47:Actor
 
 class MT_48:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_48(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Rebel";
 		health = 60;
 		spawnhealth = health;
@@ -1866,6 +1968,15 @@ class MT_48:Actor
 		sound_active = GetSoundID("Sound47");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound20");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -1878,18 +1989,8 @@ class MT_48:Actor
 
 class MT_49:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_49(void)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "MACIL";
 		health = 95;
 		spawnhealth = health;
@@ -1909,6 +2010,15 @@ class MT_49:Actor
 		sound_sight = GetSoundID("Sound9");
 		sound_active = GetSoundID("Sound47");
 		sound_pain = GetSoundID("Sound12");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -1921,13 +2031,8 @@ class MT_49:Actor
 
 class MT_50:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_50(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "MACIL";
 		health = 95;
 		spawnhealth = health;
@@ -1950,6 +2055,15 @@ class MT_50:Actor
 		sound_active = GetSoundID("Sound47");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound19");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -1962,9 +2076,8 @@ class MT_50:Actor
 
 class MT_51:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_51(void)
 	{
-		translucency = 66;
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
@@ -1972,10 +2085,10 @@ class MT_51:Actor
 		mass = 100.0;
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
+		translucency = 66;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_562;
 		sound_sight = GetSoundID("Sound72");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1987,13 +2100,8 @@ class MT_51:Actor
 
 class MT_52:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_52(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		health = 150;
 		spawnhealth = health;
 		gibshealth = -75;
@@ -2016,6 +2124,15 @@ class MT_52:Actor
 		sound_active = GetSoundID("Sound94");
 		sound_pain = GetSoundID("Sound92");
 		sound_death = GetSoundID("Sound93");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -2028,13 +2145,8 @@ class MT_52:Actor
 
 class MT_53:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_53(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "ACOLYTE";
 		health = 70;
 		spawnhealth = health;
@@ -2058,6 +2170,15 @@ class MT_53:Actor
 		sound_attack = GetSoundID("Sound5");
 		sound_pain = GetSoundID("Sound16");
 		sound_death = GetSoundID("Sound21");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -2070,15 +2191,9 @@ class MT_53:Actor
 
 class MT_54:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_54(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "ACOLYTE";
-		translation = 1;
 		health = 70;
 		spawnhealth = health;
 		gibshealth = -35;
@@ -2089,6 +2204,7 @@ class MT_54:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 150;
+		translation = 1;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
 		spawnstate = S_602;
 		seestate = S_614;
@@ -2101,6 +2217,15 @@ class MT_54:Actor
 		sound_attack = GetSoundID("Sound5");
 		sound_pain = GetSoundID("Sound16");
 		sound_death = GetSoundID("Sound21");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -2113,15 +2238,9 @@ class MT_54:Actor
 
 class MT_55:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_55(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "ACOLYTE";
-		translation = 2;
 		health = 70;
 		spawnhealth = health;
 		gibshealth = -35;
@@ -2132,6 +2251,7 @@ class MT_55:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 150;
+		translation = 2;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
 		spawnstate = S_602;
 		seestate = S_614;
@@ -2144,6 +2264,15 @@ class MT_55:Actor
 		sound_attack = GetSoundID("Sound5");
 		sound_pain = GetSoundID("Sound16");
 		sound_death = GetSoundID("Sound21");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -2156,15 +2285,9 @@ class MT_55:Actor
 
 class MT_56:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_56(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "ACOLYTE";
-		translation = 3;
 		health = 70;
 		spawnhealth = health;
 		gibshealth = -35;
@@ -2175,6 +2298,7 @@ class MT_56:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 150;
+		translation = 3;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
 		spawnstate = S_602;
 		seestate = S_614;
@@ -2187,6 +2311,15 @@ class MT_56:Actor
 		sound_attack = GetSoundID("Sound5");
 		sound_pain = GetSoundID("Sound16");
 		sound_death = GetSoundID("Sound21");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -2199,15 +2332,9 @@ class MT_56:Actor
 
 class MT_57:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_57(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "ACOLYTE";
-		translation = 4;
 		health = 70;
 		spawnhealth = health;
 		gibshealth = -35;
@@ -2218,6 +2345,7 @@ class MT_57:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 150;
+		translation = 4;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
 		spawnstate = S_602;
 		seestate = S_614;
@@ -2230,6 +2358,15 @@ class MT_57:Actor
 		sound_attack = GetSoundID("Sound5");
 		sound_pain = GetSoundID("Sound16");
 		sound_death = GetSoundID("Sound21");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -2242,15 +2379,9 @@ class MT_57:Actor
 
 class MT_58:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_58(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "ACOLYTE";
-		translation = 5;
 		health = 70;
 		spawnhealth = health;
 		gibshealth = -35;
@@ -2261,6 +2392,7 @@ class MT_58:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 150;
+		translation = 5;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
 		spawnstate = S_602;
 		seestate = S_614;
@@ -2273,6 +2405,15 @@ class MT_58:Actor
 		sound_attack = GetSoundID("Sound5");
 		sound_pain = GetSoundID("Sound16");
 		sound_death = GetSoundID("Sound21");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -2285,13 +2426,8 @@ class MT_58:Actor
 
 class MT_59:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_59(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "ACOLYTE";
 		health = 70;
 		spawnhealth = health;
@@ -2315,6 +2451,15 @@ class MT_59:Actor
 		sound_attack = GetSoundID("Sound5");
 		sound_pain = GetSoundID("Sound16");
 		sound_death = GetSoundID("Sound21");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -2327,13 +2472,8 @@ class MT_59:Actor
 
 class MT_60:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_60(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		health = 400;
 		spawnhealth = health;
 		radius = 40.0;
@@ -2353,6 +2493,15 @@ class MT_60:Actor
 		sound_active = GetSoundID("Sound67");
 		sound_pain = GetSoundID("Sound64");
 		sound_death = GetSoundID("Sound65");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -2365,13 +2514,8 @@ class MT_60:Actor
 
 class MT_61:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_61(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		health = 500;
 		spawnhealth = health;
 		radius = 40.0;
@@ -2391,6 +2535,15 @@ class MT_61:Actor
 		sound_active = GetSoundID("Sound67");
 		sound_pain = GetSoundID("Sound64");
 		sound_death = GetSoundID("Sound84");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -2403,13 +2556,8 @@ class MT_61:Actor
 
 class MT_62:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_62(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Enforcer";
 		health = 300;
 		spawnhealth = health;
@@ -2431,6 +2579,15 @@ class MT_62:Actor
 		sound_active = GetSoundID("Sound85");
 		sound_pain = GetSoundID("Sound83");
 		sound_death = GetSoundID("Sound84");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -2443,13 +2600,8 @@ class MT_62:Actor
 
 class MT_63:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_63(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "ORACLE";
 		health = 31;
 		spawnhealth = health;
@@ -2464,6 +2616,15 @@ class MT_63:Actor
 		painstate = S_741;
 		crashstate = S_741;
 		deathstate = S_748;
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -2476,13 +2637,8 @@ class MT_63:Actor
 
 class MT_64:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_64(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "PRIEST";
 		health = 800;
 		spawnhealth = health;
@@ -2503,6 +2659,15 @@ class MT_64:Actor
 		sound_attack = GetSoundID("Sound90");
 		sound_pain = GetSoundID("Sound111");
 		sound_death = GetSoundID("Sound19");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -2515,14 +2680,8 @@ class MT_64:Actor
 
 class MT_65:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_65(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translucency = 66;
 		health = 500;
 		spawnhealth = health;
 		radius = 64.0;
@@ -2532,6 +2691,7 @@ class MT_65:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 250;
+		translucency = 66;
 		flags = MF_SPECIAL|MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_PICKUP|MF_FLOAT|MF_TELEPORT|MF_COUNTKILL|MF_TRANSLATION2|MF_UNUSED4;
 		spawnstate = S_797;
 		seestate = S_799;
@@ -2544,6 +2704,15 @@ class MT_65:Actor
 		sound_attack = GetSoundID("Sound90");
 		sound_pain = GetSoundID("Sound126");
 		sound_death = GetSoundID("Sound128");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -2556,9 +2725,8 @@ class MT_65:Actor
 
 class MT_66:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_66(void)
 	{
-		translucency = 66;
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
@@ -2566,9 +2734,9 @@ class MT_66:Actor
 		mass = 100.0;
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
+		translucency = 66;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_TRANSLATION2;
 		spawnstate = S_834;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2580,7 +2748,7 @@ class MT_66:Actor
 
 class MT_67:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_67(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -2591,7 +2759,6 @@ class MT_67:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_843;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2603,7 +2770,7 @@ class MT_67:Actor
 
 class MT_68:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_68(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -2614,7 +2781,6 @@ class MT_68:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_850;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2626,14 +2792,8 @@ class MT_68:Actor
 
 class MT_69:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_69(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translucency = 66;
 		health = 500;
 		spawnhealth = health;
 		radius = 24.0;
@@ -2643,6 +2803,7 @@ class MT_69:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 50;
+		translucency = 66;
 		flags = MF_SPECIAL|MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_PICKUP|MF_FLOAT|MF_TELEPORT|MF_COUNTKILL|MF_TRANSLATION2|MF_UNUSED4;
 		spawnstate = S_861;
 		seestate = S_863;
@@ -2655,6 +2816,15 @@ class MT_69:Actor
 		sound_attack = GetSoundID("Sound90");
 		sound_pain = GetSoundID("Sound126");
 		sound_death = GetSoundID("Sound128");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -2667,14 +2837,8 @@ class MT_69:Actor
 
 class MT_70:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_70(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translucency = 66;
 		health = 500;
 		spawnhealth = health;
 		radius = 24.0;
@@ -2684,6 +2848,7 @@ class MT_70:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 50;
+		translucency = 66;
 		flags = MF_SPECIAL|MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_PICKUP|MF_FLOAT|MF_TELEPORT|MF_COUNTKILL|MF_TRANSLATION2|MF_UNUSED4;
 		spawnstate = S_881;
 		seestate = S_892;
@@ -2696,6 +2861,15 @@ class MT_70:Actor
 		sound_attack = GetSoundID("Sound90");
 		sound_pain = GetSoundID("Sound126");
 		sound_death = GetSoundID("Sound128");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -2708,14 +2882,8 @@ class MT_70:Actor
 
 class MT_71:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_71(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translucency = 66;
 		health = 500;
 		spawnhealth = health;
 		radius = 24.0;
@@ -2725,6 +2893,7 @@ class MT_71:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 50;
+		translucency = 66;
 		flags = MF_SPECIAL|MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_PICKUP|MF_FLOAT|MF_TELEPORT|MF_COUNTKILL|MF_TRANSLATION2|MF_UNUSED4;
 		spawnstate = S_910;
 		seestate = S_912;
@@ -2737,6 +2906,15 @@ class MT_71:Actor
 		sound_attack = GetSoundID("Sound90");
 		sound_pain = GetSoundID("Sound126");
 		sound_death = GetSoundID("Sound128");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -2749,14 +2927,8 @@ class MT_71:Actor
 
 class MT_72:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_72(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translucency = 66;
 		health = 500;
 		spawnhealth = health;
 		radius = 24.0;
@@ -2766,6 +2938,7 @@ class MT_72:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 50;
+		translucency = 66;
 		flags = MF_SPECIAL|MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_PICKUP|MF_FLOAT|MF_TELEPORT|MF_COUNTKILL|MF_TRANSLATION2|MF_UNUSED4;
 		spawnstate = S_930;
 		seestate = S_932;
@@ -2778,6 +2951,15 @@ class MT_72:Actor
 		sound_attack = GetSoundID("Sound90");
 		sound_pain = GetSoundID("Sound126");
 		sound_death = GetSoundID("Sound128");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -2790,14 +2972,8 @@ class MT_72:Actor
 
 class MT_73:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_73(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translucency = 66;
 		health = 1500;
 		spawnhealth = health;
 		radius = 130.0;
@@ -2807,6 +2983,7 @@ class MT_73:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 255;
+		translucency = 66;
 		flags = MF_SPECIAL|MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_PICKUP|MF_FLOAT|MF_TELEPORT|MF_COUNTKILL|MF_TRANSLATION2|MF_UNUSED4;
 		spawnstate = S_950;
 		seestate = S_964;
@@ -2819,6 +2996,15 @@ class MT_73:Actor
 		sound_attack = GetSoundID("Sound90");
 		sound_pain = GetSoundID("Sound126");
 		sound_death = GetSoundID("Sound129");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -2831,14 +3017,8 @@ class MT_73:Actor
 
 class MT_74:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_74(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
-		translucency = 66;
 		health = 100;
 		spawnhealth = health;
 		radius = 130.0;
@@ -2848,6 +3028,7 @@ class MT_74:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		painchance = 255;
+		translucency = 66;
 		flags = MF_SPECIAL|MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_PICKUP|MF_FLOAT|MF_TELEPORT|MF_COUNTKILL|MF_TRANSLATION2|MF_UNUSED4;
 		spawnstate = S_988;
 		seestate = S_989;
@@ -2860,6 +3041,15 @@ class MT_74:Actor
 		sound_attack = GetSoundID("Sound90");
 		sound_pain = GetSoundID("Sound126");
 		sound_death = GetSoundID("Sound128");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -2872,7 +3062,7 @@ class MT_74:Actor
 
 class MT_75:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_75(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -2883,7 +3073,6 @@ class MT_75:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1017;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2895,7 +3084,7 @@ class MT_75:Actor
 
 class MT_76:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_76(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -2908,7 +3097,6 @@ class MT_76:Actor
 		spawnstate = S_1018;
 		seestate = S_1019;
 		sound_sight = GetSoundID("Sound19");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2920,7 +3108,7 @@ class MT_76:Actor
 
 class MT_77:Missile
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_77(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -2936,7 +3124,6 @@ class MT_77:Missile
 		deathstate = S_149;
 		sound_sight = GetSoundID("Sound106");
 		sound_death = GetSoundID("Sound107");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2948,7 +3135,7 @@ class MT_77:Missile
 
 class MT_78:Missile
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_78(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -2964,7 +3151,6 @@ class MT_78:Missile
 		deathstate = S_149;
 		sound_sight = GetSoundID("Sound106");
 		sound_death = GetSoundID("Sound107");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2976,7 +3162,7 @@ class MT_78:Missile
 
 class MT_79:Missile
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_79(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -2992,7 +3178,6 @@ class MT_79:Missile
 		deathstate = S_149;
 		sound_sight = GetSoundID("Sound106");
 		sound_death = GetSoundID("Sound107");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3004,7 +3189,7 @@ class MT_79:Missile
 
 class MT_80:Missile
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_80(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3020,7 +3205,6 @@ class MT_80:Missile
 		deathstate = S_149;
 		sound_sight = GetSoundID("Sound106");
 		sound_death = GetSoundID("Sound107");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3032,7 +3216,7 @@ class MT_80:Missile
 
 class MT_81:Missile
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_81(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3048,7 +3232,6 @@ class MT_81:Missile
 		deathstate = S_149;
 		sound_sight = GetSoundID("Sound106");
 		sound_death = GetSoundID("Sound107");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3060,7 +3243,7 @@ class MT_81:Missile
 
 class MT_82:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_82(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3071,7 +3254,6 @@ class MT_82:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF;
 		spawnstate = S_1032;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3083,7 +3265,7 @@ class MT_82:Actor
 
 class MT_83:Missile
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_83(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3099,7 +3281,6 @@ class MT_83:Missile
 		deathstate = S_149;
 		sound_sight = GetSoundID("Sound106");
 		sound_death = GetSoundID("Sound107");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3111,7 +3292,7 @@ class MT_83:Missile
 
 class MT_84:Missile
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_84(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3127,7 +3308,6 @@ class MT_84:Missile
 		deathstate = S_149;
 		sound_sight = GetSoundID("Sound106");
 		sound_death = GetSoundID("Sound107");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3139,7 +3319,7 @@ class MT_84:Missile
 
 class MT_85:Missile
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_85(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3155,7 +3335,6 @@ class MT_85:Missile
 		deathstate = S_153;
 		sound_sight = GetSoundID("Sound106");
 		sound_death = GetSoundID("Sound107");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3167,9 +3346,8 @@ class MT_85:Missile
 
 class MT_86:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_86(void)
 	{
-		translucency = 66;
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
@@ -3178,10 +3356,10 @@ class MT_86:Actor
 		speed = 630.0;
 		if (gameskill != sk_nightmare)
 			reactiontime = 90;
+		translucency = 66;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1045;
 		deathstate = S_148;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3193,7 +3371,7 @@ class MT_86:Actor
 
 class MT_87:Missile
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_87(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3209,7 +3387,6 @@ class MT_87:Missile
 		deathstate = S_148;
 		sound_sight = GetSoundID("Sound106");
 		sound_death = GetSoundID("Sound107");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3221,7 +3398,7 @@ class MT_87:Missile
 
 class MT_88:Missile
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_88(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3237,7 +3414,6 @@ class MT_88:Missile
 		deathstate = S_148;
 		sound_sight = GetSoundID("Sound106");
 		sound_death = GetSoundID("Sound107");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3249,13 +3425,8 @@ class MT_88:Missile
 
 class MT_89:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_89(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		health = 100;
 		spawnhealth = health;
 		radius = 23.0;
@@ -3274,6 +3445,15 @@ class MT_89:Actor
 		sound_sight = GetSoundID("Sound78");
 		sound_active = GetSoundID("Sound80");
 		sound_death = GetSoundID("Sound79");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -3286,13 +3466,8 @@ class MT_89:Actor
 
 class MT_90:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_90(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		health = 80;
 		spawnhealth = health;
 		radius = 31.0;
@@ -3313,6 +3488,15 @@ class MT_90:Actor
 		sound_attack = GetSoundID("Sound98");
 		sound_pain = GetSoundID("Sound98");
 		sound_death = GetSoundID("Sound97");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -3325,13 +3509,8 @@ class MT_90:Actor
 
 class MT_91:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_91(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		health = 1000;
 		spawnhealth = health;
 		radius = 40.0;
@@ -3348,6 +3527,15 @@ class MT_91:Actor
 		sound_sight = GetSoundID("Sound116");
 		sound_active = GetSoundID("Sound115");
 		sound_death = GetSoundID("Sound114");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -3360,13 +3548,8 @@ class MT_91:Actor
 
 class MT_92:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_92(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		health = 1100;
 		spawnhealth = health;
 		radius = 45.0;
@@ -3388,6 +3571,15 @@ class MT_92:Actor
 		sound_attack = GetSoundID("Sound90");
 		sound_pain = GetSoundID("Sound109");
 		sound_death = GetSoundID("Sound65");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -3400,7 +3592,7 @@ class MT_92:Actor
 
 class MT_93:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_93(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3411,7 +3603,6 @@ class MT_93:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOBLOOD;
 		spawnstate = S_1180;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3423,7 +3614,7 @@ class MT_93:Actor
 
 class MT_94:Missile
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_94(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3439,7 +3630,6 @@ class MT_94:Missile
 		deathstate = S_241;
 		sound_sight = GetSoundID("Sound101");
 		sound_active = GetSoundID("Sound1");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3451,7 +3641,7 @@ class MT_94:Missile
 
 class MT_95:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_95(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3463,7 +3653,6 @@ class MT_95:Actor
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_242;
 		sound_sight = GetSoundID("Sound102");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3475,7 +3664,7 @@ class MT_95:Actor
 
 class MT_96:Missile
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_96(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3491,7 +3680,6 @@ class MT_96:Missile
 		deathstate = S_262;
 		sound_sight = GetSoundID("Sound71");
 		sound_death = GetSoundID("Sound6");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3503,7 +3691,7 @@ class MT_96:Missile
 
 class MT_97:Missile
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_97(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3519,7 +3707,6 @@ class MT_97:Missile
 		deathstate = S_261;
 		sound_sight = GetSoundID("Sound71");
 		sound_death = GetSoundID("Sound6");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3531,7 +3718,7 @@ class MT_97:Missile
 
 class MT_98:Missile
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_98(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3547,7 +3734,6 @@ class MT_98:Missile
 		deathstate = S_262;
 		sound_sight = GetSoundID("Sound71");
 		sound_death = GetSoundID("Sound6");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3559,7 +3745,7 @@ class MT_98:Missile
 
 class MT_99:Missile
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_99(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3576,7 +3762,6 @@ class MT_99:Missile
 		sound_sight = GetSoundID("Sound1");
 		sound_active = GetSoundID("Sound1");
 		sound_death = GetSoundID("Sound68");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3588,7 +3773,7 @@ class MT_99:Missile
 
 class MT_100:Missile
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_100(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3604,7 +3789,6 @@ class MT_100:Missile
 		deathstate = S_248;
 		sound_sight = GetSoundID("Sound1");
 		sound_active = GetSoundID("Sound1");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3616,7 +3800,7 @@ class MT_100:Missile
 
 class MT_101:Missile
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_101(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3629,7 +3813,6 @@ class MT_101:Missile
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		spawnstate = S_173;
 		deathstate = S_135;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3641,7 +3824,7 @@ class MT_101:Missile
 
 class MT_102:Missile
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_102(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3656,7 +3839,6 @@ class MT_102:Missile
 		spawnstate = S_173;
 		deathstate = S_131;
 		sound_sight = GetSoundID("Sound88");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3668,7 +3850,7 @@ class MT_102:Missile
 
 class MT_103:Missile
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_103(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3684,7 +3866,6 @@ class MT_103:Missile
 		deathstate = S_194;
 		sound_sight = GetSoundID("Sound103");
 		sound_death = GetSoundID("Sound104");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3696,7 +3877,7 @@ class MT_103:Missile
 
 class MT_104:Missile
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_104(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3712,7 +3893,6 @@ class MT_104:Missile
 		deathstate = S_216;
 		sound_sight = GetSoundID("Sound103");
 		sound_death = GetSoundID("Sound104");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3724,7 +3904,7 @@ class MT_104:Missile
 
 class MT_105:Missile
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_105(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3740,7 +3920,6 @@ class MT_105:Missile
 		deathstate = S_230;
 		sound_sight = GetSoundID("Sound103");
 		sound_death = GetSoundID("Sound104");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3752,7 +3931,7 @@ class MT_105:Missile
 
 class MT_106:Missile
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_106(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3767,7 +3946,6 @@ class MT_106:Missile
 		deathstate = S_185;
 		sound_sight = GetSoundID("Sound103");
 		sound_death = GetSoundID("Sound104");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3779,9 +3957,8 @@ class MT_106:Missile
 
 class MT_107:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_107(void)
 	{
-		translucency = 66;
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
@@ -3789,9 +3966,9 @@ class MT_107:Actor
 		mass = 100.0;
 		if (gameskill != sk_nightmare)
 			reactiontime = 80;
+		translucency = 66;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_TRANSLATION2;
 		spawnstate = S_231;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3803,7 +3980,7 @@ class MT_107:Actor
 
 class MT_108:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_108(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3815,7 +3992,6 @@ class MT_108:Actor
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_217;
 		deathstate = S_226;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3827,7 +4003,7 @@ class MT_108:Actor
 
 class MT_109:Missile
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_109(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3843,7 +4019,6 @@ class MT_109:Missile
 		deathstate = S_253;
 		sound_sight = GetSoundID("Sound87");
 		sound_death = GetSoundID("Sound104");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3855,7 +4030,7 @@ class MT_109:Missile
 
 class MT_110:Missile
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_110(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3869,7 +4044,6 @@ class MT_110:Missile
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		spawnstate = S_258;
 		deathstate = S_260;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3881,7 +4055,7 @@ class MT_110:Missile
 
 class MT_111:Missile
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_111(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3896,7 +4070,6 @@ class MT_111:Missile
 		spawnstate = S_1188;
 		deathstate = S_1190;
 		sound_sight = GetSoundID("Sound7");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3908,7 +4081,7 @@ class MT_111:Missile
 
 class MT_112:Missile
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_112(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3923,7 +4096,6 @@ class MT_112:Missile
 		spawnstate = S_1188;
 		deathstate = S_1190;
 		sound_sight = GetSoundID("Sound7");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3935,7 +4107,7 @@ class MT_112:Missile
 
 class MT_113:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_113(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3946,7 +4118,6 @@ class MT_113:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_175;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3958,9 +4129,8 @@ class MT_113:Actor
 
 class MT_PUFF:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_PUFF(void)
 	{
-		translucency = 66;
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
@@ -3968,9 +4138,9 @@ class MT_PUFF:Actor
 		mass = 100.0;
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
+		translucency = 66;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_PUFF1;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3982,7 +4152,7 @@ class MT_PUFF:Actor
 
 class MT_115:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_115(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3993,7 +4163,6 @@ class MT_115:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_140;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4005,7 +4174,7 @@ class MT_115:Actor
 
 class MT_116:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_116(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -4016,7 +4185,6 @@ class MT_116:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_159;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4028,9 +4196,8 @@ class MT_116:Actor
 
 class MT_TFOG:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_TFOG(void)
 	{
-		translucency = 66;
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
@@ -4038,9 +4205,9 @@ class MT_TFOG:Actor
 		mass = 100.0;
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
+		translucency = 66;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_TFOG1;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4052,9 +4219,8 @@ class MT_TFOG:Actor
 
 class MT_IFOG:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_IFOG(void)
 	{
-		translucency = 66;
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
@@ -4062,9 +4228,9 @@ class MT_IFOG:Actor
 		mass = 100.0;
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
+		translucency = 66;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_IFOG1;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4076,7 +4242,7 @@ class MT_IFOG:Actor
 
 class MT_TELEPORTMAN:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_TELEPORTMAN(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -4086,7 +4252,6 @@ class MT_TELEPORTMAN:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		flags = MF_NOSECTOR|MF_NOBLOCKMAP;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4098,7 +4263,7 @@ class MT_TELEPORTMAN:Actor
 
 class MT_120:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_120(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -4110,7 +4275,6 @@ class MT_120:Actor
 		flags = MF_NOBLOCKMAP|MF_AMBUSH|MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_1196;
 		seestate = S_1197;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4122,13 +4286,8 @@ class MT_120:Actor
 
 class MT_121:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_121(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		health = 125;
 		spawnhealth = health;
 		radius = 20.0;
@@ -4143,6 +4302,15 @@ class MT_121:Actor
 		painstate = S_1201;
 		deathstate = S_1204;
 		sound_death = GetSoundID("Sound6");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -4155,7 +4323,7 @@ class MT_121:Actor
 
 class MT_122:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_122(void)
 	{
 		health = 100;
 		spawnhealth = health;
@@ -4168,7 +4336,6 @@ class MT_122:Actor
 		spawnstate = S_1210;
 		deathstate = S_1212;
 		sound_death = GetSoundID("Sound104");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4180,7 +4347,7 @@ class MT_122:Actor
 
 class MT_123:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_123(void)
 	{
 		health = 80;
 		spawnhealth = health;
@@ -4193,7 +4360,6 @@ class MT_123:Actor
 		spawnstate = S_1221;
 		deathstate = S_1225;
 		sound_death = GetSoundID("Sound104");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4205,7 +4371,7 @@ class MT_123:Actor
 
 class MT_124:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_124(void)
 	{
 		classname = "Med_patch";
 		health = 1000;
@@ -4217,7 +4383,6 @@ class MT_124:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1429;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4229,7 +4394,7 @@ class MT_124:Actor
 
 class MT_125:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_125(void)
 	{
 		classname = "Medical_kit";
 		health = 1000;
@@ -4241,7 +4406,6 @@ class MT_125:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1430;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4253,7 +4417,7 @@ class MT_125:Actor
 
 class MT_126:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_126(void)
 	{
 		classname = "full_health";
 		health = 1000;
@@ -4265,7 +4429,6 @@ class MT_126:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1298;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4277,7 +4440,7 @@ class MT_126:Actor
 
 class MT_127:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_127(void)
 	{
 		classname = "Thalite_Ore";
 		health = 10;
@@ -4291,7 +4454,6 @@ class MT_127:Actor
 		spawnstate = S_1239;
 		deathstate = S_1240;
 		sound_death = GetSoundID("Sound104");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4303,7 +4465,7 @@ class MT_127:Actor
 
 class MT_128:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_128(void)
 	{
 		classname = "Metal_Armor";
 		health = 1000;
@@ -4315,7 +4477,6 @@ class MT_128:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1348;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4327,7 +4488,7 @@ class MT_128:Actor
 
 class MT_129:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_129(void)
 	{
 		classname = "Leather_Armor";
 		health = 1000;
@@ -4339,7 +4500,6 @@ class MT_129:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1349;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4351,7 +4511,7 @@ class MT_129:Actor
 
 class MT_130:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_130(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -4361,7 +4521,6 @@ class MT_130:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_1401;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4373,7 +4532,7 @@ class MT_130:Actor
 
 class MT_131:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_131(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -4383,7 +4542,6 @@ class MT_131:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_1402;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4395,7 +4553,7 @@ class MT_131:Actor
 
 class MT_132:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_132(void)
 	{
 		classname = "Base_Key";
 		health = 1000;
@@ -4407,7 +4565,6 @@ class MT_132:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1295;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4419,7 +4576,7 @@ class MT_132:Actor
 
 class MT_133:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_133(void)
 	{
 		classname = "Rebel_Key";
 		health = 1000;
@@ -4431,7 +4588,6 @@ class MT_133:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1295;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4443,13 +4599,8 @@ class MT_133:Actor
 
 class MT_134:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_134(void)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Passcard";
 		health = 1000;
 		spawnhealth = health;
@@ -4460,7 +4611,6 @@ class MT_134:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1405;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4472,13 +4622,8 @@ class MT_134:Actor
 
 class MT_135:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_135(void)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "ID_Badge";
 		health = 1000;
 		spawnhealth = health;
@@ -4489,7 +4634,6 @@ class MT_135:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1403;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4501,7 +4645,7 @@ class MT_135:Actor
 
 class MT_136:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_136(void)
 	{
 		classname = "Prison_Key";
 		health = 1000;
@@ -4513,7 +4657,6 @@ class MT_136:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1416;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4525,13 +4668,8 @@ class MT_136:Actor
 
 class MT_137:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_137(void)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Severed_Hand";
 		health = 1000;
 		spawnhealth = health;
@@ -4542,7 +4680,6 @@ class MT_137:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1409;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4554,7 +4691,7 @@ class MT_137:Actor
 
 class MT_138:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_138(void)
 	{
 		classname = "Power1_Key";
 		health = 1000;
@@ -4566,7 +4703,6 @@ class MT_138:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1417;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4578,7 +4714,7 @@ class MT_138:Actor
 
 class MT_139:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_139(void)
 	{
 		classname = "Power2_Key";
 		health = 1000;
@@ -4590,7 +4726,6 @@ class MT_139:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1418;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4602,7 +4737,7 @@ class MT_139:Actor
 
 class MT_140:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_140(void)
 	{
 		classname = "Power3_Key";
 		health = 1000;
@@ -4614,7 +4749,6 @@ class MT_140:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1419;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4626,13 +4760,8 @@ class MT_140:Actor
 
 class MT_141:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_141(void)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Gold_Key";
 		health = 1000;
 		spawnhealth = health;
@@ -4643,7 +4772,6 @@ class MT_141:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1406;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4655,13 +4783,8 @@ class MT_141:Actor
 
 class MT_142:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_142(void)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "ID_Card";
 		health = 1000;
 		spawnhealth = health;
@@ -4672,7 +4795,6 @@ class MT_142:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1404;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4684,13 +4806,8 @@ class MT_142:Actor
 
 class MT_143:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_143(void)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Silver_Key";
 		health = 1000;
 		spawnhealth = health;
@@ -4701,7 +4818,6 @@ class MT_143:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1407;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4713,13 +4829,8 @@ class MT_143:Actor
 
 class MT_144:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_144(void)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Oracle_Key";
 		health = 1000;
 		spawnhealth = health;
@@ -4730,7 +4841,6 @@ class MT_144:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1420;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4742,7 +4852,7 @@ class MT_144:Actor
 
 class MT_145:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_145(void)
 	{
 		classname = "Military_ID";
 		health = 1000;
@@ -4754,7 +4864,6 @@ class MT_145:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1421;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4766,13 +4875,8 @@ class MT_145:Actor
 
 class MT_146:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_146(void)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Order_Key";
 		health = 1000;
 		spawnhealth = health;
@@ -4783,7 +4887,6 @@ class MT_146:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1422;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4795,13 +4898,8 @@ class MT_146:Actor
 
 class MT_147:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_147(void)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Warehouse_Key";
 		health = 1000;
 		spawnhealth = health;
@@ -4812,7 +4910,6 @@ class MT_147:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1423;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4824,13 +4921,8 @@ class MT_147:Actor
 
 class MT_148:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_148(void)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Brass_Key";
 		health = 1000;
 		spawnhealth = health;
@@ -4841,7 +4933,6 @@ class MT_148:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1408;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4853,13 +4944,8 @@ class MT_148:Actor
 
 class MT_149:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_149(void)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Red_Crystal_Key";
 		health = 1000;
 		spawnhealth = health;
@@ -4870,7 +4956,6 @@ class MT_149:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1424;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4882,13 +4967,8 @@ class MT_149:Actor
 
 class MT_150:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_150(void)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Blue_Crystal_Key";
 		health = 1000;
 		spawnhealth = health;
@@ -4899,7 +4979,6 @@ class MT_150:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1425;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4911,13 +4990,8 @@ class MT_150:Actor
 
 class MT_151:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_151(void)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Chapel_Key";
 		health = 1000;
 		spawnhealth = health;
@@ -4928,7 +5002,6 @@ class MT_151:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1426;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4940,7 +5013,7 @@ class MT_151:Actor
 
 class MT_152:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_152(void)
 	{
 		classname = "Tunnel_Key";
 		health = 1000;
@@ -4952,7 +5025,6 @@ class MT_152:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1427;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4964,7 +5036,7 @@ class MT_152:Actor
 
 class MT_153:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_153(void)
 	{
 		classname = "Security_Key";
 		health = 1000;
@@ -4976,7 +5048,6 @@ class MT_153:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1428;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4988,7 +5059,7 @@ class MT_153:Actor
 
 class MT_154:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_154(void)
 	{
 		classname = "New_Key1";
 		health = 1000;
@@ -5000,7 +5071,6 @@ class MT_154:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1428;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5012,7 +5082,7 @@ class MT_154:Actor
 
 class MT_155:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_155(void)
 	{
 		classname = "New_Key2";
 		health = 1000;
@@ -5024,7 +5094,6 @@ class MT_155:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1428;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5036,7 +5105,7 @@ class MT_155:Actor
 
 class MT_156:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_156(void)
 	{
 		classname = "New_Key3";
 		health = 1000;
@@ -5048,7 +5117,6 @@ class MT_156:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1428;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5060,7 +5128,7 @@ class MT_156:Actor
 
 class MT_157:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_157(void)
 	{
 		classname = "New_Key4";
 		health = 1000;
@@ -5072,7 +5140,6 @@ class MT_157:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1428;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5084,7 +5151,7 @@ class MT_157:Actor
 
 class MT_158:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_158(void)
 	{
 		classname = "New_Key5";
 		health = 1000;
@@ -5096,7 +5163,6 @@ class MT_158:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1428;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5108,7 +5174,7 @@ class MT_158:Actor
 
 class MT_159:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_159(void)
 	{
 		classname = "Shadow_armor";
 		health = 1000;
@@ -5120,7 +5186,6 @@ class MT_159:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1435;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5132,7 +5197,7 @@ class MT_159:Actor
 
 class MT_160:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_160(void)
 	{
 		classname = "Environmental_Suit";
 		health = 1000;
@@ -5144,7 +5209,6 @@ class MT_160:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1439;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5156,7 +5220,7 @@ class MT_160:Actor
 
 class MT_161:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_161(void)
 	{
 		classname = "Guard_Uniform";
 		health = 1000;
@@ -5168,7 +5232,6 @@ class MT_161:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1440;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5180,13 +5243,8 @@ class MT_161:Actor
 
 class MT_162:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_162(void)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Officer's_Uniform";
 		health = 1000;
 		spawnhealth = health;
@@ -5197,7 +5255,6 @@ class MT_162:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1441;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5209,7 +5266,7 @@ class MT_162:Actor
 
 class MT_163:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_163(void)
 	{
 		classname = "Map";
 		health = 1000;
@@ -5221,7 +5278,6 @@ class MT_163:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1442;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5233,7 +5289,7 @@ class MT_163:Actor
 
 class MT_164:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_164(void)
 	{
 		classname = "Map-Radar";
 		health = 1000;
@@ -5245,7 +5301,6 @@ class MT_164:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1444;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5257,7 +5312,7 @@ class MT_164:Actor
 
 class MT_165:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_165(void)
 	{
 		classname = "coin";
 		health = 1000;
@@ -5269,7 +5324,6 @@ class MT_165:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL|MF_DROPPED;
 		spawnstate = S_1431;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5281,7 +5335,7 @@ class MT_165:Actor
 
 class MT_166:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_166(void)
 	{
 		classname = "10_gold";
 		health = 1000;
@@ -5293,7 +5347,6 @@ class MT_166:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL|MF_DROPPED;
 		spawnstate = S_1432;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5305,7 +5358,7 @@ class MT_166:Actor
 
 class MT_167:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_167(void)
 	{
 		classname = "25_gold";
 		health = 1000;
@@ -5317,7 +5370,6 @@ class MT_167:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL|MF_DROPPED;
 		spawnstate = S_1433;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5329,7 +5381,7 @@ class MT_167:Actor
 
 class MT_168:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_168(void)
 	{
 		classname = "50_gold";
 		health = 1000;
@@ -5341,7 +5393,6 @@ class MT_168:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL|MF_DROPPED;
 		spawnstate = S_1434;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5353,7 +5404,7 @@ class MT_168:Actor
 
 class MT_169:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_169(void)
 	{
 		classname = "ring";
 		health = 1000;
@@ -5365,7 +5416,6 @@ class MT_169:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1241;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5377,7 +5427,7 @@ class MT_169:Actor
 
 class MT_170:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_170(void)
 	{
 		classname = "Offering_Chalice";
 		health = 1000;
@@ -5389,7 +5439,6 @@ class MT_170:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL|MF_DROPPED;
 		spawnstate = S_1460;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5401,7 +5450,7 @@ class MT_170:Actor
 
 class MT_171:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_171(void)
 	{
 		classname = "ear";
 		health = 1000;
@@ -5413,7 +5462,6 @@ class MT_171:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1242;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5425,13 +5473,8 @@ class MT_171:Actor
 
 class MT_172:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_172(void)
 	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "Communicator";
 		health = 1000;
 		spawnhealth = health;
@@ -5442,7 +5485,6 @@ class MT_172:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1243;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5454,7 +5496,7 @@ class MT_172:Actor
 
 class MT_173:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_173(void)
 	{
 		classname = "Targeter";
 		health = 1000;
@@ -5466,7 +5508,6 @@ class MT_173:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1244;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5478,7 +5519,7 @@ class MT_173:Actor
 
 class MT_174:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_174(void)
 	{
 		classname = "HE-Grenade_Rounds";
 		health = 1000;
@@ -5490,7 +5531,6 @@ class MT_174:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1456;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5502,7 +5542,7 @@ class MT_174:Actor
 
 class MT_175:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_175(void)
 	{
 		classname = "Fire-Grenade_Rounds";
 		health = 1000;
@@ -5514,7 +5554,6 @@ class MT_175:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1457;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5526,7 +5565,7 @@ class MT_175:Actor
 
 class MT_176:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_176(void)
 	{
 		classname = "Gas-Grenade_Rounds";
 		health = 1000;
@@ -5538,7 +5577,6 @@ class MT_176:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1458;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5550,7 +5588,7 @@ class MT_176:Actor
 
 class MT_177:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_177(void)
 	{
 		classname = "bullets";
 		health = 1000;
@@ -5562,7 +5600,6 @@ class MT_177:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1446;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5574,7 +5611,7 @@ class MT_177:Actor
 
 class MT_178:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_178(void)
 	{
 		classname = "ammo";
 		health = 1000;
@@ -5586,7 +5623,6 @@ class MT_178:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1447;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5598,7 +5634,7 @@ class MT_178:Actor
 
 class MT_179:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_179(void)
 	{
 		classname = "rocket";
 		health = 1000;
@@ -5610,7 +5646,6 @@ class MT_179:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1448;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5622,7 +5657,7 @@ class MT_179:Actor
 
 class MT_180:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_180(void)
 	{
 		classname = "box_of_rockets";
 		health = 1000;
@@ -5634,7 +5669,6 @@ class MT_180:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1449;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5646,7 +5680,7 @@ class MT_180:Actor
 
 class MT_181:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_181(void)
 	{
 		classname = "energy_pod";
 		health = 1000;
@@ -5658,7 +5692,6 @@ class MT_181:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1450;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5670,7 +5703,7 @@ class MT_181:Actor
 
 class MT_182:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_182(void)
 	{
 		classname = "energy_pack";
 		health = 1000;
@@ -5682,7 +5715,6 @@ class MT_182:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1452;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5694,7 +5726,7 @@ class MT_182:Actor
 
 class MT_183:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_183(void)
 	{
 		classname = "poison_arrows";
 		health = 1000;
@@ -5706,7 +5738,6 @@ class MT_183:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1454;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5718,7 +5749,7 @@ class MT_183:Actor
 
 class MT_184:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_184(void)
 	{
 		classname = "electric_arrows";
 		health = 1000;
@@ -5730,7 +5761,6 @@ class MT_184:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1455;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5742,7 +5772,7 @@ class MT_184:Actor
 
 class MT_185:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_185(void)
 	{
 		classname = "Back_pack";
 		health = 1000;
@@ -5754,7 +5784,6 @@ class MT_185:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1459;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5766,7 +5795,7 @@ class MT_185:Actor
 
 class MT_186:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_186(void)
 	{
 		classname = "assault_gun";
 		health = 1000;
@@ -5778,7 +5807,6 @@ class MT_186:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1461;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5790,7 +5818,7 @@ class MT_186:Actor
 
 class MT_187:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_187(void)
 	{
 		classname = "pulse_rifle";
 		health = 1000;
@@ -5802,7 +5830,6 @@ class MT_187:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1462;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5814,7 +5841,7 @@ class MT_187:Actor
 
 class MT_188:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_188(void)
 	{
 		classname = "flame_thrower";
 		health = 1000;
@@ -5826,7 +5853,6 @@ class MT_188:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1463;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5838,7 +5864,7 @@ class MT_188:Actor
 
 class MT_189:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_189(void)
 	{
 		classname = "flame_thrower_Parts";
 		health = 1000;
@@ -5850,7 +5876,6 @@ class MT_189:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1464;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5862,7 +5887,7 @@ class MT_189:Actor
 
 class MT_190:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_190(void)
 	{
 		classname = "missile_gun";
 		health = 1000;
@@ -5874,7 +5899,6 @@ class MT_190:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1465;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5886,7 +5910,7 @@ class MT_190:Actor
 
 class MT_191:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_191(void)
 	{
 		classname = "blaster";
 		health = 1000;
@@ -5898,7 +5922,6 @@ class MT_191:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1466;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5910,7 +5933,7 @@ class MT_191:Actor
 
 class MT_192:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_192(void)
 	{
 		classname = "crossbow";
 		health = 1000;
@@ -5922,7 +5945,6 @@ class MT_192:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1468;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5934,7 +5956,7 @@ class MT_192:Actor
 
 class MT_193:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_193(void)
 	{
 		classname = "Grenade_launcher";
 		health = 1000;
@@ -5946,7 +5968,6 @@ class MT_193:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1467;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5958,7 +5979,7 @@ class MT_193:Actor
 
 class MT_194:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_194(void)
 	{
 		classname = "SIGIL";
 		health = 1000;
@@ -5970,7 +5991,6 @@ class MT_194:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1469;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5982,7 +6002,7 @@ class MT_194:Actor
 
 class MT_195:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_195(void)
 	{
 		classname = "SIGIL";
 		health = 1000;
@@ -5994,7 +6014,6 @@ class MT_195:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1470;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6006,7 +6025,7 @@ class MT_195:Actor
 
 class MT_196:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_196(void)
 	{
 		classname = "SIGIL";
 		health = 1000;
@@ -6018,7 +6037,6 @@ class MT_196:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1471;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6030,7 +6048,7 @@ class MT_196:Actor
 
 class MT_197:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_197(void)
 	{
 		classname = "SIGIL";
 		health = 1000;
@@ -6042,7 +6060,6 @@ class MT_197:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1472;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6054,7 +6071,7 @@ class MT_197:Actor
 
 class MT_198:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_198(void)
 	{
 		classname = "SIGIL";
 		health = 1000;
@@ -6066,7 +6083,6 @@ class MT_198:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1473;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6078,7 +6094,7 @@ class MT_198:Actor
 
 class MT_199:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_199(void)
 	{
 		health = 50;
 		spawnhealth = health;
@@ -6092,7 +6108,6 @@ class MT_199:Actor
 		deathstate = S_1245;
 		sound_active = GetSoundID("Sound130");
 		sound_death = GetSoundID("Sound104");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6104,13 +6119,8 @@ class MT_199:Actor
 
 class MT_200:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_200(void)
 	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(this);
-			return;
-		}
 		classname = "rat_buddy";
 		health = 5;
 		spawnhealth = health;
@@ -6128,6 +6138,15 @@ class MT_200:Actor
 		sound_sight = GetSoundID("Sound55");
 		sound_active = GetSoundID("Sound55");
 		sound_death = GetSoundID("Sound55");
+	}
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
 		::OnMapSpawn(mthing);
 	}
 };
@@ -6140,7 +6159,7 @@ class MT_200:Actor
 
 class MT_201:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_201(void)
 	{
 		health = 10;
 		spawnhealth = health;
@@ -6153,7 +6172,6 @@ class MT_201:Actor
 		spawnstate = S_1350;
 		deathstate = S_1351;
 		sound_death = GetSoundID("Sound60");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6165,7 +6183,7 @@ class MT_201:Actor
 
 class MT_202:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_202(void)
 	{
 		health = 30;
 		spawnhealth = health;
@@ -6178,7 +6196,6 @@ class MT_202:Actor
 		spawnstate = S_1358;
 		deathstate = S_1359;
 		sound_death = GetSoundID("Sound105");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6190,7 +6207,7 @@ class MT_202:Actor
 
 class MT_203:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_203(void)
 	{
 		health = 99999999;
 		spawnhealth = health;
@@ -6204,7 +6221,6 @@ class MT_203:Actor
 		spawnstate = S_1277;
 		painstate = S_1278;
 		sound_pain = GetSoundID("Sound3");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6216,7 +6232,7 @@ class MT_203:Actor
 
 class MT_204:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_204(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6227,7 +6243,6 @@ class MT_204:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1477;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6239,7 +6254,7 @@ class MT_204:Actor
 
 class MT_205:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_205(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6250,7 +6265,6 @@ class MT_205:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1478;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6262,7 +6276,7 @@ class MT_205:Actor
 
 class MT_206:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_206(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6273,7 +6287,6 @@ class MT_206:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1479;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6285,7 +6298,7 @@ class MT_206:Actor
 
 class MT_207:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_207(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6296,7 +6309,6 @@ class MT_207:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1474;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6308,7 +6320,7 @@ class MT_207:Actor
 
 class MT_208:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_208(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6319,7 +6331,6 @@ class MT_208:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1551;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6331,7 +6342,7 @@ class MT_208:Actor
 
 class MT_209:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_209(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6342,7 +6353,6 @@ class MT_209:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1552;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6354,7 +6364,7 @@ class MT_209:Actor
 
 class MT_210:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_210(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6365,7 +6375,6 @@ class MT_210:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1553;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6377,7 +6386,7 @@ class MT_210:Actor
 
 class MT_211:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_211(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6388,7 +6397,6 @@ class MT_211:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1554;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6400,7 +6408,7 @@ class MT_211:Actor
 
 class MT_212:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_212(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6411,7 +6419,6 @@ class MT_212:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1555;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6423,7 +6430,7 @@ class MT_212:Actor
 
 class MT_213:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_213(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6435,7 +6442,6 @@ class MT_213:Actor
 		flags = MF_SOLID;
 		spawnstate = S_1518;
 		sound_active = GetSoundID("Sound119");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6447,7 +6453,7 @@ class MT_213:Actor
 
 class MT_214:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_214(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6458,7 +6464,6 @@ class MT_214:Actor
 			reactiontime = 8;
 		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_1561;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6470,7 +6475,7 @@ class MT_214:Actor
 
 class MT_215:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_215(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6481,7 +6486,6 @@ class MT_215:Actor
 			reactiontime = 8;
 		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_1559;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6493,7 +6497,7 @@ class MT_215:Actor
 
 class MT_216:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_216(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6504,7 +6508,6 @@ class MT_216:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1560;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6516,7 +6519,7 @@ class MT_216:Actor
 
 class MT_217:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_217(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6527,7 +6530,6 @@ class MT_217:Actor
 			reactiontime = 8;
 		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_1562;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6539,7 +6541,7 @@ class MT_217:Actor
 
 class MT_218:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_218(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6550,7 +6552,6 @@ class MT_218:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1563;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6562,7 +6563,7 @@ class MT_218:Actor
 
 class MT_219:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_219(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6573,7 +6574,6 @@ class MT_219:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1564;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6585,7 +6585,7 @@ class MT_219:Actor
 
 class MT_220:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_220(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6595,7 +6595,6 @@ class MT_220:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_1475;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6607,7 +6606,7 @@ class MT_220:Actor
 
 class MT_221:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_221(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6618,7 +6617,6 @@ class MT_221:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1476;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6630,7 +6628,7 @@ class MT_221:Actor
 
 class MT_222:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_222(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6642,7 +6640,6 @@ class MT_222:Actor
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1520;
 		sound_active = GetSoundID("Sound45");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6654,7 +6651,7 @@ class MT_222:Actor
 
 class MT_223:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_223(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6666,7 +6663,6 @@ class MT_223:Actor
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1532;
 		sound_active = GetSoundID("Sound44");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6678,7 +6674,7 @@ class MT_223:Actor
 
 class MT_224:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_224(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6689,7 +6685,6 @@ class MT_224:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_1528;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6701,7 +6696,7 @@ class MT_224:Actor
 
 class MT_225:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_225(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6713,7 +6708,6 @@ class MT_225:Actor
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1540;
 		sound_active = GetSoundID("Sound46");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6725,7 +6719,7 @@ class MT_225:Actor
 
 class MT_226:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_226(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6736,7 +6730,6 @@ class MT_226:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1544;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6748,9 +6741,8 @@ class MT_226:Actor
 
 class MT_227:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_227(void)
 	{
-		translucency = 66;
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
@@ -6758,9 +6750,9 @@ class MT_227:Actor
 		mass = 100.0;
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
+		translucency = 66;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1547;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6772,7 +6764,7 @@ class MT_227:Actor
 
 class MT_228:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_228(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6782,7 +6774,6 @@ class MT_228:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_673;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6794,7 +6785,7 @@ class MT_228:Actor
 
 class MT_229:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_229(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6804,7 +6795,6 @@ class MT_229:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_PLAY_DIE10;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6816,7 +6806,7 @@ class MT_229:Actor
 
 class MT_230:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_230(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6826,7 +6816,6 @@ class MT_230:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_409;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6838,7 +6827,7 @@ class MT_230:Actor
 
 class MT_231:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_231(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6848,7 +6837,6 @@ class MT_231:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_632;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6860,7 +6848,7 @@ class MT_231:Actor
 
 class MT_232:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_232(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6870,7 +6858,6 @@ class MT_232:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_594;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6882,7 +6869,7 @@ class MT_232:Actor
 
 class MT_233:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_233(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6892,7 +6879,6 @@ class MT_233:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_512;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6904,7 +6890,7 @@ class MT_233:Actor
 
 class MT_234:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_234(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6914,7 +6900,6 @@ class MT_234:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_425;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6926,7 +6911,7 @@ class MT_234:Actor
 
 class MT_235:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_235(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6936,7 +6921,6 @@ class MT_235:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_1280;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6948,7 +6932,7 @@ class MT_235:Actor
 
 class MT_236:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_236(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6959,7 +6943,6 @@ class MT_236:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1372;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6971,7 +6954,7 @@ class MT_236:Actor
 
 class MT_237:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_237(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -6983,7 +6966,6 @@ class MT_237:Actor
 		flags = MF_SOLID;
 		spawnstate = S_1376;
 		sound_active = GetSoundID("Sound23");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6995,7 +6977,7 @@ class MT_237:Actor
 
 class MT_238:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_238(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7007,7 +6989,6 @@ class MT_238:Actor
 		flags = MF_SOLID;
 		spawnstate = S_1380;
 		sound_active = GetSoundID("Sound23");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7019,7 +7000,7 @@ class MT_238:Actor
 
 class MT_239:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_239(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7031,7 +7012,6 @@ class MT_239:Actor
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1384;
 		sound_active = GetSoundID("Sound23");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7043,7 +7023,7 @@ class MT_239:Actor
 
 class MT_240:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_240(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7054,7 +7034,6 @@ class MT_240:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1400;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7066,7 +7045,7 @@ class MT_240:Actor
 
 class MT_241:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_241(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7077,7 +7056,6 @@ class MT_241:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_1496;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7089,7 +7067,7 @@ class MT_241:Actor
 
 class MT_242:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_242(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7100,7 +7078,6 @@ class MT_242:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_1500;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7112,7 +7089,7 @@ class MT_242:Actor
 
 class MT_243:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_243(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7123,7 +7100,6 @@ class MT_243:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1497;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7135,7 +7111,7 @@ class MT_243:Actor
 
 class MT_244:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_244(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7146,7 +7122,6 @@ class MT_244:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1498;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7158,7 +7133,7 @@ class MT_244:Actor
 
 class MT_245:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_245(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7169,7 +7144,6 @@ class MT_245:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1388;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7181,7 +7155,7 @@ class MT_245:Actor
 
 class MT_246:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_246(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7192,7 +7166,6 @@ class MT_246:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1370;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7204,7 +7177,7 @@ class MT_246:Actor
 
 class MT_247:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_247(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7215,7 +7188,6 @@ class MT_247:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1371;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7227,7 +7199,7 @@ class MT_247:Actor
 
 class MT_248:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_248(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7238,7 +7210,6 @@ class MT_248:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1480;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7250,7 +7221,7 @@ class MT_248:Actor
 
 class MT_249:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_249(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7261,7 +7232,6 @@ class MT_249:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1481;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7273,7 +7243,7 @@ class MT_249:Actor
 
 class MT_250:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_250(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7284,7 +7254,6 @@ class MT_250:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1482;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7296,7 +7265,7 @@ class MT_250:Actor
 
 class MT_251:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_251(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7307,7 +7276,6 @@ class MT_251:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1483;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7319,7 +7287,7 @@ class MT_251:Actor
 
 class MT_252:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_252(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7331,7 +7299,6 @@ class MT_252:Actor
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1484;
 		sound_active = GetSoundID("Sound43");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7343,7 +7310,7 @@ class MT_252:Actor
 
 class MT_253:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_253(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7354,7 +7321,6 @@ class MT_253:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOCLIP;
 		spawnstate = S_1488;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7366,7 +7332,7 @@ class MT_253:Actor
 
 class MT_254:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_254(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7377,7 +7343,6 @@ class MT_254:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOCLIP;
 		spawnstate = S_1489;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7389,7 +7354,7 @@ class MT_254:Actor
 
 class MT_255:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_255(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7400,7 +7365,6 @@ class MT_255:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOCLIP;
 		spawnstate = S_1490;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7412,7 +7376,7 @@ class MT_255:Actor
 
 class MT_256:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_256(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7423,7 +7387,6 @@ class MT_256:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOCLIP;
 		spawnstate = S_1491;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7435,7 +7398,7 @@ class MT_256:Actor
 
 class MT_257:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_257(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7446,7 +7409,6 @@ class MT_257:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOCLIP;
 		spawnstate = S_1492;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7458,7 +7420,7 @@ class MT_257:Actor
 
 class MT_258:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_258(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7469,7 +7431,6 @@ class MT_258:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOCLIP;
 		spawnstate = S_1493;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7481,7 +7442,7 @@ class MT_258:Actor
 
 class MT_259:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_259(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7492,7 +7453,6 @@ class MT_259:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOCLIP;
 		spawnstate = S_1494;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7504,7 +7464,7 @@ class MT_259:Actor
 
 class MT_260:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_260(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7515,7 +7475,6 @@ class MT_260:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOCLIP;
 		spawnstate = S_1495;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7527,7 +7486,7 @@ class MT_260:Actor
 
 class MT_261:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_261(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7538,7 +7497,6 @@ class MT_261:Actor
 			reactiontime = 8;
 		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_1499;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7550,7 +7508,7 @@ class MT_261:Actor
 
 class MT_262:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_262(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7562,7 +7520,6 @@ class MT_262:Actor
 		flags = MF_SOLID;
 		spawnstate = S_1392;
 		sound_active = GetSoundID("Sound23");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7574,7 +7531,7 @@ class MT_262:Actor
 
 class MT_263:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_263(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7586,7 +7543,6 @@ class MT_263:Actor
 		flags = MF_SOLID;
 		spawnstate = S_1396;
 		sound_active = GetSoundID("Sound23");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7598,7 +7554,7 @@ class MT_263:Actor
 
 class MT_264:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_264(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7609,7 +7565,6 @@ class MT_264:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1501;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7621,7 +7576,7 @@ class MT_264:Actor
 
 class MT_265:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_265(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7632,7 +7587,6 @@ class MT_265:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1502;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7644,7 +7598,7 @@ class MT_265:Actor
 
 class MT_266:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_266(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7655,7 +7609,6 @@ class MT_266:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1503;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7667,7 +7620,7 @@ class MT_266:Actor
 
 class MT_267:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_267(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7678,7 +7631,6 @@ class MT_267:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1504;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7690,7 +7642,7 @@ class MT_267:Actor
 
 class MT_268:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_268(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7701,7 +7653,6 @@ class MT_268:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1505;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7713,7 +7664,7 @@ class MT_268:Actor
 
 class MT_269:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_269(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7724,7 +7675,6 @@ class MT_269:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1506;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7736,7 +7686,7 @@ class MT_269:Actor
 
 class MT_270:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_270(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7747,7 +7697,6 @@ class MT_270:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1507;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7759,7 +7708,7 @@ class MT_270:Actor
 
 class MT_271:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_271(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7770,7 +7719,6 @@ class MT_271:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1508;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7782,7 +7730,7 @@ class MT_271:Actor
 
 class MT_272:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_272(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7793,7 +7741,6 @@ class MT_272:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1509;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7805,7 +7752,7 @@ class MT_272:Actor
 
 class MT_273:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_273(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7816,7 +7763,6 @@ class MT_273:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1510;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7828,7 +7774,7 @@ class MT_273:Actor
 
 class MT_274:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_274(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7839,7 +7785,6 @@ class MT_274:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1511;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7851,7 +7796,7 @@ class MT_274:Actor
 
 class MT_275:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_275(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7862,7 +7807,6 @@ class MT_275:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1512;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7874,7 +7818,7 @@ class MT_275:Actor
 
 class MT_276:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_276(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7885,7 +7829,6 @@ class MT_276:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1513;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7897,7 +7840,7 @@ class MT_276:Actor
 
 class MT_277:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_277(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7908,7 +7851,6 @@ class MT_277:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1514;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7920,7 +7862,7 @@ class MT_277:Actor
 
 class MT_278:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_278(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7931,7 +7873,6 @@ class MT_278:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1515;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7943,7 +7884,7 @@ class MT_278:Actor
 
 class MT_279:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_279(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7954,7 +7895,6 @@ class MT_279:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1516;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7966,7 +7906,7 @@ class MT_279:Actor
 
 class MT_280:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_280(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -7977,7 +7917,6 @@ class MT_280:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1517;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7989,7 +7928,7 @@ class MT_280:Actor
 
 class MT_281:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_281(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -8000,7 +7939,6 @@ class MT_281:Actor
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1519;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8012,7 +7950,7 @@ class MT_281:Actor
 
 class MT_282:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_282(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -8023,7 +7961,6 @@ class MT_282:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1281;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8035,7 +7972,7 @@ class MT_282:Actor
 
 class MT_283:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_283(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -8046,7 +7983,6 @@ class MT_283:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1282;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8058,7 +7994,7 @@ class MT_283:Actor
 
 class MT_284:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_284(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -8069,7 +8005,6 @@ class MT_284:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1283;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8081,7 +8016,7 @@ class MT_284:Actor
 
 class MT_285:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_285(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -8092,7 +8027,6 @@ class MT_285:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1284;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8104,7 +8038,7 @@ class MT_285:Actor
 
 class MT_286:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_286(void)
 	{
 		health = 40;
 		spawnhealth = health;
@@ -8115,7 +8049,6 @@ class MT_286:Actor
 			reactiontime = 8;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_TELEPORT|MF_DROPPED|MF_NOBLOOD;
 		spawnstate = S_1285;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8127,7 +8060,7 @@ class MT_286:Actor
 
 class MT_287:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_287(void)
 	{
 		classname = "POWER_COUPLING";
 		health = 40;
@@ -8139,7 +8072,6 @@ class MT_287:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL|MF_DROPPED;
 		spawnstate = S_1287;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8151,7 +8083,7 @@ class MT_287:Actor
 
 class MT_288:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_288(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -8163,7 +8095,6 @@ class MT_288:Actor
 		flags = MF_SOLID;
 		spawnstate = S_1288;
 		sound_active = GetSoundID("Sound122");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8175,7 +8106,7 @@ class MT_288:Actor
 
 class MT_289:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_289(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -8187,7 +8118,6 @@ class MT_289:Actor
 		flags = MF_SOLID;
 		spawnstate = S_1289;
 		sound_active = GetSoundID("Sound123");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8199,7 +8129,7 @@ class MT_289:Actor
 
 class MT_290:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_290(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -8211,7 +8141,6 @@ class MT_290:Actor
 		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_1289;
 		sound_active = GetSoundID("Sound121");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8223,7 +8152,7 @@ class MT_290:Actor
 
 class MT_291:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_291(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -8235,7 +8164,6 @@ class MT_291:Actor
 		flags = MF_SOLID;
 		spawnstate = S_1291;
 		sound_active = GetSoundID("Sound120");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8247,7 +8175,7 @@ class MT_291:Actor
 
 class MT_292:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_292(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -8259,7 +8187,6 @@ class MT_292:Actor
 		flags = MF_SOLID;
 		spawnstate = S_1292;
 		sound_active = GetSoundID("Sound118");
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8271,7 +8198,7 @@ class MT_292:Actor
 
 class MT_293:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_293(void)
 	{
 		classname = "Teleportor_Beacon";
 		health = 5;
@@ -8284,7 +8211,6 @@ class MT_293:Actor
 		flags = MF_SPECIAL|MF_DROPPED;
 		spawnstate = S_1345;
 		seestate = S_1346;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8296,7 +8222,7 @@ class MT_293:Actor
 
 class MT_294:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_294(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -8307,7 +8233,6 @@ class MT_294:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOCLIP;
 		spawnstate = S_1300;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8319,7 +8244,7 @@ class MT_294:Actor
 
 class MT_295:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_295(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -8330,7 +8255,6 @@ class MT_295:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOCLIP;
 		spawnstate = S_1320;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8342,7 +8266,7 @@ class MT_295:Actor
 
 class MT_296:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_296(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -8353,7 +8277,6 @@ class MT_296:Actor
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOCLIP;
 		spawnstate = S_1340;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8365,7 +8288,7 @@ class MT_296:Actor
 
 class MT_297:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_297(void)
 	{
 		classname = "Ammo";
 		health = 1000;
@@ -8377,7 +8300,6 @@ class MT_297:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1295;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8389,7 +8311,7 @@ class MT_297:Actor
 
 class MT_298:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_298(void)
 	{
 		classname = "Health";
 		health = 1000;
@@ -8401,7 +8323,6 @@ class MT_298:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1295;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8413,7 +8334,7 @@ class MT_298:Actor
 
 class MT_299:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_299(void)
 	{
 		classname = "info";
 		health = 1000;
@@ -8425,7 +8346,6 @@ class MT_299:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1295;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8437,7 +8357,7 @@ class MT_299:Actor
 
 class MT_300:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_300(void)
 	{
 		classname = "alarm";
 		health = 1000;
@@ -8449,7 +8369,6 @@ class MT_300:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1295;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8461,7 +8380,7 @@ class MT_300:Actor
 
 class MT_301:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_301(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -8472,7 +8391,6 @@ class MT_301:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1295;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8484,7 +8402,7 @@ class MT_301:Actor
 
 class MT_302:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_302(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -8495,7 +8413,6 @@ class MT_302:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1295;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8507,7 +8424,7 @@ class MT_302:Actor
 
 class MT_303:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_303(void)
 	{
 		classname = "Prison_pass";
 		health = 1000;
@@ -8519,7 +8436,6 @@ class MT_303:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1295;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8531,7 +8447,7 @@ class MT_303:Actor
 
 class MT_304:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_304(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -8542,7 +8458,6 @@ class MT_304:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1295;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8554,7 +8469,7 @@ class MT_304:Actor
 
 class MT_305:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_305(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -8565,7 +8480,6 @@ class MT_305:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1295;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8577,7 +8491,7 @@ class MT_305:Actor
 
 class MT_306:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_306(void)
 	{
 		classname = "report";
 		health = 1000;
@@ -8589,7 +8503,6 @@ class MT_306:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1295;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8601,7 +8514,7 @@ class MT_306:Actor
 
 class MT_307:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_307(void)
 	{
 		classname = "Toughness";
 		health = 1000;
@@ -8613,7 +8526,6 @@ class MT_307:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1296;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8625,7 +8537,7 @@ class MT_307:Actor
 
 class MT_308:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_308(void)
 	{
 		classname = "Accuracy";
 		health = 1000;
@@ -8637,7 +8549,6 @@ class MT_308:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1297;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8649,7 +8560,7 @@ class MT_308:Actor
 
 class MT_309:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_309(void)
 	{
 		classname = "Oracle_Pass";
 		health = 1000;
@@ -8661,7 +8572,6 @@ class MT_309:Actor
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1295;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8673,7 +8583,7 @@ class MT_309:Actor
 
 class MT_310:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_310(void)
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -8683,7 +8593,6 @@ class MT_310:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_1295;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8695,7 +8604,7 @@ class MT_310:Actor
 
 class MT_311:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_311(void)
 	{
 		classname = "Blown_Up_the_Crystal";
 		health = 1000;
@@ -8706,7 +8615,6 @@ class MT_311:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_1295;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8718,7 +8626,7 @@ class MT_311:Actor
 
 class MT_312:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_312(void)
 	{
 		classname = "Blown_Up_the_Gates";
 		health = 1000;
@@ -8729,7 +8637,6 @@ class MT_312:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_1295;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8741,7 +8648,7 @@ class MT_312:Actor
 
 class MT_313:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_313(void)
 	{
 		classname = "quest4";
 		health = 1000;
@@ -8752,7 +8659,6 @@ class MT_313:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_1295;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8764,7 +8670,7 @@ class MT_313:Actor
 
 class MT_314:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_314(void)
 	{
 		classname = "quest5";
 		health = 1000;
@@ -8775,7 +8681,6 @@ class MT_314:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_1295;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8787,7 +8692,7 @@ class MT_314:Actor
 
 class MT_315:Actor
 {
-	void OnMapSpawn(mthing_t *mthing)
+	MT_315(void)
 	{
 		classname = "quest6";
 		health = 1000;
@@ -8798,7 +8703,6 @@ class MT_315:Actor
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_1295;
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -9042,9 +8946,12 @@ __mobjinfo__
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/11/09 14:37:54  dj_jl
+//	Using constructors
+//
 //	Revision 1.7  2001/10/22 17:23:13  dj_jl
 //	Floatification of angles
-//
+//	
 //	Revision 1.6  2001/10/18 17:39:34  dj_jl
 //	A lots of changes for Alpha 2
 //	
