@@ -49,9 +49,6 @@ struct continueInfo_t
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void ParseMobjInfo(void);
-void ParseStates(void);
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -558,11 +555,7 @@ static void ParseCompoundStatement(void)
 				}
 				if (t->type == ev_class)
 				{
-#ifdef REF_CLASS
 					t = MakeReferenceType(t);
-#else
-					ParseWarning("Class local variable");
-#endif
 				}
 				if (tk_Token != TK_IDENTIFIER)
 				{
@@ -859,11 +852,7 @@ static void ParseDef(TType *type, boolean builtin)
 			}
 			if (t->type == ev_class)
 			{
-#ifdef REF_CLASS
 				t = MakeReferenceType(t);
-#else
-				ParseWarning("Class variable");
-#endif
 			}
 			if (CheckForGlobalVar(s_name) ||
 				CheckForFunction(s_name) ||
@@ -893,12 +882,10 @@ static void ParseDef(TType *type, boolean builtin)
 		return;
 	}
 
-#ifdef REF_CLASS
 	if (t->type == ev_class)
 	{
 		t = MakeReferenceType(t);
 	}
-#endif
 	BreakLevel = 0;
 	ContinueLevel = 0;
 	FuncRetType = t;
@@ -951,12 +938,10 @@ static void ParseDef(TType *type, boolean builtin)
 		   	type = MakeReferenceType(type);
 		}
 #endif
-#ifdef REF_CLASS
 		if (type->type == ev_class)
 		{
 			type = MakeReferenceType(type);
 		}
-#endif
 		if (numlocaldefs == 1 && type == &type_void)
 		{
 			break;
@@ -1059,12 +1044,10 @@ static void ParseDef(TType *type, boolean builtin)
 void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 	TType *class_type, int method_type)
 {
-#ifdef REF_CLASS
 	if (t->type == ev_class)
 	{
 		t = MakeReferenceType(t);
 	}
-#endif
 	if (t != &type_void)
 	{
 		//	Funkcijas atgri÷amajam tipam jÆbÝt void vai arØ ar izmñru 4
@@ -1108,12 +1091,10 @@ void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 		   	type = MakeReferenceType(type);
 		}
 #endif
-#ifdef REF_CLASS
 		if (type->type == ev_class)
 		{
 			type = MakeReferenceType(type);
 		}
-#endif
 		if (functype.num_params == 0 && type == &type_void)
 		{
 			break;
@@ -1439,7 +1420,7 @@ void PA_Parse(void)
 				}
 				else if (TK_Check(KW_STATES))
 				{
-				   	ParseStates();
+				   	ParseStates(NULL);
 				}
 				else if (TK_Check(KW_MOBJINFO))
 				{
@@ -1495,9 +1476,13 @@ void PA_Parse(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2001/12/12 19:22:22  dj_jl
+//	Support for method usage as state functions, dynamic cast
+//	Added dynamic arrays
+//
 //	Revision 1.13  2001/12/04 18:19:55  dj_jl
 //	Fixed vector assignement in declaration
-//
+//	
 //	Revision 1.12  2001/12/03 19:25:44  dj_jl
 //	Fixed calling of parent function
 //	Added defaultproperties

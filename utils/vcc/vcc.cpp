@@ -62,6 +62,7 @@ static int		num_dump_asm;
 static char*	dump_asm_names[1024];
 static boolean 	DebugMode;
 static FILE*	DebugFile;
+static bool		dumpPreprocessed = false;
 
 // CODE --------------------------------------------------------------------
 
@@ -85,6 +86,12 @@ int main(int argc, char **argv)
 
 	dprintf("Preprocessing\n");
 	size = cpp_main(SourceFileName, &buf);
+	if (dumpPreprocessed)
+	{
+		FILE *f = fopen("vcc.i", "w");
+		fwrite(buf, 1, size, f);
+		fclose(f);
+	}
 	TK_OpenSource(buf, size);
 	PA_Parse();
 	TK_CloseSource();
@@ -168,6 +175,9 @@ static void ProcessArgs(int ArgCount, char **ArgVector)
 			option = *text++;
 			switch (option)
 			{
+				case 'i':
+					dumpPreprocessed = true;
+					break;
 				case 'c':
 					if (*text == 'a' && !text[1])
 					{
@@ -288,9 +298,13 @@ int dprintf(const char *text, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/12/12 19:22:22  dj_jl
+//	Support for method usage as state functions, dynamic cast
+//	Added dynamic arrays
+//
 //	Revision 1.8  2001/12/01 18:17:09  dj_jl
 //	Fixed calling of parent method, speedup
-//
+//	
 //	Revision 1.7  2001/10/09 17:31:55  dj_jl
 //	Addfields to class disabled by default
 //	

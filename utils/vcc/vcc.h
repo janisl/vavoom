@@ -33,6 +33,8 @@
 
 using namespace VavoomUtils;
 
+#include "array.h"
+
 // MACROS ------------------------------------------------------------------
 
 #define MAX_FILE_NAME_LENGTH	512
@@ -47,7 +49,6 @@ using namespace VavoomUtils;
 #define PF_COUNT_MASK			0x7fff
 
 #define REF_CPP		// C++ style references
-#define REF_CLASS	// Class variables/fields/params are references
 
 #define VTABLE_OFFS				4
 
@@ -375,6 +376,8 @@ void ParseTypeDef(void);
 void AddVirtualTables(void);
 
 void InitInfoTables(void);
+void ParseStates(TType *class_type);
+void ParseMobjInfo(void);
 void AddInfoTables(void);
 
 int EvalConstExpression(int type);
@@ -502,11 +505,15 @@ inline bool TK_Check(Punctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/12/12 19:22:22  dj_jl
+//	Support for method usage as state functions, dynamic cast
+//	Added dynamic arrays
+//
 //	Revision 1.12  2001/12/03 19:25:44  dj_jl
 //	Fixed calling of parent function
 //	Added defaultproperties
 //	Fixed vectors as arguments to methods
-//
+//	
 //	Revision 1.11  2001/12/01 18:17:09  dj_jl
 //	Fixed calling of parent method, speedup
 //	

@@ -58,8 +58,8 @@ struct mobjinfo_t
 
 struct compstate_t
 {
-	char name[MAX_IDENTIFIER_LENGTH];
-	char next_name[MAX_IDENTIFIER_LENGTH];
+	int name;
+	int next_name;
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -171,11 +171,20 @@ void InitInfoTables(void)
 //
 //==========================================================================
 
-void ParseStates(void)
+void ParseStates(TType *class_type)
 {
-	int		i;
-	int		j;
+	int i;
+	int j;
 
+	if (!class_type && TK_Check(PU_LPAREN))
+	{
+		class_type = CheckForType();
+		if (!class_type || class_type->type != ev_class)
+		{
+			ParseError("Class name expected");
+		}
+		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+	}
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	while (!TK_Check(PU_RBRACE))
 	{
@@ -192,7 +201,7 @@ void ParseStates(void)
 		{
 			ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
 		}
-		strcpy(cs.name, tk_String);
+		cs.name = tk_StringI;
 		AddConstant(tk_StringI, num_states);
 		TK_NextToken();
 		TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
@@ -269,14 +278,26 @@ void ParseStates(void)
 		s.time = ConstFloatExpression();
 		TK_Expect(PU_COMMA, ERR_NONE);
 		//	Funkcija
-		s.function = EvalConstExpression(ev_function);
+		if (TK_Check(KW_NULL))
+		{
+			s.function = 0;
+		}
+		else
+		{
+			field_t *field = CheckForField(class_type);
+			if (!field || field->type->type != ev_method)
+			{
+				ERR_Exit(ERR_NONE, true, "Function name expected");
+			}
+			s.function = field->func_num;
+		}
 		TK_Expect(PU_COMMA, ERR_NONE);
 		//  NÆkoýais stÆvoklis
 		if (tk_Token != TK_IDENTIFIER)
 		{
 			ERR_Exit(ERR_NONE, true, NULL);
 		}
-		strcpy(cs.next_name, tk_String);
+		cs.next_name = tk_StringI;
 		TK_NextToken();
 		if (TK_Check(PU_COMMA))
 		{
@@ -339,7 +360,7 @@ static void CheckStates(void)
 	{
 		for (j = 0; j < num_states; j++)
 		{
-			if (!strcmp(compstates[i].next_name, compstates[j].name))
+			if (compstates[i].next_name == compstates[j].name)
 			{
 				states[i].nextstate = j;
 				break;
@@ -347,8 +368,8 @@ static void CheckStates(void)
 		}
 		if (j == num_states)
 		{
-			ERR_Exit(ERR_NONE, true, "State name %d \"%s\" was not defined",
-				i, compstates[i].name);
+			ERR_Exit(ERR_NONE, true, "State named \"%s\" was not defined",
+				strings + compstates[i].next_name);
 		}
 	}
 
@@ -402,9 +423,13 @@ void AddInfoTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/12/12 19:22:22  dj_jl
+//	Support for method usage as state functions, dynamic cast
+//	Added dynamic arrays
+//
 //	Revision 1.8  2001/12/01 18:17:09  dj_jl
 //	Fixed calling of parent method, speedup
-//
+//	
 //	Revision 1.7  2001/11/09 14:42:28  dj_jl
 //	References, beautification
 //	

@@ -88,93 +88,145 @@ class TOperator
 	int			opcode;
 };
 
-class TOp
+enum ETreeType
 {
- public:
-	TOp(void) : oper(NULL) {}
-	TOp(TOperator *Aoper) : oper(Aoper) {}
-	virtual ~TOp(void) {}
-	virtual void Code(void){}
-	virtual TOp *GetAddress(void)
+	TREE_Unknown,
+	TREE_Constant,
+};
+
+class TTree
+{
+public:
+	TTree(ETreeType Aoperation = TREE_Unknown, TTree *Achild1 = NULL, TTree *Achild2 = NULL, TTree *Acond = NULL)
+		: operation(Aoperation), child1(Achild1), child2(Achild2),
+			cond(Acond), link(NULL), oper(NULL)
+	{}
+	TTree(TOperator *Aoper, TTree *Achild1 = NULL, TTree *Achild2 = NULL, TTree *Acond = NULL)
+		: operation(TREE_Unknown), child1(Achild1), child2(Achild2),
+			cond(Acond), link(NULL), oper(Aoper)
+	{}
+	virtual ~TTree(void)
+	{
+		if (child1)
+			delete child1;
+		if (child2)
+			delete child2;
+		if (cond)
+			delete cond;
+		if (link)
+			delete link;
+	}
+	virtual TTree *GetAddress(void)
 	{
 		ParseError("Invalid address operation");
 		return this;
 	}
+	virtual void Code(void)
+	{
+	}
+	void AddToList(TTree *element)
+	{
+		if (!list)
+		{
+			list = element;
+		}
+		else
+		{
+			TTree *prev = list;
+			while (prev->link)
+				prev = prev->link;
+			prev->link = element;
+		}
+	}
+	void CodeList(void)
+	{
+		for (TTree *tree = list; tree; tree = tree->link)
+		{
+			tree->Code();
+		}
+	}
 
-	TType		*type;
-	TOperator	*oper;
+	ETreeType operation;
+	TTree *child1;
+	TTree *child2;
+	union
+	{
+		TTree *cond;
+		TTree *list;
+	};
+	TTree *link;
+	union
+	{
+		int vInt;
+		float vFloat;
+		int vOffs;
+	};
+
+	TType *type;
+	TOperator *oper;
 };
 
-class TOp1 : public TOp
+class TOp1 : public	TTree
 {
  public:
-	TOp1(TOp *Aop, TOperator *Aoper) : TOp(Aoper), op(Aop)
+	TOp1(TTree *Aop, TOperator *Aoper) : TTree(Aoper)
 	{
-		if (op->type->type == ev_vector)
-			type = op->type;
+		child1 = Aop;
+		if (child1->type->type == ev_vector)
+			type = child1->type;
 		else
 			type = oper->type;
 	}
-	~TOp1(void)
-	{
-		if (op) delete op;
-	}
 	void Code(void)
 	{
-		if (op) op->Code();
+		if (child1) child1->Code();
 		if (oper && oper->opcode != OPC_DONE) AddStatement(oper->opcode);
 	}
-
-	TOp			*op;
 };
 
-class TOp2 : public TOp
+class TOp2 : public	TTree
 {
  public:
-	TOp2(TOp *Aop1, TOp *Aop2, TOperator *Aoper) : TOp(Aoper), op1(Aop1), op2(Aop2)
+	TOp2(TTree *Aop1, TTree *Aop2, TOperator *Aoper) : TTree(Aoper)
 	{
-		if ((oper->type == &type_void_ptr && op1->type->type == ev_pointer) ||
-			(oper->type == &type_none_ref && op1->type->type == ev_reference))
-			type = op1->type;
+		child1 = Aop1;
+		child2 = Aop2;
+		if ((oper->type == &type_void_ptr && child1->type->type == ev_pointer) ||
+			(oper->type == &type_none_ref && child1->type->type == ev_reference))
+			type = child1->type;
 		else
 			type = oper->type;
 	}
-	TOp2(TOp *Aop1, TOp *Aop2) : op1(Aop1), op2(Aop2)
+	TOp2(TTree *Aop1, TTree *Aop2)
 	{
-		type = op1->type;
-	}
-	~TOp2(void)
-	{
-		if (op1) delete op1;
-		if (op2) delete op2;
+		child1 = Aop1;
+		child2 = Aop2;
+		type = child1->type;
 	}
 	void Code(void)
 	{
-		if (op1) op1->Code();
-		if (op2) op2->Code();
+		if (child1) child1->Code();
+		if (child2) child2->Code();
 		if (oper) AddStatement(oper->opcode);
 	}
-
-	TOp			*op1;
-	TOp			*op2;
 };
 
 class TOpAnd : public TOp2
 {
  public:
-	TOpAnd(TOp *Aop1, TOp *Aop2) : TOp2(Aop1, Aop2)
+	TOpAnd(TTree *Aop1, TTree *Aop2) : TOp2(Aop1, Aop2)
 	{
-		TypeCheck1(op1->type);
-		TypeCheck1(op2->type);
+		TypeCheck1(child1->type);
+		TypeCheck1(child2->type);
 		type = &type_int;
 	}
 	void Code(void)
 	{
 		int*		jmppos;
 
-		if (op1) op1->Code();
+		if (child1) child1->Code();
 		jmppos = AddStatement(OPC_IFNOTTOPGOTO, 0);
-		if (op2) op2->Code();
+		if (child2) child2->Code();
 		AddStatement(OPC_ANDLOGICAL);
 		*jmppos = CodeBufferSize;
 	}
@@ -183,87 +235,78 @@ class TOpAnd : public TOp2
 class TOpOr : public TOp2
 {
  public:
-	TOpOr(TOp *Aop1, TOp *Aop2) : TOp2(Aop1, Aop2)
+	TOpOr(TTree *Aop1, TTree *Aop2) : TOp2(Aop1, Aop2)
 	{
-		TypeCheck1(op1->type);
-		TypeCheck1(op2->type);
+		TypeCheck1(child1->type);
+		TypeCheck1(child2->type);
 		type = &type_int;
 	}
 	void Code(void)
 	{
 		int*		jmppos;
 
-		if (op1) op1->Code();
+		if (child1) child1->Code();
 		jmppos = AddStatement(OPC_IFTOPGOTO, 0);
-		if (op2) op2->Code();
+		if (child2) child2->Code();
 		AddStatement(OPC_ORLOGICAL);
 		*jmppos = CodeBufferSize;
 	}
 };
 
-class TOpCond : public TOp
+class TOpCond : public   TTree
 {
  public:
-	TOpCond(TOp *Aexpr, TOp *Aop1, TOp *Aop2) : expr(Aexpr), op1(Aop1), op2(Aop2)
+	TOpCond(TTree *Aexpr, TTree *Aop1, TTree *Aop2)
 	{
-		TypeCheck1(expr->type);
-		TypeCheck3(op1->type, op2->type);
-		if (op1->type == &type_void_ptr)
-			type = op2->type;
+		cond = Aexpr;
+		child1 = Aop1;
+		child2 = Aop2;
+		TypeCheck1(cond->type);
+		TypeCheck3(child1->type, child2->type);
+		if (child1->type == &type_void_ptr)
+			type = child2->type;
 		else
-			type = op1->type;
-	}
-	~TOpCond(void)
-	{
-		if (expr) delete expr;
-		if (op1) delete op1;
-		if (op2) delete op2;
+			type = child1->type;
 	}
 	void Code(void)
 	{
 	   	int*	jumppos1;
 	   	int*	jumppos2;
 
-		if (expr) expr->Code();
+		if (cond) cond->Code();
 		jumppos1 = AddStatement(OPC_IFNOTGOTO, 0);
-		if (op1) op1->Code();
+		if (child1) child1->Code();
 		jumppos2 = AddStatement(OPC_GOTO, 0);
 		*jumppos1 = CodeBufferSize;
-		if (op2) op2->Code();
+		if (child2) child2->Code();
 		*jumppos2 = CodeBufferSize;
 	}
-
-	TOp	*expr;
-	TOp *op1;
-	TOp *op2;
 };
 
-class TOpPushPointed : public TOp
+class TOpPushPointed : public  TTree
 {
  public:
-	TOpPushPointed(TOp *Aop) : op(Aop)
+	TOpPushPointed(TTree *Aop)
 	{
-		if (op->type->type != ev_pointer)
+		child1 = Aop;
+		if (child1->type->type != ev_pointer)
 		{
 			ParseError("Expression syntax error");
-			type = op->type;
+			type = child1->type;
 		}
 		else
 		{
-			type = op->type->aux_type;
+			type = child1->type->aux_type;
 		}
 	}
-	TOpPushPointed(TOp *Aop, TType *Atype) : op(Aop)
+	TOpPushPointed(TTree *Aop, TType *Atype)
 	{
+		child1 = Aop;
 		type = Atype;
-	}
-	~TOpPushPointed(void)
-	{
-		if (op) delete op;
 	}
 	void Code(void)
 	{
-		if (op) op->Code();
+		if (child1) child1->Code();
 		if (type->type == ev_vector)
 		{
 			AddStatement(OPC_VPUSHPOINTED);
@@ -273,93 +316,76 @@ class TOpPushPointed : public TOp
 			AddStatement(OPC_PUSHPOINTED);
 		}
 	}
-	TOp *GetAddress(void)
+	TTree *GetAddress(void)
 	{
-		TOp *tmp;
-		tmp = op;
-		op = NULL;
+		TTree *tmp;
+		tmp = child1;
+		child1 = NULL;
 		delete this;
 		return tmp;
 	}
-
-	TOp			*op;
 };
 
-class TOpArrayIndex : public TOp
+class TOpArrayIndex : public TTree
 {
  public:
-	TOpArrayIndex(TOp *Aop1, TOp *Aop2, TType *Atype) : op1(Aop1), op2(Aop2)
+	TOpArrayIndex(TTree *Aop1, TTree *Aop2, TType *Atype)
 	{
+		child1 = Aop1;
+		child2 = Aop2;
 		type = MakePointerType(Atype);
-		type_size = TypeSize(Atype);
-	}
-	~TOpArrayIndex(void)
-	{
-		if (op1) delete op1;
-		if (op2) delete op2;
+//		type_size = TypeSize(Atype);
 	}
 	void Code(void)
 	{
-		if (op1) op1->Code();
-		if (op2) op2->Code();
-		AddStatement(OPC_PUSHNUMBER, type_size);
+		if (child1) child1->Code();
+		if (child2) child2->Code();
+		AddStatement(OPC_PUSHNUMBER, TypeSize(type->aux_type));
 		AddStatement(OPC_MULTIPLY);
 		AddStatement(OPC_ADD);
 	}
-
-	TOp			*op1;
-	TOp			*op2;
-	int			type_size;
 };
 
-class TOpField : public TOp
+class TOpField : public	TTree
 {
  public:
-	TOpField(TOp *Aop, int Aoffs, TType *Atype) : op(Aop), offs(Aoffs)
+	TOpField(TTree *Aop, int Aoffs, TType *Atype)
 	{
+		vOffs = Aoffs;
+		child1 = Aop;
 		type = MakePointerType(Atype);
-	}
-	~TOpField(void)
-	{
-		if (op) delete op;
 	}
 	void Code(void)
 	{
-		if (op) op->Code();
-		AddStatement(OPC_PUSHNUMBER, offs);
+		if (child1) child1->Code();
+		AddStatement(OPC_PUSHNUMBER, vOffs);
 		AddStatement(OPC_ADD);
 	}
-
-	TOp			*op;
-	int			offs;
 };
 
-class TOpConst : public TOp
+class TOpConst : public	TTree
 {
  public:
-	TOpConst(int Aval, TType *Atype) : val(Aval)
+	TOpConst(int Aval, TType *Atype)
 	{
+		vInt = Aval;
 		type = Atype;
-	}
-	~TOpConst(void)
-	{
 	}
 	void Code(void)
 	{
 		if (type->type == ev_string)
-			AddStatement(OPC_PUSHSTRING, val);
+			AddStatement(OPC_PUSHSTRING, vInt);
 		else
-			AddStatement(OPC_PUSHNUMBER, val);
+			AddStatement(OPC_PUSHNUMBER, vInt);
 	}
-
-	int			val;
 };
 
-class TOpLocal : public TOp
+class TOpLocal : public	TTree
 {
  public:
-	TOpLocal(int Aoffs, TType *Atype) : offs(Aoffs)
+	TOpLocal(int Aoffs, TType *Atype)
 	{
+		vOffs = Aoffs;
 		type = Atype;
 	}
 	~TOpLocal(void)
@@ -367,17 +393,16 @@ class TOpLocal : public TOp
 	}
 	void Code(void)
 	{
-		AddStatement(OPC_LOCALADDRESS, offs);
+		AddStatement(OPC_LOCALADDRESS, vOffs);
 	}
-
-	int			offs;
 };
 
-class TOpGlobal : public TOp
+class TOpGlobal : public TTree
 {
  public:
-	TOpGlobal(int Aoffs, TType *Atype) : offs(Aoffs)
+	TOpGlobal(int Aoffs, TType *Atype)
 	{
+		vOffs = Aoffs;
 		type = Atype;
 	}
 	~TOpGlobal(void)
@@ -385,121 +410,72 @@ class TOpGlobal : public TOp
 	}
 	void Code(void)
 	{
-		AddStatement(OPC_GLOBALADDRESS, offs);
+		AddStatement(OPC_GLOBALADDRESS, vOffs);
 	}
-
-	int			offs;
 };
 
-class TOpFuncCall : public TOp
+class TOpFuncCall : public TTree
 {
  public:
-	TOpFuncCall(int Afnum) : fnum(Afnum), ftype(functions[fnum].type)
+	TOpFuncCall(int Afnum)
 	{
-		type = ftype->aux_type;
-		this_op = NULL;
-		for (int i = 0; i < MAX_ARG_COUNT; i++)
-			parms[i] = NULL;
-	}
-	~TOpFuncCall(void)
-	{
-		for (int i = 0; i < MAX_ARG_COUNT; i++)
-			if (parms[i])
-				delete parms[i];
-		if (this_op)
-			delete this_op;
+		vOffs = Afnum;
+		type = functions[Afnum].type->aux_type;
 	}
 	void Code(void)
 	{
-		if (this_op)
-		{
-			this_op->Code();
-		}
-		for (int i = 0; i < MAX_ARG_COUNT; i++)
-		{
-			if (parms[i])
-			{
-				parms[i]->Code();
-			}
-		}
-		AddStatement(OPC_CALL, fnum);
+		CodeList();
+		AddStatement(OPC_CALL, vOffs);
 	}
-
-	int			fnum;
-	TType		*ftype;
-	TOp			*this_op;
-	TOp			*parms[MAX_ARG_COUNT];
 };
 
-class TOpIndirectFuncCall : public TOp
+class TOpIndirectFuncCall : public   TTree
 {
  public:
-	TOpIndirectFuncCall(TOp *Afnumop, TType *Aftype) : fnumop(Afnumop), ftype(Aftype)
+	TOpIndirectFuncCall(TTree *Afnumop, TType *Aftype)
 	{
-		type = ftype->aux_type;
-		for (int i = 0; i < MAX_PARAMS; i++)
-			parms[i] = NULL;
-	}
-	~TOpIndirectFuncCall(void)
-	{
-		for (int i = 0; i < MAX_PARAMS; i++)
-			if (parms[i])
-				delete parms[i];
+		child1 = Afnumop;
+		type = Aftype->aux_type;
 	}
 	void Code(void)
 	{
-		if (fnumop) fnumop->Code();
-		for (int i = 0; i < ftype->num_params; i++)
+		if (child1)
+			child1->Code();
+		for (TTree *tree = list; tree; tree = tree->link)
 		{
-			if (parms[i])
-			{
-				parms[i]->Code();
-				if (parms[i]->type->type == ev_vector)
-					AddStatement(OPC_SWAP3);
-				else
-					AddStatement(OPC_SWAP);
-			}
+			tree->Code();
+			if (tree->type->type == ev_vector)
+				AddStatement(OPC_SWAP3);
+			else
+				AddStatement(OPC_SWAP);
 		}
 		AddStatement(OPC_ICALL);
 	}
-
-	TOp			*fnumop;
-	TType		*ftype;
-	TOp			*parms[MAX_PARAMS];
 };
 
-class TOpVector : public TOp
+class TOpVector : public TTree
 {
  public:
-	TOpVector(TOp *Aop1, TOp *Aop2, TOp *Aop3) : op1(Aop1), op2(Aop2), op3(Aop3)
+	TOpVector(TTree *Aop1, TTree *Aop2, TTree *Aop3)
 	{
-		if (op1->type != &type_float)
+		if (Aop1->type != &type_float)
 			ParseError("Expression type mistmatch, vector param 1 is not a float");
-		if (op2->type != &type_float)
+		if (Aop2->type != &type_float)
 			ParseError("Expression type mistmatch, vector param 2 is not a float");
-		if (op3->type != &type_float)
+		if (Aop3->type != &type_float)
 			ParseError("Expression type mistmatch, vector param 3 is not a float");
 		type = &type_vector;
-	}
-	~TOpVector(void)
-	{
-		if (op1) delete op1;
-		if (op2) delete op2;
-		if (op3) delete op3;
+		AddToList(Aop1);
+		AddToList(Aop2);
+		AddToList(Aop3);
 	}
 	void Code(void)
 	{
-		if (op1) op1->Code();
-		if (op2) op2->Code();
-		if (op3) op3->Code();
+		CodeList();
 	}
-
-	TOp *op1;
-	TOp *op2;
-	TOp *op3;
 };
 
-class TOpPushThis:public TOp
+class TOpPushThis:public TTree
 {
  public:
 	TOpPushThis(void)
@@ -513,7 +489,7 @@ class TOpPushThis:public TOp
 	}
 };
 
-class TOpPushSelf:public TOp
+class TOpPushSelf:public TTree
 {
  public:
 	TOpPushSelf(void)
@@ -527,27 +503,43 @@ class TOpPushSelf:public TOp
 	}
 };
 
-class TOpPushSelfMethod:public TOp
+class TOpPushSelfMethod:public TTree
 {
  public:
-	TOpPushSelfMethod(TOp *Aop, int Aoffs, TType *Atype) : op(Aop), offs(Aoffs)
+	TOpPushSelfMethod(TTree *Aop, int Aoffs, TType *Atype)
 	{
+		vOffs = Aoffs;
+		child1 = Aop;
 		type = Atype;
 	}
 	void Code(void)
 	{
-		if (op) op->Code();
+		if (child1) child1->Code();
 		AddStatement(OPC_COPY);
 		AddStatement(OPC_PUSHNUMBER, VTABLE_OFFS);
 		AddStatement(OPC_ADD);
 		AddStatement(OPC_PUSHPOINTED);
-		AddStatement(OPC_PUSHNUMBER, offs * 4);
+		AddStatement(OPC_PUSHNUMBER, vOffs * 4);
 		AddStatement(OPC_ADD);
 		AddStatement(OPC_PUSHPOINTED);
 	}
+};
 
-	TOp *op;
-	int offs;
+class TOpDynamicCast:public TTree
+{
+public:
+	TOpDynamicCast(TTree *Aop, TType *Atype)
+	{
+		child1 = Aop;
+		vInt = Atype->classid;
+		type = MakeReferenceType(Atype);
+	}
+	void Code(void)
+	{
+		if (child1)
+			child1->Code();
+		AddStatement(OPC_DYNAMIC_CAST, vInt);
+	}
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -556,8 +548,8 @@ class TOpPushSelfMethod:public TOp
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static TOp *ParseExpressionPriority2(void);
-static TOp* ParseExpressionPriority14(void);
+static TTree *ParseExpressionPriority2(void);
+static TTree* ParseExpressionPriority14(void);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -864,7 +856,7 @@ TOperator *FindOperator(TOperator::id_t opid, TType *type1, TType *type2)
 //
 //==========================================================================
 
-static TOp *ParseFunctionCall(int num, bool is_method)
+static TTree *ParseFunctionCall(int num, bool is_method)
 {
 	TOpFuncCall *fop;
 	int			arg;
@@ -885,13 +877,13 @@ static TOp *ParseFunctionCall(int num, bool is_method)
 	}
 	if (is_method)
 	{
-		fop->this_op = new TOpPushThis();
+		fop->AddToList(new TOpPushThis());
 	}
 	if (!TK_Check(PU_RPAREN))
 	{
 		do
 		{
-			TOp *op = ParseExpressionPriority14();
+			TTree *op = ParseExpressionPriority14();
 			if (arg >= max_params)
 			{
 				ParseError("Incorrect number of arguments, need %d, got %d.", max_params, arg);
@@ -902,7 +894,7 @@ static TOp *ParseFunctionCall(int num, bool is_method)
 				{
 					TypeCheck3(op->type, functions[num].type->param_types[arg]);
 				}
-				fop->parms[arg] = op;
+				fop->AddToList(op);
 			}
 			arg++;
 			argsize += TypeSize(op->type);
@@ -915,7 +907,7 @@ static TOp *ParseFunctionCall(int num, bool is_method)
 	}
 	if (functions[num].type->num_params & PF_VARARGS)
 	{
-		fop->parms[arg] = new TOpConst(argsize / 4 - num_needed_params, &type_int);
+		fop->AddToList(new TOpConst(argsize / 4 - num_needed_params, &type_int));
 	}
 	return fop;
 }
@@ -926,9 +918,9 @@ static TOp *ParseFunctionCall(int num, bool is_method)
 //
 //==========================================================================
 
-static TOp *ParseExpressionPriority0(void)
+static TTree *ParseExpressionPriority0(void)
 {
-	TOp			*op;
+	TTree		*op;
 	TType		*type;
 	int			num;
 	field_t		*field;
@@ -998,11 +990,11 @@ static TOp *ParseExpressionPriority0(void)
 		if (TK_Check(KW_VECTOR))
 		{
 			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			TOp *op1 = ParseExpressionPriority14();
+			TTree *op1 = ParseExpressionPriority14();
 			TK_Expect(PU_COMMA, ERR_BAD_EXPR);
-			TOp *op2 = ParseExpressionPriority14();
+			TTree *op2 = ParseExpressionPriority14();
 			TK_Expect(PU_COMMA, ERR_BAD_EXPR);
-			TOp *op3 = ParseExpressionPriority14();
+			TTree *op3 = ParseExpressionPriority14();
 			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 			return new TOpVector(op1, op2, op3);
 		}
@@ -1103,11 +1095,19 @@ static TOp *ParseExpressionPriority0(void)
 			if (type->type != ev_class)
 			{
 				ParseError(ERR_ILLEGAL_EXPR_IDENT, "Identifier: %s", tk_String);
+				break;
 			}
-			else
+			if (TK_Check(PU_LPAREN))
 			{
-			   	return new TOpConst(type->classid, &type_classid);
+				op = ParseExpressionPriority14();
+				if (op->type->type != ev_reference)
+				{
+					ParseError(ERR_BAD_EXPR, "Class reference required");
+				}
+				TK_Expect(PU_RPAREN, ERR_BAD_EXPR);
+				return new TOpDynamicCast(op, type);
 			}
+		   	return new TOpConst(type->classid, &type_classid);
 		}
 
 		ERR_Exit(ERR_ILLEGAL_EXPR_IDENT, true, "Identifier: %s", tk_String);
@@ -1117,7 +1117,7 @@ static TOp *ParseExpressionPriority0(void)
 	   	break;
 	}
 
-	op = new TOp;
+	op = new TTree;
 	op->type = &type_void;
 	return op;
 }
@@ -1128,10 +1128,10 @@ static TOp *ParseExpressionPriority0(void)
 //
 //==========================================================================
 
-static TOp *ParseExpressionPriority1(void)
+static TTree *ParseExpressionPriority1(void)
 {
 	bool		done;
-	TOp			*op;
+	TTree			*op;
 	TType		*type;
 	field_t		*field;
 
@@ -1198,7 +1198,7 @@ static TOp *ParseExpressionPriority1(void)
    		}
 		else if (TK_Check(PU_LINDEX))
 		{
-			TOp *ind;
+			TTree *ind;
 			if (op->type->type == ev_array)
 			{
 				type = op->type->aux_type;
@@ -1241,7 +1241,7 @@ static TOp *ParseExpressionPriority1(void)
 					else
 					{
 						TypeCheck3(op->type, ftype->param_types[arg]);
-						fop->parms[arg] = op;
+						fop->AddToList(op);
 					}
 					arg++;
 				} while (TK_Check(PU_COMMA));
@@ -1268,9 +1268,9 @@ static TOp *ParseExpressionPriority1(void)
 //
 //==========================================================================
 
-static TOp *ParseExpressionPriority2(void)
+static TTree *ParseExpressionPriority2(void)
 {
-	TOp			*op;
+	TTree			*op;
 	TOperator	*oper;
 	TType		*type;
 
@@ -1382,10 +1382,10 @@ static TOp *ParseExpressionPriority2(void)
 //
 //==========================================================================
 
-static TOp *ParseExpressionPriority3(void)
+static TTree *ParseExpressionPriority3(void)
 {
-	TOp			*op1;
-	TOp			*op2;
+	TTree			*op1;
+	TTree			*op2;
 	TOperator	*oper;
 	bool		done;
 
@@ -1426,10 +1426,10 @@ static TOp *ParseExpressionPriority3(void)
 //
 //==========================================================================
 
-static TOp *ParseExpressionPriority4(void)
+static TTree *ParseExpressionPriority4(void)
 {
-	TOp			*op1;
-	TOp			*op2;
+	TTree			*op1;
+	TTree			*op2;
 	TOperator	*oper;
 	bool		done;
 
@@ -1464,10 +1464,10 @@ static TOp *ParseExpressionPriority4(void)
 //
 //==========================================================================
 
-static TOp *ParseExpressionPriority5(void)
+static TTree *ParseExpressionPriority5(void)
 {
-	TOp			*op1;
-	TOp			*op2;
+	TTree			*op1;
+	TTree			*op2;
 	TOperator	*oper;
 	bool		done;
 
@@ -1502,10 +1502,10 @@ static TOp *ParseExpressionPriority5(void)
 //
 //==========================================================================
 
-static TOp* ParseExpressionPriority6(void)
+static TTree* ParseExpressionPriority6(void)
 {
-	TOp			*op1;
-	TOp			*op2;
+	TTree			*op1;
+	TTree			*op2;
 	TOperator	*oper;
 	bool		done;
 
@@ -1552,10 +1552,10 @@ static TOp* ParseExpressionPriority6(void)
 //
 //==========================================================================
 
-static TOp* ParseExpressionPriority7(void)
+static TTree* ParseExpressionPriority7(void)
 {
-	TOp			*op1;
-	TOp			*op2;
+	TTree			*op1;
+	TTree			*op2;
 	TOperator	*oper;
 	bool		done;
 
@@ -1589,10 +1589,10 @@ static TOp* ParseExpressionPriority7(void)
 //
 //==========================================================================
 
-static TOp* ParseExpressionPriority8(void)
+static TTree* ParseExpressionPriority8(void)
 {
-	TOp			*op1;
-	TOp			*op2;
+	TTree			*op1;
+	TTree			*op2;
 	TOperator	*oper;
 
 	op1 = ParseExpressionPriority7();
@@ -1611,10 +1611,10 @@ static TOp* ParseExpressionPriority8(void)
 //
 //==========================================================================
 
-static TOp* ParseExpressionPriority9(void)
+static TTree* ParseExpressionPriority9(void)
 {
-	TOp			*op1;
-	TOp			*op2;
+	TTree			*op1;
+	TTree			*op2;
 	TOperator	*oper;
 
 	op1 = ParseExpressionPriority8();
@@ -1633,10 +1633,10 @@ static TOp* ParseExpressionPriority9(void)
 //
 //==========================================================================
 
-static TOp* ParseExpressionPriority10(void)
+static TTree* ParseExpressionPriority10(void)
 {
-	TOp			*op1;
-	TOp			*op2;
+	TTree			*op1;
+	TTree			*op2;
 	TOperator	*oper;
 
 	op1 = ParseExpressionPriority9();
@@ -1655,10 +1655,10 @@ static TOp* ParseExpressionPriority10(void)
 //
 //==========================================================================
 
-static TOp* ParseExpressionPriority11(void)
+static TTree* ParseExpressionPriority11(void)
 {
-	TOp			*op1;
-	TOp			*op2;
+	TTree			*op1;
+	TTree			*op2;
 
 	op1 = ParseExpressionPriority10();
 	while (TK_Check(PU_AND_LOG))
@@ -1675,10 +1675,10 @@ static TOp* ParseExpressionPriority11(void)
 //
 //==========================================================================
 
-static TOp* ParseExpressionPriority12(void)
+static TTree* ParseExpressionPriority12(void)
 {
-	TOp			*op1;
-	TOp			*op2;
+	TTree			*op1;
+	TTree			*op2;
 
 	op1 = ParseExpressionPriority11();
 	while (TK_Check(PU_OR_LOG))
@@ -1695,11 +1695,11 @@ static TOp* ParseExpressionPriority12(void)
 //
 //==========================================================================
 
-static TOp* ParseExpressionPriority13(void)
+static TTree* ParseExpressionPriority13(void)
 {
-	TOp			*op;
-	TOp			*op1;
-	TOp			*op2;
+	TTree			*op;
+	TTree			*op1;
+	TTree			*op2;
 
 	op = ParseExpressionPriority12();
    	if (TK_Check(PU_QUEST))
@@ -1718,7 +1718,7 @@ static TOp* ParseExpressionPriority13(void)
 //
 //==========================================================================
 
-static TOp* ParseExpressionPriority14(void)
+static TTree* ParseExpressionPriority14(void)
 {
 	int			i;
 	static const struct
@@ -1740,8 +1740,8 @@ static TOp* ParseExpressionPriority14(void)
 		{PU_RSHIFT_ASSIGN,		TOperator::ID_RSHIFTVAR}
 	};
 	TOperator	*oper;
-	TOp			*op1;
-	TOp			*op2;
+	TTree			*op1;
+	TTree			*op2;
 	TType		*type;
 
 	op1 = ParseExpressionPriority13();
@@ -1770,7 +1770,7 @@ static TOp* ParseExpressionPriority14(void)
 
 TType *ParseExpression(void)
 {
-	TOp *op = ParseExpressionPriority14();
+	TTree *op = ParseExpressionPriority14();
 	op->Code();
 	TType *t = op->type;
 	delete op;
@@ -1780,11 +1780,15 @@ TType *ParseExpression(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/12/12 19:22:22  dj_jl
+//	Support for method usage as state functions, dynamic cast
+//	Added dynamic arrays
+//
 //	Revision 1.12  2001/12/03 19:25:44  dj_jl
 //	Fixed calling of parent function
 //	Added defaultproperties
 //	Fixed vectors as arguments to methods
-//
+//	
 //	Revision 1.11  2001/12/01 18:17:09  dj_jl
 //	Fixed calling of parent method, speedup
 //	

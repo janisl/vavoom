@@ -509,11 +509,7 @@ void ParseStruct(void)
 			fi->ofs = size;
 			if (t->type == ev_class)
 			{
-#ifdef REF_CLASS
 				t = MakeReferenceType(t);
-#else
-				ParseWarning("Class field");
-#endif
 			}
 			while (TK_Check(PU_LINDEX))
 			{
@@ -621,11 +617,7 @@ void AddFields(void)
 			fi->ofs = ofs;
 			if (t->type == ev_class)
 			{
-#ifdef REF_CLASS
 				t = MakeReferenceType(t);
-#else
-				ParseWarning("Class field");
-#endif
 			}
 			while (TK_Check(PU_LINDEX))
 			{
@@ -765,7 +757,7 @@ void ParseVector(void)
 
 void ParseClass(void)
 {
-	field_t		fields[128];
+	TArray<field_t>		fields;
 	field_t		*fi;
 	field_t		*otherfield;
 	int			size;
@@ -843,7 +835,7 @@ void ParseClass(void)
 
    	class_type->available_size = 0;
    	class_type->available_ofs = 0;
-	class_type->fields = fields;
+	class_type->fields = &fields[0];
 	class_type->size = size;
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	while (!TK_Check(PU_RBRACE))
@@ -866,6 +858,12 @@ void ParseClass(void)
 			continue;
 		}
 
+		if (TK_Check(KW_STATES))
+		{
+		   	ParseStates(class_type);
+			continue;
+		}
+
 		if (TK_Check(PU_TILDE))
 		{
 			type = CheckForType();
@@ -874,7 +872,8 @@ void ParseClass(void)
 				ParseError("Class name expected.");
 			}
 			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			fi = &fields[class_type->numfields];
+			fi = new(fields) field_t;
+class_type->fields = &fields[0];
 			fi->s_name = FindString(va("~%s", class_type->name));
 			ParseMethodDef(&type_void, fi, NULL, class_type, 2);
 			continue;
@@ -882,7 +881,8 @@ void ParseClass(void)
 
 		if (TK_Check(KW_DEFAULTPROPERTIES))
 		{
-			fi = &fields[class_type->numfields];
+			fi = new(fields) field_t;
+class_type->fields = &fields[0];
 			fi->s_name = class_type->s_name;
 			ParseDefaultProperties(fi, class_type);
 			continue;
@@ -895,7 +895,8 @@ void ParseClass(void)
 		}
 		if (type == class_type && TK_Check(PU_LPAREN))
 		{
-			fi = &fields[class_type->numfields];
+			fi = new(fields) field_t;
+class_type->fields = &fields[0];
 			fi->s_name = class_type->s_name;
 			ParseMethodDef(&type_void, fi, NULL, class_type, 1);
 			continue;
@@ -920,7 +921,8 @@ void ParseClass(void)
 				ParseError("Field name expected");
 				continue;
 			}
-			fi = &fields[class_type->numfields];
+			fi = new(fields) field_t;
+class_type->fields = &fields[0];
 			fi->s_name = tk_StringI;
 			otherfield = CheckForField(class_type);
 			if (!otherfield)
@@ -945,11 +947,7 @@ void ParseClass(void)
 			fi->ofs = size;
 			if (t->type == ev_class)
 			{
-#ifdef REF_CLASS
 				t = MakeReferenceType(t);
-#else
-				ParseWarning("Class field");
-#endif
 			}
 			while (TK_Check(PU_LINDEX))
 			{
@@ -972,7 +970,8 @@ void ParseClass(void)
 
 	//	Pievieno pie tipa
 	class_type->fields = new field_t[class_type->numfields];
-	memcpy(class_type->fields, fields, class_type->numfields * sizeof(*fields));
+	memcpy(class_type->fields, fields.GetData(),
+		class_type->numfields * sizeof(field_t));
    	class_type->size = size;
 }
 
@@ -1199,6 +1198,10 @@ void ParseTypeDef(void)
 		   		type = MakeReferenceType(type);
 			}
 #endif
+			if (type->type == ev_class)
+			{
+				type = MakeReferenceType(type);
+			}
 			if (functype.num_params == 0 && type == &type_void)
 			{
 				break;
@@ -1317,11 +1320,15 @@ void AddVirtualTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/12/12 19:22:22  dj_jl
+//	Support for method usage as state functions, dynamic cast
+//	Added dynamic arrays
+//
 //	Revision 1.12  2001/12/03 19:25:44  dj_jl
 //	Fixed calling of parent function
 //	Added defaultproperties
 //	Fixed vectors as arguments to methods
-//
+//	
 //	Revision 1.11  2001/12/01 18:17:09  dj_jl
 //	Fixed calling of parent method, speedup
 //	

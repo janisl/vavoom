@@ -34,6 +34,8 @@
 #define MAX_STRINGS				8192
 #define	MAX_STRINGS_BUF			500000
 
+#define OPCODE_STATS
+
 // TYPES -------------------------------------------------------------------
 
 struct TStringInfo
@@ -216,6 +218,7 @@ static struct
 
 	{"COPY", 0, 0},
 	{"SWAP3", 0, 0},
+	{"DYNAMIC_CAST", 1, 0},
 };
 
 // CODE --------------------------------------------------------------------
@@ -413,7 +416,9 @@ int* AddStatement(int statement)
 		if (statement != OPC_DROP)
 		{
 			UndoStatement();
+#ifdef OPCODE_STATS
 			StatementInfo[undoOpcode].usecount--;
+#endif
 		}
 	}
 
@@ -448,7 +453,9 @@ int* AddStatement(int statement)
 		if (statement != OPC_VDROP)
 		{
 			UndoStatement();
+#ifdef OPCODE_STATS
 			StatementInfo[undoOpcode].usecount--;
+#endif
 		}
 	}
 
@@ -456,7 +463,9 @@ int* AddStatement(int statement)
 	undoSize = CodeBufferSize;
 
 	CodeBuffer[CodeBufferSize++] = statement;
+#ifdef OPCODE_STATS
 	StatementInfo[statement].usecount++;
+#endif
 
 	return &CodeBuffer[CodeBufferSize - 1];
 }
@@ -483,7 +492,9 @@ int* AddStatement(int statement, int parm1)
 
 	CodeBuffer[CodeBufferSize++] = statement;
    	CodeBuffer[CodeBufferSize++] = parm1;
+#ifdef OPCODE_STATS
 	StatementInfo[statement].usecount++;
+#endif
 
 	return &CodeBuffer[CodeBufferSize - 1];
 }
@@ -511,7 +522,9 @@ int* AddStatement(int statement, int parm1, int parm2)
 	CodeBuffer[CodeBufferSize++] = statement;
    	CodeBuffer[CodeBufferSize++] = parm1;
    	CodeBuffer[CodeBufferSize++] = parm2;
+#ifdef OPCODE_STATS
 	StatementInfo[statement].usecount++;
+#endif
 
 	return &CodeBuffer[CodeBufferSize - 1];
 }
@@ -661,11 +674,13 @@ void PC_WriteObject(char *name)
 
 	fclose(f);
 
+#ifdef OPCODE_STATS
 	dprintf("\n-----------------------------------------------\n\n");
 	for (i = 0; i < NUM_OPCODES; i++)
 	{
 		dprintf("%-16s %d\n", StatementInfo[i].name, StatementInfo[i].usecount);
 	}
+#endif
 }
 
 //==========================================================================
@@ -756,11 +771,15 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/12/12 19:22:22  dj_jl
+//	Support for method usage as state functions, dynamic cast
+//	Added dynamic arrays
+//
 //	Revision 1.10  2001/12/03 19:25:44  dj_jl
 //	Fixed calling of parent function
 //	Added defaultproperties
 //	Fixed vectors as arguments to methods
-//
+//	
 //	Revision 1.9  2001/12/01 18:17:09  dj_jl
 //	Fixed calling of parent method, speedup
 //	

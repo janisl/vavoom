@@ -386,28 +386,6 @@ static void ProcessQuoteToken(void)
 
 //==========================================================================
 //
-//	ProcessSingleQuoteToken
-//
-//==========================================================================
-
-static void ProcessSingleQuoteToken(void)
-{
-	tk_Token = TK_INTEGER;
-	NextChr();
-
-	ProcessChar();
-	tk_Number = Chr;
-	NextChr();
-
-	if (Chr != '\'')
-	{
-		ParseError("Bad char constant.");
-	}
-	NextChr();
-}
-
-//==========================================================================
-//
 // ProcessLetterToken
 //
 //==========================================================================
@@ -1013,9 +991,9 @@ void TK_NextToken(void)
 			case CHR_QUOTE:
 				ProcessQuoteToken();
 				break;
-			case CHR_SINGLE_QUOTE:
-				ProcessSingleQuoteToken();
-				break;
+//			case CHR_SINGLE_QUOTE:
+//				ProcessSingleQuoteToken();
+//				break;
 			default:
 				ProcessSpecialToken();
 				break;
@@ -1114,9 +1092,13 @@ void TK_Expect(Punctuation punct, error_t error)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/12/12 19:22:22  dj_jl
+//	Support for method usage as state functions, dynamic cast
+//	Added dynamic arrays
+//
 //	Revision 1.9  2001/12/04 18:19:03  dj_jl
 //	Escape character for \ symbol
-//
+//	
 //	Revision 1.8  2001/12/03 19:25:44  dj_jl
 //	Fixed calling of parent function
 //	Added defaultproperties
