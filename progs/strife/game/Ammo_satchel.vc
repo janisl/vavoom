@@ -23,8 +23,26 @@
 //**
 //**************************************************************************
 
-class Ammo_satchel:Pickup
+class Ammo_satchel : Pickup
 	__mobjinfo__(183);
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+bool HandlePickup(Actor Toucher)
+{
+	int i;
+
+	Toucher.Player.Backpack = true;
+	for (i = 0; i < NUMAMMO; i++)
+	{
+		PlayerPawn(Toucher).GiveAmmo(i, 1);
+	}
+	return true;
+}
 
 __states__
 {
@@ -34,13 +52,16 @@ __states__
 defaultproperties
 {
 	ConversationID = 187;
-	ClassName = 'ammo_satchel';
+	PickupString = "ammo satchel";
 	IdleState = S_BACKPACK;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/03/01 07:10:31  dj_jl
+//  Implemented ammo satchel
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //
