@@ -96,6 +96,8 @@ subsector_t				*r_oldviewleaf;
 // if true, load all graphics at start
 static TCvarI			precache("precache", "1", CVAR_ARCHIVE);
 
+static int				pf_DrawViewBorder;
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -112,6 +114,7 @@ void R_Init(void)
 	Drawer->InitTextures();
 	Drawer->InitData();
 	R_InitParticles();
+	pf_DrawViewBorder = clpr.FuncNumForName("DrawViewBorder");
 }
 
 //==========================================================================
@@ -243,6 +246,19 @@ static void R_ExecuteSetViewSize(void)
 	clip_base[3] = Normalize(TVec(1, 0, 1.0 / refdef.fovy));
 
 	refdef.drawworld = true;
+}
+
+//==========================================================================
+//
+//	R_DrawViewBorder
+//
+//==========================================================================
+
+void R_DrawViewBorder(void)
+{
+	clpr.Exec(pf_DrawViewBorder, 160 - screenblocks * 16,
+		(200 - sb_height - screenblocks * (200 - sb_height) / 10) / 2,
+		screenblocks * 32, screenblocks * (200 - sb_height) / 10);
 }
 
 //==========================================================================
@@ -573,9 +589,12 @@ COMMAND(TimeRefresh)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/08/30 17:39:51  dj_jl
+//	Moved view border and message box to progs
+//
 //	Revision 1.8  2001/08/23 17:47:22  dj_jl
 //	Started work on pics with custom palettes
-//
+//	
 //	Revision 1.7  2001/08/21 17:43:49  dj_jl
 //	Moved precache to r_main.cpp
 //	

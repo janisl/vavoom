@@ -218,45 +218,6 @@ void MN_Drawer(void)
 
 //==========================================================================
 //
-//	Text box
-//
-//==========================================================================
-
-void DrawTextBox(char *string)
-{
-	int		x;
-	int		y;
-	int		w;
-	int		h;
-
-    // Horiz. & Vertically center string and print it.
-	T_SetFont(font_small);
-	T_SetAlign(hcenter, vcenter);
-
-	w = (T_TextWidth (string) + 16) & ~15;
-   	h = (T_TextHeight(string) + 16) & ~15;
-    if (w > 304) w = 304;
-    if (h > 184) h = 184;
-    x = (320 - w) / 2;
-    y = (200 - h) / 2;
-
-   	char	*flat;
-
-	switch (Game)
-	{
-	 default:	   flat = "FLAT20";   break;
-	 case Heretic: flat = "FLOOR04";  break;
-	 case Hexen:   flat = "F_019";    break;
-	 case Strife:  flat = "F_PAVE01"; break;
-	}
-	R_FillRectWithFlat(x, y, w, h, flat);
-	R_DrawBorder(x, y, w, h);
-
-	T_DrawText(160, 100, string);
-}
-
-//==========================================================================
-//
 //	Server list menu
 //
 //==========================================================================
@@ -309,12 +270,48 @@ boolean MN_Active(void)
 	return clpr.Exec("MN_Active");
 }
 
+//==========================================================================
+//
+//	MB_Active
+//
+//==========================================================================
+
+boolean MB_Active(void)
+{
+	return clpr.Exec("MB_Active");
+}
+
+//==========================================================================
+//
+//	MB_Drawer
+//
+//==========================================================================
+
+void MB_Drawer(void)
+{
+	clpr.Exec("MB_Drawer");
+}
+
+//==========================================================================
+//
+//  MB_Responder
+//
+//==========================================================================
+
+boolean MB_Responder(event_t *event)
+{
+	return clpr.Exec("MB_Responder", (int)event);
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/30 17:39:51  dj_jl
+//	Moved view border and message box to progs
+//
 //	Revision 1.4  2001/08/07 16:49:26  dj_jl
 //	Added C_Active
-//
+//	
 //	Revision 1.3  2001/07/31 17:09:34  dj_jl
 //	Removed seting shareware and ExtendedWAD in progs
 //	

@@ -101,7 +101,6 @@
 #include "text.h"
 #include "sound.h"
 #include "menu.h"
-#include "msgbox.h"
 #include "play.h"
 #include "console.h"
 #include "cmd.h"
@@ -119,10 +118,13 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/30 17:39:51  dj_jl
+//	Moved view border and message box to progs
+//
 //	Revision 1.4  2001/08/04 17:25:14  dj_jl
 //	Moved title / demo loop to progs
 //	Removed shareware / ExtendedWAD from engine
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	
