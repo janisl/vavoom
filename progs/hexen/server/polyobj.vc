@@ -1,0 +1,576 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+// ===== Polyobj Event Code =====
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+enum
+{
+	PODOOR_NONE,
+	PODOOR_SLIDE,
+	PODOOR_SWING
+};
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+void DamageMobj(mobj_t *target,mobj_t *inflictor,mobj_t *source,int damage);
+boolean P_CheckPosition(mobj_t* thing, float x, float y);
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	T_RotatePoly
+//
+//==========================================================================
+
+void T_RotatePoly(special_t *pe)
+{
+	int 		absSpeed;
+	polyobj_t	*poly;
+
+	if (PO_RotatePolyobj(pe->polyobj, pe->rot_speed))
+	{
+		absSpeed = abs(pe->rot_speed);
+
+		if (pe->rot_dist == -1)
+		{
+			// perpetual polyobj
+			return;
+		}
+		pe->rot_dist -= absSpeed;
+		if (pe->rot_dist <= 0)
+		{
+			poly = GetPolyobj(pe->polyobj);
+			if (poly->specialdata == pe)
+			{
+				poly->specialdata = NULL;
+			}
+			StopSequence(&poly->startSpot);
+			PolyobjFinished(poly->tag);
+			RemoveSpecialThinker(pe);
+		}
+		if (pe->rot_dist < absSpeed)
+		{
+			pe->rot_speed = pe->rot_dist * (pe->rot_speed < 0 ? -1 : 1);
+		}
+	}
+}
+
+//==========================================================================
+//
+//	EV_RotatePoly
+//
+//==========================================================================
+
+boolean EV_RotatePoly(line_t *line, int *args, int direction, boolean
+	overRide)
+{
+	int 		mirror;
+	int 		polyNum;
+	special_t 	*pe;
+	polyobj_t 	*poly;
+
+	polyNum = args[0];
+	if ((poly = GetPolyobj(polyNum)))
+	{
+		if (poly->specialdata && !overRide)
+		{ // poly is already moving
+			return false;
+		}
+	}
+	else
+	{
+		Error("EV_RotatePoly:  Invalid polyobj num");//: %d\n", polyNum);
+	}
+	pe = NewSpecialThinker(T_RotatePoly);
+	pe->polyobj = polyNum;
+	if (args[2])
+	{
+		if (args[2] == 255)
+		{
+			pe->rot_dist = -1;
+		}
+		else
+		{
+			pe->rot_dist = args[2] * (ANG90 / 64); // Angle
+		}
+	}
+	else
+	{
+		pe->rot_dist = ANGLE_MAX - 1;
+	}
+	pe->rot_speed = (args[1] * direction * (ANG90 / 64)) >> 3;
+
+	//THRUST
+	pe->thrust_force = itof(pe->rot_speed) / 256.0 / 65536.0;
+
+	poly->specialdata = pe;
+	StartSequence(&poly->startSpot, seq_name[SEQ_DOOR_STONE + poly->seqType]);
+	
+	while ((mirror = GetPolyobjMirror(polyNum)))
+	{
+		poly = GetPolyobj(mirror);
+		if (poly && poly->specialdata && !overRide)
+		{ // mirroring poly is already in motion
+			break;
+		}
+		pe = NewSpecialThinker(T_RotatePoly);
+		poly->specialdata = pe;
+		pe->polyobj = mirror;
+		if (args[2])
+		{
+			if (args[2] == 255)
+			{
+				pe->rot_dist = -1;
+			}
+			else
+			{
+				pe->rot_dist = args[2]*(ANG90/64); // Angle
+			}
+		}
+		else
+		{
+			pe->rot_dist = ANGLE_MAX-1;
+		}
+		if((poly = GetPolyobj(polyNum)))
+		{
+			poly->specialdata = pe;
+		}
+		else
+		{
+			Error("EV_RotatePoly:  Invalid polyobj num");//: %d\n", polyNum);
+		}
+		direction = -direction;
+		pe->rot_speed = (args[1] * direction * (ANG90 / 64)) >> 3;
+
+		//THRUST
+		pe->thrust_force = itof(pe->rot_speed) / 256.0 / 65536.0;
+
+		polyNum = mirror;
+		StartSequence(&poly->startSpot, seq_name[SEQ_DOOR_STONE + poly->seqType]);
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//	T_MovePoly
+//
+//==========================================================================
+
+void T_MovePoly(special_t *pe)
+{
+	float		absSpeed;
+	polyobj_t 	*poly;
+
+	if (PO_MovePolyobj(pe->polyobj, pe->xSpeed, pe->ySpeed))
+	{
+		absSpeed = fabs(pe->speed);
+		pe->dist -= absSpeed;
+		if (pe->dist <= 0.0)
+		{
+			poly = GetPolyobj(pe->polyobj);
+			if (poly->specialdata == pe)
+			{
+				poly->specialdata = NULL;
+			}
+			StopSequence(&poly->startSpot);
+			PolyobjFinished(poly->tag);
+			RemoveSpecialThinker(pe);
+		}
+		if (pe->dist < absSpeed)
+		{
+			pe->speed = pe->dist * (pe->speed < 0.0 ? -1.0 : 1.0);
+			pe->xSpeed = pe->speed * cos(pe->angle);
+			pe->ySpeed = pe->speed * sin(pe->angle);
+		}
+	}
+}
+
+//==========================================================================
+//
+// EV_MovePoly
+//
+//==========================================================================
+
+boolean EV_MovePoly(line_t *line, int *args, boolean timesEight, boolean
+	overRide)
+{
+	int 		mirror;
+	int 		polyNum;
+	special_t 	*pe;
+	polyobj_t 	*poly;
+	angle_t 	an;
+
+	polyNum = args[0];
+	if((poly = GetPolyobj(polyNum)))
+	{
+		if(poly->specialdata && !overRide)
+		{ // poly is already moving
+			return false;
+		}
+	}
+	else
+	{
+		Error("EV_MovePoly:  Invalid polyobj num");//: %d\n", polyNum);
+	}
+	pe = NewSpecialThinker(T_MovePoly);
+	pe->polyobj = polyNum;
+	if (timesEight)
+	{
+		pe->dist = itof(args[3]) * 8.0;
+	}
+	else
+	{
+		pe->dist = itof(args[3]); // Distance
+	}
+	pe->speed = itof(args[1]) / 8.0;
+
+	//THRUST
+	pe->thrust_force = pe->speed / 8.0;
+
+	poly->specialdata = pe;
+
+	an = args[2]*(ANG90/64);
+
+	pe->angle = an;
+	pe->xSpeed = pe->speed * cos(pe->angle);
+	pe->ySpeed = pe->speed * sin(pe->angle);
+	StartSequence(&poly->startSpot, seq_name[SEQ_DOOR_STONE + poly->seqType]);
+
+	while((mirror = GetPolyobjMirror(polyNum)))
+	{
+		poly = GetPolyobj(mirror);
+		if(poly && poly->specialdata && !overRide)
+		{ // mirroring poly is already in motion
+			break;
+		}
+		pe = NewSpecialThinker(T_MovePoly);
+		pe->polyobj = mirror;
+		poly->specialdata = pe;
+		if(timesEight)
+		{
+			pe->dist = itof(args[3]) * 8.0;
+		}
+		else
+		{
+			pe->dist = itof(args[3]); // Distance
+		}
+		pe->speed = itof(args[1]) / 8.0;
+
+		//THRUST
+		pe->thrust_force = pe->speed / 8.0;
+
+		an = an+ANG180; // reverse the angle
+		pe->angle = an;
+		pe->xSpeed = pe->speed * cos(pe->angle);
+		pe->ySpeed = pe->speed * sin(pe->angle);
+		polyNum = mirror;
+		StartSequence(&poly->startSpot, seq_name[SEQ_DOOR_STONE + poly->seqType]);
+	}
+	return true;
+}
+
+//==========================================================================
+//
+// T_PolyDoor
+//
+//==========================================================================
+
+void T_PolyDoor(special_t *pd)
+{
+	int 		absSpeed;
+	float		fabsSpeed;
+	polyobj_t 	*poly;
+
+	if (pd->tics)
+	{
+		if (!--pd->tics)
+		{
+			poly = GetPolyobj(pd->polyobj);
+			StartSequence(&poly->startSpot, seq_name[SEQ_DOOR_STONE + poly->seqType]);
+		}
+		return;
+	}
+	switch(pd->type)
+	{
+		case PODOOR_SLIDE:
+			if (PO_MovePolyobj(pd->polyobj, pd->xSpeed, pd->ySpeed))
+			{
+				fabsSpeed = fabs(pd->speed);
+				pd->dist -= fabsSpeed;
+				if (pd->dist <= 0.0)
+				{
+					poly = GetPolyobj(pd->polyobj);
+					StopSequence(&poly->startSpot);
+					if (!pd->close)
+					{
+						pd->dist = pd->totalDist;
+						pd->close = true;
+						pd->tics = pd->waitTics;
+						pd->xSpeed = -pd->xSpeed;
+						pd->ySpeed = -pd->ySpeed;					
+					}
+					else
+					{
+						if (poly->specialdata == pd)
+						{
+							poly->specialdata = NULL;
+						}
+						PolyobjFinished(poly->tag);
+						RemoveSpecialThinker(pd);
+					}
+				}
+			}
+			else
+			{
+				poly = GetPolyobj(pd->polyobj);
+				if (poly->crush || !pd->close)
+				{ // continue moving if the poly is a crusher, or is opening
+					return;
+				}
+				else
+				{ // open back up
+					pd->dist = pd->totalDist - pd->dist;
+					pd->xSpeed = -pd->xSpeed;
+					pd->ySpeed = -pd->ySpeed;
+					pd->close = false;
+					StartSequence(&poly->startSpot,
+						seq_name[SEQ_DOOR_STONE + poly->seqType]);
+				}
+			}
+			break;
+
+		case PODOOR_SWING:
+			if (PO_RotatePolyobj(pd->polyobj, pd->rot_speed))
+			{
+				absSpeed = abs(pd->rot_speed);
+				if(pd->rot_dist == -1)
+				{ // perpetual polyobj
+					return;
+				}
+				pd->rot_dist -= absSpeed;
+				if(pd->rot_dist <= 0)
+				{
+					poly = GetPolyobj(pd->polyobj);
+					StopSequence(&poly->startSpot);
+					if(!pd->close)
+					{
+						pd->rot_dist = pd->rot_totalDist;
+						pd->close = true;
+						pd->tics = pd->waitTics;
+						pd->rot_speed = -pd->rot_speed;
+					}
+					else
+					{
+						if(poly->specialdata == pd)
+						{
+							poly->specialdata = NULL;
+						}
+						PolyobjFinished(poly->tag);
+						RemoveSpecialThinker(pd);
+					}
+				}
+			}
+			else
+			{
+				poly = GetPolyobj(pd->polyobj);
+				if(poly->crush || !pd->close)
+				{ // continue moving if the poly is a crusher, or is opening
+					return;
+				}
+				else
+				{ // open back up and rewait
+					pd->rot_dist = pd->rot_totalDist - pd->rot_dist;
+					pd->rot_speed = -pd->rot_speed;
+					pd->close = false;
+					StartSequence(&poly->startSpot,
+						seq_name[SEQ_DOOR_STONE + poly->seqType]);
+				}
+			}			
+			break;
+
+		default:
+			break;
+	}
+}
+
+//==========================================================================
+//
+// EV_OpenPolyDoor
+//
+//==========================================================================
+
+boolean EV_OpenPolyDoor(line_t *line, int *args, int type)
+{
+	int 		mirror;
+	int 		polyNum;
+	special_t 	*pd;
+	polyobj_t 	*poly;
+	angle_t 	an=0;
+
+	polyNum = args[0];
+	if((poly = GetPolyobj(polyNum)))
+	{
+		if(poly->specialdata)
+		{ // poly is already moving
+			return false;
+		}
+	}
+	else
+	{
+		Error("EV_OpenPolyDoor:  Invalid polyobj num");//: %d\n", polyNum);
+	}
+	pd = NewSpecialThinker(T_PolyDoor);
+	pd->type = type;
+	pd->polyobj = polyNum;
+	if (type == PODOOR_SLIDE)
+	{
+		pd->waitTics = args[4];
+		pd->speed = itof(args[1]) / 8.0;
+		pd->totalDist = itof(args[3]); // Distance
+		pd->dist = pd->totalDist;
+		an = args[2]*(ANG90/64);
+		pd->xSpeed = pd->speed * cos(an);
+		pd->ySpeed = pd->speed * sin(an);
+
+		//THRUST
+		pd->thrust_force = pd->speed / 8.0;
+
+		StartSequence(&poly->startSpot, seq_name[SEQ_DOOR_STONE + poly->seqType]);
+	}
+	else if (type == PODOOR_SWING)
+	{
+		pd->waitTics = args[3];
+		pd->rot_speed = (args[1] * (ANG90 / 64)) >> 3;
+		pd->rot_totalDist = args[2] * (ANG90 / 64);
+		pd->rot_dist = pd->rot_totalDist;
+
+		//THRUST
+		pd->thrust_force = itof(pd->rot_speed) / 8.0 / 65536.0;
+
+		StartSequence(&poly->startSpot, seq_name[SEQ_DOOR_STONE + poly->seqType]);
+	}
+
+	poly->specialdata = pd;
+
+	while ((mirror = GetPolyobjMirror(polyNum)))
+	{
+		poly = GetPolyobj(mirror);
+		if(poly && poly->specialdata)
+		{ // mirroring poly is already in motion
+			break;
+		}
+		pd = NewSpecialThinker(T_PolyDoor);
+		pd->polyobj = mirror;
+		pd->type = type;
+		poly->specialdata = pd;
+		if(type == PODOOR_SLIDE)
+		{
+			pd->waitTics = args[4];
+			pd->speed = itof(args[1]) / 8.0;
+			pd->totalDist = itof(args[3]); // Distance
+			pd->dist = pd->totalDist;
+			an = an + ANG180; // reverse the angle
+			pd->xSpeed = pd->speed * cos(an);
+			pd->ySpeed = pd->speed * sin(an);
+
+			//THRUST
+			pd->thrust_force = pd->speed / 8.0;
+
+			StartSequence(&poly->startSpot, seq_name[SEQ_DOOR_STONE + poly->seqType]);
+		}
+		else if(type == PODOOR_SWING)
+		{
+			pd->waitTics = args[3];
+			pd->rot_speed = (-args[1] * (ANG90 / 64)) >> 3;
+			pd->rot_totalDist = args[2]*(ANG90/64);
+			pd->rot_dist = pd->rot_totalDist;
+
+			//THRUST
+			pd->thrust_force = itof(pd->rot_speed) / 8.0 / 65536.0;
+
+			StartSequence(&poly->startSpot, seq_name[SEQ_DOOR_STONE + poly->seqType]);
+		}
+		polyNum = mirror;
+	}
+	return true;
+}
+
+//==========================================================================
+//
+// 	PolyThrustMobj
+//
+//==========================================================================
+
+void PolyThrustMobj(mobj_t *mobj, angle_t angle, polyobj_t *po)
+{
+	float		thrustX;
+	float		thrustY;
+	float		force;
+	special_t	*pe;
+
+	if (!(mobj->flags&MF_SHOOTABLE) && !mobj->player)
+	{
+		return;
+	}
+
+	pe = po->specialdata;
+	if (pe)
+	{
+		force = pe->thrust_force;
+		if (force < 1.0)
+		{
+			force = 1.0;
+		}
+		else if (force > 4.0)
+		{
+			force = 4.0;
+		}
+	}
+	else
+	{
+		force = 1.0;
+	}
+
+	thrustX = force * cos(angle);
+	thrustY = force * sin(angle);
+	mobj->velocity.x += thrustX * 35.0;
+	mobj->velocity.y += thrustY * 35.0;
+	if (po->crush)
+	{
+		if (!P_CheckPosition(mobj, mobj->origin.x + thrustX, mobj->origin.y + thrustY))
+		{
+			DamageMobj(mobj, NULL, NULL, 3);
+		}
+	}
+}
+

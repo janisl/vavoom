@@ -1,0 +1,247 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	MakeFloorSlope
+//
+//==========================================================================
+
+void MakeFloorSlope(mthing_t *mthing)
+{
+	sector_t	*sec;
+	line_t		*line;
+	int			i;
+
+	sec = PointInSubsector(mthing->x, mthing->y)->sector;
+	for (i = 0; i < sec->linecount; i++)
+	{
+		line = sec->lines[i];
+		if (mthing->tid == line->arg1)
+		{
+			TVec	v1;
+			TVec	v2;
+			TVec	p1;
+			TVec	p2;
+			TVec	p3;
+
+			p1 = vector(line->v1->x, line->v1->y, sec->floor.minz);
+			p2 = vector(line->v2->x, line->v2->y, sec->floor.minz);
+			p3 = vector(mthing->x, mthing->y, mthing->height);
+			if (PointOnPlaneSide(p3, line) == 0)
+			{
+				v1 = p2 - p3;
+				v2 = p1 - p3;
+			}
+			else
+			{
+				v1 = p1 - p3;
+				v2 = p2 - p3;
+			}
+			sec->floor.normal = Normalize(CrossProduct(v1, v2));
+			if (sec->floor.normal.z <= 0.0)
+			{
+				Error("Floor with normal.z <= 0.0");
+			}
+			sec->floor.dist = DotProduct(sec->floor.normal, p3);
+			sec->base_floorheight = sec->floor.dist;
+			P_ChangeSector(sec, false);
+			SendFloorSlope(sec);
+			return;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	MakeCeilingSlope
+//
+//==========================================================================
+
+void MakeCeilingSlope(mthing_t *mthing)
+{
+	sector_t	*sec;
+	line_t		*line;
+	int			i;
+
+	sec = PointInSubsector(mthing->x, mthing->y)->sector;
+	for (i = 0; i < sec->linecount; i++)
+	{
+		line = sec->lines[i];
+		if (mthing->tid == line->arg1)
+		{
+			TVec p1;
+			TVec p2;
+			TVec p3;
+			TVec v1;
+			TVec v2;
+
+			p1 = vector(line->v1->x, line->v1->y, sec->ceiling.maxz);
+			p2 = vector(line->v2->x, line->v2->y, sec->ceiling.maxz);
+			p3 = vector(mthing->x, mthing->y, mthing->height);
+			if (PointOnPlaneSide(p3, line) == 0)
+			{
+				v1 = p1 - p3;
+				v2 = p2 - p3;
+			}
+			else
+			{
+				v1 = p2 - p3;
+				v2 = p1 - p3;
+			}
+			sec->ceiling.normal = Normalize(CrossProduct(v1, v2));
+			if (sec->ceiling.normal.z >= 0.0)
+			{
+				Error("Ceiling with normal.z >= 0.0");
+			}
+			sec->ceiling.dist = DotProduct(sec->ceiling.normal, p3);
+			sec->base_ceilingheight = sec->ceiling.dist;
+			P_ChangeSector(sec, false);
+			SendCeilingSlope(sec);
+			return;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	SpawnExtraFloors
+//
+//==========================================================================
+
+void SpawnExtraFloors(line_t *line)
+{
+	int				j;
+
+	for (j = 0; j < level->numsectors; j++)
+	{
+		if (line->arg1 == level->sectors[j].tag)
+		{
+			AddExtraFloor(line, &level->sectors[j]);
+		}
+	}
+}
+
+//==========================================================================
+//
+//	CreateContents
+//
+//==========================================================================
+
+int terrain_contents[] =
+{
+	CONTENTS_EMPTY,
+	CONTENTS_EMPTY,
+	CONTENTS_WATER,
+	CONTENTS_WATER,
+	CONTENTS_SLUDGE,
+	CONTENTS_LAVA
+};
+int contents_transluc[] = { 0, 50, 20, 30 };
+
+void CreateContents(line_t *line)
+{
+	int		contents;
+
+	if (!line->arg1 && !line->arg2 && !line->arg3)
+	{
+		contents = terrain_contents[TerrainType(line->frontsector->floor.pic)];
+		line->frontsector->params.contents = contents;
+		if (line->frontsector->floor.dist == -line->frontsector->ceiling.dist)
+		{
+			line->frontsector->floor.translucency = contents_transluc[contents];
+			line->frontsector->ceiling.translucency = contents_transluc[contents];
+			line->frontsector->ceiling.flags |= SPF_NOBLOCKING | SPF_NOBLOCKSIGHT | SPF_NOBLOCKSHOOT;
+			line->frontsector->floor.flags |= SPF_NOBLOCKING | SPF_NOBLOCKSIGHT | SPF_NOBLOCKSHOOT;
+		}
+	}
+	else
+	{
+		line->frontsector->params.contents = line->arg1;
+
+		line->frontsector->floor.translucency = line->arg2;
+		line->frontsector->ceiling.translucency = line->arg2;
+
+		line->frontsector->ceiling.flags = line->arg3;
+		line->frontsector->floor.flags = line->arg3;
+	}
+}
+
+//==========================================================================
+//
+//	SpawnWorld
+//
+//==========================================================================
+
+void SpawnWorld(void)
+{
+	int			i;
+	mthing_t	*mthing;
+
+	//	Spawn slopes first
+	for (i = 0; i < level->numthings; i++)
+	{
+		mthing = &level->things[i];
+
+		if (mthing->type == 1500)
+		{
+			MakeFloorSlope(mthing);
+			mthing->type = 0;
+			continue;
+		}
+
+		if (mthing->type == 1501)
+		{
+			MakeCeilingSlope(mthing);
+			mthing->type = 0;
+			continue;
+		}
+	}
+
+	//	Spawn 3D floors
+	for (i = 0; i < level->numlines; i++)
+	{
+		if (level->lines[i].special == 160)
+		{
+			SpawnExtraFloors(&level->lines[i]);
+		}
+		if (level->lines[i].special == 161)
+		{
+			CreateContents(&level->lines[i]);
+		}
+	}
+}
+
+

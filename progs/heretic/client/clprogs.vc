@@ -1,0 +1,57 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+#include "../../common/client.vc"
+
+#include "../herdefs.vc"
+
+boolean		shareware;
+
+#include "effects.vc"
+
+#include "imission.vc"
+
+#include "finale.vc"
+
+#include "m_menu.vc"
+#include "m_main.vc"
+#include "m_single.vc"
+#include "m_epi.vc"
+#include "m_skill.vc"
+#include "m_load.vc"
+#include "m_save.vc"
+#include "m_multi.vc"
+#include "m_new.vc"
+#include "m_join.vc"
+#include "m_psetup.vc"
+#include "m_option.vc"
+#include "m_resol.vc"
+#include "m_ctrl.vc"
+#include "m_mouse.vc"
+#include "m_sound.vc"
+#include "m_help.vc"
+#include "m_quit.vc"
+
+#include "statbar.vc"
+
+#include "main.vc"

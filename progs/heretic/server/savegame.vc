@@ -1,0 +1,104 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+//==========================================================================
+//
+//	ArchivePlayer
+//
+//==========================================================================
+
+void ArchivePlayer(player_t *player)
+{
+}
+
+//==========================================================================
+//
+//	UnarchivePlayer
+//
+//==========================================================================
+
+void UnarchivePlayer(player_t *player)
+{
+	player->attacker = NULL;
+}
+
+//==========================================================================
+//
+//	ArchiveMobj
+//
+//==========================================================================
+
+void ArchiveMobj(mobj_t *mobj)
+{
+	mobj->target = MobjToNum(mobj->target);
+}
+
+//==========================================================================
+//
+//	UnarchiveMobj
+//
+//==========================================================================
+
+void UnarchiveMobj(mobj_t *mobj)
+{
+	mobj->target = NumToMobj(mobj->target);
+}
+
+//==========================================================================
+//
+//  ArchiveSpecial
+//
+//==========================================================================
+
+void ArchiveSpecial(special_t *spec)
+{
+	spec->sector = SectorToNum(spec->sector);
+}
+
+//==========================================================================
+//
+//  UnarchiveSpecial
+//
+//==========================================================================
+
+void UnarchiveSpecial(special_t *spec)
+{
+	spec->sector = NumToSector(spec->sector);
+    if (spec->function == T_MoveCeiling ||
+    	spec->function == T_VerticalDoor ||
+    	spec->function == T_MoveFloor ||
+    	spec->function == T_PlatRaise)
+    {
+    	spec->sector->specialdata = spec;
+    }
+	if (spec->function == T_MoveCeiling)
+    {
+    	P_AddActiveCeiling(spec);
+    }
+    if (spec->function == T_PlatRaise)
+    {
+    	P_AddActivePlat(spec);
+    }
+}
+
+

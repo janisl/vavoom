@@ -1,0 +1,187 @@
+//  Flat and texture animations
+
+flat F_SCANR5
+pic 1 tics 4
+pic 2 tics 4
+pic 3 tics 4
+pic 4 tics 4
+
+flat F_WATR01
+pic 1 tics 8
+pic 2 tics 8
+pic 3 tics 8
+
+flat F_PWATR1
+pic 1 tics 11
+pic 2 tics 11
+pic 3 tics 11
+
+flat F_SCANR1
+pic 1 tics 4
+pic 2 tics 4
+pic 3 tics 4
+pic 4 tics 4
+
+texture SCAN05
+pic 1 tics 4
+pic 2 tics 4
+pic 3 tics 4
+pic 4 tics 4
+
+texture SWTRMG01
+pic 1 tics 4
+pic 2 tics 4
+pic 3 tics 4
+
+texture SCAN01
+pic 1 tics 4
+pic 2 tics 4
+pic 3 tics 4
+pic 4 tics 4
+
+texture COMP01
+pic 1 tics 4
+pic 2 tics 4
+pic 3 tics 4
+pic 4 tics 4
+
+texture COMP05
+pic 1 tics 6
+pic 2 tics 6
+pic 3 tics 6
+pic 4 tics 6
+
+texture COMP09
+pic 1 tics 11
+pic 2 tics 11
+pic 3 tics 11
+pic 4 tics 11
+
+texture COMP13
+pic 1 tics 12
+pic 2 tics 12
+pic 3 tics 12
+pic 4 tics 12
+
+texture COMP17
+pic 1 tics 12
+pic 2 tics 12
+pic 3 tics 12
+pic 4 tics 12
+
+texture COMP21
+pic 1 tics 12
+pic 2 tics 12
+pic 3 tics 12
+pic 4 tics 12
+
+texture COMP25
+pic 1 tics 12
+pic 2 tics 12
+pic 3 tics 12
+pic 4 tics 12
+
+texture COMP29
+pic 1 tics 12
+pic 2 tics 12
+pic 3 tics 12
+pic 4 tics 12
+
+texture COMP33
+pic 1 tics 12
+pic 2 tics 12
+pic 3 tics 12
+pic 4 tics 12
+pic 5 tics 12
+
+texture COMP38
+pic 1 tics 12
+pic 2 tics 12
+pic 3 tics 12
+pic 4 tics 12
+
+texture COMP42
+pic 1 tics 10
+pic 2 tics 10
+pic 3 tics 10
+pic 4 tics 10
+pic 5 tics 10
+pic 6 tics 10
+pic 7 tics 10
+pic 8 tics 10
+
+texture BRKGRY13
+pic 1 tics 10
+pic 2 tics 10
+pic 3 tics 10
+pic 4 tics 10
+
+texture BRNSCN01
+pic 1 tics 10
+pic 2 tics 10
+pic 3 tics 10
+pic 4 tics 10
+
+texture CONCRT09
+pic 1 tics 11
+pic 2 tics 11
+pic 3 tics 11
+pic 4 tics 11
+
+texture CONCRT22
+pic 1 tics 11
+pic 2 tics 11
+pic 3 tics 11
+pic 4 tics 11
+
+texture WALPMP01
+pic 1 tics 16
+pic 2 tics 16
+
+texture WALTEK16
+pic 1 tics 8
+pic 2 tics 8
+
+texture FORCE01
+pic 1 tics 4
+pic 2 tics 4
+pic 3 tics 4
+pic 4 tics 4
+
+texture FORCE05
+pic 1 tics 4
+pic 2 tics 4
+pic 3 tics 4
+pic 4 tics 4
+
+texture FAN01
+pic 1 tics 4
+pic 2 tics 4
+
+flat P_VWATR1
+pic 1 tics 4
+pic 2 tics 4
+pic 3 tics 4
+
+flat F_HWATR1
+pic 1 tics 4
+pic 2 tics 4
+pic 3 tics 4
+
+flat F_TELE1
+pic 1 tics 4
+pic 2 tics 4
+
+flat F_FAN1
+pic 1 tics 4
+pic 2 tics 4
+
+flat F_CONVY1
+pic 1 tics 4
+pic 2 tics 4
+
+flat F_RDALN1
+pic 1 tics 4
+pic 2 tics 4
+pic 3 tics 4
+pic 4 tics 4

@@ -1,0 +1,163 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//**
+//**	Skill menu
+//**
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+struct menu_skill_t
+{
+	menu_t		menu;
+	menutext_t	skill[5];
+	menutext_t	title;
+};
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+menu_skill_t	SkillMenu;
+int				MenuSkill;
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	SkillCallback
+//
+//==========================================================================
+
+void SkillCallback(menucommon_t *item, int msg)
+{
+	if (msg == MMSG_ACTIVATE)
+	{
+		MenuSkill = item->id;
+	}
+}
+
+//==========================================================================
+//
+//	skill_func
+//
+//	Let's play
+//
+//==========================================================================
+
+void skill_func(void)
+{
+	SetCvar("Skill", MenuSkill);
+	SetCvar("Class", MenuPClass);
+
+	CmdBuf_AddText("Disconnect\n");
+	CmdBuf_AddText("MaxPlayers 1\n");
+#ifdef FIXME
+	int realMap;
+
+	realMap = P_TranslateMap(1);
+	if (realMap == -1)
+	{
+		realMap = 1;
+	}
+	CmdBuf << "Map " << realMap << "\n";
+#else
+	CmdBuf_AddText("Map MAP01\n");
+#endif
+
+	MN_DeactivateMenu();
+}
+
+//==========================================================================
+//
+//	menu_skill
+//
+//==========================================================================
+
+void menu_skill(void)
+{
+	int x;
+	int y;
+	int i;
+
+    InitMenu(&SkillMenu.menu);
+
+	switch (MenuPClass)
+	{
+	 case PCLASS_FIGHTER:
+		x = 120;
+		break;
+	 case PCLASS_CLERIC:
+		x = 116;
+		break;
+	 case PCLASS_MAGE:
+		x = 112;
+		break;
+	}
+	y = 44;
+
+	for (i = 0; i < 5; i++)
+	{
+		MenuText_InitFunc(&SkillMenu.skill[i], x, y, "", TEXT_BIG, skill_func);
+		SkillMenu.skill[i].callback = SkillCallback;
+		SkillMenu.skill[i].id = i;
+		AddMenuItem(&SkillMenu.menu, &SkillMenu.skill[i]);
+		y += 18;
+	}
+
+	switch (MenuPClass)
+	{
+	 case PCLASS_FIGHTER:
+		SkillMenu.skill[0].text = "SQUIRE";
+		SkillMenu.skill[1].text = "KNIGHT";
+		SkillMenu.skill[2].text = "WARRIOR";
+		SkillMenu.skill[3].text = "BERSERKER";
+		SkillMenu.skill[4].text = "TITAN";
+		break;
+	 case PCLASS_CLERIC:
+		SkillMenu.skill[0].text = "ALTAR BOY";
+		SkillMenu.skill[1].text = "ACOLYTE";
+		SkillMenu.skill[2].text = "PRIEST";
+		SkillMenu.skill[3].text = "CARDINAL";
+		SkillMenu.skill[4].text = "POPE";
+		break;
+	 case PCLASS_MAGE:
+		SkillMenu.skill[0].text = "APPRENTICE";
+		SkillMenu.skill[1].text = "ENCHANTER";
+		SkillMenu.skill[2].text = "SORCERER";
+		SkillMenu.skill[3].text = "WARLOCK";
+		SkillMenu.skill[4].text = "ARCHIMAGE";
+		break;
+	}
+
+	MenuText_InitTitle(&SkillMenu.title, 160, 24, "CHOOSE SKILL LEVEL:", TEXT_BIGC);
+	AddMenuItem(&SkillMenu.menu, &SkillMenu.title);
+
+    PushMenu(&SkillMenu.menu);
+	Menu_SetCursorToItem(&SkillMenu.menu, &SkillMenu.skill[2]);
+}
+

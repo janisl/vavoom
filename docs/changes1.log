@@ -1,0 +1,1494 @@
+******************************************************************************
+    Izmai·as versijÆs 1.x
+******************************************************************************
+
+15-06-2000
+  IzrÆdØjÆs ka web lapÆ kautkas nav kÆrtØbÆ ar failu vÆrdu lielajiem un
+ mazajiem burtiem. Laikam tur ir UNIX serveris. Tika izlabota attiecØgÆ
+ web lapa, un tagad viss ıóiet strÆdÆ normÆli.
+  PÆrkÆrtoju konsoles mainØgos un komandas. LØdzØgi kÆ QUAKE tika ieviests
+ komandu buferis, kurı tiek izpildØts katru takti, tagad komandas vairs
+ netiek izpildØtas uzreiz.
+16-06-2000
+  Nedaudz pielaboju alias komandu. Izlaboju problñmas vadØbas tausti·u menu.
+ AizstÆju vecos pazi·ojumus ar drukÆıanu konsolñ.
+17-06-2000
+  Ğodien óñros klÆt pie mİzikas moduõa. Tika nedaudz pÆrveidots qmus2mid,
+ atdalØta mİzika atseviıói no ska·as moduõa, pilnveidota konsoles komanda
+ "music", viss darbs ar mİziku tagad notiek caur ıo komandu.
+  raven-games.com piedÆvÆ man publicñt manu web lapu vi·u serverØ. Es laikam
+ pie·emıu ıo piedÆvÆjumu.
+19-06-2000
+  PÆrnesu qmus2mid Allegro versijÆ uz mİzikas moduli. PamatØgi optimizñjot
+ vairs konvertñjot netirk veidots midi fails, jo tas nav vajadzØgs un tikai
+ patñrñ laiku.
+20-06-2000
+  Izmantojot Quake izejas kodus sÆku sakÆrtot CD moduõus. Bİs arØ CD LINUX
+ versijÆ.
+21-06-2000
+  CD mİzikÆ itkÆ ir sakÆrtota.
+22-06-2000
+  PÆrbaudØju CD mİziku DOS un Windows versijÆ - viss strÆdÆ normÆli.
+26-06-2000
+  PÆrvietoju ska·as atska·oıanas un visas vadzØjÆs funkcijas uz ska·as
+ sistñmas moduõiem. Optimizñju Allegro versiju.
+  IzrÆdÆs ka ar LINUX versiju ir kautkÆdas problñmas. PÆrbaudØju - tieıÆm ir.
+ -Werror ir nedaudz par stipru prasØts, un pietam net_unix.c ir divi statisko
+ funkciju prototipi, kuri netiek izmantoti. PÆrbaudØju arØ jauno versiju, CD
+ mİzika strÆdÆ normÆli.
+27-06-2000
+  Pievienoju bcd kÆ sastÆvdaõu, vairs neizmantoju kÆ bibliotñku, izmetu ÆrÆ
+ visas nevajadzØgÆs funkcijas.
+28-06-2000
+  progdefs.h pÆrvietoju no vcc izejas kodiem uz spñles izejas kodiem. Tagad
+ bİs mazÆk problñmu ar kopñıanu - ja man nevajag vcc, man to vairs nav jÆkopñ.
+  Izveidoju funkciju S_PlayTillDone, kura atska·o ska·u un gaida, kad tÆ tiks
+ nospñlñta, bet ne ilgÆk par 5 sekundñm.
+29-06-2000
+  Ska·u sekvences tagad izmanto nosaukumus, nevis numurus. Tos programmas
+ pat nevar iegİt. ArØ vairs nav iepriekı definñtas sekvences, bet gan tiek
+ reÖistrñtas visas sekvences.
+30-06-2000
+  ObligÆti vajadzØgie ska·as konsoles mainØgie pÆrvietoti atpakaõ uz s_sound.
+01-07-2000
+  PamñÖinÆju izlabot mİzikas pauzñıanu Windows versijÆ. Nekas nesanÆca - tik
+ un tÆ turpinÆıana sÆk dziesmu no sÆkuma. TÆpat mñÖinÆju pÆrtvert iespñjamos
+ programmas deaktivñıanas pazi·ojumus. Atkal nekas no tÆ nesanÆca.
+03-07-2000
+  PÆrnesu inventÆra funkcijas uz programmÆm.
+  Uzlaboju Windows versijas ska·u buferu sistñmu. Tagad beidzot spñlñt buferi,
+ tas tiek saglabÆts gadØjumam, ja atkal vajag spñlñt ıo ska·u. Ğajos gadØjumos
+ ska·a vairs nav jÆkopñ (jau ir pÆrkopñta uz buferi), kÆ rezultÆtÆ spñle kõİst
+ nedaudz ÆtrÆka.
+  Izveidoju 3D ska·u! Skan labi. PagaidÆm kÆ atseviıós modulis.
+04-07-2000
+  PÆrvietoju 3D ska·u uz kopØgo Windows ska·as moduli. 3D ska·a tiek atõauta
+ tikai tad, ja ska·as kartei ir brØvi 3D buferi.
+  PÆrveidoju visus failus par C++ failiem. Protams bija vajadzØgas öOTI daudz
+ tipu pÆrveidoıanas, kÆ arØ vñl da÷as izmai·as, bet beigÆs viss ir normÆli.
+05-07-2000
+  Atradu veidu kÆ Windows versijÆ pÆrtvert visas Windows sistñmas tausti·u
+ kombinÆcijas, tai skaitÆ Alt-Tab, Alt-Ctrl-Del, Ctrl-Esc, u.c. Tagad man ir
+ pilna kontrole pÆr klaviatİru.
+  AtklÆju, ka ir sabojÆts dehacked failu atbalsts, izrÆdÆs, ka ir nepareizi
+ spraitu nummuri, pie kÆ vainØgs ir tukıais pirmÆ stÆvokõa spraita vÆrds.
+ Izlaboju, viss strÆdÆ normÆli.
+  PÆrbaudØju LINUX versiju. Viss strÆdÆ. IzrÆdÆs ka tikai DJGPP sÆkuma kods
+ apstrÆdÆ argumentus ("atbildes" failus un failu vÆrdu vispÆrinÆjumus).
+06-07-2000
+  Salaboju mİzikas pauzi Windows versijÆ.
+  TØkla spñlñ tiek pÆrbaudØta arØ PROGS kontrolsumma. Aizvietoju veco paketes
+ kontrolsummas aprñóinÆıanas algoritmu ar kontrolsummu no QUAKE.
+  Sagatavoju publicñıanai versiju 1.1.
+07-07-2000
+  PñdñjÆ brØdØ atradÆs vñl pÆris problñmas, kuras tika izlabotas. BeigÆs tika
+ izveidota versija 1.1, kura arØ tika uzreiz publicñta.
+
+******************************************************************************
+                            VERSIJA 1.1
+******************************************************************************
+
+08-07-2000
+  SÆku mñÖinÆt pÆriet uz peldoıÆ komata skaitõiem. Nolñmu sÆkt ar node_t, jo
+ tas netiek izmantots programmÆs. Tika ieviesta vñl vienas struktİras peldoıÆ
+ komata versija. Tika pÆrveidoti moduõi p_sight un r_bsp. Viss strÆdÆ normÆli.
+10-07-2000
+  Turpinu pÆriet uz peldoıo komatu. MñÖinu pÆrveidot rendñıanas moduli. SÆku
+ pÆrveidoıanu ar globÆlajiem mainØgajiem. Kautkas sagÆja grØstñ ar le·óiem.
+ PÆrveidoju visus pÆrveidotos le·óus atpakaõ uz angle_t, un viss ir atkal
+ kÆrtØbÆ. Ar le·óiem bİs pagrİti, tÆpñc tos es lieku mierÆ.
+11-07-2000
+  Praktiski visi rendñıanas fiksñtÆ komata mainØgie ir pÆrveidoti par peldoıÆ
+ komata mainØgajiem. Veiktas arØ daudzas optimizÆcijas atbrØvojoties no tÆdÆm
+ funkcijÆm kÆ FixedMul un FixedDiv. DØvaini, bet rezultÆtÆ spñle ir kõuvusi
+ daudz lñnÆka.
+12-07-2000
+  TÆkÆ spñle ir kõuvusi daudz lñnÆka, nolñmu atgriezties pie fiksñtÆ komata
+ versijas, izveidoto peldoıÆ komata versiju saglabÆju.
+  Aizvietoju konsoles mainØgÆ struktİru ar klasi. Konstruktors to automÆtiski
+ pievieno pie saraksta. VñlÆk saraksts tiek inicializñts, jo to nevar darØt
+ konstruktorÆ tÆpñc ka atmi·as modulis vñl nav inicializñts. Izveidoti õoti
+ ñrti operÆtori tipu pÆrveidoıanai un pieıóirıanai, kas õauj man tos izmantot
+ kÆ veselus skaitõus vai simbolu pointerus.
+  Mani neliek ieru tas, ka Quake, kurÆ tiek izmantoti peldoıÆ komata skaitõi,
+ strÆdÆ salØdzinoıi Ætri. ApskatØjos, kÆ zØmñıana notiek kveikÆ. IzrÆdÆs, ka
+ zØmñıanas ciklÆ tiek izmantoti fiksñtÆ komata skaitõi. Nolñmu apskatØties,
+ kÆ R_DrawColumn izskatÆs asemblerØ. IzrÆdÆs, ka peldoıÆ komata versijÆ cikls
+ ir daudz garÆks. IzrÆdÆs, ka peldoıÆ komata skaitõa pÆrveidoıana par veselu
+ skaitli ir õoti gara. µtri atjaunoju peldoıÆ komata versiju un funkcijÆs
+ R_DrawColumn un R_DrawSpan atjaunoju fiksñtÆ komata skaitõus. TÆ rezultÆtÆ
+ Ætrums atjaunojÆs. Tas nozØmñ, ka var droıi pÆriet uz peldoıo komatu, tikai
+ õoti bie÷i lietotu funkciju ciklos, kuros peldoıÆ komata skaitlis jÆpÆrveido
+ uz veselu skaitli, jÆatstÆj fiksñtÆ komata skaitõi. Bet tas bİs vñlÆk. Tagad
+ turpinÆıu ieviest C++ klases un citus labumus.
+13-07-2000
+  Ğodien nolñmu pamñÖinÆt padarØt programas nedaudz ÆtrÆkas. PaıÆ sÆkumÆ bija
+ viens liels switch operÆtors, kuru es nolñmu izveidot katram operÆciju kodam
+ savu funkciju un izveidoju vienu lielu funkciju tabulu. Nedaudz padomÆjot es
+ sapratu, ka tas nebija labi, jo tÆ kompilÆtors nevar Øpaıi daudz optimizñt.
+ TÆpñc es nolñmu pÆriet atpakaõ uz switch operÆtoru. Tagad man radÆs iespñja
+ to nedaudz optimizñt. NÆcÆs pielietot goto operÆtorus, jo while(1) gadØjumÆ
+ kompilÆtors Öenerñ smieklØgu pÆrbaudi, bet ar goto pñc operÆcijas izpildes
+ notiek ieıana pa taisno uz cikla sÆkumu. Vñl vairÆk - steka pointeris tiek
+ saglabÆts lokÆlÆ mainØgÆ, kurı tad tiek arØ izmantots. Ğis, kÆ arØ tekoıÆs
+ komandas pointera mainØgie, kompilñjot ar optimizÆciju, izpildes laikÆ tiek
+ glabÆti procesora reÖistros, kas padara izpildi vñl ÆtrÆku. Lai piespiestu
+ kompilÆtoru glabÆt steka pointeri reÖistrÆ, nÆcÆs programmas steku veidot kÆ
+ globÆlo masØvu. Steka apakıñjÆ un augıñjÆ elementÆ tiek ierakstØts speciÆls
+ steka identifikÆtors, kuru pÆrbaudot var noteikt, vai steks nav pÆrplİdis
+ vai pÆrtukıots. ĞÆda pÆrbaude ir daudz ÆtrÆka, nekÆ steka pointera vñrtØbas
+ pÆrbaude pie katras ielikıanas stekÆ un pie katras ·emıanas ÆrÆ no steka.
+14-07-2000
+  Ğodiem paiet mñnesis kopı es izlaidu Vavoom pirmo versiju un nedñõa kopı
+ versijas 1.1 izlaiıanas. Ar jauno skaitØtÆju manu lapu ir apmeklñjuıi vairÆk
+ par 900 apmeklñtÆju. Vecais skaitØtÆjs apstÆjÆs pie aptuveni 350, neatceros
+ cik rÆdØja skaitØtÆjs vecajÆ lapÆ, katrÆ zi·Æ tur bija vairÆki simti. KopÆ
+ sanÆk vairÆk par 1500 apmeklñtÆju. ManuprÆt tas nav slikti, var pat teikt ka
+ õoti iepriecina. TÆkÆ prasÆs tajÆ kautko atjaununÆt. Varbİt rØt.
+  SÆku arvien vairÆk izmantot C++. No Quake pa·ñmu sizebuf_t, kuru es uzreiz
+ pÆrveidoju par klasi. Izveidoju õoti ñrtu operÆtoru << drukÆıanai buferØ.
+ PÆrveidoju komndu buferi par klasi, kura ir mantota no TSizeBuf. Tagad lai
+ ierakstØtu konandu ıajÆ buferØ, tiek izmantots operÆtors <<. Kontrolsummas
+ aprñóinÆıana arØ ir klase. Baits tiek pievienots izmantojot operÆtoru +.
+  Daudzi komandlØnijas parametri, kuri tika apstrÆdÆti spñles inicializÆcijas
+ laikÆ ir aizvÆkti, to vietÆ ir jÆizmanto konsoles komandas, kuras pÆrsvarÆ
+ ir tÆdas paıas, tikai komandlØnijÆ tÆs sÆkas ar + un nevis ar -.  Vñl cenıos
+ atbrØvoties no gameaction izmantoıanas. No pÆris stÆvokõiem esmu atbrØvojies.
+15-07-2000
+  Visu, kas attiecas uz demo ierakstØıanu, spñlñıanu un mai·u kÆ arØ zØmñjumu
+ starp demo zØmñıana un nomai·a ir atdalØta modulØ g_demo.cpp. g_game.cpp tÆ
+ jau ir pÆrpildØts ar velns vi· sazin ko, un tas tikai padarØs kodu daudz
+ labÆk pÆrskatÆmu. Vñl tika ieviestas vairÆkas komandas. Piemñram "Save" un
+ "Load". Tika izmestas ÆrÆ komandas "Quicksave" un "Quicload", tagad tÆs tiek
+ definñtas kÆ "alias" failÆ default.cfg, kurı tiek izpildØts no startup.vs.
+  Viss no v_video.cpp ir pÆrnests uz screen.cpp. Varbİt tagad tur ir nedaudz
+ par daudz, bet varbİt ka viss ir normÆli.
+17-07-2000
+  Izveidoju programmÆs operÆcijas ar peldoıo komatu. Nezinu, vai tÆ bija
+ prÆtØga doma. Laikam pagaidÆm es to viso nolikıu malÆ vñlÆkai izmantoıanai.
+ Vismaz lØdz tam laikam, kad bİs veiktas citas nopietnas izmai·as kuru dñõ
+ tiks zaudñta savietojamØba. Es ceru, ka tas bİs drØz, jo uztraukties par
+ savietojamØbu ir stulbi.
+  Vñl viena nopietna izmai·a - tØkla spñlÆs paketes tiek sİtØtas izmantojot
+ little-endian baitu secØbu. Paketñ attiecØgie lauki tiek apstrÆdÆti jau paıÆ
+ tØkla modulØ un nevis tØkla draiveros. Tagad draiveri neko nezin par paketes
+ saturu.
+18-07-2000
+  Uzlaboju dehacked atbalstu, pievienoju to pie makeinfo. Tagad korekti tiek
+ ignorñti komantÆri. Parametros vispirms tiek sameklñta vienÆdØbas zØme, un
+ tad tiek novÆkti tukıumi beigÆs, kÆ rezultÆtÆ tiek iegİts pilns parametra
+ nosaukums. Visur tiek ·emtas vñrÆ atıóirØbas starp lielajiem un mazajiem
+ burtiem. Ieviesu arØ simbola virk·u apstrÆdi. IzpildÆmajÆ failÆ vispirms
+ tiek meklñti ska·u datu nosaukumi, tad lØme·a nosaukumi, tad visas programmu
+ simbolu virknes (tas mainØs gan spraitu nosaukumus, gan visus pacelıanas
+ pazi·ojumus, varbİt vñl kautko). Makeinfo tagad Öenerñ arØ simbola virk·u
+ failu, kÆ arØ vienu definØciju failu, kÆ arØ teksta datu failus un skriptus.
+ Tiek arØ aizvietoti visi finÆla teksti.
+19-07-2000
+  Tika salabota finÆla tausti·u apstrÆde.
+  Ğodien tika pamatØgi optimizñtas programmas. KonkrñtÆk funkcija RunFunction
+ tika izveidota asemblerØ. Protams kÆ pamatu es ·ñmu gcc izveidoto asemblera
+ failu. TajÆ bija õoti dauz lietas, kas man nepatika. Vispirms jau tas, ka
+ tiek optimizñts izmñram. Man galvenais ir Ætrums, izmñrs mani nerausta. TÆ
+ nu es ·ñmu un visas ıÆdas optimizÆcijas atcñlu. Vñl bija tÆda stulba lieta,
+ kÆ datu ievietoıana reÖistrÆ, pñc tam citÆ reÖistrÆ, un pirmajÆ reÖistrÆ
+ ievietotÆ vñrtØba netiek izmantota. ĞÆds tranzØts tikai visu pasliktina. To
+ novÆcot mñs iegİstam gan izmñru gan Ætrumu. TÆdu samñrÆ neefektØvu vietu
+ bija diezgan daudz. Daudz ko deva izmñra optimizÆciju novÆkıana, jo tÆ es
+ labÆk redzu, ko attiecØgajÆ vietÆ programma dara, un varu labÆk optimizñt.
+ Gala rezultÆtÆ objekta fails bija pat mazÆks kÆ sÆkumÆ.
+  Vñl izveidoju asemblera versijas funkcijÆm R_DrawColumn un R_DrawSpan. Tur
+ laikam nav ko optimizñt.
+20-07-2000
+  Veicu profilÆciju ar gprof. Noskaidroju, ka visvairÆk laika patñrñ tÆdas
+ funkcijas kÆ R_DrawColumn, R_DrawSpan un RunFunction. To arØ varñja sagaidØt.
+ Asemblera versiju izmantoıana ir tieıi laikÆ.
+21-07-2000
+  SÆkumÆ man nebija noska·ojuma kautko darØt un es nedaudz palasØju LEGACY
+ changelog-us, kÆ arØ nedaudz kautko papñtØju kveikÆ, galvenokÆrt saiatØtu ar
+ klienta-servera modeli. Tam tomñr ir viena liela priekırocØba - spñle tiek
+ spñlñta tikai serverØ un klienti tikai nosİta savu kustØbu komandu un sa·em
+ informÆciju par izmai·Æm spñles stÆvoklØ. Tas arØ var prasØt lielÆkus datu
+ tØklÆ.
+  BeigÆs tomñr kautko izdarØju - izveidoju konsoles komandas kÆ klasi. Tagad
+ tÆs ir mantotas no pamatkomandas klases, kurÆ abstraktÆ funkcija Run tiek
+ aizvietota ar attiecØgu funkciju. Izveidoju makro COMMAND, ar kuru man nav
+ jÆtñrñ laiks veidojot klasi katrai komandai, tagad es rakstu COMMAND(vÆrds),
+ aiz kura seko funkcijas kods. Komanda pati sevi reÖistrñ. Tagad cheat kodu
+ modulis pats sevi reÖistrñ. Var nokompilñt versiju bez cheat kodiem vienkÆrıi
+ kompilñjot bez ıØ moduõa.
+22-07-2000
+  PamñÖinÆju kautko darØt ar asembleru Windows versijÆ, no tÆ nekas nesanÆca.
+ GalvenÆ problñma ir identifikÆtoru vÆrdu mai·a, kuru es nezinu. Visu pÆrñjo
+ dienu pavadØju spñlñjot Half-Life.
+24-07-2000
+  PÆrbaudØju tØkla spñli. NormÆli saslñdzÆs 4 spñlñtÆji izmantojot IPX. Kad
+ spñlñ tikai divatÆ, tad viss ir õoti labi, tilØdz ir vñl trıais pñlñtÆjs, tÆ
+ spñles Ætrums katastrofÆli zİd. Vñl nedaudz padarbojos ar tØkla spñles kodu.
+25-07-2000
+  Nolñmu, ka ir jÆlai÷ klajÆ versija 1.2. To arØ izdarØju. NÆcÆs pÆriet uz
+ Borland C++ Builder, jo MSVC nepareizi konstruñ klasu masØvus.
+
+******************************************************************************
+                            VERSIJA 1.2
+******************************************************************************
+
+26-07-2000
+  Abi DOS tØkla draiveri pÆrveidoti no Borland C uz DJGPP.
+27-07-2000
+  DOS tØkla draiveri tika ienesti iekıÆ spñlñ. AtbrØvojos no doomcom_t.
+  Izveidoju klasi TMessage.
+28-07-2000
+  Lai atvieglotu darbu ar pazi·ojumiem, nolñmu, ka klasei TMessage jÆpievieno
+ operÆtori << un >>. Ğei varñja rasties ar TSizeBuf operÆtoriem, tÆpñc tika
+ izveidota no TSizeBuf mantota kalse TTextBuf, metode Print un operÆtori tika
+ pÆrnesti uz ıo klasi. TSizeBuf mantotÆs klases, kurÆs tika izmants operÆtors
+ << tagad ir mantotas no TTextBuf. Pñc tÆ operÆtoru pievienoıana TMessage
+ klasei neradØja nekÆdas problñmas.
+  AtbrØvojos no doomdata_t struktİras. Tagad tØkla pazi·ojumi tiek veidoti un
+ nolasØti izmantojot TMessage. Kontrolsumma tiek pievienota paketes beigÆs.
+ Tagad pakete sÆkas ar paketes tipu, pñc kura nosaka pÆrñjo datu uzbİvi.
+  ApstrÆdÆju IPX draiveri, pilnØbÆ atbrØvojos no tuvajiem pointeriem.
+29-07-2000
+  Ğodiem man kautkÆ ir slikts garØgais un negribÆs neko daudz darØt. Darbojos
+ tikai ap IPX draiveri.
+31-07-2000
+  Man ir radusies vñlme pÆriet uz klienta-servera arhitektİru. ManuprÆt tas
+ nebİs Øpaıi grİti. RezultÆtÆ es tikai iegİıu. GalvenÆ priekırociba ir tÆ, ka
+ spñle tiek spñlñta tikai serverØ. Tad man nav jÆuztraucas par to, vai visÆs
+ maıØnÆs spñle tiek spñlñta vienÆdi, jo tÆ tiek spñlñta tikai servverØ. Tas
+ man beidzot õaus sÆkt izmantot peldoıÆ komata skaitõus. Man pat ir radusies
+ ideja, kÆ nedaudz optimizñt datu sİtØıanu. InformÆciju par sektoriem, to
+ lØnijÆm un lØniju pusñm sİtØt tikai tad, ja ıis sektors ir redzams. To var
+ noteikt izmantojot reject tabulu. Tad, kad es beidzot esmu kÆrtØgi sapratis
+ kÆ klienta-servera modelis strÆdÆ un sapratis kÆdas tam ir priekırocØbas,
+ vñlme pÆriet uz ıo modeli ir õoti liela.
+  Nedaudz revidñju mobj_t un player_t. SÆku izmantot struktİru mantoıanu.
+ Ieviesu mobj_base_t, kurÆ ir visa tÆ informÆcija, kas ir nepiecieıama ska·as
+ un rendñıanas moduõiem. ×sÆk sakot tur ir viss, kas klientam ir jÆzin par
+ objektu. Liela daõa lauku, kurus izmanto tikai programmas ir pÆrnestas uz
+ programmÆm kÆ pievienotie lauki. SpñlñtÆja skatØıanÆs pozØcijai pievienoti
+ lauki viewx, viewy un viewangle pie player_t. Vairs netiek izmantota objekta
+ pozØcija, jo cÆõa uzbrukuma un zemestrØces gadØjumÆ pozØcija tiek nobØdØta.
+ Tagad tas viss tiek aprñóinÆts programmÆs.
+01-08-2000
+  Turpinu revidñt. SÆku interpretñt ieroÒu mai·as pogas kÆ impulsus. Tika
+ pievienots vñl ceturtais bits, kas man dod 16 impulsus. Tausti·i no 1 lØdz 9
+ ir impulsi no 1 lØdz 9, tausti·ı 0 - 10, Backspace - 11 un / - 12. Tas man
+ õÆva atbrØvotis no iebİvñtajiem artifaktu Øsajiem tausti·iem un no ieroÒu
+ skaita atkarØbas.
+  No iostream parauga izveidoju klasi TConBuf, kura drukÆ konsolñ. Ieviesu
+ ostream mainØgo con, kurı drukÆ konsolñ. Viss strÆdÆ perfekti.
+02-08-2000
+  Visi C_Printf ir aizvietoti ar con izmantoıanu. Pie TTextBuf pievienoju
+ vesela skaitõa drukÆıanu.
+03-08-2000
+  Tika izveidota galvi·a izejas kodu failiem ar VAVOOM logo, autortiesØbu
+ informÆciju un standarta GPL galvi·u.
+  Nolñmu, ka pagaidÆm necentØıos IPX draiverØ ieviest klases. TÆ vietÆ es to
+ veidoju tieıi tÆ, kÆ tas ir kveikÆ. Tika ienesta arØ draivera struktİra ar
+ IPX draivera tabulu. ĞÆdi strukturÆjot es varñıu viegli pievienot arØ citus
+ draiverus no kveika. PaıÆs beigÆs kautkas tomñr sagÆja grØstñ.
+04-08-2000
+  Kautkas stulbs notiek ar IPX draiveri. Ar 0-to soketu viss strÆdÆ normÆli.
+ TiklØdz es mñÖinu kautko sİtØt pa pirmo soketu, tÆ viss karÆs augıÆ. PÆrnesu
+ uz net_lan to daõu, kura neattiecas iz IPX draiveri. Tagad net_ipx ir tØrs
+ IPX draiveris pa taisno no QUAKE izejas kodiem tikai ıeit ir aizvÆkti visi
+ tuvie pointeri un kods nedaudz uzskaistinÆts. BeigÆs tomñr atradu kõİdu IPX
+ funkcijÆ IPX_Write. Tagad viss atrÆdÆ kÆ vajag.
+  Pievienoju arØ Beame & Whiteside TCP/IP draiveri DOS videi. DOS buferis
+ tika aizstÆts ar DJGPP transporta buferi. Diem÷ñl ıis draiveris pazi·o, ka
+ nevar atrast draiverus (kuru man arØ nav).
+07-08-2000
+  Ğodien pÆrinstalñju Windows 98. Diem÷ñl Windows neatpazØst videokarti. TÆ
+ nu man Windows vidñ ir jÆiztiek ar 16 krÆsÆm 640x480 izıóirtspñjÆ.
+  SakÆrtoju LAN draiverus pÆrñjÆm operñtÆjsistñmÆm. Tagad varu sÆkt veidot
+ kopØgu LAN draiveri.
+08-08-2000
+  Atradu video kartes draiveri. Tagad varu palaist bilderi. Diem÷ñl atmi·as
+ probñmu Windows pÆrinstalñıana nenovñrsa. AcØmredzot vaina ir paıÆ Windows.
+ Laikam bİs jÆpameklñ jaunÆka versija.
+  Pievienoju peldoıÆ komata laiku pÆrñjÆm versijÆm.
+09-08-2000
+  Tika pÆrveidota pakeıu sİtØıanas sistñma. Tagad tÆ notiek tÆ kÆ kveikÆ.
+ Aizsİtot paketi tiek gaidØts apstiprinÆjums. Tikai pñc tÆ sa·emıanas var
+ tikt sİtİta jauma pakete. Ja noteiktu laiku apstiprinÆjums netiek sa·emts,
+ pakete tiek sİtØta vñlreiz. Ja paketi nevar aizsİtØt, tÆ tiek saglabÆta
+ buferØ. Citiem vÆrdiem sakot pazi·ojumi nevar tik pazaudñti.
+10-08-2000
+  ZØmñıana spñles ielÆdes laikÆ ir speciÆls gadØjums kurÆ tiek zØmñta tikai
+ titullapa un konsole. Nav ekrÆna mai·as efekta.
+  TekoıÆs takts komandas tiek pÆrkopñtas speciÆlÆ buferØ.
+  ProgrammÆs funkcija Random tagad saucas P_Random - tÆ kÆ bija. AtbrØvojos
+ no pÆris funkcijÆm, kuras bija kÆ mantojums no programmu sÆkuma versijÆm,
+ kad man nebija tieıa pieeja stÆvokõu tabulÆm.
+  JaunÆ pakeıu sİtØıanas sistñmÆ takıu iztrİkıana tiek uzskatØta par kõİdu,
+ jo tagad tÆs nevar iztrİkt.
+11-08-2000
+  Izveidoju sistñmas asemblera moduli LINUX sistñmai kÆ arØ pievienoju tukıas
+ peldoıÆ komata precizitÆtes funkcijas neintel platformÆm.
+  Ğodien tika ieviests multicast serveris. Klients savas paketes sİta uz ıo
+ serveri un serveris tÆs nosİta tÆlÆk pÆrñjiem spñlñtÆjiem. Labi ka sÆkumÆ
+ bija pazØme kas sİta paketi, jo tÆ õÆva atrast nelielu kõİdi·u.  Kad biju
+ pÆrliecinÆjies, ka klients nesa·em servera paketes un serveris klienta, tÆ
+ tika aizvÆkta un palika tikai pazi·ojumu virkne. Tas man õÆva ieviest vñl
+ vienu jauninÆjumu - ja nevar sİtØt paketi, tÆs tiek apvienotas. RezultÆtÆ
+ Ætrums krasi palienÆjÆs - var patieıÆm normÆli spñlñt.
+  PalielinÆju pazi·ojumu izmñru lØdz 1024 baitiem.
+  DOS lan draiverØ var piespiest strÆdÆt kÆ serverim ar parametru -server vai
+ kÆ klientam ar parametru -client.
+  Izmetu ÆrÆ ticdup. Tas neko nedod un tikai jauc prÆtu.
+12-08-2000
+  TÆkÆ galvenais mñróis, ko es gribñju sasniegt versijÆ 1.3 - "multicast"
+ serveris ir sasniegts, kÆ arØ internetÆ tiku apsolØjis, ka ıonedñõ bİs jauna
+ versija, nolñmu izlaist versiju 1.3. PÆrbaudØju uz LINUX - bija pÆris kõİdas
+ kuras tika likvidñtas. AtklÆju vñl vienu kõİdu - response failu pievienoıana
+ rada segmentÆcijas kõİdu. Iemeslus noskaidroıu vñlÆk. Vñl Ætri tika salabota
+ starplØme·u statistika.
+
+******************************************************************************
+                            VERSIJA 1.3
+******************************************************************************
+
+14-08-2000
+  AtbrØvojos no takts funkcijÆm menu, konsoles un teksta moduõos. Tagad tiek
+ izmantots tekoıais laiks.
+  Ieviesu TSizeBuf konstruktoru, ar kuru tiek iedots buferis. Pie TMessage
+ pievienoju operÆrorus ar TMessage mainØgajiem.
+  Turpinu darbu pie tØkla moduõiem. SÆku aizvietot spñlñtÆju tØkla masØvus ar
+ struktİru masØvu. Vñl pÆris izmai·as.
+15-08-2000
+  Ğodien es izdarØju vienu lielu kõİdu - nesaglabÆju rezerves kpiju. StrÆdÆju
+ pie tØkla moduõa. Daudzko pÆrveidoju, galarezultÆtÆ pat nedaudz apjuku. Un
+ beigÆs izrÆdØjas, ka kautkas ir salaists dñlØ. No sÆkuma klients nevarñja
+ savienoties. Visu itkÆ izlaboju un normÆli savienojos. Bet spñle nesÆkas.
+16-08-2000
+  TÆkÆ viss ir salaists dñlØ, kautÆ negribñjÆs óerties klÆt. Nolñmu, ka jÆsÆk
+ viss no sÆkuma. Atjaunoju to versiju, kuru sestdien publicñju. Izmai·as,
+ kuras es veicu sÆkumÆ - atbrØvoıanÆs no takts funkcijÆm un izmai·as TSizeBuf
+ un TMessage klasñs tika ieviests no rezerves kopijas. TØkla modulØ darbs ir
+ jÆsÆk no sÆkuma. Nedaudz padomÆjot secinÆju, ka ir divas lietas, ar kurÆm ir
+ jÆsÆk. PirmÆ ir pieslñguma struktİras izveidoıana - tas, ko es jau darØju
+ pirmdien un kas man tagad ir jÆsÆk no sÆkuma. OtrÆ lieta, kura ir jÆizdara,
+ ir jÆsadala net_main divÆs daõÆs - tØkla draivera modulØ un datu apmai·as
+ modulØ, kurÆ tiek iekõauts protokols. Struktİra tika veiksmØgi ieviesta.
+ Windows un LINUX versijÆs interneta moduõi principÆ ir vienÆdi, atıóirÆs
+ tikai draiveru tabulas. TÆpñc es nolñmu izveodot kopØgu moduli net_inet.cpp.
+17-08-2000
+  Protams galvenais ir tØkls, bet sÆksim ar citiem sØkumiem. Vispirms tagad
+ saglabÆtÆs spñles ceõı tiek izveidots pirms spñles saglabÆıanas, un nevis
+ ielÆdes laikÆ. Tagad mainØgo SavePath var droıi mainØt spñles laikÆ. Vecais
+ M_Random tagad ir aizstÆts ar reÆliem gadØjumskaitõiem, precØzÆk sakot tiek
+ izmantota funkcija rand.
+  Un tagad pie tØkla. Tika atdalØts tØkla draiveris no protokola un visa
+ pÆrñjÆ, kas nav saistØts ar draiveri. Ieviests tØkla laiks, NET_Poll tika
+ pÆrnests uz net_main.cpp. Protokola daõa ir failÆ net_prot.cpp. Visa demo
+ spñlñıana vairs neiet cauri visam tØklam, bet tiek apstrÆdÆta atseviıói.
+ Netiek vairs sİtØtas paketes, kuras tiek ignorñtas. VispÆr demo spñles laikÆ
+ tØkla draivera funkcijas netiek izmantotas, kas nozØmñ, ka nav vajadzØgas
+ Øpaıas pÆrbaudes un darbØbas demo spñles gadØjumÆ - tagad domo tiek spñlñti
+ kÆ vajag, un strÆdÆjot pie tØkla man par demo atska·oıanu nav jÆuztraucas.
+  IPX draiverØ soketu skaits ir atkarØgs no rezervñtÆs DOS atmi·as apjoma. Ar
+ 100k man ir 18 soketi. Paketes izmñrs ir palielinÆts lØdz kilobaitam.
+  LAN un interneta funkcijas principÆ ir vienÆdas (iz·emot savienoıanos).
+ Tapñc es nolñmu to apvienot. Tagad Interneta draiveri izsauc attiecØgÆs LAN
+ funkcijas. Funkcijai LookForNodes tika izveidotas divas versijas -viena
+ serverim, otra - klientam. Klients tagad pieslñdzas tikai serverim.
+18-08-2000
+  Ğodien man bija õoti aiz·emta diena. Tikai vakarÆ es varÆju sÆkt kautko
+ darØt. StrÆdÆju tikai pie LAN saveinoıanÆs daõas. Ğeit IR pÆrmai·as. Tika
+ attØrØts pieslñgıanÆs protokols. Tika ieviesta servera informÆcijas komanda,
+ kura tagad nosİta spñlñtÆju skaitu. Vispirms klients meklñ serveri. Sa·emot
+ servera informÆciju, klients pie tÆ pieslñdzas izmantojot vi·a adresi un
+ nevis sİtot paketi pa visu portu. Tas nebija labi arØ tÆpñc, ka gadØjumÆ ja
+ ir vairÆki serveri, pieslñguma pieprasØjumu tad pie·emtu visi, bet klients
+ pieslñgtos tikai pie viena no tiem.
+19-08-2000
+  Izmai·u ıodien ir diezgan daudzos failos.
+  Ieviesu V_DrawPatch, kurÆ tiek nodots nevis zØmñjums, bet gan tÆ nosaukums.
+ ZØmñjums tiks ielÆdñts ar PU_CACHE lØmeni.
+  Ja netiek kompilñts ar GNU C kompilÆtoru, __attribute__ tiek definñts kÆ
+ tukıums. Tagad pÆrbaude ir tikai sÆkumÆ, nevis katrÆ izmantoıanas vietÆ.
+  Tika nedaudz pÆrveidots demo cikls. Tika ieviestas komandas AdvanceDemo un
+ StartDemos, kuras aizvieto attiecØgÆs funkcijas. ZØmñjuma laiks tagad tiek
+ mñrØts sekundñs un tas izmanto peldoıÆ komata laiku. Lapas mai·as pÆrbaude
+ notiek zØmñıanas laikÆ, kÆ rezultÆtÆ atbrØvojos no vñl vienas takts komandas.
+  Komandu bufera izpilde notiek pirms NET_RunTics.
+  Protams lielÆko daõu pavadØju pÆrveidojot tØkla draiverus. Vispirms klients
+ sazi·ai ar serveri neizmanto klausØıanÆs portu, bet gan atver brØvu portu.
+ Serveris, sa·emot pieprasØjumu pieslñgties tİlØt sİta klientam atbildi un
+ nevis katru sekundi visiem klientiem. Pñc nelieliem pÆrveidojumiem katrs
+ klients tiek pieslñgts uz atseviıóa potra. Sa·emtot paketi tiek norÆdØts no
+ kura klienta tai ir jÆbİt. Vñl viena liela izmai·a - pakeıu apstiprinÆıanas
+ mehÆnisms tika pÆrnests zemÆk uz draiveriem, jo principÆ tas ir domÆts LAN
+ draiveriem, un COM porta draiverim ir nepiecieıams savÆdÆks protokols. TÆ
+ vien liekas, ka virknes porta draiveris tiks uzlabots kautkad vñlÆk.
+21-08-2000
+  G_CheckDemoStatus vairs neraksta komandu buferØ komandu AdvanceDemo. Tas ir
+ jÆdara izsaukıanas vietÆs pñc ıØs funkcijas izsaukıanas. Tas tika ieviests
+ tÆdñõ, ka vairÆkÆs vietÆs tas nav vajadzØgs.
+  Komanda StartDemos pÆrnesta no Host_Init uz sÆkuma skriptu.
+  SÆku ieviest tØkla draiveru struktİras. Ir sİtØsanas, lasØıanas funkcijas.
+ Datagram draiverØ ir arØ savienoıanÆs funkcijas. LAN tagad ir Datagram.
+22-08-2000
+  PilnØbÆ ieviesti Loopback un Datagram tØkla draiveri. Diem÷ñl virknes porta
+ draiveris DOS versijai pagaidÆm tika atslñgts. SakÆrtots arØ tØkla galvenais
+ modulis. PubliskÆs struktİras, mainØgo un funkciju prototipi ir pÆrnesti uz
+ network.h.
+  Ieviesu palØgfunkciju CalcLine, kura aprñóina lØ·jas parametrus. Tagad tie
+ tiek aprñóinÆti vienÆ vietÆ. Nav atkÆrtoıanÆs abÆs lØniju ielÆdñıanas un
+ vienÆ poliobjektu funkcijÆ.
+  JÆsÆk kautkas darØt, lai atbalstØtu vairÆk par 4 tØkla spñlñtÆjiem Doom un
+ Heretic. VispÆr var spñlñt, tikai ir jÆsakÆrto krÆsu mai·as tabulas. Man
+ redÆs ideja to realizñt kÆ zØmñjumu, kuru nolasa, un tad pÆrveido speciÆlÆ
+ formÆtÆ. Ieviesu funkciju, kura pÆrveido zØmñjumu pic_t formÆtÆ, kurı tiek
+ izmantots Quake.
+23-08-2000
+  Pievienoju MPATH draiveri. Tas ir TCP/IP draiveris DOS videi.
+  SakÆrtots darbs ar pieslñguma struktİrÆm. TØkla galvenajÆ modulØ ieviestas
+ vairÆkas konsoles funkcijas. PrincipÆ tØkla draiveri tÆkÆ bİtu sakÆrtoti.
+  SavienoıanÆs notiek izmantojot konsoles funkcijas. Ar Hexen kautkas nav
+ labi, jo, ja ir bijusi spñle vai demo, rodas consistancy kõİda.
+24-08-2000
+  Ğodien ir liela diena - ıodien dzimst klienta/servera versija. JÆ, beidzot,
+ kad tØkla draiveri ir sakÆrtoti, varu óerties pie ıØs lielÆs un nozØmØgÆs
+ pÆrmai·as, kas noteikti pÆrsteigs visus Doom/Heretic/Hexen fanus. JÆ, mans
+ mñróis ir izveidot tØru klientu/serveri un nevis kaut kÆdu hibrØdu, kÆds ir
+ csDoom (Man liekas, ka csDoom autors neapjñdz, ko klients/serveris nozØmñ.
+ TÆ vien ıóiet, ka vi·s ar to saprot iespñju pieslñgties jau ejoıai spñlei.).
+  PÆrmai·u ir daudz, tÆdñõ tikai galvenie vilcieni. Vispirms izmetu ÆrÆ tÆdu
+ mainØgo, kÆ displayplayer. Klients var rendñt tikai to, ko vi·ı redz, vi·am
+ nav informÆcijas par citu spñlñtÆju atraıanÆs vietÆm (nav informÆcijas, vai
+ ıis mobj ir spñlñtÆjs, vai nav). TÆlÆk tiek ielÆdñtas divas lØme·a kopijas -
+ viena klientam, otra serverim. Rendñıana izmanto klienta lØmeni. Vispirms
+ tas bija tukı. Tad tas tika atdzØvinÆts, pievienojot objektus. Klientam ir
+ savi objekti, tips ir mobj_base_t, kurı ir mazÆks. Objektu pievienoıana ir
+ to linkoıana sektora linkos. TÆkÆ sektoru linkus izmanto tikai rendñıana,
+ tad ıØ linkoıana notiek tikai klienta daõÆ, serveris linko tikai bloóñıanas
+ kartñ. Tad tika ieviestas lØme·a izskata mai·u pievienoıana klienta lØmenim.
+ No sÆkuma informÆcija tika vienkÆrıi pÆrkopñta, vñlÆk sÆku ieviest zi·ojumu
+ sİtØıanu. SalØdzinÆıanai tiek izmantots lokÆlais klients.
+25-08-2000
+  No p_sight izmetu ÆrÆ otru versiju, tagad ir tikai versija ar BSP koku. Vñl
+ atdalØju atseviıóÆ funkcijÆ sektoru redzamØbas pÆrbaudi, to es domÆju vñl
+ izmantot sİtot informÆciju.
+  Tika ieviesta klieta spñlñtÆja struktura, kurÆ ir visa informÆcija, kura ir
+ nepiecieıama rendñıanai. TÆ tiek nosİtØta pa tØklu.
+  Dienas beigÆs domÆtÆjus izsauc tikai serveris.
+26-08-2000
+  Pirmais - ska·a. Viegli saprast, ka, lai citi klienti dzirdñtu ska·u, tiem
+ ir jÆdod attiecØga komanda. Problñma ir tur, ka ska·ai ir jaiedod tÆs avota
+ pointeris. Heretic un Hexen ska·as avotu objekti ir klientam neredzami, kÆ
+ rezultÆtÆ ska·as tiek spñlñtas vienÆ punktÆ. Nedaudz tika pÆrveidots ska·as
+ moduli lØdzØgi kveikam. Tagad tiek nodotas objekta koordinÆtes un tÆ ska·as
+ identifikÆtors.
+  Tika atdzØvinÆti poliobjekti. Klients izmanto savu, vienkÆrıotu poliobjektu
+ moduli, kurÆ netiek pÆrbaudØts, vai kustØba var tikt veikta - objekts tiek
+ vienkÆrıi pÆrvietots vai rotñts tÆ, kÆ tam ir jÆbİt.
+  Demo tika vienkÆrıi atslñgti, jo mñÖinÆjums tos spñlñt noko labu nedod.
+  Kontrole pÆr spñli tika nodota pilnØgi servera rokÆs. Daudzkas no G_Ticker
+ tagad ir servera takts apstrÆdñ. Praktiski jau ir pilnØgs klients/serveris.
+28-08-2000
+  SÆku atbrØvoties no lokÆlÆ klienta datu izmantoıanas salØdzinÆıanai. Tika
+ Ieiesti bÆzes lielumi, tekstİras mai·a notiek izsaucot speciÆlu funkciju,
+ kura arØ nodos informÆciju par izmai·Æm klientam.
+  Spñli avr saglabÆt tikai vienspñlñtÆja re÷ØmÆ. Komanda vairs netiek sİtØta
+ pa tØklu. Vñl vajadzñtu pÆrveidot pauzi.
+  Ievads pÆrnests klienta daõÆ.
+29-09-2000
+  Ieviests komandas avots. PagaidÆm vñl nekur netiek izmantots.
+  LØme·u ielÆdñıana sadalØta klienta unservera daõÆs.
+  PrincipÆ nakÆ nozØmØga vairÆk nav.
+31-09-2000
+  Serveris tagad sİta komandas ielÆdñt lØmeni un sÆkt statistiku.
+  AtbrØvojos no gameaction mainØgÆ. LielÆkÆ daõa tagad ir komandas. Da÷as no
+ tÆm nav vñlams ievadØt konsolñ. Liela daõa no g_game jau ir pÆrceõojusi uz
+ serveri.
+  Ieviesta komandas pÆrsİtØıana uz serveri. Tas tiek izmantots, piemñram,
+ pauzei.
+  Vecie gadØjumskaitõi aizvietoti ar reÆliem gadØjumskaitõiem, un tas viss ir
+ iespñjams tikai pateicoties klienta/servera arhitektİrai.
+01-09-2000
+  Salaboju statusbÆru, diezgan stulbÆ veidÆ, bet galvenais ir tas, ka tas
+ viss strÆdÆ. Ieviesu impulsus. InventÆrs pilnØbÆ izmanto ıos impulsus. ArØ
+ paınÆvØba ir impulss. Artifakta izmantoıana vairs netiek sİtØta. Lekıana ir
+ pÆrnesta pie pogÆm.
+  Man ir radusies vñlñıanÆs izlaist beta versiju, un pñc kÆdas nedñõas tikai
+ galØgo versiju 1.4.
+02-09-2000
+  Atradu nelielu kõİdi·u sektoru gaismu kodÆ. PÆris sØkumu kompilñjot Windows
+ versiju.
+  Beta versija tiek izlaista.
+
+******************************************************************************
+                            VERSIJA 1.4 BETA
+******************************************************************************
+
+04-09-2000
+  Automaps izmanto klienta datus.
+  Nedaudz izmainØju datu sİtØıanu. Ja sektoram netiek nosİtØtas imai·as, tad
+ tas nozØmñ, ka viss ir kÆ sÆkumÆ (vai arØ to nevar redzñt). Takts sÆkumÆ
+ visi sektora parametri tiek atjaunoti, priekımetu linki izdzñsti. Ja nav
+ informÆcijas par priekımetu, tad uzskata, ka tas vairs neeksistñ.
+  SÆku veidot pievienoıanos jau ejoıai spñlei. Ieviesu signon. Vñl nestrÆdÆ.
+ Izmai·as skar arØ programmas, jo tagad ir iespñja, ka nav neviena spñlñtÆja.
+05-09-2000
+  Ir pievienoıanÆs jau ejoıai spñlei. Starp citu ıis mehÆnisms tiek izmantots
+ arØ vienspñlñtÆja re÷ØmÆ. Protams lielÆkoties tika izmantota palØdzØba no
+ Quake izejas kodiem.
+  Salaboju grØdas tekstİras mai·u.
+06-09-2000
+  Salaboju spñlñtÆja ska·as.
+  Salaboju seivgeimus.
+  Salaboju starplØme·us.
+  PÆrveidoju ikonu, izveidoju vñl vienu.
+07-09-2000
+  Ska·u sekvences ir klienta pÆrzi·Æ, viss strÆdÆ kÆ vajag.
+  Ieviesu atkal objektu bÆzes lØniju.
+  Izveidoju asemblera failu Windows versijas.
+
+******************************************************************************
+                            VERSIJA 1.4
+******************************************************************************
+
+08-09-2000
+  SÆku pÆriet no fiksñtÆ punkta skaitõiem uz peldoıÆ komata skaitõiem. Tika
+ ieviesti divi makro ıo darbØbu veikıanai. SÆku es ar struktİru node_t, tam
+ sekoja vertex_t, line_t, divline_t un intercept_t. Da÷as funkcijas no r_main
+ ir pÆrnestas uz citiem moduõiem. Daudz darba.
+  Es ceru ka izlaboju "zombija" kõİdu.
+11-09-2000
+  Turpinu floatizÆciju. PÆris pÆrveidojumi modulØ p_maputl, diezgan daudz
+ pÆrveidojumi modulØ r_things.
+  Heretic un Hexen programmÆs monstri tika salikti katrs savÆ failÆ.
+12-09-2000
+  Izlaboju õoti nopietnu kõİdu - kad kadru frekvence ir lielÆka par 35 Hz,
+ ievads tiek Öenerñts par daudz, kÆ rezultÆta ir nobØde.
+  PÆrveidoju Windows versijas ievadu, tagad izmanto buferi, strÆdÆ daudz
+ labÆk. Ceru, ka novñrsu problñmu ar ska·u.
+  Menu pievienoju multiplayer menu, pagaidÆm tikai atslñgıanÆs.
+  ProgrammÆm tika pievienoto operÆcijas ar peldoıajiem skaitõiem. Objektu
+ koordinÆtes ir pekdoıÆ komata skaitõi. Ğis ir gadØjums, kad es mØlu Doom
+ programmas.
+13-09-2000
+  Ğodien koordinÆtñm pievienojas citi objektu parametri. öoti daudz darba.
+14-09-2000
+  Darbs pie daudzÆm lØme·a un spñlñtÆja struktİrÆm.
+  Pielaboti asemblera faili.
+15-09-2000
+  Floatizñtas daudzas publiskÆs funkcijas kÆ arØ tÆm atbilstoıÆs programmu
+ iebİvñtÆs funkcijas.
+  Tiek saglabÆta objektu bÆzes lØnija. Bez ıØ klients izmantoja reÆlu bÆzes
+ lØniju, bet serveris - tukıu, kÆ rezultÆtÆ bija õoti dØvaini gõuki.
+04-10-2000
+  Beidzot es esmu mÆjÆs no slimnØcas, kur man bija jÆpavada vairÆk par divÆm
+ nedñõÆm. AklÆs zarnas man vairs nav, bet visÆdi citÆdi viss ir normÆli.
+  Izmetu ÆrÆ da÷us komandlØniju parametrus - visus, kuri nosaka deathmatch
+ re÷Ømu, kÆ arØ laika ierobe÷ijumu. DeathMatch tagad ir konsoles mainØgais,
+ laiks arØ ir konsoles mainØgais TimeLimit, vñrtØba 0 nozØmñ ka vav robe÷u.
+  Pievienoju ekrÆna izıóirtspñjas menu. IzrÆdÆs, ka informÆcija kÆ mainØt
+ ekrÆna izıóirtspñju ir pazudusi no dokumentÆcijas. Tagad nevajadzñtu bİt
+ problñmÆm.
+  FlatifikÆcija, programmÆs atbrØvojos no FixedDiv, FixedMul, finesine,
+ finecosine, sin un cos ir iebİvñtas, Praktiski neizantoju fixed_t.
+05-10-2000
+  Izveidoju matemÆtikas bloku.
+  NorÆdot atmi·as apjomu tagad tiek izmantots peldoıÆ komata skaitlis.
+  FloatizÆcija, daudzi globÆlie mainØgie, it Øpaıi rendñıanas modulØ, kurı
+ tika diezgan pamatØgi apstrÆdÆts.
+06-10-2000
+  Floatizñti ska·as moduõi. Dzinñjs arØ vairs neizmanto FixedMul un FixedDiv.
+ Diezgan nopietns barbs pie automapa.
+09-10-2000
+  Objektu informÆcijÆ Ætrums arØ ir peldoıÆ komata skaitlis. OroÖinÆli ıis
+ parametrs bija mazliet dØvains. Monstriem Ætrums bija vesels skaitlis, bet
+ visam citam - fiksñtÆ komata skaitlis. Bet Øpaıas problñmas neradÆs. Vñl
+ ıis tas ir floatizñts. ProgrammÆs tas tika darØts vietÆs, kur kÆ mainØgÆ
+ tips tiek izmantots int un nevis fixed_t.
+10-10-2000
+  MatemÆtikas tabulas izmanto tikai matemÆtikas modulis. Floatizñtas tika arØ
+ tÆs. Visur, kur tika izmantotas tabulas tagad tiek izmantotas matemÆtikas
+ funkcijas.
+  ArØ Doom programmÆs iz atdalØti lielÆkÆ daõa monstru savos failos.
+  Gatavojos izlaist beta versiju. Paıreiz pieejamajÆ versijÆ ir jau zinÆmÆ
+ kõİda, kura padara neiespñjamu spñli, ja kadru frekvence ir lielÆka par 35
+ kadriem sekundñ.
+11-10-2000
+  JÆlai÷ ÆrÆ beta versija. Vñl pÆris sØki labojumi, nedaudz uzskaistinÆtas
+ programmas, atbrØvojos no pÆris iebİvñtÆm funkcijÆm, sakÆrtoju arØ bØdØıanu
+ par MAPBLOCKSHIFT. Tagad tieıÆm programmÆs visi fiksñtÆ punkta skaitõi ir
+ aizvietoti ar peldoıÆ komata skaitõiem.
+  KompilÆtors tagad definñ makro PROG_VERSION. Tagad var pÆrbaudØt, vai tiek
+ kompilñts ar pareizÆs versijas kompilÆtoru.
+
+******************************************************************************
+                            VERSIJA 1.5 BETA
+******************************************************************************
+
+12-10-2000
+  SÆku darbu pie "dedicated" servera. Tika izveidots jauns projekts. Tad kad
+ tiek kompilñts serveris, tiek definñts SERVER. Ja ne SERVER, ne CLIENT nav
+ definñti, tie abi tiek definñti. KopØgajos failos tas, kas ir vajadzØgs
+ tikai klientam tiek kompilñts tikai tad, ja ir definñts CLIENT.
+14-10-2000
+  Turpinu. DOS versijÆ serveris vairs neizmanto Allegro. Faila izmñrs kõuvis
+ daudz mazÆks. Izveidoju r_dedic.cpp kurÆ ir viss, kas serverim ir vajadzØgs
+ no rendñıanas. PÆris funkcijas vajadzñtu pÆrnest uz matemÆtikas moduli.
+16-10-2000
+  Tas pats tiek turpinÆts. ProtokolÆ nÆk klÆt pÆris komandas starplØme·iem un
+ finÆlam. Pievienota vektoru klase, vñl nekas netiek izmantots.
+18-10-2000
+  SÆku veidot arØ klienta versiju. RezultÆtÆ õoti labi parÆdÆs tas, kas ir
+ vajadzØgs serverim un kas klientam.
+19-10-2000
+  Atradu kõİdu DOS/LINUX asemblera failÆ da÷Æs peldoıo komatu operÆcijÆs. TÆs
+ tiek izmantotas õoti reti (dñõ optimizñtajÆm versijÆm). Bet pats galvenais
+ ir tas, ka es sÆku ieviest tØkla spñles menu.
+20-10-2000
+  Tika piestrÆdtas pie programmu interpretÆtora asemblera failiem. Atradu
+ da÷as vietas, kur var õoti labi optimizñt. Tika sakÆrtots arØ Windows
+ versijas asemblera fails. TØkla menu izskatÆs õoti labi.
+21-10-2000
+  AttØrØti .h faili no #ifdef CLIENT. PÆc tiem nav nekÆdas vajadzØbas. Vñl
+ pÆris citas nenozØmØgas izmai·as, pÆrsvarÆ atbrØvoıanÆs no warning-iem.
+23-10-2000
+  PÆrkÆrtota pÆris mainØgo piederØba. AtbrØvojos no net_prot.cpp. Izveidoti
+  speciÆli sistñmas moduõi "dedicated" serveriem. DOS versija brØniıóigi
+  strÆdÆ ar BSD moduli. DOS peldoıÆ komata inicializÆcija atdalØta atseviıói.
+24-10-2000
+  Nedaudz pÆrkÆrtots protokols. PÆris sØki kõİdu labojumi.
+25-10-2000
+  Vñl nadaudz uzskaistinÆts protokols. SavienoıanÆs protokolÆ spñles vÆrds ir
+ nomainØts no VAVOOM uz tekoıÆs spñles vÆrdu, tÆdñõ Doom2 serveris nereaÖñs
+ uz Hexen klientu komandÆm. Pievienotas funkcijas Host_EndGame un Host_Error,
+ varat trØs reizes minñt no kurienes tÆs nÆk.
+26-10-2000
+  Servera informÆcijas paketñ vñl tiek iekõauti izmantotie wad faili. Vñl
+ nedaudz pÆrveidotas da÷as konsoles komandas un komandlØnijas parametri.
+  Jau ir 2 nedñõas kopı BETA versijas, tÆdñõ ir jÆlai÷ ÆrÆ jauna versija.
+
+******************************************************************************
+                            VERSIJA 1.5
+******************************************************************************
+
+28-10-2000
+  Tiek pievienoti vektori. Daudz vietÆs tagad ir vektori.
+  Izveidota programmu klase.
+  Neliela optimizÆcija programmu izpildes asemblerØ.
+  Izlaboju kõİdu datagram modulØ.
+  PadarØta Windows versija draudzØgÆka Windows. Tagad var droıi izmantot Alt-
+ Tab.
+30-10-2000
+  SadalItas programmas klienta un servera daõÆs. Klientam ir tikai statusa
+ lØnija.
+31-10-2000
+  Nedaudz sakÆrtota starplØme·u statistika.
+01-11-2000
+  µtrums tagad tiek mñrØts vienØbÆs sekundñ nevis vienØbÆs taktØ (tas attiecas
+ uz momx, momy un momz).
+02-11-2000
+  ParÆdÆs palknes. Ne glu÷i kÆ objekts, bet tur kur vajag ir visi parametri.
+ KÆ palknes ir lØnijas, segmenti un BSP mezgli.
+  Pielabots asembleris priekı OpenBSD.
+03-11-2000
+  Plakne atdalØta atseviıói kÆ klase.
+  Kautko sÆku mñÖinÆt pÆrveidot rendñıanÆ. Taisos ieviest poligonus. Tastñju
+ Set3D bibliotñku.
+04-11-2000
+  Plaknes pÆrnestas uz matemÆtikas moduli.
+  Izveidoju flat tekstİru veidoıanu.
+  Debesis atdalØtas atseviıói.
+06-11-2000
+  PÆris utilØtmetodes palknes definñıanai. Objektu informÆcijÆ Ætrums arØ ir
+ pikseõi sekundñ.
+07-11-2000
+  Salabots Òats.
+  Salabota poliobjektu segmentu un lØniju parametru aprñóinÆıana.
+  ProgrammÆs sÆku izmantot vektorus. Izveidots fails ar visÆdiem makro. Ir
+ ideja nÆkoıajÆ versijÆ ieviest operÆtorus ar vektoriem. Izmantojot vektorus
+ matemÆtika kõİst vieglÆk saprotama, arØ brØziem vienkÆrıÆka. öoti vienkÆrıi
+ ir ar z komponenti Ætrumos. Tagad tÆ tiek aprñóinÆta reizñ ar x un y, nav
+ vairs vajadzØga tÆ sare÷ÖØtÆ aprñóinÆıana. Tika ieviesti vektori ıÆvi·u
+ funkcijÆs, objektu ievainoıanas funkcijÆ grİdiena aprñóinÆıanÆ un rÆdiusa
+ uzbrukuma funkcijÆ. Tas automÆtiski deva vienu papildus iespñju - lñcienu ar
+ raóeti.
+  Windows versijÆ jauna zØmñıanas sistñma, tiek kopñts pa taisno uz primÆro
+ virsmu. Dod Ætrumu, arØ lapa tiek "slñgta" tikai atjaunoıanas laikÆ.
+08-11-2000
+  Konsoles mainØgie ar peldoıÆ komata vñrtØbÆm.
+  Tika pamatØgi pÆrveidots ievads uz Quake pusi. Aizvietoti vecie vadØbas
+ tausti·i ar Quake stila tausti·u komandÆm. Ieviestas tausti·u "piesaistes".
+ Atbilstoıi pÆrveidots menu. LielÆka precizitÆte le·óiem.
+09-11-2000
+  Tika izlaista versija 1.5.1. Tikai pÆris sØkumi. Iespñja kompilñt OpenBSD
+ serveri, jaunÆ Windows versijas atjaunoıanas sistñma, sØki labojumi.
+10-11-2000
+  Nedaudz pielabotas matemÆtikas funkcijas.
+  Pievienoju poligonizÆciju. PagaidÆm tikai testñju.
+11-11-2000
+  Ğis tas uzskaistinÆts. Salaboju starplØme·us.
+  MñÖinÆju pÆrveidot poligonozÆciju. RadÆs õoti daudz kõİdu. Atteicos.
+13-11-2000
+  Uzlaboju darbu ar gaismas tabulÆm. AtbrØvojos no translñto kolonnu zØmñıanas
+ funkcijÆm.
+  PoligonizÆcija rada kõİdas. Atteicos pavisam.
+14-11-2000
+  Le·ói tiek apstrÆdÆti klienta pusñ.
+15-11-2000
+  Ğauıanas funkcijÆ tiek izmantoti vektori.
+16-11-2000
+  Ieviesu le·óu vektoru.
+  Dinamisks redzamØbas lauks, laikam viss vñl nav pareizi, jo izskatÆs ne
+ glu÷i pareizi.
+20-11-2000
+  TñmñıanÆ tiek ·emts vñrÆ skatØıanÆs le·óis. KÆ tagad bİs ar BFG ıauıanu
+ grØdÆ? ;-)
+21-11-2000
+  Interesanti - esmu strÆdÆjis tikai pie programmÆm. Nedaudz vairÆk tiek
+ lietoti vektori. PrincipÆ viss.
+22-11-2000
+  LØme·i tiek identificñti pñc vÆrda.
+23-11-2000
+  Tekstİru animÆcija ir pÆrceõojusi uz rendñıanu, zibens uz debesu rendñıanu.
+  Vñl ıis tas sakÆrtots.
+24-11-2000
+  Klienta koordinÆtes tiek sİtØtas kÆ peldoıÆ komata skaitõi, vairs vav tÆ
+ ekrÆna drebñıana.
+  Doom un Heretic ir 8 spñlñtÆja krÆsas.
+  SÆku pÆriet uz peldoıÆ komata laiku.
+25-11-2000
+  MñÖinÆjums pÆriet uz peldoıÆ komata laiku aizgÆja pa pieskari.
+27-11-2000
+  Pielaboju menu. Skatiena centrñıana, arØ lookspring. Citi sØkumi.
+28-11-2000
+  Izlabota kõİda, kuras dñõ Windows un LINUX versijas izmet SIGSEGV.
+  Windows prg÷u asemblerØ pievienoju optimizñto pÆreju uz nÆkoıo komandu.
+
+******************************************************************************
+                            VERSIJA 1.6
+******************************************************************************
+
+30-11-2000
+  Nedaudz pielaboju Windows versijas ska·as moduli lai ska·a neskanñtu kautkur
+ tÆlumÆ.
+  Kautko mainu rendñıanÆ, niekojos ap segmentu rendñıÆnu, izmetu ÆrÆ solidegs.
+01-12-2000
+  Pievienoju atbalstu "GL_Friendly Nodes". Atjaunoju testñıanu ar bibliotñku
+ Sort3D. Kautkur karÆs, jÆsÆk veidot savs 3D rendñSanas kods tieıi Vavoom-am.
+04-12-2000
+  Nokopñju glbsp, iepazinos ar oficiÆlo aprakstu, pievienoju automÆtisku gwa
+ failu pievienoıanu, apgreidoju uz specifikÆcijas 2. versiju.
+  Nolñmu izmantot trØstİru zØmñıanas kodu bÆzñtu uz MESA izejas kodiem. LØdz
+ ıim viss strÆdÆ normÆli.
+05-12-2000
+  StrÆdÆju pie trØstİru rendñıanas. Nolñmu ka visas sienu un grØdu tekstİras
+ bİs 256x256 lielas. Tas vienkÆrıo aprñóinus. Ir jau ejoıs kods.
+06-12-2000
+  Lielisks progress. TÆkÆ viss strÆdÆ lieliski, jÆsÆk to arØ likt lietÆ. KÆ
+ vienmñr sÆku testñıanu ar grØdu zØmñıanu. Ticis skaidrØbÆ ar tekstİru
+ koordinÆtu asu virzieniem dabİju strÆdÆjoıu grØdu rendñıanu ar jauno metodi.
+ Pñc nelielÆ pİlñm grØdÆm pievienojÆs arØ griesti. Pñc nelieliem labojumiem
+ ievada modulØ es ieguvu ıóiebtu nÆves skatu. Un nevis vienkÆrıi ıóiebtu, bet
+ gan mirstot rotñjoıu, kas ir pat kautkas vairÆk nekÆ tas, kas ir kveikam.
+ Uz vakara pusi grØdÆm un griestiem pievienojÆs arØ vidussienas. Kaut kur pa
+ vidu tika palielinÆts skatØıanÆs le·óa intervÆls.
+07-12-2000
+  Pievienotas arØ pÆrñjÆs sienas un spraiti. No vecÆ zØmñıanas koda laikam
+ nakas vairs nav palicis pÆri. Var arØ spñlñties ar redzes le·ói, pievienoju
+ palielinÆıanu. AizsİtØju uz doomworld.com skrØnıotu ar ıóiebto nÆves skatu.
+08-12-2000
+  Nodarbojos ar koda pieslØpñıanu, veicu profilÆciju, parÆdÆs jauns asemblera
+ kods.
+09-12-2000
+  Neliela optimizÆcija, Òakars ar asembleri, pagaidu debesis.
+11-12-2000
+  Turpinu Òakarñties ar asembleru, optimizÆcija, attØrØıana, ieroÒu zØmñıana
+ ar jauno rendñıanu.
+12-12-2000
+  Debesu zØmñıana, atbrØvojos no segmentu le·óiem.
+13-12-2000
+  Salaboju poliobjektus, pilnØbÆ atbrØvijos no kolonnu zØmñıanas, debesu kubs.
+14-12-2000
+  Nodarbojos tikai ar asembleru.
+15-12-2000
+  Izveidoju galveno iekõauto failu asemblera moduõiem.
+  Testñju slØpas virsmas. Vienas dienas laikÆ praktiski viss ir izdarØts. Tas
+ protams ir pateicoties manai jaunajai uz poligoniem bÆzñtajai rendñıanas
+ arhitektİrai, kurÆ tas ir diezgan vienkÆrıi. ZDoom autoram tas noteikti bija
+ daudz sare÷ÖØtÆk. Pateicoties vektoriem un plaknñm arØ fizika bİs diezgan
+ vienkÆrıi izveidojama. Tika izveidotas sektora plaknes, kas nÆkoıajÆ versijÆ
+ bİs paıos sektoros, pateicoties kurÆm tad arØ slØpo virsmu rendñıana ir tik
+ vienkÆrıa. Ir arØ distances gaisma.
+16-12-2000
+  Korektas dubultÆs debesis. Gatavojos veidot glvis lai samazinÆtu zØmejamo
+ poligonu skaitu. reject nevar izmantot, jo tur var bİt visÆdi efekti un ne
+ visai korekti Öererñıanas algoritmi.
+18-12-2000
+  Veidoju glvis. Esmu gatavs izmantot pvs datus. Ir gatavs ievads/izvads,
+ tiek Öenerñti tukıi dati.
+19-12-2000
+  glvis pievienota redzamØbas pÆrbaude, praktiski jau ir gatava versija. PVS
+ datu izmantoıana ir lØdzØga kveikam.
+20-12-2000
+  SÆku kautko mñÖinÆt ar OpenGL. PagaidÆm tikai sistñmas daõÆ.
+21-12-2000
+  Sadabİju no Interneta OpenGL pamÆcØbu, sÆku apgİt, jau mñÖinu pielietot
+ pie reÆliem datiem, viss strÆdÆ lieliski. Praktiski lielÆkÆ rendñıanas daõa
+ jau strÆdÆ. Man õoti patØk ıis API - vienas dienas laikÆ jau ejoıa OpenGL
+ versija. Protams, ja man jau nebİtu poligonu veidoıanas, tas nebİtu tik Ætri.
+22-12-2000
+  Virsot·u gaismas - tas ir kas jauns.
+  16 bitu krÆsas. PagaidÆm viss normÆli.
+23-12-2000
+  Darbs pie 16 bitu krÆsÆm. Atradu pÆris kõİdas Allegro bibliotñkÆ.
+  MñÖinu atrast vainu, kÆpñc da÷reiz tiek nepareizi zØmñts.
+27-12-2000
+  Neliela pÆrstrukturizÆcija. Jau bİs mñnesis kopı pñdñjÆs versijas, bİtu
+ laiks izlaist kÆdu beta versiju.
+28-12-2000
+  Pievienoju setjmp funkcijÆ Host_Init gadØjumam ja gadÆs kÆda kõİda ielÆdes
+ laikÆ.
+  Pievienoju komandlØnijas parametru -debug.
+  Pievienoju programmÆm funkciju gadØjumam, ja ir kõİda programmas izpildes
+ laikÆ.
+  Pievienoju iebİvñtÆs funkcijas tekstİru un flatu nummuru iegİıanai.
+  No kveika pa·ñmu asemblera pÆrveidoıanas programmu no gas uz masm. ManÆ
+ gadØjumÆ rezultÆts bİs priekı tasm. TÆ tika nedaudz pilnveidota. Tagad es
+ varu automÆtiski Öenerñt Windows asemblera failus no gas formÆta failiem.
+  LINUX versijai nepatØk subdivision 8 faili, pagaidÆm izmantoju precØzÆs
+ versijas.
+29-12-2000
+  Gatavojot beta versiju tika pielabotas vñl pÆris kõİdas, papildinÆta
+ dokumentÆcija, tÆda izveidota priekı glvis.
+
+******************************************************************************
+                            VERSIJA 1.666 BETA 1
+******************************************************************************
+
+30-12-2000
+  Izmantot esp bija slikta ideja - es aizmirsu par pÆrtraukumiem.
+  Gaismas efektu testñıana prasa daudz resursus - Hexen MAP01 tas pa·em 62%
+ no izpildes laika.
+  glvis palielinÆju izejas wad faila iedaõu skaitu, 1024 ir par mazu darbam
+ ar tieıÆm lieliem wad failiem (nevis ar gwa failiem). Nedaudz padarbojos ar
+ vcc. Pievienoju lokÆlo mainØgo pÆrplİıanas pÆrbaudi. IzrÆdÆs, ka Hexen ir
+ vienÆ funkcijÆ (monstru pÆrvñrıanÆs cİkÆ) ir pÆrplİde un ka ıis mainØgais
+ netiek izmantots. vcc tagad izmanto cmdlib (to paıu, ko glvis).
+02-01-2001
+  AtbrØvojos no esp izmantoıanas. PiestrÆdÆju pie draiveru struktİras. Nolñmu
+ pilnØbÆ pÆriet uz zØmñıanu no aizmugures uz priekıu. Pievienoju atbalstu
+ da÷Ædiem spraitu tipiem.
+  Tausti·u piesaistei pievienoju komandu tausti·a atlaiıanai. Tas atõauj
+ tÆdas kokmandas kÆ "bind PADDIVIDE "fov 45" "fov 90"".
+03-01-2001
+  Caurredzami spraiti 16 bitu krÆsÆm. AtrisinÆju problñmu ar Z-buferi.
+  TurpinÆs darbs pie draiveru strukturizÆcijas. Spraitu translÆcija notiek
+ datu lØmenØ, tas automÆtiski atrisina problñmas ar 16 bitu krÆsÆm un OpenGL.
+  Izveidotas OpenGL versija parastajÆm zØmñıanas funkcijÆm. Atradu, kÆpñc
+ OpenGL ir tik lñns - tekstİras visu laiku tika atjaunotas.
+04-01-2001
+  GalvenÆ uzmanØba uz draiveru strukturizÆciju un OpenGL. StrukturizÆcija ir
+ pabeigta un es varu nokompilñt versiju ar abiem draiveriem. OpenGL draiveris
+ tiek norÆdØts komandlØnijÆ. Korekti tiek zØmñti caurredzamie spraiti.
+05-01-2001
+  Salaboju sienu tekstİru koordinÆtu aprñóinÆıanu, it Øpaıi vidustekstİrai.
+  Izveidoju atbalstu OpenGL skrØnıotiem.
+  Ja nav "GL Nodes", tad ir kõİda.
+
+******************************************************************************
+                            VERSIJA 1.666 BETA 2
+******************************************************************************
+
+06-01-2001
+  SÆku darbu pie Direct3D draivera. VisÆ visumÆ diezgan liels Òakars, beigÆs
+ vñl neizdevÆs panÆkt lØme·a rendñıanu. Ar OpenGL man veicÆs daudz labÆk.
+ PatØkams ir fakts, ka DirectX 7 versijÆ õoti daudzas lietas ir vienkÆrıotas.
+ It Øpaıi patØkami tas ir attiecØbÆ uz viewport-u un tekstİru mened÷mentu.
+09-01-2001
+  Visa uzmanØba tiek veltØta Direct3D draiverim. PrincipÆ lielÆkÆ daõa strÆdÆ
+ normÆli. IzrÆdØjÆs, ka mana videokarte neatbalsta alfa testñıanu. NestrÆdÆ
+ arØ caurredzamØba. Neliels Òakars ar zØmñıanu bez tekstİras. NestrÆdÆ arØ
+ migla un es nevaru saprast kas Østi ir jÆdara.
+  Ir arØ paletes efekti OpenGL un Direct3D.
+  Pareiza dubulto debesu zØmñıanas secØba.
+  Salaboju fiksñto gaismu, vñl nav dieva re÷Øma kolormaps.
+10-01-2001
+  Noklusñto izıóirtspñju tagad katrs draiveris nosaka pats.
+  OpenGL un Direct3D visas funkcijas un mainØgie pieder klasei.
+  SÆku ieviest lo÷u caurumus.
+  Kõİdu dñõ poligonam var tikt apgrieztas vairÆk malas, nekÆ tam vajadzñtu
+ bİt. Tas ir arØ pñkı·o uzkÆrıanos iemesls.
+11-01-2001
+  Direct3D nedaudz labÆk tiek atbalstØts gadØjums, kad netiek atbalstØts
+ alfas kanÆla tests.
+  Ir OpenGL draiveris DOS versijai.
+  Jau normÆli strÆdÆ lo÷u caurumi sienÆs.
+  Izveidoju utilØtu vlumpy.
+12-01-2001
+  Nedaudz piestrÆdÆju pie ievada.
+  DarbØbu, kad nav PVS dati, var mainØt.
+  AtklÆju, ka tØkla spñli nevar palaist, jo visu laiku karÆs. Atradu vainu.
+ Bija arØ vñl viena kõİda - tØkla spñlñ atdzimstot ir ıóiebts skats.
+  Skripti tagad atbalsta arØ C++ stila komantÆrus.
+  Ir "dekÆlu" skripts.
+  Darbs pie vlumpy. Tas kõİst aizvien labÆks un vieglÆk lietojams.
+13-01-2001
+  PÆris uzskaistinÆjumi un labojumi, nekÆ nozØmØga.
+  Galvenais darbs pie vcc. Izteiksmju sadalØıana tika sadalØta paprioritÆtes
+ lØme·iem, katram lØmenim ir sava funkcija.
+15-01-2001
+  Salabota augıñjo un apakıñjo sienu zØmñıana gadØjumiem, kad priekıñjÆ grØda
+ ir augstÆka par aizmugurñjiem griezstiem un priekıñjie griezsti ir zemÆki
+ par aizmugurñjo grØdu.
+  PagaidÆm atslñdzu lo÷u caurumus sienÆ.
+  Iepazinos ar MMX, izveidoju MMX versiju z-bufera piepildØıanai. Diem÷ñl es
+ neatradu, kÆ piespiest tasm atpazØt MMX instrukcijas.
+  SÆku pÆrstrÆdÆt menu.
+16-01-2001
+  Salaboju vñl vienu debesu zØmñıanas iespñju.
+  PÆrstrÆdÆju menu. Visa uzmanØba ıeit.
+17-01-2001
+  Menu ir pÆrstrÆdÆts. Tika aizvÆkti vairs neizmantotie lauki, sØki labojumi.
+  PiestrÆdÆju pie sv_mutil, Daudzkas tika vektorizñts. ĞauıanÆ "puffi" tagad
+ korekti tiek novietoti uz grØdas un griestiem, ja tiek ıauts uz grØdu vai
+ griestiem. TñmñıanÆ tika ieviestas le·óu pÆrbaudes.
+  Dienas beigÆs Ætra ideja - sakÆrtot konsoles mainØgos alfabñtiskÆ secØbÆ.
+18-01-2001
+  Softa versijÆ pareizi darbojas Dieva kolormaps.
+  PrincipÆ no kveika tika pa·emts demo kods. StrÆdÆ normÆli.
+  IzskatÆs, ka viss, ko es gribñju sasniegt ıajÆ versijÆ ir izdarØts. TÆdñõ
+ es nolñmu, ka ir laiks izlaist galñjo versiju. Jau ir nedaudz apnicis Òakars
+ ar rendñıanu un gribas óerties klÆt pie kompilÆtora pÆrstrÆdes un pie slipÆm
+ grØdÆm un griestiem. ArØ menu ir gatavs pÆrvietoıanai uz programmÆm. Laiks
+ beidzot pie tÆ óerties. Protams, ka var parÆdØties kõİdas, bet nav vñrts
+ tñrñt laiku mñÖinot kautko atrast.
+
+******************************************************************************
+                            VERSIJA 1.666
+******************************************************************************
+
+19-01-2001
+  AtklÆju kõİdu Hexen kasu menu.
+  StÆvokõiem ir peldoıÆ komata laiks.
+  Ieviesu objekta funkciju. Ska·as pÆrvietotas no objektu informÆcijas uz
+ paıu objektu, vñrtØbas tiek piesaistØtas objekta funkcijÆs.
+  Atslñdzu dehacked atbalstu. Vairs nenÆks atpakaõ.
+  Beidzot atbrØvojos no pÆris karodzi·iem, izmantoju atiecØgos laukus, sÆkuma
+ vñrtØbas tiek definñtas objektu funkcijÆs.
+20-01-2001
+  GrØdu un griestu plaknes tagad ir sektoru lauki.
+  Nav vairs kompilÆtorÆ iebİvñto sistñmas struktİru, tagad tÆs tiek definñtas
+ iekõautajÆ failÆ.
+  SlØpas virsmas! Viss strÆdÆ normÆli. Tas bija pat pÆrÆk vienkÆrıi.
+22-01-2001
+  Le·óis pitch tagad iet pareizajÆ virzienÆ.
+  Notiek nopietns darbs pie kompilÆtora pÆrstrÆdes. Vñl ir ko darØt lai to
+ palaistu (paıreiz vñl nestrÆdÆ).
+23-01-2001
+  StÆvokõi arØ ir pÆrnesti uz paıiem objektiem. JaunÆ izteiksmju sadalØıana
+ darbojas normÆli. PÆris funkcijas ir pÆrnestas uz programmÆm.
+24-01-2001
+  Spraita indeks tagad aiz·em tikai 1 baitu.
+  Turpinu kompilÆtora pÆrstrÆdi. PÆrstrÆdÆju tipus, tiek atõauti pointeri uz
+ pointeriem, pievienota netieıÆ funkcijas izsaukıana, struktİru tipi var tikt
+ mantoti, speciÆls tips vektoriem. Meklñıanas funkcijas tagad ir pÆrnestas uz
+ programmÆm.
+25-01-2001
+  ProgrammÆs izveidoti operÆtori ar vektoriem. öoti atvieglo dzØvi.
+26-01-2001
+  Skriptos var izmantot peldoıÆ komata skaitõus.
+  Ieviesu menu steku.
+  PamazÆm mñÖinu pÆriet uz lØme·u identifikÆciju pñc vÆrda.
+  Nolñmu ieviest atbalstu 24 bitu krÆsÆm.
+27-01-2001
+  Salaboju fiksñto gaismu OpenGL un Direct3D draiveriem.
+  Darbojos pie 24 bitu krÆsu asemblera.
+29-01-2001
+  Izveidots speciÆls fails funkcijÆm darbam ar failiem.
+30-01-2001
+  Ieviesu zØmñjumu reÖistrÆciju, zØmñıanai tiek iedots reÖistrñtais nummurs.
+ Programmas varñs zØmñt tikai ıÆdÆ veidÆ.
+  SÆku pÆrnest menu uz programmÆm.
+  KriıjÆns atrada kõİdu epizodes menu shareware versijÆs, vñl viens puisis
+ atklÆja kõİdu tausti·u pÆrdefinñıanas menu.
+31-01-2001
+  LielÆkÆ daõa menu jau ir pÆrnestas.
+  Pievienoju informÆcijas simbolu virknes.
+  Pievienoju vñl kaudzi cvar karodzi·u, pagaidÆm tikai da÷i strÆdÆ.
+01-02-2001
+  Tikai pÆrveidoju parasto zØmñjumu zØmñıanu no zØmñıanas pa kolonnÆm uz
+ zØmñıanu pa rindi·Æm.
+02-02-2001
+  Ieviesu konsoles mainØgo class, tas ir vajadzØgs priekı menu, Cheat komanda
+ Class tagad saucas ChangeClass.
+  p_local.h aizvietots ar sv_local.h.
+  Liela daõa funkciju no sv_map ir pÆrnestas uz programmÆm.
+  vcc pievienots atbalsts Borland preprocesoram.
+03-02-2001
+  Testñıanas lØmenØ ieviesu treıÆs personas skatu.
+  PñdñjÆs funkcijas no sv_map, kÆ arØ liela daõa funkciju no sv_mobj tagad ir
+ programmÆs.
+05-02-2001
+  Dzinñjs vairs nezin neko par stÆvikõiem, mobjinfo_t arØ ir õoti tukı.
+ weaponinfo_t vairs neeksistñ.
+06-02-2001
+  Dzinñjs arØ neko nezin par mobjinfo_t. PamñÖinÆju reÆlu laiku. Vñl viss nav
+ gatavs. Nedaudz paÒakarñjos ar konsoles mainØgajiem un komandÆm, kÆ arØ ar
+ atmi·as mened÷eri. Izveidoju tØkla spñles spñlñtÆja opciju menu. KÆ piemñru
+ izveidoju granÆtmetñja pievienoıanu programmÆm.
+07-02-2001
+  Klienta pusñ lØme·u identifikÆcija ir tikai pñc to nosaukumiem.
+08-02-2001
+  ArØ serveris izmanto tilai lØme·u vÆrdus.
+  Izveidota speciÆla direktorija visiem utilØtiem. PapildinÆts vlumpy, tagad
+ vñl vairÆk no spñles datiem tas var Öenerñt. Paıu spñles datu "izejas kods"
+ ir õoti mazi·ı (lielÆkÆ daõa no spñles datu apjoma ir programmas un tabulas,
+ kuras tagad tiek Öenerñtas). Ar jaunajÆm Allegro rutØnÆm tabulu Öenerñıana
+ ir õoti Ætra.
+09-02-2001
+  Tas ir õoti nepatØkami, bet man nÆksies atkal Òakarñties ar Direct3D.
+  Kompilñjot Windows versiju atradÆs pÆris kõİdi·as.
+10-02-2001
+  Neliela pÆrstrukturizÆcija. VairÆki globÆlie mainØgie ir ienesti struktİrÆs.
+ Tiek korekti sİtØtas un sa·emtas info tekstu virknes. ArØ spraitu saraksts
+ tiek atsİtØts no servera.
+12-02-2001
+  Pievienoju pÆris iebİvñtÆs funkcijas.
+  Uzlaboju glVIS, tagad izmanto BSP koku. Atmetot nevajadzØgÆs daõas Ætrums
+ palielinÆjÆs aptuveni 3 reizes.
+13-02-2001
+  lumpinfo padarØju par privÆtu iekı w_wad. Izveidoju sv_world ar funkcijÆm
+ mo sv_mutil un sv_mobj. Makeinfo Öenerñ korektu MAPINFO.
+14-02-2001
+  SÆku ieviest nelielu atbalstu Strife. Protams bez izejas koda ir diezgan
+ pagrİti kautko reÆlu izveidot, jo paıam ir viss jÆhako. Tekstİras struktİras
+ ir attØrØtas no nevajadzØgajiem laukiem. Izveidoju utilØtu datu tabulu ar
+ kuru var iegİt info tabulas un citus datus no strife.exe.
+  Izveidoju otru fonta ielÆdñıanas funkcijas versiju Doom un Strife fontiem.
+ jldoom.wad vairs nesatur FONTAxxx.
+  AtõÆvu izmantot -file shareware versijÆs.
+15-02-2001
+  StrÆdÆ arØ Strife menu. Tekstİru ielÆdñıanas funkcija ir izveidota kÆ C++
+ template funkcija. Diezgan interesanta C++ ØpaıØba.
+  Nedaudz pielaboju ıauıanas fiziku daudz korektÆk pÆrbaudot ıauıanu grØdÆ un
+ griestos.
+  NokaÒÆju Build izejas kodu. NedomÆju, ka es kautko izmantoıu, jo Build vñl
+ izmanto taisnas sienas, kad man jau ir tØra 3D rendñıana.
+16-02-2001
+  Pievienoju skatiena saıóiebıanas tausti·us.
+  Izveidoju iespñju izmantot sienas tekstİras uz grØdÆm/griestiem un flatus
+ uz sienÆm.
+17-02-2001
+  Salaboju flatu tekstİru orientÆciju.
+  PilnØbÆ atteicos no matemÆtikas tabulu izmantoıanas.
+  Z-poligonu zØmñıana ir speciÆls gadØjums.
+  Ja nav atmi·as lØmenim, tad ir Host_Error.
+19-02-2001
+  Nedaudz pÆrstrÆdÆju atmi·as memed÷eri. Ar jauno sistñmu bİs mazÆk robu un
+ mazÆk iespñju, ka nevarñs rezervñt atmi·u.
+  TranslÆcijas tabulas tiek ielÆdñtas no wad faila.
+  Klientam vairs nevajag servera programmas.
+  Korektas spñlñtÆju krÆsas.
+  Strife pñdñjais lauks ir nevis karodzi·i, bet gan nosaukums.
+20-02-2001
+  CaurspØdØgas lØnijas.
+  Salabota tekstİru iepriekıielÆdñıana.
+  NomainØts konfigurÆcijas fails uz config.cfg.
+  Izveidots skripts virsmu tipiem.
+  Salabota tñmñıana.
+21-02-2001
+  ProgramÆs ieviests mainØgs argumentu skaits drukÆıanas funkcijÆm.
+  Centrñtie pazi·ojumi.
+22-02-2001
+  Darbojos ap glvis. Atradu kõİdu. SadalØıana nedeva gaidØto rezultÆtu.
+24-02-2001
+  Tiek sİtØti visi objekta le·ói, arØ spraita tips.
+  Objektu redØıanas funkcijÆ tiek iedots arØ mthing_t, izveidoju pamat-starta
+ funkciju.
+26-02-2001
+  Gatavoju publicñıanai versijas 1.7 pirmo beta versiju. VissÆdi nenozØmØgi
+ sØki labojumi, cerams ka atrisinÆju pikseõa formÆta problñmu. Atteicos no 24
+ bitu krÆsÆm softa re÷imÆ.
+27-02-2001
+  Lai÷u laukÆ. Updeitoju doóus, kautko vñl pielaboju.
+
+******************************************************************************
+                            VERSIJA 1.7 BETA 1
+******************************************************************************
+
+  Pñc izlaizıanas neticamÆ ÆtrumÆ izveidoju 3D grØdu rendñıanu.
+28-02-2001
+  Nedaudz pÆrkÆrtota lØme·u lÆdñıana.
+  Doom ieviesta staigÆıana virs/zem citiem objektiem.
+  SÆku veidot 3D grØdu fiziku.
+01-03-2001
+  Caurredzama grØda zemİdens effektiem.
+  Praktiski visa fizika ir pabeigta. Tas gan bija Ætri.
+02-03-2001
+  Ieviests atbalsts Quake stila paletes efektiem. Tiek izmantots İdenim un
+ citiem ıóidriem sastÆviem. PÆrñjie paletes efekti arØ tiks drØz aizvietoti.
+ Zemİdens efekts strÆdÆ pilnÆ apjomÆ. Ar slØpÆm virsmÆm, 3D grØdÆm un zemİdens
+ efektu Vavoom iespñjas pÆrspñj visus pÆrñjos portus. Un man prieks par to.
+03-03-2001
+  PalielinÆju animÆciju skaitu, nepiecieıams pilnajai Strife versijai.
+  SÆku pÆriet uz Hexen speciÆlo lØniju formÆtu Doom, Heretic un iespñjams arØ
+ Strife. PagaidÆm tikai aktivizñıanas forma, pilnu pÆreju es plÆnoju veikt
+ treıajÆ beta versijÆ.
+05-03-2001
+  Nedaudz izmainØju İdens definñıanas veidu. Tagad saturs un plaknes tips tiek
+ definñts ar atseviıóu lØniju.
+10-03-2001
+  KonfigurÆcija netiek saglabÆta kõİdas gadØjumÆ.
+
+******************************************************************************
+                            VERSIJA 1.7 BETA 2
+******************************************************************************
+
+12-03-2001
+  SÆku veidot jaunu demo lØmeni priekı Doom2. Tika atklÆtas pÆris kõİdi·as.
+  Serveris priekımetu redzamØbu pÆrbauda tikai ar PVS, priekımetus, kurus
+ nevar redzñt vispÆr nesİta.
+13-03-2001
+  Neierobe÷ots slñd÷u skaits, bija problñmas ar Strife, ceru ka tagad aizies.
+  PapildinÆju kompilÆtoru lai varñtu definñt translÆcijas tabulu.
+  SÆku pÆrieıanu uz Hexen stila lØnuju speciÆliem. Tiku galÆ ar durvØm un
+ griestiem.
+14-03-2001
+  Turpinu pÆriet uz Hexen lØniju tipiem, tiku skaidrØbÆ ar platformÆm un
+ grØdÆm.
+15-03-2001
+  PrincipÆ ir pabeigta pÆreja uz Hexen tipa lØniju speciÆliem. Centos to visu
+ padarØt nedaudz savietojamu ar ZDoom, vismaz lai ar zwadconv konvertñtie wad
+ faili strÆdÆtu.
+16-03-2001
+  Servera signon pazi·ojumÆ slØpo grØdu pazi·ojumi klientiem tagad ir korekti
+ pirms 3D-grØdu pazi·ojumiem.
+  Tika ıis-tas pielabots, DOS versijÆ pagaidÆm izmantoju citu tameri.
+  PrincipÆ jaunÆ BETA versija ir gatava relØzei kura bİs tikai rØt.
+
+******************************************************************************
+                            VERSIJA 1.7 BETA 3
+******************************************************************************
+
+17-03-2001
+  Pievienoju jaunu OpenGL draiveri LINUX versijai.
+  Beta versija tika izlaista.
+  SÆku veidot uz skanlØnijÆm orientñtu rendñıanu.
+19-03-2001
+  Ir strÆdÆjoıa uz skanlØnijÆm orientñta rendñıana, maskñto poligonu zØmñıana
+ notiek izmantojot Z-buferi. µtrums tieıÆm ir nedaudz pieaudzis.
+21-03-2001
+  Atradu kÆ ar TASM kompilñt MMX kodu.
+  SÆku pÆrkÆrtot 2D grafikas zØmñıanu. VecÆ metode, ar kuru tie tiek zØmñti
+ OpenGL un Direct3D versijÆs õoti tÆs palñnina. Tagad tÆs strÆdÆs krietni
+ ÆtrÆk.
+22-03-2001
+  2D zØmñjumu zØmñıana sakÆrtota. Vairs nav veco zØmñıanas meto÷u izmantoıana.
+  IzrÆdØjÆs ka glvis nekompilñjas uz LINUX. Problñmas tika atrisinÆtas, tagd
+ glvis kompilñjas ar parametru -ansi.
+23-03-2001
+  Izveidoju programmu profilÆciju.
+24-03-2001
+  Risinu LINUX problñmas. Atradu kÆ iegİt steka "traceback".
+26-03-2001
+  Maskñto poligonu zØmñıana notiek reizñ ar parasto poligonu zØmñıanu.
+  OpenGL draiverØ flatu izmñri ir 64x64.
+  Salaboju Hexen klasterus, tagad tie ir pieejami visÆm spñlñm. Klasteris
+ 0 tiek uzskatØts kÆ "nav klastera", visi tÆ lØme·i strÆdÆ kÆ da÷Ædos
+ klasteros.
+  AtbrØvojos no vecajiem makro SHORT un LONG. Varbİt, lai nebİtu problñmu,
+ izveidot baitu secØbas funkcijas kÆ funkciju pointerus (kÆ Quake), tÆ man
+ arØ nevajadzñs iekõaut endian.h.
+27-03-2001
+  Korekti tiek nolasØts maksimÆlais tekstİras izmñrs, spraiti un 2D zØmñjumi
+ lielÆki par to tiek samazinÆti. Nedaudz tiek zaudñta kvalitÆte, bet man tas
+ ir vienalga.
+  Salaboju dubulto debesu zØmñıanu OpenGL un Direct3D versijÆs.
+  Izmetu ÆrÆ visu kodu, kas attiecas uz lo÷u caurumiem siemÆs.
+28-03-2001
+  OpenGL un Direct3D draiveros daõñji atbrØvojos no tekstİras atkÆrtoıanÆs
+ izejas tekstİrÆ. TÆkÆ visu tekstİru platumi ir 2 pakÆpes, OpenGL draiverØ
+ platumÆ vispÆr nav atkÆrtoıanÆs. Ja tekstİras augstums ir 2 pakÆpe, arØ tas
+ netiek atkÆrtots, citÆdi tekstİras augstums ir 256 un tekstİras atkÆrtoıanÆs
+ notiek tieıi tÆpat kÆ software draiverØ. Direct3D akselerñtajÆ versijÆ
+ iespñjams visÆm kartñm tekstİrÆm ir jÆbİt kvadrÆtiem, tÆdñõ atkÆrtoıanÆs
+ notiek daudz vairÆk.
+29-03-2001
+  IzrÆdÆs ka puisim, ar kuru es mñÖinu risinÆt LINUX problñmas, tÆpat kÆ man
+ Allegro inicializÆcija rada kõİdu. Un izrÆdÆs ka vaina ir failÆ xalleg.h un
+ man nÆcÆs kautkÆ to apiet. Vñl nedauz tika uzlabots OpenGL draiveris, cerams
+ ka tas ir strÆdÆjoıs.
+31-03-2001
+  Baitu secØbas makro tika aizvietotas ar funkciju pointeriem, atbrØvojos no
+ endian.h iekõauıanas.
+  Pievienoju aizsardzØbu intercepts pÆrplİdei.
+  Tiek labÆk izmantota spñles direktorija.
+02-04-2001
+  Salaboju saglabÆıanu, kad apraksts satur vairÆkus vÆrdus.
+  Izlaidu ceturto betu.
+
+******************************************************************************
+                            VERSIJA 1.7 BETA 4
+******************************************************************************
+
+04-04-2001
+  Neliela optimizÆcija asemblerØ, sØki labojumi.
+  SÆku pÆrkÆrtot menu. Ieviesu tukıas zØmñıanas funnkcijas pamatelementam un
+ tÆ inicializÆcjas funkciju. Visi elementi tiek inicializñti ar to.
+05-04-2001
+  PamñÖinÆju Doom izmantot Heretica automapa fonu, Doom-Æ tas ir pelñks un
+ izskatÆs labi.
+  Turpinu darbu pie menu.
+06-04-2001
+  Menu struktİrÆs vairs nav reÆlo funkciju un simbola virk·u pointeru.
+07-04-2001
+  Liela daõa zØmñıanas un izmantoıanas koda ir pÆrnesta uz prog÷iem.
+10-04-2001
+  Vñl vairÆk menu koda ir pÆrnests uz prog÷iem.
+11-04-2001
+  Praktiski viss menu kods ir prog÷os.
+17-04-2001
+  Nedaudz optimizñju asembleru, pievienoju subdivision 8 debesu zØmñıanu.
+  Caurredzams tñmeklis.
+  SakÆrtoju prog÷os zØmñıanas funkcijas, sakÆrtots menu.
+18-04-2001
+  Korekti tiek nosİtØts klienta nummurs.
+  Korekta reÖionu zØmñıanas secØba zØmñjot no aizmugures uz priekıu.
+  Salaboju statusjoslas tumıinÆto lØniju zØmñıanu.
+  Heretic pilnekrÆna re÷ØmÆ tiek zØmñts munØcijas apjoms.
+19-04-2001
+  SÆku pÆrnest starplØme·u statistiku uz progr÷iem.
+20-04-2001
+  Pabeidzu pÆrnest starplØme·u statistiku, pÆrnesu finÆlu.
+21-04-2001
+  SØki labojumi.
+
+******************************************************************************
+                            VERSIJA 1.7 BETA 5
+******************************************************************************
+
+23-04-2001
+  Pareiza tekstİru asu aprñóinÆıana (bija pÆris kõİdas), tÆda pievienota pie
+ debesu zØmñıanas. Izmantoju formulas no kveika, kurÆs soõu aprñóinÆıana tiek
+ veikta izmantojot tekstİru asis un normÆli, iepriekı aprñóinÆtÆs kordinÆtes
+ netiek izmantotas. "spanos" daudzi poligona parametri aizvietoti ar pointeri
+ uz poligonu (lai dati netiktu dublñti).
+24-04-2001
+  DinamiskÆs gaismas! TÆs neprasa neko no rasterizÆcijas draiveriem, jo viss
+ nepiecieıamais jau ir un tiek izmantots distances gaismÆm.
+  1/z parametri tiek iegİti no normÆles.
+25-04-2001
+  Jauno parametru aprñóinÆıanas sistñmas dñõ daidzi vecie asemblera faili ir
+ izmesti ÆrÆ, vñlÆk bİs jÆveido jauni. Visas spanu zØmñıanas funkcijas tagad
+ izmanto "subdivision 8" versiju.
+26-04-2001
+  ZØmñti tiek veseli poligoni, nevis poligoni sadalØti trØstİros. Tagad spani
+ ir garÆki un vairÆk laika tiek pavadØts iekıñjos ciklos. Spanu Öenerñıana
+ notiek no priekıas uz aizmuguri tÆdñjÆdi samazinot aprñóinus. Izveidoju
+ asemblera failu asemblera mainØgajiem. Atrodoties vienÆ blokÆ tos var labÆk
+ ielÆdñt procesora keıatmi·Æ.
+27-04-2001
+  KÆ caurspØdØgo krÆsu tagad izmantoju krÆsu 0.
+  Asemblera mainØgajiem pievienojas arØ asemblerÆ izmantotie globÆlie C++
+ mainØgie.
+  Spraitu zØmñıana notiek tieıi tÆ, kÆ kveikÆ. Spraitu gaismoıana notiek jau
+ datu lØmenØ, zØmñıanai nav jÆuztraucas par gaismÆm, tieıi tÆ kÆ kveikÆ. Vñl
+ spanu zØmñıana nenotiek pa vienam spanam, bet tiek iedots vesels saraksts.
+ Gala rezultÆtÆ Ætruma pieaugums ir õoti iespaidØgs.
+28-04-2001
+  Neliels Òakars pÆrveidojot spraitu spanu zØmñıanas funkcijas asemblera
+ versijas pÆrveidoıanu no 8-bitu uz 16-bitu versiju - rezultÆts ir mazliet
+ neefektØvÆks, bet strÆdÆjoıs.
+  No struktİras draw_vertex_t pilnØbÆ izmesti ÆrÆ lauki s un t.
+30-04-2001
+  SÆku veidot iepriekıñju poligonu aprñóinÆıanu.
+  Izlaboju kõİdu, kas radØja SIGSEGV softa un OpenGL versijÆs.
+02-05-2001
+  Salaboju staigÆıanu zem İdens.
+  Atradu ÆtrÆkas ekrÆna atjaunoıanas versijas DOS versijai.
+  Turpinu poligonu iepriekıñjo aprñóinÆıanu.
+03-05-2001
+  Salaboju skatØıanos ar klaviatİru.
+  Poliobjektu kustñıanÆs saglabÆ virsotnñs z koordinÆti 0.
+  MñÖinu atrast kõİdu glbsp kura Hexen pirmajÆ lØmenØ sadala sektorus ar
+ poliobjektiem.
+04-05-2001
+  AtrisinÆju poliobjektu problñmu glbsp.
+  PÆrstrÆdÆju glvis, tagad izmanto kveika algoritmu, daudz precØzÆks, diem÷ñl
+ strÆdÆ daudz lñnÆk. Bet toties Ætrais re÷Øms dod reÆlus datus, tiesa diezgan
+ aptuvenus, bet tas ir labÆk kÆ nekas.
+05-05-2001
+  Gatavoju versiju 1.7. PagaidÆm atteicos no poligonu iepriekıaprñóinÆıanas.
+  Cerams ka izlaboju kõİdu, kad da÷reiz pñc starplØme·u statistikas pÆrlec
+ vairÆkus lØme·us.
+  glvis pÆrgÆju uz 2D vektoriem, nedaudz ÆtrÆk.
+
+******************************************************************************
+                            VERSIJA 1.7
+******************************************************************************
+
+08-05-2001
+  StrÆdÆju pie glvis, bija liekas pÆrbaudes (nav vajadzØgas 2D gadIjumÆ), kÆ
+ arØ daudzi cikli tika atrullñti. RezultÆts ir µTRS. Fantastiski Ætrs. Tik
+ Ætrs, ka PVS kompilÆcija prasa minİtes, nevis stundas.
+  AtbrØvojos no ScreenPitch, jo visos draiveros bloki ir no sistñmas atmi·as.
+ PÆrveidoju skrØnıotus. Salaboju debesu zØmñıanu Direct3D draiverØ, vñl pÆris
+ kõİdas Windows versijÆ.
+09-05-2001
+  Pie spñles datiem pievienoju RGB tabulu.
+  ProgrammÆs pievienoju tikla pazi·ojumu funkcijas.
+  Atseviıóı modulis ska·as datu funkcijÆm.
+  SÆku ieviest "partikles".
+10-05-2001
+  Pabeidzu darbu pie partiklñm. Pievienoju iespñju programmÆm apstrÆdÆt
+ neatpazØtos pazi·ojumus. Partikõu apstrÆde notiek tikai klienta prog÷os.
+  Atjaunota lØme·a sadalØıana.
+  Pievienoju iespñju izmantot veco ekrÆna attiecØbu.
+11-05-2001
+  PamatØga darbs pie lØme·a iepriekıñjÆs apstrÆdes. GrØdas un griesti jau tiek
+ sadalØti mazÆkos gabalos.
+12-05-2001
+  Visa sadalØıana ir pabeigta. RasterizÆcija to jau izmanto.
+14-05-2001
+  Ieviesta virsmu keıatmi·a. Gaismoıana notiek keıatmi·as blokÆ, kurı tagad
+ jau ir gatavs zØmñjums vajadzØgajÆ pikseõa formÆtÆ. VienkÆrıota paıu spanu
+ zØmñıana. Ieviests spanu saraksts, kÆ kveikÆ. Tiek izmantots gaismas maps
+ kÆ rezultÆtÆ dinamiskÆs gaismas strÆdÆ glu÷i kÆ kveikÆ.
+15-05-2001
+  SakÆrtotas spanu zØmñıanas funkcijas.
+  Ieviests mipmapings. òenerñtÆs mipmapu tekstİras izmanto vienu punktu no
+ Òetriem, no kuriem tas tiek veidots. UtilØts tÆs Öenerñs daudz labÆk.
+16-05-2001
+  Izveidoju 16 bitu spanu zØmñıanas funkcijas asemblera versiju. Atradu kÆ
+ labÆk izmantot advancetable 16 bitu gadØjumÆ. Ir asembleris virsmu zØmñıanai
+ gan 8 gan 15/16 bitu versijÆm.
+  Salaboju z-buferÆciju, kad bija redzami õoti tÆli objekti. IeroÒi tiek
+ zØmñti 2 vienØbas no skata punkta.
+17-05-2001
+  Tika pÆrveidots viss spanu Öenerñıanas algoritms uz kveika algoritmu kurÆ
+ spani tiek Öenerñti izmantojot poligonu malu sarakstu. Problñma ir - kÆ bİs
+ ar maskñtajÆm virsmÆm un debesØm.
+  DinamiskÆs gaismas ir skriptu (prog÷u) pÆrzi·Æ.
+18-05-2001
+  Mipmapu ÖenerÆcija ·em vñrÆ visus Òetrus izejas tekseõus un atrod labÆko
+ krÆsu.
+  Doom dinamiskÆs gaismas ir efekts, nevis pilnas gaismas spaiti.
+  Izveidoju statiskÆs gaismas. Katrai apgaismotai virsmai ir gaismas maps.
+ Kautkas nestrÆdÆ kÆ vajag.
+19-05-2001
+  StatiskÆs gaismas strÆdÆ. ArØ spraiti tiek pareizi apgaismoti ·emot vñrÆ
+ gaismas mapu un dinamiskÆs gaismas.
+  Tiek korekti attØrØta dinamisko gaismu atmi·a, vairs nebİs mistiskas gaismas
+ no iepriekıñjÆ lØma·a.
+21-05-2001
+  Doom-Æ izveidoju eksploziju ar dziestoıu dinamisko gaismu un labi daudz
+ partiklñm. ArØ spñlñtÆja ıaujamieroÒi dod dinamisko gaismu.
+  Komandu alianses tiek saglabÆtas konfigurÆcijas failÆ.
+  OpenGL izmanto z-triku lai izveirØtos no Z-bufera dzñıanas.
+  Izveidoju primitØvu maskñto spanu Öenerñıanu. Baigi lñni. TÆ vietÆ labÆk un
+ ÆtrÆk ir maskñtÆs virsmas zØmñt kÆ spraitus, ko es tagad arØ daru.
+22-05-2001
+  Izmetu ÆrÆ z-gaismu tabulas arØ no OpenGL un Direct3D.
+  AtbrØvojos no draw_vertex_t. Debesis tiek zØmñtas kÆ kuba apkÆrt lØmenim.
+ VienØgÆs problñmas ir dubultdebesis un pietiekoıi liels attÆlums priekı lai
+ ar OpenGL un Direct3D tÆs nebİtu par tuvu.
+23-05-2001
+  Doom-Æ monstru ıauıana dod dinamisko gaismu.
+  32-bitu krÆsas - izskatÆs satriecoıi labi, it Øpaıi dinamiskÆs gaismas.
+ Galvenais ka tas viss bija õoti Ætri, it Øpaıi ·emotvñrÆ to, ka ir arØ visi
+ asemblera faili.
+  Allegro video draiveris tagad pats izveido spñles BITMAP objektu, tÆ atmi·a
+ tiek rezervñta no zonas atmi·as. VairÆk nav jÆatstÆj atmi·a priekı Allegro.
+  Poligonu malas tiek pievienotas uzreiz pñc klipinga. Kautkas vñl nav kÆ
+ vajag.
+24-05-2001
+  Atradu vainu malu pievienoıanÆ.
+  Doom-Æ salaboju dekorÆciju augstumus.
+25-05-2001
+  OpenGL izveidoju virsmu gaismoıanu ar "spñka metodi".
+29-05-2001
+  PÆris vietÆs atbrØvojos no mainØgÆ Game.
+01-06-2001
+  Nelieli pÆrveidojumi prog÷u izpildñ. Steka indeks beidzot aizvietots ar
+ steka pointeri un lokÆlie mainØgie tiek ·emti no steka. Tas nozØmñ ka lokÆlo
+ mainØgo izmñrs tiek ierobe÷ots tikai ar steka atmi·as daudzumu.
+  Debesis tiek zØmñtas tikai tad, ja kÆda no debesu virsmÆm ir redzama.
+  Pievienoju sektoru gaismu tumıinÆıanu lai padarØtu lØdzØgÆku oriÖinÆlam.
+  DOS laika funkcijÆ izmetu ÆrÆ sametimecount kurı radØja problñmas zemÆs
+ izıóirtspñjÆs uz ÆtrÆm maıØnÆm.
+02-06-2001
+  Monstru ıÆvi·u eksplozijas.
+04-06-2001
+  KrÆsainais apgaismojums iekı softa ... mmmmmm. Un pats galvenais kas priecñ
+ ir tas, ka tas viss ir öOTI vienkÆrıi. Ideja sekojoıa: gaismoıanas funkcija
+ papildus izveido laitmapus krÆsainajam apgaismojumam, protams katrai krÆsas
+ komponentei ir savs maps. KrÆsas laitmaps nosaka ıØs komponentes gaismu.
+ Tiek izveidoti kolormapi katrai krÆsas komponentei kuri, kÆ noprotat, dod
+ attiecØgÆs krÆsas daudzumu atkarØbÆ no ıØs krÆsas gaismas. RezultÆtus
+ apvienojot tiek iegİta rezultñjoıÆ krÆsa. LielÆkam efektam spraiti arØ tiek
+ attiecØgi apgaismoti. KÆ noprotat, tas ne glu÷i strÆdÆ priekı 8 bitu krÆsÆm,
+ varbİt ir vajadzØga cita pieeja. Bet viens ir skaidrs - softa dzi·a zi·Æ man
+ nav konlurentu.
+05-06-2001
+  Migla tagad ir nevis katra poligona parametrs, bet gan globÆlais mainØgais.
+ Tas ir darØts tÆpñc, ka kolormapu patÒoıana padarØtu spñli pÆrÆk lñnu.
+  IzrÆdÆs ka krÆsainais apgaismojums 8 bitu krÆsÆs arØ ir õoti vienkÆrı. Man
+ taÒu ir RGB tabula un tÆs indeks ir 15 bitu krÆsa, kuru es varu aprñóinÆt kÆ
+ 16 bitu re÷ØmÆ, un tad lukapot krÆsu RGB tabulÆ. Izeidoju arØ asemblera
+ versiju, jurÆ tabulas ir nopatÒotas. FiksñtÆis kolormaps netiek atbalstØts.
+  Hexen pievienoju gaismas efektus.
+06-06-2001
+  Pievienoju spanu zØmeıanas "subdivision 16" versiju, nedaudz ÆtrÆka.
+  KrÆsainÆ apgaismojuma 16 un 32 bitu funkciju asemblera versijas.
+07-06-2001
+  Atradu kõİdu funkcijÆ CL_TraceLine - netika palielinÆts validcount. Tagad
+ viss strÆdÆ kÆ vajag un ir korektas ñnas kuras izskatÆs baigi labi, it Øpaıi
+ krÆsainajÆm gaismÆm.
+   Bet lielÆko dienas daõu pavadØju optimizñjot krÆsainÆ apgaismojuma 16 bitu
+  funkcijas no neefektØvÆ kompilÆtora ÖenerñtÆ koda uz daudz labÆku Pentium
+  optimizñtu kodu, "lieliska" nodarboıanÆs.
+08-06-2001
+  Mainot izıóirtspñju netika atbrØvota virsmu keıatmi·a, kas izsauca atmi·as
+ trİkumu mainot izıóirtspñju - izlabots.
+  PÆris dienas atpakaõ DoomWorld publicñja manu skrØnıotu, un tagad dienas
+ bildñm ir arØ komentÆri, kas izvñrtÆs par õoti labu uzzi·as vietu, kur var
+ uzzinÆt, kas patØk un kas nepatØk, kam pievñrst uzmanØbu, kam ne. Piemñram
+ sİdzñjÆs par to, ka OpenGL/Dorect3D nevar mainØt izıóirtspñju spñles laikÆ,
+ bİs jÆpievñrı vairÆk uzmanØbas.
+  OpenGL virsmas bez laitmapiem un dinamiskajÆm gaismÆm tiek zØmñtas bez
+ gaismas mapa. Tekstİras tiek korekti atbrØvotas.
+09-06-2001
+  Virsma ar dinamiskajÆm gaismÆm netiek vairs pÆrzØmñta tajÆ paıÆ kadrÆ.
+11-06-2001
+  Izveidoju Direct3D "rupjÆ spñka" gaismoıanu. MaskñtÆs virsmas gan OpenGL,
+ gan Direct3D tiek zØmñtas vienÆ gaismÆ, gaismoıanai vajag multitekstİras.
+  Priekı Direct3D nedaudz labÆks veids kÆ aizliegt teksturÆciju, tagad pat uz
+ manas kartes strÆdÆ satumıinÆıana, konsole u.t.t.
+  Nedaudz uzlaboju laitmapu Öenerñıanu.
+12-06-2001
+  OpenGL un Direct3D izveidoju gaismu bloku rezervñıanas sistñmu. Debesis
+ tiek zØmñtas ar õoti tÆlu z apgabalu.
+  IzrÆdÆs ka Borland funkcijai rand maksimÆlÆ vñrtØba ir 0x7fff, kas arØ
+ radØja da÷as dØvainØbas.
+13-06-2001
+  Atradu pilnØgi korektu veidu, kÆ Direct3D aizliegt teksturizÆciju, kÆ arØ
+ kÆ noteikt, vai ir vajadzØgas kvadrÆtveida tekstİras. Izveidoju spraitu
+ ıóiroıanu, kuru var izmantot, ja draiverim to vajag. Direct3D sÆku mñÖinÆt
+ izmantot multiteksturizÆciju, mans dzelzis to neatbalsta un ar softu vñl
+ kautkas nestrÆdÆ, droı vien tÆpñc, ka softÆ vienlaicØgi var bİt tikai viena
+ tekstİra. Heretic pievienoti gaismas efekti.
+14-06-2001
+  Divas dienas lØdz relØzei. Ğodien visam jÆbİt kÆrtØbÆ.
+  Lai Direct3D testñtu multitekstİras jÆizmanto references rasteraizers. Viss
+ aizgÆja kÆ smñrñts.
+  Salaboju debesis.
+  Pievienoju Direct3D iespñju koriÖñt tekstİras koordinÆtes kartñm, kurÆs
+ lineÆrÆ filtrÆcija nekorekti strÆdÆ.
+  Izveidoju jaunu video re÷Øma menu.
+  Hmmmm, izskatÆs, ka viss ir.
+15-06-2001
+  PñdñjÆ brØdØ da÷i sØki labojumi, testñıana.
+
+******************************************************************************
+                            VERSIJA 1.8
+******************************************************************************

@@ -1,0 +1,331 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//  CheckMissileSpawn
+//
+// 	Returns true if the missile is at a valid spawn point, otherwise
+// explodes it and returns false.
+//
+//==========================================================================
+
+int CheckMissileSpawn(mobj_t* missile)
+{
+	// move a little forward so an angle can be computed if it
+	// immediately explodes
+	vma(missile->origin, missile->velocity, frametime / 2.0, missile->origin);
+	if (!P_TryMove(missile, missile->origin.x, missile->origin.y))
+	{
+		P_ExplodeMissile(missile);
+		return false;
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  SpawnMissile
+//
+//	Returns NULL if the missile exploded immediately, otherwise returns
+// a mobj_t pointer to the missile.
+//
+//==========================================================================
+
+mobj_t* SpawnMissile(mobj_t* source, mobj_t* dest, int type)
+{
+	float		z;
+	mobj_t		*th;
+	TVec		dir;
+
+	switch (type)
+	{
+		case MT_MNTRFX1: // Minotaur swing attack missile
+			z = source->origin.z + 40.0;
+			break;
+		case MT_MNTRFX2: // Minotaur floor fire missile
+			z = ONFLOORZ;
+			break;
+		case MT_SRCRFX1: // Sorcerer Demon fireball
+			z = source->origin.z + 48.0;
+			break;
+		case MT_KNIGHTAXE: // Knight normal axe
+		case MT_REDAXE: // Knight red power axe
+			z = source->origin.z + 36.0;
+			break;
+		default:
+			z = source->origin.z + 32.0;
+			break;
+	}
+	z -= source->floorclip;
+	th = P_SpawnMobj(source->origin.x, source->origin.y, z, type);
+	if (th->sound_sight)
+	{
+		StartSound(th, th->sound_sight);
+	}
+	th->target = source; // Originator
+	vsub(dest->origin, source->origin, dir);
+	if (dest->translucency)
+	{ // Invisible target
+		VectorRotateAroundZ(&dir, (P_Random() - P_Random()) << 21);
+	}
+	vnorm(dir);
+	vscale(dir,	th->speed, th->velocity);
+	VectorAngles(&dir, &th->angles);
+	return CheckMissileSpawn(th) ? th : NULL;
+}
+
+//==========================================================================
+//
+//  SpawnMissileAngles
+//
+//	Returns NULL if the missile exploded immediately, otherwise returns
+// a mobj_t pointer to the missile.
+//
+//==========================================================================
+
+mobj_t* SpawnMissileAngles(mobj_t* source, int type, angle_t yaw, angle_t pitch)
+{
+	float	z;
+	mobj_t*	mo;
+	TVec dir;
+
+	switch (type)
+	{
+		case MT_MNTRFX1: // Minotaur swing attack missile
+			z = source->origin.z + 40.0;
+			break;
+		case MT_MNTRFX2: // Minotaur floor fire missile
+			z = ONFLOORZ;
+			break;
+		case MT_SRCRFX1: // Sorcerer Demon fireball
+			z = source->origin.z + 48.0;
+			break;
+		default:
+			z = source->origin.z + 32.0;
+			break;
+	}
+	z -= source->floorclip;
+	mo = P_SpawnMobj(source->origin.x, source->origin.y, z, type);
+	if (mo->sound_sight)
+	{
+		StartSound(mo, mo->sound_sight);
+	}
+	mo->target = source; // Originator
+	mo->angles.yaw = yaw;
+	mo->angles.pitch = pitch;
+	AngleVector(&mo->angles, &dir);
+	mo->velocity = mo->speed * dir;
+	return (CheckMissileSpawn(mo) ? mo : NULL);
+}
+
+//==========================================================================
+//
+//  SpawnPlayerMissile
+//
+//	Tries to aim at a nearby monster
+//
+//==========================================================================
+
+mobj_t* SpawnPlayerMissile(mobj_t* source, int type)
+{
+	TAVec		angles;
+	TVec		vforward;
+	float 		x, y, z;
+
+	// Try to find a target
+	avcpy(source->angles, angles);
+	AimLineAttack(source, &angles, 16.0 * 64.0);
+	if (!linetarget)
+	{
+		angles.yaw += 1 << 26;
+		AimLineAttack(source, &angles, 16.0 * 64.0);
+		if (!linetarget)
+		{
+			angles.yaw -= 2 << 26;
+			AimLineAttack(source, &angles, 16.0 * 64.0);
+			if (!linetarget)
+			{
+				angles.yaw += 1 << 26;
+			}
+		}
+	}
+
+	x = source->origin.x;
+	y = source->origin.y;
+	z = source->origin.z + 32.0 - tan(source->angles.pitch);
+	z -= source->floorclip;
+	MissileMobj = P_SpawnMobj(x, y, z, type);
+	if (MissileMobj->sound_sight)
+	{
+		StartSound(MissileMobj, MissileMobj->sound_sight);
+	}
+	MissileMobj->target = source;
+	avcpy(angles, MissileMobj->angles);
+	AngleVector(&angles, &vforward);
+	vscale(vforward, MissileMobj->speed, MissileMobj->velocity);
+	if (MissileMobj->type == MT_BLASTERFX1)
+	{
+		// Ultra-fast ripper spawning missile
+		vma(MissileMobj->origin, MissileMobj->velocity, frametime / 8.0,
+			MissileMobj->origin);
+	}
+	else
+	{
+		// Normal missile
+		vma(MissileMobj->origin, MissileMobj->velocity, frametime / 2.0,
+			MissileMobj->origin);
+	}
+	if (!P_TryMove(MissileMobj, MissileMobj->origin.x, MissileMobj->origin.y))
+	{
+		// Exploded immediately
+		P_ExplodeMissile(MissileMobj);
+		return NULL;
+	}
+	return MissileMobj;
+}
+
+//==========================================================================
+//
+//  SpawnPlayerMissileAngle
+//
+//==========================================================================
+
+mobj_t* SpawnPlayerMissileAngle(mobj_t* source, int type, angle_t angle)
+{
+	mobj_t		*th;
+	TAVec		angles;
+	TVec		vforward;
+	float 		x, y, z;
+
+	//
+	// see which target is to be aimed at
+	//
+	avcpy(source->angles, angles);
+	angles.yaw = angle;
+	AimLineAttack(source, &angles, 16.0 * 64.0);
+	if (!linetarget)
+	{
+		angles.yaw += 1 << 26;
+		AimLineAttack(source, &angles, 16.0 * 64.0);
+		if (!linetarget)
+		{
+			angles.yaw -= 2 << 26;
+			AimLineAttack(source, &angles, 16.0 * 64.0);
+			if (!linetarget)
+			{
+				angles.yaw = angle;
+			}
+		}
+	}
+	x = source->origin.x;
+	y = source->origin.y;
+	z = source->origin.z + 4.0 * 8.0 - tan(source->angles.pitch);
+	z -= source->floorclip;
+	th = P_SpawnMobj(x, y, z, type);
+	if (th->sound_sight)
+	{
+		StartSound(th, th->sound_sight);
+	}
+	th->target = source;
+	avcpy(angles, th->angles);
+	AngleVector(&angles, &vforward);
+	vscale(vforward, th->speed, th->velocity);
+	return (CheckMissileSpawn(th) ? th : NULL);
+}
+
+//==========================================================================
+//
+//	P_SeekerMissile
+//
+//	The missile specialmobj1 field must be mobj_t *target. Returns true if
+// target was tracked, false if not.
+//
+//==========================================================================
+
+boolean P_SeekerMissile(mobj_t *actor, angle_t thresh, angle_t turnMax)
+{
+	int		dir;
+	float	dist;
+	angle_t delta;
+	angle_t angle;
+	mobj_t	*target;
+
+	target = actor->specialmobj1;
+	if (!target)
+	{
+		return false;
+	}
+	if (!(target->flags & MF_SHOOTABLE))
+	{
+		// Target died
+		actor->specialmobj1 = NULL;
+		return false;
+	}
+	dir = P_FaceMobj(actor, target, &delta);
+	if (delta > thresh)
+	{
+		delta >>= 1;
+		if (delta > turnMax)
+		{
+			delta = turnMax;
+		}
+	}
+	if (dir)
+	{ // Turn clockwise
+		actor->angles.yaw += delta;
+	}
+	else
+	{ // Turn counter clockwise
+		actor->angles.yaw -= delta;
+	}
+	angle = actor->angles.yaw;
+	actor->velocity.x = actor->speed * cos(angle);
+	actor->velocity.y = actor->speed * sin(angle);
+	if (actor->origin.z + actor->height < target->origin.z ||
+		target->origin.z + target->height < actor->origin.z)
+	{
+		// Need to seek vertically
+		dist = MobjDist2(target, actor);
+		dist = dist / actor->speed;
+		if (dist < 1.0)
+		{
+			dist = 1.0;
+		}
+		actor->velocity.z = (target->origin.z - actor->origin.z) / dist;
+	}
+	return true;
+}
+

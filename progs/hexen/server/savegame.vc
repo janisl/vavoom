@@ -1,0 +1,220 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+void G_DeathMatchSpawnPlayer(int playernum);
+void P_SpawnPlayer(mthing_t *mthing);
+
+//==========================================================================
+//
+//	ArchivePlayer
+//
+//==========================================================================
+
+void ArchivePlayer(player_t *player)
+{
+}
+
+//==========================================================================
+//
+//	UnarchivePlayer
+//
+//==========================================================================
+
+void UnarchivePlayer(player_t *player)
+{
+	player->attacker = NULL;
+	player->poisoner = NULL;
+}
+
+//==========================================================================
+//
+//	ArchiveMobj
+//
+//==========================================================================
+
+void ArchiveMobj(mobj_t *mobj)
+{
+	boolean corpse;
+
+	corpse = mobj->flags & MF_CORPSE;
+	if (corpse)
+	{
+		mobj->target = MobjToNum(NULL);
+	}
+	else
+	{
+		mobj->target = MobjToNum(mobj->target);
+	}
+
+	switch (mobj->type)
+	{
+		// Just specialmobj1
+		case MT_BISH_FX:
+		case MT_HOLY_FX:
+		case MT_DRAGON:
+		case MT_THRUSTFLOOR_UP:
+		case MT_THRUSTFLOOR_DOWN:
+		case MT_MINOTAUR:
+		case MT_SORCFX1:
+		case MT_MSTAFF_FX2:
+			if (corpse)
+			{
+				mobj->specialmobj1 = MobjToNum(NULL);
+			}
+			else
+			{
+				mobj->specialmobj1 = MobjToNum(mobj->specialmobj1);
+			}
+			break;
+
+		// Just specialmobj2
+		case MT_LIGHTNING_FLOOR:
+		case MT_LIGHTNING_ZAP:
+			if (corpse)
+			{
+				mobj->specialmobj2 = MobjToNum(NULL);
+			}
+			else
+			{
+				mobj->specialmobj2 = MobjToNum(mobj->specialmobj2);
+			}
+			break;
+
+		// Both specialmobj1 and specialmobj2
+		case MT_HOLY_TAIL:
+		case MT_LIGHTNING_CEILING:
+			if (corpse)
+			{
+				mobj->specialmobj1 = MobjToNum(NULL);
+				mobj->specialmobj2 = MobjToNum(NULL);
+			}
+			else
+			{
+				mobj->specialmobj1 = MobjToNum(mobj->specialmobj1);
+				mobj->specialmobj2 = MobjToNum(mobj->specialmobj2);
+			}
+			break;
+
+		// Miscellaneous
+		case MT_KORAX:
+			mobj->special1 = 0; // Searching index
+			break;
+
+		default:
+			break;
+	}
+}
+
+//==========================================================================
+//
+//	UnarchiveMobj
+//
+//==========================================================================
+
+void UnarchiveMobj(mobj_t *mobj)
+{
+	mobj->target = NumToMobj(mobj->target);
+	switch (mobj->type)
+	{
+		// Just specialmobj1
+		case MT_BISH_FX:
+		case MT_HOLY_FX:
+		case MT_DRAGON:
+		case MT_THRUSTFLOOR_UP:
+		case MT_THRUSTFLOOR_DOWN:
+		case MT_MINOTAUR:
+		case MT_SORCFX1:
+			mobj->specialmobj1 = NumToMobj(mobj->specialmobj1);
+			break;
+
+		// Just special2
+		case MT_LIGHTNING_FLOOR:
+		case MT_LIGHTNING_ZAP:
+			mobj->specialmobj2 = NumToMobj(mobj->specialmobj2);
+			break;
+
+		// Both special1 and special2
+		case MT_HOLY_TAIL:
+		case MT_LIGHTNING_CEILING:
+			mobj->specialmobj1 = NumToMobj(mobj->specialmobj1);
+			mobj->specialmobj2 = NumToMobj(mobj->specialmobj2);
+			break;
+
+		default:
+			break;
+	}
+}
+
+//==========================================================================
+//
+//  ArchiveSpecial
+//
+//==========================================================================
+
+void ArchiveSpecial(special_t *spec)
+{
+	spec->sector = SectorToNum(spec->sector);
+}
+
+//==========================================================================
+//
+//  UnarchiveSpecial
+//
+//==========================================================================
+
+void UnarchiveSpecial(special_t *spec)
+{
+	//	Restore sector pointer
+	spec->sector = NumToSector(spec->sector);
+
+	//	Set sector's specialdata
+	if (spec->function == T_MoveCeiling ||
+		spec->function == T_VerticalDoor ||
+		spec->function == T_MoveFloor ||
+    	spec->function == T_PlatRaise ||
+        spec->function == T_BuildPillar ||
+        //spec->function == T_FloorWaggle ||
+		false)
+	{
+		spec->sector->specialdata = spec;
+	}
+
+	//	Add to active ceilings
+	if (spec->function == T_MoveCeiling)
+	{
+		P_AddActiveCeiling(spec);
+	}
+
+	//	Add to active floors
+	if (spec->function == T_MoveFloor)
+	{
+		AddActiveFloor(spec);
+	}
+
+	//	Add to active plats
+	if (spec->function == T_PlatRaise)
+    {
+		P_AddActivePlat(spec);
+    }
+}
+

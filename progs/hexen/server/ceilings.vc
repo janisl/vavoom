@@ -1,0 +1,257 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+//==================================================================
+//==================================================================
+//
+//		CEILINGS
+//
+//==================================================================
+//==================================================================
+
+enum
+{
+	CLEV_LOWERTOFLOOR,
+	CLEV_RAISETOHIGHEST,
+	CLEV_LOWERANDCRUSH,
+	CLEV_CRUSHANDRAISE,
+	CLEV_LOWERBYVALUE,
+	CLEV_RAISEBYVALUE,
+	CLEV_CRUSHRAISEANDSTAY,
+	CLEV_MOVETOVALUETIMES8
+};
+
+special_t	activeceilings;
+
+//==================================================================
+//
+//  P_AddActiveCeiling
+//
+//	Add an active ceiling
+//
+//==================================================================
+
+void P_AddActiveCeiling(special_t *c)
+{
+	c->prev = activeceilings.prev;
+    c->next = &activeceilings;
+	c->prev->next = c;
+    c->next->prev = c;
+}
+
+//==================================================================
+//
+//  P_RemoveActiveCeiling
+//
+//	Remove a ceiling's thinker
+//
+//==================================================================
+
+void P_RemoveActiveCeiling(special_t *c)
+{
+	c->prev->next = c->next;
+    c->next->prev = c->prev;
+	c->sector->specialdata = NULL;
+	RemoveSpecialThinker(c);
+	TagFinished(c->sector->tag);
+}
+
+//==================================================================
+//
+//	T_MoveCeiling
+//
+//==================================================================
+
+void T_MoveCeiling(special_t *ceiling)
+{
+	int			res;
+
+	switch (ceiling->direction)
+	{
+		case 1:         // UP
+			res = T_MovePlane(ceiling->sector, ceiling->speed,
+					ceiling->topheight, false, 1, ceiling->direction);
+			if (res == RES_PASTDEST)
+			{
+				StopSequence(&ceiling->sector->soundorg);
+				switch (ceiling->type)
+				{
+					case CLEV_CRUSHANDRAISE:
+						ceiling->direction = -1;
+						ceiling->speed = ceiling->speed * 2.0;
+						break;
+					default:
+						P_RemoveActiveCeiling(ceiling);
+						break;
+				}
+			}
+			break;
+		case -1:        // DOWN
+			res = T_MovePlane(ceiling->sector, ceiling->speed,
+				ceiling->bottomheight, ceiling->crush, 1, ceiling->direction);
+			if (res == RES_PASTDEST)
+			{
+				StopSequence(&ceiling->sector->soundorg);
+				switch (ceiling->type)
+				{
+					case CLEV_CRUSHANDRAISE:
+					case CLEV_CRUSHRAISEANDSTAY:
+						ceiling->direction = 1;
+						ceiling->speed = ceiling->speed / 2.0;
+						break;
+					default:
+						P_RemoveActiveCeiling(ceiling);
+						break;
+				}
+			} 
+			break;
+	}
+}
+
+//==================================================================
+//
+//	EV_DoCeiling
+//
+//	Move a ceiling up/down and all around!
+//
+//==================================================================
+
+int EV_DoCeiling(line_t *line, int *arg, int type)
+{
+	int			secnum,rtn;
+	sector_t	*sec;
+	special_t	*ceiling;
+
+	secnum = -1;
+	rtn = 0;
+
+	while ((secnum = FindSectorFromTag(arg[0], secnum)) >= 0)
+	{
+		sec = &level->sectors[secnum];
+		if (sec->specialdata)
+			continue;
+
+		//
+		// new door thinker
+		//
+		rtn = 1;
+		ceiling = NewSpecialThinker(T_MoveCeiling);
+		sec->specialdata = ceiling;
+		ceiling->sector = sec;
+		ceiling->crush = 0;
+		ceiling->speed = itof(arg[1]) / 8.0;
+		switch (type)
+		{
+			case CLEV_CRUSHRAISEANDSTAY:
+				ceiling->crush = arg[2]; // arg[2] = crushing value
+				ceiling->topheight = sec->ceilingheight;
+				ceiling->bottomheight = sec->floorheight + 8.0;
+				ceiling->direction = -1;
+				break;
+			case CLEV_CRUSHANDRAISE:
+				ceiling->topheight = sec->ceilingheight;
+			case CLEV_LOWERANDCRUSH:
+				ceiling->crush = arg[2]; // arg[2] = crushing value
+			case CLEV_LOWERTOFLOOR:
+				ceiling->bottomheight = sec->floorheight;
+				if (type != CLEV_LOWERTOFLOOR)
+				{
+					ceiling->bottomheight += 8.0;
+				}
+				ceiling->direction = -1;
+				break;
+			case CLEV_RAISETOHIGHEST:
+				ceiling->topheight = FindHighestCeilingSurrounding(sec);
+				ceiling->direction = 1;
+				break;
+			case CLEV_LOWERBYVALUE:
+				ceiling->bottomheight = sec->ceilingheight - itof(arg[2]);
+				ceiling->direction = -1;
+				break;
+			case CLEV_RAISEBYVALUE:
+				ceiling->topheight = sec->ceilingheight + itof(arg[2]);
+				ceiling->direction = 1;
+				break;
+			case CLEV_MOVETOVALUETIMES8:
+			{
+				float destHeight = itof(arg[2]) * 8.0;
+
+				if (arg[3])
+				{
+					destHeight = -destHeight;
+				}
+				if (sec->ceilingheight <= destHeight)
+				{
+					ceiling->direction = 1;
+					ceiling->topheight = destHeight;
+					if (sec->ceilingheight == destHeight)
+					{
+						rtn = 0;
+					}
+				}
+				else if (sec->ceilingheight > destHeight)
+				{
+					ceiling->direction = -1;
+					ceiling->bottomheight = destHeight;
+				}
+				break;
+			}
+			default:
+				rtn = 0;
+				break;
+		}
+		ceiling->tag = sec->tag;
+		ceiling->type = type;
+		P_AddActiveCeiling(ceiling);
+		if (rtn)
+		{
+			StartSequence(&ceiling->sector->soundorg,
+				seq_name[SEQ_PLATFORM + ceiling->sector->seqType]);
+		}
+	}
+	return rtn;
+}
+
+//==================================================================
+//
+//	EV_CeilingCrushStop
+//
+//	Stop a ceiling from crushing!
+//
+//==================================================================
+
+int EV_CeilingCrushStop(line_t *line, int *args)
+{
+	special_t*	c;
+
+	for (c = activeceilings.next; c != &activeceilings; c = c->next)
+	{
+		if (c->tag == args[0])
+		{
+			StopSequence(&c->sector->soundorg);
+			P_RemoveActiveCeiling(c);
+			return 1;
+		}
+	}
+	return 0;
+}

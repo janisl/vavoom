@@ -1,0 +1,111 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//**
+//**	Main menu
+//**
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+struct menu_main_t
+{
+	menu_t			menu;
+	menutext_t		single;
+	menutext_t		multi;
+	menutext_t		options;
+	menutext_t		help;
+	menutext_t		quit;
+	menubitmap_t	logo;
+};
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+void menu_single(void);
+void menu_multi(void);
+void menu_options(void);
+void menu_help(void);
+void menu_quit(void);
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+menu_main_t		MainMenu;
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	menu_main
+//
+//==========================================================================
+
+void menu_main(void)
+{
+	int x;
+	int y;
+
+	x = 97;
+	y = 80;
+
+    InitMenu(&MainMenu.menu);
+
+	if (local_server)
+	{
+		MenuText_InitFunc(&MainMenu.single, x, y, "Single Player", TEXT_BIG, menu_single);
+		AddMenuItem(&MainMenu.menu, &MainMenu.single);
+		y += 18;
+	}
+
+	MenuText_InitFunc(&MainMenu.multi, x, y, "Multiplayer", TEXT_BIG, menu_multi);
+	AddMenuItem(&MainMenu.menu, &MainMenu.multi);
+	y += 18;
+
+	MenuText_InitFunc(&MainMenu.options, x, y, "Options", TEXT_BIG, menu_options);
+	AddMenuItem(&MainMenu.menu, &MainMenu.options);
+	y += 18;
+
+#ifndef DOOM2
+	if (shareware)
+	{
+		MenuText_InitFunc(&MainMenu.help, x, y, "Read This!", TEXT_BIG, menu_help);
+	}
+	else
+#endif
+	{
+		MenuText_InitFunc(&MainMenu.help, x, y, "Help", TEXT_BIG, menu_help);
+	}
+	AddMenuItem(&MainMenu.menu, &MainMenu.help);
+	y += 18;
+
+	MenuText_InitFunc(&MainMenu.quit, x, y, "Quit game", TEXT_BIG, menu_quit);
+	AddMenuItem(&MainMenu.menu, &MainMenu.quit);
+
+	MenuBitmap_Init(&MainMenu.logo, 94, 2, MNF_INACTIVE, "M_DOOM", PIC_PATCH);
+	AddMenuItem(&MainMenu.menu, &MainMenu.logo);
+
+    PushMenu(&MainMenu.menu);
+}
+

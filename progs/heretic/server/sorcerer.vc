@@ -1,0 +1,344 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	A_Sor1Chase
+//
+//==========================================================================
+
+void A_Sor1Chase(mobj_t* actor)
+{
+	if (actor->special1)
+	{
+		actor->special1--;
+		actor->time -= 0.1;
+	}
+	A_Chase(actor);
+}
+
+//==========================================================================
+//
+//	A_Srcr1Attack
+//
+//	Sorcerer demon attack.
+//
+//==========================================================================
+
+void A_Srcr1Attack(mobj_t* actor)
+{
+	mobj_t*	mo;
+	TAVec	angles;
+	angle_t	angle;
+
+	if (!actor->target)
+	{
+		return;
+	}
+	StartSound(actor, actor->sound_attack);
+	if (P_CheckMeleeRange(actor))
+	{
+		DamageMobj(actor->target, actor, actor, HITDICE(8));
+		return;
+	}
+	if (actor->health > (actor->spawnhealth / 3) * 2)
+	{
+		// Spit one fireball
+		SpawnMissile(actor, actor->target, MT_SRCRFX1);
+	}
+	else
+	{
+		// Spit three fireballs
+		mo = SpawnMissile(actor, actor->target, MT_SRCRFX1);
+		if (mo)
+		{
+			VectorAngles(&mo->velocity, &angles);
+			angle = mo->angles.yaw;
+			SpawnMissileAngles(actor, MT_SRCRFX1, angle - ANGLE_1 * 3, angles.pitch);
+			SpawnMissileAngles(actor, MT_SRCRFX1, angle + ANGLE_1 * 3, angles.pitch);
+		}
+		if (actor->health < actor->spawnhealth / 3)
+		{
+			// Maybe attack again
+			if (actor->special1)
+			{
+				// Just attacked, so don't attack again
+				actor->special1 = 0;
+			}
+			else
+			{
+				// Set state to attack again
+				actor->special1 = 1;
+				SetMobjState(actor, S_SRCR1_ATK4);
+			}
+		}
+	}
+}
+
+//==========================================================================
+//
+//	A_Sor1Pain
+//
+//==========================================================================
+
+void A_Sor1Pain(mobj_t* actor)
+{
+	actor->special1 = 20; // Number of steps to walk fast
+	A_Pain(actor);
+}
+
+//==========================================================================
+//
+//	A_SorZap
+//
+//==========================================================================
+
+void A_SorZap(mobj_t* actor)
+{
+	StartSoundName(NULL, "SorcererZap");
+}
+
+//==========================================================================
+//
+//	A_SorcererRise
+//
+//==========================================================================
+
+void A_SorcererRise(mobj_t* actor)
+{
+	mobj_t*	mo;
+
+	actor->flags &= ~MF_SOLID;
+	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_SORCERER2);
+	SetMobjState(mo, S_SOR2_RISE1);
+	mo->angles.yaw = actor->angles.yaw;
+	mo->target = actor->target;
+}
+
+//==========================================================================
+//
+//	A_SorRise
+//
+//==========================================================================
+
+void A_SorRise(mobj_t* actor)
+{
+	StartSoundName(NULL, "SorcererRise");
+}
+
+//==========================================================================
+//
+//	A_SorSightSnd
+//
+//==========================================================================
+
+void A_SorSightSnd(mobj_t* actor)
+{
+	StartSoundName(NULL, "SorcererSight");
+}
+
+//==========================================================================
+//
+//	A_Srcr2Decide
+//
+//==========================================================================
+
+void A_Srcr2Decide(mobj_t* actor)
+{
+	int		chance;
+
+	if (!BossSpotCount)
+	{
+		// No spots
+		return;
+	}
+    switch (actor->health / (actor->spawnhealth / 8))
+    {
+     case 0: chance = 192; break;
+     case 1: chance = 120; break;
+     case 2: chance = 120; break;
+     case 3: chance = 120; break;
+     case 4: chance = 64; break;
+     case 5: chance = 64; break;
+     case 6: chance = 32; break;
+     case 7: chance = 16; break;
+     case 8: chance = 0; break;
+    }
+	if (P_Random() < chance)
+	{
+		DSparilTeleport(actor);
+	}
+}
+
+//==========================================================================
+//
+//	A_Srcr2Attack
+//
+//==========================================================================
+
+void A_Srcr2Attack(mobj_t* actor)
+{
+	int 	chance;
+
+	if (!actor->target)
+	{
+		return;
+	}
+	StartSound(NULL, actor->sound_attack);
+	if (P_CheckMeleeRange(actor))
+	{
+		DamageMobj(actor->target, actor, actor, HITDICE(20));
+		return;
+	}
+	chance = actor->health < actor->spawnhealth / 2 ? 96 : 48;
+	if (P_Random() < chance)
+	{
+		// Wizard spawners
+		SpawnMissileAngles(actor, MT_SOR2FX2, actor->angles.yaw - ANG45, ANG90 / 3);
+		SpawnMissileAngles(actor, MT_SOR2FX2, actor->angles.yaw + ANG45, ANG90 / 3);
+	}
+	else
+	{
+		// Blue bolt
+		SpawnMissile(actor, actor->target, MT_SOR2FX1);
+	}
+}
+
+//==========================================================================
+//
+//	A_Sor2DthInit
+//
+//==========================================================================
+
+void A_Sor2DthInit(mobj_t* actor)
+{
+	actor->special1 = 7; // Animation loop counter
+	P_Massacre(); // Kill monsters early
+}
+
+//==========================================================================
+//
+//  A_SorDSph
+//
+//==========================================================================
+
+void A_SorDSph(mobj_t* actor)
+{
+	StartSoundName(NULL, "SorcererDeath");
+}
+
+//==========================================================================
+//
+//	A_Sor2DthLoop
+//
+//==========================================================================
+
+void A_Sor2DthLoop(mobj_t* actor)
+{
+	if (--actor->special1)
+	{
+		// Need to loop
+		SetMobjState(actor, S_SOR2_DIE4);
+	}
+}
+
+//==========================================================================
+//
+//	A_SorDExp
+//
+//==========================================================================
+
+void A_SorDExp(mobj_t* actor)
+{
+	StartSoundName(NULL, "SorcererExplodes");
+}
+
+//==========================================================================
+//
+//	A_SorDBon
+//
+//==========================================================================
+
+void A_SorDBon(mobj_t* actor)
+{
+	StartSoundName(NULL, "SorcererBones");
+}
+
+//==========================================================================
+//
+//	A_BlueSpark
+//
+//==========================================================================
+
+void A_BlueSpark(mobj_t* actor)
+{
+	int 	i;
+	mobj_t*	mo;
+
+	for (i = 0; i < 2; i++)
+	{
+		mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_SOR2FXSPARK);
+		mo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
+		mo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
+		mo->velocity.z = (1.0 + Random()) * 35.0;
+	}
+}
+
+//==========================================================================
+//
+//	A_GenWizard
+//
+//==========================================================================
+
+void A_GenWizard(mobj_t* actor)
+{
+	mobj_t*		mo;
+	mobj_t*		fog;
+
+	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_WIZARD);
+	mo->origin.z = actor->origin.z - mo->height / 2.0;
+	if (!P_TestMobjLocation(mo))
+	{
+		// Didn't fit
+		P_RemoveMobj(mo);
+		return;
+	}
+	actor->velocity.x = actor->velocity.y = actor->velocity.z = 0.0;
+	SetMobjState(actor, actor->deathstate);
+	actor->flags &= ~MF_MISSILE;
+	fog = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_TFOG);
+	StartSoundName(fog, "Teleport");
+}
+

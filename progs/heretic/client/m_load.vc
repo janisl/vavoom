@@ -1,0 +1,118 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//**
+//**	Load menu
+//**
+//**	Selected from Single Player menu
+//**
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+#define NUMSLOTS	8
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+struct menu_load_t
+{
+	menu_t			menu;
+	menusaveslot_t	slot[NUMSLOTS];
+	menutext_t		title;
+};
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+menu_load_t LoadMenu;
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	load_func
+//
+//==========================================================================
+
+void load_func(menucommon_t *aitem, int msg)
+{
+	menusaveslot_t *item = (menusaveslot_t*)aitem;
+
+	if (msg != MMSG_ACTIVATE)
+	{
+		return;
+	}
+
+	if (!item->status)
+	{
+		// Don't try to load from an empty slot
+		return;
+	}
+
+	CmdBuf_AddText("Load %d\n", item->id);
+	MN_DeactivateMenu();
+  	LocalSound("MenuSelect");
+}
+
+//==========================================================================
+//
+//	menu_load
+//
+//==========================================================================
+
+void menu_load(void)
+{
+	int x = 80;
+	int y = 40;
+	int i;
+
+/*    if (sv.active && svs.max_clients > 1)
+   	{
+		MB_StartMessage("you can't do load while in a net game!", NULL, false);
+		return;
+   	}*/
+
+	enteringText = false;
+
+    InitMenu(&LoadMenu.menu);
+
+	for (i = 0; i < NUMSLOTS; i++)
+	{
+		MenuSaveSlot_Init(&LoadMenu.slot[i], x, y);
+		LoadMenu.slot[i].callback = load_func;
+		LoadMenu.slot[i].id = i;
+        LoadMenu.slot[i].status = SV_GetSaveString(i, ARR2STR(LoadMenu.slot[i].text));
+		AddMenuItem(&LoadMenu.menu, &LoadMenu.slot[i]);
+		y += 18;
+	}
+
+	MenuText_InitTitle(&LoadMenu.title, 160, 24, "LOAD GAME", TEXT_BIGC);
+	AddMenuItem(&LoadMenu.menu, &LoadMenu.title);
+
+    PushMenu(&LoadMenu.menu);
+
+	InitSelector();
+}
+

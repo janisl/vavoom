@@ -1,0 +1,93 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	AfterUnarchiveThinkers
+//
+//==========================================================================
+
+void AfterUnarchiveThinkers(void)
+{
+	P_CreateTIDList();
+	P_InitCreatureCorpseQueue(true); // true = scan for corpses
+}
+
+//==========================================================================
+//
+//  G_InitNew
+//
+//==========================================================================
+
+void G_InitNew(int skill)
+{
+	nomonsters = GetCvar("NoMonsters");
+    fastparm = gameskill == sk_nightmare || GetCvar("Fast");
+    randomclass = GetCvar("RandomClass");
+}
+
+//==========================================================================
+//
+//  StartLevelLoading
+//
+//==========================================================================
+
+void StartLevelLoading(void)
+{
+    bodyqueslot = 0;
+}
+
+//==========================================================================
+//
+//  EndLevelLoading
+//
+//==========================================================================
+
+void EndLevelLoading(void)
+{
+	P_CreateTIDList();
+	P_InitCreatureCorpseQueue(false); // false = do NOT scan for corpses
+}
+
+//==========================================================================
+//
+//  main
+//
+//==========================================================================
+
+void main(void)
+{
+	InitLava();
+}

@@ -1,0 +1,86 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//**
+//**	Multiplayer menu
+//**
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+struct menu_multi_t
+{
+	menu_t			menu;
+	menutext_t		newgame;
+	menutext_t		joingame;
+	menutext_t		setup;
+	menutext_t		disconnect;
+	menutext_t		title;
+};
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+void menu_new_game(void);
+void menu_join_game(void);
+void menu_psetup(void);
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+menu_multi_t MultiMenu;
+
+// CODE --------------------------------------------------------------------
+
+void menu_multi(void)
+{
+	int x = 97;
+	int y = 40;
+
+    InitMenu(&MultiMenu.menu);
+
+	if (local_server)
+	{
+		MenuText_InitFunc(&MultiMenu.newgame, x, y, "New Game", TEXT_BIG, menu_new_game);
+		AddMenuItem(&MultiMenu.menu, &MultiMenu.newgame);
+		y += 18;
+	}
+
+	MenuText_InitFunc(&MultiMenu.joingame, x, y, "Join Game", TEXT_BIG, menu_join_game);
+	AddMenuItem(&MultiMenu.menu, &MultiMenu.joingame);
+	y += 18;
+
+	MenuText_InitFunc(&MultiMenu.setup, x, y, "Player Setup", TEXT_BIG, menu_psetup);
+	AddMenuItem(&MultiMenu.menu, &MultiMenu.setup);
+	y += 18;
+
+	MenuText_InitCmd(&MultiMenu.disconnect, x, y, "Disconnect", TEXT_BIG, "Disconnect\n");
+	AddMenuItem(&MultiMenu.menu, &MultiMenu.disconnect);
+
+	MenuText_InitTitle(&MultiMenu.title, 160, 24, "MULTIPLAYER", TEXT_BIGC);
+	AddMenuItem(&MultiMenu.menu, &MultiMenu.title);
+
+    PushMenu(&MultiMenu.menu);
+}
+

@@ -1,0 +1,122 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+//==========================================================================
+// Fog Variables:
+//
+//		args[0]		Speed (0..10) of fog
+//		args[1]		Angle of spread (0..128)
+// 		args[2]		Frequency of spawn (1..10)
+//		args[3]		Lifetime countdown
+//		args[4]		Boolean: fog moving?
+//		special1		Internal:  Counter for spawn frequency
+//		special2		Internal:  Index into floatbob table
+//
+//==========================================================================
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//  A_FogSpawn
+//
+//==========================================================================
+
+void A_FogSpawn(mobj_t* actor)
+{
+	mobj_t*	mo=NULL;
+	angle_t	delta;
+
+	if (actor->special1-- > 0) return;
+
+	actor->special1 = actor->args[2];		// Reset frequency count
+
+	switch(P_Random()%3)
+	{
+		case 0:
+			mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_FOGPATCHS);
+			break;
+		case 1:
+			mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_FOGPATCHM);
+			break;
+		case 2:
+			mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_FOGPATCHL);
+			break;
+	}
+
+	if (mo)
+	{
+		delta = actor->args[1];
+		if (delta==0) delta=1;
+		mo->angles.yaw = actor->angles.yaw + (((P_Random()%delta)-(delta>>1))<<24);
+		mo->target = actor;
+		if (actor->args[0] < 1) actor->args[0] = 1;
+		mo->args[0] = (P_Random() % (actor->args[0]))+1;	// P_Random speed
+		mo->args[3] = actor->args[3];						// Set lifetime
+		mo->args[4] = 1;									// Set to moving
+		mo->special2 = P_Random()&63;
+	}
+}
+
+//==========================================================================
+//
+//  A_FogSpawn
+//
+//==========================================================================
+
+void A_FogMove(mobj_t* actor)
+{
+	float 	speed = itof(actor->args[0]);
+	angle_t	angle;
+	int 	weaveindex;
+
+	if (!(actor->args[4])) return;
+
+	if (actor->args[3]-- <= 0)
+	{
+		SetMobjStateNF(actor, actor->deathstate);
+		return;
+	}
+
+	if ((actor->args[3] % 4) == 0)
+	{
+		weaveindex = actor->special2;
+		actor->origin.z += FloatBobOffsets[weaveindex] / 2.0;
+		actor->special2 = (weaveindex + 1) & 63;
+	}
+
+	angle = actor->angles.yaw;
+	actor->velocity.x = speed * cos(angle) * 35.0;
+	actor->velocity.y = speed * sin(angle) * 35.0;
+}
+

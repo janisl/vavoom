@@ -1,0 +1,490 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+int opposite[] =
+{
+  DI_WEST, DI_SOUTHWEST, DI_SOUTH, DI_SOUTHEAST,
+  DI_EAST, DI_NORTHEAST, DI_NORTH, DI_NORTHWEST, DI_NODIR
+};
+int diags[] =
+{
+    DI_NORTHWEST, DI_NORTHEAST, DI_SOUTHWEST, DI_SOUTHEAST
+};
+
+//==========================================================================
+//
+//	P_CheckMeleeRange
+//
+//==========================================================================
+
+int P_CheckMeleeRange(mobj_t *actor)
+{
+    mobj_t	*pl;
+	float	dist;
+	
+    if (!actor->target)
+    {
+		return false;
+	}
+
+    pl = actor->target;
+    dist = MobjDist(pl, actor);
+
+    if (dist >= MELEERANGE - 20.0 + pl->radius)
+	{
+		return false;
+	}
+
+    if (!P_CheckSight(actor, actor->target))
+    {
+		return false;
+	}
+
+    return true;		
+}
+
+//==========================================================================
+//
+//	P_CheckMissileRange
+//
+//==========================================================================
+
+int P_CheckMissileRange(mobj_t *actor)
+{
+    float		dist;
+	
+    if (!P_CheckSight(actor, actor->target))
+    {
+		return false;
+	}
+
+    if (actor->flags & MF_JUSTHIT)
+    {
+		// the target just hit the enemy,
+		// so fight back!
+		actor->flags &= ~MF_JUSTHIT;
+		return true;
+    }
+	
+    if (actor->reactiontime)
+    {
+		return false;	// do not attack yet
+	}
+		
+    // OPTIMIZE: get this from a global checksight
+    dist = MobjDist(actor, actor->target) - 64.0;
+
+    if (!actor->meleestate)
+		dist -= 128.0;	// no melee attack, so fire more
+
+    if (actor->type == MT_VILE)
+    {
+		if (dist > 14.0 * 64.0)
+		    return false;	// too far away
+    }
+	
+
+    if (actor->type == MT_UNDEAD)
+    {
+		if (dist < 196.0)
+		    return false;	// close for fist attack
+		dist /= 2.0;
+    }
+	
+    if (actor->type == MT_CYBORG ||
+    	actor->type == MT_SPIDER ||
+    	actor->type == MT_SKULL)
+    {
+		dist /= 2.0;
+    }
+    
+    if (dist > 200.0)
+		dist = 200.0;
+		
+    if (actor->type == MT_CYBORG && dist > 160.0)
+		dist = 160.0;
+		
+    if (Random() * 256.0 < dist)
+		return false;
+		
+    return true;
+}
+
+//==========================================================================
+//
+//	P_FindOther
+//
+//==========================================================================
+
+int P_FindOther(mobj_t *mo)
+{
+    mobj_t		*mo2;
+
+	mo2 = NULL;
+    while ((mo2 = NextMobj(mo2)))
+    {
+		if (mo2 != mo && mo2->type == mo->type && mo2->health > 0)
+		{
+	    	// other mobj of the same type not dead
+	    	return true;
+		}
+    }
+	return false;
+}
+
+//==========================================================================
+//
+//  P_LookForMonsters
+//
+//==========================================================================
+
+boolean P_LookForMonsters(mobj_t* actor, boolean allaround)
+{
+    mobj_t*		mo;
+    angle_t		an;
+    float		dist;
+
+    for (mo = NextMobj(NULL) ; mo ; mo = NextMobj(mo))
+    {
+		if (mo->health <= 0)
+    		continue;		// dead
+
+		if (mo == actor)
+       		continue;
+
+		if ((mo->type != MT_SKULL) && (mo->type != MT_PLAYER)
+     		&& !(mo->flags & MF_COUNTKILL))
+           	continue;
+
+		if (!P_CheckSight(actor, mo))
+    		continue;		// out of sight
+
+		if (P_Random() > 128)
+            continue;
+
+		if (!allaround)
+		{
+    		an = atan2(mo->origin.y - actor->origin.y,
+    			mo->origin.x - actor->origin.x) - actor->angles.yaw;
+	    
+    		if (an > ANG90 && an < ANG270)
+    		{
+				dist = MobjDist(mo, actor);
+				// if real close, react anyway
+				if (dist > MELEERANGE)
+	    			continue;	// behind back
+    		}
+		}
+		
+		actor->target = mo;
+		return true;
+    }
+   	return false;
+}
+
+//==========================================================================
+//
+//  P_LookForMonsters2
+//
+//==========================================================================
+
+boolean P_LookForMonsters2(mobj_t* actor, boolean allaround)
+{
+    mobj_t*		mo;
+    angle_t		an;
+    float		dist;
+
+	if (!P_CheckSight(actor, players[0].mo))
+    {
+    	return false;	//	Not seen by player
+    }
+
+    for (mo = NextMobj(NULL) ; mo ; mo = NextMobj(mo))
+    {
+		if (mo->health <= 0)
+    		continue;		// dead
+
+		if (mo == actor)
+       		continue;		// self
+
+		if ((mo->type != MT_SKULL) && !(mo->flags & MF_COUNTKILL))
+           	continue;		// not a monster
+
+		if (!P_CheckSight(actor, mo))
+    		continue;		// out of sight
+
+		if (P_Random() > 128)
+            continue;		// sometimes skip
+
+		if (!allaround)
+		{
+    		an = atan2(mo->origin.y - actor->origin.y,
+    			mo->origin.x - actor->origin.x) - actor->angles.yaw;
+	    
+    		if (an > ANG90 && an < ANG270)
+    		{
+				dist = MobjDist(mo, actor);
+				// if real close, react anyway
+				if (dist > MELEERANGE)
+	    			continue;	// behind back
+    		}
+		}
+		
+		actor->target = mo;
+		return true;
+    }
+   	return false;
+}
+
+//==========================================================================
+//
+//	P_LookForPlayers
+//
+//	If allaround is false, only look 180 degrees in front.
+//	Returns true if a player is targeted.
+//
+//==========================================================================
+
+boolean P_LookForPlayers(mobj_t* actor, boolean allaround)
+{
+    int			c;
+    int			stop;
+    player_t*	player;
+    angle_t		an;
+    float		dist;
+
+	if (deathmatch == 3)
+	{
+    	return P_LookForMonsters(actor, allaround);
+	}
+
+	if (!netgame && players[0].spawned && players[0].health <= 0)
+	{
+    	return P_LookForMonsters2(actor, allaround);
+	}
+
+    c = 0;
+    stop = (actor->lastlook - 1) & 3;
+	
+    for ( ; ; actor->lastlook = (actor->lastlook + 1) & (MAXPLAYERS - 1))
+    {
+		if (actor->lastlook == stop)
+		{
+	    	// done looking
+	    	return false;
+		}
+	
+		player = &players[actor->lastlook];
+
+		if (!player->active)
+	    	continue;
+			
+		if (c++ == 2)
+		{
+	    	// done looking
+	    	return false;
+		}
+	
+		if (!player->spawned || !player->mo)
+			continue;	//	not spawned yet
+
+		if (player->health <= 0)
+	    	continue;	// dead
+
+		if (!P_CheckSight(actor, player->mo))
+	    	continue;	//	out of sight
+			
+		if (!allaround)
+		{
+	    	an = atan2(player->mo->origin.y - actor->origin.y,
+				player->mo->origin.x - actor->origin.x) - actor->angles.yaw;
+	    
+	    	if (an > ANG90 && an < ANG270)
+	    	{
+				dist = MobjDist(player->mo, actor);
+				// if real close, react anyway
+				if (dist > MELEERANGE)
+		    		continue;	// behind back
+	    	}
+		}
+		
+		actor->target = player->mo;
+		return true;
+    }
+
+    return false;
+}
+
+//==========================================================================
+//
+//	P_TryWalk
+//
+//	Attempts to move actor on in its current (ob->moveangle) direction.
+// If blocked by either a wall or an actor returns FALSE
+// If move is either clear or blocked only by a door, returns TRUE and sets...
+// If a door is in the way, an OpenDoor call is made to start it opening.
+//
+//==========================================================================
+
+boolean P_TryWalk(mobj_t* actor)
+{	
+    if (!P_Move(actor))
+    {
+		return false;
+    }
+
+    actor->movecount = P_Random() & 15;
+    return true;
+}
+
+//==========================================================================
+//
+//	P_NewChaseDir
+//
+//==========================================================================
+
+void P_NewChaseDir(mobj_t* actor)
+{
+    float		deltax;
+    float		deltay;
+    
+    int			d[3];
+    
+    int			tdir;
+    int			olddir;
+    
+    int			turnaround;
+
+    if (!actor->target)
+	{
+		Error("P_NewChaseDir: called with no target");
+	}
+		
+    olddir = actor->movedir;
+    turnaround = opposite[olddir];
+
+    deltax = actor->target->origin.x - actor->origin.x;
+    deltay = actor->target->origin.y - actor->origin.y;
+
+    if (deltax > 10.0)
+		d[1]= DI_EAST;
+    else if (deltax < -10.0)
+		d[1]= DI_WEST;
+    else
+		d[1]=DI_NODIR;
+
+    if (deltay < -10.0)
+		d[2]= DI_SOUTH;
+    else if (deltay > 10.0)
+		d[2]= DI_NORTH;
+    else
+		d[2]=DI_NODIR;
+
+    // try direct route
+    if (d[1] != DI_NODIR && d[2] != DI_NODIR)
+   	{
+		actor->movedir = diags[((deltay < 0.0) << 1) + (deltax > 0.0)];
+		if (actor->movedir != turnaround && P_TryWalk(actor))
+	    	return;
+   	}
+
+    // try other directions
+    if (P_Random() > 200 || fabs(deltay) > fabs(deltax))
+   	{
+		tdir=d[1];
+		d[1]=d[2];
+		d[2]=tdir;
+   	}
+
+   	if (d[1] == turnaround)
+		d[1] = DI_NODIR;
+   	if (d[2] == turnaround)
+		d[2] = DI_NODIR;
+	
+   	if (d[1] != DI_NODIR)
+   	{
+		actor->movedir = d[1];
+		if (P_TryWalk(actor))
+		{
+    		// either moved forward or attacked
+    		return;
+		}
+   	}
+
+   	if (d[2] != DI_NODIR)
+   	{
+		actor->movedir = d[2];
+
+		if (P_TryWalk(actor))
+    		return;
+   	}
+
+   	// there is no direct path to the player,
+   	// so pick another direction.
+   	if (olddir != DI_NODIR)
+   	{
+		actor->movedir = olddir;
+
+		if (P_TryWalk(actor))
+    		return;
+   	}
+
+   	// randomly determine direction of search
+   	if (P_Random() & 1)
+   	{
+		for (tdir = DI_EAST; tdir<=DI_SOUTHEAST; tdir++)
+		{
+	    	if (tdir != turnaround)
+    		{
+				actor->movedir = tdir;
+		
+				if (P_TryWalk(actor))
+		    		return;
+    		}
+		}
+    }
+   	else
+    {
+		for (tdir=DI_SOUTHEAST; tdir != (DI_EAST-1); tdir--)
+		{
+	    	if (tdir!=turnaround)
+    		{
+				actor->movedir =tdir;
+		
+				if (P_TryWalk(actor))
+		    		return;
+	    	}
+		}
+    }
+
+    if (turnaround !=  DI_NODIR)
+   	{
+		actor->movedir = turnaround;
+		if (P_TryWalk(actor))
+	    	return;
+   	}
+
+    actor->movedir = DI_NODIR;	// can not move
+}
+
+

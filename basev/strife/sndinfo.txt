@@ -1,0 +1,207 @@
+//==========================================================================
+//
+//  World sounds
+//
+//==========================================================================
+
+Switch                          dsswtchn
+BreakGlass                      dsbglass
+SwitchPullChain                 dspulchn
+SwitchKnob                      dsswknob
+SwitchKeyCard                   dskeycrd
+SwitchStone                     dsswston
+SwitchBolt                      dsswbolt
+SwitchScanner                   dsswscan
+SwitchFool                      dsdifool
+SwitchValve                     dsvalve
+
+//==========================================================================
+//  Intro messages
+//==========================================================================
+
+IntroMessage1                   voc91
+IntroMessage2                   voc92
+IntroMessage3                   voc93
+IntroMessage4                   voc94
+IntroMessage5                   voc95
+IntroMessage6                   voc96
+
+//==========================================================================
+//  Log messages
+//==========================================================================
+
+LogMessage1                     voc1
+LogMessage2                     voc2
+LogMessage4                     voc4
+LogMessage6                     voc6
+LogMessage7                     voc7
+LogMessage8                     voc8
+LogMessage9                     voc9
+
+//==========================================================================
+//  Conversations
+//==========================================================================
+
+UnknownMessage1                 voc1101
+HarrisMessage1                  voc1102
+HarrisMessage2                  voc1103
+HarrisMessage3                  voc1104
+HarrisMessage4                  voc1105
+HarrisMessage5                  voc1106
+HarrisMessage6                  voc1107
+HarrisMessage7                  voc1108
+GovernorMourelMessage1          voc1301
+MacilMessage1                   voc1201
+MacilMessage2                   voc1202
+MacilMessage3                   voc1203
+MacilMessage4                   voc1204
+
+//==========================================================================
+//  Quit messages
+//==========================================================================
+
+QuitMessage1                    voc100
+QuitMessage2                    voc101
+QuitMessage3                    voc102
+QuitMessage4                    voc103
+QuitMessage5                    voc104
+
+//==========================================================================
+//  Menu
+//==========================================================================
+
+MenuActivate                    dsswtchn
+MenuMove                        dspstop
+MenuSelect                      dsswknob
+MenuSwitch                      dsstnmov
+MenuPrevious                    dsswtchn
+MenuClose                       dsmtalht
+
+//==========================================================================
+//  Misc sounds
+//==========================================================================
+
+Sound1 dsswish
+Sound2 dsmeatht
+Sound3 dsmtalht
+Sound4 dswpnup
+Sound5 dsrifle
+Sound6 dsmislht
+Sound7 dsflburn
+Sound8 dsflidl
+Sound9 dsagrsee
+Sound10 dsplpain
+Sound11 dspcrush
+Sound12 dspespna
+Sound13 dspespnb
+Sound14 dspespnc
+Sound15 dspespnd
+Sound16 dsagrdpn
+Sound17 dspldeth
+Sound18 dsplxdth
+Sound19 dsslop
+Sound20 dsrebdth
+Sound21 dsagrdth
+Sound22 dslgfire
+Sound23 dssmfire
+Sound24 dsalarm
+Sound25 dsdrlmto
+Sound26 dsdrlmtc
+Sound27 dsdrsmto
+Sound28 dsdrsmtc
+Sound29 dsdrlwud
+Sound30 dsdrswud
+Sound31 dsdrston
+Sound32 dsbdopn
+Sound33 dsbdcls
+Sound37 dsyeah
+Sound38 dsmask
+Sound39 dspstart
+Sound40 dspstop
+Sound41 dsitemup
+Sound43 dswriver
+Sound44 dswfall
+Sound45 dswdrip
+Sound46 dswsplsh
+Sound47 dsrebact
+Sound48 dsagrac1
+Sound49 dsagrac2
+Sound50 dsagrac3
+Sound51 dsagrac4
+Sound52 dsambppl
+Sound53 dsambbar
+Sound54 dstelept
+Sound55 dsratact
+Sound56 dsitmbk
+Sound57 dsxbow
+Sound58 dsburnme
+Sound59 dsoof
+Sound60 dswbrldt
+Sound61 dspsdtha
+Sound62 dspsdthb
+Sound63 dspsdthc
+Sound64 dsrb2pn
+Sound65 dsrb2dth
+Sound66 dsrb2see
+Sound67 dsrb2act
+Sound68 dsfirxpl
+Sound69 dsstnmov
+Sound70 dsnoway
+Sound71 dsrlaunc
+Sound72 dsrflite
+Sound73 dsradio
+Sound78 dssntsee
+Sound79 dssntdth
+Sound80 dssntact
+Sound81 dspgrdat
+Sound82 dspgrsee
+Sound83 dspgrdpn
+Sound84 dspgrdth
+Sound85 dspgract
+Sound86 dsproton
+Sound87 dsprotfl
+Sound88 dsplasma
+Sound89 dsreavat
+Sound90 dsrevbld
+Sound91 dsrevsee
+Sound92 dsreavpn
+Sound93 dsrevdth
+Sound94 dsrevact
+Sound95 dsspisit
+Sound96 dsspdwlk
+Sound97 dsspidth
+Sound98 dsspdatk
+Sound99 dschant
+Sound100 dsstatic
+Sound101 dschain
+Sound102 dstend
+Sound103 dsphoot
+Sound104 dsexplod
+Sound105 dsbarexp
+Sound106 dssigil
+Sound107 dssglhit
+Sound108 dssiglup
+Sound109 dsprgpn
+Sound110 dsprogac
+Sound111 dslorpn
+Sound112 dslorsee
+Sound114 dsinqdth
+Sound115 dsinqact
+Sound116 dsinqsee
+Sound117 dsinqjmp
+Sound118 dsamaln1
+Sound119 dsamaln2
+Sound120 dsamaln3
+Sound121 dsamaln4
+Sound122 dsamaln5
+Sound123 dsamaln6
+Sound124 dsmnalse
+Sound125 dsalnsee
+Sound126 dsalnpn
+Sound127 dsalnact
+Sound128 dsalndth
+Sound129 dsmnaldt
+Sound130 dsreactr
+Sound131 dsairlck
+Sound132 dsdrchno
+Sound133 dsdrchnc

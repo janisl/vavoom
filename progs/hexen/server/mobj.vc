@@ -1,0 +1,2321 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+#define MAX_TID_COUNT		200
+
+#define SMALLSPLASHCLIP		12.0
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+void ActivateMorphWeapon(player_t *player);
+void P_PoisonPlayer(player_t *player, mobj_t *poisoner, int poison);
+void P_PoisonDamage(player_t *player, mobj_t *source, int damage,
+	boolean playPainSound);
+void DropWeapon(player_t *player);
+void SetupPsprites(player_t *player);
+void P_InsertMobjIntoTIDList(mobj_t *mobj, int tid);
+void A_DeQueueCorpse(mobj_t* actor);
+void P_NoiseAlert(mobj_t* target, mobj_t* emmiter);
+mobj_t *P_SpawnMobj(float x, float y, float z, int type);
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+int			PuffType;
+mobj_t		*PuffSpawned;
+mobj_t 		*MissileMobj;
+mobj_t 		*BlockingMobj;
+mobj_t*		linetarget;	// who got hit (or NULL)
+
+int PStateNormal[NUMCLASSES] =
+{
+	S_FPLAY,
+	S_CPLAY,
+	S_MPLAY,
+	S_PIGPLAY
+};
+
+int PStateRun[NUMCLASSES] = 
+{
+	S_FPLAY_RUN1,
+	S_CPLAY_RUN1,
+	S_MPLAY_RUN1,
+	S_PIGPLAY_RUN1
+};
+
+int 	TIDList[MAX_TID_COUNT+1]; // +1 for termination marker
+mobj_t 	*TIDMobj[MAX_TID_COUNT];
+
+int classFlags[] =
+{
+	MTF_FIGHTER,
+	MTF_CLERIC,
+	MTF_MAGE
+};
+
+float			windTab[3] = {5.0 / 32.0, 10.0 / 32.0, 25.0 / 32.0};
+
+// CODE --------------------------------------------------------------------
+
+//===========================================================================
+//
+//	P_GetThingFloorType
+//
+//===========================================================================
+
+int P_GetThingFloorType(mobj_t *thing)
+{
+	return TerrainType(thing->floor->pic);
+}
+
+//==========================================================================
+//
+//	SetOrigin
+//
+//==========================================================================
+
+void SetOrigin(mobj_t *mobj, TVec origin)
+{
+	float		space;
+
+	mobj->origin = origin;
+	// Set subsector and/or block links.
+	P_SetThingPosition(mobj);
+	if (origin.z == ONFLOORZ)
+	{
+		mobj->origin.z = mobj->floorz;
+	}
+	else if (origin.z == ONCEILINGZ)
+	{
+		mobj->origin.z = mobj->ceilingz - mobj->height;
+	}	
+	else if (origin.z == FLOATRANDZ)
+	{
+		space = mobj->ceilingz - mobj->height - mobj->floorz;
+		if (space > 48.0)
+		{
+			space -= 40.0;
+			mobj->origin.z = space * Random() + mobj->floorz + 40.0;
+		}
+		else
+		{
+			mobj->origin.z = mobj->floorz;
+		}
+	}
+	else if (mobj->flags2 & MF2_FLOATBOB)
+	{
+		mobj->origin.z = mobj->floorz + origin.z;		// artifact z passed in as height
+	}
+	if (mobj->flags2 & MF2_FLOORCLIP &&
+		P_GetThingFloorType(mobj) >= FLOOR_LIQUID &&
+		mobj->origin.z == mobj->subsector->sector->floorheight)
+	{
+		mobj->floorclip = 10.0;
+	}
+	else
+	{
+		mobj->floorclip = 0.0;
+	}
+}
+
+//==========================================================================
+//
+//	CopyMThing
+//
+//==========================================================================
+
+void CopyMThing(mthing_t *from, mthing_t *to)
+{
+	to->tid = from->tid;
+	to->x = from->x;
+	to->y = from->y;
+	to->height = from->height;
+	to->angle = from->angle;
+	to->type = from->type;
+	to->options = from->options;
+	to->special = from->special;
+	to->arg1 = from->arg1;
+	to->arg2 = from->arg2;
+	to->arg3 = from->arg3;
+	to->arg4 = from->arg4;
+	to->arg5 = from->arg5;
+}
+
+//==========================================================================
+//
+//	generic_mobj_start
+//
+//==========================================================================
+
+void generic_mobj_start(mobj_t *self, mthing_t *mthing)
+{
+	state_t 	*st;
+
+	self->lastlook = P_Random() % MAXPLAYERS;
+
+	// Set the state, but do not use P_SetMobjState, because action
+	// routines can't be called yet.  If the spawnstate has an action
+	// routine, it will not be called.
+	st = &states[self->spawnstate];
+	self->time = st->time;
+	self->sprite = st->sprite;
+	self->frame = st->frame;
+	self->statenum = st->statenum;
+	self->nextstate = st->nextstate;
+
+	if (mthing)
+	{
+		float		x, y, z;
+
+		x = mthing->x;
+		y = mthing->y;
+		if (self->type == MT_ZLYNCHED_NOHEART)
+		{
+			// Special stuff
+			P_SpawnMobj(x, y, ONFLOORZ, MT_BLOODPOOL);
+		}
+
+		if (self->flags & MF_SPAWNCEILING)
+		{
+			z = ONCEILINGZ;
+		}
+		else if (self->flags2 & MF2_SPAWNFLOAT)
+		{
+			z = FLOATRANDZ;
+		}
+		else if (self->flags2 & MF2_FLOATBOB)
+		{
+			z = mthing->height;
+		}
+		else
+		{
+			z = ONFLOORZ;
+		}
+		SetOrigin(self, vector(x, y, z));
+		if (z == ONFLOORZ)
+		{
+			self->origin.z += mthing->height;
+		}
+		else if (z == ONCEILINGZ)
+		{
+			self->origin.z -= mthing->height;
+		}
+		P_SetThingPosition(self);
+		self->tid = mthing->tid;
+		self->special = mthing->special;
+		self->args[0] = mthing->arg1;
+		self->args[1] = mthing->arg2;
+		self->args[2] = mthing->arg3;
+		self->args[3] = mthing->arg4;
+		self->args[4] = mthing->arg5;
+		if (self->flags2 & MF2_FLOATBOB)
+		{
+			// Seed random starting index for bobbing motion
+			self->health = P_Random();
+			self->special1f = mthing->height;
+		}
+		if (self->time > 0.0)
+		{
+			self->time = 0.1 + Random() * self->time;
+		}
+		if (self->flags&MF_COUNTKILL)
+		{
+			// Quantize angle to 45 degree increments
+			self->angles.yaw = ANG45*(mthing->angle/45);
+		}
+		else
+		{
+			// Scale angle correctly (source is 0..359)
+			self->angles.yaw = ((mthing->angle<<8)/360)<<24;
+		}
+		if (mthing->options&MTF_AMBUSH)
+		{
+			self->flags |= MF_AMBUSH;
+		}
+		if (mthing->options & MTF_DORMANT)
+		{
+			self->flags2 |= MF2_DORMANT;
+			if (self->type == MT_ICEGUY)
+			{
+				SetMobjState(self, S_ICEGUY_DORMANT);
+			}
+			self->time = -1.0;
+		}
+	}
+	else
+	{
+		SetOrigin(self, self->origin);
+	}
+}
+
+//==========================================================================
+//
+// P_SpawnMobj
+//
+//==========================================================================
+
+mobj_t *P_SpawnMobj(float x, float y, float z, int type)
+{
+	mobj_t 		*mobj;
+
+	mobj = NewMobjThinker();
+	mobj->type = type;
+	mobj->origin = vector(x, y, z);
+	mobjinfo[type].spawnfunc(mobj, NULL);
+	return mobj;
+}
+
+//==========================================================================
+//
+// P_RemoveMobj
+//
+//==========================================================================
+
+void P_RemoveMobj(mobj_t *mobj)
+{
+	// Remove from creature queue
+	if (mobj->flags & MF_COUNTKILL && mobj->flags & MF_CORPSE)
+	{
+		A_DeQueueCorpse(mobj);
+	}
+
+	if (mobj->tid)
+	{
+		// Remove from TID list
+		P_RemoveMobjFromTIDList(mobj);
+	}
+
+	// Free block
+	RemoveMobjThinker(mobj);
+}
+
+//==========================================================================
+//
+//	P_HitFloor
+//
+//==========================================================================
+
+int P_HitFloor(mobj_t *thing)
+{
+	mobj_t 	*mo;
+	int 	smallsplash=false;
+
+	if (thing->floorz != thing->subsector->sector->floorheight)
+	{
+		// don't splash if landing on the edge above water/lava/etc....
+		return FLOOR_SOLID;
+	}
+
+	// Things that don't splash go here
+	switch (thing->type)
+	{
+		case MT_LEAF1:
+		case MT_LEAF2:
+//		case MT_BLOOD:			// I set these to low mass -- pm
+//		case MT_BLOODSPLATTER:
+		case MT_SPLASH:
+		case MT_SLUDGECHUNK:
+			return FLOOR_SOLID;
+		default:
+			break;
+	}
+
+	// Small splash for small masses
+	if (thing->mass < 10.0) smallsplash = true;
+
+	switch (P_GetThingFloorType(thing))
+	{
+		case FLOOR_WATER:
+			if (smallsplash)
+			{
+				mo = P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ, MT_SPLASHBASE);
+				if (mo) mo->floorclip += SMALLSPLASHCLIP;
+				StartSoundName(mo, "Ambient10");	// small drip
+			}
+			else
+			{
+				mo = P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ, MT_SPLASH);
+				mo->target = thing;
+				mo->velocity.x = (Random() - Random()) * 35.0;
+				mo->velocity.y = (Random() - Random()) * 35.0;
+				mo->velocity.z = (2.0 + Random()) * 35.0;
+				mo = P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ, MT_SPLASHBASE);
+				if (thing->player) P_NoiseAlert(thing, thing);
+				StartSoundName(mo, "WaterSplash");
+			}
+			return FLOOR_WATER;
+		case FLOOR_LAVA:
+			if (smallsplash)
+			{
+				mo = P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ, MT_LAVASPLASH);
+				if (mo) mo->floorclip += SMALLSPLASHCLIP;
+			}
+			else
+			{
+				mo = P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ, MT_LAVASMOKE);
+				mo->velocity.z = (1.0 + Random() / 2.0) * 35.0;
+				mo = P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ, MT_LAVASPLASH);
+				if (thing->player) P_NoiseAlert(thing, thing);
+			}
+			StartSoundName(mo, "LavaSizzle");
+			if (thing->player && level->tictime&31)
+			{
+				DamageMobj(thing, &LavaInflictor, NULL, 5);
+			}
+			return FLOOR_LAVA;
+		case FLOOR_SLUDGE:
+			if (smallsplash)
+			{
+				mo = P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ, MT_SLUDGESPLASH);
+				if (mo) mo->floorclip += SMALLSPLASHCLIP;
+			}
+			else
+			{
+				mo = P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ, MT_SLUDGECHUNK);
+				mo->target = thing;
+				mo->velocity.x = (Random() - Random()) * 35.0;
+				mo->velocity.y = (Random() - Random()) * 35.0;
+				mo->velocity.z = (1.0 + Random()) * 35.0;
+				mo = P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ, MT_SLUDGESPLASH);
+				if (thing->player) P_NoiseAlert(thing, thing);
+			}
+			StartSoundName(mo, "SludgeGloop");
+			return FLOOR_SLUDGE;
+	}
+	return FLOOR_SOLID;
+}
+
+//==========================================================================
+//
+//	P_ExplodeMissile
+//
+//==========================================================================
+
+void P_ExplodeMissile(mobj_t *mo)
+{
+	mo->velocity.x = mo->velocity.y = mo->velocity.z = 0.0;
+	SetMobjState(mo, mo->deathstate);
+	//mo->tics -= P_Random()&3;
+	mo->flags &= ~MF_MISSILE;
+
+	switch (mo->type)
+	{
+		case MT_SORCBALL1:
+		case MT_SORCBALL2:
+		case MT_SORCBALL3:
+			StartSoundName(NULL, "SorcererBigBallExplode");
+			break;
+		case MT_SORCFX1:
+			StartSoundName(NULL, "SorcererHeadScream");
+			break;
+		default:
+			if (mo->sound_death)
+			{
+				StartSound(mo, mo->sound_death);
+			}
+			break;
+	}
+	if (mo->effects & EF_DLIGHT_MASK)
+	{
+		MSG_Select(MSG_SV_DATAGRAM, NULL);
+		MSG_WriteByte(svc_explosion);
+		MSG_WriteByte(mo->effects & EF_DLIGHT_MASK);
+		MSG_WriteShort(ftoi(mo->origin.x));
+		MSG_WriteShort(ftoi(mo->origin.y));
+		MSG_WriteShort(ftoi(mo->origin.z));
+		mo->effects &= ~EF_DLIGHT_MASK;
+	}
+}
+
+//==========================================================================
+//
+//	P_FloorBounceMissile
+//
+//==========================================================================
+
+void P_FloorBounceMissile(mobj_t *mo)
+{
+	if (P_HitFloor(mo) >= FLOOR_LIQUID)
+	{
+		switch (mo->type)
+		{
+			case MT_SORCFX1:
+			case MT_SORCBALL1:
+			case MT_SORCBALL2:
+			case MT_SORCBALL3:
+				break;
+			default:
+				P_RemoveMobj(mo);
+				return;
+		}
+	}
+	switch (mo->type)
+	{
+		case MT_SORCFX1:
+			mo->velocity.z = -mo->velocity.z;		// no energy absorbed
+			break;
+		case MT_SGSHARD1:
+		case MT_SGSHARD2:
+		case MT_SGSHARD3:
+		case MT_SGSHARD4:
+		case MT_SGSHARD5:
+		case MT_SGSHARD6:
+		case MT_SGSHARD7:
+		case MT_SGSHARD8:
+		case MT_SGSHARD9:
+		case MT_SGSHARD0:
+			mo->velocity.z = mo->velocity.z * -0.3;
+			if (fabs(mo->velocity.z) < 0.5 * 35.0)
+			{
+				SetMobjState(mo, S_NULL);
+				return;
+			}
+			break;
+		default:
+			mo->velocity.z = mo->velocity.z * -0.7;
+			break;
+	}
+	mo->velocity.x = 2.0 * mo->velocity.x / 3.0;
+	mo->velocity.y = 2.0 * mo->velocity.y / 3.0;
+	if (mo->sound_sight)
+	{
+		switch(mo->type)
+		{
+			case MT_SORCBALL1:
+			case MT_SORCBALL2:
+			case MT_SORCBALL3:
+				if (!mo->args[0]) StartSound(mo, mo->sound_sight);
+				break;
+			default:
+				StartSound(mo, mo->sound_sight);
+				break;
+		}
+//		StartSound(mo, mo->sound_sight);
+	}
+//	P_SetMobjState(mo, mobjinfo[mo->type].deathstate);
+}
+
+//==========================================================================
+//
+//	P_ThrustMobj
+//
+//==========================================================================
+
+void P_ThrustMobj(mobj_t *mo, angle_t angle, float move)
+{
+	mo->velocity.x += move * cos(angle) * 35.0;
+	mo->velocity.y += move * sin(angle) * 35.0;
+}
+
+//==========================================================================
+//
+//	P_FaceMobj
+//
+//	Returns 1 if 'source' needs to turn clockwise, or 0 if 'source' needs
+// to turn counter clockwise.  'delta' is set to the amount 'source'
+// needs to turn.
+//
+//==========================================================================
+
+int P_FaceMobj(mobj_t *source, mobj_t *target, angle_t *delta)
+{
+	angle_t diff;
+	angle_t angle1;
+	angle_t angle2;
+
+	angle1 = source->angles.yaw;
+	angle2 = atan2(target->origin.y - source->origin.y,
+		target->origin.x - source->origin.x);
+	if(angle2 > angle1)
+	{
+		diff = angle2-angle1;
+		if(diff > ANG180)
+		{
+			*delta = ANGLE_MAX-diff;
+			return(0);
+		}
+		else
+		{
+			*delta = diff;
+			return(1);
+		}
+	}
+	else
+	{
+		diff = angle1-angle2;
+		if(diff > ANG180)
+		{
+			*delta = ANGLE_MAX-diff;
+			return(1);
+		}
+		else
+		{
+			*delta = diff;
+			return(0);
+		}
+	}
+}
+
+//==========================================================================
+//
+//  P_MonsterFallingDamage
+//
+//==========================================================================
+
+void P_MonsterFallingDamage(mobj_t *mo)
+{
+	int		damage;
+	float	mom;
+
+	mom = fabs(mo->velocity.z) * frametime;
+	if (mom > 35.0)
+	{
+		// automatic death
+		damage = 10000;
+	}
+	else
+	{
+		damage = ftoi((mom - 23.0) * 6.0);
+	}
+	damage = 10000;	// always kill 'em
+	DamageMobj(mo, NULL, NULL, damage);
+}
+
+//==========================================================================
+//
+//	ActiveMinotaur
+//
+//	Search thinker list for minotaur
+//
+//==========================================================================
+
+mobj_t *ActiveMinotaur(player_t *master)
+{
+	mobj_t 		*mo;
+	player_t 	*plr;
+	int 		starttime;
+
+	mo = NULL;
+	while ((mo = NextMobj(mo)))
+	{
+		if (mo->type != MT_MINOTAUR) continue;
+		if (mo->health <= 0) continue;
+		if (!(mo->flags&MF_COUNTKILL)) continue;	// for morphed minotaurs
+		if (mo->flags&MF_CORPSE) continue;
+		if ((level->tictime - mo->args[0]) >= ftoi(MAULATORTIME * 35.0)) continue;
+		plr = mo->specialmobj1->player;
+		if (plr == master) return mo;
+	}
+	return NULL;
+}
+
+//==========================================================================
+//
+//	P_KillMobj
+//
+//==========================================================================
+
+void P_KillMobj(mobj_t *source, mobj_t *target)
+{
+	int 	dummy[5];
+	mobj_t 	*master;
+
+	target->flags &= ~(MF_SHOOTABLE|MF_FLOAT|MF_SKULLFLY|MF_NOGRAVITY);
+	target->flags |= MF_CORPSE|MF_DROPOFF;
+	target->flags2 &= ~MF2_PASSMOBJ;
+	target->height /= 4.0;
+	if ((target->flags&MF_COUNTKILL || target->type == MT_ZBELL)
+		 && target->special)
+	{
+		// Initiate monster death actions
+		if (target->type == MT_SORCBOSS)
+		{
+			dummy[0] = dummy[1] = dummy[2] = dummy[3] = dummy[4] = 0;
+			StartACS(target->special, 0, &dummy[0], target, NULL, 0);
+		}
+		else
+		{
+			ExecuteLineSpecial(target->special, &target->args[0],
+				NULL, 0, target);
+		}
+	}
+	if(source && source->player)
+	{ // Check for frag changes
+		if(target->player)
+		{
+			if(target == source)
+			{ // Self-frag
+				target->player->frags[P_GetPlayerNum(target->player)]--;
+			}
+			else
+			{
+				source->player->frags[P_GetPlayerNum(target->player)]++;
+			}
+		}
+	}
+	if(target->player)
+	{ // Player death
+		if(!source)
+		{ // Self-frag
+			target->player->frags[P_GetPlayerNum(target->player)]--;
+		}
+		target->flags &= ~MF_SOLID;
+		target->flags2 &= ~MF2_FLY;
+		target->player->powers[pw_flight] = 0;
+		target->player->playerstate = PST_DEAD;
+		DropWeapon(target->player);
+		if(target->flags2&MF2_FIREDAMAGE)
+		{ // Player flame death
+			switch(target->player->pclass)
+			{
+				case PCLASS_FIGHTER:
+					StartSoundName(target, "PlayerFighterBurnDeath");
+					SetMobjState(target, S_PLAY_F_FDTH1);
+					return;
+				case PCLASS_CLERIC:
+					StartSoundName(target, "PlayerClericBurnDeath");
+					SetMobjState(target, S_PLAY_C_FDTH1);
+					return;
+				case PCLASS_MAGE:
+					StartSoundName(target, "PlayerMageBurnDeath");
+					SetMobjState(target, S_PLAY_M_FDTH1);
+					return;
+				default:
+					break;
+			}
+		}
+		if (target->flags2&MF2_ICEDAMAGE)
+		{
+			// Player ice death
+			target->translation = 0; //no translation
+			target->flags |= MF_ICECORPSE;
+			switch (target->player->pclass)
+			{
+				case PCLASS_FIGHTER:
+					SetMobjState(target, S_FPLAY_ICE);
+					return;
+				case PCLASS_CLERIC:
+					SetMobjState(target, S_CPLAY_ICE);
+					return;
+				case PCLASS_MAGE:
+					SetMobjState(target, S_MPLAY_ICE);
+					return;
+				case PCLASS_PIG:
+					SetMobjState(target, S_PIG_ICE);
+					return;
+				default:
+					break;
+			}
+		}
+	}
+	if (target->flags2&MF2_FIREDAMAGE)
+	{
+		if(target->type == MT_FIGHTER_BOSS
+			|| target->type == MT_CLERIC_BOSS
+			|| target->type == MT_MAGE_BOSS)
+		{
+			switch(target->type)
+			{
+				case MT_FIGHTER_BOSS:
+					StartSoundName(target, "PlayerFighterBurnDeath");
+					SetMobjState(target, S_PLAY_F_FDTH1);
+					return;
+				case MT_CLERIC_BOSS:
+					StartSoundName(target, "PlayerClericBurnDeath");
+					SetMobjState(target, S_PLAY_C_FDTH1);
+					return;
+				case MT_MAGE_BOSS:
+					StartSoundName(target, "PlayerMageBurnDeath");
+					SetMobjState(target, S_PLAY_M_FDTH1);
+					return;
+				default:
+					break;
+			}
+		}
+		else if(target->type == MT_TREEDESTRUCTIBLE)
+		{
+			SetMobjState(target, S_ZTREEDES_X1);
+			target->height = 24.0;
+			StartSoundName(target, "TreeExplode");
+			return;
+		}
+	}
+	if (target->flags2&MF2_ICEDAMAGE)
+	{
+		target->flags |= MF_ICECORPSE;
+		switch (target->type)
+		{
+			case MT_BISHOP:
+				SetMobjState(target, S_BISHOP_ICE);
+				return;		
+			case MT_CENTAUR:
+			case MT_CENTAURLEADER:
+				SetMobjState(target, S_CENTAUR_ICE);
+				return;		
+			case MT_DEMON:
+			case MT_DEMON2:
+				SetMobjState(target, S_DEMON_ICE);
+				return;		
+			case MT_SERPENT:
+			case MT_SERPENTLEADER:
+				SetMobjState(target, S_SERPENT_ICE);
+				return;		
+			case MT_WRAITH:
+			case MT_WRAITHB:
+				SetMobjState(target, S_WRAITH_ICE);
+				return;
+			case MT_ETTIN:
+				SetMobjState(target, S_ETTIN_ICE1);
+				return;
+			case MT_FIREDEMON:
+				SetMobjState(target, S_FIRED_ICE1);
+				return;
+			case MT_FIGHTER_BOSS:
+				SetMobjState(target, S_FIGHTER_ICE);
+				return;
+			case MT_CLERIC_BOSS:
+				SetMobjState(target, S_CLERIC_ICE);
+				return;
+			case MT_MAGE_BOSS:
+				SetMobjState(target, S_MAGE_ICE);
+				return;
+			case MT_PIG:
+				SetMobjState(target, S_PIG_ICE);
+				return;
+			default:
+				target->flags &= ~MF_ICECORPSE;
+				break;
+		}
+	}
+
+	if (target->type == MT_MINOTAUR)
+	{
+		master = target->specialmobj1;
+		if (master->health > 0)
+		{
+			if (!ActiveMinotaur(master->player))
+			{
+				master->player->powers[pw_minotaur] = 0;
+			}
+		}		
+	}
+	else if (target->type == MT_TREEDESTRUCTIBLE)
+	{
+		target->height = 24.0;
+	}
+	if (target->health < target->gibshealth && target->xdeathstate)
+	{
+		// Extreme death
+		SetMobjState(target, target->xdeathstate);
+	}
+	else
+	{ // Normal death
+		if ((target->type==MT_FIREDEMON) &&
+			(target->origin.z <= target->floorz + 2.0) &&
+			(target->xdeathstate))
+		{
+			// This is to fix the imps' staying in fall state
+			SetMobjState(target, target->xdeathstate);
+		}
+		else
+		{
+			SetMobjState(target, target->deathstate);
+		}
+	}
+	target->time -= Random() * 0.1;
+}
+
+//==========================================================================
+//
+//	P_MinotaurSlam
+//
+//==========================================================================
+
+void P_MinotaurSlam(mobj_t *source, mobj_t *target)
+{
+	angle_t		angle;
+	float		thrust;
+
+	angle = atan2(target->origin.y - source->origin.y,
+		target->origin.x - source->origin.x);
+	thrust = 16.0 + Random() * 4.0;
+	target->velocity.x += thrust * cos(angle) * 35.0;
+	target->velocity.y += thrust * sin(angle) * 35.0;
+	DamageMobj(target, NULL, source, HITDICE(4));
+	if (target->player)
+	{
+		target->reactiontime = 14 + (P_Random() & 7);
+	}
+	source->args[0] = 0;			// Stop charging
+}
+
+//==========================================================================
+//
+//	P_MorphPlayer
+//
+//	Returns true if the player gets turned into a pig
+//
+//==========================================================================
+
+boolean P_MorphPlayer(player_t *player)
+{
+	mobj_t *pmo;
+	mobj_t *fog;
+	mobj_t *beastMo;
+	float	x;
+	float	y;
+	float	z;
+	angle_t angle;
+	int oldFlags2;
+    int		i;
+
+	if (player->powers[pw_invulnerability])
+	{ // Immune when invulnerable
+		return(false);
+	}
+	if (player->morphTics)
+	{ // Player is already a beast
+		return false;
+	}
+	pmo = player->mo;
+	x = pmo->origin.x;
+	y = pmo->origin.y;
+	z = pmo->origin.z;
+	angle = pmo->angles.yaw;
+	oldFlags2 = pmo->flags2;
+	SetMobjState(pmo, S_FREETARGMOBJ);
+	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, MT_TFOG);
+	StartSoundName(fog, "Teleport");
+	beastMo = P_SpawnMobj(x, y, z, MT_PIGPLAYER);
+	beastMo->special1 = player->readyweapon;
+	beastMo->angles.yaw = angle;
+	beastMo->player = player;
+	player->health = beastMo->health = MAXMORPHHEALTH;
+	player->mo = beastMo;
+	for (i = 0; i < NUMARMOR; i++)
+    {
+		player->armorpoints[i] = 0.0;
+	}
+	player->pclass = PCLASS_PIG;
+	if (oldFlags2 & MF2_FLY)
+	{
+		beastMo->flags2 |= MF2_FLY;
+	}
+	player->morphTics = ftoi(MORPHTIME * 35.0);
+	ActivateMorphWeapon(player);
+	return true;
+}
+
+//==========================================================================
+//
+//	P_MorphMonster
+//
+//==========================================================================
+
+boolean P_MorphMonster(mobj_t *actor)
+{
+	mobj_t*		master;
+	mobj_t*		monster;
+	mobj_t*		fog;
+	int 		moType;
+	float		x;
+	float		y;
+	float		z;
+	int			ghost;
+	int			tid;
+    mobj_t*		target;
+    angle_t		angle;
+    int			special;
+    int			args[5];
+    int			i;
+    mobj_t*		specialmobj1;
+
+	if (actor->player) return false;
+	if (!(actor->flags&MF_COUNTKILL)) return false;
+	if (actor->flags2&MF2_BOSS) return false;
+	moType = actor->type;
+	switch (moType)
+	{
+		case MT_PIG:
+		case MT_FIGHTER_BOSS:
+		case MT_CLERIC_BOSS:
+		case MT_MAGE_BOSS:
+			return false;
+		default:
+			break;
+	}
+
+	x = actor->origin.x;
+	y = actor->origin.y;
+	z = actor->origin.z;
+    ghost = actor->translucency;
+    tid = actor->tid;
+    target = actor->target;
+    angle = actor->angles.yaw;
+    special = actor->special;
+    for (i=0; i<5; i++)
+    {
+    	args[i] = actor->args[i];
+	}
+    specialmobj1 = actor->specialmobj1;
+	P_RemoveMobjFromTIDList(actor);
+	SetMobjState(actor, S_FREETARGMOBJ);
+	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, MT_TFOG);
+	StartSoundName(fog, "Teleport");
+	monster = P_SpawnMobj(x, y, z, MT_PIG);
+	monster->special2 = moType;
+	monster->special1 = ftoi(MORPHTIME * 35.0) + P_Random();
+	monster->translucency = ghost;
+	monster->target = target;
+	monster->angles.yaw = angle;
+	monster->tid = tid;
+	monster->special = special;
+	P_InsertMobjIntoTIDList(monster, tid);
+	for (i=0; i<5; i++)
+    {
+    	monster->args[i] = args[i];
+	}
+
+	// check for turning off minotaur power for active icon
+	if (moType == MT_MINOTAUR)
+	{
+		master = specialmobj1;
+		if (master->health > 0)
+		{
+			if (!ActiveMinotaur(master->player))
+			{
+				master->player->powers[pw_minotaur] = 0;
+			}
+		}		
+	}
+	return(true);
+}
+
+//==========================================================================
+//
+//	P_AutoUseHealth
+//
+//==========================================================================
+
+void P_AutoUseHealth(player_t *player, int saveHealth)
+{
+	int i;
+	int count;
+	int normalCount;
+	int normalSlot=0;
+	int superCount;
+	int superSlot=0;
+
+	normalCount = superCount = 0;
+	for(i = 0; i < player->inventorySlotNum; i++)
+	{
+		if(player->inventory[i].type == arti_health)
+		{
+			normalSlot = i;
+			normalCount = player->inventory[i].count;
+		}
+		else if(player->inventory[i].type == arti_superhealth)
+		{
+			superSlot = i;
+			superCount = player->inventory[i].count;
+		}
+	}
+	if((gameskill == sk_baby) && (normalCount*25 >= saveHealth))
+	{
+		// Use quartz flasks
+		count = (saveHealth+24)/25;
+		for(i = 0; i < count; i++)
+		{
+			player->health += 25;
+			PlayerRemoveArtifact(player, normalSlot);
+		}
+	}
+	else if(superCount*100 >= saveHealth)
+	{
+		// Use mystic urns
+		count = (saveHealth+99)/100;
+		for(i = 0; i < count; i++)
+		{
+			player->health += 100;
+			PlayerRemoveArtifact(player, superSlot);
+		}
+	}
+	else if((gameskill == sk_baby)
+		&& (superCount*100+normalCount*25 >= saveHealth))
+	{
+		// Use mystic urns and quartz flasks
+		count = (saveHealth+24)/25;
+		saveHealth -= count*25;
+		for(i = 0; i < count; i++)
+		{
+			player->health += 25;
+			PlayerRemoveArtifact(player, normalSlot);
+		}
+		count = (saveHealth+99)/100;
+		for(i = 0; i < count; i++)
+		{
+			player->health += 100;
+            // The same as in HERETIC
+			PlayerRemoveArtifact(player, normalSlot);
+		}
+	}
+	player->mo->health = player->health;
+}
+
+//==========================================================================
+//
+//	DamageMobj
+//
+//	Damages both enemies and players
+//	inflictor is the thing that caused the damage - creature or missile,
+// can be NULL (slime, etc)
+// 	source is the thing to target after taking damage - creature or NULL
+//	Source and inflictor are the same for melee attacks
+//	source can be null for barrel explosions and other environmental stuff
+//
+//==========================================================================
+
+void DamageMobj(mobj_t *target,mobj_t *inflictor,mobj_t *source,int damage)
+{
+	float		saved;
+	float		savedPercent;
+	player_t 	*player;
+	mobj_t 		*master;
+	int 		i;
+
+	if (!(target->flags&MF_SHOOTABLE))
+	{
+		// Shouldn't happen
+		return;
+	}
+	if (target->health <= 0)
+	{
+		if (inflictor && inflictor->flags2 & MF2_ICEDAMAGE)
+		{
+			return;
+		}
+		else if (target->flags & MF_ICECORPSE) // frozen
+		{
+			target->time = 0.1;
+			target->velocity.x = target->velocity.y = 0.0;
+		}
+		return;
+	}
+	if ((target->flags2&MF2_INVULNERABLE) && damage < 10000)
+	{
+		// mobj is invulnerable
+		if (target->player) return;	// for player, no exceptions
+		if (inflictor)
+		{
+			switch (inflictor->type)
+			{
+				// These inflictors aren't foiled by invulnerability
+				case MT_HOLY_FX:
+				case MT_POISONCLOUD:
+				case MT_FIREBOMB:
+					break;
+				default:
+					return;
+			}
+		}
+		else
+		{
+			return;
+		}
+	}
+	if (target->player)
+	{
+		if (damage < 1000 && ((target->player->cheats&CF_GODMODE)
+			|| target->player->powers[pw_invulnerability]))
+		{
+			return;
+		}
+	}
+	if (target->flags&MF_SKULLFLY)
+	{
+		target->velocity.x = target->velocity.y = target->velocity.z = 0.0;
+	}
+	if (target->flags2&MF2_DORMANT)
+	{
+		// Invulnerable, and won't wake up
+		return;
+	}
+	player = target->player;
+	if (player && gameskill == sk_baby)
+	{
+		// Take half damage in trainer mode
+		damage >>= 1;
+	}
+	// Special damage types
+	if (inflictor)
+	{
+		switch (inflictor->type)
+		{
+			case MT_EGGFX:
+				if (player)
+				{
+					P_MorphPlayer(player);
+				}
+				else
+				{
+					P_MorphMonster(target);
+				}
+				return; // Always return
+			case MT_TELOTHER_FX1:
+			case MT_TELOTHER_FX2:
+			case MT_TELOTHER_FX3:
+			case MT_TELOTHER_FX4:
+			case MT_TELOTHER_FX5:
+				if ((target->flags&MF_COUNTKILL) &&
+					(target->type != MT_SERPENT) &&
+					(target->type != MT_SERPENTLEADER) &&
+					(!(target->flags2 & MF2_BOSS)))
+				{
+					TeleportOther(target);
+				}
+				return;
+			case MT_MINOTAUR:
+				if(inflictor->flags&MF_SKULLFLY)
+				{ // Slam only when in charge mode
+					P_MinotaurSlam(inflictor, target);
+					return;
+				}
+				break;
+			case MT_BISH_FX:
+				// Bishops are just too nasty
+				damage >>= 1;
+				break;
+			case MT_SHARDFX1:
+				switch (inflictor->special2)
+				{
+					case 3:
+						damage <<= 3;
+						break;
+					case 2:
+						damage <<= 2;
+						break;
+					case 1:
+						damage <<= 1;
+						break;
+					default:
+						break;
+				}
+				break;
+			case MT_CSTAFF_MISSILE:
+				// Cleric Serpent Staff does poison damage
+				if(target->player)
+				{
+					P_PoisonPlayer(target->player, source, 20);
+					damage >>= 1;
+				}
+				break;
+			case MT_ICEGUY_FX2:
+				damage >>= 1;
+				break;
+			case MT_POISONDART:
+				if(target->player)
+				{
+					P_PoisonPlayer(target->player, source, 20);
+					damage >>= 1;
+				}
+				break;
+			case MT_POISONCLOUD:
+				if(target->player)
+				{
+					if(target->player->poisoncount < 4)
+					{
+						P_PoisonDamage(target->player, source,
+							15+(P_Random()&15), false); // Don't play painsound
+						P_PoisonPlayer(target->player, source, 50);
+						StartSoundName(target, "PlayerPoisonCough");
+					}	
+					return;
+				}
+				else if(!(target->flags&MF_COUNTKILL))
+				{ // only damage monsters/players with the poison cloud
+					return;
+				}
+				break;
+			case MT_FSWORD_MISSILE:
+				if(target->player)
+				{
+					damage -= damage>>2;
+				}
+				break;
+			default:
+				break;
+		}
+	}
+	// Push the target
+	if (inflictor && (!source || !source->player)
+		&& !(inflictor->flags2&MF2_NODMGTHRUST))
+	{
+		TVec		org1;
+		TVec		org2;
+		TVec		dir;
+	    float		thrust;
+
+		thrust = itof(damage) / target->mass * 656.25;
+
+		CopyMobjCenter(target, org1);
+		CopyMobjCenter(inflictor, org2);
+		vsub(org1, org2, dir);
+		vnorm(dir);
+		vma(target->velocity, dir, thrust, target->velocity);
+	}
+
+	//
+	// player specific
+	//
+	if (player)
+	{
+		savedPercent = AutoArmorSave[player->pclass]
+			+ player->armorpoints[ARMOR_ARMOR]
+			+ player->armorpoints[ARMOR_SHIELD]
+			+ player->armorpoints[ARMOR_HELMET]
+			+ player->armorpoints[ARMOR_AMULET];
+		if (savedPercent)
+		{
+			// armor absorbed some damage
+			if (savedPercent > 100.0)
+			{
+				savedPercent = 100.0;
+			}
+			for (i = 0; i < NUMARMOR; i++)
+			{
+				if (player->armorpoints[i])
+				{
+					player->armorpoints[i] -= itof(damage) *
+						ArmorIncrement[player->pclass * NUMARMOR + i] / 300.0;
+					if (player->armorpoints[i] < 2.0)
+					{
+						player->armorpoints[i] = 0.0;
+					}
+				}
+			}
+			saved = itof(damage) * savedPercent / 100.0;
+			if (saved > savedPercent * 2.0)
+			{	
+				saved = savedPercent * 2.0;
+			}
+			damage -= ftoi(saved);
+		}
+		if (damage >= player->health
+			&& ((gameskill == sk_baby) || deathmatch)
+			&& !player->morphTics)
+		{
+			// Try to use some inventory health
+			P_AutoUseHealth(player, damage-player->health+1);
+		}
+		player->health -= damage; // mirror mobj health here for Dave
+		if (player->health < 0)
+		{
+			player->health = 0;
+		}
+		player->attacker = source;
+		player->damagecount += damage; // add damage after armor / invuln
+		if (player->damagecount > 100)
+		{
+			player->damagecount = 100; // teleport stomp does 10k points...
+		}
+	}
+
+	//
+	// do the damage
+	//
+	target->health -= damage;
+	if (target->health <= 0)
+	{
+		// Death
+		if (inflictor)
+		{
+			// check for special fire damage or ice damage deaths
+			if (inflictor->flags2&MF2_FIREDAMAGE)
+			{
+				if (player && !player->morphTics)
+				{
+					// Check for flame death
+					if (target->health > -50 && damage > 25)
+					{
+						target->flags2 |= MF2_FIREDAMAGE;
+					}
+				}
+				else
+				{
+					target->flags2 |= MF2_FIREDAMAGE;
+				}
+			}
+			else if (inflictor->flags2&MF2_ICEDAMAGE)
+			{
+				target->flags2 |= MF2_ICEDAMAGE;
+			}
+		}
+		if (source && (source->type == MT_MINOTAUR))
+		{
+			// Minotaur's kills go to his master
+			master = source->specialmobj1;
+			// Make sure still alive and not a pointer to fighter head
+			if (master->player && (master->player->mo == master))
+			{
+				source = master;
+			}
+		}
+		if (source && (source->player) &&
+			(source->player->readyweapon == WP_FOURTH))
+		{
+			// Always extreme death from fourth weapon
+			target->health = -5000;
+		}
+		P_KillMobj(source, target);
+		return;
+	}
+	if ((P_Random() < target->painchance)
+		&& !(target->flags&MF_SKULLFLY))
+	{
+		if (inflictor && (inflictor->type >= MT_LIGHTNING_FLOOR
+			&& inflictor->type <= MT_LIGHTNING_ZAP))
+		{
+			if (P_Random() < 96)
+			{
+				target->flags |= MF_JUSTHIT; // fight back!
+				SetMobjState(target, target->painstate);
+			}
+			else
+			{
+				// "electrocute" the target
+				target->frame |= FF_FULLBRIGHT;
+				if (target->flags&MF_COUNTKILL && P_Random() < 128
+					&& !S_GetSoundPlayingInfo(target, GetSoundID("PuppyBeat")))
+				{
+					if ((target->type == MT_CENTAUR) ||
+						(target->type == MT_CENTAURLEADER) ||
+						(target->type == MT_ETTIN))
+					{
+						StartSoundName(target, "PuppyBeat");
+					}
+				}
+			}
+		}
+		else
+		{
+			target->flags |= MF_JUSTHIT; // fight back!
+			SetMobjState(target, target->painstate);	
+			if (inflictor && inflictor->type == MT_POISONCLOUD)
+			{
+				if (target->flags&MF_COUNTKILL && P_Random() < 128
+					&& !S_GetSoundPlayingInfo(target, GetSoundID("PuppyBeat")))
+				{
+					if ((target->type == MT_CENTAUR) ||
+						(target->type == MT_CENTAURLEADER) ||
+						(target->type == MT_ETTIN))
+					{
+						StartSoundName(target, "PuppyBeat");
+					}
+				}
+			}
+		}
+	}
+	target->reactiontime = 0; // we're awake now...
+	if (!target->threshold && source && !(source->flags2&MF2_BOSS)
+		&& !(target->type == MT_BISHOP) && !(target->type == MT_MINOTAUR))
+	{
+		// Target actor is not intent on another actor,
+		// so make him chase after source
+		if((target->type == MT_CENTAUR && source->type == MT_CENTAURLEADER)
+			|| (target->type == MT_CENTAURLEADER
+				&& source->type == MT_CENTAUR))
+		{
+			return;
+		}
+		target->target = source;
+		target->threshold = BASETHRESHOLD;
+		if (target->statenum == target->spawnstate
+			&& target->seestate != S_NULL)
+		{
+			SetMobjState(target, target->seestate);
+		}
+	}
+}
+
+//==========================================================================
+//
+//	P_FallingDamage
+//
+//==========================================================================
+
+void P_FallingDamage(player_t *player)
+{
+	int 	damage;
+	float 	mom;
+	float	dist;
+
+	mom = fabs(player->mo->velocity.z);
+	dist = mom / 35.0 * 16.0 / 23.0;
+
+	if (mom >= 63.0 * 35.0)
+	{
+		// automatic death
+		DamageMobj(player->mo, NULL, NULL, 10000);
+		return;
+	}
+	damage = ftoi(dist * dist / 10.0) - 24;
+	if (player->mo->velocity.z > -39.0 * 35.0 && damage > player->mo->health &&
+		player->mo->health != 1)
+	{
+		// No-death threshold
+		damage = player->mo->health - 1;
+	}
+	StartSoundName(player->mo, "PlayerLand");
+	DamageMobj(player->mo, NULL, NULL, damage);
+}
+
+//==========================================================================
+//
+//	P_PoisonPlayer - Sets up all data concerning poisoning
+//
+//==========================================================================
+
+void P_PoisonPlayer(player_t *player, mobj_t *poisoner, int poison)
+{
+	if((player->cheats&CF_GODMODE) || player->powers[pw_invulnerability])
+	{
+		return;
+	}
+	player->poisoncount += poison;
+	player->poisoner = poisoner;
+	if(player->poisoncount > 100)
+	{
+		player->poisoncount = 100;
+	}
+}
+
+//==========================================================================
+//
+//	P_PoisonDamage
+//
+//	Similar to DamageMobj
+//
+//==========================================================================
+
+void P_PoisonDamage(player_t *player, mobj_t *source, int damage,
+	boolean playPainSound)
+{
+	mobj_t *target;
+	mobj_t *inflictor;
+
+	target = player->mo;
+	inflictor = source;
+	if(target->health <= 0)
+	{
+		return;
+	}
+	if(target->flags2&MF2_INVULNERABLE && damage < 10000)
+	{ // mobj is invulnerable
+		return;
+	}
+	if(player && gameskill == sk_baby)
+	{
+		// Take half damage in trainer mode
+		damage >>= 1;
+	}
+	if(damage < 1000 && ((player->cheats&CF_GODMODE)
+		|| player->powers[pw_invulnerability]))
+	{
+		return;
+	}
+	if(damage >= player->health
+		&& ((gameskill == sk_baby) || deathmatch)
+		&& !player->morphTics)
+	{ // Try to use some inventory health
+		P_AutoUseHealth(player, damage-player->health+1);
+	}
+	player->health -= damage; // mirror mobj health here for Dave
+	if(player->health < 0)
+	{
+		player->health = 0;
+	}
+	player->attacker = source;
+
+	//
+	// do the damage
+	//
+	target->health -= damage;
+	if(target->health <= 0)
+	{ // Death
+		target->special1 = damage;
+		if(player && inflictor && !player->morphTics)
+		{ // Check for flame death
+			if((inflictor->flags2&MF2_FIREDAMAGE)
+				&& (target->health > -50) && (damage > 25))
+			{
+				target->flags2 |= MF2_FIREDAMAGE;
+			}
+			if(inflictor->flags2&MF2_ICEDAMAGE)
+			{
+				target->flags2 |= MF2_ICEDAMAGE;
+			}
+		}
+		P_KillMobj(source, target);
+		return;
+	}
+	if(!(level->tictime&63) && playPainSound)
+	{
+		SetMobjState(target, target->painstate);
+	}
+}
+
+//==========================================================================
+//
+//  SpawnPuff
+//
+//==========================================================================
+
+void SpawnPuff(float x, float y, float z)
+{
+	mobj_t *puff;
+
+	z += (Random() - Random()) * 4.0;
+	puff = P_SpawnMobj(x, y, z, PuffType);
+	if (linetarget && puff->sound_sight)
+	{
+		// Hit thing sound
+		StartSound(puff, puff->sound_sight);
+	}
+	else if (puff->sound_attack)
+	{
+		StartSound(puff, puff->sound_attack);
+	}
+	switch (PuffType)
+	{
+		case MT_PUNCHPUFF:
+			puff->velocity.z = 1.0 * 35.0;
+			break;
+		case MT_HAMMERPUFF:
+			puff->velocity.z = 8.0 / 10.0 * 35.0;
+			break;
+		default:
+			break;
+	}
+	PuffSpawned = puff;
+}
+
+//==========================================================================
+//
+//	P_BloodSplatter
+//
+//==========================================================================
+
+void P_BloodSplatter(float x, float y, float z, mobj_t *originator)
+{
+	mobj_t *mo;
+
+	mo = P_SpawnMobj(x, y, z, MT_BLOODSPLATTER);
+	mo->target = originator;
+	mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
+	mo->velocity.y = (Random() - Random()) * 4.0 * 35.0;
+	mo->velocity.z = 3.0 * 35.0;
+}
+
+//===========================================================================
+//
+//  P_BloodSplatter2
+//
+//===========================================================================
+
+void P_BloodSplatter2(float x, float y, float z, mobj_t *originator)
+{
+	mobj_t *mo;
+
+	mo = P_SpawnMobj(x + (Random() - 0.5) * 8.0,
+		y + (Random() - 0.5) * 8.0, z, MT_AXEBLOOD);
+	mo->target = originator;
+}
+
+//==========================================================================
+//
+//	P_RipperBlood
+//
+//==========================================================================
+
+void P_RipperBlood(mobj_t *mo)
+{
+	mobj_t *th;
+	float x, y, z;
+
+	x = mo->origin.x + (Random() - Random()) * 16.0;
+	y = mo->origin.y + (Random() - Random()) * 16.0;
+	z = mo->origin.z + (Random() - Random()) * 16.0;
+	th = P_SpawnMobj(x, y, z, MT_BLOOD);
+//	th->flags |= MF_NOGRAVITY;
+	th->velocity.x = mo->velocity.x / 2.0;
+	th->velocity.y = mo->velocity.y / 2.0;
+	th->time += Random() * 0.1;
+}
+
+//============================================================================
+//
+//  SinkMobj
+//
+//	Sink a mobj incrementally into the floor
+//
+//============================================================================
+
+int SinkMobj(mobj_t *actor)
+{
+	if (actor->floorclip < actor->height)
+	{
+		switch (actor->type)
+		{
+			case MT_THRUSTFLOOR_DOWN:
+			case MT_THRUSTFLOOR_UP:
+				actor->floorclip += 6.0;
+				break;
+			default:
+				actor->floorclip += 1.0;
+				break;
+		}
+		return false;
+	}
+	return true;
+}
+
+//============================================================================
+//
+//  RaiseMobj
+//
+//	Raise a mobj incrementally from the floor to
+// 
+//============================================================================
+
+int RaiseMobj(mobj_t *actor)
+{
+	int 	done = true;
+
+	// Raise a mobj from the ground
+	if (actor->floorclip > 0.0)
+	{
+		switch (actor->type)
+		{
+			case MT_WRAITHB:
+				actor->floorclip -= 2.0;
+				break;
+			case MT_THRUSTFLOOR_DOWN:
+			case MT_THRUSTFLOOR_UP:
+				actor->floorclip -= itof(actor->special2);
+				break;
+			default:
+				actor->floorclip -= 2.0;
+				break;
+		}
+		if (actor->floorclip <= 0.0)
+		{
+			actor->floorclip = 0.0;
+			done=true;
+		}
+		else
+		{
+			done = false;
+		}
+	}
+	return done;		// Reached target height
+}
+
+//============================================================================
+//
+//  SpawnDirt
+//
+//	Dirt stuff
+//
+//============================================================================
+
+void SpawnDirt(mobj_t *actor, float radius)
+{
+	float	x,y,z;
+	int dtype=0;
+	mobj_t *mo;
+	angle_t angle;
+
+	angle = P_Random() << 24;
+	x = actor->origin.x + radius * cos(angle);
+	y = actor->origin.y + radius * sin(angle);
+	z = actor->origin.z + Random() * 2.0 + 1.0;
+	switch (P_Random() % 6)
+	{
+		case 0:
+			dtype = MT_DIRT1;
+			break;
+		case 1:
+			dtype = MT_DIRT2;
+			break;
+		case 2:
+			dtype = MT_DIRT3;
+			break;
+		case 3:
+			dtype = MT_DIRT4;
+			break;
+		case 4:
+			dtype = MT_DIRT5;
+			break;
+		case 5:
+			dtype = MT_DIRT6;
+			break;
+	}
+	mo = P_SpawnMobj(x, y, z, dtype);
+	if (mo)
+	{
+		mo->velocity.z = Random() * 4.0 * 35.0;
+	}
+}
+
+//==========================================================================
+//
+//	P_HideSpecialThing
+//
+//==========================================================================
+
+void P_HideSpecialThing(mobj_t *thing)
+{
+	thing->flags &= ~MF_SPECIAL;
+	thing->translucency += 100;
+	SetMobjState(thing, S_HIDESPECIAL1);
+}
+
+//==========================================================================
+//
+//	SetDormantArtifact
+//
+//	Removes the MF_SPECIAL flag and initiates the artifact pickup animation.
+//
+//==========================================================================
+
+void SetDormantArtifact(mobj_t *arti)
+{
+	arti->flags &= ~MF_SPECIAL;
+	if (deathmatch && !(arti->flags2 & MF2_DROPPED))
+	{
+		if (arti->type == MT_ARTIINVULNERABILITY)
+		{
+			SetMobjState(arti, S_DORMANTARTI3_1);
+		}
+		else if(arti->type == MT_SUMMONMAULATOR
+			|| arti->type == MT_ARTIFLY)
+		{
+			SetMobjState(arti, S_DORMANTARTI2_1);
+		}
+		else
+		{
+			SetMobjState(arti, S_DORMANTARTI1_1);
+		}
+	}
+	else
+	{
+		// Don't respawn
+		SetMobjState(arti, S_DEADARTI1);
+	}
+}
+
+//==========================================================================
+//
+//	G_PlayerReborn
+//
+//	Called after a player dies almost everything is cleared and initialized
+//
+//==========================================================================
+
+void G_PlayerReborn(int player)
+{
+    player_t*	p; 
+	 
+    p = &players[player];
+
+    ClearPlayer(p);
+
+	p->pclass = p->baseclass;
+
+    p->usedown = p->attackdown = true;	// don't do anything immediately
+    p->playerstate = PST_LIVE;       
+    p->health = MAXHEALTH; 
+	p->readyweapon = p->pendingweapon = WP_FIRST;
+	weaponinfo[p->readyweapon * NUMCLASSES + p->pclass](p);
+	p->pspriteSY = PSpriteSY[p->pclass * NUMWEAPONS + p->readyweapon];
+	p->weaponowned[WP_FIRST] = true;
+	players[player].localQuakeHappening = false;
+
+	p->inv_ptr = 0; // reset the inventory pointer
+	p->curpos = 0;
+}
+
+//==========================================================================
+//
+//	P_SpawnPlayer
+//
+//	Called when a player is spawned on the level.  Most of the player
+// structure stays unchanged between levels.
+//
+//==========================================================================
+
+void P_SpawnPlayer(mthing_t *mthing)
+{
+	player_t	*p;
+	float		x, y, z;
+	mobj_t 		*mobj;
+
+	p = &players[mthing->type-1];
+	if (!p->active)
+	{
+		// Not playing
+		return;
+	}
+
+	if (p->playerstate == PST_REBORN)
+	{
+		G_PlayerReborn(mthing->type-1);
+	}
+	if (randomclass && deathmatch)
+	{
+		p->pclass = P_Random() % 3;
+		if (p->pclass == p->baseclass)
+		{
+			p->pclass = (p->pclass + 1) % 3;
+		}
+		p->baseclass = p->pclass;
+		SB_Start();
+	}
+	else
+	{
+		p->pclass = p->baseclass;
+	}
+	x = mthing->x;
+	y = mthing->y;
+	z = ONFLOORZ;
+	switch (p->pclass)
+	{
+		case PCLASS_FIGHTER:
+			mobj = P_SpawnMobj(x, y, z, MT_PLAYER_FIGHTER);
+			break;
+		case PCLASS_CLERIC:
+			mobj = P_SpawnMobj(x, y, z, MT_PLAYER_CLERIC);
+			break;
+		case PCLASS_MAGE:
+			mobj = P_SpawnMobj(x, y, z, MT_PLAYER_MAGE);
+			break;
+		default:
+			Error("P_SpawnPlayer: Unknown class type");
+			break;
+	}
+
+	mobj->angles.yaw = ANG45 * (mthing->angle/45);
+	mobj->player = p;
+	mobj->health = p->health;
+	p->mo = mobj;
+	p->playerstate = PST_LIVE;
+	p->refire = 0;
+	p->damagecount = 0;
+	p->bonuscount = 0;
+	p->poisoncount = 0;
+	p->morphTics = 0;
+	p->extralight = 0;
+	p->fixedcolormap = 0;
+	p->viewheight = VIEWHEIGHT;
+	SetupPsprites(p);
+	if (deathmatch)
+	{
+		// Give all keys in death match mode
+		p->keys = 2047;
+	}
+
+	// Set translation table data
+	SetPlayerColor(p);
+}
+
+//==========================================================================
+//
+// P_SpawnMapThing
+//
+// The fields of the mapthing should already be in host byte order.
+//
+//==========================================================================
+
+void P_SpawnMapThing(mthing_t *mthing, boolean spawn_thinkers)
+{
+	int 		i;
+	int 		spawnMask;
+	mobj_t 		*mobj;
+
+	if (mthing->type <= 0)
+		return;
+
+	// Count deathmatch start positions
+	if (mthing->type == 11)
+	{
+		if (level->numdeathmatchstarts < MAXDEATHMATCHSTARTS)
+		{
+        	CopyMThing(mthing, &level->deathmatchstarts[level->numdeathmatchstarts]);
+			level->numdeathmatchstarts++;
+		}
+		return;
+	}
+	if (mthing->type == PO_SPAWN_TYPE || mthing->type == PO_SPAWNCRUSH_TYPE)
+	{
+		// Polyobj StartSpot Pt.
+		SpawnPolyobj(mthing->x, mthing->y, mthing->angle,
+			(mthing->type == PO_SPAWNCRUSH_TYPE));
+		return;
+	}
+	if (mthing->type == PO_ANCHOR_TYPE)
+	{
+		// Polyobj Anchor Pt.
+		AddAnchorPoint(mthing->x, mthing->y, mthing->angle);
+		return;
+	}
+
+	// Check for player starts 1 to 4
+	if (mthing->type <= 4)
+	{
+    	CopyMThing(mthing, &level->playerstarts[mthing->arg1 * MAXPLAYERS + mthing->type - 1]);
+		return;
+	}
+	// Check for player starts 5 to 8
+	if (mthing->type >= 9100 && mthing->type <= 9103)
+	{
+		mthing->type = 5 + mthing->type - 9100; // Translate to 5 - 8
+    	CopyMThing(mthing, &level->playerstarts[mthing->arg1 * MAXPLAYERS + mthing->type - 1]);
+		return;
+	}
+
+	if (mthing->type >= 1400 && mthing->type < 1410)
+	{
+		PointInSubsector(mthing->x,
+			mthing->y)->sector->seqType = mthing->type - 1400;
+		return;
+	}
+
+	//	Don't spawn thinkers if we are loading a savegame
+	if (!spawn_thinkers)
+    {
+    	return;
+    }
+
+	// Check current game type with spawn flags
+	if (netgame == false)
+	{
+		spawnMask = MTF_GSINGLE;
+	}
+	else if(deathmatch)
+	{
+		spawnMask = MTF_GDEATHMATCH;
+	}
+	else
+	{
+		spawnMask = MTF_GCOOP;
+	}
+	if (!(mthing->options & spawnMask))
+	{
+		return;
+	}
+
+	// Check current skill with spawn flags
+	if (gameskill == sk_baby || gameskill == sk_easy)
+	{
+		spawnMask = MTF_EASY;
+	}
+	else if (gameskill == sk_hard || gameskill == sk_nightmare)
+	{
+		spawnMask = MTF_HARD;
+	}
+	else
+	{
+		spawnMask = MTF_NORMAL;
+	}
+	if (!(mthing->options&spawnMask))
+	{
+		return;
+	}
+
+	// Check current character classes with spawn flags
+	if (!netgame)
+	{
+		// Single player
+		if (!(mthing->options & classFlags[GetCvar("Class")]))
+		{
+			// Not for current class
+			return;
+		}
+	}
+#if 0	//	Because of client/server and in-game joining we can't do this
+	else if (!deathmatch)
+	{
+		// Cooperative
+		spawnMask = 0;
+		for (i = 0; i < MAXPLAYERS; i++)
+		{
+			if (playeringame[i])
+			{
+				spawnMask |= classFlags[PlayerClass[i]];
+			}
+		}
+		if (!(mthing->options&spawnMask))
+		{
+			return;
+		}
+	}
+#endif
+
+	// Find which type to spawn
+	for (i = 0; i < num_mobj_types; i++)
+	{
+		if (mthing->type == mobjinfo[i].doomednum)
+		{
+			mobj = NewMobjThinker();
+			mobj->type = i;
+			mobjinfo[i].spawnfunc(mobj, mthing);
+			return;
+		}
+	}
+	// Can't find thing type
+	dprint("P_SpawnMapThing: Unknown type %i at (%f, %f)",
+		mthing->type, mthing->x, mthing->y);
+}
+
+//==========================================================================
+//
+// P_CreateTIDList
+//
+//==========================================================================
+
+void P_CreateTIDList(void)
+{
+	int 	i;
+	mobj_t 	*mobj;
+
+	i = 0;
+	for (mobj = NextMobj(NULL); mobj; mobj = NextMobj(mobj))
+	{
+		if (mobj->tid != 0)
+		{
+			// Add to list
+			if (i == MAX_TID_COUNT)
+			{
+				Error("P_CreateTIDList: MAX_TID_COUNT exceeded.");
+			}
+			TIDList[i] = mobj->tid;
+			TIDMobj[i++] = mobj;
+		}
+	}
+	// Add termination marker
+	TIDList[i] = 0;
+}
+
+//==========================================================================
+//
+// P_InsertMobjIntoTIDList
+//
+//==========================================================================
+
+void P_InsertMobjIntoTIDList(mobj_t *mobj, int tid)
+{
+	int 	i;
+	int 	index;
+
+	index = -1;
+	for (i = 0; TIDList[i] != 0; i++)
+	{
+		if (TIDList[i] == -1)
+		{
+			// Found empty slot
+			index = i;
+			break;
+		}
+	}
+	if (index == -1)
+	{
+		// Append required
+		if (i == MAX_TID_COUNT)
+		{
+			Error("P_InsertMobjIntoTIDList: MAX_TID_COUNT exceeded.");
+		}
+		index = i;
+		TIDList[index+1] = 0;
+	}
+	mobj->tid = tid;
+	TIDList[index] = tid;
+	TIDMobj[index] = mobj;
+}
+
+//==========================================================================
+//
+// P_RemoveMobjFromTIDList
+//
+//==========================================================================
+
+void P_RemoveMobjFromTIDList(mobj_t *mobj)
+{
+	int i;
+
+	for (i = 0; TIDList[i] != 0; i++)
+	{
+		if (TIDMobj[i] == mobj)
+		{
+			TIDList[i] = -1;
+			TIDMobj[i] = NULL;
+			mobj->tid = 0;
+			return;
+		}
+	}
+	mobj->tid = 0;
+}
+
+//==========================================================================
+//
+// P_FindMobjFromTID
+//
+//==========================================================================
+
+mobj_t *P_FindMobjFromTID(int tid, int *searchPosition)
+{
+	int 	i;
+
+	for (i = *searchPosition+1; TIDList[i] != 0; i++)
+	{
+		if (TIDList[i] == tid)
+		{
+			*searchPosition = i;
+			return TIDMobj[i];
+		}
+	}
+	*searchPosition = -1;
+	return NULL;
+}
+
+//==========================================================================
+//
+//	P_TestMobjLocation
+//
+//	Returns true if the mobj is not blocked by anything at its current
+// location, otherwise returns false.
+//
+//==========================================================================
+
+boolean P_TestMobjLocation(mobj_t *mobj)
+{
+	int flags;
+
+	flags = mobj->flags;
+	mobj->flags &= ~MF_PICKUP;
+	if (P_CheckPosition(mobj, mobj->origin.x, mobj->origin.y))
+	{ // XY is ok, now check Z
+		mobj->flags = flags;
+		if ((mobj->origin.z < mobj->floorz) ||
+			(mobj->origin.z + mobj->height > mobj->ceilingz))
+		{ // Bad Z
+			return(false);
+		}
+		return(true);
+	}
+	mobj->flags = flags;
+	return(false);
+}
+
+//**************************************************************************
+//
+//		NOISE ALERT
+//
+//**************************************************************************
+
+mobj_t*		soundtarget;
+
+//==========================================================================
+//
+//  P_RecursiveSound
+//
+//	Called by P_NoiseAlert. Recursively traverse adjacent sectors, sound
+// blocking lines cut off traversal.
+//
+//==========================================================================
+
+void P_RecursiveSound(sector_t* sec, int soundblocks)
+{
+    int			i;
+    line_t*		check;
+    sector_t*	other;
+	
+    // wake up all monsters in this sector
+    if (sec->validcount == *validcount &&
+    	sec->soundtraversed <= soundblocks + 1)
+    {
+		return;		// already flooded
+    }
+    
+    sec->validcount = *validcount;
+    sec->soundtraversed = soundblocks + 1;
+    sec->soundtarget = soundtarget;
+	
+    for (i=0; i<sec->linecount; i++)
+    {
+		check = sec->lines[i];
+		if (!(check->flags & ML_TWOSIDED))
+		    continue;
+	
+		if (!LineOpenings(check, *check->v1))
+		{
+			if (!LineOpenings(check, *check->v2))
+			    continue;	// closed door
+		}
+	
+		if (level->sides[check->sidenum[0]].sector == sec)
+		    other = level->sides[check->sidenum[1]].sector;
+		else
+		    other = level->sides[check->sidenum[0]].sector;
+	
+		if (check->flags & ML_SOUNDBLOCK)
+		{
+		    if (!soundblocks)
+				P_RecursiveSound(other, 1);
+		}
+		else
+		    P_RecursiveSound(other, soundblocks);
+    }
+}
+
+//==========================================================================
+//
+//	P_NoiseAlert
+//
+//	If a monster yells at a player, it will alert other monsters to the
+// player.
+//
+//==========================================================================
+
+void P_NoiseAlert(mobj_t* target, mobj_t* emmiter)
+{
+    soundtarget = target;
+    (*validcount)++;
+    P_RecursiveSound(emmiter->subsector->sector, 0);
+}
+
+

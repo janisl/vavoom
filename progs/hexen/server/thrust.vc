@@ -1,0 +1,153 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+//===========================================================================
+//
+// Thrust floor stuff
+//
+// Thrust Spike Variables
+//		specialmobj1	pointer to dirt clump mobj
+//		special2		speed of raise
+//		args[0]		0 = lowered,  1 = raised
+//		args[1]		0 = normal,   1 = bloody
+//===========================================================================
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//  A_ThrustInitUp
+//
+//==========================================================================
+
+void A_ThrustInitUp(mobj_t* actor)
+{
+	actor->special2 = 5;		// Raise speed
+	actor->args[0] = 1;		// Mark as up
+	actor->floorclip = 0.0;
+	actor->flags = MF_SOLID;
+	actor->flags2 = MF2_NOTELEPORT|MF2_FLOORCLIP;
+	actor->specialmobj1 = NULL;
+}
+
+//==========================================================================
+//
+//  A_ThrustInitDn
+//
+//==========================================================================
+
+void A_ThrustInitDn(mobj_t* actor)
+{
+	mobj_t*	mo;
+
+	actor->special2 = 5;		// Raise speed
+	actor->args[0] = 0;		// Mark as down
+	actor->floorclip = actor->height;
+	actor->flags = 0;
+	actor->flags2 = MF2_NOTELEPORT|MF2_FLOORCLIP;
+   	actor->translucency = 100;
+	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_DIRTCLUMP);
+	actor->specialmobj1 = mo;
+}
+
+//==========================================================================
+//
+//  A_ThrustRaise
+//
+//==========================================================================
+
+void A_ThrustRaise(mobj_t* actor)
+{
+	if (RaiseMobj(actor))
+	{	// Reached it's target height
+		actor->args[0] = 1;
+		if (actor->args[1])
+			SetMobjStateNF(actor, S_BTHRUSTINIT2_1);
+		else
+			SetMobjStateNF(actor, S_THRUSTINIT2_1);
+	}
+
+	// Lose the dirt clump
+	if ((actor->floorclip < actor->height) && actor->specialmobj1)
+	{
+		P_RemoveMobj(actor->specialmobj1);
+		actor->specialmobj1 = NULL;
+	}
+
+	// Spawn some dirt
+	if (P_Random()<40)
+		SpawnDirt(actor, actor->radius);
+	actor->special2++;							// Increase raise speed
+}
+
+//==========================================================================
+//
+//  A_ThrustLower
+//
+//==========================================================================
+
+void A_ThrustLower(mobj_t* actor)
+{
+	if (SinkMobj(actor))
+	{
+		actor->args[0] = 0;
+		if (actor->args[1])
+			SetMobjStateNF(actor, S_BTHRUSTINIT1_1);
+		else
+			SetMobjStateNF(actor, S_THRUSTINIT1_1);
+	}
+}
+
+//==========================================================================
+//
+//  A_ThrustBlock
+//
+//==========================================================================
+
+void A_ThrustBlock(mobj_t* actor)
+{
+	actor->flags |= MF_SOLID;
+}
+
+//==========================================================================
+//
+//  A_ThrustImpale
+//
+//==========================================================================
+
+void A_ThrustImpale(mobj_t* actor)
+{
+	// Impale all shootables in radius
+	PIT_ThrustSpike(actor);
+}
+

@@ -1,0 +1,142 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+//==========================================================================
+//
+//	A_RestoreSpecialThing1
+//
+//	Make a special thing visible again.
+//
+//==========================================================================
+
+void A_RestoreSpecialThing1(mobj_t* thing)
+{
+	if(thing->type == MT_WMACE)
+	{
+		// Do random mace placement
+		RepositionMace(thing);
+	}
+	thing->translucency -= 100;
+	StartSoundName(thing, "Respawn");
+}
+
+//==========================================================================
+//
+//	A_RestoreSpecialThing2
+//
+//==========================================================================
+
+void A_RestoreSpecialThing2(mobj_t* thing)
+{
+	thing->flags |= MF_SPECIAL;
+	SetMobjState(thing, thing->spawnstate);
+}
+
+//==========================================================================
+//
+//	A_HideThing
+//
+//==========================================================================
+
+void A_HideThing(mobj_t* actor)
+{
+	actor->translucency += 100;
+}
+
+//==========================================================================
+//
+//	A_UnHideThing
+//
+//==========================================================================
+
+void A_UnHideThing(mobj_t* actor)
+{
+	actor->translucency -= 100;
+}
+
+//==========================================================================
+//
+//	A_RestoreArtifact
+//
+//==========================================================================
+
+void A_RestoreArtifact(mobj_t* arti)
+{
+	arti->flags |= MF_SPECIAL;
+	SetMobjState(arti, arti->spawnstate);
+	StartSoundName(arti, "Respawn");
+}
+
+//==========================================================================
+//
+//	A_InitKeyGizmo
+//
+//==========================================================================
+
+void A_InitKeyGizmo(mobj_t* gizmo)
+{
+	mobj_t*	mo;
+	int		state;
+
+	switch (gizmo->type)
+	{
+		case MT_KEYGIZMOBLUE:
+			state = S_KGZ_BLUEFLOAT1;
+			break;
+		case MT_KEYGIZMOGREEN:
+			state = S_KGZ_GREENFLOAT1;
+			break;
+		case MT_KEYGIZMOYELLOW:
+			state = S_KGZ_YELLOWFLOAT1;
+			break;
+		default:
+			break;
+	}
+	mo = P_SpawnMobj(gizmo->origin.x, gizmo->origin.y, gizmo->origin.z + 60.0,
+		MT_KEYGIZMOFLOAT);
+	SetMobjState(mo, state);
+}
+
+//==========================================================================
+//
+//	A_ESound
+//
+//==========================================================================
+
+void A_ESound(mobj_t* mo)
+{
+	string 	sound = "";
+
+	switch (mo->type)
+	{
+		case MT_SOUNDWATERFALL:
+			sound = "Waterfall";
+			break;
+		case MT_SOUNDWIND:
+			sound = "Wind";
+			break;
+	}
+	StartSoundName(mo, sound);
+}
+
+

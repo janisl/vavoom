@@ -1,0 +1,77 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	A_BeastAttack
+//
+//==========================================================================
+
+void A_BeastAttack(mobj_t* actor)
+{
+	if (!actor->target)
+	{
+		return;
+	}
+	StartSound(actor, actor->sound_attack);
+	if (P_CheckMeleeRange(actor))
+	{
+		DamageMobj(actor->target, actor, actor, HITDICE(3));
+		return;
+	}
+	SpawnMissile(actor, actor->target, MT_BEASTBALL);
+}
+
+//==========================================================================
+//
+//	A_BeastPuff
+//
+//==========================================================================
+
+void A_BeastPuff(mobj_t* actor)
+{
+    float		i1;
+    float		i2;
+    float		i3;
+
+	if (P_Random() > 64)
+	{
+    	i1 = actor->origin.x + (Random() - Random()) * 4.0;
+        i2 = actor->origin.y + (Random() - Random()) * 4.0;
+        i3 = actor->origin.z + (Random() - Random()) * 4.0;
+		P_SpawnMobj(i1, i2, i3, MT_PUFFY);
+	}
+}
+

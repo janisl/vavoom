@@ -1,0 +1,179 @@
+//------------------------------------------------------
+//  Retail maps, I guess ;-)
+
+map MAP01 "sanctuary"
+next MAP02
+sky1 SKYMNT02 0
+music D_MAP1
+
+map MAP02 "town"
+next MAP03
+sky1 SKYMNT02 0
+music D_MAP2
+
+map MAP03 "front base"
+next MAP04
+sky1 SKYMNT02 0
+music D_MAP3
+
+map MAP04 "power station"
+next MAP05
+sky1 SKYMNT02 0
+music D_MAP4
+
+map MAP05 "prison"
+next MAP06
+sky1 SKYMNT02 0
+music D_MAP5
+
+map MAP06 "sewers"
+next MAP07
+sky1 SKYMNT02 0
+music D_MAP6
+
+map MAP07 "castle"
+next MAP08
+sky1 SKYMNT02 0
+music D_MAP7
+
+map MAP08 "Audience Chamber"
+next MAP09
+sky1 SKYMNT02 0
+music D_MAP8
+
+map MAP09 "Castle: Programmer's Keep"
+next MAP10
+sky1 SKYMNT02 0
+music D_MAP9
+
+map MAP10 "New Front Base"
+next MAP11
+sky1 SKYMNT02 0
+music D_MAP10
+
+map MAP11 "Borderlands"
+next MAP12
+sky1 SKYMNT02 0
+music D_MAP11
+
+map MAP12 "temple of the oracle"
+next MAP13
+sky1 SKYMNT02 0
+music D_MAP12
+
+map MAP13 "Catacombs"
+next MAP14
+sky1 SKYMNT02 0
+music D_MAP13
+
+map MAP14 "mines"
+next MAP15
+sky1 SKYMNT02 0
+music D_MAP14
+
+map MAP15 "Fortress: Administration"
+next MAP16
+sky1 SKYMNT02 0
+music D_MAP15
+
+map MAP16 "Fortress: Bishop's Tower"
+next MAP17
+sky1 SKYMNT02 0
+music D_MAP16
+
+map MAP17 "Fortress: The Bailey"
+next MAP18
+sky1 SKYMNT02 0
+music D_MAP17
+
+map MAP18 "Fortress: Stores"
+next MAP19
+sky1 SKYMNT02 0
+music D_MAP18
+
+map MAP19 "Fortress: Security Complex"
+next MAP20
+sky1 SKYMNT02 0
+music D_MAP19
+
+map MAP20 "Factory: Receiving"
+next MAP21
+sky1 SKYMNT02 0
+music D_MAP20
+
+map MAP21 "Factory: Manufacturing"
+next MAP22
+sky1 SKYMNT02 0
+music D_MAP21
+
+map MAP22 "Factory: Forge"
+next MAP23
+sky1 SKYMNT02 0
+music D_MAP22
+
+map MAP23 "Order Commons"
+next MAP24
+sky1 SKYMNT02 0
+music D_MAP23
+
+map MAP24 "Order Chapel"
+next MAP25
+sky1 SKYMNT02 0
+music D_MAP24
+
+map MAP25 "Ruins"
+next MAP26
+sky1 SKYMNT02 0
+music D_MAP25
+
+map MAP26 "proving grounds"
+next MAP27
+sky1 SKYMNT02 0
+music D_MAP26
+
+map MAP27 "The Lab"
+next MAP28
+sky1 SKYMNT02 0
+music D_MAP26
+
+map MAP28 "Alien Ship"
+next MAP29
+sky1 SKYMNT02 0
+music D_MAP28
+
+map MAP29 "Entity's Lair"
+next MAP30
+sky1 SKYMNT02 0
+music D_MAP29
+
+map MAP30 "Abondoned Front Base"
+next MAP31
+sky1 SKYMNT02 0
+music D_MAP30
+
+map MAP31 "Training Facility"
+next MAP01
+sky1 SKYMNT02 0
+music D_MAP31
+
+//------------------------------------------------------
+//  Shareware maps
+
+map MAP32 "Sanctuary"
+next MAP33
+sky1 SKYMNT02 0
+music D_MAP1
+
+map MAP33 "Town"
+next MAP34
+sky1 SKYMNT02 0
+music D_MAP2
+
+map MAP34 "Movement Base"
+next MAP32
+sky1 SKYMNT02 0
+music D_MAP3
+
+;------------------------------------------------------
+; Non level CD tracks
+CD_TITLE_TRACK 4

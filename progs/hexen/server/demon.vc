@@ -1,0 +1,192 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//============================================================================
+//
+//	A_DemonAttack1 (melee)
+//
+//============================================================================
+
+void A_DemonAttack1(mobj_t* actor)
+{
+	if (CheckMeleeRange(actor))
+	{
+		DamageMobj(actor->target, actor, actor, HITDICE(2));
+	}
+}
+
+//============================================================================
+//
+//	A_DemonAttack2 (missile)
+//
+//============================================================================
+
+void A_DemonAttack2(mobj_t* actor)
+{
+	mobj_t*	mo;
+	int 	fireBall;
+
+	if (actor->type == MT_DEMON)
+	{
+		fireBall = MT_DEMONFX1;
+	}
+	else
+	{
+		fireBall = MT_DEMON2FX1;
+	}
+	mo = SpawnMissile(actor, actor->target, fireBall);
+	if (mo)
+	{
+		mo->origin.z += 30.0;
+		StartSoundName(actor, "DemonMissileFire");
+	}
+}
+
+//============================================================================
+//
+//	A_DemonDeath
+//
+//============================================================================
+
+void A_DemonDeath(mobj_t* actor)
+{
+	mobj_t*	mo;
+	angle_t	angle;
+
+	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0, MT_DEMONCHUNK1);
+	if (mo)
+	{
+		angle = actor->angles.yaw + ANG90;
+		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
+		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
+		mo->velocity.z = 8.0 * 35.0;
+		mo->target = actor;
+	}
+	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0, MT_DEMONCHUNK2);
+	if (mo)
+	{
+		angle = actor->angles.yaw - ANG90;
+		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
+		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
+		mo->velocity.z = 8.0 * 35.0;
+		mo->target = actor;
+	}
+	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0, MT_DEMONCHUNK3);
+	if (mo)
+	{
+		angle = actor->angles.yaw - ANG90;
+		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
+		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
+		mo->velocity.z = 8.0 * 35.0;
+		mo->target = actor;
+	}
+	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0, MT_DEMONCHUNK4);
+	if (mo)
+	{
+		angle = actor->angles.yaw - ANG90;
+		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
+		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
+		mo->velocity.z = 8.0 * 35.0;
+		mo->target = actor;
+	}
+	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0, MT_DEMONCHUNK5);
+	if (mo)
+	{
+		angle = actor->angles.yaw - ANG90;
+		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
+		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
+		mo->velocity.z = 8.0 * 35.0;
+		mo->target = actor;
+	}
+}
+
+//===========================================================================
+//
+// A_Demon2Death
+//
+//===========================================================================
+
+void A_Demon2Death(mobj_t* actor)
+{
+	mobj_t*	mo;
+	angle_t	angle;
+
+	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0, MT_DEMON2CHUNK1);
+	if (mo)
+	{
+		angle = actor->angles.yaw + ANG90;
+		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
+		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
+		mo->velocity.z = 8.0 * 35.0;
+		mo->target = actor;
+	}
+	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0, MT_DEMON2CHUNK2);
+	if(mo)
+	{
+		angle = actor->angles.yaw - ANG90;
+		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
+		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
+		mo->velocity.z = 8.0 * 35.0;
+		mo->target = actor;
+	}
+	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0, MT_DEMON2CHUNK3);
+	if(mo)
+	{
+		angle = actor->angles.yaw - ANG90;
+		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
+		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
+		mo->velocity.z = 8.0 * 35.0;
+		mo->target = actor;
+	}
+	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0, MT_DEMON2CHUNK4);
+	if(mo)
+	{
+		angle = actor->angles.yaw - ANG90;
+		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
+		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
+		mo->velocity.z = 8.0 * 35.0;
+		mo->target = actor;
+	}
+	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0, MT_DEMON2CHUNK5);
+	if(mo)
+	{
+		angle = actor->angles.yaw - ANG90;
+		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
+		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
+		mo->velocity.z = 8.0 * 35.0;
+		mo->target = actor;
+	}
+}
+

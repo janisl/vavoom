@@ -1,0 +1,109 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//**
+//**	Player setup
+//**
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+struct psetup_menu_t
+{
+	menu_t				menu;
+	menuinputline_t		name;
+	menuswitch_t		color;
+	menuspriteanim_t	anim;
+	menutext_t			title;
+};
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+psetup_menu_t PSetupMenu;
+
+string sw_colors[] = { "brown", "red", "dark brown", "gray", "green", "yellow", "light green", "cyan" };
+
+// CODE --------------------------------------------------------------------
+
+void SetColor(void)
+{
+	PSetupMenu.anim.translation = PSetupMenu.color.value;
+}
+
+void psetup_func(menucommon_t *item, int msg)
+{
+	if (msg != MMSG_ACTIVATE)
+	{
+		return;
+	}
+
+	switch (item->id)
+	{
+	 case 1:
+		SetCvarS("name", ARR2STR(PSetupMenu.name.value));
+		break;
+
+	 case 2:
+		SetCvar("color", PSetupMenu.color.value);
+		SetColor();
+		break;
+	}
+}
+
+void menu_psetup(void)
+{
+	int		x = 16;
+	int		y = 40;
+
+	InitMenu(&PSetupMenu.menu);
+
+	MenuInputLine_Init(&PSetupMenu.name, x, y, "Name", TEXT_SMALLL, 1);
+	PSetupMenu.name.callback = psetup_func;
+	PSetupMenu.name.id = 1;
+	strcpy(ARR2STR(PSetupMenu.name.value), GetCvarS("name"));
+	AddMenuItem(&PSetupMenu.menu, &PSetupMenu.name);
+	y += 20;
+
+	MenuSwitch_Init(&PSetupMenu.color, x, y, "Color", TEXT_SMALLL, GetCvar("color"), 8, &sw_colors[0]);
+	PSetupMenu.color.id = 2;
+	PSetupMenu.color.callback = psetup_func;
+	AddMenuItem(&PSetupMenu.menu, &PSetupMenu.color);
+	y += 10;
+
+	R_InstallSprite("PLAY", 500);
+
+	MenuSpriteAnim_Init(&PSetupMenu.anim, 200, 120, 500, 8, 4);
+	SetColor();
+	AddMenuItem(&PSetupMenu.menu, &PSetupMenu.anim);
+
+	MenuText_InitTitle(&PSetupMenu.title, 160, 24, "PLAYER SETUP", TEXT_BIGC);
+	AddMenuItem(&PSetupMenu.menu, &PSetupMenu.title);
+
+    PushMenu(&PSetupMenu.menu);
+}
+

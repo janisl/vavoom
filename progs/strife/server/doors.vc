@@ -1,0 +1,496 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+//**
+//**	Door animation code (opening/closing)
+//**	
+//**************************************************************************
+
+//-----------------------------------------------------------------------------
+//
+// VERTICAL DOORS
+//
+//-----------------------------------------------------------------------------
+
+#define VDOORSPEED		2.0
+#define VDOORWAIT		150
+
+enum
+{
+    door_normal,
+    close30ThenOpen,
+    close,
+    open,
+    raiseIn5Mins,
+    blazeRaise,
+    blazeOpen,
+    blazeClose
+};
+
+//
+// T_VerticalDoor
+//
+void T_VerticalDoor(special_t* door)
+{
+    int		res;
+	
+    switch (door->direction)
+    {
+      case 0:
+		// WAITING
+		if (!--door->topcountdown)
+		{
+		    switch (door->type)
+		    {
+		      case blazeRaise:
+				door->direction = -1; // time to go back down
+				StartSoundName(&door->sector->soundorg, "BlazeDoorClose");
+				break;
+		
+		      case door_normal:
+				door->direction = -1; // time to go back down
+				StartSoundName(&door->sector->soundorg, "DoorClose");
+				break;
+		
+		      case close30ThenOpen:
+				door->direction = 1;
+				StartSoundName(&door->sector->soundorg, "DoorOpen");
+				break;
+		      default:
+				break;
+		    }
+		}
+		break;
+	
+      case 2:
+		//  INITIAL WAIT
+		if (!--door->topcountdown)
+		{
+		    switch (door->type)
+		    {
+		      case raiseIn5Mins:
+				door->direction = 1;
+				door->type = door_normal;
+				StartSoundName(&door->sector->soundorg, "DoorOpen");
+				break;
+		
+		      default:
+				break;
+		    }
+		}
+		break;
+	
+      case -1:
+		// DOWN
+		res = T_MovePlane(door->sector,
+			  door->tic_speed,
+			  door->sector->floorheight,
+			  false,1,door->direction);
+		if (res == RES_PASTDEST)
+		{
+		    switch (door->type)
+		    {
+		      case blazeRaise:
+		      case blazeClose:
+				door->sector->specialdata = NULL;
+				RemoveSpecialThinker(door);  // unlink and free
+				StartSoundName(&door->sector->soundorg, "BlazeDoorClose");
+				break;
+		
+		      case door_normal:
+		      case close:
+				door->sector->specialdata = NULL;
+				RemoveSpecialThinker(door);  // unlink and free
+				break;
+		
+		      case close30ThenOpen:
+				door->direction = 0;
+				door->topcountdown = 35 * 30;
+				break;
+		      default:
+				break;
+		    }
+		}
+		else if (res == RES_CRUSHED)
+		{
+		    switch (door->type)
+		    {
+		      case blazeClose:
+		      case close:		// DO NOT GO BACK UP!
+				break;
+		
+		      default:
+				door->direction = 1;
+				StartSoundName(&door->sector->soundorg, "DoorOpen");
+				break;
+		    }
+		}
+		break;
+	
+      case 1:
+		// UP
+		res = T_MovePlane(door->sector,
+			  door->tic_speed,
+			  door->topheight,
+			  false, 1, door->direction);
+	
+		if (res == RES_PASTDEST)
+		{
+		    switch (door->type)
+		    {
+		      case blazeRaise:
+		      case door_normal:
+				door->direction = 0; // wait at top
+				door->topcountdown = door->topwait;
+				break;
+		
+		      case close30ThenOpen:
+		      case blazeOpen:
+		      case open:
+				door->sector->specialdata = NULL;
+				RemoveSpecialThinker(door);  // unlink and free
+				break;
+		
+		      default:
+				break;
+		    }
+		}
+		break;
+    }
+}
+
+
+int EV_DoDoor(line_t* line, int type)
+{
+    int			secnum;
+    int			rtn;
+    sector_t*	sec;
+    special_t*	door;
+	
+    secnum = -1;
+    rtn = 0;
+    
+    while ((secnum = FindSectorFromTag(line->arg1, secnum)) >= 0)
+    {
+		sec = &level->sectors[secnum];
+		if (sec->specialdata)
+		    continue;
+	
+		// new door thinker
+		rtn = 1;
+		door = NewSpecialThinker(T_VerticalDoor);
+		sec->specialdata = door;
+
+		door->sector = sec;
+		door->type = type;
+		door->topwait = VDOORWAIT;
+		door->tic_speed = VDOORSPEED;
+		
+		switch (type)
+		{
+		  case blazeClose:
+			    door->topheight = FindLowestCeilingSurrounding(sec);
+			    door->topheight -= 4.0;
+			    door->direction = -1;
+			    door->tic_speed = VDOORSPEED * 4.0;
+			    StartSoundName(&door->sector->soundorg, "BlazeDoorClose");
+			    break;
+	    
+		  case close:
+			    door->topheight = FindLowestCeilingSurrounding(sec);
+			    door->topheight -= 4.0;
+			    door->direction = -1;
+			    StartSoundName(&door->sector->soundorg, "DoorClose");
+			    break;
+	    
+		  case close30ThenOpen:
+			    door->topheight = sec->ceilingheight;
+			    door->direction = -1;
+			    StartSoundName(&door->sector->soundorg, "DoorClose");
+			    break;
+	    
+		  case blazeRaise:
+		  case blazeOpen:
+			    door->direction = 1;
+			    door->topheight = FindLowestCeilingSurrounding(sec);
+			    door->topheight -= 4.0;
+			    door->tic_speed = VDOORSPEED * 4.0;
+			    if (door->topheight != sec->ceilingheight)
+					StartSoundName(&door->sector->soundorg, "BlazeDoorOpen");
+			    break;
+	    
+		  case door_normal:
+		  case open:
+			    door->direction = 1;
+			    door->topheight = FindLowestCeilingSurrounding(sec);
+		    	door->topheight -= 4.0;
+			    if (door->topheight != sec->ceilingheight)
+					StartSoundName(&door->sector->soundorg, "DoorOpen");
+			    break;
+	    
+		  default:
+			    break;
+		}
+		
+    }
+    return rtn;
+}
+
+//
+// EV_DoLockedDoor
+// Move a locked door up/down
+//
+
+int EV_DoLockedDoor(line_t* line, int type, mobj_t* thing)
+{
+    player_t*	p;
+	
+    p = thing->player;
+	
+    if (!p)
+		return 0;
+		
+    switch (line->special)
+    {
+      case 99:	// Blue Lock
+      case 133:
+		if (!(p->keys & ((1 << it_bluecard) | (1 << it_blueskull))))
+		{
+		    centerprint(p, PD_BLUEO);
+		    StartSoundName(NULL, "PlayerLand");
+		    return 0;
+		}
+		break;
+	
+      case 134: // Red Lock
+      case 135:
+		if (!(p->keys & ((1 << it_redcard) | (1 << it_redskull))))
+		{
+		    centerprint(p, PD_REDO);
+		    StartSoundName(NULL, "PlayerLand");
+		    return 0;
+		}
+		break;
+	
+      case 136:	// Yellow Lock
+      case 137:
+		if (!(p->keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
+		{
+		    centerprint(p, PD_YELLOWO);
+		    StartSoundName(NULL, "PlayerLand");
+		    return 0;
+		}
+		break;
+    }
+
+    return EV_DoDoor(line, type);
+}
+
+
+//
+// EV_VerticalDoor : open a door manually, no tag value
+//
+// int return value?
+//
+int EV_VerticalDoor(line_t* line,mobj_t* thing)
+{
+    player_t*	player;
+    sector_t*	sec;
+    special_t*	door;
+    int			side;
+	
+    side = 0;	// only front sides can be used
+
+    //	Check for locks
+    player = thing->player;
+		
+    switch (line->special)
+    {
+      case 26: // Blue Lock
+      case 32:
+		if (!player)
+		    return 0;
+	
+		if (!(player->keys & ((1 << it_bluecard) | (1 << it_blueskull))))
+		{
+		    centerprint(player, PD_BLUEK);
+		    StartSoundName(NULL, "PlayerLand");
+		    return 0;
+		}
+		break;
+	
+      case 27: // Yellow Lock
+      case 34:
+		if ( !player )
+		    return 0;
+	
+		if (!(player->keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
+		{
+		    centerprint(player, PD_YELLOWK);
+		    StartSoundName(NULL, "PlayerLand");
+		    return 0;
+		}
+		break;
+	
+      case 28: // Red Lock
+      case 33:
+		if ( !player )
+		    return 0;
+	
+		if (!(player->keys & ((1 << it_redcard) | (1 << it_redskull))))
+		{
+		    centerprint(player, PD_REDK);
+		    StartSoundName(NULL, "PlayerLand");
+		    return 0;
+		}
+		break;
+    }
+
+    // if the sector has an active thinker, use it
+    sec = level->sides[line->sidenum[side^1]].sector;
+
+    if (sec->specialdata)
+    {
+		door = sec->specialdata;
+		switch (line->special)
+		{
+		  case	1: // ONLY FOR "RAISE" DOORS, NOT "OPEN"s
+		  case	26:
+		  case	27:
+		  case	28:
+		  case	117:
+			    if (door->direction == -1)
+					door->direction = 1;	// go back up
+			    else
+			    {
+					if (!thing->player)
+					    return 0;		// JDC: bad guys never close doors
+		
+					door->direction = -1;	// start going down immediately
+			    }
+			    return 1;
+		}
+    }
+	
+    // for proper sound
+    switch (line->special)
+    {
+      case 117:	// BLAZING DOOR RAISE
+      case 118:	// BLAZING DOOR OPEN
+		StartSoundName(&sec->soundorg, "BlazeDoorOpen");
+		break;
+	
+      case 1:	// NORMAL DOOR SOUND
+      case 31:
+		StartSoundName(&sec->soundorg, "DoorOpen");
+		break;
+	
+      default:	// LOCKED DOOR SOUND
+		StartSoundName(&sec->soundorg, "DoorOpen");
+		break;
+    }
+	
+    
+    // new door thinker
+    door = NewSpecialThinker(T_VerticalDoor);
+    sec->specialdata = door;
+    door->sector = sec;
+    door->direction = 1;
+    door->tic_speed = VDOORSPEED;
+    door->topwait = VDOORWAIT;
+
+    switch (line->special)
+    {
+      case 1:
+      case 26:
+      case 27:
+      case 28:
+		door->type = door_normal;
+		break;
+	
+      case 31:
+      case 32:
+      case 33:
+      case 34:
+		door->type = open;
+		line->special = 0;
+		break;
+	
+      case 117:	// blazing door raise
+		door->type = blazeRaise;
+		door->tic_speed = VDOORSPEED * 4.0;
+		break;
+      case 118:	// blazing door open
+		door->type = blazeOpen;
+		line->special = 0;
+		door->tic_speed = VDOORSPEED * 4.0;
+		break;
+    }
+    
+    // find the top and bottom of the movement range
+    door->topheight = FindLowestCeilingSurrounding(sec);
+    door->topheight -= 4.0;
+	return 1;
+}
+
+
+//
+// Spawn a door that closes after 30 seconds
+//
+void P_SpawnDoorCloseIn30(sector_t* sec)
+{
+    special_t*	door;
+	
+    door = NewSpecialThinker(T_VerticalDoor);
+
+    sec->specialdata = door;
+    sec->special = 0;
+
+    door->sector = sec;
+    door->direction = 0;
+    door->type = door_normal;
+    door->tic_speed = VDOORSPEED;
+    door->topcountdown = 30 * 35;
+}
+
+//
+// Spawn a door that opens after 5 minutes
+//
+void P_SpawnDoorRaiseIn5Mins(sector_t* sec, int secnum)
+{
+    special_t*	door;
+	
+    door = NewSpecialThinker(T_VerticalDoor);
+
+    sec->specialdata = door;
+    sec->special = 0;
+
+    door->sector = sec;
+    door->direction = 2;
+    door->type = raiseIn5Mins;
+    door->tic_speed = VDOORSPEED;
+    door->topheight = FindLowestCeilingSurrounding(sec);
+    door->topheight -= 4.0;
+    door->topwait = VDOORWAIT;
+    door->topcountdown = 5 * 60 * 35;
+}
+

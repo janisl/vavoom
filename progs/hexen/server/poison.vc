@@ -1,0 +1,105 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//===========================================================================
+//
+// 	A_PoisonBagInit
+//
+//===========================================================================
+
+void A_PoisonBagInit(mobj_t* actor)
+{
+	mobj_t*	mo;
+
+	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 28.0, MT_POISONCLOUD);
+	if(!mo)
+	{
+		return;
+	}
+	mo->velocity.x = 0.00001; // missile objects must move to impact other objects
+	mo->special1 = 24+(P_Random()&7);
+	mo->special2 = 0;
+	mo->target = actor->target;
+	mo->radius = 20.0;
+	mo->height = 30.0;
+	mo->flags &= ~MF_NOCLIP;
+}
+
+//===========================================================================
+//
+// 	A_PoisonBagCheck
+//
+//===========================================================================
+
+void A_PoisonBagCheck(mobj_t* actor)
+{
+	if(!--actor->special1)
+	{
+		SetMobjState(actor, S_POISONCLOUD_X1);
+	}
+	else
+	{
+		return;
+	}
+}
+
+//===========================================================================
+//
+// 	A_PoisonBagDamage
+//
+//===========================================================================
+
+void A_PoisonBagDamage(mobj_t* actor)
+{
+	int 	bobIndex;
+	
+	A_Explode(actor);	
+
+	bobIndex = actor->special2;
+	actor->origin.z += FloatBobOffsets[bobIndex] / 16.0;
+	actor->special2 = (bobIndex + 1) & 63;
+}
+
+//===========================================================================
+//
+// 	A_PoisonShroom
+//
+//===========================================================================
+
+void A_PoisonShroom(mobj_t* actor)
+{
+	actor->time = 4.0 + Random() * 16.0;
+}
+

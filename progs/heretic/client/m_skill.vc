@@ -1,0 +1,134 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//**
+//**	Skill menu
+//**
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+struct menu_skill_t
+{
+	menu_t		menu;
+	menutext_t	skill[5];
+	menutext_t	title;
+};
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+menu_skill_t	SkillMenu;
+int				MenuSkill;
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	SkillCallback
+//
+//==========================================================================
+
+void SkillCallback(menucommon_t *item, int msg)
+{
+	if (msg == MMSG_ACTIVATE)
+	{
+		MenuSkill = item->id;
+	}
+}
+
+//==========================================================================
+//
+//	skill_func
+//
+//	Let's play
+//
+//==========================================================================
+
+void skill_func(void)
+{
+	SetCvar("Skill", MenuSkill);
+
+	CmdBuf_AddText("Disconnect\n");
+	CmdBuf_AddText("MaxPlayers 1\n");
+	CmdBuf_AddText("Map E%dM1\n", MenuEpisode);
+
+	MN_DeactivateMenu();
+}
+
+//==========================================================================
+//
+//	menu_skill
+//
+//==========================================================================
+
+void menu_skill(void)
+{
+	int x;
+	int y;
+
+    InitMenu(&SkillMenu.menu);
+
+	x = 38;
+	y = 30;
+
+	MenuText_InitFunc(&SkillMenu.skill[0], x, y, "THOU NEEDETH A WET-NURSE", TEXT_BIG, skill_func);
+	SkillMenu.skill[0].callback = SkillCallback;
+	SkillMenu.skill[0].id = 0;
+	AddMenuItem(&SkillMenu.menu, &SkillMenu.skill[0]);
+	y += 18;
+
+	MenuText_InitFunc(&SkillMenu.skill[1], x, y, "YELLOWBELLIES-R-US", TEXT_BIG, skill_func);
+	SkillMenu.skill[1].callback = SkillCallback;
+	SkillMenu.skill[1].id = 1;
+	AddMenuItem(&SkillMenu.menu, &SkillMenu.skill[1]);
+	y += 18;
+
+	MenuText_InitFunc(&SkillMenu.skill[2], x, y, "BRINGEST THEM ONETH", TEXT_BIG, skill_func);
+	SkillMenu.skill[2].callback = SkillCallback;
+	SkillMenu.skill[2].id = 2;
+	AddMenuItem(&SkillMenu.menu, &SkillMenu.skill[2]);
+	y += 18;
+
+	MenuText_InitFunc(&SkillMenu.skill[3], x, y, "THOU ART A SMITE-MEISTER", TEXT_BIG, skill_func);
+	SkillMenu.skill[3].callback = SkillCallback;
+	SkillMenu.skill[3].id = 3;
+	AddMenuItem(&SkillMenu.menu, &SkillMenu.skill[3]);
+	y += 18;
+
+	MenuText_InitFunc(&SkillMenu.skill[4], x, y, "BLACK PLAGUE POSSESSES THEE", TEXT_BIG, skill_func);
+	SkillMenu.skill[4].callback = SkillCallback;
+	SkillMenu.skill[4].id = 4;
+	AddMenuItem(&SkillMenu.menu, &SkillMenu.skill[4]);
+
+	MenuText_InitTitle(&SkillMenu.title, 160, 24, "CHOOSE SKILL LEVEL:", TEXT_BIGC);
+	AddMenuItem(&SkillMenu.menu, &SkillMenu.title);
+
+    PushMenu(&SkillMenu.menu);
+	Menu_SetCursorToItem(&SkillMenu.menu, &SkillMenu.skill[2]);
+}
+

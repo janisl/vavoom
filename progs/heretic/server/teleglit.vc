@@ -1,0 +1,82 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	A_SpawnTeleGlitter
+//
+//==========================================================================
+
+void A_SpawnTeleGlitter(mobj_t* actor)
+{
+	mobj_t*	mo;
+
+	mo = P_SpawnMobj(actor->origin.x + Random() * 32.0 - 16.0,
+		actor->origin.y + Random() * 32.0 - 16.0,
+		actor->subsector->sector->floorheight, MT_TELEGLITTER);
+	mo->velocity.z = 0.25 * 35.0;
+}
+
+//==========================================================================
+//
+//	A_SpawnTeleGlitter2
+//
+//==========================================================================
+
+void A_SpawnTeleGlitter2(mobj_t* actor)
+{
+	mobj_t*	mo;
+
+	mo = P_SpawnMobj(
+		actor->origin.x + Random() * 32.0 - 16.0,
+		actor->origin.y + Random() * 32.0 - 16.0,
+		actor->subsector->sector->floorheight, MT_TELEGLITTER2);
+	mo->velocity.z = 0.25 * 35.0;
+}
+
+//==========================================================================
+//
+//	A_AccTeleGlitter
+//
+//==========================================================================
+
+void A_AccTeleGlitter(mobj_t* actor)
+{
+	if (++actor->health > 35)
+	{
+		actor->velocity.z += actor->velocity.z / 2.0;
+	}
+}
+

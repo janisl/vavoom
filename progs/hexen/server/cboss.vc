@@ -1,0 +1,294 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//============================================================================
+//
+//  A_ClassBossHealth
+//
+//============================================================================
+
+void A_ClassBossHealth(mobj_t* actor)
+{
+	if (netgame && !deathmatch)		// co-op only
+	{
+		if (!actor->special1)
+		{
+			actor->health *= 5;
+			actor->special1 = true;   // has been initialized
+		}
+	}
+}
+
+//============================================================================
+//
+//  A_FastChase
+//
+//============================================================================
+
+#define CLASS_BOSS_STRAFE_RANGE		64.0 * 10.0
+
+void A_FastChase(mobj_t* actor)
+{
+	int 	delta;
+	float	dist;
+	angle_t	ang;
+	mobj_t*	target;
+
+	if(actor->reactiontime)
+	{
+		actor->reactiontime--;
+	}
+
+	// Modify target threshold
+	if(actor->threshold)
+	{
+		actor->threshold--;
+	}
+
+	if (gameskill == sk_nightmare)
+	{
+		// Monsters move faster in nightmare mode
+		actor->time *= 0.5;
+		if (actor->time < 0.1)
+		{
+			actor->time = 0.1;
+		}
+	}
+
+	//
+	// turn towards movement direction if not there yet
+	//
+	if(actor->movedir < 8)
+	{
+		actor->angles.yaw &= (7<<29);
+		delta = actor->angles.yaw-(actor->movedir << 29);
+		if(delta > 0)
+		{
+			actor->angles.yaw -= ANG90/2;
+		}
+		else if(delta < 0)
+		{
+			actor->angles.yaw += ANG90/2;
+		}
+	}
+
+	if(!actor->target || !(actor->target->flags&MF_SHOOTABLE))
+	{ // look for a new target
+		if(P_LookForPlayers(actor, true))
+		{ // got a new target
+			return;
+		}
+		SetMobjState(actor, actor->spawnstate);
+		return;
+	}
+
+	//
+	// don't attack twice in a row
+	//
+	if(actor->flags & MF_JUSTATTACKED)
+	{
+		actor->flags &= ~MF_JUSTATTACKED;
+		if (gameskill != sk_nightmare)
+			P_NewChaseDir (actor);
+		return;
+	}
+
+	// Strafe
+	if (actor->special2 > 0)
+	{
+		actor->special2--;
+	}
+	else
+	{
+		target = actor->target;
+		actor->special2 = 0;
+		actor->velocity.x = actor->velocity.y = 0.0;
+		dist = MobjDist(actor, target);
+		if (dist < CLASS_BOSS_STRAFE_RANGE)
+		{
+			if (P_Random()<100)
+			{
+				ang = atan2(target->origin.y - actor->origin.y,
+					target->origin.x - actor->origin.x);
+				if (P_Random()<128)
+					ang += ANG90;
+				else
+					ang -= ANG90;
+				actor->velocity.x = 13.0 * cos(ang) * 35.0;
+				actor->velocity.y = 13.0 * sin(ang) * 35.0;
+				actor->special2 = 3;		// strafe time
+			}
+		}
+	}
+
+	//
+	// check for missile attack
+	//
+	if (actor->missilestate)
+	{
+		if ((gameskill == sk_nightmare) || !actor->movecount)
+        {
+			if (CheckMissileRange(actor))
+    	    {
+				SetMobjState(actor, actor->missilestate);
+				actor->flags |= MF_JUSTATTACKED;
+				return;
+			}
+		}
+	}
+
+	//
+	// possibly choose another target
+	//
+	if (netgame && !actor->threshold && !P_CheckSight (actor, actor->target) )
+	{
+		if (P_LookForPlayers(actor,true))
+			return;         // got a new target
+	}
+
+	//
+	// chase towards player
+	//
+	if (!actor->special2)
+	{
+		if (--actor->movecount<0 || !P_Move (actor))
+		{
+			P_NewChaseDir (actor);
+		}
+	}
+}
+
+//============================================================================
+//
+// A_FSwordAttack2
+//
+//============================================================================
+
+void A_FSwordAttack2(mobj_t* actor)
+{
+	angle_t		angle = actor->angles.yaw;
+
+	SpawnMissileAngle(actor, MT_FSWORD_MISSILE,angle+ANG45/4, 0.0);
+	SpawnMissileAngle(actor, MT_FSWORD_MISSILE,angle+ANG45/8, 0.0);
+	SpawnMissileAngle(actor, MT_FSWORD_MISSILE,angle,         0.0);
+	SpawnMissileAngle(actor, MT_FSWORD_MISSILE,angle-ANG45/8, 0.0);
+	SpawnMissileAngle(actor, MT_FSWORD_MISSILE,angle-ANG45/4, 0.0);
+	StartSoundName(actor, "FighterSwordFire");
+}
+
+//============================================================================
+//
+//  A_FighterAttack
+//
+//============================================================================
+
+void A_FighterAttack(mobj_t* actor)
+{
+	if(!actor->target) return;
+	A_FSwordAttack2(actor);
+}
+
+//============================================================================
+//
+// A_CHolyAttack3
+//
+// 	Spawns the spirits
+//============================================================================
+
+void A_CHolyAttack3(mobj_t* actor)
+{
+	SpawnMissile(actor, actor->target, MT_HOLY_MISSILE);
+	StartSoundName(actor, "HolySymbolFire");
+}
+
+//============================================================================
+//
+//  A_ClericAttack
+//
+//============================================================================
+
+void A_ClericAttack(mobj_t* actor)
+{
+	if(!actor->target) return;
+	A_CHolyAttack3(actor);
+}
+
+//============================================================================
+//
+//  MStaffSpawn2
+//
+//============================================================================
+
+void MStaffSpawn2(mobj_t* actor, angle_t angle)
+{
+	mobj_t*	mo;
+
+	mo = SpawnMissileAngle(actor, MT_MSTAFF_FX2, angle, 0.0);
+	if (mo)
+	{
+		mo->target = actor;
+		mo->specialmobj1 = P_RoughMonsterSearch(mo, 10);
+	}
+}
+
+//============================================================================
+//
+// A_MStaffAttack2 - for use by mage class boss
+//
+//============================================================================
+
+void A_MStaffAttack2(mobj_t* actor)
+{
+	angle_t		angle;
+
+	angle = actor->angles.yaw;
+	MStaffSpawn2(actor, angle);
+	MStaffSpawn2(actor, angle-ANGLE_1*5);
+	MStaffSpawn2(actor, angle+ANGLE_1*5);
+	StartSoundName(actor, "MageStaffFire");
+}
+
+//============================================================================
+//
+//  A_MageAttack
+//
+//============================================================================
+
+void A_MageAttack(mobj_t* actor)
+{
+	if(!actor->target) return;
+	A_MStaffAttack2(actor);
+}
+

@@ -1,0 +1,620 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+//**************************************************************************
+//**
+//**	DOOM finale
+//**
+//**************************************************************************
+
+#ifndef DOOM2
+
+// MACROS ------------------------------------------------------------------
+
+#define	TEXTSPEED	0.1
+#define	TEXTWAIT	7.0
+
+#define MAX_FINALE_MESSAGE_SIZE	1024
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+int				f_episode;
+int				f_map;
+
+int				FinaleStage;
+float			FinaleTime;
+float			FinaleEndTime;
+string			FinaleFlat;
+
+int				FinaleText[MAX_FINALE_MESSAGE_SIZE / 4];
+
+int				fpage1;
+int				fpage2;
+int				fend[7];
+
+int				laststage;
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	F_GetFinaleText
+//
+//==========================================================================
+
+void F_GetFinaleText(string msgLumpName)
+{
+	LoadTextLump(msgLumpName, &FinaleText[0], MAX_FINALE_MESSAGE_SIZE);
+	FinaleEndTime = itof(strlen(ARR2STR(FinaleText))) * TEXTSPEED + TEXTWAIT;
+}
+
+//===========================================================================
+//
+//	F_TextWrite
+//
+//===========================================================================
+
+void F_TextWrite(void)
+{
+    int		count;
+
+    // erase the entire screen to a tiled background
+	R_FillRectWithFlat(0, 0, 320, 200, FinaleFlat);
+
+    // draw some of the text onto the screen
+    count = ftoi((FinaleTime - 0.3) / TEXTSPEED);
+    if (count < 0)
+		count = 0;
+
+	T_SetFont(font_small);
+	T_SetAlign(hleft, vtop);
+	T_DrawNText(10, 10, ARR2STR(FinaleText), count);
+}
+
+//==========================================================================
+//
+//	F_InitBunnyScroll
+//
+//==========================================================================
+
+void F_InitBunnyScroll(void)
+{
+	int			i;
+
+	fpage1 = R_RegisterPic("PFUB1", PIC_PATCH);
+	fpage2 = R_RegisterPic("PFUB2", PIC_PATCH);
+	for (i = 0; i < 7; i++)
+	{
+		fend[i] = R_RegisterPic(va("END%d", i), PIC_PATCH);
+	}
+#ifdef FIXME
+   	S_StartSong("D_BUNNY", P_GetCDEnd2Track(), true);
+#else
+   	CmdBuf_AddText("music loop D_BUNNY\n");
+#endif
+}
+
+//==========================================================================
+//
+//  F_BunnyScroll
+//
+//==========================================================================
+
+void F_BunnyScroll(void)
+{
+    int			scrolled;
+    int			stage;
+		
+    scrolled = 320 - ftoi((FinaleTime - 6.5) * 16.0);
+    if (scrolled > 320)
+	{
+		R_DrawPic(0, 0, fpage1);
+	}
+    else if (scrolled < 0)
+	{
+		R_DrawPic(0, 0, fpage2);
+	}
+	else
+	{
+		R_DrawPic(scrolled - 320, 0, fpage2);
+		R_DrawPic(scrolled, 0, fpage1);
+	}
+	
+    if (FinaleTime < 32.0)
+	{
+		return;
+	}
+    if (FinaleTime < 35.0)
+    {
+		R_DrawPic((320 - 13 * 8) / 2, (200 - 8 * 8) / 2, fend[0]);
+		laststage = 0;
+		return;
+    }
+	
+    stage = ftoi((FinaleTime - 35.0) * 7.0);
+    if (stage > 6)
+	{
+		stage = 6;
+	}
+    if (stage > laststage)
+    {
+		LocalSound("PistolFire");
+		laststage = stage;
+    }
+    R_DrawPic((320 - 13 * 8) / 2, (200 - 8 * 8) / 2, fend[stage]);
+}
+
+//==========================================================================
+//
+//	F_StartFinale
+//
+//==========================================================================
+
+void F_StartFinale(void)
+{
+    FinaleStage = 0;
+    FinaleTime = 0.0;
+
+	FindEpisodeAndMap(ARR2STR(level->mapname), &f_episode, &f_map);
+
+	switch (f_episode)
+	{
+	 case 1:
+	    FinaleFlat = "FLOOR4_8";
+		F_GetFinaleText("FIN1TEXT");
+	    break;
+	 case 2:
+	    FinaleFlat = "SFLR6_1";
+		F_GetFinaleText("FIN2TEXT");
+	    break;
+	 case 3:
+	    FinaleFlat = "MFLR8_4";
+		F_GetFinaleText("FIN3TEXT");
+	    break;
+	 case 4:
+	    FinaleFlat = "MFLR8_3";
+		F_GetFinaleText("FIN4TEXT");
+	    break;
+	 default:
+	    // Ouch.
+	    break;
+	}
+
+#ifdef FIXME
+	S_StartSong("D_VICTOR", P_GetCDEnd1Track(), true);
+#else
+	CmdBuf_AddText("music loop D_VICTOR\n");
+#endif
+}
+
+//===========================================================================
+//
+//	F_Ticker
+//
+//===========================================================================
+
+void F_Ticker(void)
+{
+   	FinaleTime += frametime;
+
+    if (!FinaleStage && FinaleTime > FinaleEndTime)
+   	{
+		FinaleTime = 0.0;
+		FinaleStage = 1;
+		switch (f_episode)
+		{
+		 case 1:
+		    if (ExtendedWAD)
+	    		fpage1 = R_RegisterPic("CREDIT", PIC_PATCH);
+		    else
+	    		fpage1 = R_RegisterPic("HELP2", PIC_PATCH);
+		    break;
+		 case 2:
+		    fpage1 = R_RegisterPic("VICTORY2", PIC_PATCH);
+		    break;
+		 case 3:
+			F_InitBunnyScroll();
+		    break;
+		 case 4:
+		    fpage1 = R_RegisterPic("ENDPIC", PIC_PATCH);
+		    break;
+		}
+   	}
+}
+
+//==========================================================================
+//
+//	F_Drawer
+//
+//==========================================================================
+
+void F_Drawer(void)
+{
+    if (!FinaleStage)
+    {
+		F_TextWrite();
+		return;
+	}
+
+	if (f_episode == 3)
+	{
+		F_BunnyScroll();
+	}
+	else
+	{
+	    R_DrawPic(0, 0, fpage1);
+	}
+}
+
+//===========================================================================
+//
+//	F_Responder
+//
+//===========================================================================
+
+boolean F_Responder(event_t *event)
+{
+    return false;
+}
+
+#else
+
+//**************************************************************************
+//**
+//**	DOOM 2 finale
+//**
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+int					fpage1;
+
+#if 0
+static int			castnum;
+static int			*castorder;
+static state_t		*caststate;
+static float		casttime;
+static boolean		castdeath;
+static int			castframes;
+static int			castonmelee;
+static boolean		castattacking;
+
+// Casting by id Software. in order of appearance
+int castorder[] =
+{
+    MT_POSSESSED,
+    MT_SHOTGUY,
+    MT_CHAINGUY,
+    MT_TROOP,
+    MT_SERGEANT,
+    MT_SKULL,
+    MT_HEAD,
+    MT_KNIGHT,
+    MT_BRUISER,
+    MT_BABY,
+    MT_PAIN,
+    MT_UNDEAD,
+    MT_FATSO,
+    MT_VILE,
+    MT_SPIDER,
+    MT_CYBORG,
+    MT_PLAYER,
+
+    -1
+};
+
+//
+// Character cast strings
+//
+string caststrings[] =
+{
+	"ZOMBIEMAN",
+	"SHOTGUN GUY",
+	"HEAVY WEAPON DUDE",
+	"IMP",
+	"DEMON",
+	"LOST SOUL",
+	"CACODEMON",
+	"HELL KNIGHT",
+	"BARON OF HELL",
+	"ARACHNOTRON",
+	"PAIN ELEMENTAL",
+	"REVENANT",
+	"MANCUBUS",
+	"ARCH-VILE",
+	"THE SPIDER MASTERMIND",
+	"THE CYBERDEMON",
+	"OUR HERO"
+};
+#endif
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//  F_StartCast
+//
+//==========================================================================
+
+void F_StartCast(void)
+{
+#ifdef FIXME
+    S_StartSong("D_EVIL", P_GetCDEnd2Track(), true);
+#else
+    CmdBuf_AddText("music loop D_EVIL\n");
+#endif
+	fpage1 = R_RegisterPic("BOSSBACK", PIC_PATCH);
+
+#if 0
+    castnum = 0;
+	castorder = svpr.GlobalAddr("castorder");
+    caststate = &states[mobjinfo[castorder[castnum]].seestate];
+    casttime = caststate->time;
+    castdeath = false;
+    castframes = 0;
+    castonmelee = 0;
+    castattacking = false;
+#endif
+}
+
+//==========================================================================
+//
+//	CastSound
+//
+//==========================================================================
+
+#if 0
+void CastSound(int state)
+{
+	string		sfx;
+
+	// sound hacks....
+	switch (state)
+	{
+	 case S_PLAY_ATK1:	sfx = "SuperShotgunFire"; break;
+	 case S_POSS_ATK2:	sfx = "PistolFire"; break;
+	 case S_SPOS_ATK2:	sfx = "ShotgunFire"; break;
+	 case S_VILE_ATK2:	sfx = "ArchVileAttack"; break;
+	 case S_SKEL_FIST2:	sfx = "RavenantSwing"; break;
+	 case S_SKEL_FIST4:	sfx = "RavenantPunch"; break;
+	 case S_SKEL_MISS2:	sfx = "RavenantAttack"; break;
+	 case S_FATT_ATK8:
+	 case S_FATT_ATK5:
+	 case S_FATT_ATK2:	sfx = "FireballShoot"; break;
+	 case S_CPOS_ATK2:
+	 case S_CPOS_ATK3:
+	 case S_CPOS_ATK4:	sfx = "ShotgunFire"; break;
+	 case S_TROO_ATK3:	sfx = "ImpAttack"; break;
+	 case S_SARG_ATK2:	sfx = "DemonAttack"; break;
+	 case S_BOSS_ATK2:
+	 case S_BOS2_ATK2:
+	 case S_HEAD_ATK2:	sfx = "FireballShoot"; break;
+	 case S_SKULL_ATK2:	sfx = "LostSoulAttack"; break;
+	 case S_SPID_ATK2:
+	 case S_SPID_ATK3:	sfx = "ShotgunFire"; break;
+	 case S_BSPI_ATK2:	sfx = "PlasmaFire"; break;
+	 case S_CYBER_ATK2:
+	 case S_CYBER_ATK4:
+	 case S_CYBER_ATK6:	sfx = "LauncherFire"; break;
+	 case S_PAIN_ATK3:	sfx = "LostSoulAttack"; break;
+	 default: sfx = ""; break;
+	}
+
+	if (sfx)
+    {
+    	StartSoundName(NULL, sfx);
+	}
+}
+#endif
+
+//==========================================================================
+//
+//  F_CastTicker
+//
+//==========================================================================
+
+void F_CastTicker(void)
+{
+#if 0
+    int		st;
+
+	casttime -= host_frametime;
+    if (casttime > 0)
+		return;			// not time to change state yet
+		
+    if (caststate->time == -1 || !caststate->nextstate)
+    {
+		// switch from deathstate to next monster
+		castnum++;
+		castdeath = false;
+		if (castorder[castnum] == -1)
+	    	castnum = 0;
+		if (mobjinfo[castorder[castnum]].seesound)
+		    S_StartSound(mobjinfo[castorder[castnum]].seesound);
+		caststate = &states[mobjinfo[castorder[castnum]].seestate];
+		castframes = 0;
+    }
+    else
+    {
+		// just advance to next state in animation
+//		if (caststate == &states[S1_PLAY_ATK1])
+//	    	goto stopattack;	// Oh, gross hack!
+		st = caststate->nextstate;
+        if (st == mobjinfo[castorder[castnum]].spawnstate)
+        	st = mobjinfo[castorder[castnum]].seestate;
+		caststate = &states[st];
+		castframes++;
+
+		svpr.Exec("CastSound", st);
+    }
+	
+    if (castframes == 12)
+    {
+		// go into attack frame
+		castattacking = true;
+		if (castonmelee)
+		    caststate=&states[mobjinfo[castorder[castnum]].meleestate];
+		else
+		    caststate=&states[mobjinfo[castorder[castnum]].missilestate];
+		castonmelee ^= 1;
+		if (caststate == &states[0])
+		{
+		    if (castonmelee)
+				caststate=
+				    &states[mobjinfo[castorder[castnum]].meleestate];
+	    	else
+				caststate=
+				    &states[mobjinfo[castorder[castnum]].missilestate];
+		}
+    }
+	
+    if (castattacking)
+    {
+		if (castframes == 24
+		    ||	caststate == &states[mobjinfo[castorder[castnum]].seestate])
+		{
+//		  stopattack:
+	    	castattacking = false;
+		    castframes = 0;
+		    caststate = &states[mobjinfo[castorder[castnum]].seestate];
+		}
+    }
+	
+    casttime = caststate->time;
+    if (casttime == -1)
+		casttime = 15;
+#endif
+}
+
+//==========================================================================
+//
+//  F_CastResponder
+//
+//==========================================================================
+
+boolean F_CastResponder(event_t* ev)
+{
+#if 0
+    if (ev->type != ev_keydown)
+		return false;
+		
+    if (castdeath)
+		return true;			// already in dying frames
+		
+    // go into death frame
+    castdeath = true;
+    caststate = &states[mobjinfo[castorder[castnum]].deathstate];
+    casttime = caststate->time;
+    castframes = 0;
+    castattacking = false;
+    if (mobjinfo[castorder[castnum]].deathsound)
+		S_StartSound(mobjinfo[castorder[castnum]].deathsound);
+
+    return true;
+#else
+	return false;
+#endif
+}
+
+//==========================================================================
+//
+//  F_CastDrawer
+//
+//==========================================================================
+
+void F_CastDrawer(void)
+{
+    // erase the entire screen to a background
+    R_DrawPic(0, 0, fpage1);
+
+#if 0
+	T_SetFont(font_small);
+	T_SetAlign(hcenter, vtop);
+//	T_DrawText(160, 180, castorder[castnum].name);
+	T_DrawText(160, 180, svpr.GetString(mobjinfo[castorder[castnum]].message));
+    
+    // draw the current frame in the middle of the screen
+	R_DrawSpritePatch(160, 170, caststate->sprite, caststate->frame, 0);
+#endif
+}
+
+//==========================================================================
+//
+//	F_StartFinale
+//
+//==========================================================================
+
+void F_StartFinale(void)
+{
+	F_StartCast();
+}
+
+//===========================================================================
+//
+//	F_Ticker
+//
+//===========================================================================
+
+void F_Ticker(void)
+{
+	F_CastTicker();
+}
+
+//==========================================================================
+//
+//	F_Drawer
+//
+//==========================================================================
+
+void F_Drawer(void)
+{
+	F_CastDrawer();
+}
+
+//===========================================================================
+//
+//	F_Responder
+//
+//===========================================================================
+
+boolean F_Responder(event_t *event)
+{
+	return F_CastResponder(event);
+}
+
+#endif
+

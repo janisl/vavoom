@@ -1,0 +1,435 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+void UpdateBeak(player_t *player, pspdef_t *psp);
+void PostChickenWeapon(player_t *player, int weapon);
+void SetPsprite(player_t *player, int position, int stnum);
+
+//==========================================================================
+//
+//	InitLava
+//
+//==========================================================================
+
+void InitLava(void)
+{
+//	memset(&LavaInflictor, 0, sizeof(mobj_t));	//	All globals are set to 0
+	LavaInflictor.type = MT_PHOENIXFX2;
+	LavaInflictor.flags2 = MF2_FIREDAMAGE | MF2_NODMGTHRUST;
+}
+
+//==========================================================================
+//
+//  ChickenPlayerThink
+//
+//==========================================================================
+
+void ChickenPlayerThink(player_t *player)
+{
+	mobj_t*	pmo;
+
+	if (player->health > 0)
+	{
+		// Handle beak movement
+		UpdateBeak(player, &player->psprites[ps_weapon]);
+	}
+	if (player->chickenTics & 15)
+	{
+		return;
+	}
+	pmo = player->mo;
+	if (!(pmo->velocity.x + pmo->velocity.y) && P_Random() < 160)
+	{
+		// Twitch view angle
+		pmo->angles.yaw += (P_Random() - P_Random()) << 19;
+	}
+	if ((pmo->origin.z <= pmo->floorz) && (P_Random() < 32))
+	{
+		// Jump and noise
+		pmo->velocity.z += 1.0 * 35.0;
+		SetMobjState(pmo, S_CHICPLAY_PAIN);
+		return;
+	}
+	if (P_Random() < 48)
+	{
+		// Just noise
+		StartSoundName(pmo, "ChickenAttack");
+	}
+}
+
+//==========================================================================
+//
+//  UndoPlayerChicken
+//
+//==========================================================================
+
+boolean UndoPlayerChicken(player_t *player)
+{
+	mobj_t			*fog;
+	mobj_t			*mo;
+	mobj_t			*pmo;
+	float			x;
+	float			y;
+	float			z;
+	angle_t			angle;
+	int 			weapon;
+	int 			oldFlags;
+	int 			oldFlags2;
+
+	pmo = player->mo;
+	x = pmo->origin.x;
+	y = pmo->origin.y;
+	z = pmo->origin.z;
+	angle = pmo->angles.yaw;
+	weapon = pmo->special1;
+	oldFlags = pmo->flags;
+	oldFlags2 = pmo->flags2;
+	SetMobjState(pmo, S_FREETARGMOBJ);
+	mo = P_SpawnMobj(x, y, z, MT_PLAYER);
+	if (!P_TestMobjLocation(mo))
+	{
+		// Didn't fit
+		P_RemoveMobj(mo);
+		mo = P_SpawnMobj(x, y, z, MT_CHICPLAYER);
+		mo->angles.yaw = angle;
+		mo->health = player->health;
+		mo->special1 = weapon;
+		mo->player = player;
+		mo->flags = oldFlags;
+		mo->flags2 = oldFlags2;
+		player->mo = mo;
+		player->chickenTics = 2*35;
+		return false;
+	}
+	// Set color translation
+	mo->translation = player->color;
+	mo->angles.yaw = angle;
+	mo->player = player;
+	mo->reactiontime = 18;
+	if (oldFlags2&MF2_FLY)
+	{
+		mo->flags2 |= MF2_FLY;
+		mo->flags |= MF_NOGRAVITY;
+	}
+	player->chickenTics = 0;
+	player->powers[pw_weaponlevel2] = 0;
+	player->health = mo->health = MAXHEALTH;
+	player->mo = mo;
+	fog = P_SpawnMobj(x + 20.0 * cos(angle), y + 20.0 * sin(angle),
+		z + TELEFOGHEIGHT, MT_TFOG);
+	StartSoundName(fog, "Teleport");
+	PostChickenWeapon(player, weapon);
+	return true;
+}
+
+//==========================================================================
+//
+//	SetPlayerRunState
+//
+//==========================================================================
+
+void SetPlayerRunState(player_t* player)
+{
+	if (player->chickenTics)
+	{
+		if (player->mo->statenum == S_CHICPLAY)
+		{
+			SetMobjState(player->mo, S_CHICPLAY_RUN1);
+		}
+	}
+	else
+	{
+		if (player->mo->statenum == S_PLAY)
+		{
+			SetMobjState(player->mo, S_PLAY_RUN1);
+		}
+	}
+}
+
+//==========================================================================
+//
+// 	DeathPlayerThink
+//
+// 	Fall on your face when dying. Decrease POV height to floor height.
+//
+//==========================================================================
+
+void DeathPlayerThink(player_t* player)
+{
+    angle_t		angle;
+    angle_t		delta;
+	int			lookDelta;
+
+    MovePsprites(player);
+	
+    onground = (player->mo->origin.z <= player->mo->floorz);
+
+	if (player->mo->type == MT_BLOODYSKULL)
+	{
+		// Flying bloody skull
+		player->viewheight = 6.0;
+		player->deltaviewheight = 0.0;
+		//player->damagecount = 20;
+		if (onground)
+		{
+#ifdef FIXME
+			if (player->lookdir < 60)
+			{
+				lookDelta = (60 - player->lookdir) / 8;
+				if (lookDelta < 1 && (level->tictime & 1))
+				{
+					lookDelta = 1;
+				}
+				else if (lookDelta > 6)
+				{
+					lookDelta = 6;
+				}
+				player->lookdir += lookDelta;
+			}
+#endif
+		}
+	}
+	else
+	{ // Fall to ground
+		player->deltaviewheight = 0.0;
+		if (player->viewheight > 6.0)
+			player->viewheight -= 1.0;
+		if (player->viewheight < 6.0)
+			player->viewheight = 6.0;
+#ifdef FIXME
+		if (player->lookdir > 0)
+		{
+			player->lookdir -= 6;
+		}
+		else if (player->lookdir < 0)
+		{
+			player->lookdir += 6;
+		}
+		if (abs(player->lookdir) < 6)
+		{
+			player->lookdir = 0;
+		}
+#endif
+	}
+	CalcHeight(player);
+
+	if (player->attacker && player->attacker != player->mo)
+	{
+		angle = atan2(player->attacker->origin.y - player->mo->origin.y,
+			player->attacker->origin.x - player->mo->origin.x);
+		delta = angle - player->mo->angles.yaw;
+		if (delta < ANG5 || delta > -ANG5)
+		{
+			// Looking at killer, so fade damage flash down
+			player->mo->angles.yaw = angle;
+			if (player->damagecount)
+			{
+				player->damagecount--;
+			}
+		}
+		else if (delta < ANG180)
+			player->mo->angles.yaw += ANG5;
+		else
+			player->mo->angles.yaw -= ANG5;
+	}
+	else if (player->damagecount)
+	{
+		player->damagecount--;
+	}
+
+	if (player->buttons & BT_USE)
+	{
+    	mobj_t*	mo;
+
+		player->newtorch = 0;
+		player->newtorchdelta = 0;
+		player->palette = 0;
+		player->curpos = 0;
+		player->inv_ptr = 0;
+		player->playerstate = PST_REBORN;
+		// Let the mobj know the player has entered the reborn state.  Some
+		// mobjs need to know when it's ok to remove themselves.
+        mo = player->mo;
+		mo->special2 = 666;
+	}
+}
+
+//==========================================================================
+//
+//  ArtiEgg
+//
+//==========================================================================
+
+void ArtiEgg(mobj_t *mo)
+{
+	SpawnPlayerMissile(mo, MT_EGGFX);
+	SpawnPlayerMissileAngle(mo, MT_EGGFX, mo->angles.yaw-(ANG45/6));
+	SpawnPlayerMissileAngle(mo, MT_EGGFX, mo->angles.yaw+(ANG45/6));
+	SpawnPlayerMissileAngle(mo, MT_EGGFX, mo->angles.yaw-(ANG45/3));
+	SpawnPlayerMissileAngle(mo, MT_EGGFX, mo->angles.yaw+(ANG45/3));
+}
+
+//==========================================================================
+//
+//  ArtiTomeOfPower
+//
+//==========================================================================
+
+boolean ArtiTomeOfPower(player_t *player)
+{
+	if (player->chickenTics)
+	{
+		// Attempt to undo chicken
+		if (UndoPlayerChicken(player) == false)
+		{
+			// Failed
+			DamageMobj(player->mo, NULL, NULL, 10000);
+		}
+		else
+		{
+			// Succeeded
+			player->chickenTics = 0;
+			StartSoundName(player->mo, "PickupWeapon");
+		}
+	}
+	else
+	{
+		if (!P_GivePower(player, pw_weaponlevel2))
+		{
+			return false;
+		}
+		if (player->readyweapon == wp_staff)
+		{
+			SetPsprite(player, ps_weapon, S_STAFFREADY2_1);
+		}
+		else if (player->readyweapon == wp_gauntlets)
+		{
+			SetPsprite(player, ps_weapon, S_GAUNTLETREADY2_1);
+		}
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  ArtiFireBomb
+//
+//==========================================================================
+
+void ArtiFireBomb(player_t* player)
+{
+	angle_t		angle = player->mo->angles.yaw;
+	mobj_t		*mo = P_SpawnMobj(player->mo->origin.x + 24.0 * cos(angle),
+					player->mo->origin.y + 24.0 * sin(angle),
+					player->mo->origin.z - player->mo->floorclip,
+					MT_FIREBOMB);
+	mo->target = player->mo;
+}
+
+//==========================================================================
+//
+//	P_SetDormantArtifact
+//
+//	Removes the MF_SPECIAL flag, and initiates the artifact pickup animation.
+//
+//==========================================================================
+
+void P_SetDormantArtifact(mobj_t *arti)
+{
+	arti->flags &= ~MF_SPECIAL;
+	if (deathmatch && (arti->type != MT_ARTIINVULNERABILITY)
+		&& (arti->type != MT_ARTIINVISIBILITY))
+	{
+		SetMobjState(arti, S_DORMANTARTI1);
+	}
+	else
+	{
+		// Don't respawn
+		SetMobjState(arti, S_DEADARTI1);
+	}
+	StartSoundName(arti, "PickupArtifact");
+}
+
+//==========================================================================
+//
+//	P_HideSpecialThing
+//
+//==========================================================================
+
+void P_HideSpecialThing(mobj_t *thing)
+{
+	thing->flags &= ~MF_SPECIAL;
+	thing->translucency += 100;
+	SetMobjState(thing, S_HIDESPECIAL1);
+}
+
+//==========================================================================
+//
+//	G_CheckSpot
+//
+//	Returns false if the player cannot be respawned at the given mthing_t
+// spot because something is occupying it
+//
+//==========================================================================
+
+boolean G_CheckSpot(int playernum, mthing_t* mthing)
+{
+    float			x;
+    float			y;
+    subsector_t*	ss; 
+    angle_t			an;
+    mobj_t*			mo;
+    int				i;
+	
+    if (!players[playernum].mo)
+    {
+		// first spawn of level, before corpses
+		for (i=0 ; i<playernum ; i++)
+	    	if (players[i].mo->origin.x == mthing->x &&
+	    		players[i].mo->origin.y == mthing->y)
+				return false;
+		return true;
+    }
+
+    x = mthing->x;
+    y = mthing->y;
+	 
+	players[playernum].mo->flags2 &= ~MF2_PASSMOBJ;
+    if (!P_CheckPosition(players[playernum].mo, x, y))
+	{
+		players[playernum].mo->flags2 |= MF2_PASSMOBJ;
+		return false;
+	}
+	players[playernum].mo->flags2 |= MF2_PASSMOBJ;
+
+    // spawn a teleport fog 
+    ss = PointInSubsector(x, y);
+    an = ANG45 * (mthing->angle / 45);
+ 
+	mo = P_SpawnMobj(x + 20.0 * cos(an), y + 20.0 * sin(an),
+		ss->sector->floorheight + TELEFOGHEIGHT, MT_TFOG);
+	StartSoundName(mo, "Teleport");	// don't start sound on first frame
+
+    return true; 
+}
+

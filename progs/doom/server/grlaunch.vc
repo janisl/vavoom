@@ -1,0 +1,122 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+void weapon_grenade_launcher(mobj_t *self, mthing_t *mthing);
+void missile_grenade(mobj_t *self, mthing_t *mthing);
+void A_FireGrenade(mobj_t *actor);// in weapons.c
+void P_ExplodeMissile(mobj_t* mo);
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+__states__
+{
+	//	Weapon on ground
+	S_GLAUNCH { "GLAU", 0, -1.0, NULL, S_NULL }
+	//	Weapon in player view
+	S_GRENLAUNCH {"GRLG", 0, 1.0 / 35.0, A_WeaponReady, S_GRENLAUNCH}
+	S_GRENLAUNCHDOWN {"GRLG", 0, 1.0 / 35.0, A_Lower, S_GRENLAUNCHDOWN}
+	S_GRENLAUNCHUP {"GRLG", 0, 1.0 / 35.0, A_Raise, S_GRENLAUNCHUP}
+	S_GRENLAUNCH1 {"GRLG", 1, 8.0 / 35.0, A_GunFlash, S_GRENLAUNCH2}
+	S_GRENLAUNCH2 {"GRLG", 1, 12.0 / 35.0, A_FireGrenade, S_GRENLAUNCH3}
+	S_GRENLAUNCH3 {"GRLG", 1, 0.0 / 35.0, A_ReFire, S_GRENLAUNCH}
+	S_GRENLAUNCHFLASH1 {"GRLF", 0 | FF_FULLBRIGHT, 3.0 / 35.0, A_Light1, S_GRENLAUNCHFLASH2}
+	S_GRENLAUNCHFLASH2 {"GRLF", 1 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_GRENLAUNCHFLASH3}
+	S_GRENLAUNCHFLASH3 {"GRLF", 2 | FF_FULLBRIGHT, 4.0 / 35.0, A_Light2, S_GRENLAUNCHFLASH4}
+	S_GRENLAUNCHFLASH4 {"GRLF", 3 | FF_FULLBRIGHT, 4.0 / 35.0, A_Light2, S_LIGHTDONE}
+	//	Flying grenade
+	S_GRENADE {"GREN", 0 | FF_FULLBRIGHT, 3.0, NULL, S_GRENADE_EXPLODE}
+	S_GRENADE_EXPLODE {"GREN", 0 | FF_FULLBRIGHT, 0.0, P_ExplodeMissile, S_EXPLODE1}
+}
+
+__mobjinfo__
+{
+	MT_GLAUNCH { 90, weapon_grenade_launcher }
+	MT_GRENADE { -1, missile_grenade }
+}
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	weapon_grenade_launcher
+//
+//==========================================================================
+
+void weapon_grenade_launcher(mobj_t *self, mthing_t *mthing)
+{
+	self->radius = 20.0;
+	self->height = 16.0;
+	self->flags = MF_SPECIAL;
+	self->spawnstate = S_GLAUNCH;
+	generic_mobj_start(self, mthing);
+}
+
+//==========================================================================
+//
+//	missile_grenade
+//
+//==========================================================================
+
+void missile_grenade(mobj_t *self, mthing_t *mthing)
+{
+//	self->health = 1000;
+	self->radius = 11.0;
+	self->height = 8.0;
+	self->mass = 100.0;
+	self->speed = 600.0;
+	self->damage = 20;
+	self->flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE|MF_BOUNCE;
+	self->spawnstate = S_GRENADE;
+	self->deathstate = S_EXPLODE1;
+	self->sound_sight = GetSoundID("LauncherFire");
+	self->sound_pain = GetSoundID("GrenadeBounce");
+	self->sound_death = GetSoundID("BarrelExplode");
+	generic_mobj_start(self, mthing);
+}
+
+//==========================================================================
+//
+//	set_weapon_grenade
+//
+//==========================================================================
+
+void set_weapon_grenade(player_t *player)
+{
+	player->w_ammo = am_misl;
+	player->w_upstate = S_GRENLAUNCHUP;
+	player->w_downstate = S_GRENLAUNCHDOWN;
+	player->w_readystate = S_GRENLAUNCH;
+	player->w_atkstate = S_GRENLAUNCH1;
+	player->w_holdatkstate = S_NULL;
+	player->w_flashstate = S_GRENLAUNCHFLASH1;
+}
+
+

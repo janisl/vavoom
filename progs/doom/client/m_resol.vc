@@ -1,0 +1,145 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//**
+//**	Screen resolution menu
+//**
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+struct menu_resolution_t
+{
+	menu_t			menu;
+	menuswitch_t	mode;
+	menuswitch_t	bpp;
+	menutext_t		set_res;
+	menutext_t		title;
+};
+
+struct mode_t
+{
+	int			width;
+	int			height;
+};
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+menu_resolution_t	ResolutionMenu;
+
+string	sw_mode[8] = { "320x200", "320x240", "640x400", "640x480",
+	"800x600", "1024x768", "1152x864", "1280x1024" };
+string	sw_bpp[4] = { "8", "16", "24", "32" };
+
+mode_t	modes[8] =
+{
+	{ 320, 200 },
+	{ 320, 240 },
+	{ 640, 400 },
+	{ 640, 480 },
+	{ 800, 600 },
+	{ 1024, 768 },
+	{ 1152, 864 },
+	{ 1280, 1024 }
+};
+int		depths[4] = { 8, 16, 24, 32 };
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	set_resolution
+//
+//==========================================================================
+
+void set_resolution(void)
+{
+	CmdBuf_AddText("SetResolution %d %d %d\n",
+		modes[ResolutionMenu.mode.value].width,
+		modes[ResolutionMenu.mode.value].height,
+		depths[ResolutionMenu.bpp.value]);
+}
+
+//==========================================================================
+//
+//	menu_resolution
+//
+//==========================================================================
+
+void menu_resolution(void)
+{
+	int x = 120;
+	int y = 26;
+	int w, h, b, mi, bi;
+
+	w = GetCvar("screen_width");
+	h = GetCvar("screen_height");
+	b = GetCvar("screen_bpp");
+
+	for (mi = 0; mi < 8; mi++)
+	{
+		if (modes[mi].width == w && modes[mi].height == h)
+		{
+			break;
+		}
+	}
+	if (mi == 8)
+	{
+		mi = 0;
+	}
+	for (bi = 0; bi < 4; bi++)
+	{
+		if (depths[bi] == b)
+		{
+			break;
+		}
+	}
+	if (bi == 4)
+	{
+		bi = 0;
+	}
+
+    InitMenu(&ResolutionMenu.menu);
+
+	MenuSwitch_Init(&ResolutionMenu.mode, x, y, "Resolution", TEXT_SMALLR, mi, 8, &sw_mode[0]);
+	AddMenuItem(&ResolutionMenu.menu, &ResolutionMenu.mode);
+	y += 10;
+
+	MenuSwitch_Init(&ResolutionMenu.bpp, x, y, "Bit depth", TEXT_SMALLR, bi, 4, &sw_bpp[0]);
+	AddMenuItem(&ResolutionMenu.menu, &ResolutionMenu.bpp);
+	y += 10;
+
+	MenuText_InitFunc(&ResolutionMenu.set_res, x, y, "Set Resolution", TEXT_SMALLR, set_resolution);
+	AddMenuItem(&ResolutionMenu.menu, &ResolutionMenu.set_res);
+
+	MenuText_InitTitle(&ResolutionMenu.title, 160, 24, "SCREEN RESOLUTION", TEXT_BIGC);
+	AddMenuItem(&ResolutionMenu.menu, &ResolutionMenu.title);
+
+    PushMenu(&ResolutionMenu.menu);
+}
+

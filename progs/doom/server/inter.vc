@@ -1,0 +1,631 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+//**
+//**	GET STUFF
+//**
+//**************************************************************************
+
+#define BONUSADD	6
+
+void P_RemoveMobj(mobj_t* mobj);
+
+//==========================================================================
+//
+//	P_GiveAmmo
+//
+//	Num is the number of clip loads, not the individual count (0= 1/2 clip).
+// Returns false if the ammo can't be picked up at all
+//
+//==========================================================================
+
+boolean P_GiveAmmo(player_t *player,int ammo,int num)
+{
+    int		oldammo;
+	int		max;
+	
+    if (ammo == am_noammo)
+		return false;
+		
+    if (ammo < 0 || ammo > NUMAMMO)
+//		I_Error ("P_GiveAmmo: bad type %i", ammo);
+		Error("P_GiveAmmo: bad type");
+
+	max = player->backpack ? maxammo[ammo] * 2 : maxammo[ammo];
+    if (player->ammo[ammo] == max)
+		return false;
+		
+    if (num)
+		num *= clipammo[ammo];
+    else
+		num = clipammo[ammo]/2;
+    
+    if (gameskill == sk_baby || gameskill == sk_nightmare)
+    {
+		// give double ammo in trainer mode,
+		// you'll need in nightmare
+		num <<= 1;
+    }
+    
+    oldammo = player->ammo[ammo];
+    player->ammo[ammo] += num;
+
+    if (player->ammo[ammo] > max)
+		player->ammo[ammo] = max;
+
+    // If non zero ammo, 
+    // don't change up weapons,
+    // player was lower on purpose.
+    if (oldammo)
+		return true;
+
+    // We were down to zero,
+    // so select a new weapon.
+    // Preferences are not user selectable.
+    switch (ammo)
+    {
+      case am_clip:
+		if (player->readyweapon == wp_fist)
+		{
+		    if (player->weaponowned[wp_chaingun])
+				player->pendingweapon = wp_chaingun;
+		    else
+				player->pendingweapon = wp_pistol;
+		}
+		break;
+	
+      case am_shell:
+		if (player->readyweapon == wp_fist
+		    || player->readyweapon == wp_pistol)
+		{
+		    if (player->weaponowned[wp_shotgun])
+				player->pendingweapon = wp_shotgun;
+		}
+		break;
+	
+      case am_cell:
+		if (player->readyweapon == wp_fist
+		    || player->readyweapon == wp_pistol)
+		{
+		    if (player->weaponowned[wp_plasma])
+			player->pendingweapon = wp_plasma;
+		}
+		break;
+	
+      case am_misl:
+		if (player->readyweapon == wp_fist)
+		{
+		    if (player->weaponowned[wp_missile])
+				player->pendingweapon = wp_missile;
+		}
+      default:
+		break;
+    }
+	
+    return true;
+}
+
+//==========================================================================
+//
+//	P_GiveWeapon
+//
+//	The weapon name may have a MF_DROPPED flag ored in.
+//
+//==========================================================================
+
+boolean P_GiveWeapon(player_t* player,int weapon,boolean dropped)
+{
+    boolean		gaveammo;
+    boolean		gaveweapon;
+	
+    if (netgame && (deathmatch < 2) && !dropped)
+    {
+		// leave placed weapons forever on net games
+		if (player->weaponowned[weapon])
+		    return false;
+
+		player->bonuscount += BONUSADD;
+		player->weaponowned[weapon] = true;
+
+		if (deathmatch)
+		    P_GiveAmmo(player, weapon_ammo_type[weapon], 5);
+		else
+		    P_GiveAmmo(player, weapon_ammo_type[weapon], 2);
+		player->pendingweapon = weapon;
+
+    	StartSoundName(player->mo, "PickupWeapon");
+		return false;
+    }
+	
+    if (weapon_ammo_type[weapon] != am_noammo)
+    {
+		// give one clip with a dropped weapon,
+		// two clips with a found weapon
+		if (dropped)
+		    gaveammo = P_GiveAmmo(player, weapon_ammo_type[weapon], 1);
+		else
+		    gaveammo = P_GiveAmmo(player, weapon_ammo_type[weapon], 2);
+    }
+    else
+		gaveammo = false;
+	
+    if (player->weaponowned[weapon])
+		gaveweapon = false;
+    else
+    {
+		gaveweapon = true;
+		player->weaponowned[weapon] = true;
+		player->pendingweapon = weapon;
+    }
+	
+    return (gaveweapon || gaveammo);
+}
+
+//==========================================================================
+//
+// P_GiveBody
+// Returns false if the body isn't needed at all
+//
+//==========================================================================
+
+boolean P_GiveBody(player_t *player,int num)
+{
+    if (player->health >= MAXHEALTH)
+		return false;
+
+    player->health += num;
+    if (player->health > MAXHEALTH)
+		player->health = MAXHEALTH;
+    player->mo->health = player->health;
+	
+    return true;
+}
+
+//==========================================================================
+//
+// P_GiveArmor
+// Returns false if the armor is worse
+// than the current armor.
+//
+//==========================================================================
+
+boolean P_GiveArmor(player_t* player,int armortype)
+{
+    int		hits;
+	
+    hits = armortype*100;
+    if (player->armorpoints >= hits)
+		return false;	// don't pick up
+		
+    player->armortype = armortype;
+    player->armorpoints = hits;
+	
+    return true;
+}
+
+//==========================================================================
+//
+// P_GiveCard
+//
+//==========================================================================
+
+boolean P_GiveCard(player_t* player,int card)
+{
+    if (player->keys & (1 << card))
+		return false;
+    
+    player->bonuscount = BONUSADD;
+    player->keys |= 1 << card;
+	return true;
+}
+
+//==========================================================================
+//
+//	P_GiveItem
+//
+//==========================================================================
+
+boolean P_GiveItem(player_t *player, int item)
+{
+    if (player->items & item)
+    {
+		return false;	// already got it
+	}
+		
+	player->items |= item;
+    return true;
+}
+
+//==========================================================================
+//
+// P_GivePower
+//
+//==========================================================================
+
+boolean P_GivePower(player_t* player,int power)
+{
+    if (power == pw_invulnerability)
+    {
+		player->powers[power] = ftoi(INVULNTIME * 35.0);
+		return true;
+    }
+    
+    if (power == pw_invisibility)
+    {
+		player->powers[power] = ftoi(INVISTIME * 35.0);
+		player->mo->translucency = 90;
+		return true;
+    }
+    
+    if (power == pw_infrared)
+    {
+		player->powers[power] = ftoi(INFRATIME * 35.0);
+		return true;
+    }
+    
+    if (power == pw_ironfeet)
+    {
+		player->powers[power] = ftoi(IRONTIME * 35.0);
+		return true;
+    }
+    
+    if (power == pw_strength)
+    {
+		P_GiveBody(player, 100);
+		player->powers[power] = 1;
+		return true;
+    }
+	
+    if (player->powers[power])
+		return false;	// already got it
+		
+    player->powers[power] = 1;
+    return true;
+}
+
+//==========================================================================
+//
+// P_TouchSpecialThing
+//
+//==========================================================================
+
+void P_TouchSpecialThing(mobj_t* special,mobj_t* toucher)
+{
+    player_t*	player;
+    int			i;
+	float		delta;
+    string		sound;
+		
+    delta = special->origin.z - toucher->origin.z;
+
+    if (delta > toucher->height || delta < -8.0)
+    {
+		// out of reach
+		return;
+    }
+    
+    sound = "PickupItem";
+    player = toucher->player;
+
+    // Dead thing touching.
+    // Can happen with a sliding player corpse.
+    if (toucher->health <= 0)
+		return;
+
+    // Identify by sprite.
+    switch (special->sprite)
+    {
+		// armor
+      case SPR_ARM1:
+		if (!P_GiveArmor(player, 1))
+		    return;
+		cprint(player, "%s\n", GOTARMOR);
+		break;
+		
+      case SPR_ARM2:
+		if (!P_GiveArmor(player, 2))
+		    return;
+		cprint(player, "%s\n", GOTMEGA);
+		break;
+	
+		// bonus items
+      case SPR_BON1:
+		player->health++;		// can go over 100%
+		if (player->health > 200)
+	    	player->health = 200;
+		player->mo->health = player->health;
+		cprint(player, "%s\n", GOTHTHBONUS);
+		break;
+	
+      case SPR_BON2:
+		player->armorpoints++;		// can go over 100%
+		if (player->armorpoints > 200)
+		    player->armorpoints = 200;
+		if (!player->armortype)
+		    player->armortype = 1;
+		cprint(player, "%s\n", GOTARMBONUS);
+		break;
+	
+      case SPR_SOUL:
+		player->health += SOULSPHERE_HEALTH;
+		if (player->health > SOULSPHERE_MAX)
+		    player->health = SOULSPHERE_MAX;
+		player->mo->health = player->health;
+		cprint(player, "%s\n", GOTSUPER);
+		sound = "PickupPower";
+		break;
+
+#ifdef DOOM2
+      case SPR_MEGA:
+		player->health = MEGASPHERE_HEALTH;
+		player->mo->health = player->health;
+		P_GiveArmor(player,2);
+		cprint(player, "%s\n", GOTMSPHERE);
+		sound = "PickupPower";
+		break;
+#endif
+
+		// cards
+		// leave cards for everyone
+      case SPR_BKEY:
+		if (P_GiveCard(player, it_bluecard))
+		    cprint(player, "%s\n", GOTBLUECARD);
+		if (!netgame)
+		    break;
+		return;
+	
+      case SPR_YKEY:
+		if (P_GiveCard(player, it_yellowcard))
+		    cprint(player, "%s\n", GOTYELWCARD);
+		if (!netgame)
+		    break;
+		return;
+	
+      case SPR_RKEY:
+		if (P_GiveCard(player, it_redcard))
+		    cprint(player, "%s\n", GOTREDCARD);
+		if (!netgame)
+		    break;
+		return;
+	
+      case SPR_BSKU:
+		if (P_GiveCard(player, it_blueskull))
+		    cprint(player, "%s\n", GOTBLUESKUL);
+		if (!netgame)
+		    break;
+		return;
+	
+      case SPR_YSKU:
+		if (P_GiveCard(player, it_yellowskull))
+		    cprint(player, "%s\n", GOTYELWSKUL);
+		if (!netgame)
+	    	break;
+		return;
+	
+      case SPR_RSKU:
+		if (P_GiveCard(player, it_redskull))
+		    cprint(player, "%s\n", GOTREDSKULL);
+		if (!netgame)
+	    	break;
+		return;
+	
+		// medikits, heals
+      case SPR_STIM:
+		if (!P_GiveBody (player, 10))
+		    return;
+		cprint(player, "%s\n", GOTSTIM);
+		break;
+	
+      case SPR_MEDI:
+		if (!P_GiveBody (player, 25))
+		    return;
+
+		if (player->health < 25)
+		    cprint(player, "%s\n", GOTMEDINEED);
+		else
+		    cprint(player, "%s\n", GOTMEDIKIT);
+		break;
+
+	
+		// power ups
+      case SPR_PINV:
+		if (!P_GivePower (player, pw_invulnerability))
+		    return;
+		cprint(player, "%s\n", GOTINVUL);
+		sound = "PickupPower";
+		break;
+	
+      case SPR_PSTR:
+		if (!P_GivePower (player, pw_strength))
+		    return;
+		cprint(player, "%s\n", GOTBERSERK);
+		if (player->readyweapon != wp_fist)
+		    player->pendingweapon = wp_fist;
+		sound = "PickupPower";
+		break;
+	
+      case SPR_PINS:
+		if (!P_GivePower (player, pw_invisibility))
+		    return;
+		cprint(player, "%s\n", GOTINVIS);
+		sound = "PickupPower";
+		break;
+	
+      case SPR_SUIT:
+		if (!P_GivePower (player, pw_ironfeet))
+		    return;
+		cprint(player, "%s\n", GOTSUIT);
+		sound = "PickupPower";
+		break;
+	
+      case SPR_PVIS:
+		if (!P_GivePower (player, pw_infrared))
+		    return;
+		cprint(player, "%s\n", GOTVISOR);
+		sound = "PickupPower";
+		break;
+
+	    //	Items
+      case SPR_PMAP:
+		if (!P_GiveItem(player, IT_ALL_MAP))
+		    return;
+		cprint(player, "%s\n", GOTMAP);
+		sound = "PickupPower";
+		break;
+	
+		// ammo
+      case SPR_CLIP:
+		if (special->flags & MF_DROPPED)
+		{
+		    if (!P_GiveAmmo (player,am_clip,0))
+				return;
+		}
+		else
+		{
+		    if (!P_GiveAmmo (player,am_clip,1))
+				return;
+		}
+		cprint(player, "%s\n", GOTCLIP);
+		break;
+	
+      case SPR_AMMO:
+		if (!P_GiveAmmo (player, am_clip,5))
+		    return;
+		cprint(player, "%s\n", GOTCLIPBOX);
+		break;
+	
+      case SPR_ROCK:
+		if (!P_GiveAmmo (player, am_misl,1))
+		    return;
+		cprint(player, "%s\n", GOTROCKET);
+		break;
+
+      case SPR_BROK:
+		if (!P_GiveAmmo (player, am_misl,5))
+		    return;
+		cprint(player, "%s\n", GOTROCKBOX);
+		break;
+	
+      case SPR_CELL:
+		if (!P_GiveAmmo (player, am_cell,1))
+		    return;
+		cprint(player, "%s\n", GOTCELL);
+		break;
+	
+      case SPR_CELP:
+		if (!P_GiveAmmo (player, am_cell,5))
+		    return;
+		cprint(player, "%s\n", GOTCELLBOX);
+		break;
+	
+      case SPR_SHEL:
+		if (!P_GiveAmmo (player, am_shell,1))
+		    return;
+		cprint(player, "%s\n", GOTSHELLS);
+		break;
+	
+      case SPR_SBOX:
+		if (!P_GiveAmmo (player, am_shell,5))
+		    return;
+		cprint(player, "%s\n", GOTSHELLBOX);
+		break;
+	
+      case SPR_BPAK:
+	    player->backpack = true;
+		for (i=0 ; i<NUMAMMO; i++)
+        {
+		    P_GiveAmmo (player, i, 1);
+		}
+		cprint(player, "%s\n", GOTBACKPACK);
+		break;
+	
+		// weapons
+      case SPR_BFUG:
+		if (!P_GiveWeapon (player, wp_bfg, false))
+		    return;
+		cprint(player, "%s\n", GOTBFG9000);
+		sound = "PickupWeapon";
+		break;
+	
+      case SPR_MGUN:
+		if (!P_GiveWeapon (player, wp_chaingun, special->flags&MF_DROPPED) )
+		    return;
+		cprint(player, "%s\n", GOTCHAINGUN);
+		sound = "PickupWeapon";
+		break;
+	
+      case SPR_CSAW:
+		if (!P_GiveWeapon (player, wp_chainsaw, false) )
+		    return;
+		cprint(player, "%s\n", GOTCHAINSAW);
+		sound = "PickupWeapon";
+		break;
+	
+      case SPR_LAUN:
+		if (!P_GiveWeapon (player, wp_missile, false) )
+		    return;
+		cprint(player, "%s\n", GOTLAUNCHER);
+		sound = "PickupWeapon";
+		break;
+	
+      case SPR_PLAS:
+		if (!P_GiveWeapon (player, wp_plasma, false) )
+		    return;
+		cprint(player, "%s\n", GOTPLASMA);
+		sound = "PickupWeapon";
+		break;
+	
+      case SPR_SHOT:
+		if (!P_GiveWeapon (player, wp_shotgun, special->flags&MF_DROPPED ) )
+		    return;
+		cprint(player, "%s\n", GOTSHOTGUN);
+		sound = "PickupWeapon";
+		break;
+
+#ifdef DOOM2
+      case SPR_SGN2:
+		if (!P_GiveWeapon (player, wp_supershotgun, special->flags&MF_DROPPED ) )
+		    return;
+		cprint(player, "%s\n", GOTSHOTGUN2);
+		sound = "PickupWeapon";
+		break;
+#endif
+
+#ifdef GRENADE_LAUNCHER
+      case SPR_GLAU:
+		if (!P_GiveWeapon(player, wp_grenade, false))
+		    return;
+		cprint(player, "Piched up a grenade launcher\n");
+		sound = "PickupWeapon";
+		break;
+#endif
+	
+      default:
+		Error("P_SpecialThing: Unknown gettable thing");
+    }
+	
+    if (special->flags & MF_COUNTITEM)
+		player->itemcount++;
+    P_RemoveMobj(special);
+    player->bonuscount += BONUSADD;
+	StartSoundName(player->mo, sound);
+}

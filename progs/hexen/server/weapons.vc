@@ -1,0 +1,463 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+#define SHARDSPAWN_LEFT		1
+#define SHARDSPAWN_RIGHT	2
+#define SHARDSPAWN_UP		4
+#define SHARDSPAWN_DOWN		8
+
+int WeaponManaUseTable[NUMCLASSES * NUMWEAPONS] =
+{
+	0, 2, 3, 14,	//	Fighter
+	0, 1, 4, 18,	//	Priest
+	0, 3, 5, 15,	//	Mage
+	0, 0, 0, 0		//	Pig
+};
+
+//****************************************************************************
+//
+//	WEAPON UTILITES
+//
+//****************************************************************************
+
+//==========================================================================
+//
+//  WeaponManaUse
+//
+//==========================================================================
+
+int WeaponManaUse(int pclass, int num)
+{
+	return WeaponManaUseTable[(pclass << 2) + num];
+}
+
+//==========================================================================
+//
+//	SetFighterAxe
+//
+//==========================================================================
+
+void SetFighterAxe(player_t *player)
+{
+	SetPsprite(player, ps_weapon, S_FAXEREADY_G);
+}
+
+//==========================================================================
+//
+//  BringUpWeapon
+//
+//	Starts bringing the pending weapon up from the bottom of the screen.
+//
+//==========================================================================
+
+void BringUpWeapon(player_t *player)
+{
+	int		newstate;
+
+	if (player->pclass == PCLASS_FIGHTER &&
+		player->readyweapon == WP_SECOND &&
+		player->mana[MANA_1])
+	{
+		newstate = S_FAXEUP_G;
+	}
+	else
+	{
+		newstate = player->w_upstate;
+	}
+	player->pendingweapon = wp_nochange;
+	player->psprites[ps_weapon].sy = WEAPONBOTTOM;
+	SetPsprite(player, ps_weapon, newstate);
+}
+
+//==========================================================================
+//
+//	DropWeapon
+//
+//	The player died, so put the weapon away.
+//
+//==========================================================================
+
+void DropWeapon(player_t *player)
+{
+	SetPsprite(player, ps_weapon, player->w_downstate);
+}
+
+//==========================================================================
+//
+//	SetupPsprites
+//
+//	Called at start of level for each player
+//
+//==========================================================================
+
+void SetupPsprites(player_t *player)
+{
+	int 	i;
+
+	// Remove all psprites
+	for (i = 0; i < NUMPSPRITES; i++)
+	{
+		player->psprites[i].statenum = 0;
+	}
+	// Spawn the ready weapon
+	BringUpWeapon(player);
+}
+
+//==========================================================================
+//
+//	MovePsprites
+//
+//	Called every tic by player thinking routine
+//
+//==========================================================================
+
+void MovePsprites(player_t *player)
+{
+	int 		i;
+	pspdef_t 	*psp;
+
+	for(i = 0; i < NUMPSPRITES; i++)
+	{
+		psp = &player->psprites[i];
+		if (psp->statenum) // a null state means not active
+		{
+			// drop tic count and possibly change state
+			if (psp->time != -1.0)	// a -1 tic count never changes
+			{
+				psp->time -= frametime;
+				if (psp->time <= 0.0)
+				{
+					psp->time = 0.0;
+					SetPsprite(player, i, psp->nextstate);
+				}
+			}
+		}
+	}
+	player->psprites[ps_flash].sx = player->psprites[ps_weapon].sx;
+	player->psprites[ps_flash].sy = player->psprites[ps_weapon].sy;
+}
+
+//==========================================================================
+//
+//	P_CheckMana
+//
+//	Returns true if there is enough mana to shoot.  If not, selects the
+// next weapon to use.
+//
+//==========================================================================
+
+boolean P_CheckMana(player_t *player)
+{
+	int mana;
+	int count;
+
+	mana = player->w_mana;
+	count = WeaponManaUse(player->pclass, player->readyweapon);
+	if(mana == MANA_BOTH)
+	{
+		if(player->mana[MANA_1] >= count && player->mana[MANA_2] >= count)
+		{
+			return true;
+		}
+	}
+	else if(mana == MANA_NONE || player->mana[mana] >= count)
+	{
+		return true;
+	}
+	// out of mana, pick a weapon to change to
+	do
+	{
+		if(player->weaponowned[WP_THIRD]
+			&& player->mana[MANA_2] >= WeaponManaUse(player->pclass, WP_THIRD))
+		{
+			player->pendingweapon = WP_THIRD;
+		}
+		else if(player->weaponowned[WP_SECOND]
+			&& player->mana[MANA_1] >= WeaponManaUse(player->pclass, WP_SECOND))
+		{
+			player->pendingweapon = WP_SECOND;
+		}
+		else if(player->weaponowned[WP_FOURTH]
+			&& player->mana[MANA_1] >= WeaponManaUse(player->pclass, WP_FOURTH)
+			&& player->mana[MANA_2] >= WeaponManaUse(player->pclass, WP_FOURTH))
+		{
+			player->pendingweapon = WP_FOURTH;
+		}
+		else
+		{
+			player->pendingweapon = WP_FIRST;
+		}
+	} while(player->pendingweapon == wp_nochange);
+	SetPsprite(player, ps_weapon, player->w_downstate);
+	return false;
+}
+
+//==========================================================================
+//
+//	P_FireWeapon
+//
+//==========================================================================
+
+void P_FireWeapon(player_t *player)
+{
+	int attackState;
+
+	if(!P_CheckMana(player))
+	{
+		return;
+	}
+	SetMobjState(player->mo, PStateAttack[player->pclass]);
+	if (player->pclass == PCLASS_FIGHTER && player->readyweapon == WP_SECOND
+		&& player->mana[MANA_1] > 0)
+	{ // Glowing axe
+		attackState = S_FAXEATK_G1;
+	}
+	else
+	{
+		attackState = player->refire ? 
+			player->w_holdatkstate : player->w_atkstate;
+	}
+	SetPsprite(player, ps_weapon, attackState);
+	P_NoiseAlert(player->mo, player->mo);
+}
+
+//============================================================================
+//
+//	AdjustPlayerAngle
+//
+//============================================================================
+
+#define MAX_ANGLE_ADJUST (5*ANGLE_1)
+
+void AdjustPlayerAngle(mobj_t *pmo)
+{
+	angle_t angle;
+	int difference;
+
+	angle = atan2(linetarget->origin.y - pmo->origin.y,
+		linetarget->origin.x - pmo->origin.x);
+	difference = angle - pmo->angles.yaw;
+	if (abs(difference) > MAX_ANGLE_ADJUST)
+	{
+		pmo->angles.yaw += difference > 0 ? MAX_ANGLE_ADJUST : -MAX_ANGLE_ADJUST;
+	}
+	else
+	{
+		pmo->angles.yaw = angle;
+	}
+	pmo->player->fixangle = true;
+}
+
+//==========================================================================
+//
+//	ActivateMorphWeapon
+//
+//==========================================================================
+
+void ActivateMorphWeapon(player_t *player)
+{
+	player->pendingweapon = wp_nochange;
+	player->psprites[ps_weapon].sy = WEAPONTOP;
+	player->readyweapon = WP_FIRST;	// Snout is the first weapon
+	weaponinfo[player->readyweapon * NUMCLASSES + player->pclass](player);
+	player->pspriteSY = PSpriteSY[player->pclass  * NUMWEAPONS + player->readyweapon];
+	SetPsprite(player, ps_weapon, S_SNOUTREADY);
+}
+
+//==========================================================================
+//
+//	PostMorphWeapon
+//
+//==========================================================================
+
+void PostMorphWeapon(player_t *player, int weapon)
+{
+	player->pendingweapon = wp_nochange;
+	player->readyweapon = weapon;
+	weaponinfo[player->readyweapon * NUMCLASSES + player->pclass](player);
+	player->pspriteSY = PSpriteSY[player->pclass  * NUMWEAPONS + player->readyweapon];
+	player->psprites[ps_weapon].sy = WEAPONBOTTOM;
+	SetPsprite(player, ps_weapon, player->w_upstate);
+}
+
+//****************************************************************************
+//
+//	WEAPON ACTIONS
+//
+//****************************************************************************
+
+//==========================================================================
+//
+//	A_WeaponReady
+//
+// 	The player can fire the weapon or change to another weapon at this time.
+//
+//==========================================================================
+
+void A_WeaponReady(mobj_t *actor)
+{
+	player_t*	player = actor->player;
+	pspdef_t	*psp = &player->psprites[ps_weapon];
+	angle_t 	angle;
+
+	// Change player from attack state
+	if (player->mo->statenum >= PStateAttack[player->pclass] &&
+		player->mo->statenum <= PStateAttackEnd[player->pclass])
+	{
+		SetMobjState(player->mo, PStateNormal[player->pclass]);
+	}
+	// Put the weapon away if the player has a pending weapon or has
+	// died.
+	if (player->pendingweapon != wp_nochange || !player->health)
+	{
+		SetPsprite(player, ps_weapon, player->w_downstate);
+		return;
+	}
+
+	// Check for fire. 
+	if (player->buttons & BT_ATTACK)
+	{
+		player->attackdown = true;
+		P_FireWeapon(player);
+		return;
+	}
+	else
+	{
+		player->attackdown = false;
+	}
+
+	if (!player->morphTics)
+	{
+		// Bob the weapon based on movement speed.
+		angle = (ANG90 >> 4) * level->tictime;
+		psp->sx = 1.0 + player->bob * cos(angle);
+		angle &= 0x7fffffff;
+		psp->sy = WEAPONTOP + player->bob * sin(angle);
+	}
+}
+
+//==========================================================================
+//
+//	A_Lower
+//
+//==========================================================================
+
+void A_Lower(mobj_t *actor)
+{
+	player_t*	player = actor->player;
+	pspdef_t	*psp = &player->psprites[ps_weapon];
+	if (player->morphTics)
+	{
+		psp->sy = WEAPONBOTTOM;
+	}
+	else
+	{
+		psp->sy += LOWERSPEED;
+	}
+	if (psp->sy < WEAPONBOTTOM)
+	{
+		// Not lowered all the way yet
+		return;
+	}
+	if (player->playerstate == PST_DEAD)
+	{
+		// Player is dead, so don't bring up a pending weapon
+		psp->sy = WEAPONBOTTOM;
+		return;
+	}
+	if (!player->health)
+	{
+		// Player is dead, so keep the weapon off screen
+		SetPsprite(player,  ps_weapon, S_NULL);
+		return;
+	}
+	player->readyweapon = player->pendingweapon;
+	weaponinfo[player->readyweapon * NUMCLASSES + player->pclass](player);
+	player->pspriteSY = PSpriteSY[player->pclass  * NUMWEAPONS + player->readyweapon];
+	BringUpWeapon(player);
+}
+
+//==========================================================================
+//
+//	A_Raise
+//
+//==========================================================================
+
+void A_Raise(mobj_t *actor)
+{
+	player_t*	player = actor->player;
+	pspdef_t	*psp = &player->psprites[ps_weapon];
+	psp->sy -= RAISESPEED;
+	if (psp->sy > WEAPONTOP)
+	{
+		// Not raised all the way yet
+		return;
+	}
+	psp->sy = WEAPONTOP;
+	if (player->pclass == PCLASS_FIGHTER && player->readyweapon == WP_SECOND
+		&& player->mana[MANA_1])
+	{
+		SetPsprite(player, ps_weapon, S_FAXEREADY_G);
+	}
+	else
+	{	
+		SetPsprite(player, ps_weapon, player->w_readystate);
+	}
+}
+
+//==========================================================================
+//
+//	A_ReFire
+//
+// 	The player can re fire the weapon without lowering it entirely.
+//
+//==========================================================================
+
+void A_ReFire(mobj_t *actor)
+{
+	player_t*	player = actor->player;
+	if ((player->buttons & BT_ATTACK)
+		&& player->pendingweapon == wp_nochange && player->health)
+	{
+		player->refire++;
+		P_FireWeapon(player);
+	}
+	else
+	{
+		player->refire = 0;
+		P_CheckMana(player);
+	}
+}
+
+//==========================================================================
+//
+//  A_Light0
+//
+//==========================================================================
+
+void A_Light0(mobj_t *actor)
+{
+	player_t*	player = actor->player;
+	player->extralight = 0;
+}
+

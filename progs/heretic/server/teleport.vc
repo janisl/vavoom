@@ -1,0 +1,233 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+float		teleport_bbox[4];
+mobj_t*		teleport_thing;
+float		teleport_x;
+float		teleport_y;
+
+//==========================================================================
+//
+//	PIT_StompThing
+//
+//==========================================================================
+
+boolean PIT_StompThing(mobj_t* thing)
+{
+    float	blockdist;
+		
+    if (!(thing->flags & MF_SHOOTABLE))
+	{
+		return true;
+	}
+		
+    blockdist = thing->radius + teleport_thing->radius;
+    
+    if (fabs(thing->origin.x - teleport_x) >= blockdist || fabs(thing->origin.y - teleport_y) >= blockdist)
+    {
+		// didn't hit it
+		return true;
+    }
+    
+    // don't clip against self
+    if (thing == teleport_thing)
+	{
+		return true;
+	}
+
+	// 	Check if allowed to stomp things
+	if (!(teleport_thing->flags2 & MF2_TELESTOMP))
+    {
+    	return false;
+    }
+		
+	DamageMobj(thing, teleport_thing, teleport_thing, 10000);
+	
+    return true;
+}
+
+//==========================================================================
+//
+//	P_TeleportMove
+//
+//==========================================================================
+
+boolean P_TeleportMove(mobj_t* thing, float x, float y)
+{
+    int			xl;
+    int			xh;
+    int			yl;
+    int			yh;
+    int			bx;
+    int			by;
+    
+    // kill anything occupying the position
+    teleport_thing = thing;
+	
+    teleport_x = x;
+    teleport_y = y;
+
+    // stomp on any things contacted
+    xl = MapBlock(x - thing->radius - level->bmaporgx - MAXRADIUS);
+    xh = MapBlock(x + thing->radius - level->bmaporgx + MAXRADIUS);
+    yl = MapBlock(y - thing->radius - level->bmaporgy - MAXRADIUS);
+    yh = MapBlock(y + thing->radius - level->bmaporgy + MAXRADIUS);
+
+    for (bx = xl; bx <= xh; bx++)
+		for (by = yl; by <= yh; by++)
+	    	if (!P_BlockThingsIterator(bx, by, PIT_StompThing))
+				return false;
+    
+    // the move is ok,
+    // so link the thing into its new position
+    P_UnsetThingPosition(thing);
+
+    thing->origin.x = x;
+    thing->origin.y = y;
+
+    P_SetThingPosition(thing);
+
+    return true;
+}
+
+//==========================================================================
+//
+//	P_Teleport
+//
+//==========================================================================
+
+boolean P_Teleport(mobj_t *thing, float x, float y, angle_t angle)
+{
+	float		oldx;
+	float		oldy;
+	float		oldz;
+	float		aboveFloor;
+	float		fogDelta;
+	player_t 	*player;
+	mobj_t 		*fog;
+
+	oldx = thing->origin.x;
+	oldy = thing->origin.y;
+	oldz = thing->origin.z;
+	aboveFloor = thing->origin.z - thing->floorz;
+	if (!P_TeleportMove(thing, x, y))
+	{
+		return false;
+	}
+	if (thing->player)
+	{
+		player = thing->player;
+		if (player->powers[pw_flight] && aboveFloor)
+		{
+			thing->origin.z = thing->floorz + aboveFloor;
+			if (thing->origin.z + thing->height > thing->ceilingz)
+			{
+				thing->origin.z = thing->ceilingz - thing->height;
+			}
+			player->vieworg.z = thing->origin.z + player->viewheight;
+		}
+		else
+		{
+			thing->origin.z = thing->floorz;
+			player->vieworg.z = thing->origin.z + player->viewheight;
+			thing->angles.pitch = 0;
+		}
+		player->fixangle = true;
+	}
+	else if (thing->flags & MF_MISSILE)
+	{
+		thing->origin.z = thing->floorz + aboveFloor;
+		if (thing->origin.z + thing->height > thing->ceilingz)
+		{
+			thing->origin.z = thing->ceilingz - thing->height;
+		}
+	}
+	else
+	{
+		thing->origin.z = thing->floorz;
+	}
+	// Spawn teleport fog at source and destination
+	fogDelta = thing->flags & MF_MISSILE ? 0.0 : TELEFOGHEIGHT;
+	fog = P_SpawnMobj(oldx, oldy, oldz + fogDelta, MT_TFOG);
+	StartSoundName(fog, "Teleport");
+	fog = P_SpawnMobj(x + 20.0 * cos(angle),
+		y + 20.0 * sin(angle), thing->origin.z + fogDelta, MT_TFOG);
+	StartSoundName(fog, "Teleport");
+	if (thing->player && !thing->player->powers[pw_weaponlevel2])
+	{
+		// Freeze player for about .5 sec
+		thing->reactiontime = 18;
+	}
+	thing->angles.yaw = angle;
+	if (thing->flags2 & MF2_FOOTCLIP &&
+		P_GetThingFloorType(thing) != FLOOR_SOLID)
+	{
+		thing->floorclip = FOOTCLIPSIZE;
+	}
+	else
+	{
+      	thing->floorclip = 0.0;
+	}
+	if (thing->flags & MF_MISSILE)
+	{
+		thing->velocity.x = thing->speed * cos(angle);
+		thing->velocity.y = thing->speed * sin(angle);
+	}
+	else
+	{
+		thing->velocity.x = thing->velocity.y = thing->velocity.z = 0.0;
+	}
+	return(true);
+}
+
+//==========================================================================
+//
+//	EV_Teleport
+//
+//==========================================================================
+
+boolean EV_Teleport(int tag, mobj_t *thing, boolean usefog)
+{
+	int 		i;
+	mobj_t 		*m;
+
+	if (thing->flags2&MF2_NOTELEPORT)
+	{
+		return false;
+	}
+	for (m = NextMobj(NULL); m; m = NextMobj(m))
+	{
+		if (m->type != MT_TELEPORTMAN)
+		{
+			// Not a teleportman
+			continue;
+		}
+		if (m->tid != tag)
+		{
+			// Wrong sector
+			continue;
+		}
+		return P_Teleport(thing, m->origin.x, m->origin.y, m->angles.yaw);
+	}
+	return(false);
+}

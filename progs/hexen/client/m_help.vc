@@ -1,0 +1,94 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//**
+//**	Help screens
+//**
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+struct menu_help_t
+{
+	menu_t			menu;
+	menubitmap_t	pic;
+	int				numpages;
+	int				curpage;
+};
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+menu_help_t		HelpMenu;
+
+string			page_names[3] = { "HELP1", "HELP2", "CREDIT" };
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	UseHelp
+//
+//==========================================================================
+
+boolean UseHelp(menucommon_t *item, int key)
+{
+	HelpMenu.curpage++;
+	LocalSound("MenuClose");
+
+	if (key == K_ESCAPE || HelpMenu.curpage >= HelpMenu.numpages)
+    {
+     	MN_DeactivateMenu();
+	}
+	else
+	{
+		HelpMenu.pic.handle = R_RegisterPic(page_names[HelpMenu.curpage], PIC_RAW);
+	}
+
+	return true;
+}
+
+//==========================================================================
+//
+//	menu_help
+//
+//==========================================================================
+
+void menu_help(void)
+{
+    InitMenu(&HelpMenu.menu);
+
+	HelpMenu.numpages = 3;
+	HelpMenu.curpage = 0;
+
+	MenuBitmap_Init(&HelpMenu.pic, 0, 0, 0, page_names[HelpMenu.curpage], PIC_RAW);
+	AddMenuItem(&HelpMenu.menu, &HelpMenu.pic);
+	HelpMenu.pic.responder = UseHelp;
+
+    PushMenu(&HelpMenu.menu);
+}
+

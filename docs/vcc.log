@@ -1,0 +1,24 @@
+03-01-2000
+  SÆku veidot. ACC faili ir direktorijÆ SOURCE1, QCC faili ir direktorijÆ
+ SOURCE2. LØdzØgi arØ objektu faili ir direktorijÆs OBJ1 un OBJ2 un testa
+ programmas direktorijÆs TEMP1 un TEMP2. KopØgie izejas faili bİs direktorijÆ
+ SOURCE.
+04-01-2000
+  Izveidots kopØgs starta modulis dcc.c, kõİdu modulis error.c un da÷Ædu
+ funkciju modulis misc.c. Lai atıóirtu kompilÆtorus, ACC izmanto definñtu
+ ACC. SÆku veidot kopØgu token.c, sis fails ir kopØgs, un tÆ beigÆs tiek
+ iekõauts vecais fails token1.c, kurı katram kompilÆtoram ir atıóirØgs.
+ QCC izmetu ÆrÆ vektorus.
+05-01-2000
+  LielÆkÆ daõa no token.c ir kopØga. No ACC token tipiem izmesti ÆrÆ visi
+ atslñgvÆrdi, sÆku izmest ÆrÆ arØ speciÆlos simbolus.
+06-01-2000
+  Izmesti ÆrÆ no token tipiem visi speciÆlie simboli. PrincipÆ token.c
+ galvenÆ daõa ir kopØga. Apvienots strlist.c, arØ pcode.c operÆciju koda
+ rakstØıana ir pieejama abiem. SÆku apvienot izteiksmju sadalØıanu.
+07-01-2000
+   Ir kopØga izteiksmju bloks. Konstantu izteiksmju aprñóinÆıana atdaØta
+  atseviıói.
+08-01-2000
+  Ir gatava 1. versija.
+  

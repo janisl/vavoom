@@ -1,0 +1,816 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+struct yahpt_t
+{
+	int x;
+	int y;
+};
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// specifies current state
+int				interstate;
+float			intertime;
+
+int				im_episode;
+int				im_map;
+int				im_nextepisode;
+int				im_nextmap;
+
+// background (map of levels).
+int				patchINTERPIC;
+
+int				hours;
+int				minutes;
+int				seconds;
+
+int				killPercent[MAXPLAYERS];
+int				bonusPercent[MAXPLAYERS];
+int				secretPercent[MAXPLAYERS];
+
+int				patchFaceOkay[4];
+int				patchFaceDead[4];
+
+int				totalFrags[MAXPLAYERS];
+float			dSlideX[MAXPLAYERS];
+float			dSlideY[MAXPLAYERS];
+
+int				slaughterboy; // in DM, the player with the most kills
+
+int				oldinterstate;
+float			oldintertime;
+
+int				patchBEENTHERE;
+int				patchGOINGTHERE;
+
+int				im_sounds;
+
+// used for general timing
+float			cnt;
+
+yahpt_t YAHspot[3][9] =
+{
+	{
+		{ 172, 78 },
+		{ 86, 90 },
+		{ 73, 66 },
+		{ 159, 95 },
+		{ 148, 126 },
+		{ 132, 54 },
+		{ 131, 74 },
+		{ 208, 138 },
+		{ 52, 101 }
+	},
+	{
+		{ 218, 57 },
+		{ 137, 81 },
+		{ 155, 124 },
+		{ 171, 68 },
+		{ 250, 86 },
+		{ 136, 98 },
+		{ 203, 90 },
+		{ 220, 140 },
+		{ 279, 106 }
+	},
+	{
+		{ 86, 99 },
+		{ 124, 103 },
+		{ 154, 79 },
+		{ 202, 83 },
+		{ 178, 59 },
+		{ 142, 58 },
+		{ 219, 66 },
+		{ 247, 57 },
+		{ 107, 80 }
+	}
+};
+
+// CODE --------------------------------------------------------------------
+
+//========================================================================
+//
+//  IM_LoadPics
+//
+//========================================================================
+
+void IM_LoadPics(void)
+{
+	switch (im_episode)
+	{
+		case 1:
+			patchINTERPIC = R_RegisterPic("MAPE1", PIC_PATCH);
+			break;
+		case 2:
+			patchINTERPIC = R_RegisterPic("MAPE2", PIC_PATCH);
+			break;
+		case 3:
+			patchINTERPIC = R_RegisterPic("MAPE3", PIC_PATCH);
+			break;
+		default:
+            patchINTERPIC = 0;
+			break;
+	}
+	patchBEENTHERE = R_RegisterPic("IN_X", PIC_PATCH);
+	patchGOINGTHERE = R_RegisterPic("IN_YAH", PIC_PATCH);
+
+	patchFaceOkay[0] = R_RegisterPic("FACEA0", PIC_PATCH);
+	patchFaceOkay[1] = R_RegisterPic("FACEA1", PIC_PATCH);
+	patchFaceOkay[2] = R_RegisterPic("FACEA2", PIC_PATCH);
+	patchFaceOkay[3] = R_RegisterPic("FACEA3", PIC_PATCH);
+	patchFaceDead[0] = R_RegisterPic("FACEB0", PIC_PATCH);
+	patchFaceDead[1] = R_RegisterPic("FACEB1", PIC_PATCH);
+	patchFaceDead[2] = R_RegisterPic("FACEB2", PIC_PATCH);
+	patchFaceDead[3] = R_RegisterPic("FACEB3", PIC_PATCH);
+}
+
+//========================================================================
+//
+//  IM_UnloadPics
+//
+//========================================================================
+
+void IM_UnloadPics(void)
+{
+}
+
+//==========================================================================
+//
+//	IM_DrawBackground
+//
+//==========================================================================
+
+void IM_DrawBackground(void)
+{
+	if (interstate == 0)
+	{
+		R_FillRectWithFlat(0, 0, 320, 200, "FLOOR16");
+	}
+	else if (im_episode < 4)
+	{
+		R_DrawPic(0, 0, patchINTERPIC);
+	}
+}
+
+//========================================================================
+//
+//  IM_InitStats
+//
+//========================================================================
+
+void IM_InitStats(void)
+{
+	int i;
+	int j;
+	int slaughterfrags;
+	int posnum;
+	int slaughtercount;
+	int playercount;
+	int time;
+
+	if (cl->maxclients == 1)
+	{
+		time = ftoi(im->time);
+		hours = time / 3600;
+		time -= hours * 3600;
+		minutes = time / 60;
+		time -= minutes * 60;
+		seconds = time;
+	}
+	else if (!cl->deathmatch)
+	{
+		for (i = 0; i < MAXPLAYERS; i++)
+		{
+			killPercent[i] = 0;
+			bonusPercent[i] = 0;
+			secretPercent[i] = 0;
+			if (scores[i].active)
+			{
+				if (im->totalkills)
+				{
+					killPercent[i] = scores[i].killcount * 100 / im->totalkills;
+				}
+				if (im->totalitems)
+				{
+					bonusPercent[i] = scores[i].itemcount * 100 / im->totalitems;
+				}
+				if (im->totalsecret)
+				{
+					secretPercent[i] = scores[i].secretcount * 100 / im->totalsecret;
+				}
+			}
+		}
+	}
+	else
+	{
+		slaughterboy = 0;
+		slaughterfrags = -9999;
+		posnum = 0;
+		playercount = 0;
+		slaughtercount = 0;
+		for (i = 0; i < MAXPLAYERS; i++)
+		{
+			totalFrags[i] = 0;
+			if (scores[i].active)
+			{
+				playercount++;
+				for (j = 0; j < MAXPLAYERS; j++)
+				{
+					if (scores[j].active)
+					{
+						totalFrags[i] += scores[i].frags[j];
+					}
+				}
+				dSlideX[i] = (43.0 * itof(posnum)) / 20.0;
+				dSlideY[i] = (36.0 * itof(posnum)) / 20.0;
+				posnum++;
+			}
+			if (totalFrags[i] > slaughterfrags)
+			{
+				slaughterboy = 1 << i;
+				slaughterfrags = totalFrags[i];
+				slaughtercount = 1;
+			}
+			else if (totalFrags[i] == slaughterfrags)
+			{
+				slaughterboy |= 1 << i;
+				slaughtercount++;
+			}
+		}
+		if (playercount == slaughtercount)
+		{
+			// don't do the slaughter stuff if everyone is equal
+			slaughterboy = 0;
+		}
+	}
+}
+
+//========================================================================
+//
+//  IM_DrawSingleStats
+//
+//========================================================================
+
+void IM_DrawSingleStats(void)
+{
+	T_SetShadow(true);
+    T_SetFont(font_big);
+    T_SetAlign(hleft, vtop);
+    T_DrawText(50, 65, "KILLS");
+    T_DrawText(50, 90, "ITEMS");
+    T_DrawText(50, 115, "SECRETS");
+    T_SetAlign(hcenter, vtop);
+    T_DrawText(160, 3, ARR2STR(im->leave_name));
+	T_SetShadow(false);
+
+	T_SetFont(font_small);
+    T_DrawText(160, 25, "FINISHED");
+
+	if (intertime < 1.0)
+	{
+		return;
+	}
+	if (im_sounds < 1 && intertime >= 1.0)
+	{
+		LocalSound("DoorClose");
+		im_sounds++;
+	}
+	T_SetShadow(true);
+    T_SetFont(font_big);
+    T_SetAlign(hleft, vtop);
+//FIXME	T_SetDist(1, 1);
+    T_DrawText(202, 65, va("%d", scores[0].killcount));
+    T_DrawText(237, 65, "/");
+    T_DrawText(250, 65, va("%d", im->totalkills));
+//FIXME	T_SetDist(-1, 1);
+	T_SetShadow(false);
+	if (intertime < 2.0)
+	{
+		return;
+	}
+	if (im_sounds < 2 && intertime >= 2.0)
+	{
+		LocalSound("DoorClose");
+		im_sounds++;
+	}
+	T_SetShadow(true);
+    T_SetFont(font_big);
+    T_SetAlign(hleft, vtop);
+//FIXME	T_SetDist(1, 1);
+    T_DrawText(202, 90, va("%d", scores[0].itemcount));
+    T_DrawText(237, 90, "/");
+    T_DrawText(250, 90, va("%d", im->totalitems));
+//FIXME	T_SetDist(-1, 1);
+	T_SetShadow(false);
+	if (intertime < 3.0)
+	{
+		return;
+	}
+	if (im_sounds < 3 && intertime >= 3.0)
+	{
+		LocalSound("DoorClose");
+		im_sounds++;
+	}
+	T_SetShadow(true);
+    T_SetFont(font_big);
+    T_SetAlign(hleft, vtop);
+//FIXME	T_SetDist(1, 1);
+    T_DrawText(202, 115, va("%d", scores[0].secretcount));
+    T_DrawText(237, 115, "/");
+    T_DrawText(250, 115, va("%d", im->totalsecret));
+//FIXME	T_SetDist(-1, 1);
+	T_SetShadow(false);
+	if (intertime < 5.0)
+	{
+		return;
+	}
+	if (im_sounds < 4 && intertime >= 5.0)
+	{
+		LocalSound("DoorClose");
+		im_sounds++;
+	}
+
+	if (!ExtendedWAD || im_episode < 4)
+	{
+		T_SetShadow(true);
+	    T_SetFont(font_big);
+	    T_SetAlign(hleft, vtop);
+    	T_DrawText(85, 160, "TIME");
+//FIXME		T_SetDist(1, 1);
+    	T_DrawText(155, 160, va("%d%d:%d%d:%d%d", hours / 10, hours % 10,
+    		minutes / 10, minutes % 10, seconds / 10, seconds % 10));
+//FIXME		T_SetDist(-1, 1);
+		T_SetShadow(false);
+	}
+	else
+	{
+		T_SetFont(font_small);
+	    T_SetAlign(hcenter, vtop);
+	    T_DrawText(160, 160, "NOW ENTERING:");
+		T_SetShadow(true);
+	    T_SetFont(font_big);
+	    T_DrawText(160, 170, ARR2STR(im->enter_name));
+		T_SetShadow(false);
+		skipintermission = false;
+	}
+}
+
+//========================================================================
+//
+//  IM_DrawCoopStats
+//
+//========================================================================
+
+void IM_DrawCoopStats(void)
+{
+	int 	i;
+	int 	ypos;
+
+	T_SetShadow(true);
+    T_SetFont(font_big);
+    T_SetAlign(hleft, vtop);
+    T_DrawText(95, 35, "KILLS");
+    T_DrawText(155, 35, "BONUS");
+    T_DrawText(232, 35, "SECRET");
+
+    T_SetAlign(hcenter, vtop);
+    T_DrawText(160, 3, ARR2STR(im->leave_name));
+	T_SetShadow(false);
+	T_SetFont(font_small);
+    T_DrawText(160, 25, "FINISHED");
+
+	T_SetShadow(true);
+	T_SetFont(font_big);
+	T_SetAlign(hleft, vtop);
+//FIXME    T_SetDist(1, 1);
+	ypos = 50;
+//	for (i = 0; i < MAXPLAYERS; i++)
+	for (i = 0; i < 4; i++)
+	{
+		if (scores[i].active)
+		{
+			R_DrawShadowedPic(25, ypos, patchFaceOkay[i]);
+			if (intertime < 1.25)
+			{
+				ypos += 37;
+				continue;
+			}
+			else if (intertime >= 1.25 && im_sounds < 1)
+			{
+				LocalSound("DoorClose");
+				im_sounds++;
+			}
+			T_DrawText(87, ypos + 10, va("%d", killPercent[i]));
+			T_DrawText(121, ypos + 10, "%");
+			T_DrawText(162, ypos + 10, va("%d", bonusPercent[i]));
+			T_DrawText(196, ypos + 10, "%");
+			T_DrawText(239, ypos + 10, va("%d", secretPercent[i]));
+			T_DrawText(273, ypos + 10, "%");
+			ypos += 37;
+		}
+	}
+//FIXME	T_SetDist(-1, 1);
+	T_SetShadow(false);
+}
+
+//========================================================================
+//
+//  IM_DrawDMStats
+//
+//========================================================================
+
+void IM_DrawDMStats(void)
+{
+	int i;
+	int j;
+	int ypos;
+	int xpos;
+	int kpos;
+
+	xpos = 90;
+	ypos = 55;
+
+	T_SetShadow(true);
+    T_SetFont(font_big);
+    T_SetAlign(hleft, vtop);
+    T_DrawText(265, 30, "TOTAL");
+	T_SetShadow(false);
+
+	T_SetFont(font_small);
+    T_DrawText(140, 8, "VICTIMS");
+    T_DrawText(10, 80, "K\nI\nL\nL\nE\nR\nS");
+	if (intertime < 0.625)
+	{
+		for (i = 0; i < MAXPLAYERS; i++)
+		{
+			if (scores[i].active)
+			{
+				R_DrawShadowedPic(40, ypos + ftoi(dSlideY[i] * 35.0 * intertime),
+					patchFaceOkay[i]);
+				R_DrawShadowedPic(xpos + ftoi(dSlideX[i] * 35.0 * intertime), 18,
+					patchFaceDead[i]);
+			}
+		}
+		return;
+	}
+	if (intertime >= 0.625 && im_sounds < 1)
+	{
+		LocalSound("DoorClose");
+		im_sounds++;
+	}
+	if (intertime >= 3.0 && slaughterboy && im_sounds < 2)
+	{
+		LocalSound("PickupWeapon");
+		im_sounds++;
+	}
+	T_SetShadow(true);
+	T_SetFont(font_big);
+	T_SetAlign(hleft, vtop);
+//FIXME	T_SetDist(1, 1);
+//	for (i = 0; i < MAXPLAYERS; i++)
+	for (i = 0; i < 4; i++)
+	{
+		if (scores[i].active)
+		{
+			if (intertime < 3.0 || i == cl->clientnum)
+			{
+				R_DrawShadowedPic(40, ypos, patchFaceOkay[i]);
+				R_DrawShadowedPic(xpos, 18, patchFaceDead[i]);
+			}
+			else
+			{
+				R_DrawPic2(40, ypos, patchFaceOkay[i], 60);
+				R_DrawPic2(xpos, 18, patchFaceDead[i], 60);
+			}
+			kpos = 86;
+//			for (j = 0; j < MAXPLAYERS; j++)
+			for (j = 0; j < 4; j++)
+			{
+				if (scores[j].active)
+				{
+					T_DrawText(kpos, ypos + 10, va("%d", scores[i].frags[j]));
+					kpos += 43;
+				}
+	      	}
+			if (slaughterboy & (1 << i))
+			{
+				if (!(ftoi(32.0 * intertime) & 16))
+				{
+					T_DrawText(263, ypos + 10, va("%d", totalFrags[i]));
+				}
+			}
+			else
+			{
+				T_DrawText(263, ypos + 10, va("%d", totalFrags[i]));
+			}
+			ypos += 36;
+			xpos += 43;
+		}
+	}
+//FIXME	T_SetDist(-1, 1);
+	T_SetShadow(false);
+}
+
+//========================================================================
+//
+//  IM_DrawOldLevel
+//
+//========================================================================
+
+void IM_DrawOldLevel(void)
+{
+	int i;
+
+    T_SetAlign(hcenter, vtop);
+
+	T_SetShadow(true);
+    T_SetFont(font_big);
+    T_DrawText(160, 3, ARR2STR(im->leave_name));
+	T_SetShadow(false);
+
+	T_SetFont(font_small);
+    T_DrawText(160, 25, "FINISHED");
+
+	if (im_map == 9)
+	{
+		for (i = 0; i < im_nextmap - 1; i++)
+		{
+			R_DrawPic(YAHspot[im_episode-1][i].x, YAHspot[im_episode-1][i].y,
+				patchBEENTHERE);
+		}
+		if (!(ftoi(32.0 * intertime) & 16))
+		{
+			R_DrawPic(YAHspot[im_episode-1][8].x, YAHspot[im_episode-1][8].y,
+				patchBEENTHERE);
+		}
+	}
+	else
+	{
+		for (i = 0; i < im_map - 1; i++)
+		{
+			R_DrawPic(YAHspot[im_episode-1][i].x, YAHspot[im_episode-1][i].y,
+				patchBEENTHERE);
+		}
+		if (cl->didsecret)
+		{
+			R_DrawPic(YAHspot[im_episode-1][8].x, YAHspot[im_episode-1][8].y,
+				patchBEENTHERE);
+		}
+		if (!(ftoi(32.0 * intertime) & 16))
+		{
+			R_DrawPic(YAHspot[im_episode-1][im_map-1].x, YAHspot[im_episode-1][im_map-1].y,
+				patchBEENTHERE);
+		}
+	}
+}
+
+//========================================================================
+//
+//  IM_DrawYAH
+//
+//========================================================================
+
+void IM_DrawYAH(void)
+{
+	int i;
+
+    T_SetAlign(hcenter, vtop);
+
+	T_SetFont(font_small);
+    T_DrawText(160, 10, "NOW ENTERING:");
+
+	T_SetShadow(true);
+    T_SetFont(font_big);
+    T_DrawText(160, 20, ARR2STR(im->enter_name));
+	T_SetShadow(false);
+
+	if (im_map == 9)
+	{
+		im_map = im_nextmap - 1;
+	}
+	for (i = 0; i < im_map; i++)
+	{
+		R_DrawPic(YAHspot[im_episode-1][i].x, YAHspot[im_episode-1][i].y,
+			patchBEENTHERE);
+	}
+	if (cl->didsecret)
+	{
+		R_DrawPic(YAHspot[im_episode-1][8].x, YAHspot[im_episode-1][8].y,
+			patchBEENTHERE);
+	}
+	if (!(ftoi(32.0 * intertime) & 16) || interstate == 3)
+	{
+		// draw the destination 'X'
+		R_DrawPic(YAHspot[im_nextepisode-1][im_nextmap-1].x,
+			YAHspot[im_nextepisode-1][im_nextmap-1].y, patchGOINGTHERE);
+	}
+}
+
+//==========================================================================
+//
+//  IM_Drawer
+//
+//==========================================================================
+
+void IM_Drawer(void)
+{
+	if (interstate == 3)
+	{
+		return;
+	}
+	if (oldinterstate != 2 && interstate == 2)
+	{
+		LocalSound("PlatformStop");
+	}
+	oldinterstate = interstate;
+
+	IM_DrawBackground();
+
+	switch (interstate)
+	{
+	 case 0: // draw stats
+		if (cl->maxclients == 1)
+			IM_DrawSingleStats();
+		else if (!cl->deathmatch)
+			IM_DrawCoopStats();
+		else
+			IM_DrawDMStats();
+		break;
+	 case 1: // leaving old level
+		if (im_episode < 4)
+		{
+			IM_DrawOldLevel();
+		}
+		break;
+	 case 2: // going to the next level
+		if (im_episode < 4)
+		{
+			IM_DrawYAH();
+		}
+		break;
+	 case 3: // waiting before going to the next level
+		break;
+	}
+}
+
+//========================================================================
+//
+//	IM_UpdateStats
+//
+//========================================================================
+
+void IM_UpdateStats(void)
+{
+	if (interstate == 3)
+	{
+		if (cnt > 0.0)
+		{
+			cnt -= frametime;
+			if (cnt <= 0.0)
+			{
+				IM_UnloadPics();
+			    CmdBuf_AddText("TeleportNewMap\n");
+			}
+		}
+		return;
+	}
+	intertime += frametime;
+	if (oldintertime < intertime)
+	{
+		interstate++;
+		if (im_episode > 3 && interstate >= 1)
+		{
+			// Extended Wad levels:  skip directly to the next level
+			interstate = 3;
+		}
+		switch (interstate)
+		{
+			case 0:
+				oldintertime = intertime + 10.0;
+				if (im_episode > 3)
+				{
+					oldintertime = intertime + 35.0;
+				}
+				break;
+			case 1:
+				oldintertime = intertime + 6.0;
+				break;
+			case 2:
+				oldintertime = 99999.0;
+				break;
+			case 3:
+				cnt = 0.3;
+				break;
+			default:
+				break;
+		}
+	}
+	if (skipintermission)
+	{
+		if (interstate == 0 && intertime < 5.0)
+		{
+			intertime = 5.0;
+			skipintermission = false;
+			return;
+		}
+		else if (interstate < 2 && im_episode < 4)
+		{
+			interstate = 2;
+			skipintermission = false;
+			LocalSound("DoorClose");
+			return;
+		}
+		interstate = 3;
+		cnt = 0.3;
+		skipintermission = false;
+		LocalSound("DoorClose");
+	}
+}
+
+//==========================================================================
+//
+//	FindEpisodeAndMap
+//
+//==========================================================================
+
+void FindEpisodeAndMap(string name, int *epi, int *map)
+{
+	int		e;
+	int		m;
+
+	for (e = 1; e <= 3; e++)
+	{
+		for (m = 1; m <= 9; m++)
+		{
+			if (!strcmp(name, va("E%dM%d", e, m)))
+			{
+				*epi = e;
+				*map = m;
+				return;
+			}
+		}
+	}
+	*epi = 4;
+	*map = 1;
+}
+
+//==========================================================================
+//
+//	IM_Start
+//
+//==========================================================================
+
+void IM_Start(void)
+{
+	FindEpisodeAndMap(ARR2STR(im->leavemap), &im_episode, &im_map);
+	FindEpisodeAndMap(ARR2STR(im->entermap), &im_nextepisode, &im_nextmap);
+	IM_LoadPics();
+	IM_InitStats();
+	interstate = 0;
+	skipintermission = false;
+	intertime = 0.0;
+	if (im_episode > 3)
+	{
+		oldintertime = 35.0;
+	}
+	else
+	{
+		oldintertime = 10.0;
+	}
+	im_sounds = 0;
+#ifdef FIXME
+	S_StartSong("MUS_INTR", P_GetCDIntermissionTrack(), true);
+#else
+	CmdBuf_AddText("music loop MUS_INTR\n");
+#endif
+}
+
+

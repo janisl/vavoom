@@ -1,0 +1,776 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+#define BONUSADD				6
+
+// Keys
+
+#define TXT_GOTBLUEKEY			"BLUE KEY"
+#define TXT_GOTYELLOWKEY		"YELLOW KEY"
+#define TXT_GOTGREENKEY			"GREEN KEY"
+
+// Artifacts
+
+#define TXT_ARTIHEALTH			"QUARTZ FLASK"
+#define TXT_ARTIFLY				"WINGS OF WRATH"
+#define TXT_ARTIINVULNERABILITY	"RING OF INVINCIBILITY"
+#define TXT_ARTITOMEOFPOWER		"TOME OF POWER"
+#define TXT_ARTIINVISIBILITY	"SHADOWSPHERE"
+#define TXT_ARTIEGG				"MORPH OVUM"
+#define TXT_ARTISUPERHEALTH		"MYSTIC URN"
+#define TXT_ARTITORCH			"TORCH"
+#define TXT_ARTIFIREBOMB		"TIME BOMB OF THE ANCIENTS"
+#define TXT_ARTITELEPORT		"CHAOS DEVICE"
+
+// Items
+
+#define TXT_ITEMHEALTH			"CRYSTAL VIAL"
+#define TXT_ITEMBAGOFHOLDING	"BAG OF HOLDING"
+#define TXT_ITEMSHIELD1			"SILVER SHIELD"
+#define TXT_ITEMSHIELD2			"ENCHANTED SHIELD"
+#define TXT_ITEMSUPERMAP		"MAP SCROLL"
+
+// Ammo
+
+#define TXT_AMMOGOLDWAND1		"WAND CRYSTAL"
+#define TXT_AMMOGOLDWAND2		"CRYSTAL GEODE"
+#define TXT_AMMOMACE1			"MACE SPHERES"
+#define TXT_AMMOMACE2			"PILE OF MACE SPHERES"
+#define TXT_AMMOCROSSBOW1		"ETHEREAL ARROWS"
+#define TXT_AMMOCROSSBOW2		"QUIVER OF ETHEREAL ARROWS"
+#define TXT_AMMOBLASTER1		"CLAW ORB"
+#define TXT_AMMOBLASTER2		"ENERGY ORB"
+#define TXT_AMMOSKULLROD1		"LESSER RUNES"
+#define TXT_AMMOSKULLROD2		"GREATER RUNES"
+#define TXT_AMMOPHOENIXROD1		"FLAME ORB"
+#define TXT_AMMOPHOENIXROD2		"INFERNO ORB"
+
+// Weapons
+
+#define TXT_WPNMACE				"FIREMACE"
+#define TXT_WPNCROSSBOW			"ETHEREAL CROSSBOW"
+#define TXT_WPNBLASTER			"DRAGON CLAW"
+#define TXT_WPNSKULLROD			"HELLSTAFF"
+#define TXT_WPNPHOENIXROD		"PHOENIX ROD"
+#define TXT_WPNGAUNTLETS		"GAUNTLETS OF THE NECROMANCER"
+
+#define AMMO_GWND_WIMPY 		10
+#define AMMO_GWND_HEFTY 		50
+#define AMMO_CBOW_WIMPY 		5
+#define AMMO_CBOW_HEFTY 		20
+#define AMMO_BLSR_WIMPY 		10
+#define AMMO_BLSR_HEFTY 		25
+#define AMMO_SKRD_WIMPY 		20
+#define AMMO_SKRD_HEFTY 		100
+#define AMMO_PHRD_WIMPY 		1
+#define AMMO_PHRD_HEFTY 		10
+#define AMMO_MACE_WIMPY 		20
+#define AMMO_MACE_HEFTY 		100
+
+void P_SetDormantArtifact(mobj_t *arti);
+void P_HideSpecialThing(mobj_t *thing);
+void P_RemoveMobj(mobj_t *mobj);
+
+int GetAmmoChange[] =
+{
+	wp_goldwand,
+	wp_crossbow,
+	wp_blaster,
+	wp_skullrod,
+	wp_phoenixrod,
+	wp_mace
+};
+
+int GetWeaponAmmo[NUMWEAPONS] =
+{
+	0,		// staff
+	25,		// gold wand
+	10,		// crossbow
+	30,		// blaster
+	50,		// skull rod
+	2,		// phoenix rod
+	50,		// mace
+	0,		// gauntlets
+	0		// beak
+};
+
+int WeaponValue[] =
+{
+	1,		// staff
+	3,		// goldwand
+	4,		// crossbow
+	5,		// blaster
+	6,		// skullrod
+	7,		// phoenixrod
+	8,		// mace
+	2,		// gauntlets
+	0		// beak
+};
+int maxammo[NUMAMMO] =
+{
+	100,	// gold wand
+	50,		// crossbow
+	200,	// blaster
+	200,	// skull rod
+	20,		// phoenix rod
+	150		// mace
+};
+
+//==========================================================================
+//
+//	P_GiveAmmo
+//
+//	Returns true if the player accepted the ammo, false if it was
+// refused (player has maxammo[ammo]).
+//
+//==========================================================================
+
+boolean P_GiveAmmo(player_t *player, int ammo, int count)
+{
+	int 	prevAmmo;
+	int		max;
+
+	if (ammo == am_noammo)
+	{
+		return false;
+	}
+	if (ammo < 0 || ammo > NUMAMMO)
+	{
+//		I_Error("P_GiveAmmo: bad type %i", ammo);
+		Error("P_GiveAmmo: bad type");
+	}
+	max = player->backpack ? maxammo[ammo] * 2 : maxammo[ammo];
+	if (player->ammo[ammo] == max)
+	{
+		return false;
+	}
+	if (gameskill == sk_baby || gameskill == sk_nightmare)
+	{
+		// extra ammo in baby mode and nightmare mode
+		count += count>>1;
+	}
+	prevAmmo = player->ammo[ammo];
+
+	player->ammo[ammo] += count;
+	if (player->ammo[ammo] > max)
+	{
+		player->ammo[ammo] = max;
+	}
+	if (prevAmmo)
+	{
+		// Don't attempt to change weapons if the player already had
+		// ammo of the type just given
+		return true;
+	}
+	if (player->readyweapon == wp_staff
+		|| player->readyweapon == wp_gauntlets)
+	{
+		if (player->weaponowned[GetAmmoChange[ammo]])
+		{
+			player->pendingweapon = GetAmmoChange[ammo];
+		}
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//	P_GiveWeapon
+//
+//	Returns true if the weapon or its ammo was accepted.
+//
+//==========================================================================
+
+boolean P_GiveWeapon(player_t *player, int weapon)
+{
+	boolean 	gaveAmmo;
+	boolean 	gaveWeapon;
+
+	if (netgame && !deathmatch)
+	{
+		// Cooperative net-game
+		if (player->weaponowned[weapon])
+		{
+			return false;
+		}
+		player->bonuscount += BONUSADD;
+		player->weaponowned[weapon] = true;
+		P_GiveAmmo(player, weapon_ammo_type[weapon], GetWeaponAmmo[weapon]);
+		player->pendingweapon = weapon;
+		StartSoundName(player->mo, "PickupWeapon");
+		return false;
+	}
+	gaveAmmo = P_GiveAmmo(player, weapon_ammo_type[weapon],
+		GetWeaponAmmo[weapon]);
+	if (player->weaponowned[weapon])
+	{
+		gaveWeapon = false;
+	}
+	else
+	{
+		gaveWeapon = true;
+		player->weaponowned[weapon] = true;
+		if (WeaponValue[weapon] > WeaponValue[player->readyweapon])
+		{
+			// Only switch to more powerful weapons
+			player->pendingweapon = weapon;
+		}
+	}
+	return (gaveWeapon || gaveAmmo);
+}
+
+//==========================================================================
+//
+//	P_GiveBody
+//
+//	Returns false if the body isn't needed at all.
+//
+//==========================================================================
+
+boolean P_GiveBody(player_t *player, int num)
+{
+	int max;
+
+	max = MAXHEALTH;
+	if (player->chickenTics)
+	{
+		max = MAXCHICKENHEALTH;
+	}
+	if (player->health >= max)
+	{
+		return false;
+	}
+	player->health += num;
+	if (player->health > max)
+	{
+		player->health = max;
+	}
+	player->mo->health = player->health;
+	return true;
+}
+
+//==========================================================================
+//
+//	P_GiveArmor
+//
+//	Returns false if the armor is worse than the current armor.
+//
+//==========================================================================
+
+boolean P_GiveArmor(player_t *player, int armortype)
+{
+	int hits;
+
+	hits = armortype * 100;
+	if (player->armorpoints >= hits)
+	{
+		return false;
+	}
+	player->armortype = armortype;
+	player->armorpoints = hits;
+	return true;
+}
+
+//==========================================================================
+//
+//	P_GiveKey
+//
+//==========================================================================
+
+boolean P_GiveKey(player_t *player, int key)
+{
+	if ((player->keys & (1 << key)))
+	{
+		return false;
+	}
+	player->bonuscount = BONUSADD;
+	player->keys |= 1 << key;
+	return true;
+}
+
+//==========================================================================
+//
+//	P_GivePower
+//
+//	Returns true if power accepted.
+//
+//==========================================================================
+
+boolean P_GivePower(player_t *player, int power)
+{
+	if (power == pw_invulnerability)
+	{
+		if (player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		{
+			// Already have it
+			return false;
+		}
+		player->powers[power] = ftoi(INVULNTIME * 35.0);
+		return true;
+	}
+	if (power == pw_weaponlevel2)
+	{
+		if (player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		{
+			// Already have it
+			return false;
+		}
+		player->powers[power] = ftoi(WPNLEV2TIME * 35.0);
+		return true;
+	}
+	if (power == pw_invisibility)
+	{
+		if (player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		{
+			// Already have it
+			return false;
+		}
+		player->powers[power] = ftoi(INVISTIME * 35.0);
+		player->mo->translucency = 33;
+		return true;
+	}
+	if (power == pw_flight)
+	{
+		if (player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		{
+			// Already have it
+			return false;
+		}
+		player->powers[power] = ftoi(FLIGHTTIME * 35.0);
+		player->mo->flags2 |= MF2_FLY;
+		player->mo->flags |= MF_NOGRAVITY;
+		if (player->mo->origin.z <= player->mo->floorz)
+		{
+			player->flyheight = 10.0; // thrust the player in the air a bit
+		}
+		return true;
+	}
+	if (power == pw_infrared)
+	{
+		if (player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		{
+			// Already have it
+			return false;
+		}
+		player->powers[power] = ftoi(INFRATIME * 35.0);
+		return true;
+	}
+	if (player->powers[power])
+	{
+		return false; // already got it
+	}
+	player->powers[power] = 1;
+	return true;
+}
+
+//==========================================================================
+//
+//	P_GiveItem
+//
+//==========================================================================
+
+boolean P_GiveItem(player_t *player, int item)
+{
+	if (player->items & item)
+	{
+		return false; // already got it
+	}
+	player->items |= item;
+	return true;
+}
+
+//==========================================================================
+//
+//	P_GiveArtifact
+//
+//	Returns true if artifact accepted.
+//
+//==========================================================================
+
+boolean P_GiveArtifact(player_t *player, int arti, mobj_t *mo)
+{
+	int i;
+
+	i = 0;
+	while (player->inventory[i].type != arti && i < player->inventorySlotNum)
+	{
+		i++;
+	}
+	if (i == player->inventorySlotNum)
+	{
+		player->inventory[i].count = 1;
+		player->inventory[i].type = arti;
+		player->inventorySlotNum++;
+	}
+	else
+	{
+		if(player->inventory[i].count >= 16)
+		{
+			// Player already has 16 of this item
+			return false;
+		}
+		player->inventory[i].count++;
+	}
+	if (player->artifactCount == 0)
+	{
+		player->readyArtifact = arti;
+	}
+	player->artifactCount++;
+	if (mo && (mo->flags & MF_COUNTITEM))
+	{
+		player->itemcount++;
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//	P_TouchSpecialThing
+//
+//==========================================================================
+
+void P_TouchSpecialThing(mobj_t *special, mobj_t *toucher)
+{
+	int 		i;
+	player_t 	*player;
+	float	 	delta;
+	string		sound;
+	boolean 	respawn;
+
+	delta = special->origin.z - toucher->origin.z;
+	if (delta > toucher->height || delta < -32.0)
+	{
+		// Out of reach
+		return;
+	}
+	if (toucher->health <= 0)
+	{
+		// Toucher is dead
+		return;
+	}
+	sound = "PickupItem";
+	player = toucher->player;
+	respawn = true;
+	switch (special->sprite)
+	{
+		// Items
+		case SPR_PTN1: // Item_HealingPotion
+			if (!P_GiveBody(player, 10))
+			{
+				return;
+			}
+			cprint(player, "%s\n", TXT_ITEMHEALTH);
+			break;
+		case SPR_SHLD: // Item_Shield1
+			if (!P_GiveArmor(player, 1))
+			{
+				return;
+			}
+			cprint(player, "%s\n", TXT_ITEMSHIELD1);
+			break;
+		case SPR_SHD2: // Item_Shield2
+			if (!P_GiveArmor(player, 2))
+			{
+				return;
+			}
+			cprint(player, "%s\n", TXT_ITEMSHIELD2);
+			break;
+		case SPR_BAGH: // Item_BagOfHolding
+			player->backpack = true;
+			P_GiveAmmo(player, am_goldwand, AMMO_GWND_WIMPY);
+			P_GiveAmmo(player, am_blaster, AMMO_BLSR_WIMPY);
+			P_GiveAmmo(player, am_crossbow, AMMO_CBOW_WIMPY);
+			P_GiveAmmo(player, am_skullrod, AMMO_SKRD_WIMPY);
+			P_GiveAmmo(player, am_phoenixrod, AMMO_PHRD_WIMPY);
+			cprint(player, "%s\n", TXT_ITEMBAGOFHOLDING);
+			break;
+		case SPR_SPMP: // Item_SuperMap
+			if (!P_GiveItem(player, IT_ALL_MAP))
+			{
+				return;
+			}
+			cprint(player, "%s\n", TXT_ITEMSUPERMAP);
+			break;
+
+		// Keys
+		case SPR_BKYY: // Key_Blue
+			if (P_GiveKey(player, key_blue))
+			{
+				cprint(player, "%s\n", TXT_GOTBLUEKEY);
+			}
+			sound = "PickupKey";
+			if (!netgame)
+			{
+				break;
+			}
+			return;
+		case SPR_CKYY: // Key_Yellow
+			if (P_GiveKey(player, key_yellow))
+			{
+				cprint(player, "%s\n", TXT_GOTYELLOWKEY);
+			}
+			sound = "PickupKey";
+			if (!netgame)
+			{
+				break;
+			}
+			return;
+		case SPR_AKYY: // Key_Green
+			if (P_GiveKey(player, key_green))
+			{
+				cprint(player, "%s\n", TXT_GOTGREENKEY);
+			}
+			sound = "PickupKey";
+			if (!netgame)
+			{
+				break;
+			}
+			return;
+
+		// Artifacts
+		case SPR_PTN2: // Arti_HealingPotion
+			if (P_GiveArtifact(player, arti_health, special))
+			{
+				cprint(player, "%s\n", TXT_ARTIHEALTH);
+				P_SetDormantArtifact(special);
+			}
+			return;
+		case SPR_SOAR: // Arti_Fly
+			if (P_GiveArtifact(player, arti_fly, special))
+			{
+				cprint(player, "%s\n", TXT_ARTIFLY);
+				P_SetDormantArtifact(special);
+			}
+			return;
+		case SPR_INVU: // Arti_Invulnerability
+			if (P_GiveArtifact(player, arti_invulnerability, special))
+			{
+				cprint(player, "%s\n", TXT_ARTIINVULNERABILITY);
+				P_SetDormantArtifact(special);
+			}
+			return;
+		case SPR_PWBK: // Arti_TomeOfPower
+			if (P_GiveArtifact(player, arti_tomeofpower, special))
+			{
+				cprint(player, "%s\n", TXT_ARTITOMEOFPOWER);
+				P_SetDormantArtifact(special);
+			}
+			return;
+		case SPR_INVS: // Arti_Invisibility
+			if (P_GiveArtifact(player, arti_invisibility, special))
+			{
+				cprint(player, "%s\n", TXT_ARTIINVISIBILITY);
+				P_SetDormantArtifact(special);
+			}
+			return;
+		case SPR_EGGC: // Arti_Egg
+			if (P_GiveArtifact(player, arti_egg, special))
+			{
+				cprint(player, "%s\n", TXT_ARTIEGG);
+				P_SetDormantArtifact(special);
+			}
+			return;
+		case SPR_SPHL: // Arti_SuperHealth
+			if (P_GiveArtifact(player, arti_superhealth, special))
+			{
+				cprint(player, "%s\n", TXT_ARTISUPERHEALTH);
+				P_SetDormantArtifact(special);
+			}
+			return;
+		case SPR_TRCH: // Arti_Torch
+			if (P_GiveArtifact(player, arti_torch, special))
+			{
+				cprint(player, "%s\n", TXT_ARTITORCH);
+				P_SetDormantArtifact(special);
+			}
+			return;
+		case SPR_FBMB: // Arti_FireBomb
+			if (P_GiveArtifact(player, arti_firebomb, special))
+			{
+				cprint(player, "%s\n", TXT_ARTIFIREBOMB);
+				P_SetDormantArtifact(special);
+			}
+			return;
+		case SPR_ATLP: // Arti_Teleport
+			if (P_GiveArtifact(player, arti_teleport, special))
+			{
+				cprint(player, "%s\n", TXT_ARTITELEPORT);
+				P_SetDormantArtifact(special);
+			}
+			return;
+
+		// Ammo
+		case SPR_AMG1: // Ammo_GoldWandWimpy
+			if (!P_GiveAmmo(player, am_goldwand, special->health))
+			{
+				return;
+			}
+			cprint(player, "%s\n", TXT_AMMOGOLDWAND1);
+			break;
+		case SPR_AMG2: // Ammo_GoldWandHefty
+			if (!P_GiveAmmo(player, am_goldwand, special->health))
+			{
+				return;
+			}
+			cprint(player, "%s\n", TXT_AMMOGOLDWAND2);
+			break;
+		case SPR_AMM1: // Ammo_MaceWimpy
+			if (!P_GiveAmmo(player, am_mace, special->health))
+			{
+				return;
+			}
+			cprint(player, "%s\n", TXT_AMMOMACE1);
+			break;
+		case SPR_AMM2: // Ammo_MaceHefty
+			if (!P_GiveAmmo(player, am_mace, special->health))
+			{
+				return;
+			}
+			cprint(player, "%s\n", TXT_AMMOMACE2);
+			break;
+		case SPR_AMC1: // Ammo_CrossbowWimpy
+			if (!P_GiveAmmo(player, am_crossbow, special->health))
+			{
+				return;
+			}
+			cprint(player, "%s\n", TXT_AMMOCROSSBOW1);
+			break;
+		case SPR_AMC2: // Ammo_CrossbowHefty
+			if (!P_GiveAmmo(player, am_crossbow, special->health))
+			{
+				return;
+			}
+			cprint(player, "%s\n", TXT_AMMOCROSSBOW2);
+			break;
+		case SPR_AMB1: // Ammo_BlasterWimpy
+			if (!P_GiveAmmo(player, am_blaster, special->health))
+			{
+				return;
+			}
+			cprint(player, "%s\n", TXT_AMMOBLASTER1);
+			break;
+		case SPR_AMB2: // Ammo_BlasterHefty
+			if (!P_GiveAmmo(player, am_blaster, special->health))
+			{
+				return;
+			}
+			cprint(player, "%s\n", TXT_AMMOBLASTER2);
+			break;
+		case SPR_AMS1: // Ammo_SkullRodWimpy
+			if (!P_GiveAmmo(player, am_skullrod, special->health))
+			{
+				return;
+			}
+			cprint(player, "%s\n", TXT_AMMOSKULLROD1);
+			break;
+		case SPR_AMS2: // Ammo_SkullRodHefty
+			if (!P_GiveAmmo(player, am_skullrod, special->health))
+			{
+				return;
+			}
+			cprint(player, "%s\n", TXT_AMMOSKULLROD2);
+			break;
+		case SPR_AMP1: // Ammo_PhoenixRodWimpy
+			if (!P_GiveAmmo(player, am_phoenixrod, special->health))
+			{
+				return;
+			}
+			cprint(player, "%s\n", TXT_AMMOPHOENIXROD1);
+			break;
+		case SPR_AMP2: // Ammo_PhoenixRodHefty
+			if (!P_GiveAmmo(player, am_phoenixrod, special->health))
+			{
+				return;
+			}
+			cprint(player, "%s\n", TXT_AMMOPHOENIXROD2);
+			break;
+
+		// Weapons
+		case SPR_WMCE: // Weapon_Mace
+			if (!P_GiveWeapon(player, wp_mace))
+			{
+				return;
+			}
+			cprint(player, "%s\n", TXT_WPNMACE);
+			sound = "PickupWeapon";
+			break;
+		case SPR_WBOW: // Weapon_Crossbow
+			if (!P_GiveWeapon(player, wp_crossbow))
+			{
+				return;
+			}
+			cprint(player, "%s\n", TXT_WPNCROSSBOW);
+			sound = "PickupWeapon";
+			break;
+		case SPR_WBLS: // Weapon_Blaster
+			if (!P_GiveWeapon(player, wp_blaster))
+			{
+				return;
+			}
+			cprint(player, "%s\n", TXT_WPNBLASTER);
+			sound = "PickupWeapon";
+			break;
+		case SPR_WSKL: // Weapon_SkullRod
+			if (!P_GiveWeapon(player, wp_skullrod))
+			{
+				return;
+			}
+			cprint(player, "%s\n", TXT_WPNSKULLROD);
+			sound = "PickupWeapon";
+			break;
+		case SPR_WPHX: // Weapon_PhoenixRod
+			if (!P_GiveWeapon(player, wp_phoenixrod))
+			{
+				return;
+			}
+			cprint(player, "%s\n", TXT_WPNPHOENIXROD);
+			sound = "PickupWeapon";
+			break;
+		case SPR_WGNT: // Weapon_Gauntlets
+			if (!P_GiveWeapon(player, wp_gauntlets))
+			{
+				return;
+			}
+			cprint(player, "%s\n", TXT_WPNGAUNTLETS);
+			sound = "PickupWeapon";
+			break;
+		default:
+			Error("P_SpecialThing: Unknown gettable thing");
+	}
+	if (special->flags&MF_COUNTITEM)
+	{
+		player->itemcount++;
+	}
+	if (deathmatch && respawn && !(special->flags&MF_DROPPED))
+	{
+		P_HideSpecialThing(special);
+	}
+	else
+	{
+		P_RemoveMobj(special);
+	}
+	player->bonuscount += BONUSADD;
+	StartSoundName(player->mo, sound);
+}
+
+

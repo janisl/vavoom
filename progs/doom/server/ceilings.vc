@@ -1,0 +1,379 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ı
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+//**
+//**	CEILINGS
+//**
+//**	Ceiling aninmation (lowering, crushing, raising)
+//**
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+enum
+{
+    CLEV_LOWERTOFLOOR,
+    CLEV_RAISETOHIGHEST,
+    CLEV_LOWERANDCRUSH,
+    CLEV_CRUSHANDRAISE,
+	CLEV_CRUSHRAISEANDSTAYSILA
+};
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+special_t		activeceilings;
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//  P_ClearActiveCeilings
+//
+//==========================================================================
+
+void P_ClearActiveCeilings(void)
+{
+ 	activeceilings.prev = activeceilings.next = &activeceilings;
+}
+
+//==========================================================================
+//
+//  P_AddActiveCeiling
+//
+// 	Add an active ceiling
+//
+//==========================================================================
+
+void P_AddActiveCeiling(special_t* ceiling)
+{
+	//  Add to active ceilings
+	ceiling->prev = activeceilings.prev;
+    ceiling->next = &activeceilings;
+    ceiling->prev->next = ceiling;
+    activeceilings.prev = ceiling;
+}
+
+//==========================================================================
+//
+//  P_RemoveActiveCeiling
+//
+//	Remove a ceiling's thinker
+//
+//==========================================================================
+
+void P_RemoveActiveCeiling(special_t* ceiling)
+{
+	ceiling->next->prev = ceiling->prev;
+    ceiling->prev->next = ceiling->next;
+    ceiling->sector->specialdata = NULL;
+    RemoveSpecialThinker(ceiling);
+}
+
+//==========================================================================
+//
+//	T_MoveCeiling
+//
+//==========================================================================
+
+void T_MoveCeiling(special_t* ceiling)
+{
+    int		res;
+	
+    switch (ceiling->direction)
+    {
+      case 0:
+		// IN STASIS
+		break;
+      case 1:
+		// UP
+		res = T_MovePlane(ceiling->sector,
+				  ceiling->tic_speed,
+				  ceiling->topheight,
+				  false, 1, ceiling->direction);
+	
+		if (!(level->tictime & 7))
+		{
+		    switch (ceiling->type)
+		    {
+		      case CLEV_CRUSHRAISEANDSTAYSILA:
+				break;
+		      default:
+				StartSoundName(&ceiling->sector->soundorg, "StoneMoving");
+				break;
+		    }
+		}
+	
+		if (res == RES_PASTDEST)
+		{
+		    switch (ceiling->type)
+		    {
+		      case CLEV_RAISETOHIGHEST:
+				P_RemoveActiveCeiling(ceiling);
+				break;
+		
+		      case CLEV_CRUSHRAISEANDSTAYSILA:
+				StartSoundName(&ceiling->sector->soundorg, "PlatformStop");
+		      case CLEV_CRUSHANDRAISE:
+				ceiling->direction = -1;
+				break;
+
+		      default:
+				break;
+		    }
+	    
+		}
+		break;
+	
+      case -1:
+		// DOWN
+		res = T_MovePlane(ceiling->sector,
+				  ceiling->tic_speed,
+				  ceiling->bottomheight,
+				  ceiling->crush, 1, ceiling->direction);
+	
+		if (!(level->tictime & 7))
+		{
+		    switch (ceiling->type)
+		    {
+		      case CLEV_CRUSHRAISEANDSTAYSILA:
+                   break;
+		      default:
+                   StartSoundName(&ceiling->sector->soundorg, "StoneMoving");
+		    }
+		}
+	
+		if (res == RES_PASTDEST)
+		{
+		    switch (ceiling->type)
+		    {
+		      case CLEV_CRUSHRAISEANDSTAYSILA:
+					StartSoundName(&ceiling->sector->soundorg, "PlatformStop");
+		      case CLEV_CRUSHANDRAISE:
+//FIXME					ceiling->tic_speed = 1.0;
+					ceiling->direction = 1;
+					break;
+
+		      case CLEV_LOWERANDCRUSH:
+		      case CLEV_LOWERTOFLOOR:
+					P_RemoveActiveCeiling(ceiling);
+					break;
+
+		      default:
+					break;
+		    }
+		}
+		else // ( res != pastdest )
+		{
+		    if (res == RES_CRUSHED)
+		    {
+				switch (ceiling->type)
+				{
+				  case CLEV_CRUSHRAISEANDSTAYSILA:
+				  case CLEV_CRUSHANDRAISE:
+				  case CLEV_LOWERANDCRUSH:
+				    ceiling->tic_speed = 1.0 / 8.0;
+				    break;
+
+				  default:
+				    break;
+				}
+		    }
+		}
+		break;
+    }
+}
+
+//==========================================================================
+//
+//  P_ActivateInStasisCeiling
+//
+// 	Restart a ceiling that's in-stasis
+//
+//==========================================================================
+
+int P_ActivateInStasisCeiling(line_t* line)
+{
+    special_t*		ceiling;
+	
+    for (ceiling = activeceilings.next;
+         ceiling != &activeceilings;
+         ceiling = ceiling->next)
+    {
+		if ((ceiling->tag == line->arg1) && (ceiling->direction == 0))
+		{
+		    ceiling->direction = ceiling->olddirection;
+		}
+    }
+	return 1;
+}
+
+//==========================================================================
+//
+//	EV_DoCeiling
+//
+//	Move a ceiling up/down and all around!
+//
+//==========================================================================
+
+int EV_DoCeiling(line_t* line, int *args, int type)
+{
+    int			secnum;
+    int			rtn;
+    sector_t*	sec;
+    special_t*	ceiling;
+
+    secnum = -1;
+    rtn = 0;
+    
+    //	Reactivate in-stasis ceilings...for certain types.
+    switch (type)
+    {
+      case CLEV_CRUSHRAISEANDSTAYSILA:
+      case CLEV_CRUSHANDRAISE:
+		P_ActivateInStasisCeiling(line);
+      default:
+		break;
+    }
+	
+    while ((secnum = FindSectorFromTag(args[0],secnum)) >= 0)
+    {
+		sec = &level->sectors[secnum];
+		if (sec->specialdata)
+	    	continue;
+	
+		// new door thinker
+		rtn = 1;
+		ceiling = NewSpecialThinker(T_MoveCeiling);
+		sec->specialdata = ceiling;
+		ceiling->sector = sec;
+		ceiling->crush = false;
+	    ceiling->tic_speed = itof(args[1]) / 8.0;
+	
+		switch (type)
+		{
+		  case CLEV_CRUSHANDRAISE:
+			    ceiling->crush = args[3];	// args[3] = crushing value
+			    ceiling->topheight = sec->ceilingheight;
+			    ceiling->bottomheight = sec->floorheight + 8.0;
+			    ceiling->direction = -1;
+			    break;
+
+		  case CLEV_LOWERANDCRUSH:
+			    ceiling->crush = args[2];	// args[2] = crushing value
+			    ceiling->bottomheight = sec->floorheight + 8.0;
+			    ceiling->direction = -1;
+			    break;
+
+		  case CLEV_LOWERTOFLOOR:
+			    ceiling->bottomheight = sec->floorheight;
+			    ceiling->direction = -1;
+			    break;
+
+		  case CLEV_CRUSHRAISEANDSTAYSILA:
+			    ceiling->topheight = sec->ceilingheight;
+			    ceiling->crush = args[3];	// args[3] = crushing value
+			    ceiling->bottomheight = sec->floorheight;
+			    if (type != CLEV_LOWERTOFLOOR)
+					ceiling->bottomheight += 8.0;
+			    ceiling->direction = -1;
+			    break;
+
+		  case CLEV_RAISETOHIGHEST:
+			    ceiling->topheight = FindHighestCeilingSurrounding(sec);
+			    ceiling->direction = 1;
+			    break;
+/*
+			case CLEV_LOWERBYVALUE:
+				ceiling->bottomheight = sec->ceilingheight - itof(arg[2]);
+				ceiling->direction = -1;
+				break;
+			case CLEV_RAISEBYVALUE:
+				ceiling->topheight = sec->ceilingheight + itof(arg[2]);
+				ceiling->direction = 1;
+				break;
+			case CLEV_MOVETOVALUETIMES8:
+			{
+				float destHeight = itof(arg[2]) * 8.0;
+
+				if (arg[3])
+				{
+					destHeight = -destHeight;
+				}
+				if (sec->ceilingheight <= destHeight)
+				{
+					ceiling->direction = 1;
+					ceiling->topheight = destHeight;
+					if (sec->ceilingheight == destHeight)
+					{
+						rtn = 0;
+					}
+				}
+				else if (sec->ceilingheight > destHeight)
+				{
+					ceiling->direction = -1;
+					ceiling->bottomheight = destHeight;
+				}
+				break;
+			}
+*/
+		  default:
+               break;
+		}
+		
+		ceiling->tag = sec->tag;
+		ceiling->type = type;
+		P_AddActiveCeiling(ceiling);
+    }
+    return rtn;
+}
+
+//==========================================================================
+//
+//	EV_CeilingCrushStop
+//
+//	Stop a ceiling from crushing!
+//
+//==========================================================================
+
+int	EV_CeilingCrushStop(line_t* line, int *args)
+{
+    int				rtn;
+    special_t*		ceiling;
+
+	rtn = 0;
+	for (ceiling = activeceilings.next;
+		 ceiling != &activeceilings;
+		 ceiling = ceiling->next)
+	{
+		if ((ceiling->tag == args[0]) && (ceiling->direction != 0))
+		{
+			ceiling->olddirection = ceiling->direction;
+			ceiling->direction = 0;		// in-stasis
+			rtn = 1;
+		}
+	}
+	return rtn;
+}

@@ -1,0 +1,255 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+//============================================================================
+// Fire Demon AI
+//
+// special1			index into floatbob
+// special2			whether strafing or not
+//============================================================================
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//============================================================================
+//
+//  A_FiredSpawnRock
+//
+//============================================================================
+
+void A_FiredSpawnRock(mobj_t* actor)
+{
+	mobj_t*	mo;
+	float	x,y,z;
+	int 	rtype;
+
+	switch (P_Random()%5)
+	{
+		case 0:
+			rtype = MT_FIREDEMON_FX1;
+			break;
+		case 1:
+			rtype = MT_FIREDEMON_FX2;
+			break;
+		case 2:
+			rtype = MT_FIREDEMON_FX3;
+			break;
+		case 3:
+			rtype = MT_FIREDEMON_FX4;
+			break;
+		case 4:
+			rtype = MT_FIREDEMON_FX5;
+			break;
+	}
+
+	x = actor->origin.x + (Random() - 0.5) * 16.0;
+	y = actor->origin.y + (Random() - 0.5) * 16.0;
+	z = actor->origin.z + Random() * 8.0;
+	mo = P_SpawnMobj(x, y, z, rtype);
+	if (mo)
+	{
+		mo->target = actor;
+		mo->velocity.x = (Random() - 0.5) * 4.0 * 35.0;
+		mo->velocity.y = (Random() - 0.5) * 4.0 * 35.0;
+		mo->velocity.z = Random() * 4.0 * 35.0;
+		mo->special1 = 2;		// Number bounces
+	}
+
+	// Initialize fire demon
+	actor->special2 = 0;
+	actor->flags &= ~MF_JUSTATTACKED;
+}
+
+//============================================================================
+//
+//  A_FiredRocks
+//
+//============================================================================
+
+void A_FiredRocks(mobj_t* actor)
+{
+	A_FiredSpawnRock(actor);
+	A_FiredSpawnRock(actor);
+	A_FiredSpawnRock(actor);
+	A_FiredSpawnRock(actor);
+	A_FiredSpawnRock(actor);
+}
+
+//============================================================================
+//
+//  A_FiredChase
+//
+//============================================================================
+
+#define FIREDEMON_ATTACK_RANGE	(64.0 * 8.0)
+
+void A_FiredChase(mobj_t* actor)
+{
+	int 		weaveindex = actor->special1;
+	mobj_t* 	target = actor->target;
+	angle_t		ang;
+	float		dist;
+
+	if(actor->reactiontime) actor->reactiontime--;
+	if(actor->threshold) actor->threshold--;
+
+	// Float up and down
+	actor->origin.z += FloatBobOffsets[weaveindex];
+	actor->special1 = (weaveindex+2)&63;
+
+	// Insure it stays above certain height
+	if (actor->origin.z < actor->floorz + 64.0)
+	{
+		actor->origin.z += 2.0;
+	}
+
+	if(!actor->target || !(actor->target->flags&MF_SHOOTABLE))
+	{	// Invalid target
+		P_LookForPlayers(actor,true);
+		return;
+	}
+
+	// Strafe
+	if (actor->special2 > 0)
+	{
+		actor->special2--;
+	}
+	else
+	{
+		actor->special2 = 0;
+		actor->velocity.x = actor->velocity.y = 0.0;
+		dist = MobjDist(actor, target);
+		if (dist < FIREDEMON_ATTACK_RANGE)
+		{
+			if (P_Random()<30)
+			{
+				ang = atan2(target->origin.y - actor->origin.y,
+					target->origin.x - actor->origin.x);
+				if (P_Random()<128)
+					ang += ANG90;
+				else
+					ang -= ANG90;
+				actor->velocity.x = 8.0 * cos(ang) * 35.0;
+				actor->velocity.y = 8.0 * sin(ang) * 35.0;
+				actor->special2 = 3;		// strafe time
+			}
+		}
+	}
+
+	FaceMovementDirection(actor);
+
+	// Normal movement
+	if (!actor->special2)
+	{
+		if (--actor->movecount<0 || !P_Move(actor))
+		{
+			P_NewChaseDir(actor);
+		}
+	}
+
+	// Do missile attack
+	if (!(actor->flags&MF_JUSTATTACKED))
+	{
+		if (CheckMissileRange(actor) && (P_Random()<20))
+		{
+			SetMobjState (actor, actor->missilestate);
+			actor->flags |= MF_JUSTATTACKED;
+			return;
+		}
+	}
+	else
+	{
+		actor->flags &= ~MF_JUSTATTACKED;
+	}
+
+	// make active sound
+	if (actor->sound_active && P_Random() < 3)
+	{
+		StartSound(actor, actor->sound_active);
+	}
+}
+
+//============================================================================
+//
+//	A_FiredAttack
+//
+//============================================================================
+
+void A_FiredAttack(mobj_t* actor)
+{
+	mobj_t*	mo;
+
+	mo = SpawnMissile(actor, actor->target, MT_FIREDEMON_FX6);
+	if (mo) StartSoundName(actor, "FireDemonAttack");
+}
+
+//============================================================================
+//
+//	A_FiredSplotch
+//
+//============================================================================
+
+void A_FiredSplotch(mobj_t* actor)
+{
+	mobj_t*	mo;
+
+	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_FIREDEMON_SPLOTCH1);
+	if (mo)
+	{
+		mo->velocity.x = (Random() - 0.5) * 8.0 * 35.0;
+		mo->velocity.y = (Random() - 0.5) * 8.0 * 35.0;
+		mo->velocity.z = (3.0 + Random() * 4.0) * 35.0;
+	}
+	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_FIREDEMON_SPLOTCH2);
+	if (mo)
+	{
+		mo->velocity.x = (Random() - 0.5) * 8.0 * 35.0;
+		mo->velocity.y = (Random() - 0.5) * 8.0 * 35.0;
+		mo->velocity.z = (3.0 + Random() * 4.0) * 35.0;
+	}
+}
+
+//============================================================================
+//
+//	A_SmBounce
+//
+//============================================================================
+
+void A_SmBounce(mobj_t* actor)
+{
+	// give some more momentum (x,y,&z)
+	actor->origin.z = actor->floorz + 1.0;
+	actor->velocity.z = (2.0 + Random() * 4.0) * 35.0;
+	actor->velocity.x = Random() * 3.0 * 35.0;
+	actor->velocity.y = Random() * 3.0 * 35.0;
+}
+

@@ -1,0 +1,126 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//**
+//**	Sound menu
+//**
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+struct menu_sound_t
+{
+	menu_t			menu;
+	menuslider_t	sound;
+	menuslider_t	music;
+	menuswitch_t	stereo;
+	menuswitch_t	cdmusic;
+	menutext_t		title;
+};
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+menu_sound_t SoundMenu;
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	sound_func
+//
+//==========================================================================
+
+void sound_func(menucommon_t *item, int msg)
+{
+	if (msg != MMSG_ACTIVATE)
+	{
+		return;
+	}
+
+	switch (item->id)
+	{
+	 case 1:
+		SetCvar("sfx_volume", SoundMenu.sound.value);
+		break;
+
+	 case 2:
+		SetCvar("music_volume", SoundMenu.music.value);
+		break;
+
+	 case 3:
+		SetCvar("swap_stereo", SoundMenu.stereo.value);
+		break;
+
+	 case 4:
+		SetCvar("use_cd_music", SoundMenu.cdmusic.value);
+		break;
+	}
+}
+
+//==========================================================================
+//
+//	menu_sound
+//
+//==========================================================================
+
+void menu_sound(void)
+{
+	int x = 160;
+	int y = 37;
+
+    InitMenu(&SoundMenu.menu);
+
+	MenuSlider_Init(&SoundMenu.sound, x, y, "Sound volume", TEXT_SMALLR, GetCvar("sfx_volume"), 16);
+	SoundMenu.sound.callback = sound_func;
+	SoundMenu.sound.id = 1;
+	AddMenuItem(&SoundMenu.menu, &SoundMenu.sound);
+	y += 20;
+
+	MenuSlider_Init(&SoundMenu.music, x, y, "Music volume", TEXT_SMALLR, GetCvar("music_volume"), 16);
+	SoundMenu.music.callback = sound_func;
+	SoundMenu.music.id = 2;
+	AddMenuItem(&SoundMenu.menu, &SoundMenu.music);
+	y += 20;
+
+	MenuSwitch_Init(&SoundMenu.stereo, x, y, "Swap stereo", TEXT_SMALLR, GetCvar("swap_stereo"), 2, &sw_offon[0]);
+	SoundMenu.stereo.callback = sound_func;
+	SoundMenu.stereo.id = 3;
+	AddMenuItem(&SoundMenu.menu, &SoundMenu.stereo);
+	y += 10;
+
+	MenuSwitch_Init(&SoundMenu.cdmusic, x, y, "CD Music", TEXT_SMALLR, GetCvar("use_cd_music"), 2, &sw_offon[0]);
+	SoundMenu.cdmusic.callback = sound_func;
+	SoundMenu.cdmusic.id = 4;
+	AddMenuItem(&SoundMenu.menu, &SoundMenu.cdmusic);
+
+	MenuText_InitTitle(&SoundMenu.title, 160, 24, "SOUND SETTINGS", TEXT_BIGC);
+	AddMenuItem(&SoundMenu.menu, &SoundMenu.title);
+
+    PushMenu(&SoundMenu.menu);
+}
+

@@ -1,0 +1,121 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+#define MAX_GEN_PODS 16
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	A_MakePod
+//
+//==========================================================================
+
+void A_MakePod(mobj_t* actor)
+{
+	mobj_t		*mo;
+	float		x;
+	float		y;
+	float		z;
+
+	if (actor->special1 == MAX_GEN_PODS)
+	{
+		// Too many generated pods
+		return;
+	}
+	x = actor->origin.x;
+	y = actor->origin.y;
+	z = actor->origin.z;
+	mo = P_SpawnMobj(x, y, ONFLOORZ, MT_POD);
+	if (!P_CheckPosition(mo, x, y))
+	{
+		// Didn't fit
+		P_RemoveMobj(mo);
+		return;
+	}
+	SetMobjState(mo, S_POD_GROW1);
+	P_ThrustMobj(mo, P_Random() << 24, 4.5);
+	StartSoundName(mo, "PodNew");
+	actor->special1++; // Increment generated pod count
+	mo->specialmobj2 = actor; // Link the generator to the pod
+}
+
+//==========================================================================
+//
+//	A_PodPain
+//
+//==========================================================================
+
+void A_PodPain(mobj_t* actor)
+{
+	int 	i;
+	int 	count;
+	int 	chance;
+	mobj_t*	goo;
+
+	chance = P_Random();
+	if (chance < 128)
+	{
+		return;
+	}
+	count = chance > 240 ? 2 : 1;
+	for (i = 0; i < count; i++)
+	{
+		goo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 48.0, MT_PODGOO);
+		goo->target = actor;
+		goo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
+		goo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
+		goo->velocity.z = (0.5 + Random() * 2.0) * 35.0;
+	}
+}
+
+//==========================================================================
+//
+//	A_RemovePod
+//
+//==========================================================================
+
+void A_RemovePod(mobj_t* actor)
+{
+	mobj_t*	mo;
+
+	if (actor->specialmobj2)
+	{
+		mo = actor->specialmobj2;
+		if (mo->special1 > 0)
+		{
+			mo->special1--;
+		}
+	}
+}
+

@@ -1,0 +1,76 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+#ifdef DOOM2
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	A_BabyMetal
+//
+//  Arachnotron move with metal sound.
+//
+//==========================================================================
+
+void A_BabyMetal(mobj_t *mo)
+{
+    StartSoundName(mo, "BabyWalk");
+    A_Chase(mo);
+}
+
+//==========================================================================
+//
+//	A_BspiAttack
+//
+//  Arachnotron attack.
+//
+//==========================================================================
+
+void A_BspiAttack(mobj_t *actor)
+{	
+    if (!actor->target)
+		return;
+		
+    A_FaceTarget(actor);
+
+    // launch a missile
+    SpawnMissile(actor, actor->target, MT_ARACHPLAZ);
+}
+
+#else
+
+void A_BabyMetal(mobj_t *mo) { NotDoom2(); }
+void A_BspiAttack(mobj_t *actor) { NotDoom2(); }
+
+#endif

@@ -1,0 +1,110 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	A_MummyAttack
+//
+//==========================================================================
+
+void A_MummyAttack(mobj_t* actor)
+{
+	if (!actor->target)
+	{
+		return;
+	}
+	StartSound(actor, actor->sound_attack);
+	if (P_CheckMeleeRange(actor))
+	{
+		DamageMobj(actor->target, actor, actor, HITDICE(2));
+		StartSoundName(actor, "MumyAttack2");
+		return;
+	}
+	StartSoundName(actor, "MumyAttack1");
+}
+
+//==========================================================================
+//
+//	A_MummyAttack2
+//
+//	Mummy leader missile attack.
+//
+//==========================================================================
+
+void A_MummyAttack2(mobj_t* actor)
+{
+	mobj_t*	mo;
+
+	if (!actor->target)
+	{
+		return;
+	}
+	if (P_CheckMeleeRange(actor))
+	{
+		DamageMobj(actor->target, actor, actor, HITDICE(2));
+		return;
+	}
+	mo = SpawnMissile(actor, actor->target, MT_MUMMYFX1);
+	if (mo)
+	{
+		mo->specialmobj1 = actor->target;
+	}
+}
+
+//==========================================================================
+//
+//	A_MummySoul
+//
+//==========================================================================
+
+void A_MummySoul(mobj_t* mummy)
+{
+	mobj_t* mo;
+
+	mo = P_SpawnMobj(mummy->origin.x, mummy->origin.y, mummy->origin.z + 10.0, MT_MUMMYSOUL);
+	mo->velocity.z = 1.0 * 35.0;
+}
+
+//==========================================================================
+//
+// PROC A_MummyFX1Seek
+//
+//==========================================================================
+
+void A_MummyFX1Seek(mobj_t* actor)
+{
+	P_SeekerMissile(actor, ANGLE_1 * 10, ANGLE_1 * 20);
+}
+

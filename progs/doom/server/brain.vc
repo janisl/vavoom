@@ -1,0 +1,276 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+#ifdef DOOM2
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+int		numbraintargets;
+int		braintargeton;
+int		brain_easy = 0;
+mobj_t	*braintargets[32];
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	A_BrainAwake
+//
+//	Init boss spawner.
+//
+//==========================================================================
+
+void A_BrainAwake(mobj_t *mo)
+{
+    mobj_t	*m;
+	
+    // find all the target spots
+    numbraintargets = 0;
+    m = NULL;
+    while ((m = NextMobj(m)))
+    {
+		if (m->type == MT_BOSSTARGET)
+		{
+		    braintargets[numbraintargets] = m;
+		    numbraintargets++;
+		}
+    }
+    braintargeton = 0;
+	
+    StartSoundName(NULL, "BossSight");
+}
+
+//==========================================================================
+//
+//	A_BrainSpit
+//
+//	Spawn a cube.
+//
+//==========================================================================
+
+void A_BrainSpit(mobj_t *mo)
+{
+    mobj_t	*targ;
+    mobj_t	*newmobj;
+    
+    brain_easy ^= 1;
+    if (gameskill <= sk_easy && (!brain_easy))
+		return;
+		
+    // shoot a cube at current target
+    targ = braintargets[braintargeton];
+    braintargeton = (braintargeton + 1) % numbraintargets;
+
+    // spawn brain missile
+    newmobj = SpawnMissile(mo, targ, MT_SPAWNSHOT);
+    newmobj->target = targ;
+    newmobj->reactiontime = ftoi((targ->origin.y - mo->origin.y) /
+		newmobj->velocity.y / newmobj->time);
+
+    StartSoundName(NULL, "BossFire");
+}
+
+//==========================================================================
+//
+//	A_BrainPain
+//
+//	Brain pain sound.
+//
+//==========================================================================
+
+void A_BrainPain(mobj_t *mo)
+{
+    StartSoundName(NULL, "BossPain");
+}
+
+//==========================================================================
+//
+//	A_BrainScream
+//
+//	Brain death sound, make explosions.
+//
+//==========================================================================
+
+void A_BrainScream(mobj_t *mo)
+{
+	float	x;
+	float	y;
+	float	z;
+    mobj_t	*th;
+	
+    for (x = mo->origin.x - 196.0; x < mo->origin.x + 320.0; x += 8.0)
+    {
+		y = mo->origin.y - 320.0;
+		z = 1.0 / 512.0 + Random() * 512.0;
+		th = P_SpawnMobj(x, y, z,  MT_ROCKET);
+		th->velocity.z = Random() * 2.0 * 35.0;
+
+		SetMobjState(th, S_BRAINEXPLODE1);
+
+		th->time -= Random() * 0.2;
+		if (th->time < 0.1)
+	    	th->time = 0.1;
+    }
+	
+    StartSoundName(NULL, "BossDeath");
+}
+
+//==========================================================================
+//
+//	A_BrainExplode
+//
+//	Brain explosions.
+//
+//==========================================================================
+
+void A_BrainExplode(mobj_t *mo)
+{
+	float	x;
+	float	y;
+	float	z;
+    mobj_t	*th;
+
+    x = mo->origin.x + (Random() - Random()) * 8.0;
+    y = mo->origin.y;
+    z = 1.0 / 512.0 + Random() * 512.0;
+    th = P_SpawnMobj(x, y, z, MT_ROCKET);
+    th->velocity.z = Random() * 2.0 * 35.0;
+
+    SetMobjState(th, S_BRAINEXPLODE1);
+
+    th->time -= Random() * 0.2;
+    if (th->time < 0.1)
+		th->time = 0.1;
+}
+
+//==========================================================================
+//
+//	A_BrainDie
+//
+//	Killed brain, exit level.
+//
+//==========================================================================
+
+void A_BrainDie(mobj_t *mo)
+{
+    G_ExitLevel();
+}
+
+//==========================================================================
+//
+//	A_SpawnSound
+//
+//	Travelling cube sound.
+//
+//==========================================================================
+
+void A_SpawnSound(mobj_t *mo)
+{
+    StartSoundName(mo, "CubeFly");
+    A_SpawnFly(mo);
+}
+
+//==========================================================================
+//
+//	A_SpawnFly
+//
+//	Cube flying, spawn monster, when finished.
+//
+//==========================================================================
+
+void A_SpawnFly(mobj_t *mo)
+{
+    mobj_t		*newmobj;
+    mobj_t		*fog;
+    mobj_t		*targ;
+    int			r;
+    int			type;
+	
+    if (--mo->reactiontime)
+		return;	// still flying
+	
+    targ = mo->target;
+
+    // First spawn teleport fog.
+    fog = P_SpawnMobj(targ->origin.x, targ->origin.y, targ->origin.z, MT_SPAWNFIRE);
+    StartSoundName(fog, "Teleport");
+
+    // Randomly select monster to spawn.
+    r = P_Random();
+
+    // Probability distribution (kind of :),
+    // decreasing likelihood.
+    if ( r<50 )
+		type = MT_TROOP;
+    else if (r<90)
+		type = MT_SERGEANT;
+    else if (r<120)
+		type = MT_SHADOWS;
+    else if (r<130)
+		type = MT_PAIN;
+    else if (r<160)
+		type = MT_HEAD;
+    else if (r<162)
+		type = MT_VILE;
+    else if (r<172)
+		type = MT_UNDEAD;
+    else if (r<192)
+		type = MT_BABY;
+    else if (r<222)
+		type = MT_FATSO;
+    else if (r<246)
+		type = MT_KNIGHT;
+    else
+		type = MT_BRUISER;
+
+    newmobj	= P_SpawnMobj(targ->origin.x, targ->origin.y, targ->origin.z, type);
+    if (P_LookForPlayers(newmobj, true))
+		SetMobjState(newmobj, newmobj->seestate);
+	
+    // telefrag anything in this spot
+    P_TeleportMove(newmobj, newmobj->origin.x, newmobj->origin.y);
+
+    // remove self (i.e., cube).
+    P_RemoveMobj(mo);
+}
+
+#else
+
+void A_BrainAwake(mobj_t *mo) { NotDoom2(); }
+void A_BrainSpit(mobj_t *mo) { NotDoom2(); }
+void A_BrainPain(mobj_t *mo) { NotDoom2(); }
+void A_BrainScream(mobj_t *mo) { NotDoom2(); }
+void A_BrainExplode(mobj_t *mo) { NotDoom2(); }
+void A_BrainDie(mobj_t *mo) { NotDoom2(); }
+void A_SpawnSound(mobj_t *mo) { NotDoom2(); }
+void A_SpawnFly(mobj_t *mo) { NotDoom2(); }
+
+#endif

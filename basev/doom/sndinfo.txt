@@ -1,0 +1,192 @@
+//==========================================================================
+//
+//  Player sounds
+//
+//==========================================================================
+
+PlayerPain                      dsplpain
+PlayerLand                      dsoof
+PlayerDeath                     dspldeth
+PlayerExtremeDeath              dspdiehi
+PushWall                        dsskldth
+Blocked                         dsnoway
+
+//  Punch
+Punch                           dspunch
+//  Chainsaw
+ChainsawStart                   dssawup
+ChainsawIdle                    dssawidl
+ChainsawTriggered               dssawful
+ChainsawHit                     dssawhit
+//  Pistol
+PistolFire                      dspistol
+//  Shotgun
+ShotgunFire                     dsshotgn
+//  Super shotgun
+SuperShotgunFire                dsdshtgn
+SuperShotgunOpen                dsdbopn
+SuperShotgunClose               dsdbcls
+SuperShotgunLoad                dsdbload
+//  Chaingun, actally not used
+ChaingunFire                    dschgun
+//  Rocket launcher fire
+LauncherFire                    dsrlaunc
+RocketExplode                   dsrxplod
+//  Plasma gun
+PlasmaFire                      dsplasma
+//  BFG fire
+BFGFire                         dsbfg
+
+//==========================================================================
+//
+//  Monster sounds
+//
+//==========================================================================
+
+//  Zombieman / shotgun guy, some others
+ZombieSight1                    dsposit1
+ZombieSight2                    dsposit2
+ZombieSight3                    dsposit3
+ZombieActive                    dsposact
+ZombiePain                      dspopain
+ZombieDeath1                    dspodth1
+ZombieDeath2                    dspodth2
+ZombieDeath3                    dspodth3
+
+//  Imp
+ImpSight1                       dsbgsit1
+ImpSight2                       dsbgsit2
+ImpActive                       dsbgact
+ImpAttack                       dsclaw
+ImpDeath1                       dsbgdth1
+ImpDeath2                       dsbgdth2
+
+//  Demon
+DemonSight                      dssgtsit
+DemonActive                     dsdmact
+DemonAttack                     dssgtatk
+DemonPain                       dsdmpain
+DemonDeath                      dssgtdth
+
+//  Lost soul
+LostSoulAttack                  dssklatk
+
+//  Cacodemon
+CacoSight                       dscacsit
+CacoDeath                       dscacdth
+
+//  Baron of hell / Hell knight
+BaronSight                      dsbrssit
+BaronDeath                      dsbrsdth
+
+//  Hell knight
+KnightSight                     dskntsit
+KnightDeath                     dskntdth
+
+//  Cyberdemon
+CyberSight                      dscybsit
+CyberWalk1                      dshoof
+CyberWalk2                      dsmetal
+CyberDeath                      dscybdth
+
+//  Spider mastermind
+SpiderSight                     dsspisit
+SpiderDeath                     dsspidth
+
+//  Ravenant
+RavenantSight                   dsskesit
+RavenantActive                  dsskeact
+RavenantAttack                  dsskeatk
+RavenantPunch                   dsskepch
+RavenantSwing                   dsskeswg
+RavenantDeath                   dsskedth
+
+//  Arachnotron
+BabySight                       dsbspsit
+BabyActive                      dsbspact
+BabyWalk                        dsbspwlk
+BabyDeath                       dsbspdth
+
+//  Mancubus
+MancubusSight                   dsmansit
+MancubusAttack                  dsmanatk
+MancubusPain                    dsmnpain
+MancubusDeath                   dsmandth
+
+//  Pain elemental
+PainElementalSight              dspesit
+PainElementalPain               dspepain
+PainElementalDeath              dspedth
+
+//  Arch-vile
+ArchVileSight                   dsvilsit
+ArchVileActive                  dsvilact
+ArchVileAttack                  dsvilatk
+ArchVilePain                    dsvipain
+ArchVileDeath                   dsvildth
+FlameStart                      dsflamst
+Flame                           dsflame
+
+//  SS_Nazi
+SSNaziSight                     dssssit
+SSNaziDeath                     dsssdth
+
+//  Boss brain
+BossSight                       dsbossit
+BossFire                        dsbospit
+CubeFly                         dsboscub
+BossPain                        dsbospn
+BossDeath                       dsbosdth
+
+//  Commander Keen
+KeenPain                        dskeenpn
+KeenDeath                       dskeendt
+
+FireballShoot                   dsfirsht
+FireballExplode                 dsfirxpl
+
+//==========================================================================
+//
+//  World sounds
+//
+//==========================================================================
+
+PlatformStart                   dspstart
+PlatformStop                    dspstop
+DoorOpen                        dsdoropn
+DoorClose                       dsdorcls
+BlazeDoorOpen                   dsbdopn
+BlazeDoorClose                  dsbdcls
+StoneMoving                     dsstnmov
+Switch                          dsswtchn
+SwitchExit                      dsswtchx
+Teleport                        dstelept
+ItemRespawn                     dsitmbk
+BarrelExplode                   dsbarexp
+Slop                            dsslop
+
+//==========================================================================
+//
+//  Misc
+//
+//==========================================================================
+
+PickupItem                      dsitemup
+PickupWeapon                    dswpnup
+PickupPower                     dsgetpow
+
+//==========================================================================
+//
+//  Engine sounds
+//
+//==========================================================================
+
+Chat                            dstink
+ShotgunCocking                  dssgcock
+
+MenuActivate                    dsswtchn
+MenuMove                        dspstop
+MenuSelect                      dspistol
+MenuSwitch                      dsstnmov
+MenuPrevious                    dsswtchn
+MenuClose                       dsswtchx

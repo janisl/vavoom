@@ -1,0 +1,121 @@
+flat NUKAGE1
+pic 1 tics 8
+pic 2 tics 8
+pic 3 tics 8
+
+flat FWATER1
+pic 1 tics 8
+pic 2 tics 8
+pic 3 tics 8
+pic 4 tics 8
+
+flat SWATER1
+pic 1 tics 8
+pic 2 tics 8
+pic 3 tics 8
+pic 4 tics 8
+
+flat LAVA1
+pic 1 tics 8
+pic 2 tics 8
+pic 3 tics 8
+pic 4 tics 8
+
+flat BLOOD1
+pic 1 tics 8
+pic 2 tics 8
+pic 3 tics 8
+
+flat RROCK05
+pic 1 tics 8
+pic 2 tics 8
+pic 3 tics 8
+pic 4 tics 8
+
+flat SLIME01
+pic 1 tics 8
+pic 2 tics 8
+pic 3 tics 8
+pic 4 tics 8
+
+flat SLIME05
+pic 1 tics 8
+pic 2 tics 8
+pic 3 tics 8
+pic 4 tics 8
+
+flat SLIME09
+pic 1 tics 8
+pic 2 tics 8
+pic 3 tics 8
+pic 4 tics 8
+
+texture BLODGR1
+pic 1 tics 8
+pic 2 tics 8
+pic 3 tics 8
+pic 4 tics 8
+
+texture SLADRIP1
+pic 1 tics 8
+pic 2 tics 8
+pic 3 tics 8
+
+texture BLODRIP1
+pic 1 tics 8
+pic 2 tics 8
+pic 3 tics 8
+pic 4 tics 8
+
+texture FIREWALA
+pic 1 tics 8
+pic 2 tics 8
+pic 3 tics 8
+
+texture GSTFONT1
+pic 1 tics 8
+pic 2 tics 8
+pic 3 tics 8
+
+texture FIRELAV2
+pic 1 tics 8
+pic 2 tics 8
+pic 3 tics 8
+
+texture FIREMAG1
+pic 1 tics 8
+pic 2 tics 8
+pic 3 tics 8
+
+texture FIREBLU1
+pic 1 tics 8
+pic 2 tics 8
+
+texture ROCKRED1
+pic 1 tics 8
+pic 2 tics 8
+pic 3 tics 8
+
+texture BFALL1
+pic 1 tics 8
+pic 2 tics 8
+pic 3 tics 8
+pic 4 tics 8
+
+texture SFALL1
+pic 1 tics 8
+pic 2 tics 8
+pic 3 tics 8
+pic 4 tics 8
+
+texture WFALL1
+pic 1 tics 8
+pic 2 tics 8
+pic 3 tics 8
+pic 4 tics 8
+
+texture DBRAIN1
+pic 1 tics 8
+pic 2 tics 8
+pic 3 tics 8
+pic 4 tics 8

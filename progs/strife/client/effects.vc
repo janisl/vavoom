@@ -1,0 +1,156 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+#define PCOLOR(r, g, b)		(0xff000000 + ((r) << 16) + ((g) << 8) + (b))
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	ParseGunShot
+//
+//==========================================================================
+
+void ParseGunShot(void)
+{
+	TVec		org;
+	int			i, j;
+	particle_t	*p;
+	int			c;
+
+	org.x = itof(MSG_ReadShort());
+	org.y = itof(MSG_ReadShort());
+	org.z = itof(MSG_ReadShort());
+
+	for (i = 0; i < 20; i++)
+	{
+		p = NewParticle();
+		if (!p)
+			return;
+
+		p->org = org;
+		c = P_Random() >> 1;
+		p->color = PCOLOR(c, c, c);
+		p->die = cl->time + 0.5 * Random();
+		p->vel.x = 32.0 * (Random() - 0.5);
+		p->vel.y = 32.0 * (Random() - 0.5);
+		p->vel.z = 32.0 * (Random() - 0.5);
+	}
+}
+
+//==========================================================================
+//
+//	ParseBlood
+//
+//==========================================================================
+
+void ParseBlood(void)
+{
+	TVec		org;
+	int			damage;
+	int			i, j;
+	particle_t	*p;
+	int			c;
+
+	org.x = itof(MSG_ReadShort());
+	org.y = itof(MSG_ReadShort());
+	org.z = itof(MSG_ReadShort());
+	damage = MSG_ReadByte();
+
+	for (i = 0; i < damage; i++)
+	{
+		p = NewParticle();
+		if (!p)
+			return;
+
+		p->org = org;
+		c = P_Random() >> 1;
+		p->color = PCOLOR(32 + c, c >> 4, c >> 4);
+		p->die = cl->time + 0.5 * Random();
+		p->vel.x = 32.0 * (Random() - 0.5);
+		p->vel.y = 32.0 * (Random() - 0.5);
+		p->vel.z = 32.0 * (Random() - 0.5);
+	}
+}
+
+//==========================================================================
+//
+//	UpdateParticle
+//
+//==========================================================================
+
+void UpdateParticle(particle_t *p)
+{
+}
+
+//==========================================================================
+//
+//	ParseServerCommand
+//
+//==========================================================================
+
+boolean ParseServerCommand(int cmd_type)
+{
+	switch (cmd_type)
+	{
+	 case svc_gun_shot:
+		ParseGunShot();
+		break;
+
+	 case svc_blood:
+		ParseBlood();
+		break;
+
+	 default:
+		return false;
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//	CL_UpdateMobj
+//
+//==========================================================================
+
+void CL_UpdateMobj(clmobj_t *mobj, int i)
+{
+/*	if (mobj->frame & FF_FULLBRIGHT)
+	{
+		dlight_t *dl = AllocDlight(i);
+		dl->origin = mobj->origin;
+		dl->radius = 196.0;
+		dl->die = cl->time + 0.1;
+	}*/
+}
+

@@ -1,0 +1,412 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+boolean			respawnmonsters;
+boolean			shareware;
+
+//
+// Map things flags
+//
+#define	MTF_EASY		0x0001  // Skill flags.
+#define	MTF_NORMAL		0x0002
+#define	MTF_HARD		0x0004
+#define	MTF_AMBUSH		0x0008  // Deaf monsters/do not react to sound.
+#define MTF_NOTSINGLE	0x0010  // Thing apears only in net game
+
+#define VIEWHEIGHT		41.0
+
+#define BLINKTHRESHOLD 	4.0
+
+#define INVULNTIME		30.0
+#define INVISTIME		60.0
+#define INFRATIME		120.0
+#define IRONTIME		60.0
+
+// follow a player exlusively for 3 seconds
+#define	BASETHRESHOLD	100
+
+#define ONFLOORZ		-99999.0
+#define ONCEILINGZ		99999.0
+
+#define MAXRADIUS		32.0
+
+//
+// Player internal flags, for cheats and debug.
+//
+#define CF_NOCLIP		1   // No clipping, walk through barriers.
+#define CF_GODMODE		2   // No damage, no health loss.
+
+#define MELEERANGE		64.0
+#define MISSILERANGE	(32.0 * 64.0)
+
+#define LOWERSPEED		6.0
+#define RAISESPEED		6.0
+
+#define WEAPONBOTTOM	128.0
+#define WEAPONTOP		32.0
+
+// 16 pixels of bob
+#define MAXBOB			16.0
+#define ANG5   			(ANG90 / 18)
+
+#define MAXHEALTH		100
+
+enum
+{
+    wp_fist,
+    wp_crossbow,
+    wp_riffle,
+    wp_missile,
+    wp_grenade,
+    wp_flame,
+    wp_blaster,
+    wp_sigil,
+
+    NUMWEAPONS,
+
+    // No pending weapon change.
+    wp_nochange
+};
+
+// Ammunition types defined.
+enum
+{
+    am_clip,
+    am_electric_arrow,
+    am_poison_arrow,
+    am_cell,
+    am_misl,
+    am_grenade1,
+    am_grenade2,
+
+    NUMAMMO,
+
+    am_noammo	// Unlimited for chainsaw / fist.
+};
+
+enum
+{
+    it_bluecard,
+    it_yellowcard,
+    it_redcard,
+    it_blueskull,
+    it_yellowskull,
+    it_redskull,
+    
+    NUMCARDS
+};
+
+// Power up artifacts.
+enum
+{
+	pw_invulnerability,
+	pw_strength,
+	pw_invisibility,
+	pw_ironfeet,
+	pw_infrared,
+	NUMPOWERS
+};
+
+enum
+{
+	FLOOR_SOLID,
+	FLOOR_WATER,
+	FLOOR_SLUDGE,
+	FLOOR_LAVA
+};
+
+enum
+{
+	CONTENTS_EMPTY,
+	CONTENTS_WATER,
+	CONTENTS_SLUDGE,
+	CONTENTS_LAVA,
+
+	CONTENTS_SOLID = -1
+};
+
+enum
+{
+	CSHIFT_CONTENTS
+};
+
+addfields mobj_t
+{
+	//	States
+    int			spawnstate;
+    int			seestate;
+    int			painstate;
+    int			meleestate;
+    int			missilestate;
+	int			crashstate;
+    int			deathstate;
+    int			xdeathstate;
+    int			raisestate;
+
+	//	Sounds
+	int			sound_sight;
+	int			sound_active;
+	int			sound_attack;
+	int			sound_pain;
+	int			sound_death;
+
+	//	Params
+    float		mass;
+	float		speed;
+    int			painchance;
+	int			spawnhealth;
+	int			gibshealth;
+	string		classname;
+
+    // Thing being chased/attacked for tracers.
+    mobj_t*		tracer;
+
+    // Player number last looked for.
+    int			lastlook;
+
+    // For nightmare respawn.
+    mthing_t	spawnpoint;
+
+    // Reaction time: if non 0, don't attack yet.
+    // Used by player to freeze a bit after teleporting.
+    int			reactiontime;
+
+    // If >0, the target will be chased
+    // no matter what (even if shot)
+    int			threshold;
+
+    // Movement direction, movement generation (zig-zagging).
+    int			movedir;	// 0-7
+    int			movecount;	// when 0, select a new dir
+
+	//	Water
+	int			waterlevel;
+	int			watertype;
+};
+
+addfields player_t
+{
+	//
+	//	FIRST FIELDS ARE STATS THAT ARE SENT TO CLIENT FOR STATUS BAR
+	//
+
+	//
+	//	Long stats
+	//
+
+    //
+    //	Short stats
+    //
+    int				ammo[NUMAMMO];
+	int				ready_ammo;
+
+    //
+    //	Byte stats
+    //
+    boolean			weaponowned[NUMWEAPONS];
+
+	int				armorpoints;
+
+	int				keys;
+
+    boolean			backpack;
+
+    int				readyweapon;
+
+    // For screen flashing (red or bright).
+    int				damagecount;
+    int				bonuscount;
+    
+    // Bit flags, for cheats and debug.
+    // See cheat_t, above.
+    int				cheats;
+
+    // Power ups. invinc and invis are tic counters.
+    int				powers[NUMPOWERS];
+
+    //
+    //	----------
+    //
+
+    // Base height above floor for viewz.
+	float			viewheight;
+    // Bob/squat speed.
+	float			deltaviewheight;
+    // bounded/scaled total momentum.
+	float			bob;
+
+    // Refired shots are less accurate.
+    int				refire;
+
+    // Is wp_nochange if not changing.
+    int				pendingweapon;
+
+	int				w_ammo;
+	int				w_upstate;
+	int 			w_downstate;
+	int 			w_readystate;
+	int 			w_atkstate;
+	int 			w_holdatkstate;
+	int 			w_flashstate;
+
+    // Who did damage (NULL for floors/ceilings).
+    mobj_t*			attacker;
+
+    int				jumpTics;
+
+    // Armor type is 0-2.
+    int				armortype;
+
+	TVec			movedir;
+};
+
+int		long_stats = 0;
+int		short_stats = NUMAMMO + 1;
+int		byte_stats = NUMWEAPONS + 7 + NUMPOWERS;
+
+addfields client_state_t
+{
+	//
+	//	STATS FOR STATUS BAR
+	//
+
+	//
+	//	Long stats
+	//
+
+    //
+    //	Short stats
+    //
+    int				ammo[NUMAMMO];
+	int				ready_ammo;
+
+    //
+    //	Byte stats
+    //
+    boolean			weaponowned[NUMWEAPONS];
+
+	int				armorpoints;
+
+	int				keys;
+
+    boolean			backpack;
+
+    int				readyweapon;
+
+    // For screen flashing (red or bright).
+    int				damagecount;
+    int				bonuscount;
+    
+    // Bit flags, for cheats and debug.
+    // See cheat_t, above.
+    int				cheats;
+
+    // Power ups. invinc and invis are tic counters.
+    int				powers[NUMPOWERS];
+};
+
+addfields special_t
+{
+    sector_t*	sector;
+
+	special_t	*prev;
+	special_t	*next;
+
+	//	Ceiling
+    int			type;
+	float		bottomheight;
+	float		topheight;
+	float		tic_speed;
+    boolean		crush;
+    int			direction;// 1 = up, 0 = waiting, -1 = down
+    int			tag;
+    int			olddirection;
+	//	Door
+    int			topwait;// tics to wait at the top
+    int			topcountdown;	// (keep in case a door going down is reset)
+							    // when it reaches 0, start going down
+	//	Floor
+    int			newspecial;
+    int			texture;
+	float		floordestheight;
+	//	Plat
+	float		low;
+	float		high;
+    int			wait;
+    int			count;
+    int			status;
+    int			oldstatus;
+	//	Lights
+    int			maxlight;
+    int			minlight;
+    int			maxtime;
+    int			mintime;
+};
+
+// --- mobj.flags ---
+
+#define MF_SPECIAL		0x00000001	// call P_SpecialThing when touched
+#define MF_SOLID		0x00000002	// Blocks.
+#define MF_SHOOTABLE	0x00000004	// Can be hit.
+#define MF_NOSECTOR		0x00000008	// don't use the sector links
+                                                                        // (invisible but touchable)
+#define MF_NOBLOCKMAP	0x00000010	// don't use the blocklinks
+                                                                        // (inert but displayable)
+#define MF_AMBUSH		0x00000020
+#define MF_JUSTHIT		0x00000040	// try to attack right back
+#define MF_JUSTATTACKED	0x00000080	// take at least one step before attacking
+#define MF_SPAWNCEILING	0x00000100	// hang from ceiling instead of floor
+#define MF_NOGRAVITY	0x00000200	// don't apply gravity every tic
+
+// movement flags
+#define MF_DROPOFF		0x00000400      // allow jumps from high places
+#define MF_PICKUP		0x00000800      // for players to pick up items
+#define MF_NOCLIP		0x00001000      // player cheat
+#define MF_SLIDE		0x00002000      // keep info about sliding along walls
+#define MF_FLOAT		0x00004000      // allow moves to any height, no gravity
+#define MF_TELEPORT		0x00008000      // don't cross lines or look at heights
+#define MF_MISSILE		0x00010000      // don't hit same species, explode on block
+
+#define MF_DROPPED		0x00020000      // dropped by a demon, not level spawned
+#define MF_NOBLOOD		0x00080000      // don't bleed when shot (use puff)
+#define MF_CORPSE		0x00100000      // don't stop moving halfway off a step
+#define MF_INFLOAT		0x00200000      // floating to a height for a move, don't
+                                                                        // auto float to target's height
+
+#define MF_COUNTKILL	0x00400000	// count towards intermission kill total
+#define MF_COUNTITEM	0x00800000	// count towards intermission item total
+
+#define MF_SKULLFLY		0x01000000	// skull in flight
+#define MF_TRANSLATION1	0x04000000
+#define MF_TRANSLATION2	0x08000000
+
+#define MF_UNUSED4		0x80000000
+
+#define MF_WATERJUMP	0x40000000
+
+enum
+{
+	svc_gun_shot = USER_PROTOCOL_START,
+	svc_blood
+};
+

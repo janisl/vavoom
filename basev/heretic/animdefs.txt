@@ -1,0 +1,50 @@
+; Water
+flat FLTWAWA1 
+pic 1 tics 8
+pic 2 tics 8
+pic 3 tics 8
+
+; Sludge
+flat FLTSLUD1
+pic 1 tics 8
+pic 2 tics 8
+pic 3 tics 8
+
+; Teleport
+flat FLTTELE1
+pic 1 tics 6
+pic 2 tics 6
+pic 3 tics 6
+pic 4 tics 6
+
+; River - West
+flat FLTFLWW1
+pic 1 tics 9
+pic 2 tics 9
+pic 3 tics 9
+
+; Lava
+flat FLTLAVA1
+pic 1 tics 8
+pic 2 tics 8
+pic 3 tics 8
+pic 4 tics 8
+
+; Super Lava
+flat FLATHUH1
+pic 1 tics 8
+pic 2 tics 8
+pic 3 tics 8
+pic 4 tics 8
+
+; Texture: Lavaflow
+texture LAVAFL1
+pic 1 tics 6
+pic 2 tics 6
+pic 3 tics 6
+
+; Texture: Waterfall
+texture WATRWAL1
+pic 1 tics 4
+pic 2 tics 4
+pic 3 tics 4

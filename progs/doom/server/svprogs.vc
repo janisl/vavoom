@@ -1,0 +1,88 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+//**
+//**	DOOM and DOOM II progs
+//**
+//**************************************************************************
+
+#include "../../common/server.vc"
+
+#include "../doomdefs.vc"
+#include "../gendefs.vc"
+#include "strings.vc"
+
+#include "xlat.vc"
+#include "specutl.vc"
+#include "ceilings.vc"
+#include "doors.vc"
+#include "floors.vc"
+#include "plats.vc"
+#include "lights.vc"
+#include "spec.vc"
+
+#include "world.vc"
+
+#include "savegame.vc"
+#include "states.vc"
+#include "mobjinfo.vc"
+
+#ifdef GRENADE_LAUNCHER
+#include "grlaunch.vc"
+#endif
+
+#include "wpninfo.vc"
+#include "inter.vc"
+#include "user.vc"
+#include "mobj.vc"
+#include "move.vc"
+#include "physics.vc"
+#include "map.vc"
+#include "teleport.vc"
+#include "usersubs.vc"
+#include "ai_subs.vc"
+#include "weapons.vc"
+#include "enemy.vc"
+#include "cheat.vc"
+
+#include "zombiemn.vc"
+#include "shotguy.vc"
+#include "imp.vc"
+#include "demon.vc"
+#include "caco.vc"
+#include "knight.vc"
+#include "lostsoul.vc"
+#include "cyber.vc"
+#include "spider.vc"
+
+#include "heavy.vc"
+#include "arach.vc"
+#include "painelem.vc"
+#include "ravenant.vc"
+#include "mancubus.vc"
+#include "archvile.vc"
+#include "brain.vc"
+
+#include "keen.vc"
+
+#include "main.vc"
+

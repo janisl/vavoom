@@ -1,0 +1,327 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+#define NUM_SPECIALS	150
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+struct spec_trans_t
+{
+	int		special;
+	int		arg1;
+	int		arg2;
+	int		arg3;
+	int		arg4;
+	int		arg5;
+	int		spac;
+	int		repeat;
+};
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+spec_trans_t spec_trans_tab[] =
+{
+	{ 0, 0, 0, 0, 0, 0, 0, 0 },	//	0
+	{ 12, 0, 16, 150, 0, 0, SPAC_USE, true },	//	1
+	{ 11, -1, 16, 0, 0, 0, SPAC_CROSS, false },	//	2
+	{ 10, -1, 16, 0, 0, 0, SPAC_CROSS, false },	//	3
+	{ 12, -1, 16, 150, 0, 0, SPAC_CROSS, false },	//	4
+	{ 238, -1, 8, 0, 0, 0, SPAC_CROSS, false },	//	5
+	{ 196, -1, 16, 16, 10, 0, SPAC_CROSS, false },	//	6
+	{ 217, -1, 2, 8, 0, 0, SPAC_USE, false },	//	7
+	{ 217, -1, 2, 8, 0, 0, SPAC_CROSS, false },	//	8
+	{ 250, -1, 4, 4, 0, 0, SPAC_USE, false },	//	9
+
+	{ 206, -1, 32, 105, 0, 0, SPAC_CROSS, false },	//	10
+	{ 243, -1, 0, 0, 0, 0, SPAC_USE, false },	//	11
+	{ 234, -1, 0, 0, 0, 0, SPAC_CROSS, false },	//	12
+	{ 112, -1, 255, 0, 0, 0, SPAC_CROSS, false },	//	13
+	{ 230, -1, 4, 4, 0, 0, SPAC_USE, false },	//	14
+	{ 230, -1, 4, 3, 0, 0, SPAC_USE, false },	//	15
+	{ 249, -1, 16, 240, 0, 0, SPAC_CROSS, false },	//	16
+	{ 232, -1, 5, 35, 0, 0, SPAC_CROSS, false },	//	17
+	{ 25, -1, 8, 0, 0, 0, SPAC_USE, false },	//	18
+	{ 242, -1, 8, 128, 0, 0, SPAC_CROSS, false },	//	19
+
+	{ 228, -1, 4, 0, 0, 0, SPAC_USE, false },	//	20
+	{ 206, -1, 32, 105, 0, 0, SPAC_USE, false },	//	21
+	{ 228, -1, 4, 0, 0, 0, SPAC_CROSS, false },	//	22
+	{ 21, -1, 8, 0, 0, 0, SPAC_USE, false },	//	23
+	{ 238, -1, 8, 0, 0, 0, SPAC_IMPACT, false },	//	24
+	{ 196, -1, 8, 8, 10, 0, SPAC_CROSS, false },	//	25
+	{ 13, 0, 16, 150, 2 | 128, 0, SPAC_USE, true },	//	26
+	{ 13, 0, 16, 150, 3 | 128, 0, SPAC_USE, true },	//	27
+	{ 13, 0, 16, 150, 1 | 128, 0, SPAC_USE, true },	//	28
+	{ 12, -1, 16, 150, 0, 0, SPAC_USE, false },	//	29
+
+	{ 240, -1, 8, 0, 0, 0, SPAC_CROSS, false },	//	30
+	{ 11, 0, 16, 0, 0, 0, SPAC_USE, false },	//	31
+	{ 13, 0, 16, 0, 2 | 128, 0, SPAC_USE, false },	//	32
+	{ 13, 0, 16, 0, 1 | 128, 0, SPAC_USE, false },	//	33
+	{ 13, 0, 16, 0, 3 | 128, 0, SPAC_USE, false },	//	34
+	{ 112, -1, 35, 0, 0, 0, SPAC_CROSS, false },	//	35
+	{ 242, -1, 32, 136, 0, 0, SPAC_CROSS, false },	//	36
+	{ 241, -1, 8, 0, 0, 0, SPAC_CROSS, false },	//	37
+	{ 21, -1, 8, 0, 0, 0, SPAC_CROSS, false },	//	38
+	{ 70, -1, 0, 0, 0, 0, SPAC_CROSS, false },	//	39
+
+	{ 251, -1, 8, 0, 0, 0, SPAC_CROSS, false },	//	40
+	{ 254, -1, 8, 0, 0, 0, SPAC_USE, false },	//	41
+	{ 10, -1, 16, 0, 0, 0, SPAC_USE, true },	//	42
+	{ 254, -1, 8, 0, 0, 0, SPAC_USE, true },	//	43
+	{ 43, -1, 8, 0, 0, 0, SPAC_CROSS, false },	//	44
+	{ 242, -1, 8, 128, 0, 0, SPAC_USE, true },	//	45
+	{ 11, -1, 16, 0, 0, 0, SPAC_IMPACT, true },	//	46
+	{ 228, -1, 4, 0, 0, 0, SPAC_IMPACT, false },	//	47
+	{ 100, 64, 0, 0, 0, 0, SPAC_CROSS, false },	//	48
+	{ 196, -1, 8, 8, 10, 0, SPAC_USE, false },	//	49
+
+	{ 10, -1, 16, 0, 0, 0, SPAC_USE, false },	//	50
+	{ 244, -1, 0, 0, 0, 0, SPAC_USE, false },	//	51
+	{ 243, -1, 0, 0, 0, 0, SPAC_CROSS, false },	//	52
+	{ 207, -1, 8, 105, 0, 0, SPAC_CROSS, false },	//	53
+	{ 61, -1, 0, 0, 0, 0, SPAC_CROSS, false },	//	54
+	{ 28, -1, 8, 10, 0, 0, SPAC_USE, false },	//	55
+	{ 28, -1, 8, 10, 0, 0, SPAC_CROSS, false },	//	56
+	{ 44, -1, 0, 0, 0, 0, SPAC_CROSS, false },	//	57
+	{ 23, -1, 8, 24, 0, 0, SPAC_CROSS, false },	//	58
+	{ 239, -1, 8, 24, 0, 0, SPAC_CROSS, false },	//	59
+
+	{ 21, -1, 8, 0, 0, 0, SPAC_USE, true },	//	60
+	{ 11, -1, 16, 0, 0, 0, SPAC_USE, true },	//	61
+	{ 206, -1, 32, 105, 0, 0, SPAC_USE, true },	//	62
+	{ 12, -1, 16, 150, 0, 0, SPAC_USE, true },	//	63
+	{ 238, -1, 8, 0, 0, 0, SPAC_USE, true },	//	64
+	{ 28, -1, 8, 10, 0, 0, SPAC_USE, true },	//	65
+	{ 230, -1, 4, 3, 0, 0, SPAC_USE, true },	//	66
+	{ 230, -1, 4, 4, 0, 0, SPAC_USE, true },	//	67
+	{ 228, -1, 4, 0, 0, 0, SPAC_USE, true },	//	68
+	{ 25, -1, 8, 0, 0, 0, SPAC_USE, true },	//	69
+
+	{ 242, -1, 32, 136, 0, 0, SPAC_USE, true },	//	70
+	{ 242, -1, 32, 136, 0, 0, SPAC_USE, false },	//	71
+	{ 43, -1, 8, 0, 0, 0, SPAC_CROSS, true },	//	72
+	{ 196, -1, 8, 8, 10, 0, SPAC_CROSS, true },	//	73
+	{ 44, -1, 0, 0, 0, 0, SPAC_CROSS, true },	//	74
+	{ 10, -1, 16, 0, 0, 0, SPAC_CROSS, true },	//	75
+	{ 249, -1, 16, 240, 0, 0, SPAC_CROSS, true },	//	76
+	{ 196, -1, 16, 16, 10, 0, SPAC_CROSS, true },	//	77
+	{ 78, -1, 0, 0, 0, 0, 0, 0 },	//	78
+	{ 112, -1, 35, 0, 0, 0, SPAC_CROSS, true },	//	79
+
+	{ 234, -1, 0, 0, 0, 0, SPAC_CROSS, true },	//	80
+	{ 112, -1, 255, 0, 0, 0, SPAC_CROSS, true },	//	81
+	{ 21, -1, 8, 0, 0, 0, SPAC_CROSS, true },	//	82
+	{ 242, -1, 8, 128, 0, 0, SPAC_CROSS, true },	//	83
+	{ 241, -1, 8, 0, 0, 0, SPAC_CROSS, true },	//	84
+	{ 85, -1, 0, 0, 0, 0, 0, 0 },	//	85
+	{ 11, -1, 16, 0, 0, 0, SPAC_CROSS, true },	//	86
+	{ 207, -1, 8, 105, 0, 0, SPAC_CROSS, true },	//	87
+	{ 206, -1, 32, 105, 0, 0, SPAC_CROSS, true },	//	88
+	{ 61, -1, 0, 0, 0, 0, SPAC_CROSS, true },	//	89
+
+	{ 12, -1, 16, 150, 0, 0, SPAC_CROSS, true },	//	90
+	{ 238, -1, 8, 0, 0, 0, SPAC_CROSS, true },	//	91
+	{ 23, -1, 8, 24, 0, 0, SPAC_CROSS, true },	//	92
+	{ 239, -1, 8, 24, 0, 0, SPAC_CROSS, true },	//	93
+	{ 28, -1, 8, 10, 0, 0, SPAC_CROSS, true },	//	94
+	{ 228, -1, 4, 0, 0, 0, SPAC_CROSS, true },	//	95
+	{ 240, -1, 8, 0, 0, 0, SPAC_CROSS, true },	//	96
+	{ 70, -1, 0, 0, 0, 0, SPAC_CROSS, true },	//	97
+	{ 242, -1, 32, 136, 0, 0, SPAC_CROSS, true },	//	98
+	{ 13, -1, 64, 0, 2 | 128, 0, SPAC_USE, true },	//	99
+
+	{ 217, -1, 32, 16, 0, 0, SPAC_CROSS, false },	//	100
+	{ 238, -1, 8, 0, 0, 0, SPAC_USE, false },	//	101
+	{ 242, -1, 8, 128, 0, 0, SPAC_USE, false },	//	102
+	{ 11, -1, 16, 0, 0, 0, SPAC_USE, false },	//	103
+	{ 233, -1, 0, 0, 0, 0, SPAC_CROSS, false },	//	104
+	{ 12, -1, 64, 150, 0, 0, SPAC_CROSS, true },	//	105
+	{ 11, -1, 64, 0, 0, 0, SPAC_CROSS, true },	//	106
+	{ 10, -1, 64, 0, 0, 0, SPAC_CROSS, true },	//	107
+	{ 12, -1, 64, 150, 0, 0, SPAC_CROSS, false },	//	108
+	{ 11, -1, 64, 0, 0, 0, SPAC_CROSS, false },	//	109
+
+	{ 10, -1, 64, 0, 0, 0, SPAC_CROSS, false },	//	110
+	{ 12, -1, 64, 150, 0, 0, SPAC_USE, false },	//	111
+	{ 11, -1, 64, 0, 0, 0, SPAC_USE, false },	//	112
+	{ 10, -1, 64, 0, 0, 0, SPAC_USE, false },	//	113
+	{ 12, -1, 64, 150, 0, 0, SPAC_USE, true },	//	114
+	{ 11, -1, 64, 0, 0, 0, SPAC_USE, true },	//	115
+	{ 10, -1, 64, 0, 0, 0, SPAC_USE, true },	//	116
+	{ 12, 0, 64, 150, 0, 0, SPAC_USE, true },	//	117
+	{ 11, 0, 64, 0, 0, 0, SPAC_USE, false },	//	118
+	{ 25, -1, 8, 0, 0, 0, SPAC_CROSS, false },	//	119
+
+	{ 206, -1, 64, 105, 0, 0, SPAC_CROSS, true },	//	120
+	{ 206, -1, 64, 105, 0, 0, SPAC_CROSS, false },	//	121
+	{ 206, -1, 64, 105, 0, 0, SPAC_USE, false },	//	122
+	{ 206, -1, 64, 105, 0, 0, SPAC_USE, true },	//	123
+	{ 244, -1, 0, 0, 0, 0, SPAC_CROSS, false },	//	124
+	{ 70, -1, 0, 0, 0, 0, SPAC_MCROSS, false },	//	125
+	{ 70, -1, 0, 0, 0, 0, SPAC_MCROSS, true },	//	126
+	{ 217, -1, 32, 16, 0, 0, SPAC_USE, false },	//	127
+	{ 25, -1, 8, 0, 0, 0, SPAC_CROSS, true },	//	128
+	{ 25, -1, 32, 0, 0, 0, SPAC_CROSS, true },	//	129
+
+	{ 25, -1, 32, 0, 0, 0, SPAC_CROSS, false },	//	130
+	{ 25, -1, 32, 0, 0, 0, SPAC_USE, false },	//	131
+	{ 25, -1, 32, 0, 0, 0, SPAC_USE, true },	//	132
+	{ 13, -1, 64, 0, 2 | 128, 0, SPAC_USE, false },	//	133
+	{ 13, -1, 64, 0, 1 | 128, 0, SPAC_USE, true },	//	134
+	{ 13, -1, 64, 0, 1 | 128, 0, SPAC_USE, false },	//	135
+	{ 13, -1, 64, 0, 3 | 128, 0, SPAC_USE, true },	//	136
+	{ 13, -1, 64, 0, 3 | 128, 0, SPAC_USE, false },	//	137
+	{ 112, -1, 255, 0, 0, 0, SPAC_USE, true },	//	138
+	{ 112, -1, 35, 0, 0, 0, SPAC_USE, true },	//	139
+
+	{ 35, -1, 8, 64, 0, 0, SPAC_USE, false },	//	140
+	{ 197, -1, 8, 8, 10, 0, SPAC_CROSS, false },	//	141
+	{ 142, -1, 0, 0, 0, 0, 0, 0 },	//	142
+	{ 143, -1, 0, 0, 0, 0, 0, 0 },	//	143
+	{ 144, -1, 0, 0, 0, 0, 0, 0 },	//	144
+	{ 145, -1, 0, 0, 0, 0, 0, 0 },	//	145
+	{ 146, -1, 0, 0, 0, 0, 0, 0 },	//	146
+	{ 147, -1, 0, 0, 0, 0, 0, 0 },	//	147
+	{ 148, -1, 0, 0, 0, 0, 0, 0 },	//	148
+	{ 149, -1, 0, 0, 0, 0, 0, 0 },	//	149
+/*
+	{ $0, -1, 0, 0, 0, 0, 0, 0 },	//	$0
+	{ $1, -1, 0, 0, 0, 0, 0, 0 },	//	$1
+	{ $2, -1, 0, 0, 0, 0, 0, 0 },	//	$2
+	{ $3, -1, 0, 0, 0, 0, 0, 0 },	//	$3
+	{ $4, -1, 0, 0, 0, 0, 0, 0 },	//	$4
+	{ $5, -1, 0, 0, 0, 0, 0, 0 },	//	$5
+	{ $6, -1, 0, 0, 0, 0, 0, 0 },	//	$6
+	{ $7, -1, 0, 0, 0, 0, 0, 0 },	//	$7
+	{ $8, -1, 0, 0, 0, 0, 0, 0 },	//	$8
+	{ $9, -1, 0, 0, 0, 0, 0, 0 },	//	$9
+*/
+};
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	TranslateLine
+//
+//==========================================================================
+
+void TranslateLine(line_t *line)
+{
+	int		oldspec;
+
+	oldspec = line->special;
+	if (!line->special)
+	{
+		return;
+	}
+
+	if (line->special >= NUM_SPECIALS)
+	{
+		line->special = 0;
+		line->arg1 = 0;
+		return;
+	}
+
+	line->special = spec_trans_tab[oldspec].special;
+	if (spec_trans_tab[oldspec].arg1 != -1)
+		line->arg1 = spec_trans_tab[oldspec].arg1;
+	line->arg2 = spec_trans_tab[oldspec].arg2;
+	line->arg3 = spec_trans_tab[oldspec].arg3;
+	line->arg4 = spec_trans_tab[oldspec].arg4;
+	line->arg5 = spec_trans_tab[oldspec].arg5;
+	line->flags |= spec_trans_tab[oldspec].spac << ML_SPAC_SHIFT;
+	if (spec_trans_tab[oldspec].repeat)
+		line->flags |= ML_REPEAT_SPECIAL;
+}
+
+//==========================================================================
+//
+//	TranslateSector
+//
+//==========================================================================
+
+void TranslateSector(sector_t *sector)
+{
+	if (sector->special)
+	{
+		sector->special =
+			(sector->special == 9) ? SECRET_MASK :
+			((sector->special & 0xfe0) << 3) |
+			((sector->special & 0x01f) + (((sector->special & 0x1f) < 21) ? 64 : -20));
+	}
+}
+
+//==========================================================================
+//
+//	TranslateThing
+//
+//==========================================================================
+
+void TranslateThing(mthing_t *mthing)
+{
+	int		flags;
+
+	// translate the spawn flags to Hexen format.
+	flags = mthing->options;
+	mthing->options = (flags & 0xf) | 0x7e0;
+	if (flags & 0x10)	mthing->options &= ~MTF_GSINGLE;
+	if (mthing->type == 14)
+	{
+		mthing->tid = PointInSubsector(mthing->x, mthing->y)->sector->tag;
+	}
+}
+
+//==========================================================================
+//
+//	TranslateLevel
+//
+//==========================================================================
+
+void TranslateLevel(void)
+{
+	int		i;
+
+	for (i = 0; i < level->numlines; i++)
+	{
+		TranslateLine(&level->lines[i]);
+	}
+
+	for (i = 0; i < level->numsectors; i++)
+	{
+		TranslateSector(&level->sectors[i]);
+	}
+
+	for (i = 0; i < level->numthings; i++)
+	{
+		TranslateThing(&level->things[i]);
+	}
+}
+

@@ -1,0 +1,211 @@
+//==========================================================================
+//
+//  Player sounds
+//
+//==========================================================================
+
+PlayerLand                      plroof
+PlayerPain                      plrpai
+PlayerDeath                     plrdth
+PlayerExtremeDeath              gibdth
+PlayerWimpyDeath                plrwdth
+PlayerCrazyDeath                plrcdth
+
+GoldWandFire                    gldhit
+GauntletFull                    gntful
+GauntletHit                     gnthit
+GauntletHit2                    gntpow
+GauntletActive                  gntact
+GauntletUse                     gntuse
+PhoenixFire                     phosht
+PhoenixHit                      phohit
+PhoenixHit2                     hedat1
+MaceFire                        lobsht
+MaceHit                         lobhit
+MaceHit2                        lobpow
+SkullRodFire                    hrnsht
+SkullRodHit                     hrnhit
+SkullRodFire2                   hrnpow
+SkullRodHit                     ramphit
+SkullRodRain                    ramrain
+BowFire                         bowsht
+StaffHit                        stfhit
+StaffHit2                       stfpow
+StaffActive                     stfcrk
+BlasterFire                     blssht
+BlasterHit                      blshit
+
+//==========================================================================
+//
+//  Monster sounds
+//
+//==========================================================================
+
+//  Imp
+
+ImpSight                        impsit
+ImpActive                       impsit
+ImpAttack1                      impat1
+ImpAttack2                      impat2
+ImpPain                         imppai
+ImpDeath                        impdth
+
+//  Mumy
+MumySight                       mumsit
+MumyActive                      mumsit
+MumyAttack1                     mumat1
+MumyAttack2                     mumat2
+MumyPain                        mumpai
+MumyDeath                       mumdth
+MumyHeadExplode                 mumhed
+
+//  Beast
+BeastSight                      bstsit
+BeastActive                     bstact
+BeastAttack                     bstatk
+BeastPain                       bstpai
+BeastDeath                      bstdth
+
+//  Clink
+ClinkSight                      clksit
+ClinkActive                     clkact
+ClinkAttack                     clkatk
+ClinkPain                       clkpai
+ClinkDeath                      clkdth
+
+//  Snake
+SnakeSight                      snksit
+SnakeActive                     snkact
+SnakeAttack                     snkatk
+SnakePain                       snkpai
+SnakeDeath                      snkdth
+
+//  Knight
+KnightSight                     kgtsit
+KnightActive                    kgtsit
+KnightAttack1                   kgtatk
+KnightAttack2                   kgtat2
+KnightPain                      kgtpai
+KnightDeath                     kgtdth
+
+//  Wizard
+WizardSight                     wizsit
+WizardActive                    wizact
+WizardAttack                    wizatk
+WizardPain                      wizpai
+WizardDeath                     wizdth
+
+//  Minotaur
+MinotaurSight                   minsit
+MinotaurActive                  minact
+MinotaurAttack1                 minat1
+MinotaurAttack2                 minat2
+MinotaurAttack3                 minat3
+MinotaurPain                    minpai
+MinotaurDeath                   mindth
+
+//  Head
+HeadSight                       hedsit
+HeadActive                      hedact
+HeadAttack1                     hedat1
+HeadAttack2                     hedat2
+HeadAttack3                     hedat3
+HeadPain                        hedpai
+HeadDeath                       heddth
+
+//  Sorcerer
+SorcererDemonSight              bstsit
+SorcererDemonActive             sbtact
+SorcererDemonAttack             bstatk
+SorcererDemonPain               sbtpai
+SorcererDemonDeath              sbtdth
+SorcererZap                     sorzap
+SorcererRise                    sorrise
+SorcererSight                   sorsit
+SorcererActive                  soract
+SorcererAttack                  soratk
+SorcererPain                    sorpai
+SorcererDeath                   sordsph
+SorcererExplodes                sordexp
+SorcererBones                   sordbon
+
+//  Chicken
+ChickenActive                   chicact
+ChickenPeak1                    chicpk1
+ChickenPeak2                    chicpk2
+ChickenPeak3                    chicpk3
+ChickenAttack                   chicatk
+ChickenPain                     chicpai
+ChickenDeath                    chicdth
+
+//==========================================================================
+//
+//  World sounds
+//
+//==========================================================================
+
+//  Door
+DoorOpen                        doropn
+DoorClose                       dorcls
+DoorMove                        dormov
+
+//  Platforms
+PlatformStart                   pstart
+PlatformStop                    pstop
+PlatformMove                    stnmov
+
+Teleport                        telept
+Switch                          switch
+PodNew                          newpod
+PodExplode                      podexp
+Bounce                          bounce
+VolcanoBlast                    bstatk
+VolcanoHit                      lobhit
+Burn                            burn
+Splash                          splash
+WaterSplash                     gloop
+Waterfall                       waterfl
+Wind                            wind
+RipSlop                         ripslop
+Respawn                         respawn
+
+//  Ambient sounds
+Ambient1                        amb1
+Ambient2                        amb2
+Ambient3                        amb3
+Ambient4                        amb4
+Ambient5                        amb5
+Ambient6                        amb6
+Ambient7                        amb7
+Ambient8                        amb8
+Ambient9                        amb9
+Ambient10                       amb10
+Ambient11                       amb11
+
+//==========================================================================
+//
+//  Misc sounds
+//
+//==========================================================================
+
+PickupItem                      itemup
+PickupWeapon                    wpnup
+PickupArtifact                  artiup
+PickupKey                       keyup
+UseArtifact                     artiuse
+Frag                            gfrag
+
+//==========================================================================
+//
+//  Engine sounds
+//
+//==========================================================================
+
+Chat                            chat
+
+MenuActivate                    dorcls
+MenuMove                        switch
+MenuSelect                      dorcls
+MenuSwitch                      keyup
+MenuPrevious                    switch
+MenuClose                       dorcls

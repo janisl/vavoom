@@ -1,0 +1,123 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//**
+//**	Save menu
+//**
+//**	Selected from Single Player menu
+//**
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+struct menu_save_t
+{
+	menu_t			menu;
+	menusaveslot_t	slot[NUMSLOTS];
+	menutext_t		title;
+};
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+menu_save_t SaveMenu;
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	save_func
+//
+//==========================================================================
+
+void save_func(menucommon_t *aitem, int msg)
+{
+	menusaveslot_t *item = (menusaveslot_t*)aitem;
+
+	if (msg != MMSG_ACTIVATE)
+	{
+		return;
+	}
+
+    // we are going to be intercepting all chars
+   	enteringText = true;
+   	InputLine_Init(&slot_enter_text);
+    
+	if (item->status)
+    {
+		InputLine_SetValue(&slot_enter_text, ARR2STR(item->text));
+	}
+  	LocalSound("MenuSelect");
+}
+
+//==========================================================================
+//
+//	menu_save
+//
+//==========================================================================
+
+void menu_save(void)
+{
+	int x = 80;
+	int y = 40;
+	int i;
+
+/*	if (sv.active && svs.max_clients > 1)
+	{
+		MB_StartMessage("can't save net game", NULL, false);
+		return;
+	}
+
+	if (!sv.active || sv.intermission)
+	{
+		MB_StartMessage("you can't save if you aren't playing!", NULL, false);
+		return;
+	}*/
+
+	enteringText = false;
+
+    InitMenu(&SaveMenu.menu);
+
+	for (i = 0; i < NUMSLOTS; i++)
+	{
+		MenuSaveSlot_Init(&SaveMenu.slot[i], x, y);
+		SaveMenu.slot[i].callback = save_func;
+		SaveMenu.slot[i].id = i;
+        SaveMenu.slot[i].status = SV_GetSaveString(i, ARR2STR(SaveMenu.slot[i].text));
+		AddMenuItem(&SaveMenu.menu, &SaveMenu.slot[i]);
+		y += 18;
+	}
+
+	MenuText_InitTitle(&SaveMenu.title, 160, 24, "SAVE GAME", TEXT_BIGC);
+	AddMenuItem(&SaveMenu.menu, &SaveMenu.title);
+
+    PushMenu(&SaveMenu.menu);
+
+	InitSelector();
+}
+
+

@@ -1,0 +1,12 @@
+//  !!! If these are changes, you also must change defs in progs!
+// 0 - SOLID
+// 1 - ICE
+// 2 - LIQUID
+// 3 - WATER
+// 4 - LAVA
+// 5 - SLUDGE
+
+F_033 1 // FLOOR_ICE
+X_005 3 // FLOOR_WATER
+X_001 4 // FLOOR_LAVA
+X_009 5 // FLOOR_SLUDGE

@@ -1,0 +1,821 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//**************************************************************************
+//
+//	SECTOR HEIGHT CHANGING
+//
+//	After modifying a sectors floor or ceiling height, call this routine to
+// adjust the positions of all things that touch the sector.
+//	If anything doesn't fit anymore, true will be returned. If crunch is
+// true, they will take damage as they are being crushed.
+// 	If Crunch is false, you should set the sector height back the way it was
+// and call P_ChangeSector again to undo the changes.
+//
+//**************************************************************************
+
+boolean		crushchange;
+boolean		nofit;
+
+//==========================================================================
+//
+//	CalcSecMinMaxs
+//
+//==========================================================================
+
+void CalcSecMinMaxs(sector_t *sector)
+{
+	float	minz;
+	float	maxz;
+	int		i;
+
+	if (sector->floor.normal.z == 1.0)
+	{
+		//	Horisontal floor
+		sector->floor.minz = sector->floor.dist;
+		sector->floor.maxz = sector->floor.dist;
+	}
+	else
+	{
+		//	Sloped floor
+		minz = 99999.0;
+		maxz = -99999.0;
+		for (i = 0; i < sector->linecount; i++)
+		{
+			float z;
+			z = GetPlanePointZ(&sector->floor, *sector->lines[i]->v1);
+			if (minz > z)
+				minz = z;
+			if (maxz < z)
+				maxz = z;
+		}
+		sector->floor.minz = minz;
+		sector->floor.maxz = maxz;
+	}
+
+	if (sector->ceiling.normal.z == -1.0)
+	{
+		//	Horisontal ceiling
+		sector->ceiling.minz = -sector->ceiling.dist;
+		sector->ceiling.maxz = -sector->ceiling.dist;
+	}
+	else
+	{
+		//	Sloped ceiling
+		minz = 99999.0;
+		maxz = -99999.0;
+		for (i = 0; i < sector->linecount; i++)
+		{
+			float z;
+			z = GetPlanePointZ(&sector->ceiling, *sector->lines[i]->v1);
+			if (minz > z)
+				minz = z;
+			if (maxz < z)
+				maxz = z;
+		}
+		sector->ceiling.minz = minz;
+		sector->ceiling.maxz = maxz;
+	}
+
+	sector->floorheight = sector->floor.minz;
+	sector->ceilingheight = sector->ceiling.maxz;
+}
+
+//==========================================================================
+//
+//	P_ThingHeightClip
+//
+//	Takes a valid thing and adjusts the thing->floorz, thing->ceilingz, and
+// possibly thing->z. This is called for all nearby monsters whenever a
+// sector changes height. If the thing doesn't fit, the z will be set to the
+// lowest value and false will be returned.
+//
+//==========================================================================
+
+boolean P_ThingHeightClip(mobj_t* thing)
+{
+    boolean		onfloor;
+	
+    onfloor = (thing->origin.z == thing->floorz);
+	
+    P_CheckPosition(thing, thing->origin.x, thing->origin.y);
+    // what about stranding a monster partially off an edge?
+	
+    thing->floor = tmfloor;
+    thing->ceiling = tmceiling;
+    thing->floorz = tmfloorz;
+    thing->ceilingz = tmceilingz;
+	
+    if (onfloor)
+    {
+		// walking monsters rise and fall with the floor
+		thing->origin.z = thing->floorz;
+    }
+    else
+    {
+		// don't adjust a floating monster unless forced to
+		if (thing->origin.z + thing->height > thing->ceilingz)
+		    thing->origin.z = thing->ceilingz - thing->height;
+    }
+	
+    if (thing->ceilingz - thing->floorz < thing->height)
+		return false;
+		
+    return true;
+}
+
+//==========================================================================
+//
+//	PIT_ChangeSector
+//
+//==========================================================================
+
+boolean PIT_ChangeSector(mobj_t* thing)
+{
+    mobj_t*		mo;
+	
+    if (P_ThingHeightClip(thing))
+    {
+		// keep checking
+		return true;
+    }
+
+    // crunch bodies to giblets
+    if (thing->health <= 0)
+    {
+		SetMobjState(thing, S_GIBS);
+		thing->flags &= ~MF_SOLID;
+		thing->height = 0.0;
+		thing->radius = 0.0;
+
+		// keep checking
+		return true;
+    }
+
+    // crunch dropped items
+    if (thing->flags & MF_DROPPED)
+    {
+		P_RemoveMobj(thing);
+	
+		// keep checking
+		return true;
+    }
+
+    if (!(thing->flags & MF_SHOOTABLE))
+    {
+		// assume it is bloody gibs or something
+		return true;
+    }
+    
+    if (crushchange && !(level->tictime & 3))
+    {
+		DamageMobj(thing, NULL, NULL, 10);
+
+		// spray blood in a random direction
+		mo = P_SpawnMobj(thing->origin.x, thing->origin.y, thing->origin.z + thing->height / 2.0,
+			MT_BLOOD);
+		mo->velocity.x = (Random() - Random()) * 16.0 * 35.0;
+		mo->velocity.y = (Random() - Random()) * 16.0 * 35.0;
+    }
+
+    // keep checking (crush other things)	
+    nofit = true;	//don't fit
+
+	return true;
+}
+
+//==========================================================================
+//
+//  P_ChangeSector
+//
+//==========================================================================
+
+boolean P_ChangeSector(sector_t* sector, int crunch)
+{
+    int		x;
+    int		y;
+
+	CalcSecMinMaxs(sector);
+
+    nofit = false;
+    crushchange = crunch;
+	
+    // re-check heights for all things near the moving sector
+    for (x=sector->blockbox[BOXLEFT]; x<=sector->blockbox[BOXRIGHT]; x++)
+		for (y=sector->blockbox[BOXBOTTOM]; y<=sector->blockbox[BOXTOP]; y++)
+	    	P_BlockThingsIterator(x, y, PIT_ChangeSector);
+	
+    return nofit;
+}
+
+//**************************************************************************
+//
+//	USE LINES
+//
+//**************************************************************************
+
+#define USERANGE	64.0
+
+mobj_t*			usething;
+TVec			useDir;
+
+//==========================================================================
+//
+//  PTR_UseTraverse
+//
+//==========================================================================
+
+boolean PTR_UseTraverse(intercept_t* in)
+{
+	if (!in->line->special)
+    {
+		TVec		hit_point;
+		opening_t	*open;
+
+		hit_point = usething->origin + (USERANGE * in->frac) * useDir;
+		open = LineOpenings(in->line, hit_point);
+		open = FindOpening(open, hit_point.z, hit_point.z + usething->height);
+		if (!open)
+		{
+	    	StartSoundName(usething, "Blocked");
+	    
+	    	// can't use through a wall
+	    	return false;
+		}
+		// not a special line, but keep checking
+		return true;
+    }
+	
+    if (PointOnPlaneSide(usething->origin, in->line) == 1)
+	    return false;		// don't use back side
+	
+	P_ActivateLine(in->line, usething, 0, SPAC_USE);
+
+    // can't use for than one special line in a row
+	return false;
+}
+
+//==========================================================================
+//
+//	P_UseLines
+//
+//	Looks for special lines in front of the player to activate.
+//
+//==========================================================================
+
+void P_UseLines(player_t* player)
+{
+	float	x1;
+	float	y1;
+	float	x2;
+	float	y2;
+	
+	usething = player->mo;
+
+	AngleVector(&player->mo->angles, &useDir);
+	x1 = player->mo->origin.x;
+	y1 = player->mo->origin.y;
+	x2 = x1 + USERANGE * useDir.x;
+	y2 = y1 + USERANGE * useDir.y;
+	P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES, PTR_UseTraverse);
+}
+
+//**************************************************************************
+//
+//	AIMING
+//
+//**************************************************************************
+
+mobj_t*		aim_thing;
+// Height if not aiming up or down
+// ???: use slope for monsters?
+float		aim_z;
+float		aim_range;
+float		aim_slope;
+TVec		aim_dir;
+float		aim_topslope;
+float		aim_bottomslope;  // slopes to top and bottom of target
+mobj_t*		linetarget;	// who got hit (or NULL)
+float		aim_range2d;
+
+//==========================================================================
+//
+//	PTR_AimTraverse
+//
+//	Sets linetaget and aim_slope when a target is aimed at.
+//
+//==========================================================================
+
+boolean PTR_AimTraverse(intercept_t* in)
+{
+	line_t		*li;
+	mobj_t		*th;
+	float		thingtopslope;
+	float		thingbottomslope;
+	float		dist;
+	float		slope;
+	opening_t	*open;
+
+    if (in->isaline)
+    {
+		TVec		hit_point;
+
+		li = in->line;
+
+		if (!(li->flags & ML_TWOSIDED))
+	    	return false;		// stop
+	
+		// Crosses a two sided line.
+		// A two sided line will restrict
+		// the possible target ranges.
+		dist = aim_range * in->frac;
+		hit_point = aim_thing->origin + dist * aim_dir;
+		open = LineOpenings(li, hit_point);
+		open = FindOpening(open, hit_point.z, hit_point.z);
+	
+		if (!open || open->bottom >= open->top)
+		    return false;		// stop
+	
+		dist = aim_range2d * in->frac;
+		if (li->frontsector->floorheight != li->backsector->floorheight)
+		{
+			slope =	(open->bottom - aim_z) / dist;
+    		if (slope > aim_bottomslope)
+				aim_bottomslope = slope;
+		}
+		
+		if (li->frontsector->ceilingheight != li->backsector->ceilingheight)
+		{
+			slope =	(open->top - aim_z) / dist;
+		    if (slope < aim_topslope)
+				aim_topslope = slope;
+		}
+		
+		if (aim_topslope <= aim_bottomslope)
+    		return false;		// stop
+			
+		return true;			// shot continues
+    }
+
+    // shoot a thing
+	th = in->thing;
+    if (th == aim_thing)
+		return true;			// can't shoot self
+    
+    if (!(th->flags & MF_SHOOTABLE))
+		return true;			// corpse or something
+
+#ifdef FIXME
+	//	Hexen does this. There's no reason why we can't enable it in Doom.
+	if (th->player && netgame && !deathmatch)
+	{
+		// don't aim at fellow co-op players
+		return true;
+	}
+#endif
+
+    // check angles to see if the thing can be aimed at
+    dist = aim_range2d * in->frac;
+    thingtopslope = (th->origin.z + th->height - aim_z) / dist;
+
+    if (thingtopslope < aim_bottomslope)
+		return true;			// shot over the thing
+
+    thingbottomslope = (th->origin.z - aim_z) / dist;
+
+    if (thingbottomslope > aim_topslope)
+		return true;			// shot under the thing
+    
+    // this thing can be hit!
+    if (thingtopslope > aim_topslope)
+		thingtopslope = aim_topslope;
+    
+    if (thingbottomslope < aim_bottomslope)
+		thingbottomslope = aim_bottomslope;
+
+    aim_slope = (thingtopslope + thingbottomslope) / 2.0;
+    linetarget = th;
+
+    return false;			// don't go any farther
+}
+
+//==========================================================================
+//
+//	AimLineAttack
+//
+//==========================================================================
+
+void AimLineAttack(mobj_t *t1, TAVec *angles, float distance)
+{
+	float		x2;
+	float		y2;
+	angle_t		topangle;
+	angle_t		botangle;
+	
+    aim_thing = t1;
+
+    AngleVector(angles, &aim_dir);
+    x2 = t1->origin.x + distance * aim_dir.x;
+    y2 = t1->origin.y + distance * aim_dir.y;
+    aim_z = t1->origin.z + t1->height / 2.0 + 8.0 - t1->floorclip;
+	aim_range2d = Length(vector(distance * aim_dir.x, distance * aim_dir.y, 0.0));
+
+    // can't shoot outside view angles
+	topangle = -angles->pitch + ANG90 / 3;
+	botangle = -angles->pitch - ANG90 / 3;
+	if (topangle > ANG90 - ANG1)
+		topangle = ANG90 - ANG1;
+	if (botangle < ANG270 + ANG1)
+		botangle = ANG270 + ANG1;
+    aim_topslope = tan(topangle);
+    aim_bottomslope = tan(botangle);
+    
+    aim_range = distance;
+    linetarget = NULL;
+	
+    P_PathTraverse(t1->origin.x, t1->origin.y, x2, y2,
+    	PT_ADDLINES | PT_ADDTHINGS, PTR_AimTraverse);
+		
+    if (linetarget)
+	{
+		angles->pitch = -atan(aim_slope);
+	}
+}
+
+//**************************************************************************
+//
+//	SHOOTING
+//
+//**************************************************************************
+
+mobj_t*		shoot_thing;
+float		shoot_range;
+TVec		shoot_origin;
+TVec		shoot_dir;
+int			la_damage;
+
+//==========================================================================
+//
+//	ShootHitPlane
+//
+//==========================================================================
+
+boolean ShootHitPlane(sec_plane_t *plane)
+{
+	float		org_dist;
+	float		hit_dist;
+
+	if (plane->flags & SPF_NOBLOCKSHOOT)
+	{
+		//	Doesn't block shooting
+		return true;
+	}
+	org_dist = DotProduct(linestart, plane->normal) - plane->dist;
+	if (org_dist < 0.0)
+	{
+		//	Don't shoot back side
+		return true;
+	}
+	hit_dist = DotProduct(lineend, plane->normal) - plane->dist;
+	if (hit_dist >= 0.0)
+	{
+		//	Didn't hit plane
+		return true;
+	}
+
+	//	Hit plane
+	if (plane->pic == skyflatnum)
+	{
+    	// don't shoot the sky!
+		return false;
+	}
+
+	//	If we are shooting floor or ceiling we are adjusting position
+	// to spawn puff on floor or ceiling, not on wall
+	lineend -= (lineend - linestart) * hit_dist / (hit_dist - org_dist);
+
+	// position a bit closer
+	lineend += 4.0 * plane->normal;
+
+	// Spawn bullet puffs.
+	SpawnPuff(lineend.x, lineend.y, lineend.z);
+	
+	// don't go any farther
+	return false;
+}
+
+//==========================================================================
+//
+//	ShootCheckPlanes
+//
+//==========================================================================
+
+boolean	ShootCheckPlanes(sector_t *sec)
+{
+	sec_region_t	*reg;
+	sec_region_t	*startreg;
+
+	startreg = PointInRegion(sec, linestart);
+	for (reg = startreg; reg; reg = reg->next)
+	{
+		if (!ShootHitPlane(reg->floor))
+		{
+			//	Hit floor
+			return false;
+		}
+		if (!ShootHitPlane(reg->ceiling))
+		{
+			//	Hit ceiling
+			return false;
+		}
+	}
+	for (reg = startreg->prev; reg; reg = reg->prev)
+	{
+		if (!ShootHitPlane(reg->floor))
+		{
+			//	Hit floor
+			return false;
+		}
+		if (!ShootHitPlane(reg->ceiling))
+		{
+			//	Hit ceiling
+			return false;
+		}
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  PTR_ShootTraverse
+//
+//==========================================================================
+
+boolean PTR_ShootTraverse(intercept_t* in)
+{
+	TVec		hit_point;
+	line_t		*li;
+	mobj_t		*th;
+
+    if (in->isaline)
+    {
+		sector_t	*sec;
+
+		li = in->line;
+		hit_point = shoot_origin + (shoot_range * in->frac) * shoot_dir;
+		if (li->flags & ML_TWOSIDED && PointOnPlaneSide(shoot_origin, li))
+		{
+			sec = li->backsector;
+		}
+		else
+		{
+			sec = li->frontsector;
+		}
+
+		lineend = hit_point;
+
+		//	Check for shooting floor or ceiling
+		if (!ShootCheckPlanes(sec))
+		{
+			return false;
+		}
+
+		linestart = lineend;
+
+		//	Execute line special after checking for hitting floor or ceiling
+		// when we know that it actally hits line
+		if (li->special)
+		{
+			P_ActivateLine(li, shoot_thing, 0, SPAC_IMPACT);
+		}
+
+		if (li->flags & ML_TWOSIDED)
+		{
+			// crosses a two sided line
+			opening_t	*open;
+			float		opentop = 0.0;
+
+			open = LineOpenings(li, hit_point);
+			if (open)
+			{
+				opentop = open->top;
+			}
+			while (open)
+			{
+			    if (open->bottom <= hit_point.z && open->top >= hit_point.z)
+				{
+					// shot continues
+					return true;
+				}
+				open = open->next;
+			}
+			if (li->frontsector->ceiling.pic == skyflatnum &&
+				li->backsector->ceiling.pic == skyflatnum &&
+				hit_point.z > opentop)
+			{
+				// it's a sky hack wall
+				return false;
+			}
+		}
+
+		//	Hit line
+
+		// position a bit closer
+		hit_point -= 4.0 * shoot_dir;
+
+		// Spawn bullet puffs.
+		SpawnPuff(hit_point.x, hit_point.y, hit_point.z);
+	
+		// don't go any farther
+		return false;
+    }
+
+    // shoot a thing
+	th = in->thing;
+
+    if (th == shoot_thing)
+		return true;		// can't shoot self
+    
+    if (!(th->flags & MF_SHOOTABLE))
+		return true;		// corpse or something
+
+    // check angles to see if the thing can be aimed at
+    hit_point = shoot_origin + (shoot_range * in->frac) * shoot_dir;
+
+    if (th->origin.z + th->height < hit_point.z)
+		return true;		// shot over the thing
+
+    if (th->origin.z > hit_point.z)
+		return true;		// shot under the thing
+
+    // hit thing
+    // position a bit closer
+ 	hit_point -= 10.0 * shoot_dir;
+
+    // Spawn bullet puffs or blod spots,
+    // depending on target type.
+    if (th->flags & MF_NOBLOOD)
+		SpawnPuff(hit_point.x, hit_point.y, hit_point.z);
+    else
+		P_SpawnBlood(hit_point.x, hit_point.y, hit_point.z, la_damage);
+
+    if (la_damage)
+		DamageMobj(th, shoot_thing, shoot_thing, la_damage);
+
+    // don't go any farther
+    return false;
+}
+
+//==========================================================================
+//
+//	P_LineAttack
+//
+//	If damage == 0, it is just a test trace that will leave linetarget set.
+//
+//==========================================================================
+
+int LineAttack(mobj_t* t1, TVec *dir, float distance, int damage)
+{
+	TVec		dst;
+
+    shoot_thing = t1;
+    la_damage = damage;
+
+	shoot_origin = t1->origin;
+    shoot_origin.z += t1->height * 0.5 + 8.0 - t1->floorclip;
+
+	shoot_dir = *dir;
+	shoot_range = distance;
+
+	dst = shoot_origin + shoot_range * shoot_dir;
+	linestart = shoot_origin;
+    if (!P_PathTraverse(t1->origin.x, t1->origin.y, dst.x, dst.y,
+    	PT_ADDLINES | PT_ADDTHINGS, PTR_ShootTraverse))
+	{
+		return false;
+	}
+	lineend = dst;
+	return ShootCheckPlanes(PointInSubsector(dst.x, dst.y)->sector);
+}
+
+//**************************************************************************
+//
+//	RADIUS ATTACK
+//
+//**************************************************************************
+
+mobj_t*		bombsource;
+mobj_t*		bombspot;
+float		bombdamage;
+
+//==========================================================================
+//
+//	PIT_RadiusAttack
+//
+//	"bombsource" is the creature that caused the explosion at "bombspot".
+//
+//==========================================================================
+
+boolean PIT_RadiusAttack(mobj_t* thing)
+{
+	TVec	org1;
+	TVec	org2;
+	TVec	dir;
+	float	dist;
+	
+    if (!(thing->flags & MF_SHOOTABLE))
+		return true;
+
+    // Boss spider and cyborg
+    // take no damage from concussion.
+    if (thing->type == MT_CYBORG || thing->type == MT_SPIDER)
+		return true;
+
+	CopyMobjCenter(thing, org1);
+	CopyMobjCenter(bombspot, org2);
+	vsub(org1, org2, dir);
+    dist = vlen(dir) - thing->radius;
+
+    if (dist < 0.0)
+		dist = 0.0;
+
+    if (dist >= bombdamage)
+		return true;	// out of range
+
+    if (P_CheckSight(thing, bombspot))
+    {
+		// must be in direct path
+		DamageMobj(thing, bombspot, bombsource, ftoi(bombdamage - dist));
+    }
+    
+    return true;
+}
+
+//==========================================================================
+//
+//	P_RadiusAttack
+//
+//	Source is the creature that caused the explosion at spot.
+//
+//==========================================================================
+
+void P_RadiusAttack(mobj_t *spot, mobj_t *source, int damage, int distance,
+	boolean damageSource)
+{
+    int		x;
+    int		y;
+    
+    int		xl;
+    int		xh;
+    int		yl;
+    int		yh;
+    
+    float	dist;
+	
+    dist = itof(damage);
+    yh = MapBlock(spot->origin.y + dist - level->bmaporgy);
+    yl = MapBlock(spot->origin.y - dist - level->bmaporgy);
+    xh = MapBlock(spot->origin.x + dist - level->bmaporgx);
+    xl = MapBlock(spot->origin.x - dist - level->bmaporgx);
+    bombspot = spot;
+    bombsource = source;
+    bombdamage = itof(damage);
+	
+    for (y=yl ; y<=yh ; y++)
+		for (x=xl ; x<=xh ; x++)
+	    	P_BlockThingsIterator(x, y, PIT_RadiusAttack);
+}
+
+

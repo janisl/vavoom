@@ -1,0 +1,152 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!-- C++Builder XML Project -->
+<PROJECT>
+  <MACROS>
+    <VERSION value="BCB.05.03"/>
+    <PROJECT value="vavm95sv.exe"/>
+    <OBJFILES value="obj\sv\zone.obj obj\sv\crc.obj obj\sv\cvar.obj obj\sv\debug.obj 
+      obj\sv\host.obj obj\sv\maths.obj obj\sv\message.obj obj\sv\misc.obj 
+      obj\sv\net_dgrm.obj obj\sv\net_loop.obj obj\sv\net_main.obj 
+      obj\sv\net_win.obj obj\sv\net_wins.obj obj\sv\net_wipx.obj 
+      obj\sv\p_info.obj obj\sv\p_setup.obj obj\sv\pr_cmds.obj obj\sv\pr_exec.obj 
+      obj\sv\sc_man.obj obj\sv\sizebuf.obj obj\sv\sv_main.obj obj\sv\sv_save.obj 
+      obj\sv\wad.obj obj\sv\cmd.obj obj\sv\pr_execa.obj obj\sv\sys_wind.obj 
+      obj\sv\sv_user.obj obj\sv\sv_poly.obj obj\sv\sv_sight.obj 
+      obj\sv\sv_swtch.obj obj\sv\sv_tick.obj obj\sv\sv_acs.obj 
+      obj\sv\sv_world.obj obj\sv\infostr.obj obj\sv\r_tex.obj obj\sv\files.obj 
+      obj\sv\s_data.obj"/>
+    <RESFILES value=""/>
+    <IDLFILES value=""/>
+    <IDLGENFILES value=""/>
+    <DEFFILE value=""/>
+    <RESDEPEN value="$(RESFILES)"/>
+    <LIBFILES value=""/>
+    <LIBRARIES value=""/>
+    <SPARELIBS value=""/>
+    <PACKAGES value=""/>
+    <PATHCPP value=".;source"/>
+    <PATHPAS value=".;"/>
+    <PATHRC value=".;"/>
+    <PATHASM value=".;source"/>
+    <DEBUGLIBPATH value="$(BCB)\lib\debug"/>
+    <RELEASELIBPATH value="$(BCB)\lib\release"/>
+    <LINKER value="tlink32"/>
+    <USERDEFINES value="SERVER;_RWSTD_NO_EXCEPTIONS"/>
+    <SYSDEFINES value="NO_STRICT;_NO_VCL"/>
+    <MAINSOURCE value="vavm95sv.bpf"/>
+    <INCLUDEPATH value="source;$(BCB)\include"/>
+    <LIBPATH value="source;$(BCB)\lib\obj;$(BCB)\lib"/>
+    <WARNINGS value="-w-par"/>
+  </MACROS>
+  <OPTIONS>
+    <IDLCFLAGS value="-Isource -I$(BCB)\include -src_suffix cpp -DSERVER -D_RWSTD_NO_EXCEPTIONS 
+      -no_tie -boa"/>
+    <CFLAG1 value="-O2 -Vx -Ve -x- -RT- -X- -a8 -4 -b -k- -vi -tWC -tWM- -c"/>
+    <PFLAGS value="-N2obj\sv -N0obj\sv -$Y- -$L- -$D- -v -JPHNE -M"/>
+    <RFLAGS value=""/>
+    <AFLAGS value="/ml /w2 /zn"/>
+    <LFLAGS value="-Iobj\sv -D&quot;&quot; -ap -Tpe -x -Gn"/>
+  </OPTIONS>
+  <LINKER>
+    <ALLOBJ value="c0x32.obj $(OBJFILES)"/>
+    <ALLRES value="$(RESFILES)"/>
+    <ALLLIB value="$(LIBFILES) $(LIBRARIES) import32.lib cw32.lib"/>
+  </LINKER>
+  <IDEOPTIONS>
+[Version Info]
+IncludeVerInfo=0
+AutoIncBuild=0
+MajorVer=1
+MinorVer=0
+Release=0
+Build=0
+Debug=0
+PreRelease=0
+Special=0
+Private=0
+DLL=0
+Locale=1062
+CodePage=1257
+
+[Version Info Keys]
+CompanyName=
+FileDescription=
+FileVersion=1.0.0.0
+InternalName=
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=
+ProductName=
+ProductVersion=1.0.0.0
+Comments=
+
+[Excluded Packages]
+$(BCB)\Bin\dclstd50.bpl=Borland Standard Components
+$(BCB)\Bin\mfcwizard.bpl=MFC Wizard
+$(BCB)\Bin\dcl31w50.bpl=Delphi 1.0 Compatibility Components
+$(BCB)\Bin\bcbsmp50.bpl=Borland C++ Sample Components
+$(BCB)\Bin\dclado50.bpl=Borland ADO DB Components
+C:\WINDOWS\SYSTEM\ibsmp50.bpl=Borland C++ InterBase Alerter Component
+$(BCB)\Bin\dclbde50.bpl=Borland BDE DB Components
+$(BCB)\Bin\dcldb50.bpl=Borland Database Components
+$(BCB)\Bin\dclqrt50.bpl=QuickReport Components
+$(BCB)\Bin\dcltee50.bpl=TeeChart 5.0 Components
+$(BCB)\Bin\dcldss50.bpl=Borland Decision Cube Components
+$(BCB)\Bin\applet50.bpl=Borland Control Panel Applet Package
+$(BCB)\Bin\dcltqr50.bpl=TeeChart 5.0 for QuickReport Components Design Package
+$(BCB)\Bin\DCLIB50.bpl=InterBase Data Access Components
+$(BCB)\Bin\dclsmpedit50.bpl=Borland Editor Script Enhancements
+$(BCB)\Bin\dclmid50.bpl=Borland MIDAS Components
+$(BCB)\Bin\dclnet50.bpl=Borland Internet Components
+$(BCB)\Bin\DBWEBXPRT.BPL=Borland Web Wizard Package
+$(BCB)\Bin\DCLNMF50.bpl=NetMasters Fastnet Tools
+$(BCB)\Bin\dclwbm50.bpl=Borland InternetExpress Components
+$(BCB)\Bin\bcbie50.bpl=Borland C++Builder Internet Explorer 5 Components Package
+$(BCB)\Bin\dclocx50.bpl=Borland Sample Imported ActiveX Controls
+$(BCB)\Bin\dclite50.bpl=Borland Integrated Translation Environment
+$(BCB)\Bin\bcb97axserver50.bpl=Borland C++Builder COM Server Components Sample Package
+
+[HistoryLists\hlIncludePath]
+Count=2
+Item0=source;$(BCB)\include
+Item1=source;$(BCB)\include;$(BCB)\include\vcl
+
+[HistoryLists\hlLibraryPath]
+Count=1
+Item0=source;$(BCB)\lib\obj;$(BCB)\lib
+
+[HistoryLists\hlDebugSourcePath]
+Count=1
+Item0=$(BCB)\source\vcl
+
+[HistoryLists\hlConditionals]
+Count=2
+Item0=SERVER;_RWSTD_NO_EXCEPTIONS
+Item1=SERVER
+
+[HistoryLists\hlIntOutputDir]
+Count=2
+Item0=obj/sv
+Item1=svobj
+
+[Debugging]
+DebugSourceDirs=
+
+[Parameters]
+RunParams=
+HostApplication=
+RemoteHost=
+RemotePath=
+RemoteDebug=0
+
+[Compiler]
+ShowInfoMsgs=0
+LinkDebugVcl=0
+LinkCGLIB=0
+
+[CORBA]
+AddServerUnit=0
+AddClientUnit=0
+PrecompiledHeaders=0
+  </IDEOPTIONS>
+</PROJECT>

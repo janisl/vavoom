@@ -1,0 +1,168 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//============================================================================
+//
+//	A_IceGuyLook
+//
+//============================================================================
+
+void A_IceGuyLook(mobj_t* actor)
+{
+	float	dist;
+	angle_t	an;
+
+	A_Look(actor);
+	if (P_Random() < 64)
+	{
+		dist = actor->radius * itof(P_Random() - 128) / 128.0;
+		an = actor->angles.yaw + ANG90;
+
+		P_SpawnMobj(actor->origin.x + dist * cos(an),
+			actor->origin.y + dist * sin(an), actor->origin.z + 60.0,
+			MT_ICEGUY_WISP1 + (P_Random() & 1));
+	}
+}
+
+//============================================================================
+//
+//	A_IceGuyChase
+//
+//============================================================================
+
+void A_IceGuyChase(mobj_t* actor)
+{
+	float	dist;
+	angle_t	an;
+	mobj_t* mo;
+
+	A_Chase(actor);
+	if (P_Random() < 128)
+	{
+		dist = actor->radius * itof(P_Random() - 128) / 128.0;
+		an = actor->angles.yaw + ANG90;
+
+		mo = P_SpawnMobj(actor->origin.x + dist * cos(an),
+			actor->origin.y + dist * sin(an), actor->origin.z + 60.0,
+			MT_ICEGUY_WISP1 + (P_Random() & 1));
+		if (mo)
+		{
+			mo->velocity.x = actor->velocity.x;
+			mo->velocity.y = actor->velocity.y;
+			mo->velocity.z = actor->velocity.z;
+			mo->target = actor;
+		}
+	}
+}
+
+//============================================================================
+//
+// A_IceGuyAttack
+//
+//============================================================================
+
+void A_IceGuyAttack(mobj_t* actor)
+{
+	int		an;
+
+	if (!actor->target)
+	{
+		return;
+	}
+	an = actor->angles.yaw + ANG90;
+	SpawnMissileXYZ(
+		actor->origin.x + actor->radius / 2.0 * cos(an),
+		actor->origin.y + actor->radius / 2.0 * sin(an),
+		actor->origin.z + 40.0,
+		actor, actor->target, MT_ICEGUY_FX);
+
+	an = actor->angles.yaw - ANG90;
+	SpawnMissileXYZ(
+		actor->origin.x + actor->radius / 2.0 * cos(an),
+		actor->origin.y + actor->radius / 2.0 * sin(an),
+		actor->origin.z + 40.0,
+		actor, actor->target, MT_ICEGUY_FX);
+
+	StartSound(actor, actor->sound_attack);
+}
+
+//============================================================================
+//
+//	A_IceGuyMissilePuff
+//
+//============================================================================
+
+void A_IceGuyMissilePuff(mobj_t* actor)
+{
+	mobj_t*		mo;
+	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 2.0, MT_ICEFX_PUFF);
+}
+
+//============================================================================
+//
+// 	A_IceGuyMissileExplode
+//
+//============================================================================
+
+void A_IceGuyMissileExplode(mobj_t* actor)
+{
+	mobj_t*	mo;
+	int 	i;
+
+	for(i = 0; i < 8; i++)
+	{
+		mo = SpawnMissileAngle(actor, MT_ICEGUY_FX2, i * ANG45, -0.3);
+		if (mo)
+		{
+			mo->target = actor->target;
+		}
+	}
+}
+
+//============================================================================
+//
+// A_IceGuyDie
+//
+//============================================================================
+
+void A_IceGuyDie(mobj_t* actor)
+{
+	actor->velocity.x = 0.0;
+	actor->velocity.y = 0.0;
+	actor->velocity.z = 0.0;
+	actor->height *= 4.0;
+	A_FreezeDeathChunks(actor);
+}
+

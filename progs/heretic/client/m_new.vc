@@ -1,0 +1,160 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//**
+//**	New game menu
+//**
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+struct menu_new_game_t
+{
+	menu_t			menu;
+	menutext_t		start;
+	menuswitch_t	players;
+	menuswitch_t	monsters;
+	menuswitch_t	deathmatch;
+	menuswitch_t	skill;
+	menuswitch_t	timelimit;
+	menuswitch_t	episode;
+	menuswitch_t	level;
+	menutext_t		title;
+};
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+menu_new_game_t	NewGameMenu;
+
+string			sw_episode[5] = {
+	"CITY OF THE DAMNED",
+	"HELL'S MAW",
+	"THE DOME OF D'SPARIL",
+	"THE OSSUARY",
+	"THE STAGNANT DEMESNE"};
+string			sw_mapnames[9];
+
+string			sw_players[7] = {"2", "3", "4", "5", "6", "7", "8"};
+string			sw_deathmatch[2] = {"Cooperative", "Deathmatch"};
+string			sw_skill[5] = {"Baby", "Easy", "Normal", "Hard", "Nightmare"};
+string			sw_cnt5[13] = {"0", "5", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55", "60"};
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	net_epi_func
+//
+//==========================================================================
+
+void net_epi_func(menucommon_t *item, int msg)
+{
+	int i;
+
+	if (msg != MMSG_ACTIVATE)
+	{
+		return;
+	}
+
+	for (i = 0; i < 9; i++)
+	{
+		sw_mapnames[i] = P_GetMapName(NewGameMenu.episode.value * 9 + i + 1);
+	}
+}
+
+//==========================================================================
+//
+//	StartNewGame
+//
+//==========================================================================
+
+void StartNewGame(void)
+{
+	CmdBuf_AddText("Disconnect\n");
+	CmdBuf_AddText("MaxPlayers %d\n", NewGameMenu.players.value + 2);
+	CmdBuf_AddText("NoMonsters %d\n", !NewGameMenu.monsters.value);
+	CmdBuf_AddText("DeathMatch %d\n", NewGameMenu.deathmatch.value);
+	CmdBuf_AddText("TimeLimit %d\n", NewGameMenu.timelimit.value * 5);
+	CmdBuf_AddText("Skill %d\n", NewGameMenu.skill.value);
+	CmdBuf_AddText("Map E%dM%d\n", NewGameMenu.episode.value + 1,
+		NewGameMenu.level.value + 1);
+}
+
+//==========================================================================
+//
+//	menu_new_game
+//
+//==========================================================================
+
+void menu_new_game(void)
+{
+	int x = 128;
+	int y = 40;
+
+    InitMenu(&NewGameMenu.menu);
+
+	MenuText_InitFunc(&NewGameMenu.start, x, y, "Start Game", TEXT_SMALLR, StartNewGame);
+	AddMenuItem(&NewGameMenu.menu, &NewGameMenu.start);
+	y += 10;
+
+	MenuSwitch_Init(&NewGameMenu.players, x, y, "Max players", TEXT_SMALLR, 2, 6, &sw_players[0]);
+	AddMenuItem(&NewGameMenu.menu, &NewGameMenu.players);
+	y += 10;
+
+	MenuSwitch_Init(&NewGameMenu.monsters, x, y, "Monsters", TEXT_SMALLR, 0, 2, &sw_offon[0]);
+	AddMenuItem(&NewGameMenu.menu, &NewGameMenu.monsters);
+	y += 10;
+
+	MenuSwitch_Init(&NewGameMenu.deathmatch, x, y, "Game type", TEXT_SMALLR, 1, 2, &sw_deathmatch[0]);
+	AddMenuItem(&NewGameMenu.menu, &NewGameMenu.deathmatch);
+	y += 10;
+
+	MenuSwitch_Init(&NewGameMenu.skill, x, y, "Skill", TEXT_SMALLR, 2, 5, &sw_skill[0]);
+	AddMenuItem(&NewGameMenu.menu, &NewGameMenu.skill);
+	y += 10;
+
+	MenuSwitch_Init(&NewGameMenu.timelimit, x, y, "Time limit", TEXT_SMALLR, 0, 13, &sw_cnt5[0]);
+	AddMenuItem(&NewGameMenu.menu, &NewGameMenu.timelimit);
+	y += 10;
+
+	MenuSwitch_Init(&NewGameMenu.episode, x, y, "Episode", TEXT_SMALLR, 0,
+		shareware ? 1 : ExtendedWAD ? 5 : 3, &sw_episode[0]);
+	NewGameMenu.episode.callback = net_epi_func;
+	AddMenuItem(&NewGameMenu.menu, &NewGameMenu.episode);
+	y += 10;
+	net_epi_func(&NewGameMenu.episode, MMSG_ACTIVATE);
+
+	MenuSwitch_Init(&NewGameMenu.level, x, y, "Level", TEXT_SMALLR, 0, 9, &sw_mapnames[0]);
+	AddMenuItem(&NewGameMenu.menu, &NewGameMenu.level);
+
+	MenuText_InitTitle(&NewGameMenu.title, 160, 24, "NEW GAME", TEXT_BIGC);
+	AddMenuItem(&NewGameMenu.menu, &NewGameMenu.title);
+
+    PushMenu(&NewGameMenu.menu);
+}
+

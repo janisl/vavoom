@@ -1,0 +1,341 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	Cheat_God
+//
+//==========================================================================
+
+void Cheat_God(void)
+{
+	players[0].cheats ^= CF_GODMODE;
+	if (players[0].cheats & CF_GODMODE)
+	{
+  		if (players[0].mo)
+    		players[0].mo->health = GOD_HEALTH;
+  		players[0].health = GOD_HEALTH;
+  		cprint(&players[0], "Degreelessness Mode On\n");
+	}
+	else
+  		cprint(&players[0], "Degreelessness Mode Off\n");
+}
+
+//==========================================================================
+//
+//  Cheat_NoClip
+//
+//==========================================================================
+
+void Cheat_NoClip(void)
+{
+	players[0].cheats ^= CF_NOCLIP;
+	
+	if (players[0].cheats & CF_NOCLIP)
+  		cprint(&players[0], "No Clipping Mode ON\n");
+	else
+  		cprint(&players[0], "No Clipping Mode OFF\n");
+}
+
+//==========================================================================
+//
+//  Cheat_Gimme
+//
+//==========================================================================
+
+void Cheat_Gimme(void)
+{
+#define GIMME_SHOTGUN			0x00000001
+#define GIMME_CHAINGUN			0x00000002
+#define GIMME_LAUNCHER			0x00000004
+#define GIMME_PLASMA			0x00000008
+#define GIMME_BFG				0x00000010
+#define GIMME_CHAINSAW			0x00000020
+#define GIMME_BACKPACK			0x00000080
+#define GIMME_BULLETS			0x00000100
+#define GIMME_SHELLS			0x00000200
+#define GIMME_ROCKETS			0x00000400
+#define GIMME_CELLS				0x00000800
+#define GIMME_BLUECARD			0x00001000
+#define GIMME_BLUESKULL			0x00002000
+#define GIMME_YELLOWCARD		0x00004000
+#define GIMME_YELLOWSKULL		0x00008000
+#define GIMME_REDCARD			0x00010000
+#define GIMME_REDSKULL			0x00020000
+#define GIMME_INVULNERABILITY	0x00040000
+#define GIMME_STRENGTH			0x00080000
+#define GIMME_INVISIBILITY		0x00100000
+#define GIMME_IRONFEET			0x00200000
+#define GIMME_ALLMAP			0x00400000
+#define GIMME_INFRARED			0x00800000
+#define GIMME_HEALTH			0x01000000
+#define GIMME_HEALTH2			0x02000000
+#define GIMME_ARMOR				0x04000000
+#define GIMME_ARMOR2			0x08000000
+
+#define GIMME_WEAPONS			0x0000007f
+#define GIMME_AMMO				0x00000f00
+#define GIMME_KEYS				0x0003f000
+#define GIMME_POWERS			0x00fc0000
+#define GIMME_ALL				0xffffffff
+
+    int		i1;
+
+/*	if (Cmd_Argc() == 1)
+    {
+       	C_Printf("GIMME [All] [Health] [Health2] [Armor] [Armor2]\n");
+        C_Printf(" [Weapons] [Shotgun] [Chaingun] [Launcher] [Plasma]\n");
+        C_Printf(" [BFG] [Chainsaw] [SuperShotgun] [Backpack]\n");
+        C_Printf(" [Ammo] [Bullets] [Shells] [Rockets] [Cells]\n");
+		C_Printf(" [Keys] [BlueCard] [YellowCard] [RedCard]\n");
+        C_Printf(" [BlueSkull] [YellowSkull] [RedSkull]\n");
+        C_Printf(" [Powers] [Invulnerability] [Bersek]\n");
+        C_Printf(" [Invisibility] [Suit] [AllMap] [LiteAmp]\n");
+        C_Printf(":Gives you all that you need\n");
+        return;
+    }*/
+
+   	i1 = 0;
+	// All
+	if (Cmd_CheckParm("All"))
+		i1 |= GIMME_ALL;
+
+    // Weapons
+	if (Cmd_CheckParm("Weapons"))
+		i1 |= GIMME_WEAPONS;
+	if (Cmd_CheckParm("Shotgun"))
+		i1 |= GIMME_SHOTGUN;
+	if (Cmd_CheckParm("Chaingun"))
+		i1 |= GIMME_CHAINGUN;
+	if (Cmd_CheckParm("Launcher"))
+		i1 |= GIMME_LAUNCHER;
+	if (Cmd_CheckParm("Plasma"))
+		i1 |= GIMME_PLASMA;
+	if (Cmd_CheckParm("BFG"))
+		i1 |= GIMME_BFG;
+	if (Cmd_CheckParm("Chainsaw"))
+		i1 |= GIMME_CHAINSAW;
+	// Backpack
+	if (Cmd_CheckParm("Backpack"))
+		i1 |= GIMME_BACKPACK;
+
+        // Ammo
+	if (Cmd_CheckParm("Ammo"))
+		i1 |= GIMME_AMMO;
+	if (Cmd_CheckParm("Bullets"))
+		i1 |= GIMME_BULLETS;
+	if (Cmd_CheckParm("Shells"))
+		i1 |= GIMME_SHELLS;
+	if (Cmd_CheckParm("Rockets"))
+		i1 |= GIMME_ROCKETS;
+	if (Cmd_CheckParm("Cells"))
+		i1 |= GIMME_CELLS;
+
+        // Keys
+	if (Cmd_CheckParm("Keys"))
+		i1 |= GIMME_KEYS;
+	if (Cmd_CheckParm("BlueCard"))
+		i1 |= GIMME_BLUECARD;
+	if (Cmd_CheckParm("BlueSkull"))
+		i1 |= GIMME_BLUESKULL;
+	if (Cmd_CheckParm("YellowCard"))
+		i1 |= GIMME_YELLOWCARD;
+	if (Cmd_CheckParm("YellowSkull"))
+		i1 |= GIMME_YELLOWSKULL;
+	if (Cmd_CheckParm("RedCard"))
+		i1 |= GIMME_REDCARD;
+	if (Cmd_CheckParm("RedSkull"))
+		i1 |= GIMME_REDSKULL;
+
+        // Powers
+	if (Cmd_CheckParm("Powers"))
+		i1 |= GIMME_POWERS;
+	if (Cmd_CheckParm("Invulnerability"))
+		i1 |= GIMME_INVULNERABILITY;
+	if (Cmd_CheckParm("Bersek"))
+		i1 |= GIMME_STRENGTH;
+	if (Cmd_CheckParm("Invisibility"))
+		i1 |= GIMME_INVISIBILITY;
+	if (Cmd_CheckParm("Suit"))
+		i1 |= GIMME_IRONFEET;
+	if (Cmd_CheckParm("AllMap"))
+		i1 |= GIMME_ALLMAP;
+	if (Cmd_CheckParm("LiteAmp"))
+		i1 |= GIMME_INFRARED;
+
+        // Health
+	if (Cmd_CheckParm("Health"))
+		i1 |= GIMME_HEALTH;
+	if (Cmd_CheckParm("Health2"))
+		i1 |= GIMME_HEALTH2;
+
+        // Armor
+	if (Cmd_CheckParm("Armor"))
+		i1 |= GIMME_ARMOR;
+	if (Cmd_CheckParm("Armor2"))
+		i1 |= GIMME_ARMOR2;
+	
+    // Weapons
+#ifdef FIXME
+    if (i1 & GIMME_SHOTGUN)
+        players[0].weaponowned[wp_shotgun] = true;
+	if (i1 & GIMME_CHAINGUN)
+        players[0].weaponowned[wp_chaingun] = true;
+	if (i1 & GIMME_LAUNCHER)
+        players[0].weaponowned[wp_missile] = true;
+	if (i1 & GIMME_PLASMA)
+        players[0].weaponowned[wp_plasma] = true;
+	if (i1 & GIMME_BFG)
+        players[0].weaponowned[wp_bfg] = true;
+	if (i1 & GIMME_CHAINSAW)
+        players[0].weaponowned[wp_chainsaw] = true;
+#endif
+
+    // Backpack
+	if (i1 & GIMME_BACKPACK)
+	    players[0].backpack = true;
+
+	// Ammo
+	if (i1 & GIMME_BULLETS)
+        players[0].ammo[am_clip] =
+        	maxammo[am_clip] * (players[0].backpack ? 2 : 1);
+	if (i1 & GIMME_SHELLS)
+        players[0].ammo[am_electric_arrow] =
+        	maxammo[am_electric_arrow] * (players[0].backpack ? 2 : 1);
+	if (i1 & GIMME_ROCKETS)
+        players[0].ammo[am_misl] =
+        	maxammo[am_misl] * (players[0].backpack ? 2 : 1);
+	if (i1 & GIMME_CELLS)
+        players[0].ammo[am_cell] =
+        	maxammo[am_cell] * (players[0].backpack ? 2 : 1);
+
+    // Keys
+	if (i1 & GIMME_BLUECARD)
+        players[0].keys |= 1 << it_bluecard;
+	if (i1 & GIMME_YELLOWCARD)
+        players[0].keys |= 1 << it_yellowcard;
+	if (i1 & GIMME_REDCARD)
+        players[0].keys |= 1 << it_redcard;
+	if (i1 & GIMME_BLUESKULL)
+        players[0].keys |= 1 << it_blueskull;
+	if (i1 & GIMME_YELLOWSKULL)
+        players[0].keys |= 1 << it_yellowskull;
+	if (i1 & GIMME_REDSKULL)
+        players[0].keys |= 1 << it_redskull;
+
+    // Powers
+	if (i1 & GIMME_INVULNERABILITY)
+        P_GivePower(&players[0], pw_invulnerability);
+	if (i1 & GIMME_STRENGTH)
+        P_GivePower(&players[0], pw_strength);
+	if (i1 & GIMME_INVISIBILITY)
+        P_GivePower(&players[0], pw_invisibility);
+	if (i1 & GIMME_IRONFEET)
+        P_GivePower(&players[0], pw_ironfeet);
+	if (i1 & GIMME_INFRARED)
+        P_GivePower(&players[0], pw_infrared);
+
+	//	Items
+	if (i1 & GIMME_ALLMAP)
+        P_GiveItem(&players[0], IT_ALL_MAP);
+
+    // Health
+	if ((i1 & GIMME_HEALTH) && (players[0].health < 100))
+    {
+		players[0].health = 100;
+		players[0].mo->health = 100;
+    }
+	if (i1 & GIMME_HEALTH2)
+    {
+		players[0].health = 200;
+		players[0].mo->health = 200;
+    }
+
+    // Armor
+	if ((i1 & GIMME_ARMOR) && (players[0].armorpoints < 100))
+    {
+	    players[0].armortype = 1;
+	    players[0].armorpoints = 100;
+    }
+	if (i1 & GIMME_ARMOR2)
+    {
+	    players[0].armortype = 2;
+	    players[0].armorpoints = 200;
+    }
+}
+
+//==========================================================================
+//
+//	P_Massacre
+//
+//	Kills all monsters.
+//
+//==========================================================================
+
+int P_Massacre(void)
+{
+	int 	count;
+	mobj_t	*mo;
+
+	count = 0;
+	for (mo = NextMobj(NULL); mo; mo = NextMobj(mo))
+	{
+		if ((mo->flags & MF_COUNTKILL) && (mo->health > 0))
+		{
+			DamageMobj(mo, NULL, NULL, 10000);
+			count++;
+		}
+	}
+	return count;
+}
+
+//==========================================================================
+//
+//  Cheat_KillAll
+//
+//==========================================================================
+
+void Cheat_KillAll(void)
+{
+	cprint(&players[0], "%d MONSTERS KILLED\n", P_Massacre());
+}
+
+//==========================================================================
+//
+//
+//
+//==========================================================================
+
+

@@ -1,0 +1,95 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+#include "../../common/server.vc"
+
+boolean		randomclass;
+
+#include "../hexndefs.vc"
+
+#include "specutl.vc"
+#include "scroll.vc"
+#include "ceilings.vc"
+#include "doors.vc"
+#include "floors.vc"
+#include "plats.vc"
+#include "polyobj.vc"
+#include "lights.vc"
+#include "spec.vc"
+
+#include "world.vc"
+
+#include "states.vc"
+#include "mobjinfo.vc"
+#include "wpninfo.vc"
+#include "savegame.vc"
+#include "inter.vc"
+#include "invent.vc"
+#include "user.vc"
+#include "mobj.vc"
+#include "move.vc"
+#include "physics.vc"
+#include "map.vc"
+#include "teleport.vc"
+#include "missile.vc"
+#include "things.vc"
+#include "usersubs.vc"
+#include "cheat.vc"
+#include "ai_subs.vc"
+#include "weapons.vc"
+#include "action.vc"
+#include "enemy.vc"
+
+#include "w_fightr.vc"
+#include "w_cleric.vc"
+#include "w_mage.vc"
+#include "w_pig.vc"
+
+#include "thrust.vc"
+#include "pottery.vc"
+#include "tree.vc"
+#include "bell.vc"
+#include "telo.vc"
+#include "fog.vc"
+#include "poison.vc"
+#include "bridge.vc"
+#include "quake.vc"
+#include "batspawn.vc"
+
+#include "pig.vc"
+#include "ettin.vc"
+#include "centaur.vc"
+#include "demon.vc"
+#include "iceguy.vc"
+#include "fired.vc"
+#include "bishop.vc"
+#include "serpent.vc"
+#include "wraith.vc"
+#include "dragon.vc"
+#include "sorcerer.vc"
+#include "cboss.vc"
+#include "korax.vc"
+#include "minotaur.vc"
+
+#include "main.vc"
+

@@ -1,0 +1,90 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//**
+//**	Single player menu
+//**
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+struct menu_single_t
+{
+	menu_t		menu;
+	menutext_t	newgame;
+	menutext_t	loadgame;
+	menutext_t	savegame;
+	menutext_t	endgame;
+	menutext_t	title;
+};
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+void menu_episode(void);
+void menu_load(void);
+void menu_save(void);
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+menu_single_t SingleMenu;
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	menu_single
+//
+//==========================================================================
+
+void menu_single(void)
+{
+	int x = 97;
+	int y = 40;
+
+    InitMenu(&SingleMenu.menu);
+
+	MenuText_InitFunc(&SingleMenu.newgame, x, y, "New Game", TEXT_BIG, menu_episode);
+	AddMenuItem(&SingleMenu.menu, &SingleMenu.newgame);
+	y += 18;
+
+	MenuText_InitFunc(&SingleMenu.loadgame, x, y, "Load Game", TEXT_BIG, menu_load);
+	AddMenuItem(&SingleMenu.menu, &SingleMenu.loadgame);
+	y += 18;
+
+	MenuText_InitFunc(&SingleMenu.savegame, x, y, "Save Game", TEXT_BIG, menu_save);
+	AddMenuItem(&SingleMenu.menu, &SingleMenu.savegame);
+	y += 18;
+
+	MenuText_InitCmd(&SingleMenu.endgame, x, y, "End Game", TEXT_BIG, "Disconnect\n");
+	AddMenuItem(&SingleMenu.menu, &SingleMenu.endgame);
+
+	MenuText_InitTitle(&SingleMenu.title, 160, 24, "SINGLE PLAYER", TEXT_BIGC);
+	AddMenuItem(&SingleMenu.menu, &SingleMenu.title);
+
+    PushMenu(&SingleMenu.menu);
+}
+
+

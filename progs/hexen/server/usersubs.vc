@@ -1,0 +1,649 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+#define BLAST_RADIUS_DIST	255.0
+#define BLAST_FULLSTRENGTH	0.0038909912
+#define BLAST_SPEED			20.0
+
+void PostMorphWeapon(player_t *player, int weapon);
+void SetPspriteNF(player_t *player, int position, int stnum);
+
+int PStateAttack[NUMCLASSES] = 
+{
+	S_FPLAY_ATK1,
+	S_CPLAY_ATK1,
+	S_MPLAY_ATK1,
+	S_PIGPLAY_ATK1
+};
+
+int PStateAttackEnd[NUMCLASSES] = 
+{
+	S_FPLAY_ATK2,
+	S_CPLAY_ATK3,
+	S_MPLAY_ATK2,
+	S_PIGPLAY_ATK1
+};
+
+//==========================================================================
+//
+//	InitLava
+//
+//==========================================================================
+
+void InitLava(void)
+{
+	// Not needed, because all globals memory is set to 0
+//	memset(&LavaInflictor, 0, sizeof(mobj_t));
+	LavaInflictor.type = MT_CIRCLEFLAME;
+	LavaInflictor.flags2 = MF2_FIREDAMAGE|MF2_NODMGTHRUST;
+}
+
+//==========================================================================
+//
+//	MorphPlayerThink
+//
+//==========================================================================
+
+void MorphPlayerThink(player_t *player)
+{
+	mobj_t *pmo;
+
+	if (player->morphTics&15)
+	{
+		return;
+	}
+	pmo = player->mo;
+	if (!(pmo->velocity.x + pmo->velocity.y) && P_Random() < 64)
+	{
+		// Snout sniff
+		SetPspriteNF(player, ps_weapon, S_SNOUTATK2);
+		StartSoundName(pmo, "PigActive1"); // snort
+		return;
+	}
+	if (P_Random() < 48)
+	{
+		if (P_Random() < 128)
+		{
+			StartSoundName(pmo, "PigActive1");
+		}
+		else
+		{
+			StartSoundName(pmo, "PigActive2");
+		}
+	}		
+}
+
+//==========================================================================
+//
+//  UndoPlayerMorph
+//
+//==========================================================================
+
+boolean UndoPlayerMorph(player_t *player)
+{
+	mobj_t *fog;
+	mobj_t *mo;
+	mobj_t *pmo;
+	float x;
+	float y;
+	float z;
+	angle_t angle;
+	int weapon;
+	int oldFlags;
+	int oldFlags2;
+	int oldBeast;
+
+	pmo = player->mo;
+	x = pmo->origin.x;
+	y = pmo->origin.y;
+	z = pmo->origin.z;
+	angle = pmo->angles.yaw;
+	weapon = pmo->special1;
+	oldFlags = pmo->flags;
+	oldFlags2 = pmo->flags2;
+	oldBeast = pmo->type;
+	SetMobjState(pmo, S_FREETARGMOBJ);
+	switch (player->baseclass)
+	{
+		case PCLASS_FIGHTER:
+			mo = P_SpawnMobj(x, y, z, MT_PLAYER_FIGHTER);
+			break;
+		case PCLASS_CLERIC:
+			mo = P_SpawnMobj(x, y, z, MT_PLAYER_CLERIC);
+			break;
+		case PCLASS_MAGE:
+			mo = P_SpawnMobj(x, y, z, MT_PLAYER_MAGE);
+			break;
+		default:
+			Error("UndoPlayerMorph: Unknown player class %d", player->pclass);
+	}
+	if (!P_TestMobjLocation(mo))
+	{
+		// Didn't fit
+		P_RemoveMobj(mo);
+		mo = P_SpawnMobj(x, y, z, oldBeast);
+		mo->angles.yaw = angle;
+		mo->health = player->health;
+		mo->special1 = weapon;
+		mo->player = player;
+		mo->flags = oldFlags;
+		mo->flags2 = oldFlags2;
+		player->mo = mo;
+		player->morphTics = 2 * 35;
+		return false;
+	}
+	SetPlayerColor(player);
+	mo->angles.yaw = angle;
+	mo->player = player;
+	mo->reactiontime = 18;
+	if (oldFlags2 & MF2_FLY)
+	{
+		mo->flags2 |= MF2_FLY;
+		mo->flags |= MF_NOGRAVITY;
+	}
+	player->morphTics = 0;
+	player->health = mo->health = MAXHEALTH;
+	player->mo = mo;
+	player->pclass = player->baseclass;
+	fog = P_SpawnMobj(x + 20.0 * cos(angle),
+		y + 20.0 * sin(angle), z + TELEFOGHEIGHT, MT_TFOG);
+	StartSoundName(fog, "Teleport");
+	PostMorphWeapon(player, weapon);
+	return true;
+}
+
+//==========================================================================
+//
+//	SetPlayerRunState
+//
+//==========================================================================
+
+void SetPlayerRunState(player_t* player)
+{
+	if (player->mo->statenum == PStateNormal[player->pclass])
+	{
+		SetMobjState(player->mo, PStateRun[player->pclass]);
+	}
+}
+
+//==========================================================================
+//
+// 	DeathPlayerThink
+//
+// 	Fall on your face when dying. Decrease POV height to floor height.
+//
+//==========================================================================
+
+void DeathPlayerThink(player_t* player)
+{
+	int 		dir;
+	angle_t 	delta;
+	int 		lookDelta;
+
+    MovePsprites(player);
+	if (player->mo->waterlevel > 1)
+	{
+		player->mo->velocity.z -= 60.0;		// drift towards bottom
+	}
+	
+    onground = (player->mo->origin.z <= player->mo->floorz);
+
+	if(player->mo->type == MT_BLOODYSKULL || player->mo->type == MT_ICECHUNK)
+	{
+		// Flying bloody skull or flying ice chunk
+		player->viewheight = 6.0;
+		player->deltaviewheight = 0.0;
+		//player->damagecount = 20;
+		if (onground)
+		{
+#ifdef FIXME
+			if (player->lookdir < 60)
+			{
+				lookDelta = (60-player->lookdir)/8;
+				if(lookDelta < 1 && (level->tictime&1))
+				{
+					lookDelta = 1;
+				}
+				else if(lookDelta > 6)
+				{
+					lookDelta = 6;
+				}
+				player->lookdir += lookDelta;
+			}
+#endif
+		}
+	}
+	else if (!(player->mo->flags2&MF2_ICEDAMAGE))
+	{ // Fall to ground (if not frozen)
+		player->deltaviewheight = 0.0;
+		if (player->viewheight > 6.0)
+		{
+			player->viewheight -= 1.0;
+		}
+		if (player->viewheight < 6.0)
+		{
+			player->viewheight = 6.0;
+		}
+#ifdef FIXME
+		if (player->lookdir > 0)
+		{
+			player->lookdir -= 6;
+		}
+		else if (player->lookdir < 0)
+		{
+			player->lookdir += 6;
+		}
+		if (abs(player->lookdir) < 6)
+		{
+			player->lookdir = 0;
+		}
+#endif
+	}
+	CalcHeight(player);
+
+	if(player->attacker && player->attacker != player->mo)
+	{ // Watch killer
+		dir = P_FaceMobj(player->mo, player->attacker, &delta);
+		if(delta < ANGLE_1*10)
+		{ // Looking at killer, so fade damage and poison counters
+			if(player->damagecount)
+			{
+				player->damagecount--;
+			}
+			if(player->poisoncount)
+			{
+				player->poisoncount--;
+			}
+		}
+		delta = delta/8;
+		if(delta > ANGLE_1*5)
+		{
+			delta = ANGLE_1*5;
+		}
+		if(dir)
+		{ // Turn clockwise
+			player->mo->angles.yaw += delta;
+		}
+		else
+		{ // Turn counter clockwise
+			player->mo->angles.yaw -= delta;
+		}
+	}
+	else if(player->damagecount || player->poisoncount)
+	{
+		if(player->damagecount)
+		{
+			player->damagecount--;
+		}
+		else
+		{
+			player->poisoncount--;
+		}
+	}
+
+	if (player->buttons & BT_USE)
+	{
+		player->palette = 0;
+        player->weapon_palette = 0;
+		player->inv_ptr = 0;
+		player->curpos = 0;
+		player->newtorch = 0;
+		player->newtorchdelta = 0;
+		player->playerstate = PST_REBORN;
+		player->mo->special1 = player->pclass;
+		if (player->mo->special1 > 2)
+		{
+			player->mo->special1 = 0;
+		}
+		// Let the mobj know the player has entered the reborn state.  Some
+		// mobjs need to know when it's ok to remove themselves.
+		player->mo->special2 = 666;
+	}
+}
+
+//==========================================================================
+//
+//  SpawnSpeedMobj
+//
+//==========================================================================
+
+mobj_t *SpawnSpeedMobj(mobj_t* pmo)
+{
+	return P_SpawnMobj(pmo->origin.x, pmo->origin.y, pmo->origin.z, MT_PLAYER_SPEED);
+}
+
+//==========================================================================
+//
+//	ArtiPig
+//
+//==========================================================================
+
+void ArtiPig(mobj_t *mo)
+{
+	SpawnPlayerMissile(mo, MT_EGGFX);
+	SpawnPlayerMissileAngle(mo, MT_EGGFX, mo->angles.yaw - (ANG45 / 6));
+	SpawnPlayerMissileAngle(mo, MT_EGGFX, mo->angles.yaw + (ANG45 / 6));
+	SpawnPlayerMissileAngle(mo, MT_EGGFX, mo->angles.yaw - (ANG45 / 3));
+	SpawnPlayerMissileAngle(mo, MT_EGGFX, mo->angles.yaw + (ANG45 / 3));
+}
+
+//==========================================================================
+//
+//	ArtiSummon
+//
+//==========================================================================
+
+void ArtiSummon(player_t *player)
+{
+	mobj_t*		mo;
+
+	mo = SpawnPlayerMissile(player->mo, MT_SUMMON_FX);
+	if (mo)
+	{
+		mo->target = player->mo;
+		mo->specialmobj1 = player->mo;
+		mo->velocity.z = 5.0 * 35.0;
+	}
+}
+
+//==========================================================================
+//
+//	ArtiPoisonBag
+//
+//==========================================================================
+
+void ArtiPoisonBag(player_t *player)
+{
+	angle_t		angle;
+	mobj_t*		mo;
+
+	angle = player->mo->angles.yaw;
+	if (player->pclass == PCLASS_CLERIC)
+	{
+		mo = P_SpawnMobj(player->mo->origin.x + 16.0 * cos(angle),
+			player->mo->origin.y + 24.0 * sin(angle),
+			player->mo->origin.z - player->mo->floorclip + 8.0, MT_POISONBAG);
+		if (mo)
+		{
+			mo->target = player->mo;
+		}
+	}
+	else if (player->pclass == PCLASS_MAGE)
+	{
+		mo = P_SpawnMobj(player->mo->origin.x + 16.0 * cos(angle),
+			player->mo->origin.y + 24.0 * sin(angle),
+			player->mo->origin.z - player->mo->floorclip + 8.0, MT_FIREBOMB);
+		if (mo)
+		{
+			mo->target = player->mo;
+		}
+	}
+	else // PCLASS_FIGHTER, obviously (also pig, not so obviously)
+	{
+		mo = P_SpawnMobj(player->mo->origin.x, player->mo->origin.y,
+			player->mo->origin.z - player->mo->floorclip + 35.0,
+			MT_THROWINGBOMB);
+		if (mo)
+		{
+			mo->angles.yaw = player->mo->angles.yaw + (((P_Random() & 7) - 4) << 24);
+			mo->velocity.z = (4.0 + 173.0 * -tan(player->mo->angles.pitch) / 16.0) * 35.0;
+			mo->origin.z += 173.0 * -tan(player->mo->angles.pitch) / 16.0;
+			P_ThrustMobj(mo, mo->angles.yaw, mo->speed * frametime);
+			mo->velocity.x += player->mo->velocity.x / 2.0;
+			mo->velocity.y += player->mo->velocity.y / 2.0;
+			mo->target = player->mo;
+			mo->time -= Random() * 0.1;
+			CheckMissileSpawn(mo);
+		}
+	}
+}
+
+//==========================================================================
+//
+//  ArtiTeleportOther
+//
+//==========================================================================
+
+void ArtiTeleportOther(player_t *player)
+{
+	mobj_t *mo;
+
+	mo = SpawnPlayerMissile(player->mo, MT_TELOTHER_FX1);
+	if (mo)
+	{
+		mo->target = player->mo;
+	}
+}
+
+//==========================================================================
+//
+//  BlastMobj
+//
+//==========================================================================
+
+void BlastMobj(mobj_t *source, mobj_t *victim, float strength)
+{
+	angle_t		angle;
+	angle_t		ang;
+	mobj_t*		mo;
+	float		x;
+	float		y;
+	float		z;
+
+	angle = atan2(victim->origin.y - source->origin.y,
+		victim->origin.x - source->origin.x);
+	if (strength < BLAST_FULLSTRENGTH)
+	{
+		victim->velocity.x = strength * cos(angle) * 35.0;
+		victim->velocity.y = strength * sin(angle) * 35.0;
+		if (victim->player)
+		{
+			// Players handled automatically
+		}
+		else
+		{
+			victim->flags2 |= MF2_SLIDE;
+			victim->flags2 |= MF2_BLASTED;
+		}
+	}
+	else		// full strength blast from artifact
+	{
+		if (victim->flags & MF_MISSILE)
+		{
+			switch (victim->type)
+			{
+				case MT_SORCBALL1:	// don't blast sorcerer balls
+				case MT_SORCBALL2:
+				case MT_SORCBALL3:
+					return;
+					break;
+				case MT_MSTAFF_FX2:	// Reflect to originator
+					victim->specialmobj1 = victim->target;
+					victim->target = source;
+					break;
+				default:
+					break;
+			}
+		}
+		if (victim->type == MT_HOLY_FX)
+		{
+			if (victim->specialmobj1 == source)
+			{
+				victim->specialmobj1 = victim->target;
+				victim->target = source;
+			}
+		}
+		victim->velocity.x = BLAST_SPEED * cos(angle) * 35.0;
+		victim->velocity.y = BLAST_SPEED * sin(angle) * 35.0;
+
+		// Spawn blast puff
+		ang = atan2(source->origin.y - victim->origin.y,
+			source->origin.x - victim->origin.x);
+		x = victim->origin.x + (victim->radius + 1.0) * cos(ang);
+		y = victim->origin.y + (victim->radius + 1.0) * sin(ang);
+		z = victim->origin.z - victim->floorclip + victim->height / 2.0;
+		mo = P_SpawnMobj(x, y, z, MT_BLASTEFFECT);
+		if (mo)
+		{
+			mo->velocity.x = victim->velocity.x;
+			mo->velocity.y = victim->velocity.y;
+		}
+
+		if (victim->flags & MF_MISSILE)
+		{
+			victim->velocity.z = 8.0 * 35.0;
+			mo->velocity.z = victim->velocity.z;
+		}
+		else
+		{
+			victim->velocity.z = 1000.0 / victim->mass * 35.0;
+		}
+		if (victim->player)
+		{
+			// Players handled automatically
+		}
+		else
+		{
+			victim->flags2 |= MF2_SLIDE;
+			victim->flags2 |= MF2_BLASTED;
+		}
+	}
+}
+
+//==========================================================================
+//
+//  ArtiBlastRadius
+//
+//	Blast all mobj things away
+//
+//==========================================================================
+
+void ArtiBlastRadius(player_t *player)
+{
+	mobj_t 		*mo;
+	mobj_t 		*pmo=player->mo;
+	float		dist;
+
+	StartSoundName(pmo, "BlastRadius");
+	P_NoiseAlert(player->mo, player->mo);
+
+	mo = NULL;
+	while ((mo = NextMobj(mo)))
+	{
+		if ((mo == pmo) || (mo->flags2 & MF2_BOSS))
+		{
+			// Not a valid monster
+			continue;
+		}
+		if ((mo->type == MT_POISONCLOUD) ||		// poison cloud
+			(mo->type == MT_HOLY_FX) ||			// holy fx
+			(mo->flags & MF_ICECORPSE))			// frozen corpse
+		{
+			// Let these special cases go
+		}
+		else if ((mo->flags & MF_COUNTKILL) && (mo->health <= 0))
+		{
+			continue;
+		}
+		else if (!(mo->flags & MF_COUNTKILL) && !(mo->player) &&
+			!(mo->flags&MF_MISSILE))
+		{
+			// Must be monster, player, or missile
+			continue;
+		}
+		if (mo->flags2 & MF2_DORMANT)
+		{
+			continue;		// no dormant creatures
+		}
+		if ((mo->type == MT_WRAITHB) && (mo->translucency >= 100))
+		{
+			continue;		// no underground wraiths
+		}
+		if ((mo->type == MT_SPLASHBASE) || (mo->type == MT_SPLASH))
+		{
+			continue;
+		}
+		if (mo->type == MT_SERPENT || mo->type == MT_SERPENTLEADER)
+		{
+			continue;
+		}
+		dist = MobjDist(pmo, mo);
+		if (dist > BLAST_RADIUS_DIST)
+		{
+			// Out of range
+			continue;
+		}
+		BlastMobj(pmo, mo, BLAST_FULLSTRENGTH);
+	}
+}
+
+//==========================================================================
+//
+//	G_CheckSpot
+//
+//	Returns false if the player cannot be respawned at the given mthing_t
+// spot because something is occupying it
+//
+//==========================================================================
+
+boolean G_CheckSpot(int playernum, mthing_t* mthing)
+{
+    float			x;
+    float			y;
+    subsector_t*	ss; 
+    angle_t			an;
+    mobj_t*			mo;
+    int				i;
+	
+    if (!players[playernum].mo)
+    {
+		// first spawn of level, before corpses
+		for (i = 0; i < playernum; i++)
+	    	if (players[i].mo->origin.x == mthing->x &&
+	    		players[i].mo->origin.y == mthing->y)
+				return false;
+		return true;
+    }
+
+    x = mthing->x;
+    y = mthing->y;
+	 
+	players[playernum].mo->flags2 &= ~MF2_PASSMOBJ;
+    if (!P_CheckPosition(players[playernum].mo, x, y))
+	{
+		players[playernum].mo->flags2 |= MF2_PASSMOBJ;
+		return false;
+	}
+	players[playernum].mo->flags2 |= MF2_PASSMOBJ;
+
+    // spawn a teleport fog 
+    ss = PointInSubsector(x, y);
+    an = ANG45 * (mthing->angle / 45);
+ 
+	mo = P_SpawnMobj(x + 20.0 * cos(an), y + 20.0 * sin(an),
+		ss->sector->floorheight + TELEFOGHEIGHT, MT_TFOG);
+	StartSoundName(mo, "Teleport");	// don't start sound on first frame
+
+    return true; 
+}
+

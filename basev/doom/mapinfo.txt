@@ -1,0 +1,182 @@
+map E1M1 "hangar"
+next E1M2
+sky1 SKY1 0
+music D_e1m1
+
+map E1M2 "nuclear plant"
+next E1M3
+sky1 SKY1 0
+music D_e1m2
+
+map E1M3 "toxin refinery"
+next E1M4
+sky1 SKY1 0
+music D_e1m3
+
+map E1M4 "command control"
+next E1M5
+sky1 SKY1 0
+music D_e1m4
+
+map E1M5 "phobos lab"
+next E1M6
+sky1 SKY1 0
+music D_e1m5
+
+map E1M6 "central processing"
+next E1M7
+sky1 SKY1 0
+music D_e1m6
+
+map E1M7 "computer station"
+next E1M8
+sky1 SKY1 0
+music D_e1m7
+
+map E1M8 "phobos anomaly"
+next E1M1
+sky1 SKY1 0
+music D_e1m8
+
+map E1M9 "military base"
+next E1M1
+sky1 SKY1 0
+music D_e1m9
+
+;------------------------------------------------------
+map E2M1 "deimos anomaly"
+next E2M2
+sky1 SKY2 0
+music D_e2m1
+
+map E2M2 "containment area"
+next E2M3
+sky1 SKY2 0
+music D_e2m2
+
+map E2M3 "refinery"
+next E2M4
+sky1 SKY2 0
+music D_e2m3
+
+map E2M4 "deimos lab"
+next E2M5
+sky1 SKY2 0
+music D_e2m4
+
+map E2M5 "command center"
+next E2M6
+sky1 SKY2 0
+music D_e2m5
+
+map E2M6 "halls of the damned"
+next E2M7
+sky1 SKY2 0
+music D_e2m6
+
+map E2M7 "spawning vats"
+next E2M8
+sky1 SKY2 0
+music D_e2m7
+
+map E2M8 "tower of babel"
+next E2M1
+sky1 SKY2 0
+music D_e2m8
+
+map E2M9 "fortress of mystery"
+next E2M1
+sky1 SKY2 0
+music D_e2m9
+
+;-------------------------------------------------------
+map E3M1 "hell keep"
+next E3M2
+sky1 SKY3 0
+music D_e3m1
+
+map E3M2 "slough of despair"
+next E3M3
+sky1 SKY3 0
+music D_e3m2
+
+map E3M3 "pandemonium"
+next E3M4
+sky1 SKY3 0
+music D_e3m3
+
+map E3M4 "house of pain"
+next E3M5
+sky1 SKY3 0
+music D_e3m4
+
+map E3M5 "unholy cathedral"
+next E3M6
+sky1 SKY3 0
+music D_e3m5
+
+map E3M6 "mt. erebus"
+next E3M7
+sky1 SKY3 0
+music D_e3m6
+
+map E3M7 "limbo"
+next E3M8
+sky1 SKY3 0
+music D_e3m7
+
+map E3M8 "dis"
+next E3M1
+sky1 SKY3 0
+music D_e3m8
+
+map E3M9 "warrens"
+next E3M1
+sky1 SKY3 0
+music D_e3m9
+
+;------------------------------------------------------
+map E4M1 "hell beneath"
+next E4M2
+sky1 SKY4 0
+music D_e3m4
+
+map E4M2 "perfect hatred"
+next E4M3
+sky1 SKY4 0
+music D_e3m2
+
+map E4M3 "sever the wicked"
+next E4M4
+sky1 SKY4 0
+music D_e3m3
+
+map E4M4 "unruly evil"
+next E4M5
+sky1 SKY4 0
+music D_e1m5
+
+map E4M5 "they will repent"
+next E4M6
+sky1 SKY4 0
+music D_e2m7
+
+map E4M6 "against thee wickedly"
+next E4M7
+sky1 SKY4 0
+music D_e2m4
+
+map E4M7 "and hell followed"
+next E4M8
+sky1 SKY4 0
+music D_e2m6
+
+map E4M8 "unto the cruel"
+next E4M1
+sky1 SKY4 0
+music D_e2m5
+
+map E4M9 "fear"
+next E4M1
+sky1 SKY4 0
+music D_e1m9

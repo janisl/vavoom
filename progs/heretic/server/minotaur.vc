@@ -1,0 +1,242 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	A_MinotaurAtk1
+//
+//	Melee attack.
+//
+//==========================================================================
+
+void A_MinotaurAtk1(mobj_t* actor)
+{
+	player_t*	player;
+
+	if (!actor->target)
+	{
+		return;
+	}
+	StartSoundName(actor, "StaffHit2");
+	if (P_CheckMeleeRange(actor))
+	{
+		DamageMobj(actor->target, actor, actor, HITDICE(4));
+		if ((player = actor->target->player))
+		{
+			// Squish the player
+			player->deltaviewheight = -16.0;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	A_MinotaurDecide
+//
+//	Choose a missile attack.
+//
+//==========================================================================
+
+#define MNTR_CHARGE_SPEED	455.0
+
+void A_MinotaurDecide(mobj_t* actor)
+{
+	mobj_t		*target;
+	float		dist;
+	TVec		vsrc;
+	TVec		vdst;
+	TVec		dir;
+
+	target = actor->target;
+	if (!target)
+	{
+		return;
+	}
+	StartSoundName(actor, "MinotaurSight");
+	dist = MobjDist(actor, target);
+	if (target->origin.z + target->height > actor->origin.z &&
+		target->origin.z + target->height < actor->origin.z + actor->height &&
+		dist < 8.0 * 64.0 && dist > 1.0 * 64.0 && P_Random() < 150)
+	{
+		// Charge attack
+		// Don't call the state function right away
+		SetMobjStateNF(actor, S_MNTR_ATK4_1);
+		actor->flags |= MF_SKULLFLY;
+		A_FaceTarget(actor);
+		CopyMobjCenter(actor, vsrc);
+		CopyMobjCenter(actor->target, vdst);
+		vsub(vdst, vsrc, dir);
+		vnorm(dir);
+		vscale(dir, MNTR_CHARGE_SPEED, actor->velocity);
+		actor->special1 = 35 / 2; // Charge duration
+	}
+	else if (target->origin.z == target->floorz &&
+		dist < 9.0 * 64.0 && P_Random() < 220)
+	{
+		// Floor fire attack
+		SetMobjState(actor, S_MNTR_ATK3_1);
+		actor->special2 = 0;
+	}
+	else
+	{
+		// Swing attack
+		A_FaceTarget(actor);
+		// Don't need to call SetMobjState because the current state
+		// falls through to the swing attack
+	}
+}
+
+//==========================================================================
+//
+//	A_MinotaurAtk2
+//
+//	Swing attack.
+//
+//==========================================================================
+
+void A_MinotaurAtk2(mobj_t* actor)
+{
+	mobj_t*	mo;
+	angle_t	angle;
+	TAVec	angles;
+
+	if (!actor->target)
+	{
+		return;
+	}
+	StartSoundName(actor, "MinotaurAttack2");
+	if (P_CheckMeleeRange(actor))
+	{
+		DamageMobj(actor->target, actor, actor, HITDICE(5));
+		return;
+	}
+	mo = SpawnMissile(actor, actor->target, MT_MNTRFX1);
+	if (mo)
+	{
+		StartSoundName(mo, "MinotaurAttack2");
+		VectorAngles(&mo->velocity, &angles);
+		angle = mo->angles.yaw;
+		SpawnMissileAngles(actor, MT_MNTRFX1, angle - (ANG45 / 8), angles.pitch);
+		SpawnMissileAngles(actor, MT_MNTRFX1, angle + (ANG45 / 8), angles.pitch);
+		SpawnMissileAngles(actor, MT_MNTRFX1, angle - (ANG45 / 16), angles.pitch);
+		SpawnMissileAngles(actor, MT_MNTRFX1, angle + (ANG45 / 16), angles.pitch);
+	}
+}
+
+//==========================================================================
+//
+//	A_MinotaurAtk3
+//
+//	Floor fire attack.
+//
+//==========================================================================
+
+void A_MinotaurAtk3(mobj_t* actor)
+{
+	mobj_t*		mo;
+	player_t*	player;
+
+	if (!actor->target)
+	{
+		return;
+	}
+	if (P_CheckMeleeRange(actor))
+	{
+		DamageMobj(actor->target, actor, actor, HITDICE(5));
+		if ((player = actor->target->player))
+		{
+			// Squish the player
+			player->deltaviewheight = -16.0;
+		}
+	}
+	else
+	{
+		mo = SpawnMissile(actor, actor->target, MT_MNTRFX2);
+		if (mo != NULL)
+		{
+			StartSoundName(mo, "MinotaurAttack1");
+		}
+	}
+	if (P_Random() < 192 && actor->special2 == 0)
+	{
+		SetMobjState(actor, S_MNTR_ATK3_4);
+		actor->special2 = 1;
+	}
+}
+
+//==========================================================================
+//
+//	A_MinotaurCharge
+//
+//==========================================================================
+
+void A_MinotaurCharge(mobj_t* actor)
+{
+	mobj_t*	puff;
+
+	if (actor->special1)
+	{
+		puff = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_PHOENIXPUFF);
+		puff->velocity.z = 2.0 * 35.0;
+		actor->special1--;
+	}
+	else
+	{
+		actor->flags &= ~MF_SKULLFLY;
+		SetMobjState(actor, actor->seestate);
+	}
+}
+
+//==========================================================================
+//
+//	A_MntrFloorFire
+//
+//==========================================================================
+
+void A_MntrFloorFire(mobj_t* actor)
+{
+	mobj_t*	mo;
+    float	i1;
+    float	i2;
+
+	actor->origin.z = actor->floorz;
+    i1 = actor->origin.x + (Random() - Random()) * 4.0;
+    i2 = actor->origin.y + (Random() - Random()) * 4.0;
+	mo = P_SpawnMobj(i1, i2, ONFLOORZ, MT_MNTRFX3);
+	mo->target = actor->target;
+	mo->velocity.x = 0.00001; // Force block checking
+	CheckMissileSpawn(mo);
+}
+

@@ -1,0 +1,80 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+#include "../../common/server.vc"
+
+boolean		shareware;
+boolean		respawnmonsters;
+
+#include "../herdefs.vc"
+
+#include "xlat.vc"
+#include "specutl.vc"
+#include "ambient.vc"
+#include "ceilings.vc"
+#include "doors.vc"
+#include "floors.vc"
+#include "plats.vc"
+#include "lights.vc"
+#include "spec.vc"
+
+#include "world.vc"
+
+#include "savegame.vc"
+#include "states.vc"
+#include "mobjinfo.vc"
+#include "wpninfo.vc"
+#include "inter.vc"
+#include "invent.vc"
+#include "user.vc"
+#include "mobj.vc"
+#include "move.vc"
+#include "physics.vc"
+#include "map.vc"
+#include "missile.vc"
+#include "teleport.vc"
+#include "usersubs.vc"
+#include "cheat.vc"
+#include "ai_subs.vc"
+#include "weapon.vc"
+#include "action.vc"
+#include "enemy.vc"
+
+#include "pod.vc"
+#include "volcano.vc"
+#include "teleglit.vc"
+
+#include "chicken.vc"
+#include "imp.vc"
+#include "mummy.vc"
+#include "knight.vc"
+#include "wizard.vc"
+#include "head.vc"
+#include "clink.vc"
+#include "beast.vc"
+#include "snake.vc"
+#include "minotaur.vc"
+#include "sorcerer.vc"
+
+#include "main.vc"
+

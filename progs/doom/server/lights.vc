@@ -1,0 +1,399 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+//**
+//**	Light specials
+//**
+//**************************************************************************
+
+#define GLOWSPEED			8
+#define STROBEBRIGHT		5
+#define FASTDARK			15
+#define SLOWDARK			35
+
+//**************************************************************************
+//
+//	FIRELIGHT FLICKER
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//	T_FireFlicker
+//
+//==========================================================================
+
+void T_FireFlicker(special_t* flick)
+{
+    int		amount;
+	
+    if (--flick->count)
+		return;
+	
+    amount = (P_Random() & 3) * 16;
+    
+    if (flick->sector->params.lightlevel - amount < flick->minlight)
+		flick->sector->params.lightlevel = flick->minlight;
+    else
+		flick->sector->params.lightlevel = flick->maxlight - amount;
+
+    flick->count = 4;
+}
+
+//==========================================================================
+//
+// P_SpawnFireFlicker
+//
+//==========================================================================
+
+void P_SpawnFireFlicker(sector_t *sector)
+{
+    special_t	*flick;
+
+//	dprints("Spawn fire flicker\n");
+    // Note that we are resetting sector attributes.
+    // Nothing special about it during gameplay.
+    sector->special = 0;
+
+	flick = NewSpecialThinker(T_FireFlicker);
+
+    flick->sector = sector;
+    flick->count = 4;
+    flick->maxlight = sector->params.lightlevel;
+    flick->minlight = FindMinSurroundingLight(sector, sector->params.lightlevel) + 16;
+}
+
+//**************************************************************************
+//
+//	GLOWING LIGHT
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//  T_Glow
+//
+//==========================================================================
+
+void T_Glow(special_t *g)
+{
+    switch (g->direction)
+    {
+      case -1:
+		// DOWN
+		g->sector->params.lightlevel -= GLOWSPEED;
+		if (g->sector->params.lightlevel <= g->minlight)
+		{
+		    g->sector->params.lightlevel += GLOWSPEED;
+	    	g->direction = 1;
+		}
+		break;
+	
+      case 1:
+		// UP
+		g->sector->params.lightlevel += GLOWSPEED;
+		if (g->sector->params.lightlevel >= g->maxlight)
+		{
+	    	g->sector->params.lightlevel -= GLOWSPEED;
+		    g->direction = -1;
+		}
+		break;
+    }
+}
+
+//==========================================================================
+//
+//  P_SpawnGlowingLight
+//
+//	Spawn glowing light
+//
+//==========================================================================
+
+void P_SpawnGlowingLight(sector_t*	sector)
+{
+    special_t	*g;
+
+//	dprints("Spawn glowing light\n");
+    g = NewSpecialThinker(T_Glow);
+//	dprints("pointer ");
+//	dprintp(g);
+
+    g->sector = sector;
+    g->minlight = FindMinSurroundingLight(sector, sector->params.lightlevel);
+    g->maxlight = sector->params.lightlevel;
+    g->direction = -1;
+
+    sector->special = 0;
+//	dprints("\n");
+}
+
+//**************************************************************************
+//
+//	BROKEN LIGHT FLASHING
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//	T_LightFlash
+//
+//	Do flashing lights.
+//
+//==========================================================================
+
+void T_LightFlash(special_t* flash)
+{
+    if (--flash->count)
+		return;
+	
+    if (flash->sector->params.lightlevel == flash->maxlight)
+    {
+		flash->sector->params.lightlevel = flash->minlight;
+		flash->count = (P_Random() & flash->mintime) + 1;
+    }
+    else
+    {
+		flash->sector->params.lightlevel = flash->maxlight;
+		flash->count = (P_Random() & flash->maxtime) + 1;
+    }
+
+}
+
+//==========================================================================
+//
+//	P_SpawnLightFlash
+//
+//	After the map has been loaded, scan each sector
+// for specials that spawn thinkers
+//
+//==========================================================================
+
+void P_SpawnLightFlash(sector_t *sector)
+{
+    special_t	*flash;
+
+//	dprints("Spawn light flash, ");
+    // nothing special about it during gameplay
+    sector->special = 0;
+	
+    flash = NewSpecialThinker(T_LightFlash);
+//	dprints("pointer ");
+//	dprintp(flash);
+
+    flash->sector = sector;
+    flash->maxlight = sector->params.lightlevel;
+    flash->minlight = FindMinSurroundingLight(sector,sector->params.lightlevel);
+    flash->maxtime = 64;
+    flash->mintime = 7;
+    flash->count = (P_Random() & flash->maxtime) + 1;
+//	dprints("\n");
+}
+
+//**************************************************************************
+//
+//	STROBE LIGHT FLASHING
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//	T_StrobeFlash
+//
+//==========================================================================
+
+void T_StrobeFlash(special_t *flash)
+{
+    if (--flash->count)
+		return;
+	
+    if (flash->sector->params.lightlevel == flash->minlight)
+    {
+		flash->sector->params.lightlevel = flash->maxlight;
+		flash->count = flash->maxtime;
+    }
+    else
+    {
+		flash->sector->params.lightlevel = flash->minlight;
+		flash->count = flash->mintime;
+    }
+}
+
+//==========================================================================
+//
+//	P_SpawnStrobeFlash
+//
+//	After the map has been loaded, scan each sector
+// for specials that spawn thinkers
+//
+//==========================================================================
+
+void P_SpawnStrobeFlash(sector_t* sector, int fastOrSlow, int maxtime, int inSync)
+{
+    special_t*	flash;
+
+    flash = NewSpecialThinker(T_StrobeFlash);
+
+    flash->sector = sector;
+    flash->mintime = fastOrSlow;
+    flash->maxtime = maxtime;
+    flash->maxlight = sector->params.lightlevel;
+    flash->minlight = FindMinSurroundingLight(sector, sector->params.lightlevel);
+		
+    if (flash->minlight == flash->maxlight)
+		flash->minlight = 0;
+
+    // nothing special about it during gameplay
+    sector->special = 0;
+
+    if (!inSync)
+		flash->count = (P_Random() & 7) + 1;
+    else
+		flash->count = 1;
+}
+
+//==========================================================================
+//
+//  EV_StartLightStrobing
+//
+//	Start strobing lights (usually from a trigger)
+//
+//==========================================================================
+
+int EV_StartLightStrobing(line_t* line, int *args)
+{
+    int			secnum;
+    sector_t*	sec;
+	
+    secnum = -1;
+    while ((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
+    {
+		sec = &level->sectors[secnum];
+		if (sec->specialdata)
+		    continue;
+	
+		P_SpawnStrobeFlash(sec, args[2], args[1], 0);
+    }
+	return 1;
+}
+
+//**************************************************************************
+//
+//	TURN LINE'S TAG LIGHTS ON / OFF
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//  EV_LightTurnOn
+//
+//==========================================================================
+
+int EV_LightTurnOn(line_t* line, int *args)
+{
+    int			i;
+
+    for (i = 0; i < level->numsectors; i++)
+    {
+		if (level->sectors[i].tag == args[0])
+		{
+		    level->sectors[i].params.lightlevel = args[1];
+		}
+    }
+	return 1;
+}
+
+//==========================================================================
+//
+//  EV_TagLightTurnOn
+//
+//==========================================================================
+
+int EV_TagLightTurnOn(line_t* line, int *args)
+{
+    int			i;
+    int			j;
+    sector_t*	sector;
+    sector_t*	temp;
+    line_t*		templine;
+	int			max;
+
+    for (i = 0; i < level->numsectors; i++)
+    {
+	    sector = &level->sectors[i];
+	
+		if (sector->tag == args[0])
+		{
+			max = 0;
+			for (j = 0; j < sector->linecount; j++)
+			{
+			    templine = sector->lines[j];
+			    temp = getNextSector(templine, sector);
+			    if (!temp)
+					continue;
+			    if (temp->params.lightlevel > max)
+					max = temp->params.lightlevel;
+		    }
+		    sector->params.lightlevel = max;
+		}
+    }
+	return 1;
+}
+
+
+//==========================================================================
+//
+//  EV_TurnTagLightsOff
+//
+//==========================================================================
+
+int EV_TurnTagLightsOff(line_t* line, int *args)
+{
+    int			i;
+    int			j;
+    int			min;
+    sector_t*	sector;
+    sector_t*	tsec;
+    line_t*		templine;
+	
+    for (j = 0; j < level->numsectors; j++)
+    {
+	    sector = &level->sectors[j];
+    
+		if (sector->tag == args[0])
+		{
+		    min = sector->params.lightlevel;
+		    for (i = 0; i < sector->linecount; i++)
+	    	{
+				templine = sector->lines[i];
+				tsec = getNextSector(templine,sector);
+				if (!tsec)
+				    continue;
+				if (tsec->params.lightlevel < min)
+				    min = tsec->params.lightlevel;
+		    }
+	    	sector->params.lightlevel = min;
+		}
+    }
+	return 1;
+}
+
+

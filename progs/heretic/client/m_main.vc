@@ -1,0 +1,146 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//**
+//**	Main menu
+//**
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+struct menu_main_t
+{
+	menu_t			menu;
+	menutext_t		single;
+	menutext_t		multi;
+	menutext_t		options;
+	menutext_t		help;
+	menutext_t		quit;
+	menubitmap_t	logo;
+	menuanim_t		anim1;
+	menuanim_t		anim2;
+};
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+void menu_single(void);
+void menu_multi(void);
+void menu_options(void);
+void menu_help(void);
+void menu_quit(void);
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+menu_main_t		MainMenu;
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	menu_main
+//
+//==========================================================================
+
+void menu_main(void)
+{
+	int x;
+	int y;
+
+	x = 110;
+	y = 56;
+
+    InitMenu(&MainMenu.menu);
+
+	if (local_server)
+	{
+		MenuText_InitFunc(&MainMenu.single, x, y, "Single Player", TEXT_BIG, menu_single);
+		AddMenuItem(&MainMenu.menu, &MainMenu.single);
+		y += 18;
+	}
+
+	MenuText_InitFunc(&MainMenu.multi, x, y, "Multiplayer", TEXT_BIG, menu_multi);
+	AddMenuItem(&MainMenu.menu, &MainMenu.multi);
+	y += 18;
+
+	MenuText_InitFunc(&MainMenu.options, x, y, "Options", TEXT_BIG, menu_options);
+	AddMenuItem(&MainMenu.menu, &MainMenu.options);
+	y += 18;
+
+	MenuText_InitFunc(&MainMenu.help, x, y, "Help", TEXT_BIG, menu_help);
+	AddMenuItem(&MainMenu.menu, &MainMenu.help);
+	y += 18;
+
+	MenuText_InitFunc(&MainMenu.quit, x, y, "Quit game", TEXT_BIG, menu_quit);
+	AddMenuItem(&MainMenu.menu, &MainMenu.quit);
+
+	MenuBitmap_Init(&MainMenu.logo, 88, 0, MNF_INACTIVE, "M_HTIC", PIC_PATCH);
+	AddMenuItem(&MainMenu.menu, &MainMenu.logo);
+
+	MenuAnim_Init(&MainMenu.anim1, 40, 10, MNF_INACTIVE, 12, 18, 0, true);
+	MainMenu.anim1.pics[0] = R_RegisterPic("M_SKL00", PIC_PATCH);
+	MainMenu.anim1.pics[1] = R_RegisterPic("M_SKL01", PIC_PATCH);
+	MainMenu.anim1.pics[2] = R_RegisterPic("M_SKL02", PIC_PATCH);
+	MainMenu.anim1.pics[3] = R_RegisterPic("M_SKL03", PIC_PATCH);
+	MainMenu.anim1.pics[4] = R_RegisterPic("M_SKL04", PIC_PATCH);
+	MainMenu.anim1.pics[5] = R_RegisterPic("M_SKL05", PIC_PATCH);
+	MainMenu.anim1.pics[6] = R_RegisterPic("M_SKL06", PIC_PATCH);
+	MainMenu.anim1.pics[7] = R_RegisterPic("M_SKL07", PIC_PATCH);
+	MainMenu.anim1.pics[8] = R_RegisterPic("M_SKL08", PIC_PATCH);
+	MainMenu.anim1.pics[9] = R_RegisterPic("M_SKL09", PIC_PATCH);
+	MainMenu.anim1.pics[10] = R_RegisterPic("M_SKL10", PIC_PATCH);
+	MainMenu.anim1.pics[11] = R_RegisterPic("M_SKL11", PIC_PATCH);
+	MainMenu.anim1.pics[12] = R_RegisterPic("M_SKL12", PIC_PATCH);
+	MainMenu.anim1.pics[13] = R_RegisterPic("M_SKL13", PIC_PATCH);
+	MainMenu.anim1.pics[14] = R_RegisterPic("M_SKL14", PIC_PATCH);
+	MainMenu.anim1.pics[15] = R_RegisterPic("M_SKL15", PIC_PATCH);
+	MainMenu.anim1.pics[16] = R_RegisterPic("M_SKL16", PIC_PATCH);
+	MainMenu.anim1.pics[17] = R_RegisterPic("M_SKL17", PIC_PATCH);
+	AddMenuItem(&MainMenu.menu, &MainMenu.anim1);
+
+	MenuAnim_Init(&MainMenu.anim2, 232, 10, MNF_INACTIVE, 12, 18, 0, false);
+	MainMenu.anim2.pics[0] = R_RegisterPic("M_SKL00", PIC_PATCH);
+	MainMenu.anim2.pics[1] = R_RegisterPic("M_SKL01", PIC_PATCH);
+	MainMenu.anim2.pics[2] = R_RegisterPic("M_SKL02", PIC_PATCH);
+	MainMenu.anim2.pics[3] = R_RegisterPic("M_SKL03", PIC_PATCH);
+	MainMenu.anim2.pics[4] = R_RegisterPic("M_SKL04", PIC_PATCH);
+	MainMenu.anim2.pics[5] = R_RegisterPic("M_SKL05", PIC_PATCH);
+	MainMenu.anim2.pics[6] = R_RegisterPic("M_SKL06", PIC_PATCH);
+	MainMenu.anim2.pics[7] = R_RegisterPic("M_SKL07", PIC_PATCH);
+	MainMenu.anim2.pics[8] = R_RegisterPic("M_SKL08", PIC_PATCH);
+	MainMenu.anim2.pics[9] = R_RegisterPic("M_SKL09", PIC_PATCH);
+	MainMenu.anim2.pics[10] = R_RegisterPic("M_SKL10", PIC_PATCH);
+	MainMenu.anim2.pics[11] = R_RegisterPic("M_SKL11", PIC_PATCH);
+	MainMenu.anim2.pics[12] = R_RegisterPic("M_SKL12", PIC_PATCH);
+	MainMenu.anim2.pics[13] = R_RegisterPic("M_SKL13", PIC_PATCH);
+	MainMenu.anim2.pics[14] = R_RegisterPic("M_SKL14", PIC_PATCH);
+	MainMenu.anim2.pics[15] = R_RegisterPic("M_SKL15", PIC_PATCH);
+	MainMenu.anim2.pics[16] = R_RegisterPic("M_SKL16", PIC_PATCH);
+	MainMenu.anim2.pics[17] = R_RegisterPic("M_SKL17", PIC_PATCH);
+	AddMenuItem(&MainMenu.menu, &MainMenu.anim2);
+
+    PushMenu(&MainMenu.menu);
+}
+

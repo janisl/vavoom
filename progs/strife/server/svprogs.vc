@@ -1,0 +1,67 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+//**
+//**	Strife progs
+//**
+//**************************************************************************
+
+#include "../../common/server.vc"
+
+#include "../strfdefs.vc"
+#include "../gendefs.vc"
+#include "strings.vc"
+
+#include "specutl.vc"
+#include "ceilings.vc"
+#include "doors.vc"
+#include "floors.vc"
+#include "plats.vc"
+#include "lights.vc"
+#include "spec.vc"
+
+#include "world.vc"
+
+#define S_GIBS		S_NULL
+#define MT_BLOOD	MT_PUFF
+
+#include "savegame.vc"
+#include "states.vc"
+#include "mobjinfo.vc"
+#include "wpninfo.vc"
+#include "inter.vc"
+#include "user.vc"
+#include "mobj.vc"
+#include "move.vc"
+#include "physics.vc"
+#include "map.vc"
+#include "teleport.vc"
+#include "usersubs.vc"
+#include "ai_subs.vc"
+#include "weapons.vc"
+#include "enemy.vc"
+#include "cheat.vc"
+
+#include "adummy.vc"
+
+#include "main.vc"
+

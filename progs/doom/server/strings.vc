@@ -1,0 +1,60 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+#define GOTARMOR		"Picked up the armor."
+#define GOTMEGA		"Picked up the MegaArmor!"
+#define GOTHTHBONUS		"Picked up a health bonus."
+#define GOTARMBONUS		"Picked up an armor bonus."
+#define GOTSTIM		"Picked up a stimpack."
+#define GOTMEDINEED		"Picked up a medikit that you REALLY need!"
+#define GOTMEDIKIT		"Picked up a medikit."
+#define GOTSUPER		"Supercharge!"
+#define GOTBLUECARD		"Picked up a blue keycard."
+#define GOTYELWCARD		"Picked up a yellow keycard."
+#define GOTREDCARD		"Picked up a red keycard."
+#define GOTBLUESKUL		"Picked up a blue skull key."
+#define GOTYELWSKUL		"Picked up a yellow skull key."
+#define GOTREDSKULL		"Picked up a red skull key."
+#define GOTINVUL		"Invulnerability!"
+#define GOTBERSERK		"Berserk!"
+#define GOTINVIS		"Partial Invisibility"
+#define GOTSUIT		"Radiation Shielding Suit"
+#define GOTMAP		"Computer Area Map"
+#define GOTVISOR		"Light Amplification Visor"
+#define GOTMSPHERE		"MegaSphere!"
+#define GOTCLIP		"Picked up a clip."
+#define GOTCLIPBOX		"Picked up a box of bullets."
+#define GOTROCKET		"Picked up a rocket."
+#define GOTROCKBOX		"Picked up a box of rockets."
+#define GOTCELL		"Picked up an energy cell."
+#define GOTCELLBOX		"Picked up an energy cell pack."
+#define GOTSHELLS		"Picked up 4 shotgun shells."
+#define GOTSHELLBOX		"Picked up a box of shotgun shells."
+#define GOTBACKPACK		"Picked up a backpack full of ammo!"
+#define GOTBFG9000		"You got the BFG9000!  Oh, yes."
+#define GOTCHAINGUN		"You got the chaingun!"
+#define GOTCHAINSAW		"A chainsaw!  Find some meat!"
+#define GOTLAUNCHER		"You got the rocket launcher!"
+#define GOTPLASMA		"You got the plasma gun!"
+#define GOTSHOTGUN		"You got the shotgun!"
+#define GOTSHOTGUN2		"You got the super shotgun!"

@@ -1,0 +1,356 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+enum
+{
+	vd_normal,
+	DREV_CLOSEWAITOPEN,
+	vd_close,
+	vd_open,
+	raiseIn5Mins
+};
+
+string keymsg[] =
+{
+	"YOU NEED A YELLOW KEY TO OPEN THIS DOOR",
+	"YOU NEED A GREEN KEY TO OPEN THIS DOOR",
+	"YOU NEED A BLUE KEY TO OPEN THIS DOOR"
+};
+
+//==================================================================
+//==================================================================
+//
+//							VERTICAL DOORS
+//
+//==================================================================
+//==================================================================
+
+//==================================================================
+//
+//	T_VerticalDoor
+//
+//==================================================================
+
+void T_VerticalDoor(special_t *door)
+{
+	int		res;
+
+	switch(door->direction)
+	{
+		case 0: // WAITING
+			if(!--door->topcountdown)
+				switch(door->type)
+				{
+					case vd_normal:
+						door->direction = -1; // time to go back down
+						StartSoundName(&door->sector->soundorg, "DoorOpen");
+						break;
+					case DREV_CLOSEWAITOPEN:
+						door->direction = 1;
+						StartSoundName(&door->sector->soundorg, "DoorOpen");
+						break;
+					default:
+						break;
+				}
+			break;
+		case 2: // INITIAL WAIT
+			if(!--door->topcountdown)
+			{
+				switch(door->type)
+				{
+					case raiseIn5Mins:
+						door->direction = 1;
+						door->type = vd_normal;
+						StartSoundName(&door->sector->soundorg, "DoorOpen");
+						break;
+					default:
+						break;
+				}
+			}
+			break;
+		case -1: // DOWN
+			res = T_MovePlane(door->sector, door->speed,
+				door->sector->floorheight, false, 1, door->direction);
+			if(res == RES_PASTDEST)
+			{
+				switch(door->type)
+				{
+					case vd_normal:
+					case vd_close:
+						door->sector->specialdata = NULL;
+						RemoveSpecialThinker(door);  // unlink and free
+						StartSoundName(&door->sector->soundorg, "DoorClose");
+						break;
+					case DREV_CLOSEWAITOPEN:
+						door->direction = 0;
+						door->topcountdown = door->topwait;
+						break;
+					default:
+						break;
+				}
+			}
+			else if(res == RES_CRUSHED)
+			{
+				switch(door->type)
+				{
+					case vd_close: // DON'T GO BACK UP!
+						break;
+					default:
+						door->direction = 1;
+						StartSoundName(&door->sector->soundorg, "DoorOpen");
+						break;
+				}
+			}
+			break;
+		case 1: // UP
+			res = T_MovePlane(door->sector, door->speed,
+				door->topheight, false, 1, door->direction);
+			if(res == RES_PASTDEST)
+			{
+				switch(door->type)
+				{
+					case vd_normal:
+						door->direction = 0; // wait at top
+						door->topcountdown = door->topwait;
+						break;
+					case DREV_CLOSEWAITOPEN:
+					case vd_open:
+						door->sector->specialdata = NULL;
+						RemoveSpecialThinker(door); // unlink and free
+						S_StopSound(&door->sector->soundorg);
+						break;
+					default:
+						break;
+				}
+			}
+			break;
+	}
+}
+
+//----------------------------------------------------------------------------
+//
+//	EV_DoDoor
+//
+//	Move a door up/down
+//
+//----------------------------------------------------------------------------
+
+int EV_DoDoor(line_t *line, int *args, int type)
+{
+	int secnum;
+	int retcode;
+	sector_t *sec;
+	special_t *door;
+
+	secnum = -1;
+	retcode = 0;
+	while ((secnum = FindSectorFromTag(line->arg1, secnum)) >= 0)
+	{
+		sec = &level->sectors[secnum];
+		if(sec->specialdata)
+		{
+			continue;
+		}
+		// Add new door thinker
+		retcode = 1;
+		door = NewSpecialThinker(T_VerticalDoor);
+		sec->specialdata = door;
+		door->sector = sec;
+		door->type = type;
+		door->speed = itof(args[1]) / 8.0;
+		door->topwait = args[2];
+		switch (type)
+		{
+			case vd_close:
+				door->topheight = FindLowestCeilingSurrounding(sec);
+				door->topheight -= 4.0;
+				door->direction = -1;
+				StartSoundName(&door->sector->soundorg, "DoorOpen");
+				break;
+			case DREV_CLOSEWAITOPEN:
+				door->topheight = sec->ceilingheight;
+				door->topwait *= 4;
+				door->direction = -1;
+				StartSoundName(&door->sector->soundorg, "DoorOpen");
+				break;
+			case vd_normal:
+			case vd_open:
+				door->direction = 1;
+				door->topheight = FindLowestCeilingSurrounding(sec);
+				door->topheight -= 4.0;
+				if (door->topheight != sec->ceilingheight)
+				{
+					StartSoundName(&door->sector->soundorg, "DoorOpen");
+				}
+				break;
+			default:
+				break;
+		}
+	}
+	return retcode;
+}
+
+//==========================================================================
+//
+//	CheckLockedDoor
+//
+//==========================================================================
+
+boolean	CheckLockedDoor(mobj_t *user, int lock)
+{
+	player_t		*player;
+
+	player = user->player;
+	if (!player)
+	{
+		return false;
+	}
+	if (!lock)
+	{
+		return true;
+	}
+	if (!(player->keys & (1 << (lock - 1))))
+	{
+		centerprint(player, keymsg[lock - 1]);
+		StartSoundName(player->mo, "PlayerLand");
+		return false;
+	}
+	return true;
+}
+
+//==================================================================
+//
+//	EV_VerticalDoor : open a door manually, no tag value
+//
+//==================================================================
+
+boolean EV_VerticalDoor(line_t *line, mobj_t *thing)
+{
+	sector_t		*sec;
+	special_t		*door;
+	int				side;
+
+	side = 0; // only front sides can be used
+
+	// if the sector has an active thinker, use it
+	sec = level->sides[line->sidenum[side ^ 1]].sector;
+	if (sec->specialdata)
+	{
+		door = sec->specialdata;
+		switch (line->special)
+		{
+			case 1: // ONLY FOR "RAISE" DOORS, NOT "OPEN"s
+			case 26:
+			case 27:
+			case 28:
+				if (door->direction == -1)
+				{
+					door->direction = 1; // go back up
+				}
+				else
+				{
+					if (!thing->player)
+					{ // Monsters don't close doors
+						return false;
+					}
+					door->direction = -1; // start going down immediately
+				}
+				return true;
+		}
+	}
+
+	StartSoundName(&sec->soundorg, "DoorOpen");
+	//StartSoundName(&sec->soundorg, "DoorMove");
+
+	//
+	// new door thinker
+	//
+	door = NewSpecialThinker(T_VerticalDoor);
+	sec->specialdata = door;
+	door->sector = sec;
+	door->direction = 1;
+	switch (line->special)
+	{
+		case 12:
+			door->type = vd_normal;
+			break;
+		case 11:
+			door->type = vd_open;
+			break;
+		case 13:
+			door->type = line->arg3 ? vd_normal : vd_open;
+			break;
+	}
+	door->speed = itof(line->arg2) / 8.0;
+	door->topwait = line->arg3;
+	
+	//
+	// find the top and bottom of the movement range
+	//
+	door->topheight = FindLowestCeilingSurrounding(sec);
+	door->topheight -= 4.0;
+	return true;
+}
+
+//==================================================================
+//
+//	Spawn a door that closes after 30 seconds
+//
+//==================================================================
+
+void P_SpawnDoorCloseIn30(sector_t *sec)
+{
+	special_t *door;
+
+	door = NewSpecialThinker(T_VerticalDoor);
+	sec->specialdata = door;
+	sec->special = 0;
+	door->sector = sec;
+	door->direction = 0;
+	door->type = vd_normal;
+	door->speed = 2.0;
+	door->topcountdown = 30 * 35;
+}
+
+//==================================================================
+//
+//	Spawn a door that opens after 5 minutes
+//
+//==================================================================
+
+void P_SpawnDoorRaiseIn5Mins(sector_t *sec, int secnum)
+{
+	special_t *door;
+
+	door = NewSpecialThinker(T_VerticalDoor);
+	sec->specialdata = door;
+	sec->special = 0;
+	door->sector = sec;
+	door->direction = 2;
+	door->type = raiseIn5Mins;
+	door->speed = 2.0;
+	door->topheight = FindLowestCeilingSurrounding(sec);
+	door->topheight -= 4.0;
+	door->topwait = 150;
+	door->topcountdown = 5 * 60 * 35;
+}

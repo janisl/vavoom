@@ -1,0 +1,211 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+#ifdef DOOM2
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	A_SkelWhosh
+//
+//	Ravenant attack sound.
+//
+//==========================================================================
+
+void A_SkelWhoosh(mobj_t *actor)
+{
+    if (!actor->target)
+		return;
+    A_FaceTarget(actor);
+    StartSoundName(actor, "RavenantSwing");
+}
+
+//==========================================================================
+//
+//	A_SkelFist
+//
+//	Ravenant close attack.
+//
+//==========================================================================
+
+void A_SkelFist(mobj_t *actor)
+{
+    int		damage;
+
+    if (!actor->target)
+		return;
+		
+    A_FaceTarget(actor);
+	
+    if (P_CheckMeleeRange(actor))
+    {
+		damage = ((P_Random() % 10) + 1) * 6;
+		StartSoundName(actor, "RavenantPunch");
+		DamageMobj(actor->target, actor, actor, damage);
+    }
+}
+
+//==========================================================================
+//
+//	A_SkelMissile
+//
+//	Ravenant far attack.
+//
+//==========================================================================
+
+void A_SkelMissile(mobj_t *actor)
+{	
+    mobj_t	*mo;
+	
+    if (!actor->target)
+		return;
+		
+    A_FaceTarget(actor);
+    actor->origin.z += 16.0;	// so missile spawns higher
+    mo = SpawnMissile(actor, actor->target, MT_TRACER);
+    actor->origin.z -= 16.0;	// back to normal
+
+    vma(mo->origin, mo->velocity, frametime, mo->origin);
+    mo->tracer = actor->target;
+}
+
+//==========================================================================
+//
+//	A_Tracer
+//
+//	Ravenant missile tracer.
+//
+//==========================================================================
+
+#define TRACEANGLE	0xc000000
+#define TRACEADJUST	0.2865921825
+
+void A_Tracer(mobj_t *actor)
+{
+    mobj_t	*dest;
+    mobj_t	*th;
+#if 0
+    angle_t	exact;
+	float	dist;
+    float	slope;
+#else
+	TVec	vdst;
+	TVec	wishdir;
+	TVec	currdir;
+	TVec	delta;
+	float	adjustlen;
+#endif
+
+    if (level->tictime & 3)
+		return;
+    
+    // spawn a puff of smoke behind the rocket		
+    SpawnPuff(actor->origin.x, actor->origin.y, actor->origin.z);
+	
+    th = P_SpawnMobj(actor->origin.x - actor->velocity.x * frametime,
+    				actor->origin.y - actor->velocity.y * frametime,
+    				actor->origin.z - actor->velocity.z * frametime, MT_SMOKE);
+    
+    th->velocity.z = 1.0 * 35.0;
+    th->time -= Random() * 0.1;
+    if (th->time < 0.1)
+		th->time = 0.1;
+    
+    // adjust direction
+    dest = actor->tracer;
+
+    if (!dest || dest->health <= 0)
+		return;
+    
+#if 0
+    // change angle	
+    exact = PointToAngle(actor->origin.x, actor->origin.y, dest->origin.x, dest->origin.y);
+
+    if (exact != actor->angles.yaw)
+    {
+		if (exact - actor->angles.yaw > ANG180)
+		{
+	    	actor->angles.yaw -= TRACEANGLE;
+		    if (exact - actor->angles.yaw < ANG180)
+				actor->angles.yaw = exact;
+		}
+		else
+		{
+		    actor->angles.yaw += TRACEANGLE;
+	    	if (exact - actor->angles.yaw > ANG180)
+				actor->angles.yaw = exact;
+		}
+    }
+	
+    exact = actor->angles.yaw;
+    actor->velocity.x = actor->info->speed * cos(exact);
+    actor->velocity.y = actor->info->speed * sin(exact);
+    
+    // change slope
+    dist = MobjDist2(dest, actor);
+    
+    dist = dist / actor->info->speed;
+
+    if (dist < 1.0)
+		dist = 1.0;
+    slope = (dest->origin.z + 40.0 - actor->origin.z) / dist;
+
+    if (slope < actor->velocity.z)
+		actor->velocity.z -= 0.125 * 35.0;
+    else
+		actor->velocity.z += 0.125 * 35.0;
+#else
+	CopyMobjCenter(dest, vdst);
+	vsub(vdst, actor->origin, wishdir);
+	vnorm(wishdir);
+	vcpy(actor->velocity, currdir);
+	vnorm(currdir);
+	vsub(wishdir, currdir, delta);
+	adjustlen = vlen(delta);
+	if (adjustlen > TRACEADJUST)
+		adjustlen = TRACEADJUST;
+	vma(currdir, delta, adjustlen, wishdir);
+    vscale(wishdir, actor->speed, actor->velocity);
+	VectorAngles(&wishdir, &actor->angles);
+#endif
+}
+
+#else
+
+void A_SkelWhoosh(mobj_t *actor) { NotDoom2(); }
+void A_SkelFist(mobj_t *actor) { NotDoom2(); }
+void A_SkelMissile(mobj_t *actor) { NotDoom2(); }
+void A_Tracer(mobj_t *actor) { NotDoom2(); }
+
+#endif

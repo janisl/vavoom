@@ -1,0 +1,114 @@
+
+                              VCC version 1.8
+                              ***************
+
+============================================================================
+    Introduction
+============================================================================
+
+  VCC is a Vavoom C Compiler that creates progs that Vavoom uses.
+
+============================================================================
+    Using VCC
+============================================================================
+
+  VCC haves the following usage:
+
+    vcc [options] source[.c] [object[.dat]]
+
+  To compile a source file (e.g. foo.c) simply type:
+
+    vcc foo.c
+
+  This will cretae a progs file named foo.dat. You can specify other output
+file name like this:
+
+    vcc foo.c output.dat
+
+============================================================================
+    Option Descriptions
+============================================================================
+
+  The following options are recognised:
+
+    -d<file>             Output debugging information into specified file
+
+    -a<function>         Output function's ASM statements into debug file
+
+    -b                   Use Borland's preprocessor
+
+  The following params are passed directly to the proprocessor:
+
+    -D<name>[=<value>]   Define macro
+
+    -U<name>             Unefine macro
+
+    -I<directory>        Include files directory
+
+============================================================================
+    Compiling VCC
+============================================================================
+
+  VCC has been written with portability in mind. It is purely ANSI C++.
+  VCC has been known to compile and work on the following platforms:
+
+    * Windows 98 with DJGPP 2.03.
+
+    * Windows 98 with Borland C++ 5.5.
+
+    * SuSE LINUX 6.2
+
+DOS and LINUX
+-------------
+
+  The "makefile" makefile is for DOS, Linux and other UN*X type OSes. Simply
+typing `make' should create the `vcc' executable. Currently there is no
+automatic installation, just copy the vcc executable to where you want it.
+
+Win32
+-----
+
+  The "vcc.mak" makefile is for compiling under Win32 with Borland C++ 5.5.
+Assuming BCC is configured properly (the ".cfg" files it needs have been
+setup), typing `make -f vcc.mak' should create the `vcc.exe' executable.
+Note that VCC under Win32 is a console application and should be run from a
+DOS box.
+
+============================================================================
+    Copyright
+============================================================================
+
+  VCC is Copyright (C) 2000-2001 JÆnis Legzdi·ý. It is based on acc (Action
+Code Compiler for Hexen scripts) and qcc (Quake C Compiler).
+  All trademarks are the propriety of their owners.
+
+============================================================================
+    License
+============================================================================
+
+  VCC is under the GNU General Public License (GPL). See the file `COPYING'
+for the full text.
+
+============================================================================
+    Contact
+============================================================================
+
+  Questions, bug reports, suggestsions, etc... about VCC should be sent to:
+    dj_jl@navigators.lv
+
+============================================================================
+    Links
+============================================================================
+
+  The Vavoom homepage can be found here:
+    http://www.raven-games.com/hosted/vavoom/
+
+============================================================================
+    Acknowledgements
+============================================================================
+
+  id Software for Doom, Quake and releasing the source code.
+
+  Raven Software for Heretic and Hexen and releasing the source code.
+
+  ... and everyone else who deserves it !

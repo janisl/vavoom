@@ -1,0 +1,137 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	InventoryLeft
+//
+//==========================================================================
+
+void InventoryLeft(player_t *player)
+{
+	if (!player->inventoryTics)
+	{
+		player->inventoryTics = 5 * 35;
+		return;
+	}
+	player->inventoryTics = 5 * 35;
+	player->inv_ptr--;
+	if (player->inv_ptr < 0)
+	{
+		player->inv_ptr = 0;
+	}
+	else
+	{
+		player->curpos--;
+		if (player->curpos < 0)
+		{
+			player->curpos = 0;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	InventoryRight
+//
+//==========================================================================
+
+void InventoryRight(player_t *player)
+{
+	if (!player->inventoryTics)
+	{
+		player->inventoryTics = 5 * 35;
+		return;
+	}
+	player->inventoryTics = 5 * 35;
+	player->inv_ptr++;
+	if (player->inv_ptr >= player->inventorySlotNum)
+	{
+		player->inv_ptr--;
+		if (player->inv_ptr < 0)
+			player->inv_ptr = 0;
+	}
+	else
+	{
+		player->curpos++;
+		if (player->curpos > 6)
+		{
+			player->curpos = 6;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	InventoryUse
+//
+//==========================================================================
+
+void InventoryUse(player_t *player)
+{
+	player->readyArtifact = player->inventory[player->inv_ptr].type;
+	// flag to denote that it's okay to use an artifact
+	if (player->inventoryTics)
+	{
+		player->inventoryTics = 0;
+	}
+	else
+	{
+		player->arti = player->readyArtifact;
+	}
+}
+
+//==========================================================================
+//
+//	InventoryTick
+//
+//==========================================================================
+
+void InventoryTick(player_t *player)
+{
+	// turn inventory off after a certain amount of time
+	if (player->inventoryTics)
+    {
+    	player->inventoryTics--;
+		if (!player->inventoryTics)
+		{
+			player->readyArtifact =	player->inventory[player->inv_ptr].type;
+		}
+	}
+	if (player->ArtifactFlash)
+	{
+		player->ArtifactFlash--;
+	}
+}

@@ -1,0 +1,261 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+//**************************************************************************
+//**
+//** p_plats.c : Heretic 2 : Raven Software, Corp.
+//**
+//** $RCSfile$
+//** $Revision$
+//** $Date$
+//** $Author$
+//**
+//**************************************************************************
+
+enum
+{
+	PLAT_UP,
+	PLAT_DOWN,
+	PLAT_WAITING
+//	PLAT_IN_STASIS
+};
+
+enum
+{
+	PLAT_PERPETUALRAISE,
+	PLAT_DOWNWAITUPSTAY,
+	PLAT_DOWNBYVALUEWAITUPSTAY,
+	PLAT_UPWAITDOWNSTAY,
+	PLAT_UPBYVALUEWAITDOWNSTAY
+};
+
+special_t	activeplats;
+
+//==================================================================
+//
+//  P_AddActivePlat
+//
+//==================================================================
+
+void P_AddActivePlat(special_t *plat)
+{
+	plat->prev = activeceilings.prev;
+    plat->next = &activeceilings;
+	plat->prev->next = plat;
+    plat->next->prev = plat;
+}
+
+//==================================================================
+//
+//  P_RemoveActivePlat
+//
+//==================================================================
+
+void P_RemoveActivePlat(special_t *plat)
+{
+	plat->prev->next = plat->next;
+    plat->next->prev = plat->prev;
+	plat->sector->specialdata = NULL;
+	TagFinished(plat->sector->tag);
+	RemoveSpecialThinker(plat);
+}
+
+//==================================================================
+//
+//  T_PlatRaise
+//
+//	Move a plat up and down
+//
+//==================================================================
+
+void T_PlatRaise(special_t *plat)
+{
+	int		res;
+
+	switch (plat->status)
+	{
+		case PLAT_UP:
+			res = T_MovePlane(plat->sector, plat->speed,
+					plat->high, plat->crush, 0, 1);
+			if (res == RES_CRUSHED && (!plat->crush))
+			{
+				plat->count = plat->wait;
+				plat->status = PLAT_DOWN;
+				StartSequence(&plat->sector->soundorg,
+					seq_name[SEQ_PLATFORM + plat->sector->seqType]);
+			}
+			else if (res == RES_PASTDEST)
+			{
+				plat->count = plat->wait;
+				plat->status = PLAT_WAITING;
+				StopSequence(&plat->sector->soundorg);
+				switch (plat->type)
+				{
+					case PLAT_DOWNWAITUPSTAY:
+					case PLAT_DOWNBYVALUEWAITUPSTAY:
+						P_RemoveActivePlat(plat);
+						break;
+					default:
+						break;
+				}
+			}
+			break;
+		case PLAT_DOWN:
+			res = T_MovePlane(plat->sector, plat->speed, plat->low, false, 0, -1);
+			if (res == RES_PASTDEST)
+			{
+				plat->count = plat->wait;
+				plat->status = PLAT_WAITING;
+				switch (plat->type)
+				{
+					case PLAT_UPWAITDOWNSTAY:
+					case PLAT_UPBYVALUEWAITDOWNSTAY:
+						P_RemoveActivePlat(plat);
+						break;
+					default:
+						break;
+				}
+				StopSequence(&plat->sector->soundorg);
+			}
+			break;
+		case PLAT_WAITING:
+			if (!--plat->count)
+			{
+				if (plat->sector->floorheight == plat->low)
+					plat->status = PLAT_UP;
+				else
+					plat->status = PLAT_DOWN;
+				StartSequence(&plat->sector->soundorg,
+					seq_name[SEQ_PLATFORM + plat->sector->seqType]);
+			}
+	}
+}
+
+//==================================================================
+//
+//  EV_DoPlat
+//
+//	Do Platforms.
+//
+//==================================================================
+
+int EV_DoPlat(line_t *line, int *args, int type)
+{
+	special_t	*plat;
+	int			secnum;
+	int			rtn;
+	sector_t	*sec;
+
+	secnum = -1;
+	rtn = 0;
+
+	while ((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
+	{
+		sec = &level->sectors[secnum];
+		if (sec->specialdata)
+			continue;
+
+		//
+		// Find lowest & highest floors around sector
+		//
+		rtn = 1;
+		plat = NewSpecialThinker(T_PlatRaise);
+
+		plat->type = type;
+		plat->sector = sec;
+		plat->sector->specialdata = plat;
+		plat->crush = false;
+		plat->tag = args[0];
+		plat->speed = itof(args[1]) / 8.0;
+		switch (type)
+		{
+			case PLAT_DOWNWAITUPSTAY:
+				plat->low = FindLowestFloorSurrounding(sec) + 8.0;
+				if (plat->low > sec->floorheight)
+					plat->low = sec->floorheight;
+				plat->high = sec->floorheight;
+				plat->wait = args[2];
+				plat->status = PLAT_DOWN;
+				break;
+			case PLAT_DOWNBYVALUEWAITUPSTAY:
+				plat->low = sec->floorheight - itof(args[3]) * 8.0;
+				if (plat->low > sec->floorheight)
+					plat->low = sec->floorheight;
+				plat->high = sec->floorheight;
+				plat->wait = args[2];
+				plat->status = PLAT_DOWN;
+				break;
+			case PLAT_UPWAITDOWNSTAY:
+				plat->high = FindHighestFloorSurrounding(sec);
+				if (plat->high < sec->floorheight)
+					plat->high = sec->floorheight;
+				plat->low = sec->floorheight;
+				plat->wait = args[2];
+				plat->status = PLAT_UP;
+				break;
+			case PLAT_UPBYVALUEWAITDOWNSTAY:
+				plat->high = sec->floorheight + itof(args[3]) * 8.0;
+				if (plat->high < sec->floorheight)
+					plat->high = sec->floorheight;
+				plat->low = sec->floorheight;
+				plat->wait = args[2];
+				plat->status = PLAT_UP;
+				break;
+			case PLAT_PERPETUALRAISE:
+				plat->low = FindLowestFloorSurrounding(sec) + 8.0;
+				if (plat->low > sec->floorheight)
+					plat->low = sec->floorheight;
+				plat->high = FindHighestFloorSurrounding(sec);
+				if (plat->high < sec->floorheight)
+					plat->high = sec->floorheight;
+				plat->wait = args[2];
+				plat->status = P_Random()&1;
+				break;
+		}
+		P_AddActivePlat(plat);
+		StartSequence(&sec->soundorg, seq_name[SEQ_PLATFORM + sec->seqType]);
+	}
+	return rtn;
+}
+
+//==================================================================
+//
+//  EV_StopPlat
+//
+//==================================================================
+
+void EV_StopPlat(line_t *line, int *args)
+{
+	special_t*	plat;
+
+    for (plat = activeplats.next; plat != &activeplats; plat = plat->next)
+    {
+		if (plat->tag = args[0])
+		{
+			P_RemoveActivePlat(plat);
+			return;
+		}
+	}
+}
+
+

@@ -1,0 +1,500 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+//============================================================================
+//
+// Minotaur variables
+//
+// 	specialmobj1	pointer to player that spawned it (mobj_t)
+//	special2		internal to minotaur AI
+//	args[0]			minotaur start time
+//	args[4]			charge duration countdown
+//
+//============================================================================
+
+// MACROS ------------------------------------------------------------------
+
+#define MINOTAUR_LOOK_DIST		(16.0 * 54.0)
+#define MNTR_CHARGE_SPEED		805.0
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	A_Summon
+//
+//	Summon Minotaur
+//
+//==========================================================================
+
+void A_Summon(mobj_t* actor)
+{
+	mobj_t*	mo;
+	mobj_t*	master;
+
+	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_MINOTAUR);
+	if (mo)
+	{
+		if (P_TestMobjLocation(mo) == false || !actor->specialmobj1)
+		{
+			// Didn't fit - change back to artifact
+			SetMobjState(mo, S_NULL);
+			mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_SUMMONMAULATOR);
+			if (mo) mo->flags2 |= MF2_DROPPED;
+			return;
+		}
+
+		mo->args[0] = level->tictime;
+		master = actor->specialmobj1;
+		if (master->flags & MF_CORPSE)
+		{	// Master dead
+			mo->specialmobj1 = NULL;		// No master
+		}
+		else
+		{
+			mo->specialmobj1 = actor->specialmobj1;		// Pointer to master (mobj_t *)
+			P_GivePower(master->player, pw_minotaur);
+		}
+
+		// Make smoke puff
+		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_MNTRSMOKE);
+		StartSoundName(actor, "MaulatorActive");
+	}
+}
+
+//============================================================================
+//
+//	A_MinotaurLook
+//
+//	Look for enemy of player
+//
+//============================================================================
+
+void A_MinotaurLook(mobj_t* actor)
+{
+	mobj_t*		mo = NULL;
+	player_t*	player;
+	float		dist;
+	int 		i;
+	mobj_t*		master = actor->specialmobj1;
+
+	actor->target = NULL;
+
+	if (deathmatch)					// Quick search for players
+	{
+    	for (i=0; i<MAXPLAYERS; i++)
+		{
+			if (!players[i].spawned) continue;
+			player = &players[i];
+			mo = player->mo;
+			if (mo == master) continue;
+			if (mo->health <= 0) continue;
+			dist = MobjDist(actor, mo);
+			if (dist > MINOTAUR_LOOK_DIST) continue;
+			actor->target = mo;
+			break;
+		}
+	}
+
+	if (!actor->target)				// Near player monster search
+	{
+		if (master && (master->health>0) && (master->player))
+			mo = P_RoughMonsterSearch(master, 20);
+		else
+			mo = P_RoughMonsterSearch(actor, 20);
+		actor->target = mo;
+	}
+
+	if (!actor->target)				// Normal monster search
+	{
+    	mo = NULL;
+		while (mo = NextMobj(mo))
+		{
+			if (!(mo->flags&MF_COUNTKILL)) continue;
+			if (mo->health <= 0) continue;
+			if (!(mo->flags&MF_SHOOTABLE)) continue;
+			dist = MobjDist(actor, mo);
+			if (dist > MINOTAUR_LOOK_DIST) continue;
+			if ((mo == master) || (mo == actor)) continue;
+			if ((mo->type == MT_MINOTAUR) &&
+				(mo->specialmobj1 == actor->specialmobj1)) continue;
+			actor->target = mo;
+			break;			// Found mobj to attack
+		}
+	}
+
+	if (actor->target)
+	{
+		SetMobjStateNF(actor, S_MNTR_WALK1);
+	}
+	else
+	{
+		SetMobjStateNF(actor, S_MNTR_ROAM1);
+	}
+}
+
+//============================================================================
+//
+//  A_MinotaurChase
+//
+//============================================================================
+
+void A_MinotaurChase(mobj_t* actor)
+{
+	int		starttime = actor->args[0];
+
+	actor->translucency = 0; // In case pain caused him to skip his fade in.
+
+	if ((level->tictime - starttime) >= ftoi(MAULATORTIME * 35.0))
+	{
+		DamageMobj(actor, NULL, NULL, 10000);
+		return;
+	}
+
+	if (P_Random() < 30)
+		A_MinotaurLook(actor);		// adjust to closest target
+
+	if (!actor->target || (actor->target->health <= 0) ||
+		!(actor->target->flags & MF_SHOOTABLE))
+	{ // look for a new target
+		SetMobjState(actor, S_MNTR_LOOK1);
+		return;
+	}
+
+	FaceMovementDirection(actor);
+	actor->reactiontime=0;
+
+	// Melee attack
+	if (actor->meleestate && CheckMeleeRange(actor))
+	{
+		if (actor->sound_attack)
+		{
+			StartSound(actor, actor->sound_attack);
+		}
+		SetMobjState(actor, actor->meleestate);
+		return;
+	}
+
+	// Missile attack
+	if (actor->missilestate && CheckMissileRange(actor))
+	{
+		SetMobjState(actor, actor->missilestate);
+		return;
+	}
+
+	// chase towards target
+	if (!P_Move(actor))
+	{
+		P_NewChaseDir(actor);
+	}
+
+	// Active sound
+	if (actor->sound_active && P_Random() < 6)
+	{
+		StartSound(actor, actor->sound_active);
+	}
+
+}
+
+//============================================================================
+//
+//  A_MinotaurRoam
+//
+//============================================================================
+
+void A_MinotaurRoam(mobj_t* actor)
+{
+	int		starttime = actor->args[0];
+
+	actor->translucency = 0; // In case pain caused him to skip his fade in.
+
+	if ((level->tictime - starttime) >= ftoi(MAULATORTIME * 35.0))
+	{
+		DamageMobj(actor,NULL,NULL,10000);
+		return;
+	}
+
+	if (P_Random()<30)
+		A_MinotaurLook(actor);		// adjust to closest target
+
+	if (P_Random()<6)
+	{
+		//Choose new direction
+		actor->movedir = P_Random() % 8;
+		FaceMovementDirection(actor);
+	}
+	if (!P_Move(actor))
+	{
+		// Turn
+		if (P_Random() & 1)
+			actor->movedir = (++actor->movedir)%8;
+		else
+			actor->movedir = (actor->movedir+7)%8;
+		FaceMovementDirection(actor);
+	}
+}
+
+//============================================================================
+//
+//	A_MinotaurAtk1
+//
+// 	Melee attack.
+//
+//============================================================================
+
+void A_MinotaurAtk1(mobj_t* actor)
+{
+	if (!actor->target)
+	{
+		return;
+	}
+
+	StartSoundName(actor, "MaulatorHamSwing");
+	if (CheckMeleeRange(actor))
+	{
+		DamageMobj(actor->target, actor, actor, HITDICE(4));
+	}
+}
+
+//============================================================================
+//
+//	A_MinotaurDecide
+//
+// 	Choose a missile attack.
+//
+//============================================================================
+
+void A_MinotaurDecide(mobj_t* actor)
+{
+	mobj_t		*target = actor->target;
+	float		dist;
+	TVec		vsrc;
+	TVec		vdst;
+	TVec		dir;
+
+	if (!target) return;
+	dist = MobjDist(actor, target);
+
+	if (target->origin.z + target->height > actor->origin.z &&
+		target->origin.z + target->height < actor->origin.z + actor->height &&
+		dist < 16.0 * 64.0 &&
+		dist > 1.0 * 64.0 &&
+		P_Random() < 230)
+	{ // Charge attack
+		// Don't call the state function right away
+		SetMobjStateNF(actor, S_MNTR_ATK4_1);
+		actor->flags |= MF_SKULLFLY;
+		A_FaceTarget(actor);
+		CopyMobjCenter(actor, vsrc);
+		CopyMobjCenter(actor->target, vdst);
+		vsub(vdst, vsrc, dir);
+		vnorm(dir);
+		vscale(dir, MNTR_CHARGE_SPEED, actor->velocity);
+		actor->args[4] = 35 / 2; // Charge duration
+	}
+	else if (target->origin.z == target->floorz &&
+		dist < 9.0 * 64.0 &&
+		P_Random() < 100)
+	{ // Floor fire attack
+		SetMobjState(actor, S_MNTR_ATK3_1);
+		actor->special2 = 0;
+	}
+	else
+	{ // Swing attack
+		A_FaceTarget(actor);
+		// Don't need to call SetMobjState because the current state
+		// falls through to the swing attack
+	}
+}
+
+//============================================================================
+//
+//	A_MinotaurAtk2
+//
+// 	Swing attack.
+//
+//============================================================================
+
+void A_MinotaurAtk2(mobj_t* actor)
+{
+	mobj_t		*mo;
+	angle_t		angle;
+	float		momz;
+
+	if (!actor->target) return;
+
+	StartSoundName(actor, "MaulatorHamSwing");
+	if (CheckMeleeRange(actor))
+	{
+		DamageMobj(actor->target, actor, actor, HITDICE(3));
+		return;
+	}
+	mo = SpawnMissile(actor, actor->target, MT_MNTRFX1);
+	if (mo)
+	{
+		//StartSoundName(mo, sfx_minat2);
+		momz = mo->velocity.z * frametime;
+		angle = mo->angles.yaw;
+		SpawnMissileAngle(actor, MT_MNTRFX1, angle-(ANG45/8), momz);
+		SpawnMissileAngle(actor, MT_MNTRFX1, angle+(ANG45/8), momz);
+		SpawnMissileAngle(actor, MT_MNTRFX1, angle-(ANG45/16), momz);
+		SpawnMissileAngle(actor, MT_MNTRFX1, angle+(ANG45/16), momz);
+	}
+}
+
+//============================================================================
+//
+//	A_MinotaurAtk3
+//
+// 	Floor fire attack.
+//
+//============================================================================
+
+void A_MinotaurAtk3(mobj_t* actor)
+{
+	mobj_t*		mo;
+	player_t*	player;
+
+	if (!actor->target)
+	{
+		return;
+	}
+	if(CheckMeleeRange(actor))
+	{
+		DamageMobj(actor->target, actor, actor, HITDICE(3));
+		if((player = actor->target->player) != NULL)
+		{ // Squish the player
+			player->deltaviewheight = -16.0;
+		}
+	}
+	else
+	{
+		mo = SpawnMissile(actor, actor->target, MT_MNTRFX2);
+		if(mo != NULL)
+		{
+			StartSoundName(mo, "MaulatorHamHit");
+		}
+	}
+	if(P_Random() < 192 && actor->special2 == 0)
+	{
+		SetMobjState(actor, S_MNTR_ATK3_4);
+		actor->special2 = 1;
+	}
+}
+
+//============================================================================
+//
+//	A_MinotaurCharge
+//
+//============================================================================
+
+void A_MinotaurCharge(mobj_t* actor)
+{
+	mobj_t*	puff;
+
+	if (!actor->target) return;
+
+	if(actor->args[4] > 0)
+	{
+		puff = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_PUNCHPUFF);
+		puff->velocity.z = 2.0 * 35.0;
+		actor->args[4]--;
+	}
+	else
+	{
+		actor->flags &= ~MF_SKULLFLY;
+		SetMobjState(actor, actor->seestate);
+	}
+}
+
+//============================================================================
+//
+//  A_MinotaurFade0
+//
+//============================================================================
+
+void A_MinotaurFade0(mobj_t* actor)
+{
+	actor->translucency = 66;
+}
+
+//============================================================================
+//
+//  A_MinotaurFade1
+//
+//============================================================================
+
+void A_MinotaurFade1(mobj_t* actor)
+{
+	// Second level of transparency
+	actor->translucency = 33;
+}
+
+//============================================================================
+//
+//  A_MinotaurFade2
+//
+//============================================================================
+
+void A_MinotaurFade2(mobj_t* actor)
+{
+	// Make fully visible
+	actor->translucency = 0;
+}
+
+//============================================================================
+//
+//	A_MntrFloorFire
+//
+//============================================================================
+
+void A_MntrFloorFire(mobj_t* actor)
+{
+	mobj_t*	mo;
+	actor->origin.z = actor->floorz;
+	mo = P_SpawnMobj(actor->origin.x + (Random() - Random()) * 4.0,
+		actor->origin.y + (Random() - Random()) * 4.0, ONFLOORZ, MT_MNTRFX3);
+	mo->target = actor->target;
+	mo->velocity.x = 0.00001; // Force block checking
+	CheckMissileSpawn(mo);
+}
+
+//============================================================================
+//
+//  A_SmokePuffExit
+//
+//============================================================================
+
+void A_SmokePuffExit(mobj_t* actor)
+{
+	P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_MNTRSMOKEEXIT);
+}
+

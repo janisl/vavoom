@@ -1,0 +1,270 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//  Cheat_God
+//
+//==========================================================================
+
+void Cheat_God(void)
+{
+	players[0].cheats ^= CF_GODMODE;
+	if (players[0].cheats & CF_GODMODE)
+	{
+		cprint(&players[0], "GOD MODE ON\n");
+	}
+	else
+	{
+		cprint(&players[0], "GOD MODE OFF\n");
+	}
+}
+
+//==========================================================================
+//
+//  Cheat_NoClip
+//
+//==========================================================================
+
+void Cheat_NoClip(void)
+{
+	players[0].cheats ^= CF_NOCLIP;
+	if (players[0].cheats & CF_NOCLIP)
+	{
+		cprint(&players[0], "NO CLIPPING ON\n");
+	}
+	else
+	{
+		cprint(&players[0], "NO CLIPPING OFF\n");
+	}
+}
+
+//==========================================================================
+//
+//  Cheat_Gimme
+//
+//==========================================================================
+
+void Cheat_Gimme(void)
+{
+	if (Cmd_CheckParm("weapons"))
+    {
+		int i;
+
+		players[0].armorpoints = 200;
+		players[0].armortype = 2;
+		players[0].backpack = true;
+		for (i = 0; i < NUMWEAPONS-1; i++)
+		{
+			players[0].weaponowned[i] = true;
+		}
+		if (GetCvar("shareware"))
+		{
+			players[0].weaponowned[wp_skullrod] = false;
+			players[0].weaponowned[wp_phoenixrod] = false;
+			players[0].weaponowned[wp_mace] = false;
+		}
+		for(i = 0; i < 6/*NUMAMMO2*/; i++)
+		{
+			players[0].ammo[i] = maxammo[i] * 2;
+		}
+		cprint(&players[0], "ALL WEAPONS\n");
+	}
+    if (Cmd_CheckParm("power"))
+    {
+		if (players[0].powers[pw_weaponlevel2])
+		{
+			players[0].powers[pw_weaponlevel2] = 0;
+			cprint(&players[0], "POWER OFF\n");
+		}
+		else
+		{
+			UseArtifact(&players[0], arti_tomeofpower);
+			cprint(&players[0], "POWER ON\n");
+		}
+	}
+    if (Cmd_CheckParm("health"))
+    {
+		if (players[0].chickenTics)
+		{
+			players[0].health = players[0].mo->health = MAXCHICKENHEALTH;
+		}
+		else
+		{
+			players[0].health = players[0].mo->health = MAXHEALTH;
+		}
+		cprint(&players[0], "FULL HEALTH\n");
+	}
+    if (Cmd_CheckParm("keys"))
+    {
+		players[0].keys = 7;
+		cprint(&players[0], "ALL KEYS\n");
+	}
+    if (Cmd_CheckParm("artifacts"))
+    {
+        int i;
+		int j;
+
+		// All artifacts
+		for (i = arti_none + 1; i < NUMARTIFACTS; i++)
+		{
+			if (GetCvar("shareware") && (i == arti_superhealth
+				|| i == arti_teleport))
+			{
+				continue;
+			}
+			for (j = 0; j < 16; j++)
+			{
+				P_GiveArtifact(&players[0], i, NULL);
+			}
+		}
+		cprint(&players[0], "YOU GOT IT\n");
+	}
+/*	int i;
+	int j;
+	int type;
+	int count;
+
+	type = cheat->args[0] - 'a' + 1;
+	count = cheat->args[1] - '0';
+	if (type == 26 && count == 0)
+	{ // All artifacts
+		for (i = arti_none+1; i < NUMARTIFACTS; i++)
+		{
+			if (C_VariableValue("shareware") && (i == arti_superhealth
+				|| i == arti_teleport))
+			{
+				continue;
+			}
+			for (j = 0; j < 16; j++)
+			{
+				P_GiveArtifact(&players[0], i, NULL);
+			}
+		}
+		P_SetMessage(&players[0], "YOU GOT IT", false);
+	}
+	else if (type > arti_none && type < NUMARTIFACTS
+		&& count > 0 && count < 10)
+	{
+		if (C_VariableValue("shareware") && (type == arti_superhealth || type == arti_teleport))
+		{
+			P_SetMessage(&players[0], "BAD INPUT", false);
+			return;
+		}
+		for (i = 0; i < count; i++)
+		{
+			P_GiveArtifact(&players[0], type, NULL);
+		}
+		P_SetMessage(&players[0], "YOU GOT IT", false);
+	}
+	else
+	{ // Bad input
+		P_SetMessage(&players[0], "BAD INPUT", false);
+	}*/
+}
+
+//==========================================================================
+//
+//  Cheat_KillAll
+//
+//==========================================================================
+
+void P_Massacre(void);
+
+void Cheat_KillAll(void)
+{
+	P_Massacre();
+	cprint(&players[0], "MASSACRE");
+}
+
+//==========================================================================
+//
+//  Cheat_Morph
+//
+//==========================================================================
+
+void Cheat_Morph(void)
+{
+	if (players[0].chickenTics)
+	{
+		if (UndoPlayerChicken(&players[0]))
+		{
+			cprint(&players[0], "CHICKEN OFF\n");
+		}
+	}
+	else if (ChickenMorphPlayer(&players[0]))
+	{
+		cprint(&players[0], "CHICKEN ON\n");
+	}
+}
+
+//==========================================================================
+//
+//  Cheat_NoWeapons
+//
+//==========================================================================
+
+void Cheat_NoWeapons(void)
+{
+	int i;
+	if (players[0].chickenTics)
+	{
+		return;
+	}
+	for (i = 1; i < 8; i++)
+	{
+		players[0].weaponowned[i] = false;
+	}
+	players[0].pendingweapon = wp_staff;
+	cprint(&players[0], "CHEATER - YOU DON'T DESERVE WEAPONS\n");
+}
+
+//==========================================================================
+//
+//  Cheat_Class
+//
+//==========================================================================
+
+void Cheat_Class(void)
+{
+}
+
+//==========================================================================
+//
+//
+//
+//==========================================================================
+
+

@@ -1,0 +1,628 @@
+******************************************************************************
+    Izmai·as veidojot pirmo versiju.
+******************************************************************************
+
+22-09-1999
+  Atslñgts zemais grafikas lØmenis.
+  AtdalØts ievads, tas tagad ir failÆ i_input.c.
+  AtdalØti tausti·u kodi, tie tagad ir failÆ keys.h.
+  Atslñgta spñles demo versijas pÆrbaude, tagad strÆdÆ arØ 1.6 versijas demo.
+  Izlabota kõİda cheat kodam idclev.
+24-09-1999
+  PÆrdefinñti funkcionÆlo tausti·u kodi, tagad tie sÆkas no 128.
+  SÆkam ieviest augstÆkas izıóirtspñjas videore÷Ømus. Tiek izmestas
+ konstantes SCREENWIDTH un SCREENHEIGHT, un ieviesti mainØgie ScreenWidth,
+ ScreenHeight, ScreenPitch un konstantes MAXSCREENWIDTH un MAXSCREENHEIGHT.
+25-09-1999
+  Turpinu ieviest augstÆkas izıóirtspñjas. Ieviesti papildus nepiecieıamie
+ palielinÆıanas koeficienti. Funkcija V_DrawPatch zØmñ zØmñjumu tÆ kÆ uz
+ VGA ekrÆna attiecØgi palielinot to, V_DrawPatchDirect zØmñ tÆ, kÆ ir.
+26-09-1999
+  Savesti kÆrtØbÆ spraitu palielinÆıanas koeficienti, struktİrÆ visplane_t
+ nomainØts byte pret word, kÆ arØ vñl da÷i pÆrveidojumi no DOOM LEGACY,
+ kÆ rezultÆtÆ tagad normÆli strÆdÆ arØ augstÆkas izıóirtspñjas video re÷Ømi.
+  AtbrØvojos no pÆris warning-iem.
+  Ieviesu caurspØdØguma efektu.
+  Pievienoju ekrÆna satumıinÆıanu.
+27-09-1999
+  Izveidoju pilnekrÆna re÷ØmÆ caurspØdØgus statusa ciparus.
+  SÆku pÆrstrÆdÆt menu.
+28-09-1999
+  PÆrstrÆdÆju menu. Jau ir normÆls opciju menu ar mazajiem burtiem.
+  LØzdØgi kÆ DOOM LEGACY ievedu Single Player apakımenu.
+29-09-1999
+  Izveidoju lielo sarkano ıriftu. Menu visi lielie tekstu zØmñjumi nomainØti
+ pret tekstiem ar ıo ıriftu. Ieviesu ırifta struktİru.
+30-09-1999
+  SÆku pÆrveidot teksta drukÆıanas bloku.
+01-10-1999
+  Pilnveidots tekstu bloks. Tiek drukÆts teksts lØdz noteiktam garumam.
+  Izveidoju 5 caurspØdØbas tabulas.
+  EkrÆnu buferi tiek ·emti no zonas.
+  AtbrØvojos no pÆris neizmantotÆm un bezjñdzØgÆm funkcijÆm.
+02-10-1999
+  Izlaboju pÆris kõİdas menu (seivu mosaukumi ar lielo ıriftu).
+  Beidzot korsors arØ mirgo.
+  Pilnveidoju z_zone, pievienoju Z_Resize.
+03-10-1999
+  SakÆrtoju i_xxxx failus. EkrÆnu buferu atmi·as pieprasØıana pÆrcelta uz
+ I_InitGraphics, V_Init tiek saukts no I_InitGraphics. Izveidotas kopØgas
+ ievada funkcijas inicializÆcijai, notikumu nolasØıanai un aizvñrıanai.
+ Izveidota funkcija I_Shutdown, kura tiek izsaukta no I_Quit, I_Error un
+ signal_handler.
+  ApskatØju otro wipe efektu. Ar menu ieciklojÆs. Derñtu izveidot efektu ar
+ caurspØdØbu.
+  Ieviesu parametru "vienmñr skrien". Maina ar CAPSLOCK.
+  Ieviesu mainÆmu menu fona tuıumu. Var mainØt paıÆ menu.
+04-10-1999
+  Ieviesu pa 2 vadØbas tausti·iem katai funkcijai. Peles un d÷oistika pogas
+ pÆrnesu pie tausti·iem.
+  Izveidoju vadØbas tausti·u pÆrdefinñıanas menu.
+  Izmetu ÆrÆ oriÖinÆlÆ neesoıos spñles pameıanas pazi·ojumus.
+  Datu moduõi ir pÆrdñvñti par l_xxx.
+  SÆku veidot konsoli.
+05-10-1999
+  Turpinu darbu pie konsoles. Pazi·ojums pÆrvñrsts par vienkÆrıu teksta
+ lØniju.
+06-10-1999
+  PÆrveidoti pazi·ojumi. Tagad tiek rÆdØti 5 pazi·ojumi, to teksti tiek ·emti
+ no konsoles pazi·ojumiem. Ievada lØnijas kods tagad ir failÆ c_iline.
+  Izlabota kõİda ar franÒu valodu.
+  Ieviesu palaiıanas konsoli.
+  Ieviesta konsoles ievada lØnija. SÆku ieviest komandas. 1. komanda - "Quit".
+  Ieviesti spñles mainØgie.
+07-10-1999
+  Konsole turpina attØstØties. Ieviesta komanlØnijas sadalØıana komandÆ un
+ argumentos, komandas var attdalØt ar ';', ieviestas definØcijas (alias),
+ var izpildØt skripta failus.
+  Izveidota zØmñıanas funkcija, kura prot zØmñt zØmñjumus, kuri ir daõñji
+ Ærpus ekrÆna. Tagad konsolei fonÆ ir rullñjoıs zØmñjums, kÆ arØ caurspØdØgs
+ zils fons.
+08-10-1999
+  Un tÆ ir fiksñta konsoles zØmñıana ielÆdñıanÆs laikÆ. Spñles gaitÆ var
+ mainØt ekrÆna izıóirtspñju. PilnØbÆ atbrØvojos no vecÆ konfigurÆcijas faila
+ uzbİves, tagad tas viss ir konsoles skripta fails.
+09-10-1999
+  Izveidota pñdñjo 32 ievadØto komandu "vñsture". Pievienots cheat kods GIMME.
+11-10-1999
+  Izveidots ekrÆna mai·as efekts ar caurspØdØbu.
+12-10-1999
+  Konsolñ atdalØta atseviıói zØmñıana ielÆdñıanÆs laikÆ.
+  Izlabots automaps. Tagad visÆs izıóirtspñjÆs tas tiek zØmñts vienÆdi.
+ Protams lielÆkÆs izıóirtspñjÆs lØnijas mazÆk saplİst un nav tik graudainas.
+13-10-1999
+  Izveidota konsoles komandas automÆtiska pabeigıana.
+  Ieviests praksñ mainØgais gamemission, kurı nosaka, kÆ sauc lØme·us un
+ kÆdi ir finÆla teksti. Tagad korekti tiek atbalstØtas papildus missiju
+ paketes 'plutonia' un 'tnt'.
+15-10-1999
+  SÆku ieviest atbalstu mainØtiem spraitiem PWAD failÆ bez nepiecieıamØbas
+ pievienot visus spraitus.
+16-10-1999
+  Spraitu aizvietoıana strÆdÆ.
+  Ieviests Dehacked failu atbalsts. PagaidÆm tikai priekımeti un kadri.
+  Pievienoju ielÆdñıanÆs ekrÆnam uzrakstus ar lielajiem burtiem.
+18-10-1999
+  StrÆdÆ jaunais deatmatch re÷Øms. TajÆ monstri uzbrİk citiem monstriem, tie
+ atdzimst diezgan Ætri, atdzimst priekımeti.
+  Ieviesta funkcija R_DrawTranslucentColumn. Aizvietoju veco daõñjas
+ neredzamØbas efektu ar caurspØdØbu.
+20-10-1999
+  Daõñja neredzamØba ir aizstÆta ar 10% redzamØbu.
+  Ieviesu skatØıanos augıÆ un lejÆ.
+  Pievienoju tñmekli.
+24-10-1999
+  Ieviests atbalsts DOOM agrÆkÆm versijÆm.
+25-10-1999
+  Tagad arØ finÆlÆ tiek zØmñti aizvietotie spraiti.
+26-10-1999
+  Tiek sameklñti visi spraiti starp maróieriem S_START vai SS_START un S_EDN
+ vai SS_END, vairÆk nav kõİdas, ja ir vairÆki zØmñjumi da÷ÆdÆm rotÆcijÆm.
+ Tagad PWAD failÆ var tikt aizvietoti da÷i spraiti, pievienoti jauni, mainØts
+ rotÆcijas pret visu rotÆciju spraitu un otrÆdi.
+  LØdzØgi tiek aptaujÆti visi flati. Tagad pievienotie flati drØkst sÆkties
+ arØ ar F_START vai beigties ar FF_END, tie tagad tiks pieskÆitØti.
+  Spraitu zØmñjumu datu nolasØıana aizvÆkta no inicializÆcijas. Tagad, ja
+ nav datu, tie tiek nolasØti kad tie ir vajadzØgi, kÆ arØ iepirkıielÆdñjot
+ lØmeni.
+27-10-1999
+  Pauzes un starplØme·u ekrÆna tekstu zØmñjumi nomainØti pret tekstiem.
+29-10-1999
+  Daõejs atbalstu teksta lauci·am MAPINFO .wad failÆ (tÆpat, kÆ Hexen).
+30-10-1999
+  Tiek nolasØti visi MAPINFO lauci·i. Ieviesu slØdoıÆs debesis. Atteicos no
+ .exe failÆ iebİvñtiem lØme·u nosaukumiem.
+  Ieviests atbalsts ANIMDEFS sadaõai .wad failÆ.
+31-10-1999
+  SÆku darbu pie Windows versijas
+01-11-1999
+  Windows versijÆ visi .h faili ir aizvietoti, arØ daudzi .c faili
+02-11-1999
+  Ir Windows versija ar gandrØz visiem maniem DOS versijas failiem protams
+ iz·emot i_xxx.c failus.
+03-11-1999
+  Visi faili iz·emot i_xxx.c ir aizvietoti. Protams da÷os ir mazas izmai·as.
+ GandrØz pabeigta paıa veidota DirectDraw sadaõa.
+04-11-1999
+  Mana DirectDraw versija strÆdÆ. Bija problñmas ar mainØgu screens[0]. NÆcÆs
+ veikt nelielas f_wipe.c izmai·as, un pÆrveidot failÆ r_draw.c ylookup no
+ pointeru masØva uz nobØdes masØvu un izmantoıanÆ attiecØgo vñrtØbu pieskaitØt
+ pie screens[0] tekoıÆs vñrtØbas.
+  PapildinÆti DOS versijas faili.
+05-11-1999
+  Nevaru izveidot DirectDraw ar CoCreateInstance, kaut DirectMusicPerformance
+ tiek izveidots bez problñmÆm.
+  Izveidoju struktİru mthing_t iekıñjai izmantoıanai, visus map*_t no
+ "doomdata.h" izmanto tikai "p_setup.c".
+06-11-1999
+  VeiksmØgi ielÆdñja Hexen struktİras lØmeni. PagaidÆm atslñdzu.
+  SÆku ieviest BOOM papildinÆjumus. PalielinÆju robe÷as, papildinu
+ definØcijas ar nepiecieıamajiem lauci·iem, lietojot definñtu BOOM. Ja nav
+ definñts, tad ir pa vecam.
+07-11-1999
+  Papildinu rendñıanas kodu no BOOM. Kautkur karÆs, nevaru saprast kÆpñc.
+08-11-1999
+  Atradu, kÆpñc karÆs - drukÆju neatvñrtÆ debugfile. Ieviesu funkciju
+ dprintf drukÆıanai failÆ "debug.txt".
+09-11-1999
+  No rendñıanas kooda viss ir pÆrnests, daudzkas pagaidÆm kÆ komentÆrs.
+ SÆku pÆrnest kÆ komentÆrus no p_xxx.c.
+10-11-1999
+  LielÆkÆ aõa no p_xxx.c jau ir pÆrnesta. PagaidÆm vñl strÆdÆ. Vienreiz
+ atkal uzkÆrÆs.
+11-11-1999
+  LielÆkÆ daõa jau ir "palaista", un pagaidÆm viss strÆdÆ. Da÷reiz atkal
+ uzkÆrÆs.
+12-11-1999
+  Viss strÆdÆ iz·emot dinamiskÆs colormap tabulas.
+  AtbrØvojos no visplanes, drawsegs, vissprites ierobe÷ojumiem.
+13-11-1999
+  Uzlaboju vispalnes, vissprites, drawsegs.
+  AtbrØvojos no aktØvo platformu, griestu ierobe÷ojumiem.
+  Atska·ojamÆ mİzika tagad tiek definñta sadaõÆ MAPINFO.
+15-11-1999
+  Uzlaboju WAD faila iedaõu meklñıanu. Tagad meklñ tikai tajÆs iedaõÆs, kuras
+ sÆkas ar meklñjamÆs iedaõas sÆkuma simbolu.
+  Izveidoju staigÆıanu virs / zem priekımetiem.
+16-11-1999
+  StrÆdÆju pie Windows versijas. Ska·a karÆs.
+17-11-1999
+  Turpinu darbu pie Windows versijas. Praktiski viss jau ir pÆrveidots.
+ AtbrØvojos no Windoom specifiskiem failiem.
+  Pievienoju ska·u DOS versijai. Diem÷ñl nevaru pÆrbaudØt.
+  PÆrveidoju ielÆdñıanÆs ekrÆnu. Tagad fons ir melns, augıÆ ir uzraksts
+  "JL DOOM Statup v1.10", vidİ galvenÆ menu zØmñjums, apakıÆ tiek zØmñti
+  menu galvaskausi.
+19-11-1999
+  Atradu kÆpñc karÆs ska·a Windows versijÆ (tika ielÆdñtas visas ska·as,
+ kad WAD faili vñl nebija inicializñti).
+  Windows versijÆ visur pÆrgÆju uz CoCreateInstance, pievienoju mİziku,
+ pievienoju arØ pÆrveidotÆju no MUS uz MIDI. PÆrveidoıana notiek jau modulØ
+ s_sound, un uz i_sound jau tiek padoti dati MIDI formÆtÆ.
+20-11-1999
+  PapildinÆts spñles saglabÆıanas bloks ar iztrİkstoıajiem blokiem.
+  SÆku pÆrveidot tekstu drukÆıanas bloku.
+22-11-1999
+  PÆrveidots tekstu drukÆıanas bloks. Fonts un drukÆıanas pozØcijas tiek
+ definñtas atseviıói. Tagad fonti tiek identificñti ar nummuriem, pievienoju
+ krÆsas.
+  Ievades lØnijas simbola mai·a (franÒu valodas translÆcija, simbola mai·a,
+ ja ir nospiests tausti·ı SHIFT) notiek ievada lØnijas blokÆ.
+23-11-1999
+  Konsoles komandu un skripta failu izpilde atdalØta atseviıóÆ failÆ.
+  No Intreneta nokopñju Allegro bibliotñkas 3.12 versiju, atradu arØ BCD, kas
+ nozØmñ, ka tagad es varñıu ieviest CD mİziku gan DOS, gan Windows versijai.
+ Nokpñju arØ DJP, manas versijas exe failu tas saspieda uz pusi mazÆku.
+  Pievienoju CD DOS versijai, viss strÆdÆ perfekti.
+  AtklÆju, ka Raven ir izlaidusi Heretic un Hexen izejas kodus.
+24-11-1999
+  Spñlñju "Batman Doom". VienkÆrıi super.
+  Nokopñju no Interneta Heretic un Hexen izejas kodus.
+25-11-1999
+  Turpinu spñlñt "Batman Doom".
+26-11-1999
+  Praktiski izgÆju "Batman Doom". Pñdñjo bossu vñl neesmu nositis bez kodiem.
+  SakÆrtoju animÆcijas. Tagad lasa no wad faila sadaõas "ANIMATED" tÆpat kÆ
+ BOOM. NovÆcu animÆciju skaita ierobe÷ojumu.
+27-11-1999
+  PapildinÆju dehacked atbalstu ar kodu pointeriem, munØciju, ieroÒiem.
+29-11-1999
+  Atradu kõİdu dehacked kodu pointeru atbalstÆ. "Batman Doom" iet normÆli,
+ bet pirmajÆ lØmenØ izejot no vilciena stacija neizskatÆs glu÷i pareizi,
+ ir nepareizi da÷u grØdu lØme·i.
+  SÆku iepazØties ar Heretic un Hexen izejas kodiem.
+  Nokompilñju ACS skriptu kompilÆtoru. Atradu vienu kõİdu, kuras rezultÆtÆ
+ tika izdzñsta faila galvi·a.
+01-12-1999
+  Palaidu Heretic un Hexen.
+02-12-1999
+  SÆku apvienoıanu. Ir apvienots zonas atmi·as modulis, wad failu modulis,
+ izveidots kopØgs galveno definØciju fails.
+03-12-1999
+  Ir kopØgs da÷Ædu funkciju, ievada un grafikas modulis, matemÆtikas tabulas,
+ izveidoju WAD faila datu definØciju header failu.
+04-12-1999
+  KopØgas sistñmas, notikumu modulis.
+06-12-1999
+  KopØgs modulis v_video.c
+07-12-1999
+  KopØgi moduõi r_things.c un r_draw.c
+08-12-1999
+  KopØgi moduõi r_segs.c un r_plane.c
+09-12-1999
+  KopØgi visi rendñıanas moduõi.
+10-12-1999
+  Izveidoju failus r_local.h (rendñıanas moduõa lokÆlais header fails) un
+ r_public.h (funkcijas un dati, kuri ir nepiecieıami citiem moduõiem).
+ Izveidoju failu p_defs.h, kurÆ ir iekõauti visi lØme·a, monstru un spñlñtÆju
+ datu tipi, r_public.h tika integrñts failÆ gamedefs.h, kÆ arØ iekõauts
+ ticcmd_t un tØkla tipi.
+  Nezinu kÆdñõ, bet Heretic kautkÆ sabojÆ wad failu datu tabulu.
+11-12-1999
+  Izveidots kopØgs p_setup, no Hexen iekõÆvu sc_man, izveidoju MAPINFO priekı
+ Heretic. Izveidoju failu g_main, pagaidÆm tajÆ ir tikai dprintf un G_Main,
+ kurı atver "debug" gailu un izsauc spñles galveno funkciju. KautkÆ pazuda
+ wad failu bojÆıanas defekts, toties Heretic un Hexen rÆmis tiek zØmñts
+ nepareizi. Nezinu kÆdñõ, bet funkcija V_DrawShadowedPatch rada kõİdu
+ "segmentation violation".
+12-12-1999
+  Izlaboju kõİdu funkcijÆ V_DrawShadowedPatch. Debesu zØmñıanu pÆrnesu uz
+ r_draw.
+  Pievienoju p_anims no Hexen, paıreiz izmantoju tikai Doom animñtajÆm
+ tekstİrÆm.
+14-12-1999
+  SÆku apvienot info moduõus. pÆrnumurñtajos tipos pie nosaukuma sÆkuma
+ SPR_ S_ MT_ Doom datiem pievienoju indeksu 1, Heretis datiem 2 un Hexen - 3.
+15-12-1999
+  Izveidoju spñles mainØgo Game, visÆs spñlñs ir pieejami visi spraitu
+ nosaukumu un priekımetu tipu tabulas, kuras atkarØbÆ no spñles tiek sÆkumÆ
+ uzstÆdØtas. Apvienoju arØ p_user.
+16-12-1999
+  Pievienoju tekstu drukÆıanas moduli. Apvienoju ska·u definØcijas. Izveidots
+ kopØgs ska·as modulis, tai skaitÆ MUS konvertñıana uz MIDI un CD mİzika.
+17-12-1999
+  PagaidÆm pabeidzu ska·as moduli. Pievienots no Hexen arØ sn_sonix.
+  PilnØgÆk apvienots galvenais modulis.
+18-12-1999
+  Pievienoju Doom ievada lØnijas moduli.
+  SÆku apvienot Òatu.
+20-12-1999
+  Óats apvienots. Pievienoju visiem arØ konsoli. Doom karÆs mñÖinot kautko
+ darØt menu vai sÆkot demo.
+21-12-1999
+  Apvienots d_net.
+  Doom karÆs tÆpñc, ka bija neliela kõİdi·a ska·as moduØ.
+22-12-1999
+  Ğodien internetÆ ir parÆdØjuıies QUAKE IZEJAS KODI! Viasmaz ftp.cdrom.com
+ failam ir ıodienas datums un faili pñdñjoreiz ir rediÖñti vakar (piavienota
+ galvi·a). Viegli saprast, ka es tos nokopñju.
+  Nokopñju arØ izejas kodus Doom setup, ipxsetup un sersetup programmÆm.
+ Setup ir veidots Borland C++ vidñ, viss normÆli kompilñjas. Laikam arØ
+ ipxsetup un sersetup tika veidoti Borland vidñ, jo tajos tiek izmantots
+ atslñgvÆrds interrupt. Vñl nemñÖinÆju tos nokompilñt.
+  SÆku apvienot g_game.
+23-12-1999
+  Apvienots modulis g_game. Tagad arØ Doom-Æ ir elegantÆ skatiena centrñıana.
+  Doom demo karÆs, Heretic un Hexen karÆs sÆkot jaunu spñli un izsaucot
+ konsoli.
+24-12-1999
+  Darbojos ar QUAKE. NormÆli nokompilñju Windows versiju bez asemblera, kÆ
+ arØ DOS versiju. (Pateicoties Doom Legacy normÆli nokompilñju arØ asemblera
+ failus. IzrÆdÆs, ka kompilñjot asemblera failus bija jÆpievieno kompilatora
+ parametrs "-x assembler-with-cpp".) Diem÷ñl palaist neizdevÆs. Windows
+ versijai trİkst kautkÆds mistisks dll fails, DOS versija rÆda kautkÆdas
+ muõóØbas.
+25-12-1999
+  Heretic un Hexen konsoles izsaukıana karÆs tÆpñc, ka izsaucot tiek izsaukta
+ funkcija MN_DeactivateMenu, kuras dñõ arØ karÆs. Pievienoju aizsardzØbu.
+  Heretic un Hexen spñle karÆs tÆpñc, ka screenblocks noklusñtÆ vñrtØba
+ bija 0. nomainØta pret korektu vñrtØbu.
+  Hexen spñle karÆs tÆpñc, ka nebija ieroÒu informÆcijai pievienots munØcijas
+ lauka vñrtØbas.
+  Doom un Heretic demo karÆs tÆpñc, ka tajos maksimÆlais spñlñtÆju skaits
+ bija 4, bet tagad tas ir nomainØts uz 8.
+  Spñles saglabÆıanas un izsaukıanas funkcijas ievietotas modulØ sv_save.
+ PagaidÆm nekas nav apvienots.
+27-12-1999
+28-12-1999
+29-12-1999
+30-12-1999
+
+//--------------------------------------------------------------------------
+                               2000 GADS.
+//--------------------------------------------------------------------------
+03-01-2000
+  2000. gada kõİdas protams nav, jo datums nekur netiek izmantots.
+  Man radÆs ideja izveidot programmas lØdzØgi Quake programmÆm. ArØ stÆvokõu,
+ objektu tipu un spraitu nosaukumu tabulas varñtu ielÆdñt no wad faila.
+ Tas atõautu izveitot datu blokus katrai spñles versijai, kÆ rezultÆtÆ exe
+ failÆ varñs daõñji vai varbİt pilnØgi atbrØvoties no atkarØbas no spñles
+ versijas. TÆpat varñs vieglÆk veikt izmai·as stÆvokõos, objektu tipos un
+ spraitu nosaukumos, Dehacked failu vietÆ bİs mainØtas tabulas, kuras varñtu
+ izviedot ar utilØta programmu, kura tÆs veido no oriÖinÆlajÆm tabulÆm un
+ dehacked faila.
+  Programmu izpildi es veidoıu no Hexen ACS interpretÆtora un Quake programmu
+ interpretÆtora. KompilÆtoru veidoıu no ACC un QCC.
+  SÆku veidot kompilÆtoru, skat "changes.txt" kompilÆtora direktorijÆ.
+04-01-2000
+  StrÆdÆju pie kompilÆtora.
+05-01-2000
+  StrÆdÆju pie kompilÆtora.
+06-01-2000
+  StrÆdÆju pie kompilÆtora.
+07-01-2000
+  StrÆdÆju pie kompilÆtora.
+08-01-2000
+  PirmÆ kompilÆtora versija gatava. SÆku ieviest interpretÆtoru. Palaidu
+ programmu ar pÆris vienkÆrıÆm komandÆm.
+10-01-2000
+  Veidoju interpretÆtoru. Praktiski viss strÆdÆ, nÆcÆs papildinÆt kmpilÆtoru.
+ Tika ieviesti predefinñti struktİras pointeri.
+11-01-2000
+  StÆvokõu tabulÆ tieıÆ funkcija tika aizvietota ar tÆs nummuru, tÆs lauci·ı
+ tika pÆrvietots tÆlÆk, kÆ arØ pievienots lauci·ı PROGS funkcijas nummuram.
+ Izveidota "p_info.c", kurÆ ir funkciju tabulas, tiek atrasti PROGS funkciju
+ nummuri un uzstÆdØtas iebİvñtÆs un PROGS funkcijas stÆvokõu tabulÆ. StÆvokõu
+ tabulÆs vissu aizvietojot, tÆs kõİst pieejamas visÆm spñlñm. DOOM un HERETIC
+ tabulas jau ir pieejamas.
+12-01-2000
+  Pabeidzu arØ HEXEN tabulas. Standarta darbØbu funkcijas pÆrvietotas uz
+ PROGS. Lai to izdarØtu, nÆcÆs ieviest veselu kaudzi ar iebİvñtajÆm funkcijÆm.
+13-01-2000
+  DOOM monstru darbØbas funkcijas pÆrnestas uz PROGS. Demo savietojamØba
+ nestrÆdÆ. PÆrnesu arØ gandrØz visas HERETIC funkcijas.
+14-01-2000
+  PÆrnestas visas HERETIC monstru un priekımetu darbØbas funkcijas uz PROGS.
+ SÆku arØ pÆrnest HEXEN funkcijas.
+15-01-2000
+  PÆrnestas arØ visas HEXEN monstru un priekımetu darbİbas funkcijas uz PROGS.
+17-01-2000
+  PÆrnestas visas DOOM spñlñtÆja ieroÒu darbØbas funkcijas uz PROGS. DOOMÆ
+ vairs nav iebİvñto darbØbas funkciju iz·emot A_BossDeath, kura ir realizñta
+ kÆ PROGS iebİvñtÆ funkcija. ArØ HERETIC spñlñtÆja ieroÒu darbØbas funkcijas
+ ir pÆrnestas uz PROGS, palikuıas ir tikai ieroÒu ıÆvi·u darbØbas funkcijas.
+18-01-2000
+  PÆrnestas arØ visas HERETIC funkcijas, lØdzØgi kÆ DOOMÆ A_BossDeath ir
+ iebİvñtÆ funkcija. PÆrnestas arØ visas HEXEN ieroÒu funkcijas.
+19-01-2000
+  StÆvokõu tabulas pÆrnestas uz PROGS. AtklÆju, ka bitu bØdØıanas operÆcija
+ ar skaitõiem bez zØmes strÆdÆ savÆdÆk nekÆ ar skaitõiem ar zØmi. Pievienoju
+ papildu operÆciju kodus bitu bØdØıanai skaitõiem bez zØmes. RezultÆtÆ
+ atjaunojÆs DOOM demo savietojamØba.
+20-01-2000
+  Izveidotas programmas makeinfo.exe katrai spñlei, kuras izdod stÆvokõu,
+ objektu c failus priekı PROGS. ArØ objektu tabulas ir pÆrnestas uz PROGS.
+ Daudzas funkcijas, kuras tika realizñtas kÆ iebİvñtÆs, pÆrnestas uz PROGS.
+21-01-2000
+  AtbrØvojos no iebİvñtajÆm spraitu nosaukumu, stÆvokõu un objektu aprakstu
+ tabulÆm, exe failu izmñri samazinÆjuıies par 250 lØdz 300 kb.
+22-01-2000
+  Pievienotas trİkstoıÆs operÆcijas ar skaitõiem bez zØmes.
+  PÆrvietotas daudzas objektu un spñlñtÆja funkcijas.
+24-01-2000
+  MñÖinÆju izveidot konsoles fona tabulu, bet BOOMa cmaptool izveidoja
+ nepareizu tabulu, iespñjams, ka tas ir tÆdñõ, ka PAINT failu saglabÆjot
+ da÷kÆrt maina paletes secØbu.
+25-01-2000
+  Praktiski viss no "p_pspr.c" un "p_user.c" ir pÆrnests uz PROGS. "p_pspr.c"
+ vairs neeksistñ. Izveidoju "p_progsf.c" kurÆ tiek izsauktas funkcijas kuras
+ ir pÆrvietotas uz PROGS.
+26-01-2000
+  Izveidoju palØgprogrammu, kura izveido pÆrejas tabulu no vienas paletes uz
+ citu, kÆ arØ palØgprogrammu, kura izveido no pÆrejas tabulas vienai paletei
+ pÆrejas tabulu citai paletei. Tagad arØ Heretic un Hexen ir zilais konsoles
+ fons.
+  VisÆs spñlñs ir pÆrnesta uz PROGS funkcija P_DamageMobj ar nepiecieıamajÆm
+ funkcijÆm. Hexen lielÆkÆ daõa no "p_inter.c" ir pÆrnesta uz PROGS.
+27-01-2000
+  VisÆs spñlñs viss no "p_inter" ir pÆrnests uz PROGS iz·emot pazi·ojumus,
+ kuri tagad ir jaunÆ kopØgÆ failÆ "p_misc".
+28-01-2000
+  DOOM arØ Arch-vile monstru atdzØvinÆıana un A_BossDeath ir pÆrnests uz
+ PROGS. Bossa nÆves speciÆlie notikumi ir iebİvñtas funkcijas.
+  Izveidoju iespñju programmÆs definñt jaunas struktİras, kuras var tikt
+ bÆzñtas uz standarta paplaıinÆmÆm struktİrÆm (lØdzØgi kÆ C++ klases var tikt
+ bÆzñtas uz citas klases bÆzes, bet tikai ar ierobe÷otu jauno lauku atmi·u).
+29-01-2000
+  RadÆs da÷as problñmas ar mantotajiem tipiem. Atteicos no mantoıanas, tÆ
+ vietÆ izveidoju struktİrai lØdzØgu lauku pievienoıanas deklarÆtoru. tas
+ sÆkas ar atslñgvÆrdu addfields.
+31-01-2000
+  Izveidoju DETH konfigurÆciju priekı "Batman Doom". ItkÆ nav daudz ko darØt,
+ bet aiz·ñma visu dienu.
+01-02-2000
+  DOOMÆ atbrØvojos mo "p_mobj.c".
+  Nolñmu kompilÆtorÆ izmantot jau esoıo priekıprocesoru CPP, man tas ir tikai
+ Borland C, bet DJGPP arØ tÆdam ir jÆbİt. TÆdñõ nÆcÆs mainØt spraitu un
+ objektu aprakstu definñıanu. Tagad spraitu definØcija sÆkas ar atslñgvÆrdu
+ __states__, bet objektu definØcijas ar atslñgvÆrdu __mobjinfo__, ieroÒu
+ definØcijÆm bİs atslñgvÆrds __weaponinfo__. Aiz tÆ seko atvñrtÆ figİriekava,
+ tad definØcijas, kÆ tas bija lØdz ıim, tad aizvñrtÆ figİriekava.
+02-02-2000
+  IzrÆdÆs ka DJGPP programma CPP ir noslñpta direktoriju kokÆ. Pievienoju
+ pie DCC ıØs programmas izsaukıanu, un tad kompilñju tÆs izdoto rezultñjoıo
+ failu. Izveidoju arØ jauku lodzi·u, kurÆ tiek attainota kompilÆcijas gaita.
+03-02-2000
+  PÆrnesu HERETIC daudzas mobj funkcijas uz PROGS.
+  Noinstalñju Suse LINUX 6.2. JÆsÆk kautkas darØt arØ LINUX videi.
+04-02-2000
+  SamñrÆ veiksmØgi nokompilñju DCC LINUX vidñ. Protams atteicos no lodzi·a,
+ neatradu funkciju, kura darbotos tÆpat kÆ spawnv funkcija, izmantojot execv
+ tiek izsaukta jaunÆ programma un vecai vairs vÆrds netiek dots. Tomñr
+ vispirms izveidojot apstrÆdÆto failu, un pñctam to kompilñjot, viss strÆdÆ
+ normÆli.
+05-02-2000
+  SÆku pÆrnest arØ lØniju speciÆlo darbØbu funkcijas uz programmÆm. No DOOM
+ jau ir pÆrnestas gaismu un platformu funkcijas. PagaidÆm vairÆk nepÆrnesØıu,
+ kamñr exe failÆ neatbrØvoıos no atkarØbas no stÆvokõu tabulÆm.
+  SÆku apvienot arØ spñles saglabÆıanas un izsaukıanas blokus. TÆkÆ exe fails
+ nezin neko par jauno lauku tipiem, tiek izsaultas programmu funkcijas, kurÆs
+ notiek darbØbas pointeru pÆrvñrıanai nummuros un otrÆdi.
+07-02-2000
+  ArØ HERETIC atbrØvojos no "p_mobj.c", neatceros konkrñti kurÆ datumÆ.
+08-02-2000
+  Uz PROGS ir pÆrnestas ieroÒu tabulas. Izmetu ÆrÆ lauci·u mana, kaut gan
+ programmÆs tas ir pieejams un tas sakrØt ar lauci·u ammo.
+09-02-2000
+  LØdzØgi kÆ QUAKE ieviesu konsoles komandas un mainØgos. Tagad komandÆm un
+ mainØgajiem nav jÆbİt definñtiem konsoles komandu modulØ. InicializÆcijas
+ gaitÆ komandas un mainØgie tiek pievienoti izmantojot funkcijas C_AddCommand
+ un C_RegisterVariable. MainØgie ir pieejami arØ no programmÆm. AtbrØvojos no
+ vecajiem simbola virk·u mainØgajiem.
+10-02-2000
+  AtdzØvinÆju Windows versiju. PagaidÆm bez ska·as, mİzikas, CD audio un
+ tØkla. Darbojas visas trØs spñles.
+  PÆrnests arØ HEXEN viss no "p_mobj.c". AtklÆju, ka HEXEN nobija izlabota
+ kõİda, kuras dñõ konsoles izsaukıana da÷kÆrt uzlÆrÆs.
+11-02-2000
+  Beidzot ieviesu praksñ stÆvokõa lauci·u statenum.
+12-02-2000
+  VisÆs spñlñs teleportÆcija ir pÆrnestaİn programmÆm.
+17-02-2000
+  AizgÆja uz LINUX. PagaidÆm no sistñmas atkarØgiem moduõiem strÆdÆ tikai
+ grafika UN SKAüA, bet galvenais ir tas, ka viss, kas nav atkarØgs no
+ sistñmas, strÆdÆ. Pats patØkamÆkais protams ir tas, ka normÆli strÆdÆ
+ ska·a atıóirØbÆ no DOS, kur ska·as kartes draiveri nestrÆdÆ.
+18-02-2000
+  Pievienoju LINUX versijai arØ ievadi. Atradu Allegro bibliotñkÆ kõİdu
+ klaviatİras modulØ LINUX sistñmai. Tur keypad tausti·i, kad numlock ir
+ izslñgts, tika nomainØti pret bulti·u tausti·iem.
+19-02-2000
+  Gatavoju izlaist pirmo publisko versiju. AtbrØvojos no visiem warning-iem
+ DOS un LINUX versijÆs.
+20-02-2000
+  Sagatavoju pirmo publisko versiju. TÆ ir pñdñjÆ versija bez programmÆm.
+ Ir visas trØs spñles. Ir versijas DOS, Windows un LINUX operñtÆjsistÆmÆm.
+ Tika pielabotas pÆris kõİdas, bet vñl nav izlabotas kõİdas Heretic un Hexen
+ statusa logÆ un autokartñ. Windows versijÆ atjaunoju ska·u un mİziku, tØklu
+ no vecÆs versijas, vienØgi ar CD kautkas nav kÆrtØbÆ kÆ arØ da÷reiz izmet
+ ÆrÆ. LINUX versijÆ pievienoju tØklu no oriÖinÆlÆ linuxdoom.
+28-02-2000
+  HEXEN griestu, durvju, platformu un daõa grØdu funkciju pÆrnestas uz
+ programmÆm.
+29-02-2000
+  PÆrnesu arØ pÆrñjÆs HEXEN grØdu funkcijas uz programmÆm. Visas lØniju
+ speciÆlÆs funkcijas, kuras atrodas programmÆs tiek izsauktas
+ P_ExecuteLineSpecial neatrodot atbilstoıo funkciju izsauc programmas
+ funkciju ExecuteLineSpecial no kuras vissas programmu funkcijas.
+01-03-2000
+  SÆku atdalØt DOOM "bibliotñku". TajÆ ir z_zone, w_wad, sc_man, m_misc,
+ sys_???. DarbØbas tieıi ar failiem ir pÆrnestas uz sys_ moduõiem.
+ Tausti·u konstantes pÆrdñvñtas no KEY_??? uz K_??? lai nebİtu konfliktu ar
+ Allegro definØcijÆm.
+02-03-2000
+03-03-2000
+04-03-2000
+06-03-2000
+  ACS ir pieejams visÆs spñlñs. Izveidots kopØgs p_switch. Daõa no waddefs.h
+ ir atdalØta atseviıóos failos.
+07-03-2000
+  Izveidots kopØgs p_tick.
+08-03-2000
+  Óakarñjos ar Batman Doom. Izveidoju utilØtu tekstİru statistika iegİıanai.
+09-03-2000
+  PapildinÆta statistikas utilØta ar flatu statistiku. IzrÆdÆs ka dehacked
+ failos ieroÒa pacelıanas un nolaiıanas stÆvokõi ir samainØti vietÆm. Tagad
+ arØ Batman Doom 7 ierocis strÆdÆ normÆli. DCC automÆtiski definñ spraitu
+ nummuru konstantes, kuras sÆkas ar SPR_. VisÆs spñlñs redzamØba tagad tiek
+ pÆrbaudØta izmantojot BSP koku. Tiek pÆrbaudØri arØ poliobjekti.
+10-03-2000
+  Apvienots p_maputl. Praktiski viss ir vienÆds, iz·emot Hexen ir pievienota
+ poliobjektu bloóñıana. Hexen funkciju, kura meklñ monstrus pÆrnesu uz
+ p_enemy.
+11-03-2000
+  PÆris funkcijas no p_map daõñji vai pilnØgi ir pÆrnestas uz PROGS.
+  Programmu izpildñ sÆku veidot komandu funkcijas un izpildØt programmas
+ izantojot komandu funkciju tabulu. Teorñtiski tas atrÆdÆ atrÆk.
+13-03-2000
+  PilnØbÆ izveidota PROGS operÆciju tabula. Visas funkcijas tika maksimÆli
+ optimizñtas. Tika ieviesti vairÆki makro da÷ÆdÆm pÆrbaudñm. Tiek pÆrbaudØta
+ steka pÆrplİıana, ·emıana no tukıa steka, korekti operÆciju kodi, korekti
+ mainØgo nummuri, korekts funkcijas nummurs, funkcijas izsaukuma parametru
+ skaits, iecikloıanÆs un vai pñc pamatfunkcijas izpildes steks ir tukı.
+ Korekta koda gadØjumÆ vairÆkas pÆrbaudes ir liekas, tÆdñjÆdi pietiek tikai
+ pÆrbaudØt steka pÆrplİıanu, iecikloıanos un funkcijas izsaukuma parametru
+ skaitu. Ja ir tikai ıØs nepiecieıamÆs pÆrbaudes, ÆtrdarbØbas atıóirØba ir
+ õoti jİtama.
+  Salaboju DOOM 2 finÆlu. PilnØbÆ atbrØvojos no atkarØbas no stÆvokõu
+ nummuriem exe failÆ. DOOM arØ vairs neizmanto objektu nummuru definØcijas.
+14-03-2000
+  Ieviesu praksñ mobj parametrus translucency un translation. Tagad tie tiek
+ uzstÆdØti programmÆs, un rendñıana nolasa jau gatavas vñrtØbas.
+  AtbrØvojos no vecajÆm konsoles komandÆm.
+20-03-2000
+  Apvienoju automapu.
+21-03-2000
+22-03-2000
+  AtdalØju atseviıói CD mİziku. SakÆrtoju ska·as moduõus.
+23-03-2000
+24-03-2000
+27-03-2000
+  Atseviıói atdalØju ievadi. Izveidoju arØ ievades centrÆlo moduli, kurÆ ir
+ darbs ar notikumiem un tausti·u/pogu nosaukumiem.
+28-03-2000
+  Vecie konsoles mainØgie pÆrvñrsti par cvar_t. Nedaudz sakÆrtots video bloks.
+29-03-2000
+  SÆku sakÆrtot menu.
+30-03-2000
+  Visas menu zØmñıanas funkcijas ir sakÆrtotas, arØ da÷as izmantoıanas
+ funkcijas. Atsevioıói atdalØts pazi·ojuma logs.
+31-03-2000
+  ArØ izmantoınas funkcijas ir sakÆrtotas.
+01-04-2000
+  Pabeigtas arØ menu izmantoıans funkcijas, palika vñl funkcionÆlie tausti·i.
+ ManuprÆt ir jÆizveido vajadzØgÆs konsoles komandas un jÆizveido attiecØga
+ tabula (lØdzØgi QUAKE). Vñl pÆris bloki meizmanto definñtos spñles makro.
+05-04-2000
+  Ievada lØnijas bloks pÆrvietots uz gamelib.
+  ArØ cenıos izveidot pñc iespñjas vairÆk failu, kuri nebİtu atkarØgi no
+ spñles makro definØcijÆm.
+
+29-05-2000
+  Pñc neliela pÆrtraukuma un atpİtas esmu atpakaõ pie Vavoom projekta.
+  Ja tiek kompilñts ar gcc, tad netiek izmantots M_FindResponseFile, jo gcc
+ kompilñtÆs programmÆs tas jau tiek darØts programmas sÆkuma kodÆ.
+  Nedaudz sakÆrtoju tØklu. Izveidoju atseviıóu .h failu un atbrØvojos no
+ spñles makro definØcijÆm tØkla moduõos.
+  FixedDiv2 izveidoju kÆ inline funkciju.
+30-05-2000
+  Vñl vairÆki moduõi nav atkarØgi no makro definØcijÆm.
+31-05-2000
+  Apvienoju finÆlus. Nav pat vajadzØgi makro. Izlaboju pÆris kõİdas teksta
+ modulØ un spoguõattñla zØmñıanas funkcijÆ. Dehacked modulis ir visÆs spñlñs.
+02-06-2000
+  PÆrvietoju uz programmÆm gandrØz visu P_TryMove, rezultÆtÆ exe fails vairs
+ neizmanto objektu nummurus.
+03-06-2000
+  Automaps, menu un vñl pÆris failu vairs neizmanto makro definØcijas.
+05-06-2000
+  Ğodien no makro definØcijÆm atkarØgie moduõi ir vairs tikai 3: statusa
+ lØnija, starplØme·i un host moduõi.
+06-06-2000
+  DOOM un HERETIC un daõa HEXEN statusa lØniju pÆrnestas uz PROGS.
+07-06-2000
+  Vairs netiek izmantotas makro definØcijas un ir tikai 1 izpildÆmais fails.
+08-06-2000
+  Atjaunoju Windows versiju. Diem÷ñl kad tiek lÆdñts lØmenis, programma
+ vienkÆrıi tiek pÆrtraukta. NekÆdi evaru saprast kÆ tÆ beidz savu darbu.
+ Izveidoju arØ vcc Windows versiju. KompilñtÆs programmas ir identiskas.
+ Tas nozØmñ, ka vaina nav tajÆ apstÆklØ, ka varbİt Windows versijÆ ir citi
+ struktİru lauku ofseti. MñÖinÆju izveidot Borland C++ Builder versiju. Viss
+ kompilñjas normÆli, tikai linkojot linkeris nevar atrast DirectInput
+ iepriekı definñtÆs datu formÆtu struktİras.
+  BeigÆs atradu kÆpñc Windows versija karÆs. IzrÆdÆs, ka Visual C++ strÆdÆ
+ nedaudz savÆdÆk nekÆ gcc. KÆ rezultÆtÆ PROGS operÆciju komandas netika
+ nokompilñtas tÆ, kÆ es to biju gaidØjis. Pñc da÷iem pÆrveidojumiem viss
+ sÆka strÆdÆt normÆli.
+14-06-2000
+  PñdñjÆs dienÆs vñl tika pielabotas pÆris lietas, par kurÆm es jau esmu
+ aizmirsis. VispÆr pñdñjÆs dienÆs es nedaudz atpİtos un uzspñlñju Startcraft.
+  Ğodien beidzot InternetÆ publicñju pirmo Vavoom versiju. Jau pÆris dienas
+ iepriekı tika izveidota web lapa www.50megs.com serverØ. VisstulbÆkais ıajÆ
+ serverØ ir tas, ka katras lapas augıÆ ir reklÆmas "banner", kuru es nekÆdi
+ nevaru atslñgt. Projekts tika pieteikts Allegro Games Depot lapÆ. AttiecØgu
+ pazi·ojumu aizsİtØju uz Doomworld.com lapu.
+
+******************************************************************************
+                            VERSIJA 1.0
+******************************************************************************

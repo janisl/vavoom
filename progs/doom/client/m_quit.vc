@@ -1,0 +1,109 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+#define NUM_END_MESSAGES	15
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+string	quitsounds[8] =
+{
+#ifndef DOOM2
+	"PlayerDeath",
+	"DemonPain",
+	"ZombiePain",
+	"Slop",
+	"Teleport",
+	"ZombieSight1",
+	"ZombieSight3",
+	"DemonAttack"
+#else
+	"ArchVileActive",
+	"PickupPower",
+	"CubeFly",
+	"Slop",
+	"RavenantSwing",
+	"KnightDeath",
+	"BabyActive",
+	"DemonAttack"
+#endif
+};
+
+string	endmsg[NUM_END_MESSAGES] =
+{
+	"are you sure you want to\nquit this great game?",
+	"please don't leave, there's more\ndemons to toast!",
+	"let's beat it -- this is turning\ninto a bloodbath!",
+	"i wouldn't leave if i were you.\ndos is much worse.",
+	"you're trying to say you like dos\nbetter than me, right?",
+	"don't leave yet -- there's a\ndemon around that corner!",
+	"ya know, next time you come in here\ni'm gonna toast ya.",
+	"go ahead and leave. see if i care.",
+
+	"you want to quit?\nthen, thou hast lost an eighth!",
+	"don't go now, there's a \ndimensional shambler waiting\nat the dos prompt!",
+	"get outta here and go back\nto your boring programs.",
+	"if i were your boss, i'd \n deathmatch ya in a minute!",
+	"look, bud. you leave now\nand you forfeit your body count!",
+	"just leave. when you come\nback, i'll be waiting with a bat.",
+	"you're lucky i don't smack\nyou for thinking about leaving."
+};
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	QuitResponse
+//
+//==========================================================================
+
+void QuitResponse(int ch)
+{
+    if (ch != 'y')
+		return;
+
+   	LocalSoundTillDone(quitsounds[P_Random() & 7]);
+
+	CmdBuf_AddText("Quit\n");
+}
+
+//==========================================================================
+//
+//	menu_quit
+//
+//==========================================================================
+
+void menu_quit(void)
+{
+	MB_StartMessage(va("%s\n\n(press y to quit)",
+		endmsg[P_Random() % NUM_END_MESSAGES]), QuitResponse, true);
+}
+
+

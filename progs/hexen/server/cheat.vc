@@ -1,0 +1,270 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//  Cheat_God
+//
+//==========================================================================
+
+void Cheat_God(void)
+{
+	players[0].cheats ^= CF_GODMODE;
+	if (players[0].cheats & CF_GODMODE)
+	{
+		cprint(&players[0], "GOD MODE ON\n");
+	}
+	else
+	{
+		cprint(&players[0], "GOD MODE OFF\n");
+	}
+}
+
+//==========================================================================
+//
+//  Cheat_NoClip
+//
+//==========================================================================
+
+void Cheat_NoClip(void)
+{
+	players[0].cheats ^= CF_NOCLIP;
+	if (players[0].cheats & CF_NOCLIP)
+	{
+		cprint(&players[0], "NO CLIPPING ON\n");
+	}
+	else
+	{
+		cprint(&players[0], "NO CLIPPING OFF\n");
+	}
+}
+
+//==========================================================================
+//
+//  Cheat_Gimme
+//
+//==========================================================================
+
+void Cheat_Gimme(void)
+{
+	if (Cmd_CheckParm("weapons"))
+    {
+		int i;
+
+		for (i = 0; i < NUMARMOR; i++)
+		{
+			players[0].armorpoints[i] = ArmorIncrement[players[0].pclass * NUMARMOR + i];
+		}
+		for (i = 0; i < NUMWEAPONS; i++)
+		{
+			players[0].weaponowned[i] = true;
+		}
+		for (i = 0; i < NUMMANA; i++)
+		{
+			players[0].mana[i] = MAX_MANA;
+		}
+        players[0].pieces = 7;
+		cprint(&players[0], "ALL WEAPONS\n");
+	}
+    if (Cmd_CheckParm("health"))
+    {
+		if (players[0].morphTics)
+		{
+			players[0].health = players[0].mo->health = MAXMORPHHEALTH;
+		}
+		else
+		{
+			players[0].health = players[0].mo->health = MAXHEALTH;
+		}
+		cprint(&players[0], "FULL HEALTH\n");
+	}
+    if (Cmd_CheckParm("keys"))
+    {
+		players[0].keys = 2047;
+		cprint(&players[0], "ALL KEYS\n");
+	}
+    if (Cmd_CheckParm("artifacts"))
+    {
+		int i;
+		int j;
+
+		for (i = arti_none + 1; i < arti_firstpuzzitem; i++)
+		{
+			for (j = 0; j < 25; j++)
+			{
+				P_GiveArtifact(&players[0], i, NULL);
+			}
+		}
+		cprint(&players[0], "ALL ARTIFACTS\n");
+	}
+    if (Cmd_CheckParm("puzzles"))
+    {
+		int i;
+
+		for (i = arti_firstpuzzitem; i < NUMARTIFACTS; i++)
+		{
+			P_GiveArtifact(&players[0], i, NULL);
+		}
+		cprint(&players[0], "ALL ARTIFACTS\n");
+	}
+}
+
+//==========================================================================
+//
+//	P_Massacre
+//
+//	Kills all monsters.
+//
+//==========================================================================
+
+int P_Massacre(void)
+{
+	int 	count;
+	mobj_t	*mo;
+
+	count = 0;
+	for (mo = NextMobj(NULL); mo; mo = NextMobj(mo))
+	{
+		if ((mo->flags & MF_COUNTKILL) && (mo->health > 0))
+		{
+			mo->flags2 &= ~(MF2_NONSHOOTABLE + MF2_INVULNERABLE);
+			mo->flags |= MF_SHOOTABLE;
+			DamageMobj(mo, NULL, NULL, 10000);
+			count++;
+		}
+	}
+	return count;
+}
+
+//==========================================================================
+//
+//  Cheat_KillAll
+//
+//==========================================================================
+
+void Cheat_KillAll(void)
+{
+	cprint(&players[0], "%d MONSTERS KILLED\n", P_Massacre());
+}
+
+//==========================================================================
+//
+//  Cheat_Morph
+//
+//==========================================================================
+
+void Cheat_Morph(void)
+{
+	if (players[0].morphTics)
+	{
+		UndoPlayerMorph(&players[0]);
+	}
+	else
+	{
+	 	P_MorphPlayer(&players[0]);
+	}
+	cprint(&players[0], "SQUEAL!!\n");
+}
+
+//==========================================================================
+//
+//  Cheat_NoWeapons
+//
+//==========================================================================
+
+void Cheat_NoWeapons(void)
+{
+	int i;
+	if (players[0].morphTics)
+	{
+		return;
+	}
+	for (i = 1; i < 4; i++)
+	{
+		players[0].weaponowned[i] = false;
+	}
+	players[0].pendingweapon = WP_FIRST;
+    players[0].pieces = 0;
+	cprint(&players[0], "CHEATER - YOU DON'T DESERVE WEAPONS\n");
+}
+
+//==========================================================================
+//
+//  Cheat_Class
+//
+//==========================================================================
+
+void Cheat_Class(void)
+{
+	int	i;
+	int	pclass;
+
+	if (players[0].morphTics)
+	{ // don't change class if the player is morphed
+		return;
+	}
+    if (Cmd_CheckParm("fighter"))
+    	pclass = PCLASS_FIGHTER;
+    else if (Cmd_CheckParm("cleric"))
+    	pclass = PCLASS_CLERIC;
+    else if (Cmd_CheckParm("mage"))
+    	pclass = PCLASS_MAGE;
+	else
+	{
+		cprint(&players[0], "INVALID PLAYER CLASS\n");
+		return;
+	}
+	players[0].pclass = pclass;
+	for (i = 0; i < NUMARMOR; i++)
+	{
+		players[0].armorpoints[i] = 0.0;
+	}
+	players[0].baseclass = pclass;
+	PostMorphWeapon(&players[0], WP_FIRST);
+	SB_Start();
+}
+
+//==========================================================================
+//
+//
+//
+//==========================================================================
+
+//==========================================================================
+//
+//
+//
+//==========================================================================
+

@@ -1,0 +1,241 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ı
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+//**************************************************************************
+//**
+//** p_doors.c : Heretic 2 : Raven Software, Corp.
+//**
+//** $RCSfile$
+//** $Revision$
+//** $Date$
+//** $Author$
+//**
+//**************************************************************************
+
+//==================================================================
+//==================================================================
+//
+//		VERTICAL DOORS
+//
+//==================================================================
+//==================================================================
+
+enum
+{
+	DREV_NORMAL,
+	DREV_CLOSE,
+	DREV_OPEN
+};
+
+//==========================================================================
+//
+//	T_VerticalDoor
+//
+//==========================================================================
+
+void T_VerticalDoor(special_t *door)
+{
+	int		res;
+
+	switch (door->direction)
+	{
+		case 0: // WAITING
+			if (!--door->topcountdown)
+				switch (door->type)
+				{
+					case DREV_NORMAL:
+						door->direction = -1; // time to go back down
+						StartSequence(&door->sector->soundorg,
+							seq_name[SEQ_DOOR_STONE + door->sector->seqType]);
+						break;
+					default:
+						break;
+				}
+			break;
+		case -1: // DOWN
+			res = T_MovePlane(door->sector, door->speed,
+				door->sector->floorheight, false, 1, door->direction);
+			if (res == RES_PASTDEST)
+			{
+				StopSequence(&door->sector->soundorg);
+				switch(door->type)
+				{
+					case DREV_NORMAL:
+					case DREV_CLOSE:
+						door->sector->specialdata = NULL;
+						TagFinished(door->sector->tag);
+						RemoveSpecialThinker(door);  // unlink and free
+						break;
+					default:
+						break;
+				}
+			}
+			else if (res == RES_CRUSHED)
+			{
+				switch (door->type)
+				{
+					case DREV_CLOSE: // DON'T GO BACK UP!
+						break;
+					default:
+						door->direction = 1;
+						break;
+				}
+			}
+			break;
+		case 1: // UP
+			res = T_MovePlane(door->sector, door->speed,
+				door->topheight, false, 1, door->direction);
+			if (res == RES_PASTDEST)
+			{
+				StopSequence(&door->sector->soundorg);
+				switch (door->type)
+				{
+					case DREV_NORMAL:
+						door->direction = 0; // wait at top
+						door->topcountdown = door->topwait;
+						break;
+					case DREV_OPEN:
+						door->sector->specialdata = NULL;
+						TagFinished(door->sector->tag);
+						RemoveSpecialThinker(door); // unlink and free
+						break;
+					default:
+						break;
+				}
+			}
+			break;
+	}
+}
+
+//==========================================================================
+//
+//	EV_DoDoor
+//
+//	Move a door up/down
+//
+//==========================================================================
+
+int EV_DoDoor(line_t *line, int *args, int type)
+{
+	int 		secnum;
+	int 		retcode;
+	sector_t	*sec;
+	special_t	*door;
+	float		speed;
+
+	speed = itof(args[1]) / 8.0;
+	secnum = -1;
+	retcode = 0;
+	while ((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
+	{
+		sec = &level->sectors[secnum];
+		if (sec->specialdata)
+		{
+			continue;
+		}
+		// Add new door thinker
+		retcode = 1;
+		door = NewSpecialThinker(T_VerticalDoor);
+		sec->specialdata = door;
+		door->sector = sec;
+		switch (type)
+		{
+			case DREV_CLOSE:
+				door->topheight = FindLowestCeilingSurrounding(sec);
+				door->topheight -= 4.0;
+				door->direction = -1;
+				break;
+			case DREV_NORMAL:
+			case DREV_OPEN:
+				door->direction = 1;
+				door->topheight = FindLowestCeilingSurrounding(sec);
+				door->topheight -= 4.0;
+				break;
+			default:
+				break;
+		}
+		door->type = type;
+		door->speed = speed;
+		door->topwait = args[2]; // line->arg3
+		StartSequence(&door->sector->soundorg,
+			seq_name[SEQ_DOOR_STONE + door->sector->seqType]);
+	}
+	return retcode;
+}
+
+//==========================================================================
+//
+//	EV_VerticalDoor
+//
+//	Open a door manually, no tag value
+//
+//==========================================================================
+
+boolean EV_VerticalDoor(line_t *line, mobj_t *thing)
+{
+	sector_t	*sec;
+	special_t	*door;
+	int			side;
+
+	side = 0; // only front sides can be used
+
+	// if the sector has an active thinker, use it
+	sec = level->sides[line->sidenum[side ^ 1]].sector;
+	if (sec->specialdata)
+	{
+		return false;
+	}
+	//
+	// new door thinker
+	//
+	door = NewSpecialThinker(T_VerticalDoor);
+	sec->specialdata = door;
+	door->sector = sec;
+	door->direction = 1;
+	switch (line->special)
+	{
+		case 11:
+			door->type = DREV_OPEN;
+			line->special = 0;
+			break;
+		case 12:
+		case 13:
+			door->type = DREV_NORMAL;
+			break;
+		default:
+			door->type = DREV_NORMAL;
+			break;
+	}
+	door->speed = itof(line->arg2) / 8.0;
+	door->topwait = line->arg3;
+
+	//
+	// find the top and bottom of the movement range
+	//
+	door->topheight = FindLowestCeilingSurrounding(sec);
+	door->topheight -= 4.0;
+	StartSequence(&door->sector->soundorg,
+		seq_name[SEQ_DOOR_STONE + door->sector->seqType]);
+	return true;
+}
+

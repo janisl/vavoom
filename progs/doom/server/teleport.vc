@@ -1,0 +1,194 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+//**
+//**	TELEPORTATION
+//**
+//**************************************************************************
+
+float		teleport_bbox[4];
+mobj_t*		teleport_thing;
+float		teleport_x;
+float		teleport_y;
+
+//==========================================================================
+//
+//	PIT_StompThing
+//
+//==========================================================================
+
+boolean PIT_StompThing(mobj_t* thing)
+{
+    float	blockdist;
+		
+    if (!(thing->flags & MF_SHOOTABLE))
+		return true;
+		
+    blockdist = thing->radius + teleport_thing->radius;
+    
+    if (fabs(thing->origin.x - teleport_x) >= blockdist || fabs(thing->origin.y - teleport_y) >= blockdist)
+    {
+		// didn't hit it
+		return true;
+    }
+    
+    // don't clip against self
+    if (thing == teleport_thing)
+		return true;
+
+#ifdef DOOM2
+    // monsters don't stomp things except on boss level
+    if (!(teleport_thing->player || !strcmp(ptrtos(&level->mapname[0]), "MAP30")))
+#else
+    if (!(teleport_thing->player != NULL))
+#endif
+    {
+    	return false;
+    }
+		
+	DamageMobj(thing, teleport_thing, teleport_thing, 10000);
+	
+    return true;
+}
+
+//==========================================================================
+//
+//	P_TeleportMove
+//
+//==========================================================================
+
+boolean P_TeleportMove(mobj_t* thing, float x, float y)
+{
+    int			xl;
+    int			xh;
+    int			yl;
+    int			yh;
+    int			bx;
+    int			by;
+    
+    // kill anything occupying the position
+    teleport_thing = thing;
+	
+    teleport_x = x;
+    teleport_y = y;
+
+    // stomp on any things contacted
+    xl = MapBlock(x - thing->radius - level->bmaporgx - MAXRADIUS);
+    xh = MapBlock(x + thing->radius - level->bmaporgx + MAXRADIUS);
+    yl = MapBlock(y - thing->radius - level->bmaporgy - MAXRADIUS);
+    yh = MapBlock(y + thing->radius - level->bmaporgy + MAXRADIUS);
+
+    for (bx = xl; bx <= xh; bx++)
+		for (by = yl; by <= yh; by++)
+	    	if (!P_BlockThingsIterator(bx, by, PIT_StompThing))
+				return false;
+    
+    // the move is ok,
+    // so link the thing into its new position
+    P_UnsetThingPosition(thing);
+
+    thing->origin.x = x;
+    thing->origin.y = y;
+
+    P_SetThingPosition(thing);
+
+    return true;
+}
+
+//==========================================================================
+//
+//	P_Teleport
+//
+//==========================================================================
+
+int P_Teleport(mobj_t *thing, float x, float y, angle_t angle)
+{
+    float		oldx;
+    float		oldy;
+    float		oldz;
+    mobj_t*		fog;
+
+	oldx = thing->origin.x;
+	oldy = thing->origin.y;
+	oldz = thing->origin.z;
+
+	if (!P_TeleportMove(thing, x, y))
+	    return 0;
+		
+	thing->origin.z = thing->floorz;  //fixme: not needed?
+	if (thing->player)
+	    thing->player->vieworg.z = thing->origin.z + thing->player->viewheight;
+				
+	// spawn teleport fog at source and destination
+	fog = P_SpawnMobj(oldx, oldy, oldz, MT_TFOG);
+	StartSoundName(fog, "Teleport");
+
+	fog = P_SpawnMobj(x + 20.0 * cos(angle),
+		y + 20.0 * sin(angle), thing->origin.z, MT_TFOG);
+
+	// emit sound, where?
+	StartSoundName(fog, "Teleport");
+		
+	// don't move for a bit
+	if (thing->player)
+	{
+	    thing->reactiontime = 18;
+		thing->player->fixangle = true;
+	}
+
+	thing->angles.yaw = angle;
+	thing->velocity.x = thing->velocity.y = thing->velocity.z = 0.0;
+	return 1;
+}
+
+//==========================================================================
+//
+//  EV_Teleport
+//
+//==========================================================================
+
+int EV_Teleport(int tag, mobj_t* thing, boolean usefog)
+{
+    int			i;
+    mobj_t*		m;
+    sector_t*	sector;
+
+    // don't teleport missiles
+    if (thing->flags & MF_MISSILE)
+		return 0;
+
+    for (m = NextMobj(NULL); m; m = NextMobj(m))
+    {
+		// not a teleportman
+		if (m->type != MT_TELEPORTMAN)
+		    continue;
+
+		// wrong sector
+		if (m->tid != tag)
+		    continue;
+
+		return P_Teleport(thing, m->origin.x, m->origin.y, m->angles.yaw);
+    }
+    return 0;
+}
+
+

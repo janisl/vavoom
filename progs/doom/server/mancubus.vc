@@ -1,0 +1,131 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+#ifdef DOOM2
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	A_FatRaise
+//
+//	Mancubus attack sound.
+//
+//==========================================================================
+
+void A_FatRaise(mobj_t *actor)
+{
+    A_FaceTarget(actor);
+    StartSoundName(actor, "MancubusAttack");
+}
+
+//==========================================================================
+//
+//	A_FatAttack1
+//
+//	Mancubus attack, firing three missiles (bruisers) in three different
+// directions? Doesn't look like it.
+//
+//==========================================================================
+
+#define	FATSPREAD	(ANG90 / 8)
+
+void A_FatAttack1(mobj_t *actor)
+{
+    mobj_t	*mo;
+    angle_t	an;
+	
+    A_FaceTarget(actor);
+    // Change direction  to ...
+    actor->angles.yaw += FATSPREAD;
+    SpawnMissile(actor, actor->target, MT_FATSHOT);
+
+    mo = SpawnMissile(actor, actor->target, MT_FATSHOT);
+    mo->angles.yaw += FATSPREAD;
+    VectorRotateAroundZ(&mo->velocity, FATSPREAD);
+}
+
+//==========================================================================
+//
+//	A_FatAttack2
+//
+//	Mancubus attack, second direction.
+//
+//==========================================================================
+
+void A_FatAttack2(mobj_t *actor)
+{
+    mobj_t	*mo;
+    angle_t	an;
+
+    A_FaceTarget(actor);
+    // Now here choose opposite deviation.
+    actor->angles.yaw -= FATSPREAD;
+    SpawnMissile(actor, actor->target, MT_FATSHOT);
+
+    mo = SpawnMissile(actor, actor->target, MT_FATSHOT);
+    mo->angles.yaw -= FATSPREAD * 2;
+    VectorRotateAroundZ(&mo->velocity, -FATSPREAD * 2);
+}
+
+//==========================================================================
+//
+//	A_FatAttack3
+//
+//	Mancubus attack, third direction.
+//
+//==========================================================================
+
+void A_FatAttack3(mobj_t *actor)
+{
+    mobj_t		*mo;
+
+    A_FaceTarget(actor);
+    
+    mo = SpawnMissile(actor, actor->target, MT_FATSHOT);
+    mo->angles.yaw -= FATSPREAD / 2;
+	VectorRotateAroundZ(&mo->velocity, -FATSPREAD / 2);
+
+    mo = SpawnMissile(actor, actor->target, MT_FATSHOT);
+    mo->angles.yaw += FATSPREAD / 2;
+    VectorRotateAroundZ(&mo->velocity, FATSPREAD / 2);
+}
+
+#else
+
+void A_FatRaise(mobj_t *actor) { NotDoom2(); }
+void A_FatAttack1(mobj_t *actor) { NotDoom2(); }
+void A_FatAttack2(mobj_t *actor) { NotDoom2(); }
+void A_FatAttack3(mobj_t *actor) { NotDoom2(); }
+
+#endif

@@ -1,0 +1,143 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//**
+//**	Mouse menu
+//**
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+struct menu_mouse_t
+{
+	menu_t			menu;
+	menuslider_t	xsens;
+	menuslider_t	ysens;
+	menuswitch_t	mlook;
+	menuswitch_t	invert;
+	menuswitch_t	lspring;
+	menuswitch_t	lstrafe;
+	menutext_t		title;
+};
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+menu_mouse_t MouseMenu;
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	mouse_func
+//
+//==========================================================================
+
+void mouse_func(menucommon_t *item, int msg)
+{
+	if (msg != MMSG_ACTIVATE)
+	{
+		return;
+	}
+
+	switch (item->id)
+	{
+	 case 1:
+		SetCvarF("mouse_x_sensitivity", itof(MouseMenu.xsens.value) / 4.0);
+		break;
+
+	 case 2:
+		SetCvarF("mouse_y_sensitivity", itof(MouseMenu.ysens.value) / 4.0);
+		break;
+
+	 case 3:
+		SetCvar("mouse_look", MouseMenu.mlook.value);
+		break;
+
+	 case 4:
+		SetCvar("invert_mouse", MouseMenu.invert.value);
+		break;
+
+	 case 5:
+		SetCvar("lookspring", MouseMenu.lspring.value);
+		break;
+
+	 case 6:
+		SetCvar("lookstrafe", MouseMenu.lstrafe.value);
+		break;
+	}
+}
+
+void menu_mouse(void)
+{
+	int x = 160;
+	int y = 32;
+
+    InitMenu(&MouseMenu.menu);
+
+	MenuSlider_Init(&MouseMenu.xsens, x, y, "Mouse X sensitivity", TEXT_SMALLR, ftoi(GetCvarF("mouse_x_sensitivity") * 4.0), 41);
+	MouseMenu.xsens.callback = mouse_func;
+	MouseMenu.xsens.id = 1;
+	AddMenuItem(&MouseMenu.menu, &MouseMenu.xsens);
+	y += 20;
+
+	MenuSlider_Init(&MouseMenu.ysens, x, y, "Mouse Y sensitivity", TEXT_SMALLR, ftoi(GetCvarF("mouse_y_sensitivity") * 4.0), 41);
+	MouseMenu.ysens.callback = mouse_func;
+	MouseMenu.ysens.id = 2;
+	AddMenuItem(&MouseMenu.menu, &MouseMenu.ysens);
+	y += 20;
+
+	MenuSwitch_Init(&MouseMenu.mlook, x, y, "Mouse look", TEXT_SMALLR, GetCvar("mouse_look"), 2, &sw_offon[0]);
+	MouseMenu.mlook.callback = mouse_func;
+	MouseMenu.mlook.id = 3;
+	AddMenuItem(&MouseMenu.menu, &MouseMenu.mlook);
+	y += 10;
+
+	MenuSwitch_Init(&MouseMenu.invert, x, y, "Invert mouse", TEXT_SMALLR, GetCvar("invert_mouse"), 2, &sw_offon[0]);
+	MouseMenu.invert.callback = mouse_func;
+	MouseMenu.invert.id = 4;
+	AddMenuItem(&MouseMenu.menu, &MouseMenu.invert);
+	y += 10;
+
+	MenuSwitch_Init(&MouseMenu.lspring, x, y, "Look spring", TEXT_SMALLR, GetCvar("lookspring"), 2, &sw_offon[0]);
+	MouseMenu.lspring.id = 5;
+	MouseMenu.lspring.callback = mouse_func;
+	AddMenuItem(&MouseMenu.menu, &MouseMenu.lspring);
+	y += 10;
+
+	MenuSwitch_Init(&MouseMenu.lstrafe, x, y, "Look strafe", TEXT_SMALLR, GetCvar("lookstrafe"), 2, &sw_offon[0]);
+	MouseMenu.lstrafe.callback = mouse_func;
+	MouseMenu.lstrafe.id = 6;
+	AddMenuItem(&MouseMenu.menu, &MouseMenu.lstrafe);
+	y += 10;
+
+	MenuText_InitTitle(&MouseMenu.title, 160, 24, "MOUSE OPTIONS", TEXT_BIGC);
+	AddMenuItem(&MouseMenu.menu, &MouseMenu.title);
+
+    PushMenu(&MouseMenu.menu);
+}
+

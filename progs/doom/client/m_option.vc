@@ -1,0 +1,172 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//**
+//**	Options menu
+//**
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+struct menu_options_t
+{
+	menu_t			menu;
+	menutext_t		res;
+	menutext_t		ctl;
+	menutext_t		ctl2;
+	menutext_t		mouse;
+	menutext_t		sound;
+	menuslider_t	scrsize;
+	menuslider_t	gamma;
+	menuslider_t	darkening;
+	menuswitch_t	subdiv;
+	menuswitch_t	croshair;
+	menutext_t		title;
+};
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+void menu_resolution(void);
+void menu_controls(void);
+void menu_controls2(void);
+void menu_mouse(void);
+void menu_sound(void);
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+menu_options_t	OptionsMenu;
+
+string			sw_crosh[4] = {"None", "Cross", "Angle", "Dot"};
+string			sw_subdiv[2] = {"Subdivision 8", "Subdivision 16"};
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	options_func
+//
+//==========================================================================
+
+void options_func(menucommon_t *item, int msg)
+{
+	if (msg != MMSG_ACTIVATE)
+	{
+		return;
+	}
+
+	switch (item->id)
+	{
+	 case 1:
+		SetCvar("screen_size", OptionsMenu.scrsize.value + 3);
+		break;
+
+	 case 2:
+		SetCvar("brightness", OptionsMenu.gamma.value);
+		break;
+
+	 case 3:
+		SetCvar("menu_darkening", OptionsMenu.darkening.value);
+		break;
+
+	 case 4:
+		SetCvar("d_subdiv", OptionsMenu.subdiv.value + 1);
+		break;
+
+	 case 5:
+		SetCvar("croshair", OptionsMenu.croshair.value);
+		break;
+	}
+}
+
+//==========================================================================
+//
+//	menu_options
+//
+//==========================================================================
+
+void menu_options(void)
+{
+	int x = 160;
+	int y = 32;
+
+    InitMenu(&OptionsMenu.menu);
+
+	MenuText_InitFunc(&OptionsMenu.res, x, y, "Screen Resolution", TEXT_SMALLR, menu_resolution);
+	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.res);
+	y += 10;
+
+	MenuText_InitFunc(&OptionsMenu.ctl, x, y, "Controls", TEXT_SMALLR, menu_controls);
+	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.ctl);
+	y += 10;
+
+	MenuText_InitFunc(&OptionsMenu.ctl2, x, y, "Controls 2", TEXT_SMALLR, menu_controls2);
+	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.ctl2);
+	y += 10;
+
+	MenuText_InitFunc(&OptionsMenu.mouse, x, y, "Mouse Options", TEXT_SMALLR, menu_mouse);
+	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.mouse);
+	y += 10;
+
+	MenuText_InitFunc(&OptionsMenu.sound, x, y, "Sound Settings", TEXT_SMALLR, menu_sound);
+	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.sound);
+	y += 10;
+
+	MenuSlider_Init(&OptionsMenu.scrsize, x, y, "Screen size", TEXT_SMALLR, GetCvar("screen_size") - 3, 9);
+	OptionsMenu.scrsize.callback = options_func;
+	OptionsMenu.scrsize.id = 1;
+	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.scrsize);
+	y += 20;
+
+	MenuSlider_Init(&OptionsMenu.gamma, x, y, "Brightness", TEXT_SMALLR, GetCvar("brightness"), 5);
+	OptionsMenu.gamma.callback = options_func;
+	OptionsMenu.gamma.id = 2;
+	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.gamma);
+	y += 20;
+
+	MenuSlider_Init(&OptionsMenu.darkening, x, y, "Menu darkness", TEXT_SMALLR, GetCvar("menu_darkening"), 32);
+	OptionsMenu.darkening.callback = options_func;
+	OptionsMenu.darkening.id = 3;
+	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.darkening);
+	y += 20;
+
+	MenuSwitch_Init(&OptionsMenu.subdiv, x, y, "Span drawing", TEXT_SMALLR, GetCvar("d_subdiv") - 1, 2, &sw_subdiv[0]);
+	OptionsMenu.subdiv.callback = options_func;
+	OptionsMenu.subdiv.id = 4;
+	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.subdiv);
+	y += 10;
+
+	MenuSwitch_Init(&OptionsMenu.croshair, x, y, "Croshair", TEXT_SMALLR, GetCvar("croshair"), 4, &sw_crosh[0]);
+	OptionsMenu.croshair.callback = options_func;
+	OptionsMenu.croshair.id = 5;
+	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.croshair);
+
+	MenuText_InitTitle(&OptionsMenu.title, 160, 24, "OPTIONS", TEXT_BIGC);
+	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.title);
+
+    PushMenu(&OptionsMenu.menu);
+}
+
+

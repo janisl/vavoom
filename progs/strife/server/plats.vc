@@ -1,0 +1,331 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+//**
+//**	Platforms
+//**
+//**************************************************************************
+
+#define PLATWAIT		3
+#define PLATSPEED		1.0
+
+enum
+{
+    up,
+    down,
+    waiting,
+    in_stasis
+};
+
+enum
+{
+    perpetualRaise,
+    downWaitUpStay,
+    raiseAndChange,
+    raiseToNearestAndChange,
+    blazeDWUS
+};
+
+special_t		activeplats;
+
+//==========================================================================
+//
+//  P_ClearActivePlats
+//
+//==========================================================================
+
+void P_ClearActivePlats()
+{
+	activeplats.next = activeplats.prev = &activeplats;
+}
+
+//==========================================================================
+//
+//  P_AddActivePlat
+//
+//==========================================================================
+
+void P_AddActivePlat(special_t *plat)
+{
+	//  Add to active plats
+	plat->prev = activeplats.prev;
+    plat->next = &activeplats;
+    plat->prev->next = plat;
+    activeplats.prev = plat;
+}
+
+//==========================================================================
+//
+//  P_RemoveActivePlat
+//
+//==========================================================================
+
+void P_RemoveActivePlat(special_t *plat)
+{
+	plat->prev->next = plat->next;
+    plat->next->prev = plat->prev;
+    plat->sector->specialdata = NULL;
+    RemoveSpecialThinker(plat);
+}
+
+//==========================================================================
+//
+//  T_PlatRaise
+//
+//	Move a plat up and down
+//
+//==========================================================================
+
+void T_PlatRaise(special_t* plat)
+{
+    int		res;
+	
+    switch (plat->status)
+    {
+      case up:
+		res = T_MovePlane(plat->sector, plat->tic_speed,
+					plat->high, plat->crush, 0, 1);
+					
+		if (plat->type == raiseAndChange ||
+			plat->type == raiseToNearestAndChange)
+		{
+		    if (!(level->tictime & 7))
+				StartSoundName(&plat->sector->soundorg, "StoneMoving");
+		}
+	
+				
+		if (res == RES_CRUSHED && (!plat->crush))
+		{
+		    plat->count = plat->wait;
+		    plat->status = down;
+		    StartSoundName(&plat->sector->soundorg, "PlatformStart");
+		}
+		else
+		{
+		    if (res == RES_PASTDEST)
+		    {
+				plat->count = plat->wait;
+				plat->status = waiting;
+				StartSoundName(&plat->sector->soundorg, "PlatformStop");
+
+				switch(plat->type)
+				{
+				  case blazeDWUS:
+				  case downWaitUpStay:
+				  case raiseAndChange:
+				  case raiseToNearestAndChange:
+				    P_RemoveActivePlat(plat);
+				    break;
+		    
+				  default:
+				    break;
+				}
+		    }
+		}
+		break;
+	
+      case	down:
+		res = T_MovePlane(plat->sector, plat->tic_speed, plat->low, false, 0, -1);
+
+		if (res == RES_PASTDEST)
+		{
+	    	plat->count = plat->wait;
+	    	plat->status = waiting;
+	    	StartSoundName(&plat->sector->soundorg, "PlatformStop");
+		}
+		break;
+	
+      case	waiting:
+		if (!--plat->count)
+		{
+		    if (plat->sector->floorheight == plat->low)
+				plat->status = up;
+		    else
+				plat->status = down;
+		    StartSoundName(&plat->sector->soundorg, "PlatformStart");
+		}
+      	break;
+
+      case	in_stasis:
+		break;
+    }
+}
+
+//==========================================================================
+//
+//  P_ActivateInStasis
+//
+//==========================================================================
+
+void P_ActivateInStasis(int tag)
+{
+    special_t	*plat;
+	
+    for (plat = activeplats.next; plat != &activeplats; plat = plat->next)
+	{
+		if ((plat->tag == tag) && (plat->status == in_stasis))
+		{
+	    	plat->status = plat->oldstatus;
+		}
+	}
+}
+
+//==========================================================================
+//
+//  EV_DoPlat
+//
+//	Do Platforms, "amount" is only used for SOME platforms.
+//
+//==========================================================================
+
+int EV_DoPlat(line_t* line, int type, int amount)
+{
+    special_t	*plat;
+    int			secnum;
+    int			rtn;
+    sector_t*	sec;
+	
+    secnum = -1;
+    rtn = 0;
+
+    //	Activate all <type> plats that are in_stasis
+    if (type == perpetualRaise)
+    {
+    	//	Activate in stasis
+		P_ActivateInStasis(line->arg1);
+    }
+	
+    while ((secnum = FindSectorFromTag(line->arg1,secnum)) >= 0)
+    {
+		sec = &level->sectors[secnum];
+
+		if (sec->specialdata)
+	    	continue;
+	
+		// Find lowest & highest floors around sector
+		rtn = 1;
+		plat = NewSpecialThinker(T_PlatRaise);
+		
+		plat->type = type;
+		plat->sector = sec;
+		plat->sector->specialdata = plat;
+		plat->crush = false;
+		plat->tag = line->arg1;
+
+		switch (type)
+		{
+		  case raiseToNearestAndChange:
+		    plat->tic_speed = PLATSPEED / 2.0;
+		    SetFloorPic(sec, level->sides[line->sidenum[0]].sector->floor.pic);
+		    plat->high = FindNextHighestFloor(sec, sec->floorheight);
+		    plat->wait = 0;
+		    plat->status = up;
+		    // NO MORE DAMAGE, IF APPLICABLE
+		    sec->special = 0;
+
+		    StartSoundName(&sec->soundorg, "StoneMoving");
+		    break;
+	    
+		  case raiseAndChange:
+		    plat->tic_speed = PLATSPEED / 2.0;
+		    SetFloorPic(sec, level->sides[line->sidenum[0]].sector->floor.pic);
+		    plat->high = sec->floorheight + itof(amount);
+		    plat->wait = 0;
+		    plat->status = up;
+
+		    StartSoundName(&sec->soundorg, "StoneMoving");
+		    break;
+	    
+		  case downWaitUpStay:
+		    plat->tic_speed = PLATSPEED * 4.0;
+		    plat->low = FindLowestFloorSurrounding(sec);
+
+		    if (plat->low > sec->floorheight)
+				plat->low = sec->floorheight;
+
+		    plat->high = sec->floorheight;
+		    plat->wait = 35*PLATWAIT;
+		    plat->status = down;
+		    StartSoundName(&sec->soundorg, "PlatformStart");
+		    break;
+	    
+		  case blazeDWUS:
+		    plat->tic_speed = PLATSPEED * 8.0;
+		    plat->low = FindLowestFloorSurrounding(sec);
+
+		    if (plat->low > sec->floorheight)
+				plat->low = sec->floorheight;
+
+		    plat->high = sec->floorheight;
+		    plat->wait = 35*PLATWAIT;
+		    plat->status = down;
+		    StartSoundName(&sec->soundorg, "PlatformStart");
+		    break;
+	    
+		  case perpetualRaise:
+		    plat->tic_speed = PLATSPEED;
+		    plat->low = FindLowestFloorSurrounding(sec);
+
+		    if (plat->low > sec->floorheight)
+				plat->low = sec->floorheight;
+
+		    plat->high = FindHighestFloorSurrounding(sec);
+
+		    if (plat->high < sec->floorheight)
+				plat->high = sec->floorheight;
+
+		    plat->wait = 35*PLATWAIT;
+		    plat->status = P_Random()&1;
+
+		    StartSoundName(&sec->soundorg, "PlatformStart");
+		    break;
+
+	      default:
+    	    break;
+		}
+		P_AddActivePlat(plat);
+    }
+    return rtn;
+}
+
+//==========================================================================
+//
+//  EV_StopPlat
+//
+//==========================================================================
+
+int EV_StopPlat(line_t* line)
+{
+    special_t	*plat;
+	
+    for (plat = activeplats.next; plat != &activeplats; plat = plat->next)
+    {
+		if ((plat->status != in_stasis) && (plat->tag == line->arg1))
+		{
+		    plat->oldstatus = plat->status;
+		    plat->status = in_stasis;
+		}
+	}
+	return 1;
+}
+
+

@@ -1,0 +1,1401 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+void DropWeapon(player_t *player);
+void ActivateBeak(player_t *player);
+void DSparilTeleport(mobj_t *actor);
+void SetupPsprites(player_t *player);
+void AddBossSpot(float x, float y, angle_t angle);
+void AddMaceSpot(float x, float y);
+boolean P_CheckPosition(mobj_t* thing, float x, float y);
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+mobj_t*	MissileMobj;
+int		PuffType;
+
+float	FloatBobOffsets[64] =
+{
+	0.0, 0.7841339111, 1.560714722, 2.322265625,
+	3.061462402, 3.77116394, 4.444549561, 5.075134277,
+	5.656845093, 6.184082031, 6.651748657, 7.055358887,
+	7.391021729, 7.655517578, 7.8462677, 7.961471558,
+	7.999984741, 7.961471558, 7.8462677, 7.655517578,
+	7.391021729, 7.055358887, 6.651748657, 6.184082031,
+	5.656845093, 5.075134277, 4.444549561, 3.77116394,
+	3.061462402, 2.322265625, 1.560714722, 0.7841339111,
+	-0.0000152587, -0.7841491699, -1.56072998, -2.322280884,
+	-3.061477661, -3.771179199, -4.444564819, -5.075149536,
+	-5.656860352, -6.18409729, -6.651763916, -7.055374146,
+	-7.391052246, -7.655532837, -7.846298218, -7.961486816,
+	-8.0, -7.961486816, -7.846298218, -7.655532837,
+	-7.391052246, -7.055374146, -6.651763916, -6.18409729,
+	-5.656860352, -5.075149536, -4.444564819, -3.771179199,
+	-3.061477661, -2.322280884, -1.56072998, -0.7841339111
+};
+
+// CODE --------------------------------------------------------------------
+
+//===========================================================================
+//
+//	P_GetThingFloorType
+//
+//===========================================================================
+
+int P_GetThingFloorType(mobj_t *thing)
+{
+	return TerrainType(thing->floor->pic);
+}
+
+//==========================================================================
+//
+//	SetOrigin
+//
+//==========================================================================
+
+void SetOrigin(mobj_t *mobj, TVec origin)
+{
+	float		space;
+
+	mobj->origin = origin;
+	// Set subsector and/or block links.
+	P_SetThingPosition(mobj);
+	if (origin.z == ONFLOORZ)
+	{
+		mobj->origin.z = mobj->floorz;
+	}
+	else if (origin.z == ONCEILINGZ)
+	{
+		mobj->origin.z = mobj->ceilingz - mobj->height;
+	}
+	else if (origin.z == FLOATRANDZ)
+	{
+		space = mobj->ceilingz - mobj->height - mobj->floorz;
+		if (space > 48.0)
+		{
+			space -= 40.0;
+			mobj->origin.z = space * Random() + mobj->floorz + 40.0;
+		}
+		else
+		{
+			mobj->origin.z = mobj->floorz;
+		}
+	}
+	if (mobj->flags2 & MF2_FOOTCLIP &&
+		P_GetThingFloorType(mobj) != FLOOR_SOLID &&
+		mobj->floorz == mobj->subsector->sector->floorheight)
+	{
+		mobj->floorclip = FOOTCLIPSIZE;
+	}
+	else
+	{
+      	mobj->floorclip = 0.0;
+	}
+}
+
+//==========================================================================
+//
+//	CopyMThing
+//
+//==========================================================================
+
+void CopyMThing(mthing_t *from, mthing_t *to)
+{
+	to->tid = from->tid;
+	to->x = from->x;
+	to->y = from->y;
+	to->height = from->height;
+	to->angle = from->angle;
+	to->type = from->type;
+	to->options = from->options;
+	to->special = from->special;
+	to->arg1 = from->arg1;
+	to->arg2 = from->arg2;
+	to->arg3 = from->arg3;
+	to->arg4 = from->arg4;
+	to->arg5 = from->arg5;
+}
+
+//==========================================================================
+//
+//	generic_mobj_start
+//
+//==========================================================================
+
+void generic_mobj_start(mobj_t *self, mthing_t *mthing)
+{
+	state_t		*st;
+
+	self->lastlook = P_Random() % MAXPLAYERS;
+
+	// Set the state, but do not use P_SetMobjState, because action
+	// routines can't be called yet.  If the spawnstate has an action
+	// routine, it will not be called.
+	st = &states[self->spawnstate];
+	self->time = st->time;
+	self->sprite = st->sprite;
+	self->frame = st->frame;
+	self->statenum = st->statenum;
+	self->nextstate = st->nextstate;
+
+	if (mthing)
+	{
+		float	x, y, z;
+
+		x = mthing->x;
+		y = mthing->y;
+		if (self->flags & MF_SPAWNCEILING)
+		{
+			z = ONCEILINGZ;
+		}
+		else if (self->flags2 & MF2_SPAWNFLOAT)
+		{
+			z = FLOATRANDZ;
+		}
+		else
+		{
+			z = ONFLOORZ;
+		}
+		SetOrigin(self, vector(x, y, z));
+		if (self->flags2 & MF2_FLOATBOB)
+		{
+			// Seed random starting index for bobbing motion
+			self->health = P_Random();
+		}
+		if (z == ONFLOORZ)
+		{
+			self->origin.z += mthing->height;
+		}
+		else if (z == ONCEILINGZ)
+		{
+			self->origin.z -= mthing->height;
+		}
+		P_SetThingPosition(self);
+		self->tid = mthing->tid;
+		self->special = mthing->special;
+		self->args[0] = mthing->arg1;
+		self->args[1] = mthing->arg2;
+		self->args[2] = mthing->arg3;
+		self->args[3] = mthing->arg4;
+		self->args[4] = mthing->arg5;
+		if (self->time > 0.0)
+		{
+			self->time = 0.1 + Random() * self->time;
+		}
+		if (self->flags & MF_COUNTKILL)
+		{
+			level->totalkills++;
+    	    CopyMThing(mthing, &self->spawnpoint);
+		}
+		if (self->flags & MF_COUNTITEM)
+		{
+			level->totalitems++;
+		}
+		self->angles.yaw = ANG45 * (mthing->angle / 45);
+		if (mthing->options & MTF_AMBUSH)
+		{
+			self->flags |= MF_AMBUSH;
+		}
+	}
+	else
+	{
+		SetOrigin(self, self->origin);
+	}
+}
+
+//===========================================================================
+//
+//	P_SpawnMobj
+//
+//===========================================================================
+
+mobj_t *P_SpawnMobj(float x, float y, float z, int type)
+{
+	mobj_t		*mobj;
+
+	mobj = NewMobjThinker();
+
+	mobj->type = type;
+	mobj->origin = vector(x, y, z);
+	mobjinfo[type].spawnfunc(mobj, NULL);
+	return mobj;
+}
+
+//===========================================================================
+//
+//	P_RemoveMobj
+//
+//===========================================================================
+
+void P_RemoveMobj(mobj_t *mobj)
+{
+	// free block
+	RemoveMobjThinker(mobj);
+}
+
+//===========================================================================
+//
+//	P_FaceMobj
+//
+//	Returns 1 if 'source' needs to turn clockwise, or 0 if 'source' needs
+// to turn counter clockwise.  'delta' is set to the amount 'source'
+// needs to turn.
+//
+//===========================================================================
+
+int P_FaceMobj(mobj_t *source, mobj_t *target, angle_t *delta)
+{
+	angle_t diff;
+	angle_t angle1;
+	angle_t angle2;
+
+	angle1 = source->angles.yaw;
+	angle2 = atan2(target->origin.y - source->origin.y,
+		target->origin.x - source->origin.x);
+	if (angle2 > angle1)
+	{
+		diff = angle2 - angle1;
+		if (diff > ANG180)
+		{
+			*delta = ANGLE_MAX - diff;
+			return 0;
+		}
+		else
+		{
+			*delta = diff;
+			return 1;
+		}
+	}
+	else
+	{
+		diff = angle1 - angle2;
+		if (diff > ANG180)
+		{
+			*delta = ANGLE_MAX - diff;
+			return 1;
+		}
+		else
+		{
+			*delta = diff;
+			return 0;
+		}
+	}
+}
+
+//===========================================================================
+//
+//	P_TestMobjLocation
+//
+//	Returns true if the mobj is not blocked by anything at its current
+// location, otherwise returns false.
+//
+//===========================================================================
+
+boolean P_TestMobjLocation(mobj_t *mobj)
+{
+	int 	flags;
+
+	flags = mobj->flags;
+	mobj->flags &= ~MF_PICKUP;
+	if (P_CheckPosition(mobj, mobj->origin.x, mobj->origin.y))
+	{
+		// XY is ok, now check Z
+		mobj->flags = flags;
+		if ((mobj->origin.z < mobj->floorz) ||
+			(mobj->origin.z + mobj->height > mobj->ceilingz))
+		{
+			// Bad Z
+			return false;
+		}
+		return true;
+	}
+	mobj->flags = flags;
+	return false;
+}
+
+//===========================================================================
+//
+//	P_ExplodeMissile
+//
+//===========================================================================
+
+void P_ExplodeMissile(mobj_t *mo)
+{
+	if (mo->type == MT_WHIRLWIND)
+	{
+		if (++mo->special2 < 60)
+		{
+			return;
+		}
+	}
+	mo->velocity.x = mo->velocity.y = mo->velocity.z = 0.0;
+	SetMobjState(mo, mo->deathstate);
+	//mo->tics -= P_Random()&3;
+	mo->flags &= ~MF_MISSILE;
+	if (mo->sound_death)
+	{
+		StartSound(mo, mo->sound_death);
+	}
+	if (mo->effects & EF_DLIGHT_MASK)
+	{
+		MSG_Select(MSG_SV_DATAGRAM, NULL);
+		MSG_WriteByte(svc_explosion);
+		MSG_WriteByte(mo->effects & EF_DLIGHT_MASK);
+		MSG_WriteShort(ftoi(mo->origin.x));
+		MSG_WriteShort(ftoi(mo->origin.y));
+		MSG_WriteShort(ftoi(mo->origin.z));
+		mo->effects &= ~EF_DLIGHT_MASK;
+	}
+}
+
+//==========================================================================
+//
+//	P_KillMobj
+//
+//==========================================================================
+
+void P_KillMobj(mobj_t *source, mobj_t *target)
+{
+	target->flags &= ~(MF_SHOOTABLE|MF_FLOAT|MF_SKULLFLY|MF_NOGRAVITY);
+	target->flags |= MF_CORPSE|MF_DROPOFF;
+	target->flags2 &= ~MF2_PASSMOBJ;
+	target->height /= 4.0;
+	if (source && source->player)
+	{
+		if (target->flags&MF_COUNTKILL)
+		{
+			// Count for intermission
+			source->player->killcount++;
+		}
+		if (target->player)
+		{
+			// Frag stuff
+			if (target == source)
+			{
+				// Self-frag
+				target->player->frags[P_GetPlayerNum(target->player)]--;
+			}
+			else
+			{
+				source->player->frags[P_GetPlayerNum(target->player)]++;
+				StartSoundName(source->player->mo, "Frag");
+				if (source->player->chickenTics)
+				{
+					// Make a super chicken
+					P_GivePower(source->player, pw_weaponlevel2);
+				}
+			}
+		}
+	}
+	else if (!netgame && (target->flags&MF_COUNTKILL))
+	{
+		// Count all monster deaths
+		players[0].killcount++;
+	}
+	if (target->player)
+	{
+		if (!source)
+		{
+			// Self-frag
+			target->player->frags[P_GetPlayerNum(target->player)]--;
+		}
+		target->flags &= ~MF_SOLID;
+		target->flags2 &= ~MF2_FLY;
+		target->player->powers[pw_flight] = 0;
+		target->player->powers[pw_weaponlevel2] = 0;
+		target->player->playerstate = PST_DEAD;
+		DropWeapon(target->player);
+		if (target->flags2&MF2_FIREDAMAGE)
+		{
+			// Player flame death
+			SetMobjState(target, S_PLAY_FDTH1);
+			//StartSoundName(target, sfx2_hedat1); // Burn sound
+			return;
+		}
+	}
+	if (target->health < target->gibshealth && target->xdeathstate)
+	{
+		// Extreme death
+		SetMobjState(target, target->xdeathstate);
+	}
+	else
+	{
+		// Normal death
+		SetMobjState(target, target->deathstate);
+	}
+	target->time -= Random() * 0.1;
+}
+
+//==========================================================================
+//
+//	P_MinotaurSlam
+//
+//==========================================================================
+
+void P_MinotaurSlam(mobj_t *source, mobj_t *target)
+{
+	angle_t angle;
+	float	thrust;
+
+	angle = atan2(target->origin.y - source->origin.y,
+		target->origin.x - source->origin.x);
+	thrust = 16.0 + Random() * 4.0;
+	target->velocity.x += thrust * cos(angle) * 35.0;
+	target->velocity.y += thrust * sin(angle) * 35.0;
+	DamageMobj(target, NULL, NULL, HITDICE(6));
+	if (target->player)
+	{
+		target->reactiontime = 14 + (P_Random() & 7);
+	}
+}
+
+//==========================================================================
+//
+//	P_TouchWhirlwind
+//
+//==========================================================================
+
+void P_TouchWhirlwind(mobj_t *target)
+{
+	float		randVal;
+
+	target->angles.yaw += (P_Random() - P_Random()) << 20;
+	target->velocity.x += (Random() - Random()) * 4.0 * 35.0;
+	target->velocity.y += (Random() - Random()) * 4.0 * 35.0;
+	if (level->tictime & 16 && !(target->flags2 & MF2_BOSS))
+	{
+		randVal = Random() * 4.0;
+		if (randVal > 2.5)
+		{
+			randVal = 2.5;
+		}
+		target->velocity.z += randVal * 35.0;
+		if (target->velocity.z > 12.0 * 35.0)
+		{
+			target->velocity.z = 12.0 * 35.0;
+		}
+	}
+	if (!(level->tictime & 7))
+	{
+		DamageMobj(target, NULL, NULL, 3);
+	}
+}
+
+//==========================================================================
+//
+//  ChickenMorphPlayer
+//
+//	Returns true if the player gets turned into a chicken.
+//
+//==========================================================================
+
+boolean ChickenMorphPlayer(player_t *player)
+{
+	mobj_t *pmo;
+	mobj_t *fog;
+	mobj_t *chicken;
+	float	x;
+	float	y;
+	float	z;
+	angle_t angle;
+	int oldFlags2;
+
+	if (player->chickenTics)
+	{
+		if ((player->chickenTics < ftoi(CHICKENTIME * 35.0) - TICRATE)
+			&& !player->powers[pw_weaponlevel2])
+		{
+			// Make a super chicken
+			P_GivePower(player, pw_weaponlevel2);
+		}
+		return false;
+	}
+	if (player->powers[pw_invulnerability])
+	{
+		// Immune when invulnerable
+		return false;
+	}
+	pmo = player->mo;
+	x = pmo->origin.x;
+	y = pmo->origin.y;
+	z = pmo->origin.z;
+	angle = pmo->angles.yaw;
+	oldFlags2 = pmo->flags2;
+	SetMobjState(pmo, S_FREETARGMOBJ);
+	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, MT_TFOG);
+	StartSoundName(fog, "Teleport");
+	chicken = P_SpawnMobj(x, y, z, MT_CHICPLAYER);
+	chicken->special1 = player->readyweapon;
+	chicken->angles.yaw = angle;
+	chicken->player = player;
+	player->health = chicken->health = MAXCHICKENHEALTH;
+	player->mo = chicken;
+	player->armorpoints = player->armortype = 0;
+	player->powers[pw_invisibility] = 0;
+	player->powers[pw_weaponlevel2] = 0;
+	if (oldFlags2 & MF2_FLY)
+	{
+		chicken->flags2 |= MF2_FLY;
+	}
+	player->chickenTics = ftoi(CHICKENTIME * 35.0);
+	ActivateBeak(player);
+	return true;
+}
+
+//==========================================================================
+//
+//	P_ChickenMorph
+//
+//==========================================================================
+
+boolean P_ChickenMorph(mobj_t *actor)
+{
+	mobj_t *fog;
+	mobj_t *chicken;
+	mobj_t *target;
+	int moType;
+	float	x;
+	float	y;
+	float	z;
+	angle_t angle;
+	int ghost;
+
+	if (actor->player)
+	{
+		return false;
+	}
+	moType = actor->type;
+	switch (moType)
+	{
+		case MT_POD:
+		case MT_CHICKEN:
+		case MT_HEAD:
+		case MT_MINOTAUR:
+		case MT_SORCERER1:
+		case MT_SORCERER2:
+			return false;
+		default:
+			break;
+	}
+	x = actor->origin.x;
+	y = actor->origin.y;
+	z = actor->origin.z;
+	angle = actor->angles.yaw;
+	ghost = actor->translucency;
+	target = actor->target;
+	SetMobjState(actor, S_FREETARGMOBJ);
+	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, MT_TFOG);
+	StartSoundName(fog, "Teleport");
+	chicken = P_SpawnMobj(x, y, z, MT_CHICKEN);
+	chicken->special2 = moType;
+	chicken->special1 = ftoi(CHICKENTIME * 35.0) + P_Random();
+	chicken->translucency = ghost;
+	chicken->target = target;
+	chicken->angles.yaw = angle;
+	return true;
+}
+
+//==========================================================================
+//
+//	P_AutoUseChaosDevice
+//
+//==========================================================================
+
+boolean P_AutoUseChaosDevice(player_t *player)
+{
+	int i;
+
+	for (i = 0; i < player->inventorySlotNum; i++)
+	{
+		if (player->inventory[i].type == arti_teleport)
+		{
+			PlayerUseArtifact(player, arti_teleport);
+			player->health = player->mo->health = (player->health+1)/2;
+			return true;
+		}
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//	P_AutoUseHealth
+//
+//==========================================================================
+
+void P_AutoUseHealth(player_t *player, int saveHealth)
+{
+	int i;
+	int count;
+	int normalCount;
+	int normalSlot;
+	int superCount;
+	int superSlot;
+
+	normalCount = superCount = 0;
+	for (i = 0; i < player->inventorySlotNum; i++)
+	{
+		if (player->inventory[i].type == arti_health)
+		{
+			normalSlot = i;
+			normalCount = player->inventory[i].count;
+		}
+		else if (player->inventory[i].type == arti_superhealth)
+		{
+			superSlot = i;
+			superCount = player->inventory[i].count;
+		}
+	}
+	if ((gameskill == sk_baby) && (normalCount*25 >= saveHealth))
+	{
+		// Use quartz flasks
+		count = (saveHealth+24)/25;
+		for (i = 0; i < count; i++)
+		{
+			player->health += 25;
+			PlayerRemoveArtifact(player, normalSlot);
+		}
+	}
+	else if (superCount*100 >= saveHealth)
+	{
+		// Use mystic urns
+		count = (saveHealth+99)/100;
+		for (i = 0; i < count; i++)
+		{
+			player->health += 100;
+			PlayerRemoveArtifact(player, superSlot);
+		}
+	}
+	else if ((gameskill == sk_baby)
+		&& (superCount*100+normalCount*25 >= saveHealth))
+	{
+		// Use mystic urns and quartz flasks
+		count = (saveHealth+24)/25;
+		saveHealth -= count*25;
+		for (i = 0; i < count; i++)
+		{
+			player->health += 25;
+			PlayerRemoveArtifact(player, normalSlot);
+		}
+		count = (saveHealth+99)/100;
+		for(i = 0; i < count; i++)
+		{
+			player->health += 100;
+	        //	I found a bug. There must be used superSlot, not normalSlot.
+	        // 	Also if player used all quartz flasks, superSlot may be
+	        // invalid, so it must be found again.
+			PlayerRemoveArtifact(player, superSlot);
+		}
+	}
+	player->mo->health = player->health;
+}
+
+//==========================================================================
+//
+//  DamageMobj
+//
+//	Damages both enemies and players.
+// 	inflictor is the thing that caused the damage creature or missile, can
+// be NULL (slime, etc)
+// 	source is the thing to target after taking damage creature or NULL
+// 	Source and inflictor are the same for melee attacks
+// 	source can be null for barrel explosions and other environmental stuff
+//
+//==========================================================================
+
+void DamageMobj(mobj_t *target,mobj_t *inflictor,mobj_t *source,int damage)
+{
+	int 		saved;
+	player_t 	*player;
+
+	if (!(target->flags & MF_SHOOTABLE))
+	{
+		// Shouldn't happen
+		return;
+	}
+	if (target->health <= 0)
+	{
+		return;
+	}
+	if (target->flags & MF_SKULLFLY)
+	{
+		if (target->type == MT_MINOTAUR)
+		{
+			// Minotaur is invulnerable during charge attack
+			return;
+		}
+		target->velocity.x = target->velocity.y = target->velocity.z = 0.0;
+	}
+	player = target->player;
+	if (player && gameskill == sk_baby)
+	{
+		// Take half damage in trainer mode
+		damage >>= 1;
+	}
+	// Special damage types
+	if (inflictor)
+	{
+		switch (inflictor->type)
+		{
+			case MT_EGGFX:
+				if (player)
+				{
+					ChickenMorphPlayer(player);
+				}
+				else
+				{
+					P_ChickenMorph(target);
+				}
+				return; // Always return
+			case MT_WHIRLWIND:
+				P_TouchWhirlwind(target);
+				return;
+			case MT_MINOTAUR:
+				if (inflictor->flags & MF_SKULLFLY)
+				{
+					// Slam only when in charge mode
+					P_MinotaurSlam(inflictor, target);
+					return;
+				}
+				break;
+			case MT_MACEFX4: // Death ball
+				if ((target->flags2 & MF2_BOSS) || target->type == MT_HEAD)
+				{
+					// Don't allow cheap boss kills
+					break;
+				}
+				else if (target->player)
+				{
+					// Player specific checks
+					if (target->player->powers[pw_invulnerability])
+					{
+						// Can't hurt invulnerable players
+						break;
+					}
+					if (P_AutoUseChaosDevice(target->player))
+					{
+						// Player was saved using chaos device
+						return;
+					}
+				}
+				damage = 10000; // Something's gonna die
+				break;
+			case MT_PHOENIXFX2: // Flame thrower
+				if (target->player && P_Random() < 128)
+				{
+					// Freeze player for a bit
+					target->reactiontime += 4;
+				}
+				break;
+			case MT_RAINPLR1: // Rain missiles
+			case MT_RAINPLR2:
+			case MT_RAINPLR3:
+			case MT_RAINPLR4:
+				if (target->flags2 & MF2_BOSS)
+				{
+					// Decrease damage for bosses
+					damage = (P_Random() & 7) + 1;
+				}
+				break;
+			case MT_HORNRODFX2:
+			case MT_PHOENIXFX1:
+				if (target->type == MT_SORCERER2 && P_Random() < 96)
+				{
+					// D'Sparil teleports away
+					DSparilTeleport(target);
+					return;
+				}
+				break;
+			case MT_BLASTERFX1:
+			case MT_RIPPER:
+				if (target->type == MT_HEAD)
+				{
+					// Less damage to Ironlich bosses
+					damage = P_Random() & 1;
+					if (!damage)
+					{
+						return;
+					}
+				}
+				break;
+			default:
+				break;
+		}
+	}
+	// Push the target unless source is using the gauntlets
+	if (inflictor && (!source || !source->player ||
+		source->player->readyweapon != wp_gauntlets)
+		&& !(inflictor->flags2 & MF2_NODMGTHRUST))
+	{
+		TVec		org1;
+		TVec		org2;
+		TVec		dir;
+	    float		thrust;
+
+		if (source && source->player && (source == inflictor)
+			&& source->player->powers[pw_weaponlevel2]
+			&& source->player->readyweapon == wp_staff)
+		{
+			// Staff power level 2
+			thrust = 350.0;
+		}
+		else
+		{
+			thrust = itof(damage) / target->mass * 656.25;
+		}
+
+		CopyMobjCenter(target, org1);
+		CopyMobjCenter(inflictor, org2);
+		vsub(org1, org2, dir);
+		if (target->flags & MF_NOGRAVITY)
+		{
+			dir.z = 0.0;
+		}
+		vnorm(dir);
+		vma(target->velocity, dir, thrust, target->velocity);
+	}
+
+	//
+	// player specific
+	//
+	if (player)
+	{
+		if(damage < 1000 && ((player->cheats&CF_GODMODE)
+			|| player->powers[pw_invulnerability]))
+		{
+			return;
+		}
+		if(player->armortype)
+		{
+			if (player->armortype == 1)
+			{
+				saved = damage >> 1;
+			}
+			else
+			{
+				saved = (damage >> 1) + (damage >> 2);
+			}
+			if (player->armorpoints <= saved)
+			{
+				// armor is used up
+				saved = player->armorpoints;
+				player->armortype = 0;
+			}
+			player->armorpoints -= saved;
+			damage -= saved;
+		}
+		if (damage >= player->health
+			&& ((gameskill == sk_baby) || deathmatch)
+			&& !player->chickenTics)
+		{
+			// Try to use some inventory health
+			P_AutoUseHealth(player, damage-player->health + 1);
+		}
+		player->health -= damage; // mirror mobj health here for Dave
+		if (player->health < 0)
+		{
+			player->health = 0;
+		}
+		player->attacker = source;
+		player->damagecount += damage; // add damage after armor / invuln
+		if (player->damagecount > 100)
+		{
+			player->damagecount = 100; // teleport stomp does 10k points...
+		}
+	}
+
+	//
+	// do the damage
+	//
+	target->health -= damage;
+	if (target->health <= 0)
+	{
+		// Death
+		target->special1 = damage;
+		if (target->type == MT_POD && source && source->type != MT_POD)
+		{
+			// Make sure players get frags for chain-reaction kills
+			target->target = source;
+		}
+		if (player && inflictor && !player->chickenTics)
+		{
+			// Check for flame death
+			if ((inflictor->flags2 & MF2_FIREDAMAGE)
+				|| ((inflictor->type == MT_PHOENIXFX1)
+				&& (target->health > -50) && (damage > 25)))
+			{
+				target->flags2 |= MF2_FIREDAMAGE;
+			}
+		}
+		P_KillMobj(source, target);
+		return;
+	}
+	if ((P_Random() < target->painchance)
+		&& !(target->flags&MF_SKULLFLY))
+	{
+		target->flags |= MF_JUSTHIT; // fight back!
+		SetMobjState(target, target->painstate);
+	}
+	target->reactiontime = 0; // we're awake now...
+	if (!target->threshold && source && !(source->flags2&MF2_BOSS)
+		&& !(target->type == MT_SORCERER2 && source->type == MT_WIZARD))
+	{
+		// Target actor is not intent on another actor,
+		// so make him chase after source
+		target->target = source;
+		target->threshold = BASETHRESHOLD;
+		if (target->statenum == target->spawnstate
+			&& target->seestate != S_NULL)
+		{
+			SetMobjState(target, target->seestate);
+		}
+	}
+}
+
+//==========================================================================
+//
+//  SpawnPuff
+//
+//==========================================================================
+
+void SpawnPuff(float x, float y, float z)
+{
+	mobj_t *puff;
+
+	z += (Random() - Random()) * 4.0;
+	puff = P_SpawnMobj(x, y, z, PuffType);
+	if (puff->sound_attack)
+	{
+		StartSound(puff, puff->sound_attack);
+	}
+	switch (PuffType)
+	{
+		case MT_BEAKPUFF:
+		case MT_STAFFPUFF:
+			puff->velocity.z = 1.0 * 35.0;
+			break;
+		case MT_GAUNTLETPUFF1:
+		case MT_GAUNTLETPUFF2:
+			puff->velocity.z = 0.8 * 35.0;
+		default:
+			break;
+	}
+	if (PuffType == MT_GOLDWANDPUFF1)
+	{
+		MSG_Select(MSG_SV_DATAGRAM, NULL);
+		MSG_WriteByte(svc_explosion);
+		MSG_WriteByte(EF_DL_WHITE);
+		MSG_WriteShort(ftoi(x));
+		MSG_WriteShort(ftoi(y));
+		MSG_WriteShort(ftoi(z));
+	}
+	if (PuffType == MT_BLASTERPUFF1)
+	{
+		MSG_Select(MSG_SV_DATAGRAM, NULL);
+		MSG_WriteByte(svc_explosion);
+		MSG_WriteByte(EF_DL_BLUE);
+		MSG_WriteShort(ftoi(x));
+		MSG_WriteShort(ftoi(y));
+		MSG_WriteShort(ftoi(z));
+	}
+}
+
+//==========================================================================
+//
+//	P_BloodSplatter
+//
+//==========================================================================
+
+void P_BloodSplatter(float x, float y, float z, mobj_t *originator)
+{
+	mobj_t *mo;
+
+	mo = P_SpawnMobj(x, y, z, MT_BLOODSPLATTER);
+	mo->target = originator;
+	mo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
+	mo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
+	mo->velocity.z = 2.0 * 35.0;
+}
+
+//==========================================================================
+//
+//	P_RipperBlood
+//
+//==========================================================================
+
+void P_RipperBlood(mobj_t *mo)
+{
+	mobj_t *th;
+	float x, y, z;
+
+	x = mo->origin.x + (Random() - Random()) * 16.0;
+	y = mo->origin.y + (Random() - Random()) * 16.0;
+	z = mo->origin.z + (Random() - Random()) * 16.0;
+	th = P_SpawnMobj(x, y, z, MT_BLOOD);
+	th->flags |= MF_NOGRAVITY;
+	th->velocity.x = mo->velocity.x / 2.0;
+	th->velocity.y = mo->velocity.y / 2.0;
+	th->time += Random() * 0.1;
+}
+
+//==========================================================================
+//
+//	P_SpawnPlayer
+//
+//	Called when a player is spawned on the level
+//	Most of the player structure stays unchanged between levels
+//
+//==========================================================================
+
+void P_SpawnPlayer(mthing_t *mthing)
+{
+	player_t	*p;
+	float		x, y, z;
+	mobj_t		*mobj;
+
+	p = &players[mthing->type - 1];
+
+	if (!p->active)
+		return;                                         // not playing
+		
+	if (p->playerstate == PST_REBORN)
+    {
+		G_PlayerReborn(mthing->type - 1);
+	}
+	x = mthing->x;
+	y = mthing->y;
+
+	z = ONFLOORZ;
+	mobj = P_SpawnMobj(x, y, z, MT_PLAYER);
+	// set color translations for player sprites
+	mobj->translation = p->color;
+
+	mobj->angles.yaw = ANG45 * (mthing->angle / 45);
+	mobj->player = p;
+	mobj->health = p->health;
+	p->mo = mobj;
+	p->playerstate = PST_LIVE;      
+	p->refire = 0;
+	p->damagecount = 0;
+	p->bonuscount = 0;
+	p->chickenTics = 0;
+	p->rain1 = NULL;
+	p->rain2 = NULL;
+	p->extralight = 0;
+	p->fixedcolormap = 0;
+	p->viewheight = VIEWHEIGHT;
+	SetupPsprites(p); // setup gun psprite
+	if (deathmatch)
+	{
+		// Give all keys in death match mode
+		p->keys = 7;
+	}
+}
+
+//==========================================================================
+//
+//	P_SpawnMapThing
+//
+//==========================================================================
+
+void P_SpawnMapThing(mthing_t *mthing, boolean spawn_thinkers)
+{
+	int 	i;
+	int 	bit;
+	mobj_t 	*mobj;
+	int		spawnMask;
+
+	if (mthing->type <= 0)
+	{
+		return;
+	}
+
+	// count deathmatch start positions
+	if (mthing->type == 11)
+	{
+		if (level->numdeathmatchstarts < MAXDEATHMATCHSTARTS)
+		{
+        	CopyMThing(mthing, &level->deathmatchstarts[level->numdeathmatchstarts]);
+			level->numdeathmatchstarts++;
+		}
+		return;
+	}
+	
+	// check for players specially
+	if (mthing->type <= 4)
+	{
+		// save spots for respawning in network games
+		CopyMThing(mthing, &level->playerstarts[mthing->arg1 * MAXPLAYERS + mthing->type - 1]);
+		return;
+	}
+
+	// Ambient sound sequences
+	if (mthing->type >= 1200 && mthing->type < 1300)
+	{
+		P_AddAmbientSfx(mthing->type - 1200);
+		return;
+	}
+
+	// Check for boss spots
+	if (mthing->type == 56) // Monster_BossSpot
+	{
+		AddBossSpot(mthing->x, mthing->y, ANG45 * (mthing->angle / 45));
+		return;
+	}
+
+	// Check current game type with spawn flags
+	if (netgame == false)
+	{
+		spawnMask = MTF_GSINGLE;
+	}
+	else if(deathmatch)
+	{
+		spawnMask = MTF_GDEATHMATCH;
+	}
+	else
+	{
+		spawnMask = MTF_GCOOP;
+	}
+	if (!(mthing->options & spawnMask))
+	{
+		return;
+	}
+
+	// check for apropriate skill level
+	if (gameskill == sk_baby)
+		bit = 1;
+	else if (gameskill == sk_nightmare)
+		bit = 4;
+	else
+		bit = 1 << (gameskill - 1);
+	if (!(mthing->options & bit))
+		return;
+	
+	// find which type to spawn
+	for (i = 0; i < num_mobj_types; i++)
+		if (mthing->type == mobjinfo[i].doomednum)
+			break;
+	
+	if (i == num_mobj_types)
+	{
+		dprint("P_SpawnMapThing: Unknown type %i at (%f, %f)",
+			mthing->type, mthing->x, mthing->y);
+		return;
+	}
+		
+	// spawn it
+	switch(i)
+	{
+		// Special stuff
+		case MT_WSKULLROD:
+		case MT_WPHOENIXROD:
+		case MT_AMSKRDWIMPY:
+		case MT_AMSKRDHEFTY:
+		case MT_AMPHRDWIMPY:
+		case MT_AMPHRDHEFTY:
+		case MT_AMMACEWIMPY:
+		case MT_AMMACEHEFTY:
+		case MT_ARTISUPERHEAL:
+		case MT_ARTITELEPORT:
+		case MT_ITEMSHIELD2:
+			if (shareware)
+			{
+				// Don't place on map in shareware version
+				return;
+			}
+			break;
+		case MT_WMACE:
+			if (!shareware)
+			{
+				// Put in the mace spot list
+				AddMaceSpot(mthing->x, mthing->y);
+				return;
+			}
+			return;
+		default:
+			break;
+	}
+    if (!spawn_thinkers)
+    {
+    	return;
+    }
+
+	mobj = NewMobjThinker();
+
+	mobj->type = i;
+	mobjinfo[i].spawnfunc(mobj, mthing);
+}
+
+//==========================================================================
+//
+//	P_HitFloor
+//
+//==========================================================================
+
+int P_HitFloor(mobj_t *thing)
+{
+	mobj_t *mo;
+
+	if (thing->floorz != thing->subsector->sector->floorheight)
+	{
+		// don't splash if landing on the edge above water/lava/etc....
+		return FLOOR_SOLID;
+	}
+	switch (P_GetThingFloorType(thing))
+	{
+		case FLOOR_WATER:
+			P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ, MT_SPLASHBASE);
+			mo = P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ, MT_SPLASH);
+			mo->target = thing;
+			mo->velocity.x = (Random() - Random()) * 35.0;
+			mo->velocity.y = (Random() - Random()) * 35.0;
+			mo->velocity.z = (2.0 + Random()) * 35.0;
+			StartSoundName(mo, "WaterSplash");
+			return FLOOR_WATER;
+		case FLOOR_LAVA:
+			P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ, MT_LAVASPLASH);
+			mo = P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ, MT_LAVASMOKE);
+			mo->velocity.z = (1.0 + Random() / 2.0) * 35.0;
+			StartSoundName(mo, "Burn");
+			return FLOOR_LAVA;
+		case FLOOR_SLUDGE:
+			P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ, MT_SLUDGESPLASH);
+			mo = P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ, MT_SLUDGECHUNK);
+			mo->target = thing;
+			mo->velocity.x = (Random() - Random()) * 35.0;
+			mo->velocity.y = (Random() - Random()) * 35.0;
+			mo->velocity.z = (1.0 + Random()) * 35.0;
+			return FLOOR_SLUDGE;
+	}
+	return FLOOR_SOLID;
+}
+
+//===========================================================================
+//
+//	P_FloorBounceMissile
+//
+//===========================================================================
+
+void P_FloorBounceMissile(mobj_t *mo)
+{
+	mo->velocity.z = -mo->velocity.z;
+	SetMobjState(mo, mo->deathstate);
+}
+
+//===========================================================================
+//
+//	P_ThrustMobj
+//
+//===========================================================================
+
+void P_ThrustMobj(mobj_t *mo, angle_t angle, float move)
+{
+	mo->velocity.x += move * cos(angle) * 35.0;
+	mo->velocity.y += move * sin(angle) * 35.0;
+}
+
+//**************************************************************************
+//
+//		NOISE ALERT
+//
+//**************************************************************************
+
+mobj_t*		soundtarget;
+
+//==========================================================================
+//
+//  P_RecursiveSound
+//
+//	Called by P_NoiseAlert. Recursively traverse adjacent sectors, sound
+// blocking lines cut off traversal.
+//
+//==========================================================================
+
+void P_RecursiveSound(sector_t* sec, int soundblocks)
+{
+    int			i;
+    line_t*		check;
+    sector_t*	other;
+	
+    // wake up all monsters in this sector
+    if (sec->validcount == *validcount &&
+    	sec->soundtraversed <= soundblocks + 1)
+    {
+		return;		// already flooded
+    }
+    
+    sec->validcount = *validcount;
+    sec->soundtraversed = soundblocks + 1;
+    sec->soundtarget = soundtarget;
+	
+    for (i=0; i<sec->linecount; i++)
+    {
+		check = sec->lines[i];
+		if (!(check->flags & ML_TWOSIDED))
+		    continue;
+	
+		if (!LineOpenings(check, *check->v1))
+		{
+			if (!LineOpenings(check, *check->v2))
+			    continue;	// closed door
+		}
+	
+		if (level->sides[check->sidenum[0]].sector == sec)
+		    other = level->sides[check->sidenum[1]].sector;
+		else
+		    other = level->sides[check->sidenum[0]].sector;
+	
+		if (check->flags & ML_SOUNDBLOCK)
+		{
+		    if (!soundblocks)
+				P_RecursiveSound(other, 1);
+		}
+		else
+		    P_RecursiveSound(other, soundblocks);
+    }
+}
+
+//==========================================================================
+//
+//	P_NoiseAlert
+//
+//	If a monster yells at a player, it will alert other monsters to the
+// player.
+//
+//==========================================================================
+
+void P_NoiseAlert(mobj_t* target, mobj_t* emmiter)
+{
+    soundtarget = target;
+    (*validcount)++;
+    P_RecursiveSound(emmiter->subsector->sector, 0);
+}
+

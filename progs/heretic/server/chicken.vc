@@ -1,0 +1,135 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ı
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	A_ChicLook
+//
+//==========================================================================
+
+void A_ChicLook(mobj_t* actor)
+{
+	if (UpdateChicken(actor, 10))
+	{
+		return;
+	}
+	A_Look(actor);
+}
+
+//==========================================================================
+//
+//	A_ChicChase
+//
+//==========================================================================
+
+void A_ChicChase(mobj_t* actor)
+{
+	if (UpdateChicken(actor, 3))
+	{
+		return;
+	}
+	A_Chase(actor);
+}
+
+//==========================================================================
+//
+//	A_Feathers
+//
+//==========================================================================
+
+void A_Feathers(mobj_t* actor)
+{
+	int 	i;
+	int 	count;
+	mobj_t*	mo;
+
+	if (actor->health > 0)
+	{
+		// Pain
+		count = P_Random() < 32 ? 2 : 1;
+	}
+	else
+	{
+		// Death
+		count = 5 + (P_Random() & 3);
+	}
+	for (i = 0; i < count; i++)
+	{
+		mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 20.0, MT_FEATHER);
+		mo->target = actor;
+		mo->velocity.x = (Random() - Random()) * 35.0;
+		mo->velocity.y = (Random() - Random()) * 35.0;
+		mo->velocity.z = (1.0 + Random() * 2.0) * 35.0;
+		SetMobjState(mo, S_FEATHER1 + (P_Random() & 7));
+	}
+}
+
+//==========================================================================
+//
+//	A_ChicAttack
+//
+//==========================================================================
+
+void A_ChicAttack(mobj_t* actor)
+{
+	if (UpdateChicken(actor, 18))
+	{
+		return;
+	}
+	if (!actor->target)
+	{
+		return;
+	}
+	if (P_CheckMeleeRange(actor))
+	{
+		DamageMobj(actor->target, actor, actor, 1+(P_Random()&1));
+	}
+}
+
+//==========================================================================
+//
+//	A_ChicPain
+//
+//==========================================================================
+
+void A_ChicPain(mobj_t* actor)
+{
+	if (UpdateChicken(actor, 10))
+	{
+		return;
+	}
+	StartSound(actor, actor->sound_pain);
+}
+

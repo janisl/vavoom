@@ -1,0 +1,515 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+#define FLOORSPEED		1.0
+
+// TYPES -------------------------------------------------------------------
+
+enum
+{
+    // lower floor to highest surrounding floor
+    lowerFloor,
+    
+    // lower floor to lowest surrounding floor
+    lowerFloorToLowest,
+    
+    // lower floor to highest surrounding floor VERY FAST
+    turboLower,
+    
+    // raise floor to lowest surrounding CEILING
+    raiseFloor,
+    
+    // raise floor to next highest surrounding floor
+    raiseFloorToNearest,
+
+    // raise floor to shortest height texture around it
+    raiseToTexture,
+    
+    // lower floor to lowest surrounding floor
+    //  and change floorpic
+    lowerAndChange,
+  
+    raiseFloor24,
+    raiseFloor24AndChange,
+    raiseFloorCrush,
+
+     // raise to next highest floor, turbo-speed
+    raiseFloorTurbo,       
+    donutRaise,
+    raiseFloor512
+};
+
+enum
+{
+    build8,	// slowly build by 8
+    turbo16	// quickly build by 16
+};
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//
+// getSide()
+// Will return a side_t*
+//  given the number of the current sector,
+//  the line number, and the side (0/1) that you want.
+//
+side_t* getSide(int currentSector, int line, int side)
+{
+    return &level->sides[level->sectors[currentSector].lines[line]->sidenum[side]];
+}
+
+
+//
+// getSector()
+// Will return a sector_t*
+//  given the number of the current sector,
+//  the line number and the side (0/1) that you want.
+//
+sector_t* getSector(int currentSector,int line,int side)
+{
+   return level->sides[level->sectors[currentSector].lines[line]->sidenum[side]].sector;
+}
+
+
+//
+// twoSided()
+// Given the sector number and the line number,
+//  it will tell you whether the line is two-sided or not.
+//
+int twoSided(int sector,int line)
+{
+    return level->sectors[sector].lines[line]->flags & ML_TWOSIDED;
+}
+
+//==========================================================================
+//
+//  T_MoveFloor
+//
+//	MOVE A FLOOR TO IT'S DESTINATION (UP OR DOWN)
+//
+//==========================================================================
+
+void T_MoveFloor(special_t* floor)
+{
+    int			res;
+	
+    res = T_MovePlane(floor->sector,
+		      floor->tic_speed,
+		      floor->floordestheight,
+		      floor->crush, 0, floor->direction);
+    
+    if (!(level->tictime & 7))
+		StartSoundName(&floor->sector->soundorg, "StoneMoving");
+    
+    if (res == RES_PASTDEST)
+    {
+		floor->sector->specialdata = NULL;
+
+		if (floor->direction == 1)
+		{
+		    switch (floor->type)
+		    {
+		      case donutRaise:
+				floor->sector->special = floor->newspecial;
+				SetFloorPic(floor->sector, floor->texture);
+                break;
+		      default:
+				break;
+		    }
+		}
+		else if (floor->direction == -1)
+		{
+		    switch (floor->type)
+		    {
+		      case lowerAndChange:
+				floor->sector->special = floor->newspecial;
+				SetFloorPic(floor->sector, floor->texture);
+                break;
+		      default:
+				break;
+		    }
+		}
+		RemoveSpecialThinker(floor);
+		StartSoundName(&floor->sector->soundorg, "PlatformStop");
+    }
+}
+
+//==========================================================================
+//
+//  EV_DoFloor
+//
+//	HANDLE FLOOR TYPES
+//
+//==========================================================================
+
+int EV_DoFloor(line_t* line, int floortype)
+{
+    int				secnum;
+    int				rtn;
+    int				i;
+    sector_t		*sec;
+    special_t		*floor;
+	float			minsize = 99999.0;
+	side_t			*side;
+
+    secnum = -1;
+    rtn = 0;
+    while ((secnum = FindSectorFromTag(line->arg1,secnum)) >= 0)
+    {
+		sec = &level->sectors[secnum];
+		
+		// ALREADY MOVING?  IF SO, KEEP GOING...
+		if (sec->specialdata)
+	    	continue;
+	
+		// new floor thinker
+		rtn = 1;
+		floor = NewSpecialThinker(T_MoveFloor);
+		sec->specialdata = floor;
+		floor->type = floortype;
+		floor->crush = false;
+
+		switch (floortype)
+		{
+		  case lowerFloor:
+		    floor->direction = -1;
+		    floor->sector = sec;
+		    floor->tic_speed = FLOORSPEED;
+		    floor->floordestheight = FindHighestFloorSurrounding(sec);
+		    break;
+
+		  case lowerFloorToLowest:
+		    floor->direction = -1;
+		    floor->sector = sec;
+		    floor->tic_speed = FLOORSPEED;
+		    floor->floordestheight = FindLowestFloorSurrounding(sec);
+		    break;
+
+		  case turboLower:
+		    floor->direction = -1;
+		    floor->sector = sec;
+		    floor->tic_speed = FLOORSPEED * 4.0;
+		    floor->floordestheight = FindHighestFloorSurrounding(sec);
+		    if (floor->floordestheight != sec->floorheight)
+				floor->floordestheight += 8.0;
+		    break;
+
+		  case raiseFloorCrush:
+		    floor->crush = true;
+		  case raiseFloor:
+		    floor->direction = 1;
+		    floor->sector = sec;
+		    floor->tic_speed = FLOORSPEED;
+		    floor->floordestheight = FindLowestCeilingSurrounding(sec);
+		    if (floor->floordestheight > sec->ceilingheight)
+				floor->floordestheight = sec->ceilingheight;
+			if (floortype == raiseFloorCrush)
+			    floor->floordestheight -= 8.0;
+		    break;
+
+		  case raiseFloorTurbo:
+		    floor->direction = 1;
+		    floor->sector = sec;
+		    floor->tic_speed = FLOORSPEED * 4.0;
+		    floor->floordestheight = FindNextHighestFloor(sec, sec->floorheight);
+		    break;
+
+		  case raiseFloorToNearest:
+		    floor->direction = 1;
+		    floor->sector = sec;
+		    floor->tic_speed = FLOORSPEED;
+		    floor->floordestheight = FindNextHighestFloor(sec, sec->floorheight);
+		    break;
+
+		  case raiseFloor24:
+		    floor->direction = 1;
+		    floor->sector = sec;
+		    floor->tic_speed = FLOORSPEED;
+		    floor->floordestheight = floor->sector->floorheight + 24.0;
+		    break;
+		  case raiseFloor512:
+		    floor->direction = 1;
+		    floor->sector = sec;
+		    floor->tic_speed = FLOORSPEED;
+		    floor->floordestheight = floor->sector->floorheight + 512.0;
+		    break;
+
+		  case raiseFloor24AndChange:
+		    floor->direction = 1;
+		    floor->sector = sec;
+		    floor->tic_speed = FLOORSPEED;
+		    floor->floordestheight = floor->sector->floorheight + 24.0;
+		    SetFloorPic(sec, line->frontsector->floor.pic);
+		    sec->special = line->frontsector->special;
+		    break;
+
+		  case raiseToTexture:
+			floor->direction = 1;
+			floor->sector = sec;
+			floor->tic_speed = FLOORSPEED;
+			for (i = 0; i < sec->linecount; i++)
+			{
+				if (!twoSided(secnum, i))
+					continue;
+
+				side = getSide(secnum,i,0);
+				if (side->bottomtexture >= 0)
+					if (TextureHeight(side->bottomtexture) < minsize)
+						minsize = TextureHeight(side->bottomtexture);
+
+		      	side = getSide(secnum,i,1);
+				if (side->bottomtexture >= 0)
+					if (TextureHeight(side->bottomtexture) < minsize)
+						minsize = TextureHeight(side->bottomtexture);
+			}
+			floor->floordestheight = floor->sector->floorheight + minsize;
+			break;
+	  
+		  case lowerAndChange:
+		    floor->direction = -1;
+		    floor->sector = sec;
+		    floor->tic_speed = FLOORSPEED;
+	    	floor->floordestheight = FindLowestFloorSurrounding(sec);
+		    floor->texture = sec->floor.pic;
+	    	for (i = 0; i < sec->linecount; i++)
+		    {
+				if ( twoSided(secnum, i) )
+				{
+				    if (getSide(secnum,i,0)->sector == &level->sectors[secnum])
+				    {
+						sec = getSector(secnum,i,1);
+
+						if (sec->floorheight == floor->floordestheight)
+						{
+						    floor->texture = sec->floor.pic;
+						    floor->newspecial = sec->special;
+						    break;
+						}
+				    }
+				    else
+				    {
+						sec = getSector(secnum,i,0);
+
+						if (sec->floorheight == floor->floordestheight)
+						{
+						    floor->texture = sec->floor.pic;
+						    floor->newspecial = sec->special;
+						    break;
+						}
+				    }
+				}
+		    }
+			break;
+		  default:
+		    break;
+		}
+    }
+    return rtn;
+}
+
+//==========================================================================
+//
+//	EV_BuildStairs
+//
+//	BUILD A STAIRCASE!
+//
+//==========================================================================
+
+int EV_BuildStairs(line_t* line, int type)
+{
+    int				secnum;
+    float			height;
+    int				i;
+    int				texture;
+    int				ok;
+    int				rtn;
+	int				j;
+
+    sector_t*		sec;
+    sector_t*		tsec;
+
+    special_t*		floor;
+    
+    float			stairsize = 0.0;
+    float			speed = 0.0;
+
+    secnum = -1;
+    rtn = 0;
+    while ((secnum = FindSectorFromTag(line->arg1,secnum)) >= 0)
+    {
+		sec = &level->sectors[secnum];
+		
+	// ALREADY MOVING?  IF SO, KEEP GOING...
+		if (sec->specialdata)
+		    continue;
+	
+		// new floor thinker
+		rtn = 1;
+		floor = NewSpecialThinker(T_MoveFloor);
+		sec->specialdata = floor;
+		floor->direction = 1;
+		floor->sector = sec;
+		switch (type)
+		{
+		  case build8:
+		    speed = FLOORSPEED / 4.0;
+		    stairsize = 8.0;
+		    break;
+		  case turbo16:
+		    speed = FLOORSPEED * 4.0;
+		    stairsize = 16.0;
+		    break;
+		}
+		floor->tic_speed = speed;
+		height = sec->floorheight + stairsize;
+		floor->floordestheight = height;
+		
+		texture = sec->floor.pic;
+	
+		// Find next sector to raise
+		// 1.	Find 2-sided line with same sector side[0]
+		// 2.	Other side is the next sector to raise
+	    //   3. Unless already moving, or different texture, then stop building
+		do
+		{
+		    ok = 0;
+		    for (i = 0;i < sec->linecount;i++)
+		    {
+				if (!(sec->lines[i]->flags & ML_TWOSIDED))
+				    continue;
+					
+				tsec = sec->lines[i]->frontsector;
+		
+				if (&level->sectors[secnum] != tsec)
+				    continue;
+
+				tsec = sec->lines[i]->backsector;
+
+				if (tsec->floor.pic != texture)
+				    continue;
+
+				height += stairsize;
+
+				if (tsec->specialdata)
+			    	continue;
+
+				sec = tsec;
+//				secnum = tsec - level->sectors;
+				for (j=0; j<level->numsectors; j++)
+                	if (tsec == &level->sectors[j])
+                    {
+                    	secnum = j;
+                        break;
+					}
+
+				floor = NewSpecialThinker(T_MoveFloor);
+
+				sec->specialdata = floor;
+				floor->direction = 1;
+				floor->sector = sec;
+				floor->tic_speed = speed;
+				floor->floordestheight = height;
+				ok = 1;
+				break;
+			}
+		} while (ok);
+    }
+    return rtn;
+}
+
+//==========================================================================
+//
+//	EV_DoDonut()
+//
+//	Handle donut function: lower pillar, raise surrounding pool, both to
+// height, texture and type of the sector surrounding the pool.
+//	Passed the linedef that triggered the donut
+//	Returns whether a thinker was created
+//
+//==========================================================================
+
+int EV_DoDonut(line_t *line)
+{
+	sector_t* 		s1;
+	sector_t* 		s2;
+	sector_t* 		s3;
+	int       		secnum;
+	int       		rtn;
+	int       		i;
+	special_t*		floor;
+
+	secnum = -1;
+	rtn = 0;
+	// do function on all sectors with same tag as linedef
+	while ((secnum = FindSectorFromTag(line->arg1,secnum)) >= 0)
+	{
+    	s1 = &level->sectors[secnum];                // s1 is pillar's sector
+              
+		// ALREADY MOVING?  IF SO, KEEP GOING...
+		if (s1->specialdata)
+		    continue;
+                      
+		s2 = getNextSector(s1->lines[0], s1);  // s2 is pool's sector
+		rtn = 1;
+
+		// find a two sided line around the pool whose other side isn't the pillar
+		for (i = 0;i < s2->linecount; i++)
+    	{
+		    if ((!s2->lines[i]->flags & ML_TWOSIDED) ||
+				(s2->lines[i]->backsector == s1))
+					continue;
+		    s3 = s2->lines[i]->backsector;
+	    
+		    //	Spawn rising slime
+		    floor = NewSpecialThinker(T_MoveFloor);
+		    s2->specialdata = floor;
+		    floor->type = donutRaise;
+		    floor->crush = false;
+		    floor->direction = 1;
+		    floor->sector = s2;
+		    floor->tic_speed = FLOORSPEED / 2.0;
+		    floor->texture = s3->floor.pic;
+		    floor->newspecial = 0;
+		    floor->floordestheight = s3->floorheight;
+	    
+		    //	Spawn lowering donut-hole
+		    floor = NewSpecialThinker(T_MoveFloor);
+		    s1->specialdata = floor;
+		    floor->type = lowerFloor;
+		    floor->crush = false;
+		    floor->direction = -1;
+		    floor->sector = s1;
+		    floor->tic_speed = FLOORSPEED / 2.0;
+		    floor->floordestheight = s3->floorheight;
+		    break;
+		}
+    }
+    return rtn;
+}
+
