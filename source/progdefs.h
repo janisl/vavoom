@@ -171,6 +171,7 @@ enum
 
 	OPC_COPY,
 	OPC_SWAP3,
+	OPC_DYNAMIC_CAST,
 
 	NUM_OPCODES
 };
@@ -235,9 +236,12 @@ struct dclassinfo_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/12/12 19:27:46  dj_jl
+//	Added dynamic cast
+//
 //	Revision 1.6  2001/12/03 19:21:45  dj_jl
 //	Added swaping with vector
-//
+//	
 //	Revision 1.5  2001/09/20 16:30:28  dj_jl
 //	Started to use object-oriented stuff in progs
 //	

@@ -238,6 +238,8 @@
  externdef _current_func
  externdef _D_DrawZSpan
  externdef _PR_RFInvalidOpcode
+ externdef _PR_DynamicCast
+ externdef _PR_Test
 _TEXT SEGMENT
  align 4
  public _RunFunction
@@ -250,6 +252,7 @@ _RunFunction:
  mov dword ptr[_current_func],edi
  sal edi,4
  add edi,dword ptr[_pr_functions]
+ call _PR_Profile1
  mov eax,dword ptr[4+edi]
  test eax,eax
  jge LINTERPRET_FUNCTION
@@ -399,6 +402,7 @@ LOPCODE_TABLE:
  dd LOPC_PUSHSTRING
  dd LOPC_COPY
  dd LOPC_SWAP3
+ dd LOPC_DYNAMIC_CAST
  align 4
 LINC_STATEMENT_POINTER:
  add edi,4
@@ -1791,6 +1795,19 @@ LOPC_SWAP3:
  mov edx,dword ptr[-4+esi]
  mov dword ptr[-8+esi],edx
  mov dword ptr[-4+esi],eax
+ mov eax,dword ptr[edi]
+ add edi,4
+ jmp  dword ptr[LOPCODE_TABLE+eax*4]
+ align 4
+LOPC_DYNAMIC_CAST:
+ mov eax,dword ptr[edi]
+ mov edx,dword ptr[-4+esi]
+ push eax
+ push edx
+ add edi,4
+ call _PR_DynamicCast
+ mov dword ptr[-4+esi],eax
+ add esp,8
  mov eax,dword ptr[edi]
  add edi,4
  jmp  dword ptr[LOPCODE_TABLE+eax*4]

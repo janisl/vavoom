@@ -27,11 +27,14 @@
 //**	
 //**************************************************************************
 
-//#define PROGS_PROFILE
+#define PROGS_PROFILE
 
 #include "asm_i386.h"
 
 #ifdef USEASM
+
+.extern	C(PR_DynamicCast)
+.extern	C(PR_Test)
 
 //==========================================================================
 //
@@ -245,6 +248,7 @@ LOPCODE_TABLE:
 
 	.long	LOPC_COPY
 	.long	LOPC_SWAP3
+	.long	LOPC_DYNAMIC_CAST
 
 	Align4
 LINC_STATEMENT_POINTER:
@@ -2003,6 +2007,22 @@ LOPC_SWAP3:
 	addl	$4,%edi
 	jmp		*LOPCODE_TABLE(,%eax,4)
 
+	//	Dynamic cast of a object
+	Align4
+LOPC_DYNAMIC_CAST:
+	movl	(%edi),%eax
+	movl	-4(%esi),%edx
+	pushl	%eax
+	pushl	%edx
+	addl	$4,%edi
+	call	C(PR_DynamicCast)
+	movl	%eax,-4(%esi)
+	addl	$8,%esp
+	//	Go to the next statement
+	movl	(%edi),%eax
+	addl	$4,%edi
+	jmp		*LOPCODE_TABLE(,%eax,4)
+
 LEND_RUN_FUNCTION:
 	popl	%ebx
 	popl	%esi
@@ -2015,9 +2035,12 @@ LEND_RUN_FUNCTION:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/12/12 19:27:46  dj_jl
+//	Added dynamic cast
+//
 //	Revision 1.6  2001/12/03 19:21:45  dj_jl
 //	Added swaping with vector
-//
+//	
 //	Revision 1.5  2001/09/20 16:30:28  dj_jl
 //	Started to use object-oriented stuff in progs
 //	

@@ -77,7 +77,6 @@ builtin_t*				pr_builtins;
 int						current_func = 0;
 dword*					pr_profile1;
 dword*					pr_profile2;
-
 int						function_call_trace[256];
 int						function_call_depth;
 
@@ -321,17 +320,6 @@ void TProgs::Load(const char *AName)
 #endif
     }
 
-	//  Setup parent virtual tables
-	for (i = 0; i < Progs->num_classinfo; i++)
-	{
-		if (ClassInfo[i].parent)
-		{
-			int *vtable = Globals + ClassInfo[i].vtable;
-			int *pvtable = Globals + ClassInfo[ClassInfo[i].parent].vtable;
-			vtable[2] = (int)pvtable;
-		}
-	}
-
 	Profile1 = (dword*)Z_Calloc(Progs->num_functions * 4);
 	Profile2 = (dword*)Z_Calloc(Progs->num_functions * 4);
 
@@ -455,6 +443,18 @@ char* TProgs::FuncName(int fnum)
 extern "C" void PR_RFInvalidOpcode(void)
 {
 	Sys_Error("Empty function or invalid opcode");
+}
+
+extern "C" VObject *PR_DynamicCast(VObject *object, int class_id)
+{
+cond << "DynCast " << (void *)object << " to " << class_id << endl;
+	if (!current_progs->CanCast(object, class_id))
+	{
+cond << "Failed\n";
+		return NULL;
+	}
+cond << "Succed\n";
+	return object;
 }
 
 #ifdef USEASM
@@ -1267,6 +1267,10 @@ static void RunFunction(int fnum)
 		}
 		break;
 
+	 case OPC_DYNAMIC_CAST:
+		sp[-1] = (int)PR_DynamicCast((VObject *)sp[-1], *current_statement++);
+		break;
+
 	 default:
 #ifdef CHECK_VALID_OPCODE
 		Sys_Error("Invalid opcode %d", current_statement[-1]);
@@ -1632,7 +1636,7 @@ void TProgs::DumpProfile(void)
 	for (i = 0; i < MAX_PROF && profsort[i]; i++)
 	{
 		int fnum = profsort[i];
-		con << va("%3.2f%% (%6d) %6d %s\n",
+		con << va("%3.2f%% (%9d) %9d %s\n",
 			(double)Profile2[fnum] * 100.0 / (double)totalcount,
 			(int)Profile2[fnum], (int)Profile1[fnum], FuncName(fnum));
 	}
@@ -1669,7 +1673,8 @@ VObject *TProgs::Spawn(int cid, int tag)
 {
 	try
 	{
-		VObject *Obj = (VObject*)Z_Calloc(ClassInfo[cid].size, tag, 0);
+		VObject *Obj = new((EInternal *)Z_Calloc(ClassInfo[cid].size,
+			tag, 0)) VObject;
 		Obj->vtable = Globals + ClassInfo[cid].vtable;
 		Exec(Obj->vtable[4], (int)Obj);
 		return Obj;
@@ -1690,7 +1695,7 @@ VObject *TProgs::Spawn(int cid, int tag)
 void TProgs::Destroy(VObject *buf)
 {
 	Exec(buf->vtable[5], (int)buf);
-	Z_Free(buf);
+	delete buf;
 }
 
 //==========================================================================
@@ -1701,7 +1706,7 @@ void TProgs::Destroy(VObject *buf)
 
 bool TProgs::CanCast(VObject *object, int cid)
 {
-	return CanCast(object->vtable[0], cid);
+	return CanCast(object->GetClassID(), cid);
 }
 
 //==========================================================================
@@ -1744,9 +1749,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2001/12/12 19:27:46  dj_jl
+//	Added dynamic cast
+//
 //	Revision 1.11  2001/12/03 19:21:45  dj_jl
 //	Added swaping with vector
-//
+//	
 //	Revision 1.10  2001/12/01 17:43:13  dj_jl
 //	Renamed ClassBase to VObject
 //	
