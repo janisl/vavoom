@@ -98,6 +98,10 @@ static TVec			listener_forward;
 static TVec			listener_right;
 static TVec			listener_up;
 
+static TCvarF		s3d_distance_unit("s3d_distance_unit", "72.0", CVAR_ARCHIVE);
+static TCvarF		s3d_doppler_factor("s3d_doppler_factor", "2.0", CVAR_ARCHIVE);
+static TCvarF		s3d_rolloff_factor("s3d_rolloff_factor", "1.0", CVAR_ARCHIVE);
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -152,7 +156,8 @@ void S_InitSfx(void)
 		memset(&caps, 0, sizeof(caps));
 		caps.dwSize = sizeof(caps);
 		DSound->GetCaps(&caps);
-		if (caps.dwFreeHw3DStaticBuffers && !M_CheckParm("-no3dsound"))
+		if (caps.dwFreeHw3DStaticBuffers && caps.dwFreeHwMixingStaticBuffers && 
+			!M_CheckParm("-no3dsound"))
 		{
 			sound3D = true;
 			con << "3D sound on\n";
@@ -175,15 +180,14 @@ void S_InitSfx(void)
 
 		// Set up wave format
 		memset(&wfx, 0, sizeof(WAVEFORMATEX));
-		wfx.wFormatTag         = WAVE_FORMAT_PCM;
-		wfx.nChannels          = 2;
-		wfx.nSamplesPerSec     = 11025;
-//		wfx.nSamplesPerSec     = 44100;
-		wfx.wBitsPerSample     = WORD(8);
-//		wfx.wBitsPerSample     = WORD(16);
-		wfx.nBlockAlign        = WORD(wfx.wBitsPerSample / 8 * wfx.nChannels);
-		wfx.nAvgBytesPerSec    = wfx.nSamplesPerSec * wfx.nBlockAlign;
-		wfx.cbSize             = 0;
+		wfx.wFormatTag		= WAVE_FORMAT_PCM;
+		wfx.wBitsPerSample	= WORD(caps.dwFlags & DSCAPS_PRIMARY16BIT ? 16 : 8);
+		wfx.nChannels		= caps.dwFlags & DSCAPS_PRIMARYSTEREO ? 2 : 1;
+//		wfx.nSamplesPerSec	= 11025;
+		wfx.nSamplesPerSec	= 44100;
+		wfx.nBlockAlign		= WORD(wfx.wBitsPerSample / 8 * wfx.nChannels);
+		wfx.nAvgBytesPerSec	= wfx.nSamplesPerSec * wfx.nBlockAlign;
+		wfx.cbSize			= 0;
 
 		result = PrimarySoundBuffer->SetFormat(&wfx);
 		if (result != DS_OK)
@@ -198,9 +202,9 @@ void S_InitSfx(void)
 				Sys_Error("Failed to get Listener");
 			}
 
-			Listener->SetDistanceFactor(1.0 / 256.0, DS3D_IMMEDIATE);
-			Listener->SetDopplerFactor(1.0, DS3D_IMMEDIATE);
-			Listener->SetRolloffFactor(1.0, DS3D_IMMEDIATE);
+			Listener->SetDistanceFactor(1.0 / s3d_distance_unit, DS3D_IMMEDIATE);
+			Listener->SetDopplerFactor(s3d_doppler_factor, DS3D_IMMEDIATE);
+			Listener->SetRolloffFactor(s3d_rolloff_factor, DS3D_IMMEDIATE);
 		}
 	}
 
@@ -695,7 +699,10 @@ void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
 
 	result = dsbuffer->Play(0, 0, 0);
 	if (result != DS_OK)
-		Sys_Error("Failed to play channel\n%s", DS_Error(result));
+	{
+		cond << "Failed to play channel\n" << DS_Error(result) << endl;
+		StopChannel(chan);
+	}
 	unguard;
 }
 
@@ -898,6 +905,10 @@ void S_UpdateSfx(void)
 			listener_up.y,
 			DS3D_DEFERRED);
 
+		Listener->SetDistanceFactor(1.0 / s3d_distance_unit, DS3D_DEFERRED);
+		Listener->SetDopplerFactor(s3d_doppler_factor, DS3D_DEFERRED);
+		Listener->SetRolloffFactor(s3d_rolloff_factor, DS3D_DEFERRED);
+
 		Listener->CommitDeferredSettings();
 	}
 	unguard;
@@ -1020,9 +1031,12 @@ boolean S_GetSoundPlayingInfo(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/01/28 18:43:16  dj_jl
+//	Added console variables for DirectSound3D settings
+//
 //	Revision 1.10  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
-//
+//	
 //	Revision 1.9  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	
