@@ -72,6 +72,7 @@ static int				sprite_cache_count;
 
 void TSoftwareDrawer::InitTextures(void)
 {
+	guard(TSoftwareDrawer::InitTextures);
 	//	Textures
 	texturedata = Z_CNew<miptexture_t*>(numtextures);
 	//	Flats
@@ -81,6 +82,7 @@ void TSoftwareDrawer::InitTextures(void)
 	{
 		skymapdata = Z_CNew<void *>(numskymaps);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -91,6 +93,7 @@ void TSoftwareDrawer::InitTextures(void)
 
 void D_FlushTextureCaches(void)
 {
+	guard(D_FlushTextureCaches);
 	int		i;
 
 	for (i = 0; i < SPRITE_CACHE_SIZE; i++)
@@ -108,6 +111,7 @@ void D_FlushTextureCaches(void)
 			Z_Free(skymapdata[i]);
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -118,6 +122,7 @@ void D_FlushTextureCaches(void)
 
 void D_LoadImage(const char *name, void **dataptr)
 {
+	guard(D_LoadImage);
 	int j;
 
 	Mod_LoadSkin(name, dataptr);
@@ -149,6 +154,7 @@ void D_LoadImage(const char *name, void **dataptr)
 		}
 		Z_Free(SkinData);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -186,6 +192,7 @@ byte MipColor(void)
 
 static void	MakeMips(miptexture_t *mip)
 {
+	guard(MakeMips);
 	byte		*psrc, *pdst;
 	int			i, j, miplevel, mipw, miph, srcrow;
 
@@ -222,6 +229,7 @@ static void	MakeMips(miptexture_t *mip)
 			psrc += srcrow;
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -240,17 +248,27 @@ static void	MakeMips(miptexture_t *mip)
 static void DrawColumnInCache(column_t* column, byte* cache,
 	int originx, int originy, int cachewidth, int cacheheight, bool dsky)
 {
+	guard(DrawColumnInCache);
     int		count;
     int		position;
     byte*	source;
     byte*	dest;
+	int		top = -1;	//	DeepSea tall patches support
 	
 	// step through the posts in a column
     while (column->topdelta != 0xff)
     {
+		if (column->topdelta <= top)
+		{
+			top += column->topdelta;
+		}
+		else
+		{
+			top = column->topdelta;
+		}
 		source = (byte *)column + 3;
 		count = column->length;
-		position = originy + column->topdelta;
+		position = originy + top;
 
 		//	Clip position
 		if (position < 0)
@@ -274,6 +292,7 @@ static void DrawColumnInCache(column_t* column, byte* cache,
 		
 		column = (column_t *)((byte *)column + column->length + 4);
     }
+	unguard;
 }
 
 //==========================================================================
@@ -287,6 +306,7 @@ static void DrawColumnInCache(column_t* column, byte* cache,
 
 static void GenerateTexture(int texnum, bool double_sky)
 {
+	guard(GenerateTexture);
 	miptexture_t	*mip;
     byte*			block;
     texdef_t*		texture;
@@ -351,6 +371,7 @@ static void GenerateTexture(int texnum, bool double_sky)
     // Now that the texture has been built in column cache,
     //  it is purgable from zone memory.
     Z_ChangeTag(mip, PU_CACHE);
+	unguard;
 }
 
 //==========================================================================
@@ -361,6 +382,7 @@ static void GenerateTexture(int texnum, bool double_sky)
 
 void TSoftwareDrawer::SetTexture(int tex)
 {
+	guard(TSoftwareDrawer::SetTexture);
 	if (tex & TEXF_FLAT)
 	{
 		SetFlat(tex);
@@ -375,6 +397,7 @@ void TSoftwareDrawer::SetTexture(int tex)
 
 	miptexture = texturedata[tex];
 	cacheblock = (byte*)miptexture + miptexture->offsets[0];
+	unguard;
 }
 
 //==========================================================================
@@ -385,6 +408,7 @@ void TSoftwareDrawer::SetTexture(int tex)
 
 static void LoadSkyMap(const char *name, void **dataptr)
 {
+	guard(LoadSkyMap);
 	int j;
 
 	Mod_LoadSkin(name, NULL);
@@ -473,6 +497,7 @@ static void LoadSkyMap(const char *name, void **dataptr)
 	}
 	Z_ChangeTag(*dataptr, PU_CACHE);
 	Z_Free(SkinData);
+	unguard;
 }
 
 //==========================================================================
@@ -483,6 +508,7 @@ static void LoadSkyMap(const char *name, void **dataptr)
 
 void TSoftwareDrawer::SetSkyTexture(int tex, bool double_sky)
 {
+	guard(TSoftwareDrawer::SetSkyTexture);
 	if (tex & TEXF_SKY_MAP)
 	{
 		tex &= ~TEXF_SKY_MAP;
@@ -508,6 +534,7 @@ void TSoftwareDrawer::SetSkyTexture(int tex, bool double_sky)
 
 		miptexture = texturedata[tex];
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -518,6 +545,7 @@ void TSoftwareDrawer::SetSkyTexture(int tex, bool double_sky)
 
 static void GenerateFlat(int num)
 {
+	guard(GenerateFlat);
 	miptexture_t	*mip;
 	byte			*block, *data;
 
@@ -540,6 +568,7 @@ static void GenerateFlat(int num)
 
 	MakeMips(mip);
 	Z_ChangeTag(mip, PU_CACHE);
+	unguard;
 }
 
 //==========================================================================
@@ -550,6 +579,7 @@ static void GenerateFlat(int num)
 
 void TSoftwareDrawer::SetFlat(int num)
 {
+	guard(TSoftwareDrawer::SetFlat);
 	num &= ~TEXF_FLAT;
 
 	if (!flatdata[num])
@@ -559,6 +589,7 @@ void TSoftwareDrawer::SetFlat(int num)
 
     miptexture = flatdata[num];
     cacheblock = (byte*)miptexture + miptexture->offsets[0];
+	unguard;
 }
 
 //==========================================================================
@@ -569,6 +600,7 @@ void TSoftwareDrawer::SetFlat(int num)
 
 static void	GenerateSprite(int lump, int slot, dword light, int translation)
 {
+	guard(GenerateSprite);
     patch_t	*patch = (patch_t*)W_CacheLumpNum(spritelumps[lump], PU_STATIC);
 
 	int w = LittleShort(patch->width);
@@ -619,14 +651,23 @@ static void	GenerateSprite(int lump, int slot, dword light, int translation)
     	column_t *column = (column_t *)((byte *)patch + LittleLong(patch->columnofs[x]));
 
 		// step through the posts in a column
+		int top = -1;	//	DeepSea tall patches support
 	    while (column->topdelta != 0xff)
 	    {
+			if (column->topdelta <= top)
+			{
+				top += column->topdelta;
+			}
+			else
+			{
+				top = column->topdelta;
+			}
 		    byte* source = (byte *)column + 3;
 			int count = column->length;
 
 			if (ScreenBPP == 8 && colored)
 			{
-			    byte* dest = ((byte*)block) + x + column->topdelta * w;
+			    byte* dest = ((byte*)block) + x + top * w;
 		    	while (count--)
 	    		{
 					int itmp = trtab[*source ? *source : r_black_color[0]];
@@ -638,7 +679,7 @@ static void	GenerateSprite(int lump, int slot, dword light, int translation)
 			}
 			else if (ScreenBPP == 8)
 			{
-			    byte* dest = ((byte*)block) + x + column->topdelta * w;
+			    byte* dest = ((byte*)block) + x + top * w;
 		    	while (count--)
 	    		{
 					*dest = ((byte*)cmap)[trtab[*source ? *source : r_black_color[0]]];
@@ -648,7 +689,7 @@ static void	GenerateSprite(int lump, int slot, dword light, int translation)
 			}
 			else if (PixelBytes == 2 && colored)
 			{
-			    word* dest = ((word*)block) + x + column->topdelta * w;
+			    word* dest = ((word*)block) + x + top * w;
 		    	while (count--)
 	    		{
 					int itmp = trtab[*source ? *source : r_black_color[0]];
@@ -661,7 +702,7 @@ static void	GenerateSprite(int lump, int slot, dword light, int translation)
 			}
 			else if (PixelBytes == 2)
 			{
-			    word* dest = ((word*)block) + x + column->topdelta * w;
+			    word* dest = ((word*)block) + x + top * w;
 		    	while (count--)
 	    		{
 					*dest = ((word*)cmap)[trtab[*source ? *source : r_black_color[0]]];
@@ -671,7 +712,7 @@ static void	GenerateSprite(int lump, int slot, dword light, int translation)
 			}
 			else if (colored)
 			{
-			    dword* dest = ((dword*)block) + x + column->topdelta * w;
+			    dword* dest = ((dword*)block) + x + top * w;
 		    	while (count--)
 	    		{
 					int itmp = trtab[*source ? *source : r_black_color[0]];
@@ -684,7 +725,7 @@ static void	GenerateSprite(int lump, int slot, dword light, int translation)
 			}
 			else
 			{
-			    dword* dest = ((dword*)block) + x + column->topdelta * w;
+			    dword* dest = ((dword*)block) + x + top * w;
 		    	while (count--)
 	    		{
 					*dest = ((dword*)cmap)[trtab[*source ? *source : r_black_color[0]]];
@@ -697,6 +738,7 @@ static void	GenerateSprite(int lump, int slot, dword light, int translation)
 	}
 
 	Z_ChangeTag(patch, PU_CACHE);
+	unguard;
 }
 
 //==========================================================================
@@ -707,6 +749,7 @@ static void	GenerateSprite(int lump, int slot, dword light, int translation)
 
 void SetSpriteLump(int lump, dword light, int translation)
 {
+	guard(SetSpriteLump);
 	light &= 0xf8f8f8f8;
 
 	int i;
@@ -740,14 +783,18 @@ void SetSpriteLump(int lump, dword light, int translation)
 	GenerateSprite(lump, avail, light, translation);
 	cacheblock = (byte*)sprite_cache[avail].data;
 	cachewidth = spritewidth[lump];
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/03/20 19:09:53  dj_jl
+//	DeepSea tall patches support.
+//
 //	Revision 1.8  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.7  2001/11/02 18:35:55  dj_jl
 //	Sky optimizations
 //	

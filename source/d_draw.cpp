@@ -711,12 +711,13 @@ static void D_PutDot_32(int x, int y, dword c)
 
 //==========================================================================
 //
-//	SetPatch
+//	GeneratePicFromPatch
 //
 //==========================================================================
 
 static void GeneratePicFromPatch(int handle)
 {
+	guard(GeneratePicFromPatch);
 	patch_t *patch = (patch_t*)W_CacheLumpName(pic_list[handle].name, PU_TEMP);
 	int w = LittleShort(patch->width);
 	int h = LittleShort(patch->height);
@@ -730,10 +731,19 @@ static void GeneratePicFromPatch(int handle)
     	column_t *column = (column_t *)((byte *)patch + LittleLong(patch->columnofs[x]));
 
 		// step through the posts in a column
+		int top = -1;	//	DeepSea tall patches support
 	    while (column->topdelta != 0xff)
 	    {
+			if (column->topdelta <= top)
+			{
+				top += column->topdelta;
+			}
+			else
+			{
+				top = column->topdelta;
+			}
 		    byte* source = (byte *)column + 3;
-		    byte* dest = block + x + column->topdelta * w;
+		    byte* dest = block + x + top * w;
 			int count = column->length;
 
 	    	while (count--)
@@ -761,6 +771,7 @@ static void GeneratePicFromPatch(int handle)
 			block[i] = remap[block[i]];
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -771,6 +782,7 @@ static void GeneratePicFromPatch(int handle)
 
 static void GeneratePicFromRaw(int handle)
 {
+	guard(GeneratePicFromRaw);
 	picdata[handle] = (byte*)Z_Malloc(320 * 200, PU_CACHE, (void**)&picdata[handle]);
 	W_ReadLump(W_GetNumForName(pic_list[handle].name), picdata[handle]);
 
@@ -798,6 +810,7 @@ static void GeneratePicFromRaw(int handle)
 		picdata[handle][i] = remap[picdata[handle][i]];
 	}
 	picwidth[handle] = 320;
+	unguard;
 }
 
 //==========================================================================
@@ -897,6 +910,7 @@ static void D_DrawPic(float x1, float y1, float x2, float y2,
 void TSoftwareDrawer::DrawPic(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, int handle, int trans)
 {
+	guard(TSoftwareDrawer::DrawPic);
 	SetPic(handle);
 	if (ScreenBPP == 8)
 	{
@@ -956,6 +970,7 @@ void TSoftwareDrawer::DrawPic(float x1, float y1, float x2, float y2,
 		}
 	}
 	D_DrawPic(x1, y1, x2, y2, s1, t1, s2, t2);
+	unguard;
 }
 
 //==========================================================================
@@ -967,6 +982,7 @@ void TSoftwareDrawer::DrawPic(float x1, float y1, float x2, float y2,
 void TSoftwareDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, int handle, int shade)
 {
+	guard(TSoftwareDrawer::DrawPicShadow);
 	SetPic(handle);
 	ds_shade = shade;
 	if (ScreenBPP == 8)
@@ -982,6 +998,7 @@ void TSoftwareDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 		picspanfunc = D_DrawPicSpanShadow_32;
 	}
 	D_DrawPic(x1, y1, x2, y2, s1, t1, s2, t2);
+	unguard;
 }
 
 //==========================================================================
@@ -995,6 +1012,7 @@ void TSoftwareDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 void TSoftwareDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, const char* fname)
 {
+	guard(TSoftwareDrawer::FillRectWithFlat);
 	SetFlat(R_FlatNumForName(fname));
 	picsource = (byte*)cacheblock;
 	if (ScreenBPP == 8)
@@ -1010,6 +1028,7 @@ void TSoftwareDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 		picspanfunc = D_DrawFlatSpan_32;
 	}
 	D_DrawPic(x1, y1, x2, y2, s1, t1, s2, t2);
+	unguard;
 }
 
 //==========================================================================
@@ -1023,6 +1042,7 @@ void TSoftwareDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 void TSoftwareDrawer::FillRect(float x1, float y1, float x2, float y2,
 	dword color)
 {
+	guard(TSoftwareDrawer::FillRect);
 	if (ScreenBPP == 8)
 	{
 		D_FillRect_8(x1, y1, x2, y2, color);
@@ -1035,6 +1055,7 @@ void TSoftwareDrawer::FillRect(float x1, float y1, float x2, float y2,
 	{
 		D_FillRect_32(x1, y1, x2, y2, color);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -1048,12 +1069,14 @@ void TSoftwareDrawer::FillRect(float x1, float y1, float x2, float y2,
 
 void TSoftwareDrawer::ShadeRect(int x, int y, int w, int h, int darkening)
 {
+	guard(TSoftwareDrawer::ShadeRect);
 	if (ScreenBPP == 8)
 		D_ShadeRect_8(x, y, w, h, darkening);
 	else if (PixelBytes == 2)
 		D_ShadeRect_16(x, y, w, h, darkening);
 	else
 		D_ShadeRect_32(x, y, w, h, darkening);
+	unguard;
 }
 
 //==========================================================================
@@ -1064,12 +1087,14 @@ void TSoftwareDrawer::ShadeRect(int x, int y, int w, int h, int darkening)
 
 void TSoftwareDrawer::DrawConsoleBackground(int h)
 {
+	guard(TSoftwareDrawer::DrawConsoleBackground);
 	if (ScreenBPP == 8)
 		D_DrawConsoleBackground_8(h);
 	else if (PixelBytes == 2)
 		D_DrawConsoleBackground_16(h);
 	else
 		D_DrawConsoleBackground_32(h);
+	unguard;
 }
 
 //==========================================================================
@@ -1081,6 +1106,7 @@ void TSoftwareDrawer::DrawConsoleBackground(int h)
 void TSoftwareDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 	int lump, int translation, boolean flip)
 {
+	guard(TSoftwareDrawer::DrawSpriteLump);
 	float w = spritewidth[lump];
 	float h = spriteheight[lump];
 
@@ -1093,6 +1119,7 @@ void TSoftwareDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 		D_DrawPic(x1, y1, x2, y2, w - 0.0001, 0, 0, h);
     else
 		D_DrawPic(x1, y1, x2, y2, 0, 0, w, h);
+	unguard;
 }
 
 //==========================================================================
@@ -1103,12 +1130,14 @@ void TSoftwareDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 
 void TSoftwareDrawer::StartAutomap(void)
 {
+	guard(TSoftwareDrawer::StartAutomap);
 	if (PixelBytes == 1)
 		D_PutDot = D_PutDot_8;
 	else if (PixelBytes == 2)
 		D_PutDot = D_PutDot_16;
 	else
 		D_PutDot = D_PutDot_32;
+	unguard;
 }
 
 #if 0
@@ -1301,6 +1330,7 @@ static void DrawWuLine(int X0, int Y0, int X1, int Y1, byte *BaseColor,
 
 void TSoftwareDrawer::DrawLine(int x1, int y1, dword color, int x2, int y2, dword)
 {
+	guard(TSoftwareDrawer::DrawLine);
     register int x;
     register int y;
     register int dx;
@@ -1384,6 +1414,7 @@ void TSoftwareDrawer::DrawLine(int x1, int y1, dword color, int x2, int y2, dwor
 		    d += ax;
 		}
     }
+	unguard;
 }
 
 //==========================================================================
@@ -1399,9 +1430,12 @@ void TSoftwareDrawer::EndAutomap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/03/20 19:09:53  dj_jl
+//	DeepSea tall patches support.
+//
 //	Revision 1.11  2002/01/15 18:30:43  dj_jl
 //	Some fixes and improvements suggested by Malcolm Nixon
-//
+//	
 //	Revision 1.10  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

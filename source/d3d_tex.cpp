@@ -244,13 +244,22 @@ void TDirect3DDrawer::DrawColumnInCache(column_t* column, rgba_t* cache,
     int		position;
 	byte*	source;
 	rgba_t*	dest;
+	int		top = -1;	//	DeepSea tall patches support
 
 	// step through the posts in a column
     while (column->topdelta != 0xff)
     {
+		if (column->topdelta <= top)
+		{
+			top += column->topdelta;
+		}
+		else
+		{
+			top = column->topdelta;
+		}
 		source = (byte *)column + 3;
 		count = column->length;
-		position = originy + column->topdelta;
+		position = originy + top;
 
 		//	Clip position
 		if (position < 0)
@@ -504,10 +513,19 @@ void TDirect3DDrawer::GenerateSprite(int lump)
     		LittleLong(patch->columnofs[x]));
 
 		// step through the posts in a column
+		int top = -1;	//	DeepSea tall patches support
 	    while (column->topdelta != 0xff)
 	    {
+			if (column->topdelta <= top)
+			{
+				top += column->topdelta;
+			}
+			else
+			{
+				top = column->topdelta;
+			}
 		    byte* source = (byte *)column + 3;
-		    rgba_t* dest = block + x + column->topdelta * w;
+		    rgba_t* dest = block + x + top * w;
 			int count = column->length;
 
 	    	while (count--)
@@ -554,10 +572,19 @@ void TDirect3DDrawer::GenerateTranslatedSprite(int lump, int slot, int translati
     		LittleLong(patch->columnofs[x]));
 
 		// step through the posts in a column
+		int top = -1;	//	DeepSea tall patches support
 	    while (column->topdelta != 0xff)
 	    {
+			if (column->topdelta <= top)
+			{
+				top += column->topdelta;
+			}
+			else
+			{
+				top = column->topdelta;
+			}
 		    byte* source = (byte *)column + 3;
-		    rgba_t* dest = block + x + column->topdelta * w;
+		    rgba_t* dest = block + x + top * w;
 			int count = column->length;
 
 	    	while (count--)
@@ -689,10 +716,19 @@ void TDirect3DDrawer::GeneratePicFromPatch(int handle)
     		LittleLong(patch->columnofs[x]));
 
 		// step through the posts in a column
+		int top = -1;	//	DeepSea tall patches support
 	    while (column->topdelta != 0xff)
 	    {
+			if (column->topdelta <= top)
+			{
+				top += column->topdelta;
+			}
+			else
+			{
+				top = column->topdelta;
+			}
 		    byte* source = (byte *)column + 3;
-		    rgba_t* dest = block + x + column->topdelta * w;
+		    rgba_t* dest = block + x + top * w;
 			int count = column->length;
 
 	    	while (count--)
@@ -1274,9 +1310,12 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureNoMip(int width, int height, 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2002/03/20 19:09:53  dj_jl
+//	DeepSea tall patches support.
+//
 //	Revision 1.18  2002/01/15 18:30:43  dj_jl
 //	Some fixes and improvements suggested by Malcolm Nixon
-//
+//	
 //	Revision 1.17  2002/01/11 18:24:44  dj_jl
 //	Added guard macros
 //	

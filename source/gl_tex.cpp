@@ -236,13 +236,22 @@ void TOpenGLDrawer::DrawColumnInCache(column_t* column, rgba_t* cache,
 	int		position;
 	byte*	source;
 	rgba_t*	dest;
+	int		top = -1;	//	DeepSea tall patches support
 
 	// step through the posts in a column
 	while (column->topdelta != 0xff)
 	{
+		if (column->topdelta <= top)
+		{
+			top += column->topdelta;
+		}
+		else
+		{
+			top = column->topdelta;
+		}
 		source = (byte *)column + 3;
 		count = column->length;
-		position = originy + column->topdelta;
+		position = originy + top;
 
 		//	Clip position
 		if (position < 0)
@@ -492,10 +501,19 @@ void TOpenGLDrawer::GenerateSprite(int lump)
 			LittleLong(patch->columnofs[x]));
 
 		// step through the posts in a column
+		int top = -1;	//	DeepSea tall patches support
 		while (column->topdelta != 0xff)
 		{
+			if (column->topdelta <= top)
+			{
+				top += column->topdelta;
+			}
+			else
+			{
+				top = column->topdelta;
+			}
 			byte* source = (byte *)column + 3;
-			rgba_t* dest = block + x + column->topdelta * w;
+			rgba_t* dest = block + x + top * w;
 			int count = column->length;
 
 			while (count--)
@@ -548,10 +566,19 @@ void TOpenGLDrawer::GenerateTranslatedSprite(int lump, int slot, int translation
 			LittleLong(patch->columnofs[x]));
 
 		// step through the posts in a column
+		int top = -1;	//	DeepSea tall patches support
 		while (column->topdelta != 0xff)
 		{
+			if (column->topdelta <= top)
+			{
+				top += column->topdelta;
+			}
+			else
+			{
+				top = column->topdelta;
+			}
 			byte* source = (byte *)column + 3;
-			rgba_t* dest = block + x + column->topdelta * w;
+			rgba_t* dest = block + x + top * w;
 			int count = column->length;
 
 			while (count--)
@@ -689,10 +716,19 @@ void TOpenGLDrawer::GeneratePicFromPatch(int handle)
 			LittleLong(patch->columnofs[x]));
 
 		// step through the posts in a column
+		int top = -1;	//	DeepSea tall patches support
 		while (column->topdelta != 0xff)
 		{
+			if (column->topdelta <= top)
+			{
+				top += column->topdelta;
+			}
+			else
+			{
+				top = column->topdelta;
+			}
 			byte* source = (byte *)column + 3;
-			rgba_t* dest = block + x + column->topdelta * w;
+			rgba_t* dest = block + x + top * w;
 			int count = column->length;
 
 			while (count--)
@@ -1133,9 +1169,12 @@ void TOpenGLDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/03/20 19:09:53  dj_jl
+//	DeepSea tall patches support.
+//
 //	Revision 1.16  2002/01/11 18:24:44  dj_jl
 //	Added guard macros
-//
+//	
 //	Revision 1.15  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	
