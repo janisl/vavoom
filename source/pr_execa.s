@@ -123,53 +123,42 @@ LOPCODE_TABLE:
 	.long	LOPC_DIVIDE
 
 	.long	LOPC_MODULUS
-	.long	LOPC_UDIVIDE
-	.long	LOPC_UMODULUS
 	.long	LOPC_EQ
 	.long	LOPC_NE
 	.long	LOPC_LT
 	.long	LOPC_GT
 	.long	LOPC_LE
 	.long	LOPC_GE
-	.long	LOPC_ULT
-
-	.long	LOPC_UGT
-	.long	LOPC_ULE
-	.long	LOPC_UGE
 	.long	LOPC_ANDLOGICAL
 	.long	LOPC_ORLOGICAL
 	.long	LOPC_NEGATELOGICAL
+
 	.long	LOPC_ANDBITWISE
 	.long	LOPC_ORBITWISE
 	.long	LOPC_XORBITWISE
 	.long	LOPC_LSHIFT
-
 	.long	LOPC_RSHIFT
-	.long	LOPC_URSHIFT
 	.long	LOPC_UNARYMINUS
 	.long	LOPC_BITINVERSE
 	.long	LOPC_CALL
 	.long	LOPC_GOTO
 	.long	LOPC_IFGOTO
+
 	.long	LOPC_IFNOTGOTO
 	.long	LOPC_CASEGOTO
 	.long	LOPC_DROP
-
 	.long	LOPC_ASSIGN
 	.long	LOPC_ADDVAR
 	.long	LOPC_SUBVAR
 	.long	LOPC_MULVAR
 	.long	LOPC_DIVVAR
 	.long	LOPC_MODVAR
-	.long	LOPC_UDIVVAR
-	.long	LOPC_UMODVAR
 	.long	LOPC_ANDVAR
-	.long	LOPC_ORVAR
 
+	.long	LOPC_ORVAR
 	.long	LOPC_XORVAR
 	.long	LOPC_LSHIFTVAR
 	.long	LOPC_RSHIFTVAR
-	.long	LOPC_URSHIFTVAR
 	.long	LOPC_PREINC
 	.long	LOPC_PREDEC
 	.long	LOPC_POSTINC
@@ -183,25 +172,22 @@ LOPCODE_TABLE:
 	.long	LOPC_MULVAR_DROP
 	.long	LOPC_DIVVAR_DROP
 	.long	LOPC_MODVAR_DROP
-	.long	LOPC_UDIVVAR_DROP
-	.long	LOPC_UMODVAR_DROP
 	.long	LOPC_ANDVAR_DROP
 	.long	LOPC_ORVAR_DROP
-
 	.long	LOPC_XORVAR_DROP
 	.long	LOPC_LSHIFTVAR_DROP
+
 	.long	LOPC_RSHIFTVAR_DROP
-	.long	LOPC_URSHIFTVAR_DROP
 	.long	LOPC_INC_DROP
 	.long	LOPC_DEC_DROP
 	.long	LOPC_FADD
 	.long	LOPC_FSUBTRACT
 	.long	LOPC_FMULTIPLY
 	.long	LOPC_FDIVIDE
-
 	.long	LOPC_FEQ
 	.long	LOPC_FNE
 	.long	LOPC_FLT
+
 	.long	LOPC_FGT
 	.long	LOPC_FLE
 	.long	LOPC_FGE
@@ -209,10 +195,10 @@ LOPCODE_TABLE:
 	.long	LOPC_FADDVAR
 	.long	LOPC_FSUBVAR
 	.long	LOPC_FMULVAR
-
 	.long	LOPC_FDIVVAR
 	.long	LOPC_FADDVAR_DROP
 	.long	LOPC_FSUBVAR_DROP
+
 	.long	LOPC_FMULVAR_DROP
 	.long	LOPC_FDIVVAR_DROP
 	.long	LOPC_SWAP
@@ -220,10 +206,10 @@ LOPCODE_TABLE:
 	.long	LOPC_VPUSHPOINTED
 	.long	LOPC_VADD
 	.long	LOPC_VSUBTRACT
-
 	.long	LOPC_VPRESCALE
 	.long	LOPC_VPOSTSCALE
 	.long	LOPC_VISCALE
+
 	.long	LOPC_VEQ
 	.long	LOPC_VNE
 	.long	LOPC_VUNARYMINUS
@@ -231,10 +217,10 @@ LOPCODE_TABLE:
 	.long	LOPC_VASSIGN
 	.long	LOPC_VADDVAR
 	.long	LOPC_VSUBVAR
-
 	.long	LOPC_VSCALEVAR
 	.long	LOPC_VISCALEVAR
 	.long	LOPC_VASSIGN_DROP
+
 	.long	LOPC_VADDVAR_DROP
 	.long	LOPC_VSUBVAR_DROP
 	.long	LOPC_VSCALEVAR_DROP
@@ -242,13 +228,15 @@ LOPCODE_TABLE:
 	.long	LOPC_RETURNL
 	.long	LOPC_RETURNV
 	.long	LOPC_PUSHSTRING
-
 	.long	LOPC_COPY
 	.long	LOPC_SWAP3
 	.long	LOPC_PUSHFUNCTION
+
 	.long	LOPC_PUSHCLASSID
 	.long	LOPC_DYNAMIC_CAST
 	.long	LOPC_CASE_GOTO_CLASSID
+	.long	LOPC_PUSHNAME
+	.long	LOPC_CASE_GOTO_NAME
 
 	Align4
 LINC_STATEMENT_POINTER:
@@ -277,6 +265,7 @@ LOPC_GLOBALADDRESS:		// Patched
 LOPC_PUSHSTRING:		// Patched
 LOPC_PUSHFUNCTION:
 LOPC_PUSHCLASSID:
+LOPC_PUSHNAME:
 	movl	(%edi),%eax
 	movl	%eax,(%esi)
 	addl	$4,%edi
@@ -370,32 +359,6 @@ LOPC_MODULUS:
 	addl	$4,%edi
 	jmp		*LOPCODE_TABLE(,%eax,4)
 
-	//	Unsigned divide
-	Align4
-LOPC_UDIVIDE:
-	subl	$4,%esi
-	movl	-4(%esi),%eax
-	xorl	%edx,%edx
-	divl	(%esi)
-	movl	%eax,-4(%esi)
-	//	Go to the next statement
-	movl	(%edi),%eax
-	addl	$4,%edi
-	jmp		*LOPCODE_TABLE(,%eax,4)
-
-    //	Unsigned modulus
-	Align4
-LOPC_UMODULUS:
-	subl	$4,%esi
-	movl	-4(%esi),%eax
-	xorl	%edx,%edx
-	divl	(%esi)
-	movl	%edx,-4(%esi)
-	//	Go to the next statement
-	movl	(%edi),%eax
-	addl	$4,%edi
-	jmp		*LOPCODE_TABLE(,%eax,4)
-
     //	Equals
 	Align4
 LOPC_EQ:
@@ -473,62 +436,6 @@ LOPC_GE:
 	movl	(%esi),%eax
 	cmpl	%eax,-4(%esi)
 	setge	%al
-	andl	$1,%eax
-	movl	%eax,-4(%esi)
-	//	Go to the next statement
-	movl	(%edi),%eax
-	addl	$4,%edi
-	jmp		*LOPCODE_TABLE(,%eax,4)
-
-    //	Unsigned less
-	Align4
-LOPC_ULT:
-	subl	$4,%esi
-	movl	(%esi),%eax
-	cmpl	%eax,-4(%esi)
-	setb	%al
-	andl	$1,%eax
-	movl	%eax,-4(%esi)
-	//	Go to the next statement
-	movl	(%edi),%eax
-	addl	$4,%edi
-	jmp		*LOPCODE_TABLE(,%eax,4)
-
-    //	Unsigned greater
-	Align4
-LOPC_UGT:
-	subl	$4,%esi
-	movl	(%esi),%eax
-	cmpl	%eax,-4(%esi)
-	seta	%al
-	andl	$1,%eax
-	movl	%eax,-4(%esi)
-	//	Go to the next statement
-	movl	(%edi),%eax
-	addl	$4,%edi
-	jmp		*LOPCODE_TABLE(,%eax,4)
-
-    //	Unsigned less or equals
-	Align4
-LOPC_ULE:
-	subl	$4,%esi
-	movl	(%esi),%eax
-	cmpl	%eax,-4(%esi)
-	setbe	%al
-	andl	$1,%eax
-	movl	%eax,-4(%esi)
-	//	Go to the next statement
-	movl	(%edi),%eax
-	addl	$4,%edi
-	jmp		*LOPCODE_TABLE(,%eax,4)
-
-	//	Unsigned greater or equals
-	Align4
-LOPC_UGE:
-	subl	$4,%esi
-	movl	(%esi),%eax
-	cmpl	%eax,-4(%esi)
-	setae	%al
 	andl	$1,%eax
 	movl	%eax,-4(%esi)
 	//	Go to the next statement
@@ -643,17 +550,6 @@ LOPC_RSHIFT:
 	addl	$4,%edi
 	jmp		*LOPCODE_TABLE(,%eax,4)
 
-    //	Unsigned right shift
-	Align4
-LOPC_URSHIFT:
-	subl	$4,%esi
-	movl	(%esi),%ecx
-	shrl	%cl,-4(%esi)
-	//	Go to the next statement
-	movl	(%edi),%eax
-	addl	$4,%edi
-	jmp		*LOPCODE_TABLE(,%eax,4)
-
     //	Unary minus
 	Align4
 LOPC_UNARYMINUS:
@@ -725,6 +621,7 @@ LOPC_IFNOTGOTO:
 	Align4
 LOPC_CASEGOTO:
 LOPC_CASE_GOTO_CLASSID:
+LOPC_CASE_GOTO_NAME:
 	movl	(%edi),%eax
 	addl	$4,%edi
 	cmpl	-4(%esi),%eax
@@ -830,36 +727,6 @@ LOPC_MODVAR:
 	addl	$4,%edi
 	jmp		*LOPCODE_TABLE(,%eax,4)
 
-    //	Unsigned divide variable
-	Align4
-LOPC_UDIVVAR:
-	subl	$4,%esi
-	movl	-4(%esi),%ecx
-	movl	(%ecx),%eax
-	xorl	%edx,%edx
-	divl	(%esi)
-	movl	%eax,(%ecx)
-	movl	%eax,-4(%esi)
-	//	Go to the next statement
-	movl	(%edi),%eax
-	addl	$4,%edi
-	jmp		*LOPCODE_TABLE(,%eax,4)
-
-    //	Unsigned modulus variable
-	Align4
-LOPC_UMODVAR:
-	subl	$4,%esi
-	movl	-4(%esi),%ecx
-	movl	(%ecx),%eax
-	xorl	%edx,%edx
-	divl	(%esi)
-	movl	%edx,(%ecx)
-	movl	%edx,-4(%esi)
-	//	Go to the next statement
-	movl	(%edi),%eax
-	addl	$4,%edi
-	jmp		*LOPCODE_TABLE(,%eax,4)
-
     //	Bitwise AND variable
 	Align4
 LOPC_ANDVAR:
@@ -923,20 +790,6 @@ LOPC_RSHIFTVAR:
 	movl	-4(%esi),%edx
 	movl	(%esi),%ecx
 	sarl	%cl,(%edx)
-	movl	(%edx),%eax
-	movl	%eax,-4(%esi)
-	//	Go to the next statement
-	movl	(%edi),%eax
-	addl	$4,%edi
-	jmp		*LOPCODE_TABLE(,%eax,4)
-
-    //	Unsigned right shift variable
-	Align4
-LOPC_URSHIFTVAR:
-	subl	$4,%esi
-	movl	-4(%esi),%edx
-	movl	(%esi),%ecx
-	shrl	%cl,(%edx)
 	movl	(%edx),%eax
 	movl	%eax,-4(%esi)
 	//	Go to the next statement
@@ -1097,36 +950,6 @@ LOPC_MODVAR_DROP:
 	addl	$4,%edi
 	jmp		*LOPCODE_TABLE(,%eax,4)
 
-    //	Unsigned divide variable, drop result
-	Align4
-LOPC_UDIVVAR_DROP:
-	subl	$4,%esi
-	movl	-4(%esi),%ecx
-	movl	(%ecx),%eax
-	xorl	%edx,%edx
-	divl	(%esi)
-	movl	%eax,(%ecx)
-	subl	$4,%esi
-	//	Go to the next statement
-	movl	(%edi),%eax
-	addl	$4,%edi
-	jmp		*LOPCODE_TABLE(,%eax,4)
-
-    //	Unsigned modulus variable, drop result
-	Align4
-LOPC_UMODVAR_DROP:
-	subl	$4,%esi
-	movl	-4(%esi),%ecx
-	movl	(%ecx),%eax
-	xorl	%edx,%edx
-	divl	(%esi)
-	movl	%edx,(%ecx)
-	subl	$4,%esi
-	//	Go to the next statement
-	movl	(%edi),%eax
-	addl	$4,%edi
-	jmp		*LOPCODE_TABLE(,%eax,4)
-
     //	Bitwise AND variable, drop result
 	Align4
 LOPC_ANDVAR_DROP:
@@ -1186,19 +1009,6 @@ LOPC_RSHIFTVAR_DROP:
 	movl	-4(%esi),%eax
 	movl	(%esi),%ecx
 	sarl	%cl,(%eax)
-	subl	$4,%esi
-	//	Go to the next statement
-	movl	(%edi),%eax
-	addl	$4,%edi
-	jmp		*LOPCODE_TABLE(,%eax,4)
-
-    //	Unsigned right shift variable, drop result
-	Align4
-LOPC_URSHIFTVAR_DROP:
-	subl	$4,%esi
-	movl	-4(%esi),%eax
-	movl	(%esi),%ecx
-	shrl	%cl,(%eax)
 	subl	$4,%esi
 	//	Go to the next statement
 	movl	(%edi),%eax
@@ -1999,9 +1809,12 @@ LEND_RUN_FUNCTION:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/01/11 08:07:17  dj_jl
+//	Added names to progs
+//
 //	Revision 1.9  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.8  2001/12/18 18:54:44  dj_jl
 //	Found a workaround for calling a C++ function, progs code patching
 //	

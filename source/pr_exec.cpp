@@ -48,6 +48,25 @@
 
 // TYPES -------------------------------------------------------------------
 
+struct FFunction
+{
+	FName	Name;
+	int		FirstStatement;
+	short	NumParms;
+	short	NumLocals;
+    short	Type;
+	short	Flags;
+	dword	Profile1;
+	dword	Profile2;
+	VClass	*OuterClass;
+};
+
+struct FGlobalDef
+{
+	FName	Name;
+	int		Ofs;
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -64,7 +83,7 @@ extern "C" void TestCaller(void);
 
 extern "C" { 
 int				*pr_stackPtr; 
-dfunction_t		*current_func = NULL;
+FFunction		*current_func = NULL;
 }
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
@@ -114,7 +133,7 @@ void PR_OnAbort(void)
 
 extern "C" void PR_Profile1(void)
 {
-//	pr_profile1[current_func]++;
+	current_func->Profile1++;
 }
 
 //==========================================================================
@@ -125,10 +144,10 @@ extern "C" void PR_Profile1(void)
 
 extern "C" void PR_Profile2(void)
 {
-//	if (current_func)
-//	{
-//		pr_profile2[current_func]++;
-//	}
+	if (current_func)
+	{
+		current_func->Profile2++;
+	}
 }
 extern "C" void PR_Profile2_end(void){}
 
@@ -142,7 +161,7 @@ void PR_Traceback(void)
 {
 	if (current_func)
 	{
-		Host_CoreDump("(%s)", current_func->name);
+		Host_CoreDump("(%s)", *current_func->Name);
 	}
 }
 
@@ -171,8 +190,12 @@ void TProgs::Load(const char *AName)
 	char	progfilename[256];
 	char	*Strings;
 	int		*Statements;
+	dfunction_t		*DFunctions;
+	dglobaldef_t	*DGlobalDefs;
 	dclassinfo_t	*ClassInfo;
 	VClass		**ClassList;
+	FName	*NameRemap;
+	char	*pName;
 
 	i = M_CheckParm("-progs");
     if (i && i < myargc - 1)
@@ -214,9 +237,21 @@ void TProgs::Load(const char *AName)
 	Strings = (char*)Progs + Progs->ofs_strings;
 	Statements = (int*)((byte*)Progs + Progs->ofs_statements);
 	Globals = (int*)((byte*)Progs + Progs->ofs_globals);
-	Functions = (dfunction_t *)((byte *)Progs + Progs->ofs_functions);
-	Globaldefs = (globaldef_t *)((byte *)Progs + Progs->ofs_globaldefs);
+	DFunctions = (dfunction_t *)((byte *)Progs + Progs->ofs_functions);
+	DGlobalDefs = (dglobaldef_t *)((byte *)Progs + Progs->ofs_globaldefs);
 	ClassInfo = (dclassinfo_t *)((byte *)Progs + Progs->ofs_classinfo);
+
+	Functions = Z_CNew<FFunction>(Progs->num_functions);
+	Globaldefs = Z_CNew<FGlobalDef>(Progs->num_globaldefs);
+
+	// Read names
+	NameRemap = Z_New<FName>(Progs->num_names);
+	pName = (char *)Progs + Progs->ofs_names;
+	for (i = 0; i < Progs->num_names; i++)
+	{
+		NameRemap[i] = pName;
+		pName += (strlen(pName) + 4) & ~3;
+	}
 
 	// byte swap the lumps
 	for (i = 0; i < Progs->num_statements; i++)
@@ -229,22 +264,22 @@ void TProgs::Load(const char *AName)
 	}
 	for (i = 0; i < Progs->num_functions; i++)
 	{
-		Functions[i].name = Strings + LittleLong(Functions[i].s_name);
-		Functions[i].first_statement = LittleLong(Functions[i].first_statement);
-		Functions[i].num_parms = LittleShort(Functions[i].num_parms);
-		Functions[i].num_locals = LittleShort(Functions[i].num_locals);
-		Functions[i].type = LittleShort(Functions[i].type);
-		Functions[i].flags = LittleShort(Functions[i].flags);
+		DFunctions[i].name = LittleShort(DFunctions[i].name);
+		DFunctions[i].outer_class = LittleShort(DFunctions[i].outer_class);
+		DFunctions[i].first_statement = LittleLong(DFunctions[i].first_statement);
+		DFunctions[i].num_parms = LittleShort(DFunctions[i].num_parms);
+		DFunctions[i].num_locals = LittleShort(DFunctions[i].num_locals);
+		DFunctions[i].type = LittleShort(DFunctions[i].type);
+		DFunctions[i].flags = LittleShort(DFunctions[i].flags);
 	}
 	for (i = 0; i < Progs->num_globaldefs; i++)
 	{
-		Globaldefs[i].type = LittleShort(Globaldefs[i].type);
-		Globaldefs[i].ofs = LittleShort(Globaldefs[i].ofs);
-		Globaldefs[i].name = Strings + LittleLong(Globaldefs[i].s_name);
+		DGlobalDefs[i].name = LittleShort(DGlobalDefs[i].name);
+		DGlobalDefs[i].ofs = LittleShort(DGlobalDefs[i].ofs);
 	}
 	for (i = 0; i < Progs->num_classinfo; i++)
 	{
-		ClassInfo[i].name = Strings + LittleLong(ClassInfo[i].s_name);
+		ClassInfo[i].name = LittleLong(ClassInfo[i].name);
 		ClassInfo[i].vtable = LittleLong(ClassInfo[i].vtable);
 		ClassInfo[i].size = LittleShort(ClassInfo[i].size);
 		ClassInfo[i].num_methods = LittleShort(ClassInfo[i].num_methods);
@@ -255,12 +290,12 @@ void TProgs::Load(const char *AName)
 	ClassList = Z_CNew<VClass *>(Progs->num_classinfo);
 	for (i = 0; i < Progs->num_classinfo; i++)
 	{
-		ClassList[i] = VClass::FindClass(ClassInfo[i].name);
+		ClassList[i] = VClass::FindClass(*NameRemap[ClassInfo[i].name]);
 		if (!ClassList[i])
 		{
 			ClassList[i] = (VClass *)VObject::StaticSpawnObject(
 				VClass::StaticClass(), NULL, PU_STRING);
-			ClassList[i]->Name = ClassInfo[i].name;
+			ClassList[i]->Name = NameRemap[ClassInfo[i].name];
 			ClassList[i]->ClassSize = ClassInfo[i].size;
 		}
 		if (!ClassList[i]->ClassVTable)
@@ -275,6 +310,26 @@ void TProgs::Load(const char *AName)
 		{
 			ClassList[i]->ParentClass = ClassList[ClassInfo[i].parent];
 		}
+	}
+
+	//	Setup functions
+	for (i = 0; i < Progs->num_functions; i++)
+	{
+		Functions[i].Name = NameRemap[DFunctions[i].name];
+		Functions[i].OuterClass = DFunctions[i].outer_class != -1 ?
+			ClassList[DFunctions[i].outer_class] : NULL;
+		Functions[i].FirstStatement = DFunctions[i].first_statement;
+		Functions[i].NumParms = DFunctions[i].num_parms;
+		Functions[i].NumLocals = DFunctions[i].num_locals;
+		Functions[i].Type = DFunctions[i].type;
+		Functions[i].Flags = DFunctions[i].flags;
+	}
+
+	//	Setup globaldefs
+	for (i = 0; i < Progs->num_globaldefs; i++)
+	{
+		Globaldefs[i].Ofs = DGlobalDefs[i].ofs;
+		Globaldefs[i].Name = NameRemap[DGlobalDefs[i].name];
 	}
 
 	//	Setup string pointers in globals
@@ -299,6 +354,10 @@ void TProgs::Load(const char *AName)
 		{
 			Globals[i] = (int)ClassList[Globals[i]];
 		}
+		if (globalinfo[i] == 4)
+		{
+			Globals[i] = NameRemap[Globals[i]].GetIndex();
+		}
 	}
 
 	//	Set up builtins
@@ -306,15 +365,16 @@ void TProgs::Load(const char *AName)
     {
     	int		j;
 
-		if (Functions[i].num_parms > 8)
+		if (Functions[i].NumParms > 8)
 			Sys_Error("Function haves more than 8 params");
-        for (j=0; BuiltinInfo[j].name; j++)
+        for (j = 0; BuiltinInfo[j].name; j++)
         {
-        	if (!strcmp(BuiltinInfo[j].name, Functions[i].name))
+        	if (Functions[i].OuterClass == BuiltinInfo[j].OuterClass &&
+        		!strcmp(*Functions[i].Name, BuiltinInfo[j].name))
 			{
-            	if (Functions[i].flags & FUNC_Native)
+            	if (Functions[i].Flags & FUNC_Native)
                 {
-					Functions[i].first_statement = (int)BuiltinInfo[j].func;
+					Functions[i].FirstStatement = (int)BuiltinInfo[j].func;
 					break;
                 }
                 else
@@ -323,20 +383,20 @@ void TProgs::Load(const char *AName)
                 }
             }
         }
-		if (!BuiltinInfo[j].name && Functions[i].flags & FUNC_Native)
+		if (!BuiltinInfo[j].name && Functions[i].Flags & FUNC_Native)
         {
 	    	//	Default builtin
-			Functions[i].first_statement = (int)PF_Fixme;
+			Functions[i].FirstStatement = (int)PF_Fixme;
 #if defined CLIENT && defined SERVER
         	//	Don't abort with error, because it will be done, when this
             // function will be called (if it will be called).
-        	cond << "WARNING: Builtin " << Functions[i].name << " not found!\n";
+        	cond << "WARNING: Builtin " << *Functions[i].Name << " not found!\n";
 #endif
         }
-		if (!(Functions[i].flags & FUNC_Native))
+		if (!(Functions[i].Flags & FUNC_Native))
 		{
-			Functions[i].first_statement =
-				(int)(Statements + Functions[i].first_statement);
+			Functions[i].FirstStatement =
+				(int)(Statements + Functions[i].FirstStatement);
 		}
     }
 
@@ -357,6 +417,9 @@ void TProgs::Load(const char *AName)
 		case OPC_DYNAMIC_CAST:
 			Statements[i + 1] = (int)ClassList[Statements[i + 1]];
 			break;
+		case OPC_PUSHNAME:
+			Statements[i + 1] = NameRemap[Statements[i + 1]].GetIndex();
+			break;
 		case OPC_GOTO:
 		case OPC_IFGOTO:
 		case OPC_IFNOTGOTO:
@@ -371,6 +434,10 @@ void TProgs::Load(const char *AName)
 			Statements[i + 1] = (int)ClassList[Statements[i + 1]];
 			Statements[i + 2] = (int)(Statements + Statements[i + 2]);
 			break;
+		case OPC_CASE_GOTO_NAME:
+			Statements[i + 1] = NameRemap[Statements[i + 1]].GetIndex();
+			Statements[i + 2] = (int)(Statements + Statements[i + 2]);
+			break;
 		case OPC_GLOBALADDRESS:
 #ifdef CHECK_VALID_VAR_NUM
 			if (Statements[i + 1] < 0 || Statements[i + 1] >= Progs->num_globaldefs)
@@ -378,7 +445,7 @@ void TProgs::Load(const char *AName)
 		    	Sys_Error("Bad global num %d", Statements[i + 1]);
 	    	}
 #endif
-			Statements[i + 1] = (int)(Globals + Globaldefs[Statements[i + 1]].ofs);
+			Statements[i + 1] = (int)(Globals + Globaldefs[Statements[i + 1]].Ofs);
 			break;
 		case OPC_CALL:
 		    Statements[i + 1] = (int)(Functions + Statements[i + 1]);
@@ -390,6 +457,7 @@ void TProgs::Load(const char *AName)
 	//	Execute initialization function
 	Exec("main");
 	Z_Free(ClassList);
+	Z_Free(NameRemap);
 	unguard;
 }
 
@@ -402,6 +470,8 @@ void TProgs::Load(const char *AName)
 void TProgs::Unload(void)
 {
 	Z_Free(Progs);
+	Z_Free(Functions);
+	Z_Free(Globaldefs);
 }
 
 //==========================================================================
@@ -414,9 +484,9 @@ int TProgs::CheckFuncNumForName(const char* name)
 {
 	int		i;
 
-	for (i=1; i<Progs->num_functions; i++)
+	for (i = 1; i < Progs->num_functions; i++)
     {
-    	if (!strcmp(Functions[i].name, name))
+    	if (!Functions[i].OuterClass && !strcmp(*Functions[i].Name, name))
 		{
 			return (int)(Functions + i);
 		}
@@ -454,9 +524,9 @@ int TProgs::CheckGlobalNumForName(const char* name)
 
 	for (i=1; i<Progs->num_globaldefs; i++)
     {
-    	if (!strcmp(Globaldefs[i].name, name))
+    	if (!strcmp(*Globaldefs[i].Name, name))
 		{
-        	return Globaldefs[i].ofs;
+        	return Globaldefs[i].Ofs;
 		}
     }
 	return -1;
@@ -488,7 +558,7 @@ int TProgs::GlobalNumForName(const char* name)
 
 char* TProgs::FuncName(int fnum)
 {
-	return ((dfunction_t *)fnum)->name;
+	return const_cast<char *>(*((FFunction *)fnum)->Name);
 }
 
 //==========================================================================
@@ -515,11 +585,11 @@ extern "C" VObject *PR_DynamicCast(VObject *object, VClass *SomeClass)
 #ifdef USEASM
 
 //	Use asm version
-extern "C" void RunFunction(dfunction_t *func);
+extern "C" void RunFunction(FFunction *func);
 
 #else
 
-static void RunFunction(dfunction_t *func)
+static void RunFunction(FFunction *func)
 {
 	int			*current_statement;
 	int			*sp;
@@ -528,11 +598,11 @@ static void RunFunction(dfunction_t *func)
 	guardSlow(RunFunction);
     current_func = func;
 
-	if (func->flags & FUNC_Native)
+	if (func->Flags & FUNC_Native)
 	{
 		//	Negative first statements are built in functions. Don't need to
 		// check builtin number (already done when setup builtins).
-		((void(*)(void))func->first_statement)();
+		((void(*)(void))func->FirstStatement)();
 		return;
 	}
 
@@ -540,10 +610,10 @@ static void RunFunction(dfunction_t *func)
 	sp = pr_stackPtr;
 
 	//	Setup local vars
-    local_vars = sp - func->num_parms;
-	sp += func->num_locals - func->num_parms;
+    local_vars = sp - func->NumParms;
+	sp += func->NumLocals - func->NumParms;
 
-	current_statement = (int *)func->first_statement;
+	current_statement = (int *)func->FirstStatement;
 
 	//
     //	The main function loop
@@ -582,6 +652,7 @@ static void RunFunction(dfunction_t *func)
 	 case OPC_PUSHSTRING:
 	 case OPC_PUSHFUNCTION:
 	 case OPC_PUSHCLASSID:
+	 case OPC_PUSHNAME:
 		*sp++ = *current_statement++;
 		break;
 
@@ -624,16 +695,6 @@ static void RunFunction(dfunction_t *func)
 		sp[-1] %= *sp;
 		break;
 
-	 case OPC_UDIVIDE:
-        sp--;
-		sp[-1] = (unsigned)sp[-1] / (unsigned)*sp;
-		break;
-
-	 case OPC_UMODULUS:
-        sp--;
-		sp[-1] = (unsigned)sp[-1] % (unsigned)*sp;
-		break;
-
 	 case OPC_EQ:
         sp--;
 		sp[-1] = sp[-1] == *sp;
@@ -662,26 +723,6 @@ static void RunFunction(dfunction_t *func)
 	 case OPC_GE:
         sp--;
 		sp[-1] = sp[-1] >= *sp;
-		break;
-
-	 case OPC_ULT:
-        sp--;
-		sp[-1] = (unsigned)sp[-1] < (unsigned)*sp;
-		break;
-
-	 case OPC_UGT:
-        sp--;
-		sp[-1] = (unsigned)sp[-1] > (unsigned)*sp;
-		break;
-
-	 case OPC_ULE:
-        sp--;
-		sp[-1] = (unsigned)sp[-1] <= (unsigned)*sp;
-		break;
-
-	 case OPC_UGE:
-        sp--;
-		sp[-1] = (unsigned)sp[-1] >= (unsigned)*sp;
 		break;
 
 	 case OPC_ANDLOGICAL:
@@ -723,11 +764,6 @@ static void RunFunction(dfunction_t *func)
 		sp[-1] >>= *sp;
 		break;
 
-	 case OPC_URSHIFT:
-        sp--;
-		sp[-1] = (unsigned)sp[-1] >> (unsigned)*sp;
-		break;
-
 	 case OPC_UNARYMINUS:
 		sp[-1] = -sp[-1];
 		break;
@@ -738,7 +774,7 @@ static void RunFunction(dfunction_t *func)
 
 	 case OPC_CALL:
 		pr_stackPtr = sp;
-	    RunFunction((dfunction_t *)*current_statement++);
+	    RunFunction((FFunction *)*current_statement++);
 		current_func = func;
 		sp = pr_stackPtr;
 		break;
@@ -773,6 +809,7 @@ static void RunFunction(dfunction_t *func)
 
 	 case OPC_CASEGOTO:
 	 case OPC_CASE_GOTO_CLASSID:
+	 case OPC_CASE_GOTO_NAME:
 		if (*current_statement++ == sp[-1])
 	    {
 	    	current_statement = (int *)*current_statement;
@@ -824,18 +861,6 @@ static void RunFunction(dfunction_t *func)
 		sp[-1] = *(int*)sp[-1];
 		break;
 
-	 case OPC_UDIVVAR:
-        sp--;
-		*(unsigned*)sp[-1] /= (unsigned)*sp;
-		sp[-1] = *(int*)sp[-1];
-		break;
-
-	 case OPC_UMODVAR:
-        sp--;
-		*(unsigned*)sp[-1] %= (unsigned)*sp;
-		sp[-1] = *(int*)sp[-1];
-		break;
-
 	 case OPC_ANDVAR:
         sp--;
 		*(int*)sp[-1] &= *sp;
@@ -863,12 +888,6 @@ static void RunFunction(dfunction_t *func)
 	 case OPC_RSHIFTVAR:
         sp--;
 		*(int*)sp[-1] >>= *sp;
-		sp[-1] = *(int*)sp[-1];
-		break;
-
-	 case OPC_URSHIFTVAR:
-        sp--;
-		*(unsigned*)sp[-1] >>= (unsigned)*sp;
 		sp[-1] = *(int*)sp[-1];
 		break;
 
@@ -986,18 +1005,6 @@ static void RunFunction(dfunction_t *func)
 		sp--;
 		break;
 
-	 case OPC_UDIVVAR_DROP:
-        sp--;
-		*(unsigned*)sp[-1] /= (unsigned)*sp;
-		sp--;
-		break;
-
-	 case OPC_UMODVAR_DROP:
-        sp--;
-		*(unsigned*)sp[-1] %= (unsigned)*sp;
-		sp--;
-		break;
-
 	 case OPC_ANDVAR_DROP:
         sp--;
 		*(int*)sp[-1] &= *sp;
@@ -1025,12 +1032,6 @@ static void RunFunction(dfunction_t *func)
 	 case OPC_RSHIFTVAR_DROP:
         sp--;
 		*(int*)sp[-1] >>= *sp;
-		sp--;
-		break;
-
-	 case OPC_URSHIFTVAR_DROP:
-        sp--;
-		*(unsigned*)sp[-1] >>= (unsigned)*sp;
 		sp--;
 		break;
 
@@ -1162,7 +1163,7 @@ static void RunFunction(dfunction_t *func)
 	 case OPC_ICALL:
 		sp--;
 		pr_stackPtr = sp;
-	    RunFunction((dfunction_t *)*sp);
+	    RunFunction((FFunction *)*sp);
 		current_func = func;
 		sp = pr_stackPtr;
 		break;
@@ -1305,7 +1306,7 @@ static void RunFunction(dfunction_t *func)
 	}
 
     goto func_loop;
-	unguardfSlow(("(%s)", func->name));
+	unguardfSlow(("(%s)", *func->Name));
 }
 
 #endif
@@ -1319,9 +1320,9 @@ static void RunFunction(dfunction_t *func)
 int TProgs::ExecuteFunction(int fnum)
 {
 	guard(TProgs::ExecuteFunction);
-	dfunction_t		*prev_func;
+	FFunction		*prev_func;
 	int				ret = 0;
-	dfunction_t		*func = (dfunction_t *)fnum;
+	FFunction		*func = (FFunction *)fnum;
 
 	//	Run function
 	prev_func = current_func;
@@ -1329,7 +1330,7 @@ int TProgs::ExecuteFunction(int fnum)
 	current_func = prev_func;
 
 	//	Get return value
-	if (func->type)
+	if (func->Type)
     {
 		ret = *(--pr_stackPtr);
 	}
@@ -1339,7 +1340,7 @@ int TProgs::ExecuteFunction(int fnum)
     if (!current_func && pr_stackPtr != pr_stack + 1)
     {
     	Sys_Error("ExecuteFunction: Stack is not empty after executing function:\n%s\nstack = %p, sp = %p",
-            func->name, pr_stack, pr_stackPtr);
+            *func->Name, pr_stack, pr_stackPtr);
     }
 #endif
 
@@ -1347,7 +1348,7 @@ int TProgs::ExecuteFunction(int fnum)
 	//	Check, if stack wasn't underflowed
 	if (pr_stack[0] != STACK_ID)
    	{
-   		Sys_Error("ExecuteFunction: Stack underflow in %s", func->name);
+   		Sys_Error("ExecuteFunction: Stack underflow in %s", *func->Name);
     }
 #endif
 
@@ -1355,13 +1356,13 @@ int TProgs::ExecuteFunction(int fnum)
 	//	Check, if stack wasn't overflowed
 	if (pr_stack[MAX_PROG_STACK - 1] != STACK_ID)
    	{
-   		Sys_Error("ExecuteFunction: Stack overflow in %s", func->name);
+   		Sys_Error("ExecuteFunction: Stack overflow in %s", *func->Name);
     }
 #endif
 
 	//	All done
 	return ret;
-	unguardf(("(%s)", ((dfunction_t *)fnum)->name));
+	unguardf(("(%s)", *((FFunction *)fnum)->Name));
 }
 
 //==========================================================================
@@ -1373,10 +1374,10 @@ int TProgs::ExecuteFunction(int fnum)
 int TProgs::Exec(int fnum)
 {
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum].num_parms != 0)
+    if (Functions[fnum].NumParms != 0)
     {
     	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 0",
-    		FuncName(fnum), Functions[fnum].num_parms);
+    		FuncName(fnum), Functions[fnum].NumParms);
     }
 #endif
     return ExecuteFunction(fnum);
@@ -1393,10 +1394,10 @@ int TProgs::Exec(int fnum, int parm1)
 	int		*p;
 
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum].num_parms != 1)
+    if (Functions[fnum].NumParms != 1)
     {
     	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 1",
-    		FuncName(fnum), Functions[fnum].num_parms);
+    		FuncName(fnum), Functions[fnum].NumParms);
     }
 #endif
 	p = pr_stackPtr;
@@ -1416,10 +1417,10 @@ int TProgs::Exec(int fnum, int parm1, int parm2)
 	int		*p;
 
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum].num_parms != 2)
+    if (Functions[fnum].NumParms != 2)
     {
     	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 2",
-    		FuncName(fnum), Functions[fnum].num_parms);
+    		FuncName(fnum), Functions[fnum].NumParms);
     }
 #endif
 	p = pr_stackPtr;
@@ -1440,10 +1441,10 @@ int TProgs::Exec(int fnum, int parm1, int parm2, int parm3)
 	int		*p;
 
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum].num_parms != 3)
+    if (Functions[fnum].NumParms != 3)
     {
     	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 3",
-    		FuncName(fnum), Functions[fnum].num_parms);
+    		FuncName(fnum), Functions[fnum].NumParms);
     }
 #endif
 	p = pr_stackPtr;
@@ -1465,10 +1466,10 @@ int TProgs::Exec(int fnum, int parm1, int parm2, int parm3, int parm4)
 	int		*p;
 
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum].num_parms != 4)
+    if (Functions[fnum].NumParms != 4)
     {
     	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 4",
-    		FuncName(fnum), Functions[fnum].num_parms);
+    		FuncName(fnum), Functions[fnum].NumParms);
     }
 #endif
 	p = pr_stackPtr;
@@ -1492,10 +1493,10 @@ int TProgs::Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
 	int		*p;
 
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum].num_parms != 5)
+    if (Functions[fnum].NumParms != 5)
     {
     	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 5",
-    		FuncName(fnum), Functions[fnum].num_parms);
+    		FuncName(fnum), Functions[fnum].NumParms);
     }
 #endif
 	p = pr_stackPtr;
@@ -1520,10 +1521,10 @@ int TProgs::Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
 	int		*p;
 
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum].num_parms != 6)
+    if (Functions[fnum].NumParms != 6)
     {
     	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 6",
-    		FuncName(fnum), Functions[fnum].num_parms);
+    		FuncName(fnum), Functions[fnum].NumParms);
     }
 #endif
 	p = pr_stackPtr;
@@ -1549,10 +1550,10 @@ int TProgs::Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
 	int		*p;
 
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum].num_parms != 7)
+    if (Functions[fnum].NumParms != 7)
     {
     	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 7",
-    		FuncName(fnum), Functions[fnum].num_parms);
+    		FuncName(fnum), Functions[fnum].NumParms);
     }
 #endif
 	p = pr_stackPtr;
@@ -1579,10 +1580,10 @@ int TProgs::Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
 	int		*p;
 
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum].num_parms != 8)
+    if (Functions[fnum].NumParms != 8)
     {
     	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 8",
-    		FuncName(fnum), Functions[fnum].num_parms);
+    		FuncName(fnum), Functions[fnum].NumParms);
     }
 #endif
 	p = pr_stackPtr;
@@ -1668,9 +1669,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2002/01/11 08:07:17  dj_jl
+//	Added names to progs
+//
 //	Revision 1.17  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.16  2002/01/04 18:22:13  dj_jl
 //	Beautification
 //	

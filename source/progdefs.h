@@ -49,53 +49,42 @@ enum
 	DECLARE_OPC(DIVIDE, 0),
 
 	DECLARE_OPC(MODULUS, 0),
-	DECLARE_OPC(UDIVIDE, 0),
-	DECLARE_OPC(UMODULUS, 0),
 	DECLARE_OPC(EQ, 0),
 	DECLARE_OPC(NE, 0),
 	DECLARE_OPC(LT, 0),
 	DECLARE_OPC(GT, 0),
 	DECLARE_OPC(LE, 0),
 	DECLARE_OPC(GE, 0),
-	DECLARE_OPC(ULT, 0),
-
-	DECLARE_OPC(UGT, 0),
-	DECLARE_OPC(ULE, 0),
-	DECLARE_OPC(UGE, 0),
 	DECLARE_OPC(ANDLOGICAL, 0),
 	DECLARE_OPC(ORLOGICAL, 0),
 	DECLARE_OPC(NEGATELOGICAL, 0),
+
 	DECLARE_OPC(ANDBITWISE, 0),
 	DECLARE_OPC(ORBITWISE, 0),
 	DECLARE_OPC(XORBITWISE, 0),
 	DECLARE_OPC(LSHIFT, 0),
-
 	DECLARE_OPC(RSHIFT, 0),
-	DECLARE_OPC(URSHIFT, 0),
 	DECLARE_OPC(UNARYMINUS, 0),
 	DECLARE_OPC(BITINVERSE, 0),
 	DECLARE_OPC(CALL, 1),
 	DECLARE_OPC(GOTO, 1),
 	DECLARE_OPC(IFGOTO, 1),
+
 	DECLARE_OPC(IFNOTGOTO, 1),
 	DECLARE_OPC(CASEGOTO, 2),
 	DECLARE_OPC(DROP, 0),
-
 	DECLARE_OPC(ASSIGN, 0),
 	DECLARE_OPC(ADDVAR, 0),
 	DECLARE_OPC(SUBVAR, 0),
 	DECLARE_OPC(MULVAR, 0),
 	DECLARE_OPC(DIVVAR, 0),
 	DECLARE_OPC(MODVAR, 0),
-	DECLARE_OPC(UDIVVAR, 0),
-	DECLARE_OPC(UMODVAR, 0),
 	DECLARE_OPC(ANDVAR, 0),
-	DECLARE_OPC(ORVAR, 0),
 
+	DECLARE_OPC(ORVAR, 0),
 	DECLARE_OPC(XORVAR, 0),
 	DECLARE_OPC(LSHIFTVAR, 0),
 	DECLARE_OPC(RSHIFTVAR, 0),
-	DECLARE_OPC(URSHIFTVAR, 0),
 	DECLARE_OPC(PREINC, 0),
 	DECLARE_OPC(PREDEC, 0),
 	DECLARE_OPC(POSTINC, 0),
@@ -109,25 +98,22 @@ enum
 	DECLARE_OPC(MULVAR_DROP, 0),
 	DECLARE_OPC(DIVVAR_DROP, 0),
 	DECLARE_OPC(MODVAR_DROP, 0),
-	DECLARE_OPC(UDIVVAR_DROP, 0),
-	DECLARE_OPC(UMODVAR_DROP, 0),
 	DECLARE_OPC(ANDVAR_DROP, 0),
 	DECLARE_OPC(ORVAR_DROP, 0),
-
 	DECLARE_OPC(XORVAR_DROP, 0),
 	DECLARE_OPC(LSHIFTVAR_DROP, 0),
+
 	DECLARE_OPC(RSHIFTVAR_DROP, 0),
-	DECLARE_OPC(URSHIFTVAR_DROP, 0),
 	DECLARE_OPC(INC_DROP, 0),
 	DECLARE_OPC(DEC_DROP, 0),
 	DECLARE_OPC(FADD, 0),
 	DECLARE_OPC(FSUBTRACT, 0),
 	DECLARE_OPC(FMULTIPLY, 0),
 	DECLARE_OPC(FDIVIDE, 0),
-
 	DECLARE_OPC(FEQ, 0),
 	DECLARE_OPC(FNE, 0),
 	DECLARE_OPC(FLT, 0),
+
 	DECLARE_OPC(FGT, 0),
 	DECLARE_OPC(FLE, 0),
 	DECLARE_OPC(FGE, 0),
@@ -135,10 +121,10 @@ enum
 	DECLARE_OPC(FADDVAR, 0),
 	DECLARE_OPC(FSUBVAR, 0),
 	DECLARE_OPC(FMULVAR, 0),
-
 	DECLARE_OPC(FDIVVAR, 0),
 	DECLARE_OPC(FADDVAR_DROP, 0),
 	DECLARE_OPC(FSUBVAR_DROP, 0),
+
 	DECLARE_OPC(FMULVAR_DROP, 0),
 	DECLARE_OPC(FDIVVAR_DROP, 0),
 	DECLARE_OPC(SWAP, 0),
@@ -146,10 +132,10 @@ enum
 	DECLARE_OPC(VPUSHPOINTED, 0),
 	DECLARE_OPC(VADD, 0),
 	DECLARE_OPC(VSUBTRACT, 0),
-
 	DECLARE_OPC(VPRESCALE, 0),
 	DECLARE_OPC(VPOSTSCALE, 0),
 	DECLARE_OPC(VISCALE, 0),
+
 	DECLARE_OPC(VEQ, 0),
 	DECLARE_OPC(VNE, 0),
 	DECLARE_OPC(VUNARYMINUS, 0),
@@ -157,10 +143,10 @@ enum
 	DECLARE_OPC(VASSIGN, 0),
 	DECLARE_OPC(VADDVAR, 0),
 	DECLARE_OPC(VSUBVAR, 0),
-
 	DECLARE_OPC(VSCALEVAR, 0),
 	DECLARE_OPC(VISCALEVAR, 0),
 	DECLARE_OPC(VASSIGN_DROP, 0),
+
 	DECLARE_OPC(VADDVAR_DROP, 0),
 	DECLARE_OPC(VSUBVAR_DROP, 0),
 	DECLARE_OPC(VSCALEVAR_DROP, 0),
@@ -168,13 +154,15 @@ enum
 	DECLARE_OPC(RETURNL, 0),
 	DECLARE_OPC(RETURNV, 0),
 	DECLARE_OPC(PUSHSTRING, 1),
-
 	DECLARE_OPC(COPY, 0),
 	DECLARE_OPC(SWAP3, 0),
 	DECLARE_OPC(PUSHFUNCTION, 1),
+
 	DECLARE_OPC(PUSHCLASSID, 1),
 	DECLARE_OPC(DYNAMIC_CAST, 1),
 	DECLARE_OPC(CASE_GOTO_CLASSID, 2),
+	DECLARE_OPC(PUSHNAME, 1),
+	DECLARE_OPC(CASE_GOTO_NAME, 2),
 
 #undef DECLARE_OPC
 #ifndef OPCODE_INFO
@@ -186,8 +174,10 @@ struct dprograms_t
 	char	magic[4];		//	"VPRG"
 	int		version;
 
+	int		ofs_names;
+	int		num_names;
+
 	int		ofs_strings;    //	First string is empty
-	int		num_strings;
 
 	int		ofs_statements;
 	int		num_statements;	//	Instruction 0 is error
@@ -202,7 +192,6 @@ struct dprograms_t
 	int		num_globaldefs;
 
 	int		ofs_globalinfo;
-    int		reserved1;
 
 	int		ofs_classinfo;
 	int		num_classinfo;
@@ -215,11 +204,8 @@ enum
 
 struct dfunction_t
 {
-	union
-	{
-		int		s_name;
-		char*	name;
-	};
+	short	name;
+	short	outer_class;
 	int		first_statement;	//	Negatÿvi skaitıi ir ieb›vÒt∆s funkcijas
 	short	num_parms;
 	short	num_locals;
@@ -227,24 +213,15 @@ struct dfunction_t
 	short	flags;
 };
 
-struct globaldef_t
+struct dglobaldef_t
 {
-	unsigned short	type;
+	unsigned short	name;
 	unsigned short	ofs;
-	union
-	{
-		int		s_name;
-		char*	name;
-	};
 };
 
 struct dclassinfo_t
 {
-	union
-	{
-		int		s_name;
-		char*	name;
-	};
+	int		name;
 	int		vtable;
 	short	size;
 	short	num_methods;
@@ -260,9 +237,12 @@ struct dclassinfo_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/01/11 08:07:17  dj_jl
+//	Added names to progs
+//
 //	Revision 1.10  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.9  2001/12/27 17:40:06  dj_jl
 //	Added method count to VClass, changed version number
 //	

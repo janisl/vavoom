@@ -30,8 +30,8 @@
 // TYPES -------------------------------------------------------------------
 
 struct dprograms_t;
-struct dfunction_t;
-struct globaldef_t;
+struct FFunction;
+struct FGlobalDef;
 
 typedef void (*builtin_t)(void);
 
@@ -39,6 +39,7 @@ struct builtin_info_t
 {
 	char*		name;
     builtin_t	func;
+	VClass		*OuterClass;
 };
 
 class TProgs
@@ -138,8 +139,8 @@ class TProgs
  private:
 	dprograms_t	*Progs;
 	int			*Globals;
-	dfunction_t	*Functions;
-	globaldef_t	*Globaldefs;
+	FFunction	*Functions;
+	FGlobalDef	*Globaldefs;
 
 	int CheckFuncNumForName(const char* name);
 	int CheckGlobalNumForName(const char* name);
@@ -160,9 +161,12 @@ extern TProgs			svpr;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/01/11 08:07:18  dj_jl
+//	Added names to progs
+//
 //	Revision 1.8  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.7  2001/12/18 19:03:16  dj_jl
 //	A lots of work on VObject
 //	
