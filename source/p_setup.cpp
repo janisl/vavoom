@@ -63,6 +63,7 @@ static vertex_t*		gl_vertexes;
 static int				numglvertexes;
 
 static byte				novis[32 * 1024 / 8];
+static bool				AuxiliaryMap;
 
 // CODE --------------------------------------------------------------------
 
@@ -288,8 +289,10 @@ static void LoadSectors(int lump, level_t &loadlevel)
 		ss->base_lightlevel = ss->params.lightlevel;
     }
 
-	if (DevMaps)
+	if (AuxiliaryMap)
+	{
 		W_UseAuxiliary();
+	}
 
     Z_Free(data);
 }
@@ -333,8 +336,10 @@ static void LoadSideDefs(int lump, level_t &loadlevel)
 		sd->base_bottomtexture = sd->bottomtexture;
 	}
 
-	if (DevMaps)
+	if (AuxiliaryMap)
+	{
 		W_UseAuxiliary();
+	}
 
 	Z_Free(data);
 }
@@ -908,9 +913,19 @@ static void GroupLines(level_t &loadlevel)
 void LoadLevel(level_t &lev, const char *mapname, bool server_level)
 {
     // if working with a devlopment map, reload it
-	if (DevMaps)
+	if (fl_devmode)
 	{
-		W_OpenAuxiliary(va("%s%s.WAD", DevMapsDir, lev.mapname));
+		char	aux_file_name[256];
+
+		if (FL_FindFile(va("maps/%s.wad", lev.mapname), aux_file_name))
+		{
+			W_OpenAuxiliary(aux_file_name);
+			AuxiliaryMap = true;
+		}
+		else
+		{
+			AuxiliaryMap = false;
+		}
 	}
 
     int lumpnum = W_CheckNumForName(mapname);
@@ -972,7 +987,7 @@ void LoadLevel(level_t &lev, const char *mapname, bool server_level)
 	//
 	// End of map lump processing
 	//
-	if (DevMaps)
+	if (AuxiliaryMap)
 	{
 		// Close the auxiliary file, but don't free its loaded lumps.
 		// The next call to W_OpenAuxiliary() will do a full shutdown
@@ -1077,9 +1092,12 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/21 17:42:42  dj_jl
+//	Removed -devmaps code, in devgame mode look for map in <gamedir>/maps
+//
 //	Revision 1.5  2001/08/02 17:46:38  dj_jl
 //	Added sending info about changed textures to new clients
-//
+//	
 //	Revision 1.4  2001/08/01 17:37:34  dj_jl
 //	Made walls check texture list before flats
 //	
