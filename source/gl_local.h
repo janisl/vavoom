@@ -32,7 +32,6 @@
 #include "winlocal.h"
 #endif
 #include <GL/gl.h>
-#include <GL/glu.h>
 
 #ifndef APIENTRY
 #define APIENTRY
@@ -211,6 +210,7 @@ class TOpenGLDrawer : public TDrawer
 	void GeneratePicFromPatch(int);
 	void GeneratePicFromRaw(int);
 	void SetSkin(const char*);
+	void BuildMipmaps(int, int, rgba_t*);
 
 	bool				mtexable;
 	MultiTexCoord2f_t	p_MultiTexCoord2f;
@@ -235,9 +235,12 @@ class TOpenGLDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/08/21 17:47:51  dj_jl
+//	Localized GL/glu.h
+//
 //	Revision 1.7  2001/08/15 17:15:55  dj_jl
 //	Drawer API changes, removed wipes
-//
+//	
 //	Revision 1.6  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
 //	
