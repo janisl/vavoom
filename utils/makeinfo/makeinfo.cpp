@@ -7,7 +7,9 @@
 //**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**	   #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**	$Id$
+//**
+//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -18,7 +20,11 @@
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
-//**	
+//**
+//**	$Log$
+//**	Revision 1.2  2001/07/27 14:27:55  dj_jl
+//**	Update with Id-s and Log-s, some fixes
+//**
 //**************************************************************************
 
 #include "makeinfo.h"
@@ -76,6 +82,8 @@ void WriteHeader(FILE *f)
 	fprintf(f, "//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##\n");
 	fprintf(f, "//**	   #    ##    ##    #      ####     ####   ##       ##\n");
 	fprintf(f, "//**\n");
+	fprintf(f, "//**\t$""Id:$\n");
+	fprintf(f, "//**\n");
 	fprintf(f, "//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý\n");
 	fprintf(f, "//**\n");
 	fprintf(f, "//**	This program is free software; you can redistribute it and/or\n");
@@ -88,6 +96,7 @@ void WriteHeader(FILE *f)
 	fprintf(f, "//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n");
 	fprintf(f, "//**  GNU General Public License for more details.\n");
 	fprintf(f, "//**\n");
+	fprintf(f, "//**\t$""Log:$\n");
 	fprintf(f, "//**************************************************************************\n");
 }
 

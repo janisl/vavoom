@@ -1,4 +1,6 @@
 /*
+$Id$
+
 Copyright (C) 1996-1997 Id Software, Inc.
 Copyright (C) 2000-2001 JÆnis Legzdi·ý
 
@@ -16,6 +18,10 @@ See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+$Log$
+Revision 1.2  2001/07/27 14:27:54  dj_jl
+Update with Id-s and Log-s, some fixes
 
 */
 //
@@ -461,14 +467,7 @@ void emitonejumpdata (void)
 void emitexterndef (void)
 {
 
-	printf (" %s:dword", tokens[1]);
-}
-
-
-void emitexternlabel (void)
-{
-
-	printf (" %s:near", tokens[1]);
+	printf (" %s", tokens[1]);
 }
 
 
@@ -716,7 +715,6 @@ parsefield	parsedata[] = {
 	{".byte",  " db", -2, emit_multiple_data},
 	{".data",  "", 1, datasegstart},
 	{".extern"," externdef", 2, emitexterndef},
-	{".extrnl"," externdef", 2, emitexternlabel},
 	{".globl", " public", -2, emit_multiple_data},
 	{".long",  " dd", -2, emit_multiple_data},
 	{".single"," dd", -2, emit_multiple_data},
@@ -1154,6 +1152,8 @@ int main (int argc, char **argv)
 {
 	tokenstat	stat;
 
+	printf (" .486P\n"
+            " .model FLAT\n");
 	in_line = 1;
 	outline = 3;
 

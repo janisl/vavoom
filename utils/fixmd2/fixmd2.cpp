@@ -7,6 +7,8 @@
 //**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**	   #    ##    ##    #      ####     ####   ##       ##
 //**
+//**	$Id$
+//**
 //**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
@@ -18,13 +20,16 @@
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
-//**	
+//**
+//**	$Log$
+//**	Revision 1.2  2001/07/27 14:27:55  dj_jl
+//**	Update with Id-s and Log-s, some fixes
+//**
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
 
 #include "cmdlib.h"
-#include "scrlib.h"
 #include "fmd2defs.h"
 
 // MACROS ------------------------------------------------------------------
@@ -44,7 +49,6 @@
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static char			filename[256];
-static float		sparms[3];
 static mmdl_t		*model;
 
 // CODE --------------------------------------------------------------------
@@ -79,14 +83,17 @@ static void WriteModel(void)
 //
 //==========================================================================
 
-static void ScaleModel(void)
+static void ScaleModel(double scale)
 {
 	mframe_t *frame = (mframe_t*)((byte*)model + model->ofsframes);
 	for (int i = 0; i < model->numframes; i++)
 	{
-		frame->scale[0] *= sparms[0];
-		frame->scale[1] *= sparms[1];
-		frame->scale[2] *= sparms[2];
+		frame->scale[0] *= scale;
+		frame->scale[1] *= scale;
+		frame->scale[2] *= scale;
+		frame->scale_origin[0] *= scale;
+		frame->scale_origin[1] *= scale;
+		frame->scale_origin[2] *= scale;
 		frame = (mframe_t*)((byte*)frame + model->framesize);
 	}
 }
@@ -97,14 +104,14 @@ static void ScaleModel(void)
 //
 //==========================================================================
 
-static void ShiftModel(void)
+static void ShiftModel(double x, double y, double z)
 {
 	mframe_t *frame = (mframe_t*)((byte*)model + model->ofsframes);
 	for (int i = 0; i < model->numframes; i++)
 	{
-		frame->scale_origin[0] += sparms[0];
-		frame->scale_origin[1] += sparms[1];
-		frame->scale_origin[2] += sparms[2];
+		frame->scale_origin[0] += x;
+		frame->scale_origin[1] += y;
+		frame->scale_origin[2] += z;
 		frame = (mframe_t*)((byte*)frame + model->framesize);
 	}
 }
@@ -115,10 +122,10 @@ static void ShiftModel(void)
 //
 //==========================================================================
 
-static void FixModelSkin(void)
+static void FixModelSkin(const char *name)
 {
 	mskin_t *skin = (mskin_t*)((byte*)model + model->ofsskins);
-	strcpy(skin->name, sc_String);
+	strcpy(skin->name, name);
 }
 
 //==========================================================================
@@ -129,52 +136,47 @@ static void FixModelSkin(void)
 
 int main(int argc, char *argv[])
 {
-	if (argc != 2)
+	if (argc < 2)
 	{
-		cerr << "Usage: fixmd2 <script>\n";
+		cerr << "Usage: fixmd2 <model> [options]\n";
+		cerr << "Options are:\n";
+		cerr << "  s<scale>  - scale model by scale\n";
+		cerr << "  i<iscale> - scale model by 1/iscale\n";
+		cerr << "  x<shift>  - shift origin on x\n";
+		cerr << "  y<shift>  - shift origin on y\n";
+		cerr << "  z<shift>  - shift origin on z\n";
+		cerr << "  /<name>   - set skin\n";
 		return -1;
 	}
-	SC_Open(argv[1]);
-	while (SC_GetString())
+	strcpy(filename, argv[1]);
+	LoadModel();
+	for (int i = 2; i < argc; i++)
 	{
-		strcpy(filename, sc_String);
-		LoadModel();
-		do
+		if (argv[i][0] == 's')
 		{
-			SC_MustGetString();
-			if (SC_Compare("scale"))
-			{
-				SC_MustGetFloat();
-				sparms[0] = sc_Float;
-				SC_MustGetFloat();
-				sparms[1] = sc_Float;
-				SC_MustGetFloat();
-				sparms[2] = sc_Float;
-				ScaleModel();
-			}
-			else if (SC_Compare("shift"))
-			{
-				SC_MustGetFloat();
-				sparms[0] = sc_Float;
-				SC_MustGetFloat();
-				sparms[1] = sc_Float;
-				SC_MustGetFloat();
-				sparms[2] = sc_Float;
-				ShiftModel();
-			}
-			else if (SC_Compare("skin"))
-			{
-				SC_MustGetString();
-				FixModelSkin();
-			}
-			else if (!SC_Compare("end"))
-			{
-				SC_ScriptError("Bad command");
-			}
+			ScaleModel(atof(argv[i] + 1));
 		}
-		while (!SC_Compare("end"));
-		WriteModel();
+		if (argv[i][0] == 'i')
+		{
+			ScaleModel(1.0 / atof(argv[i] + 1));
+		}
+		if (argv[i][0] == 'x')
+		{
+			ShiftModel(atof(argv[i] + 1), 0, 0);
+		}
+		if (argv[i][0] == 'y')
+		{
+			ShiftModel(0, atof(argv[i] + 1), 0);
+		}
+		if (argv[i][0] == 'z')
+		{
+			ShiftModel(0, 0, atof(argv[i] + 1));
+		}
+		if (argv[i][0] == '/')
+		{
+			FixModelSkin(argv[i] + 1);
+		}
 	}
-	SC_Close();
+	WriteModel();
 	return 0;
 }

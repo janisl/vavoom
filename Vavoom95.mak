@@ -17,7 +17,7 @@ PROJECT = Vavoom95.exe
 OBJFILES = obj\chat.obj obj\cheats.obj \
     obj\cmd.obj obj\console.obj obj\crc.obj obj\cvar.obj obj\debug.obj \
     obj\finale.obj obj\host.obj obj\iline.obj obj\imission.obj \
-    obj\sys_wina.obj obj\misc.obj obj\p_info.obj obj\p_setup.obj \
+    obj\sys_i386.obj obj\misc.obj obj\p_info.obj obj\p_setup.obj \
     obj\pr_cmds.obj obj\pr_exec.obj \
     obj\sc_man.obj \
     obj\sizebuf.obj obj\sys_win.obj \

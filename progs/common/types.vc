@@ -7,6 +7,8 @@
 //**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**	   #    ##    ##    #      ####     ####   ##       ##
 //**
+//**	$Id$
+//**
 //**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
@@ -18,7 +20,11 @@
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
-//**	
+//**
+//**	$Log$
+//**	Revision 1.2  2001/07/27 14:27:51  dj_jl
+//**	Update with Id-s and Log-s, some fixes
+//**
 //**************************************************************************
 
 typedef int boolean;
@@ -886,6 +892,7 @@ struct clmobj_t
     int			sprite;	// used to find patch_t and flip value
     int			frame;	// might be ORed with FF_FULLBRIGHT
 
+	int			model_index;
 	void		*__alias_model;
 	int			alias_frame;
 	int			alias_skinnum;

@@ -7,6 +7,8 @@
 //**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**	   #    ##    ##    #      ####     ####   ##       ##
 //**
+//**	$Id$
+//**
 //**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
@@ -18,7 +20,11 @@
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
-//**	
+//**
+//**	$Log$
+//**	Revision 1.2  2001/07/27 14:27:54  dj_jl
+//**	Update with Id-s and Log-s, some fixes
+//**
 //**************************************************************************
 //**	
 //**	Refresh of things, i.e. objects represented by sprites.
@@ -104,7 +110,7 @@ struct trans_sprite_t
 	TVec		texorg;
 	int			translucency;
 	int			translation;
-	bool		is_sprite;
+	int			type;
 	float		dist;
 	dword		light;
 };
@@ -319,7 +325,7 @@ static void	GetSpriteParams(int lump)
 //==========================================================================
 
 void R_DrawTranslucentPoly(TVec *sv, int count, int lump,
-	int translucency, int translation, bool is_sprite, dword light)
+	int translucency, int translation, bool type, dword light)
 {
 	int i;
 
@@ -354,7 +360,7 @@ void R_DrawTranslucentPoly(TVec *sv, int count, int lump,
 			spr.surf = r_surface;
 			spr.translucency = translucency + 1;
 			spr.translation = translation;
-			spr.is_sprite = is_sprite;
+			spr.type = type;
 			spr.light = light;
 			return;
 		}
@@ -380,7 +386,13 @@ void R_DrawTranslucentPoly(TVec *sv, int count, int lump,
 		r_taxis = spr.taxis;
 		r_texorg = spr.texorg;
 		r_surface = spr.surf;
-		if (spr.is_sprite)
+		if (spr.type == 2)
+		{
+			Drawer->DrawAliasModel(spr.dv[0], ((TAVec*)spr.dv)[1],
+				(model_t*)spr.surf, spr.lump, spr.translation,
+				spr.light, spr.translucency - 1);
+		}
+		else if (spr.type)
 		{
 			Drawer->DrawSpritePolygon(spr.dv, spr.lump,
 				spr.translucency - 1, spr.translation, spr.light);
@@ -413,7 +425,7 @@ void R_DrawTranslucentPoly(TVec *sv, int count, int lump,
 	}
 
 	//	All slots are full and are nearer to current sprite so draw it
-	if (is_sprite)
+	if (type)
 	{
 		Drawer->DrawSpritePolygon(sv, lump, translucency,
 			translation, light);
@@ -673,9 +685,81 @@ static void RenderAliasModel(clmobj_t *mobj)
 		return;
 	}
 
+	dword light = R_LightPoint(mobj->origin);
+
+	if (mobj->translucency)
+	{
+		int i;
+
+		float dist = fabs(DotProduct(mobj->origin - vieworg, viewforward));
+		int found = -1;
+		float best_dist = -1;
+		for (i = 0; i < MAX_TRANS_SPRITES; i++)
+		{
+			trans_sprite_t &spr = trans_sprites[i];
+			if (!spr.translucency)
+			{
+				spr.dv = trans_sprite_verts + 4 * i;
+				spr.dv[0] = mobj->origin;
+				((TAVec*)spr.dv)[1] = mobj->angles;
+				spr.surf = (surface_t*)mobj->alias_model;
+				spr.lump = mobj->alias_frame;
+				spr.light = light;
+				spr.translucency = mobj->translucency + 1;
+				spr.dist = dist;
+				spr.type = 2;
+				spr.translation = mobj->alias_skinnum;
+				return;
+			}
+			if (spr.dist > best_dist)
+			{
+				found = i;
+				best_dist = spr.dist;
+			}
+		}
+		if (best_dist > dist)
+		{
+			//	All slots are full, draw and replace a far away sprite
+			trans_sprite_t &spr = trans_sprites[found];
+			r_normal = spr.normal;
+			r_dist = spr.pdist;
+			r_saxis = spr.saxis;
+			r_taxis = spr.taxis;
+			r_texorg = spr.texorg;
+			r_surface = spr.surf;
+			if (spr.type == 2)
+			{
+				Drawer->DrawAliasModel(spr.dv[0], ((TAVec*)spr.dv)[1],
+					(model_t*)spr.surf, spr.lump, spr.translation,
+					spr.light, spr.translucency - 1);
+			}
+			else if (spr.type)
+			{
+				Drawer->DrawSpritePolygon(spr.dv, spr.lump,
+					spr.translucency - 1, spr.translation, spr.light);
+			}
+			else
+			{
+				Drawer->DrawMaskedPolygon(spr.dv, spr.count, spr.lump,
+					spr.translucency - 1);
+				if (spr.count > 4)
+					Z_Free(spr.dv);
+			}
+			spr.dv = trans_sprite_verts + 4 * i;
+			spr.dv[0] = mobj->origin;
+			((TAVec*)spr.dv)[1] = mobj->angles;
+			spr.surf = (surface_t*)mobj->alias_model;
+			spr.lump = mobj->alias_frame;
+			spr.light = light;
+			spr.translucency = mobj->translucency + 1;
+			spr.translation = mobj->alias_skinnum;
+			spr.dist = dist;
+			spr.type = 2;
+			return;
+		}
+	}
 	Drawer->DrawAliasModel(mobj->origin, mobj->angles, mobj->alias_model,
-		mobj->alias_frame, mobj->alias_skinnum, R_LightPoint(mobj->origin),
-		mobj->translucency);
+		mobj->alias_frame, mobj->alias_skinnum, light, mobj->translucency);
 }
 
 //==========================================================================
@@ -744,7 +828,13 @@ void R_DrawTranslucentPolys(void)
 			r_taxis = spr.taxis;
 			r_texorg = spr.texorg;
 			r_surface = spr.surf;
-			if (spr.is_sprite)
+			if (spr.type == 2)
+			{
+				Drawer->DrawAliasModel(spr.dv[0], ((TAVec*)spr.dv)[1],
+					(model_t*)spr.surf, spr.lump, spr.translation,
+					spr.light, spr.translucency - 1);
+			}
+			else if (spr.type)
 			{
 				Drawer->DrawSpritePolygon(spr.dv, spr.lump,
 					spr.translucency - 1, spr.translation, spr.light);

@@ -7,6 +7,8 @@
 //**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**	   #    ##    ##    #      ####     ####   ##       ##
 //**
+//**	$Id$
+//**
 //**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
@@ -18,11 +20,12 @@
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
-//**	
+//**
+//**	$Log$
+//**	Revision 1.2  2001/07/27 14:27:54  dj_jl
+//**	Update with Id-s and Log-s, some fixes
+//**
 //**************************************************************************
-
-#ifndef _MSGBOX_H
-#define _MSGBOX_H
 
 // HEADER FILES ------------------------------------------------------------
 
@@ -40,4 +43,3 @@ void MB_StartMessage(char* string, void* routine, boolean input);
 
 extern boolean		messageToPrint;
 
-#endif

@@ -7,6 +7,8 @@
 //**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**	   #    ##    ##    #      ####     ####   ##       ##
 //**
+//**	$Id$
+//**
 //**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
@@ -18,7 +20,11 @@
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
-//**	
+//**
+//**	$Log$
+//**	Revision 1.2  2001/07/27 14:27:54  dj_jl
+//**	Update with Id-s and Log-s, some fixes
+//**
 //**************************************************************************
 //**
 //**	Zone Memory Allocation, perhaps NeXT ObjectiveC inspired.
@@ -26,9 +32,6 @@
 //**  to John Carmack, might have been useful for Quake.
 //**
 //**************************************************************************
-
-#ifndef _ZONE_H
-#define _ZONE_H
 
 // HEADER FILES ------------------------------------------------------------
 
@@ -98,4 +101,3 @@ inline char *Z_StrDup(const char *src)
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-#endif

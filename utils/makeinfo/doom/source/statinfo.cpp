@@ -7,7 +7,9 @@
 //**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**	   #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**	$Id$
+//**
+//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -18,7 +20,11 @@
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
-//**	
+//**
+//**	$Log$
+//**	Revision 1.2  2001/07/27 14:27:55  dj_jl
+//**	Update with Id-s and Log-s, some fixes
+//**
 //**************************************************************************
 #include "info.h"
 #include "../../makeinfo.h"
@@ -200,26 +206,26 @@ state_t	states[NUMDOOMSTATES] = {
     {SPR1_PLAY,20,5,SA1_NULL,S1_PLAY_XDIE8,0,0},	// S1_PLAY_XDIE7
     {SPR1_PLAY,21,5,SA1_NULL,S1_PLAY_XDIE9,0,0},	// S1_PLAY_XDIE8
     {SPR1_PLAY,22,-1,SA1_NULL,S1_NULL,0,0},	// S1_PLAY_XDIE9
-    {SPR1_POSS,0,10,SA1_Look,S1_POSS_STND2,0,0,"models/trooper.md2",0},	// S1_POSS_STND
-    {SPR1_POSS,1,10,SA1_Look,S1_POSS_STND,0,0,"models/trooper.md2",1},	// S1_POSS_STND2
-    {SPR1_POSS,0,4,SA1_Chase,S1_POSS_RUN2,0,0,"models/trooper.md2",2},	// S1_POSS_RUN1
-    {SPR1_POSS,0,4,SA1_Chase,S1_POSS_RUN3,0,0,"models/trooper.md2",2},	// S1_POSS_RUN2
-    {SPR1_POSS,1,4,SA1_Chase,S1_POSS_RUN4,0,0,"models/trooper.md2",3},	// S1_POSS_RUN3
-    {SPR1_POSS,1,4,SA1_Chase,S1_POSS_RUN5,0,0,"models/trooper.md2",3},	// S1_POSS_RUN4
-    {SPR1_POSS,2,4,SA1_Chase,S1_POSS_RUN6,0,0,"models/trooper.md2",4},	// S1_POSS_RUN5
-    {SPR1_POSS,2,4,SA1_Chase,S1_POSS_RUN7,0,0,"models/trooper.md2",4},	// S1_POSS_RUN6
-    {SPR1_POSS,3,4,SA1_Chase,S1_POSS_RUN8,0,0,"models/trooper.md2",5},	// S1_POSS_RUN7
-    {SPR1_POSS,3,4,SA1_Chase,S1_POSS_RUN1,0,0,"models/trooper.md2",5},	// S1_POSS_RUN8
-    {SPR1_POSS,4,10,SA1_FaceTarget,S1_POSS_ATK2,0,0,"models/trooper.md2",6},	// S1_POSS_ATK1
-    {SPR1_POSS,5,8,SA1_PosAttack,S1_POSS_ATK3,0,0,"models/trooper.md2",7},	// S1_POSS_ATK2
-    {SPR1_POSS,4,8,SA1_NULL,S1_POSS_RUN1,0,0,"models/trooper.md2",8},	// S1_POSS_ATK3
-    {SPR1_POSS,6,3,SA1_NULL,S1_POSS_PAIN2,0,0,"models/trooper.md2",9},	// S1_POSS_PAIN
-    {SPR1_POSS,6,3,SA1_Pain,S1_POSS_RUN1,0,0,"models/trooper.md2",9},	// S1_POSS_PAIN2
-    {SPR1_POSS,7,5,SA1_NULL,S1_POSS_DIE2,0,0,"models/troopdie.md2",0},	// S1_POSS_DIE1
-    {SPR1_POSS,8,5,SA1_Scream,S1_POSS_DIE3,0,0,"models/troopdie.md2",1},	// S1_POSS_DIE2
-    {SPR1_POSS,9,5,SA1_Fall,S1_POSS_DIE4,0,0,"models/troopdie.md2",2},	// S1_POSS_DIE3
-    {SPR1_POSS,10,5,SA1_NULL,S1_POSS_DIE5,0,0,"models/troopdie.md2",3},	// S1_POSS_DIE4
-    {SPR1_POSS,11,-1,SA1_NULL,S1_NULL,0,0,"models/troopdie.md2",4},	// S1_POSS_DIE5
+    {SPR1_POSS,0,10,SA1_Look,S1_POSS_STND2,0,0,"models/monsters/trooper.md2",0},	// S1_POSS_STND
+    {SPR1_POSS,1,10,SA1_Look,S1_POSS_STND,0,0,"models/monsters/trooper.md2",1},	// S1_POSS_STND2
+    {SPR1_POSS,0,4,SA1_Chase,S1_POSS_RUN2,0,0,"models/monsters/trooper.md2",2},	// S1_POSS_RUN1
+    {SPR1_POSS,0,4,SA1_Chase,S1_POSS_RUN3,0,0,"models/monsters/trooper.md2",3},	// S1_POSS_RUN2
+    {SPR1_POSS,1,4,SA1_Chase,S1_POSS_RUN4,0,0,"models/monsters/trooper.md2",4},	// S1_POSS_RUN3
+    {SPR1_POSS,1,4,SA1_Chase,S1_POSS_RUN5,0,0,"models/monsters/trooper.md2",5},	// S1_POSS_RUN4
+    {SPR1_POSS,2,4,SA1_Chase,S1_POSS_RUN6,0,0,"models/monsters/trooper.md2",6},	// S1_POSS_RUN5
+    {SPR1_POSS,2,4,SA1_Chase,S1_POSS_RUN7,0,0,"models/monsters/trooper.md2",7},	// S1_POSS_RUN6
+    {SPR1_POSS,3,4,SA1_Chase,S1_POSS_RUN8,0,0,"models/monsters/trooper.md2",8},	// S1_POSS_RUN7
+    {SPR1_POSS,3,4,SA1_Chase,S1_POSS_RUN1,0,0,"models/monsters/trooper.md2",9},	// S1_POSS_RUN8
+    {SPR1_POSS,4,10,SA1_FaceTarget,S1_POSS_ATK2,0,0,"models/monsters/trooper.md2",10},	// S1_POSS_ATK1
+    {SPR1_POSS,5,8,SA1_PosAttack,S1_POSS_ATK3,0,0,"models/monsters/trooper.md2",11},	// S1_POSS_ATK2
+    {SPR1_POSS,4,8,SA1_NULL,S1_POSS_RUN1,0,0,"models/monsters/trooper.md2",12},	// S1_POSS_ATK3
+    {SPR1_POSS,6,3,SA1_NULL,S1_POSS_PAIN2,0,0,"models/monsters/trooper.md2",13},	// S1_POSS_PAIN
+    {SPR1_POSS,6,3,SA1_Pain,S1_POSS_RUN1,0,0,"models/monsters/trooper.md2",14},	// S1_POSS_PAIN2
+    {SPR1_POSS,7,5,SA1_NULL,S1_POSS_DIE2,0,0,"models/monsters/troopdie.md2",0},	// S1_POSS_DIE1
+    {SPR1_POSS,8,5,SA1_Scream,S1_POSS_DIE3,0,0,"models/monsters/troopdie.md2",1},	// S1_POSS_DIE2
+    {SPR1_POSS,9,5,SA1_Fall,S1_POSS_DIE4,0,0,"models/monsters/troopdie.md2",2},	// S1_POSS_DIE3
+    {SPR1_POSS,10,5,SA1_NULL,S1_POSS_DIE5,0,0,"models/monsters/troopdie.md2",3},	// S1_POSS_DIE4
+    {SPR1_POSS,11,-1,SA1_NULL,S1_NULL,0,0,"models/monsters/troopdie.md2",4},	// S1_POSS_DIE5
     {SPR1_POSS,12,5,SA1_NULL,S1_POSS_XDIE2,0,0},	// S1_POSS_XDIE1
     {SPR1_POSS,13,5,SA1_XScream,S1_POSS_XDIE3,0,0},	// S1_POSS_XDIE2
     {SPR1_POSS,14,5,SA1_Fall,S1_POSS_XDIE4,0,0},	// S1_POSS_XDIE3
@@ -229,30 +235,30 @@ state_t	states[NUMDOOMSTATES] = {
     {SPR1_POSS,18,5,SA1_NULL,S1_POSS_XDIE8,0,0},	// S1_POSS_XDIE7
     {SPR1_POSS,19,5,SA1_NULL,S1_POSS_XDIE9,0,0},	// S1_POSS_XDIE8
     {SPR1_POSS,20,-1,SA1_NULL,S1_NULL,0,0},	// S1_POSS_XDIE9
-    {SPR1_POSS,10,5,SA1_NULL,S1_POSS_RAISE2,0,0,"models/troopdie.md2",3},	// S1_POSS_RAISE1
-    {SPR1_POSS,9,5,SA1_NULL,S1_POSS_RAISE3,0,0,"models/troopdie.md2",2},	// S1_POSS_RAISE2
-    {SPR1_POSS,8,5,SA1_NULL,S1_POSS_RAISE4,0,0,"models/troopdie.md2",1},	// S1_POSS_RAISE3
-    {SPR1_POSS,7,5,SA1_NULL,S1_POSS_RUN1,0,0,"models/troopdie.md2",0},	// S1_POSS_RAISE4
-    {SPR1_SPOS,0,10,SA1_Look,S1_SPOS_STND2,0,0},	// S1_SPOS_STND
-    {SPR1_SPOS,1,10,SA1_Look,S1_SPOS_STND,0,0},	// S1_SPOS_STND2
-    {SPR1_SPOS,0,3,SA1_Chase,S1_SPOS_RUN2,0,0},	// S1_SPOS_RUN1
-    {SPR1_SPOS,0,3,SA1_Chase,S1_SPOS_RUN3,0,0},	// S1_SPOS_RUN2
-    {SPR1_SPOS,1,3,SA1_Chase,S1_SPOS_RUN4,0,0},	// S1_SPOS_RUN3
-    {SPR1_SPOS,1,3,SA1_Chase,S1_SPOS_RUN5,0,0},	// S1_SPOS_RUN4
-    {SPR1_SPOS,2,3,SA1_Chase,S1_SPOS_RUN6,0,0},	// S1_SPOS_RUN5
-    {SPR1_SPOS,2,3,SA1_Chase,S1_SPOS_RUN7,0,0},	// S1_SPOS_RUN6
-    {SPR1_SPOS,3,3,SA1_Chase,S1_SPOS_RUN8,0,0},	// S1_SPOS_RUN7
-    {SPR1_SPOS,3,3,SA1_Chase,S1_SPOS_RUN1,0,0},	// S1_SPOS_RUN8
-    {SPR1_SPOS,4,10,SA1_FaceTarget,S1_SPOS_ATK2,0,0},	// S1_SPOS_ATK1
-    {SPR1_SPOS,32773,10,SA1_SPosAttack,S1_SPOS_ATK3,0,0},	// S1_SPOS_ATK2
-    {SPR1_SPOS,4,10,SA1_NULL,S1_SPOS_RUN1,0,0},	// S1_SPOS_ATK3
-    {SPR1_SPOS,6,3,SA1_NULL,S1_SPOS_PAIN2,0,0},	// S1_SPOS_PAIN
-    {SPR1_SPOS,6,3,SA1_Pain,S1_SPOS_RUN1,0,0},	// S1_SPOS_PAIN2
-    {SPR1_SPOS,7,5,SA1_NULL,S1_SPOS_DIE2,0,0},	// S1_SPOS_DIE1
-    {SPR1_SPOS,8,5,SA1_Scream,S1_SPOS_DIE3,0,0},	// S1_SPOS_DIE2
-    {SPR1_SPOS,9,5,SA1_Fall,S1_SPOS_DIE4,0,0},	// S1_SPOS_DIE3
-    {SPR1_SPOS,10,5,SA1_NULL,S1_SPOS_DIE5,0,0},	// S1_SPOS_DIE4
-    {SPR1_SPOS,11,-1,SA1_NULL,S1_NULL,0,0},	// S1_SPOS_DIE5
+    {SPR1_POSS,10,5,SA1_NULL,S1_POSS_RAISE2,0,0,"models/monsters/troopdie.md2",5},	// S1_POSS_RAISE1
+    {SPR1_POSS,9,5,SA1_NULL,S1_POSS_RAISE3,0,0,"models/monsters/troopdie.md2",6},	// S1_POSS_RAISE2
+    {SPR1_POSS,8,5,SA1_NULL,S1_POSS_RAISE4,0,0,"models/monsters/troopdie.md2",7},	// S1_POSS_RAISE3
+    {SPR1_POSS,7,5,SA1_NULL,S1_POSS_RUN1,0,0,"models/monsters/troopdie.md2",8},	// S1_POSS_RAISE4
+    {SPR1_SPOS,0,10,SA1_Look,S1_SPOS_STND2,0,0,"models/monsters/sargeant.md2",0},	// S1_SPOS_STND
+    {SPR1_SPOS,1,10,SA1_Look,S1_SPOS_STND,0,0,"models/monsters/sargeant.md2",1},	// S1_SPOS_STND2
+    {SPR1_SPOS,0,3,SA1_Chase,S1_SPOS_RUN2,0,0,"models/monsters/sargeant.md2",2},	// S1_SPOS_RUN1
+    {SPR1_SPOS,0,3,SA1_Chase,S1_SPOS_RUN3,0,0,"models/monsters/sargeant.md2",3},	// S1_SPOS_RUN2
+    {SPR1_SPOS,1,3,SA1_Chase,S1_SPOS_RUN4,0,0,"models/monsters/sargeant.md2",4},	// S1_SPOS_RUN3
+    {SPR1_SPOS,1,3,SA1_Chase,S1_SPOS_RUN5,0,0,"models/monsters/sargeant.md2",5},	// S1_SPOS_RUN4
+    {SPR1_SPOS,2,3,SA1_Chase,S1_SPOS_RUN6,0,0,"models/monsters/sargeant.md2",6},	// S1_SPOS_RUN5
+    {SPR1_SPOS,2,3,SA1_Chase,S1_SPOS_RUN7,0,0,"models/monsters/sargeant.md2",7},	// S1_SPOS_RUN6
+    {SPR1_SPOS,3,3,SA1_Chase,S1_SPOS_RUN8,0,0,"models/monsters/sargeant.md2",8},	// S1_SPOS_RUN7
+    {SPR1_SPOS,3,3,SA1_Chase,S1_SPOS_RUN1,0,0,"models/monsters/sargeant.md2",9},	// S1_SPOS_RUN8
+    {SPR1_SPOS,4,10,SA1_FaceTarget,S1_SPOS_ATK2,0,0,"models/monsters/sargeant.md2",10},	// S1_SPOS_ATK1
+    {SPR1_SPOS,32773,10,SA1_SPosAttack,S1_SPOS_ATK3,0,0,"models/monsters/sargeant.md2",11},	// S1_SPOS_ATK2
+    {SPR1_SPOS,4,10,SA1_NULL,S1_SPOS_RUN1,0,0,"models/monsters/sargeant.md2",12},	// S1_SPOS_ATK3
+    {SPR1_SPOS,6,3,SA1_NULL,S1_SPOS_PAIN2,0,0,"models/monsters/sargeant.md2",13},	// S1_SPOS_PAIN
+    {SPR1_SPOS,6,3,SA1_Pain,S1_SPOS_RUN1,0,0,"models/monsters/sargeant.md2",14},	// S1_SPOS_PAIN2
+    {SPR1_SPOS,7,5,SA1_NULL,S1_SPOS_DIE2,0,0,"models/monsters/sargdie.md2",0},	// S1_SPOS_DIE1
+    {SPR1_SPOS,8,5,SA1_Scream,S1_SPOS_DIE3,0,0,"models/monsters/sargdie.md2",1},	// S1_SPOS_DIE2
+    {SPR1_SPOS,9,5,SA1_Fall,S1_SPOS_DIE4,0,0,"models/monsters/sargdie.md2",2},	// S1_SPOS_DIE3
+    {SPR1_SPOS,10,5,SA1_NULL,S1_SPOS_DIE5,0,0,"models/monsters/sargdie.md2",3},	// S1_SPOS_DIE4
+    {SPR1_SPOS,11,-1,SA1_NULL,S1_NULL,0,0,"models/monsters/sargdie.md2",4},	// S1_SPOS_DIE5
     {SPR1_SPOS,12,5,SA1_NULL,S1_SPOS_XDIE2,0,0},	// S1_SPOS_XDIE1
     {SPR1_SPOS,13,5,SA1_XScream,S1_SPOS_XDIE3,0,0},	// S1_SPOS_XDIE2
     {SPR1_SPOS,14,5,SA1_Fall,S1_SPOS_XDIE4,0,0},	// S1_SPOS_XDIE3
@@ -262,11 +268,11 @@ state_t	states[NUMDOOMSTATES] = {
     {SPR1_SPOS,18,5,SA1_NULL,S1_SPOS_XDIE8,0,0},	// S1_SPOS_XDIE7
     {SPR1_SPOS,19,5,SA1_NULL,S1_SPOS_XDIE9,0,0},	// S1_SPOS_XDIE8
     {SPR1_SPOS,20,-1,SA1_NULL,S1_NULL,0,0},	// S1_SPOS_XDIE9
-    {SPR1_SPOS,11,5,SA1_NULL,S1_SPOS_RAISE2,0,0},	// S1_SPOS_RAISE1
-    {SPR1_SPOS,10,5,SA1_NULL,S1_SPOS_RAISE3,0,0},	// S1_SPOS_RAISE2
-    {SPR1_SPOS,9,5,SA1_NULL,S1_SPOS_RAISE4,0,0},	// S1_SPOS_RAISE3
-    {SPR1_SPOS,8,5,SA1_NULL,S1_SPOS_RAISE5,0,0},	// S1_SPOS_RAISE4
-    {SPR1_SPOS,7,5,SA1_NULL,S1_SPOS_RUN1,0,0},	// S1_SPOS_RAISE5
+    {SPR1_SPOS,11,5,SA1_NULL,S1_SPOS_RAISE2,0,0,"models/monsters/sargdie.md2",5},	// S1_SPOS_RAISE1
+    {SPR1_SPOS,10,5,SA1_NULL,S1_SPOS_RAISE3,0,0,"models/monsters/sargdie.md2",6},	// S1_SPOS_RAISE2
+    {SPR1_SPOS,9,5,SA1_NULL,S1_SPOS_RAISE4,0,0,"models/monsters/sargdie.md2",7},	// S1_SPOS_RAISE3
+    {SPR1_SPOS,8,5,SA1_NULL,S1_SPOS_RAISE5,0,0,"models/monsters/sargdie.md2",8},	// S1_SPOS_RAISE4
+    {SPR1_SPOS,7,5,SA1_NULL,S1_SPOS_RUN1,0,0,"models/monsters/sargdie.md2",9},	// S1_SPOS_RAISE5
     {SPR1_VILE,0,10,SA1_Look,S1_VILE_STND2,0,0},	// S1_VILE_STND
     {SPR1_VILE,1,10,SA1_Look,S1_VILE_STND,0,0},	// S1_VILE_STND2
     {SPR1_VILE,0,2,SA1_VileChase,S1_VILE_RUN2,0,0},	// S1_VILE_RUN1
@@ -468,26 +474,26 @@ state_t	states[NUMDOOMSTATES] = {
     {SPR1_CPOS,9,5,SA1_NULL,S1_CPOS_RAISE6,0,0},	// S1_CPOS_RAISE5
     {SPR1_CPOS,8,5,SA1_NULL,S1_CPOS_RAISE7,0,0},	// S1_CPOS_RAISE6
     {SPR1_CPOS,7,5,SA1_NULL,S1_CPOS_RUN1,0,0},	// S1_CPOS_RAISE7
-    {SPR1_TROO,0,10,SA1_Look,S1_TROO_STND2,0,0},	// S1_TROO_STND
-    {SPR1_TROO,1,10,SA1_Look,S1_TROO_STND,0,0},	// S1_TROO_STND2
-    {SPR1_TROO,0,3,SA1_Chase,S1_TROO_RUN2,0,0},	// S1_TROO_RUN1
-    {SPR1_TROO,0,3,SA1_Chase,S1_TROO_RUN3,0,0},	// S1_TROO_RUN2
-    {SPR1_TROO,1,3,SA1_Chase,S1_TROO_RUN4,0,0},	// S1_TROO_RUN3
-    {SPR1_TROO,1,3,SA1_Chase,S1_TROO_RUN5,0,0},	// S1_TROO_RUN4
-    {SPR1_TROO,2,3,SA1_Chase,S1_TROO_RUN6,0,0},	// S1_TROO_RUN5
-    {SPR1_TROO,2,3,SA1_Chase,S1_TROO_RUN7,0,0},	// S1_TROO_RUN6
-    {SPR1_TROO,3,3,SA1_Chase,S1_TROO_RUN8,0,0},	// S1_TROO_RUN7
-    {SPR1_TROO,3,3,SA1_Chase,S1_TROO_RUN1,0,0},	// S1_TROO_RUN8
-    {SPR1_TROO,4,8,SA1_FaceTarget,S1_TROO_ATK2,0,0},	// S1_TROO_ATK1
-    {SPR1_TROO,5,8,SA1_FaceTarget,S1_TROO_ATK3,0,0},	// S1_TROO_ATK2
-    {SPR1_TROO,6,6,SA1_TroopAttack,S1_TROO_RUN1,0,0},	// S1_TROO_ATK3
-    {SPR1_TROO,7,2,SA1_NULL,S1_TROO_PAIN2,0,0},	// S1_TROO_PAIN
-    {SPR1_TROO,7,2,SA1_Pain,S1_TROO_RUN1,0,0},	// S1_TROO_PAIN2
-    {SPR1_TROO,8,8,SA1_NULL,S1_TROO_DIE2,0,0},	// S1_TROO_DIE1
-    {SPR1_TROO,9,8,SA1_Scream,S1_TROO_DIE3,0,0},	// S1_TROO_DIE2
-    {SPR1_TROO,10,6,SA1_NULL,S1_TROO_DIE4,0,0},	// S1_TROO_DIE3
-    {SPR1_TROO,11,6,SA1_Fall,S1_TROO_DIE5,0,0},	// S1_TROO_DIE4
-    {SPR1_TROO,12,-1,SA1_NULL,S1_NULL,0,0},	// S1_TROO_DIE5
+    {SPR1_TROO,0,10,SA1_Look,S1_TROO_STND2,0,0,"models/monsters/imp.md2",0},	// S1_TROO_STND
+    {SPR1_TROO,1,10,SA1_Look,S1_TROO_STND,0,0,"models/monsters/imp.md2",1},	// S1_TROO_STND2
+    {SPR1_TROO,0,3,SA1_Chase,S1_TROO_RUN2,0,0,"models/monsters/imp.md2",8},	// S1_TROO_RUN1
+    {SPR1_TROO,0,3,SA1_Chase,S1_TROO_RUN3,0,0,"models/monsters/imp.md2",9},	// S1_TROO_RUN2
+    {SPR1_TROO,1,3,SA1_Chase,S1_TROO_RUN4,0,0,"models/monsters/imp.md2",10},	// S1_TROO_RUN3
+    {SPR1_TROO,1,3,SA1_Chase,S1_TROO_RUN5,0,0,"models/monsters/imp.md2",11},	// S1_TROO_RUN4
+    {SPR1_TROO,2,3,SA1_Chase,S1_TROO_RUN6,0,0,"models/monsters/imp.md2",12},	// S1_TROO_RUN5
+    {SPR1_TROO,2,3,SA1_Chase,S1_TROO_RUN7,0,0,"models/monsters/imp.md2",13},	// S1_TROO_RUN6
+    {SPR1_TROO,3,3,SA1_Chase,S1_TROO_RUN8,0,0,"models/monsters/imp.md2",14},	// S1_TROO_RUN7
+    {SPR1_TROO,3,3,SA1_Chase,S1_TROO_RUN1,0,0,"models/monsters/imp.md2",15},	// S1_TROO_RUN8
+    {SPR1_TROO,4,8,SA1_FaceTarget,S1_TROO_ATK2,0,0,"models/monsters/imp.md2",16},	// S1_TROO_ATK1
+    {SPR1_TROO,5,8,SA1_FaceTarget,S1_TROO_ATK3,0,0,"models/monsters/imp.md2",17},	// S1_TROO_ATK2
+    {SPR1_TROO,6,6,SA1_TroopAttack,S1_TROO_RUN1,0,0,"models/monsters/imp.md2",18},	// S1_TROO_ATK3
+    {SPR1_TROO,7,2,SA1_NULL,S1_TROO_PAIN2,0,0,"models/monsters/imp.md2",19},	// S1_TROO_PAIN
+    {SPR1_TROO,7,2,SA1_Pain,S1_TROO_RUN1,0,0,"models/monsters/imp.md2",20},	// S1_TROO_PAIN2
+    {SPR1_TROO,8,8,SA1_NULL,S1_TROO_DIE2,0,0,"models/monsters/impdie.md2",0},	// S1_TROO_DIE1
+    {SPR1_TROO,9,8,SA1_Scream,S1_TROO_DIE3,0,0,"models/monsters/impdie.md2",1},	// S1_TROO_DIE2
+    {SPR1_TROO,10,6,SA1_NULL,S1_TROO_DIE4,0,0,"models/monsters/impdie.md2",2},	// S1_TROO_DIE3
+    {SPR1_TROO,11,6,SA1_Fall,S1_TROO_DIE5,0,0,"models/monsters/impdie.md2",3},	// S1_TROO_DIE4
+    {SPR1_TROO,12,-1,SA1_NULL,S1_NULL,0,0,"models/monsters/impdie.md2",4},	// S1_TROO_DIE5
     {SPR1_TROO,13,5,SA1_NULL,S1_TROO_XDIE2,0,0},	// S1_TROO_XDIE1
     {SPR1_TROO,14,5,SA1_XScream,S1_TROO_XDIE3,0,0},	// S1_TROO_XDIE2
     {SPR1_TROO,15,5,SA1_NULL,S1_TROO_XDIE4,0,0},	// S1_TROO_XDIE3
@@ -496,92 +502,92 @@ state_t	states[NUMDOOMSTATES] = {
     {SPR1_TROO,18,5,SA1_NULL,S1_TROO_XDIE7,0,0},	// S1_TROO_XDIE6
     {SPR1_TROO,19,5,SA1_NULL,S1_TROO_XDIE8,0,0},	// S1_TROO_XDIE7
     {SPR1_TROO,20,-1,SA1_NULL,S1_NULL,0,0},	// S1_TROO_XDIE8
-    {SPR1_TROO,12,8,SA1_NULL,S1_TROO_RAISE2,0,0},	// S1_TROO_RAISE1
-    {SPR1_TROO,11,8,SA1_NULL,S1_TROO_RAISE3,0,0},	// S1_TROO_RAISE2
-    {SPR1_TROO,10,6,SA1_NULL,S1_TROO_RAISE4,0,0},	// S1_TROO_RAISE3
-    {SPR1_TROO,9,6,SA1_NULL,S1_TROO_RAISE5,0,0},	// S1_TROO_RAISE4
-    {SPR1_TROO,8,6,SA1_NULL,S1_TROO_RUN1,0,0},	// S1_TROO_RAISE5
-    {SPR1_SARG,0,10,SA1_Look,S1_SARG_STND2,0,0},	// S1_SARG_STND
-    {SPR1_SARG,1,10,SA1_Look,S1_SARG_STND,0,0},	// S1_SARG_STND2
-    {SPR1_SARG,0,2,SA1_Chase,S1_SARG_RUN2,0,0},	// S1_SARG_RUN1
-    {SPR1_SARG,0,2,SA1_Chase,S1_SARG_RUN3,0,0},	// S1_SARG_RUN2
-    {SPR1_SARG,1,2,SA1_Chase,S1_SARG_RUN4,0,0},	// S1_SARG_RUN3
-    {SPR1_SARG,1,2,SA1_Chase,S1_SARG_RUN5,0,0},	// S1_SARG_RUN4
-    {SPR1_SARG,2,2,SA1_Chase,S1_SARG_RUN6,0,0},	// S1_SARG_RUN5
-    {SPR1_SARG,2,2,SA1_Chase,S1_SARG_RUN7,0,0},	// S1_SARG_RUN6
-    {SPR1_SARG,3,2,SA1_Chase,S1_SARG_RUN8,0,0},	// S1_SARG_RUN7
-    {SPR1_SARG,3,2,SA1_Chase,S1_SARG_RUN1,0,0},	// S1_SARG_RUN8
-    {SPR1_SARG,4,8,SA1_FaceTarget,S1_SARG_ATK2,0,0},	// S1_SARG_ATK1
-    {SPR1_SARG,5,8,SA1_FaceTarget,S1_SARG_ATK3,0,0},	// S1_SARG_ATK2
-    {SPR1_SARG,6,8,SA1_SargAttack,S1_SARG_RUN1,0,0},	// S1_SARG_ATK3
-    {SPR1_SARG,7,2,SA1_NULL,S1_SARG_PAIN2,0,0},	// S1_SARG_PAIN
-    {SPR1_SARG,7,2,SA1_Pain,S1_SARG_RUN1,0,0},	// S1_SARG_PAIN2
-    {SPR1_SARG,8,8,SA1_NULL,S1_SARG_DIE2,0,0},	// S1_SARG_DIE1
-    {SPR1_SARG,9,8,SA1_Scream,S1_SARG_DIE3,0,0},	// S1_SARG_DIE2
-    {SPR1_SARG,10,4,SA1_NULL,S1_SARG_DIE4,0,0},	// S1_SARG_DIE3
-    {SPR1_SARG,11,4,SA1_Fall,S1_SARG_DIE5,0,0},	// S1_SARG_DIE4
-    {SPR1_SARG,12,4,SA1_NULL,S1_SARG_DIE6,0,0},	// S1_SARG_DIE5
-    {SPR1_SARG,13,-1,SA1_NULL,S1_NULL,0,0},	// S1_SARG_DIE6
-    {SPR1_SARG,13,5,SA1_NULL,S1_SARG_RAISE2,0,0},	// S1_SARG_RAISE1
-    {SPR1_SARG,12,5,SA1_NULL,S1_SARG_RAISE3,0,0},	// S1_SARG_RAISE2
-    {SPR1_SARG,11,5,SA1_NULL,S1_SARG_RAISE4,0,0},	// S1_SARG_RAISE3
-    {SPR1_SARG,10,5,SA1_NULL,S1_SARG_RAISE5,0,0},	// S1_SARG_RAISE4
-    {SPR1_SARG,9,5,SA1_NULL,S1_SARG_RAISE6,0,0},	// S1_SARG_RAISE5
-    {SPR1_SARG,8,5,SA1_NULL,S1_SARG_RUN1,0,0},	// S1_SARG_RAISE6
-    {SPR1_HEAD,0,10,SA1_Look,S1_HEAD_STND,0,0},	// S1_HEAD_STND
-    {SPR1_HEAD,0,3,SA1_Chase,S1_HEAD_RUN1,0,0},	// S1_HEAD_RUN1
-    {SPR1_HEAD,1,5,SA1_FaceTarget,S1_HEAD_ATK2,0,0},	// S1_HEAD_ATK1
-    {SPR1_HEAD,2,5,SA1_FaceTarget,S1_HEAD_ATK3,0,0},	// S1_HEAD_ATK2
-    {SPR1_HEAD,32771,5,SA1_HeadAttack,S1_HEAD_RUN1,0,0},	// S1_HEAD_ATK3
-    {SPR1_HEAD,4,3,SA1_NULL,S1_HEAD_PAIN2,0,0},	// S1_HEAD_PAIN
-    {SPR1_HEAD,4,3,SA1_Pain,S1_HEAD_PAIN3,0,0},	// S1_HEAD_PAIN2
-    {SPR1_HEAD,5,6,SA1_NULL,S1_HEAD_RUN1,0,0},	// S1_HEAD_PAIN3
-    {SPR1_HEAD,6,8,SA1_NULL,S1_HEAD_DIE2,0,0},	// S1_HEAD_DIE1
-    {SPR1_HEAD,7,8,SA1_Scream,S1_HEAD_DIE3,0,0},	// S1_HEAD_DIE2
-    {SPR1_HEAD,8,8,SA1_NULL,S1_HEAD_DIE4,0,0},	// S1_HEAD_DIE3
-    {SPR1_HEAD,9,8,SA1_NULL,S1_HEAD_DIE5,0,0},	// S1_HEAD_DIE4
-    {SPR1_HEAD,10,8,SA1_Fall,S1_HEAD_DIE6,0,0},	// S1_HEAD_DIE5
-    {SPR1_HEAD,11,-1,SA1_NULL,S1_NULL,0,0},	// S1_HEAD_DIE6
-    {SPR1_HEAD,11,8,SA1_NULL,S1_HEAD_RAISE2,0,0},	// S1_HEAD_RAISE1
-    {SPR1_HEAD,10,8,SA1_NULL,S1_HEAD_RAISE3,0,0},	// S1_HEAD_RAISE2
-    {SPR1_HEAD,9,8,SA1_NULL,S1_HEAD_RAISE4,0,0},	// S1_HEAD_RAISE3
-    {SPR1_HEAD,8,8,SA1_NULL,S1_HEAD_RAISE5,0,0},	// S1_HEAD_RAISE4
-    {SPR1_HEAD,7,8,SA1_NULL,S1_HEAD_RAISE6,0,0},	// S1_HEAD_RAISE5
-    {SPR1_HEAD,6,8,SA1_NULL,S1_HEAD_RUN1,0,0},	// S1_HEAD_RAISE6
+    {SPR1_TROO,12,8,SA1_NULL,S1_TROO_RAISE2,0,0,"models/monsters/impdie.md2",5},	// S1_TROO_RAISE1
+    {SPR1_TROO,11,8,SA1_NULL,S1_TROO_RAISE3,0,0,"models/monsters/impdie.md2",6},	// S1_TROO_RAISE2
+    {SPR1_TROO,10,6,SA1_NULL,S1_TROO_RAISE4,0,0,"models/monsters/impdie.md2",7},	// S1_TROO_RAISE3
+    {SPR1_TROO,9,6,SA1_NULL,S1_TROO_RAISE5,0,0,"models/monsters/impdie.md2",8},	// S1_TROO_RAISE4
+    {SPR1_TROO,8,6,SA1_NULL,S1_TROO_RUN1,0,0,"models/monsters/impdie.md2",9},	// S1_TROO_RAISE5
+    {SPR1_SARG,0,10,SA1_Look,S1_SARG_STND2,0,0,"models/monsters/demon.md2",0},	// S1_SARG_STND
+    {SPR1_SARG,1,10,SA1_Look,S1_SARG_STND,0,0,"models/monsters/demon.md2",1},	// S1_SARG_STND2
+    {SPR1_SARG,0,2,SA1_Chase,S1_SARG_RUN2,0,0,"models/monsters/demon.md2",2},	// S1_SARG_RUN1
+    {SPR1_SARG,0,2,SA1_Chase,S1_SARG_RUN3,0,0,"models/monsters/demon.md2",3},	// S1_SARG_RUN2
+    {SPR1_SARG,1,2,SA1_Chase,S1_SARG_RUN4,0,0,"models/monsters/demon.md2",4},	// S1_SARG_RUN3
+    {SPR1_SARG,1,2,SA1_Chase,S1_SARG_RUN5,0,0,"models/monsters/demon.md2",5},	// S1_SARG_RUN4
+    {SPR1_SARG,2,2,SA1_Chase,S1_SARG_RUN6,0,0,"models/monsters/demon.md2",6},	// S1_SARG_RUN5
+    {SPR1_SARG,2,2,SA1_Chase,S1_SARG_RUN7,0,0,"models/monsters/demon.md2",7},	// S1_SARG_RUN6
+    {SPR1_SARG,3,2,SA1_Chase,S1_SARG_RUN8,0,0,"models/monsters/demon.md2",8},	// S1_SARG_RUN7
+    {SPR1_SARG,3,2,SA1_Chase,S1_SARG_RUN1,0,0,"models/monsters/demon.md2",9},	// S1_SARG_RUN8
+    {SPR1_SARG,4,8,SA1_FaceTarget,S1_SARG_ATK2,0,0,"models/monsters/demon.md2",10},	// S1_SARG_ATK1
+    {SPR1_SARG,5,8,SA1_FaceTarget,S1_SARG_ATK3,0,0,"models/monsters/demon.md2",11},	// S1_SARG_ATK2
+    {SPR1_SARG,6,8,SA1_SargAttack,S1_SARG_RUN1,0,0,"models/monsters/demon.md2",12},	// S1_SARG_ATK3
+    {SPR1_SARG,7,2,SA1_NULL,S1_SARG_PAIN2,0,0,"models/monsters/demon.md2",13},	// S1_SARG_PAIN
+    {SPR1_SARG,7,2,SA1_Pain,S1_SARG_RUN1,0,0,"models/monsters/demon.md2",14},	// S1_SARG_PAIN2
+    {SPR1_SARG,8,8,SA1_NULL,S1_SARG_DIE2,0,0,"models/monsters/demondie.md2",0},	// S1_SARG_DIE1
+    {SPR1_SARG,9,8,SA1_Scream,S1_SARG_DIE3,0,0,"models/monsters/demondie.md2",1},	// S1_SARG_DIE2
+    {SPR1_SARG,10,4,SA1_NULL,S1_SARG_DIE4,0,0,"models/monsters/demondie.md2",2},	// S1_SARG_DIE3
+    {SPR1_SARG,11,4,SA1_Fall,S1_SARG_DIE5,0,0,"models/monsters/demondie.md2",3},	// S1_SARG_DIE4
+    {SPR1_SARG,12,4,SA1_NULL,S1_SARG_DIE6,0,0,"models/monsters/demondie.md2",4},	// S1_SARG_DIE5
+    {SPR1_SARG,13,-1,SA1_NULL,S1_NULL,0,0,"models/monsters/demondie.md2",5},	// S1_SARG_DIE6
+    {SPR1_SARG,13,5,SA1_NULL,S1_SARG_RAISE2,0,0,"models/monsters/demondie.md2",6},	// S1_SARG_RAISE1
+    {SPR1_SARG,12,5,SA1_NULL,S1_SARG_RAISE3,0,0,"models/monsters/demondie.md2",7},	// S1_SARG_RAISE2
+    {SPR1_SARG,11,5,SA1_NULL,S1_SARG_RAISE4,0,0,"models/monsters/demondie.md2",8},	// S1_SARG_RAISE3
+    {SPR1_SARG,10,5,SA1_NULL,S1_SARG_RAISE5,0,0,"models/monsters/demondie.md2",9},	// S1_SARG_RAISE4
+    {SPR1_SARG,9,5,SA1_NULL,S1_SARG_RAISE6,0,0,"models/monsters/demondie.md2",10},	// S1_SARG_RAISE5
+    {SPR1_SARG,8,5,SA1_NULL,S1_SARG_RUN1,0,0,"models/monsters/demondie.md2",11},	// S1_SARG_RAISE6
+    {SPR1_HEAD,0,10,SA1_Look,S1_HEAD_STND,0,0,"models/monsters/caco.md2",0},	// S1_HEAD_STND
+    {SPR1_HEAD,0,3,SA1_Chase,S1_HEAD_RUN1,0,0,"models/monsters/caco.md2",1},	// S1_HEAD_RUN1
+    {SPR1_HEAD,1,5,SA1_FaceTarget,S1_HEAD_ATK2,0,0,"models/monsters/caco.md2",2},	// S1_HEAD_ATK1
+    {SPR1_HEAD,2,5,SA1_FaceTarget,S1_HEAD_ATK3,0,0,"models/monsters/caco.md2",3},	// S1_HEAD_ATK2
+    {SPR1_HEAD,32771,5,SA1_HeadAttack,S1_HEAD_RUN1,0,0,"models/monsters/caco.md2",4},	// S1_HEAD_ATK3
+    {SPR1_HEAD,4,3,SA1_NULL,S1_HEAD_PAIN2,0,0,"models/monsters/caco.md2",5},	// S1_HEAD_PAIN
+    {SPR1_HEAD,4,3,SA1_Pain,S1_HEAD_PAIN3,0,0,"models/monsters/caco.md2",6},	// S1_HEAD_PAIN2
+    {SPR1_HEAD,5,6,SA1_NULL,S1_HEAD_RUN1,0,0,"models/monsters/caco.md2",7},	// S1_HEAD_PAIN3
+    {SPR1_HEAD,6,8,SA1_NULL,S1_HEAD_DIE2,0,0,"models/monsters/cacodie.md2",0},	// S1_HEAD_DIE1
+    {SPR1_HEAD,7,8,SA1_Scream,S1_HEAD_DIE3,0,0,"models/monsters/cacodie.md2",1},	// S1_HEAD_DIE2
+    {SPR1_HEAD,8,8,SA1_NULL,S1_HEAD_DIE4,0,0,"models/monsters/cacodie.md2",2},	// S1_HEAD_DIE3
+    {SPR1_HEAD,9,8,SA1_NULL,S1_HEAD_DIE5,0,0,"models/monsters/cacodie.md2",3},	// S1_HEAD_DIE4
+    {SPR1_HEAD,10,8,SA1_Fall,S1_HEAD_DIE6,0,0,"models/monsters/cacodie.md2",4},	// S1_HEAD_DIE5
+    {SPR1_HEAD,11,-1,SA1_NULL,S1_NULL,0,0,"models/monsters/cacodie.md2",5},	// S1_HEAD_DIE6
+    {SPR1_HEAD,11,8,SA1_NULL,S1_HEAD_RAISE2,0,0,"models/monsters/cacodie.md2",6},	// S1_HEAD_RAISE1
+    {SPR1_HEAD,10,8,SA1_NULL,S1_HEAD_RAISE3,0,0,"models/monsters/cacodie.md2",7},	// S1_HEAD_RAISE2
+    {SPR1_HEAD,9,8,SA1_NULL,S1_HEAD_RAISE4,0,0,"models/monsters/cacodie.md2",8},	// S1_HEAD_RAISE3
+    {SPR1_HEAD,8,8,SA1_NULL,S1_HEAD_RAISE5,0,0,"models/monsters/cacodie.md2",9},	// S1_HEAD_RAISE4
+    {SPR1_HEAD,7,8,SA1_NULL,S1_HEAD_RAISE6,0,0,"models/monsters/cacodie.md2",10},	// S1_HEAD_RAISE5
+    {SPR1_HEAD,6,8,SA1_NULL,S1_HEAD_RUN1,0,0,"models/monsters/cacodie.md2",11},	// S1_HEAD_RAISE6
     {SPR1_BAL7,32768,4,SA1_NULL,S1_BRBALL2,0,0},	// S1_BRBALL1
     {SPR1_BAL7,32769,4,SA1_NULL,S1_BRBALL1,0,0},	// S1_BRBALL2
     {SPR1_BAL7,32770,6,SA1_NULL,S1_BRBALLX2,0,0},	// S1_BRBALLX1
     {SPR1_BAL7,32771,6,SA1_NULL,S1_BRBALLX3,0,0},	// S1_BRBALLX2
     {SPR1_BAL7,32772,6,SA1_NULL,S1_NULL,0,0},	// S1_BRBALLX3
-    {SPR1_BOSS,0,10,SA1_Look,S1_BOSS_STND2,0,0},	// S1_BOSS_STND
-    {SPR1_BOSS,1,10,SA1_Look,S1_BOSS_STND,0,0},	// S1_BOSS_STND2
-    {SPR1_BOSS,0,3,SA1_Chase,S1_BOSS_RUN2,0,0},	// S1_BOSS_RUN1
-    {SPR1_BOSS,0,3,SA1_Chase,S1_BOSS_RUN3,0,0},	// S1_BOSS_RUN2
-    {SPR1_BOSS,1,3,SA1_Chase,S1_BOSS_RUN4,0,0},	// S1_BOSS_RUN3
-    {SPR1_BOSS,1,3,SA1_Chase,S1_BOSS_RUN5,0,0},	// S1_BOSS_RUN4
-    {SPR1_BOSS,2,3,SA1_Chase,S1_BOSS_RUN6,0,0},	// S1_BOSS_RUN5
-    {SPR1_BOSS,2,3,SA1_Chase,S1_BOSS_RUN7,0,0},	// S1_BOSS_RUN6
-    {SPR1_BOSS,3,3,SA1_Chase,S1_BOSS_RUN8,0,0},	// S1_BOSS_RUN7
-    {SPR1_BOSS,3,3,SA1_Chase,S1_BOSS_RUN1,0,0},	// S1_BOSS_RUN8
-    {SPR1_BOSS,4,8,SA1_FaceTarget,S1_BOSS_ATK2,0,0},	// S1_BOSS_ATK1
-    {SPR1_BOSS,5,8,SA1_FaceTarget,S1_BOSS_ATK3,0,0},	// S1_BOSS_ATK2
-    {SPR1_BOSS,6,8,SA1_BruisAttack,S1_BOSS_RUN1,0,0},	// S1_BOSS_ATK3
-    {SPR1_BOSS,7,2,SA1_NULL,S1_BOSS_PAIN2,0,0},	// S1_BOSS_PAIN
-    {SPR1_BOSS,7,2,SA1_Pain,S1_BOSS_RUN1,0,0},	// S1_BOSS_PAIN2
-    {SPR1_BOSS,8,8,SA1_NULL,S1_BOSS_DIE2,0,0},	// S1_BOSS_DIE1
-    {SPR1_BOSS,9,8,SA1_Scream,S1_BOSS_DIE3,0,0},	// S1_BOSS_DIE2
-    {SPR1_BOSS,10,8,SA1_NULL,S1_BOSS_DIE4,0,0},	// S1_BOSS_DIE3
-    {SPR1_BOSS,11,8,SA1_Fall,S1_BOSS_DIE5,0,0},	// S1_BOSS_DIE4
-    {SPR1_BOSS,12,8,SA1_NULL,S1_BOSS_DIE6,0,0},	// S1_BOSS_DIE5
-    {SPR1_BOSS,13,8,SA1_NULL,S1_BOSS_DIE7,0,0},	// S1_BOSS_DIE6
-    {SPR1_BOSS,14,-1,SA1_BossDeath,S1_NULL,0,0},	// S1_BOSS_DIE7
-    {SPR1_BOSS,14,8,SA1_NULL,S1_BOSS_RAISE2,0,0},	// S1_BOSS_RAISE1
-    {SPR1_BOSS,13,8,SA1_NULL,S1_BOSS_RAISE3,0,0},	// S1_BOSS_RAISE2
-    {SPR1_BOSS,12,8,SA1_NULL,S1_BOSS_RAISE4,0,0},	// S1_BOSS_RAISE3
-    {SPR1_BOSS,11,8,SA1_NULL,S1_BOSS_RAISE5,0,0},	// S1_BOSS_RAISE4
-    {SPR1_BOSS,10,8,SA1_NULL,S1_BOSS_RAISE6,0,0},	// S1_BOSS_RAISE5
-    {SPR1_BOSS,9,8,SA1_NULL,S1_BOSS_RAISE7,0,0},	// S1_BOSS_RAISE6
-    {SPR1_BOSS,8,8,SA1_NULL,S1_BOSS_RUN1,0,0},	// S1_BOSS_RAISE7
+    {SPR1_BOSS,0,10,SA1_Look,S1_BOSS_STND2,0,0,"models/monsters/baron.md2",0},	// S1_BOSS_STND
+    {SPR1_BOSS,1,10,SA1_Look,S1_BOSS_STND,0,0,"models/monsters/baron.md2",1},	// S1_BOSS_STND2
+    {SPR1_BOSS,0,3,SA1_Chase,S1_BOSS_RUN2,0,0,"models/monsters/baron.md2",2},	// S1_BOSS_RUN1
+    {SPR1_BOSS,0,3,SA1_Chase,S1_BOSS_RUN3,0,0,"models/monsters/baron.md2",3},	// S1_BOSS_RUN2
+    {SPR1_BOSS,1,3,SA1_Chase,S1_BOSS_RUN4,0,0,"models/monsters/baron.md2",4},	// S1_BOSS_RUN3
+    {SPR1_BOSS,1,3,SA1_Chase,S1_BOSS_RUN5,0,0,"models/monsters/baron.md2",5},	// S1_BOSS_RUN4
+    {SPR1_BOSS,2,3,SA1_Chase,S1_BOSS_RUN6,0,0,"models/monsters/baron.md2",6},	// S1_BOSS_RUN5
+    {SPR1_BOSS,2,3,SA1_Chase,S1_BOSS_RUN7,0,0,"models/monsters/baron.md2",7},	// S1_BOSS_RUN6
+    {SPR1_BOSS,3,3,SA1_Chase,S1_BOSS_RUN8,0,0,"models/monsters/baron.md2",8},	// S1_BOSS_RUN7
+    {SPR1_BOSS,3,3,SA1_Chase,S1_BOSS_RUN1,0,0,"models/monsters/baron.md2",9},	// S1_BOSS_RUN8
+    {SPR1_BOSS,4,8,SA1_FaceTarget,S1_BOSS_ATK2,0,0,"models/monsters/baron.md2",10},	// S1_BOSS_ATK1
+    {SPR1_BOSS,5,8,SA1_FaceTarget,S1_BOSS_ATK3,0,0,"models/monsters/baron.md2",11},	// S1_BOSS_ATK2
+    {SPR1_BOSS,6,8,SA1_BruisAttack,S1_BOSS_RUN1,0,0,"models/monsters/baron.md2",12},	// S1_BOSS_ATK3
+    {SPR1_BOSS,7,2,SA1_NULL,S1_BOSS_PAIN2,0,0,"models/monsters/baron.md2",13},	// S1_BOSS_PAIN
+    {SPR1_BOSS,7,2,SA1_Pain,S1_BOSS_RUN1,0,0,"models/monsters/baron.md2",14},	// S1_BOSS_PAIN2
+    {SPR1_BOSS,8,8,SA1_NULL,S1_BOSS_DIE2,0,0,"models/monsters/barondie.md2",0},	// S1_BOSS_DIE1
+    {SPR1_BOSS,9,8,SA1_Scream,S1_BOSS_DIE3,0,0,"models/monsters/barondie.md2",1},	// S1_BOSS_DIE2
+    {SPR1_BOSS,10,8,SA1_NULL,S1_BOSS_DIE4,0,0,"models/monsters/barondie.md2",2},	// S1_BOSS_DIE3
+    {SPR1_BOSS,11,8,SA1_Fall,S1_BOSS_DIE5,0,0,"models/monsters/barondie.md2",3},	// S1_BOSS_DIE4
+    {SPR1_BOSS,12,8,SA1_NULL,S1_BOSS_DIE6,0,0,"models/monsters/barondie.md2",4},	// S1_BOSS_DIE5
+    {SPR1_BOSS,13,8,SA1_NULL,S1_BOSS_DIE7,0,0,"models/monsters/barondie.md2",5},	// S1_BOSS_DIE6
+    {SPR1_BOSS,14,-1,SA1_BossDeath,S1_NULL,0,0,"models/monsters/barondie.md2",6},	// S1_BOSS_DIE7
+    {SPR1_BOSS,14,8,SA1_NULL,S1_BOSS_RAISE2,0,0,"models/monsters/barondie.md2",7},	// S1_BOSS_RAISE1
+    {SPR1_BOSS,13,8,SA1_NULL,S1_BOSS_RAISE3,0,0,"models/monsters/barondie.md2",8},	// S1_BOSS_RAISE2
+    {SPR1_BOSS,12,8,SA1_NULL,S1_BOSS_RAISE4,0,0,"models/monsters/barondie.md2",9},	// S1_BOSS_RAISE3
+    {SPR1_BOSS,11,8,SA1_NULL,S1_BOSS_RAISE5,0,0,"models/monsters/barondie.md2",10},	// S1_BOSS_RAISE4
+    {SPR1_BOSS,10,8,SA1_NULL,S1_BOSS_RAISE6,0,0,"models/monsters/barondie.md2",11},	// S1_BOSS_RAISE5
+    {SPR1_BOSS,9,8,SA1_NULL,S1_BOSS_RAISE7,0,0,"models/monsters/barondie.md2",12},	// S1_BOSS_RAISE6
+    {SPR1_BOSS,8,8,SA1_NULL,S1_BOSS_RUN1,0,0,"models/monsters/barondie.md2",13},	// S1_BOSS_RAISE7
     {SPR1_BOS2,0,10,SA1_Look,S1_BOS2_STND2,0,0},	// S1_BOS2_STND
     {SPR1_BOS2,1,10,SA1_Look,S1_BOS2_STND,0,0},	// S1_BOS2_STND2
     {SPR1_BOS2,0,3,SA1_Chase,S1_BOS2_RUN2,0,0},	// S1_BOS2_RUN1
@@ -627,37 +633,37 @@ state_t	states[NUMDOOMSTATES] = {
     {SPR1_SKUL,32776,6,SA1_Fall,S1_SKULL_DIE5,0,0},	// S1_SKULL_DIE4
     {SPR1_SKUL,9,6,SA1_NULL,S1_SKULL_DIE6,0,0},	// S1_SKULL_DIE5
     {SPR1_SKUL,10,6,SA1_NULL,S1_NULL,0,0},	// S1_SKULL_DIE6
-    {SPR1_SPID,0,10,SA1_Look,S1_SPID_STND2,0,0},	// S1_SPID_STND
-    {SPR1_SPID,1,10,SA1_Look,S1_SPID_STND,0,0},	// S1_SPID_STND2
-    {SPR1_SPID,0,3,SA1_Metal,S1_SPID_RUN2,0,0},	// S1_SPID_RUN1
-    {SPR1_SPID,0,3,SA1_Chase,S1_SPID_RUN3,0,0},	// S1_SPID_RUN2
-    {SPR1_SPID,1,3,SA1_Chase,S1_SPID_RUN4,0,0},	// S1_SPID_RUN3
-    {SPR1_SPID,1,3,SA1_Chase,S1_SPID_RUN5,0,0},	// S1_SPID_RUN4
-    {SPR1_SPID,2,3,SA1_Metal,S1_SPID_RUN6,0,0},	// S1_SPID_RUN5
-    {SPR1_SPID,2,3,SA1_Chase,S1_SPID_RUN7,0,0},	// S1_SPID_RUN6
-    {SPR1_SPID,3,3,SA1_Chase,S1_SPID_RUN8,0,0},	// S1_SPID_RUN7
-    {SPR1_SPID,3,3,SA1_Chase,S1_SPID_RUN9,0,0},	// S1_SPID_RUN8
-    {SPR1_SPID,4,3,SA1_Metal,S1_SPID_RUN10,0,0},	// S1_SPID_RUN9
-    {SPR1_SPID,4,3,SA1_Chase,S1_SPID_RUN11,0,0},	// S1_SPID_RUN10
-    {SPR1_SPID,5,3,SA1_Chase,S1_SPID_RUN12,0,0},	// S1_SPID_RUN11
-    {SPR1_SPID,5,3,SA1_Chase,S1_SPID_RUN1,0,0},	// S1_SPID_RUN12
-    {SPR1_SPID,32768,20,SA1_FaceTarget,S1_SPID_ATK2,0,0},	// S1_SPID_ATK1
-    {SPR1_SPID,32774,4,SA1_SPosAttack,S1_SPID_ATK3,0,0},	// S1_SPID_ATK2
-    {SPR1_SPID,32775,4,SA1_SPosAttack,S1_SPID_ATK4,0,0},	// S1_SPID_ATK3
-    {SPR1_SPID,32775,1,SA1_SpidRefire,S1_SPID_ATK2,0,0},	// S1_SPID_ATK4
-    {SPR1_SPID,8,3,SA1_NULL,S1_SPID_PAIN2,0,0},	// S1_SPID_PAIN
-    {SPR1_SPID,8,3,SA1_Pain,S1_SPID_RUN1,0,0},	// S1_SPID_PAIN2
-    {SPR1_SPID,9,20,SA1_Scream,S1_SPID_DIE2,0,0},	// S1_SPID_DIE1
-    {SPR1_SPID,10,10,SA1_Fall,S1_SPID_DIE3,0,0},	// S1_SPID_DIE2
-    {SPR1_SPID,11,10,SA1_NULL,S1_SPID_DIE4,0,0},	// S1_SPID_DIE3
-    {SPR1_SPID,12,10,SA1_NULL,S1_SPID_DIE5,0,0},	// S1_SPID_DIE4
-    {SPR1_SPID,13,10,SA1_NULL,S1_SPID_DIE6,0,0},	// S1_SPID_DIE5
-    {SPR1_SPID,14,10,SA1_NULL,S1_SPID_DIE7,0,0},	// S1_SPID_DIE6
-    {SPR1_SPID,15,10,SA1_NULL,S1_SPID_DIE8,0,0},	// S1_SPID_DIE7
-    {SPR1_SPID,16,10,SA1_NULL,S1_SPID_DIE9,0,0},	// S1_SPID_DIE8
-    {SPR1_SPID,17,10,SA1_NULL,S1_SPID_DIE10,0,0},	// S1_SPID_DIE9
-    {SPR1_SPID,18,30,SA1_NULL,S1_SPID_DIE11,0,0},	// S1_SPID_DIE10
-    {SPR1_SPID,18,-1,SA1_BossDeath,S1_NULL,0,0},	// S1_SPID_DIE11
+    {SPR1_SPID,0,10,SA1_Look,S1_SPID_STND2,0,0,"models/monsters/spider.md2",0},	// S1_SPID_STND
+    {SPR1_SPID,1,10,SA1_Look,S1_SPID_STND,0,0,"models/monsters/spider.md2",1},	// S1_SPID_STND2
+    {SPR1_SPID,0,3,SA1_Metal,S1_SPID_RUN2,0,0,"models/monsters/spider.md2",2},	// S1_SPID_RUN1
+    {SPR1_SPID,0,3,SA1_Chase,S1_SPID_RUN3,0,0,"models/monsters/spider.md2",3},	// S1_SPID_RUN2
+    {SPR1_SPID,1,3,SA1_Chase,S1_SPID_RUN4,0,0,"models/monsters/spider.md2",4},	// S1_SPID_RUN3
+    {SPR1_SPID,1,3,SA1_Chase,S1_SPID_RUN5,0,0,"models/monsters/spider.md2",5},	// S1_SPID_RUN4
+    {SPR1_SPID,2,3,SA1_Metal,S1_SPID_RUN6,0,0,"models/monsters/spider.md2",6},	// S1_SPID_RUN5
+    {SPR1_SPID,2,3,SA1_Chase,S1_SPID_RUN7,0,0,"models/monsters/spider.md2",7},	// S1_SPID_RUN6
+    {SPR1_SPID,3,3,SA1_Chase,S1_SPID_RUN8,0,0,"models/monsters/spider.md2",8},	// S1_SPID_RUN7
+    {SPR1_SPID,3,3,SA1_Chase,S1_SPID_RUN9,0,0,"models/monsters/spider.md2",9},	// S1_SPID_RUN8
+    {SPR1_SPID,4,3,SA1_Metal,S1_SPID_RUN10,0,0,"models/monsters/spider.md2",10},	// S1_SPID_RUN9
+    {SPR1_SPID,4,3,SA1_Chase,S1_SPID_RUN11,0,0,"models/monsters/spider.md2",11},	// S1_SPID_RUN10
+    {SPR1_SPID,5,3,SA1_Chase,S1_SPID_RUN12,0,0,"models/monsters/spider.md2",12},	// S1_SPID_RUN11
+    {SPR1_SPID,5,3,SA1_Chase,S1_SPID_RUN1,0,0,"models/monsters/spider.md2",13},	// S1_SPID_RUN12
+    {SPR1_SPID,32768,20,SA1_FaceTarget,S1_SPID_ATK2,0,0,"models/monsters/spider.md2",14},	// S1_SPID_ATK1
+    {SPR1_SPID,32774,4,SA1_SPosAttack,S1_SPID_ATK3,0,0,"models/monsters/spider.md2",15},	// S1_SPID_ATK2
+    {SPR1_SPID,32775,4,SA1_SPosAttack,S1_SPID_ATK4,0,0,"models/monsters/spidatk.md2",0},	// S1_SPID_ATK3
+    {SPR1_SPID,32775,1,SA1_SpidRefire,S1_SPID_ATK2,0,0,"models/monsters/spidatk.md2",0},	// S1_SPID_ATK4
+    {SPR1_SPID,8,3,SA1_NULL,S1_SPID_PAIN2,0,0,"models/monsters/spider.md2",16},	// S1_SPID_PAIN
+    {SPR1_SPID,8,3,SA1_Pain,S1_SPID_RUN1,0,0,"models/monsters/spider.md2",17},	// S1_SPID_PAIN2
+    {SPR1_SPID,9,20,SA1_Scream,S1_SPID_DIE2,0,0,"models/monsters/spiddie.md2",0},	// S1_SPID_DIE1
+    {SPR1_SPID,10,10,SA1_Fall,S1_SPID_DIE3,0,0,"models/monsters/spiddie.md2",1},	// S1_SPID_DIE2
+    {SPR1_SPID,11,10,SA1_NULL,S1_SPID_DIE4,0,0,"models/monsters/spiddie.md2",2},	// S1_SPID_DIE3
+    {SPR1_SPID,12,10,SA1_NULL,S1_SPID_DIE5,0,0,"models/monsters/spiddie.md2",3},	// S1_SPID_DIE4
+    {SPR1_SPID,13,10,SA1_NULL,S1_SPID_DIE6,0,0,"models/monsters/spiddie.md2",4},	// S1_SPID_DIE5
+    {SPR1_SPID,14,10,SA1_NULL,S1_SPID_DIE7,0,0,"models/monsters/spiddie.md2",5},	// S1_SPID_DIE6
+    {SPR1_SPID,15,10,SA1_NULL,S1_SPID_DIE8,0,0,"models/monsters/spiddie.md2",6},	// S1_SPID_DIE7
+    {SPR1_SPID,16,10,SA1_NULL,S1_SPID_DIE9,0,0,"models/monsters/spiddie.md2",7},	// S1_SPID_DIE8
+    {SPR1_SPID,17,10,SA1_NULL,S1_SPID_DIE10,0,0,"models/monsters/spiddie.md2",8},	// S1_SPID_DIE9
+    {SPR1_SPID,18,30,SA1_NULL,S1_SPID_DIE11,0,0,"models/monsters/spiddie.md2",9},	// S1_SPID_DIE10
+    {SPR1_SPID,18,-1,SA1_BossDeath,S1_NULL,0,0,"models/monsters/spiddie.md2",10},	// S1_SPID_DIE11
     {SPR1_BSPI,0,10,SA1_Look,S1_BSPI_STND2,0,0},	// S1_BSPI_STND
     {SPR1_BSPI,1,10,SA1_Look,S1_BSPI_STND,0,0},	// S1_BSPI_STND2
     {SPR1_BSPI,0,20,SA1_NULL,S1_BSPI_RUN1,0,0},	// S1_BSPI_SIGHT
@@ -700,33 +706,33 @@ state_t	states[NUMDOOMSTATES] = {
     {SPR1_APBX,32770,5,SA1_NULL,S1_ARACH_PLEX4,0,0},	// S1_ARACH_PLEX3
     {SPR1_APBX,32771,5,SA1_NULL,S1_ARACH_PLEX5,0,0},	// S1_ARACH_PLEX4
     {SPR1_APBX,32772,5,SA1_NULL,S1_NULL,0,0},	// S1_ARACH_PLEX5
-    {SPR1_CYBR,0,10,SA1_Look,S1_CYBER_STND2,0,0},	// S1_CYBER_STND
-    {SPR1_CYBR,1,10,SA1_Look,S1_CYBER_STND,0,0},	// S1_CYBER_STND2
-    {SPR1_CYBR,0,3,SA1_Hoof,S1_CYBER_RUN2,0,0},	// S1_CYBER_RUN1
-    {SPR1_CYBR,0,3,SA1_Chase,S1_CYBER_RUN3,0,0},	// S1_CYBER_RUN2
-    {SPR1_CYBR,1,3,SA1_Chase,S1_CYBER_RUN4,0,0},	// S1_CYBER_RUN3
-    {SPR1_CYBR,1,3,SA1_Chase,S1_CYBER_RUN5,0,0},	// S1_CYBER_RUN4
-    {SPR1_CYBR,2,3,SA1_Chase,S1_CYBER_RUN6,0,0},	// S1_CYBER_RUN5
-    {SPR1_CYBR,2,3,SA1_Chase,S1_CYBER_RUN7,0,0},	// S1_CYBER_RUN6
-    {SPR1_CYBR,3,3,SA1_Metal,S1_CYBER_RUN8,0,0},	// S1_CYBER_RUN7
-    {SPR1_CYBR,3,3,SA1_Chase,S1_CYBER_RUN1,0,0},	// S1_CYBER_RUN8
-    {SPR1_CYBR,4,6,SA1_FaceTarget,S1_CYBER_ATK2,0,0},	// S1_CYBER_ATK1
-    {SPR1_CYBR,5,12,SA1_CyberAttack,S1_CYBER_ATK3,0,0},	// S1_CYBER_ATK2
-    {SPR1_CYBR,4,12,SA1_FaceTarget,S1_CYBER_ATK4,0,0},	// S1_CYBER_ATK3
-    {SPR1_CYBR,5,12,SA1_CyberAttack,S1_CYBER_ATK5,0,0},	// S1_CYBER_ATK4
-    {SPR1_CYBR,4,12,SA1_FaceTarget,S1_CYBER_ATK6,0,0},	// S1_CYBER_ATK5
-    {SPR1_CYBR,5,12,SA1_CyberAttack,S1_CYBER_RUN1,0,0},	// S1_CYBER_ATK6
-    {SPR1_CYBR,6,10,SA1_Pain,S1_CYBER_RUN1,0,0},	// S1_CYBER_PAIN
-    {SPR1_CYBR,7,10,SA1_NULL,S1_CYBER_DIE2,0,0},	// S1_CYBER_DIE1
-    {SPR1_CYBR,8,10,SA1_Scream,S1_CYBER_DIE3,0,0},	// S1_CYBER_DIE2
-    {SPR1_CYBR,9,10,SA1_NULL,S1_CYBER_DIE4,0,0},	// S1_CYBER_DIE3
-    {SPR1_CYBR,10,10,SA1_NULL,S1_CYBER_DIE5,0,0},	// S1_CYBER_DIE4
-    {SPR1_CYBR,11,10,SA1_NULL,S1_CYBER_DIE6,0,0},	// S1_CYBER_DIE5
-    {SPR1_CYBR,12,10,SA1_Fall,S1_CYBER_DIE7,0,0},	// S1_CYBER_DIE6
-    {SPR1_CYBR,13,10,SA1_NULL,S1_CYBER_DIE8,0,0},	// S1_CYBER_DIE7
-    {SPR1_CYBR,14,10,SA1_NULL,S1_CYBER_DIE9,0,0},	// S1_CYBER_DIE8
-    {SPR1_CYBR,15,30,SA1_NULL,S1_CYBER_DIE10,0,0},	// S1_CYBER_DIE9
-    {SPR1_CYBR,15,-1,SA1_BossDeath,S1_NULL,0,0},	// S1_CYBER_DIE10
+    {SPR1_CYBR,0,10,SA1_Look,S1_CYBER_STND2,0,0,"models/monsters/cyber.md2",0},	// S1_CYBER_STND
+    {SPR1_CYBR,1,10,SA1_Look,S1_CYBER_STND,0,0,"models/monsters/cyber.md2",1},	// S1_CYBER_STND2
+    {SPR1_CYBR,0,3,SA1_Hoof,S1_CYBER_RUN2,0,0,"models/monsters/cyber.md2",2},	// S1_CYBER_RUN1
+    {SPR1_CYBR,0,3,SA1_Chase,S1_CYBER_RUN3,0,0,"models/monsters/cyber.md2",3},	// S1_CYBER_RUN2
+    {SPR1_CYBR,1,3,SA1_Chase,S1_CYBER_RUN4,0,0,"models/monsters/cyber.md2",4},	// S1_CYBER_RUN3
+    {SPR1_CYBR,1,3,SA1_Chase,S1_CYBER_RUN5,0,0,"models/monsters/cyber.md2",5},	// S1_CYBER_RUN4
+    {SPR1_CYBR,2,3,SA1_Chase,S1_CYBER_RUN6,0,0,"models/monsters/cyber.md2",6},	// S1_CYBER_RUN5
+    {SPR1_CYBR,2,3,SA1_Chase,S1_CYBER_RUN7,0,0,"models/monsters/cyber.md2",7},	// S1_CYBER_RUN6
+    {SPR1_CYBR,3,3,SA1_Metal,S1_CYBER_RUN8,0,0,"models/monsters/cyber.md2",8},	// S1_CYBER_RUN7
+    {SPR1_CYBR,3,3,SA1_Chase,S1_CYBER_RUN1,0,0,"models/monsters/cyber.md2",9},	// S1_CYBER_RUN8
+    {SPR1_CYBR,4,6,SA1_FaceTarget,S1_CYBER_ATK2,0,0,"models/monsters/cyber.md2",10},	// S1_CYBER_ATK1
+    {SPR1_CYBR,5,12,SA1_CyberAttack,S1_CYBER_ATK3,0,0,"models/monsters/cyberatk.md2",0},	// S1_CYBER_ATK2
+    {SPR1_CYBR,4,12,SA1_FaceTarget,S1_CYBER_ATK4,0,0,"models/monsters/cyber.md2",10},	// S1_CYBER_ATK3
+    {SPR1_CYBR,5,12,SA1_CyberAttack,S1_CYBER_ATK5,0,0,"models/monsters/cyberatk.md2",0},	// S1_CYBER_ATK4
+    {SPR1_CYBR,4,12,SA1_FaceTarget,S1_CYBER_ATK6,0,0,"models/monsters/cyber.md2",10},	// S1_CYBER_ATK5
+    {SPR1_CYBR,5,12,SA1_CyberAttack,S1_CYBER_RUN1,0,0,"models/monsters/cyberatk.md2",0},	// S1_CYBER_ATK6
+    {SPR1_CYBR,6,10,SA1_Pain,S1_CYBER_RUN1,0,0,"models/monsters/cyber.md2",11},	// S1_CYBER_PAIN
+    {SPR1_CYBR,7,10,SA1_NULL,S1_CYBER_DIE2,0,0,"models/monsters/cyberdie.md2",0},	// S1_CYBER_DIE1
+    {SPR1_CYBR,8,10,SA1_Scream,S1_CYBER_DIE3,0,0,"models/monsters/cyberdie.md2",1},	// S1_CYBER_DIE2
+    {SPR1_CYBR,9,10,SA1_NULL,S1_CYBER_DIE4,0,0,"models/monsters/cyberdie.md2",2},	// S1_CYBER_DIE3
+    {SPR1_CYBR,10,10,SA1_NULL,S1_CYBER_DIE5,0,0,"models/monsters/cyberdie.md2",3},	// S1_CYBER_DIE4
+    {SPR1_CYBR,11,10,SA1_NULL,S1_CYBER_DIE6,0,0,"models/monsters/cyberdie.md2",4},	// S1_CYBER_DIE5
+    {SPR1_CYBR,12,10,SA1_Fall,S1_CYBER_DIE7,0,0,"models/monsters/cyberdie.md2",5},	// S1_CYBER_DIE6
+    {SPR1_CYBR,13,10,SA1_NULL,S1_CYBER_DIE8,0,0,"models/monsters/cyberdie.md2",6},	// S1_CYBER_DIE7
+    {SPR1_CYBR,14,10,SA1_NULL,S1_CYBER_DIE9,0,0,"models/monsters/cyberdie.md2",7},	// S1_CYBER_DIE8
+    {SPR1_CYBR,15,30,SA1_NULL,S1_CYBER_DIE10,0,0,"models/monsters/cyberdie.md2",8},	// S1_CYBER_DIE9
+    {SPR1_CYBR,15,-1,SA1_BossDeath,S1_NULL,0,0,"models/monsters/cyberdie.md2",9},	// S1_CYBER_DIE10
     {SPR1_PAIN,0,10,SA1_Look,S1_PAIN_STND,0,0},	// S1_PAIN_STND
     {SPR1_PAIN,0,3,SA1_Chase,S1_PAIN_RUN2,0,0},	// S1_PAIN_RUN1
     {SPR1_PAIN,0,3,SA1_Chase,S1_PAIN_RUN3,0,0},	// S1_PAIN_RUN2

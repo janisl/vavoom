@@ -7,10 +7,10 @@ all: clprogs.dat svprogs.dat
 del:
 	rm clprogs.dat svprogs.dat
 
-clprogs.dat: clprogs.c ../doom/*.c ../doom/client/*.c ../common/*.c
+clprogs.dat: clprogs.vc ../doom/*.vc ../doom/client/*.vc ../common/*.vc
 	$(VCC) -I../doom/client clprogs
 
-svprogs.dat: svprogs.c ../doom/*.c ../doom/server/*.c ../common/*.c
+svprogs.dat: svprogs.vc ../doom/*.vc ../doom/server/*.vc ../common/*.vc
 	$(VCC) -I../doom/server svprogs
 
 info:

@@ -7,6 +7,8 @@
 //**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**	   #    ##    ##    #      ####     ####   ##       ##
 //**
+//**	$Id$
+//**
 //**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
@@ -18,7 +20,11 @@
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
-//**	
+//**
+//**	$Log$
+//**	Revision 1.2  2001/07/27 14:27:53  dj_jl
+//**	Update with Id-s and Log-s, some fixes
+//**
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
@@ -89,7 +95,7 @@ static void CL_ReadMobjBase(clmobj_t &mobj)
 	mobj.translation = net_msg.ReadByte();
 	mobj.floorclip = net_msg.ReadShort();
 	mobj.effects = net_msg.ReadByte();
-	mobj.alias_model = model_precache[net_msg.ReadShort()];
+	mobj.model_index = net_msg.ReadShort();
 	mobj.alias_frame = net_msg.ReadByte();
 	mobj.spritetype = mobj.sprite >> 10;
 	mobj.sprite &= 0x3ff;
@@ -162,10 +168,11 @@ static void CL_ReadMobj(int bits, clmobj_t &mobj, const clmobj_t &base)
 	else
 		mobj.effects = base.effects;
 	if (bits & MOB_MODEL)
-		mobj.alias_model = model_precache[net_msg.ReadShort()];
+		mobj.model_index = net_msg.ReadShort();
 	else
-		mobj.alias_model = base.alias_model;
-	if (mobj.alias_model && (bits & MOB_FRAME))
+		mobj.model_index = base.model_index;
+	mobj.alias_model = model_precache[mobj.model_index];
+	if (mobj.model_index && (bits & MOB_FRAME))
 		mobj.alias_frame = net_msg.ReadByte();
 	else
 		mobj.alias_frame = base.alias_frame;

@@ -7,6 +7,8 @@
 //**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**	   #    ##    ##    #      ####     ####   ##       ##
 //**
+//**	$Id$
+//**
 //**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
@@ -18,16 +20,17 @@
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
-//**	
+//**
+//**	$Log$
+//**	Revision 1.2  2001/07/27 14:27:54  dj_jl
+//**	Update with Id-s and Log-s, some fixes
+//**
 //**************************************************************************
 //**
 //**	INTERNAL DATA TYPES
 //**  used by play and refresh
 //**
 //**************************************************************************
-
-#ifndef _LEVEL_H
-#define _LEVEL_H
 
 // HEADER FILES ------------------------------------------------------------
 
@@ -660,4 +663,3 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-#endif

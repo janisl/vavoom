@@ -7,6 +7,8 @@
 //**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**	   #    ##    ##    #      ####     ####   ##       ##
 //**
+//**	$Id$
+//**
 //**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
@@ -18,7 +20,11 @@
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
-//**	
+//**
+//**	$Log$
+//**	Revision 1.2  2001/07/27 14:27:53  dj_jl
+//**	Update with Id-s and Log-s, some fixes
+//**
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
@@ -870,6 +876,10 @@ void TDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	SetSkin(pskindesc->name);
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_SHADEMODE, D3DSHADE_GOURAUD);
+	if (translucency)
+	{
+		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
+	}
 
 	verts = (trivertx_t *)(pframedesc + 1);
 	order = (int *)((byte *)pmdl + pmdl->ofscmds);
@@ -912,6 +922,10 @@ void TDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	}
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_SHADEMODE, D3DSHADE_FLAT);
+	if (translucency)
+	{
+		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
+	}
 
 	RenderDevice->SetTransform(D3DTRANSFORMSTATE_WORLD, &IdentityMatrix);
 }

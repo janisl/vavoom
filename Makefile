@@ -5,7 +5,7 @@
 #---------------------------------------
 
 # Uncomment to compile a debug version
-#DEBUG = 1
+DEBUG = 1
 
 # Uncomment to compile without OpenGL driver
 #NOGL = 1
@@ -42,7 +42,7 @@ SYS_OBJS = \
 	obj/net_ipx.o \
 	obj/net_mp.o \
 	obj/npxsetup.o \
-	obj/sys_dosa.o \
+	obj/sys_i386.o \
 	obj/sys_dos.o
 ifndef NOGL
 SYS_OBJS += obj/gl_alleg.o
@@ -54,7 +54,7 @@ SYS_OBJS = \
 	obj/in_alleg.o \
 	obj/net_bsd.o \
 	obj/net_udp.o \
-	obj/sys_lina.o \
+	obj/sys_i386.o \
 	obj/sys_lin.o
 ifndef NOGL
 SYS_OBJS += obj/gl_x.o
@@ -256,20 +256,21 @@ WAD_FILES = \
 
 # ---------------------------------------
 
+C_ARGS   = -c -W -Wall -mpentiumpro -ffast-math
+CPP_ARGS = -c -W -Wall -mpentiumpro -ffast-math -fno-rtti -fno-exceptions
+ASM_ARGS = -c -W -Wall -x assembler-with-cpp
+LINK_ARGS = -Wall
+
 ifdef DEBUG
 
-C_ARGS = -W -Wall -O3 -ffast-math -fomit-frame-pointer -c
-CPP_ARGS = -W -Wall -O -ffast-math -g -fno-rtti -fno-exceptions -c
-ASM_ARGS = -x assembler-with-cpp -W -Wall -c
-LINK_ARGS = -Wall
+C_ARGS   += -O -g
+CPP_ARGS += -O -g
 
 else
 
-C_ARGS = -W -Wall -O3 -ffast-math -fomit-frame-pointer -mpentiumpro -c
-CPP_ARGS = -W -Wall -O3 -ffast-math -fomit-frame-pointer \
-	-fno-rtti -fno-exceptions -mpentiumpro -c
-ASM_ARGS = -x assembler-with-cpp -W -Wall -c
-LINK_ARGS = -Wall -s
+C_ARGS   += -O3 -fomit-frame-pointer
+CPP_ARGS += -O3 -fomit-frame-pointer
+LINK_ARGS += -s
 
 endif
 
@@ -279,7 +280,7 @@ endif
 
 # ---------------------------------------
 
-all: exe data
+all: exe utils data
 
 exe: Vavoom$(EXE)
 
@@ -383,16 +384,14 @@ ASM_FILES = \
 	source/d32_span.asm \
 	source/d32_spr.asm \
 	source/d32_surf.asm \
-	source/pr_execa.asm
+	source/pr_execa.asm \
+	source/sys_i386.asm
 
 asm: $(ASM_FILES)
 
 source/%.asm : source/%.s source/asm_i386.h source/gas2tasm.exe
-	gcc -x assembler-with-cpp -E -P -DGAS2TASM $< -o source/temp.i
-	cp source/template.asm $@
-	source/gas2tasm.exe < source/temp.i >> $@
-	rm source/temp.i
+	gcc -x assembler-with-cpp -E -P -DGAS2TASM $< -o - | source/gas2tasm.exe > $@
 
 source/gas2tasm.exe : source/gas2tasm.c
-	gcc -O3 -ffast-math -fomit-frame-pointer -m486 -s -o $@ $<
+	gcc -O3 -ffast-math -fomit-frame-pointer -s -o $@ $<
 
