@@ -42,7 +42,7 @@ void A_Punch(void)
 	if (Player->Powers[pw_strength])
 		damage *= 10;
 
-	avcpy(Player->MO.Angles, angles);
+	angles = Player->MO.Angles;
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
 	dir = AimLineAttack(Player->MO, angles, MELEERANGE);
@@ -95,6 +95,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/03/08 12:42:31  dj_jl
+//  Removed old macro.
+//
 //  Revision 1.1  2002/11/02 08:20:57  dj_jl
 //  New style classes.
 //

@@ -40,7 +40,7 @@ void A_SnoutAttack(void)
 	TVec vforward;
 
 	damage = 3 + (P_Random() & 3);
-	avcpy(Player->MO.Angles, angles);
+	angles = Player->MO.Angles;
 	AimLineAttack(Player->MO, &angles, MELEERANGE);
 	PuffType = SnoutPuff;
 	PuffSpawned = none;
@@ -95,6 +95,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/03/08 12:42:31  dj_jl
+//  Removed old macro.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //
