@@ -360,8 +360,7 @@ static void CL_ParseViewData(void)
 
 	cl.health = net_msg.ReadByte();
 	net_msg >> cl.items;
-	for (i = 0; i < MAXPLAYERS; i++)
-		cl.frags[i] = (char)net_msg.ReadByte();
+	cl.Frags = net_msg.ReadShort();
 
 	bits = net_msg.ReadByte();
 	for (i = 0; i < NUM_CSHIFTS; i++)
@@ -1030,9 +1029,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2002/06/29 16:00:45  dj_jl
+//	Added total frags count.
+//
 //	Revision 1.25  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.24  2002/03/28 17:59:04  dj_jl
 //	Fixed negative frags.
 //	

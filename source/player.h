@@ -119,7 +119,8 @@ struct player_t
 	int				Items;
 
     // Frags, kills of other players.
-    int				Frags[MAXPLAYERS];
+	int				Frags;
+    int				FragsStats[MAXPLAYERS];
 
     // For intermission stats.
     int				KillCount;
@@ -158,9 +159,12 @@ struct player_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/06/29 16:00:45  dj_jl
+//	Added total frags count.
+//
 //	Revision 1.13  2002/03/09 18:05:34  dj_jl
 //	Added support for defining native functions outside pr_cmds
-//
+//	
 //	Revision 1.12  2002/02/22 18:09:52  dj_jl
 //	Some improvements, beautification.
 //	

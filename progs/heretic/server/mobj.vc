@@ -355,11 +355,13 @@ void Actor::Kill(Actor source)
 			if (self == source)
 			{
 				// Self-frag
-				Player->Frags[P_GetPlayerNum(Player)]--;
+				Player->FragsStats[P_GetPlayerNum(Player)]--;
+				Player->Frags--;
 			}
 			else
 			{
-				source.Player->Frags[P_GetPlayerNum(Player)]++;
+				source.Player->FragsStats[P_GetPlayerNum(Player)]++;
+				source.Player->Frags++;
 				source.PlaySound('Frag', CHAN_ITEM);
 				if (source.Player->ChickenTics)
 				{
@@ -379,7 +381,8 @@ void Actor::Kill(Actor source)
 		if (!source)
 		{
 			// Self-frag
-			Player->Frags[P_GetPlayerNum(Player)]--;
+			Player->FragsStats[P_GetPlayerNum(Player)]--;
+			Player->Frags--;
 		}
 		bSolid = false;
 		bFly = false;
@@ -1402,6 +1405,9 @@ void Actor::NightmareRespawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.44  2002/06/29 15:58:14  dj_jl
+//  Added total frags count.
+//
 //  Revision 1.43  2002/06/22 07:16:00  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //

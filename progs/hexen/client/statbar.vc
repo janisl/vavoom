@@ -39,7 +39,6 @@ int sb_pclass;
 int sb_color;
 
 int HealthMarker;
-int sb_frags;
 int sb_health;
 
 boolean hitCenterFrame;
@@ -461,7 +460,7 @@ void SB_DrawMainBar(void)
 	if (deathmatch)
 	{
 		R_DrawPic(38, 162, pic_kills);
-		SB_DrawNumber9(40, 176, sb_frags, 0);
+		SB_DrawNumber9(40, 176, cl->Frags, 0);
 	}
 	else
 	{
@@ -674,7 +673,7 @@ void SB_DrawFullscreenStats(void)
 	//  Frags
 	if (deathmatch)
 	{
-		SB_DrawNumber9(45, 185, sb_frags, 0);
+		SB_DrawNumber9(45, 185, cl->Frags, 0);
 	}
 
 	if (cl->InventoryTime)
@@ -790,16 +789,6 @@ void SB_Drawer(int sb_view)
 {
 	int i;
 
-	// Frags
-	if (deathmatch)
-	{
-		sb_frags = 0;
-		for (i = 0; i < MAXPLAYERS; i++)
-		{
-			sb_frags += cl->frags[i];
-		}
-	}
-
 	if (sb_view == SB_VIEW_FULLSCREEN)
 	{
 		SB_DrawFullscreenStats();
@@ -870,6 +859,9 @@ void SB_UpdateWidgets(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/06/29 15:58:14  dj_jl
+//  Added total frags count.
+//
 //  Revision 1.12  2002/03/16 17:49:35  dj_jl
 //  Beautification.
 //

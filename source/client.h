@@ -133,7 +133,7 @@ struct client_state_t
 	int				items;
 
     // Frags, kills of other players.
-    int				frags[MAXPLAYERS];
+    int				Frags;
 
     // So gun flashes light up areas.
     int				extralight;
@@ -272,9 +272,12 @@ extern TProgs			clpr;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/06/29 16:00:45  dj_jl
+//	Added total frags count.
+//
 //	Revision 1.8  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.7  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	

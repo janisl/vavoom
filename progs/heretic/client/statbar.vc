@@ -39,8 +39,6 @@ int sb_height = 42;
 int HealthMarker;
 int ChainWiggle;
 
-int sb_frags;
-
 boolean hitCenterFrame;
 
 // Graphics
@@ -325,7 +323,7 @@ void SB_DrawMainBar(void)
 		//  Frags / Health
 		if (deathmatch)
 		{
-			SB_DrawNumber9(61, 170, sb_frags);
+			SB_DrawNumber9(61, 170, cl->Frags);
 		}
 		else
 		{
@@ -413,7 +411,7 @@ void SB_DrawFullscreenStats(void)
 	//  Frags
 	if (deathmatch)
 	{
-		SB_DrawNumber9(45, 185, sb_frags);
+		SB_DrawNumber9(45, 185, cl->Frags);
 	}
 
 	//  Ammo
@@ -549,11 +547,6 @@ void SB_UpdateWidgets(void)
 	{
 		ChainWiggle = P_Random() & 1;
 	}
-	sb_frags = 0;
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		sb_frags += cl->frags[i];
-	}
 
 	curHealth = cl->health;
 	if (curHealth < 0)
@@ -591,6 +584,9 @@ void SB_UpdateWidgets(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/06/29 15:58:14  dj_jl
+//  Added total frags count.
+//
 //  Revision 1.10  2002/03/20 19:07:46  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

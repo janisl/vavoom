@@ -145,9 +145,6 @@ int sb_height = 32;
 //  WIDGET DATA
 //
 
-// number of frags so far in deathmatch
-int st_fragscount;
-
 // current face index, used by w_faces
 int st_faceindex = 0;
 
@@ -363,7 +360,7 @@ void SB_DrawMainBar(void)
 	if (deathmatch)
 	{
 		// frags sum
-		SB_DrawTallNum(ST_FRAGSX, ST_FRAGSY, st_fragscount, 0, false);
+		SB_DrawTallNum(ST_FRAGSX, ST_FRAGSY, cl->Frags, 0, false);
 	}
 	else
 	{
@@ -455,7 +452,7 @@ void SB_DrawFullscreenStats(void)
 	if (deathmatch)
 	{
 		// frags sum
-		SB_DrawTallNum(315, 5, st_fragscount, 40, false);
+		SB_DrawTallNum(315, 5, cl->Frags, 40, false);
 	}
 }
 
@@ -699,23 +696,16 @@ void UpdateFaceWidget(void)
 
 void SB_UpdateWidgets(void)
 {
-	int i;
-
 	//  Update widget data
-	st_fragscount = 0;
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (i != cl->clientnum)
-			st_fragscount += cl->frags[i];
-		else
-			st_fragscount -= cl->frags[i];
-	}
 	UpdateFaceWidget();
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/06/29 15:58:14  dj_jl
+//  Added total frags count.
+//
 //  Revision 1.10  2002/06/14 15:51:20  dj_jl
 //  A lots of changes, new functions etc for DDF.
 //

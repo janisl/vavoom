@@ -764,9 +764,8 @@ void SV_WriteViewData(player_t &player, TMessage &msg)
 	}
 
 	msg << (byte)player.Health
-		<< player.Items;
-	for (i = 0; i < MAXPLAYERS; i++)
-		msg << (byte)player.Frags[i];
+		<< player.Items
+		<< (short)player.Frags;
 
 	int bits = 0;
 	for (i = 0; i < NUM_CSHIFTS; i++)
@@ -1529,7 +1528,7 @@ static void G_DoCompleted(void)
 	{
 		sv_reliable << (byte)players[i].bActive;
 		for (j = 0; j < MAXPLAYERS; j++)
-			sv_reliable << (byte)players[i].Frags[j];
+			sv_reliable << (byte)players[i].FragsStats[j];
 		sv_reliable << (short)players[i].KillCount
 					<< (short)players[i].ItemCount
 					<< (short)players[i].SecretCount;
@@ -1964,7 +1963,8 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 
 			players[i].bSpawned = false;
 			players[i].MO = NULL;
-			memset(players[i].Frags, 0, sizeof(players[i].Frags));
+			players[i].Frags = 0;
+			memset(players[i].FragsStats, 0, sizeof(players[i].FragsStats));
 			if (players[i].PlayerState == PST_DEAD)
 				players[i].PlayerState = PST_REBORN;
 			players[i].Message.Clear();
@@ -2432,7 +2432,8 @@ void SV_ConnectClient(player_t *player)
 		player->PlayerState = PST_REBORN;
 		svpr.Exec("PutClientIntoServer", (int)player);
 	}
-	memset(player->Frags, 0, sizeof(player->Frags));
+	player->Frags = 0;
+	memset(player->FragsStats, 0, sizeof(player->FragsStats));
 
 	SV_SendServerInfo(player);
 }
@@ -2788,9 +2789,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.43  2002/06/29 16:00:45  dj_jl
+//	Added total frags count.
+//
 //	Revision 1.42  2002/06/14 15:37:47  dj_jl
 //	Added FOutputDevice code for dedicated server.
-//
+//	
 //	Revision 1.41  2002/03/28 18:03:24  dj_jl
 //	Hack for single player, added SV_GetModelIndex
 //	

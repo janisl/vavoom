@@ -1374,66 +1374,51 @@ static void AM_DrawDeathmatchStats(void)
 {
 #ifdef FIXME
 	int i, j, k, m;
-	int fragCount[MAXPLAYERS];
 	int order[MAXPLAYERS];
 	char textBuffer[80];
 	int yPosition;
 
-	for(i = 0; i < MAXPLAYERS; i++)
+	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		fragCount[i] = 0;
 		order[i] = -1;
 	}
 	for(i = 0; i < MAXPLAYERS; i++)
 	{
-		if(!playeringame[i])
+		if (!playeringame[i])
 		{
 			continue;
 		}
-		else
+		for (k = 0; k < MAXPLAYERS; k++)
 		{
-			for(j = 0; j < MAXPLAYERS; j++)
+			if (order[k] == -1)
 			{
-				if(playeringame[j])
-				{
-					fragCount[i] += players[i].frags[j];
-				}
+				order[k] = i;
+				break;
 			}
-			for(k = 0; k < MAXPLAYERS; k++)
+			else if (players[i].Frags > players[order[k]].Frags)
 			{
-				if(order[k] == -1)
+				for(m = MAXPLAYERS-1; m > k; m--)
 				{
-					order[k] = i;
-					break;
+					 order[m] = order[m-1];
 				}
-				else if(fragCount[i] > fragCount[order[k]])
-				{
-					for(m = MAXPLAYERS-1; m > k; m--)
-					{
-						 order[m] = order[m-1];
-					}
-					order[k] = i;
-					break;
-				}
+				order[k] = i;
+				break;
 			}
 		}
 	}
 	yPosition = 15;
-	for(i = 0; i < MAXPLAYERS; i++)
+	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if(!playeringame[order[i]])
+		if (!playeringame[order[i]])
 		{
 			continue;
 		}
-		else
-		{
-			T_SetFont(font_small);
-		    T_SetAlign(hleft, vtop);
-		    T_DrawString(8, yPosition, PlayerName[order[i]]);
-			sprintf(textBuffer, "%d", fragCount[order[i]]);
-		    T_DrawString(80, yPosition, textBuffer);
-			yPosition += 10;
-		}
+		T_SetFont(font_small);
+	    T_SetAlign(hleft, vtop);
+	    T_DrawString(8, yPosition, PlayerName[order[i]]);
+		sprintf(textBuffer, "%d", players[order[i]].Frags);
+	    T_DrawString(80, yPosition, textBuffer);
+		yPosition += 10;
 	}
 #endif
 }
@@ -1537,9 +1522,12 @@ void AM_Drawer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/06/29 16:00:45  dj_jl
+//	Added total frags count.
+//
 //	Revision 1.10  2002/01/25 18:08:19  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.9  2002/01/15 18:30:43  dj_jl
 //	Some fixes and improvements suggested by Malcolm Nixon
 //	

@@ -620,7 +620,8 @@ struct player_t
 	int Items;
 
 	// Frags, kills of other players.
-	int Frags[MAXPLAYERS];
+	int Frags;
+	int FragsStats[MAXPLAYERS];
 
 	// For intermission stats.
 	int KillCount;
@@ -817,7 +818,7 @@ struct client_state_t
 	int items;
 
 	// Frags, kills of other players.
-	int frags[MAXPLAYERS];
+	int Frags;
 
 	// So gun flashes light up areas.
 	int extralight;
@@ -978,6 +979,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.39  2002/06/29 15:58:14  dj_jl
+//  Added total frags count.
+//
 //  Revision 1.38  2002/06/14 15:44:44  dj_jl
 //  Added state names to the states.
 //
