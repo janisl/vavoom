@@ -487,7 +487,12 @@ static void ProcessLetterToken(void)
 		break;
 
 	case 'a':
-		if (!strcmp(tk_String, "addfields"))
+		if (!strcmp(tk_String, "abstract"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_ABSTRACT;
+		}
+		else if (!strcmp(tk_String, "addfields"))
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_ADDFIELDS;
@@ -1177,9 +1182,12 @@ void TK_Expect(Punctuation punct, error_t error)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/03/12 19:17:30  dj_jl
+//	Added keyword abstract
+//
 //	Revision 1.16  2002/02/16 16:28:36  dj_jl
 //	Added support for bool variables
-//
+//	
 //	Revision 1.15  2002/01/17 18:19:52  dj_jl
 //	New style of adding to mobjinfo, some fixes
 //	

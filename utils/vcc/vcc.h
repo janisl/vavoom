@@ -169,6 +169,7 @@ enum Keyword
 {
 	KW_STATES = 1,
 	KW_MOBJINFO,
+	KW_ABSTRACT,
 	KW_ADDFIELDS,
 	KW_BOOL,
 	KW_BREAK,
@@ -654,9 +655,12 @@ inline bool TK_Check(Punctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2002/03/12 19:17:30  dj_jl
+//	Added keyword abstract
+//
 //	Revision 1.22  2002/02/26 17:52:20  dj_jl
 //	Exporting special property info into progs.
-//
+//	
 //	Revision 1.21  2002/02/16 16:28:36  dj_jl
 //	Added support for bool variables
 //	

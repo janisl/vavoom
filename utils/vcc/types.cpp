@@ -934,12 +934,25 @@ void ParseClass(void)
 		}
 	}
 
-	if (TK_Check(KW_MOBJINFO))
+	do
 	{
-		TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-		AddToMobjInfo(EvalConstExpression(ev_int), class_type->classid);
-		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-	}
+		if (TK_Check(KW_MOBJINFO))
+		{
+			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+			AddToMobjInfo(EvalConstExpression(ev_int), class_type->classid);
+			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+		}
+		else if (TK_Check(KW_NATIVE))
+		{
+		}
+		else if (TK_Check(KW_ABSTRACT))
+		{
+		}
+		else
+		{
+			break;
+		}
+	} while (1);
 
    	class_type->available_size = 0;
    	class_type->available_ofs = 0;
@@ -1491,9 +1504,12 @@ void AddVirtualTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2002/03/12 19:17:30  dj_jl
+//	Added keyword abstract
+//
 //	Revision 1.23  2002/02/26 17:52:20  dj_jl
 //	Exporting special property info into progs.
-//
+//	
 //	Revision 1.22  2002/02/16 16:28:36  dj_jl
 //	Added support for bool variables
 //	
