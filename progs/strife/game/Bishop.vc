@@ -23,13 +23,30 @@
 //**
 //**************************************************************************
 
-class Bishop:Pawn
+class Bishop : Pawn
 	__mobjinfo__(187);
 
-void A_BishopAttack(void)
+//==========================================================================
+//
+//	A_BishopAttack
+//
+//==========================================================================
+
+void A_BishopAttack()
 {
+	Actor missile;
+
+	if (!Enemy)
+		return;
+
+	missile = SpawnMissileZ(64.0, Enemy, RobotMissile2);
+	if (missile)
+	{
+		missile.Enemy = Enemy;
+	}
 }
-void A_BishopDeath(void)
+
+void A_BishopDeath()
 {
 }
 
@@ -90,6 +107,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/01/29 07:25:05  dj_jl
+//  Implemented many action functions
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

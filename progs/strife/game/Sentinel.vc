@@ -23,11 +23,39 @@
 //**
 //**************************************************************************
 
-class Sentinel:Pawn
+class Sentinel : Pawn
 	__mobjinfo__(3006);
 
-void A_SentinelAttack(void)
+//==========================================================================
+//
+//	A_SentinelAttack
+//
+//==========================================================================
+
+void A_SentinelAttack()
 {
+	int i;
+	Actor missile;
+	Actor trail;
+
+	missile = SpawnMissileZ(32.0, Enemy, SentinelShot);
+	if (missile && (missile.Velocity.x || missile.Velocity.y))
+	{
+		for (i = 8; i > 1; i--)
+		{
+			trail = Spawn(SentinelShotTrail, vector(
+				Origin.x + missile.Radius * itof(i) * cos(missile.Angles.yaw),
+				Origin.y + missile.Radius * itof(i) * sin(missile.Angles.yaw),
+				missile.Origin.z + (missile.Velocity.z / 35.0 / 4.0 * itof(i))));
+			if (trail)
+			{
+				trail.Instigator = self;
+				trail.Velocity = missile.Velocity;
+				trail.CheckMissileSpawn();
+			}
+		}
+		missile.Origin.z += missile.Velocity.z / 35.0 / 4.0;
+	}
 }
 
 __states__
@@ -75,6 +103,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/01/29 07:25:40  dj_jl
+//  Implemented many action functions
+//
 //  Revision 1.1  2002/11/02 08:20:57  dj_jl
 //  New style classes.
 //
