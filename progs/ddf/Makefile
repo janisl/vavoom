@@ -7,7 +7,7 @@ OUTDIR=.
 endif
 
 ifndef COMMON_DIR
-COMMON_DIR=../common
+COMMON_DIR=../../progs/common
 endif
 
 all: $(OUTDIR)/clprogs.dat $(OUTDIR)/svprogs.dat
@@ -17,11 +17,11 @@ svprogs: $(OUTDIR)/svprogs.dat
 del:
 	rm $(OUTDIR)/clprogs.dat $(OUTDIR)/svprogs.dat
 
-$(OUTDIR)/clprogs.dat: clprogs.vc ../doom/*.vc ../doom/client/*.vc $(COMMON_DIR)/*.vc
-	$(VCC) -I$(COMMON_DIR) -I../doom/client clprogs.vc $@
+$(OUTDIR)/clprogs.dat: clprogs.vc ../../progs/doom/*.vc ../../progs/doom/client/*.vc $(COMMON_DIR)/*.vc
+	$(VCC) -I$(COMMON_DIR) -I../../progs/doom/client clprogs.vc $@
 
-$(OUTDIR)/svprogs.dat: *.vc ../doom/*.vc ../doom/server/*.vc $(COMMON_DIR)/*.vc
-	$(VCC) -I$(COMMON_DIR) -I../doom/server svprogs.vc $@
+$(OUTDIR)/svprogs.dat: *.vc ../../progs/doom/*.vc ../../progs/doom/server/*.vc $(COMMON_DIR)/*.vc
+	$(VCC) -I$(COMMON_DIR) -I../../progs/doom/server svprogs.vc $@
 
 #---------------------------------------
 # Debugging

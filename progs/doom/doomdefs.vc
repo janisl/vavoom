@@ -44,7 +44,11 @@ enum
 	wp_grenade,
 #endif
 
+#ifdef DDF
+	NUMWEAPONS = 32,
+#else
 	NUMWEAPONS,
+#endif
 
 	// No pending weapon change.
 	wp_nochange
@@ -96,13 +100,12 @@ addfields client_state_t
 	sb_stats_t stats;
 
 	int ammo[NUMAMMO];
+	int maxammo[NUMAMMO];
 	int ready_ammo;
 
 	boolean weaponowned[NUMWEAPONS];
 
 	int armorpoints;
-
-	boolean backpack;
 
 	int readyweapon;
 
@@ -139,6 +142,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/06/14 15:51:20  dj_jl
+//  A lots of changes, new functions etc for DDF.
+//
 //  Revision 1.11  2002/05/18 16:59:58  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

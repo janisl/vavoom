@@ -30,7 +30,6 @@
 #include <client.vc>
 
 #include "../doomdefs.vc"
-#include "../gendefs.vc"
 
 #ifndef DOOM2
 boolean ExtendedWAD;
@@ -76,6 +75,9 @@ boolean ExtendedWAD;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/06/14 15:51:20  dj_jl
+//  A lots of changes, new functions etc for DDF.
+//
 //  Revision 1.11  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

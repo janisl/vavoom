@@ -25,11 +25,44 @@
 
 //**************************************************************************
 //
+//	ArmorPickup
+//
+//**************************************************************************
+
+class ArmorPickup:Pickup
+	abstract
+{
+
+int ArmorClass;
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+boolean HandlePickup(Actor Toucher)
+{
+	if (!Toucher.GiveArmor(ArmorClass))
+		return false;
+	cprint(Toucher.Player, PickupMessage);
+	Toucher.PlaySound('PickupItem', CHAN_ITEM);
+	return true;
+}
+
+defaultproperties
+{
+}
+
+}
+
+//**************************************************************************
+//
 //	ItemArmor1
 //
 //**************************************************************************
 
-class ItemArmor1:Pickup
+class ItemArmor1:ArmorPickup
 	__mobjinfo__(2018)
 {
 
@@ -42,6 +75,8 @@ __states__
 defaultproperties
 {
 	IdleState = S_ARM1;
+	ArmorClass = 1;
+	PickupMessage = "Picked up the armor.";
 }
 
 }
@@ -52,7 +87,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemArmor2:Pickup
+class ItemArmor2:ArmorPickup
 	__mobjinfo__(2019)
 {
 
@@ -65,6 +100,8 @@ __states__
 defaultproperties
 {
 	IdleState = S_ARM2;
+	ArmorClass = 2;
+	PickupMessage = "Picked up the MegaArmor!";
 }
 
 }
@@ -78,6 +115,23 @@ defaultproperties
 class ItemHealthBonus:Pickup
 	__mobjinfo__(2014)
 {
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+boolean HandlePickup(Actor Toucher)
+{
+	Toucher.Player->Health++;	// can go over 100%
+	if (Toucher.Player->Health > 200)
+		Toucher.Player->Health = 200;
+	Toucher.Health = Toucher.Player->Health;
+	cprint(Toucher.Player, PickupMessage);
+	Toucher.PlaySound('PickupItem', CHAN_ITEM);
+	return true;
+}
 
 __states__
 {
@@ -94,6 +148,7 @@ defaultproperties
 	Translucency = 33;
 	bCountItem = true;
 	IdleState = S_BON1;
+	PickupMessage = "Picked up a health bonus.";
 }
 
 }
@@ -107,6 +162,24 @@ defaultproperties
 class ItemArmorBonus:Pickup
 	__mobjinfo__(2015)
 {
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+boolean HandlePickup(Actor Toucher)
+{
+	Toucher.Player->ArmorPoints++;	// can go over 100%
+	if (Toucher.Player->ArmorPoints > 200)
+		Toucher.Player->ArmorPoints = 200;
+	if (!Toucher.Player->ArmorType)
+		Toucher.Player->ArmorType = 1;
+	cprint(Toucher.Player, PickupMessage);
+	Toucher.PlaySound('PickupItem', CHAN_ITEM);
+	return true;
+}
 
 __states__
 {
@@ -122,6 +195,42 @@ defaultproperties
 {
 	bCountItem = true;
 	IdleState = S_BON2;
+	PickupMessage = "Picked up an armor bonus.";
+}
+
+}
+
+//**************************************************************************
+//
+//	KeyPickup
+//
+//**************************************************************************
+
+class KeyPickup:Pickup
+	abstract
+{
+
+int KeyType;
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+boolean HandlePickup(Actor Toucher)
+{
+	if (Toucher.GiveCard(KeyType))
+		cprint(Toucher.Player, PickupMessage);
+	if (netgame)
+		return false;
+	Toucher.PlaySound('PickupItem', CHAN_ITEM);
+	return true;
+}
+
+defaultproperties
+{
+	bNoDeathmatch = true;
 }
 
 }
@@ -132,7 +241,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemKeyBlueCard:Pickup
+class ItemKeyBlueCard:KeyPickup
 	__mobjinfo__(5)
 {
 
@@ -144,8 +253,9 @@ __states__
 
 defaultproperties
 {
-	bNoDeathmatch = true;
 	IdleState = S_BKEY;
+	KeyType = it_bluecard;
+	PickupMessage = "Picked up a blue keycard.";
 }
 
 }
@@ -156,7 +266,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemKeyRedCard:Pickup
+class ItemKeyRedCard:KeyPickup
 	__mobjinfo__(13)
 {
 
@@ -168,8 +278,9 @@ __states__
 
 defaultproperties
 {
-	bNoDeathmatch = true;
 	IdleState = S_RKEY;
+	KeyType = it_redcard;
+	PickupMessage = "Picked up a red keycard.";
 }
 
 }
@@ -180,7 +291,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemKeyYellowCard:Pickup
+class ItemKeyYellowCard:KeyPickup
 	__mobjinfo__(6)
 {
 
@@ -192,8 +303,9 @@ __states__
 
 defaultproperties
 {
-	bNoDeathmatch = true;
 	IdleState = S_YKEY;
+	KeyType = it_yellowcard;
+	PickupMessage = "Picked up a yellow keycard.";
 }
 
 }
@@ -204,7 +316,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemKeyYellowSkull:Pickup
+class ItemKeyYellowSkull:KeyPickup
 	__mobjinfo__(39)
 {
 
@@ -216,8 +328,9 @@ __states__
 
 defaultproperties
 {
-	bNoDeathmatch = true;
 	IdleState = S_YSKULL;
+	KeyType = it_yellowskull;
+	PickupMessage = "Picked up a yellow skull key.";
 }
 
 }
@@ -228,7 +341,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemKeyRedSkull:Pickup
+class ItemKeyRedSkull:KeyPickup
 	__mobjinfo__(38)
 {
 
@@ -240,8 +353,9 @@ __states__
 
 defaultproperties
 {
-	bNoDeathmatch = true;
 	IdleState = S_RSKULL;
+	KeyType = it_redskull;
+	PickupMessage = "Picked up a red skull key.";
 }
 
 }
@@ -252,7 +366,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemKeyBlueSkull:Pickup
+class ItemKeyBlueSkull:KeyPickup
 	__mobjinfo__(40)
 {
 
@@ -264,8 +378,42 @@ __states__
 
 defaultproperties
 {
-	bNoDeathmatch = true;
 	IdleState = S_BSKULL;
+	KeyType = it_blueskull;
+	PickupMessage = "Picked up a blue skull key.";
+}
+
+}
+
+//**************************************************************************
+//
+//	HealthPickup
+//
+//**************************************************************************
+
+class HealthPickup:Pickup
+	abstract
+{
+
+int HealthAmount;
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+boolean HandlePickup(Actor Toucher)
+{
+	if (!Toucher.GiveBody(HealthAmount, MAXHEALTH))
+		return false;
+	cprint(Toucher.Player, PickupMessage);
+	Toucher.PlaySound('PickupItem', CHAN_ITEM);
+	return true;
+}
+
+defaultproperties
+{
 }
 
 }
@@ -276,7 +424,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemStimPack:Pickup
+class ItemStimPack:HealthPickup
 	__mobjinfo__(2011)
 {
 
@@ -288,6 +436,8 @@ __states__
 defaultproperties
 {
 	IdleState = S_STIM;
+	HealthAmount = 10;
+	PickupMessage = "Picked up a stimpack.";
 }
 
 }
@@ -298,7 +448,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemMedikit:Pickup
+class ItemMedikit:HealthPickup
 	__mobjinfo__(2012)
 {
 
@@ -310,6 +460,9 @@ __states__
 defaultproperties
 {
 	IdleState = S_MEDI;
+	HealthAmount = 25;
+	PickupMessage = "Picked up a medikit.";
+	//"Picked up a medikit that you REALLY need!"
 }
 
 }
@@ -323,6 +476,23 @@ defaultproperties
 class ItemSoulSphere:Pickup
 	__mobjinfo__(2013)
 {
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+boolean HandlePickup(Actor Toucher)
+{
+	Toucher.Player->Health += SOULSPHERE_HEALTH;
+	if (Toucher.Player->Health > SOULSPHERE_MAX)
+		Toucher.Player->Health = SOULSPHERE_MAX;
+	Toucher.Health = Toucher.Player->Health;
+	cprint(Toucher.Player, PickupMessage);
+	Toucher.PlaySound('PickupPower', CHAN_ITEM);
+	return true;
+}
 
 __states__
 {
@@ -339,6 +509,40 @@ defaultproperties
 	Translucency = 33;
 	bCountItem = true;
 	IdleState = S_SOUL;
+	PickupMessage = "Supercharge!";
+}
+
+}
+
+//**************************************************************************
+//
+//	PowerupPickup
+//
+//**************************************************************************
+
+class PowerupPickup:Pickup
+	abstract
+{
+
+int PowerType;
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+boolean HandlePickup(Actor Toucher)
+{
+	if (!Toucher.GivePower(PowerType))
+		return false;
+	cprint(Toucher.Player, PickupMessage);
+	Toucher.PlaySound('PickupPower', CHAN_ITEM);
+	return true;
+}
+
+defaultproperties
+{
 }
 
 }
@@ -349,7 +553,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemInvulnerability:Pickup
+class ItemInvulnerability:PowerupPickup
 	__mobjinfo__(2022)
 {
 
@@ -367,6 +571,8 @@ defaultproperties
 	bCountItem = true;
 	bNoRespawn = true;
 	IdleState = S_PINV;
+	PowerType = pw_invulnerability;
+	PickupMessage = "Invulnerability!";
 }
 
 }
@@ -377,7 +583,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemBerserk:Pickup
+class ItemBerserk:PowerupPickup
 	__mobjinfo__(2023)
 {
 
@@ -390,6 +596,8 @@ defaultproperties
 {
 	bCountItem = true;
 	IdleState = S_PSTR;
+	PowerType = pw_strength;
+	PickupMessage = "Berserk!";
 }
 
 }
@@ -400,7 +608,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemInvisibility:Pickup
+class ItemInvisibility:PowerupPickup
 	__mobjinfo__(2024)
 {
 
@@ -418,6 +626,8 @@ defaultproperties
 	bCountItem = true;
 	bNoRespawn = true;
 	IdleState = S_PINS;
+	PowerType = pw_invisibility;
+	PickupMessage = "Partial Invisibility";
 }
 
 }
@@ -428,7 +638,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemRadiationSuit:Pickup
+class ItemRadiationSuit:PowerupPickup
 	__mobjinfo__(2025)
 {
 
@@ -440,6 +650,34 @@ __states__
 defaultproperties
 {
 	IdleState = S_SUIT;
+	PowerType = pw_ironfeet;
+	PickupMessage = "Radiation Shielding Suit";
+}
+
+}
+
+//**************************************************************************
+//
+//	ItemInfrared
+//
+//**************************************************************************
+
+class ItemInfrared:PowerupPickup
+	__mobjinfo__(2045)
+{
+
+__states__
+{
+	S_PVIS('PVIS', 0 | FF_FULLBRIGHT, 'items/visor.md2', 0, 6.0 / 35.0, S_PVIS2) { }
+	S_PVIS2('PVIS', 1, 'items/visor.md2', 1, 6.0 / 35.0, S_PVIS) { }
+}
+
+defaultproperties
+{
+	bCountItem = true;
+	IdleState = S_PVIS;
+	PowerType = pw_infrared;
+	PickupMessage = "Light Amplification Visor";
 }
 
 }
@@ -453,6 +691,21 @@ defaultproperties
 class ItemComputerMap:Pickup
 	__mobjinfo__(2026)
 {
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+boolean HandlePickup(Actor Toucher)
+{
+	if (!Toucher.GiveItem(IT_ALL_MAP))
+		return false;
+	cprint(Toucher.Player, PickupMessage);
+	Toucher.PlaySound('PickupPower', CHAN_ITEM);
+	return true;
+}
 
 __states__
 {
@@ -468,30 +721,7 @@ defaultproperties
 {
 	bCountItem = true;
 	IdleState = S_PMAP;
-}
-
-}
-
-//**************************************************************************
-//
-//	ItemInfrared
-//
-//**************************************************************************
-
-class ItemInfrared:Pickup
-	__mobjinfo__(2045)
-{
-
-__states__
-{
-	S_PVIS('PVIS', 0 | FF_FULLBRIGHT, 'items/visor.md2', 0, 6.0 / 35.0, S_PVIS2) { }
-	S_PVIS2('PVIS', 1, 'items/visor.md2', 1, 6.0 / 35.0, S_PVIS) { }
-}
-
-defaultproperties
-{
-	bCountItem = true;
-	IdleState = S_PVIS;
+	PickupMessage = "Computer Area Map";
 }
 
 }
@@ -502,9 +732,26 @@ defaultproperties
 //
 //**************************************************************************
 
+#ifdef DOOM2
 class ItemMegaSphere:Pickup
 	__mobjinfo__(83)
 {
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+boolean HandlePickup(Actor Toucher)
+{
+	Toucher.Player->Health = MEGASPHERE_HEALTH;
+	Toucher.Health = Toucher.Player->Health;
+	Toucher.GiveArmor(2);
+	cprint(Toucher.Player, PickupMessage);
+	Toucher.PlaySound('PickupPower', CHAN_ITEM);
+	return true;
+}
 
 __states__
 {
@@ -519,6 +766,50 @@ defaultproperties
 	Translucency = 33;
 	bCountItem = true;
 	IdleState = S_MEGA;
+	PickupMessage = "MegaSphere!";
+}
+
+}
+#endif
+
+//**************************************************************************
+//
+//	AmmoPickup
+//
+//**************************************************************************
+
+class AmmoPickup:Pickup
+	abstract
+{
+
+int AmmoType;
+int AmmoCount;
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+boolean HandlePickup(Actor Toucher)
+{
+	if (bDropped)
+	{
+		if (!Toucher.GiveAmmo(AmmoType, AmmoCount / 2))
+			return false;
+	}
+	else
+	{
+		if (!Toucher.GiveAmmo(AmmoType, AmmoCount))
+			return false;
+	}
+	cprint(Toucher.Player, PickupMessage);
+	Toucher.PlaySound('PickupItem', CHAN_ITEM);
+	return true;
+}
+
+defaultproperties
+{
 }
 
 }
@@ -529,7 +820,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemAmmoBulletClip:Pickup
+class ItemAmmoBulletClip:AmmoPickup
 	__mobjinfo__(2007)
 {
 
@@ -541,6 +832,9 @@ __states__
 defaultproperties
 {
 	IdleState = S_CLIP;
+	AmmoType = am_clip;
+	AmmoCount = clipammo[am_clip];
+	PickupMessage = "Picked up a clip.";
 }
 
 }
@@ -551,7 +845,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemAmmoBulletBox:Pickup
+class ItemAmmoBulletBox:AmmoPickup
 	__mobjinfo__(2048)
 {
 
@@ -563,6 +857,9 @@ __states__
 defaultproperties
 {
 	IdleState = S_AMMO;
+	AmmoType = am_clip;
+	AmmoCount = 5 * clipammo[am_clip];
+	PickupMessage = "Picked up a box of bullets.";
 }
 
 }
@@ -573,7 +870,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemAmmoRocket:Pickup
+class ItemAmmoRocket:AmmoPickup
 	__mobjinfo__(2010)
 {
 
@@ -585,6 +882,9 @@ __states__
 defaultproperties
 {
 	IdleState = S_ROCK;
+	AmmoType = am_misl;
+	AmmoCount = clipammo[am_misl];
+	PickupMessage = "Picked up a rocket.";
 }
 
 }
@@ -595,7 +895,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemAmmoRocketBox:Pickup
+class ItemAmmoRocketBox:AmmoPickup
 	__mobjinfo__(2046)
 {
 
@@ -607,6 +907,9 @@ __states__
 defaultproperties
 {
 	IdleState = S_BROK;
+	AmmoType = am_misl;
+	AmmoCount = 5 * clipammo[am_misl];
+	PickupMessage = "Picked up a box of rockets.";
 }
 
 }
@@ -617,7 +920,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemAmmoCells:Pickup
+class ItemAmmoCells:AmmoPickup
 	__mobjinfo__(2047)
 {
 
@@ -629,6 +932,9 @@ __states__
 defaultproperties
 {
 	IdleState = S_CELL;
+	AmmoType = am_cell;
+	AmmoCount = clipammo[am_cell];
+	PickupMessage = "Picked up an energy cell.";
 }
 
 }
@@ -639,7 +945,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemAmmoCellsPack:Pickup
+class ItemAmmoCellsPack:AmmoPickup
 	__mobjinfo__(17)
 {
 
@@ -651,6 +957,9 @@ __states__
 defaultproperties
 {
 	IdleState = S_CELP;
+	AmmoType = am_cell;
+	AmmoCount = 5 * clipammo[am_cell];
+	PickupMessage = "Picked up an energy cell pack.";
 }
 
 }
@@ -661,7 +970,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemAmmoShells:Pickup
+class ItemAmmoShells:AmmoPickup
 	__mobjinfo__(2008)
 {
 
@@ -673,6 +982,9 @@ __states__
 defaultproperties
 {
 	IdleState = S_SHEL;
+	AmmoType = am_shell;
+	AmmoCount = clipammo[am_shell];
+	PickupMessage = "Picked up 4 shotgun shells.";
 }
 
 }
@@ -683,7 +995,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemAmmoShellsBox:Pickup
+class ItemAmmoShellsBox:AmmoPickup
 	__mobjinfo__(2049)
 {
 
@@ -695,6 +1007,9 @@ __states__
 defaultproperties
 {
 	IdleState = S_SBOX;
+	AmmoType = am_shell;
+	AmmoCount = 5 * clipammo[am_shell];
+	PickupMessage = "Picked up a box of shotgun shells.";
 }
 
 }
@@ -709,6 +1024,31 @@ class ItemBackpack:Pickup
 	__mobjinfo__(8)
 {
 
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+boolean HandlePickup(Actor Toucher)
+{
+	int i;
+
+	if (!Toucher.Player->Backpack)
+	{
+		Toucher.Player->Backpack = true;
+		for (i = 0; i < NUMAMMO; i++)
+			Toucher.Player->MaxAmmo[i] *= 2;
+	}
+	for (i = 0; i < NUMAMMO; i++)
+	{
+		Toucher.GiveAmmo(i, clipammo[i]);
+	}
+	cprint(Toucher.Player, PickupMessage);
+	Toucher.PlaySound('PickupItem', CHAN_ITEM);
+	return true;
+}
+
 __states__
 {
 	S_BPAK('BPAK', 0, 'ammo/backpack.md2', 0, -1.0, S_NULL) { }
@@ -717,6 +1057,40 @@ __states__
 defaultproperties
 {
 	IdleState = S_BPAK;
+	PickupMessage = "Picked up a backpack full of ammo!";
+}
+
+}
+
+//**************************************************************************
+//
+//	WeaponPickup
+//
+//**************************************************************************
+
+class WeaponPickup:Pickup
+	abstract
+{
+
+int WeaponType;
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+boolean HandlePickup(Actor Toucher)
+{
+	if (!Toucher.GiveWeapon(WeaponType, bDropped))
+		return false;
+	cprint(Toucher.Player, PickupMessage);
+	Toucher.PlaySound('PickupWeapon', CHAN_ITEM);
+	return true;
+}
+
+defaultproperties
+{
 }
 
 }
@@ -727,7 +1101,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemWeaponBFG:Pickup
+class ItemWeaponBFG:WeaponPickup
 	__mobjinfo__(2006)
 {
 
@@ -739,6 +1113,8 @@ __states__
 defaultproperties
 {
 	IdleState = S_BFUG;
+	WeaponType = wp_bfg;
+	PickupMessage = "You got the BFG9000!  Oh, yes.";
 }
 
 }
@@ -749,7 +1125,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemWeaponChaingun:Pickup
+class ItemWeaponChaingun:WeaponPickup
 	__mobjinfo__(2002)
 {
 
@@ -761,6 +1137,8 @@ __states__
 defaultproperties
 {
 	IdleState = S_MGUN;
+	WeaponType = wp_chaingun;
+	PickupMessage = "You got the chaingun!";
 }
 
 }
@@ -771,7 +1149,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemWeaponChainsaw:Pickup
+class ItemWeaponChainsaw:WeaponPickup
 	__mobjinfo__(2005)
 {
 
@@ -783,6 +1161,8 @@ __states__
 defaultproperties
 {
 	IdleState = S_CSAW;
+	WeaponType = wp_chainsaw;
+	PickupMessage = "A chainsaw!  Find some meat!";
 }
 
 }
@@ -793,7 +1173,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemWeaponRocketLauncher:Pickup
+class ItemWeaponRocketLauncher:WeaponPickup
 	__mobjinfo__(2003)
 {
 
@@ -805,6 +1185,8 @@ __states__
 defaultproperties
 {
 	IdleState = S_LAUN;
+	WeaponType = wp_missile;
+	PickupMessage = "You got the rocket launcher!";
 }
 
 }
@@ -815,7 +1197,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemWeaponPlasmaGun:Pickup
+class ItemWeaponPlasmaGun:WeaponPickup
 	__mobjinfo__(2004)
 {
 
@@ -827,6 +1209,8 @@ __states__
 defaultproperties
 {
 	IdleState = S_PLAS;
+	WeaponType = wp_plasma;
+	PickupMessage = "You got the plasma gun!";
 }
 
 }
@@ -837,7 +1221,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemWeaponShotgun:Pickup
+class ItemWeaponShotgun:WeaponPickup
 	__mobjinfo__(2001)
 {
 
@@ -849,6 +1233,8 @@ __states__
 defaultproperties
 {
 	IdleState = S_SHOT;
+	WeaponType = wp_shotgun;
+	PickupMessage = "You got the shotgun!";
 }
 
 }
@@ -859,7 +1245,8 @@ defaultproperties
 //
 //**************************************************************************
 
-class ItemWeaponSuperShotgun:Pickup
+#ifdef DOOM2
+class ItemWeaponSuperShotgun:WeaponPickup
 	__mobjinfo__(82)
 {
 
@@ -871,13 +1258,19 @@ __states__
 defaultproperties
 {
 	IdleState = S_SHOT2;
+	WeaponType = wp_supershotgun;
+	PickupMessage = "You got the super shotgun!";
 }
 
 }
+#endif
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2002/06/14 15:51:20  dj_jl
+//  A lots of changes, new functions etc for DDF.
+//
 //  Revision 1.2  2002/05/18 16:59:58  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

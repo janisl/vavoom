@@ -35,8 +35,7 @@ Actor Spawn(classid type, TVec AOrigin);
 //
 //	Actor::GiveAmmo
 //
-//	Num is the number of clip loads, not the individual count (0= 1/2 clip).
-// Returns false if the ammo can't be picked up at all
+//	Returns false if the ammo can't be picked up at all
 //
 //==========================================================================
 
@@ -51,14 +50,9 @@ boolean Actor::GiveAmmo(int ammo, int num)
 	if (ammo < 0 || ammo > NUMAMMO)
 		Error("P_GiveAmmo: bad type %i", ammo);
 
-	max = Player->Backpack ? maxammo[ammo] * 2 : maxammo[ammo];
+	max = Player->MaxAmmo[ammo];
 	if (Player->Ammo[ammo] == max)
 		return false;
-
-	if (num)
-		num *= clipammo[ammo];
-	else
-		num = clipammo[ammo] / 2;
 
 	if (gameskill == sk_baby || gameskill == sk_nightmare)
 	{
@@ -135,9 +129,20 @@ boolean Actor::GiveAmmo(int ammo, int num)
 
 boolean Actor::GiveWeapon(int weapon, boolean dropped)
 {
+#ifdef DDF
+	if (Player->WeaponOwned[weapon])
+	{
+		return false;
+	}
+	Player->WeaponOwned[weapon] = true;
+	Player->PendingWeapon = weapon;
+	return true;
+#else
 	boolean gaveammo;
 	boolean gaveweapon;
+	int ammoCount;
 
+	ammoCount = clipammo[weapon_ammo_type[weapon]];
 	if (netgame && (deathmatch < 2) && !dropped)
 	{
 		// leave placed weapons forever on net games
@@ -148,30 +153,28 @@ boolean Actor::GiveWeapon(int weapon, boolean dropped)
 		Player->WeaponOwned[weapon] = true;
 
 		if (deathmatch)
-			GiveAmmo(weapon_ammo_type[weapon], 5);
+			GiveAmmo(weapon_ammo_type[weapon], 5 * ammoCount);
 		else
-			GiveAmmo(weapon_ammo_type[weapon], 2);
+			GiveAmmo(weapon_ammo_type[weapon], 2 * ammoCount);
 		Player->PendingWeapon = weapon;
 
 		PlaySound('PickupWeapon', CHAN_ITEM);
 		return false;
 	}
 
+	gaveammo = false;
 	if (weapon_ammo_type[weapon] != am_noammo)
 	{
 		// give one clip with a dropped weapon,
 		// two clips with a found weapon
 		if (dropped)
-			gaveammo = GiveAmmo(weapon_ammo_type[weapon], 1);
+			gaveammo = GiveAmmo(weapon_ammo_type[weapon], 1 * ammoCount);
 		else
-			gaveammo = GiveAmmo(weapon_ammo_type[weapon], 2);
+			gaveammo = GiveAmmo(weapon_ammo_type[weapon], 2 * ammoCount);
 	}
-	else
-		gaveammo = false;
 
-	if (Player->WeaponOwned[weapon])
-		gaveweapon = false;
-	else
+	gaveweapon = false;
+	if (!Player->WeaponOwned[weapon])
 	{
 		gaveweapon = true;
 		Player->WeaponOwned[weapon] = true;
@@ -179,6 +182,7 @@ boolean Actor::GiveWeapon(int weapon, boolean dropped)
 	}
 
 	return (gaveweapon || gaveammo);
+#endif
 }
 
 //==========================================================================
@@ -189,17 +193,17 @@ boolean Actor::GiveWeapon(int weapon, boolean dropped)
 //
 //==========================================================================
 
-boolean Actor::GiveBody(int num)
+boolean Actor::GiveBody(int num, int max)
 {
-	if (Health >= MAXHEALTH)
+	if (Health >= max)
 	{
 		return false;
 	}
 
 	Health += num;
-	if (Health > MAXHEALTH)
+	if (Health > max)
 	{
-		Health = MAXHEALTH;
+		Health = max;
 	}
 	Player->Health = Health;
 
@@ -225,6 +229,32 @@ boolean Actor::GiveArmor(int armortype)
 	Player->ArmorType = armortype;
 	Player->ArmorPoints = hits;
 
+	return true;
+}
+
+//==========================================================================
+//
+//	Actor::GiveArmor2
+//
+//	Returns false if the armor is worse than the current armor.
+//
+//==========================================================================
+
+boolean Actor::GiveArmor2(int armortype, int num, int max)
+{
+	if (Player->ArmorPoints >= max)
+	{
+		return false;	// don't pick up
+	}
+	Player->ArmorPoints += num;
+	if (Player->ArmorPoints > max)
+	{
+		Player->ArmorPoints = max;
+	}
+	if (Player->ArmorType < armortype)
+	{
+		Player->ArmorType = armortype;
+	}
 	return true;
 }
 
@@ -296,8 +326,10 @@ boolean Actor::GivePower(int power)
 
 	if (power == pw_strength)
 	{
-		GiveBody(100);
+		GiveBody(100, MAXHEALTH);
 		Player->Powers[power] = 1;
+		if (Player->ReadyWeapon != wp_fist)
+			Player->PendingWeapon = wp_fist;
 		return true;
 	}
 
@@ -305,6 +337,36 @@ boolean Actor::GivePower(int power)
 		return false;	// already got it
 
 	Player->Powers[power] = 1;
+	return true;
+}
+
+//==========================================================================
+//
+//	Actor::GivePower2
+//
+//==========================================================================
+
+boolean Actor::GivePower2(int power, float duration, float max)
+{
+	if (Player->Powers[power] >= ftoi(max * 35.0))
+		return false;	// already got it
+
+	Player->Powers[power] += ftoi(duration * 35.0);
+	if (Player->Powers[power] >= ftoi(max * 35.0))
+	{
+		Player->Powers[power] = ftoi(max * 35.0);
+	}
+
+	if (power == pw_invisibility)
+	{
+		Translucency = 90;
+	}
+	if (power == pw_strength)
+	{
+		if (Player->ReadyWeapon != wp_fist)
+			Player->PendingWeapon = wp_fist;
+	}
+
 	return true;
 }
 
@@ -350,326 +412,53 @@ void Actor::HideSpecial(void)
 
 //==========================================================================
 //
+//	Actor::HandlePickup
+//
+//==========================================================================
+
+boolean Actor::HandlePickup(Actor Toucher)
+{
+	return false;
+}
+
+//==========================================================================
+//
 //	Actor::TouchSpecial
 //
 //==========================================================================
 
 void Actor::TouchSpecial(Actor Toucher)
 {
-	int i;
-	name sound;
-
 	if (!Toucher.bPickUp)
 	{
 		// can't remove thing
 		return;
 	}
-
 	// Dead thing touching.
 	// Can happen with a sliding player corpse.
 	if (Toucher.Health <= 0)
 		return;
 
-	sound = 'PickupItem';
-
-	// Identify by sprite.
-	switch (SpriteName)
+	if (!HandlePickup(Toucher))
 	{
-		// armor
-	case 'ARM1':
-		if (!Toucher.GiveArmor(1))
-			return;
-		cprint(Toucher.Player, GOTARMOR);
-		break;
-
-	case 'ARM2':
-		if (!Toucher.GiveArmor(2))
-			return;
-		cprint(Toucher.Player, GOTMEGA);
-		break;
-
-		// bonus items
-	case 'BON1':
-		Toucher.Player->Health++;	// can go over 100%
-		if (Toucher.Player->Health > 200)
-			Toucher.Player->Health = 200;
-		Toucher.Health = Toucher.Player->Health;
-		cprint(Toucher.Player, GOTHTHBONUS);
-		break;
-
-	case 'BON2':
-		Toucher.Player->ArmorPoints++;	// can go over 100%
-		if (Toucher.Player->ArmorPoints > 200)
-			Toucher.Player->ArmorPoints = 200;
-		if (!Toucher.Player->ArmorType)
-			Toucher.Player->ArmorType = 1;
-		cprint(Toucher.Player, GOTARMBONUS);
-		break;
-
-	case 'SOUL':
-		Toucher.Player->Health += SOULSPHERE_HEALTH;
-		if (Toucher.Player->Health > SOULSPHERE_MAX)
-			Toucher.Player->Health = SOULSPHERE_MAX;
-		Toucher.Player->MO.Health = Toucher.Player->Health;
-		cprint(Toucher.Player, GOTSUPER);
-		sound = 'PickupPower';
-		break;
-
-#ifdef DOOM2
-	case 'MEGA':
-		Toucher.Player->Health = MEGASPHERE_HEALTH;
-		Toucher.Health = Toucher.Player->Health;
-		Toucher.GiveArmor(2);
-		cprint(Toucher.Player, GOTMSPHERE);
-		sound = 'PickupPower';
-		break;
-#endif
-
-		// cards
-		// leave cards for everyone
-	case 'BKEY':
-		if (Toucher.GiveCard(it_bluecard))
-			cprint(Toucher.Player, GOTBLUECARD);
-		if (!netgame)
-			break;
 		return;
-
-	case 'YKEY':
-		if (Toucher.GiveCard(it_yellowcard))
-			cprint(Toucher.Player, GOTYELWCARD);
-		if (!netgame)
-			break;
-		return;
-
-	case 'RKEY':
-		if (Toucher.GiveCard(it_redcard))
-			cprint(Toucher.Player, GOTREDCARD);
-		if (!netgame)
-			break;
-		return;
-
-	case 'BSKU':
-		if (Toucher.GiveCard(it_blueskull))
-			cprint(Toucher.Player, GOTBLUESKUL);
-		if (!netgame)
-			break;
-		return;
-
-	case 'YSKU':
-		if (Toucher.GiveCard(it_yellowskull))
-			cprint(Toucher.Player, GOTYELWSKUL);
-		if (!netgame)
-			break;
-		return;
-
-	case 'RSKU':
-		if (Toucher.GiveCard(it_redskull))
-			cprint(Toucher.Player, GOTREDSKULL);
-		if (!netgame)
-			break;
-		return;
-
-		// medikits, heals
-	case 'STIM':
-		if (!Toucher.GiveBody(10))
-			return;
-		cprint(Toucher.Player, GOTSTIM);
-		break;
-
-	case 'MEDI':
-		if (!Toucher.GiveBody(25))
-			return;
-
-		if (Toucher.Player->Health < 25)
-			cprint(Toucher.Player, GOTMEDINEED);
-		else
-			cprint(Toucher.Player, GOTMEDIKIT);
-		break;
-
-		// power ups
-	case 'PINV':
-		if (!Toucher.GivePower(pw_invulnerability))
-			return;
-		cprint(Toucher.Player, GOTINVUL);
-		sound = 'PickupPower';
-		break;
-
-	case 'PSTR':
-		if (!Toucher.GivePower(pw_strength))
-			return;
-		cprint(Toucher.Player, GOTBERSERK);
-		if (Toucher.Player->ReadyWeapon != wp_fist)
-			Toucher.Player->PendingWeapon = wp_fist;
-		sound = 'PickupPower';
-		break;
-
-	case 'PINS':
-		if (!Toucher.GivePower(pw_invisibility))
-			return;
-		cprint(Toucher.Player, GOTINVIS);
-		sound = 'PickupPower';
-		break;
-
-	case 'SUIT':
-		if (!Toucher.GivePower(pw_ironfeet))
-			return;
-		cprint(Toucher.Player, GOTSUIT);
-		sound = 'PickupPower';
-		break;
-
-	case 'PVIS':
-		if (!Toucher.GivePower(pw_infrared))
-			return;
-		cprint(Toucher.Player, GOTVISOR);
-		sound = 'PickupPower';
-		break;
-
-		//  Items
-	case 'PMAP':
-		if (!Toucher.GiveItem(IT_ALL_MAP))
-			return;
-		cprint(Toucher.Player, GOTMAP);
-		sound = 'PickupPower';
-		break;
-
-		// ammo
-	case 'CLIP':
-		if (bDropped)
-		{
-			if (!Toucher.GiveAmmo(am_clip, 0))
-				return;
-		}
-		else
-		{
-			if (!Toucher.GiveAmmo(am_clip, 1))
-				return;
-		}
-		cprint(Toucher.Player, GOTCLIP);
-		break;
-
-	case 'AMMO':
-		if (!Toucher.GiveAmmo(am_clip, 5))
-			return;
-		cprint(Toucher.Player, GOTCLIPBOX);
-		break;
-
-	case 'ROCK':
-		if (!Toucher.GiveAmmo(am_misl, 1))
-			return;
-		cprint(Toucher.Player, GOTROCKET);
-		break;
-
-	case 'BROK':
-		if (!Toucher.GiveAmmo(am_misl, 5))
-			return;
-		cprint(Toucher.Player, GOTROCKBOX);
-		break;
-
-	case 'CELL':
-		if (!Toucher.GiveAmmo(am_cell, 1))
-			return;
-		cprint(Toucher.Player, GOTCELL);
-		break;
-
-	case 'CELP':
-		if (!Toucher.GiveAmmo(am_cell, 5))
-			return;
-		cprint(Toucher.Player, GOTCELLBOX);
-		break;
-
-	case 'SHEL':
-		if (!Toucher.GiveAmmo(am_shell, 1))
-			return;
-		cprint(Toucher.Player, GOTSHELLS);
-		break;
-
-	case 'SBOX':
-		if (!Toucher.GiveAmmo(am_shell, 5))
-			return;
-		cprint(Toucher.Player, GOTSHELLBOX);
-		break;
-
-	case 'BPAK':
-		Toucher.Player->Backpack = true;
-		for (i = 0; i < NUMAMMO; i++)
-		{
-			Toucher.GiveAmmo(i, 1);
-		}
-		cprint(Toucher.Player, GOTBACKPACK);
-		break;
-
-		// weapons
-	case 'BFUG':
-		if (!Toucher.GiveWeapon(wp_bfg, false))
-			return;
-		cprint(Toucher.Player, GOTBFG9000);
-		sound = 'PickupWeapon';
-		break;
-
-	case 'MGUN':
-		if (!Toucher.GiveWeapon(wp_chaingun, bDropped))
-			return;
-		cprint(Toucher.Player, GOTCHAINGUN);
-		sound = 'PickupWeapon';
-		break;
-
-	case 'CSAW':
-		if (!Toucher.GiveWeapon(wp_chainsaw, false))
-			return;
-		cprint(Toucher.Player, GOTCHAINSAW);
-		sound = 'PickupWeapon';
-		break;
-
-	case 'LAUN':
-		if (!Toucher.GiveWeapon(wp_missile, false))
-			return;
-		cprint(Toucher.Player, GOTLAUNCHER);
-		sound = 'PickupWeapon';
-		break;
-
-	case 'PLAS':
-		if (!Toucher.GiveWeapon(wp_plasma, false))
-			return;
-		cprint(Toucher.Player, GOTPLASMA);
-		sound = 'PickupWeapon';
-		break;
-
-	case 'SHOT':
-		if (!Toucher.GiveWeapon(wp_shotgun, bDropped))
-			return;
-		cprint(Toucher.Player, GOTSHOTGUN);
-		sound = 'PickupWeapon';
-		break;
-
-#ifdef DOOM2
-	case 'SGN2':
-		if (!Toucher.GiveWeapon(wp_supershotgun, bDropped))
-			return;
-		cprint(Toucher.Player, GOTSHOTGUN2);
-		sound = 'PickupWeapon';
-		break;
-#endif
-
-#ifdef GRENADE_LAUNCHER
-	case 'GLAU':
-		if (!Toucher.GiveWeapon(wp_grenade, false))
-			return;
-		cprint(Toucher.Player, "Piched up a grenade launcher");
-		sound = 'PickupWeapon';
-		break;
-#endif
 	}
-
+#ifdef DDF
+	cprint(Toucher.Player, PickupMessage);
+	Toucher.PlaySound(ActiveSound, CHAN_ITEM);
+#endif
 	if (bCountItem)
 		Toucher.Player->ItemCount++;
 	HideSpecial();
 	Toucher.Player->BonusCount += BONUSADD;
-	Toucher.PlaySound(sound, CHAN_ITEM);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/06/14 15:51:20  dj_jl
+//  A lots of changes, new functions etc for DDF.
+//
 //  Revision 1.18  2002/05/18 16:59:58  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

@@ -151,8 +151,6 @@ int st_fragscount;
 // current face index, used by w_faces
 int st_faceindex = 0;
 
-int st_maxammo[4];
-
 //
 //  FACE WIDGET DATA
 //
@@ -431,10 +429,10 @@ void SB_DrawMainBar(void)
 	SB_DrawSmallNum(ST_AMMO3X, ST_AMMO3Y, cl->ammo[3]);
 
 	// max ammo count (all four kinds)
-	SB_DrawSmallNum(ST_MAXAMMO0X, ST_MAXAMMO0Y, st_maxammo[0]);
-	SB_DrawSmallNum(ST_MAXAMMO1X, ST_MAXAMMO1Y, st_maxammo[1]);
-	SB_DrawSmallNum(ST_MAXAMMO2X, ST_MAXAMMO2Y, st_maxammo[2]);
-	SB_DrawSmallNum(ST_MAXAMMO3X, ST_MAXAMMO3Y, st_maxammo[3]);
+	SB_DrawSmallNum(ST_MAXAMMO0X, ST_MAXAMMO0Y, cl->maxammo[0]);
+	SB_DrawSmallNum(ST_MAXAMMO1X, ST_MAXAMMO1Y, cl->maxammo[1]);
+	SB_DrawSmallNum(ST_MAXAMMO2X, ST_MAXAMMO2Y, cl->maxammo[2]);
+	SB_DrawSmallNum(ST_MAXAMMO3X, ST_MAXAMMO3Y, cl->maxammo[3]);
 }
 
 //==========================================================================
@@ -712,16 +710,15 @@ void SB_UpdateWidgets(void)
 		else
 			st_fragscount -= cl->frags[i];
 	}
-	for (i = 0; i < 4; i++)
-	{
-		st_maxammo[i] = maxammo[i] * (cl->backpack ? 2 : 1);
-	}
 	UpdateFaceWidget();
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/06/14 15:51:20  dj_jl
+//  A lots of changes, new functions etc for DDF.
+//
 //  Revision 1.9  2002/01/11 08:03:10  dj_jl
 //  Renamed 'name' to "Name'
 //

@@ -30,9 +30,8 @@
 #include <server.vc>
 
 #include "../doomdefs.vc"
-#include "../gendefs.vc"
+#include "gendefs.vc"
 #include "svdefs.vc"
-#include "strings.vc"
 
 #include "xlat.vc"
 #include "specutl.vc"
@@ -47,7 +46,6 @@
 #include "world.vc"
 
 #include "savegame.vc"
-#include "states.vc"
 #include "mobjinfo.vc"
 #include "wpninfo.vc"
 
@@ -64,12 +62,8 @@
 #include "enemy.vc"
 #include "cheat.vc"
 
-#include "miscobj.vc"
-
-#include "player.vc"
-
-#include "ddf_wpn.vc"
 #include "ddf_act.vc"
+#include "ddf_wpn.vc"
 
 #include "things.vc"
 #include "weapons.vc"
@@ -79,6 +73,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2002/06/14 15:51:20  dj_jl
+//  A lots of changes, new functions etc for DDF.
+//
 //  Revision 1.1  2002/05/18 17:03:26  dj_jl
 //  Working on DDF to VavoomC converter.
 //

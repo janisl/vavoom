@@ -23,47 +23,224 @@
 //**
 //**************************************************************************
 
-class DDFWeapon:Weapon
+//==========================================================================
+//
+//	Weapon::A_WeaponShoot
+//
+//==========================================================================
+
+void Weapon::A_WeaponShoot(AttackType *custom_attack)
 {
+	AttackType *attack = &Attack;
 
-#define FUNC(name)		void name(void) { }
+	// -AJA- 1999/08/10: Multiple attack support.
+	if (custom_attack)
+		attack = custom_attack;
 
-// Weapon Action Routine pointers
-FUNC(A_WeaponShoot)
-FUNC(A_WeaponEject)
-FUNC(A_WeaponJump)
-FUNC(A_NoFire)
-FUNC(A_NoFireReturn)
-FUNC(A_SFXWeapon1)
-FUNC(A_SFXWeapon2)
-FUNC(A_SFXWeapon3)
-FUNC(A_WeaponPlaySound)
-FUNC(A_WeaponKillSound)
-FUNC(A_WeaponTransSet)
-FUNC(A_WeaponTransFade)
-FUNC(A_WeaponEnableRadTrig)
-FUNC(A_WeaponDisableRadTrig)
+	// Some do not need ammunition anyway.
+	// Return if current ammunition sufficient.
+	if (!(Ammo == am_noammo || Player->Ammo[Ammo] >= AmmoPerShot))
+		return;
 
-FUNC(A_SetCrosshair)
-FUNC(A_GotTarget)
-FUNC(A_WeaponKick)
+	// -AJA- 1999/08/11: Increase fire count.
+	//p->weapons[p->ready_wp].clip_size--;
 
-FUNC(A_WeaponShootSA)
-FUNC(A_ReFireSA)
-FUNC(A_NoFireSA)
-FUNC(A_NoFireReturnSA)
-FUNC(A_CheckReloadSA)
-FUNC(A_GunFlashSA)
+	PlayerPawn(Player->MO).ActPlayerAttack(attack);
 
-defaultproperties
-{
+	Player->DeltaViewHeight -= Kick;
+	//p->kick_offset = w->kick;
+
+	if (linetarget /*&& !DDFActor(Player->MO.Enemy).bDummyMobj*/)
+	{
+		if (HitSound)
+			Player->MO.PlaySound(HitSound, CHAN_WEAPON);
+
+		if (bFeedBack)
+			Player->MO.bJustAttacked = true;
+	}
+	else
+	{
+		if (EngagedSound)
+			Player->MO.PlaySound(EngagedSound, CHAN_WEAPON);
+	}
+
+	// show the player making the shot/attack...
+	if (attack->AttackStyle == ATK_CloseCombat && Player->MO.MeleeState)
+	{
+		Player->MO.SetState(Player->MO.MeleeState);
+	}
+	else if (Player->MO.MissileState)
+	{
+		Player->MO.SetState(Player->MO.MissileState);
+	}
+
+	if (Ammo != am_noammo)
+	{
+		Player->Ammo[Ammo] -= AmmoPerShot;
+		AmmoFired += AmmoPerShot;
+	}
+
+	if (FlashState/* && !p->flash*/)
+	{
+		Player->ViewEnts[ps_flash].SetState(FlashState);
+		//p->flash = true;
+	}
 }
 
+//==========================================================================
+//
+//	Weapon::A_WeaponEject
+//
+//	Used for ejecting shells (or other effects).
+//
+//==========================================================================
+
+void Weapon::A_WeaponEject(AttackType *custom_attack)
+{
+	AttackType *attack = &EjectAttack;
+
+	if (custom_attack)
+		attack = custom_attack;
+
+	PlayerPawn(Player->MO).ActPlayerAttack(attack);
+}
+
+//==========================================================================
+//
+//	Weapon::A_WeaponJump
+//
+//==========================================================================
+
+void Weapon::A_WeaponJump(float chance, name jumpState)
+{
+	if (Random() < chance)
+	{
+		NextState = FindState(jumpState);
+	}
+}
+//==========================================================================
+//
+//	Weapon::A_WeaponShootSA
+//
+//==========================================================================
+
+void Weapon::A_WeaponShootSA(AttackType *custom_attack)
+{
+	AttackType *attack = &SAAttack;
+
+	// -AJA- 1999/08/10: Multiple attack support.
+	if (custom_attack)
+		attack = custom_attack;
+
+	// Some do not need ammunition anyway.
+	// Return if current ammunition sufficient.
+	if (!(SAAmmo == am_noammo || Player->Ammo[SAAmmo] >= SAAmmoPerShot))
+		return;
+
+	// -AJA- 1999/08/11: Increase fire count.
+	//p->weapons[p->ready_wp].clip_size--;
+
+	PlayerPawn(Player->MO).ActPlayerAttack(attack);
+
+	Player->DeltaViewHeight -= Kick;
+	//p->kick_offset = w->kick;
+
+	if (linetarget /*&& !DDFActor(Player->MO.Enemy).bDummyMobj*/)
+	{
+		if (HitSound)
+			Player->MO.PlaySound(HitSound, CHAN_WEAPON);
+
+		if (bFeedBack)
+			Player->MO.bJustAttacked = true;
+	}
+	else
+	{
+		if (EngagedSound)
+			Player->MO.PlaySound(EngagedSound, CHAN_WEAPON);
+	}
+
+	// show the player making the shot/attack...
+	if (attack->AttackStyle == ATK_CloseCombat && Player->MO.MeleeState)
+	{
+		Player->MO.SetState(Player->MO.MeleeState);
+	}
+	else if (Player->MO.MissileState)
+	{
+		Player->MO.SetState(Player->MO.MissileState);
+	}
+
+	if (SAAmmo != am_noammo)
+	{
+		Player->Ammo[SAAmmo] -= SAAmmoPerShot;
+		AmmoFiredSA += AmmoPerShot;
+	}
+
+	if (SAFlashState/* && !p->flash*/)
+	{
+		Player->ViewEnts[ps_flash].SetState(SAFlashState);
+		//p->flash = true;
+	}
+}
+
+//===========================================================================
+//
+//  Weapon::A_ReFireSA
+//
+//  The player can re-fire the weapon without lowering it entirely.
+//
+//===========================================================================
+
+void Weapon::A_ReFireSA(void)
+{
+	// check for fire
+	//  (if a weaponchange is pending, let it go through instead)
+	if ((Player->Buttons & 0x08)
+		&& Player->PendingWeapon == wp_nochange && Player->Health)
+	{
+		Player->Refire++;
+		FireWeaponSA(Player);
+	}
+	else
+	{
+		Player->Refire = 0;
+		CheckAmmoSA(Player);
+	}
+}
+
+//===========================================================================
+//
+//  Weapon::A_CheckReloadSA
+//
+//===========================================================================
+
+void Weapon::A_CheckReloadSA(void)
+{
+	CheckAmmoSA(Player);
+	if (SAReloadState && AmmoFiredSA >= SAClip)
+	{
+		AmmoFiredSA = 0;
+		SetState(SAReloadState);
+	}
+}
+
+//===========================================================================
+//
+//  Weapon::A_GunFlashSA
+//
+//===========================================================================
+
+void Weapon::A_GunFlashSA(void)
+{
+	Player->MO.SetState(Player->MO.MissileState);
+	SetPsprite(Player, ps_flash, SAFlashState);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2002/06/14 15:51:20  dj_jl
+//  A lots of changes, new functions etc for DDF.
+//
 //  Revision 1.1  2002/05/18 17:03:28  dj_jl
 //  Working on DDF to VavoomC converter.
 //

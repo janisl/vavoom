@@ -181,7 +181,11 @@ boolean PIT_ChangeSector(MapObject Other)
 	// crunch bodies to giblets
 	if (thing.Health <= 0)
 	{
+#ifdef DDF
+		thing.SetState(thing.GibState);
+#else
 		thing.SetState(S_GIBS);
+#endif
 		thing.bSolid;
 		thing.Height = 0.0;
 		thing.Radius = 0.0;
@@ -911,6 +915,9 @@ boolean PIT_VileCheck(MapObject Other)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2002/06/14 15:51:20  dj_jl
+//  A lots of changes, new functions etc for DDF.
+//
 //  Revision 1.28  2002/05/18 16:59:58  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

@@ -29,7 +29,7 @@
 //
 //**************************************************************************
 
-class ItemWeaponGrenadeLauncher:Pickup
+class ItemWeaponGrenadeLauncher:WeaponPickup
 	__mobjinfo__(90)
 {
 
@@ -42,6 +42,8 @@ __states__
 defaultproperties
 {
 	IdleState = S_GLAUNCH;
+	WeaponType = wp_grenade;
+	PickupMessage = "Piched up a grenade launcher";
 }
 
 }
@@ -103,33 +105,33 @@ void A_FireGrenade(void)
 
 	Player->Ammo[Ammo]--;
 
-	A = Spawn(Grenade, Player->mo->Origin + vector(0.0, 0.0, 32.0));
+	A = Spawn(Grenade, Player->MO.Origin + vector(0.0, 0.0, 32.0));
 
 	if (A.SightSound)
 		A.PlaySound(A.SightSound, CHAN_VOICE);
 
-	A.Owner = *Player->mo;
+	A.Instigator = Player->MO;
 
 	//  See which target is to be aimed at
-	if (Player->mo->Angles.pitch)
+	if (Player->MO.Angles.pitch)
 	{
 		TVec v_forward;
 		TVec v_right;
 		TVec v_up;
 
-		AngleVectors(&Player->mo->Angles, &v_forward, &v_right, &v_up);
+		AngleVectors(&Player->MO.Angles, &v_forward, &v_right, &v_up);
 		A.Velocity = v_forward * A.Speed + v_up * A.Speed / 3.0 +
 			((Random() - 0.5) * 20.0) * v_right +
 			((Random() - 0.5) * 20.0) * v_up;
 	}
 	else
 	{
-		A.Velocity = Aim(Player->mo, 16.0 * 64.0) * A.Speed;
+		A.Velocity = Aim(Player->MO, 16.0 * 64.0) * A.Speed;
 		A.Velocity.z = A.Speed / 3.0;
 	}
 	VectorAngles(&A.Velocity, &A.Angles);
 
-	CheckMissileSpawn(&A);
+	A.CheckMissileSpawn();
 }
 
 __states__
@@ -162,6 +164,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/06/14 15:51:20  dj_jl
+//  A lots of changes, new functions etc for DDF.
+//
 //  Revision 1.17  2002/05/18 16:59:58  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

@@ -110,7 +110,7 @@ void A_FirePistol(void)
 
 	Player->MO.PlaySound('PistolFire', CHAN_WEAPON);
 
-	Player->MO.SetState(PlayerPawn(Player->MO).Attack2State);
+	Player->MO.SetState(Player->MO.MissileState);
 	Player->Ammo[Ammo]--;
 
 	SetPsprite(Player, ps_flash, FlashState);
@@ -166,7 +166,7 @@ void A_FireShotgun(void)
 	TVec dir;
 
 	Player->MO.PlaySound('ShotgunFire', CHAN_WEAPON);
-	Player->MO.SetState(PlayerPawn(Player->MO).Attack2State);
+	Player->MO.SetState(Player->MO.MissileState);
 
 	Player->Ammo[Ammo]--;
 
@@ -235,7 +235,7 @@ void A_FireCGun(void)
 	if (!Player->Ammo[Ammo])
 		return;
 
-	Player->MO.SetState(PlayerPawn(Player->MO).Attack2State);
+	Player->MO.SetState(Player->MO.MissileState);
 	Player->Ammo[Ammo]--;
 
 	SetPsprite(Player, ps_flash, FlashState + StateNum - AttackState);
@@ -708,7 +708,7 @@ void A_FireShotgun2(void)
 	TVec dir;
 
 	Player->MO.PlaySound('SuperShotgunFire', CHAN_WEAPON);
-	Player->MO.SetState(PlayerPawn(Player->MO).Attack2State);
+	Player->MO.SetState(Player->MO.MissileState);
 
 	Player->Ammo[Ammo] -= 2;
 
@@ -798,6 +798,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/06/14 15:51:20  dj_jl
+//  A lots of changes, new functions etc for DDF.
+//
 //  Revision 1.26  2002/05/18 16:59:59  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

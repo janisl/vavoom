@@ -73,8 +73,8 @@ defaultproperties
 	bPickUp = true;
 	IdleState = S_PLAY;
 	SeeState = S_PLAY_RUN1;
-	MissileState = S_PLAY_ATK1;
-	Attack2State = S_PLAY_ATK2;
+	MeleeState = S_PLAY_ATK1;
+	MissileState = S_PLAY_ATK2;
 	PainState = S_PLAY_PAIN;
 	DeathState = S_PLAY_DIE1;
 	GibsDeathState = S_PLAY_XDIE1;
@@ -87,6 +87,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2002/06/14 15:51:20  dj_jl
+//  A lots of changes, new functions etc for DDF.
+//
 //  Revision 1.2  2002/05/18 16:59:59  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

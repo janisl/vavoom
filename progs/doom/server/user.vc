@@ -451,10 +451,17 @@ void PlayerPawn::PlayerImpulse(void)
 	impulse = Player->Impulse;
 	Player->Impulse = 0;
 
+#ifdef DDF
+	if (impulse <= 10)
+	{
+		ChangeWeapon(Player, impulse - 1);
+	}
+#else
 	if (impulse <= 7)
 	{
 		ChangeWeapon(Player, impulse - 1);
 	}
+#endif
 	else if (impulse == 16)
 	{
 		//  Suicide
@@ -764,10 +771,14 @@ void G_PlayerReborn(int player)
 	p->bAttackDown = true;
 	p->PlayerState = PST_LIVE;
 	p->Health = INITIAL_HEALTH;
-	p->Ammo[am_clip] = INITIAL_AMMO;
 #ifdef DDF
 	SetInitialWeapons(p);
 #else
+	p->Ammo[am_clip] = INITIAL_AMMO;
+	p->MaxAmmo[am_clip] = maxammo[am_clip];
+	p->MaxAmmo[am_shell] = maxammo[am_shell];
+	p->MaxAmmo[am_misl] = maxammo[am_misl];
+	p->MaxAmmo[am_cell] = maxammo[am_cell];
 	p->WeaponOwned[wp_fist] = true;
 	p->WeaponOwned[wp_pistol] = true;
 	SetWeapon(p, wp_pistol);
@@ -1020,6 +1031,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/06/14 15:51:20  dj_jl
+//  A lots of changes, new functions etc for DDF.
+//
 //  Revision 1.27  2002/05/18 16:59:59  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

@@ -143,14 +143,21 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 	LastLook = P_Random() % MAXPLAYERS;
 	// do not set the state with SetState,
 	// because action routines can not be called yet
-	st = &states[IdleState];
+#ifdef DDF
+	if (SpawnState)
+		StateNum = SpawnState;
+	else if (MeanderState)
+		StateNum = MeanderState;
+	else
+#endif
+		StateNum = IdleState;
+	st = &states[StateNum];
 	StateTime = st->time;
 	SpriteIndex = st->sprite;
 	SpriteName = sprite_names[st->sprite];
 	SpriteFrame = st->frame;
 	ModelIndex = st->model_index;
 	ModelFrame = st->model_frame;
-	StateNum = st->statenum;
 	NextState = st->nextstate;
 
 	if (mthing)
@@ -472,11 +479,18 @@ Actor Actor::SpawnMissile(Actor dest, classid type)
 
 	A.Instigator = self;	// where it came from
 
-	dir = dest.Origin - Origin;
-	// fuzzy player
-	if (dest.Translucency)
+	if (dest)
 	{
-		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
+		dir = dest.Origin - Origin;
+		// fuzzy player
+		if (dest.Translucency)
+		{
+			VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
+		}
+	}
+	else
+	{
+		dir = Velocity;
 	}
 	dir = Normalize(dir);
 	A.Velocity = dir * A.Speed;
@@ -585,6 +599,15 @@ void Actor::Died(Actor source)
 
 void Actor::DropStuff(void)
 {
+#ifdef DDF
+	if (DropItem)
+	{
+		Actor A;
+
+		A = Spawn(DropItem, vector(Origin.x, Origin.y, FloorZ));
+		A.bDropped = true;	// special versions of items
+	}
+#endif
 }
 
 //==========================================================================
@@ -847,6 +870,9 @@ void P_NoiseAlert(Actor target, Actor emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.43  2002/06/14 15:51:20  dj_jl
+//  A lots of changes, new functions etc for DDF.
+//
 //  Revision 1.42  2002/05/18 16:59:58  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

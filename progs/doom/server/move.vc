@@ -87,7 +87,11 @@ boolean Actor::Touch(MapObject InOther)
 		}
 
 		// damage / explode
+#ifdef DDF
+		damage = MissileDamage;	// Already computed
+#else
 		damage = ((P_Random() % 8) + 1) * MissileDamage;
+#endif
 		Other.Damage(self, Instigator, damage);
 		// don't traverse any more
 		return false;
@@ -147,6 +151,9 @@ void Actor::Thrust(float angle, float move)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/06/14 15:51:20  dj_jl
+//  A lots of changes, new functions etc for DDF.
+//
 //  Revision 1.27  2002/05/18 16:59:58  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

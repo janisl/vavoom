@@ -238,14 +238,24 @@ boolean BotPlayer::CheckItem(Actor item)
 	if ((item.Class == ItemStimPack || item.Class == ItemMedikit) &&
 		(botmo.Health >= MAXHEALTH))
 		return false;
+#ifdef DOOM2
 	if ((item.Class == ItemSoulSphere || item.Class == ItemMegaSphere) &&
 		(botmo.Health >= 2 * MAXHEALTH))
 		return false;
+#else
+	if (item.Class == ItemSoulSphere && (botmo.Health >= 2 * MAXHEALTH))
+		return false;
+#endif
 	if (item.Class == ItemArmor1 && (player->ArmorPoints >= 100))
 		return false;
+#ifdef DOOM2
 	if ((item.Class == ItemArmor2 || item.Class == ItemMegaSphere) &&
 		(player->ArmorPoints >= 200))
 		return false;
+#else
+	if ((item.Class == ItemArmor2) && (player->ArmorPoints >= 200))
+		return false;
+#endif
 #if 0
 	if (teamgame.value && item->flags3 & MF3_KEY && !item->bDropped)
 		return false;
@@ -737,8 +747,10 @@ int BotPlayer::WeapFromItem(Actor item)
 		return wp_chainsaw;
 	case ItemWeaponShotgun:
 		return wp_shotgun;
+#ifdef DOOM2
 	case ItemWeaponSuperShotgun:
 		return wp_supershotgun;
+#endif
 	case ItemWeaponChaingun:
 		return wp_chaingun;
 	case ItemWeaponRocketLauncher:
@@ -2250,6 +2262,9 @@ void BotPlayer::OnSpawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/06/14 15:51:20  dj_jl
+//  A lots of changes, new functions etc for DDF.
+//
 //  Revision 1.18  2002/04/11 16:49:49  dj_jl
 //  Tick function.
 //

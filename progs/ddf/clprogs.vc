@@ -23,13 +23,18 @@
 //**
 //**************************************************************************
 
+#define DDF
 #define DOOM2
+#define NO_BOTS
 
-#include "../doom/client/clprogs.vc"
+#include "../../progs/doom/client/clprogs.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2002/06/14 15:51:20  dj_jl
+//  A lots of changes, new functions etc for DDF.
+//
 //  Revision 1.1  2002/05/18 17:03:26  dj_jl
 //  Working on DDF to VavoomC converter.
 //
