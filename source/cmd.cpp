@@ -279,11 +279,11 @@ char *Cmd_Args(void)
 
 //==========================================================================
 //
-//  Commands_f
+//	COMMAND CmdList
 //
 //==========================================================================
 
-COMMAND(Commands)
+COMMAND(CmdList)
 {
 	const char *prefix = Argv(1);
 	int pref_len = strlen(prefix);
@@ -624,9 +624,12 @@ void Cmd_ForwardToServer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/29 17:50:09  dj_jl
+//	Renamed command Commands to CmdList
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
