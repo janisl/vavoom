@@ -57,6 +57,7 @@ IMPLEMENT_CLASS(VWindow);
 VWindow::VWindow(void)
 : WindowType(WIN_Normal)
 , bIsVisible(true)
+, bIsSensitive(true)
 {
 }
 
@@ -78,6 +79,16 @@ void VWindow::Init(VWindow *InParent)
 	InitWindow();
 	WindowReady();
 	bIsInitialized = true;
+}
+
+//==========================================================================
+//
+//	VWindow::CleanUp
+//
+//==========================================================================
+
+void VWindow::CleanUp(void)
+{
 }
 
 //==========================================================================
@@ -115,6 +126,24 @@ VRootWindow *VWindow::GetRootWindow(void)
 		win = win->Parent;
 	}
 	return (VRootWindow *)win;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWindow::GetModalWindow
+//
+//==========================================================================
+
+VModalWindow *VWindow::GetModalWindow(void)
+{
+	guard(VWindow::GetModalWindow);
+	VWindow *win = this;
+	while (win->WindowType < WIN_Modal)
+	{
+		win = win->Parent;
+	}
+	return (VModalWindow *)win;
 	unguard;
 }
 
@@ -298,6 +327,23 @@ void VWindow::SetVisibility(bool NewVisibility)
 	{
 		bIsVisible = NewVisibility;
 		VisibilityChanged(NewVisibility);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWindow::SetSensitivity
+//
+//==========================================================================
+
+void VWindow::SetSensitivity(bool NewSensitivity)
+{
+	guard(VWindow::SetSensitivity);
+	if (!!bIsSensitive != NewSensitivity)
+	{
+		bIsSensitive = NewSensitivity;
+		SensitivityChanged(NewSensitivity);
 	}
 	unguard;
 }
@@ -582,6 +628,12 @@ IMPLEMENT_FUNCTION(VWindow, Lower)
 	VWindow *Self = PR_PopWin();
 	Self->Lower();
 }
+IMPLEMENT_FUNCTION(VWindow, SetVisibility)
+{
+	bool bNewVisibility = !!PR_Pop();
+	VWindow *Self = PR_PopWin();
+	Self->SetVisibility(bNewVisibility);
+}
 IMPLEMENT_FUNCTION(VWindow, Show)
 {
 	VWindow *Self = PR_PopWin();
@@ -597,11 +649,37 @@ IMPLEMENT_FUNCTION(VWindow, IsVisible)
 	VWindow *Self = PR_PopWin();
 	PR_Push(Self->IsVisible());
 }
+IMPLEMENT_FUNCTION(VWindow, SetSensitivity)
+{
+	bool bNewSensitivity = !!PR_Pop();
+	VWindow *Self = PR_PopWin();
+	Self->SetSensitivity(bNewSensitivity);
+}
+IMPLEMENT_FUNCTION(VWindow, Enable)
+{
+	VWindow *Self = PR_PopWin();
+	Self->Enable();
+}
+IMPLEMENT_FUNCTION(VWindow, Disable)
+{
+	VWindow *Self = PR_PopWin();
+	Self->Disable();
+}
+IMPLEMENT_FUNCTION(VWindow, IsSensitive)
+{
+	VWindow *Self = PR_PopWin();
+	PR_Push(Self->IsSensitive());
+}
 
 IMPLEMENT_FUNCTION(VWindow, GetRootWindow)
 {
 	VWindow *Self = PR_PopWin();
 	PR_Push((int)Self->GetRootWindow());
+}
+IMPLEMENT_FUNCTION(VWindow, GetModalWindow)
+{
+	VWindow *Self = PR_PopWin();
+	PR_Push((int)Self->GetModalWindow());
 }
 IMPLEMENT_FUNCTION(VWindow, GetParent)
 {
@@ -685,7 +763,10 @@ IMPLEMENT_FUNCTION(VWindow, DestroyAllChildren)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2002/06/14 15:39:22  dj_jl
+//	Some fixes for Borland.
+//
 //	Revision 1.1  2002/05/29 16:51:50  dj_jl
 //	Started a work on native Window classes.
-//
+//	
 //**************************************************************************

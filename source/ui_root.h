@@ -23,9 +23,9 @@
 //**
 //**************************************************************************
 
-class VRootWindow:public VWindow
+class VRootWindow:public VModalWindow
 {
-	DECLARE_CLASS(VRootWindow, VWindow, 0);
+	DECLARE_CLASS(VRootWindow, VModalWindow, 0)
 
 	VRootWindow(void);
 	void Init(void);
@@ -42,9 +42,12 @@ extern VRootWindow *GRoot;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2002/06/14 15:39:22  dj_jl
+//	Some fixes for Borland.
+//
 //	Revision 1.1  2002/05/29 16:51:50  dj_jl
 //	Started a work on native Window classes.
-//
+//	
 //	Revision 1.4  2002/05/18 16:56:35  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	

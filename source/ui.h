@@ -31,10 +31,12 @@
 // Forward declarations
 class	VGC;
 class	VWindow;
+class	VModalWindow;
 class	VRootWindow;
 
 #include "ui_gc.h"
 #include "ui_win.h"
+#include "ui_modal.h"
 #include "ui_root.h"
 
 // MACROS ------------------------------------------------------------------
@@ -50,7 +52,10 @@ class	VRootWindow;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2002/06/14 15:39:22  dj_jl
+//	Some fixes for Borland.
+//
 //	Revision 1.1  2002/05/29 16:51:50  dj_jl
 //	Started a work on native Window classes.
-//
+//	
 //**************************************************************************

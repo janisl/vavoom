@@ -26,12 +26,13 @@
 enum EWinType
 {
 	WIN_Normal,
+	WIN_Modal,
 	WIN_Root
 };
 
 class VWindow:public VObject
 {
-	DECLARE_CLASS(VWindow, VObject, 0);
+	DECLARE_CLASS(VWindow, VObject, 0)
 
 	friend class VRootWindow;
 
@@ -40,6 +41,7 @@ class VWindow:public VObject
 
 	// Booleans
 	dword bIsVisible:1;			// TRUE if the window is visible
+	dword bIsSensitive:1;		// TRUE if the window can take input
 	dword bTickEnabled:1;		// TRUE if () event should be called
 	dword bIsInitialized:1;		// TRUE if the window has been initialized
 
@@ -67,10 +69,12 @@ private:
 public:
 	VWindow(void);
 	virtual void Init(VWindow *InParent);
+	virtual void CleanUp(void);
 	void Destroy(void);
 
 	// Ancestral routines
 	VRootWindow *GetRootWindow(void);
+	VModalWindow *GetModalWindow(void);
 	VWindow *GetParent(void);
 
 	// Child routines
@@ -104,6 +108,27 @@ public:
 		}
 		else
 			return bIsVisible;
+	}
+
+	// Sensitivity routines
+	void SetSensitivity(bool NewSensitivity);
+	void Enable(void) { SetSensitivity(true); }
+	void Disable(void) { SetSensitivity(false); }
+	bool IsSensitive(bool bRecurse = true)
+	{
+		if (bRecurse)
+		{
+			VWindow *pParent = this;
+			while (pParent)
+			{
+				if (!pParent->bIsSensitive)
+					break;
+				pParent = pParent->Parent;
+			}
+			return (pParent ? false : true);
+		}
+		else
+			return bIsSensitive;
 	}
 
 	//	Reconfiguration routines.
@@ -154,6 +179,10 @@ public:
 	{
 		clpr.Exec(GetVFunction("VisibilityChanged"), (int)this, NewVisibility);
 	}
+	virtual void SensitivityChanged(bool bNewSensitivity)
+	{
+		clpr.Exec(GetVFunction("SensitivityChanged"), (int)this, bNewSensitivity);
+	}
 
 	virtual void DrawWindow(VGC *gc)
 	{
@@ -190,11 +219,17 @@ public:
 	DECLARE_FUNCTION(NewChild)
 	DECLARE_FUNCTION(Raise)
 	DECLARE_FUNCTION(Lower)
+	DECLARE_FUNCTION(SetVisibility)
 	DECLARE_FUNCTION(Show)
 	DECLARE_FUNCTION(Hide)
 	DECLARE_FUNCTION(IsVisible)
-
+	DECLARE_FUNCTION(SetSensitivity)
+	DECLARE_FUNCTION(Enable)
+	DECLARE_FUNCTION(Disable)
+	DECLARE_FUNCTION(IsSensitive)
+	
 	DECLARE_FUNCTION(GetRootWindow)
+	DECLARE_FUNCTION(GetModalWindow)
 	DECLARE_FUNCTION(GetParent)
 
 	DECLARE_FUNCTION(SetPos)
@@ -214,7 +249,10 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2002/06/14 15:39:22  dj_jl
+//	Some fixes for Borland.
+//
 //	Revision 1.1  2002/05/29 16:51:50  dj_jl
 //	Started a work on native Window classes.
-//
+//	
 //**************************************************************************

@@ -151,8 +151,8 @@ struct VClipRect
 
 class VGC:public VObject
 {
-	DECLARE_CLASS(VGC, VObject, 0);
-	NO_DEFAULT_CONSTRUCTOR(VGC);
+	DECLARE_CLASS(VGC, VObject, 0)
+	NO_DEFAULT_CONSTRUCTOR(VGC)
 
 	friend class VWindow;
 
@@ -164,7 +164,10 @@ class VGC:public VObject
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2002/06/14 15:39:22  dj_jl
+//	Some fixes for Borland.
+//
 //	Revision 1.1  2002/05/29 16:51:50  dj_jl
 //	Started a work on native Window classes.
-//
+//	
 //**************************************************************************
