@@ -556,6 +556,7 @@ struct client_state_t
 	// Current PLAYPAL index
 	//  can be set to REDCOLORMAP for pain, etc.
 	int palette;
+	int prev_palette;
 
 	int cshifts[NUM_CSHIFTS];	//  color shifts for damage,
 	int prev_cshifts[NUM_CSHIFTS];	// powerups and content types
@@ -709,6 +710,9 @@ struct ClipRect
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.54  2005/04/04 07:35:15  dj_jl
+//  Palette flash state fix.
+//
 //  Revision 1.53  2005/03/28 07:48:33  dj_jl
 //  Some Boom line specials.
 //
