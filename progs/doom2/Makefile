@@ -2,14 +2,16 @@ ifndef VCC
 VCC=vcc
 endif
 
-all: clprogs.dat svprogs.dat
+all: ../../basev/doom2/progs/clprogs.dat ../../basev/doom2/progs/svprogs.dat
+clprogs: ../../basev/doom2/progs/clprogs.dat
+svprogs: ../../basev/doom2/progs/svprogs.dat
 
 del:
-	rm clprogs.dat svprogs.dat
+	rm ../../basev/doom2/progs/clprogs.dat ../../basev/doom2/progs/svprogs.dat
 
-clprogs.dat: clprogs.vc ../doom/*.vc ../doom/client/*.vc ../common/*.vc
-	$(VCC) clprogs
+../../basev/doom2/progs/clprogs.dat: clprogs.vc ../doom/*.vc ../doom/client/*.vc ../common/*.vc
+	$(VCC) clprogs.vc $@
 
-svprogs.dat: svprogs.vc ../doom/*.vc ../doom/server/*.vc ../common/*.vc
-	$(VCC) svprogs
+../../basev/doom2/progs/svprogs.dat: svprogs.vc ../doom/*.vc ../doom/server/*.vc ../common/*.vc
+	$(VCC) svprogs.vc $@
 

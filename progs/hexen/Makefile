@@ -2,14 +2,18 @@ ifndef VCC
 VCC=vcc
 endif
 
-all: clprogs.dat svprogs.dat
+OUTDIR=../../basev/hexen/progs
+
+all: $(OUTDIR)/clprogs.dat $(OUTDIR)/svprogs.dat
+clprogs: $(OUTDIR)/clprogs.dat
+svprogs: $(OUTDIR)/svprogs.dat
 
 del:
-	rm clprogs.dat svprogs.dat
+	rm $(OUTDIR)/clprogs.dat $(OUTDIR)/svprogs.dat
 
-clprogs.dat: *.vc client/*.vc ../common/*.vc
-	$(VCC) client/clprogs.vc clprogs.dat
+$(OUTDIR)/clprogs.dat: *.vc client/*.vc ../common/*.vc
+	$(VCC) client/clprogs.vc $@
 
-svprogs.dat: *.vc server/*.vc ../common/*.vc
-	$(VCC) server/svprogs.vc svprogs.dat
+$(OUTDIR)/svprogs.dat: *.vc server/*.vc ../common/*.vc
+	$(VCC) server/svprogs.vc $@
 
