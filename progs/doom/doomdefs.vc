@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-#define GRENADE_LAUNCHER
+//#define GRENADE_LAUNCHER
 
 #ifndef DOOM2
 boolean shareware;
@@ -137,6 +137,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/03 18:33:04  dj_jl
+//  Beautification
+//
 //  Revision 1.8  2001/10/22 17:23:11  dj_jl
 //  Floatification of angles
 //
