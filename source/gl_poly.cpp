@@ -769,6 +769,8 @@ void TOpenGLDrawer::StartParticles(void)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	}
 	glEnable(GL_BLEND);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.0);
 	glBegin(GL_QUADS);
 }
 
@@ -798,14 +800,19 @@ void TOpenGLDrawer::EndParticles(void)
 {
 	glEnd();
 	glDisable(GL_BLEND);
+	glDisable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.666);
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/01 17:36:11  dj_jl
+//	Added alpha test to the particle drawing
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

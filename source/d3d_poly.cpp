@@ -942,6 +942,8 @@ void TDirect3DDrawer::StartParticles(void)
 	}
 	RenderDevice->SetTexture(0, particle_texture);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
+	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
+	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAREF, 0);
 }
 
 //==========================================================================
@@ -981,14 +983,19 @@ void TDirect3DDrawer::DrawParticle(particle_t *p)
 void TDirect3DDrawer::EndParticles(void)
 {
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
+	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
+	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAREF, 170);
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/01 17:36:11  dj_jl
+//	Added alpha test to the particle drawing
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
