@@ -177,6 +177,7 @@ OBJ_FILES = $(SYS_OBJS) \
 	obj/sizebuf.o \
 	obj/sn_sonix.o \
 	obj/sv_acs.o \
+	obj/sv_ent.o \
 	obj/sv_main.o \
 	obj/sv_poly.o \
 	obj/sv_save.o \
@@ -258,6 +259,7 @@ SV_OBJ_FILES = $(SV_SYS_OBJS) \
 	obj/sv/sc_man.o \
 	obj/sv/sizebuf.o \
 	obj/sv/sv_acs.o \
+	obj/sv/sv_ent.o \
 	obj/sv/sv_main.o \
 	obj/sv/sv_poly.o \
 	obj/sv/sv_save.o \

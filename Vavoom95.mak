@@ -4,8 +4,7 @@ BCB = $(MAKEDIR)\..
 !endif
 
 # ---------------------------------------------------------------------------
-CFLAGS = -O2 -X- -a4 -4 -b -k- -vi -q -c -w -w-8071 -w-8027 \
-         -Ic:\mssdk\include -D_NO_VCL
+CFLAGS = -O2 -X- -a4 -4 -b -k- -vi -q -c -w -Ic:\mssdk\include -D_NO_VCL
 RFLAGS = /l 0x426
 AFLAGS = /ml /zn
 LFLAGS = -Iobj -aa -Tpe -x -Gn -w -q
@@ -24,7 +23,7 @@ OBJFILES = obj\chat.obj obj\cheats.obj \
     obj\net_dgrm.obj obj\net_loop.obj obj\net_main.obj obj\net_null.obj \
     obj\net_win.obj obj\net_wins.obj obj\net_wipx.obj \
     \
-    obj\sv_acs.obj \
+    obj\sv_acs.obj obj\sv_ent.obj \
     obj\sv_main.obj obj\sv_poly.obj obj\sv_save.obj obj\sv_sight.obj \
     obj\sv_swtch.obj obj\sv_user.obj obj\sv_tick.obj obj\sv_world.obj \
     \
