@@ -82,7 +82,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	0,		// damage
 	sfx1_posact,		// activesound
 	MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
-    0,	// flags2
+    MF2_MCROSS,	// flags2
 	S1_POSS_RAISE1		// raisestate
     },
 
@@ -110,7 +110,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	0,		// damage
 	sfx1_posact,		// activesound
 	MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
-    0,	// flags2
+    MF2_MCROSS,	// flags2
 	S1_SPOS_RAISE1		// raisestate
     },
 
@@ -138,7 +138,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	0,		// damage
 	sfx1_vilact,		// activesound
 	MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
-    0,	// flags2
+    MF2_MCROSS,	// flags2
 	S1_NULL		// raisestate
     },
 
@@ -196,7 +196,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	0,		// damage
 	sfx1_skeact,		// activesound
 	MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
-    0,	// flags2
+    MF2_MCROSS,	// flags2
 	S1_SKEL_RAISE1		// raisestate
     },
 
@@ -224,7 +224,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	10,		// damage
 	sfx1_None,		// activesound
 	MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY|MF_TRANSLUCENT,		// flags
-    0,	// flags2
+    MF2_PCROSS,	// flags2
 	S1_NULL,		// raisestate
 	0,
 	"EF_DL_RBALL"
@@ -282,7 +282,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	0,		// damage
 	sfx1_posact,		// activesound
 	MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
-    0,	// flags2
+    MF2_MCROSS,	// flags2
 	S1_FATT_RAISE1		// raisestate
     },
 
@@ -310,7 +310,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	8,		// damage
 	sfx1_None,		// activesound
 	MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY|MF_TRANSLUCENT,		// flags
-    0,	// flags2
+    MF2_PCROSS,	// flags2
 	S1_NULL,		// raisestate
 	0,
 	"EF_DL_RBALL"
@@ -340,7 +340,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	0,		// damage
 	sfx1_posact,		// activesound
 	MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
-    0,	// flags2
+    MF2_MCROSS,	// flags2
 	S1_CPOS_RAISE1		// raisestate
     },
 
@@ -368,7 +368,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	0,		// damage
 	sfx1_bgact,		// activesound
 	MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
-    0,	// flags2
+    MF2_MCROSS,	// flags2
 	S1_TROO_RAISE1		// raisestate
     },
 
@@ -396,7 +396,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	0,		// damage
 	sfx1_dmact,		// activesound
 	MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
-    0,	// flags2
+    MF2_MCROSS,	// flags2
 	S1_SARG_RAISE1		// raisestate
     },
 
@@ -424,7 +424,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	0,		// damage
 	sfx1_dmact,		// activesound
 	MF_SOLID|MF_SHOOTABLE|MF_SHADOW|MF_COUNTKILL,		// flags
-    0,	// flags2
+    MF2_MCROSS,	// flags2
 	S1_SARG_RAISE1		// raisestate
     },
 
@@ -452,7 +452,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	0,		// damage
 	sfx1_dmact,		// activesound
 	MF_SOLID|MF_SHOOTABLE|MF_FLOAT|MF_NOGRAVITY|MF_COUNTKILL,		// flags
-    0,	// flags2
+    MF2_MCROSS,	// flags2
 	S1_HEAD_RAISE1		// raisestate
     },
 
@@ -480,7 +480,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	0,		// damage
 	sfx1_dmact,		// activesound
 	MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
-    0,	// flags2
+    MF2_MCROSS,	// flags2
 	S1_BOSS_RAISE1		// raisestate
     },
 
@@ -508,7 +508,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	8,		// damage
 	sfx1_None,		// activesound
 	MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY|MF_TRANSLUCENT,		// flags
-    0,	// flags2
+    MF2_PCROSS,	// flags2
 	S1_NULL,		// raisestate
 	0,
 	"EF_DL_GBALL"
@@ -538,7 +538,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	0,		// damage
 	sfx1_dmact,		// activesound
 	MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
-    0,	// flags2
+    MF2_MCROSS,	// flags2
 	S1_BOS2_RAISE1		// raisestate
     },
 
@@ -566,7 +566,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	3,		// damage
 	sfx1_dmact,		// activesound
 	MF_SOLID|MF_SHOOTABLE|MF_FLOAT|MF_NOGRAVITY|MF_TRANSLUCENT,		// flags
-    0,	// flags2
+    MF2_MCROSS,	// flags2
 	S1_NULL,		// raisestate
 	0,
 	"EF_DL_MISSILE"
@@ -596,7 +596,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	0,		// damage
 	sfx1_dmact,		// activesound
 	MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
-    0,	// flags2
+    MF2_MCROSS,	// flags2
 	S1_NULL		// raisestate
     },
 
@@ -624,7 +624,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	0,		// damage
 	sfx1_bspact,		// activesound
 	MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
-    0,	// flags2
+    MF2_MCROSS,	// flags2
 	S1_BSPI_RAISE1		// raisestate
     },
 
@@ -652,7 +652,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	0,		// damage
 	sfx1_dmact,		// activesound
 	MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
-    0,	// flags2
+    MF2_MCROSS,	// flags2
 	S1_NULL		// raisestate
     },
 
@@ -680,7 +680,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	0,		// damage
 	sfx1_dmact,		// activesound
 	MF_SOLID|MF_SHOOTABLE|MF_FLOAT|MF_NOGRAVITY|MF_COUNTKILL,		// flags
-    0,	// flags2
+    MF2_MCROSS,	// flags2
 	S1_PAIN_RAISE1		// raisestate
     },
 
@@ -708,7 +708,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	0,		// damage
 	sfx1_posact,		// activesound
 	MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
-    0,	// flags2
+    MF2_MCROSS,	// flags2
 	S1_SSWV_RAISE1		// raisestate
     },
 
@@ -736,7 +736,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	0,		// damage
 	sfx1_None,		// activesound
 	MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY|MF_SHOOTABLE|MF_COUNTKILL,		// flags
-    0,	// flags2
+    MF2_MCROSS,	// flags2
 	S1_NULL		// raisestate
     },
 
@@ -848,7 +848,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	3,		// damage
 	sfx1_None,		// activesound
 	MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY|MF_NOCLIP,		// flags
-    0,	// flags2
+    MF2_PCROSS,	// flags2
 	S1_NULL		// raisestate
     },
 
@@ -934,7 +934,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	3,		// damage
 	sfx1_None,		// activesound
 	MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY|MF_TRANSLUCENT,		// flags
-    0,	// flags2
+    MF2_PCROSS,	// flags2
 	S1_NULL,		// raisestate
 	0,
 	"EF_DL_RBALL"
@@ -964,7 +964,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	5,		// damage
 	sfx1_None,		// activesound
 	MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY|MF_TRANSLUCENT,		// flags
-    0,	// flags2
+    MF2_PCROSS,	// flags2
 	S1_NULL,		// raisestate
 	0,
 	"EF_DL_RBALL"
@@ -994,7 +994,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	20,		// damage
 	sfx1_None,		// activesound
 	MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-    0,	// flags2
+    MF2_PCROSS,	// flags2
 	S1_NULL,		// raisestate
 	0,
 	"EF_DL_MISSILE | EF_ROCKET"
@@ -1024,7 +1024,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	5,		// damage
 	sfx1_None,		// activesound
 	MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY|MF_TRANSLUCENT,		// flags
-    0,	// flags2
+    MF2_PCROSS,	// flags2
 	S1_NULL,		// raisestate
 	0,
 	"EF_DL_PLASMA"
@@ -1054,7 +1054,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	100,		// damage
 	sfx1_None,		// activesound
 	MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY|MF_TRANSLUCENT,		// flags
-    0,	// flags2
+    MF2_PCROSS,	// flags2
 	S1_NULL,		// raisestate
 	0,
 	"EF_DL_GBALL"
@@ -1084,7 +1084,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	5,		// damage
 	sfx1_None,		// activesound
 	MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY|MF_TRANSLUCENT,		// flags
-    0,	// flags2
+    MF2_PCROSS,	// flags2
 	S1_NULL,		// raisestate
 	0,
 	"EF_DL_MISSILE"
@@ -3980,9 +3980,12 @@ void MarkSpecialWeaponStates(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/01/29 18:19:01  dj_jl
+//	Added MCROSS and PCROSS flags.
+//
 //	Revision 1.7  2002/01/17 18:18:12  dj_jl
 //	Renamed all map object classes
-//
+//	
 //	Revision 1.6  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
 //	

@@ -88,9 +88,9 @@ char* flagnames2[32] =
     "MF2_FLAG21",
     "MF2_FLAG22",
     "MF2_FLAG23",
-    "MF2_FLAG24",
+    "MF2_MCROSS",
 
-    "MF2_FLAG25",
+    "MF2_PCROSS",
     "MF2_FLAG26",
     "MF2_FLAG27",
     "MF2_FLAG28",
@@ -103,9 +103,12 @@ char* flagnames2[32] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/01/29 18:19:01  dj_jl
+//	Added MCROSS and PCROSS flags.
+//
 //	Revision 1.4  2002/01/07 12:31:35  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/09/20 16:35:58  dj_jl
 //	Beautification
 //	

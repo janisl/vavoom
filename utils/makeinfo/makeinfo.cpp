@@ -374,6 +374,14 @@ void WriteMobjInfo(void)
 #endif
         flags2 &= ~(MF2_DONTDRAW);
 
+#ifdef STRIFE
+		//	Add MCROSS and PCROSS flags.
+		if (flags & MF_COUNTKILL)
+			flags2 |= MF2_MCROSS;
+		else if (flags & MF_MISSILE)
+			flags2 |= MF2_MCROSS;
+#endif
+
 #if defined HERETIC || defined HEXEN
 		//	Add passmobj flag to all missiles and invert it
 		if (flags & MF_MISSILE)
@@ -761,9 +769,12 @@ int main(int argc, char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2002/01/29 18:19:01  dj_jl
+//	Added MCROSS and PCROSS flags.
+//
 //	Revision 1.18  2002/01/28 18:51:59  dj_jl
 //	Replaced some pointers with references.
-//
+//	
 //	Revision 1.17  2002/01/24 18:21:20  dj_jl
 //	Inverted passmobj flag
 //	
