@@ -1834,6 +1834,59 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 
 //==========================================================================
 //
+//	SV_WriteChangedTextures
+//
+//	Writes texture change commands for new clients
+//
+//==========================================================================
+
+static void SV_WriteChangedTextures(TMessage &msg)
+{
+	int			i;
+
+	for (i = 0; i < level.numsides; i++)
+	{
+		side_t &s = level.sides[i];
+		if (s.midtexture != s.base_midtexture)
+		{
+			msg << (byte)svc_side_mid
+				<< (word)i
+				<< (word)s.midtexture;
+		}
+		if (s.bottomtexture != s.base_bottomtexture)
+		{
+			msg << (byte)svc_side_bot
+				<< (word)i
+				<< (word)s.bottomtexture;
+		}
+		if (s.toptexture != s.base_toptexture)
+		{
+			msg << (byte)svc_side_top
+				<< (word)i
+				<< (word)s.toptexture;
+		}
+	}
+
+	for (i = 0; i < level.numsectors; i++)
+	{
+		sector_t &s = level.sectors[i];
+		if (s.floor.pic != s.floor.base_pic)
+		{
+			msg << (byte)svc_sec_floor
+				<< (word)i
+				<< (word)s.floor.pic;
+		}
+		if (s.ceiling.pic != s.ceiling.base_pic)
+		{
+			msg << (byte)svc_sec_ceil
+				<< (word)i
+				<< (word)s.ceiling.pic;
+		}
+	}
+}
+
+//==========================================================================
+//
 //	COMMAND PreSpawn
 //
 //==========================================================================
@@ -1883,6 +1936,7 @@ COMMAND(Spawn)
 			Host_Error("Player without Mobj\n");
 		}
 	}
+	SV_WriteChangedTextures(sv_player->message);
 	sv_player->message << (byte)svc_set_angles
 						<< (byte)(sv_player->mo->angles.pitch >> 24)
 						<< (byte)(sv_player->mo->angles.yaw >> 24)
@@ -2355,9 +2409,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/02 17:46:38  dj_jl
+//	Added sending info about changed textures to new clients
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

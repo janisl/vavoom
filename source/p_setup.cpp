@@ -251,24 +251,18 @@ static void LoadSectors(int lump, level_t &loadlevel)
 		//	Floor
 		ss->floor.Set(TVec(0, 0, 1), LittleShort(ms->floorheight));
 		ss->floor.pic = FTNumForName(ms->floorpic);
-		ss->floor.angle = 0;
+		ss->floor.base_pic = ss->floor.pic;
 		ss->floor.xoffs = 0;
 		ss->floor.yoffs = 0;
-		ss->floor.xscale = 1.0;
-		ss->floor.yscale = 1.0;
-		ss->floor.light = 0;
 		ss->floor.minz = LittleShort(ms->floorheight);
 		ss->floor.maxz = LittleShort(ms->floorheight);
 
 		//	Ceiling
 		ss->ceiling.Set(TVec(0, 0, -1), -LittleShort(ms->ceilingheight));
 		ss->ceiling.pic = FTNumForName(ms->ceilingpic);
-		ss->ceiling.angle = 0;
+		ss->ceiling.base_pic = ss->ceiling.pic;
 		ss->ceiling.xoffs = 0;
 		ss->ceiling.yoffs = 0;
-		ss->ceiling.xscale = 1.0;
-		ss->ceiling.yscale = 1.0;
-		ss->ceiling.light = 0;
 		ss->ceiling.minz = LittleShort(ms->ceilingheight);
 		ss->ceiling.maxz = LittleShort(ms->ceilingheight);
 
@@ -308,38 +302,41 @@ static void LoadSectors(int lump, level_t &loadlevel)
 
 static void LoadSideDefs(int lump, level_t &loadlevel)
 {
-    byte*               data;
-    int                 i;
-    mapsidedef_t*       msd;
-    side_t*             sd;
+	byte*				data;
+	int					i;
+	mapsidedef_t*		msd;
+	side_t*				sd;
 
 	loadlevel.numsides = W_LumpLength(lump) / sizeof(mapsidedef_t);
 	loadlevel.sides = (side_t*)Z_Calloc(loadlevel.numsides * sizeof(side_t), PU_LEVEL, 0);
-    data = (byte*)W_CacheLumpNum(lump, PU_STATIC);
+	data = (byte*)W_CacheLumpNum(lump, PU_STATIC);
 
-    msd = (mapsidedef_t *)data;
-    sd = loadlevel.sides;
+	msd = (mapsidedef_t *)data;
+	sd = loadlevel.sides;
 
 	// Make sure primary lumps are used for texture searching
 	W_UsePrimary();
 
-    for (i=0 ; i<loadlevel.numsides ; i++, msd++, sd++)
-    {
+	for (i = 0; i < loadlevel.numsides; i++, msd++, sd++)
+	{
 		sd->textureoffset = LittleShort(msd->textureoffset);
 		sd->rowoffset = LittleShort(msd->rowoffset);
 		sd->sector = &loadlevel.sectors[LittleShort(msd->sector)];
-      	sd->midtexture = TFNumForName(msd->midtexture);
-       	sd->toptexture = TFNumForName(msd->toptexture);
-       	sd->bottomtexture = TFNumForName(msd->bottomtexture);
+		sd->midtexture = TFNumForName(msd->midtexture);
+		sd->toptexture = TFNumForName(msd->toptexture);
+		sd->bottomtexture = TFNumForName(msd->bottomtexture);
 
 		sd->base_textureoffset = sd->textureoffset;
 		sd->base_rowoffset = sd->rowoffset;
-    }
+		sd->base_midtexture = sd->midtexture;
+		sd->base_toptexture = sd->toptexture;
+		sd->base_bottomtexture = sd->bottomtexture;
+	}
 
 	if (DevMaps)
 		W_UseAuxiliary();
 
-    Z_Free(data);
+	Z_Free(data);
 }
 
 //==========================================================================
@@ -1080,9 +1077,12 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/02 17:46:38  dj_jl
+//	Added sending info about changed textures to new clients
+//
 //	Revision 1.4  2001/08/01 17:37:34  dj_jl
 //	Made walls check texture list before flats
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

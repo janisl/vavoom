@@ -180,6 +180,12 @@ struct side_t
     int			bottomtexture;
     int			midtexture;
 
+	//	Remember base textures so we can inform new clients about
+	// changed textures
+	int			base_toptexture;
+	int			base_bottomtexture;
+	int			base_midtexture;
+
     // Sector the SideDef is facing.
     sector_t	*sector;
 };
@@ -232,15 +238,11 @@ struct sec_plane_t : public TPlane
 	float		maxz;
 
 	int			pic;
-	angle_t		angle;
+	int			base_pic;
 
 	float		xoffs;
 	float		yoffs;
 
-	float		xscale;
-	float		yscale;
-
-	float		light;
 	int			flags;
 	int			translucency;
 };
@@ -662,9 +664,12 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/02 17:46:38  dj_jl
+//	Added sending info about changed textures to new clients
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
