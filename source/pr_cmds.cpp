@@ -2083,7 +2083,6 @@ static void PF_ClearPlayer(void)
 	pl->fixedcolormap = 0;
 	pl->palette = 0;
 	memset(pl->cshifts, 0, sizeof(pl->cshifts));
-    memset(pl->psprites, 0, sizeof(pl->psprites));
 	pl->pspriteSY = 0;
 	memset(pl->user_fields, 0, sizeof(pl->user_fields));
 }
@@ -3178,9 +3177,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2001/12/12 19:28:49  dj_jl
+//	Some little changes, beautification
+//
 //	Revision 1.22  2001/12/04 18:16:28  dj_jl
 //	Player models and skins handled by server
-//
+//	
 //	Revision 1.21  2001/12/01 17:43:13  dj_jl
 //	Renamed ClassBase to VObject
 //	

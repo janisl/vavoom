@@ -41,7 +41,7 @@
 
 // MACROS ------------------------------------------------------------------
 
-//#define PROGS_PROFILE
+#define PROGS_PROFILE
 
 #define MINIMUM_HEAP_SIZE	0x800000		//   8 meg
 #define MAXIMUM_HEAP_SIZE	0x8000000		// 128 meg
@@ -654,7 +654,7 @@ int main(int argc,char** argv)
 
 #ifdef PROGS_PROFILE
 		install_timer();
-		install_int(PR_Profile2, 1);
+		install_int_ex(PR_Profile2, 1);
 #endif
 
 		//	Install signal handlers overriding Allegro handlers
@@ -705,9 +705,12 @@ int main(int argc,char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/12/12 19:28:49  dj_jl
+//	Some little changes, beautification
+//
 //	Revision 1.8  2001/11/09 14:19:42  dj_jl
 //	Functions for directory listing
-//
+//	
 //	Revision 1.7  2001/10/08 17:26:17  dj_jl
 //	Started to use exceptions
 //	

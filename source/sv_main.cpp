@@ -704,27 +704,27 @@ void SV_WriteViewData(player_t &player, TMessage &msg)
 		<< (byte)player.palette
 		<< (byte)player.mo->translucency
 		<< (word)player.pspriteSY;
-	if (player.psprites[0].statenum)
+	if (player.ViewEnts[0] && player.ViewEnts[0]->statenum)
 	{
-		msg << (word)player.psprites[0].sprite
-			<< (byte)player.psprites[0].frame
-			<< (word)player.psprites[0].model_index
-			<< (byte)player.psprites[0].alias_frame
-			<< (word)player.psprites[0].sx
-			<< (word)player.psprites[0].sy;
+		msg << (word)player.ViewEnts[0]->sprite
+			<< (byte)player.ViewEnts[0]->frame
+			<< (word)player.ViewEnts[0]->model_index
+			<< (byte)player.ViewEnts[0]->alias_frame
+			<< (word)player.ViewEnts[0]->sx
+			<< (word)player.ViewEnts[0]->sy;
 	}
 	else
 	{
 		msg << (short)-1;
 	}
-	if (player.psprites[1].statenum)
+	if (player.ViewEnts[1] && player.ViewEnts[1]->statenum)
 	{
-		msg << (word)player.psprites[1].sprite
-			<< (byte)player.psprites[1].frame
-			<< (word)player.psprites[1].model_index
-			<< (byte)player.psprites[1].alias_frame
-			<< (word)player.psprites[1].sx
-			<< (word)player.psprites[1].sy;
+		msg << (word)player.ViewEnts[1]->sprite
+			<< (byte)player.ViewEnts[1]->frame
+			<< (word)player.ViewEnts[1]->model_index
+			<< (byte)player.ViewEnts[1]->alias_frame
+			<< (word)player.ViewEnts[1]->sx
+			<< (word)player.ViewEnts[1]->sy;
 	}
 	else
 	{
@@ -2638,9 +2638,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2001/12/12 19:28:49  dj_jl
+//	Some little changes, beautification
+//
 //	Revision 1.22  2001/12/04 18:16:28  dj_jl
 //	Player models and skins handled by server
-//
+//	
 //	Revision 1.21  2001/12/03 19:23:08  dj_jl
 //	Fixes for view angles at respawn
 //	

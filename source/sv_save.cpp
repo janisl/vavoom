@@ -351,6 +351,40 @@ mobj_t* SetMobjPtr(int id)
 
 //==========================================================================
 //
+//	WriteVObject
+//
+//==========================================================================
+
+void WriteVObject(VObject *Obj)
+{
+	int size = Obj->GetSize();
+
+	StreamOutLong(size);
+	StreamOutLong(Obj->GetClassID());
+	StreamOutBuffer((byte *)Obj + sizeof(VObject), size - sizeof(VObject));
+}
+
+//==========================================================================
+//
+//	ReadVObject
+//
+//==========================================================================
+
+VObject *ReadVObject(int tag)
+{
+	//  Get params
+	int size = GET_LONG;
+	int cid = GET_LONG;
+
+	//  Allocate object and copy data
+	VObject *o = svpr.Spawn(cid, tag);
+	memcpy((byte*)o + sizeof(VObject), SavePtr.b, size - sizeof(VObject));
+	SavePtr.b += size - sizeof(VObject);
+	return o;
+}
+
+//==========================================================================
+//
 // ArchivePlayers
 //
 //==========================================================================
@@ -377,6 +411,15 @@ static void ArchivePlayers(void)
 		tempPlayer = players[i];
 		svpr.Exec(pf_archive_player, (int)&tempPlayer);
 		StreamOutBuffer(&tempPlayer, sizeof(player_t));
+
+		for (int pi = 0; pi < NUMPSPRITES; pi++)
+		{
+			if (!tempPlayer.ViewEnts[pi])
+			{
+				continue;
+			}
+			WriteVObject(tempPlayer.ViewEnts[pi]);
+		}
 	}
 }
 
@@ -408,6 +451,15 @@ static void UnarchivePlayers(void)
 		players[i].mo = NULL; // Will be set when unarc thinker
 		svpr.Exec(pf_unarchive_player, (int)&players[i]);
 		players[i].active = false;
+
+		for (int pi = 0; pi < NUMPSPRITES; pi++)
+		{
+			if (!players[i].ViewEnts[pi])
+			{
+				continue;
+			}
+			players[i].ViewEnts[pi] = (VViewEntity *)ReadVObject(PU_STRING);
+		}
 	}
 }
 
@@ -639,7 +691,7 @@ static void ArchiveThinkers(void)
 			continue;
 		}
 
-		int size = thinker->vtable[1];
+		int size = thinker->GetSize();
 
 		VThinker *th = (VThinker*)Z_Malloc(size);
 		memcpy(th, thinker, size);
@@ -661,9 +713,7 @@ static void ArchiveThinkers(void)
 
 		svpr.Exec(pf_archive_thinker, (int)th);
 
-		th->vtable = (int *)th->vtable[0];
-		StreamOutLong(size);
-		StreamOutBuffer(th, size);
+		WriteVObject(th);
 		Z_Free(th);
 	}
 
@@ -687,14 +737,7 @@ static void UnarchiveThinkers(void)
 
 	while (*SavePtr.l != -1)
 	{
-		//  Get params
-		int size = GET_LONG;
-		int cid = GET_LONG;
-
-		//  Allocate thinker and copy data
-		thinker = (VThinker *)svpr.Spawn(cid, PU_LEVSPEC);
-		memcpy((byte*)thinker + 4, SavePtr.b, size - 4);
-		SavePtr.b += size - 4;
+		thinker = (VThinker *)ReadVObject(PU_LEVSPEC);
 
 		//  Add to thinker list
 		P_AddThinker(thinker);
@@ -1286,9 +1329,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2001/12/12 19:28:49  dj_jl
+//	Some little changes, beautification
+//
 //	Revision 1.14  2001/12/04 18:14:46  dj_jl
 //	Renamed thinker_t to VThinker
-//
+//	
 //	Revision 1.13  2001/11/09 18:16:10  dj_jl
 //	Fixed copying and deleting when save directory doesn't exist
 //	

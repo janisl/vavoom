@@ -34,8 +34,7 @@
 #include <conio.h>
 #include <sys/timeb.h>
 #include <sys/stat.h>
-#include "winlocal.h"	// Because dirent.h includes windows.h
-#include <dirent.h>
+#include "winlocal.h"	
 #include "gamedefs.h"
 
 // MACROS ------------------------------------------------------------------
@@ -59,7 +58,9 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static DIR *current_dir;
+static HANDLE			dir_handle;
+static WIN32_FIND_DATA	dir_buf;
+static bool				dir_already_got;
 
 // CODE --------------------------------------------------------------------
 
@@ -186,10 +187,15 @@ int Sys_CreateDirectory(const char* path)
 //
 //==========================================================================
 
-int Sys_OpenDir(const char *path)
+int Sys_OpenDir(const char *dirname)
 {
-	current_dir = opendir(path);
-	return current_dir != NULL;
+	dir_handle = FindFirstFile(va("%s/*.*", dirname), &dir_buf);
+    if (dir_handle == INVALID_HANDLE_VALUE)
+    {
+        return false;
+    }
+    dir_already_got = true;
+    return true;
 }
 
 //==========================================================================
@@ -200,12 +206,15 @@ int Sys_OpenDir(const char *path)
 
 const char *Sys_ReadDir(void)
 {
-	struct dirent *de = readdir(current_dir);
-	if (de)
+	if (!dir_already_got)
 	{
-		return de->d_name;
+		if (FindNextFile(dir_handle, &dir_buf) != TRUE)
+		{
+			return NULL;
+		}
 	}
-	return NULL;
+	dir_already_got = false;
+	return dir_buf.cFileName;
 }
 
 //==========================================================================
@@ -216,7 +225,7 @@ const char *Sys_ReadDir(void)
 
 void Sys_CloseDir(void)
 {
-	closedir(current_dir);
+    FindClose(dir_handle);
 }
 
 //==========================================================================
@@ -232,7 +241,7 @@ bool Sys_DirExists(const char *path)
 	if (stat(path, &s) == -1)
 		return false;
 	
-	return !!S_ISDIR(s.st_mode);
+	return !!(s.st_mode & S_IFDIR);
 }
 
 //==========================================================================
@@ -473,9 +482,12 @@ int main(int argc, char **argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/12/12 19:28:49  dj_jl
+//	Some little changes, beautification
+//
 //	Revision 1.6  2001/11/09 14:19:42  dj_jl
 //	Functions for directory listing
-//
+//	
 //	Revision 1.5  2001/10/08 17:26:17  dj_jl
 //	Started to use exceptions
 //	

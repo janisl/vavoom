@@ -489,11 +489,8 @@ static void CL_ParseTime()
 		}
 	}
 
+	R_AnimateSurfaces();
 	net_msg >> new_time;
-	for (i = cl_level.tictime; i < new_time; i++)
-	{
-		R_AnimateSurfaces();
-	}
 	cl_level.tictime = new_time;
 	cl_level.time = (float)new_time / 35.0;
 }
@@ -1024,9 +1021,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2001/12/12 19:28:49  dj_jl
+//	Some little changes, beautification
+//
 //	Revision 1.16  2001/12/04 18:16:28  dj_jl
 //	Player models and skins handled by server
-//
+//	
 //	Revision 1.15  2001/12/01 17:51:46  dj_jl
 //	Little changes to compile with MSVC
 //	

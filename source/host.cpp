@@ -30,7 +30,7 @@
 
 //#define REAL_TIME
 
-//#define PROGS_PROFILE
+#define PROGS_PROFILE
 
 void CL_Init(void);
 void SV_Init(void);
@@ -548,9 +548,12 @@ void Host_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/12/12 19:28:49  dj_jl
+//	Some little changes, beautification
+//
 //	Revision 1.12  2001/11/09 14:22:09  dj_jl
 //	R_InitTexture now called from Host_init
-//
+//	
 //	Revision 1.11  2001/10/12 17:31:13  dj_jl
 //	no message
 //	

@@ -60,8 +60,11 @@ enum psprnum_t
     NUMPSPRITES
 };
 
-struct pspdef_t
+class VViewEntity:public VObject
 {
+	DECLARE_CLASS(VViewEntity, VObject, 0)
+	NO_DEFAULT_CONSTRUCTOR(VViewEntity)
+
 	int			sprite;	// a -1 sprite means not active
 	int			frame;
 	int			model_index;
@@ -148,7 +151,7 @@ struct player_t
 	dword			cshifts[NUM_CSHIFTS];
 
     // Overlay view sprites (gun, etc).
-    pspdef_t		psprites[NUMPSPRITES];
+    VViewEntity		*ViewEnts[NUMPSPRITES];
 	float			pspriteSY;
 
     // True if secret level has been done.
@@ -169,9 +172,12 @@ struct player_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/12/12 19:28:49  dj_jl
+//	Some little changes, beautification
+//
 //	Revision 1.7  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
-//
+//	
 //	Revision 1.6  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	

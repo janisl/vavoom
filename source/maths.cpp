@@ -160,7 +160,16 @@ void AngleVector(const TAVec &angles, TVec &forward)
 
 void VectorAngles(const TVec &vec, TAVec &angles)
 {
-	angles.pitch = -matan(vec.z, sqrt(vec.x * vec.x + vec.y * vec.y));
+	double length = sqrt(vec.x * vec.x + vec.y * vec.y);
+	if (!length)
+	{
+		cond << "Length 0, z = " << vec.z << endl;
+		angles.pitch = 0;
+		angles.yaw = 0;
+		angles.roll = 0;
+		return;
+	}
+	angles.pitch = -matan(vec.z, length);
 	angles.yaw = matan(vec.y, vec.x);
 	angles.roll = 0;
 }
@@ -226,9 +235,12 @@ void PerpendicularVector(TVec &dst, const TVec &src)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/12/12 19:28:49  dj_jl
+//	Some little changes, beautification
+//
 //	Revision 1.6  2001/10/27 07:51:27  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.5  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
 //	

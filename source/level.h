@@ -54,7 +54,7 @@
 //
 class VThinker:public VObject
 {
-	DECLARE_CLASS(VThinker, VObject, 0)
+	DECLARE_ABSTRACT_CLASS(VThinker, VObject, 0)
 public:
 	VThinker	*prev;
 	VThinker	*next;
@@ -68,7 +68,7 @@ public:
 //==========================================================================
 
 struct sector_t;
-struct mobj_t;
+class mobj_t;
 
 //
 //	Your plain vanilla vertex.
@@ -442,7 +442,7 @@ struct player_t;
 class mobj_t:public VThinker
 {
 	DECLARE_CLASS(mobj_t, VThinker, 0)
-public:
+
 	// Info for drawing: position.
 	TVec			origin;
 
@@ -620,9 +620,12 @@ extern cl_level_t		cl_level;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2001/12/12 19:28:49  dj_jl
+//	Some little changes, beautification
+//
 //	Revision 1.13  2001/12/04 18:14:46  dj_jl
 //	Renamed thinker_t to VThinker
-//
+//	
 //	Revision 1.12  2001/12/01 17:43:12  dj_jl
 //	Renamed ClassBase to VObject
 //	

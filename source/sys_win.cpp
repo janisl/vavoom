@@ -31,9 +31,6 @@
 #include <fcntl.h>
 #include <io.h>
 #include <direct.h>
-#ifdef __BORLANDC__
-#include <dirent.h>
-#endif
 #include <sys/stat.h>
 
 // MACROS ------------------------------------------------------------------
@@ -45,15 +42,6 @@
 
 #define PAUSE_SLEEP		50				// sleep time on pause or minimization
 #define NOT_FOCUS_SLEEP	20				// sleep time when not focus
-
-#ifndef __BORLANDC__
-// POSIX file type test macros.  The parameter is an st_mode value.
-#define S_ISDIR(m)  ((m) & S_IFDIR)
-#define S_ISCHR(m)  ((m) & S_IFCHR)
-#define S_ISBLK(m)  ((m) & S_IFBLK)
-#define S_ISREG(m)  ((m) & S_IFREG)
-#define S_ISFIFO(m) ((m) & S_IFIFO)
-#endif
 
 // TYPES -------------------------------------------------------------------
 
@@ -81,9 +69,9 @@ HINSTANCE			hInst;	//	Needed for DirectInput
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-#ifdef __BORLANDC__
-static DIR *current_dir;
-#endif
+static HANDLE			dir_handle;
+static WIN32_FIND_DATA	dir_buf;
+static bool				dir_already_got;
 
 static double		pfreq;
 static double		curtime = 0.0;
@@ -223,14 +211,15 @@ int Sys_CreateDirectory(const char* path)
 //
 //==========================================================================
 
-int Sys_OpenDir(const char *path)
+int Sys_OpenDir(const char *dirname)
 {
-#ifdef __BORLANDC__
-	current_dir = opendir(path);
-	return current_dir != NULL;
-#else
-	return false;
-#endif
+	dir_handle = FindFirstFile(va("%s/*.*", dirname), &dir_buf);
+    if (dir_handle == INVALID_HANDLE_VALUE)
+    {
+        return false;
+    }
+    dir_already_got = true;
+    return true;
 }
 
 //==========================================================================
@@ -241,14 +230,15 @@ int Sys_OpenDir(const char *path)
 
 const char *Sys_ReadDir(void)
 {
-#ifdef __BORLANDC__
-	struct dirent *de = readdir(current_dir);
-	if (de)
+	if (!dir_already_got)
 	{
-		return de->d_name;
+		if (FindNextFile(dir_handle, &dir_buf) != TRUE)
+		{
+			return NULL;
+		}
 	}
-#endif
-	return NULL;
+	dir_already_got = false;
+	return dir_buf.cFileName;
 }
 
 //==========================================================================
@@ -259,9 +249,7 @@ const char *Sys_ReadDir(void)
 
 void Sys_CloseDir(void)
 {
-#ifdef __BORLANDC__
-	closedir(current_dir);
-#endif
+    FindClose(dir_handle);
 }
 
 //==========================================================================
@@ -277,7 +265,7 @@ bool Sys_DirExists(const char *path)
 	if (stat(path, &s) == -1)
 		return false;
 	
-	return !!S_ISDIR(s.st_mode);
+	return !!(s.st_mode & S_IFDIR);
 }
 
 //==========================================================================
@@ -837,9 +825,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/12/12 19:28:49  dj_jl
+//	Some little changes, beautification
+//
 //	Revision 1.10  2001/12/04 18:11:59  dj_jl
 //	Fixes for compiling with MSVC
-//
+//	
 //	Revision 1.9  2001/12/01 17:52:52  dj_jl
 //	no message
 //	
