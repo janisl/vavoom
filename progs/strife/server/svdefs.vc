@@ -133,14 +133,34 @@ enum
 
 enum
 {
-	it_bluecard,
-	it_yellowcard,
-	it_redcard,
-	it_blueskull,
-	it_yellowskull,
-	it_redskull,
+	KEY_BaseKey,
+	KEY_GovsKey,
+	KEY_Passcard,
+	KEY_IDBadge,
+	KEY_PrisonKey,
+	KEY_SeveredKey,
+	KEY_Power1Key,
+	KEY_Power2Key,
+	KEY_GoldKey,
+	KEY_Power3Key,
+	KEY_IDCard,
+	KEY_SilverKey,
+	KEY_OracleKey,
+	KEY_MilitaryID,
+	KEY_OrderKey,
+	KEY_WarehouseKey,
+	KEY_BrassKey,
+	KEY_RedCrystalKey,
+	KEY_BlueCrystalKey,
+	KEY_ChapelKey,
+	KEY_CatacombKey,
+	KEY_SecurityKey,
+	KEY_CoreKey,
+	KEY_MaulerKey,
+	KEY_FactoryKey,
+	KEY_MineKey,
 
-	NUMCARDS
+	NUMKEYS
 };
 
 // Power up artifacts.
@@ -228,7 +248,6 @@ class Actor:Entity
 							// auto float to target's height
 	bool bSkullFly;			// skull in flight
 	bool bCountKill;		// count towards intermission kill total
-	bool bCountItem;		// count towards intermission item total
 	bool bUnknown1;
 	bool bUnknown2;
 	bool bUnknown3;
@@ -509,6 +528,7 @@ class Actor:Entity
 }
 
 class Pawn:Actor
+	abstract
 {
 	bool bCkeckNoMonsters;
 
@@ -561,6 +581,25 @@ class PlayerPawn:Pawn
 		bCountKill = false;
 		bCkeckNoMonsters = false;
 		bActivateMCross = false;
+	}
+}
+
+class Pickup:Actor
+	abstract
+{
+	name PickupSound;
+	string PickupString;
+
+	boolean ValidTouch(Actor Toucher);
+	boolean HandlePickup(Actor Toucher);
+	void HideSpecial(void);
+	void TouchSpecial(Actor Toucher);
+
+	defaultproperties
+	{
+		bSpecial = true;
+		PickupSound = 'PickupItem';
+		PickupString = "Item";
 	}
 }
 
@@ -672,6 +711,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.32  2002/05/03 17:17:32  dj_jl
+//  Started work on weapons and items.
+//
 //  Revision 1.31  2002/04/27 17:04:55  dj_jl
 //  Merged all creatures.
 //

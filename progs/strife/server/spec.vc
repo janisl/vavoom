@@ -73,7 +73,7 @@ boolean CheckLock(Actor user, int lock)
 		return true;
 	}
 
-	if (!(user.Player->Keys & (1 << lock)))
+	if (!(user.Player->Keys & (1 << (lock - 1))))
 	{
 		centerprint(user.Player, "You need a key");
 		user.PlaySound('PlayerLand', CHAN_VOICE);
@@ -818,6 +818,9 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/05/03 17:17:32  dj_jl
+//  Started work on weapons and items.
+//
 //  Revision 1.19  2002/03/28 18:21:41  dj_jl
 //  Removed P_RespawnSpecials.
 //

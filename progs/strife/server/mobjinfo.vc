@@ -1508,7 +1508,7 @@ class Thing124:Actor
 //
 //==========================================================================
 
-class MedPatch:Actor
+class MedPatch:Pickup
 	__mobjinfo__(2011)
 {
 	defaultproperties
@@ -1519,7 +1519,6 @@ class MedPatch:Actor
 		Height = 8.0;
 		Mass = 20.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1383;
 	}
 };
@@ -1530,7 +1529,7 @@ class MedPatch:Actor
 //
 //==========================================================================
 
-class MedicalKit:Actor
+class MedicalKit:Pickup
 	__mobjinfo__(2012)
 {
 	defaultproperties
@@ -1541,7 +1540,6 @@ class MedicalKit:Actor
 		Height = 8.0;
 		Mass = 15.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1384;
 	}
 };
@@ -1552,7 +1550,7 @@ class MedicalKit:Actor
 //
 //==========================================================================
 
-class SurgeryKit:Actor
+class SurgeryKit:Pickup
 	__mobjinfo__(83)
 {
 	defaultproperties
@@ -1563,7 +1561,6 @@ class SurgeryKit:Actor
 		Height = 8.0;
 		Mass = 5.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1245;
 	}
 };
@@ -1574,7 +1571,7 @@ class SurgeryKit:Actor
 //
 //==========================================================================
 
-class DegninOre:Actor
+class DegninOre:Pickup
 	__mobjinfo__(59)
 {
 	defaultproperties
@@ -1585,7 +1582,6 @@ class DegninOre:Actor
 		Height = 8.0;
 		Mass = 10.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bSolid = true;
 		bShootable = true;
 		bUnknown4 = true;
@@ -1602,7 +1598,7 @@ class DegninOre:Actor
 //
 //==========================================================================
 
-class MetalArmor:Actor
+class MetalArmor:Pickup
 	__mobjinfo__(2019)
 {
 	defaultproperties
@@ -1613,7 +1609,6 @@ class MetalArmor:Actor
 		Height = 8.0;
 		Mass = 3.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1295;
 	}
 };
@@ -1624,7 +1619,7 @@ class MetalArmor:Actor
 //
 //==========================================================================
 
-class LeatherArmor:Actor
+class LeatherArmor:Pickup
 	__mobjinfo__(2018)
 {
 	defaultproperties
@@ -1635,7 +1630,6 @@ class LeatherArmor:Actor
 		Height = 8.0;
 		Mass = 5.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1296;
 	}
 };
@@ -1686,7 +1680,7 @@ class Thing132:Actor
 //
 //==========================================================================
 
-class Base_Key:Actor
+class Base_Key:Pickup
 	__mobjinfo__(230)
 {
 	defaultproperties
@@ -1697,7 +1691,6 @@ class Base_Key:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bNoDeathmatch = true;
 		SpawnState = S_1350;
 	}
@@ -1709,7 +1702,7 @@ class Base_Key:Actor
 //
 //==========================================================================
 
-class Govs_Key:Actor
+class Govs_Key:Pickup
 {
 	defaultproperties
 	{
@@ -1719,7 +1712,6 @@ class Govs_Key:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1379;
 	}
 };
@@ -1730,7 +1722,7 @@ class Govs_Key:Actor
 //
 //==========================================================================
 
-class Passcard:Actor
+class Passcard:Pickup
 	__mobjinfo__(185)
 {
 	defaultproperties
@@ -1741,7 +1733,6 @@ class Passcard:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bNoDeathmatch = true;
 		SpawnState = S_1353;
 	}
@@ -1753,7 +1744,7 @@ class Passcard:Actor
 //
 //==========================================================================
 
-class ID_Badge:Actor
+class ID_Badge:Pickup
 	__mobjinfo__(184)
 {
 	defaultproperties
@@ -1764,7 +1755,6 @@ class ID_Badge:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bNoDeathmatch = true;
 		SpawnState = S_1351;
 	}
@@ -1776,7 +1766,7 @@ class ID_Badge:Actor
 //
 //==========================================================================
 
-class Prison_Key:Actor
+class Prison_Key:Pickup
 {
 	defaultproperties
 	{
@@ -1787,7 +1777,6 @@ class Prison_Key:Actor
 		Mass = 100.0;
 		StepSpeed = 11.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bUnknown5 = true;
 		SpawnState = S_1364;
 	}
@@ -1799,7 +1788,7 @@ class Prison_Key:Actor
 //
 //==========================================================================
 
-class Severed_Hand:Actor
+class Severed_Hand:Pickup
 	__mobjinfo__(91)
 {
 	defaultproperties
@@ -1811,7 +1800,6 @@ class Severed_Hand:Actor
 		Mass = 100.0;
 		StepSpeed = 12.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bUnknown5 = true;
 		bNoDeathmatch = true;
 		SpawnState = S_1357;
@@ -1824,7 +1812,7 @@ class Severed_Hand:Actor
 //
 //==========================================================================
 
-class Power1_Key:Actor
+class Power1_Key:Pickup
 {
 	defaultproperties
 	{
@@ -1834,7 +1822,6 @@ class Power1_Key:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1365;
 	}
 };
@@ -1845,7 +1832,7 @@ class Power1_Key:Actor
 //
 //==========================================================================
 
-class Power2_Key:Actor
+class Power2_Key:Pickup
 {
 	defaultproperties
 	{
@@ -1855,7 +1842,6 @@ class Power2_Key:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1366;
 	}
 };
@@ -1866,7 +1852,7 @@ class Power2_Key:Actor
 //
 //==========================================================================
 
-class Power3_Key:Actor
+class Power3_Key:Pickup
 {
 	defaultproperties
 	{
@@ -1876,7 +1862,6 @@ class Power3_Key:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1367;
 	}
 };
@@ -1887,7 +1872,7 @@ class Power3_Key:Actor
 //
 //==========================================================================
 
-class Gold_Key:Actor
+class Gold_Key:Pickup
 	__mobjinfo__(40)
 {
 	defaultproperties
@@ -1898,7 +1883,6 @@ class Gold_Key:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bNoDeathmatch = true;
 		SpawnState = S_1354;
 	}
@@ -1910,7 +1894,7 @@ class Gold_Key:Actor
 //
 //==========================================================================
 
-class ID_Card:Actor
+class ID_Card:Pickup
 	__mobjinfo__(13)
 {
 	defaultproperties
@@ -1921,7 +1905,6 @@ class ID_Card:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bNoDeathmatch = true;
 		SpawnState = S_1352;
 	}
@@ -1933,7 +1916,7 @@ class ID_Card:Actor
 //
 //==========================================================================
 
-class Silver_Key:Actor
+class Silver_Key:Pickup
 	__mobjinfo__(38)
 {
 	defaultproperties
@@ -1944,7 +1927,6 @@ class Silver_Key:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bNoDeathmatch = true;
 		SpawnState = S_1355;
 	}
@@ -1956,7 +1938,7 @@ class Silver_Key:Actor
 //
 //==========================================================================
 
-class Oracle_Key:Actor
+class Oracle_Key:Pickup
 	__mobjinfo__(61)
 {
 	defaultproperties
@@ -1967,7 +1949,6 @@ class Oracle_Key:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bNoDeathmatch = true;
 		SpawnState = S_1368;
 	}
@@ -1979,7 +1960,7 @@ class Oracle_Key:Actor
 //
 //==========================================================================
 
-class Military_ID:Actor
+class Military_ID:Pickup
 {
 	defaultproperties
 	{
@@ -1989,7 +1970,6 @@ class Military_ID:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1369;
 	}
 };
@@ -2000,7 +1980,7 @@ class Military_ID:Actor
 //
 //==========================================================================
 
-class Order_Key:Actor
+class Order_Key:Pickup
 	__mobjinfo__(86)
 {
 	defaultproperties
@@ -2011,7 +1991,6 @@ class Order_Key:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bNoDeathmatch = true;
 		SpawnState = S_1370;
 	}
@@ -2023,7 +2002,7 @@ class Order_Key:Actor
 //
 //==========================================================================
 
-class Warehouse_Key:Actor
+class Warehouse_Key:Pickup
 	__mobjinfo__(166)
 {
 	defaultproperties
@@ -2034,7 +2013,6 @@ class Warehouse_Key:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bNoDeathmatch = true;
 		SpawnState = S_1371;
 	}
@@ -2046,7 +2024,7 @@ class Warehouse_Key:Actor
 //
 //==========================================================================
 
-class Brass_Key:Actor
+class Brass_Key:Pickup
 	__mobjinfo__(39)
 {
 	defaultproperties
@@ -2057,7 +2035,6 @@ class Brass_Key:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bNoDeathmatch = true;
 		SpawnState = S_1356;
 	}
@@ -2069,7 +2046,7 @@ class Brass_Key:Actor
 //
 //==========================================================================
 
-class Red_Crystal_Key:Actor
+class Red_Crystal_Key:Pickup
 	__mobjinfo__(192)
 {
 	defaultproperties
@@ -2080,7 +2057,6 @@ class Red_Crystal_Key:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bNoDeathmatch = true;
 		SpawnState = S_1372;
 	}
@@ -2092,7 +2068,7 @@ class Red_Crystal_Key:Actor
 //
 //==========================================================================
 
-class Blue_Crystal_Key:Actor
+class Blue_Crystal_Key:Pickup
 	__mobjinfo__(193)
 {
 	defaultproperties
@@ -2103,7 +2079,6 @@ class Blue_Crystal_Key:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bNoDeathmatch = true;
 		SpawnState = S_1373;
 	}
@@ -2115,7 +2090,7 @@ class Blue_Crystal_Key:Actor
 //
 //==========================================================================
 
-class Chapel_Key:Actor
+class Chapel_Key:Pickup
 	__mobjinfo__(195)
 {
 	defaultproperties
@@ -2126,7 +2101,6 @@ class Chapel_Key:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bNoDeathmatch = true;
 		SpawnState = S_1374;
 	}
@@ -2138,7 +2112,7 @@ class Chapel_Key:Actor
 //
 //==========================================================================
 
-class Catacomb_Key:Actor
+class Catacomb_Key:Pickup
 {
 	defaultproperties
 	{
@@ -2149,7 +2123,6 @@ class Catacomb_Key:Actor
 		Mass = 100.0;
 		StepSpeed = 28.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bUnknown5 = true;
 		SpawnState = S_1375;
 	}
@@ -2161,7 +2134,7 @@ class Catacomb_Key:Actor
 //
 //==========================================================================
 
-class Security_Key:Actor
+class Security_Key:Pickup
 {
 	defaultproperties
 	{
@@ -2171,7 +2144,6 @@ class Security_Key:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1377;
 	}
 };
@@ -2182,7 +2154,7 @@ class Security_Key:Actor
 //
 //==========================================================================
 
-class Core_Key:Actor
+class Core_Key:Pickup
 	__mobjinfo__(236)
 {
 	defaultproperties
@@ -2193,7 +2165,6 @@ class Core_Key:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bNoDeathmatch = true;
 		SpawnState = S_1382;
 	}
@@ -2205,7 +2176,7 @@ class Core_Key:Actor
 //
 //==========================================================================
 
-class Mauler_Key:Actor
+class Mauler_Key:Pickup
 	__mobjinfo__(233)
 {
 	defaultproperties
@@ -2216,7 +2187,6 @@ class Mauler_Key:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bNoDeathmatch = true;
 		SpawnState = S_1376;
 	}
@@ -2228,7 +2198,7 @@ class Mauler_Key:Actor
 //
 //==========================================================================
 
-class Factory_Key:Actor
+class Factory_Key:Pickup
 	__mobjinfo__(234)
 {
 	defaultproperties
@@ -2239,7 +2209,6 @@ class Factory_Key:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bNoDeathmatch = true;
 		SpawnState = S_1380;
 	}
@@ -2251,7 +2220,7 @@ class Factory_Key:Actor
 //
 //==========================================================================
 
-class Mine_Key:Actor
+class Mine_Key:Pickup
 	__mobjinfo__(235)
 {
 	defaultproperties
@@ -2262,7 +2231,6 @@ class Mine_Key:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bNoDeathmatch = true;
 		SpawnState = S_1378;
 	}
@@ -2274,7 +2242,7 @@ class Mine_Key:Actor
 //
 //==========================================================================
 
-class New_Key5:Actor
+class New_Key5:Pickup
 {
 	defaultproperties
 	{
@@ -2284,7 +2252,6 @@ class New_Key5:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1376;
 	}
 };
@@ -2295,7 +2262,7 @@ class New_Key5:Actor
 //
 //==========================================================================
 
-class Shadow_armor:Actor
+class Shadow_armor:Pickup
 	__mobjinfo__(2024)
 {
 	defaultproperties
@@ -2306,7 +2273,6 @@ class Shadow_armor:Actor
 		Height = 8.0;
 		Mass = 2.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1389;
 	}
 };
@@ -2317,7 +2283,7 @@ class Shadow_armor:Actor
 //
 //==========================================================================
 
-class Environmental_Suit:Actor
+class Environmental_Suit:Pickup
 	__mobjinfo__(2025)
 {
 	defaultproperties
@@ -2328,7 +2294,6 @@ class Environmental_Suit:Actor
 		Height = 8.0;
 		Mass = 5.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1393;
 	}
 };
@@ -2339,7 +2304,7 @@ class Environmental_Suit:Actor
 //
 //==========================================================================
 
-class Guard_Uniform:Actor
+class Guard_Uniform:Pickup
 	__mobjinfo__(90)
 {
 	defaultproperties
@@ -2351,7 +2316,6 @@ class Guard_Uniform:Actor
 		Mass = 100.0;
 		StepSpeed = 15.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bUnknown5 = true;
 		SpawnState = S_1394;
 	}
@@ -2363,7 +2327,7 @@ class Guard_Uniform:Actor
 //
 //==========================================================================
 
-class Officers_Uniform:Actor
+class Officers_Uniform:Pickup
 	__mobjinfo__(52)
 {
 	defaultproperties
@@ -2374,7 +2338,6 @@ class Officers_Uniform:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bNoDeathmatch = true;
 		SpawnState = S_1395;
 	}
@@ -2386,7 +2349,7 @@ class Officers_Uniform:Actor
 //
 //==========================================================================
 
-class Map:Actor
+class Map:Pickup
 	__mobjinfo__(2026)
 {
 	defaultproperties
@@ -2397,7 +2360,6 @@ class Map:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1396;
 	}
 };
@@ -2408,7 +2370,7 @@ class Map:Actor
 //
 //==========================================================================
 
-class Scanner:Actor
+class Scanner:Pickup
 	__mobjinfo__(2027)
 {
 	defaultproperties
@@ -2419,7 +2381,6 @@ class Scanner:Actor
 		Height = 8.0;
 		Mass = 1.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1398;
 	}
 };
@@ -2430,7 +2391,7 @@ class Scanner:Actor
 //
 //==========================================================================
 
-class Teleporter_Beacon:Actor
+class Teleporter_Beacon:Pickup
 	__mobjinfo__(10)
 {
 	defaultproperties
@@ -2441,7 +2402,6 @@ class Teleporter_Beacon:Actor
 		Height = 8.0;
 		Mass = 3.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bDropped = true;
 		SpawnState = S_1292;
 		SeeState = S_1293;
@@ -2454,7 +2414,7 @@ class Teleporter_Beacon:Actor
 //
 //==========================================================================
 
-class Targeter:Actor
+class Targeter:Pickup
 	__mobjinfo__(207)
 {
 	defaultproperties
@@ -2465,7 +2425,6 @@ class Targeter:Actor
 		Height = 8.0;
 		Mass = 5.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1187;
 	}
 };
@@ -2476,7 +2435,7 @@ class Targeter:Actor
 //
 //==========================================================================
 
-class Coin:Actor
+class Coin:Pickup
 	__mobjinfo__(93)
 {
 	defaultproperties
@@ -2487,7 +2446,6 @@ class Coin:Actor
 		Height = 8.0;
 		Mass = 99999.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bDropped = true;
 		bNoDeathmatch = true;
 		SpawnState = S_1385;
@@ -2500,7 +2458,7 @@ class Coin:Actor
 //
 //==========================================================================
 
-class Gold10:Actor
+class Gold10:Pickup
 	__mobjinfo__(138)
 {
 	defaultproperties
@@ -2511,7 +2469,6 @@ class Gold10:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bDropped = true;
 		bNoDeathmatch = true;
 		SpawnState = S_1386;
@@ -2524,7 +2481,7 @@ class Gold10:Actor
 //
 //==========================================================================
 
-class Gold25:Actor
+class Gold25:Pickup
 	__mobjinfo__(139)
 {
 	defaultproperties
@@ -2535,7 +2492,6 @@ class Gold25:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bDropped = true;
 		bNoDeathmatch = true;
 		SpawnState = S_1387;
@@ -2548,7 +2504,7 @@ class Gold25:Actor
 //
 //==========================================================================
 
-class Gold50:Actor
+class Gold50:Pickup
 	__mobjinfo__(140)
 {
 	defaultproperties
@@ -2559,7 +2515,6 @@ class Gold50:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bDropped = true;
 		bNoDeathmatch = true;
 		SpawnState = S_1388;
@@ -2572,7 +2527,7 @@ class Gold50:Actor
 //
 //==========================================================================
 
-class Gold300:Actor
+class Gold300:Pickup
 {
 	defaultproperties
 	{
@@ -2583,7 +2538,6 @@ class Gold300:Actor
 		Mass = 100.0;
 		StepSpeed = 3.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bUnknown5 = true;
 		bDropped = true;
 		SpawnState = S_1241;
@@ -2596,7 +2550,7 @@ class Gold300:Actor
 //
 //==========================================================================
 
-class Ring:Actor
+class Ring:Pickup
 {
 	defaultproperties
 	{
@@ -2607,7 +2561,6 @@ class Ring:Actor
 		Mass = 100.0;
 		StepSpeed = 1.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bUnknown5 = true;
 		SpawnState = S_1188;
 	}
@@ -2619,7 +2572,7 @@ class Ring:Actor
 //
 //==========================================================================
 
-class Offering_Chalice:Actor
+class Offering_Chalice:Pickup
 	__mobjinfo__(205)
 {
 	defaultproperties
@@ -2631,7 +2584,6 @@ class Offering_Chalice:Actor
 		Mass = 100.0;
 		StepSpeed = 2.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bUnknown5 = true;
 		bDropped = true;
 		SpawnState = S_1413;
@@ -2644,7 +2596,7 @@ class Offering_Chalice:Actor
 //
 //==========================================================================
 
-class Ear:Actor
+class Ear:Pickup
 {
 	defaultproperties
 	{
@@ -2655,7 +2607,6 @@ class Ear:Actor
 		Mass = 100.0;
 		StepSpeed = 9.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bUnknown5 = true;
 		SpawnState = S_1189;
 	}
@@ -2667,7 +2618,7 @@ class Ear:Actor
 //
 //==========================================================================
 
-class Communicator:Actor
+class Communicator:Pickup
 	__mobjinfo__(206)
 {
 	defaultproperties
@@ -2678,7 +2629,6 @@ class Communicator:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bNoDeathmatch = true;
 		SpawnState = S_1190;
 	}
@@ -2690,7 +2640,7 @@ class Communicator:Actor
 //
 //==========================================================================
 
-class HEGrenade_Rounds:Actor
+class HEGrenade_Rounds:Pickup
 	__mobjinfo__(152)
 {
 	defaultproperties
@@ -2701,7 +2651,6 @@ class HEGrenade_Rounds:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1410;
 	}
 };
@@ -2712,7 +2661,7 @@ class HEGrenade_Rounds:Actor
 //
 //==========================================================================
 
-class PhosphorusGrenade_Rounds:Actor
+class PhosphorusGrenade_Rounds:Pickup
 	__mobjinfo__(153)
 {
 	defaultproperties
@@ -2723,7 +2672,6 @@ class PhosphorusGrenade_Rounds:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1411;
 	}
 };
@@ -2734,7 +2682,7 @@ class PhosphorusGrenade_Rounds:Actor
 //
 //==========================================================================
 
-class Clip_of_bullets:Actor
+class Clip_of_bullets:Pickup
 	__mobjinfo__(2007)
 {
 	defaultproperties
@@ -2745,7 +2693,6 @@ class Clip_of_bullets:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1400;
 	}
 };
@@ -2756,7 +2703,7 @@ class Clip_of_bullets:Actor
 //
 //==========================================================================
 
-class Ammo1:Actor
+class Ammo1:Pickup
 	__mobjinfo__(2048)
 {
 	defaultproperties
@@ -2767,7 +2714,6 @@ class Ammo1:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1401;
 	}
 };
@@ -2778,7 +2724,7 @@ class Ammo1:Actor
 //
 //==========================================================================
 
-class Mini_missiles:Actor
+class Mini_missiles:Pickup
 	__mobjinfo__(2010)
 {
 	defaultproperties
@@ -2789,7 +2735,6 @@ class Mini_missiles:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1402;
 	}
 };
@@ -2800,7 +2745,7 @@ class Mini_missiles:Actor
 //
 //==========================================================================
 
-class Crate_of_missiles:Actor
+class Crate_of_missiles:Pickup
 	__mobjinfo__(2046)
 {
 	defaultproperties
@@ -2811,7 +2756,6 @@ class Crate_of_missiles:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1403;
 	}
 };
@@ -2822,7 +2766,7 @@ class Crate_of_missiles:Actor
 //
 //==========================================================================
 
-class Energy_pod:Actor
+class Energy_pod:Pickup
 	__mobjinfo__(2047)
 {
 	defaultproperties
@@ -2833,7 +2777,6 @@ class Energy_pod:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1404;
 	}
 };
@@ -2844,7 +2787,7 @@ class Energy_pod:Actor
 //
 //==========================================================================
 
-class Energy_pack:Actor
+class Energy_pack:Pickup
 	__mobjinfo__(17)
 {
 	defaultproperties
@@ -2855,7 +2798,6 @@ class Energy_pack:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1406;
 	}
 };
@@ -2866,7 +2808,7 @@ class Energy_pack:Actor
 //
 //==========================================================================
 
-class Poison_bolts:Actor
+class Poison_bolts:Pickup
 	__mobjinfo__(115)
 {
 	defaultproperties
@@ -2877,7 +2819,6 @@ class Poison_bolts:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1408;
 	}
 };
@@ -2888,7 +2829,7 @@ class Poison_bolts:Actor
 //
 //==========================================================================
 
-class Electric_bolts:Actor
+class Electric_bolts:Pickup
 	__mobjinfo__(114)
 {
 	defaultproperties
@@ -2899,7 +2840,6 @@ class Electric_bolts:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1409;
 	}
 };
@@ -2910,7 +2850,7 @@ class Electric_bolts:Actor
 //
 //==========================================================================
 
-class Ammo_satchel:Actor
+class Ammo_satchel:Pickup
 	__mobjinfo__(183)
 {
 	defaultproperties
@@ -2921,7 +2861,6 @@ class Ammo_satchel:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1412;
 	}
 };
@@ -2932,7 +2871,7 @@ class Ammo_satchel:Actor
 //
 //==========================================================================
 
-class Assault_gun:Actor
+class Assault_gun:Pickup
 	__mobjinfo__(2002)
 {
 	defaultproperties
@@ -2943,7 +2882,6 @@ class Assault_gun:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1414;
 	}
 };
@@ -2954,7 +2892,7 @@ class Assault_gun:Actor
 //
 //==========================================================================
 
-class Assault_gun2:Actor
+class Assault_gun2:Pickup
 	__mobjinfo__(2006)
 {
 	defaultproperties
@@ -2965,7 +2903,6 @@ class Assault_gun2:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1415;
 	}
 };
@@ -2976,7 +2913,7 @@ class Assault_gun2:Actor
 //
 //==========================================================================
 
-class Flame_thrower:Actor
+class Flame_thrower:Pickup
 	__mobjinfo__(2005)
 {
 	defaultproperties
@@ -2987,7 +2924,6 @@ class Flame_thrower:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1416;
 	}
 };
@@ -2998,7 +2934,7 @@ class Flame_thrower:Actor
 //
 //==========================================================================
 
-class Flame_thrower_Parts:Actor
+class Flame_thrower_Parts:Pickup
 {
 	defaultproperties
 	{
@@ -3008,7 +2944,6 @@ class Flame_thrower_Parts:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1417;
 	}
 };
@@ -3019,7 +2954,7 @@ class Flame_thrower_Parts:Actor
 //
 //==========================================================================
 
-class Mini_missile_launcher:Actor
+class Mini_missile_launcher:Pickup
 	__mobjinfo__(2003)
 {
 	defaultproperties
@@ -3030,7 +2965,6 @@ class Mini_missile_launcher:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1418;
 	}
 };
@@ -3041,7 +2975,7 @@ class Mini_missile_launcher:Actor
 //
 //==========================================================================
 
-class Mauler:Actor
+class Mauler:Pickup
 	__mobjinfo__(2004)
 {
 	defaultproperties
@@ -3052,7 +2986,6 @@ class Mauler:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1419;
 	}
 };
@@ -3063,7 +2996,7 @@ class Mauler:Actor
 //
 //==========================================================================
 
-class Crossbow:Actor
+class Crossbow:Pickup
 	__mobjinfo__(2001)
 {
 	defaultproperties
@@ -3074,7 +3007,6 @@ class Crossbow:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1421;
 	}
 };
@@ -3085,7 +3017,7 @@ class Crossbow:Actor
 //
 //==========================================================================
 
-class Grenade_launcher:Actor
+class Grenade_launcher:Pickup
 	__mobjinfo__(154)
 {
 	defaultproperties
@@ -3096,7 +3028,6 @@ class Grenade_launcher:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1420;
 	}
 };
@@ -3107,7 +3038,7 @@ class Grenade_launcher:Actor
 //
 //==========================================================================
 
-class Sigil1:Actor
+class Sigil1:Pickup
 	__mobjinfo__(77)
 {
 	defaultproperties
@@ -3118,7 +3049,6 @@ class Sigil1:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1422;
 	}
 };
@@ -3129,7 +3059,7 @@ class Sigil1:Actor
 //
 //==========================================================================
 
-class Sigil2:Actor
+class Sigil2:Pickup
 	__mobjinfo__(78)
 {
 	defaultproperties
@@ -3140,7 +3070,6 @@ class Sigil2:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1423;
 	}
 };
@@ -3151,7 +3080,7 @@ class Sigil2:Actor
 //
 //==========================================================================
 
-class Sigil3:Actor
+class Sigil3:Pickup
 	__mobjinfo__(79)
 {
 	defaultproperties
@@ -3162,7 +3091,6 @@ class Sigil3:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1424;
 	}
 };
@@ -3173,7 +3101,7 @@ class Sigil3:Actor
 //
 //==========================================================================
 
-class Sigil4:Actor
+class Sigil4:Pickup
 	__mobjinfo__(80)
 {
 	defaultproperties
@@ -3184,7 +3112,6 @@ class Sigil4:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1425;
 	}
 };
@@ -3195,7 +3122,7 @@ class Sigil4:Actor
 //
 //==========================================================================
 
-class Sigil5:Actor
+class Sigil5:Pickup
 	__mobjinfo__(81)
 {
 	defaultproperties
@@ -3206,7 +3133,6 @@ class Sigil5:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1426;
 	}
 };
@@ -5108,7 +5034,7 @@ class Thing288:Actor
 //
 //==========================================================================
 
-class BrokenPowerCoupling:Actor
+class BrokenPowerCoupling:Pickup
 	__mobjinfo__(226)
 {
 	defaultproperties
@@ -5120,7 +5046,6 @@ class BrokenPowerCoupling:Actor
 		Mass = 1.0;
 		Speed = 17920.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bUnknown5 = true;
 		bDropped = true;
 		SpawnState = S_1233;
@@ -5311,7 +5236,7 @@ class Thing297:Actor
 //
 //==========================================================================
 
-class Ammo2:Actor
+class Ammo2:Pickup
 {
 	defaultproperties
 	{
@@ -5321,7 +5246,6 @@ class Ammo2:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1241;
 	}
 };
@@ -5332,7 +5256,7 @@ class Ammo2:Actor
 //
 //==========================================================================
 
-class Health1:Actor
+class Health1:Pickup
 {
 	defaultproperties
 	{
@@ -5342,7 +5266,6 @@ class Health1:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1241;
 	}
 };
@@ -5353,7 +5276,7 @@ class Health1:Actor
 //
 //==========================================================================
 
-class Info1:Actor
+class Info1:Pickup
 {
 	defaultproperties
 	{
@@ -5363,7 +5286,6 @@ class Info1:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1241;
 	}
 };
@@ -5374,7 +5296,7 @@ class Info1:Actor
 //
 //==========================================================================
 
-class Alarm1:Actor
+class Alarm1:Pickup
 {
 	defaultproperties
 	{
@@ -5384,7 +5306,6 @@ class Alarm1:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1241;
 	}
 };
@@ -5395,7 +5316,7 @@ class Alarm1:Actor
 //
 //==========================================================================
 
-class Thing302:Actor
+class Thing302:Pickup
 {
 	defaultproperties
 	{
@@ -5404,7 +5325,6 @@ class Thing302:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1241;
 	}
 };
@@ -5415,7 +5335,7 @@ class Thing302:Actor
 //
 //==========================================================================
 
-class Thing303:Actor
+class Thing303:Pickup
 {
 	defaultproperties
 	{
@@ -5424,7 +5344,6 @@ class Thing303:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1241;
 	}
 };
@@ -5435,7 +5354,7 @@ class Thing303:Actor
 //
 //==========================================================================
 
-class Prison_pass:Actor
+class Prison_pass:Pickup
 {
 	defaultproperties
 	{
@@ -5446,7 +5365,6 @@ class Prison_pass:Actor
 		Mass = 100.0;
 		StepSpeed = 10.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bUnknown5 = true;
 		SpawnState = S_1241;
 	}
@@ -5458,7 +5376,7 @@ class Prison_pass:Actor
 //
 //==========================================================================
 
-class Thing305:Actor
+class Thing305:Pickup
 {
 	defaultproperties
 	{
@@ -5467,7 +5385,6 @@ class Thing305:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1241;
 	}
 };
@@ -5478,7 +5395,7 @@ class Thing305:Actor
 //
 //==========================================================================
 
-class Thing306:Actor
+class Thing306:Pickup
 {
 	defaultproperties
 	{
@@ -5487,7 +5404,6 @@ class Thing306:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1241;
 	}
 };
@@ -5498,7 +5414,7 @@ class Thing306:Actor
 //
 //==========================================================================
 
-class Thing307:Actor
+class Thing307:Pickup
 {
 	defaultproperties
 	{
@@ -5507,7 +5423,6 @@ class Thing307:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1241;
 	}
 };
@@ -5518,7 +5433,7 @@ class Thing307:Actor
 //
 //==========================================================================
 
-class Report:Actor
+class Report:Pickup
 {
 	defaultproperties
 	{
@@ -5528,7 +5443,6 @@ class Report:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1241;
 	}
 };
@@ -5539,7 +5453,7 @@ class Report:Actor
 //
 //==========================================================================
 
-class Toughness:Actor
+class Toughness:Pickup
 {
 	defaultproperties
 	{
@@ -5549,7 +5463,6 @@ class Toughness:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1243;
 	}
 };
@@ -5560,7 +5473,7 @@ class Toughness:Actor
 //
 //==========================================================================
 
-class Accuracy:Actor
+class Accuracy:Pickup
 {
 	defaultproperties
 	{
@@ -5570,7 +5483,6 @@ class Accuracy:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1244;
 	}
 };
@@ -5581,7 +5493,7 @@ class Accuracy:Actor
 //
 //==========================================================================
 
-class Oracle_Pass:Actor
+class Oracle_Pass:Pickup
 {
 	defaultproperties
 	{
@@ -5592,7 +5504,6 @@ class Oracle_Pass:Actor
 		Mass = 100.0;
 		StepSpeed = 18.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		bUnknown5 = true;
 		SpawnState = S_1242;
 	}
@@ -6203,7 +6114,7 @@ class Thing342:Actor
 //
 //==========================================================================
 
-class Thing343:Actor
+class Thing343:Pickup
 {
 	defaultproperties
 	{
@@ -6212,7 +6123,6 @@ class Thing343:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		bSpecial = true;
 		SpawnState = S_1241;
 	}
 };
@@ -6220,9 +6130,12 @@ class Thing343:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2002/05/03 17:17:31  dj_jl
+//	Started work on weapons and items.
+//
 //	Revision 1.27  2002/04/27 17:04:54  dj_jl
 //	Merged all creatures.
-//
+//	
 //	Revision 1.26  2002/04/22 17:22:31  dj_jl
 //	Retail Strife data.
 //	

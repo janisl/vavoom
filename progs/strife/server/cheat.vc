@@ -79,222 +79,37 @@ void Cheat_NoClip(void)
 
 void Cheat_Gimme(void)
 {
-#define GIMME_SHOTGUN			0x00000001
-#define GIMME_CHAINGUN			0x00000002
-#define GIMME_LAUNCHER			0x00000004
-#define GIMME_PLASMA			0x00000008
-#define GIMME_BFG				0x00000010
-#define GIMME_CHAINSAW			0x00000020
-#define GIMME_BACKPACK			0x00000080
-#define GIMME_BULLETS			0x00000100
-#define GIMME_SHELLS			0x00000200
-#define GIMME_ROCKETS			0x00000400
-#define GIMME_CELLS				0x00000800
-#define GIMME_BLUECARD			0x00001000
-#define GIMME_BLUESKULL			0x00002000
-#define GIMME_YELLOWCARD		0x00004000
-#define GIMME_YELLOWSKULL		0x00008000
-#define GIMME_REDCARD			0x00010000
-#define GIMME_REDSKULL			0x00020000
-#define GIMME_INVULNERABILITY	0x00040000
-#define GIMME_STRENGTH			0x00080000
-#define GIMME_INVISIBILITY		0x00100000
-#define GIMME_IRONFEET			0x00200000
-#define GIMME_ALLMAP			0x00400000
-#define GIMME_INFRARED			0x00800000
-#define GIMME_HEALTH			0x01000000
-#define GIMME_HEALTH2			0x02000000
-#define GIMME_ARMOR				0x04000000
-#define GIMME_ARMOR2			0x08000000
-
-#define GIMME_WEAPONS			0x0000007f
-#define GIMME_AMMO				0x00000f00
-#define GIMME_KEYS				0x0003f000
-#define GIMME_POWERS			0x00fc0000
-#define GIMME_ALL				0xffffffff
-
-	int i1;
-
-/*	if (Cmd_Argc() == 1)
-    {
-       	C_Printf("GIMME [All] [Health] [Health2] [Armor] [Armor2]\n");
-        C_Printf(" [Weapons] [Shotgun] [Chaingun] [Launcher] [Plasma]\n");
-        C_Printf(" [BFG] [Chainsaw] [SuperShotgun] [Backpack]\n");
-        C_Printf(" [Ammo] [Bullets] [Shells] [Rockets] [Cells]\n");
-		C_Printf(" [Keys] [BlueCard] [YellowCard] [RedCard]\n");
-        C_Printf(" [BlueSkull] [YellowSkull] [RedSkull]\n");
-        C_Printf(" [Powers] [Invulnerability] [Bersek]\n");
-        C_Printf(" [Invisibility] [Suit] [AllMap] [LiteAmp]\n");
-        C_Printf(":Gives you all that you need\n");
-        return;
-    }*/
-
-	i1 = 0;
-	// All
-	if (Cmd_CheckParm("All"))
-		i1 |= GIMME_ALL;
+	int i;
 
 	// Weapons
 	if (Cmd_CheckParm("Weapons"))
-		i1 |= GIMME_WEAPONS;
-	if (Cmd_CheckParm("Shotgun"))
-		i1 |= GIMME_SHOTGUN;
-	if (Cmd_CheckParm("Chaingun"))
-		i1 |= GIMME_CHAINGUN;
-	if (Cmd_CheckParm("Launcher"))
-		i1 |= GIMME_LAUNCHER;
-	if (Cmd_CheckParm("Plasma"))
-		i1 |= GIMME_PLASMA;
-	if (Cmd_CheckParm("BFG"))
-		i1 |= GIMME_BFG;
-	if (Cmd_CheckParm("Chainsaw"))
-		i1 |= GIMME_CHAINSAW;
-	// Backpack
-	if (Cmd_CheckParm("Backpack"))
-		i1 |= GIMME_BACKPACK;
+	{
+		for (i = 0; i < NUMWEAPONS; i++)
+		{
+			players[0].WeaponOwned[i] = true;
+		}
+	}
 
 	// Ammo
 	if (Cmd_CheckParm("Ammo"))
-		i1 |= GIMME_AMMO;
-	if (Cmd_CheckParm("Bullets"))
-		i1 |= GIMME_BULLETS;
-	if (Cmd_CheckParm("Shells"))
-		i1 |= GIMME_SHELLS;
-	if (Cmd_CheckParm("Rockets"))
-		i1 |= GIMME_ROCKETS;
-	if (Cmd_CheckParm("Cells"))
-		i1 |= GIMME_CELLS;
+	{
+		for (i = 0; i < NUMAMMO; i++)
+		{
+			players[0].Ammo[i] = maxammo[am_clip];
+		}
+	}
 
 	// Keys
 	if (Cmd_CheckParm("Keys"))
-		i1 |= GIMME_KEYS;
-	if (Cmd_CheckParm("BlueCard"))
-		i1 |= GIMME_BLUECARD;
-	if (Cmd_CheckParm("BlueSkull"))
-		i1 |= GIMME_BLUESKULL;
-	if (Cmd_CheckParm("YellowCard"))
-		i1 |= GIMME_YELLOWCARD;
-	if (Cmd_CheckParm("YellowSkull"))
-		i1 |= GIMME_YELLOWSKULL;
-	if (Cmd_CheckParm("RedCard"))
-		i1 |= GIMME_REDCARD;
-	if (Cmd_CheckParm("RedSkull"))
-		i1 |= GIMME_REDSKULL;
-
-	// Powers
-	if (Cmd_CheckParm("Powers"))
-		i1 |= GIMME_POWERS;
-	if (Cmd_CheckParm("Invulnerability"))
-		i1 |= GIMME_INVULNERABILITY;
-	if (Cmd_CheckParm("Bersek"))
-		i1 |= GIMME_STRENGTH;
-	if (Cmd_CheckParm("Invisibility"))
-		i1 |= GIMME_INVISIBILITY;
-	if (Cmd_CheckParm("Suit"))
-		i1 |= GIMME_IRONFEET;
-	if (Cmd_CheckParm("AllMap"))
-		i1 |= GIMME_ALLMAP;
-	if (Cmd_CheckParm("LiteAmp"))
-		i1 |= GIMME_INFRARED;
+	{
+		players[0].Keys = 0x03ffffff;
+	}
 
 	// Health
 	if (Cmd_CheckParm("Health"))
-		i1 |= GIMME_HEALTH;
-	if (Cmd_CheckParm("Health2"))
-		i1 |= GIMME_HEALTH2;
-
-	// Armor
-	if (Cmd_CheckParm("Armor"))
-		i1 |= GIMME_ARMOR;
-	if (Cmd_CheckParm("Armor2"))
-		i1 |= GIMME_ARMOR2;
-
-	// Weapons
-#ifdef FIXME
-	if (i1 & GIMME_SHOTGUN)
-		players[0].weaponowned[wp_shotgun] = true;
-	if (i1 & GIMME_CHAINGUN)
-		players[0].weaponowned[wp_chaingun] = true;
-	if (i1 & GIMME_LAUNCHER)
-		players[0].weaponowned[wp_missile] = true;
-	if (i1 & GIMME_PLASMA)
-		players[0].weaponowned[wp_plasma] = true;
-	if (i1 & GIMME_BFG)
-		players[0].weaponowned[wp_bfg] = true;
-	if (i1 & GIMME_CHAINSAW)
-		players[0].weaponowned[wp_chainsaw] = true;
-#endif
-
-	// Backpack
-	if (i1 & GIMME_BACKPACK)
-		players[0].Backpack = true;
-
-	// Ammo
-	if (i1 & GIMME_BULLETS)
-		players[0].Ammo[am_clip] =
-			maxammo[am_clip] * (players[0].Backpack ? 2 : 1);
-	if (i1 & GIMME_SHELLS)
-		players[0].Ammo[am_electric_arrow] =
-			maxammo[am_electric_arrow] * (players[0].Backpack ? 2 : 1);
-	if (i1 & GIMME_ROCKETS)
-		players[0].Ammo[am_misl] =
-			maxammo[am_misl] * (players[0].Backpack ? 2 : 1);
-	if (i1 & GIMME_CELLS)
-		players[0].Ammo[am_cell] =
-			maxammo[am_cell] * (players[0].Backpack ? 2 : 1);
-
-	// Keys
-	if (i1 & GIMME_BLUECARD)
-		players[0].Keys |= 1 << it_bluecard;
-	if (i1 & GIMME_YELLOWCARD)
-		players[0].Keys |= 1 << it_yellowcard;
-	if (i1 & GIMME_REDCARD)
-		players[0].Keys |= 1 << it_redcard;
-	if (i1 & GIMME_BLUESKULL)
-		players[0].Keys |= 1 << it_blueskull;
-	if (i1 & GIMME_YELLOWSKULL)
-		players[0].Keys |= 1 << it_yellowskull;
-	if (i1 & GIMME_REDSKULL)
-		players[0].Keys |= 1 << it_redskull;
-
-	// Powers
-	if (i1 & GIMME_INVULNERABILITY)
-		PlayerPawn(players[0].MO).GivePower(pw_invulnerability);
-	if (i1 & GIMME_STRENGTH)
-		PlayerPawn(players[0].MO).GivePower(pw_strength);
-	if (i1 & GIMME_INVISIBILITY)
-		PlayerPawn(players[0].MO).GivePower(pw_invisibility);
-	if (i1 & GIMME_IRONFEET)
-		PlayerPawn(players[0].MO).GivePower(pw_ironfeet);
-	if (i1 & GIMME_INFRARED)
-		PlayerPawn(players[0].MO).GivePower(pw_infrared);
-
-	//  Items
-	if (i1 & GIMME_ALLMAP)
-		PlayerPawn(players[0].MO).GiveItem(IT_ALL_MAP);
-
-	// Health
-	if ((i1 & GIMME_HEALTH) && (players[0].Health < 100))
 	{
 		players[0].Health = 100;
 		players[0].MO.Health = 100;
-	}
-	if (i1 & GIMME_HEALTH2)
-	{
-		players[0].Health = 200;
-		players[0].MO.Health = 200;
-	}
-
-	// Armor
-	if ((i1 & GIMME_ARMOR) && (players[0].ArmorPoints < 100))
-	{
-		players[0].ArmorType = 1;
-		players[0].ArmorPoints = 100;
-	}
-	if (i1 & GIMME_ARMOR2)
-	{
-		players[0].ArmorType = 2;
-		players[0].ArmorPoints = 200;
 	}
 }
 
@@ -337,6 +152,9 @@ void Cheat_KillAll(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/05/03 17:17:31  dj_jl
+//  Started work on weapons and items.
+//
 //  Revision 1.13  2002/03/28 18:15:35  dj_jl
 //  Renamed mo in player_t to MO.
 //

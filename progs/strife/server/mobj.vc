@@ -182,8 +182,6 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 			StateTime = 0.1 + Random() * StateTime;
 		if (bCountKill)
 			level->totalkills++;
-		if (bCountItem)
-			level->totalitems++;
 
 		Angles.yaw = itof(45 * (mthing->angle / 45));
 		if (mthing->options & MTF_AMBUSH)
@@ -838,6 +836,9 @@ void Actor::Thrust(float angle, float move)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.41  2002/05/03 17:17:31  dj_jl
+//  Started work on weapons and items.
+//
 //  Revision 1.40  2002/04/27 17:04:54  dj_jl
 //  Merged all creatures.
 //

@@ -432,7 +432,7 @@ void PlayerPawn::PlayerImpulse(void)
 	impulse = Player->Impulse;
 	Player->Impulse = 0;
 
-	if (impulse <= 7)
+	if (impulse <= 8)
 	{
 		ChangeWeapon(Player, impulse - 1);
 	}
@@ -904,6 +904,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/05/03 17:17:32  dj_jl
+//  Started work on weapons and items.
+//
 //  Revision 1.22  2002/03/28 18:15:35  dj_jl
 //  Renamed mo in player_t to MO.
 //

@@ -101,11 +101,16 @@
 #include "rat.vc"
 #include "prayer.vc"
 
+#include "items.vc"
+
 #include "svmain.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/05/03 17:17:32  dj_jl
+//  Started work on weapons and items.
+//
 //  Revision 1.14  2002/04/27 17:04:55  dj_jl
 //  Merged all creatures.
 //

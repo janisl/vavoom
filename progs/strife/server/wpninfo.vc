@@ -29,23 +29,23 @@
 //**
 //**************************************************************************
 
-class WeaponFist;
+class WeaponPunch;
 class WeaponCrossbow;
-class WeaponRiffle;
-class WeaponMissile;
-class WeaponGrenade;
+class WeaponAssaultGun;
+class WeaponMissileLauncher;
+class WeaponGrenadeLauncher;
 class WeaponFlamethrower;
-class WeaponBlaster;
+class WeaponMauler;
 class WeaponSigil;
 
 classid WeaponClasses[] = {
-	WeaponFist,
+	WeaponPunch,
 	WeaponCrossbow,
-	WeaponRiffle,
-	WeaponMissile,
-	WeaponGrenade,
+	WeaponAssaultGun,
+	WeaponMissileLauncher,
+	WeaponGrenadeLauncher,
 	WeaponFlamethrower,
-	WeaponBlaster,
+	WeaponMauler,
 	WeaponSigil,
 };
 
@@ -64,9 +64,12 @@ int weapon_ammo_type[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/05/03 17:17:33  dj_jl
+//	Started work on weapons and items.
+//
 //	Revision 1.7  2002/04/22 17:22:33  dj_jl
 //	Retail Strife data.
-//
+//	
 //  Revision 1.6  2002/03/02 17:35:56  dj_jl
 //  Weapon classes
 //
