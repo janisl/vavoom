@@ -60,7 +60,8 @@ void AdvanceDemo(void)
 		pagetime = 170.0 / 35.0;
 		page_pic = R_RegisterPic("TITLEPIC", PIC_PATCH);
 //      S_StartSong("D_STRIFE", P_GetCDTitleTrack(), false);
-		CmdBuf_AddText("music play D_STRIFE");
+//		CmdBuf_AddText("music play D_STRIFE");
+		CmdBuf_AddText("music play d_logo");
 		break;
 
 	case 1:
@@ -146,6 +147,9 @@ void StopDemoLoop(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2002/05/03 17:14:02  dj_jl
+//  Fixed music.
+//
 //  Revision 1.3  2002/01/07 12:27:41  dj_jl
 //  Changed copyright year
 //
