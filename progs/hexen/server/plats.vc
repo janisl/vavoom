@@ -46,9 +46,8 @@ enum
 
 // TYPES -------------------------------------------------------------------
 
-class TPlat:Thinker
+class TPlat:SectorThinker
 {
-	sector_t *sector;
 	float speed;
 	float low;
 	float high;
@@ -60,8 +59,6 @@ class TPlat:Thinker
 	float wait;
 
 	void Think(void);
-	void Archive(void);
-	void Unarchive(void);
 };
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
@@ -143,32 +140,6 @@ void TPlat::Think(void)
 				seq_name[SEQ_PLATFORM + sector->seqType]);
 		}
 	}
-}
-
-//==========================================================================
-//
-//  TPlat::Archive
-//
-//==========================================================================
-
-void TPlat::Archive(void)
-{
-	sector = SectorToNum(sector);
-}
-
-//==========================================================================
-//
-//  TPlat::Unarchive
-//
-//==========================================================================
-
-void TPlat::Unarchive(void)
-{
-	//  Restore sector pointer
-	sector = NumToSector(sector);
-
-	//  Set sector's specialdata
-	sector->specialdata = this;
 }
 
 //==========================================================================
@@ -282,6 +253,9 @@ void EV_StopPlat(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/18 18:31:01  dj_jl
+//  Added class SectorThinker
+//
 //  Revision 1.5  2001/09/25 17:13:50  dj_jl
 //  Beautification
 //

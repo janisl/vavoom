@@ -76,7 +76,7 @@ int HITDICE(int a)
 //
 //==========================================================================
 
-float MobjDist(base_mobj_t * mo1, base_mobj_t * mo2)
+float MobjDist(MapObject * mo1, MapObject * mo2)
 {
 	return Length(MobjCenter(mo2) - MobjCenter(mo1));
 }
@@ -87,7 +87,7 @@ float MobjDist(base_mobj_t * mo1, base_mobj_t * mo2)
 //
 //==========================================================================
 
-float MobjDist2(base_mobj_t * mo1, base_mobj_t * mo2)
+float MobjDist2(MapObject * mo1, MapObject * mo2)
 {
 	TVec dir;
 
@@ -403,9 +403,35 @@ void UnarchiveThinker(Thinker * th)
 	for (var = (type *)NextThinker(NULL, type); var; \
 		var = (type *)NextThinker(var, type))
 
+//==========================================================================
+//
+//	SectorThinker
+//
+//==========================================================================
+
+class SectorThinker:Thinker
+{
+	sector_t	*sector;
+
+	void Archive(void)
+	{
+		sector = SectorToNum(sector);
+	}
+
+	void Unarchive(void)
+	{
+		sector = NumToSector(sector);
+
+		//  Set sector's specialdata
+		sector->specialdata = this;
+	}
+}
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2001/12/18 18:31:01  dj_jl
+//  Added class SectorThinker
+//
 //  Revision 1.14  2001/12/12 19:15:27  dj_jl
 //  Some little changes for state methods
 //

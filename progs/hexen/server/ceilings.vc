@@ -45,9 +45,8 @@ enum
 
 // TYPES -------------------------------------------------------------------
 
-class TCeiling:Thinker
+class CeilingMover:SectorThinker
 {
-	sector_t *sector;
 	int type;
 	float topheight;
 	float speed;
@@ -57,8 +56,6 @@ class TCeiling:Thinker
 	int tag;	// ID
 
 	void Think(void);
-	void Archive(void);
-	void Unarchive(void);
 };
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
@@ -69,11 +66,11 @@ class TCeiling:Thinker
 
 //==========================================================================
 //
-//	TCeiling::Think
+//	CeilingMover::Think
 //
 //==========================================================================
 
-void TCeiling::Think(void)
+void CeilingMover::Think(void)
 {
 	int res;
 
@@ -123,32 +120,6 @@ void TCeiling::Think(void)
 	}
 }
 
-//==========================================================================
-//
-//  TCeiling::Archive
-//
-//==========================================================================
-
-void TCeiling::Archive(void)
-{
-	sector = SectorToNum(sector);
-}
-
-//==========================================================================
-//
-//  TCeiling::Unarchive
-//
-//==========================================================================
-
-void TCeiling::Unarchive(void)
-{
-	//  Restore sector pointer
-	sector = NumToSector(sector);
-
-	//  Set sector's specialdata
-	sector->specialdata = this;
-}
-
 //==================================================================
 //
 //  EV_DoCeiling
@@ -161,7 +132,7 @@ int EV_DoCeiling(line_t * line, int *arg, int type)
 {
 	int secnum, rtn;
 	sector_t *sec;
-	TCeiling *ceiling;
+	CeilingMover *ceiling;
 
 	secnum = -1;
 	rtn = 0;
@@ -176,7 +147,7 @@ int EV_DoCeiling(line_t * line, int *arg, int type)
 		// new door thinker
 		//
 		rtn = 1;
-		ceiling = NewSpecialThinker(TCeiling);
+		ceiling = NewSpecialThinker(CeilingMover);
 		sec->specialdata = ceiling;
 		ceiling->sector = sec;
 		ceiling->crush = 0;
@@ -262,9 +233,9 @@ int EV_DoCeiling(line_t * line, int *arg, int type)
 
 int EV_CeilingCrushStop(line_t * line, int *args)
 {
-	TCeiling *c;
+	CeilingMover *c;
 
-	FOREACH(TCeiling, c)
+	FOREACH(CeilingMover, c)
 	{
 		if (c->tag == args[0])
 		{
@@ -281,6 +252,9 @@ int EV_CeilingCrushStop(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/18 18:31:01  dj_jl
+//  Added class SectorThinker
+//
 //  Revision 1.5  2001/09/25 17:13:50  dj_jl
 //  Beautification
 //

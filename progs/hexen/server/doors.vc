@@ -40,9 +40,8 @@ enum
 
 // TYPES -------------------------------------------------------------------
 
-class TDoor:Thinker
+class TDoor:SectorThinker
 {
-	sector_t *sector;
 	int type;
 	float topheight;
 	float speed;
@@ -51,8 +50,6 @@ class TDoor:Thinker
 	float toptime;	// when it reaches 0, start going down
 
 	void Think(void);
-	void Archive(void);
-	void Unarchive(void);
 };
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
@@ -140,32 +137,6 @@ void TDoor::Think(void)
 		}
 		break;
 	}
-}
-
-//==========================================================================
-//
-//  TDoor::Archive
-//
-//==========================================================================
-
-void TDoor::Archive(void)
-{
-	sector = SectorToNum(sector);
-}
-
-//==========================================================================
-//
-//  TDoor::Unarchive
-//
-//==========================================================================
-
-void TDoor::Unarchive(void)
-{
-	//  Restore sector pointer
-	sector = NumToSector(sector);
-
-	//  Set sector's specialdata
-	sector->specialdata = this;
 }
 
 //==========================================================================
@@ -287,6 +258,9 @@ boolean EV_VerticalDoor(line_t * line, mobj_t * thing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/12/18 18:31:01  dj_jl
+//  Added class SectorThinker
+//
 //  Revision 1.4  2001/09/24 17:17:17  dj_jl
 //  Created thinker classes
 //
