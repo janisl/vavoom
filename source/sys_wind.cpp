@@ -214,19 +214,14 @@ void Sys_Quit(void)
 
 void Sys_Error(const char *error, ...)
 {
-    va_list		argptr;
-	char		buf[1024];
+	va_list argptr;
+	char buf[1024];
 
-	Host_Shutdown();
-
-	// Message last, so it actually prints on the screen
 	va_start(argptr,error);
 	vsprintf(buf, error, argptr);
 	va_end(argptr);
 
-	dprintf("\n\nERROR: %s\n", buf);
-
-	exit(1);
+	throw VavoomError(buf);
 }
 
 //==========================================================================
@@ -290,14 +285,14 @@ void signal_handler(int s)
 
 	switch (s)
 	{
-	 case SIGINT:	Sys_Error("Interrupted by User");
-	 case SIGILL:	Sys_Error("Illegal Instruction");
-	 case SIGFPE:	Sys_Error("Floating Point Exception");
-	 case SIGSEGV:	Sys_Error("Segmentation Violation");
-	 case SIGTERM:	Sys_Error("Software termination signal from kill");
-	 case SIGBREAK:	Sys_Error("Ctrl-Break sequence");
-	 case SIGABRT:	Sys_Error("Abnormal termination triggered by abort call");
-     default:		Sys_Error("Terminated by signal");
+	 case SIGINT:	throw VavoomError("Interrupted by User");
+	 case SIGILL:	throw VavoomError("Illegal Instruction");
+	 case SIGFPE:	throw VavoomError("Floating Point Exception");
+	 case SIGSEGV:	throw VavoomError("Segmentation Violation");
+	 case SIGTERM:	throw VavoomError("Software termination signal from kill");
+	 case SIGBREAK:	throw VavoomError("Ctrl-Break sequence");
+	 case SIGABRT:	throw VavoomError("Abnormal termination triggered by abort call");
+     default:		throw VavoomError("Terminated by signal");
     }
 }
 
@@ -377,32 +372,54 @@ char *Sys_ConsoleInput(void)
 
 int main(int argc, char **argv)
 {
-	printf("Vavoom dedicated server "VERSION_TEXT"\n");
-
-	M_InitArgs(argc, argv);
-
-	//Install signal handler
-	signal(SIGINT,  signal_handler);
-	signal(SIGILL,  signal_handler);
-	signal(SIGFPE,  signal_handler);
-	signal(SIGSEGV, signal_handler);
-	signal(SIGTERM, signal_handler);
-	signal(SIGBREAK,signal_handler);
-	signal(SIGABRT, signal_handler);
-
-	Host_Init();
-	while (1)
+	try
 	{
-		Host_Frame();
+		printf("Vavoom dedicated server "VERSION_TEXT"\n");
+
+		M_InitArgs(argc, argv);
+
+		//Install signal handler
+		signal(SIGINT,  signal_handler);
+		signal(SIGILL,  signal_handler);
+		signal(SIGFPE,  signal_handler);
+		signal(SIGSEGV, signal_handler);
+		signal(SIGTERM, signal_handler);
+		signal(SIGBREAK,signal_handler);
+		signal(SIGABRT, signal_handler);
+
+		Host_Init();
+		while (1)
+		{
+			Host_Frame();
+		}
+	}
+	catch (VavoomError &e)
+	{
+		Host_Shutdown();
+
+		dprintf("\n\nERROR: %s\n", e.message);
+		fprintf(stderr, "%s\n", e.message);
+
+		return 1;
+	}
+	catch (...)
+	{
+		Host_Shutdown();
+		dprintf("\n\nExiting due to external exception\n");
+		fprintf(stderr, "\nExiting due to external exception\n");
+		throw;
 	}
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/08 17:26:17  dj_jl
+//	Started to use exceptions
+//
 //	Revision 1.4  2001/08/29 17:49:36  dj_jl
 //	Added file time functions
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

@@ -562,21 +562,14 @@ static void stack_trace(void)
 
 void Sys_Error(const char *error, ...)
 {
-    va_list		argptr;
-	char		buf[1024];
+	va_list argptr;
+	char buf[1024];
 
-	Host_Shutdown();
-	stack_trace();
+	va_start(argptr,error);
+	vsprintf(buf, error, argptr);
+	va_end(argptr);
 
-    // Message last, so it actually prints on the screen
-    va_start (argptr,error);
-    vsprintf(buf, error, argptr);
-    va_end (argptr);
-
-    printf("\n%s\n", buf);
-	dprintf("\n\nERROR: %s\n", buf);
-
-    exit(1);
+	throw VavoomError(buf);
 }
 
 //==========================================================================
@@ -671,34 +664,26 @@ static void signal_handler(int s)
 	signal(s,SIG_IGN);  // Ignore future instances of this signal.
 
 	switch (s)
-      {
-       case SIGABRT:
-            Sys_Error("Aborted");
-            break;
-       case SIGFPE:
-            Sys_Error("Floating Point Exception");
-            break;
-       case SIGILL:
-            Sys_Error("Illegal Instruction");
-            break;
-       case SIGSEGV:
-            Sys_Error("Segmentation Violation");
-            break;
-       case SIGTERM:
-            Sys_Error("Terminated");
-            break;
-       case SIGINT:
-            Sys_Error("Interrupted by User");
-            break;
-       case SIGKILL:
-            Sys_Error("Killed");
-            break;
-       case SIGQUIT:
-            Sys_Error("Quited");
-            break;
-       default:
-            Sys_Error("Terminated by signal");
-      }
+	{
+	 case SIGABRT:
+		throw VavoomError("Aborted");
+	 case SIGFPE:
+		throw VavoomError("Floating Point Exception");
+	 case SIGILL:
+		throw VavoomError("Illegal Instruction");
+	 case SIGSEGV:
+		throw VavoomError("Segmentation Violation");
+	 case SIGTERM:
+		throw VavoomError("Terminated");
+	 case SIGINT:
+		throw VavoomError("Interrupted by User");
+	 case SIGKILL:
+		throw VavoomError("Killed");
+	 case SIGQUIT:
+		throw VavoomError("Quited");
+	 default:
+		throw VavoomError("Terminated by signal");
+	}
 }
 
 //==========================================================================
@@ -728,39 +713,62 @@ void Sys_HighFPPrecision(void){}
 
 int main(int argc,char** argv)
 {
-	M_InitArgs(argc, argv);
+	try
+	{
+		M_InitArgs(argc, argv);
 
 #ifdef __i386__
-	Sys_SetFPCW();
+		Sys_SetFPCW();
 #endif
 
-	allegro_init();
+		allegro_init();
 
-	//	Install signal handlers
-   	signal(SIGABRT, signal_handler);
-   	signal(SIGFPE,  signal_handler);
-   	signal(SIGILL,  signal_handler);
-   	signal(SIGSEGV, signal_handler);
-   	signal(SIGTERM, signal_handler);
-   	signal(SIGINT,  signal_handler);
-   	signal(SIGKILL, signal_handler);
-   	signal(SIGQUIT, signal_handler);
+		//	Install signal handlers
+	   	signal(SIGABRT, signal_handler);
+   		signal(SIGFPE,  signal_handler);
+	   	signal(SIGILL,  signal_handler);
+   		signal(SIGSEGV, signal_handler);
+	   	signal(SIGTERM, signal_handler);
+   		signal(SIGINT,  signal_handler);
+	   	signal(SIGKILL, signal_handler);
+   		signal(SIGQUIT, signal_handler);
 
-	Host_Init();
+		Host_Init();
 
-    while (1)
-    {
-		Host_Frame();
-    }
+	    while (1)
+	    {
+			Host_Frame();
+	    }
+	}
+	catch (VavoomError &e)
+	{
+		Host_Shutdown();
+		stack_trace();
+
+		printf("\n%s\n", e.message);
+		dprintf("\n\nERROR: %s\n", e.message);
+
+		exit(1);
+	}
+	catch (...)
+	{
+		Host_Shutdown();
+		dprintf("\n\nExiting due to external exception\n");
+		fprintf(stderr, "\nExiting due to external exception\n");
+		throw;
+	}
 }
 END_OF_MAIN()	//	For Allegro
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/10/08 17:26:17  dj_jl
+//	Started to use exceptions
+//
 //	Revision 1.8  2001/09/20 16:27:43  dj_jl
 //	Improved zone allocation
-//
+//	
 //	Revision 1.7  2001/09/06 17:47:31  dj_jl
 //	no message
 //	

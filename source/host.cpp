@@ -39,13 +39,18 @@ void ServerFrame(int realtics);
 void CL_ReadFromServer(void);
 void SV_ShutdownServer(boolean crash);
 void CL_Disconnect(void);
-void InitMapInfo(void);
 
 // MACROS ------------------------------------------------------------------
 
 #define DEBUGFILENAME	"basev/debug.txt"
 
 // TYPES -------------------------------------------------------------------
+
+class EndGame:public VavoomError
+{
+public:
+	explicit EndGame(const char *txt) : VavoomError(txt) { }
+};
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -78,8 +83,6 @@ double			oldrealtime;
 int				host_framecount;
 
 boolean			host_initialized = false;
-
-jmp_buf			host_abort;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -188,11 +191,6 @@ void Host_Shutdown(void)
 
 void Host_Init(void)
 {
-	if (setjmp(host_abort))
-	{
-		Sys_Error("Error during startup");
-	}
-
 	OpenDebugFile(DEBUGFILENAME);
 
 	// init subsystems
@@ -213,14 +211,11 @@ void Host_Init(void)
 
 	FL_Init();
 
+	W_InitMultipleFiles(wadfiles);
+
 	HandleArgs();
 
-#ifdef CLIENT
-	C_Init();
-	V_Init();
-#endif
-
-	W_InitMultipleFiles(wadfiles);
+	PR_Init();
 
 #ifdef CLIENT
 	IN_Init();
@@ -231,18 +226,11 @@ void Host_Init(void)
 	SCR_Init();
 	T_Init();
 	CT_Init();
-#endif
+	C_Init();
+	V_Init();
 
-	PR_Init();
-
-#ifdef CLIENT
 	CL_Init();
-#endif
-#ifdef SERVER
-	SV_Init();
-#endif
 
-#ifdef CLIENT
 	MN_Init();
 	AM_Init();
 	SB_Init();
@@ -252,7 +240,7 @@ void Host_Init(void)
 
 	InitMapInfo();
 #ifdef SERVER
-	P_Init();
+	SV_Init();
 #endif
 
 	NET_Init();
@@ -363,92 +351,141 @@ static bool FilterTime(void)
 
 void Host_Frame(void)
 {
-	static double		time1 = 0;
-	static double		time2 = 0;
-	static double		time3 = 0;
-	int			pass1, pass2, pass3;
+	static double time1 = 0;
+	static double time2 = 0;
+	static double time3 = 0;
+	int pass1, pass2, pass3;
 
-	if (setjmp(host_abort))
+	try
 	{
-		//	Something bad happened, or the server disconnected
-		return;
-	}
-
-	//	Keep the random time dependent
-	rand();
+		//	Keep the random time dependent
+		rand();
 
 #ifdef PARANOID
-	Z_CheckHeap();
+		Z_CheckHeap();
 #endif
 
-	//	Decide the simulation time
-	if (!FilterTime())
-	{
-		//	Don't run too fast, or packets will flood out
-		return;
-	}
+		//	Decide the simulation time
+		if (!FilterTime())
+		{
+			//	Don't run too fast, or packets will flood out
+			return;
+		}
 
 #ifdef CLIENT
-	//	Get new key, mice and joystick events
-	IN_ProcessEvents();
+		//	Get new key, mice and joystick events
+		IN_ProcessEvents();
 #endif
 
-	//	Check for commands typed to the host
-	Host_GetConsoleCommands();
+		//	Check for commands typed to the host
+		Host_GetConsoleCommands();
 
-	//	Process console commands
-	CmdBuf.Exec();
+		//	Process console commands
+		CmdBuf.Exec();
 
-	NET_Poll();
+		NET_Poll();
 
 #ifdef CLIENT
-	//	Make intentions
-	CL_SendMove();
+		//	Make intentions
+		CL_SendMove();
 #endif
 
 #ifdef SERVER
-	if (sv.active)
-	{
-		//	Server operations
-		ServerFrame(host_frametics);
-	}
+		if (sv.active)
+		{
+			//	Server operations
+			ServerFrame(host_frametics);
+		}
 #endif
 
-	host_time += host_frametime;
+		host_time += host_frametime;
 
 #ifdef CLIENT
-	//	Fetch results from server
-	CL_ReadFromServer();
+		//	Fetch results from server
+		CL_ReadFromServer();
 
-	//	Update video
-	if (show_time)
-		time1 = Sys_Time();
+		//	Update video
+		if (show_time)
+			time1 = Sys_Time();
 
-	SCR_Update();
+		SCR_Update();
 
-	if (show_time)
-		time2 = Sys_Time();
+		if (show_time)
+			time2 = Sys_Time();
 
-	if (cls.signon == SIGNONS)
-	{
-		CL_DecayLights();
-	}
+		if (cls.signon == SIGNONS)
+		{
+			CL_DecayLights();
+		}
 
-	//	Update audio
-	S_UpdateSounds();
+		//	Update audio
+		S_UpdateSounds();
 #endif
 
-	if (show_time)
-	{
-		pass1 = (int)((time1 - time3) * 1000);
-		time3 = Sys_Time();
-		pass2 = (int)((time2 - time1) * 1000);
-		pass3 = (int)((time3 - time2) * 1000);
-		con << (pass1 + pass2 + pass3) << " tot "
-			<< pass1 << " server " << pass2 << " gfx " << pass3 << " snd\n";
-	}
+		if (show_time)
+		{
+			pass1 = (int)((time1 - time3) * 1000);
+			time3 = Sys_Time();
+			pass2 = (int)((time2 - time1) * 1000);
+			pass3 = (int)((time3 - time2) * 1000);
+			con << (pass1 + pass2 + pass3) << " tot "
+				<< pass1 << " server " << pass2 << " gfx " << pass3 << " snd\n";
+		}
 
-	host_framecount++;
+		host_framecount++;
+	}
+	catch (RecoverableError &e)
+	{
+		con << "Host_Error: " << e.message << endl;
+
+		//	Reset progs virtual machine
+		PR_OnAbort();
+		//	Make sure, that we use primary wad files
+		W_CloseAuxiliary();
+
+#ifdef SERVER
+		SV_ShutdownServer(false);
+#endif
+
+#ifdef CLIENT
+		if (cls.state == ca_dedicated)
+			Sys_Error("Host_Error: %s\n", e.message);	// dedicated servers exit
+
+		CL_Disconnect();
+		clpr.Exec("OnHostError");
+		C_StartFull();
+#else
+		Sys_Error("Host_Error: %s\n", e.message);	// dedicated servers exit
+#endif
+	}
+	catch (EndGame &e)
+	{
+		cond << "Host_EndGame: " << e.message << endl;
+
+		//	Reset progs virtual machine
+		PR_OnAbort();
+		//	Make sure, that we use primary wad files
+		W_CloseAuxiliary();
+
+#ifdef SERVER
+		SV_ShutdownServer(false);
+#endif
+
+#ifdef CLIENT
+		if (cls.state == ca_dedicated)
+			Sys_Error("Host_EndGame: %s\n", e.message);	// dedicated servers exit
+	
+		CL_Disconnect();
+		clpr.Exec("OnHostEndGame");
+#else
+		Sys_Error("Host_EndGame: %s\n", e.message);	// dedicated servers exit
+#endif
+	}
+	catch (...)
+	{
+		dprintf("- Host_Frame\n");
+		throw;
+	}
 }
 
 //==========================================================================
@@ -459,34 +496,14 @@ void Host_Frame(void)
 
 void Host_EndGame(const char *message, ...)
 {
-	va_list		argptr;
-	char		string[1024];
+	va_list argptr;
+	char string[1024];
 	
 	va_start(argptr,message);
 	vsprintf(string,message,argptr);
 	va_end(argptr);
-	cond << "Host_EndGame: " << string << endl;
 
-	//	Reset progs virtual machine
-	PR_OnAbort();
-	//	Make sure, that we use primary wad files
-	W_CloseAuxiliary();
-
-#ifdef SERVER
-	SV_ShutdownServer(false);
-#endif
-
-#ifdef CLIENT
-	if (cls.state == ca_dedicated)
-		Sys_Error("Host_EndGame: %s\n", string);	// dedicated servers exit
-	
-	CL_Disconnect();
-	clpr.Exec("OnHostEndGame");
-
-	longjmp(host_abort, 1);
-#else
-	Sys_Error("Host_EndGame: %s\n", string);	// dedicated servers exit
-#endif
+	throw EndGame(string);
 }
 
 //==========================================================================
@@ -499,46 +516,14 @@ void Host_EndGame(const char *message, ...)
 
 void Host_Error(const char *error, ...)
 {
-	va_list		argptr;
-	char		string[1024];
-	static boolean inerror = false;
+	va_list argptr;
+	char string[1024];
 	
-	if (inerror)
-	{
-		Sys_Error("Host_Error: recursively entered");
-	}
-	inerror = true;
-	
-//	SCR_EndLoadingPlaque();		// reenable screen updates
-
 	va_start(argptr, error);
 	vsprintf(string, error, argptr);
 	va_end(argptr);
-	con << "Host_Error: " << string << endl;
 
-	//	Reset progs virtual machine
-	PR_OnAbort();
-	//	Make sure, that we use primary wad files
-	W_CloseAuxiliary();
-
-#ifdef SERVER
-	SV_ShutdownServer(false);
-#endif
-
-#ifdef CLIENT
-	if (cls.state == ca_dedicated)
-		Sys_Error("Host_Error: %s\n", string);	// dedicated servers exit
-
-	CL_Disconnect();
-	clpr.Exec("OnHostError");
-	C_StartFull();
-
-	inerror = false;
-
-	longjmp(host_abort, 1);
-#else
-	Sys_Error("Host_Error: %s\n", string);	// dedicated servers exit
-#endif
+	throw RecoverableError(string);
 }
 
 //==========================================================================
@@ -592,9 +577,12 @@ COMMAND(Quit)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/10/08 17:26:17  dj_jl
+//	Started to use exceptions
+//
 //	Revision 1.9  2001/10/04 17:20:25  dj_jl
 //	Saving config using streams
-//
+//	
 //	Revision 1.8  2001/09/24 17:35:24  dj_jl
 //	Support for thinker classes
 //	

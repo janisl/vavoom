@@ -57,18 +57,44 @@ typedef int					boolean;	//	Must be 4 bytes long
 typedef unsigned char 		byte;
 typedef unsigned short	 	word;
 typedef unsigned long	 	dword;
-#ifndef _WIN32
-typedef long long 			__int64;
-#endif
+
+//==========================================================================
+//
+//	Errors
+//
+//==========================================================================
+
+#define MAX_ERROR_TEXT_SIZE		1024
+
+class VavoomError
+{
+public:
+	char message[MAX_ERROR_TEXT_SIZE];
+
+	explicit VavoomError(const char *text)
+	{
+		strncpy(message, text, MAX_ERROR_TEXT_SIZE - 1);
+		message[MAX_ERROR_TEXT_SIZE - 1] = 0;
+	}
+};
+
+class RecoverableError:public VavoomError
+{
+public:
+	explicit RecoverableError(const char *text) : VavoomError(text) { }
+};
 
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/10/08 17:26:17  dj_jl
+//	Started to use exceptions
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

@@ -421,23 +421,14 @@ void Sys_Quit(void)
 
 void Sys_Error(const char *error, ...)
 {
-    va_list		argptr;
+	va_list		argptr;
 	char		buf[1024];
 
-	Host_Shutdown();
+	va_start(argptr, error);
+	vsprintf(buf, error, argptr);
+	va_end(argptr);
 
-    // Message last, so it actually prints on the screen
-    va_start(argptr, error);
-    vsprintf(buf, error, argptr);
-    va_end(argptr);
-
-	dprintf("\n\nERROR: %s\n", buf);
-
-    fprintf(stderr, "\n%s\n", buf);
-
-	if (M_CheckParm("-RHIDE") || M_CheckParm("-debug"))
-		__djgpp_traceback_exit(SIGABRT);
-	exit(1);
+	throw VavoomError(buf);
 }
 
 //==========================================================================
@@ -565,41 +556,32 @@ static void signal_handler(int s)
     //	In a case if default signal handler doesn't exit from program
 	exit(1);
 #else
-    // Ignore future instances of this signal.
-	signal(s,SIG_IGN);
+	// Ignore future instances of this signal.
+	signal(s, SIG_IGN);
 
-    //	Exit with error message
+	//	Exit with error message
 	switch (s)
-    {
-       case SIGABRT:
-            Sys_Error("Aborted");
-            break;
-       case SIGFPE:
-            Sys_Error("Floating Point Exception");
-            break;
-       case SIGILL:
-            Sys_Error("Illegal Instruction");
-            break;
-       case SIGINT:
-            Sys_Error("Interrupted by User");
-            break;
-       case SIGSEGV:
-            Sys_Error("Segmentation Violation");
-            break;
-       case SIGTERM:
-            Sys_Error("Terminated");
-            break;
-       case SIGKILL:
-            Sys_Error("Killed");
-            break;
-       case SIGQUIT:
-            Sys_Error("Quited");
-            break;
-       case SIGNOFP:
-            Sys_Error("VAVOOM requires a floating-point processor");
-            break;
-       default:
-            Sys_Error("Terminated by signal");
+	{
+	 case SIGABRT:
+		throw VavoomError("Aborted");
+	 case SIGFPE:
+		throw VavoomError("Floating Point Exception");
+	 case SIGILL:
+		throw VavoomError("Illegal Instruction");
+	 case SIGINT:
+		throw VavoomError("Interrupted by User");
+	 case SIGSEGV:
+		throw VavoomError("Segmentation Violation");
+	 case SIGTERM:
+		throw VavoomError("Terminated");
+	 case SIGKILL:
+		throw VavoomError("Killed");
+	 case SIGQUIT:
+		throw VavoomError("Quited");
+	 case SIGNOFP:
+		throw VavoomError("VAVOOM requires a floating-point processor");
+	 default:
+		throw VavoomError("Terminated by signal");
     }
 #endif
 }
@@ -616,38 +598,59 @@ extern "C" void PR_Profile2(void);
 
 int main(int argc,char** argv)
 {
-	M_InitArgs(argc, argv);
+	try
+	{
+		M_InitArgs(argc, argv);
 
-	//	Startup Allegro
-    allegro_init();
+		//	Startup Allegro
+    	allegro_init();
 
 #ifdef PROGS_PROFILE
-	install_timer();
-	install_int(PR_Profile2, 1);
+		install_timer();
+		install_int(PR_Profile2, 1);
 #endif
 
-	//	Install signal handlers overriding Allegro handlers
-   	signal(SIGABRT, signal_handler);
-   	signal(SIGFPE,  signal_handler);
-   	signal(SIGILL,  signal_handler);
-   	signal(SIGSEGV, signal_handler);
-   	signal(SIGTERM, signal_handler);
-   	signal(SIGINT,  signal_handler);
-   	signal(SIGKILL, signal_handler);
-   	signal(SIGQUIT, signal_handler);
-   	signal(SIGNOFP, signal_handler);
+		//	Install signal handlers overriding Allegro handlers
+   		signal(SIGABRT, signal_handler);
+	   	signal(SIGFPE,  signal_handler);
+   		signal(SIGILL,  signal_handler);
+	   	signal(SIGSEGV, signal_handler);
+   		signal(SIGTERM, signal_handler);
+	   	signal(SIGINT,  signal_handler);
+   		signal(SIGKILL, signal_handler);
+	   	signal(SIGQUIT, signal_handler);
+   		signal(SIGNOFP, signal_handler);
 
-	Sys_SetFPCW();
-	Sys_InitTime();
+		Sys_SetFPCW();
+		Sys_InitTime();
 
-	//	Initialize
-	Host_Init();
+		//	Initialize
+		Host_Init();
 
-	//	Play game
-    while (1)
-    {
-		Host_Frame();
-    }
+		//	Play game
+    	while (1)
+	    {
+			Host_Frame();
+	    }
+	}
+	catch (VavoomError &e)
+	{
+		Host_Shutdown();
+
+		dprintf("\n\nERROR: %s\n", e.message);
+		fprintf(stderr, "\n%s\n", e.message);
+
+		if (M_CheckParm("-RHIDE") || M_CheckParm("-debug"))
+			__djgpp_traceback_exit(SIGABRT);
+		exit(1);
+	}
+	catch (...)
+	{
+		Host_Shutdown();
+		dprintf("\n\nExiting due to external exception\n");
+		fprintf(stderr, "\nExiting due to external exception\n");
+		throw;
+	}
 
     return 0;
 }
@@ -655,9 +658,12 @@ int main(int argc,char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/10/08 17:26:17  dj_jl
+//	Started to use exceptions
+//
 //	Revision 1.6  2001/09/05 12:21:42  dj_jl
 //	Release changes
-//
+//	
 //	Revision 1.5  2001/08/29 17:49:36  dj_jl
 //	Added file time functions
 //	

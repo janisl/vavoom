@@ -376,21 +376,14 @@ void Sys_Quit(void)
 
 void Sys_Error(const char *error, ...)
 {
-	va_list		argptr;
-	char		buf[1024];
+	va_list argptr;
+	char buf[1024];
 
-	Host_Shutdown();
-
-	// Message last, so it actually prints on the screen
 	va_start(argptr,error);
 	vsprintf(buf, error, argptr);
 	va_end(argptr);
 
-	dprintf("\n\nERROR: %s\n", buf);
-	MessageBox(hwnd, buf, "Error", MB_OK);
-
-	SendMessage(hwnd, WM_CLOSE, 0, 0);
-	exit(1);
+	throw VavoomError(buf);
 }
 
 //==========================================================================
@@ -494,14 +487,14 @@ static void signal_handler(int s)
 
 	switch (s)
 	{
-	 case SIGINT:	Sys_Error("Interrupted by User");
-	 case SIGILL:	Sys_Error("Illegal Instruction");
-	 case SIGFPE:	Sys_Error("Floating Point Exception");
-	 case SIGSEGV:	Sys_Error("Segmentation Violation");
-	 case SIGTERM:	Sys_Error("Software termination signal from kill");
-	 case SIGBREAK:	Sys_Error("Ctrl-Break sequence");
-	 case SIGABRT:	Sys_Error("Abnormal termination triggered by abort call");
-	 default:		Sys_Error("Terminated by signal");
+	 case SIGINT:	throw VavoomError("Interrupted by User");
+	 case SIGILL:	throw VavoomError("Illegal Instruction");
+	 case SIGFPE:	throw VavoomError("Floating Point Exception");
+	 case SIGSEGV:	throw VavoomError("Segmentation Violation");
+	 case SIGTERM:	throw VavoomError("Software termination signal from kill");
+	 case SIGBREAK:	throw VavoomError("Ctrl-Break sequence");
+	 case SIGABRT:	throw VavoomError("Abnormal termination triggered by abort call");
+	 default:		throw VavoomError("Terminated by signal");
 	}
 }
 
@@ -630,114 +623,136 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 	MSG 		msg;
 	HACCEL		ghAccel;
 
-	M_InitArgs(__argc, __argv);
-
-	hInst = hInstance;
-
-	//	Create window class
-	wndclass.cbSize        = sizeof(wndclass);
-	wndclass.style         = 0;
-	wndclass.lpfnWndProc   = WndProc;
-	wndclass.cbClsExtra    = 0;
-	wndclass.cbWndExtra    = 0;
-	wndclass.hInstance     = hInst;
-	wndclass.hIcon         = LoadIcon(hInstance, "APPICON");
-	wndclass.hCursor       = LoadCursor(NULL, IDC_ARROW);
-	wndclass.hbrBackground = NULL;
-	wndclass.lpszMenuName  = NULL;
-	wndclass.lpszClassName = "VAVOOM";
-	wndclass.hIconSm       = NULL;
-
-	if (!RegisterClassEx(&wndclass))
+	try
 	{
-		MessageBox(NULL, "Failed to register class", "Error", MB_OK);
-		return 1;
-	}
+		M_InitArgs(__argc, __argv);
 
-	//	Create window
-	hwnd = CreateWindowEx(WS_EX_APPWINDOW,
-		"VAVOOM", "VAVOOM for Windows'95", WS_POPUP,
-		0, 0, 2, 2, NULL, NULL, hInst, NULL);
-	if (!hwnd)
-	{
-		MessageBox(NULL, "Couldn't create window", "Error", MB_OK);
-		return 1;
-	}
+		hInst = hInstance;
 
-	// Make the window visible & update its client area
-	ShowWindow(hwnd, iCmdShow);
-	UpdateWindow(hwnd);
+		//	Create window class
+		wndclass.cbSize        = sizeof(wndclass);
+		wndclass.style         = 0;
+		wndclass.lpfnWndProc   = WndProc;
+		wndclass.cbClsExtra    = 0;
+		wndclass.cbWndExtra    = 0;
+		wndclass.hInstance     = hInst;
+		wndclass.hIcon         = LoadIcon(hInstance, "APPICON");
+		wndclass.hCursor       = LoadCursor(NULL, IDC_ARROW);
+		wndclass.hbrBackground = NULL;
+		wndclass.lpszMenuName  = NULL;
+		wndclass.lpszClassName = "VAVOOM";
+		wndclass.hIconSm       = NULL;
 
-	//	Initialize COM
-	if (FAILED(CoInitialize(NULL)))
-	{
-		MessageBox(hwnd, "Failed to initialize COM", "Error", MB_OK);
-		return 1;
-	}
-
-	//	Create event
-	tevent = CreateEvent(NULL, FALSE, FALSE, NULL);
-	if (!tevent)
-	{
-		CoUninitialize();
-		MessageBox(hwnd, "Couldn't create event", "Error", MB_OK);
-		return 1;
-	}
-
-	ghAccel = LoadAccelerators(hInst, "AppAccel");
-
-	ShowCursor(FALSE);
-
-	//	Install signal handlers
-	signal(SIGINT,  signal_handler);
-	signal(SIGILL,  signal_handler);
-	signal(SIGFPE,  signal_handler);
-	signal(SIGSEGV, signal_handler);
-	signal(SIGTERM, signal_handler);
-	signal(SIGBREAK,signal_handler);
-	signal(SIGABRT, signal_handler);
-
-	MaskExceptions();
-	Sys_SetFPCW();
-
-	Sys_InitTime();
-
-	Host_Init();
-	while (1)
-	{
-		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		if (!RegisterClassEx(&wndclass))
 		{
-			if (msg.message == WM_QUIT)
-			{
-				dprintf("Quit message\n");
-				Sys_Quit();
-			}
-//			else if (msg.message == WM_SYSKEYDOWN || msg.message == WM_SYSKEYUP)
-//			{
-//			}
-			else if (!TranslateAccelerator(msg.hwnd, ghAccel, &msg))
-			{
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
+			MessageBox(NULL, "Failed to register class", "Error", MB_OK);
+			return 1;
 		}
 
-		if (Minimized || !ActiveApp)
+		//	Create window
+		hwnd = CreateWindowEx(WS_EX_APPWINDOW,
+			"VAVOOM", "VAVOOM for Windows'95", WS_POPUP,
+			0, 0, 2, 2, NULL, NULL, hInst, NULL);
+		if (!hwnd)
 		{
-			SleepUntilInput(PAUSE_SLEEP);
-			continue;
+			MessageBox(NULL, "Couldn't create window", "Error", MB_OK);
+			return 1;
 		}
 
-		Host_Frame();
+		// Make the window visible & update its client area
+		ShowWindow(hwnd, iCmdShow);
+		UpdateWindow(hwnd);
+
+		//	Initialize COM
+		if (FAILED(CoInitialize(NULL)))
+		{
+			MessageBox(hwnd, "Failed to initialize COM", "Error", MB_OK);
+			return 1;
+		}
+
+		//	Create event
+		tevent = CreateEvent(NULL, FALSE, FALSE, NULL);
+		if (!tevent)
+		{
+			CoUninitialize();
+			MessageBox(hwnd, "Couldn't create event", "Error", MB_OK);
+			return 1;
+		}
+
+		ghAccel = LoadAccelerators(hInst, "AppAccel");
+
+		ShowCursor(FALSE);
+
+		//	Install signal handlers
+		signal(SIGINT,  signal_handler);
+		signal(SIGILL,  signal_handler);
+		signal(SIGFPE,  signal_handler);
+		signal(SIGSEGV, signal_handler);
+		signal(SIGTERM, signal_handler);
+		signal(SIGBREAK,signal_handler);
+		signal(SIGABRT, signal_handler);
+
+		MaskExceptions();
+		Sys_SetFPCW();
+
+		Sys_InitTime();
+
+		Host_Init();
+		while (1)
+		{
+			while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+			{
+				if (msg.message == WM_QUIT)
+				{
+					dprintf("Quit message\n");
+					Sys_Quit();
+				}
+//				else if (msg.message == WM_SYSKEYDOWN || msg.message == WM_SYSKEYUP)
+//				{
+//				}
+				else if (!TranslateAccelerator(msg.hwnd, ghAccel, &msg))
+				{
+					TranslateMessage(&msg);
+					DispatchMessage(&msg);
+				}
+			}
+
+			if (Minimized || !ActiveApp)
+			{
+				SleepUntilInput(PAUSE_SLEEP);
+				continue;
+			}
+
+			Host_Frame();
+		}
+	}
+	catch (VavoomError &e)
+	{
+		Host_Shutdown();
+
+		dprintf("\n\nERROR: %s\n", e.message);
+		MessageBox(hwnd, e.message, "Error", MB_OK);
+
+		SendMessage(hwnd, WM_CLOSE, 0, 0);
+		return 1;
+	}
+	catch (...)
+	{
+		Host_Shutdown();
+		dprintf("\n\nExiting due to external exception\n");
+		throw;
 	}
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/10/08 17:26:17  dj_jl
+//	Started to use exceptions
+//
 //	Revision 1.6  2001/10/04 17:23:29  dj_jl
 //	Got rid of some warnings
-//
+//	
 //	Revision 1.5  2001/09/20 16:27:43  dj_jl
 //	Improved zone allocation
 //	

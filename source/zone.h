@@ -51,6 +51,12 @@
 
 // TYPES -------------------------------------------------------------------
 
+class ZoneError:public VavoomError
+{
+public:
+	explicit ZoneError(const char *text) : VavoomError(text) { }
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void Z_Init(void* base, int size);
@@ -142,9 +148,12 @@ template<class T> T* Z_CNew(int elem_count, int tag, void** owner)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/08 17:26:18  dj_jl
+//	Started to use exceptions
+//
 //	Revision 1.4  2001/09/12 17:34:42  dj_jl
 //	Added memory allocation templates
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

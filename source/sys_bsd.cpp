@@ -328,21 +328,14 @@ void Sys_Quit(void)
 
 void Sys_Error(const char *error, ...)
 {
-    va_list		argptr;
-	char		buf[1024];
+	va_list argptr;
+	char buf[1024];
 
-	Host_Shutdown();
+	va_start(argptr, error);
+	vsprintf(buf, error, argptr);
+	va_end(argptr);
 
-    // Message last, so it actually prints on the screen
-    va_start(argptr, error);
-    vsprintf(buf, error, argptr);
-    va_end(argptr);
-
-	dprintf("\n\nERROR: %s\n", buf);
-
-    fprintf(stderr, "\n%s\n", buf);
-
-	exit(1);
+	throw VavoomError(buf);
 }
 
 //==========================================================================
@@ -365,29 +358,29 @@ void Sys_Shutdown(void)
 
 static void signal_handler(int s)
 {
-    // Ignore future instances of this signal.
+	// Ignore future instances of this signal.
 	signal(s, SIG_IGN);
 
-    //	Exit with error message
+	//	Exit with error message
 	switch (s)
-    {
-     case SIGABRT:	Sys_Error("Abnormal termination triggered by abort call");
-	 case SIGFPE:	Sys_Error("Floating Point Exception");
-	 case SIGILL:	Sys_Error("Illegal Instruction");
-	 case SIGINT:	Sys_Error("Interrupted by User");
-	 case SIGSEGV:	Sys_Error("Segmentation Violation");
-     case SIGTERM:	Sys_Error("Software termination signal from kill");
+	{
+	 case SIGABRT:	throw VavoomError("Abnormal termination triggered by abort call");
+	 case SIGFPE:	throw VavoomError("Floating Point Exception");
+	 case SIGILL:	throw VavoomError("Illegal Instruction");
+	 case SIGINT:	throw VavoomError("Interrupted by User");
+	 case SIGSEGV:	throw VavoomError("Segmentation Violation");
+	 case SIGTERM:	throw VavoomError("Software termination signal from kill");
 #ifdef SIGKILL
-	 case SIGKILL:	Sys_Error("Killed");
+	 case SIGKILL:	throw VavoomError("Killed");
 #endif
 #ifdef SIGQUIT
-	 case SIGQUIT:	Sys_Error("Quited");
+	 case SIGQUIT:	throw VavoomError("Quited");
 #endif
 #ifdef SIGNOFP
-	 case SIGNOFP:	Sys_Error("VAVOOM requires a floating-point processor");
+	 case SIGNOFP:	throw VavoomError("VAVOOM requires a floating-point processor");
 #endif
-     default:		Sys_Error("Terminated by signal");
-    }
+     default:		throw VavoomError("Terminated by signal");
+	}
 }
 
 //==========================================================================
@@ -400,43 +393,66 @@ static void signal_handler(int s)
 
 int main(int argc, char** argv)
 {
-	printf("Vavoom dedicated server "VERSION_TEXT"\n");
+	try
+	{
+		printf("Vavoom dedicated server "VERSION_TEXT"\n");
 
-	M_InitArgs(argc, argv);
+		M_InitArgs(argc, argv);
 
-	//	Install signal handlers
-   	signal(SIGABRT, signal_handler);
-   	signal(SIGFPE,  signal_handler);
-   	signal(SIGILL,  signal_handler);
-   	signal(SIGSEGV, signal_handler);
-   	signal(SIGTERM, signal_handler);
-   	signal(SIGINT,  signal_handler);
+		//	Install signal handlers
+   		signal(SIGABRT, signal_handler);
+	   	signal(SIGFPE,  signal_handler);
+   		signal(SIGILL,  signal_handler);
+	   	signal(SIGSEGV, signal_handler);
+   		signal(SIGTERM, signal_handler);
+	   	signal(SIGINT,  signal_handler);
 #ifdef SIGKILL
-   	signal(SIGKILL, signal_handler);
+	   	signal(SIGKILL, signal_handler);
 #endif
 #ifdef SIGQUIT
-   	signal(SIGQUIT, signal_handler);
+	   	signal(SIGQUIT, signal_handler);
 #endif
 #ifdef SIGNOFP
-   	signal(SIGNOFP, signal_handler);
+	   	signal(SIGNOFP, signal_handler);
 #endif
 
-	//	Initialize
-	Host_Init();
+		//	Initialize
+		Host_Init();
 
-	//	Play game
-    while (1)
-    {
-		Host_Frame();
-    }
+		//	Play game
+	    while (1)
+	    {
+			Host_Frame();
+	    }
+	}
+	catch (VavoomError &e)
+	{
+		Host_Shutdown();
+
+		dprintf("\n\nERROR: %s\n", e.message);
+
+		fprintf(stderr, "\n%s\n", e.message);
+
+		exit(1);
+	}
+	catch (...)
+	{
+		Host_Shutdown();
+		dprintf("\n\nExiting due to external exception\n");
+		fprintf(stderr, "\nExiting due to external exception\n");
+		throw;
+	}
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/08 17:26:17  dj_jl
+//	Started to use exceptions
+//
 //	Revision 1.4  2001/08/29 17:49:36  dj_jl
 //	Added file time functions
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	
