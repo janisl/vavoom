@@ -339,13 +339,13 @@ void Actor::TouchSpecial(Actor Toucher)
 	case 'ARM1':
 		if (!Toucher.GiveArmor(1))
 			return;
-		cprint(Toucher.Player, "%s\n", GOTARMOR);
+		cprint(Toucher.Player, GOTARMOR);
 		break;
 
 	case 'ARM2':
 		if (!Toucher.GiveArmor(2))
 			return;
-		cprint(Toucher.Player, "%s\n", GOTMEGA);
+		cprint(Toucher.Player, GOTMEGA);
 		break;
 
 		// bonus items
@@ -354,7 +354,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		if (Toucher.Player->Health > 200)
 			Toucher.Player->Health = 200;
 		Toucher.Health = Toucher.Player->Health;
-		cprint(Toucher.Player, "%s\n", GOTHTHBONUS);
+		cprint(Toucher.Player, GOTHTHBONUS);
 		break;
 
 	case 'BON2':
@@ -363,7 +363,7 @@ void Actor::TouchSpecial(Actor Toucher)
 			Toucher.Player->ArmorPoints = 200;
 		if (!Toucher.Player->ArmorType)
 			Toucher.Player->ArmorType = 1;
-		cprint(Toucher.Player, "%s\n", GOTARMBONUS);
+		cprint(Toucher.Player, GOTARMBONUS);
 		break;
 
 	case 'SOUL':
@@ -371,7 +371,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		if (Toucher.Player->Health > SOULSPHERE_MAX)
 			Toucher.Player->Health = SOULSPHERE_MAX;
 		Toucher.Player->mo->Health = Toucher.Player->Health;
-		cprint(Toucher.Player, "%s\n", GOTSUPER);
+		cprint(Toucher.Player, GOTSUPER);
 		sound = 'PickupPower';
 		break;
 
@@ -380,7 +380,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		Toucher.Player->Health = MEGASPHERE_HEALTH;
 		Toucher.Health = Toucher.Player->Health;
 		Toucher.GiveArmor(2);
-		cprint(Toucher.Player, "%s\n", GOTMSPHERE);
+		cprint(Toucher.Player, GOTMSPHERE);
 		sound = 'PickupPower';
 		break;
 #endif
@@ -389,42 +389,42 @@ void Actor::TouchSpecial(Actor Toucher)
 		// leave cards for everyone
 	case 'BKEY':
 		if (Toucher.GiveCard(it_bluecard))
-			cprint(Toucher.Player, "%s\n", GOTBLUECARD);
+			cprint(Toucher.Player, GOTBLUECARD);
 		if (!netgame)
 			break;
 		return;
 
 	case 'YKEY':
 		if (Toucher.GiveCard(it_yellowcard))
-			cprint(Toucher.Player, "%s\n", GOTYELWCARD);
+			cprint(Toucher.Player, GOTYELWCARD);
 		if (!netgame)
 			break;
 		return;
 
 	case 'RKEY':
 		if (Toucher.GiveCard(it_redcard))
-			cprint(Toucher.Player, "%s\n", GOTREDCARD);
+			cprint(Toucher.Player, GOTREDCARD);
 		if (!netgame)
 			break;
 		return;
 
 	case 'BSKU':
 		if (Toucher.GiveCard(it_blueskull))
-			cprint(Toucher.Player, "%s\n", GOTBLUESKUL);
+			cprint(Toucher.Player, GOTBLUESKUL);
 		if (!netgame)
 			break;
 		return;
 
 	case 'YSKU':
 		if (Toucher.GiveCard(it_yellowskull))
-			cprint(Toucher.Player, "%s\n", GOTYELWSKUL);
+			cprint(Toucher.Player, GOTYELWSKUL);
 		if (!netgame)
 			break;
 		return;
 
 	case 'RSKU':
 		if (Toucher.GiveCard(it_redskull))
-			cprint(Toucher.Player, "%s\n", GOTREDSKULL);
+			cprint(Toucher.Player, GOTREDSKULL);
 		if (!netgame)
 			break;
 		return;
@@ -433,7 +433,7 @@ void Actor::TouchSpecial(Actor Toucher)
 	case 'STIM':
 		if (!Toucher.GiveBody(10))
 			return;
-		cprint(Toucher.Player, "%s\n", GOTSTIM);
+		cprint(Toucher.Player, GOTSTIM);
 		break;
 
 	case 'MEDI':
@@ -441,23 +441,23 @@ void Actor::TouchSpecial(Actor Toucher)
 			return;
 
 		if (Toucher.Player->Health < 25)
-			cprint(Toucher.Player, "%s\n", GOTMEDINEED);
+			cprint(Toucher.Player, GOTMEDINEED);
 		else
-			cprint(Toucher.Player, "%s\n", GOTMEDIKIT);
+			cprint(Toucher.Player, GOTMEDIKIT);
 		break;
 
 		// power ups
 	case 'PINV':
 		if (!Toucher.GivePower(pw_invulnerability))
 			return;
-		cprint(Toucher.Player, "%s\n", GOTINVUL);
+		cprint(Toucher.Player, GOTINVUL);
 		sound = 'PickupPower';
 		break;
 
 	case 'PSTR':
 		if (!Toucher.GivePower(pw_strength))
 			return;
-		cprint(Toucher.Player, "%s\n", GOTBERSERK);
+		cprint(Toucher.Player, GOTBERSERK);
 		if (Toucher.Player->ReadyWeapon != wp_fist)
 			Toucher.Player->PendingWeapon = wp_fist;
 		sound = 'PickupPower';
@@ -466,21 +466,21 @@ void Actor::TouchSpecial(Actor Toucher)
 	case 'PINS':
 		if (!Toucher.GivePower(pw_invisibility))
 			return;
-		cprint(Toucher.Player, "%s\n", GOTINVIS);
+		cprint(Toucher.Player, GOTINVIS);
 		sound = 'PickupPower';
 		break;
 
 	case 'SUIT':
 		if (!Toucher.GivePower(pw_ironfeet))
 			return;
-		cprint(Toucher.Player, "%s\n", GOTSUIT);
+		cprint(Toucher.Player, GOTSUIT);
 		sound = 'PickupPower';
 		break;
 
 	case 'PVIS':
 		if (!Toucher.GivePower(pw_infrared))
 			return;
-		cprint(Toucher.Player, "%s\n", GOTVISOR);
+		cprint(Toucher.Player, GOTVISOR);
 		sound = 'PickupPower';
 		break;
 
@@ -488,7 +488,7 @@ void Actor::TouchSpecial(Actor Toucher)
 	case 'PMAP':
 		if (!Toucher.GiveItem(IT_ALL_MAP))
 			return;
-		cprint(Toucher.Player, "%s\n", GOTMAP);
+		cprint(Toucher.Player, GOTMAP);
 		sound = 'PickupPower';
 		break;
 
@@ -504,49 +504,49 @@ void Actor::TouchSpecial(Actor Toucher)
 			if (!Toucher.GiveAmmo(am_clip, 1))
 				return;
 		}
-		cprint(Toucher.Player, "%s\n", GOTCLIP);
+		cprint(Toucher.Player, GOTCLIP);
 		break;
 
 	case 'AMMO':
 		if (!Toucher.GiveAmmo(am_clip, 5))
 			return;
-		cprint(Toucher.Player, "%s\n", GOTCLIPBOX);
+		cprint(Toucher.Player, GOTCLIPBOX);
 		break;
 
 	case 'ROCK':
 		if (!Toucher.GiveAmmo(am_misl, 1))
 			return;
-		cprint(Toucher.Player, "%s\n", GOTROCKET);
+		cprint(Toucher.Player, GOTROCKET);
 		break;
 
 	case 'BROK':
 		if (!Toucher.GiveAmmo(am_misl, 5))
 			return;
-		cprint(Toucher.Player, "%s\n", GOTROCKBOX);
+		cprint(Toucher.Player, GOTROCKBOX);
 		break;
 
 	case 'CELL':
 		if (!Toucher.GiveAmmo(am_cell, 1))
 			return;
-		cprint(Toucher.Player, "%s\n", GOTCELL);
+		cprint(Toucher.Player, GOTCELL);
 		break;
 
 	case 'CELP':
 		if (!Toucher.GiveAmmo(am_cell, 5))
 			return;
-		cprint(Toucher.Player, "%s\n", GOTCELLBOX);
+		cprint(Toucher.Player, GOTCELLBOX);
 		break;
 
 	case 'SHEL':
 		if (!Toucher.GiveAmmo(am_shell, 1))
 			return;
-		cprint(Toucher.Player, "%s\n", GOTSHELLS);
+		cprint(Toucher.Player, GOTSHELLS);
 		break;
 
 	case 'SBOX':
 		if (!Toucher.GiveAmmo(am_shell, 5))
 			return;
-		cprint(Toucher.Player, "%s\n", GOTSHELLBOX);
+		cprint(Toucher.Player, GOTSHELLBOX);
 		break;
 
 	case 'BPAK':
@@ -555,49 +555,49 @@ void Actor::TouchSpecial(Actor Toucher)
 		{
 			Toucher.GiveAmmo(i, 1);
 		}
-		cprint(Toucher.Player, "%s\n", GOTBACKPACK);
+		cprint(Toucher.Player, GOTBACKPACK);
 		break;
 
 		// weapons
 	case 'BFUG':
 		if (!Toucher.GiveWeapon(wp_bfg, false))
 			return;
-		cprint(Toucher.Player, "%s\n", GOTBFG9000);
+		cprint(Toucher.Player, GOTBFG9000);
 		sound = 'PickupWeapon';
 		break;
 
 	case 'MGUN':
 		if (!Toucher.GiveWeapon(wp_chaingun, bDropped))
 			return;
-		cprint(Toucher.Player, "%s\n", GOTCHAINGUN);
+		cprint(Toucher.Player, GOTCHAINGUN);
 		sound = 'PickupWeapon';
 		break;
 
 	case 'CSAW':
 		if (!Toucher.GiveWeapon(wp_chainsaw, false))
 			return;
-		cprint(Toucher.Player, "%s\n", GOTCHAINSAW);
+		cprint(Toucher.Player, GOTCHAINSAW);
 		sound = 'PickupWeapon';
 		break;
 
 	case 'LAUN':
 		if (!Toucher.GiveWeapon(wp_missile, false))
 			return;
-		cprint(Toucher.Player, "%s\n", GOTLAUNCHER);
+		cprint(Toucher.Player, GOTLAUNCHER);
 		sound = 'PickupWeapon';
 		break;
 
 	case 'PLAS':
 		if (!Toucher.GiveWeapon(wp_plasma, false))
 			return;
-		cprint(Toucher.Player, "%s\n", GOTPLASMA);
+		cprint(Toucher.Player, GOTPLASMA);
 		sound = 'PickupWeapon';
 		break;
 
 	case 'SHOT':
 		if (!Toucher.GiveWeapon(wp_shotgun, bDropped))
 			return;
-		cprint(Toucher.Player, "%s\n", GOTSHOTGUN);
+		cprint(Toucher.Player, GOTSHOTGUN);
 		sound = 'PickupWeapon';
 		break;
 
@@ -605,7 +605,7 @@ void Actor::TouchSpecial(Actor Toucher)
 	case 'SGN2':
 		if (!Toucher.GiveWeapon(wp_supershotgun, bDropped))
 			return;
-		cprint(Toucher.Player, "%s\n", GOTSHOTGUN2);
+		cprint(Toucher.Player, GOTSHOTGUN2);
 		sound = 'PickupWeapon';
 		break;
 #endif
@@ -614,7 +614,7 @@ void Actor::TouchSpecial(Actor Toucher)
 	case 'GLAU':
 		if (!Toucher.GiveWeapon(wp_grenade, false))
 			return;
-		cprint(Toucher.Player, "Piched up a grenade launcher\n");
+		cprint(Toucher.Player, "Piched up a grenade launcher");
 		sound = 'PickupWeapon';
 		break;
 #endif
@@ -630,6 +630,9 @@ void Actor::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/03/12 19:21:24  dj_jl
+//  No need for linefeed in client-printing
+//
 //  Revision 1.14  2002/02/22 18:00:08  dj_jl
 //  A lots of the renaming, beautification.
 //

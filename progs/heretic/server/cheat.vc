@@ -46,11 +46,11 @@ void Cheat_God(void)
 	players[0].Cheats ^= CF_GODMODE;
 	if (players[0].Cheats & CF_GODMODE)
 	{
-		cprint(&players[0], "GOD MODE ON\n");
+		cprint(&players[0], "GOD MODE ON");
 	}
 	else
 	{
-		cprint(&players[0], "GOD MODE OFF\n");
+		cprint(&players[0], "GOD MODE OFF");
 	}
 }
 
@@ -65,11 +65,11 @@ void Cheat_NoClip(void)
 	players[0].Cheats ^= CF_NOCLIP;
 	if (players[0].Cheats & CF_NOCLIP)
 	{
-		cprint(&players[0], "NO CLIPPING ON\n");
+		cprint(&players[0], "NO CLIPPING ON");
 	}
 	else
 	{
-		cprint(&players[0], "NO CLIPPING OFF\n");
+		cprint(&players[0], "NO CLIPPING OFF");
 	}
 }
 
@@ -102,19 +102,19 @@ void Cheat_Gimme(void)
 		{
 			players[0].Ammo[i] = maxammo[i] * 2;
 		}
-		cprint(&players[0], "ALL WEAPONS\n");
+		cprint(&players[0], "ALL WEAPONS");
 	}
 	if (Cmd_CheckParm("power"))
 	{
 		if (players[0].Powers[pw_weaponlevel2])
 		{
 			players[0].Powers[pw_weaponlevel2] = 0;
-			cprint(&players[0], "POWER OFF\n");
+			cprint(&players[0], "POWER OFF");
 		}
 		else
 		{
 			UseArtifact(&players[0], arti_tomeofpower);
-			cprint(&players[0], "POWER ON\n");
+			cprint(&players[0], "POWER ON");
 		}
 	}
 	if (Cmd_CheckParm("health"))
@@ -129,12 +129,12 @@ void Cheat_Gimme(void)
 			players[0].mo->Health = MAXHEALTH;
 			players[0].Health = players[0].mo->Health;
 		}
-		cprint(&players[0], "FULL HEALTH\n");
+		cprint(&players[0], "FULL HEALTH");
 	}
 	if (Cmd_CheckParm("keys"))
 	{
 		players[0].Keys = 7;
-		cprint(&players[0], "ALL KEYS\n");
+		cprint(&players[0], "ALL KEYS");
 	}
 	if (Cmd_CheckParm("artifacts"))
 	{
@@ -153,7 +153,7 @@ void Cheat_Gimme(void)
 				players[0].mo->GiveArtifact(i, none);
 			}
 		}
-		cprint(&players[0], "YOU GOT IT\n");
+		cprint(&players[0], "YOU GOT IT");
 	}
 /*	int i;
 	int j;
@@ -208,7 +208,7 @@ void P_Massacre(void);
 void Cheat_KillAll(void)
 {
 	P_Massacre();
-	cprint(&players[0], "MASSACRE\n");
+	cprint(&players[0], "MASSACRE");
 }
 
 //==========================================================================
@@ -223,12 +223,12 @@ void Cheat_Morph(void)
 	{
 		if (UndoPlayerChicken(&players[0]))
 		{
-			cprint(&players[0], "CHICKEN OFF\n");
+			cprint(&players[0], "CHICKEN OFF");
 		}
 	}
 	else if (players[0].mo->ChickenMorphPlayer())
 	{
-		cprint(&players[0], "CHICKEN ON\n");
+		cprint(&players[0], "CHICKEN ON");
 	}
 }
 
@@ -251,7 +251,7 @@ void Cheat_NoWeapons(void)
 		players[0].WeaponOwned[i] = false;
 	}
 	players[0].PendingWeapon = wp_staff;
-	cprint(&players[0], "CHEATER - YOU DON'T DESERVE WEAPONS\n");
+	cprint(&players[0], "CHEATER - YOU DON'T DESERVE WEAPONS");
 }
 
 //==========================================================================
@@ -267,6 +267,9 @@ void Cheat_Class(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/03/12 19:21:24  dj_jl
+//  No need for linefeed in client-printing
+//
 //  Revision 1.11  2002/02/26 17:49:48  dj_jl
 //  no message
 //

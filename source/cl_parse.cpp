@@ -830,7 +830,7 @@ void CL_ParseServerMessage(void)
 			break;
 
 		 case svc_print:
-			con << net_msg.ReadString();
+			con << net_msg.ReadString() << endl;
 			break;
 
 		 case svc_center_print:
@@ -1030,9 +1030,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2002/03/12 19:21:55  dj_jl
+//	No need for linefeed in client-printing
+//
 //	Revision 1.22  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
-//
+//	
 //	Revision 1.21  2002/01/11 08:09:34  dj_jl
 //	Added sector plane swapping
 //	

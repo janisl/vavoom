@@ -49,10 +49,10 @@ void Cheat_God(void)
 		if (players[0].mo)
 			players[0].mo->Health = GOD_HEALTH;
 		players[0].Health = GOD_HEALTH;
-		cprint(&players[0], "Degreelessness Mode On\n");
+		cprint(&players[0], "Degreelessness Mode On");
 	}
 	else
-		cprint(&players[0], "Degreelessness Mode Off\n");
+		cprint(&players[0], "Degreelessness Mode Off");
 }
 
 //==========================================================================
@@ -66,9 +66,9 @@ void Cheat_NoClip(void)
 	players[0].Cheats ^= CF_NOCLIP;
 
 	if (players[0].Cheats & CF_NOCLIP)
-		cprint(&players[0], "No Clipping Mode ON\n");
+		cprint(&players[0], "No Clipping Mode ON");
 	else
-		cprint(&players[0], "No Clipping Mode OFF\n");
+		cprint(&players[0], "No Clipping Mode OFF");
 }
 
 //==========================================================================
@@ -331,12 +331,15 @@ int P_Massacre(void)
 
 void Cheat_KillAll(void)
 {
-	cprint(&players[0], "%d MONSTERS KILLED\n", P_Massacre());
+	cprint(&players[0], "%d MONSTERS KILLED", P_Massacre());
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/03/12 19:21:24  dj_jl
+//  No need for linefeed in client-printing
+//
 //  Revision 1.10  2002/02/22 18:00:25  dj_jl
 //  A lots of the renaming, beautification.
 //

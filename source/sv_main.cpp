@@ -2366,9 +2366,9 @@ COMMAND(Stats)
 		return;
 	}
 
-	SV_ClientPrintf(sv_player, "Kills: %d of %d\n", sv_player->KillCount, level.totalkills);
-	SV_ClientPrintf(sv_player, "Items: %d of %d\n", sv_player->ItemCount, level.totalitems);
-	SV_ClientPrintf(sv_player, "Secrets: %d of %d\n", sv_player->SecretCount, level.totalsecret);
+	SV_ClientPrintf(sv_player, "Kills: %d of %d", sv_player->KillCount, level.totalkills);
+	SV_ClientPrintf(sv_player, "Items: %d of %d", sv_player->ItemCount, level.totalitems);
+	SV_ClientPrintf(sv_player, "Secrets: %d of %d", sv_player->SecretCount, level.totalsecret);
 }
 
 //==========================================================================
@@ -2637,7 +2637,7 @@ COMMAND(Say)
 	if (Argc() < 2)
 		return;
 
-   	SV_BroadcastPrintf("%s: %s\n", sv_player->Name, Args());
+   	SV_BroadcastPrintf("%s: %s", sv_player->Name, Args());
 	SV_StartSound(NULL, S_GetSoundID("Chat"), 0, 127);
 }
 
@@ -2701,9 +2701,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.40  2002/03/12 19:21:55  dj_jl
+//	No need for linefeed in client-printing
+//
 //	Revision 1.39  2002/03/09 18:06:25  dj_jl
 //	Made Entity class and most of it's functions native
-//
+//	
 //	Revision 1.38  2002/03/04 18:27:49  dj_jl
 //	Fixes for weapons
 //	

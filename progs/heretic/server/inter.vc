@@ -471,21 +471,21 @@ void Actor::TouchSpecial(Actor Toucher)
 		{
 			return;
 		}
-		cprint(Toucher.Player, "%s\n", TXT_ITEMHEALTH);
+		cprint(Toucher.Player, TXT_ITEMHEALTH);
 		break;
 	case 'SHLD':	// Item_Shield1
 		if (!Toucher.GiveArmor(1))
 		{
 			return;
 		}
-		cprint(Toucher.Player, "%s\n", TXT_ITEMSHIELD1);
+		cprint(Toucher.Player, TXT_ITEMSHIELD1);
 		break;
 	case 'SHD2':	// Item_Shield2
 		if (!Toucher.GiveArmor(2))
 		{
 			return;
 		}
-		cprint(Toucher.Player, "%s\n", TXT_ITEMSHIELD2);
+		cprint(Toucher.Player, TXT_ITEMSHIELD2);
 		break;
 	case 'BAGH':	// Item_BagOfHolding
 		Toucher.Player->Backpack = true;
@@ -494,21 +494,21 @@ void Actor::TouchSpecial(Actor Toucher)
 		Toucher.GiveAmmo(am_crossbow, AMMO_CBOW_WIMPY);
 		Toucher.GiveAmmo(am_skullrod, AMMO_SKRD_WIMPY);
 		Toucher.GiveAmmo(am_phoenixrod, AMMO_PHRD_WIMPY);
-		cprint(Toucher.Player, "%s\n", TXT_ITEMBAGOFHOLDING);
+		cprint(Toucher.Player, TXT_ITEMBAGOFHOLDING);
 		break;
 	case 'SPMP':	// Item_SuperMap
 		if (!Toucher.GiveItem(IT_ALL_MAP))
 		{
 			return;
 		}
-		cprint(Toucher.Player, "%s\n", TXT_ITEMSUPERMAP);
+		cprint(Toucher.Player, TXT_ITEMSUPERMAP);
 		break;
 
 		// Keys
 	case 'BKYY':	// Key_Blue
 		if (Toucher.GiveKey(key_blue))
 		{
-			cprint(Toucher.Player, "%s\n", TXT_GOTBLUEKEY);
+			cprint(Toucher.Player, TXT_GOTBLUEKEY);
 		}
 		sound = 'PickupKey';
 		if (!netgame)
@@ -519,7 +519,7 @@ void Actor::TouchSpecial(Actor Toucher)
 	case 'CKYY':	// Key_Yellow
 		if (Toucher.GiveKey(key_yellow))
 		{
-			cprint(Toucher.Player, "%s\n", TXT_GOTYELLOWKEY);
+			cprint(Toucher.Player, TXT_GOTYELLOWKEY);
 		}
 		sound = 'PickupKey';
 		if (!netgame)
@@ -530,7 +530,7 @@ void Actor::TouchSpecial(Actor Toucher)
 	case 'AKYY':	// Key_Green
 		if (Toucher.GiveKey(key_green))
 		{
-			cprint(Toucher.Player, "%s\n", TXT_GOTGREENKEY);
+			cprint(Toucher.Player, TXT_GOTGREENKEY);
 		}
 		sound = 'PickupKey';
 		if (!netgame)
@@ -543,70 +543,70 @@ void Actor::TouchSpecial(Actor Toucher)
 	case 'PTN2':	// Arti_HealingPotion
 		if (Toucher.GiveArtifact(arti_health, self))
 		{
-			cprint(Toucher.Player, "%s\n", TXT_ARTIHEALTH);
+			cprint(Toucher.Player, TXT_ARTIHEALTH);
 			P_SetDormantArtifact(this);
 		}
 		return;
 	case 'SOAR':	// Arti_Fly
 		if (Toucher.GiveArtifact(arti_fly, self))
 		{
-			cprint(Toucher.Player, "%s\n", TXT_ARTIFLY);
+			cprint(Toucher.Player, TXT_ARTIFLY);
 			P_SetDormantArtifact(this);
 		}
 		return;
 	case 'INVU':	// Arti_Invulnerability
 		if (Toucher.GiveArtifact(arti_invulnerability, self))
 		{
-			cprint(Toucher.Player, "%s\n", TXT_ARTIINVULNERABILITY);
+			cprint(Toucher.Player, TXT_ARTIINVULNERABILITY);
 			P_SetDormantArtifact(&self);
 		}
 		return;
 	case 'PWBK':	// Arti_TomeOfPower
 		if (Toucher.GiveArtifact(arti_tomeofpower, self))
 		{
-			cprint(Toucher.Player, "%s\n", TXT_ARTITOMEOFPOWER);
+			cprint(Toucher.Player, TXT_ARTITOMEOFPOWER);
 			P_SetDormantArtifact(&self);
 		}
 		return;
 	case 'INVS':	// Arti_Invisibility
 		if (Toucher.GiveArtifact(arti_invisibility, self))
 		{
-			cprint(Toucher.Player, "%s\n", TXT_ARTIINVISIBILITY);
+			cprint(Toucher.Player, TXT_ARTIINVISIBILITY);
 			P_SetDormantArtifact(&self);
 		}
 		return;
 	case 'EGGC':	// Arti_Egg
 		if (Toucher.GiveArtifact(arti_egg, self))
 		{
-			cprint(Toucher.Player, "%s\n", TXT_ARTIEGG);
+			cprint(Toucher.Player, TXT_ARTIEGG);
 			P_SetDormantArtifact(&self);
 		}
 		return;
 	case 'SPHL':	// Arti_SuperHealth
 		if (Toucher.GiveArtifact(arti_superhealth, self))
 		{
-			cprint(Toucher.Player, "%s\n", TXT_ARTISUPERHEALTH);
+			cprint(Toucher.Player, TXT_ARTISUPERHEALTH);
 			P_SetDormantArtifact(&self);
 		}
 		return;
 	case 'TRCH':	// Arti_Torch
 		if (Toucher.GiveArtifact(arti_torch, self))
 		{
-			cprint(Toucher.Player, "%s\n", TXT_ARTITORCH);
+			cprint(Toucher.Player, TXT_ARTITORCH);
 			P_SetDormantArtifact(&self);
 		}
 		return;
 	case 'FBMB':	// Arti_FireBomb
 		if (Toucher.GiveArtifact(arti_firebomb, self))
 		{
-			cprint(Toucher.Player, "%s\n", TXT_ARTIFIREBOMB);
+			cprint(Toucher.Player, TXT_ARTIFIREBOMB);
 			P_SetDormantArtifact(&self);
 		}
 		return;
 	case 'ATLP':	// Arti_Teleport
 		if (Toucher.GiveArtifact(arti_teleport, self))
 		{
-			cprint(Toucher.Player, "%s\n", TXT_ARTITELEPORT);
+			cprint(Toucher.Player, TXT_ARTITELEPORT);
 			P_SetDormantArtifact(&self);
 		}
 		return;
@@ -617,84 +617,84 @@ void Actor::TouchSpecial(Actor Toucher)
 		{
 			return;
 		}
-		cprint(Toucher.Player, "%s\n", TXT_AMMOGOLDWAND1);
+		cprint(Toucher.Player, TXT_AMMOGOLDWAND1);
 		break;
 	case 'AMG2':	// Ammo_GoldWandHefty
 		if (!Toucher.GiveAmmo(am_goldwand, Health))
 		{
 			return;
 		}
-		cprint(Toucher.Player, "%s\n", TXT_AMMOGOLDWAND2);
+		cprint(Toucher.Player, TXT_AMMOGOLDWAND2);
 		break;
 	case 'AMM1':	// Ammo_MaceWimpy
 		if (!Toucher.GiveAmmo(am_mace, Health))
 		{
 			return;
 		}
-		cprint(Toucher.Player, "%s\n", TXT_AMMOMACE1);
+		cprint(Toucher.Player, TXT_AMMOMACE1);
 		break;
 	case 'AMM2':	// Ammo_MaceHefty
 		if (!Toucher.GiveAmmo(am_mace, Health))
 		{
 			return;
 		}
-		cprint(Toucher.Player, "%s\n", TXT_AMMOMACE2);
+		cprint(Toucher.Player, TXT_AMMOMACE2);
 		break;
 	case 'AMC1':	// Ammo_CrossbowWimpy
 		if (!Toucher.GiveAmmo(am_crossbow, Health))
 		{
 			return;
 		}
-		cprint(Toucher.Player, "%s\n", TXT_AMMOCROSSBOW1);
+		cprint(Toucher.Player, TXT_AMMOCROSSBOW1);
 		break;
 	case 'AMC2':	// Ammo_CrossbowHefty
 		if (!Toucher.GiveAmmo(am_crossbow, Health))
 		{
 			return;
 		}
-		cprint(Toucher.Player, "%s\n", TXT_AMMOCROSSBOW2);
+		cprint(Toucher.Player, TXT_AMMOCROSSBOW2);
 		break;
 	case 'AMB1':	// Ammo_BlasterWimpy
 		if (!Toucher.GiveAmmo(am_blaster, Health))
 		{
 			return;
 		}
-		cprint(Toucher.Player, "%s\n", TXT_AMMOBLASTER1);
+		cprint(Toucher.Player, TXT_AMMOBLASTER1);
 		break;
 	case 'AMB2':	// Ammo_BlasterHefty
 		if (!Toucher.GiveAmmo(am_blaster, Health))
 		{
 			return;
 		}
-		cprint(Toucher.Player, "%s\n", TXT_AMMOBLASTER2);
+		cprint(Toucher.Player, TXT_AMMOBLASTER2);
 		break;
 	case 'AMS1':	// Ammo_SkullRodWimpy
 		if (!Toucher.GiveAmmo(am_skullrod, Health))
 		{
 			return;
 		}
-		cprint(Toucher.Player, "%s\n", TXT_AMMOSKULLROD1);
+		cprint(Toucher.Player, TXT_AMMOSKULLROD1);
 		break;
 	case 'AMS2':	// Ammo_SkullRodHefty
 		if (!Toucher.GiveAmmo(am_skullrod, Health))
 		{
 			return;
 		}
-		cprint(Toucher.Player, "%s\n", TXT_AMMOSKULLROD2);
+		cprint(Toucher.Player, TXT_AMMOSKULLROD2);
 		break;
 	case 'AMP1':	// Ammo_PhoenixRodWimpy
 		if (!Toucher.GiveAmmo(am_phoenixrod, Health))
 		{
 			return;
 		}
-		cprint(Toucher.Player, "%s\n", TXT_AMMOPHOENIXROD1);
+		cprint(Toucher.Player, TXT_AMMOPHOENIXROD1);
 		break;
 	case 'AMP2':	// Ammo_PhoenixRodHefty
 		if (!Toucher.GiveAmmo(am_phoenixrod, Health))
 		{
 			return;
 		}
-		cprint(Toucher.Player, "%s\n", TXT_AMMOPHOENIXROD2);
+		cprint(Toucher.Player, TXT_AMMOPHOENIXROD2);
 		break;
 
 		// Weapons
@@ -703,7 +703,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		{
 			return;
 		}
-		cprint(Toucher.Player, "%s\n", TXT_WPNMACE);
+		cprint(Toucher.Player, TXT_WPNMACE);
 		sound = 'PickupWeapon';
 		break;
 	case 'WBOW':	// Weapon_Crossbow
@@ -711,7 +711,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		{
 			return;
 		}
-		cprint(Toucher.Player, "%s\n", TXT_WPNCROSSBOW);
+		cprint(Toucher.Player, TXT_WPNCROSSBOW);
 		sound = 'PickupWeapon';
 		break;
 	case 'WBLS':	// Weapon_Blaster
@@ -719,7 +719,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		{
 			return;
 		}
-		cprint(Toucher.Player, "%s\n", TXT_WPNBLASTER);
+		cprint(Toucher.Player, TXT_WPNBLASTER);
 		sound = 'PickupWeapon';
 		break;
 	case 'WSKL':	// Weapon_SkullRod
@@ -727,7 +727,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		{
 			return;
 		}
-		cprint(Toucher.Player, "%s\n", TXT_WPNSKULLROD);
+		cprint(Toucher.Player, TXT_WPNSKULLROD);
 		sound = 'PickupWeapon';
 		break;
 	case 'WPHX':	// Weapon_PhoenixRod
@@ -735,7 +735,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		{
 			return;
 		}
-		cprint(Toucher.Player, "%s\n", TXT_WPNPHOENIXROD);
+		cprint(Toucher.Player, TXT_WPNPHOENIXROD);
 		sound = 'PickupWeapon';
 		break;
 	case 'WGNT':	// Weapon_Gauntlets
@@ -743,7 +743,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		{
 			return;
 		}
-		cprint(Toucher.Player, "%s\n", TXT_WPNGAUNTLETS);
+		cprint(Toucher.Player, TXT_WPNGAUNTLETS);
 		sound = 'PickupWeapon';
 		break;
 
@@ -769,6 +769,9 @@ void Actor::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/03/12 19:21:24  dj_jl
+//  No need for linefeed in client-printing
+//
 //  Revision 1.14  2002/02/22 18:00:16  dj_jl
 //  A lots of the renaming, beautification.
 //

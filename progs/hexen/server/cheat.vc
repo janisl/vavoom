@@ -46,11 +46,11 @@ void Cheat_God(void)
 	players[0].Cheats ^= CF_GODMODE;
 	if (players[0].Cheats & CF_GODMODE)
 	{
-		cprint(&players[0], "GOD MODE ON\n");
+		cprint(&players[0], "GOD MODE ON");
 	}
 	else
 	{
-		cprint(&players[0], "GOD MODE OFF\n");
+		cprint(&players[0], "GOD MODE OFF");
 	}
 }
 
@@ -65,11 +65,11 @@ void Cheat_NoClip(void)
 	players[0].Cheats ^= CF_NOCLIP;
 	if (players[0].Cheats & CF_NOCLIP)
 	{
-		cprint(&players[0], "NO CLIPPING ON\n");
+		cprint(&players[0], "NO CLIPPING ON");
 	}
 	else
 	{
-		cprint(&players[0], "NO CLIPPING OFF\n");
+		cprint(&players[0], "NO CLIPPING OFF");
 	}
 }
 
@@ -99,7 +99,7 @@ void Cheat_Gimme(void)
 			players[0].Mana[i] = MAX_MANA;
 		}
 		players[0].Pieces = 7;
-		cprint(&players[0], "ALL WEAPONS\n");
+		cprint(&players[0], "ALL WEAPONS");
 	}
 	if (Cmd_CheckParm("health"))
 	{
@@ -113,12 +113,12 @@ void Cheat_Gimme(void)
 			players[0].mo->Health = MAXHEALTH;
 			players[0].Health = players[0].mo->Health;
 		}
-		cprint(&players[0], "FULL HEALTH\n");
+		cprint(&players[0], "FULL HEALTH");
 	}
 	if (Cmd_CheckParm("keys"))
 	{
 		players[0].Keys = 2047;
-		cprint(&players[0], "ALL KEYS\n");
+		cprint(&players[0], "ALL KEYS");
 	}
 	if (Cmd_CheckParm("artifacts"))
 	{
@@ -129,10 +129,10 @@ void Cheat_Gimme(void)
 		{
 			for (j = 0; j < 25; j++)
 			{
-				players[0].mo->GiveArtifact(i);
+				PlayerPawn(*players[0].mo).GiveArtifact(i);
 			}
 		}
-		cprint(&players[0], "ALL ARTIFACTS\n");
+		cprint(&players[0], "ALL ARTIFACTS");
 	}
 	if (Cmd_CheckParm("puzzles"))
 	{
@@ -140,9 +140,9 @@ void Cheat_Gimme(void)
 
 		for (i = arti_firstpuzzitem; i < NUMARTIFACTS; i++)
 		{
-			players[0].mo->GiveArtifact(i);
+			PlayerPawn(*players[0].mo).GiveArtifact(i);
 		}
-		cprint(&players[0], "ALL ARTIFACTS\n");
+		cprint(&players[0], "ALL ARTIFACTS");
 	}
 }
 
@@ -182,7 +182,7 @@ int P_Massacre(void)
 
 void Cheat_KillAll(void)
 {
-	cprint(&players[0], "%d MONSTERS KILLED\n", P_Massacre());
+	cprint(&players[0], "%d MONSTERS KILLED", P_Massacre());
 }
 
 //==========================================================================
@@ -201,7 +201,7 @@ void Cheat_Morph(void)
 	{
 		players[0].mo->MorphPlayer();
 	}
-	cprint(&players[0], "SQUEAL!!\n");
+	cprint(&players[0], "SQUEAL!!");
 }
 
 //==========================================================================
@@ -224,7 +224,7 @@ void Cheat_NoWeapons(void)
 	}
 	players[0].PendingWeapon = WP_FIRST;
 	players[0].Pieces = 0;
-	cprint(&players[0], "CHEATER - YOU DON'T DESERVE WEAPONS\n");
+	cprint(&players[0], "CHEATER - YOU DON'T DESERVE WEAPONS");
 }
 
 //==========================================================================
@@ -250,7 +250,7 @@ void Cheat_Class(void)
 		pclass = PCLASS_MAGE;
 	else
 	{
-		cprint(&players[0], "INVALID PLAYER CLASS\n");
+		cprint(&players[0], "INVALID PLAYER CLASS");
 		return;
 	}
 	players[0].PClass = pclass;
@@ -266,6 +266,9 @@ void Cheat_Class(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/03/12 19:21:24  dj_jl
+//  No need for linefeed in client-printing
+//
 //  Revision 1.13  2002/02/26 17:49:48  dj_jl
 //  no message
 //
