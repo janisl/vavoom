@@ -187,6 +187,24 @@ bool TSoftwareDrawer::SetResolution(int Width, int Height, int BPP)
 			gshift = 5;
 			bshift = 11;
 		}
+		else if (ddsd.ddpfPixelFormat.dwRBitMask == 0x00ff0000 &&
+			ddsd.ddpfPixelFormat.dwGBitMask == 0x0000ff00 &&
+			ddsd.ddpfPixelFormat.dwBBitMask == 0x000000ff)
+		{
+			BPP = 32;
+			rshift = 16;
+			gshift = 8;
+			bshift = 0;
+		}
+		else if (ddsd.ddpfPixelFormat.dwRBitMask == 0x000000ff &&
+			ddsd.ddpfPixelFormat.dwGBitMask == 0x0000ff00 &&
+			ddsd.ddpfPixelFormat.dwBBitMask == 0x00ff0000)
+		{
+			BPP = 32;
+			rshift = 0;
+			gshift = 8;
+			bshift = 16;
+		}
 		else
 		{
 			con << "Pixel format not supported\n";
@@ -304,9 +322,12 @@ void TSoftwareDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/01/21 18:24:22  dj_jl
+//	Fixed 32 bit mode
+//
 //	Revision 1.7  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.6  2002/01/03 18:38:25  dj_jl
 //	Added guard macros and core dumps
 //	
