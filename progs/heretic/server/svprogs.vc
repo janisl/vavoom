@@ -24,7 +24,6 @@
 //**************************************************************************
 
 #include "../../common/server.vc"
-#define Thinker		thinker_t
 
 boolean shareware;
 boolean respawnmonsters;
@@ -84,6 +83,9 @@ boolean respawnmonsters;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/09/25 17:13:50  dj_jl
+//  Beautification
+//
 //  Revision 1.5  2001/09/24 17:16:18  dj_jl
 //  Created thinker classes
 //

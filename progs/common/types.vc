@@ -31,7 +31,7 @@ struct line_t;
 struct subsector_t;
 
 #ifdef SERVER
-class thinker_t;
+class Thinker;
 class mobj_t;
 #endif
 
@@ -101,9 +101,9 @@ struct line_t:TPlane
 	// if == validcount, already checked
 	int validcount;
 
-	// thinker_t for reversable actions
+	// Thinker for reversable actions
 #ifdef SERVER
-	thinker_t *__specialdata;
+	Thinker *__specialdata;
 #else
 	void *__specialdata;
 #endif
@@ -227,9 +227,9 @@ struct sector_t
 	// if == validcount, already checked
 	int validcount;
 
-	// thinker_t for reversable actions
+	// Thinker for reversable actions
 #ifdef SERVER
-	thinker_t *specialdata;
+	Thinker *specialdata;
 #else
 	void *__specialdata;
 #endif
@@ -259,7 +259,7 @@ struct polyobj_t
 	boolean crush;	// should the polyobj attempt to crush mobjs?
 	int seqType;
 #ifdef SERVER
-	thinker_t *specialdata;	// pointer a thinker, if the poly is moving
+	Thinker *specialdata;	// pointer a thinker, if the poly is moving
 #else
 	void *__specialdata;	// pointer a thinker, if the poly is moving
 #endif
@@ -417,8 +417,9 @@ typedef void (*weapon_func_t) (player_t *);
 //
 //==========================================================================
 
-class thinker_t
-{ void *__prev;
+class Thinker
+{
+	void *__prev;
 	void *__next;
 	boolean destroyed;
 
@@ -427,15 +428,15 @@ class thinker_t
 	void Unarchive(void);
 };
 
-void thinker_t::Think(void)
+void Thinker::Think(void)
 {
 }
 
-void thinker_t::Archive(void)
+void Thinker::Archive(void)
 {
 }
 
-void thinker_t::Unarchive(void)
+void Thinker::Unarchive(void)
 {
 }
 
@@ -514,7 +515,7 @@ struct mobjinfo_t
 };
 
 // Map Object definition.
-class mobj_t:thinker_t
+class mobj_t:Thinker
 {
 	// Info for drawing: position.==============================================s
 		TVec origin;
@@ -753,7 +754,7 @@ typedef boolean(*trav_func_t) (intercept_t *);
 #define MAX_ACS_SCRIPT_VARS	10
 #define ACS_STACK_DEPTH 	32
 
-class ACS:thinker_t
+class ACS:Thinker
 { mobj_t *activator;
 	line_t *line;
 	int side;
@@ -989,6 +990,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2001/09/25 17:13:50  dj_jl
+//  Beautification
+//
 //  Revision 1.8  2001/09/24 17:11:23  dj_jl
 //  Created thinker classes
 //

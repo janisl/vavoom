@@ -25,8 +25,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define NextPlat(plat)	(TPlat *)NextThinker(plat, TPlat)
-
 // CONSTANTS ---------------------------------------------------------------
 
 enum
@@ -177,7 +175,7 @@ void P_ActivateInStasis(int tag)
 {
 	TPlat *plat;
 
-	for (plat = NextPlat(NULL); plat; plat = NextPlat(plat))
+	FOREACH(TPlat, plat)
 	{
 		if ((plat->tag == tag) && (plat->status == PLAT_IN_STASIS))
 		{
@@ -266,7 +264,7 @@ int EV_StopPlat(line_t * line, int *args)
 {
 	TPlat *plat;
 
-	for (plat = NextPlat(NULL); plat; plat = NextPlat(plat))
+	FOREACH(TPlat, plat)
 	{
 		if ((plat->status != PLAT_IN_STASIS) && (plat->tag == args[0]))
 		{
@@ -280,6 +278,9 @@ int EV_StopPlat(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/09/25 17:13:50  dj_jl
+//  Beautification
+//
 //  Revision 1.5  2001/09/24 17:16:18  dj_jl
 //  Created thinker classes
 //

@@ -25,8 +25,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define NextFloor(floor)	(TFloor *)NextThinker(floor, TFloor)
-
 // CONSTANTS ---------------------------------------------------------------
 
 enum
@@ -344,7 +342,7 @@ int EV_FloorCrushStop(line_t * line, int *args)
 	boolean rtn;
 
 	rtn = 0;
-	for (floor = NextFloor(NULL); floor; floor = NextFloor(floor))
+	FOREACH(TFloor, floor)
 	{
 		if (floor->type != FLEV_RAISEFLOORCRUSH)
 		{
@@ -942,6 +940,9 @@ boolean EV_StartFloorWaggle(int tag, int height, int speed, int offset,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/09/25 17:13:50  dj_jl
+//  Beautification
+//
 //  Revision 1.4  2001/09/24 17:17:17  dj_jl
 //  Created thinker classes
 //

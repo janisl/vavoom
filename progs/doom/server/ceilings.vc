@@ -31,8 +31,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define NextCeiling(ceil)	(TCeiling *)NextThinker(ceil, TCeiling)
-
 // CONSTANTS ---------------------------------------------------------------
 
 enum
@@ -219,7 +217,7 @@ int P_ActivateInStasisCeiling(line_t * line)
 {
 	TCeiling *ceiling;
 
-	for (ceiling = NextCeiling(NULL); ceiling; ceiling = NextCeiling(ceiling))
+	FOREACH(TCeiling, ceiling)
 	{
 		if ((ceiling->tag == line->arg1) && (ceiling->direction == 0))
 		{
@@ -329,7 +327,7 @@ int EV_CeilingCrushStop(line_t * line, int *args)
 	TCeiling *ceiling;
 
 	rtn = 0;
-	for (ceiling = NextCeiling(NULL); ceiling; ceiling = NextCeiling(ceiling))
+	FOREACH(TCeiling, ceiling)
 	{
 		if ((ceiling->tag == args[0]) && (ceiling->direction != 0))
 		{
@@ -344,6 +342,9 @@ int EV_CeilingCrushStop(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/09/25 17:13:50  dj_jl
+//  Beautification
+//
 //  Revision 1.5  2001/09/24 17:13:25  dj_jl
 //  Created thinker classes
 //

@@ -126,6 +126,9 @@ extern int strlen(string s);
 //  Compare strings
 extern int strcmp(string s1, string s2);
 
+//  Compare strings ingnoring case
+extern int stricmp(string s1, string s2);
+
 //  Copy string
 extern void strcpy(string s1, string s2);
 
@@ -394,9 +397,9 @@ extern boolean P_CheckSight(mobj_t * mobj1, mobj_t * mobj2);
 //
 
 extern void *NewSpecialThinker(classid);
-extern void RemoveSpecialThinker(thinker_t * spec);
+extern void RemoveSpecialThinker(Thinker * spec);
 extern void P_ChangeSwitchTexture(line_t * line, int useAgain);
-extern thinker_t *NextThinker(thinker_t * last, classid id);
+extern Thinker *NextThinker(Thinker * last, classid id);
 
 //
 //  Polyobj functions
@@ -477,6 +480,9 @@ extern void Destroy(void *ptr);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2001/09/25 17:13:50  dj_jl
+//  Beautification
+//
 //  Revision 1.8  2001/09/24 17:11:23  dj_jl
 //  Created thinker classes
 //

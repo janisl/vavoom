@@ -24,7 +24,6 @@
 //**************************************************************************
 
 #include "../../common/server.vc"
-#define Thinker		thinker_t
 
 boolean randomclass;
 
@@ -99,6 +98,9 @@ boolean randomclass;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/09/25 17:13:50  dj_jl
+//  Beautification
+//
 //  Revision 1.4  2001/09/24 17:18:15  dj_jl
 //  Created thinker classes
 //

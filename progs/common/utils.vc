@@ -587,7 +587,7 @@ __mobjinfo__
 //
 //==========================================================================
 
-void RunThink(thinker_t * th)
+void RunThink(Thinker * th)
 {
 	th->Think();
 }
@@ -598,7 +598,7 @@ void RunThink(thinker_t * th)
 //
 //==========================================================================
 
-void ArchiveThinker(thinker_t * th)
+void ArchiveThinker(Thinker * th)
 {
 	th->Archive();
 }
@@ -609,14 +609,21 @@ void ArchiveThinker(thinker_t * th)
 //
 //==========================================================================
 
-void UnarchiveThinker(thinker_t * th)
+void UnarchiveThinker(Thinker * th)
 {
 	th->Unarchive();
 }
 
+#define FOREACH(type, var) \
+	for (var = (type *)NextThinker(NULL, type); var; \
+		var = (type *)NextThinker(var, type))
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/09/25 17:13:50  dj_jl
+//  Beautification
+//
 //  Revision 1.5  2001/09/24 17:11:23  dj_jl
 //  Created thinker classes
 //
