@@ -25,7 +25,7 @@ files. In current version they are:
 
     levels     - maps/<level-name>.wad
     progs      - progs/<name>.dat
-    
+
   For each game directory Vavoom searches for base.txt script file. It is
 used to setup game directory on which this game is based on. It consists of
 list of entries with the following format:
@@ -46,7 +46,7 @@ list of entries with the following format:
 
   If "-game" and "-devgame" options are not used, basev/games.txt script is
 used to detect game. The format is same as base.txt script.
-    
+
   The game directory can nevr be changed while Vavoom is executing. This is a
 precacution against having a malicious server instruct clients to write files
 over areas they shouldn't.
@@ -56,4 +56,105 @@ over areas they shouldn't.
     - for each game directory all wad files in form wad0.wad, wad1.wad ...
       until one is missing;
     - files specified with "-file" option.
-    
+
+******************************************************************************
+New linedef special types
+******************************************************************************
+
+All additional linedef specials are available only for maps in Hexen format.
+
+3D-floor
+--------
+
+Special #: 160
+     Arg1: tag
+
+  Adds a extra floor at all sectors with tag equal to Arg1. Extra floor is
+described with line's front sector. It's floor describes floor of the top
+region, ceiling - ceiling of bottom region, light level and contents - light
+level and contents of bottom region.
+  WARNING: WadAuthor checks treats floor lower than ceiling as error, so for
+maps with 3D-floors you should never use "Fix all".
+
+
+
+Contents
+--------
+
+Special #: 161
+     Arg1: type
+     Arg2: translucency
+     Arg3: flags
+
+  Defines contents type of the front sector.
+  Doom content types:
+    0 - empty
+    1 - water
+    2 - blood
+    3 - nukage
+    4 - slime
+    5 - lava
+  Heretic and Hexen content types:
+    0 - empty
+    1 - water
+    2 - lava
+    3 - sludge
+  Translucency is given in percents, 0 - sold, 100 - invisible. Flags applies
+to both - floor and ceiling and are combination of the following values:
+    1 - don't block movement
+    2 - don't block sight
+    4 - don't block shooting
+  Translucency and flags have sense only if sector is used for 3D-floors.
+Usualy for solid 3D-floors you will have flags 0, for water surfaces - 7.
+
+******************************************************************************
+New thing types
+******************************************************************************
+
+Floor slope
+-----------
+
+Editor #: 1500
+
+  Used to describe floor slope. It works together with line of sector, where
+this thing is placed in, with Arg1 equal to thing's TID number. Floor plane
+is defined with 3 points - thing's position and line ending vertexes at
+sector's floor height.
+  HINT: In WadAuthor if line doean't have a special type or special type
+doesn't use Arg1, Arg1 must be changed using "Edit raw data".
+
+
+
+Ceiling slope
+-----------
+
+Editor #: 1501
+
+  Used to describe ceiling slope. Alghorythm is similar to floor slopes.
+
+  
+  
+Static light
+------------
+
+Editor #: 1502
+       Z: z position of light source
+    Arg1: octradius (i.e. radius is Arg1 * 8)
+
+  Adds a static light source at given position with given radius.
+
+
+
+Static colored light
+--------------------
+
+Editor #: 1503
+       Z: z position of light source
+    Arg1: octradius (i.e. radius is Arg1 * 8)
+    Arg2: r
+    Arg3: g
+    Arg4: b
+
+  Adds a static colored light source at given position with given radius
+and color. R is red, G - green and B - blue component of color.
+

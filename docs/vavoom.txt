@@ -87,10 +87,6 @@ Heretic and/or Hexen directory or new directory. If you decide to create a
 new directory, you must copy here main game wad file. Then unarchieve here
 binaries.
 
-  Since version 1.666 Vavoom needs "GL-Friendly Nodes" created with glBSP
-and PVS (Potentially Visible Set) data created with glVIS utility  at least
-in fast mode. Utilites are included with binaries.
-
 ==============================================================================
 3.2 Linux/UNIX installation
 ==============================================================================
@@ -143,24 +139,14 @@ additional wad files.
   This will install Vavoom into /usr/local/games/Vavoom and glbsp and glvis
 utilites into /usr/local/bin.
 
-  7. Change to this directory and copy the main .wad file here:
+  7. Change to this directory and copy the main .wad file here or create
+a symbolic link to it:
 
         cd /usr/local/games/Vavoom
         cp <where-your-wad-file-is> .
    or:
         cd /usr/local/games/Vavoom
         ln -s <where-your-wad-file-is> .
-
-  8. Create "GL Nodes" with glBSP and PVS data with glVIS:
-
-     glbsp <wad-file>
-     glvis <wad-file>
-
-  "GL Nodes" are needed for rendering, and there's no difference which
-rasterizer driver (software, OpenGL or Direct3D) will be used.
-
-  PVS data created with glVIS is used to make it faster, but it will run also
-without it.
 
 ==============================================================================
 3.3 Compiling LINUX / UNIX dedicated server
@@ -376,9 +362,6 @@ Custom games and development
 
 -DEVGAME like -game, but also sets Vavoom in development mode
 -devgame <directory>
-
--SCRIPTS specifies directory, where to look for scripts
--scripts <directory>
 
 -DEVSND sets sound development mode, uses given SNDINFO script, sounds and
 music are loaded form archive directory, which is specified in script.

@@ -307,3 +307,174 @@
 04-09-2001
   Da÷i zØki labojumi.
   Nolñmu laist klajÆ.
+
+******************************************************************************
+                            VERSIJA 1.9
+******************************************************************************
+
+05-09-2001
+  AtradÆs pÆris problñmas kompilñjot Linux-am kÆ ÆrØ neliels gõuks Windows
+ versijÆ.
+06-09-2001
+  Nolñmu paskatØties kÆdas Østi izmai·as kodÆ rada exceptions un RTTI. Protams
+ ka exceptions nemaina neko klasñs, bet gan pievieno kaudzi leiblu un kaut
+ kÆdus tur vñl datus. RTTI izmai·as ir tikai klasñs ar virtuÆlajÆm funkcijÆm
+ jur virtuÆlo funkciju tabulÆ tiek pievienota vñl viena funkcija, kura citÆdi
+ ir nulles pointeris. JÆsÆk tas viss izmantot.
+08-09-2001
+  IzmñÖinÆju glBSP plugin-u. viss strÆdÆ normÆli. PagaidÆm tas ir tikai kÆ
+ konsoles komanda.
+  SÆku pÆrveidot glVIS lai izveidotu plugin-u. Tas tiks realizñts kÆ C++ klase
+ ar virtuÆlajÆm funkcijÆm. Kõİdas gadØjumÆ tiks izmests exception.
+10-09-2001
+  glVIS plugin-s ir gatavs, pievienoju pie Vavoom, viss strÆdÆ. ArØ konsoles
+ komanda.
+11-09-2001
+  Windows OpenGL versijÆ pievienoju loga re÷Ømu.
+12-09-2001
+  glVIS plaugin-Æ nolñmu Malloc un Free izveidot kÆ funkcijas pointerus darba
+ Ætruma dñõ.
+13-09-2001
+  PÆrstrÆdÆju wad failu moduli, katrs wad fails ir kÆ objekts un ir õoti
+ viegli pievienot gwa failu.
+14-09-2001
+  Pievienoju dinamisko gwa failu veidoıanu.
+  Direct3D versijÆ pÆrgÆju uz DirectX 8 izmantojot ifdefus lai varñtu pÆriet
+ atpakaõ. PÆc pÆris stundÆm viss bija kÆrtØbÆ un strÆdÆja. Bet tagad aliktÆs
+ zi·as - tas ir lñns. Rendñıanas Ætruma tests deva sekojoıus rezultÆtus:
+   DirectX 8 -  9,4 FPS
+   DirectX 7 - 17,9 FPS
+   OpenGL    - 31,2 FPS
+ Tas tikai apliecina to, par cik OpenGL ir pÆrÆks.
+15-09-2001
+  SÆku pÆrstrÆdÆt kompilÆtoru. Pievienotas klases, var tikt definñtas metodes
+ kuras var izmantot this pointeri. Metodes vÆl nav klases sastÆvdaõa.
+17-09-2001
+  Salaboju glBSP poliobjektu noteikıanu, vñl ir palikuıas pÆris nianses.
+  Pa·ñmu no vcc preprocesoru, izveidoju to kÆ bibliotñku un pievienoju pie
+ vcc. Vairs nav vajadzØgs cits kompilÆtors lai kompilñtu prog÷us.
+  Pievienotas metodes pie klasñm, metodes var izmantot klases parametrus pa
+ tieıo, metodes var izsaukt. ArØ jauns mainØgÆ tips classid. Klasu informÆcija
+ ir pievienota virtuÆlÆs maıØnas failam.
+  Sa·ñmu piedÆvÆjumu pievienoties Korax-Heritage projektam.
+18-09-2001
+  Pievienoju modeõus no Korax-Heritage projekta.
+  Izveidoju utilØtu ar kuru var apdeitot failus nesaÒakarñjot logus.
+  IznÆkusi jaunÆkÆ Allegro versija kurÆ ir izlabotas manis pieteiktÆs kõİdas.
+  ÖlBSP pluginÆ sÆkot jaunu karti tiek pÆrzØmñts viss ekrÆns.
+  Pievienoju atbalstu TGA modeõu ÆdÆm.
+  Prog÷u klasñs virtuÆlÆs tabulas sÆkumÆ pievienoju informÆciju par klasi -
+ tÆs id un izmñru.
+  SÆku izmantot klases prog÷os un pÆrbaudØt kÆ tÆs strÆdÆ.
+19-09-2001
+  AtbrØvojos no degenmobj_t. ACS domÆtÆja klase ir definñta prog÷os.
+20-09-2001
+  Salaboju pÆrdefinñtÆs metodes.
+  Salabiju zØmñjumu palielinÆıanu kad viena dimensija nemainÆs, tagad visi
+ zØmñjumi tiek palielinÆti un nevis tiek pievienota tukıa vieta.
+  Windows OpenGL versijÆ beidzot ir kõİdas message box.
+  End÷inñ vairs netiek rezervñta vieta papildus laukiem, tagad tiek izmantots
+ prog÷u klases izmñrs.
+21-09-2001
+  PÆrveidoju seivoıanu, dzinØ atbrØvojos no special_t.
+  SÆku sadalØt special atseviıóÆs klasñs. Ar Doom ir pabeigts. Pie reizes es
+ arØ pÆrveidoju to visu uz peldoıÆ komata laika izmantoıanu.
+24-09-2001
+  Pabeidzu ar Heretic un Hexen.
+25-09-2001
+  StraifÆ nolñmu pÆriet uz Hexen formÆtu vienkÆrıi pÆrkopñjot visu no Doom.
+  Aizvietoju menu konsoles funkcijas ar vienu funkciju, kurÆ tiek iedots menu
+ vÆrds tÆdñjÆdi prog÷os var pievienot jaunus menu, kurus var izsaukt ar kÆda
+ tausti·a palØdzØbu.
+  Pievienoju atbalstu bÆzes klases metodes izsaukıanai.
+26-09-2001
+  PÆrveidoju LavaInflictor par pointeri.
+  SÆku ieviest atbalstu lØme·a objektu tipiem.
+  makeinfo utilØtÆ pievienoju efektus, statiskÆs gaismas un objektu augstumu
+ koriÖñıanu.
+27-09-2001
+  Katram objekta tipam ir sava klase.
+  Pirmais baga reports SourceForge lapÆ. Neliela problñma ar ievada lØnijÆm -
+ mÆÖinot ievadØt informÆciju uzkarÆs. Viss Ætri tika salabots.
+  Izlaista jauna glBSP versija. Poliobjektu kodu vi·ı tomñr pats salaboja.
+28-09-2001
+  PÆrslñdzos uz jauno glBSP. Tomñr da÷us poliobjekta sektorus neatrod.
+29-09-2001
+  Iespñja definñt metodes iekı klases deklarÆcijas.
+  Neliels uzlabojums lai paÆtrinÆtu kompileri. Diem÷ñl nav neko ÆtrÆks.
+  AktØvo domÆtÆju pointeri ir kÆ pievienotie lauki.
+01-10-2001
+  Objektu stÆvokõu mai·as funkcijas pÆrmesu uz katru spñli.
+  SÆku pÆrstrÆdÆt statusbÆru.
+02-10-2001
+  Preprocesors veido izejas failu atmi·Æ.
+  Statusa bÆrs pÆrstrÆdÆts.
+03-10-2001
+  AtbrØvojos no pÆris warning-iem.
+  Izlaboju gõuku Hexen-Æ, kad neatrodoties uz zemes kustñjÆs pilnÆ ÆtrumÆ.
+04-10-2001
+  AtdalØju atseviıói pazi·ojumu tekstu un centra teksta funkcijas.
+  Implementñju atliuıos konsoles mainØgo karodzi·us.
+  KonfigurÆcijas fails tiek saglabÆts izmantojot strØmus.
+05-10-2001
+  SÆku zimantot exception-us.
+  Da÷Ædas klienta un servera lØme·u struktİras.
+  Konsole tiek zØmñta ar mazÆkiem burtiem.
+  Óetri va buferi.
+  PÆrnesu visu no v_draw.cpp uz r_ moduõiem.
+  Sa·emot servera informÆciju klients nomet signons uz 0, vairs nav vajadzØga
+ komanda Reconnect.
+  AtrisinÆju problñmu ar objektu z-koordinÆti virs İdens.
+  NezØmeju tekstİru 0.
+06-10-2001
+  RadÆs vñlme sÆkt savu lØmeNa redaktoru, ko es arØ sÆku realizñt. Protams
+ zØmñıanai es izmantoju OpenGL. IzskatÆs jauki.
+  Atbilde no Korax-Heritage puiıiem ar jautÆjumu kÆ izveidot slØpÆs virsmas
+ un 3D-grØdas, bİs jÆraksta dokumentÆcija.
+08-10-2001
+  PÆrdñvñju p_info.cpp par mapinfo.cpp ar attiecØgu header failu.
+  Dzinis tagad atgrie÷ pointeri uz serveru sarakstu, dzinØ tas tagad ir tØkla
+ daõÆ.
+09-10-2001
+  Pievienoju debesu zØmñıanas sÆkıanas un beigıanas metodes.
+  Salaboju lØme·u ielÆdi no atseviıóiem failiem.
+  Pñc noklusñıanas klasei nevar izmantot lauku pievienoıanu.
+  Uzlaboju statistiku sİtØıanu.
+  Salaboju slñd÷u ska·u.
+  Prog÷os katra spñle definñ savu mobj_t. StatiskÆs gaismas pÆrnesu uz katras
+ spñles prog÷iem. Serverim ir savs definØciju fails.
+10-10-2001
+  KÆ apsolØju RambOrc, ieviesu spraitu zØmñıanu lØdzØgi kÆ DoomsDay dzinØ.
+  PapildinÆjumi pie MAPINFO skripta. Tiek definñts noslñpuma lØmenis, debesu
+ kubs un, pats interesentÆkais, lØme·u nummuru norÆdes uz lØme·u vÆrdiem.
+  Hexen sÆk spñli lØmenØ ar warptrans 1 (kÆ oriÖinÆli).
+  Debesu dati salikti struktİrÆ.
+  Skripti devmodñ tiek lÆdñti no faila.
+  Iedevu Korax' Heritage komandai testñıanai ala versiju.
+11-10-2001
+  UzÆtru roku uzcepu utilØtu, kas pÆrveido tekstİru sarakstu par skriptÆ un
+ otrÆdi.
+12-10-2001
+13-10-2001
+  Atbalsts ÆdÆm ar jebkuru paleti.
+  Atseviıóa klase raóetñm.
+  Iespñja atslñgt dinamiskÆs gaismas.
+  Miglas parametru konsoles mainØgie.
+15-10-2001
+  Hexen prog÷os da÷as fizikas funkcijas ir metodes. Raóeıu klasei ir savas
+ fizikas metodes.
+  Pñc noklusñıanas ir izslñgta Quake modeõu gaismoıana.
+  Pilns TGA faila visu zinÆmo formÆtu atbalsts, TGA skrØnıoti.
+16-10-2001
+  Izveidoju debesu kuba skriptu, viss strÆdÆ perfekti.
+  Nedaudz uzlaboju slØdñıanu uz slØpÆm virsmÆm.
+  RadÆs vñlme pÆriet uz peldoıÆ komata le·óiem.
+17-10-2001
+  SpñlñtÆja skatØınÆs le·ói caur spñlñtÆja struktİru.
+  Klienta pusñ tiek izmantoti peldoıÆ komata le·ói.
+  Vairs neslØd uz ne pÆrÆk slØpÆm virsmÆm.
+  Hexen vñl pÆris domÆtÆji izmanto peldoıÆ komata laiku. Vñl ir palikıu tikai
+ poliobjektu rotñıanas domÆtÆji, kuriem vispirms derñtu peldoıÆ komata le·ói.
+  Miglas konsoles mainØgie ir kopØgi.
+  Atradu kõİdu glBSP kuras dñõ tika sapists REJECT.
+  

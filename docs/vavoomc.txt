@@ -87,16 +87,8 @@ vcc must be available on path. Add directory utils/bin to the path or put vcc
 in any other directory which is included in path or put it in the directory,
 where you will use it (possibly will not work in Linux).
 
-  In current version uou also need one of the following compilers (it is used
-as preprocessor):
-    - GNU C Compiler. DOS version is a part of DJGPP
-      (http://www.delorie.com/djgpp), LINUX users must have it.
-    - Borland C++ (www.borland.com)
-  In next version I'm going to remove this requirement.
-
-  For each PROGS there is a Makefile and 2 bat files: compile.bat which will
-use preprocessor form DJGPP and comp_bcc.bat which will use proprocessor from
-Borland C++. Simply run make or one of the bat files.
+  For each PROGS there is a Makefile and bat file compile.bat. Simply run
+make or compile.bat.
 
 ****************************************************************************
 Progs from DeHackEd
@@ -106,8 +98,7 @@ Progs from DeHackEd
 progs/hack_d2. Here you will find an example dehacked patch hack.deh. It is a
 dehacked patch from Batman Doom with fixed some bugs that progs don't like.
 Replace it with patch that you want to use. Then run hack.bat to create hacked
-source files and scripts. Then you must compile progs. Use compile.bat to
-use DJGPP as preprocessor or comp_bcc.bat to use Borland C++ proprocessor.
+source files and scripts. Then you must compile progs with compile.bat.
 Finally run makewad.bat to create hack.wad which I hope you know how to use.
 
   For Doom the directory is progs/hack_d1, the sample hack.deh is from Aliens
