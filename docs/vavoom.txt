@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                    version 1.14
+                                                    version 1.15
 
 Contents:
     0. Disclaimer
@@ -831,6 +831,27 @@ Version 1.14
 * Switched to floating-point time.
 * Added OpenAL driver.
 * Updated models.
+
+==============================================================================
+Version 1.15 BETA 1
+==============================================================================
+
+* 2 pass scripts compiling has been partially implemented.
+* VavoomC now has new, UnrealScript-like, class definition style.
+* Fixed some problems with huge maps.
+* Fixed screenshots.
+* Slope creation with vertex heights.
+* ZDoom's sloping specials.
+* Support for colored sector light.
+* Configurable entity limit.
+* Support for old aspect ratio (console variable old_aspect).
+
+==============================================================================
+Version 1.15
+==============================================================================
+
+* Fully switched to UnrealScript like class definition style.
+* Network game fixes.
 
 *****************************************************************************
 8. Licencing

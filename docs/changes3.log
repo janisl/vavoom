@@ -99,3 +99,136 @@
 ******************************************************************************
                             VERSIJA 1.14
 ******************************************************************************
+
+12-08-2002
+  IzmñÖinÆju MP3 ar fmod, strÆdÆ normÆli.
+13-08-2002
+  DDF atbalstÆ nomainØju ObjInitState uz stÆvokõa vÆrdu.
+  ddf2vc portñju uz Windows, ar Borland strÆdA normÆli, problñmas ar MSVC.
+ Vñl netiek eksportñti stÆvokõi objektiem bez tiem.
+14-08-2002
+  SÆku strÆdÆt pie 2 piegÆjienu kompilatora.
+16-08-2002
+  Nopietns progress 2 piegÆjienu kompilñıanÆ.
+17-08-2002
+  2 piegÆjienu kompilñıana ir strÆdAjoıa.
+19-08-2002
+  AtrisinÆju problñmu ar BLOCKMAP lielÆku par 64k.
+  Salaboju skrØnıotus.
+20-08-2002
+  Implementñju slØpo virsmu definñıanu izmantojot virsot·u augstumus.
+23-08-2002
+  UtilØtos atbrØvojos no iostream.
+26-08-2002
+  SlØpo virsmu definñıana izmantojot ZDoom lØniju speciÆlu.
+  PadarØju VEntity publisku.
+27-08-2002
+  Ieviesu atbalstu krÆsainam sektoru apgaismojumam.
+  Apvienoju Entity un MapObject klases.
+28-08-2002
+  Hexen atbrØvojos no tilta orbØtu tabulÆm.
+  Konfigurñjams entØıu limits.
+  Ieviesu atbalstu vecajÆm ekrÆna proporcijÆm.
+29-08-2002
+  SÆku ieviest lØme·a klasi.
+30-08-2002
+  Visi lØme·a dati ir pÆrnesti uz lØme·a klasi.
+  Apgreidoju tekstİru utilØtu. Var konvertñt Strife tekstİras.
+31-08-2002
+  Turpinu darbu pie lØme·a klases, pÆrnestas veirÆkas funkcijas.
+  Var eksportñt Strife tekstİras atpakaõ wad failÆ.
+  SkriptÆ bool var izmantot funkciju argumentos un kÆ atgrie÷amo tipu.
+02-09-2002
+  SkriptÆ atbrØvojos no PointInSubsector, visur ØstenØbÆ ir vajadzØgs sektors.
+  PieıóirıanÆ netika pÆrbaudØta tipu savietojamØba.
+05-09-2002
+  PÆrnesu P_ChangeSector uz dzini.
+07-09-2002
+  Aizvietoju boolean ar bool.
+  PÆrnesu RoughMonsterSearch uz dzini.
+14-09-2002
+  SÆku pÆrveidot klases jaunÆ stilÆ.
+21-09-2002
+  Turpinu sadali. Ğodien kÆrta Hexex. Ak, vai!
+28-09-2002
+  Turpinu. KÆrta vñl vienai kaudzei klaıu.
+05-10-2002
+  Sodien kÆrta Strife klasñm.
+12-10-2002
+  Dienas kÆrtØbÆ menu.
+19-10-2002
+  KÆrta menu objektiem.
+26-10-2002
+  Beidzot arØ servera pamatklases. Tas viss tika apdeitots iekı CVS, bet tÆ
+ laikA uzkÆrÆs kompis un radÆk konflikti. Nebija laika Òakarñties. Bet pats
+ galvenais ir tas, ka visas klases ir jaunajÆ stilÆ.
+02-11-2002
+  Tiku galÆ ar CVS konfliktu. VisÆdi citÆd izjaukta diena.
+09-11-2002
+  Atradu kÆpñc ACS kÆrÆs - aizmirsu iekõaut skripta failu.
+16-11-2002
+  PÆris uzlabojumi softa draiverØ. PÆris citi sØki labojumi.
+02-01-2003
+  PÆris pÆrkÆrtojumi menu, konkrñti ievada lØnija.
+  KompilÆtorÆ ir tikai 2 piegÆjienu versija, atbrØvojos no this pointera.
+15-02-2003
+  Ievada lØniju integrÆcija.
+  Korekts Destroy.
+08-03-2003
+  Uzlaboju tØkla spñli, cerams ka nebİs aizturu.
+
+******************************************************************************
+                            VERSIJA 1.15
+******************************************************************************
+
+03-07-2003
+  Taka darbs pie Vavoom ir loti ierobezots, trukst daudz log informacijas.
+ Man ir izdevies izveidot nelielu sistemu ka apdeitot un ir neliels progress.
+ Isuma statuss uz so dienu, salidzinajuma ar relizi.
+  Kustigas 3D gridas, tas bija diezgan vienkarsi.
+  Speletaju masivs tagad satur pointerus uz strukturam, driz bus klases.
+  Testa implementacija ZDoom kameram.
+  TArray templeits papildinats ar atminas tagu.
+  Apdeitoju DDF konverteri lai tas generetu klasu failus.
+05-09-2003
+  Nolemu apdeitot logus. Stavoklis uz sodienu.
+  Kautkas prieks Boom atbalsta, neka daudz.
+  Joka pec speletaja ieroca nomesana.
+  Darbs pie Strife liniju specialiem, daudzi jaunie jau strada.
+22-09-2003
+  Salaboju RoughMonsterSearch.
+23-09-2003
+  Ir bijusas paris izmainas Strife, tadas ka sarunas laika nospiezot ESC tiek
+ aizsutits impuls, kludas labojums menu slaideros un enumos, statusbara tagad
+ ir veselibas skaits (vel nav indikators), implementeju stavesanas funkciju,
+ ir klusie ieroci.
+  Palielinaju maksimalo izskirtspeju.
+  glbsp konsoles komanda parsingo visus parametrus.
+25-09-2003
+  vlumpy prot veidot Doom standarta patcus.
+  Teksta drukasana ar vardu vrapingu Strife sarunam.
+  Gadijuma sarunas.
+26-09-2003
+  Atradu ko nozime visi Strife sarunu atbilzu lauki, tagad speletajam tiek
+ doti prieksmeti un ir ne atbilde ja kautka nav. Inventara sistema.
+29-09-2003
+  Atradu ko nozime visi parametri Strife sarunas. Tagad viss strada ka vajag,
+ tai skaita visi nomestie prieksmeti. Ir ari kvestu biti.
+  Nokopeju no Unreal-a guard makrosu kontekstu Linux versijai, signali tagad
+ izmanto longjmp lai izietu ara un atjaunotu registrus lai varetu mierigi
+ izmest exception-u. Tagad signali normali iziet no programas.
+02-10-2003
+  Strife statusbara ierocu popupa ir visi elementi. Implementeti specialie
+ sarunu prieksmeti kuri atver durvis. Tiek dota precizitate un izturiba.
+03-10-2003
+  Palielinaju speletaja sakuma punktu skaitu.
+  Strife izsitot logu tas vairs nebloke, var nonemt force field.
+15-10-2003
+  Izlaboju kludu Heretic kad inventars pec attieciga laika neaizveras.
+  OpenGL un Direct3D draiveros ja nav brivu cache bloku tiek atbrivoti visi
+ vecie cache bloki.
+  Seivgeimos tagad tiek saglabata slepta limena informacija. Tagad ieladejot
+ seivu un izejot limeni pareizi atgriezas uz vajadzigo limeni.
+21-10-2003
+  Speletaja ierocu spraiti tiek zimeti dazados atalumos lai nebutu problemu
+ ar to parklasanos.

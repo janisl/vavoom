@@ -270,7 +270,7 @@ no-cluster, all maps in cluster 0 are treated as in different clusters.
 
   Note on MAPALIAS keyword:
 
-  This option haves to applications. First is usage of the non-standard map
+  This option haves two applications. First is usage of the non-standard map
 names. MapTeleport and StartACS specials takes map numbers and it was
 impossible to use maps with non standard names. Map aliases gives you this
 ability.
