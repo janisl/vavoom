@@ -221,6 +221,8 @@ native boolean WadLumpPresent(string name);
 
 native Object Spawn(classid cid, Object owner);
 native void Object::Destroy(void);
+native boolean Object::IsA(classid cid);
+native boolean Object::IsDestroyed(void);
 
 //==========================================================================
 //
@@ -457,6 +459,8 @@ native sector_t *SectorToNum(sector_t * sector);
 native sector_t *NumToSector(sector_t * sector);
 native Entity *MobjToNum(Entity * mobj);
 native Entity *NumToMobj(Entity * mobj);
+native classid ClassIDToNum(classid cid);
+native classid NumToClassID(classid cid);
 
 native void G_ExitLevel(void);
 native void G_SecretExitLevel(void);
@@ -483,6 +487,9 @@ native void MSG_SelectClientMsg(int msgtype, player_t * client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2001/12/27 17:54:25  dj_jl
+//  Added some Object methods
+//
 //  Revision 1.20  2001/12/18 18:33:11  dj_jl
 //  Changed keyword extern with native
 //
