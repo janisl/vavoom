@@ -812,7 +812,7 @@ void CL_ParseServerMessage(void)
 			break;
 
 		 case svc_set_angles:
-			cl.viewangles.pitch = ByteToAngle(net_msg.ReadByte());
+			cl.viewangles.pitch = AngleMod180(ByteToAngle(net_msg.ReadByte()));
 			cl.viewangles.yaw = ByteToAngle(net_msg.ReadByte());
 			cl.viewangles.roll = ByteToAngle(net_msg.ReadByte());
 			break;
@@ -1030,9 +1030,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/10/27 07:51:27  dj_jl
+//	Beautification
+//
 //	Revision 1.12  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
-//
+//	
 //	Revision 1.11  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	

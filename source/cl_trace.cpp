@@ -169,7 +169,7 @@ static boolean CheckLine(seg_t* seg)
 	s2 = PlaneSide2(trace_end, line);
 
 	// line isn't crossed?
-	if (s1 == s2)
+	if (s1 == s2 || (s1 == 2 && s2 == 0))
     	return true;
 
 	// stop because it is not two sided anyway
@@ -375,9 +375,12 @@ boolean CL_TraceLine(const TVec &start, const TVec &end)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/27 07:51:27  dj_jl
+//	Beautification
+//
 //	Revision 1.4  2001/10/08 17:34:57  dj_jl
 //	A lots of small changes and cleanups
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

@@ -67,10 +67,14 @@ int mlog2(int val)
 
 float AngleMod(float angle)
 {
+#if 0
 	while (angle < 0.0)
 		angle += 360.0;
 	while (angle >= 360.0)
 		angle -= 360.0;
+#else
+	angle = (360.0/65536) * ((int)(angle*(65536/360.0)) & 65535);
+#endif
 	return angle;
 }
 
@@ -82,10 +86,16 @@ float AngleMod(float angle)
 
 float AngleMod180(float angle)
 {
+#if 0
 	while (angle < -180.0)
 		angle += 360.0;
 	while (angle >= 180.0)
 		angle -= 360.0;
+#else
+	angle += 180;
+	angle = (360.0/65536) * ((int)(angle*(65536/360.0)) & 65535);
+	angle -= 180;
+#endif
 	return angle;
 }
 
@@ -216,9 +226,12 @@ void PerpendicularVector(TVec &dst, const TVec &src)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/27 07:51:27  dj_jl
+//	Beautification
+//
 //	Revision 1.5  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
-//
+//	
 //	Revision 1.4  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	

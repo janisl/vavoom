@@ -246,11 +246,14 @@ int	SV_GetMobjBits(mobj_t &mobj, mobj_base_t &base)
 		bits |=	MOB_Y;
 	if (fabs(base.origin.z - (mobj.origin.z - mobj.floorclip)) >= 1.0)
 		bits |=	MOB_Z;
-	if (fabs(base.angles.yaw - mobj.angles.yaw) >= 1.0)
+//	if (fabs(base.angles.yaw - mobj.angles.yaw) >= 1.0)
+	if (AngleToByte(base.angles.yaw) != AngleToByte(mobj.angles.yaw))
 		bits |=	MOB_ANGLE;
-	if (fabs(base.angles.pitch - mobj.angles.pitch) >= 1.0)
+//	if (fabs(base.angles.pitch - mobj.angles.pitch) >= 1.0)
+	if (AngleToByte(base.angles.pitch) != AngleToByte(mobj.angles.pitch))
 		bits |=	MOB_ANGLEP;
-	if (fabs(base.angles.roll - mobj.angles.roll) >= 1.0)
+//	if (fabs(base.angles.roll - mobj.angles.roll) >= 1.0)
+	if (AngleToByte(base.angles.roll) != AngleToByte(mobj.angles.roll))
 		bits |=	MOB_ANGLER;
 	if (base.sprite != mobj.sprite || base.spritetype != mobj.spritetype)
 		bits |=	MOB_SPRITE;
@@ -2485,9 +2488,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2001/10/27 07:51:27  dj_jl
+//	Beautification
+//
 //	Revision 1.18  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
-//
+//	
 //	Revision 1.17  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	
