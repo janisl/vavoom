@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                    version 1.15
+                                                  version 1.15.2
 
 Contents:
     0. Disclaimer
@@ -852,6 +852,24 @@ Version 1.15
 
 * Fully switched to UnrealScript like class definition style.
 * Network game fixes.
+
+==============================================================================
+Version 1.15.1
+==============================================================================
+
+* Moving 3D floors.
+* Greately improved Strife support: implemented many line specials, fully
+ working conversations, inventory system and more.
+* In OpenGL and Direct3D drivers added a fix for overflow problem.
+* Secret level info saved in a savegame.
+* A fix for "feet in ground" problem (console vars r_fix_sprite_offsets and
+ r_sprite_fix_delta).
+
+==============================================================================
+Version 1.15.2
+==============================================================================
+
+* Several bug fixes, improved Strife support.
 
 *****************************************************************************
 8. Licencing
