@@ -260,7 +260,7 @@ class MT_UNDEAD:Actor
 //
 //==========================================================================
 
-class MT_TRACER:Missile
+class MT_TRACER:Actor
 {
 	defaultproperties
 	{
@@ -352,7 +352,7 @@ class MT_FATSO:Actor
 //
 //==========================================================================
 
-class MT_FATSHOT:Missile
+class MT_FATSHOT:Actor
 {
 	defaultproperties
 	{
@@ -641,7 +641,7 @@ class MT_BRUISER:Actor
 //
 //==========================================================================
 
-class MT_BRUISERSHOT:Missile
+class MT_BRUISERSHOT:Actor
 {
 	defaultproperties
 	{
@@ -1071,7 +1071,7 @@ class MT_BOSSTARGET:Actor
 //
 //==========================================================================
 
-class MT_SPAWNSHOT:Missile
+class MT_SPAWNSHOT:Actor
 {
 	defaultproperties
 	{
@@ -1142,7 +1142,7 @@ class MT_BARREL:Actor
 //
 //==========================================================================
 
-class MT_TROOPSHOT:Missile
+class MT_TROOPSHOT:Actor
 {
 	defaultproperties
 	{
@@ -1170,7 +1170,7 @@ class MT_TROOPSHOT:Missile
 //
 //==========================================================================
 
-class MT_HEADSHOT:Missile
+class MT_HEADSHOT:Actor
 {
 	defaultproperties
 	{
@@ -1198,7 +1198,7 @@ class MT_HEADSHOT:Missile
 //
 //==========================================================================
 
-class MT_ROCKET:Missile
+class MT_ROCKET:Actor
 {
 	defaultproperties
 	{
@@ -1225,7 +1225,7 @@ class MT_ROCKET:Missile
 //
 //==========================================================================
 
-class MT_PLASMA:Missile
+class MT_PLASMA:Actor
 {
 	defaultproperties
 	{
@@ -1253,7 +1253,7 @@ class MT_PLASMA:Missile
 //
 //==========================================================================
 
-class MT_BFG:Missile
+class MT_BFG:Actor
 {
 	defaultproperties
 	{
@@ -1280,7 +1280,7 @@ class MT_BFG:Missile
 //
 //==========================================================================
 
-class MT_ARACHPLAZ:Missile
+class MT_ARACHPLAZ:Actor
 {
 	defaultproperties
 	{
@@ -3608,9 +3608,12 @@ __mobjinfo__
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/12/12 18:57:40  dj_jl
+//	State functions now are methods of Actor and Weapon classes
+//
 //	Revision 1.10  2001/12/04 18:25:36  dj_jl
 //	Replaced constructors with defaultproperties
-//
+//	
 //	Revision 1.9  2001/11/09 14:37:52  dj_jl
 //	Using constructors
 //	

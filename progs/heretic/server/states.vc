@@ -29,133 +29,140 @@
 //**
 //**************************************************************************
 
-void A_FreeTargMobj(mobj_t *actor);
-void A_RestoreSpecialThing1(mobj_t *actor);
-void A_RestoreSpecialThing2(mobj_t *actor);
-void A_HideThing(mobj_t *actor);
-void A_UnHideThing(mobj_t *actor);
-void A_RestoreArtifact(mobj_t *actor);
-void A_Scream(mobj_t *actor);
-void A_Explode(mobj_t *actor);
-void A_PodPain(mobj_t *actor);
-void A_RemovePod(mobj_t *actor);
-void A_MakePod(mobj_t *actor);
-void A_InitKeyGizmo(mobj_t *actor);
-void A_VolcanoSet(mobj_t *actor);
-void A_VolcanoBlast(mobj_t *actor);
-void A_BeastPuff(mobj_t *actor);
-void A_VolcBallImpact(mobj_t *actor);
-void A_SpawnTeleGlitter(mobj_t *actor);
-void A_SpawnTeleGlitter2(mobj_t *actor);
-void A_AccTeleGlitter(mobj_t *actor);
-void A_Light0(mobj_t *actor);
-void A_WeaponReady(mobj_t *actor);
-void A_Lower(mobj_t *actor);
-void A_Raise(mobj_t *actor);
-void A_StaffAttackPL1(mobj_t *actor);
-void A_ReFire(mobj_t *actor);
-void A_StaffAttackPL2(mobj_t *actor);
-void A_BeakReady(mobj_t *actor);
-void A_BeakRaise(mobj_t *actor);
-void A_BeakAttackPL1(mobj_t *actor);
-void A_BeakAttackPL2(mobj_t *actor);
-void A_GauntletAttack(mobj_t *actor);
-void A_FireBlasterPL1(mobj_t *actor);
-void A_FireBlasterPL2(mobj_t *actor);
-void A_SpawnRippers(mobj_t *actor);
-void A_FireMacePL1(mobj_t *actor);
-void A_FireMacePL2(mobj_t *actor);
-void A_MacePL1Check(mobj_t *actor);
-void A_MaceBallImpact(mobj_t *actor);
-void A_MaceBallImpact2(mobj_t *actor);
-void A_DeathBallImpact(mobj_t *actor);
-void A_FireSkullRodPL1(mobj_t *actor);
-void A_FireSkullRodPL2(mobj_t *actor);
-void A_SkullRodPL2Seek(mobj_t *actor);
-void A_AddPlayerRain(mobj_t *actor);
-void A_HideInCeiling(mobj_t *actor);
-void A_SkullRodStorm(mobj_t *actor);
-void A_RainImpact(mobj_t *actor);
-void A_FireGoldWandPL1(mobj_t *actor);
-void A_FireGoldWandPL2(mobj_t *actor);
-void A_FirePhoenixPL1(mobj_t *actor);
-void A_InitPhoenixPL2(mobj_t *actor);
-void A_FirePhoenixPL2(mobj_t *actor);
-void A_ShutdownPhoenixPL2(mobj_t *actor);
-void A_PhoenixPuff(mobj_t *actor);
-void A_FlameEnd(mobj_t *actor);
-void A_FloatPuff(mobj_t *actor);
-void A_FireCrossbowPL1(mobj_t *actor);
-void A_FireCrossbowPL2(mobj_t *actor);
-void A_BoltSpark(mobj_t *actor);
-void A_Pain(mobj_t *actor);
-void A_NoBlocking(mobj_t *actor);
-void A_AddPlayerCorpse(mobj_t *actor);
-void A_SkullPop(mobj_t *actor);
-void A_FlameSnd(mobj_t *actor);
-void A_CheckBurnGone(mobj_t *actor);
-void A_CheckSkullFloor(mobj_t *actor);
-void A_CheckSkullDone(mobj_t *actor);
-void A_Feathers(mobj_t *actor);
-void A_ChicLook(mobj_t *actor);
-void A_ChicChase(mobj_t *actor);
-void A_ChicPain(mobj_t *actor);
-void A_FaceTarget(mobj_t *actor);
-void A_ChicAttack(mobj_t *actor);
-void A_Look(mobj_t *actor);
-void A_Chase(mobj_t *actor);
-void A_MummyAttack(mobj_t *actor);
-void A_MummyAttack2(mobj_t *actor);
-void A_MummySoul(mobj_t *actor);
-void A_ContMobjSound(mobj_t *actor);
-void A_MummyFX1Seek(mobj_t *actor);
-void A_BeastAttack(mobj_t *actor);
-void A_SnakeAttack(mobj_t *actor);
-void A_SnakeAttack2(mobj_t *actor);
-void A_HeadAttack(mobj_t *actor);
-void A_BossDeath(mobj_t *actor);
-void A_HeadIceImpact(mobj_t *actor);
-void A_HeadFireGrow(mobj_t *actor);
-void A_WhirlwindSeek(mobj_t *actor);
-void A_ClinkAttack(mobj_t *actor);
-void A_WizAtk1(mobj_t *actor);
-void A_WizAtk2(mobj_t *actor);
-void A_WizAtk3(mobj_t *actor);
-void A_GhostOff(mobj_t *actor);
-void A_ImpMeAttack(mobj_t *actor);
-void A_ImpMsAttack(mobj_t *actor);
-void A_ImpMsAttack2(mobj_t *actor);
-void A_ImpDeath(mobj_t *actor);
-void A_ImpXDeath1(mobj_t *actor);
-void A_ImpXDeath2(mobj_t *actor);
-void A_ImpExplode(mobj_t *actor);
-void A_KnightAttack(mobj_t *actor);
-void A_DripBlood(mobj_t *actor);
-void A_Sor1Chase(mobj_t *actor);
-void A_Sor1Pain(mobj_t *actor);
-void A_Srcr1Attack(mobj_t *actor);
-void A_SorZap(mobj_t *actor);
-void A_SorcererRise(mobj_t *actor);
-void A_SorRise(mobj_t *actor);
-void A_SorSightSnd(mobj_t *actor);
-void A_Srcr2Decide(mobj_t *actor);
-void A_Srcr2Attack(mobj_t *actor);
-void A_Sor2DthInit(mobj_t *actor);
-void A_SorDSph(mobj_t *actor);
-void A_Sor2DthLoop(mobj_t *actor);
-void A_SorDExp(mobj_t *actor);
-void A_SorDBon(mobj_t *actor);
-void A_BlueSpark(mobj_t *actor);
-void A_GenWizard(mobj_t *actor);
-void A_MinotaurAtk1(mobj_t *actor);
-void A_MinotaurDecide(mobj_t *actor);
-void A_MinotaurAtk2(mobj_t *actor);
-void A_MinotaurAtk3(mobj_t *actor);
-void A_MinotaurCharge(mobj_t *actor);
-void A_MntrFloorFire(mobj_t *actor);
-void A_ESound(mobj_t *actor);
+class Actor:Entity
+{
+	void A_FreeTargMobj(void);
+	void A_RestoreSpecialThing1(void);
+	void A_RestoreSpecialThing2(void);
+	void A_HideThing(void);
+	void A_UnHideThing(void);
+	void A_RestoreArtifact(void);
+	void A_Scream(void);
+	void A_Explode(void);
+	void A_PodPain(void);
+	void A_RemovePod(void);
+	void A_MakePod(void);
+	void A_InitKeyGizmo(void);
+	void A_VolcanoSet(void);
+	void A_VolcanoBlast(void);
+	void A_BeastPuff(void);
+	void A_VolcBallImpact(void);
+	void A_SpawnTeleGlitter(void);
+	void A_SpawnTeleGlitter2(void);
+	void A_AccTeleGlitter(void);
+	void A_SpawnRippers(void);
+	void A_MacePL1Check(void);
+	void A_MaceBallImpact(void);
+	void A_MaceBallImpact2(void);
+	void A_DeathBallImpact(void);
+	void A_SkullRodPL2Seek(void);
+	void A_AddPlayerRain(void);
+	void A_HideInCeiling(void);
+	void A_SkullRodStorm(void);
+	void A_RainImpact(void);
+	void A_PhoenixPuff(void);
+	void A_FlameEnd(void);
+	void A_FloatPuff(void);
+	void A_BoltSpark(void);
+	void A_Pain(void);
+	void A_NoBlocking(void);
+	void A_AddPlayerCorpse(void);
+	void A_SkullPop(void);
+	void A_FlameSnd(void);
+	void A_CheckBurnGone(void);
+	void A_CheckSkullFloor(void);
+	void A_CheckSkullDone(void);
+	void A_Feathers(void);
+	void A_ChicLook(void);
+	void A_ChicChase(void);
+	void A_ChicPain(void);
+	void A_FaceTarget(void);
+	void A_ChicAttack(void);
+	void A_Look(void);
+	void A_Chase(void);
+	void A_MummyAttack(void);
+	void A_MummyAttack2(void);
+	void A_MummySoul(void);
+	void A_ContMobjSound(void);
+	void A_MummyFX1Seek(void);
+	void A_BeastAttack(void);
+	void A_SnakeAttack(void);
+	void A_SnakeAttack2(void);
+	void A_HeadAttack(void);
+	void A_BossDeath(void);
+	void A_HeadIceImpact(void);
+	void A_HeadFireGrow(void);
+	void A_WhirlwindSeek(void);
+	void A_ClinkAttack(void);
+	void A_WizAtk1(void);
+	void A_WizAtk2(void);
+	void A_WizAtk3(void);
+	void A_GhostOff(void);
+	void A_ImpMeAttack(void);
+	void A_ImpMsAttack(void);
+	void A_ImpMsAttack2(void);
+	void A_ImpDeath(void);
+	void A_ImpXDeath1(void);
+	void A_ImpXDeath2(void);
+	void A_ImpExplode(void);
+	void A_KnightAttack(void);
+	void A_DripBlood(void);
+	void A_Sor1Chase(void);
+	void A_Sor1Pain(void);
+	void A_Srcr1Attack(void);
+	void A_SorZap(void);
+	void A_SorcererRise(void);
+	void A_SorRise(void);
+	void A_SorSightSnd(void);
+	void A_Srcr2Decide(void);
+	void A_Srcr2Attack(void);
+	void A_Sor2DthInit(void);
+	void A_SorDSph(void);
+	void A_Sor2DthLoop(void);
+	void A_SorDExp(void);
+	void A_SorDBon(void);
+	void A_BlueSpark(void);
+	void A_GenWizard(void);
+	void A_MinotaurAtk1(void);
+	void A_MinotaurDecide(void);
+	void A_MinotaurAtk2(void);
+	void A_MinotaurAtk3(void);
+	void A_MinotaurCharge(void);
+	void A_MntrFloorFire(void);
+	void A_ESound(void);
+}
 
-__states__
+class Weapon:ViewEntity
+{
+	void A_Light0(void);
+	void A_WeaponReady(void);
+	void A_Lower(void);
+	void A_Raise(void);
+	void A_StaffAttackPL1(void);
+	void A_ReFire(void);
+	void A_StaffAttackPL2(void);
+	void A_BeakReady(void);
+	void A_BeakRaise(void);
+	void A_BeakAttackPL1(void);
+	void A_BeakAttackPL2(void);
+	void A_GauntletAttack(void);
+	void A_FireBlasterPL1(void);
+	void A_FireBlasterPL2(void);
+	void A_FireMacePL1(void);
+	void A_FireMacePL2(void);
+	void A_FireSkullRodPL1(void);
+	void A_FireSkullRodPL2(void);
+	void A_FireGoldWandPL1(void);
+	void A_FireGoldWandPL2(void);
+	void A_FirePhoenixPL1(void);
+	void A_InitPhoenixPL2(void);
+	void A_FirePhoenixPL2(void);
+	void A_ShutdownPhoenixPL2(void);
+	void A_FireCrossbowPL1(void);
+	void A_FireCrossbowPL2(void);
+}
+
+__states__(Actor)
 {
 	S_NULL {"IMPX", 0, -1.0, NULL, S_NULL}
 	S_FREETARGMOBJ {"ACLO", 4, 1050.0 / 35.0, A_FreeTargMobj, S_NULL}
@@ -393,6 +400,9 @@ __states__
 	S_TFOG11 {"TELE", 4 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_TFOG12}
 	S_TFOG12 {"TELE", 3 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_TFOG13}
 	S_TFOG13 {"TELE", 2 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_NULL}
+}
+__states__(Weapon)
+{
 	S_LIGHTDONE {"STFF", 0, 0.0 / 35.0, A_Light0, S_NULL}
 	S_STAFFREADY {"STFF", 0, 1.0 / 35.0, A_WeaponReady, S_STAFFREADY}
 	S_STAFFDOWN {"STFF", 0, 1.0 / 35.0, A_Lower, S_STAFFDOWN}
@@ -408,6 +418,9 @@ __states__
 	S_STAFFATK2_1 {"STFF", 6, 6.0 / 35.0, NULL, S_STAFFATK2_2}
 	S_STAFFATK2_2 {"STFF", 7, 8.0 / 35.0, A_StaffAttackPL2, S_STAFFATK2_3}
 	S_STAFFATK2_3 {"STFF", 6, 8.0 / 35.0, A_ReFire, S_STAFFREADY2_1}
+}
+__states__(Actor)
+{
 	S_STAFFPUFF1 {"PUF3", 0 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_STAFFPUFF2}
 	S_STAFFPUFF2 {"PUF3", 1, 4.0 / 35.0, NULL, S_STAFFPUFF3}
 	S_STAFFPUFF3 {"PUF3", 2, 4.0 / 35.0, NULL, S_STAFFPUFF4}
@@ -418,12 +431,21 @@ __states__
 	S_STAFFPUFF2_4 {"PUF4", 3 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_STAFFPUFF2_5}
 	S_STAFFPUFF2_5 {"PUF4", 4 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_STAFFPUFF2_6}
 	S_STAFFPUFF2_6 {"PUF4", 5 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_NULL}
+}
+__states__(Weapon)
+{
 	S_BEAKREADY {"BEAK", 0, 1.0 / 35.0, A_BeakReady, S_BEAKREADY}
 	S_BEAKDOWN {"BEAK", 0, 1.0 / 35.0, A_Lower, S_BEAKDOWN}
 	S_BEAKUP {"BEAK", 0, 1.0 / 35.0, A_BeakRaise, S_BEAKUP}
 	S_BEAKATK1_1 {"BEAK", 0, 18.0 / 35.0, A_BeakAttackPL1, S_BEAKREADY}
 	S_BEAKATK2_1 {"BEAK", 0, 12.0 / 35.0, A_BeakAttackPL2, S_BEAKREADY}
+}
+__states__(Actor)
+{
 	S_WGNT {"WGNT", 0, -1.0, NULL, S_NULL}
+}
+__states__(Weapon)
+{
 	S_GAUNTLETREADY {"GAUN", 0, 1.0 / 35.0, A_WeaponReady, S_GAUNTLETREADY}
 	S_GAUNTLETDOWN {"GAUN", 0, 1.0 / 35.0, A_Lower, S_GAUNTLETDOWN}
 	S_GAUNTLETUP {"GAUN", 0, 1.0 / 35.0, A_Raise, S_GAUNTLETUP}
@@ -446,6 +468,9 @@ __states__
 	S_GAUNTLETATK2_5 {"GAUN", 13 | FF_FULLBRIGHT, 4.0 / 35.0, A_GauntletAttack, S_GAUNTLETATK2_6}
 	S_GAUNTLETATK2_6 {"GAUN", 10, 4.0 / 35.0, A_ReFire, S_GAUNTLETATK2_7}
 	S_GAUNTLETATK2_7 {"GAUN", 9, 4.0 / 35.0, A_Light0, S_GAUNTLETREADY2_1}
+}
+__states__(Actor)
+{
 	S_GAUNTLETPUFF1_1 {"PUF1", 0 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_GAUNTLETPUFF1_2}
 	S_GAUNTLETPUFF1_2 {"PUF1", 1 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_GAUNTLETPUFF1_3}
 	S_GAUNTLETPUFF1_3 {"PUF1", 2 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_GAUNTLETPUFF1_4}
@@ -455,6 +480,9 @@ __states__
 	S_GAUNTLETPUFF2_3 {"PUF1", 6 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_GAUNTLETPUFF2_4}
 	S_GAUNTLETPUFF2_4 {"PUF1", 7 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_NULL}
 	S_BLSR {"WBLS", 0, -1.0, NULL, S_NULL}
+}
+__states__(Weapon)
+{
 	S_BLASTERREADY {"BLSR", 0, 1.0 / 35.0, A_WeaponReady, S_BLASTERREADY}
 	S_BLASTERDOWN {"BLSR", 0, 1.0 / 35.0, A_Lower, S_BLASTERDOWN}
 	S_BLASTERUP {"BLSR", 0, 1.0 / 35.0, A_Raise, S_BLASTERUP}
@@ -470,6 +498,9 @@ __states__
 	S_BLASTERATK2_4 {"BLSR", 2, 4.0 / 35.0, NULL, S_BLASTERATK2_5}
 	S_BLASTERATK2_5 {"BLSR", 1, 4.0 / 35.0, NULL, S_BLASTERATK2_6}
 	S_BLASTERATK2_6 {"BLSR", 0, 0.0 / 35.0, A_ReFire, S_BLASTERREADY}
+}
+__states__(Actor)
+{
 	S_BLASTERFX1_1 {"ACLO", 4, 200.0 / 35.0, NULL, S_BLASTERFX1_1}
 	S_BLASTERFXI1_1 {"FX18", 0 | FF_FULLBRIGHT, 3.0 / 35.0, A_SpawnRippers, S_BLASTERFXI1_2}
 	S_BLASTERFXI1_2 {"FX18", 1 | FF_FULLBRIGHT, 3.0 / 35.0, NULL, S_BLASTERFXI1_3}
@@ -503,6 +534,9 @@ __states__
 	S_BLASTERPUFF2_6 {"FX17", 10 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_BLASTERPUFF2_7}
 	S_BLASTERPUFF2_7 {"FX17", 11 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_NULL}
 	S_WMCE {"WMCE", 0, -1.0, NULL, S_NULL}
+}
+__states__(Weapon)
+{
 	S_MACEREADY {"MACE", 0, 1.0 / 35.0, A_WeaponReady, S_MACEREADY}
 	S_MACEDOWN {"MACE", 0, 1.0 / 35.0, A_Lower, S_MACEDOWN}
 	S_MACEUP {"MACE", 0, 1.0 / 35.0, A_Raise, S_MACEUP}
@@ -520,6 +554,9 @@ __states__
 	S_MACEATK2_2 {"MACE", 3, 4.0 / 35.0, A_FireMacePL2, S_MACEATK2_3}
 	S_MACEATK2_3 {"MACE", 1, 4.0 / 35.0, NULL, S_MACEATK2_4}
 	S_MACEATK2_4 {"MACE", 0, 8.0 / 35.0, A_ReFire, S_MACEREADY}
+}
+__states__(Actor)
+{
 	S_MACEFX1_1 {"FX02", 0, 4.0 / 35.0, A_MacePL1Check, S_MACEFX1_2}
 	S_MACEFX1_2 {"FX02", 1, 4.0 / 35.0, A_MacePL1Check, S_MACEFX1_1}
 	S_MACEFXI1_1 {"FX02", 5 | FF_FULLBRIGHT, 4.0 / 35.0, A_MaceBallImpact, S_MACEFXI1_2}
@@ -535,6 +572,9 @@ __states__
 	S_MACEFX4_1 {"FX02", 4, 99.0 / 35.0, NULL, S_MACEFX4_1}
 	S_MACEFXI4_1 {"FX02", 2 | FF_FULLBRIGHT, 4.0 / 35.0, A_DeathBallImpact, S_MACEFXI1_2}
 	S_WSKL {"WSKL", 0, -1.0, NULL, S_NULL}
+}
+__states__(Weapon)
+{
 	S_HORNRODREADY {"HROD", 0, 1.0 / 35.0, A_WeaponReady, S_HORNRODREADY}
 	S_HORNRODDOWN {"HROD", 0, 1.0 / 35.0, A_Lower, S_HORNRODDOWN}
 	S_HORNRODUP {"HROD", 0, 1.0 / 35.0, A_Raise, S_HORNRODUP}
@@ -550,6 +590,9 @@ __states__
 	S_HORNRODATK2_7 {"HROD", 4, 3.0 / 35.0, NULL, S_HORNRODATK2_8}
 	S_HORNRODATK2_8 {"HROD", 3, 2.0 / 35.0, NULL, S_HORNRODATK2_9}
 	S_HORNRODATK2_9 {"HROD", 2, 2.0 / 35.0, A_ReFire, S_HORNRODREADY}
+}
+__states__(Actor)
+{
 	S_HRODFX1_1 {"FX00", 0 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_HRODFX1_2}
 	S_HRODFX1_2 {"FX00", 1 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_HRODFX1_1}
 	S_HRODFXI1_1 {"FX00", 7 | FF_FULLBRIGHT, 5.0 / 35.0, NULL, S_HRODFXI1_2}
@@ -606,6 +649,9 @@ __states__
 	S_RAINAIRXPLR2_3 {"FX21", 8 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_NULL}
 	S_RAINAIRXPLR3_3 {"FX22", 8 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_NULL}
 	S_RAINAIRXPLR4_3 {"FX23", 8 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_NULL}
+}
+__states__(Weapon)
+{
 	S_GOLDWANDREADY {"GWND", 0, 1.0 / 35.0, A_WeaponReady, S_GOLDWANDREADY}
 	S_GOLDWANDDOWN {"GWND", 0, 1.0 / 35.0, A_Lower, S_GOLDWANDDOWN}
 	S_GOLDWANDUP {"GWND", 0, 1.0 / 35.0, A_Raise, S_GOLDWANDUP}
@@ -617,6 +663,9 @@ __states__
 	S_GOLDWANDATK2_2 {"GWND", 2, 4.0 / 35.0, A_FireGoldWandPL2, S_GOLDWANDATK2_3}
 	S_GOLDWANDATK2_3 {"GWND", 3, 3.0 / 35.0, NULL, S_GOLDWANDATK2_4}
 	S_GOLDWANDATK2_4 {"GWND", 3, 0.0 / 35.0, A_ReFire, S_GOLDWANDREADY}
+}
+__states__(Actor)
+{
 	S_GWANDFX1_1 {"FX01", 0 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_GWANDFX1_2}
 	S_GWANDFX1_2 {"FX01", 1 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_GWANDFX1_1}
 	S_GWANDFXI1_1 {"FX01", 4 | FF_FULLBRIGHT, 3.0 / 35.0, NULL, S_GWANDFXI1_2}
@@ -631,6 +680,9 @@ __states__
 	S_GWANDPUFF1_4 {"PUF2", 3 | FF_FULLBRIGHT, 3.0 / 35.0, NULL, S_GWANDPUFF1_5}
 	S_GWANDPUFF1_5 {"PUF2", 4 | FF_FULLBRIGHT, 3.0 / 35.0, NULL, S_NULL}
 	S_WPHX {"WPHX", 0, -1.0, NULL, S_NULL}
+}
+__states__(Weapon)
+{
 	S_PHOENIXREADY {"PHNX", 0, 1.0 / 35.0, A_WeaponReady, S_PHOENIXREADY}
 	S_PHOENIXDOWN {"PHNX", 0, 1.0 / 35.0, A_Lower, S_PHOENIXDOWN}
 	S_PHOENIXUP {"PHNX", 0, 1.0 / 35.0, A_Raise, S_PHOENIXUP}
@@ -643,6 +695,9 @@ __states__
 	S_PHOENIXATK2_2 {"PHNX", 2 | FF_FULLBRIGHT, 1.0 / 35.0, A_FirePhoenixPL2, S_PHOENIXATK2_3}
 	S_PHOENIXATK2_3 {"PHNX", 1, 4.0 / 35.0, A_ReFire, S_PHOENIXATK2_4}
 	S_PHOENIXATK2_4 {"PHNX", 1, 4.0 / 35.0, A_ShutdownPhoenixPL2, S_PHOENIXREADY}
+}
+__states__(Actor)
+{
 	S_PHOENIXFX1_1 {"FX04", 0 | FF_FULLBRIGHT, 4.0 / 35.0, A_PhoenixPuff, S_PHOENIXFX1_1}
 	S_PHOENIXFXI1_1 {"FX08", 0 | FF_FULLBRIGHT, 6.0 / 35.0, A_Explode, S_PHOENIXFXI1_2}
 	S_PHOENIXFXI1_2 {"FX08", 1 | FF_FULLBRIGHT, 5.0 / 35.0, NULL, S_PHOENIXFXI1_3}
@@ -673,6 +728,9 @@ __states__
 	S_PHOENIXFXI2_4 {"FX09", 9 | FF_FULLBRIGHT, 5.0 / 35.0, NULL, S_PHOENIXFXI2_5}
 	S_PHOENIXFXI2_5 {"FX09", 10 | FF_FULLBRIGHT, 5.0 / 35.0, NULL, S_NULL}
 	S_WBOW {"WBOW", 0, -1.0, NULL, S_NULL}
+}
+__states__(Weapon)
+{
 	S_CRBOW1 {"CRBW", 0, 1.0 / 35.0, A_WeaponReady, S_CRBOW2}
 	S_CRBOW2 {"CRBW", 0, 1.0 / 35.0, A_WeaponReady, S_CRBOW3}
 	S_CRBOW3 {"CRBW", 0, 1.0 / 35.0, A_WeaponReady, S_CRBOW4}
@@ -709,6 +767,9 @@ __states__
 	S_CRBOWATK2_6 {"CRBW", 0, 3.0 / 35.0, NULL, S_CRBOWATK2_7}
 	S_CRBOWATK2_7 {"CRBW", 1, 3.0 / 35.0, NULL, S_CRBOWATK2_8}
 	S_CRBOWATK2_8 {"CRBW", 2, 4.0 / 35.0, A_ReFire, S_CRBOW1}
+}
+__states__(Actor)
+{
 	S_CRBOWFX1 {"FX03", 1 | FF_FULLBRIGHT, 1.0 / 35.0, NULL, S_CRBOWFX1}
 	S_CRBOWFXI1_1 {"FX03", 7 | FF_FULLBRIGHT, 8.0 / 35.0, NULL, S_CRBOWFXI1_2}
 	S_CRBOWFXI1_2 {"FX03", 8 | FF_FULLBRIGHT, 8.0 / 35.0, NULL, S_CRBOWFXI1_3}
@@ -1367,9 +1428,12 @@ __states__
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/12/12 18:57:42  dj_jl
+//	State functions now are methods of Actor and Weapon classes
+//
 //	Revision 1.6  2001/10/27 07:38:58  dj_jl
 //	Added new models
-//
+//	
 //	Revision 1.5  2001/09/25 17:15:38  dj_jl
 //	Renamed some models
 //	

@@ -37,13 +37,12 @@
 
 //===========================================================================
 //
-//  A_CMaceAttack
+//  Weapon::A_CMaceAttack
 //
 //===========================================================================
 
-void A_CMaceAttack(mobj_t * actor)
+void Weapon::A_CMaceAttack(void)
 {
-	player_t *player = actor->player;
 	int damage;
 	int i;
 	TAVec angles;
@@ -94,27 +93,23 @@ void A_CMaceAttack(mobj_t * actor)
 
 //============================================================================
 //
-//  A_CStaffInitBlink
+//  Weapon::A_CStaffInitBlink
 //
 //============================================================================
 
-void A_CStaffInitBlink(mobj_t * actor)
+void Weapon::A_CStaffInitBlink(void)
 {
-	player_t *player = actor->player;
-
 	player->mo->special1 = (P_Random() >> 1) + 20;
 }
 
 //============================================================================
 //
-//  A_CStaffCheckBlink
+//  Weapon::A_CStaffCheckBlink
 //
 //============================================================================
 
-void A_CStaffCheckBlink(mobj_t * actor)
+void Weapon::A_CStaffCheckBlink(void)
 {
-	player_t *player = actor->player;
-
 	if (!--player->mo->special1)
 	{
 		SetPsprite(player, ps_weapon, S_CSTAFFBLINK1);
@@ -124,13 +119,12 @@ void A_CStaffCheckBlink(mobj_t * actor)
 
 //============================================================================
 //
-//  A_CStaffCheck
+//  Weapon::A_CStaffCheck
 //
 //============================================================================
 
-void A_CStaffCheck(mobj_t * actor)
+void Weapon::A_CStaffCheck(void)
 {
-	player_t *player = actor->player;
 	mobj_t *pmo;
 	int damage;
 	int newLife;
@@ -189,13 +183,12 @@ void A_CStaffCheck(mobj_t * actor)
 
 //============================================================================
 //
-//  A_CStaffAttack
+//  Weapon::A_CStaffAttack
 //
 //============================================================================
 
-void A_CStaffAttack(mobj_t * actor)
+void Weapon::A_CStaffAttack(void)
 {
-	player_t *player = actor->player;
 	mobj_t *mo;
 	mobj_t *pmo;
 
@@ -219,36 +212,35 @@ void A_CStaffAttack(mobj_t * actor)
 
 //============================================================================
 //
-//  A_CStaffMissileSlither
+//  Actor::A_CStaffMissileSlither
 //
 //============================================================================
 
-void A_CStaffMissileSlither(mobj_t * actor)
+void Actor::A_CStaffMissileSlither(void)
 {
 	float newX, newY;
 	int weaveXY;
 	float angle;
 
-	weaveXY = actor->special2;
-	angle = AngleMod360(actor->angles.yaw + 90.0);
-	newX = actor->origin.x - cos(angle) * FloatBobOffsets[weaveXY];
-	newY = actor->origin.y - sin(angle) * FloatBobOffsets[weaveXY];
+	weaveXY = special2;
+	angle = AngleMod360(angles.yaw + 90.0);
+	newX = origin.x - cos(angle) * FloatBobOffsets[weaveXY];
+	newY = origin.y - sin(angle) * FloatBobOffsets[weaveXY];
 	weaveXY = (weaveXY + 3) & 63;
 	newX += cos(angle) * FloatBobOffsets[weaveXY];
 	newY += sin(angle) * FloatBobOffsets[weaveXY];
-	P_TryMove(actor, newX, newY);
-	actor->special2 = weaveXY;
+	P_TryMove(this, newX, newY);
+	special2 = weaveXY;
 }
 
 //============================================================================
 //
-//  A_CFlameAttack
+//  Weapon::A_CFlameAttack
 //
 //============================================================================
 
-void A_CFlameAttack(mobj_t * actor)
+void Weapon::A_CFlameAttack(void)
 {
-	player_t *player = actor->player;
 	mobj_t *mo;
 
 	mo = SpawnPlayerMissile(player->mo, MT_CFLAME_MISSILE);
@@ -265,15 +257,13 @@ void A_CFlameAttack(mobj_t * actor)
 
 //============================================================================
 //
-//  A_CFlameMissile
+//  Actor::A_CFlameMissile
 //
 //============================================================================
 
 #define FLAMESPEED		(9.0 / 20.0 * 35.0)
 
-void A_UnHideThing(mobj_t * actor);
-
-void A_CFlameMissile(mobj_t * actor)
+void Actor::A_CFlameMissile(void)
 {
 	int i;
 	float an;
@@ -281,8 +271,8 @@ void A_CFlameMissile(mobj_t * actor)
 	mobj_t *mo;
 	mobj_t *bmo;
 
-	A_UnHideThing(actor);
-	StartSoundName(actor, "ClericFlameExplode", CHAN_VOICE);
+	A_UnHideThing();
+	StartSoundName(this, "ClericFlameExplode", CHAN_VOICE);
 	bmo = BlockingMobj;
 	if (bmo && bmo->flags & MF_SHOOTABLE)
 	{
@@ -297,7 +287,7 @@ void A_CFlameMissile(mobj_t * actor)
 			if (mo)
 			{
 				mo->angles.yaw = an;
-				mo->target = actor->target;
+				mo->target = target;
 				mo->velocity.x = mo->special1f = FLAMESPEED * cos(an);
 				mo->velocity.y = mo->special2f = FLAMESPEED * sin(an);
 				mo->time -= Random() * 0.1;
@@ -308,56 +298,55 @@ void A_CFlameMissile(mobj_t * actor)
 			if (mo)
 			{
 				mo->angles.yaw = AngleMod360(180.0 + an);
-				mo->target = actor->target;
+				mo->target = target;
 				mo->velocity.x = mo->special1f = -FLAMESPEED * cos(an);
 				mo->velocity.y = mo->special2f = -FLAMESPEED * sin(an);
 				mo->time -= Random() * 0.1;
 			}
 		}
-		SetMobjState(actor, S_FLAMEPUFF2_1);
+		SetMobjState(this, S_FLAMEPUFF2_1);
 	}
 }
 
 //============================================================================
 //
-// A_CFlameRotate
+//	Actor::A_CFlameRotate
 //
 //============================================================================
 
 #define FLAMEROTSPEED	2.0 * 35.0
 
-void A_CFlameRotate(mobj_t * actor)
+void Actor::A_CFlameRotate(void)
 {
 	float an;
 
-	an = AngleMod360(actor->angles.yaw + 90.0);
-	actor->velocity.x = actor->special1f + FLAMEROTSPEED * cos(an);
-	actor->velocity.y = actor->special2f + FLAMEROTSPEED * sin(an);
-	actor->angles.yaw = AngleMod360(actor->angles.yaw + 90.0 / 15.0);
+	an = AngleMod360(angles.yaw + 90.0);
+	velocity.x = special1f + FLAMEROTSPEED * cos(an);
+	velocity.y = special2f + FLAMEROTSPEED * sin(an);
+	angles.yaw = AngleMod360(angles.yaw + 90.0 / 15.0);
 }
 
 //============================================================================
 //
-// A_CFlamePuff
+//	Actor::A_CFlamePuff
 //
 //============================================================================
 
-void A_CFlamePuff(mobj_t * actor)
+void Actor::A_CFlamePuff(void)
 {
-	A_UnHideThing(actor);
-	actor->velocity = vector(0.0, 0.0, 0.0);
-	StartSoundName(actor, "ClericFlameExplode", CHAN_VOICE);
+	A_UnHideThing();
+	velocity = vector(0.0, 0.0, 0.0);
+	StartSoundName(this, "ClericFlameExplode", CHAN_VOICE);
 }
 
 //============================================================================
 //
-//  A_CHolyAttack
+//  Weapon::A_CHolyAttack
 //
 //============================================================================
 
-void A_CHolyAttack(mobj_t * actor)
+void Weapon::A_CHolyAttack(void)
 {
-	player_t *player = actor->player;
 	mobj_t *mo;
 
 	player->mana[MANA_1] -=
@@ -373,17 +362,15 @@ void A_CHolyAttack(mobj_t * actor)
 
 //============================================================================
 //
-//  A_CHolyPalette
+//  Weapon::A_CHolyPalette
 //
 //============================================================================
 
-void A_CHolyPalette(mobj_t * actor)
+void Weapon::A_CHolyPalette(void)
 {
-	player_t *player = actor->player;
-	pspdef_t *psp = &player->psprites[ps_weapon];
 	int pal;
 
-	pal = STARTHOLYPAL + psp->statenum - S_CHOLYATK_6;
+	pal = STARTHOLYPAL + statenum - S_CHOLYATK_6;
 	if (pal == STARTHOLYPAL + 3)
 	{
 		// reset back to original playpal
@@ -394,13 +381,13 @@ void A_CHolyPalette(mobj_t * actor)
 
 //============================================================================
 //
-//  A_CHolyAttack2
+//  Actor::A_CHolyAttack2
 //
 //  Spawns the spirits
 //
 //============================================================================
 
-void A_CHolyAttack2(mobj_t * actor)
+void Actor::A_CHolyAttack2(void)
 {
 	int j;
 	int i;
@@ -410,9 +397,7 @@ void A_CHolyAttack2(mobj_t * actor)
 
 	for (j = 0; j < 4; j++)
 	{
-		mo =
-			P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
-			MT_HOLY_FX);
+		mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_HOLY_FX);
 		if (!mo)
 		{
 			continue;
@@ -433,11 +418,11 @@ void A_CHolyAttack2(mobj_t * actor)
 				((32 + (P_Random() & 7)) << 16) + 32 + (P_Random() & 7);
 			break;
 		}
-		mo->origin.z = actor->origin.z;
-		mo->angles.yaw = AngleMod360(actor->angles.yaw +
+		mo->origin.z = origin.z;
+		mo->angles.yaw = AngleMod360(angles.yaw +
 			(45.0 + 45.0 / 2.0) - 45.0 * itof(j));
 		P_ThrustMobj(mo, mo->angles.yaw, mo->speed * frametime);
-		mo->target = actor->target;
+		mo->target = target;
 		mo->args[0] = 10;	// initial turn value
 		mo->args[1] = 0;	// initial look angle
 		if (deathmatch)
@@ -570,7 +555,7 @@ void CHolySeekerMissile(mobj_t * actor, float thresh, float turnMax)
 
 //============================================================================
 //
-// A_CHolyWeave
+// CHolyWeave
 //
 //============================================================================
 
@@ -597,50 +582,49 @@ void CHolyWeave(mobj_t * actor)
 
 //============================================================================
 //
-// A_CHolySeek
+//	Actor::A_CHolySeek
 //
 //============================================================================
 
-void A_CHolySeek(mobj_t * actor)
+void Actor::A_CHolySeek(void)
 {
-	actor->health--;
-	if (actor->health <= 0)
+	health--;
+	if (health <= 0)
 	{
-		actor->velocity.x /= 4.0;
-		actor->velocity.y /= 4.0;
-		actor->velocity.z = 0.0;
-		SetMobjState(actor, actor->deathstate);
-		actor->time -= Random() * 0.1;
+		velocity.x /= 4.0;
+		velocity.y /= 4.0;
+		velocity.z = 0.0;
+		SetMobjState(this, deathstate);
+		time -= Random() * 0.1;
 		return;
 	}
-	if (actor->specialmobj1)
+	if (specialmobj1)
 	{
-		CHolySeekerMissile(actor, itof(actor->args[0]),
-			itof(actor->args[0]) * 2.0);
+		CHolySeekerMissile(this, itof(args[0]), itof(args[0]) * 2.0);
 		if (!((level->tictime + 7) & 15))
 		{
-			actor->args[0] = 5 + (P_Random() / 20);
+			args[0] = 5 + (P_Random() / 20);
 		}
 	}
-	CHolyWeave(actor);
+	CHolyWeave(this);
 }
 
 //============================================================================
 //
-// A_CHolyCheckScream
+//	Actor::A_CHolyCheckScream
 //
 //============================================================================
 
-void A_CHolyCheckScream(mobj_t * actor)
+void Actor::A_CHolyCheckScream(void)
 {
-	A_CHolySeek(actor);
+	A_CHolySeek();
 	if (P_Random() < 20)
 	{
-		StartSoundName(actor, "SpiritActive", CHAN_VOICE);
+		StartSoundName(this, "SpiritActive", CHAN_VOICE);
 	}
-	if (!actor->specialmobj1)
+	if (!specialmobj1)
 	{
-		CHolyFindTarget(actor);
+		CHolyFindTarget(this);
 	}
 }
 
@@ -708,49 +692,51 @@ void CHolyTailRemove(mobj_t * actor)
 
 //============================================================================
 //
-// A_CHolyTail
+//	A_CHolyTail
 //
 //============================================================================
 
-void A_CHolyTail(mobj_t * actor)
+void Actor::A_CHolyTail(void)
 {
 	mobj_t *parent;
 
-	parent = actor->specialmobj2;
+	parent = specialmobj2;
 
 	if (parent)
 	{
 		if (parent->statenum >= parent->deathstate)
 		{
 			// Ghost removed, so remove all tail parts
-			CHolyTailRemove(actor);
+			CHolyTailRemove(this);
 			return;
 		}
-		else if (P_TryMove(actor,
+		else if (P_TryMove(this,
 				parent->origin.x - 14.0 * cos(parent->angles.yaw),
 				parent->origin.y - 14.0 * sin(parent->angles.yaw)))
 		{
-			actor->origin.z = parent->origin.z - 5.0;
+			origin.z = parent->origin.z - 5.0;
 		}
-		CHolyTailFollow(actor, 10.0);
+		CHolyTailFollow(this, 10.0);
 	}
 }
 
 //============================================================================
 //
-// A_CHolySpawnPuff
+//	Actor::A_CHolySpawnPuff
 //
 //============================================================================
 
-void A_CHolySpawnPuff(mobj_t * actor)
+void Actor::A_CHolySpawnPuff(void)
 {
-	P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
-		MT_HOLY_MISSILE_PUFF);
+	P_SpawnMobj(origin.x, origin.y, origin.z, MT_HOLY_MISSILE_PUFF);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.6  2001/10/22 17:23:13  dj_jl
 //  Floatification of angles
 //

@@ -1325,6 +1325,10 @@ void NetGameReborn(int playernum)
 
 void SpawnClient(int i)
 {
+	players[i].ViewEnts[ps_weapon] = Spawn(ViewEntity, none);
+	players[i].ViewEnts[ps_weapon].player = &players[i];
+	players[i].ViewEnts[ps_flash] = Spawn(ViewEntity, none);
+	players[i].ViewEnts[ps_flash].player = &players[i];
 	if (players[i].is_bot)
 	{
 		players[i].Bot = Spawn(BotPlayer, none);
@@ -1349,6 +1353,8 @@ void SpawnClient(int i)
 
 void DisconnectClient(player_t * player)
 {
+	int i;
+
 	if (player->Bot != none)
 	{
 		player->Bot.Destroy();
@@ -1358,6 +1364,14 @@ void DisconnectClient(player_t * player)
 	{
 		player->mo->player = NULL;
 		player->mo->Damage(NULL, NULL, 10000);
+	}
+	for (i = 0; i < NUMPSPRITES; i++)
+	{
+		if (player->ViewEnts[i])
+		{
+			player->ViewEnts[i].Destroy();
+			player->ViewEnts[i] = none;
+		}
 	}
 	bprint("%s left the game\n", ARR2STR(player->name));
 	StartSoundName(NULL, "Chat", CHAN_AUTO);
@@ -1381,6 +1395,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.12  2001/12/04 18:36:42  dj_jl
 //  Bots, directly from SkullTag!
 //

@@ -48,116 +48,118 @@
 
 //==========================================================================
 //
-//  A_ThrustInitUp
+//  Actor::A_ThrustInitUp
 //
 //==========================================================================
 
-void A_ThrustInitUp(mobj_t * actor)
+void Actor::A_ThrustInitUp(void)
 {
-	actor->special2 = 5;	// Raise speed
-	actor->args[0] = 1;	// Mark as up
-	actor->floorclip = 0.0;
-	actor->flags = MF_SOLID;
-	actor->flags2 = MF2_NOTELEPORT | MF2_FLOORCLIP;
-	actor->specialmobj1 = NULL;
+	special2 = 5;	// Raise speed
+	args[0] = 1;	// Mark as up
+	floorclip = 0.0;
+	flags = MF_SOLID;
+	flags2 = MF2_NOTELEPORT | MF2_FLOORCLIP;
+	specialmobj1 = NULL;
 }
 
 //==========================================================================
 //
-//  A_ThrustInitDn
+//  Actor::A_ThrustInitDn
 //
 //==========================================================================
 
-void A_ThrustInitDn(mobj_t * actor)
+void Actor::A_ThrustInitDn(void)
 {
 	mobj_t *mo;
 
-	actor->special2 = 5;	// Raise speed
-	actor->args[0] = 0;	// Mark as down
-	actor->floorclip = actor->height;
-	actor->flags = 0;
-	actor->flags2 = MF2_NOTELEPORT | MF2_FLOORCLIP;
-	actor->translucency = 100;
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
-		MT_DIRTCLUMP);
-	actor->specialmobj1 = mo;
+	special2 = 5;	// Raise speed
+	args[0] = 0;	// Mark as down
+	floorclip = height;
+	flags = 0;
+	flags2 = MF2_NOTELEPORT | MF2_FLOORCLIP;
+	translucency = 100;
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_DIRTCLUMP);
+	specialmobj1 = mo;
 }
 
 //==========================================================================
 //
-//  A_ThrustRaise
+//  Actor::A_ThrustRaise
 //
 //==========================================================================
 
-void A_ThrustRaise(mobj_t * actor)
+void Actor::A_ThrustRaise(void)
 {
-	if (RaiseMobj(actor))
-	{	// Reached it's target height
-		actor->args[0] = 1;
-		if (actor->args[1])
-			SetMobjStateNF(actor, S_BTHRUSTINIT2_1);
+	if (RaiseMobj(this))
+	{
+		// Reached it's target height
+		args[0] = 1;
+		if (args[1])
+			SetMobjStateNF(this, S_BTHRUSTINIT2_1);
 		else
-			SetMobjStateNF(actor, S_THRUSTINIT2_1);
+			SetMobjStateNF(this, S_THRUSTINIT2_1);
 	}
 
 	// Lose the dirt clump
-	if ((actor->floorclip < actor->height) && actor->specialmobj1)
+	if ((floorclip < height) && specialmobj1)
 	{
-		P_RemoveMobj(actor->specialmobj1);
-		actor->specialmobj1 = NULL;
+		P_RemoveMobj(specialmobj1);
+		specialmobj1 = NULL;
 	}
 
 	// Spawn some dirt
 	if (P_Random() < 40)
-		SpawnDirt(actor, actor->radius);
-	actor->special2++;	// Increase raise speed
+		SpawnDirt(this, radius);
+	special2++;	// Increase raise speed
 }
 
 //==========================================================================
 //
-//  A_ThrustLower
+//  Actor::A_ThrustLower
 //
 //==========================================================================
 
-void A_ThrustLower(mobj_t * actor)
+void Actor::A_ThrustLower(void)
 {
-	if (SinkMobj(actor))
+	if (SinkMobj(this))
 	{
-		actor->args[0] = 0;
-		if (actor->args[1])
-			SetMobjStateNF(actor, S_BTHRUSTINIT1_1);
+		args[0] = 0;
+		if (args[1])
+			SetMobjStateNF(this, S_BTHRUSTINIT1_1);
 		else
-			SetMobjStateNF(actor, S_THRUSTINIT1_1);
+			SetMobjStateNF(this, S_THRUSTINIT1_1);
 	}
 }
 
 //==========================================================================
 //
-//  A_ThrustBlock
+//  Actor::A_ThrustBlock
 //
 //==========================================================================
 
-void A_ThrustBlock(mobj_t * actor)
+void Actor::A_ThrustBlock(void)
 {
-	actor->flags |= MF_SOLID;
+	flags |= MF_SOLID;
 }
 
 //==========================================================================
 //
-//  A_ThrustImpale
+//  Actor::A_ThrustImpale
 //
 //==========================================================================
 
-void A_ThrustImpale(mobj_t * actor)
+void Actor::A_ThrustImpale(void)
 {
 	// Impale all shootables in radius
-	PIT_ThrustSpike(actor);
+	PIT_ThrustSpike(this);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

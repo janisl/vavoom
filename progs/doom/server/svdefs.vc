@@ -274,14 +274,6 @@ class Entity:base_mobj_t
 	boolean Physics(void);
 }
 
-class Actor:mobj_t
-{
-}
-
-class Missile:mobj_t
-{
-}
-
 /*
 
   Class definitions for botinfo, chatinfo, and
@@ -663,6 +655,9 @@ boolean respawnmonsters;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/12/12 18:57:40  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.6  2001/12/04 18:36:42  dj_jl
 //  Bots, directly from SkullTag!
 //

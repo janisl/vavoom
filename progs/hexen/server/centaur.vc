@@ -37,164 +37,143 @@
 
 //============================================================================
 //
-//  A_CentaurAttack
+//  Actor::A_CentaurAttack
 //
 //============================================================================
 
-void A_CentaurAttack(mobj_t * actor)
+void Actor::A_CentaurAttack(void)
 {
-	if (!actor->target)
+	if (!target)
 	{
 		return;
 	}
-	if (CheckMeleeRange(actor))
+	if (CheckMeleeRange(this))
 	{
-		actor->target->Damage(actor, actor, P_Random() % 7 + 3);
+		target->Damage(this, this, P_Random() % 7 + 3);
 	}
 }
 
 //============================================================================
 //
-//  A_CentaurAttack2
+//  Actor::A_CentaurAttack2
 //
 //============================================================================
 
-void A_CentaurAttack2(mobj_t * actor)
+void Actor::A_CentaurAttack2(void)
 {
-	if (!actor->target)
+	if (!target)
 	{
 		return;
 	}
-	SpawnMissile(actor, actor->target, MT_CENTAUR_FX);
-	StartSoundName(actor, "CentaurLeaderAttack", CHAN_WEAPON);
+	SpawnMissile(this, target, MT_CENTAUR_FX);
+	StartSoundName(this, "CentaurLeaderAttack", CHAN_WEAPON);
 }
 
 //============================================================================
 //
-//  A_SetInvulnerable
+//	Actor::A_SetReflective
 //
 //============================================================================
 
-void A_SetInvulnerable(mobj_t * actor)
+void Actor::A_SetReflective(void)
 {
-	actor->flags2 |= MF2_INVULNERABLE;
-}
+	flags2 |= MF2_REFLECTIVE;
 
-//============================================================================
-//
-//  A_UnSetInvulnerable
-//
-//============================================================================
-
-void A_UnSetInvulnerable(mobj_t * actor)
-{
-	actor->flags2 &= ~MF2_INVULNERABLE;
-}
-
-//============================================================================
-//
-// A_SetReflective
-//
-//============================================================================
-
-void A_SetReflective(mobj_t * actor)
-{
-	actor->flags2 |= MF2_REFLECTIVE;
-
-	if ((actor->type == MT_CENTAUR) || (actor->type == MT_CENTAURLEADER))
+	if ((type == MT_CENTAUR) || (type == MT_CENTAURLEADER))
 	{
-		A_SetInvulnerable(actor);
+		A_SetInvulnerable(this);
 	}
 }
 
 //============================================================================
 //
-// A_UnSetReflective
+//	Actor::A_UnSetReflective
 //
 //============================================================================
 
-void A_UnSetReflective(mobj_t * actor)
+void Actor::A_UnSetReflective(void)
 {
-	actor->flags2 &= ~MF2_REFLECTIVE;
+	flags2 &= ~MF2_REFLECTIVE;
 
-	if ((actor->type == MT_CENTAUR) || (actor->type == MT_CENTAURLEADER))
+	if ((type == MT_CENTAUR) || (type == MT_CENTAURLEADER))
 	{
-		A_UnSetInvulnerable(actor);
+		A_UnSetInvulnerable();
 	}
 }
 
 //============================================================================
 //
-// A_CentaurDefend
+//	Actor::A_CentaurDefend
 //
 //============================================================================
 
-void A_CentaurDefend(mobj_t * actor)
+void Actor::A_CentaurDefend(void)
 {
-	A_FaceTarget(actor);
-	if (CheckMeleeRange(actor) && P_Random() < 32)
+	A_FaceTarget();
+	if (CheckMeleeRange(this) && P_Random() < 32)
 	{
-		A_UnSetInvulnerable(actor);
-		SetMobjState(actor, actor->meleestate);
+		A_UnSetInvulnerable();
+		SetMobjState(this, meleestate);
 	}
 }
 
 //============================================================================
 //
-//  A_CentaurDropStuff
+//  Actor::A_CentaurDropStuff
 //
 //  Spawn shield/sword sprites when the centaur pulps
 //
 //============================================================================
 
-void A_CentaurDropStuff(mobj_t * actor)
+void Actor::A_CentaurDropStuff(void)
 {
 	mobj_t *mo;
 	float angle;
 
-	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0,
-		MT_CENTAUR_SHIELD);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, MT_CENTAUR_SHIELD);
 	if (mo)
 	{
-		angle = AngleMod360(actor->angles.yaw + 90.0);
+		angle = AngleMod360(angles.yaw + 90.0);
 		mo->velocity.x = ((Random() - 0.5) * 8.0 + 1.0) * cos(angle) * 35.0;
 		mo->velocity.y = ((Random() - 0.5) * 8.0 + 1.0) * sin(angle) * 35.0;
 		mo->velocity.z = 8.0 + Random() * 4.0 * 35.0;
-		mo->target = actor;
+		mo->target = this;
 	}
-	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0,
-		MT_CENTAUR_SWORD);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, MT_CENTAUR_SWORD);
 	if (mo)
 	{
-		angle = AngleMod360(actor->angles.yaw - 90.0);
+		angle = AngleMod360(angles.yaw - 90.0);
 		mo->velocity.x = ((Random() - 0.5) * 8.0 + 1.0) * cos(angle) * 35.0;
 		mo->velocity.y = ((Random() - 0.5) * 8.0 + 1.0) * sin(angle) * 35.0;
 		mo->velocity.z = 8.0 + Random() * 4.0 * 35.0;
-		mo->target = actor;
+		mo->target = this;
 	}
 }
 
 //===========================================================================
 //
-//  A_CheckFloor
+//  Actor::A_CheckFloor
 //
 //  Checks if an object hit the floor
 //
 //===========================================================================
 
-void A_CheckFloor(mobj_t * actor)
+void Actor::A_CheckFloor(void)
 {
-	if (actor->origin.z <= actor->floorz)
+	if (origin.z <= floorz)
 	{
-		actor->origin.z = actor->floorz;
-		actor->flags2 &= ~MF2_LOGRAV;
-		SetMobjState(actor, actor->deathstate);
+		origin.z = floorz;
+		flags2 &= ~MF2_LOGRAV;
+		SetMobjState(this, deathstate);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.6  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

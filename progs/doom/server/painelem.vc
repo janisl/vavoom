@@ -89,50 +89,50 @@ void A_PainShootSkull(mobj_t * actor, float angle)
 	}
 
 	newmobj->target = actor->target;
-	A_SkullAttack(newmobj);
+	((Actor *)newmobj)->A_SkullAttack();
 }
 
 //==========================================================================
 //
-//  A_PainAttack
+//  Actor::A_PainAttack
 //
 //  Pain elemental attack. Spawn a lost soul and launch it at the target.
 // 
 //==========================================================================
 
-void A_PainAttack(mobj_t * actor)
+void Actor::A_PainAttack(void)
 {
-	if (!actor->target)
+	if (!target)
 		return;
 
-	A_FaceTarget(actor);
-	A_PainShootSkull(actor, actor->angles.yaw);
+	A_FaceTarget();
+	A_PainShootSkull(this, angles.yaw);
 }
 
 //==========================================================================
 //
-//  A_PainDie
+//  Actor::A_PainDie
 //
 //  Pain elemental death.
 //
 //==========================================================================
 
-void A_PainDie(mobj_t * actor)
+void Actor::A_PainDie(void)
 {
-	A_Fall(actor);
-	A_PainShootSkull(actor, actor->angles.yaw + 90.0);
-	A_PainShootSkull(actor, actor->angles.yaw + 180.0);
-	A_PainShootSkull(actor, actor->angles.yaw + 270.0);
+	A_Fall();
+	A_PainShootSkull(this, angles.yaw + 90.0);
+	A_PainShootSkull(this, angles.yaw + 180.0);
+	A_PainShootSkull(this, angles.yaw + 270.0);
 }
 
 #else
 
-void A_PainAttack(mobj_t * actor)
+void Actor::A_PainAttack(void)
 {
 	NotDoom2();
 }
 
-void A_PainDie(mobj_t * actor)
+void Actor::A_PainDie(void)
 {
 	NotDoom2();
 }
@@ -142,6 +142,9 @@ void A_PainDie(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/12 18:57:40  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.5  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

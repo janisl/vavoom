@@ -25,6 +25,8 @@
 
 // MACROS ------------------------------------------------------------------
 
+#define	SKULLSPEED		700.0
+
 // CONSTANTS ---------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
@@ -37,30 +39,30 @@
 
 //==========================================================================
 //
-//  A_SkullAttack
+//  Actor::A_SkullAttack
 //
 //  Lost soul attack. Fly at the player like a missile.
 //
 //==========================================================================
 
-#define	SKULLSPEED		700.0
-
-void A_SkullAttack(mobj_t * actor)
+void Actor::A_SkullAttack(void)
 {
-	if (!actor->target)
+	if (!target)
 		return;
 
-	actor->flags |= MF_SKULLFLY;
+	flags |= MF_SKULLFLY;
 
-	StartSound(actor, actor->sound_attack, CHAN_VOICE);
-	A_FaceTarget(actor);
-	actor->velocity =
-		Normalize(MobjCenter(actor->target) - actor->origin) * SKULLSPEED;
+	StartSound(this, sound_attack, CHAN_VOICE);
+	A_FaceTarget();
+	velocity = Normalize(MobjCenter(target) - origin) * SKULLSPEED;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/12/12 18:57:40  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.4  2001/09/24 17:24:09  dj_jl
 //  Beautification
 //

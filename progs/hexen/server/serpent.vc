@@ -37,141 +37,145 @@
 
 //============================================================================
 //
-// A_SerpentChase
+//	Actor::A_SerpentChase
 //
 //============================================================================
 
-void A_SerpentChase(mobj_t * actor)
+void Actor::A_SerpentChase(void)
 {
 	float delta;
 	float oldX, oldY;
 	int oldFloor;
 
-	if (actor->reactiontime)
+	if (reactiontime)
 	{
-		actor->reactiontime--;
+		reactiontime--;
 	}
 
 	// Modify target threshold
-	if (actor->threshold)
+	if (threshold)
 	{
-		actor->threshold--;
+		threshold--;
 	}
 
 	if (gameskill == sk_nightmare)
 	{
 		// Monsters move faster in nightmare mode
-		actor->time *= 0.5;
-		if (actor->time < 0.1)
+		time *= 0.5;
+		if (time < 0.1)
 		{
-			actor->time = 0.1;
+			time = 0.1;
 		}
 	}
 
 	//
 	// turn towards movement direction if not there yet
 	//
-	if (actor->movedir < 8)
+	if (movedir < 8)
 	{
-		actor->angles.yaw = itof(ftoi(actor->angles.yaw / 45.0)) * 45.0;
-		delta = AngleMod180(actor->angles.yaw - itof(actor->movedir) * 45.0);
+		angles.yaw = itof(ftoi(angles.yaw / 45.0)) * 45.0;
+		delta = AngleMod180(angles.yaw - itof(movedir) * 45.0);
 		if (delta > 0.0)
 		{
-			actor->angles.yaw = AngleMod360(actor->angles.yaw - 45.0);
+			angles.yaw = AngleMod360(angles.yaw - 45.0);
 		}
 		else if (delta < 0.0)
 		{
-			actor->angles.yaw = AngleMod360(actor->angles.yaw + 45.0);
+			angles.yaw = AngleMod360(angles.yaw + 45.0);
 		}
 	}
 
-	if (!actor->target || !(actor->target->flags & MF_SHOOTABLE))
-	{	// look for a new target
-		if (P_LookForPlayers(actor, true))
-		{	// got a new target
+	if (!target || !(target->flags & MF_SHOOTABLE))
+	{
+		// look for a new target
+		if (P_LookForPlayers(this, true))
+		{
+			// got a new target
 			return;
 		}
-		SetMobjState(actor, actor->spawnstate);
+		SetMobjState(this, spawnstate);
 		return;
 	}
 
 	//
 	// don't attack twice in a row
 	//
-	if (actor->flags & MF_JUSTATTACKED)
+	if (flags & MF_JUSTATTACKED)
 	{
-		actor->flags &= ~MF_JUSTATTACKED;
+		flags &= ~MF_JUSTATTACKED;
 		if (gameskill != sk_nightmare)
-			P_NewChaseDir(actor);
+			P_NewChaseDir(this);
 		return;
 	}
 
 	//
 	// check for melee attack
 	//
-	if (actor->meleestate && CheckMeleeRange(actor))
+	if (meleestate && CheckMeleeRange(this))
 	{
-		if (actor->sound_attack)
+		if (sound_attack)
 		{
-			StartSound(actor, actor->sound_attack, CHAN_WEAPON);
+			StartSound(this, sound_attack, CHAN_WEAPON);
 		}
-		SetMobjState(actor, actor->meleestate);
+		SetMobjState(this, meleestate);
 		return;
 	}
 
 	//
 	// possibly choose another target
 	//
-	if (netgame && !actor->threshold && !P_CheckSight(actor, actor->target))
+	if (netgame && !threshold && !P_CheckSight(this, target))
 	{
-		if (P_LookForPlayers(actor, true))
+		if (P_LookForPlayers(this, true))
 			return;	// got a new target
 	}
 
 	//
 	// chase towards player
 	//
-	oldX = actor->origin.x;
-	oldY = actor->origin.y;
-	oldFloor = actor->subsector->sector->floor.pic;
-	if (--actor->movecount < 0 || !P_Move(actor))
+	oldX = origin.x;
+	oldY = origin.y;
+	oldFloor = subsector->sector->floor.pic;
+	if (--movecount < 0 || !P_Move(this))
 	{
-		P_NewChaseDir(actor);
+		P_NewChaseDir(this);
 	}
-	if (actor->subsector->sector->floor.pic != oldFloor)
+	if (subsector->sector->floor.pic != oldFloor)
 	{
-		P_TryMove(actor, oldX, oldY);
-		P_NewChaseDir(actor);
+		P_TryMove(this, oldX, oldY);
+		P_NewChaseDir(this);
 	}
 
 	//
 	// make active sound
 	//
-	if (actor->sound_active && P_Random() < 3)
+	if (sound_active && P_Random() < 3)
 	{
-		StartSound(actor, actor->sound_active, CHAN_VOICE);
+		StartSound(this, sound_active, CHAN_VOICE);
 	}
 }
 
 //============================================================================
 //
-//  A_SerpentHumpDecide
+//  Actor::A_SerpentHumpDecide
 //
 //  Decided whether to hump up, or if the mobj is a serpent leader,
 // to missile attack
+//
 //============================================================================
 
-void A_SerpentHumpDecide(mobj_t * actor)
+void Actor::A_SerpentHumpDecide(void)
 {
-	if (actor->type == MT_SERPENTLEADER)
+	if (type == MT_SERPENTLEADER)
 	{
 		if (P_Random() > 30)
 		{
 			return;
 		}
 		else if (P_Random() < 40)
-		{	// Missile attack
-			SetMobjState(actor, S_SERPENT_SURFACE1);
+		{
+			// Missile attack
+			SetMobjState(this, S_SERPENT_SURFACE1);
 			return;
 		}
 	}
@@ -179,332 +183,336 @@ void A_SerpentHumpDecide(mobj_t * actor)
 	{
 		return;
 	}
-	if (!CheckMeleeRange(actor))
-	{	// The hump shouldn't occur when within melee range
-		if (actor->type == MT_SERPENTLEADER && P_Random() < 128)
+	if (!CheckMeleeRange(this))
+	{
+		// The hump shouldn't occur when within melee range
+		if (type == MT_SERPENTLEADER && P_Random() < 128)
 		{
-			SetMobjState(actor, S_SERPENT_SURFACE1);
+			SetMobjState(this, S_SERPENT_SURFACE1);
 		}
 		else
 		{
-			SetMobjState(actor, S_SERPENT_HUMP1);
-			StartSoundName(actor, "SerpentActive", CHAN_VOICE);
+			SetMobjState(this, S_SERPENT_HUMP1);
+			StartSoundName(this, "SerpentActive", CHAN_VOICE);
 		}
 	}
 }
 
 //============================================================================
 //
-// A_SerpentUnHide
+//	Actor::A_SerpentUnHide
 //
 //============================================================================
 
-void A_SerpentUnHide(mobj_t * actor)
+void Actor::A_SerpentUnHide(void)
 {
-	actor->translucency = 0;
-	actor->floorclip = 24.0;
+	translucency = 0;
+	floorclip = 24.0;
 }
 
 //============================================================================
 //
-// A_SerpentRaiseHump
+//	Actor::A_SerpentRaiseHump
 // 
-// Raises the hump above the surface by raising the floorclip level
+//	Raises the hump above the surface by raising the floorclip level
+//
 //============================================================================
 
-void A_SerpentRaiseHump(mobj_t * actor)
+void Actor::A_SerpentRaiseHump(void)
 {
-	actor->floorclip -= 4.0;
+	floorclip -= 4.0;
 }
 
 //============================================================================
 //
-// A_SerpentLowerHump
+//	Actor::A_SerpentLowerHump
 // 
 //============================================================================
 
-void A_SerpentLowerHump(mobj_t * actor)
+void Actor::A_SerpentLowerHump(void)
 {
-	actor->floorclip += 4.0;
+	floorclip += 4.0;
 }
 
 //============================================================================
 //
-// A_SerpentHide
+//	Actor::A_SerpentHide
 //
 //============================================================================
 
-void A_SerpentHide(mobj_t * actor)
+void Actor::A_SerpentHide(void)
 {
-	actor->translucency = 100;
-	actor->floorclip = 0.0;
-}
-
-//==========================================================================
-//
-// A_SetShootable
-//
-//==========================================================================
-
-void A_SetShootable(mobj_t * actor)
-{
-	actor->flags2 &= ~MF2_NONSHOOTABLE;
-	actor->flags |= MF_SHOOTABLE;
+	translucency = 100;
+	floorclip = 0.0;
 }
 
 //==========================================================================
 //
-// A_UnSetShootable
+//	Actor::A_SetShootable
 //
 //==========================================================================
 
-void A_UnSetShootable(mobj_t * actor)
+void Actor::A_SetShootable(void)
 {
-	actor->flags2 |= MF2_NONSHOOTABLE;
-	actor->flags &= ~MF_SHOOTABLE;
+	flags2 &= ~MF2_NONSHOOTABLE;
+	flags |= MF_SHOOTABLE;
+}
+
+//==========================================================================
+//
+//	Actor::A_UnSetShootable
+//
+//==========================================================================
+
+void Actor::A_UnSetShootable(void)
+{
+	flags2 |= MF2_NONSHOOTABLE;
+	flags &= ~MF_SHOOTABLE;
 }
 
 //============================================================================
 //
-// A_SerpentBirthScream
+//	Actor::A_SerpentBirthScream
 //
 //============================================================================
 
-void A_SerpentBirthScream(mobj_t * actor)
+void Actor::A_SerpentBirthScream(void)
 {
-	StartSoundName(actor, "SerpentBirth", CHAN_VOICE);
+	StartSoundName(this, "SerpentBirth", CHAN_VOICE);
 }
 
 //============================================================================
 //
-//  A_SerpentCheckForAttack
+//  Actor::A_SerpentCheckForAttack
 //
 //============================================================================
 
-void A_SerpentCheckForAttack(mobj_t * actor)
+void Actor::A_SerpentCheckForAttack(void)
 {
-	if (!actor->target)
+	if (!target)
 	{
 		return;
 	}
-	if (actor->type == MT_SERPENTLEADER)
+	if (type == MT_SERPENTLEADER)
 	{
-		if (!CheckMeleeRange(actor))
+		if (!CheckMeleeRange(this))
 		{
-			SetMobjState(actor, S_SERPENT_ATK1);
+			SetMobjState(this, S_SERPENT_ATK1);
 			return;
 		}
 	}
-	if (CheckMeleeRange2(actor))
+	if (CheckMeleeRange2(this))
 	{
-		SetMobjState(actor, S_SERPENT_WALK1);
+		SetMobjState(this, S_SERPENT_WALK1);
 	}
-	else if (CheckMeleeRange(actor))
+	else if (CheckMeleeRange(this))
 	{
 		if (P_Random() < 32)
 		{
-			SetMobjState(actor, S_SERPENT_WALK1);
+			SetMobjState(this, S_SERPENT_WALK1);
 		}
 		else
 		{
-			SetMobjState(actor, S_SERPENT_ATK1);
+			SetMobjState(this, S_SERPENT_ATK1);
 		}
 	}
 }
 
 //============================================================================
 //
-// A_SerpentDiveSound
+//	Actor::A_SerpentDiveSound
 //
 //============================================================================
 
-void A_SerpentDiveSound(mobj_t * actor)
+void Actor::A_SerpentDiveSound(void)
 {
-	StartSoundName(actor, "SerpentActive", CHAN_VOICE);
+	StartSoundName(this, "SerpentActive", CHAN_VOICE);
 }
 
 //============================================================================
 //
-//  A_SerpentWalk
+//  Actor::A_SerpentWalk
 //
 //  Similar to A_Chase, only has a hardcoded entering of meleestate.
 //
 //============================================================================
 
-void A_SerpentWalk(mobj_t * actor)
+void Actor::A_SerpentWalk(void)
 {
 	float delta;
 
-	if (actor->reactiontime)
+	if (reactiontime)
 	{
-		actor->reactiontime--;
+		reactiontime--;
 	}
 
 	// Modify target threshold
-	if (actor->threshold)
+	if (threshold)
 	{
-		actor->threshold--;
+		threshold--;
 	}
 
 	if (gameskill == sk_nightmare)
-	{	// Monsters move faster in nightmare mode
-		actor->time *= 0.5;
-		if (actor->time < 0.1)
+	{
+		// Monsters move faster in nightmare mode
+		time *= 0.5;
+		if (time < 0.1)
 		{
-			actor->time = 0.1;
+			time = 0.1;
 		}
 	}
 
 	//
 	// turn towards movement direction if not there yet
 	//
-	if (actor->movedir < 8)
+	if (movedir < 8)
 	{
-		actor->angles.yaw = itof(ftoi(actor->angles.yaw / 45.0)) * 45.0;
-		delta = AngleMod180(actor->angles.yaw - itof(actor->movedir) * 45.0);
+		angles.yaw = itof(ftoi(angles.yaw / 45.0)) * 45.0;
+		delta = AngleMod180(angles.yaw - itof(movedir) * 45.0);
 		if (delta > 0.0)
 		{
-			actor->angles.yaw = AngleMod360(actor->angles.yaw - 45.0);
+			angles.yaw = AngleMod360(angles.yaw - 45.0);
 		}
 		else if (delta < 0.0)
 		{
-			actor->angles.yaw = AngleMod360(actor->angles.yaw + 45.0);
+			angles.yaw = AngleMod360(angles.yaw + 45.0);
 		}
 	}
 
-	if (!actor->target || !(actor->target->flags & MF_SHOOTABLE))
-	{	// look for a new target
-		if (P_LookForPlayers(actor, true))
-		{	// got a new target
+	if (!target || !(target->flags & MF_SHOOTABLE))
+	{
+		// look for a new target
+		if (P_LookForPlayers(this, true))
+		{
+			// got a new target
 			return;
 		}
-		SetMobjState(actor, actor->spawnstate);
+		SetMobjState(this, spawnstate);
 		return;
 	}
 
 	//
 	// don't attack twice in a row
 	//
-	if (actor->flags & MF_JUSTATTACKED)
+	if (flags & MF_JUSTATTACKED)
 	{
-		actor->flags &= ~MF_JUSTATTACKED;
+		flags &= ~MF_JUSTATTACKED;
 		if (gameskill != sk_nightmare)
-			P_NewChaseDir(actor);
+			P_NewChaseDir(this);
 		return;
 	}
 
 	//
 	// check for melee attack
 	//
-	if (actor->meleestate && CheckMeleeRange(actor))
+	if (meleestate && CheckMeleeRange(this))
 	{
-		if (actor->sound_attack)
+		if (sound_attack)
 		{
-			StartSound(actor, actor->sound_attack, CHAN_WEAPON);
+			StartSound(this, sound_attack, CHAN_WEAPON);
 		}
-		SetMobjState(actor, S_SERPENT_ATK1);
+		SetMobjState(this, S_SERPENT_ATK1);
 		return;
 	}
 	//
 	// possibly choose another target
 	//
-	if (netgame && !actor->threshold && !P_CheckSight(actor, actor->target))
+	if (netgame && !threshold && !P_CheckSight(this, target))
 	{
-		if (P_LookForPlayers(actor, true))
+		if (P_LookForPlayers(this, true))
 			return;	// got a new target
 	}
 
 	//
 	// chase towards player
 	//
-	if (--actor->movecount < 0 || !P_Move(actor))
+	if (--movecount < 0 || !P_Move(this))
 	{
-		P_NewChaseDir(actor);
+		P_NewChaseDir(this);
 	}
 }
 
 //============================================================================
 //
-//  A_SerpentChooseAttack
+//  Actor::A_SerpentChooseAttack
 //
 //============================================================================
 
-void A_SerpentChooseAttack(mobj_t * actor)
+void Actor::A_SerpentChooseAttack(void)
 {
-	if (!actor->target || CheckMeleeRange(actor))
+	if (!target || CheckMeleeRange(this))
 	{
 		return;
 	}
-	if (actor->type == MT_SERPENTLEADER)
+	if (type == MT_SERPENTLEADER)
 	{
-		SetMobjState(actor, S_SERPENT_MISSILE1);
+		SetMobjState(this, S_SERPENT_MISSILE1);
 	}
 }
 
 //============================================================================
 //
-// A_SerpentMeleeAttack
+//	Actor::A_SerpentMeleeAttack
 //
 //============================================================================
 
-void A_SerpentMeleeAttack(mobj_t * actor)
+void Actor::A_SerpentMeleeAttack(void)
 {
-	if (!actor->target)
+	if (!target)
 	{
 		return;
 	}
-	if (CheckMeleeRange(actor))
+	if (CheckMeleeRange(this))
 	{
-		actor->target->Damage(actor, actor, HITDICE(5));
-		StartSoundName(actor, "SerpentMeleeHit", CHAN_WEAPON);
+		target->Damage(this, this, HITDICE(5));
+		StartSoundName(this, "SerpentMeleeHit", CHAN_WEAPON);
 	}
 	if (P_Random() < 96)
 	{
-		A_SerpentCheckForAttack(actor);
+		A_SerpentCheckForAttack();
 	}
 }
 
 //============================================================================
 //
-// A_SerpentMissileAttack
+//	Actor::A_SerpentMissileAttack
 //
 //============================================================================
 
-void A_SerpentMissileAttack(mobj_t * actor)
+void Actor::A_SerpentMissileAttack(void)
 {
 	mobj_t *mo;
 
-	if (!actor->target)
+	if (!target)
 	{
 		return;
 	}
-	mo = SpawnMissile(actor, actor->target, MT_SERPENTFX);
+	mo = SpawnMissile(this, target, MT_SERPENTFX);
 }
 
 //============================================================================
 //
-// A_SerpentHeadPop
+//	Actor::A_SerpentHeadPop
 //
 //============================================================================
 
-void A_SerpentHeadPop(mobj_t * actor)
+void Actor::A_SerpentHeadPop(void)
 {
-	P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0,
-		MT_SERPENT_HEAD);
+	P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, MT_SERPENT_HEAD);
 }
 
 //============================================================================
 //
-// A_SerpentSpawnGibs
+//	Actor::A_SerpentSpawnGibs
 //
 //============================================================================
 
-void A_SerpentSpawnGibs(mobj_t * actor)
+void Actor::A_SerpentSpawnGibs(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(actor->origin.x + (Random() - 0.5) * 16.0,
-		actor->origin.y + (Random() - 0.5) * 16.0, actor->floorz + 1.0,
+	mo = P_SpawnMobj(origin.x + (Random() - 0.5) * 16.0,
+		origin.y + (Random() - 0.5) * 16.0, floorz + 1.0,
 		MT_SERPENT_GIB1);
 	if (mo)
 	{
@@ -512,8 +520,8 @@ void A_SerpentSpawnGibs(mobj_t * actor)
 		mo->velocity.y = (Random() - 0.5) / 4.0 * 35.0;
 		mo->floorclip = 6.0;
 	}
-	mo = P_SpawnMobj(actor->origin.x + (Random() - 0.5) * 16.0,
-		actor->origin.y + (Random() - 0.5) * 16.0, actor->floorz + 1.0,
+	mo = P_SpawnMobj(origin.x + (Random() - 0.5) * 16.0,
+		origin.y + (Random() - 0.5) * 16.0, floorz + 1.0,
 		MT_SERPENT_GIB2);
 	if (mo)
 	{
@@ -521,8 +529,8 @@ void A_SerpentSpawnGibs(mobj_t * actor)
 		mo->velocity.y = (Random() - 0.5) / 4.0 * 35.0;
 		mo->floorclip = 6.0;
 	}
-	mo = P_SpawnMobj(actor->origin.x + (Random() - 0.5) * 16.0,
-		actor->origin.y + (Random() - 0.5) * 16.0, actor->floorz + 1.0,
+	mo = P_SpawnMobj(origin.x + (Random() - 0.5) * 16.0,
+		origin.y + (Random() - 0.5) * 16.0, floorz + 1.0,
 		MT_SERPENT_GIB3);
 	if (mo)
 	{
@@ -534,62 +542,65 @@ void A_SerpentSpawnGibs(mobj_t * actor)
 
 //============================================================================
 //
-// A_SerpentHeadCheck
+//	Actor::A_SerpentHeadCheck
 //
 //============================================================================
 
-void A_SerpentHeadCheck(mobj_t * actor)
+void Actor::A_SerpentHeadCheck(void)
 {
-	if (actor->origin.z <= actor->floorz)
+	if (origin.z <= floorz)
 	{
-		if (P_GetThingFloorType(actor) >= FLOOR_LIQUID)
+		if (P_GetThingFloorType(this) >= FLOOR_LIQUID)
 		{
-			P_HitFloor(actor);
-			SetMobjState(actor, S_NULL);
+			P_HitFloor(this);
+			SetMobjState(this, S_NULL);
 		}
 		else
 		{
-			SetMobjState(actor, S_SERPENT_HEAD_X1);
+			SetMobjState(this, S_SERPENT_HEAD_X1);
 		}
 	}
 }
 
 //============================================================================
 //
-// A_FloatGib
+//	Actor::A_FloatGib
 //
 //============================================================================
 
-void A_FloatGib(mobj_t * actor)
+void Actor::A_FloatGib(void)
 {
-	actor->floorclip -= 1.0;
+	floorclip -= 1.0;
 }
 
 //============================================================================
 //
-// A_SinkGib
+//	Actor::A_SinkGib
 //
 //============================================================================
 
-void A_SinkGib(mobj_t * actor)
+void Actor::A_SinkGib(void)
 {
-	actor->floorclip += 1.0;
+	floorclip += 1.0;
 }
 
 //============================================================================
 //
-// A_DelayGib
+//	Actor::A_DelayGib
 //
 //============================================================================
 
-void A_DelayGib(mobj_t * actor)
+void Actor::A_DelayGib(void)
 {
-	actor->time -= Random() * 2.0;
+	time -= Random() * 2.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.6  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

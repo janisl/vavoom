@@ -39,72 +39,72 @@
 
 //==========================================================================
 //
-//  A_SkelWhosh
+//  Actor::A_SkelWhosh
 //
 //  Ravenant attack sound.
 //
 //==========================================================================
 
-void A_SkelWhoosh(mobj_t * actor)
+void Actor::A_SkelWhoosh(void)
 {
-	if (!actor->target)
+	if (!target)
 		return;
-	A_FaceTarget(actor);
-	StartSoundName(actor, "RavenantSwing", CHAN_WEAPON);
+	A_FaceTarget();
+	StartSoundName(this, "RavenantSwing", CHAN_WEAPON);
 }
 
 //==========================================================================
 //
-//  A_SkelFist
+//  Actor::A_SkelFist
 //
 //  Ravenant close attack.
 //
 //==========================================================================
 
-void A_SkelFist(mobj_t * actor)
+void Actor::A_SkelFist(void)
 {
 	int damage;
 
-	if (!actor->target)
+	if (!target)
 		return;
 
-	A_FaceTarget(actor);
+	A_FaceTarget();
 
-	if (P_CheckMeleeRange(actor))
+	if (P_CheckMeleeRange(this))
 	{
 		damage = ((P_Random() % 10) + 1) * 6;
-		StartSoundName(actor, "RavenantPunch", CHAN_WEAPON);
-		actor->target->Damage(actor, actor, damage);
+		StartSoundName(this, "RavenantPunch", CHAN_WEAPON);
+		target->Damage(this, this, damage);
 	}
 }
 
 //==========================================================================
 //
-//  A_SkelMissile
+//  Actor::A_SkelMissile
 //
 //  Ravenant far attack.
 //
 //==========================================================================
 
-void A_SkelMissile(mobj_t * actor)
+void Actor::A_SkelMissile(void)
 {
 	mobj_t *mo;
 
-	if (!actor->target)
+	if (!target)
 		return;
 
-	A_FaceTarget(actor);
-	actor->origin.z += 16.0;	// so missile spawns higher
-	mo = SpawnMissile(actor, actor->target, MT_TRACER);
-	actor->origin.z -= 16.0;	// back to normal
+	A_FaceTarget();
+	origin.z += 16.0;	// so missile spawns higher
+	mo = SpawnMissile(this, target, MT_TRACER);
+	origin.z -= 16.0;	// back to normal
 
 	mo->origin = mo->origin + mo->velocity * 0.03;
-	mo->tracer = actor->target;
+	mo->tracer = target;
 }
 
 //==========================================================================
 //
-//  A_Tracer
+//  Actor::A_Tracer
 //
 //  Ravenant missile tracer.
 //
@@ -112,7 +112,7 @@ void A_SkelMissile(mobj_t * actor)
 
 #define TRACEADJUST	0.2865921825
 
-void A_Tracer(mobj_t * actor)
+void Actor::A_Tracer(void)
 {
 	mobj_t *dest;
 	mobj_t *th;
@@ -125,11 +125,11 @@ void A_Tracer(mobj_t * actor)
 		return;
 
 	// spawn a puff of smoke behind the rocket      
-	SpawnPuff(actor->origin.x, actor->origin.y, actor->origin.z);
+	SpawnPuff(origin.x, origin.y, origin.z);
 
-	th = P_SpawnMobj(actor->origin.x - actor->velocity.x * frametime,
-		actor->origin.y - actor->velocity.y * frametime,
-		actor->origin.z - actor->velocity.z * frametime, MT_SMOKE);
+	th = P_SpawnMobj(origin.x - velocity.x * frametime,
+		origin.y - velocity.y * frametime,
+		origin.z - velocity.z * frametime, MT_SMOKE);
 
 	th->velocity.z = 1.0 * 35.0;
 	th->time -= Random() * 0.1;
@@ -137,40 +137,40 @@ void A_Tracer(mobj_t * actor)
 		th->time = 0.1;
 
 	// adjust direction
-	dest = actor->tracer;
+	dest = tracer;
 
 	if (!dest || dest->health <= 0)
 		return;
 
-	wishdir = Normalize(MobjCenter(dest) - actor->origin);
-	currdir = Normalize(actor->velocity);
+	wishdir = Normalize(MobjCenter(dest) - origin);
+	currdir = Normalize(velocity);
 	delta = wishdir - currdir;
 	adjustlen = Length(delta);
 	if (adjustlen > TRACEADJUST)
 		adjustlen = TRACEADJUST;
 	wishdir = currdir + delta * adjustlen;
-	actor->velocity = wishdir * actor->speed;
-	VectorAngles(&wishdir, &actor->angles);
+	velocity = wishdir * speed;
+	VectorAngles(&wishdir, &angles);
 }
 
 #else
 
-void A_SkelWhoosh(mobj_t * actor)
+void Actor::A_SkelWhoosh(void)
 {
 	NotDoom2();
 }
 
-void A_SkelFist(mobj_t * actor)
+void Actor::A_SkelFist(void)
 {
 	NotDoom2();
 }
 
-void A_SkelMissile(mobj_t * actor)
+void Actor::A_SkelMissile(void)
 {
 	NotDoom2();
 }
 
-void A_Tracer(mobj_t * actor)
+void Actor::A_Tracer(void)
 {
 	NotDoom2();
 }
@@ -180,6 +180,9 @@ void A_Tracer(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/12/12 18:57:40  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.7  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

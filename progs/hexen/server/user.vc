@@ -1871,6 +1871,11 @@ void SpawnClient(int i)
 	player->attacker = NULL;
 	player->poisoner = NULL;
 
+	player->ViewEnts[ps_weapon] = Spawn(ViewEntity, none);
+	player->ViewEnts[ps_weapon].player = player;
+	player->ViewEnts[ps_flash] = Spawn(ViewEntity, none);
+	player->ViewEnts[ps_flash].player = player;
+
 	if (netgame && !deathmatch)
 	{
 		// Cooperative net-play, retain keys and weapons
@@ -1927,10 +1932,20 @@ void SpawnClient(int i)
 
 void DisconnectClient(player_t * player)
 {
+	int i;
+
 	if (player->mo)
 	{
 		player->mo->player = NULL;
 		player->mo->Damage(NULL, NULL, 10000);
+	}
+	for (i = 0; i < NUMPSPRITES; i++)
+	{
+		if (player->ViewEnts[i])
+		{
+			player->ViewEnts[i].Destroy();
+			player->ViewEnts[i] = none;
+		}
 	}
 	bprint("%s left the game\n", ARR2STR(player->name));
 	StartSoundName(NULL, "Chat", CHAN_AUTO);
@@ -1954,6 +1969,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.14  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

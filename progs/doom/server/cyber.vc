@@ -37,52 +37,55 @@
 
 //==========================================================================
 //
-//  A_Hoof
+//  Actor::A_Hoof
 //
 //  Cyberdemon move with hoof sound.
 //
 //==========================================================================
 
-void A_Hoof(mobj_t * mo)
+void Actor::A_Hoof(void)
 {
-	StartSoundName(mo, "CyberWalk1", CHAN_BODY);
-	A_Chase(mo);
+	StartSoundName(this, "CyberWalk1", CHAN_BODY);
+	A_Chase();
 }
 
 //==========================================================================
 //
-//  A_Metal
+//  Actor::A_Metal
 //
 //  Cyberdemon move with metal sound.
 //
 //==========================================================================
 
-void A_Metal(mobj_t * mo)
+void Actor::A_Metal(void)
 {
-	StartSoundName(mo, "CyberWalk2", CHAN_BODY);
-	A_Chase(mo);
+	StartSoundName(this, "CyberWalk2", CHAN_BODY);
+	A_Chase();
 }
 
 //==========================================================================
 //
-//  A_CyberAttack
+//  Actor::A_CyberAttack
 //
 //  Cyberdemon attack.
 //
 //==========================================================================
 
-void A_CyberAttack(mobj_t * actor)
+void Actor::A_CyberAttack(void)
 {
-	if (!actor->target)
+	if (!target)
 		return;
 
-	A_FaceTarget(actor);
-	SpawnMissile(actor, actor->target, MT_ROCKET);
+	A_FaceTarget();
+	SpawnMissile(this, target, MT_ROCKET);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/12/12 18:57:40  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.4  2001/09/24 17:24:09  dj_jl
 //  Beautification
 //

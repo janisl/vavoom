@@ -29,84 +29,97 @@
 //**
 //**************************************************************************
 
-void A_Light0(mobj_t *actor);
-void A_WeaponReady(mobj_t *actor);
-void A_Lower(mobj_t *actor);
-void A_Raise(mobj_t *actor);
-void A_Punch(mobj_t *actor);
-void A_ReFire(mobj_t *actor);
-void A_FirePistol(mobj_t *actor);
-void A_Light1(mobj_t *actor);
-void A_FireShotgun(mobj_t *actor);
-void A_Light2(mobj_t *actor);
-void A_FireShotgun2(mobj_t *actor);
-void A_CheckReload(mobj_t *actor);
-void A_OpenShotgun2(mobj_t *actor);
-void A_LoadShotgun2(mobj_t *actor);
-void A_CloseShotgun2(mobj_t *actor);
-void A_FireCGun(mobj_t *actor);
-void A_GunFlash(mobj_t *actor);
-void A_FireMissile(mobj_t *actor);
-void A_Saw(mobj_t *actor);
-void A_FirePlasma(mobj_t *actor);
-void A_BFGsound(mobj_t *actor);
-void A_FireBFG(mobj_t *actor);
-void A_BFGSpray(mobj_t *actor);
-void A_Explode(mobj_t *actor);
-void A_Pain(mobj_t *actor);
-void A_PlayerScream(mobj_t *actor);
-void A_Fall(mobj_t *actor);
-void A_XScream(mobj_t *actor);
-void A_Look(mobj_t *actor);
-void A_Chase(mobj_t *actor);
-void A_FaceTarget(mobj_t *actor);
-void A_PosAttack(mobj_t *actor);
-void A_Scream(mobj_t *actor);
-void A_SPosAttack(mobj_t *actor);
-void A_VileChase(mobj_t *actor);
-void A_VileStart(mobj_t *actor);
-void A_VileTarget(mobj_t *actor);
-void A_VileAttack(mobj_t *actor);
-void A_StartFire(mobj_t *actor);
-void A_Fire(mobj_t *actor);
-void A_FireCrackle(mobj_t *actor);
-void A_Tracer(mobj_t *actor);
-void A_SkelWhoosh(mobj_t *actor);
-void A_SkelFist(mobj_t *actor);
-void A_SkelMissile(mobj_t *actor);
-void A_FatRaise(mobj_t *actor);
-void A_FatAttack1(mobj_t *actor);
-void A_FatAttack2(mobj_t *actor);
-void A_FatAttack3(mobj_t *actor);
-void A_BossDeath(mobj_t *actor);
-void A_CPosAttack(mobj_t *actor);
-void A_CPosRefire(mobj_t *actor);
-void A_TroopAttack(mobj_t *actor);
-void A_SargAttack(mobj_t *actor);
-void A_HeadAttack(mobj_t *actor);
-void A_BruisAttack(mobj_t *actor);
-void A_SkullAttack(mobj_t *actor);
-void A_Metal(mobj_t *actor);
-void A_SpidRefire(mobj_t *actor);
-void A_BabyMetal(mobj_t *actor);
-void A_BspiAttack(mobj_t *actor);
-void A_Hoof(mobj_t *actor);
-void A_CyberAttack(mobj_t *actor);
-void A_PainAttack(mobj_t *actor);
-void A_PainDie(mobj_t *actor);
-void A_KeenDie(mobj_t *actor);
-void A_BrainPain(mobj_t *actor);
-void A_BrainScream(mobj_t *actor);
-void A_BrainDie(mobj_t *actor);
-void A_BrainAwake(mobj_t *actor);
-void A_BrainSpit(mobj_t *actor);
-void A_SpawnSound(mobj_t *actor);
-void A_SpawnFly(mobj_t *actor);
-void A_BrainExplode(mobj_t *actor);
+class Actor:Entity
+{
+	void A_BFGSpray(void);
+	void A_Explode(void);
+	void A_Pain(void);
+	void A_PlayerScream(void);
+	void A_Fall(void);
+	void A_XScream(void);
+	void A_Look(void);
+	void A_Chase(void);
+	void A_FaceTarget(void);
+	void A_PosAttack(void);
+	void A_Scream(void);
+	void A_SPosAttack(void);
+	void A_VileChase(void);
+	void A_VileStart(void);
+	void A_VileTarget(void);
+	void A_VileAttack(void);
+	void A_StartFire(void);
+	void A_Fire(void);
+	void A_FireCrackle(void);
+	void A_Tracer(void);
+	void A_SkelWhoosh(void);
+	void A_SkelFist(void);
+	void A_SkelMissile(void);
+	void A_FatRaise(void);
+	void A_FatAttack1(void);
+	void A_FatAttack2(void);
+	void A_FatAttack3(void);
+	void A_BossDeath(void);
+	void A_CPosAttack(void);
+	void A_CPosRefire(void);
+	void A_TroopAttack(void);
+	void A_SargAttack(void);
+	void A_HeadAttack(void);
+	void A_BruisAttack(void);
+	void A_SkullAttack(void);
+	void A_Metal(void);
+	void A_SpidRefire(void);
+	void A_BabyMetal(void);
+	void A_BspiAttack(void);
+	void A_Hoof(void);
+	void A_CyberAttack(void);
+	void A_PainAttack(void);
+	void A_PainDie(void);
+	void A_KeenDie(void);
+	void A_BrainPain(void);
+	void A_BrainScream(void);
+	void A_BrainDie(void);
+	void A_BrainAwake(void);
+	void A_BrainSpit(void);
+	void A_SpawnSound(void);
+	void A_SpawnFly(void);
+	void A_BrainExplode(void);
+}
 
-__states__
+class Weapon:ViewEntity
+{
+	void A_Light0(void);
+	void A_WeaponReady(void);
+	void A_Lower(void);
+	void A_Raise(void);
+	void A_Punch(void);
+	void A_ReFire(void);
+	void A_FirePistol(void);
+	void A_Light1(void);
+	void A_FireShotgun(void);
+	void A_Light2(void);
+	void A_FireShotgun2(void);
+	void A_CheckReload(void);
+	void A_OpenShotgun2(void);
+	void A_LoadShotgun2(void);
+	void A_CloseShotgun2(void);
+	void A_FireCGun(void);
+	void A_GunFlash(void);
+	void A_FireMissile(void);
+	void A_Saw(void);
+	void A_FirePlasma(void);
+	void A_BFGsound(void);
+	void A_FireBFG(void);
+#ifdef GRENADE_LAUNCHER
+	void A_FireGrenade(void);
+#endif
+}
+
+__states__(Actor)
 {
 	S_NULL {"TROO", 0, -1.0, NULL, S_NULL}
+}
+__states__(Weapon)
+{
 	S_LIGHTDONE {"SHTG", 4, 0.0 / 35.0, A_Light0, S_NULL}
 	S_PUNCH {"PUNG", 0, "weapons/v_fists.md2", 0, 1.0 / 35.0, A_WeaponReady, S_PUNCH}
 	S_PUNCHDOWN {"PUNG", 0, "weapons/v_fists.md2", 1, 1.0 / 35.0, A_Lower, S_PUNCHDOWN}
@@ -196,6 +209,9 @@ __states__
 	S_BFG4 {"BFGG", 1, "weapons/v_bfg.md2", 6, 20.0 / 35.0, A_ReFire, S_BFG}
 	S_BFGFLASH1 {"BFGF", 0 | FF_FULLBRIGHT, 11.0 / 35.0, A_Light1, S_BFGFLASH2}
 	S_BFGFLASH2 {"BFGF", 1 | FF_FULLBRIGHT, 6.0 / 35.0, A_Light2, S_LIGHTDONE}
+}
+__states__(Actor)
+{
 	S_BLOOD1 {"BLUD", 2, 8.0 / 35.0, NULL, S_BLOOD2}
 	S_BLOOD2 {"BLUD", 1, 8.0 / 35.0, NULL, S_BLOOD3}
 	S_BLOOD3 {"BLUD", 0, 8.0 / 35.0, NULL, S_NULL}
@@ -1078,9 +1094,12 @@ __states__
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/12/12 18:57:40  dj_jl
+//	State functions now are methods of Actor and Weapon classes
+//
 //	Revision 1.6  2001/09/20 16:19:59  dj_jl
 //	Start using object-oriented stuff, beautification
-//
+//	
 //	Revision 1.5  2001/08/07 16:40:21  dj_jl
 //	Changed player model path
 //

@@ -44,13 +44,13 @@ mobj_t *braintargets[32];
 
 //==========================================================================
 //
-//  A_BrainAwake
+//  Actor::A_BrainAwake
 //
 //  Init boss spawner.
 //
 //==========================================================================
 
-void A_BrainAwake(mobj_t * mo)
+void Actor::A_BrainAwake(void)
 {
 	mobj_t *m;
 
@@ -72,13 +72,13 @@ void A_BrainAwake(mobj_t * mo)
 
 //==========================================================================
 //
-//  A_BrainSpit
+//  Actor::A_BrainSpit
 //
 //  Spawn a cube.
 //
 //==========================================================================
 
-void A_BrainSpit(mobj_t * mo)
+void Actor::A_BrainSpit(void)
 {
 	mobj_t *targ;
 	mobj_t *newmobj;
@@ -92,9 +92,9 @@ void A_BrainSpit(mobj_t * mo)
 	braintargeton = (braintargeton + 1) % numbraintargets;
 
 	// spawn brain missile
-	newmobj = SpawnMissile(mo, targ, MT_SPAWNSHOT);
+	newmobj = SpawnMissile(this, targ, MT_SPAWNSHOT);
 	newmobj->target = targ;
-	newmobj->reactiontime = ftoi((targ->origin.y - mo->origin.y) /
+	newmobj->reactiontime = ftoi((targ->origin.y - origin.y) /
 		newmobj->velocity.y / newmobj->time);
 
 	StartSoundName(NULL, "BossFire", CHAN_WEAPON);
@@ -102,35 +102,35 @@ void A_BrainSpit(mobj_t * mo)
 
 //==========================================================================
 //
-//  A_BrainPain
+//  Actor::A_BrainPain
 //
 //  Brain pain sound.
 //
 //==========================================================================
 
-void A_BrainPain(mobj_t * mo)
+void Actor::A_BrainPain(void)
 {
 	StartSoundName(NULL, "BossPain", CHAN_VOICE);
 }
 
 //==========================================================================
 //
-//  A_BrainScream
+//  Actor::A_BrainScream
 //
 //  Brain death sound, make explosions.
 //
 //==========================================================================
 
-void A_BrainScream(mobj_t * mo)
+void Actor::A_BrainScream(void)
 {
 	float x;
 	float y;
 	float z;
 	mobj_t *th;
 
-	for (x = mo->origin.x - 196.0; x < mo->origin.x + 320.0; x += 8.0)
+	for (x = origin.x - 196.0; x < origin.x + 320.0; x += 8.0)
 	{
-		y = mo->origin.y - 320.0;
+		y = origin.y - 320.0;
 		z = 1.0 / 512.0 + Random() * 512.0;
 		th = P_SpawnMobj(x, y, z, MT_ROCKET);
 		th->velocity.z = Random() * 2.0 * 35.0;
@@ -147,21 +147,21 @@ void A_BrainScream(mobj_t * mo)
 
 //==========================================================================
 //
-//  A_BrainExplode
+//  Actor::A_BrainExplode
 //
 //  Brain explosions.
 //
 //==========================================================================
 
-void A_BrainExplode(mobj_t * mo)
+void Actor::A_BrainExplode(void)
 {
 	float x;
 	float y;
 	float z;
 	mobj_t *th;
 
-	x = mo->origin.x + (Random() - Random()) * 8.0;
-	y = mo->origin.y;
+	x = origin.x + (Random() - Random()) * 8.0;
+	y = origin.y;
 	z = 1.0 / 512.0 + Random() * 512.0;
 	th = P_SpawnMobj(x, y, z, MT_ROCKET);
 	th->velocity.z = Random() * 2.0 * 35.0;
@@ -175,40 +175,40 @@ void A_BrainExplode(mobj_t * mo)
 
 //==========================================================================
 //
-//  A_BrainDie
+//  Actor::A_BrainDie
 //
 //  Killed brain, exit level.
 //
 //==========================================================================
 
-void A_BrainDie(mobj_t * mo)
+void Actor::A_BrainDie(void)
 {
 	G_ExitLevel();
 }
 
 //==========================================================================
 //
-//  A_SpawnSound
+//  Actor::A_SpawnSound
 //
 //  Travelling cube sound.
 //
 //==========================================================================
 
-void A_SpawnSound(mobj_t * mo)
+void Actor::A_SpawnSound(void)
 {
-	StartSoundName(mo, "CubeFly", CHAN_VOICE);
-	A_SpawnFly(mo);
+	StartSoundName(this, "CubeFly", CHAN_VOICE);
+	A_SpawnFly();
 }
 
 //==========================================================================
 //
-//  A_SpawnFly
+//  Actor::A_SpawnFly
 //
 //  Cube flying, spawn monster, when finished.
 //
 //==========================================================================
 
-void A_SpawnFly(mobj_t * mo)
+void Actor::A_SpawnFly(void)
 {
 	mobj_t *newmobj;
 	mobj_t *fog;
@@ -216,14 +216,13 @@ void A_SpawnFly(mobj_t * mo)
 	int r;
 	classid type;
 
-	if (--mo->reactiontime)
+	if (--reactiontime)
 		return;	// still flying
 
-	targ = mo->target;
+	targ = target;
 
 	// First spawn teleport fog.
-	fog =
-		P_SpawnMobj(targ->origin.x, targ->origin.y, targ->origin.z,
+	fog = P_SpawnMobj(targ->origin.x, targ->origin.y, targ->origin.z,
 		MT_SPAWNFIRE);
 	StartSoundName(fog, "Teleport", CHAN_VOICE);
 
@@ -255,8 +254,8 @@ void A_SpawnFly(mobj_t * mo)
 	else
 		type = MT_BRUISER;
 
-	newmobj =
-		P_SpawnMobj(targ->origin.x, targ->origin.y, targ->origin.z, type);
+	newmobj = P_SpawnMobj(targ->origin.x, targ->origin.y,
+		targ->origin.z, type);
 	if (P_LookForPlayers(newmobj, true))
 		SetMobjState(newmobj, newmobj->seestate);
 
@@ -264,47 +263,47 @@ void A_SpawnFly(mobj_t * mo)
 	P_TeleportMove(newmobj, newmobj->origin.x, newmobj->origin.y);
 
 	// remove self (i.e., cube).
-	P_RemoveMobj(mo);
+	P_RemoveMobj(this);
 }
 
 #else
 
-void A_BrainAwake(mobj_t * mo)
+void Actor::A_BrainAwake(void)
 {
 	NotDoom2();
 }
 
-void A_BrainSpit(mobj_t * mo)
+void Actor::A_BrainSpit(void)
 {
 	NotDoom2();
 }
 
-void A_BrainPain(mobj_t * mo)
+void Actor::A_BrainPain(void)
 {
 	NotDoom2();
 }
 
-void A_BrainScream(mobj_t * mo)
+void Actor::A_BrainScream(void)
 {
 	NotDoom2();
 }
 
-void A_BrainExplode(mobj_t * mo)
+void Actor::A_BrainExplode(void)
 {
 	NotDoom2();
 }
 
-void A_BrainDie(mobj_t * mo)
+void Actor::A_BrainDie(void)
 {
 	NotDoom2();
 }
 
-void A_SpawnSound(mobj_t * mo)
+void Actor::A_SpawnSound(void)
 {
 	NotDoom2();
 }
 
-void A_SpawnFly(mobj_t * mo)
+void Actor::A_SpawnFly(void)
 {
 	NotDoom2();
 }
@@ -314,6 +313,9 @@ void A_SpawnFly(mobj_t * mo)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/12 18:57:40  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.5  2001/10/22 17:23:11  dj_jl
 //  Floatification of angles
 //

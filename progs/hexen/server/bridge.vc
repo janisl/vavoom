@@ -184,29 +184,29 @@ float orbitTableY[256] = {
 
 //==========================================================================
 //
-//  A_BridgeOrbit
+//  Actor::A_BridgeOrbit
 //
 //==========================================================================
 
-void A_BridgeOrbit(mobj_t * actor)
+void Actor::A_BridgeOrbit(void)
 {
-	if (actor->target->special1)
+	if (target->special1)
 	{
-		SetMobjState(actor, S_NULL);
+		SetMobjState(this, S_NULL);
 	}
-	actor->args[0] += 3;
-	actor->origin.x = actor->target->origin.x + orbitTableX[actor->args[0]];
-	actor->origin.y = actor->target->origin.y + orbitTableY[actor->args[0]];
-	actor->origin.z = actor->target->origin.z;
+	args[0] += 3;
+	origin.x = target->origin.x + orbitTableX[args[0]];
+	origin.y = target->origin.y + orbitTableY[args[0]];
+	origin.z = target->origin.z;
 }
 
 //==========================================================================
 //
-//  A_BridgeInit
+//  Actor::A_BridgeInit
 //
 //==========================================================================
 
-void A_BridgeInit(mobj_t * actor)
+void Actor::A_BridgeInit(void)
 {
 	int startangle;
 	mobj_t *ball1;
@@ -214,28 +214,28 @@ void A_BridgeInit(mobj_t * actor)
 	mobj_t *ball3;
 	float cx, cy, cz;
 
-	cx = actor->origin.x;
-	cy = actor->origin.y;
-	cz = actor->origin.z;
+	cx = origin.x;
+	cy = origin.y;
+	cz = origin.z;
 	startangle = P_Random();
-	actor->special1 = 0;
+	special1 = 0;
 
 	// Spawn triad into world
 	ball1 = P_SpawnMobj(cx, cy, cz, MT_BRIDGEBALL);
 	ball1->args[0] = startangle;
-	ball1->target = actor;
+	ball1->target = this;
 
 	ball2 = P_SpawnMobj(cx, cy, cz, MT_BRIDGEBALL);
 	ball2->args[0] = (startangle + 85) & 255;
-	ball2->target = actor;
+	ball2->target = this;
 
 	ball3 = P_SpawnMobj(cx, cy, cz, MT_BRIDGEBALL);
 	ball3->args[0] = (startangle + 170) & 255;
-	ball3->target = actor;
+	ball3->target = this;
 
-	A_BridgeOrbit(ball1);
-	A_BridgeOrbit(ball2);
-	A_BridgeOrbit(ball3);
+	((Actor *)ball1)->A_BridgeOrbit();
+	((Actor *)ball2)->A_BridgeOrbit();
+	((Actor *)ball3)->A_BridgeOrbit();
 }
 
 //==========================================================================
@@ -244,7 +244,7 @@ void A_BridgeInit(mobj_t * actor)
 //
 //==========================================================================
 
-void A_BridgeRemove(mobj_t * actor)
+void A_BridgeRemove(mobj_t *actor)
 {
 	actor->special1 = true;	// Removing the bridge
 	actor->flags &= ~MF_SOLID;
@@ -254,6 +254,9 @@ void A_BridgeRemove(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

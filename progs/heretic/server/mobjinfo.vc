@@ -278,7 +278,7 @@ class MT_ARTIEGG:Actor
 //
 //==========================================================================
 
-class MT_EGGFX:Missile
+class MT_EGGFX:Actor
 {
 	defaultproperties
 	{
@@ -440,7 +440,7 @@ class MT_POD:Actor
 //
 //==========================================================================
 
-class MT_PODGOO:Missile
+class MT_PODGOO:Actor
 {
 	defaultproperties
 	{
@@ -484,7 +484,7 @@ class MT_PODGENERATOR:Actor
 //
 //==========================================================================
 
-class MT_SPLASH:Missile
+class MT_SPLASH:Actor
 {
 	defaultproperties
 	{
@@ -571,7 +571,7 @@ class MT_LAVASMOKE:Actor
 //
 //==========================================================================
 
-class MT_SLUDGECHUNK:Missile
+class MT_SLUDGECHUNK:Actor
 {
 	defaultproperties
 	{
@@ -1126,7 +1126,7 @@ class MT_MISC12:Actor
 //
 //==========================================================================
 
-class MT_VOLCANOBLAST:Missile
+class MT_VOLCANOBLAST:Actor
 {
 	defaultproperties
 	{
@@ -1153,7 +1153,7 @@ class MT_VOLCANOBLAST:Missile
 //
 //==========================================================================
 
-class MT_VOLCANOTBLAST:Missile
+class MT_VOLCANOTBLAST:Actor
 {
 	defaultproperties
 	{
@@ -1221,7 +1221,7 @@ class MT_TELEGLITGEN2:Actor
 //
 //==========================================================================
 
-class MT_TELEGLITTER:Missile
+class MT_TELEGLITTER:Actor
 {
 	defaultproperties
 	{
@@ -1242,7 +1242,7 @@ class MT_TELEGLITTER:Missile
 //
 //==========================================================================
 
-class MT_TELEGLITTER2:Missile
+class MT_TELEGLITTER2:Actor
 {
 	defaultproperties
 	{
@@ -1456,7 +1456,7 @@ class MT_MISC14:Actor
 //
 //==========================================================================
 
-class MT_BLASTERFX1:Missile
+class MT_BLASTERFX1:Actor
 {
 	defaultproperties
 	{
@@ -1506,7 +1506,7 @@ class MT_BLASTERSMOKE:Actor
 //
 //==========================================================================
 
-class MT_RIPPER:Missile
+class MT_RIPPER:Actor
 {
 	defaultproperties
 	{
@@ -1595,7 +1595,7 @@ class MT_WMACE:Actor
 //
 //==========================================================================
 
-class MT_MACEFX1:Missile
+class MT_MACEFX1:Actor
 {
 	defaultproperties
 	{
@@ -1621,7 +1621,7 @@ class MT_MACEFX1:Missile
 //
 //==========================================================================
 
-class MT_MACEFX2:Missile
+class MT_MACEFX2:Actor
 {
 	defaultproperties
 	{
@@ -1646,7 +1646,7 @@ class MT_MACEFX2:Missile
 //
 //==========================================================================
 
-class MT_MACEFX3:Missile
+class MT_MACEFX3:Actor
 {
 	defaultproperties
 	{
@@ -1671,7 +1671,7 @@ class MT_MACEFX3:Missile
 //
 //==========================================================================
 
-class MT_MACEFX4:Missile
+class MT_MACEFX4:Actor
 {
 	defaultproperties
 	{
@@ -1717,7 +1717,7 @@ class MT_WSKULLROD:Actor
 //
 //==========================================================================
 
-class MT_HORNRODFX1:Missile
+class MT_HORNRODFX1:Actor
 {
 	defaultproperties
 	{
@@ -1745,7 +1745,7 @@ class MT_HORNRODFX1:Missile
 //
 //==========================================================================
 
-class MT_HORNRODFX2:Missile
+class MT_HORNRODFX2:Actor
 {
 	defaultproperties
 	{
@@ -1773,7 +1773,7 @@ class MT_HORNRODFX2:Missile
 //
 //==========================================================================
 
-class MT_RAINPLR1:Missile
+class MT_RAINPLR1:Actor
 {
 	defaultproperties
 	{
@@ -1798,7 +1798,7 @@ class MT_RAINPLR1:Missile
 //
 //==========================================================================
 
-class MT_RAINPLR2:Missile
+class MT_RAINPLR2:Actor
 {
 	defaultproperties
 	{
@@ -1823,7 +1823,7 @@ class MT_RAINPLR2:Missile
 //
 //==========================================================================
 
-class MT_RAINPLR3:Missile
+class MT_RAINPLR3:Actor
 {
 	defaultproperties
 	{
@@ -1848,7 +1848,7 @@ class MT_RAINPLR3:Missile
 //
 //==========================================================================
 
-class MT_RAINPLR4:Missile
+class MT_RAINPLR4:Actor
 {
 	defaultproperties
 	{
@@ -1873,7 +1873,7 @@ class MT_RAINPLR4:Missile
 //
 //==========================================================================
 
-class MT_GOLDWANDFX1:Missile
+class MT_GOLDWANDFX1:Actor
 {
 	defaultproperties
 	{
@@ -1900,7 +1900,7 @@ class MT_GOLDWANDFX1:Missile
 //
 //==========================================================================
 
-class MT_GOLDWANDFX2:Missile
+class MT_GOLDWANDFX2:Actor
 {
 	defaultproperties
 	{
@@ -1989,7 +1989,7 @@ class MT_WPHOENIXROD:Actor
 //
 //==========================================================================
 
-class MT_PHOENIXFX1:Missile
+class MT_PHOENIXFX1:Actor
 {
 	defaultproperties
 	{
@@ -2040,7 +2040,7 @@ class MT_PHOENIXPUFF:Actor
 //
 //==========================================================================
 
-class MT_PHOENIXFX2:Missile
+class MT_PHOENIXFX2:Actor
 {
 	defaultproperties
 	{
@@ -2087,7 +2087,7 @@ class MT_MISC15:Actor
 //
 //==========================================================================
 
-class MT_CRBOWFX1:Missile
+class MT_CRBOWFX1:Actor
 {
 	defaultproperties
 	{
@@ -2114,7 +2114,7 @@ class MT_CRBOWFX1:Missile
 //
 //==========================================================================
 
-class MT_CRBOWFX2:Missile
+class MT_CRBOWFX2:Actor
 {
 	defaultproperties
 	{
@@ -2142,7 +2142,7 @@ class MT_CRBOWFX2:Missile
 //
 //==========================================================================
 
-class MT_CRBOWFX3:Missile
+class MT_CRBOWFX3:Actor
 {
 	defaultproperties
 	{
@@ -2212,7 +2212,7 @@ class MT_BLOOD:Actor
 //
 //==========================================================================
 
-class MT_BLOODSPLATTER:Missile
+class MT_BLOODSPLATTER:Actor
 {
 	defaultproperties
 	{
@@ -2358,7 +2358,7 @@ class MT_CHICKEN:Actor
 //
 //==========================================================================
 
-class MT_FEATHER:Missile
+class MT_FEATHER:Actor
 {
 	defaultproperties
 	{
@@ -2578,7 +2578,7 @@ class MT_MUMMYSOUL:Actor
 //
 //==========================================================================
 
-class MT_MUMMYFX1:Missile
+class MT_MUMMYFX1:Actor
 {
 	defaultproperties
 	{
@@ -2649,7 +2649,7 @@ class MT_BEAST:Actor
 //
 //==========================================================================
 
-class MT_BEASTBALL:Missile
+class MT_BEASTBALL:Actor
 {
 	defaultproperties
 	{
@@ -2675,7 +2675,7 @@ class MT_BEASTBALL:Missile
 //
 //==========================================================================
 
-class MT_BURNBALL:Missile
+class MT_BURNBALL:Actor
 {
 	defaultproperties
 	{
@@ -2701,7 +2701,7 @@ class MT_BURNBALL:Missile
 //
 //==========================================================================
 
-class MT_BURNBALLFB:Missile
+class MT_BURNBALLFB:Actor
 {
 	defaultproperties
 	{
@@ -2727,7 +2727,7 @@ class MT_BURNBALLFB:Missile
 //
 //==========================================================================
 
-class MT_PUFFY:Missile
+class MT_PUFFY:Actor
 {
 	defaultproperties
 	{
@@ -2795,7 +2795,7 @@ class MT_SNAKE:Actor
 //
 //==========================================================================
 
-class MT_SNAKEPRO_A:Missile
+class MT_SNAKEPRO_A:Actor
 {
 	defaultproperties
 	{
@@ -2821,7 +2821,7 @@ class MT_SNAKEPRO_A:Missile
 //
 //==========================================================================
 
-class MT_SNAKEPRO_B:Missile
+class MT_SNAKEPRO_B:Actor
 {
 	defaultproperties
 	{
@@ -2890,7 +2890,7 @@ class MT_HEAD:Actor
 //
 //==========================================================================
 
-class MT_HEADFX1:Missile
+class MT_HEADFX1:Actor
 {
 	defaultproperties
 	{
@@ -2916,7 +2916,7 @@ class MT_HEADFX1:Missile
 //
 //==========================================================================
 
-class MT_HEADFX2:Missile
+class MT_HEADFX2:Actor
 {
 	defaultproperties
 	{
@@ -2942,7 +2942,7 @@ class MT_HEADFX2:Missile
 //
 //==========================================================================
 
-class MT_HEADFX3:Missile
+class MT_HEADFX3:Actor
 {
 	defaultproperties
 	{
@@ -2968,7 +2968,7 @@ class MT_HEADFX3:Missile
 //
 //==========================================================================
 
-class MT_WHIRLWIND:Missile
+class MT_WHIRLWIND:Actor
 {
 	defaultproperties
 	{
@@ -3080,7 +3080,7 @@ class MT_WIZARD:Actor
 //
 //==========================================================================
 
-class MT_WIZFX1:Missile
+class MT_WIZFX1:Actor
 {
 	defaultproperties
 	{
@@ -3241,7 +3241,7 @@ class MT_IMPCHUNK2:Actor
 //
 //==========================================================================
 
-class MT_IMPBALL:Missile
+class MT_IMPBALL:Actor
 {
 	defaultproperties
 	{
@@ -3356,7 +3356,7 @@ class MT_KNIGHTGHOST:Actor
 //
 //==========================================================================
 
-class MT_KNIGHTAXE:Missile
+class MT_KNIGHTAXE:Actor
 {
 	defaultproperties
 	{
@@ -3383,7 +3383,7 @@ class MT_KNIGHTAXE:Missile
 //
 //==========================================================================
 
-class MT_REDAXE:Missile
+class MT_REDAXE:Actor
 {
 	defaultproperties
 	{
@@ -3453,7 +3453,7 @@ class MT_SORCERER1:Actor
 //
 //==========================================================================
 
-class MT_SRCRFX1:Missile
+class MT_SRCRFX1:Actor
 {
 	defaultproperties
 	{
@@ -3521,7 +3521,7 @@ class MT_SORCERER2:Actor
 //
 //==========================================================================
 
-class MT_SOR2FX1:Missile
+class MT_SOR2FX1:Actor
 {
 	defaultproperties
 	{
@@ -3569,7 +3569,7 @@ class MT_SOR2FXSPARK:Actor
 //
 //==========================================================================
 
-class MT_SOR2FX2:Missile
+class MT_SOR2FX2:Actor
 {
 	defaultproperties
 	{
@@ -3661,7 +3661,7 @@ class MT_MINOTAUR:Actor
 //
 //==========================================================================
 
-class MT_MNTRFX1:Missile
+class MT_MNTRFX1:Actor
 {
 	defaultproperties
 	{
@@ -3687,7 +3687,7 @@ class MT_MNTRFX1:Missile
 //
 //==========================================================================
 
-class MT_MNTRFX2:Missile
+class MT_MNTRFX2:Actor
 {
 	defaultproperties
 	{
@@ -3714,7 +3714,7 @@ class MT_MNTRFX2:Missile
 //
 //==========================================================================
 
-class MT_MNTRFX3:Missile
+class MT_MNTRFX3:Actor
 {
 	defaultproperties
 	{
@@ -4178,9 +4178,12 @@ __mobjinfo__
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/12/12 18:57:41  dj_jl
+//	State functions now are methods of Actor and Weapon classes
+//
 //	Revision 1.9  2001/12/04 18:25:36  dj_jl
 //	Replaced constructors with defaultproperties
-//
+//	
 //	Revision 1.8  2001/11/09 14:37:53  dj_jl
 //	Using constructors
 //	

@@ -37,32 +37,32 @@
 
 //==========================================================================
 //
-//  A_BeastAttack
+//  Actor::A_BeastAttack
 //
 //==========================================================================
 
-void A_BeastAttack(mobj_t * actor)
+void Actor::A_BeastAttack(void)
 {
-	if (!actor->target)
+	if (!target)
 	{
 		return;
 	}
-	StartSound(actor, actor->sound_attack, CHAN_WEAPON);
-	if (P_CheckMeleeRange(actor))
+	StartSound(this, sound_attack, CHAN_WEAPON);
+	if (P_CheckMeleeRange(this))
 	{
-		actor->target->Damage(actor, actor, HITDICE(3));
+		target->Damage(this, this, HITDICE(3));
 		return;
 	}
-	SpawnMissile(actor, actor->target, MT_BEASTBALL);
+	SpawnMissile(this, target, MT_BEASTBALL);
 }
 
 //==========================================================================
 //
-//  A_BeastPuff
+//  Actor::A_BeastPuff
 //
 //==========================================================================
 
-void A_BeastPuff(mobj_t * actor)
+void Actor::A_BeastPuff(void)
 {
 	float i1;
 	float i2;
@@ -70,9 +70,9 @@ void A_BeastPuff(mobj_t * actor)
 
 	if (P_Random() > 64)
 	{
-		i1 = actor->origin.x + (Random() - Random()) * 4.0;
-		i2 = actor->origin.y + (Random() - Random()) * 4.0;
-		i3 = actor->origin.z + (Random() - Random()) * 4.0;
+		i1 = origin.x + (Random() - Random()) * 4.0;
+		i2 = origin.y + (Random() - Random()) * 4.0;
+		i3 = origin.z + (Random() - Random()) * 4.0;
 		P_SpawnMobj(i1, i2, i3, MT_PUFFY);
 	}
 }
@@ -80,6 +80,9 @@ void A_BeastPuff(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/12 18:57:41  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.5  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

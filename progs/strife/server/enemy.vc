@@ -217,15 +217,15 @@ void A_FaceTarget(mobj_t * actor)
 
 //==========================================================================
 //
-//  A_Pain
+//  Actor::A_Pain
 //
 //==========================================================================
 
-void A_Pain(mobj_t * actor)
+void Actor::A_Pain(void)
 {
-	if (actor->sound_pain)
+	if (sound_pain)
 	{
-		StartSound(actor, actor->sound_pain, CHAN_VOICE);
+		StartSound(this, sound_pain, CHAN_VOICE);
 	}
 }
 
@@ -245,17 +245,17 @@ void A_Explode(mobj_t * thingy)
 
 //==========================================================================
 //
-//  A_Scream
+//  Actor::A_Scream
 //
 //  Death sound.
 //
 //==========================================================================
 
-void A_Scream(mobj_t * actor)
+void Actor::A_Scream(void)
 {
-	if (actor->sound_death)
+	if (sound_death)
 	{
-		StartSound(actor, actor->sound_death, CHAN_VOICE);
+		StartSound(this, sound_death, CHAN_VOICE);
 	}
 }
 
@@ -274,16 +274,16 @@ void A_XScream(mobj_t * actor)
 
 //==========================================================================
 //
-//  A_Fall
+//  Actor::A_Fall
 //
 //  Unset blocking.
 //
 //==========================================================================
 
-void A_Fall(mobj_t * actor)
+void Actor::A_Fall(void)
 {
 	// actor is on ground, it can be walked over
-	actor->flags &= ~MF_SOLID;
+	flags &= ~MF_SOLID;
 
 	// So change this if corpse objects
 	// are meant to be obstacles.
@@ -291,30 +291,33 @@ void A_Fall(mobj_t * actor)
 
 //==========================================================================
 //
-//  A_PlayerScream
+//  Actor::A_PlayerScream
 //
 //  Player death sound
 //
 //==========================================================================
 
-void A_PlayerScream(mobj_t * mo)
+void Actor::A_PlayerScream(void)
 {
 	// Default death sound.
 	string sound = "PlayerDeath";
 
-	if (mo->health < -50)
+	if (health < -50)
 	{
 		// IF THE PLAYER DIES
 		// LESS THAN -50% WITHOUT GIBBING
 		sound = "PlayerExtremeDeath";
 	}
 
-	StartSoundName(mo, sound, CHAN_VOICE);
+	StartSoundName(this, sound, CHAN_VOICE);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.5  2001/10/22 17:23:13  dj_jl
 //  Floatification of angles
 //

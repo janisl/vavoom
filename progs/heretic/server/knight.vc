@@ -37,46 +37,46 @@
 
 //==========================================================================
 //
-//  A_KnightAttack
+//  Actor::A_KnightAttack
 //
 //==========================================================================
 
-void A_KnightAttack(mobj_t * actor)
+void Actor::A_KnightAttack(void)
 {
-	if (!actor->target)
+	if (!target)
 	{
 		return;
 	}
-	if (P_CheckMeleeRange(actor))
+	if (P_CheckMeleeRange(this))
 	{
-		actor->target->Damage(actor, actor, HITDICE(3));
-		StartSoundName(actor, "KnightAttack2", CHAN_WEAPON);
+		target->Damage(this, this, HITDICE(3));
+		StartSoundName(this, "KnightAttack2", CHAN_WEAPON);
 		return;
 	}
 	// Throw axe
-	StartSound(actor, actor->sound_attack, CHAN_WEAPON);
-	if (actor->type == MT_KNIGHTGHOST || P_Random() < 40)
-	{	// Red axe
-		SpawnMissile(actor, actor->target, MT_REDAXE);
+	StartSound(this, sound_attack, CHAN_WEAPON);
+	if (type == MT_KNIGHTGHOST || P_Random() < 40)
+	{
+		// Red axe
+		SpawnMissile(this, target, MT_REDAXE);
 		return;
 	}
 	// Green axe
-	SpawnMissile(actor, actor->target, MT_KNIGHTAXE);
+	SpawnMissile(this, target, MT_KNIGHTAXE);
 }
 
 //==========================================================================
 //
-//  A_DripBlood
+//  Actor::A_DripBlood
 //
 //==========================================================================
 
-void A_DripBlood(mobj_t * actor)
+void Actor::A_DripBlood(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(actor->origin.x + (Random() - Random()) * 8.0,
-		actor->origin.y + (Random() - Random()) * 8.0,
-		actor->origin.z, MT_BLOOD);
+	mo = P_SpawnMobj(origin.x + (Random() - Random()) * 8.0,
+		origin.y + (Random() - Random()) * 8.0, origin.z, MT_BLOOD);
 	mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
 	mo->velocity.y = (Random() - Random()) * 4.0 * 35.0;
 	mo->flags2 |= MF2_LOGRAV;
@@ -85,6 +85,9 @@ void A_DripBlood(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/12 18:57:41  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.5  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

@@ -37,84 +37,85 @@
 
 //==========================================================================
 //
-//  A_MummyAttack
+//  Actor::A_MummyAttack
 //
 //==========================================================================
 
-void A_MummyAttack(mobj_t * actor)
+void Actor::A_MummyAttack(void)
 {
-	if (!actor->target)
+	if (!target)
 	{
 		return;
 	}
-	StartSound(actor, actor->sound_attack, CHAN_WEAPON);
-	if (P_CheckMeleeRange(actor))
+	StartSound(this, sound_attack, CHAN_WEAPON);
+	if (P_CheckMeleeRange(this))
 	{
-		actor->target->Damage(actor, actor, HITDICE(2));
-		StartSoundName(actor, "MumyAttack2", CHAN_WEAPON);
+		target->Damage(this, this, HITDICE(2));
+		StartSoundName(this, "MumyAttack2", CHAN_WEAPON);
 		return;
 	}
-	StartSoundName(actor, "MumyAttack1", CHAN_WEAPON);
+	StartSoundName(this, "MumyAttack1", CHAN_WEAPON);
 }
 
 //==========================================================================
 //
-//  A_MummyAttack2
+//  Actor::A_MummyAttack2
 //
 //  Mummy leader missile attack.
 //
 //==========================================================================
 
-void A_MummyAttack2(mobj_t * actor)
+void Actor::A_MummyAttack2(void)
 {
 	mobj_t *mo;
 
-	if (!actor->target)
+	if (!target)
 	{
 		return;
 	}
-	if (P_CheckMeleeRange(actor))
+	if (P_CheckMeleeRange(this))
 	{
-		actor->target->Damage(actor, actor, HITDICE(2));
+		target->Damage(this, this, HITDICE(2));
 		return;
 	}
-	mo = SpawnMissile(actor, actor->target, MT_MUMMYFX1);
+	mo = SpawnMissile(this, target, MT_MUMMYFX1);
 	if (mo)
 	{
-		mo->specialmobj1 = actor->target;
+		mo->specialmobj1 = target;
 	}
 }
 
 //==========================================================================
 //
-//  A_MummySoul
+//  Actor::A_MummySoul
 //
 //==========================================================================
 
-void A_MummySoul(mobj_t * mummy)
+void Actor::A_MummySoul(void)
 {
 	mobj_t *mo;
 
-	mo =
-		P_SpawnMobj(mummy->origin.x, mummy->origin.y, mummy->origin.z + 10.0,
-		MT_MUMMYSOUL);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 10.0, MT_MUMMYSOUL);
 	mo->velocity.z = 1.0 * 35.0;
 }
 
 //==========================================================================
 //
-// PROC A_MummyFX1Seek
+//	Actor::A_MummyFX1Seek
 //
 //==========================================================================
 
-void A_MummyFX1Seek(mobj_t * actor)
+void Actor::A_MummyFX1Seek(void)
 {
-	P_SeekerMissile(actor, 10.0, 20.0);
+	P_SeekerMissile(this, 10.0, 20.0);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.6  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

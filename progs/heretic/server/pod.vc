@@ -39,25 +39,25 @@
 
 //==========================================================================
 //
-//  A_MakePod
+//  Actor::A_MakePod
 //
 //==========================================================================
 
-void A_MakePod(mobj_t * actor)
+void Actor::A_MakePod(void)
 {
 	mobj_t *mo;
 	float x;
 	float y;
 	float z;
 
-	if (actor->special1 == MAX_GEN_PODS)
+	if (special1 == MAX_GEN_PODS)
 	{
 		// Too many generated pods
 		return;
 	}
-	x = actor->origin.x;
-	y = actor->origin.y;
-	z = actor->origin.z;
+	x = origin.x;
+	y = origin.y;
+	z = origin.z;
 	mo = P_SpawnMobj(x, y, ONFLOORZ, MT_POD);
 	if (!P_CheckPosition(mo, x, y))
 	{
@@ -68,17 +68,17 @@ void A_MakePod(mobj_t * actor)
 	SetMobjState(mo, S_POD_GROW1);
 	P_ThrustMobj(mo, Random() * 360.0, 4.5);
 	StartSoundName(mo, "PodNew", CHAN_VOICE);
-	actor->special1++;	// Increment generated pod count
-	mo->specialmobj2 = actor;	// Link the generator to the pod
+	special1++;	// Increment generated pod count
+	mo->specialmobj2 = this;	// Link the generator to the pod
 }
 
 //==========================================================================
 //
-//  A_PodPain
+//  Actor::A_PodPain
 //
 //==========================================================================
 
-void A_PodPain(mobj_t * actor)
+void Actor::A_PodPain(void)
 {
 	int i;
 	int count;
@@ -93,10 +93,8 @@ void A_PodPain(mobj_t * actor)
 	count = chance > 240 ? 2 : 1;
 	for (i = 0; i < count; i++)
 	{
-		goo =
-			P_SpawnMobj(actor->origin.x, actor->origin.y,
-			actor->origin.z + 48.0, MT_PODGOO);
-		goo->target = actor;
+		goo = P_SpawnMobj(origin.x, origin.y, origin.z + 48.0, MT_PODGOO);
+		goo->target = this;
 		goo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
 		goo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
 		goo->velocity.z = (0.5 + Random() * 2.0) * 35.0;
@@ -105,17 +103,17 @@ void A_PodPain(mobj_t * actor)
 
 //==========================================================================
 //
-//  A_RemovePod
+//  Actor::A_RemovePod
 //
 //==========================================================================
 
-void A_RemovePod(mobj_t * actor)
+void Actor::A_RemovePod(void)
 {
 	mobj_t *mo;
 
-	if (actor->specialmobj2)
+	if (specialmobj2)
 	{
-		mo = actor->specialmobj2;
+		mo = specialmobj2;
 		if (mo->special1 > 0)
 		{
 			mo->special1--;
@@ -126,6 +124,9 @@ void A_RemovePod(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.5  2001/10/22 17:23:12  dj_jl
 //  Floatification of angles
 //

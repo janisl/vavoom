@@ -37,29 +37,32 @@
 
 //==========================================================================
 //
-//  A_ClinkAttack
+//  Actor::A_ClinkAttack
 //
 //==========================================================================
 
-void A_ClinkAttack(mobj_t * actor)
+void Actor::A_ClinkAttack(void)
 {
 	int damage;
 
-	if (!actor->target)
+	if (!target)
 	{
 		return;
 	}
-	StartSound(actor, actor->sound_attack, CHAN_WEAPON);
-	if (P_CheckMeleeRange(actor))
+	StartSound(this, sound_attack, CHAN_WEAPON);
+	if (P_CheckMeleeRange(this))
 	{
 		damage = ((P_Random() % 7) + 3);
-		actor->target->Damage(actor, actor, damage);
+		target->Damage(this, this, damage);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/12 18:57:41  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.5  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

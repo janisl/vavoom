@@ -98,7 +98,7 @@ boolean SetMobjState(mobj_t * mobj, int state)
 	// Call action functions when the state is set
 	if (st->function)
 	{
-		st->function(mobj);
+		st->function(*mobj);
 	}
 
 	state = st->nextstate;
@@ -1548,6 +1548,9 @@ void P_NightmareRespawn(mobj_t * mobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2001/12/12 18:57:41  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.14  2001/12/04 18:36:42  dj_jl
 //  Bots, directly from SkullTag!
 //

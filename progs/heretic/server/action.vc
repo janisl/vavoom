@@ -25,82 +25,82 @@
 
 //==========================================================================
 //
-//  A_RestoreSpecialThing1
+//  Actor::A_RestoreSpecialThing1
 //
 //  Make a special thing visible again.
 //
 //==========================================================================
 
-void A_RestoreSpecialThing1(mobj_t * thing)
+void Actor::A_RestoreSpecialThing1(void)
 {
-	if (thing->type == MT_WMACE)
+	if (type == MT_WMACE)
 	{
 		// Do random mace placement
-		RepositionMace(thing);
+		RepositionMace(this);
 	}
-	thing->translucency -= 100;
-	StartSoundName(thing, "Respawn", CHAN_VOICE);
+	translucency -= 100;
+	StartSoundName(this, "Respawn", CHAN_VOICE);
 }
 
 //==========================================================================
 //
-//  A_RestoreSpecialThing2
+//  Actor::A_RestoreSpecialThing2
 //
 //==========================================================================
 
-void A_RestoreSpecialThing2(mobj_t * thing)
+void Actor::A_RestoreSpecialThing2(void)
 {
-	thing->flags |= MF_SPECIAL;
-	SetMobjState(thing, thing->spawnstate);
+	flags |= MF_SPECIAL;
+	SetMobjState(this, spawnstate);
 }
 
 //==========================================================================
 //
-//  A_HideThing
+//  Actor::A_HideThing
 //
 //==========================================================================
 
-void A_HideThing(mobj_t * actor)
+void Actor::A_HideThing(void)
 {
-	actor->translucency += 100;
+	translucency += 100;
 }
 
 //==========================================================================
 //
-//  A_UnHideThing
+//  Actor::A_UnHideThing
 //
 //==========================================================================
 
-void A_UnHideThing(mobj_t * actor)
+void Actor::A_UnHideThing(void)
 {
-	actor->translucency -= 100;
+	translucency -= 100;
 }
 
 //==========================================================================
 //
-//  A_RestoreArtifact
+//  Actor::A_RestoreArtifact
 //
 //==========================================================================
 
-void A_RestoreArtifact(mobj_t * arti)
+void Actor::A_RestoreArtifact(void)
 {
-	arti->flags |= MF_SPECIAL;
-	SetMobjState(arti, arti->spawnstate);
-	StartSoundName(arti, "Respawn", CHAN_VOICE);
+	flags |= MF_SPECIAL;
+	SetMobjState(this, spawnstate);
+	StartSoundName(this, "Respawn", CHAN_VOICE);
 }
 
 //==========================================================================
 //
-//  A_InitKeyGizmo
+//  Actor::A_InitKeyGizmo
 //
 //==========================================================================
 
-void A_InitKeyGizmo(mobj_t * gizmo)
+void Actor::A_InitKeyGizmo(void)
 {
 	mobj_t *mo;
 	int state;
 
-	switch (gizmo->type)
+	switch (type)
 	{
 	case MT_KEYGIZMOBLUE:
 		state = S_KGZ_BLUEFLOAT1;
@@ -114,22 +114,21 @@ void A_InitKeyGizmo(mobj_t * gizmo)
 	default:
 		break;
 	}
-	mo = P_SpawnMobj(gizmo->origin.x, gizmo->origin.y, gizmo->origin.z + 60.0,
-		MT_KEYGIZMOFLOAT);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 60.0, MT_KEYGIZMOFLOAT);
 	SetMobjState(mo, state);
 }
 
 //==========================================================================
 //
-//  A_ESound
+//  Actor::A_ESound
 //
 //==========================================================================
 
-void A_ESound(mobj_t * mo)
+void Actor::A_ESound(void)
 {
 	string sound = "";
 
-	switch (mo->type)
+	switch (type)
 	{
 	case MT_SOUNDWATERFALL:
 		sound = "Waterfall";
@@ -138,12 +137,15 @@ void A_ESound(mobj_t * mo)
 		sound = "Wind";
 		break;
 	}
-	StartSoundName(mo, sound, CHAN_VOICE);
+	StartSoundName(this, sound, CHAN_VOICE);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/12/12 18:57:41  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

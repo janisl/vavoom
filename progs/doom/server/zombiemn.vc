@@ -37,40 +37,40 @@
 
 //==========================================================================
 //
-//  A_PosAttack
+//  Actor::A_PosAttack
 //
 //  Zombieman attack.
 //
 //==========================================================================
 
-void A_PosAttack(mobj_t * actor)
+void Actor::A_PosAttack(void)
 {
 	int damage;
-	TAVec angles;
-	TVec vforward;
+	TVec dir;
 
-	if (!actor->target)
+	if (!target)
 		return;
 
-	A_FaceTarget(actor);
+	A_FaceTarget();
 
-	avcpy(actor->angles, angles);
-	AimLineAttack(actor, &angles, MISSILERANGE);
-	angles.yaw = AngleMod360(angles.yaw + (Random() - Random()) * 45.0 / 2.0);
-	AngleVector(&angles, &vforward);
+	dir = AimLineAttack(this, angles, MISSILERANGE);
+	VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 
-	StartSoundName(actor, "PistolFire", CHAN_WEAPON);
+	StartSoundName(this, "PistolFire", CHAN_WEAPON);
 
 	damage = ((P_Random() % 5) + 1) * 3;
 
-	LineAttack(actor, &vforward, MISSILERANGE, damage);
+	LineAttack(this, &dir, MISSILERANGE, damage);
 
-	actor->effects |= EF_DL_MUZZLEFLASH;
+	effects |= EF_DL_MUZZLEFLASH;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/12/12 18:57:40  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.6  2001/10/22 17:23:12  dj_jl
 //  Floatification of angles
 //

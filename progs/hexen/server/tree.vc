@@ -37,25 +37,25 @@
 
 //============================================================================
 //
-//  A_LeafSpawn
+//  Actor::A_LeafSpawn
 //
 //============================================================================
 
-void A_LeafSpawn(mobj_t * actor)
+void Actor::A_LeafSpawn(void)
 {
 	mobj_t *mo;
 	int i;
 
 	for (i = (P_Random() & 3) + 1; i; i--)
 	{
-		mo = P_SpawnMobj(actor->origin.x + (Random() - Random()) * 64.0,
-			actor->origin.y + (Random() - Random()) * 64.0,
-			actor->origin.z + Random() * 64.0,
+		mo = P_SpawnMobj(origin.x + (Random() - Random()) * 64.0,
+			origin.y + (Random() - Random()) * 64.0,
+			origin.z + Random() * 64.0,
 			P_Random() & 1 ? MT_LEAF2 : MT_LEAF1);
 		if (mo)
 		{
-			P_ThrustMobj(mo, actor->angles.yaw, Random() * 2.0 + 3.0);
-			mo->target = actor;
+			P_ThrustMobj(mo, angles.yaw, Random() * 2.0 + 3.0);
+			mo->target = this;
 			mo->special1 = 0;
 		}
 	}
@@ -63,73 +63,75 @@ void A_LeafSpawn(mobj_t * actor)
 
 //============================================================================
 //
-//  A_LeafThrust
+//  Actor::A_LeafThrust
 //
 //============================================================================
 
-void A_LeafThrust(mobj_t * actor)
+void Actor::A_LeafThrust(void)
 {
 	if (P_Random() > 96)
 	{
 		return;
 	}
-	actor->velocity.z += (Random() * 2.0 + 1.0) * 35.0;
+	velocity.z += (Random() * 2.0 + 1.0) * 35.0;
 }
 
 //============================================================================
 //
-//  A_LeafCheck
+//  Actor::A_LeafCheck
 //
 //============================================================================
 
-void A_LeafCheck(mobj_t * actor)
+void Actor::A_LeafCheck(void)
 {
-	actor->special1++;
-	if (actor->special1 >= 20)
+	special1++;
+	if (special1 >= 20)
 	{
-		SetMobjState(actor, S_NULL);
+		SetMobjState(this, S_NULL);
 		return;
 	}
 	if (P_Random() > 64)
 	{
-		if (!actor->velocity.x && !actor->velocity.y)
+		if (!velocity.x && !velocity.y)
 		{
-			P_ThrustMobj(actor, actor->target->angles.yaw,
-				Random() * 2.0 + 1.0);
+			P_ThrustMobj(this, target->angles.yaw, Random() * 2.0 + 1.0);
 		}
 		return;
 	}
-	SetMobjState(actor, S_LEAF1_8);
-	actor->velocity.z = (Random() * 2.0 + 1.0) * 35.0;
-	P_ThrustMobj(actor, actor->target->angles.yaw, Random() * 2.0 + 2.0);
-	actor->flags |= MF_MISSILE;
+	SetMobjState(this, S_LEAF1_8);
+	velocity.z = (Random() * 2.0 + 1.0) * 35.0;
+	P_ThrustMobj(this, target->angles.yaw, Random() * 2.0 + 2.0);
+	flags |= MF_MISSILE;
 }
 
 //===========================================================================
 //
-//  A_TreeDeath
+//  Actor::A_TreeDeath
 //
 //===========================================================================
 
-void A_TreeDeath(mobj_t * actor)
+void Actor::A_TreeDeath(void)
 {
-	if (!(actor->flags2 & MF2_FIREDAMAGE))
+	if (!(flags2 & MF2_FIREDAMAGE))
 	{
-		actor->height *= 4.0;
-		actor->flags |= MF_SHOOTABLE;
-		actor->flags &= ~(MF_CORPSE + MF_DROPOFF);
-		actor->health = 35;
+		height *= 4.0;
+		flags |= MF_SHOOTABLE;
+		flags &= ~(MF_CORPSE + MF_DROPOFF);
+		health = 35;
 		return;
 	}
 	else
 	{
-		SetMobjState(actor, actor->meleestate);
+		SetMobjState(this, meleestate);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.5  2001/10/22 17:23:13  dj_jl
 //  Floatification of angles
 //

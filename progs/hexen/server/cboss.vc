@@ -25,6 +25,8 @@
 
 // MACROS ------------------------------------------------------------------
 
+#define CLASS_BOSS_STRAFE_RANGE		64.0 * 10.0
+
 // CONSTANTS ---------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
@@ -37,120 +39,119 @@
 
 //============================================================================
 //
-//  A_ClassBossHealth
+//  Actor::A_ClassBossHealth
 //
 //============================================================================
 
-void A_ClassBossHealth(mobj_t * actor)
+void Actor::A_ClassBossHealth(void)
 {
 	if (netgame && !deathmatch)	// co-op only
 	{
-		if (!actor->special1)
+		if (!special1)
 		{
-			actor->health *= 5;
-			actor->special1 = true;	// has been initialized
+			health *= 5;
+			special1 = true;	// has been initialized
 		}
 	}
 }
 
 //============================================================================
 //
-//  A_FastChase
+//  Actor::A_FastChase
 //
 //============================================================================
 
-#define CLASS_BOSS_STRAFE_RANGE		64.0 * 10.0
-
-void A_FastChase(mobj_t * actor)
+void Actor::A_FastChase(void)
 {
 	float delta;
 	float dist;
 	float ang;
-	mobj_t *target;
 
-	if (actor->reactiontime)
+	if (reactiontime)
 	{
-		actor->reactiontime--;
+		reactiontime--;
 	}
 
 	// Modify target threshold
-	if (actor->threshold)
+	if (threshold)
 	{
-		actor->threshold--;
+		threshold--;
 	}
 
 	if (gameskill == sk_nightmare)
 	{
 		// Monsters move faster in nightmare mode
-		actor->time *= 0.5;
-		if (actor->time < 0.1)
+		time *= 0.5;
+		if (time < 0.1)
 		{
-			actor->time = 0.1;
+			time = 0.1;
 		}
 	}
 
 	//
 	// turn towards movement direction if not there yet
 	//
-	if (actor->movedir < 8)
+	if (movedir < 8)
 	{
-		actor->angles.yaw = itof(ftoi(actor->angles.yaw / 45.0)) * 45.0;
-		delta = AngleMod180(actor->angles.yaw - itof(actor->movedir) * 45.0);
+		angles.yaw = itof(ftoi(angles.yaw / 45.0)) * 45.0;
+		delta = AngleMod180(angles.yaw - itof(movedir) * 45.0);
 		if (delta > 0.0)
 		{
-			actor->angles.yaw = AngleMod360(actor->angles.yaw - 45.0);
+			angles.yaw = AngleMod360(angles.yaw - 45.0);
 		}
 		else if (delta < 0.0)
 		{
-			actor->angles.yaw = AngleMod360(actor->angles.yaw + 45.0);
+			angles.yaw = AngleMod360(angles.yaw + 45.0);
 		}
 	}
 
-	if (!actor->target || !(actor->target->flags & MF_SHOOTABLE))
-	{	// look for a new target
-		if (P_LookForPlayers(actor, true))
-		{	// got a new target
+	if (!target || !(target->flags & MF_SHOOTABLE))
+	{
+		// look for a new target
+		if (P_LookForPlayers(this, true))
+		{
+			// got a new target
 			return;
 		}
-		SetMobjState(actor, actor->spawnstate);
+		SetMobjState(this, spawnstate);
 		return;
 	}
 
 	//
 	// don't attack twice in a row
 	//
-	if (actor->flags & MF_JUSTATTACKED)
+	if (flags & MF_JUSTATTACKED)
 	{
-		actor->flags &= ~MF_JUSTATTACKED;
+		flags &= ~MF_JUSTATTACKED;
 		if (gameskill != sk_nightmare)
-			P_NewChaseDir(actor);
+			P_NewChaseDir(this);
 		return;
 	}
 
 	// Strafe
-	if (actor->special2 > 0)
+	if (special2 > 0)
 	{
-		actor->special2--;
+		special2--;
 	}
 	else
 	{
-		target = actor->target;
-		actor->special2 = 0;
-		actor->velocity.x = actor->velocity.y = 0.0;
-		dist = MobjDist(actor, target);
+		special2 = 0;
+		velocity.x = 0.0;
+		velocity.y = 0.0;
+		dist = MobjDist(this, target);
 		if (dist < CLASS_BOSS_STRAFE_RANGE)
 		{
 			if (P_Random() < 100)
 			{
-				ang = atan2(target->origin.y - actor->origin.y,
-					target->origin.x - actor->origin.x);
+				ang = atan2(target->origin.y - origin.y,
+					target->origin.x - origin.x);
 				if (P_Random() < 128)
 					ang = AngleMod360(ang + 90.0);
 				else
 					ang = AngleMod360(ang - 90.0);
-				actor->velocity.x = 13.0 * cos(ang) * 35.0;
-				actor->velocity.y = 13.0 * sin(ang) * 35.0;
-				actor->special2 = 3;	// strafe time
+				velocity.x = 13.0 * cos(ang) * 35.0;
+				velocity.y = 13.0 * sin(ang) * 35.0;
+				special2 = 3;	// strafe time
 			}
 		}
 	}
@@ -158,14 +159,14 @@ void A_FastChase(mobj_t * actor)
 	//
 	// check for missile attack
 	//
-	if (actor->missilestate)
+	if (missilestate)
 	{
-		if ((gameskill == sk_nightmare) || !actor->movecount)
+		if ((gameskill == sk_nightmare) || !movecount)
 		{
-			if (CheckMissileRange(actor))
+			if (CheckMissileRange(this))
 			{
-				SetMobjState(actor, actor->missilestate);
-				actor->flags |= MF_JUSTATTACKED;
+				SetMobjState(this, missilestate);
+				flags |= MF_JUSTATTACKED;
 				return;
 			}
 		}
@@ -174,27 +175,27 @@ void A_FastChase(mobj_t * actor)
 	//
 	// possibly choose another target
 	//
-	if (netgame && !actor->threshold && !P_CheckSight(actor, actor->target))
+	if (netgame && !threshold && !P_CheckSight(this, target))
 	{
-		if (P_LookForPlayers(actor, true))
+		if (P_LookForPlayers(this, true))
 			return;	// got a new target
 	}
 
 	//
 	// chase towards player
 	//
-	if (!actor->special2)
+	if (!special2)
 	{
-		if (--actor->movecount < 0 || !P_Move(actor))
+		if (--movecount < 0 || !P_Move(this))
 		{
-			P_NewChaseDir(actor);
+			P_NewChaseDir(this);
 		}
 	}
 }
 
 //============================================================================
 //
-// A_FSwordAttack2
+//	A_FSwordAttack2
 //
 //============================================================================
 
@@ -202,32 +203,37 @@ void A_FSwordAttack2(mobj_t * actor)
 {
 	float angle = actor->angles.yaw;
 
-	SpawnMissileAngle(actor, MT_FSWORD_MISSILE, AngleMod360(angle + 45.0 / 4.0), 0.0);
-	SpawnMissileAngle(actor, MT_FSWORD_MISSILE, AngleMod360(angle + 45.0 / 8.0), 0.0);
+	SpawnMissileAngle(actor, MT_FSWORD_MISSILE,
+		AngleMod360(angle + 45.0 / 4.0), 0.0);
+	SpawnMissileAngle(actor, MT_FSWORD_MISSILE,
+		AngleMod360(angle + 45.0 / 8.0), 0.0);
 	SpawnMissileAngle(actor, MT_FSWORD_MISSILE, angle, 0.0);
-	SpawnMissileAngle(actor, MT_FSWORD_MISSILE, AngleMod360(angle - 45.0 / 8.0), 0.0);
-	SpawnMissileAngle(actor, MT_FSWORD_MISSILE, AngleMod360(angle - 45.0 / 4.0), 0.0);
+	SpawnMissileAngle(actor, MT_FSWORD_MISSILE,
+		AngleMod360(angle - 45.0 / 8.0), 0.0);
+	SpawnMissileAngle(actor, MT_FSWORD_MISSILE,
+		AngleMod360(angle - 45.0 / 4.0), 0.0);
 	StartSoundName(actor, "FighterSwordFire", CHAN_WEAPON);
 }
 
 //============================================================================
 //
-//  A_FighterAttack
+//  Actor::A_FighterAttack
 //
 //============================================================================
 
-void A_FighterAttack(mobj_t * actor)
+void Actor::A_FighterAttack(void)
 {
-	if (!actor->target)
+	if (!target)
 		return;
-	A_FSwordAttack2(actor);
+	A_FSwordAttack2(this);
 }
 
 //============================================================================
 //
-// A_CHolyAttack3
+//	A_CHolyAttack3
 //
 //  Spawns the spirits
+//
 //============================================================================
 
 void A_CHolyAttack3(mobj_t * actor)
@@ -238,15 +244,15 @@ void A_CHolyAttack3(mobj_t * actor)
 
 //============================================================================
 //
-//  A_ClericAttack
+//  Actor::A_ClericAttack
 //
 //============================================================================
 
-void A_ClericAttack(mobj_t * actor)
+void Actor::A_ClericAttack(void)
 {
-	if (!actor->target)
+	if (!target)
 		return;
-	A_CHolyAttack3(actor);
+	A_CHolyAttack3(this);
 }
 
 //============================================================================
@@ -269,7 +275,7 @@ void MStaffSpawn2(mobj_t * actor, float angle)
 
 //============================================================================
 //
-// A_MStaffAttack2 - for use by mage class boss
+//	A_MStaffAttack2 - for use by mage class boss
 //
 //============================================================================
 
@@ -286,20 +292,23 @@ void A_MStaffAttack2(mobj_t * actor)
 
 //============================================================================
 //
-//  A_MageAttack
+//  Actor::A_MageAttack
 //
 //============================================================================
 
-void A_MageAttack(mobj_t * actor)
+void Actor::A_MageAttack(void)
 {
-	if (!actor->target)
+	if (!target)
 		return;
-	A_MStaffAttack2(actor);
+	A_MStaffAttack2(this);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.5  2001/10/22 17:23:12  dj_jl
 //  Floatification of angles
 //

@@ -23,30 +23,7 @@
 //**
 //**************************************************************************
 
-void A_FireGrenade(mobj_t * actor);	// in weapons.c
-void P_ExplodeMissile(mobj_t * mo);
-
-__states__
-{
-	//  Weapon on ground
-	S_GLAUNCH { "GLAU", 0, -1.0, NULL, S_NULL}
-
-	//  Weapon in player view
-	S_GRENLAUNCH { "GRLG", 0, 1.0 / 35.0, A_WeaponReady, S_GRENLAUNCH}
-	S_GRENLAUNCHDOWN { "GRLG", 0, 1.0 / 35.0, A_Lower, S_GRENLAUNCHDOWN}
-	S_GRENLAUNCHUP { "GRLG", 0, 1.0 / 35.0, A_Raise, S_GRENLAUNCHUP}
-	S_GRENLAUNCH1 { "GRLG", 1, 8.0 / 35.0, A_GunFlash, S_GRENLAUNCH2}
-	S_GRENLAUNCH2 { "GRLG", 1, 12.0 / 35.0, A_FireGrenade, S_GRENLAUNCH3}
-	S_GRENLAUNCH3 { "GRLG", 1, 0.0 / 35.0, A_ReFire, S_GRENLAUNCH}
-	S_GRENLAUNCHFLASH1 { "GRLF", 0 | FF_FULLBRIGHT, 3.0 / 35.0, A_Light1, S_GRENLAUNCHFLASH2}
-	S_GRENLAUNCHFLASH2 { "GRLF", 1 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_GRENLAUNCHFLASH3}
-	S_GRENLAUNCHFLASH3 { "GRLF", 2 | FF_FULLBRIGHT, 4.0 / 35.0, A_Light2, S_GRENLAUNCHFLASH4}
-	S_GRENLAUNCHFLASH4 { "GRLF", 3 | FF_FULLBRIGHT, 4.0 / 35.0, A_Light2, S_LIGHTDONE}
-
-	//  Flying grenade
-	S_GRENADE { "GREN", 0 | FF_FULLBRIGHT, 3.0, NULL, S_GRENADE_EXPLODE}
-	S_GRENADE_EXPLODE { "GREN", 0 | FF_FULLBRIGHT, 0.0, P_ExplodeMissile, S_EXPLODE1}
-}
+void P_ExplodeMissile(mobj_t * missile);
 
 //==========================================================================
 //
@@ -56,15 +33,25 @@ __states__
 
 class weapon_grenade_launcher:Actor
 {
-	void OnMapSpawn(mthing_t * mthing)
+	__states__
+	{
+		//  Weapon on ground
+		S_GLAUNCH { "GLAU", 0, -1.0, NULL, S_NULL}
+	}
+
+	defaultproperties
 	{
 		radius = 20.0;
 		height = 16.0;
 		flags = MF_SPECIAL;
 		spawnstate = S_GLAUNCH;
-		::OnMapSpawn(mthing);
 	}
 };
+
+__mobjinfo__
+{
+	{ 90, weapon_grenade_launcher }
+}
 
 //==========================================================================
 //
@@ -72,9 +59,21 @@ class weapon_grenade_launcher:Actor
 //
 //==========================================================================
 
-class missile_grenade:Missile
+class missile_grenade:Actor
 {
-	void OnMapSpawn(mthing_t * mthing)
+	void A_ExplodeMissile(void)
+	{
+		P_ExplodeMissile(this);
+	}
+
+	__states__
+	{
+		//  Flying grenade
+		S_GRENADE { "GREN", 0 | FF_FULLBRIGHT, 3.0, NULL, S_GRENADE_EXPLODE}
+		S_GRENADE_EXPLODE { "GREN", 0 | FF_FULLBRIGHT, 0.0, A_ExplodeMissile, S_EXPLODE1}
+	}
+
+	defaultproperties
 	{
 		radius = 11.0;
 		height = 8.0;
@@ -87,21 +86,29 @@ class missile_grenade:Missile
 		sound_sight = GetSoundID("LauncherFire");
 		sound_pain = GetSoundID("GrenadeBounce");
 		sound_death = GetSoundID("BarrelExplode");
-		::OnMapSpawn(mthing);
 	}
 };
-
-__mobjinfo__
-{
-	{ 90, weapon_grenade_launcher }
-	{ -1, missile_grenade }
-}
 
 //==========================================================================
 //
 //  set_weapon_grenade
 //
 //==========================================================================
+
+__states__(Weapon)
+{
+	//  Weapon in player view
+	S_GRENLAUNCH { "GRLG", 0, 1.0 / 35.0, A_WeaponReady, S_GRENLAUNCH}
+	S_GRENLAUNCHDOWN { "GRLG", 0, 1.0 / 35.0, A_Lower, S_GRENLAUNCHDOWN}
+	S_GRENLAUNCHUP { "GRLG", 0, 1.0 / 35.0, A_Raise, S_GRENLAUNCHUP}
+	S_GRENLAUNCH1 { "GRLG", 1, 8.0 / 35.0, A_GunFlash, S_GRENLAUNCH2}
+	S_GRENLAUNCH2 { "GRLG", 1, 12.0 / 35.0, A_FireGrenade, S_GRENLAUNCH3}
+	S_GRENLAUNCH3 { "GRLG", 1, 0.0 / 35.0, A_ReFire, S_GRENLAUNCH}
+	S_GRENLAUNCHFLASH1 { "GRLF", 0 | FF_FULLBRIGHT, 3.0 / 35.0, A_Light1, S_GRENLAUNCHFLASH2}
+	S_GRENLAUNCHFLASH2 { "GRLF", 1 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_GRENLAUNCHFLASH3}
+	S_GRENLAUNCHFLASH3 { "GRLF", 2 | FF_FULLBRIGHT, 4.0 / 35.0, A_Light2, S_GRENLAUNCHFLASH4}
+	S_GRENLAUNCHFLASH4 { "GRLF", 3 | FF_FULLBRIGHT, 4.0 / 35.0, A_Light2, S_LIGHTDONE}
+}
 
 void set_weapon_grenade(player_t * player)
 {
@@ -118,6 +125,9 @@ void set_weapon_grenade(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/12/12 18:57:40  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.7  2001/10/22 17:23:11  dj_jl
 //  Floatification of angles
 //

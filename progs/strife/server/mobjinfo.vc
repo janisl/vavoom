@@ -3030,7 +3030,7 @@ class MT_76:Actor
 //
 //==========================================================================
 
-class MT_77:Missile
+class MT_77:Actor
 {
 	defaultproperties
 	{
@@ -3056,7 +3056,7 @@ class MT_77:Missile
 //
 //==========================================================================
 
-class MT_78:Missile
+class MT_78:Actor
 {
 	defaultproperties
 	{
@@ -3082,7 +3082,7 @@ class MT_78:Missile
 //
 //==========================================================================
 
-class MT_79:Missile
+class MT_79:Actor
 {
 	defaultproperties
 	{
@@ -3108,7 +3108,7 @@ class MT_79:Missile
 //
 //==========================================================================
 
-class MT_80:Missile
+class MT_80:Actor
 {
 	defaultproperties
 	{
@@ -3134,7 +3134,7 @@ class MT_80:Missile
 //
 //==========================================================================
 
-class MT_81:Missile
+class MT_81:Actor
 {
 	defaultproperties
 	{
@@ -3181,7 +3181,7 @@ class MT_82:Actor
 //
 //==========================================================================
 
-class MT_83:Missile
+class MT_83:Actor
 {
 	defaultproperties
 	{
@@ -3207,7 +3207,7 @@ class MT_83:Missile
 //
 //==========================================================================
 
-class MT_84:Missile
+class MT_84:Actor
 {
 	defaultproperties
 	{
@@ -3233,7 +3233,7 @@ class MT_84:Missile
 //
 //==========================================================================
 
-class MT_85:Missile
+class MT_85:Actor
 {
 	defaultproperties
 	{
@@ -3283,7 +3283,7 @@ class MT_86:Actor
 //
 //==========================================================================
 
-class MT_87:Missile
+class MT_87:Actor
 {
 	defaultproperties
 	{
@@ -3309,7 +3309,7 @@ class MT_87:Missile
 //
 //==========================================================================
 
-class MT_88:Missile
+class MT_88:Actor
 {
 	defaultproperties
 	{
@@ -3519,7 +3519,7 @@ class MT_93:Actor
 //
 //==========================================================================
 
-class MT_94:Missile
+class MT_94:Actor
 {
 	defaultproperties
 	{
@@ -3567,7 +3567,7 @@ class MT_95:Actor
 //
 //==========================================================================
 
-class MT_96:Missile
+class MT_96:Actor
 {
 	defaultproperties
 	{
@@ -3593,7 +3593,7 @@ class MT_96:Missile
 //
 //==========================================================================
 
-class MT_97:Missile
+class MT_97:Actor
 {
 	defaultproperties
 	{
@@ -3619,7 +3619,7 @@ class MT_97:Missile
 //
 //==========================================================================
 
-class MT_98:Missile
+class MT_98:Actor
 {
 	defaultproperties
 	{
@@ -3645,7 +3645,7 @@ class MT_98:Missile
 //
 //==========================================================================
 
-class MT_99:Missile
+class MT_99:Actor
 {
 	defaultproperties
 	{
@@ -3672,7 +3672,7 @@ class MT_99:Missile
 //
 //==========================================================================
 
-class MT_100:Missile
+class MT_100:Actor
 {
 	defaultproperties
 	{
@@ -3698,7 +3698,7 @@ class MT_100:Missile
 //
 //==========================================================================
 
-class MT_101:Missile
+class MT_101:Actor
 {
 	defaultproperties
 	{
@@ -3721,7 +3721,7 @@ class MT_101:Missile
 //
 //==========================================================================
 
-class MT_102:Missile
+class MT_102:Actor
 {
 	defaultproperties
 	{
@@ -3746,7 +3746,7 @@ class MT_102:Missile
 //
 //==========================================================================
 
-class MT_103:Missile
+class MT_103:Actor
 {
 	defaultproperties
 	{
@@ -3772,7 +3772,7 @@ class MT_103:Missile
 //
 //==========================================================================
 
-class MT_104:Missile
+class MT_104:Actor
 {
 	defaultproperties
 	{
@@ -3798,7 +3798,7 @@ class MT_104:Missile
 //
 //==========================================================================
 
-class MT_105:Missile
+class MT_105:Actor
 {
 	defaultproperties
 	{
@@ -3824,7 +3824,7 @@ class MT_105:Missile
 //
 //==========================================================================
 
-class MT_106:Missile
+class MT_106:Actor
 {
 	defaultproperties
 	{
@@ -3893,7 +3893,7 @@ class MT_108:Actor
 //
 //==========================================================================
 
-class MT_109:Missile
+class MT_109:Actor
 {
 	defaultproperties
 	{
@@ -3919,7 +3919,7 @@ class MT_109:Missile
 //
 //==========================================================================
 
-class MT_110:Missile
+class MT_110:Actor
 {
 	defaultproperties
 	{
@@ -3943,7 +3943,7 @@ class MT_110:Missile
 //
 //==========================================================================
 
-class MT_111:Missile
+class MT_111:Actor
 {
 	defaultproperties
 	{
@@ -3968,7 +3968,7 @@ class MT_111:Missile
 //
 //==========================================================================
 
-class MT_112:Missile
+class MT_112:Actor
 {
 	defaultproperties
 	{
@@ -8631,9 +8631,12 @@ __mobjinfo__
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/12/12 18:57:43  dj_jl
+//	State functions now are methods of Actor and Weapon classes
+//
 //	Revision 1.9  2001/12/04 18:25:36  dj_jl
 //	Replaced constructors with defaultproperties
-//
+//	
 //	Revision 1.8  2001/11/09 14:37:54  dj_jl
 //	Using constructors
 //	

@@ -32,6 +32,8 @@
 
 // MACROS ------------------------------------------------------------------
 
+#define FIREDEMON_ATTACK_RANGE	(64.0 * 8.0)
+
 // CONSTANTS ---------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
@@ -93,152 +95,147 @@ void A_FiredSpawnRock(mobj_t * actor)
 
 //============================================================================
 //
-//  A_FiredRocks
+//  Actor::A_FiredRocks
 //
 //============================================================================
 
-void A_FiredRocks(mobj_t * actor)
+void Actor::A_FiredRocks(void)
 {
-	A_FiredSpawnRock(actor);
-	A_FiredSpawnRock(actor);
-	A_FiredSpawnRock(actor);
-	A_FiredSpawnRock(actor);
-	A_FiredSpawnRock(actor);
+	A_FiredSpawnRock(this);
+	A_FiredSpawnRock(this);
+	A_FiredSpawnRock(this);
+	A_FiredSpawnRock(this);
+	A_FiredSpawnRock(this);
 }
 
 //============================================================================
 //
-//  A_FiredChase
+//  Actor::A_FiredChase
 //
 //============================================================================
 
-#define FIREDEMON_ATTACK_RANGE	(64.0 * 8.0)
-
-void A_FiredChase(mobj_t * actor)
+void Actor::A_FiredChase(void)
 {
-	int weaveindex = actor->special1;
-	mobj_t *target = actor->target;
+	int weaveindex = special1;
 	float ang;
 	float dist;
 
-	if (actor->reactiontime)
-		actor->reactiontime--;
-	if (actor->threshold)
-		actor->threshold--;
+	if (reactiontime)
+		reactiontime--;
+	if (threshold)
+		threshold--;
 
 	// Float up and down
-	actor->origin.z += FloatBobOffsets[weaveindex];
-	actor->special1 = (weaveindex + 2) & 63;
+	origin.z += FloatBobOffsets[weaveindex];
+	special1 = (weaveindex + 2) & 63;
 
 	// Insure it stays above certain height
-	if (actor->origin.z < actor->floorz + 64.0)
+	if (origin.z < floorz + 64.0)
 	{
-		actor->origin.z += 2.0;
+		origin.z += 2.0;
 	}
 
-	if (!actor->target || !(actor->target->flags & MF_SHOOTABLE))
-	{	// Invalid target
-		P_LookForPlayers(actor, true);
+	if (!target || !(target->flags & MF_SHOOTABLE))
+	{
+		// Invalid target
+		P_LookForPlayers(this, true);
 		return;
 	}
 
 	// Strafe
-	if (actor->special2 > 0)
+	if (special2 > 0)
 	{
-		actor->special2--;
+		special2--;
 	}
 	else
 	{
-		actor->special2 = 0;
-		actor->velocity.x = actor->velocity.y = 0.0;
-		dist = MobjDist(actor, target);
+		special2 = 0;
+		velocity.x = 0.0;
+		velocity.y = 0.0;
+		dist = MobjDist(this, target);
 		if (dist < FIREDEMON_ATTACK_RANGE)
 		{
 			if (P_Random() < 30)
 			{
-				ang = atan2(target->origin.y - actor->origin.y,
-					target->origin.x - actor->origin.x);
+				ang = atan2(target->origin.y - origin.y,
+					target->origin.x - origin.x);
 				if (P_Random() < 128)
 					ang = AngleMod360(ang + 90.0);
 				else
 					ang = AngleMod360(ang - 90.0);
-				actor->velocity.x = 8.0 * cos(ang) * 35.0;
-				actor->velocity.y = 8.0 * sin(ang) * 35.0;
-				actor->special2 = 3;	// strafe time
+				velocity.x = 8.0 * cos(ang) * 35.0;
+				velocity.y = 8.0 * sin(ang) * 35.0;
+				special2 = 3;	// strafe time
 			}
 		}
 	}
 
-	FaceMovementDirection(actor);
+	FaceMovementDirection(this);
 
 	// Normal movement
-	if (!actor->special2)
+	if (!special2)
 	{
-		if (--actor->movecount < 0 || !P_Move(actor))
+		if (--movecount < 0 || !P_Move(this))
 		{
-			P_NewChaseDir(actor);
+			P_NewChaseDir(this);
 		}
 	}
 
 	// Do missile attack
-	if (!(actor->flags & MF_JUSTATTACKED))
+	if (!(flags & MF_JUSTATTACKED))
 	{
-		if (CheckMissileRange(actor) && (P_Random() < 20))
+		if (CheckMissileRange(this) && (P_Random() < 20))
 		{
-			SetMobjState(actor, actor->missilestate);
-			actor->flags |= MF_JUSTATTACKED;
+			SetMobjState(this, missilestate);
+			flags |= MF_JUSTATTACKED;
 			return;
 		}
 	}
 	else
 	{
-		actor->flags &= ~MF_JUSTATTACKED;
+		flags &= ~MF_JUSTATTACKED;
 	}
 
 	// make active sound
-	if (actor->sound_active && P_Random() < 3)
+	if (sound_active && P_Random() < 3)
 	{
-		StartSound(actor, actor->sound_active, CHAN_VOICE);
+		StartSound(this, sound_active, CHAN_VOICE);
 	}
 }
 
 //============================================================================
 //
-//  A_FiredAttack
+//  Actor::A_FiredAttack
 //
 //============================================================================
 
-void A_FiredAttack(mobj_t * actor)
+void Actor::A_FiredAttack(void)
 {
 	mobj_t *mo;
 
-	mo = SpawnMissile(actor, actor->target, MT_FIREDEMON_FX6);
+	mo = SpawnMissile(this, target, MT_FIREDEMON_FX6);
 	if (mo)
-		StartSoundName(actor, "FireDemonAttack", CHAN_WEAPON);
+		StartSoundName(this, "FireDemonAttack", CHAN_WEAPON);
 }
 
 //============================================================================
 //
-//  A_FiredSplotch
+//  Actor::A_FiredSplotch
 //
 //============================================================================
 
-void A_FiredSplotch(mobj_t * actor)
+void Actor::A_FiredSplotch(void)
 {
 	mobj_t *mo;
 
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
-		MT_FIREDEMON_SPLOTCH1);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_FIREDEMON_SPLOTCH1);
 	if (mo)
 	{
 		mo->velocity.x = (Random() - 0.5) * 8.0 * 35.0;
 		mo->velocity.y = (Random() - 0.5) * 8.0 * 35.0;
 		mo->velocity.z = (3.0 + Random() * 4.0) * 35.0;
 	}
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
-		MT_FIREDEMON_SPLOTCH2);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_FIREDEMON_SPLOTCH2);
 	if (mo)
 	{
 		mo->velocity.x = (Random() - 0.5) * 8.0 * 35.0;
@@ -249,22 +246,25 @@ void A_FiredSplotch(mobj_t * actor)
 
 //============================================================================
 //
-//  A_SmBounce
+//  Actor::A_SmBounce
 //
 //============================================================================
 
-void A_SmBounce(mobj_t * actor)
+void Actor::A_SmBounce(void)
 {
 	// give some more momentum (x,y,&z)
-	actor->origin.z = actor->floorz + 1.0;
-	actor->velocity.z = (2.0 + Random() * 4.0) * 35.0;
-	actor->velocity.x = Random() * 3.0 * 35.0;
-	actor->velocity.y = Random() * 3.0 * 35.0;
+	origin.z = floorz + 1.0;
+	velocity.z = (2.0 + Random() * 4.0) * 35.0;
+	velocity.x = Random() * 3.0 * 35.0;
+	velocity.y = Random() * 3.0 * 35.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.5  2001/10/22 17:23:13  dj_jl
 //  Floatification of angles
 //

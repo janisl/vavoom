@@ -37,13 +37,12 @@
 
 //============================================================================
 //
-//  A_FPunchAttack
+//  Weapon::A_FPunchAttack
 //
 //============================================================================
 
-void A_FPunchAttack(mobj_t * actor)
+void Weapon::A_FPunchAttack(void)
 {
-	player_t *player = actor->player;
 	int damage;
 	mobj_t *pmo = player->mo;
 	float power;
@@ -143,15 +142,14 @@ void A_FPunchAttack(mobj_t * actor)
 
 //============================================================================
 //
-//  A_FAxeAttack
+//  Weapon::A_FAxeAttack
 //
 //============================================================================
 
 #define AXERANGE	(9.0 * MELEERANGE / 4.0)
 
-void A_FAxeAttack(mobj_t * actor)
+void Weapon::A_FAxeAttack(void)
 {
-	player_t *player = actor->player;
 	mobj_t *pmo = player->mo;
 	float power;
 	int damage;
@@ -240,15 +238,14 @@ void A_FAxeAttack(mobj_t * actor)
 
 //============================================================================
 //
-//  A_FHammerAttack
+//  Weapon::A_FHammerAttack
 //
 //============================================================================
 
 #define HAMMER_RANGE	(MELEERANGE + MELEERANGE / 2.0)
 
-void A_FHammerAttack(mobj_t * actor)
+void Weapon::A_FHammerAttack(void)
 {
-	player_t *player = actor->player;
 	mobj_t *pmo = player->mo;
 	int damage;
 	float power;
@@ -330,13 +327,12 @@ void A_FHammerAttack(mobj_t * actor)
 
 //============================================================================
 //
-//  A_FHammerThrow
+//  Weapon::A_FHammerThrow
 //
 //============================================================================
 
-void A_FHammerThrow(mobj_t * actor)
+void Weapon::A_FHammerThrow(void)
 {
-	player_t *player = actor->player;
 	mobj_t *mo;
 
 	if (!player->mo->special1)
@@ -354,13 +350,12 @@ void A_FHammerThrow(mobj_t * actor)
 
 //============================================================================
 //
-//  A_FSwordAttack
+//  Weapon::A_FSwordAttack
 //
 //============================================================================
 
-void A_FSwordAttack(mobj_t * actor)
+void Weapon::A_FSwordAttack(void)
 {
-	player_t *player = actor->player;
 	mobj_t *pmo;
 
 	player->mana[MANA_1] -=
@@ -387,25 +382,28 @@ void A_FSwordAttack(mobj_t * actor)
 
 //============================================================================
 //
-//  A_FSwordFlames
+//  Actor::A_FSwordFlames
 //
 //============================================================================
 
-void A_FSwordFlames(mobj_t * actor)
+void Actor::A_FSwordFlames(void)
 {
 	int i;
 
 	for (i = 1 + (P_Random() & 3); i; i--)
 	{
-		P_SpawnMobj(actor->origin.x + (Random() - 0.5) * 16.0,
-			actor->origin.y + (Random() - 0.5) * 16.0,
-			actor->origin.z + (Random() - 0.5) * 8.0, MT_FSWORD_FLAME);
+		P_SpawnMobj(origin.x + (Random() - 0.5) * 16.0,
+			origin.y + (Random() - 0.5) * 16.0,
+			origin.z + (Random() - 0.5) * 8.0, MT_FSWORD_FLAME);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.6  2001/10/22 17:23:13  dj_jl
 //  Floatification of angles
 //

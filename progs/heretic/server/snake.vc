@@ -37,43 +37,46 @@
 
 //==========================================================================
 //
-//  A_SnakeAttack
+//  Actor::A_SnakeAttack
 //
 //==========================================================================
 
-void A_SnakeAttack(mobj_t * actor)
+void Actor::A_SnakeAttack(void)
 {
-	if (!actor->target)
+	if (!target)
 	{
-		SetMobjState(actor, S_SNAKE_WALK1);
+		SetMobjState(this, S_SNAKE_WALK1);
 		return;
 	}
-	StartSound(actor, actor->sound_attack, CHAN_WEAPON);
-	A_FaceTarget(actor);
-	SpawnMissile(actor, actor->target, MT_SNAKEPRO_A);
+	StartSound(this, sound_attack, CHAN_WEAPON);
+	A_FaceTarget();
+	SpawnMissile(this, target, MT_SNAKEPRO_A);
 }
 
 //==========================================================================
 //
-//  A_SnakeAttack2
+//  Actor::A_SnakeAttack2
 //
 //==========================================================================
 
-void A_SnakeAttack2(mobj_t * actor)
+void Actor::A_SnakeAttack2(void)
 {
-	if (!actor->target)
+	if (!target)
 	{
-		SetMobjState(actor, S_SNAKE_WALK1);
+		SetMobjState(this, S_SNAKE_WALK1);
 		return;
 	}
-	StartSound(actor, actor->sound_attack, CHAN_WEAPON);
-	A_FaceTarget(actor);
-	SpawnMissile(actor, actor->target, MT_SNAKEPRO_B);
+	StartSound(this, sound_attack, CHAN_WEAPON);
+	A_FaceTarget();
+	SpawnMissile(this, target, MT_SNAKEPRO_B);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

@@ -37,30 +37,30 @@
 
 //============================================================================
 //
-//  A_DemonAttack1 (melee)
+//  Actor::A_DemonAttack1 (melee)
 //
 //============================================================================
 
-void A_DemonAttack1(mobj_t * actor)
+void Actor::A_DemonAttack1(void)
 {
-	if (CheckMeleeRange(actor))
+	if (CheckMeleeRange(this))
 	{
-		actor->target->Damage(actor, actor, HITDICE(2));
+		target->Damage(this, this, HITDICE(2));
 	}
 }
 
 //============================================================================
 //
-//  A_DemonAttack2 (missile)
+//  Actor::A_DemonAttack2 (missile)
 //
 //============================================================================
 
-void A_DemonAttack2(mobj_t * actor)
+void Actor::A_DemonAttack2(void)
 {
 	mobj_t *mo;
 	classid fireBall;
 
-	if (actor->type == MT_DEMON)
+	if (type == MT_DEMON)
 	{
 		fireBall = MT_DEMONFX1;
 	}
@@ -68,153 +68,136 @@ void A_DemonAttack2(mobj_t * actor)
 	{
 		fireBall = MT_DEMON2FX1;
 	}
-	mo = SpawnMissile(actor, actor->target, fireBall);
+	mo = SpawnMissile(this, target, fireBall);
 	if (mo)
 	{
 		mo->origin.z += 30.0;
-		StartSoundName(actor, "DemonMissileFire", CHAN_WEAPON);
+		StartSoundName(this, "DemonMissileFire", CHAN_WEAPON);
 	}
 }
 
 //============================================================================
 //
-//  A_DemonDeath
+//  Actor::A_DemonDeath
 //
 //============================================================================
 
-void A_DemonDeath(mobj_t * actor)
+void Actor::A_DemonDeath(void)
 {
 	mobj_t *mo;
 	float angle;
 
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0,
-		MT_DEMONCHUNK1);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, MT_DEMONCHUNK1);
 	if (mo)
 	{
-		angle = AngleMod360(actor->angles.yaw + 90.0);
+		angle = AngleMod360(angles.yaw + 90.0);
 		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->velocity.z = 8.0 * 35.0;
-		mo->target = actor;
+		mo->target = this;
 	}
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0,
-		MT_DEMONCHUNK2);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, MT_DEMONCHUNK2);
 	if (mo)
 	{
-		angle = AngleMod360(actor->angles.yaw - 90.0);
+		angle = AngleMod360(angles.yaw - 90.0);
 		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->velocity.z = 8.0 * 35.0;
-		mo->target = actor;
+		mo->target = this;
 	}
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0,
-		MT_DEMONCHUNK3);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, MT_DEMONCHUNK3);
 	if (mo)
 	{
-		angle = AngleMod360(actor->angles.yaw - 90.0);
+		angle = AngleMod360(angles.yaw - 90.0);
 		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->velocity.z = 8.0 * 35.0;
-		mo->target = actor;
+		mo->target = this;
 	}
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0,
-		MT_DEMONCHUNK4);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, MT_DEMONCHUNK4);
 	if (mo)
 	{
-		angle = AngleMod360(actor->angles.yaw - 90.0);
+		angle = AngleMod360(angles.yaw - 90.0);
 		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->velocity.z = 8.0 * 35.0;
-		mo->target = actor;
+		mo->target = this;
 	}
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0,
-		MT_DEMONCHUNK5);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, MT_DEMONCHUNK5);
 	if (mo)
 	{
-		angle = AngleMod360(actor->angles.yaw - 90.0);
+		angle = AngleMod360(angles.yaw - 90.0);
 		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->velocity.z = 8.0 * 35.0;
-		mo->target = actor;
+		mo->target = this;
 	}
 }
 
 //===========================================================================
 //
-// A_Demon2Death
+//	Actor::A_Demon2Death
 //
 //===========================================================================
 
-void A_Demon2Death(mobj_t * actor)
+void Actor::A_Demon2Death(void)
 {
 	mobj_t *mo;
 	float angle;
 
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0,
-		MT_DEMON2CHUNK1);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, MT_DEMON2CHUNK1);
 	if (mo)
 	{
-		angle = AngleMod360(actor->angles.yaw + 90.0);
+		angle = AngleMod360(angles.yaw + 90.0);
 		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->velocity.z = 8.0 * 35.0;
-		mo->target = actor;
+		mo->target = this;
 	}
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0,
-		MT_DEMON2CHUNK2);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, MT_DEMON2CHUNK2);
 	if (mo)
 	{
-		angle = AngleMod360(actor->angles.yaw - 90.0);
+		angle = AngleMod360(angles.yaw - 90.0);
 		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->velocity.z = 8.0 * 35.0;
-		mo->target = actor;
+		mo->target = this;
 	}
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0,
-		MT_DEMON2CHUNK3);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, MT_DEMON2CHUNK3);
 	if (mo)
 	{
-		angle = AngleMod360(actor->angles.yaw - 90.0);
+		angle = AngleMod360(angles.yaw - 90.0);
 		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->velocity.z = 8.0 * 35.0;
-		mo->target = actor;
+		mo->target = this;
 	}
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0,
-		MT_DEMON2CHUNK4);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, MT_DEMON2CHUNK4);
 	if (mo)
 	{
-		angle = AngleMod360(actor->angles.yaw - 90.0);
+		angle = AngleMod360(angles.yaw - 90.0);
 		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->velocity.z = 8.0 * 35.0;
-		mo->target = actor;
+		mo->target = this;
 	}
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0,
-		MT_DEMON2CHUNK5);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, MT_DEMON2CHUNK5);
 	if (mo)
 	{
-		angle = AngleMod360(actor->angles.yaw - 90.0);
+		angle = AngleMod360(angles.yaw - 90.0);
 		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->velocity.z = 8.0 * 35.0;
-		mo->target = actor;
+		mo->target = this;
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.6  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

@@ -37,42 +37,45 @@
 
 //============================================================================
 //
-//  A_EttinAttack
+//  Actor::A_EttinAttack
 //
 //============================================================================
 
-void A_EttinAttack(mobj_t * actor)
+void Actor::A_EttinAttack(void)
 {
-	if (CheckMeleeRange(actor))
+	if (CheckMeleeRange(this))
 	{
-		actor->target->Damage(actor, actor, HITDICE(2));
+		target->Damage(this, this, HITDICE(2));
 	}
 }
 
 //============================================================================
 //
-//  A_DropMace
+//  Actor::A_DropMace
 //
 //============================================================================
 
-void A_DropMace(mobj_t * actor)
+void Actor::A_DropMace(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(actor->origin.x, actor->origin.y,
-		actor->origin.z + actor->height / 2.0, MT_ETTIN_MACE);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + height / 2.0,
+		MT_ETTIN_MACE);
 	if (mo)
 	{
 		mo->velocity.x = (Random() - 0.5) * 8.0 * 35.0;
 		mo->velocity.y = (Random() - 0.5) * 8.0 * 35.0;
 		mo->velocity.z = (10.0 + Random() * 4.0) * 35.0;
-		mo->target = actor;
+		mo->target = this;
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.5  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

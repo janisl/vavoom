@@ -37,156 +37,155 @@
 
 //==========================================================================
 //
-//  A_ImpMeAttack
+//  Actor::A_ImpMeAttack
 //
 //==========================================================================
 
-void A_ImpMeAttack(mobj_t * actor)
+void Actor::A_ImpMeAttack(void)
 {
-	if (!actor->target)
+	if (!target)
 	{
 		return;
 	}
-	StartSound(actor, actor->sound_attack, CHAN_WEAPON);
-	if (P_CheckMeleeRange(actor))
+	StartSound(this, sound_attack, CHAN_WEAPON);
+	if (P_CheckMeleeRange(this))
 	{
-		actor->target->Damage(actor, actor, 5 + (P_Random() & 7));
+		target->Damage(this, this, 5 + (P_Random() & 7));
 	}
 }
 
 //==========================================================================
 //
-//  A_ImpMsAttack
+//  Actor::A_ImpMsAttack
 //
 //==========================================================================
 
-void A_ImpMsAttack(mobj_t * actor)
+void Actor::A_ImpMsAttack(void)
 {
 	mobj_t *dest;
 	float an;
 	float dist;
 
-	if (!actor->target || P_Random() > 64)
+	if (!target || P_Random() > 64)
 	{
-		SetMobjState(actor, actor->seestate);
+		SetMobjState(this, seestate);
 		return;
 	}
-	dest = actor->target;
-	actor->flags |= MF_SKULLFLY;
-	StartSound(actor, actor->sound_attack, CHAN_WEAPON);
-	A_FaceTarget(actor);
-	an = actor->angles.yaw;
-	actor->velocity.x = 12.0 * cos(an) * 35.0;
-	actor->velocity.y = 12.0 * sin(an) * 35.0;
-	dist = MobjDist2(dest, actor);
+	dest = target;
+	flags |= MF_SKULLFLY;
+	StartSound(this, sound_attack, CHAN_WEAPON);
+	A_FaceTarget();
+	an = angles.yaw;
+	velocity.x = 12.0 * cos(an) * 35.0;
+	velocity.y = 12.0 * sin(an) * 35.0;
+	dist = MobjDist2(dest, this);
 	dist = dist / 12.0;
 	if (dist < 1.0)
 	{
 		dist = 1.0;
 	}
-	actor->velocity.z =
-		(dest->origin.z + dest->height / 2.0 - actor->origin.z) / dist * 35.0;
+	velocity.z = (dest->origin.z + dest->height / 2.0 - origin.z) / dist;
 }
 
 //==========================================================================
 //
-//  A_ImpMsAttack2
+//  Actor::A_ImpMsAttack2
 //
 //  Fireball attack of the imp leader.
 //
 //==========================================================================
 
-void A_ImpMsAttack2(mobj_t * actor)
+void Actor::A_ImpMsAttack2(void)
 {
-	if (!actor->target)
+	if (!target)
 	{
 		return;
 	}
-	StartSound(actor, actor->sound_attack, CHAN_WEAPON);
-	if (P_CheckMeleeRange(actor))
+	StartSound(this, sound_attack, CHAN_WEAPON);
+	if (P_CheckMeleeRange(this))
 	{
-		actor->target->Damage(actor, actor, 5 + (P_Random() & 7));
+		target->Damage(this, this, 5 + (P_Random() & 7));
 		return;
 	}
-	SpawnMissile(actor, actor->target, MT_IMPBALL);
+	SpawnMissile(this, target, MT_IMPBALL);
 }
 
 //==========================================================================
 //
-//  A_ImpDeath
+//  Actor::A_ImpDeath
 //
 //==========================================================================
 
-void A_ImpDeath(mobj_t * actor)
+void Actor::A_ImpDeath(void)
 {
-	actor->flags &= ~MF_SOLID;
-	actor->flags2 |= MF2_FOOTCLIP;
-	if (actor->origin.z <= actor->floorz)
+	flags &= ~MF_SOLID;
+	flags2 |= MF2_FOOTCLIP;
+	if (origin.z <= floorz)
 	{
-		SetMobjState(actor, S_IMP_CRASH1);
+		SetMobjState(this, S_IMP_CRASH1);
 	}
 }
 
 //==========================================================================
 //
-//  A_ImpXDeath1
+//  Actor::A_ImpXDeath1
 //
 //==========================================================================
 
-void A_ImpXDeath1(mobj_t * actor)
+void Actor::A_ImpXDeath1(void)
 {
-	actor->flags &= ~MF_SOLID;
-	actor->flags |= MF_NOGRAVITY;
-	actor->flags2 |= MF2_FOOTCLIP;
-	actor->special1 = 666;	// Flag the crash routine
+	flags &= ~MF_SOLID;
+	flags |= MF_NOGRAVITY;
+	flags2 |= MF2_FOOTCLIP;
+	special1 = 666;	// Flag the crash routine
 }
 
 //==========================================================================
 //
-//  A_ImpXDeath2
+//  Actor::A_ImpXDeath2
 //
 //==========================================================================
 
-void A_ImpXDeath2(mobj_t * actor)
+void Actor::A_ImpXDeath2(void)
 {
-	actor->flags &= ~MF_NOGRAVITY;
-	if (actor->origin.z <= actor->floorz)
+	flags &= ~MF_NOGRAVITY;
+	if (origin.z <= floorz)
 	{
-		SetMobjState(actor, S_IMP_CRASH1);
+		SetMobjState(this, S_IMP_CRASH1);
 	}
 }
 
 //==========================================================================
 //
-//  A_ImpExplode
+//  Actor::A_ImpExplode
 //
 //==========================================================================
 
-void A_ImpExplode(mobj_t * actor)
+void Actor::A_ImpExplode(void)
 {
 	mobj_t *mo;
 
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
-		MT_IMPCHUNK1);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_IMPCHUNK1);
 	mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
 	mo->velocity.y = (Random() - Random()) * 4.0 * 35.0;
 	mo->velocity.z = 9.0 * 35.0;
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
-		MT_IMPCHUNK2);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_IMPCHUNK2);
 	mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
 	mo->velocity.y = (Random() - Random()) * 4.0 * 35.0;
 	mo->velocity.z = 9.0 * 35.0;
-	if (actor->special1 == 666)
-	{	// Extreme death crash
-		SetMobjState(actor, S_IMP_XCRASH1);
+	if (special1 == 666)
+	{
+		// Extreme death crash
+		SetMobjState(this, S_IMP_XCRASH1);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/12/12 18:57:41  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.6  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

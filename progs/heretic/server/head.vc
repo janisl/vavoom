@@ -37,17 +37,16 @@
 
 //==========================================================================
 //
-//  A_HeadAttack
+//  Actor::A_HeadAttack
 //
 //==========================================================================
 
-void A_HeadAttack(mobj_t * actor)
+void Actor::A_HeadAttack(void)
 {
 	int i;
 	mobj_t *fire;
 	mobj_t *baseFire;
 	mobj_t *mo;
-	mobj_t *target;
 	int randAttack;
 	int dist;
 
@@ -56,29 +55,28 @@ void A_HeadAttack(mobj_t * actor)
 	// Whirlwind    (close 40% : far 20%)
 	// Distance threshold = 8 cells
 
-	target = actor->target;
 	if (!target)
 	{
 		return;
 	}
-	A_FaceTarget(actor);
-	if (P_CheckMeleeRange(actor))
+	A_FaceTarget();
+	if (P_CheckMeleeRange(this))
 	{
-		target->Damage(actor, actor, HITDICE(6));
+		target->Damage(this, this, HITDICE(6));
 		return;
 	}
-	dist = MobjDist2(actor, target) > 8.0 * 64.0;
+	dist = MobjDist2(this, target) > 8.0 * 64.0;
 	randAttack = P_Random();
 	if (randAttack < (dist ? 150 : 50))
 	{
 		// Ice ball
-		SpawnMissile(actor, target, MT_HEADFX1);
-		StartSoundName(actor, "HeadAttack2", CHAN_WEAPON);
+		SpawnMissile(this, target, MT_HEADFX1);
+		StartSoundName(this, "HeadAttack2", CHAN_WEAPON);
 	}
 	else if (randAttack < (dist ? 200 : 150))
 	{
 		// Fire column
-		baseFire = SpawnMissile(actor, target, MT_HEADFX3);
+		baseFire = SpawnMissile(this, target, MT_HEADFX3);
 		if (baseFire != NULL)
 		{
 			SetMobjState(baseFire, S_HEADFX3_4);	// Don't grow
@@ -88,13 +86,11 @@ void A_HeadAttack(mobj_t * actor)
 					baseFire->origin.z, MT_HEADFX3);
 				if (i == 0)
 				{
-					StartSoundName(actor, "HeadAttack1", CHAN_WEAPON);
+					StartSoundName(this, "HeadAttack1", CHAN_WEAPON);
 				}
 				fire->target = baseFire->target;
 				fire->angles.yaw = baseFire->angles.yaw;
-				fire->velocity.x = baseFire->velocity.x;
-				fire->velocity.y = baseFire->velocity.y;
-				fire->velocity.z = baseFire->velocity.z;
+				fire->velocity = baseFire->velocity;
 				fire->damage = 0;
 				fire->health = (i + 1) * 2;
 				CheckMissileSpawn(fire);
@@ -104,25 +100,25 @@ void A_HeadAttack(mobj_t * actor)
 	else
 	{
 		// Whirlwind
-		mo = SpawnMissile(actor, target, MT_WHIRLWIND);
+		mo = SpawnMissile(this, target, MT_WHIRLWIND);
 		if (mo != NULL)
 		{
 			mo->origin.z -= 32.0;
 			mo->specialmobj1 = target;
 			mo->special2 = 50;	// Timer for active sound
 			mo->health = 20 * TICRATE;	// Duration
-			StartSoundName(actor, "HeadAttack3", CHAN_WEAPON);
+			StartSoundName(this, "HeadAttack3", CHAN_WEAPON);
 		}
 	}
 }
 
 //==========================================================================
 //
-//  A_HeadIceImpact
+//  Actor::A_HeadIceImpact
 //
 //==========================================================================
 
-void A_HeadIceImpact(mobj_t * ice)
+void Actor::A_HeadIceImpact(void)
 {
 	int i;
 	float angle;
@@ -130,10 +126,9 @@ void A_HeadIceImpact(mobj_t * ice)
 
 	for (i = 0; i < 8; i++)
 	{
-		shard = P_SpawnMobj(ice->origin.x, ice->origin.y, ice->origin.z,
-			MT_HEADFX2);
+		shard = P_SpawnMobj(origin.x, origin.y, origin.z, MT_HEADFX2);
 		angle = itof(i) * 45.0;
-		shard->target = ice->target;
+		shard->target = target;
 		shard->angles.yaw = angle;
 		shard->velocity.x = shard->speed * cos(angle);
 		shard->velocity.y = shard->speed * sin(angle);
@@ -144,51 +139,54 @@ void A_HeadIceImpact(mobj_t * ice)
 
 //==========================================================================
 //
-//  A_HeadFireGrow
+//  Actor::A_HeadFireGrow
 //
 //==========================================================================
 
-void A_HeadFireGrow(mobj_t * fire)
+void Actor::A_HeadFireGrow(void)
 {
-	fire->health--;
-	fire->origin.z += 9.0;
-	if (fire->health == 0)
+	health--;
+	origin.z += 9.0;
+	if (health == 0)
 	{
-		SetMobjState(fire, S_HEADFX3_4);
+		SetMobjState(this, S_HEADFX3_4);
 	}
 }
 
 //==========================================================================
 //
-//  A_WhirlwindSeek
+//  Actor::A_WhirlwindSeek
 //
 //==========================================================================
 
-void A_WhirlwindSeek(mobj_t * actor)
+void Actor::A_WhirlwindSeek(void)
 {
-	actor->health -= 3;
-	if (actor->health < 0)
+	health -= 3;
+	if (health < 0)
 	{
-		actor->velocity.x = actor->velocity.y = actor->velocity.z = 0.0;
-		SetMobjState(actor, actor->deathstate);
-		actor->flags &= ~MF_MISSILE;
+		velocity = vector(0.0, 0.0, 0.0);
+		SetMobjState(this, deathstate);
+		flags &= ~MF_MISSILE;
 		return;
 	}
-	if ((actor->special2 -= 3) < 0)
+	if ((special2 -= 3) < 0)
 	{
-		actor->special2 = 58 + (P_Random() & 31);
-		StartSoundName(actor, "HeadAttack3", CHAN_WEAPON);
+		special2 = 58 + (P_Random() & 31);
+		StartSoundName(this, "HeadAttack3", CHAN_WEAPON);
 	}
-	if (actor->specialmobj1 && actor->specialmobj1->translucency)
+	if (specialmobj1 && specialmobj1->translucency)
 	{
 		return;
 	}
-	P_SeekerMissile(actor, 10.0, 30.0);
+	P_SeekerMissile(this, 10.0, 30.0);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/12/12 18:57:41  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.6  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

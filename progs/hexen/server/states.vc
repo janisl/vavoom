@@ -29,234 +29,241 @@
 //**
 //**************************************************************************
 
-void A_FreeTargMobj(mobj_t *actor);
-void A_FlameCheck(mobj_t *actor);
-void A_HideThing(mobj_t *actor);
-void A_UnHideThing(mobj_t *actor);
-void A_RestoreSpecialThing1(mobj_t *actor);
-void A_RestoreSpecialThing2(mobj_t *actor);
-void A_RestoreArtifact(mobj_t *actor);
-void A_Summon(mobj_t *actor);
-void A_ThrustInitUp(mobj_t *actor);
-void A_ThrustInitDn(mobj_t *actor);
-void A_ThrustRaise(mobj_t *actor);
-void A_ThrustBlock(mobj_t *actor);
-void A_ThrustImpale(mobj_t *actor);
-void A_ThrustLower(mobj_t *actor);
-void A_TeloSpawnC(mobj_t *actor);
-void A_TeloSpawnB(mobj_t *actor);
-void A_TeloSpawnA(mobj_t *actor);
-void A_TeloSpawnD(mobj_t *actor);
-void A_CheckTeleRing(mobj_t *actor);
-void A_FogSpawn(mobj_t *actor);
-void A_FogMove(mobj_t *actor);
-void A_Quake(mobj_t *actor);
-void A_ContMobjSound(mobj_t *actor);
-void A_Scream(mobj_t *actor);
-void A_Explode(mobj_t *actor);
-void A_PoisonBagInit(mobj_t *actor);
-void A_PoisonBagDamage(mobj_t *actor);
-void A_PoisonBagCheck(mobj_t *actor);
-void A_CheckThrowBomb(mobj_t *actor);
-void A_NoGravity(mobj_t *actor);
-void A_PotteryExplode(mobj_t *actor);
-void A_PotteryChooseBit(mobj_t *actor);
-void A_PotteryCheck(mobj_t *actor);
-void A_CorpseBloodDrip(mobj_t *actor);
-void A_CorpseExplode(mobj_t *actor);
-void A_LeafSpawn(mobj_t *actor);
-void A_LeafThrust(mobj_t *actor);
-void A_LeafCheck(mobj_t *actor);
-void A_BridgeInit(mobj_t *actor);
-void A_BridgeOrbit(mobj_t *actor);
-void A_TreeDeath(mobj_t *actor);
-void A_PoisonShroom(mobj_t *actor);
-void A_Pain(mobj_t *actor);
-void A_SoAExplode(mobj_t *actor);
-void A_BellReset1(mobj_t *actor);
-void A_BellReset2(mobj_t *actor);
-void A_NoBlocking(mobj_t *actor);
-void A_Light0(mobj_t *actor);
-void A_WeaponReady(mobj_t *actor);
-void A_Lower(mobj_t *actor);
-void A_Raise(mobj_t *actor);
-void A_FPunchAttack(mobj_t *actor);
-void A_ReFire(mobj_t *actor);
-void A_FAxeAttack(mobj_t *actor);
-void A_FHammerAttack(mobj_t *actor);
-void A_FHammerThrow(mobj_t *actor);
-void A_FSwordAttack(mobj_t *actor);
-void A_FSwordFlames(mobj_t *actor);
-void A_CMaceAttack(mobj_t *actor);
-void A_CStaffInitBlink(mobj_t *actor);
-void A_CStaffCheckBlink(mobj_t *actor);
-void A_CStaffCheck(mobj_t *actor);
-void A_CStaffAttack(mobj_t *actor);
-void A_CStaffMissileSlither(mobj_t *actor);
-void A_CFlameAttack(mobj_t *actor);
-void A_CFlameRotate(mobj_t *actor);
-void A_CFlamePuff(mobj_t *actor);
-void A_CFlameMissile(mobj_t *actor);
-void A_CHolyAttack(mobj_t *actor);
-void A_CHolyPalette(mobj_t *actor);
-void A_CHolySeek(mobj_t *actor);
-void A_CHolyCheckScream(mobj_t *actor);
-void A_CHolyTail(mobj_t *actor);
-void A_CHolySpawnPuff(mobj_t *actor);
-void A_CHolyAttack2(mobj_t *actor);
-void A_MWandAttack(mobj_t *actor);
-void A_LightningReady(mobj_t *actor);
-void A_MLightningAttack(mobj_t *actor);
-void A_LightningZap(mobj_t *actor);
-void A_LightningClip(mobj_t *actor);
-void A_LightningRemove(mobj_t *actor);
-void A_LastZap(mobj_t *actor);
-void A_ZapMimic(mobj_t *actor);
-void A_MStaffAttack(mobj_t *actor);
-void A_MStaffPalette(mobj_t *actor);
-void A_MStaffWeave(mobj_t *actor);
-void A_MStaffTrack(mobj_t *actor);
-void A_SnoutAttack(mobj_t *actor);
-void A_FireConePL1(mobj_t *actor);
-void A_ShedShard(mobj_t *actor);
-void A_AddPlayerCorpse(mobj_t *actor);
-void A_SkullPop(mobj_t *actor);
-void A_FreezeDeath(mobj_t *actor);
-void A_FreezeDeathChunks(mobj_t *actor);
-void A_CheckBurnGone(mobj_t *actor);
-void A_CheckSkullFloor(mobj_t *actor);
-void A_CheckSkullDone(mobj_t *actor);
-void A_SpeedFade(mobj_t *actor);
-void A_IceSetTics(mobj_t *actor);
-void A_IceCheckHeadDone(mobj_t *actor);
-void A_PigPain(mobj_t *actor);
-void A_PigLook(mobj_t *actor);
-void A_PigChase(mobj_t *actor);
-void A_FaceTarget(mobj_t *actor);
-void A_PigAttack(mobj_t *actor);
-void A_QueueCorpse(mobj_t *actor);
-void A_Look(mobj_t *actor);
-void A_Chase(mobj_t *actor);
-void A_CentaurAttack(mobj_t *actor);
-void A_CentaurAttack2(mobj_t *actor);
-void A_SetReflective(mobj_t *actor);
-void A_CentaurDefend(mobj_t *actor);
-void A_UnSetReflective(mobj_t *actor);
-void A_CentaurDropStuff(mobj_t *actor);
-void A_CheckFloor(mobj_t *actor);
-void A_DemonAttack1(mobj_t *actor);
-void A_DemonAttack2(mobj_t *actor);
-void A_DemonDeath(mobj_t *actor);
-void A_Demon2Death(mobj_t *actor);
-void A_WraithRaiseInit(mobj_t *actor);
-void A_WraithRaise(mobj_t *actor);
-void A_WraithInit(mobj_t *actor);
-void A_WraithLook(mobj_t *actor);
-void A_WraithChase(mobj_t *actor);
-void A_WraithFX3(mobj_t *actor);
-void A_WraithMelee(mobj_t *actor);
-void A_WraithMissile(mobj_t *actor);
-void A_WraithFX2(mobj_t *actor);
-void A_MinotaurFade1(mobj_t *actor);
-void A_MinotaurFade2(mobj_t *actor);
-void A_MinotaurLook(mobj_t *actor);
-void A_MinotaurChase(mobj_t *actor);
-void A_MinotaurRoam(mobj_t *actor);
-void A_MinotaurAtk1(mobj_t *actor);
-void A_MinotaurDecide(mobj_t *actor);
-void A_MinotaurAtk2(mobj_t *actor);
-void A_MinotaurAtk3(mobj_t *actor);
-void A_MinotaurCharge(mobj_t *actor);
-void A_SmokePuffExit(mobj_t *actor);
-void A_MinotaurFade0(mobj_t *actor);
-void A_MntrFloorFire(mobj_t *actor);
-void A_SerpentChase(mobj_t *actor);
-void A_SerpentHumpDecide(mobj_t *actor);
-void A_SerpentUnHide(mobj_t *actor);
-void A_SerpentRaiseHump(mobj_t *actor);
-void A_SerpentLowerHump(mobj_t *actor);
-void A_SerpentHide(mobj_t *actor);
-void A_SerpentBirthScream(mobj_t *actor);
-void A_SetShootable(mobj_t *actor);
-void A_SerpentCheckForAttack(mobj_t *actor);
-void A_UnSetShootable(mobj_t *actor);
-void A_SerpentDiveSound(mobj_t *actor);
-void A_SerpentWalk(mobj_t *actor);
-void A_SerpentChooseAttack(mobj_t *actor);
-void A_SerpentMeleeAttack(mobj_t *actor);
-void A_SerpentMissileAttack(mobj_t *actor);
-void A_SerpentHeadPop(mobj_t *actor);
-void A_SerpentSpawnGibs(mobj_t *actor);
-void A_SerpentHeadCheck(mobj_t *actor);
-void A_FloatGib(mobj_t *actor);
-void A_DelayGib(mobj_t *actor);
-void A_SinkGib(mobj_t *actor);
-void A_BishopDecide(mobj_t *actor);
-void A_BishopDoBlur(mobj_t *actor);
-void A_BishopSpawnBlur(mobj_t *actor);
-void A_BishopChase(mobj_t *actor);
-void A_BishopAttack(mobj_t *actor);
-void A_BishopAttack2(mobj_t *actor);
-void A_BishopPainBlur(mobj_t *actor);
-void A_BishopPuff(mobj_t *actor);
-void A_SetAltShadow(mobj_t *actor);
-void A_BishopMissileWeave(mobj_t *actor);
-void A_BishopMissileSeek(mobj_t *actor);
-void A_DragonInitFlight(mobj_t *actor);
-void A_DragonFlap(mobj_t *actor);
-void A_DragonFlight(mobj_t *actor);
-void A_DragonAttack(mobj_t *actor);
-void A_DragonPain(mobj_t *actor);
-void A_DragonCheckCrash(mobj_t *actor);
-void A_DragonFX2(mobj_t *actor);
-void A_ESound(mobj_t *actor);
-void A_EttinAttack(mobj_t *actor);
-void A_DropMace(mobj_t *actor);
-void A_FiredRocks(mobj_t *actor);
-void A_UnSetInvulnerable(mobj_t *actor);
-void A_FiredChase(mobj_t *actor);
-void A_FiredAttack(mobj_t *actor);
-void A_FiredSplotch(mobj_t *actor);
-void A_SmBounce(mobj_t *actor);
-void A_IceGuyLook(mobj_t *actor);
-void A_IceGuyChase(mobj_t *actor);
-void A_IceGuyAttack(mobj_t *actor);
-void A_IceGuyDie(mobj_t *actor);
-void A_IceGuyMissilePuff(mobj_t *actor);
-void A_IceGuyMissileExplode(mobj_t *actor);
-void A_ClassBossHealth(mobj_t *actor);
-void A_FastChase(mobj_t *actor);
-void A_FighterAttack(mobj_t *actor);
-void A_ClericAttack(mobj_t *actor);
-void A_MageAttack(mobj_t *actor);
-void A_SorcSpinBalls(mobj_t *actor);
-void A_SpeedBalls(mobj_t *actor);
-void A_SpawnFizzle(mobj_t *actor);
-void A_SorcBossAttack(mobj_t *actor);
-void A_SorcBallOrbit(mobj_t *actor);
-void A_SorcBallPop(mobj_t *actor);
-void A_BounceCheck(mobj_t *actor);
-void A_SorcFX1Seek(mobj_t *actor);
-void A_SorcFX2Split(mobj_t *actor);
-void A_SorcFX2Orbit(mobj_t *actor);
-void A_SorcererBishopEntry(mobj_t *actor);
-void A_SpawnBishop(mobj_t *actor);
-void A_SorcFX4Check(mobj_t *actor);
-void A_KoraxStep2(mobj_t *actor);
-void A_KoraxChase(mobj_t *actor);
-void A_KoraxStep(mobj_t *actor);
-void A_KoraxDecide(mobj_t *actor);
-void A_KoraxMissile(mobj_t *actor);
-void A_KoraxCommand(mobj_t *actor);
-void A_KoraxBonePop(mobj_t *actor);
-void A_KSpiritRoam(mobj_t *actor);
-void A_KBoltRaise(mobj_t *actor);
-void A_KBolt(mobj_t *actor);
-void A_BatSpawnInit(mobj_t *actor);
-void A_BatSpawn(mobj_t *actor);
-void A_BatMove(mobj_t *actor);
+class Actor:Entity
+{
+	void A_FreeTargMobj(void);
+	void A_FlameCheck(void);
+	void A_HideThing(void);
+	void A_UnHideThing(void);
+	void A_RestoreSpecialThing1(void);
+	void A_RestoreSpecialThing2(void);
+	void A_RestoreArtifact(void);
+	void A_Summon(void);
+	void A_ThrustInitUp(void);
+	void A_ThrustInitDn(void);
+	void A_ThrustRaise(void);
+	void A_ThrustBlock(void);
+	void A_ThrustImpale(void);
+	void A_ThrustLower(void);
+	void A_TeloSpawnC(void);
+	void A_TeloSpawnB(void);
+	void A_TeloSpawnA(void);
+	void A_TeloSpawnD(void);
+	void A_CheckTeleRing(void);
+	void A_FogSpawn(void);
+	void A_FogMove(void);
+	void A_Quake(void);
+	void A_ContMobjSound(void);
+	void A_Scream(void);
+	void A_Explode(void);
+	void A_PoisonBagInit(void);
+	void A_PoisonBagDamage(void);
+	void A_PoisonBagCheck(void);
+	void A_CheckThrowBomb(void);
+	void A_NoGravity(void);
+	void A_PotteryExplode(void);
+	void A_PotteryChooseBit(void);
+	void A_PotteryCheck(void);
+	void A_CorpseBloodDrip(void);
+	void A_CorpseExplode(void);
+	void A_LeafSpawn(void);
+	void A_LeafThrust(void);
+	void A_LeafCheck(void);
+	void A_BridgeInit(void);
+	void A_BridgeOrbit(void);
+	void A_TreeDeath(void);
+	void A_PoisonShroom(void);
+	void A_Pain(void);
+	void A_SoAExplode(void);
+	void A_BellReset1(void);
+	void A_BellReset2(void);
+	void A_NoBlocking(void);
+	void A_FSwordFlames(void);
+	void A_CStaffMissileSlither(void);
+	void A_CFlameRotate(void);
+	void A_CFlamePuff(void);
+	void A_CFlameMissile(void);
+	void A_CHolySeek(void);
+	void A_CHolyCheckScream(void);
+	void A_CHolyTail(void);
+	void A_CHolySpawnPuff(void);
+	void A_CHolyAttack2(void);
+	void A_LightningZap(void);
+	void A_LightningClip(void);
+	void A_LightningRemove(void);
+	void A_LastZap(void);
+	void A_ZapMimic(void);
+	void A_MStaffWeave(void);
+	void A_MStaffTrack(void);
+	void A_ShedShard(void);
+	void A_AddPlayerCorpse(void);
+	void A_SkullPop(void);
+	void A_FreezeDeath(void);
+	void A_FreezeDeathChunks(void);
+	void A_CheckBurnGone(void);
+	void A_CheckSkullFloor(void);
+	void A_CheckSkullDone(void);
+	void A_SpeedFade(void);
+	void A_IceSetTics(void);
+	void A_IceCheckHeadDone(void);
+	void A_PigPain(void);
+	void A_PigLook(void);
+	void A_PigChase(void);
+	void A_FaceTarget(void);
+	void A_PigAttack(void);
+	void A_QueueCorpse(void);
+	void A_Look(void);
+	void A_Chase(void);
+	void A_CentaurAttack(void);
+	void A_CentaurAttack2(void);
+	void A_SetReflective(void);
+	void A_CentaurDefend(void);
+	void A_UnSetReflective(void);
+	void A_CentaurDropStuff(void);
+	void A_CheckFloor(void);
+	void A_DemonAttack1(void);
+	void A_DemonAttack2(void);
+	void A_DemonDeath(void);
+	void A_Demon2Death(void);
+	void A_WraithRaiseInit(void);
+	void A_WraithRaise(void);
+	void A_WraithInit(void);
+	void A_WraithLook(void);
+	void A_WraithChase(void);
+	void A_WraithFX3(void);
+	void A_WraithMelee(void);
+	void A_WraithMissile(void);
+	void A_WraithFX2(void);
+	void A_MinotaurFade1(void);
+	void A_MinotaurFade2(void);
+	void A_MinotaurLook(void);
+	void A_MinotaurChase(void);
+	void A_MinotaurRoam(void);
+	void A_MinotaurAtk1(void);
+	void A_MinotaurDecide(void);
+	void A_MinotaurAtk2(void);
+	void A_MinotaurAtk3(void);
+	void A_MinotaurCharge(void);
+	void A_SmokePuffExit(void);
+	void A_MinotaurFade0(void);
+	void A_MntrFloorFire(void);
+	void A_SerpentChase(void);
+	void A_SerpentHumpDecide(void);
+	void A_SerpentUnHide(void);
+	void A_SerpentRaiseHump(void);
+	void A_SerpentLowerHump(void);
+	void A_SerpentHide(void);
+	void A_SerpentBirthScream(void);
+	void A_SetShootable(void);
+	void A_SerpentCheckForAttack(void);
+	void A_UnSetShootable(void);
+	void A_SerpentDiveSound(void);
+	void A_SerpentWalk(void);
+	void A_SerpentChooseAttack(void);
+	void A_SerpentMeleeAttack(void);
+	void A_SerpentMissileAttack(void);
+	void A_SerpentHeadPop(void);
+	void A_SerpentSpawnGibs(void);
+	void A_SerpentHeadCheck(void);
+	void A_FloatGib(void);
+	void A_DelayGib(void);
+	void A_SinkGib(void);
+	void A_BishopDecide(void);
+	void A_BishopDoBlur(void);
+	void A_BishopSpawnBlur(void);
+	void A_BishopChase(void);
+	void A_BishopAttack(void);
+	void A_BishopAttack2(void);
+	void A_BishopPainBlur(void);
+	void A_BishopPuff(void);
+	void A_SetAltShadow(void);
+	void A_BishopMissileWeave(void);
+	void A_BishopMissileSeek(void);
+	void A_DragonInitFlight(void);
+	void A_DragonFlap(void);
+	void A_DragonFlight(void);
+	void A_DragonAttack(void);
+	void A_DragonPain(void);
+	void A_DragonCheckCrash(void);
+	void A_DragonFX2(void);
+	void A_ESound(void);
+	void A_EttinAttack(void);
+	void A_DropMace(void);
+	void A_FiredRocks(void);
+	void A_UnSetInvulnerable(void);
+	void A_FiredChase(void);
+	void A_FiredAttack(void);
+	void A_FiredSplotch(void);
+	void A_SmBounce(void);
+	void A_IceGuyLook(void);
+	void A_IceGuyChase(void);
+	void A_IceGuyAttack(void);
+	void A_IceGuyDie(void);
+	void A_IceGuyMissilePuff(void);
+	void A_IceGuyMissileExplode(void);
+	void A_ClassBossHealth(void);
+	void A_FastChase(void);
+	void A_FighterAttack(void);
+	void A_ClericAttack(void);
+	void A_MageAttack(void);
+	void A_SorcSpinBalls(void);
+	void A_SpeedBalls(void);
+	void A_SpawnFizzle(void);
+	void A_SorcBossAttack(void);
+	void A_SorcBallOrbit(void);
+	void A_SorcBallPop(void);
+	void A_BounceCheck(void);
+	void A_SorcFX1Seek(void);
+	void A_SorcFX2Split(void);
+	void A_SorcFX2Orbit(void);
+	void A_SorcererBishopEntry(void);
+	void A_SpawnBishop(void);
+	void A_SorcFX4Check(void);
+	void A_KoraxStep2(void);
+	void A_KoraxChase(void);
+	void A_KoraxStep(void);
+	void A_KoraxDecide(void);
+	void A_KoraxMissile(void);
+	void A_KoraxCommand(void);
+	void A_KoraxBonePop(void);
+	void A_KSpiritRoam(void);
+	void A_KBoltRaise(void);
+	void A_KBolt(void);
+	void A_BatSpawnInit(void);
+	void A_BatSpawn(void);
+	void A_BatMove(void);
+}
 
-__states__
+class Weapon:ViewEntity
+{
+	void A_Light0(void);
+	void A_WeaponReady(void);
+	void A_Lower(void);
+	void A_Raise(void);
+	void A_FPunchAttack(void);
+	void A_ReFire(void);
+	void A_FAxeAttack(void);
+	void A_FHammerAttack(void);
+	void A_FHammerThrow(void);
+	void A_FSwordAttack(void);
+	void A_CMaceAttack(void);
+	void A_CStaffInitBlink(void);
+	void A_CStaffCheckBlink(void);
+	void A_CStaffCheck(void);
+	void A_CStaffAttack(void);
+	void A_CFlameAttack(void);
+	void A_CHolyAttack(void);
+	void A_CHolyPalette(void);
+	void A_MWandAttack(void);
+	void A_LightningReady(void);
+	void A_MLightningAttack(void);
+	void A_MStaffAttack(void);
+	void A_MStaffPalette(void);
+	void A_SnoutAttack(void);
+	void A_FireConePL1(void);
+}
+
+__states__(Actor)
 {
 	S_NULL {"MAN1", 0, -1.0, NULL, S_NULL}
 	S_FREETARGMOBJ {"ACLO", 4, 1050.0 / 35.0, A_FreeTargMobj, S_NULL}
@@ -1243,6 +1250,9 @@ __states__
 	S_TELESMOKE24 {"TSMK", 23, 3.0 / 35.0, NULL, S_TELESMOKE25}
 	S_TELESMOKE25 {"TSMK", 24, 4.0 / 35.0, NULL, S_TELESMOKE26}
 	S_TELESMOKE26 {"TSMK", 25, 3.0 / 35.0, NULL, S_TELESMOKE1}
+}
+__states__(Weapon)
+{
 	S_LIGHTDONE {"FPCH", 0, 0.0 / 35.0, A_Light0, S_NULL}
 	S_PUNCHREADY {"FPCH", 0, 1.0 / 35.0, A_WeaponReady, S_PUNCHREADY}
 	S_PUNCHDOWN {"FPCH", 0, 1.0 / 35.0, A_Lower, S_PUNCHDOWN}
@@ -1252,6 +1262,9 @@ __states__
 	S_PUNCHATK1_3 {"FPCH", 3, 4.0 / 35.0, A_FPunchAttack, S_PUNCHATK1_4, 5.0, 40.0}
 	S_PUNCHATK1_4 {"FPCH", 2, 4.0 / 35.0, NULL, S_PUNCHATK1_5, 5.0, 40.0}
 	S_PUNCHATK1_5 {"FPCH", 1, 5.0 / 35.0, A_ReFire, S_PUNCHREADY, 5.0, 40.0}
+}
+__states__(Actor)
+{
 	S_PUNCHATK2_1 {"FPCH", 3, 4.0 / 35.0, NULL, S_PUNCHATK2_2, 5.0, 40.0}
 	S_PUNCHATK2_2 {"FPCH", 4, 4.0 / 35.0, NULL, S_PUNCHATK2_3, 5.0, 40.0}
 	S_PUNCHATK2_3 {"FPCH", 4, 1.0 / 35.0, NULL, S_PUNCHATK2_4, 15.0, 50.0}
@@ -1267,6 +1280,9 @@ __states__
 	S_PUNCHPUFF4 {"FHFX", 21, 4.0 / 35.0, NULL, S_PUNCHPUFF5}
 	S_PUNCHPUFF5 {"FHFX", 22, 4.0 / 35.0, NULL, S_NULL}
 	S_AXE {"WFAX", 0, -1.0, NULL, S_NULL}
+}
+__states__(Weapon)
+{
 	S_FAXEREADY {"FAXE", 0, 1.0 / 35.0, A_WeaponReady, S_FAXEREADY}
 	S_FAXEDOWN {"FAXE", 0, 1.0 / 35.0, A_Lower, S_FAXEDOWN}
 	S_FAXEUP {"FAXE", 0, 1.0 / 35.0, A_Raise, S_FAXEUP}
@@ -1304,6 +1320,9 @@ __states__
 	S_FAXEATK_G11 {"FAXE", 0, 1.0 / 35.0, NULL, S_FAXEATK_G12, 0.0, 44.0}
 	S_FAXEATK_G12 {"FAXE", 0, 1.0 / 35.0, NULL, S_FAXEATK_G13, 0.0, 36.0}
 	S_FAXEATK_G13 {"FAXE", 0, 1.0 / 35.0, NULL, S_FAXEREADY_G}
+}
+__states__(Actor)
+{
 	S_AXEPUFF_GLOW1 {"FAXE", 17 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_AXEPUFF_GLOW2}
 	S_AXEPUFF_GLOW2 {"FAXE", 18 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_AXEPUFF_GLOW3}
 	S_AXEPUFF_GLOW3 {"FAXE", 19 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_AXEPUFF_GLOW4}
@@ -1318,6 +1337,9 @@ __states__
 	S_AXEBLOOD5 {"FAXE", 9, 3.0 / 35.0, NULL, S_AXEBLOOD6}
 	S_AXEBLOOD6 {"FAXE", 10, 3.0 / 35.0, NULL, S_NULL}
 	S_HAMM {"WFHM", 0, -1.0, NULL, S_NULL}
+}
+__states__(Weapon)
+{
 	S_FHAMMERREADY {"FHMR", 0, 1.0 / 35.0, A_WeaponReady, S_FHAMMERREADY}
 	S_FHAMMERDOWN {"FHMR", 0, 1.0 / 35.0, A_Lower, S_FHAMMERDOWN}
 	S_FHAMMERUP {"FHMR", 0, 1.0 / 35.0, A_Raise, S_FHAMMERUP}
@@ -1333,6 +1355,9 @@ __states__
 	S_FHAMMERATK_10 {"FHMR", 0, 1.0 / 35.0, NULL, S_FHAMMERATK_11, 0.0, 40.0}
 	S_FHAMMERATK_11 {"FHMR", 0, 1.0 / 35.0, NULL, S_FHAMMERATK_12, 0.0, 35.0}
 	S_FHAMMERATK_12 {"FHMR", 0, 1.0 / 35.0, NULL, S_FHAMMERREADY}
+}
+__states__(Actor)
+{
 	S_HAMMER_MISSILE_1 {"FHFX", 0 | FF_FULLBRIGHT, 2.0 / 35.0, NULL, S_HAMMER_MISSILE_2}
 	S_HAMMER_MISSILE_2 {"FHFX", 1 | FF_FULLBRIGHT, 2.0 / 35.0, A_ContMobjSound, S_HAMMER_MISSILE_3}
 	S_HAMMER_MISSILE_3 {"FHFX", 2 | FF_FULLBRIGHT, 2.0 / 35.0, NULL, S_HAMMER_MISSILE_4}
@@ -1356,6 +1381,9 @@ __states__
 	S_HAMMERPUFF3 {"FHFX", 20, 4.0 / 35.0, NULL, S_HAMMERPUFF4}
 	S_HAMMERPUFF4 {"FHFX", 21, 4.0 / 35.0, NULL, S_HAMMERPUFF5}
 	S_HAMMERPUFF5 {"FHFX", 22, 4.0 / 35.0, NULL, S_NULL}
+}
+__states__(Weapon)
+{
 	S_FSWORDREADY {"FSRD", 0 | FF_FULLBRIGHT, 1.0 / 35.0, A_WeaponReady, S_FSWORDREADY1}
 	S_FSWORDREADY1 {"FSRD", 0 | FF_FULLBRIGHT, 1.0 / 35.0, A_WeaponReady, S_FSWORDREADY2}
 	S_FSWORDREADY2 {"FSRD", 0 | FF_FULLBRIGHT, 1.0 / 35.0, A_WeaponReady, S_FSWORDREADY3}
@@ -1382,6 +1410,9 @@ __states__
 	S_FSWORDATK_10 {"FSRD", 2 | FF_FULLBRIGHT, 1.0 / 35.0, NULL, S_FSWORDATK_11, 5.0, 50.0}
 	S_FSWORDATK_11 {"FSRD", 0 | FF_FULLBRIGHT, 1.0 / 35.0, NULL, S_FSWORDATK_12, 5.0, 45.0}
 	S_FSWORDATK_12 {"FSRD", 1 | FF_FULLBRIGHT, 1.0 / 35.0, NULL, S_FSWORDREADY, 5.0, 40.0}
+}
+__states__(Actor)
+{
 	S_FSWORD_MISSILE1 {"FSFX", 0 | FF_FULLBRIGHT, 3.0 / 35.0, NULL, S_FSWORD_MISSILE2}
 	S_FSWORD_MISSILE2 {"FSFX", 1 | FF_FULLBRIGHT, 3.0 / 35.0, NULL, S_FSWORD_MISSILE3}
 	S_FSWORD_MISSILE3 {"FSFX", 2 | FF_FULLBRIGHT, 3.0 / 35.0, NULL, S_FSWORD_MISSILE1}
@@ -1405,6 +1436,9 @@ __states__
 	S_FSWORD_FLAME8 {"FSFX", 20 | FF_FULLBRIGHT, 3.0 / 35.0, NULL, S_FSWORD_FLAME9}
 	S_FSWORD_FLAME9 {"FSFX", 21 | FF_FULLBRIGHT, 3.0 / 35.0, NULL, S_FSWORD_FLAME10}
 	S_FSWORD_FLAME10 {"FSFX", 22 | FF_FULLBRIGHT, 3.0 / 35.0, NULL, S_NULL}
+}
+__states__(Weapon)
+{
 	S_CMACEREADY {"CMCE", 0, 1.0 / 35.0, A_WeaponReady, S_CMACEREADY}
 	S_CMACEDOWN {"CMCE", 0, 1.0 / 35.0, A_Lower, S_CMACEDOWN}
 	S_CMACEUP {"CMCE", 0, 1.0 / 35.0, A_Raise, S_CMACEUP}
@@ -1425,7 +1459,13 @@ __states__
 	S_CMACEATK_15 {"CMCE", 0, 1.0 / 35.0, NULL, S_CMACEATK_16, 8.0, 55.0}
 	S_CMACEATK_16 {"CMCE", 0, 2.0 / 35.0, NULL, S_CMACEATK_17, 8.0, 50.0}
 	S_CMACEATK_17 {"CMCE", 0, 1.0 / 35.0, NULL, S_CMACEREADY, 8.0, 45.0}
+}
+__states__(Actor)
+{
 	S_CSTAFF {"WCSS", 0, "weapons/g_staff.md2", 0, -1.0, NULL, S_NULL}
+}
+__states__(Weapon)
+{
 	S_CSTAFFREADY {"CSSF", 2, 4.0 / 35.0, NULL, S_CSTAFFREADY1}
 	S_CSTAFFREADY1 {"CSSF", 1, 3.0 / 35.0, A_CStaffInitBlink, S_CSTAFFREADY2}
 	S_CSTAFFREADY2 {"CSSF", 0, 1.0 / 35.0, A_WeaponReady, S_CSTAFFREADY3}
@@ -1457,6 +1497,9 @@ __states__
 	S_CSTAFFATK_4 {"CSSF", 9, 2.0 / 35.0, NULL, S_CSTAFFATK_5, 0.0, 45.0}
 	S_CSTAFFATK_5 {"CSSF", 0, 2.0 / 35.0, NULL, S_CSTAFFATK_6, 0.0, 40.0}
 	S_CSTAFFATK_6 {"CSSF", 0, 2.0 / 35.0, NULL, S_CSTAFFREADY2, 0.0, 36.0}
+}
+__states__(Actor)
+{
 	S_CSTAFFATK2_1 {"CSSF", 10, 10.0 / 35.0, NULL, S_CSTAFFREADY2, 0.0, 36.0}
 	S_CSTAFF_MISSILE1 {"CSSF", 3 | FF_FULLBRIGHT, 1.0 / 35.0, A_CStaffMissileSlither, S_CSTAFF_MISSILE2}
 	S_CSTAFF_MISSILE2 {"CSSF", 3 | FF_FULLBRIGHT, 1.0 / 35.0, A_CStaffMissileSlither, S_CSTAFF_MISSILE3}
@@ -1479,6 +1522,9 @@ __states__
 	S_CFLAME6 {"WCFM", 5 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_CFLAME7}
 	S_CFLAME7 {"WCFM", 6 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_CFLAME8}
 	S_CFLAME8 {"WCFM", 7 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_CFLAME1}
+}
+__states__(Weapon)
+{
 	S_CFLAMEREADY1 {"CFLM", 0, 1.0 / 35.0, A_WeaponReady, S_CFLAMEREADY2}
 	S_CFLAMEREADY2 {"CFLM", 0, 1.0 / 35.0, A_WeaponReady, S_CFLAMEREADY3}
 	S_CFLAMEREADY3 {"CFLM", 0, 1.0 / 35.0, A_WeaponReady, S_CFLAMEREADY4}
@@ -1501,6 +1547,9 @@ __states__
 	S_CFLAMEATK_6 {"CFLM", 4 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_CFLAMEATK_7}
 	S_CFLAMEATK_7 {"CFLM", 6, 2.0 / 35.0, NULL, S_CFLAMEATK_8, 0.0, 40.0}
 	S_CFLAMEATK_8 {"CFLM", 6, 2.0 / 35.0, NULL, S_CFLAMEREADY1}
+}
+__states__(Actor)
+{
 	S_CFLAMEFLOOR1 {"CFFX", 13 | FF_FULLBRIGHT, 5.0 / 35.0, NULL, S_CFLAMEFLOOR2}
 	S_CFLAMEFLOOR2 {"CFFX", 14 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_CFLAMEFLOOR3}
 	S_CFLAMEFLOOR3 {"CFFX", 15 | FF_FULLBRIGHT, 3.0 / 35.0, NULL, S_NULL}
@@ -1566,6 +1615,9 @@ __states__
 	S_CFLAME_MISSILE1 {"CFFX", 0 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_CFLAME_MISSILE2}
 	S_CFLAME_MISSILE2 {"CFFX", 0, 1.0 / 35.0, A_CFlamePuff, S_FLAMEPUFF1}
 	S_CFLAME_MISSILE_X {"CFFX", 0 | FF_FULLBRIGHT, 1.0 / 35.0, A_CFlameMissile, S_FLAMEPUFF1}
+}
+__states__(Weapon)
+{
 	S_CHOLYREADY {"CHLY", 0, 1.0 / 35.0, A_WeaponReady, S_CHOLYREADY}
 	S_CHOLYDOWN {"CHLY", 0, 1.0 / 35.0, A_Lower, S_CHOLYDOWN}
 	S_CHOLYUP {"CHLY", 0, 1.0 / 35.0, A_Raise, S_CHOLYUP}
@@ -1578,6 +1630,9 @@ __states__
 	S_CHOLYATK_7 {"CHLY", 6 | FF_FULLBRIGHT, 2.0 / 35.0, A_CHolyPalette, S_CHOLYATK_8, 0.0, 40.0}
 	S_CHOLYATK_8 {"CHLY", 6 | FF_FULLBRIGHT, 2.0 / 35.0, A_CHolyPalette, S_CHOLYATK_9, 0.0, 40.0}
 	S_CHOLYATK_9 {"CHLY", 6 | FF_FULLBRIGHT, 2.0 / 35.0, A_CHolyPalette, S_CHOLYREADY, 0.0, 36.0}
+}
+__states__(Actor)
+{
 	S_HOLY_FX1 {"SPIR", 0, 2.0 / 35.0, A_CHolySeek, S_HOLY_FX2}
 	S_HOLY_FX2 {"SPIR", 0, 2.0 / 35.0, A_CHolySeek, S_HOLY_FX3}
 	S_HOLY_FX3 {"SPIR", 1, 2.0 / 35.0, A_CHolySeek, S_HOLY_FX4}
@@ -1605,6 +1660,9 @@ __states__
 	S_HOLY_MISSILE_P3 {"SPIR", 18, 3.0 / 35.0, NULL, S_HOLY_MISSILE_P4}
 	S_HOLY_MISSILE_P4 {"SPIR", 19, 3.0 / 35.0, NULL, S_HOLY_MISSILE_P5}
 	S_HOLY_MISSILE_P5 {"SPIR", 20, 3.0 / 35.0, NULL, S_NULL}
+}
+__states__(Weapon)
+{
 	S_MWANDREADY {"MWND", 0, 1.0 / 35.0, A_WeaponReady, S_MWANDREADY}
 	S_MWANDDOWN {"MWND", 0, 1.0 / 35.0, A_Lower, S_MWANDDOWN}
 	S_MWANDUP {"MWND", 0, 1.0 / 35.0, A_Raise, S_MWANDUP}
@@ -1612,6 +1670,9 @@ __states__
 	S_MWANDATK_2 {"MWND", 1 | FF_FULLBRIGHT, 6.0 / 35.0, A_MWandAttack, S_MWANDATK_3, 0.0, 48.0}
 	S_MWANDATK_3 {"MWND", 0, 3.0 / 35.0, NULL, S_MWANDATK_4, 0.0, 40.0}
 	S_MWANDATK_4 {"MWND", 0, 3.0 / 35.0, A_ReFire, S_MWANDREADY, 0.0, 36.0}
+}
+__states__(Actor)
+{
 	S_MWANDPUFF1 {"MWND", 4 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MWANDPUFF2}
 	S_MWANDPUFF2 {"MWND", 5 | FF_FULLBRIGHT, 3.0 / 35.0, NULL, S_MWANDPUFF3}
 	S_MWANDPUFF3 {"MWND", 6 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MWANDPUFF4}
@@ -1631,6 +1692,9 @@ __states__
 	S_MW_LIGHTNING6 {"WMLG", 5 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MW_LIGHTNING7}
 	S_MW_LIGHTNING7 {"WMLG", 6 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MW_LIGHTNING8}
 	S_MW_LIGHTNING8 {"WMLG", 7 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MW_LIGHTNING1}
+}
+__states__(Weapon)
+{
 	S_MLIGHTNINGREADY {"MLNG", 0 | FF_FULLBRIGHT, 1.0 / 35.0, A_WeaponReady, S_MLIGHTNINGREADY2}
 	S_MLIGHTNINGREADY2 {"MLNG", 0 | FF_FULLBRIGHT, 1.0 / 35.0, A_WeaponReady, S_MLIGHTNINGREADY3}
 	S_MLIGHTNINGREADY3 {"MLNG", 0 | FF_FULLBRIGHT, 1.0 / 35.0, A_WeaponReady, S_MLIGHTNINGREADY4}
@@ -1668,6 +1732,9 @@ __states__
 	S_MLIGHTNINGATK_9 {"MLNG", 1 | FF_FULLBRIGHT, 2.0 / 35.0, NULL, S_MLIGHTNINGATK_10, 0.0, 50.0}
 	S_MLIGHTNINGATK_10 {"MLNG", 1 | FF_FULLBRIGHT, 2.0 / 35.0, NULL, S_MLIGHTNINGATK_11, 0.0, 45.0}
 	S_MLIGHTNINGATK_11 {"MLNG", 1 | FF_FULLBRIGHT, 2.0 / 35.0, NULL, S_MLIGHTNINGREADY, 0.0, 40.0}
+}
+__states__(Actor)
+{
 	S_LIGHTNING_CEILING1 {"MLFX", 0 | FF_FULLBRIGHT, 2.0 / 35.0, A_LightningZap, S_LIGHTNING_CEILING2}
 	S_LIGHTNING_CEILING2 {"MLFX", 1 | FF_FULLBRIGHT, 2.0 / 35.0, A_LightningClip, S_LIGHTNING_CEILING3}
 	S_LIGHTNING_CEILING3 {"MLFX", 2 | FF_FULLBRIGHT, 2.0 / 35.0, A_LightningClip, S_LIGHTNING_CEILING4}
@@ -1727,6 +1794,9 @@ __states__
 	S_LIGHTNING_ZAP_X6 {"MLFX", 18 | FF_FULLBRIGHT, 2.0 / 35.0, NULL, S_LIGHTNING_ZAP_X7}
 	S_LIGHTNING_ZAP_X7 {"MLFX", 19 | FF_FULLBRIGHT, 2.0 / 35.0, NULL, S_LIGHTNING_ZAP_X8}
 	S_LIGHTNING_ZAP_X8 {"MLFX", 20 | FF_FULLBRIGHT, 2.0 / 35.0, NULL, S_NULL}
+}
+__states__(Weapon)
+{
 	S_MSTAFFREADY {"MSTF", 0, 1.0 / 35.0, A_WeaponReady, S_MSTAFFREADY2}
 	S_MSTAFFREADY2 {"MSTF", 0, 1.0 / 35.0, A_WeaponReady, S_MSTAFFREADY3}
 	S_MSTAFFREADY3 {"MSTF", 0, 1.0 / 35.0, A_WeaponReady, S_MSTAFFREADY4}
@@ -1771,6 +1841,9 @@ __states__
 	S_MSTAFFATK_5 {"MSTF", 8, 2.0 / 35.0, A_MStaffPalette, S_MSTAFFATK_6, 0.0, 48.0}
 	S_MSTAFFATK_6 {"MSTF", 8, 1.0 / 35.0, NULL, S_MSTAFFATK_7, 0.0, 40.0}
 	S_MSTAFFATK_7 {"MSTF", 9, 5.0 / 35.0, NULL, S_MSTAFFREADY, 0.0, 36.0}
+}
+__states__(Actor)
+{
 	S_MSTAFF_FX1_1 {"MSP1", 0 | FF_FULLBRIGHT, 3.0 / 35.0, A_MStaffWeave, S_MSTAFF_FX1_2}
 	S_MSTAFF_FX1_2 {"MSP1", 1 | FF_FULLBRIGHT, 3.0 / 35.0, A_MStaffWeave, S_MSTAFF_FX1_3}
 	S_MSTAFF_FX1_3 {"MSP1", 2 | FF_FULLBRIGHT, 3.0 / 35.0, A_MStaffWeave, S_MSTAFF_FX1_4}
@@ -1805,14 +1878,23 @@ __states__
 	S_MSTAFF1 {"WMS1", 0 | FF_FULLBRIGHT, -1.0, NULL, S_NULL}
 	S_MSTAFF2 {"WMS2", 0 | FF_FULLBRIGHT, -1.0, NULL, S_NULL}
 	S_MSTAFF3 {"WMS3", 0 | FF_FULLBRIGHT, -1.0, NULL, S_NULL}
+}
+__states__(Weapon)
+{
 	S_SNOUTREADY {"WPIG", 0, 1.0 / 35.0, A_WeaponReady, S_SNOUTREADY}
 	S_SNOUTDOWN {"WPIG", 0, 1.0 / 35.0, A_Lower, S_SNOUTDOWN}
 	S_SNOUTUP {"WPIG", 0, 1.0 / 35.0, A_Raise, S_SNOUTUP}
 	S_SNOUTATK1 {"WPIG", 0, 4.0 / 35.0, A_SnoutAttack, S_SNOUTATK2}
 	S_SNOUTATK2 {"WPIG", 1, 8.0 / 35.0, A_SnoutAttack, S_SNOUTREADY}
+}
+__states__(Actor)
+{
 	S_COS1 {"WMCS", 0 | FF_FULLBRIGHT, 8.0 / 35.0, NULL, S_COS2}
 	S_COS2 {"WMCS", 1 | FF_FULLBRIGHT, 8.0 / 35.0, NULL, S_COS3}
 	S_COS3 {"WMCS", 2 | FF_FULLBRIGHT, 8.0 / 35.0, NULL, S_COS1}
+}
+__states__(Weapon)
+{
 	S_CONEREADY {"CONE", 0, 1.0 / 35.0, A_WeaponReady, S_CONEREADY}
 	S_CONEDOWN {"CONE", 0, 1.0 / 35.0, A_Lower, S_CONEDOWN}
 	S_CONEUP {"CONE", 0, 1.0 / 35.0, A_Raise, S_CONEUP}
@@ -1824,6 +1906,9 @@ __states__
 	S_CONEATK1_6 {"CONE", 6, 3.0 / 35.0, NULL, S_CONEATK1_7}
 	S_CONEATK1_7 {"CONE", 0, 9.0 / 35.0, NULL, S_CONEATK1_8}
 	S_CONEATK1_8 {"CONE", 0, 10.0 / 35.0, A_ReFire, S_CONEREADY}
+}
+__states__(Actor)
+{
 	S_SHARDFX1_1 {"SHRD", 0 | FF_FULLBRIGHT, 2.0 / 35.0, NULL, S_SHARDFX1_2}
 	S_SHARDFX1_2 {"SHRD", 0 | FF_FULLBRIGHT, 3.0 / 35.0, A_ShedShard, S_SHARDFX1_3}
 	S_SHARDFX1_3 {"SHRD", 1 | FF_FULLBRIGHT, 3.0 / 35.0, NULL, S_SHARDFX1_4}
@@ -3109,9 +3194,12 @@ __states__
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/12/12 18:57:42  dj_jl
+//	State functions now are methods of Actor and Weapon classes
+//
 //	Revision 1.6  2001/11/02 18:42:08  dj_jl
 //	Damage method
-//
+//	
 //	Revision 1.5  2001/10/27 07:38:58  dj_jl
 //	Added new models
 //	

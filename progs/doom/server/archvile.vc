@@ -46,7 +46,7 @@
 //==========================================================================
 
 mobj_t *corpsehit;
-mobj_t *vileobj;
+Entity vileobj;
 float viletryx;
 float viletryy;
 
@@ -64,13 +64,13 @@ boolean PIT_VileCheck(mobj_t * thing)
 	if (thing->raisestate == S_NULL)
 		return true;	// monster doesn't have a raise state
 
-	maxdist = thing->radius + vileobj->radius;
+	maxdist = thing->radius + vileobj.radius;
 
 	if (fabs(thing->origin.x - viletryx) > maxdist ||
 		fabs(thing->origin.y - viletryy) > maxdist)
 		return true;	// not actually touching
 
-	if (!P_CheckSight(vileobj, thing))
+	if (!P_CheckSight(&vileobj, thing))
 		return true;	//  Con't see, possibly in other region
 
 	corpsehit = thing;
@@ -88,13 +88,13 @@ boolean PIT_VileCheck(mobj_t * thing)
 
 //==========================================================================
 //
-//  A_VileChase
+//  Actor::A_VileChase
 //
 //  Arch-vile check for ressurecting a body.
 //
 //==========================================================================
 
-void A_VileChase(mobj_t * actor)
+void Actor::A_VileChase(void)
 {
 	int xl;
 	int xh;
@@ -104,19 +104,14 @@ void A_VileChase(mobj_t * actor)
 	int bx;
 	int by;
 
-	mobjinfo_t *info;
 	mobj_t *temp;
 
-	if (actor->movedir != DI_NODIR)
+	if (movedir != DI_NODIR)
 	{
 		// check for corpses to raise
-		viletryx =
-			actor->origin.x +
-			actor->speed * frametime * xspeed[actor->movedir];
-		viletryy =
-			actor->origin.y +
-			actor->speed * frametime * yspeed[actor->movedir];
-		vileobj = actor;
+		viletryx = origin.x + speed * frametime * xspeed[movedir];
+		viletryy = origin.y + speed * frametime * yspeed[movedir];
+		vileobj = self;
 
 		xl = MapBlock(viletryx - level->bmaporgx - MAXRADIUS * 2.0);
 		xh = MapBlock(viletryx - level->bmaporgx + MAXRADIUS * 2.0);
@@ -132,12 +127,12 @@ void A_VileChase(mobj_t * actor)
 				if (!P_BlockThingsIterator(bx, by, PIT_VileCheck))
 				{
 					// got one!
-					temp = actor->target;
-					actor->target = corpsehit;
-					A_FaceTarget(actor);
-					actor->target = temp;
+					temp = target;
+					target = corpsehit;
+					A_FaceTarget();
+					target = temp;
 
-					SetMobjState(actor, S_VILE_HEAL1);
+					SetMobjState(this, S_VILE_HEAL1);
 					StartSoundName(corpsehit, "Slop", CHAN_BODY);
 
 					SetMobjState(corpsehit, corpsehit->raisestate);
@@ -157,173 +152,171 @@ void A_VileChase(mobj_t * actor)
 		}
 	}
 	// Return to normal attack.
-	A_Chase(actor);
+	A_Chase();
 }
 
 //==========================================================================
 //
-//  A_VileStart
+//  Actor::A_VileStart
 //
 //  Arch-vile attack start sound.
 //
 //==========================================================================
 
-void A_VileStart(mobj_t * actor)
+void Actor::A_VileStart(void)
 {
-	StartSoundName(actor, "ArchVileAttack", CHAN_WEAPON);
+	StartSoundName(this, "ArchVileAttack", CHAN_WEAPON);
 }
 
 //==========================================================================
 //
-//  A_VileTarget
+//  Actor::A_VileTarget
 //
 //  Spawn the hellfire.
 //
 //==========================================================================
 
-void A_Fire(mobj_t * actor);
-
-void A_VileTarget(mobj_t * actor)
+void Actor::A_VileTarget(void)
 {
 	mobj_t *fog;
 
-	if (!actor->target)
+	if (!target)
 		return;
 
-	A_FaceTarget(actor);
+	A_FaceTarget();
 
-	fog = P_SpawnMobj(actor->target->origin.x, actor->target->origin.x,
-		actor->target->origin.z, MT_FIRE);
+	fog = P_SpawnMobj(target->origin.x, target->origin.x,
+		target->origin.z, MT_FIRE);
 
-	actor->tracer = fog;
-	fog->target = actor;
-	fog->tracer = actor->target;
-	A_Fire(fog);
+	tracer = fog;
+	fog->target = this;
+	fog->tracer = target;
+	((Actor *)fog)->A_Fire();
 }
 
 //==========================================================================
 //
-//  A_VileAttack
+//  Actor::A_VileAttack
 //
 //  Arch-vile attack.
 //
 //==========================================================================
 
-void A_VileAttack(mobj_t * actor)
+void Actor::A_VileAttack(void)
 {
 	mobj_t *fire;
 
-	if (!actor->target)
+	if (!target)
 		return;
 
-	A_FaceTarget(actor);
+	A_FaceTarget();
 
-	if (!P_CheckSight(actor, actor->target))
+	if (!P_CheckSight(this, target))
 		return;
 
-	StartSoundName(actor, "BarrelExplode", CHAN_WEAPON);
-	actor->target->Damage(actor, actor, 20);
-	actor->target->velocity.z = 1000.0 / actor->target->mass * 35.0;
+	StartSoundName(this, "BarrelExplode", CHAN_WEAPON);
+	target->Damage(this, this, 20);
+	target->velocity.z = 1000.0 / target->mass * 35.0;
 
-	fire = actor->tracer;
+	fire = tracer;
 
 	if (!fire)
 		return;
 
 	// move the fire between the vile and the player
-	fire->origin.x = actor->target->origin.x - 24.0 * cos(actor->angles.yaw);
-	fire->origin.y = actor->target->origin.y - 24.0 * sin(actor->angles.yaw);
-	P_RadiusAttack(fire, actor, 70, 0, 0);
+	fire->origin.x = target->origin.x - 24.0 * cos(angles.yaw);
+	fire->origin.y = target->origin.y - 24.0 * sin(angles.yaw);
+	P_RadiusAttack(fire, this, 70, 0, 0);
 }
 
 //==========================================================================
 //
-//  A_StartFire
+//  Actor::A_StartFire
 //
 //  Make fire start sound.
 //
 //==========================================================================
 
-void A_StartFire(mobj_t * actor)
+void Actor::A_StartFire(void)
 {
-	StartSoundName(actor, "FlameStart", CHAN_VOICE);
-	A_Fire(actor);
+	StartSoundName(this, "FlameStart", CHAN_VOICE);
+	A_Fire();
 }
 
 //==========================================================================
 //
-//  A_Fire
+//  Actor::A_Fire
 //
 //  Keep fire in front of player unless out of sight.
 //
 //==========================================================================
 
-void A_Fire(mobj_t * actor)
+void Actor::A_Fire(void)
 {
 	mobj_t *dest;
 
-	dest = actor->tracer;
+	dest = tracer;
 	if (!dest)
 		return;
 
 	// don't move it if the vile lost sight
-	if (!P_CheckSight(actor->target, dest))
+	if (!P_CheckSight(target, dest))
 		return;
 
-	P_UnsetThingPosition(actor);
-	actor->origin.x = dest->origin.x + 24.0 * cos(dest->angles.yaw);
-	actor->origin.y = dest->origin.y + 24.0 * sin(dest->angles.yaw);
-	actor->origin.z = dest->origin.z;
-	P_SetThingPosition(actor);
+	P_UnsetThingPosition(this);
+	origin.x = dest->origin.x + 24.0 * cos(dest->angles.yaw);
+	origin.y = dest->origin.y + 24.0 * sin(dest->angles.yaw);
+	origin.z = dest->origin.z;
+	P_SetThingPosition(this);
 }
 
 //==========================================================================
 //
-//  A_FireCrackle
+//  Actor::A_FireCrackle
 //
 //  Fire sound.
 //
 //==========================================================================
 
-void A_FireCrackle(mobj_t * actor)
+void Actor::A_FireCrackle(void)
 {
-	StartSoundName(actor, "Flame", CHAN_VOICE);
-	A_Fire(actor);
+	StartSoundName(this, "Flame", CHAN_VOICE);
+	A_Fire();
 }
 
 #else
 
-void A_VileChase(mobj_t * actor)
+void Actor::A_VileChase(void)
 {
 	NotDoom2();
 }
 
-void A_VileStart(mobj_t * actor)
+void Actor::A_VileStart(void)
 {
 	NotDoom2();
 }
 
-void A_VileTarget(mobj_t * actor)
+void Actor::A_VileTarget(void)
 {
 	NotDoom2();
 }
 
-void A_VileAttack(mobj_t * actor)
+void Actor::A_VileAttack(void)
 {
 	NotDoom2();
 }
 
-void A_StartFire(mobj_t * actor)
+void Actor::A_StartFire(void)
 {
 	NotDoom2();
 }
 
-void A_Fire(mobj_t * actor)
+void Actor::A_Fire(void)
 {
 	NotDoom2();
 }
 
-void A_FireCrackle(mobj_t * actor)
+void Actor::A_FireCrackle(void)
 {
 	NotDoom2();
 }
@@ -333,6 +326,9 @@ void A_FireCrackle(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/12 18:57:40  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.5  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

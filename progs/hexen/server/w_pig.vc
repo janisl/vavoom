@@ -37,13 +37,12 @@
 
 //============================================================================
 //
-//  A_SnoutAttack
+//  Weapon::A_SnoutAttack
 //
 //============================================================================
 
-void A_SnoutAttack(mobj_t * actor)
+void Weapon::A_SnoutAttack(void)
 {
-	player_t *player = actor->player;
 	int damage;
 	TAVec angles;
 	TVec vforward;
@@ -71,6 +70,9 @@ void A_SnoutAttack(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.6  2001/10/22 17:23:13  dj_jl
 //  Floatification of angles
 //

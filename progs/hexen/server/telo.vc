@@ -45,117 +45,104 @@
 
 //==========================================================================
 //
-//  A_TeloSpawnA
+//  Actor::A_TeloSpawnA
 //
 //==========================================================================
 
-void A_TeloSpawnA(mobj_t * actor)
+void Actor::A_TeloSpawnA(void)
 {
 	mobj_t *mo;
 
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
-		MT_TELOTHER_FX2);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_TELOTHER_FX2);
 	if (mo)
 	{
 		mo->special1 = TELEPORT_LIFE;	// Lifetime countdown
-		mo->angles.yaw = actor->angles.yaw;
-		mo->target = actor->target;
-		mo->velocity.x = actor->velocity.x / 2.0;
-		mo->velocity.y = actor->velocity.y / 2.0;
-		mo->velocity.z = actor->velocity.z / 2.0;
+		mo->angles.yaw = angles.yaw;
+		mo->target = target;
+		mo->velocity = velocity / 2.0;
 	}
 }
 
 //==========================================================================
 //
-//  A_TeloSpawnB
+//  Actor::A_TeloSpawnB
 //
 //==========================================================================
 
-void A_TeloSpawnB(mobj_t * actor)
+void Actor::A_TeloSpawnB(void)
 {
 	mobj_t *mo;
 
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
-		MT_TELOTHER_FX3);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_TELOTHER_FX3);
 	if (mo)
 	{
 		mo->special1 = TELEPORT_LIFE;	// Lifetime countdown
-		mo->angles.yaw = actor->angles.yaw;
-		mo->target = actor->target;
-		mo->velocity.x = actor->velocity.x / 2.0;
-		mo->velocity.y = actor->velocity.y / 2.0;
-		mo->velocity.z = actor->velocity.z / 2.0;
+		mo->angles.yaw = angles.yaw;
+		mo->target = target;
+		mo->velocity = velocity / 2.0;
 	}
 }
 
 //==========================================================================
 //
-//  A_TeloSpawnC
+//  Actor::A_TeloSpawnC
 //
 //==========================================================================
 
-void A_TeloSpawnC(mobj_t * actor)
+void Actor::A_TeloSpawnC(void)
 {
 	mobj_t *mo;
 
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
-		MT_TELOTHER_FX4);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_TELOTHER_FX4);
 	if (mo)
 	{
 		mo->special1 = TELEPORT_LIFE;	// Lifetime countdown
-		mo->angles.yaw = actor->angles.yaw;
-		mo->target = actor->target;
-		mo->velocity.x = actor->velocity.x / 2.0;
-		mo->velocity.y = actor->velocity.y / 2.0;
-		mo->velocity.z = actor->velocity.z / 2.0;
+		mo->angles.yaw = angles.yaw;
+		mo->target = target;
+		mo->velocity = velocity / 2.0;
 	}
 }
 
 //==========================================================================
 //
-//  A_TeloSpawnD
+//  Actor::A_TeloSpawnD
 //
 //==========================================================================
 
-void A_TeloSpawnD(mobj_t * actor)
+void Actor::A_TeloSpawnD(void)
 {
 	mobj_t *mo;
 
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
-		MT_TELOTHER_FX5);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_TELOTHER_FX5);
 	if (mo)
 	{
 		mo->special1 = TELEPORT_LIFE;	// Lifetime countdown
-		mo->angles.yaw = actor->angles.yaw;
-		mo->target = actor->target;
-		mo->velocity.x = actor->velocity.x / 2.0;
-		mo->velocity.y = actor->velocity.y / 2.0;
-		mo->velocity.z = actor->velocity.z / 2.0;
+		mo->angles.yaw = angles.yaw;
+		mo->target = target;
+		mo->velocity = velocity / 2.0;
 	}
 }
 
 //==========================================================================
 //
-//  A_CheckTeleRing
+//  Actor::A_CheckTeleRing
 //
 //==========================================================================
 
-void A_CheckTeleRing(mobj_t * actor)
+void Actor::A_CheckTeleRing(void)
 {
-	if (actor->special1-- <= 0)
+	if (special1-- <= 0)
 	{
-		SetMobjState(actor, actor->deathstate);
+		SetMobjState(this, deathstate);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

@@ -37,13 +37,12 @@
 
 //============================================================================
 //
-//  A_MWandAttack
+//  Weapon::A_MWandAttack
 //
 //============================================================================
 
-void A_MWandAttack(mobj_t * actor)
+void Weapon::A_MWandAttack(void)
 {
-	player_t *player = actor->player;
 	mobj_t *mo;
 
 	mo = SpawnPlayerMissile(player->mo, MT_MWAND_MISSILE);
@@ -56,14 +55,13 @@ void A_MWandAttack(mobj_t * actor)
 
 //==========================================================================
 //
-//  A_FireConePL1
+//  Weapon::A_FireConePL1
 //
 //==========================================================================
 
-void A_FireConePL1(mobj_t * actor)
+void Weapon::A_FireConePL1(void)
 {
-	player_t *player = actor->player;
-	TAVec angles;
+	TAVec ang;
 	int damage;
 	int i;
 	mobj_t *pmo;
@@ -78,9 +76,9 @@ void A_FireConePL1(mobj_t * actor)
 	damage = 90 + (P_Random() & 15);
 	for (i = 0; i < 16; i++)
 	{
-		avcpy(pmo->angles, angles);
-		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
-		AimLineAttack(pmo, &angles, MELEERANGE);
+		ang = pmo->angles;
+		ang.yaw = AngleMod360(ang.yaw + itof(i) * (45.0 / 16.0));
+		AimLineAttack(pmo, &ang, MELEERANGE);
 		if (linetarget)
 		{
 			pmo->flags2 |= MF2_ICEDAMAGE;
@@ -108,55 +106,55 @@ void A_FireConePL1(mobj_t * actor)
 
 //============================================================================
 //
-//  A_ShedShard
+//  Actor::A_ShedShard
 //
 //============================================================================
 
-void A_ShedShard(mobj_t * actor)
+void Actor::A_ShedShard(void)
 {
 	mobj_t *mo;
-	int spawndir = actor->special1;
-	int spermcount = actor->special2;
+	int spawndir = special1;
+	int spermcount = special2;
 
 	if (spermcount <= 0)
 		return;	// No sperm left
-	actor->special2 = 0;
+	special2 = 0;
 	spermcount--;
 
 	// every so many calls, spawn a new missile in it's set directions
 	if (spawndir & SHARDSPAWN_LEFT)
 	{
-		mo = SpawnMissileAngleSpeed(actor, MT_SHARDFX1,
-			actor->angles.yaw + (45.0 / 9.0), 0.0, itof(20 + 2 * spermcount));
+		mo = SpawnMissileAngleSpeed(this, MT_SHARDFX1,
+			angles.yaw + (45.0 / 9.0), 0.0, itof(20 + 2 * spermcount));
 		if (mo)
 		{
 			mo->special1 = SHARDSPAWN_LEFT;
 			mo->special2 = spermcount;
-			mo->velocity.z = actor->velocity.z;
-			mo->target = actor->target;
+			mo->velocity.z = velocity.z;
+			mo->target = target;
 			mo->args[0] = (spermcount == 3) ? 2 : 0;
 		}
 	}
 	if (spawndir & SHARDSPAWN_RIGHT)
 	{
-		mo = SpawnMissileAngleSpeed(actor, MT_SHARDFX1,
-			actor->angles.yaw - (45.0 / 9.0), 0.0, itof(20 + 2 * spermcount));
+		mo = SpawnMissileAngleSpeed(this, MT_SHARDFX1,
+			angles.yaw - (45.0 / 9.0), 0.0, itof(20 + 2 * spermcount));
 		if (mo)
 		{
 			mo->special1 = SHARDSPAWN_RIGHT;
 			mo->special2 = spermcount;
-			mo->velocity.z = actor->velocity.z;
-			mo->target = actor->target;
+			mo->velocity.z = velocity.z;
+			mo->target = target;
 			mo->args[0] = (spermcount == 3) ? 2 : 0;
 		}
 	}
 	if (spawndir & SHARDSPAWN_UP)
 	{
-		mo = SpawnMissileAngleSpeed(actor, MT_SHARDFX1, actor->angles.yaw,
+		mo = SpawnMissileAngleSpeed(this, MT_SHARDFX1, angles.yaw,
 			0.0, itof(15 + 2 * spermcount));
 		if (mo)
 		{
-			mo->velocity.z = actor->velocity.z;
+			mo->velocity.z = velocity.z;
 			mo->origin.z += 8.0;
 			if (spermcount & 1)	// Every other reproduction
 				mo->special1 =
@@ -164,17 +162,17 @@ void A_ShedShard(mobj_t * actor)
 			else
 				mo->special1 = SHARDSPAWN_UP;
 			mo->special2 = spermcount;
-			mo->target = actor->target;
+			mo->target = target;
 			mo->args[0] = (spermcount == 3) ? 2 : 0;
 		}
 	}
 	if (spawndir & SHARDSPAWN_DOWN)
 	{
-		mo = SpawnMissileAngleSpeed(actor, MT_SHARDFX1, actor->angles.yaw,
+		mo = SpawnMissileAngleSpeed(this, MT_SHARDFX1, angles.yaw,
 			0.0, itof(15 + 2 * spermcount));
 		if (mo)
 		{
-			mo->velocity.z = actor->velocity.z;
+			mo->velocity.z = velocity.z;
 			mo->origin.z -= 4.0;
 			if (spermcount & 1)	// Every other reproduction
 				mo->special1 =
@@ -182,7 +180,7 @@ void A_ShedShard(mobj_t * actor)
 			else
 				mo->special1 = SHARDSPAWN_DOWN;
 			mo->special2 = spermcount;
-			mo->target = actor->target;
+			mo->target = target;
 			mo->args[0] = (spermcount == 3) ? 2 : 0;
 		}
 	}
@@ -190,15 +188,13 @@ void A_ShedShard(mobj_t * actor)
 
 //============================================================================
 //
-//  A_LightningReady
+//  Weapon::A_LightningReady
 //
 //============================================================================
 
-void A_LightningReady(mobj_t * actor)
+void Weapon::A_LightningReady(void)
 {
-	player_t *player = actor->player;
-
-	A_WeaponReady(actor);
+	A_WeaponReady();
 	if (P_Random() < 160)
 	{
 		StartSoundName(player->mo, "MageLightningReady", CHAN_WEAPON);
@@ -211,8 +207,6 @@ void A_LightningReady(mobj_t * actor)
 //
 //============================================================================
 
-void A_LightningZap(mobj_t * actor);
-
 void A_MLightningAttack2(mobj_t * actor)
 {
 	mobj_t *fmo;
@@ -224,27 +218,25 @@ void A_MLightningAttack2(mobj_t * actor)
 	{
 		fmo->specialmobj1 = NULL;
 		fmo->specialmobj2 = cmo;
-		A_LightningZap(fmo);
+		((Actor *)fmo)->A_LightningZap();
 	}
 	if (cmo)
 	{
 		cmo->specialmobj1 = NULL;	// mobj that it will track
 		cmo->specialmobj2 = fmo;
-		A_LightningZap(cmo);
+		((Actor *)cmo)->A_LightningZap();
 	}
 	StartSoundName(actor, "MageLightningFire", CHAN_WEAPON);
 }
 
 //============================================================================
 //
-//  A_MLightningAttack
+//  Weapon::A_MLightningAttack
 //
 //============================================================================
 
-void A_MLightningAttack(mobj_t * actor)
+void Weapon::A_MLightningAttack(void)
 {
-	player_t *player = actor->player;
-
 	A_MLightningAttack2(player->mo);
 	player->mana[MANA_2] -=
 		WeaponManaUse(player->pclass, player->readyweapon);
@@ -252,90 +244,89 @@ void A_MLightningAttack(mobj_t * actor)
 
 //============================================================================
 //
-//  A_LightningClip
+//  Actor::A_LightningClip
 //
 //============================================================================
 
 #define ZAGSPEED		1.0
 
-void A_LightningClip(mobj_t * actor)
+void Actor::A_LightningClip(void)
 {
 	mobj_t *cMo;
-	mobj_t *target;
+	mobj_t *targ;
 	int zigZag;
 
-	if (actor->type == MT_LIGHTNING_FLOOR)
+	if (type == MT_LIGHTNING_FLOOR)
 	{
-		actor->origin.z = actor->floorz;
-		target = actor->specialmobj2->specialmobj1;
+		origin.z = floorz;
+		targ = specialmobj2->specialmobj1;
 	}
-	else if (actor->type == MT_LIGHTNING_CEILING)
+	else if (type == MT_LIGHTNING_CEILING)
 	{
-		actor->origin.z = actor->ceilingz - actor->height;
-		target = actor->specialmobj1;
+		origin.z = ceilingz - height;
+		targ = specialmobj1;
 	}
-	if (actor->type == MT_LIGHTNING_FLOOR)
+	if (type == MT_LIGHTNING_FLOOR)
 	{
 		// floor lightning zig-zags, and forces the ceiling lightning to mimic
-		cMo = actor->specialmobj2;
+		cMo = specialmobj2;
 		zigZag = P_Random();
-		if ((zigZag > 128 && actor->special1 < 2) || actor->special1 < -2)
+		if ((zigZag > 128 && special1 < 2) || special1 < -2)
 		{
-			P_ThrustMobj(actor, actor->angles.yaw + 90.0, ZAGSPEED);
+			P_ThrustMobj(this, angles.yaw + 90.0, ZAGSPEED);
 			if (cMo)
 			{
-				P_ThrustMobj(cMo, actor->angles.yaw + 90.0, ZAGSPEED);
+				P_ThrustMobj(cMo, angles.yaw + 90.0, ZAGSPEED);
 			}
-			actor->special1++;
+			special1++;
 		}
 		else
 		{
-			P_ThrustMobj(actor, actor->angles.yaw - 90.0, ZAGSPEED);
+			P_ThrustMobj(this, angles.yaw - 90.0, ZAGSPEED);
 			if (cMo)
 			{
 				P_ThrustMobj(cMo, cMo->angles.yaw - 90.0, ZAGSPEED);
 			}
-			actor->special1--;
+			special1--;
 		}
 	}
-	if (target)
+	if (targ)
 	{
-		if (target->health <= 0)
+		if (targ->health <= 0)
 		{
-			P_ExplodeMissile(actor);
+			P_ExplodeMissile(this);
 		}
 		else
 		{
-			actor->angles.yaw = atan2(target->origin.y - actor->origin.y,
-				target->origin.x - actor->origin.x);
-			actor->velocity.x = 0.0;
-			actor->velocity.y = 0.0;
-			P_ThrustMobj(actor, actor->angles.yaw,
-				actor->speed * frametime / 2.0);
+			angles.yaw = atan2(targ->origin.y - origin.y,
+				targ->origin.x - origin.x);
+			velocity.x = 0.0;
+			velocity.y = 0.0;
+			P_ThrustMobj(this, angles.yaw, speed * frametime / 2.0);
 		}
 	}
 }
 
 //============================================================================
 //
-//  A_LightningZap
+//  Actor::A_LightningZap
 //
 //============================================================================
 
-void A_LightningZap(mobj_t * actor)
+void Actor::A_LightningZap(void)
 {
 	mobj_t *mo;
 	float deltaZ;
 
-	A_LightningClip(actor);
+	A_LightningClip();
 
-	actor->health -= 8;
-	if (actor->health <= 0)
+	health -= 8;
+	if (health <= 0)
 	{
-		SetMobjState(actor, actor->deathstate);
+		SetMobjState(this, deathstate);
 		return;
 	}
-	if (actor->type == MT_LIGHTNING_FLOOR)
+	if (type == MT_LIGHTNING_FLOOR)
 	{
 		deltaZ = 10.0;
 	}
@@ -343,16 +334,16 @@ void A_LightningZap(mobj_t * actor)
 	{
 		deltaZ = -10.0;
 	}
-	mo = P_SpawnMobj(actor->origin.x + (Random() - 0.5) * actor->radius,
-		actor->origin.y + (Random() - 0.5) * actor->radius,
-		actor->origin.z + deltaZ, MT_LIGHTNING_ZAP);
+	mo = P_SpawnMobj(origin.x + (Random() - 0.5) * radius,
+		origin.y + (Random() - 0.5) * radius,
+		origin.z + deltaZ, MT_LIGHTNING_ZAP);
 	if (mo)
 	{
-		mo->specialmobj2 = actor;
-		mo->velocity.x = actor->velocity.x;
-		mo->velocity.y = actor->velocity.y;
-		mo->target = actor->target;
-		if (actor->type == MT_LIGHTNING_FLOOR)
+		mo->specialmobj2 = this;
+		mo->velocity.x = velocity.x;
+		mo->velocity.y = velocity.y;
+		mo->target = target;
+		if (type == MT_LIGHTNING_FLOOR)
 		{
 			mo->velocity.z = 20.0 * 35.0;
 		}
@@ -361,50 +352,48 @@ void A_LightningZap(mobj_t * actor)
 			mo->velocity.z = -20.0 * 35.0;
 		}
 	}
-	if (actor->type == MT_LIGHTNING_FLOOR && P_Random() < 160)
+	if (type == MT_LIGHTNING_FLOOR && P_Random() < 160)
 	{
-		StartSoundName(actor, "MageLightningContinuous", CHAN_VOICE);
+		StartSoundName(this, "MageLightningContinuous", CHAN_VOICE);
 	}
 }
 
 //============================================================================
 //
-//  A_ZapMimic
+//  Actor::A_ZapMimic
 //
 //============================================================================
 
-void A_ZapMimic(mobj_t * actor)
+void Actor::A_ZapMimic(void)
 {
 	mobj_t *mo;
 
-	mo = actor->specialmobj2;
+	mo = specialmobj2;
 	if (mo)
 	{
 		if (mo->statenum >= mo->deathstate || mo->statenum == S_FREETARGMOBJ)
 		{
-			P_ExplodeMissile(actor);
+			P_ExplodeMissile(this);
 		}
 		else
 		{
-			actor->velocity.x = mo->velocity.x;
-			actor->velocity.y = mo->velocity.y;
+			velocity.x = mo->velocity.x;
+			velocity.y = mo->velocity.y;
 		}
 	}
 }
 
 //============================================================================
 //
-//  A_LastZap
+//  Actor::A_LastZap
 //
 //============================================================================
 
-void A_LastZap(mobj_t * actor)
+void Actor::A_LastZap(void)
 {
 	mobj_t *mo;
 
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
-		MT_LIGHTNING_ZAP);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_LIGHTNING_ZAP);
 	if (mo)
 	{
 		SetMobjState(mo, S_LIGHTNING_ZAP_X1);
@@ -414,15 +403,15 @@ void A_LastZap(mobj_t * actor)
 
 //============================================================================
 //
-//  A_LightningRemove
+//  Actor::A_LightningRemove
 //
 //============================================================================
 
-void A_LightningRemove(mobj_t * actor)
+void Actor::A_LightningRemove(void)
 {
 	mobj_t *mo;
 
-	mo = actor->specialmobj2;
+	mo = specialmobj2;
 	if (mo)
 	{
 		mo->specialmobj2 = NULL;
@@ -432,7 +421,7 @@ void A_LightningRemove(mobj_t * actor)
 
 //============================================================================
 //
-// MStaffSpawn
+//	MStaffSpawn
 //
 //============================================================================
 
@@ -450,13 +439,12 @@ void MStaffSpawn(mobj_t * pmo, float angle)
 
 //============================================================================
 //
-//  A_MStaffAttack
+//  Weapon::A_MStaffAttack
 //
 //============================================================================
 
-void A_MStaffAttack(mobj_t * actor)
+void Weapon::A_MStaffAttack(void)
 {
-	player_t *player = actor->player;
 	float angle;
 	mobj_t *pmo;
 
@@ -478,17 +466,15 @@ void A_MStaffAttack(mobj_t * actor)
 
 //============================================================================
 //
-//  A_MStaffPalette
+//  Weapon::A_MStaffPalette
 //
 //============================================================================
 
-void A_MStaffPalette(mobj_t * actor)
+void Weapon::A_MStaffPalette(void)
 {
-	player_t *player = actor->player;
-	pspdef_t *psp = &player->psprites[ps_weapon];
 	int pal;
 
-	pal = STARTSCOURGEPAL + psp->statenum - S_MSTAFFATK_2;
+	pal = STARTSCOURGEPAL + statenum - S_MSTAFFATK_2;
 	if (pal == STARTSCOURGEPAL + 3)
 	{	// reset back to original playpal
 		pal = 0;
@@ -498,53 +484,56 @@ void A_MStaffPalette(mobj_t * actor)
 
 //============================================================================
 //
-//  A_MStaffWeave
+//  Actor::A_MStaffWeave
 //
 //============================================================================
 
-void A_MStaffWeave(mobj_t * actor)
+void Actor::A_MStaffWeave(void)
 {
 	float newX, newY;
 	int weaveXY, weaveZ;
 	float angle;
 
-	weaveXY = actor->special2 >> 16;
-	weaveZ = actor->special2 & 0xFFFF;
-	angle = AngleMod360(actor->angles.yaw + 90.0);
-	newX = actor->origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
-	newY = actor->origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
+	weaveXY = special2 >> 16;
+	weaveZ = special2 & 0xFFFF;
+	angle = AngleMod360(angles.yaw + 90.0);
+	newX = origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
+	newY = origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	weaveXY = (weaveXY + 6) & 63;
 	newX += cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	newY += sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
-	P_TryMove(actor, newX, newY);
-	actor->origin.z -= FloatBobOffsets[weaveZ] * 2.0;
+	P_TryMove(this, newX, newY);
+	origin.z -= FloatBobOffsets[weaveZ] * 2.0;
 	weaveZ = (weaveZ + 3) & 63;
-	actor->origin.z += FloatBobOffsets[weaveZ] * 2.0;
-	if (actor->origin.z <= actor->floorz)
+	origin.z += FloatBobOffsets[weaveZ] * 2.0;
+	if (origin.z <= floorz)
 	{
-		actor->origin.z = actor->floorz + 1.0;
+		origin.z = floorz + 1.0;
 	}
-	actor->special2 = weaveZ + (weaveXY << 16);
+	special2 = weaveZ + (weaveXY << 16);
 }
 
 //============================================================================
 //
-//  A_MStaffTrack
+//  Actor::A_MStaffTrack
 //
 //============================================================================
 
-void A_MStaffTrack(mobj_t * actor)
+void Actor::A_MStaffTrack(void)
 {
-	if (!actor->specialmobj1 && (P_Random() < 50))
+	if (!specialmobj1 && (P_Random() < 50))
 	{
-		actor->specialmobj1 = P_RoughMonsterSearch(actor, 10);
+		specialmobj1 = P_RoughMonsterSearch(this, 10);
 	}
-	SeekerMissile(actor, 2.0, 10.0);
+	SeekerMissile(this, 2.0, 10.0);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.7  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

@@ -44,68 +44,68 @@
 
 //============================================================================
 //
-//  A_WraithInit
+//  Actor::A_WraithInit
 //
 //============================================================================
 
-void A_WraithInit(mobj_t * actor)
+void Actor::A_WraithInit(void)
 {
-	actor->origin.z += 48.0;
-	actor->special1 = 0;	// index into floatbob
+	origin.z += 48.0;
+	special1 = 0;	// index into floatbob
 }
 
 //============================================================================
 //
-//  A_WraithRaiseInit
+//  Actor::A_WraithRaiseInit
 //
 //============================================================================
 
-void A_WraithRaiseInit(mobj_t * actor)
+void Actor::A_WraithRaiseInit(void)
 {
-	actor->translucency = 0;
-	actor->flags2 &= ~MF2_NONSHOOTABLE;
-	actor->flags |= MF_SHOOTABLE | MF_SOLID;
-	actor->floorclip = actor->height;
+	translucency = 0;
+	flags2 &= ~MF2_NONSHOOTABLE;
+	flags |= MF_SHOOTABLE | MF_SOLID;
+	floorclip = height;
 }
 
 //============================================================================
 //
-//  A_WraithRaise
+//  Actor::A_WraithRaise
 //
 //============================================================================
 
-void A_WraithRaise(mobj_t * actor)
+void Actor::A_WraithRaise(void)
 {
-	if (RaiseMobj(actor))
+	if (RaiseMobj(this))
 	{
 		// Reached it's target height
-		SetMobjState(actor, S_WRAITH_CHASE1);
+		SetMobjState(this, S_WRAITH_CHASE1);
 	}
 
-	SpawnDirt(actor, actor->radius);
+	SpawnDirt(this, radius);
 }
 
 //============================================================================
 //
-//  A_WraithLook
+//  Actor::A_WraithLook
 //
 //============================================================================
 
-void A_WraithLook(mobj_t * actor)
+void Actor::A_WraithLook(void)
 {
-//      A_WraithFX4(actor);             // too expensive
-	A_Look(actor);
+//	A_WraithFX4();             // too expensive
+	A_Look();
 }
 
 //============================================================================
 //
-//  A_WraithFX2
+//  Actor::A_WraithFX2
 //
 //  Spawns sparkle tail of missile.
 //
 //============================================================================
 
-void A_WraithFX2(mobj_t * actor)
+void Actor::A_WraithFX2(void)
 {
 	mobj_t *mo;
 	float angle;
@@ -113,22 +113,21 @@ void A_WraithFX2(mobj_t * actor)
 
 	for (i = 0; i < 2; i++)
 	{
-		mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
-			MT_WRAITHFX2);
+		mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_WRAITHFX2);
 		if (mo)
 		{
 			if (Random() < 0.5)
 			{
-				angle = AngleMod360(actor->angles.yaw + Random() * 90.0);
+				angle = AngleMod360(angles.yaw + Random() * 90.0);
 			}
 			else
 			{
-				angle = AngleMod360(actor->angles.yaw - Random() * 90.0);
+				angle = AngleMod360(angles.yaw - Random() * 90.0);
 			}
 			mo->velocity.z = 0.0;
 			mo->velocity.x = (Random() / 2.0 + 1.0) * cos(angle) * 35.0;
 			mo->velocity.y = (Random() / 2.0 + 1.0) * sin(angle) * 35.0;
-			mo->target = actor;
+			mo->target = this;
 			mo->floorclip = 10.0;
 		}
 	}
@@ -136,13 +135,13 @@ void A_WraithFX2(mobj_t * actor)
 
 //============================================================================
 //
-//  A_WraithFX3
+//  Actor::A_WraithFX3
 //
 //  Spawn an FX3 around the actor during attacks.
 //
 //============================================================================
 
-void A_WraithFX3(mobj_t * actor)
+void Actor::A_WraithFX3(void)
 {
 	mobj_t *mo;
 	int numdropped = P_Random() % 15;
@@ -150,15 +149,13 @@ void A_WraithFX3(mobj_t * actor)
 
 	for (i = 0; i < numdropped; i++)
 	{
-		mo =
-			P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
-			MT_WRAITHFX3);
+		mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_WRAITHFX3);
 		if (mo)
 		{
 			mo->origin.x += (Random() - 0.5) * 8.0;
 			mo->origin.y += (Random() - 0.5) * 8.0;
 			mo->origin.z += Random() * 4.0;
-			mo->target = actor;
+			mo->target = this;
 		}
 	}
 }
@@ -228,64 +225,67 @@ void A_WraithFX4(mobj_t * actor)
 
 //============================================================================
 //
-//  A_WraithChase
+//  Actor::A_WraithChase
 //
 //============================================================================
 
-void A_WraithChase(mobj_t * actor)
+void Actor::A_WraithChase(void)
 {
-	int weaveindex = actor->special1;
+	int weaveindex = special1;
 
-	actor->origin.z += FloatBobOffsets[weaveindex];
-	actor->special1 = (weaveindex + 2) & 63;
+	origin.z += FloatBobOffsets[weaveindex];
+	special1 = (weaveindex + 2) & 63;
 //  if (actor->floorclip > 0)
 //  {
 //      SetMobjState(actor, S_WRAITH_RAISE2);
 //      return;
 //  }
-	A_Chase(actor);
-	A_WraithFX4(actor);
+	A_Chase();
+	A_WraithFX4(this);
 }
 
 //============================================================================
 //
-//  A_WraithMelee
+//  Actor::A_WraithMelee
 //
 //============================================================================
 
-void A_WraithMelee(mobj_t * actor)
+void Actor::A_WraithMelee(void)
 {
 	int amount;
 
 	// Steal health from target and give to player
-	if (CheckMeleeRange(actor) && (P_Random() < 220))
+	if (CheckMeleeRange(this) && (P_Random() < 220))
 	{
 		amount = HITDICE(2);
-		actor->target->Damage(actor, actor, amount);
-		actor->health += amount;
+		target->Damage(this, this, amount);
+		health += amount;
 	}
 }
 
 //============================================================================
 //
-//  A_WraithMissile
+//  Actor::A_WraithMissile
 //
 //============================================================================
 
-void A_WraithMissile(mobj_t * actor)
+void Actor::A_WraithMissile(void)
 {
 	mobj_t *mo;
 
-	mo = SpawnMissile(actor, actor->target, MT_WRAITHFX1);
+	mo = SpawnMissile(this, target, MT_WRAITHFX1);
 	if (mo)
 	{
-		StartSoundName(actor, "WraithMissileFire", CHAN_WEAPON);
+		StartSoundName(this, "WraithMissileFire", CHAN_WEAPON);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.6  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

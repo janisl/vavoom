@@ -90,7 +90,7 @@ boolean SetMobjState(mobj_t * mobj, int state)
 		// Call action functions when the state is set
 		if (st->function)
 		{
-			st->function(mobj);
+			st->function(*mobj);
 		}
 
 		state = st->nextstate;
@@ -895,6 +895,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.13  2001/12/04 18:40:22  dj_jl
 //  Some fixes
 //

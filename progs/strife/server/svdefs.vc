@@ -359,14 +359,6 @@ class mobj_t:base_mobj_t
 	boolean Physics(void);
 };
 
-class Actor:mobj_t
-{
-}
-
-class Missile:mobj_t
-{
-}
-
 addfields player_t
 {
 	int ammo[NUMAMMO];
@@ -437,6 +429,9 @@ boolean respawnmonsters;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/12 18:57:43  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.5  2001/12/01 18:08:53  dj_jl
 //  Physics functions as methods, started to use class references
 //

@@ -52,90 +52,92 @@
 
 //===========================================================================
 //
-//  A_BatSpawnInit
+//  Actor::A_BatSpawnInit
 //
 //===========================================================================
 
-void A_BatSpawnInit(mobj_t * actor)
+void Actor::A_BatSpawnInit(void)
 {
-	actor->special1 = 0;	// Frequency count
+	special1 = 0;	// Frequency count
 }
 
 //===========================================================================
 //
-//  A_BatSpawn
+//  Actor::A_BatSpawn
 //
 //===========================================================================
 
-void A_BatSpawn(mobj_t * actor)
+void Actor::A_BatSpawn(void)
 {
 	mobj_t *mo;
 	float delta;
 	float angle;
 
 	// Countdown until next spawn
-	if (actor->special1-- > 0)
+	if (special1-- > 0)
 		return;
-	actor->special1 = actor->args[0];	// Reset frequency count
+	special1 = args[0];	// Reset frequency count
 
-	delta = itof(actor->args[1]);
+	delta = itof(args[1]);
 	if (delta == 0.0)
 		delta = 1.0;
-	angle = AngleMod360(actor->angles.yaw +
+	angle = AngleMod360(angles.yaw +
 		delta * (Random() - 0.5) * 360.0 / 256.0);
-	mo = SpawnMissileAngle(actor, MT_BAT, angle, 0.0);
+	mo = SpawnMissileAngle(this, MT_BAT, angle, 0.0);
 	if (mo)
 	{
 		mo->args[0] = P_Random() & 63;	// floatbob index
-		mo->args[4] = actor->args[4];	// turn degrees
-		mo->special2 = actor->args[3] << 3;	// Set lifetime
-		mo->target = actor;
+		mo->args[4] = args[4];	// turn degrees
+		mo->special2 = args[3] << 3;	// Set lifetime
+		mo->target = this;
 	}
 }
 
 //===========================================================================
 //
-//  A_BatMove
+//  Actor::A_BatMove
 //
 //===========================================================================
 
-void A_BatMove(mobj_t * actor)
+void Actor::A_BatMove(void)
 {
 	float newangle;
-	float speed;
+	float newSpeed;
 
-	if (actor->special2 < 0)
+	if (special2 < 0)
 	{
-		SetMobjState(actor, actor->deathstate);
+		SetMobjState(this, deathstate);
 	}
-	actor->special2 -= 2;	// Called every 2 tics
+	special2 -= 2;	// Called every 2 tics
 
 	if (P_Random() < 128)
 	{
-		newangle = AngleMod360(actor->angles.yaw + itof(actor->args[4]));
+		newangle = AngleMod360(angles.yaw + itof(args[4]));
 	}
 	else
 	{
-		newangle = AngleMod360(actor->angles.yaw - itof(actor->args[4]));
+		newangle = AngleMod360(angles.yaw - itof(args[4]));
 	}
 
 	// Adjust momentum vector to new direction
-	speed = actor->speed * Random() * 4.0;
-	actor->velocity.x = speed * cos(newangle);
-	actor->velocity.y = speed * sin(newangle);
+	newSpeed = speed * Random() * 4.0;
+	velocity.x = newSpeed * cos(newangle);
+	velocity.y = newSpeed * sin(newangle);
 
 	if (P_Random() < 15)
-		StartSoundName(actor, "BatScream", CHAN_VOICE);
+		StartSoundName(this, "BatScream", CHAN_VOICE);
 
 	// Handle Z movement
-	actor->origin.z =
-		actor->target->origin.z + 2.0 * FloatBobOffsets[actor->args[0]];
-	actor->args[0] = (actor->args[0] + 3) & 63;
+	origin.z = target->origin.z + 2.0 * FloatBobOffsets[args[0]];
+	args[0] = (args[0] + 3) & 63;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.5  2001/10/22 17:23:12  dj_jl
 //  Floatification of angles
 //

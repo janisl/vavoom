@@ -37,17 +37,15 @@
 
 //===========================================================================
 //
-//  A_PoisonBagInit
+//  Actor::A_PoisonBagInit
 //
 //===========================================================================
 
-void A_PoisonBagInit(mobj_t * actor)
+void Actor::A_PoisonBagInit(void)
 {
 	mobj_t *mo;
 
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 28.0,
-		MT_POISONCLOUD);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 28.0, MT_POISONCLOUD);
 	if (!mo)
 	{
 		return;
@@ -55,7 +53,7 @@ void A_PoisonBagInit(mobj_t * actor)
 	mo->velocity.x = 0.00001;	// missile objects must move to impact other objects
 	mo->special1 = 24 + (P_Random() & 7);
 	mo->special2 = 0;
-	mo->target = actor->target;
+	mo->target = target;
 	mo->radius = 20.0;
 	mo->height = 30.0;
 	mo->flags &= ~MF_NOCLIP;
@@ -63,53 +61,52 @@ void A_PoisonBagInit(mobj_t * actor)
 
 //===========================================================================
 //
-//  A_PoisonBagCheck
+//  Actor::A_PoisonBagCheck
 //
 //===========================================================================
 
-void A_PoisonBagCheck(mobj_t * actor)
+void Actor::A_PoisonBagCheck(void)
 {
-	if (!--actor->special1)
+	if (!--special1)
 	{
-		SetMobjState(actor, S_POISONCLOUD_X1);
-	}
-	else
-	{
-		return;
+		SetMobjState(this, S_POISONCLOUD_X1);
 	}
 }
 
 //===========================================================================
 //
-//  A_PoisonBagDamage
+//  Actor::A_PoisonBagDamage
 //
 //===========================================================================
 
-void A_PoisonBagDamage(mobj_t * actor)
+void Actor::A_PoisonBagDamage(void)
 {
 	int bobIndex;
 
-	A_Explode(actor);
+	A_Explode();
 
-	bobIndex = actor->special2;
-	actor->origin.z += FloatBobOffsets[bobIndex] / 16.0;
-	actor->special2 = (bobIndex + 1) & 63;
+	bobIndex = special2;
+	origin.z += FloatBobOffsets[bobIndex] / 16.0;
+	special2 = (bobIndex + 1) & 63;
 }
 
 //===========================================================================
 //
-//  A_PoisonShroom
+//  Actor::A_PoisonShroom
 //
 //===========================================================================
 
-void A_PoisonShroom(mobj_t * actor)
+void Actor::A_PoisonShroom(void)
 {
-	actor->time = 4.0 + Random() * 16.0;
+	time = 4.0 + Random() * 16.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

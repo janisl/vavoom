@@ -37,43 +37,42 @@
 
 //==========================================================================
 //
-//  A_SPosAttack
+//  Actor::A_SPosAttack
 //
 //  Shotgun guy, Spider mastermind attack.
 //
 //==========================================================================
 
-void A_SPosAttack(mobj_t * actor)
+void Actor::A_SPosAttack(void)
 {
 	int i;
 	int damage;
-	TAVec bangles;
-	TAVec angles;
-	TVec vforward;
+	TVec aimDir;
+	TVec dir;
 
-	if (!actor->target)
+	if (!target)
 		return;
 
-	StartSoundName(actor, "ShotgunFire", CHAN_WEAPON);
-	A_FaceTarget(actor);
-	bangles = actor->angles;
-	AimLineAttack(actor, &bangles, MISSILERANGE);
+	StartSoundName(this, "ShotgunFire", CHAN_WEAPON);
+	A_FaceTarget();
+	aimDir = AimLineAttack(this, angles, MISSILERANGE);
 	for (i = 0; i < 3; i++)
 	{
-		angles = bangles;
-		angles.yaw = AngleMod360(angles.yaw +
-			(Random() - Random()) * 45.0 / 2.0);
-		AngleVector(&angles, &vforward);
+		dir = aimDir;
+		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 		damage = ((P_Random() % 5) + 1) * 3;
-		LineAttack(actor, &vforward, MISSILERANGE, damage);
+		LineAttack(this, &dir, MISSILERANGE, damage);
 	}
 
-	actor->effects |= EF_DL_MUZZLEFLASH;
+	effects |= EF_DL_MUZZLEFLASH;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/12/12 18:57:40  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.6  2001/10/22 17:23:11  dj_jl
 //  Floatification of angles
 //

@@ -361,14 +361,6 @@ class Entity:base_mobj_t
 	void OnMapSpawn(mthing_t *mthing);
 };
 
-class Actor:Entity
-{
-}
-
-class Missile:Entity
-{
-}
-
 addfields player_t
 {
 	//
@@ -536,6 +528,9 @@ string door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.6  2001/12/01 18:08:53  dj_jl
 //  Physics functions as methods, started to use class references
 //

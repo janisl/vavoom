@@ -37,44 +37,44 @@
 
 void SetPsprite(player_t * player, int position, int stnum)
 {
-	pspdef_t *psp;
+	ViewEntity e;
 	state_t *state;
 
-	psp = &player->psprites[position];
+	e = player->ViewEnts[position];
 	do
 	{
 		if (!stnum)
 		{
 			// Object removed itself.
-			psp->statenum = 0;
+			e.statenum = 0;
 			break;
 		}
 		state = &states[stnum];
-		psp->time = state->time;	// could be 0
-		psp->sprite = state->sprite;
-		psp->frame = state->frame;
-		psp->model_index = state->model_index;
-		psp->alias_frame = state->model_frame;
-		psp->statenum = state->statenum;
-		psp->nextstate = state->nextstate;
+		e.time = state->time;	// could be 0
+		e.sprite = state->sprite;
+		e.frame = state->frame;
+		e.model_index = state->model_index;
+		e.alias_frame = state->model_frame;
+		e.statenum = state->statenum;
+		e.nextstate = state->nextstate;
 		if (state->misc1)
 		{
 			// Set coordinates.
-			psp->sx = state->misc1;
-			psp->sy = state->misc2;
+			e.sx = state->misc1;
+			e.sy = state->misc2;
 		}
 		if (state->function)
 		{
 			// Call action routine.
-			state->function(player->mo);
-			if (!psp->statenum)
+			state->function(e);
+			if (!e.statenum)
 			{
 				break;
 			}
 		}
-		stnum = psp->nextstate;
+		stnum = e.nextstate;
 	}
-	while (!psp->time);	// An initial state of 0 could cycle through.
+	while (!e.time);	// An initial state of 0 could cycle through.
 }
 
 //===========================================================================
@@ -92,7 +92,7 @@ void BringUpWeapon(player_t * player)
 		StartSoundName(player->mo, "ChainsawStart", CHAN_WEAPON);
 
 	player->pendingweapon = wp_nochange;
-	player->psprites[ps_weapon].sy = WEAPONBOTTOM;
+	player->ViewEnts[ps_weapon].sy = WEAPONBOTTOM;
 
 	SetPsprite(player, ps_weapon, player->w_upstate);
 }
@@ -173,7 +173,7 @@ void SetupPsprites(player_t * player)
 	// remove all psprites
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
-		player->psprites[i].statenum = 0;
+		player->ViewEnts[i].statenum = 0;
 	}
 
 	// spawn the gun
@@ -191,31 +191,31 @@ void SetupPsprites(player_t * player)
 void MovePsprites(player_t * player)
 {
 	int i;
-	pspdef_t *psp;
+	ViewEntity e;
 
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
-		psp = &player->psprites[i];
+		e = player->ViewEnts[i];
 		// a null state means not active
-		if (psp->statenum)
+		if (e.statenum)
 		{
 			// drop tic count and possibly change state
 
 			// a -1 tic count never changes
-			if (psp->time != -1.0)
+			if (e.time != -1.0)
 			{
-				psp->time -= frametime;
-				if (psp->time <= 0.0)
+				e.time -= frametime;
+				if (e.time <= 0.0)
 				{
-					psp->time = 0.0;
-					SetPsprite(player, i, psp->nextstate);
+					e.time = 0.0;
+					SetPsprite(player, i, e.nextstate);
 				}
 			}
 		}
 	}
 
-	player->psprites[ps_flash].sx = player->psprites[ps_weapon].sx;
-	player->psprites[ps_flash].sy = player->psprites[ps_weapon].sy;
+	player->ViewEnts[ps_flash].sx = player->ViewEnts[ps_weapon].sx;
+	player->ViewEnts[ps_flash].sy = player->ViewEnts[ps_weapon].sy;
 }
 
 //==========================================================================
@@ -314,20 +314,6 @@ int CheckAmmo(player_t * player)
 
 //===========================================================================
 //
-//  BulletSlope
-//
-//  Sets a slope so a near miss is at aproximately the height of the
-// intended target
-//
-//===========================================================================
-
-void BulletSlope(mobj_t * mo, TAVec * angles)
-{
-	*angles = Aim(mo, 16.0 * 64.0);
-}
-
-//===========================================================================
-//
 //  FireWeapon
 //
 //===========================================================================
@@ -350,26 +336,24 @@ void FireWeapon(player_t * player)
 //
 //===========================================================================
 
-void GunShot(mobj_t * mo, int accurate, TAVec * bangles)
+void GunShot(mobj_t * mo, int accurate, TVec dir)
 {
-	TAVec angles;
-	TVec vforward;
 	int damage;
 
 	//  Make a copy of angles because inacurate shoot will modify them
-	angles.pitch = bangles->pitch;
-	angles.yaw = bangles->yaw;
-	angles.roll = bangles->roll;
 	if (!accurate)
 	{
+		TAVec angles;
+
+		VectorAngles(&dir, &angles);
 		angles.yaw = AngleMod360(angles.yaw +
 			(Random() - Random()) * 45.0 / 8.0);
+		AngleVector(&angles, &dir);
 	}
-	AngleVector(&angles, &vforward);
 
 	damage = 5 * (P_Random() % 3 + 1);
 
-	LineAttack(mo, &vforward, MISSILERANGE, damage);
+	LineAttack(mo, &dir, MISSILERANGE, damage);
 }
 
 //***************************************************************************
@@ -380,27 +364,25 @@ void GunShot(mobj_t * mo, int accurate, TAVec * bangles)
 
 //===========================================================================
 //
-//  A_WeaponReady
+//  Weapon::A_WeaponReady
 //
 //  The player can fire the weapon or change to another weapon at this time.
 // Follows after getting weapon up, or after previous attack/fire sequence.
 //
 //===========================================================================
 
-void A_WeaponReady(mobj_t * actor)
+void Weapon::A_WeaponReady(void)
 {
-	player_t *player = actor->player;
-	pspdef_t *psp = &player->psprites[ps_weapon];
 	float angle;
 
 	// get out of attack state
-	if (player->mo->statenum == S_PLAY_ATK1
-		|| player->mo->statenum == S_PLAY_ATK2)
+	if (player->mo->statenum == S_PLAY_ATK1 ||
+		player->mo->statenum == S_PLAY_ATK2)
 	{
 		SetMobjState(player->mo, S_PLAY);
 	}
 
-	if (player->readyweapon == wp_chainsaw && psp->statenum == S_SAW)
+	if (player->readyweapon == wp_chainsaw && statenum == S_SAW)
 	{
 		StartSoundName(player->mo, "ChainsawIdle", CHAN_WEAPON);
 	}
@@ -433,36 +415,34 @@ void A_WeaponReady(mobj_t * actor)
 
 	// bob the weapon based on movement speed
 	angle = AngleMod360(180.0 * level->time);
-	psp->sx = 1.0 + player->bob * cos(angle);
+	sx = 1.0 + player->bob * cos(angle);
 	if (angle >= 180.0)
 	{
 		angle -= 180.0;
 	}
-	psp->sy = WEAPONTOP + player->bob * sin(angle);
+	sy = WEAPONTOP + player->bob * sin(angle);
 }
 
 //===========================================================================
 //
-//  A_Lower
+//  Weapon::A_Lower
+//
 //  Lowers current weapon, and changes weapon at bottom.
 //
 //===========================================================================
 
-void A_Lower(mobj_t * actor)
+void Weapon::A_Lower(void)
 {
-	player_t *player = actor->player;
-	pspdef_t *psp = &player->psprites[ps_weapon];
-
-	psp->sy += LOWERSPEED;
+	sy += LOWERSPEED;
 
 	// Is already down.
-	if (psp->sy < WEAPONBOTTOM)
+	if (sy < WEAPONBOTTOM)
 		return;
 
 	// Player is dead.
 	if (player->playerstate == PST_DEAD)
 	{
-		psp->sy = WEAPONBOTTOM;
+		sy = WEAPONBOTTOM;
 
 		// don't bring weapon back up
 		return;
@@ -485,23 +465,20 @@ void A_Lower(mobj_t * actor)
 
 //===========================================================================
 //
-//  A_Raise
+//  Weapon::A_Raise
 //
 //===========================================================================
 
-void A_Raise(mobj_t * actor)
+void Weapon::A_Raise(void)
 {
-	player_t *player = actor->player;
-	pspdef_t *psp = &player->psprites[ps_weapon];
+	sy -= RAISESPEED;
 
-	psp->sy -= RAISESPEED;
-
-	if (psp->sy > WEAPONTOP)
+	if (sy > WEAPONTOP)
 	{
 		return;
 	}
 
-	psp->sy = WEAPONTOP;
+	sy = WEAPONTOP;
 
 	// The weapon has been raised all the way,
 	//  so change to the ready state.
@@ -510,16 +487,14 @@ void A_Raise(mobj_t * actor)
 
 //===========================================================================
 //
-//  A_ReFire
+//  Weapon::A_ReFire
 //
 //  The player can re-fire the weapon without lowering it entirely.
 //
 //===========================================================================
 
-void A_ReFire(mobj_t * actor)
+void Weapon::A_ReFire(void)
 {
-	player_t *player = actor->player;
-
 	// check for fire
 	//  (if a weaponchange is pending, let it go through instead)
 	if ((player->buttons & BT_ATTACK)
@@ -537,68 +512,58 @@ void A_ReFire(mobj_t * actor)
 
 //===========================================================================
 //
-//  A_CheckReload
+//  Weapon::A_CheckReload
 //
 //===========================================================================
 
-void A_CheckReload(mobj_t * actor)
+void Weapon::A_CheckReload(void)
 {
-	player_t *player = actor->player;
-
 	CheckAmmo(player);
 }
 
 //===========================================================================
 //
-//  A_GunFlash
+//  Weapon::A_GunFlash
 //
 //===========================================================================
 
-void A_GunFlash(mobj_t * actor)
+void Weapon::A_GunFlash(void)
 {
-	player_t *player = actor->player;
-
 	SetMobjState(player->mo, S_PLAY_ATK2);
 	SetPsprite(player, ps_flash, player->w_flashstate);
 }
 
 //===========================================================================
 //
-//  A_Light0
+//  Weapon::A_Light0
 //
 //===========================================================================
 
-void A_Light0(mobj_t * actor)
+void Weapon::A_Light0(void)
 {
-	player_t *player = actor->player;
-
 	player->extralight = 0;
-	actor->effects &= ~EF_DLIGHT_MASK;
+	player->mo->effects &= ~EF_DLIGHT_MASK;
 }
 
 //===========================================================================
 //
-//  A_Light1
+//  Weapon::A_Light1
 //
 //===========================================================================
 
-void A_Light1(mobj_t * actor)
+void Weapon::A_Light1(void)
 {
-	player_t *player = actor->player;
-
 	player->extralight = 1;
 }
 
 //===========================================================================
 //
-//  A_Light2
+//  Weapon::A_Light2
 //
 //===========================================================================
 
-void A_Light2(mobj_t * actor)
+void Weapon::A_Light2(void)
 {
-	player_t *player = actor->player;
-
 	player->extralight = 2;
 }
 
@@ -610,63 +575,59 @@ void A_Light2(mobj_t * actor)
 
 //===========================================================================
 //
-//  A_Punch
+//  Weapon::A_Punch
 //
 //===========================================================================
 
-void A_Punch(mobj_t * actor)
+void Weapon::A_Punch(void)
 {
-	player_t *player = actor->player;
 	int damage;
-	TAVec angles;
-	TVec vforward;
+	TAVec aimAngles;
+	TVec dir;
 
 	damage = (P_Random() % 10 + 1) << 1;
 
 	if (player->powers[pw_strength])
 		damage *= 10;
 
-	avcpy(player->mo->angles, angles);
-	angles.yaw = AngleMod360(angles.yaw + (Random() -
+	aimAngles = player->mo->angles;
+	aimAngles.yaw = AngleMod360(aimAngles.yaw + (Random() -
 		Random()) * 45.0 / 8.0);
-	AimLineAttack(player->mo, &angles, MELEERANGE);
-	AngleVector(&angles, &vforward);
-	LineAttack(player->mo, &vforward, MELEERANGE, damage);
+	dir = AimLineAttack(player->mo, aimAngles, MELEERANGE);
+	LineAttack(player->mo, &dir, MELEERANGE, damage);
 
 	// turn to face target
 	if (linetarget)
 	{
 		StartSoundName(player->mo, "Punch", CHAN_WEAPON);
-		player->mo->angles.yaw =
-			atan2(linetarget->origin.y - player->mo->origin.y,
-				linetarget->origin.x - player->mo->origin.x);
+		player->mo->angles.yaw = atan2(
+			linetarget->origin.y - player->mo->origin.y,
+			linetarget->origin.x - player->mo->origin.x);
 		player->fixangle = 1;
 	}
 }
 
 //===========================================================================
 //
-//  A_Saw
+//  Weapon::A_Saw
 //
 //===========================================================================
 
-void A_Saw(mobj_t * actor)
+void Weapon::A_Saw(void)
 {
-	player_t *player = actor->player;
 	float angle;
 	int damage;
-	TAVec angles;
-	TVec vforward;
+	TAVec aimAng;
+	TVec dir;
 
 	damage = 2 * (P_Random() % 10 + 1);
-	avcpy(player->mo->angles, angles);
-	angles.yaw = AngleMod360(angles.yaw + (Random() -
+	aimAng = player->mo->angles;
+	aimAng.yaw = AngleMod360(aimAng.yaw + (Random() -
 		Random()) * 45.0 / 8.0);
 
 	// use meleerange + 1 se the puff doesn't skip the flash
-	AimLineAttack(player->mo, &angles, MELEERANGE + 0.00001);
-	AngleVector(&angles, &vforward);
-	LineAttack(player->mo, &vforward, MELEERANGE + 0.00001, damage);
+	dir = AimLineAttack(player->mo, aimAng, MELEERANGE + 0.00001);
+	LineAttack(player->mo, &dir, MELEERANGE + 0.00001, damage);
 
 	if (!linetarget)
 	{
@@ -699,14 +660,13 @@ void A_Saw(mobj_t * actor)
 
 //===========================================================================
 //
-//  A_FirePistol
+//  Weapon::A_FirePistol
 //
 //===========================================================================
 
-void A_FirePistol(mobj_t * actor)
+void Weapon::A_FirePistol(void)
 {
-	player_t *player = actor->player;
-	TAVec angles;
+	TVec dir;
 
 	StartSoundName(player->mo, "PistolFire", CHAN_WEAPON);
 
@@ -715,22 +675,21 @@ void A_FirePistol(mobj_t * actor)
 
 	SetPsprite(player, ps_flash, player->w_flashstate);
 
-	BulletSlope(player->mo, &angles);
-	GunShot(player->mo, !player->refire, &angles);
-	actor->effects |= EF_DL_MUZZLEFLASH;
+	dir = Aim(player->mo, 16.0 * 64.0);
+	GunShot(player->mo, !player->refire, dir);
+	player->mo->effects |= EF_DL_MUZZLEFLASH;
 }
 
 //===========================================================================
 //
-//  A_FireShotgun
+//  Weapon::A_FireShotgun
 //
 //===========================================================================
 
-void A_FireShotgun(mobj_t * actor)
+void Weapon::A_FireShotgun(void)
 {
-	player_t *player = actor->player;
 	int i;
-	TAVec angles;
+	TVec dir;
 
 	StartSoundName(player->mo, "ShotgunFire", CHAN_WEAPON);
 	SetMobjState(player->mo, S_PLAY_ATK2);
@@ -739,30 +698,29 @@ void A_FireShotgun(mobj_t * actor)
 
 	SetPsprite(player, ps_flash, player->w_flashstate);
 
-	BulletSlope(player->mo, &angles);
+	dir = Aim(player->mo, 16.0 * 64.0);
 	for (i = 0; i < 7; i++)
 	{
-		GunShot(player->mo, false, &angles);
+		GunShot(player->mo, false, dir);
 	}
-	actor->effects |= EF_DL_MUZZLEFLASH;
+	player->mo->effects |= EF_DL_MUZZLEFLASH;
 }
 
 #ifdef DOOM2
 
 //===========================================================================
 //
-//  A_FireShotgun2
+//  Weapon::A_FireShotgun2
 //
 //===========================================================================
 
-void A_FireShotgun2(mobj_t * actor)
+void Weapon::A_FireShotgun2(void)
 {
-	player_t *player = actor->player;
 	int i;
 	int damage;
-	TAVec bangles;
-	TAVec angles;
-	TVec vforward;
+	TAVec rot;
+	TVec aimDir;
+	TVec dir;
 
 	StartSoundName(player->mo, "SuperShotgunFire", CHAN_WEAPON);
 	SetMobjState(player->mo, S_PLAY_ATK2);
@@ -771,80 +729,71 @@ void A_FireShotgun2(mobj_t * actor)
 
 	SetPsprite(player, ps_flash, player->w_flashstate);
 
-	BulletSlope(player->mo, &bangles);
-
+	aimDir = Aim(player->mo, 16.0 * 64.0);
 	for (i = 0; i < 20; i++)
 	{
-		avcpy(bangles, angles);
-		angles.pitch = AngleMod360(angles.pitch +
-			(Random() - Random()) * 45.0 / 8.0);
-		angles.yaw = AngleMod360(angles.yaw +
-			(Random() - Random()) * 45.0 / 4.0);
-		AngleVector(&angles, &vforward);
+		rot.pitch = (Random() - Random()) * 45.0 / 8.0;
+		rot.yaw = (Random() - Random()) * 45.0 / 4.0;
+		rot.roll = 0.0;
+		dir = RotateVector(aimDir, rot);
 		damage = 5 * (P_Random() % 3 + 1);
-		LineAttack(player->mo, &vforward, MISSILERANGE, damage);
+		LineAttack(player->mo, &dir, MISSILERANGE, damage);
 	}
-	actor->effects |= EF_DL_MUZZLEFLASH;
+	player->mo->effects |= EF_DL_MUZZLEFLASH;
 }
 
 //===========================================================================
 //
-//  A_OpenShotgun2
+//  Weapon::A_OpenShotgun2
 //
 //===========================================================================
 
-void A_OpenShotgun2(mobj_t * actor)
+void Weapon::A_OpenShotgun2(void)
 {
-	player_t *player = actor->player;
-
 	StartSoundName(player->mo, "SuperShotgunOpen", CHAN_WEAPON);
 }
 
 //===========================================================================
 //
-//  A_LoadShotgun2
+//  Weapon::A_LoadShotgun2
 //
 //===========================================================================
 
-void A_LoadShotgun2(mobj_t * actor)
+void Weapon::A_LoadShotgun2(void)
 {
-	player_t *player = actor->player;
-
 	StartSoundName(player->mo, "SuperShotgunLoad", CHAN_WEAPON);
 }
 
 //===========================================================================
 //
-//  A_CloseShotgun2
+//  Weapon::A_CloseShotgun2
 //
 //===========================================================================
 
-void A_CloseShotgun2(mobj_t * actor)
+void Weapon::A_CloseShotgun2(void)
 {
-	player_t *player = actor->player;
-
 	StartSoundName(player->mo, "SuperShotgunClose", CHAN_WEAPON);
-	A_ReFire(actor);
+	A_ReFire();
 }
 
 #else
 
-void A_FireShotgun2(mobj_t * actor)
+void Weapon::A_FireShotgun2(void)
 {
 	NotDoom2();
 }
 
-void A_OpenShotgun2(mobj_t * actor)
+void Weapon::A_OpenShotgun2(void)
 {
 	NotDoom2();
 }
 
-void A_LoadShotgun2(mobj_t * actor)
+void Weapon::A_LoadShotgun2(void)
 {
 	NotDoom2();
 }
 
-void A_CloseShotgun2(mobj_t * actor)
+void Weapon::A_CloseShotgun2(void)
 {
 	NotDoom2();
 }
@@ -853,15 +802,13 @@ void A_CloseShotgun2(mobj_t * actor)
 
 //===========================================================================
 //
-//  A_FireCGun
+//  Weapon::A_FireCGun
 //
 //===========================================================================
 
-void A_FireCGun(mobj_t * actor)
+void Weapon::A_FireCGun(void)
 {
-	player_t *player = actor->player;
-	pspdef_t *psp = &player->psprites[ps_weapon];
-	TAVec angles;
+	TVec dir;
 
 	StartSoundName(player->mo, "PistolFire", CHAN_WEAPON);
 
@@ -871,63 +818,64 @@ void A_FireCGun(mobj_t * actor)
 	SetMobjState(player->mo, S_PLAY_ATK2);
 	player->ammo[player->w_ammo]--;
 
-	SetPsprite(player, ps_flash, player->w_flashstate
-		+ psp->statenum - S_CHAIN1);
+	SetPsprite(player, ps_flash, player->w_flashstate + statenum - S_CHAIN1);
 
-	BulletSlope(player->mo, &angles);
-	GunShot(player->mo, !player->refire, &angles);
-	actor->effects |= EF_DL_MUZZLEFLASH;
+	dir = Aim(player->mo, 16.0 * 64.0);
+	GunShot(player->mo, !player->refire, dir);
+	player->mo->effects |= EF_DL_MUZZLEFLASH;
 }
 
 //===========================================================================
 //
-//  A_FireMissile
+//  Weapon::A_FireMissile
 //
 //===========================================================================
 
-void A_FireMissile(mobj_t * actor)
+void Weapon::A_FireMissile(void)
 {
-	player_t *player = actor->player;
-
 	player->ammo[player->w_ammo]--;
 	SpawnPlayerMissile(player->mo, MT_ROCKET);
 }
 
 //===========================================================================
 //
-//  A_FireGrenade
+//  Weapon::A_FireGrenade
 //
 //===========================================================================
 
 #ifdef GRENADE_LAUNCHER
-void A_FireGrenade(mobj_t * actor)
+void Weapon::A_FireGrenade(void)
 {
-	player_t *player = actor->player;
 	mobj_t *mo;
-	TVec vforward;
-	TAVec angles;
 
 	player->ammo[player->w_ammo]--;
 
-	angles = actor->angles;
-	if (!angles.pitch)
-	{
-		//  See which target is to be aimed at
-		//  Don't aim, if not looking forwards (using freelook)
-		angles = Aim(actor, 16.0 * 64.0);
-	}
-	angles.pitch = AngleMod180(angles.pitch - 30.0);
-
-	mo = P_SpawnMobj(actor->origin.x, actor->origin.y,
-		actor->origin.z + 32.0, missile_grenade);
+	mo = P_SpawnMobj(player->mo->origin.x, player->mo->origin.y,
+		player->mo->origin.z + 32.0, missile_grenade);
 
 	if (mo->sound_sight)
 		StartSound(mo, mo->sound_sight, CHAN_VOICE);
 
-	mo->target = actor;
-	mo->angles = angles;
-	AngleVector(&angles, &vforward);
-	mo->velocity = vforward * mo->speed;
+	mo->target = player->mo;
+
+	//  See which target is to be aimed at
+	if (player->mo->angles.pitch)
+	{
+		TVec v_forward;
+		TVec v_right;
+		TVec v_up;
+
+		AngleVectors(&player->mo->angles, &v_forward, &v_right, &v_up);
+		mo->velocity = v_forward * mo->speed + v_up * mo->speed / 3.0 +
+			((Random() - 0.5) * 20.0) * v_right +
+			((Random() - 0.5) * 20.0) * v_up;
+	}
+	else
+	{
+		mo->velocity = Aim(player->mo, 16.0 * 64.0) * mo->speed;
+		mo->velocity.z = mo->speed / 3.0;
+	}
+	VectorAngles(&mo->velocity, &mo->angles);
 
 	CheckMissileSpawn(mo);
 }
@@ -935,14 +883,12 @@ void A_FireGrenade(mobj_t * actor)
 
 //===========================================================================
 //
-//  A_FirePlasma
+//  Weapon::A_FirePlasma
 //
 //===========================================================================
 
-void A_FirePlasma(mobj_t * actor)
+void Weapon::A_FirePlasma(void)
 {
-	player_t *player = actor->player;
-
 	player->ammo[player->w_ammo]--;
 
 	SetPsprite(player, ps_flash, player->w_flashstate + (P_Random() & 1));
@@ -952,56 +898,52 @@ void A_FirePlasma(mobj_t * actor)
 
 //===========================================================================
 //
-//  A_BFGsound
+//  Weapon::A_BFGsound
 //
 //===========================================================================
 
-void A_BFGsound(mobj_t * actor)
+void Weapon::A_BFGsound(void)
 {
-	player_t *player = actor->player;
-
 	StartSoundName(player->mo, "BFGFire", CHAN_WEAPON);
 }
 
 //===========================================================================
 //
-//  A_FireBFG
+//  Weapon::A_FireBFG
 //
 //===========================================================================
 
-void A_FireBFG(mobj_t * actor)
+void Weapon::A_FireBFG(void)
 {
-	player_t *player = actor->player;
-
 	player->ammo[player->w_ammo] -= BFGCELLS;
 	SpawnPlayerMissile(player->mo, MT_BFG);
 }
 
 //===========================================================================
 //
-//  A_BFGSpray
+//  Actor::A_BFGSpray
 //
 //  Spawn a BFG explosion on every monster in view
 //
 //===========================================================================
 
-void A_BFGSpray(mobj_t * mo)
+void Actor::A_BFGSpray(void)
 {
 	int i;
 	int j;
 	int damage;
-	TAVec angles;
+	TAVec aimAng;
 	mobj_t *emo;
 
 	// offset angles from its attack angle
 	for (i = 0; i < 40; i++)
 	{
-		avcpy(mo->angles, angles);
-		angles.yaw = AngleMod360(angles.yaw - 45.0 + 90.0 / 40.0 * itof(i));
+		aimAng = angles;
+		aimAng.yaw = AngleMod360(aimAng.yaw - 45.0 + 90.0 / 40.0 * itof(i));
 
-		// mo->target is the originator (player)
+		// target is the originator (player)
 		//  of the missile
-		AimLineAttack(mo->target, &angles, 16.0 * 64.0);
+		AimLineAttack(target, aimAng, 16.0 * 64.0);
 		if (!linetarget)
 		{
 			continue;
@@ -1021,13 +963,16 @@ void A_BFGSpray(mobj_t * mo)
 		for (j = 0; j < 15; j++)
 			damage += (P_Random() & 7) + 1;
 
-		linetarget->Damage(mo->target, mo->target, damage);
+		linetarget->Damage(target, target, damage);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2001/12/12 18:57:40  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.9  2001/12/01 18:14:08  dj_jl
 //  Changed MSG_Select, beautification
 //

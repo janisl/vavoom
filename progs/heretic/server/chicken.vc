@@ -37,47 +37,47 @@
 
 //==========================================================================
 //
-//  A_ChicLook
+//  Actor::A_ChicLook
 //
 //==========================================================================
 
-void A_ChicLook(mobj_t * actor)
+void Actor::A_ChicLook(void)
 {
-	if (UpdateChicken(actor, 10))
+	if (UpdateChicken(this, 10))
 	{
 		return;
 	}
-	A_Look(actor);
+	A_Look();
 }
 
 //==========================================================================
 //
-//  A_ChicChase
+//  Actor::A_ChicChase
 //
 //==========================================================================
 
-void A_ChicChase(mobj_t * actor)
+void Actor::A_ChicChase(void)
 {
-	if (UpdateChicken(actor, 3))
+	if (UpdateChicken(this, 3))
 	{
 		return;
 	}
-	A_Chase(actor);
+	A_Chase();
 }
 
 //==========================================================================
 //
-//  A_Feathers
+//  Actor::A_Feathers
 //
 //==========================================================================
 
-void A_Feathers(mobj_t * actor)
+void Actor::A_Feathers(void)
 {
 	int i;
 	int count;
 	mobj_t *mo;
 
-	if (actor->health > 0)
+	if (health > 0)
 	{
 		// Pain
 		count = P_Random() < 32 ? 2 : 1;
@@ -89,10 +89,8 @@ void A_Feathers(mobj_t * actor)
 	}
 	for (i = 0; i < count; i++)
 	{
-		mo =
-			P_SpawnMobj(actor->origin.x, actor->origin.y,
-			actor->origin.z + 20.0, MT_FEATHER);
-		mo->target = actor;
+		mo = P_SpawnMobj(origin.x, origin.y, origin.z + 20.0, MT_FEATHER);
+		mo->target = this;
 		mo->velocity.x = (Random() - Random()) * 35.0;
 		mo->velocity.y = (Random() - Random()) * 35.0;
 		mo->velocity.z = (1.0 + Random() * 2.0) * 35.0;
@@ -102,44 +100,47 @@ void A_Feathers(mobj_t * actor)
 
 //==========================================================================
 //
-//  A_ChicAttack
+//  Actor::A_ChicAttack
 //
 //==========================================================================
 
-void A_ChicAttack(mobj_t * actor)
+void Actor::A_ChicAttack(void)
 {
-	if (UpdateChicken(actor, 18))
+	if (UpdateChicken(this, 18))
 	{
 		return;
 	}
-	if (!actor->target)
+	if (!target)
 	{
 		return;
 	}
-	if (P_CheckMeleeRange(actor))
+	if (P_CheckMeleeRange(this))
 	{
-		actor->target->Damage(actor, actor, 1 + (P_Random() & 1));
+		target->Damage(this, this, 1 + (P_Random() & 1));
 	}
 }
 
 //==========================================================================
 //
-//  A_ChicPain
+//  Actor::A_ChicPain
 //
 //==========================================================================
 
-void A_ChicPain(mobj_t * actor)
+void Actor::A_ChicPain(void)
 {
-	if (UpdateChicken(actor, 10))
+	if (UpdateChicken(this, 10))
 	{
 		return;
 	}
-	StartSound(actor, actor->sound_pain, CHAN_VOICE);
+	StartSound(this, sound_pain, CHAN_VOICE);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/12 18:57:41  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.5  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

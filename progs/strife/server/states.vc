@@ -29,122 +29,132 @@
 //**
 //**************************************************************************
 
-void A_Light0(mobj_t *actor);
-void A_WeaponReady(mobj_t *actor);
-void A_Lower(mobj_t *actor);
-void A_Raise(mobj_t *actor);
-void A_Punch(mobj_t *actor);
-void A_ReFire(mobj_t *actor);
-void A_7(mobj_t *actor);
-void A_8(mobj_t *actor);
-void A_9(mobj_t *actor);
-void A_10(mobj_t *actor);
-void A_11(mobj_t *actor);
-void A_12(mobj_t *actor);
-void A_13(mobj_t *actor);
-void A_14(mobj_t *actor);
-void A_15(mobj_t *actor);
-void A_16(mobj_t *actor);
-void A_17(mobj_t *actor);
-void A_18(mobj_t *actor);
-void A_19(mobj_t *actor);
-void A_20(mobj_t *actor);
-void A_21(mobj_t *actor);
-void A_22(mobj_t *actor);
-void A_23(mobj_t *actor);
-void A_24(mobj_t *actor);
-void A_25(mobj_t *actor);
-void A_26(mobj_t *actor);
-void A_27(mobj_t *actor);
-void A_28(mobj_t *actor);
-void A_29(mobj_t *actor);
-void A_30(mobj_t *actor);
-void A_31(mobj_t *actor);
-void A_32(mobj_t *actor);
-void A_33(mobj_t *actor);
-void A_34(mobj_t *actor);
-void A_35(mobj_t *actor);
-void A_36(mobj_t *actor);
-void A_37(mobj_t *actor);
-void A_38(mobj_t *actor);
-void A_Pain(mobj_t *actor);
-void A_PlayerScream(mobj_t *actor);
-void A_Fall(mobj_t *actor);
-void A_42(mobj_t *actor);
-void A_43(mobj_t *actor);
-void A_44(mobj_t *actor);
-void A_45(mobj_t *actor);
-void A_46(mobj_t *actor);
-void A_Scream(mobj_t *actor);
-void A_48(mobj_t *actor);
-void A_49(mobj_t *actor);
-void A_50(mobj_t *actor);
-void A_51(mobj_t *actor);
-void A_52(mobj_t *actor);
-void A_53(mobj_t *actor);
-void A_54(mobj_t *actor);
-void A_55(mobj_t *actor);
-void A_56(mobj_t *actor);
-void A_57(mobj_t *actor);
-void A_58(mobj_t *actor);
-void A_59(mobj_t *actor);
-void A_60(mobj_t *actor);
-void A_61(mobj_t *actor);
-void A_62(mobj_t *actor);
-void A_63(mobj_t *actor);
-void A_64(mobj_t *actor);
-void A_65(mobj_t *actor);
-void A_66(mobj_t *actor);
-void A_67(mobj_t *actor);
-void A_68(mobj_t *actor);
-void A_69(mobj_t *actor);
-void A_70(mobj_t *actor);
-void A_71(mobj_t *actor);
-void A_72(mobj_t *actor);
-void A_73(mobj_t *actor);
-void A_74(mobj_t *actor);
-void A_75(mobj_t *actor);
-void A_76(mobj_t *actor);
-void A_77(mobj_t *actor);
-void A_78(mobj_t *actor);
-void A_79(mobj_t *actor);
-void A_80(mobj_t *actor);
-void A_81(mobj_t *actor);
-void A_82(mobj_t *actor);
-void A_83(mobj_t *actor);
-void A_84(mobj_t *actor);
-void A_85(mobj_t *actor);
-void A_86(mobj_t *actor);
-void A_87(mobj_t *actor);
-void A_88(mobj_t *actor);
-void A_89(mobj_t *actor);
-void A_90(mobj_t *actor);
-void A_91(mobj_t *actor);
-void A_92(mobj_t *actor);
-void A_93(mobj_t *actor);
-void A_94(mobj_t *actor);
-void A_95(mobj_t *actor);
-void A_96(mobj_t *actor);
-void A_97(mobj_t *actor);
-void A_98(mobj_t *actor);
-void A_99(mobj_t *actor);
-void A_100(mobj_t *actor);
-void A_101(mobj_t *actor);
-void A_102(mobj_t *actor);
-void A_103(mobj_t *actor);
-void A_104(mobj_t *actor);
-void A_105(mobj_t *actor);
-void A_106(mobj_t *actor);
-void A_107(mobj_t *actor);
-void A_108(mobj_t *actor);
-void A_109(mobj_t *actor);
-void A_110(mobj_t *actor);
-void A_111(mobj_t *actor);
-void A_112(mobj_t *actor);
+class Actor:Entity
+{
+	void A_24(void);
+	void A_25(void);
+	void A_26(void);
+	void A_27(void);
+	void A_28(void);
+	void A_29(void);
+	void A_30(void);
+	void A_31(void);
+	void A_32(void);
+	void A_33(void);
+	void A_34(void);
+	void A_35(void);
+	void A_36(void);
+	void A_37(void);
+	void A_38(void);
+	void A_Pain(void);
+	void A_PlayerScream(void);
+	void A_Fall(void);
+	void A_42(void);
+	void A_43(void);
+	void A_44(void);
+	void A_45(void);
+	void A_46(void);
+	void A_Scream(void);
+	void A_48(void);
+	void A_49(void);
+	void A_50(void);
+	void A_51(void);
+	void A_52(void);
+	void A_53(void);
+	void A_54(void);
+	void A_55(void);
+	void A_56(void);
+	void A_57(void);
+	void A_58(void);
+	void A_59(void);
+	void A_60(void);
+	void A_61(void);
+	void A_62(void);
+	void A_63(void);
+	void A_64(void);
+	void A_65(void);
+	void A_66(void);
+	void A_67(void);
+	void A_68(void);
+	void A_69(void);
+	void A_70(void);
+	void A_71(void);
+	void A_72(void);
+	void A_73(void);
+	void A_74(void);
+	void A_75(void);
+	void A_76(void);
+	void A_77(void);
+	void A_78(void);
+	void A_79(void);
+	void A_80(void);
+	void A_81(void);
+	void A_82(void);
+	void A_83(void);
+	void A_84(void);
+	void A_85(void);
+	void A_86(void);
+	void A_87(void);
+	void A_88(void);
+	void A_89(void);
+	void A_90(void);
+	void A_91(void);
+	void A_92(void);
+	void A_93(void);
+	void A_94(void);
+	void A_95(void);
+	void A_96(void);
+	void A_97(void);
+	void A_98(void);
+	void A_99(void);
+	void A_100(void);
+	void A_101(void);
+	void A_102(void);
+	void A_103(void);
+	void A_104(void);
+	void A_105(void);
+	void A_106(void);
+	void A_107(void);
+	void A_108(void);
+	void A_109(void);
+	void A_110(void);
+	void A_111(void);
+	void A_112(void);
+}
 
-__states__
+class Weapon:ViewEntity
+{
+	void A_Light0(void);
+	void A_WeaponReady(void);
+	void A_Lower(void);
+	void A_Raise(void);
+	void A_Punch(void);
+	void A_ReFire(void);
+	void A_7(void);
+	void A_8(void);
+	void A_9(void);
+	void A_10(void);
+	void A_11(void);
+	void A_12(void);
+	void A_13(void);
+	void A_14(void);
+	void A_15(void);
+	void A_16(void);
+	void A_17(void);
+	void A_18(void);
+	void A_19(void);
+	void A_20(void);
+	void A_21(void);
+	void A_22(void);
+	void A_23(void);
+}
+
+__states__(Actor)
 {
 	S_NULL {"PLAY", 0, -1.0, NULL, S_NULL}
+}
+__states__(Weapon)
+{
 	S_LIGHTDONE {"PNCH", 0, 0.0 / 35.0, A_Light0, S_NULL}
 	S_WAVE1 {"WAVE", 0 | FF_FULLBRIGHT, 3.0 / 35.0, NULL, S_WAVE2}
 	S_WAVE2 {"WAVE", 1 | FF_FULLBRIGHT, 3.0 / 35.0, NULL, S_WAVE3}
@@ -275,6 +285,9 @@ __states__
 	S_SIGILFLASH1 {"SIGF", 0 | FF_FULLBRIGHT, 4.0 / 35.0, A_13, S_SIGILFLASH2}
 	S_SIGILFLASH2 {"SIGF", 1 | FF_FULLBRIGHT, 6.0 / 35.0, A_23, S_SIGILFLASH3}
 	S_SIGILFLASH3 {"SIGF", 2 | FF_FULLBRIGHT, 4.0 / 35.0, A_12, S_LIGHTDONE}
+}
+__states__(Actor)
+{
 	S_131 {"POW1", 0, 4.0 / 35.0, NULL, S_132}
 	S_132 {"POW1", 1, 4.0 / 35.0, NULL, S_133}
 	S_133 {"POW1", 2, 4.0 / 35.0, NULL, S_134}
@@ -1714,9 +1727,12 @@ __states__
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/12/12 18:57:43  dj_jl
+//	State functions now are methods of Actor and Weapon classes
+//
 //	Revision 1.3  2001/09/20 16:20:00  dj_jl
 //	Start using object-oriented stuff, beautification
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:53  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

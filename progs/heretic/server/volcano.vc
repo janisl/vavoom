@@ -37,22 +37,22 @@
 
 //==========================================================================
 //
-//  A_VolcanoSet
+//  Actor::A_VolcanoSet
 //
 //==========================================================================
 
-void A_VolcanoSet(mobj_t * volcano)
+void Actor::A_VolcanoSet(void)
 {
-	volcano->time = 3.0 + Random() * 3.5;
+	time = 3.0 + Random() * 3.5;
 }
 
 //==========================================================================
 //
-//  A_VolcanoBlast
+//  Actor::A_VolcanoBlast
 //
 //==========================================================================
 
-void A_VolcanoBlast(mobj_t * volcano)
+void Actor::A_VolcanoBlast(void)
 {
 	int i;
 	int count;
@@ -62,9 +62,9 @@ void A_VolcanoBlast(mobj_t * volcano)
 	count = 1 + (P_Random() % 3);
 	for (i = 0; i < count; i++)
 	{
-		blast = P_SpawnMobj(volcano->origin.x, volcano->origin.y,
-			volcano->origin.z + 44.0, MT_VOLCANOBLAST);	// MT_VOLCANOBLAST
-		blast->target = volcano;
+		blast = P_SpawnMobj(origin.x, origin.y, origin.z + 44.0,
+			MT_VOLCANOBLAST);	// MT_VOLCANOBLAST
+		blast->target = this;
 		angle = Random() * 360.0;
 		blast->angles.yaw = angle;
 		blast->velocity.x = cos(angle) * 35.0;
@@ -77,28 +77,27 @@ void A_VolcanoBlast(mobj_t * volcano)
 
 //==========================================================================
 //
-//  A_VolcBallImpact
+//  Actor::A_VolcBallImpact
 //
 //==========================================================================
 
-void A_VolcBallImpact(mobj_t * ball)
+void Actor::A_VolcBallImpact(void)
 {
 	int i;
 	mobj_t *tiny;
 	float angle;
 
-	if (ball->origin.z <= ball->floorz)
+	if (origin.z <= floorz)
 	{
-		ball->flags |= MF_NOGRAVITY;
-		ball->flags2 &= ~MF2_LOGRAV;
-		ball->origin.z += 28.0;
+		flags |= MF_NOGRAVITY;
+		flags2 &= ~MF2_LOGRAV;
+		origin.z += 28.0;
 	}
-	P_RadiusAttack(ball, ball->target, 25, 0, 0);
+	P_RadiusAttack(this, target, 25, 0, 0);
 	for (i = 0; i < 4; i++)
 	{
-		tiny = P_SpawnMobj(ball->origin.x, ball->origin.y, ball->origin.z,
-			MT_VOLCANOTBLAST);
-		tiny->target = ball;
+		tiny = P_SpawnMobj(origin.x, origin.y, origin.z, MT_VOLCANOTBLAST);
+		tiny->target = this;
 		angle = itof(i) * 90.0;
 		tiny->angles.yaw = angle;
 		tiny->velocity.x = 0.7 * cos(angle) * 35.0;
@@ -111,6 +110,9 @@ void A_VolcBallImpact(mobj_t * ball)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.5  2001/10/22 17:23:12  dj_jl
 //  Floatification of angles
 //

@@ -50,51 +50,45 @@
 
 //==========================================================================
 //
-//  A_FogSpawn
+//  Actor::A_FogSpawn
 //
 //==========================================================================
 
-void A_FogSpawn(mobj_t * actor)
+void Actor::A_FogSpawn(void)
 {
 	mobj_t *mo = NULL;
 	float delta;
 
-	if (actor->special1-- > 0)
+	if (special1-- > 0)
 		return;
 
-	actor->special1 = actor->args[2];	// Reset frequency count
+	special1 = args[2];	// Reset frequency count
 
 	switch (P_Random() % 3)
 	{
 	case 0:
-		mo =
-			P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
-			MT_FOGPATCHS);
+		mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_FOGPATCHS);
 		break;
 	case 1:
-		mo =
-			P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
-			MT_FOGPATCHM);
+		mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_FOGPATCHM);
 		break;
 	case 2:
-		mo =
-			P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
-			MT_FOGPATCHL);
+		mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_FOGPATCHL);
 		break;
 	}
 
 	if (mo)
 	{
-		delta = itof(actor->args[1]);
+		delta = itof(args[1]);
 		if (delta == 0.0)
 			delta = 1.0;
-		mo->angles.yaw = AngleMod360(actor->angles.yaw +
+		mo->angles.yaw = AngleMod360(angles.yaw +
 			((Random() * delta) - (delta * 0.5)) * 360.0 / 256.0);
-		mo->target = actor;
-		if (actor->args[0] < 1)
-			actor->args[0] = 1;
-		mo->args[0] = (P_Random() % (actor->args[0])) + 1;	// P_Random speed
-		mo->args[3] = actor->args[3];	// Set lifetime
+		mo->target = this;
+		if (args[0] < 1)
+			args[0] = 1;
+		mo->args[0] = (P_Random() % (args[0])) + 1;	// P_Random speed
+		mo->args[3] = args[3];	// Set lifetime
 		mo->args[4] = 1;	// Set to moving
 		mo->special2 = P_Random() & 63;
 	}
@@ -102,40 +96,43 @@ void A_FogSpawn(mobj_t * actor)
 
 //==========================================================================
 //
-//  A_FogSpawn
+//	Actor::A_FogMove
 //
 //==========================================================================
 
-void A_FogMove(mobj_t * actor)
+void Actor::A_FogMove(void)
 {
-	float speed = itof(actor->args[0]);
+	float speed = itof(args[0]);
 	float angle;
 	int weaveindex;
 
-	if (!(actor->args[4]))
+	if (!args[4])
 		return;
 
-	if (actor->args[3]-- <= 0)
+	if (args[3]-- <= 0)
 	{
-		SetMobjStateNF(actor, actor->deathstate);
+		SetMobjStateNF(this, deathstate);
 		return;
 	}
 
-	if ((actor->args[3] % 4) == 0)
+	if ((args[3] % 4) == 0)
 	{
-		weaveindex = actor->special2;
-		actor->origin.z += FloatBobOffsets[weaveindex] / 2.0;
-		actor->special2 = (weaveindex + 1) & 63;
+		weaveindex = special2;
+		origin.z += FloatBobOffsets[weaveindex] / 2.0;
+		special2 = (weaveindex + 1) & 63;
 	}
 
-	angle = actor->angles.yaw;
-	actor->velocity.x = speed * cos(angle) * 35.0;
-	actor->velocity.y = speed * sin(angle) * 35.0;
+	angle = angles.yaw;
+	velocity.x = speed * cos(angle) * 35.0;
+	velocity.y = speed * sin(angle) * 35.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.5  2001/10/22 17:23:13  dj_jl
 //  Floatification of angles
 //

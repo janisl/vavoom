@@ -166,11 +166,11 @@ void DragonSeek(mobj_t * actor, float thresh, float turnMax)
 
 //============================================================================
 //
-// A_DragonInitFlight
+//	Actor::A_DragonInitFlight
 //
 //============================================================================
 
-void A_DragonInitFlight(mobj_t * actor)
+void Actor::A_DragonInitFlight(void)
 {
 	int search;
 
@@ -178,124 +178,123 @@ void A_DragonInitFlight(mobj_t * actor)
 	do
 	{
 		// find the first tid identical to the dragon's tid
-		actor->specialmobj1 = P_FindMobjFromTID(actor->tid, &search);
+		specialmobj1 = P_FindMobjFromTID(tid, &search);
 		if (search == -1)
 		{
-			SetMobjState(actor, actor->spawnstate);
+			SetMobjState(this, spawnstate);
 			return;
 		}
 	}
-	while (actor->specialmobj1 == actor);
-	P_RemoveMobjFromTIDList(actor);
+	while (specialmobj1 == this);
+	P_RemoveMobjFromTIDList(this);
 }
 
 //============================================================================
 //
-// A_DragonFlight
+//	Actor::A_DragonFlight
 //
 //============================================================================
 
-void A_DragonFlight(mobj_t * actor)
+void Actor::A_DragonFlight(void)
 {
 	float angle;
 
-	DragonSeek(actor, 4.0, 8.0);
-	if (actor->target)
+	DragonSeek(this, 4.0, 8.0);
+	if (target)
 	{
-		if (!(actor->target->flags & MF_SHOOTABLE))
+		if (!(target->flags & MF_SHOOTABLE))
 		{
 			// target died
-			actor->target = NULL;
+			target = NULL;
 			return;
 		}
-		angle = atan2(actor->target->origin.y - actor->origin.y,
-			actor->target->origin.x - actor->origin.x);
-		if (fabs(AngleMod180(actor->angles.yaw - angle)) < 45.0 / 2.0
-			&& CheckMeleeRange(actor))
+		angle = atan2(target->origin.y - origin.y,
+			target->origin.x - origin.x);
+		if (fabs(AngleMod180(angles.yaw - angle)) < 45.0 / 2.0
+			&& CheckMeleeRange(this))
 		{
-			actor->target->Damage(actor, actor, HITDICE(8));
-			StartSoundName(actor, "DragonAttack", CHAN_WEAPON);
+			target->Damage(this, this, HITDICE(8));
+			StartSoundName(this, "DragonAttack", CHAN_WEAPON);
 		}
-		else if (fabs(AngleMod180(actor->angles.yaw - angle)) <= 20.0)
+		else if (fabs(AngleMod180(angles.yaw - angle)) <= 20.0)
 		{
-			SetMobjState(actor, actor->missilestate);
-			StartSoundName(actor, "DragonAttack", CHAN_WEAPON);
+			SetMobjState(this, missilestate);
+			StartSoundName(this, "DragonAttack", CHAN_WEAPON);
 		}
 	}
 	else
 	{
-		P_LookForPlayers(actor, true);
+		P_LookForPlayers(this, true);
 	}
 }
 
 //============================================================================
 //
-// A_DragonFlap
+//	Actor::A_DragonFlap
 //
 //============================================================================
 
-void A_DragonFlap(mobj_t * actor)
+void Actor::A_DragonFlap(void)
 {
-	A_DragonFlight(actor);
+	A_DragonFlight();
 	if (P_Random() < 240)
 	{
-		StartSoundName(actor, "DragonWingflap", CHAN_BODY);
+		StartSoundName(this, "DragonWingflap", CHAN_BODY);
 	}
 	else
 	{
-		StartSound(actor, actor->sound_active, CHAN_VOICE);
+		StartSound(this, sound_active, CHAN_VOICE);
 	}
 }
 
 //============================================================================
 //
-// A_DragonAttack
+//	Actor::A_DragonAttack
 //
 //============================================================================
 
-void A_DragonAttack(mobj_t * actor)
+void Actor::A_DragonAttack(void)
 {
-	mobj_t *mo;
-
-	mo = SpawnMissile(actor, actor->target, MT_DRAGON_FX);
+	SpawnMissile(this, target, MT_DRAGON_FX);
 }
 
 //============================================================================
 //
-//  A_DragonPain
+//  Actor::A_DragonPain
 //
 //============================================================================
 
-void A_DragonPain(mobj_t * actor)
+void Actor::A_DragonPain(void)
 {
-	A_Pain(actor);
-	if (!actor->specialmobj1)
-	{	// no destination spot yet
-		SetMobjState(actor, S_DRAGON_INIT);
-	}
-}
-
-//============================================================================
-//
-// A_DragonCheckCrash
-//
-//============================================================================
-
-void A_DragonCheckCrash(mobj_t * actor)
-{
-	if (actor->origin.z <= actor->floorz)
+	A_Pain();
+	if (!specialmobj1)
 	{
-		SetMobjState(actor, S_DRAGON_CRASH1);
+		// no destination spot yet
+		SetMobjState(this, S_DRAGON_INIT);
 	}
 }
 
 //============================================================================
 //
-// A_DragonFX2
+//	Actor::A_DragonCheckCrash
 //
 //============================================================================
 
-void A_DragonFX2(mobj_t * actor)
+void Actor::A_DragonCheckCrash(void)
+{
+	if (origin.z <= floorz)
+	{
+		SetMobjState(this, S_DRAGON_CRASH1);
+	}
+}
+
+//============================================================================
+//
+//	Actor::A_DragonFX2
+//
+//============================================================================
+
+void Actor::A_DragonFX2(void)
 {
 	mobj_t *mo;
 	int i;
@@ -304,13 +303,13 @@ void A_DragonFX2(mobj_t * actor)
 	delay = 0.5 + Random();
 	for (i = 1 + (P_Random() & 3); i; i--)
 	{
-		mo = P_SpawnMobj(actor->origin.x + (Random() - 0.5) * 64.0,
-			actor->origin.y + (Random() - 0.5) * 64.0,
-			actor->origin.z + (Random() - 0.5) * 16.0, MT_DRAGON_FX2);
+		mo = P_SpawnMobj(origin.x + (Random() - 0.5) * 64.0,
+			origin.y + (Random() - 0.5) * 64.0,
+			origin.z + (Random() - 0.5) * 16.0, MT_DRAGON_FX2);
 		if (mo)
 		{
 			mo->time = delay + Random() * 0.2 * itof(i);
-			mo->target = actor->target;
+			mo->target = target;
 		}
 	}
 }
@@ -318,6 +317,9 @@ void A_DragonFX2(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.6  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

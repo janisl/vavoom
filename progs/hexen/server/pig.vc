@@ -134,75 +134,78 @@ int UpdateMorphedMonster(mobj_t * actor, int tics)
 
 //============================================================================
 //
-//  A_PigLook
+//  Actor::A_PigLook
 //
 //============================================================================
 
-void A_PigLook(mobj_t * actor)
+void Actor::A_PigLook(void)
 {
-	if (UpdateMorphedMonster(actor, 10))
+	if (UpdateMorphedMonster(this, 10))
 	{
 		return;
 	}
-	A_Look(actor);
+	A_Look();
 }
 
 //============================================================================
 //
-//  A_PigChase
+//  Actor::A_PigChase
 //
 //============================================================================
 
-void A_PigChase(mobj_t * actor)
+void Actor::A_PigChase(void)
 {
-	if (UpdateMorphedMonster(actor, 3))
+	if (UpdateMorphedMonster(this, 3))
 	{
 		return;
 	}
-	A_Chase(actor);
+	A_Chase();
 }
 
 //============================================================================
 //
-// A_PigAttack
+//	Actor::A_PigAttack
 //
 //============================================================================
 
-void A_PigAttack(mobj_t * actor)
+void Actor::A_PigAttack(void)
 {
-	if (UpdateMorphedMonster(actor, 18))
+	if (UpdateMorphedMonster(this, 18))
 	{
 		return;
 	}
-	if (!actor->target)
+	if (!target)
 	{
 		return;
 	}
-	if (CheckMeleeRange(actor))
+	if (CheckMeleeRange(this))
 	{
-		actor->target->Damage(actor, actor, 2 + (P_Random() & 1));
-		StartSoundName(actor, "PigAttack", CHAN_VOICE);
+		target->Damage(this, this, 2 + (P_Random() & 1));
+		StartSoundName(this, "PigAttack", CHAN_VOICE);
 	}
 }
 
 //============================================================================
 //
-//  A_PigPain
+//  Actor::A_PigPain
 //
 //============================================================================
 
-void A_PigPain(mobj_t * actor)
+void Actor::A_PigPain(void)
 {
-	A_Pain(actor);
-	if (actor->origin.z <= actor->floorz)
+	A_Pain();
+	if (origin.z <= floorz)
 	{
-		actor->velocity.z = 3.5 * 35.0;
+		velocity.z = 3.5 * 35.0;
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.6  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

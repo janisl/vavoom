@@ -39,64 +39,60 @@
 
 //==========================================================================
 //
-//  A_CPosAttack
+//  Actor::A_CPosAttack
 //
 //  Heavy weapon dude attack.
 //
 //==========================================================================
 
-void A_CPosAttack(mobj_t * actor)
+void Actor::A_CPosAttack(void)
 {
 	int damage;
-	TAVec angles;
-	TVec vforward;
+	TVec dir;
 
-	if (!actor->target)
+	if (!target)
 		return;
 
-	StartSoundName(actor, "ShotgunFire", CHAN_WEAPON);
-	A_FaceTarget(actor);
-	angles = actor->angles;
-	AimLineAttack(actor, &angles, MISSILERANGE);
-	angles.yaw = AngleMod360(angles.yaw + (Random() - Random()) * 45.0 / 2.0);
-	AngleVector(&angles, &vforward);
+	StartSoundName(this, "ShotgunFire", CHAN_WEAPON);
+	A_FaceTarget();
+	dir = AimLineAttack(this, angles, MISSILERANGE);
+	VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 	damage = ((P_Random() % 5) + 1) * 3;
-	LineAttack(actor, &vforward, MISSILERANGE, damage);
+	LineAttack(this, &dir, MISSILERANGE, damage);
 
-	actor->effects |= EF_DL_MUZZLEFLASH;
+	effects |= EF_DL_MUZZLEFLASH;
 }
 
 //==========================================================================
 //
-//  A_CPosRefire
+//  Actor::A_CPosRefire
 //
 //  Heavy weapon dude refire.
 //
 //==========================================================================
 
-void A_CPosRefire(mobj_t * actor)
+void Actor::A_CPosRefire(void)
 {
 	// keep firing unless target got out of sight
-	A_FaceTarget(actor);
+	A_FaceTarget();
 
 	if (P_Random() < 40)
 		return;
 
-	if (!actor->target || actor->target->health <= 0 ||
-		!P_CheckSight(actor, actor->target))
+	if (!target || target->health <= 0 || !P_CheckSight(this, target))
 	{
-		SetMobjState(actor, actor->seestate);
+		SetMobjState(this, seestate);
 	}
 }
 
 #else
 
-void A_CPosAttack(mobj_t * actor)
+void Actor::A_CPosAttack(void)
 {
 	NotDoom2();
 }
 
-void A_CPosRefire(mobj_t * actor)
+void Actor::A_CPosRefire(void)
 {
 	NotDoom2();
 }
@@ -106,6 +102,9 @@ void A_CPosRefire(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/12/12 18:57:40  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.6  2001/10/22 17:23:11  dj_jl
 //  Floatification of angles
 //

@@ -37,11 +37,11 @@
 
 //============================================================================
 //
-//  A_BishopDecide
+//  Actor::A_BishopDecide
 //
 //============================================================================
 
-void A_BishopDecide(mobj_t * actor)
+void Actor::A_BishopDecide(void)
 {
 	if (P_Random() < 220)
 	{
@@ -49,164 +49,161 @@ void A_BishopDecide(mobj_t * actor)
 	}
 	else
 	{
-		SetMobjState(actor, S_BISHOP_BLUR1);
+		SetMobjState(this, S_BISHOP_BLUR1);
 	}
 }
 
 //============================================================================
 //
-//  A_BishopDoBlur
+//  Actor::A_BishopDoBlur
 //
 //============================================================================
 
-void A_BishopDoBlur(mobj_t * actor)
+void Actor::A_BishopDoBlur(void)
 {
-	actor->special1 = (P_Random() & 3) + 3;	// P_Random number of blurs
+	special1 = (P_Random() & 3) + 3;	// P_Random number of blurs
 	if (P_Random() < 120)
 	{
-		P_ThrustMobj(actor, AngleMod360(actor->angles.yaw + 90.0), 11.0);
+		P_ThrustMobj(this, AngleMod360(angles.yaw + 90.0), 11.0);
 	}
 	else if (P_Random() > 125)
 	{
-		P_ThrustMobj(actor, AngleMod360(actor->angles.yaw - 90.0), 11.0);
+		P_ThrustMobj(this, AngleMod360(angles.yaw - 90.0), 11.0);
 	}
 	else
 	{
 		// Thrust forward
-		P_ThrustMobj(actor, actor->angles.yaw, 11.0);
+		P_ThrustMobj(this, angles.yaw, 11.0);
 	}
-	StartSoundName(actor, "BishopBlur", CHAN_VOICE);
+	StartSoundName(this, "BishopBlur", CHAN_VOICE);
 }
 
 //============================================================================
 //
-// A_BishopSpawnBlur
+//	Actor::A_BishopSpawnBlur
 //
 //============================================================================
 
-void A_BishopSpawnBlur(mobj_t * actor)
+void Actor::A_BishopSpawnBlur(void)
 {
 	mobj_t *mo;
 
-	if (!--actor->special1)
+	if (!--special1)
 	{
-		actor->velocity.x = 0.0;
-		actor->velocity.y = 0.0;
+		velocity.x = 0.0;
+		velocity.y = 0.0;
 		if (P_Random() > 96)
 		{
-			SetMobjState(actor, S_BISHOP_WALK1);
+			SetMobjState(this, S_BISHOP_WALK1);
 		}
 		else
 		{
-			SetMobjState(actor, S_BISHOP_ATK1);
+			SetMobjState(this, S_BISHOP_ATK1);
 		}
 	}
-	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
-		MT_BISHOPBLUR);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_BISHOPBLUR);
 	if (mo)
 	{
-		mo->angles.yaw = actor->angles.yaw;
+		mo->angles.yaw = angles.yaw;
 	}
 }
 
 //============================================================================
 //
-// A_BishopChase
+//	Actor::A_BishopChase
 //
 //============================================================================
 
-void A_BishopChase(mobj_t * actor)
+void Actor::A_BishopChase(void)
 {
-	actor->origin.z -= FloatBobOffsets[actor->special2] / 2.0;
-	actor->special2 = (actor->special2 + 4) & 63;
-	actor->origin.z += FloatBobOffsets[actor->special2] / 2.0;
+	origin.z -= FloatBobOffsets[special2] / 2.0;
+	special2 = (special2 + 4) & 63;
+	origin.z += FloatBobOffsets[special2] / 2.0;
 }
 
 //============================================================================
 //
-// A_BishopAttack
+//	Actor::A_BishopAttack
 //
 //============================================================================
 
-void A_BishopAttack(mobj_t * actor)
+void Actor::A_BishopAttack(void)
 {
-	if (!actor->target)
+	if (!target)
 	{
 		return;
 	}
-	StartSound(actor, actor->sound_attack, CHAN_WEAPON);
-	if (CheckMeleeRange(actor))
+	StartSound(this, sound_attack, CHAN_WEAPON);
+	if (CheckMeleeRange(this))
 	{
-		actor->target->Damage(actor, actor, HITDICE(4));
+		target->Damage(this, this, HITDICE(4));
 		return;
 	}
-	actor->special1 = (P_Random() & 3) + 5;
+	special1 = (P_Random() & 3) + 5;
 }
 
 //============================================================================
 //
-//  A_BishopAttack2
+//  Actor::A_BishopAttack2
 //
 //  Spawns one of a string of bishop missiles
 //
 //============================================================================
 
-void A_BishopAttack2(mobj_t * actor)
+void Actor::A_BishopAttack2(void)
 {
 	mobj_t *mo;
 
-	if (!actor->target || !actor->special1)
+	if (!target || !special1)
 	{
-		actor->special1 = 0;
-		SetMobjState(actor, S_BISHOP_WALK1);
+		special1 = 0;
+		SetMobjState(this, S_BISHOP_WALK1);
 		return;
 	}
-	mo = SpawnMissile(actor, actor->target, MT_BISH_FX);
+	mo = SpawnMissile(this, target, MT_BISH_FX);
 	if (mo)
 	{
-		mo->specialmobj1 = actor->target;
+		mo->specialmobj1 = target;
 		mo->special2 = 16;	// High word == x/y, Low word == z
 	}
-	actor->special1--;
+	special1--;
 }
 
 //============================================================================
 //
-//  A_BishopPainBlur
+//  Actor::A_BishopPainBlur
 //
 //============================================================================
 
-void A_BishopPainBlur(mobj_t * actor)
+void Actor::A_BishopPainBlur(void)
 {
 	mobj_t *mo;
 
 	if (P_Random() < 64)
 	{
-		SetMobjState(actor, S_BISHOP_BLUR1);
+		SetMobjState(this, S_BISHOP_BLUR1);
 		return;
 	}
-	mo = P_SpawnMobj(actor->origin.x + (Random() - Random()) * 16.0,
-		actor->origin.y + (Random() - Random()) * 16.0,
-		actor->origin.z + (Random() - Random()) * 8.0, MT_BISHOPPAINBLUR);
+	mo = P_SpawnMobj(origin.x + (Random() - Random()) * 16.0,
+		origin.y + (Random() - Random()) * 16.0,
+		origin.z + (Random() - Random()) * 8.0, MT_BISHOPPAINBLUR);
 	if (mo)
 	{
-		mo->angles.yaw = actor->angles.yaw;
+		mo->angles.yaw = angles.yaw;
 	}
 }
 
 //============================================================================
 //
-// A_BishopPuff
+//	Actor::A_BishopPuff
 //
 //============================================================================
 
-void A_BishopPuff(mobj_t * actor)
+void Actor::A_BishopPuff(void)
 {
 	mobj_t *mo;
 
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 40.0,
-		MT_BISHOP_PUFF);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 40.0, MT_BISHOP_PUFF);
 	if (mo)
 	{
 		mo->velocity.z = 0.5 * 35.0;
@@ -215,56 +212,59 @@ void A_BishopPuff(mobj_t * actor)
 
 //==========================================================================
 //
-// A_SetAltShadow
+//	Actor::A_SetAltShadow
 //
 //==========================================================================
 
-void A_SetAltShadow(mobj_t * actor)
+void Actor::A_SetAltShadow(void)
 {
-	actor->translucency = 33;
+	translucency = 33;
 }
 
 //============================================================================
 //
-// A_BishopMissileWeave
+//	Actor::A_BishopMissileWeave
 //
 //============================================================================
 
-void A_BishopMissileWeave(mobj_t * actor)
+void Actor::A_BishopMissileWeave(void)
 {
 	float newX, newY;
 	int weaveXY, weaveZ;
 	float angle;
 
-	weaveXY = actor->special2 >> 16;
-	weaveZ = actor->special2 & 0xFFFF;
-	angle = AngleMod360(actor->angles.yaw + 90.0);
-	newX = actor->origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 2.0;
-	newY = actor->origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 2.0;
+	weaveXY = special2 >> 16;
+	weaveZ = special2 & 0xFFFF;
+	angle = AngleMod360(angles.yaw + 90.0);
+	newX = origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 2.0;
+	newY = origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 2.0;
 	weaveXY = (weaveXY + 2) & 63;
 	newX += cos(angle) * FloatBobOffsets[weaveXY] * 2.0;
 	newY += sin(angle) * FloatBobOffsets[weaveXY] * 2.0;
-	P_TryMove(actor, newX, newY);
-	actor->origin.z -= FloatBobOffsets[weaveZ];
+	P_TryMove(this, newX, newY);
+	origin.z -= FloatBobOffsets[weaveZ];
 	weaveZ = (weaveZ + 2) & 63;
-	actor->origin.z += FloatBobOffsets[weaveZ];
-	actor->special2 = weaveZ + (weaveXY << 16);
+	origin.z += FloatBobOffsets[weaveZ];
+	special2 = weaveZ + (weaveXY << 16);
 }
 
 //============================================================================
 //
-// A_BishopMissileSeek
+//	Actor::A_BishopMissileSeek
 //
 //============================================================================
 
-void A_BishopMissileSeek(mobj_t * actor)
+void Actor::A_BishopMissileSeek(void)
 {
-	SeekerMissile(actor, 2.0, 3.0);
+	SeekerMissile(this, 2.0, 3.0);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.7  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

@@ -27,150 +27,152 @@
 //**
 //**************************************************************************
 
-void A_Explode(mobj_t * actor);
-
 //==========================================================================
 //
-//  A_HideThing
+//  Actor::A_HideThing
 //
 //==========================================================================
 
-void A_HideThing(mobj_t * actor)
+void Actor::A_HideThing(void)
 {
-	actor->translucency += 100;
+	if (translucency < 100)
+	{
+		translucency += 100;
+	}
 }
 
 //==========================================================================
 //
-//  A_UnHideThing
+//  Actor::A_UnHideThing
 //
 //==========================================================================
 
-void A_UnHideThing(mobj_t * actor)
+void Actor::A_UnHideThing(void)
 {
-	actor->translucency -= 100;
+	if (translucency >= 100)
+	{
+		translucency -= 100;
+	}
 }
 
 //==========================================================================
 //
-//  A_RestoreArtifact
+//  Actor::A_RestoreArtifact
 //
 //==========================================================================
 
-void A_RestoreArtifact(mobj_t * arti)
+void Actor::A_RestoreArtifact(void)
 {
-	arti->flags |= MF_SPECIAL;
-	SetMobjState(arti, arti->spawnstate);
-	StartSoundName(arti, "Respawn", CHAN_VOICE);
+	flags |= MF_SPECIAL;
+	SetMobjState(this, spawnstate);
+	StartSoundName(this, "Respawn", CHAN_VOICE);
 }
 
 //==========================================================================
 //
-//  A_RestoreSpecialThing1
+//  Actor::A_RestoreSpecialThing1
 //
 //  Make a special thing visible again.
 //
 //==========================================================================
 
-void A_RestoreSpecialThing1(mobj_t * thing)
+void Actor::A_RestoreSpecialThing1(void)
 {
-	thing->translucency -= 100;
-	StartSoundName(thing, "Respawn", CHAN_VOICE);
+	translucency -= 100;
+	StartSoundName(this, "Respawn", CHAN_VOICE);
 }
 
 //==========================================================================
 //
-//  A_RestoreSpecialThing2
+//  Actor::A_RestoreSpecialThing2
 //
 //==========================================================================
 
-void A_RestoreSpecialThing2(mobj_t * thing)
+void Actor::A_RestoreSpecialThing2(void)
 {
-	thing->flags |= MF_SPECIAL;
-	SetMobjState(thing, thing->spawnstate);
+	flags |= MF_SPECIAL;
+	SetMobjState(this, spawnstate);
 }
 
 //===========================================================================
 //
-//  A_FlameCheck
+//  Actor::A_FlameCheck
 //
 //===========================================================================
 
-void A_FlameCheck(mobj_t * actor)
+void Actor::A_FlameCheck(void)
 {
-	if (!actor->args[0]--)	// Called every 8 tics
+	if (!args[0]--)	// Called every 8 tics
 	{
-		SetMobjState(actor, S_NULL);
+		SetMobjState(this, S_NULL);
 	}
 }
 
 //===========================================================================
 //
-//  A_CheckThrowBomb
+//  Actor::A_CheckThrowBomb
 //
 //===========================================================================
 
-void A_CheckThrowBomb(mobj_t * actor)
+void Actor::A_CheckThrowBomb(void)
 {
-	if (fabs(actor->velocity.x) < 1.5 * 35.0 &&
-		fabs(actor->velocity.y) < 1.5 * 35.0 &&
-		actor->velocity.z < 2.0 * 35.0 && actor->statenum == S_THROWINGBOMB6)
+	if (fabs(velocity.x) < 1.5 * 35.0 &&
+		fabs(velocity.y) < 1.5 * 35.0 &&
+		velocity.z < 2.0 * 35.0 && statenum == S_THROWINGBOMB6)
 	{
-		SetMobjState(actor, S_THROWINGBOMB7);
-		actor->origin.z = actor->floorz;
-		actor->velocity.z = 0.0;
-		actor->flags2 &= ~MF2_FLOORBOUNCE;
-		actor->flags &= ~MF_MISSILE;
+		SetMobjState(this, S_THROWINGBOMB7);
+		origin.z = floorz;
+		velocity.z = 0.0;
+		flags2 &= ~MF2_FLOORBOUNCE;
+		flags &= ~MF_MISSILE;
 	}
-	if (!--actor->health)
+	if (!--health)
 	{
-		SetMobjState(actor, actor->deathstate);
+		SetMobjState(this, deathstate);
 	}
 }
 
 //===========================================================================
 //
-//  A_NoGravity
+//  Actor::A_NoGravity
 //
 //===========================================================================
 
-void A_NoGravity(mobj_t * actor)
+void Actor::A_NoGravity(void)
 {
-	actor->flags |= MF_NOGRAVITY;
+	flags |= MF_NOGRAVITY;
 }
 
 //============================================================================
 //
-//  A_CorpseBloodDrip
+//  Actor::A_CorpseBloodDrip
 //
 //============================================================================
 
-void A_CorpseBloodDrip(mobj_t * actor)
+void Actor::A_CorpseBloodDrip(void)
 {
 	if (P_Random() > 128)
 	{
 		return;
 	}
-	P_SpawnMobj(actor->origin.x, actor->origin.y,
-		actor->origin.z + actor->height / 2.0, MT_CORPSEBLOODDRIP);
+	P_SpawnMobj(origin.x, origin.y, origin.z + height / 2.0,
+		MT_CORPSEBLOODDRIP);
 }
 
 //============================================================================
 //
-//  A_CorpseExplode
+//  Actor::A_CorpseExplode
 //
 //============================================================================
 
-void A_CorpseExplode(mobj_t * actor)
+void Actor::A_CorpseExplode(void)
 {
 	mobj_t *mo;
 	int i;
 
 	for (i = (P_Random() & 3) + 3; i; i--)
 	{
-		mo =
-			P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
-			MT_CORPSEBIT);
+		mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_CORPSEBIT);
 		SetMobjState(mo, mo->spawnstate + (P_Random() % 3));
 		if (mo)
 		{
@@ -180,9 +182,7 @@ void A_CorpseExplode(mobj_t * actor)
 		}
 	}
 	// Spawn a skull
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
-		MT_CORPSEBIT);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_CORPSEBIT);
 	SetMobjState(mo, S_CORPSEBIT_4);
 	if (mo)
 	{
@@ -191,27 +191,27 @@ void A_CorpseExplode(mobj_t * actor)
 		mo->velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
 		StartSoundName(mo, "FireDemonDeath", CHAN_VOICE);
 	}
-	P_RemoveMobj(actor);
+	P_RemoveMobj(this);
 }
 
 //===========================================================================
 //
-//  A_SoAExplode
+//  Actor::A_SoAExplode
 //
 //  Suit of Armor Explode
 //
 //===========================================================================
 
-void A_SoAExplode(mobj_t * actor)
+void Actor::A_SoAExplode(void)
 {
 	mobj_t *mo;
 	int i;
 
 	for (i = 0; i < 10; i++)
 	{
-		mo = P_SpawnMobj(actor->origin.x + (Random() - 0.5) * 16.0,
-			actor->origin.y + (Random() - 0.5) * 16.0,
-			actor->origin.z + Random() * actor->height, MT_ZARMORCHUNK);
+		mo = P_SpawnMobj(origin.x + (Random() - 0.5) * 16.0,
+			origin.y + (Random() - 0.5) * 16.0,
+			origin.z + Random() * height, MT_ZARMORCHUNK);
 		SetMobjState(mo, mo->spawnstate + i);
 		if (mo)
 		{
@@ -220,33 +220,34 @@ void A_SoAExplode(mobj_t * actor)
 			mo->velocity.z = (Random() * 8.0 + 5.0) * 35.0;
 		}
 	}
-	if (actor->args[0])
-	{	// Spawn an item
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
-			TranslateThingType[actor->args[0]]);
+	if (args[0])
+	{
+		// Spawn an item
+		P_SpawnMobj(origin.x, origin.y, origin.z,
+			TranslateThingType[args[0]]);
 	}
 	StartSoundName(mo, "SuitofArmorBreak", CHAN_VOICE);
-	P_RemoveMobj(actor);
+	P_RemoveMobj(this);
 }
 
 //==========================================================================
 //
-//  A_ContMobjSound
+//  Actor::A_ContMobjSound
 //
 //==========================================================================
 
-void A_ContMobjSound(mobj_t * actor)
+void Actor::A_ContMobjSound(void)
 {
-	switch (actor->type)
+	switch (type)
 	{
 	case MT_SERPENTFX:
-		StartSoundName(actor, "SerpentFXContinuous", CHAN_VOICE);
+		StartSoundName(this, "SerpentFXContinuous", CHAN_VOICE);
 		break;
 	case MT_HAMMER_MISSILE:
-		StartSoundName(actor, "FighterHammerContinuous", CHAN_VOICE);
+		StartSoundName(this, "FighterHammerContinuous", CHAN_VOICE);
 		break;
 	case MT_QUAKE_FOCUS:
-		StartSoundName(actor, "Earthquake", CHAN_VOICE);
+		StartSoundName(this, "Earthquake", CHAN_VOICE);
 		break;
 	default:
 		break;
@@ -255,23 +256,48 @@ void A_ContMobjSound(mobj_t * actor)
 
 //==========================================================================
 //
-//  A_ESound
+//  Actor::A_ESound
 //
 //==========================================================================
 
-void A_ESound(mobj_t * mo)
+void Actor::A_ESound(void)
 {
-	switch (mo->type)
+	switch (type)
 	{
 	case MT_SOUNDWIND:
-		StartSoundName(mo, "Wind", CHAN_VOICE);
+		StartSoundName(this, "Wind", CHAN_VOICE);
 		break;
 	}
+}
+
+//============================================================================
+//
+//  A_SetInvulnerable
+//
+//============================================================================
+
+void A_SetInvulnerable(mobj_t *actor)
+{
+	actor->flags2 |= MF2_INVULNERABLE;
+}
+
+//============================================================================
+//
+//  Actor::A_UnSetInvulnerable
+//
+//============================================================================
+
+void Actor::A_UnSetInvulnerable(void)
+{
+	flags2 &= ~MF2_INVULNERABLE;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

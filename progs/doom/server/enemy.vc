@@ -25,46 +25,46 @@
 
 //==========================================================================
 //
-//  A_Look
+//	Actor::A_Look
 //
 //  Stay in state until a player is sighted
 //
 //==========================================================================
 
-void A_Look(mobj_t * actor)
+void Actor::A_Look(void)
 {
 	mobj_t *targ;
 	int sound;
 
-	actor->threshold = 0;	// any shot will wake up
-	targ = actor->subsector->sector->soundtarget;
+	threshold = 0;	// any shot will wake up
+	targ = subsector->sector->soundtarget;
 
 	if (targ && targ->flags & MF_SHOOTABLE)
 	{
-		actor->target = targ;
+		target = targ;
 
-		if (actor->flags & MF_AMBUSH)
+		if (flags & MF_AMBUSH)
 		{
-			if (!P_CheckSight(actor, actor->target))
+			if (!P_CheckSight(this, target))
 			{
-				if (!P_LookForPlayers(actor, false))
+				if (!P_LookForPlayers(this, false))
 					return;
 			}
 		}
 	}
 	else
 	{
-		if (!P_LookForPlayers(actor, false))
+		if (!P_LookForPlayers(this, false))
 			return;
 	}
 
 	// go into chase state
-	if (actor->sound_sight)
+	if (sound_sight)
 	{
 		int sfx_posit = GetSoundID("ZombieSight1");
 		int sfx_bgsit = GetSoundID("ImpSight1");
 
-		sound = actor->sound_sight;
+		sound = sound_sight;
 		if (sound >= sfx_posit && sound <= sfx_posit + 2)
 		{
 			sound = sfx_posit + P_Random() % 3;
@@ -74,53 +74,53 @@ void A_Look(mobj_t * actor)
 			sound = sfx_bgsit + P_Random() % 2;
 		}
 
-		if (actor->type == MT_SPIDER || actor->type == MT_CYBORG)
+		if (type == MT_SPIDER || type == MT_CYBORG)
 		{
 			// Full volume
 			StartSound(NULL, sound, CHAN_VOICE);
 		}
 		else
 		{
-			StartSound(actor, sound, CHAN_VOICE);
+			StartSound(this, sound, CHAN_VOICE);
 		}
 	}
 
-	SetMobjState(actor, actor->seestate);
+	SetMobjState(this, seestate);
 }
 
 //==========================================================================
 //
-//  A_Chase
+//	Actor::A_Chase
 //
 //  Actor has a melee attack, so it tries to close as fast as possible
 //
 //==========================================================================
 
-void A_Chase(mobj_t * actor)
+void Actor::A_Chase(void)
 {
 	float delta;
 
-	if (actor->reactiontime)
+	if (reactiontime)
 	{
-		actor->reactiontime--;
+		reactiontime--;
 	}
 
 	//  Remove muzzle flash
-	if ((actor->effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
+	if ((effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
 	{
-		actor->effects &= ~EF_DLIGHT_MASK;
+		effects &= ~EF_DLIGHT_MASK;
 	}
 
 	// modify target threshold
-	if (actor->threshold)
+	if (threshold)
 	{
-		if (!actor->target || actor->target->health <= 0)
+		if (!target || target->health <= 0)
 		{
-			actor->threshold = 0;
+			threshold = 0;
 		}
 		else
 		{
-			actor->threshold--;
+			threshold--;
 		}
 	}
 
@@ -134,198 +134,182 @@ void A_Chase(mobj_t * actor)
 	}
 */
 	// turn towards movement direction if not there yet
-	if (actor->movedir < 8)
+	if (movedir < 8)
 	{
-		actor->angles.yaw = itof(ftoi(actor->angles.yaw / 45.0)) * 45.0;
+		angles.yaw = itof(ftoi(angles.yaw / 45.0)) * 45.0;
 
-		delta = AngleMod180(actor->angles.yaw - itof(actor->movedir) * 45.0);
+		delta = AngleMod180(angles.yaw - itof(movedir) * 45.0);
 
 		if (delta > 0.0)
 		{
-			actor->angles.yaw -= 45.0;
+			angles.yaw -= 45.0;
 		}
 		else if (delta < 0.0)
 		{
-			actor->angles.yaw += 45.0;
+			angles.yaw += 45.0;
 		}
 	}
 
-	if (!actor->target || !(actor->target->flags & MF_SHOOTABLE))
+	if (!target || !(target->flags & MF_SHOOTABLE))
 	{
 		// look for a new target
-		if (P_LookForPlayers(actor, true))
+		if (P_LookForPlayers(this, true))
 		{
 			return;	// got a new target
 		}
-		SetMobjState(actor, actor->spawnstate);
+		SetMobjState(this, spawnstate);
 		return;
 	}
 
 	// do not attack twice in a row
-	if (actor->flags & MF_JUSTATTACKED)
+	if (flags & MF_JUSTATTACKED)
 	{
-		actor->flags &= ~MF_JUSTATTACKED;
+		flags &= ~MF_JUSTATTACKED;
 		if (!fastparm)
 		{
-			P_NewChaseDir(actor);
+			P_NewChaseDir(this);
 		}
 		return;
 	}
 
 	// check for melee attack
-	if (actor->meleestate && P_CheckMeleeRange(actor))
+	if (meleestate && P_CheckMeleeRange(this))
 	{
-		if (actor->sound_attack)
+		if (sound_attack)
 		{
-			StartSound(actor, actor->sound_attack, CHAN_WEAPON);
+			StartSound(this, sound_attack, CHAN_WEAPON);
 		}
-		SetMobjState(actor, actor->meleestate);
+		SetMobjState(this, meleestate);
 		return;
 	}
 
 	// check for missile attack
-	if (actor->missilestate)
+	if (missilestate)
 	{
-		if (fastparm || !actor->movecount)
+		if (fastparm || !movecount)
 		{
-			if (P_CheckMissileRange(actor))
+			if (P_CheckMissileRange(this))
 			{
-				SetMobjState(actor, actor->missilestate);
-				actor->flags |= MF_JUSTATTACKED;
+				SetMobjState(this, missilestate);
+				flags |= MF_JUSTATTACKED;
 				return;
 			}
 		}
 	}
 
 	// possibly choose another target
-	if (netgame && !actor->threshold)
+	if (netgame && !threshold)
 	{
-		if (!P_CheckSight(actor, actor->target))
+		if (!P_CheckSight(this, target))
 		{
-			if (P_LookForPlayers(actor, true))
+			if (P_LookForPlayers(this, true))
 				return;	// got a new target
 		}
 	}
 
 	// chase towards player
-	if (--actor->movecount < 0 || !P_Move(actor))
+	if (--movecount < 0 || !P_Move(this))
 	{
-		P_NewChaseDir(actor);
+		P_NewChaseDir(this);
 	}
 
 	// make active sound
-	if (actor->sound_active && P_Random() < 3)
+	if (sound_active && P_Random() < 3)
 	{
-		StartSound(actor, actor->sound_active, CHAN_VOICE);
+		StartSound(this, sound_active, CHAN_VOICE);
 	}
 }
 
 //==========================================================================
 //
-//  A_FaceTarget
+//	Actor::A_FaceTarget
 //
 //==========================================================================
 
-void A_FaceTarget(mobj_t * actor)
+void Actor::A_FaceTarget(void)
 {
-	if (!actor->target)
+	if (!target)
 		return;
 
-	actor->flags &= ~MF_AMBUSH;
+	flags &= ~MF_AMBUSH;
 
-	actor->angles.yaw = atan2(actor->target->origin.y - actor->origin.y,
-		actor->target->origin.x - actor->origin.x);
+	angles.yaw = atan2(target->origin.y - origin.y,
+		target->origin.x - origin.x);
 
-	if (actor->target->translucency)
+	if (target->translucency)
 	{
-		actor->angles.yaw = AngleMod360(actor->angles.yaw +
-			(Random() - Random()) * 45.0);
+		angles.yaw = AngleMod360(angles.yaw + (Random() - Random()) * 45.0);
 	}
 }
 
 //==========================================================================
 //
-//  A_StopMuzzleFlash
+//  Actor::A_Pain
 //
 //==========================================================================
 
-void A_StopMuzzleFlash(mobj_t * actor)
+void Actor::A_Pain(void)
 {
 	//  Remove muzzle flash
-	if ((actor->effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
+	if ((effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
 	{
-		actor->effects &= ~EF_DLIGHT_MASK;
+		effects &= ~EF_DLIGHT_MASK;
+	}
+
+	if (sound_pain)
+	{
+		StartSound(this, sound_pain, CHAN_VOICE);
 	}
 }
 
 //==========================================================================
 //
-//  A_Pain
-//
-//==========================================================================
-
-void A_Pain(mobj_t * actor)
-{
-	//  Remove muzzle flash
-	if ((actor->effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
-	{
-		actor->effects &= ~EF_DLIGHT_MASK;
-	}
-
-	if (actor->sound_pain)
-	{
-		StartSound(actor, actor->sound_pain, CHAN_VOICE);
-	}
-}
-
-//==========================================================================
-//
-//  A_Explode
+//  Actor::A_Explode
 //
 //  Rocket and barrel explosion.
 //
 //==========================================================================
 
-void A_Explode(mobj_t * thingy)
+void Actor::A_Explode(void)
 {
-	thingy->translucency = 50;
-	P_RadiusAttack(thingy, thingy->target, 128, 0, 0);
+	translucency = 50;
+	P_RadiusAttack(this, target, 128, 0, 0);
 
 	//  Spawn explosion effects - dynamic light and particles
 	MSG_Select(MSG_SV_DATAGRAM);
 	MSG_WriteByte(svc_explosion);
-	MSG_WriteShort(ftoi(thingy->origin.x));
-	MSG_WriteShort(ftoi(thingy->origin.y));
-	MSG_WriteShort(ftoi(thingy->origin.z + thingy->height * 0.5));
+	MSG_WriteShort(ftoi(origin.x));
+	MSG_WriteShort(ftoi(origin.y));
+	MSG_WriteShort(ftoi(origin.z + height * 0.5));
 
 	//  Clear old dynamic light effect
-	thingy->effects &= ~EF_DLIGHT_MASK;
+	effects &= ~EF_DLIGHT_MASK;
 }
 
 //==========================================================================
 //
-//  A_Scream
+//	Actor::A_Scream
 //
 //  Death sound.
 //
 //==========================================================================
 
-void A_Scream(mobj_t * actor)
+void Actor::A_Scream(void)
 {
 	int sound;
 
 	//  Remove muzzle flash
-	if ((actor->effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
+	if ((effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
 	{
-		actor->effects &= ~EF_DLIGHT_MASK;
+		effects &= ~EF_DLIGHT_MASK;
 	}
 
-	if (actor->sound_death)
+	if (sound_death)
 	{
 		int sfx_podth = GetSoundID("ZombieDeath1");
 		int sfx_bgdth = GetSoundID("ImpDeath1");
 
-		sound = actor->sound_death;
+		sound = sound_death;
 		if (sound >= sfx_podth && sound <= sfx_podth + 2)
 		{
 			sound = sfx_podth + P_Random() % 3;
@@ -336,55 +320,55 @@ void A_Scream(mobj_t * actor)
 		}
 
 		// Check for bosses.
-		if (actor->type == MT_SPIDER || actor->type == MT_CYBORG)
+		if (type == MT_SPIDER || type == MT_CYBORG)
 		{
 			// full volume
 			StartSound(NULL, sound, CHAN_VOICE);
 		}
 		else
 		{
-			StartSound(actor, sound, CHAN_VOICE);
+			StartSound(this, sound, CHAN_VOICE);
 		}
 	}
 }
 
 //==========================================================================
 //
-//  A_XScream
+//	Actor::A_XScream
 //
 //  Explode death sound.
 //
 //==========================================================================
 
-void A_XScream(mobj_t * actor)
+void Actor::A_XScream(void)
 {
 	//  Remove muzzle flash
-	if ((actor->effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
+	if ((effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
 	{
-		actor->effects &= ~EF_DLIGHT_MASK;
+		effects &= ~EF_DLIGHT_MASK;
 	}
 
-	StartSoundName(actor, "Slop", CHAN_BODY);
+	StartSoundName(this, "Slop", CHAN_BODY);
 }
 
 //==========================================================================
 //
-//  A_Fall
+//	Actor::A_Fall
 //
 //  Unset blocking.
 //
 //==========================================================================
 
-void A_Fall(mobj_t * actor)
+void Actor::A_Fall(void)
 {
 	//  Remove muzzle flash
-	if ((actor->effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
+	if ((effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
 	{
-		actor->effects &= ~EF_DLIGHT_MASK;
+		effects &= ~EF_DLIGHT_MASK;
 	}
 
 	// actor is on ground, it can be walked over
-	actor->flags &= ~MF_SOLID;
+	flags &= ~MF_SOLID;
 
 	// So change this if corpse objects
 	// are meant to be obstacles.
@@ -392,19 +376,19 @@ void A_Fall(mobj_t * actor)
 
 //==========================================================================
 //
-//  A_PlayerScream
+//  Actor::A_PlayerScream
 //
 //  Player death sound
 //
 //==========================================================================
 
-void A_PlayerScream(mobj_t * mo)
+void Actor::A_PlayerScream(void)
 {
 	// Default death sound.
 	string sound = "PlayerDeath";
 
 #ifdef DOOM2
-	if (mo->health < -50)
+	if (health < -50)
 	{
 		// IF THE PLAYER DIES
 		// LESS THAN -50% WITHOUT GIBBING
@@ -412,52 +396,52 @@ void A_PlayerScream(mobj_t * mo)
 	}
 #endif
 
-	StartSoundName(mo, sound, CHAN_VOICE);
+	StartSoundName(this, sound, CHAN_VOICE);
 }
 
 #ifndef DOOM2
 
 //==========================================================================
 //
-//  A_BossDeath
+//  Actor::A_BossDeath
 //
 //  DOOM / Ultimate DOOM boss death
 //  Possibly trigger special effects if on first boss level
 //
 //==========================================================================
 
-void A_BossDeath(mobj_t * mo)
+void Actor::A_BossDeath(void)
 {
 	string mapname;
 	int i;
 	mobj_t *mo2;
 	int args[5];
 
-	mapname = ptrtos(&level->mapname[0]);
+	mapname = ARR2STR(level->mapname);
 
 	if (!strcmp(mapname, "E1M8"))
 	{
-		if (mo->type != MT_BRUISER)
+		if (type != MT_BRUISER)
 			return;
 	}
 	else if (!strcmp(mapname, "E2M8"))
 	{
-		if (mo->type != MT_CYBORG)
+		if (type != MT_CYBORG)
 			return;
 	}
 	else if (!strcmp(mapname, "E3M8"))
 	{
-		if (mo->type != MT_SPIDER)
+		if (type != MT_SPIDER)
 			return;
 	}
 	else if (!strcmp(mapname, "E4M6"))
 	{
-		if (mo->type != MT_CYBORG)
+		if (type != MT_CYBORG)
 			return;
 	}
 	else if (!strcmp(mapname, "E4M8"))
 	{
-		if (mo->type != MT_SPIDER)
+		if (type != MT_SPIDER)
 			return;
 	}
 	else
@@ -477,7 +461,7 @@ void A_BossDeath(mobj_t * mo)
 	// scan the remaining thinkers to see if all bosses are dead
 	for (mo2 = NextMobj(NULL); mo2; mo2 = NextMobj(mo2))
 	{
-		if (mo2 != mo && mo2->type == mo->type && mo2->health > 0)
+		if (mo2 != this && mo2->type == type && mo2->health > 0)
 		{
 			// other boss not dead
 			return;
@@ -516,26 +500,26 @@ void A_BossDeath(mobj_t * mo)
 
 //==========================================================================
 //
-//  A_BossDeath
+//  Actor::A_BossDeath
 //
 //  DOOM II boss death
 //  Possibly trigger special effects if on first boss level
 //
 //==========================================================================
 
-void A_BossDeath(mobj_t * mo)
+void Actor::A_BossDeath(void)
 {
 	int i;
 	mobj_t *mo2;
 	int args[5];
 
-	if (strcmp(ptrtos(&level->mapname[0]), "MAP07"))
+	if (strcmp(ARR2STR(level->mapname), "MAP07"))
 	{
 		//  Not a boss level
 		return;
 	}
 
-	if ((mo->type != MT_FATSO) && (mo->type != MT_BABY))
+	if ((type != MT_FATSO) && (type != MT_BABY))
 		return;
 
 	// make sure there is a player alive for victory
@@ -549,7 +533,7 @@ void A_BossDeath(mobj_t * mo)
 	// scan the remaining thinkers to see if all bosses are dead
 	for (mo2 = NextMobj(NULL); mo2; mo2 = NextMobj(mo2))
 	{
-		if (mo2 != mo && mo2->type == mo->type && mo2->health > 0)
+		if (mo2 != this && mo2->type == type && mo2->health > 0)
 		{
 			// other boss not dead
 			return;
@@ -557,7 +541,7 @@ void A_BossDeath(mobj_t * mo)
 	}
 
 	// victory!
-	if (mo->type == MT_FATSO)
+	if (type == MT_FATSO)
 	{
 		args[0] = 666;
 		args[1] = 8;
@@ -576,6 +560,9 @@ void A_BossDeath(mobj_t * mo)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/12/12 18:57:40  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.6  2001/12/01 18:14:07  dj_jl
 //  Changed MSG_Select, beautification
 //

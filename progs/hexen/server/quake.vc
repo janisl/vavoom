@@ -85,37 +85,36 @@ boolean A_LocalQuake(int *args, mobj_t * actor)
 
 //===========================================================================
 //
-// A_Quake
+//	Actor::A_Quake
 //
 //===========================================================================
 
-void A_Quake(mobj_t * actor)
+void Actor::A_Quake(void)
 {
 	float an;
-	player_t *player;
+	player_t *pl;
 	mobj_t *victim;
-	int richters = actor->args[0];
+	int richters = args[0];
 	int playnum;
 	int dist;
 
-	if (actor->args[1]-- > 0)
+	if (args[1]-- > 0)
 	{
 		for (playnum = 0; playnum < MAXPLAYERS; playnum++)
 		{
-			player = &players[playnum];
-			if (!player->active || !player->spawned)
+			pl = &players[playnum];
+			if (!pl->active || !pl->spawned)
 				continue;
 
-			victim = player->mo;
-			dist = ftoi(MobjDist(actor, victim)) >> 6;
+			victim = pl->mo;
+			dist = ftoi(MobjDist(this, victim)) >> 6;
 			// Tested in tile units (64 pixels)
-			if (dist < actor->args[3])	// In tremor radius
+			if (dist < args[3])	// In tremor radius
 			{
-				player->localQuakeHappening = richters;
+				pl->localQuakeHappening = richters;
 			}
 			// Check if in damage radius
-			if ((dist < actor->args[2]) &&
-				(victim->origin.z <= victim->floorz))
+			if ((dist < args[2]) && (victim->origin.z <= victim->floorz))
 			{
 				if (P_Random() < 50)
 				{
@@ -131,15 +130,18 @@ void A_Quake(mobj_t * actor)
 	{
 		for (playnum = 0; playnum < MAXPLAYERS; playnum++)
 		{
-			players[playnum].localQuakeHappening = false;
+			players[playnum].localQuakeHappening = 0;
 		}
-		SetMobjState(actor, S_NULL);
+		SetMobjState(this, S_NULL);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/12/12 18:57:42  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.6  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

@@ -37,45 +37,45 @@
 
 void SetPsprite(player_t * player, int position, int stnum)
 {
-	pspdef_t *psp;
+	ViewEntity e;
 	state_t *state;
 
-	psp = &player->psprites[position];
+	e = player->ViewEnts[position];
 	do
 	{
 		if (!stnum)
 		{
 			// Object removed itself.
-			psp->statenum = 0;
+			e.statenum = 0;
 			break;
 		}
 		state = &states[stnum];
-		psp->time = state->time;	// could be 0
-		psp->sprite = state->sprite;
-		psp->frame = state->frame;
-		psp->model_index = state->model_index;
-		psp->alias_frame = state->model_frame;
-		psp->statenum = state->statenum;
-		psp->nextstate = state->nextstate;
+		e.time = state->time;	// could be 0
+		e.sprite = state->sprite;
+		e.frame = state->frame;
+		e.model_index = state->model_index;
+		e.alias_frame = state->model_frame;
+		e.statenum = state->statenum;
+		e.nextstate = state->nextstate;
 		// In Strife states doesn't have misc fields
 		if (state->misc1)
 		{
 			// Set coordinates.
-			psp->sx = state->misc1;
-			psp->sy = state->misc2;
+			e.sx = state->misc1;
+			e.sy = state->misc2;
 		}
 		if (state->function)
 		{
 			// Call action routine.
-			state->function(player->mo);
-			if (!psp->statenum)
+			state->function(e);
+			if (!e.statenum)
 			{
 				break;
 			}
 		}
-		stnum = psp->nextstate;
+		stnum = e.nextstate;
 	}
-	while (!psp->time);	// An initial state of 0 could cycle through.
+	while (!e.time);	// An initial state of 0 could cycle through.
 }
 
 //===========================================================================
@@ -90,7 +90,7 @@ void SetPsprite(player_t * player, int position, int stnum)
 void BringUpWeapon(player_t * player)
 {
 	player->pendingweapon = wp_nochange;
-	player->psprites[ps_weapon].sy = WEAPONBOTTOM;
+	player->ViewEnts[ps_weapon].sy = WEAPONBOTTOM;
 
 	SetPsprite(player, ps_weapon, player->w_upstate);
 }
@@ -141,10 +141,10 @@ void SetupPsprites(player_t * player)
 {
 	int i;
 
-	// remove all psprites
+	// remove all  ViewEnts
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
-		player->psprites[i].statenum = 0;
+		player->ViewEnts[i].statenum = 0;
 	}
 
 	// spawn the gun
@@ -162,31 +162,31 @@ void SetupPsprites(player_t * player)
 void MovePsprites(player_t * player)
 {
 	int i;
-	pspdef_t *psp;
+	ViewEntity e;
 
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
-		psp = &player->psprites[i];
+		e = player->ViewEnts[i];
 		// a null state means not active
-		if (psp->statenum)
+		if (e.statenum)
 		{
 			// drop tic count and possibly change state
 
 			// a -1 tic count never changes
-			if (psp->time != -1.0)
+			if (e.time != -1.0)
 			{
-				psp->time -= frametime;
-				if (psp->time <= 0.0)
+				e.time -= frametime;
+				if (e.time <= 0.0)
 				{
-					psp->time = 0.0;
-					SetPsprite(player, i, psp->nextstate);
+					e.time = 0.0;
+					SetPsprite(player, i, e.nextstate);
 				}
 			}
 		}
 	}
 
-	player->psprites[ps_flash].sx = player->psprites[ps_weapon].sx;
-	player->psprites[ps_flash].sy = player->psprites[ps_weapon].sy;
+	player->ViewEnts[ps_flash].sx = player->ViewEnts[ps_weapon].sx;
+	player->ViewEnts[ps_flash].sy = player->ViewEnts[ps_weapon].sy;
 }
 
 //==========================================================================
@@ -312,17 +312,15 @@ void FireWeapon(player_t * player)
 
 //===========================================================================
 //
-//  A_WeaponReady
+//  Weapon::A_WeaponReady
 //
 //  The player can fire the weapon or change to another weapon at this time.
 // Follows after getting weapon up, or after previous attack/fire sequence.
 //
 //===========================================================================
 
-void A_WeaponReady(mobj_t * actor)
+void Weapon::A_WeaponReady(void)
 {
-	player_t *player = actor->player;
-	pspdef_t *psp = &player->psprites[ps_weapon];
 	float angle;
 
 	// get out of attack state
@@ -332,7 +330,7 @@ void A_WeaponReady(mobj_t * actor)
 		SetMobjState(player->mo, S_PLAY);
 	}
 
-/*    if (player->readyweapon == wp_chainsaw && psp->statenum == S_SAW)
+/*    if (player->readyweapon == wp_chainsaw && statenum == S_SAW)
     {
 		StartSoundName(player->mo, "ChainsawIdle");
     }*/
@@ -363,36 +361,34 @@ void A_WeaponReady(mobj_t * actor)
 
 	// bob the weapon based on movement speed
 	angle = AngleMod360(180.0 * level->time);
-	psp->sx = 1.0 + player->bob * cos(angle);
+	sx = 1.0 + player->bob * cos(angle);
 	if (angle >= 180.0)
 	{
 		angle -= 180.0;
 	}
-	psp->sy = WEAPONTOP + player->bob * sin(angle);
+	sy = WEAPONTOP + player->bob * sin(angle);
 }
 
 //===========================================================================
 //
-//  A_Lower
+//  Weapon::A_Lower
+//
 //  Lowers current weapon, and changes weapon at bottom.
 //
 //===========================================================================
 
-void A_Lower(mobj_t * actor)
+void Weapon::A_Lower(void)
 {
-	player_t *player = actor->player;
-	pspdef_t *psp = &player->psprites[ps_weapon];
-
-	psp->sy += LOWERSPEED;
+	sy += LOWERSPEED;
 
 	// Is already down.
-	if (psp->sy < WEAPONBOTTOM)
+	if (sy < WEAPONBOTTOM)
 		return;
 
 	// Player is dead.
 	if (player->playerstate == PST_DEAD)
 	{
-		psp->sy = WEAPONBOTTOM;
+		sy = WEAPONBOTTOM;
 
 		// don't bring weapon back up
 		return;
@@ -415,23 +411,20 @@ void A_Lower(mobj_t * actor)
 
 //===========================================================================
 //
-//  A_Raise
+//  Weapon::A_Raise
 //
 //===========================================================================
 
-void A_Raise(mobj_t * actor)
+void Weapon::A_Raise(void)
 {
-	player_t *player = actor->player;
-	pspdef_t *psp = &player->psprites[ps_weapon];
+	sy -= RAISESPEED;
 
-	psp->sy -= RAISESPEED;
-
-	if (psp->sy > WEAPONTOP)
+	if (sy > WEAPONTOP)
 	{
 		return;
 	}
 
-	psp->sy = WEAPONTOP;
+	sy = WEAPONTOP;
 
 	// The weapon has been raised all the way,
 	//  so change to the ready state.
@@ -440,16 +433,14 @@ void A_Raise(mobj_t * actor)
 
 //===========================================================================
 //
-//  A_ReFire
+//  Weapon::A_ReFire
 //
 //  The player can re-fire the weapon without lowering it entirely.
 //
 //===========================================================================
 
-void A_ReFire(mobj_t * actor)
+void Weapon::A_ReFire(void)
 {
-	player_t *player = actor->player;
-
 	// check for fire
 	//  (if a weaponchange is pending, let it go through instead)
 	if ((player->buttons & BT_ATTACK)
@@ -494,14 +485,12 @@ void A_GunFlash(mobj_t * actor)
 
 //===========================================================================
 //
-//  A_Light0
+//  Weapon::A_Light0
 //
 //===========================================================================
 
-void A_Light0(mobj_t * actor)
+void Weapon::A_Light0(void)
 {
-	player_t *player = actor->player;
-
 	player->extralight = 0;
 }
 
@@ -539,13 +528,12 @@ void A_Light2(mobj_t * actor)
 
 //===========================================================================
 //
-//  A_Punch
+//  Weapon::A_Punch
 //
 //===========================================================================
 
-void A_Punch(mobj_t * actor)
+void Weapon::A_Punch(void)
 {
-	player_t *player = actor->player;
 	int damage;
 	TAVec angles;
 	TVec vforward;
@@ -576,6 +564,9 @@ void A_Punch(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/12/12 18:57:43  dj_jl
+//  State functions now are methods of Actor and Weapon classes
+//
 //  Revision 1.7  2001/10/22 17:23:13  dj_jl
 //  Floatification of angles
 //
