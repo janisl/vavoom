@@ -93,6 +93,7 @@ void TOpenGLDrawer::Init(void)
 
 bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 {
+	guard(TOpenGLDrawer::SetResolution);
 	bool default_mode = false;
 	if (!Width || !Height)
 	{
@@ -358,6 +359,7 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 	XUNLOCK();
 
 	return true;
+	unguard;
 }
 
 //==========================================================================
@@ -368,6 +370,7 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 
 void *TOpenGLDrawer::GetExtFuncPtr(const char *name)
 {
+	guard(TOpenGLDrawer::GetExtFuncPtr);
 	void *prjobj = dlopen(NULL, RTLD_LAZY);
 	if (!prjobj)
 	{
@@ -377,6 +380,7 @@ void *TOpenGLDrawer::GetExtFuncPtr(const char *name)
 	void *ptr = dlsym(prjobj, name);
 	dlclose(prjobj);
 	return ptr;
+	unguard;
 }
 
 //==========================================================================
@@ -389,8 +393,10 @@ void *TOpenGLDrawer::GetExtFuncPtr(const char *name)
 
 void TOpenGLDrawer::Update(void)
 {
+	guard(TOpenGLDrawer::Update);
 	glFlush();
 	glXSwapBuffers(RenderDisplay, RenderWindow);
+	unguard;
 }
 
 //==========================================================================
@@ -403,6 +409,7 @@ void TOpenGLDrawer::Update(void)
 
 void TOpenGLDrawer::Shutdown(void)
 {
+	guard(TOpenGLDrawer::Shutdown);
 	XLOCK();
 
 	DeleteTextures();
@@ -448,14 +455,18 @@ void TOpenGLDrawer::Shutdown(void)
 	}
 
 	XUNLOCK();
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/01/11 08:12:01  dj_jl
+//	Added guard macros
+//
 //	Revision 1.8  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.7  2001/09/20 16:22:51  dj_jl
 //	Removed workarounds for Allegro bugs that are now fixed
 //	

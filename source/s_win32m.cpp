@@ -88,6 +88,7 @@ void S_InitMusic(void)
 
 void S_InitDirectMusic(LPDIRECTSOUND DSound)
 {
+	guard(S_InitDirectMusic);
 	HRESULT			result;
 
 	if (M_CheckParm("-nomusic"))
@@ -115,6 +116,7 @@ void S_InitDirectMusic(LPDIRECTSOUND DSound)
 
 	music_started = true;
 	enabled = true;
+	unguard;
 }
 
 //==========================================================================
@@ -125,6 +127,7 @@ void S_InitDirectMusic(LPDIRECTSOUND DSound)
 
 void S_ShutdownMusic(void)
 {
+	guard(S_ShutdownMusic);
 	if (music_started)
 	{
 		// Release segment
@@ -146,6 +149,7 @@ void S_ShutdownMusic(void)
 		Performance = NULL;
 		music_started = false;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -248,6 +252,7 @@ static void ResumeSong(void)
 
 void S_UpdateMusic(void)
 {
+	guard(S_UpdateMusic);
 	if (!music_started)
     	return;
 
@@ -290,6 +295,7 @@ void S_UpdateMusic(void)
 				con << "Invalid error\n";
 		}
     }
+	unguard;
 }
 
 //==========================================================================
@@ -440,6 +446,7 @@ static void StartMidiSong(char* song, boolean loop)
 
 COMMAND(Music)
 {
+	guard(COMMAND Music);
 	char	*command;
 
 	if (!music_started)
@@ -519,6 +526,7 @@ COMMAND(Music)
         }
         return;
 	}
+	unguard;
 }
 
 
@@ -983,9 +991,12 @@ static int qmus2mid(char *mus, char *mid, int length)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/01/11 08:12:01  dj_jl
+//	Added guard macros
+//
 //	Revision 1.5  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2001/10/08 17:34:57  dj_jl
 //	A lots of small changes and cleanups
 //	

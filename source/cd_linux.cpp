@@ -89,6 +89,7 @@ static int		 	remap[100];
 
 void CD_Init(void)
 {
+	guard(CD_Init);
 	int i;
 
     if (M_CheckParm("-nosound") || M_CheckParm("-nocdaudio"))
@@ -123,6 +124,7 @@ void CD_Init(void)
 	}
 
 	con << "CD Audio Initialized\n";
+	unguard;
 }
 
 //==========================================================================
@@ -133,6 +135,7 @@ void CD_Init(void)
 
 void CD_Update(void)
 {
+	guard(CD_Update);
 	struct cdrom_subchnl	subchnl;
 	static time_t			lastchk;
 
@@ -160,6 +163,7 @@ void CD_Update(void)
 				CD_Play(playTrack, true);
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -170,6 +174,7 @@ void CD_Update(void)
 
 void CD_Shutdown(void)
 {
+	guard(CD_Shutdown);
 	if (!cd_started)
 		return;
 
@@ -177,6 +182,7 @@ void CD_Shutdown(void)
 	close(cdfile);
 	cdfile = -1;
 	cd_started = false;
+	unguard;
 }
 
 //==========================================================================
@@ -187,6 +193,7 @@ void CD_Shutdown(void)
 
 COMMAND(CD)
 {
+	guard(COMMAND CD);
 	char	*command;
 
 	if (!cd_started)
@@ -313,6 +320,7 @@ COMMAND(CD)
         }
 		return;
 	}
+	unguard;
 }
 
 //**************************************************************************
@@ -495,9 +503,12 @@ static void CD_CloseDoor(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/01/11 08:12:01  dj_jl
+//	Added guard macros
+//
 //	Revision 1.4  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

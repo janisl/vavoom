@@ -110,6 +110,7 @@ static TVec			listener_up;
 
 void S_InitSfx(void)
 {
+	guard(S_InitSfx);
 	HRESULT			result;
 	DSBUFFERDESC	dsbdesc;
 	WAVEFORMATEX	wfx;
@@ -233,6 +234,7 @@ void S_InitSfx(void)
 
 		cond << "Using " << snd_Channels << " sound buffers\n";
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -243,12 +245,14 @@ void S_InitSfx(void)
 
 void S_ShutdownSfx(void)
 {
+	guard(S_ShutdownSfx);
 	//	Shutdown sound
 	if (DSound)
 	{
 		DSound->Release();
 		DSound = NULL;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -475,9 +479,6 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id)
 	DWORD					size2;
 	int						i;
 
-	//	Check, that sound lump is loaded
-	S_LoadSound(sound_id);
-
 	for (i = 0; i < MAX_VOICES; i++)
 	{
 		if (free_buffers[i].sound_id == sound_id)
@@ -496,12 +497,12 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id)
 
 		    dsbuffer->SetCurrentPosition(0);
 
-			//	We don't need to keep lump static
-			S_DoneWithLump(sound_id);
-
 			return dsbuffer;
 		}
 	}
+
+	//	Check, that sound lump is loaded
+	S_LoadSound(sound_id);
 
     // Set up wave format structure.
 	memset(&pcmwf, 0, sizeof(PCMWAVEFORMAT));
@@ -594,6 +595,7 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id)
 void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
 	int origin_id, int channel, int volume)
 {
+	guard(S_StartSound);
 	int 					dist;
 	int 					priority;
 	int						chan;
@@ -694,6 +696,7 @@ void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
 	result = dsbuffer->Play(0, 0, 0);
 	if (result != DS_OK)
 		Sys_Error("Failed to play channel\n%s", DS_Error(result));
+	unguard;
 }
 
 //==========================================================================
@@ -704,6 +707,7 @@ void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
 
 void S_PlayTillDone(char *sound)
 {
+	guard(S_PlayTillDone);
     int						sound_id;
 	double					start;
     HRESULT					result;
@@ -770,6 +774,7 @@ void S_PlayTillDone(char *sound)
 	//	Stop and release buffer
 	dsbuffer->Stop();
 	dsbuffer->Release();
+	unguard;
 }
 
 //==========================================================================
@@ -783,6 +788,7 @@ void S_PlayTillDone(char *sound)
 
 void S_UpdateSfx(void)
 {
+	guard(S_UpdateSfx);
 	int 		i;
 	int			dist;
     DWORD		Status;
@@ -894,6 +900,7 @@ void S_UpdateSfx(void)
 
 		Listener->CommitDeferredSettings();
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -947,6 +954,7 @@ static void StopChannel(int chan_num)
 
 void S_StopSound(int origin_id, int channel)
 {
+	guard(S_StopSound);
 	int i;
 
     for (i = 0; i < snd_Channels; i++)
@@ -957,6 +965,7 @@ void S_StopSound(int origin_id, int channel)
         	StopChannel(i);
 		}
     }
+	unguard;
 }
 
 //==========================================================================
@@ -967,6 +976,7 @@ void S_StopSound(int origin_id, int channel)
 
 void S_StopAllSound(void)
 {
+	guard(S_StopAllSound);
 	int i;
 
 	//	stop all sounds
@@ -974,16 +984,7 @@ void S_StopAllSound(void)
 	{
 		StopChannel(i);
 	}
-
-	//	Cache out lumps
-	for (i = 0; i < NumSfx; i++)
-    {
-    	if (S_sfx[i].snd_ptr)
-        {
-        	Z_ChangeTag(S_sfx[i].snd_ptr, PU_CACHE);
-            S_sfx[i].snd_ptr = NULL;
-        }
-    }
+	unguard;
 }
 
 //==========================================================================
@@ -994,6 +995,7 @@ void S_StopAllSound(void)
 
 boolean S_GetSoundPlayingInfo(int origin_id, int sound_id)
 {
+	guard(S_GetSoundPlayingInfo);
 	int i;
 
 	for (i = 0; i < snd_Channels; i++)
@@ -1012,14 +1014,18 @@ boolean S_GetSoundPlayingInfo(int origin_id, int sound_id)
 		}
 	}
 	return false;
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/01/11 08:12:01  dj_jl
+//	Added guard macros
+//
 //	Revision 1.9  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.8  2001/12/18 19:06:36  dj_jl
 //	Made TCvar a pure C++ class
 //	

@@ -136,6 +136,7 @@ void S_InitMusic(void)
 
 void S_UpdateMusic(void)
 {
+	guard(S_UpdateMusic);
 	//	Update volume
     if (music_volume < 0 )
     {
@@ -159,6 +160,7 @@ void S_UpdateMusic(void)
 	    MusVolume = music_volume;
 		set_volume(-1, MusVolume * 17);
     }
+	unguard;
 }
 
 //==========================================================================
@@ -169,7 +171,9 @@ void S_UpdateMusic(void)
 
 void S_ShutdownMusic(void)
 {
+	guard(S_ShutdownMusic);
 	StopMidiSong();
+	unguard;
 }
 
 //==========================================================================
@@ -180,6 +184,7 @@ void S_ShutdownMusic(void)
 
 COMMAND(Music)
 {
+	guard(COMMAND Music);
 	char	*command;
 
 	S_UpdateMusic();
@@ -255,6 +260,7 @@ COMMAND(Music)
         }
         return;
 	}
+	unguard;
 }
 
 
@@ -576,7 +582,7 @@ static dword ReadTime(char **file)
 //
 //==========================================================================
 
-void AllocateChannel(int num)
+static void AllocateChannel(int num)
 {
 	if (tracks[num].data)
     {
@@ -820,9 +826,12 @@ static void FreeTracks(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/01/11 08:12:01  dj_jl
+//	Added guard macros
+//
 //	Revision 1.4  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

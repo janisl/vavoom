@@ -76,6 +76,7 @@ static int		 	remap[100];
 
 void CD_Init(void)
 {
+	guard(CD_Init);
     MCI_OPEN_PARMS		open;
 	MCI_SET_PARMS		set;
 	DWORD				result;
@@ -118,6 +119,7 @@ void CD_Init(void)
 	}
 
 	con << "CD Audio Initialized\n";
+	unguard;
 }
 
 //==========================================================================
@@ -128,6 +130,7 @@ void CD_Init(void)
 
 LONG CD_MessageHandler(HWND, UINT, WPARAM wParam, LPARAM lParam)
 {
+	guard(CD_MessageHandler);
 	if (lParam != (LPARAM)CDDevice)
 		return 1;
 
@@ -158,6 +161,7 @@ LONG CD_MessageHandler(HWND, UINT, WPARAM wParam, LPARAM lParam)
 	}
 
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -178,6 +182,7 @@ void CD_Update(void)
 
 void CD_Shutdown(void)
 {
+	guard(CD_Shutdown);
 	if (!cd_started)
 	{
     	return;
@@ -187,6 +192,7 @@ void CD_Shutdown(void)
 	if (mciSendCommand(CDDevice, MCI_CLOSE, MCI_WAIT, (DWORD)NULL))
 		cond << "CD_Shutdown: MCI_CLOSE failed\n";
 	cd_started = false;
+	unguard;
 }
 
 //==========================================================================
@@ -197,6 +203,7 @@ void CD_Shutdown(void)
 
 COMMAND(CD)
 {
+	guard(COMMAND CD);
 	char	*command;
 
 	if (!cd_started)
@@ -323,6 +330,7 @@ COMMAND(CD)
         }
 		return;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -560,9 +568,12 @@ static void CD_CloseDoor(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/01/11 08:12:01  dj_jl
+//	Added guard macros
+//
 //	Revision 1.4  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

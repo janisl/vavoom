@@ -74,6 +74,7 @@ void TOpenGLDrawer::Init(void)
 
 bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 {
+	guard(TOpenGLDrawer::SetResolution);
 	if (!Width || !Height)
 	{
 		//	Set defaults
@@ -114,6 +115,7 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 	ScreenBPP = BPP;
 
 	return true;
+	unguard;
 }
 
 //==========================================================================
@@ -137,8 +139,10 @@ void *TOpenGLDrawer::GetExtFuncPtr(const char*)
 
 void TOpenGLDrawer::Update(void)
 {
+	guard(TOpenGLDrawer::Update);
 	glFlush();
 	AMesaSwapBuffers(RenderBuffer);
+	unguard;
 }
 
 //==========================================================================
@@ -151,6 +155,7 @@ void TOpenGLDrawer::Update(void)
 
 void TOpenGLDrawer::Shutdown(void)
 {
+	guard(TOpenGLDrawer::Shutdown);
 	DeleteTextures();
 	if (RenderContext)
 	{
@@ -167,14 +172,18 @@ void TOpenGLDrawer::Shutdown(void)
 		AMesaDestroyVisual(RenderVisual);
 		RenderVisual = NULL;
 	}
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/01/11 08:12:01  dj_jl
+//	Added guard macros
+//
 //	Revision 1.5  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2001/08/04 17:32:04  dj_jl
 //	Added support for multitexture extensions
 //	

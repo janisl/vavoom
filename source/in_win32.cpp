@@ -458,6 +458,7 @@ static DIDATAFORMAT	df_Joystick =
 
 static void StartupKeyboard(void)
 {
+	guard(StartupKeyboard);
 	HRESULT		Result;
 
 	//	Create keyboard device
@@ -488,6 +489,7 @@ static void StartupKeyboard(void)
 
 	//	Acquire device
 	lpKeyboard->Acquire();
+	unguard;
 }
 
 //==========================================================================
@@ -498,6 +500,7 @@ static void StartupKeyboard(void)
 
 static void ReadKeyboard(void)
 {
+	guard(ReadKeyboard);
 	HRESULT				Result;
 	event_t	  			event;
 	size_t				i;
@@ -524,6 +527,7 @@ static void ReadKeyboard(void)
 		event.data1 = scan2key[DevData[i].dwOfs];
 		IN_PostEvent(&event);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -536,12 +540,14 @@ static void ReadKeyboard(void)
 
 static void ShutdownKeyboard(void)
 {
+	guard(ShutdownKeyboard);
 	if (lpKeyboard)
 	{
 		lpKeyboard->Unacquire();
 		lpKeyboard->Release();
 		lpKeyboard = NULL;
 	}
+	unguard;
 }
 
 //**************************************************************************
@@ -560,6 +566,7 @@ static void ShutdownKeyboard(void)
 
 static void StartupMouse(void)
 {
+	guard(StartupMouse);
 	HRESULT		Result;
 
 	if (M_CheckParm("-nomouse"))
@@ -580,6 +587,7 @@ static void StartupMouse(void)
 	lpMouse->Acquire();
 
 	mousepresent = true;
+	unguard;
 }
 
 //==========================================================================
@@ -592,6 +600,7 @@ static void StartupMouse(void)
 
 static void ReadMouse(void)
 {
+	guard(ReadMouse);
 	HRESULT			Result;
 	DIMOUSESTATE	MouseState;
 	event_t 		event;
@@ -681,6 +690,7 @@ static void ReadMouse(void)
 	  	IN_PostEvent(&event);
 	}
 	lastbuttons[2] = MouseState.rgbButtons[2];
+	unguard;
 }
 
 //==========================================================================
@@ -691,6 +701,7 @@ static void ReadMouse(void)
 
 static void ShutdownMouse(void)
 {
+	guard(ShutdownMouse);
 	if (lpMouse)
 	{
 		lpMouse->Unacquire();
@@ -698,6 +709,7 @@ static void ShutdownMouse(void)
 		lpMouse = NULL;
 	}
 	mousepresent = false;
+	unguard;
 }
 
 //**************************************************************************
@@ -786,10 +798,12 @@ static int FAR PASCAL JoystickEnumCallback(
 
 static void StartupJoystick(void)
 {
+	guard(StartupJoystick);
   	if (M_CheckParm("-nojoy"))
 		return;
 
 	DInput->EnumDevices(DIDEVTYPE_JOYSTICK, JoystickEnumCallback, NULL, DIEDFL_ATTACHEDONLY);
+	unguard;
 }
 
 //==========================================================================
@@ -800,6 +814,7 @@ static void StartupJoystick(void)
 
 static void ReadJoystick(void)
 {
+	guard(StartupJoystick);
 	DIJOYSTATE	JoyState;
 	HRESULT		Result;
 	event_t 	event;
@@ -872,6 +887,7 @@ static void ReadJoystick(void)
 		IN_PostEvent(&event);
 	}
 	oldb[3] = JoyState.rgbButtons[3];
+	unguard;
 }
 
 //==========================================================================
@@ -882,6 +898,7 @@ static void ReadJoystick(void)
 
 static void ShutdownJoystick(void)
 {
+	guard(ShutdownJoystick);
 	if (lpJoystick)
 	{
 		lpJoystick->Unacquire();
@@ -889,6 +906,7 @@ static void ShutdownJoystick(void)
 		lpJoystick = NULL;
 	}
 	joystick_started = false;
+	unguard;
 }
 
 //**************************************************************************
@@ -905,6 +923,7 @@ static void ShutdownJoystick(void)
 
 void IN_Init(void)
 {
+	guard(IN_Init);
 	HRESULT		result;
 
 	result = CoCreateInstance(CLSID_DirectInput, NULL,
@@ -919,6 +938,7 @@ void IN_Init(void)
 	StartupKeyboard();
 	StartupMouse();
 	StartupJoystick();
+	unguard;
 }
 
 //==========================================================================
@@ -929,6 +949,7 @@ void IN_Init(void)
 
 void IN_SetActiveWindow(HWND window)
 {
+	guard(IN_SetActiveWindow);
 	if (lpKeyboard)
 	{
 		lpKeyboard->Unacquire();
@@ -949,6 +970,7 @@ void IN_SetActiveWindow(HWND window)
 		lpJoystick->SetCooperativeLevel(window, DISCL_EXCLUSIVE | DISCL_FOREGROUND);
 		lpJoystick->Acquire();
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -977,6 +999,7 @@ void IN_ReadInput(void)
 
 void IN_Shutdown(void)
 {
+	guard(IN_Shutdown);
 	ShutdownJoystick();
 	ShutdownMouse();
 	ShutdownKeyboard();
@@ -986,14 +1009,18 @@ void IN_Shutdown(void)
 		DInput->Release();
 		DInput = NULL; 
 	}
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/01/11 08:12:01  dj_jl
+//	Added guard macros
+//
 //	Revision 1.5  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2001/08/29 17:51:49  dj_jl
 //	Changes for OpenGL window
 //	

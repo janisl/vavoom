@@ -127,6 +127,7 @@ static void KeyboardHandler(void)
 
 static void ReadKeyboard(void)
 {
+	guard(ReadKeyboard);
     unsigned char 	ch;
 
     if (!keyboard_started)
@@ -159,6 +160,7 @@ static void ReadKeyboard(void)
             !(ch & 0x80));
 		nextkeyextended = false;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -171,6 +173,7 @@ static void ReadKeyboard(void)
 
 static void StartupKeyboard(void)
 {
+	guard(StartupKeyboard);
 	nextkeyextended = false;
 	pause_garbage = 0;
 
@@ -200,6 +203,7 @@ static void StartupKeyboard(void)
 	_go32_dpmi_lock_data(&kbdhead, sizeof(kbdhead));
 
 	keyboard_started = true;
+	unguard;
 }
 
 //==========================================================================
@@ -212,6 +216,7 @@ static void StartupKeyboard(void)
 
 static void ShutdownKeyboard(void)
 {
+	guard(ShutdownKeyboard);
     if (keyboard_started)
     {
 		keyboard_started = false;
@@ -222,6 +227,7 @@ static void ShutdownKeyboard(void)
 		_unlock_dpmi_data(keyboardque, sizeof(keyboardque));
 		_unlock_dpmi_data(&kbdhead, sizeof(kbdhead));
 	}
+	unguard;
 }
 
 //**************************************************************************
@@ -240,6 +246,7 @@ static void ShutdownKeyboard(void)
 
 static void StartupMouse(void)
 {
+	guard(StartupMouse);
     __dpmi_regs r;
 
     if (M_CheckParm("-nomouse"))
@@ -262,6 +269,7 @@ static void StartupMouse(void)
     //reset mickey count
     r.x.ax = 0x0b;
     __dpmi_int(0x33,&r);
+	unguard;
 }
 
 //==========================================================================
@@ -274,6 +282,7 @@ static void StartupMouse(void)
 
 static void ReadMouse(void)
 {
+	guard(ReadMouse);
 	int			i;
     __dpmi_regs r;
     event_t 	event;
@@ -334,6 +343,7 @@ static void ReadMouse(void)
 	    }
     }
   	lastbuttons = buttons;
+	unguard;
 }
 
 //==========================================================================
@@ -344,6 +354,7 @@ static void ReadMouse(void)
 
 static void ShutdownMouse(void)
 {
+	guard(ShutdownMouse);
 	if (mouse_started)
     {
     	__dpmi_regs r;
@@ -352,6 +363,7 @@ static void ShutdownMouse(void)
 	    r.x.ax = 0;
 	    __dpmi_int(0x33, &r);
 	}
+	unguard;
 }
 
 //**************************************************************************
@@ -370,6 +382,7 @@ static void ShutdownMouse(void)
 
 static void StartupJoystick(void)
 {
+	guard(StartupJoystick);
 	if (M_CheckParm("-nojoy"))
     {
     	return;
@@ -415,6 +428,7 @@ static void StartupJoystick(void)
 
 	memset(joy_oldb, 0, sizeof(joy_oldb));
     joystick_started = true;
+	unguard;
 }
 
 //==========================================================================
@@ -425,6 +439,7 @@ static void StartupJoystick(void)
 
 static void ReadJoystick(void)
 {
+	guard(ReadJoystick);
 	int			i;
     event_t 	event;
 
@@ -451,6 +466,7 @@ static void ReadJoystick(void)
             joy_oldb[i] = joy[0].button[i].b;
     	}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -461,11 +477,13 @@ static void ReadJoystick(void)
 
 static void ShutdownJoystick(void)
 {
+	guard(ShutdownJoystick);
 	if (joystick_started)
     {
     	joystick_started = false;
     	remove_joystick();
     }
+	unguard;
 }
 
 //**************************************************************************
@@ -521,9 +539,12 @@ void IN_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/01/11 08:12:01  dj_jl
+//	Added guard macros
+//
 //	Revision 1.6  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.5  2001/08/15 17:24:49  dj_jl
 //	Added keyboard init error checking
 //	

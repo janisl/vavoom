@@ -73,6 +73,7 @@ void TOpenGLDrawer::Init(void)
 
 bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 {
+	guard(TOpenGLDrawer::SetResolution);
 	int			pixelformat;
 	MSG			msg;
 
@@ -233,6 +234,7 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 	ScreenBPP = BPP;
 
 	return true;
+	unguard;
 }
 
 //==========================================================================
@@ -243,7 +245,9 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 
 void *TOpenGLDrawer::GetExtFuncPtr(const char *name)
 {
+	guard(TOpenGLDrawer::GetExtFuncPtr);
 	return wglGetProcAddress(name);
+	unguard;
 }
 
 //==========================================================================
@@ -256,7 +260,9 @@ void *TOpenGLDrawer::GetExtFuncPtr(const char *name)
 
 void TOpenGLDrawer::Update(void)
 {
+	guard(TOpenGLDrawer::Update);
 	SwapBuffers(DeviceContext);
+	unguard;
 }
 
 //==========================================================================
@@ -269,6 +275,7 @@ void TOpenGLDrawer::Update(void)
 
 void TOpenGLDrawer::Shutdown(void)
 {
+	guard(TOpenGLDrawer::Shutdown);
 	DeleteTextures();
 
 	if (RenderContext)
@@ -304,14 +311,18 @@ void TOpenGLDrawer::Shutdown(void)
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/01/11 08:12:01  dj_jl
+//	Added guard macros
+//
 //	Revision 1.10  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.9  2001/10/04 17:23:29  dj_jl
 //	Got rid of some warnings
 //	

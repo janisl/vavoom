@@ -94,6 +94,7 @@ static TVec			listener_up;
 
 void S_InitSfx(void)
 {
+	guard(S_InitSfx);
 	int		sound_card;
     int		music_card;
 	int		i;
@@ -128,6 +129,7 @@ void S_InitSfx(void)
 	cond << "configured audio device\n"
 		<< " SFX   : " << digi_driver->desc << endl
 		<< " Music : " << midi_driver->desc << endl;
+	unguard;
 }
 
 //==========================================================================
@@ -138,7 +140,9 @@ void S_InitSfx(void)
 
 void S_ShutdownSfx(void)
 {
+	guard(S_ShutdownSfx);
 	remove_sound();
+	unguard;
 }
 
 //==========================================================================
@@ -318,6 +322,7 @@ static int CalcPitch(int freq, int sound_id)
 void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
 	int origin_id, int channel, int volume)
 {
+	guard(S_StartSound);
 	SAMPLE*		spl;
 	int 		dist;
 	int 		priority;
@@ -400,6 +405,7 @@ void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
 	Channel[chan].priority = priority;
 	Channel[chan].volume = volume;
 	Channel[chan].voice = voice;
+	unguard;
 }
 
 //==========================================================================
@@ -410,6 +416,7 @@ void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
 
 void S_PlayTillDone(char *sound)
 {
+	guard(S_PlayTillDone);
     int			sound_id;
 	double		start;
 	SAMPLE		spl;
@@ -466,6 +473,7 @@ void S_PlayTillDone(char *sound)
     }
 
 	deallocate_voice(voice);
+	unguard;
 }
 
 //==========================================================================
@@ -479,6 +487,7 @@ void S_PlayTillDone(char *sound)
 
 void S_UpdateSfx(void)
 {
+	guard(S_UpdateSfx);
 	int 		i;
 	int			dist;
 	int			vol;
@@ -555,6 +564,7 @@ void S_UpdateSfx(void)
 
 		Channel[i].priority = CalcPriority(Channel[i].sound_id, dist);
     }
+	unguard;
 }
 
 //==========================================================================
@@ -587,6 +597,7 @@ static void StopChannel(int chan_num)
 
 void S_StopSound(int origin_id, int channel)
 {
+	guard(S_StopSound);
 	int i;
 
     for (i = 0; i < snd_Channels; i++)
@@ -597,6 +608,7 @@ void S_StopSound(int origin_id, int channel)
         	StopChannel(i);
 		}
     }
+	unguard;
 }
 
 //==========================================================================
@@ -607,6 +619,7 @@ void S_StopSound(int origin_id, int channel)
 
 void S_StopAllSound(void)
 {
+	guard(S_StopAllSound);
 	int i;
 
 	//	stop all sounds
@@ -614,6 +627,7 @@ void S_StopAllSound(void)
 	{
 		StopChannel(i);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -624,6 +638,7 @@ void S_StopAllSound(void)
 
 boolean S_GetSoundPlayingInfo(int origin_id, int sound_id)
 {
+	guard(S_GetSoundPlayingInfo);
 	int i;
 
 	for (i = 0; i < snd_Channels; i++)
@@ -639,14 +654,18 @@ boolean S_GetSoundPlayingInfo(int origin_id, int sound_id)
 		}
 	}
 	return false;
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/01/11 08:12:01  dj_jl
+//	Added guard macros
+//
 //	Revision 1.7  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.6  2001/08/30 17:41:42  dj_jl
 //	Added entity sound channels
 //	

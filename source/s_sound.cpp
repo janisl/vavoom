@@ -68,12 +68,14 @@ static boolean		CDMusic = false;
 
 void S_Init(void)
 {
+	guard(S_Init);
 	S_InitSfx();
 	S_InitMusic();
 	CD_Init();
 
 	S_InitScript();
 	SN_InitSequenceScript();
+	unguard;
 }
 
 //==========================================================================
@@ -86,9 +88,11 @@ void S_Init(void)
 
 void S_Shutdown(void)
 {
+	guard(S_Shutdown);
 	CD_Shutdown();
 	S_ShutdownMusic();
 	S_ShutdownSfx();
+	unguard;
 }
 
 //==========================================================================
@@ -99,6 +103,7 @@ void S_Shutdown(void)
 
 void S_StartSong(char* song, int track, boolean loop)
 {
+	guard(S_StartSong);
 	if (CDMusic)
 	{
     	if (loop)
@@ -113,6 +118,7 @@ void S_StartSong(char* song, int track, boolean loop)
 		else
 			CmdBuf << "Music Play " << song << "\n";
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -123,6 +129,7 @@ void S_StartSong(char* song, int track, boolean loop)
 
 void S_PauseSound(void)
 {
+	guard(S_PauseSound);
 	if (CDMusic)
 	{
     	CmdBuf << "CD Pause\n";
@@ -131,6 +138,7 @@ void S_PauseSound(void)
 	{
     	CmdBuf << "Music Pause\n";
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -141,6 +149,7 @@ void S_PauseSound(void)
 
 void S_ResumeSound(void)
 {
+	guard(S_ResumeSound);
 	if (CDMusic)
 	{
     	CmdBuf << "CD resume\n";
@@ -149,6 +158,7 @@ void S_ResumeSound(void)
 	{
     	CmdBuf << "Music resume\n";
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -173,6 +183,7 @@ static void StartMusic(void)
 
 void S_Start(const mapInfo_t &info)
 {
+	guard(S_Start);
 	SN_StopAllSequences();
 	S_StopAllSound();
 
@@ -180,6 +191,7 @@ void S_Start(const mapInfo_t &info)
 	mapCDTrack = info.cdTrack;
 
 	StartMusic();
+	unguard;
 }	
 
 //==========================================================================
@@ -192,13 +204,14 @@ void S_Start(const mapInfo_t &info)
 
 void S_UpdateSounds(void)
 {
-	if ((int)cd_music && !CDMusic)
+	guard(S_UpdateSounds);
+	if (cd_music && !CDMusic)
     {
     	CmdBuf << "Music Stop\n";
 		CDMusic = true;
 		StartMusic();
     }
-	if (!(int)cd_music && CDMusic)
+	if (!cd_music && CDMusic)
     {
     	CmdBuf << "CD Stop\n";
 		CDMusic = false;
@@ -211,14 +224,18 @@ void S_UpdateSounds(void)
 	S_UpdateSfx();
 	S_UpdateMusic();
 	CD_Update();
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/01/11 08:12:01  dj_jl
+//	Added guard macros
+//
 //	Revision 1.4  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	
