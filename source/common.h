@@ -23,9 +23,6 @@
 //**
 //**************************************************************************
 
-#ifndef _COMMON_H
-#define _COMMON_H
-
 #ifndef __GNUC__
 #define __attribute__(whatever)
 #endif
@@ -60,6 +57,18 @@ typedef unsigned long	 	dword;
 
 //==========================================================================
 //
+//	Standard macros
+//
+//==========================================================================
+
+//	Number of elements in an array.
+#define ARRAY_COUNT(array)				(sizeof(array) / sizeof((array)[0]))
+
+//	Offset of a struct member.
+#define STRUCT_OFFSET(struc, member)	((int)&((struc *)NULL)->member)
+
+//==========================================================================
+//
 //	Errors
 //
 //==========================================================================
@@ -84,14 +93,15 @@ public:
 	explicit RecoverableError(const char *text) : VavoomError(text) { }
 };
 
-#endif
-
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/12/12 19:27:08  dj_jl
+//	Added some macros
+//
 //	Revision 1.4  2001/10/08 17:26:17  dj_jl
 //	Started to use exceptions
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	
