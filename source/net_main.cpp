@@ -185,7 +185,7 @@ void NET_Shutdown(void)
 	//
 	for (net_driverlevel = 0; net_driverlevel < net_numdrivers; net_driverlevel++)
 	{
-		if (net_drivers[net_driverlevel].initialized == true)
+		if (net_drivers[net_driverlevel].initialized)
 		{
 			net_drivers[net_driverlevel].Shutdown();
 			net_drivers[net_driverlevel].initialized = false;
@@ -892,9 +892,12 @@ slist_t * GetSlist(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/06/14 15:41:35  dj_jl
+//	Got rid of a warning.
+//
 //	Revision 1.9  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.8  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	
