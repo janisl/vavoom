@@ -383,6 +383,7 @@ boolean C_Responder(event_t* ev)
 
      // Execute entered command
 	 case K_ENTER:
+	 case K_PADENTER:
    		//	Print it
 		con << ">" << c_iline.Data << "\n";
 
@@ -811,9 +812,12 @@ void C_DrawCenterMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2002/03/02 17:30:34  dj_jl
+//	Added suport for Pad-Enter.
+//
 //	Revision 1.14  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.13  2001/12/28 16:27:30  dj_jl
 //	Beautification
 //	

@@ -105,7 +105,7 @@ bool TILine::Key(byte ch)
 	}
     else if (ch == K_BACKSPACE)
 	    DelChar();
-	else if (ch != K_ENTER)
+	else if (ch != K_ENTER && ch != K_PADENTER)
 		return false; // did not eat key
 
     return true; // ate the key
@@ -114,9 +114,12 @@ bool TILine::Key(byte ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/03/02 17:30:34  dj_jl
+//	Added suport for Pad-Enter.
+//
 //	Revision 1.5  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2001/11/09 14:32:26  dj_jl
 //	Cleaned up
 //	

@@ -123,7 +123,7 @@ boolean CT_Responder(event_t *ev)
 	}
 
    	eatkey = w_chat.Key((byte)ev->data1);
-	if (ev->data1 == K_ENTER)
+	if (ev->data1 == K_ENTER || ev->data1 == K_PADENTER)
 	{
 		CmdBuf << "Say " << w_chat.Data << "\n";
 		CT_Stop();
@@ -169,9 +169,12 @@ void CT_Drawer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/03/02 17:30:34  dj_jl
+//	Added suport for Pad-Enter.
+//
 //	Revision 1.6  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.5  2001/12/04 18:11:59  dj_jl
 //	Fixes for compiling with MSVC
 //	
