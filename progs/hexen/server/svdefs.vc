@@ -265,7 +265,7 @@ enum
 
 // TYPES -------------------------------------------------------------------
 
-class Entity:base_mobj_t
+class Entity:MapObject
 {
 	//  States
 	int spawnstate;
@@ -517,6 +517,8 @@ string door_seq_name[] = {
 	"DoorMetal2"
 };
 
+#define POLY_SEQ_NAME(num)		seq_name[SEQ_DOOR_STONE + num]
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -528,6 +530,9 @@ string door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/12/18 18:31:49  dj_jl
+//  Beautification
+//
 //  Revision 1.7  2001/12/12 18:57:42  dj_jl
 //  State functions now are methods of Actor and Weapon classes
 //

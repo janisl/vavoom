@@ -181,7 +181,7 @@ boolean EV_RotatePoly(line_t * line, int *args, int direction, boolean
 	pe->thrust_force = pe->speed / 32.0 * itof(0x800) / 90.0;
 
 	poly->specialdata = pe;
-	PolyobjStartSequence(poly, seq_name[SEQ_DOOR_STONE + poly->seqType]);
+	PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
 
 	while ((mirror = GetPolyobjMirror(polyNum)))
 	{
@@ -223,7 +223,7 @@ boolean EV_RotatePoly(line_t * line, int *args, int direction, boolean
 		pe->thrust_force = pe->speed / 32.0 * itof(0x800) / 90.0;
 
 		polyNum = mirror;
-		PolyobjStartSequence(poly, seq_name[SEQ_DOOR_STONE + poly->seqType]);
+		PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
 	}
 	return true;
 }
@@ -315,7 +315,7 @@ boolean EV_MovePoly(line_t * line, int *args, boolean timesEight, boolean
 	an = itof(args[2]) * (90.0 / 64.0);
 
 	pe->angle = an;
-	PolyobjStartSequence(poly, seq_name[SEQ_DOOR_STONE + poly->seqType]);
+	PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
 
 	while ((mirror = GetPolyobjMirror(polyNum)))
 	{
@@ -343,7 +343,7 @@ boolean EV_MovePoly(line_t * line, int *args, boolean timesEight, boolean
 		an = AngleMod360(an + 180.0);	// reverse the angle
 		pe->angle = an;
 		polyNum = mirror;
-		PolyobjStartSequence(poly, seq_name[SEQ_DOOR_STONE + poly->seqType]);
+		PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
 	}
 	return true;
 }
@@ -366,8 +366,7 @@ void TPolyDoor::Think(void)
 		{
 			time = 0.0;
 			poly = GetPolyobj(polyobj);
-			PolyobjStartSequence(poly,
-				seq_name[SEQ_DOOR_STONE + poly->seqType]);
+			PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
 		}
 		return;
 	}
@@ -416,8 +415,7 @@ void TPolyDoor::Think(void)
 				xSpeed = -xSpeed;
 				ySpeed = -ySpeed;
 				close = false;
-				PolyobjStartSequence(poly,
-					seq_name[SEQ_DOOR_STONE + poly->seqType]);
+				PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
 			}
 		}
 		break;
@@ -463,8 +461,7 @@ void TPolyDoor::Think(void)
 				dist = totalDist - dist;
 				speed = -speed;
 				close = false;
-				PolyobjStartSequence(poly,
-					seq_name[SEQ_DOOR_STONE + poly->seqType]);
+				PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
 			}
 		}
 		break;
@@ -516,7 +513,7 @@ boolean EV_OpenPolyDoor(line_t * line, int *args, int type)
 		//THRUST
 		pd->thrust_force = pd->speed / 8.0;
 
-		PolyobjStartSequence(poly, seq_name[SEQ_DOOR_STONE + poly->seqType]);
+		PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
 	}
 	else if (type == PODOOR_SWING)
 	{
@@ -528,7 +525,7 @@ boolean EV_OpenPolyDoor(line_t * line, int *args, int type)
 		//THRUST
 		pd->thrust_force = pd->speed * itof(0x1000) / 180.0;
 
-		PolyobjStartSequence(poly, seq_name[SEQ_DOOR_STONE + poly->seqType]);
+		PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
 	}
 
 	poly->specialdata = pd;
@@ -557,8 +554,7 @@ boolean EV_OpenPolyDoor(line_t * line, int *args, int type)
 			//THRUST
 			pd->thrust_force = pd->speed / 8.0;
 
-			PolyobjStartSequence(poly,
-				seq_name[SEQ_DOOR_STONE + poly->seqType]);
+			PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
 		}
 		else if (type == PODOOR_SWING)
 		{
@@ -570,8 +566,7 @@ boolean EV_OpenPolyDoor(line_t * line, int *args, int type)
 			//THRUST
 			pd->thrust_force = pd->speed * itof(0x1000) / 180.0;
 
-			PolyobjStartSequence(poly,
-				seq_name[SEQ_DOOR_STONE + poly->seqType]);
+			PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
 		}
 		polyNum = mirror;
 	}
@@ -649,6 +644,9 @@ boolean PolyBusy(int polyobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2001/12/18 18:31:49  dj_jl
+//  Beautification
+//
 //  Revision 1.8  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //
