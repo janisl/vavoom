@@ -669,7 +669,7 @@ static void ArchiveThinkers(void)
         {
         	ACSThinkerCount++;
         }
-		else
+		else if (thinker->function)
 		{
 			cond << "Invalid thinker function " << thinker->function << endl;
 		}
@@ -1385,9 +1385,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/23 17:48:43  dj_jl
+//	NULL pointer is valid thinker, so no warnings
+//
 //	Revision 1.5  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
-//
+//	
 //	Revision 1.4  2001/08/04 17:32:39  dj_jl
 //	Beautification
 //	
