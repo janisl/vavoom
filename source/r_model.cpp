@@ -419,31 +419,34 @@ static void LoadTGA(const char *filename, void **bufptr)
 
 	data = (byte*)(hdr + 1) + hdr->id_length;
 
-	for (int i = 0; i < hdr->pal_colors; i++)
+	if (hdr->pal_type == 1)
 	{
-		switch (hdr->pal_entry_size)
+		for (int i = 0; i < hdr->pal_colors; i++)
 		{
-		case 16:
-			col = *(word *)data;
-			SkinPal[i].r = (col & 0x1F) << 3;
-			SkinPal[i].g = ((col >> 5) & 0x1F) << 3;
-			SkinPal[i].b = ((col >> 10) & 0x1F) << 3;
-			SkinPal[i].a = 255;
-			break;
-		case 24:
-			SkinPal[i].b = data[0];
-			SkinPal[i].g = data[1];
-			SkinPal[i].r = data[2];
-			SkinPal[i].a = 255;
-			break;
-		case 32:
-			SkinPal[i].b = data[0];
-			SkinPal[i].g = data[1];
-			SkinPal[i].r = data[2];
-			SkinPal[i].a = data[3];
-			break;
+			switch (hdr->pal_entry_size)
+			{
+			case 16:
+				col = *(word *)data;
+				SkinPal[i].r = (col & 0x1F) << 3;
+				SkinPal[i].g = ((col >> 5) & 0x1F) << 3;
+				SkinPal[i].b = ((col >> 10) & 0x1F) << 3;
+				SkinPal[i].a = 255;
+				break;
+			case 24:
+				SkinPal[i].b = data[0];
+				SkinPal[i].g = data[1];
+				SkinPal[i].r = data[2];
+				SkinPal[i].a = 255;
+				break;
+			case 32:
+				SkinPal[i].b = data[0];
+				SkinPal[i].g = data[1];
+				SkinPal[i].r = data[2];
+				SkinPal[i].a = data[3];
+				break;
+			}
+			data += (hdr->pal_entry_size >> 3);
 		}
-		data += (hdr->pal_entry_size >> 3);
 	}
 
 	/* Image type:
@@ -894,9 +897,12 @@ void R_PositionWeaponModel(clmobj_t &wpent, model_t *wpmodel, int frame)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2004/03/18 08:02:34  dj_jl
+//	Fixed tga loading with no palette
+//
 //	Revision 1.7  2002/07/13 07:51:48  dj_jl
 //	Replacing console's iostream with output device.
-//
+//	
 //	Revision 1.6  2002/05/18 16:56:35  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	
