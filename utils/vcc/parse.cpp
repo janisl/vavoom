@@ -31,9 +31,9 @@ namespace Pass2 {
 
 // MACROS ------------------------------------------------------------------
 
-#define MAX_BREAK		128
-#define MAX_CONTINUE	128
-#define MAX_CASE		128
+#define MAX_BREAK		256
+#define MAX_CONTINUE	256
+#define MAX_CASE		256
 
 // TYPES -------------------------------------------------------------------
 
@@ -1300,9 +1300,12 @@ void PA_Parse(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2005/03/16 14:41:34  dj_jl
+//	Increased limits.
+//
 //	Revision 1.26  2003/03/08 12:47:52  dj_jl
 //	Code cleanup.
-//
+//	
 //	Revision 1.25  2002/11/02 17:11:13  dj_jl
 //	New style classes.
 //	
