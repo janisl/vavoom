@@ -176,10 +176,17 @@ void WriteStates(void)
     fprintf(f, "//**************************************************************************\n");
 	fprintf(f, "\n");
 
-	fprintf(f, "__states__(Actor)\n{\n");
 	bool in_weapon = false;
-//	fprintf(f, "\tS_NULL {\"\", 0, -1, NULL, S_NULL}\n");//- Dehacked fails
-	for (i=0; i<numstates; i++)
+	if (states[1].weapon_state)
+	{
+		fprintf(f, "__states__(Weapon)\n{\n");
+		in_weapon = true;
+	}
+	else
+	{
+		fprintf(f, "__states__(Actor)\n{\n");
+	}
+	for (i=1; i<numstates; i++)
     {
 		if (in_weapon && !states[i].weapon_state)
 		{
@@ -279,9 +286,9 @@ void WriteMobjInfo(void)
 
 		//  ------------- Class declaration ------------
 		parent = "Actor";
-#if 0
-		if (flags & MF_MISSILE)
-			parent = "Missile";
+#ifndef NODEH
+		if (Hacked)
+			parent = "HackedActor";
 #endif
 #if defined DOOM || defined DOOM2
 		if (i == 0)
@@ -299,21 +306,15 @@ void WriteMobjInfo(void)
 		fprintf(f, "{\n");
 
         //  ------------ OnMapSpawn method -----------
-		bool no_deathmatch = flags & MF_NOTDMATCH && mobjinfo[i].doomednum != -1;
 #ifdef NODEH
 		bool no_monsters = flags & MF_COUNTKILL;
 #else
 		bool no_monsters = flags & MF_COUNTKILL || mobjinfo[i].doomednum == 3006;
 #endif
-		if (no_deathmatch || no_monsters || mobjinfo[i].extra)
+		if (mobjinfo[i].extra)
 		{
     	    fprintf(f, "\tvoid OnMapSpawn(mthing_t *mthing)\n");
         	fprintf(f, "\t{\n");
-
-			if (no_deathmatch)
-    	    	fprintf(f, "\t\tif (deathmatch)\n\t\t{\n\t\t\tRemoveMobjThinker(self);\n\t\t\treturn;\n\t\t}\n");
-			if (no_monsters)
-        		fprintf(f, "\t\tif (nomonsters)\n\t\t{\n\t\t\tRemoveMobjThinker(self);\n\t\t\treturn;\n\t\t}\n");
 
 			//	Calling of start function
 			fprintf(f, "\t\t::OnMapSpawn(mthing);\n");
@@ -396,7 +397,7 @@ void WriteMobjInfo(void)
 #endif
 
 		//	Clear replaced flags
-        flags &= ~(MF_SHADOW|MF_NOTDMATCH);
+        flags &= ~(MF_SHADOW);
 		if (altshadow) flags &= ~MF_ALTSHADOW;
 #ifdef STRIFE
 		flags &= ~(0x70000000);
@@ -441,6 +442,8 @@ void WriteMobjInfo(void)
 				fprintf(f, "\t\t%s = true;\n", flagnames2[j]);
 			}
 		}
+		if (no_monsters)
+       		fprintf(f, "\t\tbCheckNoMonsters = true\n");
 
 		//	States
         if (mobjinfo[i].spawnstate)
@@ -451,6 +454,10 @@ void WriteMobjInfo(void)
 			fprintf(f, "\t\tMeleeState = %s;\n", statename[mobjinfo[i].meleestate]);
         if (mobjinfo[i].missilestate)
 			fprintf(f, "\t\tMissileState = %s;\n", statename[mobjinfo[i].missilestate]);
+#if defined DOOM || defined DOOM2
+        if (i == 0)
+			fprintf(f, "\t\tAttack2State = S_PLAY_ATK2;\n");
+#endif
         if (mobjinfo[i].painstate)
 			fprintf(f, "\t\tPainState = %s;\n", statename[mobjinfo[i].painstate]);
         if (mobjinfo[i].crashstate)
@@ -758,9 +765,12 @@ int main(int argc, char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2002/05/03 17:03:03  dj_jl
+//	Some updates.
+//
 //	Revision 1.24  2002/03/20 19:12:22  dj_jl
 //	Updated to current state.
-//
+//	
 //	Revision 1.23  2002/02/22 18:11:01  dj_jl
 //	Some renaming.
 //	

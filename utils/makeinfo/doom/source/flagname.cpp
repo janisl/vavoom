@@ -53,7 +53,7 @@ char* flagnames1[32] =
     "bCountItem",
 
     "bSkullFly",
-    "MF_NOTDMATCH",
+    "bNoDeathmatch",
     "MF_TRANSLATION1",
     "MF_TRANSLATION2",
 	"MF_UNUSED1",
@@ -103,9 +103,12 @@ char* flagnames2[32] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/05/03 17:03:03  dj_jl
+//	Some updates.
+//
 //	Revision 1.6  2002/02/22 18:11:01  dj_jl
 //	Some renaming.
-//
+//	
 //	Revision 1.5  2002/02/06 17:31:46  dj_jl
 //	Replaced Actor flags with boolean variables.
 //	
