@@ -1603,16 +1603,15 @@ static void G_DoReborn(int playernum)
 {
 	if (!players[playernum].spawned)
 		return;
-    if (!netgame && !deathmatch)// For fun now
+	if (!netgame && !deathmatch)// For fun now
 	{
 		CmdBuf << "Restart\n";
 		players[playernum].playerstate = PST_LIVE;
 	}
-    else 
-    {
-    	svpr.Exec("NetGameReborn", playernum);
-    }
-	players[playernum].fixangle = true;
+	else
+	{
+		svpr.Exec("NetGameReborn", playernum);
+	}
 }
 
 //==========================================================================
@@ -2009,10 +2008,11 @@ COMMAND(Spawn)
 	}
 	SV_WriteChangedTextures(sv_player->message);
 	sv_player->message << (byte)svc_set_angles
-						<< (byte)(AngleToByte(sv_player->mo->angles.pitch))
-						<< (byte)(AngleToByte(sv_player->mo->angles.yaw))
+						<< (byte)(AngleToByte(sv_player->viewangles.pitch))
+						<< (byte)(AngleToByte(sv_player->viewangles.yaw))
 						<< (byte)0;
 	sv_player->message << (byte)svc_signonnum << (byte)3;
+	sv_player->fixangle = false;
 	memset(sv_player->old_stats, 0, sizeof(sv_player->old_stats));
 }
 
@@ -2311,7 +2311,7 @@ void SV_ConnectBot(void)
 
 	sv_player = &players[i];
 	SV_RunClientCommand("PreSpawn\n");
-	SV_SetUserInfo("name\\bot\\color\\0\\class\\0\\");
+	SV_SetUserInfo("\\name\\bot\\color\\0\\class\\0\\model\\doomguy\\skin\\green.pcx");
 	SV_RunClientCommand("Spawn\n");
 	SV_RunClientCommand("Begin\n");
 }
@@ -2540,9 +2540,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2001/12/03 19:23:08  dj_jl
+//	Fixes for view angles at respawn
+//
 //	Revision 1.20  2001/12/01 17:40:41  dj_jl
 //	Added support for bots
-//
+//	
 //	Revision 1.19  2001/10/27 07:51:27  dj_jl
 //	Beautification
 //	
