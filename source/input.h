@@ -170,7 +170,7 @@ int IN_ReadKey(void);
 void IN_GetBindingKeys(const char *, int &, int &);
 void IN_GetBindingKeyNames(const char *, char *, char *);
 void IN_SetBinding(int, const char *, const char *);
-void IN_WriteBindings(FILE* f);
+void IN_WriteBindings(ostream &strm);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
@@ -181,9 +181,12 @@ extern int		altdown;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/04 17:20:25  dj_jl
+//	Saving config using streams
+//
 //	Revision 1.4  2001/08/31 17:24:52  dj_jl
 //	Added some new keys
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

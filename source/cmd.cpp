@@ -369,11 +369,11 @@ COMMAND(Alias)
 //
 //==========================================================================
 
-void Cmd_WriteAlias(FILE *f)
+void Cmd_WriteAlias(ostream &strm)
 {
 	for (alias_t *a = alias; a; a = a->next)
 	{
-		fprintf(f, "alias %s \"%s\"\n", a->Name, a->CmdLine);
+		strm << "alias " << a->Name << " \"" << a->CmdLine << "\"\n";
 	}
 }
 
@@ -624,9 +624,12 @@ void Cmd_ForwardToServer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/04 17:20:25  dj_jl
+//	Saving config using streams
+//
 //	Revision 1.4  2001/08/29 17:50:09  dj_jl
 //	Renamed command Commands to CmdList
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

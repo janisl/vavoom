@@ -59,6 +59,7 @@ class TCmdBuf : public TTextBuf
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void Cmd_Init(void);
+void Cmd_WriteAlias(ostream &strm);
 
 void Cmd_TokenizeString(const char *str);
 int Cmd_Argc(void);
@@ -105,9 +106,12 @@ class TCommand
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/10/04 17:20:25  dj_jl
+//	Saving config using streams
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

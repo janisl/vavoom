@@ -563,18 +563,19 @@ COMMAND(Bind)
 //
 //==========================================================================
 
-void IN_WriteBindings(FILE* f)
+void IN_WriteBindings(ostream &strm)
 {
-	int		i;
-	char	name[32];
+	int i;
+	char name[32];
 
-	fprintf(f, "UnbindAll\n");
+	strm << "UnbindAll\n";
 	for (i = 0; i < 256; i++)
 	{
 		if (keybindings_down[i] && (*keybindings_down[i] || *keybindings_up[i]))
 		{
 			KeyNameForNum(i, name);
-			fprintf(f, "bind \"%s\" \"%s\" \"%s\"\n", name, keybindings_down[i], keybindings_up[i]);
+			strm << "bind \"" << name << "\" \"" << keybindings_down[i]
+				<< "\" \"" << keybindings_up[i] << "\"\n";
 		}
 	}
 }
@@ -608,9 +609,12 @@ void IN_GetBindingKeys(const char *binding, int &key1, int &key2)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/04 17:20:25  dj_jl
+//	Saving config using streams
+//
 //	Revision 1.5  2001/08/31 17:24:52  dj_jl
 //	Added some new keys
-//
+//	
 //	Revision 1.4  2001/08/15 17:25:53  dj_jl
 //	Removed F_CheckPal
 //	
