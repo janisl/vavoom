@@ -30,7 +30,7 @@
 #include "../../common/server.vc"
 
 #include "../strfdefs.vc"
-#include "strings.vc"
+#include "svdefs.vc"
 
 #include "xlat.vc"
 #include "specutl.vc"
@@ -70,6 +70,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/09 17:35:46  dj_jl
+//  Split server defines into seperate file
+//
 //  Revision 1.5  2001/09/25 17:12:09  dj_jl
 //  Switched to Hexen map format, special thinker classes
 //

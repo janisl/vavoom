@@ -1,0 +1,518 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+#define TELEFOGHEIGHT	32.0
+
+#define STARTREDPALS    1
+#define STARTBONUSPALS  9
+#define STARTPOISONPALS 13
+#define STARTICEPAL		21
+#define STARTHOLYPAL	22
+#define STARTSCOURGEPAL 25
+#define NUMREDPALS      8
+#define NUMBONUSPALS    4
+#define NUMPOISONPALS	8
+
+#define BLINKTHRESHOLD 	4.0
+
+#define INVULNTIME		30.0
+#define INFRATIME		120.0
+#define FLIGHTTIME 		60.0
+#define SPEEDTIME 		45.0
+#define MORPHTIME 		40.0
+#define MAULATORTIME 	25.0
+
+#define MAXHEALTH 		100
+#define MAXMORPHHEALTH	30
+#define VIEWHEIGHT 		48.0
+
+// player radius for movement checking
+//#define PLAYERRADIUS  16*FRACUNIT
+
+// MAXRADIUS is for precalculated sector block boxes
+// the spider demon is larger, but we don't have any moving sectors
+// nearby
+#define MAXRADIUS 		32.0
+
+#define BASETHRESHOLD	100	// follow a player exlusively for 3 seconds
+
+#define ONFLOORZ		-99999.0
+#define ONCEILINGZ		99999.0
+#define FLOATRANDZ		99998.0
+
+#define ANGLE_1			(ANG45 / 45)
+#define ANGLE_MAX		0xffffffff
+
+#define WPIECE1			1
+#define WPIECE2			2
+#define WPIECE3			4
+
+//
+// Map things flags
+//
+#define	MTF_EASY		0x0001	// Skill flags.
+#define	MTF_NORMAL		0x0002
+#define	MTF_HARD		0x0004
+#define	MTF_AMBUSH		0x0008	// Deaf monsters/do not react to sound.
+#define MTF_DORMANT		0x0010	// The thing is dormant
+#define MTF_FIGHTER		0x0020	// Thing appearing in player classes
+#define MTF_CLERIC		0x0040
+#define MTF_MAGE		0x0080
+#define MTF_GSINGLE		0x0100	// Appearing in game modes
+#define MTF_GCOOP		0x0200
+#define MTF_GDEATHMATCH	0x0400
+
+//
+// Player internal flags, for cheats and debug.
+//
+#define CF_NOCLIP		1	// No clipping, walk through barriers.
+#define CF_GODMODE		2	// No damage, no health loss.
+
+#define MELEERANGE		64.0
+#define MISSILERANGE	(32.0 * 64.0)
+
+#define LOWERSPEED		6.0
+#define RAISESPEED		6.0
+
+#define WEAPONBOTTOM	128.0
+#define WEAPONTOP		32.0
+
+// 16 pixels of bob
+#define MAXBOB			16.0
+#define ANG5   			(ANG90 / 18)
+
+// --- mobj.flags ---
+
+#define	MF_SPECIAL		0x00000001	// call P_SpecialThing when touched
+#define	MF_SOLID		0x00000002	// Blocks.
+#define	MF_SHOOTABLE	0x00000004	// Can be hit.
+#define	MF_NOSECTOR		0x00000008	// don't use the sector links
+									// (invisible but touchable)
+#define	MF_NOBLOCKMAP	0x00000010	// don't use the blocklinks
+									// (inert but displayable)
+#define	MF_AMBUSH		0x00000020
+#define	MF_JUSTHIT		0x00000040	// try to attack right back
+#define	MF_JUSTATTACKED	0x00000080	// take at least one step before attacking
+#define	MF_SPAWNCEILING	0x00000100	// hang from ceiling instead of floor
+#define	MF_NOGRAVITY	0x00000200	// don't apply gravity every tic
+
+// movement flags
+#define	MF_DROPOFF		0x00000400	// allow jumps from high places
+#define	MF_PICKUP		0x00000800	// for players to pick up items
+#define	MF_NOCLIP		0x00001000	// player cheat
+#define	MF_SLIDE		0x00002000	// keep info about sliding along walls
+#define	MF_FLOAT		0x00004000	// allow moves to any height, no gravity
+#define	MF_TELEPORT		0x00008000	// don't cross lines or look at heights
+#define MF_MISSILE		0x00010000	// don't hit same species, explode on block
+
+#define	MF_NOBLOOD		0x00080000	// don't bleed when shot (use puff)
+#define	MF_CORPSE		0x00100000	// don't stop moving halfway off a step
+#define	MF_INFLOAT		0x00200000	// floating to a height for a move, don't
+									// auto float to target's height
+
+#define	MF_COUNTKILL	0x00400000	// count towards intermission kill total
+#define	MF_ICECORPSE	0x00800000	// a frozen corpse (for blasting)
+
+#define	MF_SKULLFLY		0x01000000	// skull in flight
+#define MF_WATERJUMP	0x80000000
+
+// --- mobj.flags2 ---
+
+#define MF2_LOGRAV			0x00000001	// alternate gravity setting
+#define MF2_WINDTHRUST		0x00000002	// gets pushed around by the wind
+										// specials
+#define MF2_FLOORBOUNCE		0x00000004	// bounces off the floor
+#define MF2_BLASTED			0x00000008	// missile will pass through ghosts
+#define MF2_FLY				0x00000010	// fly mode is active
+#define MF2_FLOORCLIP		0x00000020	// if feet are allowed to be clipped
+#define MF2_SPAWNFLOAT		0x00000040	// spawn random float z
+#define MF2_NOTELEPORT		0x00000080	// does not teleport
+#define MF2_RIP				0x00000100	// missile rips through solid
+										// targets
+#define MF2_PUSHABLE		0x00000200	// can be pushed by other moving
+										// mobjs
+#define MF2_SLIDE			0x00000400	// slides against walls
+#define MF2_ONMOBJ			0x00000800	// mobj is resting on top of another
+										// mobj
+#define MF2_PASSMOBJ		0x00001000	// Enable z block checking.  If on,
+										// this flag will allow the mobj to
+										// pass over/under other mobjs.
+#define MF2_CANNOTPUSH		0x00002000	// cannot push other pushable mobjs
+#define MF2_DROPPED			0x00004000	// dropped by a demon
+#define MF2_BOSS			0x00008000	// mobj is a major boss
+#define MF2_FIREDAMAGE		0x00010000	// does fire damage
+#define MF2_NODMGTHRUST		0x00020000	// does not thrust target when
+										// damaging
+#define MF2_TELESTOMP		0x00040000	// mobj can stomp another
+#define MF2_FLOATBOB		0x00080000	// use float bobbing z movement
+
+#define MF2_IMPACT			0x00200000	// an MF_MISSILE mobj can activate
+										// SPAC_IMPACT
+#define MF2_PUSHWALL		0x00400000	// mobj can push walls
+#define MF2_MCROSS			0x00800000	// can activate monster cross lines
+#define MF2_PCROSS			0x01000000	// can activate projectile cross lines
+#define MF2_CANTLEAVEFLOORPIC 0x02000000	// stay within a certain floor type
+#define MF2_NONSHOOTABLE	0x04000000	// mobj is totally non-shootable,
+										// but still considered solid
+#define MF2_INVULNERABLE	0x08000000	// mobj is invulnerable
+#define MF2_DORMANT			0x10000000	// thing is dormant
+#define MF2_ICEDAMAGE		0x20000000	// does ice damage
+#define MF2_SEEKERMISSILE	0x40000000	// is a seeker (for reflection)
+#define MF2_REFLECTIVE		0x80000000	// reflects missiles
+
+// CONSTANTS ---------------------------------------------------------------
+
+// Any floor type >= FLOOR_LIQUID will floorclip sprites
+enum
+{
+	FLOOR_SOLID,
+	FLOOR_ICE,
+	FLOOR_LIQUID,
+	FLOOR_WATER,
+	FLOOR_LAVA,
+	FLOOR_SLUDGE
+};
+
+enum
+{
+	CONTENTS_EMPTY,
+	CONTENTS_WATER,
+	CONTENTS_SLUDGE,
+	CONTENTS_LAVA,
+
+	CONTENTS_SOLID = -1
+};
+
+enum
+{
+	CSHIFT_CONTENTS
+};
+
+// Power up artifacts.
+enum
+{
+	pw_invulnerability,
+	pw_infrared,
+	pw_flight,
+	pw_speed,
+	pw_minotaur,
+	NUMPOWERS
+};
+
+enum
+{
+	PO_ANCHOR_TYPE = 3000,
+	PO_SPAWN_TYPE,
+	PO_SPAWNCRUSH_TYPE
+};
+
+enum
+{
+	SEQ_PLATFORM,
+	SEQ_PLATFORM_HEAVY,	// same script as a normal platform
+	SEQ_PLATFORM_METAL,
+	SEQ_PLATFORM_CREAK,	// same script as a normal platform
+	SEQ_PLATFORM_SILENCE,
+	SEQ_PLATFORM_LAVA,
+	SEQ_PLATFORM_WATER,
+	SEQ_PLATFORM_ICE,
+	SEQ_PLATFORM_EARTH,
+	SEQ_PLATFORM_METAL2,
+
+	SEQ_DOOR_STONE,
+	SEQ_DOOR_HEAVY,
+	SEQ_DOOR_METAL,
+	SEQ_DOOR_CREAK,
+	SEQ_DOOR_SILENCE,
+	SEQ_DOOR_LAVA,
+	SEQ_DOOR_WATER,
+	SEQ_DOOR_ICE,
+	SEQ_DOOR_EARTH,
+	SEQ_DOOR_METAL2,
+
+	SEQ_ESOUND_WIND,
+	SEQ_NUMSEQ
+};
+
+enum
+{
+	CHAN_AUTO,
+	CHAN_VOICE,
+	CHAN_WEAPON,
+	CHAN_ITEM,
+	CHAN_BODY
+};
+
+// TYPES -------------------------------------------------------------------
+
+class mobj_t:base_mobj_t
+{
+	//  States
+	int spawnstate;
+	int seestate;
+	int painstate;
+	int meleestate;
+	int missilestate;
+	int crashstate;
+	int deathstate;
+	int xdeathstate;
+	int raisestate;
+
+	//  Sounds
+	int sound_sight;
+	int sound_active;
+	int sound_attack;
+	int sound_pain;
+	int sound_death;
+
+	//  Params
+	float mass;
+	float speed;
+	int painchance;
+	int spawnhealth;
+	int gibshealth;
+
+	float time;	// state tic counter
+	int statenum;
+	int nextstate;
+
+	// Thing being chased/attacked (or NULL),
+	// also the originator for missiles.
+	mobj_t *target;
+
+	int special1;	// Special info
+	int special2;	// Special info
+	float special1f;
+	float special2f;
+	mobj_t *specialmobj1;
+	mobj_t *specialmobj2;
+
+	int type;
+
+	int damage;	// For missiles
+
+	boolean blaster;
+
+	// Player number last looked for.
+	int lastlook;
+
+	// Reaction time: if non 0, don't attack yet.
+	// Used by player to freeze a bit after teleporting.
+	int reactiontime;
+
+	// If >0, the target will be chased
+	// no matter what (even if shot)
+	int threshold;
+
+	// Movement direction, movement generation (zig-zagging).
+	int movedir;	// 0-7
+	int movecount;	// when 0, select a new dir
+
+	//  Water
+	int waterlevel;
+	int watertype;
+
+	void Think(void);
+	void Archive(void);
+	void Unarchive(void);
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+	}
+};
+
+addfields player_t
+{
+	//
+	//  FIRST FIELDS ARE STATS THAT ARE SENT TO CLIENT FOR STATUS BAR
+	//
+
+	sb_stats_t stats;
+
+	float armorpoints[NUMARMOR];
+
+	int inventoryTics;
+
+	int ArtifactFlash;
+	int readyArtifact;
+	int inv_ptr;
+	int curpos;
+	int inventorySlotNum;
+	inventory_t inventory[NUMARTIFACTS];
+
+	int mana[NUMMANA];
+
+	//
+	//  ----------
+	//
+
+	int keys;
+
+	// Power ups. invinc and invis are tic counters.
+	int powers[NUMPOWERS];
+
+	int arti;	// artitype_t to use
+
+	// Base height above floor for viewz.
+	float viewheight;
+	// Bob/squat speed.
+	float deltaviewheight;
+	// bounded/scaled total momentum.
+	float bob;
+
+	int flyheight;
+
+	int artifactCount;
+
+	// Bit flags, for cheats and debug.
+	// See cheat_t, above.
+	int cheats;
+
+	// Refired shots are less accurate.
+	int refire;
+
+	int pieces;	// Fourth Weapon pieces
+
+	// Is wp_nochange if not changing.
+	int pendingweapon;
+	int readyweapon;
+
+	int w_mana;
+	int w_upstate;
+	int w_downstate;
+	int w_readystate;
+	int w_atkstate;
+	int w_holdatkstate;
+	int w_flashstate;
+
+	boolean weaponowned[NUMWEAPONS];
+
+	// Who did damage (NULL for floors/ceilings).
+	mobj_t *attacker;
+
+	// For screen flashing (red or bright).
+	int damagecount;
+	int bonuscount;
+
+	int poisoncount;	// screen flash for poison damage
+	mobj_t *poisoner;	// NULL for non-player mobjs
+
+	int jumpTics;
+	int localQuakeHappening;
+
+	int newtorch;	// used in the torch flicker effect.
+	int newtorchdelta;
+
+	int weapon_palette;
+	int morphTics;	// player is a pig if > 0
+
+	TVec movedir;
+};
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+int num_stats = NUM_STATS + NUMARMOR + NUMMANA + 6 + NUMARTIFACTS * 2;
+
+boolean randomclass;
+
+// Hexen only
+
+float FloatBobOffsets[64] = {
+	0.0, 0.7841339111, 1.560714722, 2.322265625,
+	3.061462402, 3.77116394, 4.444549561, 5.075134277,
+	5.656845093, 6.184082031, 6.651748657, 7.055358887,
+	7.391021729, 7.655517578, 7.8462677, 7.961471558,
+	7.999984741, 7.961471558, 7.8462677, 7.655517578,
+	7.391021729, 7.055358887, 6.651748657, 6.184082031,
+	5.656845093, 5.075134277, 4.444549561, 3.77116394,
+	3.061462402, 2.322265625, 1.560714722, 0.7841339111,
+	-0.0000152587, -0.7841491699, -1.56072998, -2.322280884,
+	-3.061477661, -3.771179199, -4.444564819, -5.075149536,
+	-5.656860352, -6.18409729, -6.651763916, -7.055374146,
+	-7.391052246, -7.655532837, -7.846298218, -7.961486816,
+	-8.0, -7.961486816, -7.846298218, -7.655532837,
+	-7.391052246, -7.055374146, -6.651763916, -6.18409729,
+	-5.656860352, -5.075149536, -4.444564819, -3.771179199,
+	-3.061477661, -2.322280884, -1.56072998, -0.7841339111
+};
+
+string seq_name[] = {
+	"Platform",
+	"Platform",	// a 'heavy' platform is just a platform
+	"PlatformMetal",
+	"Platform",	// same with a 'creak' platform
+	"Silence",
+	"Lava",
+	"Water",
+	"Ice",
+	"Earth",
+	"PlatformMetal2",
+
+	"DoorNormal",
+	"DoorHeavy",
+	"DoorMetal",
+	"DoorCreak",
+	"Silence",
+	"Lava",
+	"Water",
+	"Ice",
+	"Earth",
+	"DoorMetal2",
+
+	"Wind"
+};
+
+string door_seq_name[] = {
+	"DoorNormal",
+	"DoorHeavy",
+	"DoorMetal",
+	"DoorCreak",
+	"Silence",
+	"Lava",
+	"Water",
+	"Ice",
+	"Earth",
+	"DoorMetal2"
+};
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//
+//
+//==========================================================================
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2001/10/09 17:35:46  dj_jl
+//  Split server defines into seperate file
+//
+//**************************************************************************

@@ -29,6 +29,7 @@ boolean shareware;
 boolean respawnmonsters;
 
 #include "../herdefs.vc"
+#include "svdefs.vc"
 
 #include "xlat.vc"
 #include "specutl.vc"
@@ -83,6 +84,9 @@ boolean respawnmonsters;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/10/09 17:35:46  dj_jl
+//  Split server defines into seperate file
+//
 //  Revision 1.6  2001/09/25 17:13:50  dj_jl
 //  Beautification
 //
