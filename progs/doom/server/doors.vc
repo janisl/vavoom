@@ -42,9 +42,8 @@ enum
 
 // TYPES -------------------------------------------------------------------
 
-class TDoor:Thinker
+class TDoor:SectorThinker
 {
-	sector_t *sector;
 	int type;
 	float topheight;
 	float speed;
@@ -54,8 +53,6 @@ class TDoor:Thinker
 						// when it reaches 0, start going down
 
 	void Think(void);
-	void Archive(void);
-	void Unarchive(void);
 };
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
@@ -195,31 +192,6 @@ void TDoor::Think(void)
 		}
 		break;
 	}
-}
-
-//==========================================================================
-//
-//	TDoor::Archive
-//
-//==========================================================================
-
-void TDoor::Archive(void)
-{
-	sector = SectorToNum(sector);
-}
-
-//==========================================================================
-//
-//	TDoor::Unarchive
-//
-//==========================================================================
-
-void TDoor::Unarchive(void)
-{
-	sector = NumToSector(sector);
-
-	//  Set sector's specialdata
-	sector->specialdata = this;
 }
 
 //==========================================================================
@@ -458,6 +430,9 @@ void P_SpawnDoorRaiseIn5Mins(sector_t * sec)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/18 18:29:15  dj_jl
+//  Added Hexen action specials
+//
 //  Revision 1.5  2001/09/24 17:13:25  dj_jl
 //  Created thinker classes
 //

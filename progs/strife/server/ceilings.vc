@@ -39,14 +39,20 @@ enum
 	CLEV_RAISETOHIGHEST,
 	CLEV_LOWERANDCRUSH,
 	CLEV_CRUSHANDRAISE,
-	CLEV_CRUSHRAISEANDSTAYSILA
+	// Doom specials
+	CLEV_CRUSHANDRAISEA,
+	CLEV_CRUSHRAISEANDSTAYSILA,
+	// Hexen specials
+	CLEV_LOWERBYVALUE,
+	CLEV_RAISEBYVALUE,
+	CLEV_CRUSHRAISEANDSTAY,
+	CLEV_MOVETOVALUETIMES8
 };
 
 // TYPES -------------------------------------------------------------------
 
-class TCeiling:Thinker
+class CeilingMover:SectorThinker
 {
-	sector_t *sector;
 	int type;
 	float bottomheight;
 	float topheight;
@@ -55,10 +61,10 @@ class TCeiling:Thinker
 	int direction;	// 1 = up, 0 = waiting, -1 = down
 	int tag;
 	int olddirection;
+	float dnspeed;
+	float upspeed;
 
 	void Think(void);
-	void Archive(void);
-	void Unarchive(void);
 };
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
@@ -69,11 +75,11 @@ class TCeiling:Thinker
 
 //==========================================================================
 //
-//  TCeiling::Think
+//  CeilingMover::Think
 //
 //==========================================================================
 
-void TCeiling::Think(void)
+void CeilingMover::Think(void)
 {
 	int res;
 
@@ -88,6 +94,7 @@ void TCeiling::Think(void)
 		res = T_MovePlane(sector, speed * frametime, topheight,
 			false, 1, direction);
 
+		//FIXME sound sequences
 		if (!(level->tictime & 7))
 		{
 			switch (type)
@@ -104,18 +111,22 @@ void TCeiling::Think(void)
 		{
 			switch (type)
 			{
-			case CLEV_RAISETOHIGHEST:
-				sector->specialdata = NULL;
-				RemoveSpecialThinker(this);
+			case CLEV_CRUSHANDRAISE:
+				direction = -1;
+				speed = speed * 2.0;
 				break;
 
 			case CLEV_CRUSHRAISEANDSTAYSILA:
 				SectorStartSoundName(sector, "PlatformStop", CHAN_VOICE);
-			case CLEV_CRUSHANDRAISE:
+			case CLEV_CRUSHANDRAISEA:
 				direction = -1;
+				speed = dnspeed;
 				break;
 
 			default:
+				sector->specialdata = NULL;
+				TagFinished(sector->tag);
+				RemoveSpecialThinker(this);
 				break;
 			}
 
@@ -127,6 +138,7 @@ void TCeiling::Think(void)
 		res = T_MovePlane(sector, speed * frametime, bottomheight,
 			crush, 1, direction);
 
+		//FIXME use sequences
 		if (!(level->tictime & 7))
 		{
 			switch (type)
@@ -142,20 +154,23 @@ void TCeiling::Think(void)
 		{
 			switch (type)
 			{
-			case CLEV_CRUSHRAISEANDSTAYSILA:
-				SectorStartSoundName(sector, "PlatformStop", CHAN_VOICE);
 			case CLEV_CRUSHANDRAISE:
-//FIXME             speed = 32.0;
+			case CLEV_CRUSHRAISEANDSTAY:
+				speed = speed / 2.0;
 				direction = 1;
 				break;
 
-			case CLEV_LOWERANDCRUSH:
-			case CLEV_LOWERTOFLOOR:
-				sector->specialdata = NULL;
-				RemoveSpecialThinker(this);
+			case CLEV_CRUSHRAISEANDSTAYSILA:
+				SectorStartSoundName(sector, "PlatformStop", CHAN_VOICE);
+			case CLEV_CRUSHANDRAISEA:
+				speed = upspeed;
+				direction = 1;
 				break;
 
 			default:
+				sector->specialdata = NULL;
+				TagFinished(sector->tag);
+				RemoveSpecialThinker(this);
 				break;
 			}
 		}
@@ -166,7 +181,7 @@ void TCeiling::Think(void)
 				switch (type)
 				{
 				case CLEV_CRUSHRAISEANDSTAYSILA:
-				case CLEV_CRUSHANDRAISE:
+				case CLEV_CRUSHANDRAISEA:
 				case CLEV_LOWERANDCRUSH:
 					speed = 4.0;
 					break;
@@ -182,31 +197,6 @@ void TCeiling::Think(void)
 
 //==========================================================================
 //
-//  TCeiling::Archive
-//
-//==========================================================================
-
-void TCeiling::Archive(void)
-{
-	sector = SectorToNum(sector);
-}
-
-//==========================================================================
-//
-//  TCeiling::Unarchive
-//
-//==========================================================================
-
-void TCeiling::Unarchive(void)
-{
-	sector = NumToSector(sector);
-
-	//  Set sector's specialdata
-	sector->specialdata = this;
-}
-
-//==========================================================================
-//
 //  P_ActivateInStasisCeiling
 //
 //  Restart a ceiling that's in-stasis
@@ -215,9 +205,9 @@ void TCeiling::Unarchive(void)
 
 int P_ActivateInStasisCeiling(line_t * line)
 {
-	TCeiling *ceiling;
+	CeilingMover *ceiling;
 
-	FOREACH(TCeiling, ceiling)
+	FOREACH(CeilingMover, ceiling)
 	{
 		if ((ceiling->tag == line->arg1) && (ceiling->direction == 0))
 		{
@@ -240,7 +230,8 @@ int EV_DoCeiling(line_t * line, int *args, int type)
 	int secnum;
 	int rtn;
 	sector_t *sec;
-	TCeiling *ceiling;
+	CeilingMover *ceiling;
+	float destHeight;
 
 	secnum = -1;
 	rtn = 0;
@@ -249,7 +240,7 @@ int EV_DoCeiling(line_t * line, int *args, int type)
 	switch (type)
 	{
 	case CLEV_CRUSHRAISEANDSTAYSILA:
-	case CLEV_CRUSHANDRAISE:
+	case CLEV_CRUSHANDRAISEA:
 		P_ActivateInStasisCeiling(line);
 	default:
 		break;
@@ -263,7 +254,7 @@ int EV_DoCeiling(line_t * line, int *args, int type)
 
 		// new ceiling thinker
 		rtn = 1;
-		ceiling = NewSpecialThinker(TCeiling);
+		ceiling = NewSpecialThinker(CeilingMover);
 		sec->specialdata = ceiling;
 		ceiling->sector = sec;
 		ceiling->crush = false;
@@ -271,30 +262,8 @@ int EV_DoCeiling(line_t * line, int *args, int type)
 
 		switch (type)
 		{
-		case CLEV_CRUSHANDRAISE:
-			ceiling->crush = args[3];	// args[3] = crushing value
-			ceiling->topheight = sec->ceilingheight;
-			ceiling->bottomheight = sec->floorheight + 8.0;
-			ceiling->direction = -1;
-			break;
-
-		case CLEV_LOWERANDCRUSH:
-			ceiling->crush = args[2];	// args[2] = crushing value
-			ceiling->bottomheight = sec->floorheight + 8.0;
-			ceiling->direction = -1;
-			break;
-
 		case CLEV_LOWERTOFLOOR:
 			ceiling->bottomheight = sec->floorheight;
-			ceiling->direction = -1;
-			break;
-
-		case CLEV_CRUSHRAISEANDSTAYSILA:
-			ceiling->topheight = sec->ceilingheight;
-			ceiling->crush = args[3];	// args[3] = crushing value
-			ceiling->bottomheight = sec->floorheight;
-			if (type != CLEV_LOWERTOFLOOR)
-				ceiling->bottomheight += 8.0;
 			ceiling->direction = -1;
 			break;
 
@@ -303,7 +272,63 @@ int EV_DoCeiling(line_t * line, int *args, int type)
 			ceiling->direction = 1;
 			break;
 
-		default:
+		case CLEV_LOWERANDCRUSH:
+			ceiling->crush = args[2];	// args[2] = crushing value
+			ceiling->bottomheight = sec->floorheight + 8.0;
+			ceiling->direction = -1;
+			break;
+
+		case CLEV_CRUSHANDRAISE:
+			ceiling->crush = args[2];	// args[2] = crushing value
+			ceiling->topheight = sec->ceilingheight;
+			ceiling->bottomheight = sec->floorheight + 8.0;
+			ceiling->direction = -1;
+			break;
+
+		case CLEV_CRUSHANDRAISEA:
+		case CLEV_CRUSHRAISEANDSTAYSILA:
+			ceiling->crush = args[3];	// args[3] = crushing value
+			ceiling->topheight = sec->ceilingheight;
+			ceiling->bottomheight = sec->floorheight + 8.0;
+			ceiling->direction = -1;
+			ceiling->dnspeed = itof(args[1]) * 4.0;
+			ceiling->upspeed = itof(args[2]) * 4.0;
+			break;
+
+		case CLEV_CRUSHRAISEANDSTAY:
+			ceiling->crush = args[2];	// args[2] = crushing value
+			ceiling->topheight = sec->ceilingheight;
+			ceiling->bottomheight = sec->floorheight + 8.0;
+			ceiling->direction = -1;
+			break;
+		case CLEV_LOWERBYVALUE:
+			ceiling->bottomheight = sec->ceilingheight - itof(args[2]);
+			ceiling->direction = -1;
+			break;
+		case CLEV_RAISEBYVALUE:
+			ceiling->topheight = sec->ceilingheight + itof(args[2]);
+			ceiling->direction = 1;
+			break;
+		case CLEV_MOVETOVALUETIMES8:
+			destHeight = itof(args[2]) * 8.0;
+			if (args[3])
+			{
+				destHeight = -destHeight;
+			}
+			if (sec->ceilingheight <= destHeight)
+			{
+				ceiling->direction = 1;
+				ceiling->topheight = destHeight;
+				if (sec->ceilingheight == destHeight)
+				{
+					rtn = 0;
+				}
+			}
+			else if (sec->ceilingheight > destHeight)
+			{
+				ceiling->direction = -1;
+				ceiling->bottomheight = destHeight;
+			}
 			break;
 		}
 
@@ -324,10 +349,10 @@ int EV_DoCeiling(line_t * line, int *args, int type)
 int EV_CeilingCrushStop(line_t * line, int *args)
 {
 	int rtn;
-	TCeiling *ceiling;
+	CeilingMover *ceiling;
 
 	rtn = 0;
-	FOREACH(TCeiling, ceiling)
+	FOREACH(CeilingMover, ceiling)
 	{
 		if ((ceiling->tag == args[0]) && (ceiling->direction != 0))
 		{
@@ -342,8 +367,11 @@ int EV_CeilingCrushStop(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
-//  Revision 1.6  2001/09/25 17:12:09  dj_jl
-//  Switched to Hexen map format, special thinker classes
+//  Revision 1.7  2001/12/18 18:29:22  dj_jl
+//  Added Hexen action specials
+//
+//  Revision 1.6  2001/09/25 17:13:50  dj_jl
+//  Beautification
 //
 //  Revision 1.5  2001/09/24 17:13:25  dj_jl
 //  Created thinker classes

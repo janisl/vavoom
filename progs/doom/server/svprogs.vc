@@ -41,6 +41,7 @@
 #include "doors.vc"
 #include "floors.vc"
 #include "plats.vc"
+#include "polyobj.vc"
 #include "lights.vc"
 #include "spec.vc"
 
@@ -95,6 +96,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2001/12/18 18:29:15  dj_jl
+//  Added Hexen action specials
+//
 //  Revision 1.10  2001/12/04 18:36:42  dj_jl
 //  Bots, directly from SkullTag!
 //

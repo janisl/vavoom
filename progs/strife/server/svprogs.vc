@@ -39,6 +39,7 @@
 #include "doors.vc"
 #include "floors.vc"
 #include "plats.vc"
+#include "polyobj.vc"
 #include "lights.vc"
 #include "spec.vc"
 
@@ -71,6 +72,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/12/18 18:29:22  dj_jl
+//  Added Hexen action specials
+//
 //  Revision 1.7  2001/10/18 17:39:34  dj_jl
 //  A lots of changes for Alpha 2
 //

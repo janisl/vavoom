@@ -41,16 +41,22 @@ enum
 
 enum
 {
+	// Doom specials
+	PLAT_PERPETUALRAISELIP,
+	PLAT_DOWNWAITUPSTAYLIP,
+	// Hexen specials
 	PLAT_PERPETUALRAISE,
-	PLAT_DOWNWAITUPSTAY
+	PLAT_DOWNWAITUPSTAY,
+	PLAT_DOWNBYVALUEWAITUPSTAY,
+	PLAT_UPWAITDOWNSTAY,
+	PLAT_UPBYVALUEWAITDOWNSTAY
 };
 
 // TYPES -------------------------------------------------------------------
 
-class TPlat:Thinker
+class TPlat:SectorThinker
 {
 	int type;
-	sector_t *sector;
 	int tag;
 	float speed;
 	boolean crush;
@@ -62,8 +68,6 @@ class TPlat:Thinker
 	int oldstatus;
 
 	void Think(void);
-	void Archive(void);
-	void Unarchive(void);
 };
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
@@ -95,24 +99,24 @@ void TPlat::Think(void)
 			status = PLAT_DOWN;
 			SectorStartSoundName(sector, "PlatformStart", CHAN_VOICE);
 		}
-		else
+		else if (res == RES_PASTDEST)
 		{
-			if (res == RES_PASTDEST)
+			time = wait;
+			status = PLAT_WAITING;
+			SectorStartSoundName(sector, "PlatformStop", CHAN_VOICE);
+
+			switch (type)
 			{
-				time = wait;
-				status = PLAT_WAITING;
-				SectorStartSoundName(sector, "PlatformStop", CHAN_VOICE);
+			case PLAT_DOWNWAITUPSTAY:
+			case PLAT_DOWNWAITUPSTAYLIP:
+			case PLAT_DOWNBYVALUEWAITUPSTAY:
+				sector->specialdata = NULL;
+				TagFinished(sector->tag);
+				RemoveSpecialThinker(this);
+				break;
 
-				switch (type)
-				{
-				case PLAT_DOWNWAITUPSTAY:
-					sector->specialdata = NULL;
-					RemoveSpecialThinker(this);
-					break;
-
-				default:
-					break;
-				}
+			default:
+				break;
 			}
 		}
 		break;
@@ -125,6 +129,17 @@ void TPlat::Think(void)
 			time = wait;
 			status = PLAT_WAITING;
 			SectorStartSoundName(sector, "PlatformStop", CHAN_VOICE);
+			switch (type)
+			{
+			case PLAT_UPWAITDOWNSTAY:
+			case PLAT_UPBYVALUEWAITDOWNSTAY:
+				sector->specialdata = NULL;
+				TagFinished(sector->tag);
+				RemoveSpecialThinker(this);
+				break;
+			default:
+				break;
+			}
 		}
 		break;
 
@@ -144,31 +159,6 @@ void TPlat::Think(void)
 	case PLAT_IN_STASIS:
 		break;
 	}
-}
-
-//==========================================================================
-//
-//	TPlat::Archive
-//
-//==========================================================================
-
-void TPlat::Archive(void)
-{
-	sector = SectorToNum(sector);
-}
-
-//==========================================================================
-//
-//	TPlat::Unarchive
-//
-//==========================================================================
-
-void TPlat::Unarchive(void)
-{
-	sector = NumToSector(sector);
-
-	//  Set sector's specialdata
-	sector->specialdata = this;
 }
 
 //==========================================================================
@@ -209,7 +199,7 @@ int EV_DoPlat(line_t * line, int *args, int type)
 	rtn = 0;
 
 	//  Activate all <type> plats that are PLAT_IN_STASIS
-	if (type == PLAT_PERPETUALRAISE)
+	if (type == PLAT_PERPETUALRAISELIP)
 	{
 		//  Activate in stasis
 		P_ActivateInStasis(args[0]);
@@ -235,18 +225,16 @@ int EV_DoPlat(line_t * line, int *args, int type)
 
 		switch (type)
 		{
-		case PLAT_DOWNWAITUPSTAY:
-			plat->low = FindLowestFloorSurrounding(sec);
+		case PLAT_DOWNWAITUPSTAYLIP:
+			plat->low = FindLowestFloorSurrounding(sec) + itof(args[3]);
 			if (plat->low > sec->floorheight)
 				plat->low = sec->floorheight;
 			plat->high = sec->floorheight;
 			plat->wait = itof(args[2]) / 35.0;
 			plat->status = PLAT_DOWN;
-			SectorStartSoundName(sec, "PlatformStart", CHAN_VOICE);
 			break;
-
-		case PLAT_PERPETUALRAISE:
-			plat->low = FindLowestFloorSurrounding(sec);
+		case PLAT_PERPETUALRAISELIP:
+			plat->low = FindLowestFloorSurrounding(sec) + itof(args[3]);
 			if (plat->low > sec->floorheight)
 				plat->low = sec->floorheight;
 			plat->high = FindHighestFloorSurrounding(sec);
@@ -254,12 +242,51 @@ int EV_DoPlat(line_t * line, int *args, int type)
 				plat->high = sec->floorheight;
 			plat->wait = itof(args[2]) / 35.0;
 			plat->status = P_Random() & 1;
-			SectorStartSoundName(sec, "PlatformStart", CHAN_VOICE);
 			break;
-
-		default:
+		case PLAT_DOWNWAITUPSTAY:
+			plat->low = FindLowestFloorSurrounding(sec) + 8.0;
+			if (plat->low > sec->floorheight)
+				plat->low = sec->floorheight;
+			plat->high = sec->floorheight;
+			plat->wait = itof(args[2]) / 35.0;
+			plat->status = PLAT_DOWN;
+			break;
+		case PLAT_DOWNBYVALUEWAITUPSTAY:
+			plat->low = sec->floorheight - itof(args[3]) * 8.0;
+			if (plat->low > sec->floorheight)
+				plat->low = sec->floorheight;
+			plat->high = sec->floorheight;
+			plat->wait = itof(args[2]) / 35.0;
+			plat->status = PLAT_DOWN;
+			break;
+		case PLAT_UPWAITDOWNSTAY:
+			plat->high = FindHighestFloorSurrounding(sec);
+			if (plat->high < sec->floorheight)
+				plat->high = sec->floorheight;
+			plat->low = sec->floorheight;
+			plat->wait = itof(args[2]) / 35.0;
+			plat->status = PLAT_UP;
+			break;
+		case PLAT_UPBYVALUEWAITDOWNSTAY:
+			plat->high = sec->floorheight + itof(args[3]) * 8.0;
+			if (plat->high < sec->floorheight)
+				plat->high = sec->floorheight;
+			plat->low = sec->floorheight;
+			plat->wait = itof(args[2]) / 35.0;
+			plat->status = PLAT_UP;
+			break;
+		case PLAT_PERPETUALRAISE:
+			plat->low = FindLowestFloorSurrounding(sec) + 8.0;
+			if (plat->low > sec->floorheight)
+				plat->low = sec->floorheight;
+			plat->high = FindHighestFloorSurrounding(sec);
+			if (plat->high < sec->floorheight)
+				plat->high = sec->floorheight;
+			plat->wait = itof(args[2]) / 35.0;
+			plat->status = P_Random() & 1;
 			break;
 		}
+		SectorStartSoundName(sec, "PlatformStart", CHAN_VOICE);
 	}
 	return rtn;
 }
@@ -288,8 +315,11 @@ int EV_StopPlat(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
-//  Revision 1.6  2001/09/25 17:12:09  dj_jl
-//  Switched to Hexen map format, special thinker classes
+//  Revision 1.7  2001/12/18 18:29:22  dj_jl
+//  Added Hexen action specials
+//
+//  Revision 1.6  2001/09/25 17:13:50  dj_jl
+//  Beautification
 //
 //  Revision 1.5  2001/09/24 17:14:11  dj_jl
 //  Created thinker classes
