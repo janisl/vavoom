@@ -268,6 +268,7 @@ void SV_UnlinkFromWorld(VMapObject* thing)
 		}
     }
 	thing->subsector = NULL;
+	thing->sector = NULL;
 }
 
 //==========================================================================
@@ -298,6 +299,7 @@ void SV_LinkToWorld(VMapObject* thing)
 	reg = SV_FindThingGap(ss->sector->botregion, thing->origin,
 		thing->origin.z, thing->origin.z + thing->height);
 	thing->subsector = ss;
+	thing->sector = ss->sector;
 
 	r = reg;
 	while (r->floor->flags)
@@ -991,9 +993,12 @@ int SV_PointContents(const sector_t *sector, const TVec &p)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/02/14 19:23:58  dj_jl
+//	Beautification
+//
 //	Revision 1.10  2002/02/06 17:30:36  dj_jl
 //	Replaced Actor flags with boolean variables.
-//
+//	
 //	Revision 1.9  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
 //	

@@ -135,6 +135,7 @@ class VMapObject:public VThinker
 	int				effects;
 
 	subsector_t*	subsector;
+	sector_t*		sector;
 
 	// Interaction info, by BLOCKMAP.
 	// Links in blocks (if needed).
@@ -158,6 +159,8 @@ class VMapObject:public VThinker
 									// (invisible but touchable)
 	boolean			bNoBlockmap;	// don't use the blocklinks
 									// (inert but displayable)
+	boolean			bIsPlayer;		// Player or player-bot
+
 	int				health;
 
 	// For movement checking.
@@ -457,9 +460,12 @@ inline subsector_t* SV_PointInSubsector(float x, float y)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2002/02/14 19:23:58  dj_jl
+//	Beautification
+//
 //	Revision 1.18  2002/02/06 17:30:36  dj_jl
 //	Replaced Actor flags with boolean variables.
-//
+//	
 //	Revision 1.17  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
 //	

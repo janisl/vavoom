@@ -51,6 +51,7 @@ void CL_Disconnect(void);
 void SV_MapTeleport(char *mapname);
 bool SV_ReadClientMessages(int i);
 void SV_DestroyAllThinkers(void);
+void SV_RunClientCommand(const char *cmd);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -2003,7 +2004,16 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 	for (i = 0; i < svs.max_clients; i++)
 	{
 		if (players[i].active)
+		{
 			SV_SendServerInfo(&players[i]);
+			if (players[i].is_bot)
+			{
+				sv_player = &players[i];
+				SV_RunClientCommand("PreSpawn\n");
+				SV_RunClientCommand("Spawn\n");
+				SV_RunClientCommand("Begin\n");
+			}
+		}
 	}
 
 	if (!spawn_thinkers)
@@ -2427,7 +2437,6 @@ void SV_CheckForNewClients(void)
 //==========================================================================
 
 extern bool net_connect_bot;
-void SV_RunClientCommand(const char *cmd);
 void SV_SetUserInfo(const char *info);
 
 void SV_ConnectBot(const char *name)
@@ -2685,9 +2694,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.34  2002/02/14 19:23:58  dj_jl
+//	Beautification
+//
 //	Revision 1.33  2002/02/06 17:30:36  dj_jl
 //	Replaced Actor flags with boolean variables.
-//
+//	
 //	Revision 1.32  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
 //	
