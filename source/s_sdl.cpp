@@ -509,7 +509,7 @@ void VSDLSoundDevice::PlaySound(int sound_id, const TVec &origin,
 	if (dist)
 	{
 		sep = CalcSep(origin);
-//JL		Mix_SetPanning(voice, 255 - sep, sep);
+		Mix_SetPanning(voice, 255 - sep, sep);
 	}
 //	pitch = CalcPitch(S_sfx[sound_id].freq, sound_id);
 //#warning how to set the pitch? (CS)
@@ -753,7 +753,7 @@ void VSDLSoundDevice::Tick(float DeltaTime)
 		sep = CalcSep(channels[i].origin);
 
 		Mix_Volume(channels[i].voice, vol);
-//JLK		Mix_SetPanning(channels[i].voice, 255 - sep, sep);
+		Mix_SetPanning(channels[i].voice, 255 - sep, sep);
 
 		channels[i].priority = CalcPriority(channels[i].sound_id, dist);
 	}
@@ -846,9 +846,12 @@ bool VSDLSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2004/10/18 06:36:45  dj_jl
+//	Some fixes.
+//
 //	Revision 1.10  2004/10/11 06:49:57  dj_jl
 //	SDL patches.
-//
+//	
 //	Revision 1.9  2004/08/21 19:10:44  dj_jl
 //	Changed sound driver declaration.
 //	

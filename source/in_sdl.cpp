@@ -291,16 +291,10 @@ void IN_ReadInput()
 				vev.data1 = K_MOUSE2;
 			else if (ev.button.button == SDL_BUTTON_MIDDLE)
 				vev.data1 = K_MOUSE3;
-//			else if (ev.button.button == SDL_BUTTON_WHEELUP)
-//				vev.data1 = K_MWHEELUP;
-//			else if (ev.button.button == SDL_BUTTON_WHEELDOWN)
-//				vev.data1 = K_MWHEELDOWN;
-//			else if (ev.button.button == SDL_BUTTON_WHEELDOWN + 1)
-//				vev.data1 = K_MOUSED1;
-//			else if (ev.button.button == SDL_BUTTON_WHEELDOWN + 2)
-//				vev.data1 = K_MOUSED2;
-//			else if (ev.button.button == SDL_BUTTON_WHEELDOWN + 3)
-//				vev.data1 = K_MOUSED3;
+			else if (ev.button.button == SDL_BUTTON_WHEELUP)
+				vev.data1 = K_MWHEELUP;
+			else if (ev.button.button == SDL_BUTTON_WHEELDOWN)
+				vev.data1 = K_MWHEELDOWN;
 			else
 				break;
 			vev.data2 = 0;
@@ -374,9 +368,12 @@ void IN_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2004/10/18 06:36:45  dj_jl
+//	Some fixes.
+//
 //	Revision 1.3  2004/10/11 06:49:57  dj_jl
 //	SDL patches.
-//
+//	
 //	Revision 1.2  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	
