@@ -410,6 +410,8 @@ public:
 	int			classid;
 	int			num_methods;
 	int			vtable;
+	int			num_properties;
+	int			ofs_properties;
 
 	//	Function params
 	int			num_params;
@@ -652,9 +654,12 @@ inline bool TK_Check(Punctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2002/02/26 17:52:20  dj_jl
+//	Exporting special property info into progs.
+//
 //	Revision 1.21  2002/02/16 16:28:36  dj_jl
 //	Added support for bool variables
-//
+//	
 //	Revision 1.20  2002/02/02 19:23:02  dj_jl
 //	Natives declared inside class declarations.
 //	

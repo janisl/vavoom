@@ -518,6 +518,8 @@ void PC_WriteObject(char *name)
 		ci.size = LittleShort(ct->size);
 		ci.num_methods = LittleShort(ct->num_methods);
 		ci.parent = LittleLong(ct->aux_type ? ct->aux_type->classid : 0);
+		ci.num_properties = LittleLong(ct->num_properties);
+		ci.ofs_properties = LittleLong(ct->ofs_properties);
 		fwrite(&ci, 1, sizeof(ci), f);
 	}
 
@@ -665,9 +667,12 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/02/26 17:52:20  dj_jl
+//	Exporting special property info into progs.
+//
 //	Revision 1.16  2002/02/16 16:28:36  dj_jl
 //	Added support for bool variables
-//
+//	
 //	Revision 1.15  2002/01/11 08:17:31  dj_jl
 //	Added name subsystem, removed support for unsigned ints
 //	

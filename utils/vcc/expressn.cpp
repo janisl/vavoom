@@ -1779,7 +1779,7 @@ static TTree* ParseExpressionPriority14(void)
 		{
 			type = op1->RealType;
 			op1 = op1->GetAddress();
-   			op2 = ParseExpressionPriority14();
+			op2 = ParseExpressionPriority14();
 			oper = FindOperator(AssignOps[i].opid, type, op2->type);
 //			TypeCheck3(op2->type, type);
 		   	op1 = new TOp2(op1, op2, oper);
@@ -1813,9 +1813,12 @@ TType *ParseExpression(bool bLocals)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2002/02/26 17:52:20  dj_jl
+//	Exporting special property info into progs.
+//
 //	Revision 1.20  2002/02/16 16:28:36  dj_jl
 //	Added support for bool variables
-//
+//	
 //	Revision 1.19  2002/01/23 17:56:28  dj_jl
 //	Removed support for C-style type casting.
 //	

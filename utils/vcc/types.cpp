@@ -33,6 +33,13 @@
 
 // TYPES -------------------------------------------------------------------
 
+enum
+{
+	PROPTYPE_Reference,
+	PROPTYPE_ClassID,
+	PROPTYPE_Name,
+};
+
 struct typedef_t
 {
 	FName		Name;
@@ -1414,12 +1421,52 @@ static void AddVTable(TType *t)
 
 //==========================================================================
 //
+//	WritePropertyInfo
+//
+//==========================================================================
+
+void WritePropertyInfo(TType *t)
+{
+	t->ofs_properties = numglobals;
+	t->num_properties = 0;
+	dfield_t *df = (dfield_t *)(globals + numglobals);
+	for (int i = 0; i < t->numfields; i++)
+	{
+		field_t &F = t->fields[i];
+		switch (F.type->type)
+		{
+		case ev_name:
+			df[t->num_properties].type = PROPTYPE_Name;
+			df[t->num_properties].ofs = F.ofs;
+			t->num_properties++;
+			break;
+		//	ev_string,
+		//	ev_function,
+		//	ev_pointer,
+		case ev_reference:
+			df[t->num_properties].type = PROPTYPE_Reference;
+			df[t->num_properties].ofs = F.ofs;
+			t->num_properties++;
+			break;
+		case ev_classid:
+			df[t->num_properties].type = PROPTYPE_ClassID;
+			df[t->num_properties].ofs = F.ofs;
+			t->num_properties++;
+			break;
+		}
+	}
+	numglobals += t->num_properties * sizeof(dfield_t) / 4;
+}
+
+//==========================================================================
+//
 //	AddVirtualTables
 //
 //==========================================================================
 
 void AddVirtualTables(void)
 {
+	int OldNumGlobals = numglobals;
 	classtypes = new TType*[numclasses];
 	memset(classtypes, 0, numclasses * 4);
 	for (TType *t = types; t; t = t->next)
@@ -1429,14 +1476,27 @@ void AddVirtualTables(void)
 			AddVTable(t);
 		}
 	}
+	dprintf("Virtual tables takes %d bytes\n", (numglobals - OldNumGlobals) * 4);
+	OldNumGlobals = numglobals;
+	for (TType *t = types; t; t = t->next)
+	{
+		if (t->type == ev_class)
+		{
+			WritePropertyInfo(t);
+		}
+	}
+	dprintf("Fields info takes %d bytes\n", (numglobals - OldNumGlobals) * 4);
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2002/02/26 17:52:20  dj_jl
+//	Exporting special property info into progs.
+//
 //	Revision 1.22  2002/02/16 16:28:36  dj_jl
 //	Added support for bool variables
-//
+//	
 //	Revision 1.21  2002/02/02 19:23:02  dj_jl
 //	Natives declared inside class declarations.
 //	
