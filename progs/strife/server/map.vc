@@ -287,7 +287,7 @@ boolean PTR_UseTraverse(intercept_t * in)
 	if (PointOnPlaneSide(usething->origin, in->line) == 1)
 		return false;	// don't use back side
 
-	P_UseSpecialLine(usething, in->line);
+	P_ActivateLine(in->line, usething, 0, SPAC_USE);
 
 	// can't use for than one special line in a row
 	return false;
@@ -626,7 +626,7 @@ boolean PTR_ShootTraverse(intercept_t * in)
 		// when we know that it actally hits line
 		if (li->special)
 		{
-			P_ShootSpecialLine(shoot_thing, li);
+			P_ActivateLine(li, shoot_thing, 0, SPAC_IMPACT);
 		}
 
 		if (li->flags & ML_TWOSIDED)
@@ -765,8 +765,8 @@ boolean PIT_RadiusAttack(mobj_t * thing)
 
 	// Boss spider and cyborg
 	// take no damage from concussion.
-//  if (thing->type == MT_CYBORG || thing->type == MT_SPIDER)
-//      return true;
+//	if (thing->type == MT_CYBORG || thing->type == MT_SPIDER)
+//		return true;
 
 	dist = Length(MobjCenter(thing) - MobjCenter(bombspot)) - thing->radius;
 
@@ -823,6 +823,9 @@ void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage, int distance,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/09/25 17:12:09  dj_jl
+//  Switched to Hexen map format, special thinker classes
+//
 //  Revision 1.5  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

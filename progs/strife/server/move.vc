@@ -110,6 +110,14 @@ boolean PIT_CheckThing(mobj_t * thing)
 		return true;
 
 	BlockingMobj = thing;
+	if (tmthing->flags & MF_MISSILE || !(thing->flags & MF_SPECIAL))
+	{
+		// see if it went over / under
+		if (tmthing->origin.z >= thing->origin.z + thing->height)
+			return true;	// overhead
+		if (tmthing->origin.z + tmthing->height < thing->origin.z)
+			return true;	// underneath
+	}
 
 	// check for skulls slamming into things
 	if (tmthing->flags & MF_SKULLFLY)
@@ -125,13 +133,7 @@ boolean PIT_CheckThing(mobj_t * thing)
 	// missiles can hit other things
 	if (tmthing->flags & MF_MISSILE)
 	{
-		// see if it went over / under
-		if (tmthing->origin.z > thing->origin.z + thing->height)
-			return true;	// overhead
-		if (tmthing->origin.z + tmthing->height < thing->origin.z)
-			return true;	// underneath
-
-		if (tmthing->target && tmthing->target->type == thing->type)
+		if (tmthing->target && (tmthing->target->type == thing->type))
 		{
 			// Don't hit same species as originator.
 			if (thing == tmthing->target)
@@ -321,7 +323,7 @@ boolean P_CheckPosition(mobj_t * thing, float x, float y)
 	tmx = x;
 	tmy = y;
 	tmz = thing->origin.z;
-	tmpos = vector(x, y, tmz);
+	tmpos = vector(x, y, thing->origin.z);
 
 	tmbbox[BOXTOP] = y + tmthing->radius;
 	tmbbox[BOXBOTTOM] = y - tmthing->radius;
@@ -410,7 +412,16 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	floatok = false;
 	if (!check)
 	{
-		return false;
+		if (!BlockingMobj || BlockingMobj->player || !thing->player ||
+			BlockingMobj->origin.z + BlockingMobj->height - thing->origin.z >
+			24.0
+			|| (BlockingMobj->subsector->sector->ceilingheight -
+		   (BlockingMobj->origin.z + BlockingMobj->height) < thing->height)
+			|| (tmceilingz - (BlockingMobj->origin.z + BlockingMobj->height) <
+				thing->height))
+		{
+			return false;
+		}
 	}
 
 	if (!(thing->flags & MF_NOCLIP))
@@ -448,10 +459,10 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	thing->origin.y = y;
 
 	P_SetThingPosition(thing);
-	thing->floor = tmfloor;
-	thing->ceiling = tmceiling;
 	thing->floorz = tmfloorz;
 	thing->ceilingz = tmceilingz;
+	thing->floor = tmfloor;
+	thing->ceiling = tmceiling;
 
 	//
 	// if any special lines were hit, do the effect
@@ -469,7 +480,18 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 			{
 				if (ld->special)
 				{
-					P_CrossSpecialLine(ld, oldside, thing);
+					if (thing->player)
+					{
+						P_ActivateLine(ld, thing, oldside, SPAC_CROSS);
+					}
+					else if (thing->flags & MF_COUNTKILL)	//thing->flags2 & MF2_MCROSS)
+					{
+						P_ActivateLine(ld, thing, oldside, SPAC_MCROSS);
+					}
+					else	//if (thing->flags2 & MF2_PCROSS)
+					{
+						P_ActivateLine(ld, thing, oldside, SPAC_PCROSS);
+					}
 				}
 			}
 		}
@@ -533,7 +555,7 @@ boolean P_Move(mobj_t * actor)
 			// if the special is not a door
 			// that can be opened,
 			// return false
-			if (P_UseSpecialLine(actor, ld))
+			if (P_ActivateLine(ld, actor, 0, SPAC_USE))
 			{
 				good = true;
 			}
@@ -555,6 +577,9 @@ boolean P_Move(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2001/09/25 17:12:09  dj_jl
+//  Switched to Hexen map format, special thinker classes
+//
 //  Revision 1.3  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

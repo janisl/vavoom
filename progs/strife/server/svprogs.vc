@@ -28,70 +28,11 @@
 //**************************************************************************
 
 #include "../../common/server.vc"
-#define Thinker		thinker_t
 
 #include "../strfdefs.vc"
 #include "strings.vc"
 
-//==========================================================================
-//
-//  Level special
-//
-//==========================================================================
-
-class special_t;
-
-typedef void (*special_func_t) (special_t *);
-
-class special_t:Thinker
-{
-	special_func_t function;
-
-	sector_t *sector;
-
-	special_t *prev;
-	special_t *next;
-
-	//  Ceiling
-	int type;
-	float bottomheight;
-	float topheight;
-	float tic_speed;
-	boolean crush;
-	int direction;	// 1 = up, 0 = waiting, -1 = down
-	int tag;
-	int olddirection;
-	//  Door
-	int topwait;	// tics to wait at the top
-	int topcountdown;	// (keep in case a door going down is reset)
-	// when it reaches 0, start going down
-	//  Floor
-	int newspecial;
-	int texture;
-	float floordestheight;
-	//  Plat
-	float low;
-	float high;
-	int wait;
-	int count;
-	int status;
-	int oldstatus;
-	//  Lights
-	int maxlight;
-	int minlight;
-	int maxtime;
-	int mintime;
-
-	void Think(void);
-	void Archive(void);
-	void Unarchive(void);
-};
-
-void special_t::Think(void)
-{
-	function(this);
-}
-
+#include "xlat.vc"
 #include "specutl.vc"
 #include "ceilings.vc"
 #include "doors.vc"
@@ -129,6 +70,9 @@ void special_t::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/09/25 17:12:09  dj_jl
+//  Switched to Hexen map format, special thinker classes
+//
 //  Revision 1.4  2001/09/24 17:19:06  dj_jl
 //  Created thinker classes
 //

@@ -33,7 +33,13 @@ boolean shareware;
 #define	MTF_NORMAL		0x0002
 #define	MTF_HARD		0x0004
 #define	MTF_AMBUSH		0x0008	// Deaf monsters/do not react to sound.
-#define MTF_NOTSINGLE	0x0010	// Thing apears only in net game
+#define MTF_DORMANT		0x0010	// The thing is dormant
+#define MTF_FIGHTER		0x0020	// Thing appearing in player classes
+#define MTF_CLERIC		0x0040
+#define MTF_MAGE		0x0080
+#define MTF_GSINGLE		0x0100	// Appearing in game modes
+#define MTF_GCOOP		0x0200
+#define MTF_GDEATHMATCH	0x0400
 
 #define VIEWHEIGHT		41.0
 
@@ -212,6 +218,7 @@ addfields player_t
 {
 ////  FIRST FIELDS ARE STATS THAT ARE SENT TO CLIENT FOR STATUS BAR//////  Long stats//////  Short stats// consoleplayer, SB_STYLE_NORMAL, &sb_baron, 0, NULL);È
 
+
 		int ammo[NUMAMMO];
 	int ready_ammo;
 
@@ -286,6 +293,7 @@ int byte_stats = NUMWEAPONS + 7 + NUMPOWERS;
 addfields client_state_t
 {
 ////  STATS FOR STATUS BAR//////  Long stats//////  Short stats//AR//////  Long stats//////  Short stats// consoleplayer, SB_STYLE_NORMAL, &sb_baron, 0, NULL);È
+
 
 		int ammo[NUMAMMO];
 	int ready_ammo;
@@ -381,9 +389,19 @@ enum
 #define MEGASPHERE_HEALTH	200
 #define GOD_HEALTH			100
 
+// [RH] Equivalents for BOOM's generalized sector types
+
+#define DAMAGE_MASK		0x0300
+#define SECRET_MASK		0x0400
+#define FRICTION_MASK	0x0800
+#define PUSH_MASK		0x1000
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/09/25 17:12:42  dj_jl
+//  Switched to Hexen map format, special thinker classes
+//
 //  Revision 1.5  2001/09/24 17:18:43  dj_jl
 //  Created thinker classes
 //

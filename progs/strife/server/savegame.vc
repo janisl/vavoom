@@ -68,51 +68,12 @@ void mobj_t::Unarchive(void)
 	target = NumToMobj(target);
 }
 
-//==========================================================================
-//
-//  special_t::Archive
-//
-//==========================================================================
-
-void special_t::Archive(void)
-{
-	sector = SectorToNum(sector);
-}
-
-//==========================================================================
-//
-//  special_t::Unarchive
-//
-//==========================================================================
-
-void special_t::Unarchive(void)
-{
-	sector = NumToSector(sector);
-
-	//  Set sector's specialdata
-	if (function == T_MoveCeiling ||
-		function == T_VerticalDoor ||
-		function == T_MoveFloor || function == T_PlatRaise)
-	{
-		sector->specialdata = this;
-	}
-
-	//  Add ceiling to active ceilings
-	if (function == T_MoveCeiling)
-	{
-		P_AddActiveCeiling(this);
-	}
-
-	//  Add plat to activaplats
-	if (function == T_PlatRaise)
-	{
-		P_AddActivePlat(this);
-	}
-}
-
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/09/25 17:12:09  dj_jl
+//  Switched to Hexen map format, special thinker classes
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

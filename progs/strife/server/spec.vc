@@ -34,7 +34,7 @@
 int CanActivateCross(mobj_t * thing);
 void P_RespawnSpecials(void);
 
-int EV_Teleport(line_t * line, int side, mobj_t * thing);
+int EV_Teleport(int tag, mobj_t * thing, boolean usefog);
 
 // DATA DECLARATIONS -------------------------------------------------------
 
@@ -45,6 +45,577 @@ int numlinespecials;
 line_t *linespeciallist[MAXLINEANIMS];
 
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//  CheckLock
+//
+//==========================================================================
+
+boolean CheckLock(mobj_t * user, int lock)
+{
+	player_t *player;
+
+	player = user->player;
+
+	if (!player)
+	{
+		return false;
+	}
+	if (!lock)
+	{
+		return true;
+	}
+
+	switch (lock)
+	{
+	case 2:	// Blue Lock
+		if (!(player->keys & (1 << it_bluecard)))
+		{
+			centerprint(player, "You need a blue keycard");
+			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
+			return false;
+		}
+		break;
+
+	case 1:	// Red Lock
+		if (!(player->keys & (1 << it_redcard)))
+		{
+			centerprint(player, "You need a red keycard");
+			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
+			return false;
+		}
+		break;
+
+	case 3:	// Yellow Lock
+		if (!(player->keys & (1 << it_yellowcard)))
+		{
+			centerprint(player, "You need a yellow keycard");
+			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
+			return false;
+		}
+		break;
+
+	case 5:	// Blue Lock
+		if (!(player->keys & (1 << it_blueskull)))
+		{
+			centerprint(player, "You need a blue skullkey");
+			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
+			return false;
+		}
+		break;
+
+	case 4:	// Red Lock
+		if (!(player->keys & (1 << it_redskull)))
+		{
+			centerprint(player, "You need a red skullkey");
+			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
+			return false;
+		}
+		break;
+
+	case 6:	// Yellow Lock
+		if (!(player->keys & (1 << it_yellowskull)))
+		{
+			centerprint(player, "You need a yellow skullkey");
+			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
+			return false;
+		}
+		break;
+
+	case 100:	// Any key
+	case 128 + 100:	// Any key
+		if (!player->keys)
+		{
+			centerprint(player, "You need any key");
+			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
+			return false;
+		}
+		break;
+
+	case 110:	// All keys
+		if (player->keys != 0x3f)
+		{
+			centerprint(player, "You need all keycards and skullkeys");
+			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
+			return false;
+		}
+		break;
+
+	case 128 + 2:	// Blue Lock
+		if (!(player->keys & ((1 << it_bluecard) | (1 << it_blueskull))))
+		{
+			centerprint(player, "You need a blue key");
+			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
+			return false;
+		}
+		break;
+
+	case 128 + 1:	// Red Lock
+		if (!(player->keys & ((1 << it_redcard) | (1 << it_redskull))))
+		{
+			centerprint(player, "You need a red key");
+			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
+			return false;
+		}
+		break;
+
+	case 128 + 3:	// Yellow Lock
+		if (!(player->keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
+		{
+			centerprint(player, "You need a yellow key");
+			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
+			return false;
+		}
+		break;
+
+	case 128 + 101:	// All keys
+		if (!(player->keys & ((1 << it_bluecard) | (1 << it_blueskull))) ||
+			!(player->keys & ((1 << it_redcard) | (1 << it_redskull))) ||
+			!(player->keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
+		{
+			centerprint(player, "You need all keys");
+			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
+			return false;
+		}
+		break;
+	}
+
+	return true;
+}
+
+//==========================================================================
+//
+//  StartLockedACS
+//
+//==========================================================================
+
+boolean StartLockedACS(line_t * line, int *args, mobj_t * mo, int side)
+{
+	int i;
+	int newArgs[5];
+
+	if (!CheckLock(mo, args[4]))
+	{
+		return false;
+	}
+	for (i = 0; i < 4; i++)
+	{
+		newArgs[i] = args[i];
+	}
+	newArgs[4] = 0;
+	return StartACS(newArgs[0], newArgs[1], &newArgs[2], mo, line, side);
+}
+
+//==========================================================================
+//
+//  ExecuteLineSpecial
+//
+//==========================================================================
+
+boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
+	mobj_t * mo)
+{
+	boolean buttonSuccess;
+
+	buttonSuccess = false;
+	switch (special)
+	{
+/*
+		case 1: // Poly Start Line
+			break;
+		case 2: // Poly Rotate Left
+			buttonSuccess = EV_RotatePoly(line, args, 1, false);
+			break;
+		case 3: // Poly Rotate Right
+			buttonSuccess = EV_RotatePoly(line, args, -1, false);
+			break;
+		case 4: // Poly Move
+			buttonSuccess = EV_MovePoly(line, args, false, false);
+			break;
+		case 5: // Poly Explicit Line:  Only used in initialization
+			break;
+		case 6: // Poly Move Times 8
+			buttonSuccess = EV_MovePoly(line, args, true, false);
+			break;
+		case 7: // Poly Door Swing
+			buttonSuccess = EV_OpenPolyDoor(line, args, PODOOR_SWING);
+			break;
+		case 8: // Poly Door Slide
+			buttonSuccess = EV_OpenPolyDoor(line, args, PODOOR_SLIDE);
+			break;*/
+	case 10:	// Door Close
+		buttonSuccess = EV_DoDoor(line, args, doorClose);
+		break;
+	case 11:	// Door Open
+		if (!args[0])
+		{
+			buttonSuccess = EV_VerticalDoor(line, mo);
+		}
+		else
+		{
+			buttonSuccess = EV_DoDoor(line, args, doorOpen);
+		}
+		break;
+	case 12:	// Door Raise
+		if (!args[0])
+		{
+			buttonSuccess = EV_VerticalDoor(line, mo);
+		}
+		else
+		{
+			buttonSuccess = EV_DoDoor(line, args, doorRaise);
+		}
+		break;
+	case 13:	// Door Locked_Raise
+		if (CheckLock(mo, args[3]))
+		{
+			if (!args[0])
+			{
+				buttonSuccess = EV_VerticalDoor(line, mo);
+			}
+			else
+			{
+				buttonSuccess = EV_DoDoor(line, args, doorRaise);
+			}
+		}
+		break;
+/*		case 20: // Floor Lower by Value
+			buttonSuccess = EV_DoFloor(line, args, FLEV_LOWERFLOORBYVALUE);
+			break;*/
+	case 21:	// Floor Lower to Lowest
+		buttonSuccess = EV_DoFloor(line, args, FLEV_LOWERFLOORTOLOWEST);
+		break;
+	case 22:	// Floor Lower to Nearest
+		buttonSuccess = EV_DoFloor(line, args, FLEV_LOWERFLOOR);
+		break;
+	case 23:	// Floor Raise by Value
+		buttonSuccess = EV_DoFloor(line, args, FLEV_RAISEFLOORBYVALUE);
+		break;
+/*		case 24: // Floor Raise to Highest
+			buttonSuccess = EV_DoFloor(line, args, FLEV_RAISEFLOOR);
+			break;*/
+	case 25:	// Floor Raise to Nearest
+		buttonSuccess = EV_DoFloor(line, args, FLEV_RAISEFLOORTONEAREST);
+		break;
+/*		case 26: // Stairs Build Down Normal
+			buttonSuccess = EV_BuildStairs(line, args, -1, STAIRS_NORMAL);
+			break;
+		case 27: // Build Stairs Up Normal
+			buttonSuccess = EV_BuildStairs(line, args, 1, STAIRS_NORMAL);
+			break;*/
+	case 28:	// Floor Raise and Crush
+		buttonSuccess = EV_DoFloor(line, args, FLEV_RAISEFLOORCRUSH);
+		break;
+/*		case 29: // Build Pillar (no crushing)
+			buttonSuccess = EV_BuildPillar(line, args, false);
+			break;
+		case 30: // Open Pillar
+			buttonSuccess = EV_OpenPillar(line, args);
+			break;
+		case 31: // Stairs Build Down Sync
+			buttonSuccess = EV_BuildStairs(line, args, -1, STAIRS_SYNC);
+			break;
+		case 32: // Build Stairs Up Sync
+			buttonSuccess = EV_BuildStairs(line, args, 1, STAIRS_SYNC);
+			break;*/
+	case 35:	// Raise Floor by Value Times 8
+		buttonSuccess = EV_DoFloor(line, args, FLEV_RAISEBYVALUETIMES8);
+		break;
+/*		case 36: // Lower Floor by Value Times 8
+			buttonSuccess = EV_DoFloor(line, args, FLEV_LOWERBYVALUETIMES8);
+			break;
+		case 40: // Ceiling Lower by Value
+			buttonSuccess = EV_DoCeiling(line, args, CLEV_LOWERBYVALUE);
+			break;
+		case 41: // Ceiling Raise by Value
+			buttonSuccess = EV_DoCeiling(line, args, CLEV_RAISEBYVALUE);
+			break;
+		case 42: // Ceiling Crush and Raise
+			buttonSuccess = EV_DoCeiling(line, args, CLEV_CRUSHANDRAISE);
+			break;*/
+	case 43:	// Ceiling Lower and Crush
+		buttonSuccess = EV_DoCeiling(line, args, CLEV_LOWERANDCRUSH);
+		break;
+	case 44:	// Ceiling Crush Stop
+		buttonSuccess = EV_CeilingCrushStop(line, args);
+		break;
+/*		case 45: // Ceiling Crush Raise and Stay
+			buttonSuccess = EV_DoCeiling(line, args, CLEV_CRUSHRAISEANDSTAY);
+			break;
+		case 46: // Floor Crush Stop
+			buttonSuccess = EV_FloorCrushStop(line, args);
+			break;
+		case 60: // Plat Perpetual Raise
+			buttonSuccess = EV_DoPlat(line, args, PLAT_PERPETUALRAISE);
+			break;*/
+	case 61:	// Plat Stop
+		EV_StopPlat(line, args);
+		break;
+/*		case 62: // Plat Down-Wait-Up-Stay
+			buttonSuccess = EV_DoPlat(line, args, PLAT_DOWNWAITUPSTAY);
+			break;
+		case 63: // Plat Down-by-Value*8-Wait-Up-Stay
+			buttonSuccess = EV_DoPlat(line, args, PLAT_DOWNBYVALUEWAITUPSTAY);
+			break;
+		case 64: // Plat Up-Wait-Down-Stay
+			buttonSuccess = EV_DoPlat(line, args, PLAT_UPWAITDOWNSTAY);
+			break;
+		case 65: // Plat Up-by-Value*8-Wait-Down-Stay
+			buttonSuccess = EV_DoPlat(line, args, PLAT_UPBYVALUEWAITDOWNSTAY);
+			break;
+		case 66: // Floor Lower Instant * 8
+			buttonSuccess = EV_DoFloor(line, args, FLEV_LOWERTIMES8INSTANT);
+			break;
+		case 67: // Floor Raise Instant * 8
+			buttonSuccess = EV_DoFloor(line, args, FLEV_RAISETIMES8INSTANT);
+			break;
+		case 68: // Floor Move to Value * 8
+			buttonSuccess = EV_DoFloor(line, args, FLEV_MOVETOVALUETIMES8);
+			break;
+		case 69: // Ceiling Move to Value * 8
+			buttonSuccess = EV_DoCeiling(line, args, CLEV_MOVETOVALUETIMES8);
+			break;*/
+	case 70:	// Teleport
+		if (side == 0)
+		{	// Only teleport when crossing the front side of a line
+			buttonSuccess = EV_Teleport(args[0], mo, true);
+		}
+		break;
+/*		case 71: // Teleport, no fog
+			if(side == 0)
+			{ // Only teleport when crossing the front side of a line
+				buttonSuccess = EV_Teleport(args[0], mo, false);
+			}
+			break;
+		case 72: // Thrust Mobj
+			if (!side) // Only thrust on side 0
+			{
+				P_ThrustMobj(mo, args[0] * (ANG90 / 64), itof(args[1]));
+				buttonSuccess = 1;
+			}
+			break;
+		case 73: // Damage Mobj
+			if(args[0])
+			{
+				DamageMobj(mo, NULL, NULL, args[0]);
+			}
+			else
+			{ // If arg1 is zero, then guarantee a kill
+				DamageMobj(mo, NULL, NULL, 10000);
+			}
+			buttonSuccess = 1;
+			break;*/
+	case 74:	// Teleport_NewMap
+		if (side == 0)
+		{	// Only teleport when crossing the front side of a line
+			if (!(mo && mo->player && mo->player->playerstate == PST_DEAD))	// Players must be alive to teleport
+			{
+				G_Completed(args[0], args[1]);
+				buttonSuccess = true;
+			}
+		}
+		break;
+	case 75:	// Teleport_EndGame
+		if (side == 0)
+		{	// Only teleport when crossing the front side of a line
+			if (!(mo && mo->player && mo->player->playerstate == PST_DEAD))	// Players must be alive to teleport
+			{
+				buttonSuccess = true;
+				if (deathmatch)
+				{	// Winning in deathmatch just goes back to map 1
+					G_Completed(1, 0);
+				}
+				else
+				{	// Passing -1, -1 to G_Completed() starts the Finale
+					G_Completed(-1, -1);
+				}
+			}
+		}
+		break;
+	case 80:	// ACS_Execute
+		buttonSuccess = StartACS(args[0], args[1], &args[2], mo, line, side);
+		break;
+	case 81:	// ACS_Suspend
+		buttonSuccess = SuspendACS(args[0], args[1]);
+		break;
+	case 82:	// ACS_Terminate
+		buttonSuccess = TerminateACS(args[0], args[1]);
+		break;
+	case 83:	// ACS_LockedExecute
+		buttonSuccess = StartLockedACS(line, args, mo, side);
+		break;
+/*		case 90: // Poly Rotate Left Override
+			buttonSuccess = EV_RotatePoly(line, args, 1, true);
+			break;
+		case 91: // Poly Rotate Right Override
+			buttonSuccess = EV_RotatePoly(line, args, -1, true);
+			break;
+		case 92: // Poly Move Override
+			buttonSuccess = EV_MovePoly(line, args, false, true);
+			break;
+		case 93: // Poly Move Times 8 Override
+			buttonSuccess = EV_MovePoly(line, args, true, true);
+			break;
+		case 94: // Build Pillar Crush 
+			buttonSuccess = EV_BuildPillar(line, args, true);
+			break;
+		case 95: // Lower Floor and Ceiling
+			buttonSuccess = EV_DoFloorAndCeiling(line, args, false);
+			break;
+		case 96: // Raise Floor and Ceiling
+			buttonSuccess = EV_DoFloorAndCeiling(line, args, true);
+			break;
+		case 109: // Force Lightning
+			buttonSuccess = true;
+			P_ForceLightning();
+			break;
+		case 110: // Light Raise by Value
+			buttonSuccess = EV_SpawnLight(line, args, LITE_RAISEBYVALUE);
+			break; 
+		case 111: // Light Lower by Value
+			buttonSuccess = EV_SpawnLight(line, args, LITE_LOWERBYVALUE);
+			break; */
+	case 112:	// Light Change to Value
+//          buttonSuccess = EV_SpawnLight(line, args, LITE_CHANGETOVALUE);
+		buttonSuccess = EV_LightTurnOn(line, args);
+		break;
+/*		case 113: // Light Fade
+			buttonSuccess = EV_SpawnLight(line, args, LITE_FADE);
+			break; 
+		case 114: // Light Glow
+			buttonSuccess = EV_SpawnLight(line, args, LITE_GLOW);
+			break; 
+		case 115: // Light Flicker
+			buttonSuccess = EV_SpawnLight(line, args, LITE_FLICKER);
+			break;
+		case 116: // Light Strobe
+			buttonSuccess = EV_SpawnLight(line, args, LITE_STROBE);
+			break; 
+		case 120: // Quake Tremor
+			buttonSuccess = A_LocalQuake(args, mo);
+			break;
+		case 129: // UsePuzzleItem
+			buttonSuccess = EV_LineSearchForPuzzleItem(line, args, mo);
+			break;
+		case 130: // Thing_Activate
+			buttonSuccess = EV_ThingActivate(args[0]);
+			break;
+		case 131: // Thing_Deactivate
+			buttonSuccess = EV_ThingDeactivate(args[0]);
+			break;
+		case 132: // Thing_Remove
+			buttonSuccess = EV_ThingRemove(args[0]);
+			break;
+		case 133: // Thing_Destroy
+			buttonSuccess = EV_ThingDestroy(args[0]);
+			break;
+		case 134: // Thing_Projectile
+			buttonSuccess = EV_ThingProjectile(args, 0);
+			break;
+		case 135: // Thing_Spawn
+			buttonSuccess = EV_ThingSpawn(args, 1);
+			break;
+		case 136: // Thing_ProjectileGravity
+			buttonSuccess = EV_ThingProjectile(args, 1);
+			break;
+		case 137: // Thing_SpawnNoFog
+			buttonSuccess = EV_ThingSpawn(args, 0);
+			break;
+		case 138: // Floor_Waggle
+			buttonSuccess = EV_StartFloorWaggle(args[0], args[1],
+				args[2], args[3], args[4]);
+			break;
+		case 140: // Sector_SoundChange
+			buttonSuccess = EV_SectorSoundChange(args);
+			break;
+
+		// Line specials only processed during level initialization
+		// 100: Scroll_Texture_Left
+		// 101: Scroll_Texture_Right
+		// 102: Scroll_Texture_Up
+		// 103: Scroll_Texture_Down
+		// 121: Line_SetIdentification
+*/
+
+	case 196:	// Ceiling Crush and Raise
+		buttonSuccess = EV_DoCeiling(line, args, CLEV_CRUSHANDRAISE);
+		break;
+	case 197:	// Ceiling_CrushAndRaiseSilentA
+		buttonSuccess = EV_DoCeiling(line, args, CLEV_CRUSHRAISEANDSTAYSILA);
+		break;
+	case 206:	// Plat_DownWaitUpStayLip
+		buttonSuccess = EV_DoPlat(line, args, PLAT_DOWNWAITUPSTAY);
+		break;
+	case 207:	// Plat_PerpetualRaiseLip
+		buttonSuccess = EV_DoPlat(line, args, PLAT_PERPETUALRAISE);
+		break;
+	case 217:	// Stairs_BuildUpDoom
+		buttonSuccess = EV_BuildStairs(line, args);
+		break;
+	case 226:	// ACS_ExecuteAlways
+		buttonSuccess = StartACS(args[0], args[1], &args[2], mo, line, side);
+		break;
+	case 228:	// Plat_RaiseAndStayTx0
+		buttonSuccess =
+			EV_DoFloor(line, args, FLEV_RAISEFLOORTONEARESTCHANGE);
+		break;
+	case 230:	// Plat_UpByValueStayTx
+		buttonSuccess = EV_DoFloor(line, args, FLEV_RAISEFLOORBYVALUECHANGE2);
+		break;
+	case 232:	// Light_StrobeDoom
+		buttonSuccess = EV_StartLightStrobing(line, args);
+		break;
+	case 233:	// Light_MinNeighbor
+		buttonSuccess = EV_TurnTagLightsOff(line, args);
+		break;
+	case 234:	// Light_MaxNeighbor
+		buttonSuccess = EV_TagLightTurnOn(line, args);
+		break;
+	case 238:	// Floor Raise to Highest
+		buttonSuccess = EV_DoFloor(line, args, FLEV_RAISEFLOOR);
+		break;
+	case 239:	// Floor_RaiseByValueTxTy
+		buttonSuccess = EV_DoFloor(line, args, FLEV_RAISEFLOORBYVALUECHANGE);
+		break;
+	case 240:	// Floor_RaiseByTexture
+		buttonSuccess = EV_DoFloor(line, args, FLEV_RAISETOTEXTURE);
+		break;
+	case 241:	// Floor_LowerToLowestTxTy
+		buttonSuccess = EV_DoFloor(line, args, FLEV_LOWERTOLOWESTCHANGE);
+		break;
+	case 242:	// Floor_LowerToHighest
+		buttonSuccess = EV_DoFloor(line, args, FLEV_LOWERTOHIGHEST);
+		break;
+	case 243:	// Exit_Normal
+		buttonSuccess = 1;
+		G_ExitLevel();
+		break;
+	case 244:	// Exit_Secret
+		buttonSuccess = 1;
+		G_SecretExitLevel();
+		break;
+	case 249:	// Door_CloseWaitOpen
+		buttonSuccess = EV_DoDoor(line, args, DREV_CLOSEWAITOPEN);
+		break;
+	case 250:	// Floor_Donut
+		buttonSuccess = EV_DoDonut(line, args);
+		break;
+	case 251:	// FloorAndCeiling_LowerRaise
+	case 201:	//FIXME
+		buttonSuccess = EV_DoCeiling(line, args, CLEV_RAISETOHIGHEST);
+		buttonSuccess |= EV_DoFloor(line, args, FLEV_LOWERFLOORTOLOWEST);
+		break;
+	case 254:	// Ceiling_LowerToFloor
+		buttonSuccess = EV_DoCeiling(line, args, CLEV_LOWERTOFLOOR);
+		break;
+
+		// Inert Line specials
+	default:
+		break;
+	}
+	return buttonSuccess;
+}
 
 //==========================================================================
 //
@@ -67,60 +638,60 @@ void P_SpawnSpecials(boolean spawn_thinkers)
 			if (!sector->special)
 				continue;
 
+			if (sector->special & SECRET_MASK)
+			{
+				// SECRET SECTOR
+				level->totalsecret++;
+			}
 			switch (sector->special)
 			{
-			case 1:
+			case 64 + 1:
 				// FLICKERING LIGHTS
 				P_SpawnLightFlash(sector);
 				break;
 
-			case 2:
+			case 64 + 2:
 				// STROBE FAST
-				P_SpawnStrobeFlash(sector, FASTDARK, 0);
+				P_SpawnStrobeFlash(sector, FASTDARK, STROBEBRIGHT, 0);
 				break;
 
-			case 3:
+			case 64 + 3:
 				// STROBE SLOW
-				P_SpawnStrobeFlash(sector, SLOWDARK, 0);
+				P_SpawnStrobeFlash(sector, SLOWDARK, STROBEBRIGHT, 0);
 				break;
 
-			case 4:
+			case 64 + 4:
 				// STROBE FAST/DEATH SLIME
-				P_SpawnStrobeFlash(sector, FASTDARK, 0);
+				P_SpawnStrobeFlash(sector, FASTDARK, STROBEBRIGHT, 0);
 				sector->special = 4;
 				break;
 
-			case 8:
+			case 64 + 8:
 				// GLOWING LIGHT
 				P_SpawnGlowingLight(sector);
 				break;
 
-			case 9:
-				// SECRET SECTOR
-				level->totalsecret++;
-				break;
-
-			case 10:
+			case 64 + 10:
 				// DOOR CLOSE IN 30 SECONDS
 				P_SpawnDoorCloseIn30(sector);
 				break;
 
-			case 12:
+			case 64 + 12:
 				// SYNC STROBE SLOW
-				P_SpawnStrobeFlash(sector, SLOWDARK, 1);
+				P_SpawnStrobeFlash(sector, SLOWDARK, STROBEBRIGHT, 1);
 				break;
 
-			case 13:
+			case 64 + 13:
 				// SYNC STROBE FAST
-				P_SpawnStrobeFlash(sector, FASTDARK, 1);
+				P_SpawnStrobeFlash(sector, FASTDARK, STROBEBRIGHT, 1);
 				break;
 
-			case 14:
+			case 64 + 14:
 				// DOOR RAISE IN 5 MINUTES
-				P_SpawnDoorRaiseIn5Mins(sector, i);
+				P_SpawnDoorRaiseIn5Mins(sector);
 				break;
 
-			case 17:
+			case 64 + 17:
 				P_SpawnFireFlicker(sector);
 				break;
 			}
@@ -133,876 +704,13 @@ void P_SpawnSpecials(boolean spawn_thinkers)
 	{
 		switch (level->lines[i].special)
 		{
-		case 48:
+		case 100:
 			// EFFECT FIRSTCOL SCROLL+
 			linespeciallist[numlinespecials] = &level->lines[i];
 			numlinespecials++;
 			break;
-
-		case 182:
-			SetLineTransluc(&level->lines[i], 33);
-			break;
 		}
 	}
-
-	P_ClearActiveCeilings();
-	P_ClearActivePlats();
-}
-
-//==========================================================================
-//
-//  P_CrossSpecialLine - TRIGGER
-//
-//  Called every time a thing origin is about to cross a line with a non 0
-// special.
-//
-//==========================================================================
-
-void P_CrossSpecialLine(line_t * line, int side, mobj_t * thing)
-{
-	//  Triggers that other things can activate
-	if (!thing->player)
-	{
-		// Things that should NOT trigger specials...
-		if (!CanActivateCross(thing))
-		{
-			return;
-		}
-
-		switch (line->special)
-		{
-		case 39:	// TELEPORT TRIGGER
-		case 97:	// TELEPORT RETRIGGER
-		case 125:	// TELEPORT MONSTERONLY TRIGGER
-		case 126:	// TELEPORT MONSTERONLY RETRIGGER
-		case 10:	// PLAT DOWN-WAIT-UP-STAY TRIGGER
-		case 88:	// PLAT DOWN-WAIT-UP-STAY RETRIGGER
-		case 4:	// RAISE DOOR
-			break;
-		default:
-			return;
-		}
-	}
-
-	// Note: could use some const's here.
-	switch (line->special)
-	{
-// TRIGGERS.
-// All from here to RETRIGGERS.
-	case 2:
-		// Open Door
-		EV_DoDoor(line, open);
-		line->special = 0;
-		break;
-
-	case 3:
-		// Close Door
-		EV_DoDoor(line, close);
-		line->special = 0;
-		break;
-
-	case 4:
-		// Raise Door
-		EV_DoDoor(line, door_normal);
-		line->special = 0;
-		break;
-
-	case 5:
-		// Raise Floor
-		EV_DoFloor(line, raiseFloor);
-		line->special = 0;
-		break;
-
-	case 6:
-		// Fast Ceiling Crush & Raise
-		EV_DoCeiling(line, fastCrushAndRaise);
-		line->special = 0;
-		break;
-
-	case 8:
-		// Build Stairs
-		EV_BuildStairs(line, build8);
-		line->special = 0;
-		break;
-
-	case 10:
-		// PlatDownWaitUp
-		EV_DoPlat(line, downWaitUpStay, 0);
-		line->special = 0;
-		break;
-
-	case 12:
-		// Light Turn On - brightest near
-		EV_LightTurnOn(line, 0);
-		line->special = 0;
-		break;
-
-	case 13:
-		// Light Turn On 255
-		EV_LightTurnOn(line, 255);
-		line->special = 0;
-		break;
-
-	case 16:
-		// Close Door 30
-		EV_DoDoor(line, close30ThenOpen);
-		line->special = 0;
-		break;
-
-	case 17:
-		// Start Light Strobing
-		EV_StartLightStrobing(line);
-		line->special = 0;
-		break;
-
-	case 19:
-		// Lower Floor
-		EV_DoFloor(line, lowerFloor);
-		line->special = 0;
-		break;
-
-	case 22:
-		// Raise floor to nearest height and change texture
-		EV_DoPlat(line, raiseToNearestAndChange, 0);
-		line->special = 0;
-		break;
-
-	case 25:
-		// Ceiling Crush and Raise
-		EV_DoCeiling(line, crushAndRaise);
-		line->special = 0;
-		break;
-
-	case 30:
-		// Raise floor to shortest texture height
-		//  on either side of lines.
-		EV_DoFloor(line, raiseToTexture);
-		line->special = 0;
-		break;
-
-	case 35:
-		// Lights Very Dark
-		EV_LightTurnOn(line, 35);
-		line->special = 0;
-		break;
-
-	case 36:
-		// Lower Floor (TURBO)
-		EV_DoFloor(line, turboLower);
-		line->special = 0;
-		break;
-
-	case 37:
-		// LowerAndChange
-		EV_DoFloor(line, lowerAndChange);
-		line->special = 0;
-		break;
-
-	case 38:
-		// Lower Floor To Lowest
-		EV_DoFloor(line, lowerFloorToLowest);
-		line->special = 0;
-		break;
-
-	case 39:
-		// TELEPORT!
-		EV_Teleport(line, side, thing);
-		line->special = 0;
-		break;
-
-	case 40:
-		// RaiseCeilingLowerFloor
-		EV_DoCeiling(line, raiseToHighest);
-		EV_DoFloor(line, lowerFloorToLowest);
-		line->special = 0;
-		break;
-
-	case 44:
-		// Ceiling Crush
-		EV_DoCeiling(line, lowerAndCrush);
-		line->special = 0;
-		break;
-
-	case 52:
-		// EXIT!
-		G_ExitLevel();
-		break;
-
-	case 53:
-		// Perpetual Platform Raise
-		EV_DoPlat(line, perpetualRaise, 0);
-		line->special = 0;
-		break;
-
-	case 54:
-		// Platform Stop
-		EV_StopPlat(line);
-		line->special = 0;
-		break;
-
-	case 56:
-		// Raise Floor Crush
-		EV_DoFloor(line, raiseFloorCrush);
-		line->special = 0;
-		break;
-
-	case 57:
-		// Ceiling Crush Stop
-		EV_CeilingCrushStop(line);
-		line->special = 0;
-		break;
-
-	case 58:
-		// Raise Floor 24
-		EV_DoFloor(line, raiseFloor24);
-		line->special = 0;
-		break;
-
-	case 59:
-		// Raise Floor 24 And Change
-		EV_DoFloor(line, raiseFloor24AndChange);
-		line->special = 0;
-		break;
-
-	case 100:
-		// Build Stairs Turbo 16
-		EV_BuildStairs(line, turbo16);
-		line->special = 0;
-		break;
-
-	case 104:
-		// Turn lights off in sector(tag)
-		EV_TurnTagLightsOff(line);
-		line->special = 0;
-		break;
-
-	case 108:
-		// Blazing Door Raise (faster than TURBO!)
-		EV_DoDoor(line, blazeRaise);
-		line->special = 0;
-		break;
-
-	case 109:
-		// Blazing Door Open (faster than TURBO!)
-		EV_DoDoor(line, blazeOpen);
-		line->special = 0;
-		break;
-
-	case 110:
-		// Blazing Door Close (faster than TURBO!)
-		EV_DoDoor(line, blazeClose);
-		line->special = 0;
-		break;
-
-	case 119:
-		// Raise floor to nearest surr. floor
-		EV_DoFloor(line, raiseFloorToNearest);
-		line->special = 0;
-		break;
-
-	case 121:
-		// Blazing PlatDownWaitUpStay
-		EV_DoPlat(line, blazeDWUS, 0);
-		line->special = 0;
-		break;
-
-	case 124:
-		// Secret EXIT
-		G_SecretExitLevel();
-		break;
-
-	case 125:
-		// TELEPORT MonsterONLY
-		if (!thing->player)
-		{
-			EV_Teleport(line, side, thing);
-			line->special = 0;
-		}
-		break;
-
-	case 130:
-		// Raise Floor Turbo
-		EV_DoFloor(line, raiseFloorTurbo);
-		line->special = 0;
-		break;
-
-	case 141:
-		// Silent Ceiling Crush & Raise
-		EV_DoCeiling(line, silentCrushAndRaise);
-		line->special = 0;
-		break;
-
-// RETRIGGERS.  All from here till end.
-	case 72:
-		// Ceiling Crush
-		EV_DoCeiling(line, lowerAndCrush);
-		break;
-
-	case 73:
-		// Ceiling Crush and Raise
-		EV_DoCeiling(line, crushAndRaise);
-		break;
-
-	case 74:
-		// Ceiling Crush Stop
-		EV_CeilingCrushStop(line);
-		break;
-
-	case 75:
-		// Close Door
-		EV_DoDoor(line, close);
-		break;
-
-	case 76:
-		// Close Door 30
-		EV_DoDoor(line, close30ThenOpen);
-		break;
-
-	case 77:
-		// Fast Ceiling Crush & Raise
-		EV_DoCeiling(line, fastCrushAndRaise);
-		break;
-
-	case 79:
-		// Lights Very Dark
-		EV_LightTurnOn(line, 35);
-		break;
-
-	case 80:
-		// Light Turn On - brightest near
-		EV_LightTurnOn(line, 0);
-		break;
-
-	case 81:
-		// Light Turn On 255
-		EV_LightTurnOn(line, 255);
-		break;
-
-	case 82:
-		// Lower Floor To Lowest
-		EV_DoFloor(line, lowerFloorToLowest);
-		break;
-
-	case 83:
-		// Lower Floor
-		EV_DoFloor(line, lowerFloor);
-		break;
-
-	case 84:
-		// LowerAndChange
-		EV_DoFloor(line, lowerAndChange);
-		break;
-
-	case 86:
-		// Open Door
-		EV_DoDoor(line, open);
-		break;
-
-	case 87:
-		// Perpetual Platform Raise
-		EV_DoPlat(line, perpetualRaise, 0);
-		break;
-
-	case 88:
-		// PlatDownWaitUp
-		EV_DoPlat(line, downWaitUpStay, 0);
-		break;
-
-	case 89:
-		// Platform Stop
-		EV_StopPlat(line);
-		break;
-
-	case 90:
-		// Raise Door
-		EV_DoDoor(line, door_normal);
-		break;
-
-	case 91:
-		// Raise Floor
-		EV_DoFloor(line, raiseFloor);
-		break;
-
-	case 92:
-		// Raise Floor 24
-		EV_DoFloor(line, raiseFloor24);
-		break;
-
-	case 93:
-		// Raise Floor 24 And Change
-		EV_DoFloor(line, raiseFloor24AndChange);
-		break;
-
-	case 94:
-		// Raise Floor Crush
-		EV_DoFloor(line, raiseFloorCrush);
-		break;
-
-	case 95:
-		// Raise floor to nearest height
-		// and change texture.
-		EV_DoPlat(line, raiseToNearestAndChange, 0);
-		break;
-
-	case 96:
-		// Raise floor to shortest texture height
-		// on either side of lines.
-		EV_DoFloor(line, raiseToTexture);
-		break;
-
-	case 97:
-		// TELEPORT!
-		EV_Teleport(line, side, thing);
-		break;
-
-	case 98:
-		// Lower Floor (TURBO)
-		EV_DoFloor(line, turboLower);
-		break;
-
-	case 105:
-		// Blazing Door Raise (faster than TURBO!)
-		EV_DoDoor(line, blazeRaise);
-		break;
-
-	case 106:
-		// Blazing Door Open (faster than TURBO!)
-		EV_DoDoor(line, blazeOpen);
-		break;
-
-	case 107:
-		// Blazing Door Close (faster than TURBO!)
-		EV_DoDoor(line, blazeClose);
-		break;
-
-	case 120:
-		// Blazing PlatDownWaitUpStay.
-		EV_DoPlat(line, blazeDWUS, 0);
-		break;
-
-	case 126:
-		// TELEPORT MonsterONLY.
-		if (!thing->player)
-			EV_Teleport(line, side, thing);
-		break;
-
-	case 128:
-		// Raise To Nearest Floor
-		EV_DoFloor(line, raiseFloorToNearest);
-		break;
-
-	case 129:
-		// Raise Floor Turbo
-		EV_DoFloor(line, raiseFloorTurbo);
-		break;
-	}
-}
-
-//==========================================================================
-//
-//  P_ShootSpecialLine - IMPACT SPECIALS
-//
-//  Called when a thing shoots a special line.
-//
-//==========================================================================
-
-void P_ShootSpecialLine(mobj_t * thing, line_t * line)
-{
-	//  Impacts that other things can activate.
-	if (!thing->player)
-	{
-		switch (line->special)
-		{
-		case 46:	// OPEN DOOR IMPACT
-			break;
-		default:
-			return;
-		}
-	}
-
-	switch (line->special)
-	{
-	case 24:
-		// RAISE FLOOR
-		EV_DoFloor(line, raiseFloor);
-		P_ChangeSwitchTexture(line, 0);
-		break;
-
-	case 46:
-		// OPEN DOOR
-		EV_DoDoor(line, open);
-		P_ChangeSwitchTexture(line, 1);
-		break;
-
-	case 47:
-		// RAISE FLOOR NEAR AND CHANGE
-		EV_DoPlat(line, raiseToNearestAndChange, 0);
-		P_ChangeSwitchTexture(line, 0);
-		break;
-
-	case 182:
-		P_ChangeSwitchTexture(line, 0);
-		break;
-	}
-}
-
-//==========================================================================
-//
-//  P_UseSpecialLine
-//
-//  Called when a thing uses a special line. Only the front sides of lines
-// are usable.
-//
-//==========================================================================
-
-boolean P_UseSpecialLine(mobj_t * thing, line_t * line)
-{
-	// Switches that other things can activate.
-	if (!thing->player)
-	{
-		// never open secret doors
-		if (line->flags & ML_SECRET)
-			return false;
-
-		switch (line->special)
-		{
-		case 1:	// MANUAL DOOR RAISE
-		case 32:	// MANUAL BLUE
-		case 33:	// MANUAL RED
-		case 34:	// MANUAL YELLOW
-			break;
-
-		default:
-			return false;
-		}
-	}
-
-	// do something  
-	switch (line->special)
-	{
-		// MANUALS
-	case 1:	// Vertical Door
-	case 26:	// Blue Door/Locked
-	case 27:	// Yellow Door /Locked
-	case 28:	// Red Door /Locked
-
-	case 31:	// Manual door open
-	case 32:	// Blue locked door open
-	case 33:	// Red locked door open
-	case 34:	// Yellow locked door open
-
-	case 117:	// Blazing door raise
-	case 118:	// Blazing door open
-		EV_VerticalDoor(line, thing);
-		break;
-
-// SWITCHES
-	case 7:
-		// Build Stairs
-		if (EV_BuildStairs(line, build8))
-			P_ChangeSwitchTexture(line, 0);
-		break;
-
-	case 9:
-		// Change Donut
-		if (EV_DoDonut(line))
-			P_ChangeSwitchTexture(line, 0);
-		break;
-
-	case 11:
-		// Exit level
-		P_ChangeSwitchTexture(line, 0);
-		SectorStartSoundName(line->frontsector, "SwitchExit", CHAN_VOICE);
-		G_ExitLevel();
-		break;
-
-	case 14:
-		// Raise Floor 32 and change texture
-		if (EV_DoPlat(line, raiseAndChange, 32))
-			P_ChangeSwitchTexture(line, 0);
-		break;
-
-	case 15:
-		// Raise Floor 24 and change texture
-		if (EV_DoPlat(line, raiseAndChange, 24))
-			P_ChangeSwitchTexture(line, 0);
-		break;
-
-	case 18:
-		// Raise Floor to next highest floor
-		if (EV_DoFloor(line, raiseFloorToNearest))
-			P_ChangeSwitchTexture(line, 0);
-		break;
-
-	case 20:
-		// Raise Plat next highest floor and change texture
-		if (EV_DoPlat(line, raiseToNearestAndChange, 0))
-			P_ChangeSwitchTexture(line, 0);
-		break;
-
-	case 21:
-		// PlatDownWaitUpStay
-		if (EV_DoPlat(line, downWaitUpStay, 0))
-			P_ChangeSwitchTexture(line, 0);
-		break;
-
-	case 23:
-		// Lower Floor to Lowest
-		if (EV_DoFloor(line, lowerFloorToLowest))
-			P_ChangeSwitchTexture(line, 0);
-		break;
-
-	case 29:
-		// Raise Door
-		if (EV_DoDoor(line, door_normal))
-			P_ChangeSwitchTexture(line, 0);
-		break;
-
-	case 41:
-		// Lower Ceiling to Floor
-		if (EV_DoCeiling(line, lowerToFloor))
-			P_ChangeSwitchTexture(line, 0);
-		break;
-
-	case 49:
-		// Ceiling Crush And Raise
-		if (EV_DoCeiling(line, crushAndRaise))
-			P_ChangeSwitchTexture(line, 0);
-		break;
-
-	case 50:
-		// Close Door
-		if (EV_DoDoor(line, close))
-			P_ChangeSwitchTexture(line, 0);
-		break;
-
-	case 51:
-		// Secret EXIT
-		P_ChangeSwitchTexture(line, 0);
-		G_SecretExitLevel();
-		break;
-
-	case 55:
-		// Raise Floor Crush
-		if (EV_DoFloor(line, raiseFloorCrush))
-			P_ChangeSwitchTexture(line, 0);
-		break;
-
-	case 71:
-		// Turbo Lower Floor
-		if (EV_DoFloor(line, turboLower))
-			P_ChangeSwitchTexture(line, 0);
-		break;
-
-	case 101:
-		// Raise Floor
-		if (EV_DoFloor(line, raiseFloor))
-			P_ChangeSwitchTexture(line, 0);
-		break;
-
-	case 102:
-		// Lower Floor to Surrounding floor height
-		if (EV_DoFloor(line, lowerFloor))
-			P_ChangeSwitchTexture(line, 0);
-		break;
-
-	case 103:
-		// Open Door
-		if (EV_DoDoor(line, open))
-			P_ChangeSwitchTexture(line, 0);
-		break;
-
-	case 111:
-		// Blazing Door Raise (faster than TURBO!)
-		if (EV_DoDoor(line, blazeRaise))
-			P_ChangeSwitchTexture(line, 0);
-		break;
-
-	case 112:
-		// Blazing Door Open (faster than TURBO!)
-		if (EV_DoDoor(line, blazeOpen))
-			P_ChangeSwitchTexture(line, 0);
-		break;
-
-	case 113:
-		// Blazing Door Close (faster than TURBO!)
-		if (EV_DoDoor(line, blazeClose))
-			P_ChangeSwitchTexture(line, 0);
-		break;
-
-	case 122:
-		// Blazing PlatDownWaitUpStay
-		if (EV_DoPlat(line, blazeDWUS, 0))
-			P_ChangeSwitchTexture(line, 0);
-		break;
-
-	case 127:
-		// Build Stairs Turbo 16
-		if (EV_BuildStairs(line, turbo16))
-			P_ChangeSwitchTexture(line, 0);
-		break;
-
-	case 131:
-		// Raise Floor Turbo
-		if (EV_DoFloor(line, raiseFloorTurbo))
-			P_ChangeSwitchTexture(line, 0);
-		break;
-
-	case 133:
-		// BlzOpenDoor BLUE
-	case 135:
-		// BlzOpenDoor RED
-	case 137:
-		// BlzOpenDoor YELLOW
-		if (EV_DoLockedDoor(line, blazeOpen, thing))
-			P_ChangeSwitchTexture(line, 0);
-		break;
-
-	case 140:
-		// Raise Floor 512
-		if (EV_DoFloor(line, raiseFloor512))
-			P_ChangeSwitchTexture(line, 0);
-		break;
-
-// BUTTONS
-	case 42:
-		// Close Door
-		if (EV_DoDoor(line, close))
-			P_ChangeSwitchTexture(line, 1);
-		break;
-
-	case 43:
-		// Lower Ceiling to Floor
-		if (EV_DoCeiling(line, lowerToFloor))
-			P_ChangeSwitchTexture(line, 1);
-		break;
-
-	case 45:
-		// Lower Floor to Surrounding floor height
-		if (EV_DoFloor(line, lowerFloor))
-			P_ChangeSwitchTexture(line, 1);
-		break;
-
-	case 60:
-		// Lower Floor to Lowest
-		if (EV_DoFloor(line, lowerFloorToLowest))
-			P_ChangeSwitchTexture(line, 1);
-		break;
-
-	case 61:
-		// Open Door
-		if (EV_DoDoor(line, open))
-			P_ChangeSwitchTexture(line, 1);
-		break;
-
-	case 62:
-		// PlatDownWaitUpStay
-		if (EV_DoPlat(line, downWaitUpStay, 1))
-			P_ChangeSwitchTexture(line, 1);
-		break;
-
-	case 63:
-		// Raise Door
-		if (EV_DoDoor(line, door_normal))
-			P_ChangeSwitchTexture(line, 1);
-		break;
-
-	case 64:
-		// Raise Floor to ceiling
-		if (EV_DoFloor(line, raiseFloor))
-			P_ChangeSwitchTexture(line, 1);
-		break;
-
-	case 65:
-		// Raise Floor Crush
-		if (EV_DoFloor(line, raiseFloorCrush))
-			P_ChangeSwitchTexture(line, 1);
-		break;
-
-	case 66:
-		// Raise Floor 24 and change texture
-		if (EV_DoPlat(line, raiseAndChange, 24))
-			P_ChangeSwitchTexture(line, 1);
-		break;
-
-	case 67:
-		// Raise Floor 32 and change texture
-		if (EV_DoPlat(line, raiseAndChange, 32))
-			P_ChangeSwitchTexture(line, 1);
-		break;
-
-	case 68:
-		// Raise Plat to next highest floor and change texture
-		if (EV_DoPlat(line, raiseToNearestAndChange, 0))
-			P_ChangeSwitchTexture(line, 1);
-		break;
-
-	case 69:
-		// Raise Floor to next highest floor
-		if (EV_DoFloor(line, raiseFloorToNearest))
-			P_ChangeSwitchTexture(line, 1);
-		break;
-
-	case 70:
-		// Turbo Lower Floor
-		if (EV_DoFloor(line, turboLower))
-			P_ChangeSwitchTexture(line, 1);
-		break;
-
-	case 99:
-		// BlzOpenDoor BLUE
-	case 134:
-		// BlzOpenDoor RED
-	case 136:
-		// BlzOpenDoor YELLOW
-		if (EV_DoLockedDoor(line, blazeOpen, thing))
-			P_ChangeSwitchTexture(line, 1);
-		break;
-
-	case 114:
-		// Blazing Door Raise (faster than TURBO!)
-		if (EV_DoDoor(line, blazeRaise))
-			P_ChangeSwitchTexture(line, 1);
-		break;
-
-	case 115:
-		// Blazing Door Open (faster than TURBO!)
-		if (EV_DoDoor(line, blazeOpen))
-			P_ChangeSwitchTexture(line, 1);
-		break;
-
-	case 116:
-		// Blazing Door Close (faster than TURBO!)
-		if (EV_DoDoor(line, blazeClose))
-			P_ChangeSwitchTexture(line, 1);
-		break;
-
-	case 123:
-		// Blazing PlatDownWaitUpStay
-		if (EV_DoPlat(line, blazeDWUS, 0))
-			P_ChangeSwitchTexture(line, 1);
-		break;
-
-	case 132:
-		// Raise Floor Turbo
-		if (EV_DoFloor(line, raiseFloorTurbo))
-			P_ChangeSwitchTexture(line, 1);
-		break;
-
-	case 138:
-		// Light Turn On
-		if (EV_LightTurnOn(line, 255))
-			P_ChangeSwitchTexture(line, 1);
-		break;
-
-	case 139:
-		// Light Turn Off
-		if (EV_LightTurnOn(line, 35))
-			P_ChangeSwitchTexture(line, 1);
-		break;
-	}
-
-	return true;
 }
 
 //==========================================================================
@@ -1022,9 +730,10 @@ void P_UpdateSpecials(void)
 		line = linespeciallist[i];
 		switch (line->special)
 		{
-		case 48:
+		case 100:
 			// EFFECT FIRSTCOL SCROLL +
-			level->sides[line->sidenum[0]].textureoffset += 1.0;
+			level->sides[line->sidenum[0]].textureoffset +=
+				itof(line->arg1) / 64.0;
 			break;
 		}
 	}
@@ -1032,9 +741,112 @@ void P_UpdateSpecials(void)
 	P_RespawnSpecials();
 }
 
+//==========================================================================
+//
+//  CheckActivation
+//
+//==========================================================================
+
+boolean CheckActivation(int activationType, line_t * line, mobj_t * mo)
+{
+	int lineActivation;
+	boolean noway = true;
+
+	lineActivation = GET_SPAC(line->flags);
+	if (lineActivation != activationType &&
+		!(activationType == SPAC_MCROSS && lineActivation == SPAC_CROSS))
+	{
+		return false;
+	}
+	if (!mo->player && !(mo->flags & MF_MISSILE))
+	{
+		if ((activationType == SPAC_USE || activationType == SPAC_PUSH)
+			&& (line->flags & ML_SECRET))
+			return false;	// never open secret doors
+
+		switch (lineActivation)
+		{
+		case SPAC_IMPACT:
+		case SPAC_PCROSS:
+			// shouldn't really be here if not a missile
+		case SPAC_MCROSS:
+			noway = false;
+			break;
+
+		case SPAC_CROSS:
+			switch (line->special)
+			{
+			case 12:
+			case 70:
+/*			 case Teleport_NoFog:
+			 case Teleport_Line:
+			 case Plat_DownWaitUpStayLip:*/
+			case 62:
+				noway = false;
+			}
+			break;
+
+		case SPAC_USE:
+		case SPAC_PUSH:
+			switch (line->special)
+			{
+			case 12:
+				if (line->arg1 == 0)
+					noway = false;
+				break;
+/*			 case Teleport:
+			 case Teleport_NoFog:
+				noway = false;*/
+			}
+			break;
+		}
+		if (noway)
+			return false;
+	}
+	return true;
+}
+
+//============================================================================
+//
+//  P_ActivateLine
+//
+//============================================================================
+
+boolean P_ActivateLine(line_t * line, mobj_t * mo, int side,
+	int activationType)
+{
+	int lineActivation;
+	boolean repeat;
+	boolean buttonSuccess;
+
+	if (!CheckActivation(activationType, line, mo))
+	{
+		return false;
+	}
+
+	lineActivation = GET_SPAC(line->flags);
+	repeat = line->flags & ML_REPEAT_SPECIAL;
+	buttonSuccess = ExecuteLineSpecial(line->special, &line->arg1, line,
+		side, mo);
+	if (!repeat && buttonSuccess)
+	{
+		// clear the special on non-retriggerable lines
+		line->special = 0;
+	}
+	if ((lineActivation == SPAC_USE || lineActivation == SPAC_IMPACT)
+		&& buttonSuccess)
+	{
+		P_ChangeSwitchTexture(line, repeat);
+	}
+	return true;
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/09/25 17:12:09  dj_jl
+//  Switched to Hexen map format, special thinker classes
+//
 //  Revision 1.5  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //
