@@ -632,6 +632,7 @@ static TOperator	Eq_str_str(TOperator::ID_EQ, &type_int, &type_string, &type_str
 static TOperator	Eq_func_func(TOperator::ID_EQ, &type_int, &type_function, &type_function, OPC_EQ);
 static TOperator	Eq_ptr_ptr(TOperator::ID_EQ, &type_int, &type_void_ptr, &type_void_ptr, OPC_EQ);
 static TOperator	Eq_vec_vec(TOperator::ID_EQ, &type_int, &type_vector, &type_vector, OPC_VEQ);
+static TOperator	Eq_cid_cid(TOperator::ID_EQ, &type_int, &type_classid, &type_classid, OPC_EQ);
 
 static TOperator	Ne_int_int(TOperator::ID_NE, &type_int, &type_int, &type_int, OPC_NE);
 static TOperator	Ne_int_uint(TOperator::ID_NE, &type_int, &type_int, &type_uint, OPC_NE);
@@ -642,6 +643,7 @@ static TOperator	Ne_str_str(TOperator::ID_NE, &type_int, &type_string, &type_str
 static TOperator	Ne_func_func(TOperator::ID_NE, &type_int, &type_function, &type_function, OPC_NE);
 static TOperator	Ne_ptr_ptr(TOperator::ID_NE, &type_int, &type_void_ptr, &type_void_ptr, OPC_NE);
 static TOperator	Ne_vec_vec(TOperator::ID_NE, &type_int, &type_vector, &type_vector, OPC_VNE);
+static TOperator	Ne_cid_cid(TOperator::ID_NE, &type_int, &type_classid, &type_classid, OPC_NE);
 
 static TOperator	And_int_int(TOperator::ID_ANDBITWISE, &type_int, &type_int, &type_int, OPC_ANDBITWISE);
 static TOperator	And_int_uint(TOperator::ID_ANDBITWISE, &type_uint, &type_int, &type_uint, OPC_ANDBITWISE);
@@ -667,6 +669,7 @@ static TOperator	Assign_str_str(TOperator::ID_ASSIGN, &type_string, &type_string
 static TOperator	Assign_func_func(TOperator::ID_ASSIGN, &type_function, &type_function, &type_function, OPC_ASSIGN);
 static TOperator	Assign_ptr_ptr(TOperator::ID_ASSIGN, &type_void_ptr, &type_void_ptr, &type_void_ptr, OPC_ASSIGN);
 static TOperator	Assign_vec_vec(TOperator::ID_ASSIGN, &type_vector, &type_vector, &type_vector, OPC_VASSIGN);
+static TOperator	Assign_cid_cid(TOperator::ID_ASSIGN, &type_classid, &type_classid, &type_classid, OPC_ASSIGN);
 
 static TOperator	AddVar_int_int(TOperator::ID_ADDVAR, &type_int, &type_int, &type_int, OPC_ADDVAR);
 static TOperator	AddVar_int_uint(TOperator::ID_ADDVAR, &type_uint, &type_int, &type_uint, OPC_ADDVAR);
@@ -797,7 +800,7 @@ TOperator *FindOperator(TOperator::id_t opid, TType *type1, TType *type2)
 			return oper;
 		}
 	}
-	ParseError("Expression type mistmatch - can't find matching operator");
+	ParseError("Expression type mistmatch");
 	return &NullOp;
 }
 
@@ -1670,9 +1673,12 @@ TType *ParseExpression(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/10/22 17:29:58  dj_jl
+//	Operators for clasid type
+//
 //	Revision 1.7  2001/10/02 17:44:52  dj_jl
 //	Some optimizations
-//
+//	
 //	Revision 1.6  2001/09/25 17:03:50  dj_jl
 //	Added calling of parent functions
 //	
