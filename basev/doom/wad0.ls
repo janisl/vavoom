@@ -1,6 +1,3 @@
-../../progs/doom2/clprogs.dat
-../../progs/doom2/svprogs.dat
-
 animdefs.txt
 sfxinfo.txt
 sndinfo.txt
