@@ -54,7 +54,7 @@ enum EZoneTag
 
 // TYPES -------------------------------------------------------------------
 
-class ZoneError:public VavoomError
+class ZoneError : public VavoomError
 {
 public:
 	explicit ZoneError(const char *text) : VavoomError(text) { }
@@ -151,9 +151,12 @@ template<class T> T* Z_CNew(int elem_count, int tag, void** owner)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2003/03/08 12:08:05  dj_jl
+//	Beautification.
+//
 //	Revision 1.7  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.6  2001/12/12 19:28:49  dj_jl
 //	Some little changes, beautification
 //	

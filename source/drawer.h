@@ -75,7 +75,7 @@ struct model_t
 	void		*data;		// only access through Mod_Extradata
 };
 
-class VDrawer:public VSubsystem
+class VDrawer : public VSubsystem
 {
 	DECLARE_ABSTRACT_CLASS(VDrawer, VSubsystem, 0)
 	NO_DEFAULT_CONSTRUCTOR(VDrawer)
@@ -143,9 +143,12 @@ extern VDrawer			*Drawer;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2003/03/08 12:08:04  dj_jl
+//	Beautification.
+//
 //	Revision 1.15  2002/07/23 13:12:00  dj_jl
 //	Some compatibility fixes, beautification.
-//
+//	
 //	Revision 1.14  2002/07/15 17:51:09  dj_jl
 //	Made VSubsystem global.
 //	

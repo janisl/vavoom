@@ -59,7 +59,7 @@ struct sfxinfo_t
 //
 //	Sound device interface. This class implements dummy driver.
 //
-class VSoundDevice:public VSubsystem
+class VSoundDevice : public VSubsystem
 {
 	DECLARE_CLASS(VSoundDevice, VSubsystem, 0)
 	NO_DEFAULT_CONSTRUCTOR(VSoundDevice)
@@ -129,9 +129,12 @@ extern TCvarI		swap_stereo;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2003/03/08 12:08:04  dj_jl
+//	Beautification.
+//
 //	Revision 1.9  2002/07/27 18:10:11  dj_jl
 //	Implementing Strife conversations.
-//
+//	
 //	Revision 1.8  2002/07/23 13:12:00  dj_jl
 //	Some compatibility fixes, beautification.
 //	

@@ -147,7 +147,7 @@ typedef void (*particle_func_t)(particle_t *pparticle);
 
 typedef void (*picspanfunc_t)(fixed_t, fixed_t, fixed_t, int, byte*, void*);
 
-class VSoftwareDrawer:public VDrawer
+class VSoftwareDrawer : public VDrawer
 {
 	DECLARE_CLASS(VSoftwareDrawer, VDrawer, 0)
 	NO_DEFAULT_CONSTRUCTOR(VSoftwareDrawer)
@@ -647,9 +647,12 @@ inline byte GetColB(dword col)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2003/03/08 12:08:04  dj_jl
+//	Beautification.
+//
 //	Revision 1.22  2002/11/16 17:11:15  dj_jl
 //	Improving software driver class.
-//
+//	
 //	Revision 1.21  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
 //	

@@ -43,13 +43,13 @@ struct FPropertyInfo
 //
 //==========================================================================
 
-class VClass:public VObject
+class VClass : public VObject
 {
 	DECLARE_CLASS(VClass, VObject, 0)
 
 	VClass*		ParentClass;
 
-	size_t		ClassSize;
+	int			ClassSize;
 	dword		ClassFlags;
 	FFunction	**ClassVTable;
 	void (*ClassConstructor)(void*);
@@ -91,9 +91,12 @@ class VClass:public VObject
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2003/03/08 12:08:05  dj_jl
+//	Beautification.
+//
 //	Revision 1.7  2002/05/03 17:06:23  dj_jl
 //	Mangling of string pointers.
-//
+//	
 //	Revision 1.6  2002/03/09 18:05:34  dj_jl
 //	Added support for defining native functions outside pr_cmds
 //	

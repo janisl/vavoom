@@ -62,7 +62,7 @@ struct free_buf_t
 	double					free_time;
 };
 
-class VDefaultSoundDevice:public VSoundDevice
+class VDefaultSoundDevice : public VSoundDevice
 {
 	DECLARE_CLASS(VDefaultSoundDevice, VSoundDevice, 0)
 	NO_DEFAULT_CONSTRUCTOR(VDefaultSoundDevice)
@@ -1205,9 +1205,12 @@ bool VDefaultSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2003/03/08 12:08:04  dj_jl
+//	Beautification.
+//
 //	Revision 1.18  2002/07/27 18:10:11  dj_jl
 //	Implementing Strife conversations.
-//
+//	
 //	Revision 1.17  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
 //	

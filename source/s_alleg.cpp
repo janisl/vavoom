@@ -55,7 +55,7 @@ struct channel_t
 	int			voice;
 };
 
-class VDefaultSoundDevice:public VSoundDevice
+class VDefaultSoundDevice : public VSoundDevice
 {
 	DECLARE_CLASS(VDefaultSoundDevice, VSoundDevice, 0);
 	NO_DEFAULT_CONSTRUCTOR(VDefaultSoundDevice);
@@ -767,9 +767,12 @@ bool VDefaultSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2003/03/08 12:08:04  dj_jl
+//	Beautification.
+//
 //	Revision 1.12  2002/08/05 17:20:32  dj_jl
 //	Fixed voices.
-//
+//	
 //	Revision 1.11  2002/07/27 18:10:11  dj_jl
 //	Implementing Strife conversations.
 //	

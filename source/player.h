@@ -44,7 +44,7 @@ enum playerstate_t
     PST_REBORN		
 };
 
-class VViewEntity:public VObject
+class VViewEntity : public VObject
 {
 	DECLARE_CLASS(VViewEntity, VObject, 0)
 	NO_DEFAULT_CONSTRUCTOR(VViewEntity)
@@ -159,9 +159,12 @@ struct player_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2003/03/08 12:08:04  dj_jl
+//	Beautification.
+//
 //	Revision 1.15  2002/08/28 16:41:09  dj_jl
 //	Merged VMapObject with VEntity, some natives.
-//
+//	
 //	Revision 1.14  2002/06/29 16:00:45  dj_jl
 //	Added total frags count.
 //	

@@ -43,7 +43,7 @@ char *P_TranslateMap(int map);
 
 // TYPES -------------------------------------------------------------------
 
-class EndGame:public VavoomError
+class EndGame : public VavoomError
 {
 public:
 	explicit EndGame(const char *txt) : VavoomError(txt) { }
@@ -612,9 +612,12 @@ void Host_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2003/03/08 12:08:04  dj_jl
+//	Beautification.
+//
 //	Revision 1.25  2002/08/28 16:42:04  dj_jl
 //	Configurable entity limit.
-//
+//	
 //	Revision 1.24  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
 //	

@@ -67,7 +67,7 @@
 //
 //	FIXME Make a file for this.
 //
-class VSubsystem:public VObject
+class VSubsystem : public VObject
 {
 	DECLARE_ABSTRACT_CLASS(VSubsystem, VObject, CLASS_Transient)
 	NO_DEFAULT_CONSTRUCTOR(VSubsystem)
@@ -106,9 +106,12 @@ class VSubsystem:public VObject
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2003/03/08 12:08:04  dj_jl
+//	Beautification.
+//
 //	Revision 1.23  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.22  2002/07/15 17:51:09  dj_jl
 //	Made VSubsystem global.
 //	

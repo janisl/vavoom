@@ -44,7 +44,7 @@
 
 // TYPES -------------------------------------------------------------------
 
-class TGLVisGUI:public TGLVis
+class TGLVisGUI : public TGLVis
 {
  public:
 	void DisplayMessage(const char *text, ...)
@@ -248,9 +248,12 @@ COMMAND(glVIS)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2003/03/08 12:08:04  dj_jl
+//	Beautification.
+//
 //	Revision 1.6  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.5  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

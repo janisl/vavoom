@@ -162,7 +162,7 @@ public:
 	}
 };
 
-class VDirect3DDrawer:public VDrawer
+class VDirect3DDrawer : public VDrawer
 {
 	DECLARE_CLASS(VDirect3DDrawer, VDrawer, 0)
 
@@ -444,9 +444,12 @@ private:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2003/03/08 12:08:04  dj_jl
+//	Beautification.
+//
 //	Revision 1.22  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
-//
+//	
 //	Revision 1.21  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
 //	

@@ -30,7 +30,7 @@ enum EWinType
 	WIN_Root
 };
 
-class VWindow:public VObject
+class VWindow : public VObject
 {
 	DECLARE_CLASS(VWindow, VObject, 0)
 
@@ -257,9 +257,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2003/03/08 12:08:05  dj_jl
+//	Beautification.
+//
 //	Revision 1.3  2002/07/27 18:12:14  dj_jl
 //	Added Selectability flag.
-//
+//	
 //	Revision 1.2  2002/06/14 15:39:22  dj_jl
 //	Some fixes for Borland.
 //	

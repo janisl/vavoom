@@ -700,7 +700,7 @@ void* W_CacheLumpName(const char* name,int tag)
 //
 //==========================================================================
 
-class FArchiveLumpReader:public FArchive
+class FArchiveLumpReader : public FArchive
 {
 public:
 	FArchiveLumpReader(byte* InData, int InSize, int InTag)
@@ -858,6 +858,9 @@ void W_Profile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2003/03/08 12:08:05  dj_jl
+//  Beautification.
+//
 //  Revision 1.11  2002/07/23 16:29:56  dj_jl
 //  Replaced console streams with output device class.
 //

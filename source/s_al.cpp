@@ -52,7 +52,7 @@ struct FALChannel
 	ALuint		source;
 };
 
-class VOpenALDevice:public VSoundDevice
+class VOpenALDevice : public VSoundDevice
 {
 	DECLARE_CLASS(VOpenALDevice, VSoundDevice, 0)
 	NO_DEFAULT_CONSTRUCTOR(VOpenALDevice)
@@ -832,9 +832,12 @@ bool VOpenALDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2003/03/08 12:08:04  dj_jl
+//	Beautification.
+//
 //	Revision 1.4  2002/08/08 18:05:20  dj_jl
 //	Release fixes.
-//
+//	
 //	Revision 1.3  2002/07/27 18:10:11  dj_jl
 //	Implementing Strife conversations.
 //	

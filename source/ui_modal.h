@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class VModalWindow:public VWindow
+class VModalWindow : public VWindow
 {
 	DECLARE_CLASS(VModalWindow, VWindow, 0)
 
@@ -33,7 +33,10 @@ class VModalWindow:public VWindow
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2003/03/08 12:08:05  dj_jl
+//	Beautification.
+//
 //	Revision 1.1  2002/06/14 15:45:57  dj_jl
 //	Added modal window class.
-//
+//	
 //**************************************************************************

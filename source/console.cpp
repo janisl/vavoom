@@ -50,7 +50,7 @@ enum cons_state_t
     cons_closing
 };
 
-class FConsoleDevice:public FOutputDevice
+class FConsoleDevice : public FOutputDevice
 {
 public:
 	void Serialize(const char* V, EName Event);
@@ -795,9 +795,12 @@ void C_DrawCenterMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2003/03/08 12:08:03  dj_jl
+//	Beautification.
+//
 //	Revision 1.19  2002/07/27 18:11:46  dj_jl
 //	Scrolling by 5 lines.
-//
+//	
 //	Revision 1.18  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
 //	

@@ -573,7 +573,7 @@ void FL_ExtractFileExtension(const char *path, char *dest)
 //
 //==========================================================================
 
-class FArchiveFileReader:public FArchive
+class FArchiveFileReader : public FArchive
 {
 public:
 	FArchiveFileReader(FILE* InFile, FOutputDevice *InError) 
@@ -664,7 +664,7 @@ FArchive* FL_OpenFileRead(const char *Name)
 //
 //==========================================================================
 
-class FArchiveFileWriter:public FArchive
+class FArchiveFileWriter : public FArchive
 {
 public:
 	FArchiveFileWriter(FILE *InFile, FOutputDevice *InError) 
@@ -759,9 +759,12 @@ FArchive* FL_OpenFileWrite(const char *Name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2003/03/08 12:08:04  dj_jl
+//	Beautification.
+//
 //	Revision 1.14  2002/11/16 17:13:09  dj_jl
 //	Some compatibility changes.
-//
+//	
 //	Revision 1.13  2002/08/24 14:52:16  dj_jl
 //	Fixed screenshots.
 //	
