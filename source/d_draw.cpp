@@ -609,7 +609,7 @@ static void GeneratePicFromPatch(int handle)
 
 	    	while (count--)
 	    	{
-				*dest = *source ? *source : black_color;
+				*dest = *source ? *source : r_black_color[0];
 				source++;
 				dest += w;
 	    	}
@@ -632,7 +632,7 @@ static void GeneratePicFromRaw(int handle)
 	{
 		if (!picdata[handle][i])
 		{
-			picdata[handle][i] = black_color;
+			picdata[handle][i] = r_black_color[0];
 		}
 	}
 	picwidth[handle] = 320;
@@ -1213,9 +1213,12 @@ void TSoftwareDrawer::EndAutomap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/23 17:47:22  dj_jl
+//	Started work on pics with custom palettes
+//
 //	Revision 1.5  2001/08/15 17:15:55  dj_jl
 //	Drawer API changes, removed wipes
-//
+//	
 //	Revision 1.4  2001/08/01 17:33:58  dj_jl
 //	Fixed drawing of spite lump for player setup menu, beautification
 //	

@@ -36,11 +36,13 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define MAX_PICS	512
+#define MAX_PICS		512
+
+#define MAX_PALETTES	8
 
 //	Flag in texture number indicating that this texture is a flat. This
 // allows to use wall textures on floors / ceilings and flats on walls
-#define TEXF_FLAT	0x8000
+#define TEXF_FLAT		0x8000
 
 // TYPES -------------------------------------------------------------------
 
@@ -85,6 +87,7 @@ struct pic_info_t
 {
 	char	name[12];
 	int		type;
+	int		palnum;
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -140,6 +143,9 @@ extern dword			blocklightsr[18 * 18];
 extern dword			blocklightsg[18 * 18];
 extern dword			blocklightsb[18 * 18];
 
+extern rgba_t			r_palette[MAX_PALETTES][256];
+extern int				r_black_color[MAX_PALETTES];
+
 extern int				SkinWidth;
 extern int				SkinHeight;
 extern byte				*SkinData;
@@ -150,9 +156,12 @@ extern rgb_t			SkinPal[256];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/23 17:47:22  dj_jl
+//	Started work on pics with custom palettes
+//
 //	Revision 1.5  2001/08/21 17:46:08  dj_jl
 //	Added R_TextureAnimation, made SetTexture recognize flats
-//
+//	
 //	Revision 1.4  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
 //	

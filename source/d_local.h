@@ -332,8 +332,6 @@ extern int				bshift;
 
 extern int				bppindex;
 
-extern int				black_color;
-
 extern byte				*d_rgbtable;
 
 extern miptexture_t		*miptexture;
@@ -506,9 +504,12 @@ inline byte GetColB(dword col)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/08/23 17:47:22  dj_jl
+//	Started work on pics with custom palettes
+//
 //	Revision 1.8  2001/08/21 17:46:08  dj_jl
 //	Added R_TextureAnimation, made SetTexture recognize flats
-//
+//	
 //	Revision 1.7  2001/08/15 17:15:55  dj_jl
 //	Drawer API changes, removed wipes
 //	

@@ -142,6 +142,9 @@ byte*			translationtables;
 //
 pic_info_t		pic_list[MAX_PICS];
 
+rgba_t			r_palette[MAX_PALETTES][256];
+int				r_black_color[MAX_PALETTES];
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static animDef_t	AnimDefs[MAX_ANIM_DEFS];
@@ -780,6 +783,62 @@ void R_Init(void)
 
 //==========================================================================
 //
+//	R_SetupPalette
+//
+//==========================================================================
+
+void R_SetupPalette(int palnum, const char *name)
+{
+	byte *psrc = (byte*)W_CacheLumpName(name, PU_CACHE);
+	rgba_t *pal = r_palette[palnum];
+	//	We use color 0 as transparent color, so we must find an alternate
+	// index for black color. In Doom, Heretic and Strife there is another
+	// black color, in Hexen it's almost black.
+	//	I think that originaly Doom uses color 255 as transparent color, but
+	// utilites created by others uses the alternate black color and these
+	// graphics can contain pixels of color 255.
+	//	Heretic and Hexen also uses color 255 as transparent, even more - in
+	// colormaps it's maped to color 0. Posibly this can cause problems with
+	// modified graphics.
+	//	Strife uses color 0 as transparent. I already had problems with fact
+	// that color 255 is normal color, now there shouldn't be any problems.
+	int best_dist = 0x10000;
+	for (int i = 0; i < 256; i++)
+	{
+		pal[i].r = *psrc++;
+		pal[i].g = *psrc++;
+		pal[i].b = *psrc++;
+		if (i == 0)
+		{
+			pal[i].a = 0;
+		}
+		else
+		{
+			pal[i].a = 255;
+			int dist = pal[i].r * pal[i].r + pal[i].g * pal[i].g +
+				pal[i].b * pal[i].b;
+			if (dist < best_dist)
+			{
+				r_black_color[palnum] = i;
+				best_dist = dist;
+			}
+		}
+	}
+}
+
+//==========================================================================
+//
+//	R_InitData
+//
+//==========================================================================
+
+void R_InitData(void)
+{
+	R_SetupPalette(0, "PLAYPAL");
+}
+
+//==========================================================================
+//
 // 	R_PrecacheLevel
 //
 // 	Preloads all relevant graphics for the level.
@@ -861,9 +920,36 @@ int R_RegisterPic(const char *name, int type)
 	{
 		if (!pic_list[i].name[0])
 		{
-//			cond << "Registering pic " << i << " " << name << endl;
 			strcpy(pic_list[i].name, name);
 			pic_list[i].type = type;
+			pic_list[i].palnum = 0;
+			return i;
+		}
+		if (!stricmp(pic_list[i].name, name))
+		{
+			return i;
+		}
+	}
+	cond << "R_RegisterPic: No more free slots\n";
+	return -1;
+}
+
+//==========================================================================
+//
+//	R_RegisterPicPal
+//
+//==========================================================================
+
+int R_RegisterPicPal(const char *name, int type, const char *palname)
+{
+	for (int i = 0; i < MAX_PICS; i++)
+	{
+		if (!pic_list[i].name[0])
+		{
+			strcpy(pic_list[i].name, name);
+			pic_list[i].type = type;
+			pic_list[i].palnum = 1;
+			R_SetupPalette(1, palname);
 			return i;
 		}
 		if (!stricmp(pic_list[i].name, name))
@@ -964,9 +1050,12 @@ void R_DrawShadowedPic(int x, int y, int handle)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/08/23 17:47:22  dj_jl
+//	Started work on pics with custom palettes
+//
 //	Revision 1.6  2001/08/21 17:46:08  dj_jl
 //	Added R_TextureAnimation, made SetTexture recognize flats
-//
+//	
 //	Revision 1.5  2001/08/15 17:21:14  dj_jl
 //	Removed game dependency
 //	

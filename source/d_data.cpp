@@ -43,8 +43,6 @@ extern byte		gammatable[5][256];
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-int				black_color;
-
 //
 //	Colormaps
 //
@@ -276,31 +274,6 @@ void TSoftwareDrawer::SetPalette(int num)
 
 static void InitColormaps(void)
 {
-	int i;
-
-	//	We use color 0 as transparent color, so we must find an alternate
-	// index for black color. In Doom, Heretic and Strife there is another
-	// black color, in Hexen it's almost black.
-	//	I think that originaly Doom uses color 255 as transparent color, but
-	// utilites created by others uses the alternate black color and these
-	// graphics can contain pixels of color 255.
-	//	Heretic and Hexen also uses color 255 as transparent, even more - in
-	// colormaps it's maped to color 0. Posibly this can cause problems with
-	// modified graphics.
-	//	Strife uses color 0 as transparent. I already had problems with fact
-	// that color 255 is normal color, now there shouldn't be any problems.
-	rgb_t *pal = (rgb_t*)W_CacheLumpName("playpal", PU_CACHE);
-	int best_dist = 0x10000;
-	for (i = 1; i < 256; i++)
-	{
-		int dist = pal[i].r * pal[i].r + pal[i].g * pal[i].g + pal[i].b * pal[i].b;
-		if (dist < best_dist)
-		{
-			black_color = i;
-			best_dist = dist;
-		}
-	}
-
     // Load in the light tables,
     colormaps = (byte*)W_CacheLumpName("COLORMAP", PU_STATIC);
     fadetable = colormaps;
@@ -455,7 +428,7 @@ void TSoftwareDrawer::NewMap(void)
 		}
 		else if (!colormaps[i])
 		{
-			fadetable[i] = black_color;
+			fadetable[i] = r_black_color[0];
 		}
 	}
 
@@ -470,9 +443,12 @@ void TSoftwareDrawer::NewMap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/23 17:47:22  dj_jl
+//	Started work on pics with custom palettes
+//
 //	Revision 1.4  2001/08/15 17:27:17  dj_jl
 //	Truecolor translucency with lookup table
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

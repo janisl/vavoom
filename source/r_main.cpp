@@ -39,6 +39,8 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
+void R_InitData(void);
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -106,6 +108,7 @@ void R_Init(void)
 {
 	r_back2front = (Drawer != _SoftwareDrawer);
 	R_InitTexture();
+	R_InitData();
 	Drawer->InitTextures();
 	Drawer->InitData();
 	R_InitParticles();
@@ -570,9 +573,12 @@ COMMAND(TimeRefresh)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/08/23 17:47:22  dj_jl
+//	Started work on pics with custom palettes
+//
 //	Revision 1.7  2001/08/21 17:43:49  dj_jl
 //	Moved precache to r_main.cpp
-//
+//	
 //	Revision 1.6  2001/08/15 17:29:05  dj_jl
 //	Beautification
 //	

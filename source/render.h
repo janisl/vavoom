@@ -77,6 +77,7 @@ void R_ForceLightning(void);
 
 //	2D graphics
 int R_RegisterPic(const char *name, int type);
+int R_RegisterPicPal(const char *name, int type, const char*);
 void R_GetPicInfo(int handle, picinfo_t *info);
 void R_DrawPic(int x, int y, int handle, int trans = 0);
 void R_DrawShadowedPic(int x, int y, int handle);
@@ -92,9 +93,12 @@ extern int				skyflatnum;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/23 17:47:22  dj_jl
+//	Started work on pics with custom palettes
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

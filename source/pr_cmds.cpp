@@ -2004,6 +2004,24 @@ PF(R_RegisterPic)
 
 //==========================================================================
 //
+//	PF_R_RegisterPicPal
+//
+//==========================================================================
+
+PF(R_RegisterPicPal)
+{
+	int name;
+	int type;
+	int palname;
+
+	palname = Pop();
+	type = Pop();
+	name = Pop();
+	Push(R_RegisterPicPal(PROG_TO_STR(name), type, PROG_TO_STR(palname)));
+}
+
+//==========================================================================
+//
 //	PF_R_GetPicInfo
 //
 //==========================================================================
@@ -2776,6 +2794,7 @@ builtin_info_t BuiltinInfo[] =
 #ifdef CLIENT
 	//	Graphics
 	_(R_RegisterPic),
+	_(R_RegisterPicPal),
 	_(R_GetPicInfo),
 	_(R_DrawPic),
 	_(R_DrawPic2),
@@ -2890,9 +2909,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/08/23 17:47:22  dj_jl
+//	Started work on pics with custom palettes
+//
 //	Revision 1.6  2001/08/21 17:39:22  dj_jl
 //	Real string pointers in progs
-//
+//	
 //	Revision 1.5  2001/08/17 17:43:40  dj_jl
 //	LINUX fixes
 //	

@@ -214,7 +214,7 @@ static void DrawColumnInCache(column_t* column, byte* cache,
 
     	while (count-- > 0)
     	{
-			*dest = *source || dsky ? *source : black_color;
+			*dest = *source || dsky ? *source : r_black_color[0];
 			source++;
 			dest += cachewidth;
     	}
@@ -429,7 +429,7 @@ static void GenerateFlat(int num)
 		for (int i = 0; i < 64; i++)
 		{
 			byte pix = data[(j << 6) + i];
-			block[(j << 6) + i] = pix ? pix : black_color;
+			block[(j << 6) + i] = pix ? pix : r_black_color[0];
 		}
 	}
 
@@ -524,7 +524,7 @@ static void	GenerateSprite(int lump, int slot, dword light, int translation)
 			    byte* dest = ((byte*)block) + x + column->topdelta * w;
 		    	while (count--)
 	    		{
-					int itmp = trtab[*source ? *source : black_color];
+					int itmp = trtab[*source ? *source : r_black_color[0]];
 					*dest = d_rgbtable[(((word*)cmapr)[itmp]) |
 						(((word*)cmapg)[itmp]) | (((word*)cmapb)[itmp])];
 					source++;
@@ -536,7 +536,7 @@ static void	GenerateSprite(int lump, int slot, dword light, int translation)
 			    byte* dest = ((byte*)block) + x + column->topdelta * w;
 		    	while (count--)
 	    		{
-					*dest = ((byte*)cmap)[trtab[*source ? *source : black_color]];
+					*dest = ((byte*)cmap)[trtab[*source ? *source : r_black_color[0]]];
 					source++;
 					dest += w;
 		    	}
@@ -546,7 +546,7 @@ static void	GenerateSprite(int lump, int slot, dword light, int translation)
 			    word* dest = ((word*)block) + x + column->topdelta * w;
 		    	while (count--)
 	    		{
-					int itmp = trtab[*source ? *source : black_color];
+					int itmp = trtab[*source ? *source : r_black_color[0]];
 					*dest = (((word*)cmapr)[itmp]) |
 						(((word*)cmapg)[itmp]) | (((word*)cmapb)[itmp]);
 					if (!*dest) *dest = 1;
@@ -559,7 +559,7 @@ static void	GenerateSprite(int lump, int slot, dword light, int translation)
 			    word* dest = ((word*)block) + x + column->topdelta * w;
 		    	while (count--)
 	    		{
-					*dest = ((word*)cmap)[trtab[*source ? *source : black_color]];
+					*dest = ((word*)cmap)[trtab[*source ? *source : r_black_color[0]]];
 					source++;
 					dest += w;
 		    	}
@@ -569,7 +569,7 @@ static void	GenerateSprite(int lump, int slot, dword light, int translation)
 			    dword* dest = ((dword*)block) + x + column->topdelta * w;
 		    	while (count--)
 	    		{
-					int itmp = trtab[*source ? *source : black_color];
+					int itmp = trtab[*source ? *source : r_black_color[0]];
 					*dest = MakeCol32(((byte*)cmapr)[itmp],
 						((byte*)cmapg)[itmp], ((byte*)cmapb)[itmp]);
 					if (!*dest) *dest = 1;
@@ -582,7 +582,7 @@ static void	GenerateSprite(int lump, int slot, dword light, int translation)
 			    dword* dest = ((dword*)block) + x + column->topdelta * w;
 		    	while (count--)
 	    		{
-					*dest = ((dword*)cmap)[trtab[*source ? *source : black_color]];
+					*dest = ((dword*)cmap)[trtab[*source ? *source : r_black_color[0]]];
 					source++;
 					dest += w;
 		    	}
@@ -640,9 +640,12 @@ void SetSpriteLump(int lump, dword light, int translation)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/23 17:47:22  dj_jl
+//	Started work on pics with custom palettes
+//
 //	Revision 1.4  2001/08/21 17:46:08  dj_jl
 //	Added R_TextureAnimation, made SetTexture recognize flats
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	
