@@ -1100,12 +1100,52 @@ void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot, int transla
 	Drawer->DrawSpriteLump(x1, y1, x2, y2, lump, translation, flip);
 }
 
+//==========================================================================
+//
+//	R_DrawModelFrame
+//
+//==========================================================================
+
+void R_DrawModelFrame(const TVec &origin, angle_t angle, model_t *model,
+	int frame, const char *skin)
+{
+	viewangles.yaw = ANG180;
+	viewangles.pitch = 0;
+	viewangles.roll = 0;
+	AngleVectors(viewangles, viewforward, viewright, viewup);
+	vieworg = TVec(0, 0, 0);
+	fixedlight = 0;
+
+	refdef_t	rd;
+
+    rd.x = 0;
+	rd.y = 0;
+	rd.width = ScreenWidth;
+	rd.height = ScreenHeight;
+	rd.fovx = tan(DEG2RAD(90) / 2);
+	rd.fovy = rd.fovx * rd.height / rd.width / PixelAspect;
+	rd.drawworld = false;
+
+	Drawer->SetupView(&rd);
+
+	TAVec angles;
+	angles.yaw = angle;
+	angles.pitch = 0;
+	angles.roll = 0;
+	Drawer->DrawAliasModel(origin, angles, model, frame, skin, 0xffffffff, 0, false);
+
+	Drawer->EndView();
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/08/15 17:21:47  dj_jl
+//	Added model drawing for menu
+//
 //	Revision 1.6  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
-//
+//	
 //	Revision 1.5  2001/08/04 17:29:11  dj_jl
 //	Added depth hack for weapon models
 //	

@@ -2118,6 +2118,49 @@ PF(R_DrawSpritePatch)
 
 //==========================================================================
 //
+//	PF_InstallModel
+//
+//==========================================================================
+
+PF(InstallModel)
+{
+	int			name;
+
+	name = Pop();
+	if (FL_FindFile(PROG_TO_STR(name), NULL))
+	{
+		Push((int)Mod_FindName(PROG_TO_STR(name)));
+	}
+	else
+	{
+		Push(0);
+	}
+}
+
+//==========================================================================
+//
+//	PF_R_DrawModelFrame
+//
+//==========================================================================
+
+PF(R_DrawModelFrame)
+{
+	TVec		origin;
+	angle_t		angle;
+	model_t		*model;
+	int			frame;
+	int			skin;
+
+	skin = Pop();
+	frame = Pop();
+	model = (model_t*)Pop();
+	angle = Pop();
+	origin = Popv();
+	R_DrawModelFrame(origin, angle, model, frame, PROG_TO_STR(skin));
+}
+
+//==========================================================================
+//
 //	PF_R_FillRectWithFlat
 //
 //==========================================================================
@@ -2741,6 +2784,8 @@ builtin_info_t BuiltinInfo[] =
 	_(R_DrawShadowedPic),
 	_(R_InstallSprite),
 	_(R_DrawSpritePatch),
+	_(InstallModel),
+	_(R_DrawModelFrame),
 	_(R_FillRectWithFlat),
 	_(R_ShadeRect),
 
@@ -2847,9 +2892,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/15 17:21:47  dj_jl
+//	Added model drawing for menu
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
