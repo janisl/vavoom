@@ -357,11 +357,10 @@ int WINS_Read(int socket, byte *buf, int len, sockaddr_t *addr)
 	ret = recvfrom(socket, (char*)buf, len, 0, (sockaddr *)addr, &addrlen);
 	if (ret == -1)
 	{
-		int errno = WSAGetLastError();
+		int e = WSAGetLastError();
 
-		if (errno == WSAEWOULDBLOCK || errno == WSAECONNREFUSED)
+		if (e == WSAEWOULDBLOCK || e == WSAECONNREFUSED)
 			return 0;
-
 	}
 	return ret;
 }
@@ -620,9 +619,12 @@ int WINS_SetSocketPort(sockaddr_t *addr, int port)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/01/11 08:12:49  dj_jl
+//	Changes for MinGW
+//
 //	Revision 1.6  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.5  2001/12/18 19:05:03  dj_jl
 //	Made TCvar a pure C++ class
 //	

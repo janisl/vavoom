@@ -26,6 +26,8 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "WinLocal.h"
+#include <objbase.h>
+#include <mmsystem.h>
 #include "gamedefs.h"
 #include <signal.h>
 #include <fcntl.h>
@@ -305,8 +307,8 @@ double Sys_Time(void)
 
 	QueryPerformanceCounter(&PerformanceCount);
 
-	temp = ((unsigned int)PerformanceCount.LowPart >> lowshift) |
-		   ((unsigned int)PerformanceCount.HighPart << (32 - lowshift));
+	temp = ((unsigned int)PerformanceCount.u.LowPart >> lowshift) |
+		   ((unsigned int)PerformanceCount.u.HighPart << (32 - lowshift));
 
 	// check for turnover or backward time
 	if ((temp <= oldtime) && ((oldtime - temp) < 0x10000000))
@@ -363,8 +365,8 @@ static void Sys_InitTime(void)
 
 	// get 32 out of the 64 time bits such that we have around
 	// 1 microsecond resolution
-	lowpart = (dword)PerformanceFreq.LowPart;
-	highpart = (dword)PerformanceFreq.HighPart;
+	lowpart = (dword)PerformanceFreq.u.LowPart;
+	highpart = (dword)PerformanceFreq.u.HighPart;
 	lowshift = 0;
 
 	while (highpart || (lowpart > 2000000.0))
@@ -380,8 +382,8 @@ static void Sys_InitTime(void)
 	//	Read current time and set old time.
 	QueryPerformanceCounter(&PerformanceCount);
 
-	oldtime = ((dword)PerformanceCount.LowPart >> lowshift) |
-			  ((dword)PerformanceCount.HighPart << (32 - lowshift));
+	oldtime = ((dword)PerformanceCount.u.LowPart >> lowshift) |
+			  ((dword)PerformanceCount.u.HighPart << (32 - lowshift));
 
 	//	Set start time
 	j = M_CheckParm("-starttime");
@@ -840,9 +842,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/01/11 08:12:49  dj_jl
+//	Changes for MinGW
+//
 //	Revision 1.13  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.12  2002/01/03 18:38:25  dj_jl
 //	Added guard macros and core dumps
 //	
