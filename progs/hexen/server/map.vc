@@ -990,7 +990,7 @@ boolean PIT_RadiusAttack(MapObject Other)
 		// Out of range
 		return true;
 	}
-	if (P_CheckSight(Other, bombspot))
+	if (Actor(Other).CanSee(bombspot))
 	{
 		// OK to damage, target is in direct path
 		damage = (bombdamage * ftoi(bombdistance - dist) /
@@ -1105,6 +1105,9 @@ void PIT_ThrustSpike(Actor actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/07/13 08:01:49  dj_jl
+//  Moved some functions to the Entity class.
+//
 //  Revision 1.27  2002/03/28 18:15:35  dj_jl
 //  Renamed mo in player_t to MO.
 //

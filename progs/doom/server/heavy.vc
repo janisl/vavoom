@@ -75,7 +75,7 @@ void A_CPosRefire(void)
 	if (P_Random() < 40)
 		return;
 
-	if (!Enemy || Enemy.Health <= 0 || !P_CheckSight(self, Enemy))
+	if (!Enemy || Enemy.Health <= 0 || !CanSee(Enemy))
 	{
 		SetState(SeeState);
 	}
@@ -244,6 +244,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/07/13 08:01:48  dj_jl
+//  Moved some functions to the Entity class.
+//
 //  Revision 1.20  2002/06/29 15:54:34  dj_jl
 //  Floatized PainChance.
 //

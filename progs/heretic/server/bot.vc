@@ -280,7 +280,7 @@ void BotPlayer::SetEnemy(void)
 #endif
 
 	if (enemy && enemy.Health > 0 && player->MO &&
-		P_CheckSight(player->MO, enemy))
+		player->MO.CanSee(enemy))
 	{
 		return;
 	}
@@ -973,7 +973,7 @@ boolean BotPlayer::CheckPath(float ang, float dist)
 
 boolean BotPlayer::Check_LOS(Actor to, float vangle)
 {
-	if (!P_CheckSight(botmo, to))
+	if (!botmo.CanSee(to))
 		return false; // out of sight
 	if (vangle == 360.0)
 		return true;
@@ -1311,10 +1311,10 @@ Actor BotPlayer::FindEnemy(void)
 		if (players[i].bActive /*&& !mo->IsTeammate (players[i].mo)*/ &&
 			players[i].MO.Health > 0 && botmo != players[i].MO)
 		{
-			 //Here's a strange one, when bot is standing still, the P_CheckSight within Check_LOS almost always returns false. tought it should be the same checksight as below but.. (below works) something must be fuckin wierd screded up. 
+			 //Here's a strange one, when bot is standing still, the CanSee within Check_LOS almost always returns false. tought it should be the same checksight as below but.. (below works) something must be fuckin wierd screded up.
 			if (Check_LOS(players[i].MO, vangle))
 			{
-				if (P_CheckSight(botmo, players[i].MO))
+				if (botmo.CanSee(players[i].MO))
 				{
 					temp = MobjDist(players[i].MO, botmo);
 
@@ -2037,6 +2037,9 @@ void BotPlayer::OnSpawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/07/13 08:01:49  dj_jl
+//  Moved some functions to the Entity class.
+//
 //  Revision 1.16  2002/04/11 16:49:50  dj_jl
 //  Tick function.
 //

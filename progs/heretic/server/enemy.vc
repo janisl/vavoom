@@ -60,7 +60,7 @@ void Pawn::A_Look(void)
 
 		if (bAmbush)
 		{
-			if (!P_CheckSight(self, Enemy))
+			if (!CanSee(Enemy))
 			{
 				if (!LookForPlayers(false))
 					return;
@@ -196,7 +196,7 @@ void Pawn::A_Chase(void)
 	// possibly choose another target
 	if (netgame && !Threshold)
 	{
-		if (!P_CheckSight(self, Enemy))
+		if (!CanSee(Enemy))
 		{
 			if (LookForPlayers(true))
 				return;	// got a new target
@@ -499,6 +499,9 @@ void Pawn::A_BossDeath(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/07/13 08:01:49  dj_jl
+//  Moved some functions to the Entity class.
+//
 //  Revision 1.27  2002/06/22 07:16:00  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //

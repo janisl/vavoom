@@ -56,7 +56,7 @@ boolean Pawn::CheckMeleeRange(void)
 	{
 		return false;
 	}
-	if (!P_CheckSight(self, Enemy))
+	if (!CanSee(Enemy))
 	{
 		return false;
 	}
@@ -92,7 +92,7 @@ boolean Pawn::CheckMeleeRange2(void)
 	{
 		return false;
 	}
-	if (!P_CheckSight(self, Enemy))
+	if (!CanSee(Enemy))
 	{
 		return false;
 	}
@@ -119,7 +119,7 @@ boolean Pawn::CheckMissileRange(void)
 {
 	float dist;
 
-	if (!P_CheckSight(self, Enemy))
+	if (!CanSee(Enemy))
 	{
 		return false;
 	}
@@ -202,7 +202,7 @@ boolean Pawn::LookForMonsters(void)
 	int count;
 	Actor mo;
 
-	if (!P_CheckSight(players[0].MO, self))
+	if (!players[0].MO.CanSee(self))
 	{
 		// Player can't see monster
 		return false;
@@ -230,7 +230,7 @@ boolean Pawn::LookForMonsters(void)
 			// Stop searching
 			return false;
 		}
-		if (!P_CheckSight(self, mo))
+		if (!CanSee(mo))
 		{
 			// Out of sight
 			continue;
@@ -289,7 +289,7 @@ boolean Pawn::LookForPlayers(boolean allaround)
 			continue;	//  not spawned yet
 		if (P->Health <= 0)
 			continue;	// dead
-		if (!P_CheckSight(self, P->MO))
+		if (!CanSee(P->MO))
 			continue;	// out of sight
 
 		if (!allaround)
@@ -578,7 +578,7 @@ Actor Actor::RoughBlockCheck(int index)
 				{
 					continue;
 				}
-				if (P_CheckSight(self, link))
+				if (CanSee(link))
 				{
 					return link;
 				}
@@ -605,7 +605,7 @@ Actor Actor::RoughBlockCheck(int index)
 				{
 					continue;
 				}
-				if (P_CheckSight(self, link))
+				if (CanSee(link))
 				{
 					return link;
 				}
@@ -624,7 +624,7 @@ Actor Actor::RoughBlockCheck(int index)
 				{
 					continue;
 				}
-				else if (P_CheckSight(self, link))
+				else if (CanSee(link))
 				{
 					angle = AngleMod360(atan2(
 						link.Origin.y - Instigator.Origin.y,
@@ -654,7 +654,7 @@ Actor Actor::RoughBlockCheck(int index)
 				{
 					continue;
 				}
-				else if (P_CheckSight(self, link))
+				else if (CanSee(link))
 				{
 					return link;
 				}
@@ -790,6 +790,9 @@ Actor Actor::RoughMonsterSearch(int distance)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/07/13 08:01:49  dj_jl
+//  Moved some functions to the Entity class.
+//
 //  Revision 1.22  2002/06/22 07:16:01  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //

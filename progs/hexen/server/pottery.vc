@@ -62,8 +62,7 @@ void A_PotteryCheck(void)
 			continue;
 		}
 		pmo = players[i].MO;
-		if (P_CheckSight(self, pmo) &&
-			(fabs(AngleMod180(atan2(Origin.y - pmo.Origin.y,
+		if (CanSee(pmo) && (fabs(AngleMod180(atan2(Origin.y - pmo.Origin.y,
 			Origin.x - pmo.Origin.x) - pmo.Angles.yaw)) <= 45.0))
 		{
 			// Previous state (pottery bit waiting state)
@@ -221,6 +220,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/07/13 08:01:49  dj_jl
+//  Moved some functions to the Entity class.
+//
 //  Revision 1.21  2002/06/22 07:16:02  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //

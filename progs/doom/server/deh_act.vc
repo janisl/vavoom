@@ -701,7 +701,7 @@ void A_SpidRefire(void)
 	if (P_Random() < 10)
 		return;
 
-	if (!Enemy || Enemy.Health <= 0 || !P_CheckSight(self, Enemy))
+	if (!Enemy || Enemy.Health <= 0 || !CanSee(Enemy))
 	{
 		SetState(SeeState);
 	}
@@ -749,7 +749,7 @@ void A_CPosRefire(void)
 	if (P_Random() < 40)
 		return;
 
-	if (!Enemy || Enemy.Health <= 0 || !P_CheckSight(self, Enemy))
+	if (!Enemy || Enemy.Health <= 0 || !CanSee(Enemy))
 	{
 		SetState(SeeState);
 	}
@@ -1184,7 +1184,7 @@ void A_VileAttack(void)
 
 	A_FaceTarget();
 
-	if (!P_CheckSight(self, Enemy))
+	if (!CanSee(Enemy))
 		return;
 
 	PlaySound('BarrelExplode', CHAN_WEAPON);
@@ -1216,7 +1216,7 @@ void A_Fire(void)
 		return;
 
 	// don't move it if the vile lost sight
-	if (!P_CheckSight(Instigator, Enemy))
+	if (!Instigator.CanSee(Enemy))
 		return;
 
 	P_UnsetThingPosition(self);
@@ -1669,6 +1669,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/07/13 08:01:48  dj_jl
+//  Moved some functions to the Entity class.
+//
 //  Revision 1.4  2002/06/22 07:22:16  dj_jl
 //  Added default values to Actor.
 //

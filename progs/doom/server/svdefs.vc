@@ -861,7 +861,7 @@ class Weapon:ViewEntity
 	}
 	void A_WeaponKillSound(void)
 	{
-		StopSound(Player->MO, CHAN_WEAPON);
+		Player->MO.StopSound(CHAN_WEAPON);
 	}
 	FUNC(A_WeaponTransSet)
 	FUNC(A_WeaponTransFade)			// EXTRA
@@ -1212,6 +1212,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.36  2002/07/13 08:01:49  dj_jl
+//  Moved some functions to the Entity class.
+//
 //  Revision 1.35  2002/06/29 15:54:34  dj_jl
 //  Floatized PainChance.
 //

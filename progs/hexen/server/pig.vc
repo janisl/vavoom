@@ -79,18 +79,18 @@ int UpdateMorphedMonster(int tics)
 	oldArgs[3] = Args[3];
 	oldArgs[4] = Args[4];
 
-	P_UnsetThingPosition(self);
+	UnlinkFromWorld();
 	mo = Spawn(originalClass, oldOrigin);
 
 	if (!mo.TestLocation())
 	{
 		// Didn't fit
 		mo.Remove();
-		P_SetThingPosition(self);
+		LinkToWorld();
 		mo._Special1 = 5 * 35;	// Next try in 5 seconds
 		return false;
 	}
-	P_SetThingPosition(self);
+	LinkToWorld();
 	RemoveFromTIDList();
 	SetState(S_FREETARGMOBJ);
 	mo.Angles.yaw = oldAngle;
@@ -228,6 +228,9 @@ void Actor::A_PigPain(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/07/13 08:01:49  dj_jl
+//  Moved some functions to the Entity class.
+//
 //  Revision 1.26  2002/06/29 15:54:34  dj_jl
 //  Floatized PainChance.
 //

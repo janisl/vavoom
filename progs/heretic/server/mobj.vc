@@ -66,7 +66,7 @@ void Actor::SetOrigin2(TVec origin)
 
 	Origin = origin;
 	// Set subsector and/or block links.
-	P_SetThingPosition(self);
+	LinkToWorld();
 	if (origin.z == ONFLOORZ)
 	{
 		Origin.z = FloorZ;
@@ -185,7 +185,7 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 		{
 			Origin.z -= mthing->height;
 		}
-		P_SetThingPosition(self);
+		LinkToWorld();
 		TID = mthing->tid;
 		Special = mthing->special;
 		Args[0] = mthing->arg1;
@@ -1405,6 +1405,9 @@ void Actor::NightmareRespawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.45  2002/07/13 08:01:49  dj_jl
+//  Moved some functions to the Entity class.
+//
 //  Revision 1.44  2002/06/29 15:58:14  dj_jl
 //  Added total frags count.
 //

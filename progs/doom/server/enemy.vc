@@ -44,7 +44,7 @@ void Actor::A_Look(void)
 
 		if (bAmbush)
 		{
-			if (!P_CheckSight(self, Enemy))
+			if (!CanSee(Enemy))
 			{
 				if (!LookForPlayers(false))
 					return;
@@ -223,7 +223,7 @@ void Actor::A_Chase(void)
 	// possibly choose another target
 	if (netgame && !Threshold)
 	{
-		if (!P_CheckSight(self, Enemy))
+		if (!CanSee(Enemy))
 		{
 			if (LookForPlayers(true))
 				return;	// got a new target
@@ -441,6 +441,9 @@ void Actor::A_PlayerScream(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/07/13 08:01:48  dj_jl
+//  Moved some functions to the Entity class.
+//
 //  Revision 1.25  2002/06/14 15:51:20  dj_jl
 //  A lots of changes, new functions etc for DDF.
 //

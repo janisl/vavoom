@@ -313,7 +313,7 @@ void A_SerpentChase(void)
 	//
 	// possibly choose another enemy
 	//
-	if (netgame && !Threshold && !P_CheckSight(self, Enemy))
+	if (netgame && !Threshold && !CanSee(Enemy))
 	{
 		if (LookForPlayers(true))
 			return;	// got a new enemy
@@ -588,7 +588,7 @@ void A_SerpentWalk(void)
 	//
 	// possibly choose another target
 	//
-	if (netgame && !Threshold && !P_CheckSight(self, Enemy))
+	if (netgame && !Threshold && !CanSee(Enemy))
 	{
 		if (LookForPlayers(true))
 			return;	// got a new target
@@ -948,6 +948,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2002/07/13 08:01:50  dj_jl
+//  Moved some functions to the Entity class.
+//
 //  Revision 1.28  2002/06/29 15:54:34  dj_jl
 //  Floatized PainChance.
 //

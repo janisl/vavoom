@@ -65,7 +65,7 @@ void Actor::SetOrigin2(TVec origin)
 	Origin = origin;
 
 	// set subsector and/or block links
-	P_SetThingPosition(self);
+	LinkToWorld();
 
 	if (origin.z == ONFLOORZ)
 	{
@@ -183,7 +183,7 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 		{
 			Origin.z -= mthing->height;
 		}
-		P_SetThingPosition(self);
+		LinkToWorld();
 
 		TID = mthing->tid;
 		Special = mthing->special;
@@ -881,6 +881,9 @@ void P_NoiseAlert(Actor target, Actor emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.45  2002/07/13 08:01:48  dj_jl
+//  Moved some functions to the Entity class.
+//
 //  Revision 1.44  2002/06/29 15:54:34  dj_jl
 //  Floatized PainChance.
 //

@@ -847,7 +847,7 @@ boolean PIT_RadiusAttack(MapObject Other)
 	if (dist >= bombdamage)
 		return true;	// out of range
 
-	if (P_CheckSight(Other, bombspot))
+	if (Actor(Other).CanSee(bombspot))
 	{
 		// must be in direct path
 		Actor(Other).Damage(bombspot, bombsource, ftoi(bombdamage - dist));
@@ -893,6 +893,9 @@ void Actor::RadiusAttack(int damage, int distance, boolean damageSource)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/07/13 08:01:49  dj_jl
+//  Moved some functions to the Entity class.
+//
 //  Revision 1.27  2002/06/22 07:16:00  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //

@@ -60,7 +60,7 @@ boolean Actor::CheckMeleeRange(void)
 		return false;
 	}
 
-	if (!P_CheckSight(self, Enemy))
+	if (!CanSee(Enemy))
 	{
 		return false;
 	}
@@ -78,7 +78,7 @@ boolean Actor::CheckMissileRange(void)
 {
 	float dist;
 
-	if (!P_CheckSight(self, Enemy))
+	if (!CanSee(Enemy))
 	{
 		return false;
 	}
@@ -170,7 +170,7 @@ boolean Actor::LookForMonsters(boolean allaround)
 		if (!mo.bIsPlayer && !mo.bMonster)
 			continue;
 
-		if (!P_CheckSight(self, mo))
+		if (!CanSee(mo))
 			continue;	// out of sight
 
 		if (P_Random() > 128)
@@ -208,7 +208,7 @@ boolean Actor::LookForMonsters2(boolean allaround)
 	float an;
 	float dist;
 
-	if (!P_CheckSight(self, players[0].MO))
+	if (!players[0].MO.CanSee(self))
 	{
 		return false;	//  Not seen by player
 	}
@@ -224,7 +224,7 @@ boolean Actor::LookForMonsters2(boolean allaround)
 		if (!mo.bMonster)
 			continue;	// not a monster
 
-		if (!P_CheckSight(self, mo))
+		if (!CanSee(mo))
 			continue;	// out of sight
 
 		if (P_Random() > 128)
@@ -305,7 +305,7 @@ boolean Actor::LookForPlayers(boolean allaround)
 		if (P->Health <= 0)
 			continue;	// dead
 
-		if (!P_CheckSight(self, P->MO))
+		if (!CanSee(P->MO))
 			continue;	//  out of sight
 
 		if (!allaround)
@@ -556,6 +556,9 @@ void Actor::NewChaseDir(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/07/13 08:01:48  dj_jl
+//  Moved some functions to the Entity class.
+//
 //  Revision 1.22  2002/05/18 16:59:58  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

@@ -318,7 +318,7 @@ void Actor::P_ActComboAttack(void)
 
 	if (attack->bNeedSight)
 	{
-		if (!P_CheckSight(self, Enemy))
+		if (!CanSee(Enemy))
 			return;
 	}
 	CurrentAttack = attack;
@@ -348,7 +348,7 @@ void Actor::P_ActMeleeAttack(AttackType *custom_attack)
 
 	if (attack->bNeedSight)
 	{
-		if (!Enemy || !P_CheckSight(self, Enemy))
+		if (!Enemy || !CanSee(Enemy))
 			return;
 	}
 	CurrentAttack = attack;
@@ -378,7 +378,7 @@ void Actor::P_ActRangeAttack(AttackType *custom_attack)
 
 	if (attack->bNeedSight)
 	{
-		if (!Enemy || !P_CheckSight(self, Enemy))
+		if (!Enemy || !CanSee(Enemy))
 			return;
 	}
 	CurrentAttack = attack;
@@ -410,7 +410,7 @@ void Actor::P_ActSpareAttack(AttackType *custom_attack)
 
 	if (attack->bNeedSight && Enemy)
 	{
-		if (!P_CheckSight(self, Enemy))
+		if (!CanSee(Enemy))
 			return;
 	}
 
@@ -449,7 +449,7 @@ void Actor::P_ActRefireCheck(void)
 	if (Random() < attack->KeepFireChance)
 		return;
 
-	if (!Enemy || (Enemy.Health <= 0) || !P_CheckSight(self, Enemy))
+	if (!Enemy || (Enemy.Health <= 0) || !CanSee(Enemy))
 	{
 		if (SeeState)
 			SetState(SeeState);
@@ -483,7 +483,7 @@ void Actor::P_ActPlaySound(name sound)
 
 void Actor::P_ActKillSound(void)
 {
-	StopSound(self, CHAN_AUTO);
+	StopSound(CHAN_AUTO);
 }
 
 //==========================================================================
@@ -1057,7 +1057,7 @@ void Actor::P_ActEffectTracker(void)
 
 	if (CurrentAttack->bNeedSight)
 	{
-		if (!P_CheckSight(self, Enemy))
+		if (!CanSee(Enemy))
 			return;
 	}
 
@@ -1096,7 +1096,7 @@ void Actor::P_ActTrackerFollow(void)
 		return;
 
 	// don't move it if the vile lost sight
-	if (!P_CheckSight(Instigator, Enemy))
+	if (!Instigator.CanSee(Enemy))
 		return;
 
 	P_UnsetThingPosition(self);
@@ -1298,6 +1298,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/07/13 08:01:48  dj_jl
+//  Moved some functions to the Entity class.
+//
 //  Revision 1.4  2002/06/22 07:11:11  dj_jl
 //  Added FindClass.
 //

@@ -56,7 +56,7 @@ boolean Actor::CheckMeleeRange(void)
 	{
 		return false;
 	}
-	if (!P_CheckSight(self, Enemy))
+	if (!CanSee(Enemy))
 	{
 		return false;
 	}
@@ -73,7 +73,7 @@ boolean Actor::CheckMissileRange(void)
 {
 	float dist;
 
-	if (!P_CheckSight(self, Enemy))
+	if (!CanSee(Enemy))
 	{
 		return false;
 	}
@@ -145,8 +145,9 @@ boolean Actor::LookForMonsters(void)
 	int count;
 	Actor mo;
 
-	if (!P_CheckSight(players[0].MO, self))
-	{	// Player can't see monster
+	if (!players[0].MO.CanSee(self))
+	{
+		// Player can't see monster
 		return false;
 	}
 	count = 0;
@@ -172,7 +173,7 @@ boolean Actor::LookForMonsters(void)
 			// Stop searching
 			return (false);
 		}
-		if (!P_CheckSight(self, mo))
+		if (!CanSee(mo))
 		{
 			// Out of sight
 			continue;
@@ -224,7 +225,7 @@ boolean Actor::LookForPlayers(boolean allaround)
 			continue;	// not spawned yet
 		if (P->Health <= 0)
 			continue;	// dead
-		if (!P_CheckSight(self, P->MO))
+		if (!CanSee(P->MO))
 			continue;	// out of sight
 
 		if (!allaround)
@@ -472,6 +473,9 @@ void Actor::NewChaseDir(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/07/13 08:01:49  dj_jl
+//  Moved some functions to the Entity class.
+//
 //  Revision 1.25  2002/04/11 16:52:14  dj_jl
 //  Made TryMove native.
 //

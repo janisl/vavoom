@@ -175,7 +175,7 @@ void A_FastChase(void)
 	//
 	// possibly choose another enemy
 	//
-	if (netgame && !Threshold && !P_CheckSight(self, Enemy))
+	if (netgame && !Threshold && !CanSee(Enemy))
 	{
 		if (LookForPlayers(true))
 			return;	// got a new enemy
@@ -477,6 +477,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/07/13 08:01:49  dj_jl
+//  Moved some functions to the Entity class.
+//
 //  Revision 1.24  2002/06/29 15:54:34  dj_jl
 //  Floatized PainChance.
 //

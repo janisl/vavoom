@@ -820,7 +820,7 @@ boolean PIT_RadiusAttack(MapObject Other)
 	if (dist >= bombdamage)
 		return true;	// out of range
 
-	if (P_CheckSight(Other, bombspot))
+	if (Actor(Other).CanSee(bombspot))
 	{
 		// must be in direct path
 		Actor(Other).Damage(bombspot, bombsource, ftoi(bombdamage - dist));
@@ -896,7 +896,7 @@ boolean PIT_VileCheck(MapObject Other)
 		fabs(Other.Origin.y - viletryy) > maxdist)
 		return true;	// not actually touching
 
-	if (!P_CheckSight(vileobj, Other))
+	if (!vileobj.CanSee(Actor(Other)))
 		return true;	//  Con't see, possibly in other region
 
 	CorpseHit = Actor(Other);
@@ -915,6 +915,9 @@ boolean PIT_VileCheck(MapObject Other)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2002/07/13 08:01:48  dj_jl
+//  Moved some functions to the Entity class.
+//
 //  Revision 1.29  2002/06/14 15:51:20  dj_jl
 //  A lots of changes, new functions etc for DDF.
 //

@@ -46,14 +46,14 @@ void A_Fire(void)
 		return;
 
 	// don't move it if the vile lost sight
-	if (!P_CheckSight(Instigator, Enemy))
+	if (!Instigator.CanSee(Enemy))
 		return;
 
-	P_UnsetThingPosition(self);
+	UnlinkFromWorld();
 	Origin.x = Enemy.Origin.x + 24.0 * cos(Enemy.Angles.yaw);
 	Origin.y = Enemy.Origin.y + 24.0 * sin(Enemy.Angles.yaw);
 	Origin.z = Enemy.Origin.z;
-	P_SetThingPosition(self);
+	LinkToWorld();
 }
 
 //==========================================================================
@@ -263,7 +263,7 @@ void A_VileAttack(void)
 
 	A_FaceTarget();
 
-	if (!P_CheckSight(self, Enemy))
+	if (!CanSee(Enemy))
 		return;
 
 	PlaySound('BarrelExplode', CHAN_WEAPON);
@@ -353,6 +353,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/07/13 08:01:48  dj_jl
+//  Moved some functions to the Entity class.
+//
 //  Revision 1.27  2002/06/29 15:54:33  dj_jl
 //  Floatized PainChance.
 //

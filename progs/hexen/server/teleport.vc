@@ -121,11 +121,11 @@ boolean Actor::TeleportMove(TVec pos)
 
 	// the move is ok,
 	// so link the thing into its new position
-	P_UnsetThingPosition(self);
+	UnlinkFromWorld();
 
 	Origin = pos;
 
-	P_SetThingPosition(self);
+	LinkToWorld();
 
 	return true;
 }
@@ -371,6 +371,9 @@ boolean EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/07/13 08:01:50  dj_jl
+//  Moved some functions to the Entity class.
+//
 //  Revision 1.20  2002/03/16 17:47:47  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

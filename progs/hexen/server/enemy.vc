@@ -80,7 +80,7 @@ void Pawn::A_Look(void)
 
 		if (bAmbush)
 		{
-			if (!P_CheckSight(self, Enemy))
+			if (!CanSee(Enemy))
 			{
 				if (!LookForPlayers(false))
 					return;
@@ -216,7 +216,7 @@ void Pawn::A_Chase(void)
 	// possibly choose another target
 	if (netgame && !Threshold)
 	{
-		if (!P_CheckSight(self, Enemy))
+		if (!CanSee(Enemy))
 		{
 			if (LookForPlayers(true))
 				return;	// got a new target
@@ -321,7 +321,7 @@ void Actor::A_FreeTargMobj(void)
 
 void Actor::A_Scream(void)
 {
-	StopSound(self, CHAN_AUTO);
+	StopSound(CHAN_AUTO);
 	if (bIsPlayer)
 	{
 		if (Player->MorphTics)
@@ -790,6 +790,9 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2002/07/13 08:01:49  dj_jl
+//  Moved some functions to the Entity class.
+//
 //  Revision 1.28  2002/06/22 07:16:01  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //

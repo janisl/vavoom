@@ -88,16 +88,17 @@ boolean UpdateChicken(int tics)
 		return false;
 	}
 	moType = SpecialCID;
-	P_UnsetThingPosition(self);
+	UnlinkFromWorld();
 	A = Spawn(moType, Origin);
 	if (A.TestLocation() == false)
 	{
 		// Didn't fit
 		A.Remove();
-		P_SetThingPosition(self);
+		LinkToWorld();
 		Special1 = 5 * 35;	// Next try in 5 seconds
 		return false;
 	}
+	LinkToWorld();
 	A.Angles.yaw = Angles.yaw;
 	A.Enemy = Enemy;
 	fog = Spawn(TeleportFog, Origin + vector(0.0, 0.0, TELEFOGHEIGHT));
@@ -256,6 +257,9 @@ void Pawn::A_Feathers(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/07/13 08:01:49  dj_jl
+//  Moved some functions to the Entity class.
+//
 //  Revision 1.22  2002/06/22 07:16:00  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //

@@ -219,7 +219,7 @@ void PlayerPawn::MovePlayer(float deltaTime)
 				if (Velocity.z <= -39.0 * 35.0)
 				{
 					// stop falling scream
-					StopSound(self, CHAN_VOICE);
+					StopSound(CHAN_VOICE);
 				}
 			}
 		}
@@ -1006,7 +1006,7 @@ boolean PlayerPawn::UseArtifact(int arti)
 		if (Velocity.z <= -35.0 * 35.0)
 		{
 			// stop falling scream
-			StopSound(self, CHAN_VOICE);
+			StopSound(CHAN_VOICE);
 		}
 		break;
 	case arti_teleport:
@@ -1402,6 +1402,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.33  2002/07/13 08:01:49  dj_jl
+//  Moved some functions to the Entity class.
+//
 //  Revision 1.32  2002/04/11 16:49:50  dj_jl
 //  Tick function.
 //
