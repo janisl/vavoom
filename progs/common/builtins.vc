@@ -473,6 +473,8 @@ extern void SetCeilPic(sector_t * sec, int texture);
 extern void SetLineTransluc(line_t * line, int trans);
 extern void SendFloorSlope(sector_t * sector);
 extern void SendCeilingSlope(sector_t * sector);
+extern int FindModel(string name);
+extern int FindSkin(string name);
 
 extern void MSG_SelectClientMsg(int msgtype, player_t * client);
 
@@ -481,6 +483,9 @@ extern void MSG_SelectClientMsg(int msgtype, player_t * client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2001/12/04 18:39:51  dj_jl
+//  Model and skin handling on server
+//
 //  Revision 1.18  2001/12/01 18:10:10  dj_jl
 //  Started to use class references
 //
