@@ -219,7 +219,7 @@ native string Info_ValueForKey(string info, string key);
 //  Checks if WAD lump is present, used to check for shareware/extended WADs
 native boolean WadLumpPresent(string Name);
 
-native Object Spawn(classid cid, Object owner);
+native Object SpawnObject(classid cid, Object owner);
 
 //==========================================================================
 //
@@ -485,6 +485,10 @@ native void MSG_SelectClientMsg(int msgtype, player_t * client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.33  2002/03/02 17:29:54  dj_jl
+//  Renamed builtin Spawn to SpawnObject
+//  Added suport for Pad-Enter, some fixes.
+//
 //  Revision 1.32  2002/02/26 17:46:47  dj_jl
 //  Fixes for menus.
 //

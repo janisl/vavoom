@@ -205,7 +205,7 @@ class MenuScreen:MenuObject
 		{
 			FatalError("Too many menu items");
 		}
-		item = Spawn(type, self);
+		item = SpawnObject(type, self);
 		Items[NumItems++] = item;
 		item.Parent = self;
 		item.Init();
@@ -446,7 +446,7 @@ boolean InputLine_Key(TILine * iline, int ch)
 			strsetchar(ARR2STR(iline->Data), --iline->len, 0);
 		}
 	}
-	else if (ch != K_ENTER)
+	else if (ch != K_ENTER && ch != K_PADENTER)
 	{
 		return false; // did not eat key
 	}
@@ -475,7 +475,7 @@ void InputLine_SetValue(TILine * iline, string text)
 
 MenuScreen SpawnMenu(classid CID)
 {
-	MenuScreen S = Spawn(CID, none);
+	MenuScreen S = SpawnObject(CID, none);
 	S.Init();
 	return S;
 }
@@ -773,7 +773,8 @@ class MenuTextButton:MenuChoice
 
 	boolean Key(int key)
 	{
-		if (key == K_ENTER || key == K_MOUSE1 || key == K_JOY1)
+		if (key == K_ENTER || key == K_PADENTER ||
+			key == K_MOUSE1 || key == K_JOY1)
 		{
 			ActivateEvent();
 			LocalSound(ActivateSound);
@@ -916,6 +917,7 @@ class MenuChoiceEnum:MenuChoice
 			return true;
 		case K_RIGHTARROW:
 		case K_ENTER:
+		case K_PADENTER:
 		case K_MOUSE1:
 			if (Value < MaxValue - 1)
 				newValue = Value + 1;
@@ -1168,6 +1170,7 @@ class MenuSaveSlot:MenuChoice
 				break;
 
 			case K_ENTER:
+			case K_PADENTER:
 			case K_MOUSE1:
 				enteringText = false;
 				if (slot_enter_text.Data[0])
@@ -1190,7 +1193,8 @@ class MenuSaveSlot:MenuChoice
 			return true;
 		}
 
-		if (key == K_ENTER || key == K_MOUSE1 || key == K_JOY1)
+		if (key == K_ENTER || key == K_PADENTER ||
+			key == K_MOUSE1 || key == K_JOY1)
 		{
 			ActivateSlot();
 			return true;
@@ -1247,6 +1251,7 @@ class MenuInputLine:MenuChoice
 				break;
 
 			case K_ENTER:
+			case K_PADENTER:
 			case K_MOUSE1:
 				enteringText = false;
 				strcpy(ARR2STR(Value), ARR2STR(slot_enter_text.Data));
@@ -1264,7 +1269,8 @@ class MenuInputLine:MenuChoice
 			return true;
 		}
 
-		if (key == K_ENTER || key == K_MOUSE1 || key == K_JOY1)
+		if (key == K_ENTER || key == K_PADENTER ||
+			key == K_MOUSE1 || key == K_JOY1)
 		{
 			// we are going to be intercepting all chars
 			enteringText = true;
@@ -1412,6 +1418,7 @@ class MenuSList:MenuChoice
 			return true;
 
 		case K_ENTER:
+		case K_PADENTER:
 			if (slist->count)
 			{
 				LocalSound('MenuSelect');
@@ -1436,6 +1443,10 @@ class MenuSList:MenuChoice
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/03/02 17:29:55  dj_jl
+//  Renamed builtin Spawn to SpawnObject
+//  Added suport for Pad-Enter, some fixes.
+//
 //  Revision 1.19  2002/02/26 17:46:50  dj_jl
 //  Fixes for menus.
 //

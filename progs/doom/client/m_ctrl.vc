@@ -98,6 +98,7 @@ class MenuControlKey:MenuChoice
 			return true;
 
 		case K_ENTER:
+		case K_PADENTER:
 		case K_MOUSE1:
 			CurrentCtl = self;
 			MB_StartMessage("Press new key\n\nESC to cancel",
@@ -255,6 +256,10 @@ void menu_controls2(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/03/02 17:29:55  dj_jl
+//  Renamed builtin Spawn to SpawnObject
+//  Added suport for Pad-Enter, some fixes.
+//
 //  Revision 1.7  2002/02/06 17:22:16  dj_jl
 //  Some fixes for the menus.
 //
