@@ -1312,6 +1312,54 @@ void Thrust(float angle, float move)
 	Velocity.y += move * sin(angle) * 35.0;
 }
 
+//==========================================================================
+//
+//  FaceActor
+//
+//  Returns 1 if 'source' needs to turn clockwise, or 0 if 'source' needs
+// to turn counter clockwise.  'delta' is set to the amount 'source'
+// needs to turn.
+//
+//==========================================================================
+
+int FaceActor(Actor target, float *delta)
+{
+	float diff;
+	float angle1;
+	float angle2;
+
+	angle1 = Angles.yaw;
+	angle2 = atan2(target.Origin.y - Origin.y, target.Origin.x - Origin.x);
+	if (angle2 > angle1)
+	{
+		diff = AngleMod360(angle2 - angle1);
+		if (diff > 180.0)
+		{
+			*delta = 360.0 - diff;
+			return 0;
+		}
+		else
+		{
+			*delta = diff;
+			return 1;
+		}
+	}
+	else
+	{
+		diff = AngleMod360(angle1 - angle2);
+		if (diff > 180.0)
+		{
+			*delta = 360.0 - diff;
+			return 1;
+		}
+		else
+		{
+			*delta = diff;
+			return 0;
+		}
+	}
+}
+
 //**************************************************************************
 //
 //  OBJECT MOVEMENT
@@ -4171,6 +4219,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2003/10/22 06:42:04  dj_jl
+//  Added look at actor function
+//
 //  Revision 1.3  2003/07/11 16:47:38  dj_jl
 //  Made array of players with pointers
 //
