@@ -4,7 +4,7 @@ object LauncherForm: TLauncherForm
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Vavoom launcher'
-  ClientHeight = 298
+  ClientHeight = 314
   ClientWidth = 447
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -13,20 +13,21 @@ object LauncherForm: TLauncherForm
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
+  ShowHint = True
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
     Left = 24
-    Top = 224
+    Top = 240
     Width = 31
     Height = 13
     Caption = 'Game:'
   end
   object Label2: TLabel
     Left = 8
-    Top = 248
+    Top = 264
     Width = 47
     Height = 13
     Caption = 'Renderer:'
@@ -478,64 +479,79 @@ object LauncherForm: TLauncherForm
   end
   object Label5: TLabel
     Left = 160
-    Top = 224
+    Top = 248
     Width = 24
     Height = 13
     Caption = 'Files:'
   end
   object Label6: TLabel
     Left = 160
-    Top = 256
+    Top = 272
     Width = 66
     Height = 13
     Caption = 'Other options:'
   end
   object Label7: TLabel
     Left = 8
-    Top = 272
+    Top = 288
     Width = 30
     Height = 13
     Caption = 'Progs:'
   end
+  object Label8: TLabel
+    Left = 152
+    Top = 224
+    Width = 67
+    Height = 13
+    Caption = 'Custom game:'
+  end
   object RunButton: TButton
     Left = 376
-    Top = 224
+    Top = 248
     Width = 65
     Height = 25
+    Hint = 'Launch Vavoom'
     Caption = 'Run'
     TabOrder = 9
     OnClick = RunButtonClick
   end
   object Game: TComboBox
     Left = 56
-    Top = 224
+    Top = 240
     Width = 97
     Height = 21
+    Hint = 
+      'Select game to play, if custom game is used, this will be ignore' +
+      'd'
     Style = csDropDownList
     ItemHeight = 13
     TabOrder = 4
     Items.Strings = (
       '(Autodetect)'
       'Doom'
-      'Doom 2'
+      'Doom 2: Hell On Earth'
+      'Doom 2: TNT Evilution'
+      'Doom 2: The Plutonia Experiment'
       'Heretic'
       'Hexen'
       'Strife')
   end
   object ExitButton: TButton
     Left = 376
-    Top = 256
+    Top = 280
     Width = 65
     Height = 25
+    Hint = 'Exit launcher'
     Caption = 'Exit'
     TabOrder = 10
     OnClick = ExitButtonClick
   end
   object RendererBox: TComboBox
     Left = 56
-    Top = 248
+    Top = 264
     Width = 97
     Height = 21
+    Hint = 'Specifies the graphics device'
     Style = csDropDownList
     ItemHeight = 13
     TabOrder = 5
@@ -548,7 +564,7 @@ object LauncherForm: TLauncherForm
     Left = 8
     Top = 112
     Width = 129
-    Height = 105
+    Height = 121
     Caption = 'Sound'
     TabOrder = 0
     object CheckBoxNoSound: TCheckBox
@@ -556,6 +572,7 @@ object LauncherForm: TLauncherForm
       Top = 16
       Width = 105
       Height = 17
+      Hint = 'Disables all sound and music'
       Caption = 'Disable all sound'
       TabOrder = 0
     end
@@ -564,6 +581,7 @@ object LauncherForm: TLauncherForm
       Top = 32
       Width = 105
       Height = 17
+      Hint = 'Disables sound'
       Caption = 'No sounds'
       TabOrder = 1
     end
@@ -572,6 +590,7 @@ object LauncherForm: TLauncherForm
       Top = 48
       Width = 105
       Height = 17
+      Hint = 'Disables the usage of the 3D sound hardware'
       Caption = 'No 3D sound'
       TabOrder = 2
     end
@@ -580,6 +599,7 @@ object LauncherForm: TLauncherForm
       Top = 64
       Width = 105
       Height = 17
+      Hint = 'Disables MIDI music'
       Caption = 'No music'
       TabOrder = 3
     end
@@ -588,8 +608,18 @@ object LauncherForm: TLauncherForm
       Top = 80
       Width = 105
       Height = 17
+      Hint = 'Disables CD audio'
       Caption = 'No CD audio'
       TabOrder = 4
+    end
+    object CheckBoxUseOpenAL: TCheckBox
+      Left = 8
+      Top = 96
+      Width = 97
+      Height = 17
+      Hint = 'Uses OpenAL sound API'
+      Caption = 'Use OpenAL'
+      TabOrder = 5
     end
   end
   object GroupBox2: TGroupBox
@@ -604,6 +634,7 @@ object LauncherForm: TLauncherForm
       Top = 16
       Width = 97
       Height = 17
+      Hint = 'Disables mouse'
       Caption = 'Disable mouse'
       TabOrder = 0
     end
@@ -612,6 +643,7 @@ object LauncherForm: TLauncherForm
       Top = 32
       Width = 97
       Height = 17
+      Hint = 'Disables joystick'
       Caption = 'Disable joystick'
       TabOrder = 1
     end
@@ -642,7 +674,8 @@ object LauncherForm: TLauncherForm
       Top = 16
       Width = 129
       Height = 17
-      Caption = 'Disable LAN drivers'
+      Hint = 'Disables all LAN drivers, this includes TCP/IP and IPX'
+      Caption = 'Disable all LAN drivers'
       TabOrder = 0
     end
     object CheckBoxNoUDP: TCheckBox
@@ -650,6 +683,7 @@ object LauncherForm: TLauncherForm
       Top = 32
       Width = 129
       Height = 17
+      Hint = 'Disables TCP/IP driver'
       Caption = 'Disable TCP/IP driver'
       TabOrder = 1
     end
@@ -658,6 +692,7 @@ object LauncherForm: TLauncherForm
       Top = 48
       Width = 129
       Height = 17
+      Hint = 'Disables IPX driver'
       Caption = 'Disable IPX driver'
       TabOrder = 2
     end
@@ -666,6 +701,9 @@ object LauncherForm: TLauncherForm
       Top = 80
       Width = 97
       Height = 21
+      Hint = 
+        'Here you can specify your IP address in a case Vavoom doesn'#39't de' +
+        'tect a correct one'
       TabOrder = 3
     end
     object EditPort: TEdit
@@ -673,6 +711,7 @@ object LauncherForm: TLauncherForm
       Top = 80
       Width = 41
       Height = 21
+      Hint = 'Specify the port used for connection'
       TabOrder = 4
     end
   end
@@ -688,29 +727,52 @@ object LauncherForm: TLauncherForm
       Top = 16
       Width = 105
       Height = 17
+      Hint = 'Creates debug.txt in the basev directory'
       Caption = 'Create debug file'
       TabOrder = 0
     end
   end
   object EditFiles: TEdit
     Left = 184
-    Top = 224
+    Top = 248
     Width = 185
     Height = 21
+    Hint = 
+      'Additional files to use with Vavoom, path is relative to the Vav' +
+      'oom directory'
     TabOrder = 7
   end
   object EditMisc: TEdit
     Left = 160
-    Top = 272
+    Top = 288
     Width = 209
     Height = 21
+    Hint = 'Any other command line options'
     TabOrder = 8
   end
   object EditProgs: TEdit
     Left = 40
-    Top = 272
+    Top = 288
     Width = 113
     Height = 21
+    Hint = 'Directory with custom progs'
     TabOrder = 6
+  end
+  object EditGame: TEdit
+    Left = 224
+    Top = 224
+    Width = 97
+    Height = 21
+    Hint = 'Specifies a custom game'
+    TabOrder = 11
+  end
+  object CheckBoxDevGame: TCheckBox
+    Left = 328
+    Top = 224
+    Width = 113
+    Height = 17
+    Hint = 'Development mode of the custom game'
+    Caption = 'Development mode'
+    TabOrder = 12
   end
 end

@@ -60,6 +60,9 @@ void __fastcall TLauncherForm::FormCreate(TObject *Sender)
 		EditFiles->Text = Reg->ReadString("Files");
 		EditProgs->Text = Reg->ReadString("Progs");
 		EditMisc->Text = Reg->ReadString("Options");
+		CheckBoxUseOpenAL->Checked = Reg->ReadInteger("UseOpenAL");
+		EditGame->Text = Reg->ReadString("CustomGame");
+		CheckBoxDevGame->Checked = Reg->ReadInteger("DevGame");
 	}
 	catch (...)
 	{
@@ -79,6 +82,7 @@ void __fastcall TLauncherForm::FormDestroy(TObject *Sender)
 	Reg->WriteInteger("No3DSound", CheckBoxNo3DSound->Checked);
 	Reg->WriteInteger("NoMusic", CheckBoxNoMusic->Checked);
 	Reg->WriteInteger("NoCDAudio", CheckBoxNoCDAudio->Checked);
+	Reg->WriteInteger("UseOpenAL", CheckBoxUseOpenAL->Checked);
 	Reg->WriteInteger("NoLAN", CheckBoxNoLan->Checked);
 	Reg->WriteInteger("NoUDP", CheckBoxNoUDP->Checked);
 	Reg->WriteInteger("NoIPX", CheckBoxNoIPX->Checked);
@@ -87,6 +91,8 @@ void __fastcall TLauncherForm::FormDestroy(TObject *Sender)
 	Reg->WriteInteger("NoMouse", CheckBoxNoMouse->Checked);
 	Reg->WriteInteger("NoJoy", CheckBoxNoJoy->Checked);
 	Reg->WriteInteger("Debug", CheckBoxDebug->Checked);
+	Reg->WriteString("CustomGame", EditGame->Text);
+	Reg->WriteInteger("DevGame", CheckBoxDevGame->Checked);
 	Reg->WriteString("Files", EditFiles->Text);
 	Reg->WriteString("Progs", EditProgs->Text);
 	Reg->WriteString("Options", EditMisc->Text);
@@ -112,12 +118,18 @@ void __fastcall TLauncherForm::RunButtonClick(TObject *Sender)
 		CAT("-doom2");
 		break;
 	 case 3:
-		CAT("-heretic");
+		CAT("-tnt");
 		break;
 	 case 4:
-		CAT("-hexen");
+		CAT("-plutonia");
 		break;
 	 case 5:
+		CAT("-heretic");
+		break;
+	 case 6:
+		CAT("-hexen");
+		break;
+	 case 7:
 		CAT("-strife");
 		break;
 	}
@@ -136,6 +148,7 @@ void __fastcall TLauncherForm::RunButtonClick(TObject *Sender)
 	if (CheckBoxNo3DSound->Checked)	CAT("-no3dsound");
 	if (CheckBoxNoMusic->Checked)	CAT("-nomusic");
 	if (CheckBoxNoCDAudio->Checked)	CAT("-nocdaudio");
+	if (CheckBoxUseOpenAL->Checked)	CAT("-openal");
 	// Network
 	if (CheckBoxNoLan->Checked)		CAT("-nolan");
 	if (CheckBoxNoUDP->Checked)		CAT("-noudp");
@@ -165,6 +178,27 @@ void __fastcall TLauncherForm::RunButtonClick(TObject *Sender)
 	if (CheckBoxNoJoy->Checked)		CAT("-nojoy");
 	// Misc
 	if (CheckBoxDebug->Checked)		CAT("-debug");
+	len = EditGame->GetTextLen();
+	if (len)
+	{
+		len++;
+		if (CheckBoxDevGame->Checked)
+		{
+			char *buf = new char[len + 10];
+			strcpy(buf, " -devgame ");
+			EditGame->GetTextBuf(buf + 10, len);
+			strcat(CmdLine, buf);
+			delete buf;
+		}
+		else
+		{
+			char *buf = new char[len + 7];
+			strcpy(buf, " -game ");
+			EditGame->GetTextBuf(buf + 7, len);
+			strcat(CmdLine, buf);
+			delete buf;
+		}
+	}
 	len = EditFiles->GetTextLen();
 	if (len)
 	{
@@ -232,9 +266,12 @@ void __fastcall TLauncherForm::ExitButtonClick(TObject *Sender)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/08/05 17:24:54  dj_jl
+//	Updated with new stuff.
+//
 //	Revision 1.5  2002/01/07 12:31:36  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2001/10/18 17:42:53  dj_jl
 //	Fixed show window command
 //	

@@ -70,6 +70,10 @@ __published:	// IDE-managed Components
 	TEdit *EditMisc;
 	TLabel *Label7;
 	TEdit *EditProgs;
+	TCheckBox *CheckBoxUseOpenAL;
+	TLabel *Label8;
+	TEdit *EditGame;
+	TCheckBox *CheckBoxDevGame;
 	void __fastcall RunButtonClick(TObject *Sender);
 	void __fastcall ExitButtonClick(TObject *Sender);
 	void __fastcall FormCreate(TObject *Sender);
@@ -86,9 +90,12 @@ extern PACKAGE TLauncherForm *LauncherForm;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/08/05 17:24:54  dj_jl
+//	Updated with new stuff.
+//
 //	Revision 1.4  2002/01/07 12:31:36  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/09/24 17:30:40  dj_jl
 //	Beautification
 //	
