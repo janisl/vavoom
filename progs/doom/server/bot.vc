@@ -907,7 +907,7 @@ boolean PTR_BotPathTraverse(intercept_t *in)
 			}
 			else if (diffheight <= 48.0 && diffheight >= 24.0)
 			{
-				bot.player->buttons |= BT_JUMP;
+				botmo.player->buttons |= BT_JUMP;
 			}
 		}
 
@@ -2016,6 +2016,9 @@ void BotPlayer::OnSpawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2001/12/12 19:15:27  dj_jl
+//  Some little changes for state methods
+//
 //  Revision 1.1  2001/12/04 18:36:42  dj_jl
 //  Bots, directly from SkullTag!
 //

@@ -444,16 +444,17 @@ boolean PTR_AimTraverse(intercept_t * in)
 //
 //==========================================================================
 
-void AimLineAttack(mobj_t * t1, TAVec * angles, float distance)
+TVec AimLineAttack(mobj_t * t1, TAVec angles, float distance)
 {
 	float x2;
 	float y2;
 	float topangle;
 	float botangle;
+	TVec dir;
 
 	aim_thing = t1;
 
-	AngleVector(angles, &aim_dir);
+	AngleVector(&angles, &aim_dir);
 	x2 = t1->origin.x + distance * aim_dir.x;
 	y2 = t1->origin.y + distance * aim_dir.y;
 	aim_z = t1->origin.z + t1->height / 2.0 + 8.0 - t1->floorclip;
@@ -461,8 +462,8 @@ void AimLineAttack(mobj_t * t1, TAVec * angles, float distance)
 		Length(vector(distance * aim_dir.x, distance * aim_dir.y, 0.0));
 
 	// can't shoot outside view angles
-	topangle = AngleMod180(-angles->pitch + 30.0);
-	botangle = AngleMod180(-angles->pitch - 30.0);
+	topangle = AngleMod180(-angles.pitch + 30.0);
+	botangle = AngleMod180(-angles.pitch - 30.0);
 	if (topangle > 89.0)
 		topangle = 89.0;
 	if (botangle < -89.0)
@@ -478,8 +479,10 @@ void AimLineAttack(mobj_t * t1, TAVec * angles, float distance)
 
 	if (linetarget)
 	{
-		angles->pitch = -atan(aim_slope);
+		angles.pitch = -atan(aim_slope);
 	}
+	AngleVector(&angles, &dir);
+	return dir;
 }
 
 //===========================================================================
@@ -491,29 +494,31 @@ void AimLineAttack(mobj_t * t1, TAVec * angles, float distance)
 //
 //===========================================================================
 
-TAVec Aim(mobj_t * mo, float distance)
+TVec Aim(mobj_t * mo, float distance)
 {
 	TAVec an;
+	TVec dir;
 
 	// see which target is to be aimed at
 	an = mo->angles;
 
-	AimLineAttack(mo, &an, distance);
+	dir = AimLineAttack(mo, an, distance);
 	if (!linetarget)
 	{
 		an.yaw = AngleMod360(an.yaw + 45.0 / 8.0);
-		AimLineAttack(mo, &an, distance);
+		dir = AimLineAttack(mo, an, distance);
 		if (!linetarget)
 		{
 			an.yaw = AngleMod360(an.yaw - 45.0 / 4.0);
-			AimLineAttack(mo, &an, distance);
+			dir = AimLineAttack(mo, an, distance);
 			if (!linetarget)
 			{
 				an.yaw = AngleMod360(an.yaw + 45.0 / 8.0);
+				AngleVector(&an, &dir);
 			}
 		}
 	}
-	return an;
+	return dir;
 }
 
 //**************************************************************************
@@ -857,6 +862,9 @@ void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage, int distance,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2001/12/12 19:15:27  dj_jl
+//  Some little changes for state methods
+//
 //  Revision 1.9  2001/12/01 18:14:08  dj_jl
 //  Changed MSG_Select, beautification
 //

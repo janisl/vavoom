@@ -178,29 +178,12 @@ void P_SpawnPlayer(mthing_t * mthing)
 mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 {
 	mobj_t *th;
-	TAVec angles;
-	TVec vforward;
 	float x;
 	float y;
 	float z;
+	TVec dir;
 
-	// see which target is to be aimed at
-	angles = source->angles;
-	AimLineAttack(source, &angles, 16.0 * 64.0);
-	if (!linetarget)
-	{
-		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
-		AimLineAttack(source, &angles, 16.0 * 64.0);
-		if (!linetarget)
-		{
-			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
-			AimLineAttack(source, &angles, 16.0 * 64.0);
-			if (!linetarget)
-			{
-				angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
-			}
-		}
-	}
+	dir = Aim(source, 16.0 * 64.0);
 
 	x = source->origin.x;
 	y = source->origin.y;
@@ -212,9 +195,8 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 		StartSound(th, th->sound_sight, CHAN_VOICE);
 
 	th->target = source;
-	avcpy(angles, th->angles);
-	AngleVector(&angles, &vforward);
-	th->velocity = vforward * th->speed;
+	th->velocity = dir * th->speed;
+	VectorAngles(&dir, &th->angles);
 
 	CheckMissileSpawn(th);
 
@@ -224,6 +206,9 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2001/12/12 19:15:27  dj_jl
+//  Some little changes for state methods
+//
 //  Revision 1.9  2001/12/04 18:36:42  dj_jl
 //  Bots, directly from SkullTag!
 //

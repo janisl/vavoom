@@ -432,7 +432,7 @@ class Thinker:Object
 struct player_t;
 class Entity;
 
-typedef void (*mobj_func_t) (Entity *);
+typedef void (*state_func_t) (Object);
 typedef boolean(*thing_iter_func_t) (Entity *);
 
 struct state_t
@@ -446,7 +446,7 @@ struct state_t
 	int nextstate;
 	float misc1;
 	float misc2;
-	mobj_func_t function;
+	state_func_t function;
 };
 
 struct mobjinfo_t
@@ -524,7 +524,7 @@ class base_mobj_t:Thinker
 //
 //==========================================================================
 
-struct pspdef_t
+class ViewEntity:Object
 {
 	int sprite;
 	int frame;
@@ -536,6 +536,7 @@ struct pspdef_t
 	int statenum;	// a 0 state means not active
 	int nextstate;
 	float time;
+	player_t *player;
 };
 
 //
@@ -614,7 +615,7 @@ struct player_t
 	uint cshifts[NUM_CSHIFTS];
 
 	// Overlay view sprites (gun, etc).
-	pspdef_t psprites[NUMPSPRITES];
+	ViewEntity ViewEnts[NUMPSPRITES];
 	float pspriteSY;
 
 	// True if secret level has been done.
@@ -958,6 +959,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2001/12/12 19:15:27  dj_jl
+//  Some little changes for state methods
+//
 //  Revision 1.18  2001/12/01 18:10:10  dj_jl
 //  Started to use class references
 //

@@ -126,6 +126,26 @@ int PointOnPlaneSide(TVec point, TPlane * plane)
 
 //==========================================================================
 //
+//	RotateVector
+//
+//==========================================================================
+
+TVec RotateVector(TVec vec, TAVec rot)
+{
+	TVec v_forward;
+	TVec v_right;
+	TVec v_up;
+	TVec out;
+
+	AngleVectors(&rot, &v_forward, &v_right, &v_up);
+	out.x = DotProduct(vec, v_forward);
+	out.y = -DotProduct(vec, v_right);
+	out.z = DotProduct(vec, v_up);
+	return out;
+}
+
+//==========================================================================
+//
 //  VectorRotateAroundZ
 //
 //==========================================================================
@@ -386,6 +406,9 @@ void UnarchiveThinker(Thinker * th)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2001/12/12 19:15:27  dj_jl
+//  Some little changes for state methods
+//
 //  Revision 1.13  2001/12/01 18:10:10  dj_jl
 //  Started to use class references
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-void UpdateBeak(player_t * player, pspdef_t * psp);
+void UpdateBeak(player_t * player, ViewEntity e);
 void PostChickenWeapon(player_t * player, int weapon);
 void SetPsprite(player_t * player, int position, int stnum);
 
@@ -70,7 +70,7 @@ void ChickenPlayerThink(player_t * player)
 	if (player->health > 0)
 	{
 		// Handle beak movement
-		UpdateBeak(player, &player->psprites[ps_weapon]);
+		UpdateBeak(player, player->ViewEnts[ps_weapon]);
 	}
 	if (player->chickenTics & 15)
 	{
@@ -457,6 +457,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2001/12/12 19:15:27  dj_jl
+//  Some little changes for state methods
+//
 //  Revision 1.8  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //
