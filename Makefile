@@ -187,6 +187,10 @@ OBJ_FILES = $(SYS_OBJS) \
 	obj/sv_user.o \
 	obj/sv_world.o \
 	obj/text.o \
+	obj/ui_gc.o \
+	obj/ui_modal.o \
+	obj/ui_root.o \
+	obj/ui_win.o \
 	obj/vclass.o \
 	obj/vobject.o \
 	obj/wad.o \

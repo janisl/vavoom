@@ -37,6 +37,7 @@ OBJFILES = obj\chat.obj obj\cheats.obj \
     \
     obj\am_map.obj obj\menu.obj obj\sbar.obj obj\screen.obj obj\text.obj \
     obj\finale.obj obj\iline.obj obj\imission.obj obj\console.obj \
+    obj\ui_gc.obj obj\ui_modal.obj obj\ui_root.obj obj\ui_win.obj \
     \
     obj\r_bsp.obj obj\r_light.obj obj\r_main.obj obj\r_model.obj \
     obj\r_sky.obj obj\r_surf.obj obj\r_tex.obj obj\r_things.obj \
