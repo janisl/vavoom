@@ -4,6 +4,7 @@ scripts/sndinfo.txt
 scripts/sndseq.txt
 scripts/switches.txt
 scripts/terrains.txt
+scripts/skyboxes.txt
 
 $load palette.pcx
 
