@@ -153,12 +153,6 @@ void SV_LoadLevel(const char *MapName)
 	svpr.SetGlobal("GLevel", (int)GLevel);
 
 	GLevel->LoadMap(MapName);
-
-	if (!GLevel->bExtended)
-	{
-		//	Translate level to Hexen format
-		svpr.Exec("TranslateLevel");
-	}
 	unguard;
 }
 
@@ -343,6 +337,9 @@ void CalcSecMinMaxs(sector_t *sector)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2005/03/28 07:28:19  dj_jl
+//  Transfer lighting and other BOOM stuff.
+//
 //  Revision 1.25  2003/07/04 15:00:28  dj_jl
 //  Moving floors fix
 //

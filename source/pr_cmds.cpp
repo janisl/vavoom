@@ -989,6 +989,20 @@ PF(MSG_SelectClientMsg)
 
 //==========================================================================
 //
+//	PF_MSG_CheckSpace
+//
+//==========================================================================
+
+PF(MSG_CheckSpace)
+{
+	int		len;
+
+	len = Pop();
+	Push(pr_msg->CheckSpace(len));
+}
+
+//==========================================================================
+//
 //	PF_MSG_WriteByte
 //
 //==========================================================================
@@ -2214,6 +2228,44 @@ PF(SetSecLightColor)
 
 //==========================================================================
 //
+//	PF_SetFloorLightSector
+//
+//==========================================================================
+
+PF(SetFloorLightSector)
+{
+	sector_t	*Sector;
+	sector_t	*SrcSector;
+
+	SrcSector = (sector_t*)Pop();
+	Sector = (sector_t*)Pop();
+	Sector->floor.LightSourceSector = SrcSector - GLevel->Sectors;
+	sv_signon << (byte)svc_set_floor_light_sec
+			<< (word)(Sector - GLevel->Sectors)
+			<< (word)(SrcSector - GLevel->Sectors);
+}
+
+//==========================================================================
+//
+//	PF_SetCeilingLightSector
+//
+//==========================================================================
+
+PF(SetCeilingLightSector)
+{
+	sector_t	*Sector;
+	sector_t	*SrcSector;
+
+	SrcSector = (sector_t*)Pop();
+	Sector = (sector_t*)Pop();
+	Sector->ceiling.LightSourceSector = SrcSector - GLevel->Sectors;
+	sv_signon << (byte)svc_set_ceil_light_sec
+			<< (word)(Sector - GLevel->Sectors)
+			<< (word)(SrcSector - GLevel->Sectors);
+}
+
+//==========================================================================
+//
 //	PF_FindModel
 //
 //==========================================================================
@@ -2970,12 +3022,12 @@ builtin_info_t BuiltinInfo[] =
 
 	//	Cvar functions
 	_(CreateCvar),
-    _(GetCvar),
-    _(SetCvar),
-    _(GetCvarF),
-    _(SetCvarF),
-    _(GetCvarS),
-    _(SetCvarS),
+	_(GetCvar),
+	_(SetCvar),
+	_(GetCvarF),
+	_(SetCvarF),
+	_(GetCvarS),
+	_(SetCvarS),
 
 	//	Math functions
 	_(AngleMod360),
@@ -3009,8 +3061,8 @@ builtin_info_t BuiltinInfo[] =
 	_(atof),
 
 	//	Random numbers
-    _(Random),
-    _(P_Random),
+	_(Random),
+	_(P_Random),
 
 	//	Textures
 	_(CheckTextureNumForName),
@@ -3021,6 +3073,7 @@ builtin_info_t BuiltinInfo[] =
 
 	//	Message IO functions
 	_(MSG_Select),
+	_(MSG_CheckSpace),
 	_(MSG_WriteByte),
 	_(MSG_WriteShort),
 	_(MSG_WriteLong),
@@ -3036,7 +3089,7 @@ builtin_info_t BuiltinInfo[] =
 
 	_(itof),
 	_(ftoi),
-    _(Cmd_CheckParm),
+	_(Cmd_CheckParm),
 	_(CmdBuf_AddText),
 	_(Info_ValueForKey),
 	_(WadLumpPresent),
@@ -3101,7 +3154,7 @@ builtin_info_t BuiltinInfo[] =
 	//	Map utilites
 	_(LineOpenings),
 	_(P_BoxOnLineSide),
-    _(P_BlockThingsIterator),
+	_(P_BlockThingsIterator),
 	_(P_PathTraverse),
 	_(FindThingGap),
 	_(FindOpening),
@@ -3112,53 +3165,53 @@ builtin_info_t BuiltinInfo[] =
 	_(P_ChangeSector),
 
 	//	Mobj utilites
-    _(NewMobjThinker),
-    _(NextMobj),
+	_(NewMobjThinker),
+	_(NextMobj),
 
-    //	Special thinker utilites
-    _(NewSpecialThinker),
-    _(RemoveSpecialThinker),
-    _(P_ChangeSwitchTexture),
+	//	Special thinker utilites
+	_(NewSpecialThinker),
+	_(RemoveSpecialThinker),
+	_(P_ChangeSwitchTexture),
 	_(NextThinker),
 
-    //	Polyobj functions
-    _(SpawnPolyobj),
-    _(AddAnchorPoint),
+	//	Polyobj functions
+	_(SpawnPolyobj),
+	_(AddAnchorPoint),
 	_(GetPolyobj),
-    _(GetPolyobjMirror),
+	_(GetPolyobjMirror),
 	_(PO_MovePolyobj),
- 	_(PO_RotatePolyobj),
+	_(PO_RotatePolyobj),
 
 	//	ACS functions
 	_(StartACS),
-    _(SuspendACS),
-    _(TerminateACS),
-    _(TagFinished),
-    _(PolyobjFinished),
+	_(SuspendACS),
+	_(TerminateACS),
+	_(TagFinished),
+	_(PolyobjFinished),
 
 	//	Sound functions
 	_(StartSoundAtVolume),
-    _(SectorStartSound),
-    _(SectorStopSound),
-    _(GetSoundPlayingInfo),
-    _(GetSoundID),
-    _(SectorStartSequence),
-    _(SectorStopSequence),
-    _(PolyobjStartSequence),
-    _(PolyobjStopSequence),
+	_(SectorStartSound),
+	_(SectorStopSound),
+	_(GetSoundPlayingInfo),
+	_(GetSoundID),
+	_(SectorStartSequence),
+	_(SectorStopSequence),
+	_(PolyobjStartSequence),
+	_(PolyobjStopSequence),
 
-    //  Savegame archieve / unarchieve utilite functions
-    _(SectorToNum),
-    _(NumToSector),
+	//  Savegame archieve / unarchieve utilite functions
+	_(SectorToNum),
+	_(NumToSector),
 
-    _(G_ExitLevel),
-    _(G_SecretExitLevel),
-    _(G_Completed),
-    _(P_GetPlayerNum),
-    _(SB_Start),
-    _(ClearPlayer),
+	_(G_ExitLevel),
+	_(G_SecretExitLevel),
+	_(G_Completed),
+	_(P_GetPlayerNum),
+	_(SB_Start),
+	_(ClearPlayer),
 	_(TerrainType),
-    _(P_ForceLightning),
+	_(P_ForceLightning),
 	_(SetFloorPic),
 	_(SetCeilPic),
 	_(SetLineTexture),
@@ -3166,20 +3219,25 @@ builtin_info_t BuiltinInfo[] =
 	_(SendFloorSlope),
 	_(SendCeilingSlope),
 	_(SetSecLightColor),
+	_(SetFloorLightSector),
+	_(SetCeilingLightSector),
 	_(FindModel),
 	_(GetModelIndex),
 	_(FindSkin),
 	_(MSG_SelectClientMsg),
 #endif
-    {NULL, NULL, NULL}
+	{NULL, NULL, NULL}
 };
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.54  2005/03/28 07:28:19  dj_jl
+//	Transfer lighting and other BOOM stuff.
+//
 //	Revision 1.53  2005/03/16 15:04:44  dj_jl
 //	More work on line specials.
-//
+//	
 //	Revision 1.52  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
 //	

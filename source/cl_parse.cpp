@@ -989,6 +989,16 @@ void CL_ParseServerMessage(void)
 			S_MusicChanged();
 			break;
 
+		case svc_set_floor_light_sec:
+			i = (word)net_msg.ReadShort();
+			GClLevel->Sectors[i].floor.LightSourceSector = net_msg.ReadShort();
+			break;
+
+		case svc_set_ceil_light_sec:
+			i = (word)net_msg.ReadShort();
+			GClLevel->Sectors[i].ceiling.LightSourceSector = net_msg.ReadShort();
+			break;
+
 		default:
 			if (clpr.Exec(pf_ParseServerCommand, cmd_type))
 			{
@@ -1010,9 +1020,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.33  2005/03/28 07:28:19  dj_jl
+//	Transfer lighting and other BOOM stuff.
+//
 //	Revision 1.32  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.31  2003/03/08 11:30:07  dj_jl
 //	Got rid of some warnings.
 //	

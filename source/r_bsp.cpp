@@ -97,7 +97,8 @@ static void R_SetUpFrustumIndexes(void)
 //
 //==========================================================================
 
-static void DrawSurfaces(surface_t *surfs, texinfo_t *texinfo, int clipflags)
+static void DrawSurfaces(surface_t *surfs, texinfo_t *texinfo, int clipflags,
+	int LightSourceSector = -1)
 {
 	guard(DrawSurfaces);
 	if (!surfs)
@@ -111,15 +112,17 @@ static void DrawSurfaces(surface_t *surfs, texinfo_t *texinfo, int clipflags)
 		return;
 	}
 
+	sec_params_t* LightParams = LightSourceSector == -1 ? r_region->params :
+		&GClLevel->Sectors[LightSourceSector].params;
+	int lLev = fixedlight ? fixedlight :
+			MIN(255, LightParams->lightlevel);
+	if (r_darken)
+	{
+		lLev = light_remap[lLev];
+	}
 	do
 	{
-		int lLev = fixedlight ? fixedlight :
-			MIN(255, r_region->params->lightlevel);
-		if (r_darken)
-		{
-			lLev = light_remap[lLev];
-		}
-		surfs->Light = (lLev << 24) | r_region->params->LightColor;
+		surfs->Light = (lLev << 24) | LightParams->LightColor;
 		surfs->dlightframe = r_sub->dlightframe;
 		surfs->dlightbits = r_sub->dlightbits;
 
@@ -221,7 +224,8 @@ static void	RenderSecSurface(sec_surface_t *ssurf, int clipflags)
 	r_normal = plane.normal;
 	r_dist = plane.dist;
 
-	DrawSurfaces(ssurf->surfs, &ssurf->texinfo, clipflags);
+	DrawSurfaces(ssurf->surfs, &ssurf->texinfo, clipflags,
+		plane.LightSourceSector);
 	unguard;
 }
 
@@ -415,9 +419,12 @@ void R_RenderWorld(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2005/03/28 07:28:19  dj_jl
+//	Transfer lighting and other BOOM stuff.
+//
 //	Revision 1.12  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.11  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
 //	

@@ -204,6 +204,8 @@ struct sec_plane_t : public TPlane
 
 	int			flags;
 	int			translucency;
+
+	int			LightSourceSector;
 };
 
 struct sec_params_t
@@ -274,7 +276,7 @@ struct sector_t
 	dword		bHasExtrafloors:1;		//	This sector has extrafloors.
 	dword		bExtrafloorSource:1;	//	This sector is a source of an extrafloor.
 
-	int			user_fields[6];
+	int			user_fields[16];
 };
 
 //
@@ -503,7 +505,8 @@ private:
 	//	Map loaders.
 	void LoadVertexes(int Lump, int GLLump);
 	void LoadSectors(int Lump);
-	void LoadSideDefs(int Lump);
+	void LoadSideDefsPass1(int Lump);
+	void LoadSideDefsPass2(int Lump);
 	void LoadLineDefs1(int Lump);
 	void LoadLineDefs2(int Lump);
 	void LoadGLSegs(int Lump);
@@ -517,6 +520,7 @@ private:
 	//	Map loading helpers.
 	int FTNumForName(const char *name) const;
 	int TFNumForName(const char *name) const;
+	int CMapTFNumForName(const char *name) const;
 	void SetupLineSides(line_t *ld) const;
 
 	//	Post-loading routines.
@@ -598,9 +602,12 @@ extern VLevel*			GClLevel;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2005/03/28 07:28:19  dj_jl
+//	Transfer lighting and other BOOM stuff.
+//
 //	Revision 1.29  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.28  2004/12/03 16:15:47  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
 //	

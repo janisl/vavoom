@@ -31,6 +31,12 @@
 
 // MACROS ------------------------------------------------------------------
 
+enum
+{
+	LNSPEC_LineTranslucent = 208,
+	LNSPEC_TransferHeights = 209,
+};
+
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -122,7 +128,7 @@ void VLevel::LoadMap(const char *mapname)
 	//
 	LoadVertexes(lumpnum + ML_VERTEXES, gl_lumpnum + ML_GL_VERT);
 	LoadSectors(lumpnum + ML_SECTORS);
-	LoadSideDefs(lumpnum + ML_SIDEDEFS);
+	LoadSideDefsPass1(lumpnum + ML_SIDEDEFS);
 	if (!bExtended)
 	{
 		LoadLineDefs1(lumpnum + ML_LINEDEFS);
@@ -166,6 +172,17 @@ void VLevel::LoadMap(const char *mapname)
 #endif
 		}
 	}
+
+#ifdef SERVER
+	if (!bExtended)
+	{
+		//	Translate level to Hexen format
+		svpr.Exec("TranslateLevel", (int)this);
+	}
+#endif
+	//	Set up textures after loading lines because for some Boom line
+	// specials there can be special meaning of some texture names.
+	LoadSideDefsPass2(lumpnum + ML_SIDEDEFS);
 
 	GroupLines();
 
@@ -301,6 +318,7 @@ void VLevel::LoadSectors(int Lump)
 		ss->floor.yoffs = 0;
 		ss->floor.minz = LittleShort(ms->floorheight);
 		ss->floor.maxz = LittleShort(ms->floorheight);
+		ss->floor.LightSourceSector = -1;
 
 		//	Ceiling
 		ss->ceiling.Set(TVec(0, 0, -1), -LittleShort(ms->ceilingheight));
@@ -310,6 +328,7 @@ void VLevel::LoadSectors(int Lump)
 		ss->ceiling.yoffs = 0;
 		ss->ceiling.minz = LittleShort(ms->ceilingheight);
 		ss->ceiling.maxz = LittleShort(ms->ceilingheight);
+		ss->ceiling.LightSourceSector = -1;
 
 		//	Params
 		ss->params.lightlevel = LittleShort(ms->lightlevel);
@@ -340,11 +359,11 @@ void VLevel::LoadSectors(int Lump)
 
 //==========================================================================
 //
-//  VLevel::LoadSideDefs
+//  VLevel::LoadSideDefsPass1
 //
 //==========================================================================
 
-void VLevel::LoadSideDefs(int Lump)
+void VLevel::LoadSideDefsPass1(int Lump)
 {
 	guard(VLevel::LoadSideDefs);
 	byte *data;
@@ -364,12 +383,80 @@ void VLevel::LoadSideDefs(int Lump)
 		sd->textureoffset = LittleShort(msd->textureoffset);
 		sd->rowoffset = LittleShort(msd->rowoffset);
 		sd->sector = &Sectors[LittleShort(msd->sector)];
-		sd->midtexture = TFNumForName(msd->midtexture);
-		sd->toptexture = TFNumForName(msd->toptexture);
-		sd->bottomtexture = TFNumForName(msd->bottomtexture);
 
 		sd->base_textureoffset = sd->textureoffset;
 		sd->base_rowoffset = sd->rowoffset;
+	}
+
+	Z_Free(data);
+	unguard;
+}
+
+//==========================================================================
+//
+//  VLevel::LoadSideDefsPass2
+//
+//==========================================================================
+
+void VLevel::LoadSideDefsPass2(int Lump)
+{
+	guard(VLevel::LoadSideDefs);
+	byte *data;
+	int i;
+	mapsidedef_t *msd;
+	side_t *sd;
+
+	//	Assign line specials to sidedefs midtexture and arg1 to toptexture.
+	for (i = 0; i < NumLines; i++)
+	{
+		if (Lines[i].sidenum[0] != -1)
+		{
+			Sides[Lines[i].sidenum[0]].midtexture = Lines[i].special;
+			Sides[Lines[i].sidenum[0]].toptexture = Lines[i].arg1;
+		}
+		if (Lines[i].sidenum[1] != -1)
+		{
+			Sides[Lines[i].sidenum[1]].midtexture = Lines[i].special;
+			Sides[Lines[i].sidenum[1]].toptexture = Lines[i].arg1;
+		}
+	}
+
+	data = (byte*)W_CacheLumpNum(Lump, PU_STATIC);
+	msd = (mapsidedef_t *)data;
+	sd = Sides;
+
+	for (i = 0; i < NumSides; i++, msd++, sd++)
+	{
+		switch (sd->midtexture)
+		{
+		case LNSPEC_LineTranslucent:
+			//	In BOOM midtexture can be translucency table lump name.
+			sd->midtexture = R_CheckTextureNumForName(msd->midtexture);
+			if (sd->midtexture == -1)
+			{
+				sd->midtexture = R_CheckFlatNumForName(msd->midtexture);
+				if (sd->midtexture == -1)
+				{
+					sd->midtexture = 0;
+				}
+			}
+			sd->toptexture = TFNumForName(msd->toptexture);
+			sd->bottomtexture = TFNumForName(msd->bottomtexture);
+			break;
+
+		case LNSPEC_TransferHeights:
+			sd->midtexture = CMapTFNumForName(msd->midtexture);
+			sd->toptexture = CMapTFNumForName(msd->toptexture);
+			sd->bottomtexture = CMapTFNumForName(msd->bottomtexture);
+			break;
+
+		default:
+			sd->midtexture = TFNumForName(msd->midtexture);
+			sd->toptexture = TFNumForName(msd->toptexture);
+			sd->bottomtexture = TFNumForName(msd->bottomtexture);
+			break;
+		}
+
 		sd->base_midtexture = sd->midtexture;
 		sd->base_toptexture = sd->toptexture;
 		sd->base_bottomtexture = sd->bottomtexture;
@@ -977,6 +1064,32 @@ int VLevel::TFNumForName(const char *name) const
 
 //==========================================================================
 //
+//  VLevel::CMapTFNumForName
+//
+//  Retrieval, get a texture or flat number for a name.
+//
+//==========================================================================
+
+int VLevel::CMapTFNumForName(const char *name) const
+{
+	guard(VLevel::CMapTFNumForName);
+	int i;
+
+	i = R_CheckTextureNumForName(name);
+	if (i == -1)
+	{
+		i = R_CheckFlatNumForName(name);
+		if (i == -1)
+		{
+			return 0;
+		}
+	}
+	return i;
+	unguard;
+}
+
+//==========================================================================
+//
 //  VLevel::ClearBox
 //
 //==========================================================================
@@ -1223,9 +1336,12 @@ IMPLEMENT_FUNCTION(VLevel, PointInSector)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2005/03/28 07:28:19  dj_jl
+//	Transfer lighting and other BOOM stuff.
+//
 //	Revision 1.4  2004/12/03 16:15:46  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
-//
+//	
 //	Revision 1.3  2004/10/11 15:55:43  dj_jl
 //	Support for version 3 GL nodes and ACS helpers.
 //	

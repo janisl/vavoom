@@ -27,7 +27,7 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define PROTOCOL_VERSION	9
+#define PROTOCOL_VERSION	10
 
 enum
 {
@@ -99,6 +99,8 @@ enum
 
 	svc_change_sky,
 	svc_change_music,
+	svc_set_floor_light_sec,
+	svc_set_ceil_light_sec,
 
 	USER_PROTOCOL_START = 128
 };
@@ -148,9 +150,12 @@ enum
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2005/03/28 07:28:19  dj_jl
+//	Transfer lighting and other BOOM stuff.
+//
 //	Revision 1.10  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.9  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
 //	
