@@ -38,15 +38,25 @@ struct rgb_t
 	byte		b;
 };
 
+struct rgba_t
+{
+	byte		r;
+	byte		g;
+	byte		b;
+	byte		a;
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void LoadImage(const char *name);
 void DestroyImage(void);
+void ConvertImageTo32Bit(void);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern int				ImgWidth;
 extern int				ImgHeight;
+extern int				ImgBPP;
 extern byte				*ImgData;
 extern rgb_t			ImgPal[256];
 
@@ -55,9 +65,12 @@ extern rgb_t			ImgPal[256];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/04/11 16:53:31  dj_jl
+//	Added support for TGA images.
+//
 //	Revision 1.4  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/09/24 17:28:45  dj_jl
 //	Beautification
 //	
