@@ -65,6 +65,7 @@ TCvar::TCvar(const char *AName, const char *ADefault, int AFlags)
 	default_string = ADefault;
 	flags = AFlags;
 	string = NULL;
+	latched_string = NULL;
 
 	TCvar *prev = NULL;
 	for (TCvar *var = Variables; var; var = var->next)
@@ -457,9 +458,12 @@ COMMAND(CvarList)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2003/09/24 16:41:59  dj_jl
+//	Fixed cvar constructor
+//
 //	Revision 1.8  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.7  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	
