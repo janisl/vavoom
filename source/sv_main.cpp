@@ -1796,6 +1796,10 @@ int SV_FindModel(const char *name)
 {
 	int i;
 
+	if (!name || !*name)
+	{
+		return 0;
+	}
 	for (i = 0; i < nummodels; i++)
 	{
 		if (!stricmp(name, models[i]))
@@ -1821,6 +1825,10 @@ int SV_FindSkin(const char *name)
 {
 	int i;
 
+	if (!name || !*name)
+	{
+		return 0;
+	}
 	for (i = 0; i < numskins; i++)
 	{
 		if (!stricmp(name, skins[i]))
@@ -2385,6 +2393,7 @@ void SV_ConnectClient(player_t *player)
 	{
 		player->MO = NULL;
 		player->PlayerState = PST_REBORN;
+		svpr.Exec("PutClientIntoServer", (int)player);
 	}
 	memset(player->Frags, 0, sizeof(player->Frags));
 
@@ -2690,9 +2699,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.38  2002/03/04 18:27:49  dj_jl
+//	Fixes for weapons
+//
 //	Revision 1.37  2002/02/22 18:09:52  dj_jl
 //	Some improvements, beautification.
-//
+//	
 //	Revision 1.36  2002/02/16 16:30:36  dj_jl
 //	Fixed sending server infor to remote clients
 //	
