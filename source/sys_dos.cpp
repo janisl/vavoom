@@ -428,30 +428,43 @@ void* Sys_ZoneBase(int* size)
 	int			maxzone = 0x1000000;
 	int			p;
 
-	if (M_CheckParm("-opengl"))
-	{
-		maxzone = 0x800000;
-	}
-	p = M_CheckParm("-maxzone");
+	p = M_CheckParm("-mem");
 	if (p && p < myargc - 1)
-    {
-		maxzone = (int)(atof(myargv[p + 1]) * 0x100000);
-		if (maxzone < MINIMUM_HEAP_SIZE)
-			maxzone = MINIMUM_HEAP_SIZE;
-		if (maxzone > MAXIMUM_HEAP_SIZE)
-			maxzone = MAXIMUM_HEAP_SIZE;
-	}
-
-	// 	Get available memory size
-	heap = _go32_dpmi_remaining_physical_memory();
-
-	do
 	{
-		heap -= 0x10000;                // leave 64k alone
-		if (heap > maxzone)
-			heap = maxzone;
+		heap = (int)(atof(myargv[p + 1]) * 0x100000);
 		ptr = malloc(heap);
-	} while (!ptr);
+		if (!ptr)
+		{
+			Sys_Error("Couldn't alloc %d bytes", heap);
+		}
+	}
+	else
+	{
+		if (M_CheckParm("-opengl"))
+		{
+			maxzone = 0x800000;
+		}
+		p = M_CheckParm("-maxzone");
+		if (p && p < myargc - 1)
+	    {
+			maxzone = (int)(atof(myargv[p + 1]) * 0x100000);
+			if (maxzone < MINIMUM_HEAP_SIZE)
+				maxzone = MINIMUM_HEAP_SIZE;
+			if (maxzone > MAXIMUM_HEAP_SIZE)
+				maxzone = MAXIMUM_HEAP_SIZE;
+		}
+
+		// 	Get available memory size
+		heap = _go32_dpmi_remaining_physical_memory();
+
+		do
+		{
+			heap -= 0x10000;                // leave 64k alone
+			if (heap > maxzone)
+				heap = maxzone;
+			ptr = malloc(heap);
+		} while (!ptr);
+	}
 
 	dprintf("0x%x (%f meg) allocated for zone, Zone base 0x%X\n",
 		heap, (float)heap / (float)(1024 * 1024), (int)ptr);
@@ -613,9 +626,12 @@ int main(int argc,char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/15 17:28:11  dj_jl
+//	Added -mem option
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
