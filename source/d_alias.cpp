@@ -410,7 +410,7 @@ void D_AliasSetUpTransform(const TAVec &angles, int frame, int trivial_accept)
 // TODO: don't repeat this check when drawing?
 	if ((frame >= pmdl->numframes) || (frame < 0))
 	{
-		cond << "No such frame " << frame << endl;
+		GCon->Logf(NAME_Dev, "No such frame %d", frame);
 		frame = 0;
 	}
 
@@ -794,7 +794,7 @@ void D_AliasSetupFrame(int frame)
 {
 	if ((frame >= pmdl->numframes) || (frame < 0))
 	{
-		cond << "D_AliasSetupFrame: no such frame " << frame << endl;
+		GCon->Logf(NAME_Dev, "D_AliasSetupFrame: no such frame %d", frame);
 		frame = 0;
 	}
 
@@ -855,15 +855,15 @@ void D_AliasDrawModel(const TAVec &angles, model_t *model, int frame,
 
 //==========================================================================
 //
-//	TSoftwareDrawer::DrawAliasModel
+//	VSoftwareDrawer::DrawAliasModel
 //
 //==========================================================================
 
-void TSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
+void VSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	model_t *model, int frame, const char *skin, dword light, int translucency,
 	bool is_view_model)
 {
-	guard(TSoftwareDrawer::DrawAliasModel);
+	guard(VSoftwareDrawer::DrawAliasModel);
 	modelorg = vieworg - origin;
 
 	// see if the bounding box lets us trivially reject, also sets
@@ -880,9 +880,12 @@ void TSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.12  2002/03/20 19:11:20  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.11  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

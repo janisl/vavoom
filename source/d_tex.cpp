@@ -66,13 +66,13 @@ static int				sprite_cache_count;
 
 //==========================================================================
 //
-//	TSoftwareDrawer::InitTextures
+//	VSoftwareDrawer::InitTextures
 //
 //==========================================================================
 
-void TSoftwareDrawer::InitTextures(void)
+void VSoftwareDrawer::InitTextures(void)
 {
-	guard(TSoftwareDrawer::InitTextures);
+	guard(VSoftwareDrawer::InitTextures);
 	//	Textures
 	texturedata = Z_CNew<miptexture_t*>(numtextures);
 	//	Flats
@@ -376,13 +376,13 @@ static void GenerateTexture(int texnum, bool double_sky)
 
 //==========================================================================
 //
-// 	TSoftwareDrawer::SetTexture
+// 	VSoftwareDrawer::SetTexture
 //
 //==========================================================================
 
-void TSoftwareDrawer::SetTexture(int tex)
+void VSoftwareDrawer::SetTexture(int tex)
 {
-	guard(TSoftwareDrawer::SetTexture);
+	guard(VSoftwareDrawer::SetTexture);
 	if (tex & TEXF_FLAT)
 	{
 		SetFlat(tex);
@@ -502,13 +502,13 @@ static void LoadSkyMap(const char *name, void **dataptr)
 
 //==========================================================================
 //
-// 	TSoftwareDrawer::SetSkyTexture
+// 	VSoftwareDrawer::SetSkyTexture
 //
 //==========================================================================
 
-void TSoftwareDrawer::SetSkyTexture(int tex, bool double_sky)
+void VSoftwareDrawer::SetSkyTexture(int tex, bool double_sky)
 {
-	guard(TSoftwareDrawer::SetSkyTexture);
+	guard(VSoftwareDrawer::SetSkyTexture);
 	if (tex & TEXF_SKY_MAP)
 	{
 		tex &= ~TEXF_SKY_MAP;
@@ -573,13 +573,13 @@ static void GenerateFlat(int num)
 
 //==========================================================================
 //
-//	TSoftwareDrawer::SetFlat
+//	VSoftwareDrawer::SetFlat
 //
 //==========================================================================
 
-void TSoftwareDrawer::SetFlat(int num)
+void VSoftwareDrawer::SetFlat(int num)
 {
-	guard(TSoftwareDrawer::SetFlat);
+	guard(VSoftwareDrawer::SetFlat);
 	num &= ~TEXF_FLAT;
 
 	if (!flatdata[num])
@@ -789,9 +789,12 @@ void SetSpriteLump(int lump, dword light, int translation)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.9  2002/03/20 19:09:53  dj_jl
 //	DeepSea tall patches support.
-//
+//	
 //	Revision 1.8  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

@@ -102,10 +102,14 @@ struct surfcache_t
 	surface_t	*surf;
 };
 
-class TOpenGLDrawer : public TDrawer
+class VOpenGLDrawer:public VDrawer
 {
- public:
-	TOpenGLDrawer(void);
+	DECLARE_CLASS(VOpenGLDrawer, VDrawer, 0)
+	NO_DEFAULT_CONSTRUCTOR(VOpenGLDrawer)
+
+	//
+	// VDrawer interface
+	//
 	void Init(void);
 	void InitData(void);
 	bool SetResolution(int, int, int);
@@ -161,7 +165,7 @@ class TOpenGLDrawer : public TDrawer
 	void DrawLine(int, int, dword, int, int, dword);
 	void EndAutomap(void);
 
- private:
+private:
 	GLint		maxTexSize;
 	bool		texturesGenerated;
 
@@ -198,27 +202,6 @@ class TOpenGLDrawer : public TDrawer
 	float		pic_iw[MAX_PICS];
 	float		pic_ih[MAX_PICS];
 
-	float		tex_iw;
-	float		tex_ih;
-
-	int			lastgamma;
-
-	GLenum		maxfilter;
-	GLenum		minfilter;
-	GLenum		mipfilter;
-
-	rgba_t		pal8_to24[256];
-
-	TCvarI		tex_linear;
-	TCvarI		clear;
-	TCvarI		blend_sprites;
-	TCvarI		ext_multitexture;
-	TCvarI		ext_point_parameters;
-	TCvarI		ext_anisotropy;
-	TCvarF		maxdist;
-	TCvarI		model_lighting;
-	TCvarI		specular_highlights;
-
 	GLuint		lmap_id[NUM_BLOCK_SURFS];
 	rgba_t		light_block[NUM_BLOCK_SURFS][BLOCK_WIDTH * BLOCK_HEIGHT];
 	bool		block_changed[NUM_BLOCK_SURFS];
@@ -232,6 +215,30 @@ class TOpenGLDrawer : public TDrawer
 	surfcache_t	*freeblocks;
 	surfcache_t	*cacheblocks[NUM_BLOCK_SURFS];
 	surfcache_t	blockbuf[NUM_CACHE_BLOCKS];
+
+	float		tex_iw;
+	float		tex_ih;
+
+	int			lastgamma;
+
+	GLenum		maxfilter;
+	GLenum		minfilter;
+	GLenum		mipfilter;
+
+	rgba_t		pal8_to24[256];
+
+	//
+	//	Console variables
+	//
+	static TCvarI tex_linear;
+	static TCvarI clear;
+	static TCvarI blend_sprites;
+	static TCvarI ext_multitexture;
+	static TCvarI ext_point_parameters;
+	static TCvarI ext_anisotropy;
+	static TCvarF maxdist;
+	static TCvarI model_lighting;
+	static TCvarI specular_highlights;
 
 	//	Extensions
 	bool CheckExtension(const char*);
@@ -293,9 +300,12 @@ class TOpenGLDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.20  2002/03/28 17:56:52  dj_jl
 //	Increased lightmap texture count.
-//
+//	
 //	Revision 1.19  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

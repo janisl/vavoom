@@ -88,13 +88,13 @@ void MatrixMultiply(MyD3DMatrix &out, const MyD3DMatrix& a, const MyD3DMatrix& b
 
 //==========================================================================
 //
-//	TDirect3DDrawer::FlushCaches
+//	VDirect3DDrawer::FlushCaches
 //
 //==========================================================================
 
-void TDirect3DDrawer::FlushCaches(bool free_blocks)
+void VDirect3DDrawer::FlushCaches(bool free_blocks)
 {
-	guard(TDirect3DDrawer::FlushCaches);
+	guard(VDirect3DDrawer::FlushCaches);
 	int				i;
 	surfcache_t		*blines;
 	surfcache_t		*block;
@@ -134,13 +134,13 @@ void TDirect3DDrawer::FlushCaches(bool free_blocks)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::AllocBlock
+//	VDirect3DDrawer::AllocBlock
 //
 //==========================================================================
 
-surfcache_t	*TDirect3DDrawer::AllocBlock(int width, int height)
+surfcache_t	*VDirect3DDrawer::AllocBlock(int width, int height)
 {
-	guard(TDirect3DDrawer::AllocBlock);
+	guard(VDirect3DDrawer::AllocBlock);
 	int				i;
 	surfcache_t		*blines;
 	surfcache_t		*block;
@@ -246,13 +246,13 @@ surfcache_t	*TDirect3DDrawer::AllocBlock(int width, int height)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::FreeSurfCache
+//	VDirect3DDrawer::FreeSurfCache
 //
 //==========================================================================
 
-void TDirect3DDrawer::FreeSurfCache(surfcache_t *block)
+void VDirect3DDrawer::FreeSurfCache(surfcache_t *block)
 {
-	guard(TDirect3DDrawer::FreeSurfCache);
+	guard(VDirect3DDrawer::FreeSurfCache);
 	surfcache_t		*other;
 
 	*block->owner = NULL;
@@ -310,13 +310,13 @@ void TDirect3DDrawer::FreeSurfCache(surfcache_t *block)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::CacheSurface
+//	VDirect3DDrawer::CacheSurface
 //
 //==========================================================================
 
-void TDirect3DDrawer::CacheSurface(surface_t *surface)
+void VDirect3DDrawer::CacheSurface(surface_t *surface)
 {
-	guard(TDirect3DDrawer::CacheSurface);
+	guard(VDirect3DDrawer::CacheSurface);
 	surfcache_t     *cache;
 	int				smax, tmax;
 	int				i, j, bnum;
@@ -401,13 +401,13 @@ void TDirect3DDrawer::CacheSurface(surface_t *surface)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::DrawPolygon
+//	VDirect3DDrawer::DrawPolygon
 //
 //==========================================================================
 
-void TDirect3DDrawer::DrawPolygon(TVec *cv, int count, int texture, int)
+void VDirect3DDrawer::DrawPolygon(TVec *cv, int count, int texture, int)
 {
-	guard(TDirect3DDrawer::DrawPolygon);
+	guard(VDirect3DDrawer::DrawPolygon);
 	MyD3DVertex		out[256];
 	int				i, l;
 	bool			lightmaped;
@@ -451,13 +451,13 @@ void TDirect3DDrawer::DrawPolygon(TVec *cv, int count, int texture, int)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::WorldDrawing
+//	VDirect3DDrawer::WorldDrawing
 //
 //==========================================================================
 
-void TDirect3DDrawer::WorldDrawing(void)
+void VDirect3DDrawer::WorldDrawing(void)
 {
-	guard(TDirect3DDrawer::WorldDrawing);
+	guard(VDirect3DDrawer::WorldDrawing);
 	MyD3DVertex		out[256];
 	int				lb, i;
 	surfcache_t		*cache;
@@ -685,13 +685,13 @@ void TDirect3DDrawer::WorldDrawing(void)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::BeginSky
+//	VDirect3DDrawer::BeginSky
 //
 //==========================================================================
 
-void TDirect3DDrawer::BeginSky(void)
+void VDirect3DDrawer::BeginSky(void)
 {
-	guard(TDirect3DDrawer::BeginSky);
+	guard(VDirect3DDrawer::BeginSky);
 #if DIRECT3D_VERSION >= 0x0800
 	viewData.MinZ = 0.99;
 #else
@@ -708,14 +708,14 @@ void TDirect3DDrawer::BeginSky(void)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::DrawSkyPolygon
+//	VDirect3DDrawer::DrawSkyPolygon
 //
 //==========================================================================
 
-void TDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
+void VDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 	int texture1, float offs1, int texture2, float offs2)
 {
-	guard(TDirect3DDrawer::DrawSkyPolygon);
+	guard(VDirect3DDrawer::DrawSkyPolygon);
 	MyD3DVertex		out[256];
 	int				i;
 
@@ -785,13 +785,13 @@ void TDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 
 //==========================================================================
 //
-//	TDirect3DDrawer::EndSky
+//	VDirect3DDrawer::EndSky
 //
 //==========================================================================
 
-void TDirect3DDrawer::EndSky(void)
+void VDirect3DDrawer::EndSky(void)
 {
-	guard(TDirect3DDrawer::EndSky);
+	guard(VDirect3DDrawer::EndSky);
 	if (r_fog)
 	{
 		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGENABLE, TRUE);
@@ -808,14 +808,14 @@ void TDirect3DDrawer::EndSky(void)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::DrawMaskedPolygon
+//	VDirect3DDrawer::DrawMaskedPolygon
 //
 //==========================================================================
 
-void TDirect3DDrawer::DrawMaskedPolygon(TVec *cv, int count,
+void VDirect3DDrawer::DrawMaskedPolygon(TVec *cv, int count,
 	int texture, int translucency)
 {
-	guard(TDirect3DDrawer::DrawMaskedPolygon);
+	guard(VDirect3DDrawer::DrawMaskedPolygon);
 	MyD3DVertex	out[256];
 	int			i, r, g, b, alpha, w, h, size, l;
 	surface_t	*surf = r_surface;
@@ -873,14 +873,14 @@ void TDirect3DDrawer::DrawMaskedPolygon(TVec *cv, int count,
 
 //==========================================================================
 //
-//	TDirect3DDrawer::DrawSpritePolygon
+//	VDirect3DDrawer::DrawSpritePolygon
 //
 //==========================================================================
 
-void TDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump,
+void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump,
 	int translucency, int translation, dword light)
 {
-	guard(TDirect3DDrawer::DrawSpritePolygon);
+	guard(VDirect3DDrawer::DrawSpritePolygon);
 	MyD3DVertex		out[4];
 	int				i;
 
@@ -919,15 +919,15 @@ void TDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump,
 
 //==========================================================================
 //
-//	TDirect3DDrawer::DrawAliasModel
+//	VDirect3DDrawer::DrawAliasModel
 //
 //==========================================================================
 
-void TDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
+void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	model_t *model, int frame, const char *skin, dword light, int translucency,
 	bool is_view_model)
 {
-	guard(TDirect3DDrawer::DrawAliasModel);
+	guard(VDirect3DDrawer::DrawAliasModel);
 	mmdl_t				*pmdl;
 	mframe_t			*pframedesc;
 	mskin_t				*pskindesc;
@@ -985,7 +985,7 @@ void TDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 	if ((frame >= pmdl->numframes) || (frame < 0))
 	{
-		cond << "no such frame " << frame << endl;
+		GCon->Logf(NAME_Dev, "no such frame %d", frame);
 		frame = 0;
 	}
 	pframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
@@ -1025,10 +1025,7 @@ void TDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	}
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_SHADEMODE, D3DSHADE_GOURAUD);
-	if (translucency)
-	{
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
-	}
+	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 
 	verts = (trivertx_t *)(pframedesc + 1);
 	order = (int *)((byte *)pmdl + pmdl->ofscmds);
@@ -1087,10 +1084,7 @@ void TDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	}
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_SHADEMODE, D3DSHADE_FLAT);
-	if (translucency)
-	{
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
-	}
+	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 
 	RenderDevice->SetTransform(D3DTRANSFORMSTATE_WORLD, &IdentityMatrix);
 	if (is_view_model)
@@ -1110,13 +1104,13 @@ void TDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 //==========================================================================
 //
-//	TDirect3DDrawer::StartParticles
+//	VDirect3DDrawer::StartParticles
 //
 //==========================================================================
 
-void TDirect3DDrawer::StartParticles(void)
+void VDirect3DDrawer::StartParticles(void)
 {
-	guard(TDirect3DDrawer::StartParticles);
+	guard(VDirect3DDrawer::StartParticles);
 	if (!particle_texture)
 	{
 		rgba_t		pbuf[8][8];
@@ -1147,13 +1141,13 @@ void TDirect3DDrawer::StartParticles(void)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::DrawParticle
+//	VDirect3DDrawer::DrawParticle
 //
 //==========================================================================
 
-void TDirect3DDrawer::DrawParticle(particle_t *p)
+void VDirect3DDrawer::DrawParticle(particle_t *p)
 {
-	guard(TDirect3DDrawer::DrawParticle);
+	guard(VDirect3DDrawer::DrawParticle);
 	MyD3DVertex out[4];
 	out[0] = MyD3DVertex(p->org - viewright + viewup, p->color, 0, 0);
 	out[1] = MyD3DVertex(p->org + viewright + viewup, p->color, 1, 0);
@@ -1169,13 +1163,13 @@ void TDirect3DDrawer::DrawParticle(particle_t *p)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::EndParticles
+//	VDirect3DDrawer::EndParticles
 //
 //==========================================================================
 
-void TDirect3DDrawer::EndParticles(void)
+void VDirect3DDrawer::EndParticles(void)
 {
-	guard(TDirect3DDrawer::EndParticles);
+	guard(VDirect3DDrawer::EndParticles);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAREF, 170);
@@ -1185,9 +1179,12 @@ void TDirect3DDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.21  2002/03/28 17:58:02  dj_jl
 //	Added support for scaled textures.
-//
+//	
 //	Revision 1.20  2002/03/02 17:32:33  dj_jl
 //	Fixed specular lights when fog is enabled.
 //	

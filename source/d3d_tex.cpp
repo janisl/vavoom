@@ -47,11 +47,11 @@
 
 //==========================================================================
 //
-//	TDirect3DDrawer::ToPowerOf2
+//	VDirect3DDrawer::ToPowerOf2
 //
 //==========================================================================
 
-int TDirect3DDrawer::ToPowerOf2(int val)
+int VDirect3DDrawer::ToPowerOf2(int val)
 {
 	int answer = 1;
 	while (answer < val)
@@ -61,14 +61,14 @@ int TDirect3DDrawer::ToPowerOf2(int val)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::CreateSurface
+//	VDirect3DDrawer::CreateSurface
 //
 //==========================================================================
 
 #if DIRECT3D_VERSION >= 0x0800
-LPDIRECT3DTEXTURE8 TDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool mipmaps)
+LPDIRECT3DTEXTURE8 VDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool mipmaps)
 {
-	guard(TDirect3DDrawer::CreateSurface);
+	guard(VDirect3DDrawer::CreateSurface);
 	LPDIRECT3DTEXTURE8 surf = NULL;
 
 	HRESULT res = RenderDevice->CreateTexture(w, h, mipmaps ? 0 : 1, 0,
@@ -77,22 +77,22 @@ LPDIRECT3DTEXTURE8 TDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool mi
 	if (res != D3D_OK)
 	{
 		if (res == D3DERR_INVALIDCALL)
-			con << "Invalid call\n";
+			GCon->Log("Invalid call");
 		else if (res == D3DERR_OUTOFVIDEOMEMORY)
-			con << "Out of vid mem\n";
+			GCon->Log("Out of vid mem");
 		else if (res == E_OUTOFMEMORY)
-			con << "Out of mem\n";
+			GCon->Log("Out of mem");
 		else
-			con << "Unknown error " << res << endl;
+			GCon->Logf("Unknown error %d", res);
 		Sys_Error("Create texture failed\n");
 	}
 	return surf;
 	unguard;
 }
 #else
-LPDIRECTDRAWSURFACE7 TDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool mipmaps)
+LPDIRECTDRAWSURFACE7 VDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool mipmaps)
 {
-	guard(TDirect3DDrawer::CreateSurface);
+	guard(VDirect3DDrawer::CreateSurface);
 	DDSURFACEDESC2			ddsd;
 	LPDIRECTDRAWSURFACE7	surf = NULL;
 	int i;
@@ -139,13 +139,13 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool 
 
 //==========================================================================
 //
-//	TDirect3DDrawer::InitTextures
+//	VDirect3DDrawer::InitTextures
 //
 //==========================================================================
 
-void TDirect3DDrawer::InitTextures(void)
+void VDirect3DDrawer::InitTextures(void)
 {
-	guard(TDirect3DDrawer::InitTextures);
+	guard(VDirect3DDrawer::InitTextures);
 	numsurfaces = numtextures + numflats + numskymaps + numspritelumps +
 		MAX_TRANSLATED_SPRITES + MAX_PICS + MAX_SKIN_CACHE;
 #if DIRECT3D_VERSION >= 0x0800
@@ -186,13 +186,13 @@ void TDirect3DDrawer::InitTextures(void)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::FlushTextures
+//	VDirect3DDrawer::FlushTextures
 //
 //==========================================================================
 
-void TDirect3DDrawer::FlushTextures(void)
+void VDirect3DDrawer::FlushTextures(void)
 {
-	guard(TDirect3DDrawer::FlushTextures);
+	guard(VDirect3DDrawer::FlushTextures);
 	for (int i = 0; i < numsurfaces; i++)
 	{
 		SAFE_RELEASE(texturesurfaces[i]);
@@ -202,13 +202,13 @@ void TDirect3DDrawer::FlushTextures(void)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::ReleaseTextures
+//	VDirect3DDrawer::ReleaseTextures
 //
 //==========================================================================
 
-void TDirect3DDrawer::ReleaseTextures(void)
+void VDirect3DDrawer::ReleaseTextures(void)
 {
-	guard(TDirect3DDrawer::ReleaseTextures);
+	guard(VDirect3DDrawer::ReleaseTextures);
 	int i;
 	for (i = 0; i < numsurfaces; i++)
 	{
@@ -225,7 +225,7 @@ void TDirect3DDrawer::ReleaseTextures(void)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::DrawColumnInCache
+//	VDirect3DDrawer::DrawColumnInCache
 //
 // 	Clip and draw a column from a patch into a flat buffer.
 //
@@ -236,10 +236,10 @@ void TDirect3DDrawer::ReleaseTextures(void)
 //
 //==========================================================================
 
-void TDirect3DDrawer::DrawColumnInCache(column_t* column, rgba_t* cache,
+void VDirect3DDrawer::DrawColumnInCache(column_t* column, rgba_t* cache,
 	int originx, int originy, int cachewidth, int cacheheight, bool dsky)
 {
-	guard(TDirect3DDrawer::DrawColumnInCache);
+	guard(VDirect3DDrawer::DrawColumnInCache);
     int		count;
     int		position;
 	byte*	source;
@@ -288,16 +288,16 @@ void TDirect3DDrawer::DrawColumnInCache(column_t* column, rgba_t* cache,
 
 //==========================================================================
 //
-//	TDirect3DDrawer::GenerateTexture
+//	VDirect3DDrawer::GenerateTexture
 //
 // 	Using the texture definition, the composite texture is created from the
 // patches, and each column is cached.
 //
 //==========================================================================
 
-void TDirect3DDrawer::GenerateTexture(int texnum, bool dsky)
+void VDirect3DDrawer::GenerateTexture(int texnum, bool dsky)
 {
-	guard(TDirect3DDrawer::GenerateTexture);
+	guard(VDirect3DDrawer::GenerateTexture);
     rgba_t*			block;
     texdef_t*		texture;
     texpatch_t*		patch;	
@@ -347,13 +347,13 @@ void TDirect3DDrawer::GenerateTexture(int texnum, bool dsky)
 
 //==========================================================================
 //
-// 	TDirect3DDrawer::SetTexture
+// 	VDirect3DDrawer::SetTexture
 //
 //==========================================================================
 
-void TDirect3DDrawer::SetTexture(int tex)
+void VDirect3DDrawer::SetTexture(int tex)
 {
-	guard(TDirect3DDrawer::SetTexture);
+	guard(VDirect3DDrawer::SetTexture);
 	if (tex & TEXF_FLAT)
 	{
 		SetFlat(tex);
@@ -382,13 +382,13 @@ void TDirect3DDrawer::SetTexture(int tex)
 
 //==========================================================================
 //
-// 	TDirect3DDrawer::SetSkyTexture
+// 	VDirect3DDrawer::SetSkyTexture
 //
 //==========================================================================
 
-void TDirect3DDrawer::SetSkyTexture(int tex, bool double_sky)
+void VDirect3DDrawer::SetSkyTexture(int tex, bool double_sky)
 {
-	guard(TDirect3DDrawer::SetSkyTexture);
+	guard(VDirect3DDrawer::SetSkyTexture);
 	if (!RenderDevice)
 	{
 		return;
@@ -448,13 +448,13 @@ void TDirect3DDrawer::SetSkyTexture(int tex, bool double_sky)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::GenerateFlat
+//	VDirect3DDrawer::GenerateFlat
 //
 //==========================================================================
 
-void TDirect3DDrawer::GenerateFlat(int num)
+void VDirect3DDrawer::GenerateFlat(int num)
 {
-	guard(TDirect3DDrawer::GenerateFlat);
+	guard(VDirect3DDrawer::GenerateFlat);
 	rgba_t *block = (rgba_t*)Z_Malloc(64 * 64 * 4, PU_HIGH, 0);
 	byte *data = (byte*)W_CacheLumpNum(flatlumps[num], PU_CACHE);
 
@@ -472,13 +472,13 @@ void TDirect3DDrawer::GenerateFlat(int num)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::SetFlat
+//	VDirect3DDrawer::SetFlat
 //
 //==========================================================================
 
-void TDirect3DDrawer::SetFlat(int num)
+void VDirect3DDrawer::SetFlat(int num)
 {
-	guard(TDirect3DDrawer::SetFlat);
+	guard(VDirect3DDrawer::SetFlat);
 	if (!RenderDevice)
 		return;
 
@@ -499,13 +499,13 @@ void TDirect3DDrawer::SetFlat(int num)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::GenerateSprite
+//	VDirect3DDrawer::GenerateSprite
 //
 //==========================================================================
 
-void TDirect3DDrawer::GenerateSprite(int lump)
+void VDirect3DDrawer::GenerateSprite(int lump)
 {
-	guard(TDirect3DDrawer::GenerateSprite);
+	guard(VDirect3DDrawer::GenerateSprite);
     patch_t	*patch = (patch_t*)W_CacheLumpNum(spritelumps[lump], PU_STATIC);
 
 	int w = LittleShort(patch->width);
@@ -554,13 +554,13 @@ void TDirect3DDrawer::GenerateSprite(int lump)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::GenerateTranslatedSprite
+//	VDirect3DDrawer::GenerateTranslatedSprite
 //
 //==========================================================================
 
-void TDirect3DDrawer::GenerateTranslatedSprite(int lump, int slot, int translation)
+void VDirect3DDrawer::GenerateTranslatedSprite(int lump, int slot, int translation)
 {
-	guard(TDirect3DDrawer::GenerateTranslatedSprite);
+	guard(VDirect3DDrawer::GenerateTranslatedSprite);
     patch_t	*patch = (patch_t*)W_CacheLumpNum(spritelumps[lump], PU_STATIC);
 
 	int w = LittleShort(patch->width);
@@ -614,13 +614,13 @@ void TDirect3DDrawer::GenerateTranslatedSprite(int lump, int slot, int translati
 
 //==========================================================================
 //
-//	TDirect3DDrawer::SetSpriteLump
+//	VDirect3DDrawer::SetSpriteLump
 //
 //==========================================================================
 
-void TDirect3DDrawer::SetSpriteLump(int lump, int translation)
+void VDirect3DDrawer::SetSpriteLump(int lump, int translation)
 {
-	guard(TDirect3DDrawer::SetSpriteLump);
+	guard(VDirect3DDrawer::SetSpriteLump);
 	if (!RenderDevice)
 		return;
 
@@ -677,13 +677,13 @@ void TDirect3DDrawer::SetSpriteLump(int lump, int translation)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::SetPic
+//	VDirect3DDrawer::SetPic
 //
 //==========================================================================
 
-void TDirect3DDrawer::SetPic(int handle)
+void VDirect3DDrawer::SetPic(int handle)
 {
-	guard(TDirect3DDrawer::SetPic);
+	guard(VDirect3DDrawer::SetPic);
 	if (!RenderDevice)
 		return;
 
@@ -711,13 +711,13 @@ void TDirect3DDrawer::SetPic(int handle)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::GeneratePicFromPatch
+//	VDirect3DDrawer::GeneratePicFromPatch
 //
 //==========================================================================
 
-void TDirect3DDrawer::GeneratePicFromPatch(int handle)
+void VDirect3DDrawer::GeneratePicFromPatch(int handle)
 {
-	guard(TDirect3DDrawer::GeneratePicFromPatch);
+	guard(VDirect3DDrawer::GeneratePicFromPatch);
 	patch_t *patch = (patch_t*)W_CacheLumpName(pic_list[handle].name, PU_STATIC);
 	int w = LittleShort(patch->width);
 	int h = LittleShort(patch->height);
@@ -767,13 +767,13 @@ void TDirect3DDrawer::GeneratePicFromPatch(int handle)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::GeneratePicFromRaw
+//	VDirect3DDrawer::GeneratePicFromRaw
 //
 //==========================================================================
 
-void TDirect3DDrawer::GeneratePicFromRaw(int handle)
+void VDirect3DDrawer::GeneratePicFromRaw(int handle)
 {
-	guard(TDirect3DDrawer::GeneratePicFromRaw);
+	guard(VDirect3DDrawer::GeneratePicFromRaw);
 	int lump = W_GetNumForName(pic_list[handle].name);
 	int len = W_LumpLength(lump);
 	byte* raw = (byte*)W_CacheLumpNum(lump, PU_STATIC);
@@ -801,13 +801,13 @@ void TDirect3DDrawer::GeneratePicFromRaw(int handle)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::SetSkin
+//	VDirect3DDrawer::SetSkin
 //
 //==========================================================================
 
-void TDirect3DDrawer::SetSkin(const char *name)
+void VDirect3DDrawer::SetSkin(const char *name)
 {
-	guard(TDirect3DDrawer::SetSkin);
+	guard(VDirect3DDrawer::SetSkin);
 	int			i;
 	int			avail;
 
@@ -865,22 +865,22 @@ void TDirect3DDrawer::SetSkin(const char *name)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::UploadTextureImage
+//	VDirect3DDrawer::UploadTextureImage
 //
 //==========================================================================
 
 #if DIRECT3D_VERSION >= 0x0800
-void TDirect3DDrawer::UploadTextureImage(LPDIRECT3DTEXTURE8 tex, int level,
+void VDirect3DDrawer::UploadTextureImage(LPDIRECT3DTEXTURE8 tex, int level,
 	int width, int height, rgba_t *data)
 {
-	guard(TDirect3DDrawer::UploadTextureImage);
+	guard(VDirect3DDrawer::UploadTextureImage);
 	LPDIRECT3DSURFACE8 surf;
 	tex->GetSurfaceLevel(level, &surf);
 
 	D3DLOCKED_RECT lrect;
 	if (FAILED(surf->LockRect(&lrect, NULL, 0)))
 	{
-		cond << "Failed to lock surface\n";
+		GCon->Logf(NAME_Dev, "Failed to lock surface");
 		return;
 	}
 
@@ -909,17 +909,17 @@ void TDirect3DDrawer::UploadTextureImage(LPDIRECT3DTEXTURE8 tex, int level,
 	unguard;
 }
 #else
-void TDirect3DDrawer::UploadTextureImage(LPDIRECTDRAWSURFACE7 surf,
+void VDirect3DDrawer::UploadTextureImage(LPDIRECTDRAWSURFACE7 surf,
 	int width, int height, rgba_t *data)
 {
-	guard(TDirect3DDrawer::UploadTextureImage);
+	guard(VDirect3DDrawer::UploadTextureImage);
 	DDSURFACEDESC2 ddsd;
 	memset(&ddsd, 0, sizeof(ddsd));
 	ddsd.dwSize = sizeof(ddsd);
 	ddsd.dwFlags = DDSD_WIDTH | DDSD_HEIGHT | DDSD_PIXELFORMAT | DDSD_LPSURFACE;
 	if (FAILED(surf->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL)))
 	{
-		cond << "Failed to lock surface\n";
+		GCon->Logf(NAME_Dev, "Failed to lock surface");
 		return;
 	}
 	rgba_t *in = data;
@@ -952,13 +952,13 @@ void TDirect3DDrawer::UploadTextureImage(LPDIRECTDRAWSURFACE7 surf,
 
 //==========================================================================
 //
-//	TDirect3DDrawer::AdjustGamma
+//	VDirect3DDrawer::AdjustGamma
 //
 //==========================================================================
 
-void TDirect3DDrawer::AdjustGamma(rgba_t *data, int size)
+void VDirect3DDrawer::AdjustGamma(rgba_t *data, int size)
 {
-	guard(TDirect3DDrawer::AdjustGamma);
+	guard(VDirect3DDrawer::AdjustGamma);
 	byte *gt = gammatable[usegamma];
 	for (int i = 0; i < size; i++)
 	{
@@ -971,17 +971,17 @@ void TDirect3DDrawer::AdjustGamma(rgba_t *data, int size)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::ResampleTexture
+//	VDirect3DDrawer::ResampleTexture
 //
 //	Resizes	texture.
 //	This is a simplified version of gluScaleImage from sources of MESA 3.0
 //
 //==========================================================================
 
-void TDirect3DDrawer::ResampleTexture(int widthin, int heightin,
+void VDirect3DDrawer::ResampleTexture(int widthin, int heightin,
 	const byte *datain, int widthout, int heightout, byte *dataout)
 {
-	guard(TDirect3DDrawer::ResampleTexture);
+	guard(VDirect3DDrawer::ResampleTexture);
 	int i, j, k;
 	float sx, sy;
 
@@ -1097,15 +1097,15 @@ void TDirect3DDrawer::ResampleTexture(int widthin, int heightin,
 
 //==========================================================================
 //
-//	TDirect3DDrawer::MipMap
+//	VDirect3DDrawer::MipMap
 //
 //	Scales image down for next mipmap level, operates in place
 //
 //==========================================================================
 
-void TDirect3DDrawer::MipMap(int width, int height, byte *in)
+void VDirect3DDrawer::MipMap(int width, int height, byte *in)
 {
-	guard(TDirect3DDrawer::MipMap);
+	guard(VDirect3DDrawer::MipMap);
 	int		i, j;
 	byte	*out = in;
 
@@ -1141,17 +1141,17 @@ void TDirect3DDrawer::MipMap(int width, int height, byte *in)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::UploadTexture
+//	VDirect3DDrawer::UploadTexture
 //
 //==========================================================================
 
 #if DIRECT3D_VERSION >= 0x0800
-LPDIRECT3DTEXTURE8 TDirect3DDrawer::UploadTexture(int width, int height, rgba_t *data)
+LPDIRECT3DTEXTURE8 VDirect3DDrawer::UploadTexture(int width, int height, rgba_t *data)
 #else
-LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTexture(int width, int height, rgba_t *data)
+LPDIRECTDRAWSURFACE7 VDirect3DDrawer::UploadTexture(int width, int height, rgba_t *data)
 #endif
 {
-	guard(TDirect3DDrawer::UploadTexture);
+	guard(VDirect3DDrawer::UploadTexture);
 	int						w, h;
 	byte					*image;
 	byte					stackbuf[256 * 128 * 4];
@@ -1253,17 +1253,17 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTexture(int width, int height, rgba_
 
 //==========================================================================
 //
-//	TDirect3DDrawer::UploadTextureNoMip
+//	VDirect3DDrawer::UploadTextureNoMip
 //
 //==========================================================================
 
 #if DIRECT3D_VERSION >= 0x0800
-LPDIRECT3DTEXTURE8 TDirect3DDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
+LPDIRECT3DTEXTURE8 VDirect3DDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
 #else
-LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
+LPDIRECTDRAWSURFACE7 VDirect3DDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
 #endif
 {
-	guard(TDirect3DDrawer::UploadTextureNoMip);
+	guard(VDirect3DDrawer::UploadTextureNoMip);
 	int		w, h;
 	byte	*image;
 	byte	stackbuf[64 * 1024];
@@ -1328,9 +1328,12 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureNoMip(int width, int height, 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.20  2002/03/28 17:55:08  dj_jl
 //	Added wrapping/clamping.
-//
+//	
 //	Revision 1.19  2002/03/20 19:09:53  dj_jl
 //	DeepSea tall patches support.
 //	

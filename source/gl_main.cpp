@@ -45,74 +45,63 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-// PRIVATE DATA DEFINITIONS ------------------------------------------------
+IMPLEMENT_CLASS(VOpenGLDrawer);
 
-static TOpenGLDrawer	OpenGLDrawer;
+TCvarI VOpenGLDrawer::tex_linear("gl_tex_linear", "2", CVAR_ARCHIVE);
+TCvarI VOpenGLDrawer::clear("gl_clear", "0", CVAR_ARCHIVE);
+TCvarI VOpenGLDrawer::blend_sprites("gl_blend_sprites", "0", CVAR_ARCHIVE);
+TCvarI VOpenGLDrawer::ext_multitexture("gl_ext_multitexture", "1", CVAR_ARCHIVE);
+TCvarI VOpenGLDrawer::ext_point_parameters("gl_ext_point_parameters", "1", CVAR_ARCHIVE);
+TCvarI VOpenGLDrawer::ext_anisotropy("gl_ext_anisotropy", "1", CVAR_ARCHIVE);
+TCvarF VOpenGLDrawer::maxdist("gl_maxdist", "8192.0", CVAR_ARCHIVE);
+TCvarI VOpenGLDrawer::model_lighting("gl_model_lighting", "0", CVAR_ARCHIVE);
+TCvarI VOpenGLDrawer::specular_highlights("gl_specular_highlights", "1", CVAR_ARCHIVE);
+
+// PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	TOpenGLDrawer::TOpenGLDrawer
+//	VOpenGLDrawer::InitResolution
 //
 //==========================================================================
 
-TOpenGLDrawer::TOpenGLDrawer(void) :
-	lastgamma(0),
-	tex_linear("gl_tex_linear", "2", CVAR_ARCHIVE),
-	clear("gl_clear", "0", CVAR_ARCHIVE),
-	blend_sprites("gl_blend_sprites", "0", CVAR_ARCHIVE),
-	ext_multitexture("gl_ext_multitexture", "1", CVAR_ARCHIVE),
-	ext_point_parameters("gl_ext_point_parameters", "1", CVAR_ARCHIVE),
-	ext_anisotropy("gl_ext_anisotropy", "1", CVAR_ARCHIVE),
-	maxdist("gl_maxdist", "8192.0", CVAR_ARCHIVE),
-	model_lighting("gl_model_lighting", "0", CVAR_ARCHIVE),
-	specular_highlights("gl_specular_highlights", "1", CVAR_ARCHIVE)
+void VOpenGLDrawer::InitResolution(void)
 {
-	_OpenGLDrawer = this;
-}
+	guard(VOpenGLDrawer::InitResolution);
+	GCon->Logf(NAME_Init, "GL_VENDOR: %s", glGetString(GL_VENDOR));
+	GCon->Logf(NAME_Init, "GL_RENDERER: %s", glGetString(GL_RENDERER));
+	GCon->Logf(NAME_Init, "GL_VERSION: %s", glGetString (GL_VERSION));
 
-//==========================================================================
-//
-//	TOpenGLDrawer::InitResolution
-//
-//==========================================================================
-
-void TOpenGLDrawer::InitResolution(void)
-{
-	guard(TOpenGLDrawer::InitResolution);
-	con << "GL_VENDOR: " << glGetString(GL_VENDOR) << endl;
-	con << "GL_RENDERER: " << glGetString(GL_RENDERER) << endl;
-	con << "GL_VERSION: " << glGetString (GL_VERSION) << endl;
-
-	con << "GL_EXTENSIONS:\n";
+	GCon->Log(NAME_Init, "GL_EXTENSIONS:");
 	char *sbuf = Z_StrDup((char*)glGetString(GL_EXTENSIONS));
 	for (char *s = strtok(sbuf, " "); s; s = strtok(NULL, " "))
 	{
-		con << "- " << s << endl;
+		GCon->Logf(NAME_Init, "- %s", s);
 	}
 	Z_Free(sbuf);
 
 	// Check the maximum texture size.
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
-	con << "Maximum texture size: " << maxTexSize << endl;
+	GCon->Logf(NAME_Init, "Maximum texture size: %d", maxTexSize);
 
 	//	Check multi-texture extensions
 	if (ext_multitexture && CheckExtension("GL_ARB_multitexture"))
 	{
-		con << "Found GL_ARB_multitexture...\n";
+		GCon->Log(NAME_Init, "Found GL_ARB_multitexture...");
 
 		p_MultiTexCoord2f = MultiTexCoord2f_t(GetExtFuncPtr("glMultiTexCoord2fARB"));
 		p_SelectTexture = SelectTexture_t(GetExtFuncPtr("glActiveTextureARB"));
 
 		if (p_MultiTexCoord2f && p_SelectTexture)
 		{
-			con << "Multitexture extensions found.\n";
+			GCon->Log(NAME_Init, "Multitexture extensions found.");
 			mtexable = true;
 		}
 		else
 		{
-			con << "Symbol not found, disabled.\n";
+			GCon->Log(NAME_Init, "Symbol not found, disabled.");
 			mtexable = false;
 		}
 	}
@@ -124,18 +113,18 @@ void TOpenGLDrawer::InitResolution(void)
 	//  Check point parameters extensions
 	if (ext_point_parameters && CheckExtension("GL_EXT_point_parameters"))
 	{
-		con << "Found GL_EXT_point_parameters...\n";
+		GCon->Log(NAME_Init, "Found GL_EXT_point_parameters...");
 
 		p_PointParameterf = PointParameterf_t(GetExtFuncPtr("glPointParameterfEXT"));
 		p_PointParameterfv = PointParameterfv_t(GetExtFuncPtr("glPointParameterfvEXT"));
 		if (p_PointParameterf && p_PointParameterfv)
 		{
-			con << "Point parameters extensions found\n";
+			GCon->Log(NAME_Init, "Point parameters extensions found");
 			pointparmsable = true;
 		}
 		else
 		{
-			con << "Symbol not found, disabled.\n";
+			GCon->Log(NAME_Init, "Symbol not found, disabled.");
 			pointparmsable = false;
 		}
 	}
@@ -151,7 +140,7 @@ void TOpenGLDrawer::InitResolution(void)
 
 		glGetFloatv(GLenum(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT), &max_anisotropy);
 		glTexParameterfv(GL_TEXTURE_2D, GLenum(GL_TEXTURE_MAX_ANISOTROPY_EXT), &max_anisotropy);
-		con << "Max anisotropy " << max_anisotropy << endl;
+		GCon->Logf(NAME_Init, "Max anisotropy %f", max_anisotropy);
 	}
 
 	glClearColor(0.0, 0.0, 0.0, 0.0);	// Black Background
@@ -178,13 +167,13 @@ void TOpenGLDrawer::InitResolution(void)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::CheckExtension
+//	VOpenGLDrawer::CheckExtension
 //
 //==========================================================================
 
-bool TOpenGLDrawer::CheckExtension(const char *ext)
+bool VOpenGLDrawer::CheckExtension(const char *ext)
 {
-	guard(TOpenGLDrawer::CheckExtension);
+	guard(VOpenGLDrawer::CheckExtension);
 	char *sbuf = Z_StrDup((char*)glGetString(GL_EXTENSIONS));
 	for (char *s = strtok(sbuf, " "); s; s = strtok(NULL, " "))
 	{
@@ -201,24 +190,24 @@ bool TOpenGLDrawer::CheckExtension(const char *ext)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::NewMap
+//	VOpenGLDrawer::NewMap
 //
 //==========================================================================
 
-void TOpenGLDrawer::NewMap(void)
+void VOpenGLDrawer::NewMap(void)
 {
 	FlushCaches(false);
 }
 
 //==========================================================================
 //
-//	TOpenGLDrawer::Setup2D
+//	VOpenGLDrawer::Setup2D
 //
 //==========================================================================
 
-void TOpenGLDrawer::Setup2D(void)
+void VOpenGLDrawer::Setup2D(void)
 {
-	guard(TOpenGLDrawer::Setup2D);
+	guard(VOpenGLDrawer::Setup2D);
 	glViewport(0, 0, ScreenWidth, ScreenHeight);
 
 	glMatrixMode(GL_PROJECTION);
@@ -242,13 +231,13 @@ void TOpenGLDrawer::Setup2D(void)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::StartUpdate
+//	VOpenGLDrawer::StartUpdate
 //
 //==========================================================================
 
-void TOpenGLDrawer::StartUpdate(void)
+void VOpenGLDrawer::StartUpdate(void)
 {
-	guard(TOpenGLDrawer::StartUpdate);
+	guard(VOpenGLDrawer::StartUpdate);
 	glFinish();
 	if (clear)
 	{
@@ -292,13 +281,13 @@ void TOpenGLDrawer::StartUpdate(void)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::BeginDirectUpdate
+//	VOpenGLDrawer::BeginDirectUpdate
 //
 //==========================================================================
 
-void TOpenGLDrawer::BeginDirectUpdate(void)
+void VOpenGLDrawer::BeginDirectUpdate(void)
 {
-	guard(TOpenGLDrawer::BeginDirectUpdate);
+	guard(VOpenGLDrawer::BeginDirectUpdate);
 	glFinish();
 	glDrawBuffer(GL_FRONT);
 	unguard;
@@ -306,26 +295,26 @@ void TOpenGLDrawer::BeginDirectUpdate(void)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::EndDirectUpdate
+//	VOpenGLDrawer::EndDirectUpdate
 //
 //==========================================================================
 
-void TOpenGLDrawer::EndDirectUpdate(void)
+void VOpenGLDrawer::EndDirectUpdate(void)
 {
-	guard(TOpenGLDrawer::EndDirectUpdate);
+	guard(VOpenGLDrawer::EndDirectUpdate);
 	glDrawBuffer(GL_BACK);
 	unguard;
 }
 
 //==========================================================================
 //
-//	TOpenGLDrawer::SetupView
+//	VOpenGLDrawer::SetupView
 //
 //==========================================================================
 
-void TOpenGLDrawer::SetupView(const refdef_t *rd)
+void VOpenGLDrawer::SetupView(const refdef_t *rd)
 {
-	guard(TOpenGLDrawer::SetupView);
+	guard(VOpenGLDrawer::SetupView);
 	if (rd->drawworld && rd->width != ScreenWidth)
 	{
 		// 	Draws the border around the view for different size windows
@@ -395,13 +384,13 @@ void TOpenGLDrawer::SetupView(const refdef_t *rd)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::EndView
+//	VOpenGLDrawer::EndView
 //
 //==========================================================================
 
-void TOpenGLDrawer::EndView(void)
+void VOpenGLDrawer::EndView(void)
 {
-	guard(TOpenGLDrawer::EndView);
+	guard(VOpenGLDrawer::EndView);
 	Setup2D();
 
 	cl.cshifts[7] = cl.prev_cshifts[7];
@@ -435,13 +424,13 @@ void TOpenGLDrawer::EndView(void)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::ReadScreen
+//	VOpenGLDrawer::ReadScreen
 //
 //==========================================================================
 
-void *TOpenGLDrawer::ReadScreen(int *bpp, bool *bot2top)
+void *VOpenGLDrawer::ReadScreen(int *bpp, bool *bot2top)
 {
-	guard(TOpenGLDrawer::ReadScreen);
+	guard(VOpenGLDrawer::ReadScreen);
 	void *dst = Z_Malloc(ScreenWidth * ScreenHeight * 3, PU_VIDEO, 0);
 	if (!dst)
 	{
@@ -458,13 +447,13 @@ void *TOpenGLDrawer::ReadScreen(int *bpp, bool *bot2top)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::SetPalette
+//	VOpenGLDrawer::SetPalette
 //
 //==========================================================================
 
-void TOpenGLDrawer::SetPalette(int pnum)
+void VOpenGLDrawer::SetPalette(int pnum)
 {
-	guard(TOpenGLDrawer::SetPalette);
+	guard(VOpenGLDrawer::SetPalette);
 	byte *pal = (byte*)W_CacheLumpName("PLAYPAL", PU_CACHE) + 768 * pnum;
 	int cmax = MAX(MAX(pal[0], pal[1]), pal[2]);
 	if (!cmax)
@@ -483,9 +472,12 @@ void TOpenGLDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.18  2002/01/11 18:24:44  dj_jl
 //	Added guard macros
-//
+//	
 //	Revision 1.17  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

@@ -41,60 +41,48 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+IMPLEMENT_CLASS(VDirect3DDrawer);
+
+TCvarI VDirect3DDrawer::device("d3d_device", "0", CVAR_ARCHIVE);
+TCvarI VDirect3DDrawer::clear("d3d_clear", "0", CVAR_ARCHIVE);
+TCvarI VDirect3DDrawer::tex_linear("d3d_tex_linear", "2", CVAR_ARCHIVE);
+TCvarI VDirect3DDrawer::dither("d3d_dither", "0", CVAR_ARCHIVE);
+TCvarI VDirect3DDrawer::blend_sprites("d3d_blend_sprites", "0", CVAR_ARCHIVE);
+TCvarF VDirect3DDrawer::maxdist("d3d_maxdist", "8192.0", CVAR_ARCHIVE);
+TCvarI VDirect3DDrawer::model_lighting("d3d_model_lighting", "0", CVAR_ARCHIVE);
+TCvarI VDirect3DDrawer::specular_highlights("d3d_specular_highlights", "1", CVAR_ARCHIVE);
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static TDirect3DDrawer		Direct3DDrawer;
 static bool					Windowed;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	TDirect3DDrawer::TDirect3DDrawer
+//	VDirect3DDrawer::VDirect3DDrawer
 //
 //==========================================================================
 
-TDirect3DDrawer::TDirect3DDrawer(void) :
-	lastgamma(0),
-	device("d3d_device", "0", CVAR_ARCHIVE),
-	clear("d3d_clear", "0", CVAR_ARCHIVE),
-	tex_linear("d3d_tex_linear", "2", CVAR_ARCHIVE),
-	dither("d3d_dither", "0", CVAR_ARCHIVE),
-	blend_sprites("d3d_blend_sprites", "0", CVAR_ARCHIVE),
-	maxdist("d3d_maxdist", "8192.0", CVAR_ARCHIVE),
-	model_lighting("d3d_model_lighting", "0", CVAR_ARCHIVE),
-	specular_highlights("d3d_specular_highlights", "1", CVAR_ARCHIVE),
+VDirect3DDrawer::VDirect3DDrawer(void) :
 	IdentityMatrix(	1, 0, 0, 0,
 					0, 1, 0, 0,
 					0, 0, 1, 0,
 					0, 0, 0, 1)
 {
-	_Direct3DDrawer = this;
-
-#if DIRECT3D_VERSION < 0x0800
-	//	DirectDraw interfaces
-	DDraw = NULL;
-	PrimarySurface = NULL;
-	RenderSurface = NULL;
-	ZBuffer = NULL;
-#endif
-
-	//	Direct3D interfaces
-	Direct3D = NULL;
-	RenderDevice = NULL;
 }
 
 //==========================================================================
 //
-//	TDirect3DDrawer::Init
+//	VDirect3DDrawer::Init
 //
 // 	Determine the hardware configuration
 //
 //==========================================================================
 
-void TDirect3DDrawer::Init(void)
+void VDirect3DDrawer::Init(void)
 {
-	guard(TDirect3DDrawer::Init);
+	guard(VDirect3DDrawer::Init);
 
 	Windowed = !!M_CheckParm("-window");
 #if DIRECT3D_VERSION >= 0x0800
@@ -151,11 +139,11 @@ void TDirect3DDrawer::Init(void)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::InitData
+//	VDirect3DDrawer::InitData
 //
 //==========================================================================
 
-void TDirect3DDrawer::InitData(void)
+void VDirect3DDrawer::InitData(void)
 {
 }
 
@@ -163,35 +151,35 @@ void TDirect3DDrawer::InitData(void)
 
 //==========================================================================
 //
-//	EnumDevicesCallback
+//	VDirect3DDrawer::EnumDevicesCallback
 //
 //==========================================================================
 
-static HRESULT CALLBACK EnumDevicesCallback(
+HRESULT CALLBACK VDirect3DDrawer::EnumDevicesCallback(
 	LPSTR lpDeviceDesc,
 	LPSTR lpDeviceName,
 	LPD3DDEVICEDESC7 lpD3DDeviceDesc,
 	LPVOID)
 {
-	cond << "Device " << lpDeviceName << endl;
-	cond << "Description: " << lpDeviceDesc << endl;
-	cond << lpD3DDeviceDesc;
-	cond << "-------------------------------------\n";
+	GCon->Logf(NAME_Dev, "Device %s", lpDeviceName);
+	GCon->Logf(NAME_Dev, "Description: %s", lpDeviceDesc);
+	LogDeviceDesc(*GCon, lpD3DDeviceDesc);
+	GCon->Log(NAME_Dev, "-------------------------------------");
 
 	return D3DENUMRET_OK;
 }
 
 //==========================================================================
 //
-//	EnumZBufferCallback
+//	VDirect3DDrawer::EnumZBufferCallback
 //
 //==========================================================================
 
-static HRESULT CALLBACK EnumZBufferCallback(LPDDPIXELFORMAT pf, void* dst)
+HRESULT CALLBACK VDirect3DDrawer::EnumZBufferCallback(LPDDPIXELFORMAT pf, void* dst)
 {
-	cond << "Z buffer format\n"
-		<< pf
-		<< "-------------------------------------\n";
+	GCon->Log(NAME_Dev, "Z buffer format");
+	LogPixelFormat(*GCon, pf);
+	GCon->Log(NAME_Dev, "-------------------------------------");
 
 	// Choose best available z-buffer bit depth
 	if (pf->dwFlags == DDPF_ZBUFFER &&
@@ -206,15 +194,15 @@ static HRESULT CALLBACK EnumZBufferCallback(LPDDPIXELFORMAT pf, void* dst)
 
 //==========================================================================
 //
-//	EnumPixelFormatsCallback
+//	VDirect3DDrawer::EnumPixelFormatsCallback
 //
 //==========================================================================
 
-static HRESULT CALLBACK EnumPixelFormatsCallback(LPDDPIXELFORMAT pf, void* dst)
+HRESULT CALLBACK VDirect3DDrawer::EnumPixelFormatsCallback(LPDDPIXELFORMAT pf, void* dst)
 {
-	cond << "Pixel format\n"
-		<< pf
-		<< "-------------------------------------\n";
+	GCon->Log(NAME_Dev, "Pixel format");
+	LogPixelFormat(*GCon, pf);
+	GCon->Log(NAME_Dev, "-------------------------------------");
 
 	if ((pf->dwFlags == (DDPF_RGB|DDPF_ALPHAPIXELS)) &&
 		(pf->dwRGBBitCount == 16))
@@ -231,11 +219,11 @@ static HRESULT CALLBACK EnumPixelFormatsCallback(LPDDPIXELFORMAT pf, void* dst)
 
 //==========================================================================
 //
-//	EnumPixelFormats32Callback
+//	VDirect3DDrawer::EnumPixelFormats32Callback
 //
 //==========================================================================
 
-static HRESULT CALLBACK EnumPixelFormats32Callback(LPDDPIXELFORMAT pf, void* dst)
+HRESULT CALLBACK VDirect3DDrawer::EnumPixelFormats32Callback(LPDDPIXELFORMAT pf, void* dst)
 {
 	if ((pf->dwFlags == (DDPF_RGB|DDPF_ALPHAPIXELS)) &&
 		(pf->dwRGBBitCount == 32))
@@ -293,15 +281,15 @@ int GetShift(dword mask)
 
 //==========================================================================
 //
-// 	TDirect3DDrawer::SetResolution
+// 	VDirect3DDrawer::SetResolution
 //
 // 	Set up the video mode
 //
 //==========================================================================
 
-bool TDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
+bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
 {
-	guard(TDirect3DDrawer::SetResolution);
+	guard(VDirect3DDrawer::SetResolution);
 	if (!Width || !Height)
 	{
 		//	Set defaults
@@ -392,7 +380,7 @@ bool TDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
 	gshift32 = 8;
 	bshift32 = 0;
 #else
-	con << "-------------------------------------\n";
+	GCon->Log(NAME_Init, "-------------------------------------");
 
 	DDSURFACEDESC2	ddsd;
 
@@ -552,13 +540,13 @@ bool TDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::InitResolution
+//	VDirect3DDrawer::InitResolution
 //
 //==========================================================================
 
-void TDirect3DDrawer::InitResolution(void)
+void VDirect3DDrawer::InitResolution(void)
 {
-	guard(TDirect3DDrawer::InitResolution);
+	guard(VDirect3DDrawer::InitResolution);
 #if DIRECT3D_VERSION >= 0x0800
 	RenderDevice->SetStreamSource(0, NULL, sizeof(MyD3DVertex));
 	RenderDevice->SetVertexShader(MYD3D_VERTEX_FORMAT);
@@ -582,24 +570,24 @@ void TDirect3DDrawer::InitResolution(void)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::NewMap
+//	VDirect3DDrawer::NewMap
 //
 //==========================================================================
 
-void TDirect3DDrawer::NewMap(void)
+void VDirect3DDrawer::NewMap(void)
 {
 	FlushCaches(false);
 }
 
 //==========================================================================
 //
-//	TDirect3DDrawer::StartUpdate
+//	VDirect3DDrawer::StartUpdate
 //
 //==========================================================================
 
-void TDirect3DDrawer::StartUpdate(void)
+void VDirect3DDrawer::StartUpdate(void)
 {
-	guard(TDirect3DDrawer::StartUpdate);
+	guard(VDirect3DDrawer::StartUpdate);
 #if DIRECT3D_VERSION < 0x0800
 	// Check for lost surface
 	if (RenderSurface->IsLost() != DD_OK)
@@ -709,13 +697,13 @@ void TDirect3DDrawer::StartUpdate(void)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::Setup2D
+//	VDirect3DDrawer::Setup2D
 //
 //==========================================================================
 
-void TDirect3DDrawer::Setup2D(void)
+void VDirect3DDrawer::Setup2D(void)
 {
-	guard(TDirect3DDrawer::Setup2D);
+	guard(VDirect3DDrawer::Setup2D);
 	//	Setup viewport
 #if DIRECT3D_VERSION >= 0x0800
 	D3DVIEWPORT8 view2D;
@@ -758,13 +746,13 @@ void TDirect3DDrawer::Setup2D(void)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::SetupView
+//	VDirect3DDrawer::SetupView
 //
 //==========================================================================
 
-void TDirect3DDrawer::SetupView(const refdef_t *rd)
+void VDirect3DDrawer::SetupView(const refdef_t *rd)
 {
-	guard(TDirect3DDrawer::SetupView);
+	guard(VDirect3DDrawer::SetupView);
 	if (rd->drawworld && rd->width != ScreenWidth)
 	{
 		R_DrawViewBorder();
@@ -849,13 +837,13 @@ void TDirect3DDrawer::SetupView(const refdef_t *rd)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::EndView
+//	VDirect3DDrawer::EndView
 //
 //==========================================================================
 
-void TDirect3DDrawer::EndView(void)
+void VDirect3DDrawer::EndView(void)
 {
-	guard(TDirect3DDrawer::EndView);
+	guard(VDirect3DDrawer::EndView);
 	Setup2D();
 
 	cl.cshifts[7] = cl.prev_cshifts[7];
@@ -892,15 +880,15 @@ void TDirect3DDrawer::EndView(void)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::Update
+//	VDirect3DDrawer::Update
 //
 // 	Blit to the screen / Flip surfaces
 //
 //==========================================================================
 
-void TDirect3DDrawer::Update(void)
+void VDirect3DDrawer::Update(void)
 {
-	guard(TDirect3DDrawer::Update);
+	guard(VDirect3DDrawer::Update);
 	// End the scene.
 	RenderDevice->EndScene();
 
@@ -920,13 +908,13 @@ void TDirect3DDrawer::Update(void)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::BeginDirectUpdate
+//	VDirect3DDrawer::BeginDirectUpdate
 //
 //==========================================================================
 
-void TDirect3DDrawer::BeginDirectUpdate(void)
+void VDirect3DDrawer::BeginDirectUpdate(void)
 {
-	guard(TDirect3DDrawer::BeginDirectUpdate);
+	guard(VDirect3DDrawer::BeginDirectUpdate);
 #if DIRECT3D_VERSION < 0x0800
 	// Check for lost surface
 	if (RenderSurface->IsLost() != DD_OK)
@@ -942,26 +930,26 @@ void TDirect3DDrawer::BeginDirectUpdate(void)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::EndDirectUpdate
+//	VDirect3DDrawer::EndDirectUpdate
 //
 //==========================================================================
 
-void TDirect3DDrawer::EndDirectUpdate(void)
+void VDirect3DDrawer::EndDirectUpdate(void)
 {
 	Update();
 }
 
 //==========================================================================
 //
-// 	TDirect3DDrawer::Shutdown
+// 	VDirect3DDrawer::Shutdown
 //
 //	Close the graphics
 //
 //==========================================================================
 
-void TDirect3DDrawer::Shutdown(void)
+void VDirect3DDrawer::Shutdown(void)
 {
-	guard(TDirect3DDrawer::Shutdown);
+	guard(VDirect3DDrawer::Shutdown);
 	ReleaseTextures();
 #if DIRECT3D_VERSION >= 0x0800
 	SAFE_RELEASE(RenderDevice)
@@ -985,13 +973,13 @@ void TDirect3DDrawer::Shutdown(void)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::ReadScreen
+//	VDirect3DDrawer::ReadScreen
 //
 //==========================================================================
 
-void *TDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
+void *VDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 {
-	guard(TDirect3DDrawer::ReadScreen);
+	guard(VDirect3DDrawer::ReadScreen);
 	//	Allocate buffer
 	void *dst = Z_Malloc(ScreenWidth * ScreenHeight * sizeof(rgb_t), PU_VIDEO, 0);
 	if (!dst)
@@ -1047,7 +1035,7 @@ void *TDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 	}
 	else
 	{
-		con << "Invalid pixel format\n";
+		GCon->Log(NAME_Init, "Invalid pixel format");
 		Z_Free(dst);
 		return NULL;
 	}
@@ -1117,13 +1105,13 @@ void *TDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::SetPalette
+//	VDirect3DDrawer::SetPalette
 //
 //==========================================================================
 
-void TDirect3DDrawer::SetPalette(int pnum)
+void VDirect3DDrawer::SetPalette(int pnum)
 {
-	guard(TDirect3DDrawer::SetPalette);
+	guard(VDirect3DDrawer::SetPalette);
 	rgb_t *pal = (rgb_t*)W_CacheLumpName("playpal", PU_CACHE);
 
 	pal += 256 * pnum;
@@ -1144,9 +1132,12 @@ void TDirect3DDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.20  2002/01/11 18:24:44  dj_jl
 //	Added guard macros
-//
+//	
 //	Revision 1.19  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	

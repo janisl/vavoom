@@ -59,13 +59,13 @@ static byte ptex[8][8] =
 
 //==========================================================================
 //
-//	TOpenGLDrawer::InitData
+//	VOpenGLDrawer::InitData
 //
 //==========================================================================
 
-void TOpenGLDrawer::InitData(void)
+void VOpenGLDrawer::InitData(void)
 {
-	guard(TOpenGLDrawer::InitData);
+	guard(VOpenGLDrawer::InitData);
 	byte *pal = (byte*)W_CacheLumpName("PLAYPAL", PU_CACHE);
 	for (int i = 0; i < 256; i++)
 	{
@@ -79,13 +79,13 @@ void TOpenGLDrawer::InitData(void)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::InitTextures
+//	VOpenGLDrawer::InitTextures
 //
 //==========================================================================
 
-void TOpenGLDrawer::InitTextures(void)
+void VOpenGLDrawer::InitTextures(void)
 {
-	guard(TOpenGLDrawer::InitTextures);
+	guard(VOpenGLDrawer::InitTextures);
 	//	Textures
 	texture_id = (GLuint*)Z_Calloc(numtextures * 4);
 	texture_sent = (bool*)Z_Calloc(numtextures);
@@ -110,13 +110,13 @@ void TOpenGLDrawer::InitTextures(void)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::GenerateTextures
+//	VOpenGLDrawer::GenerateTextures
 //
 //==========================================================================
 
-void TOpenGLDrawer::GenerateTextures(void)
+void VOpenGLDrawer::GenerateTextures(void)
 {
-	guard(TOpenGLDrawer::GenerateTextures);
+	guard(VOpenGLDrawer::GenerateTextures);
 	int			i, j;
 	rgba_t		pbuf[8][8];
 
@@ -155,13 +155,13 @@ void TOpenGLDrawer::GenerateTextures(void)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::FlushTextures
+//	VOpenGLDrawer::FlushTextures
 //
 //==========================================================================
 
-void TOpenGLDrawer::FlushTextures(void)
+void VOpenGLDrawer::FlushTextures(void)
 {
-	guard(TOpenGLDrawer::FlushTextures);
+	guard(VOpenGLDrawer::FlushTextures);
 	memset(texture_sent, 0, numtextures);
 	memset(flat_sent, 0, numflats);
 	memset(skymap_sent, 0, numskymaps);
@@ -174,13 +174,13 @@ void TOpenGLDrawer::FlushTextures(void)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::DeleteTextures
+//	VOpenGLDrawer::DeleteTextures
 //
 //==========================================================================
 
-void TOpenGLDrawer::DeleteTextures(void)
+void VOpenGLDrawer::DeleteTextures(void)
 {
-	guard(TOpenGLDrawer::DeleteTextures);
+	guard(VOpenGLDrawer::DeleteTextures);
 	if (texturesGenerated)
 	{
 		glDeleteTextures(numtextures, texture_id);
@@ -203,11 +203,11 @@ void TOpenGLDrawer::DeleteTextures(void)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::ToPowerOf2
+//	VOpenGLDrawer::ToPowerOf2
 //
 //==========================================================================
 
-int TOpenGLDrawer::ToPowerOf2(int val)
+int VOpenGLDrawer::ToPowerOf2(int val)
 {
 	int answer = 1;
 	while (answer < val)
@@ -217,7 +217,7 @@ int TOpenGLDrawer::ToPowerOf2(int val)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::DrawColumnInCache
+//	VOpenGLDrawer::DrawColumnInCache
 //
 // 	Clip and draw a column from a patch into a flat buffer.
 //
@@ -228,10 +228,10 @@ int TOpenGLDrawer::ToPowerOf2(int val)
 //
 //==========================================================================
 
-void TOpenGLDrawer::DrawColumnInCache(column_t* column, rgba_t* cache,
+void VOpenGLDrawer::DrawColumnInCache(column_t* column, rgba_t* cache,
 	int originx, int originy, int cachewidth, int cacheheight)
 {
-	guard(TOpenGLDrawer::DrawColumnInCache);
+	guard(VOpenGLDrawer::DrawColumnInCache);
 	int		count;
 	int		position;
 	byte*	source;
@@ -280,16 +280,16 @@ void TOpenGLDrawer::DrawColumnInCache(column_t* column, rgba_t* cache,
 
 //==========================================================================
 //
-//	TOpenGLDrawer::GenerateTexture
+//	VOpenGLDrawer::GenerateTexture
 //
 // 	Using the texture definition, the composite texture is created from the
 // patches, and each column is cached.
 //
 //==========================================================================
 
-void TOpenGLDrawer::GenerateTexture(int texnum)
+void VOpenGLDrawer::GenerateTexture(int texnum)
 {
-	guard(TOpenGLDrawer::GenerateTexture);
+	guard(VOpenGLDrawer::GenerateTexture);
 	rgba_t*			block;
 	texdef_t*		texture;
 	texpatch_t*		patch;
@@ -342,13 +342,13 @@ void TOpenGLDrawer::GenerateTexture(int texnum)
 
 //==========================================================================
 //
-// 	TOpenGLDrawer::SetTexture
+// 	VOpenGLDrawer::SetTexture
 //
 //==========================================================================
 
-void TOpenGLDrawer::SetTexture(int tex)
+void VOpenGLDrawer::SetTexture(int tex)
 {
-	guard(TOpenGLDrawer::SetTexture);
+	guard(VOpenGLDrawer::SetTexture);
 	if (tex & TEXF_FLAT)
 	{
 		SetFlat(tex);
@@ -371,13 +371,13 @@ void TOpenGLDrawer::SetTexture(int tex)
 
 //==========================================================================
 //
-// 	TOpenGLDrawer::SetSkyTexture
+// 	VOpenGLDrawer::SetSkyTexture
 //
 //==========================================================================
 
-void TOpenGLDrawer::SetSkyTexture(int tex, bool double_sky)
+void VOpenGLDrawer::SetSkyTexture(int tex, bool double_sky)
 {
-	guard(TOpenGLDrawer::SetSkyTexture);
+	guard(VOpenGLDrawer::SetSkyTexture);
 	if (tex & TEXF_SKY_MAP)
 	{
 		tex &= ~TEXF_SKY_MAP;
@@ -430,13 +430,13 @@ void TOpenGLDrawer::SetSkyTexture(int tex, bool double_sky)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::GenerateFlat
+//	VOpenGLDrawer::GenerateFlat
 //
 //==========================================================================
 
-void TOpenGLDrawer::GenerateFlat(int num)
+void VOpenGLDrawer::GenerateFlat(int num)
 {
-	guard(TOpenGLDrawer::GenerateFlat);
+	guard(VOpenGLDrawer::GenerateFlat);
 	rgba_t *block = (rgba_t*)Z_Malloc(4 * 64 * 64);
 	byte *data = (byte*)W_CacheLumpNum(flatlumps[num], PU_CACHE);
 	for (int i = 0; i < 64 * 64; i++)
@@ -453,13 +453,13 @@ void TOpenGLDrawer::GenerateFlat(int num)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::SetFlat
+//	VOpenGLDrawer::SetFlat
 //
 //==========================================================================
 
-void TOpenGLDrawer::SetFlat(int num)
+void VOpenGLDrawer::SetFlat(int num)
 {
-	guard(TOpenGLDrawer::SetFlat);
+	guard(VOpenGLDrawer::SetFlat);
 	num = R_TextureAnimation(num);
 	num &= ~TEXF_FLAT;
 
@@ -478,13 +478,13 @@ void TOpenGLDrawer::SetFlat(int num)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::GenerateSprite
+//	VOpenGLDrawer::GenerateSprite
 //
 //==========================================================================
 
-void TOpenGLDrawer::GenerateSprite(int lump)
+void VOpenGLDrawer::GenerateSprite(int lump)
 {
-	guard(TOpenGLDrawer::GenerateSprite);
+	guard(VOpenGLDrawer::GenerateSprite);
 	patch_t	*patch = (patch_t*)W_CacheLumpNum(spritelumps[lump], PU_STATIC);
 
 	int w = LittleShort(patch->width);
@@ -538,13 +538,13 @@ void TOpenGLDrawer::GenerateSprite(int lump)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::GenerateTranslatedSprite
+//	VOpenGLDrawer::GenerateTranslatedSprite
 //
 //==========================================================================
 
-void TOpenGLDrawer::GenerateTranslatedSprite(int lump, int slot, int translation)
+void VOpenGLDrawer::GenerateTranslatedSprite(int lump, int slot, int translation)
 {
-	guard(TOpenGLDrawer::GenerateTranslatedSprite);
+	guard(VOpenGLDrawer::GenerateTranslatedSprite);
 	patch_t	*patch = (patch_t*)W_CacheLumpNum(spritelumps[lump], PU_STATIC);
 
 	int w = LittleShort(patch->width);
@@ -602,13 +602,13 @@ void TOpenGLDrawer::GenerateTranslatedSprite(int lump, int slot, int translation
 
 //==========================================================================
 //
-//	TOpenGLDrawer::SetSpriteLump
+//	VOpenGLDrawer::SetSpriteLump
 //
 //==========================================================================
 
-void TOpenGLDrawer::SetSpriteLump(int lump, int translation)
+void VOpenGLDrawer::SetSpriteLump(int lump, int translation)
 {
-	guard(TOpenGLDrawer::SetSpriteLump);
+	guard(VOpenGLDrawer::SetSpriteLump);
 	if (translation)
 	{
 		int i;
@@ -661,13 +661,13 @@ void TOpenGLDrawer::SetSpriteLump(int lump, int translation)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::SetPic
+//	VOpenGLDrawer::SetPic
 //
 //==========================================================================
 
-void TOpenGLDrawer::SetPic(int handle)
+void VOpenGLDrawer::SetPic(int handle)
 {
-	guard(TOpenGLDrawer::SetPic);
+	guard(VOpenGLDrawer::SetPic);
 	glBindTexture(GL_TEXTURE_2D, pic_id[handle]);
 
 	if (!pic_sent[handle])
@@ -694,13 +694,13 @@ void TOpenGLDrawer::SetPic(int handle)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::GeneratePicFromPatch
+//	VOpenGLDrawer::GeneratePicFromPatch
 //
 //==========================================================================
 
-void TOpenGLDrawer::GeneratePicFromPatch(int handle)
+void VOpenGLDrawer::GeneratePicFromPatch(int handle)
 {
-	guard(TOpenGLDrawer::GeneratePicFromPatch);
+	guard(VOpenGLDrawer::GeneratePicFromPatch);
 	patch_t *patch = (patch_t*)W_CacheLumpName(pic_list[handle].name, PU_STATIC);
 	int w = LittleShort(patch->width);
 	int h = LittleShort(patch->height);
@@ -755,13 +755,13 @@ void TOpenGLDrawer::GeneratePicFromPatch(int handle)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::GeneratePicFromRaw
+//	VOpenGLDrawer::GeneratePicFromRaw
 //
 //==========================================================================
 
-void TOpenGLDrawer::GeneratePicFromRaw(int handle)
+void VOpenGLDrawer::GeneratePicFromRaw(int handle)
 {
-	guard(TOpenGLDrawer::GeneratePicFromRaw);
+	guard(VOpenGLDrawer::GeneratePicFromRaw);
 	int lump = W_GetNumForName(pic_list[handle].name);
 	int len = W_LumpLength(lump);
 	byte *raw = (byte*)W_CacheLumpNum(lump, PU_STATIC);
@@ -800,13 +800,13 @@ void TOpenGLDrawer::GeneratePicFromRaw(int handle)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::SetSkin
+//	VOpenGLDrawer::SetSkin
 //
 //==========================================================================
 
-void TOpenGLDrawer::SetSkin(const char *name)
+void VOpenGLDrawer::SetSkin(const char *name)
 {
-	guard(TOpenGLDrawer::SetSkin);
+	guard(VOpenGLDrawer::SetSkin);
 	int			i;
 	int			avail;
 
@@ -863,13 +863,13 @@ void TOpenGLDrawer::SetSkin(const char *name)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::AdjustGamma
+//	VOpenGLDrawer::AdjustGamma
 //
 //==========================================================================
 
-void TOpenGLDrawer::AdjustGamma(rgba_t *data, int size)
+void VOpenGLDrawer::AdjustGamma(rgba_t *data, int size)
 {
-	guard(TOpenGLDrawer::AdjustGamma);
+	guard(VOpenGLDrawer::AdjustGamma);
 	byte *gt = gammatable[usegamma];
 	for (int i = 0; i < size; i++)
 	{
@@ -882,17 +882,17 @@ void TOpenGLDrawer::AdjustGamma(rgba_t *data, int size)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::ResampleTexture
+//	VOpenGLDrawer::ResampleTexture
 //
 //	Resizes	texture.
 //	This is a simplified version of gluScaleImage from sources of MESA 3.0
 //
 //==========================================================================
 
-void TOpenGLDrawer::ResampleTexture(int widthin, int heightin,
+void VOpenGLDrawer::ResampleTexture(int widthin, int heightin,
 	const byte *datain, int widthout, int heightout, byte *dataout)
 {
-	guard(TOpenGLDrawer::ResampleTexture);
+	guard(VOpenGLDrawer::ResampleTexture);
 	int i, j, k;
 	float sx, sy;
 
@@ -1008,15 +1008,15 @@ void TOpenGLDrawer::ResampleTexture(int widthin, int heightin,
 
 //==========================================================================
 //
-//	TOpenGLDrawer::MipMap
+//	VOpenGLDrawer::MipMap
 //
 //	Scales image down for next mipmap level, operates in place
 //
 //==========================================================================
 
-void TOpenGLDrawer::MipMap(int width, int height, byte *in)
+void VOpenGLDrawer::MipMap(int width, int height, byte *in)
 {
-	guard(TOpenGLDrawer::MipMap);
+	guard(VOpenGLDrawer::MipMap);
 	int		i, j;
 	byte	*out = in;
 
@@ -1052,13 +1052,13 @@ void TOpenGLDrawer::MipMap(int width, int height, byte *in)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::UploadTexture
+//	VOpenGLDrawer::UploadTexture
 //
 //==========================================================================
 
-void TOpenGLDrawer::UploadTexture(int width, int height, rgba_t *data)
+void VOpenGLDrawer::UploadTexture(int width, int height, rgba_t *data)
 {
-	guard(TOpenGLDrawer::UploadTexture);
+	guard(VOpenGLDrawer::UploadTexture);
 	int		w, h;
 	byte	*image;
 	int		level;
@@ -1116,13 +1116,13 @@ void TOpenGLDrawer::UploadTexture(int width, int height, rgba_t *data)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::UploadTextureNoMip
+//	VOpenGLDrawer::UploadTextureNoMip
 //
 //==========================================================================
 
-void TOpenGLDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
+void VOpenGLDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
 {
-	guard(TOpenGLDrawer::UploadTextureNoMip);
+	guard(VOpenGLDrawer::UploadTextureNoMip);
 	int		w, h;
 	byte	*image;
 	byte	stackbuf[64 * 1024];
@@ -1168,9 +1168,12 @@ void TOpenGLDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.18  2002/04/11 16:44:44  dj_jl
 //	Got rid of some warnings.
-//
+//	
 //	Revision 1.17  2002/03/20 19:09:53  dj_jl
 //	DeepSea tall patches support.
 //	

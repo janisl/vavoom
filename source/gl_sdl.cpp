@@ -50,27 +50,27 @@ static SDL_Surface	*hw_screen = NULL;
 
 //==========================================================================
 //
-//	TOpenGLDrawer::Init
+//	VOpenGLDrawer::Init
 //
 // 	Determine the hardware configuration
 //
 //==========================================================================
 
-void TOpenGLDrawer::Init(void)
+void VOpenGLDrawer::Init(void)
 {
 }
 
 //==========================================================================
 //
-// 	TOpenGLDrawer::SetResolution
+// 	VOpenGLDrawer::SetResolution
 //
 // 	Set up the video mode
 //
 //==========================================================================
 
-bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
+bool VOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 {
-	guard(TOpenGLDrawer::SetResolution);
+	guard(VOpenGLDrawer::SetResolution);
 	if (!Width || !Height)
 	{
 		// Set defaults
@@ -106,43 +106,43 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::GetExtFuncPtr
+//	VOpenGLDrawer::GetExtFuncPtr
 //
 //==========================================================================
 
-void *TOpenGLDrawer::GetExtFuncPtr(const char *name)
+void *VOpenGLDrawer::GetExtFuncPtr(const char *name)
 {
-	guard(TOpenGLDrawer::GetExtFuncPtr);
+	guard(VOpenGLDrawer::GetExtFuncPtr);
 	return SDL_GL_GetProcAddress(name);
 	unguard;
 }
 
 //==========================================================================
 //
-//	TOpenGLDrawer::Update
+//	VOpenGLDrawer::Update
 //
 // 	Blit to the screen / Flip surfaces
 //
 //==========================================================================
 
-void TOpenGLDrawer::Update(void)
+void VOpenGLDrawer::Update(void)
 {
-	guard(TOpenGLDrawer::Update);
+	guard(VOpenGLDrawer::Update);
 	SDL_GL_SwapBuffers();
 	unguard;
 }
 
 //==========================================================================
 //
-// 	TOpenGLDrawer::Shutdown
+// 	VOpenGLDrawer::Shutdown
 //
 //	Close the graphics
 //
 //==========================================================================
 
-void TOpenGLDrawer::Shutdown(void)
+void VOpenGLDrawer::Shutdown(void)
 {
-	guard(TOpenGLDrawer::Shutdown);
+	guard(VOpenGLDrawer::Shutdown);
 	if (hw_screen != NULL)
 		SDL_FreeSurface(hw_screen);
 	unguard;
@@ -151,9 +151,12 @@ void TOpenGLDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.2  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.1  2002/01/03 18:39:42  dj_jl
 //	Added SDL port
 //	

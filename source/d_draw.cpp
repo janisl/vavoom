@@ -903,14 +903,14 @@ static void D_DrawPic(float x1, float y1, float x2, float y2,
 
 //==========================================================================
 //
-//	TSoftwareDrawer::DrawPic
+//	VSoftwareDrawer::DrawPic
 //
 //==========================================================================
 
-void TSoftwareDrawer::DrawPic(float x1, float y1, float x2, float y2,
+void VSoftwareDrawer::DrawPic(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, int handle, int trans)
 {
-	guard(TSoftwareDrawer::DrawPic);
+	guard(VSoftwareDrawer::DrawPic);
 	SetPic(handle);
 	if (ScreenBPP == 8)
 	{
@@ -975,14 +975,14 @@ void TSoftwareDrawer::DrawPic(float x1, float y1, float x2, float y2,
 
 //==========================================================================
 //
-//	TSoftwareDrawer::DrawPicShadow
+//	VSoftwareDrawer::DrawPicShadow
 //
 //==========================================================================
 
-void TSoftwareDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
+void VSoftwareDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, int handle, int shade)
 {
-	guard(TSoftwareDrawer::DrawPicShadow);
+	guard(VSoftwareDrawer::DrawPicShadow);
 	SetPic(handle);
 	ds_shade = shade;
 	if (ScreenBPP == 8)
@@ -1003,16 +1003,16 @@ void TSoftwareDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 
 //==========================================================================
 //
-//  TSoftwareDrawer::FillRectWithFlat
+//  VSoftwareDrawer::FillRectWithFlat
 //
 // 	Fills rectangle with flat.
 //
 //==========================================================================
 
-void TSoftwareDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
+void VSoftwareDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, const char* fname)
 {
-	guard(TSoftwareDrawer::FillRectWithFlat);
+	guard(VSoftwareDrawer::FillRectWithFlat);
 	SetFlat(R_FlatNumForName(fname));
 	picsource = (byte*)cacheblock;
 	if (ScreenBPP == 8)
@@ -1033,16 +1033,16 @@ void TSoftwareDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 
 //==========================================================================
 //
-//  TSoftwareDrawer::FillRect
+//  VSoftwareDrawer::FillRect
 //
 // 	Fills rectangle with color.
 //
 //==========================================================================
 
-void TSoftwareDrawer::FillRect(float x1, float y1, float x2, float y2,
+void VSoftwareDrawer::FillRect(float x1, float y1, float x2, float y2,
 	dword color)
 {
-	guard(TSoftwareDrawer::FillRect);
+	guard(VSoftwareDrawer::FillRect);
 	if (ScreenBPP == 8)
 	{
 		D_FillRect_8(x1, y1, x2, y2, color);
@@ -1060,16 +1060,16 @@ void TSoftwareDrawer::FillRect(float x1, float y1, float x2, float y2,
 
 //==========================================================================
 //
-//	TSoftwareDrawer::ShadeRect
+//	VSoftwareDrawer::ShadeRect
 //
 //  Fade all the screen buffer, so that the menu is more readable,
 // especially now that we use the small hufont in the menus...
 //
 //==========================================================================
 
-void TSoftwareDrawer::ShadeRect(int x, int y, int w, int h, int darkening)
+void VSoftwareDrawer::ShadeRect(int x, int y, int w, int h, int darkening)
 {
-	guard(TSoftwareDrawer::ShadeRect);
+	guard(VSoftwareDrawer::ShadeRect);
 	if (ScreenBPP == 8)
 		D_ShadeRect_8(x, y, w, h, darkening);
 	else if (PixelBytes == 2)
@@ -1081,13 +1081,13 @@ void TSoftwareDrawer::ShadeRect(int x, int y, int w, int h, int darkening)
 
 //==========================================================================
 //
-//	TSoftwareDrawer::DrawConsoleBackground
+//	VSoftwareDrawer::DrawConsoleBackground
 //
 //==========================================================================
 
-void TSoftwareDrawer::DrawConsoleBackground(int h)
+void VSoftwareDrawer::DrawConsoleBackground(int h)
 {
-	guard(TSoftwareDrawer::DrawConsoleBackground);
+	guard(VSoftwareDrawer::DrawConsoleBackground);
 	if (ScreenBPP == 8)
 		D_DrawConsoleBackground_8(h);
 	else if (PixelBytes == 2)
@@ -1099,14 +1099,14 @@ void TSoftwareDrawer::DrawConsoleBackground(int h)
 
 //==========================================================================
 //
-//	TSoftwareDrawer::DrawSpriteLump
+//	VSoftwareDrawer::DrawSpriteLump
 //
 //==========================================================================
 
-void TSoftwareDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
+void VSoftwareDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 	int lump, int translation, boolean flip)
 {
-	guard(TSoftwareDrawer::DrawSpriteLump);
+	guard(VSoftwareDrawer::DrawSpriteLump);
 	float w = spritewidth[lump];
 	float h = spriteheight[lump];
 
@@ -1124,13 +1124,13 @@ void TSoftwareDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 
 //==========================================================================
 //
-//	TSoftwareDrawer::StartAutomap
+//	VSoftwareDrawer::StartAutomap
 //
 //==========================================================================
 
-void TSoftwareDrawer::StartAutomap(void)
+void VSoftwareDrawer::StartAutomap(void)
 {
-	guard(TSoftwareDrawer::StartAutomap);
+	guard(VSoftwareDrawer::StartAutomap);
 	if (PixelBytes == 1)
 		D_PutDot = D_PutDot_8;
 	else if (PixelBytes == 2)
@@ -1324,13 +1324,13 @@ static void DrawWuLine(int X0, int Y0, int X1, int Y1, byte *BaseColor,
 
 //==========================================================================
 //
-//	TSoftwareDrawer::DrawLine
+//	VSoftwareDrawer::DrawLine
 //
 //==========================================================================
 
-void TSoftwareDrawer::DrawLine(int x1, int y1, dword color, int x2, int y2, dword)
+void VSoftwareDrawer::DrawLine(int x1, int y1, dword color, int x2, int y2, dword)
 {
-	guard(TSoftwareDrawer::DrawLine);
+	guard(VSoftwareDrawer::DrawLine);
     register int x;
     register int y;
     register int dx;
@@ -1419,20 +1419,23 @@ void TSoftwareDrawer::DrawLine(int x1, int y1, dword color, int x2, int y2, dwor
 
 //==========================================================================
 //
-//	TSoftwareDrawer::EndAutomap
+//	VSoftwareDrawer::EndAutomap
 //
 //==========================================================================
 
-void TSoftwareDrawer::EndAutomap(void)
+void VSoftwareDrawer::EndAutomap(void)
 {
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.12  2002/03/20 19:09:53  dj_jl
 //	DeepSea tall patches support.
-//
+//	
 //	Revision 1.11  2002/01/15 18:30:43  dj_jl
 //	Some fixes and improvements suggested by Malcolm Nixon
 //	

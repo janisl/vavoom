@@ -56,15 +56,15 @@ static bool					new_palette = false;
 
 //==========================================================================
 //
-//	TSoftwareDrawer::Init
+//	VSoftwareDrawer::Init
 //
 // 	Determine the hardware configuration
 //
 //==========================================================================
 
-void TSoftwareDrawer::Init(void)
+void VSoftwareDrawer::Init(void)
 {
-	guard(TSoftwareDrawer::Init);
+	guard(VSoftwareDrawer::Init);
 	HRESULT			result;
 
 	// Create DirectDraw object
@@ -94,15 +94,15 @@ void TSoftwareDrawer::Init(void)
 
 //==========================================================================
 //
-// 	TSoftwareDrawer::SetResolution
+// 	VSoftwareDrawer::SetResolution
 //
 // 	Set up the video mode
 //
 //==========================================================================
 
-bool TSoftwareDrawer::SetResolution(int Width, int Height, int BPP)
+bool VSoftwareDrawer::SetResolution(int Width, int Height, int BPP)
 {
-	guard(TSoftwareDrawer::SetResolution);
+	guard(VSoftwareDrawer::SetResolution);
 	if (!Width || !Height)
 	{
 		//	Set default mode for Windows
@@ -207,7 +207,7 @@ bool TSoftwareDrawer::SetResolution(int Width, int Height, int BPP)
 		}
 		else
 		{
-			con << "Pixel format not supported\n";
+			GCon->Log(NAME_Init, "Pixel format not supported");
 			return false;
 		}
 	}
@@ -222,15 +222,15 @@ bool TSoftwareDrawer::SetResolution(int Width, int Height, int BPP)
 
 //==========================================================================
 //
-//	TSoftwareDrawer::SetPalette8
+//	VSoftwareDrawer::SetPalette8
 //
 //	Sets palette.
 //
 //==========================================================================
 
-void TSoftwareDrawer::SetPalette8(byte *palette)
+void VSoftwareDrawer::SetPalette8(byte *palette)
 {
-	guard(TSoftwareDrawer::SetPalette8);
+	guard(VSoftwareDrawer::SetPalette8);
   	int				i;
 
 	for (i = 0; i < 256; i++)
@@ -246,15 +246,15 @@ void TSoftwareDrawer::SetPalette8(byte *palette)
 
 //==========================================================================
 //
-//	TSoftwareDrawer::Update
+//	VSoftwareDrawer::Update
 //
 // 	Blit to the screen / Flip surfaces
 //
 //==========================================================================
 
-void TSoftwareDrawer::Update(void)
+void VSoftwareDrawer::Update(void)
 {
-	guard(TSoftwareDrawer::Update);
+	guard(VSoftwareDrawer::Update);
 	DDSURFACEDESC	ddsd;
 
 	// Check for lost surface
@@ -294,13 +294,13 @@ void TSoftwareDrawer::Update(void)
 
 //==========================================================================
 //
-// 	TSoftwareDrawer::Shutdown
+// 	VSoftwareDrawer::Shutdown
 //
 //	Close the graphics
 //
 //==========================================================================
 
-void TSoftwareDrawer::Shutdown(void)
+void VSoftwareDrawer::Shutdown(void)
 {
 	if (DDraw)
 	{
@@ -322,9 +322,12 @@ void TSoftwareDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.8  2002/01/21 18:24:22  dj_jl
 //	Fixed 32 bit mode
-//
+//	
 //	Revision 1.7  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

@@ -54,27 +54,27 @@ static AMesaContext		RenderContext = NULL;
 
 //==========================================================================
 //
-//	TOpenGLDrawer::Init
+//	VOpenGLDrawer::Init
 //
 // 	Determine the hardware configuration
 //
 //==========================================================================
 
-void TOpenGLDrawer::Init(void)
+void VOpenGLDrawer::Init(void)
 {
 }
 
 //==========================================================================
 //
-// 	TOpenGLDrawer::SetResolution
+// 	VOpenGLDrawer::SetResolution
 //
 // 	Set up the video mode
 //
 //==========================================================================
 
-bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
+bool VOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 {
-	guard(TOpenGLDrawer::SetResolution);
+	guard(VOpenGLDrawer::SetResolution);
 	if (!Width || !Height)
 	{
 		//	Set defaults
@@ -120,26 +120,26 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::GetExtFuncPtr
+//	VOpenGLDrawer::GetExtFuncPtr
 //
 //==========================================================================
 
-void *TOpenGLDrawer::GetExtFuncPtr(const char*)
+void *VOpenGLDrawer::GetExtFuncPtr(const char*)
 {
 	return NULL;
 }
 
 //==========================================================================
 //
-//	TOpenGLDrawer::Update
+//	VOpenGLDrawer::Update
 //
 // 	Blit to the screen / Flip surfaces
 //
 //==========================================================================
 
-void TOpenGLDrawer::Update(void)
+void VOpenGLDrawer::Update(void)
 {
-	guard(TOpenGLDrawer::Update);
+	guard(VOpenGLDrawer::Update);
 	glFlush();
 	AMesaSwapBuffers(RenderBuffer);
 	unguard;
@@ -147,15 +147,15 @@ void TOpenGLDrawer::Update(void)
 
 //==========================================================================
 //
-// 	TOpenGLDrawer::Shutdown
+// 	VOpenGLDrawer::Shutdown
 //
 //	Close the graphics
 //
 //==========================================================================
 
-void TOpenGLDrawer::Shutdown(void)
+void VOpenGLDrawer::Shutdown(void)
 {
-	guard(TOpenGLDrawer::Shutdown);
+	guard(VOpenGLDrawer::Shutdown);
 	DeleteTextures();
 	if (RenderContext)
 	{
@@ -178,9 +178,12 @@ void TOpenGLDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.6  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
-//
+//	
 //	Revision 1.5  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

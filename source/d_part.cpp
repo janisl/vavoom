@@ -723,13 +723,13 @@ extern "C" void D_DrawParticle_32(particle_t *pparticle)
 
 //==========================================================================
 //
-//	TSoftwareDrawer::StartParticles
+//	VSoftwareDrawer::StartParticles
 //
 //==========================================================================
 
-void TSoftwareDrawer::StartParticles(void)
+void VSoftwareDrawer::StartParticles(void)
 {
-	guard(TSoftwareDrawer::StartParticles);
+	guard(VSoftwareDrawer::StartParticles);
 	r_pright = viewright * xscaleshrink;
 	r_pup = viewup * yscaleshrink;
 	r_ppn = viewforward;
@@ -738,13 +738,13 @@ void TSoftwareDrawer::StartParticles(void)
 
 //==========================================================================
 //
-//	TSoftwareDrawer::DrawParticle
+//	VSoftwareDrawer::DrawParticle
 //
 //==========================================================================
 
-void TSoftwareDrawer::DrawParticle(particle_t *pparticle)
+void VSoftwareDrawer::DrawParticle(particle_t *pparticle)
 {
-	guard(TSoftwareDrawer::DrawParticle);
+	guard(VSoftwareDrawer::DrawParticle);
 	if (pparticle->color > 0x7fffffff)
 	{
 		D_DrawParticle(pparticle);
@@ -754,20 +754,23 @@ void TSoftwareDrawer::DrawParticle(particle_t *pparticle)
 
 //==========================================================================
 //
-//	TSoftwareDrawer::EndParticles
+//	VSoftwareDrawer::EndParticles
 //
 //==========================================================================
 
-void TSoftwareDrawer::EndParticles(void)
+void VSoftwareDrawer::EndParticles(void)
 {
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.7  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.6  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

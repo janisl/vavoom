@@ -51,14 +51,14 @@
 
 //==========================================================================
 //
-//	TOpenGLDrawer::DrawPic
+//	VOpenGLDrawer::DrawPic
 //
 //==========================================================================
 
-void TOpenGLDrawer::DrawPic(float x1, float y1, float x2, float y2,
+void VOpenGLDrawer::DrawPic(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, int handle, int trans)
 {
-	guard(TOpenGLDrawer::DrawPic);
+	guard(VOpenGLDrawer::DrawPic);
 	SetPic(handle);
 	if (trans)
 	{
@@ -90,14 +90,14 @@ void TOpenGLDrawer::DrawPic(float x1, float y1, float x2, float y2,
 
 //==========================================================================
 //
-//	TOpenGLDrawer::DrawPicShadow
+//	VOpenGLDrawer::DrawPicShadow
 //
 //==========================================================================
 
-void TOpenGLDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
+void VOpenGLDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, int handle, int shade)
 {
-	guard(TOpenGLDrawer::DrawPicShadow);
+	guard(VOpenGLDrawer::DrawPicShadow);
 	SetPic(handle);
 	glDisable(GL_ALPHA_TEST);
 	glEnable(GL_BLEND);
@@ -119,16 +119,16 @@ void TOpenGLDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 
 //==========================================================================
 //
-//  TOpenGLDrawer::FillRectWithFlat
+//  VOpenGLDrawer::FillRectWithFlat
 //
 // 	Fills rectangle with flat.
 //
 //==========================================================================
 
-void TOpenGLDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
+void VOpenGLDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, const char* fname)
 {
-	guard(TOpenGLDrawer::FillRectWithFlat);
+	guard(VOpenGLDrawer::FillRectWithFlat);
 	SetFlat(R_FlatNumForName(fname));
 
 	glColor4f(1, 1, 1, 1);
@@ -147,14 +147,14 @@ void TOpenGLDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 
 //==========================================================================
 //
-//  TOpenGLDrawer::FillRect
+//  VOpenGLDrawer::FillRect
 //
 //==========================================================================
 
-void TOpenGLDrawer::FillRect(float x1, float y1, float x2, float y2,
+void VOpenGLDrawer::FillRect(float x1, float y1, float x2, float y2,
 	dword color)
 {
-	guard(TOpenGLDrawer::FillRect);
+	guard(VOpenGLDrawer::FillRect);
 	SetColor(color);
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_ALPHA_TEST);
@@ -171,16 +171,16 @@ void TOpenGLDrawer::FillRect(float x1, float y1, float x2, float y2,
 
 //==========================================================================
 //
-//	TOpenGLDrawer::ShadeRect
+//	VOpenGLDrawer::ShadeRect
 //
 //  Fade all the screen buffer, so that the menu is more readable,
 // especially now that we use the small hufont in the menus...
 //
 //==========================================================================
 
-void TOpenGLDrawer::ShadeRect(int x, int y, int w, int h, int darkening)
+void VOpenGLDrawer::ShadeRect(int x, int y, int w, int h, int darkening)
 {
-	guard(TOpenGLDrawer::ShadeRect);
+	guard(VOpenGLDrawer::ShadeRect);
 	glDisable(GL_ALPHA_TEST);
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
@@ -201,13 +201,13 @@ void TOpenGLDrawer::ShadeRect(int x, int y, int w, int h, int darkening)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::DrawConsoleBackground
+//	VOpenGLDrawer::DrawConsoleBackground
 //
 //==========================================================================
 
-void TOpenGLDrawer::DrawConsoleBackground(int h)
+void VOpenGLDrawer::DrawConsoleBackground(int h)
 {
-	guard(TOpenGLDrawer::DrawConsoleBackground);
+	guard(VOpenGLDrawer::DrawConsoleBackground);
 	glDisable(GL_ALPHA_TEST);
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
@@ -228,14 +228,14 @@ void TOpenGLDrawer::DrawConsoleBackground(int h)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::DrawSpriteLump
+//	VOpenGLDrawer::DrawSpriteLump
 //
 //==========================================================================
 
-void TOpenGLDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
+void VOpenGLDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 	int lump, int translation, boolean flip)
 {
-	guard(TOpenGLDrawer::DrawSpriteLump);
+	guard(VOpenGLDrawer::DrawSpriteLump);
 	SetSpriteLump(lump, translation);
 
 	float s1, s2;
@@ -270,13 +270,13 @@ void TOpenGLDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 
 //==========================================================================
 //
-//	TOpenGLDrawer::StartAutomap
+//	VOpenGLDrawer::StartAutomap
 //
 //==========================================================================
 
-void TOpenGLDrawer::StartAutomap(void)
+void VOpenGLDrawer::StartAutomap(void)
 {
-	guard(TOpenGLDrawer::StartAutomap);
+	guard(VOpenGLDrawer::StartAutomap);
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_ALPHA_TEST);
 	glEnable(GL_LINE_SMOOTH);
@@ -287,13 +287,13 @@ void TOpenGLDrawer::StartAutomap(void)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::DrawLine
+//	VOpenGLDrawer::DrawLine
 //
 //==========================================================================
 
-void TOpenGLDrawer::DrawLine(int x1, int y1, dword c1, int x2, int y2, dword c2)
+void VOpenGLDrawer::DrawLine(int x1, int y1, dword c1, int x2, int y2, dword c2)
 {
-	guard(TOpenGLDrawer::DrawLine);
+	guard(VOpenGLDrawer::DrawLine);
 	SetColor(c1);
 	glVertex2f(x1, y1);
 	SetColor(c2);
@@ -303,13 +303,13 @@ void TOpenGLDrawer::DrawLine(int x1, int y1, dword c1, int x2, int y2, dword c2)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::EndAutomap
+//	VOpenGLDrawer::EndAutomap
 //
 //==========================================================================
 
-void TOpenGLDrawer::EndAutomap(void)
+void VOpenGLDrawer::EndAutomap(void)
 {
-	guard(TOpenGLDrawer::EndAutomap);
+	guard(VOpenGLDrawer::EndAutomap);
 	glEnd();
 	glDisable(GL_BLEND);
 	glDisable(GL_LINE_SMOOTH);
@@ -321,9 +321,12 @@ void TOpenGLDrawer::EndAutomap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.11  2002/01/11 18:24:44  dj_jl
 //	Added guard macros
-//
+//	
 //	Revision 1.10  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

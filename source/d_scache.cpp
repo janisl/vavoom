@@ -135,7 +135,7 @@ void D_InitCaches(void *buffer, int size)
 {
 	guard(D_InitCaches);
 //	if (!msg_suppress_1)
-		con << (size / 1024) << "k surface cache\n";
+		GCon->Logf(NAME_Init, "%dk surface cache", size / 1024);
 
 	sc_size = size - GUARDSIZE;
 	sc_base = (surfcache_t *)buffer;
@@ -270,13 +270,13 @@ surfcache_t *D_SCAlloc(int width, int height)
 
 //==========================================================================
 //
-//	TSoftwareDrawer::FreeSurfCache
+//	VSoftwareDrawer::FreeSurfCache
 //
 //==========================================================================
 
-void TSoftwareDrawer::FreeSurfCache(surfcache_t* cache)
+void VSoftwareDrawer::FreeSurfCache(surfcache_t* cache)
 {
-	guard(TSoftwareDrawer::FreeSurfCache);
+	guard(VSoftwareDrawer::FreeSurfCache);
 	*cache->owner = NULL;
 	cache->owner = NULL;
 	unguard;
@@ -305,9 +305,12 @@ void D_SCDump(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.5  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

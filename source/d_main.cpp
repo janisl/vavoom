@@ -81,6 +81,8 @@ extern surfcache_t		*sc_base;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+IMPLEMENT_CLASS(VSoftwareDrawer);
+
 byte					*scrn;
 word					*scrn16;
 
@@ -131,8 +133,6 @@ int						d_minmip;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static TSoftwareDrawer	SoftwareDrawer;
-
 static TCvarI			d_subdiv("d_subdiv", "1", CVAR_ARCHIVE);
 
 static TCvarI			d_mipcap("d_mipcap", "0");
@@ -147,24 +147,13 @@ static int				viewarea;
 
 //==========================================================================
 //
-//	TSoftwareDrawer::TSoftwareDrawer
+//	VSoftwareDrawer::AllocMemory
 //
 //==========================================================================
 
-TSoftwareDrawer::TSoftwareDrawer(void)
+bool VSoftwareDrawer::AllocMemory(int width, int height, int bpp)
 {
-	_SoftwareDrawer = this;
-}
-
-//==========================================================================
-//
-//	TSoftwareDrawer::AllocMemory
-//
-//==========================================================================
-
-bool TSoftwareDrawer::AllocMemory(int width, int height, int bpp)
-{
-	guard(TSoftwareDrawer::AllocMemory);
+	guard(VSoftwareDrawer::AllocMemory);
 	scrn = (byte*)Z_Malloc(width * height * ((bpp + 7) >> 3), PU_VIDEO, 0);
 	if (!scrn)
 	{
@@ -194,13 +183,13 @@ bool TSoftwareDrawer::AllocMemory(int width, int height, int bpp)
 
 //==========================================================================
 //
-//	TSoftwareDrawer::FreeMemory
+//	VSoftwareDrawer::FreeMemory
 //
 //==========================================================================
 
-void TSoftwareDrawer::FreeMemory(void)
+void VSoftwareDrawer::FreeMemory(void)
 {
-	guard(TSoftwareDrawer::FreeMemory);
+	guard(VSoftwareDrawer::FreeMemory);
 	D_FlushCaches(true);
 	D_FlushTextureCaches();
 //FIXME use Z_FreeTag(PU_VIDEO)
@@ -224,15 +213,15 @@ void TSoftwareDrawer::FreeMemory(void)
 
 //==========================================================================
 //
-//	TSoftwareDrawer::InitResolution
+//	VSoftwareDrawer::InitResolution
 //
 //	Calculate image scaling
 //
 //==========================================================================
 
-void TSoftwareDrawer::InitResolution(void)
+void VSoftwareDrawer::InitResolution(void)
 {
-	guard(TSoftwareDrawer::InitResolution);
+	guard(VSoftwareDrawer::InitResolution);
 	scrn16 = (word*)scrn;
 
 	if (ScreenBPP == 8)
@@ -408,44 +397,44 @@ static void EraseViewBorder(const refdef_t *rd)
 
 //==========================================================================
 //
-//	TSoftwareDrawer::StartUpdate
+//	VSoftwareDrawer::StartUpdate
 //
 //==========================================================================
 
-void TSoftwareDrawer::StartUpdate(void)
+void VSoftwareDrawer::StartUpdate(void)
 {
 }
 
 //==========================================================================
 //
-//	TSoftwareDrawer::BeginDirectUpdate
+//	VSoftwareDrawer::BeginDirectUpdate
 //
 //==========================================================================
 
-void TSoftwareDrawer::BeginDirectUpdate(void)
+void VSoftwareDrawer::BeginDirectUpdate(void)
 {
 }
 
 //==========================================================================
 //
-//	TSoftwareDrawer::EndDirectUpdate
+//	VSoftwareDrawer::EndDirectUpdate
 //
 //==========================================================================
 
-void TSoftwareDrawer::EndDirectUpdate(void)
+void VSoftwareDrawer::EndDirectUpdate(void)
 {
 	Update();
 }
 
 //==========================================================================
 //
-//	TSoftwareDrawer::SetupView
+//	VSoftwareDrawer::SetupView
 //
 //==========================================================================
 
-void TSoftwareDrawer::SetupView(const refdef_t *rd)
+void VSoftwareDrawer::SetupView(const refdef_t *rd)
 {
-	guard(TSoftwareDrawer::SetupView);
+	guard(VSoftwareDrawer::SetupView);
 	int i;
 
 	viewx = rd->x;
@@ -574,13 +563,13 @@ void TSoftwareDrawer::SetupView(const refdef_t *rd)
 
 //==========================================================================
 //
-//	TSoftwareDrawer::EndView
+//	VSoftwareDrawer::EndView
 //
 //==========================================================================
 
-void TSoftwareDrawer::EndView(void)
+void VSoftwareDrawer::EndView(void)
 {
-	guard(TSoftwareDrawer::EndView);
+	guard(VSoftwareDrawer::EndView);
 	// back to high floating-point precision
 	Sys_HighFPPrecision();
 
@@ -595,13 +584,13 @@ void TSoftwareDrawer::EndView(void)
 
 //==========================================================================
 //
-//	TSoftwareDrawer::ReadScreen
+//	VSoftwareDrawer::ReadScreen
 //
 //==========================================================================
 
-void *TSoftwareDrawer::ReadScreen(int *bpp, bool *bot2top)
+void *VSoftwareDrawer::ReadScreen(int *bpp, bool *bot2top)
 {
-	guard(TSoftwareDrawer::ReadScreen);
+	guard(VSoftwareDrawer::ReadScreen);
 	void *dst;
 	if (ScreenBPP == 8)
 	{
@@ -659,9 +648,12 @@ void *TSoftwareDrawer::ReadScreen(int *bpp, bool *bot2top)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.14  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.13  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

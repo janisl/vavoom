@@ -58,11 +58,11 @@ static BITMAP		*gamebitmap = NULL;
 
 //==========================================================================
 //
-//	TSoftwareDrawer::Init
+//	VSoftwareDrawer::Init
 //
 //==========================================================================
 
-void TSoftwareDrawer::Init(void)
+void VSoftwareDrawer::Init(void)
 {
 }
 
@@ -116,15 +116,15 @@ static BITMAP *my_create_bitmap_ex(int color_depth, int width, int height)
 
 //==========================================================================
 //
-// 	TSoftwareDrawer::SetResolution
+// 	VSoftwareDrawer::SetResolution
 //
 // 	Set up the video mode
 //
 //==========================================================================
 
-bool TSoftwareDrawer::SetResolution(int Width, int Height, int bpp)
+bool VSoftwareDrawer::SetResolution(int Width, int Height, int bpp)
 {
-	guard(TSoftwareDrawer::SetResolution);
+	guard(VSoftwareDrawer::SetResolution);
 	if (!Width || !Height)
 	{
 		//	Set defaults
@@ -143,7 +143,8 @@ bool TSoftwareDrawer::SetResolution(int Width, int Height, int bpp)
     set_color_depth(bpp);
     if (set_gfx_mode(GFX_AUTODETECT, Width, Height, 0, 0))
     {
-		con << "Failed to set video mode:\n" << allegro_error << endl;
+		GCon->Log(NAME_Init, "Failed to set video mode:");
+		GCon->Log(NAME_Init, allegro_error);
     	return false;
     }
 
@@ -154,7 +155,7 @@ bool TSoftwareDrawer::SetResolution(int Width, int Height, int bpp)
     gamebitmap = my_create_bitmap_ex(bpp, SCREEN_W, SCREEN_H);
 	if (!gamebitmap)
 	{
-		con << "Failed to create game bitmap:\n";
+		GCon->Log(NAME_Init, "Failed to create game bitmap:");
 		return false;
 	}
 
@@ -189,15 +190,15 @@ bool TSoftwareDrawer::SetResolution(int Width, int Height, int bpp)
 
 //==========================================================================
 //
-// 	TSoftwareDrawer::SetPalette8
+// 	VSoftwareDrawer::SetPalette8
 //
 // 	Takes full 8 bit values.
 //
 //==========================================================================
 
-void TSoftwareDrawer::SetPalette8(byte *palette)
+void VSoftwareDrawer::SetPalette8(byte *palette)
 {
-	guard(TSoftwareDrawer::SetPalette8);
+	guard(VSoftwareDrawer::SetPalette8);
   	int 	i;
 	byte	*table;
 
@@ -233,7 +234,7 @@ void TSoftwareDrawer::SetPalette8(byte *palette)
 
 //==========================================================================
 //
-//	TSoftwareDrawer::Update
+//	VSoftwareDrawer::Update
 //
 // 	Blit to the screen / Flip surfaces
 //
@@ -273,9 +274,9 @@ static void Blit_Banked(void)
 }
 #endif
 
-void TSoftwareDrawer::Update(void)
+void VSoftwareDrawer::Update(void)
 {
-	guard(TSoftwareDrawer::Update);
+	guard(VSoftwareDrawer::Update);
 #ifdef DJGPP
 	if (is_linear_bitmap(screen))
 	{
@@ -297,13 +298,13 @@ void TSoftwareDrawer::Update(void)
 
 //==========================================================================
 //
-// 	TSoftwareDrawer::Shutdown
+// 	VSoftwareDrawer::Shutdown
 //
 // 	Restore text mode
 //
 //==========================================================================
 
-void TSoftwareDrawer::Shutdown(void)
+void VSoftwareDrawer::Shutdown(void)
 {
     set_gfx_mode(GFX_TEXT, 80, 25, 0, 0);
 }
@@ -311,9 +312,12 @@ void TSoftwareDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.9  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.8  2002/01/03 18:38:25  dj_jl
 //	Added guard macros and core dumps
 //	

@@ -242,16 +242,16 @@ static void CalcFadetable32(rgb_t *pal)
 
 //==========================================================================
 //
-//	TSoftwareDrawer::SetPalette
+//	VSoftwareDrawer::SetPalette
 //
 //==========================================================================
 
-void TSoftwareDrawer::SetPalette(int num)
+void VSoftwareDrawer::SetPalette(int num)
 {
-	guard(TSoftwareDrawer::SetPalette);
+	guard(VSoftwareDrawer::SetPalette);
 	if (num < 0 || num >= 32)
 	{
-		cond << "Invalid palette num " << num << endl;
+		GCon->Logf(NAME_Dev, "Invalid palette num %d", num);
 		num = 0;
 	}
 	byte *pal = (byte*)W_CacheLumpName("playpal", PU_CACHE) + num * 768;
@@ -328,13 +328,13 @@ static void InitTranslucencyTables(void)
 
 //==========================================================================
 //
-//	TSoftwareDrawer::InitData
+//	VSoftwareDrawer::InitData
 //
 //==========================================================================
 
-void TSoftwareDrawer::InitData(void)
+void VSoftwareDrawer::InitData(void)
 {
-	guard(TSoftwareDrawer::InitData);
+	guard(VSoftwareDrawer::InitData);
 	d_rgbtable = (byte*)W_CacheLumpName("RGBTABLE", PU_STATIC);
     InitColormaps();
 	InitTranslucencyTables();
@@ -343,13 +343,13 @@ void TSoftwareDrawer::InitData(void)
 
 //==========================================================================
 //
-//	TSoftwareDrawer::UpdatePalette
+//	VSoftwareDrawer::UpdatePalette
 //
 //==========================================================================
 
-void TSoftwareDrawer::UpdatePalette(void)
+void VSoftwareDrawer::UpdatePalette(void)
 {
-	guard(TSoftwareDrawer::UpdatePalette);
+	guard(VSoftwareDrawer::UpdatePalette);
 	int		i, j;
 	bool	newshifts;
 	byte	*basepal, *newpal;
@@ -419,13 +419,13 @@ void TSoftwareDrawer::UpdatePalette(void)
 
 //==========================================================================
 //
-//	TSoftwareDrawer::NewMap
+//	VSoftwareDrawer::NewMap
 //
 //==========================================================================
 
-void TSoftwareDrawer::NewMap(void)
+void VSoftwareDrawer::NewMap(void)
 {
-	guard(TSoftwareDrawer::NewMap);
+	guard(VSoftwareDrawer::NewMap);
 	if (fadetable != colormaps)
 	{
 		Z_ChangeTag(fadetable, PU_CACHE);
@@ -465,9 +465,12 @@ void TSoftwareDrawer::NewMap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.9  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.8  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

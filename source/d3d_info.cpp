@@ -45,927 +45,904 @@
 
 // CODE --------------------------------------------------------------------
 
-#if DIRECT3D_VERSION >= 0x0800
-
-ostream &operator << (ostream &str, const D3DCAPS8 *)
-{
-	return str;
-}
-
-#else
+#if DIRECT3D_VERSION < 0x0800
 
 //==========================================================================
 //
-//
+//	VDirect3DDrawer::LogPrimCaps
 //
 //==========================================================================
 
-ostream &operator << (ostream &str, const D3DPRIMCAPS pc)
+void VDirect3DDrawer::LogPrimCaps(FOutputDevice &Ar, const D3DPRIMCAPS &pc)
 {
-	str << "Misc caps:";
+	Ar.Log("Misc caps:");
 	if (pc.dwMiscCaps & D3DPMISCCAPS_MASKPLANES)
 	{
-		str << " MaskPlanes";
+		Ar.Log(" MaskPlanes");
 	}
 	if (pc.dwMiscCaps & D3DPMISCCAPS_MASKZ)
 	{
-		str << " MaskZ";
+		Ar.Log(" MaskZ");
 	}
 	if (pc.dwMiscCaps & D3DPMISCCAPS_LINEPATTERNREP)
 	{
-		str << " LinePatternRep";
+		Ar.Log(" LinePatternRep");
 	}
 	if (pc.dwMiscCaps & D3DPMISCCAPS_CONFORMANT)
 	{
-		str << " Conformant";
+		Ar.Log(" Conformant");
 	}
 	if (pc.dwMiscCaps & D3DPMISCCAPS_CULLNONE)
 	{
-		str << " CullNone";
+		Ar.Log(" CullNone");
 	}
 	if (pc.dwMiscCaps & D3DPMISCCAPS_CULLCW)
 	{
-		str << " CullClockwise";
+		Ar.Log(" CullClockwise");
 	}
 	if (pc.dwMiscCaps & D3DPMISCCAPS_CULLCCW)
 	{
-		str << " CullCounterClockwise";
+		Ar.Log(" CullCounterClockwise");
 	}
-	str << endl;
 
-	str << "Rasterization caps:";
+	Ar.Log("Rasterization caps:");
 	if (pc.dwRasterCaps & D3DPRASTERCAPS_DITHER)
 	{
-		str << " Dither";
+		Ar.Log(" Dither");
 	}
 	if (pc.dwRasterCaps & D3DPRASTERCAPS_ROP2)
 	{
-		str << " ROp2";
+		Ar.Log(" ROp2");
 	}
 	if (pc.dwRasterCaps & D3DPRASTERCAPS_XOR)
 	{
-		str << " XOR";
+		Ar.Log(" XOR");
 	}
 	if (pc.dwRasterCaps & D3DPRASTERCAPS_PAT)
 	{
-		str << " Pat";
+		Ar.Log(" Pat");
 	}
 	if (pc.dwRasterCaps & D3DPRASTERCAPS_ZTEST)
 	{
-		str << " ZTest";
+		Ar.Log(" ZTest");
 	}
 	if (pc.dwRasterCaps & D3DPRASTERCAPS_SUBPIXEL)
 	{
-		str << " SubPixel";
+		Ar.Log(" SubPixel");
 	}
 	if (pc.dwRasterCaps & D3DPRASTERCAPS_SUBPIXELX)
 	{
-		str << " SubPixelX";
+		Ar.Log(" SubPixelX");
 	}
 	if (pc.dwRasterCaps & D3DPRASTERCAPS_FOGVERTEX)
 	{
-		str << " FogVertex";
+		Ar.Log(" FogVertex");
 	}
 	if (pc.dwRasterCaps & D3DPRASTERCAPS_FOGTABLE)
 	{
-		str << " FogTable";
+		Ar.Log(" FogTable");
 	}
 	if (pc.dwRasterCaps & D3DPRASTERCAPS_STIPPLE)
 	{
-		str << " Stipple";
+		Ar.Log(" Stipple");
 	}
 	if (pc.dwRasterCaps & D3DPRASTERCAPS_ANTIALIASSORTDEPENDENT)
 	{
-		str << " AntialiasSortDependent";
+		Ar.Log(" AntialiasSortDependent");
 	}
 	if (pc.dwRasterCaps & D3DPRASTERCAPS_ANTIALIASSORTINDEPENDENT)
 	{
-		str << " AntialiasSortIndependent";
+		Ar.Log(" AntialiasSortIndependent");
 	}
 	if (pc.dwRasterCaps & D3DPRASTERCAPS_ANTIALIASEDGES)
 	{
-		str << " AntialiasEdges";
+		Ar.Log(" AntialiasEdges");
 	}
 	if (pc.dwRasterCaps & D3DPRASTERCAPS_MIPMAPLODBIAS)
 	{
-		str << " MipMapLodBias";
+		Ar.Log(" MipMapLodBias");
 	}
 	if (pc.dwRasterCaps & D3DPRASTERCAPS_ZBIAS)
 	{
-		str << " ZBias";
+		Ar.Log(" ZBias");
 	}
 	if (pc.dwRasterCaps & D3DPRASTERCAPS_ZBUFFERLESSHSR)
 	{
-		str << " ZBufferLessHSR";
+		Ar.Log(" ZBufferLessHSR");
 	}
 	if (pc.dwRasterCaps & D3DPRASTERCAPS_FOGRANGE)
 	{
-		str << " FogRange";
+		Ar.Log(" FogRange");
 	}
 	if (pc.dwRasterCaps & D3DPRASTERCAPS_ANISOTROPY)
 	{
-		str << " Anisotropy";
+		Ar.Log(" Anisotropy");
 	}
 	if (pc.dwRasterCaps & D3DPRASTERCAPS_WBUFFER)
 	{
-		str << " WBuffer";
+		Ar.Log(" WBuffer");
 	}
 	if (pc.dwRasterCaps & D3DPRASTERCAPS_TRANSLUCENTSORTINDEPENDENT)
 	{
-		str << " TranslucentSortIndependent";
+		Ar.Log(" TranslucentSortIndependent");
 	}
 	if (pc.dwRasterCaps & D3DPRASTERCAPS_WFOG)
 	{
-		str << " WFog";
+		Ar.Log(" WFog");
 	}
 	if (pc.dwRasterCaps & D3DPRASTERCAPS_ZFOG)
 	{
-		str << " ZFog";
+		Ar.Log(" ZFog");
 	}
-	str << endl;
 
-	str << "Supported depth tests:";
+	Ar.Log("Supported depth tests:");
 	if (pc.dwZCmpCaps & D3DPCMPCAPS_ALWAYS)
 	{
-		str << " always";
+		Ar.Log(" always");
 	}
 	if (pc.dwZCmpCaps & D3DPCMPCAPS_EQUAL)
 	{
-		str << " equal";
+		Ar.Log(" equal");
 	}
 	if (pc.dwZCmpCaps & D3DPCMPCAPS_GREATER)
 	{
-		str << " greater";
+		Ar.Log(" greater");
 	}
 	if (pc.dwZCmpCaps & D3DPCMPCAPS_GREATEREQUAL)
 	{
-		str << " greater_equal";
+		Ar.Log(" greater_equal");
 	}
 	if (pc.dwZCmpCaps & D3DPCMPCAPS_LESS)
 	{
-		str << " less";
+		Ar.Log(" less");
 	}
 	if (pc.dwZCmpCaps & D3DPCMPCAPS_LESSEQUAL)
 	{
-		str << " less_equal";
+		Ar.Log(" less_equal");
 	}
 	if (pc.dwZCmpCaps & D3DPCMPCAPS_NEVER)
 	{
-		str << " never";
+		Ar.Log(" never");
 	}
 	if (pc.dwZCmpCaps & D3DPCMPCAPS_NOTEQUAL)
 	{
-		str << " not_equal";
+		Ar.Log(" not_equal");
 	}
-	str << endl;
 
-	str << "Src blend caps:";
+	Ar.Log("Src blend caps:");
 	if (pc.dwSrcBlendCaps & D3DPBLENDCAPS_ZERO)
 	{
-		str << " Zero";
+		Ar.Log(" Zero");
 	}
 	if (pc.dwSrcBlendCaps & D3DPBLENDCAPS_ONE)
 	{
-		str << " One";
+		Ar.Log(" One");
 	}
 	if (pc.dwSrcBlendCaps & D3DPBLENDCAPS_SRCCOLOR)
 	{
-		str << " SrcColor";
+		Ar.Log(" SrcColor");
 	}
 	if (pc.dwSrcBlendCaps & D3DPBLENDCAPS_INVSRCCOLOR)
 	{
-		str << " InvSrcColor";
+		Ar.Log(" InvSrcColor");
 	}
 	if (pc.dwSrcBlendCaps & D3DPBLENDCAPS_SRCALPHA)
 	{
-		str << " SrcAlpha";
+		Ar.Log(" SrcAlpha");
 	}
 	if (pc.dwSrcBlendCaps & D3DPBLENDCAPS_INVSRCALPHA)
 	{
-		str << " InvSrcAlpha";
+		Ar.Log(" InvSrcAlpha");
 	}
 	if (pc.dwSrcBlendCaps & D3DPBLENDCAPS_DESTALPHA)
 	{
-		str << " DestAlpha";
+		Ar.Log(" DestAlpha");
 	}
 	if (pc.dwSrcBlendCaps & D3DPBLENDCAPS_INVDESTALPHA)
 	{
-		str << " InvDestAlpha";
+		Ar.Log(" InvDestAlpha");
 	}
 	if (pc.dwSrcBlendCaps & D3DPBLENDCAPS_DESTCOLOR)
 	{
-		str << " DestColor";
+		Ar.Log(" DestColor");
 	}
 	if (pc.dwSrcBlendCaps & D3DPBLENDCAPS_INVDESTCOLOR)
 	{
-		str << " InvDestColor";
+		Ar.Log(" InvDestColor");
 	}
 	if (pc.dwSrcBlendCaps & D3DPBLENDCAPS_SRCALPHASAT)
 	{
-		str << " SrcAlphaSat";
+		Ar.Log(" SrcAlphaSat");
 	}
 	if (pc.dwSrcBlendCaps & D3DPBLENDCAPS_BOTHSRCALPHA)
 	{
-		str << " BothSrcAlpha";
+		Ar.Log(" BothSrcAlpha");
 	}
 	if (pc.dwSrcBlendCaps & D3DPBLENDCAPS_BOTHINVSRCALPHA)
 	{
-		str << " BothInvSrcAlpha";
+		Ar.Log(" BothInvSrcAlpha");
 	}
-	str << endl;
 
-	str << "Dest blend caps:";
+	Ar.Log("Dest blend caps:");
 	if (pc.dwDestBlendCaps & D3DPBLENDCAPS_ZERO)
 	{
-		str << " Zero";
+		Ar.Log(" Zero");
 	}
 	if (pc.dwDestBlendCaps & D3DPBLENDCAPS_ONE)
 	{
-		str << " One";
+		Ar.Log(" One");
 	}
 	if (pc.dwDestBlendCaps & D3DPBLENDCAPS_SRCCOLOR)
 	{
-		str << " SrcColor";
+		Ar.Log(" SrcColor");
 	}
 	if (pc.dwDestBlendCaps & D3DPBLENDCAPS_INVSRCCOLOR)
 	{
-		str << " InvSrcColor";
+		Ar.Log(" InvSrcColor");
 	}
 	if (pc.dwDestBlendCaps & D3DPBLENDCAPS_SRCALPHA)
 	{
-		str << " SrcAlpha";
+		Ar.Log(" SrcAlpha");
 	}
 	if (pc.dwDestBlendCaps & D3DPBLENDCAPS_INVSRCALPHA)
 	{
-		str << " InvSrcAlpha";
+		Ar.Log(" InvSrcAlpha");
 	}
 	if (pc.dwDestBlendCaps & D3DPBLENDCAPS_DESTALPHA)
 	{
-		str << " DestAlpha";
+		Ar.Log(" DestAlpha");
 	}
 	if (pc.dwDestBlendCaps & D3DPBLENDCAPS_INVDESTALPHA)
 	{
-		str << " InvDestAlpha";
+		Ar.Log(" InvDestAlpha");
 	}
 	if (pc.dwDestBlendCaps & D3DPBLENDCAPS_DESTCOLOR)
 	{
-		str << " DestColor";
+		Ar.Log(" DestColor");
 	}
 	if (pc.dwDestBlendCaps & D3DPBLENDCAPS_INVDESTCOLOR)
 	{
-		str << " InvDestColor";
+		Ar.Log(" InvDestColor");
 	}
 	if (pc.dwDestBlendCaps & D3DPBLENDCAPS_SRCALPHASAT)
 	{
-		str << " SrcAlphaSat";
+		Ar.Log(" SrcAlphaSat");
 	}
 	if (pc.dwDestBlendCaps & D3DPBLENDCAPS_BOTHSRCALPHA)
 	{
-		str << " BothSrcAlpha";
+		Ar.Log(" BothSrcAlpha");
 	}
 	if (pc.dwDestBlendCaps & D3DPBLENDCAPS_BOTHINVSRCALPHA)
 	{
-		str << " BothInvSrcAlpha";
+		Ar.Log(" BothInvSrcAlpha");
 	}
-	str << endl;
 
-	str << "Supported alpaha tests:";
+	Ar.Log("Supported alpaha tests:");
 	if (pc.dwAlphaCmpCaps & D3DPCMPCAPS_ALWAYS)
 	{
-		str << " always";
+		Ar.Log(" always");
 	}
 	if (pc.dwAlphaCmpCaps & D3DPCMPCAPS_EQUAL)
 	{
-		str << " equal";
+		Ar.Log(" equal");
 	}
 	if (pc.dwAlphaCmpCaps & D3DPCMPCAPS_GREATER)
 	{
-		str << " greater";
+		Ar.Log(" greater");
 	}
 	if (pc.dwAlphaCmpCaps & D3DPCMPCAPS_GREATEREQUAL)
 	{
-		str << " greater_equal";
+		Ar.Log(" greater_equal");
 	}
 	if (pc.dwAlphaCmpCaps & D3DPCMPCAPS_LESS)
 	{
-		str << " less";
+		Ar.Log(" less");
 	}
 	if (pc.dwAlphaCmpCaps & D3DPCMPCAPS_LESSEQUAL)
 	{
-		str << " less_equal";
+		Ar.Log(" less_equal");
 	}
 	if (pc.dwAlphaCmpCaps & D3DPCMPCAPS_NEVER)
 	{
-		str << " never";
+		Ar.Log(" never");
 	}
 	if (pc.dwAlphaCmpCaps & D3DPCMPCAPS_NOTEQUAL)
 	{
-		str << " not_equal";
+		Ar.Log(" not_equal");
 	}
-	str << endl;
 
-	str << "Shade caps:";
+	Ar.Log("Shade caps:");
 	if (pc.dwShadeCaps & D3DPSHADECAPS_COLORFLATMONO)
 	{
-		str << " ColorFlatMono";
+		Ar.Log(" ColorFlatMono");
 	}
 	if (pc.dwShadeCaps & D3DPSHADECAPS_COLORFLATRGB)
 	{
-		str << " ColorFlatRGB";
+		Ar.Log(" ColorFlatRGB");
 	}
 	if (pc.dwShadeCaps & D3DPSHADECAPS_COLORGOURAUDMONO)
 	{
-		str << " ColorGouraudMono";
+		Ar.Log(" ColorGouraudMono");
 	}
 	if (pc.dwShadeCaps & D3DPSHADECAPS_COLORGOURAUDRGB)
 	{
-		str << " ColorGouraudRGB";
+		Ar.Log(" ColorGouraudRGB");
 	}
 	if (pc.dwShadeCaps & D3DPSHADECAPS_COLORPHONGMONO)
 	{
-		str << " ColorPhongMono";
+		Ar.Log(" ColorPhongMono");
 	}
 	if (pc.dwShadeCaps & D3DPSHADECAPS_COLORPHONGRGB)
 	{
-		str << " ColorPhongRGB";
+		Ar.Log(" ColorPhongRGB");
 	}
 	if (pc.dwShadeCaps & D3DPSHADECAPS_SPECULARFLATMONO)
 	{
-		str << " SpecularFlatMono";
+		Ar.Log(" SpecularFlatMono");
 	}
 	if (pc.dwShadeCaps & D3DPSHADECAPS_SPECULARFLATRGB)
 	{
-		str << " SpecularFlatRGB";
+		Ar.Log(" SpecularFlatRGB");
 	}
 	if (pc.dwShadeCaps & D3DPSHADECAPS_SPECULARGOURAUDMONO)
 	{
-		str << " SpecularGouraudMono";
+		Ar.Log(" SpecularGouraudMono");
 	}
 	if (pc.dwShadeCaps & D3DPSHADECAPS_SPECULARGOURAUDRGB)
 	{
-		str << " SpecularGouraudRGB";
+		Ar.Log(" SpecularGouraudRGB");
 	}
 	if (pc.dwShadeCaps & D3DPSHADECAPS_SPECULARPHONGMONO)
 	{
-		str << " SpecularPhongMono";
+		Ar.Log(" SpecularPhongMono");
 	}
 	if (pc.dwShadeCaps & D3DPSHADECAPS_SPECULARPHONGRGB)
 	{
-		str << " SpecularPhongRGB";
+		Ar.Log(" SpecularPhongRGB");
 	}
 	if (pc.dwShadeCaps & D3DPSHADECAPS_ALPHAFLATBLEND)
 	{
-		str << " AlphaFlatBlend";
+		Ar.Log(" AlphaFlatBlend");
 	}
 	if (pc.dwShadeCaps & D3DPSHADECAPS_ALPHAFLATSTIPPLED)
 	{
-		str << " AlphaFlatStippled";
+		Ar.Log(" AlphaFlatStippled");
 	}
 	if (pc.dwShadeCaps & D3DPSHADECAPS_ALPHAGOURAUDBLEND)
 	{
-		str << " AlphaGouraudBlend";
+		Ar.Log(" AlphaGouraudBlend");
 	}
 	if (pc.dwShadeCaps & D3DPSHADECAPS_ALPHAGOURAUDSTIPPLED)
 	{
-		str << " AlphaGouraudStippled";
+		Ar.Log(" AlphaGouraudStippled");
 	}
 	if (pc.dwShadeCaps & D3DPSHADECAPS_ALPHAPHONGBLEND)
 	{
-		str << " AlphaPhongBlend";
+		Ar.Log(" AlphaPhongBlend");
 	}
 	if (pc.dwShadeCaps & D3DPSHADECAPS_ALPHAPHONGSTIPPLED)
 	{
-		str << " AlphaPhongStippled";
+		Ar.Log(" AlphaPhongStippled");
 	}
 	if (pc.dwShadeCaps & D3DPSHADECAPS_FOGFLAT)
 	{
-		str << " FogFlat";
+		Ar.Log(" FogFlat");
 	}
 	if (pc.dwShadeCaps & D3DPSHADECAPS_FOGGOURAUD)
 	{
-		str << " FogGouraud";
+		Ar.Log(" FogGouraud");
 	}
 	if (pc.dwShadeCaps & D3DPSHADECAPS_FOGPHONG)
 	{
-		str << " FogPhong";
+		Ar.Log(" FogPhong");
 	}
-	str << endl;
 
-	str << "Texture caps:\n";
+	Ar.Log("Texture caps:");
 	if (pc.dwTextureCaps & D3DPTEXTURECAPS_PERSPECTIVE)
 	{
-		str << "- Perspective-correct texturing is supported\n";
+		Ar.Log("- Perspective-correct texturing is supported");
 	}
 	if (pc.dwTextureCaps & D3DPTEXTURECAPS_POW2)
 	{
-		str << "- Power-of-2 texture dimensions are required\n";
+		Ar.Log("- Power-of-2 texture dimensions are required");
 	}
 	if (pc.dwTextureCaps & D3DPTEXTURECAPS_ALPHA)
 	{
-		str << "- Alpha in texture pixels is supported\n";
+		Ar.Log("- Alpha in texture pixels is supported");
 	}
 	if (pc.dwTextureCaps & D3DPTEXTURECAPS_TRANSPARENCY)
 	{
-		str << "- Color-keyed textures are supported\n";
+		Ar.Log("- Color-keyed textures are supported");
 	}
 	if (pc.dwTextureCaps & D3DPTEXTURECAPS_BORDER)
 	{
-		str << "- obsolete, see D3DPTADDRESSCAPS_BORDER\n";
+		Ar.Log("- obsolete, see D3DPTADDRESSCAPS_BORDER");
 	}
 	if (pc.dwTextureCaps & D3DPTEXTURECAPS_SQUAREONLY)
 	{
-		str << "- Only square textures are supported\n";
+		Ar.Log("- Only square textures are supported");
 	}
 	if (pc.dwTextureCaps & D3DPTEXTURECAPS_TEXREPEATNOTSCALEDBYSIZE)
 	{
-		str << "- Texture indices are not scaled by the texture size prior to interpolation.\n";
+		Ar.Log("- Texture indices are not scaled by the texture size prior to interpolation.");
 	}
 	if (pc.dwTextureCaps & D3DPTEXTURECAPS_ALPHAPALETTE)
 	{
-		str << "- Device can draw alpha from texture palettes\n";
+		Ar.Log("- Device can draw alpha from texture palettes");
 	}
 	if (pc.dwTextureCaps & D3DPTEXTURECAPS_NONPOW2CONDITIONAL)
 	{
-		str << "- Device can use non-POW2 textures\n";
+		Ar.Log("- Device can use non-POW2 textures");
 	}
 	if (pc.dwTextureCaps & D3DPTEXTURECAPS_PROJECTED)
 	{
-		str << "- Device can divide transformed texture coordinates by the COUNTth texture coordinate (can do D3DTTFF_PROJECTED)\n";
+		Ar.Log("- Device can divide transformed texture coordinates by the COUNTth texture coordinate (can do D3DTTFF_PROJECTED)");
 	}
 	if (pc.dwTextureCaps & D3DPTEXTURECAPS_CUBEMAP)
 	{
-		str << "- Device can do cubemap textures\n";
+		Ar.Log("- Device can do cubemap textures");
 	}
 	if (pc.dwTextureCaps & D3DPTEXTURECAPS_COLORKEYBLEND)
 	{
-		str << "- colorkeyblend\n";
+		Ar.Log("- colorkeyblend");
 	}
 
-	str << "Texture filter caps:";
+	Ar.Log("Texture filter caps:");
 	if (pc.dwTextureFilterCaps & D3DPTFILTERCAPS_NEAREST)
 	{
-		str << " Nearest";
+		Ar.Log(" Nearest");
 	}
 	if (pc.dwTextureFilterCaps & D3DPTFILTERCAPS_LINEAR)
 	{
-		str << " Linear";
+		Ar.Log(" Linear");
 	}
 	if (pc.dwTextureFilterCaps & D3DPTFILTERCAPS_MIPNEAREST)
 	{
-		str << " MipNearest";
+		Ar.Log(" MipNearest");
 	}
 	if (pc.dwTextureFilterCaps & D3DPTFILTERCAPS_MIPLINEAR)
 	{
-		str << " MipLinear";
+		Ar.Log(" MipLinear");
 	}
 	if (pc.dwTextureFilterCaps & D3DPTFILTERCAPS_LINEARMIPNEAREST)
 	{
-		str << " LinearMipNearest";
+		Ar.Log(" LinearMipNearest");
 	}
 	if (pc.dwTextureFilterCaps & D3DPTFILTERCAPS_LINEARMIPLINEAR)
 	{
-		str << " LinearMipLinear";
+		Ar.Log(" LinearMipLinear");
 	}
 	if (pc.dwTextureFilterCaps & D3DPTFILTERCAPS_MINFPOINT)
 	{
-		str << " MinFPoint";
+		Ar.Log(" MinFPoint");
 	}
 	if (pc.dwTextureFilterCaps & D3DPTFILTERCAPS_MINFLINEAR)
 	{
-		str << " MinFLinear";
+		Ar.Log(" MinFLinear");
 	}
 	if (pc.dwTextureFilterCaps & D3DPTFILTERCAPS_MINFANISOTROPIC)
 	{
-		str << " MinFAnisotropic";
+		Ar.Log(" MinFAnisotropic");
 	}
 	if (pc.dwTextureFilterCaps & D3DPTFILTERCAPS_MIPFPOINT)
 	{
-		str << " MipFPoint";
+		Ar.Log(" MipFPoint");
 	}
 	if (pc.dwTextureFilterCaps & D3DPTFILTERCAPS_MIPFLINEAR)
 	{
-		str << " MipFLinear";
+		Ar.Log(" MipFLinear");
 	}
 	if (pc.dwTextureFilterCaps & D3DPTFILTERCAPS_MAGFPOINT)
 	{
-		str << " MagFPoint";
+		Ar.Log(" MagFPoint");
 	}
 	if (pc.dwTextureFilterCaps & D3DPTFILTERCAPS_MAGFLINEAR)
 	{
-		str << " MagFLinear";
+		Ar.Log(" MagFLinear");
 	}
 	if (pc.dwTextureFilterCaps & D3DPTFILTERCAPS_MAGFANISOTROPIC)
 	{
-		str << " MagFAnisotropic";
+		Ar.Log(" MagFAnisotropic");
 	}
 	if (pc.dwTextureFilterCaps & D3DPTFILTERCAPS_MAGFAFLATCUBIC)
 	{
-		str << " MagFAFlatCubic";
+		Ar.Log(" MagFAFlatCubic");
 	}
 	if (pc.dwTextureFilterCaps & D3DPTFILTERCAPS_MAGFGAUSSIANCUBIC)
 	{
-		str << " MagFGaussianCubic";
+		Ar.Log(" MagFGaussianCubic");
 	}
-	str << endl;
 
-	str << "Texture blend caps:";
+	Ar.Log("Texture blend caps:");
 	if (pc.dwTextureBlendCaps & D3DPTBLENDCAPS_DECAL)
 	{
-		str << " Decal";
+		Ar.Log(" Decal");
 	}
 	if (pc.dwTextureBlendCaps & D3DPTBLENDCAPS_MODULATE)
 	{
-		str << " Modulate";
+		Ar.Log(" Modulate");
 	}
 	if (pc.dwTextureBlendCaps & D3DPTBLENDCAPS_DECALALPHA)
 	{
-		str << " DecalAlpha";
+		Ar.Log(" DecalAlpha");
 	}
 	if (pc.dwTextureBlendCaps & D3DPTBLENDCAPS_MODULATEALPHA)
 	{
-		str << " ModulateAlpha";
+		Ar.Log(" ModulateAlpha");
 	}
 	if (pc.dwTextureBlendCaps & D3DPTBLENDCAPS_DECALMASK)
 	{
-		str << " DecalMask";
+		Ar.Log(" DecalMask");
 	}
 	if (pc.dwTextureBlendCaps & D3DPTBLENDCAPS_MODULATEMASK)
 	{
-		str << " ModulateMask";
+		Ar.Log(" ModulateMask");
 	}
 	if (pc.dwTextureBlendCaps & D3DPTBLENDCAPS_COPY)
 	{
-		str << " Copy";
+		Ar.Log(" Copy");
 	}
 	if (pc.dwTextureBlendCaps & D3DPTBLENDCAPS_ADD)
 	{
-		str << " Add";
+		Ar.Log(" Add");
 	}
-	str << endl;
 
-	str << "Texture address caps:";
+	Ar.Log("Texture address caps:");
 	if (pc.dwTextureAddressCaps & D3DPTADDRESSCAPS_WRAP)
 	{
-		str << " Wrap";
+		Ar.Log(" Wrap");
 	}
 	if (pc.dwTextureAddressCaps & D3DPTADDRESSCAPS_MIRROR)
 	{
-		str << " Mirror";
+		Ar.Log(" Mirror");
 	}
 	if (pc.dwTextureAddressCaps & D3DPTADDRESSCAPS_CLAMP)
 	{
-		str << " Clamp";
+		Ar.Log(" Clamp");
 	}
 	if (pc.dwTextureAddressCaps & D3DPTADDRESSCAPS_BORDER)
 	{
-		str << " Border";
+		Ar.Log(" Border");
 	}
 	if (pc.dwTextureAddressCaps & D3DPTADDRESSCAPS_INDEPENDENTUV)
 	{
-		str << " IndependentUV";
+		Ar.Log(" IndependentUV");
 	}
-	str << endl;
 
-    str << "Stipple width: " << pc.dwStippleWidth << endl;
-    str << "Stipple height: " << pc.dwStippleHeight << endl;
-	return str;
+    Ar.Logf("Stipple width: %d", pc.dwStippleWidth);
+    Ar.Logf("Stipple height: %d", pc.dwStippleHeight);
 }
 
 //==========================================================================
 //
-//
+//	VDirect3DDrawer::LogDeviceDesc
 //
 //==========================================================================
 
-ostream &operator << (ostream &str, const LPD3DDEVICEDESC7 dd)
+void VDirect3DDrawer::LogDeviceDesc(FOutputDevice &Ar, const LPD3DDEVICEDESC7 dd)
 {
-	str << "Device caps:\n";
+	Ar.Log("Device caps:");
 	if (dd->dwDevCaps & D3DDEVCAPS_FLOATTLVERTEX)
 	{
-		str << "- accepts floating point for post-transform vertex data.\n";
+		Ar.Log("- accepts floating point for post-transform vertex data.");
 	}
 	if (dd->dwDevCaps & D3DDEVCAPS_SORTINCREASINGZ)
 	{
-		str << "- needs data sorted for increasing depth.\n";
+		Ar.Log("- needs data sorted for increasing depth.");
 	}
 	if (dd->dwDevCaps & D3DDEVCAPS_SORTDECREASINGZ)
 	{
-		str << "- needs data sorted for decreasing depth.\n";
+		Ar.Log("- needs data sorted for decreasing depth.");
 	}
 	if (dd->dwDevCaps & D3DDEVCAPS_SORTEXACT)
 	{
-		str << "- needs data sorted exactly.\n";
+		Ar.Log("- needs data sorted exactly.");
 	}
 	if (dd->dwDevCaps & D3DDEVCAPS_EXECUTESYSTEMMEMORY)
 	{
-		str << "- can use execute buffers from system memory.\n";
+		Ar.Log("- can use execute buffers from system memory.");
 	}
 	if (dd->dwDevCaps & D3DDEVCAPS_EXECUTEVIDEOMEMORY)
 	{
-		str << "- can use execute buffer from video memory.\n";
+		Ar.Log("- can use execute buffer from video memory.");
 	}
 	if (dd->dwDevCaps & D3DDEVCAPS_TLVERTEXSYSTEMMEMORY)
 	{
-		str << "- can use buffers from system memory for transformed and lit vertices.\n";
+		Ar.Log("- can use buffers from system memory for transformed and lit vertices.");
 	}
 	if (dd->dwDevCaps & D3DDEVCAPS_TLVERTEXVIDEOMEMORY)
 	{
-		str << "- can use buffers from video memory for transformed and lit vertices.\n";
+		Ar.Log("- can use buffers from video memory for transformed and lit vertices.");
 	}
 	if (dd->dwDevCaps & D3DDEVCAPS_TEXTURESYSTEMMEMORY)
 	{
-		str << "- can retrieve textures from system memory.\n";
+		Ar.Log("- can retrieve textures from system memory.");
 	}
 	if (dd->dwDevCaps & D3DDEVCAPS_TEXTUREVIDEOMEMORY)
 	{
-		str << "- can retrieve textures from device memory.\n";
+		Ar.Log("- can retrieve textures from device memory.");
 	}
 	if (dd->dwDevCaps & D3DDEVCAPS_DRAWPRIMTLVERTEX)
 	{
-		str << "- exports a DrawPrimitive-aware HAL.\n";
+		Ar.Log("- exports a DrawPrimitive-aware HAL.");
 	}
 	if (dd->dwDevCaps & D3DDEVCAPS_CANRENDERAFTERFLIP)
 	{
-		str << "- can queue rendering commands after a page flip.\n";
+		Ar.Log("- can queue rendering commands after a page flip.");
 	}
 	if (dd->dwDevCaps & D3DDEVCAPS_TEXTURENONLOCALVIDMEM)
 	{
-		str << "- can retrieve textures from non-local video (AGP) memory.\n";
+		Ar.Log("- can retrieve textures from non-local video (AGP) memory.");
 	}
 	if (dd->dwDevCaps & D3DDEVCAPS_DRAWPRIMITIVES2)
 	{
-		str << "- can support DrawPrimitives2.\n";
+		Ar.Log("- can support DrawPrimitives2.");
 	}
 	if (dd->dwDevCaps & D3DDEVCAPS_SEPARATETEXTUREMEMORIES)
 	{
-		str << "- uses discrete texture memory pools for each stage.\n";
+		Ar.Log("- uses discrete texture memory pools for each stage.");
 	}
 	if (dd->dwDevCaps & D3DDEVCAPS_DRAWPRIMITIVES2EX)
 	{
-		str << "- can support Extended DrawPrimitives2 i.e. DX7 compliant driver.\n";
+		Ar.Log("- can support Extended DrawPrimitives2 i.e. DX7 compliant driver.");
 	}
 	if (dd->dwDevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT)
 	{
-		str << "- supports transformation and lighting in hardware.\n";
+		Ar.Log("- supports transformation and lighting in hardware.");
 	}
 	if (dd->dwDevCaps & D3DDEVCAPS_CANBLTSYSTONONLOCAL)
 	{
-		str << "- supports blits from system-memory textures to non-local video-memory textures.\n";
+		Ar.Log("- supports blits from system-memory textures to non-local video-memory textures.");
 	}
 	if (dd->dwDevCaps & D3DDEVCAPS_HWRASTERIZATION)
 	{
-		str << "- has HW acceleration for rasterization.\n";
+		Ar.Log("- has HW acceleration for rasterization.");
 	}
-	str << endl;
+	Ar.Log("");
 
-	str << "-- Line caps --\n" << dd->dpcLineCaps;
-	str << endl;
+	Ar.Log("-- Line caps --");
+	LogPrimCaps(Ar, dd->dpcLineCaps);
+	Ar.Log("");
 
-	str << "-- Triangle caps --\n" << dd->dpcTriCaps;
- 	str << endl;
+	Ar.Log("-- Triangle caps --");
+	LogPrimCaps(Ar, dd->dpcTriCaps);
+ 	Ar.Log("");
 
-	str << "Rendering bit depth: ";
- 	if (dd->dwDeviceRenderBitDepth & DDBD_8) str << "8 ";
- 	if (dd->dwDeviceRenderBitDepth & DDBD_16) str << "16 ";
- 	if (dd->dwDeviceRenderBitDepth & DDBD_24) str << "24 ";
- 	if (dd->dwDeviceRenderBitDepth & DDBD_32) str << "32 ";
- 	str << endl;
-	str << "Z-Buffer bit depth: ";
- 	if (dd->dwDeviceZBufferBitDepth & DDBD_8) str << "8 ";
- 	if (dd->dwDeviceZBufferBitDepth & DDBD_16) str << "16 ";
- 	if (dd->dwDeviceZBufferBitDepth & DDBD_24) str << "24 ";
- 	if (dd->dwDeviceZBufferBitDepth & DDBD_32) str << "32 ";
- 	str << endl;
-	str << endl;
+	Ar.Log("Rendering bit depth:");
+ 	if (dd->dwDeviceRenderBitDepth & DDBD_8) Ar.Log(" 8");
+ 	if (dd->dwDeviceRenderBitDepth & DDBD_16) Ar.Log(" 16");
+ 	if (dd->dwDeviceRenderBitDepth & DDBD_24) Ar.Log(" 24");
+ 	if (dd->dwDeviceRenderBitDepth & DDBD_32) Ar.Log(" 32");
+	Ar.Log("Z-Buffer bit depth:");
+ 	if (dd->dwDeviceZBufferBitDepth & DDBD_8) Ar.Log(" 8");
+ 	if (dd->dwDeviceZBufferBitDepth & DDBD_16) Ar.Log(" 16");
+ 	if (dd->dwDeviceZBufferBitDepth & DDBD_24) Ar.Log(" 24");
+ 	if (dd->dwDeviceZBufferBitDepth & DDBD_32) Ar.Log(" 32");
+	Ar.Log("");
 
-	str << "Min texture width: " << dd->dwMinTextureWidth << endl;
-	str << "Min texture height: " << dd->dwMinTextureHeight << endl;
-	str << "Max texture width: " << dd->dwMaxTextureWidth << endl;
-	str << "Max texture height: " << dd->dwMaxTextureHeight << endl;
-	str << endl;
+	Ar.Logf("Min texture width: %d", dd->dwMinTextureWidth);
+	Ar.Logf("Min texture height: %d", dd->dwMinTextureHeight);
+	Ar.Logf("Max texture width: %d", dd->dwMaxTextureWidth);
+	Ar.Logf("Max texture height: %d", dd->dwMaxTextureHeight);
+	Ar.Log("");
 
-	str << "Max texture repeat: " << dd->dwMaxTextureRepeat << endl;
-	str << "Max texture aspect ratio: " << dd->dwMaxTextureAspectRatio << endl;
-	str << "Max anisotropy: " << dd->dwMaxAnisotropy << endl;
-	str << endl;
+	Ar.Logf("Max texture repeat: %d", dd->dwMaxTextureRepeat);
+	Ar.Logf("Max texture aspect ratio: %d", dd->dwMaxTextureAspectRatio);
+	Ar.Logf("Max anisotropy: %d", dd->dwMaxAnisotropy);
+	Ar.Log("");
 
-	str << "Guard band left: " << dd->dvGuardBandLeft << endl;
-	str << "Guard band top: " << dd->dvGuardBandTop << endl;
-	str << "Guard band right: " << dd->dvGuardBandRight << endl;
-	str << "Guard band bottom: " << dd->dvGuardBandBottom << endl;
-	str << endl;
+	Ar.Logf("Guard band left: %d", dd->dvGuardBandLeft);
+	Ar.Logf("Guard band top: %d", dd->dvGuardBandTop);
+	Ar.Logf("Guard band right: %d", dd->dvGuardBandRight);
+	Ar.Logf("Guard band bottom: %d", dd->dvGuardBandBottom);
+	Ar.Log("");
 
-	str << "Extents adjust: " << dd->dvExtentsAdjust << endl;
-	str << endl;
+	Ar.Logf("Extents adjust: %d", dd->dvExtentsAdjust);
+	Ar.Log("");
 
-	str << "Stencil caps: ";
+	Ar.Log("Stencil caps:");
 	if (dd->dwStencilCaps & D3DSTENCILCAPS_DECR)
 	{
-		str << "DECR ";
+		Ar.Log(" DECR");
 	}
 	if (dd->dwStencilCaps & D3DSTENCILCAPS_DECRSAT)
 	{
-		str << "DECRSAT ";
+		Ar.Log(" DECRSAT");
 	}
 	if (dd->dwStencilCaps & D3DSTENCILCAPS_INCR)
 	{
-		str << "INCR ";
+		Ar.Log(" INCR");
 	}
 	if (dd->dwStencilCaps & D3DSTENCILCAPS_INCRSAT)
 	{
-		str << "INCRSAT ";
+		Ar.Log(" INCRSAT");
 	}
 	if (dd->dwStencilCaps & D3DSTENCILCAPS_INVERT)
 	{
-		str << "INVERT ";
+		Ar.Log(" INVERT");
 	}
 	if (dd->dwStencilCaps & D3DSTENCILCAPS_KEEP)
 	{
-		str << "KEEP ";
+		Ar.Log(" KEEP");
 	}
 	if (dd->dwStencilCaps & D3DSTENCILCAPS_REPLACE)
 	{
-		str << "REPLACE ";
+		Ar.Log(" REPLACE");
 	}
 	if (dd->dwStencilCaps & D3DSTENCILCAPS_ZERO)
 	{
-		str << "ZERO ";
+		Ar.Log(" ZERO");
 	}
-	str << endl;
 
-	str << "Flexible vertex format capabilities:\n";
+	Ar.Log("Flexible vertex format capabilities:");
 	if (dd->dwFVFCaps & D3DFVFCAPS_DONOTSTRIPELEMENTS)
 	{
-		str << "- prefers that vertex elements not be stripped.\n";
+		Ar.Log("- prefers that vertex elements not be stripped.");
 	}
-	str << "- total " << (dd->dwFVFCaps & D3DFVFCAPS_TEXCOORDCOUNTMASK) << " texture coordinate sets\n";
+	Ar.Logf("- total %d texture coordinate sets", dd->dwFVFCaps & D3DFVFCAPS_TEXCOORDCOUNTMASK);
 
-	str << "Supported texture operations: ";
+	Ar.Log("Supported texture operations:");
 	if (dd->dwTextureOpCaps & D3DTEXOPCAPS_ADD)
 	{
-		str << "ADD ";
+		Ar.Log(" ADD");
 	}
 	if (dd->dwTextureOpCaps & D3DTEXOPCAPS_ADDSIGNED)
 	{
-		str << "ADDSIGNED ";
+		Ar.Log(" ADDSIGNED");
 	}
 	if (dd->dwTextureOpCaps & D3DTEXOPCAPS_ADDSIGNED2X)
 	{
-		str << "ADDSIGNED2X ";
+		Ar.Log(" ADDSIGNED2X");
 	}
 	if (dd->dwTextureOpCaps & D3DTEXOPCAPS_ADDSMOOTH)
 	{
-		str << "ADDSMOOTH ";
+		Ar.Log(" ADDSMOOTH");
 	}
 	if (dd->dwTextureOpCaps & D3DTEXOPCAPS_BLENDCURRENTALPHA)
 	{
-		str << "BLENDCURRENTALPHA ";
+		Ar.Log(" BLENDCURRENTALPHA");
 	}
 	if (dd->dwTextureOpCaps & D3DTEXOPCAPS_BLENDDIFFUSEALPHA)
 	{
-		str << "BLENDDIFFUSEALPHA ";
+		Ar.Log(" BLENDDIFFUSEALPHA");
 	}
 	if (dd->dwTextureOpCaps & D3DTEXOPCAPS_BLENDFACTORALPHA)
 	{
-		str << "BLENDFACTORALPHA ";
+		Ar.Log(" BLENDFACTORALPHA");
 	}
 	if (dd->dwTextureOpCaps & D3DTEXOPCAPS_BLENDTEXTUREALPHA)
 	{
-		str << "BLENDTEXTUREALPHA ";
+		Ar.Log(" BLENDTEXTUREALPHA");
 	}
 	if (dd->dwTextureOpCaps & D3DTEXOPCAPS_BLENDTEXTUREALPHAPM)
 	{
-		str << "BLENDTEXTUREALPHAPM ";
+		Ar.Log(" BLENDTEXTUREALPHAPM");
 	}
 	if (dd->dwTextureOpCaps & D3DTEXOPCAPS_BUMPENVMAP)
 	{
-		str << "BUMPENVMAP ";
+		Ar.Log(" BUMPENVMAP");
 	}
 	if (dd->dwTextureOpCaps & D3DTEXOPCAPS_BUMPENVMAPLUMINANCE)
 	{
-		str << "BUMPENVMAPLUMINANCE ";
+		Ar.Log(" BUMPENVMAPLUMINANCE");
 	}
 	if (dd->dwTextureOpCaps & D3DTEXOPCAPS_DISABLE)
 	{
-		str << "DISABLE ";
+		Ar.Log(" DISABLE");
 	}
 	if (dd->dwTextureOpCaps & D3DTEXOPCAPS_DOTPRODUCT3)
 	{
-		str << "DOTPRODUCT3 ";
+		Ar.Log(" DOTPRODUCT3");
 	}
 	if (dd->dwTextureOpCaps & D3DTEXOPCAPS_MODULATE)
 	{
-		str << "MODULATE ";
+		Ar.Log(" MODULATE");
 	}
 	if (dd->dwTextureOpCaps & D3DTEXOPCAPS_MODULATE2X)
 	{
-		str << "MODULATE2X ";
+		Ar.Log(" MODULATE2X");
 	}
 	if (dd->dwTextureOpCaps & D3DTEXOPCAPS_MODULATE4X)
 	{
-		str << "MODULATE4X ";
+		Ar.Log(" MODULATE4X");
 	}
 	if (dd->dwTextureOpCaps & D3DTEXOPCAPS_MODULATEALPHA_ADDCOLOR)
 	{
-		str << "MODULATEALPHA_ADDCOLOR ";
+		Ar.Log(" MODULATEALPHA_ADDCOLOR");
 	}
 	if (dd->dwTextureOpCaps & D3DTEXOPCAPS_MODULATECOLOR_ADDALPHA)
 	{
-		str << "MODULATEALPHA_ADDCOLOR ";
+		Ar.Log(" MODULATEALPHA_ADDCOLOR");
 	}
 	if (dd->dwTextureOpCaps & D3DTEXOPCAPS_MODULATEINVALPHA_ADDCOLOR)
 	{
-		str << "MODULATEINVALPHA_ADDCOLOR ";
+		Ar.Log(" MODULATEINVALPHA_ADDCOLOR");
 	}
 	if (dd->dwTextureOpCaps & D3DTEXOPCAPS_MODULATEINVCOLOR_ADDALPHA)
 	{
-		str << "MODULATEINVCOLOR_ADDALPHA ";
+		Ar.Log(" MODULATEINVCOLOR_ADDALPHA");
 	}
 	if (dd->dwTextureOpCaps & D3DTEXOPCAPS_PREMODULATE)
 	{
-		str << "PREMODULATE ";
+		Ar.Log(" PREMODULATE");
 	}
 	if (dd->dwTextureOpCaps & D3DTEXOPCAPS_SELECTARG1)
 	{
-		str << "SELECTARG1 ";
+		Ar.Log(" SELECTARG1");
 	}
 	if (dd->dwTextureOpCaps & D3DTEXOPCAPS_SELECTARG2)
 	{
-		str << "SELECTARG2 ";
+		Ar.Log(" SELECTARG2");
 	}
 	if (dd->dwTextureOpCaps & D3DTEXOPCAPS_SUBTRACT)
 	{
-		str << "SUBTRACT ";
+		Ar.Log(" SUBTRACT");
 	}
-	str << endl;
-	str << "Max texture blend stages: " << dd->wMaxTextureBlendStages << endl;
-	str << "Max simultaneous textures: " << dd->wMaxSimultaneousTextures << endl;
-	str << "Max active lights: " << dd->dwMaxActiveLights << endl;
-	str << "Max vertex W: " << dd->dvMaxVertexW << endl;
-	str << "Max user clip planes: " << dd->wMaxUserClipPlanes << endl;
-	str << "Max vertex blend matrices: " << dd->wMaxVertexBlendMatrices << endl;
+	Ar.Logf("Max texture blend stages: %d", dd->wMaxTextureBlendStages);
+	Ar.Logf("Max simultaneous textures: %d", dd->wMaxSimultaneousTextures);
+	Ar.Logf("Max active lights: %d", dd->dwMaxActiveLights);
+	Ar.Logf("Max vertex W: %d", dd->dvMaxVertexW);
+	Ar.Logf("Max user clip planes: %d", dd->wMaxUserClipPlanes);
+	Ar.Logf("Max vertex blend matrices: %d", dd->wMaxVertexBlendMatrices);
 
 /*
     GUID        deviceGUID;
 
     DWORD       dwVertexProcessingCaps;
 */
-	return str;
 }
 
 //==========================================================================
 //
-//
+//	VDirect3DDrawer::LogPixelFormat
 //
 //==========================================================================
 
-ostream &operator << (ostream &str, const LPDDPIXELFORMAT pf)
+void VDirect3DDrawer::LogPixelFormat(FOutputDevice &Ar, const LPDDPIXELFORMAT pf)
 {
 	if (pf->dwFlags & DDPF_ALPHAPIXELS)
-		str << "- has alpha channel." << endl;
+		Ar.Log("- has alpha channel.");
 	if (pf->dwFlags & DDPF_ALPHA)
-		str << "- Alpha-only surface." << endl;
+		Ar.Log("- Alpha-only surface.");
 	if (pf->dwFlags & DDPF_FOURCC)
-		str << "- contains a FOURCC code describing a non-RGB pixel format." << endl;
+		Ar.Log("- contains a FOURCC code describing a non-RGB pixel format.");
 	if (pf->dwFlags & DDPF_PALETTEINDEXED1)
-		str << "- 1-bit color indexed." << endl;
+		Ar.Log("- 1-bit color indexed.");
 	if (pf->dwFlags & DDPF_PALETTEINDEXED2)
-		str << "- 2-bit color indexed." << endl;
+		Ar.Log("- 2-bit color indexed.");
 	if (pf->dwFlags & DDPF_PALETTEINDEXED4)
-		str << "- 4-bit color indexed." << endl;
+		Ar.Log("- 4-bit color indexed.");
 	if (pf->dwFlags & DDPF_PALETTEINDEXED8)
-		str << "- 8-bit color indexed." << endl;
+		Ar.Log("- 8-bit color indexed.");
 	if (pf->dwFlags & DDPF_PALETTEINDEXEDTO8)
-		str << "- indexed to an 8-bit palette." << endl;
+		Ar.Log("- indexed to an 8-bit palette.");
 	if (pf->dwFlags & DDPF_RGB)
-		str << "- RGB surface." << endl;
+		Ar.Log("- RGB surface.");
 	if (pf->dwFlags & DDPF_COMPRESSED)
-		str << "- will accept pixel data in the specified format and compress it during the write operation." << endl;
+		Ar.Log("- will accept pixel data in the specified format and compress it during the write operation.");
 	if (pf->dwFlags & DDPF_RGBTOYUV)
-		str << "- translates RGB data YUV data." << endl;
+		Ar.Log("- translates RGB data YUV data.");
 	if (pf->dwFlags & DDPF_YUV)
-		str << "- YUV surface." << endl;
+		Ar.Log("- YUV surface.");
 	if (pf->dwFlags & DDPF_ZBUFFER)
-		str << "- z-buffer surface." << endl;
+		Ar.Log("- z-buffer surface.");
 	if (pf->dwFlags & DDPF_ZPIXELS)
-		str << "- contains z information in the pixels." << endl;
+		Ar.Log("- contains z information in the pixels.");
 	if (pf->dwFlags & DDPF_STENCILBUFFER)
-		str << "- contains stencil information along with Z." << endl;
+		Ar.Log("- contains stencil information along with Z.");
 	if (pf->dwFlags & DDPF_ALPHAPREMULT)
-		str << "- uses the premultiplied alpha format." << endl;
+		Ar.Log("- uses the premultiplied alpha format.");
 	if (pf->dwFlags & DDPF_LUMINANCE)
-		str << "- luminance-only or luminance-alpha surface." << endl;
+		Ar.Log("- luminance-only or luminance-alpha surface.");
 	if (pf->dwFlags & DDPF_BUMPLUMINANCE)
-		str << "- luminance off bumpmap surface." << endl;
+		Ar.Log("- luminance off bumpmap surface.");
 	if (pf->dwFlags & DDPF_BUMPDUDV)
-		str << "- has Bump-map." << endl;
-	str << "- Bit depth: " << pf->dwRGBBitCount << endl;
-	str << "- Mask for red bits: " << hex << pf->dwRBitMask << dec << endl;
-	str << "- Mask for green bits: " << hex << pf->dwGBitMask << dec << endl;
-	str << "- Mask for blue bits: " << hex << pf->dwBBitMask << dec << endl;
-	str << "- Mask for alpha/Z channel: " << hex << pf->dwRGBAlphaBitMask << dec << endl;
-
-	return str;
+		Ar.Log("- has Bump-map.");
+	Ar.Logf("- Bit depth: %d", pf->dwRGBBitCount);
+	Ar.Logf("- Mask for red bits: %x", pf->dwRBitMask);
+	Ar.Logf("- Mask for green bits: %x", pf->dwGBitMask);
+	Ar.Logf("- Mask for blue bits: %x", pf->dwBBitMask);
+	Ar.Logf("- Mask for alpha/Z channel: %x", pf->dwRGBAlphaBitMask);
 }
 
 #endif
@@ -973,9 +950,12 @@ ostream &operator << (ostream &str, const LPDDPIXELFORMAT pf)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.3  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.2  2001/09/14 16:48:22  dj_jl
 //	Switched to DirectX 8
 //	

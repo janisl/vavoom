@@ -1832,28 +1832,28 @@ void D_SpriteDrawPolygon(TVec *cv, int count, surface_t *surf, int lump,
 
 //==========================================================================
 //
-//	TSoftwareDrawer::DrawMaskedPolygon
+//	VSoftwareDrawer::DrawMaskedPolygon
 //
 //==========================================================================
 
-void TSoftwareDrawer::DrawMaskedPolygon(TVec *cv, int count, int,
+void VSoftwareDrawer::DrawMaskedPolygon(TVec *cv, int count, int,
 	int translucency)
 {
-	guard(TSoftwareDrawer::DrawMaskedPolygon);
+	guard(VSoftwareDrawer::DrawMaskedPolygon);
 	D_SpriteDrawPolygon(cv, count, r_surface, 0, 0, translucency, 0);
 	unguard;
 }
 
 //==========================================================================
 //
-//	TSoftwareDrawer::DrawSpritePolygon
+//	VSoftwareDrawer::DrawSpritePolygon
 //
 //==========================================================================
 
-void TSoftwareDrawer::DrawSpritePolygon(TVec *cv, int lump,
+void VSoftwareDrawer::DrawSpritePolygon(TVec *cv, int lump,
 	int translucency, int translation, dword light)
 {
-	guard(TSoftwareDrawer::DrawSpritePolygon);
+	guard(VSoftwareDrawer::DrawSpritePolygon);
 	D_SpriteDrawPolygon(cv, 4, NULL, lump, translation, translucency, light);
 	unguard;
 }
@@ -1861,9 +1861,12 @@ void TSoftwareDrawer::DrawSpritePolygon(TVec *cv, int lump,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.7  2002/03/28 17:58:02  dj_jl
 //	Added support for scaled textures.
-//
+//	
 //	Revision 1.6  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
 //	

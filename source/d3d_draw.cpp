@@ -51,14 +51,14 @@
 
 //==========================================================================
 //
-//	TDirect3DDrawer::DrawPic
+//	VDirect3DDrawer::DrawPic
 //
 //==========================================================================
 
-void TDirect3DDrawer::DrawPic(float x1, float y1, float x2, float y2,
+void VDirect3DDrawer::DrawPic(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, int handle, int trans)
 {
-	guard(TDirect3DDrawer::DrawPic);
+	guard(VDirect3DDrawer::DrawPic);
 	MyD3DVertex	dv[4];
 	int l = (((100 - trans) * 255 / 100) << 24) | 0xffffff;
 
@@ -91,14 +91,14 @@ void TDirect3DDrawer::DrawPic(float x1, float y1, float x2, float y2,
 
 //==========================================================================
 //
-//	TDirect3DDrawer::DrawPicShadow
+//	VDirect3DDrawer::DrawPicShadow
 //
 //==========================================================================
 
-void TDirect3DDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
+void VDirect3DDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, int handle, int shade)
 {
-	guard(TDirect3DDrawer::DrawPicShadow);
+	guard(VDirect3DDrawer::DrawPicShadow);
 	MyD3DVertex	dv[4];
 	int l = shade << 24;
 
@@ -125,16 +125,16 @@ void TDirect3DDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 
 //==========================================================================
 //
-//  TDirect3DDrawer::FillRectWithFlat
+//  VDirect3DDrawer::FillRectWithFlat
 //
 // 	Fills rectangle with flat.
 //
 //==========================================================================
 
-void TDirect3DDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
+void VDirect3DDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, const char* fname)
 {
-	guard(TDirect3DDrawer::FillRectWithFlat);
+	guard(VDirect3DDrawer::FillRectWithFlat);
 	MyD3DVertex	dv[4];
 	int l = 0xffffffff;
 
@@ -155,14 +155,14 @@ void TDirect3DDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 
 //==========================================================================
 //
-//  TDirect3DDrawer::FillRect
+//  VDirect3DDrawer::FillRect
 //
 //==========================================================================
 
-void TDirect3DDrawer::FillRect(float x1, float y1, float x2, float y2,
+void VDirect3DDrawer::FillRect(float x1, float y1, float x2, float y2,
 	dword color)
 {
-	guard(TDirect3DDrawer::FillRect);
+	guard(VDirect3DDrawer::FillRect);
 	MyD3DVertex	dv[4];
 
 	dv[0] = MyD3DVertex(x1, y1, color, 0, 0);
@@ -184,16 +184,16 @@ void TDirect3DDrawer::FillRect(float x1, float y1, float x2, float y2,
 
 //==========================================================================
 //
-//	TDirect3DDrawer::DarkenScreen
+//	VDirect3DDrawer::DarkenScreen
 //
 //  Fade all the screen buffer, so that the menu is more readable,
 // especially now that we use the small hufont in the menus...
 //
 //==========================================================================
 
-void TDirect3DDrawer::ShadeRect(int x, int y, int w, int h, int darkening)
+void VDirect3DDrawer::ShadeRect(int x, int y, int w, int h, int darkening)
 {
-	guard(TDirect3DDrawer::ShadeRect);
+	guard(VDirect3DDrawer::ShadeRect);
 	MyD3DVertex	dv[4];
 	int l = darkening << 27;
 
@@ -220,13 +220,13 @@ void TDirect3DDrawer::ShadeRect(int x, int y, int w, int h, int darkening)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::DrawConsoleBackground
+//	VDirect3DDrawer::DrawConsoleBackground
 //
 //==========================================================================
 
-void TDirect3DDrawer::DrawConsoleBackground(int h)
+void VDirect3DDrawer::DrawConsoleBackground(int h)
 {
-	guard(TDirect3DDrawer::DrawConsoleBackground);
+	guard(VDirect3DDrawer::DrawConsoleBackground);
 	MyD3DVertex	dv[4];
 	int l = 0xc000007f;
 
@@ -253,14 +253,14 @@ void TDirect3DDrawer::DrawConsoleBackground(int h)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::DrawSpriteLump
+//	VDirect3DDrawer::DrawSpriteLump
 //
 //==========================================================================
 
-void TDirect3DDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
+void VDirect3DDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 	int lump, int translation, boolean flip)
 {
-	guard(TDirect3DDrawer::DrawSpriteLump);
+	guard(VDirect3DDrawer::DrawSpriteLump);
 	SetSpriteLump(lump, translation);
 
 	float s1, s2;
@@ -293,13 +293,13 @@ void TDirect3DDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 
 //==========================================================================
 //
-//	TDirect3DDrawer::StartAutomap
+//	VDirect3DDrawer::StartAutomap
 //
 //==========================================================================
 
-void TDirect3DDrawer::StartAutomap(void)
+void VDirect3DDrawer::StartAutomap(void)
 {
-	guard(TDirect3DDrawer::StartAutomap);
+	guard(VDirect3DDrawer::StartAutomap);
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
@@ -308,13 +308,13 @@ void TDirect3DDrawer::StartAutomap(void)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::DrawLine
+//	VDirect3DDrawer::DrawLine
 //
 //==========================================================================
 
-void TDirect3DDrawer::DrawLine(int x1, int y1, dword c1, int x2, int y2, dword c2)
+void VDirect3DDrawer::DrawLine(int x1, int y1, dword c1, int x2, int y2, dword c2)
 {
-	guard(TDirect3DDrawer::DrawLine);
+	guard(VDirect3DDrawer::DrawLine);
 	MyD3DVertex out[2];
  	out[0] = MyD3DVertex(x1, y1, c1, 0, 0);
  	out[1] = MyD3DVertex(x2, y2, c2, 0, 0);
@@ -328,13 +328,13 @@ void TDirect3DDrawer::DrawLine(int x1, int y1, dword c1, int x2, int y2, dword c
 
 //==========================================================================
 //
-//	TDirect3DDrawer::EndAutomap
+//	VDirect3DDrawer::EndAutomap
 //
 //==========================================================================
 
-void TDirect3DDrawer::EndAutomap(void)
+void VDirect3DDrawer::EndAutomap(void)
 {
-	guard(TDirect3DDrawer::EndAutomap);
+	guard(VDirect3DDrawer::EndAutomap);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
@@ -344,9 +344,12 @@ void TDirect3DDrawer::EndAutomap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.10  2002/01/11 18:24:44  dj_jl
 //	Added guard macros
-//
+//	
 //	Revision 1.9  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	

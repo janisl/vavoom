@@ -162,10 +162,11 @@ public:
 	}
 };
 
-class TDirect3DDrawer : public TDrawer
+class VDirect3DDrawer:public VDrawer
 {
- public:
-	TDirect3DDrawer(void);
+	DECLARE_CLASS(VDirect3DDrawer, VDrawer, 0)
+
+	VDirect3DDrawer(void);
 	void Init(void);
 	void InitData(void);
 	bool SetResolution(int, int, int);
@@ -220,7 +221,7 @@ class TDirect3DDrawer : public TDrawer
 	void DrawLine(int, int, dword, int, int, dword);
 	void EndAutomap(void);
 
- private:
+private:
 	void Setup2D(void);
 	void FlushTextures(void);
 	void ReleaseTextures(void);
@@ -258,6 +259,20 @@ class TDirect3DDrawer : public TDrawer
 	void FlushCaches(bool);
 	surfcache_t	*AllocBlock(int width, int height);
 	void CacheSurface(surface_t *surface);
+
+#if DIRECT3D_VERSION < 0x0800
+	static HRESULT CALLBACK EnumDevicesCallback(
+		LPSTR lpDeviceDesc,
+		LPSTR lpDeviceName,
+		LPD3DDEVICEDESC7 lpD3DDeviceDesc,
+		LPVOID);
+	static HRESULT CALLBACK EnumZBufferCallback(LPDDPIXELFORMAT pf, void* dst);
+	static HRESULT CALLBACK EnumPixelFormatsCallback(LPDDPIXELFORMAT pf, void* dst);
+	static HRESULT CALLBACK EnumPixelFormats32Callback(LPDDPIXELFORMAT pf, void* dst);
+	static void LogPrimCaps(FOutputDevice &Ar, const D3DPRIMCAPS &pc);
+	static void LogDeviceDesc(FOutputDevice &Ar, const LPD3DDEVICEDESC7 dd);
+	static void LogPixelFormat(FOutputDevice &Ar, const LPDDPIXELFORMAT pf);
+#endif
 
 	word MakeCol16(byte r, byte g, byte b, byte a)
 	{
@@ -410,21 +425,14 @@ class TDirect3DDrawer : public TDrawer
 	surfcache_t					*cacheblocks[NUM_BLOCK_SURFS];
 	surfcache_t					blockbuf[NUM_CACHE_BLOCKS];
 
-	TCvarI device;
-	TCvarI clear;
-	TCvarI tex_linear;
-	TCvarI dither;
-	TCvarI blend_sprites;
-	TCvarF maxdist;
-	TCvarI model_lighting;
-	TCvarI specular_highlights;
-
-#if DIRECT3D_VERSION >= 0x0800
-	friend ostream &operator << (ostream &str, const D3DCAPS8 *dd);
-#else
-	friend ostream &operator << (ostream &str, const LPD3DDEVICEDESC7 dd);
-	friend ostream &operator << (ostream &str, const LPDDPIXELFORMAT pf);
-#endif
+	static TCvarI device;
+	static TCvarI clear;
+	static TCvarI tex_linear;
+	static TCvarI dither;
+	static TCvarI blend_sprites;
+	static TCvarF maxdist;
+	static TCvarI model_lighting;
+	static TCvarI specular_highlights;
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -436,9 +444,12 @@ class TDirect3DDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.20  2002/03/28 17:56:52  dj_jl
 //	Increased lightmap texture count.
-//
+//	
 //	Revision 1.19  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	

@@ -76,14 +76,12 @@ TCvarF					r_fog_start("r_fog_start", "1.0");
 TCvarF					r_fog_end("r_fog_end", "2048.0");
 TCvarF					r_fog_density("r_fog_density", "0.5");
 
-TDrawer					*Drawer;
-TDrawer					*_SoftwareDrawer = NULL;
-TDrawer					*_OpenGLDrawer = NULL;
-TDrawer					*_Direct3DDrawer = NULL;
-
-bool					r_back2front;
+VDrawer					*Drawer;
 
 refdef_t				refdef;
+
+IMPLEMENT_CLASS(VSubsystem);	// FIXME
+IMPLEMENT_CLASS(VDrawer);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -119,7 +117,6 @@ static TCvarI			_driver("_driver", "0", CVAR_ROM);
 void R_Init(void)
 {
 	guard(R_Init);
-	r_back2front = (Drawer != _SoftwareDrawer);
 	R_InitSkyBoxes();
 	R_InitData();
 	Drawer->InitTextures();
@@ -620,7 +617,7 @@ COMMAND(TimeRefresh)
 	}
 	stop = Sys_Time();
 	time = stop - start;
-	con << time << " seconds (" << (128 / time) << " fps)\n";
+	GCon->Logf("%f seconds (%f fps)\n", time, 128 / time);
 	
 	cl.viewangles.yaw = startangle;
 	unguard;
@@ -635,33 +632,36 @@ COMMAND(TimeRefresh)
 void V_Init(void)
 {
 	guard(V_Init);
+	VClass *DrawerClass;
+
 	if (M_CheckParm("-d3d"))
 	{
-		Drawer = _Direct3DDrawer;
+		DrawerClass = VClass::FindClass("Direct3DDrawer");
 		_driver = 2;
-		if (!Drawer)
+		if (!DrawerClass)
 		{
 			Sys_Error("Direct3D drawer is not available");
 		}
 	}
 	else if (M_CheckParm("-opengl"))
 	{
-		Drawer = _OpenGLDrawer;
+		DrawerClass = VClass::FindClass("OpenGLDrawer");
 		_driver = 1;
-		if (!Drawer)
+		if (!DrawerClass)
 		{
 			Sys_Error("OpenGL drawer is not available");
 		}
 	}
 	else
 	{
-		Drawer = _SoftwareDrawer;
+		DrawerClass = VClass::FindClass("SoftwareDrawer");
 		_driver = 0;
-		if (!Drawer)
+		if (!DrawerClass)
 		{
 			Sys_Error("Software drawer is not available");
 		}
 	}
+	Drawer = (VDrawer *)VObject::StaticSpawnObject(DrawerClass, NULL, PU_STATIC);
 	Drawer->Init();
 	unguard;
 }
@@ -678,6 +678,7 @@ void V_Shutdown(void)
 	if (Drawer)
 	{
 		Drawer->Shutdown();
+		Drawer->Destroy();
 		Drawer = NULL;
 	}
 	unguard;
@@ -686,9 +687,12 @@ void V_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.19  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.18  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
 //	

@@ -75,9 +75,26 @@ struct model_t
 	void		*data;		// only access through Mod_Extradata
 };
 
-class TDrawer
+//
+//	VSubsystem
+//
+//	FIXME Make this global.
+//
+class VSubsystem:public VObject
 {
- public:
+	DECLARE_ABSTRACT_CLASS(VSubsystem, VObject, CLASS_Transient)
+	NO_DEFAULT_CONSTRUCTOR(VSubsystem)
+
+	//	VSubsystem interface.
+	virtual void Tick(float)
+	{}
+};
+
+class VDrawer:public VSubsystem
+{
+	DECLARE_ABSTRACT_CLASS(VDrawer, VSubsystem, 0)
+	NO_DEFAULT_CONSTRUCTOR(VDrawer);
+
 	virtual void Init(void) = 0;
 	virtual void InitData(void) = 0;
 	virtual bool SetResolution(int, int, int) = 0;
@@ -136,17 +153,17 @@ class TDrawer
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-extern TDrawer			*Drawer;
-extern TDrawer			*_SoftwareDrawer;
-extern TDrawer			*_OpenGLDrawer;
-extern TDrawer			*_Direct3DDrawer;
+extern VDrawer			*Drawer;
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.12  2002/03/28 17:58:02  dj_jl
 //	Added support for scaled textures.
-//
+//	
 //	Revision 1.11  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

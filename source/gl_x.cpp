@@ -73,27 +73,27 @@ static bool			dgamouse;
 
 //==========================================================================
 //
-//	TOpenGLDrawer::Init
+//	VOpenGLDrawer::Init
 //
 // 	Determine the hardware configuration
 //
 //==========================================================================
 
-void TOpenGLDrawer::Init(void)
+void VOpenGLDrawer::Init(void)
 {
 }
 
 //==========================================================================
 //
-// 	TOpenGLDrawer::SetResolution
+// 	VOpenGLDrawer::SetResolution
 //
 // 	Set up the video mode
 //
 //==========================================================================
 
-bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
+bool VOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 {
-	guard(TOpenGLDrawer::SetResolution);
+	guard(VOpenGLDrawer::SetResolution);
 	bool default_mode = false;
 	if (!Width || !Height)
 	{
@@ -109,7 +109,7 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 	if (BPP < 16)
 	{
 		//	True-color only
-		cond << "Attempt to set a paletized video mode for OpenGL\n";
+		GCon->Log(NAME_Init, "Attempt to set a paletized video mode for OpenGL");
 		return false;
 	}
 
@@ -147,7 +147,7 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 	RenderDisplay = _xwin.display;
 	if (!RenderDisplay)
 	{
-		cond << "No display - Allegro X-Windows driver not initialized\n";
+		GCon->Log(NAME_Init, "No display - Allegro X-Windows driver not initialized");
 		XUNLOCK();
 		return false;
 	}
@@ -165,7 +165,8 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 	}
 	else
 	{
-		con << "Using XFree86-VidModeExtension Version " << MajorVersion << '.' << MinorVersion << endl;
+		GCon->Logf(NAME_Init, "Using XFree86-VidModeExtension Version %d.%d",
+			MajorVersion, MinorVersion);
 		vidmode_ext = true;
 	}
 #endif
@@ -173,7 +174,7 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 	visinfo = glXChooseVisual(RenderDisplay, RenderScreen, attrib);
 	if (!visinfo)
 	{
-		cond << "Failed to choose visual\n";
+		GCon->Log(NAME_Init, "Failed to choose visual");
 		XUNLOCK();
 		return false;
 	}
@@ -210,7 +211,7 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 		{
 			// No such mode, if we are trying to set default mode,
 			// we will use windowed mode, otherwise complain.
-			cond << "No such video mode\n";
+			GCon->Log(NAME_Init, "No such video mode");
 			XUNLOCK();
 			return false;
 		}
@@ -273,7 +274,7 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 	RenderContext = glXCreateContext(RenderDisplay, visinfo, NULL, True);
 	if (!RenderContext)
 	{
-		cond << "Failed to create OpenGL context\n";
+		GCon->Log(NAME_Dev, "Failed to create OpenGL context");
 		XUNLOCK();
 		return false;
 	}
@@ -310,7 +311,7 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 				 None,
 				 CurrentTime) != GrabSuccess)
 	{
-		con << "Failed to grab mouse\n";
+		GCon->Log(NAME_Init, "Failed to grab mouse");
 		return false;
 	}
 	_xwin.mouse_grabbed = 1;
@@ -325,7 +326,7 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 		if (!XF86DGAQueryVersion(RenderDisplay, &MajorVersion, &MinorVersion))
 		{
 			// unable to query, probalby not supported
-			con << "Failed to detect XF86DGA Mouse\n";
+			GCon->Log(NAME_Init, "Failed to detect XF86DGA Mouse");
 			XWarpPointer(RenderDisplay, None, RenderWindow,
 				0, 0, 0, 0, Width / 2, Height / 2);
 		}
@@ -347,7 +348,7 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 	if (XGrabKeyboard(RenderDisplay, RenderWindow, False,
 		GrabModeAsync, GrabModeAsync, CurrentTime) != GrabSuccess)
 	{
-		con << "Failed to grab keyboard\n";
+		GCon->Log(NAME_Init, "Failed to grab keyboard");
 		return false;
 	}
 	_xwin.keyboard_grabbed = 1;
@@ -364,17 +365,17 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::GetExtFuncPtr
+//	VOpenGLDrawer::GetExtFuncPtr
 //
 //==========================================================================
 
-void *TOpenGLDrawer::GetExtFuncPtr(const char *name)
+void *VOpenGLDrawer::GetExtFuncPtr(const char *name)
 {
-	guard(TOpenGLDrawer::GetExtFuncPtr);
+	guard(VOpenGLDrawer::GetExtFuncPtr);
 	void *prjobj = dlopen(NULL, RTLD_LAZY);
 	if (!prjobj)
 	{
-		con << "Unable to open symbol list for main program.\n";
+		GCon->Log(NAME_Init, "Unable to open symbol list for main program.");
 		return NULL;
 	}
 	void *ptr = dlsym(prjobj, name);
@@ -385,15 +386,15 @@ void *TOpenGLDrawer::GetExtFuncPtr(const char *name)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::Update
+//	VOpenGLDrawer::Update
 //
 // 	Blit to the screen / Flip surfaces
 //
 //==========================================================================
 
-void TOpenGLDrawer::Update(void)
+void VOpenGLDrawer::Update(void)
 {
-	guard(TOpenGLDrawer::Update);
+	guard(VOpenGLDrawer::Update);
 	glFlush();
 	glXSwapBuffers(RenderDisplay, RenderWindow);
 	unguard;
@@ -401,15 +402,15 @@ void TOpenGLDrawer::Update(void)
 
 //==========================================================================
 //
-// 	TOpenGLDrawer::Shutdown
+// 	VOpenGLDrawer::Shutdown
 //
 //	Close the graphics
 //
 //==========================================================================
 
-void TOpenGLDrawer::Shutdown(void)
+void VOpenGLDrawer::Shutdown(void)
 {
-	guard(TOpenGLDrawer::Shutdown);
+	guard(VOpenGLDrawer::Shutdown);
 	XLOCK();
 
 	DeleteTextures();
@@ -461,9 +462,12 @@ void TOpenGLDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.9  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
-//
+//	
 //	Revision 1.8  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

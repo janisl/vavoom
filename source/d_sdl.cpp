@@ -52,27 +52,27 @@ static bool			new_palette = false;
 
 //==========================================================================
 //
-//	TSoftwareDrawer::Init
+//	VSoftwareDrawer::Init
 //
 // 	Determine the hardware configuration
 //
 //==========================================================================
 
-void TSoftwareDrawer::Init(void)
+void VSoftwareDrawer::Init(void)
 {
 }
 
 //==========================================================================
 //
-// 	TSoftwareDrawer::SetResolution
+// 	VSoftwareDrawer::SetResolution
 //
 // 	Set up the video mode
 //
 //==========================================================================
 
-bool TSoftwareDrawer::SetResolution(int Width, int Height, int BPP)
+bool VSoftwareDrawer::SetResolution(int Width, int Height, int BPP)
 {
-	guard(TSoftwareDrawer::SetResolution);
+	guard(VSoftwareDrawer::SetResolution);
 	Uint32 flags = 0;
 
 	if (!Width || !Height)
@@ -145,15 +145,15 @@ bool TSoftwareDrawer::SetResolution(int Width, int Height, int BPP)
 
 //==========================================================================
 //
-//	TSoftwareDrawer::SetPalette8
+//	VSoftwareDrawer::SetPalette8
 //
 //	Sets palette.
 //
 //==========================================================================
 
-void TSoftwareDrawer::SetPalette8(byte *palette)
+void VSoftwareDrawer::SetPalette8(byte *palette)
 {
-	guard(TSoftwareDrawer::SetPalette8);
+	guard(VSoftwareDrawer::SetPalette8);
 	int i;
 
 	for (i = 0; i < hw_palette.ncolors; i++)
@@ -169,15 +169,15 @@ void TSoftwareDrawer::SetPalette8(byte *palette)
 
 //==========================================================================
 //
-//	TSoftwareDrawer::Update
+//	VSoftwareDrawer::Update
 //
 // 	Blit to the screen / Flip surfaces
 //
 //==========================================================================
 
-void TSoftwareDrawer::Update(void)
+void VSoftwareDrawer::Update(void)
 {
-	guard(TSoftwareDrawer::Update);
+	guard(VSoftwareDrawer::Update);
 	int i;
 	int scrnpitch;
 	byte *psrc = NULL;
@@ -211,13 +211,13 @@ void TSoftwareDrawer::Update(void)
 
 //==========================================================================
 //
-// 	TSoftwareDrawer::Shutdown
+// 	VSoftwareDrawer::Shutdown
 //
 //	Close the graphics
 //
 //==========================================================================
 
-void TSoftwareDrawer::Shutdown(void)
+void VSoftwareDrawer::Shutdown(void)
 {
 	if (hw_screen != NULL)
 	{
@@ -234,9 +234,12 @@ void TSoftwareDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.2  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.1  2002/01/03 18:39:42  dj_jl
 //	Added SDL port
 //	

@@ -436,13 +436,13 @@ extern "C" void D_ClipEdge(const TVec &v0, const TVec &v1,
 
 //==========================================================================
 //
-//	TSoftwareDrawer::DrawPolygon
+//	VSoftwareDrawer::DrawPolygon
 //
 //==========================================================================
 
-void TSoftwareDrawer::DrawPolygon(TVec *cv, int count, int, int clipflags)
+void VSoftwareDrawer::DrawPolygon(TVec *cv, int count, int, int clipflags)
 {
-	guard(TSoftwareDrawer::DrawPolygon);
+	guard(VSoftwareDrawer::DrawPolygon);
 	int		i;
 
 	if (surface_p == surf_max)
@@ -497,24 +497,24 @@ void TSoftwareDrawer::DrawPolygon(TVec *cv, int count, int, int clipflags)
 
 //==========================================================================
 //
-//	TSoftwareDrawer::BeginSky
+//	VSoftwareDrawer::BeginSky
 //
 //==========================================================================
 
-void TSoftwareDrawer::BeginSky(void)
+void VSoftwareDrawer::BeginSky(void)
 {
 }
 
 //==========================================================================
 //
-//	TSoftwareDrawer::DrawSkyPolygon
+//	VSoftwareDrawer::DrawSkyPolygon
 //
 //==========================================================================
 
-void TSoftwareDrawer::DrawSkyPolygon(TVec *cv, int count,
+void VSoftwareDrawer::DrawSkyPolygon(TVec *cv, int count,
 	int texture1, float offs1, int texture2, float offs2)
 {
-	guard(TSoftwareDrawer::DrawSkyPolygon);
+	guard(VSoftwareDrawer::DrawSkyPolygon);
 	int		i;
 
 	if (surface_p == surf_max)
@@ -574,11 +574,11 @@ void TSoftwareDrawer::DrawSkyPolygon(TVec *cv, int count,
 
 //==========================================================================
 //
-//	TSoftwareDrawer::EndSky
+//	VSoftwareDrawer::EndSky
 //
 //==========================================================================
 
-void TSoftwareDrawer::EndSky(void)
+void VSoftwareDrawer::EndSky(void)
 {
 }
 
@@ -1003,7 +1003,7 @@ static void D_DrawSurfaces(void)
 
 //==========================================================================
 //
-//	TSoftwareDrawer::WorldDrawing
+//	VSoftwareDrawer::WorldDrawing
 //
 //	Input:
 //	newedges[] array
@@ -1014,9 +1014,9 @@ static void D_DrawSurfaces(void)
 //
 //==========================================================================
 
-void TSoftwareDrawer::WorldDrawing(void)
+void VSoftwareDrawer::WorldDrawing(void)
 {
-	guard(TSoftwareDrawer::WorldDrawing);
+	guard(VSoftwareDrawer::WorldDrawing);
 	int			iv, bottom;
 	byte		basespans[MAX_SPANS * sizeof(espan_t) + CACHE_SIZE];
 	espan_t		*basespan_p;
@@ -1098,17 +1098,22 @@ void TSoftwareDrawer::WorldDrawing(void)
 	// draw whatever's left in the span list
 	D_DrawSurfaces();
 
-	if (outofsurfs) cond << "Out of " << outofsurfs << " surfs\n";
-	if (outofedges) cond << "Out of " << outofedges << " edges\n";
+	if (outofsurfs)
+		GCon->Logf(NAME_Dev, "Out of %d surfs", outofsurfs);
+	if (outofedges)
+		GCon->Logf(NAME_Dev, "Out of %d edges", outofedges);
 	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.12  2002/03/28 17:58:02  dj_jl
 //	Added support for scaled textures.
-//
+//	
 //	Revision 1.11  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
 //	

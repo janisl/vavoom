@@ -52,28 +52,28 @@ static HWND			RenderWindow;
 
 //==========================================================================
 //
-//	TOpenGLDrawer::Init
+//	VOpenGLDrawer::Init
 //
 // 	Determine the hardware configuration
 //
 //==========================================================================
 
-void TOpenGLDrawer::Init(void)
+void VOpenGLDrawer::Init(void)
 {
 	Windowed = !!M_CheckParm("-window");
 }
 
 //==========================================================================
 //
-// 	TOpenGLDrawer::SetResolution
+// 	VOpenGLDrawer::SetResolution
 //
 // 	Set up the video mode
 //
 //==========================================================================
 
-bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
+bool VOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 {
-	guard(TOpenGLDrawer::SetResolution);
+	guard(VOpenGLDrawer::SetResolution);
 	int			pixelformat;
 	MSG			msg;
 
@@ -119,7 +119,7 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 		0, 0, 2, 2, hwnd, NULL, hInst, NULL);
 	if (!RenderWindow)
 	{
-		con << "Couldn't create window\n";
+		GCon->Log(NAME_Init, "Couldn't create window");
 		return false;
 	}
 
@@ -170,7 +170,7 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 	DeviceContext = GetDC(RenderWindow);
 	if (!DeviceContext)
 	{
-		con << "Failed to get device context\n";
+		GCon->Log(NAME_Init, "Failed to get device context");
 		return false;
 	}
 
@@ -217,14 +217,14 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 	RenderContext = wglCreateContext(DeviceContext);
 	if (!RenderContext)
 	{
-		con << "Failed to create context\n";
+		GCon->Log(NAME_Init, "Failed to create context");
 		return false;
 	}
 
 	//	Make this context current
 	if (!wglMakeCurrent(DeviceContext, RenderContext))
 	{
-		con << "Make current failed\n";
+		GCon->Log(NAME_Init, "Make current failed");
 		return false;
 	}
 
@@ -239,43 +239,43 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::GetExtFuncPtr
+//	VOpenGLDrawer::GetExtFuncPtr
 //
 //==========================================================================
 
-void *TOpenGLDrawer::GetExtFuncPtr(const char *name)
+void *VOpenGLDrawer::GetExtFuncPtr(const char *name)
 {
-	guard(TOpenGLDrawer::GetExtFuncPtr);
+	guard(VOpenGLDrawer::GetExtFuncPtr);
 	return wglGetProcAddress(name);
 	unguard;
 }
 
 //==========================================================================
 //
-//	TOpenGLDrawer::Update
+//	VOpenGLDrawer::Update
 //
 // 	Blit to the screen / Flip surfaces
 //
 //==========================================================================
 
-void TOpenGLDrawer::Update(void)
+void VOpenGLDrawer::Update(void)
 {
-	guard(TOpenGLDrawer::Update);
+	guard(VOpenGLDrawer::Update);
 	SwapBuffers(DeviceContext);
 	unguard;
 }
 
 //==========================================================================
 //
-// 	TOpenGLDrawer::Shutdown
+// 	VOpenGLDrawer::Shutdown
 //
 //	Close the graphics
 //
 //==========================================================================
 
-void TOpenGLDrawer::Shutdown(void)
+void VOpenGLDrawer::Shutdown(void)
 {
-	guard(TOpenGLDrawer::Shutdown);
+	guard(VOpenGLDrawer::Shutdown);
 	DeleteTextures();
 
 	if (RenderContext)
@@ -317,9 +317,12 @@ void TOpenGLDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.11  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
-//
+//	
 //	Revision 1.10  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

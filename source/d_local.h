@@ -147,10 +147,11 @@ typedef void (*particle_func_t)(particle_t *pparticle);
 
 typedef void (*picspanfunc_t)(int, int, fixed_t, fixed_t, fixed_t, int, byte*);
 
-class TSoftwareDrawer : public TDrawer
+class VSoftwareDrawer:public VDrawer
 {
- public:
-	TSoftwareDrawer(void);
+	DECLARE_CLASS(VSoftwareDrawer, VDrawer, 0)
+	NO_DEFAULT_CONSTRUCTOR(VSoftwareDrawer)
+
 	void Init(void);
 	void InitData(void);
 	bool SetResolution(int, int, int);
@@ -543,9 +544,12 @@ inline byte GetColB(dword col)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2002/07/13 07:38:00  dj_jl
+//	Added drawers to the object tree.
+//
 //	Revision 1.19  2002/01/15 18:30:43  dj_jl
 //	Some fixes and improvements suggested by Malcolm Nixon
-//
+//	
 //	Revision 1.18  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	
