@@ -231,7 +231,7 @@ class MenuScreen:MenuObject
 		currentY = ChoicesStartY;
 		for (i = 0; i < MAX_MENU_ITEMS; i++)
 		{
-			if (Choices[i])
+			if (Choices[i] && Choices[i] != classidNone)
 			{
 				newChoice = MenuChoice(AddItem(Choices[i]));
 				newChoice.SetPos(ChoicesStartX, currentY);
@@ -242,7 +242,7 @@ class MenuScreen:MenuObject
 
 	void CreateSelector(void)
 	{
-		if (SelectorType)
+		if (SelectorType && SelectorType != classidNone)
 		{
 			Selector = AddItem(SelectorType);
 		}
@@ -980,7 +980,7 @@ class MenuChoiceSlider:MenuChoice
 
 	boolean SetNewValue(float newValue)
 	{
-		return false;
+		return true;
 	}
 
 	void Init(void)
@@ -990,7 +990,7 @@ class MenuChoiceSlider:MenuChoice
 		Value = GetInitialValue();
 		if (Value < MinValue)
 			Value = MinValue;
-		if (Value >= MaxValue)
+		if (Value > MaxValue)
 			Value = MaxValue;
 
 		pic_M_SLDLT = R_RegisterPic("M_SLDLT", PIC_PATCH);
@@ -1043,9 +1043,9 @@ class MenuChoiceSlider:MenuChoice
 
 		case K_RIGHTARROW:
 			newValue = Value + ValueDelta;
-			if (Value > MaxValue)
+			if (newValue > MaxValue)
 			{
-				Value = MaxValue;
+				newValue = MaxValue;
 			}
 			if (SetNewValue(newValue))
 			{
@@ -1434,6 +1434,9 @@ class MenuSList:MenuChoice
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/03/28 18:25:35  dj_jl
+//  Fixed sliders.
+//
 //  Revision 1.21  2002/03/09 17:52:52  dj_jl
 //  Got rid of function pointers
 //
