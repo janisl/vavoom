@@ -27,9 +27,27 @@
 
 // CONSTANTS ---------------------------------------------------------------
 
+enum
+{
+	MB_None,
+	MB_Quit,
+	MB_Control,
+#ifndef DOOM2
+	MB_Shareware,
+#endif
+	MB_Nightmare
+};
+
 // TYPES -------------------------------------------------------------------
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
+
+void QuitResponse(int ch);
+void ControlResponse(int key);
+#ifndef DOOM2
+void SharewareResponse(int key);
+#endif
+void VerifyNightmare(int ch);
 
 // DATA DECLARATIONS -------------------------------------------------------
 
@@ -43,7 +61,7 @@ int msgBoxW;
 int msgBoxH;
 int messageString[256 / 4];	// ...and here is the message string!
 boolean messageNeedsInput;	// timed message = no input from user
-mb_func_t messageRoutine;
+int messageType;
 
 // CODE --------------------------------------------------------------------
 
@@ -53,11 +71,11 @@ mb_func_t messageRoutine;
 //
 //==========================================================================
 
-void MB_StartMessage(string text, mb_func_t routine, boolean input)
+void MB_StartMessage(string text, int type, boolean input)
 {
 	messageToPrint = true;
 	strcpy(ARR2STR(messageString), text);
-	messageRoutine = routine;
+	messageType = type;
 	messageNeedsInput = input;
 
 	T_SetFont(font_small);
@@ -114,8 +132,25 @@ boolean MB_Responder(event_t * event)
 		}
 
 		messageToPrint = false;
-		if (messageRoutine)
-			messageRoutine(event->data1);
+		switch (messageType)
+		{
+		case MB_None:
+			break;
+		case MB_Quit:
+			QuitResponse(event->data1);
+			break;
+		case MB_Control:
+			ControlResponse(event->data1);
+			break;
+#ifndef DOOM2
+		case MB_Shareware:
+			SharewareResponse(event->data1);
+			break;
+#endif
+		case MB_Nightmare:
+			VerifyNightmare(event->data1);
+			break;
+		}
 
 //      S_StartSound(sfx1_swtchx);
 		return true;
@@ -137,6 +172,9 @@ boolean MB_Active(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/03/09 17:52:50  dj_jl
+//  Got rid of function pointers
+//
 //  Revision 1.5  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

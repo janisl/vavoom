@@ -38,8 +38,6 @@ class MenuControlKey;
 MenuControlKey CurrentCtl;
 int ControlColumn;	// menu column for controls
 
-void ControlResponse(int key);
-
 class MenuControlKey:MenuChoice
 {
 	string Text;
@@ -102,7 +100,7 @@ class MenuControlKey:MenuChoice
 		case K_MOUSE1:
 			CurrentCtl = self;
 			MB_StartMessage("Press new key\n\nESC to cancel",
-				ControlResponse, false);
+				MB_Control, false);
 			return true;
 
 		case K_BACKSPACE:
@@ -256,6 +254,9 @@ void menu_controls2(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/03/09 17:52:49  dj_jl
+//  Got rid of function pointers
+//
 //  Revision 1.8  2002/03/02 17:29:55  dj_jl
 //  Renamed builtin Spawn to SpawnObject
 //  Added suport for Pad-Enter, some fixes.

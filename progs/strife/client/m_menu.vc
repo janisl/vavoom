@@ -36,8 +36,6 @@
 class MenuObject;
 class MenuScreen;
 
-typedef void (*menufunc_t) (void);
-
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 void PopMenu(void);
@@ -1443,6 +1441,9 @@ class MenuSList:MenuChoice
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/03/09 17:52:52  dj_jl
+//  Got rid of function pointers
+//
 //  Revision 1.20  2002/03/02 17:29:55  dj_jl
 //  Renamed builtin Spawn to SpawnObject
 //  Added suport for Pad-Enter, some fixes.

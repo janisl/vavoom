@@ -59,7 +59,7 @@ class MenuChoice_Episode1:MenuBigTextButton
 		if (shareware && EpisodeNum > 1)
 		{
 			MB_StartMessage("ONLY AVAILABLE IN THE REGISTERED VERSION",
-				SharewareResponse, false);
+				MB_Shareware, false);
 			return;
 		}
 		MenuEpisode = EpisodeNum;
@@ -158,6 +158,9 @@ void menu_episode(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/03/09 17:52:49  dj_jl
+//  Got rid of function pointers
+//
 //  Revision 1.6  2002/01/23 17:54:22  dj_jl
 //  Object-oriented menus, got rid of C-style type casting.
 //

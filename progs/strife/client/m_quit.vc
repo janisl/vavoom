@@ -82,12 +82,15 @@ void QuitResponse(int ch)
 void menu_quit(void)
 {
 	MB_StartMessage("Do you really want to leave?\n\n(press y to quit)",
-		QuitResponse, true);
+		MB_Quit, true);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/03/09 17:52:52  dj_jl
+//  Got rid of function pointers
+//
 //  Revision 1.7  2002/02/22 18:00:25  dj_jl
 //  A lots of the renaming, beautification.
 //

@@ -38,7 +38,7 @@
 struct menulist_t
 {
 	string Name;
-	menufunc_t func;
+	classid MenuClass;
 };
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
@@ -46,19 +46,19 @@ struct menulist_t
 // DATA DECLARATIONS -------------------------------------------------------
 
 menulist_t menulist[NUM_MENUS] = {
-	{ "Main", menu_main },
-	{ "Save", menu_save },
-	{ "Load", menu_load },
-	{ "PSetup", menu_psetup },
-	{ "Options", menu_options },
-	{ "Controls", menu_controls },
-	{ "Controls2", menu_controls2 },
-	{ "Mouse", menu_mouse },
-	{ "Resolution", menu_resolution },
-	{ "Video", menu_video },
-	{ "Sound", menu_sound },
-	{ "Help", menu_help },
-	{ "Quit", menu_quit },
+	{ "Main", MenuScreenMain },
+	{ "Save", MenuScreenSaveGame },
+	{ "Load", MenuScreenLoadGame },
+	{ "PSetup", MenuScreenPlayerSetup },
+	{ "Options", MenuScreenOptions },
+	{ "Controls", MenuScreenControls },
+	{ "Controls2", MenuScreenControls2 },
+	{ "Mouse", MenuScreenMouseOptions },
+	{ "Resolution", MenuScreenScreenResolution },
+	{ "Video", MenuScreenVideoOptions },
+	{ "Sound", MenuScreenSoundOptions },
+	{ "Help", MenuScreenHelp },
+//	{ "Quit", menu_quit },
 };
 
 // CODE --------------------------------------------------------------------
@@ -141,9 +141,14 @@ void MN_SetMenu(string Name)
 	{
 		if (!stricmp(Name, menulist[i].Name))
 		{
-			menulist[i].func();
+			PushMenuScreen(SpawnMenu(menulist[i].MenuClass));
 			return;
 		}
+	}
+	if (!stricmp(Name, "Quit"))
+	{
+		menu_quit();
+		return;
 	}
 	menu_main();
 }
@@ -151,6 +156,9 @@ void MN_SetMenu(string Name)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/03/09 17:52:52  dj_jl
+//  Got rid of function pointers
+//
 //  Revision 1.5  2002/01/21 18:21:33  dj_jl
 //  Working on object-oriented menus
 //

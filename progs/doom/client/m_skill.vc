@@ -80,7 +80,7 @@ class MenuChoice_SkillBaby:MenuBigTextButton
 		if (SkillLevel == sk_nightmare)
 		{
 			MB_StartMessage("are you sure? this skill level\nisn't even remotely fair.\n\npress y or n.",
-				VerifyNightmare, true);
+				MB_Nightmare, true);
 			return;
 		}
 
@@ -190,6 +190,9 @@ void menu_skill(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/03/09 17:52:49  dj_jl
+//  Got rid of function pointers
+//
 //  Revision 1.11  2002/02/06 17:22:16  dj_jl
 //  Some fixes for the menus.
 //
