@@ -54,14 +54,14 @@
 
 // if rangecheck is undefined, most parameter validation debugging code
 // will not be compiled
-#define PARANOID
-#define DEVELOPER
+//#define PARANOID
+//#define DEVELOPER
 #define DO_GUARD
 
 #define VERSION_MAJOR	1
-#define VERSION_MINOR	11
-#define VERSION_RELEASE	2
-#define VERSION_TEXT	"1.11.2"
+#define VERSION_MINOR	12
+#define VERSION_RELEASE	0
+#define VERSION_TEXT	"1.12"
 
 //==========================================================================
 //
@@ -119,9 +119,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2002/03/28 18:06:11  dj_jl
+//	Updated version.
+//
 //	Revision 1.18  2002/03/09 18:05:33  dj_jl
 //	Added support for defining native functions outside pr_cmds
-//
+//	
 //	Revision 1.17  2002/01/28 18:45:16  dj_jl
 //	Changed version
 //	
