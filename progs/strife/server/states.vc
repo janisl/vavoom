@@ -29,10 +29,6 @@
 //**
 //**************************************************************************
 
-__states__(Actor)
-{
-	S_NULL('PLAY', 0, -1.0, S_NULL) { }
-}
 __states__(Weapon)
 {
 	S_LIGHTDONE('PNCH', 0, 0.0 / 35.0, S_NULL) { A_Light0(); }
@@ -735,9 +731,12 @@ __states__(Actor)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/05/03 17:12:52  dj_jl
+//	S_NULL defined in Entity.
+//
 //	Revision 1.10  2002/04/27 17:04:55  dj_jl
 //	Merged all creatures.
-//
+//	
 //	Revision 1.9  2002/04/22 17:22:32  dj_jl
 //	Retail Strife data.
 //	

@@ -145,6 +145,15 @@ native void UpdateVelocity(void);
 
 native Entity CheckOnmobj(void);
 
+//
+//	States
+//
+
+__states__
+{
+	S_NULL('', 0, -1.0, S_NULL) { }
+}
+
 //==========================================================================
 //
 //
@@ -191,6 +200,9 @@ tmtrace_t *tmtrace;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/05/03 17:12:50  dj_jl
+//  S_NULL defined in Entity.
+//
 //  Revision 1.13  2002/04/11 16:52:17  dj_jl
 //  Made TryMove native.
 //

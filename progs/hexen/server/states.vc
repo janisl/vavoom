@@ -31,7 +31,6 @@
 
 __states__(Actor)
 {
-	S_NULL('MAN1', 0, -1.0, S_NULL) { }
 	S_FREETARGMOBJ('ACLO', 4, 1050.0 / 35.0, S_NULL) { A_FreeTargMobj(); }
 	S_MAPSPOT('TLGL', 0, -1.0, S_NULL) { }
 	S_FIREBALL1_1('FBL1', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBALL1_2) { }
@@ -1594,9 +1593,12 @@ __states__(Actor)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2002/05/03 17:12:51  dj_jl
+//	S_NULL defined in Entity.
+//
 //	Revision 1.17  2002/03/28 18:20:11  dj_jl
 //	Got rid of SetStateNF.
-//
+//	
 //	Revision 1.16  2002/03/20 19:07:47  dj_jl
 //	Got rid of a lots of legacy, beautification.
 //	
