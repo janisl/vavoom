@@ -921,10 +921,7 @@ void R_DrawTranslucentPolys(void)
 //
 //==========================================================================
 
-#define PSP_DIST	2
-#define PSP_DISTI	0.5
-
-static void RenderPSprite(cl_pspdef_t* psp)
+static void RenderPSprite(cl_pspdef_t* psp, float PSP_DIST)
 {
 	guard(RenderPSprite);
 	spritedef_t*		sprdef;
@@ -961,6 +958,7 @@ static void RenderPSprite(cl_pspdef_t* psp)
 
 	TVec	dv[4];
 
+	float PSP_DISTI = 1.0 / PSP_DIST;
 	TVec sprorigin = vieworg + PSP_DIST * viewforward;
 
 	float sprx = 160.0 - psp->sx + spriteoffset[lump];
@@ -1075,7 +1073,7 @@ void R_DrawPlayerSprites(void)
 		{
 			if (psp->sprite != -1)
 			{
-				RenderPSprite(psp);
+				RenderPSprite(psp, 3 - i);
 			}
 		}
 	}
@@ -1184,9 +1182,12 @@ void R_DrawModelFrame(const TVec &origin, float angle, model_t *model,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2003/10/23 06:36:47  dj_jl
+//	PSprites drawn at different depths
+//
 //	Revision 1.16  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
-//
+//	
 //	Revision 1.15  2002/07/13 07:51:49  dj_jl
 //	Replacing console's iostream with output device.
 //	
