@@ -101,6 +101,8 @@ static TVec			listener_up;
 static TCvarF		s3d_distance_unit("s3d_distance_unit", "72.0", CVAR_ARCHIVE);
 static TCvarF		s3d_doppler_factor("s3d_doppler_factor", "2.0", CVAR_ARCHIVE);
 static TCvarF		s3d_rolloff_factor("s3d_rolloff_factor", "1.0", CVAR_ARCHIVE);
+static TCvarF		s3d_min_distance("s3d_min_distance", "16.0", CVAR_ARCHIVE);
+static TCvarF		s3d_max_distance("s3d_max_distance", "2024.0", CVAR_ARCHIVE);
 
 // CODE --------------------------------------------------------------------
 
@@ -665,10 +667,11 @@ void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
 		{
 			Buf3D->SetMode(DS3DMODE_HEADRELATIVE, DS3D_IMMEDIATE);
 			Buf3D->SetPosition(0.0, -16.0, 0.0, DS3D_IMMEDIATE);
+			Buf3D->SetMinDistance(s3d_min_distance, DS3D_IMMEDIATE);
+			Buf3D->SetMaxDistance(s3d_max_distance, DS3D_IMMEDIATE);
 		}
 		else
 		{
-//			Buf3D->SetMinDistance(8.0, DS3D_DEFERRED);
 			Buf3D->SetPosition(
 				Channel[chan].origin.x,
 				Channel[chan].origin.z,
@@ -679,6 +682,8 @@ void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
 				Channel[chan].velocity.z,
 				Channel[chan].velocity.y,
 				DS3D_IMMEDIATE);
+			Buf3D->SetMinDistance(s3d_min_distance, DS3D_IMMEDIATE);
+			Buf3D->SetMaxDistance(s3d_max_distance, DS3D_IMMEDIATE);
 		} 
 		Buf3D->Release();
 	}
@@ -1031,9 +1036,12 @@ boolean S_GetSoundPlayingInfo(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/01/29 18:17:58  dj_jl
+//	Fixed 3D sound.
+//
 //	Revision 1.11  2002/01/28 18:43:16  dj_jl
 //	Added console variables for DirectSound3D settings
-//
+//	
 //	Revision 1.10  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
 //	
