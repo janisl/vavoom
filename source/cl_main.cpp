@@ -54,8 +54,6 @@ client_static_t		cls;
 client_state_t		cl;
 TProgs				clpr;
 
-boolean			precache = true;        // if true, load all graphics at start
- 
 TCvarS			cl_name("name", "PLAYER", CVAR_ARCHIVE | CVAR_USERINFO);
 TCvarI			cl_color("color", "0", CVAR_ARCHIVE | CVAR_USERINFO);
 TCvarI			cl_class("class", "0", CVAR_ARCHIVE | CVAR_USERINFO);
@@ -519,9 +517,12 @@ COMMAND(Say)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/21 17:43:49  dj_jl
+//	Moved precache to r_main.cpp
+//
 //	Revision 1.5  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
-//
+//	
 //	Revision 1.4  2001/08/04 17:25:14  dj_jl
 //	Moved title / demo loop to progs
 //	Removed shareware / ExtendedWAD from engine

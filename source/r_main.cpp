@@ -48,8 +48,6 @@ void R_ClearParticles(void);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern boolean			precache;        // if true, load all graphics at start
-
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 int						screenblocks = 0;
@@ -92,6 +90,9 @@ static TVec				clip_base[4];
 
 subsector_t				*r_viewleaf;
 subsector_t				*r_oldviewleaf;
+
+// if true, load all graphics at start
+static TCvarI			precache("precache", "1", CVAR_ARCHIVE);
 
 // CODE --------------------------------------------------------------------
 
@@ -569,9 +570,12 @@ COMMAND(TimeRefresh)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/08/21 17:43:49  dj_jl
+//	Moved precache to r_main.cpp
+//
 //	Revision 1.6  2001/08/15 17:29:05  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.5  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
 //	
