@@ -43,6 +43,9 @@ extern void FatalError(string format, ...);
 //  Cvar functions
 //
 
+//  Create a new cvar
+extern void CreateCvar(string name, string default_value, int flags);
+
 //  Read value
 extern int GetCvar(string name);
 
@@ -387,6 +390,7 @@ extern opening_t *FindOpening(opening_t * gaps, float z1, float z2);
 extern sec_region_t *PointInRegion(sector_t * sector, TVec p);
 extern int PointContents(sector_t * sector, TVec p);
 extern sec_region_t *AddExtraFloor(line_t * line, sector_t * dst);
+extern int MapBlock(float val);
 
 //
 //  Mobj utilites
@@ -483,6 +487,9 @@ extern void SendCeilingSlope(sector_t * sector);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2001/10/27 07:37:39  dj_jl
+//  Possibility to create new console variables
+//
 //  Revision 1.15  2001/10/22 17:23:08  dj_jl
 //  Floatification of angles
 //

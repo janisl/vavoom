@@ -37,6 +37,16 @@ enum
 
 #define MAX_INFO_STRING		1024
 
+#define CVAR_ARCHIVE		1	//	Set to cause it to be saved to vavoom.cfg
+#define	CVAR_USERINFO		2	//	Added to userinfo  when changed
+#define	CVAR_SERVERINFO		4	//	Added to serverinfo when changed
+#define	CVAR_INIT			8	//	Don't allow change from console at all,
+								// but can be set from the command line
+#define	CVAR_LATCH			16	//	Save changes until server restart
+#define	CVAR_ROM			32	//	Display only, cannot be set by user at all
+#define CVAR_CHEAT			64	//	Can not be changed if cheats are disabled
+#define CVAR_MODIFIED		128	//	Set each time the cvar is changed
+
 #define MININT	  0x80000000
 #define MAXINT	  0x7fffffff
 
@@ -270,6 +280,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/10/27 07:37:39  dj_jl
+//  Possibility to create new console variables
+//
 //  Revision 1.7  2001/10/22 17:23:08  dj_jl
 //  Floatification of angles
 //
