@@ -2,7 +2,7 @@
 // UTILITY : general purpose functions
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2002 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2003 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -83,7 +83,7 @@ void UtilFree(void *data)
 char *UtilStrDup(const char *str)
 {
   char *result;
-  int len = strlen(str);
+  int len = (int)strlen(str);
 
   result = UtilCalloc(len+1);
 
@@ -118,7 +118,7 @@ char *UtilStrNDup(const char *str, int size)
   return result;
 }
 
-int StrCaseCmp(const char *A, const char *B)
+int UtilStrCaseCmp(const char *A, const char *B)
 {
   for (; *A || *B; A++, B++)
   {
@@ -132,11 +132,11 @@ int StrCaseCmp(const char *A, const char *B)
 
 
 //
-// RoundPOW2
+// UtilRoundPOW2
 //
 // Rounds the value _up_ to the nearest power of two.
 //
-int RoundPOW2(int x)
+int UtilRoundPOW2(int x)
 {
   int tmp;
 
@@ -151,3 +151,40 @@ int RoundPOW2(int x)
   return (x + 1);
 }
 
+
+//
+// UtilComputeAngle
+//
+// Translate (dx, dy) into an angle value (degrees)
+//
+angle_g UtilComputeAngle(float_g dx, float_g dy)
+{
+  double angle;
+
+  if (dx == 0)
+    return (dy > 0) ? 90.0 : 270.0;
+
+  angle = atan2((double) dy, (double) dx) * 180.0 / M_PI;
+
+  if (angle < 0) 
+    angle += 360.0;
+
+  return angle;
+}
+
+
+//
+// UtilFileExists
+//
+int UtilFileExists(const char *filename)
+{
+  FILE *fp = fopen(filename, "rb");
+
+  if (fp)
+  {
+    fclose(fp);
+    return TRUE;
+  }
+
+  return FALSE;
+}

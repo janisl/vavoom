@@ -2,7 +2,7 @@
 // WAD : WAD read/write functions.
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2002 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2003 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -102,8 +102,11 @@ lump_t;
 /* this lump needs to be loaded */
 #define LUMP_READ_ME       0x0100
 
+/* this lump is new (didn't exist in the original) */
+#define LUMP_NEW           0x0200
+
 /* this level failed to build properly */
-#define LUMP_FAILED_LEVEL  0x4000
+#define LUMP_FAILED_LEVEL  0x1000
 
 
 /* ----- function prototypes --------------------- */
@@ -140,6 +143,11 @@ glbsp_ret_e WriteWadFile(const char *filename);
 
 // close all wad files and free any memory.
 void CloseWads(void);
+
+// delete the GWA file that is associated with the given normal
+// wad file.  It doesn't have to exist.
+//
+void DeleteGwaFile(const char *base_wad_name);
 
 // returns the number of levels found in the wad.
 int CountLevels(void);

@@ -2,92 +2,162 @@
 Compiling glBSP
 ===============
 
-by Andrew Apted.  10th August 2002.
+by Andrew Apted.  25th December 2003.
 
 
-glBSP has been written with portability in mind.  It is purely ANSI C,
-with one minor exception: I use // comments instead of the more
-traditional /* */ comments.
+glBSP comes in three flavours: a command-line (text) utility "glbsp",
+a graphical (GUI) version "glBSPX", and can be compiled as a library
+"libglbsp" for other programs to use.
 
-As always, it's a good idea to open the makefile (or batch file, as
-the case may be) and check the various settings near the top.
+Currently the following operating systems are supported: Unix (Linux),
+Windows (95/98/etc), MacOS X, and DOS.  All flavours are supported in
+all OSes except for glBSPX under DOS.
 
-glBSP has been known to compile and work on the following platforms:
+There are two compiling methods: using a makefile, and using an IDE.
+Currently the Unix, MacOS X and DOS versions all use makefiles,
+whereas under Windows it's a mixed bag: there are Borland C++Builder
+makefiles, and project files for Dev-C++ (see the "Links" below) and
+for Microsoft MSVC.NET 2002.
 
-   +  Linux 2.1.126, libc5, GCC 2.7.2.1.
+The GUI version (glBSPX) requires a graphical toolkit called FLTK
+(Fast Light Tool Kit) version 1.1.4.  (Other versions may work,
+but you're on your own there).  See the "Links" section below if
+you need to download it.  
 
-   +  Linux 2.2.18, glibc 2.2, GCC 2.95.2.
-
-   +  MSDOS 6.22, with DJGPP 2.02.
-
-   +  Win32, with Borland C++ 5.5 (free command line tools).
-
-   +  Win32, with MinGW 1.0.
-
-   +  IRIX 6.5.
-   
-   +  Digital Unix 4.0.
-
-
-Linux and other Unices
-----------------------
-
-CD into the cmdline directory.  The "makefile" makefile is the correct
-one for Linux and other UN*X type OSes.  Simply typing `make' should
-create the `glbsp' executable.  Currently there is no automatic
-installation, just copy the glbsp executable to where you want it.
+At the moment there is no automatic installation (no "make install"
+targets).  Just copy the glbsp (or glBSPX) executable to where you
+want it.
 
 
-MSDOS
------
+About Borland C++Builder 5.5
+----------------------------
 
-CD into the cmdline directory.  The "makefile.dj" makefile is for
-compiling under DOS with DJGPP.  Simply typing `make -f makefile.dj'
-should create the glbsp.exe executable.
-
-
-Win32
------
-
-CD into the cmdline directory.  The "makefile.bcc" makefile is for
-compiling under Win32 with Borland C++Builder 5.5.  Assuming BCC is
-configured properly (the ".cfg" files it needs have been setup),
-typing `make -f makefile.bcc' should create the glbsp.exe executable.
-
-For MinGW compilation, edit the "makeming.bat" file and set the
-`MINGW' variable (at the top) to the correct directory.  Then simply
-run the "makeming.bat" batch file.
+It's been a while since I've used it, but you'll need to add two
+".cfg" files into the same directory as the makefile ("bcc32.cfg"
+and "ilink32.cfg" if I remember correctly).  Please refer to the
+documentation that comes with BCC 5.5 for all the details.
 
 
-Plugin
-------
+Command-line glBSP
+------------------
+
+Unix/Linux:
+
+    cd cmdline; make -f makefile.unx
+
+MacOS X:
+
+    cd cmdline; make -f makefile.osx
+
+MSDOS with DJGPP:
+
+    cd cmdline; make -f makefile.dj
+
+Windows with Borland C++Builder 5.5:
+
+    cd cmdline; make -f makefile.bcc
+
+Windows with Dev-C++:
+
+    Just open the cmdline/cmdline.dev project file.
+
+Windows with MSVC.NET:
+
+    Just open the cmdline/cmdline.vcproj project file.
+
+
+Plugin Library
+--------------
 
 The plugin version of glBSP is a special version that can be used
 within other programs, e.g. a DOOM engine.  Instructions for making
-the plugin are similiar to the above, but CD into the `plugin'
+the plugin are similiar to the above, but CD into the "plugin"
 directory instead.  The result is a library file: libglbsp.a under
-Linux and MSDOS, libglbsp.lib under Win32.
+Unix/Linux, MacOS X and MSDOS, and libglbsp.lib under Win32.
 
-NOTE WELL: since glBSP is under the GNU General Public License (GPL),
-it can only be incorporated into other programs that are also under
-the GPL.  See the file COPYING.txt for the full details.
+NOTE WELL:
+    Since glBSP is under the GNU General Public License (GPL), it
+    can only be incorporated into other programs that are also
+    under the GPL.  See the file COPYING.txt for all the details.
 
 
-Compiling glBSPX
-================
+Graphical version: glBSPX
+-------------------------
 
 glBSPX is the GUI version of glBSP, written in C++ and requires the
-FLTK toolkit, version 1.1 (http://www.fltk.org).  Assuming the FLTK
-static library has been built and installed, first CD into the fltk
-directory (in glbsp sources).
+FLTK toolkit, version 1.1.4.  FLTK needs to be built before trying
+to build glBSPX: see the next section for some guidelines.
 
-For Linux: 
+Unix/Linux: 
 
-    Just running "make" should do the trick.
+    cd fltk; make -f makefile.unx
 
-For Win32 with MinGW: 
+MacOS X:
 
-    First edit the "makeming.bat" file and set the the FLTK and
-    MINGW variables (at the top) to the correct directories.  Then
-    just run the "makeming.bat" batch file.
+    cd fltk; make -f makefile.osx
+
+Windows with Dev-C++:
+
+    Just open the fltk/fltk.dev project file.
+
+
+Building FLTK
+-------------
+
+Unix / Linux:
+
+    Use the normal method (configure, make, make install).  Make sure the
+    static library is built (although dynamic should work).  Since OpenGL
+    isn't needed, I usually configure with "--disable-gl".
+
+MacOS X:
+
+    Similar, but should use "./configure --prefix=$HOME" (that's where the
+    makefile expects to find it.  Edit fltk/makefile.osx if it has been
+    installed somewhere else.  Also I've only tested the static library.
+    After configuring FLTK you must apply the glbsp patch in
+    patches/FLTK_MACOSX.diff (to get the Fl_Sys_Menu_Bar class built).
+
+Windows with Dev-C++:
+
+    Note that the glBSPX project file (fltk/fltk.dev) assumes that
+    fltk-1.1.4 and glbsp-2.05 are in the same directory.
+
+    First copy the files from the glbsp "patches/fltk_win32" directory
+    into the fltk-1.1.4 directory.  (Copy "devcpp" whole, and copy
+    "src/Fl_Win32.cxx" into fltk-1.1.4/src and overwrite the
+    existing one).  Then you can build FLTK with the Dev-C++ IDE by
+    using the project files in the fltk-1.1.4/devcpp directory
+    (both fltk.lib.dev and fltkimages.lib.dev).
+
+
+Success Stories
+---------------
+
+The command line version of glbsp is known to work on these platforms:
+
+   +  Linux 2.1.126, libc5, GCC 2.7.2.1.
+   +  Linux 2.2.18, glibc 2.2, GCC 2.95.2.
+   +  Linux 2.4.22-PPC, glibc 2.3.1, GCC 3.2.2.
+
+   +  MacOS X (10.2.4) with GCC 3.1.
+
+   +  Win32, with Borland C++ 5.5 (free command line tools).
+   +  Win32, with Dev-C++ and MinGW.
+   +  Win32, with MSVC.NET 2002.
+
+   +  MSDOS 6.22, with DJGPP 2.02.
+
+   +  IRIX 6.5.
+   +  Digital Unix 4.0.
+
+
+Links
+-----
+
+Dev-C++ (an open source IDE for Windows) home page:
+    http://dev-cpp.sourceforge.net
+
+Fast Light Toolkit home page:
+    http://www.fltk.org
 

@@ -2,7 +2,7 @@
 // WAD : WAD read/write functions.
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2002 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2003 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -38,8 +38,8 @@
 #include "wad.h"
 
 
-FILE *in_file = NULL;
-FILE *out_file = NULL;
+static FILE *in_file = NULL;
+static FILE *out_file = NULL;
 
 
 #define DEBUG_DIR   0
@@ -47,6 +47,8 @@ FILE *out_file = NULL;
 
 #define APPEND_BLKSIZE  256
 #define LEVNAME_BUNCH   20
+
+#define ALIGN_LEN(len)  ((((len) + 3) / 4) * 4)
 
 
 // current wad info
@@ -72,6 +74,8 @@ static const char *gl_lumps[NUM_GL_LUMPS]=
   "GL_VERT", "GL_SEGS", "GL_SSECT", "GL_NODES",
   "GL_PVS"  // -JL- PVS (Potentially Visible Set) lump
 };
+
+static const char align_filler[4] = { 0, 0, 0, 0 };
 
 
 //
@@ -180,7 +184,7 @@ static lump_t *NewLump(char *name)
 
   cur->name = name;
   cur->start = cur->new_start = -1;
-  cur->flags = 0;
+  cur->flags = LUMP_NEW;
   cur->length = 0;
   cur->space = 0;
   cur->data = NULL;
@@ -238,9 +242,9 @@ static void FreeLump(lump_t *lump)
 // Returns TRUE if successful, or FALSE if there was a problem (in
 // which case the error message as been setup).
 //
-static boolean_g ReadHeader(const char *filename)
+static int ReadHeader(const char *filename)
 {
-  int len;
+  size_t len;
   raw_wad_header_t header;
   char strbuf[1024];
 
@@ -251,9 +255,7 @@ static boolean_g ReadHeader(const char *filename)
     sprintf(strbuf, "Trouble reading wad header for %s : %s", 
       filename, strerror(errno));
 
-    GlbspFree(cur_comms->message);
-    cur_comms->message = GlbspStrDup(strbuf);
-    
+    SetErrorMsg(strbuf);
     return FALSE;
   }
 
@@ -262,9 +264,7 @@ static boolean_g ReadHeader(const char *filename)
     sprintf(strbuf, "%s does not appear to be a wad file : bad magic", 
         filename);
 
-    GlbspFree(cur_comms->message);
-    cur_comms->message = GlbspStrDup(strbuf);
-    
+    SetErrorMsg(strbuf);
     return FALSE;
   }
 
@@ -289,7 +289,7 @@ static boolean_g ReadHeader(const char *filename)
 //
 static void ReadDirEntry(void)
 {
-  int len;
+  size_t len;
   raw_wad_entry_t entry;
   lump_t *lump;
   
@@ -302,7 +302,7 @@ static void ReadDirEntry(void)
 
   lump = NewLump(UtilStrNDup(entry.name, 8));
 
-  lump->start = UINT32(entry.start);
+  lump->start  = UINT32(entry.start);
   lump->length = UINT32(entry.length);
 
 # if DEBUG_DIR
@@ -518,10 +518,10 @@ static void ReadDirectory(void)
 //
 static void ReadLumpData(lump_t *lump)
 {
-  int len;
+  size_t len;
 
-  cur_file_pos++;
-  DisplaySetBar(1, cur_file_pos);
+  cur_comms->file_pos++;
+  DisplaySetBar(1, cur_comms->file_pos);
   DisplayTicker();
 
 # if DEBUG_LUMP
@@ -627,7 +627,7 @@ static int CountLumpTypes(int flag_mask, int flag_match)
 //
 static void WriteHeader(void)
 {
-  int len;
+  size_t len;
   raw_wad_header_t header;
 
   switch (wad.kind)
@@ -662,7 +662,7 @@ lump_t *CreateGLMarker(lump_t *level)
   sprintf(name_buf, "GL_%s", level->name);
 
   cur = NewLump(UtilStrDup(name_buf));
-  cur->flags = LUMP_IS_GL_LEVEL;
+  cur->flags |= LUMP_IS_GL_LEVEL;
 
   // link it in
   cur->next = level->next;
@@ -745,7 +745,7 @@ static void RecomputeDirectory(void)
 
     cur->new_start = wad.dir_start;
 
-    wad.dir_start += cur->length;
+    wad.dir_start += ALIGN_LEN(cur->length);
     wad.num_entries++;
 
     if (cur->flags & LUMP_IS_LEVEL)
@@ -759,7 +759,7 @@ static void RecomputeDirectory(void)
 
         L->new_start = wad.dir_start;
 
-        wad.dir_start += L->length;
+        wad.dir_start += ALIGN_LEN(L->length);
         wad.num_entries++;
       }
     }
@@ -775,7 +775,7 @@ static void RecomputeDirectory(void)
 
         L->new_start = wad.dir_start;
 
-        wad.dir_start += L->length;
+        wad.dir_start += ALIGN_LEN(L->length);
         wad.num_entries++;
       }
     }
@@ -788,10 +788,11 @@ static void RecomputeDirectory(void)
 //
 static void WriteLumpData(lump_t *lump)
 {
-  int len;
+  size_t len;
+  int align_size;
 
-  cur_file_pos++;
-  DisplaySetBar(1, cur_file_pos);
+  cur_comms->file_pos++;
+  DisplaySetBar(1, cur_comms->file_pos);
   DisplayTicker();
 
 # if DEBUG_LUMP
@@ -804,7 +805,7 @@ static void WriteLumpData(lump_t *lump)
   if (ftell(out_file) != lump->new_start)
     PrintWarn("Consistency failure writing %s (%08X, %08X\n", 
       lump->name, ftell(out_file), lump->new_start);
-       
+ 
   if (lump->length == 0)
     return;
 
@@ -825,6 +826,11 @@ static void WriteLumpData(lump_t *lump)
   if (len != 1)
     PrintWarn("Trouble writing lump %s\n", lump->name);
   
+  align_size = ALIGN_LEN(lump->length) - lump->length;
+
+  if (align_size > 0)
+    fwrite(align_filler, align_size, 1, out_file);
+
   UtilFree(lump->data);
 
   lump->data = NULL;
@@ -885,14 +891,14 @@ static int WriteAllLumps(void)
 //
 static void WriteDirEntry(lump_t *lump)
 {
-  int len;
+  size_t len;
   raw_wad_entry_t entry;
 
   DisplayTicker();
 
   strncpy(entry.name, lump->name, 8);
 
-  entry.start = UINT32(lump->new_start);
+  entry.start  = UINT32(lump->new_start);
   entry.length = UINT32(lump->length);
 
   len = fwrite(&entry, sizeof(entry), 1, out_file);
@@ -978,8 +984,8 @@ static int WriteDirectory(void)
 //
 int CheckExtension(const char *filename, const char *ext)
 {
-  int A = strlen(filename) - 1;
-  int B = strlen(ext) - 1;
+  int A = (int)strlen(filename) - 1;
+  int B = (int)strlen(ext) - 1;
 
   for (; B >= 0; B--, A--)
   {
@@ -1239,9 +1245,8 @@ glbsp_ret_e ReadWadFile(const char *filename)
     sprintf(strbuf, "Cannot open WAD file %s : %s", filename, 
         strerror(errno));
     
-    GlbspFree(cur_comms->message);
-    cur_comms->message = GlbspStrDup(strbuf);
-    
+    SetErrorMsg(strbuf);
+
     return GLBSP_E_ReadError;
   }
   
@@ -1253,7 +1258,7 @@ glbsp_ret_e ReadWadFile(const char *filename)
 
   PrintMsg("Opened %cWAD file : %s\n", (wad.kind == IWAD) ? 'I' : 'P', 
       filename); 
-  PrintMsg("Reading %d dir entries at 0x%X\n", wad.num_entries, 
+  PrintVerbose("Reading %d dir entries at 0x%X\n", wad.num_entries, 
       wad.dir_start);
 
   // read directory
@@ -1268,13 +1273,13 @@ glbsp_ret_e ReadWadFile(const char *filename)
   DisplaySetBarLimit(1, CountLumpTypes(LUMP_READ_ME, LUMP_READ_ME));
   DisplaySetBar(1, 0);
 
-  cur_file_pos = 0;
+  cur_comms->file_pos = 0;
 
   // now read lumps
   check = ReadAllLumps();
 
   if (check != wad.num_entries)
-    PrintWarn("Read directory count consistency failure (%d,%d)\n",
+    InternalError("Read directory count consistency failure (%d,%d)\n",
       check, wad.num_entries);
   
   wad.current_level = NULL;
@@ -1305,9 +1310,8 @@ glbsp_ret_e WriteWadFile(const char *filename)
   {
     sprintf(strbuf, "Cannot open output WAD file: %s", strerror(errno));
     
-    GlbspFree(cur_comms->message);
-    cur_comms->message = GlbspStrDup(strbuf);
-    
+    SetErrorMsg(strbuf);
+
     return GLBSP_E_WriteError;
   }
 
@@ -1322,7 +1326,7 @@ glbsp_ret_e WriteWadFile(const char *filename)
   DisplaySetBarLimit(1, CountLumpTypes(LUMP_IGNORE_ME, 0));
   DisplaySetBar(1, 0);
 
-  cur_file_pos = 0;
+  cur_comms->file_pos = 0;
 
   // now write all the lumps to the output wad
   check1 = WriteAllLumps();
@@ -1333,10 +1337,24 @@ glbsp_ret_e WriteWadFile(const char *filename)
   check2 = WriteDirectory();
 
   if (check1 != wad.num_entries || check2 != wad.num_entries)
-    PrintWarn("Write directory count consistency failure (%d,%d,%d\n",
+    InternalError("Write directory count consistency failure (%d,%d,%d\n",
       check1, check2, wad.num_entries);
 
   return GLBSP_E_OK;
+}
+
+
+//
+// DeleteGwaFile
+//
+void DeleteGwaFile(const char *base_wad_name)
+{
+  char *gwa_file = ReplaceExtension(base_wad_name, "gwa");
+
+  if (remove(gwa_file) == 0)
+    PrintMsg("Deleted GWA file : %s\n", gwa_file);
+ 
+  UtilFree(gwa_file);
 }
 
 

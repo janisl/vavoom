@@ -2,7 +2,7 @@
 // LEVEL : Level structure read/write functions.
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2002 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2003 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -29,6 +29,7 @@
 #include <limits.h>
 #include <assert.h>
 
+#include "analyze.h"
 #include "blockmap.h"
 #include "level.h"
 #include "node.h"
@@ -41,37 +42,33 @@
 
 #define DEBUG_LOAD      0
 #define DEBUG_BSP       0
-#define DEBUG_SORTER    0
-#define DEBUG_WALLTIPS  0
-#define DEBUG_POLYOBJ   0
 
 #define ALLOC_BLKNUM  1024
-
-#define POLY_BOX_SZ  10
 
 
 // per-level variables
 
-static boolean_g normal_exists;
-static boolean_g doing_normal;
-static boolean_g doing_gl;
-static boolean_g doing_hexen;
+boolean_g lev_doing_normal;
+boolean_g lev_doing_gl;
+boolean_g lev_doing_hexen;
 
 
 #define LEVELARRAY(TYPE, BASEVAR, NUMVAR)  \
-    static TYPE ** BASEVAR = NULL;  \
+    TYPE ** BASEVAR = NULL;  \
     int NUMVAR = 0;
 
 
-LEVELARRAY(vertex_t,  vertices,   num_vertices)
-LEVELARRAY(linedef_t, linedefs,   num_linedefs)
-LEVELARRAY(sidedef_t, sidedefs,   num_sidedefs)
-LEVELARRAY(sector_t,  sectors,    num_sectors)
-LEVELARRAY(seg_t,     segs,       num_segs)
-LEVELARRAY(subsec_t,  subsecs,    num_subsecs)
-LEVELARRAY(node_t,    nodes,      num_nodes)
-LEVELARRAY(node_t,    stale_nodes,num_stale_nodes)
-LEVELARRAY(wall_tip_t,wall_tips,  num_wall_tips)
+LEVELARRAY(vertex_t,  lev_vertices,   num_vertices)
+LEVELARRAY(linedef_t, lev_linedefs,   num_linedefs)
+LEVELARRAY(sidedef_t, lev_sidedefs,   num_sidedefs)
+LEVELARRAY(sector_t,  lev_sectors,    num_sectors)
+LEVELARRAY(thing_t,   lev_things,     num_things)
+
+static LEVELARRAY(seg_t,     segs,       num_segs)
+static LEVELARRAY(subsec_t,  subsecs,    num_subsecs)
+static LEVELARRAY(node_t,    nodes,      num_nodes)
+static LEVELARRAY(node_t,    stale_nodes,num_stale_nodes)
+static LEVELARRAY(wall_tip_t,wall_tips,  num_wall_tips)
 
 
 int num_normal_vert = 0;
@@ -95,16 +92,19 @@ int num_complete_seg = 0;
 
 
 vertex_t *NewVertex(void)
-  ALLIGATOR(vertex_t, vertices, num_vertices)
+  ALLIGATOR(vertex_t, lev_vertices, num_vertices)
 
 linedef_t *NewLinedef(void)
-  ALLIGATOR(linedef_t, linedefs, num_linedefs)
+  ALLIGATOR(linedef_t, lev_linedefs, num_linedefs)
 
 sidedef_t *NewSidedef(void)
-  ALLIGATOR(sidedef_t, sidedefs, num_sidedefs)
+  ALLIGATOR(sidedef_t, lev_sidedefs, num_sidedefs)
 
 sector_t *NewSector(void)
-  ALLIGATOR(sector_t, sectors, num_sectors)
+  ALLIGATOR(sector_t, lev_sectors, num_sectors)
+
+thing_t *NewThing(void)
+  ALLIGATOR(thing_t, lev_things, num_things)
 
 seg_t *NewSeg(void)
   ALLIGATOR(seg_t, segs, num_segs)
@@ -136,16 +136,19 @@ wall_tip_t *NewWallTip(void)
 
 
 void FreeVertices(void)
-  FREEMASON(vertex_t, vertices, num_vertices)
+  FREEMASON(vertex_t, lev_vertices, num_vertices)
 
 void FreeLinedefs(void)
-  FREEMASON(linedef_t, linedefs, num_linedefs)
+  FREEMASON(linedef_t, lev_linedefs, num_linedefs)
 
 void FreeSidedefs(void)
-  FREEMASON(sidedef_t, sidedefs, num_sidedefs)
+  FREEMASON(sidedef_t, lev_sidedefs, num_sidedefs)
 
 void FreeSectors(void)
-  FREEMASON(sector_t, sectors, num_sectors)
+  FREEMASON(sector_t, lev_sectors, num_sectors)
+
+void FreeThings(void)
+  FREEMASON(thing_t, lev_things, num_things)
 
 void FreeSegs(void)
   FREEMASON(seg_t, segs, num_segs)
@@ -174,16 +177,19 @@ void FreeWallTips(void)
 }
 
 vertex_t *LookupVertex(int index)
-  LOOKERUPPER(vertices, num_vertices, "vertex")
+  LOOKERUPPER(lev_vertices, num_vertices, "vertex")
 
 linedef_t *LookupLinedef(int index)
-  LOOKERUPPER(linedefs, num_linedefs, "linedef")
+  LOOKERUPPER(lev_linedefs, num_linedefs, "linedef")
   
 sidedef_t *LookupSidedef(int index)
-  LOOKERUPPER(sidedefs, num_sidedefs, "sidedef")
+  LOOKERUPPER(lev_sidedefs, num_sidedefs, "sidedef")
   
 sector_t *LookupSector(int index)
-  LOOKERUPPER(sectors, num_sectors, "sector")
+  LOOKERUPPER(lev_sectors, num_sectors, "sector")
+  
+thing_t *LookupThing(int index)
+  LOOKERUPPER(lev_things, num_things, "thing")
   
 seg_t *LookupSeg(int index)
   LOOKERUPPER(segs, num_segs, "seg")
@@ -204,7 +210,7 @@ node_t *LookupStaleNode(int index)
 //
 // CheckForNormalNodes
 //
-boolean_g CheckForNormalNodes(void)
+int CheckForNormalNodes(void)
 {
   lump_t *lump;
   
@@ -307,6 +313,90 @@ void GetSectors(void)
     sector->index = i;
 
     /* Note: rej_* fields are handled completely in reject.c */
+  }
+}
+
+//
+// GetThings
+//
+void GetThings(void)
+{
+  int i, count=-1;
+  raw_thing_t *raw;
+  lump_t *lump = FindLevelLump("THINGS");
+
+  if (lump)
+    count = lump->length / sizeof(raw_thing_t);
+
+  if (!lump || count == 0)
+  {
+    // Note: no error if no things exist, even though technically a map
+    // will be unplayable without the player starts.
+    PrintWarn("Couldn't find any Things");
+    return;
+  }
+
+  DisplayTicker();
+
+# if DEBUG_LOAD
+  PrintDebug("GetThings: num = %d\n", count);
+# endif
+
+  raw = (raw_thing_t *) lump->data;
+
+  for (i=0; i < count; i++, raw++)
+  {
+    thing_t *thing = NewThing();
+
+    thing->x = SINT16(raw->x);
+    thing->y = SINT16(raw->y);
+
+    thing->type = UINT16(raw->type);
+    thing->options = UINT16(raw->options);
+
+    thing->index = i;
+  }
+}
+
+//
+// GetThingsHexen
+//
+void GetThingsHexen(void)
+{
+  int i, count=-1;
+  raw_hexen_thing_t *raw;
+  lump_t *lump = FindLevelLump("THINGS");
+
+  if (lump)
+    count = lump->length / sizeof(raw_hexen_thing_t);
+
+  if (!lump || count == 0)
+  {
+    // Note: no error if no things exist, even though technically a map
+    // will be unplayable without the player starts.
+    PrintWarn("Couldn't find any Things");
+    return;
+  }
+
+  DisplayTicker();
+
+# if DEBUG_LOAD
+  PrintDebug("GetThingsHexen: num = %d\n", count);
+# endif
+
+  raw = (raw_hexen_thing_t *) lump->data;
+
+  for (i=0; i < count; i++, raw++)
+  {
+    thing_t *thing = NewThing();
+
+    thing->x = SINT16(raw->x);
+    thing->y = SINT16(raw->y);
+
+    thing->type = UINT16(raw->type);
+    thing->options = UINT16(raw->options);
+
+    thing->index = i;
   }
 }
 
@@ -445,7 +535,7 @@ void GetLinedefsHexen(void)
   DisplayTicker();
 
 # if DEBUG_LOAD
-  PrintDebug("GetLinedefs: num = %d\n", count);
+  PrintDebug("GetLinedefsHexen: num = %d\n", count);
 # endif
 
   raw = (raw_hexen_linedef_t *) lump->data;
@@ -562,601 +652,14 @@ void GetStaleNodes(void)
   }
 }
 
-static void MarkPolyobjSector(sector_t *sector)
-{
-  int i;
-    
-  if (! sector)
-    return;
 
-# if DEBUG_POLYOBJ
-  PrintDebug("  Marking SECTOR %d\n", sector->index);
-# endif
-
-  /* already marked ? */
-  if (sector->polyobj)
-    return;
-
-  /* mark all lines of this sector as precious, to prevent the sector
-   * from being split.
-   */ 
-  sector->polyobj = TRUE;
-
-  for (i = 0; i < num_linedefs; i++)
-  {
-    linedef_t *L = linedefs[i];
-
-    if ((L->right && L->right->sector == sector) ||
-        (L->left && L->left->sector == sector))
-    {
-      L->is_precious = TRUE;
-    }
-  }
-}
-
-static void MarkPolyobjPoint(float_g x, float_g y)
-{
-  int i;
-  int inside_count = 0;
- 
-  float_g best_dist = 999999;
-  linedef_t *best_match = NULL;
-  sector_t *sector = NULL;
-
-  float_g x1, y1;
-  float_g x2, y2;
-
-  // -AJA- First we handle the "awkward" cases where the polyobj sits
-  //       directly on a linedef or even a vertex.  We check all lines
-  //       that intersect a small box around the spawn point.
-
-  int bminx = (int) (x - POLY_BOX_SZ);
-  int bminy = (int) (y - POLY_BOX_SZ);
-  int bmaxx = (int) (x + POLY_BOX_SZ);
-  int bmaxy = (int) (y + POLY_BOX_SZ);
-
-  for (i = 0; i < num_linedefs; i++)
-  {
-    linedef_t *L = linedefs[i];
-
-    if (CheckLinedefInsideBox(bminx, bminy, bmaxx, bmaxy,
-          (int) L->start->x, (int) L->start->y,
-          (int) L->end->x, (int) L->end->y))
-    {
-#     if DEBUG_POLYOBJ
-      PrintDebug("  Touching line was %d\n", L->index);
-#     endif
-
-      if (L->left)
-        MarkPolyobjSector(L->left->sector);
-
-      if (L->right)
-        MarkPolyobjSector(L->right->sector);
-
-      inside_count++;
-    }
-  }
-
-  if (inside_count > 0)
-    return;
-
-  // -AJA- Algorithm is just like in DEU: we cast a line horizontally
-  //       from the given (x,y) position and find all linedefs that
-  //       intersect it, choosing the one with the closest distance.
-  //       If the point is sitting directly on a (two-sided) line,
-  //       then we mark the sectors on both sides.
-
-  for (i = 0; i < num_linedefs; i++)
-  {
-    linedef_t *L = linedefs[i];
-
-    float_g x_cut;
-
-    x1 = L->start->x;  y1 = L->start->y;
-    x2 = L->end->x;    y2 = L->end->y;
-
-    /* check vertical range */
-    if (fabs(y2 - y1) < DIST_EPSILON)
-      continue;
-
-    if ((y > (y1 + DIST_EPSILON) && y > (y2 + DIST_EPSILON)) || 
-        (y < (y1 - DIST_EPSILON) && y < (y2 - DIST_EPSILON)))
-      continue;
-
-    x_cut = x1 + (x2 - x1) * (y - y1) / (y2 - y1) - x;
-
-    if (fabs(x_cut) < fabs(best_dist))
-    {
-      /* found a closer linedef */
-
-      best_match = L;
-      best_dist = x_cut;
-    }
-  }
-
-  if (! best_match)
-  {
-    PrintWarn("Bad polyobj thing at (%1.0f,%1.0f).\n", x, y);
-    return;
-  }
-
-  y1 = best_match->start->y;
-  y2 = best_match->end->y;
-
-# if DEBUG_POLYOBJ
-  PrintDebug("  Closest line was %d Y=%1.0f..%1.0f (dist=%1.1f)\n",
-      best_match->index, y1, y2, best_dist);
-# endif
-
-  /* sanity check: shouldn't be directly on the line */
-# if DEBUG_POLYOBJ
-  if (fabs(best_dist) < DIST_EPSILON)
-  {
-    PrintDebug("  Polyobj FAILURE: directly on the line (%d)\n",
-        best_match->index);
-  }
-# endif
- 
-  /* check orientation of line, to determine which side the polyobj is
-   * actually on.
-   */
-  if ((y1 > y2) == (best_dist > 0))
-    sector = best_match->right ? best_match->right->sector : NULL;
-  else
-    sector = best_match->left ? best_match->left->sector : NULL;
-
-# if DEBUG_POLYOBJ
-  PrintDebug("  Sector %d contains the polyobj.\n", 
-      sector ? sector->index : -1);
-# endif
-
-  if (! sector)
-  {
-    PrintWarn("Invalid Polyobj thing at (%1.0f,%1.0f).\n", x, y);
-    return;
-  }
-
-  MarkPolyobjSector(sector);
-}
-
-//
-// FindPolyobjSectors
-//
-// Based on code courtesy of Janis Legzdinsh.
-//
-void FindPolyobjSectors(void)
-{
-  int i, count=-1;
-  raw_hexen_thing_t *raw;
-  lump_t *lump;
-  int hexen_style;
-
-  // -JL- There's a conflict between Hexen polyobj thing types and Doom thing
-  //      types. In Doom type 3001 is for Imp and 3002 for Demon. To solve
-  //      this problem, first we are going through all lines to see if the
-  //      level has any polyobjs. If found, we also must detect wat polyobj
-  //      thing types are used - Hexen ones or ZDoom ones. That's why we
-  //      are going through all things searching for ZDoom polyobj thing
-  //      types. If any found, we assume that ZDoom polyobj thing types are
-  //      used, otherwise Hexen polyobj thing types are used.
-
-  // -JL- First go through all lines to see if level contains any polyobjs
-  for (i = 0; i < num_linedefs; i++)
-  {
-    linedef_t *L = linedefs[i];
-
-    if (L->type == HEXTYPE_POLY_START || L->type == HEXTYPE_POLY_EXPLICIT)
-      break;
-  }
-
-  if (i == num_linedefs)
-  {
-    // -JL- No polyobjs in this level
-    return;
-  }
-
-  lump = FindLevelLump("THINGS");
-  if (lump)
-    count = lump->length / sizeof(raw_hexen_thing_t);
-
-  /* Note: no error if no things exist, even though technically a map
-   * will be unplayable without the player starts.
-   */
-  if (!lump || count==0)
-    return;
-
-  raw = (raw_hexen_thing_t*) lump->data;
-
-  // -JL- Detect what polyobj thing types are used - Hexen ones or ZDoom ones
-  hexen_style = TRUE;
-  
-  for (i = 0; i < count; i++, raw++)
-  {
-    int type = UINT16(raw->type);
-
-    if (type == ZDOOM_PO_SPAWN_TYPE || type == ZDOOM_PO_SPAWNCRUSH_TYPE)
-    {
-      // -JL- A ZDoom style polyobj thing found
-      hexen_style = FALSE;
-      break;
-    }
-  }
-
-# if DEBUG_POLYOBJ
-  PrintDebug("Using %s style polyobj things\n",
-      hexen_style ? "HEXEN" : "ZDOOM");
-# endif
-   
-  // -JL- Reset to the begining.
-  raw = (raw_hexen_thing_t*) lump->data;
-
-  for (i = 0; i < count; i++, raw++)
-  {
-    float_g x = (float_g) SINT16(raw->x);
-    float_g y = (float_g) SINT16(raw->y);
-
-    int type = UINT16(raw->type);
-
-    // ignore everything except polyobj start spots
-    if (hexen_style)
-    {
-      // -JL- Hexen style polyobj things
-      if (type != PO_SPAWN_TYPE && type != PO_SPAWNCRUSH_TYPE)
-        continue;
-    }
-    else
-    {
-      // -JL- ZDoom style polyobj things
-      if (type != ZDOOM_PO_SPAWN_TYPE && type != ZDOOM_PO_SPAWNCRUSH_TYPE)
-        continue;
-    }
-
-#   if DEBUG_POLYOBJ
-    PrintDebug("Thing %d at (%1.0f,%1.0f) is a polyobj spawner.\n",
-        i, x, y);
-#   endif
-    
-    MarkPolyobjPoint(x, y);
-  }
-}
-
-
-/* ----- analysis routines ----------------------------- */
-
-static int VertexCompare(const void *p1, const void *p2)
-{
-  int vert1 = ((const uint16_g *) p1)[0];
-  int vert2 = ((const uint16_g *) p2)[0];
-
-  vertex_t *A = vertices[vert1];
-  vertex_t *B = vertices[vert2];
-
-  if (vert1 == vert2)
-    return 0;
-
-  if ((int)A->x != (int)B->x)
-    return (int)A->x - (int)B->x; 
-  
-  return (int)A->y - (int)B->y;
-}
-
-static int SidedefCompare(const void *p1, const void *p2)
-{
-  int comp;
-
-  int side1 = ((const uint16_g *) p1)[0];
-  int side2 = ((const uint16_g *) p2)[0];
-
-  sidedef_t *A = sidedefs[side1];
-  sidedef_t *B = sidedefs[side2];
-
-  if (side1 == side2)
-    return 0;
-
-  // don't merge sidedefs on special lines
-  if (A->on_special || B->on_special)
-    return side1 - side2;
-
-  if (A->sector != B->sector)
-  {
-    if (A->sector == NULL) return -1;
-    if (B->sector == NULL) return +1;
-
-    return (A->sector->index - B->sector->index);
-  }
-
-  if ((int)A->x_offset != (int)B->x_offset)
-    return A->x_offset - (int)B->x_offset;
-
-  if ((int)A->y_offset != B->y_offset)
-    return (int)A->y_offset - (int)B->y_offset;
-
-  // compare textures
-
-  comp = memcmp(A->upper_tex, B->upper_tex, sizeof(A->upper_tex));
-  if (comp) return comp;
-  
-  comp = memcmp(A->lower_tex, B->lower_tex, sizeof(A->lower_tex));
-  if (comp) return comp;
-  
-  comp = memcmp(A->mid_tex, B->mid_tex, sizeof(A->mid_tex));
-  if (comp) return comp;
-
-  // sidedefs must be the same
-  return 0;
-}
-
-static void DetectDuplicateVertices(void)
-{
-  int i;
-  uint16_g *array = UtilCalloc(num_vertices * sizeof(uint16_g));
-
-  DisplayTicker();
-
-  // sort array of indices
-  for (i=0; i < num_vertices; i++)
-    array[i] = i;
-  
-  qsort(array, num_vertices, sizeof(uint16_g), VertexCompare);
-
-  // now mark them off
-  for (i=0; i < num_vertices - 1; i++)
-  {
-    // duplicate ?
-    if (VertexCompare(array + i, array + i+1) == 0)
-    {
-      vertex_t *A = vertices[array[i]];
-      vertex_t *B = vertices[array[i+1]];
-
-      // found a duplicate !
-      if (A->equiv)
-        B->equiv = A->equiv;
-      else
-        B->equiv = A;
-    }
-  }
-
-  UtilFree(array);
-}
-
-static void DetectDuplicateSidedefs(void)
-{
-  int i;
-  uint16_g *array = UtilCalloc(num_sidedefs * sizeof(uint16_g));
-
-  DisplayTicker();
-
-  // sort array of indices
-  for (i=0; i < num_sidedefs; i++)
-    array[i] = i;
-  
-  qsort(array, num_sidedefs, sizeof(uint16_g), SidedefCompare);
-
-  // now mark them off
-  for (i=0; i < num_sidedefs - 1; i++)
-  {
-    // duplicate ?
-    if (SidedefCompare(array + i, array + i+1) == 0)
-    {
-      sidedef_t *A = sidedefs[array[i]];
-      sidedef_t *B = sidedefs[array[i+1]];
-
-      // found a duplicate !
-      if (A->equiv)
-        B->equiv = A->equiv;
-      else
-        B->equiv = A;
-    }
-  }
-
-  UtilFree(array);
-}
-
-static void PruneLinedefs(void)
-{
-  int i;
-  int new_num;
-
-  DisplayTicker();
-
-  // scan all linedefs
-  for (i=0, new_num=0; i < num_linedefs; i++)
-  {
-    linedef_t *L = linedefs[i];
-
-    // handle duplicated vertices
-    while (L->start->equiv)
-    {
-      L->start->ref_count--;
-      L->start = L->start->equiv;
-      L->start->ref_count++;
-    }
-
-    while (L->end->equiv)
-    {
-      L->end->ref_count--;
-      L->end = L->end->equiv;
-      L->end->ref_count++;
-    }
-
-    // handle duplicated sidedefs
-    while (L->right && L->right->equiv)
-    {
-      L->right->ref_count--;
-      L->right = L->right->equiv;
-      L->right->ref_count++;
-    }
-
-    while (L->left && L->left->equiv)
-    {
-      L->left->ref_count--;
-      L->left = L->left->equiv;
-      L->left->ref_count++;
-    }
-
-    // remove zero length lines
-    if (L->zero_len)
-    {
-      L->start->ref_count--;
-      L->end->ref_count--;
-
-      UtilFree(L);
-      continue;
-    }
-
-    L->index = new_num;
-    linedefs[new_num++] = L;
-  }
-
-  if (new_num < num_linedefs)
-  {
-    PrintMsg("Pruned %d zero-length linedefs\n", num_linedefs - new_num);
-    num_linedefs = new_num;
-  }
-
-  if (new_num == 0)
-    FatalError("Couldn't find any Linedefs");
-}
-
-static void PruneVertices(void)
-{
-  int i;
-  int new_num;
-  int unused = 0;
-
-  DisplayTicker();
-
-  // scan all vertices
-  for (i=0, new_num=0; i < num_vertices; i++)
-  {
-    vertex_t *V = vertices[i];
-
-    if (V->ref_count < 0)
-      InternalError("Vertex %d ref_count is %d", i, V->ref_count);
-    
-    if (V->ref_count == 0)
-    {
-      if (V->equiv == NULL)
-        unused++;
-
-      UtilFree(V);
-      continue;
-    }
-
-    V->index = new_num;
-    vertices[new_num++] = V;
-  }
-
-  if (new_num < num_vertices)
-  {
-    int dup_num = num_vertices - new_num - unused;
-
-    if (unused > 0)
-      PrintMsg("Pruned %d unused vertices "
-        "(this is normal if the nodes were built before)\n", unused);
-
-    if (dup_num > 0)
-      PrintMsg("Pruned %d duplicate vertices\n", dup_num);
-
-    num_vertices = new_num;
-  }
-
-  if (new_num == 0)
-    FatalError("Couldn't find any Vertices");
- 
-  num_normal_vert = num_vertices;
-}
-
-static void PruneSidedefs(void)
-{
-  int i;
-  int new_num;
-  int unused = 0;
-
-  DisplayTicker();
-
-  // scan all sidedefs
-  for (i=0, new_num=0; i < num_sidedefs; i++)
-  {
-    sidedef_t *S = sidedefs[i];
-
-    if (S->ref_count < 0)
-      InternalError("Sidedef %d ref_count is %d", i, S->ref_count);
-    
-    if (S->ref_count == 0)
-    {
-      if (S->sector)
-        S->sector->ref_count--;
-
-      if (S->equiv == NULL)
-        unused++;
-
-      UtilFree(S);
-      continue;
-    }
-
-    S->index = new_num;
-    sidedefs[new_num++] = S;
-  }
-
-  if (new_num < num_sidedefs)
-  {
-    int dup_num = num_sidedefs - new_num - unused;
-
-    if (unused > 0)
-      PrintMsg("Pruned %d unused sidedefs\n", unused);
-
-    if (dup_num > 0)
-      PrintMsg("Pruned %d duplicate sidedefs\n", dup_num);
-
-    num_sidedefs = new_num;
-  }
-
-  if (new_num == 0)
-    FatalError("Couldn't find any Sidedefs");
-}
-
-static void PruneSectors(void)
-{
-  int i;
-  int new_num;
-
-  DisplayTicker();
-
-  // scan all sectors
-  for (i=0, new_num=0; i < num_sectors; i++)
-  {
-    sector_t *S = sectors[i];
-
-    if (S->ref_count < 0)
-      InternalError("Sector %d ref_count is %d", i, S->ref_count);
-    
-    if (S->ref_count == 0)
-    {
-      UtilFree(S);
-      continue;
-    }
-
-    S->index = new_num;
-    sectors[new_num++] = S;
-  }
-
-  if (new_num < num_sectors)
-  {
-    PrintMsg("Pruned %d unused sectors\n", num_sectors - new_num);
-    num_sectors = new_num;
-  }
-
-  if (new_num == 0)
-    FatalError("Couldn't find any Sectors");
-}
 
 static INLINE_G int TransformSegDist(const seg_t *seg)
 {
   float_g sx = seg->side ? seg->linedef->end->x : seg->linedef->start->x;
   float_g sy = seg->side ? seg->linedef->end->y : seg->linedef->start->y;
 
-  return (int) ceil(ComputeDist(seg->start->x - sx, seg->start->y - sy));
+  return (int) ceil(UtilComputeDist(seg->start->x - sx, seg->start->y - sy));
 }
 
 static INLINE_G int TransformAngle(angle_g angle)
@@ -1186,238 +689,6 @@ static int SegCompare(const void *p1, const void *p2)
 }
 
 
-/* ----- vertex routines ------------------------------- */
-
-static void VertexAddWallTip(vertex_t *vert, float_g dx, float_g dy,
-  sector_t *left, sector_t *right)
-{
-  wall_tip_t *tip = NewWallTip();
-  wall_tip_t *after;
-
-  tip->angle = ComputeAngle(dx, dy);
-  tip->left  = left;
-  tip->right = right;
-
-  // find the correct place (order is increasing angle)
-  for (after=vert->tip_set; after && after->next; after=after->next)
-  { }
-
-  while (after && tip->angle + ANG_EPSILON < after->angle) 
-    after = after->prev;
-  
-  // link it in
-  tip->next = after ? after->next : vert->tip_set;
-  tip->prev = after;
-
-  if (after)
-  {
-    if (after->next)
-      after->next->prev = tip;
-    
-    after->next = tip;
-  }
-  else
-  {
-    if (vert->tip_set)
-      vert->tip_set->prev = tip;
-    
-    vert->tip_set = tip;
-  }
-}
-
-static void CalculateWallTips(void)
-{
-  int i;
-
-  DisplayTicker();
-
-  for (i=0; i < num_linedefs; i++)
-  {
-    linedef_t *line = linedefs[i];
-
-    float_g x1 = line->start->x;
-    float_g y1 = line->start->y;
-    float_g x2 = line->end->x;
-    float_g y2 = line->end->y;
-
-    sector_t *left  = (line->left)  ? line->left->sector  : NULL;
-    sector_t *right = (line->right) ? line->right->sector : NULL;
-    
-    VertexAddWallTip(line->start, x2-x1, y2-y1, left, right);
-    VertexAddWallTip(line->end,   x1-x2, y1-y2, right, left);
-  }
- 
-# if DEBUG_WALLTIPS
-  for (i=0; i < num_vertices; i++)
-  {
-    vertex_t *vert = vertices[i];
-    wall_tip_t *tip;
-
-    PrintDebug("WallTips for vertex %d:\n", i);
-
-    for (tip=vert->tip_set; tip; tip=tip->next)
-    {
-      PrintDebug("  Angle=%1.1f left=%d right=%d\n", tip->angle,
-        tip->left ? tip->left->index : -1,
-        tip->right ? tip->right->index : -1);
-    }
-  }
-# endif
-}
-
-//
-// NewVertexFromSplitSeg
-//
-vertex_t *NewVertexFromSplitSeg(seg_t *seg, float_g x, float_g y)
-{
-  vertex_t *vert = NewVertex();
-
-  vert->x = x;
-  vert->y = y;
-
-  vert->ref_count = seg->partner ? 4 : 2;
-
-  if (doing_gl && (!cur_info->v1_vert || !doing_normal))
-  {
-    vert->index = num_gl_vert | 0x8000;
-    num_gl_vert++;
-  }
-  else
-  {
-    vert->index = num_normal_vert;
-    num_normal_vert++;
-  }
-
-  // compute wall_tip info
-
-  VertexAddWallTip(vert, -seg->pdx, -seg->pdy, seg->sector, 
-      seg->partner ? seg->partner->sector : NULL);
-
-  VertexAddWallTip(vert, seg->pdx, seg->pdy,
-      seg->partner ? seg->partner->sector : NULL, seg->sector);
-
-  // create a duplex vertex if needed
-
-  if (doing_normal && doing_gl && !cur_info->v1_vert)
-  {
-    vert->normal_dup = NewVertex();
-
-    vert->normal_dup->x = x;
-    vert->normal_dup->y = y;
-    vert->normal_dup->ref_count = vert->ref_count;
-
-    vert->normal_dup->index = num_normal_vert;
-    num_normal_vert++;
-  }
-
-  return vert;
-}
-
-//
-// NewVertexDegenerate
-//
-vertex_t *NewVertexDegenerate(vertex_t *start, vertex_t *end)
-{
-  float_g dx = end->x - start->x;
-  float_g dy = end->y - start->y;
-
-  float_g dlen = ComputeDist(dx, dy);
-
-  vertex_t *vert = NewVertex();
-
-  vert->ref_count = start->ref_count;
-
-  if (doing_normal)
-  {
-    vert->index = num_normal_vert;
-    num_normal_vert++;
-  }
-  else
-  {
-    vert->index = num_gl_vert | 0x8000;
-    num_gl_vert++;
-  }
-
-  // compute new coordinates
-
-  vert->x = start->x;
-  vert->y = start->x;
-
-  if (dlen == 0)
-    InternalError("NewVertexDegenerate: bad delta !");
-
-  dx /= dlen;
-  dy /= dlen;
-
-  while ((int)vert->x == (int)start->x && 
-         (int)vert->y == (int)start->y)
-  {
-    vert->x += dx;
-    vert->y += dy;
-  }
-
-  return vert;
-}
-
-//
-// VertexCheckOpen
-//
-int VertexCheckOpen(vertex_t *vert, float_g dx, float_g dy,
-    sector_t ** left_sec, sector_t ** right_sec)
-{
-  wall_tip_t *tip;
-
-  angle_g angle = ComputeAngle(dx, dy);
-
-  *left_sec = *right_sec = NULL;
-
-  // first check whether there's a wall_tip that lies in the exact
-  // direction of the given direction (which is relative to the
-  // vertex).
-
-  for (tip=vert->tip_set; tip; tip=tip->next)
-  {
-    if (fabs(tip->angle - angle) < ANG_EPSILON)
-    {
-      // yes, found one
-
-      *left_sec  = tip->left;
-      *right_sec = tip->right;
-
-      return FALSE;
-    }
-  }
-
-  // OK, now just find the first wall_tip whose angle is greater than
-  // the angle we're interested in.  Therefore we'll be on the RIGHT
-  // side of that wall_tip.
-
-  for (tip=vert->tip_set; tip; tip=tip->next)
-  {
-    if (angle + ANG_EPSILON < tip->angle)
-    {
-      // found it
-      *left_sec = *right_sec = tip->right;
-
-      return (tip->right != NULL);
-    }
-
-    if (! tip->next)
-    {
-      // no more tips, thus we must be on the LEFT side of the tip
-      // with the largest angle.
-
-      *left_sec = *right_sec = tip->left;
-
-      return (tip->left != NULL);
-    }
-  }
-  
-  InternalError("Vertex %d has no tips !", vert->index);
-  return FALSE;
-}
-
-
 /* ----- writing routines ------------------------------ */
 
 void PutVertices(char *name, int do_gl)
@@ -1435,7 +706,7 @@ void PutVertices(char *name, int do_gl)
   for (i=0, count=0; i < num_vertices; i++)
   {
     raw_vertex_t raw;
-    vertex_t *vert = vertices[i];
+    vertex_t *vert = lev_vertices[i];
 
     if ((do_gl && !(vert->index & 0x8000)) ||
         (!do_gl && (vert->index & 0x8000)))
@@ -1479,7 +750,7 @@ void PutV2Vertices(void)
   for (i=0, count=0; i < num_vertices; i++)
   {
     raw_v2_vertex_t raw;
-    vertex_t *vert = vertices[i];
+    vertex_t *vert = lev_vertices[i];
 
     if (! (vert->index & 0x8000))
       continue;
@@ -1514,7 +785,7 @@ void PutSectors(void)
   for (i=0; i < num_sectors; i++)
   {
     raw_sector_t raw;
-    sector_t *sector = sectors[i];
+    sector_t *sector = lev_sectors[i];
 
     raw.floor_h = SINT16(sector->floor_h);
     raw.ceil_h  = SINT16(sector->ceil_h);
@@ -1547,7 +818,7 @@ void PutSidedefs(void)
   for (i=0; i < num_sidedefs; i++)
   {
     raw_sidedef_t raw;
-    sidedef_t *side = sidedefs[i];
+    sidedef_t *side = lev_sidedefs[i];
 
     raw.sector = (side->sector == NULL) ? SINT16(-1) :
         UINT16(side->sector->index);
@@ -1580,7 +851,7 @@ void PutLinedefs(void)
   for (i=0; i < num_linedefs; i++)
   {
     raw_linedef_t raw;
-    linedef_t *line = linedefs[i];
+    linedef_t *line = lev_linedefs[i];
 
     raw.start = UINT16(line->start->index);
     raw.end   = UINT16(line->end->index);
@@ -1613,7 +884,7 @@ void PutLinedefsHexen(void)
   for (i=0; i < num_linedefs; i++)
   {
     raw_hexen_linedef_t raw;
-    linedef_t *line = linedefs[i];
+    linedef_t *line = lev_linedefs[i];
 
     raw.start = UINT16(line->start->index);
     raw.end   = UINT16(line->end->index);
@@ -1876,54 +1147,62 @@ void LoadLevel(void)
 
   const char *level_name = GetLevelName();
 
-  normal_exists = CheckForNormalNodes();
+  boolean_g normal_exists = CheckForNormalNodes();
 
-  doing_normal = !cur_info->gwa_mode && (cur_info->force_normal || 
+  lev_doing_normal = !cur_info->gwa_mode && (cur_info->force_normal || 
     (!cur_info->no_normal && !normal_exists));
 
-  doing_gl = cur_info->gwa_mode || !cur_info->no_gl;
+  lev_doing_gl = cur_info->gwa_mode || !cur_info->no_gl;
 
-  if (doing_normal && doing_gl)
+  // -JL- Identify Hexen mode by presence of BEHAVIOR lump
+  lev_doing_hexen = (FindLevelLump("BEHAVIOR") != NULL);
+
+  if (lev_doing_normal && lev_doing_gl)
     sprintf(message, "Building normal and GL nodes on %s", level_name);
-  else if (doing_normal)
+  else if (lev_doing_normal)
     sprintf(message, "Building normal nodes only on %s", level_name);
-  else if (doing_gl)
+  else if (lev_doing_gl)
     sprintf(message, "Building GL nodes on %s", level_name);
   else
     sprintf(message, "Building _nothing_ on %s", level_name);
  
+  if (lev_doing_hexen)
+    strcat(message, " (Hexen)");
+
+  lev_doing_hexen |= cur_info->force_hexen;
+
   DisplaySetBarText(1, message);
-  PrintMsg("\n\n%s\n\n", message);
 
-  doing_hexen = cur_info->force_hexen;
+  PrintVerbose("\n\n");
+  PrintMsg("%s\n", message);
+  PrintVerbose("\n");
 
-  // -JL- Identify Hexen mode by presence of BEHAVIOR lump
-  if (!doing_hexen && FindLevelLump("BEHAVIOR") != NULL)
-  {
-    PrintMsg("Hexen level detected.\n");
-    doing_hexen = TRUE;
-  }
-  
   GetVertices();
   GetSectors();
   GetSidedefs();
 
-  if (doing_hexen)
+  if (lev_doing_hexen)
+  {
     GetLinedefsHexen();
+    GetThingsHexen();
+  }
   else
+  {
     GetLinedefs();
+    GetThings();
+  }
 
-  PrintMsg("Loaded %d vertices, %d sectors, %d sides, %d lines\n", 
-      num_vertices, num_sectors, num_sidedefs, num_linedefs);
+  PrintVerbose("Loaded %d vertices, %d sectors, %d sides, %d lines, %d things\n", 
+      num_vertices, num_sectors, num_sidedefs, num_linedefs, num_things);
 
-  if (!cur_info->choose_fresh && !doing_normal &&
+  if (!cur_info->choose_fresh && !lev_doing_normal &&
       normal_exists && num_sectors > 5 && num_linedefs > 100)
   {
-    PrintMsg("Using original nodes to speed things up\n");
+    PrintVerbose("Using original nodes to speed things up\n");
     GetStaleNodes();
   }
  
-  if (doing_normal && !cur_info->no_prune)
+  if (lev_doing_normal && !cur_info->no_prune)
   {
     DetectDuplicateVertices();
 
@@ -1937,14 +1216,17 @@ void LoadLevel(void)
     if (!cur_info->keep_sect)
       PruneSectors();
   }
+ 
+  CalculateWallTips();
 
-  if (doing_hexen)
+  if (lev_doing_hexen)
   {
     // -JL- Find sectors containing polyobjs
-    FindPolyobjSectors();
+    DetectPolyobjSectors();
   }
-  
-  CalculateWallTips();
+
+  if (!cur_info->keep_dummy && num_sectors > 10)
+    DetectDummySectors();
 }
 
 //
@@ -1956,6 +1238,7 @@ void FreeLevel(void)
   FreeSidedefs();
   FreeLinedefs();
   FreeSectors();
+  FreeThings();
   FreeSegs();
   FreeSubsecs();
   FreeNodes();
@@ -1971,7 +1254,7 @@ void SaveLevel(node_t *root_node)
   if (cur_info->v1_vert)
     RoundOffBspTree(root_node);
  
-  if (doing_gl)
+  if (lev_doing_gl)
   {
     if (cur_info->v1_vert)
       PutVertices("GL_VERT", TRUE);
@@ -1986,7 +1269,7 @@ void SaveLevel(node_t *root_node)
     CreateGLLump("GL_PVS");
   }
 
-  if (doing_normal)
+  if (lev_doing_normal)
   {
     if (! cur_info->v1_vert)
       RoundOffBspTree(root_node);
@@ -1997,7 +1280,7 @@ void SaveLevel(node_t *root_node)
     PutSectors();
     PutSidedefs();
 
-    if (doing_hexen)
+    if (lev_doing_hexen)
       PutLinedefsHexen();
     else
       PutLinedefs();

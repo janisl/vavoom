@@ -2,7 +2,7 @@
 // LEVEL : Level structures & read/write functions.
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2002 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2003 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -83,8 +83,14 @@ typedef struct sector_s
   // sector index.  Always valid after loading & pruning.
   int index;
 
-  // allow segs from other sectors to coexist in a subsector
-  int coalesce;
+  // allow segs from other sectors to coexist in a subsector.
+  char coalesce;
+
+  // -JL- non-zero if this sector contains a polyobj.
+  int has_polyobj;
+
+  // this is a dummy sector (for extrafloors).
+  char is_dummy;
 
   // reference count.  When building normal nodes, unused sectors will
   // be pruned.
@@ -101,9 +107,6 @@ typedef struct sector_s
   int light;
   int special;
   int tag;
-
-  // -JL- non-zero if this sector contains a polyobj.
-  int polyobj;
 
   // used when building REJECT table.  Each set of sectors that are
   // isolated from other sectors will have a different group number.
@@ -182,6 +185,21 @@ typedef struct linedef_s
   int index;
 }
 linedef_t;
+
+
+typedef struct thing_s
+{
+  int x, y;
+  int type;
+  int options;
+
+  // other info (angle, and hexen stuff) omitted.  We don't need to
+  // write the THING lump, only read it.
+
+  // Always valid (thing indices never change).
+  int index;
+}
+thing_t;
 
 
 typedef struct seg_s
@@ -334,6 +352,7 @@ extern int num_vertices;
 extern int num_linedefs;
 extern int num_sidedefs;
 extern int num_sectors;
+extern int num_things;
 extern int num_segs;
 extern int num_subsecs;
 extern int num_nodes;
@@ -351,16 +370,19 @@ vertex_t *NewVertex(void);
 linedef_t *NewLinedef(void);
 sidedef_t *NewSidedef(void);
 sector_t *NewSector(void);
+thing_t *NewThing(void);
 seg_t *NewSeg(void);
 subsec_t *NewSubsec(void);
 node_t *NewNode(void);
 node_t *NewStaleNode(void);
+wall_tip_t *NewWallTip(void);
 
 // lookup routines
 vertex_t *LookupVertex(int index);
 linedef_t *LookupLinedef(int index);
 sidedef_t *LookupSidedef(int index);
 sector_t *LookupSector(int index);
+thing_t *LookupThing(int index);
 seg_t *LookupSeg(int index);
 subsec_t *LookupSubsec(int index);
 node_t *LookupNode(int index);
@@ -377,26 +399,5 @@ void FreeLevel(void);
 
 // save the newly computed NODE info etc..
 void SaveLevel(node_t *root_node);
-
-// return a new vertex (with correct wall_tip info) for the split that
-// happens along the given seg at the given location.
-//
-vertex_t *NewVertexFromSplitSeg(seg_t *seg, float_g x, float_g y);
-
-// return a new end vertex to compensate for a seg that would end up
-// being zero-length (after integer rounding).  Doesn't compute the
-// wall_tip info (thus this routine should only be used _after_ node
-// building).
-//
-vertex_t *NewVertexDegenerate(vertex_t *start, vertex_t *end);
-
-// check whether a line with the given delta coordinates and beginning
-// at this vertex is open.  Returns 1 if open, or 0 if closed.  The
-// sectors that lie on the left & right side of the given line are
-// also determined (NULL if the area is void space).
-//
-int VertexCheckOpen(vertex_t *vert, float_g dx, float_g dy,
-    sector_t ** left_sec, sector_t ** right_sec);
-
 
 #endif /* __GLBSP_LEVEL_H__ */

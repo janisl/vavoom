@@ -9,7 +9,8 @@ DEFINES=-DWIN32 -DGLBSP_PLUGIN
 LIBDIR=$(BCC32DIR)\LIB
 MSLIBDIR=$(LIBDIR)\PSDK
 
-OBJS=$(OUTPUT)\blockmap.obj \
+OBJS=$(OUTPUT)\analyze.obj  \
+     $(OUTPUT)\blockmap.obj \
      $(OUTPUT)\glbsp.obj    \
      $(OUTPUT)\level.obj    \
      $(OUTPUT)\node.obj     \

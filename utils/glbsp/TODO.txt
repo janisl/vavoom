@@ -2,5 +2,34 @@
 TODO
 ====
 
--  glBSPX: Fix modal windows not having close buttons in Win32.
+
+LATER / IDEAS
+=============
+
+*  Unix/Linux: have 'make install' targets.
+
++  Put Changelog on GLBSP page.
+
+-  Detect and handle overlapping linedefs (used to make higher mid-maskers).
+
+-  MacOSX: Project builder setup for glBSPX.
+
+?  .GOR files (Glbsp ORganisation).  Applies parameters to WAD file
+   with the same base name.
+
+   Example:
+
+      glbsp X.wad -o Y.wad
+
+   With a file X.gor that exists and contains:
+
+     [PARAMS]
+     Factor = 11
+     NoReject = TRUE
+     Fresh = FALSE
+     Warn  = FALSE
+     Quiet = TRUE
+     Version = 1
+     DummyMaxGroup = 1
+     DummyLineTypes = 280-281, 289, 400-417, 430-433
 

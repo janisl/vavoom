@@ -2,7 +2,7 @@
 // NODE : Recursively create nodes and return the pointers.
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2002 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2003 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -44,6 +44,7 @@
 #include <limits.h>
 #include <assert.h>
 
+#include "analyze.h"
 #include "blockmap.h"
 #include "level.h"
 #include "node.h"
@@ -68,7 +69,7 @@ static superblock_t *quick_alloc_supers = NULL;
 //
 static int PointOnLineSide(seg_t *part, float_g x, float_g y)
 {
-  float_g perp = ComputePerpDist(part, x, y);
+  float_g perp = UtilPerpDist(part, x, y);
   
   if (fabs(perp) <= DIST_EPSILON)
     return 0;
@@ -378,18 +379,19 @@ static seg_t *CreateOneSeg(linedef_t *line, vertex_t *start, vertex_t *end,
 superblock_t *CreateSegs(void)
 {
   int i;
+  int bw, bh;
 
   seg_t *left, *right;
   superblock_t *block;
 
-  PrintMsg("Creating Segs...\n");
+  PrintVerbose("Creating Segs...\n");
 
   block = NewSuperBlock();
  
-  block->x1 = block_x;
-  block->y1 = block_y;
-  block->x2 = block->x1 + 128 * RoundPOW2(block_w);
-  block->y2 = block->y1 + 128 * RoundPOW2(block_h);
+  GetBlockmapBounds(&block->x1, &block->y1, &bw, &bh);
+
+  block->x2 = block->x1 + 128 * UtilRoundPOW2(bw);
+  block->y2 = block->y1 + 128 * UtilRoundPOW2(bh);
 
   // step through linedefs and get side numbers
 
@@ -404,12 +406,16 @@ superblock_t *CreateSegs(void)
     // ignore zero-length lines
     if (line->zero_len)
       continue;
-    
+
+    // ignore lines from dummy sectors
+    if (line->right && line->right->sector && line->right->sector->is_dummy)
+      continue;
+
     // check for Humungously long lines
     if (ABS(line->start->x - line->end->x) >= 10000 ||
         ABS(line->start->y - line->end->y) >= 10000)
     {
-      if (ComputeDist(line->start->x - line->end->x,
+      if (UtilComputeDist(line->start->x - line->end->x,
           line->start->y - line->end->y) >= 30000)
       {
         PrintWarn("Linedef #%d is VERY long, it may cause problems\n",
@@ -524,8 +530,8 @@ static void ClockwiseOrder(subsec_t *sub)
 
     angle_g angle1, angle2;
 
-    angle1 = ComputeAngle(A->start->x-sub->mid_x, A->start->y-sub->mid_y);
-    angle2 = ComputeAngle(B->start->x-sub->mid_x, B->start->y-sub->mid_y);
+    angle1 = UtilComputeAngle(A->start->x - sub->mid_x, A->start->y - sub->mid_y);
+    angle2 = UtilComputeAngle(B->start->x - sub->mid_x, B->start->y - sub->mid_y);
 
     if (angle1 + ANG_EPSILON < angle2)
     {
@@ -561,7 +567,7 @@ static void ClockwiseOrder(subsec_t *sub)
 
   for (cur=sub->seg_list; cur; cur=cur->next)
   {
-    angle_g angle = ComputeAngle(cur->start->x - sub->mid_x,
+    angle_g angle = UtilComputeAngle(cur->start->x - sub->mid_x,
         cur->start->y - sub->mid_y);
     
     PrintDebug("  Seg %p: Angle %1.6f  (%1.1f,%1.1f) -> (%1.1f,%1.1f)\n",
@@ -760,16 +766,16 @@ static subsec_t *CreateSubsec(superblock_t *seg_list)
 }
 
 //
-// ComputeHeight
+// ComputeBspHeight
 //
-int ComputeHeight(node_t *node)
+int ComputeBspHeight(node_t *node)
 {
   if (node)
   {
     int left, right;
     
-    right = ComputeHeight(node->r.node);
-    left  = ComputeHeight(node->l.node);
+    right = ComputeBspHeight(node->r.node);
+    left  = ComputeBspHeight(node->l.node);
 
     return MAX(left, right) + 1;
   }
@@ -778,7 +784,7 @@ int ComputeHeight(node_t *node)
 }
 
 
-#ifdef DEBUG_BUILDER
+#if DEBUG_BUILDER
 
 static void DebugShowSegs(superblock_t *seg_list)
 {

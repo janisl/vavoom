@@ -2,7 +2,7 @@
 // REJECT : Generate the reject table
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2002 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2003 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -214,7 +214,7 @@ void PutReject(void)
 
   AppendLevelLump(lump, matrix, reject_size);
 
-  PrintMsg("Added simple reject lump\n");
+  PrintVerbose("Added simple reject lump\n");
 
   UtilFree(matrix);
 }

@@ -2,6 +2,42 @@
 CHANGELOG
 =========
 
+Changes in V2.05  (31st December 2003)
+--------------------------------------
+
+ - ported glbsp and glBSPX to MacOS X.
+
+ - fixed blockmap bug when building on big-endian CPUs.
+
+ - fixed the "-noprog" option (it must have been broken for quite a while,
+   maybe since version 1.95).
+
+ - added a new option "-quiet" for less cluttered output.
+
+ - fixed some C++ interfacing problems (thanks, indirectly, to Andy Baker).
+
+ - added some 'near miss' names for certain command-line options.
+
+ - glbsp now handles multiple input files (GWA mode).
+
+ - lumps are now aligned on 4-byte boundaries within the output WAD.
+
+ - improved the 'about' image in the GUI version.
+
+ - fixed massive slow-down in GUI version under MacOSX (maybe others).
+
+ - automatically ignores extrafloor dummy sectors.
+
+ - renamed GUI version to glBSPX (was: glbspX).
+
+ - split level.c into two files, new file is analyze.c.
+
+ - reduced the amount of global symbols, and renamed some things for
+   more consistency (e.g. UtilStrCaseCmp).
+
+ - glBSPX: gave the manual/license windows a nicer interface.
+
+
 Changes in V2.00  (25th September 2002)
 ---------------------------------------
 

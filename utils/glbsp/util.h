@@ -2,7 +2,7 @@
 // UTILITY : general purpose functions
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2002 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2003 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -47,18 +47,35 @@ void *UtilCalloc(int size);
 // re-allocate some memory.  guaranteed not to fail.
 void *UtilRealloc(void *old, int size);
 
-// duplicate a string
+// duplicate a string.
 char *UtilStrDup(const char *str);
 char *UtilStrNDup(const char *str, int size);
 
-// free some memory or a string
+// free some memory or a string.
 void UtilFree(void *data);
 
-// compare two strings case insensitively
-int StrCaseCmp(const char *A, const char *B);
+// compare two strings case insensitively.
+int UtilStrCaseCmp(const char *A, const char *B);
 
 // round a positive value up to the nearest power of two.
-int RoundPOW2(int x);
+int UtilRoundPOW2(int x);
 
+// compute angle & distance from (0,0) to (dx,dy)
+angle_g UtilComputeAngle(float_g dx, float_g dy);
+#define UtilComputeDist(dx,dy)  sqrt((dx) * (dx) + (dy) * (dy))
+
+// compute the parallel and perpendicular distances from a partition
+// line to a point.
+//
+#define UtilParallelDist(part,x,y)  \
+    (((x) * (part)->pdx + (y) * (part)->pdy + (part)->p_para)  \
+     / (part)->p_length)
+
+#define UtilPerpDist(part,x,y)  \
+    (((x) * (part)->pdy - (y) * (part)->pdx + (part)->p_perp)  \
+     / (part)->p_length)
+
+// check if the file exists.
+int UtilFileExists(const char *filename);
 
 #endif /* __GLBSP_UTIL_H__ */

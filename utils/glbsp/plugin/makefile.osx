@@ -1,5 +1,5 @@
 #
-# glBSP Makefile for UNIX Plugin
+# glBSP Makefile for MacOSX Plugin
 #
 
 MAIN=..
@@ -8,11 +8,10 @@ SYSDIR=.
 OUTNAME=libglbsp.a
 
 CC=gcc
-CFLAGS=-O3 -g -Wall -DGLBSP_PLUGIN -DUNIX -DINLINE_G=inline
-AR=ar rc
-RANLIB=ranlib
+CFLAGS=-O3 -Wall -DGLBSP_PLUGIN -DMACOSX -DINLINE_G=inline
 
-OBJS=$(MAIN)/blockmap.o \
+OBJS=$(MAIN)/analyze.o  \
+     $(MAIN)/blockmap.o \
      $(MAIN)/glbsp.o    \
      $(MAIN)/level.o    \
      $(MAIN)/node.o     \
@@ -31,8 +30,8 @@ clean:
 	rm -f $(OUTNAME) $(MAIN)/*.o $(SYSDIR)/*.o
 
 $(OUTNAME): $(OBJS)
-	$(AR) $(OUTNAME) $(OBJS)
-	$(RANLIB) $(OUTNAME)
+	libtool -static -o $(OUTNAME) - $(OBJS)
+	ranlib $(OUTNAME)
 
 .PHONY: all clean
 

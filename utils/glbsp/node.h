@@ -2,7 +2,7 @@
 // NODE : Recursively create nodes and return the pointers.
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2002 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2003 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -56,7 +56,7 @@ glbsp_ret_e BuildNodes(superblock_t *seg_list,
     node_t ** N, subsec_t ** S, int depth, node_t *stale_nd);
 
 // compute the height of the bsp tree, starting at `node'.
-int ComputeHeight(node_t *node);
+int ComputeBspHeight(node_t *node);
 
 // traverse the BSP tree and put all the segs in each subsector into
 // clockwise order, and renumber the seg indices.  This cannot be done

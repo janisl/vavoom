@@ -2,7 +2,7 @@
 README for glBSP
 ================
 
-by Andrew Apted.  23rd September 2002.
+by Andrew Apted.  3rd December 2003.
 
 
 Introduction
@@ -22,21 +22,17 @@ and Vavoom.  See the links below.
 Status
 ------
 
-The current version of glBSP is 2.00.  It has been tested and known to
-work on numerous large wads, including DOOM I shareware, DOOM II,
-TeamTNT's Eternal III, Fanatic's QDOOM, and many others.
-
-NOTE: This version is the *final* one.  I've completely finished with
-      everything relating to DOOM.  You're on your own now !  Bug
-      reports or other comments will be ignored.
+The current version of glBSP is 2.05.  It has been tested and known to
+work on numerous large wads, including DOOM I, DOOM II, TeamTNT's Eternal III,
+Fanatic's QDOOM, and many others.
 
 
 Copyright
 ---------
 
-glBSP is Copyright (C) 2000-2002 Andrew Apted.  It is based on `BSP
-2.3' (C) Colin Reed and Lee Killough, which was created from the basic
-theory stated in DEU5 (OBJECTS.C) by Raphael Quinet.
+glBSP is Copyright (C) 2000-2003 Andrew Apted.  It is based on
+"BSP 2.3" (C) Colin Reed and Lee Killough, which was created from
+the basic theory stated in DEU5 (OBJECTS.C) by Raphael Quinet.
 
 The GUI version (glBSPX) is based in part on the work of the FLTK
 project, see http://www.fltk.org.
@@ -47,11 +43,11 @@ All trademarks are the propriety of their owners.
 License
 -------
 
-Thanks to Lee Killough and André Majorel (the previous and current
-maintainers of BSP, respectively), glBSP is now under the GNU General
-Public License (GPL).  See the file `GLBSP.lic' in the binary package
-or `COPYING.txt' in the source package (or go to http://www.gnu.org)
-for the full text, but to summarise:
+Thanks to Lee Killough and André Majorel (the two previous maintainers
+of BSP), glBSP is now under the GNU General Public License (GPL).  See
+the file `GLBSP.lic' in the binary package or `COPYING.txt' in the
+source package (or go to http://www.gnu.org) for the full text, but to
+summarise:
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

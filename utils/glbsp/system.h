@@ -2,7 +2,7 @@
 // SYSTEM : Bridging code
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2002 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2003 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -42,12 +42,6 @@ extern const nodebuildinfo_t *cur_info;
 extern const nodebuildfuncs_t *cur_funcs;
 extern volatile nodebuildcomms_t *cur_comms;
 
-extern int cur_build_pos;
-extern int cur_file_pos;
-
-extern int total_big_warn;
-extern int total_small_warn;
-
 
 /* ----- function prototypes ---------------------------- */
 
@@ -57,8 +51,12 @@ void InternalError(const char *str, ...);
 
 // display normal messages & warnings to the screen
 void PrintMsg(const char *str, ...);
+void PrintVerbose(const char *str, ...);
 void PrintWarn(const char *str, ...);
 void PrintMiniWarn(const char *str, ...);
+
+// set message for certain errors
+void SetErrorMsg(const char *str);
 
 // endian handling
 void InitEndian(void);

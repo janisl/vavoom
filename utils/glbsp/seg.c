@@ -2,7 +2,7 @@
 // SEG : Choose the best Seg to use for a node line.
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2002 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2003 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -46,6 +46,7 @@
 #include <limits.h>
 #include <assert.h>
 
+#include "analyze.h"
 #include "blockmap.h"
 #include "level.h"
 #include "node.h"
@@ -57,7 +58,7 @@
 
 #define PRECIOUS_MULTIPLY  100
 
-#define SEG_REUSE_THRESHHOLD  64
+#define SEG_REUSE_THRESHHOLD  200
 
 
 #define DEBUG_PICKNODE  0
@@ -81,27 +82,6 @@ eval_info_t;
 
 
 static intersection_t *quick_alloc_cuts = NULL;
-
-
-//
-// ComputeAngle
-//
-// Translate (dx, dy) into an angle value (degrees)
-//
-angle_g ComputeAngle(float_g dx, float_g dy)
-{
-  double angle;
-
-  if (dx == 0)
-    return (dy > 0) ? 90.0 : 270.0;
-
-  angle = atan2((double) dy, (double) dx) * 180.0 / M_PI;
-
-  if (angle < 0) 
-    angle += 360.0;
-
-  return angle;
-}
 
 
 //
@@ -153,8 +133,8 @@ void RecomputeSeg(seg_t *seg)
   seg->pdx = seg->pex - seg->psx;
   seg->pdy = seg->pey - seg->psy;
   
-  seg->p_length = ComputeDist(seg->pdx, seg->pdy);
-  seg->p_angle = ComputeAngle(seg->pdx, seg->pdy);
+  seg->p_length = UtilComputeDist(seg->pdx, seg->pdy);
+  seg->p_angle  = UtilComputeAngle(seg->pdx, seg->pdy);
 
   if (seg->p_length <= 0)
     InternalError("Seg %p has zero p_length.", seg);
@@ -315,7 +295,7 @@ static void AddIntersection(intersection_t ** cut_list,
   cut = NewIntersection();
 
   cut->vertex = vert;
-  cut->along_dist = ComputeParallelDist(part, vert->x, vert->y);
+  cut->along_dist = UtilParallelDist(part, vert->x, vert->y);
   
   cut->l.open = VertexCheckOpen(vert, -part->pdx, -part->pdy,
       &cut->l.right, &cut->l.left);
@@ -423,8 +403,8 @@ static int EvalPartitionWorker(superblock_t *seg_list, seg_t *part,
     }
     else
     {
-      a = ComputePerpDist(part, check->psx, check->psy);
-      b = ComputePerpDist(part, check->pex, check->pey);
+      a = UtilPerpDist(part, check->psx, check->psy);
+      b = UtilPerpDist(part, check->pex, check->pey);
 
       fa = fabs(a);
       fb = fabs(b);
@@ -641,8 +621,8 @@ static seg_t *FindSegFromStaleNode(superblock_t *part_list,
     if (! part->linedef)
       continue;
     
-    fa = fabs(ComputePerpDist(part, stale_nd->x, stale_nd->y));
-    fb = fabs(ComputePerpDist(part, stale_nd->x + stale_nd->dx, 
+    fa = fabs(UtilPerpDist(part, stale_nd->x, stale_nd->y));
+    fb = fabs(UtilPerpDist(part, stale_nd->x + stale_nd->dx, 
          stale_nd->y + stale_nd->dy));
 
     if (fa < DIST_EPSILON && fb < DIST_EPSILON)
@@ -675,7 +655,7 @@ static seg_t *FindSegFromStaleNode(superblock_t *part_list,
 
 
 /* returns FALSE if cancelled */
-static boolean_g PickNodeWorker(superblock_t *part_list, 
+static int PickNodeWorker(superblock_t *part_list, 
     superblock_t *seg_list, seg_t ** best, int *best_cost,
     int *progress, int prog_step)
 {
@@ -702,12 +682,10 @@ static boolean_g PickNodeWorker(superblock_t *part_list,
 
     if ((*progress % prog_step) == 0)
     {
-      cur_build_pos++;
-      DisplaySetBar(1, cur_build_pos);
-      DisplaySetBar(2, cur_file_pos + cur_build_pos / 100);
+      cur_comms->build_pos++;
+      DisplaySetBar(1, cur_comms->build_pos);
+      DisplaySetBar(2, cur_comms->file_pos + cur_comms->build_pos / 100);
     }
-
-    DisplayTicker();
 
     /* ignore minisegs as partition candidates */
     if (! part->linedef)
@@ -725,6 +703,8 @@ static boolean_g PickNodeWorker(superblock_t *part_list,
     /* remember which Seg */
     (*best) = part;
   }
+
+  DisplayTicker();
 
   /* recursively handle sub-blocks */
 
@@ -770,11 +750,11 @@ seg_t *PickNode(superblock_t *seg_list, int depth,
 
     if (total / prog_step < build_step)
     {
-      cur_build_pos += build_step - total / prog_step;
+      cur_comms->build_pos += build_step - total / prog_step;
       build_step = total / prog_step;
 
-      DisplaySetBar(1, cur_build_pos);
-      DisplaySetBar(2, cur_file_pos + cur_build_pos / 100);
+      DisplaySetBar(1, cur_comms->build_pos);
+      DisplaySetBar(2, cur_comms->file_pos + cur_comms->build_pos / 100);
     }
   }
 
@@ -805,9 +785,9 @@ seg_t *PickNode(superblock_t *seg_list, int depth,
     if (best)
     {
       /* update progress */
-      cur_build_pos += build_step;
-      DisplaySetBar(1, cur_build_pos);
-      DisplaySetBar(2, cur_file_pos + cur_build_pos / 100);
+      cur_comms->build_pos += build_step;
+      DisplaySetBar(1, cur_comms->build_pos);
+      DisplaySetBar(2, cur_comms->file_pos + cur_comms->build_pos / 100);
 
 #     if DEBUG_PICKNODE
       PrintDebug("PickNode: Using Stale node (%1.1f,%1.1f) -> (%1.1f,%1.1f)\n",
@@ -867,8 +847,8 @@ void DivideOneSeg(seg_t *cur, seg_t *part,
   float_g x, y;
 
   /* get state of lines' relation to each other */
-  float_g a = ComputePerpDist(part, cur->psx, cur->psy);
-  float_g b = ComputePerpDist(part, cur->pex, cur->pey);
+  float_g a = UtilPerpDist(part, cur->psx, cur->psy);
+  float_g b = UtilPerpDist(part, cur->pex, cur->pey);
 
   if (cur->source_line == part->source_line)
     a = b = 0;
@@ -947,8 +927,6 @@ void SeparateSegs(superblock_t *seg_list, seg_t *part,
     intersection_t ** cut_list)
 {
   int num;
-
-  DisplayTicker();
 
   while (seg_list->segs)
   {

@@ -2,7 +2,7 @@
 // BLOCKMAP : Generate the blockmap
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2002 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2003 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -38,13 +38,12 @@
 #include "wad.h"
 
 
-
 #define DEBUG_BLOCKMAP  0
 
 
-int block_x, block_y;
-int block_w, block_h;
-int block_count;
+static int block_x, block_y;
+static int block_w, block_h;
+static int block_count;
 
 static uint16_g ** block_lines;
 
@@ -56,6 +55,18 @@ static int block_compression;
 #define DUMMY_DUP  0xFFFF
 
 
+//
+// GetBlockmapBounds
+//
+void GetBlockmapBounds(int *x, int *y, int *w, int *h)
+{
+  *x = block_x; *y = block_y;
+  *w = block_w; *h = block_h;
+}
+
+//
+// CheckLinedefInsideBox
+//
 int CheckLinedefInsideBox(int xmin, int ymin, int xmax, int ymax,
     int x1, int y1, int x2, int y2)
 {
@@ -169,7 +180,7 @@ static void BlockAdd(int blk_num, int line_index)
   // compute new checksum
   cur[BK_XOR] = ((cur[BK_XOR] << 4) | (cur[BK_XOR] >> 12)) ^ line_index;
 
-  cur[BK_FIRST + cur[BK_NUM]] = line_index;
+  cur[BK_FIRST + cur[BK_NUM]] = UINT16(line_index);
   cur[BK_NUM]++;
 }
 
@@ -257,6 +268,10 @@ static void CreateBlockmap(void)
 
     // ignore zero-length lines
     if (L->zero_len)
+      continue;
+
+    // ignore lines from dummy sectors
+    if (L->right && L->right->sector && L->right->sector->is_dummy)
       continue;
 
     BlockAddLine(L);
@@ -531,7 +546,7 @@ void InitBlockmap(void)
   /* find limits of linedefs, and store as map limits */
   FindBlockmapLimits(&map_bbox);
 
-  PrintMsg("Map goes from (%d,%d) to (%d,%d)\n",
+  PrintVerbose("Map goes from (%d,%d) to (%d,%d)\n",
       map_bbox.minx, map_bbox.miny, map_bbox.maxx, map_bbox.maxy);
 
   block_x = map_bbox.minx - (map_bbox.minx & 0x7);
@@ -570,7 +585,7 @@ void PutBlockmap(void)
 
   WriteBlockmap();
 
-  PrintMsg("Completed blockmap building (compression: %d%%)\n",
+  PrintVerbose("Completed blockmap building (compression: %d%%)\n",
       block_compression);
 
   FreeBlockmap();

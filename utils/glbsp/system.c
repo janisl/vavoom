@@ -2,7 +2,7 @@
 // SYSTEM : System specific code
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2002 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2003 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -33,11 +33,6 @@
 #define DEBUG_ENABLED   0
 
 #define DEBUGGING_FILE  "gb_debug.txt"
-
-
-int total_big_warn;
-int total_small_warn;
-
 
 #define DEBUG_ENDIAN  0
 
@@ -98,6 +93,27 @@ void PrintMsg(const char *str, ...)
 }
 
 //
+// PrintVerbose
+//
+void PrintVerbose(const char *str, ...)
+{
+  va_list args;
+
+  if (! cur_info->quiet)
+  {
+    va_start(args, str);
+    vsprintf(message_buf, str, args);
+    va_end(args);
+
+    (* cur_funcs->print_msg)("%s", message_buf);
+  }
+
+#if DEBUG_ENABLED
+  PrintDebug(">>> %s", message_buf);
+#endif
+}
+
+//
 // PrintWarn
 //
 void PrintWarn(const char *str, ...)
@@ -110,7 +126,7 @@ void PrintWarn(const char *str, ...)
 
   (* cur_funcs->print_msg)("Warning: %s", message_buf);
 
-  total_big_warn++;
+  cur_comms->total_big_warn++;
 
 #if DEBUG_ENABLED
   PrintDebug("Warning: %s", message_buf);
@@ -133,7 +149,7 @@ void PrintMiniWarn(const char *str, ...)
     (* cur_funcs->print_msg)("Warning: %s", message_buf);
   }
 
-  total_small_warn++;
+  cur_comms->total_small_warn++;
 
 #if DEBUG_ENABLED
   va_start(args, str);
@@ -142,6 +158,16 @@ void PrintMiniWarn(const char *str, ...)
 
   PrintDebug("MiniWarn: %s", message_buf);
 #endif
+}
+
+//
+// SetErrorMsg
+//
+void SetErrorMsg(const char *str)
+{
+  GlbspFree(cur_comms->message);
+
+  cur_comms->message = GlbspStrDup(str);
 }
 
 
