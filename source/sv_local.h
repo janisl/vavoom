@@ -88,7 +88,7 @@ boolean P_StartACS(int number, int map, int *args, mobj_t *activator,
 	line_t *line, int side);
 boolean P_TerminateACS(int number, int map);
 boolean P_SuspendACS(int number, int map);
-void T_InterpretACS(acs_t *script);
+void SV_InterpretACS(acs_t *script);
 void P_TagFinished(int tag);
 void P_PolyobjFinished(int po);
 void P_ACSInitNewGame(void);
@@ -161,17 +161,6 @@ int SV_PointContents(const sector_t *sector, const TVec &p);
 
 //==========================================================================
 //
-//	sv_mobj
-//
-//	Mobj utilites
-//
-//==========================================================================
-
-void P_MobjInit(void);
-void P_MobjThinker(mobj_t* mobj);
-
-//==========================================================================
-//
 //	sv_sight
 //
 //	Sight checking
@@ -207,7 +196,6 @@ int SV_TerrainType(int pic);
 void P_InitThinkers(void);
 void P_AddThinker(thinker_t *thinker);
 void P_RemoveThinker(thinker_t *thinker);
-void P_SpecialThinker(special_t* special);
 void P_Ticker(void);
 
 extern int 			TimerGame; // tic countdown for deathmatch
@@ -231,7 +219,7 @@ int PO_GetPolyobjMirror(int poly);
 
 //==========================================================================
 //
-//	Server
+//	sv_main
 //
 //==========================================================================
 
@@ -250,10 +238,14 @@ struct mobj_base_t
 	int			effects;		// dynamic lights, trails
 };
 
-void SV_StartSound(mobj_t * origin, int sound_id, int, int volume);
-void SV_StopSound(mobj_t *origin, int);
-void SV_StartSequence(mobj_t *mobj, char *name);
-void SV_StopSequence(mobj_t *origin);
+void SV_StartSound(const mobj_t *, int, int, int);
+void SV_StopSound(const mobj_t *, int);
+void SV_SectorStartSound(const sector_t *, int, int, int);
+void SV_SectorStopSound(const sector_t *, int);
+void SV_SectorStartSequence(const sector_t *, const char *);
+void SV_SectorStopSequence(const sector_t *);
+void SV_PolyobjStartSequence(const polyobj_t *, const char *);
+void SV_PolyobjStopSequence(const polyobj_t *);
 void SV_BroadcastPrintf(const char *s, ...);
 void SV_ClientPrintf(player_t *player, const char *s, ...);
 void SV_ClientCenterPrintf(player_t *player, const char *s, ...);
@@ -265,6 +257,10 @@ void SV_SetLineTransluc(line_t *line, int trans);
 void SV_ReadMove(void);
 
 extern player_t		*sv_player;
+
+extern int			cid_mobj;
+extern int			cid_special;
+extern int			cid_acs;
 
 //==========================================================================
 //
@@ -310,14 +306,22 @@ inline subsector_t* SV_PointInSubsector(float x, float y)
 	return PointInSubsector(level, x, y);
 }
 
+inline bool SV_CanCast(thinker_t *th, int cid)
+{
+	return !th->destroyed && svpr.CanCast(th, cid);
+}
+
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/09/20 16:30:28  dj_jl
+//	Started to use object-oriented stuff in progs
+//
 //	Revision 1.6  2001/08/29 17:56:11  dj_jl
 //	Added sound channels
-//
+//	
 //	Revision 1.5  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
 //	

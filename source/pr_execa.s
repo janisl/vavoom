@@ -243,6 +243,8 @@ LOPCODE_TABLE:
 	.long	LOPC_RETURNV
 	.long	LOPC_PUSHSTRING
 
+	.long	LOPC_COPY
+
 	Align4
 LINC_STATEMENT_POINTER:
 	addl	$4,%edi
@@ -1936,21 +1938,6 @@ LOPC_VISCALEVAR_DROP:
 
 //**************************************************************************
 
-	//	Push string
-	Align4
-LOPC_PUSHSTRING:
-	movl	(%edi),%eax
-	addl	C(pr_strings),%eax
-	movl	%eax,(%esi)
-	addl	$4,%edi
-	addl	$4,%esi
-	//	Go to the next statement
-	movl	(%edi),%eax
-	addl	$4,%edi
-	jmp		*LOPCODE_TABLE(,%eax,4)
-
-//**************************************************************************
-
     //	Return from function returning dword sized value
 	Align4
 LOPC_RETURNL:
@@ -1973,6 +1960,32 @@ LOPC_RETURNV:
 	movl	%esi,C(pr_stackPtr)
 	jmp		LEND_RUN_FUNCTION
 
+//**************************************************************************
+
+	//	Push string
+	Align4
+LOPC_PUSHSTRING:
+	movl	(%edi),%eax
+	addl	C(pr_strings),%eax
+	movl	%eax,(%esi)
+	addl	$4,%edi
+	addl	$4,%esi
+	//	Go to the next statement
+	movl	(%edi),%eax
+	addl	$4,%edi
+	jmp		*LOPCODE_TABLE(,%eax,4)
+
+	//	Copy top of the stack
+	Align4
+LOPC_COPY:
+	movl	-4(%esi),%eax
+	movl	%eax,(%esi)
+	addl	$4,%esi
+	//	Go to the next statement
+	movl	(%edi),%eax
+	addl	$4,%edi
+	jmp		*LOPCODE_TABLE(,%eax,4)
+
 LEND_RUN_FUNCTION:
 	popl	%ebx
 	popl	%esi
@@ -1985,9 +1998,12 @@ LEND_RUN_FUNCTION:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/09/20 16:30:28  dj_jl
+//	Started to use object-oriented stuff in progs
+//
 //	Revision 1.4  2001/08/21 17:39:22  dj_jl
 //	Real string pointers in progs
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

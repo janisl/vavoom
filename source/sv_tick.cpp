@@ -54,6 +54,7 @@
 
 static int	pf_UpdateSpecials;
 static int	pf_SetViewPos;
+static int	pf_RunThink;
 
 // CODE --------------------------------------------------------------------
 
@@ -67,6 +68,7 @@ void P_InitThinkers(void)
 {
 	pf_UpdateSpecials = svpr.FuncNumForName("P_UpdateSpecials");
     pf_SetViewPos = svpr.FuncNumForName("SetViewPos");
+	pf_RunThink = svpr.FuncNumForName("RunThink");
 	level.thinkers.prev = level.thinkers.next  = &level.thinkers;
 }
 
@@ -97,18 +99,7 @@ void P_AddThinker(thinker_t *thinker)
 
 void P_RemoveThinker(thinker_t *thinker)
 {
-	thinker->function = NULL;
-}
-
-//==========================================================================
-//
-//  P_ProgsThinker
-//
-//==========================================================================
-
-void P_SpecialThinker(special_t* special)
-{
-	svpr.Exec(special->funcnum, (int)special);
+	thinker->destroyed = true;
 }
 
 //==========================================================================
@@ -124,9 +115,9 @@ static void RunThinkers(void)
 	currentthinker = level.thinkers.next;
 	while (currentthinker != &level.thinkers)
 	{
-		if (currentthinker->function)
+		if (!currentthinker->destroyed)
 		{
-			currentthinker->function(currentthinker);
+			svpr.Exec(pf_RunThink, (int)currentthinker);
 		}
         else
 		{
@@ -168,9 +159,12 @@ void P_Ticker(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/20 16:30:28  dj_jl
+//	Started to use object-oriented stuff in progs
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

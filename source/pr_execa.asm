@@ -397,6 +397,7 @@ LOPCODE_TABLE:
  dd LOPC_RETURNL
  dd LOPC_RETURNV
  dd LOPC_PUSHSTRING
+ dd LOPC_COPY
  align 4
 LINC_STATEMENT_POINTER:
  add edi,4
@@ -1744,16 +1745,6 @@ LOPC_VISCALEVAR_DROP:
  add edi,4
  jmp  dword ptr[LOPCODE_TABLE+eax*4]
  align 4
-LOPC_PUSHSTRING:
- mov eax,dword ptr[edi]
- add eax,dword ptr[_pr_strings]
- mov dword ptr[esi],eax
- add edi,4
- add esi,4
- mov eax,dword ptr[edi]
- add edi,4
- jmp  dword ptr[LOPCODE_TABLE+eax*4]
- align 4
 LOPC_RETURNL:
  mov eax,dword ptr[-4+esi]
  mov dword ptr[ebp],eax
@@ -1771,6 +1762,24 @@ LOPC_RETURNV:
  lea esi,dword ptr[12+ebp]
  mov dword ptr[_pr_stackPtr],esi
  jmp LEND_RUN_FUNCTION
+ align 4
+LOPC_PUSHSTRING:
+ mov eax,dword ptr[edi]
+ add eax,dword ptr[_pr_strings]
+ mov dword ptr[esi],eax
+ add edi,4
+ add esi,4
+ mov eax,dword ptr[edi]
+ add edi,4
+ jmp  dword ptr[LOPCODE_TABLE+eax*4]
+ align 4
+LOPC_COPY:
+ mov eax,dword ptr[-4+esi]
+ mov dword ptr[esi],eax
+ add esi,4
+ mov eax,dword ptr[edi]
+ add edi,4
+ jmp  dword ptr[LOPCODE_TABLE+eax*4]
 LEND_RUN_FUNCTION:
  pop ebx
  pop esi

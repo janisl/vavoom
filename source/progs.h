@@ -32,6 +32,12 @@
 struct dprograms_t;
 struct dfunction_t;
 struct globaldef_t;
+struct dclassinfo_t;
+
+struct ClassBase
+{
+	int *vtable;
+};
 
 typedef void (*builtin_t)(void);
 
@@ -134,6 +140,16 @@ class TProgs
 	}
 	void DumpProfile(void);
 
+	int GetClassID(const char *);
+	ClassBase *Spawn(int, int);
+	ClassBase *Spawn(const char *name, int tag)
+	{
+		return Spawn(GetClassID(name), tag);
+	}
+	void Destroy(ClassBase *);
+	bool CanCast(ClassBase *, int);
+	bool CanCast(int, int);
+
  private:
 	dprograms_t	*Progs;
 	char		*Strings;
@@ -142,6 +158,7 @@ class TProgs
 	dfunction_t	*Functions;
 	globaldef_t	*Globaldefs;
 	builtin_t	*Builtins;
+	dclassinfo_t	*ClassInfo;
 	dword		*Profile1;
 	dword		*Profile2;
 
@@ -164,9 +181,12 @@ extern TProgs			svpr;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/09/20 16:30:28  dj_jl
+//	Started to use object-oriented stuff in progs
+//
 //	Revision 1.4  2001/08/21 17:39:22  dj_jl
 //	Real string pointers in progs
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

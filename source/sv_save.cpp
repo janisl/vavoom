@@ -478,8 +478,8 @@ static void ArchiveWorld(void)
 	for (i = 0; i < level.numpolyobjs; i++)
 	{
 		StreamOutLong(level.polyobjs[i].angle);
-		StreamOutFloat(level.polyobjs[i].startSpot.origin.x);
-		StreamOutFloat(level.polyobjs[i].startSpot.origin.y);
+		StreamOutFloat(level.polyobjs[i].startSpot.x);
+		StreamOutFloat(level.polyobjs[i].startSpot.y);
   	}
 }
 
@@ -616,10 +616,43 @@ static void UnarchiveWorld(void)
 	for(i = 0; i < level.numpolyobjs; i++)
 	{
 		PO_RotatePolyobj(level.polyobjs[i].tag, (angle_t)GET_LONG);
-		deltaX = GET_FLOAT - level.polyobjs[i].startSpot.origin.x;
-		deltaY = GET_FLOAT - level.polyobjs[i].startSpot.origin.y;
+		deltaX = GET_FLOAT - level.polyobjs[i].startSpot.x;
+		deltaY = GET_FLOAT - level.polyobjs[i].startSpot.y;
 		PO_MovePolyobj(level.polyobjs[i].tag, deltaX, deltaY);
 	}
+}
+
+//==========================================================================
+//
+//	ArchiveThinker
+//
+//==========================================================================
+
+static void ArchiveThinker(ClassBase *th)
+{
+	int size = th->vtable[1];
+	th->vtable = (int *)th->vtable[0];
+	StreamOutLong(size);
+	StreamOutBuffer(th, size);
+	Z_Free(th);
+}
+
+//==========================================================================
+//
+//	UnarchiveThinker
+//
+//==========================================================================
+
+static ClassBase *UnarchiveThinker(void)
+{
+	ClassBase *th;
+
+	int size = GET_LONG;
+	int cid = GET_LONG;
+	th = svpr.Spawn(cid, PU_LEVSPEC);
+	memcpy((byte*)th + 4, SavePtr.b, size - 4);
+	SavePtr.b += size - 4;
+	return th;
 }
 
 //==========================================================================
@@ -631,17 +664,15 @@ static void UnarchiveWorld(void)
 static void ArchiveThinkers(void)
 {
 	thinker_t	*thinker;
-	int			pf_archive_mobj;
-	int			pf_archive_special;
+	int			pf_archive_thinker;
 	int 		MobjCount;
 	int			SpecialsCount;
 	int			ACSThinkerCount;
-	mobj_t 		tempMobj;
-	special_t	spec;
-	acs_t		acs;
+	mobj_t 		*tempMobj;
+	special_t	*spec;
+	acs_t		*acs;
 
-	pf_archive_mobj = svpr.FuncNumForName("ArchiveMobj");
-	pf_archive_special = svpr.FuncNumForName("ArchiveSpecial");
+	pf_archive_thinker = svpr.FuncNumForName("ArchiveThinker");
 
 	// Sets the archive numbers in all mobj structs.  Also sets the MobjCount
 	// global.  Ignores player mobjs if SavingPlayers is false.
@@ -652,7 +683,11 @@ static void ArchiveThinkers(void)
 	for (thinker = level.thinkers.next; thinker != &level.thinkers;
 		thinker = thinker->next)
 	{
-		if (thinker->function == (think_t)P_MobjThinker)
+		if (thinker->destroyed)
+		{
+			continue;
+		}
+		if (svpr.CanCast(thinker, cid_mobj))
 		{
 			if (((mobj_t *)thinker)->player && !SavingPlayers)
 			{
@@ -661,17 +696,17 @@ static void ArchiveThinkers(void)
 			}
 			((mobj_t *)thinker)->archiveNum = MobjCount++;
 		}
-		else if (thinker->function == (think_t)P_SpecialThinker)
+		else if (svpr.CanCast(thinker, cid_special))
 		{
 			SpecialsCount++;
 		}
-		else if (thinker->function == (think_t)T_InterpretACS)
+		else if (svpr.CanCast(thinker, cid_acs))
 		{
 			ACSThinkerCount++;
 		}
-		else if (thinker->function)
+		else
 		{
-			cond << "Invalid thinker function " << thinker->function << endl;
+			cond << "Invalid thinker class " << thinker->vtable[0] << endl;
 		}
 	}
 
@@ -684,7 +719,7 @@ static void ArchiveThinkers(void)
 	for (thinker = level.thinkers.next; thinker != &level.thinkers;
 		thinker = thinker->next)
 	{
-		if (thinker->function != (think_t)P_MobjThinker)
+		if (!SV_CanCast(thinker, cid_mobj))
 		{
 			// Not a mobj thinker
 			continue;
@@ -694,13 +729,14 @@ static void ArchiveThinkers(void)
 			// Skipping player mobjs
 			continue;
 		}
-		memcpy(&tempMobj, thinker, sizeof(mobj_t));
-		if (tempMobj.player)
+		tempMobj = (mobj_t*)Z_Malloc(thinker->vtable[1]);
+		memcpy(tempMobj, thinker, thinker->vtable[1]);
+		if (tempMobj->player)
 		{
-			tempMobj.player = (player_t *)((tempMobj.player - players) + 1);
+			tempMobj->player = (player_t *)((tempMobj->player - players) + 1);
 		}
-		svpr.Exec(pf_archive_mobj, (int)&tempMobj);
-		StreamOutBuffer(&tempMobj, sizeof(mobj_t));
+		svpr.Exec(pf_archive_thinker, (int)tempMobj);
+		ArchiveThinker(tempMobj);
 	}
 
 	//
@@ -709,11 +745,12 @@ static void ArchiveThinkers(void)
 	StreamOutLong(SpecialsCount);
 	for (thinker = level.thinkers.next; thinker != &level.thinkers ;thinker=thinker->next)
 	{
-		if (thinker->function == (think_t)P_SpecialThinker)
+		if (SV_CanCast(thinker, cid_special))
 		{
-			memcpy(&spec, thinker, sizeof(special_t));
-			svpr.Exec(pf_archive_special, (int)&spec);
-			StreamOutBuffer(&spec, sizeof(special_t));
+			spec = (special_t*)Z_Malloc(thinker->vtable[1]);
+			memcpy(spec, thinker, thinker->vtable[1]);
+			svpr.Exec(pf_archive_thinker, (int)spec);
+			ArchiveThinker(spec);
 		}
 	}
 
@@ -724,13 +761,14 @@ static void ArchiveThinkers(void)
 	for (thinker = level.thinkers.next; thinker != &level.thinkers;
 		thinker = thinker->next)
 	{
-		if (thinker->function == (think_t)T_InterpretACS)
+		if (SV_CanCast(thinker, cid_acs))
 		{
-			memcpy(&acs, thinker, sizeof(acs_t));
-			acs.ip = (int *)((int)(acs.ip) - (int)ActionCodeBase);
-			acs.line = acs.line ? (line_t *)(acs.line - level.lines) : (line_t *)-1;
-			acs.activator = (mobj_t *)GetMobjNum(acs.activator);
-			StreamOutBuffer(&acs, sizeof(acs_t));
+			acs = (acs_t*)Z_Malloc(thinker->vtable[1]);
+			memcpy(acs, thinker, thinker->vtable[1]);
+			acs->ip = (int *)((int)(acs->ip) - (int)ActionCodeBase);
+			acs->line = acs->line ? (line_t *)(acs->line - level.lines) : (line_t *)-1;
+			acs->activator = (mobj_t *)GetMobjNum(acs->activator);
+			ArchiveThinker(acs);
 		}
 	}
 }
@@ -744,8 +782,7 @@ static void ArchiveThinkers(void)
 static void UnarchiveThinkers(void)
 {
 	int 		i;
-	int			pf_unarchive_mobj;
-	int			pf_unarchive_special;
+	int			pf_unarchive_thinker;
 	int 		MobjCount;
 	int			SpecialsCount;
 	int			ACSThinkerCount;
@@ -753,8 +790,7 @@ static void UnarchiveThinkers(void)
 	special_t	*spec;
 	acs_t		*acs;
 
-	pf_unarchive_mobj = svpr.FuncNumForName("UnarchiveMobj");
-	pf_unarchive_special = svpr.FuncNumForName("UnarchiveSpecial");
+	pf_unarchive_thinker = svpr.FuncNumForName("UnarchiveThinker");
 
 	AssertSegment(ASEG_THINKERS);
 
@@ -765,14 +801,11 @@ static void UnarchiveThinkers(void)
 	MobjList = (mobj_t**)Z_Malloc(MobjCount * sizeof(mobj_t*), PU_STATIC, NULL);
 	for (i = 0; i < MobjCount; i++)
 	{
-		MobjList[i] = (mobj_t*)Z_Malloc(sizeof(mobj_t), PU_LEVSPEC, NULL);
+		MobjList[i] = (mobj_t*)UnarchiveThinker();
 	}
-	for(i = 0; i < MobjCount; i++)
+	for (i = 0; i < MobjCount; i++)
 	{
 		mobj = MobjList[i];
-		memcpy(mobj, SavePtr.b, sizeof(mobj_t));
-		SavePtr.b += sizeof(mobj_t);
-		mobj->function = (think_t)P_MobjThinker;
 		if(mobj->player)
 		{
 			mobj->player = &players[(int)mobj->player-1];
@@ -780,7 +813,7 @@ static void UnarchiveThinkers(void)
 		}
 		mobj->subsector = NULL;	//	Must mark as not linked
 		SV_LinkToWorld(mobj);
-		svpr.Exec(pf_unarchive_mobj, (int)mobj);
+		svpr.Exec(pf_unarchive_thinker, (int)mobj);
 		P_AddThinker(mobj);
 		sv_mobjs[mobj->netID] = mobj;
 	}
@@ -791,11 +824,8 @@ static void UnarchiveThinkers(void)
 	SpecialsCount = GET_LONG;
 	for (i=0; i<SpecialsCount; i++)
 	{
-	   	spec = (special_t*)Z_Malloc(sizeof(special_t), PU_LEVSPEC, NULL);
-		memcpy(spec, SavePtr.b, sizeof(special_t));
-		SavePtr.b += sizeof(special_t);
-		spec->function = (think_t)P_SpecialThinker;
-		svpr.Exec(pf_unarchive_special, (int)spec);
+	   	spec = (special_t*)UnarchiveThinker();
+		svpr.Exec(pf_unarchive_thinker, (int)spec);
 		P_AddThinker(spec);
 	}
 
@@ -805,10 +835,7 @@ static void UnarchiveThinkers(void)
 	ACSThinkerCount = GET_LONG;
 	for (i=0; i<ACSThinkerCount; i++)
 	{
-		acs = (acs_t*)Z_Malloc(sizeof(acs_t), PU_LEVEL, NULL);
-		memcpy(acs, SavePtr.b, sizeof(acs_t));
-		SavePtr.b += sizeof(acs_t);
-		acs->function = (think_t)T_InterpretACS;
+		acs = (acs_t*)UnarchiveThinker();
 		acs->ip = (int *)(ActionCodeBase + (int)acs->ip);
 		if ((int)acs->line == -1)
 		{
@@ -1383,9 +1410,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/09/20 16:30:28  dj_jl
+//	Started to use object-oriented stuff in progs
+//
 //	Revision 1.7  2001/08/30 17:46:21  dj_jl
 //	Removed game dependency
-//
+//	
 //	Revision 1.6  2001/08/23 17:48:43  dj_jl
 //	NULL pointer is valid thinker, so no warnings
 //	

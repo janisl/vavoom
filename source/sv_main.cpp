@@ -98,6 +98,10 @@ char			sv_next_map[12];
 
 int 		TimerGame;
 
+int				cid_mobj;
+int				cid_special;
+int				cid_acs;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static int 		LeavePosition;
@@ -143,6 +147,10 @@ void SV_Init(void)
     svpr.SetGlobal("validcount", (int)&validcount);
 	svpr.SetGlobal("level", (int)&level);
 
+	cid_mobj = svpr.GetClassID("mobj_t");
+	cid_special = svpr.GetClassID("special_t");
+	cid_acs = svpr.GetClassID("ACS");
+
 	long_stats = svpr.GetGlobal("long_stats");
 	short_stats = svpr.GetGlobal("short_stats");
 	byte_stats = svpr.GetGlobal("byte_stats");
@@ -161,7 +169,6 @@ void P_Init(void)
 {
 	P_InitSwitchList();
 	P_InitTerrainTypes();
-	P_MobjInit();
 }
 
 //==========================================================================
@@ -199,30 +206,6 @@ void SV_ClearDatagram(void)
 	sv_datagram.Clear();
 }
 
-static int			pf_mobj_thinker;
-
-//==========================================================================
-//
-//	P_MobjInit
-//
-//==========================================================================
-
-void P_MobjInit(void)
-{
-	pf_mobj_thinker = svpr.FuncNumForName("P_MobjThinker");
-}
-
-//==========================================================================
-//
-//  P_MobjThinker
-//
-//==========================================================================
-
-void P_MobjThinker(mobj_t* mobj)
-{
-	svpr.Exec(pf_mobj_thinker, (int)mobj);
-}
-
 //==========================================================================
 //
 //	SV_SpawnMobj
@@ -234,8 +217,7 @@ mobj_t *SV_SpawnMobj(void)
 	int			i;
     mobj_t*		mobj;
 
-    mobj = (mobj_t*)Z_Calloc(sizeof(*mobj), PU_LEVSPEC, NULL);
-    mobj->function = (think_t)P_MobjThinker;
+    mobj = (mobj_t*)svpr.Spawn(cid_mobj, PU_LEVSPEC);
     P_AddThinker(mobj);
 
 	//	Client treats first objects as player objects and will use
@@ -436,44 +418,19 @@ void SV_CreateBaseline(void)
 //
 //==========================================================================
 
-int GetOriginNum(degenmobj_t *origin)
+int GetOriginNum(const mobj_t *mobj)
 {
-	int		i;
-
-	if (!origin)
+	if (!mobj)
 	{
 		return 0;
 	}
 
-	for (i = 0; i < MAX_MOBJS; i++)
+	if (mobj->player)
 	{
-		if (origin == sv_mobjs[i])
-		{
-			if (sv_mobjs[i]->player)
-			{
-				return (sv_mobjs[i]->player - players) + 1;
-			}
-			return i;
-		}
+		return (mobj->player - players) + 1;
 	}
 
-	for (i = 0; i < level.numsectors; i++)
-	{
-		if (origin == &level.sectors[i].soundorg)
-		{
-			return i + MAX_MOBJS;
-		}
-	}
-
-	for (i = 0; i < level.numpolyobjs; i++)
-	{
-		if (origin == &level.polyobjs[i].startSpot)
-		{
-			return i + MAX_MOBJS + level.numsectors;
-		}
-	}
-
-	return MAX_MOBJS;
+	return mobj->netID;
 }
 
 //==========================================================================
@@ -482,23 +439,20 @@ int GetOriginNum(degenmobj_t *origin)
 //
 //==========================================================================
 
-void SV_StartSound(mobj_t * origin, int sound_id, int channel, int volume)
+void SV_StartSound(const TVec &origin, int origin_id, int sound_id,
+	int channel, int volume)
 {
-	int		i;
-
 	if (sv_datagram.CurSize + 12 > MAX_DATAGRAM)
 		return;
 
-	i = GetOriginNum(origin);
-	i |= channel << 13;
 	sv_datagram << (byte)svc_start_sound
 				<< (word)sound_id
-				<< (word)i;
-	if (i)
+				<< (word)(origin_id | (channel << 13));
+	if (origin_id)
 	{
-		sv_datagram << (word)origin->origin.x
-					<< (word)origin->origin.y
-					<< (word)origin->origin.z;
+		sv_datagram << (word)origin.x
+					<< (word)origin.y
+					<< (word)origin.z;
 	}
 	sv_datagram << (byte)volume;
 }
@@ -509,17 +463,76 @@ void SV_StartSound(mobj_t * origin, int sound_id, int channel, int volume)
 //
 //==========================================================================
 
-void SV_StopSound(mobj_t *origin, int channel)
+void SV_StopSound(int origin_id, int channel)
 {
-	int		i;
-
 	if (sv_datagram.CurSize + 3 > MAX_DATAGRAM)
 		return;
 
-	i = GetOriginNum(origin);
-	i |= channel << 13;
 	sv_datagram << (byte)svc_stop_sound
-				<< (word)i;
+				<< (word)(origin_id | (channel << 13));
+}
+
+//==========================================================================
+//
+//	SV_StartSound
+//
+//==========================================================================
+
+void SV_StartSound(const mobj_t * origin, int sound_id, int channel,
+	int volume)
+{
+	if (origin)
+	{
+		SV_StartSound(origin->origin, GetOriginNum(origin), sound_id,
+			channel, volume);
+	}
+	else
+	{
+		SV_StartSound(TVec(0, 0, 0), 0, sound_id, channel, volume);
+	}
+}
+
+//==========================================================================
+//
+//	SV_StopSound
+//
+//==========================================================================
+
+void SV_StopSound(const mobj_t *origin, int channel)
+{
+	SV_StopSound(GetOriginNum(origin), channel);
+}
+
+//==========================================================================
+//
+//	SV_SectorStartSound
+//
+//==========================================================================
+
+void SV_SectorStartSound(const sector_t *sector, int sound_id, int channel,
+	int volume)
+{
+	if (sector)
+	{
+		SV_StartSound(sector->soundorg,
+			(sector - level.sectors) + MAX_MOBJS,
+			sound_id, channel, volume);
+	}
+	else
+	{
+		SV_StartSound(TVec(0, 0, 0), 0, sound_id, channel, volume);
+	}
+}
+
+//==========================================================================
+//
+//	SV_SectorStopSound
+//
+//==========================================================================
+
+void SV_SectorStopSound(const sector_t *sector, int channel)
+{
+	SV_StopSound((sector - level.sectors) + MAX_MOBJS, channel);
 }
 
 //==========================================================================
@@ -528,16 +541,16 @@ void SV_StopSound(mobj_t *origin, int channel)
 //
 //==========================================================================
 
-void SV_StartSequence(mobj_t *origin, char *name)
+void SV_StartSequence(const TVec &origin, int origin_id, const char *name)
 {
 	if (sv_datagram.CurSize + 32 > MAX_DATAGRAM)
 		return;
 
 	sv_datagram << (byte)svc_start_seq
-				<< (word)GetOriginNum(origin)
-				<< (word)origin->origin.x
-				<< (word)origin->origin.y
-				<< (word)origin->origin.z
+				<< (word)origin_id
+				<< (word)origin.x
+				<< (word)origin.y
+				<< (word)origin.z
 				<< name;
 }
 
@@ -547,13 +560,66 @@ void SV_StartSequence(mobj_t *origin, char *name)
 //
 //==========================================================================
 
-void SV_StopSequence(mobj_t *origin)
+void SV_StopSequence(int origin_id)
 {
 	if (sv_datagram.CurSize + 3 > MAX_DATAGRAM)
 		return;
 
 	sv_datagram << (byte)svc_stop_seq
-				<< (word)GetOriginNum(origin);
+				<< (word)origin_id;
+}
+
+//==========================================================================
+//
+//	SV_SectorStartSequence
+//
+//==========================================================================
+
+void SV_SectorStartSequence(const sector_t *sector, const char *name)
+{
+	if (sector)
+	{
+		SV_StartSequence(sector->soundorg,
+			(sector - level.sectors) + MAX_MOBJS, name);
+	}
+	else
+	{
+		SV_StartSequence(TVec(0, 0, 0), 0, name);
+	}
+}
+
+//==========================================================================
+//
+//	SV_SectorStopSequence
+//
+//==========================================================================
+
+void SV_SectorStopSequence(const sector_t *sector)
+{
+	SV_StopSequence((sector - level.sectors) + MAX_MOBJS);
+}
+
+//==========================================================================
+//
+//	SV_PolyobjStartSequence
+//
+//==========================================================================
+
+void SV_PolyobjStartSequence(const polyobj_t *poly, const char *name)
+{
+	SV_StartSequence(poly->startSpot,
+		(poly - level.polyobjs) + MAX_MOBJS + level.numsectors, name);
+}
+
+//==========================================================================
+//
+//	SV_PolyobjStopSequence
+//
+//==========================================================================
+
+void SV_PolyobjStopSequence(const polyobj_t *poly)
+{
+	SV_StopSequence((poly - level.polyobjs) + MAX_MOBJS + level.numsectors);
 }
 
 //==========================================================================
@@ -861,8 +927,8 @@ void SV_UpdateLevel(TMessage &msg)
 		if (!SV_CheckFatPVS(po->subsector))
 			continue;
 
-		if (po->base_x != po->startSpot.origin.x ||
-			po->base_y != po->startSpot.origin.y ||
+		if (po->base_x != po->startSpot.x ||
+			po->base_y != po->startSpot.y ||
 			po->base_angle != po->angle)
 			po->changed = true;
 
@@ -877,8 +943,8 @@ void SV_UpdateLevel(TMessage &msg)
 
 		msg << (byte)svc_poly_update
 			<< (byte)i
-			<< (word)po->startSpot.origin.x
-			<< (word)po->startSpot.origin.y
+			<< (word)po->startSpot.x
+			<< (word)po->startSpot.y
 			<< (byte)(po->angle >> 24);
   	}
 
@@ -2428,9 +2494,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/09/20 16:30:28  dj_jl
+//	Started to use object-oriented stuff in progs
+//
 //	Revision 1.9  2001/08/30 17:46:21  dj_jl
 //	Removed game dependency
-//
+//	
 //	Revision 1.8  2001/08/21 17:39:22  dj_jl
 //	Real string pointers in progs
 //	

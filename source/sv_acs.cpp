@@ -45,12 +45,12 @@
 
 // TYPES -------------------------------------------------------------------
 
-typedef struct
+struct acsHeader_t
 {
 	int marker;
 	int infoOffset;
 	int code;
-} acsHeader_t;
+};
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -385,8 +385,7 @@ static void StartOpenACS(int number, int infoIndex, int *address)
 {
 	acs_t *script;
 
-	script = (acs_t *)Z_Malloc(sizeof(acs_t), PU_LEVSPEC, 0);
-	memset(script, 0, sizeof(acs_t));
+	script = (acs_t *)svpr.Spawn(cid_acs, PU_LEVSPEC);
 	script->number = number;
 
 	// World objects are allotted 1 second for initialization
@@ -394,7 +393,6 @@ static void StartOpenACS(int number, int infoIndex, int *address)
 
 	script->infoIndex = infoIndex;
 	script->ip = address;
-	script->function = (think_t)T_InterpretACS;
 	P_AddThinker(script);
 }
 
@@ -463,15 +461,13 @@ if (map_num) sprintf(map, "MAP%02d", map_num);
 	{ // Script is already executing
 		return false;
 	}
-	script = (acs_t *)Z_Malloc(sizeof(acs_t), PU_LEVSPEC, 0);
-	memset(script, 0, sizeof(acs_t));
+	script = (acs_t *)svpr.Spawn(cid_acs, PU_LEVSPEC);
 	script->number = number;
 	script->infoIndex = infoIndex;
 	script->activator = activator;
 	script->line = line;
 	script->side = side;
 	script->ip = ACSInfo[infoIndex].address;
-	script->function = (think_t)T_InterpretACS;
 	for(i = 0; i < ACSInfo[infoIndex].argCount; i++)
 	{
 		script->vars[i] = args[i];
@@ -586,11 +582,11 @@ void P_ACSInitNewGame(void)
 
 //==========================================================================
 //
-// T_InterpretACS
+// SV_InterpretACS
 //
 //==========================================================================
 
-void T_InterpretACS(acs_t *script)
+void SV_InterpretACS(acs_t *script)
 {
 	int cmd;
 	int action;
@@ -1324,7 +1320,7 @@ static void ThingCount(int type, int tid)
 		for(think = level.thinkers.next; think != &level.thinkers;
 			think = think->next)
 		{
-			if (think->function != (think_t)P_MobjThinker)
+			if (!SV_CanCast(think, cid_mobj))
 			{
 				// Not a mobj thinker
 				continue;
@@ -1711,14 +1707,14 @@ static int CmdAmbientSound(void)
 
 static int CmdSoundSequence(void)
 {
-	mobj_t *mobj;
+	sector_t *sec;
 
-	mobj = NULL;
-	if(ACScript->line)
+	sec = NULL;
+	if (ACScript->line)
 	{
-		mobj = (mobj_t *)&ACScript->line->frontsector->soundorg;
+		sec = ACScript->line->frontsector;
 	}
-	SV_StartSequence(mobj, ACStrings[Pop()]);
+	SV_SectorStartSequence(sec, ACStrings[Pop()]);
 	return SCRIPT_CONTINUE;
 }
 
@@ -1790,9 +1786,12 @@ static int CmdSetLineSpecial(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/09/20 16:30:28  dj_jl
+//	Started to use object-oriented stuff in progs
+//
 //	Revision 1.4  2001/08/29 17:55:42  dj_jl
 //	Added sound channels
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

@@ -31,7 +31,7 @@
 // MACROS ------------------------------------------------------------------
 
 #define PROG_MAGIC		"VPRG"
-#define PROG_VERSION	9
+#define PROG_VERSION	10
 
 // TYPES -------------------------------------------------------------------
 
@@ -169,6 +169,8 @@ enum
 	OPC_RETURNV,
 	OPC_PUSHSTRING,
 
+	OPC_COPY,
+
 	NUM_OPCODES
 };
 
@@ -195,8 +197,8 @@ struct dprograms_t
 	int		ofs_globalinfo;
     int		num_builtins;
 
-	int		pad2;	//	Reserved
-	int		pad3;
+	int		ofs_classinfo;
+	int		num_classinfo;
 };
 
 struct dfunction_t
@@ -215,6 +217,14 @@ struct globaldef_t
 	int				s_name;
 };
 
+struct dclassinfo_t
+{
+	int		s_name;
+	int		vtable;
+	int		size;
+	int		parent;
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
@@ -224,9 +234,12 @@ struct globaldef_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/09/20 16:30:28  dj_jl
+//	Started to use object-oriented stuff in progs
+//
 //	Revision 1.4  2001/08/21 17:39:22  dj_jl
 //	Real string pointers in progs
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

@@ -52,18 +52,11 @@
 //
 //	Doubly linked list of actors.
 //
-struct thinker_t;
-
-//
-//	think_t is a function pointer to a routine to handle an actor
-//
-typedef void (*think_t)(thinker_t*);
-
-struct thinker_t
+struct thinker_t : ClassBase
 {
 	thinker_t	*prev;
-    thinker_t	*next;
-	think_t		function;
+	thinker_t	*next;
+	boolean		destroyed;
 };
 
 //==========================================================================
@@ -87,8 +80,6 @@ typedef TVec vertex_t;
 //
 struct special_t : public thinker_t
 {
-	int			funcnum;
-	int			user_fields[128];
 };
 
 //
@@ -219,15 +210,6 @@ struct seg_t : public TPlane
 	drawseg_t	*drawsegs;
 };
 
-//
-//	Each sector has a degenmobj_t in its center for sound origin purposes.
-//
-struct degenmobj_t : public thinker_t
-{
-    // Info for drawing: position.
-	TVec		origin;
-};
-
 #define SPF_NOBLOCKING		1	//	Not blocking
 #define SPF_NOBLOCKSIGHT	2	//	Do not block sight
 #define SPF_NOBLOCKSHOOT	4	//	Do not block shooting
@@ -303,8 +285,8 @@ struct sector_t
     // mapblock bounding box for height changes
     int         blockbox[4];
 
-    // origin for any sounds played by the sector
-    degenmobj_t soundorg;
+	// origin for any sounds played by the sector
+	TVec		soundorg;
 
     // if == validcount, already checked
     int         validcount;
@@ -327,8 +309,8 @@ struct polyobj_t
 {
 	int 		numsegs;
 	seg_t 		**segs;
-	degenmobj_t startSpot;
-	vertex_t 	*originalPts; 	// used as the base for the rotations
+	TVec		startSpot;
+	vertex_t	*originalPts; 	// used as the base for the rotations
 	vertex_t 	*prevPts; 		// use to restore the old point values
 	angle_t 	angle;
 	int 		tag;			// reference tag assigned in HereticEd
@@ -470,8 +452,11 @@ struct mthing_t
 struct player_t;
 
 // Map Object definition.
-struct mobj_t : public degenmobj_t
+struct mobj_t : public thinker_t
 {
+    // Info for drawing: position.
+	TVec			origin;
+
     // Momentums, used to update position.
 	TVec			velocity;
 
@@ -535,9 +520,6 @@ struct mobj_t : public degenmobj_t
 	int				args[5];		// special arguments
 
 	int				netID;
-
-	//	128 integers for user defined fields in PROGS
-	int				user_fields[128];
 };
 
 #define MAX_MOBJS	2048	//	Temporary limit required by client/server
@@ -664,9 +646,12 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/09/20 16:30:28  dj_jl
+//	Started to use object-oriented stuff in progs
+//
 //	Revision 1.4  2001/08/02 17:46:38  dj_jl
 //	Added sending info about changed textures to new clients
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

@@ -1278,7 +1278,7 @@ static void PF_NextMobj(void)
 	}
     for (th = th->next; th != &level.thinkers; th = th->next)
     {
-        if (th->function == (think_t)P_MobjThinker)
+        if (SV_CanCast(th, cid_mobj))
         {
             Push((int)th);
             return;
@@ -1315,17 +1315,15 @@ static void PF_P_CheckSight(void)
 //
 //==========================================================================
 
-static void PF_NewSpecialThinker(void)
+PF(NewSpecialThinker)
 {
-	int			func;
+	int			cid;
 	special_t	*spec;
-	
-    func = Pop();
-    spec = (special_t*)Z_Malloc(sizeof(*spec), PU_LEVSPEC, 0);
-	memset(spec, 0, sizeof(*spec));
-    spec->function = (think_t)P_SpecialThinker;
-    spec->funcnum = func;
-    P_AddThinker(spec);
+
+	cid = Pop();
+	spec = (special_t*)svpr.Spawn(cid, PU_LEVSPEC);
+con << "Special " << spec->vtable[1] << " bytes\n";
+	P_AddThinker(spec);
 	Push((int)spec);
 }
 
@@ -1555,6 +1553,20 @@ static void PF_PolyobjFinished(void)
 	P_PolyobjFinished(tag);
 }
 
+//==========================================================================
+//
+//	PF_InterpretACS
+//
+//==========================================================================
+
+PF(InterpretACS)
+{
+	acs_t	*script;
+
+	script = (acs_t *)Pop();
+	SV_InterpretACS(script);
+}
+
 //**************************************************************************
 //
 //  Sound functions
@@ -1617,6 +1629,40 @@ PF(StopSound)
 
 //==========================================================================
 //
+//	PF_SectorStartSound
+//
+//==========================================================================
+
+PF(SectorStartSound)
+{
+	sector_t*	sec;
+    int			sound;
+	int			channel;
+
+	channel = Pop();
+    sound = Pop();
+    sec = (sector_t*)Pop();
+	SV_SectorStartSound(sec, sound, channel, 127);
+}
+
+//==========================================================================
+//
+//	PF_SectorStopSound
+//
+//==========================================================================
+
+PF(SectorStopSound)
+{
+	sector_t*	sec;
+	int			channel;
+
+	channel = Pop();
+    sec = (sector_t*)Pop();
+    SV_SectorStopSound(sec, channel);
+}
+
+//==========================================================================
+//
 //	PF_GetSoundPlayingInfo
 //
 //==========================================================================
@@ -1651,32 +1697,62 @@ static void PF_GetSoundID(void)
 
 //==========================================================================
 //
-//  PF_StartSequence
+//  PF_SectorStartSequence
 //
 //==========================================================================
 
-static void PF_StartSequence(void)
+PF(SectorStartSequence)
 {
-	mobj_t*		mobj;
+	sector_t*	sec;
 	int 		name;
 
     name = Pop();
-    mobj = (mobj_t*)Pop();
-	SV_StartSequence(mobj, PROG_TO_STR(name));
+    sec = (sector_t*)Pop();
+	SV_SectorStartSequence(sec, PROG_TO_STR(name));
 }
 
 //==========================================================================
 //
-//  PF_StopSequence
+//  PF_SectorStopSequence
 //
 //==========================================================================
 
-static void PF_StopSequence(void)
+PF(SectorStopSequence)
 {
-	mobj_t*		mobj;
+	sector_t*	sec;
 
-    mobj = (mobj_t*)Pop();
-	SV_StopSequence(mobj);
+    sec = (sector_t*)Pop();
+	SV_SectorStopSequence(sec);
+}
+
+//==========================================================================
+//
+//  PF_PolyobjStartSequence
+//
+//==========================================================================
+
+PF(PolyobjStartSequence)
+{
+	polyobj_t*	poly;
+	int 		name;
+
+    name = Pop();
+    poly = (polyobj_t*)Pop();
+	SV_PolyobjStartSequence(poly, PROG_TO_STR(name));
+}
+
+//==========================================================================
+//
+//  PF_PolyobjStopSequence
+//
+//==========================================================================
+
+PF(PolyobjStopSequence)
+{
+	polyobj_t*	poly;
+
+    poly = (polyobj_t*)Pop();
+	SV_PolyobjStopSequence(poly);
 }
 
 //**************************************************************************
@@ -1983,6 +2059,33 @@ static void	PF_SendCeilingSlope(void)
 			<< sector->ceiling.dist;
 }
 
+//==========================================================================
+//
+//	PF_Spawn
+//
+//==========================================================================
+
+PF(Spawn)
+{
+	int cid;
+
+	cid = Pop();
+	Push((int)svpr.Spawn(cid, PU_LEVSPEC));
+}
+
+//==========================================================================
+//
+//	PF_Destroy
+//
+//==========================================================================
+
+PF(Destroy)
+{
+	ClassBase *ptr;
+
+	ptr = (ClassBase *)Pop();
+	svpr.Destroy(ptr);
+}
 #endif
 #ifdef CLIENT
 
@@ -2856,15 +2959,20 @@ builtin_info_t BuiltinInfo[] =
     {"TerminateACS", PF_TerminateACS},
     {"TagFinished", PF_TagFinished},
     {"PolyobjFinished", PF_PolyobjFinished},
+	{"ACS::Think", PF_InterpretACS},
 
 	//	Sound functions
-    {"StartSound", PF_StartSound},
-    {"StartSoundAtVolume", PF_StartSoundAtVolume},
-    {"StopSound", PF_StopSound},
-    {"GetSoundPlayingInfo", PF_GetSoundPlayingInfo},
-    {"GetSoundID", PF_GetSoundID},
-    {"StartSequence", PF_StartSequence},
-    {"StopSequence", PF_StopSequence},
+    _(StartSound),
+    _(StartSoundAtVolume),
+    _(StopSound),
+    _(SectorStartSound),
+    _(SectorStopSound),
+    _(GetSoundPlayingInfo),
+    _(GetSoundID),
+    _(SectorStartSequence),
+    _(SectorStopSequence),
+    _(PolyobjStartSequence),
+    _(PolyobjStopSequence),
 
     //  Savegame archieve / unarchieve utilite functions
     {"SectorToNum", PF_SectorToNum},
@@ -2886,6 +2994,8 @@ builtin_info_t BuiltinInfo[] =
 	{"SetLineTransluc", PF_SetLineTransluc},
 	{"SendFloorSlope", PF_SendFloorSlope},
 	{"SendCeilingSlope", PF_SendCeilingSlope},
+	_(Spawn),
+	_(Destroy),
 #endif
     {NULL, NULL}
 };
@@ -2893,9 +3003,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/09/20 16:30:28  dj_jl
+//	Started to use object-oriented stuff in progs
+//
 //	Revision 1.8  2001/08/30 17:45:35  dj_jl
 //	Sound channels, moving messsage box to progs
-//
+//	
 //	Revision 1.7  2001/08/23 17:47:22  dj_jl
 //	Started work on pics with custom palettes
 //	

@@ -234,6 +234,7 @@ void TProgs::Load(const char *AName)
 	Globals = (int*)((byte*)Progs + Progs->ofs_globals);
 	Functions = (dfunction_t *)((byte *)Progs + Progs->ofs_functions);
 	Globaldefs = (globaldef_t *)((byte *)Progs + Progs->ofs_globaldefs);
+	ClassInfo = (dclassinfo_t *)((byte *)Progs + Progs->ofs_classinfo);
 
 	// byte swap the lumps
 	for (i = 0; i < Progs->num_statements; i++)
@@ -257,6 +258,13 @@ void TProgs::Load(const char *AName)
 		Globaldefs[i].type = LittleShort(Globaldefs[i].type);
 		Globaldefs[i].ofs = LittleShort(Globaldefs[i].ofs);
 		Globaldefs[i].s_name = LittleLong(Globaldefs[i].s_name);
+	}
+	for (i = 0; i < Progs->num_classinfo; i++)
+	{
+		ClassInfo[i].s_name = LittleLong(ClassInfo[i].s_name);
+		ClassInfo[i].vtable = LittleLong(ClassInfo[i].vtable);
+		ClassInfo[i].size = LittleLong(ClassInfo[i].size);
+		ClassInfo[i].parent = LittleLong(ClassInfo[i].parent);
 	}
 
 	//	Setup string pointers in globals
@@ -1219,6 +1227,11 @@ static void RunFunction(int fnum)
 
 //=====================================
 
+	 case OPC_COPY:
+		*sp = sp[-1];
+		sp++;
+		break;
+
 	 default:
 #ifdef CHECK_VALID_OPCODE
 		Sys_Error("Invalid opcode %d", current_statement[-1]);
@@ -1590,12 +1603,87 @@ void TProgs::DumpProfile(void)
 	}
 }
 
+//==========================================================================
+//
+//	TProgs::GetClassID
+//
+//==========================================================================
+
+int TProgs::GetClassID(const char *name)
+{
+	for (int i = 0; i < Progs->num_classinfo; i++)
+	{
+		if (!strcmp(name, Strings + ClassInfo[i].s_name))
+		{
+			return i;
+		}
+	}
+	Sys_Error("Class %s not found", name);
+}
+
+//==========================================================================
+//
+//	TProgs::Spawn
+//
+//==========================================================================
+
+ClassBase *TProgs::Spawn(int cid, int tag)
+{
+	ClassBase *Obj = (ClassBase*)Z_Calloc(ClassInfo[cid].size, tag, 0);
+	Obj->vtable = Globals + ClassInfo[cid].vtable;
+	return Obj;
+}
+
+//==========================================================================
+//
+//	TProgs::Destroy
+//
+//==========================================================================
+
+void TProgs::Destroy(ClassBase *buf)
+{
+	Z_Free(buf);
+}
+
+//==========================================================================
+//
+//	TProgs::CanCast
+//
+//==========================================================================
+
+bool TProgs::CanCast(ClassBase *object, int cid)
+{
+	return CanCast(object->vtable[0], cid);
+}
+
+//==========================================================================
+//
+//	TProgs::CanCast
+//
+//==========================================================================
+
+bool TProgs::CanCast(int fromid, int cid)
+{
+	while (fromid)
+	{
+		if (fromid == cid)
+		{
+			return true;
+		}
+		fromid = ClassInfo[fromid].parent;
+	}
+	return false;
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/09/20 16:30:28  dj_jl
+//	Started to use object-oriented stuff in progs
+//
 //	Revision 1.5  2001/08/31 17:28:00  dj_jl
 //	Removed RANGECHECK
-//
+//	
 //	Revision 1.4  2001/08/21 17:40:24  dj_jl
 //	Real string pointers in progs
 //	In devgame mode look for progs in <gamedir>/progs
