@@ -1165,7 +1165,7 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 
 	if (i == num_mobj_types)
 	{
-		dprint("P_SpawnMapThing: Unknown type %i at (%f, %f)\n",
+		dprint("P_SpawnMapThing: Unknown type %i at (%f, %f)",
 			mthing->type, mthing->x, mthing->y);
 		return;
 	}
@@ -1405,6 +1405,9 @@ void Actor::NightmareRespawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.47  2002/07/23 16:31:44  dj_jl
+//  Beautification.
+//
 //  Revision 1.46  2002/07/23 13:07:30  dj_jl
 //  Final touches for switching to floating-point time, beautification.
 //

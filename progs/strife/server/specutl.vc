@@ -162,7 +162,7 @@ float FindNextHighestFloor(sector_t * sec, float currentheight)
 		// Check for overflow. Exit.
 		if (h >= MAX_ADJOINING_SECTORS)
 		{
-			dprint("Sector with more than 20 adjoining sectors\n");
+			dprint("Sector with more than 20 adjoining sectors");
 			break;
 		}
 	}
@@ -469,6 +469,9 @@ boolean TagBusy(int tag)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/07/23 16:31:44  dj_jl
+//  Beautification.
+//
 //  Revision 1.6  2002/01/15 08:12:26  dj_jl
 //  Replaced some pointers with references
 //

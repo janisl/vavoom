@@ -1229,17 +1229,17 @@ void PlayerPawn::ActPlayerAttack(AttackType *attack)
 		break;
 
 	case ATK_SmartProjectile:	// EXTRA
-		print("Smart proj\n");
+		print("Smart proj");
 		//LaunchSmartProjectile(object, target, attack->atk_mobj);
 		break;
 
 	case ATK_RandomSpread:		// EXTRA
-		print("Random spread\n");
+		print("Random spread");
 		//P_ActLaunchRandomSpread(object);
 		break;
 
 	case ATK_ShootToSpot:		// EXTRA
-		print("Shoot to spot\n");
+		print("Shoot to spot");
 		//ShootToSpot(object);
 		break;
 
@@ -1248,22 +1248,22 @@ void PlayerPawn::ActPlayerAttack(AttackType *attack)
 		break;
 
 	case ATK_Spawner:			// EXTRA
-		print("spawner\n");
+		print("spawner");
 		//ObjectSpawning(object, object->angle);
 		break;
 
 	case ATK_Spreader:			// EXTRA
-		print("Spreader\n");
+		print("Spreader");
 		//P_ActLaunchOrderedSpread(object);
 		break;
 
 	case ATK_Tracker:			// EXTRA
-		print("Tracker\n");
+		print("Tracker");
 		//LaunchTracker(object);
 		break;
 
 	case ATK_TripleSpawner:		// EXTRA
-		print("Tripple spawner\n");
+		print("Tripple spawner");
 		//ObjectTripleSpawn(object);
 		break;
 
@@ -1272,7 +1272,7 @@ void PlayerPawn::ActPlayerAttack(AttackType *attack)
 		break;
 
 	default:
-		print("Bad attack type %d\n", attack->AttackStyle);
+		print("Bad attack type %d", attack->AttackStyle);
 	}
 }
 
@@ -1298,6 +1298,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/07/23 16:31:43  dj_jl
+//  Beautification.
+//
 //  Revision 1.5  2002/07/13 08:01:48  dj_jl
 //  Moved some functions to the Entity class.
 //

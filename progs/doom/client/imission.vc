@@ -1311,7 +1311,7 @@ void IM_DrawOnLnode(int n, int *c)
 	else
 	{
 		// DEBUG
-		dprint("Could not place patch on level %d\n", n + 1);
+		dprint("Could not place patch on level %d", n + 1);
 	}
 }
 
@@ -1738,6 +1738,9 @@ void IM_Start(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/07/23 16:31:43  dj_jl
+//  Beautification.
+//
 //  Revision 1.7  2002/02/26 17:49:47  dj_jl
 //  no message
 //

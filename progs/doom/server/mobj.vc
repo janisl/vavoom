@@ -332,7 +332,7 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 			return;
 		}
 	}
-	dprint("P_SpawnMapThing: Unknown type %d at (%f, %f)\n",
+	dprint("P_SpawnMapThing: Unknown type %d at (%f, %f)",
 		mthing->type, mthing->x, mthing->y);
 }
 
@@ -881,6 +881,9 @@ void P_NoiseAlert(Actor target, Actor emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.47  2002/07/23 16:31:43  dj_jl
+//  Beautification.
+//
 //  Revision 1.46  2002/07/23 13:07:29  dj_jl
 //  Final touches for switching to floating-point time, beautification.
 //
