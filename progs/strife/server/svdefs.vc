@@ -119,6 +119,9 @@
 #define MF_WATERJUMP	0x40000000
 
 #define MF2_ONMOBJ		0x00000001
+#define MF2_MCROSS			0x00800000	// can activate monster cross lines
+#define MF2_PCROSS			0x01000000	// can activate projectile cross lines
+#define MF2_DORMANT			0x10000000	// thing is dormant
 
 #define INITIAL_HEALTH		100
 #define INITIAL_AMMO		50
@@ -578,6 +581,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/01/29 18:10:32  dj_jl
+//  Added MCROSS and PCROSS flags
+//
 //  Revision 1.15  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

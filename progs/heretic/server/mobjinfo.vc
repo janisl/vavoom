@@ -290,7 +290,7 @@ class EggMissile:Actor
 		ReactionCount = 8;
 		MissileDamage = 1;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT;
+		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_EGGFX1;
 		DeathState = S_EGGFXI1_1;
 	}
@@ -449,7 +449,7 @@ class PodGoo:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_CANNOTPUSH;
+		Flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_CANNOTPUSH|MF2_PCROSS;
 		SpawnState = S_PODGOO1;
 		DeathState = S_PODGOOX;
 	}
@@ -493,7 +493,7 @@ class Splash:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_CANNOTPUSH;
+		Flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_CANNOTPUSH|MF2_PCROSS;
 		SpawnState = S_SPLASH1;
 		DeathState = S_SPLASHX;
 	}
@@ -579,7 +579,7 @@ class SludgeChunk:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_CANNOTPUSH;
+		Flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_CANNOTPUSH|MF2_PCROSS;
 		SpawnState = S_SLUDGECHUNK1;
 		DeathState = S_SLUDGECHUNKX;
 	}
@@ -1157,7 +1157,7 @@ class VolcanoBlast:Actor
 		ReactionCount = 8;
 		MissileDamage = 2;
 		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_FIREDAMAGE;
+		Flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_FIREDAMAGE|MF2_PCROSS;
 		SpawnState = S_VOLCANOBALL1;
 		DeathState = S_VOLCANOBALLX1;
 		DeathSound = 'VolcanoHit';
@@ -1183,7 +1183,7 @@ class VolcanoTBlast:Actor
 		ReactionCount = 8;
 		MissileDamage = 1;
 		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_FIREDAMAGE;
+		Flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_FIREDAMAGE|MF2_PCROSS;
 		SpawnState = S_VOLCANOTBALL1;
 		DeathState = S_VOLCANOTBALLX1;
 		Effects = EF_DL_RED;
@@ -1488,7 +1488,7 @@ class BlasterFX1:Actor
 		ReactionCount = 8;
 		MissileDamage = 2;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT;
+		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_BLASTERFX1_1;
 		DeathState = S_BLASTERFXI1_1;
 		DeathSound = 'BlasterHit';
@@ -1536,7 +1536,7 @@ class Ripper:Actor
 		ReactionCount = 8;
 		MissileDamage = 1;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_RIP;
+		Flags2 = MF2_NOTELEPORT|MF2_RIP|MF2_PCROSS;
 		SpawnState = S_RIPPER1;
 		DeathState = S_RIPPERX1;
 		DeathSound = 'SkullRodHit';
@@ -1625,7 +1625,7 @@ class MaceFX1:Actor
 		ReactionCount = 8;
 		MissileDamage = 2;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_NOTELEPORT;
+		Flags2 = MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_MACEFX1_1;
 		DeathState = S_MACEFXI1_1;
 		SightSound = 'MaceFire';
@@ -1650,7 +1650,7 @@ class MaceFX2:Actor
 		ReactionCount = 8;
 		MissileDamage = 6;
 		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_LOGRAV|MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_NOTELEPORT;
+		Flags2 = MF2_LOGRAV|MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_MACEFX2_1;
 		DeathState = S_MACEFXI2_1;
 	}
@@ -1674,7 +1674,7 @@ class MaceFX3:Actor
 		ReactionCount = 8;
 		MissileDamage = 4;
 		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_LOGRAV|MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_NOTELEPORT;
+		Flags2 = MF2_LOGRAV|MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_MACEFX3_1;
 		DeathState = S_MACEFXI1_1;
 	}
@@ -1698,7 +1698,7 @@ class MaceFX4:Actor
 		ReactionCount = 8;
 		MissileDamage = 18;
 		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_LOGRAV|MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_TELESTOMP;
+		Flags2 = MF2_LOGRAV|MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_TELESTOMP|MF2_PCROSS;
 		SpawnState = S_MACEFX4_1;
 		DeathState = S_MACEFXI4_1;
 	}
@@ -1744,7 +1744,7 @@ class HornRodMissile1:Actor
 		ReactionCount = 8;
 		MissileDamage = 3;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT;
+		Flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_HRODFX1_1;
 		DeathState = S_HRODFXI1_1;
 		SightSound = 'SkullRodFire';
@@ -1771,7 +1771,7 @@ class HornRodMissile2:Actor
 		ReactionCount = 8;
 		MissileDamage = 10;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT;
+		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_HRODFX2_1;
 		DeathState = S_HRODFXI2_1;
 		SightSound = 'SkullRodFire';
@@ -1798,7 +1798,7 @@ class RainPlayer1:Actor
 		ReactionCount = 8;
 		MissileDamage = 5;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT;
+		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_RAINPLR1_1;
 		DeathState = S_RAINPLR1X_1;
 	}
@@ -1822,7 +1822,7 @@ class RainPlayer2:Actor
 		ReactionCount = 8;
 		MissileDamage = 5;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT;
+		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_RAINPLR2_1;
 		DeathState = S_RAINPLR2X_1;
 	}
@@ -1846,7 +1846,7 @@ class RainPlayer3:Actor
 		ReactionCount = 8;
 		MissileDamage = 5;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT;
+		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_RAINPLR3_1;
 		DeathState = S_RAINPLR3X_1;
 	}
@@ -1870,7 +1870,7 @@ class RainPlayer4:Actor
 		ReactionCount = 8;
 		MissileDamage = 5;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT;
+		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_RAINPLR4_1;
 		DeathState = S_RAINPLR4X_1;
 	}
@@ -1894,7 +1894,7 @@ class GoldWandMissile1:Actor
 		ReactionCount = 8;
 		MissileDamage = 2;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT;
+		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_GWANDFX1_1;
 		DeathState = S_GWANDFXI1_1;
 		DeathSound = 'GoldWandFire';
@@ -1920,7 +1920,7 @@ class GoldWandMissile2:Actor
 		ReactionCount = 8;
 		MissileDamage = 1;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT;
+		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_GWANDFX2_1;
 		DeathState = S_GWANDFXI1_1;
 		Effects = EF_DL_WHITE;
@@ -2009,7 +2009,7 @@ class PhoenixFX1:Actor
 		ReactionCount = 8;
 		MissileDamage = 20;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_THRUGHOST|MF2_NOTELEPORT;
+		Flags2 = MF2_THRUGHOST|MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_PHOENIXFX1_1;
 		DeathState = S_PHOENIXFXI1_1;
 		SightSound = 'PhoenixFire';
@@ -2058,7 +2058,7 @@ class PhoenixFX2:Actor
 		ReactionCount = 8;
 		MissileDamage = 2;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE;
+		Flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE|MF2_PCROSS;
 		SpawnState = S_PHOENIXFX2_1;
 		DeathState = S_PHOENIXFXI2_1;
 		Effects = EF_DL_WHITE;
@@ -2105,7 +2105,7 @@ class CrossbowFX1:Actor
 		ReactionCount = 8;
 		MissileDamage = 10;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT;
+		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_CRBOWFX1;
 		DeathState = S_CRBOWFXI1_1;
 		SightSound = 'BowFire';
@@ -2131,7 +2131,7 @@ class CrossbowFX2:Actor
 		ReactionCount = 8;
 		MissileDamage = 6;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT;
+		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_CRBOWFX2;
 		DeathState = S_CRBOWFXI1_1;
 		SightSound = 'BowFire';
@@ -2158,7 +2158,7 @@ class CrossbowFX3:Actor
 		ReactionCount = 8;
 		MissileDamage = 2;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_WINDTHRUST|MF2_THRUGHOST|MF2_NOTELEPORT;
+		Flags2 = MF2_WINDTHRUST|MF2_THRUGHOST|MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_CRBOWFX3;
 		DeathState = S_CRBOWFXI3_1;
 		DeathSound = 'SkullRodHit';
@@ -2224,7 +2224,7 @@ class BloodSplatter:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_CANNOTPUSH;
+		Flags2 = MF2_NOTELEPORT|MF2_CANNOTPUSH|MF2_PCROSS;
 		SpawnState = S_BLOODSPLATTER1;
 		DeathState = S_BLOODSPLATTERX;
 	}
@@ -2325,7 +2325,7 @@ class Chicken:Actor
 		ReactionCount = 8;
 		PainChance = 200;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_COUNTKILL;
-		Flags2 = MF2_WINDTHRUST|MF2_FOOTCLIP;
+		Flags2 = MF2_WINDTHRUST|MF2_FOOTCLIP|MF2_MCROSS;
 		SpawnState = S_CHICKEN_LOOK1;
 		SeeState = S_CHICKEN_WALK1;
 		MeleeState = S_CHICKEN_ATK1;
@@ -2365,7 +2365,7 @@ class Feather:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_LOGRAV|MF2_WINDTHRUST|MF2_NOTELEPORT|MF2_CANNOTPUSH;
+		Flags2 = MF2_LOGRAV|MF2_WINDTHRUST|MF2_NOTELEPORT|MF2_CANNOTPUSH|MF2_PCROSS;
 		SpawnState = S_FEATHER1;
 		DeathState = S_FEATHERX;
 	}
@@ -2390,7 +2390,7 @@ class Mummy:Actor
 		ReactionCount = 8;
 		PainChance = 128;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_FOOTCLIP;
+		Flags2 = MF2_FOOTCLIP|MF2_MCROSS;
 		SpawnState = S_MUMMY_LOOK1;
 		SeeState = S_MUMMY_WALK1;
 		MeleeState = S_MUMMY_ATK1;
@@ -2433,7 +2433,7 @@ class MummyLeader:Actor
 		ReactionCount = 8;
 		PainChance = 64;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_FOOTCLIP;
+		Flags2 = MF2_FOOTCLIP|MF2_MCROSS;
 		SpawnState = S_MUMMY_LOOK1;
 		SeeState = S_MUMMY_WALK1;
 		MeleeState = S_MUMMY_ATK1;
@@ -2478,7 +2478,7 @@ class MummyGhost:Actor
 		PainChance = 128;
 		Translucency = 33;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_FOOTCLIP;
+		Flags2 = MF2_FOOTCLIP|MF2_MCROSS;
 		SpawnState = S_MUMMY_LOOK1;
 		SeeState = S_MUMMY_WALK1;
 		MeleeState = S_MUMMY_ATK1;
@@ -2522,7 +2522,7 @@ class MummyLeaderGhost:Actor
 		PainChance = 64;
 		Translucency = 33;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_FOOTCLIP;
+		Flags2 = MF2_FOOTCLIP|MF2_MCROSS;
 		SpawnState = S_MUMMY_LOOK1;
 		SeeState = S_MUMMY_WALK1;
 		MeleeState = S_MUMMY_ATK1;
@@ -2586,7 +2586,7 @@ class MummyMissile:Actor
 		ReactionCount = 8;
 		MissileDamage = 4;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT;
+		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_MUMMYFX1_1;
 		DeathState = S_MUMMYFXI1_1;
 		Effects = EF_DL_WHITE;
@@ -2613,7 +2613,7 @@ class Beast:Actor
 		ReactionCount = 8;
 		PainChance = 100;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_FOOTCLIP;
+		Flags2 = MF2_FOOTCLIP|MF2_MCROSS;
 		SpawnState = S_BEAST_LOOK1;
 		SeeState = S_BEAST_WALK1;
 		MissileState = S_BEAST_ATK1;
@@ -2656,7 +2656,7 @@ class BeastBall:Actor
 		ReactionCount = 8;
 		MissileDamage = 4;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT;
+		Flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_BEASTBALL1;
 		DeathState = S_BEASTBALLX1;
 		Effects = EF_DL_RED;
@@ -2681,7 +2681,7 @@ class BurnBall:Actor
 		ReactionCount = 8;
 		MissileDamage = 2;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT;
+		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_BURNBALL1;
 		DeathState = S_BEASTBALLX1;
 		Effects = EF_DL_RED;
@@ -2706,7 +2706,7 @@ class BurnBallFB:Actor
 		ReactionCount = 8;
 		MissileDamage = 2;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT;
+		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_BURNBALLFB1;
 		DeathState = S_BEASTBALLX1;
 		Effects = EF_DL_RED;
@@ -2731,7 +2731,7 @@ class Puffy:Actor
 		ReactionCount = 8;
 		MissileDamage = 2;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT;
+		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_PUFFY1;
 		DeathState = S_PUFFY1;
 	}
@@ -2756,7 +2756,7 @@ class Snake:Actor
 		ReactionCount = 8;
 		PainChance = 48;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_FOOTCLIP;
+		Flags2 = MF2_FOOTCLIP|MF2_MCROSS;
 		SpawnState = S_SNAKE_LOOK1;
 		SeeState = S_SNAKE_WALK1;
 		MissileState = S_SNAKE_ATK1;
@@ -2798,7 +2798,7 @@ class SnakeProjectileA:Actor
 		ReactionCount = 8;
 		MissileDamage = 1;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT;
+		Flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_SNAKEPRO_A1;
 		DeathState = S_SNAKEPRO_AX1;
 		Effects = EF_DL_MAGENTA;
@@ -2823,7 +2823,7 @@ class SnakeProjectileB:Actor
 		ReactionCount = 8;
 		MissileDamage = 3;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT;
+		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_SNAKEPRO_B1;
 		DeathState = S_SNAKEPRO_BX1;
 		Effects = EF_DL_WHITE;
@@ -2849,6 +2849,7 @@ class Head:Actor
 		ReactionCount = 8;
 		PainChance = 32;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_NOBLOOD|MF_COUNTKILL;
+		Flags2 = MF2_MCROSS;
 		SpawnState = S_HEAD_LOOK;
 		SeeState = S_HEAD_FLOAT;
 		MissileState = S_HEAD_ATK1;
@@ -2890,7 +2891,7 @@ class HeadMissile1:Actor
 		ReactionCount = 8;
 		MissileDamage = 1;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_THRUGHOST|MF2_NOTELEPORT;
+		Flags2 = MF2_THRUGHOST|MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_HEADFX1_1;
 		DeathState = S_HEADFXI1_1;
 		Effects = EF_DL_BLUE;
@@ -2915,7 +2916,7 @@ class HeadMissile2:Actor
 		ReactionCount = 8;
 		MissileDamage = 3;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT;
+		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_HEADFX2_1;
 		DeathState = S_HEADFXI2_1;
 		Effects = EF_DL_BLUE;
@@ -2940,7 +2941,7 @@ class HeadMissile3:Actor
 		ReactionCount = 8;
 		MissileDamage = 5;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT;
+		Flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_HEADFX3_1;
 		DeathState = S_HEADFXI3_1;
 		Effects = EF_DL_WHITE;
@@ -2966,7 +2967,7 @@ class WhirlWind:Actor
 		MissileDamage = 1;
 		Translucency = 33;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT;
+		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_HEADFX4_1;
 		DeathState = S_HEADFXI4_1;
 	}
@@ -2991,7 +2992,7 @@ class Clink:Actor
 		ReactionCount = 8;
 		PainChance = 32;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_NOBLOOD|MF_COUNTKILL;
-		Flags2 = MF2_FOOTCLIP;
+		Flags2 = MF2_FOOTCLIP|MF2_MCROSS;
 		SpawnState = S_CLINK_LOOK1;
 		SeeState = S_CLINK_WALK1;
 		MeleeState = S_CLINK_ATK1;
@@ -3034,6 +3035,7 @@ class Wizard:Actor
 		ReactionCount = 8;
 		PainChance = 64;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT|MF_COUNTKILL;
+		Flags2 = MF2_MCROSS;
 		SpawnState = S_WIZARD_LOOK1;
 		SeeState = S_WIZARD_WALK1;
 		MissileState = S_WIZARD_ATK1;
@@ -3075,7 +3077,7 @@ class WizardMissile:Actor
 		ReactionCount = 8;
 		MissileDamage = 3;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT;
+		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_WIZFX1_1;
 		DeathState = S_WIZFXI1_1;
 		Effects = EF_DL_MAGENTA;
@@ -3102,7 +3104,7 @@ class Imp:Actor
 		ReactionCount = 8;
 		PainChance = 200;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT|MF_COUNTKILL;
-		Flags2 = MF2_SPAWNFLOAT;
+		Flags2 = MF2_SPAWNFLOAT|MF2_MCROSS;
 		SpawnState = S_IMP_LOOK1;
 		SeeState = S_IMP_FLY1;
 		MeleeState = S_IMP_MEATK1;
@@ -3149,7 +3151,7 @@ class ImpLeader:Actor
 		ReactionCount = 8;
 		PainChance = 200;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT|MF_COUNTKILL;
-		Flags2 = MF2_SPAWNFLOAT;
+		Flags2 = MF2_SPAWNFLOAT|MF2_MCROSS;
 		SpawnState = S_IMP_LOOK1;
 		SeeState = S_IMP_FLY1;
 		MissileState = S_IMP_MSATK2_1;
@@ -3235,7 +3237,7 @@ class ImpBall:Actor
 		ReactionCount = 8;
 		MissileDamage = 1;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT;
+		Flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_IMPFX1;
 		DeathState = S_IMPFXI1;
 		Effects = EF_DL_WHITE;
@@ -3261,7 +3263,7 @@ class Knight:Actor
 		ReactionCount = 8;
 		PainChance = 100;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_FOOTCLIP;
+		Flags2 = MF2_FOOTCLIP|MF2_MCROSS;
 		SpawnState = S_KNIGHT_STND1;
 		SeeState = S_KNIGHT_WALK1;
 		MeleeState = S_KNIGHT_ATK1;
@@ -3306,7 +3308,7 @@ class KnightGhost:Actor
 		PainChance = 100;
 		Translucency = 33;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_FOOTCLIP;
+		Flags2 = MF2_FOOTCLIP|MF2_MCROSS;
 		SpawnState = S_KNIGHT_STND1;
 		SeeState = S_KNIGHT_WALK1;
 		MeleeState = S_KNIGHT_ATK1;
@@ -3349,7 +3351,7 @@ class KnightAxe:Actor
 		ReactionCount = 8;
 		MissileDamage = 2;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_WINDTHRUST|MF2_THRUGHOST|MF2_NOTELEPORT;
+		Flags2 = MF2_WINDTHRUST|MF2_THRUGHOST|MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_SPINAXE1;
 		DeathState = S_SPINAXEX1;
 		DeathSound = 'SkullRodHit';
@@ -3375,7 +3377,7 @@ class KnightRedAxe:Actor
 		ReactionCount = 8;
 		MissileDamage = 7;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_THRUGHOST|MF2_NOTELEPORT;
+		Flags2 = MF2_THRUGHOST|MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_REDAXE1;
 		DeathState = S_REDAXEX1;
 		DeathSound = 'SkullRodHit';
@@ -3402,7 +3404,7 @@ class Sorcerer1:Actor
 		ReactionCount = 8;
 		PainChance = 56;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_FOOTCLIP|MF2_BOSS;
+		Flags2 = MF2_FOOTCLIP|MF2_BOSS|MF2_MCROSS;
 		SpawnState = S_SRCR1_LOOK1;
 		SeeState = S_SRCR1_WALK1;
 		MissileState = S_SRCR1_ATK1;
@@ -3444,7 +3446,7 @@ class Sorcerer1Missile:Actor
 		ReactionCount = 8;
 		MissileDamage = 10;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE;
+		Flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE|MF2_PCROSS;
 		SpawnState = S_SRCRFX1_1;
 		DeathState = S_SRCRFXI1_1;
 		Effects = EF_DL_WHITE;
@@ -3469,7 +3471,7 @@ class Sorcerer2:Actor
 		ReactionCount = 8;
 		PainChance = 32;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_COUNTKILL;
-		Flags2 = MF2_FOOTCLIP|MF2_BOSS;
+		Flags2 = MF2_FOOTCLIP|MF2_BOSS|MF2_MCROSS;
 		SpawnState = S_SOR2_LOOK1;
 		SeeState = S_SOR2_WALK1;
 		MissileState = S_SOR2_ATK1;
@@ -3510,7 +3512,7 @@ class Sorcerer2Missile1:Actor
 		ReactionCount = 8;
 		MissileDamage = 1;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT;
+		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_SOR2FX1_1;
 		DeathState = S_SOR2FXI1_1;
 		Effects = EF_DL_BLUE;
@@ -3556,7 +3558,7 @@ class Sorcerer2Missile2:Actor
 		ReactionCount = 8;
 		MissileDamage = 10;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT;
+		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
 		SpawnState = S_SOR2FX2_1;
 		DeathState = S_SOR2FXI2_1;
 		Effects = EF_DL_BLUE;
@@ -3604,7 +3606,7 @@ class Minotaur:Actor
 		PainChance = 25;
 		MissileDamage = 7;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_COUNTKILL;
-		Flags2 = MF2_FOOTCLIP|MF2_BOSS;
+		Flags2 = MF2_FOOTCLIP|MF2_BOSS|MF2_MCROSS;
 		SpawnState = S_MNTR_LOOK1;
 		SeeState = S_MNTR_WALK1;
 		MeleeState = S_MNTR_ATK1_1;
@@ -3647,7 +3649,7 @@ class MinotaurMissile:Actor
 		ReactionCount = 8;
 		MissileDamage = 3;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE;
+		Flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE|MF2_PCROSS;
 		SpawnState = S_MNTRFX1_1;
 		DeathState = S_MNTRFXI1_1;
 		Effects = EF_DL_WHITE;
@@ -3672,7 +3674,7 @@ class MinotaurFloorFire:Actor
 		ReactionCount = 8;
 		MissileDamage = 4;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE;
+		Flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE|MF2_PCROSS;
 		SpawnState = S_MNTRFX2_1;
 		DeathState = S_MNTRFXI2_1;
 		DeathSound = 'PhoenixHit';
@@ -3697,7 +3699,7 @@ class MinotaurFloorFire2:Actor
 		ReactionCount = 8;
 		MissileDamage = 4;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE;
+		Flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE|MF2_PCROSS;
 		SpawnState = S_MNTRFX3_1;
 		DeathState = S_MNTRFXI2_1;
 		DeathSound = 'PhoenixHit';
@@ -4082,10 +4084,13 @@ class SoundWaterfall:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2002/01/29 18:10:31  dj_jl
+//	Added MCROSS and PCROSS flags
+//
 //	Revision 1.18  2002/01/28 18:50:18  dj_jl
 //	Made some functions Actor members.
 //	Replaced some pointers with references.
-//
+//	
 //	Revision 1.17  2002/01/24 18:19:26  dj_jl
 //	Split common class Entity, made SetMobjState an Entity function
 //	

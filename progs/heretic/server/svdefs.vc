@@ -147,6 +147,9 @@
 										// damaging
 #define MF2_TELESTOMP		0x00040000	// mobj can stomp another
 #define MF2_FLOATBOB		0x00080000	// use float bobbing z movement
+#define MF2_MCROSS			0x00800000	// can activate monster cross lines
+#define MF2_PCROSS			0x01000000	// can activate projectile cross lines
+#define MF2_DORMANT			0x10000000	// thing is dormant
 
 enum
 {
@@ -839,6 +842,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/01/29 18:10:31  dj_jl
+//  Added MCROSS and PCROSS flags
+//
 //  Revision 1.16  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

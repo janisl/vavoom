@@ -725,13 +725,18 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 					{
 						P_ActivateLine(ld, thing, oldside, SPAC_CROSS);
 					}
-					else if (thing->Flags & MF_COUNTKILL)	//thing->flags2 & MF2_MCROSS)
+					else if (thing->Flags2 & MF2_MCROSS)
 					{
 						P_ActivateLine(ld, thing, oldside, SPAC_MCROSS);
 					}
-					else	//if (thing->flags2 & MF2_PCROSS)
+					else if (thing->Flags2 & MF2_PCROSS)
 					{
 						P_ActivateLine(ld, thing, oldside, SPAC_PCROSS);
+					}
+					else if (ld->special == 70)
+					{
+						//	Teleport hack
+						P_ActivateLine(ld, thing, oldside, SPAC_MCROSS);
 					}
 				}
 			}
@@ -741,9 +746,24 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	return true;
 }
 
+//==========================================================================
+//
+//  P_ThrustMobj
+//
+//==========================================================================
+
+void P_ThrustMobj(mobj_t * mo, float angle, float move)
+{
+	mo->velocity.x += move * cos(angle) * 35.0;
+	mo->velocity.y += move * sin(angle) * 35.0;
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/29 18:10:31  dj_jl
+//  Added MCROSS and PCROSS flags
+//
 //  Revision 1.12  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

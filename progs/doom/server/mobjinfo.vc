@@ -77,6 +77,7 @@ class Zombieman:Actor
 		ReactionCount = 8;
 		PainChance = 200;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		Flags2 = MF2_MCROSS;
 		SpawnState = S_POSS_STND;
 		SeeState = S_POSS_RUN1;
 		MissileState = S_POSS_ATK1;
@@ -122,6 +123,7 @@ class ShotgunGuy:Actor
 		ReactionCount = 8;
 		PainChance = 170;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		Flags2 = MF2_MCROSS;
 		SpawnState = S_SPOS_STND;
 		SeeState = S_SPOS_RUN1;
 		MissileState = S_SPOS_ATK1;
@@ -165,6 +167,7 @@ class ArchVile:Actor
 		ReactionCount = 8;
 		PainChance = 10;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		Flags2 = MF2_MCROSS;
 		SpawnState = S_VILE_STND;
 		SeeState = S_VILE_RUN1;
 		MissileState = S_VILE_ATK1;
@@ -228,6 +231,7 @@ class Revenant:Actor
 		ReactionCount = 8;
 		PainChance = 100;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		Flags2 = MF2_MCROSS;
 		SpawnState = S_SKEL_STND;
 		SeeState = S_SKEL_RUN1;
 		MeleeState = S_SKEL_FIST1;
@@ -271,6 +275,7 @@ class RevenantTracer:Actor
 		MissileDamage = 10;
 		Translucency = 33;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_PCROSS;
 		SpawnState = S_TRACER;
 		DeathState = S_TRACEEXP1;
 		SightSound = 'RavenantAttack';
@@ -319,6 +324,7 @@ class Mancubus:Actor
 		ReactionCount = 8;
 		PainChance = 80;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		Flags2 = MF2_MCROSS;
 		SpawnState = S_FATT_STND;
 		SeeState = S_FATT_RUN1;
 		MissileState = S_FATT_ATK1;
@@ -361,6 +367,7 @@ class MancubusMissile:Actor
 		MissileDamage = 8;
 		Translucency = 33;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_PCROSS;
 		SpawnState = S_FATSHOT1;
 		DeathState = S_FATSHOTX1;
 		SightSound = 'FireballShoot';
@@ -389,6 +396,7 @@ class ChaingunGuy:Actor
 		ReactionCount = 8;
 		PainChance = 170;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		Flags2 = MF2_MCROSS;
 		SpawnState = S_CPOS_STND;
 		SeeState = S_CPOS_RUN1;
 		MissileState = S_CPOS_ATK1;
@@ -433,6 +441,7 @@ class Imp:Actor
 		ReactionCount = 8;
 		PainChance = 200;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		Flags2 = MF2_MCROSS;
 		SpawnState = S_TROO_STND;
 		SeeState = S_TROO_RUN1;
 		MeleeState = S_TROO_ATK1;
@@ -477,6 +486,7 @@ class Demon:Actor
 		ReactionCount = 8;
 		PainChance = 180;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		Flags2 = MF2_MCROSS;
 		SpawnState = S_SARG_STND;
 		SeeState = S_SARG_RUN1;
 		MeleeState = S_SARG_ATK1;
@@ -521,6 +531,7 @@ class Shadows:Actor
 		PainChance = 180;
 		Translucency = 90;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		Flags2 = MF2_MCROSS;
 		SpawnState = S_SARG_STND;
 		SeeState = S_SARG_RUN1;
 		MeleeState = S_SARG_ATK1;
@@ -564,6 +575,7 @@ class Cacodemon:Actor
 		ReactionCount = 8;
 		PainChance = 128;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT|MF_COUNTKILL;
+		Flags2 = MF2_MCROSS;
 		SpawnState = S_HEAD_STND;
 		SeeState = S_HEAD_RUN1;
 		MissileState = S_HEAD_ATK1;
@@ -606,6 +618,7 @@ class BaronOfHell:Actor
 		ReactionCount = 8;
 		PainChance = 50;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		Flags2 = MF2_MCROSS;
 		SpawnState = S_BOSS_STND;
 		SeeState = S_BOSS_RUN1;
 		MeleeState = S_BOSS_ATK1;
@@ -649,6 +662,7 @@ class BruiserShot:Actor
 		MissileDamage = 8;
 		Translucency = 33;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_PCROSS;
 		SpawnState = S_BRBALL1;
 		DeathState = S_BRBALLX1;
 		SightSound = 'FireballShoot';
@@ -676,6 +690,7 @@ class HellKnight:Actor
 		ReactionCount = 8;
 		PainChance = 50;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		Flags2 = MF2_MCROSS;
 		SpawnState = S_BOS2_STND;
 		SeeState = S_BOS2_RUN1;
 		MeleeState = S_BOS2_ATK1;
@@ -721,6 +736,7 @@ class LostSoul:Actor
 		MissileDamage = 3;
 		Translucency = 33;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT;
+		Flags2 = MF2_MCROSS;
 		SpawnState = S_SKULL_STND;
 		SeeState = S_SKULL_RUN1;
 		MissileState = S_SKULL_ATK1;
@@ -763,6 +779,7 @@ class SpiderMastermind:Actor
 		ReactionCount = 8;
 		PainChance = 40;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		Flags2 = MF2_MCROSS;
 		SpawnState = S_SPID_STND;
 		SeeState = S_SPID_RUN1;
 		MissileState = S_SPID_ATK1;
@@ -805,6 +822,7 @@ class Arachnotron:Actor
 		ReactionCount = 8;
 		PainChance = 128;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		Flags2 = MF2_MCROSS;
 		SpawnState = S_BSPI_STND;
 		SeeState = S_BSPI_SIGHT;
 		MissileState = S_BSPI_ATK1;
@@ -847,6 +865,7 @@ class Cyberdemon:Actor
 		ReactionCount = 8;
 		PainChance = 20;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		Flags2 = MF2_MCROSS;
 		SpawnState = S_CYBER_STND;
 		SeeState = S_CYBER_RUN1;
 		MissileState = S_CYBER_ATK1;
@@ -888,6 +907,7 @@ class PainElemental:Actor
 		ReactionCount = 8;
 		PainChance = 128;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT|MF_COUNTKILL;
+		Flags2 = MF2_MCROSS;
 		SpawnState = S_PAIN_STND;
 		SeeState = S_PAIN_RUN1;
 		MissileState = S_PAIN_ATK1;
@@ -931,6 +951,7 @@ class WolfSS:Actor
 		ReactionCount = 8;
 		PainChance = 170;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		Flags2 = MF2_MCROSS;
 		SpawnState = S_SSWV_STND;
 		SeeState = S_SSWV_RUN1;
 		MissileState = S_SSWV_ATK1;
@@ -973,6 +994,7 @@ class CommanderKeen:Actor
 		ReactionCount = 8;
 		PainChance = 256;
 		Flags = MF_SOLID|MF_SHOOTABLE|MF_SPAWNCEILING|MF_NOGRAVITY|MF_COUNTKILL;
+		Flags2 = MF2_MCROSS;
 		SpawnState = S_KEENSTND;
 		PainState = S_KEENPAIN;
 		DeathState = S_COMMKEEN;
@@ -1077,6 +1099,7 @@ class SpawnShot:Actor
 		ReactionCount = 8;
 		MissileDamage = 3;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_NOCLIP|MF_MISSILE;
+		Flags2 = MF2_PCROSS;
 		SpawnState = S_SPAWN1;
 		SightSound = 'BossFire';
 		DeathSound = 'FireballExplode';
@@ -1147,6 +1170,7 @@ class ImpMissile:Actor
 		MissileDamage = 3;
 		Translucency = 33;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_PCROSS;
 		SpawnState = S_TBALL1;
 		DeathState = S_TBALLX1;
 		SightSound = 'FireballShoot';
@@ -1174,6 +1198,7 @@ class CacodemonMissile:Actor
 		MissileDamage = 5;
 		Translucency = 33;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_PCROSS;
 		SpawnState = S_RBALL1;
 		DeathState = S_RBALLX1;
 		SightSound = 'FireballShoot';
@@ -1200,6 +1225,7 @@ class Rocket:Actor
 		ReactionCount = 8;
 		MissileDamage = 20;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_PCROSS;
 		SpawnState = S_ROCKET;
 		DeathState = S_EXPLODE1;
 		SightSound = 'LauncherFire';
@@ -1227,6 +1253,7 @@ class PlasmaShot:Actor
 		MissileDamage = 5;
 		Translucency = 33;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_PCROSS;
 		SpawnState = S_PLASBALL;
 		DeathState = S_PLASEXP;
 		SightSound = 'PlasmaFire';
@@ -1254,6 +1281,7 @@ class BFGShot:Actor
 		MissileDamage = 100;
 		Translucency = 33;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_PCROSS;
 		SpawnState = S_BFGSHOT;
 		DeathState = S_BFGLAND;
 		DeathSound = 'RocketExplode';
@@ -1280,6 +1308,7 @@ class ArachnotronPlasma:Actor
 		MissileDamage = 5;
 		Translucency = 33;
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_PCROSS;
 		SpawnState = S_ARACH_PLAZ;
 		DeathState = S_ARACH_PLEX;
 		SightSound = 'PlasmaFire';
@@ -3467,10 +3496,13 @@ class BrainStem:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2002/01/29 18:10:31  dj_jl
+//	Added MCROSS and PCROSS flags
+//
 //	Revision 1.18  2002/01/28 18:50:18  dj_jl
 //	Made some functions Actor members.
 //	Replaced some pointers with references.
-//
+//	
 //	Revision 1.17  2002/01/17 18:15:53  dj_jl
 //	Renamed all map object classes
 //	
