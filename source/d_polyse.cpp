@@ -301,6 +301,9 @@ extern "C" void D_PolysetDraw(void)
 		{
 			continue;
 		}
+#ifdef USEASM
+		*(float*)&d_denom = 1.0 / float(d_denom);
+#endif
 
 		stindex0 = pstv + ptri->stvertindex[0];
 		stindex1 = pstv + ptri->stvertindex[1];
@@ -2203,9 +2206,12 @@ extern "C" void D_PolysetDrawSpansRGBFuzz_32(spanpackage_t *pspanpackage)
 //**************************************************************************
 //
 //	$Log$
-//	Revision 1.6  2001/09/05 12:21:42  dj_jl
+//	Revision 1.7  2001/09/05 12:56:24  dj_jl
 //	Release changes
 //
+//	Revision 1.6  2001/09/05 12:21:42  dj_jl
+//	Release changes
+//	
 //	Revision 1.5  2001/08/15 17:12:23  dj_jl
 //	Optimized model drawing
 //	
