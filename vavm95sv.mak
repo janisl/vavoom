@@ -18,7 +18,7 @@ OBJFILES = obj\sv\zone.obj obj\sv\crc.obj obj\sv\cvar.obj obj\sv\debug.obj \
     obj\sv\host.obj obj\sv\maths.obj obj\sv\message.obj obj\sv\misc.obj \
     obj\sv\net_dgrm.obj obj\sv\net_loop.obj obj\sv\net_main.obj \
     obj\sv\net_win.obj obj\sv\net_wins.obj obj\sv\net_wipx.obj \
-    obj\sv\p_info.obj obj\sv\p_setup.obj obj\sv\pr_cmds.obj obj\sv\pr_exec.obj \
+    obj\sv\mapinfo.obj obj\sv\p_setup.obj obj\sv\pr_cmds.obj obj\sv\pr_exec.obj \
     obj\sv\sc_man.obj obj\sv\sizebuf.obj obj\sv\sv_main.obj obj\sv\sv_save.obj \
     obj\sv\wad.obj obj\sv\cmd.obj obj\sv\pr_execa.obj obj\sv\sys_wind.obj \
     obj\sv\sv_user.obj obj\sv\sv_poly.obj obj\sv\sv_sight.obj \
