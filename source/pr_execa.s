@@ -239,6 +239,7 @@ LOPCODE_TABLE:
 	.long	LOPC_CASE_GOTO_NAME
 	.long	LOPC_PUSHBOOL
 	.long	LOPC_ASSIGNBOOL
+	.long	LOPC_PUSH_VFUNC
 
 	Align4
 LINC_STATEMENT_POINTER:
@@ -1837,6 +1838,19 @@ LABOOL_FALSE:
 	addl	$4,%edi
 	jmp		*LOPCODE_TABLE(,%eax,4)
 
+LOPC_PUSH_VFUNC:
+	movl	-4(%esi),%edx
+	movl	(%edi),%eax
+	movl	4(%edx),%edx
+	addl	$4,%edi
+	movl	(%edx,%eax,4),%eax
+	movl	%eax,(%esi)
+	addl	$4,%esi
+	//	Go to the next statement
+	movl	(%edi),%eax
+	addl	$4,%edi
+	jmp		*LOPCODE_TABLE(,%eax,4)
+
 LEND_RUN_FUNCTION:
 	popl	%ebx
 	popl	%esi
@@ -1849,9 +1863,12 @@ LEND_RUN_FUNCTION:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/03/16 17:53:12  dj_jl
+//	Added opcode for pushing virtual function.
+//
 //	Revision 1.11  2002/02/16 16:29:26  dj_jl
 //	Added support for bool variables
-//
+//	
 //	Revision 1.10  2002/01/11 08:07:17  dj_jl
 //	Added names to progs
 //	

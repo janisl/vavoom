@@ -542,6 +542,8 @@ class TOpPushSelfMethod:public TTree
 	void Code(void)
 	{
 		if (child1) child1->Code();
+#if 0
+		#define VTABLE_OFFS				4
 		AddStatement(OPC_COPY);
 		AddStatement(OPC_PUSHNUMBER, VTABLE_OFFS);
 		AddStatement(OPC_ADD);
@@ -549,6 +551,9 @@ class TOpPushSelfMethod:public TTree
 		AddStatement(OPC_PUSHNUMBER, vOffs * 4);
 		AddStatement(OPC_ADD);
 		AddStatement(OPC_PUSHPOINTED);
+#else
+		AddStatement(OPC_PUSH_VFUNC, vOffs);
+#endif
 	}
 };
 
@@ -576,6 +581,7 @@ public:
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 static TTree *ParseExpressionPriority2(void);
+static TTree* ParseExpressionPriority13(void);
 static TTree* ParseExpressionPriority14(void);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
@@ -1813,9 +1819,12 @@ TType *ParseExpression(bool bLocals)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2002/03/16 17:54:25  dj_jl
+//	Added opcode for pushing virtual function.
+//
 //	Revision 1.21  2002/02/26 17:52:20  dj_jl
 //	Exporting special property info into progs.
-//
+//	
 //	Revision 1.20  2002/02/16 16:28:36  dj_jl
 //	Added support for bool variables
 //	

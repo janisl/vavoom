@@ -1340,6 +1340,10 @@ static void RunFunction(FFunction *func)
 		}
 		break;
 
+	 case OPC_PUSH_VFUNC:
+		*sp++ = (int)((VObject *)sp[-1])->GetVFunction(*current_statement++);
+		break;
+
 	 default:
 #ifdef CHECK_VALID_OPCODE
 		Sys_Error("Invalid opcode %d", current_statement[-1]);
@@ -1710,9 +1714,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2002/03/16 17:53:12  dj_jl
+//	Added opcode for pushing virtual function.
+//
 //	Revision 1.25  2002/03/09 18:05:34  dj_jl
 //	Added support for defining native functions outside pr_cmds
-//
+//	
 //	Revision 1.24  2002/02/26 17:54:26  dj_jl
 //	Importing special property info from progs and using it in saving.
 //	

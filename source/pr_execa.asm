@@ -381,6 +381,7 @@ LOPCODE_TABLE:
  dd LOPC_CASE_GOTO_NAME
  dd LOPC_PUSHBOOL
  dd LOPC_ASSIGNBOOL
+ dd LOPC_PUSH_VFUNC
  align 4
 LINC_STATEMENT_POINTER:
  add edi,4
@@ -1650,6 +1651,17 @@ LABOOL_FALSE:
  xor edx,offset -1
  and dword ptr[eax],edx
  add esi,offset -4
+ mov eax,dword ptr[edi]
+ add edi,4
+ jmp  dword ptr[LOPCODE_TABLE+eax*4]
+LOPC_PUSH_VFUNC:
+ mov edx,dword ptr[-4+esi]
+ mov eax,dword ptr[edi]
+ mov edx,dword ptr[4+edx]
+ add edi,4
+ mov eax,dword ptr[edx+eax*4]
+ mov dword ptr[esi],eax
+ add esi,4
  mov eax,dword ptr[edi]
  add edi,4
  jmp  dword ptr[LOPCODE_TABLE+eax*4]

@@ -58,8 +58,6 @@ using namespace VavoomUtils;
 
 #define REF_CPP		// C++ style references
 
-#define VTABLE_OFFS				4
-
 // TYPES -------------------------------------------------------------------
 
 enum
@@ -655,9 +653,12 @@ inline bool TK_Check(Punctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2002/03/16 17:54:25  dj_jl
+//	Added opcode for pushing virtual function.
+//
 //	Revision 1.23  2002/03/12 19:17:30  dj_jl
 //	Added keyword abstract
-//
+//	
 //	Revision 1.22  2002/02/26 17:52:20  dj_jl
 //	Exporting special property info into progs.
 //	

@@ -165,6 +165,7 @@ enum
 	DECLARE_OPC(CASE_GOTO_NAME, 2),
 	DECLARE_OPC(PUSHBOOL, 1),
 	DECLARE_OPC(ASSIGNBOOL, 1),
+	DECLARE_OPC(PUSH_VFUNC, 1),
 
 #undef DECLARE_OPC
 #ifndef OPCODE_INFO
@@ -247,9 +248,12 @@ struct dfield_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/03/16 17:53:12  dj_jl
+//	Added opcode for pushing virtual function.
+//
 //	Revision 1.13  2002/02/26 17:54:26  dj_jl
 //	Importing special property info from progs and using it in saving.
-//
+//	
 //	Revision 1.12  2002/02/16 16:29:26  dj_jl
 //	Added support for bool variables
 //	
