@@ -280,3 +280,16 @@
   DirectSound draiveri atrisinaju problemu ar strukturu izmeriem.
 18-08-2004
   Atbalsts lielakiem virtuala ekrana izmeriem.
+21-08-2004
+  Partaisiju VClass par patstavigu klasi.
+  Partaisiju rendera un skanas draiveru registraciju.
+22-08-2004
+  Parnesu kaudzi funkciju uz speletaja klasi.
+23-08-2004
+  Parnesu ari ierocu utilitus uz speletaja klasi.
+26-08-2004
+  Pievienoju jaunus 3D modelus Hexen-am.
+27-08-2004
+  Saku parnest visparigas klienta funkcijas uz speletaja klasi.
+28-08-2004
+  Pabeidzu ar visparigajam klienta funkcijam.

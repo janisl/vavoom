@@ -28,6 +28,28 @@
 //**
 //**************************************************************************
 
+float air_control = 1.0 / 256.0;
+
+bool onground;
+
+Actor bodyque[BODYQUESIZE];
+int bodyqueslot;
+
+int opposite[] = {
+	DI_WEST, DI_SOUTHWEST, DI_SOUTH, DI_SOUTHEAST,
+	DI_EAST, DI_NORTHEAST, DI_NORTH, DI_NORTHWEST, DI_NODIR
+};
+int diags[] = {
+	DI_NORTHWEST, DI_NORTHEAST, DI_SOUTHWEST, DI_SOUTHEAST
+};
+
+float xspeed[8] =
+	{ 1.0, 0.7171630859, 0.0, -0.7171630859, -1.0, -0.7171630859, 0.0,
+		0.7171630859 };
+float yspeed[8] =
+	{ 0.0, 0.7171630859, 1.0, 0.7171630859, 0.0, -0.7171630859, -1.0,
+		-0.7171630859 };
+
 //==========================================================================
 //==========================================================================
 //
@@ -337,6 +359,9 @@ void P_NoiseAlert(Actor target, Actor emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.52  2004/08/28 12:35:20  dj_jl
+//  Move general client functions to player class.
+//
 //  Revision 1.51  2003/11/03 07:12:32  dj_jl
 //  8 player starts
 //

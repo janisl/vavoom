@@ -112,6 +112,504 @@ BotPlayer Bot;
 
 //==========================================================================
 //
+//	PutClientIntoServer
+//
+//==========================================================================
+
+void PutClientIntoServer()
+{
+	ViewEnts[ps_weapon] = SpawnObject(Weapon, none);
+	ViewEnts[ps_weapon].Player = self;
+	ViewEnts[ps_flash] = SpawnObject(Weapon, none);
+	ViewEnts[ps_flash].Player = self;
+	if (bIsBot)
+	{
+		Bot = SpawnObject(BotPlayer, none);
+		Bot.player = self;
+		Bot.OnBeginPlay();
+	}
+}
+
+//==========================================================================
+//
+//  SpawnClient
+//
+//==========================================================================
+
+void SpawnClient()
+{
+	int j;
+	int oldKeys;
+	int oldPieces;
+	bool oldWeaponowned[NUMWEAPONS];
+	bool playerWasReborn;
+	int bestWeapon;
+
+	Attacker = none;
+	Poisoner = none;
+
+	if (netgame && !deathmatch)
+	{
+		// Cooperative net-play, retain keys and weapons
+		oldKeys = Keys;
+		oldPieces = Pieces;
+		for (j = 0; j < NUMWEAPONS; j++)
+		{
+			oldWeaponowned[j] = WeaponOwned[j];
+		}
+		playerWasReborn = (PlayerState == PST_REBORN);
+	}
+
+	//  Spawn player
+	if (deathmatch)
+	{
+		DeathMatchSpawnPlayer();
+	}
+	else
+	{
+		SpawnPlayer(&level->playerstarts[RebornPosition * MAXPLAYERS +
+			P_GetPlayerNum(self)]);
+	}
+
+	if (netgame && !deathmatch && playerWasReborn)
+	{
+		// Restore keys and weapons when reborn in co-op
+		Keys = oldKeys;
+		Pieces = oldPieces;
+		for (bestWeapon = 0, j = 0; j < NUMWEAPONS; j++)
+		{
+			if (oldWeaponowned[j])
+			{
+				bestWeapon = j;
+				WeaponOwned[j] = true;
+			}
+		}
+		Mana[MANA_1] = 25;
+		Mana[MANA_2] = 25;
+		if (bestWeapon)
+		{
+			// Bring up the best weapon
+			PendingWeapon = bestWeapon;
+		}
+	}
+
+	// Destroy all things touching players
+	MO.TeleportMove(MO.Origin);
+}
+
+//==========================================================================
+//
+//  NetGameReborn
+//
+//==========================================================================
+
+void NetGameReborn()
+{
+	int i;
+	bool oldWeaponowned[NUMWEAPONS];
+	int oldKeys;
+	int oldPieces;
+	bool foundSpot;
+	int bestWeapon;
+
+	// remove pitch and roll angles from corpse
+	MO.Angles.pitch = 0.0;
+	MO.Angles.roll = 0.0;
+
+	// first dissasociate the corpse
+	MO.Player = none;
+	MO.bIsPlayer = false;
+
+	// spawn at random spot if in death match
+	if (deathmatch)
+	{
+		DeathMatchSpawnPlayer();
+		return;
+	}
+
+	// Cooperative net-play, retain keys and weapons
+	oldKeys = Keys;
+	oldPieces = Pieces;
+	for (i = 0; i < NUMWEAPONS; i++)
+	{
+		oldWeaponowned[i] = WeaponOwned[i];
+	}
+
+	foundSpot = false;
+	if (CheckSpot(&level->playerstarts[RebornPosition * MAXPLAYERS +
+		P_GetPlayerNum(self)]))
+	{
+		// Appropriate player start spot is open
+		SpawnPlayer(&level->playerstarts[RebornPosition * MAXPLAYERS +
+			P_GetPlayerNum(self)]);
+		foundSpot = true;
+	}
+	else
+	{
+		// Try to spawn at one of the other player start spots
+		for (i = 0; i < MAXPLAYERS; i++)
+		{
+			if (CheckSpot(&level->playerstarts[RebornPosition * MAXPLAYERS + i]))
+			{
+				// Found an open start spot
+				SpawnPlayer(&level->playerstarts[RebornPosition * MAXPLAYERS + i]);
+				foundSpot = true;
+				break;
+			}
+		}
+	}
+
+	if (!foundSpot)
+	{
+		// Player's going to be inside something
+		SpawnPlayer(&level->playerstarts[RebornPosition * MAXPLAYERS +
+			P_GetPlayerNum(self)]);
+	}
+
+	// Restore keys and weapons
+	Keys = oldKeys;
+	Pieces = oldPieces;
+	for (bestWeapon = 0, i = 0; i < NUMWEAPONS; i++)
+	{
+		if (oldWeaponowned[i])
+		{
+			bestWeapon = i;
+			WeaponOwned[i] = true;
+		}
+	}
+	Mana[MANA_1] = 25;
+	Mana[MANA_2] = 25;
+	if (bestWeapon)
+	{
+		// Bring up the best weapon
+		PendingWeapon = bestWeapon;
+	}
+}
+
+//==========================================================================
+//
+//  DisconnectClient
+//
+//==========================================================================
+
+void DisconnectClient()
+{
+	int i;
+
+	if (Bot != none)
+	{
+		Bot.Destroy();
+		Bot = none;
+	}
+	if (MO)
+	{
+		MO.Player = none;
+		MO.bIsPlayer = false;
+		MO.Damage(none, none, 10000);
+	}
+	for (i = 0; i < NUMPSPRITES; i++)
+	{
+		if (ViewEnts[i])
+		{
+			ViewEnts[i].Destroy();
+			ViewEnts[i] = none;
+		}
+	}
+	bprint("%s left the game\n", ARR2STR(PlayerName));
+	MO.PlayFullVolumeSound('Chat', CHAN_AUTO);
+}
+
+//==========================================================================
+//
+//  UserinfoChanged
+//
+//==========================================================================
+
+void UserinfoChanged()
+{
+	if (!bSpawned)
+	{
+		return;
+	}
+	SetPlayerColor();
+}
+
+//==========================================================================
+//
+//  SetPlayerColor
+//
+//==========================================================================
+
+void SetPlayerColor()
+{
+	MO.Translation = 0;
+	if (PClass == PCLASS_FIGHTER)
+	{
+		// The first type should be blue, and the third should be the
+		// Fighter's original gold color
+		if (Color == 0)
+		{
+			MO.Translation = 2;
+		}
+		else if (Color != 2)
+		{
+			MO.Translation = Color;
+		}
+	}
+	else if (Color)
+	{
+		// Set color translation bits for player sprites
+		MO.Translation = PClass * (MAXPLAYERS - 1) + Color;
+	}
+}
+
+//==========================================================================
+//
+//  DeathMatchSpawnPlayer
+//
+//  Spawns a player at one of the random death match spots called at level
+// load and each death
+//
+//==========================================================================
+
+void DeathMatchSpawnPlayer()
+{
+	int i;
+	int j;
+
+	for (j = 0; j < 20; j++)
+	{
+		i = P_Random() % level->numdeathmatchstarts;
+		if (CheckSpot(&level->deathmatchstarts[i]))
+		{
+			SpawnPlayer(&level->deathmatchstarts[i]);
+			return;
+		}
+	}
+
+	// no good spot, so the player will probably get stuck 
+	SpawnPlayer(&level->playerstarts[P_GetPlayerNum(self)]);
+}
+
+//==========================================================================
+//
+//  CheckSpot
+//
+//  Returns false if the player cannot be respawned at the given mthing_t
+// spot because something is occupying it
+//
+//==========================================================================
+
+bool CheckSpot(mthing_t * mthing)
+{
+	float x;
+	float y;
+	sector_t *sec;
+	float an;
+	Actor A;
+	int i;
+
+	if (!MO)
+	{
+		// first spawn of level, before corpses
+		for (i = 0; i < MAXPLAYERS; i++)
+			if (svvars->Players[i] && svvars->Players[i].MO &&
+				svvars->Players[i].MO.Origin.x == mthing->x &&
+				svvars->Players[i].MO.Origin.y == mthing->y)
+				return false;
+		return true;
+	}
+
+	x = mthing->x;
+	y = mthing->y;
+
+	MO.bNoPassMobj = true;
+	if (!MO.CheckPosition(vector(x, y, ONFLOORZ)))
+	{
+		MO.bNoPassMobj = false;
+		return false;
+	}
+	MO.bNoPassMobj = false;
+
+	// spawn a teleport fog 
+	sec = GLevel.PointInSector(vector(x, y, 0.0));
+	an = itof(45 * (mthing->angle / 45));
+
+	A = Spawn(TeleportFog, vector(x + 20.0 * cos(an), y + 20.0 * sin(an),
+		sec->floorheight + TELEFOGHEIGHT));
+	A.PlaySound('Teleport', CHAN_VOICE);
+
+	return true;
+}
+
+//==========================================================================
+//
+//  SpawnPlayer
+//
+//  Called when a player is spawned on the level.  Most of the player
+// structure stays unchanged between levels.
+//
+//==========================================================================
+
+void SpawnPlayer(mthing_t * mthing)
+{
+	float x, y, z;
+	PlayerPawn pp;
+
+	if (PlayerState == PST_REBORN)
+	{
+		PlayerReborn();
+	}
+	if (randomclass && deathmatch)
+	{
+		PClass = P_Random() % 3;
+		if (PClass == BaseClass)
+		{
+			PClass = (PClass + 1) % 3;
+		}
+		BaseClass = PClass;
+		SB_Start();
+	}
+	else
+	{
+		PClass = BaseClass;
+	}
+	x = mthing->x;
+	y = mthing->y;
+	z = ONFLOORZ;
+	switch (PClass)
+	{
+	case PCLASS_FIGHTER:
+		pp = PlayerPawn(Spawn(PlayerFighter, vector(x, y, z)));
+		break;
+	case PCLASS_CLERIC:
+		pp = PlayerPawn(Spawn(PlayerCleric, vector(x, y, z)));
+		break;
+	case PCLASS_MAGE:
+		pp = PlayerPawn(Spawn(PlayerMage, vector(x, y, z)));
+		break;
+	default:
+		Error("P_SpawnPlayer: Unknown class type");
+		break;
+	}
+	pp.Origin.z += mthing->height;
+	pp.LinkToWorld();
+
+	pp.Angles.yaw = itof(45 * (mthing->angle / 45));
+	pp.Player = self;
+	pp.bIsPlayer = true;
+	pp.Health = Health;
+	MO = pp;
+	PlayerState = PST_LIVE;
+	Refire = 0;
+	DamageFlash = 0.0;
+	BonusFlash = 0.0;
+	PoisonCount = 0;
+	MorphTime = 0.0;
+	ExtraLight = 0;
+	FixedColormap = 0;
+	ViewHeight = VIEWHEIGHT;
+	ViewAngles = pp.Angles;
+	bFixAngle = true;
+	SetupPsprites();
+	if (deathmatch)
+	{
+		// Give all keys in death match mode
+		Keys = 2047;
+	}
+
+	// Set translation table data
+	SetPlayerColor();
+	if (bIsBot)
+	{
+		Bot.OnSpawn();
+	}
+}
+
+//==========================================================================
+//
+//  PlayerReborn
+//
+//  Called after a player dies almost everything is cleared and initialized
+//
+//==========================================================================
+
+void PlayerReborn()
+{
+	BotPlayer B;
+
+	B = Bot;
+	ClearPlayer(self);
+	Bot = B;
+
+	PClass = BaseClass;
+
+	bUseDown = true;	// don't do anything immediately
+	bAttackDown = true;
+	PlayerState = PST_LIVE;
+	Health = MAXHEALTH;
+	WeaponOwned[WP_FIRST] = true;
+	SetWeapon(WP_FIRST);
+	LocalQuakeHappening = 0;
+}
+
+//==========================================================================
+//
+//  PlayerExitMap
+//
+//  Called when the player leaves a map.
+//
+//==========================================================================
+
+void PlayerExitMap(bool clusterChange)
+{
+	int i;
+	float flightPower;
+
+	// Strip all current powers (retain flight)
+	flightPower = Powers[pw_flight];
+	for (i = 0; i < NUMPOWERS; i++)
+		Powers[i] = 0.0;
+//  memset(Powers, 0, sizeof(Powers));
+	Powers[pw_flight] = flightPower;
+
+	if (deathmatch)
+	{
+		Powers[pw_flight] = 0.0;
+	}
+	else
+	{
+		if (clusterChange)
+		{	// Entering new cluster
+			// Strip all keys
+			Keys = 0;
+
+			// Strip flight artifact
+			for (i = 0; i < 25; i++)
+			{
+				Powers[pw_flight] = 0.0;
+				PlayerUseArtifact(arti_fly);
+			}
+			Powers[pw_flight] = 0.0;
+		}
+	}
+
+	if (MorphTime)
+	{
+		SetWeapon(MO._Special1);	// Restore weapon
+		MorphTime = 0.0;
+	}
+	MO.Angles.pitch = 0.0;
+	MO.Translucency = 0;	// Remove invisibility
+	ExtraLight = 0;	// Remove weapon flashes
+	FixedColormap = 0;	// Remove torch
+	DamageFlash = 0.0;	// No palette changes
+	BonusFlash = 0.0;
+	PoisonCount = 0;
+}
+
+//==========================================================================
+//
 //  GiveMana
 //
 //  Returns true if the player accepted the mana, false if it was
@@ -1190,7 +1688,7 @@ bool UndoPlayerMorph()
 	A.Health = MAXHEALTH;
 	Health = A.Health;
 	PClass = BaseClass;
-	SetPlayerColor(self);
+	SetPlayerColor();
 	PostMorphWeapon(MO._Special1);
 
 	fog = Spawn(TeleportFog, MO.Origin + vector(20.0 * cos(MO.Angles.yaw),
@@ -2764,6 +3262,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2004/08/28 12:35:23  dj_jl
+//  Move general client functions to player class.
+//
 //  Revision 1.3  2004/08/23 19:23:59  dj_jl
 //  Moved weapon utilites to player class.
 //

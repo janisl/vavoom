@@ -89,6 +89,402 @@ BotPlayer Bot;
 
 //==========================================================================
 //
+//  PutClientIntoServer
+//
+//==========================================================================
+
+void PutClientIntoServer()
+{
+	ViewEnts[ps_weapon] = SpawnObject(Weapon, none);
+	ViewEnts[ps_weapon].Player = self;
+	ViewEnts[ps_flash] = SpawnObject(Weapon, none);
+	ViewEnts[ps_flash].Player = self;
+#ifndef	NO_BOTS
+	if (bIsBot)
+	{
+		Bot = SpawnObject(BotPlayer, none);
+		Bot.player = self;
+		Bot.OnBeginPlay();
+	}
+#endif
+}
+
+//==========================================================================
+//
+//  SpawnClient
+//
+//==========================================================================
+
+void SpawnClient()
+{
+	if (deathmatch)
+	{
+		DeathMatchSpawnPlayer();
+	}
+	else
+	{
+		SpawnPlayer(&level->playerstarts[RebornPosition * MAXPLAYERS +
+			P_GetPlayerNum(self)]);
+	}
+}
+
+//==========================================================================
+//
+//  NetGameReborn
+//
+//	Respawn at the start
+//
+//==========================================================================
+
+void NetGameReborn()
+{
+	int i;
+
+	// remove pitch and roll angles from corpse
+	MO.Angles.pitch = 0.0;
+	MO.Angles.roll = 0.0;
+
+	// first dissasociate the corpse
+	MO.Player = none;
+	MO.bIsPlayer = false;
+
+	// spawn at random spot if in death match
+	if (deathmatch)
+	{
+		DeathMatchSpawnPlayer();
+		return;
+	}
+
+	if (CheckSpot(&level->playerstarts[RebornPosition * MAXPLAYERS +
+		P_GetPlayerNum(self)]))
+	{
+		SpawnPlayer(&level->playerstarts[RebornPosition * MAXPLAYERS +
+			P_GetPlayerNum(self)]);
+		return;
+	}
+
+	// try to spawn at one of the other players spots
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (CheckSpot(&level->playerstarts[RebornPosition * MAXPLAYERS + i]))
+		{
+			SpawnPlayer(&level->playerstarts[RebornPosition * MAXPLAYERS + i]);
+			return;
+		}
+		// he's going to be inside something.  Too bad.
+	}
+	SpawnPlayer(&level->playerstarts[RebornPosition * MAXPLAYERS +
+		P_GetPlayerNum(self)]);
+}
+
+//==========================================================================
+//
+//  DisconnectClient
+//
+//==========================================================================
+
+void DisconnectClient()
+{
+	int i;
+
+#ifndef	NO_BOTS
+	if (Bot != none)
+	{
+		Bot.Destroy();
+		Bot = none;
+	}
+#endif
+	if (MO)
+	{
+		MO.Player = none;
+		MO.bIsPlayer = false;
+		MO.Damage(none, none, 10000);
+	}
+	for (i = 0; i < NUMPSPRITES; i++)
+	{
+		if (ViewEnts[i])
+		{
+			ViewEnts[i].Destroy();
+			ViewEnts[i] = none;
+		}
+	}
+	bprint("%s left the game\n", ARR2STR(PlayerName));
+	MO.PlayFullVolumeSound('Chat', CHAN_AUTO);
+}
+
+//==========================================================================
+//
+//  UserinfoChanged
+//
+//==========================================================================
+
+void UserinfoChanged()
+{
+	if (!bSpawned)
+	{
+		return;
+	}
+	MO.Translation = Color;
+	SetClientModel();
+}
+
+//==========================================================================
+//
+//	SetClientModel
+//
+//==========================================================================
+
+void SetClientModel()
+{
+	string model;
+	string skin;
+
+	model = Info_ValueForKey(ARR2STR(UserInfo), "model");
+	if (!model || !strgetchar(model, 0))
+	{
+		MO.bFixedModel = false;
+		MO.ModelSkinNum = 0;
+		return;
+	}
+
+	MO.bFixedModel = true;
+	MO.ModelIndex = FindModel(va("players/%s/tris.md2", model));
+	skin = Info_ValueForKey(ARR2STR(UserInfo), "skin");
+	if (skin && strgetchar(skin, 0))
+	{
+		MO.ModelSkinNum = FindSkin(va("players/%s/%s", model, skin));
+	}
+	else
+	{
+		MO.ModelSkinNum = 0;
+	}
+}
+
+//==========================================================================
+//
+//  DeathMatchSpawnPlayer
+//
+//  Spawns a player at one of the random death match spots called at level
+// load and each death
+//
+//==========================================================================
+
+void DeathMatchSpawnPlayer()
+{
+	int i;
+	int j;
+
+	for (j = 0; j < 20; j++)
+	{
+		i = P_Random() % level->numdeathmatchstarts;
+		if (CheckSpot(&level->deathmatchstarts[i]))
+		{
+			SpawnPlayer(&level->deathmatchstarts[i]);
+			return;
+		}
+	}
+
+	// no good spot, so the player will probably get stuck 
+	SpawnPlayer(&level->playerstarts[P_GetPlayerNum(self)]);
+}
+
+//==========================================================================
+//
+//  CheckSpot
+//
+//  Returns false if the player cannot be respawned at the given mthing_t
+// spot because something is occupying it
+//
+//==========================================================================
+
+bool CheckSpot(mthing_t * mthing)
+{
+	float x;
+	float y;
+	sector_t *sec;
+	float an;
+	Actor A;
+	int mtnum;
+	int sfxnum;
+	int i;
+
+	if (!MO)
+	{
+		// first spawn of level, before corpses
+		for (i = 0; i < MAXPLAYERS; i++)
+			if (svvars->Players[i] && svvars->Players[i].MO &&
+				svvars->Players[i].MO.Origin.x == mthing->x &&
+				svvars->Players[i].MO.Origin.y == mthing->y)
+				return false;
+		return true;
+	}
+
+	x = mthing->x;
+	y = mthing->y;
+
+	if (!MO.CheckPosition(vector(x, y, ONFLOORZ)))
+	{
+		return false;
+	}
+
+	// flush an old corpse if needed 
+	if (bodyqueslot >= BODYQUESIZE)
+		bodyque[bodyqueslot % BODYQUESIZE].Remove();
+	bodyque[bodyqueslot % BODYQUESIZE] = MO;
+	bodyqueslot++;
+
+	// spawn a teleport fog 
+	sec = GLevel.PointInSector(vector(x, y, 0.0));
+	an = itof(45 * (mthing->angle / 45));
+
+	A = Spawn(TeleportFog, vector(x + 20.0 * cos(an), y + 20.0 * sin(an),
+		sec->floorheight));
+	A.PlaySound('Teleport', CHAN_VOICE);
+
+	return true;
+}
+
+//==========================================================================
+//
+//  SpawnPlayer
+//
+//  Called when a player is spawned on the level. Most of the player
+// structure stays unchanged between levels.
+//
+//==========================================================================
+
+void SpawnPlayer(mthing_t * mthing)
+{
+	float x;
+	float y;
+	float z;
+	PlayerPawn PP;
+
+	if (PlayerState == PST_REBORN)
+		PlayerReborn();
+
+	x = mthing->x;
+	y = mthing->y;
+	z = ONFLOORZ;
+	PP = PlayerPawn(Spawn(DoomPlayer, vector(x, y, z)));
+	PP.Origin.z += mthing->height;
+	PP.LinkToWorld();
+
+	// set color translations for player sprites
+	PP.Translation = Color;
+
+	PP.Angles.yaw = itof(mthing->angle);
+	PP.Player = self;
+	PP.bIsPlayer = true;
+	PP.Health = Health;
+
+	MO = PP;
+	PlayerState = PST_LIVE;
+	Refire = 0;
+	DamageFlash = 0.0;
+	BonusFlash = 0.0;
+	ExtraLight = 0;
+	FixedColormap = 0;
+	ViewHeight = VIEWHEIGHT;
+	ViewAngles = PP.Angles;
+	bFixAngle = true;
+
+	// setup gun psprite
+	SetupPsprites();
+
+	// give all cards in death match mode
+	if (deathmatch)
+	{
+		Keys = 0x3f;
+	}
+
+	// wake up the status bar
+	SB_Start();
+
+#ifndef	NO_BOTS
+	if (bIsBot)
+	{
+		Bot.OnSpawn();
+	}
+#endif
+
+	SetClientModel();
+}
+
+//==========================================================================
+//
+//  PlayerReborn
+//
+//  Called after a player dies almost everything is cleared and initialized
+//
+//==========================================================================
+
+void PlayerReborn()
+{
+#ifndef	NO_BOTS
+	BotPlayer b;
+#endif
+
+	//  Clear player struct
+#ifndef	NO_BOTS
+	b = Bot;
+#endif
+	ClearPlayer(self);
+#ifndef	NO_BOTS
+	Bot = b;
+#endif
+
+	//  Set initial data
+	bUseDown = true;	// don't do anything immediately
+	bAttackDown = true;
+	PlayerState = PST_LIVE;
+	Health = INITIAL_HEALTH;
+#ifdef DDF
+	SetInitialWeapons(self);
+#else
+	Ammo[am_clip] = INITIAL_AMMO;
+	MaxAmmo[am_clip] = maxammo[am_clip];
+	MaxAmmo[am_shell] = maxammo[am_shell];
+	MaxAmmo[am_misl] = maxammo[am_misl];
+	MaxAmmo[am_cell] = maxammo[am_cell];
+	WeaponOwned[wp_fist] = true;
+	WeaponOwned[wp_pistol] = true;
+	SetWeapon(wp_pistol);
+#endif
+}
+
+//==========================================================================
+//
+//  PlayerExitMap
+//
+//  Call when a player completes a level.
+//
+//==========================================================================
+
+void PlayerExitMap(bool clusterChange)
+{
+	int i;
+
+	if (clusterChange)
+	{
+		Keys = 0;
+	}
+
+	for (i = 0; i < NUMPOWERS; i++)
+	{
+		Powers[i] = 0.0;
+	}
+	Items = 0;
+	MO.Angles.pitch = 0.0;
+	MO.Translucency = 0;	// cancel invisibility
+	ExtraLight = 0;			// cancel gun flashes
+	FixedColormap = 0;		// cancel ir gogles
+	DamageFlash = 0.0;		// no palette changes
+	BonusFlash = 0.0;
+}
+
+//==========================================================================
+//
 //	GiveAmmo
 //
 //	Returns false if the ammo can't be picked up at all
@@ -1737,6 +2133,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2004/08/28 12:35:20  dj_jl
+//  Move general client functions to player class.
+//
 //  Revision 1.3  2004/08/23 19:23:42  dj_jl
 //  Moved weapon utilites to player class.
 //

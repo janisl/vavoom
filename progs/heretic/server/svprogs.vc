@@ -50,28 +50,21 @@ bool respawnmonsters;
 
 #include "../game/classes.vc"
 
-#include "inter.vc"
-#include "user.vc"
 #include "mobj.vc"
-#include "physics.vc"
 #include "map.vc"
-#include "missile.vc"
 #include "teleport.vc"
-#include "usersubs.vc"
 #include "cheat.vc"
-#include "ai_subs.vc"
-#include "wpnbase.vc"
-#include "enemy.vc"
 
 #include "bot.vc"
-
-#include "sorcerer.vc"
 
 #include "svmain.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2004/08/28 12:35:22  dj_jl
+//  Move general client functions to player class.
+//
 //  Revision 1.17  2002/10/26 16:32:24  dj_jl
 //  New style of defining classes.
 //

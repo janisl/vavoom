@@ -51,12 +51,9 @@
 #include "../game/classes.vc"
 
 #include "savegame.vc"
-#include "user.vc"
 #include "mobj.vc"
 #include "map.vc"
 #include "teleport.vc"
-#include "usersubs.vc"
-#include "ai_subs.vc"
 #include "cheat.vc"
 
 #include "bot.vc"
@@ -77,6 +74,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2004/08/28 12:35:21  dj_jl
+//  Move general client functions to player class.
+//
 //  Revision 1.21  2004/08/23 19:23:55  dj_jl
 //  Moved weapon utilites to player class.
 //

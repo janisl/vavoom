@@ -107,6 +107,38 @@ int WorldTimer;	// total time the player's been playing
 
 int OldStats[96];
 
+void PutClientIntoServer()
+{
+}
+
+void SpawnClient()
+{
+}
+
+void NetGameReborn()
+{
+}
+
+void DisconnectClient()
+{
+}
+
+void UserinfoChanged()
+{
+}
+
+void PlayerExitMap(bool clusterChange)
+{
+}
+
+void PlayerTick(float deltaTime)
+{
+}
+
+void SetViewPos()
+{
+}
+
 defaultproperties
 {
 }
@@ -114,6 +146,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/08/28 12:35:20  dj_jl
+//  Move general client functions to player class.
+//
 //  Revision 1.1  2003/11/12 16:52:08  dj_jl
 //  Changed player structure into a class
 //

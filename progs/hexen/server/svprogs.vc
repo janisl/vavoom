@@ -46,29 +46,22 @@
 #include "../game/classes.vc"
 
 #include "savegame.vc"
-#include "inter.vc"
-#include "user.vc"
 #include "mobj.vc"
-#include "physics.vc"
 #include "map.vc"
 #include "teleport.vc"
 #include "things.vc"
-#include "usersubs.vc"
 #include "cheat.vc"
-#include "ai_subs.vc"
-#include "weapons.vc"
 
 #include "bot.vc"
-
-#include "enemy.vc"
-
-#include "quake.vc"
 
 #include "svmain.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2004/08/28 12:35:23  dj_jl
+//  Move general client functions to player class.
+//
 //  Revision 1.16  2002/11/02 08:24:11  dj_jl
 //  New style classes.
 //

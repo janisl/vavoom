@@ -23,7 +23,205 @@
 //**
 //**************************************************************************
 
+#define MAX_BOSS_SPOTS 8
+
+int GetAmmoChange[] = {
+	wp_goldwand,
+	wp_crossbow,
+	wp_blaster,
+	wp_skullrod,
+	wp_phoenixrod,
+	wp_mace
+};
+
+int GetWeaponAmmo[NUMWEAPONS] = {
+	0,	// staff
+	25,	// gold wand
+	10,	// crossbow
+	30,	// blaster
+	50,	// skull rod
+	2,	// phoenix rod
+	50,	// mace
+	0,	// gauntlets
+	0	// beak
+};
+
+int WeaponValue[] = {
+	1,	// staff
+	3,	// goldwand
+	4,	// crossbow
+	5,	// blaster
+	6,	// skullrod
+	7,	// phoenixrod
+	8,	// mace
+	2,	// gauntlets
+	0	// beak
+};
+int maxammo[NUMAMMO] = {
+	100,	// gold wand
+	50,	// crossbow
+	200,	// blaster
+	200,	// skull rod
+	20,	// phoenix rod
+	150	// mace
+};
+
+string ArtifactText[NUMARTIFACTS] =
+{
+	"",
+	TXT_ARTIINVULNERABILITY,
+	TXT_ARTIINVISIBILITY,
+	TXT_ARTIHEALTH,
+	TXT_ARTISUPERHEALTH,
+	TXT_ARTITOMEOFPOWER,
+	TXT_ARTITORCH,
+	TXT_ARTIFIREBOMB,
+	TXT_ARTIEGG,
+	TXT_ARTIFLY,
+	TXT_ARTITELEPORT,
+};
+string WeaponText[] = {
+	"",
+	"",
+	TXT_WPNCROSSBOW,
+	TXT_WPNBLASTER,
+	TXT_WPNSKULLROD,
+	TXT_WPNPHOENIXROD,
+	TXT_WPNMACE,
+	TXT_WPNGAUNTLETS,
+};
+string KeyText[] = {
+	TXT_GOTYELLOWKEY,
+	TXT_GOTGREENKEY,
+	TXT_GOTBLUEKEY,
+};
+string AmmoText[] = {
+	TXT_AMMOGOLDWAND1,
+	TXT_AMMOGOLDWAND2,
+	TXT_AMMOMACE1,
+	TXT_AMMOMACE2,
+	TXT_AMMOCROSSBOW1,
+	TXT_AMMOCROSSBOW2,
+	TXT_AMMOBLASTER1,
+	TXT_AMMOBLASTER2,
+	TXT_AMMOSKULLROD1,
+	TXT_AMMOSKULLROD2,
+	TXT_AMMOPHOENIXROD1,
+	TXT_AMMOPHOENIXROD2,
+};
+
 classid PuffType;
+
+float air_control = 1.0 / 256.0;
+
+Actor GLavaInflictor;
+
+bool onground;
+
+bool WeaponInShareware[9] = {
+	true,	// Staff
+	true,	// Gold wand
+	true,	// Crossbow
+	true,	// Blaster
+	false,	// Skull rod
+	false,	// Phoenix rod
+	false,	// Mace
+	true,	// Gauntlets
+	true	// Beak
+};
+
+float pushTab[5] = {
+	5.0 * 35.0 * 35.0 / 32.0,
+	10.0 * 35.0 * 35.0 / 32.0,
+	25.0 * 35.0 * 35.0 / 32.0,
+	30.0 * 35.0 * 35.0 / 32.0,
+	35.0 * 35.0 * 35.0 / 32.0
+};
+
+Actor MissileMobj;
+
+float windTab[3] = { 5.0 / 32.0, 10.0 / 32.0, 25.0 / 32.0 };
+
+int opposite[] = {
+	DI_WEST, DI_SOUTHWEST, DI_SOUTH, DI_SOUTHEAST, DI_EAST, DI_NORTHEAST,
+	DI_NORTH, DI_NORTHWEST, DI_NODIR
+};
+
+int diags[] = { DI_NORTHWEST, DI_NORTHEAST, DI_SOUTHWEST, DI_SOUTHEAST };
+
+float xspeed[8] =
+	{ 1.0, 0.7171630859, 0.0, -0.7171630859, -1.0, -0.7171630859, 0.0,
+		0.7171630859 };
+float yspeed[8] =
+	{ 0.0, 0.7171630859, 1.0, 0.7171630859, 0.0, -0.7171630859, -1.0,
+		-0.7171630859 };
+
+Actor bodyque[BODYQUESIZE];
+int bodyqueslot;
+
+int BossSpotCount;
+TVec BossSpot[MAX_BOSS_SPOTS];
+float BossSpot_angle[MAX_BOSS_SPOTS];
+
+int WeaponAmmoUsePL1[NUMWEAPONS] = {
+	0,	// staff
+	USE_GWND_AMMO_1,	// gold wand
+	USE_CBOW_AMMO_1,	// crossbow
+	USE_BLSR_AMMO_1,	// blaster
+	USE_SKRD_AMMO_1,	// skull rod
+	USE_PHRD_AMMO_1,	// phoenix rod
+	USE_MACE_AMMO_1,	// mace
+	0,	// gauntlets
+	0	// beak
+};
+
+int WeaponAmmoUsePL2[NUMWEAPONS] = {
+	0,	// staff
+	USE_GWND_AMMO_2,	// gold wand
+	USE_CBOW_AMMO_2,	// crossbow
+	USE_BLSR_AMMO_2,	// blaster
+	USE_SKRD_AMMO_2,	// skull rod
+	USE_PHRD_AMMO_2,	// phoenix rod
+	USE_MACE_AMMO_2,	// mace
+	0,	// gauntlets
+	0	// beak
+};
+
+int MaceSpotCount;
+float MaceSpot_x[MAX_MACE_SPOTS];
+float MaceSpot_y[MAX_MACE_SPOTS];
+
+//==========================================================================
+//
+//  P_Massacre
+//
+//  Kills all monsters.
+//
+//==========================================================================
+
+void P_Massacre(void)
+{
+	Actor mo;
+
+	FOREACH(Actor, mo)
+	{
+		if (mo.bCountKill && mo.Health > 0)
+		{
+			mo.Damage(none, none, 10000);
+		}
+	}
+}
+
+//==========================================================================
+//
+//  InitLava
+//
+//==========================================================================
+
+void InitLava(void)
+{
+	GLavaInflictor = LavaInflictor(NewMobjThinker(LavaInflictor));
+}
 
 //==========================================================================
 //
@@ -110,69 +308,6 @@ void SpawnPuff(TVec org)
 		MSG_WriteShort(ftoi(org.x));
 		MSG_WriteShort(ftoi(org.y));
 		MSG_WriteShort(ftoi(org.z));
-	}
-}
-
-//==========================================================================
-//
-//  P_SpawnPlayer
-//
-//  Called when a player is spawned on the level
-//  Most of the player structure stays unchanged between levels
-//
-//==========================================================================
-
-void P_SpawnPlayer(mthing_t * mthing)
-{
-	Player p;
-	float x, y, z;
-	Actor A;
-
-	p = svvars->Players[mthing->type - 1];
-
-	if (!p)
-		return;	// not playing
-
-	if (p.PlayerState == PST_REBORN)
-	{
-		G_PlayerReborn(mthing->type - 1);
-	}
-	x = mthing->x;
-	y = mthing->y;
-
-	z = ONFLOORZ;
-	A = Spawn(HereticPlayer, vector(x, y, z));
-	A.Origin.z += mthing->height;
-	A.LinkToWorld();
-	// set color translations for player sprites
-	A.Translation = p.Color;
-
-	A.Angles.yaw = itof(45 * (mthing->angle / 45));
-	A.Player = p;
-	A.bIsPlayer = true;
-	A.Health = p.Health;
-	p.MO = A;
-	p.PlayerState = PST_LIVE;
-	p.Refire = 0;
-	p.DamageFlash = 0.0;
-	p.BonusFlash = 0.0;
-	p.ChickenTime = 0.0;
-	p.Rain1 = none;
-	p.Rain2 = none;
-	p.ExtraLight = 0;
-	p.FixedColormap = 0;
-	p.ViewHeight = VIEWHEIGHT;
-	p.ViewAngles = A.Angles;
-	p.bFixAngle = true;
-	p.SetupPsprites();	// setup gun psprite
-	if (deathmatch)
-	{
-		// Give all keys in death match mode
-		p.Keys = 7;
-	}
-	if (p.bIsBot)
-	{
-		p.Bot.OnSpawn();
 	}
 }
 
@@ -402,9 +537,101 @@ void P_NoiseAlert(Actor target, Actor emmiter)
 	P_RecursiveSound(emmiter.Sector, 0);
 }
 
+//==========================================================================
+//
+//  InitMonsters
+//
+//  Called at level load.
+//
+//==========================================================================
+
+void InitMonsters(void)
+{
+	BossSpotCount = 0;
+}
+
+//==========================================================================
+//
+//  P_AddBossSpot
+//
+//==========================================================================
+
+void AddBossSpot(float x, float y, float angle)
+{
+	if (BossSpotCount == MAX_BOSS_SPOTS)
+	{
+		Error("Too many boss spots.");
+	}
+	BossSpot[BossSpotCount].x = x;
+	BossSpot[BossSpotCount].y = y;
+	BossSpot[BossSpotCount].z = 0.0;	//FIXME
+	BossSpot_angle[BossSpotCount] = angle;
+	BossSpotCount++;
+}
+
+//===========================================================================
+//
+//  OpenWeapons
+//
+//  Called at level load before things are loaded.
+//
+//===========================================================================
+
+void OpenWeapons(void)
+{
+	MaceSpotCount = 0;
+}
+
+//===========================================================================
+//
+//  AddMaceSpot
+//
+//===========================================================================
+
+void AddMaceSpot(float x, float y)
+{
+	if (MaceSpotCount == MAX_MACE_SPOTS)
+	{
+		Error("Too many mace spots.");
+	}
+	MaceSpot_x[MaceSpotCount] = x;
+	MaceSpot_y[MaceSpotCount] = y;
+	MaceSpotCount++;
+}
+
+//===========================================================================
+//
+//  CloseWeapons
+//
+//  Called at level load after things are loaded.
+//
+//===========================================================================
+
+void CloseWeapons(void)
+{
+	int spot;
+
+	if (!MaceSpotCount)
+	{
+		// No maces placed
+		return;
+	}
+	if (!deathmatch && P_Random() < 64)
+	{
+		// Sometimes doesn't show up if not in deathmatch
+		return;
+	}
+	spot = P_Random() % MaceSpotCount;
+	Spawn(ItemWeaponMace, vector(MaceSpot_x[spot], MaceSpot_y[spot],
+		ONFLOORZ));
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.55  2004/08/28 12:35:22  dj_jl
+//  Move general client functions to player class.
+//
 //  Revision 1.54  2004/08/23 19:23:57  dj_jl
 //  Moved weapon utilites to player class.
 //
