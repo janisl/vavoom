@@ -53,7 +53,6 @@ FNameEntry*			FName::NameHash[4096];  // Hashed names.
 bool				FName::Initialized;	 // Subsystem initialized.
 
 #define REGISTER_NAME(name)		{ NAME_##name, OF_Native, NULL, #name },
-#define REG_NAME_HIGH(name)		{ NAME_##name, OF_Native, NULL, #name },
 FNameEntry AutoNames[] =
 {
 #include "names.h"
@@ -71,7 +70,12 @@ FNameEntry AutoNames[] =
 
 inline dword GetTypeHash(const char *S)
 {
-	return ((byte *)S)[0] | ((byte *)S)[1];
+	dword ret = 0;
+	for (int i = 0; S[i]; i++)
+	{
+		ret ^= (byte)S[i] << ((i & 3) * 8);
+	}
+	return ret;
 }
 
 //==========================================================================
@@ -222,7 +226,10 @@ void FName::DeleteEntry(int i)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2002/01/25 18:05:58  dj_jl
+//	Better string hash function
+//
 //	Revision 1.1  2002/01/11 08:17:31  dj_jl
 //	Added name subsystem, removed support for unsigned ints
-//
+//	
 //**************************************************************************

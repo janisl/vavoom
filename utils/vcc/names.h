@@ -32,7 +32,6 @@
 // Define a message as an enumeration.
 #ifndef REGISTER_NAME
 	#define REGISTER_NAME(name)	NAME_##name,
-	#define REG_NAME_HIGH(name)	NAME_##name,
 	#define REGISTERING_ENUM
 	enum EName {
 #endif
@@ -40,21 +39,23 @@
 // Hardcoded names which are not messages ----------------------------------
 
 // Special zero value, meaning no name.
-REG_NAME_HIGH(None)
+REGISTER_NAME(None)
 
 // Closing -----------------------------------------------------------------
 
 #ifdef REGISTERING_ENUM
 	};
 	#undef REGISTER_NAME
-	#undef REG_NAME_HIGH
 	#undef REGISTERING_ENUM
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2002/01/25 18:05:58  dj_jl
+//	Better string hash function
+//
 //	Revision 1.1  2002/01/11 08:17:31  dj_jl
 //	Added name subsystem, removed support for unsigned ints
-//
+//	
 //**************************************************************************
