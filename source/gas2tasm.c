@@ -750,6 +750,7 @@ parsefield	parsedata[] = {
 	{"fistpl", " fistp", 2, emitoneoperandl},
 	{"fld",    " fld", 2, emitoneoperandl},
 	{"fld1",   " fld1", -1, emit_0_or_1_operandsl},
+	{"fldz",   " fldz", -1, emit_0_or_1_operandsl},
 	{"fldcw",  " fldcw", 2, emitoneoperandw},
 	{"fldenv", " fldenv", 2, emitoneoperandl},
 	{"flds",   " fld", 2, emitoneoperandl},
@@ -760,6 +761,7 @@ parsefield	parsedata[] = {
 	{"fnstcw", " fnstcw", 2, emitoneoperandw},
 	{"fnstenv"," fnstenv", 2, emitoneoperandl},
 	{"fnstsw", " fnstsw", 2, emitoneoperandw},
+	{"frndint"," frndint", -1, emit_0_or_1_operandsl},
 	{"fstp",   " fstp", 2, emitoneoperandl},
 	{"fstps",  " fstp", 2, emitoneoperandl},
 	{"fsts",   " fst", 2, emitoneoperandl},
@@ -1181,6 +1183,9 @@ int main (int argc, char **argv)
 
 /*
  * $Log$
+ * Revision 1.4  2001/08/15 17:16:36  dj_jl
+ * Added missing opcodes
+ *
  * Revision 1.3  2001/07/31 17:16:30  dj_jl
  * Just moved Log to the end of file
  *
