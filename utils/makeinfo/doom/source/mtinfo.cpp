@@ -3971,18 +3971,36 @@ void FixupHeights(void)
 	MarkWeaponState(S1_DSNR1);
 }
 
+extern bool Hacked;
+extern state_action_info_t StateActionInfo[];
+extern state_t states[];
+
 void MarkSpecialWeaponStates(void)
 {
 	MarkWeaponState(S1_CHAINFLASH2);
 	MarkWeaponState(S1_PLASMAFLASH2);
+	if (Hacked)
+	{
+		//	Need this for unused states with weapon action functions.
+		for (int i = 1; i < NUMDOOMSTATES; i++)
+		{
+			if (StateActionInfo[states[i].action_num].weapon_action)
+			{
+				states[i].weapon_state = true;
+			}
+		}
+	}
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/03/28 18:08:17  dj_jl
+//	Changes for DeHackEd compatibility.
+//
 //	Revision 1.9  2002/02/14 19:23:07  dj_jl
 //	Renamed Entity properties to new naming style
-//
+//	
 //	Revision 1.8  2002/01/29 18:19:01  dj_jl
 //	Added MCROSS and PCROSS flags.
 //	
