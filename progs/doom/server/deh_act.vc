@@ -23,6 +23,44 @@
 //**
 //**************************************************************************
 
+class Zombieman;
+class ShotgunGuy;
+class Imp;
+class Demon;
+class Shadows;
+class Cacodemon;
+class LostSoul;
+class ChaingunGuy;
+class WolfSS;
+class PainElemental;
+class ArchVile;
+class Revenant;
+class Arachnotron;
+class Mancubus;
+class HellKnight;
+class BaronOfHell;
+class Cyberdemon;
+class SpiderMastermind;
+
+class ItemAmmoBulletClip;
+class ItemWeaponShotgun;
+class ItemWeaponChaingun;
+class ItemInvulnerability;
+class ItemInvisibility;
+
+class ExtraBFG;
+class ImpMissile;
+class CacodemonMissile;
+class BruiserShot;
+class RevenantTracer;
+class RevenantTracerSmoke;
+class MancubusMissile;
+class ArchvileFire;
+class BossTarget;
+class SpawnShot;
+class SpawnFire;
+class ArachnotronPlasma;
+
 #define	SKULLSPEED		700.0
 #define SKULL_RADIUS	16.0
 #define	FATSPREAD		(90.0 / 8.0)
@@ -35,17 +73,6 @@ int numbraintargets;
 int braintargeton;
 int brain_easy;
 Actor braintargets[32];
-
-//==========================================================================
-//
-//	State number retrievals
-//
-//==========================================================================
-
-int GetBrainExplodeState(void)
-{
-	return S_NULL;	//S_BRAINEXPLODE1;
-}
 
 //==========================================================================
 //
@@ -82,6 +109,300 @@ void DropStuff(void)
 
 	A = Spawn(item, vector(Origin.x, Origin.y, FloorZ));
 	A.bDropped = true;	// special versions of items
+}
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+boolean HandlePickup(Actor Toucher)
+{
+	int i;
+	name sound;
+
+	sound = 'PickupItem';
+
+	// Identify by sprite.
+	switch (SpriteName)
+	{
+		// armor
+	case 'ARM1':
+		if (!Toucher.GiveArmor(1))
+			return false;
+		cprint(Toucher.Player, GOTARMOR);
+		break;
+
+	case 'ARM2':
+		if (!Toucher.GiveArmor(2))
+			return false;
+		cprint(Toucher.Player, GOTMEGA);
+		break;
+
+		// bonus items
+	case 'BON1':
+		Toucher.Player->Health++;	// can go over 100%
+		if (Toucher.Player->Health > 200)
+			Toucher.Player->Health = 200;
+		Toucher.Health = Toucher.Player->Health;
+		cprint(Toucher.Player, GOTHTHBONUS);
+		break;
+
+	case 'BON2':
+		Toucher.Player->ArmorPoints++;	// can go over 100%
+		if (Toucher.Player->ArmorPoints > 200)
+			Toucher.Player->ArmorPoints = 200;
+		if (!Toucher.Player->ArmorType)
+			Toucher.Player->ArmorType = 1;
+		cprint(Toucher.Player, GOTARMBONUS);
+		break;
+
+	case 'SOUL':
+		Toucher.Player->Health += SOULSPHERE_HEALTH;
+		if (Toucher.Player->Health > SOULSPHERE_MAX)
+			Toucher.Player->Health = SOULSPHERE_MAX;
+		Toucher.Player->MO.Health = Toucher.Player->Health;
+		cprint(Toucher.Player, GOTSUPER);
+		sound = 'PickupPower';
+		break;
+
+	case 'MEGA':
+		Toucher.Player->Health = MEGASPHERE_HEALTH;
+		Toucher.Health = Toucher.Player->Health;
+		Toucher.GiveArmor(2);
+		cprint(Toucher.Player, GOTMSPHERE);
+		sound = 'PickupPower';
+		break;
+
+		// cards
+		// leave cards for everyone
+	case 'BKEY':
+		if (Toucher.GiveCard(it_bluecard))
+			cprint(Toucher.Player, GOTBLUECARD);
+		if (!netgame)
+			break;
+		return false;
+
+	case 'YKEY':
+		if (Toucher.GiveCard(it_yellowcard))
+			cprint(Toucher.Player, GOTYELWCARD);
+		if (!netgame)
+			break;
+		return false;
+
+	case 'RKEY':
+		if (Toucher.GiveCard(it_redcard))
+			cprint(Toucher.Player, GOTREDCARD);
+		if (!netgame)
+			break;
+		return false;
+
+	case 'BSKU':
+		if (Toucher.GiveCard(it_blueskull))
+			cprint(Toucher.Player, GOTBLUESKUL);
+		if (!netgame)
+			break;
+		return false;
+
+	case 'YSKU':
+		if (Toucher.GiveCard(it_yellowskull))
+			cprint(Toucher.Player, GOTYELWSKUL);
+		if (!netgame)
+			break;
+		return false;
+
+	case 'RSKU':
+		if (Toucher.GiveCard(it_redskull))
+			cprint(Toucher.Player, GOTREDSKULL);
+		if (!netgame)
+			break;
+		return false;
+
+		// medikits, heals
+	case 'STIM':
+		if (!Toucher.GiveBody(10, MAXHEALTH))
+			return false;
+		cprint(Toucher.Player, GOTSTIM);
+		break;
+
+	case 'MEDI':
+		if (!Toucher.GiveBody(25, MAXHEALTH))
+			return false;
+
+		if (Toucher.Player->Health < 25)
+			cprint(Toucher.Player, GOTMEDINEED);
+		else
+			cprint(Toucher.Player, GOTMEDIKIT);
+		break;
+
+		// power ups
+	case 'PINV':
+		if (!Toucher.GivePower(pw_invulnerability))
+			return false;
+		cprint(Toucher.Player, GOTINVUL);
+		sound = 'PickupPower';
+		break;
+
+	case 'PSTR':
+		if (!Toucher.GivePower(pw_strength))
+			return false;
+		cprint(Toucher.Player, GOTBERSERK);
+		sound = 'PickupPower';
+		break;
+
+	case 'PINS':
+		if (!Toucher.GivePower(pw_invisibility))
+			return false;
+		cprint(Toucher.Player, GOTINVIS);
+		sound = 'PickupPower';
+		break;
+
+	case 'SUIT':
+		if (!Toucher.GivePower(pw_ironfeet))
+			return false;
+		cprint(Toucher.Player, GOTSUIT);
+		sound = 'PickupPower';
+		break;
+
+	case 'PVIS':
+		if (!Toucher.GivePower(pw_infrared))
+			return false;
+		cprint(Toucher.Player, GOTVISOR);
+		sound = 'PickupPower';
+		break;
+
+		//  Items
+	case 'PMAP':
+		if (!Toucher.GiveItem(IT_ALL_MAP))
+			return false;
+		cprint(Toucher.Player, GOTMAP);
+		sound = 'PickupPower';
+		break;
+
+		// ammo
+	case 'CLIP':
+		if (bDropped)
+		{
+			if (!Toucher.GiveAmmo(am_clip, clipammo[am_clip] / 2))
+				return false;
+		}
+		else
+		{
+			if (!Toucher.GiveAmmo(am_clip, clipammo[am_clip]))
+				return false;
+		}
+		cprint(Toucher.Player, GOTCLIP);
+		break;
+
+	case 'AMMO':
+		if (!Toucher.GiveAmmo(am_clip, 5 * clipammo[am_clip]))
+			return false;
+		cprint(Toucher.Player, GOTCLIPBOX);
+		break;
+
+	case 'ROCK':
+		if (!Toucher.GiveAmmo(am_misl, clipammo[am_misl]))
+			return false;
+		cprint(Toucher.Player, GOTROCKET);
+		break;
+
+	case 'BROK':
+		if (!Toucher.GiveAmmo(am_misl, 5 * clipammo[am_misl]))
+			return false;
+		cprint(Toucher.Player, GOTROCKBOX);
+		break;
+
+	case 'CELL':
+		if (!Toucher.GiveAmmo(am_cell, clipammo[am_cell]))
+			return false;
+		cprint(Toucher.Player, GOTCELL);
+		break;
+
+	case 'CELP':
+		if (!Toucher.GiveAmmo(am_cell, 5 * clipammo[am_cell]))
+			return false;
+		cprint(Toucher.Player, GOTCELLBOX);
+		break;
+
+	case 'SHEL':
+		if (!Toucher.GiveAmmo(am_shell, clipammo[am_shell]))
+			return false;
+		cprint(Toucher.Player, GOTSHELLS);
+		break;
+
+	case 'SBOX':
+		if (!Toucher.GiveAmmo(am_shell, 5 * clipammo[am_shell]))
+			return false;
+		cprint(Toucher.Player, GOTSHELLBOX);
+		break;
+
+	case 'BPAK':
+		if (!Toucher.Player->Backpack)
+		{
+			Toucher.Player->Backpack = true;
+			for (i = 0; i < NUMAMMO; i++)
+				Toucher.Player->MaxAmmo[i] *= 2;
+		}
+		for (i = 0; i < NUMAMMO; i++)
+		{
+			Toucher.GiveAmmo(i, clipammo[i]);
+		}
+		cprint(Toucher.Player, GOTBACKPACK);
+		break;
+
+		// weapons
+	case 'BFUG':
+		if (!Toucher.GiveWeapon(wp_bfg, false))
+			return false;
+		cprint(Toucher.Player, GOTBFG9000);
+		sound = 'PickupWeapon';
+		break;
+
+	case 'MGUN':
+		if (!Toucher.GiveWeapon(wp_chaingun, bDropped))
+			return false;
+		cprint(Toucher.Player, GOTCHAINGUN);
+		sound = 'PickupWeapon';
+		break;
+
+	case 'CSAW':
+		if (!Toucher.GiveWeapon(wp_chainsaw, false))
+			return false;
+		cprint(Toucher.Player, GOTCHAINSAW);
+		sound = 'PickupWeapon';
+		break;
+
+	case 'LAUN':
+		if (!Toucher.GiveWeapon(wp_missile, false))
+			return false;
+		cprint(Toucher.Player, GOTLAUNCHER);
+		sound = 'PickupWeapon';
+		break;
+
+	case 'PLAS':
+		if (!Toucher.GiveWeapon(wp_plasma, false))
+			return false;
+		cprint(Toucher.Player, GOTPLASMA);
+		sound = 'PickupWeapon';
+		break;
+
+	case 'SHOT':
+		if (!Toucher.GiveWeapon(wp_shotgun, bDropped))
+			return false;
+		cprint(Toucher.Player, GOTSHOTGUN);
+		sound = 'PickupWeapon';
+		break;
+
+	case 'SGN2':
+		if (!Toucher.GiveWeapon(wp_supershotgun, bDropped))
+			return false;
+		cprint(Toucher.Player, GOTSHOTGUN2);
+		sound = 'PickupWeapon';
+		break;
+	}
+	Toucher.PlaySound(sound, CHAN_ITEM);
+	return true;
 }
 
 //===========================================================================
@@ -436,6 +757,39 @@ void A_CPosRefire(void)
 
 //==========================================================================
 //
+//  A_BabyMetal
+//
+//  Arachnotron move with metal sound.
+//
+//==========================================================================
+
+void A_BabyMetal(void)
+{
+	PlaySound('BabyWalk', CHAN_BODY);
+	A_Chase();
+}
+
+//==========================================================================
+//
+//  A_BspiAttack
+//
+//  Arachnotron attack.
+//
+//==========================================================================
+
+void A_BspiAttack(void)
+{
+	if (!Enemy)
+		return;
+
+	A_FaceTarget();
+
+	// launch a missile
+	SpawnMissile(Enemy, ArachnotronPlasma);
+}
+
+//==========================================================================
+//
 //  A_PainShootSkull
 //
 //  Spawn a lost soul and launch it at the target
@@ -752,7 +1106,7 @@ void A_VileChase(void)
 					A_FaceTarget();
 					Enemy = temp;
 
-					SetState(S_VILE_HEAL1);
+					SetState(FindState('S_VILE_HEAL1'));
 					CorpseHit.PlaySound('Slop', CHAN_BODY);
 
 					CorpseHit.SetState(CorpseHit.RaiseState);
@@ -933,7 +1287,7 @@ void A_BrainScream(void)
 		A = Spawn(Rocket, org);
 		A.Velocity.z = Random() * 2.0 * 35.0;
 
-		A.SetState(GetBrainExplodeState());
+		A.SetState(FindState('S_BRAINEXPLODE1'));
 
 		A.StateTime -= Random() * 0.2;
 		if (A.StateTime < 0.1)
@@ -962,7 +1316,7 @@ void A_BrainExplode(void)
 	A = Spawn(Rocket, org);
 	A.Velocity.z = Random() * 2.0 * 35.0;
 
-	A.SetState(GetBrainExplodeState());
+	A.SetState(FindState('S_BRAINEXPLODE1'));
 
 	A.StateTime -= Random() * 0.2;
 	if (A.StateTime < 0.1)
@@ -1312,6 +1666,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2002/06/14 15:53:12  dj_jl
+//  Fixed DeHackEd support.
+//
 //  Revision 1.2  2002/05/18 16:59:58  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

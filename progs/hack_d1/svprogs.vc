@@ -29,10 +29,11 @@
 
 #include <server.vc>
 
+#define NO_BOTS
+
 #include "../doomdefs.vc"
-#include "../gendefs.vc"
+#include "gendefs.vc"
 #include "svdefs.vc"
-#include "strings.vc"
 
 #include "xlat.vc"
 #include "specutl.vc"
@@ -47,64 +48,45 @@
 #include "world.vc"
 
 #include "savegame.vc"
-#include "states.vc"
-#include "mobjinfo.vc"
 #include "wpninfo.vc"
+
+class DoomPlayer;
+class Blood;
+class TeleportFog;
+class ItemRespawnFog;
+class TeleportSpot;
 
 #include "inter.vc"
 #include "user.vc"
 #include "mobj.vc"
 #include "move.vc"
 #include "physics.vc"
+#define S_GIBS		FindState('S_GIBS')
 #include "map.vc"
+#undef S_GIBS
 #include "teleport.vc"
 #include "usersubs.vc"
 #include "ai_subs.vc"
 #include "wpnbase.vc"
-#include "weapons.vc"
 #include "enemy.vc"
 #include "cheat.vc"
 
-#ifdef GRENADE_LAUNCHER
-#include "grlaunch.vc"
-#endif
-
-#include "bot.vc"
-
-#include "player.vc"
-#include "zombiemn.vc"
-#include "shotguy.vc"
-#include "imp.vc"
-#include "demon.vc"
-#include "caco.vc"
-#include "baron.vc"
-#include "lostsoul.vc"
-#include "cyber.vc"
-#include "spider.vc"
-
-#include "heavy.vc"
-#include "knight.vc"
-#include "arach.vc"
-#include "painelem.vc"
-#include "revenant.vc"
-#include "mancubus.vc"
-#include "archvile.vc"
-#include "brain.vc"
-
-#include "keen.vc"
-
-#include "miscobj.vc"
-#include "items.vc"
-#include "decorat.vc"
-
+#include "strings.vc"
 #include "deh_wpn.vc"
 #include "deh_act.vc"
+
+#include "states.vc"
+#include "mobjinfo.vc"
+#include "weapons.vc"
 
 #include "svmain.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/06/14 15:53:13  dj_jl
+//  Fixed DeHackEd support.
+//
 //  Revision 1.8  2002/05/18 16:59:59  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

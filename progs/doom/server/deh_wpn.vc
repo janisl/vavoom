@@ -23,6 +23,10 @@
 //**
 //**************************************************************************
 
+class Rocket;
+class PlasmaShot;
+class BFGShot;
+
 class HackedWeapon:Weapon
 {
 
@@ -123,7 +127,7 @@ void A_FirePistol(void)
 
 	Player->MO.PlaySound('PistolFire', CHAN_WEAPON);
 
-	Player->MO.SetState(S_PLAY_ATK2);
+	Player->MO.SetState(Player->MO.MissileState);
 	Player->Ammo[Ammo]--;
 
 	SetPsprite(Player, ps_flash, FlashState);
@@ -145,7 +149,7 @@ void A_FireShotgun(void)
 	TVec dir;
 
 	Player->MO.PlaySound('ShotgunFire', CHAN_WEAPON);
-	Player->MO.SetState(S_PLAY_ATK2);
+	Player->MO.SetState(Player->MO.MissileState);
 
 	Player->Ammo[Ammo]--;
 
@@ -174,7 +178,7 @@ void A_FireShotgun2(void)
 	TVec dir;
 
 	Player->MO.PlaySound('SuperShotgunFire', CHAN_WEAPON);
-	Player->MO.SetState(S_PLAY_ATK2);
+	Player->MO.SetState(Player->MO.MissileState);
 
 	Player->Ammo[Ammo] -= 2;
 
@@ -242,7 +246,7 @@ void A_FireCGun(void)
 	if (!Player->Ammo[Ammo])
 		return;
 
-	Player->MO.SetState(S_PLAY_ATK2);
+	Player->MO.SetState(Player->MO.MissileState);
 	Player->Ammo[Ammo]--;
 
 	SetPsprite(Player, ps_flash, FlashState + StateNum - AttackState);//S_CHAIN1);
@@ -311,6 +315,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2002/06/14 15:53:12  dj_jl
+//  Fixed DeHackEd support.
+//
 //  Revision 1.1  2002/05/03 17:11:53  dj_jl
 //  Object classes split up into their files.
 //

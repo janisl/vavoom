@@ -29,8 +29,9 @@
 
 #include <client.vc>
 
+#define NO_BOTS
+
 #include "../doomdefs.vc"
-#include "../gendefs.vc"
 
 #ifndef DOOM2
 boolean ExtendedWAD;
@@ -76,6 +77,9 @@ boolean ExtendedWAD;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/06/14 15:53:12  dj_jl
+//  Fixed DeHackEd support.
+//
 //  Revision 1.6  2002/01/07 12:21:11  dj_jl
 //  Changed copyright year
 //
