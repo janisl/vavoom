@@ -19,3 +19,59 @@
 22-06-2002
   Strife atslñgas, munØciju un ieroÒus jau var pa·emt. GandrØz visi ieroÒi ir
  strÆdñjoıi.
+25-06-2002
+  Visur pÆrgÆju uz peldoıÆ komata PainChance.
+  Darbojos ar Strife dekorÆcijÆm.
+26-06-2002
+  Salaboju Doom statiskÆs gaismas.
+  Pabeidzu ar Strife dekorÆcijÆm.
+27-06-2002
+  Ieviesu kopñjo fragu skaitØtÆju.
+01-07-2002
+  StrÆdÆju pie strife. Darbojos ar monstru ıÆvi·iem un citiem efektiem. Visas
+ funkcijas ir apvienotas, daõa jau sadalØtas pa attiecØgajÆm klasñm.
+02-07-2002
+  PilnØbÆ pabeidzu Strife datu apvienoıanu, sakÆrtoıana.
+  Segmentu dati tiek interpretñti kÆ bez zØmes, kas atrisinÆs problñmu ar õoti
+ lieliem lØme·iem.
+03-07-2002
+  PÆris globÆlo funkciju pÆrnestas uz Entity klasi.
+  Neliels uzlabojums lØme·a ielÆdñ kas atõauj ielÆdñt problemÆtiskus lØme·us.
+  Salaboju tØkla paketes izmñra haku vienspñlñtÆja re÷ØmÆ.
+  makeinfo izmetu ÆrÆ Heretic, Hexen un Strife datus, pÆrgrupñju Doom datus.
+ Iespñjams es to pÆrdñvñıu par deh2vc.
+06-07-2002
+  Heretic un Hexen pievienoti jauni modeõi.
+08-07-2002
+  Turpinu modeõu pievienoıanu un uzlaboıanu.
+12-07-2002
+  Rendñıanas draiveri tagad pieder VObject objektu kokam.
+  Visi draiveri zØmñ lØmeni vienÆ virzienÆ.
+13-07-2002
+  Srife izmetu ÆrÆ visus shareware versijas datus.
+  Neliela kõİdi·a asemblera failÆ.
+15-07-2002
+  Srife izveidoju ievada sekvenci.
+16-07-2002
+  KompilÆtorÆ aizvietoju stÆvokLu tabulas ar dinamiskajiem masØviem.
+  SÆku darbu pie ska·as draiveru objektiem.
+17-07-2002
+  Daõa ska·as draivera funkciju ir klases funkcijas.
+18-07-2002
+  Salaboju pieslñgıanos tØkla spñlei no menu, kÆ arØ vienu problñmu Heretic,
+ kas uzkÆra tØkla spñli.
+  Pabeidzu ar ska·as draivera objektu, sÆku ieviest OpenAL draiveri. Ja nav
+ ska·as datu, vairs netiks pÆrtraukta spñle.
+19-07-2002
+  AtrisinÆju problñmu ar giard makrosiem.
+20-07-2002
+  Aizvietoju pÆris takıu skaitØtÆjus ar peldoıÆ komata laiku.
+  PilnØbÆ implementñju OpenAL draiveri.
+22-07-2002
+  OficiÆli pÆrgÆju uz peldoıÆ komata laiku.
+  Izlaidu beta versiju.
+23-07-2002
+  PilnØbÆ atbrØvojos no iostream.
+26-07-2002
+  SÆku ieviest Strife sarunas.
+  
