@@ -311,6 +311,7 @@ extern void InputLine_SetValue(TILine * iline, string text);
 extern boolean InputLine_Key(TILine * iline, int key);
 
 extern string P_GetMapName(int map);
+extern string P_TranslateMap(int map);
 extern boolean SV_GetSaveString(int i, string buf);
 extern void StartSearch(void);
 extern slist_t * GetSlist(void);
@@ -476,6 +477,9 @@ extern void Destroy(void *ptr);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2001/10/12 17:23:33  dj_jl
+//  Start on first map in MAPINFO script
+//
 //  Revision 1.12  2001/10/08 17:22:12  dj_jl
 //  Changed slist to be returned by engine
 //

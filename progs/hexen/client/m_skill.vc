@@ -78,18 +78,7 @@ void skill_func(void)
 
 	CmdBuf_AddText("Disconnect\n");
 	CmdBuf_AddText("MaxPlayers 1\n");
-#ifdef FIXME
-	int realMap;
-
-	realMap = P_TranslateMap(1);
-	if (realMap == -1)
-	{
-		realMap = 1;
-	}
-	CmdBuf << "Map " << realMap << "\n";
-#else
-	CmdBuf_AddText("Map MAP01\n");
-#endif
+	CmdBuf_AddText("Map %s\n", P_TranslateMap(1));
 
 	ForceMenuOff();
 }
@@ -168,6 +157,9 @@ void menu_skill(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/12 17:23:35  dj_jl
+//  Start on first map in MAPINFO script
+//
 //  Revision 1.5  2001/09/25 17:11:04  dj_jl
 //  Seperated menu API
 //
