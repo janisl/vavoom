@@ -808,9 +808,9 @@ void NetGameReborn(int playernum)
 
 void SpawnClient(int i)
 {
-	players[i].ViewEnts[ps_weapon] = Spawn(ViewEntity, none);
+	players[i].ViewEnts[ps_weapon] = Spawn(Weapon, none);
 	players[i].ViewEnts[ps_weapon].player = &players[i];
-	players[i].ViewEnts[ps_flash] = Spawn(ViewEntity, none);
+	players[i].ViewEnts[ps_flash] = Spawn(Weapon, none);
 	players[i].ViewEnts[ps_flash].player = &players[i];
 	if (deathmatch)
 	{
@@ -867,6 +867,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/03 18:31:57  dj_jl
+//  Fixed view sprites
+//
 //  Revision 1.8  2001/12/12 18:57:43  dj_jl
 //  State functions now are methods of Actor and Weapon classes
 //

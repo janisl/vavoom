@@ -1871,9 +1871,9 @@ void SpawnClient(int i)
 	player->attacker = NULL;
 	player->poisoner = NULL;
 
-	player->ViewEnts[ps_weapon] = Spawn(ViewEntity, none);
+	player->ViewEnts[ps_weapon] = Spawn(Weapon, none);
 	player->ViewEnts[ps_weapon].player = player;
-	player->ViewEnts[ps_flash] = Spawn(ViewEntity, none);
+	player->ViewEnts[ps_flash] = Spawn(Weapon, none);
 	player->ViewEnts[ps_flash].player = player;
 
 	if (netgame && !deathmatch)
@@ -1969,6 +1969,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/01/03 18:31:57  dj_jl
+//  Fixed view sprites
+//
 //  Revision 1.15  2001/12/12 18:57:42  dj_jl
 //  State functions now are methods of Actor and Weapon classes
 //
