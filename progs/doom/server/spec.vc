@@ -27,7 +27,15 @@
 
 #define MAXLINEANIMS            64
 
+#define MAX_TAGGED_LINES	64
+
 // TYPES -------------------------------------------------------------------
+
+struct tagged_line_t
+{
+	line_t *line;
+	int lineTag;
+};
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
@@ -35,6 +43,8 @@ int CanActivateCross(mobj_t * thing);
 void P_RespawnSpecials(void);
 
 int EV_Teleport(int tag, mobj_t * thing, boolean usefog);
+boolean EV_SilentLineTeleport(line_t *line, int side, Actor *thing, int id,
+							boolean reverse);
 
 void P_ThrustMobj(mobj_t *mo, float an, float force);
 
@@ -45,6 +55,9 @@ void P_ThrustMobj(mobj_t *mo, float an, float force);
 //
 int numlinespecials;
 line_t *linespeciallist[MAXLINEANIMS];
+
+tagged_line_t TaggedLines[MAX_TAGGED_LINES];
+int TaggedLineCount;
 
 // CODE --------------------------------------------------------------------
 
@@ -553,6 +566,9 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 207:	// Plat_PerpetualRaiseLip
 		buttonSuccess = EV_DoPlat(line, args, PLAT_PERPETUALRAISELIP);
 		break;
+	case 215:	// Teleport_Line
+		buttonSuccess = EV_SilentLineTeleport(line, side, mo, args[1], args[2]);
+		break;
 	case 217:	// Stairs_BuildUpDoom
 		buttonSuccess = EV_BuildStairsOld(line, args);
 		break;
@@ -630,6 +646,7 @@ void P_SpawnSpecials(boolean spawn_thinkers)
 {
 	sector_t *sector;
 	int i;
+	int j;
 
 	//  Init special SECTORs.
 	if (spawn_thinkers)
@@ -714,6 +731,59 @@ void P_SpawnSpecials(boolean spawn_thinkers)
 			break;
 		}
 	}
+
+	TaggedLineCount = 0;
+	for (i = 0; i < level->numlines; i++)
+	{
+		switch (level->lines[i].special)
+		{
+		case 121:	// Line_SetIdentification
+		case 208:	// TranslucentLine
+		case 215:	// Teleport_Line
+			if (level->lines[i].arg1)
+			{
+				if (TaggedLineCount == MAX_TAGGED_LINES)
+				{
+					Error("P_SpawnSpecials: MAX_TAGGED_LINES exceeded.");
+				}
+				TaggedLines[TaggedLineCount].line = &level->lines[i];
+				TaggedLines[TaggedLineCount++].lineTag = level->lines[i].arg1;
+			}
+			if (level->lines[i].special == 121)
+			{
+				level->lines[i].special = 0;
+			}
+			break;
+		}
+	}
+
+print("Trans\n");
+	//	Process translucent lines
+	for (i = 0; i < level->numlines; i++)
+	{
+		if (level->lines[i].special != 208)
+		{
+			continue;
+		}
+
+		int trans = (255 - level->lines[i].arg2) * 100 / 255;
+		if (level->lines[i].arg1)
+		{
+			for (j = 0; j < TaggedLineCount; j++)
+			{
+				if (TaggedLines[j].lineTag == level->lines[i].arg1)
+				{
+					SetLineTransluc(TaggedLines[j].line, trans);
+				}
+			}
+		}
+		else
+		{
+			SetLineTransluc(&level->lines[i], trans);
+		}
+		level->lines[i].special = 0;
+	}
+print("Done\n");
 }
 
 //==========================================================================
@@ -844,9 +914,34 @@ boolean P_ActivateLine(line_t * line, mobj_t * mo, int side,
 	return true;
 }
 
+//==========================================================================
+//
+//  P_FindLine
+//
+//==========================================================================
+
+line_t *P_FindLine(int lineTag, int *searchPosition)
+{
+	int i;
+
+	for (i = *searchPosition + 1; i < TaggedLineCount; i++)
+	{
+		if (TaggedLines[i].lineTag == lineTag)
+		{
+			*searchPosition = i;
+			return TaggedLines[i].line;
+		}
+	}
+	*searchPosition = -1;
+	return NULL;
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/02/16 16:23:46  dj_jl
+//  Added line teleporters and translucent lines
+//
 //  Revision 1.12  2002/02/14 19:20:57  dj_jl
 //  Renamed Entity properties to new naming style
 //
