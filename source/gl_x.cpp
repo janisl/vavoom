@@ -356,6 +356,24 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 
 //==========================================================================
 //
+//	TOpenGLDrawer::GetExtFuncPtr
+//
+//==========================================================================
+
+void *TOpenGLDrawer::GetExtFuncPtr(const char *name)
+{
+	void *prjobj = dlopen(NULL, RTLD_LAZY);
+	if (!prjobj)
+	{
+		con << "Unable to open symbol list for main program.\n";
+		return NULL;
+	}
+	void *ptr = dlsym(prjobj, name);
+	dlclose(prjobj);
+}
+
+//==========================================================================
+//
 //	TOpenGLDrawer::Update
 //
 // 	Blit to the screen / Flip surfaces
@@ -419,9 +437,12 @@ void TOpenGLDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/04 17:32:04  dj_jl
+//	Added support for multitexture extensions
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

@@ -59,8 +59,7 @@ static TOpenGLDrawer	OpenGLDrawer;
 
 TOpenGLDrawer::TOpenGLDrawer(void) :
 	tex_linear("gl_tex_linear", "1", CVAR_ARCHIVE),
-	clear("gl_clear", "0", CVAR_ARCHIVE),
-	ztrick("gl_ztrick", "0", CVAR_ARCHIVE)
+	clear("gl_clear", "0", CVAR_ARCHIVE)
 {
 	_OpenGLDrawer = this;
 }
@@ -69,8 +68,6 @@ TOpenGLDrawer::TOpenGLDrawer(void) :
 //
 //	TOpenGLDrawer::InitResolution
 //
-//	Calculate image scaling
-//
 //==========================================================================
 
 void TOpenGLDrawer::InitResolution(void)
@@ -78,11 +75,38 @@ void TOpenGLDrawer::InitResolution(void)
 	con << "GL_VENDOR: " << glGetString(GL_VENDOR) << endl;
 	con << "GL_RENDERER: " << glGetString(GL_RENDERER) << endl;
 	con << "GL_VERSION: " << glGetString (GL_VERSION) << endl;
-	con << "GL_EXTENSIONS: " << glGetString(GL_EXTENSIONS) << endl;
+
+	con << "GL_EXTENSIONS:\n";
+	char *sbuf = Z_StrDup((char*)glGetString(GL_EXTENSIONS));
+	for (char *s = strtok(sbuf, " "); s; s = strtok(NULL, " "))
+	{
+		con << "- " << s << endl;
+	}
+	Z_Free(sbuf);
 
 	// Check the maximum texture size.
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
 	con << "Maximum texture size: " << maxTexSize << endl;
+
+	//	Check multi-texture extensions
+	if (CheckExtension("GL_ARB_multitexture"))
+	{
+		con << "Found GL_ARB_multitexture...\n";
+
+		p_MultiTexCoord2f = MultiTexCoord2f_t(GetExtFuncPtr("glMultiTexCoord2fARB"));
+		p_SelectTexture = SelectTexture_t(GetExtFuncPtr("glActiveTextureARB"));
+
+		if (p_MultiTexCoord2f && p_SelectTexture)
+		{
+			con << "Multitexture extensions found.\n";
+			mtexable = true;
+		}
+		else
+		{
+			con << "Symbol not found, disabled.\n";
+			mtexable = false;
+		}
+	}
 
 	glClearColor(0.0, 0.0, 0.0, 0.0);	// Black Background
 	glClearDepth(1.0);					// Depth Buffer Setup
@@ -93,8 +117,10 @@ void TOpenGLDrawer::InitResolution(void)
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glAlphaFunc(GL_GREATER, 0.666);
-	glDepthFunc(GL_LEQUAL);
 	glShadeModel(GL_FLAT);
+
+	glDepthFunc(GL_LEQUAL);
+	glDepthRange(0.0, 1.0);
 
 	float fogColor[4] = { 0.5, 0.5, 0.5, 1.0 };
 	glFogi(GL_FOG_MODE, GL_LINEAR);		// Fog Mode
@@ -103,6 +129,27 @@ void TOpenGLDrawer::InitResolution(void)
 	glHint(GL_FOG_HINT, GL_DONT_CARE);	// Fog Hint Value
 	glFogf(GL_FOG_START, 1.0f);			// Fog Start Depth
 	glFogf(GL_FOG_END, 2048.0f);		// Fog End Depth
+}
+
+//==========================================================================
+//
+//	TOpenGLDrawer::CheckExtension
+//
+//==========================================================================
+
+bool TOpenGLDrawer::CheckExtension(const char *ext)
+{
+	char *sbuf = Z_StrDup((char*)glGetString(GL_EXTENSIONS));
+	for (char *s = strtok(sbuf, " "); s; s = strtok(NULL, " "))
+	{
+		if (!strcmp(ext, s))
+		{
+			Z_Free(sbuf);
+			return true;
+		}
+	}
+	Z_Free(sbuf);
+	return false;
 }
 
 //==========================================================================
@@ -152,39 +199,11 @@ void TOpenGLDrawer::Setup2D(void)
 
 void TOpenGLDrawer::StartUpdate(void)
 {
-	float gldepthmin;
-	float gldepthmax;
-
-	if (ztrick)
-	{
-		if (clear)
-			glClear(GL_COLOR_BUFFER_BIT);
-
-		trickframe++;
-		if (trickframe & 1)
-		{
-			gldepthmin = 0.0;
-			gldepthmax = 0.5;
-			glDepthFunc(GL_LEQUAL);
-		}
-		else
-		{
-			gldepthmin = 1.0;
-			gldepthmax = 0.5;
-			glDepthFunc(GL_GEQUAL);
-		}
-	}
+	glFinish();
+	if (clear)
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	else
-	{
-		if (clear)
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		else
-			glClear(GL_DEPTH_BUFFER_BIT);
-		gldepthmin = 0;
-		gldepthmax = 1;
-		glDepthFunc(GL_LEQUAL);
-	}
-	glDepthRange(gldepthmin, gldepthmax);
+		glClear(GL_DEPTH_BUFFER_BIT);
 
 	Setup2D();
 }
@@ -255,8 +274,6 @@ void TOpenGLDrawer::SetupFrame(void)
 	glDisable(GL_ALPHA_TEST);
 	if (r_use_fog)
 		glEnable(GL_FOG);
-	else
-		glDisable(GL_FOG);
 
 	memset(light_chain, 0, sizeof(light_chain));
 }
@@ -366,9 +383,12 @@ void TOpenGLDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/04 17:32:04  dj_jl
+//	Added support for multitexture extensions
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
