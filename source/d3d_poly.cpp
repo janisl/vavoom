@@ -433,12 +433,12 @@ void TDirect3DDrawer::DrawPolygon(TVec *cv, int count, int texture, int)
 
 	SetTexture(texture);
 
+	texinfo_t *tex = r_surface->texinfo;
 	for (i = 0; i < count; i++)
 	{
-		TVec texpt = cv[i] - r_texorg;
 		out[i] = MyD3DVertex(cv[i], l,
-			DotProduct(texpt, r_saxis) * tex_iw,
-			DotProduct(texpt, r_taxis) * tex_ih);
+			(DotProduct(cv[i], tex->saxis) + tex->soffs) * tex_iw,
+			(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
 	}
 
 #if DIRECT3D_VERSION >= 0x0800
@@ -511,9 +511,8 @@ void TDirect3DDrawer::WorldDrawing(void)
 				SetTexture(tex->pic);
 				for (i = 0; i < surf->count; i++)
 				{
-					TVec texpt = surf->verts[i] - tex->texorg;
-					s = DotProduct(texpt, tex->saxis);
-					t = DotProduct(texpt, tex->taxis);
+					s = DotProduct(surf->verts[i], tex->saxis) + tex->soffs;
+					t = DotProduct(surf->verts[i], tex->taxis) + tex->toffs;
 					lights = (s - surf->texturemins[0]) / 16 + cache->s + 0.5;
 					lightt = (t - surf->texturemins[1]) / 16 + cache->t + 0.5;
 					out[i] = MyD3DVertex(surf->verts[i], 0xffffffff,
@@ -577,9 +576,8 @@ void TDirect3DDrawer::WorldDrawing(void)
 				tex = surf->texinfo;
 				for (i = 0; i < surf->count; i++)
 				{
-					TVec texpt = surf->verts[i] - tex->texorg;
-					s = DotProduct(texpt, tex->saxis);
-					t = DotProduct(texpt, tex->taxis);
+					s = DotProduct(surf->verts[i], tex->saxis) + tex->soffs;
+					t = DotProduct(surf->verts[i], tex->taxis) + tex->toffs;
 					lights = (s - surf->texturemins[0]) / 16 + cache->s + 0.5;
 					lightt = (t - surf->texturemins[1]) / 16 + cache->t + 0.5;
 					out[i] = MyD3DVertex(surf->verts[i], 0xffffffff,
@@ -655,9 +653,8 @@ void TDirect3DDrawer::WorldDrawing(void)
 				tex = surf->texinfo;
 				for (i = 0; i < surf->count; i++)
 				{
-					TVec texpt = surf->verts[i] - tex->texorg;
-					s = DotProduct(texpt, tex->saxis);
-					t = DotProduct(texpt, tex->taxis);
+					s = DotProduct(surf->verts[i], tex->saxis) + tex->soffs;
+					t = DotProduct(surf->verts[i], tex->taxis) + tex->toffs;
 					lights = (s - surf->texturemins[0]) / 16 + cache->s + 0.5;
 					lightt = (t - surf->texturemins[1]) / 16 + cache->t + 0.5;
 					out[i] = MyD3DVertex(surf->verts[i], 0xffffffff,
@@ -722,6 +719,7 @@ void TDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 	MyD3DVertex		out[256];
 	int				i;
 
+	texinfo_t *tex = r_surface->texinfo;
 	if (maxMultiTex >= 2 && texture2)
 	{
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
@@ -734,13 +732,11 @@ void TDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 		SetSkyTexture(texture2, true);
 		for (i = 0; i < count; i++)
 		{
-			TVec v = cv[i] + vieworg;
-			TVec texpt = cv[i] - r_texorg;
-			out[i] = MyD3DVertex(v, 0xffffffff,
-				(DotProduct(texpt, r_saxis) - offs1) * tex_iw,
-				DotProduct(texpt, r_taxis) * tex_ih,
-				(DotProduct(texpt, r_saxis) - offs2) * tex_iw,
-				DotProduct(texpt, r_taxis) * tex_ih);
+			out[i] = MyD3DVertex(cv[i] + vieworg, 0xffffffff,
+				(DotProduct(cv[i], tex->saxis) + tex->soffs - offs1) * tex_iw,
+				(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih,
+				(DotProduct(cv[i], tex->saxis) + tex->soffs - offs2) * tex_iw,
+				(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
 		}
 #if DIRECT3D_VERSION >= 0x0800
 		RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, count - 2, out, sizeof(MyD3DVertex));
@@ -756,11 +752,9 @@ void TDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 		SetSkyTexture(texture1, false);
 		for (i = 0; i < count; i++)
 		{
-			TVec v = cv[i] + vieworg;
-			TVec texpt = cv[i] - r_texorg;
-			out[i] = MyD3DVertex(v, 0xffffffff,
-				(DotProduct(texpt, r_saxis) - offs1) * tex_iw,
-				DotProduct(texpt, r_taxis) * tex_ih);
+			out[i] = MyD3DVertex(cv[i] + vieworg, 0xffffffff,
+				(DotProduct(cv[i], tex->saxis) + tex->soffs - offs1) * tex_iw,
+				(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
 		}
 #if DIRECT3D_VERSION >= 0x0800
 		RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, count - 2, out, sizeof(MyD3DVertex));
@@ -773,11 +767,9 @@ void TDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 			SetSkyTexture(texture2, true);
 			for (i = 0; i < count; i++)
 			{
-				TVec v = cv[i] + vieworg;
-				TVec texpt = cv[i] - r_texorg;
-				out[i] = MyD3DVertex(v, 0xffffffff,
-					(DotProduct(texpt, r_saxis) - offs2) * tex_iw,
-					DotProduct(texpt, r_taxis) * tex_ih);
+				out[i] = MyD3DVertex(cv[i] + vieworg, 0xffffffff,
+					(DotProduct(cv[i], tex->saxis) + tex->soffs - offs2) * tex_iw,
+					(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
 			}
 			RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 #if DIRECT3D_VERSION >= 0x0800
@@ -849,12 +841,12 @@ void TDirect3DDrawer::DrawMaskedPolygon(TVec *cv, int count,
 	alpha = (100 - translucency) * 255 / 100;
 	l = (alpha << 24) | (r << 16) | (g << 8) | b;
 
+	texinfo_t *tex = r_surface->texinfo;
 	for (i = 0; i < count; i++)
 	{
-		TVec texpt = cv[i] - r_texorg;
 		out[i] = MyD3DVertex(cv[i], l,
-			DotProduct(texpt, r_saxis) * tex_iw,
-			DotProduct(texpt, r_taxis) * tex_ih);
+			(DotProduct(cv[i], tex->saxis) + tex->soffs) * tex_iw,
+			(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
 	}
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
@@ -1193,9 +1185,12 @@ void TDirect3DDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2002/03/28 17:58:02  dj_jl
+//	Added support for scaled textures.
+//
 //	Revision 1.20  2002/03/02 17:32:33  dj_jl
 //	Fixed specular lights when fog is enabled.
-//
+//	
 //	Revision 1.19  2002/01/11 18:24:44  dj_jl
 //	Added guard macros
 //	

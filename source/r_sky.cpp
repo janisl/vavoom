@@ -246,32 +246,38 @@ static void R_InitOldSky(const mapInfo_t &info)
 	sky[0].plane.Set(TVec(-1, 0, 0), -128);
 	sky[0].texinfo.saxis = TVec(0, -1.0, 0);
 	sky[0].texinfo.taxis = TVec(0, 0, -1.0);
-	sky[0].texinfo.texorg = TVec(128, 128, skytop);
+	sky[0].texinfo.soffs = 128;
+	sky[0].texinfo.toffs = skytop;
 
 	sky[1].plane.Set(TVec(0, 1, 0), -128);
 	sky[1].texinfo.saxis = TVec(-1.0, 0, 0);
 	sky[1].texinfo.taxis = TVec(0, 0, -1.0);
-	sky[1].texinfo.texorg = TVec(128, -128, skytop);
+	sky[1].texinfo.soffs = 128;
+	sky[1].texinfo.toffs = skytop;
 
 	sky[2].plane.Set(TVec(1, 0, 0), -128);
 	sky[2].texinfo.saxis = TVec(0, 1.0, 0);
 	sky[2].texinfo.taxis = TVec(0, 0, -1.0);
-	sky[2].texinfo.texorg = TVec(-128, -128, skytop);
+	sky[2].texinfo.soffs = 128;
+	sky[2].texinfo.toffs = skytop;
 
 	sky[3].plane.Set(TVec(0, -1, 0), -128);
 	sky[3].texinfo.saxis = TVec(1.0, 0, 0);
 	sky[3].texinfo.taxis = TVec(0, 0, -1.0);
-	sky[3].texinfo.texorg = TVec(-128, 128, skytop);
+	sky[3].texinfo.soffs = 128;
+	sky[3].texinfo.toffs = skytop;
 
 	sky[4].plane.Set(TVec(0, 0, -1), -skytop);
 	sky[4].texinfo.saxis = TVec(0, -1.0, 0);
 	sky[4].texinfo.taxis = TVec(1.0, 0, 0);
-	sky[4].texinfo.texorg = TVec(-128, 128, skytop);
+	sky[4].texinfo.soffs = 128;
+	sky[4].texinfo.toffs = 128;
 
 	sky[5].plane.Set(TVec(0, 0, 1), skybot);
 	sky[5].texinfo.saxis = TVec(0, -1.0, 0);
 	sky[5].texinfo.taxis = TVec(1.0, 0, 0);
-	sky[5].texinfo.texorg = TVec(-128, 128, skybot);
+	sky[5].texinfo.soffs = 128;
+	sky[5].texinfo.toffs = 128;
 
 	sky[1].columnOffset1 = sky[1].columnOffset2 = 256;
 	sky[2].columnOffset1 = sky[2].columnOffset2 = 512;
@@ -301,7 +307,9 @@ static void R_InitOldSky(const mapInfo_t &info)
 	}
 
 	sky[4].texinfo.taxis *= skyheight / 256.0;
+	sky[4].texinfo.toffs *= skyheight / 256.0;
 	sky[5].texinfo.taxis *= skyheight / 256.0;
+	sky[5].texinfo.toffs *= skyheight / 256.0;
 
 	//	Precache textures
 	Drawer->SetSkyTexture(info.sky1Texture, info.doubleSky);
@@ -371,32 +379,38 @@ static void R_InitSkyBox(const mapInfo_t &info)
 	sky[0].plane.Set(TVec(-1, 0, 0), -128);
 	sky[0].texinfo.saxis = TVec(0, -1.0, 0);
 	sky[0].texinfo.taxis = TVec(0, 0, -1.0);
-	sky[0].texinfo.texorg = TVec(128, 128, 128);
+	sky[0].texinfo.soffs = 128;
+	sky[0].texinfo.toffs = 128;
 
 	sky[1].plane.Set(TVec(0, 1, 0), -128);
 	sky[1].texinfo.saxis = TVec(-1.0, 0, 0);
 	sky[1].texinfo.taxis = TVec(0, 0, -1.0);
-	sky[1].texinfo.texorg = TVec(128, -128, 128);
+	sky[1].texinfo.soffs = 128;
+	sky[1].texinfo.toffs = 128;
 
 	sky[2].plane.Set(TVec(1, 0, 0), -128);
 	sky[2].texinfo.saxis = TVec(0, 1.0, 0);
 	sky[2].texinfo.taxis = TVec(0, 0, -1.0);
-	sky[2].texinfo.texorg = TVec(-128, -128, 128);
+	sky[2].texinfo.soffs = 128;
+	sky[2].texinfo.toffs = 128;
 
 	sky[3].plane.Set(TVec(0, -1, 0), -128);
 	sky[3].texinfo.saxis = TVec(1.0, 0, 0);
 	sky[3].texinfo.taxis = TVec(0, 0, -1.0);
-	sky[3].texinfo.texorg = TVec(-128, 128, 128);
+	sky[3].texinfo.soffs = 128;
+	sky[3].texinfo.toffs = 128;
 
 	sky[4].plane.Set(TVec(0, 0, -1), -128);
 	sky[4].texinfo.saxis = TVec(0, -1.0, 0);
 	sky[4].texinfo.taxis = TVec(1.0, 0, 0);
-	sky[4].texinfo.texorg = TVec(-128, 128, 128);
+	sky[4].texinfo.soffs = 128;
+	sky[4].texinfo.toffs = 128;
 
 	sky[5].plane.Set(TVec(0, 0, 1), -128);
 	sky[5].texinfo.saxis = TVec(0, -1.0, 0);
 	sky[5].texinfo.taxis = TVec(-1.0, 0, 0);
-	sky[5].texinfo.texorg = TVec(128, 128, -128);
+	sky[5].texinfo.soffs = 128;
+	sky[5].texinfo.toffs = 128;
 
 	for (int j = 0; j < 6; j++)
 	{
@@ -413,7 +427,9 @@ static void R_InitSkyBox(const mapInfo_t &info)
 		sky[j].surf.extents[0] = skymaps[smap].width;
 		sky[j].surf.extents[1] = skymaps[smap].height;
 		sky[j].texinfo.saxis *= skymaps[smap].width / 256.0;
+		sky[j].texinfo.soffs *= skymaps[smap].width / 256.0;
 		sky[j].texinfo.taxis *= skymaps[smap].height / 256.0;
+		sky[j].texinfo.toffs *= skymaps[smap].height / 256.0;
 	}
 	unguard;
 }
@@ -626,10 +642,6 @@ void R_DrawSky(void)
 
 	for (int i = 0; i < 6; i++)
 	{
-		r_saxis = sky[i].texinfo.saxis;
-		r_taxis = sky[i].texinfo.taxis;
-		r_texorg = sky[i].texinfo.texorg;
-
 		r_normal = sky[i].plane.normal;
 		r_dist = sky[i].plane.dist;
 
@@ -647,9 +659,12 @@ void R_DrawSky(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/03/28 17:58:02  dj_jl
+//	Added support for scaled textures.
+//
 //	Revision 1.9  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.8  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

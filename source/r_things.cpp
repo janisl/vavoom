@@ -125,6 +125,10 @@ struct trans_sprite_t
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+TVec				r_saxis;
+TVec				r_taxis;
+TVec				r_texorg;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 //	Temporary variables for sprite installing
@@ -1171,9 +1175,12 @@ void R_DrawModelFrame(const TVec &origin, float angle, model_t *model,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/03/28 17:58:02  dj_jl
+//	Added support for scaled textures.
+//
 //	Revision 1.13  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.12  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

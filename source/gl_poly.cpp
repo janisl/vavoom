@@ -413,12 +413,12 @@ void TOpenGLDrawer::DrawPolygon(TVec *cv, int count, int texture, int)
 		glColor4f(lev, lev, lev, 1.0);
 	}
 
+	texinfo_t *tex = r_surface->texinfo;
 	glBegin(GL_POLYGON);
 	for (i = 0; i < count; i++)
 	{
-		TVec texpt = cv[i] - r_texorg;
-		glTexCoord2f(DotProduct(texpt, r_saxis) * tex_iw,
-			DotProduct(texpt, r_taxis) * tex_ih);
+		glTexCoord2f((DotProduct(cv[i], tex->saxis) + tex->soffs) * tex_iw,
+			(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
 		glVertex(cv[i]);
 	}
 	glEnd();
@@ -479,9 +479,8 @@ void TOpenGLDrawer::WorldDrawing(void)
 				glBegin(GL_POLYGON);
 				for (i = 0; i < surf->count; i++)
 				{
-					TVec texpt = surf->verts[i] - tex->texorg;
-					s = DotProduct(texpt, tex->saxis);
-					t = DotProduct(texpt, tex->taxis);
+					s = DotProduct(surf->verts[i], tex->saxis) + tex->soffs;
+					t = DotProduct(surf->verts[i], tex->taxis) + tex->toffs;
 					lights = (s - surf->texturemins[0] +
 						cache->s * 16 + 8) / (BLOCK_WIDTH * 16);
 					lightt = (t - surf->texturemins[1] +
@@ -532,11 +531,10 @@ void TOpenGLDrawer::WorldDrawing(void)
 				glBegin(GL_POLYGON);
 				for (i = 0; i < surf->count; i++)
 				{
-					TVec texpt = surf->verts[i] - tex->texorg;
-					s = (DotProduct(texpt, tex->saxis) - surf->texturemins[0] +
-						cache->s * 16 + 8) / (BLOCK_WIDTH * 16);
-					t = (DotProduct(texpt, tex->taxis) - surf->texturemins[1] +
-						cache->t * 16 + 8) / (BLOCK_HEIGHT * 16);
+					s = (DotProduct(surf->verts[i], tex->saxis) + tex->soffs -
+						surf->texturemins[0] + cache->s * 16 + 8) / (BLOCK_WIDTH * 16);
+					t = (DotProduct(surf->verts[i], tex->taxis) + tex->toffs -
+						surf->texturemins[1] + cache->t * 16 + 8) / (BLOCK_HEIGHT * 16);
 					glTexCoord2f(s, t);
 					glVertex(surf->verts[i]);
 				}
@@ -589,11 +587,10 @@ void TOpenGLDrawer::WorldDrawing(void)
 				glBegin(GL_POLYGON);
 				for (i = 0; i < surf->count; i++)
 				{
-					TVec texpt = surf->verts[i] - tex->texorg;
-					s = (DotProduct(texpt, tex->saxis) - surf->texturemins[0] +
-						cache->s * 16 + 8) / (BLOCK_WIDTH * 16);
-					t = (DotProduct(texpt, tex->taxis) - surf->texturemins[1] +
-						cache->t * 16 + 8) / (BLOCK_HEIGHT * 16);
+					s = (DotProduct(surf->verts[i], tex->saxis) + tex->soffs -
+						surf->texturemins[0] + cache->s * 16 + 8) / (BLOCK_WIDTH * 16);
+					t = (DotProduct(surf->verts[i], tex->taxis) + tex->toffs -
+						surf->texturemins[1] + cache->t * 16 + 8) / (BLOCK_HEIGHT * 16);
 					glTexCoord2f(s, t);
 					glVertex(surf->verts[i]);
 				}
@@ -646,6 +643,7 @@ void TOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 	guard(TOpenGLDrawer::DrawSkyPolygon);
 	int		i;
 
+	texinfo_t *tex = r_surface->texinfo;
 	if (mtexable && texture2)
 	{
 		SetSkyTexture(texture1, false);
@@ -659,11 +657,12 @@ void TOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 		glBegin(GL_POLYGON);
 		for (i = 0; i < count; i++)
 		{
-			TVec texpt = cv[i] - r_texorg;
-			MultiTexCoord(0, (DotProduct(texpt, r_saxis) - offs1) * tex_iw,
-				DotProduct(texpt, r_taxis) * tex_ih);
-			MultiTexCoord(1, (DotProduct(texpt, r_saxis) - offs2) * tex_iw,
-				DotProduct(texpt, r_taxis) * tex_ih);
+			MultiTexCoord(0, 
+				(DotProduct(cv[i], tex->saxis) + tex->soffs - offs1) * tex_iw,
+				(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
+			MultiTexCoord(1, 
+				(DotProduct(cv[i], tex->saxis) + tex->soffs - offs2) * tex_iw,
+				(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
 			glVertex(cv[i]);
 		}
 		glEnd();
@@ -679,9 +678,9 @@ void TOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 		glColor4f(1, 1, 1, 1);
 		for (i = 0; i < count; i++)
 		{
-			TVec texpt = cv[i] - r_texorg;
-			glTexCoord2f((DotProduct(texpt, r_saxis) - offs1) * tex_iw,
-				DotProduct(texpt, r_taxis) * tex_ih);
+			glTexCoord2f(
+				(DotProduct(cv[i], tex->saxis) + tex->soffs - offs1) * tex_iw,
+				(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
 			glVertex(cv[i]);
 		}
 		glEnd();
@@ -694,9 +693,9 @@ void TOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 			glColor4f(1, 1, 1, 1);
 			for (i = 0; i < count; i++)
 			{
-				TVec texpt = cv[i] - r_texorg;
-				glTexCoord2f((DotProduct(texpt, r_saxis) - offs2) * tex_iw,
-					DotProduct(texpt, r_taxis) * tex_ih);
+				glTexCoord2f(
+					(DotProduct(cv[i], tex->saxis) + tex->soffs - offs2) * tex_iw,
+					(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
 				glVertex(cv[i]);
 			}
 			glEnd();
@@ -764,12 +763,12 @@ void TOpenGLDrawer::DrawMaskedPolygon(TVec *cv, int count,
 	iscale = 1.0 / (size * 255 * 256);
 	glColor4f(r * iscale, g * iscale, b * iscale, alpha);
 
+	texinfo_t *tex = r_surface->texinfo;
 	glBegin(GL_POLYGON);
 	for (i = 0; i < count; i++)
 	{
-		TVec texpt = cv[i] - r_texorg;
-		glTexCoord2f(DotProduct(texpt, r_saxis) * tex_iw,
-			DotProduct(texpt, r_taxis) * tex_ih);
+		glTexCoord2f((DotProduct(cv[i], tex->saxis) + tex->soffs) * tex_iw,
+			(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
 		glVertex(cv[i]);
 	}
 	glEnd();
@@ -1061,9 +1060,12 @@ void TOpenGLDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2002/03/28 17:58:02  dj_jl
+//	Added support for scaled textures.
+//
 //	Revision 1.19  2002/03/02 17:32:33  dj_jl
 //	Fixed specular lights when fog is enabled.
-//
+//	
 //	Revision 1.18  2002/01/11 18:24:44  dj_jl
 //	Added guard macros
 //	

@@ -46,36 +46,6 @@ struct rgba_t
 
 struct surfcache_t;
 
-struct texinfo_t
-{
-	TVec			saxis;
-	float			soffs;
-	TVec			taxis;
-	float			toffs;
-	TVec			texorg;
-	int				pic;
-	//	0 for solid surfaces
-	// translucency + 1 for masked surfaces
-	int				translucency;
-};
-
-struct surface_t
-{
-	surface_t		*next;
-	texinfo_t		*texinfo;
-	TPlane			*plane;
-	int				lightlevel;
-	byte			*lightmap;
-	rgb_t			*lightmap_rgb;
-	int				dlightframe;
-	int				dlightbits;
-	int				count;
-	short			texturemins[2];
-	short			extents[2];
-	surfcache_t		*cachespots[4];
-	TVec			verts[1];
-};
-
 struct particle_t
 {
 	//	Drawing info
@@ -174,9 +144,12 @@ extern TDrawer			*_Direct3DDrawer;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/03/28 17:58:02  dj_jl
+//	Added support for scaled textures.
+//
 //	Revision 1.11  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.10  2001/10/09 17:21:39  dj_jl
 //	Added sky begining and ending functions
 //	

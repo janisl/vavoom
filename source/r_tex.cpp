@@ -285,6 +285,8 @@ static void InitTextures(void)
 		texture->width = LittleShort(mtexture->width);
 		texture->height = LittleShort(mtexture->height);
 		texture->patchcount = LittleShort(mtexture->patchcount);
+		texture->SScale = mtexture->sscale ? mtexture->sscale / 8.0 : 1.0;
+		texture->TScale = mtexture->tscale ? mtexture->tscale / 8.0 : 1.0;
 
 		memcpy(texture->name, mtexture->name, sizeof(texture->name));
 		patch = texture->patches;
@@ -313,7 +315,7 @@ static void InitTextures(void)
 			}
 		}
 
-		textureheight[i] = texture->height;
+		textureheight[i] = texture->height / texture->TScale;
 		
     	// Create translation table for global animation.
 		texturetranslation[i] = i;
@@ -431,6 +433,8 @@ static void InitTextures2(void)
 		texture->width = LittleShort(mtexture->width);
 		texture->height = LittleShort(mtexture->height);
 		texture->patchcount = LittleShort(mtexture->patchcount);
+		texture->SScale = 1.0;
+		texture->TScale = 1.0;
 
 		memcpy(texture->name, mtexture->name, sizeof(texture->name));
 		patch = texture->patches;
@@ -1300,9 +1304,12 @@ void R_ShadeRect(int x, int y, int width, int height, int shade)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2002/03/28 17:58:02  dj_jl
+//	Added support for scaled textures.
+//
 //	Revision 1.17  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.16  2002/02/22 18:09:52  dj_jl
 //	Some improvements, beautification.
 //	

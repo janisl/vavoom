@@ -929,10 +929,12 @@ static void D_CalcGradients(surface_t *pface, int miplevel, const TVec &modelorg
 		centerxfrac * d_tdivzstepu - centeryfrac * d_tdivzstepv;
 
 	t = 0x10000 * mipscale;
-	sadjust = ((fixed_t)(DotProduct(modelorg - tex->texorg, tex->saxis) * t + 0.5)) -
-			((pface->texturemins[0] << 16) >> miplevel);
-	tadjust = ((fixed_t)(DotProduct(modelorg - tex->texorg, tex->taxis) * t + 0.5)) -
-			((pface->texturemins[1] << 16) >> miplevel);
+	sadjust = ((fixed_t)(DotProduct(modelorg, tex->saxis) * t + 0.5)) -
+			((pface->texturemins[0] << 16) >> miplevel)
+			+ ((fixed_t)(tex->soffs * t));
+	tadjust = ((fixed_t)(DotProduct(modelorg, tex->taxis) * t + 0.5)) -
+			((pface->texturemins[1] << 16) >> miplevel)
+			+ ((fixed_t)(tex->toffs * t));
 
 	//
 	// -1 (-epsilon) so we never wander off the edge of the texture
@@ -1104,9 +1106,12 @@ void TSoftwareDrawer::WorldDrawing(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/03/28 17:58:02  dj_jl
+//	Added support for scaled textures.
+//
 //	Revision 1.11  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.10  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

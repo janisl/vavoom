@@ -255,9 +255,8 @@ static void CalcFaceVectors(surface_t *surf)
 	}
 
 	// calculate texorg on the texture plane
-//	for (i = 0; i < 3; i++)
-//		texorg[i] = -tex->vecs[0][3] * l->textoworld[0][i] - tex->vecs[1][3] * l->textoworld[1][i];
-	texorg = tex->texorg;
+	for (i = 0; i < 3; i++)
+		texorg[i] = -tex->soffs * textoworld[0][i] - tex->toffs * textoworld[1][i];
 
 	// project back to the face plane
 	dist = DotProduct(texorg, surf->plane->normal) - surf->plane->dist - 1;
@@ -721,7 +720,6 @@ dword R_LightPoint(const TVec &p)
 	subsector_t		*sub;
 	subregion_t		*reg;
 	float			l, lr, lg, lb, d, add;
-	TVec			texpt;
 	int				i, s, t, ds, dt;
 	surface_t		*surf;
 	int				ltmp;
@@ -753,9 +751,8 @@ dword R_LightPoint(const TVec &p)
 	lr = lg = lb = l;
 
 	//	Light from floor's lightmap
-	texpt = p - reg->floor->texinfo.texorg;
-	s = (int)DotProduct(texpt, reg->floor->texinfo.saxis);
-	t = (int)DotProduct(texpt, reg->floor->texinfo.taxis);
+	s = (int)(DotProduct(p, reg->floor->texinfo.saxis) + reg->floor->texinfo.soffs);
+	t = (int)(DotProduct(p, reg->floor->texinfo.taxis) + reg->floor->texinfo.toffs);
 	for (surf = reg->floor->surfs; surf; surf = surf->next)
 	{
 		if (!surf->lightmap)
@@ -864,14 +861,14 @@ void R_AddDynamicLights(surface_t *surf)
 			continue;
 		minlight = rad - minlight;
 
-		impact = cl_dlights[lnum].origin - surf->plane->normal * dist - tex->texorg;
+		impact = cl_dlights[lnum].origin - surf->plane->normal * dist;
 
 		rmul = (cl_dlights[lnum].color >> 16) & 0xff;
 		gmul = (cl_dlights[lnum].color >> 8) & 0xff;
 		bmul = cl_dlights[lnum].color & 0xff;
 
-		local.x = DotProduct(impact, tex->saxis);// + tex->vecs[0][3];
-		local.y = DotProduct(impact, tex->taxis);// + tex->vecs[1][3];
+		local.x = DotProduct(impact, tex->saxis) + tex->soffs;
+		local.y = DotProduct(impact, tex->taxis) + tex->toffs;
 
 		local.x -= surf->texturemins[0];
 		local.y -= surf->texturemins[1];
@@ -1065,9 +1062,12 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/03/28 17:58:02  dj_jl
+//	Added support for scaled textures.
+//
 //	Revision 1.13  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.12  2002/02/22 18:09:52  dj_jl
 //	Some improvements, beautification.
 //	

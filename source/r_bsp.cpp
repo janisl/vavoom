@@ -49,10 +49,6 @@
 TVec				r_normal;
 float				r_dist;
 
-TVec				r_saxis;
-TVec				r_taxis;
-TVec				r_texorg;
-
 surface_t			*r_surface;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
@@ -114,10 +110,6 @@ static void DrawSurfaces(surface_t *surfs, texinfo_t *texinfo, int clipflags)
 		sky_is_visible = true;
 		return;
 	}
-
-	r_saxis = texinfo->saxis;
-	r_taxis = texinfo->taxis;
-	r_texorg = texinfo->texorg;
 
 	do
 	{
@@ -457,9 +449,12 @@ void R_RenderWorld(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/03/28 17:58:02  dj_jl
+//	Added support for scaled textures.
+//
 //	Revision 1.8  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.7  2002/01/25 18:08:19  dj_jl
 //	Beautification
 //	

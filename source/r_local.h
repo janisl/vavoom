@@ -65,8 +65,6 @@ struct sec_surface_t
 	sec_plane_t		*secplane;
 	texinfo_t		texinfo;
 	float			dist;
-	float			xoffs;
-	float			yoffs;
 	surface_t		*surfs;
 };
 
@@ -149,9 +147,12 @@ extern refdef_t			refdef;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/03/28 17:58:02  dj_jl
+//	Added support for scaled textures.
+//
 //	Revision 1.7  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.6  2001/11/09 14:22:09  dj_jl
 //	R_InitTexture now called from Host_init
 //	

@@ -1670,13 +1670,15 @@ void D_MaskedSurfCaclulateGradients(surface_t *surf)
 	float		distinv, mipscale, t;
 	int			miplevel;
 	surfcache_t *cache;
+	texinfo_t	*tex;
 
+	tex = surf->texinfo;
 	miplevel = D_MipLevelForScale(r_nearzi * scale_for_mip);
 	mipscale = 1.0 / (float)(1 << miplevel);
 
 	TransformVector(r_normal, p_normal);
-	TransformVector(r_saxis, p_saxis);
-	TransformVector(r_taxis, p_taxis);
+	TransformVector(tex->saxis, p_saxis);
+	TransformVector(tex->taxis, p_taxis);
 
 	distinv = 1.0 / (r_dist - DotProduct(vieworg, r_normal));
 
@@ -1699,10 +1701,12 @@ void D_MaskedSurfCaclulateGradients(surface_t *surf)
 		centerxfrac * d_tdivzstepu - centeryfrac * d_tdivzstepv;
 
 	t = 0x10000 * mipscale;
-	sadjust = (fixed_t)(DotProduct(vieworg - r_texorg, r_saxis) * t + 0.5) -
-		((surf->texturemins[0] << 16) >> miplevel);
-	tadjust = (fixed_t)(DotProduct(vieworg - r_texorg, r_taxis) * t + 0.5) -
-		((surf->texturemins[1] << 16) >> miplevel);
+	sadjust = (fixed_t)(DotProduct(vieworg, tex->saxis) * t + 0.5) -
+		((surf->texturemins[0] << 16) >> miplevel)
+		+ (fixed_t)(tex->soffs * t);
+	tadjust = (fixed_t)(DotProduct(vieworg, tex->taxis) * t + 0.5) -
+		((surf->texturemins[1] << 16) >> miplevel)
+		+ (fixed_t)(tex->toffs * t);
 
 	// -1 (-epsilon) so we never wander off the edge of the texture
 	bbextents = ((surf->extents[0] << 16) >> miplevel) - 1;
@@ -1857,9 +1861,12 @@ void TSoftwareDrawer::DrawSpritePolygon(TVec *cv, int lump,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/03/28 17:58:02  dj_jl
+//	Added support for scaled textures.
+//
 //	Revision 1.6  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.5  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

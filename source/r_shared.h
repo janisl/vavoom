@@ -108,6 +108,35 @@ struct pic_info_t
 	int		yoffset;
 };
 
+struct texinfo_t
+{
+	TVec			saxis;
+	float			soffs;
+	TVec			taxis;
+	float			toffs;
+	int				pic;
+	//	0 for solid surfaces
+	// translucency + 1 for masked surfaces
+	int				translucency;
+};
+
+struct surface_t
+{
+	surface_t		*next;
+	texinfo_t		*texinfo;
+	TPlane			*plane;
+	int				lightlevel;
+	byte			*lightmap;
+	rgb_t			*lightmap_rgb;
+	int				dlightframe;
+	int				dlightbits;
+	int				count;
+	short			texturemins[2];
+	short			extents[2];
+	surfcache_t		*cachespots[4];
+	TVec			verts[1];
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void R_DrawViewBorder(void);
@@ -198,9 +227,12 @@ extern byte				gammatable[5][256];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2002/03/28 17:58:02  dj_jl
+//	Added support for scaled textures.
+//
 //	Revision 1.15  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.14  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	
