@@ -310,6 +310,33 @@ void VDirect3DDrawer::GenerateTexture(int texnum, bool dsky)
 
     texture = textures[texnum];
 
+	char HighResName[80];
+	sprintf(HighResName, "textures/walls/%s.png", texture->name);
+	for (i = 0; HighResName[i]; i++)
+		HighResName[i] = tolower(HighResName[i]);
+	if (FL_FindFile(HighResName, NULL))
+	{
+		Mod_LoadSkin(HighResName, 0);
+		if (SkinBPP == 8)
+		{
+			rgba_t *buf = (rgba_t*)Z_Malloc(SkinWidth * SkinHeight * 4);
+			for (int i = 0; i < SkinWidth * SkinHeight; i++)
+			{
+				buf[i] = SkinPal[SkinData[i]];
+			}
+			texturedata[texnum] = UploadTexture(SkinWidth, SkinHeight, buf);
+			Z_Free(buf);
+		}
+		else
+		{
+			texturedata[texnum] = UploadTexture(SkinWidth, SkinHeight, (rgba_t *)SkinData);
+		}
+		Z_Free(SkinData);
+		texture_iw[texnum] = 1.0 / float(texture->width);
+		texture_ih[texnum] = 1.0 / float(texture->height);
+		return;
+	}
+
 	block = (rgba_t*)Z_Calloc(texture->width * texture->height * 4);
 
     // Composite the columns together.
@@ -455,6 +482,31 @@ void VDirect3DDrawer::SetSkyTexture(int tex, bool double_sky)
 void VDirect3DDrawer::GenerateFlat(int num)
 {
 	guard(VDirect3DDrawer::GenerateFlat);
+	char HighResName[80];
+	sprintf(HighResName, "textures/flats/%s.png", W_LumpName(flatlumps[num]));
+	for (int j = 0; HighResName[j]; j++)
+		HighResName[j] = tolower(HighResName[j]);
+	if (FL_FindFile(HighResName, NULL))
+	{
+		Mod_LoadSkin(HighResName, 0);
+		if (SkinBPP == 8)
+		{
+			rgba_t *buf = (rgba_t*)Z_Malloc(SkinWidth * SkinHeight * 4);
+			for (int i = 0; i < SkinWidth * SkinHeight; i++)
+			{
+				buf[i] = SkinPal[SkinData[i]];
+			}
+			flatdata[num] = UploadTexture(SkinWidth, SkinHeight, buf);
+			Z_Free(buf);
+		}
+		else
+		{
+			flatdata[num] = UploadTexture(SkinWidth, SkinHeight, (rgba_t *)SkinData);
+		}
+		Z_Free(SkinData);
+		return;
+	}
+
 	rgba_t *block = (rgba_t*)Z_Malloc(64 * 64 * 4, PU_HIGH, 0);
 	byte *data = (byte*)W_CacheLumpNum(flatlumps[num], PU_CACHE);
 
@@ -726,6 +778,34 @@ void VDirect3DDrawer::GeneratePicFromPatch(int handle)
 	int w = LittleShort(patch->width);
 	int h = LittleShort(patch->height);
 
+	char HighResName[80];
+	sprintf(HighResName, "textures/patches/%s.png", pic_list[handle].name);
+	for (int i = 0; HighResName[i]; i++)
+		HighResName[i] = tolower(HighResName[i]);
+	if (FL_FindFile(HighResName, NULL))
+	{
+		Mod_LoadSkin(HighResName, 0);
+		if (SkinBPP == 8)
+		{
+			rgba_t *buf = (rgba_t*)Z_Malloc(SkinWidth * SkinHeight * 4);
+			for (int i = 0; i < SkinWidth * SkinHeight; i++)
+			{
+				buf[i] = SkinPal[SkinData[i]];
+			}
+			picdata[handle] = UploadTextureNoMip(SkinWidth, SkinHeight, buf);
+			Z_Free(buf);
+		}
+		else
+		{
+			picdata[handle] = UploadTextureNoMip(SkinWidth, SkinHeight, (rgba_t *)SkinData);
+		}
+		Z_Free(SkinData);
+		pic_iw[handle] = 1.0 / float(w);
+		pic_ih[handle] = 1.0 / float(h);
+		Z_ChangeTag(patch, PU_CACHE);
+		return;
+	}
+
     rgba_t *block = (rgba_t*)Z_Calloc(w * h * 4, PU_HIGH, 0);
 	rgba_t *pal = r_palette[pic_list[handle].palnum];
 	int black = r_black_color[pic_list[handle].palnum];
@@ -780,10 +860,36 @@ void VDirect3DDrawer::GeneratePicFromRaw(int handle)
 	guard(VDirect3DDrawer::GeneratePicFromRaw);
 	int lump = W_GetNumForName(pic_list[handle].name);
 	int len = W_LumpLength(lump);
-	byte* raw = (byte*)W_CacheLumpNum(lump, PU_STATIC);
-	int w = 320;
 	int h = len / 320;
 
+	char HighResName[80];
+	sprintf(HighResName, "textures/patches/%s.png", pic_list[handle].name);
+	for (int i = 0; HighResName[i]; i++)
+		HighResName[i] = tolower(HighResName[i]);
+	if (FL_FindFile(HighResName, NULL))
+	{
+		Mod_LoadSkin(HighResName, 0);
+		if (SkinBPP == 8)
+		{
+			rgba_t *buf = (rgba_t*)Z_Malloc(SkinWidth * SkinHeight * 4);
+			for (int i = 0; i < SkinWidth * SkinHeight; i++)
+			{
+				buf[i] = SkinPal[SkinData[i]];
+			}
+			picdata[handle] = UploadTextureNoMip(SkinWidth, SkinHeight, buf);
+			Z_Free(buf);
+		}
+		else
+		{
+			picdata[handle] = UploadTextureNoMip(SkinWidth, SkinHeight, (rgba_t *)SkinData);
+		}
+		Z_Free(SkinData);
+		pic_iw[handle] = 1.0 / 320.0;
+		pic_ih[handle] = 1.0 / float(h);
+		return;
+	}
+
+	byte* raw = (byte*)W_CacheLumpNum(lump, PU_STATIC);
     rgba_t *block = (rgba_t*)Z_Calloc(len * 4, PU_HIGH, 0);
 	rgba_t *pal = r_palette[pic_list[handle].palnum];
 	int black = r_black_color[pic_list[handle].palnum];
@@ -795,9 +901,9 @@ void VDirect3DDrawer::GeneratePicFromRaw(int handle)
 		*dst = pal[*src ? *src : black];
 	}
 
-	piciw[handle] = 1.0 / float(w);
+	piciw[handle] = 1.0 / 320.0;
 	picih[handle] = 1.0 / float(h);
-	picdata[handle] = UploadTextureNoMip(w, h, block);
+	picdata[handle] = UploadTextureNoMip(320, h, block);
 	Z_Free(block);
 	Z_ChangeTag(raw, PU_CACHE);
 	unguard;
@@ -1332,9 +1438,12 @@ LPDIRECTDRAWSURFACE7 VDirect3DDrawer::UploadTextureNoMip(int width, int height, 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2004/11/30 07:19:00  dj_jl
+//	Support for high resolution textures.
+//
 //	Revision 1.22  2004/11/23 12:43:10  dj_jl
 //	Wad file lump namespaces.
-//
+//	
 //	Revision 1.21  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
 //	

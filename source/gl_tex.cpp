@@ -302,6 +302,36 @@ void VOpenGLDrawer::GenerateTexture(int texnum)
 
 	texture = textures[texnum];
 
+	char HighResName[80];
+	sprintf(HighResName, "textures/walls/%s.png", texture->name);
+	for (i = 0; HighResName[i]; i++)
+		HighResName[i] = tolower(HighResName[i]);
+	if (FL_FindFile(HighResName, NULL))
+	{
+		Mod_LoadSkin(HighResName, 0);
+		if (SkinBPP == 8)
+		{
+			rgba_t *buf = (rgba_t*)Z_Malloc(SkinWidth * SkinHeight * 4);
+			for (int i = 0; i < SkinWidth * SkinHeight; i++)
+			{
+				buf[i] = SkinPal[SkinData[i]];
+			}
+			UploadTexture(SkinWidth, SkinHeight, buf);
+			Z_Free(buf);
+		}
+		else
+		{
+			UploadTexture(SkinWidth, SkinHeight, (rgba_t *)SkinData);
+		}
+		Z_Free(SkinData);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		texture_iw[texnum] = 1.0 / float(texture->width);
+		texture_ih[texnum] = 1.0 / float(texture->height);
+		texture_sent[texnum] = true;
+		return;
+	}
+
 	block = (rgba_t*)Z_Calloc(4 * texture->width * texture->height);
 
 	// Composite the columns together.
@@ -437,6 +467,34 @@ void VOpenGLDrawer::SetSkyTexture(int tex, bool double_sky)
 void VOpenGLDrawer::GenerateFlat(int num)
 {
 	guard(VOpenGLDrawer::GenerateFlat);
+	char HighResName[80];
+	sprintf(HighResName, "textures/flats/%s.png", W_LumpName(flatlumps[num]));
+	for (int j = 0; HighResName[j]; j++)
+		HighResName[j] = tolower(HighResName[j]);
+	if (FL_FindFile(HighResName, NULL))
+	{
+		Mod_LoadSkin(HighResName, 0);
+		if (SkinBPP == 8)
+		{
+			rgba_t *buf = (rgba_t*)Z_Malloc(SkinWidth * SkinHeight * 4);
+			for (int i = 0; i < SkinWidth * SkinHeight; i++)
+			{
+				buf[i] = SkinPal[SkinData[i]];
+			}
+			UploadTexture(SkinWidth, SkinHeight, buf);
+			Z_Free(buf);
+		}
+		else
+		{
+			UploadTexture(SkinWidth, SkinHeight, (rgba_t *)SkinData);
+		}
+		Z_Free(SkinData);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		flat_sent[num] = true;
+		return;
+	}
+
 	rgba_t *block = (rgba_t*)Z_Malloc(4 * 64 * 64);
 	byte *data = (byte*)W_CacheLumpNum(flatlumps[num], PU_CACHE);
 	for (int i = 0; i < 64 * 64; i++)
@@ -709,6 +767,37 @@ void VOpenGLDrawer::GeneratePicFromPatch(int handle)
 	int w = LittleShort(patch->width);
 	int h = LittleShort(patch->height);
 
+	char HighResName[80];
+	sprintf(HighResName, "textures/patches/%s.png", pic_list[handle].name);
+	for (int i = 0; HighResName[i]; i++)
+		HighResName[i] = tolower(HighResName[i]);
+	if (FL_FindFile(HighResName, NULL))
+	{
+		Mod_LoadSkin(HighResName, 0);
+		if (SkinBPP == 8)
+		{
+			rgba_t *buf = (rgba_t*)Z_Malloc(SkinWidth * SkinHeight * 4);
+			for (int i = 0; i < SkinWidth * SkinHeight; i++)
+			{
+				buf[i] = SkinPal[SkinData[i]];
+			}
+			UploadTextureNoMip(SkinWidth, SkinHeight, buf);
+			Z_Free(buf);
+		}
+		else
+		{
+			UploadTextureNoMip(SkinWidth, SkinHeight, (rgba_t *)SkinData);
+		}
+		Z_Free(SkinData);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		pic_iw[handle] = 1.0 / float(w);
+		pic_ih[handle] = 1.0 / float(h);
+		pic_sent[handle] = true;
+		Z_ChangeTag(patch, PU_CACHE);
+		return;
+	}
+
 	rgba_t *block = (rgba_t*)Z_Calloc(4 * w * h);
 	rgba_t *pal = r_palette[pic_list[handle].palnum];
 	int black = r_black_color[pic_list[handle].palnum];
@@ -768,8 +857,47 @@ void VOpenGLDrawer::GeneratePicFromRaw(int handle)
 	guard(VOpenGLDrawer::GeneratePicFromRaw);
 	int lump = W_GetNumForName(pic_list[handle].name);
 	int len = W_LumpLength(lump);
-	byte *raw = (byte*)W_CacheLumpNum(lump, PU_STATIC);
 	int h = len / 320;
+
+	char HighResName[80];
+	sprintf(HighResName, "textures/patches/%s.png", pic_list[handle].name);
+	for (int i = 0; HighResName[i]; i++)
+		HighResName[i] = tolower(HighResName[i]);
+	if (FL_FindFile(HighResName, NULL))
+	{
+		Mod_LoadSkin(HighResName, 0);
+		if (SkinBPP == 8)
+		{
+			rgba_t *buf = (rgba_t*)Z_Malloc(SkinWidth * SkinHeight * 4);
+			for (int i = 0; i < SkinWidth * SkinHeight; i++)
+			{
+				buf[i] = SkinPal[SkinData[i]];
+			}
+			UploadTextureNoMip(SkinWidth, SkinHeight, buf);
+			Z_Free(buf);
+		}
+		else
+		{
+			UploadTextureNoMip(SkinWidth, SkinHeight, (rgba_t *)SkinData);
+		}
+		Z_Free(SkinData);
+		if (h < 200)
+		{
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		}
+		else
+		{
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		}
+		pic_iw[handle] = 1.0 / 320.0;
+		pic_ih[handle] = 1.0 / float(h);
+		pic_sent[handle] = true;
+		return;
+	}
+
+	byte *raw = (byte*)W_CacheLumpNum(lump, PU_STATIC);
 	rgba_t *block = (rgba_t*)Z_Calloc(4 * len);
 	rgba_t *pal = r_palette[pic_list[handle].palnum];
 	int black = r_black_color[pic_list[handle].palnum];
@@ -1172,9 +1300,12 @@ void VOpenGLDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2004/11/30 07:19:00  dj_jl
+//	Support for high resolution textures.
+//
 //	Revision 1.20  2004/11/23 12:43:10  dj_jl
 //	Wad file lump namespaces.
-//
+//	
 //	Revision 1.19  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
 //	

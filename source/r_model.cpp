@@ -29,6 +29,7 @@
 
 // HEADER FILES ------------------------------------------------------------
 
+#include <png.h>
 #include "gamedefs.h"
 #include "r_local.h"
 
@@ -764,7 +765,6 @@ static void LoadTGA(const char *filename, void **bufptr)
 		Sys_Error("Nonsupported tga format");
 	}
 
-
 	Z_Free(hdr);
 	unguard;
 }
@@ -833,6 +833,108 @@ void WriteTGA(char* filename, void* data, int width, int height, int bpp,
 
 //==========================================================================
 //
+//	MyPNGReadFunc
+//
+//==========================================================================
+
+static void MyPNGReadFunc(png_structp png_ptr, png_bytep data, png_size_t length)
+{
+	guard(MyPNGReadFunc);
+	byte** ReadPtr = (byte**)png_get_io_ptr(png_ptr);
+	memcpy(data, *ReadPtr, length);
+	*ReadPtr += length;
+	unguard;
+}
+
+//==========================================================================
+//
+//	LoadPNG
+//
+//==========================================================================
+
+static void LoadPNG(const char *filename, void**)
+{
+	guard(LoadPNG);
+	void*		SrcData;
+	void*		ReadPtr;
+	int			i;
+
+	//	Read in file.
+	if (FL_ReadFile(filename, &SrcData, PU_HIGH) < 0)
+		Sys_Error("Couldn't find file %s", filename);
+
+	//	Verify signature.
+	if (png_sig_cmp((png_byte*)SrcData, 0, 8))
+		Sys_Error("%s is not a valid PNG file", filename);
+
+	//	Create reading structure.
+	png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING,
+		NULL, NULL, NULL);
+	if (!png_ptr)
+		Sys_Error("Couldn't create png_ptr");
+
+	//	Create info structure.
+	png_infop info_ptr = png_create_info_struct(png_ptr);
+	if (!info_ptr)
+		Sys_Error("Couldn't create info_ptr");
+
+	//	Create end info structure.
+	png_infop end_info = png_create_info_struct(png_ptr);
+	if (!end_info)
+		Sys_Error("Couldn't create end_info");
+
+	//	Set up error handling.
+	if (setjmp(png_jmpbuf(png_ptr)))
+		Sys_Error("Error reading PNG file");
+
+	//	Set my read function.
+	ReadPtr = SrcData;
+	png_set_read_fn(png_ptr, &ReadPtr, MyPNGReadFunc);
+
+	//	Read image info.
+	png_read_info(png_ptr, info_ptr);
+	SkinWidth = png_get_image_width(png_ptr, info_ptr);
+	SkinHeight = png_get_image_height(png_ptr, info_ptr);
+	int BitDepth = png_get_bit_depth(png_ptr, info_ptr);
+	int ColorType = png_get_color_type(png_ptr, info_ptr);
+
+	//	Set up transformations.
+	if (ColorType == PNG_COLOR_TYPE_PALETTE)
+		png_set_palette_to_rgb(png_ptr);
+	if (ColorType == PNG_COLOR_TYPE_GRAY && BitDepth < 8)
+		png_set_gray_1_2_4_to_8(png_ptr);
+	if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
+		png_set_tRNS_to_alpha(png_ptr);
+	if (BitDepth == 16)
+		png_set_strip_16(png_ptr);
+	if (ColorType == PNG_COLOR_TYPE_PALETTE ||
+		ColorType == PNG_COLOR_TYPE_RGB ||
+		ColorType == PNG_COLOR_TYPE_GRAY)
+		png_set_add_alpha(png_ptr, 0xff, PNG_FILLER_AFTER);
+	if (ColorType == PNG_COLOR_TYPE_GRAY ||
+		ColorType == PNG_COLOR_TYPE_GRAY_ALPHA)
+		png_set_gray_to_rgb(png_ptr);
+
+	//	Set up unpacking buffer and row pointers.
+	SkinBPP = 32;
+	SkinData = (byte*)Z_Malloc(SkinWidth * SkinHeight * 4, PU_HIGH, NULL);
+	png_bytep* RowPtrs = (png_bytep*)Z_Malloc(SkinHeight * 4, PU_HIGH, NULL);
+	for (i = 0; i < SkinHeight; i++)
+		RowPtrs[i] = SkinData + i * SkinWidth * 4;
+	png_read_image(png_ptr, RowPtrs);
+
+	//	Finish reading.
+	png_read_end(png_ptr, end_info);
+	png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
+
+	//	Free memory.
+	Z_Free(SrcData);
+	Z_Free(RowPtrs);
+	unguard;
+}
+
+//==========================================================================
+//
 //	Mod_LoadSkin
 //
 //==========================================================================
@@ -850,6 +952,10 @@ void Mod_LoadSkin(const char *name, void **bufptr)
 	else if (!strcmp(ext, "tga"))
 	{
 		LoadTGA(name, bufptr);
+	}
+	else if (!strcmp(ext, "png"))
+	{
+		LoadPNG(name, bufptr);
 	}
 	else
 	{
@@ -897,9 +1003,12 @@ void R_PositionWeaponModel(clmobj_t &wpent, model_t *wpmodel, int frame)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2004/11/30 07:19:01  dj_jl
+//	Support for high resolution textures.
+//
 //	Revision 1.8  2004/03/18 08:02:34  dj_jl
 //	Fixed tga loading with no palette
-//
+//	
 //	Revision 1.7  2002/07/13 07:51:48  dj_jl
 //	Replacing console's iostream with output device.
 //	

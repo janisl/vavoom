@@ -58,7 +58,7 @@ SYS_OBJS = \
 	obj/sys_i386.o \
 	obj/sys_dos.o
 GL_SYS_OBJ = obj/gl_alleg.o
-LIBS := -lalleg -lstdcxx
+LIBS := -lalleg -lpng -lz -lstdcxx
 else
 ifdef USE_SDL
 #-- Linux with SDL --
@@ -73,7 +73,7 @@ SYS_OBJS = \
 	obj/sys_i386.o \
 	obj/sys_sdl.o
 GL_SYS_OBJ = obj/gl_sdl.o
-LIBS := `sdl-config --libs` -lSDL_mixer -lm -lstdc++
+LIBS := `sdl-config --libs` -lSDL_mixer -lpng -lz -lm -lstdc++
 else
 #-- Linux with Allegro --
 SYS_OBJS = \
@@ -87,7 +87,7 @@ SYS_OBJS = \
 	obj/sys_i386.o \
 	obj/sys_lin.o
 GL_SYS_OBJ = obj/gl_x.o
-LIBS := `allegro-config --libs` -lm -lstdc++
+LIBS := `allegro-config --libs` -lXxf86dga -lpng -lz -lm -lstdc++
 #LIBS := `allegro-config --static` -lm -lstdc++ -static
 endif
 endif
@@ -490,7 +490,9 @@ installdata:
 # ---------------------------------------
 
 clean:
-	rm obj/*.o obj/*.obj obj/cl/*.o obj/cl/*.obj obj/sv/*.o obj/sv/*.obj *.tds
+	-rm obj/{,cl/,sv/}*.{o,obj} *.tds \
+		utils/{acc,fixmd2,glbsp,glvis,vcc{,/vcpp},vlumpy}/*.{o,obj,a,lib,tds} \
+		basev/{doom{,1,2},heretic,hexen,plutonia,strife,tnt}/{progs/*.dat,wad0.wad}
 
 # ---------------------------------------
 #
@@ -533,4 +535,3 @@ source/%.asm : source/%.s source/asm_i386.h source/gas2tasm.exe
 
 source/gas2tasm.exe : source/gas2tasm.c
 	gcc -O3 -ffast-math -fomit-frame-pointer -s -o $@ $<
-
