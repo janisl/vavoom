@@ -630,7 +630,7 @@ boolean SV_PathTraverse(float x1, float y1, float x2, float y2,
 	trace_org = TVec(x1, y1, 0);
 	trace_dest = TVec(x2, y2, 0);
 	trace_delta = trace_dest - trace_org;
-	trace_dir = Normalize(trace_delta);
+	trace_dir = Normalise(trace_delta);
 	trace_len = Length(trace_delta);
 
 	trace_plane.SetPointDir(trace_org, trace_delta);
@@ -1090,9 +1090,12 @@ bool P_ChangeSector(sector_t * sector, int crunch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2004/12/27 12:23:17  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.19  2003/07/03 18:11:13  dj_jl
 //	Moving extrafloors
-//
+//	
 //	Revision 1.18  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
 //	

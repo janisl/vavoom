@@ -157,13 +157,15 @@ void TConsoleGLVis::DisplayMapDone(int accepts, int total)
 
 static void ShowUsage(void)
 {
-	fprintf(stderr, "\nGLVIS version 1.4, Copyright (c)2000-2002 JÆnis Legzdi·ý ("__DATE__" "__TIME__")\n");
+	fprintf(stderr, "\nGLVIS version 1.5, Copyright (c)2000-2002 Janis "
+		"Legzdinsh ("__DATE__" "__TIME__")\n");
 	fprintf(stderr, "Usage: glvis [options] file[.wad]\n");
 	fprintf(stderr, "    -s            silent mode\n");
 	fprintf(stderr, "    -f            fast mode\n");
 	fprintf(stderr, "    -v            verbose mode\n");
 	fprintf(stderr, "    -t#           specify test level\n");
-	fprintf(stderr, "    -m<LEVELNAME> specifies a level to process, can be used multiple times\n");
+	fprintf(stderr, "    -m<LEVELNAME> specifies a level to process, can "
+		"be used multiple times\n");
 	fprintf(stderr, "    -noreject     don't create reject\n");
 	exit(1);
 }
@@ -205,7 +207,8 @@ int main(int argc, char *argv[])
 				break;
 
 			 case 'm':
-				strcpy(GLVis.specified_maps[GLVis.num_specified_maps++], arg + 2);
+				strcpy(GLVis.specified_maps[GLVis.num_specified_maps++],
+					arg + 2);
 				break;
 
 			 case 'n':
@@ -254,7 +257,8 @@ int main(int argc, char *argv[])
 	if (!silent_mode)
 	{
 		int worktime = time(0) - starttime;
-		fprintf(stderr, "Time elapsed: %d:%02d:%02d\n", worktime / 3600, (worktime / 60) % 60, worktime % 60);
+		fprintf(stderr, "Time elapsed: %d:%02d:%02d\n", worktime / 3600,
+			(worktime / 60) % 60, worktime % 60);
 	}
 
 	return 0;
@@ -263,9 +267,12 @@ int main(int argc, char *argv[])
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2004/12/27 12:23:18  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.12  2002/08/24 14:41:35  dj_jl
 //	Removed usage of the iostream.
-//
+//	
 //	Revision 1.11  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
 //	

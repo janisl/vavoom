@@ -6,7 +6,7 @@ BCB = $(MAKEDIR)\..
 !endif
 MAIN=.
 OUTPUT=.
-CFLAGS=-O2 -tWC -pc -I$(BCB)\include
+CFLAGS=-O2 -tWC -pc
 DEFINES=-DWIN32 -DGLBSP_PLUGIN
 
 OBJS=$(OUTPUT)\analyze.obj  \

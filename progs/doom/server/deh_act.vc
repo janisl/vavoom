@@ -637,7 +637,7 @@ void A_SkullAttack(void)
 
 	PlaySound(AttackSound, CHAN_VOICE);
 	A_FaceTarget();
-	Velocity = Normalize(MobjCenter(Enemy) - Origin) * 700.0;//SKULLSPEED;
+	Velocity = Normalise(MobjCenter(Enemy) - Origin) * 700.0;//SKULLSPEED;
 }
 
 //==========================================================================
@@ -967,8 +967,8 @@ void A_Tracer(void)
 	if (!Enemy || Enemy.Health <= 0)
 		return;
 
-	wishdir = Normalize(MobjCenter(Enemy) - Origin);
-	currdir = Normalize(Velocity);
+	wishdir = Normalise(MobjCenter(Enemy) - Origin);
+	currdir = Normalise(Velocity);
 	delta = wishdir - currdir;
 	adjustlen = Length(delta);
 	if (adjustlen > TRACEADJUST)
@@ -1669,6 +1669,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2004/12/27 12:23:11  dj_jl
+//  Multiple small changes for version 1.16
+//
 //  Revision 1.8  2003/07/11 16:47:39  dj_jl
 //  Made array of players with pointers
 //

@@ -405,6 +405,8 @@ void Died(Actor source)
 		// even those caused by other monsters
 		svvars->Players[0].KillCount++;
 	}
+	if (bCountKill)
+		level->currentkills++;
 
 	if (bIsPlayer)
 	{
@@ -520,7 +522,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 	if (inflictor && bColideWithThings)
 	{
 		Velocity += (500.0 * itof(damage) / Mass) *
-			Normalize(MobjCenter(self) - MobjCenter(inflictor));
+			Normalise(MobjCenter(self) - MobjCenter(inflictor));
 	}
 
 	// player specific
@@ -2572,6 +2574,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2004/12/27 12:23:14  dj_jl
+//  Multiple small changes for version 1.16
+//
 //  Revision 1.14  2004/12/22 07:56:47  dj_jl
 //  Fully working Strife support.
 //

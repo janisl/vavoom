@@ -332,8 +332,8 @@ void VDirect3DDrawer::GenerateTexture(int texnum, bool dsky)
 			texturedata[texnum] = UploadTexture(SkinWidth, SkinHeight, (rgba_t *)SkinData);
 		}
 		Z_Free(SkinData);
-		texture_iw[texnum] = 1.0 / float(texture->width);
-		texture_ih[texnum] = 1.0 / float(texture->height);
+		textureiw[texnum] = 1.0 / float(texture->width);
+		textureih[texnum] = 1.0 / float(texture->height);
 		return;
 	}
 
@@ -800,8 +800,8 @@ void VDirect3DDrawer::GeneratePicFromPatch(int handle)
 			picdata[handle] = UploadTextureNoMip(SkinWidth, SkinHeight, (rgba_t *)SkinData);
 		}
 		Z_Free(SkinData);
-		pic_iw[handle] = 1.0 / float(w);
-		pic_ih[handle] = 1.0 / float(h);
+		piciw[handle] = 1.0 / float(w);
+		picih[handle] = 1.0 / float(h);
 		Z_ChangeTag(patch, PU_CACHE);
 		return;
 	}
@@ -861,10 +861,11 @@ void VDirect3DDrawer::GeneratePicFromRaw(int handle)
 	int lump = W_GetNumForName(pic_list[handle].name);
 	int len = W_LumpLength(lump);
 	int h = len / 320;
+	int i;
 
 	char HighResName[80];
 	sprintf(HighResName, "textures/patches/%s.png", pic_list[handle].name);
-	for (int i = 0; HighResName[i]; i++)
+	for (i = 0; HighResName[i]; i++)
 		HighResName[i] = tolower(HighResName[i]);
 	if (FL_FindFile(HighResName, NULL))
 	{
@@ -884,8 +885,8 @@ void VDirect3DDrawer::GeneratePicFromRaw(int handle)
 			picdata[handle] = UploadTextureNoMip(SkinWidth, SkinHeight, (rgba_t *)SkinData);
 		}
 		Z_Free(SkinData);
-		pic_iw[handle] = 1.0 / 320.0;
-		pic_ih[handle] = 1.0 / float(h);
+		piciw[handle] = 1.0 / 320.0;
+		picih[handle] = 1.0 / float(h);
 		return;
 	}
 
@@ -896,7 +897,7 @@ void VDirect3DDrawer::GeneratePicFromRaw(int handle)
 
 	byte *src = raw;
 	rgba_t *dst = block;
-	for (int i = 0; i < len; i++, src++, dst++)
+	for (i = 0; i < len; i++, src++, dst++)
 	{
 		*dst = pal[*src ? *src : black];
 	}
@@ -1438,9 +1439,12 @@ LPDIRECTDRAWSURFACE7 VDirect3DDrawer::UploadTextureNoMip(int width, int height, 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.23  2004/11/30 07:19:00  dj_jl
 //	Support for high resolution textures.
-//
+//	
 //	Revision 1.22  2004/11/23 12:43:10  dj_jl
 //	Wad file lump namespaces.
 //	

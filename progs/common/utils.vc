@@ -402,96 +402,6 @@ void UnarchiveThinker(Thinker th)
 
 //==========================================================================
 //
-//  PutClientIntoServer
-//
-//==========================================================================
-
-void PutClientIntoServer(Player player)
-{
-	player.PutClientIntoServer();
-}
-
-//==========================================================================
-//
-//  SpawnClient
-//
-//==========================================================================
-
-void SpawnClient(int i)
-{
-	svvars->Players[i].SpawnClient();
-}
-
-//==========================================================================
-//
-//  NetGameReborn
-//
-//==========================================================================
-
-void NetGameReborn(int playernum)
-{
-	svvars->Players[playernum].NetGameReborn();
-}
-
-//==========================================================================
-//
-//  DisconnectClient
-//
-//==========================================================================
-
-void DisconnectClient(Player player)
-{
-	player.DisconnectClient();
-}
-
-//==========================================================================
-//
-//  UserinfoChanged
-//
-//==========================================================================
-
-void UserinfoChanged(Player player)
-{
-	player.UserinfoChanged();
-}
-
-//==========================================================================
-//
-//  G_PlayerExitMap
-//
-//  Call when a player completes a level.
-//
-//==========================================================================
-
-void G_PlayerExitMap(int player, bool clusterChange)
-{
-	svvars->Players[player].PlayerExitMap(clusterChange);
-}
-
-//==========================================================================
-//
-//  PlayerThink
-//
-//==========================================================================
-
-void PlayerThink(BasePlayer player)
-{
-	player.PlayerTick(frametime);
-}
-
-//==========================================================================
-//
-//  SetViewPos
-//
-//==========================================================================
-
-void SetViewPos(BasePlayer player)
-{
-	player.SetViewPos();
-}
-
-//==========================================================================
-//
 //	CreateTIDList
 //
 //==========================================================================
@@ -565,6 +475,9 @@ int FindState(name StateName)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.33  2004/12/27 12:23:09  dj_jl
+//  Multiple small changes for version 1.16
+//
 //  Revision 1.32  2004/11/01 07:38:21  dj_jl
 //  Almost all Hexen line specials are available in all games.
 //

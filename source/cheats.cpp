@@ -56,7 +56,7 @@
 //
 //==========================================================================
 
-static boolean CheatAllowed(void)
+static boolean CheatAllowed()
 {
    	if (!sv.active || sv.intermission || !svvars.Players[0])
     {
@@ -94,7 +94,7 @@ COMMAND(God)
 {
 	if (CheatAllowed())
     {
-		svpr.Exec("Cheat_God");
+		svvars.Players[0]->eventCheat_God();
     }
 }
 
@@ -108,7 +108,7 @@ COMMAND(NoClip)
 {
 	if (CheatAllowed())
     {
-		svpr.Exec("Cheat_NoClip");
+		svvars.Players[0]->eventCheat_NoClip();
     }
 }
 
@@ -122,7 +122,7 @@ COMMAND(Gimme)
 {
 	if (CheatAllowed())
     {
-		svpr.Exec("Cheat_Gimme");
+		svvars.Players[0]->eventCheat_Gimme();
     }
 }
 
@@ -136,7 +136,7 @@ COMMAND(KillAll)
 {
 	if (CheatAllowed())
     {
-		svpr.Exec("Cheat_KillAll");
+		svvars.Players[0]->eventCheat_KillAll();
     }
 }
 
@@ -150,7 +150,7 @@ COMMAND(Morph)
 {
 	if (CheatAllowed())
     {
-		svpr.Exec("Cheat_Morph");
+		svvars.Players[0]->eventCheat_Morph();
     }
 }
 
@@ -164,7 +164,7 @@ COMMAND(NoWeapons)
 {
 	if (CheatAllowed())
     {
-		svpr.Exec("Cheat_NoWeapons");
+		svvars.Players[0]->eventCheat_NoWeapons();
     }
 }
 
@@ -178,7 +178,7 @@ COMMAND(ChangeClass)
 {
 	if (CheatAllowed())
     {
-		svpr.Exec("Cheat_Class");
+		svvars.Players[0]->eventCheat_Class();
     }
 }
 
@@ -227,9 +227,12 @@ COMMAND(MyPos)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.11  2004/12/22 07:50:06  dj_jl
 //	More extended ACS support, more linedef flags.
-//
+//	
 //	Revision 1.10  2003/11/12 16:47:40  dj_jl
 //	Changed player structure into a class
 //	

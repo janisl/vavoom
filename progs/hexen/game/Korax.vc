@@ -193,7 +193,7 @@ Actor SpawnKoraxMissile(TVec org, Actor dest, classid type)
 		// Invisible target
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0);
 	}
-	dir = Normalize(dir);
+	dir = Normalise(dir);
 	th.Velocity = dir * th.Speed;
 	VectorAngles(&dir, &th.Angles);
 	return th.CheckMissileSpawn() ? th : none;
@@ -515,6 +515,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2004/12/27 12:23:13  dj_jl
+//  Multiple small changes for version 1.16
+//
 //  Revision 1.3  2004/12/22 07:54:41  dj_jl
 //  More extended ACS support, more linedef flags.
 //

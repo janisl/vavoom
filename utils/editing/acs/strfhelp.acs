@@ -56,6 +56,9 @@ str MusicNames[34] =
 	"d_end"
 };
 
+//	Script 0 is used to implement several of Strife's unique line types.
+// It's also used to implement the sky change after the Programmer dies.
+
 script << 0 >> (int type, int tag)
 {
 	switch (type)
@@ -124,6 +127,7 @@ script << 0 >> (int type, int tag)
 		SetResultValue(Plat_DownWaitUpStayLip(tag, 32, 105, 0));
 		break;
 
+	case 180:
 	case 181:
 		//	Raise floor by 512, change texture and special.
 		SetResultValue(Floor_RaiseByValueTxTy(tag, 8, 512));
@@ -497,10 +501,23 @@ script << 0 >> (int type, int tag)
 //			Floor_LowerToLowest(tag, VDOORSPEED / 2));
 		SetResultValue(FloorAndCeiling_LowerRaise(tag, VDOORSPEED / 2));
 		break;
+
+	case 256:
+		//	Not a line type, but used by the Programmer death script.
+		ChangeSky("SKYMNT01", "SKYMNT01");
+		break;
 	}
 }
 
-script 240 (void)
+//	When the Programmer dies, he executes script 250.
+script 250 (void)
 {
+	int i;
+
+	//	The next time you visit maps 1-9, their skies need to change.
+	for (i = 1; i < 10; i++)
+	{
+	    ACS_Execute(0, i, 256, 0, 0);
+	}
 	Teleport_NewMap(10, 0);
 }

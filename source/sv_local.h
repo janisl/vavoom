@@ -349,6 +349,8 @@ enum
 	SCRIPT_RedReturn	= 7,
 	SCRIPT_WhiteReturn	= 8,
 	SCRIPT_Lightning	= 12,
+	SCRIPT_Unloading	= 13,
+	SCRIPT_Disconnect	= 14,
 };
 
 class FACSGrowingArray
@@ -372,7 +374,7 @@ struct acsstore_t
 
 void P_LoadACScripts(int Lump);
 void P_StartTypedACScripts(int Type);
-bool P_StartACS(int number, int map, int arg1, int arg1, int arg1,
+bool P_StartACS(int number, int map, int arg1, int arg2, int arg3,
 	VEntity* activator, line_t* line, int side, bool Always,
 	bool WantResult);
 boolean P_TerminateACS(int number, int map);
@@ -536,6 +538,9 @@ const char *SV_GetMapName(int num);
 int SV_FindModel(const char *name);
 int SV_GetModelIndex(const FName &Name);
 int SV_FindSkin(const char *name);
+void SV_ChangeSky(const char* Sky1, const char* Sky2);
+void SV_ChangeMusic(const char* SongName);
+void SV_ChangeLocalMusic(VBasePlayer *player, const char* SongName);
 
 void SV_ReadMove(void);
 
@@ -608,9 +613,12 @@ inline int SV_GetPlayerNum(VBasePlayer* player)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.34  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.33  2004/12/22 07:49:13  dj_jl
 //	More extended ACS support, more linedef flags.
-//
+//	
 //	Revision 1.32  2004/12/03 16:15:47  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
 //	

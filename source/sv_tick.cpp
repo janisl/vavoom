@@ -55,7 +55,6 @@
 IMPLEMENT_CLASS(V, Thinker)
 
 static FFunction *pf_UpdateSpecials;
-static FFunction *pf_SetViewPos;
 static int FIndex_Tick;
 
 // CODE --------------------------------------------------------------------
@@ -69,7 +68,6 @@ static int FIndex_Tick;
 void P_InitThinkers(void)
 {
 	pf_UpdateSpecials = svpr.FuncForName("P_UpdateSpecials");
-    pf_SetViewPos = svpr.FuncForName("SetViewPos");
 	FIndex_Tick = VThinker::StaticClass()->GetFunctionIndex("Tick");
 }
 
@@ -141,7 +139,7 @@ void P_Ticker(void)
 	{
 		if (svvars.Players[i] && svvars.Players[i]->bSpawned)
 		{
-			svpr.Exec(pf_SetViewPos, (int)svvars.Players[i]);
+			svvars.Players[i]->eventSetViewPos();
 		}
 	}
 
@@ -153,9 +151,12 @@ void P_Ticker(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2004/12/27 12:23:17  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.18  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
-//
+//	
 //	Revision 1.17  2003/11/12 16:47:40  dj_jl
 //	Changed player structure into a class
 //	

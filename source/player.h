@@ -151,6 +151,91 @@ class VBasePlayer : public VObject
 	dword 			WorldTimer;				// total time the player's been playing
 
 	int				OldStats[96];
+
+	void eventPutClientIntoServer()
+	{
+		svpr.Exec(GetVFunction("PutClientIntoServer"), (int)this);
+	}
+
+	void eventSpawnClient()
+	{
+		svpr.Exec(GetVFunction("SpawnClient"), (int)this);
+	}
+
+	void eventNetGameReborn()
+	{
+		svpr.Exec(GetVFunction("NetGameReborn"), (int)this);
+	}
+
+	void eventDisconnectClient()
+	{
+		svpr.Exec(GetVFunction("DisconnectClient"), (int)this);
+	}
+
+	void eventUserinfoChanged()
+	{
+		svpr.Exec(GetVFunction("UserinfoChanged"), (int)this);
+	}
+
+	void eventPlayerExitMap(bool clusterChange)
+	{
+		svpr.Exec(GetVFunction("PlayerExitMap"), (int)this, clusterChange);
+	}
+
+	void eventPlayerTick(float deltaTime)
+	{
+		svpr.Exec(GetVFunction("PlayerTick"), (int)this, PassFloat(deltaTime));
+	}
+
+	void eventSetViewPos()
+	{
+		svpr.Exec(GetVFunction("SetViewPos"), (int)this);
+	}
+
+	void eventCheat_God()
+	{
+		svpr.Exec(GetVFunction("Cheat_God"), (int)this);
+	}
+
+	void eventCheat_NoClip()
+	{
+		svpr.Exec(GetVFunction("Cheat_NoClip"), (int)this);
+	}
+
+	void eventCheat_Gimme()
+	{
+		svpr.Exec(GetVFunction("Cheat_Gimme"), (int)this);
+	}
+
+	void eventCheat_KillAll()
+	{
+		svpr.Exec(GetVFunction("Cheat_KillAll"), (int)this);
+	}
+
+	void eventCheat_Morph()
+	{
+		svpr.Exec(GetVFunction("Cheat_Morph"), (int)this);
+	}
+
+	void eventCheat_NoWeapons()
+	{
+		svpr.Exec(GetVFunction("Cheat_NoWeapons"), (int)this);
+	}
+
+	void eventCheat_Class()
+	{
+		svpr.Exec(GetVFunction("Cheat_Class"), (int)this);
+	}
+
+	void eventArchivePlayer()
+	{
+		svpr.Exec(GetVFunction("ArchivePlayer"), (int)this);
+	}
+
+	void eventUnarchivePlayer()
+	{
+		svpr.Exec(GetVFunction("UnarchivePlayer"), (int)this);
+	}
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -160,9 +245,12 @@ class VBasePlayer : public VObject
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.18  2003/11/12 16:47:40  dj_jl
 //	Changed player structure into a class
-//
+//	
 //	Revision 1.17  2003/03/08 16:02:52  dj_jl
 //	A little multiplayer fix.
 //	

@@ -229,7 +229,7 @@ static void CalcFaceVectors(surface_t *surf)
 		- tex->taxis.x * tex->saxis.z;
 	texnormal.z = tex->taxis.x * tex->saxis.y
 		- tex->taxis.y * tex->saxis.x;
-	texnormal = Normalize(texnormal);
+	texnormal = Normalise(texnormal);
 
 	// flip it towards plane normal
 	distscale = DotProduct(texnormal, surf->plane->normal);
@@ -364,7 +364,7 @@ static void CalcPoints(surface_t *surf)
 				}
 				
 				// move surf 8 pixels towards the center
-				*spt += 8 * Normalize(facemid - *spt);
+				*spt += 8 * Normalise(facemid - *spt);
 			}
 			if (i == 2)
 				c_bad++;
@@ -445,7 +445,7 @@ static void SingleLightFace(light_t *light, surface_t *surf)
 		if (dist < 0)
 			continue;	// light doesn't reach
 
-		incoming = Normalize(light->origin - *spt);
+		incoming = Normalise(light->origin - *spt);
 		angle = DotProduct(incoming, surf->plane->normal);
 
 		angle = 0.5 + 0.5 * angle;
@@ -1071,9 +1071,12 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.17  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.16  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
 //	

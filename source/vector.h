@@ -31,7 +31,7 @@
 
 class  TVec
 {
- public:
+public:
 	float		x;
 	float		y;
 	float		z;
@@ -150,7 +150,7 @@ inline float Length(const TVec &v)
 	return sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
-inline TVec Normalize(const TVec& v)
+inline TVec Normalise(const TVec& v)
 {
    return v / v.Length();
 }
@@ -179,9 +179,12 @@ inline FArchive& operator << (FArchive &Ar, TVec &v)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2004/12/27 12:23:17  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.6  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.5  2002/05/18 16:56:35  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	

@@ -89,42 +89,42 @@ struct subregion_t
 //
 // R_BSP
 //
-void R_RenderWorld(void);
+void R_RenderWorld();
 
 //
 // R_Things
 //
-void R_RenderMobjs(void);
-void R_DrawPlayerSprites(void);
-void R_DrawCroshair(void);
+void R_RenderMobjs();
+void R_DrawPlayerSprites();
+void R_DrawCroshair();
 void R_DrawTranslucentPoly(TVec*, int, int, int, int, bool, dword);
-void R_DrawTranslucentPolys(void);
+void R_DrawTranslucentPolys();
 
 //
 // R_Sky
 //
-void R_InitSkyBoxes(void);
-void R_InitSky(const mapInfo_t &info);
-void R_AnimateSky(void);
-void R_DrawSky(void);
+void R_InitSkyBoxes();
+void R_InitSky();
+void R_AnimateSky();
+void R_DrawSky();
 
 //
 //	R_Tex
 //
-void R_PrecacheLevel(void);
+void R_PrecacheLevel();
 float R_TextureHeight(int pic);
 
 //
 //	R_Surf
 //
-void R_UpdateWorld(void);
+void R_UpdateWorld();
 
 //
 //	R_Light
 //
-void R_ClearLights(void);
+void R_ClearLights();
 void R_LightFace(surface_t *surf, subsector_t *leaf);
-void R_PushDlights(void);
+void R_PushDlights();
 dword R_LightPoint(const TVec &p);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
@@ -148,9 +148,12 @@ extern TCvarI			old_aspect;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.10  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
-//
+//	
 //	Revision 1.9  2002/07/13 07:39:08  dj_jl
 //	Removed back to front drawing.
 //	

@@ -858,10 +858,11 @@ void VOpenGLDrawer::GeneratePicFromRaw(int handle)
 	int lump = W_GetNumForName(pic_list[handle].name);
 	int len = W_LumpLength(lump);
 	int h = len / 320;
+	int i;
 
 	char HighResName[80];
 	sprintf(HighResName, "textures/patches/%s.png", pic_list[handle].name);
-	for (int i = 0; HighResName[i]; i++)
+	for (i = 0; HighResName[i]; i++)
 		HighResName[i] = tolower(HighResName[i]);
 	if (FL_FindFile(HighResName, NULL))
 	{
@@ -904,7 +905,7 @@ void VOpenGLDrawer::GeneratePicFromRaw(int handle)
 
 	byte *src = raw;
 	rgba_t *dst = block;
-	for (int i = 0; i < len; i++, src++, dst++)
+	for (i = 0; i < len; i++, src++, dst++)
 	{
 		*dst = pal[*src ? *src : black];
 	}
@@ -1300,9 +1301,12 @@ void VOpenGLDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.21  2004/11/30 07:19:00  dj_jl
 //	Support for high resolution textures.
-//
+//	
 //	Revision 1.20  2004/11/23 12:43:10  dj_jl
 //	Wad file lump namespaces.
 //	

@@ -635,6 +635,7 @@ void Sys_Error(const char *error, ...)
 	vsprintf(buf, error, argptr);
 	va_end(argptr);
 
+	dprintf("Sys_Error: %s", buf);
 	throw VavoomError(buf);
 }
 
@@ -841,9 +842,12 @@ int main(int argc,char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2004/12/27 12:23:17  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.4  2004/10/11 06:53:16  dj_jl
 //	In end text characters below space are replaced with dots.
-//
+//	
 //	Revision 1.3  2003/10/22 06:15:00  dj_jl
 //	Safer handling of signals in Linux
 //	

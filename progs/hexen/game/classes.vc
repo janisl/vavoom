@@ -57,6 +57,7 @@
 #include "FireFlicker.vc"
 #include "StaticLightSource.vc"
 #include "StaticRGBLightSource.vc"
+#include "PlaneWatcher.vc"
 
 #include "LavaInflictor.vc"
 
@@ -496,6 +497,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2004/12/27 12:23:13  dj_jl
+//  Multiple small changes for version 1.16
+//
 //  Revision 1.4  2004/11/22 07:36:27  dj_jl
 //  Implemented all sector specials in all games.
 //

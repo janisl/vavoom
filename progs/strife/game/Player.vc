@@ -929,7 +929,7 @@ void InvThrow()
 
 	AngleVector(&MO.Angles, &Dir);
 	Dir.z = 0.0;
-	Dir = Normalize(Dir);
+	Dir = Normalise(Dir);
 	Item = Spawn(ItemType, MO.Origin + vector(0.0, 0.0, 32.0) +
 		Dir * (MO.Radius + 36.0));
 	Item.Velocity = Dir * 64.0;
@@ -1137,7 +1137,7 @@ void CheckWaterJump()
 	start = MO.Origin;
 	start.z += MO.Height * 0.5 + 8.0;
 	vforward.z = 0.0;
-	vforward = Normalize(vforward);
+	vforward = Normalise(vforward);
 	end = start + vforward * 24.0;
 	if (!TraceLine(start, end))
 	{
@@ -1231,6 +1231,9 @@ void WaterJump()
 
 void PlayerInSpecialSector(float deltaTime)
 {
+	float speed;
+	float finean;
+
 	// Falling, not all the way down yet?
 	if (MO.Origin.z != MO.Sector->floorheight)
 		return;
@@ -1239,6 +1242,7 @@ void PlayerInSpecialSector(float deltaTime)
 	{
 		//	Secret area.
 		SecretCount++;
+		level->currentsecret++;
 		MO.Sector->special &= ~SECSPEC_SECRET_MASK;
 		centerprint(self, "You found a secret area");
 	}
@@ -1329,6 +1333,9 @@ void PlayerInSpecialSector(float deltaTime)
 			if (!Powers[pw_ironfeet])
 				HazardTime += 2.0 * deltaTime;
 			break;
+		case SECSPEC_DamageInstantDeath:
+			MO.Damage(none, none, 999);
+			break;
 		case SECSPEC_DamageSuperHazard:
 			if (!Powers[pw_ironfeet])
 				HazardTime += 4.0 * deltaTime;
@@ -1369,6 +1376,12 @@ void PlayerInSpecialSector(float deltaTime)
 
 	switch (MO.Sector->special)
 	{
+	case SECSPEC_ScrollCurrent:
+		speed = itof((MO.Sector->tag - 100) % 10) / 16.0 * 35.0;
+		finean = itof((MO.Sector->tag - 100) / 10) * 45.0;
+		MO.Velocity.x += speed * cos(finean);
+		MO.Velocity.y += speed * sin(finean);
+		break;
 	case SECSPEC_ScrollNorthSlow:
 	case SECSPEC_ScrollNorthMedium:
 	case SECSPEC_ScrollNorthFast:
@@ -2186,6 +2199,117 @@ void FireWeapon()
 		P_NoiseAlert(MO, MO);
 }
 
+//==========================================================================
+//
+//  Cheat_God
+//
+//==========================================================================
+
+void Cheat_God()
+{
+	Cheats ^= CF_GODMODE;
+	if (Cheats & CF_GODMODE)
+	{
+		if (MO)
+			MO.Health = GOD_HEALTH;
+		Health = GOD_HEALTH;
+		cprint(self, "Degreelessness Mode On");
+	}
+	else
+		cprint(self, "Degreelessness Mode Off");
+}
+
+//==========================================================================
+//
+//  Cheat_NoClip
+//
+//==========================================================================
+
+void Cheat_NoClip()
+{
+	Cheats ^= CF_NOCLIP;
+	if (Cheats & CF_NOCLIP)
+		cprint(self, "No Clipping Mode ON");
+	else
+		cprint(self, "No Clipping Mode OFF");
+}
+
+//==========================================================================
+//
+//  Cheat_Gimme
+//
+//==========================================================================
+
+void Cheat_Gimme()
+{
+	int i;
+
+	// Weapons
+	if (Cmd_CheckParm("Weapons"))
+	{
+		for (i = 0; i < NUMWEAPONS; i++)
+		{
+			WeaponOwned[i] = true;
+		}
+	}
+
+	// Ammo
+	if (Cmd_CheckParm("Ammo"))
+	{
+		for (i = 0; i < NUMAMMO; i++)
+		{
+			Ammo[i] = maxammo[i];
+		}
+	}
+
+	// Keys
+	if (Cmd_CheckParm("Keys"))
+	{
+		Keys = 0x03ffffff;
+	}
+
+	// Health
+	if (Cmd_CheckParm("Health"))
+	{
+		Health = 100;
+		MO.Health = 100;
+	}
+
+	// Comm unit
+	if (Cmd_CheckParm("CommUnit"))
+	{
+		Communicator = true;
+	}
+
+	// Sigil piece
+	if (Cmd_CheckParm("Sigil"))
+	{
+		GiveSigilPiece();
+	}
+}
+
+//==========================================================================
+//
+//  Cheat_KillAll
+//
+//==========================================================================
+
+void Cheat_KillAll()
+{
+	cprint(self, "%d MONSTERS KILLED", P_Massacre());
+}
+
+//==========================================================================
+//
+//  UnarchivePlayer
+//
+//==========================================================================
+
+void UnarchivePlayer()
+{
+	Attacker = none;
+}
+
 defaultproperties
 {
 }
@@ -2193,6 +2317,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2004/12/27 12:23:14  dj_jl
+//  Multiple small changes for version 1.16
+//
 //  Revision 1.11  2004/12/22 07:56:47  dj_jl
 //  Fully working Strife support.
 //

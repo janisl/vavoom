@@ -329,16 +329,33 @@ struct RogueConSpeech
 
 struct base_level_t
 {
-	float time;
-	int tictime;
+	float		time;
+	int			tictime;
 
-	int totalkills;
-	int totalitems;
-	int totalsecret;	// for intermission
+	int			totalkills;
+	int			totalitems;
+	int			totalsecret;	// for intermission
+	int			currentkills;
+	int			currentitems;
+	int			currentsecret;
 
-	int mapname[3];
-	int __nextmap[3];
-	int __level_name[8];
+	int			mapname[3];
+	int			levelnum;
+	int			cluster;
+	int			partime;
+	int			__level_name[8];
+
+	int			sky1Texture;
+	int			sky2Texture;
+	float		sky1ScrollDelta;
+	float		sky2ScrollDelta;
+	int			doubleSky;
+	int			lightning;
+	int			skybox[8];
+	int			fadetable[3];
+
+	int			cdTrack;
+	int			songLump[3];
 };
 
 //**************************************************************************
@@ -683,6 +700,9 @@ struct ClipRect
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.51  2004/12/27 12:23:09  dj_jl
+//  Multiple small changes for version 1.16
+//
 //  Revision 1.50  2003/11/12 16:48:02  dj_jl
 //  Changed player structure into a class
 //

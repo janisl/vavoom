@@ -281,7 +281,7 @@ void S_ResumeSound(void)
 //
 //==========================================================================
 
-static void StartMusic(void)
+static void StartMusic()
 {
 	S_StartSong(mapSong, mapCDTrack, true);
 }
@@ -295,18 +295,34 @@ static void StartMusic(void)
 //
 //==========================================================================
 
-void S_Start(const mapInfo_t &info)
+void S_Start()
 {
 	guard(S_Start);
 	SN_StopAllSequences();
 	S_StopAllSound();
 
-	strcpy(mapSong, info.songLump);
-	mapCDTrack = info.cdTrack;
+	strcpy(mapSong, cl_level.songLump);
+	mapCDTrack = cl_level.cdTrack;
 
 	StartMusic();
 	unguard;
 }	
+
+//==========================================================================
+//
+//	S_MusicChanged
+//
+//==========================================================================
+
+void S_MusicChanged()
+{
+	guard(S_MusicChanged);
+	strcpy(mapSong, cl_level.songLump);
+	mapCDTrack = cl_level.cdTrack;
+
+	StartMusic();
+	unguard;
+}
 
 //==========================================================================
 //
@@ -344,9 +360,12 @@ void S_UpdateSounds(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.12  2004/11/30 07:17:17  dj_jl
 //	Made string pointers const.
-//
+//	
 //	Revision 1.11  2004/08/21 19:10:44  dj_jl
 //	Changed sound driver declaration.
 //	

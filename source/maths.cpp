@@ -196,7 +196,7 @@ void ProjectPointOnPlane(TVec &dst, const TVec &p, const TVec &normal)
 //
 //	PerpendicularVector
 //
-//	assumes "src" is normalized
+//	assumes "src" is normalised
 //
 //==========================================================================
 
@@ -227,17 +227,20 @@ void PerpendicularVector(TVec &dst, const TVec &src)
 	ProjectPointOnPlane(dst, tempvec, src);
 
 	/*
-	** normalize the result
+	** normalise the result
 	*/
-	dst = Normalize(dst);
+	dst = Normalise(dst);
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.10  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.9  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

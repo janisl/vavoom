@@ -45,7 +45,6 @@ bool respawnmonsters;
 
 #include "world.vc"
 
-#include "savegame.vc"
 #include "mobjinfo.vc"
 #include "wpninfo.vc"
 
@@ -55,7 +54,6 @@ bool respawnmonsters;
 #include "map.vc"
 #include "teleport.vc"
 #include "things.vc"
-#include "cheat.vc"
 
 #include "bot.vc"
 
@@ -64,6 +62,9 @@ bool respawnmonsters;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2004/12/27 12:23:12  dj_jl
+//  Multiple small changes for version 1.16
+//
 //  Revision 1.20  2004/11/22 07:36:27  dj_jl
 //  Implemented all sector specials in all games.
 //

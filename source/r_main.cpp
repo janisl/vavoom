@@ -157,16 +157,16 @@ void R_Init(void)
 //
 //==========================================================================
 
-void R_Start(const mapInfo_t &info)
+void R_Start()
 {
 	guard(R_Start);
 	r_oldviewleaf = NULL;
 
 	R_ClearLights();
 	R_ClearParticles();
-	R_InitSky(info);
+	R_InitSky();
 
-	r_fog = !stricmp(info.fadetable, "FOGMAP");
+	r_fog = !stricmp(cl_level.fadetable, "FOGMAP");
 
 	screenblocks = 0;
 
@@ -279,16 +279,16 @@ static void R_ExecuteSetViewSize(void)
 	refdef.fovy = refdef.fovx * refdef.height / refdef.width / PixelAspect;
 
 	// left side clip
-	clip_base[0] = Normalize(TVec(1, 1.0 / refdef.fovx, 0));
+	clip_base[0] = Normalise(TVec(1, 1.0 / refdef.fovx, 0));
 	
 	// right side clip
-	clip_base[1] = Normalize(TVec(1, -1.0 / refdef.fovx, 0));
+	clip_base[1] = Normalise(TVec(1, -1.0 / refdef.fovx, 0));
 	
 	// top side clip
-	clip_base[2] = Normalize(TVec(1, 0, -1.0 / refdef.fovy));
+	clip_base[2] = Normalise(TVec(1, 0, -1.0 / refdef.fovy));
 	
 	// bottom side clip
-	clip_base[3] = Normalize(TVec(1, 0, 1.0 / refdef.fovy));
+	clip_base[3] = Normalise(TVec(1, 0, 1.0 / refdef.fovy));
 
 	refdef.drawworld = true;
 	unguard;
@@ -705,9 +705,12 @@ void V_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.26  2004/08/21 17:22:15  dj_jl
 //	Changed rendering driver declaration.
-//
+//	
 //	Revision 1.25  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
 //	

@@ -286,7 +286,7 @@ static surface_t *SubdivideFace(surface_t *f, const TVec &axis, const TVec *next
 
 	plane.normal = axis;
 	dot = Length(plane.normal);
-	plane.normal = Normalize(plane.normal);
+	plane.normal = Normalise(plane.normal);
 	plane.dist = (mins + subdivide_size - 16) / dot;
 
 	float dots[MAXSPLITVERTS + 1];
@@ -407,7 +407,7 @@ static sec_surface_t *CreateSecSurface(subsector_t *sub, sec_plane_t *splane)
 	else
 	{
 		ssurf->texinfo.taxis = TVec(0, 0, -1) * TextureTScale(splane->pic);
-		ssurf->texinfo.saxis = Normalize(CrossProduct(splane->normal, 
+		ssurf->texinfo.saxis = Normalise(CrossProduct(splane->normal, 
 			ssurf->texinfo.taxis)) * TextureSScale(splane->pic);
 	}
 	ssurf->texinfo.soffs = splane->xoffs;
@@ -582,7 +582,7 @@ static surface_t *SubdivideSeg(surface_t *surf, const TVec &axis, const TVec *ne
 
 	plane.normal = axis;
 	dot = Length(plane.normal);
-	plane.normal = Normalize(plane.normal);
+	plane.normal = Normalise(plane.normal);
 	plane.dist = (mins + subdivide_size - 16) / dot;
 
 	float dots[MAXWVERTS + 1];
@@ -1864,9 +1864,12 @@ void R_UpdateWorld(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.12  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.11  2002/07/13 07:51:48  dj_jl
 //	Replacing console's iostream with output device.
 //	

@@ -137,7 +137,7 @@ static int FindSkyMap(const char *name)
 //
 //==========================================================================
 
-void R_InitSkyBoxes(void)
+void R_InitSkyBoxes()
 {
 	guard(R_InitSkyBoxes);
 	SC_Open("skyboxes");
@@ -176,7 +176,7 @@ void R_InitSkyBoxes(void)
 //
 //==========================================================================
 
-static void R_InitOldSky(const mapInfo_t &info)
+static void R_InitOldSky()
 {
 	guard(R_InitOldSky);
 	memset(sky, 0, sizeof(sky));
@@ -184,12 +184,13 @@ static void R_InitOldSky(const mapInfo_t &info)
 	// Check if the level is a lightning level
 	LevelHasLightning = false;
 	LightningFlash = 0;
-	if (info.lightning)
+	if (cl_level.lightning)
 	{
 		int secCount = 0;
 		for (int i = 0; i < GClLevel->NumSectors; i++)
 		{
 			if (GClLevel->Sectors[i].ceiling.pic == skyflatnum ||
+				GClLevel->Sectors[i].special == LIGHTNING_OUTDOOR ||
 				GClLevel->Sectors[i].special == LIGHTNING_SPECIAL ||
 				GClLevel->Sectors[i].special == LIGHTNING_SPECIAL2)
 			{
@@ -205,9 +206,10 @@ static void R_InitOldSky(const mapInfo_t &info)
 		}
 	}
 
-	int skyheight = textures[info.sky1Texture]->height;
+	int skyheight = textures[cl_level.sky1Texture]->height;
 	float skytop;
 	float skybot;
+	int j;
 
 	if (skyheight <= 128)
 	{
@@ -220,7 +222,7 @@ static void R_InitOldSky(const mapInfo_t &info)
 	skybot = skytop - skyheight;
 	int skyh = (int)skytop;
 
-	for (int j = 0; j < VDIVS; j++)
+	for (j = 0; j < VDIVS; j++)
 	{
 		float va0 = 90.0 - j * (180.0 / VDIVS);
 		float va1 = 90.0 - (j + 1) * (180.0 / VDIVS);
@@ -255,7 +257,7 @@ static void R_InitOldSky(const mapInfo_t &info)
 			TVec hdir = j < VDIVS / 2 ? s.surf.verts[3] - s.surf.verts[0] :
 				s.surf.verts[2] - s.surf.verts[1];
 			TVec vdir = s.surf.verts[0] - s.surf.verts[1];
-			TVec normal = Normalize(CrossProduct(vdir, hdir));
+			TVec normal = Normalise(CrossProduct(vdir, hdir));
 			s.plane.Set(normal, DotProduct(s.surf.verts[1], normal));
 
 			s.texinfo.saxis = hdir * (1024 / HDIVS / DotProduct(hdir, hdir));
@@ -265,8 +267,10 @@ float tk = skyh / RADIUS;
 				s.texinfo.saxis);
 			s.texinfo.toffs = skyh;
 
-			float mins = DotProduct(s.surf.verts[j < VDIVS / 2 ? 0 : 1], s.texinfo.saxis) + s.texinfo.soffs;
-			float maxs = DotProduct(s.surf.verts[j < VDIVS / 2 ? 3 : 2], s.texinfo.saxis) + s.texinfo.soffs;
+			float mins = DotProduct(s.surf.verts[j < VDIVS / 2 ? 0 : 1],
+				s.texinfo.saxis) + s.texinfo.soffs;
+			float maxs = DotProduct(s.surf.verts[j < VDIVS / 2 ? 3 : 2],
+				s.texinfo.saxis) + s.texinfo.soffs;
 			int bmins = (int)floor(mins / 16);
 			int bmaxs = (int)ceil(maxs / 16);
 			s.surf.texturemins[0] = bmins * 16;
@@ -286,21 +290,21 @@ float tk = skyh / RADIUS;
 
 	NumSkySurfs = VDIVS * HDIVS;
 
-	for (int j = 0; j < NumSkySurfs; j++)
+	for (j = 0; j < NumSkySurfs; j++)
 	{
-		sky[j].baseTexture1 = info.sky1Texture;
-		sky[j].baseTexture2 = info.sky2Texture;
-		if (info.doubleSky)
+		sky[j].baseTexture1 = cl_level.sky1Texture;
+		sky[j].baseTexture2 = cl_level.sky2Texture;
+		if (cl_level.doubleSky)
 		{
 			sky[j].texture1 = sky[j].baseTexture2;
 			sky[j].texture2 = sky[j].baseTexture1;
-			sky[j].scrollDelta1 = info.sky2ScrollDelta;
-			sky[j].scrollDelta2 = info.sky1ScrollDelta;
+			sky[j].scrollDelta1 = cl_level.sky2ScrollDelta;
+			sky[j].scrollDelta2 = cl_level.sky1ScrollDelta;
 		}
 		else
 		{
 			sky[j].texture1 = sky[j].baseTexture1;
-			sky[j].scrollDelta1 = info.sky1ScrollDelta;
+			sky[j].scrollDelta1 = cl_level.sky1ScrollDelta;
 		}
 		sky[j].surf.plane = &sky[j].plane;
 		sky[j].surf.texinfo = &sky[j].texinfo;
@@ -308,8 +312,8 @@ float tk = skyh / RADIUS;
 	}
 
 	//	Precache textures
-	Drawer->SetSkyTexture(info.sky1Texture, info.doubleSky);
-	Drawer->SetSkyTexture(info.sky2Texture, false);
+	Drawer->SetSkyTexture(cl_level.sky1Texture, cl_level.doubleSky);
+	Drawer->SetSkyTexture(cl_level.sky2Texture, false);
 	unguard;
 }
 
@@ -319,21 +323,21 @@ float tk = skyh / RADIUS;
 //
 //==========================================================================
 
-static void R_InitSkyBox(const mapInfo_t &info)
+static void R_InitSkyBox()
 {
 	guard(R_InitSkyBox);
 	int num;
 
 	for (num = 0; num < numskyboxes; num++)
 	{
-		if (!strcmp(info.skybox, skyboxinfo[num].name))
+		if (!strcmp(cl_level.skybox, skyboxinfo[num].name))
 		{
 			break;
 		}
 	}
 	if (num == numskyboxes)
 	{
-		Host_Error("No such skybox %s", info.skybox);
+		Host_Error("No such skybox %s", cl_level.skybox);
 	}
 	skyboxinfo_t &sinfo = skyboxinfo[num];
 
@@ -439,17 +443,52 @@ static void R_InitSkyBox(const mapInfo_t &info)
 //
 //==========================================================================
 
-void R_InitSky(const mapInfo_t &info)
+void R_InitSky()
 {
 	guard(R_InitSky);
-	if (info.skybox[0])
+	if (cl_level.skybox[0])
 	{
-		R_InitSkyBox(info);
+		R_InitSkyBox();
 	}
 	else
 	{
-		R_InitOldSky(info);
+		R_InitOldSky();
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	R_SkyChanged
+//
+//==========================================================================
+
+void R_SkyChanged()
+{
+	guard(R_SkyChanged);
+	if (cl_level.skybox[0])
+	{
+		return;
+	}
+
+	for (int j = 0; j < NumSkySurfs; j++)
+	{
+		sky[j].baseTexture1 = cl_level.sky1Texture;
+		sky[j].baseTexture2 = cl_level.sky2Texture;
+		if (cl_level.doubleSky)
+		{
+			sky[j].texture1 = sky[j].baseTexture2;
+			sky[j].texture2 = sky[j].baseTexture1;
+		}
+		else
+		{
+			sky[j].texture1 = sky[j].baseTexture1;
+		}
+	}
+
+	//	Precache textures
+	Drawer->SetSkyTexture(cl_level.sky1Texture, cl_level.doubleSky);
+	Drawer->SetSkyTexture(cl_level.sky2Texture, false);
 	unguard;
 }
 
@@ -459,7 +498,7 @@ void R_InitSky(const mapInfo_t &info)
 //
 //==========================================================================
 
-void R_AnimateSky(void)
+void R_AnimateSky()
 {
 	guard(R_AnimateSky);
 	//	Update sky column offsets
@@ -490,7 +529,7 @@ void R_AnimateSky(void)
 //
 //==========================================================================
 
-static void R_LightningFlash(void)
+static void R_LightningFlash()
 {
 	guard(R_LightningFlash);
 	int 		i;
@@ -622,7 +661,7 @@ static void R_LightningFlash(void)
 //
 //==========================================================================
 
-void R_ForceLightning(void)
+void R_ForceLightning()
 {
 	guard(R_ForceLightning);
 	NextLightningFlash = 0;
@@ -635,7 +674,7 @@ void R_ForceLightning(void)
 //
 //==========================================================================
 
-void R_DrawSky(void)
+void R_DrawSky()
 {
 	guard(R_DrawSky);
 	Drawer->BeginSky();
@@ -659,9 +698,12 @@ void R_DrawSky(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.14  2004/11/22 07:36:29  dj_jl
 //	Implemented all sector specials in all games.
-//
+//	
 //	Revision 1.13  2004/10/08 12:37:47  dj_jl
 //	Better rendering of old skies.
 //	

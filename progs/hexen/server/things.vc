@@ -145,7 +145,7 @@ classid TranslateThingType[] = {
 //
 //==========================================================================
 
-bool EV_ThingProjectile(int *args, bool gravity)
+bool EV_ThingProjectile(int *args, bool gravity, int newtid)
 {
 	int tid;
 	float angle;
@@ -183,6 +183,7 @@ bool EV_ThingProjectile(int *args, bool gravity)
 			newA.bNoGravity = false;
 			newA.Mass = 12.5;
 		}
+		newA.TID = newtid;
 		if (newA.CheckMissileSpawn())
 		{
 			success = true;
@@ -413,6 +414,9 @@ int ThingCount(int type, int tid)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2004/12/27 12:23:14  dj_jl
+//  Multiple small changes for version 1.16
+//
 //  Revision 1.29  2004/11/01 07:38:23  dj_jl
 //  Almost all Hexen line specials are available in all games.
 //

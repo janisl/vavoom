@@ -62,9 +62,11 @@ void A_AcolyteDeath()
 		}
 	}
 
-	// Give TOKN type 318? to the player and show log message 14
 	svvars->Players[0].GiveQuest(QUEST_7);
 	svvars->Players[0].Objectives = 14;
+	MSG_Select(MSG_SV_RELIABLE);
+	MSG_WriteByte(svc_voice);
+	MSG_WriteShort(14);
 }
 
 __states__
@@ -90,6 +92,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2004/12/27 12:23:14  dj_jl
+//  Multiple small changes for version 1.16
+//
 //  Revision 1.3  2004/10/13 06:42:15  dj_jl
 //  Different quest giving.
 //

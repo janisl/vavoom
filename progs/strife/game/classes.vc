@@ -59,6 +59,7 @@
 #include "QuakeFocus.vc"
 #include "StaticLightSource.vc"
 #include "StaticRGBLightSource.vc"
+#include "PlaneWatcher.vc"
 
 #include "ReactorPuff.vc"
 #include "Puff.vc"
@@ -429,6 +430,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2004/12/27 12:23:15  dj_jl
+//  Multiple small changes for version 1.16
+//
 //  Revision 1.5  2004/11/22 07:36:28  dj_jl
 //  Implemented all sector specials in all games.
 //

@@ -535,13 +535,13 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		buttonSuccess = EV_ThingDestroy(args[0]);
 		break;
 	case 134: // Thing_Projectile
-		buttonSuccess = EV_ThingProjectile(args, 0);
+		buttonSuccess = EV_ThingProjectile(args, 0, 0);
 		break;
 	case 135: // Thing_Spawn
 		buttonSuccess = EV_ThingSpawn(args, 1);
 		break;
 	case 136: // Thing_ProjectileGravity
-		buttonSuccess = EV_ThingProjectile(args, 1);
+		buttonSuccess = EV_ThingProjectile(args, 1, 0);
 		break;
 	case 137: // Thing_SpawnNoFog
 		buttonSuccess = EV_ThingSpawn(args, 0);
@@ -1010,9 +1010,29 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 	return NULL;
 }
 
+//==========================================================================
+//
+//  StartPlaneWatcher
+//
+//==========================================================================
+
+void StartPlaneWatcher(Actor it, line_t* line, int lineSide, bool ceiling,
+	int tag, int height, int special, int arg0, int arg1, int arg2, int arg3,
+	int arg4)
+{
+	PlaneWatcher	PW;
+
+	PW = PlaneWatcher(NewSpecialThinker(PlaneWatcher));
+	PW.Start(it, line, lineSide, ceiling, tag, height, special, arg0, arg1,
+		arg2, arg3, arg4);
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2004/12/27 12:23:11  dj_jl
+//  Multiple small changes for version 1.16
+//
 //  Revision 1.23  2004/12/22 07:54:41  dj_jl
 //  More extended ACS support, more linedef flags.
 //

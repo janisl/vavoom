@@ -461,7 +461,6 @@ static void CL_ParseServerInfo(void)
 {
 	guard(CL_ParseServerInfo);
 	byte		ver;
-	mapInfo_t	info;
 
 	net_msg >> ver;
 	if (ver != PROTOCOL_VERSION)
@@ -473,33 +472,54 @@ static void CL_ParseServerInfo(void)
 	CL_ReadFromServerInfo();
 
 	strcpy(cl_level.mapname, net_msg.ReadString());
-	P_GetMapInfo(cl_level.mapname, info);
-	strcpy(cl_level.level_name, info.name);
+	strcpy(cl_level.level_name, net_msg.ReadString());
 
-	CL_LoadLevel(cl_level.mapname);
+	cl.clientnum = net_msg.ReadByte();
+	cl.maxclients = net_msg.ReadByte();
+	cl.deathmatch = net_msg.ReadByte();
 
-	R_Start(info);
-   	S_Start(info);
+	net_msg >> cl_level.totalkills
+			>> cl_level.totalitems
+			>> cl_level.totalsecret;
+	cl_level.sky1Texture = (word)net_msg.ReadShort();
+	cl_level.sky2Texture = (word)net_msg.ReadShort();
+	net_msg >> cl_level.sky1ScrollDelta
+			>> cl_level.sky2ScrollDelta;
+	cl_level.doubleSky = net_msg.ReadByte();
+	cl_level.lightning = net_msg.ReadByte();
+	strcpy(cl_level.skybox, net_msg.ReadString());
+	strcpy(cl_level.fadetable, net_msg.ReadString());
+
+	strcpy(cl_level.songLump, net_msg.ReadString());
+	cl_level.cdTrack = net_msg.ReadByte();
 
 	GCon->Log("---------------------------------------");
 	GCon->Log(cl_level.level_name);
 	GCon->Log("");
     C_ClearNotify();
 
-	cl.clientnum = net_msg.ReadByte();
-	cl.maxclients =	net_msg.ReadByte();
-	cl.deathmatch = net_msg.ReadByte();
-
-	net_msg >> cl_level.totalkills
-			>> cl_level.totalitems
-			>> cl_level.totalsecret;
-
 	clpr.SetGlobal("netgame", cl.maxclients > 1);
 	clpr.SetGlobal("deathmatch", cl.deathmatch);
 
-   	SB_Start();
+	CL_LoadLevel(cl_level.mapname);
 
-    Z_CheckHeap();
+	//	Temporary hack to restore seen on automap flags.
+#ifdef SERVER
+	if (sv.active)
+	{
+		for (int i = 0; i < GClLevel->NumLines; i++)
+		{
+			GClLevel->Lines[i].flags |= GLevel->Lines[i].flags & ML_MAPPED;
+		}
+	}
+#endif
+
+	R_Start();
+	S_Start();
+
+	SB_Start();
+
+	Z_CheckHeap();
 
 	GCon->Log(NAME_Dev, "Client level loaded");
 	unguard;
@@ -666,7 +686,7 @@ void CL_ParseServerMessage(void)
 	float		radius;
 	dword		color;
 	int			trans;
-	sector_t	*sec;
+	sector_t*	sec;
 
 	net_msg.BeginReading();
 
@@ -957,7 +977,19 @@ void CL_ParseServerMessage(void)
 				(net_msg.ReadByte() << 8) | net_msg.ReadByte();
 			break;
 
-		 default:
+		case svc_change_sky:
+			cl_level.sky1Texture = (word)net_msg.ReadShort();
+			cl_level.sky2Texture = (word)net_msg.ReadShort();
+			R_SkyChanged();
+			break;
+
+		case svc_change_music:
+			strcpy(cl_level.songLump, net_msg.ReadString());
+			cl_level.cdTrack = net_msg.ReadByte();
+			S_MusicChanged();
+			break;
+
+		default:
 			if (clpr.Exec(pf_ParseServerCommand, cmd_type))
 			{
 				break;
@@ -978,9 +1010,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.32  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.31  2003/03/08 11:30:07  dj_jl
 //	Got rid of some warnings.
-//
+//	
 //	Revision 1.30  2002/09/07 16:31:50  dj_jl
 //	Added Level class.
 //	

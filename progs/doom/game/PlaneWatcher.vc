@@ -1,0 +1,153 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class PlaneWatcher : Thinker;
+
+sector_t*	Sector;
+float		WatchD;
+float		LastD;
+int			Special;
+int			Args[5];
+Actor		Activator;
+line_t*		Line;
+int			LineSide;
+bool		bCeiling;
+
+//==========================================================================
+//
+//  Start
+//
+//==========================================================================
+
+void Start(Actor it, line_t* line, int lineSide, bool ceiling, int tag,
+	int height, int special, int arg0, int arg1, int arg2, int arg3, int arg4)
+{
+	int				secnum;
+	sec_plane_t*	plane;
+
+	Special = special;
+	Args[0] = arg0;
+	Args[1] = arg1;
+	Args[2] = arg2;
+	Args[3] = arg3;
+	Args[4] = arg4;
+	Activator = it;
+	Line = line;
+	LineSide = lineSide;
+	bCeiling = ceiling;
+
+	secnum = FindSectorFromTag(tag, -1);
+	if (secnum >= 0)
+	{
+		Sector = &XLevel.Sectors[secnum];
+		if (bCeiling)
+		{
+			plane = &Sector->ceiling;
+		}
+		else
+		{
+			plane = &Sector->floor;
+		}
+		LastD = plane->dist;
+		//FIXME plane.ChangeHeight ();
+		WatchD = plane->dist + itof(height);
+	}
+	else
+	{
+		Sector = NULL;
+		WatchD = 0.0;
+		LastD = 0.0;
+	}
+}
+
+//==========================================================================
+//
+//  Archive
+//
+//==========================================================================
+
+void Archive()
+{
+	Sector = SectorToNum(Sector);
+	//FIXME handle Line 
+}
+
+//==========================================================================
+//
+//  Unarchive
+//
+//==========================================================================
+
+void Unarchive()
+{
+	Sector = NumToSector(Sector);
+	//FIXME handle Line 
+}
+
+//==========================================================================
+//
+//  Tick
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	float		NewDist;
+
+	if (Sector == NULL)
+	{
+		RemoveSpecialThinker(self);
+		return;
+	}
+
+	if (bCeiling)
+	{
+		NewDist = Sector->ceiling.dist;
+	}
+	else
+	{
+		NewDist = Sector->floor.dist;
+	}
+
+	if ((LastD < WatchD && NewDist >= WatchD) ||
+		(LastD > WatchD && NewDist <= WatchD))
+	{
+		ExecuteLineSpecial(Special, &Args[0], Line, LineSide, Activator);
+		RemoveSpecialThinker(self);
+	}
+
+}
+
+defaultproperties
+{
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2004/12/27 12:23:11  dj_jl
+//  Multiple small changes for version 1.16
+//
+//**************************************************************************

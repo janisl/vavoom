@@ -160,7 +160,7 @@ class TPlane
 	//	Initializes vertical plane from point and direction
 	void SetPointDir(const TVec &point, const TVec &dir)
 	{
-		normal = Normalize(TVec(dir.y, -dir.x, 0));
+		normal = Normalise(TVec(dir.y, -dir.x, 0));
 		dist = DotProduct(point, normal);
 		CalcBits();
 	}
@@ -193,9 +193,12 @@ class TPlane
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.9  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.8  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	

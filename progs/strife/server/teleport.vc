@@ -145,7 +145,7 @@ bool EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
 		}
 
 		// Get the thing's position along the source linedef
-		SrcXAxis = Normalize(*line->v2 - *line->v1);
+		SrcXAxis = Normalise(*line->v2 - *line->v1);
 		SrcYAxis = -line->normal;
 		pos = DotProduct(SrcXAxis, thing.Origin - *line->v1);
 		oldZ = thing.Origin.z;
@@ -153,7 +153,7 @@ bool EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
 		// Interpolate position across the exit linedef
 		if (reverse)
 		{
-			DstXAxis = Normalize(*l->v2 - *l->v1);
+			DstXAxis = Normalise(*l->v2 - *l->v1);
 			DstYAxis = -l->normal;
 			newPos = *l->v1 + pos * DstXAxis;
 			newPos.z = thing.Origin.z - GetPlanePointZ(
@@ -162,7 +162,7 @@ bool EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
 		}
 		else
 		{
-			DstXAxis = Normalize(*l->v1 - *l->v2);
+			DstXAxis = Normalise(*l->v1 - *l->v2);
 			DstYAxis = l->normal;
 			newPos = *l->v2 + pos * DstXAxis;
 			newPos.z = thing.Origin.z - GetPlanePointZ(
@@ -205,6 +205,9 @@ bool EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2004/12/27 12:23:15  dj_jl
+//  Multiple small changes for version 1.16
+//
 //  Revision 1.28  2004/11/01 07:38:24  dj_jl
 //  Almost all Hexen line specials are available in all games.
 //

@@ -137,7 +137,7 @@ inline double Length(const TVec &v)
 	return sqrt(v.x * v.x + v.y * v.y);
 }
 
-inline TVec Normalize(const TVec& v)
+inline TVec Normalise(const TVec& v)
 {
    return v / v.Length();
 }
@@ -168,7 +168,7 @@ class TPlane
 	//	Initializes vertical plane from point and direction
 	void SetPointDir(const TVec &point, const TVec &dir)
 	{
-		normal = Normalize(TVec(dir.y, -dir.x));
+		normal = Normalise(TVec(dir.y, -dir.x));
 		dist = DotProduct(point, normal);
 	}
 
@@ -182,9 +182,12 @@ class TPlane
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2004/12/27 12:23:18  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.6  2002/08/24 14:41:35  dj_jl
 //	Removed usage of the iostream.
-//
+//	
 //	Revision 1.5  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
 //	

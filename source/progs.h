@@ -117,15 +117,41 @@ class TProgs
 	static int Exec(FFunction *func, int parm1);
 	static int Exec(FFunction *func, int parm1, int parm2);
 	static int Exec(FFunction *func, int parm1, int parm2, int parm3);
-	static int Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4);
-	static int Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
-						int parm5);
-	static int Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
-						int parm5, int parm6);
-	static int Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
-						int parm5, int parm6, int parm7);
-	static int Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
-						int parm5, int parm6, int parm7, int parm8);
+	static int Exec(FFunction *func, int parm1, int parm2, int parm3,
+		int parm4);
+	static int Exec(FFunction *func, int parm1, int parm2, int parm3,
+		int parm4, int parm5);
+	static int Exec(FFunction *func, int parm1, int parm2, int parm3,
+		int parm4, int parm5, int parm6);
+	static int Exec(FFunction *func, int parm1, int parm2, int parm3,
+		int parm4, int parm5, int parm6, int parm7);
+	static int Exec(FFunction *func, int parm1, int parm2, int parm3,
+		int parm4, int parm5, int parm6, int parm7, int parm8);
+	static int Exec(FFunction *func, int parm1, int parm2, int parm3,
+		int parm4, int parm5, int parm6, int parm7, int parm8, int parm9);
+	static int Exec(FFunction *func, int parm1, int parm2, int parm3,
+		int parm4, int parm5, int parm6, int parm7, int parm8, int parm9,
+		int parm10);
+	static int Exec(FFunction *func, int parm1, int parm2, int parm3,
+		int parm4, int parm5, int parm6, int parm7, int parm8, int parm9,
+		int parm10, int parm11);
+	static int Exec(FFunction *func, int parm1, int parm2, int parm3,
+		int parm4, int parm5, int parm6, int parm7, int parm8, int parm9,
+		int parm10, int parm11, int parm12);
+	static int Exec(FFunction *func, int parm1, int parm2, int parm3,
+		int parm4, int parm5, int parm6, int parm7, int parm8, int parm9,
+		int parm10, int parm11, int parm12, int parm13);
+	static int Exec(FFunction *func, int parm1, int parm2, int parm3,
+		int parm4, int parm5, int parm6, int parm7, int parm8, int parm9,
+		int parm10, int parm11, int parm12, int parm13, int parm14);
+	static int Exec(FFunction *func, int parm1, int parm2, int parm3,
+		int parm4, int parm5, int parm6, int parm7, int parm8, int parm9,
+		int parm10, int parm11, int parm12, int parm13, int parm14,
+		int parm15);
+	static int Exec(FFunction *func, int parm1, int parm2, int parm3,
+		int parm4, int parm5, int parm6, int parm7, int parm8, int parm9,
+		int parm10, int parm11, int parm12, int parm13, int parm14,
+		int parm15, int parm16);
 	int Exec(const char *name)
 	{
 		return Exec(FuncForName(name));
@@ -147,27 +173,84 @@ class TProgs
 		return Exec(FuncForName(name), parm1, parm2, parm3, parm4);
 	}
 	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
-								int parm5)
+		int parm5)
 	{
 		return Exec(FuncForName(name), parm1, parm2, parm3, parm4, parm5);
 	}
 	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
-								int parm5, int parm6)
+		int parm5, int parm6)
 	{
-		return Exec(FuncForName(name),
-			parm1, parm2, parm3, parm4, parm5, parm6);
+		return Exec(FuncForName(name), parm1, parm2, parm3, parm4, parm5,
+			parm6);
 	}
 	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
-								int parm5, int parm6, int parm7)
+		int parm5, int parm6, int parm7)
 	{
-		return Exec(FuncForName(name),
-			parm1, parm2, parm3, parm4, parm5, parm6, parm7);
+		return Exec(FuncForName(name), parm1, parm2, parm3, parm4, parm5,
+			parm6, parm7);
 	}
 	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
-								int parm5, int parm6, int parm7, int parm8)
+		int parm5, int parm6, int parm7, int parm8)
 	{
-		return Exec(FuncForName(name),
-			parm1, parm2, parm3, parm4, parm5, parm6, parm7, parm8);
+		return Exec(FuncForName(name), parm1, parm2, parm3, parm4, parm5,
+			parm6, parm7, parm8);
+	}
+	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
+		int parm5, int parm6, int parm7, int parm8, int parm9)
+	{
+		return Exec(FuncForName(name), parm1, parm2, parm3, parm4, parm5,
+			parm6, parm7, parm8, parm9);
+	}
+	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
+		int parm5, int parm6, int parm7, int parm8, int parm9, int parm10)
+	{
+		return Exec(FuncForName(name), parm1, parm2, parm3, parm4, parm5,
+			parm6, parm7, parm8, parm9, parm10);
+	}
+	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
+		int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
+		int parm11)
+	{
+		return Exec(FuncForName(name), parm1, parm2, parm3, parm4, parm5,
+			parm6, parm7, parm8, parm9, parm10, parm11);
+	}
+	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
+		int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
+		int parm11, int parm12)
+	{
+		return Exec(FuncForName(name), parm1, parm2, parm3, parm4, parm5,
+			parm6, parm7, parm8, parm9, parm10, parm11, parm12);
+	}
+	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
+		int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
+		int parm11, int parm12, int parm13)
+	{
+		return Exec(FuncForName(name), parm1, parm2, parm3, parm4, parm5,
+			parm6, parm7, parm8, parm9, parm10, parm11, parm12, parm13);
+	}
+	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
+		int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
+		int parm11, int parm12, int parm13, int parm14)
+	{
+		return Exec(FuncForName(name), parm1, parm2, parm3, parm4, parm5,
+			parm6, parm7, parm8, parm9, parm10, parm11, parm12, parm13,
+			parm14);
+	}
+	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
+		int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
+		int parm11, int parm12, int parm13, int parm14, int parm15)
+	{
+		return Exec(FuncForName(name), parm1, parm2, parm3, parm4, parm5,
+			parm6, parm7, parm8, parm9, parm10, parm11, parm12, parm13,
+			parm14, parm15);
+	}
+	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
+		int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
+		int parm11, int parm12, int parm13, int parm14, int parm15, int parm16)
+	{
+		return Exec(FuncForName(name), parm1, parm2, parm3, parm4, parm5,
+			parm6, parm7, parm8, parm9, parm10, parm11, parm12, parm13,
+			parm14, parm15, parm16);
 	}
 	void DumpProfile(void);
 
@@ -260,9 +343,12 @@ inline FName PR_PopName(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.12  2002/05/03 17:06:23  dj_jl
 //	Mangling of string pointers.
-//
+//	
 //	Revision 1.11  2002/03/09 18:05:34  dj_jl
 //	Added support for defining native functions outside pr_cmds
 //	

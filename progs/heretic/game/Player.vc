@@ -1086,7 +1086,7 @@ void CheckWaterJump()
 	start = MO.Origin;
 	start.z += MO.Height * 0.5 + 8.0;
 	vforward.z = 0.0;
-	vforward = Normalize(vforward);
+	vforward = Normalise(vforward);
 	end = start + vforward * 24.0;
 	if (!TraceLine(start, end))
 	{
@@ -1186,6 +1186,9 @@ void WaterJump()
 
 void PlayerInSpecialSector(float deltaTime)
 {
+	float speed;
+	float finean;
+
 	if (MO.Origin.z != MO.Sector->floorheight)
 	{
 		// Player is not touching the floor
@@ -1196,6 +1199,7 @@ void PlayerInSpecialSector(float deltaTime)
 	{
 		//	Secret area.
 		SecretCount++;
+		level->currentsecret++;
 		MO.Sector->special &= ~SECSPEC_SECRET_MASK;
 		centerprint(self, "You found a secret area");
 	}
@@ -1277,6 +1281,9 @@ void PlayerInSpecialSector(float deltaTime)
 		case SECSPEC_DamageHazard:
 			HazardTime += 2.0 * deltaTime;
 			break;
+		case SECSPEC_DamageInstantDeath:
+			MO.Damage(none, none, 999);
+			break;
 		case SECSPEC_DamageSuperHazard:
 			HazardTime += 4.0 * deltaTime;
 			break;
@@ -1313,6 +1320,12 @@ void PlayerInSpecialSector(float deltaTime)
 
 	switch (MO.Sector->special & SECSPEC_BASE_MASK)
 	{
+	case SECSPEC_ScrollCurrent:
+		speed = itof((MO.Sector->tag - 100) % 10) / 16.0 * 35.0;
+		finean = itof((MO.Sector->tag - 100) / 10) * 45.0;
+		MO.Velocity.x += speed * cos(finean);
+		MO.Velocity.y += speed * sin(finean);
+		break;
 	case SECSPEC_ScrollNorthSlow:
 	case SECSPEC_ScrollNorthMedium:
 	case SECSPEC_ScrollNorthFast:
@@ -2668,6 +2681,234 @@ void WeaponLevel2Fade()
 	Weapon(ViewEnts[ps_weapon]).WeaponLevel2Fade();
 }
 
+//==========================================================================
+//
+//  Cheat_God
+//
+//==========================================================================
+
+void Cheat_God()
+{
+	Cheats ^= CF_GODMODE;
+	if (Cheats & CF_GODMODE)
+	{
+		cprint(self, "GOD MODE ON");
+	}
+	else
+	{
+		cprint(self, "GOD MODE OFF");
+	}
+}
+
+//==========================================================================
+//
+//  Cheat_NoClip
+//
+//==========================================================================
+
+void Cheat_NoClip()
+{
+	Cheats ^= CF_NOCLIP;
+	if (Cheats & CF_NOCLIP)
+	{
+		cprint(self, "NO CLIPPING ON");
+	}
+	else
+	{
+		cprint(self, "NO CLIPPING OFF");
+	}
+}
+
+//==========================================================================
+//
+//  Cheat_Gimme
+//
+//==========================================================================
+
+void Cheat_Gimme()
+{
+	if (Cmd_CheckParm("weapons"))
+	{
+		int i;
+
+		ArmorPoints = 200;
+		ArmorType = 2;
+		Backpack = true;
+		for (i = 0; i < NUMWEAPONS - 1; i++)
+		{
+			WeaponOwned[i] = true;
+		}
+		if (shareware)
+		{
+			WeaponOwned[wp_skullrod] = false;
+			WeaponOwned[wp_phoenixrod] = false;
+			WeaponOwned[wp_mace] = false;
+		}
+		for (i = 0; i < 6 /*NUMAMMO2 */ ; i++)
+		{
+			Ammo[i] = maxammo[i] * 2;
+		}
+		cprint(self, "ALL WEAPONS");
+	}
+	if (Cmd_CheckParm("power"))
+	{
+		if (Powers[pw_weaponlevel2])
+		{
+			Powers[pw_weaponlevel2] = 0.0;
+			cprint(self, "POWER OFF");
+		}
+		else
+		{
+			UseArtifact(arti_tomeofpower);
+			cprint(self, "POWER ON");
+		}
+	}
+	if (Cmd_CheckParm("health"))
+	{
+		if (ChickenTime)
+		{
+			MO.Health = MAXCHICKENHEALTH;
+			Health = MO.Health;
+		}
+		else
+		{
+			MO.Health = MAXHEALTH;
+			Health = MO.Health;
+		}
+		cprint(self, "FULL HEALTH");
+	}
+	if (Cmd_CheckParm("keys"))
+	{
+		Keys = 7;
+		cprint(self, "ALL KEYS");
+	}
+	if (Cmd_CheckParm("artifacts"))
+	{
+		int i;
+		int j;
+
+		// All artifacts
+		for (i = arti_none + 1; i < NUMARTIFACTS; i++)
+		{
+			if (shareware && (i == arti_superhealth || i == arti_teleport))
+			{
+				continue;
+			}
+			for (j = 0; j < 16; j++)
+			{
+				GiveArtifact(i);
+			}
+		}
+		cprint(self, "YOU GOT IT");
+	}
+/*	int i;
+	int j;
+	int type;
+	int count;
+
+	type = cheat->args[0] - 'a' + 1;
+	count = cheat->args[1] - '0';
+	if (type == 26 && count == 0)
+	{ // All artifacts
+		for (i = arti_none+1; i < NUMARTIFACTS; i++)
+		{
+			if (shareware && (i == arti_superhealth || i == arti_teleport))
+			{
+				continue;
+			}
+			for (j = 0; j < 16; j++)
+			{
+				P_GiveArtifact(player, i, NULL);
+			}
+		}
+		P_SetMessage(player, "YOU GOT IT", false);
+	}
+	else if (type > arti_none && type < NUMARTIFACTS
+		&& count > 0 && count < 10)
+	{
+		if (shareware && (type == arti_superhealth || type == arti_teleport))
+		{
+			P_SetMessage(player, "BAD INPUT", false);
+			return;
+		}
+		for (i = 0; i < count; i++)
+		{
+			P_GiveArtifact(player, type, NULL);
+		}
+		P_SetMessage(player, "YOU GOT IT", false);
+	}
+	else
+	{ // Bad input
+		P_SetMessage(player, "BAD INPUT", false);
+	}*/
+}
+
+//==========================================================================
+//
+//  Cheat_KillAll
+//
+//==========================================================================
+
+void Cheat_KillAll()
+{
+	P_Massacre();
+	cprint(self, "MASSACRE");
+}
+
+//==========================================================================
+//
+//  Cheat_Morph
+//
+//==========================================================================
+
+void Cheat_Morph()
+{
+	if (ChickenTime)
+	{
+		if (UndoPlayerChicken())
+		{
+			cprint(self, "CHICKEN OFF");
+		}
+	}
+	else if (MO.ChickenMorphPlayer())
+	{
+		cprint(self, "CHICKEN ON");
+	}
+}
+
+//==========================================================================
+//
+//  Cheat_NoWeapons
+//
+//==========================================================================
+
+void Cheat_NoWeapons()
+{
+	int i;
+
+	if (ChickenTime)
+	{
+		return;
+	}
+	for (i = 1; i < 8; i++)
+	{
+		WeaponOwned[i] = false;
+	}
+	PendingWeapon = wp_staff;
+	cprint(self, "CHEATER - YOU DON'T DESERVE WEAPONS");
+}
+
+//==========================================================================
+//
+//  UnarchivePlayer
+//
+//==========================================================================
+
+void UnarchivePlayer()
+{
+	Attacker = none;
+}
+
 defaultproperties
 {
 }
@@ -2675,6 +2916,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2004/12/27 12:23:12  dj_jl
+//  Multiple small changes for version 1.16
+//
 //  Revision 1.6  2004/11/22 07:36:25  dj_jl
 //  Implemented all sector specials in all games.
 //

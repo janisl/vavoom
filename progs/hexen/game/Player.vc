@@ -1161,7 +1161,7 @@ void CheckWaterJump()
 	start = MO.Origin;
 	start.z += MO.Height * 0.5 + 8.0;
 	vforward.z = 0.0;
-	vforward = Normalize(vforward);
+	vforward = Normalise(vforward);
 	end = start + vforward * 24.0;
 	if (!TraceLine(start, end))
 	{
@@ -1386,6 +1386,9 @@ void CalcHeight(float deltaTime)
 
 void PlayerInSpecialSector(float deltaTime)
 {
+	float speed;
+	float finean;
+
 	//FIXME Bullshit, doesn't work on slopes
 	if (MO.Origin.z != MO.Sector->floorheight)
 	{
@@ -1397,6 +1400,7 @@ void PlayerInSpecialSector(float deltaTime)
 	{
 		//	Secret area.
 		SecretCount++;
+		level->currentsecret++;
 		MO.Sector->special &= ~SECSPEC_SECRET_MASK;
 		centerprint(self, "You found a secret area");
 	}
@@ -1481,6 +1485,9 @@ void PlayerInSpecialSector(float deltaTime)
 		case SECSPEC_DamageHazard:
 			HazardTime += 2.0 * deltaTime;
 			break;
+		case SECSPEC_DamageInstantDeath:
+			MO.Damage(none, none, 999);
+			break;
 		case SECSPEC_DamageSuperHazard:
 			HazardTime += 4.0 * deltaTime;
 			break;
@@ -1517,6 +1524,12 @@ void PlayerInSpecialSector(float deltaTime)
 
 	switch (MO.Sector->special)
 	{
+	case SECSPEC_ScrollCurrent:
+		speed = itof((MO.Sector->tag - 100) % 10) / 16.0 * 35.0;
+		finean = itof((MO.Sector->tag - 100) / 10) * 45.0;
+		MO.Velocity.x += speed * cos(finean);
+		MO.Velocity.y += speed * sin(finean);
+		break;
 	case SECSPEC_ScrollNorthSlow:
 	case SECSPEC_ScrollNorthMedium:
 	case SECSPEC_ScrollNorthFast:
@@ -3409,6 +3422,219 @@ void PostMorphWeapon(int weapon)
 	SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).UpState);
 }
 
+//==========================================================================
+//
+//  Cheat_God
+//
+//==========================================================================
+
+void Cheat_God()
+{
+	Cheats ^= CF_GODMODE;
+	if (Cheats & CF_GODMODE)
+	{
+		cprint(self, "GOD MODE ON");
+	}
+	else
+	{
+		cprint(self, "GOD MODE OFF");
+	}
+}
+
+//==========================================================================
+//
+//  Cheat_NoClip
+//
+//==========================================================================
+
+void Cheat_NoClip()
+{
+	Cheats ^= CF_NOCLIP;
+	if (Cheats & CF_NOCLIP)
+	{
+		cprint(self, "NO CLIPPING ON");
+	}
+	else
+	{
+		cprint(self, "NO CLIPPING OFF");
+	}
+}
+
+//==========================================================================
+//
+//  Cheat_Gimme
+//
+//==========================================================================
+
+void Cheat_Gimme()
+{
+	if (Cmd_CheckParm("weapons"))
+	{
+		int i;
+
+		for (i = 0; i < NUMARMOR; i++)
+		{
+			ArmorPoints[i] = ArmorIncrement[PClass * NUMARMOR + i];
+		}
+		for (i = 0; i < NUMWEAPONS; i++)
+		{
+			WeaponOwned[i] = true;
+		}
+		for (i = 0; i < NUMMANA; i++)
+		{
+			Mana[i] = MAX_MANA;
+		}
+		Pieces = 7;
+		cprint(self, "ALL WEAPONS");
+	}
+	if (Cmd_CheckParm("health"))
+	{
+		if (MorphTime)
+		{
+			MO.Health = MAXMORPHHEALTH;
+			Health = MO.Health;
+		}
+		else
+		{
+			MO.Health = MAXHEALTH;
+			Health = MO.Health;
+		}
+		cprint(self, "FULL HEALTH");
+	}
+	if (Cmd_CheckParm("keys"))
+	{
+		Keys = 2047;
+		cprint(self, "ALL KEYS");
+	}
+	if (Cmd_CheckParm("artifacts"))
+	{
+		int i;
+		int j;
+
+		for (i = arti_none + 1; i < arti_firstpuzzitem; i++)
+		{
+			for (j = 0; j < 25; j++)
+			{
+				GiveArtifact(i);
+			}
+		}
+		cprint(self, "ALL ARTIFACTS");
+	}
+	if (Cmd_CheckParm("puzzles"))
+	{
+		int i;
+
+		for (i = arti_firstpuzzitem; i < NUMARTIFACTS; i++)
+		{
+			GiveArtifact(i);
+		}
+		cprint(self, "ALL ARTIFACTS");
+	}
+}
+
+//==========================================================================
+//
+//  Cheat_KillAll
+//
+//==========================================================================
+
+void Cheat_KillAll()
+{
+	cprint(self, "%d MONSTERS KILLED", P_Massacre());
+}
+
+//==========================================================================
+//
+//  Cheat_Morph
+//
+//==========================================================================
+
+void Cheat_Morph()
+{
+	if (MorphTime)
+	{
+		UndoPlayerMorph();
+	}
+	else
+	{
+		MO.MorphPlayer();
+	}
+	cprint(self, "SQUEAL!!");
+}
+
+//==========================================================================
+//
+//  Cheat_NoWeapons
+//
+//==========================================================================
+
+void Cheat_NoWeapons()
+{
+	int i;
+
+	if (MorphTime)
+	{
+		return;
+	}
+	for (i = 1; i < 4; i++)
+	{
+		WeaponOwned[i] = false;
+	}
+	PendingWeapon = WP_FIRST;
+	Pieces = 0;
+	cprint(self, "CHEATER - YOU DON'T DESERVE WEAPONS");
+}
+
+//==========================================================================
+//
+//  Cheat_Class
+//
+//==========================================================================
+
+void Cheat_Class()
+{
+	int i;
+	int pclass;
+
+	if (MorphTime)
+	{
+		// don't change class if the player is morphed
+		return;
+	}
+	if (Cmd_CheckParm("fighter"))
+		pclass = PCLASS_FIGHTER;
+	else if (Cmd_CheckParm("cleric"))
+		pclass = PCLASS_CLERIC;
+	else if (Cmd_CheckParm("mage"))
+		pclass = PCLASS_MAGE;
+	else
+	{
+		cprint(self, "INVALID PLAYER CLASS");
+		return;
+	}
+	PClass = pclass;
+	for (i = 0; i < NUMARMOR; i++)
+	{
+		ArmorPoints[i] = 0.0;
+	}
+	BaseClass = pclass;
+	PostMorphWeapon(WP_FIRST);
+	SetCvar("class", pclass);
+	SB_Start();
+}
+
+//==========================================================================
+//
+//  UnarchivePlayer
+//
+//==========================================================================
+
+void UnarchivePlayer()
+{
+	Attacker = none;
+	Poisoner = none;
+}
+
 defaultproperties
 {
 }
@@ -3416,6 +3642,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2004/12/27 12:23:13  dj_jl
+//  Multiple small changes for version 1.16
+//
 //  Revision 1.5  2004/11/22 07:36:27  dj_jl
 //  Implemented all sector specials in all games.
 //

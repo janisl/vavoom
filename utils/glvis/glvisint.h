@@ -188,8 +188,10 @@ class TVisBuilder
 	void FreeWinding(winding_t *w);
 	winding_t *CopyWinding(winding_t *w);
 	winding_t *ClipWinding(winding_t *in, TPlane *split);
-	winding_t *ClipToSeperators(winding_t *source, winding_t *pass, winding_t *target);
-	void RecursiveLeafFlow(int leafnum, threaddata_t *thread, pstack_t *prevstack);
+	winding_t *ClipToSeperators(winding_t *source, winding_t *pass,
+		winding_t *target);
+	void RecursiveLeafFlow(int leafnum, threaddata_t *thread,
+		pstack_t *prevstack, int StackDepth);
 	void PortalFlow(portal_t *p);
 	portal_t *GetNextPortal(void);
 	void CalcPortalVis(void);
@@ -209,9 +211,12 @@ class TVisBuilder
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2004/12/27 12:23:18  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.3  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.2  2001/10/18 17:41:47  dj_jl
 //	Added reject building
 //	

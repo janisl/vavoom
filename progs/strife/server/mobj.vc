@@ -394,9 +394,37 @@ bool A_LocalQuake(int *args)
 	return success;
 }
 
+//==========================================================================
+//
+//  P_Massacre
+//
+//  Kills all monsters.
+//
+//==========================================================================
+
+int P_Massacre()
+{
+	int count;
+	Actor mo;
+
+	count = 0;
+	FOREACH(Actor, mo)
+	{
+		if (mo.bCountKill && (mo.Health > 0))
+		{
+			mo.Damage(none, none, 10000);
+			count++;
+		}
+	}
+	return count;
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.55  2004/12/27 12:23:15  dj_jl
+//  Multiple small changes for version 1.16
+//
 //  Revision 1.54  2004/11/22 07:36:29  dj_jl
 //  Implemented all sector specials in all games.
 //

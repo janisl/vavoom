@@ -246,7 +246,7 @@ spec_trans_t spec_trans_tab[] = {
 	{217, -1, 4, 128 + 16, 0, 0, SPAC_CROSS, false},	//  178
 	{43, -1, 8, 1, 0, 0, SPAC_CROSS, false},	//  179
 
-	{230, -1, 4, 64, 0, 0, SPAC_IMPACT, false},	//  180
+	{84, 0, 0, 0, 0, 0, SPAC_IMPACT, false},	//  180
 	{84, 0, 0, 0, 0, 0, SPAC_USE, false},	//  181
 	{49, -1, 255, 0, 0, 0, SPAC_IMPACT, false},	//  182
 	{84, 0, 0, 0, 0, 0, SPAC_CROSS, false},	//  183
@@ -515,6 +515,9 @@ void TranslateLevel(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2004/12/27 12:23:15  dj_jl
+//  Multiple small changes for version 1.16
+//
 //  Revision 1.13  2004/12/22 07:56:48  dj_jl
 //  Fully working Strife support.
 //

@@ -50,15 +50,16 @@ struct seqnode_t
 //
 //	Main
 //
-void S_Init(void);
-void S_Start(const mapInfo_t &info);
+void S_Init();
+void S_Start();
+void S_MusicChanged();
 void S_StartSong(const char* name, int track, boolean loop);
-void S_PauseSound(void);
-void S_ResumeSound(void);
-void S_UpdateSounds(void);
+void S_PauseSound();
+void S_ResumeSound();
+void S_UpdateSounds();
 int S_GetSoundID(FName Name);
 int S_GetSoundID(const char *name);
-void S_Shutdown(void);
+void S_Shutdown();
 
 //
 //	Sound playback
@@ -95,9 +96,12 @@ extern seqnode_t	*SequenceListHead;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.8  2004/11/30 07:17:17  dj_jl
 //	Made string pointers const.
-//
+//	
 //	Revision 1.7  2002/07/27 18:10:11  dj_jl
 //	Implementing Strife conversations.
 //	

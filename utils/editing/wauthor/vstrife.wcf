@@ -213,18 +213,18 @@ LightingInc=0
 
 ; Special
 0x064   1       Scroll_Texture_Left( speed, -, -, -, - )
+0x065   1       Scroll_Texture_Right( speed, -, -, -, - )
+0x066   1       Scroll_Texture_Up( speed, -, -, -, - )
 0x067   1       Scroll_Texture_Down( speed, -, -, -, - )
+0x078   1       Earthquake( intensity, duration, damrad, tremrad, tag )
 0x079   1       Line_SetIdentification( line, -, -, -, - )
+0x08c   1       Sector_ChangeSound( tag, sound, -, -, - )
 0x0a0   1       3d floor( tag, -, -, -, - )
 0x0a1   1       Contents( type, trans, flags, -, - )
 0x0b5   1       Plane_Align( floor, ceiling, line_id, -, - )
 0x0d0   1       TranslucentLine( line, amount, -, -, - )
 0x0fb   1       FloorAndCeiling_LowerRaise( tag, speed, -, -, - )
-;0x065   1       Scroll_Texture_Right( speed, -, -, -, - )
-;0x066   1       Scroll_Texture_Up( speed, -, -, -, - )
 ;0x081   1       UsePuzzleItem( item, script, sArg0, sArg1, sArg2 )
-;0x08c   1       Sector_ChangeSound( tag, sound, -, -, - )
-;0x078   1       Earthquake( intensity, duration, damrad, tremrad, tag )
 
 ; Door
 0x00a   2       Door_Close( tag, speed, -, -, - )
@@ -320,24 +320,24 @@ LightingInc=0
 ; Thing
 0x048   10      ThrustThing( angle, distance, -, -, - )
 0x049   10      DamageThing( damage, -, -, -, - )
-;0x082   10      Thing_Activate( tag, -, -, -, - )
-;0x083   10      Thing_Deactivate( tag, -, -, -, - )
-;0x084   10      Thing_Remove( tag, -, -, -, - )
-;0x085   10      Thing_Destroy( tag, -, -, -, - )
-;0x086   10      Thing_Projectile( tag, type, angle, speed, vspeed )
-;0x088   10      Thing_ProjectileGravity( tag, type, angle, speed, vspeed )
-;0x087   10      Thing_Spawn( tag, spawntype, angle, -, - )
-;0x089   10      Thing_SpawnNoFog( tag, spawntype, angle, -, - )
+0x082   10      Thing_Activate( tag, -, -, -, - )
+0x083   10      Thing_Deactivate( tag, -, -, -, - )
+0x084   10      Thing_Remove( tag, -, -, -, - )
+0x085   10      Thing_Destroy( tag, -, -, -, - )
+0x086   10      Thing_Projectile( tag, type, angle, speed, vspeed )
+0x088   10      Thing_ProjectileGravity( tag, type, angle, speed, vspeed )
+0x087   10      Thing_Spawn( tag, spawntype, angle, -, - )
+0x089   10      Thing_SpawnNoFog( tag, spawntype, angle, -, - )
 ;ZDoom
 ;0x0e5   10      Thing_SetGoal( tag, goal, delay, -, - )
 ;0x0f8   10      HealThing( amount, -, -, -, - )
 
 ; Teleport
 0x046   11      Teleport( tag, -, -, -, - )
+0x047   11      Teleport_NoFog( tag, -, -, -, - )
 0x04a   11      Teleport_NewMap( map, position, -, -, - )
 0x04b   11      Teleport_EndGame( -, -, -, -, - )
 0x0d7   11      Teleport_Line( thisline, destline, reverse, -, - )
-;0x047   11      Teleport_NoFog( tag, -, -, -, - )
 
 ; Lighting
 0x06d   12      Light_ForceLightning( tag, -, -, -, - )
@@ -375,17 +375,93 @@ LightingInc=0
 0x060   15      FloorAndCeiling_RaiseByValue( tag, speed, height, -, - )
 
 [Sectors.Types]
+0x0001 Phased light (manual)
+0x0002 Phased light sequence start
+0x0003 Phased light sequence 1
+0x0004 Phased light sequence 2
+0x001a Stairs 1
+0x001b Stairs 2
+0x0028 Wind east (weak)
+0x0029 Wind east (normal)
+0x002a Wind east (strong)
+0x002b Wind north (weak)
+0x002c Wind north (normal)
+0x002d Wind north (strong)
+0x002e Wind south (weak)
+0x002f Wind south (normal)
+0x0030 Wind south (strong)
+0x0031 Wind west (weak)
+0x0032 Wind west (normal)
+0x0033 Wind west (strong)
 0x0041 Blink (random)
 0x0042 Blink (1/2 second)
 0x0043 Blink (1 second)
 0x0044 -10/20% health, blink (1/2 second)
 0x0045 -5/10% health
+0x0046 -2/4% health
 0x0047 -2/5% health
 0x0048 Light oscillates
 0x004a Ceiling drops (after 30 seconds)
 0x004b -10/20% health, end level/game
 0x004c Blink (1 second sync.)
 0x004d Blink (1/2 second sync.)
+0x004e Ceiling rises (after 300 seconds)
+0x004f Reduced floor friction
 0x0050 -10/20% health
 0x0051 Light flickers randomly
+0x0052 -5/10% health, lava
+0x0053 -10/20% health, lava
+0x0054 -10/20% health, lava, scroll east
+0x0069 Hazardous area
+0x0073 Instant death
+0x0074 Double hazardous area
+0x0076 Scroll to current orientation
+0x00c7 Outdoor lightning
+0x00c7 Indoor lightning (bright)
+0x00c6 Indoor lightning (dim)
+0x00c8 Use second sky image
+0x00c9 Scroll north (slow)
+0x00ca Scroll north (normal)
+0x00cb Scroll north (fast)
+0x00cc Scroll east (slow)
+0x00cd Scroll east (normal)
+0x00ce Scroll east (fast)
+0x00cf Scroll south (slow)
+0x00d0 Scroll south (normal)
+0x00d1 Scroll south (fast)
+0x00d2 Scroll west (slow)
+0x00d3 Scroll west (normal)
+0x00d4 Scroll west (fast)
+0x00d5 Scroll northwest (slow)
+0x00d6 Scroll northwest (normal)
+0x00d7 Scroll northwest (fast)
+0x00d8 Scroll northeast (slow)
+0x00d9 Scroll northeast (normal)
+0x00da Scroll northeast (fast)
+0x00db Scroll southeast (slow)
+0x00dc Scroll southeast (normal)
+0x00dd Scroll southeast (fast)
+0x00de Scroll southwest (slow)
+0x00df Scroll southwest (normal)
+0x00e0 Scroll southwest (fast)
+0x00e1 Scroll east (very slow)
+0x00e2 Scroll east (slow)
+0x00e3 Scroll east (normal)
+0x00e4 Scroll east (fast)
+0x00e5 Scroll east (very fast)
+0x00e6 Scroll north (very slow)
+0x00e7 Scroll north (slow)
+0x00e8 Scroll north (normal)
+0x00e9 Scroll north (fast)
+0x00ea Scroll north (very fast)
+0x00eb Scroll south (very slow)
+0x00ec Scroll south (slow)
+0x00ed Scroll south (normal)
+0x00ee Scroll south (fast)
+0x00ef Scroll south (very fast)
+0x00f0 Scroll west (very slow)
+0x00f1 Scroll west (slow)
+0x00f2 Scroll west (normal)
+0x00f3 Scroll west (fast)
+0x00f4 Scroll west (very fast)
 0x0400 Secret

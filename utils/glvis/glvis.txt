@@ -1,5 +1,5 @@
                             *********************
-                              glVIS version 1.4
+                              glVIS version 1.5
                             *********************
 
 ============================================================================
@@ -52,9 +52,9 @@ The following options are recognised:
     Status
 ============================================================================
 
-  The current version of glVIS is 1.4. It has been tested and known to work
+  The current version of glVIS is 1.5. It has been tested and known to work
 on numerous large wads, including Ultimate DOOM, DOOM II, Heretic, Hexen,
-Batman Doom, Hacx.
+Strife, Batman Doom, Hacx.
   NOTE: glVIS is very expensive, complete vis data for a large wad can take
 several hours.
 
@@ -69,9 +69,9 @@ several hours.
 
     * Windows 98 with Borland C++ 5.5
 
-    * Linux Mandrake 8.0
+    * GNU/Linux
 
-  The "makefile" makefile is for DOS, Linux and other UN*X type OSes. Simply
+  The "Makefile" makefile is for DOS, Linux and other UN*X type OSes. Simply
 typing `make' should create the `glvis' executable. Currently there is no
 automatic installation, just copy the glvis executable to where you want it.
 
@@ -79,7 +79,7 @@ automatic installation, just copy the glvis executable to where you want it.
     Copyright
 ============================================================================
 
-  glVIS is Copyright (C) 2000-2001 JÆnis Legzdi·ý. glVIS is now based on
+  glVIS is Copyright (C) 2000-2004 Janis Legzdinsh. glVIS is now based on
 Quake's vis utility.
   All trademarks are the propriety of their owners.
 
@@ -102,7 +102,7 @@ for the full text.
 ============================================================================
 
   The homepage for glVIS can be found here:
-    http://www.vavoom-engine.com/glvis.html
+    http://www.vavoom-engine.com/glvis.php
 
   The homepage for glBSP can be found here:
     http://glbsp.sourceforge.net/

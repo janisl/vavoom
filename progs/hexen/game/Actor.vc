@@ -663,6 +663,8 @@ void Died(Actor source)
 			}
 		}
 	}
+	if (bCountKill)
+		level->currentkills++;
 	if (bIsPlayer)
 	{
 		// Player death
@@ -1154,7 +1156,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 		float thrust;
 
 		thrust = itof(damage) / Mass * 656.25;
-		dir = Normalize(MobjCenter(self) - MobjCenter(inflictor));
+		dir = Normalise(MobjCenter(self) - MobjCenter(inflictor));
 		Velocity += dir * thrust;
 	}
 
@@ -3836,6 +3838,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2004/12/27 12:23:13  dj_jl
+//  Multiple small changes for version 1.16
+//
 //  Revision 1.11  2004/12/22 07:54:41  dj_jl
 //  More extended ACS support, more linedef flags.
 //

@@ -380,7 +380,7 @@ void A_MinotaurDecide(void)
 		SetState(ChargeState);
 		bSkullFly = true;
 		A_FaceTarget();
-		Velocity = Normalize(Enemy.Origin - Origin) * ChargeSpeed;
+		Velocity = Normalise(Enemy.Origin - Origin) * ChargeSpeed;
 		Args[4] = 35 / 2;	// Charge duration
 	}
 	else if (Enemy.Origin.z == Enemy.FloorZ &&
@@ -640,6 +640,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2004/12/27 12:23:13  dj_jl
+//  Multiple small changes for version 1.16
+//
 //  Revision 1.4  2003/11/12 16:50:47  dj_jl
 //  Changed player structure into a class
 //

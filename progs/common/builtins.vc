@@ -68,10 +68,10 @@ native void SetCvarS(string Name, string value);
 //  Math functions
 //
 
-//  Normalizes angle in range 0..360
+//  Normalises angle in range 0..360
 native float AngleMod360(float angle);
 
-//  Normalizes angle in range -180..180
+//  Normalises angle in range -180..180
 native float AngleMod180(float angle);
 
 //  Sine
@@ -92,8 +92,8 @@ native float atan2(float y, float x);
 //  Vector length
 native float Length(TVec vec);
 
-//  Normalizes vector
-native TVec Normalize(TVec vec);
+//  Normalises vector
+native TVec Normalise(TVec vec);
 
 //  Dot product
 native float DotProduct(TVec v1, TVec v2);
@@ -486,6 +486,9 @@ native void MSG_SelectClientMsg(int msgtype, BasePlayer client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.46  2004/12/27 12:23:09  dj_jl
+//  Multiple small changes for version 1.16
+//
 //  Revision 1.45  2004/12/22 07:54:31  dj_jl
 //  More extended ACS support, more linedef flags.
 //

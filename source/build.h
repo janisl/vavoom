@@ -24,9 +24,9 @@
 //**************************************************************************
 
 #define VERSION_MAJOR	1
-#define VERSION_MINOR	15
-#define VERSION_RELEASE	3
-#define VERSION_TEXT	"1.15.3"
+#define VERSION_MINOR	16
+#define VERSION_RELEASE	0
+#define VERSION_TEXT	"1.16"
 
 #if !defined CLIENT && !defined SERVER
 #define CLIENT
@@ -47,7 +47,7 @@
 // will not be compiled
 //#define PARANOID		1
 
-//#define DEVELOPER		1
+#define DEVELOPER		1
 
 #define DO_GUARD		1
 
@@ -58,9 +58,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.8  2004/10/18 06:37:10  dj_jl
 //	Version 1.15.3
-//
+//	
 //	Revision 1.7  2002/11/16 17:14:22  dj_jl
 //	Some changes for release.
 //	

@@ -121,8 +121,6 @@ static bool		completed;
 
 static int		num_stats;
 
-static FFunction *pf_PlayerThink;
-
 static TCvarI	TimeLimit("TimeLimit", "0");
 static TCvarI	DeathMatch("DeathMatch", "0", CVAR_SERVERINFO);
 static TCvarI  	NoMonsters("NoMonsters", "0");
@@ -143,6 +141,8 @@ static int		numskins;
 static char		skins[MAX_SKINS][MAX_VPATH];
 
 static int		pg_frametime;
+
+static TCvarI	split_frame("split_frame", "1", CVAR_ARCHIVE);
 
 // CODE --------------------------------------------------------------------
 
@@ -183,7 +183,6 @@ void SV_Init(void)
 	num_stats = svpr.GetGlobal("num_stats");
 	if (num_stats > 96)
 		Sys_Error("Too many stats %d", num_stats);
-	pf_PlayerThink = svpr.FuncForName("PlayerThink");
 
 	P_InitSwitchList();
 	P_InitTerrainTypes();
@@ -1388,7 +1387,7 @@ void SV_RunClients(void)
 		if (svvars.Players[i]->bSpawned && !sv.intermission && !paused)
 #endif
 		{
-			svpr.Exec(pf_PlayerThink, (int)svvars.Players[i]);
+			svvars.Players[i]->eventPlayerTick(host_frametime);
 		}
 	}
 
@@ -1410,12 +1409,19 @@ void SV_Ticker(void)
 {
 	guard(SV_Ticker);
 	float	saved_frametime;
+	int		exec_times;
 
 	saved_frametime = host_frametime;
+	exec_times = 1;
 	if (!real_time)
 	{
 		// Rounded a little bit up to prevent "slow motion"
 		host_frametime = 0.028572f;//1.0 / 35.0;
+	}
+	else if (split_frame)
+	{
+		while (host_frametime / exec_times > 1.0 / 35.0)
+			exec_times++;
 	}
 
 	svpr.SetGlobal(pg_frametime, PassFloat(host_frametime));
@@ -1427,23 +1433,28 @@ void SV_Ticker(void)
 	// do main actions
 	if (!sv.intermission)
 	{
-		// pause if in menu or console
-#ifdef CLIENT
-		if (!paused && (netgame || !(MN_Active() || C_Active())))
-#else
-		if (!paused)
-#endif
+		host_frametime /= exec_times;
+		svpr.SetGlobal(pg_frametime, PassFloat(host_frametime));
+		for (int i = 0; i < exec_times && !completed; i++)
 		{
-			//	LEVEL TIMER
-			if (TimerGame)
+			// pause if in menu or console
+#ifdef CLIENT
+			if (!paused && (netgame || !(MN_Active() || C_Active())))
+#else
+			if (!paused)
+#endif
 			{
-				if (!--TimerGame)
+				//	LEVEL TIMER
+				if (TimerGame)
 				{
-					LeavePosition = 0;
-					completed = true;
+					if (!--TimerGame)
+					{
+						LeavePosition = 0;
+						completed = true;
+					}
 				}
+				P_Ticker();
 			}
-			P_Ticker();
 		}
 	}
 
@@ -1452,10 +1463,7 @@ void SV_Ticker(void)
 		G_DoCompleted();
 	}
 
-	if (!real_time)
-	{
-		host_frametime = saved_frametime;
-	}
+	host_frametime = saved_frametime;
 	unguard;
 }
 
@@ -1553,6 +1561,54 @@ void SV_SetCeilPic(int i, int texture)
 
 //==========================================================================
 //
+//	SV_ChangeSky
+//
+//==========================================================================
+
+void SV_ChangeSky(const char* Sky1, const char* Sky2)
+{
+	guard(SV_ChangeSky);
+	level.sky1Texture = R_TextureNumForName(Sky1);
+	level.sky2Texture = R_TextureNumForName(Sky2);
+	sv_reliable << (byte)svc_change_sky
+				<< (word)level.sky1Texture
+				<< (word)level.sky2Texture;
+	unguard;
+}
+
+//==========================================================================
+//
+//	SV_ChangeMusic
+//
+//==========================================================================
+
+void SV_ChangeMusic(const char* SongName)
+{
+	guard(SV_ChangeMusic);
+	strcpy(level.songLump, SongName);
+	sv_reliable << (byte)svc_change_music
+				<< level.songLump
+				<< (byte)level.cdTrack;
+	unguard;
+}
+
+//==========================================================================
+//
+//	SV_ChangeLocalMusic
+//
+//==========================================================================
+
+void SV_ChangeLocalMusic(VBasePlayer *player, const char* SongName)
+{
+	guard(SV_ChangeLocalMusic);
+	player->Message << (byte)svc_change_music
+					<< SongName
+					<< (byte)0;
+	unguard;
+}
+
+//==========================================================================
+//
 //	G_DoCompleted
 //
 //==========================================================================
@@ -1584,8 +1640,8 @@ static void G_DoCompleted(void)
 	{
 		if (svvars.Players[i])
 		{
-			svpr.Exec("G_PlayerExitMap", i,
-				!old_info.cluster || old_info.cluster != new_info.cluster);
+			svvars.Players[i]->eventPlayerExitMap(!old_info.cluster ||
+				old_info.cluster != new_info.cluster);
 		}
 	}
 
@@ -1776,7 +1832,7 @@ static void G_DoReborn(int playernum)
 	}
 	else
 	{
-		svpr.Exec("NetGameReborn", playernum);
+		svvars.Players[playernum]->eventNetGameReborn();
 	}
 }
 
@@ -1998,12 +2054,23 @@ void SV_SendServerInfo(VBasePlayer *player)
 		<< (byte)PROTOCOL_VERSION
 		<< svs.serverinfo
 		<< level.mapname
+		<< level.level_name
 		<< (byte)SV_GetPlayerNum(player)
 		<< (byte)svs.max_clients
 		<< (byte)deathmatch
 		<< level.totalkills
 		<< level.totalitems
-		<< level.totalsecret;
+		<< level.totalsecret
+		<< (word)level.sky1Texture
+		<< (word)level.sky2Texture
+		<< level.sky1ScrollDelta
+		<< level.sky2ScrollDelta
+		<< (byte)level.doubleSky
+		<< (byte)level.lightning
+		<< level.skybox
+		<< level.fadetable
+		<< level.songLump
+		<< (byte)level.cdTrack;
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
@@ -2092,6 +2159,22 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 	strcpy(sv_next_map, info.nextMap);
 	strcpy(sv_secret_map, info.secretMap);
 	memcpy(sv.mapalias, info.mapalias, sizeof(info.mapalias));
+
+	level.levelnum = info.warpTrans;//FIXME does this make sense?
+	level.cluster = info.cluster;
+	level.partime = 0;//FIXME not used in Vavoom.
+
+	level.sky1Texture = info.sky1Texture;
+	level.sky2Texture = info.sky2Texture;
+	level.sky1ScrollDelta = info.sky1ScrollDelta;
+	level.sky2ScrollDelta = info.sky2ScrollDelta;
+	level.doubleSky = info.doubleSky;
+	level.lightning = info.lightning;
+	strcpy(level.skybox, info.skybox);
+	strcpy(level.fadetable, info.fadetable);
+
+	level.cdTrack = info.cdTrack;
+	strcpy(level.songLump, info.songLump);
 
 	netgame = svs.max_clients > 1;
 	deathmatch = DeathMatch;
@@ -2305,7 +2388,7 @@ COMMAND(Spawn)
 		{
 			GCon->Log(NAME_Dev, "Mobj already spawned");
 		}
-		svpr.Exec("SpawnClient", SV_GetPlayerNum(sv_player));
+		sv_player->eventSpawnClient();
 	}
 	else
 	{
@@ -2363,7 +2446,7 @@ void SV_DropClient(boolean)
 	guard(SV_DropClient);
 	if (sv_player->bSpawned)
 	{
-		svpr.Exec("DisconnectClient", (int)sv_player);
+		sv_player->eventDisconnectClient();
 	}
 	sv_player->bActive = false;
 	svvars.Players[SV_GetPlayerNum(sv_player)] = NULL;
@@ -2568,7 +2651,7 @@ void SV_ConnectClient(VBasePlayer *player)
 	{
 		player->MO = NULL;
 		player->PlayerState = PST_REBORN;
-		svpr.Exec("PutClientIntoServer", (int)player);
+		player->eventPutClientIntoServer();
 	}
 	player->Frags = 0;
 	memset(player->FragsStats, 0, sizeof(player->FragsStats));
@@ -2895,9 +2978,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.61  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.60  2004/12/03 16:15:47  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
-//
+//	
 //	Revision 1.59  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
 //	

@@ -527,16 +527,16 @@ PF(Length)
 
 //==========================================================================
 //
-//	PF_Normalize
+//	PF_Normalise
 //
 //==========================================================================
 
-PF(Normalize)
+PF(Normalise)
 {
 	TVec		vec;
 
 	vec = Popv();
-	Pushv(Normalize(vec));
+	Pushv(Normalise(vec));
 }
 
 //==========================================================================
@@ -2977,7 +2977,7 @@ builtin_info_t BuiltinInfo[] =
 	_(tan),
 	_(atan),
 	_(atan2),
-	_(Normalize),
+	_(Normalise),
 	_(Length),
 	_(DotProduct),
 	_(CrossProduct),
@@ -3169,9 +3169,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.52  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.51  2004/12/22 07:49:13  dj_jl
 //	More extended ACS support, more linedef flags.
-//
+//	
 //	Revision 1.50  2004/08/18 18:05:46  dj_jl
 //	Support for higher virtual screen resolutions.
 //	

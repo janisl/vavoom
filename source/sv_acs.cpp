@@ -30,16 +30,7 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define SCRIPT_CONTINUE 0
-#define SCRIPT_STOP 1
-#define SCRIPT_TERMINATE 2
-#define PRINT_BUFFER_SIZE 256
-#define GAME_SINGLE_PLAYER 0
-#define GAME_NET_COOPERATIVE 1
-#define GAME_NET_DEATHMATCH 2
-#define TEXTURE_TOP 0
-#define TEXTURE_MIDDLE 1
-#define TEXTURE_BOTTOM 2
+#define PRINT_BUFFER_SIZE	256
 #define ACS_STACK_DEPTH		4096
 
 // TYPES -------------------------------------------------------------------
@@ -50,6 +41,27 @@ enum EACSFormat
 	ACS_Enhanced,
 	ACS_LittleEnhanced,
 	ACS_Unknown
+};
+
+enum EScriptAction
+{
+	SCRIPT_CONTINUE,
+	SCRIPT_STOP,
+	SCRIPT_TERMINATE,
+};
+
+enum EGameMode
+{
+	GAME_SINGLE_PLAYER,
+	GAME_NET_COOPERATIVE,
+	GAME_NET_DEATHMATCH
+};
+
+enum ETexturePosition
+{
+	TEXTURE_TOP,
+	TEXTURE_MIDDLE,
+	TEXTURE_BOTTOM
 };
 
 //	Script flags.
@@ -325,6 +337,10 @@ enum EPCD
 	PCD_GetSectorCeilingZ,
 	PCD_LSpec5Result,
 	PCD_GetSigilPieces,
+	PCD_GetLevelInfo,
+	PCD_ChangeSky,
+	PCD_PlayerInGame,
+	PCD_PlayerIsBot,
 
 	PCODE_COMMAND_COUNT
 };
@@ -338,6 +354,19 @@ enum aste_t
 	ASTE_WAITINGFORPOLY,
 	ASTE_WAITINGFORSCRIPT,
 	ASTE_TERMINATING
+};
+
+enum
+{
+	LEVELINFO_PAR_TIME,
+	LEVELINFO_CLUSTERNUM,
+	LEVELINFO_LEVELNUM,
+	LEVELINFO_TOTAL_SECRETS,
+	LEVELINFO_FOUND_SECRETS,
+	LEVELINFO_TOTAL_ITEMS,
+	LEVELINFO_FOUND_ITEMS,
+	LEVELINFO_TOTAL_MONSTERS,
+	LEVELINFO_KILLED_MONSTERS
 };
 
 struct acsHeader_t
@@ -573,12 +602,12 @@ static boolean P_ExecuteLineSpecial(int special, int *args, line_t *line, int si
    		special, (int)args, (int)line, side, (int)mo);
 }
 
-static line_t *P_FindLine(int lineTag, int *searchPosition)
+static line_t* P_FindLine(int lineTag, int *searchPosition)
 {
 	return (line_t*)svpr.Exec("P_FindLine", lineTag, (int)searchPosition);
 }
 
-static VEntity *P_FindMobjFromTID(int tid, int *searchPosition)
+static VEntity* P_FindMobjFromTID(int tid, int *searchPosition)
 {
 	return (VEntity*)svpr.Exec("FindMobjFromTID", tid, (int)searchPosition);
 }
@@ -586,6 +615,27 @@ static VEntity *P_FindMobjFromTID(int tid, int *searchPosition)
 static int ThingCount(int type, int tid)
 {
 	return svpr.Exec("ThingCount", type, tid);
+}
+
+static int Thing_Projectile2(int tid, int type, int angle, int speed,
+	int vspeed, int gravity, int newtid)
+{
+	int args[5];
+
+	args[0] = tid;
+	args[1] = type;
+	args[2] = angle;
+	args[3] = speed;
+	args[4] = vspeed;
+	return svpr.Exec("EV_ThingProjectile", (int)&args[0], gravity, newtid);
+}
+
+static void StartPlaneWatcher(VEntity* it, line_t* line, int lineSide,
+	bool ceiling, int tag, int height, int special, int arg0, int arg1,
+	int arg2, int arg3, int arg4)
+{
+	svpr.Exec("StartPlaneWatcher", (int)it, (int)line, lineSide, ceiling,
+		tag, height, special, arg0, arg1, arg2, arg3, arg4);
 }
 
 static VEntity* EntityFromTID(int TID, VEntity* Default)
@@ -2048,11 +2098,6 @@ int VACS::RunScript(float DeltaTime)
 	action = SCRIPT_CONTINUE;
 	do
 	{
-		//	Push	stack[stackPtr++] = 
-		//	Pop		stack[--stackPtr]
-		//	Top		stack[stackPtr - 1]
-		//	Drop	stackPtr--
-
 #define PC_GET_INT	(*PCodePtr++)
 #define NEXTBYTE	(fmt == ACS_LittleEnhanced ? getbyte(PCodePtr) : PC_GET_INT)
 
@@ -2876,6 +2921,7 @@ int VACS::RunScript(float DeltaTime)
 			}
 			break;
 
+		//	Extended P-Code commands.
 		case PCD_ActivatorSound:
 			{
 				int sound;
@@ -2973,8 +3019,7 @@ int VACS::RunScript(float DeltaTime)
 			break;
 
 		case PCD_MusicChange:
-			//FIXME send over network. Also needs to be saved in savegame.
-			S_StartSong(FACScriptsObject::StaticGetString(stack[stackPtr - 2]), stack[stackPtr - 1], true);
+			SV_ChangeMusic(FACScriptsObject::StaticGetString(stack[stackPtr - 2]));
 			stackPtr -= 2;
 			break;
 
@@ -3123,40 +3168,37 @@ int VACS::RunScript(float DeltaTime)
 			break;
 
 		case PCD_SetMusic:
-			//FIXME send over network. Also needs to be saved in savegame.
-			//What's the third argument?
-			S_StartSong(FACScriptsObject::StaticGetString(stack[stackPtr - 3]), stack[stackPtr - 2], true);
+			SV_ChangeMusic(FACScriptsObject::StaticGetString(stack[stackPtr - 3]));
 			stackPtr -= 3;
 			break;
 
 		case PCD_SetMusicDirect:
-			//FIXME send over network. Also needs to be saved in savegame.
-			//What's the third argument?
 			{
 				const char* SongName = FACScriptsObject::StaticGetString(PC_GET_INT);
-				int cdtrack = PC_GET_INT;
 				PC_GET_INT;
-				S_StartSong(SongName, cdtrack, true);
+				PC_GET_INT;
+				SV_ChangeMusic(SongName);
 			}
 			break;
 
 		case PCD_LocalSetMusic:
-			//FIXME send over network. Also needs to be saved in savegame.
-			//What's the third argument?
-			//Only for Activator.
-			S_StartSong(FACScriptsObject::StaticGetString(stack[stackPtr - 3]), stack[stackPtr - 2], true);
+			if (Activator && Activator->bIsPlayer)
+			{
+				SV_ChangeLocalMusic(Activator->Player,
+					FACScriptsObject::StaticGetString(stack[stackPtr - 3]));
+			}
 			stackPtr -= 3;
 			break;
 
 		case PCD_LocalSetMusicDirect:
-			//FIXME send over network. Also needs to be saved in savegame.
-			//What's the third argument?
-			//Only for Activator.
 			{
 				const char* SongName = FACScriptsObject::StaticGetString(PC_GET_INT);
-				int cdtrack = PC_GET_INT;
 				PC_GET_INT;
-				S_StartSong(SongName, cdtrack, true);
+				PC_GET_INT;
+				if (Activator && Activator->bIsPlayer)
+				{
+					SV_ChangeLocalMusic(Activator->Player, SongName);
+				}
 			}
 			break;
 
@@ -3194,47 +3236,7 @@ int VACS::RunScript(float DeltaTime)
 				float y = float(stack[optstart - 2]) / float(0x10000);
 				float holdTime = float(stack[optstart - 1]) / float(0x10000);
 
-				/*FIXME
-				if (screen == NULL ||
-					players[consoleplayer].mo == screen)
-				{
-					DHUDMessage *msg;
-
-					switch (type & ~HUDMSG_LOG)
-					{
-					default:	// normal
-						msg = new DHUDMessage (work, x, y, hudwidth, hudheight, color, holdTime);
-						break;
-					case 1:		// fade out
-						{
-							float fadeTime = (optstart < sp) ?
-								FIXED2FLOAT(Stack[optstart]) : 0.5f;
-							msg = new DHUDMessageFadeOut (work, x, y, hudwidth, hudheight, color, holdTime, fadeTime);
-						}
-						break;
-					case 2:		// type on, then fade out
-						{
-							float typeTime = (optstart < sp) ?
-								FIXED2FLOAT(Stack[optstart]) : 0.05f;
-							float fadeTime = (optstart < sp-1) ?
-								FIXED2FLOAT(Stack[optstart+1]) : 0.5f;
-							msg = new DHUDMessageTypeOnFadeOut (work, x, y, hudwidth, hudheight, color, typeTime, holdTime, fadeTime);
-						}
-						break;
-					}
-					StatusBar->AttachMessage (msg, id ? 0xff000000|id : 0);
-					if (type & HUDMSG_LOG)
-					{
-						static char bar[] = TEXTCOLOR_ORANGE "\n\35\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36"
-					"\36\36\36\36\36\36\36\36\36\36\36\36\37" TEXTCOLOR_NORMAL "\n";
-
-						workreal[0] = '\x1c';
-						workreal[1] = color >= CR_BRICK && color <= CR_YELLOW ? 'A' + color : '-';
-						AddToConsole (-1, bar);
-						AddToConsole (-1, workreal);
-						AddToConsole (-1, bar);
-					}
-				}*/
+				//FIXME
 				if (cmd != PCD_EndHudMessageBold &&
 					Activator && Activator->bIsPlayer)
 				{
@@ -3398,6 +3400,8 @@ int VACS::RunScript(float DeltaTime)
 
 		case PCD_SetThingSpecial:
 			{
+				int searcher = -1;
+				VEntity* mobj;
 				int tid = stack[stackPtr - 7];
 				int special = stack[stackPtr - 6];
 				int arg1 = stack[stackPtr - 5];
@@ -3405,7 +3409,16 @@ int VACS::RunScript(float DeltaTime)
 				int arg3 = stack[stackPtr - 3];
 				int arg4 = stack[stackPtr - 2];
 				int arg5 = stack[stackPtr - 1];
-				//FIXME implement.
+
+				while ((mobj = P_FindMobjFromTID(tid, &searcher)) != NULL)
+				{
+					mobj->Special = special;
+					mobj->Args[0] = arg1;
+					mobj->Args[1] = arg2;
+					mobj->Args[2] = arg3;
+					mobj->Args[3] = arg4;
+					mobj->Args[4] = arg5;
+				}
 				stackPtr -= 7;
 			}
 			break;
@@ -3493,33 +3506,19 @@ int VACS::RunScript(float DeltaTime)
 			break;
 
 		case PCD_SetFloorTrigger:
-			{
-				int tag = stack[stackPtr - 8];
-				int height = stack[stackPtr - 7];
-				int special = stack[stackPtr - 6];
-				int arg0 = stack[stackPtr - 5];
-				int arg1 = stack[stackPtr - 4];
-				int arg2 = stack[stackPtr - 3];
-				int arg3 = stack[stackPtr - 2];
-				int arg4 = stack[stackPtr - 1];
-				//FIXME implement.
-				stackPtr -= 8;
-			}
+			StartPlaneWatcher(Activator, line, side, false,
+				stack[stackPtr - 8], stack[stackPtr - 7], stack[stackPtr - 6],
+				stack[stackPtr - 5], stack[stackPtr - 4], stack[stackPtr - 3],
+				stack[stackPtr - 2], stack[stackPtr - 1]);
+			stackPtr -= 8;
 			break;
 
 		case PCD_SetCeilingTrigger:
-			{
-				int tag = stack[stackPtr - 8];
-				int height = stack[stackPtr - 7];
-				int special = stack[stackPtr - 6];
-				int arg0 = stack[stackPtr - 5];
-				int arg1 = stack[stackPtr - 4];
-				int arg2 = stack[stackPtr - 3];
-				int arg3 = stack[stackPtr - 2];
-				int arg4 = stack[stackPtr - 1];
-				//FIXME implement.
-				stackPtr -= 8;
-			}
+			StartPlaneWatcher(Activator, line, side, true,
+				stack[stackPtr - 8], stack[stackPtr - 7], stack[stackPtr - 6],
+				stack[stackPtr - 5], stack[stackPtr - 4], stack[stackPtr - 3],
+				stack[stackPtr - 2], stack[stackPtr - 1]);
+			stackPtr -= 8;
 			break;
 
 		case PCD_GetActorX:
@@ -4080,19 +4079,9 @@ int VACS::RunScript(float DeltaTime)
 			break;
 
 		case PCD_ThingProjectile2:
-			// Like Thing_Projectile(Gravity) specials, but you can give the
-			// projectile a TID.
-			// Thing_Projectile2(tid, type, angle, speed, vspeed, gravity, newtid);
-			{
-				int tid = stack[stackPtr - 7];
-				int type = stack[stackPtr - 6];
-				int angle = stack[stackPtr - 5];
-				int speed = stack[stackPtr - 4];
-				int vspeed = stack[stackPtr - 3];
-				int gravity = stack[stackPtr - 2];
-				int newtid = stack[stackPtr - 1];
-				//FIXME implement.
-			}
+			Thing_Projectile2(stack[stackPtr - 7], stack[stackPtr - 6],
+				stack[stackPtr - 5], stack[stackPtr - 4], stack[stackPtr - 3],
+				stack[stackPtr - 2], stack[stackPtr - 1]);
 			stackPtr -= 7;
 			break;
 
@@ -4250,6 +4239,73 @@ int VACS::RunScript(float DeltaTime)
 				stack[stackPtr++] = Activator->eventGetSigilPieces();
 			else
 				stack[stackPtr++] = 0;
+			break;
+
+		case PCD_GetLevelInfo:
+			switch (stack[stackPtr - 1])
+			{
+			case LEVELINFO_PAR_TIME:
+				stack[stackPtr - 1] = level.partime;
+				break;
+			case LEVELINFO_CLUSTERNUM:
+				stack[stackPtr - 1] = level.cluster;
+				break;
+			case LEVELINFO_LEVELNUM:
+				stack[stackPtr - 1] = level.levelnum;
+				break;
+			case LEVELINFO_TOTAL_SECRETS:
+				stack[stackPtr - 1] = level.totalsecret;
+				break;
+			case LEVELINFO_FOUND_SECRETS:
+				stack[stackPtr - 1] = level.currentsecret;
+				break;
+			case LEVELINFO_TOTAL_ITEMS:
+				stack[stackPtr - 1] = level.totalitems;
+				break;
+			case LEVELINFO_FOUND_ITEMS:
+				stack[stackPtr - 1] = level.currentitems;
+				break;
+			case LEVELINFO_TOTAL_MONSTERS:
+				stack[stackPtr - 1] = level.totalkills;
+				break;
+			case LEVELINFO_KILLED_MONSTERS:
+				stack[stackPtr - 1] = level.currentkills;
+				break;
+			default:
+				stack[stackPtr - 1] = 0;
+				break;
+			}
+
+		case PCD_ChangeSky:
+			SV_ChangeSky(
+				FACScriptsObject::StaticGetString(stack[stackPtr - 2]),
+				FACScriptsObject::StaticGetString(stack[stackPtr - 1]));
+			stackPtr -= 2;
+			break;
+
+		case PCD_PlayerInGame:
+			if (stack[stackPtr - 1] < 0 || stack[stackPtr - 1] >= MAXPLAYERS)
+			{
+				stack[stackPtr - 1] = false;
+			}
+			else
+			{
+				stack[stackPtr - 1] = svvars.Players[stack[stackPtr - 1]] &&
+					svvars.Players[stack[stackPtr - 1]]->bSpawned;
+			}
+			break;
+
+		case PCD_PlayerIsBot:
+			if (stack[stackPtr - 1] < 0 || stack[stackPtr - 1] >= MAXPLAYERS)
+			{
+				stack[stackPtr - 1] = false;
+			}
+			else
+			{
+				stack[stackPtr - 1] = svvars.Players[stack[stackPtr - 1]] &&
+					svvars.Players[stack[stackPtr - 1]]->bSpawned &&
+					svvars.Players[stack[stackPtr - 1]]->bIsBot;
+			}
 			break;
 
 			//	These opcodes are not supported. They will terminate script.
@@ -4570,9 +4626,12 @@ static void strbin(char *str)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.31  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.30  2004/12/22 07:49:13  dj_jl
 //	More extended ACS support, more linedef flags.
-//
+//	
 //	Revision 1.29  2004/12/03 16:15:47  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
 //	

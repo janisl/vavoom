@@ -27,7 +27,7 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define PROTOCOL_VERSION	8
+#define PROTOCOL_VERSION	9
 
 enum
 {
@@ -97,6 +97,9 @@ enum
 	svc_static_light_rgb,
 	svc_sec_light_color,
 
+	svc_change_sky,
+	svc_change_music,
+
 	USER_PROTOCOL_START = 128
 };
 
@@ -145,9 +148,12 @@ enum
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.9  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
-//
+//	
 //	Revision 1.8  2002/01/11 08:09:34  dj_jl
 //	Added sector plane swapping
 //	

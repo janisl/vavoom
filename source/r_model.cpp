@@ -910,7 +910,7 @@ static void LoadPNG(const char *filename, void**)
 	if (ColorType == PNG_COLOR_TYPE_PALETTE ||
 		ColorType == PNG_COLOR_TYPE_RGB ||
 		ColorType == PNG_COLOR_TYPE_GRAY)
-		png_set_add_alpha(png_ptr, 0xff, PNG_FILLER_AFTER);
+		png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
 	if (ColorType == PNG_COLOR_TYPE_GRAY ||
 		ColorType == PNG_COLOR_TYPE_GRAY_ALPHA)
 		png_set_gray_to_rgb(png_ptr);
@@ -1003,9 +1003,12 @@ void R_PositionWeaponModel(clmobj_t &wpent, model_t *wpmodel, int frame)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.10  2004/12/03 16:15:47  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
-//
+//	
 //	Revision 1.9  2004/11/30 07:19:01  dj_jl
 //	Support for high resolution textures.
 //	

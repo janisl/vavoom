@@ -502,7 +502,7 @@ static void RenderSprite(clmobj_t *thing)
 
 		sprup = TVec(0, 0, 1);
 		//	CrossProduct(sprup, viewforward)
-		sprright = Normalize(TVec(viewforward.y, -viewforward.x, 0));
+		sprright = Normalise(TVec(viewforward.y, -viewforward.x, 0));
 		//	CrossProduct(sprright, sprup)
 		sprforward = TVec(-sprright.y, sprright.x, 0);
 		break;
@@ -514,14 +514,14 @@ static void RenderSprite(clmobj_t *thing)
 		// cross product will be between two nearly parallel vectors and
 		// starts to approach an undefined state, so we don't draw if the two
 		// vectors are less than 1 degree apart
-		tvec = Normalize(sprorigin - vieworg);
+		tvec = Normalise(sprorigin - vieworg);
 		dot = tvec.z;	//	same as DotProduct (tvec, sprup) because
 						// sprup is 0, 0, 1
 		if ((dot > 0.999848) || (dot < -0.999848))	// cos(1 degree) = 0.999848
 			return;
 		sprup = TVec(0, 0, 1);
 		//	CrossProduct(sprup, -sprorigin)
-		sprright = Normalize(TVec(tvec.y, -tvec.x, 0));
+		sprright = Normalise(TVec(tvec.y, -tvec.x, 0));
 		//	CrossProduct(sprright, sprup)
 		sprforward = TVec(-sprright.y, sprright.x, 0);
 		break;
@@ -574,7 +574,7 @@ static void RenderSprite(clmobj_t *thing)
 		cr = mcos(thing->angles.roll);
 
 		//	CrossProduct(TVec(0, 0, 1), viewforward)
-		tvec = Normalize(TVec(viewforward.y, -viewforward.x, 0));
+		tvec = Normalise(TVec(viewforward.y, -viewforward.x, 0));
 		//	CrossProduct(tvec, TVec(0, 0, 1))
 		sprforward = TVec(-tvec.y, tvec.x, 0);
 		//	Rotate
@@ -1190,9 +1190,12 @@ void R_DrawModelFrame(const TVec &origin, float angle, model_t *model,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.19  2004/11/22 07:33:17  dj_jl
 //	Always check for valid sprite numbers and frames.
-//
+//	
 //	Revision 1.18  2003/12/23 07:15:43  dj_jl
 //	Sprite offset fix
 //	

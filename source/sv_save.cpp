@@ -52,7 +52,7 @@
    	sprintf(_name, "%s/saves/%s.vs%d", fl_gamedir, _map, _slot)
 
 #define SAVE_DESCRIPTION_LENGTH		24
-#define SAVE_VERSION_TEXT			"Version 1.14"
+#define SAVE_VERSION_TEXT			"Version 1.16"
 #define SAVE_VERSION_TEXT_LENGTH	16
 
 // TYPES -------------------------------------------------------------------
@@ -154,17 +154,6 @@ static void OpenStreamOut(char *fileName)
 //==========================================================================
 
 static void StreamOutByte(byte val)
-{
-	*Saver << val;
-}
-
-//==========================================================================
-//
-//	StreamOutWord
-//
-//==========================================================================
-
-static void StreamOutWord(word val)
 {
 	*Saver << val;
 }
@@ -468,9 +457,7 @@ static void ArchivePlayers(void)
 	guard(ArchivePlayers);
 	int			i;
 	VBasePlayer	*tempPlayer;
-	FFunction	*pf_archive_player;
 
-	pf_archive_player = svpr.FuncForName("ArchivePlayer");
 	StreamOutLong(ASEG_PLAYERS);
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
@@ -485,7 +472,7 @@ static void ArchivePlayers(void)
 
 		tempPlayer = (VBasePlayer*)Z_Malloc(svvars.Players[i]->GetClass()->ClassSize);
 		memcpy(tempPlayer, svvars.Players[i], svvars.Players[i]->GetClass()->ClassSize);
-		svpr.Exec(pf_archive_player, (int)tempPlayer);
+		tempPlayer->eventArchivePlayer();
 		StreamOutBuffer((byte*)tempPlayer + sizeof(VObject),
 			svvars.Players[i]->GetClass()->ClassSize - sizeof(VObject));
 
@@ -512,9 +499,7 @@ static void UnarchivePlayers(void)
 {
 	guard(UnarchivePlayers);
 	int		i;
-	FFunction *pf_unarchive_player;
 
-	pf_unarchive_player = svpr.FuncForName("UnarchivePlayer");
 	AssertSegment(ASEG_PLAYERS);
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
@@ -534,7 +519,7 @@ static void UnarchivePlayers(void)
 		Loader->Serialise((byte*)svvars.Players[i] + sizeof(VObject),
 			svvars.Players[i]->GetClass()->ClassSize - sizeof(VObject));
 		svvars.Players[i]->MO = NULL; // Will be set when unarc thinker
-		svpr.Exec(pf_unarchive_player, (int)svvars.Players[i]);
+		svvars.Players[i]->eventUnarchivePlayer();
 		svvars.Players[i]->bActive = false;
 
 		for (int pi = 0; pi < NUMPSPRITES; pi++)
@@ -590,6 +575,13 @@ static void Level__Serialise(FArchive &Ar)
 	//
 	for (i = 0, li = GLevel->Lines; i < GLevel->NumLines; i++, li++)
 	{
+		//	Temporary hack to save seen on automap flags.
+#ifdef CLIENT
+		if (cls.state == ca_connected)
+		{
+			li->flags |= GClLevel->Lines[i].flags & ML_MAPPED;
+		}
+#endif
 		Ar << li->flags
 			<< li->special
 			<< li->arg1
@@ -997,6 +989,20 @@ static void SV_SaveMap(int slot, boolean savePlayers)
 	StreamOutLong(level.totalkills);
 	StreamOutLong(level.totalitems);
 	StreamOutLong(level.totalsecret);
+	StreamOutLong(level.currentkills);
+	StreamOutLong(level.currentitems);
+	StreamOutLong(level.currentsecret);
+
+	StreamOutLong(level.sky1Texture);
+	StreamOutLong(level.sky2Texture);
+	StreamOutFloat(level.sky1ScrollDelta);
+	StreamOutFloat(level.sky2ScrollDelta);
+	StreamOutByte(level.doubleSky);
+	StreamOutByte(level.lightning);
+	StreamOutBuffer(level.skybox, sizeof(level.skybox));
+
+	StreamOutBuffer(level.songLump, sizeof(level.songLump));
+	StreamOutLong(level.cdTrack);
 
 	//	Save baseline
 	StreamOutLong(ASEG_BASELINE);
@@ -1049,6 +1055,20 @@ static void SV_LoadMap(char *mapname, int slot)
 	level.totalkills = GET_LONG;
 	level.totalitems = GET_LONG;
 	level.totalsecret = GET_LONG;
+	level.currentkills = GET_LONG;
+	level.currentitems = GET_LONG;
+	level.currentsecret = GET_LONG;
+
+	level.sky1Texture = GET_LONG;
+	level.sky2Texture = GET_LONG;
+	level.sky1ScrollDelta = GET_FLOAT;
+	level.sky2ScrollDelta = GET_FLOAT;
+	level.doubleSky = GET_BYTE;
+	level.lightning = GET_BYTE;
+	Loader->Serialise(level.skybox, sizeof(level.skybox));
+
+	Loader->Serialise(level.songLump, sizeof(level.songLump));
+	level.cdTrack = GET_LONG;
 
 	AssertSegment(ASEG_BASELINE);
 	int len = GET_LONG;
@@ -1462,9 +1482,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.37  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.36  2004/12/22 07:50:51  dj_jl
 //	Fixed loading of ACS arrays.
-//
+//	
 //	Revision 1.35  2004/12/03 16:15:47  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
 //	

@@ -540,10 +540,27 @@ struct base_level_t
 	int			totalkills;
 	int			totalitems;
 	int			totalsecret;    // for intermission
+	int			currentkills;
+	int			currentitems;
+	int			currentsecret;
 
 	char		mapname[12];
-	char		nextmap[12];
+	int			levelnum;
+	int			cluster;
+	int			partime;
 	char		level_name[32];
+
+	int			sky1Texture;
+	int			sky2Texture;
+	float		sky1ScrollDelta;
+	float		sky2ScrollDelta;
+	boolean		doubleSky;
+	boolean		lightning;
+	char		skybox[32];
+	char		fadetable[12];
+
+	int			cdTrack;
+	char		songLump[12];
 };
 
 struct sv_level_t:base_level_t
@@ -581,9 +598,12 @@ extern VLevel*			GClLevel;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.28  2004/12/03 16:15:47  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
-//
+//	
 //	Revision 1.27  2003/10/22 06:23:46  dj_jl
 //	Increased maximal start spot count
 //	

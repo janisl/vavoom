@@ -50,18 +50,19 @@
 
 #include "../game/classes.vc"
 
-#include "savegame.vc"
 #include "mobj.vc"
 #include "map.vc"
 #include "teleport.vc"
 #include "things.vc"
-#include "cheat.vc"
 
 #include "svmain.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2004/12/27 12:23:15  dj_jl
+//  Multiple small changes for version 1.16
+//
 //  Revision 1.23  2004/11/22 07:36:29  dj_jl
 //  Implemented all sector specials in all games.
 //

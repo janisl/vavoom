@@ -127,7 +127,7 @@ void SV_ReadFromUserInfo(void)
 	}
 	strcpy(sv_player->PlayerName, Info_ValueForKey(sv_player->UserInfo, "name"));
 	sv_player->Color = atoi(Info_ValueForKey(sv_player->UserInfo, "color"));
-	svpr.Exec("UserinfoChanged", (int)sv_player);
+	sv_player->eventUserinfoChanged();
 	unguard;
 }
 
@@ -257,9 +257,12 @@ COMMAND(SetInfo)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2004/12/27 12:23:17  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.14  2003/11/12 16:47:40  dj_jl
 //	Changed player structure into a class
-//
+//	
 //	Revision 1.13  2003/07/11 16:45:20  dj_jl
 //	Made array of players with pointers
 //	

@@ -104,7 +104,7 @@ Actor SpawnMissile(Actor dest, classid type)
 	{
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 	}
-	dir = Normalize(dir);
+	dir = Normalise(dir);
 	A.Velocity = dir * A.Speed;
 
 	VectorAngles(&dir, &A.Angles);
@@ -138,7 +138,7 @@ Actor SpawnMissileZ(float z, Actor dest, classid type)
 	{
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 	}
-	dir = Normalize(dir);
+	dir = Normalise(dir);
 	A.Velocity = dir * A.Speed;
 
 	VectorAngles(&dir, &A.Angles);
@@ -987,7 +987,7 @@ void A_BossDeath()
 	else if (Class == Programmer)
 	{
 		//	Call death script.
-		StartACS(240, 0, 0, 0, 0, self, NULL, 0, false, false);
+		StartACS(250, 0, 0, 0, 0, self, NULL, 0, false, false);
 	}
 	else if (Class == Specter1)
 	{
@@ -1339,6 +1339,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2004/12/27 12:23:14  dj_jl
+//  Multiple small changes for version 1.16
+//
 //  Revision 1.6  2004/12/22 07:56:47  dj_jl
 //  Fully working Strife support.
 //

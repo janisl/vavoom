@@ -1,94 +1,94 @@
 
-15-06-2002
+15.06.2002
   AtklÆjÆs, ka Hexen-Æ monstri neredz spñlñtÆju. DØvaini, jo man ıóita, ke es
  to jau izlaboju.
-17-06-2002
+17.06.2002
   Heretic objektu pÆrkÆrtoıana. Ieviestas pamatklases, viss saıóirots. Tika
  floatizñts PainChance.
-18-06-2002
+18.06.2002
   PÆrnesu SlideMove un BounceWall uz end÷ini.
-19-06-2002
+19.06.2002
   Hexen objektu pÆrkÆrtoıana. Ieviestas bÆzes klases, ıóiroıana.
-20-06-2002
+20.06.2002
   Pievienoju funkciju FindClass.
   Pabeidzu ıóirot Hexen klases. BaigÆ no·emıanÆs.
   SÆku atıóirot Strife paceõmos priekımetus.
-21-06-2002
+21.06.2002
   IzrÆdÆs ka sarunu skriptos priekımeti tiek doti izmantojot indeksu tabulÆ.
  Visi Strife pickup-i ir atseviıói.
-22-06-2002
+22.06.2002
   Strife atslñgas, munØciju un ieroÒus jau var pa·emt. GandrØz visi ieroÒi ir
  strÆdñjoıi.
-25-06-2002
+25.06.2002
   Visur pÆrgÆju uz peldoıÆ komata PainChance.
   Darbojos ar Strife dekorÆcijÆm.
-26-06-2002
+26.06.2002
   Salaboju Doom statiskÆs gaismas.
   Pabeidzu ar Strife dekorÆcijÆm.
-27-06-2002
+27.06.2002
   Ieviesu kopñjo fragu skaitØtÆju.
-01-07-2002
+01.07.2002
   StrÆdÆju pie strife. Darbojos ar monstru ıÆvi·iem un citiem efektiem. Visas
  funkcijas ir apvienotas, daõa jau sadalØtas pa attiecØgajÆm klasñm.
-02-07-2002
+02.07.2002
   PilnØbÆ pabeidzu Strife datu apvienoıanu, sakÆrtoıana.
   Segmentu dati tiek interpretñti kÆ bez zØmes, kas atrisinÆs problñmu ar õoti
  lieliem lØme·iem.
-03-07-2002
+03.07.2002
   PÆris globÆlo funkciju pÆrnestas uz Entity klasi.
   Neliels uzlabojums lØme·a ielÆdñ kas atõauj ielÆdñt problemÆtiskus lØme·us.
   Salaboju tØkla paketes izmñra haku vienspñlñtÆja re÷ØmÆ.
   makeinfo izmetu ÆrÆ Heretic, Hexen un Strife datus, pÆrgrupñju Doom datus.
  Iespñjams es to pÆrdñvñıu par deh2vc.
-06-07-2002
+06.07.2002
   Heretic un Hexen pievienoti jauni modeõi.
-08-07-2002
+08.07.2002
   Turpinu modeõu pievienoıanu un uzlaboıanu.
-12-07-2002
+12.07.2002
   Rendñıanas draiveri tagad pieder VObject objektu kokam.
   Visi draiveri zØmñ lØmeni vienÆ virzienÆ.
-13-07-2002
+13.07.2002
   Srife izmetu ÆrÆ visus shareware versijas datus.
   Neliela kõİdi·a asemblera failÆ.
-15-07-2002
+15.07.2002
   Srife izveidoju ievada sekvenci.
-16-07-2002
+16.07.2002
   KompilÆtorÆ aizvietoju stÆvokLu tabulas ar dinamiskajiem masØviem.
   SÆku darbu pie ska·as draiveru objektiem.
-17-07-2002
+17.07.2002
   Daõa ska·as draivera funkciju ir klases funkcijas.
-18-07-2002
+18.07.2002
   Salaboju pieslñgıanos tØkla spñlei no menu, kÆ arØ vienu problñmu Heretic,
  kas uzkÆra tØkla spñli.
   Pabeidzu ar ska·as draivera objektu, sÆku ieviest OpenAL draiveri. Ja nav
  ska·as datu, vairs netiks pÆrtraukta spñle.
-19-07-2002
+19.07.2002
   AtrisinÆju problñmu ar giard makrosiem.
-20-07-2002
+20.07.2002
   Aizvietoju pÆris takıu skaitØtÆjus ar peldoıÆ komata laiku.
   PilnØbÆ implementñju OpenAL draiveri.
-22-07-2002
+22.07.2002
   OficiÆli pÆrgÆju uz peldoıÆ komata laiku.
   Izlaidu beta versiju.
-23-07-2002
+23.07.2002
   PilnØbÆ atbrØvojos no iostream.
-26-07-2002
+26.07.2002
   SÆku ieviest Strife sarunas.
-29-07-2002
+29.07.2002
   Strife sarunas jau strÆdÆ.
   Konsolñ skrollings pa 5 lØnijÆm, ar SHIFT pa vienai.
-30-07-2002
+30.07.2002
   PÆris dienas atpakaõ pateicu glBSP autoram par izmai·Æm. Vi·am paıam bija
  vñl pÆris izmai·as, kuras tika atjauninÆtas.
-01-08-2002
+01.08.2002
   Atjaunoju glBSP ar paıu jaunÆko versiju, kuru Endrjİ ir aploudojis CVS.
   Atjaunoju vlaunch ar pÆris jaunÆm lietÆm.
-03-08-2002
+03.08.2002
   Pievienoju Heretic Gold Wand modeli.
-05-08-2002
+05.08.2002
   PiestrÆdÆju pie modeõiem.
   Sla·u sekvences tiek pÆrsİtØtas ar droıo protokolu.
-06-08-2002
+06.08.2002
   PÆris sØki labojumi. SakÆrtoju DDF un DeHackEd atbalstu.
   Pielaboju OpenAL draiveri Linux vajadzØbÆm. Linux versijÆ ıis tas trİkst.
   Poliobjektu grİzıanas kodÆ netika pareizi nodoti peldoıÆ komata skaitõi,
@@ -100,88 +100,88 @@
                             VERSIJA 1.14
 ******************************************************************************
 
-12-08-2002
+12.08.2002
   IzmñÖinÆju MP3 ar fmod, strÆdÆ normÆli.
-13-08-2002
+13.08.2002
   DDF atbalstÆ nomainØju ObjInitState uz stÆvokõa vÆrdu.
   ddf2vc portñju uz Windows, ar Borland strÆdA normÆli, problñmas ar MSVC.
  Vñl netiek eksportñti stÆvokõi objektiem bez tiem.
-14-08-2002
+14.08.2002
   SÆku strÆdÆt pie 2 piegÆjienu kompilatora.
-16-08-2002
+16.08.2002
   Nopietns progress 2 piegÆjienu kompilñıanÆ.
-17-08-2002
+17.08.2002
   2 piegÆjienu kompilñıana ir strÆdAjoıa.
-19-08-2002
+19.08.2002
   AtrisinÆju problñmu ar BLOCKMAP lielÆku par 64k.
   Salaboju skrØnıotus.
-20-08-2002
+20.08.2002
   Implementñju slØpo virsmu definñıanu izmantojot virsot·u augstumus.
-23-08-2002
+23.08.2002
   UtilØtos atbrØvojos no iostream.
-26-08-2002
+26.08.2002
   SlØpo virsmu definñıana izmantojot ZDoom lØniju speciÆlu.
   PadarØju VEntity publisku.
-27-08-2002
+27.08.2002
   Ieviesu atbalstu krÆsainam sektoru apgaismojumam.
   Apvienoju Entity un MapObject klases.
-28-08-2002
+28.08.2002
   Hexen atbrØvojos no tilta orbØtu tabulÆm.
   Konfigurñjams entØıu limits.
   Ieviesu atbalstu vecajÆm ekrÆna proporcijÆm.
-29-08-2002
+29.08.2002
   SÆku ieviest lØme·a klasi.
-30-08-2002
+30.08.2002
   Visi lØme·a dati ir pÆrnesti uz lØme·a klasi.
   Apgreidoju tekstİru utilØtu. Var konvertñt Strife tekstİras.
-31-08-2002
+31.08.2002
   Turpinu darbu pie lØme·a klases, pÆrnestas veirÆkas funkcijas.
   Var eksportñt Strife tekstİras atpakaõ wad failÆ.
   SkriptÆ bool var izmantot funkciju argumentos un kÆ atgrie÷amo tipu.
-02-09-2002
+02.09.2002
   SkriptÆ atbrØvojos no PointInSubsector, visur ØstenØbÆ ir vajadzØgs sektors.
   PieıóirıanÆ netika pÆrbaudØta tipu savietojamØba.
-05-09-2002
+05.09.2002
   PÆrnesu P_ChangeSector uz dzini.
-07-09-2002
+07.09.2002
   Aizvietoju boolean ar bool.
   PÆrnesu RoughMonsterSearch uz dzini.
-14-09-2002
+14.09.2002
   SÆku pÆrveidot klases jaunÆ stilÆ.
-21-09-2002
+21.09.2002
   Turpinu sadali. Ğodien kÆrta Hexen. Ak, vai!
-28-09-2002
+28.09.2002
   Turpinu. KÆrta vñl vienai kaudzei klaıu.
-05-10-2002
+05.10.2002
   Sodien kÆrta Strife klasñm.
-12-10-2002
+12.10.2002
   Dienas kÆrtØbÆ menu.
-19-10-2002
+19.10.2002
   KÆrta menu objektiem.
-26-10-2002
+26.10.2002
   Beidzot arØ servera pamatklases. Tas viss tika apdeitots iekı CVS, bet tÆ
  laikA uzkÆrÆs kompis un radÆk konflikti. Nebija laika Òakarñties. Bet pats
  galvenais ir tas, ka visas klases ir jaunajÆ stilÆ.
-02-11-2002
+02.11.2002
   Tiku galÆ ar CVS konfliktu. VisÆdi citÆd izjaukta diena.
-09-11-2002
+09.11.2002
   Atradu kÆpñc ACS kÆrÆs - aizmirsu iekõaut skripta failu.
-16-11-2002
+16.11.2002
   PÆris uzlabojumi softa draiverØ. PÆris citi sØki labojumi.
-02-01-2003
+02.01.2003
   PÆris pÆrkÆrtojumi menu, konkrñti ievada lØnija.
   KompilÆtorÆ ir tikai 2 piegÆjienu versija, atbrØvojos no this pointera.
-15-02-2003
+15.02.2003
   Ievada lØniju integrÆcija.
   Korekts Destroy.
-08-03-2003
+08.03.2003
   Uzlaboju tØkla spñli, cerams ka nebİs aizturu.
 
 ******************************************************************************
                             VERSIJA 1.15
 ******************************************************************************
 
-03-07-2003
+03.07.2003
   Taka darbs pie Vavoom ir loti ierobezots, trukst daudz log informacijas.
  Man ir izdevies izveidot nelielu sistemu ka apdeitot un ir neliels progress.
  Isuma statuss uz so dienu, salidzinajuma ar relizi.
@@ -190,79 +190,79 @@
   Testa implementacija ZDoom kameram.
   TArray templeits papildinats ar atminas tagu.
   Apdeitoju DDF konverteri lai tas generetu klasu failus.
-05-09-2003
+05.09.2003
   Nolemu apdeitot logus. Stavoklis uz sodienu.
   Kautkas prieks Boom atbalsta, neka daudz.
   Joka pec speletaja ieroca nomesana.
   Darbs pie Strife liniju specialiem, daudzi jaunie jau strada.
-22-09-2003
+22.09.2003
   Salaboju RoughMonsterSearch.
-23-09-2003
+23.09.2003
   Ir bijusas paris izmainas Strife, tadas ka sarunas laika nospiezot ESC tiek
  aizsutits impuls, kludas labojums menu slaideros un enumos, statusbara tagad
  ir veselibas skaits (vel nav indikators), implementeju stavesanas funkciju,
  ir klusie ieroci.
   Palielinaju maksimalo izskirtspeju.
   glbsp konsoles komanda parsingo visus parametrus.
-25-09-2003
+25.09.2003
   vlumpy prot veidot Doom standarta patcus.
   Teksta drukasana ar vardu vrapingu Strife sarunam.
   Gadijuma sarunas.
-26-09-2003
+26.09.2003
   Atradu ko nozime visi Strife sarunu atbilzu lauki, tagad speletajam tiek
  doti prieksmeti un ir ne atbilde ja kautka nav. Inventara sistema.
-29-09-2003
+29.09.2003
   Atradu ko nozime visi parametri Strife sarunas. Tagad viss strada ka vajag,
  tai skaita visi nomestie prieksmeti. Ir ari kvestu biti.
   Nokopeju no Unreal-a guard makrosu kontekstu Linux versijai, signali tagad
  izmanto longjmp lai izietu ara un atjaunotu registrus lai varetu mierigi
  izmest exception-u. Tagad signali normali iziet no programas.
-02-10-2003
+02.10.2003
   Strife statusbara ierocu popupa ir visi elementi. Implementeti specialie
  sarunu prieksmeti kuri atver durvis. Tiek dota precizitate un izturiba.
-03-10-2003
+03.10.2003
   Palielinaju speletaja sakuma punktu skaitu.
   Strife izsitot logu tas vairs nebloke, var nonemt force field.
-15-10-2003
+15.10.2003
   Izlaboju kludu Heretic kad inventars pec attieciga laika neaizveras.
   OpenGL un Direct3D draiveros ja nav brivu cache bloku tiek atbrivoti visi
  vecie cache bloki.
   Seivgeimos tagad tiek saglabata slepta limena informacija. Tagad ieladejot
  seivu un izejot limeni pareizi atgriezas uz vajadzigo limeni.
-21-10-2003
+21.10.2003
   Speletaja ierocu spraiti tiek zimeti dazados atalumos lai nebutu problemu
  ar to parklasanos.
-05-11-2003
+05.11.2003
   Speletaja struktura parveidota par klasi.
-22-12-2003
+22.12.2003
   Ieviesu risinajumu "feet in ground" problemai.
 
 ******************************************************************************
                             VERSIJA 1.15.1
 ******************************************************************************
 
-09-01-2004
+09.01.2004
   Apdeitoju uz jaunako glbsp versiju.
   Izlaboju atkartojosos balsu kludu.
   Implementeju comm unita un teksturu skrollinga liniju specialus.
   Saku parnest no ZDoom Strife stavoklu funkcijas.
-13-01-2004
+13.01.2004
   Parnesu praktiski visas pieejamas Strife stavoklu funkcijas. Alternativie
  ieroci.
-23-01-2004
+23.01.2004
   Parnesu daudzas Strife stavoklu funkcijas pec to piederibas.
-27-01-2004
+27.01.2004
   Izlaboju kludu limena ielade.
   Labaks minzone izmers.
-11-02-2004
+11.02.2004
   Salaboju botu tikla mesidzus.
   Implementeju Strife ammo satchel.
   Sarunu uzsaksanai augstuma parbaude.
-12-02-2004
+12.02.2004
   Salaboju atkartotu menu izsauksanu.
-27-02-2004
+27.02.2004
   Speletaja starta punktu augstums.
-24-03-2004
+24.03.2004
   Speciala darbiba nogalinot monstru.
   Salaboju augstumu floutojosajiem itemiem.
   Salaboju TGA failu paletes ieladi.
@@ -271,47 +271,47 @@
                             VERSIJA 1.15.2
 ******************************************************************************
 
-07-04-2004
+07.04.2004
   Loga rezims visiem Windows renderiem.
-15-04-2004
+15.04.2004
   Campers ieteica paris labojumus un atbalstu peles rullitim.
 !!! Trukst datu.
-29-07-2004
+29.07.2004
   DirectSound draiveri atrisinaju problemu ar strukturu izmeriem.
-18-08-2004
+18.08.2004
   Atbalsts lielakiem virtuala ekrana izmeriem.
-21-08-2004
+21.08.2004
   Partaisiju VClass par patstavigu klasi.
   Partaisiju rendera un skanas draiveru registraciju.
-22-08-2004
+22.08.2004
   Parnesu kaudzi funkciju uz speletaja klasi.
-23-08-2004
+23.08.2004
   Parnesu ari ierocu utilitus uz speletaja klasi.
-26-08-2004
+26.08.2004
   Pievienoju jaunus 3D modelus Hexen-am.
-27-08-2004
+27.08.2004
   Saku parnest visparigas klienta funkcijas uz speletaja klasi.
-28-08-2004
+28.08.2004
   Pabeidzu ar visparigajam klienta funkcijam.
-04-10-2004
+04.10.2004
   I've got my own computer at home and I'm back to Vavoom development. I also
  decided to write further logs in English, partly because most user's don't
  speek Latvian (now they will understand this) and because in Linux typing logs
  in Latvian might have compatibility problems. But don't expect me to translate
  all old logs.
-05-10-2004
+05.10.2004
   Added behavior lump size check. Levels with BEHAVIOR lump of 0 bytes will
  load fine now.
-06-10-2004
+06.10.2004
   Working on better rendering of old skies, almost done.
-07-10-2004
+07.10.2004
   Finished improved old sky rendering.
-08-10-2004
+08.10.2004
   Added SDL patches (with some modifications). Probably I have a very old
  version of SDL since I had to comment out some lines that most likely do work
  with newer versions.
   Updated to latest glBSP version.
-10-10-2004
+10.10.2004
   Added support for version 3.0 GL-Nodes in engine and glVIS.
   Fixed flying blood n Hexen.
   In Doom and Strife added definitions for texture and flat animations for all
@@ -319,25 +319,131 @@
   Added toggle always run to controls menu.
   In Linux end text replace characters below 32 with dot.
   For Strife added helper ACS scripts lump. Coorect locks by quests.
-11-10-2004
+11.10.2004
   Joystick yaw speed default value fixed.
   Added acc and compiling of helper ACS to build process.
   In Strife stamina affects maximal health.
-12-10-2004
+12.10.2004
   Working on Strife. By looking at SvDoom source found out that items and
  blowable objects have give quest flag with quest number in speed. It made a
  lots of quest triggers work fine. Also implemented animated door. Now it's
  playable till killing of Programmer.
-13-10-2004
+13.10.2004
   More work on Strife. Fully implemented alarm indicators, turrets, stalkers
  and Programmer. Killing Programmer informs helper ACS about death so that
  map traversals to new and abandoned front base work fine.
-15-10-2004
-  Upgrasded to latest SDL. Amyways there's some delay till sound is played.
-17-10-2004
+15.10.2004
+  Upgraded to latest SDL. Amyways there's some delay till sound is played.
+17.10.2004
   Working on Strife monsters. Implemented templar, inquisitor, Bishop, Macil,
  Oracle, Loremaster, specters, Entity. Also implemented sigil.
 
 ******************************************************************************
                             VERSION 1.15.3
+******************************************************************************
+
+26.10.2004
+  In ACS interpreter replaced function table with big switch statement. This
+ is much faster since compiler can optimize it better (like in progs VM). It
+ will also allow multiple other optimizations that I've done in progs VM.
+29.10.2004
+  Finally added TID handling to all games.
+31.10.2004
+  Implementing missing Hexen line specials in all games. The only missing is
+ use puzzle item.
+11.11.2004
+  Several changes in Allegro+GLX driver to match latest Allegro version.
+14.11.2004
+  Fixed sky height, always checking for valid sprite number and frame.
+20.11.2004
+  Began working on implementing all sector specials in all games.
+21.11.2004
+  All of the normal sector specials and extended damage specials are properly
+ implemented. This also fixed several bugs where sector special number wasn't
+ addjusted to translated special number. Also fixed time when damage specials
+ are applied.
+22.11.2004
+  Implemented wad file lump namespaces.
+  In ACS interpreter manually inlined stack functions. Execution local state
+ variables that were global now are local.
+23.11.2004
+  Added support for loading PNG files. As a test tried to load a hi-res PNG
+ texture replacement textures and it worked fine, meaning that hi-res texture
+ support is almost done.
+  In ACS interpreter optimized work with stack.
+24.11.2004
+  Added all extended acs opcodes. Most of them currently are not implemented,
+ they only take parameters and pushes result to stack.
+25.11.2004
+  Added support for loading enhanced ACS script lumps.
+28.11.2004
+  Implemented ACS functions. Created scripts object class for libraries.
+29.11.2004
+  Fully implemented support for high-resolution textures.
+  Some more work on ACS objects.
+30.11.2004
+  Implemented ACS variable arrays and libraries.
+04.12.2004
+  Increased ACS variable amounts.
+  Updated to acc 1.31.
+05.12.2004
+  Removed limit on ACS scritp variable count. Execution of ACS scritps with
+ result.
+06.12.2004
+  In progs increased maximal function arg count to 16, StartACS uses this.
+  Implemented some ACS opcodes.
+  Updated acc to version 1.32.
+  Started to implement many Strife line specials with helper ACS using new
+ ACS possibilities.
+07.12.2004
+  In Strife changed lock numbers for "Doean't work" to match ZDoom's.
+  Strife's new line specials with temporary numbers changed to have proper
+ numbers.
+08.12.2004
+  In Strife fixed z velocity for flamethrower and grenades. Fixed mauler's
+ second attack throwing out of the level. Proper Sigil sprite depending on
+ number of Sigil pieces. Fixed floor Sigil attack.
+09.12.2004
+  Implemened Strife's friendly enemy AI.
+10.12.2004
+  Implemented Strife's key display. Fixed activation of several line types.
+11.12.2004
+  Implemented some Strife's unknown action functions.
+12.12.2004
+  Added more line flags. Implemented railings.
+  Strife conversations now display prices. 
+  Fixed manual doors to use passed special arguments.
+  In utils directory created directory for editing stuff - ACS includes and
+ config files for WadAuthor and DoomBuilder.
+13.12.2004
+  In Strife implemented armor display, fixed breakable glass.
+14.12.2004
+  Implemented throwing an item in Strife.
+17.12.2004
+  Manual door fix in all games.
+19.12.2004
+  Fixed Strife boss deaths.
+20.12.2004
+  Updated to acc 1.33.
+21.12.2004
+  Implemented Strife finales, slideshows, various death types.
+22.12.2004
+  Several fixes to compile under Windows.
+  Updated glVIS to release a new version.
+23.12.2004
+  Moved cheat and savegame functions to player class.
+  Player class functions are called directly by engine.
+  Added newely added ACS pcodes.
+24.12.2004
+  Properly implemented SetThingSpecial, SetFloorTrigger, setCeilingTrigger,
+ ThingProjectile2, GetLevelInfo and ChangeSky pcodes.
+25.12.2004
+  Implemented temporary hack to save lines seen on automap.
+26.12.2004
+  Properly implemented music change ACS commands.
+  Option to split long frames into smaller ones when running thinkers so that
+ physics work more accurate.
+
+******************************************************************************
+                            VERSION 1.16
 ******************************************************************************

@@ -47,30 +47,31 @@ struct picinfo_t
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // r_main
-void R_Init(void); // Called by startup code.
-void R_Start(const mapInfo_t &info);
+void R_Init(); // Called by startup code.
+void R_Start();
 void R_SetViewSize(int blocks);
-void R_RenderPlayerView(void);
+void R_RenderPlayerView();
 
 // r_tex
-void R_InitTexture(void);
+void R_InitTexture();
 int R_TextureNumForName(const char *name);
 int R_CheckTextureNumForName(const char *name);
 int R_FlatNumForName(const char* name);
 int R_CheckFlatNumForName(const char* name);
 float R_TextureHeight(int pic);
-void R_AnimateSurfaces(void);
+void R_AnimateSurfaces();
 
 // r_surf
-void R_PreRender(void);
+void R_PreRender();
 void R_SegMoved(seg_t *seg);
 
 // r_things
 void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot, int = 0);
-void R_InitSprites(void);
+void R_InitSprites();
 
 // r_sky
-void R_ForceLightning(void);
+void R_ForceLightning();
+void R_SkyChanged();
 
 //	2D graphics
 int R_RegisterPic(const char *name, int type);
@@ -89,9 +90,12 @@ extern int				skyflatnum;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.6  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.5  2001/11/09 14:25:15  dj_jl
 //	Cleaned up
 //	

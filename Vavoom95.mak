@@ -4,7 +4,7 @@ BCB = $(MAKEDIR)\..
 !endif
 
 # ---------------------------------------------------------------------------
-CFLAGS = -O2 -X- -a4 -4 -b -k- -vi -q -c -w -I$(BCB)\include -Ic:\mssdk\include -D_NO_VCL
+CFLAGS = -O2 -X- -a4 -4 -b -k- -vi -q -c -w -Ic:\mssdk\include -D_NO_VCL
 RFLAGS = /l 0x426
 AFLAGS = /ml /zn
 LFLAGS = -Iobj -aa -Tpe -x -Gn -w -q
@@ -85,7 +85,8 @@ LIBRARIES = utils\glbsp\libglbsp.lib utils\glvis\glvis.lib \
 $(PROJECT): $(OBJFILES) $(RESFILES) $(LIBRARIES)
     ilink32 @&&!
     $(LFLAGS) -L$(BCB)\lib c0w32.obj $(OBJFILES), +
-    $(PROJECT),,$(LIBRARIES) import32.lib cw32.lib,,$(RESFILES)
+    $(PROJECT),,$(LIBRARIES) libpng.lib zlib.lib import32.lib cw32.lib,, +
+	$(RESFILES)
 !
 # ---------------------------------------------------------------------------
 .cpp.obj:

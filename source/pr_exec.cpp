@@ -1540,7 +1540,7 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4)
 //==========================================================================
 
 int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
-								int parm5)
+	int parm5)
 {
 	int		*p;
 
@@ -1568,7 +1568,7 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 //==========================================================================
 
 int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
-								int parm5, int parm6)
+	int parm5, int parm6)
 {
 	int		*p;
 
@@ -1597,7 +1597,7 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 //==========================================================================
 
 int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
-								int parm5, int parm6, int parm7)
+	int parm5, int parm6, int parm7)
 {
 	int		*p;
 
@@ -1627,7 +1627,7 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 //==========================================================================
 
 int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
-								int parm5, int parm6, int parm7, int parm8)
+	int parm5, int parm6, int parm7, int parm8)
 {
 	int		*p;
 
@@ -1648,6 +1648,296 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 	p[5] = parm6;
 	p[6] = parm7;
 	p[7] = parm8;
+    return ExecuteFunction(func);
+}
+
+//==========================================================================
+//
+//	TProgs::Exec
+//
+//==========================================================================
+
+int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
+	int parm5, int parm6, int parm7, int parm8, int parm9)
+{
+	int		*p;
+
+#ifdef CHECK_PARM_COUNT
+    if (Functions[fnum].NumParms != 9)
+    {
+    	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 9",
+    		FuncName(fnum), Functions[fnum].NumParms);
+    }
+#endif
+	p = pr_stackPtr;
+	pr_stackPtr += 9;
+	p[0] = parm1;
+	p[1] = parm2;
+	p[2] = parm3;
+	p[3] = parm4;
+	p[4] = parm5;
+	p[5] = parm6;
+	p[6] = parm7;
+	p[7] = parm8;
+	p[8] = parm9;
+    return ExecuteFunction(func);
+}
+
+//==========================================================================
+//
+//	TProgs::Exec
+//
+//==========================================================================
+
+int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
+	int parm5, int parm6, int parm7, int parm8, int parm9, int parm10)
+{
+	int		*p;
+
+#ifdef CHECK_PARM_COUNT
+    if (Functions[fnum].NumParms != 10)
+    {
+    	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 10",
+    		FuncName(fnum), Functions[fnum].NumParms);
+    }
+#endif
+	p = pr_stackPtr;
+	pr_stackPtr += 10;
+	p[0] = parm1;
+	p[1] = parm2;
+	p[2] = parm3;
+	p[3] = parm4;
+	p[4] = parm5;
+	p[5] = parm6;
+	p[6] = parm7;
+	p[7] = parm8;
+	p[8] = parm9;
+	p[9] = parm10;
+    return ExecuteFunction(func);
+}
+
+//==========================================================================
+//
+//	TProgs::Exec
+//
+//==========================================================================
+
+int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
+	int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
+	int parm11)
+{
+	int		*p;
+
+#ifdef CHECK_PARM_COUNT
+    if (Functions[fnum].NumParms != 11)
+    {
+    	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 11",
+    		FuncName(fnum), Functions[fnum].NumParms);
+    }
+#endif
+	p = pr_stackPtr;
+	pr_stackPtr += 11;
+	p[0] = parm1;
+	p[1] = parm2;
+	p[2] = parm3;
+	p[3] = parm4;
+	p[4] = parm5;
+	p[5] = parm6;
+	p[6] = parm7;
+	p[7] = parm8;
+	p[8] = parm9;
+	p[9] = parm10;
+	p[10] = parm11;
+    return ExecuteFunction(func);
+}
+
+//==========================================================================
+//
+//	TProgs::Exec
+//
+//==========================================================================
+
+int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
+	int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
+	int parm11, int parm12)
+{
+	int		*p;
+
+#ifdef CHECK_PARM_COUNT
+    if (Functions[fnum].NumParms != 12)
+    {
+    	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 12",
+    		FuncName(fnum), Functions[fnum].NumParms);
+    }
+#endif
+	p = pr_stackPtr;
+	pr_stackPtr += 12;
+	p[0] = parm1;
+	p[1] = parm2;
+	p[2] = parm3;
+	p[3] = parm4;
+	p[4] = parm5;
+	p[5] = parm6;
+	p[6] = parm7;
+	p[7] = parm8;
+	p[8] = parm9;
+	p[9] = parm10;
+	p[10] = parm11;
+	p[11] = parm12;
+    return ExecuteFunction(func);
+}
+
+//==========================================================================
+//
+//	TProgs::Exec
+//
+//==========================================================================
+
+int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
+	int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
+	int parm11, int parm12, int parm13)
+{
+	int		*p;
+
+#ifdef CHECK_PARM_COUNT
+    if (Functions[fnum].NumParms != 13)
+    {
+    	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 13",
+    		FuncName(fnum), Functions[fnum].NumParms);
+    }
+#endif
+	p = pr_stackPtr;
+	pr_stackPtr += 13;
+	p[0] = parm1;
+	p[1] = parm2;
+	p[2] = parm3;
+	p[3] = parm4;
+	p[4] = parm5;
+	p[5] = parm6;
+	p[6] = parm7;
+	p[7] = parm8;
+	p[8] = parm9;
+	p[9] = parm10;
+	p[10] = parm11;
+	p[11] = parm12;
+	p[12] = parm13;
+    return ExecuteFunction(func);
+}
+
+//==========================================================================
+//
+//	TProgs::Exec
+//
+//==========================================================================
+
+int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
+	int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
+	int parm11, int parm12, int parm13, int parm14)
+{
+	int		*p;
+
+#ifdef CHECK_PARM_COUNT
+    if (Functions[fnum].NumParms != 14)
+    {
+    	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 14",
+    		FuncName(fnum), Functions[fnum].NumParms);
+    }
+#endif
+	p = pr_stackPtr;
+	pr_stackPtr += 14;
+	p[0] = parm1;
+	p[1] = parm2;
+	p[2] = parm3;
+	p[3] = parm4;
+	p[4] = parm5;
+	p[5] = parm6;
+	p[6] = parm7;
+	p[7] = parm8;
+	p[8] = parm9;
+	p[9] = parm10;
+	p[10] = parm11;
+	p[11] = parm12;
+	p[12] = parm13;
+	p[13] = parm14;
+    return ExecuteFunction(func);
+}
+
+//==========================================================================
+//
+//	TProgs::Exec
+//
+//==========================================================================
+
+int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
+	int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
+	int parm11, int parm12, int parm13, int parm14, int parm15)
+{
+	int		*p;
+
+#ifdef CHECK_PARM_COUNT
+    if (Functions[fnum].NumParms != 15)
+    {
+    	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 15",
+    		FuncName(fnum), Functions[fnum].NumParms);
+    }
+#endif
+	p = pr_stackPtr;
+	pr_stackPtr += 15;
+	p[0] = parm1;
+	p[1] = parm2;
+	p[2] = parm3;
+	p[3] = parm4;
+	p[4] = parm5;
+	p[5] = parm6;
+	p[6] = parm7;
+	p[7] = parm8;
+	p[8] = parm9;
+	p[9] = parm10;
+	p[10] = parm11;
+	p[11] = parm12;
+	p[12] = parm13;
+	p[13] = parm14;
+	p[14] = parm15;
+    return ExecuteFunction(func);
+}
+
+//==========================================================================
+//
+//	TProgs::Exec
+//
+//==========================================================================
+
+int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
+	int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
+	int parm11, int parm12, int parm13, int parm14, int parm15, int parm16)
+{
+	int		*p;
+
+#ifdef CHECK_PARM_COUNT
+    if (Functions[fnum].NumParms != 16)
+    {
+    	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 16",
+    		FuncName(fnum), Functions[fnum].NumParms);
+    }
+#endif
+	p = pr_stackPtr;
+	pr_stackPtr += 16;
+	p[0] = parm1;
+	p[1] = parm2;
+	p[2] = parm3;
+	p[3] = parm4;
+	p[4] = parm5;
+	p[5] = parm6;
+	p[6] = parm7;
+	p[7] = parm8;
+	p[8] = parm9;
+	p[9] = parm10;
+	p[10] = parm11;
+	p[11] = parm12;
+	p[12] = parm13;
+	p[13] = parm14;
+	p[14] = parm15;
+	p[15] = parm16;
     return ExecuteFunction(func);
 }
 
@@ -1720,9 +2010,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.33  2004/12/27 12:23:16  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.32  2004/12/22 07:37:21  dj_jl
 //	Increased argument count limit.
-//
+//	
 //	Revision 1.31  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
 //	

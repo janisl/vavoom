@@ -359,7 +359,7 @@ winding_t *TVisBuilder::ClipToSeperators(winding_t *source, winding_t *pass,
 //==========================================================================
 
 void TVisBuilder::RecursiveLeafFlow(int leafnum, threaddata_t *thread,
-	pstack_t *prevstack)
+	pstack_t *prevstack, int StackDepth)
 {
 	pstack_t	stack;
 	portal_t	*p;
@@ -369,6 +369,10 @@ void TVisBuilder::RecursiveLeafFlow(int leafnum, threaddata_t *thread,
 	int			i, j;
 	long		*test, *might, *vis;
 	bool		more;
+
+	//	Avoid going too deep into stack.
+	if (StackDepth > 256)
+		return;
 
 	c_chains++;
 
@@ -449,7 +453,7 @@ void TVisBuilder::RecursiveLeafFlow(int leafnum, threaddata_t *thread,
 			// the second leaf can only be blocked if coplanar
 			stack.source = prevstack->source;
 			stack.pass = target;
-			RecursiveLeafFlow(p->leaf, thread, &stack);
+			RecursiveLeafFlow(p->leaf, thread, &stack, StackDepth + 1);
 			FreeWinding(target);
 			continue;
 		}
@@ -495,7 +499,7 @@ void TVisBuilder::RecursiveLeafFlow(int leafnum, threaddata_t *thread,
 		c_portalpass++;
 	
 		// flow through it for real
-		RecursiveLeafFlow(p->leaf, thread, &stack);
+		RecursiveLeafFlow(p->leaf, thread, &stack, StackDepth + 1);
 		
 		FreeWinding(source);
 		FreeWinding(target);
@@ -529,7 +533,7 @@ void TVisBuilder::PortalFlow(portal_t *p)
 	data.pstack_head.portalplane = *p;
 	data.pstack_head.mightsee = p->mightsee;
 		
-	RecursiveLeafFlow(p->leaf, &data, &data.pstack_head);
+	RecursiveLeafFlow(p->leaf, &data, &data.pstack_head, 0);
 
 	Delete(p->mightsee);
 	p->status = stat_done;
@@ -730,9 +734,12 @@ void TVisBuilder::BuildReject(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2004/12/27 12:23:18  dj_jl
+//	Multiple small changes for version 1.16
+//
 //	Revision 1.8  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.7  2002/01/03 18:35:14  dj_jl
 //	Switched to doubles, some fixes
 //	

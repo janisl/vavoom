@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                  version 1.15.3
+                                                    version 1.16
 
 Contents:
     0. Disclaimer
@@ -96,6 +96,8 @@ In order to compile and run Vavoom under Linux, you need the following:
 Compiler and tools:
     * GNU C++ Compiler, GNU make (every LINUX user must have them)
 Libraries:
+    * zlib
+    * libpng
     * Allegro 4.0 (http://alleg.sourceforge.net)
  or
     * SDL 1.2.2 (http://www.libsdl.org)
@@ -119,9 +121,10 @@ and change into it:
 
   2. Unpack the Vavoom source package:
 
-        unzip v113_src.zip
+        unzip v116_src.zip
 
-  3. Run fixunix.sh to convert text files to UNIX format:
+  3. If you got zip file then you must run fixunix.sh to convert text files
+to UNIX format:
 
         ./fixunix.sh
 
@@ -193,6 +196,8 @@ For DOS you need
       * DJGPP (http://www.delorie.com/djgpp)
       * GNU make or RHIDE
   Libraries:
+      * zlib
+      * libpng
       * Allegro 4.0 (http://alleg.sourceforge.net) and later.
       * OpenGL version: MESA (http://www.mesa3d.org) and Allegro driver for
     MESA (http://www.geocities.com/SiliconValley/7259/)
@@ -206,6 +211,8 @@ For Windows you need:
       * Microsoft Visual C++ 6.0.
       * DJGPP (http://www.delorie.com/djgpp) - used to compile asm files.
   Libraries:
+      * zlib
+      * libpng
       * DirectX 7 SDK (http://www.microsoft.com/directx), already included
     in Builder but some headers needed by DirectMusic are missing. In Allogro
     website (http://alleg.sourceforge.net) you will find a minimal version of
@@ -886,6 +893,16 @@ Version 1.15.3
 * Even more improved Strife support.
 * Several other small bug fixes.
 
+==============================================================================
+Version 1.16
+==============================================================================
+
+* Fully working Strife support.
+* Implemented all sector specials in all games.
+* Support for hi-res texture replacements.
+* Added support for enhanced ACS script lumps. Several extended pcodes are
+ still missing.
+
 *****************************************************************************
 8. Licencing
 *****************************************************************************
@@ -898,6 +915,12 @@ Version 1.15.3
 
   The Vavoom homepage:
     http://www.vavoom-engine.com/
+
+  Vavoom forums:
+    http://forums.vavoom-engine.com/
+
+  Vavoom wiki:
+    http://www.vavoom-engine.com/wiki/
 
   The Vavoom SourceForfe project page:
     http://sourceforge.net/projects/vavoom/
