@@ -230,7 +230,11 @@ static void ClearSaveSlot(int slot)
 	char fileName[MAX_OSPATH];
 
 	sprintf(slotExt, "vs%d", slot);
-	Sys_OpenDir(va("%s/saves", fl_gamedir));
+	if (!Sys_OpenDir(va("%s/saves", fl_gamedir)))
+	{
+		//  Directory doesn't exist ... yet
+		return;
+	}
 	while ((curName = Sys_ReadDir()) != NULL)
 	{
 		char ext[8];
@@ -263,7 +267,11 @@ static void CopySaveSlot(int sourceSlot, int destSlot)
 
 	sprintf(srcExt, "vs%d", sourceSlot);
 	sprintf(dstExt, "vs%d", destSlot);
-	Sys_OpenDir(va("%s/saves", fl_gamedir));
+	if (!Sys_OpenDir(va("%s/saves", fl_gamedir)))
+	{
+		//  Directory doesn't exist ... yet
+		return;
+	}
 	while ((curName = Sys_ReadDir()) != NULL)
 	{
 		char ext[8];
@@ -1278,9 +1286,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/11/09 18:16:10  dj_jl
+//	Fixed copying and deleting when save directory doesn't exist
+//
 //	Revision 1.12  2001/11/09 14:32:00  dj_jl
 //	Copy and delete using directory listing
-//
+//	
 //	Revision 1.11  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
 //	
