@@ -609,7 +609,7 @@ void* Sys_ZoneBase(int* size)
 			maxzone = MAXIMUM_HEAP_SIZE;
 	}
 
-	heap = 0xa00000;
+	heap = 0x2010000;
 
 	do
 	{
@@ -758,9 +758,12 @@ END_OF_MAIN()	//	For Allegro
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/09/06 17:47:31  dj_jl
+//	no message
+//
 //	Revision 1.6  2001/08/30 17:41:00  dj_jl
 //	Added end text
-//
+//	
 //	Revision 1.5  2001/08/29 17:49:36  dj_jl
 //	Added file time functions
 //	

@@ -30,9 +30,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
-#include "cl_local.h"
-
-#define PU_MODEL		10
+#include "r_local.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -42,28 +40,28 @@
 
 struct pcx_t
 {
-    char			manufacturer;
-    char			version;
-    char			encoding;
-    char			bits_per_pixel;
+	char			manufacturer;
+	char			version;
+	char			encoding;
+	char			bits_per_pixel;
 
-    unsigned short	xmin;
-    unsigned short	ymin;
-    unsigned short	xmax;
-    unsigned short	ymax;
-    
-    unsigned short	hres;
-    unsigned short	vres;
+	unsigned short	xmin;
+	unsigned short	ymin;
+	unsigned short	xmax;
+	unsigned short	ymax;
 
-    unsigned char	palette[48];
-    
-    char			reserved;
-    char			color_planes;
-    unsigned short	bytes_per_line;
-    unsigned short	palette_type;
-    
-    char			filler[58];
-    unsigned char	data;		// unbounded
+	unsigned short	hres;
+	unsigned short	vres;
+
+	unsigned char	palette[48];
+
+	char			reserved;
+	char			color_planes;
+	unsigned short	bytes_per_line;
+	unsigned short	palette_type;
+
+	char			filler[58];
+	unsigned char	data;		// unbounded
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -73,7 +71,6 @@ struct pcx_t
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 static model_t *Mod_LoadModel(model_t *mod);
-static void Mod_LoadAliasModel(model_t *mod, void *buffer);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -128,9 +125,9 @@ model_t *Mod_FindName(char *name)
 	if (!name[0])
 		Sys_Error("Mod_ForName: NULL name");
 		
-//
-// search the currently loaded models
-//
+	//
+	// search the currently loaded models
+	//
 	for (i=0 , mod=mod_known ; i<mod_numknown ; i++, mod++)
 	{
 		if (!strcmp(mod->name, name))
@@ -153,108 +150,32 @@ model_t *Mod_FindName(char *name)
 
 //==========================================================================
 //
-//	Mod_LoadModel
-//
-//	Loads a model into the cache
+//	Mod_SwapAliasModel
 //
 //==========================================================================
 
-static model_t *Mod_LoadModel(model_t *mod)
+static void Mod_SwapAliasModel(model_t *mod)
 {
-	unsigned	*buf;
-	char		filename[256];
-
-	if (mod->data)
-	{
-		return mod;
-	}
-
-//
-// load the file
-//
-	if (!FL_FindFile(mod->name, filename))
-		Sys_Error("Couldn't find model %s", mod->name);
-	M_ReadFile(filename, (byte**)&buf);
-	
-//
-// fill it in
-//
-
-// call the apropriate loader
-	switch (LittleLong(*(unsigned *)buf))
-	{
-	 case IDPOLY2HEADER:
-		Mod_LoadAliasModel(mod, buf);
-		break;
-		
-	 default:
-		Sys_Error("Unknown model format");
-		break;
-	}
-	Z_Free(buf);
-
-	return mod;
-}
-
-//==========================================================================
-//
-//	Mod_ForName
-//
-//	Loads in a model for the given name
-//
-//==========================================================================
-
-model_t *Mod_ForName(char *name)
-{
-	model_t	*mod;
-
-	mod = Mod_FindName(name);
-
-	return Mod_LoadModel(mod);
-}
-
-//==========================================================================
-//
-//	Mod_LoadAliasModel
-//
-//==========================================================================
-
-static void Mod_LoadAliasModel(model_t *mod, void *buffer)
-{
-	int					version;
-	int					size;
-	int					i;
-	mmdl_t				*pinmodel;
+	int					i, j;
 	mmdl_t				*pmodel;
-	mskin_t				*pinskin;
-	mskin_t				*pskin;
-	mstvert_t			*pinstverts;
 	mstvert_t			*pstverts;
-	mtriangle_t			*pintriangles;
 	mtriangle_t			*ptri;
-	mframe_t			*pinframe;
 	mframe_t			*pframe;
-	int					*pincmds;
 	int					*pcmds;
 
-	pinmodel = (mmdl_t *)buffer;
-
-	version = LittleLong(pinmodel->version);
-	if (version != ALIAS_VERSION)
-		Sys_Error("%s has wrong version number (%i should be %i)",
-				 mod->name, version, ALIAS_VERSION);
-
-	size = 	LittleLong(pinmodel->ofsend) +
-			LittleLong(pinmodel->numskins) * LittleLong(pinmodel->skinheight) * LittleLong(pinmodel->skinwidth);
-	pmodel = (mmdl_t *)Z_Malloc(size, PU_MODEL, &mod->data);
+	pmodel = (mmdl_t*)mod->data;
 
 	//
-	// endian-adjust and copy the data, starting with the alias model header
+	// endian-adjust and swap the data, starting with the alias model header
 	//
 	for (i = 0; i < (int)sizeof(mmdl_t) / 4; i++)
 	{
-		((int*)pmodel)[i] = LittleLong(((int*)pinmodel)[i]);
+		((int*)pmodel)[i] = LittleLong(((int*)pmodel)[i]);
 	}
+
+	if (pmodel->version != ALIAS_VERSION)
+		Sys_Error("%s has wrong version number (%i should be %i)",
+			mod->name, pmodel->version, ALIAS_VERSION);
 
 	if (pmodel->numverts <= 0)
 		Sys_Error("model %s has no vertices", mod->name);
@@ -277,94 +198,85 @@ static void Mod_LoadAliasModel(model_t *mod, void *buffer)
 	if (pmodel->numskins < 1)
 		Sys_Error("Mod_LoadAliasModel: Invalid # of skins: %d\n", pmodel->numskins);
 
-	//
-	// load the skins
-	//
-	pskin = (mskin_t*)((byte*)pmodel + pmodel->ofsskins);
-	pinskin = (mskin_t*)((byte*)pinmodel + pmodel->ofsskins);
-
-	for (i = 0; i < pmodel->numskins; i++)
-	{
-		strcpy(pskin[i].name, pinskin[i].name);
-	}
-
-	//
-	// set base s and t vertices
-	//
-	pstverts = (mstvert_t*)((byte*)pmodel + pmodel->ofsstverts);
-	pinstverts = (mstvert_t*)((byte*)pinmodel + pmodel->ofsstverts);
-
-	for (i = 0; i < pmodel->numstverts; i++)
-	{
-		pstverts[i].s = LittleShort(pinstverts[i].s);
-		pstverts[i].t = LittleShort(pinstverts[i].t);
-	}
-
-	//
-	// set up the triangles
-	//
-	ptri = (mtriangle_t *)((byte*)pmodel + pmodel->ofstris);
-	pintriangles = (mtriangle_t *)((byte*)pinmodel + pmodel->ofstris);
-
-	for (i = 0; i < pmodel->numtris; i++)
-	{
-		int		j;
-
-		for (j = 0; j < 3; j++)
-		{
-			ptri[i].vertindex[j] = LittleShort(pintriangles[i].vertindex[j]);
-			ptri[i].stvertindex[j] = LittleShort(pintriangles[i].stvertindex[j]);
-		}
-	}
-
-	//
-	// load the frames
-	//
 	if (pmodel->numframes < 1)
 		Sys_Error("Mod_LoadAliasModel: Invalid # of frames: %d\n", pmodel->numframes);
 
-	pframe = (mframe_t *)((byte*)pmodel + pmodel->ofsframes);
-	pinframe = (mframe_t *)((byte*)pinmodel + pmodel->ofsframes);
+	//
+	// base s and t vertices
+	//
+	pstverts = (mstvert_t*)((byte*)pmodel + pmodel->ofsstverts);
+	for (i = 0; i < pmodel->numstverts; i++)
+	{
+		pstverts[i].s = LittleShort(pstverts[i].s);
+		pstverts[i].t = LittleShort(pstverts[i].t);
+	}
 
+	//
+	// triangles
+	//
+	ptri = (mtriangle_t *)((byte*)pmodel + pmodel->ofstris);
+	for (i = 0; i < pmodel->numtris; i++)
+	{
+		for (j = 0; j < 3; j++)
+		{
+			ptri[i].vertindex[j] = LittleShort(ptri[i].vertindex[j]);
+			ptri[i].stvertindex[j] = LittleShort(ptri[i].stvertindex[j]);
+		}
+	}
+
+	//
+	// frames
+	//
+	pframe = (mframe_t *)((byte*)pmodel + pmodel->ofsframes);
 	for (i = 0; i < pmodel->numframes; i++)
 	{
-		trivertx_t		*pverts, *pinverts;
-		int				j;
-
-		pframe->scale[0] = LittleFloat(pinframe->scale[0]);
-		pframe->scale[1] = LittleFloat(pinframe->scale[1]);
-		pframe->scale[2] = LittleFloat(pinframe->scale[2]);
-		pframe->scale_origin[0] = LittleFloat(pinframe->scale_origin[0]);
-		pframe->scale_origin[1] = LittleFloat(pinframe->scale_origin[1]);
-		pframe->scale_origin[2] = LittleFloat(pinframe->scale_origin[2]);
-		strcpy(pframe->name, pinframe->name);
-
-		pinverts = (trivertx_t*)(pinframe + 1);
-		pverts = (trivertx_t*)(pframe +1);
-
-		for (j = 0; j < pmodel->numverts; j++)
-		{
-			// these are all byte values, so no need to deal with endianness
-			pverts[j].v[0] = pinverts[j].v[0];
-			pverts[j].v[1] = pinverts[j].v[1];
-			pverts[j].v[2] = pinverts[j].v[2];
-			pverts[j].lightnormalindex = pinverts[j].lightnormalindex;
-		}
-
+		pframe->scale[0] = LittleFloat(pframe->scale[0]);
+		pframe->scale[1] = LittleFloat(pframe->scale[1]);
+		pframe->scale[2] = LittleFloat(pframe->scale[2]);
+		pframe->scale_origin[0] = LittleFloat(pframe->scale_origin[0]);
+		pframe->scale_origin[1] = LittleFloat(pframe->scale_origin[1]);
+		pframe->scale_origin[2] = LittleFloat(pframe->scale_origin[2]);
 		pframe = (mframe_t*)((byte*)pframe + pmodel->framesize);
-		pinframe = (mframe_t*)((byte*)pinframe + pmodel->framesize);
 	}
 
 	//
-	// load commands
+	// commands
 	//
 	pcmds = (int*)((byte*)pmodel + pmodel->ofscmds);
-	pincmds = (int*)((byte*)pinmodel + pmodel->ofscmds);
-
 	for (i = 0; i < pmodel->numcmds; i++)
 	{
-		pcmds[i] = LittleLong(pincmds[i]);
+		pcmds[i] = LittleLong(pcmds[i]);
 	}
+}
+
+//==========================================================================
+//
+//	Mod_LoadModel
+//
+//	Loads a model into the cache
+//
+//==========================================================================
+
+static model_t *Mod_LoadModel(model_t *mod)
+{
+	if (mod->data)
+	{
+		return mod;
+	}
+
+	//
+	// load the file
+	//
+	if (FL_ReadFile(mod->name, &mod->data, PU_CACHE) < 0)
+		Sys_Error("Couldn't load %s", mod->name);
+	
+	if (LittleLong(*(unsigned *)mod->data) != IDPOLY2HEADER)
+		Sys_Error("model %s is not a md2 model", mod->name);
+
+	// swap model
+	Mod_SwapAliasModel(mod);
+
+	return mod;
 }
 
 //==========================================================================
@@ -382,7 +294,8 @@ static void LoadPCX(const char *filename, void **bufptr)
 	pcx_t		*pcx;
 	byte		*data;
 
-	M_ReadFile(filename, (byte**)&pcx);
+	if (FL_ReadFile(filename, (void**)&pcx, PU_STATIC) < 0)
+		Sys_Error("Couldn't find skin %s", filename);
 
 	if (pcx->bits_per_pixel != 8)
 	{
@@ -452,19 +365,52 @@ static void LoadPCX(const char *filename, void **bufptr)
 
 void Mod_LoadSkin(const char *name, void **bufptr)
 {
-	char		filename[256];
+	LoadPCX(name, bufptr);
+}
 
-	if (!FL_FindFile(name, filename))
-		Sys_Error("Couldn't find skin %s", name);
-	LoadPCX(filename, bufptr);
+//==========================================================================
+//
+//	R_PositionWeaponModel
+//
+//==========================================================================
+
+void R_PositionWeaponModel(clmobj_t &wpent, model_t *wpmodel, int frame)
+{
+	mmdl_t *pmdl = (mmdl_t*)Mod_Extradata(wpmodel);
+	if ((frame >= pmdl->numframes) || (frame < 0))
+	{
+		frame = 0;
+	}
+	mtriangle_t *ptris = (mtriangle_t*)((byte*)pmdl + pmdl->ofstris);
+	mframe_t *pframe = (mframe_t*)((byte*)pmdl + pmdl->ofsframes +
+		frame * pmdl->framesize);
+	trivertx_t *pverts = (trivertx_t *)(pframe + 1);
+	TVec p[3];
+	for (int vi = 0; vi < 3; vi++)
+	{
+		p[vi].x = pverts[ptris[0].vertindex[vi]].v[0] * pframe->scale[0] + pframe->scale_origin[0];
+		p[vi].y = pverts[ptris[0].vertindex[vi]].v[1] * pframe->scale[1] + pframe->scale_origin[1];
+		p[vi].z = pverts[ptris[0].vertindex[vi]].v[2] * pframe->scale[2] + pframe->scale_origin[2];
+	}
+	TVec md_forward, md_left, md_up;
+	AngleVectors(wpent.angles, md_forward, md_left, md_up);
+	md_left = -md_left;
+	wpent.origin += md_forward * p[0].x + md_left * p[0].y + md_up * p[0].z;
+	TAVec wangles;
+	VectorAngles(p[1] - p[0], wangles);
+	wpent.angles.yaw += wangles.yaw;
+	wpent.angles.pitch += wangles.pitch;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.1  2001/09/06 17:46:37  dj_jl
+//	no message
+//
 //	Revision 1.4  2001/08/15 17:18:05  dj_jl
 //	Removed MAX_SKIN_HEIGHT
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	
