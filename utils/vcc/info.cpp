@@ -29,11 +29,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define MAX_STATES				(4 * 1024)
-#define MAX_SPRITE_NAMES		1024
-#define MAX_MODELS				1024
-#define MAX_MOBJ_TYPES			1024
-
 // TYPES -------------------------------------------------------------------
 
 struct state_t
@@ -71,18 +66,14 @@ struct compstate_t
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static int				num_sprite_names;
-static FName			*sprite_names;
+static TArray<FName>		sprite_names;
 
-static int				num_models;
-static FName			*models;
+static TArray<FName>		models;
 
-static int				num_states;
-static state_t			*states = NULL;
-static compstate_t		*compstates = NULL;
+static TArray<state_t>		states;
+static TArray<compstate_t>	compstates;
 
-static mobjinfo_t		*mobj_info = NULL;
-static int				num_mobj_types;
+static TArray<mobjinfo_t>	mobj_info;
 
 static int				gv_num_sprite_names;
 static int				gv_sprite_names;
@@ -103,23 +94,12 @@ static int				gv_mobj_info;
 
 void InitInfoTables(void)
 {
-	sprite_names = new FName[MAX_SPRITE_NAMES];
-	memset(sprite_names, 0, MAX_SPRITE_NAMES * 4);
-	num_sprite_names = 0;
-
-	models = new FName[MAX_MODELS];
-	memset(models, 0, MAX_MODELS * 4);
-	num_models = 1; // 0 indicates no-model
-
-	states = new state_t[MAX_STATES];
-	memset(states, 0, MAX_STATES * sizeof(state_t));
-	compstates = new compstate_t[MAX_STATES];
-	memset(compstates, 0, MAX_STATES * sizeof(compstate_t));
-	num_states = 0;
-
-	mobj_info = new mobjinfo_t[MAX_MOBJ_TYPES];
-	memset(mobj_info, 0, MAX_MOBJ_TYPES * sizeof(mobjinfo_t));
-	num_mobj_types = 0;
+	sprite_names.Empty(64);
+	models.Empty(64);
+	states.Empty(1024);
+	compstates.Empty(1024);
+	mobj_info.Empty(128);
+	models.AddItem(NAME_None);	// 0 indicates no-model
 
 	globaldefs[numglobaldefs].Name = "num_sprite_names";
 	globaldefs[numglobaldefs].type = &type_int;
@@ -184,13 +164,10 @@ void ParseStates(TType *class_type)
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	while (!TK_Check(PU_RBRACE))
 	{
-		if (num_states >= MAX_STATES)
-		{
-			ERR_Exit(ERR_NONE, true, "States overflow.");
-		}
-
-		state_t &s = states[num_states];
-		compstate_t &cs = compstates[num_states];
+		state_t &s = *new(states) state_t;
+		memset(&s, 0, sizeof(s));
+		compstate_t &cs = *new(compstates) compstate_t;
+		memset(&cs, 0, sizeof(cs));
 
 		//	St∆vokıa identifik∆tors
 		if (tk_Token != TK_IDENTIFIER)
@@ -198,7 +175,7 @@ void ParseStates(TType *class_type)
 			ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
 		}
 		s.statename = tk_Name;
-		AddConstant(tk_Name, num_states);
+		AddConstant(tk_Name, states.Num() - 1);
 		TK_NextToken();
 		TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
 		//	Spraita v∆rds
@@ -212,17 +189,16 @@ void ParseStates(TType *class_type)
 			{
 				ERR_Exit(ERR_NONE, true, "Invalid sprite name");
 			}
-			for (i = 0; i < num_sprite_names; i++)
+			for (i = 0; i < sprite_names.Num(); i++)
 			{
 		   		if (sprite_names[i] == tk_Name)
 				{
 				   	break;
 				}
 			}
-			if (i == num_sprite_names)
+			if (i == sprite_names.Num())
 			{
-			   	sprite_names[i] = tk_Name;
-				num_sprite_names++;
+			   	i = sprite_names.AddItem(tk_Name);
 			}
 			s.sprite = i;
 		}
@@ -238,17 +214,16 @@ void ParseStates(TType *class_type)
 		if (tk_Token == TK_NAME)
 		{
 			//	Modelis
-			for (i = 0; i < num_models; i++)
+			for (i = 0; i < models.Num(); i++)
 			{
 		   		if (models[i] == tk_Name)
 				{
 				   	break;
 				}
 			}
-			if (i == num_models)
+			if (i == models.Num())
 			{
-			   	models[i] = tk_Name;
-				num_models++;
+			   	i = models.AddItem(tk_Name);
 			}
 			s.model_index = i;
 			TK_NextToken();
@@ -292,8 +267,6 @@ void ParseStates(TType *class_type)
 		TK_Expect(PU_RPAREN, ERR_NONE);
 		//	Code
 		s.function = ParseStateCode(class_type);
-
-		num_states++;
 	}
 }
 
@@ -305,9 +278,9 @@ void ParseStates(TType *class_type)
 
 void AddToMobjInfo(int Index, int ClassID)
 {
-	mobj_info[num_mobj_types].doomednum = Index;
-	mobj_info[num_mobj_types].class_id = ClassID;
-	num_mobj_types++;
+	int i = mobj_info.Add();
+	mobj_info[i].doomednum = Index;
+	mobj_info[i].class_id = ClassID;
 }
 
 //==========================================================================
@@ -321,9 +294,9 @@ static void CheckStates(void)
 	int		i;
 	int		j;
 
-	for (i = 0; i < num_states; i++)
+	for (i = 0; i < states.Num(); i++)
 	{
-		for (j = 0; j < num_states; j++)
+		for (j = 0; j < states.Num(); j++)
 		{
 			if (compstates[i].NextName == states[j].statename)
 			{
@@ -331,7 +304,7 @@ static void CheckStates(void)
 				break;
 			}
 		}
-		if (j == num_states)
+		if (j == states.Num())
 		{
 			ERR_Exit(ERR_NONE, true, "State named \"%s\" was not defined",
 				*compstates[i].NextName);
@@ -370,44 +343,51 @@ void AddInfoTables(void)
 	CheckStates();
 
 	//  Pievieno spraitu v∆rdus
-	AddInfoData(gv_num_sprite_names, &num_sprite_names, 4, false);
-	AddInfoData(gv_sprite_names, sprite_names, 4 * num_sprite_names, true);
+	i = sprite_names.Num();
+	AddInfoData(gv_num_sprite_names, &i, 4, false);
+	AddInfoData(gv_sprite_names, sprite_names.GetData(), 4 * sprite_names.Num(), true);
 	//  Pievieno modeıus
-	AddInfoData(gv_num_models, &num_models, 4, false);
-	AddInfoData(gv_models, models, 4 * num_models, true);
+	i = models.Num();
+	AddInfoData(gv_num_models, &i, 4, false);
+	AddInfoData(gv_models, models.GetData(), 4 * models.Num(), true);
 	//	Pievieno st∆vokıu tabulu
-	AddInfoData(gv_num_states, &num_states, 4, false);
-	for (i = 0; i < num_states; i++)
+	i = states.Num();
+	AddInfoData(gv_num_states, &i, 4, false);
+	for (i = 0; i < states.Num(); i++)
 	{
 		if (states[i].function)
 		{
-			globalinfo[numglobals + i * sizeof(*states) / 4 +
+			globalinfo[numglobals + i * sizeof(state_t) / 4 +
 				STRUCT_OFFSET(state_t, function) / 4] = 2;
 		}
-		globalinfo[numglobals + i * sizeof(*states) / 4 +
+		globalinfo[numglobals + i * sizeof(state_t) / 4 +
 			STRUCT_OFFSET(state_t, statename) / 4] = 4;
 	}
-	AddInfoData(gv_states, states, num_states * sizeof(*states), false);
+	AddInfoData(gv_states, states.GetData(), states.Num() * sizeof(state_t), false);
 	//	Pievieno objektu aprakstu tabulu
-	AddInfoData(gv_num_mobj_info, &num_mobj_types, 4, false);
-	for (i = 0; i < num_mobj_types; i++)
+	i = mobj_info.Num();
+	AddInfoData(gv_num_mobj_info, &i, 4, false);
+	for (i = 0; i < mobj_info.Num(); i++)
 	{
-		globalinfo[numglobals + i * sizeof(*mobj_info) / 4 + 1] = 3;
+		globalinfo[numglobals + i * sizeof(mobjinfo_t) / 4 + 1] = 3;
 	}
-	AddInfoData(gv_mobj_info, mobj_info, num_mobj_types * sizeof(*mobj_info), false);
+	AddInfoData(gv_mobj_info, mobj_info.GetData(), mobj_info.Num() * sizeof(mobjinfo_t), false);
 
 	dprintf("Num sprite names: %d, num models: %d\n",
-				num_sprite_names, num_models);
+				sprite_names.Num(), models.Num());
 	dprintf("Num states: %d, num mobj types: %d\n",
-				num_states, num_mobj_types);
+				states.Num(), mobj_info.Num());
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2002/07/20 14:53:34  dj_jl
+//	Switched to dynamic arrays.
+//
 //	Revision 1.18  2002/06/14 15:33:45  dj_jl
 //	Some fixes.
-//
+//	
 //	Revision 1.17  2002/02/22 18:11:53  dj_jl
 //	Removed misc fields from states.
 //	
