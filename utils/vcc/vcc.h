@@ -31,6 +31,8 @@
 #include "cmdlib.h"
 #include "../../source/progdefs.h"
 
+using namespace VavoomUtils;
+
 // MACROS ------------------------------------------------------------------
 
 #define MAX_FILE_NAME_LENGTH	512
@@ -341,9 +343,12 @@ inline int PassFloat(float f)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/12 17:29:54  dj_jl
+//	VavoomUtils namespace usage
+//
 //	Revision 1.3  2001/08/21 17:52:54  dj_jl
 //	Added support for real string pointers, beautification
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:56  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
