@@ -1679,7 +1679,7 @@ static void UpdateSubsector(int num, float *bbox)
     r_sub = &cl_level.subsectors[num];
     frontsector = r_sub->sector;
 
-	if (r_sub->visframe != r_visframecount)
+	if (r_sub->VisFrame != r_visframecount)
  	{
 		return;
 	}
@@ -1719,7 +1719,7 @@ static void UpdateBSPNode(int bspnum, float *bbox)
 		
 	node_t* bsp = &cl_level.nodes[bspnum];
     
-	if (bsp->visframe != r_visframecount)
+	if (bsp->VisFrame != r_visframecount)
  	{
 		return;
 	}
@@ -1746,9 +1746,12 @@ void R_UpdateWorld(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/01/25 18:08:19  dj_jl
+//	Beautification
+//
 //	Revision 1.7  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.6  2001/12/01 17:51:46  dj_jl
 //	Little changes to compile with MSVC
 //	

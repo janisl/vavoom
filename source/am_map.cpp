@@ -886,7 +886,7 @@ static boolean AM_clipMline(mline_t* ml, fline_t* fl)
     register int	outcode2 = 0;
     register int	outside;
     
-    fpoint_t		tmp;
+    fpoint_t		tmp = { 0, 0};
     int				dx;
     int				dy;
 
@@ -1141,6 +1141,7 @@ static void AM_drawWalls(void)
 //
 //==========================================================================
 
+#if 0
 static void AM_rotate(float* x, float* y, float a)
 {
 	float	tmpx;
@@ -1149,6 +1150,7 @@ static void AM_rotate(float* x, float* y, float a)
     *y   = *x * msin(a) + *y * mcos(a);
     *x = tmpx;
 }
+#endif
 
 //==========================================================================
 //
@@ -1535,9 +1537,12 @@ void AM_Drawer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/01/25 18:08:19  dj_jl
+//	Beautification
+//
 //	Revision 1.9  2002/01/15 18:30:43  dj_jl
 //	Some fixes and improvements suggested by Malcolm Nixon
-//
+//	
 //	Revision 1.8  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	

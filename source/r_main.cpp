@@ -384,13 +384,13 @@ static void R_MarkLeaves(void)
 		if (vis[i >> 3] & (1 << (i & 7)))
 		{
 			subsector_t *sub = &cl_level.subsectors[i];
-			sub->visframe = r_visframecount;
+			sub->VisFrame = r_visframecount;
 			node = sub->parent;
 			while (node)
 			{
-				if (node->visframe == r_visframecount)
+				if (node->VisFrame == r_visframecount)
 					break;
-				node->visframe = r_visframecount;
+				node->VisFrame = r_visframecount;
 				node = node->parent;
 			}
 		}
@@ -654,9 +654,12 @@ void V_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/01/25 18:08:19  dj_jl
+//	Beautification
+//
 //	Revision 1.16  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.15  2001/12/27 17:36:47  dj_jl
 //	Some speedup
 //	

@@ -318,7 +318,8 @@ struct node_t : public TPlane
 	word		children[2];
 
 	node_t		*parent;
-	int			visframe;
+	int			VisFrame;
+	int			SkyVisFrame;
 };
 
 //
@@ -336,7 +337,8 @@ struct subsector_t
 	polyobj_t	*poly;
 
 	node_t		*parent;
-	int			visframe;
+	int			VisFrame;
+	int			SkyVisFrame;
 
 	dword		dlightbits;
 	int			dlightframe;
@@ -479,9 +481,12 @@ extern cl_level_t		cl_level;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2002/01/25 18:08:19  dj_jl
+//	Beautification
+//
 //	Revision 1.18  2002/01/11 08:09:34  dj_jl
 //	Added sector plane swapping
-//
+//	
 //	Revision 1.17  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	
