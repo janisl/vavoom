@@ -53,7 +53,7 @@
    	sprintf(_name, "%s/saves/%s.vs%d", fl_gamedir, _map, _slot)
 
 #define SAVE_DESCRIPTION_LENGTH		24
-#define SAVE_VERSION_TEXT			"Version 1.6"
+#define SAVE_VERSION_TEXT			"Version 1.10"
 #define SAVE_VERSION_TEXT_LENGTH	16
 
 // TYPES -------------------------------------------------------------------
@@ -225,41 +225,24 @@ static void CloseStreamOut(void)
 
 static void ClearSaveSlot(int slot)
 {
-	int		i;
-	int		j;
-	char	fileName[100];
+	char slotExt[4];
+	const char *curName;
+	char fileName[MAX_OSPATH];
 
-	for (i = 0; i < MAX_MAPS; i++)
+	sprintf(slotExt, "vs%d", slot);
+	Sys_OpenDir(va("%s/saves", fl_gamedir));
+	while ((curName = Sys_ReadDir()) != NULL)
 	{
-		SAVE_MAP_NAME(fileName, slot, va("MAP%02d", i));
-		remove(fileName);
-	}
-	for (j = 1; j <= 9; j++)
-	{
-		for (i = 1; i <= 9; i++)
+		char ext[8];
+
+		FL_ExtractFileExtension(curName, ext);
+		if (!strcmp(ext, slotExt))
 		{
-			SAVE_MAP_NAME(fileName, slot, va("E%dM%d", j, i));
+			sprintf(fileName, "%s/saves/%s", fl_gamedir, curName);
 			remove(fileName);
 		}
 	}
-	SAVE_NAME(fileName, slot);
-	remove(fileName);
-}
-
-//==========================================================================
-//
-// CopyFile
-//
-//==========================================================================
-
-static void CopyFile(char *sourceName, char *destName)
-{
-	int length;
-	byte *buffer;
-
-	length = M_ReadFile(sourceName, &buffer);
-	M_WriteFile(destName, buffer, length);
-	Z_Free(buffer);
+	Sys_CloseDir();
 }
 
 //==========================================================================
@@ -272,38 +255,37 @@ static void CopyFile(char *sourceName, char *destName)
 
 static void CopySaveSlot(int sourceSlot, int destSlot)
 {
-	int		i;
-	int		j;
-	char sourceName[100];
-	char destName[100];
+	char srcExt[4];
+	char dstExt[4];
+	const char *curName;
+	char sourceName[MAX_OSPATH];
+	char destName[MAX_OSPATH];
 
-	for(i = 0; i < MAX_MAPS; i++)
+	sprintf(srcExt, "vs%d", sourceSlot);
+	sprintf(dstExt, "vs%d", destSlot);
+	Sys_OpenDir(va("%s/saves", fl_gamedir));
+	while ((curName = Sys_ReadDir()) != NULL)
 	{
-		SAVE_MAP_NAME(sourceName, sourceSlot, va("MAP%02d", i));
-		if (Sys_FileExists(sourceName))
+		char ext[8];
+
+		FL_ExtractFileExtension(curName, ext);
+		if (!strcmp(ext, srcExt))
 		{
-			SAVE_MAP_NAME(destName, destSlot, va("MAP%02d", i));
-			CopyFile(sourceName, destName);
+			sprintf(sourceName, "%s/saves/%s", fl_gamedir, curName);
+			strcpy(destName, sourceName);
+			FL_StripExtension(destName);
+			strcat(destName, ".");
+			strcat(destName, dstExt);
+
+			int length;
+			byte *buffer;
+
+			length = M_ReadFile(sourceName, &buffer);
+			M_WriteFile(destName, buffer, length);
+			Z_Free(buffer);
 		}
 	}
-	for (j = 1; j <= 9; j++)
-	{
-		for (i = 1; i <= 9; i++)
-		{
-			SAVE_MAP_NAME(sourceName, sourceSlot, va("E%dM%d", j, i));
-			if (Sys_FileExists(sourceName))
-			{
-				SAVE_MAP_NAME(destName, destSlot, va("E%dM%d", j, i));
-				CopyFile(sourceName, destName);
-			}
-		}
-	}
-	SAVE_NAME(sourceName, sourceSlot);
-	if (Sys_FileExists(sourceName))
-	{
-		SAVE_NAME(destName, destSlot);
-		CopyFile(sourceName, destName);
-	}
+	Sys_CloseDir();
 }
 
 //==========================================================================
@@ -1296,9 +1278,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2001/11/09 14:32:00  dj_jl
+//	Copy and delete using directory listing
+//
 //	Revision 1.11  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
-//
+//	
 //	Revision 1.10  2001/10/02 17:43:50  dj_jl
 //	Added addfields to lines, sectors and polyobjs
 //	
