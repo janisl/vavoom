@@ -154,14 +154,14 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 	// Set the state, but do not use P_SetMobjState, because action
 	// routines can't be called yet.  If the spawnstate has an action
 	// routine, it will not be called.
-	st = &states[IdleState];
+	StateNum = IdleState;
+	st = &states[StateNum];
 	StateTime = st->time;
 	SpriteIndex = st->sprite;
 	SpriteName = sprite_names[st->sprite];
 	SpriteFrame = st->frame;
 	ModelIndex = st->model_index;
 	ModelFrame = st->model_frame;
-	StateNum = st->statenum;
 	NextState = st->nextstate;
 
 	if (mthing)
@@ -1420,6 +1420,9 @@ void Actor::NightmareRespawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.42  2002/06/14 15:47:53  dj_jl
+//  Added state names to the states.
+//
 //  Revision 1.41  2002/05/18 16:59:59  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

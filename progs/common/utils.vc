@@ -403,6 +403,27 @@ void UnarchiveThinker(Thinker * th)
 	th->Unarchive();
 }
 
+//==========================================================================
+//
+//	FindState
+//
+//==========================================================================
+
+int FindState(name StateName)
+{
+	int i;
+
+	for (i = 0; i < num_states; i++)
+	{
+		if (states[i].statename == StateName)
+		{
+			return i;
+		}
+	}
+	Error("Can't find state %n", StateName);
+	return 0;
+}
+
 #define FOREACH(type, var) \
 	for (var = type(NextThinker(none, type)); var; \
 		var = type(NextThinker(var, type)))
@@ -448,6 +469,9 @@ class SectorMover:SectorThinker
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/06/14 15:44:44  dj_jl
+//  Added state names to the states.
+//
 //  Revision 1.25  2002/04/11 16:48:10  dj_jl
 //  New base classes for sector thinkers, Tick function.
 //

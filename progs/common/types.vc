@@ -448,9 +448,9 @@ struct state_t
 	int model_index;
 	int model_frame;
 	float time;
-	int statenum;
 	int nextstate;
 	int __function;
+	name statename;
 };
 
 struct mobjinfo_t
@@ -978,6 +978,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.38  2002/06/14 15:44:44  dj_jl
+//  Added state names to the states.
+//
 //  Revision 1.37  2002/04/11 16:48:10  dj_jl
 //  New base classes for sector thinkers, Tick function.
 //
