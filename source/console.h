@@ -29,14 +29,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-typedef enum
-{
- 	cons_closed,
-    cons_opening,
-    cons_open,
-    cons_closing
-} cons_state_t;
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void C_Init(void);
@@ -57,9 +49,12 @@ extern ostream			cond;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/15 17:26:35  dj_jl
+//	Made console not active when closing
+//
 //	Revision 1.4  2001/08/07 16:49:26  dj_jl
 //	Added C_Active
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	
