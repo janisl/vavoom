@@ -446,8 +446,8 @@ state_t	states[NUMHEXENSTATES] = {
 {SPR3_AGG2,0,-1,SA3_NULL,S3_NULL,0,0},	// S3_ARTIPUZZGEMGREEN2
 {SPR3_AGMB,0,-1,SA3_NULL,S3_NULL,0,0},	// S3_ARTIPUZZGEMBLUE1
 {SPR3_AGB2,0,-1,SA3_NULL,S3_NULL,0,0},	// S3_ARTIPUZZGEMBLUE2
-{SPR3_ABK1,0,-1,SA3_NULL,S3_NULL,0,0},	// S3_ARTIPUZZBOOK1
-{SPR3_ABK2,0,-1,SA3_NULL,S3_NULL,0,0},	// S3_ARTIPUZZBOOK2
+{SPR3_ABK1,0,-1,SA3_NULL,S3_NULL,0,0,"puzzle/book1.md2",0},	// S3_ARTIPUZZBOOK1
+{SPR3_ABK2,0,-1,SA3_NULL,S3_NULL,0,0,"puzzle/book2.md2",0},	// S3_ARTIPUZZBOOK2
 {SPR3_ASK2,0,-1,SA3_NULL,S3_NULL,0,0},	// S3_ARTIPUZZSKULL2
 {SPR3_AFWP,0,-1,SA3_NULL,S3_NULL,0,0},	// S3_ARTIPUZZFWEAPON
 {SPR3_ACWP,0,-1,SA3_NULL,S3_NULL,0,0},	// S3_ARTIPUZZCWEAPON
@@ -2880,9 +2880,12 @@ state_t	states[NUMHEXENSTATES] = {
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/11/02 18:36:59  dj_jl
+//	no message
+//
 //	Revision 1.5  2001/10/27 07:53:44  dj_jl
 //	Added new models
-//
+//	
 //	Revision 1.4  2001/09/25 17:02:53  dj_jl
 //	Renamed some models
 //	

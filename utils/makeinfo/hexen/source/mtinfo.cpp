@@ -364,7 +364,7 @@ MF2_NOTELEPORT|MF2_DONTDRAW,		// flags2
 0,
 0,
 "if (!tid)\n"
-"\t\tAddStaticLight(origin, 64.0);"
+"\t\t\tAddStaticLight(origin, 64.0);"
  },
 
 {		// MT_FLAME_LARGE
@@ -396,7 +396,7 @@ MF2_NOTELEPORT|MF2_DONTDRAW,		// flags2
 0,
 0,
 "if (!tid)\n"
-"\t\tAddStaticLight(origin, 128.0);"
+"\t\t\tAddStaticLight(origin, 128.0);"
  },
 
 {		// MT_HEALINGBOTTLE
@@ -2696,7 +2696,7 @@ MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 0,
 0,
 "if (!tid)\n"
-"\t\tAddStaticLight(origin, 128.0);"
+"\t\t\tAddStaticLight(origin, 128.0);"
  },
 
 {		// MT_MISC6
@@ -5166,7 +5166,8 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 0,
 0,
 "if (!tid)\n"
-"\t\tAddStaticLight(origin + vector(0.0, 0.0, 48.0), 128.0);"
+"\t\t\tAddStaticLight(origin + vector(0.0, 0.0, 48.0), \n"
+"\t\t\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 128.0);"
  },
 
 {		// MT_ZWALLTORCH_UNLIT
@@ -5360,7 +5361,7 @@ MF_SOLID,		// flags
 0,
 0,
 "if (!tid)\n"
-"\t\tAddStaticLight(origin + vector(0.0, 0.0, 32.0), 200.0);"
+"\t\t\tAddStaticLight(origin + vector(0.0, 0.0, 32.0), 200.0);"
  },
 
 {		// MT_ZFIREBULL_UNLIT
@@ -5419,7 +5420,7 @@ MF_SOLID,		// flags
 0,
 0,
 "if (!tid)\n"
-"\t\tAddStaticLight(origin + vector(0.0, 0.0, 16.0), 160.0);"
+"\t\t\tAddStaticLight(origin + vector(0.0, 0.0, 16.0), 160.0);"
  },
 
 {		// MT_BRASSTORCH
@@ -5451,7 +5452,7 @@ MF_SOLID,		// flags
 0,
 0,
 "if (!tid)\n"
-"\t\tAddStaticLight(origin + vector(0.0, 0.0, 48.0), 160.0);"
+"\t\t\tAddStaticLight(origin + vector(0.0, 0.0, 48.0), 160.0);"
  },
 
 {		// MT_ZSUITOFARMOR
@@ -5564,7 +5565,7 @@ MF_NOBLOCKMAP,		// flags
 0,
 0,
 "if (!tid)\n"
-"\t\tAddStaticLightRGB(origin, 128.0, RGB(0, 0, 255));"
+"\t\t\tAddStaticLightRGB(origin, 128.0, RGB(0, 0, 255));"
  },
 
 {		// MT_ZIRON_MAIDEN
@@ -5650,7 +5651,7 @@ MF_SOLID,		// flags
 0,
 0,
 "if (!tid)\n"
-"\t\tAddStaticLight(origin, 128.0);"
+"\t\t\tAddStaticLight(origin, 128.0);"
  },
 
 {		// MT_ZCAULDRON_UNLIT
@@ -10928,9 +10929,12 @@ MF2_PASSMOBJ|MF2_NOTELEPORT		// flags2
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/11/02 18:36:59  dj_jl
+//	no message
+//
 //	Revision 1.4  2001/09/27 17:04:39  dj_jl
 //	Effects and static lights in mobjinfo, mobj classes
-//
+//	
 //	Revision 1.3  2001/09/20 16:34:59  dj_jl
 //	Beautification
 //	

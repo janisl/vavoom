@@ -26,6 +26,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "cmdlib.h"
+using namespace VavoomUtils;
 #include "fmd2defs.h"
 
 // MACROS ------------------------------------------------------------------
@@ -94,6 +95,24 @@ static void ScaleModel(double scale)
 		frame->scale_origin[0] *= scale;
 		frame->scale_origin[1] *= scale;
 		frame->scale_origin[2] *= scale;
+		frame = (mframe_t*)((byte*)frame + model->framesize);
+	}
+}
+
+//==========================================================================
+//
+//	ScaleModelNoOrigin
+//
+//==========================================================================
+
+static void ScaleModelNoOrigin(double scale)
+{
+	mframe_t *frame = (mframe_t*)((byte*)model + model->ofsframes);
+	for (int i = 0; i < model->numframes; i++)
+	{
+		frame->scale[0] *= scale;
+		frame->scale[1] *= scale;
+		frame->scale[2] *= scale;
 		frame = (mframe_t*)((byte*)frame + model->framesize);
 	}
 }
@@ -208,6 +227,10 @@ int main(int argc, char *argv[])
 		{
 			ScaleModel(atof(argv[i] + 1));
 		}
+		else if (argv[i][0] == 'S')
+		{
+			ScaleModelNoOrigin(atof(argv[i] + 1));
+		}
 		else if (argv[i][0] == 'i')
 		{
 			ScaleModel(1.0 / atof(argv[i] + 1));
@@ -244,9 +267,12 @@ int main(int argc, char *argv[])
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/11/02 18:36:59  dj_jl
+//	no message
+//
 //	Revision 1.5  2001/09/24 17:29:38  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.4  2001/08/04 17:38:19  dj_jl
 //	Added moving of texture vertexes
 //
