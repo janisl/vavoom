@@ -381,12 +381,6 @@ void TProgs::Load(const char *AName)
 			Statements[i + 1] = (int)(Globals + Globaldefs[Statements[i + 1]].ofs);
 			break;
 		case OPC_CALL:
-			if (i > 68638 && i < 68668)
-			{
-				con << "Call statement " << i << " of function "
-					<< Statements[i + 1] << ' ' << Functions[Statements[i + 1]].name
-					<< ' ' << (void *)Functions[Statements[i + 1]].first_statement << endl;
-			}
 		    Statements[i + 1] = (int)(Functions + Statements[i + 1]);
 			break;
 		}
@@ -1674,9 +1668,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2002/01/04 18:22:13  dj_jl
+//	Beautification
+//
 //	Revision 1.15  2002/01/03 18:38:25  dj_jl
 //	Added guard macros and core dumps
-//
+//	
 //	Revision 1.14  2001/12/27 17:39:10  dj_jl
 //	Added method count to VClass
 //	

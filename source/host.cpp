@@ -270,6 +270,7 @@ static bool FilterTime(void)
 
 void Host_Frame(void)
 {
+	guard(Host_Frame);
 	static double time1 = 0;
 	static double time2 = 0;
 	static double time3 = 0;
@@ -403,11 +404,7 @@ void Host_Frame(void)
 		Sys_Error("Host_EndGame: %s\n", e.message);	// dedicated servers exit
 #endif
 	}
-	catch (...)
-	{
-		dprintf("- Host_Frame\n");
-		throw;
-	}
+	unguard;
 }
 
 //==========================================================================
@@ -523,10 +520,13 @@ COMMAND(Quit)
 
 void Host_CoreDump(const char *fmt, ...)
 {
+	static bool first = true;
+
 	if (!host_error_string)
 	{
 		host_error_string = new char[32];
 		strcpy(host_error_string, "Stack trace: ");
+		first = true;
 
 		PR_Traceback();
 	}
@@ -542,7 +542,10 @@ void Host_CoreDump(const char *fmt, ...)
 
 	char *new_string = new char[strlen(host_error_string) + strlen(string) + 6];
 	strcpy(new_string, host_error_string);
-	strcat(new_string, " <- ");
+	if (first)
+		first = false;
+	else
+		strcat(new_string, " <- ");
 	strcat(new_string, string);
 	delete host_error_string;
 	host_error_string = new_string;
@@ -585,9 +588,12 @@ void Host_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/01/04 18:22:13  dj_jl
+//	Beautification
+//
 //	Revision 1.16  2002/01/03 18:38:25  dj_jl
 //	Added guard macros and core dumps
-//
+//	
 //	Revision 1.15  2001/12/27 17:37:42  dj_jl
 //	Added garbage collection
 //	
