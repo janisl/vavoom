@@ -203,9 +203,9 @@ static void Host_GetConsoleCommands(void)
 		return;
 #endif
 
-	while ((cmd = Sys_ConsoleInput()))
+	for (cmd = Sys_ConsoleInput(); cmd; cmd = Sys_ConsoleInput())
 	{
-		CmdBuf << cmd;
+		CmdBuf << cmd << "\n";
 	}
 	unguard;
 }
@@ -605,9 +605,12 @@ void Host_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2002/05/29 16:53:27  dj_jl
+//	Got rid of a warning.
+//
 //	Revision 1.21  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.20  2002/04/11 16:40:57  dj_jl
 //	Safe core dumps.
 //	
