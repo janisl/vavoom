@@ -2731,14 +2731,69 @@ int TConBuf::overflow(int ch)
 	return 0;
 }
 
+class FConsoleDevice:public FOutputDevice
+{
+public:
+	void Serialize(const char* V, EName)
+	{
+		cout << V << endl;
+	}
+};
+
+FConsoleDevice			Console;
+
+FOutputDevice			*GCon = &Console;
+
+void FOutputDevice::Log(const char* S)
+{
+	Serialize(S, NAME_Log);
+}
+void FOutputDevice::Log(EName Type, const char* S)
+{
+	Serialize(S, Type);
+}
+void FOutputDevice::Log(const FString& S)
+{
+	Serialize(*S, NAME_Log);
+}
+void FOutputDevice::Log(EName Type, const FString& S)
+{
+	Serialize(*S, Type);
+}
+void FOutputDevice::Logf(const char* Fmt, ...)
+{
+	va_list argptr;
+	char string[1024];
+	
+	va_start(argptr, Fmt);
+	vsprintf(string, Fmt, argptr);
+	va_end(argptr);
+
+	Serialize(string, NAME_Log);
+}
+void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
+{
+	va_list argptr;
+	char string[1024];
+	
+	va_start(argptr, Fmt);
+	vsprintf(string, Fmt, argptr);
+	va_end(argptr);
+
+	Serialize(string, Type);
+}
+
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.42  2002/06/14 15:37:47  dj_jl
+//	Added FOutputDevice code for dedicated server.
+//
 //	Revision 1.41  2002/03/28 18:03:24  dj_jl
 //	Hack for single player, added SV_GetModelIndex
-//
+//	
 //	Revision 1.40  2002/03/12 19:21:55  dj_jl
 //	No need for linefeed in client-printing
 //	
