@@ -880,6 +880,14 @@ void ParseClass(void)
 			continue;
 		}
 
+		if (TK_Check(KW_DEFAULTPROPERTIES))
+		{
+			fi = &fields[class_type->numfields];
+			fi->s_name = class_type->s_name;
+			ParseDefaultProperties(fi, class_type);
+			continue;
+		}
+
 		type = CheckForType();
 		if (!type)
 		{
@@ -1309,9 +1317,14 @@ void AddVirtualTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2001/12/03 19:25:44  dj_jl
+//	Fixed calling of parent function
+//	Added defaultproperties
+//	Fixed vectors as arguments to methods
+//
 //	Revision 1.11  2001/12/01 18:17:09  dj_jl
 //	Fixed calling of parent method, speedup
-//
+//	
 //	Revision 1.10  2001/11/09 14:42:29  dj_jl
 //	References, beautification
 //	

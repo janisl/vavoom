@@ -1233,6 +1233,76 @@ void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 
 //==========================================================================
 //
+//	ParseDefaultProperties
+//
+//==========================================================================
+
+void ParseDefaultProperties(field_t *method, TType *class_type)
+{
+	numlocaldefs = 1;
+	localsofs = 1;
+
+	TType functype;
+	memset(&functype, 0, sizeof(TType));
+	functype.type = ev_function;
+	functype.size = 4;
+	functype.aux_type = &type_void;
+	functype.params_size = 1;
+	maxlocalsofs = 1;
+
+	TType methodtype;
+	memcpy(&methodtype, &functype, sizeof(TType));
+	methodtype.type = ev_method;
+	method->type = FindType(&methodtype);
+	method->ofs = 4;
+	class_type->numfields++;
+
+	int s_name = FindString(va("%s::%s",
+		class_type->name, class_type->name));
+	if (CheckForFunction(s_name))
+	{
+		ERR_Exit(ERR_FUNCTION_REDECLARED, true,
+			 "Function: %s", strings + s_name);
+	}
+
+	int num = numfunctions;
+	numfunctions++;
+	method->func_num = num;
+	functions[num].s_name = s_name;
+	functions[num].type = FindType(&functype);
+	functions[num].first_statement = 0;
+
+	if (TK_Check(PU_LBRACE))
+	{
+		ThisType = MakePointerType(class_type);
+		SelfType = MakeReferenceType(class_type);
+		BreakLevel = 0;
+		ContinueLevel = 0;
+		FuncRetType = &type_void;
+
+		functions[num].first_statement = CodeBufferSize;
+
+		//  Call parent constructor
+		field_t *pcon = FindConstructor(class_type->aux_type);
+		if (pcon)
+		{
+			AddStatement(OPC_LOCALADDRESS, 0);
+			AddStatement(OPC_PUSHPOINTED);
+			AddStatement(OPC_CALL, pcon->func_num);
+		}
+
+	   	ParseCompoundStatement();
+		AddStatement(OPC_RETURN);
+		functions[num].num_locals = maxlocalsofs;
+	}
+	else
+	{
+		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+	}
+}
+
+//==========================================================================
+//
 //	AddConstant
 //
 //==========================================================================
@@ -1422,9 +1492,14 @@ void PA_Parse(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2001/12/03 19:25:44  dj_jl
+//	Fixed calling of parent function
+//	Added defaultproperties
+//	Fixed vectors as arguments to methods
+//
 //	Revision 1.11  2001/12/01 18:17:09  dj_jl
 //	Fixed calling of parent method, speedup
-//
+//	
 //	Revision 1.10  2001/11/09 14:42:28  dj_jl
 //	References, beautification
 //	

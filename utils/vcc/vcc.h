@@ -210,6 +210,7 @@ enum Keyword
 	KW_CLASSID,
 	KW_CONTINUE,
 	KW_DEFAULT,
+	KW_DEFAULTPROPERTIES,
 	KW_DO,
 	KW_ELSE,
 	KW_ENUM,
@@ -321,6 +322,7 @@ struct constant_t
 void PA_Parse(void);
 void ParseMethodDef(TType *t, field_t *fi, field_t *otherfield,
 	TType *class_type, int method_type);
+void ParseDefaultProperties(field_t *method, TType *class_type);
 
 void ERR_Exit(error_t error, boolean info, char *text, ...) __attribute__((noreturn));
 void ParseError(error_t error);
@@ -500,9 +502,14 @@ inline bool TK_Check(Punctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2001/12/03 19:25:44  dj_jl
+//	Fixed calling of parent function
+//	Added defaultproperties
+//	Fixed vectors as arguments to methods
+//
 //	Revision 1.11  2001/12/01 18:17:09  dj_jl
 //	Fixed calling of parent method, speedup
-//
+//	
 //	Revision 1.10  2001/11/09 14:42:29  dj_jl
 //	References, beautification
 //	

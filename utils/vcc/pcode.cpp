@@ -29,8 +29,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-//#define COUNT_UNSIGNED_OPS
-
 #define CODE_BUFFER_SIZE		(256 * 1024)
 #define	MAX_GLOBALS				(256 * 1024)
 #define MAX_STRINGS				8192
@@ -77,158 +75,147 @@ static TStringInfo	StringInfo[MAX_STRINGS];
 static int 		StringCount;
 static int		StringLookup[256];
 
-#ifdef COUNT_UNSIGNED_OPS
-static int		udiv = 0;
-static int		umod = 0;
-static int		ult = 0;
-static int		ule = 0;
-static int		ugt = 0;
-static int		uge = 0;
-static int		urshift = 0;
-static int		udiva = 0;
-static int		umoda = 0;
-static int		urshifta = 0;
-#endif
-
 static struct
 {
 	char*	name;
 	int		params;
+	int		usecount;
 } StatementInfo[NUM_OPCODES] =
 {
-	{"DONE", 0},
-	{"RETURN", 0},
-	{"PUSHNUMBER", 1},
-	{"PUSHPOINTED", 0},
-	{"LOCALADDRESS", 1},
-	{"GLOBALADDRESS", 1},
-	{"ADD", 0},
-	{"SUBTRACT", 0},
-	{"MULTIPLY", 0},
-	{"DIVIDE", 0},
+	{"DONE", 0, 0},
+	{"RETURN", 0, 0},
+	{"PUSHNUMBER", 1, 0},
+	{"PUSHPOINTED", 0, 0},
+	{"LOCALADDRESS", 1, 0},
+	{"GLOBALADDRESS", 1, 0},
+	{"ADD", 0, 0},
+	{"SUBTRACT", 0, 0},
+	{"MULTIPLY", 0, 0},
+	{"DIVIDE", 0, 0},
 
-	{"MODULUS", 0},
-	{"UDIVIDE", 0},
-	{"UMODULUS", 0},
-	{"EQ", 0},
-	{"NE", 0},
-	{"LT", 0},
-	{"GT", 0},
-	{"LE", 0},
-	{"GE", 0},
-	{"ULT", 0},
+	{"MODULUS", 0, 0},
+	{"UDIVIDE", 0, 0},
+	{"UMODULUS", 0, 0},
+	{"EQ", 0, 0},
+	{"NE", 0, 0},
+	{"LT", 0, 0},
+	{"GT", 0, 0},
+	{"LE", 0, 0},
+	{"GE", 0, 0},
+	{"ULT", 0, 0},
 
-	{"UGT", 0},
-	{"ULE", 0},
-	{"UGE", 0},
-	{"ANDLOGICAL", 0},
-	{"ORLOGICAL", 0},
-	{"NEGATELOGICAL", 0},
-	{"ANDBITWISE", 0},
-	{"ORBITWISE", 0},
-	{"XORBITWISE", 0},
-	{"LSHIFT", 0},
+	{"UGT", 0, 0},
+	{"ULE", 0, 0},
+	{"UGE", 0, 0},
+	{"ANDLOGICAL", 0, 0},
+	{"ORLOGICAL", 0, 0},
+	{"NEGATELOGICAL", 0, 0},
+	{"ANDBITWISE", 0, 0},
+	{"ORBITWISE", 0, 0},
+	{"XORBITWISE", 0, 0},
+	{"LSHIFT", 0, 0},
 
-	{"RSHIFT", 0},
-	{"URSHIFT", 0},
-	{"UNARYMINUS", 0},
-	{"BITINVERSE", 0},
-	{"CALL", 1},
-	{"GOTO", 1},
-	{"IFGOTO", 1},
-	{"IFNOTGOTO", 1},
-	{"CASEGOTO", 2},
-	{"DROP", 0},
+	{"RSHIFT", 0, 0},
+	{"URSHIFT", 0, 0},
+	{"UNARYMINUS", 0, 0},
+	{"BITINVERSE", 0, 0},
+	{"CALL", 1, 0},
+	{"GOTO", 1, 0},
+	{"IFGOTO", 1, 0},
+	{"IFNOTGOTO", 1, 0},
+	{"CASEGOTO", 2, 0},
+	{"DROP", 0, 0},
 
-	{"ASSIGN", 0},
-	{"ADDVAR", 0},
-	{"SUBVAR", 0},
-	{"MULVAR", 0},
-	{"DIVVAR", 0},
-	{"MODVAR", 0},
-	{"UDIVVAR", 0},
-	{"UMODVAR", 0},
-	{"ANDVAR", 0},
-	{"ORVAR", 0},
+	{"ASSIGN", 0, 0},
+	{"ADDVAR", 0, 0},
+	{"SUBVAR", 0, 0},
+	{"MULVAR", 0, 0},
+	{"DIVVAR", 0, 0},
+	{"MODVAR", 0, 0},
+	{"UDIVVAR", 0, 0},
+	{"UMODVAR", 0, 0},
+	{"ANDVAR", 0, 0},
+	{"ORVAR", 0, 0},
 
-	{"XORVAR", 0},
-	{"LSHIFTVAR", 0},
-	{"RSHIFTVAR", 0},
-	{"URSHIFTVAR", 0},
-	{"PREINC", 0},
-	{"PREDEC", 0},
-	{"POSTINC", 0},
-	{"POSTDEC", 0},
-	{"IFTOPGOTO", 1},
-	{"IFNOTTOPGOTO", 1},
+	{"XORVAR", 0, 0},
+	{"LSHIFTVAR", 0, 0},
+	{"RSHIFTVAR", 0, 0},
+	{"URSHIFTVAR", 0, 0},
+	{"PREINC", 0, 0},
+	{"PREDEC", 0, 0},
+	{"POSTINC", 0, 0},
+	{"POSTDEC", 0, 0},
+	{"IFTOPGOTO", 1, 0},
+	{"IFNOTTOPGOTO", 1, 0},
 
-	{"ASSIGN_DROP", 0},
-	{"ADDVAR_DROP", 0},
-	{"SUBVAR_DROP", 0},
-	{"MULVAR_DROP", 0},
-	{"DIVVAR_DROP", 0},
-	{"MODVAR_DROP", 0},
-	{"UDIVVAR_DROP", 0},
-	{"UMODVAR_DROP", 0},
-	{"ANDVAR_DROP", 0},
-	{"ORVAR_DROP", 0},
+	{"ASSIGN_DROP", 0, 0},
+	{"ADDVAR_DROP", 0, 0},
+	{"SUBVAR_DROP", 0, 0},
+	{"MULVAR_DROP", 0, 0},
+	{"DIVVAR_DROP", 0, 0},
+	{"MODVAR_DROP", 0, 0},
+	{"UDIVVAR_DROP", 0, 0},
+	{"UMODVAR_DROP", 0, 0},
+	{"ANDVAR_DROP", 0, 0},
+	{"ORVAR_DROP", 0, 0},
 
-	{"XORVAR_DROP", 0},
-	{"LSHIFTVAR_DROP", 0},
-	{"RSHIFTVAR_DROP", 0},
-	{"URSHIFTVAR_DROP", 0},
-	{"INC_DROP", 0},
-	{"DEC_DROP", 0},
-	{"FADD", 0},
-	{"FSUBTRACT", 0},
-	{"FMULTIPLY", 0},
-	{"FDIVIDE", 0},
+	{"XORVAR_DROP", 0, 0},
+	{"LSHIFTVAR_DROP", 0, 0},
+	{"RSHIFTVAR_DROP", 0, 0},
+	{"URSHIFTVAR_DROP", 0, 0},
+	{"INC_DROP", 0, 0},
+	{"DEC_DROP", 0, 0},
+	{"FADD", 0, 0},
+	{"FSUBTRACT", 0, 0},
+	{"FMULTIPLY", 0, 0},
+	{"FDIVIDE", 0, 0},
 
-	{"FEQ", 0},
-	{"FNE", 0},
-	{"FLT", 0},
-	{"FGT", 0},
-	{"FLE", 0},
-	{"FGE", 0},
-	{"FUNARYMINUS", 0},
-	{"FADDVAR", 0},
-	{"FSUBVAR", 0},
-	{"FMULVAR", 0},
+	{"FEQ", 0, 0},
+	{"FNE", 0, 0},
+	{"FLT", 0, 0},
+	{"FGT", 0, 0},
+	{"FLE", 0, 0},
+	{"FGE", 0, 0},
+	{"FUNARYMINUS", 0, 0},
+	{"FADDVAR", 0, 0},
+	{"FSUBVAR", 0, 0},
+	{"FMULVAR", 0, 0},
 
-	{"FDIVVAR", 0},
-	{"FADDVAR_DROP", 0},
-	{"FSUBVAR_DROP", 0},
-	{"FMULVAR_DROP", 0},
-	{"FDIVVAR_DROP", 0},
-	{"SWAP", 0},
-	{"ICALL", 0},
-	{"VPUSHPOINTED", 0},
-	{"VADD", 0},
-	{"VSUBTRACT", 0},
+	{"FDIVVAR", 0, 0},
+	{"FADDVAR_DROP", 0, 0},
+	{"FSUBVAR_DROP", 0, 0},
+	{"FMULVAR_DROP", 0, 0},
+	{"FDIVVAR_DROP", 0, 0},
+	{"SWAP", 0, 0},
+	{"ICALL", 0, 0},
+	{"VPUSHPOINTED", 0, 0},
+	{"VADD", 0, 0},
+	{"VSUBTRACT", 0, 0},
 
-	{"VPRESCALE", 0},
-	{"VPOSTSCALE", 0},
-	{"VISCALE", 0},
-	{"VEQ", 0},
-	{"VNE", 0},
-	{"VUNARYMINUS", 0},
-	{"VDROP", 0},
-	{"VASSIGN", 0},
-	{"VADDVAR", 0},
-	{"VSUBVAR", 0},
+	{"VPRESCALE", 0, 0},
+	{"VPOSTSCALE", 0, 0},
+	{"VISCALE", 0, 0},
+	{"VEQ", 0, 0},
+	{"VNE", 0, 0},
+	{"VUNARYMINUS", 0, 0},
+	{"VDROP", 0, 0},
+	{"VASSIGN", 0, 0},
+	{"VADDVAR", 0, 0},
+	{"VSUBVAR", 0, 0},
 
-	{"VSCALEVAR", 0},
-	{"VISCALEVAR", 0},
-	{"VASSIGN_DROP", 0},
-	{"VADDVAR_DROP", 0},
-	{"VSUBVAR_DROP", 0},
-	{"VSCALEVAR_DROP", 0},
-	{"VISCALEVAR_DROP", 0},
-	{"RETURNL", 0},
-	{"RETURNV", 0},
-	{"PUSHSTRING", 1},
+	{"VSCALEVAR", 0, 0},
+	{"VISCALEVAR", 0, 0},
+	{"VASSIGN_DROP", 0, 0},
+	{"VADDVAR_DROP", 0, 0},
+	{"VSUBVAR_DROP", 0, 0},
+	{"VSCALEVAR_DROP", 0, 0},
+	{"VISCALEVAR_DROP", 0, 0},
+	{"RETURNL", 0, 0},
+	{"RETURNV", 0, 0},
+	{"PUSHSTRING", 1, 0},
 
-	{"COPY", 0},
+	{"COPY", 0, 0},
+	{"SWAP3", 0, 0},
 };
 
 // CODE --------------------------------------------------------------------
@@ -426,6 +413,7 @@ int* AddStatement(int statement)
 		if (statement != OPC_DROP)
 		{
 			UndoStatement();
+			StatementInfo[undoOpcode].usecount--;
 		}
 	}
 
@@ -460,6 +448,7 @@ int* AddStatement(int statement)
 		if (statement != OPC_VDROP)
 		{
 			UndoStatement();
+			StatementInfo[undoOpcode].usecount--;
 		}
 	}
 
@@ -467,19 +456,8 @@ int* AddStatement(int statement)
 	undoSize = CodeBufferSize;
 
 	CodeBuffer[CodeBufferSize++] = statement;
+	StatementInfo[statement].usecount++;
 
-#ifdef COUNT_UNSIGNED_OPS
-	if (statement == OPC_UDIVIDE) udiv++;
-	if (statement == OPC_UMODULUS) umod++;
-	if (statement == OPC_ULT) ult++;
-	if (statement == OPC_ULE) ule++;
-	if (statement == OPC_UGT) ugt++;
-	if (statement == OPC_UGE) uge++;
-	if (statement == OPC_URSHIFT) urshift++;
-	if (statement == OPC_UDIVVAR) udiva++;
-	if (statement == OPC_UMODVAR) umoda++;
-	if (statement == OPC_URSHIFTVAR) urshifta++;
-#endif
 	return &CodeBuffer[CodeBufferSize - 1];
 }
 
@@ -505,6 +483,7 @@ int* AddStatement(int statement, int parm1)
 
 	CodeBuffer[CodeBufferSize++] = statement;
    	CodeBuffer[CodeBufferSize++] = parm1;
+	StatementInfo[statement].usecount++;
 
 	return &CodeBuffer[CodeBufferSize - 1];
 }
@@ -532,6 +511,7 @@ int* AddStatement(int statement, int parm1, int parm2)
 	CodeBuffer[CodeBufferSize++] = statement;
    	CodeBuffer[CodeBufferSize++] = parm1;
    	CodeBuffer[CodeBufferSize++] = parm2;
+	StatementInfo[statement].usecount++;
 
 	return &CodeBuffer[CodeBufferSize - 1];
 }
@@ -680,10 +660,12 @@ void PC_WriteObject(char *name)
 	fwrite(&progs, 1, sizeof(progs), f);
 
 	fclose(f);
-#ifdef COUNT_UNSIGNED_OPS
-	dprintf("%d %d %d %d %d %d %d %d %d %d\n", udiv, umod, ult, ule,
-		ugt, uge, urshift, udiva, umoda, urshifta);
-#endif
+
+	dprintf("\n-----------------------------------------------\n\n");
+	for (i = 0; i < NUM_OPCODES; i++)
+	{
+		dprintf("%-16s %d\n", StatementInfo[i].name, StatementInfo[i].usecount);
+	}
 }
 
 //==========================================================================
@@ -774,9 +756,14 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/12/03 19:25:44  dj_jl
+//	Fixed calling of parent function
+//	Added defaultproperties
+//	Fixed vectors as arguments to methods
+//
 //	Revision 1.9  2001/12/01 18:17:09  dj_jl
 //	Fixed calling of parent method, speedup
-//
+//	
 //	Revision 1.8  2001/11/09 14:42:28  dj_jl
 //	References, beautification
 //	

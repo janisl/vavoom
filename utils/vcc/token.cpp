@@ -92,6 +92,7 @@ static char* Keywords[] =
 	"classid",
 	"continue",
 	"default",
+	"defaultproperties",
 	"do",
 	"else",
 	"enum",
@@ -499,6 +500,11 @@ static void ProcessLetterToken(void)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_DEFAULT;
+		}
+		else if (!strcmp(tk_String, "defaultproperties"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_DEFAULTPROPERTIES;
 		}
 		else if (!strcmp(tk_String, "do"))
 		{
@@ -1106,9 +1112,14 @@ void TK_Expect(Punctuation punct, error_t error)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/12/03 19:25:44  dj_jl
+//	Fixed calling of parent function
+//	Added defaultproperties
+//	Fixed vectors as arguments to methods
+//
 //	Revision 1.7  2001/12/01 18:17:09  dj_jl
 //	Fixed calling of parent method, speedup
-//
+//	
 //	Revision 1.6  2001/11/09 14:42:29  dj_jl
 //	References, beautification
 //	
