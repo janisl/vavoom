@@ -42,13 +42,10 @@ class TILine
 	void Init(void);
 	void AddChar(char ch);
 	void DelChar(void);
-	void AddPrefix(char* str);	// left of left-margin
 	bool Key(byte ch);	// whether eaten
-	bool TranslatedKey(byte ch);
 
     char		Data[MAX_ILINE_LENGTH + 1];	// line of text
     int			len;		      		// current line length
-    int			lm; // left margin past which I am not to delete characters
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -58,9 +55,12 @@ class TILine
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/11/09 14:32:26  dj_jl
+//	Cleaned up
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

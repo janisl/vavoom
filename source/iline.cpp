@@ -44,49 +44,6 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-//  Key shifting
-static const char 	shiftxform[] =
-{
-
-    0,
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-    11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-    21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-    31,
-    ' ', '!', '"', '#', '$', '%', '&',
-    '"', // shift-'
-    '(', ')', '*', '+',
-    '<', // shift-,
-    '_', // shift--
-    '>', // shift-.
-    '?', // shift-/
-    ')', // shift-0
-    '!', // shift-1
-    '@', // shift-2
-    '#', // shift-3
-    '$', // shift-4
-    '%', // shift-5
-    '^', // shift-6
-    '&', // shift-7
-    '*', // shift-8
-    '(', // shift-9
-    ':',
-    ':', // shift-;
-    '<',
-    '+', // shift-=
-    '>', '?', '@',
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
-    'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-    '{', // shift-[
-    '|', // shift-backslash - OH MY GOD DOES WATCOM SUCK
-    '}', // shift-]
-    '"', '_',
-    '\'', // shift-`
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
-    'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-    '{', '|', '}', '~', 127
-};
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -97,7 +54,6 @@ static const char 	shiftxform[] =
 
 void TILine::Init(void)
 {
-    lm = 0;
     len = 0;
     Data[0] = 0;
 }
@@ -125,36 +81,28 @@ void TILine::AddChar(char ch)
 
 void TILine::DelChar(void)
 {
-    if (len != lm && len)
+    if (len)
+	{
 		Data[--len] = 0;
+	}
 }
 
 //==========================================================================
 //
-//  TILine::AddPrefix
-//
-//==========================================================================
-
-void TILine::AddPrefix(char* str)
-{
-    while (*str)
-		AddChar(*(str++));
-    lm = len;
-}
-
-//==========================================================================
-//
-//  TILine::TranslatedKey
+//  TILine::Key
 //
 // 	Wrapper function for handling general keyed input.
 //	Returns true if it ate the key
 //
 //==========================================================================
 
-bool TILine::TranslatedKey(byte ch)
+bool TILine::Key(byte ch)
 {
     if (ch >= ' ' && ch < 128)
+	{
+		ch = IN_TranslateKey(ch);
   		AddChar((char)ch);
+	}
     else if (ch == K_BACKSPACE)
 	    DelChar();
 	else if (ch != K_ENTER)
@@ -163,26 +111,15 @@ bool TILine::TranslatedKey(byte ch)
     return true; // ate the key
 }
 
-//==========================================================================
-//
-//  TILine::Key
-//
-//==========================================================================
-
-bool TILine::Key(byte ch)
-{
-   	if (shiftdown && ch < 128)
-		ch = shiftxform[ch];
-
-	return TranslatedKey(ch);
-}
-
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/11/09 14:32:26  dj_jl
+//	Cleaned up
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
