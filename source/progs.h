@@ -171,8 +171,18 @@ class TProgs
 	}
 	void DumpProfile(void);
 
+	int GetStringOffs(const char *Str)
+	{
+		return Str - Strings;
+	}
+	char *StrAtOffs(int Offs)
+	{
+		return Strings + Offs;
+	}
+
  private:
 	dprograms_t	*Progs;
+	char		*Strings;
 	int			*Globals;
 	FFunction	*Functions;
 	FGlobalDef	*Globaldefs;
@@ -250,9 +260,12 @@ inline FName PR_PopName(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/05/03 17:06:23  dj_jl
+//	Mangling of string pointers.
+//
 //	Revision 1.11  2002/03/09 18:05:34  dj_jl
 //	Added support for defining native functions outside pr_cmds
-//
+//	
 //	Revision 1.10  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
 //	

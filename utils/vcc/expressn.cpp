@@ -542,18 +542,7 @@ class TOpPushSelfMethod:public TTree
 	void Code(void)
 	{
 		if (child1) child1->Code();
-#if 0
-		#define VTABLE_OFFS				4
-		AddStatement(OPC_COPY);
-		AddStatement(OPC_PUSHNUMBER, VTABLE_OFFS);
-		AddStatement(OPC_ADD);
-		AddStatement(OPC_PUSHPOINTED);
-		AddStatement(OPC_PUSHNUMBER, vOffs * 4);
-		AddStatement(OPC_ADD);
-		AddStatement(OPC_PUSHPOINTED);
-#else
 		AddStatement(OPC_PUSH_VFUNC, vOffs);
-#endif
 	}
 };
 
@@ -1819,9 +1808,12 @@ TType *ParseExpression(bool bLocals)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2002/05/03 17:04:03  dj_jl
+//	Mangling of string pointers.
+//
 //	Revision 1.22  2002/03/16 17:54:25  dj_jl
 //	Added opcode for pushing virtual function.
-//
+//	
 //	Revision 1.21  2002/02/26 17:52:20  dj_jl
 //	Exporting special property info into progs.
 //	

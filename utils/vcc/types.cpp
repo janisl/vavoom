@@ -38,6 +38,7 @@ enum
 	PROPTYPE_Reference,
 	PROPTYPE_ClassID,
 	PROPTYPE_Name,
+	PROPTYPE_String,
 };
 
 struct typedef_t
@@ -1453,7 +1454,11 @@ void WritePropertyInfo(TType *t)
 			df[t->num_properties].ofs = F.ofs;
 			t->num_properties++;
 			break;
-		//	ev_string,
+		case ev_string:
+			df[t->num_properties].type = PROPTYPE_String;
+			df[t->num_properties].ofs = F.ofs;
+			t->num_properties++;
+			break;
 		//	ev_function,
 		//	ev_pointer,
 		case ev_reference:
@@ -1504,9 +1509,12 @@ void AddVirtualTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2002/05/03 17:04:03  dj_jl
+//	Mangling of string pointers.
+//
 //	Revision 1.24  2002/03/12 19:17:30  dj_jl
 //	Added keyword abstract
-//
+//	
 //	Revision 1.23  2002/02/26 17:52:20  dj_jl
 //	Exporting special property info into progs.
 //	

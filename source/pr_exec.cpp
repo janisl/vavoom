@@ -183,7 +183,6 @@ void TProgs::Load(const char *AName)
 	int		i;
 	int		len;
 	char	progfilename[256];
-	char	*Strings;
 	int		*Statements;
 	dfunction_t		*DFunctions;
 	dglobaldef_t	*DGlobalDefs;
@@ -1714,9 +1713,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2002/05/03 17:04:35  dj_jl
+//	Mangling of string pointers.
+//
 //	Revision 1.27  2002/04/11 16:45:42  dj_jl
 //	Ignoring natives in profiling.
-//
+//	
 //	Revision 1.26  2002/03/16 17:53:12  dj_jl
 //	Added opcode for pushing virtual function.
 //	

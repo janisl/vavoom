@@ -867,6 +867,13 @@ void MangleVObject(VObject *Obj, VClass *InClass)
 
 		case PROPTYPE_Name:
 			break;
+
+		case PROPTYPE_String:
+			if (*p)
+			{
+				*p = svpr.GetStringOffs((char *)*p);
+			}
+			break;
 		}
 	}
 }
@@ -909,6 +916,13 @@ void UnMangleVObject(VObject *Obj, VClass *InClass)
 
 		case PROPTYPE_Name:
 			*p = UnarchiveName(*p).GetIndex();
+			break;
+
+		case PROPTYPE_String:
+			if (*p)
+			{
+				*p = (int)svpr.StrAtOffs(*p);
+			}
 			break;
 		}
 	}
@@ -1570,9 +1584,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2002/05/03 17:06:23  dj_jl
+//	Mangling of string pointers.
+//
 //	Revision 1.23  2002/02/26 17:54:26  dj_jl
 //	Importing special property info from progs and using it in saving.
-//
+//	
 //	Revision 1.22  2002/02/15 19:12:04  dj_jl
 //	Property namig style change
 //	

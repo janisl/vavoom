@@ -28,6 +28,7 @@ enum
 	PROPTYPE_Reference,
 	PROPTYPE_ClassID,
 	PROPTYPE_Name,
+	PROPTYPE_String,
 };
 
 struct FPropertyInfo
@@ -90,9 +91,12 @@ class VClass:public VObject
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/05/03 17:06:23  dj_jl
+//	Mangling of string pointers.
+//
 //	Revision 1.6  2002/03/09 18:05:34  dj_jl
 //	Added support for defining native functions outside pr_cmds
-//
+//	
 //	Revision 1.5  2002/02/26 17:54:26  dj_jl
 //	Importing special property info from progs and using it in saving.
 //	
