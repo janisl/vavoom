@@ -23,28 +23,117 @@
 //**
 //**************************************************************************
 
-class Stalker:Pawn
+class Stalker : Pawn
 	__mobjinfo__(186);
 
-void A_StalkerInit(void)
+name WalkSound;
+
+//==========================================================================
+//
+//	A_StalkerLook
+//
+//==========================================================================
+
+void A_StalkerLook()
 {
+	//	Set look state depending on floor/ceiling state.
+	if (bNoGravity)
+	{
+		SetState(S_STALKER_LOOK);
+	}
+	else
+	{
+		SetState(S_STALKER_F_LOOK);
+	}
 }
-void A_StalkerChase2(void)
+
+//==========================================================================
+//
+//	A_StalkerChase2
+//
+//==========================================================================
+
+void A_StalkerChase2()
 {
+	//	Movement code must assume stalker is floating.
+	bInFloat = true;
+	bFloat = true;
+
+	if (bNoGravity)
+	{
+		//	Check for falling down.
+		if (Origin.z + Height < CeilingZ)
+		{
+			SetState(S_STALKER_LAND1);
+		}
+		else
+		{
+			A_Chase();
+		}
+	}
+	else
+	{
+		//	Walking on floor.
+		SetState(S_STALKER_F_RUN1);
+	}
 }
-void A_StalkerChase(void)
+
+//==========================================================================
+//
+//	A_StalkerChase
+//
+//==========================================================================
+
+void A_StalkerChase()
 {
+	PlaySound(WalkSound, CHAN_BODY);
+	A_Chase();
 }
-void A_StalkerAttack(void)
+
+//==========================================================================
+//
+//	A_StalkerAttack
+//
+//==========================================================================
+
+void A_StalkerAttack()
 {
+	if (!Enemy)
+		return;
+
+	A_FaceTarget();
+
+	if (bNoGravity)
+	{
+		//	Land if we are on ceiling.
+		SetState(S_STALKER_LAND1);
+	}
+	else
+	{
+		if (CheckMeleeRange())
+		{
+			Enemy.Damage(self, self, (P_Random() & 7) * 2);
+		}
+	}
 }
-void A_StalkerLand(void)
+
+//==========================================================================
+//
+//	A_StalkerLand
+//
+//==========================================================================
+
+void A_StalkerLand()
 {
+	bNoGravity = false;
+	bInFloat = false;
+	bFloat = false;
+	PlaySound(WalkSound, CHAN_BODY);
 }
 
 __states__
 {
-	S_STALKER_INIT('SPID', 0, 1.0 / 35.0, S_STALKER_INIT) { A_StalkerInit(); }
+	S_STALKER_INIT('SPID', 0, 1.0 / 35.0, S_STALKER_INIT) { A_StalkerLook(); }
 	S_STALKER_LOOK('SPID', 0, 10.0 / 35.0, S_STALKER_LOOK) { A_Look(); }
 	S_STALKER_F_LOOK('SPID', 9, 10.0 / 35.0, S_STALKER_F_LOOK) { A_Look(); }
 	S_STALKER_RUN1('SPID', 0, 1.0 / 35.0, S_STALKER_RUN2) { A_StalkerChase2(); }
@@ -104,6 +193,7 @@ defaultproperties
 	DeathState = S_STALKER_DIE1;
 	SightSound = 'StalkerSight';
 	ActiveSound = 'StalkerSight';
+	WalkSound = 'StalkerWalk';
 	AttackSound = 'StalkerAttack';
 	PainSound = 'StalkerAttack';
 	DeathSound = 'StalkerDeath';
@@ -112,6 +202,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/10/14 06:19:52  dj_jl
+//  Implemented stalker.
+//
 //  Revision 1.1  2002/11/02 08:20:57  dj_jl
 //  New style classes.
 //
