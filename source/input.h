@@ -172,6 +172,8 @@ void IN_GetBindingKeyNames(const char *, char *, char *);
 void IN_SetBinding(int, const char *, const char *);
 void IN_WriteBindings(ostream &strm);
 
+int IN_TranslateKey(int);
+
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern int		shiftdown;
@@ -181,9 +183,12 @@ extern int		altdown;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/11/09 14:26:48  dj_jl
+//	Moved here shift-key table
+//
 //	Revision 1.5  2001/10/04 17:20:25  dj_jl
 //	Saving config using streams
-//
+//	
 //	Revision 1.4  2001/08/31 17:24:52  dj_jl
 //	Added some new keys
 //	
