@@ -207,7 +207,7 @@ spec_trans_t spec_trans_tab[] = {
 	{102, 64, 0, 0, 0, 0, SPAC_CROSS, false},	//  142
 	{103, 64, 0, 0, 0, 0, SPAC_CROSS, false},	//  143
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  144 S1 Open Sliding Door (spcl txt)
-	{74, -1, 0, 0, 0, 0, SPAC_CROSS, true},	//  145
+	{80, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  145
 	{217, -1, 4, 128 + 16, 0, 0, SPAC_USE, false},	//  146
 	{259, -1, 0, 0, 0, 0, SPAC_USE, false},	//  147
 	{258, -1, 0, 0, 0, 0, SPAC_USE, true},	//  148
@@ -217,7 +217,7 @@ spec_trans_t spec_trans_tab[] = {
 	{13, -1, 64, 0, 9, 0, SPAC_USE, true},	//  151
 	{13, -1, 64, 0, 17, 0, SPAC_USE, true},	//  152
 	{13, -1, 64, 0, 12, 0, SPAC_USE, true},	//  153
-	{206, -1, 32, 105, 0, 0, SPAC_USE, true},	//  154 Gold key
+	{83, 0, 0, 0, 0, 1 + KEY_GoldKey, SPAC_USE, true},	//  154
 	{64, -1, 32, 105, 0, 0, SPAC_USE, true},	//  155
 	{13, 0, 16, 0, 17, 0, SPAC_USE, false},	//  156
 	{13, 0, 16, 0, 12, 0, SPAC_USE, false},	//  157
@@ -242,7 +242,7 @@ spec_trans_t spec_trans_tab[] = {
 	{251, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  174
 	{256, 1, 16, 0, 0, 0, SPAC_CROSS, false},	//  175
 	{13, -1, 16, 0, 10, 0, SPAC_USE, true},	//  176
-	{206, -1, 32, 105, 0, 0, SPAC_USE, true},	//  177 Power 3
+	{83, 0, 0, 0, 0, 1 + KEY_Power3Key, SPAC_USE, true},	//  177
 	{217, -1, 4, 128 + 16, 0, 0, SPAC_CROSS, false},	//  178
 	{43, -1, 8, 1, 0, 0, SPAC_CROSS, false},	//  179
 
@@ -252,16 +252,16 @@ spec_trans_t spec_trans_tab[] = {
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  183 (MAP12)
 	{64, -1, 32, 105, 0, 0, SPAC_CROSS, true},	//  184 SR?
 	{70, -1, 0, 0, 0, 0, SPAC_CROSS, true},	//  185 Silent
-	{74, -1, 0, 0, 0, 0, SPAC_CROSS, true},	//  186 1-Way
-	{259, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  187 Crystal
-	{13, -1, 16, 0, 129, 0, SPAC_CROSS, false},	//  188
+	{80, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  186
+	{83, 0, 0, 0, 0, 33 + QUEST_BlownUpCrystal, SPAC_CROSS, false},	//  187 Crystal
+	{13, -1, 16, 0, 33 + QUEST_10, 0, SPAC_CROSS, false},	//  188 ??? Quest
 	{251, -1, 8, 0, 0, 0, SPAC_USE, false},	//  189 O
 
 	{13, 0, 16, 150, 14, 0, SPAC_USE, true},	//  190
 	{13, -1, 16, 0, 14, 0, SPAC_USE, true},	//  191
 	{13, -1, 16, 0, 16, 0, SPAC_USE, false},	//  192
 	{21, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  193 Quest F
-	{261, -1, 16, 12, 0, 0, SPAC_USE, false},	//  194
+	{80, 0, 0, 0, 0, 0, SPAC_USE, false},	//  194
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  195 WR Teleport Monster Chan
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  196 UNUSED
 	{10, -1, 64, 0, 0, 0, SPAC_CROSS, false},	//  197 ??? Q SigilB F
@@ -284,13 +284,13 @@ spec_trans_t spec_trans_tab[] = {
 	{22, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  212 Comm Unit
 	{13, 0, 16, 150, 130, 0, SPAC_USE, true},	//  213
 	{68, -1, 8, 4, 0, 0, SPAC_USE, true},	//  214
-	{260, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  215 Quest
+	{83, 0, 0, 0, 0, -1, SPAC_CROSS, false},	//  215
 	{13, -1, 16, 0, 0, 0, SPAC_CROSS, false},	//  216 ??? Q Quest
 	{13, 0, 16, 150, 23, 0, SPAC_USE, true},	//  217
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  218 W1 Clear NonBlock Quest UNUSED
-	{21, -1, 8, 0, 0, 0, SPAC_USE, false},	//  219 Red Crystal
+	{83, 0, 0, 0, 0, 1 + KEY_RedCrystalKey, SPAC_USE, false},	//  219
 
-	{21, -1, 8, 0, 0, 0, SPAC_USE, false},	//  220 Blue Crystal
+	{83, 0, 0, 0, 0, 1 + KEY_BlueCrystalKey, SPAC_USE, false},	//  220
 	{13, 0, 16, 150, 24, 0, SPAC_USE, true},	//  221
 	{13, -1, 16, 0, 25, 0, SPAC_USE, false},	//  222 ??? Realy a key?
 	{13, -1, 16, 0, 26, 0, SPAC_USE, true},	//  223
@@ -336,9 +336,11 @@ spec_trans_t spec_trans_tab[] = {
 void TranslateLine(line_t * line)
 {
 	int oldspec;
+	int oldtag;
 	int oldflags;
 
 	oldspec = line->special;
+	oldtag = line->arg1;
 	oldflags = line->flags;
 	line->flags &= 0x01ff;
 	if (!line->special)
@@ -359,21 +361,36 @@ void TranslateLine(line_t * line)
 	}
 
 	line->special = spec_trans_tab[oldspec].special;
-	if (oldspec == 145 || oldspec == 186 || oldspec == 215)
+	if (line->special == 80)
 	{
-		//	Split map teleport tag.
-		line->arg2 = line->arg1 % 100;	//	Spot.
-		line->arg1 = line->arg1 / 100;	//	Map.
+		//	Call helper ACS script.
+		line->arg1 = 255;
+		line->arg2 = 0;
+		line->arg3 = oldspec;
+		line->arg4 = oldtag;
+		line->arg5 = 0;
+	}
+	else if (line->special == 83)
+	{
+		//	Call locked helper ACS script.
+		line->arg1 = 255;
+		line->arg2 = 0;
+		line->arg3 = oldspec;
+		line->arg4 = oldtag;
+		if (spec_trans_tab[oldspec].arg5 == -1)
+			line->arg5 = 32 + (oldtag % 100);
+		else
+			line->arg5 = spec_trans_tab[oldspec].arg5;
 	}
 	else
 	{
 		if (spec_trans_tab[oldspec].arg1 != -1)
 			line->arg1 = spec_trans_tab[oldspec].arg1;
 		line->arg2 = spec_trans_tab[oldspec].arg2;
+		line->arg3 = spec_trans_tab[oldspec].arg3;
+		line->arg4 = spec_trans_tab[oldspec].arg4;
+		line->arg5 = spec_trans_tab[oldspec].arg5;
 	}
-	line->arg3 = spec_trans_tab[oldspec].arg3;
-	line->arg4 = spec_trans_tab[oldspec].arg4;
-	line->arg5 = spec_trans_tab[oldspec].arg5;
 	line->flags |= spec_trans_tab[oldspec].spac << ML_SPAC_SHIFT;
 	if (spec_trans_tab[oldspec].repeat)
 		line->flags |= ML_REPEAT_SPECIAL;
@@ -465,6 +482,9 @@ void TranslateLevel(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2004/10/12 06:39:08  dj_jl
+//  Various improvements.
+//
 //  Revision 1.8  2004/02/16 07:12:48  dj_jl
 //  Many more specials now work
 //

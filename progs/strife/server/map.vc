@@ -276,6 +276,14 @@ bool CheckChoice(RogueConChoice *Choice)
 			Item.HandlePickup(CurrentSpeakingTo);
 			Item.Remove();
 		}
+		//	Several items actually give more items
+		ItemType = GetExtraClassFromID(Choice->GiveItem);
+		if (ItemType != classidNone)
+		{
+			Item = Pickup(Spawn(ItemType, vector(0.0, 0.0, 0.0)));
+			Item.HandlePickup(CurrentSpeakingTo);
+			Item.Remove();
+		}
 	}
 	if (Choice->Objectives)
 	{
@@ -419,6 +427,24 @@ classid GetClassFromID(int ID)
 	if (ID)
 	{
 		print("Unknown item %d", ID);
+	}
+	return classidNone;
+}
+
+//==========================================================================
+//
+//	GetExtraClassFromID
+//
+//==========================================================================
+
+classid GetExtraClassFromID(int ID)
+{
+	switch (ID)
+	{
+	case 134:	return Quest3;		//	ItemGovsKey;
+	case 176:	return Quest1;		//	Communicator;
+	case 304:	return Quest10;		//	Prison_pass;
+	case 309:	return Accuracy;	//	Toughness;
 	}
 	return classidNone;
 }
@@ -1163,6 +1189,9 @@ bool PIT_RadiusAttack(Entity Other)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.34  2004/10/12 06:39:08  dj_jl
+//  Various improvements.
+//
 //  Revision 1.33  2004/08/22 19:23:27  dj_jl
 //  Moved many functions to player class.
 //

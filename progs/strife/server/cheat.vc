@@ -118,6 +118,12 @@ void Cheat_Gimme(void)
 		player.Health = 100;
 		player.MO.Health = 100;
 	}
+
+	// Comm unit
+	if (Cmd_CheckParm("CommUnit"))
+	{
+		player.Communicator = true;
+	}
 }
 
 //==========================================================================
@@ -162,6 +168,9 @@ void Cheat_KillAll(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2004/10/12 06:39:08  dj_jl
+//  Various improvements.
+//
 //  Revision 1.16  2003/11/12 16:51:33  dj_jl
 //  Changed player structure into a class
 //

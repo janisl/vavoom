@@ -77,9 +77,13 @@ bool CheckLock(Actor user, int lock)
 			return false;
 		}
 	}
-	else if (lock == 129)
+	else if (lock <= 64)
 	{
-		//	Quest Piston
+		//	Quests.
+		if (!(user.Player.Quests & (1 << (lock - 33))))
+		{
+			return false;
+		}
 	}
 	else if (lock == 130)
 	{
@@ -601,16 +605,8 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 			buttonSuccess = true;
 		}
 		break;
-	case 261:	// Door Open, give quest.
-		if (!args[0])
-		{
-			buttonSuccess = EV_VerticalDoor(line, A);
-		}
-		else
-		{
-			buttonSuccess = EV_DoDoor(line, args, doorOpen);
-		}
-		A.Player.Quests |= 1 << args[2];
+	case 261:	// Give quest.
+		A.Player.GiveQuest(args[0]);
 		break;
 
 		// Inert Line specials
@@ -941,6 +937,9 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2004/10/12 06:39:08  dj_jl
+//  Various improvements.
+//
 //  Revision 1.25  2004/01/20 07:13:42  dj_jl
 //  Communicator voices
 //

@@ -596,12 +596,12 @@ bool GiveWeapon(int weapon, int weapon2, bool dropped)
 
 bool GiveBody(int num)
 {
-	if (Health >= MAXHEALTH)
+	if (Health >= MAXHEALTH + Stamina)
 		return false;
 
 	Health += num;
-	if (Health > MAXHEALTH)
-		Health = MAXHEALTH;
+	if (Health > MAXHEALTH + Stamina)
+		Health = MAXHEALTH + Stamina;
 	MO.Health = Health;
 
 	return true;
@@ -908,6 +908,17 @@ bool GivePower(int power)
 
 	Powers[power] = 1.0;
 	return true;
+}
+
+//==========================================================================
+//
+//	GiveQuest
+//
+//==========================================================================
+
+void GiveQuest(int QuestID)
+{
+	Quests |= 1 << QuestID;
 }
 
 //==========================================================================
@@ -1877,6 +1888,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2004/10/12 06:39:07  dj_jl
+//  Various improvements.
+//
 //  Revision 1.4  2004/08/28 12:35:24  dj_jl
 //  Move general client functions to player class.
 //
