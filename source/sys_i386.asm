@@ -15,36 +15,9 @@
  externdef _bbextentt
  externdef _cacheblock
  externdef _cachewidth
- externdef _ds_transluc
- externdef _ds_transluc16
- externdef _r_lightptr
- externdef _r_lightptrr
- externdef _r_lightptrg
- externdef _r_lightptrb
- externdef _r_lightwidth
- externdef _r_numvblocks
- externdef _r_sourcemax
- externdef _r_stepback
- externdef _prowdestbase
- externdef _pbasesource
- externdef _sourcetstep
- externdef _surfrowbytes
- externdef _lightright
- externdef _lightrightstep
- externdef _lightdeltastep
- externdef _lightdelta
- externdef _lightrleft
- externdef _lightrright
- externdef _lightrleftstep
- externdef _lightrrightstep
- externdef _lightgleft
- externdef _lightgright
- externdef _lightgleftstep
- externdef _lightgrightstep
- externdef _lightbleft
- externdef _lightbright
- externdef _lightbleftstep
- externdef _lightbrightstep
+ externdef _d_transluc
+ externdef _d_srctranstab
+ externdef _d_dsttranstab
  externdef sdivz8stepu
  externdef tdivz8stepu
  externdef zi8stepu
@@ -84,8 +57,13 @@
  externdef DP_32768
  externdef DP_Color
  externdef DP_Pix
- externdef ceil_cw
+ externdef lzistepx
+ externdef gb
+ externdef gbstep
+ externdef full_cw
  externdef single_cw
+ externdef floor_cw
+ externdef ceil_cw
  externdef _ylookup
  externdef _zbuffer
  externdef _scrn
@@ -124,6 +102,124 @@
  externdef _fadetable32r
  externdef _fadetable32g
  externdef _fadetable32b
+ externdef _viewwidth
+ externdef _viewheight
+ externdef _vrectx_adj
+ externdef _vrecty_adj
+ externdef _vrectw_adj
+ externdef _vrecth_adj
+ externdef _r_nearzi
+ externdef _r_emited
+ externdef _d_u1
+ externdef _d_v1
+ externdef _d_ceilv1
+ externdef _d_lastvertvalid
+ externdef _firstvert
+ externdef _edge_p
+ externdef _surfaces
+ externdef _surface_p
+ externdef _newedges
+ externdef _removeedges
+ externdef _r_lightptr
+ externdef _r_lightptrr
+ externdef _r_lightptrg
+ externdef _r_lightptrb
+ externdef _r_lightwidth
+ externdef _r_numvblocks
+ externdef _r_sourcemax
+ externdef _r_stepback
+ externdef _prowdestbase
+ externdef _pbasesource
+ externdef _sourcetstep
+ externdef _surfrowbytes
+ externdef _lightright
+ externdef _lightrightstep
+ externdef _lightdeltastep
+ externdef _lightdelta
+ externdef _lightrleft
+ externdef _lightrright
+ externdef _lightrleftstep
+ externdef _lightrrightstep
+ externdef _lightgleft
+ externdef _lightgright
+ externdef _lightgleftstep
+ externdef _lightgrightstep
+ externdef _lightbleft
+ externdef _lightbright
+ externdef _lightbleftstep
+ externdef _lightbrightstep
+ externdef _d_affinetridesc
+ externdef _d_apverts
+ externdef _d_anumverts
+ externdef _aliastransform
+ externdef _xprojection
+ externdef _yprojection
+ externdef _aliasxcenter
+ externdef _aliasycenter
+ externdef _ziscale
+ externdef _d_plightvec
+ externdef _d_avertexnormals
+ externdef _d_ambientlightr
+ externdef _d_ambientlightg
+ externdef _d_ambientlightb
+ externdef _d_shadelightr
+ externdef _d_shadelightg
+ externdef _d_shadelightb
+ externdef _ubasestep
+ externdef _errorterm
+ externdef _erroradjustup
+ externdef _erroradjustdown
+ externdef _r_p0
+ externdef _r_p1
+ externdef _r_p2
+ externdef _d_denom
+ externdef _a_sstepxfrac
+ externdef _a_tstepxfrac
+ externdef _r_rstepx
+ externdef _r_gstepx
+ externdef _r_bstepx
+ externdef _a_ststepxwhole
+ externdef _r_sstepx
+ externdef _r_tstepx
+ externdef _r_rstepy
+ externdef _r_gstepy
+ externdef _r_bstepy
+ externdef _r_sstepy
+ externdef _r_tstepy
+ externdef _r_zistepx
+ externdef _r_zistepy
+ externdef _d_aspancount
+ externdef _d_countextrastep
+ externdef _d_pedgespanpackage
+ externdef _d_pdest
+ externdef _d_ptex
+ externdef _d_pz
+ externdef _d_sfrac
+ externdef _d_tfrac
+ externdef _d_r
+ externdef _d_g
+ externdef _d_b
+ externdef _d_zi
+ externdef _d_ptexextrastep
+ externdef _d_ptexbasestep
+ externdef _d_pdestextrastep
+ externdef _d_pdestbasestep
+ externdef _d_sfracextrastep
+ externdef _d_sfracbasestep
+ externdef _d_tfracextrastep
+ externdef _d_tfracbasestep
+ externdef _d_rextrastep
+ externdef _d_rbasestep
+ externdef _d_gextrastep
+ externdef _d_gbasestep
+ externdef _d_bextrastep
+ externdef _d_bbasestep
+ externdef _d_ziextrastep
+ externdef _d_zibasestep
+ externdef _d_pzextrastep
+ externdef _d_pzbasestep
+ externdef _a_spans
+ externdef _adivtab
  externdef _pr_globals
  externdef _pr_stackPtr
  externdef _pr_statements
@@ -148,11 +244,14 @@ _MaskExceptions:
 _TEXT ENDS
 _DATA SEGMENT
  align 4
- public ceil_cw
+ public full_cw
  public single_cw
-ceil_cw dd 0
-single_cw dd 0
+ public floor_cw
+ public ceil_cw
 full_cw dd 0
+single_cw dd 0
+floor_cw dd 0
+ceil_cw dd 0
 cw dd 0
 pushed_cw dd 0
 _DATA ENDS
@@ -168,6 +267,9 @@ _Sys_SetFPCW:
  and ah,0F0h
  or ah,00Ch
  mov ds:dword ptr[single_cw],eax
+ and ah,0F0h
+ or ah,004h
+ mov ds:dword ptr[floor_cw],eax
  and ah,0F0h
  or ah,008h
  mov ds:dword ptr[ceil_cw],eax
