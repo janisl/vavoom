@@ -23,21 +23,23 @@
 //**
 //**************************************************************************
 
-class ConDialog:MenuScreen;
+class ConDialog : MenuScreen;
 
 //	Background
-int BackPic;
+int					BackPic;
 
 //	Speech
-string SpeakerName;
-string SpeechText;
+string				SpeakerName;
+string				SpeechText;
 
 //	Choices
-ConDlgChoice WinChoices[6];
-int NumChoices;
+ConDlgChoice		WinChoices[6];
+int					NumChoices;
 
-RandomConversation RandomConversations[5];
-string CancelTexts[3];
+RandomConversation	RandomConversations[5];
+string				CancelTexts[3];
+
+int					WithGoldBuf[32 / 4 * 5];
 
 void SetSpeech(int SpeechNum)
 {
@@ -95,7 +97,18 @@ void SetSpeech(int SpeechNum)
 			continue;
 		}
 		WinChoices[NumChoices] = ConDlgChoice(NewChild(ConDlgChoice));
-		WinChoices[NumChoices].Text = ARR2STR(Speech->Choices[i].Text);
+		if (Speech->Choices[i].NeedItem1 == 168 &&
+			Speech->Choices[i].NeedAmount1 > 0)
+		{
+			sprint(ptrtos(&WithGoldBuf[32 / 4 * i]), "%s for %d gold",
+				ARR2STR(Speech->Choices[i].Text),
+				Speech->Choices[i].NeedAmount1);
+			WinChoices[NumChoices].Text = ptrtos(&WithGoldBuf[32 / 4 * i]);
+		}
+		else
+		{
+			WinChoices[NumChoices].Text = ARR2STR(Speech->Choices[i].Text);
+		}
 		WinChoices[NumChoices].ImpulseNum = 201 + i;
 		NumChoices++;
 	}
@@ -210,6 +223,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2004/12/22 07:56:46  dj_jl
+//  Fully working Strife support.
+//
 //  Revision 1.3  2003/09/26 16:54:19  dj_jl
 //  Wrapped text printing, random speeches
 //

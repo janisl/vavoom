@@ -51,7 +51,9 @@ void A_FireBlaster1()
 		rot.roll = 0.0;
 		dir = RotateDirectionVector(aimDir, rot);
 		damage = 5 * (P_Random() % 3 + 1);
+		Player.MO.bDisruptDamage = true;
 		LineAttack(Player.MO, dir, MAULERRANGE, damage);
+		Player.MO.bDisruptDamage = false;
 	}
 }
 
@@ -79,7 +81,7 @@ void A_FireBlaster2()
 	Player.MO.SetState(Player.MO.MissileState);
 	Player.Ammo[Ammo] -= 30;
 	Player.SpawnPlayerMissile(MaulerTorpedoMissile);
-	Player.MO.Damage(Player.MO, none, 20);
+	Player.MO.Damage(none, Player.MO, 20);
 	Player.MO.Thrust(Player.MO.Angles.yaw + 180.0, 125.0 / 16.0 * 35.0);
 }
 
@@ -136,6 +138,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2004/12/22 07:56:47  dj_jl
+//  Fully working Strife support.
+//
 //  Revision 1.4  2004/08/22 19:23:27  dj_jl
 //  Moved many functions to player class.
 //

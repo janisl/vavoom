@@ -49,11 +49,13 @@ int InvCursor;
 
 int Objectives;
 
+// Armor type is 0-2.
+int ArmorType;
+int ArmorPoints;
+
 //
 //  ----------
 //
-
-int ArmorPoints;
 
 int Quests;
 
@@ -88,9 +90,6 @@ Actor Attacker;
 
 float JumpTime;
 int LocalQuakeHappening;
-
-// Armor type is 0-2.
-int ArmorType;
 
 float LastSectorDamageTime;
 
@@ -893,6 +892,53 @@ void AdjustInvFirst()
 
 //==========================================================================
 //
+//	InvThrow
+//
+//==========================================================================
+
+void InvThrow()
+{
+	classid	ItemType;
+	int		Amount;
+	Actor	Item;
+	TVec	Dir;
+
+	if (!Inventory[InvCursor])
+	{
+		return;
+	}
+
+	ItemType = InvItemCID[InvCursor];
+	Amount = 1;
+	//	Gold is dropped with maximal throwable amount.
+	if (InvCursor == ITEM_Coin && Inventory[InvCursor] >= 50)
+	{
+		ItemType = Gold50;
+		Amount = 50;
+	}
+	else if (InvCursor == ITEM_Coin && Inventory[InvCursor] >= 25)
+	{
+		ItemType = Gold25;
+		Amount = 25;
+	}
+	else if (InvCursor == ITEM_Coin && Inventory[InvCursor] >= 10)
+	{
+		ItemType = Gold10;
+		Amount = 10;
+	}
+
+	AngleVector(&MO.Angles, &Dir);
+	Dir.z = 0.0;
+	Dir = Normalize(Dir);
+	Item = Spawn(ItemType, MO.Origin + vector(0.0, 0.0, 32.0) +
+		Dir * (MO.Radius + 36.0));
+	Item.Velocity = Dir * 64.0;
+	//	Remove item.
+	RemoveInvItem(InvCursor, Amount);
+}
+
+//==========================================================================
+//
 //	GivePower
 //
 //==========================================================================
@@ -1515,6 +1561,10 @@ void PlayerImpulse()
 	if (impulse <= 8)
 	{
 		ChangeWeapon(impulse - 1);
+	}
+	else if (impulse == 11)
+	{
+		InvThrow();
 	}
 	else if (impulse == 13)
 	{
@@ -2143,6 +2193,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2004/12/22 07:56:47  dj_jl
+//  Fully working Strife support.
+//
 //  Revision 1.10  2004/11/22 07:36:28  dj_jl
 //  Implemented all sector specials in all games.
 //

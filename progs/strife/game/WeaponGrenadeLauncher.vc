@@ -64,7 +64,7 @@ void A_FireGrenade()
 		grenade.PlaySound(grenade.SightSound, CHAN_VOICE);
 	}
 
-	grenade.Velocity.z = tan(-Player.MO.Angles.pitch) * grenade.Speed + 8.0 * 35.0;
+	grenade.Velocity.z = (tan(-Player.MO.Angles.pitch) * grenade.Speed + 8.0 * 35.0) / 5.0;
 
 	an = Player.MO.Angles.yaw;
 	tworadii = Player.MO.Radius + grenade.Radius;
@@ -134,6 +134,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2004/12/22 07:56:47  dj_jl
+//  Fully working Strife support.
+//
 //  Revision 1.4  2004/08/23 19:24:01  dj_jl
 //  Moved weapon utilites to player class.
 //

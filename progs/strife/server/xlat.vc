@@ -92,7 +92,7 @@ spec_trans_t spec_trans_tab[] = {
 	{21, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  38
 	{70, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  39
 
-	{251, -1, 8, 0, 0, 0, SPAC_USE, false},	//  40
+	{84, 0, 0, 0, 0, 0, SPAC_USE, false},	//  40
 	{254, -1, 8, 0, 0, 0, SPAC_USE, false},	//  41
 	{10, -1, 16, 0, 0, 0, SPAC_USE, true},	//  42
 	{254, -1, 8, 0, 0, 0, SPAC_USE, true},	//  43
@@ -105,7 +105,7 @@ spec_trans_t spec_trans_tab[] = {
 
 	{10, -1, 16, 0, 0, 0, SPAC_USE, false},	//  50
 	{244, -1, 0, 0, 0, 0, SPAC_USE, false},	//  51 S1 EndLevelSecret
-	{243, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  52
+	{84, 0, 0, 0, 0, 0, SPAC_CROSS, false},	//  52
 	{207, -1, 8, 105, 0, 0, SPAC_CROSS, false},	//  53
 	{61, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  54
 	{28, -1, 8, 10, 0, 0, SPAC_USE, false},	//  55
@@ -206,14 +206,14 @@ spec_trans_t spec_trans_tab[] = {
 	{197, -1, 8, 8, 10, 0, SPAC_CROSS, false},	//  141
 	{102, 64, 0, 0, 0, 0, SPAC_CROSS, false},	//  142
 	{103, 64, 0, 0, 0, 0, SPAC_CROSS, false},	//  143
-	{262, -1, 0, 0, 0, 0, SPAC_USE, true},	//  144
-	{80, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  145
+	{14, -1, 4, 105, 0, 0, SPAC_USE, true},	//  144
+	{84, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  145
 	{217, -1, 4, 128 + 16, 0, 0, SPAC_USE, false},	//  146
-	{259, -1, 0, 0, 0, 0, SPAC_USE, false},	//  147
-	{258, -1, 0, 0, 0, 0, SPAC_USE, true},	//  148
+	{34, -1, 0, 0, 0, 0, SPAC_USE, false},	//  147
+	{33, -1, 0, 0, 0, 0, SPAC_USE, true},	//  148
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  149 UNUSED
 
-	{256, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  150
+	{173, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  150
 	{13, -1, 64, 0, 9, 0, SPAC_USE, true},	//  151
 	{13, -1, 64, 0, 17, 0, SPAC_USE, true},	//  152
 	{13, -1, 64, 0, 12, 0, SPAC_USE, true},	//  153
@@ -229,7 +229,7 @@ spec_trans_t spec_trans_tab[] = {
 	{13, -1, 64, 0, 17, 0, SPAC_USE, false},	//  162
 	{13, -1, 64, 0, 12, 0, SPAC_USE, false},	//  163
 	{13, -1, 64, 0, 9, 0, SPAC_USE, false},	//  164
-	{13, 0, 0, 0, 255, 0, SPAC_USE, true},	//  165
+	{13, 0, 0, 0, 102, 0, SPAC_USE, true},	//  165
 	{13, 0, 16, 150, 6, 0, SPAC_USE, true},	//  166
 	{13, -1, 64, 0, 6, 0, SPAC_USE, false},	//  167
 	{13, -1, 64, 0, 6, 0, SPAC_USE, true},	//  168
@@ -239,53 +239,53 @@ spec_trans_t spec_trans_tab[] = {
 	{13, -1, 16, 0, 5, 0, SPAC_USE, false},	//  171
 	{13, -1, 16, 0, 7, 0, SPAC_USE, true},	//  172
 	{13, -1, 16, 0, 8, 0, SPAC_USE, true},	//  173
-	{251, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  174
-	{256, 1, 16, 0, 0, 0, SPAC_CROSS, false},	//  175
+	{84, 0, 0, 0, 0, 0, SPAC_CROSS, false},	//  174
+	{84, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  175
 	{13, -1, 16, 0, 10, 0, SPAC_USE, true},	//  176
 	{83, 0, 0, 0, 0, 1 + KEY_Power3Key, SPAC_USE, true},	//  177
 	{217, -1, 4, 128 + 16, 0, 0, SPAC_CROSS, false},	//  178
 	{43, -1, 8, 1, 0, 0, SPAC_CROSS, false},	//  179
 
 	{230, -1, 4, 64, 0, 0, SPAC_IMPACT, false},	//  180
-	{230, -1, 4, 64, 0, 0, SPAC_USE, false},	//  181
-	{257, -1, 255, 0, 0, 0, SPAC_IMPACT, false},	//  182
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  183 (MAP12)
-	{64, -1, 32, 105, 0, 0, SPAC_CROSS, true},	//  184 SR?
-	{70, -1, 0, 0, 0, 0, SPAC_CROSS, true},	//  185 Silent
-	{80, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  186
-	{83, 0, 0, 0, 0, 33 + QUEST_BlownUpCrystal, SPAC_CROSS, false},	//  187 Crystal
-	{13, -1, 16, 0, 33 + QUEST_GotPrisonPass, 0, SPAC_CROSS, false},	//  188 ??? Quest
-	{251, -1, 8, 0, 0, 0, SPAC_USE, false},	//  189 O
+	{84, 0, 0, 0, 0, 0, SPAC_USE, false},	//  181
+	{49, -1, 255, 0, 0, 0, SPAC_IMPACT, false},	//  182
+	{84, 0, 0, 0, 0, 0, SPAC_CROSS, false},	//  183
+	{84, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  184 SR?
+	{71, -1, 0, 0, 0, 0, SPAC_CROSS, true},	//  185
+	{84, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  186
+	{84, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  187
+	{84, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  188
+	{83, 0, 0, 0, 0, 1 + KEY_OracleKey, SPAC_USE, false},	//  189
 
-	{13, 0, 16, 150, 14, 0, SPAC_USE, true},	//  190
-	{13, -1, 16, 0, 14, 0, SPAC_USE, true},	//  191
-	{13, -1, 16, 0, 16, 0, SPAC_USE, false},	//  192
-	{21, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  193 Quest F
-	{80, 0, 0, 0, 0, 0, SPAC_USE, false},	//  194
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  195 WR Teleport Monster Chan
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  196 UNUSED
-	{10, -1, 64, 0, 0, 0, SPAC_CROSS, false},	//  197 ??? Q SigilB F
-	{256, 3, 0, 0, 0, 0, SPAC_CROSS, true},	//  198 Uniform
-	{196, -1, 16, 16, 0, 0, SPAC_USE, false},	//  199 Quest Factory
+	{13, 0, 16, 150, 1 + KEY_MilitaryID, 0, SPAC_USE, true},	//  190
+	{13, -1, 16, 0, 1 + KEY_MilitaryID, 0, SPAC_USE, true},	//  191
+	{13, -1, 16, 0, 1 + KEY_WarehouseKey, 0, SPAC_USE, false},	//  192
+	{84, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  193
+	{84, 0, 0, 0, 0, 0, SPAC_USE, false},	//  194
+	{39, -1, 0, 0, 0, 0, SPAC_MCROSS, true},	//  195
+	{84, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  196 TRIGGER? UNUSED
+	{84, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  197
+	{84, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  198
+	{84, 0, 0, 0, 0, 0, SPAC_USE, false},	//  199
 
-	{11, -1, 16, 0, 0, 0, SPAC_CROSS, false},	//  200 ??? Q SigilA UNUSED
+	{84, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  200
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  201 SR PlaySound UNUSED
-	{260, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  202
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  203 SR PlayMusic UNUSED
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  204 W1 PlayMusic UNUSED
-	{13, 0, 0, 0, 254, 0, SPAC_USE, true},	//  205
-	{256, 2, 0, 0, 0, 0, SPAC_CROSS, false},	//  206 Chalice
-	{262, -1, 0, 0, 0, 0, SPAC_USE, true},	//  207
-	{256, 2, 0, 0, 0, 0, SPAC_CROSS, false},	//  208 CommUnit UNUSED
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  209 S1 LowerStairs Chalice UNUSED
+	{174, -1, 0, 1, 0, 0, SPAC_CROSS, false},	//  202
+	{84, 0, 0, 0, 0, 0, SPAC_USE, true},	//  203
+	{84, 0, 0, 0, 0, 0, SPAC_USE, false},	//  204
+	{13, 0, 0, 0, 103, 0, SPAC_USE, true},	//  205
+	{84, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  206
+	{14, -1, 4, 105, 0, 0, SPAC_USE, true},	//  207
+	{84, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  208
+	{84, 0, 0, 0, 0, 0, SPAC_USE, false},	//  209
 
-	{260, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  210 Teaser only
+	{174, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  210
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  211 S1 PlaySound UNUSED
-	{22, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  212 Comm Unit
-	{13, 0, 16, 150, 130, 0, SPAC_USE, true},	//  213
-	{68, -1, 8, 4, 0, 0, SPAC_USE, true},	//  214
-	{83, 0, 0, 0, 0, -1, SPAC_CROSS, false},	//  215
-	{13, -1, 16, 0, 0, 0, SPAC_CROSS, false},	//  216 ??? Q Quest
+	{84, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  212
+	{84, 0, 0, 0, 0, 0, SPAC_USE, true},	//  213
+	{84, 0, 0, 0, 0, 0, SPAC_USE, true},	//  214
+	{84, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  215
+	{84, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  216
 	{13, 0, 16, 150, 23, 0, SPAC_USE, true},	//  217
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  218 W1 Clear NonBlock Quest UNUSED
 	{83, 0, 0, 0, 0, 1 + KEY_RedCrystalKey, SPAC_USE, false},	//  219
@@ -296,17 +296,17 @@ spec_trans_t spec_trans_tab[] = {
 	{13, -1, 16, 0, 26, 0, SPAC_USE, true},	//  223
 	{13, 0, 16, 0, 20, 0, SPAC_USE, false},	//  224
 	{13, 0, 16, 0, 21, 0, SPAC_USE, false},	//  225
-	{21, -1, 8, 0, 0, 0, SPAC_USE, false},	//  226 Stat Bon
-	{10, -1, 16, 0, 0, 0, SPAC_CROSS, false},	//  227 ??? Q Quest
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  228 W1 PlayEntityVoice
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  229 SR Open Sliding Sigil (spcl txt)
+	{84, 0, 0, 0, 0, 0, SPAC_USE, false},	//  226
+	{84, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  227
+	{84, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  228
+	{84, 0, 0, 0, 0, 0, SPAC_USE, true},	//  229
 
-	{11, -1, 16, 0, 0, 0, SPAC_CROSS, false},	//  230 ??? Quest
+	{84, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  230
 	{70, -1, 0, 0, 0, 0, SPAC_MCROSS, true},	//  231 ??? (InSou)
-	{13, 0, 16, 150, 13, 0, SPAC_USE, true},	//  232
-	{251, -1, 8, 0, 0, 0, SPAC_USE, false},	//  233 V
-	{11, -1, 16, 0, 0, 0, SPAC_USE, true},	//  234 ??? Q Quest
-	{251, -1, 8, 0, 0, 0, SPAC_USE, false},	//  235 Sigil
+	{84, 0, 0, 0, 0, 0, SPAC_USE, true},	//  232
+	{84, 0, 0, 0, 0, 0, SPAC_USE, false},	//  233
+	{84, 0, 0, 0, 0, 0, SPAC_USE, true},	//  234
+	{84, 0, 0, 0, 0, 0, SPAC_USE, false},	//  235
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  236
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  237
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  238
@@ -342,7 +342,17 @@ void TranslateLine(line_t * line)
 	oldspec = line->special;
 	oldtag = line->arg1;
 	oldflags = line->flags;
+
 	line->flags &= 0x01ff;
+	if (oldflags & ML_RAILING_STRIFE)
+	{
+		line->flags |= ML_RAILING;
+	}
+	if (oldflags & ML_BLOCK_FLOATERS_STRIFE)
+	{
+		line->flags |= ML_BLOCK_FLOATERS;
+	}
+
 	if (!line->special)
 	{
 		if (oldflags & ML_TRANSLUCENT_STRIFE)
@@ -361,10 +371,10 @@ void TranslateLine(line_t * line)
 	}
 
 	line->special = spec_trans_tab[oldspec].special;
-	if (line->special == 80)
+	if (line->special == 84)
 	{
 		//	Call helper ACS script.
-		line->arg1 = 255;
+		line->arg1 = 0;
 		line->arg2 = 0;
 		line->arg3 = oldspec;
 		line->arg4 = oldtag;
@@ -373,14 +383,11 @@ void TranslateLine(line_t * line)
 	else if (line->special == 83)
 	{
 		//	Call locked helper ACS script.
-		line->arg1 = 255;
+		line->arg1 = 0;
 		line->arg2 = 0;
 		line->arg3 = oldspec;
 		line->arg4 = oldtag;
-		if (spec_trans_tab[oldspec].arg5 == -1)
-			line->arg5 = 32 + (oldtag % 100);
-		else
-			line->arg5 = spec_trans_tab[oldspec].arg5;
+		line->arg5 = spec_trans_tab[oldspec].arg5;
 	}
 	else
 	{
@@ -396,7 +403,7 @@ void TranslateLine(line_t * line)
 		line->flags |= ML_REPEAT_SPECIAL;
 	if (oldflags & ML_TRANSLUCENT_STRIFE)
 	{
-		if (line->special == 257)
+		if (line->special == 49)
 		{
 			line->arg2 = 170;
 		}
@@ -508,6 +515,9 @@ void TranslateLevel(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2004/12/22 07:56:48  dj_jl
+//  Fully working Strife support.
+//
 //  Revision 1.12  2004/11/22 07:36:29  dj_jl
 //  Implemented all sector specials in all games.
 //

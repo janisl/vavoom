@@ -190,7 +190,7 @@ enum
 
 enum
 {
-	QUEST_KilledBeldin,
+	QUEST_KilledBeldin,//1
 	QUEST_StoleChalice,
 	QUEST_Prison,
 	QUEST_GovPowerCoupling,
@@ -199,17 +199,17 @@ enum
 	QUEST_7,
 	QUEST_8,
 	QUEST_GotDerwinsEar,
-	QUEST_GotPrisonPass,
+	QUEST_GotPrisonPass,//10
 	QUEST_GotPrisonKey,
 	QUEST_GotSeveredHand,
 	QUEST_FreedPrisoners,
 	QUEST_BlownUpCrystal,
 	QUEST_GotGuardUniform,
 	QUEST_BlownUpGates,
-	QUEST_17,
+	QUEST_VisitOracle,
 	QUEST_GotOraclePass,
 	QUEST_DestroyComputer,
-	QUEST_20,
+	QUEST_20,//20
 	QUEST_KilledBishop,
 	QUEST_KillMacil,
 	QUEST_KilledOracle,
@@ -219,7 +219,7 @@ enum
 	QUEST_BlownUpComputer,
 	QUEST_GotCatacombKey,
 	QUEST_FreedWorkers,
-	QUEST_30,
+	QUEST_30,//30
 	QUEST_31,
 
 	NUMQUESTS
@@ -231,7 +231,7 @@ enum
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-int num_stats = NUMAMMO + NUMWEAPONS + NUMINVITEMS + 9;
+int num_stats = NUMAMMO + NUMWEAPONS + NUMINVITEMS + 11;
 bool respawnmonsters;
 
 float FloatBobOffsets[64] = {
@@ -258,6 +258,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.50  2004/12/22 07:56:48  dj_jl
+//  Fully working Strife support.
+//
 //  Revision 1.49  2004/11/22 07:36:29  dj_jl
 //  Implemented all sector specials in all games.
 //

@@ -154,31 +154,22 @@ int EV_DoDoor(line_t * line, int *args, int type)
 //
 //==========================================================================
 
-int EV_VerticalDoor(line_t * line, Actor thing)
+int EV_VerticalDoor(line_t * line, int* args, int type, Actor thing)
 {
 	sector_t *sec;
 	VerticalDoor Door;
 	int side;
 	float speed;
-	int type;
 
 	side = 0;	// only front sides can be used
 
-	switch (line->special)
+	//HACK delay 0 means open
+	if (type == doorRaise && !args[2])
 	{
-	case 11:
 		type = doorOpen;
-		break;
-
-	case 12:
-		type = doorRaise;
-		break;
-
-	case 13:
-		type = line->arg3 ? doorRaise : doorOpen;
-		break;
 	}
-	speed = itof(line->arg2) * 4.0;
+
+	speed = itof(args[1]) * 4.0;
 
 	// if the sector has an active thinker, use it
 	sec = GLevel.Sides[line->sidenum[side ^ 1]].sector;
@@ -221,7 +212,7 @@ int EV_VerticalDoor(line_t * line, Actor thing)
 	Door.sector = sec;
 	Door.direction = 1;
 	Door.speed = speed;
-	Door.topwait = itof(line->arg3) / 35.0;
+	Door.topwait = itof(args[2]) / 35.0;
 	Door.type = type;
 
 	// find the top and bottom of the movement range
@@ -258,8 +249,8 @@ int EV_TextureChangeDoor(line_t* line, int* args)
 		sec->SpecialData = Door;
 
 		Door.sector = sec;
-		Door.topwait = 160.0 / 35.0;
-		Door.speed = 99999.0;
+		Door.topwait = itof(args[2]) / 35.0;
+		Door.speed = 99999.0;//itof(args[1]) * 4.0
 		Door.line = line;
 
 		Door.direction = 1;
@@ -277,7 +268,7 @@ int EV_TextureChangeDoor(line_t* line, int* args)
 //
 //==========================================================================
 
-int EV_ManualTextureChangeDoor(line_t * line, Actor thing)
+int EV_ManualTextureChangeDoor(line_t * line, int* args, Actor thing)
 {
 	sector_t *sec;
 	TextureChangeDoor Door;
@@ -287,7 +278,7 @@ int EV_ManualTextureChangeDoor(line_t * line, Actor thing)
 
 	side = 0;	// only front sides can be used
 
-	speed = itof(line->arg2) * 4.0;
+	speed = itof(args[1]) * 4.0;
 
 	// if the sector has an active thinker, use it
 	sec = GLevel.Sides[line->sidenum[side ^ 1]].sector;
@@ -303,8 +294,8 @@ int EV_ManualTextureChangeDoor(line_t * line, Actor thing)
 	Door.sector = sec;
 	Door.line = line;
 	Door.direction = 1;
-	Door.speed = 99999.0;
-	Door.topwait = 160.0 / 35.0;
+	Door.speed = 99999.0;//speed;
+	Door.topwait = itof(args[2]) / 35.0;
 
 	// find the top and bottom of the movement range
 	Door.topheight = FindLowestCeilingSurrounding(sec);
@@ -366,6 +357,9 @@ void P_SpawnDoorRaiseIn5Mins(sector_t * sec)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2004/12/22 07:56:48  dj_jl
+//  Fully working Strife support.
+//
 //  Revision 1.16  2004/10/13 06:41:14  dj_jl
 //  Implemented animated doors.
 //

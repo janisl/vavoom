@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class ForceFieldGuardian:Actor
+class ForceFieldGuardian : Actor
 	__mobjinfo__(25);
 
 __states__
 {
-	S_REMOVE_FORCE_FIELD('', 0, 1.0 / 35.0, S_NULL) { A_Unknown31(); }
+	S_REMOVE_FORCE_FIELD('', 0, 1.0 / 35.0, S_NULL) { A_RemoveForceField(); }
 }
 
 defaultproperties
@@ -47,6 +47,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/12/22 07:56:47  dj_jl
+//  Fully working Strife support.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

@@ -124,6 +124,12 @@ void Cheat_Gimme(void)
 	{
 		player.Communicator = true;
 	}
+
+	// Sigil piece
+	if (Cmd_CheckParm("Sigil"))
+	{
+		player.GiveSigilPiece();
+	}
 }
 
 //==========================================================================
@@ -168,6 +174,9 @@ void Cheat_KillAll(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2004/12/22 07:56:47  dj_jl
+//  Fully working Strife support.
+//
 //  Revision 1.17  2004/10/12 06:39:08  dj_jl
 //  Various improvements.
 //

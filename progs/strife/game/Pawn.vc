@@ -948,6 +948,7 @@ void A_BossDeath()
 	int i;
 	Actor Other;
 	int args[5];
+	int VoiceNum;
 
 	// make sure there is a player alive for victory
 	for (i = 0; i < MAXPLAYERS; i++)
@@ -986,10 +987,20 @@ void A_BossDeath()
 	else if (Class == Programmer)
 	{
 		//	Call death script.
-		args[0] = 0;
-		args[1] = 0;
+		StartACS(240, 0, 0, 0, 0, self, NULL, 0, false, false);
+	}
+	else if (Class == Specter1)
+	{
+		args[0] = 999;
+		args[1] = 8;
 		args[2] = 0;
-		StartACS(254, 0, &args[0], self, NULL, 0);
+		args[3] = 0;
+		args[4] = 0;
+		EV_DoFloor(NULL, &args[0], FLEV_LOWERFLOORTOLOWEST);
+		Enemy.Player.Objectives = 95;
+		MSG_Select(MSG_SV_RELIABLE);
+		MSG_WriteByte(svc_voice);
+		MSG_WriteShort(95);
 	}
 	else if (Class == Specter2)
 	{
@@ -1010,8 +1021,33 @@ void A_BossDeath()
 			return;
 
 		Enemy.Player.GiveSigilPiece();
-		Enemy.Player.GiveQuest(QUEST_KilledOracle);
 		cprint(Enemy.Player, "You've Killed The Oracle!");
+		Enemy.Player.GiveQuest(QUEST_KilledOracle);
+		if (Enemy.Player.Quests & QUEST_KilledBishop)
+		{
+			//	If the Bishop is dead, set quest item 22
+			Enemy.Player.GiveQuest(QUEST_KillMacil);
+		}
+		if (Enemy.Player.Quests & QUEST_Factory)
+		{
+			Enemy.Player.Objectives = 85;
+			MSG_Select(MSG_SV_RELIABLE);
+			MSG_WriteByte(svc_voice);
+			MSG_WriteShort(85);
+		}
+		else
+		{
+			Enemy.Player.Objectives = 87;
+			MSG_Select(MSG_SV_RELIABLE);
+			MSG_WriteByte(svc_voice);
+			MSG_WriteShort(87);
+		}
+		args[0] = 222;
+		args[1] = 256;
+		args[2] = 0;
+		args[3] = 0;
+		args[4] = 0;
+		EV_DoDoor(NULL, &args[0], doorOpen);
 	}
 	else if (Class == Specter4)
 	{
@@ -1021,6 +1057,20 @@ void A_BossDeath()
 		Enemy.Player.GiveSigilPiece();
 		Enemy.Player.GiveQuest(QUEST_KilledMacil);
 		cprint(Enemy.Player, "You've Killed Macil!");
+		if (Enemy.Player.Quests & QUEST_Factory)
+		{
+			Enemy.Player.Objectives = 106;
+			MSG_Select(MSG_SV_RELIABLE);
+			MSG_WriteByte(svc_voice);
+			MSG_WriteShort(106);
+		}
+		else
+		{
+			Enemy.Player.Objectives = 79;
+			MSG_Select(MSG_SV_RELIABLE);
+			MSG_WriteByte(svc_voice);
+			MSG_WriteShort(79);
+		}
 	}
 	else if (Class == Specter5)
 	{
@@ -1032,14 +1082,45 @@ void A_BossDeath()
 		cprint(Enemy.Player, "You've Killed The LoreMaster!");
 		Enemy.Player.Accuracy += 10;
 		Enemy.Player.Stamina += 10;
+		if (Enemy.Player.Sigil == 4)
+		{
+			Enemy.Player.Objectives = 85;
+			MSG_Select(MSG_SV_RELIABLE);
+			MSG_WriteByte(svc_voice);
+			MSG_WriteShort(85);
+		}
+		else
+		{
+			Enemy.Player.Objectives = 83;
+			MSG_Select(MSG_SV_RELIABLE);
+			MSG_WriteByte(svc_voice);
+			MSG_WriteShort(83);
+		}
+		args[0] = 666;
+		args[1] = 8;
+		args[2] = 0;
+		args[3] = 0;
+		args[4] = 0;
+		EV_DoFloor(NULL, &args[0], FLEV_LOWERFLOORTOLOWEST);
 	}
 	else if (Class == SubEntity)
 	{
-//		if (finaletype == noend)
-//		{
-//			finaletype = sad;
-//		}
-//		D_StartEndPic();
+		if (!Enemy)
+			return;
+
+		if (Enemy.Player.Quests & QUEST_GotCatacombKey)
+		{
+			MSG_Select(MSG_SV_RELIABLE);
+			MSG_WriteByte(svc_finale_type);
+			MSG_WriteByte(0);
+		}
+		else
+		{
+			MSG_Select(MSG_SV_RELIABLE);
+			MSG_WriteByte(svc_finale_type);
+			MSG_WriteByte(2);
+		}
+		G_Completed(-1, -1);
 	}
 }
 
@@ -1227,7 +1308,7 @@ __states__
 	S_BURN21('BURN', 18, 7.0 / 35.0, S_BURN22) { }
 	S_BURN22('BURN', 19, 7.0 / 35.0, S_BURN23) { }
 	S_BURN23('BURN', 20, 7.0 / 35.0, S_BURN24) { }
-	S_BURN24('BURN', 21, 700.0 / 35.0, S_NULL) { A_Dying(); }
+	S_BURN24('BURN', 21, 700.0 / 35.0, S_NULL) { /*FIXME A_Dying();*/ }
 
 	S_DISRUPT1('DISR', 0, 5.0 / 35.0, S_DISRUPT2) { }
 	S_DISRUPT2('DISR', 1, 5.0 / 35.0, S_DISRUPT3) { }
@@ -1258,6 +1339,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2004/12/22 07:56:47  dj_jl
+//  Fully working Strife support.
+//
 //  Revision 1.5  2004/11/01 07:38:23  dj_jl
 //  Almost all Hexen line specials are available in all games.
 //

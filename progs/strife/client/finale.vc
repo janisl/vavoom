@@ -33,6 +33,11 @@
 
 // DATA DECLARATIONS -------------------------------------------------------
 
+int				FinaleType;
+int				FinalePage;
+int				FinalePic;
+float			FinaleTimer;
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -41,8 +46,10 @@
 //
 //==========================================================================
 
-void F_StartFinale(void)
+void F_StartFinale()
 {
+	FinalePage = FinaleType * 10;
+	F_PlayPage();
 }
 
 //===========================================================================
@@ -51,8 +58,13 @@ void F_StartFinale(void)
 //
 //===========================================================================
 
-void F_Ticker(void)
+void F_Ticker()
 {
+	FinaleTimer -= frametime;
+	if (FinaleTimer <= 0.0)
+	{
+		F_PlayPage();
+	}
 }
 
 //==========================================================================
@@ -61,8 +73,9 @@ void F_Ticker(void)
 //
 //==========================================================================
 
-void F_Drawer(void)
+void F_Drawer()
 {
+	R_DrawPic(0, 0, FinalePic);
 }
 
 //===========================================================================
@@ -71,14 +84,104 @@ void F_Drawer(void)
 //
 //===========================================================================
 
-bool F_Responder(event_t * event)
+bool F_Responder(event_t* event)
 {
 	return false;
+}
+
+//===========================================================================
+//
+//  F_PlayPage
+//
+//===========================================================================
+
+void F_PlayPage()
+{
+	switch (FinalePage)
+	{
+		//	Happy ending.
+	case 0:
+		CmdBuf_AddText("music loop D_HAPPY\n");
+		FinalePic = R_RegisterPic("SS4F1", PIC_PATCH);
+		PlayVoice("rie01");
+		FinaleTimer = 13.0;
+		FinalePage = 1;
+		break;
+
+	case 1:
+		FinalePic = R_RegisterPic("SS4F2", PIC_PATCH);
+		PlayVoice("bbx01");
+		FinaleTimer = 11.0;
+		FinalePage = 2;
+		break;
+
+	case 2:
+		FinalePic = R_RegisterPic("SS4F3", PIC_PATCH);
+		PlayVoice("bbx02");
+		FinaleTimer = 14.0;
+		FinalePage = 3;
+		break;
+
+	case 3:
+		FinalePic = R_RegisterPic("SS4F4", PIC_PATCH);
+		FinaleTimer = 28.0;
+		FinalePage = -1;
+		break;
+
+		//	Sad ending.
+	case 10:
+		CmdBuf_AddText("music loop D_SAD\n");
+		FinalePic = R_RegisterPic("SS5F1", PIC_PATCH);
+		PlayVoice("ss501b");
+		FinaleTimer = 11.0;
+		FinalePage = 11;
+		break;
+
+	case 11:
+		FinalePic = R_RegisterPic("SS5F2", PIC_PATCH);
+		PlayVoice("ss502b");
+		FinaleTimer = 10.0;
+		FinalePage = 12;
+		break;
+
+	case 12:
+		FinalePic = R_RegisterPic("SS5F3", PIC_PATCH);
+		PlayVoice("ss503b");
+		FinaleTimer = 11.0;
+		FinalePage = -1;
+		break;
+
+		//	Dark ending.
+	case 20:
+		CmdBuf_AddText("music loop D_END\n");
+		FinalePic = R_RegisterPic("SS6F1", PIC_PATCH);
+		PlayVoice("ss601a");
+		FinaleTimer = 8.0;
+		FinalePage = 21;
+		break;
+
+	case 21:
+		FinalePic = R_RegisterPic("SS6F2", PIC_PATCH);
+		PlayVoice("ss602a");
+		FinaleTimer = 8.0;
+		FinalePage = 22;
+		break;
+
+	case 22:
+		FinalePic = R_RegisterPic("SS6F3", PIC_PATCH);
+		PlayVoice("ss603a");
+		FinaleTimer = 9.0;
+		FinalePage = -1;
+		break;
+	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2004/12/22 07:56:47  dj_jl
+//  Fully working Strife support.
+//
 //  Revision 1.5  2002/09/07 16:28:26  dj_jl
 //  Added Level class.
 //

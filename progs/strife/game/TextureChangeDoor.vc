@@ -94,6 +94,7 @@ void StartAnim()
 
 void Tick(float deltaTime)
 {
+	int		i;
 	int		res;
 	int		texTop;
 	int		NewMidTexture;
@@ -192,6 +193,13 @@ void Tick(float deltaTime)
 			SetLineTexture(line->sidenum[1], 1, 0);
 			sector->SpecialData = none;
 			RemoveSpecialThinker(self);	// unlink and free
+			for (i = 0; i < sector->linecount; i++)
+			{
+				if (sector->lines[i]->backsector)
+				{
+					sector->lines[i]->flags |= ML_BLOCKING;
+				}
+			}
 		}
 		else if (res == RES_CRUSHED)
 		{
@@ -208,6 +216,13 @@ void Tick(float deltaTime)
 		{
 			direction = 0;	// wait at top
 			toptime = topwait;
+			for (i = 0; i < sector->linecount; i++)
+			{
+				if (sector->lines[i]->backsector)
+				{
+					sector->lines[i]->flags &= ~ML_BLOCKING;
+				}
+			}
 		}
 		break;
 	}
@@ -220,6 +235,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/12/22 07:56:47  dj_jl
+//  Fully working Strife support.
+//
 //  Revision 1.2  2004/10/18 06:36:11  dj_jl
 //  Beautification.
 //

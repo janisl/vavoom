@@ -99,6 +99,7 @@ defaultproperties
 {
 	ReactionCount = 120;
 	bNoGravity = false;
+	bFireDamage = true;
 	IdleState = S_GRENADE_FLAME_1;
 	DeathState = S_GRENADE_FLAME_X1;
 }
@@ -106,6 +107,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/12/22 07:56:47  dj_jl
+//  Fully working Strife support.
+//
 //  Revision 1.2  2004/02/04 07:32:58  dj_jl
 //  Implemented many action functions
 //

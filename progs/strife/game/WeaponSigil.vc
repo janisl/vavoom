@@ -34,6 +34,7 @@ class WeaponSigil : Weapon;
 void A_SigilSound()
 {
 	Player.MO.PlaySound('SigilFire', CHAN_WEAPON);
+	SpriteFrame = Player.Sigil;
 }
 
 //==========================================================================
@@ -45,6 +46,7 @@ void A_SigilSound()
 void A_SigilShowFlash()
 {
 	Player.SetPsprite(ps_flash, FlashState);
+	SpriteFrame = Player.Sigil;
 }
 
 //==========================================================================
@@ -60,6 +62,7 @@ void A_FireSigil()
 	Actor sigilspread;
 	int i;
 
+	Player.MO.Damage(none, Player.MO, (Player.Sigil + 1) * 4);
 	angle = Player.MO.Angles.yaw + 180.0;
 	Player.MO.Velocity.x += 4.0 * 35.0 * cos(angle);
 	Player.MO.Velocity.y += 4.0 * 35.0 * sin(angle);
@@ -90,26 +93,26 @@ void A_FireSigil()
 	}
 	else
 	{
-		sigil = Player.SpawnPlayerMissile(SigilFloor);
-		if (sigil)
+		sigil = Spawn(SigilFloor, Player.MO.Origin + vector(0.0, 0.0, 32.0));
+
+		if (sigil.SightSound)
+			sigil.PlaySound(sigil.SightSound, CHAN_VOICE);
+
+		sigil.Instigator = Player.MO;
+		sigil.Origin.z = sigil.FloorZ;
+		Aim(Player.MO, 16.0 * 64.0);
+		if (!linetarget)
 		{
-			sigil.Origin.z = sigil.FloorZ;
-			if (!linetarget)
-			{
-				sigil.Origin.x = Player.MO.Origin.x;
-				sigil.Origin.y = Player.MO.Origin.y;
-				sigil.Velocity.x = 0.0;
-				sigil.Velocity.y = 0.0;
-			}
-			else
-			{
-				sigil.Origin.x = linetarget.Origin.x;
-				sigil.Origin.y = linetarget.Origin.y;
-				sigil.Velocity.x = 0.0;
-				sigil.Velocity.y = 0.0;
-			}
+			sigil.Origin.x = Player.MO.Origin.x;
+			sigil.Origin.y = Player.MO.Origin.y;
+		}
+		else
+		{
+			sigil.Origin.x = linetarget.Origin.x;
+			sigil.Origin.y = linetarget.Origin.y;
 		}
 	}
+	SpriteFrame = Player.Sigil;
 }
 
 //==========================================================================
@@ -127,17 +130,33 @@ void A_SigilFlash()
 
 __states__
 {
-	S_SIGIL('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_SIGIL) { A_WeaponReady(); }
+	S_SIGIL('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_SIGIL)
+	{
+		A_WeaponReady();
+		SpriteFrame = Player.Sigil;
+	}
 	S_SIGIL01('SIGH', 1 | FF_FULLBRIGHT, -1.0, S_NULL) { }
 	S_SIGIL02('SIGH', 2 | FF_FULLBRIGHT, -1.0, S_NULL) { }
 	S_SIGIL03('SIGH', 3 | FF_FULLBRIGHT, -1.0, S_NULL) { }
 	S_SIGIL04('SIGH', 4 | FF_FULLBRIGHT, -1.0, S_NULL) { }
-	S_SIGILDOWN('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_SIGILDOWN) { A_Lower(); }
-	S_SIGILUP('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_SIGILUP) { A_Raise(); }
+	S_SIGILDOWN('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_SIGILDOWN)
+	{
+		A_Lower();
+		SpriteFrame = Player.Sigil;
+	}
+	S_SIGILUP('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_SIGILUP)
+	{
+		A_Raise();
+		SpriteFrame = Player.Sigil;
+	}
 	S_SIGIL1('SIGH', 0 | FF_FULLBRIGHT, 18.0 / 35.0, S_SIGIL2) { A_SigilSound(); }
 	S_SIGIL2('SIGH', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SIGIL3) { A_SigilShowFlash(); }
 	S_SIGIL3('SIGH', 0, 10.0 / 35.0, S_SIGIL4) { A_FireSigil(); }
-	S_SIGIL4('SIGH', 0, 5.0 / 35.0, S_SIGIL) { A_ClearFlash(); }
+	S_SIGIL4('SIGH', 0, 5.0 / 35.0, S_SIGIL)
+	{
+		A_ClearFlash();
+		SpriteFrame = Player.Sigil;
+	}
 	S_SIGILFLASH1('SIGF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGILFLASH2) { A_Light2(); }
 	S_SIGILFLASH2('SIGF', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGILFLASH3) { A_SigilFlash(); }
 	S_SIGILFLASH3('SIGF', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE)
@@ -160,6 +179,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2004/12/22 07:56:47  dj_jl
+//  Fully working Strife support.
+//
 //  Revision 1.3  2004/10/18 06:35:21  dj_jl
 //  Implemented many monsters, sigil and some more.
 //

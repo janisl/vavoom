@@ -77,29 +77,16 @@ bool CheckLock(Actor user, int lock)
 			return false;
 		}
 	}
-	else if (lock <= 64)
+	else if (lock == 102)
 	{
-		//	Quests.
-		if (!(user.Player.Quests & (1 << (lock - 33))))
-		{
-			cprint(user.Player, "You need quest %d", lock - 33);
-			return false;
-		}
-	}
-	else if (lock == 130)
-	{
-		//	Quest Chalice
-	}
-	else if (lock == 254)
-	{
-		centerprint(user.Player,
-			"THIS AREA IS ONLY AVAILABLE IN THE RETAIL VERSION OF STRIFE");
+		centerprint(user.Player, "That doesn't seem to work");
 		user.PlaySound('PlayerLand', CHAN_VOICE);
 		return false;
 	}
-	else if (lock == 255)
+	else if (lock == 103)
 	{
-		centerprint(user.Player, "That doesn't seem to work");
+		centerprint(user.Player,
+			"THIS AREA IS ONLY AVAILABLE IN THE RETAIL VERSION OF STRIFE");
 		user.PlaySound('PlayerLand', CHAN_VOICE);
 		return false;
 	}
@@ -115,19 +102,12 @@ bool CheckLock(Actor user, int lock)
 
 bool StartLockedACS(line_t * line, int *args, Actor A, int side)
 {
-	int i;
-	int newArgs[5];
-
 	if (!CheckLock(A, args[4]))
 	{
 		return false;
 	}
-	for (i = 0; i < 4; i++)
-	{
-		newArgs[i] = args[i];
-	}
-	newArgs[4] = 0;
-	return StartACS(newArgs[0], newArgs[1], &newArgs[2], A, line, side);
+	return StartACS(args[0], args[1], args[2], args[3], args[4], A, line, side,
+		false, false);
 }
 
 //=========================================================================
@@ -158,6 +138,54 @@ bool EV_SectorSoundChange(int *args)
 
 //==========================================================================
 //
+//  EV_NoiseAlert
+//
+//==========================================================================
+
+bool EV_NoiseAlert(Actor A, int *args)
+{
+	Actor	ASource;
+	Actor	ATarget;
+	int		Search;
+
+	if (!args[0])
+	{
+		ASource = A;
+	}
+	else
+	{
+		Search = -1;
+		ASource = Actor(FindMobjFromTID(args[0], &Search));
+	}
+
+	if (!args[1])
+	{
+		ATarget = A;
+	}
+	else
+	{
+		Search = -1;
+		ATarget = Actor(FindMobjFromTID(args[1], &Search));
+	}
+
+	P_NoiseAlert(ASource, ATarget);
+	return true;
+}
+
+//==========================================================================
+//
+//  EV_ForceField
+//
+//==========================================================================
+
+bool EV_ForceField(Actor A, int *args)
+{
+	A.Damage(none, none, 10);
+	return true;
+}
+
+//==========================================================================
+//
 //  EV_RemoveForceField
 //
 //==========================================================================
@@ -176,7 +204,7 @@ bool EV_RemoveForceField(int *args)
 		for (i = 0; i < sec->linecount; i++)
 		{
 			secline = sec->lines[i];
-			if (secline->special != 258)
+			if (secline->special != 33)
 				continue;
 			if (!(secline->flags & ML_TWOSIDED))
 				continue;
@@ -188,6 +216,41 @@ bool EV_RemoveForceField(int *args)
 		}
 	}
 	return true;
+}
+
+//==========================================================================
+//
+//  EV_SendToCommunicator
+//
+//==========================================================================
+
+bool EV_SendToCommunicator(Actor A, int *args, int side)
+{
+	if (args[1] && side)
+		return false;
+
+	if (A && A.bIsPlayer && A.Player.Communicator)
+	{
+		if (!args[3])
+		{
+			A.Player.Objectives = args[0];
+		}
+
+		MSG_Select(MSG_SV_RELIABLE);
+		MSG_WriteByte(svc_voice);
+		MSG_WriteShort(args[0]);
+
+		if (args[2] == 0)
+		{
+			cprint(A.Player, "Incoming Message");
+		}
+		else if (args[2] == 1)
+		{
+			cprint(A.Player, "Incoming Message from BlackBird");
+		}
+		return true;
+	}
+	return false;
 }
 
 //==========================================================================
@@ -232,7 +295,7 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 11:	// Door Open
 		if (!args[0])
 		{
-			buttonSuccess = EV_VerticalDoor(line, A);
+			buttonSuccess = EV_VerticalDoor(line, args, doorOpen, A);
 		}
 		else
 		{
@@ -242,7 +305,7 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 12:	// Door Raise
 		if (!args[0])
 		{
-			buttonSuccess = EV_VerticalDoor(line, A);
+			buttonSuccess = EV_VerticalDoor(line, args, doorRaise, A);
 		}
 		else
 		{
@@ -254,7 +317,7 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		{
 			if (!args[0])
 			{
-				buttonSuccess = EV_VerticalDoor(line, A);
+				buttonSuccess = EV_VerticalDoor(line, args, doorRaise, A);
 			}
 			else
 			{
@@ -417,7 +480,8 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		}
 		break;
 	case 80:	// ACS_Execute
-		buttonSuccess = StartACS(args[0], args[1], &args[2], A, line, side);
+		buttonSuccess = StartACS(args[0], args[1], args[2], args[3], args[4],
+			A, line, side, false, false);
 		break;
 	case 81:	// ACS_Suspend
 		buttonSuccess = SuspendACS(args[0], args[1]);
@@ -427,6 +491,10 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		break;
 	case 83:	// ACS_LockedExecute
 		buttonSuccess = StartLockedACS(line, args, A, side);
+		break;
+	case 84:	// ACS_ExecuteWithResult
+		buttonSuccess = StartACS(args[0], args[1], args[2], args[3], args[4],
+			A, line, side, false, true);
 		break;
 	case 90: // Poly Rotate Left Override
 		buttonSuccess = EV_RotatePoly(line, args, 1, true);
@@ -521,6 +589,43 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	// 103: Scroll_Texture_Down
 	// 121: Line_SetIdentification
 
+	case 14:	//	Door_Animated
+		if (!args[0])
+		{
+			buttonSuccess = EV_ManualTextureChangeDoor(line, args, A);
+		}
+		else
+		{
+			buttonSuccess = EV_TextureChangeDoor(line, args);
+		}
+		break;
+	case 33:	//	Force field.
+		buttonSuccess = EV_ForceField(A, args);
+		break;
+	case 34:	//	ClearForceField.
+		buttonSuccess = EV_RemoveForceField(args);
+		break;
+	case 39:	//	Teleport_ZombieChanger
+		if (side == 0)
+		{
+			// Only teleport when crossing the front side of a line
+			buttonSuccess = EV_Teleport(args[0], A, true);
+			A.SetState(A.PainState);
+		}
+		break;
+	case 49:	//	Break glass.
+		if (line->flags & ML_TWOSIDED)
+		{
+			line->flags &= ~ML_BLOCKING;
+		}
+		buttonSuccess = true;
+		break;
+	case 173:	//	NoiseAlert.
+		buttonSuccess = EV_NoiseAlert(A, args);
+		break;
+	case 174:	//	SendToCommunicator.
+		buttonSuccess = EV_SendToCommunicator(A, args, side);
+		break;
 	case 196:	// Ceiling Crush and RaiseA
 		buttonSuccess = EV_DoCeiling(line, args, CLEV_CRUSHANDRAISEA);
 		break;
@@ -540,7 +645,8 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		buttonSuccess = EV_BuildStairsOld(line, args);
 		break;
 	case 226:	// ACS_ExecuteAlways
-		buttonSuccess = StartACS(args[0], args[1], &args[2], A, line, side);
+		buttonSuccess = StartACS(args[0], args[1], args[2], args[3], args[4],
+			A, line, side, true, false);
 		break;
 	case 228:	// Plat_RaiseAndStayTx0
 		buttonSuccess =
@@ -594,56 +700,6 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		break;
 	case 254:	// Ceiling_LowerToFloor
 		buttonSuccess = EV_DoCeiling(line, args, CLEV_LOWERTOFLOOR);
-		break;
-
-	//
-	//	More correct numbers will be assigned later.
-	//
-	case 256:	//	Raise Alert.
-		if (A.bIsPlayer && args[0] < 2)
-		{
-			//	TODO:
-			//	Arg1 - type (0 - allways, 1 - below height, 2 - have item, 3 - don't have item).
-			//	Arg2 - height or item.
-			buttonSuccess = true;
-			P_NoiseAlert(A, A);
-		}
-		break;
-	case 257:	//	Break glass.
-		if (line->flags & ML_TWOSIDED)
-		{
-			line->flags &= ~ML_BLOCKING;
-		}
-		buttonSuccess = true;
-		break;
-	case 258:	//	Force field.
-		A.Damage(none, none, 10);
-		buttonSuccess = true;
-		break;
-	case 259:	//	Remove force field.
-		buttonSuccess = EV_RemoveForceField(args);
-		break;
-	case 260:	//	PlayCommUnitSound.
-		if (A && A.bIsPlayer && A.Player.Communicator)
-		{
-			MSG_Select(MSG_SV_RELIABLE);
-			MSG_WriteByte(svc_voice);
-			MSG_WriteShort(args[0]);
-			buttonSuccess = true;
-		}
-		break;
-	case 261:	// Give quest.
-		A.Player.GiveQuest(args[0]);
-		break;
-	case 262:
-		if (!args[0])
-		{
-			buttonSuccess = EV_ManualTextureChangeDoor(line, A);
-		}
-		else
-		{
-			buttonSuccess = EV_TextureChangeDoor(line, args);
-		}
 		break;
 
 		// Inert Line specials
@@ -855,7 +911,7 @@ void P_SpawnSpecials(bool spawn_thinkers)
 			}
 			GLevel.Lines[i].special = 0;
 		}
-		else if (GLevel.Lines[i].special == 257 && GLevel.Lines[i].arg2 != 255)
+		else if (GLevel.Lines[i].special == 49 && GLevel.Lines[i].arg2 != 255)
 		{
 			int trans = (255 - GLevel.Lines[i].arg2) * 100 / 255;
 			SetLineTransluc(&GLevel.Lines[i], trans);
@@ -938,9 +994,9 @@ bool CheckActivation(int activationType, line_t * line, Actor A)
 			{
 			case 12:
 			case 70:
-/*			 case Teleport_NoFog:
-			 case Teleport_Line:
-			 case Plat_DownWaitUpStayLip:*/
+			case 71:
+			case 215:
+			case 206:
 			case 62:
 				noway = false;
 			}
@@ -988,7 +1044,7 @@ bool P_ActivateLine(line_t * line, Actor A, int side, int activationType)
 	repeat = line->flags & ML_REPEAT_SPECIAL;
 	buttonSuccess = ExecuteLineSpecial(line->special, &line->arg1, line,
 		side, A);
-	changeBack = line->special == 257 && (line->flags & ML_TWOSIDED) && buttonSuccess;
+	changeBack = line->special == 49 && (line->flags & ML_TWOSIDED) && buttonSuccess;
 	if (!repeat && buttonSuccess)
 	{
 		// clear the special on non-retriggerable lines
@@ -1031,6 +1087,9 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2004/12/22 07:56:48  dj_jl
+//  Fully working Strife support.
+//
 //  Revision 1.29  2004/11/22 07:36:29  dj_jl
 //  Implemented all sector specials in all games.
 //

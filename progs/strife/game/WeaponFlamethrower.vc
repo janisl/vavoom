@@ -43,7 +43,7 @@ void A_FireFlamethrower()
 	A = Player.SpawnPlayerMissile(FlameFX1);
 	if (A)
 	{
-		A.Velocity.z += 5.0 * 35.0;
+		A.Velocity.z += 5.0 * 35.0 / 10.0;
 	}
 }
 
@@ -70,6 +70,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2004/12/22 07:56:47  dj_jl
+//  Fully working Strife support.
+//
 //  Revision 1.4  2004/08/22 19:23:27  dj_jl
 //  Moved many functions to player class.
 //

@@ -39,7 +39,7 @@
 //
 //==========================================================================
 
-void ParseGunShot(void)
+void ParseGunShot()
 {
 	TVec org;
 	int i, j;
@@ -72,7 +72,7 @@ void ParseGunShot(void)
 //
 //==========================================================================
 
-void ParseBlood(void)
+void ParseBlood()
 {
 	TVec org;
 	int damage;
@@ -137,6 +137,18 @@ bool ParseServerCommand(int cmd_type)
 		PlayVoice(va("VOC%d", MSG_ReadShort()));
 		break;
 
+	case svc_slideshow1:
+		PushMenuScreen(SpawnMenu(ConSlideshow1));
+		break;
+
+	case svc_slideshow2:
+		PushMenuScreen(SpawnMenu(ConSlideshow2));
+		break;
+
+	case svc_finale_type:
+		FinaleType = MSG_ReadByte();
+		break;
+
 	default:
 		return false;
 	}
@@ -151,18 +163,14 @@ bool ParseServerCommand(int cmd_type)
 
 void CL_UpdateMobj(clmobj_t * mobj, int i)
 {
-/*	if (mobj->frame & FF_FULLBRIGHT)
-	{
-		dlight_t *dl = AllocDlight(i);
-		dl->origin = mobj->origin;
-		dl->radius = 196.0;
-		dl->die = cl->time + 0.1;
-	}*/
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2004/12/22 07:56:47  dj_jl
+//  Fully working Strife support.
+//
 //  Revision 1.8  2004/01/20 07:13:06  dj_jl
 //  Communicator voices
 //

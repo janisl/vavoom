@@ -30,7 +30,10 @@ enum
 	svc_gun_shot = USER_PROTOCOL_START,
 	svc_blood,
 	svc_speech,
-	svc_voice
+	svc_voice,
+	svc_slideshow1,
+	svc_slideshow2,
+	svc_finale_type
 };
 
 enum
@@ -160,6 +163,10 @@ addfields client_state_t
 	int InvCursor;
 
 	int Objectives;
+
+	// Armor type is 0-2.
+	int ArmorType;
+	int ArmorPoints;
 };
 
 #endif
@@ -169,6 +176,9 @@ int maxammo[] = { 250, 50, 25, 400, 100, 30, 16 };
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2004/12/22 07:56:48  dj_jl
+//  Fully working Strife support.
+//
 //  Revision 1.14  2004/01/30 17:47:52  dj_jl
 //  Implemented many action functions.
 //

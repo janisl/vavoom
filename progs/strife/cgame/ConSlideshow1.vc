@@ -23,34 +23,91 @@
 //**
 //**************************************************************************
 
-class PoisonArrow : Projectile;
+class ConSlideshow1 : MenuScreen;
 
-__states__
+//	Background
+MenuStaticBitmap	BackPic;
+int					PageNum;
+float				PicTimer;
+
+void CreateChoices()
 {
-	S_ARROW2('ARWP', 0, 10.0 / 35.0, S_ARROW2) { A_ActiveSound(); }
-	S_ARROW2_X('AROW', 0, 1.0 / 35.0, S_NULL) { }
+	::CreateChoices();
+	BackPic = MenuStaticBitmap(NewChild(MenuHelpPage));
+	PlayPage();
+}
+
+void Tick(float DeltaTime)
+{
+	::Tick(DeltaTime);
+	PicTimer -= DeltaTime;
+	if (PicTimer <= 0.0)
+	{
+		PlayPage();
+	}
+}
+
+void PlayPage()
+{
+	switch (PageNum)
+	{
+	case 0:
+		BackPic.Handle = R_RegisterPic("SS2F1", PIC_PATCH);
+		PlayVoice("mac10");
+		PicTimer = 9.0;
+		PageNum = 1;
+		break;
+
+	case 1:
+		BackPic.Handle = R_RegisterPic("SS2F2", PIC_PATCH);
+		PlayVoice("mac11");
+		PicTimer = 10.0;
+		PageNum = 2;
+		break;
+
+	case 2:
+		BackPic.Handle = R_RegisterPic("SS2F3", PIC_PATCH);
+		PlayVoice("mac12");
+		PicTimer = 12.0;
+		PageNum = 3;
+		break;
+
+	case 3:
+		BackPic.Handle = R_RegisterPic("SS2F4", PIC_PATCH);
+		PlayVoice("mac13");
+		PicTimer = 17.0;
+		PageNum = -1;
+		break;
+
+	case -1:
+		CmdBuf_AddText("Impulse 200\n");
+		PopMenu();
+		break;
+	}
+}
+
+bool Key(int key)
+{
+	switch (key)
+	{
+	case K_ESCAPE:
+	case K_MOUSE2:
+		CmdBuf_AddText("Impulse 200\n");
+		PopMenu();
+		return true;
+	}
+	return ::Key(key);
 }
 
 defaultproperties
 {
-	Radius = 10.0;
-	Height = 10.0;
-	Speed = 1050.0;
-	MissileDamage = 500;
-	IdleState = S_ARROW2;
-	DeathState = S_ARROW2_X;
-	SightSound = 'PunchMiss';
-	ActiveSound = 'PunchMiss';
-	bPoisonDamage = true;
+	bTickEnabled = true;
 }
 
 //**************************************************************************
 //
 //  $Log$
-//  Revision 1.2  2004/12/22 07:56:47  dj_jl
+//  Revision 1.1  2004/12/22 07:56:46  dj_jl
 //  Fully working Strife support.
-//
-//  Revision 1.1  2002/11/02 08:20:56  dj_jl
-//  New style classes.
 //
 //**************************************************************************

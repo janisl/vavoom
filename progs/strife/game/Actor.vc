@@ -35,6 +35,8 @@ int PainState;
 int DyingState;
 int DeathState;
 int GibsDeathState;
+int FireDeathState;
+int DisruptDeathState;
 
 //  Sounds
 name SightSound;
@@ -76,6 +78,9 @@ bool bNoDeathmatch;
 bool bSpawnFlag8;
 bool bSpawnFlag9;
 bool bWindThrust;
+bool bPoisonDamage;		// Does poison damage (doesn't gib enemies).
+bool bFireDamage;		// Causes fire damage.
+bool bDisruptDamage;	// Disrupts enemies.
 
 //  Params
 float Speed;
@@ -350,12 +355,21 @@ void Died(Actor source)
 	classid DropItemType;
 	Actor A;
 
+	if (bIsPlayer && !strcmp(ARR2STR(level->mapname), "MAP29"))
+	{
+		//	Start sad finale.
+		MSG_Select(MSG_SV_RELIABLE);
+		MSG_WriteByte(svc_finale_type);
+		MSG_WriteByte(1);
+		G_Completed(-1, -1);
+	}
+
 	bShootable = false;
 	bFloat = false;
 	bSkullFly = false;
 
-//	if (target->type != MT_SKULL)
-	bNoGravity = false;
+	if (!bSpawnCeiling)
+		bNoGravity = false;
 
 	bDropOff = true;
 	bCorpse = true;
@@ -414,7 +428,15 @@ void Died(Actor source)
 #endif
 	}
 
-	if (Health < GibsHealth && GibsDeathState)
+	if (bFireDamage && FireDeathState)
+	{
+		SetState(FireDeathState);
+	}
+	else if (bDisruptDamage && DisruptDeathState)
+	{
+		SetState(DisruptDeathState);
+	}
+	else if (Health < GibsHealth && GibsDeathState)
 	{
 		SetState(GibsDeathState);
 	}
@@ -550,6 +572,22 @@ void Damage(Actor inflictor, Actor source, int damage)
 	Health -= damage;
 	if (Health <= 0)
 	{
+		if (inflictor)
+		{
+			if (inflictor.bPoisonDamage)
+			{
+				//	Prevent gibing animation.
+				Health = -1;
+			}
+			else if (inflictor.bFireDamage)
+			{
+				bFireDamage = true;
+			}
+			else if (inflictor.bDisruptDamage)
+			{
+				bDisruptDamage = true;
+			}
+		}
 		Died(source);
 		return;
 	}
@@ -764,6 +802,337 @@ void CrossSpecialLine(line_t *ld, int side)
 		//	Teleport hack
 		P_ActivateLine(ld, self, side, SPAC_MCROSS);
 	}
+}
+
+//===========================================================================
+//
+//  GiveInventory
+//
+//===========================================================================
+
+void GiveInventory(name ItemName, int Amount)
+{
+	if (!bIsPlayer)
+	{
+		return;
+	}
+
+	//	Stamina upgrade.
+	if (ItemName == 'UpgradeStamina')
+	{
+		Player.Stamina += 10;
+	}
+
+	//	Accuracy upgrade.
+	if (ItemName == 'UpgradeAccuracy')
+	{
+		Player.Accuracy += 10;
+	}
+
+	//	Quest items.
+	if (ItemName == 'QuestItem1')
+	{
+		Player.GiveQuest(QUEST_KilledBeldin);
+	}
+	if (ItemName == 'QuestItem2')
+	{
+		Player.GiveQuest(QUEST_StoleChalice);
+	}
+	if (ItemName == 'QuestItem3')
+	{
+		Player.GiveQuest(QUEST_Prison);
+	}
+	if (ItemName == 'QuestItem4')
+	{
+		Player.GiveQuest(QUEST_GovPowerCoupling);
+	}
+	if (ItemName == 'QuestItem5')
+	{
+		Player.GiveQuest(QUEST_GovDerwin);
+	}
+	if (ItemName == 'QuestItem6')
+	{
+		Player.GiveQuest(QUEST_6);
+	}
+	if (ItemName == 'QuestItem7')
+	{
+		Player.GiveQuest(QUEST_7);
+	}
+	if (ItemName == 'QuestItem8')
+	{
+		Player.GiveQuest(QUEST_8);
+	}
+	if (ItemName == 'QuestItem9')
+	{
+		Player.GiveQuest(QUEST_GotDerwinsEar);
+	}
+	if (ItemName == 'QuestItem10')
+	{
+		Player.GiveQuest(QUEST_GotPrisonPass);
+	}
+	if (ItemName == 'QuestItem11')
+	{
+		Player.GiveQuest(QUEST_GotPrisonKey);
+	}
+	if (ItemName == 'QuestItem12')
+	{
+		Player.GiveQuest(QUEST_GotSeveredHand);
+	}
+	if (ItemName == 'QuestItem13')
+	{
+		Player.GiveQuest(QUEST_FreedPrisoners);
+	}
+	if (ItemName == 'QuestItem14')
+	{
+		Player.GiveQuest(QUEST_BlownUpCrystal);
+	}
+	if (ItemName == 'QuestItem15')
+	{
+		Player.GiveQuest(QUEST_GotGuardUniform);
+	}
+	if (ItemName == 'QuestItem16')
+	{
+		Player.GiveQuest(QUEST_BlownUpGates);
+	}
+	if (ItemName == 'QuestItem17')
+	{
+		Player.GiveQuest(QUEST_VisitOracle);
+	}
+	if (ItemName == 'QuestItem18')
+	{
+		Player.GiveQuest(QUEST_GotOraclePass);
+	}
+	if (ItemName == 'QuestItem19')
+	{
+		Player.GiveQuest(QUEST_DestroyComputer);
+	}
+	if (ItemName == 'QuestItem20')
+	{
+		Player.GiveQuest(QUEST_20);
+	}
+	if (ItemName == 'QuestItem21')
+	{
+		Player.GiveQuest(QUEST_KilledBishop);
+	}
+	if (ItemName == 'QuestItem22')
+	{
+		Player.GiveQuest(QUEST_KillMacil);
+	}
+	if (ItemName == 'QuestItem23')
+	{
+		Player.GiveQuest(QUEST_KilledOracle);
+	}
+	if (ItemName == 'QuestItem24')
+	{
+		Player.GiveQuest(QUEST_KilledMacil);
+	}
+	if (ItemName == 'QuestItem25')
+	{
+		Player.GiveQuest(QUEST_Factory);
+	}
+	if (ItemName == 'QuestItem26')
+	{
+		Player.GiveQuest(QUEST_KilledLoremaster);
+	}
+	if (ItemName == 'QuestItem27')
+	{
+		Player.GiveQuest(QUEST_BlownUpComputer);
+	}
+	if (ItemName == 'QuestItem28')
+	{
+		Player.GiveQuest(QUEST_GotCatacombKey);
+	}
+	if (ItemName == 'QuestItem29')
+	{
+		Player.GiveQuest(QUEST_FreedWorkers);
+	}
+	if (ItemName == 'QuestItem30')
+	{
+		Player.GiveQuest(QUEST_30);
+	}
+	if (ItemName == 'QuestItem31')
+	{
+		Player.GiveQuest(QUEST_31);
+	}
+}
+
+//===========================================================================
+//
+//  CheckInventory
+//
+//===========================================================================
+
+int CheckInventory(name ItemName)
+{
+	//	Check if it's a player.
+	if (!bIsPlayer)
+	{
+		return 0;
+	}
+
+	//	Weapons.
+	if (ItemName == 'FlameThrower')
+	{
+		return Player.WeaponOwned[wp_flame];
+	}
+	if (ItemName == 'Sigil')
+	{
+		return Player.WeaponOwned[wp_sigil];
+	}
+
+	//	Inventory items.
+	if (ItemName == 'OfferingChalice')
+	{
+		return Player.Inventory[ITEM_OfferingChalice];
+	}
+	if (ItemName == 'OfficersUniform')
+	{
+		return Player.Inventory[ITEM_OfficersUniform];
+	}
+
+	//	Quest items.
+	if (ItemName == 'QuestItem1')
+	{
+		return Player.Quests & (1 << 0) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem2')
+	{
+		return Player.Quests & (1 << 1) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem3')
+	{
+		return Player.Quests & (1 << 2) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem4')
+	{
+		return Player.Quests & (1 << 3) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem5')
+	{
+		return Player.Quests & (1 << 4) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem6')
+	{
+		return Player.Quests & (1 << 5) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem7')
+	{
+		return Player.Quests & (1 << 6) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem8')
+	{
+		return Player.Quests & (1 << 7) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem9')
+	{
+		return Player.Quests & (1 << 8) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem10')
+	{
+		return Player.Quests & (1 << 9) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem11')
+	{
+		return Player.Quests & (1 << 10) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem12')
+	{
+		return Player.Quests & (1 << 11) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem13')
+	{
+		return Player.Quests & (1 << 12) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem14')
+	{
+		return Player.Quests & (1 << 13) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem15')
+	{
+		return Player.Quests & (1 << 14) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem16')
+	{
+		return Player.Quests & (1 << 15) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem17')
+	{
+		return Player.Quests & (1 << 16) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem18')
+	{
+		return Player.Quests & (1 << 17) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem19')
+	{
+		return Player.Quests & (1 << 18) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem20')
+	{
+		return Player.Quests & (1 << 19) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem21')
+	{
+		return Player.Quests & (1 << 20) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem22')
+	{
+		return Player.Quests & (1 << 21) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem23')
+	{
+		return Player.Quests & (1 << 22) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem24')
+	{
+		return Player.Quests & (1 << 23) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem25')
+	{
+		return Player.Quests & (1 << 24) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem26')
+	{
+		return Player.Quests & (1 << 25) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem27')
+	{
+		return Player.Quests & (1 << 26) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem28')
+	{
+		return Player.Quests & (1 << 27) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem29')
+	{
+		return Player.Quests & (1 << 28) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem30')
+	{
+		return Player.Quests & (1 << 29) ? 1 : 0;
+	}
+	if (ItemName == 'QuestItem31')
+	{
+		return Player.Quests & (1 << 30) ? 1 : 0;
+	}
+
+	//	I don't know what it is.
+	return 0;
+}
+
+//===========================================================================
+//
+//  GetSigilPieces
+//
+//===========================================================================
+
+int GetSigilPieces()
+{
+	if (bIsPlayer && Player.WeaponOwned[wp_sigil])
+	{
+		return Player.Sigil + 1;
+	}
+	return 0;
 }
 
 //**************************************************************************
@@ -1557,6 +1926,58 @@ bool LookForMonsters(bool allaround)
 
 //==========================================================================
 //
+//  LookForMonsters2
+//
+//==========================================================================
+
+bool LookForMonsters2(bool allaround)
+{
+	Actor mo;
+	float an;
+	float dist;
+
+	FOREACH(Actor, mo)
+	{
+		if (mo.Health <= 0)
+			continue;	// dead
+
+		if (mo == self)
+			continue;	// self
+
+		if (!mo.bCountKill)
+			continue;	// not a monster
+
+		if (bUnknown1 == mo.bUnknown1)
+			continue;	// fiendly.
+
+		if (!CanSee(mo))
+			continue;	// out of sight
+
+		if (P_Random() > 128)
+			continue;	// sometimes skip
+
+		if (!allaround)
+		{
+			an = AngleMod360(atan2(mo.Origin.y - Origin.y,
+				mo.Origin.x - Origin.x) - Angles.yaw);
+
+			if (an > 90.0 && an < 270.0)
+			{
+				dist = MobjDist(mo, self);
+				// if real close, react anyway
+				if (dist > MELEERANGE)
+					continue;	// behind back
+			}
+		}
+
+		Enemy = mo;
+		return true;
+	}
+	return false;
+}
+
+//==========================================================================
+//
 //  LookForPlayers
 //
 //  If allaround is false, only look 180 degrees in front.
@@ -1571,6 +1992,11 @@ bool LookForPlayers(bool allaround)
 	Player player;
 	float an;
 	float dist;
+
+	if (bUnknown1)
+	{
+		return LookForMonsters2(allaround);
+	}
 
 	if (!netgame && svvars->Players[0] && svvars->Players[0].bSpawned && svvars->Players[0].Health <= 0)
 	{
@@ -1627,6 +2053,34 @@ bool LookForPlayers(bool allaround)
 	}
 
 	return false;
+}
+
+//==========================================================================
+//
+//	SpawnSubMissile
+//
+//==========================================================================
+
+Actor SpawnSubMissile(classid type)
+{
+	Actor other;
+	TVec dir;
+
+	other = Spawn(type, Origin);
+	if (!other)
+	{
+		return none;
+	}
+
+	other.Instigator = self;
+	other.Angles = Angles;
+
+	other.Velocity.x = other.Speed * cos(Angles.yaw);
+	other.Velocity.y = other.Speed * sin(Angles.yaw);
+	dir = AimLineAttack(self, Angles, 1024.0);
+	other.Velocity.z = other.Speed * dir.z;
+	other.CheckMissileSpawn();
+	return other;
 }
 
 //==========================================================================
@@ -1989,34 +2443,6 @@ void A_AlertMonsters()
 
 //==========================================================================
 //
-//	SpawnSubMissile
-//
-//==========================================================================
-
-Actor SpawnSubMissile(classid type)
-{
-	Actor other;
-	TVec dir;
-
-	other = Spawn(type, Origin);
-	if (!other)
-	{
-		return none;
-	}
-
-	other.Instigator = self;
-	other.Angles = Angles;
-
-	other.Velocity.x = other.Speed * cos(Angles.yaw);
-	other.Velocity.y = other.Speed * sin(Angles.yaw);
-	dir = AimLineAttack(self, Angles, 1024.0);
-	other.Velocity.z = other.Speed * dir.z;
-	other.CheckMissileSpawn();
-	return other;
-}
-
-//==========================================================================
-//
 //	A_CheckAlarm
 //
 //	Stay in state untill alarm is triggered.
@@ -2041,14 +2467,55 @@ void A_CheckAlarm()
 	}
 }
 
-void A_Unknown24()
+//==========================================================================
+//
+//	A_Explode32
+//
+//==========================================================================
+
+void A_Explode32()
 {
+	RadiusAttack(32, 32, false);
+	if (DeathSound)
+		PlaySound(DeathSound, CHAN_VOICE);
 }
-void A_Unknown27()
+
+//==========================================================================
+//
+//	A_Explode192
+//
+//==========================================================================
+
+void A_Explode192()
 {
+	RadiusAttack(192, 192, false);
+	if (DeathSound)
+		PlaySound(DeathSound, CHAN_VOICE);
 }
-void A_Unknown31()
+
+//==========================================================================
+//
+//	A_RemoveForceField
+//
+//==========================================================================
+
+void A_RemoveForceField()
 {
+	int i;
+	line_t* line;
+
+	bSpecial = false;
+	for (i = 0; i < Sector->linecount; i++)
+	{
+		line = Sector->lines[i];
+		if (line->backsector && line->special == 33)
+		{
+			line->flags &= ~(ML_BLOCKING|ML_BLOCKEVERYTHING);
+			line->special = 0;
+			SetLineTexture(line->sidenum[0], 1, 0);
+			SetLineTexture(line->sidenum[1], 1, 0);
+		}
+	}
 }
 
 __states__
@@ -2058,7 +2525,7 @@ __states__
 	S_PUNCH_PUFF_3('POW2', 2, 4.0 / 35.0, S_PUNCH_PUFF_4) { }
 	S_PUNCH_PUFF_4('POW2', 3, 4.0 / 35.0, S_NULL) { }
 
-	S_ZAP1_1('ZAP1', 1, 3.0 / 35.0, S_ZAP1_2) { A_Unknown24(); }
+	S_ZAP1_1('ZAP1', 1, 3.0 / 35.0, S_ZAP1_2) { A_Explode32(); }
 	S_ZAP1_0('ZAP1', 0, 3.0 / 35.0, S_ZAP1_2) { A_AlertMonsters(); }
 	S_ZAP1_2('ZAP1', 1, 3.0 / 35.0, S_ZAP1_3) { }
 	S_ZAP1_3('ZAP1', 2, 3.0 / 35.0, S_ZAP1_4) { }
@@ -2105,6 +2572,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2004/12/22 07:56:47  dj_jl
+//  Fully working Strife support.
+//
 //  Revision 1.13  2004/11/22 07:36:28  dj_jl
 //  Implemented all sector specials in all games.
 //

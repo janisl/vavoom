@@ -37,6 +37,7 @@ int sb_height = 32;
 bool bShowWeapons;
 bool bShowKeys;
 bool bShowObjectives;
+int KeysPage;
 
 int pic_invback;
 int pic_invtop;
@@ -57,6 +58,7 @@ int pic_flame;
 int pic_blaster;
 int pic_sigil[5];
 int pic_i_comm;
+int pic_key[NUMKEYS];
 
 int LoadedLog;
 int LogText[1024 / 4];
@@ -75,7 +77,7 @@ string InventoryIconNames[NUMINVITEMS] =
 	"I_MASK",
 	"I_UNIF",
 	"I_OFIC",
-	"I_PMAP",
+	"I_PMUP",//"I_PMAP", - pic doesn't exist.
 	"I_PMUP",
 	"I_BEAC",
 	"I_TARG",
@@ -90,6 +92,68 @@ string InventoryIconNames[NUMINVITEMS] =
 	"I_HELT",
 	"I_GUNT",
 	"I_OTOK",
+};
+
+string KeyIconNames[NUMKEYS] =
+{
+	"I_FUSL",
+	"I_REBL",
+	"I_TPAS",
+	"I_CRD1",
+	"I_PRIS",
+	"I_HAND",
+	"I_PWR1",
+	"I_PWR2",
+	"I_KY1G",
+	"I_PWR3",
+	"I_CRD2",
+	"I_KY2S",
+	"I_ORAC",
+	"I_GYID",
+	"I_FUBR",
+	"I_WARE",
+	"I_KY3B",
+	"I_RCRY",
+	"I_BCRY",
+	"I_CHAP",
+	"I_TUNL",
+	"I_SECK",
+	"I_GOID",
+	"I_BLTK",
+	"I_PROC",
+	"I_MINE",
+	"I_BLTK"
+};
+
+string KeyNames[NUMKEYS] =
+{
+	"Base Key",
+	"Govs Key",
+	"Passcard",
+	"ID Badge",
+	"Prison Key",
+	"Severed Hand",
+	"Power1 Key",
+	"Power2 Key",
+	"Gold Key",
+	"Power3 Key",
+	"ID Card",
+	"Silver Key",
+	"Oracle Key",
+	"Military ID",
+	"Order Key",
+	"Warehouse Key",
+	"Brass Key",
+	"Red Crystal Key",
+	"Blue Crystal Key",
+	"Chapel Key",
+	"Catacomb Key",
+	"Security Key",
+	"Core Key",
+	"Mauler Key",
+	"Factory Key",
+	"Mine Key",
+	"New Key 5",
 };
 
 // CODE --------------------------------------------------------------------
@@ -128,6 +192,10 @@ void SB_StartMap(void)
 		pic_inv[i] = R_RegisterPic(InventoryIconNames[i], PIC_PATCH);
 	}
 	pic_invcurs = R_RegisterPic("INVCURS", PIC_PATCH);
+	for (i = 0; i < NUMKEYS; i++)
+	{
+		pic_key[i] = R_RegisterPic(KeyIconNames[i], PIC_PATCH);
+	}
 
 	pic_crossbow = R_RegisterPic("CBOWA0", PIC_PATCH);
 	pic_riffle = R_RegisterPic("RIFLA0", PIC_PATCH);
@@ -197,6 +265,20 @@ void SB_DrawMainBar(void)
 
 	// health percentage
 	SB_DrawSmallNum(76, 162, cl->health);
+
+	// armor percentage
+	if (cl->ArmorPoints > 0)
+	{
+		if (cl->ArmorType == 2)
+		{
+			R_DrawPic(8, 175, pic_inv[ITEM_MetalArmor]);
+		}
+		else
+		{
+			R_DrawPic(8, 175, pic_inv[ITEM_LeatherArmor]);
+		}
+		SB_DrawSmallNum(24, 192, cl->ArmorPoints);
+	}
 
 	Idx = 0;
 	for (i = cl->InvFirst; Idx < 6 && i < NUMINVITEMS; i++)
@@ -276,6 +358,18 @@ void SB_DrawMainBar(void)
 	{
 		R_DrawPic2(0, 56, pic_invpbak2, 33);
 		R_DrawPic(0, 56, pic_invpop2);
+		for (i = 0; i < 10; i++)
+		{
+			if (cl->Keys & (1 << (i + KeysPage * 10)))
+			{
+				R_DrawPic(20 + (i / 5) * 140, 60 + (i % 5) * 18,
+					pic_key[i + KeysPage * 10]);
+				T_SetFont(font_yellow);
+				T_SetAlign(hleft, vtop);
+				T_DrawText(40 + (i / 5) * 140, 64 + (i % 5) * 18,
+					KeyNames[i + KeysPage * 10]);
+			}
+		}
 	}
 	else if (bShowObjectives)
 	{
@@ -334,6 +428,10 @@ void SB_Drawer(int sb_view)
 
 void SB_UpdateWidgets(void)
 {
+	if (bShowKeys && !GetCvar("sb_show_keys"))
+	{
+		KeysPage = (KeysPage + 1) % 3;
+	}
 	bShowWeapons = GetCvar("sb_show_weapons");
 	bShowKeys = GetCvar("sb_show_keys");
 	bShowObjectives = GetCvar("sb_show_objectives");
@@ -342,6 +440,9 @@ void SB_UpdateWidgets(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2004/12/22 07:56:47  dj_jl
+//  Fully working Strife support.
+//
 //  Revision 1.11  2003/10/16 17:04:30  dj_jl
 //  Status bar implementation
 //

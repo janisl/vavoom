@@ -29,8 +29,8 @@ class DegninOre : InventoryItem
 __states__
 {
 	S_ORE('XPRK', 0, -1.0, S_NULL) { }
-	S_ORE_X('XPRK', 0, 1.0 / 35.0, S_ORE_X1) { A_Unknown31(); }
-	S_ORE_X1('BNG3', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X2) { A_Unknown27(); }
+	S_ORE_X('XPRK', 0, 1.0 / 35.0, S_ORE_X1) { A_RemoveForceField(); }
+	S_ORE_X1('BNG3', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X2) { A_Explode192(); }
 	S_ORE_X2('BNG3', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X3) { }
 	S_ORE_X3('BNG3', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X4) { }
 	S_ORE_X4('BNG3', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X5) { }
@@ -61,6 +61,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/12/22 07:56:47  dj_jl
+//  Fully working Strife support.
+//
 //  Revision 1.2  2003/10/02 17:15:47  dj_jl
 //  Inventory items.
 //

@@ -105,6 +105,7 @@ Actor CurrentSpeaker;
 Actor CurrentSpeakingTo;
 float OldSpeakerAngle;
 int CurrentSpeechIndex;
+bool ConversationSlideshow;
 
 //==========================================================================
 //
@@ -514,6 +515,13 @@ void ConChoiceImpulse(int ChoiceNum)
 	RogueConChoice *Choice;
 	int SpeechNum;
 
+	if (ConversationSlideshow)
+	{
+		//	Resume conversation after slideshow.
+		StartSpeech(GetSpeech(CurrentSpeaker));
+		ConversationSlideshow = false;
+		return;
+	}
 	if (!CurrentSpeaker || !CurrentSpeechIndex)
 	{
 		return;
@@ -546,7 +554,10 @@ void ConChoiceImpulse(int ChoiceNum)
 	if (Choice->Next < 0)
 	{
 		CurrentSpeaker.CurrentSpeech = -Choice->Next;
-		StartSpeech(GetSpeech(CurrentSpeaker));
+		if (!ConversationSlideshow)
+		{
+			StartSpeech(GetSpeech(CurrentSpeaker));
+		}
 	}
 	else
 	{
@@ -555,6 +566,7 @@ void ConChoiceImpulse(int ChoiceNum)
 			CurrentSpeaker.CurrentSpeech = Choice->Next;
 		}
 		StopSpeech();
+		ConversationSlideshow = false;
 	}
 }
 
@@ -602,7 +614,7 @@ bool PTR_UseThingTraverse(intercept_t * in)
 	hit_point = usething.Origin + (USETHINGRANGE * in->frac) * useDir;
 	open = LineOpenings(in->line, hit_point);
 	open = FindOpening(open, hit_point.z, hit_point.z + usething.Height);
-	if (!open)
+	if (!open || open->range < 1.0)
 	{
 		// can't use through a wall
 		return false;
@@ -1223,6 +1235,9 @@ bool PIT_RadiusAttack(Entity Other)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.37  2004/12/22 07:56:48  dj_jl
+//  Fully working Strife support.
+//
 //  Revision 1.36  2004/10/18 06:35:36  dj_jl
 //  Implemented many monsters, sigil and some more.
 //

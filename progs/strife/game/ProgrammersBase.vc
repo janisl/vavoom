@@ -23,11 +23,11 @@
 //**
 //**************************************************************************
 
-class ProgrammersBase:Effect;
+class ProgrammersBase : Effect;
 
 __states__
 {
-	S_PROGRAMMER_BASE_1('BASE', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_BASE_2) { A_Unknown24(); }
+	S_PROGRAMMER_BASE_1('BASE', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_BASE_2) { A_Explode32(); }
 	S_PROGRAMMER_BASE_2('BASE', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_BASE_3) { }
 	S_PROGRAMMER_BASE_3('BASE', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_BASE_4) { }
 	S_PROGRAMMER_BASE_4('BASE', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_BASE_5) { }
@@ -49,6 +49,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/12/22 07:56:47  dj_jl
+//  Fully working Strife support.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //
