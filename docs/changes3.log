@@ -1,0 +1,21 @@
+
+15-06-2002
+  AtklÆjÆs, ka Hexen-Æ monstri neredz spñlñtÆju. DØvaini, jo man ıóita, ke es
+ to jau izlaboju.
+17-06-2002
+  Heretic objektu pÆrkÆrtoıana. Ieviestas pamatklases, viss saıóirots. Tika
+ floatizñts PainChance.
+18-06-2002
+  PÆrnesu SlideMove un BounceWall uz end÷ini.
+19-06-2002
+  Hexen objektu pÆrkÆrtoıana. Ieviestas bÆzes klases, ıóiroıana.
+20-06-2002
+  Pievienoju funkciju FindClass.
+  Pabeidzu ıóirot Hexen klases. BaigÆ no·emıanÆs.
+  SÆku atıóirot Strife paceõmos priekımetus.
+21-06-2002
+  IzrÆdÆs ka sarunu skriptos priekımeti tiek doti izmantojot indeksu tabulÆ.
+ Visi Strife pickup-i ir atseviıói.
+22-06-2002
+  Strife atslñgas, munØciju un ieroÒus jau var pa·emt. GandrØz visi ieroÒi ir
+ strÆdñjoıi.
