@@ -1400,11 +1400,10 @@ void P_MobjThinker(mobj_t * mobj)
 	if (mobj->time != -1.0)
 	{
 		mobj->time -= frametime;
-		// you can cycle through multiple states in a tic
 		if (mobj->time <= 0.0)
 		{
-			mobj->time = 0.0;
-			while (!mobj->time)
+			// you can cycle through multiple states in a tic
+			do
 			{
 				if (!SetMobjState(mobj, mobj->nextstate))
 				{
@@ -1412,6 +1411,7 @@ void P_MobjThinker(mobj_t * mobj)
 					return;
 				}
 			}
+			while (!mobj->time);
 		}
 	}
 }
@@ -1424,6 +1424,9 @@ void mobj_t::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/10/04 17:27:52  dj_jl
+//  Beautification
+//
 //  Revision 1.6  2001/10/02 17:42:38  dj_jl
 //  Possibility to declare function's code inside class declaration
 //
