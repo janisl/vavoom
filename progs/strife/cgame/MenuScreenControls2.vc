@@ -34,6 +34,9 @@ void CreateControlKeyChoices(void)
 	AddControl("Inventory right", "Impulse 14", "");
 	AddControl("Inventory use", "Impulse 15", "");
 	AddControl("Talk key", "ChatMode", "");
+	AddControl("Show weapons", "sb_show_weapons 1", "sb_show_weapons 0");
+	AddControl("Show keys", "sb_show_keys 1", "sb_show_keys 0");
+	AddControl("Show objectives", "sb_show_objectives 1", "sb_show_objectives 0");
 }
 
 defaultproperties
@@ -43,6 +46,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/10/16 17:03:54  dj_jl
+//  Status bar implementation
+//
 //  Revision 1.1  2002/11/02 08:20:52  dj_jl
 //  New style classes.
 //

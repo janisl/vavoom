@@ -44,11 +44,17 @@
 void main(void)
 {
 	shareware = !WadLumpPresent("MAP01");
+	CreateCvar("sb_show_weapons", "0", 0);
+	CreateCvar("sb_show_keys", "0", 0);
+	CreateCvar("sb_show_objectives", "0", 0);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2003/10/16 17:04:30  dj_jl
+//  Status bar implementation
+//
 //  Revision 1.4  2003/09/11 17:15:59  dj_jl
 //  Removed unused cvar
 //

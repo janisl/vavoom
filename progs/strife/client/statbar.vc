@@ -34,14 +34,34 @@
 // DATA DECLARATIONS -------------------------------------------------------
 
 int sb_height = 32;
+bool bShowWeapons;
+bool bShowKeys;
+bool bShowObjectives;
 
 int pic_invback;
 int pic_invtop;
+int pic_invpop;
+int pic_invpop2;
+int pic_invpbak;
+int pic_invpbak2;
 int pic_pause;
 int pic_yellownum[11];
 int pic_graynum[11];
 int pic_inv[NUMINVITEMS];
 int pic_invcurs;
+int pic_crossbow;
+int pic_riffle;
+int pic_missile;
+int pic_grenade;
+int pic_flame;
+int pic_blaster;
+int pic_sigil[5];
+int pic_i_comm;
+
+int LoadedLog;
+int LogText[1024 / 4];
+
+int AmmoPosY[NUMAMMO] = { 75, 99, 91, 139, 131, 115, 123 };
 
 string InventoryIconNames[NUMINVITEMS] =
 {
@@ -88,6 +108,10 @@ void SB_StartMap(void)
 
 	pic_invback = R_RegisterPic("INVBACK", PIC_PATCH);
 	pic_invtop = R_RegisterPic("INVTOP", PIC_PATCH);
+	pic_invpop = R_RegisterPic("INVPOP", PIC_PATCH);
+	pic_invpop2 = R_RegisterPic("INVPOP2", PIC_PATCH);
+	pic_invpbak = R_RegisterPic("INVPBAK", PIC_PATCH);
+	pic_invpbak2 = R_RegisterPic("INVPBAK2", PIC_PATCH);
 
 	for (i = 0; i < 10; i++)
 	{
@@ -104,6 +128,19 @@ void SB_StartMap(void)
 		pic_inv[i] = R_RegisterPic(InventoryIconNames[i], PIC_PATCH);
 	}
 	pic_invcurs = R_RegisterPic("INVCURS", PIC_PATCH);
+
+	pic_crossbow = R_RegisterPic("CBOWA0", PIC_PATCH);
+	pic_riffle = R_RegisterPic("RIFLA0", PIC_PATCH);
+	pic_missile = R_RegisterPic("MMSLA0", PIC_PATCH);
+	pic_grenade = R_RegisterPic("GRNDA0", PIC_PATCH);
+	pic_flame = R_RegisterPic("FLAMA0", PIC_PATCH);
+	pic_blaster = R_RegisterPic("TRPDA0", PIC_PATCH);
+	pic_sigil[0] = R_RegisterPic("I_SGL1", PIC_PATCH);
+	pic_sigil[1] = R_RegisterPic("I_SGL2", PIC_PATCH);
+	pic_sigil[2] = R_RegisterPic("I_SGL3", PIC_PATCH);
+	pic_sigil[3] = R_RegisterPic("I_SGL4", PIC_PATCH);
+	pic_sigil[4] = R_RegisterPic("I_SGL5", PIC_PATCH);
+	pic_i_comm = R_RegisterPic("I_COMM", PIC_PATCH);
 
 	pic_pause = R_RegisterPic("M_PAUSE", PIC_PATCH);
 }
@@ -152,6 +189,7 @@ void SB_DrawMainBar(void)
 {
 	int Idx;
 	int i;
+	int NumKeys;
 
 	//  background
 	R_DrawPic(0, 168, pic_invback);
@@ -172,6 +210,87 @@ void SB_DrawMainBar(void)
 			R_DrawPic(48 + Idx * 35, 182, pic_inv[i]);
 			SB_DrawSmallNum(76 + Idx * 35, 192, cl->Inventory[i]);
 			Idx++;
+		}
+	}
+
+	if (cl->WeaponOwned[wp_sigil])
+	{
+		R_DrawPic(253, 175, pic_sigil[cl->Sigil]);
+	}
+
+	if (cl->ReadyAmmo != 1994)
+	{
+		SB_DrawSmallNum(310, 162, cl->ReadyAmmo);
+	}
+
+	if (bShowWeapons)
+	{
+		R_DrawPic2(0, 56, pic_invpbak, 33);
+		R_DrawPic(0, 56, pic_invpop);
+		if (cl->WeaponOwned[wp_crossbow])
+		{
+			R_DrawPic(38, 86, pic_crossbow);
+		}
+		if (cl->WeaponOwned[wp_riffle])
+		{
+			R_DrawPic(40, 107, pic_riffle);
+		}
+		if (cl->WeaponOwned[wp_missile])
+		{
+			R_DrawPic(39, 131, pic_missile);
+		}
+		if (cl->WeaponOwned[wp_grenade])
+		{
+			R_DrawPic(78, 87, pic_grenade);
+		}
+		if (cl->WeaponOwned[wp_flame])
+		{
+			R_DrawPic(80, 117, pic_flame);
+		}
+		if (cl->WeaponOwned[wp_blaster])
+		{
+			R_DrawPic(75, 142, pic_blaster);
+		}
+		for (i = 0; i < NUMAMMO; i++)
+		{
+			SB_DrawSmallNum(205, AmmoPosY[i], cl->Ammo[i]);
+			SB_DrawSmallNum(238, AmmoPosY[i], maxammo[i] * (cl->Backpack ? 2 : 1));
+		}
+		SB_DrawSmallNum(267, 84, cl->Accuracy);
+		SB_DrawSmallNum(267, 108, cl->Stamina);
+		NumKeys = 0;
+		for (i = 0; i < NUMKEYS; i++)
+		{
+			if (cl->Keys & (1 << i))
+			{
+				NumKeys++;
+			}
+		}
+		SB_DrawSmallNum(267, 132, NumKeys);
+		if (cl->Communicator)
+		{
+			R_DrawPic(280, 130, pic_i_comm);
+		}
+	}
+	else if (bShowKeys)
+	{
+		R_DrawPic2(0, 56, pic_invpbak2, 33);
+		R_DrawPic(0, 56, pic_invpop2);
+	}
+	else if (bShowObjectives)
+	{
+		R_DrawPic2(0, 56, pic_invpbak2, 33);
+		R_DrawPic(0, 56, pic_invpop2);
+		if (cl->Objectives)
+		{
+			if (LoadedLog != cl->Objectives)
+			{
+				LoadTextLump(va("LOG%d", cl->Objectives), &LogText[0], 1024);
+				LoadedLog = cl->Objectives;
+			}
+			T_SetFont(font_yellow);
+			T_SetAlign(hleft, vtop);
+			T_DrawTextW(20, 60, ARR2STR(LogText), 280);
 		}
 	}
 }
@@ -199,7 +318,8 @@ void SB_DrawPause(void)
 
 void SB_Drawer(int sb_view)
 {
-	if (sb_view != SB_VIEW_FULLSCREEN)
+	if (sb_view != SB_VIEW_FULLSCREEN ||
+		bShowWeapons || bShowKeys || bShowObjectives)
 	{
 		SB_DrawMainBar();
 	}
@@ -214,11 +334,17 @@ void SB_Drawer(int sb_view)
 
 void SB_UpdateWidgets(void)
 {
+	bShowWeapons = GetCvar("sb_show_weapons");
+	bShowKeys = GetCvar("sb_show_keys");
+	bShowObjectives = GetCvar("sb_show_objectives");
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2003/10/16 17:04:30  dj_jl
+//  Status bar implementation
+//
 //  Revision 1.10  2003/10/02 18:04:39  dj_jl
 //  Inventory system.
 //
