@@ -353,8 +353,8 @@ struct base_level_t
 	// Store VERTEXES, LINEDEFS, SIDEDEFS, etc.
 	//
 	// Lookup tables for map data.
-	int __numvertexes;
-	void *__vertexes;
+	int numvertexes;
+	TVec *vertexes;
 
 	int __numsegs;
 	void *__segs;
@@ -1022,6 +1022,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.42  2002/08/24 14:53:06  dj_jl
+//  Implemented sloping with vertex heights.
+//
 //  Revision 1.41  2002/07/27 18:08:12  dj_jl
 //  Implementing Strife conversations.
 //

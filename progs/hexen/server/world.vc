@@ -79,7 +79,6 @@ void MakeFloorSlope(mthing_t * mthing)
 			}
 			sec->floor.dist = DotProduct(sec->floor.normal, p3);
 			sec->base_floorheight = sec->floor.dist;
-			P_ChangeSector(sec, false);
 			SendFloorSlope(sec);
 			return;
 		}
@@ -130,10 +129,208 @@ void MakeCeilingSlope(mthing_t * mthing)
 			}
 			sec->ceiling.dist = DotProduct(sec->ceiling.normal, p3);
 			sec->base_ceilingheight = sec->ceiling.dist;
-			P_ChangeSector(sec, false);
 			SendCeilingSlope(sec);
 			return;
 		}
+	}
+}
+
+//==========================================================================
+//
+//	SetVertexHeights
+//
+//==========================================================================
+
+boolean SetVertexHeights(int ThingID)
+{
+	int i;
+	int j;
+	boolean ret = false;
+	mthing_t * mthing;
+	
+	//	Clean all
+	for (i = 0; i < level->numvertexes; i++)
+	{
+		level->vertexes[i].z = 0.1;
+	}
+	for (j = 0; j < level->numthings; j++)
+	{
+		mthing = &level->things[j];
+		if (mthing->type == ThingID)
+		{
+			for (i = 0; i < level->numvertexes; i++)
+			{
+				if (level->vertexes[i].x == mthing->x &&
+					level->vertexes[i].y == mthing->y)
+				{
+					level->vertexes[i].z = mthing->height;
+					ret = true;
+				}
+			}
+		}
+	}
+	return ret;
+}
+
+//==========================================================================
+//
+//	CleanVertexHeights
+//
+//==========================================================================
+
+void CleanVertexHeights(void)
+{
+	int i;
+	
+	for (i = 0; i < level->numvertexes; i++)
+	{
+		level->vertexes[i].z = 0.0;
+	}
+}
+
+//==========================================================================
+//
+//	MakeVertexFloorHeights
+//
+//==========================================================================
+
+void MakeVertexFloorHeights(void)
+{
+	int i;
+	sector_t *sec;
+	TVec p1;
+	TVec p2;
+	TVec p3;
+	TVec v1;
+	TVec v2;
+	
+	if (!SetVertexHeights(1504))
+	{
+		return;
+	}
+	for (i = 0; i < level->numsectors; i++)
+	{
+		sec = &level->sectors[i];
+		if (sec->linecount != 3)
+			continue;
+		p1 = *sec->lines[0]->v1;
+		p2 = *sec->lines[0]->v2;
+		if (sec->lines[1]->v1 == sec->lines[0]->v1 ||
+			sec->lines[1]->v1 == sec->lines[0]->v2)
+		{
+			p3 = *sec->lines[1]->v2;
+		}
+		else
+		{
+			p3 = *sec->lines[1]->v1;
+		}
+		if (p1.z == 0.1 && p2.z == 0.1 && p3.z == 0.1)
+		{
+			continue;
+		}
+		if (p1.z == 0.1)
+		{
+			p1.z = sec->floorheight;
+		}
+		if (p2.z == 0.1)
+		{
+			p2.z = sec->floorheight;
+		}
+		if (p3.z == 0.1)
+		{
+			p3.z = sec->floorheight;
+		}
+		if (PointOnPlaneSide(p3, sec->lines[0]) == 0)
+		{
+			v1 = p2 - p3;
+			v2 = p1 - p3;
+		}
+		else
+		{
+			v1 = p1 - p3;
+			v2 = p2 - p3;
+		}
+		sec->floor.normal = Normalize(CrossProduct(v1, v2));
+		if (sec->floor.normal.z <= 0.0)
+		{
+			Error("Floor with normal.z <= 0.0");
+		}
+		sec->floor.dist = DotProduct(sec->floor.normal, p3);
+		sec->base_floorheight = sec->floor.dist;
+		SendFloorSlope(sec);
+	}
+}
+
+//==========================================================================
+//
+//	MakeVertexCeilingHeights
+//
+//==========================================================================
+
+void MakeVertexCeilingHeights(void)
+{
+	int i;
+	sector_t *sec;
+	TVec p1;
+	TVec p2;
+	TVec p3;
+	TVec v1;
+	TVec v2;
+	
+	if (!SetVertexHeights(1505))
+	{
+		return;
+	}
+	for (i = 0; i < level->numsectors; i++)
+	{
+		sec = &level->sectors[i];
+		if (sec->linecount != 3)
+			continue;
+		p1 = *sec->lines[0]->v1;
+		p2 = *sec->lines[0]->v2;
+		if (sec->lines[1]->v1 == sec->lines[0]->v1 ||
+			sec->lines[1]->v1 == sec->lines[0]->v2)
+		{
+			p3 = *sec->lines[1]->v2;
+		}
+		else
+		{
+			p3 = *sec->lines[1]->v1;
+		}
+		if (p1.z == 0.1 && p2.z == 0.1 && p3.z == 0.1)
+		{
+			continue;
+		}
+		if (p1.z == 0.1)
+		{
+			p1.z = sec->ceilingheight;
+		}
+		if (p2.z == 0.1)
+		{
+			p2.z = sec->ceilingheight;
+		}
+		if (p3.z == 0.1)
+		{
+			p3.z = sec->ceilingheight;
+		}
+		if (PointOnPlaneSide(p3, sec->lines[0]) == 0)
+		{
+			v1 = p1 - p3;
+			v2 = p2 - p3;
+		}
+		else
+		{
+			v1 = p2 - p3;
+			v2 = p1 - p3;
+		}
+		sec->ceiling.normal = Normalize(CrossProduct(v1, v2));
+		if (sec->ceiling.normal.z >= 0.0)
+		{
+			Error("Ceiling with normal.z >= 0.0");
+		}
+		sec->ceiling.dist = DotProduct(sec->ceiling.normal, p3);
+		sec->base_ceilingheight = sec->ceiling.dist;
+		SendCeilingSlope(sec);
 	}
 }
 
@@ -235,6 +432,9 @@ void SpawnWorld(void)
 			continue;
 		}
 	}
+	MakeVertexFloorHeights();
+	MakeVertexCeilingHeights();
+	CleanVertexHeights();
 
 	//  Spawn 3D floors
 	for (i = 0; i < level->numlines; i++)
@@ -253,6 +453,9 @@ void SpawnWorld(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/08/24 14:53:06  dj_jl
+//  Implemented sloping with vertex heights.
+//
 //  Revision 1.6  2002/05/03 17:13:35  dj_jl
 //  Fixed content types.
 //
