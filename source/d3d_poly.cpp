@@ -29,11 +29,7 @@
 
 // MACROS ------------------------------------------------------------------
 
-#ifdef BUMP_TEST
-#define MTEX_VERTEX_F	D3DFVF_XYZ | D3DFVF_TEX2 | D3DFVF_DIFFUSE
-#else
 #define MTEX_VERTEX_F	D3DFVF_XYZ | D3DFVF_TEX2
-#endif
 #define PART_VERTEX_F	D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1
 
 // TYPES -------------------------------------------------------------------
@@ -43,9 +39,6 @@ struct MTEX_VERTEX
 	float		x;			// Homogeneous coordinates
 	float		y;
 	float		z;
-#ifdef BUMP_TEST
-	dword		diffuse;
-#endif
 	float		texs;		// Texture coordinates
 	float		text;
 	float		lights;		// Lightmap coordinates
@@ -78,16 +71,16 @@ static float	r_avertexnormal_dots[SHADEDOT_QUANT][256] =
 #include "anorm_dots.h"
 ;
 
-static word ptex[8][8] =
+static byte ptex[8][8] =
 {
-	{ 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff },
-	{ 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff },
-	{ 0x7fff, 0x7fff, 0x7fff, 0xffff, 0xffff, 0x7fff, 0x7fff, 0x7fff },
-	{ 0x7fff, 0x7fff, 0xffff, 0xffff, 0xffff, 0xffff, 0x7fff, 0x7fff },
-	{ 0x7fff, 0x7fff, 0xffff, 0xffff, 0xffff, 0xffff, 0x7fff, 0x7fff },
-	{ 0x7fff, 0x7fff, 0x7fff, 0xffff, 0xffff, 0x7fff, 0x7fff, 0x7fff },
-	{ 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff },
-	{ 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff },
+	{ 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 1, 1, 0, 0, 0 },
+	{ 0, 0, 1, 1, 1, 1, 0, 0 },
+	{ 0, 0, 1, 1, 1, 1, 0, 0 },
+	{ 0, 0, 0, 1, 1, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0 },
 };
 
 // CODE --------------------------------------------------------------------
@@ -366,10 +359,11 @@ void TDirect3DDrawer::CacheSurface(surface_t *surface)
 	{
 		for (i = 0; i < smax; i++)
 		{
-			light_block[bnum][(j + cache->t) * BLOCK_WIDTH + i + cache->s] = MakeCol16(
-				255 - (blocklightsr[j * smax + i] >> 8),
-				255 - (blocklightsg[j * smax + i] >> 8),
-				255 - (blocklightsb[j * smax + i] >> 8));
+			rgba_t &cdst = light_block[bnum][(j + cache->t) * BLOCK_WIDTH + i + cache->s];
+ 			cdst.r = 255 - (blocklightsr[j * smax + i] >> 8);
+			cdst.g = 255 - (blocklightsg[j * smax + i] >> 8);
+			cdst.b = 255 - (blocklightsb[j * smax + i] >> 8);
+			cdst.a = 255;
 		}
 	}
 	cache->chain = light_chain[bnum];
@@ -396,12 +390,10 @@ void TDirect3DDrawer::DrawPolygon(TVec *cv, int count, int texture, int)
 	if (lightmaped)
 	{
 		CacheSurface(surf);
-#ifndef BUMP_TEST
 		if (maxMultiTex >= 2)
 		{
 			return;
 		}
-#endif
 		l = 0xffffffff;
 	}
 	else
@@ -438,44 +430,16 @@ void TDirect3DDrawer::WorldDrawing(void)
 	float			s, t, lights, lightt;
 	surface_t		*surf;
 	texinfo_t		*tex;
-	word			*buf;
 
 	if (maxMultiTex >= 2)
 	{
-#ifdef BUMP_TEST
-		RenderDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, D3DTFG_LINEAR);
-		RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, D3DTFN_LINEAR);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_ZERO);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_SRCCOLOR);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, FALSE);	// don't bother writing Z
-
-		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DOTPRODUCT3);
-#else
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
-#endif
 		RenderDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
 		RenderDevice->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
 		RenderDevice->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
 		RenderDevice->SetTextureStageState(1, D3DTSS_TEXCOORDINDEX, 1);
 		RenderDevice->SetTextureStageState(1, D3DTSS_MAGFILTER, D3DTFG_LINEAR);
 		RenderDevice->SetTextureStageState(1, D3DTSS_MINFILTER, D3DTFN_LINEAR);
-
-#ifdef BUMP_TEST
-		if (!bumpTexture)
-		{
-			bumpTexture = CreateSurface(256, 256, 32);
-			dword *bbuf = (dword*)LockSurface(bumpTexture);
-			FILE *f = fopen("bumpmap.tga", "rb");
-			fseek(f, 18, SEEK_SET);
-			fread(bbuf, 1, 256 * 256 * 4, f);
-//			for (i = 0; i < 256 * 256; i++)
-//				bbuf[i] = MakeCol32(0, 0, 255, 255);
-			fclose(f);
-			bumpTexture->Unlock(NULL);
-		}
-		RenderDevice->SetTexture(0, bumpTexture);
-#endif
 
 		for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
 		{
@@ -486,15 +450,13 @@ void TDirect3DDrawer::WorldDrawing(void)
 
 			if (!light_surf[lb])
 			{
-				light_surf[lb] = CreateSurface(BLOCK_WIDTH, BLOCK_HEIGHT, 16);
+				light_surf[lb] = CreateSurface(BLOCK_WIDTH, BLOCK_HEIGHT, 16, false);
 				block_changed[lb] = true;
 			}
 			if (block_changed[lb])
 			{
 				block_changed[lb] = false;
-				buf = LockSurface(light_surf[lb]);
-				memcpy(buf, light_block[lb], BLOCK_WIDTH * BLOCK_HEIGHT * 2);
-				light_surf[lb]->Unlock(NULL);
+				UploadTextureImage(light_surf[lb], BLOCK_WIDTH, BLOCK_HEIGHT, light_block[lb]);
 			}
 
 			RenderDevice->SetTexture(1, light_surf[lb]);
@@ -503,12 +465,7 @@ void TDirect3DDrawer::WorldDrawing(void)
 			{
 				surf = cache->surf;
 				tex = surf->texinfo;
-#ifdef BUMP_TEST
-				tex_iw = 1.0 / 256.0;
-				tex_ih = 1.0 / 256.0;
-#else
 				SetTexture(tex->pic);
-#endif
 				for (i = 0; i < surf->count; i++)
 				{
 					TVec texpt = surf->verts[i] - tex->texorg;
@@ -523,9 +480,6 @@ void TDirect3DDrawer::WorldDrawing(void)
 					mtv[i].text = t * tex_ih;
 					mtv[i].lights = lights / BLOCK_WIDTH;
 					mtv[i].lightt = lightt / BLOCK_HEIGHT;
-#ifdef BUMP_TEST
-					mtv[i].diffuse = 0x800000ff;
-#endif
 				}
 				RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MTEX_VERTEX_F, mtv, surf->count, 0);
 			}
@@ -533,17 +487,6 @@ void TDirect3DDrawer::WorldDrawing(void)
 
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 		RenderDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_DISABLE);
-#ifdef BUMP_TEST
-		if (!tex_linear)
-		{
-			RenderDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, D3DTFG_POINT);
-			RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, D3DTFN_POINT);
-		}
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_SRCALPHA);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCALPHA);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, TRUE);		// back to normal Z buffering
-#endif
 	}
 	else
 	{
@@ -563,15 +506,13 @@ void TDirect3DDrawer::WorldDrawing(void)
 
 			if (!light_surf[lb])
 			{
-				light_surf[lb] = CreateSurface(BLOCK_WIDTH, BLOCK_HEIGHT, 16);
+				light_surf[lb] = CreateSurface(BLOCK_WIDTH, BLOCK_HEIGHT, 16, false);
 				block_changed[lb] = true;
 			}
 			if (block_changed[lb])
 			{
 				block_changed[lb] = false;
-				buf = LockSurface(light_surf[lb]);
-				memcpy(buf, light_block[lb], BLOCK_WIDTH * BLOCK_HEIGHT * 2);
-				light_surf[lb]->Unlock(NULL);
+				UploadTextureImage(light_surf[lb], BLOCK_WIDTH, BLOCK_HEIGHT, light_block[lb]);
 			}
 
 			RenderDevice->SetTexture(0, light_surf[lb]);
@@ -930,9 +871,20 @@ void TDirect3DDrawer::StartParticles(void)
 {
 	if (!particle_texture)
 	{
-		particle_texture = CreateSurface(8, 8, 16);
-		memcpy(LockSurface(particle_texture), ptex, 8 * 8 * 2);
-		particle_texture->Unlock(NULL);
+		rgba_t		pbuf[8][8];
+
+		for (int j = 0; j < 8; j++)
+		{
+			for (int i = 0; i < 8; i++)
+			{
+				pbuf[j][i].r = 255;
+				pbuf[j][i].g = 255;
+				pbuf[j][i].b = 255;
+				pbuf[j][i].a = ptex[j][i] * 255;
+			}
+		}
+		particle_texture = CreateSurface(8, 8, 16, false);
+		UploadTextureImage(particle_texture, 8, 8, &pbuf[0][0]);
 	}
 	RenderDevice->SetTexture(0, particle_texture);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
@@ -984,9 +936,12 @@ void TDirect3DDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/08/24 17:03:57  dj_jl
+//	Added mipmapping, removed bumpmap test code
+//
 //	Revision 1.7  2001/08/21 17:46:08  dj_jl
 //	Added R_TextureAnimation, made SetTexture recognize flats
-//
+//	
 //	Revision 1.6  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
 //	

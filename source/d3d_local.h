@@ -41,8 +41,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-//#define BUMP_TEST
-
 #define SAFE_RELEASE(iface) \
 	if (iface) \
 	{ \
@@ -135,8 +133,7 @@ class TDirect3DDrawer : public TDrawer
 	void Setup2D(void);
 	void ReleaseTextures(void);
 	int ToPowerOf2(int);
-	LPDIRECTDRAWSURFACE7 CreateSurface(int, int, int);
-	word *LockSurface(LPDIRECTDRAWSURFACE7);
+	LPDIRECTDRAWSURFACE7 CreateSurface(int, int, int, bool);
 	void DrawColumnInCache(column_t*, rgba_t*, int, int, int, int, bool);
 	void GenerateTexture(int, bool);
 	void GenerateFlat(int);
@@ -146,7 +143,7 @@ class TDirect3DDrawer : public TDrawer
 	void GeneratePicFromPatch(int);
 	void GeneratePicFromRaw(int);
 	void SetSkin(const char*);
-	LPDIRECTDRAWSURFACE7 UploadTextureImage(int, int, rgba_t*);
+	void UploadTextureImage(LPDIRECTDRAWSURFACE7, int, int, rgba_t*);
 	void ResampleTexture(int, int, const byte*, int, int, byte*);
 	void MipMap(int, int, byte*);
 	LPDIRECTDRAWSURFACE7 UploadTexture(int, int, rgba_t*);
@@ -156,16 +153,9 @@ class TDirect3DDrawer : public TDrawer
 	surfcache_t	*AllocBlock(int width, int height);
 	void CacheSurface(surface_t *surface);
 
-	word MakeCol16(byte r, byte g, byte b)
-	{
-		return amask |
-			((r >> (8 - rbits)) << rshift) |
-			((g >> (8 - gbits)) << gshift) |
-			((b >> (8 - bbits)) << bshift);
-	}
 	word MakeCol16(byte r, byte g, byte b, byte a)
 	{
-		return ((a << 8) & amask) |
+		return ((a >> (8 - abits)) << ashift) |
 			((r >> (8 - rbits)) << rshift) |
 			((g >> (8 - gbits)) << gshift) |
 			((b >> (8 - bbits)) << bshift);
@@ -199,7 +189,8 @@ class TDirect3DDrawer : public TDrawer
 	int							maxTexSize;
 	int							maxMultiTex;
 
-	int							amask;
+	int							abits;
+	int							ashift;
 	int							rbits;
 	int							rshift;
 	int							gbits;
@@ -211,8 +202,6 @@ class TDirect3DDrawer : public TDrawer
 	int							rshift32;
 	int							gshift32;
 	int							bshift32;
-
-	word						pal8_to16[256];
 
 	float						tex_iw;
 	float						tex_ih;
@@ -242,7 +231,7 @@ class TDirect3DDrawer : public TDrawer
 	float						picih[MAX_PICS];
 
 	LPDIRECTDRAWSURFACE7		*light_surf;
-	word						light_block[NUM_BLOCK_SURFS][BLOCK_WIDTH * BLOCK_HEIGHT];
+	rgba_t						light_block[NUM_BLOCK_SURFS][BLOCK_WIDTH * BLOCK_HEIGHT];
 	bool						block_changed[NUM_BLOCK_SURFS];
 	surfcache_t					*light_chain[NUM_BLOCK_SURFS];
 	surfcache_t					*freeblocks;
@@ -253,10 +242,6 @@ class TDirect3DDrawer : public TDrawer
 	TCvarI						clear;
 	TCvarI						tex_linear;
 	TCvarI						dither;
-
-#ifdef BUMP_TEST
-	LPDIRECTDRAWSURFACE7		bumpTexture;
-#endif
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -268,9 +253,12 @@ class TDirect3DDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/08/24 17:03:57  dj_jl
+//	Added mipmapping, removed bumpmap test code
+//
 //	Revision 1.8  2001/08/23 17:47:57  dj_jl
 //	Started work on mipmapping
-//
+//	
 //	Revision 1.7  2001/08/15 17:15:55  dj_jl
 //	Drawer API changes, removed wipes
 //	

@@ -65,7 +65,7 @@ int TDirect3DDrawer::ToPowerOf2(int val)
 //
 //==========================================================================
 
-LPDIRECTDRAWSURFACE7 TDirect3DDrawer::CreateSurface(int w, int h, int bpp)
+LPDIRECTDRAWSURFACE7 TDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool mipmaps)
 {
 	DDSURFACEDESC2			ddsd;
 	LPDIRECTDRAWSURFACE7	surf = NULL;
@@ -75,6 +75,10 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::CreateSurface(int w, int h, int bpp)
 	ddsd.dwSize = sizeof(ddsd);
 	ddsd.dwFlags = DDSD_WIDTH | DDSD_HEIGHT | DDSD_CAPS | DDSD_PIXELFORMAT;
 	ddsd.ddsCaps.dwCaps = DDSCAPS_TEXTURE | SurfaceMemFlag;
+	if (mipmaps)
+	{
+		ddsd.ddsCaps.dwCaps |= DDSCAPS_MIPMAP | DDSCAPS_COMPLEX;
+	}
 	ddsd.dwWidth  = w;
 	ddsd.dwHeight = h;
 	if (bpp == 32)
@@ -103,26 +107,6 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::CreateSurface(int w, int h, int bpp)
 
 	cond << "Not enough video memory\n";
 	return NULL;
-}
-
-//==========================================================================
-//
-//	TDirect3DDrawer::LockSurface
-//
-//==========================================================================
-
-word *TDirect3DDrawer::LockSurface(LPDIRECTDRAWSURFACE7 surf)
-{
-	DDSURFACEDESC2			ddsd;
-	memset(&ddsd, 0, sizeof(ddsd));
-	ddsd.dwSize = sizeof(ddsd);
-	ddsd.dwFlags = DDSD_WIDTH | DDSD_HEIGHT | DDSD_LPSURFACE;
-	if (FAILED(surf->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL)))
-	{
-		cond << "Failed to lock surface\n";
-		return NULL;
-	}
-	return (word*)ddsd.lpSurface;
 }
 
 //==========================================================================
@@ -176,9 +160,6 @@ void TDirect3DDrawer::ReleaseTextures(void)
 		SAFE_RELEASE(light_surf[i]);
 	}
 	SAFE_RELEASE(particle_texture);
-#ifdef BUMP_TEST
-	SAFE_RELEASE(bumpTexture);
-#endif
 }
 
 //==========================================================================
@@ -354,20 +335,18 @@ void TDirect3DDrawer::SetSkyTexture(int tex, bool double_sky)
 
 void TDirect3DDrawer::GenerateFlat(int num)
 {
-	flatdata[num] = CreateSurface(64, 64, 16);
-	if (!flatdata[num])
-		return;
-	word *block = LockSurface(flatdata[num]);
+	rgba_t *block = (rgba_t*)Z_Malloc(64 * 64 * 4, PU_HIGH, 0);
 	byte *data = (byte*)W_CacheLumpNum(flatlumps[num], PU_CACHE);
 
 	byte *src = data;
-	word *dst = block;
-	for (int i = 0; i < 64 * 64; i++)
+	rgba_t *dst = block;
+	for (int i = 0; i < 64 * 64; i++, src++)
 	{
-		*dst++ = pal8_to16[*src++];
+		*dst++ = r_palette[0][*src ? *src : r_black_color[0]];
 	}
 
-	flatdata[num]->Unlock(NULL);
+	flatdata[num] = UploadTexture(64, 64, block);
+	Z_Free(block);
 }
 
 //==========================================================================
@@ -401,56 +380,32 @@ void TDirect3DDrawer::SetFlat(int num)
 
 void TDirect3DDrawer::GenerateSprite(int lump)
 {
-    patch_t	*patch = (patch_t*)W_CacheLumpNum(spritelumps[lump], PU_CACHE);
+    patch_t	*patch = (patch_t*)W_CacheLumpNum(spritelumps[lump], PU_STATIC);
 
 	int w = LittleShort(patch->width);
 	int h = LittleShort(patch->height);
 	int p2w = ToPowerOf2(w);
 	int p2h = ToPowerOf2(h);
-	fixed_t xscale;
-	if (p2w > maxTexSize)
-	{
-		xscale = FRACUNIT * w / maxTexSize;
-		p2w = maxTexSize;
-		if (square_textures)
-		{
-			p2h = p2w;
-		}
-		spriteiw[lump] = 1.0 / (float)w;
-	}
-	else
-	{
-		xscale = FRACUNIT;
-		if (square_textures)
-		{
-			p2w = p2h = MAX(p2w, p2h);
-		}
-		spriteiw[lump] = 1.0 / (float)p2w;
-	}
+	spriteiw[lump] = 1.0 / (float)p2w;
 	spriteih[lump] = 1.0 / (float)p2h;
-	int workw = MIN(w, p2w);
 
-	spritedata[lump] = CreateSurface(p2w, p2h, 16);
-	if (!spritedata[lump])
-		return;
-	word *block = LockSurface(spritedata[lump]);
-	memset(block, 0, p2w * p2h * 2);
+	rgba_t *block = (rgba_t*)Z_Calloc(p2w * p2h * 4, PU_HIGH, 0);
 
-	for (int x = 0; x < workw; x++)
+	for (int x = 0; x < w; x++)
 	{
     	column_t *column = (column_t *)((byte *)patch +
-    		LittleLong(patch->columnofs[(x * xscale) >> FRACBITS]));
+    		LittleLong(patch->columnofs[x]));
 
 		// step through the posts in a column
 	    while (column->topdelta != 0xff)
 	    {
 		    byte* source = (byte *)column + 3;
-		    word* dest = block + x + column->topdelta * p2w;
+		    rgba_t* dest = block + x + column->topdelta * p2w;
 			int count = column->length;
 
 	    	while (count--)
 	    	{
-				*dest = pal8_to16[*source];
+				*dest = r_palette[0][*source ? *source : r_black_color[0]];
 				source++;
 				dest += p2w;
 	    	}
@@ -458,7 +413,9 @@ void TDirect3DDrawer::GenerateSprite(int lump)
 	    }
 	}
 
-	spritedata[lump]->Unlock(NULL);
+	spritedata[lump] = UploadTexture(p2w, p2h, block);
+	Z_Free(block);
+	Z_ChangeTag(patch, PU_CACHE);
 }
 
 //==========================================================================
@@ -469,60 +426,37 @@ void TDirect3DDrawer::GenerateSprite(int lump)
 
 void TDirect3DDrawer::GenerateTranslatedSprite(int lump, int slot, int translation)
 {
-    patch_t	*patch = (patch_t*)W_CacheLumpNum(spritelumps[lump], PU_CACHE);
+    patch_t	*patch = (patch_t*)W_CacheLumpNum(spritelumps[lump], PU_STATIC);
 
 	int w = LittleShort(patch->width);
 	int h = LittleShort(patch->height);
 	int p2w = ToPowerOf2(w);
 	int p2h = ToPowerOf2(h);
-	fixed_t xscale;
-	if (p2w > maxTexSize)
-	{
-		xscale = FRACUNIT * w / maxTexSize;
-		p2w = maxTexSize;
-		if (square_textures)
-		{
-			p2h = p2w;
-		}
-		trspriw[slot] = 1.0 / (float)w;
-	}
-	else
-	{
-		xscale = FRACUNIT;
-		if (square_textures)
-		{
-			p2w = p2h = MAX(p2w, p2h);
-		}
-		trspriw[slot] = 1.0 / (float)p2w;
-	}
+	trspriw[slot] = 1.0 / (float)p2w;
 	trsprih[slot] = 1.0 / (float)p2h;
-	int workw = MIN(w, p2w);
 
-	trsprdata[slot] = CreateSurface(p2w, p2h, 16);
-	if (!trsprdata[slot])
-		return;
-	word *block = LockSurface(trsprdata[slot]);
-	memset(block, 0, p2w * p2h * 2);
+	rgba_t *block = (rgba_t*)Z_Calloc(p2w * p2h * 4, PU_HIGH, 0);
 	trsprlump[slot] = lump;
 	trsprtnum[slot] = translation;
 
 	byte *trtab = translationtables + translation * 256;
 
-	for (int x = 0; x < workw; x++)
+	for (int x = 0; x < w; x++)
 	{
     	column_t *column = (column_t *)((byte *)patch +
-    		LittleLong(patch->columnofs[(x * xscale) >> FRACBITS]));
+    		LittleLong(patch->columnofs[x]));
 
 		// step through the posts in a column
 	    while (column->topdelta != 0xff)
 	    {
 		    byte* source = (byte *)column + 3;
-		    word* dest = block + x + column->topdelta * p2w;
+		    rgba_t* dest = block + x + column->topdelta * p2w;
 			int count = column->length;
 
 	    	while (count--)
 	    	{
-				*dest = pal8_to16[trtab[*source]];
+				int col = trtab[*source];
+				*dest = r_palette[0][col ? col : r_black_color[0]];
 				source++;
 				dest += p2w;
 	    	}
@@ -530,7 +464,9 @@ void TDirect3DDrawer::GenerateTranslatedSprite(int lump, int slot, int translati
 	    }
 	}
 
-	trsprdata[slot]->Unlock(NULL);
+	trsprdata[slot] = UploadTexture(p2w, p2h, block);
+	Z_Free(block);
+	Z_ChangeTag(patch, PU_CACHE);
 }
 
 //==========================================================================
@@ -626,55 +562,33 @@ void TDirect3DDrawer::SetPic(int handle)
 
 void TDirect3DDrawer::GeneratePicFromPatch(int handle)
 {
-	patch_t *patch = (patch_t*)W_CacheLumpName(pic_list[handle].name, PU_CACHE);
+	patch_t *patch = (patch_t*)W_CacheLumpName(pic_list[handle].name, PU_STATIC);
 	int w = LittleShort(patch->width);
 	int h = LittleShort(patch->height);
 	int p2w = ToPowerOf2(w);
 	int p2h = ToPowerOf2(h);
-	fixed_t xscale;
-	if (p2w > maxTexSize)
-	{
-		xscale = FRACUNIT * w / maxTexSize;
-		p2w = maxTexSize;
-		if (square_textures)
-		{
-			p2h = p2w;
-		}
-		piciw[handle] = 1.0 / (float)w;
-	}
-	else
-	{
-		xscale = FRACUNIT;
-		if (square_textures)
-		{
-			p2w = p2h = MAX(p2w, p2h);
-		}
-		piciw[handle] = 1.0 / (float)p2w;
-	}
+	piciw[handle] = 1.0 / (float)p2w;
 	picih[handle] = 1.0 / (float)p2h;
-	int workw = MIN(w, p2w);
 
-	picdata[handle] = CreateSurface(p2w, p2h, 16);
-	if (!picdata[handle])
-		return;
-    word *block = LockSurface(picdata[handle]);
-	memset(block, 0, p2w * p2h * 2);
+    rgba_t *block = (rgba_t*)Z_Calloc(p2w * p2h * 4, PU_HIGH, 0);
+	rgba_t *pal = r_palette[pic_list[handle].palnum];
+	int black = r_black_color[pic_list[handle].palnum];
 
-	for (int x = 0; x < workw; x++)
+	for (int x = 0; x < w; x++)
 	{
     	column_t *column = (column_t *)((byte *)patch +
-    		LittleLong(patch->columnofs[(x * xscale) >> FRACBITS]));
+    		LittleLong(patch->columnofs[x]));
 
 		// step through the posts in a column
 	    while (column->topdelta != 0xff)
 	    {
 		    byte* source = (byte *)column + 3;
-		    word* dest = block + x + column->topdelta * p2w;
+		    rgba_t* dest = block + x + column->topdelta * p2w;
 			int count = column->length;
 
 	    	while (count--)
 	    	{
-				*dest = pal8_to16[*source];
+				*dest = pal[*source ? *source : black];
 				source++;
 				dest += p2w;
 	    	}
@@ -682,7 +596,9 @@ void TDirect3DDrawer::GeneratePicFromPatch(int handle)
 	    }
 	}
 
-	picdata[handle]->Unlock(NULL);
+	picdata[handle] = UploadTextureNoMip(p2w, p2h, block);
+	Z_Free(block);
+	Z_ChangeTag(patch, PU_CACHE);
 }
 
 //==========================================================================
@@ -693,59 +609,28 @@ void TDirect3DDrawer::GeneratePicFromPatch(int handle)
 
 void TDirect3DDrawer::GeneratePicFromRaw(int handle)
 {
-	int p2w = 512;
-	int p2h = 256;
-	fixed_t xscale;
-	if (p2w > maxTexSize)
-	{
-		p2w = maxTexSize;
-		xscale = FRACUNIT * 320 / maxTexSize;
-		piciw[handle] = 1.0 / 320.0;
-	}
-	else
-	{
-		xscale = FRACUNIT;
-		piciw[handle] = 1.0 / 512.0;
-	}
-	if (square_textures)
-	{
-		p2h = p2w;
-	}
-	picih[handle] = 1.0 / (float)p2h;
-	int workw = MIN(320, p2w);
-
 	int lump = W_GetNumForName(pic_list[handle].name);
-	byte* raw = (byte*)W_CacheLumpNum(lump, PU_CACHE);
-	int realh = W_LumpLength(lump) / 320;
-	picdata[handle] = CreateSurface(p2w, p2h, 16);
-	if (!picdata[handle])
-		return;
-    word *block = LockSurface(picdata[handle]);
+	int len = W_LumpLength(lump);
+	byte* raw = (byte*)W_CacheLumpNum(lump, PU_STATIC);
+	int w = 320;
+	int h = len / 320;
 
-	for (int y = 0; y < realh; y++)
+    rgba_t *block = (rgba_t*)Z_Calloc(len * 4, PU_HIGH, 0);
+	rgba_t *pal = r_palette[pic_list[handle].palnum];
+	int black = r_black_color[pic_list[handle].palnum];
+
+	byte *src = raw;
+	rgba_t *dst = block;
+	for (int i = 0; i < len; i++, src++, dst++)
 	{
-		byte *src = raw + 320 * y;
-		word *dst = block + p2w * y;
-		for (int x = 0; x < workw; x++)
-		{
-			dst[x] = pal8_to16[src[(x * xscale) >> FRACBITS]];
-		}
-		if (workw == 320)
-		{
-			//	For automap warping
-			dst[320] = pal8_to16[src[0]];
-			dst[511] = pal8_to16[src[319]];
-		}
-	}
-	if (realh != 200)
-	{
-		//	Automap background, copy top and bottom so wrapping in
-		// bilinear filtering looks good
-		memcpy(block + p2w * realh, block, p2w * 2);
-		memcpy(block + p2w * (p2h - 1), block + p2w * (realh - 1), p2w * 2);
+		*dst = pal[*src ? *src : black];
 	}
 
-	picdata[handle]->Unlock(NULL);
+	piciw[handle] = 1.0 / float(w);
+	picih[handle] = 1.0 / float(h);
+	picdata[handle] = UploadTextureNoMip(w, h, block);
+	Z_Free(block);
+	Z_ChangeTag(raw, PU_CACHE);
 }
 
 //==========================================================================
@@ -787,28 +672,15 @@ void TDirect3DDrawer::SetSkin(const char *name)
 		strcpy(skin_name[avail], name);
 		Mod_LoadSkin(name, 0);
 
-		int w = SkinWidth > maxTexSize ? maxTexSize : ToPowerOf2(SkinWidth);
-		int h = SkinHeight > maxTexSize ? maxTexSize : ToPowerOf2(SkinHeight);
-		if (square_textures)
+		rgba_t *buf = (rgba_t*)Z_Malloc(SkinWidth * SkinHeight * 4, PU_HIGH, 0);
+		byte *src = SkinData;
+		rgba_t *dst = buf;
+		for (int x = 0; x < SkinWidth * SkinHeight; x++, src++, dst++)
 		{
-			w = h = MAX(w, h);
+			*dst = r_palette[0][*src ? *src : r_black_color[0]];
 		}
-
-		int sscale = FRACUNIT * SkinWidth / w;
-		int tscale = FRACUNIT * SkinHeight / h;
-
-		skin_data[avail] = CreateSurface(w, h, 16);
-		word *buf = LockSurface(skin_data[avail]);
-		word *dst = buf;
-		for (int t = 0; t < h; t++)
-		{
-			byte *src = SkinData + ((t * tscale) >> FRACBITS) * SkinWidth;
-			for (int s = 0; s < w; s++)
-			{
-				*dst++ = pal8_to16[src[(s * sscale) >> FRACBITS]];
-			}
-		}
-		skin_data[avail]->Unlock(NULL);
+		skin_data[avail] = UploadTexture(SkinWidth, SkinHeight, buf);
+		Z_Free(buf);
 		Z_Free(SkinData);
 	}
 
@@ -821,25 +693,36 @@ void TDirect3DDrawer::SetSkin(const char *name)
 //
 //==========================================================================
 
-LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureImage(int width,
-	int height, rgba_t *data)
+void TDirect3DDrawer::UploadTextureImage(LPDIRECTDRAWSURFACE7 surf,
+	int width, int height, rgba_t *data)
 {
-	LPDIRECTDRAWSURFACE7 surf = CreateSurface(width, height, 16);
-	if (!surf)
-		return NULL;
-
-	word *block = LockSurface(surf);
-	rgba_t *in = data;
-	word *out = block;
-	for (int i = 0; i < height; i++)
+	DDSURFACEDESC2			ddsd;
+	memset(&ddsd, 0, sizeof(ddsd));
+	ddsd.dwSize = sizeof(ddsd);
+	ddsd.dwFlags = DDSD_WIDTH | DDSD_HEIGHT | DDSD_PIXELFORMAT | DDSD_LPSURFACE;
+	if (FAILED(surf->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL)))
 	{
-		for (int j = 0; j < width; j++, in++, out++)
+		cond << "Failed to lock surface\n";
+		return;
+	}
+	rgba_t *in = data;
+	if (ddsd.ddpfPixelFormat.dwRGBBitCount == 16)
+	{
+		word *out = (word*)ddsd.lpSurface;
+		for (int i = 0; i < width * height; i++, in++, out++)
 		{
 			*out = MakeCol16(in->r, in->g, in->b, in->a);
 		}
 	}
+	else if (ddsd.ddpfPixelFormat.dwRGBBitCount == 32)
+	{
+		dword *out = (dword*)ddsd.lpSurface;
+		for (int i = 0; i < width * height; i++, in++, out++)
+		{
+			*out = MakeCol32(in->r, in->g, in->b, in->a);
+		}
+	}
 	surf->Unlock(NULL);
-	return surf;
 }
 
 //==========================================================================
@@ -855,8 +738,18 @@ void TDirect3DDrawer::ResampleTexture(int widthin, int heightin,
 	const byte *datain, int widthout, int heightout, byte *dataout)
 {
 	int i, j, k;
+	float sx, sy;
 
-//#define POINT_SAMPLE
+	if (widthout > 1)
+		sx = float(widthin - 1) / float(widthout - 1);
+	else
+		sx = float(widthin - 1);
+	if (heightout > 1)
+		sy = float(heightin - 1) / float(heightout - 1);
+	else
+		sy = float(heightin - 1);
+
+#define POINT_SAMPLE
 #ifdef POINT_SAMPLE
 	for (i = 0; i < heightout; i++)
 	{
@@ -875,17 +768,6 @@ void TDirect3DDrawer::ResampleTexture(int widthin, int heightin,
 		}
 	}
 #else
-	float sx, sy;
-
-	if (widthout > 1)
-		sx = float(widthin - 1) / float(widthout - 1);
-	else
-		sx = float(widthin - 1);
-	if (heightout > 1)
-		sy = float(heightin - 1) / float(heightout - 1);
-	else
-		sy = float(heightin - 1);
-
 	if (sx < 1.0 && sy < 1.0)
 	{
 		/* magnify both width and height:  use weighted sample of 4 pixels */
@@ -1017,11 +899,13 @@ void TDirect3DDrawer::MipMap(int width, int height, byte *in)
 
 LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTexture(int width, int height, rgba_t *data)
 {
-	int		w, h;
-	byte	*image;
-	int		level;
-	byte	stackbuf[256 * 128 * 4];
+	int						w, h;
+	byte					*image;
+	byte					stackbuf[256 * 128 * 4];
 	LPDIRECTDRAWSURFACE7	surf;
+	LPDIRECTDRAWSURFACE7	mipsurf;
+	DDSCAPS2				ddsc;
+	HRESULT					ddres;
 
 	w = ToPowerOf2(width);
 	if (w > maxTexSize)
@@ -1048,25 +932,41 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTexture(int width, int height, rgba_
 	}
 	if (w != width || h != height)
 	{
-		/* must rescale image to get "top" mipmap texture image */
+		//	Must rescale image to get "top" mipmap texture image
 		ResampleTexture(width, height, (byte*)data, w, h, image);
 	}
 	else
 	{
 		memcpy(image, data, w * h * 4);
 	}
-	surf = UploadTextureImage(w, h, (rgba_t*)image);
+	surf = CreateSurface(w, h, 16, true);
+	UploadTextureImage(surf, w, h, (rgba_t*)image);
 
-	for (level = 1; w > 1 || h > 1; level++)
+	mipsurf = NULL;
+	memset(&ddsc, 0, sizeof(ddsc));
+	ddsc.dwCaps = DDSCAPS_TEXTURE | DDSCAPS_MIPMAP;
+	while (w > 1 && h > 1)
 	{
 		MipMap(w, h, image);
 		if (w > 1)
 			w >>= 1;
 		if (h > 1)
 			h >>= 1;
-#if 0
-		UploadTextureImage(w, h, (rgba_t*)image);
-#endif
+		if (mipsurf)
+		{
+			LPDIRECTDRAWSURFACE7 prevsurf = mipsurf;
+			ddres = prevsurf->GetAttachedSurface(&ddsc, &mipsurf);
+			prevsurf->Release();
+		}
+		else
+		{
+			ddres = surf->GetAttachedSurface(&ddsc, &mipsurf);
+		}
+		if (ddres != DD_OK)
+		{
+			Sys_Error("Failed to get attached surface");
+		}
+		UploadTextureImage(mipsurf, w, h, (rgba_t*)image);
 	}
 
 	if (image != stackbuf)
@@ -1104,6 +1004,7 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureNoMip(int width, int height, 
 		w = h = MAX(w, h);
 	}
 
+	surf = CreateSurface(w, h, 16, false);
 	if (w != width || h != height)
 	{
 		/* must rescale image to get "top" mipmap texture image */
@@ -1116,7 +1017,7 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureNoMip(int width, int height, 
 			image = (byte*)Z_Malloc(w * h * 4, PU_HIGH, 0);
 		}
 		ResampleTexture(width, height, (byte*)data, w, h, image);
-		surf = UploadTextureImage(w, h, (rgba_t*)image);
+		UploadTextureImage(surf, w, h, (rgba_t*)image);
 		if (image != stackbuf)
 		{
 			Z_Free(image);
@@ -1124,7 +1025,7 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureNoMip(int width, int height, 
 	}
 	else
 	{
-		surf = UploadTextureImage(w, h, data);
+		UploadTextureImage(surf, w, h, data);
 	}
 	return surf;
 }
@@ -1132,9 +1033,12 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureNoMip(int width, int height, 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/08/24 17:03:57  dj_jl
+//	Added mipmapping, removed bumpmap test code
+//
 //	Revision 1.6  2001/08/23 17:47:57  dj_jl
 //	Started work on mipmapping
-//
+//	
 //	Revision 1.5  2001/08/21 17:46:08  dj_jl
 //	Added R_TextureAnimation, made SetTexture recognize flats
 //	

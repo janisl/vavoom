@@ -394,7 +394,8 @@ bool TDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
 	RenderDevice->EnumTextureFormats(EnumPixelFormatsCallback, &PixelFormat);
 	if (PixelFormat.dwSize != sizeof(DDPIXELFORMAT))
 		return false;
-	amask = PixelFormat.dwRGBAlphaBitMask;
+	abits = GetBits(PixelFormat.dwRGBAlphaBitMask);
+	ashift = GetShift(PixelFormat.dwRGBAlphaBitMask);
 	rbits = GetBits(PixelFormat.dwRBitMask);
 	rshift = GetShift(PixelFormat.dwRBitMask);
 	gbits = GetBits(PixelFormat.dwGBitMask);
@@ -485,11 +486,13 @@ void TDirect3DDrawer::StartUpdate(void)
 	{
 		RenderDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, D3DTFG_LINEAR);
 		RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, D3DTFN_LINEAR);
+		RenderDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, D3DTFP_LINEAR);
 	}
 	else
 	{
 		RenderDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, D3DTFG_POINT);
 		RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, D3DTFN_POINT);
+		RenderDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, D3DTFP_NONE);
 	}
 
 	//	Dithering
@@ -751,10 +754,6 @@ void *TDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 void TDirect3DDrawer::SetPalette(int pnum)
 {
 	rgb_t *pal = (rgb_t*)W_CacheLumpName("playpal", PU_CACHE);
-	for (int i = 0; i < 256; i++)
-	{
-		pal8_to16[i] = MakeCol16(pal[i].r, pal[i].g, pal[i].b);
-	}
 
 	pal += 256 * pnum;
 	int cmax = MAX(MAX(pal[0].r, pal[0].g), pal[0].b);
@@ -1687,9 +1686,12 @@ ostream &operator << (ostream &str, const LPDDPIXELFORMAT pf)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/08/24 17:03:57  dj_jl
+//	Added mipmapping, removed bumpmap test code
+//
 //	Revision 1.7  2001/08/15 17:15:55  dj_jl
 //	Drawer API changes, removed wipes
-//
+//	
 //	Revision 1.6  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
 //	
