@@ -37,9 +37,9 @@
 
 #define PF(name)			static void PF_##name(void)
 #define PF_M(cname, name)	static void PF_##cname##__##name(void)
-#define _(name)				{#name, PF_##name}
-#define _M(cname, name)		{#cname"::"#name, PF_##cname##__##name}
-#define __(name)			{#name, name}
+#define _(name)				{#name, PF_##name, NULL}
+#define _M(cname, name)		{#name, PF_##cname##__##name, V##cname::StaticClass()}
+#define __(name)			{#name, name, NULL}
 
 #define PROG_TO_STR(ofs)	((char*)(ofs))
 #define STR_TO_PROG(str)	(int(str))
@@ -211,6 +211,11 @@ static char *PF_FormatString(void)
 
 			 case 'f':
 				strcat(vastring, va("%f", ((float*)params)[pi]));
+				pi++;
+				break;
+
+			 case 'n':
+				strcat(vastring, *((FName *)params)[pi]);
 				pi++;
 				break;
 
@@ -1371,7 +1376,7 @@ static void PF_PointContents(void)
 //
 //==========================================================================
 
-static void PF_AddExtraFloor(void)
+PF(AddExtraFloor)
 {
 	line_t		*line;
 	sector_t	*dst;
@@ -1382,6 +1387,21 @@ static void PF_AddExtraFloor(void)
 	sv_signon << (byte)svc_extra_floor
 				<< (short)(line - level.lines)
 				<< (short)(dst - level.sectors);
+}
+
+//==========================================================================
+//
+//	PF_SwapPlanes
+//
+//==========================================================================
+
+PF(SwapPlanes)
+{
+	sector_t	*s;
+
+	s = (sector_t *)Pop();
+	SwapPlanes(s);
+	sv_signon << (byte)svc_swap_planes << (short)(s - level.sectors);
 }
 
 //==========================================================================
@@ -3051,8 +3071,8 @@ PF(NewParticle)
 builtin_info_t BuiltinInfo[] =
 {
 	//	Error functions
-	{"Error", PF_Error},
-	{"FatalError", PF_FatalError},
+	_(Error),
+	_(FatalError),
 
 	//	Cvar functions
 	_(CreateCvar),
@@ -3080,29 +3100,29 @@ builtin_info_t BuiltinInfo[] =
 	_(VectorAngles),
 
 	//	String functions
-	{"ptrtos", PF_ptrtos},
+	_(ptrtos),
 	_(strgetchar),
 	_(strsetchar),
-	{"strlen", PF_strlen},
-	{"strcmp", PF_strcmp},
-	{"stricmp", PF_stricmp},
-	{"strcpy", PF_strcpy},
-	{"strclr", PF_strclr},
-	{"strcat", PF_strcat},
-	{"sprint", PF_sprint},
-	{"va", PF_va},
-	{"atoi", PF_atoi},
-	{"atof", PF_atof},
+	_(strlen),
+	_(strcmp),
+	_(stricmp),
+	_(strcpy),
+	_(strclr),
+	_(strcat),
+	_(sprint),
+	_(va),
+	_(atoi),
+	_(atof),
 
 	//	Random numbers
-    {"Random", PF_Random},
-    {"P_Random", PF_P_Random},
+    _(Random),
+    _(P_Random),
 
 	//	Textures
-	{"CheckTextureNumForName", PF_CheckTextureNumForName},
-	{"TextureNumForName", PF_TextureNumForName},
-	{"CheckFlatNumForName", PF_CheckFlatNumForName},
-	{"FlatNumForName", PF_FlatNumForName},
+	_(CheckTextureNumForName),
+	_(TextureNumForName),
+	_(CheckFlatNumForName),
+	_(FlatNumForName),
 	_(TextureHeight),
 
 	//	Message IO functions
@@ -3117,14 +3137,14 @@ builtin_info_t BuiltinInfo[] =
 	_(MSG_ReadLong),
 
 	//	Printinf in console
-	{"print", PF_print},
-	{"dprint", PF_dprint},
+	_(print),
+	_(dprint),
 
-	{"itof", PF_itof},
-	{"ftoi", PF_ftoi},
-    {"Cmd_CheckParm", PF_Cmd_CheckParm},
-	{"CmdBuf_AddText", PF_CmdBuf_AddText},
-	{"Info_ValueForKey", PF_Info_ValueForKey},
+	_(itof),
+	_(ftoi),
+    _(Cmd_CheckParm),
+	_(CmdBuf_AddText),
+	_(Info_ValueForKey),
 	_(WadLumpPresent),
 	_(Spawn),
 	_M(Object, Destroy),
@@ -3177,51 +3197,52 @@ builtin_info_t BuiltinInfo[] =
 #endif
 #ifdef SERVER
 	//	Print functions
-	{"bprint", PF_bprint},
-	{"cprint", PF_cprint},
-	{"centerprint", PF_centerprint},
+	_(bprint),
+	_(cprint),
+	_(centerprint),
 
 	//	Map utilites
-	{"LineOpenings", PF_LineOpenings},
-	{"P_BoxOnLineSide", PF_P_BoxOnLineSide},
-    {"P_BlockThingsIterator", PF_P_BlockThingsIterator},
-	{"P_BlockLinesIterator", PF_P_BlockLinesIterator},
-	{"P_PathTraverse", PF_P_PathTraverse},
-	{"FindThingGap", PF_FindThingGap},
-	{"FindOpening", PF_FindOpening},
-	{"PointInRegion", PF_PointInRegion},
-	{"PointContents", PF_PointContents},
-	{"AddExtraFloor", PF_AddExtraFloor},
-	{"MapBlock", PF_MapBlock},
+	_(LineOpenings),
+	_(P_BoxOnLineSide),
+    _(P_BlockThingsIterator),
+	_(P_BlockLinesIterator),
+	_(P_PathTraverse),
+	_(FindThingGap),
+	_(FindOpening),
+	_(PointInRegion),
+	_(PointContents),
+	_(AddExtraFloor),
+	_(SwapPlanes),
+	_(MapBlock),
 
 	//	Mobj utilites
-    {"NewMobjThinker", PF_NewMobjThinker},
-    {"RemoveMobjThinker", PF_RemoveMobjThinker},
-    {"P_SetThingPosition", PF_P_SetThingPosition},
-    {"P_UnsetThingPosition", PF_P_UnsetThingPosition},
-    {"NextMobj", PF_NextMobj},
-    {"P_CheckSight", PF_P_CheckSight},
+    _(NewMobjThinker),
+    _(RemoveMobjThinker),
+    _(P_SetThingPosition),
+    _(P_UnsetThingPosition),
+    _(NextMobj),
+    _(P_CheckSight),
 
     //	Special thinker utilites
-    {"NewSpecialThinker", PF_NewSpecialThinker},
-    {"RemoveSpecialThinker", PF_RemoveSpecialThinker},
-    {"P_ChangeSwitchTexture", PF_P_ChangeSwitchTexture},
+    _(NewSpecialThinker),
+    _(RemoveSpecialThinker),
+    _(P_ChangeSwitchTexture),
 	_(NextThinker),
 
     //	Polyobj functions
-    {"SpawnPolyobj", PF_SpawnPolyobj},
-    {"AddAnchorPoint", PF_AddAnchorPoint},
-	{"GetPolyobj", PF_GetPolyobj},
-    {"GetPolyobjMirror", PF_GetPolyobjMirror},
-	{"PO_MovePolyobj", PF_PO_MovePolyobj},
- 	{"PO_RotatePolyobj", PF_PO_RotatePolyobj},
+    _(SpawnPolyobj),
+    _(AddAnchorPoint),
+	_(GetPolyobj),
+    _(GetPolyobjMirror),
+	_(PO_MovePolyobj),
+ 	_(PO_RotatePolyobj),
 
 	//	ACS functions
-	{"StartACS", PF_StartACS},
-    {"SuspendACS", PF_SuspendACS},
-    {"TerminateACS", PF_TerminateACS},
-    {"TagFinished", PF_TagFinished},
-    {"PolyobjFinished", PF_PolyobjFinished},
+	_(StartACS),
+    _(SuspendACS),
+    _(TerminateACS),
+    _(TagFinished),
+    _(PolyobjFinished),
 	_M(ACS, Think),
 	_M(ACS, Archive),
 	_M(ACS, Unarchive),
@@ -3240,40 +3261,44 @@ builtin_info_t BuiltinInfo[] =
     _(PolyobjStopSequence),
 
     //  Savegame archieve / unarchieve utilite functions
-    {"SectorToNum", PF_SectorToNum},
-    {"NumToSector", PF_NumToSector},
-    {"NumToMobj", PF_NumToMobj},
-    {"MobjToNum", PF_MobjToNum},
+    _(SectorToNum),
+    _(NumToSector),
+    _(NumToMobj),
+    _(MobjToNum),
 	_(ClassIDToNum),
 	_(NumToClassID),
 
-    {"G_ExitLevel", PF_G_ExitLevel},
-    {"G_SecretExitLevel", PF_G_SecretExitLevel},
-    {"G_Completed", PF_G_Completed},
-    {"PointInSubsector", PF_PointInSubsector},
-    {"P_GetPlayerNum", PF_P_GetPlayerNum},
-    {"SB_Start", PF_SB_Start},
-    {"ClearPlayer", PF_ClearPlayer},
-	{"TerrainType", PF_TerrainType},
-    {"P_ForceLightning", PF_P_ForceLightning},
-	{"SetFloorPic", PF_SetFloorPic},
-	{"SetCeilPic", PF_SetCeilPic},
-	{"SetLineTransluc", PF_SetLineTransluc},
-	{"SendFloorSlope", PF_SendFloorSlope},
-	{"SendCeilingSlope", PF_SendCeilingSlope},
+    _(G_ExitLevel),
+    _(G_SecretExitLevel),
+    _(G_Completed),
+    _(PointInSubsector),
+    _(P_GetPlayerNum),
+    _(SB_Start),
+    _(ClearPlayer),
+	_(TerrainType),
+    _(P_ForceLightning),
+	_(SetFloorPic),
+	_(SetCeilPic),
+	_(SetLineTransluc),
+	_(SendFloorSlope),
+	_(SendCeilingSlope),
 	_(FindModel),
 	_(FindSkin),
 	_(MSG_SelectClientMsg),
 #endif
-    {NULL, NULL}
+    {NULL, NULL, NULL}
 };
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2002/01/11 08:08:26  dj_jl
+//	Added names to progs
+//	Added sector plane swapping
+//
 //	Revision 1.26  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.25  2001/12/27 17:33:29  dj_jl
 //	Removed thinker list
 //	
