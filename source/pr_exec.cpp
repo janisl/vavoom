@@ -138,7 +138,7 @@ extern "C" void PR_Profile1(void)
 
 extern "C" void PR_Profile2(void)
 {
-	if (current_func)
+	if (current_func && (!(current_func->Flags & FUNC_Native)))
 	{
 		current_func->Profile2++;
 	}
@@ -1714,9 +1714,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2002/04/11 16:45:42  dj_jl
+//	Ignoring natives in profiling.
+//
 //	Revision 1.26  2002/03/16 17:53:12  dj_jl
 //	Added opcode for pushing virtual function.
-//
+//	
 //	Revision 1.25  2002/03/09 18:05:34  dj_jl
 //	Added support for defining native functions outside pr_cmds
 //	
