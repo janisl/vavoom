@@ -33,8 +33,6 @@
 	dst.roll = src.roll;\
 }
 
-void P_RemoveMobj(Actor * mobj);
-
 //==========================================================================
 //
 //  abs
@@ -447,6 +445,9 @@ class SectorThinker:Thinker
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/03/16 17:51:16  dj_jl
+//  Added function Remove to the Entity class.
+//
 //  Revision 1.23  2002/03/09 17:57:01  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

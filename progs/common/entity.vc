@@ -61,6 +61,17 @@ native boolean CheckWater(void);
 
 //==========================================================================
 //
+//	Remove
+//
+//==========================================================================
+
+void Remove(void)
+{
+	RemoveMobjThinker(self);
+}
+
+//==========================================================================
+//
 //  SetStateNF
 //
 //  Same as SetState, but does not call the state function.
@@ -77,7 +88,7 @@ boolean SetStateNF(int state)
 		{
 			// Remove mobj
 			StateNum = 0;
-			P_RemoveMobj(&Actor(self));
+			Remove();
 			return false;
 		}
 
@@ -178,6 +189,9 @@ tmtrace_t *tmtrace;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/03/16 17:51:16  dj_jl
+//  Added function Remove to the Entity class.
+//
 //  Revision 1.10  2002/03/12 19:20:24  dj_jl
 //  Added native and abstract class modifiers
 //
