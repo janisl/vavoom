@@ -41,10 +41,12 @@ struct maptexture_t
 	};
 
 	char		name[8];
-	int			masked;	//	boolean is not a good type here
+	short		masked;				// Unused
+	byte		sscale;				// ZDoom's texture scaling
+	byte		tscale;
 	short		width;
 	short		height;
-	void		**columndirectory;	// OBSOLETE
+	int			columndirectory;	// OBSOLETE
 	short		patchcount;
 	mappatch_t	patches[1];
 };
@@ -70,9 +72,12 @@ struct maptexture_strife_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/03/20 19:10:27  dj_jl
+//	Added texture scaling.
+//
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	
