@@ -193,7 +193,7 @@ void ParseStates(void)
 			ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
 		}
 		strcpy(cs.name, tk_String);
-		TK_AddConstant(tk_String, num_states);
+		AddConstant(tk_StringI, num_states);
 		TK_NextToken();
 		TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 		//	Nummurs
@@ -209,7 +209,7 @@ void ParseStates(void)
 			{
 				ERR_Exit(ERR_NONE, true, "Invalid sprite name");
 			}
-			j = FindString(tk_String);
+			j = tk_StringI;
 			for (i=0; i<num_sprite_names; i++)
 			{
 		   		if (sprite_names[i] == j)
@@ -223,7 +223,7 @@ void ParseStates(void)
 
 			   	sprite_names[i] = j;
 				sprintf(snc, "SPR_%s", tk_String);
-				TK_AddConstant(snc, num_sprite_names);
+				AddConstant(FindString(snc), num_sprite_names);
 				num_sprite_names++;
 			}
 			s.sprite = i;
@@ -240,7 +240,7 @@ void ParseStates(void)
 		if (tk_Token == TK_STRING)
 		{
 			//	Modelis
-			j = FindString(tk_String);
+			j = tk_StringI;
 			for (i = 0; i < num_models; i++)
 			{
 		   		if (models[i] == j)
@@ -402,9 +402,12 @@ void AddInfoTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/12/01 18:17:09  dj_jl
+//	Fixed calling of parent method, speedup
+//
 //	Revision 1.7  2001/11/09 14:42:28  dj_jl
 //	References, beautification
-//
+//	
 //	Revision 1.6  2001/10/22 17:28:02  dj_jl
 //	Removed mobjinfo index constants
 //	

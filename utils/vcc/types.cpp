@@ -29,21 +29,18 @@
 
 // MACROS ------------------------------------------------------------------
 
-// 4 bytes for virtual table
-#define BASE_CLASS_SIZE			4
-// 0 - class ID
-// 1 - size
-// 2 - parent vtable
-// 3 - reserved
-// 4 - constructor
-// 5 - destructor
+#define VTOFFS_CID				0
+#define VTOFFS_SIZE				4
+#define VTOFFS_PARENTVT			8
+#define VTOFFS_CTOR				16
+#define VTOFFS_DTOR				20
 #define BASE_NUM_METHODS		6
 
 // TYPES -------------------------------------------------------------------
 
 struct typedef_t
 {
-	char		name[MAX_IDENTIFIER_LENGTH];
+	int			s_name;
 	TType		*type;
 	typedef_t	*next;
 };
@@ -71,7 +68,8 @@ TType		type_mobjinfo("mobjinfo_t", ev_struct, &type_state, NULL, -1);
 TType		type_void_ptr("", ev_pointer, &type_mobjinfo, &type_void, 4);
 TType		type_vector("", ev_vector, &type_void_ptr, NULL, 12);
 TType		type_classid("classid", ev_classid, &type_vector, NULL, 4);
-TType		type_none_ref("", ev_reference, &type_classid, &type_void, 4);
+TType		type_class("Object", ev_class, &type_classid, NULL, -1);
+TType		type_none_ref("", ev_reference, &type_class, &type_class, 4);
 
 TType		*types = &type_none_ref;
 
@@ -84,6 +82,16 @@ typedef_t	*typedefs;
 int			numclasses = 1;
 
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	InitTypes
+//
+//==========================================================================
+
+void InitTypes(void)
+{
+}
 
 //==========================================================================
 //
@@ -194,7 +202,7 @@ TType *CheckForType(void)
 
 	for (tdef = typedefs; tdef; tdef = tdef->next)
 	{
-		if (TK_Check(tdef->name))
+		if (TK_Check(tdef->s_name))
 		{
 			return tdef->type;
 		}
@@ -202,7 +210,14 @@ TType *CheckForType(void)
 
 	for (check = types; check; check = check->next)
 	{
-		if (check->name[0] && TK_Check(check->name))
+		if (check->s_name)
+		{
+			if (TK_Check(check->s_name))
+			{
+				return check;
+			}
+		}
+		else if (check->name[0] && TK_Check(check->name))
 		{
 			return check;
 		}
@@ -319,6 +334,33 @@ void TypeCheck3(TType *t1, TType *t2)
 			return;
 		}
 		if ((t1 == &type_void) || (t2 == &type_void))
+		{
+			return;
+		}
+		if ((t1->type == ev_struct && t2->type == ev_struct) ||
+			(t1->type == ev_class && t2->type == ev_class))
+		{
+			while (t1->aux_type)
+			{
+				t1 = t1->aux_type;
+				if (t1 == t2)
+				{
+					return;
+				}
+			}
+		}
+	}
+	if ((t1->type == ev_reference) && (t2->type == ev_reference))
+	{
+		t1 = t1->aux_type;
+		t2 = t2->aux_type;
+		if (t1 == &type_uint) t1 = &type_int;
+		if (t2 == &type_uint) t2 = &type_int;
+		if (t1 == t2)
+		{
+			return;
+		}
+		if ((t1 == &type_class) || (t2 == &type_class))
 		{
 			return;
 		}
@@ -462,7 +504,7 @@ void ParseStruct(void)
 				ParseError("Field name expected");
 			}
 			fi = &fields[num_fields];
-			strcpy(fi->name, tk_String);
+			fi->s_name = tk_StringI;
 			TK_NextToken();
 			fi->ofs = size;
 			if (t->type == ev_class)
@@ -574,7 +616,7 @@ void AddFields(void)
 				ParseError("Field name expected");
 			}
 			fi = &fields[num_fields];
-			strcpy(fi->name, tk_String);
+			fi->s_name = tk_StringI;
 			TK_NextToken();
 			fi->ofs = ofs;
 			if (t->type == ev_class)
@@ -693,7 +735,7 @@ void ParseVector(void)
 				continue;
 			}
 			fi = &fields[num_fields];
-			strcpy(fi->name, tk_String);
+			fi->s_name = tk_StringI;
 			TK_NextToken();
 			fi->ofs = size;
 		   	size += TypeSize(type);
@@ -756,7 +798,7 @@ void ParseClass(void)
 		class_type = new TType;
 		memset(class_type, 0, sizeof(TType));
 		strcpy(class_type->name, tk_String);
-		class_type->s_name = FindString(tk_String);
+		class_type->s_name = tk_StringI;
 		class_type->type = ev_class;
 		class_type->next = types;
 		class_type->classid = numclasses++;
@@ -772,7 +814,7 @@ void ParseClass(void)
 
 	class_type->numfields = 0;
 	class_type->num_methods = BASE_NUM_METHODS;
-	size = BASE_CLASS_SIZE;
+	size = 0;
 
 	if (TK_Check(PU_COLON))
 	{
@@ -791,6 +833,12 @@ void ParseClass(void)
 			class_type->num_methods = type->num_methods;
 			size = TypeSize(type);
 		}
+	}
+	else if (class_type != &type_class)
+	{
+		class_type->aux_type = &type_class;
+		class_type->num_methods = type_class.num_methods;
+		size = TypeSize(&type_class);
 	}
 
    	class_type->available_size = 0;
@@ -827,7 +875,7 @@ void ParseClass(void)
 			}
 			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
 			fi = &fields[class_type->numfields];
-			sprintf(fi->name, "~%s", class_type->name);
+			fi->s_name = FindString(va("~%s", class_type->name));
 			ParseMethodDef(&type_void, fi, NULL, class_type, 2);
 			continue;
 		}
@@ -840,7 +888,7 @@ void ParseClass(void)
 		if (type == class_type && TK_Check(PU_LPAREN))
 		{
 			fi = &fields[class_type->numfields];
-			strcpy(fi->name, class_type->name);
+			fi->s_name = class_type->s_name;
 			ParseMethodDef(&type_void, fi, NULL, class_type, 1);
 			continue;
 		}
@@ -865,7 +913,7 @@ void ParseClass(void)
 				continue;
 			}
 			fi = &fields[class_type->numfields];
-			strcpy(fi->name, tk_String);
+			fi->s_name = tk_StringI;
 			otherfield = CheckForField(class_type);
 			if (!otherfield)
 			{
@@ -949,7 +997,7 @@ field_t* ParseField(TType *t)
 	}
 	for (i = 0; i < t->numfields; i++)
 	{
-		if (TK_Check(fi[i].name))
+		if (TK_Check(fi[i].s_name))
 		{
 			return &fi[i];
 		}
@@ -989,7 +1037,7 @@ field_t* CheckForField(TType *t, bool check_aux)
 	field_t *fi = t->fields;
 	for (int i = 0; i < t->numfields; i++)
 	{
-		if (TK_Check(fi[i].name))
+		if (TK_Check(fi[i].s_name))
 		{
 			return &fi[i];
 		}
@@ -999,6 +1047,68 @@ field_t* CheckForField(TType *t, bool check_aux)
 		return CheckForField(t->aux_type);
 	}
 	return NULL;
+}
+
+//==========================================================================
+//
+//	FindConstructor
+//
+//==========================================================================
+
+field_t* FindConstructor(TType *t)
+{
+	if (!t)
+	{
+		return NULL;
+	}
+	if (t->type != ev_class)
+	{
+		return NULL;
+	}
+	if (t->size == -1)
+	{
+		return NULL;
+	}
+	field_t *fi = t->fields;
+	for (int i = 0; i < t->numfields; i++)
+	{
+		if (fi[i].s_name == t->s_name)
+		{
+			return &fi[i];
+		}
+	}
+	return FindConstructor(t->aux_type);
+}
+
+//==========================================================================
+//
+//	FindDestructor
+//
+//==========================================================================
+
+field_t* FindDestructor(TType *t)
+{
+	if (!t)
+	{
+		return NULL;
+	}
+	if (t->type != ev_class)
+	{
+		return NULL;
+	}
+	if (t->size == -1)
+	{
+		return NULL;
+	}
+	field_t *fi = t->fields;
+	for (int i = 0; i < t->numfields; i++)
+	{
+		if (fi[i].s_name == t->s_name)
+		{
+			return &fi[i];
+		}
+	}
+	return FindDestructor(t->aux_type);
 }
 
 //==========================================================================
@@ -1034,7 +1144,7 @@ void ParseTypeDef(void)
 	{
 		//	Function pointer type
 		TType		functype;
-		char		name[MAX_IDENTIFIER_LENGTH];
+		int s_name;
 
 		memset(&functype, 0, sizeof(TType));
 		functype.type = ev_function;
@@ -1051,7 +1161,7 @@ void ParseTypeDef(void)
 			ParseError("New type name expected");
 			return;
 		}
-		strcpy(name, tk_String);
+		s_name = tk_StringI;
 		TK_NextToken();
 		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 
@@ -1105,7 +1215,7 @@ void ParseTypeDef(void)
 
 		//	Add to typedefs
 		tdef = new typedef_t;
-		strcpy(tdef->name, name);
+		tdef->s_name = s_name;
 		tdef->type = FindType(&functype);
 		tdef->next = typedefs;
 		typedefs = tdef;
@@ -1121,7 +1231,7 @@ void ParseTypeDef(void)
 
 	//	Add to typedefs
 	tdef = new typedef_t;
-	strcpy(tdef->name, tk_String);
+	tdef->s_name = tk_StringI;
 	tdef->type = type;
 	tdef->next = typedefs;
 	typedefs = tdef;
@@ -1168,7 +1278,8 @@ static void AddVTable(TType *t)
 		}
 		if (!f.func_num)
 		{
-			ParseError("Method %s::%s not defined", t->name, f.name);
+			ParseError("Method %s::%s not defined", t->name,
+				strings + f.s_name);
 		}
 		vtable[f.ofs] = f.func_num;
 	}
@@ -1198,9 +1309,12 @@ void AddVirtualTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/12/01 18:17:09  dj_jl
+//	Fixed calling of parent method, speedup
+//
 //	Revision 1.10  2001/11/09 14:42:29  dj_jl
 //	References, beautification
-//
+//	
 //	Revision 1.9  2001/10/27 07:54:59  dj_jl
 //	Added support for constructors and destructors
 //	

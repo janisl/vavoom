@@ -61,7 +61,7 @@ int 				tk_Line;
 
 tokenType_t 		tk_Token;
 char*				tk_String;
-//int					tk_StringI;
+int					tk_StringI;
 int 				tk_Number;
 float				tk_Float;
 Keyword				tk_Keyword;
@@ -82,6 +82,7 @@ static char			Chr;
 
 static char* Keywords[] =
 {
+	"",
 	"__states__",
 	"__mobjinfo__",
 	"addfields",
@@ -101,6 +102,7 @@ static char* Keywords[] =
 	"if",
    	"int",
 	"return",
+	"self",
 	"string",
 	"struct",
 	"switch",
@@ -158,11 +160,6 @@ void TK_Init(void)
 	tk_String = TokenStringBuffer;
 	IncLineNumber = false;
 	SourceOpen = false;
-	for (i = 0; i < 256; i++)
-	{
-		ConstLookup[i] = -1;
-	}
-	numconstants = 0;
 }
 
 //==========================================================================
@@ -381,7 +378,7 @@ static void ProcessQuoteToken(void)
 	}
 	TokenStringBuffer[len] = 0;
 	NextChr();
-//	tk_StringI = FindString(tk_String);
+	tk_StringI = FindString(tk_String);
 }
 
 //==========================================================================
@@ -434,15 +431,27 @@ static void ProcessLetterToken(void)
 	switch (TokenStringBuffer[0])
 	{
 	case '_':
-		if (!strcmp(tk_String, "__states__"))
+		if (tk_String[1] == '_')
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_STATES;
-		}
-		else if (!strcmp(tk_String, "__mobjinfo__"))
-		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_MOBJINFO;
+			if (tk_String[2] == 's' && tk_String[3] == 't' &&
+				tk_String[4] == 'a' && tk_String[5] == 't' &&
+				tk_String[6] == 'e' && tk_String[7] == 's' &&
+				tk_String[8] == '_' && tk_String[9] == '_' &&
+				tk_String[10] == 0)
+			{
+				tk_Token = TK_KEYWORD;
+				tk_Keyword = KW_STATES;
+			}
+			else if (tk_String[2] == 'm' && tk_String[3] == 'o' &&
+				tk_String[4] == 'b' && tk_String[5] == 'j' &&
+				tk_String[6] == 'i' && tk_String[7] == 'n' &&
+				tk_String[8] == 'f' && tk_String[9] == 'o' &&
+				tk_String[10] == '_' && tk_String[11] == '_' &&
+				tk_String[12] == 0)
+			{
+				tk_Token = TK_KEYWORD;
+				tk_Keyword = KW_MOBJINFO;
+			}
 		}
 		break;
 
@@ -547,6 +556,24 @@ static void ProcessLetterToken(void)
 		}
 		break;
 
+	case 'n':
+		if (tk_String[1] == 'o' && tk_String[2] == 'n' &&
+			tk_String[3] == 'e' && tk_String[4] == 0)
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_NONE;
+		}
+		break;
+
+/*	case 'N':
+		if (tk_String[1] == 'U' && tk_String[2] == 'L' &&
+			tk_String[3] == 'L' && tk_String[4] == 0)
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_NULL;
+		}
+		break;*/
+
 	case 'r':
 		if (!strcmp(tk_String, "return"))
 		{
@@ -556,7 +583,12 @@ static void ProcessLetterToken(void)
 		break;
 
 	case 's':
-		if (!strcmp(tk_String, "string"))
+		if (!strcmp(tk_String, "self"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_SELF;
+		}
+		else if (!strcmp(tk_String, "string"))
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_STRING;
@@ -615,11 +647,17 @@ static void ProcessLetterToken(void)
 		}
 		break;
 	}
+	if (tk_String[0] == 'N' && tk_String[1] == 'U' && tk_String[2] == 'L' &&
+		tk_String[3] == 'L' && tk_String[4] == 0)
+	{
+		tk_Token = TK_KEYWORD;
+		tk_Keyword = KW_NULL;
+	}
 
-//	if (tk_Token == TK_IDENTIFIER)
-//	{
-//		tk_StringI = FindString(tk_String);
-//	}
+	if (tk_Token == TK_IDENTIFIER)
+	{
+		tk_StringI = FindString(tk_String);
+	}
 }
 
 //==========================================================================
@@ -1068,9 +1106,12 @@ void TK_Expect(Punctuation punct, error_t error)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/12/01 18:17:09  dj_jl
+//	Fixed calling of parent method, speedup
+//
 //	Revision 1.6  2001/11/09 14:42:29  dj_jl
 //	References, beautification
-//
+//	
 //	Revision 1.5  2001/10/02 17:44:52  dj_jl
 //	Some optimizations
 //	

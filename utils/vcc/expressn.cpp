@@ -397,6 +397,7 @@ class TOpFuncCall : public TOp
 	TOpFuncCall(int Afnum) : fnum(Afnum), ftype(functions[fnum].type)
 	{
 		type = ftype->aux_type;
+		this_op = NULL;
 		for (int i = 0; i < MAX_ARG_COUNT; i++)
 			parms[i] = NULL;
 	}
@@ -405,9 +406,15 @@ class TOpFuncCall : public TOp
 		for (int i = 0; i < MAX_ARG_COUNT; i++)
 			if (parms[i])
 				delete parms[i];
+		if (this_op)
+			delete this_op;
 	}
 	void Code(void)
 	{
+		if (this_op)
+		{
+			this_op->Code();
+		}
 		for (int i = 0; i < MAX_ARG_COUNT; i++)
 		{
 			if (parms[i])
@@ -420,6 +427,7 @@ class TOpFuncCall : public TOp
 
 	int			fnum;
 	TType		*ftype;
+	TOp			*this_op;
 	TOp			*parms[MAX_ARG_COUNT];
 };
 
@@ -502,6 +510,20 @@ class TOpPushThis:public TOp
 	}
 };
 
+class TOpPushSelf:public TOp
+{
+ public:
+	TOpPushSelf(void)
+	{
+		type = SelfType;
+	}
+	void Code(void)
+	{
+		AddStatement(OPC_LOCALADDRESS, 0);
+		AddStatement(OPC_PUSHPOINTED);
+	}
+};
+
 class TOpPushSelfMethod:public TOp
 {
  public:
@@ -513,29 +535,7 @@ class TOpPushSelfMethod:public TOp
 	{
 		if (op) op->Code();
 		AddStatement(OPC_COPY);
-		AddStatement(OPC_PUSHPOINTED);
-		AddStatement(OPC_PUSHNUMBER, offs * 4);
-		AddStatement(OPC_ADD);
-		AddStatement(OPC_PUSHPOINTED);
-	}
-
-	TOp *op;
-	int offs;
-};
-
-class TOpPushAuxMethod:public TOp
-{
- public:
-	TOpPushAuxMethod(TOp *Aop, int Aoffs, TType *Atype) : op(Aop), offs(Aoffs)
-	{
-		type = Atype;
-	}
-	void Code(void)
-	{
-		if (op) op->Code();
-		AddStatement(OPC_COPY);
-		AddStatement(OPC_PUSHPOINTED);
-		AddStatement(OPC_PUSHNUMBER, 8);
+		AddStatement(OPC_PUSHNUMBER, VTABLE_OFFS);
 		AddStatement(OPC_ADD);
 		AddStatement(OPC_PUSHPOINTED);
 		AddStatement(OPC_PUSHNUMBER, offs * 4);
@@ -857,6 +857,68 @@ TOperator *FindOperator(TOperator::id_t opid, TType *type1, TType *type2)
 
 //==========================================================================
 //
+//	ParseFunctionCall
+//
+//==========================================================================
+
+static TOp *ParseFunctionCall(int num, bool is_method)
+{
+	TOpFuncCall *fop;
+	int			arg;
+	int			argsize;
+
+	fop = new TOpFuncCall(num);
+	arg = 0;
+	argsize = 0;
+	int max_params;
+	int num_needed_params = functions[num].type->num_params & PF_COUNT_MASK;
+	if (functions[num].type->num_params & PF_VARARGS)
+	{
+		max_params = MAX_ARG_COUNT - 1;
+	}
+	else
+	{
+		max_params = functions[num].type->num_params;
+	}
+	if (is_method)
+	{
+		fop->this_op = new TOpPushThis();
+	}
+	if (!TK_Check(PU_RPAREN))
+	{
+		do
+		{
+			TOp *op = ParseExpressionPriority14();
+			if (arg >= max_params)
+			{
+				ParseError("Incorrect number of arguments, need %d, got %d.", max_params, arg);
+			}
+			else
+			{
+				if (arg < num_needed_params)
+				{
+					TypeCheck3(op->type, functions[num].type->param_types[arg]);
+				}
+				fop->parms[arg] = op;
+			}
+			arg++;
+			argsize += TypeSize(op->type);
+		} while (TK_Check(PU_COMMA));
+		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+	}
+	if (arg < num_needed_params)
+	{
+		ParseError("Incorrect argument count %d, should be %d", arg, num_needed_params);
+	}
+	if (functions[num].type->num_params & PF_VARARGS)
+	{
+		fop->parms[arg] = new TOpConst(argsize / 4 - num_needed_params, &type_int);
+	}
+	return fop;
+}
+
+//==========================================================================
+//
 //	ParseExpressionPriority0
 //
 //==========================================================================
@@ -866,7 +928,6 @@ static TOp *ParseExpressionPriority0(void)
 	TOp			*op;
 	TType		*type;
 	int			num;
-	int			arg;
 	field_t		*field;
 
    	switch (tk_Token)
@@ -882,7 +943,7 @@ static TOp *ParseExpressionPriority0(void)
 		return op;
 
 	 case TK_STRING:
-		op = new TOpConst(FindString(tk_String), &type_string);
+		op = new TOpConst(tk_StringI, &type_string);
 		TK_NextToken();
 		return op;
 
@@ -925,9 +986,8 @@ static TOp *ParseExpressionPriority0(void)
 				ParseError("Not a method");
 				break;
 			}
-			op = new TOpPushThis();
-			op = new TOpPushAuxMethod(op, field->ofs, field->type);
-			return op;
+			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+			return ParseFunctionCall(field->func_num, true);
 		}
 		break;
 
@@ -955,15 +1015,30 @@ static TOp *ParseExpressionPriority0(void)
 				return op;
 			}
 		}
-		break;
-
-	 case TK_IDENTIFIER:
-		if (TK_Check("NULL"))
+		if (TK_Check(KW_SELF))
+		{
+			if (!SelfType)
+			{
+				ParseError("self used outside member function\n");
+			}
+			else
+			{
+				op = new TOpPushSelf();
+				return op;
+			}
+		}
+		if (TK_Check(KW_NONE))
+		{
+		   	return new TOpConst(0, &type_none_ref);
+		}
+		if (TK_Check(KW_NULL))
 		{
 		   	return new TOpConst(0, &type_void_ptr);
 		}
+		break;
 
-		num = CheckForLocalVar(tk_String);
+	 case TK_IDENTIFIER:
+		num = CheckForLocalVar(tk_StringI);
 		if (num)
 		{
 			TK_NextToken();
@@ -972,14 +1047,14 @@ static TOp *ParseExpressionPriority0(void)
 			return op;
 		}
 
-		num = CheckForConstant(tk_String);
+		num = CheckForConstant(tk_StringI);
 		if (num != -1)
 		{
 			TK_NextToken();
 		   	return new TOpConst(Constants[num].value, &type_int);
 		}
 
-		num = CheckForGlobalVar(tk_String);
+		num = CheckForGlobalVar(tk_StringI);
 		if (num)
 		{
 			TK_NextToken();
@@ -988,62 +1063,16 @@ static TOp *ParseExpressionPriority0(void)
 			return op;
 		}
 
-		num = CheckForFunction(tk_String);
+		num = CheckForFunction(tk_StringI);
 		if (num)
 		{
-			TOpFuncCall *fop;
-			int			argsize;
-
 			TK_NextToken();
 			if (!TK_Check(PU_LPAREN))
 			{
 				op = new TOpConst(num, functions[num].type);
 				return op;
 			}
-			fop = new TOpFuncCall(num);
-			arg = 0;
-			argsize = 0;
-			int max_params;
-			int num_needed_params = functions[num].type->num_params & PF_COUNT_MASK;
-			if (functions[num].type->num_params & PF_VARARGS)
-			{
-				max_params = MAX_ARG_COUNT - 1;
-			}
-			else
-			{
-				max_params = functions[num].type->num_params;
-			}
-			if (!TK_Check(PU_RPAREN))
-			{
-				do
-				{
-					op = ParseExpressionPriority14();
-					if (arg >= max_params)
-					{
-						ParseError("Incorrect number of arguments.");
-					}
-					else
-					{
-						if (arg < num_needed_params)
-						{
-							TypeCheck3(op->type, functions[num].type->param_types[arg]);
-						}
-						fop->parms[arg] = op;
-					}
-					arg++;
-					argsize += TypeSize(op->type);
-				} while (TK_Check(PU_COMMA));
-				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-			}
-			if (arg < num_needed_params)
-			{
-				ParseError("Incorrect argument count %d, should be %d", arg, num_needed_params);
-			}
-			if (functions[num].type->num_params & PF_VARARGS)
-			{
-				fop->parms[arg] = new TOpConst(argsize / 4 - num_needed_params, &type_int);
-			}
-			return fop;
+			return ParseFunctionCall(num, false);
 		}
 
 		if (ThisType)
@@ -1294,6 +1323,11 @@ static TOp *ParseExpressionPriority2(void)
 				op->type->aux_type->type == ev_class)
 			{
 				op->type = MakeReferenceType(op->type->aux_type);
+				return op;
+			}
+			if (op->type->type == ev_reference)
+			{
+				ParseError("* applied on a reference");
 				return op;
 			}
 			return new TOpPushPointed(op);
@@ -1743,9 +1777,12 @@ TType *ParseExpression(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/12/01 18:17:09  dj_jl
+//	Fixed calling of parent method, speedup
+//
 //	Revision 1.10  2001/11/09 14:42:28  dj_jl
 //	References, beautification
-//
+//	
 //	Revision 1.9  2001/10/27 07:54:59  dj_jl
 //	Added support for constructors and destructors
 //	

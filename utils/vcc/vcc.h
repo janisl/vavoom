@@ -49,6 +49,8 @@ using namespace VavoomUtils;
 #define REF_CPP		// C++ style references
 #define REF_CLASS	// Class variables/fields/params are references
 
+#define VTABLE_OFFS				4
+
 // TYPES -------------------------------------------------------------------
 
 enum
@@ -75,7 +77,7 @@ class TType;
 
 struct field_t
 {
-	char		name[MAX_IDENTIFIER_LENGTH];
+	int			s_name;
 	int			ofs;
 	TType		*type;
 	int			func_num;	// Method's function
@@ -199,7 +201,7 @@ enum tokenType_t
 
 enum Keyword
 {
-	KW_STATES,
+	KW_STATES = 1,
 	KW_MOBJINFO,
 	KW_ADDFIELDS,
 	KW_BREAK,
@@ -217,7 +219,10 @@ enum Keyword
 	KW_FUNCTION,
 	KW_IF,
    	KW_INT,
+	KW_NONE,
+	KW_NULL,
 	KW_RETURN,
+	KW_SELF,
 	KW_STRING,
 	KW_STRUCT,
 	KW_SWITCH,
@@ -231,7 +236,7 @@ enum Keyword
 
 enum Punctuation
 {
-	PU_VARARGS,
+	PU_VARARGS = 1,
 	PU_LSHIFT_ASSIGN,
 	PU_RSHIFT_ASSIGN,
 	PU_ADD_ASSIGN,
@@ -292,23 +297,23 @@ class TFunction
 class TGlobalDef
 {
  public:
-	TType		*type;
-	int			ofs;
 	int			s_name;
+	int			ofs;
+	TType		*type;
 };
 
 struct localvardef_t
 {
-	char	name[MAX_IDENTIFIER_LENGTH];
-	TType	*type;
-	int		ofs;
+	int			s_name;
+	int			ofs;
+	TType		*type;
 };
 
 struct constant_t
 {
-	char	name[MAX_IDENTIFIER_LENGTH];
-	int		value;
-	int		next;
+	int			s_name;
+	int			value;
+	int			next;
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -335,10 +340,9 @@ bool TK_Check(const char *string);
 void TK_Expect(const char *string, error_t error);
 void TK_Expect(Keyword kwd, error_t error);
 void TK_Expect(Punctuation punct, error_t error);
-void TK_AddConstant(char* name, int value);
 
 void PC_Init(void);
-int FindString(char *str);
+int FindString(const char *str);
 int *AddStatement(int statement);
 int *AddStatement(int statement, int parm1);
 int *AddStatement(int statement, int parm1, int parm2);
@@ -346,6 +350,7 @@ int UndoStatement(void);
 void PC_WriteObject(char *name);
 void PC_DumpAsm(char* name);
 
+void InitTypes(void);
 TType *CheckForType(void);
 TType *FindType(TType *type);
 TType *MakePointerType(TType *type);
@@ -362,6 +367,8 @@ void AddFields(void);
 void ParseVector(void);
 field_t* ParseField(TType *t);
 field_t* CheckForField(TType *, bool = true);
+field_t* FindConstructor(TType *t);
+field_t* FindDestructor(TType *t);
 void ParseTypeDef(void);
 void AddVirtualTables(void);
 
@@ -373,12 +380,11 @@ float ConstFloatExpression(void);
 
 TType *ParseExpression(void);
 
-int CheckForFunction(const char* name);
 int CheckForFunction(int s_name);
-int CheckForGlobalVar(const char* name);
 int CheckForGlobalVar(int s_name);
-int CheckForLocalVar(char* name);
-int CheckForConstant(const char *name);
+int CheckForLocalVar(int s_name);
+int CheckForConstant(int s_name);
+void AddConstant(int s_name, int value);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
@@ -410,10 +416,9 @@ extern int				numbuiltins;
 
 extern constant_t		Constants[MAX_CONSTANTS];
 extern int				numconstants;
-extern int				ConstLookup[256];
 
 extern TType			*ThisType;
-
+extern TType			*SelfType;
 
 extern char*    		strings;
 extern int              strofs;
@@ -433,6 +438,7 @@ extern TType			type_mobjinfo;
 extern TType			type_void_ptr;
 extern TType			type_vector;
 extern TType			type_classid;
+extern TType			type_class;
 extern TType			type_none_ref;
 
 extern int				numclasses;
@@ -457,6 +463,16 @@ inline int PassFloat(float f)
 
     v.f = f;
     return v.i;
+}
+
+inline bool TK_Check(int s_string)
+{
+	if (tk_Token == TK_IDENTIFIER && tk_StringI == s_string)
+	{
+		TK_NextToken();
+		return true;
+	}
+	return false;
 }
 
 inline bool TK_Check(Keyword kwd)
@@ -484,9 +500,12 @@ inline bool TK_Check(Punctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/12/01 18:17:09  dj_jl
+//	Fixed calling of parent method, speedup
+//
 //	Revision 1.10  2001/11/09 14:42:29  dj_jl
 //	References, beautification
-//
+//	
 //	Revision 1.9  2001/10/27 07:54:59  dj_jl
 //	Added support for constructors and destructors
 //	

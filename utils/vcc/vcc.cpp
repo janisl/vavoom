@@ -92,7 +92,7 @@ int main(int argc, char **argv)
 	ERR_RemoveErrorFile();
 	DumpAsm();
 	endtime = time(0);
-	dprintf("Time elapsed: %2d:%2d\n",
+	dprintf("Time elapsed: %02d:%02d\n",
 		(endtime - starttime) / 60, (endtime - starttime) % 60);
 	return 0;
 }
@@ -117,6 +117,8 @@ static void Init(void)
 	num_dump_asm = 0;
 	TK_Init();
 	PC_Init();
+	InitTypes();
+	InitInfoTables();
 }
 
 //==========================================================================
@@ -286,9 +288,12 @@ int dprintf(const char *text, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/12/01 18:17:09  dj_jl
+//	Fixed calling of parent method, speedup
+//
 //	Revision 1.7  2001/10/09 17:31:55  dj_jl
 //	Addfields to class disabled by default
-//
+//	
 //	Revision 1.6  2001/10/02 17:46:04  dj_jl
 //	Preprocessing into a memory buffer
 //	

@@ -38,6 +38,12 @@
 
 // TYPES -------------------------------------------------------------------
 
+struct TStringInfo
+{
+	int offs;
+	int next;
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -67,8 +73,9 @@ int				numbuiltins;
 static int		undoOpcode;
 static int		undoSize;
 
-static int		StringInfo[MAX_STRINGS];
+static TStringInfo	StringInfo[MAX_STRINGS];
 static int 		StringCount;
+static int		StringLookup[256];
 
 #ifdef COUNT_UNSIGNED_OPS
 static int		udiv = 0;
@@ -253,10 +260,21 @@ void PC_Init(void)
 	functions[0].type = &type_function;
 	strings = new char[MAX_STRINGS_BUF];
 	memset(strings, 0, MAX_STRINGS_BUF);
+	memset(StringLookup, 0, 256 * 4);
 	//	1. simbolu virkne ir tukýa
 	StringCount = 1;
 	strofs = 4;
-	InitInfoTables();
+}
+
+//==========================================================================
+//
+//	StringHashFunc
+//
+//==========================================================================
+
+static int StringHashFunc(const char *str)
+{
+	return (*str ^ (str[1] << 4)) & 0xff;
 }
 
 //==========================================================================
@@ -267,15 +285,18 @@ void PC_Init(void)
 //
 //==========================================================================
 
-int FindString(char *str)
+int FindString(const char *str)
 {
-	int i;
-
-	for (i = 0; i < StringCount; i++)
+	if (!*str)
 	{
-		if (!strcmp(strings + StringInfo[i], str))
+		return 0;
+	}
+	int hash = StringHashFunc(str);
+	for (int i = StringLookup[hash]; i; i = StringInfo[i].next)
+	{
+		if (!strcmp(strings + StringInfo[i].offs, str))
 		{
-			return StringInfo[i];
+			return StringInfo[i].offs;
 		}
 	}
 
@@ -286,11 +307,13 @@ int FindString(char *str)
 				 "Current maximum: %d", MAX_STRINGS);
 	}
 
-	StringInfo[StringCount] = strofs;
+	StringInfo[StringCount].offs = strofs;
+	StringInfo[StringCount].next = StringLookup[hash];
+	StringLookup[hash] = StringCount;
 	strcpy(strings + strofs, str);
 	strofs += (strlen(str) + 4) & ~3;
 	StringCount++;
-	return StringInfo[StringCount - 1];
+	return StringInfo[StringCount - 1].offs;
 }
 
 //==========================================================================
@@ -699,6 +722,11 @@ static void DumpAsmFunction(int num)
 				//	IzsauktÆs funkcijas vÆrds
 				dprintf("(%s)", strings + functions[CodeBuffer[s]].s_name);
 			}
+			else if (st == OPC_PUSHSTRING)
+			{
+				//  Sibolu virkne
+				dprintf("(%s)", strings + CodeBuffer[s]);
+			}
 			s++;
 		}
 		if (StatementInfo[st].params >= 2)
@@ -746,9 +774,12 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/12/01 18:17:09  dj_jl
+//	Fixed calling of parent method, speedup
+//
 //	Revision 1.8  2001/11/09 14:42:28  dj_jl
 //	References, beautification
-//
+//	
 //	Revision 1.7  2001/10/27 07:54:59  dj_jl
 //	Added support for constructors and destructors
 //	

@@ -80,7 +80,7 @@ static int ConstExprFactor(void)
 			break;
 
 		case TK_IDENTIFIER:
-			num = CheckForConstant(tk_String);
+			num = CheckForConstant(tk_StringI);
 			if (num != -1)
 			{
 				TK_NextToken();
@@ -412,18 +412,18 @@ int EvalConstExpression(int type)
 		{
 			ERR_Exit(ERR_BAD_CONST_EXPR, true, "String expected");
 		}
-		ret = FindString(tk_String);
+		ret = tk_StringI;
 		TK_NextToken();
 		return ret;
 
 	 case ev_function:
-		if (TK_Check("NULL"))
+		if (TK_Check(KW_NULL))
 		{
 			return 0;
 		}
 		else if (tk_Token == TK_IDENTIFIER)
 		{
-			ret = CheckForFunction(tk_String);
+			ret = CheckForFunction(tk_StringI);
 			if (!ret)
 			{
 				ERR_Exit(ERR_NONE, true, "%s is not a function", tk_String);
@@ -469,9 +469,12 @@ float ConstFloatExpression(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/12/01 18:17:09  dj_jl
+//	Fixed calling of parent method, speedup
+//
 //	Revision 1.5  2001/10/02 17:44:52  dj_jl
 //	Some optimizations
-//
+//	
 //	Revision 1.4  2001/09/20 16:09:55  dj_jl
 //	Added basic object-oriented support
 //	
