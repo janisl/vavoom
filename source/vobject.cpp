@@ -54,14 +54,22 @@ TArray<int>			VObject::GObjAvailable;
 VObject*			VObject::GObjAutoRegister;
 VObject*			VObject::GObjHash[4096];
 
-// -------------------------------------------------------------------------
+//==========================================================================
+//
+//	VObject::VObject
+//
+//==========================================================================
 
 VObject::VObject(void)
 {
 	Register();
 }
 
-// -------------------------------------------------------------------------
+//==========================================================================
+//
+//	VObject::VObject
+//
+//==========================================================================
 
 VObject::VObject(ENativeConstructor, VClass* AClass, const char *AName, dword AFlags)
 	: ObjectFlags(AFlags), Class(AClass)
@@ -71,7 +79,11 @@ VObject::VObject(ENativeConstructor, VClass* AClass, const char *AName, dword AF
 	GObjAutoRegister = this;
 }
 
-// -------------------------------------------------------------------------
+//==========================================================================
+//
+//	VObject::~VObject
+//
+//==========================================================================
 
 VObject::~VObject(void)
 {
@@ -87,7 +99,11 @@ VObject::~VObject(void)
 	}
 }
 
-// -------------------------------------------------------------------------
+//==========================================================================
+//
+//	VObject::StaticInit
+//
+//==========================================================================
 
 void VObject::StaticInit(void)
 {
@@ -98,13 +114,21 @@ void VObject::StaticInit(void)
 	}
 }
 
-// -------------------------------------------------------------------------
+//==========================================================================
+//
+//	VObject::StaticExit
+//
+//==========================================================================
 
 void VObject::StaticExit(void)
 {
 }
 
-// -------------------------------------------------------------------------
+//==========================================================================
+//
+//	VObject::StaticSpawnObject
+//
+//==========================================================================
 
 VObject *VObject::StaticSpawnObject(VClass *AClass, VObject *AOuter, int tag)
 {
@@ -120,13 +144,13 @@ VObject *VObject::StaticSpawnObject(VClass *AClass, VObject *AOuter, int tag)
 		{
 			Sys_Error("No native base class");
 		}
-		NativeClass->ClassConstructor(Obj);//InternalConstructor(Obj);
+		NativeClass->ClassConstructor(Obj);
 		Obj->Class = AClass;
 		Obj->Outer = AOuter;
 		Obj->vtable = AClass->ClassVTable;
 		if (Obj->vtable)
 		{
-			TProgs::Exec(Obj->vtable[4], (int)Obj);
+			TProgs::Exec(Obj->vtable[0], (int)Obj);
 		}
 		return Obj;
 	}
@@ -138,7 +162,11 @@ VObject *VObject::StaticSpawnObject(VClass *AClass, VObject *AOuter, int tag)
 	}
 }
 
-// -------------------------------------------------------------------------
+//==========================================================================
+//
+//	VObject::Register
+//
+//==========================================================================
 
 void VObject::Register(void)
 {
@@ -154,7 +182,11 @@ void VObject::Register(void)
 	HashObject();
 }
 
-// -------------------------------------------------------------------------
+//==========================================================================
+//
+//	VObject::HashObject
+//
+//==========================================================================
 
 void VObject::HashObject(void)
 {
@@ -165,7 +197,11 @@ void VObject::HashObject(void)
 #endif
 }
 
-// -------------------------------------------------------------------------
+//==========================================================================
+//
+//	VObject::UnhashObject
+//
+//==========================================================================
 
 void VObject::UnhashObject(void)
 {
@@ -194,28 +230,32 @@ void VObject::UnhashObject(void)
 #endif
 }
 
-// -------------------------------------------------------------------------
+//==========================================================================
+//
+//	VObject::Destroy
+//
+//==========================================================================
 
 void VObject::Destroy(void)
 {
-	if (IsA(VClass::StaticClass()))
-	{
-		con << "Destroying class " << ((VClass *)this)->GetName() << endl;
-	}
-	if (vtable)
-	{
-		TProgs::Exec(vtable[5], (int)this);
-	}
-	delete this;
+	SetFlags(OF_Destroyed);
 }
 
-// -------------------------------------------------------------------------
+//==========================================================================
+//
+//	VObject::Serialize
+//
+//==========================================================================
 
 void VObject::Serialize(FArchive &Ar)
 {
 }
 
-// -------------------------------------------------------------------------
+//==========================================================================
+//
+//	VObject::IsA
+//
+//==========================================================================
 
 bool VObject::IsA(VClass *SomeBaseClass) const
 {
@@ -229,7 +269,11 @@ bool VObject::IsA(VClass *SomeBaseClass) const
 	return false;
 }
 
-// -------------------------------------------------------------------------
+//==========================================================================
+//
+//	VObject::IsIn
+//
+//==========================================================================
 
 bool VObject::IsIn(VObject *SomeOuter) const
 {
@@ -243,51 +287,57 @@ bool VObject::IsIn(VObject *SomeOuter) const
 	return false;
 }
 
-//**************************************************************************
-//**************************************************************************
+//==========================================================================
+//
+//	VObject::CollectGarbage
+//
+//==========================================================================
 
-IMPLEMENT_CLASS(VClass)
-
-// -------------------------------------------------------------------------
-
-VClass::VClass(void)
+void VObject::CollectGarbage(void)
 {
-}
-
-// -------------------------------------------------------------------------
-
-VClass::VClass(ENativeConstructor, size_t ASize, dword AClassFlags, 
-	VClass *AParent, const char *AName, int AFlags, void(*ACtor)(void*))
-	: VObject(EC_NativeConstructor, StaticClass(), AName, AFlags), 
-	ParentClass(AParent), ClassSize(ASize),
-	ClassFlags(AClassFlags), ClassConstructor(ACtor)
-{
-}
-
-// -------------------------------------------------------------------------
-
-VClass *VClass::FindClass(const char *AName)
-{
-	FName TempName(AName, FNAME_Find);
-	if (TempName == NAME_None)
+	for (int i = 0; i < GObjObjects.Num(); i++)
 	{
-		// No such name, no chance to find a class
-		return NULL;
-	}
-	for (TObjectIterator<VClass> It; It; ++It)
-	{
-		if (It->GetFName() == TempName)
+		if (!GObjObjects[i])
 		{
-			return *It;
+			continue;
+		}
+		VObject *Obj = GObjObjects[i];
+		if (Obj->GetFlags() & OF_Destroyed)
+		{
+			delete Obj;
 		}
 	}
-	return NULL;
+}
+
+//==========================================================================
+//
+//	VObject::GetIndexObject
+//
+//==========================================================================
+
+VObject *VObject::GetIndexObject(int Index)
+{
+	return GObjObjects[Index];
+}
+
+//==========================================================================
+//
+//	VObject::GetObjectsCount
+//
+//==========================================================================
+
+int VObject::GetObjectsCount(void)
+{
+	return GObjObjects.Num();
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2001/12/27 17:35:42  dj_jl
+//	Split VClass in seperate module
+//
 //	Revision 1.1  2001/12/18 19:03:17  dj_jl
 //	A lots of work on VObject
-//
+//	
 //**************************************************************************

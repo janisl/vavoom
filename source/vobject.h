@@ -184,6 +184,9 @@ public:
 	static void StaticInit(void);
 	static void StaticExit(void);
 	static VObject *StaticSpawnObject(VClass *, VObject *, int);
+	static void CollectGarbage(void);
+	static VObject *GetIndexObject(int Index);
+	static int GetObjectsCount(void);
 
 	// Functions.
 	bool IsA(VClass *SomeBaseClass) const;
@@ -294,54 +297,15 @@ public:
 	}
 };
 
-//==========================================================================
-//
-//	VClass
-//
-//==========================================================================
-
-class VClass:public VObject
-{
-	DECLARE_CLASS(VClass, VObject, 0)
-
-	VClass*		ParentClass;
-
-	size_t		ClassSize;
-	dword		ClassFlags;
-	int*		ClassVTable;
-	void (*ClassConstructor)(void*);
-
-	static VClass *FindClass(const char *);
-
-	VClass(void);
-	VClass(ENativeConstructor, size_t ASize, dword AClassFlags,
-		VClass *AParent, const char *AName, int AFlags, 
-		void(*ACtor)(void*));
-
-	bool IsChildOf(const VClass *SomeBaseClass) const
-	{
-		for (const VClass *c = this; c; c = c->GetSuperClass())
-		{
-			if (SomeBaseClass == c)
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
-	VClass *GetSuperClass(void) const
-	{
-		return ParentClass;
-	}
-};
-
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/12/27 17:35:42  dj_jl
+//	Split VClass in seperate module
+//
 //	Revision 1.3  2001/12/18 19:03:17  dj_jl
 //	A lots of work on VObject
-//
+//	
 //	Revision 1.2  2001/12/12 19:28:49  dj_jl
 //	Some little changes, beautification
 //	
