@@ -218,7 +218,7 @@ static int GetChannel(int sound_id, int origin_id, int channel, int priority)
 
 static int CalcVol(int volume, int dist)
 {
-	return (SoundCurve[dist] * volume) >> 6;
+	return (SoundCurve[dist] * volume) >> 7;
 }
 
 static int CalcSep(const TVec &origin)
@@ -414,8 +414,7 @@ void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
 	}
 
 	vol = CalcVol(volume, dist);
-#warning SDL_mixer wants to have volumes from 0..128 (CS)
-	Mix_Volume(voice, vol >> 1);
+	Mix_Volume(voice, vol);
 	if (dist)
 	{
 		sep = CalcSep(origin);
@@ -581,7 +580,7 @@ void S_UpdateSfx(void)
 		vol = CalcVol(channels[i].volume, dist);
 		sep = CalcSep(channels[i].origin);
 
-		Mix_Volume(channels[i].voice, vol >> 1);
+		Mix_Volume(channels[i].voice, vol);
 		Mix_SetPanning(channels[i].voice, 255 - sep, sep);
 
 		channels[i].priority = CalcPriority(channels[i].sound_id, dist);
@@ -660,9 +659,12 @@ boolean S_GetSoundPlayingInfo(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2002/01/21 18:27:48  dj_jl
+//	Fixed volume
+//
 //	Revision 1.2  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.1  2002/01/03 18:39:42  dj_jl
 //	Added SDL port
 //	
