@@ -388,14 +388,9 @@ int P_FaceMobj(mobj_t * source, mobj_t * target, float * delta)
 
 boolean P_TestMobjLocation(mobj_t * mobj)
 {
-	int flags;
-
-	flags = mobj->flags;
-	mobj->flags &= ~MF_PICKUP;
 	if (P_CheckPosition(mobj, mobj->origin.x, mobj->origin.y))
 	{
 		// XY is ok, now check Z
-		mobj->flags = flags;
 		if ((mobj->origin.z < mobj->floorz) ||
 			(mobj->origin.z + mobj->height > mobj->ceilingz))
 		{
@@ -404,7 +399,6 @@ boolean P_TestMobjLocation(mobj_t * mobj)
 		}
 		return true;
 	}
-	mobj->flags = flags;
 	return false;
 }
 
@@ -1548,6 +1542,9 @@ void P_NightmareRespawn(mobj_t * mobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/01/15 08:10:57  dj_jl
+//  Added P_CheckRelPosition
+//
 //  Revision 1.20  2002/01/12 18:00:47  dj_jl
 //  Sound names initialized as names
 //

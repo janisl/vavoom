@@ -136,7 +136,7 @@ boolean P_ThingHeightClip(mobj_t * thing)
 
 	onfloor = (thing->origin.z == thing->floorz);
 
-	P_CheckPosition(thing, thing->origin.x, thing->origin.y);
+	P_CheckRelPosition(thing, thing->origin.x, thing->origin.y);
 	// what about stranding a monster partially off an edge?
 
 	thing->floorz = tmfloorz;
@@ -1101,6 +1101,9 @@ void PIT_ThrustSpike(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/15 08:10:57  dj_jl
+//  Added P_CheckRelPosition
+//
 //  Revision 1.12  2002/01/11 18:19:42  dj_jl
 //  Started to use names in progs
 //
