@@ -21,16 +21,15 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
 #include "cl_local.h"
+
+void OnHostEndGame(void);
+void OnHostError(void);
 
 //#define PROGS_PROFILE
 
@@ -68,13 +67,12 @@ void Cmd_WriteAlias(FILE *f);
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 static void 	HandleArgs(void);
-static void 	ExecOptionFILE(char **args, int tag);
 static void 	ExecOptionSCRIPTS(char **args, int tag);
 static void 	ExecOptionDEVMAPS(char **args, int tag);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern const char	**wadfiles;
+extern const char	*wadfiles[];
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -120,7 +118,6 @@ static TCvarS	configfile("configfile", "config.cfg", CVAR_ARCHIVE);
 
 static execOpt_t ExecOptions[] =
 {
-	{ "-file", 		ExecOptionFILE, 1, 0 },
 	{ "-scripts", 	ExecOptionSCRIPTS, 1, 0 },
 	{ "-devmaps", 	ExecOptionDEVMAPS, 1, 0 },
 	{ NULL, NULL, 0, 0 } // Terminator
@@ -564,11 +561,8 @@ void Host_EndGame(const char *message, ...)
 	if (cls.state == ca_dedicated)
 		Sys_Error("Host_EndGame: %s\n", string);	// dedicated servers exit
 	
-	if (cls.demosequence != -1)
-		CmdBuf << "AdvanceDemo\n";
-	else
-		CL_Disconnect();
-	G_ForceTitle();
+	CL_Disconnect();
+	OnHostEndGame();
 
 	longjmp(host_abort, 1);
 #else
@@ -617,8 +611,7 @@ void Host_Error(const char *error, ...)
 		Sys_Error("Host_Error: %s\n", string);	// dedicated servers exit
 
 	CL_Disconnect();
-	cls.demosequence = -1;
-	G_ForceTitle();
+	OnHostError();
 	C_StartFull();
 
 	inerror = false;
@@ -637,26 +630,7 @@ void Host_Error(const char *error, ...)
 //==========================================================================
 //==========================================================================
 
-//==========================================================================
-//
-//	G_AddFile
-//
-//==========================================================================
-
-static void G_AddFile(char *file)
-{
-    int     i;
-    char    *newfile;
-
-    i = 0;
-    while (wadfiles[i])
-	{
-    	i++;
-	}
-    newfile = (char*)Z_Malloc(strlen(file) + 1, PU_STATIC, 0);
-    strcpy(newfile, file);
-    wadfiles[i] = newfile;
-}
+void FL_AddFile(const char *file);
 
 //==========================================================================
 //
@@ -677,23 +651,6 @@ static void HandleArgs(void)
 		{
 			opt->func(&myargv[p], opt->tag);
 		}
-	}
-}
-
-//==========================================================================
-//
-//	ExecOptionFILE
-//
-//==========================================================================
-
-static void ExecOptionFILE(char**, int)
-{
-	int p;
-
-	p = M_CheckParm("-file");
-	while (++p != myargc && myargv[p][0] != '-' && myargv[p][0] != '+')
-	{
-		G_AddFile(myargv[p]);
 	}
 }
 
@@ -737,7 +694,7 @@ static void ExecOptionDEVMAPS(char **args, int)
 		if (SC_Compare("file"))
 		{
 			SC_MustGetString();
-			G_AddFile(sc_String);
+			FL_AddFile(sc_String);
 		}
 		else
 		{
@@ -768,4 +725,13 @@ COMMAND(Quit)
 	Sys_Quit();
 }
 
-
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/07/31 17:07:41  dj_jl
+//	Changes for filesystem and localising demo loop
+//
+//	Revision 1.2  2001/07/27 14:27:54  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************
