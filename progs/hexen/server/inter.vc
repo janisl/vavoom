@@ -715,6 +715,7 @@ void Actor::TouchSpecial(Actor Toucher)
 {
 	name sound;
 	boolean respawn;
+	int KeyType;
 
 	if (!Toucher.bPickUp)
 	{
@@ -728,38 +729,39 @@ void Actor::TouchSpecial(Actor Toucher)
 	}
 	sound = 'PickupItem';
 	respawn = true;
-	switch (sprite)
+	KeyType = -1;
+	switch (SpriteName)
 	{
 		// Items
-	case SPR_PTN1:	// Item_HealingPotion
+	case 'PTN1':	// Item_HealingPotion
 		if (!Toucher.GiveBody(10))
 		{
 			return;
 		}
 		cprint(Toucher.player, "%s\n", TXT_ITEMHEALTH);
 		break;
-	case SPR_ARM1:
+	case 'ARM1':
 		if (!Toucher.GiveArmor(ARMOR_ARMOR, -1))
 		{
 			return;
 		}
 		cprint(Toucher.player, "%s\n", TXT_ARMOR1);
 		break;
-	case SPR_ARM2:
+	case 'ARM2':
 		if (!Toucher.GiveArmor(ARMOR_SHIELD, -1))
 		{
 			return;
 		}
 		cprint(Toucher.player, "%s\n", TXT_ARMOR2);
 		break;
-	case SPR_ARM3:
+	case 'ARM3':
 		if (!Toucher.GiveArmor(ARMOR_HELMET, -1))
 		{
 			return;
 		}
 		cprint(Toucher.player, "%s\n", TXT_ARMOR3);
 		break;
-	case SPR_ARM4:
+	case 'ARM4':
 		if (!Toucher.GiveArmor(ARMOR_AMULET, -1))
 		{
 			return;
@@ -768,157 +770,152 @@ void Actor::TouchSpecial(Actor Toucher)
 		break;
 
 		// Keys
-	case SPR_KEY1:
-	case SPR_KEY2:
-	case SPR_KEY3:
-	case SPR_KEY4:
-	case SPR_KEY5:
-	case SPR_KEY6:
-	case SPR_KEY7:
-	case SPR_KEY8:
-	case SPR_KEY9:
-	case SPR_KEYA:
-	case SPR_KEYB:
-		if (!Toucher.GiveKey(sprite - SPR_KEY1))
+	case 'KEYB':
+		KeyType++;
+	case 'KEYA':
+		KeyType++;
+	case 'KEY9':
+		KeyType++;
+	case 'KEY8':
+		KeyType++;
+	case 'KEY7':
+		KeyType++;
+	case 'KEY6':
+		KeyType++;
+	case 'KEY5':
+		KeyType++;
+	case 'KEY4':
+		KeyType++;
+	case 'KEY3':
+		KeyType++;
+	case 'KEY2':
+		KeyType++;
+	case 'KEY1':
+		KeyType++;
+		if (!Toucher.GiveKey(KeyType))
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TextKeyMessages[sprite - SPR_KEY1]);
+		cprint(Toucher.player, "%s\n", TextKeyMessages[KeyType]);
 		sound = 'PickupKey';
-
-		// Check and process the special now in case the key doesn't
-		// get removed for coop netplay
-		if (special)
-		{
-			ExecuteLineSpecial(special, &args[0], NULL, 0, &Toucher);
-			special = 0;
-		}
-
-		if (!netgame)
-		{
-			// Only remove keys in single player game
-			break;
-		}
-		Toucher.player->bonuscount += BONUSADD;
-		StartSoundName(Toucher, sound, CHAN_ITEM);
-		return;
+		break;
 
 		// Artifacts
-	case SPR_PTN2:
+	case 'PTN2':
 		Toucher.TryPickupArtifact(arti_health, self);
 		return;
-	case SPR_SOAR:
+	case 'SOAR':
 		Toucher.TryPickupArtifact(arti_fly, self);
 		return;
-	case SPR_INVU:
+	case 'INVU':
 		Toucher.TryPickupArtifact(arti_invulnerability, self);
 		return;
-	case SPR_SUMN:
+	case 'SUMN':
 		Toucher.TryPickupArtifact(arti_summon, self);
 		return;
-	case SPR_PORK:
+	case 'PORK':
 		Toucher.TryPickupArtifact(arti_egg, self);
 		return;
-	case SPR_SPHL:
+	case 'SPHL':
 		Toucher.TryPickupArtifact(arti_superhealth, self);
 		return;
-	case SPR_HRAD:
+	case 'HRAD':
 		Toucher.TryPickupArtifact(arti_healingradius, self);
 		return;
-	case SPR_TRCH:
+	case 'TRCH':
 		Toucher.TryPickupArtifact(arti_torch, self);
 		return;
-	case SPR_ATLP:
+	case 'ATLP':
 		Toucher.TryPickupArtifact(arti_teleport, self);
 		return;
-	case SPR_TELO:
+	case 'TELO':
 		Toucher.TryPickupArtifact(arti_teleportother, self);
 		return;
-	case SPR_PSBG:
+	case 'PSBG':
 		Toucher.TryPickupArtifact(arti_poisonbag, self);
 		return;
-	case SPR_SPED:
+	case 'SPED':
 		Toucher.TryPickupArtifact(arti_speed, self);
 		return;
-	case SPR_BMAN:
+	case 'BMAN':
 		Toucher.TryPickupArtifact(arti_boostmana, self);
 		return;
-	case SPR_BRAC:
+	case 'BRAC':
 		Toucher.TryPickupArtifact(arti_boostarmor, self);
 		return;
-	case SPR_BLST:
+	case 'BLST':
 		Toucher.TryPickupArtifact(arti_blastradius, self);
 		return;
 
 		// Puzzle artifacts
-	case SPR_ASKU:
+	case 'ASKU':
 		Toucher.TryPickupArtifact(arti_puzzskull, self);
 		return;
-	case SPR_ABGM:
+	case 'ABGM':
 		Toucher.TryPickupArtifact(arti_puzzgembig, self);
 		return;
-	case SPR_AGMR:
+	case 'AGMR':
 		Toucher.TryPickupArtifact(arti_puzzgemred, self);
 		return;
-	case SPR_AGMG:
+	case 'AGMG':
 		Toucher.TryPickupArtifact(arti_puzzgemgreen1, self);
 		return;
-	case SPR_AGG2:
+	case 'AGG2':
 		Toucher.TryPickupArtifact(arti_puzzgemgreen2, self);
 		return;
-	case SPR_AGMB:
+	case 'AGMB':
 		Toucher.TryPickupArtifact(arti_puzzgemblue1, self);
 		return;
-	case SPR_AGB2:
+	case 'AGB2':
 		Toucher.TryPickupArtifact(arti_puzzgemblue2, self);
 		return;
-	case SPR_ABK1:
+	case 'ABK1':
 		Toucher.TryPickupArtifact(arti_puzzbook1, self);
 		return;
-	case SPR_ABK2:
+	case 'ABK2':
 		Toucher.TryPickupArtifact(arti_puzzbook2, self);
 		return;
-	case SPR_ASK2:
+	case 'ASK2':
 		Toucher.TryPickupArtifact(arti_puzzskull2, self);
 		return;
-	case SPR_AFWP:
+	case 'AFWP':
 		Toucher.TryPickupArtifact(arti_puzzfweapon, self);
 		return;
-	case SPR_ACWP:
+	case 'ACWP':
 		Toucher.TryPickupArtifact(arti_puzzcweapon, self);
 		return;
-	case SPR_AMWP:
+	case 'AMWP':
 		Toucher.TryPickupArtifact(arti_puzzmweapon, self);
 		return;
-	case SPR_AGER:
+	case 'AGER':
 		Toucher.TryPickupArtifact(arti_puzzgear1, self);
 		return;
-	case SPR_AGR2:
+	case 'AGR2':
 		Toucher.TryPickupArtifact(arti_puzzgear2, self);
 		return;
-	case SPR_AGR3:
+	case 'AGR3':
 		Toucher.TryPickupArtifact(arti_puzzgear3, self);
 		return;
-	case SPR_AGR4:
+	case 'AGR4':
 		Toucher.TryPickupArtifact(arti_puzzgear4, self);
 		return;
 
 		// Mana
-	case SPR_MAN1:
+	case 'MAN1':
 		if (!Toucher.GiveMana(MANA_1, 15))
 		{
 			return;
 		}
 		cprint(Toucher.player, "%s\n", TXT_MANA_1);
 		break;
-	case SPR_MAN2:
+	case 'MAN2':
 		if (!Toucher.GiveMana(MANA_2, 15))
 		{
 			return;
 		}
 		cprint(Toucher.player, "%s\n", TXT_MANA_2);
 		break;
-	case SPR_MAN3:	// Double Mana Dodecahedron
+	case 'MAN3':	// Double Mana Dodecahedron
 		if (!Toucher.GiveMana(MANA_1, 20))
 		{
 			if (!Toucher.GiveMana(MANA_2, 20))
@@ -934,79 +931,80 @@ void Actor::TouchSpecial(Actor Toucher)
 		break;
 
 		// 2nd and 3rd Mage Weapons
-	case SPR_WMCS:	// Frost Shards
+	case 'WMCS':	// Frost Shards
 		Toucher.TryPickupWeapon(PCLASS_MAGE, WP_SECOND,
 			self, TXT_WEAPON_M2);
 		return;
-	case SPR_WMLG:	// Arc of Death
+	case 'WMLG':	// Arc of Death
 		Toucher.TryPickupWeapon(PCLASS_MAGE, WP_THIRD,
 			self, TXT_WEAPON_M3);
 		return;
 
 		// 2nd and 3rd Fighter Weapons
-	case SPR_WFAX:	// Timon's Axe
+	case 'WFAX':	// Timon's Axe
 		Toucher.TryPickupWeapon(PCLASS_FIGHTER, WP_SECOND,
 			self, TXT_WEAPON_F2);
 		return;
-	case SPR_WFHM:	// Hammer of Retribution
+	case 'WFHM':	// Hammer of Retribution
 		Toucher.TryPickupWeapon(PCLASS_FIGHTER, WP_THIRD,
 			self, TXT_WEAPON_F3);
 		return;
 
 		// 2nd and 3rd Cleric Weapons
-	case SPR_WCSS:	// Serpent Staff
+	case 'WCSS':	// Serpent Staff
 		Toucher.TryPickupWeapon(PCLASS_CLERIC, WP_SECOND,
 			self, TXT_WEAPON_C2);
 		return;
-	case SPR_WCFM:	// Firestorm
+	case 'WCFM':	// Firestorm
 		Toucher.TryPickupWeapon(PCLASS_CLERIC, WP_THIRD,
 			self, TXT_WEAPON_C3);
 		return;
 
 		// Fourth Weapon Pieces
-	case SPR_WFR1:
+	case 'WFR1':
 		Toucher.TryPickupWeaponPiece(PCLASS_FIGHTER, WPIECE1, self);
 		return;
-	case SPR_WFR2:
+	case 'WFR2':
 		Toucher.TryPickupWeaponPiece(PCLASS_FIGHTER, WPIECE2, self);
 		return;
-	case SPR_WFR3:
+	case 'WFR3':
 		Toucher.TryPickupWeaponPiece(PCLASS_FIGHTER, WPIECE3, self);
 		return;
-	case SPR_WCH1:
+	case 'WCH1':
 		Toucher.TryPickupWeaponPiece(PCLASS_CLERIC, WPIECE1, self);
 		return;
-	case SPR_WCH2:
+	case 'WCH2':
 		Toucher.TryPickupWeaponPiece(PCLASS_CLERIC, WPIECE2, self);
 		return;
-	case SPR_WCH3:
+	case 'WCH3':
 		Toucher.TryPickupWeaponPiece(PCLASS_CLERIC, WPIECE3, self);
 		return;
-	case SPR_WMS1:
+	case 'WMS1':
 		Toucher.TryPickupWeaponPiece(PCLASS_MAGE, WPIECE1, self);
 		return;
-	case SPR_WMS2:
+	case 'WMS2':
 		Toucher.TryPickupWeaponPiece(PCLASS_MAGE, WPIECE2, self);
 		return;
-	case SPR_WMS3:
+	case 'WMS3':
 		Toucher.TryPickupWeaponPiece(PCLASS_MAGE, WPIECE3, self);
 		return;
-
-	default:
-		Error("P_TouchSpecialThing: Unknown gettable thing");
 	}
 	if (special)
 	{
 		ExecuteLineSpecial(special, &args[0], NULL, 0, &Toucher);
 		special = 0;
 	}
-	if (deathmatch && respawn && !bDropped)
+	if (KeyType == -1 || !netgame)
 	{
-		P_HideSpecialThing(this);
-	}
-	else
-	{
-		P_RemoveMobj(this);
+		// Only remove keys in single player game
+		if (deathmatch && respawn && !bDropped)
+		{
+			P_HideSpecialThing(this);
+		}
+		else
+		{
+			P_RemoveMobj(this);
+		}
 	}
 	Toucher.player->bonuscount += BONUSADD;
 	StartSoundName(Toucher, sound, CHAN_ITEM);
@@ -1015,6 +1013,9 @@ void Actor::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/02/09 18:12:25  dj_jl
+//  Replaced identifying sprite name indexes with sprite names
+//
 //  Revision 1.12  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

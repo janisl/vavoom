@@ -329,23 +329,23 @@ void Actor::TouchSpecial(Actor Toucher)
 	sound = 'PickupItem';
 
 	// Identify by sprite.
-	switch (sprite)
+	switch (SpriteName)
 	{
 		// armor
-	case SPR_ARM1:
+	case 'ARM1':
 		if (!Toucher.GiveArmor(1))
 			return;
 		cprint(Toucher.player, "%s\n", GOTARMOR);
 		break;
 
-	case SPR_ARM2:
+	case 'ARM2':
 		if (!Toucher.GiveArmor(2))
 			return;
 		cprint(Toucher.player, "%s\n", GOTMEGA);
 		break;
 
 		// bonus items
-	case SPR_BON1:
+	case 'BON1':
 		Toucher.player->health++;	// can go over 100%
 		if (Toucher.player->health > 200)
 			Toucher.player->health = 200;
@@ -353,7 +353,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		cprint(Toucher.player, "%s\n", GOTHTHBONUS);
 		break;
 
-	case SPR_BON2:
+	case 'BON2':
 		Toucher.player->armorpoints++;	// can go over 100%
 		if (Toucher.player->armorpoints > 200)
 			Toucher.player->armorpoints = 200;
@@ -362,7 +362,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		cprint(Toucher.player, "%s\n", GOTARMBONUS);
 		break;
 
-	case SPR_SOUL:
+	case 'SOUL':
 		Toucher.player->health += SOULSPHERE_HEALTH;
 		if (Toucher.player->health > SOULSPHERE_MAX)
 			Toucher.player->health = SOULSPHERE_MAX;
@@ -372,7 +372,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		break;
 
 #ifdef DOOM2
-	case SPR_MEGA:
+	case 'MEGA':
 		Toucher.player->health = MEGASPHERE_HEALTH;
 		Toucher.Health = Toucher.player->health;
 		Toucher.GiveArmor(2);
@@ -383,42 +383,42 @@ void Actor::TouchSpecial(Actor Toucher)
 
 		// cards
 		// leave cards for everyone
-	case SPR_BKEY:
+	case 'BKEY':
 		if (Toucher.GiveCard(it_bluecard))
 			cprint(Toucher.player, "%s\n", GOTBLUECARD);
 		if (!netgame)
 			break;
 		return;
 
-	case SPR_YKEY:
+	case 'YKEY':
 		if (Toucher.GiveCard(it_yellowcard))
 			cprint(Toucher.player, "%s\n", GOTYELWCARD);
 		if (!netgame)
 			break;
 		return;
 
-	case SPR_RKEY:
+	case 'RKEY':
 		if (Toucher.GiveCard(it_redcard))
 			cprint(Toucher.player, "%s\n", GOTREDCARD);
 		if (!netgame)
 			break;
 		return;
 
-	case SPR_BSKU:
+	case 'BSKU':
 		if (Toucher.GiveCard(it_blueskull))
 			cprint(Toucher.player, "%s\n", GOTBLUESKUL);
 		if (!netgame)
 			break;
 		return;
 
-	case SPR_YSKU:
+	case 'YSKU':
 		if (Toucher.GiveCard(it_yellowskull))
 			cprint(Toucher.player, "%s\n", GOTYELWSKUL);
 		if (!netgame)
 			break;
 		return;
 
-	case SPR_RSKU:
+	case 'RSKU':
 		if (Toucher.GiveCard(it_redskull))
 			cprint(Toucher.player, "%s\n", GOTREDSKULL);
 		if (!netgame)
@@ -426,13 +426,13 @@ void Actor::TouchSpecial(Actor Toucher)
 		return;
 
 		// medikits, heals
-	case SPR_STIM:
+	case 'STIM':
 		if (!Toucher.GiveBody(10))
 			return;
 		cprint(Toucher.player, "%s\n", GOTSTIM);
 		break;
 
-	case SPR_MEDI:
+	case 'MEDI':
 		if (!Toucher.GiveBody(25))
 			return;
 
@@ -443,14 +443,14 @@ void Actor::TouchSpecial(Actor Toucher)
 		break;
 
 		// power ups
-	case SPR_PINV:
+	case 'PINV':
 		if (!Toucher.GivePower(pw_invulnerability))
 			return;
 		cprint(Toucher.player, "%s\n", GOTINVUL);
 		sound = 'PickupPower';
 		break;
 
-	case SPR_PSTR:
+	case 'PSTR':
 		if (!Toucher.GivePower(pw_strength))
 			return;
 		cprint(Toucher.player, "%s\n", GOTBERSERK);
@@ -459,21 +459,21 @@ void Actor::TouchSpecial(Actor Toucher)
 		sound = 'PickupPower';
 		break;
 
-	case SPR_PINS:
+	case 'PINS':
 		if (!Toucher.GivePower(pw_invisibility))
 			return;
 		cprint(Toucher.player, "%s\n", GOTINVIS);
 		sound = 'PickupPower';
 		break;
 
-	case SPR_SUIT:
+	case 'SUIT':
 		if (!Toucher.GivePower(pw_ironfeet))
 			return;
 		cprint(Toucher.player, "%s\n", GOTSUIT);
 		sound = 'PickupPower';
 		break;
 
-	case SPR_PVIS:
+	case 'PVIS':
 		if (!Toucher.GivePower(pw_infrared))
 			return;
 		cprint(Toucher.player, "%s\n", GOTVISOR);
@@ -481,7 +481,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		break;
 
 		//  Items
-	case SPR_PMAP:
+	case 'PMAP':
 		if (!Toucher.GiveItem(IT_ALL_MAP))
 			return;
 		cprint(Toucher.player, "%s\n", GOTMAP);
@@ -489,7 +489,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		break;
 
 		// ammo
-	case SPR_CLIP:
+	case 'CLIP':
 		if (bDropped)
 		{
 			if (!Toucher.GiveAmmo(am_clip, 0))
@@ -503,49 +503,49 @@ void Actor::TouchSpecial(Actor Toucher)
 		cprint(Toucher.player, "%s\n", GOTCLIP);
 		break;
 
-	case SPR_AMMO:
+	case 'AMMO':
 		if (!Toucher.GiveAmmo(am_clip, 5))
 			return;
 		cprint(Toucher.player, "%s\n", GOTCLIPBOX);
 		break;
 
-	case SPR_ROCK:
+	case 'ROCK':
 		if (!Toucher.GiveAmmo(am_misl, 1))
 			return;
 		cprint(Toucher.player, "%s\n", GOTROCKET);
 		break;
 
-	case SPR_BROK:
+	case 'BROK':
 		if (!Toucher.GiveAmmo(am_misl, 5))
 			return;
 		cprint(Toucher.player, "%s\n", GOTROCKBOX);
 		break;
 
-	case SPR_CELL:
+	case 'CELL':
 		if (!Toucher.GiveAmmo(am_cell, 1))
 			return;
 		cprint(Toucher.player, "%s\n", GOTCELL);
 		break;
 
-	case SPR_CELP:
+	case 'CELP':
 		if (!Toucher.GiveAmmo(am_cell, 5))
 			return;
 		cprint(Toucher.player, "%s\n", GOTCELLBOX);
 		break;
 
-	case SPR_SHEL:
+	case 'SHEL':
 		if (!Toucher.GiveAmmo(am_shell, 1))
 			return;
 		cprint(Toucher.player, "%s\n", GOTSHELLS);
 		break;
 
-	case SPR_SBOX:
+	case 'SBOX':
 		if (!Toucher.GiveAmmo(am_shell, 5))
 			return;
 		cprint(Toucher.player, "%s\n", GOTSHELLBOX);
 		break;
 
-	case SPR_BPAK:
+	case 'BPAK':
 		Toucher.player->backpack = true;
 		for (i = 0; i < NUMAMMO; i++)
 		{
@@ -555,42 +555,42 @@ void Actor::TouchSpecial(Actor Toucher)
 		break;
 
 		// weapons
-	case SPR_BFUG:
+	case 'BFUG':
 		if (!Toucher.GiveWeapon(wp_bfg, false))
 			return;
 		cprint(Toucher.player, "%s\n", GOTBFG9000);
 		sound = 'PickupWeapon';
 		break;
 
-	case SPR_MGUN:
+	case 'MGUN':
 		if (!Toucher.GiveWeapon(wp_chaingun, bDropped))
 			return;
 		cprint(Toucher.player, "%s\n", GOTCHAINGUN);
 		sound = 'PickupWeapon';
 		break;
 
-	case SPR_CSAW:
+	case 'CSAW':
 		if (!Toucher.GiveWeapon(wp_chainsaw, false))
 			return;
 		cprint(Toucher.player, "%s\n", GOTCHAINSAW);
 		sound = 'PickupWeapon';
 		break;
 
-	case SPR_LAUN:
+	case 'LAUN':
 		if (!Toucher.GiveWeapon(wp_missile, false))
 			return;
 		cprint(Toucher.player, "%s\n", GOTLAUNCHER);
 		sound = 'PickupWeapon';
 		break;
 
-	case SPR_PLAS:
+	case 'PLAS':
 		if (!Toucher.GiveWeapon(wp_plasma, false))
 			return;
 		cprint(Toucher.player, "%s\n", GOTPLASMA);
 		sound = 'PickupWeapon';
 		break;
 
-	case SPR_SHOT:
+	case 'SHOT':
 		if (!Toucher.GiveWeapon(wp_shotgun, bDropped))
 			return;
 		cprint(Toucher.player, "%s\n", GOTSHOTGUN);
@@ -598,7 +598,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		break;
 
 #ifdef DOOM2
-	case SPR_SGN2:
+	case 'SGN2':
 		if (!Toucher.GiveWeapon(wp_supershotgun, bDropped))
 			return;
 		cprint(Toucher.player, "%s\n", GOTSHOTGUN2);
@@ -607,7 +607,7 @@ void Actor::TouchSpecial(Actor Toucher)
 #endif
 
 #ifdef GRENADE_LAUNCHER
-	case SPR_GLAU:
+	case 'GLAU':
 		if (!Toucher.GiveWeapon(wp_grenade, false))
 			return;
 		cprint(Toucher.player, "Piched up a grenade launcher\n");
@@ -626,6 +626,9 @@ void Actor::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/09 18:12:25  dj_jl
+//  Replaced identifying sprite name indexes with sprite names
+//
 //  Revision 1.11  2002/02/06 17:28:51  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

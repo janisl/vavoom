@@ -463,31 +463,31 @@ void Actor::TouchSpecial(Actor Toucher)
 	}
 	sound = 'PickupItem';
 	respawn = true;
-	switch (sprite)
+	switch (SpriteName)
 	{
 		// Items
-	case SPR_PTN1:	// Item_HealingPotion
+	case 'PTN1':	// Item_HealingPotion
 		if (!Toucher.GiveBody(10))
 		{
 			return;
 		}
 		cprint(Toucher.player, "%s\n", TXT_ITEMHEALTH);
 		break;
-	case SPR_SHLD:	// Item_Shield1
+	case 'SHLD':	// Item_Shield1
 		if (!Toucher.GiveArmor(1))
 		{
 			return;
 		}
 		cprint(Toucher.player, "%s\n", TXT_ITEMSHIELD1);
 		break;
-	case SPR_SHD2:	// Item_Shield2
+	case 'SHD2':	// Item_Shield2
 		if (!Toucher.GiveArmor(2))
 		{
 			return;
 		}
 		cprint(Toucher.player, "%s\n", TXT_ITEMSHIELD2);
 		break;
-	case SPR_BAGH:	// Item_BagOfHolding
+	case 'BAGH':	// Item_BagOfHolding
 		Toucher.player->backpack = true;
 		Toucher.GiveAmmo(am_goldwand, AMMO_GWND_WIMPY);
 		Toucher.GiveAmmo(am_blaster, AMMO_BLSR_WIMPY);
@@ -496,7 +496,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		Toucher.GiveAmmo(am_phoenixrod, AMMO_PHRD_WIMPY);
 		cprint(Toucher.player, "%s\n", TXT_ITEMBAGOFHOLDING);
 		break;
-	case SPR_SPMP:	// Item_SuperMap
+	case 'SPMP':	// Item_SuperMap
 		if (!Toucher.GiveItem(IT_ALL_MAP))
 		{
 			return;
@@ -505,7 +505,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		break;
 
 		// Keys
-	case SPR_BKYY:	// Key_Blue
+	case 'BKYY':	// Key_Blue
 		if (Toucher.GiveKey(key_blue))
 		{
 			cprint(Toucher.player, "%s\n", TXT_GOTBLUEKEY);
@@ -516,7 +516,7 @@ void Actor::TouchSpecial(Actor Toucher)
 			break;
 		}
 		return;
-	case SPR_CKYY:	// Key_Yellow
+	case 'CKYY':	// Key_Yellow
 		if (Toucher.GiveKey(key_yellow))
 		{
 			cprint(Toucher.player, "%s\n", TXT_GOTYELLOWKEY);
@@ -527,7 +527,7 @@ void Actor::TouchSpecial(Actor Toucher)
 			break;
 		}
 		return;
-	case SPR_AKYY:	// Key_Green
+	case 'AKYY':	// Key_Green
 		if (Toucher.GiveKey(key_green))
 		{
 			cprint(Toucher.player, "%s\n", TXT_GOTGREENKEY);
@@ -540,70 +540,70 @@ void Actor::TouchSpecial(Actor Toucher)
 		return;
 
 		// Artifacts
-	case SPR_PTN2:	// Arti_HealingPotion
+	case 'PTN2':	// Arti_HealingPotion
 		if (Toucher.GiveArtifact(arti_health, self))
 		{
 			cprint(Toucher.player, "%s\n", TXT_ARTIHEALTH);
 			P_SetDormantArtifact(this);
 		}
 		return;
-	case SPR_SOAR:	// Arti_Fly
+	case 'SOAR':	// Arti_Fly
 		if (Toucher.GiveArtifact(arti_fly, self))
 		{
 			cprint(Toucher.player, "%s\n", TXT_ARTIFLY);
 			P_SetDormantArtifact(this);
 		}
 		return;
-	case SPR_INVU:	// Arti_Invulnerability
+	case 'INVU':	// Arti_Invulnerability
 		if (Toucher.GiveArtifact(arti_invulnerability, self))
 		{
 			cprint(Toucher.player, "%s\n", TXT_ARTIINVULNERABILITY);
 			P_SetDormantArtifact(&self);
 		}
 		return;
-	case SPR_PWBK:	// Arti_TomeOfPower
+	case 'PWBK':	// Arti_TomeOfPower
 		if (Toucher.GiveArtifact(arti_tomeofpower, self))
 		{
 			cprint(Toucher.player, "%s\n", TXT_ARTITOMEOFPOWER);
 			P_SetDormantArtifact(&self);
 		}
 		return;
-	case SPR_INVS:	// Arti_Invisibility
+	case 'INVS':	// Arti_Invisibility
 		if (Toucher.GiveArtifact(arti_invisibility, self))
 		{
 			cprint(Toucher.player, "%s\n", TXT_ARTIINVISIBILITY);
 			P_SetDormantArtifact(&self);
 		}
 		return;
-	case SPR_EGGC:	// Arti_Egg
+	case 'EGGC':	// Arti_Egg
 		if (Toucher.GiveArtifact(arti_egg, self))
 		{
 			cprint(Toucher.player, "%s\n", TXT_ARTIEGG);
 			P_SetDormantArtifact(&self);
 		}
 		return;
-	case SPR_SPHL:	// Arti_SuperHealth
+	case 'SPHL':	// Arti_SuperHealth
 		if (Toucher.GiveArtifact(arti_superhealth, self))
 		{
 			cprint(Toucher.player, "%s\n", TXT_ARTISUPERHEALTH);
 			P_SetDormantArtifact(&self);
 		}
 		return;
-	case SPR_TRCH:	// Arti_Torch
+	case 'TRCH':	// Arti_Torch
 		if (Toucher.GiveArtifact(arti_torch, self))
 		{
 			cprint(Toucher.player, "%s\n", TXT_ARTITORCH);
 			P_SetDormantArtifact(&self);
 		}
 		return;
-	case SPR_FBMB:	// Arti_FireBomb
+	case 'FBMB':	// Arti_FireBomb
 		if (Toucher.GiveArtifact(arti_firebomb, self))
 		{
 			cprint(Toucher.player, "%s\n", TXT_ARTIFIREBOMB);
 			P_SetDormantArtifact(&self);
 		}
 		return;
-	case SPR_ATLP:	// Arti_Teleport
+	case 'ATLP':	// Arti_Teleport
 		if (Toucher.GiveArtifact(arti_teleport, self))
 		{
 			cprint(Toucher.player, "%s\n", TXT_ARTITELEPORT);
@@ -612,84 +612,84 @@ void Actor::TouchSpecial(Actor Toucher)
 		return;
 
 		// Ammo
-	case SPR_AMG1:	// Ammo_GoldWandWimpy
+	case 'AMG1':	// Ammo_GoldWandWimpy
 		if (!Toucher.GiveAmmo(am_goldwand, Health))
 		{
 			return;
 		}
 		cprint(Toucher.player, "%s\n", TXT_AMMOGOLDWAND1);
 		break;
-	case SPR_AMG2:	// Ammo_GoldWandHefty
+	case 'AMG2':	// Ammo_GoldWandHefty
 		if (!Toucher.GiveAmmo(am_goldwand, Health))
 		{
 			return;
 		}
 		cprint(Toucher.player, "%s\n", TXT_AMMOGOLDWAND2);
 		break;
-	case SPR_AMM1:	// Ammo_MaceWimpy
+	case 'AMM1':	// Ammo_MaceWimpy
 		if (!Toucher.GiveAmmo(am_mace, Health))
 		{
 			return;
 		}
 		cprint(Toucher.player, "%s\n", TXT_AMMOMACE1);
 		break;
-	case SPR_AMM2:	// Ammo_MaceHefty
+	case 'AMM2':	// Ammo_MaceHefty
 		if (!Toucher.GiveAmmo(am_mace, Health))
 		{
 			return;
 		}
 		cprint(Toucher.player, "%s\n", TXT_AMMOMACE2);
 		break;
-	case SPR_AMC1:	// Ammo_CrossbowWimpy
+	case 'AMC1':	// Ammo_CrossbowWimpy
 		if (!Toucher.GiveAmmo(am_crossbow, Health))
 		{
 			return;
 		}
 		cprint(Toucher.player, "%s\n", TXT_AMMOCROSSBOW1);
 		break;
-	case SPR_AMC2:	// Ammo_CrossbowHefty
+	case 'AMC2':	// Ammo_CrossbowHefty
 		if (!Toucher.GiveAmmo(am_crossbow, Health))
 		{
 			return;
 		}
 		cprint(Toucher.player, "%s\n", TXT_AMMOCROSSBOW2);
 		break;
-	case SPR_AMB1:	// Ammo_BlasterWimpy
+	case 'AMB1':	// Ammo_BlasterWimpy
 		if (!Toucher.GiveAmmo(am_blaster, Health))
 		{
 			return;
 		}
 		cprint(Toucher.player, "%s\n", TXT_AMMOBLASTER1);
 		break;
-	case SPR_AMB2:	// Ammo_BlasterHefty
+	case 'AMB2':	// Ammo_BlasterHefty
 		if (!Toucher.GiveAmmo(am_blaster, Health))
 		{
 			return;
 		}
 		cprint(Toucher.player, "%s\n", TXT_AMMOBLASTER2);
 		break;
-	case SPR_AMS1:	// Ammo_SkullRodWimpy
+	case 'AMS1':	// Ammo_SkullRodWimpy
 		if (!Toucher.GiveAmmo(am_skullrod, Health))
 		{
 			return;
 		}
 		cprint(Toucher.player, "%s\n", TXT_AMMOSKULLROD1);
 		break;
-	case SPR_AMS2:	// Ammo_SkullRodHefty
+	case 'AMS2':	// Ammo_SkullRodHefty
 		if (!Toucher.GiveAmmo(am_skullrod, Health))
 		{
 			return;
 		}
 		cprint(Toucher.player, "%s\n", TXT_AMMOSKULLROD2);
 		break;
-	case SPR_AMP1:	// Ammo_PhoenixRodWimpy
+	case 'AMP1':	// Ammo_PhoenixRodWimpy
 		if (!Toucher.GiveAmmo(am_phoenixrod, Health))
 		{
 			return;
 		}
 		cprint(Toucher.player, "%s\n", TXT_AMMOPHOENIXROD1);
 		break;
-	case SPR_AMP2:	// Ammo_PhoenixRodHefty
+	case 'AMP2':	// Ammo_PhoenixRodHefty
 		if (!Toucher.GiveAmmo(am_phoenixrod, Health))
 		{
 			return;
@@ -698,7 +698,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		break;
 
 		// Weapons
-	case SPR_WMCE:	// Weapon_Mace
+	case 'WMCE':	// Weapon_Mace
 		if (!Toucher.GiveWeapon(wp_mace))
 		{
 			return;
@@ -706,7 +706,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		cprint(Toucher.player, "%s\n", TXT_WPNMACE);
 		sound = 'PickupWeapon';
 		break;
-	case SPR_WBOW:	// Weapon_Crossbow
+	case 'WBOW':	// Weapon_Crossbow
 		if (!Toucher.GiveWeapon(wp_crossbow))
 		{
 			return;
@@ -714,7 +714,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		cprint(Toucher.player, "%s\n", TXT_WPNCROSSBOW);
 		sound = 'PickupWeapon';
 		break;
-	case SPR_WBLS:	// Weapon_Blaster
+	case 'WBLS':	// Weapon_Blaster
 		if (!Toucher.GiveWeapon(wp_blaster))
 		{
 			return;
@@ -722,7 +722,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		cprint(Toucher.player, "%s\n", TXT_WPNBLASTER);
 		sound = 'PickupWeapon';
 		break;
-	case SPR_WSKL:	// Weapon_SkullRod
+	case 'WSKL':	// Weapon_SkullRod
 		if (!Toucher.GiveWeapon(wp_skullrod))
 		{
 			return;
@@ -730,7 +730,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		cprint(Toucher.player, "%s\n", TXT_WPNSKULLROD);
 		sound = 'PickupWeapon';
 		break;
-	case SPR_WPHX:	// Weapon_PhoenixRod
+	case 'WPHX':	// Weapon_PhoenixRod
 		if (!Toucher.GiveWeapon(wp_phoenixrod))
 		{
 			return;
@@ -738,7 +738,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		cprint(Toucher.player, "%s\n", TXT_WPNPHOENIXROD);
 		sound = 'PickupWeapon';
 		break;
-	case SPR_WGNT:	// Weapon_Gauntlets
+	case 'WGNT':	// Weapon_Gauntlets
 		if (!Toucher.GiveWeapon(wp_gauntlets))
 		{
 			return;
@@ -746,8 +746,9 @@ void Actor::TouchSpecial(Actor Toucher)
 		cprint(Toucher.player, "%s\n", TXT_WPNGAUNTLETS);
 		sound = 'PickupWeapon';
 		break;
+
 	default:
-		Error("P_SpecialThing: Unknown gettable thing");
+		Error("Unknown gettable thing %n", SpriteName);
 	}
 	if (bCountItem)
 	{
@@ -768,6 +769,9 @@ void Actor::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/09 18:12:25  dj_jl
+//  Replaced identifying sprite name indexes with sprite names
+//
 //  Revision 1.11  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //
