@@ -90,6 +90,7 @@ VObject::VObject(ENativeConstructor, VClass* AClass, const char *AName, dword AF
 VObject::~VObject(void)
 {
 	guard(VObject::~VObject);
+	ConditionalDestroy();
 	if (!GObjInitialized)
 	{
 		return;
@@ -240,13 +241,28 @@ void VObject::UnhashObject(void)
 
 //==========================================================================
 //
+//	VObject::ConditionalDestroy
+//
+//==========================================================================
+
+bool VObject::ConditionalDestroy(void)
+{
+	if (!(ObjectFlags & OF_Destroyed))
+	{
+		SetFlags(OF_Destroyed);
+		Destroy();
+	}
+	return true;
+}
+
+//==========================================================================
+//
 //	VObject::Destroy
 //
 //==========================================================================
 
 void VObject::Destroy(void)
 {
-	SetFlags(OF_Destroyed);
 }
 
 //==========================================================================
@@ -365,7 +381,7 @@ IMPLEMENT_FUNCTION(VObject, Destroy)
 	VObject *ptr;
 
 	ptr = (VObject *)PR_Pop();
-	ptr->Destroy();
+	delete ptr;
 }
 
 //==========================================================================
@@ -409,9 +425,12 @@ IMPLEMENT_FUNCTION(VObject, IsDestroyed)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2003/03/08 11:36:03  dj_jl
+//	API fixes.
+//
 //	Revision 1.10  2002/08/28 16:43:13  dj_jl
 //	Fixed object registration.
-//
+//	
 //	Revision 1.9  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
 //	

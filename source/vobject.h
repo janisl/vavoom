@@ -51,12 +51,16 @@ public: \
 // Declare a concrete class.
 #define DECLARE_CLASS(TClass, TSuperClass, TStaticFlags) \
 	DECLARE_BASE_CLASS(TClass, TSuperClass, TStaticFlags) \
+	virtual ~TClass() \
+		{ ConditionalDestroy(); } \
 	static void InternalConstructor(void* X) \
 		{ new((EInternal *)X)TClass(); }
 
 // Declare an abstract class.
 #define DECLARE_ABSTRACT_CLASS(TClass, TSuperClass, TStaticFlags) \
-	DECLARE_BASE_CLASS(TClass, TSuperClass, TStaticFlags | CLASS_Abstract)
+	DECLARE_BASE_CLASS(TClass, TSuperClass, TStaticFlags | CLASS_Abstract) \
+	virtual ~TClass() \
+		{ ConditionalDestroy(); }
 
 // Register a class at startup time.
 #define IMPLEMENT_CLASS(TClass) \
@@ -138,7 +142,7 @@ public:
 //
 // The base class of all objects.
 //
-class VObject:public VVirtualObjectBase
+class VObject : public VVirtualObjectBase
 {
 	// Declarations.
 	DECLARE_BASE_CLASS(VObject, VObject, CLASS_Abstract)
@@ -194,6 +198,7 @@ public:
 	static int GetObjectsCount(void);
 
 	// Functions.
+	bool ConditionalDestroy();
 	bool IsA(VClass *SomeBaseClass) const;
 	bool IsIn(VObject *SomeOuter) const;
 
@@ -314,9 +319,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2003/03/08 11:36:03  dj_jl
+//	API fixes.
+//
 //	Revision 1.10  2002/05/29 16:53:52  dj_jl
 //	Added GetVFunction.
-//
+//	
 //	Revision 1.9  2002/05/18 16:56:35  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	
