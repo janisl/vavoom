@@ -44,7 +44,7 @@ float GetInitialValue(void)
 
 bool SetNewValue(float newValue)
 {
-	return false;
+	return true;
 }
 
 void InitWindow(void)
@@ -132,6 +132,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/09/11 17:17:25  dj_jl
+//  Fixed return value
+//
 //  Revision 1.1  2002/11/02 08:20:52  dj_jl
 //  New style classes.
 //
