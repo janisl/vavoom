@@ -40,6 +40,37 @@ int pic_invtop;
 int pic_pause;
 int pic_yellownum[11];
 int pic_graynum[11];
+int pic_inv[NUMINVITEMS];
+int pic_invcurs;
+
+string InventoryIconNames[NUMINVITEMS] =
+{
+	"I_STMP",
+	"I_MDKT",
+	"I_FULL",
+	"I_XPRK",
+	"I_ARM1",
+	"I_ARM2",
+	"I_SHD1",
+	"I_MASK",
+	"I_UNIF",
+	"I_OFIC",
+	"I_PMAP",
+	"I_PMUP",
+	"I_BEAC",
+	"I_TARG",
+	"I_COIN",
+	"I_RING",
+	"I_RELC",
+	"I_EARS",
+	"I_BFLM",
+	"I_COUP",
+	"I_TOKN",
+	"I_TOKN",
+	"I_HELT",
+	"I_GUNT",
+	"I_OTOK",
+};
 
 // CODE --------------------------------------------------------------------
 
@@ -67,6 +98,12 @@ void SB_StartMap(void)
 	}
 	pic_yellownum[10] = R_RegisterPic("INVFONY%", PIC_PATCH);
 	pic_graynum[10] = R_RegisterPic("INVFONG%", PIC_PATCH);
+
+	for (i = 0; i < NUMINVITEMS; i++)
+	{
+		pic_inv[i] = R_RegisterPic(InventoryIconNames[i], PIC_PATCH);
+	}
+	pic_invcurs = R_RegisterPic("INVCURS", PIC_PATCH);
 
 	pic_pause = R_RegisterPic("M_PAUSE", PIC_PATCH);
 }
@@ -113,12 +150,30 @@ void SB_DrawSmallNum(int x, int y, int num)
 
 void SB_DrawMainBar(void)
 {
+	int Idx;
+	int i;
+
 	//  background
 	R_DrawPic(0, 168, pic_invback);
 	R_DrawPic(0, 160, pic_invtop);
 
 	// health percentage
 	SB_DrawSmallNum(76, 162, cl->health);
+
+	Idx = 0;
+	for (i = cl->InvFirst; Idx < 6 && i < NUMINVITEMS; i++)
+	{
+		if (cl->Inventory[i])
+		{
+			if (cl->InvCursor == i)
+			{
+				R_DrawPic(42 + 35 * Idx, 180, pic_invcurs);
+			}
+			R_DrawPic(48 + Idx * 35, 182, pic_inv[i]);
+			SB_DrawSmallNum(76 + Idx * 35, 192, cl->Inventory[i]);
+			Idx++;
+		}
+	}
 }
 
 //==========================================================================
@@ -164,6 +219,9 @@ void SB_UpdateWidgets(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2003/10/02 18:04:39  dj_jl
+//  Inventory system.
+//
 //  Revision 1.9  2003/09/15 16:42:25  dj_jl
 //  Health indicator
 //

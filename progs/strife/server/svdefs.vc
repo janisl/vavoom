@@ -148,72 +148,6 @@ enum
 
 // CONSTANTS ---------------------------------------------------------------
 
-enum
-{
-	wp_fist,
-	wp_crossbow,
-	wp_riffle,
-	wp_missile,
-	wp_grenade,
-	wp_flame,
-	wp_blaster,
-	wp_sigil,
-
-	NUMWEAPONS,
-
-	// No pending weapon change.
-	wp_nochange
-};
-
-// Ammunition types defined.
-enum
-{
-	am_clip,
-	am_electric_arrow,
-	am_poison_arrow,
-	am_cell,
-	am_misl,
-	am_grenade1,
-	am_grenade2,
-
-	NUMAMMO,
-
-	am_noammo	// Unlimited for chainsaw / fist.
-};
-
-enum
-{
-	KEY_BaseKey,
-	KEY_GovsKey,
-	KEY_Passcard,
-	KEY_IDBadge,
-	KEY_PrisonKey,
-	KEY_SeveredHand,
-	KEY_Power1Key,
-	KEY_Power2Key,
-	KEY_GoldKey,
-	KEY_Power3Key,
-	KEY_IDCard,
-	KEY_SilverKey,
-	KEY_OracleKey,
-	KEY_MilitaryID,
-	KEY_OrderKey,
-	KEY_WarehouseKey,
-	KEY_BrassKey,
-	KEY_RedCrystalKey,
-	KEY_BlueCrystalKey,
-	KEY_ChapelKey,
-	KEY_CatacombKey,
-	KEY_SecurityKey,
-	KEY_CoreKey,
-	KEY_MaulerKey,
-	KEY_FactoryKey,
-	KEY_MineKey,
-	KEY_NewKey5,
-
-	NUMKEYS
-};
-
 // Power up artifacts.
 enum
 {
@@ -257,20 +191,78 @@ enum
 	CHAN_BODY
 };
 
+enum
+{
+	QUEST_1,
+	QUEST_StoleChalice,
+	QUEST_WasInFrontBase,
+	QUEST_GovPowerCoupling,
+	QUEST_GovDerwin,
+	QUEST_6,
+	QUEST_7,
+	QUEST_8,
+	QUEST_9,
+	QUEST_10,
+	QUEST_11,
+	QUEST_12,
+	QUEST_FreedPrisoners,
+	QUEST_BlownUpCrystal,
+	QUEST_15,
+	QUEST_BlownUpGates,
+	QUEST_17,
+	QUEST_18,
+	QUEST_DestroyComputer,
+	QUEST_20,
+	QUEST_KilledBishop,
+	QUEST_KillMacil,
+	QUEST_KilledOracle,
+	QUEST_KilledMacil,
+	QUEST_Factory,
+	QUEST_KilledLoremaster,
+	QUEST_BlownUpComputer,
+	QUEST_28,
+	QUEST_FreedWorkers,
+	QUEST_30,
+	QUEST_31,
+
+	NUMQUESTS
+};
+
 // TYPES -------------------------------------------------------------------
 
 addfields player_t
 {
+	//
+	//  FIRST FIELDS ARE STATS THAT ARE SENT TO CLIENT FOR STATUS BAR
+	//
+
 	int Ammo[NUMAMMO];
 	int ReadyAmmo;
 
 	bool WeaponOwned[NUMWEAPONS];
+	int Sigil;
 
-	int ArmorPoints;
+	bool Backpack;
+	bool Communicator;
+
+	int Accuracy;
+	int Stamina;
 
 	int Keys;
 
-	bool Backpack;
+	int Inventory[NUMINVITEMS];
+	int InvFirst;
+	int InvCursor;
+
+	int Objectives;
+
+	//
+	//  ----------
+	//
+
+	int ArmorPoints;
+
+	int Quests;
 
 	int ReadyWeapon;
 
@@ -313,7 +305,7 @@ addfields player_t
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-int num_stats = 0;
+int num_stats = NUMAMMO + NUMWEAPONS + NUMINVITEMS + 9;
 bool respawnmonsters;
 
 float FloatBobOffsets[64] = {
@@ -340,6 +332,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.44  2003/10/02 18:02:45  dj_jl
+//  Inventory system.
+//
 //  Revision 1.43  2003/03/08 12:41:45  dj_jl
 //  Removing class pointers.
 //

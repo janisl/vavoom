@@ -32,9 +32,142 @@ enum
 	svc_speech
 };
 
+enum
+{
+	wp_fist,
+	wp_crossbow,
+	wp_riffle,
+	wp_missile,
+	wp_grenade,
+	wp_flame,
+	wp_blaster,
+	wp_sigil,
+
+	NUMWEAPONS,
+
+	// No pending weapon change.
+	wp_nochange
+};
+
+// Ammunition types defined.
+enum
+{
+	am_clip,
+	am_electric_arrow,
+	am_poison_arrow,
+	am_cell,
+	am_misl,
+	am_grenade1,
+	am_grenade2,
+
+	NUMAMMO,
+
+	am_noammo	// Unlimited for chainsaw / fist.
+};
+
+enum
+{
+	KEY_BaseKey,
+	KEY_GovsKey,
+	KEY_Passcard,
+	KEY_IDBadge,
+	KEY_PrisonKey,
+	KEY_SeveredHand,
+	KEY_Power1Key,
+	KEY_Power2Key,
+	KEY_GoldKey,
+	KEY_Power3Key,
+	KEY_IDCard,
+	KEY_SilverKey,
+	KEY_OracleKey,
+	KEY_MilitaryID,
+	KEY_OrderKey,
+	KEY_WarehouseKey,
+	KEY_BrassKey,
+	KEY_RedCrystalKey,
+	KEY_BlueCrystalKey,
+	KEY_ChapelKey,
+	KEY_CatacombKey,
+	KEY_SecurityKey,
+	KEY_CoreKey,
+	KEY_MaulerKey,
+	KEY_FactoryKey,
+	KEY_MineKey,
+	KEY_NewKey5,
+
+	NUMKEYS
+};
+
+enum
+{
+	ITEM_MedPatch,
+	ITEM_MedicalKit,
+	ITEM_SurgeryKit,
+	ITEM_DegninOre,
+	ITEM_MetalArmor,
+	ITEM_LeatherArmor,
+	ITEM_ShadowArmor,
+	ITEM_EnvironmentalSuit,
+	ITEM_GuardUniform,
+	ITEM_OfficersUniform,
+	ITEM_Map,
+	ITEM_Scanner,
+	ITEM_TeleporterBeacon,
+	ITEM_Targeter,
+	ITEM_Coin,
+	ITEM_Ring,
+	ITEM_OfferingChalice,
+	ITEM_Ear,
+	ITEM_FlameThrowerParts,
+	ITEM_BrokenPowerCoupling,
+	ITEM_PrisonPass,
+	ITEM_Report,
+	ITEM_Toughness,
+	ITEM_Accuracy,
+	ITEM_OraclePass,
+
+	NUMINVITEMS
+};
+
+#ifdef CLIENT
+
+addfields client_state_t
+{
+	//
+	//  STATS FOR STATUS BAR
+	//
+
+	int Ammo[NUMAMMO];
+	int ReadyAmmo;
+
+	bool WeaponOwned[NUMWEAPONS];
+	int Sigil;
+
+	bool Backpack;
+	bool Communicator;
+
+	int Accuracy;
+	int Stamina;
+
+	int Keys;
+
+	int Inventory[NUMINVITEMS];
+	int InvFirst;
+	int InvCursor;
+
+	int Objectives;
+};
+
+#endif
+
+int maxammo[] = { 250, 50, 25, 400, 100, 30, 16 };
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2003/10/02 18:04:04  dj_jl
+//  Inventory system.
+//
 //  Revision 1.11  2002/09/07 16:28:26  dj_jl
 //  Added Level class.
 //
