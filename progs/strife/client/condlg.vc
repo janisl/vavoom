@@ -1,0 +1,174 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//**
+//**	Conversation dialog
+//**
+//**************************************************************************
+
+//==========================================================================
+//
+//	ConDlgChoice
+//
+//==========================================================================
+
+class ConDlgChoice:MenuSmallTextButton
+{
+	int ImpulseNum;
+
+	void ActivateEvent(void)
+	{
+		CmdBuf_AddText("Impulse %d\n", ImpulseNum);
+		PopMenu();
+	}
+
+	defaultproperties
+	{
+		TextHAlign = hleft;
+	}
+}
+
+//==========================================================================
+//
+//	ConDialog
+//
+//==========================================================================
+
+class ConDialog:MenuScreen
+{
+	//	Background
+	int BackPic;
+
+	//	Speech
+	string SpeakerName;
+	string SpeechText;
+
+	//	Choices
+	ConDlgChoice WinChoices[6];
+	int NumChoices;
+
+	string CancelTexts[3];
+
+	void SetSpeech(int SpeechNum)
+	{
+		int i;
+		FRogueConSpeech *Speech;
+
+		if (!SpeechNum)
+			return;
+		if (SpeechNum < 0)
+		{
+			SpeechNum = -SpeechNum;
+			if (SpeechNum > level->NumGenericSpeeches)
+				return;
+			Speech = &level->GenericSpeeches[SpeechNum - 1];
+		}
+		else
+		{
+			if (SpeechNum > level->NumLevelSpeeches)
+				return;
+			Speech = &level->LevelSpeeches[SpeechNum - 1];
+		}
+		if (Speech->BackPic[0])
+		{
+			BackPic = R_RegisterPic(ARR2STR(Speech->BackPic), PIC_PATCH);
+		}
+
+		SpeakerName = ARR2STR(Speech->Name);
+		SpeechText = ARR2STR(Speech->Text);
+
+		for (i = 0; i < 5; i++)
+		{
+			if (!Speech->Choices[i].Text[0])
+			{
+				continue;
+			}
+			WinChoices[NumChoices] = ConDlgChoice(NewChild(ConDlgChoice));
+			WinChoices[NumChoices].Text = ARR2STR(Speech->Choices[i].Text);
+			WinChoices[NumChoices].ImpulseNum = 201 + i;
+			NumChoices++;
+		}
+
+		WinChoices[NumChoices] = ConDlgChoice(NewChild(ConDlgChoice));
+		WinChoices[NumChoices].Text = CancelTexts[P_Random() % 3];
+		WinChoices[NumChoices].ImpulseNum = 200;
+		NumChoices++;
+
+		for (i = 0; i < NumChoices; i++)
+		{
+			WinChoices[i].SetPos(50, 180 - NumChoices * 16 + i * 16);
+		}
+
+		if (Speech->Voice[0])
+		{
+			PlayVoice(ARR2STR(Speech->Voice));
+		}
+
+		SetDefaultChoice();
+	}
+
+	void DrawWindow(GC gc)
+	{
+		if (BackPic != -1)
+		{
+			gc.DrawIcon(0, 0, BackPic);
+		}
+		gc.DrawText(16, 16, SpeakerName);
+		gc.DrawText(16, 32, SpeechText);
+		gc.DrawText(50, 160 - NumChoices * 16,
+			"______________________________");
+	}
+
+	defaultproperties
+	{
+		SelectorType = MenuSelector_Spinner;
+		BackPic = -1;
+		CancelTexts[0] = "BYE!";
+		CancelTexts[1] = "Thanks, Bye!";
+		CancelTexts[2] = "See you later!";
+	}
+}
+
+//==========================================================================
+//
+//	StartSpeech
+//
+//==========================================================================
+
+void StartSpeech(int SpeechNum)
+{
+	ConDialog Dlg;
+
+	Dlg = ConDialog(SpawnMenu(ConDialog));
+	Dlg.SetSpeech(SpeechNum);
+	PushMenuScreen(Dlg);
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/08/05 17:18:43  dj_jl
+//  Added conversations.
+//
+//**************************************************************************
