@@ -85,6 +85,9 @@ void CL_Init(void)
 
 	pf_CL_UpdateMobj = clpr.FuncForName("CL_UpdateMobj");
 
+	cl_mobjs = Z_CNew<clmobj_t>(GMaxEntities);
+	cl_mo_base = Z_CNew<clmobjbase_t>(GMaxEntities);
+
 	cls.message.Alloc(NET_MAXMESSAGE);
 	unguard;
 }
@@ -216,7 +219,7 @@ void CL_DecayLights(void)
 void CL_UpdateMobjs(void)
 {
 	guard(CL_UpdateMobjs);
-	for (int i = 0; i < MAX_MOBJS; i++)
+	for (int i = 0; i < GMaxEntities; i++)
 	{
 		if (cl_mobjs[i].in_use)
 		{
@@ -536,9 +539,12 @@ COMMAND(Say)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2002/08/28 16:42:04  dj_jl
+//	Configurable entity limit.
+//
 //	Revision 1.14  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.13  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
 //	

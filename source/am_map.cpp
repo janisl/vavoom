@@ -1274,7 +1274,7 @@ static void AM_drawThings(dword color)
 {
     int			i;
 
-	for (i = 0; i < MAX_MOBJS; i++)
+	for (i = 0; i < GMaxEntities; i++)
 	{
 		if (cl_mobjs[i].in_use)
 		{
@@ -1522,9 +1522,12 @@ void AM_Drawer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/08/28 16:42:04  dj_jl
+//	Configurable entity limit.
+//
 //	Revision 1.12  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.11  2002/06/29 16:00:45  dj_jl
 //	Added total frags count.
 //	

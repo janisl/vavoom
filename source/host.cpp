@@ -116,6 +116,12 @@ void Host_Init(void)
 	cls.state = ca_disconnected;
 #endif
 
+	int p = M_CheckParm("-maxents");
+	if (p && p < myargc - 1)
+	{
+		GMaxEntities = atoi(myargv[p + 1]);
+	}
+
 	//  Memory must be initialised before anything else
 	void*	base;
 	int		size;
@@ -606,9 +612,12 @@ void Host_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2002/08/28 16:42:04  dj_jl
+//	Configurable entity limit.
+//
 //	Revision 1.24  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.23  2002/07/23 13:10:37  dj_jl
 //	Some fixes for switching to floating-point time.
 //	

@@ -71,6 +71,25 @@ struct clmobj_t
 	int			effects;
 };
 
+// Client side Map Object definition.
+struct clmobjbase_t
+{
+	TVec		origin;	// position
+	TAVec		angles;	// orientation
+
+	int			spritetype;
+    int			sprite;	// used to find patch_t and flip value
+    int			frame;	// might be ORed with FF_FULLBRIGHT
+
+	int			model_index;
+	int			alias_frame;
+
+    int			translucency;
+    int			translation;
+
+	int			effects;
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 dlight_t *CL_AllocDlight(int key);
@@ -94,7 +113,8 @@ void R_DrawPic640(int x, int y, int handle, int trans = 0);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-extern clmobj_t			cl_mobjs[MAX_MOBJS];
+extern clmobj_t			*cl_mobjs;
+extern clmobjbase_t		*cl_mo_base;
 extern clmobj_t			cl_weapon_mobjs[MAXPLAYERS];
 
 extern float fScaleX;
@@ -117,9 +137,12 @@ extern dlight_t			cl_dlights[MAX_DLIGHTS];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/08/28 16:42:04  dj_jl
+//	Configurable entity limit.
+//
 //	Revision 1.11  2002/04/11 16:44:44  dj_jl
 //	Got rid of some warnings.
-//
+//	
 //	Revision 1.10  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	
