@@ -23,57 +23,23 @@
 //**
 //**************************************************************************
 
-#include "gamedefs.h"
-#include "net_loc.h"
-
-#include "net_loop.h"
-#include "net_null.h"
-
-net_driver_t net_drivers[MAX_NET_DRIVERS] =
-{
-	{
-	"Loopback",
-	false,
-	Loop_Init,
-	Loop_Listen,
-	Loop_SearchForHosts,
-	Loop_Connect,
-	Loop_CheckNewConnections,
-	Loop_GetMessage,
-	Loop_SendMessage,
-	Loop_SendUnreliableMessage,
-	Loop_CanSendMessage,
-	Loop_CanSendUnreliableMessage,
-	Loop_Close,
-	Loop_Shutdown
-	}
-	,
-	{
-	"Null",
-	false,
-	NetNull_Init,
-	NetNull_Listen,
-	NetNull_SearchForHosts,
-	NetNull_Connect,
-	NetNull_CheckNewConnections,
-	NetNull_GetMessage,
-	NetNull_SendMessage,
-	NetNull_SendUnreliableMessage,
-	NetNull_CanSendMessage,
-	NetNull_CanSendUnreliableMessage,
-	NetNull_Close,
-	NetNull_Shutdown
-	}
-};
-int net_numdrivers = 2;
-
-net_landriver_t	net_landrivers[MAX_NET_DRIVERS];
-int net_numlandrivers = 0;
+int			NetNull_Init(void);
+void		NetNull_Listen(boolean state);
+void		NetNull_SearchForHosts(boolean xmit);
+qsocket_t 	*NetNull_Connect(char *host);
+qsocket_t 	*NetNull_CheckNewConnections(void);
+int			NetNull_GetMessage(qsocket_t *sock);
+int			NetNull_SendMessage(qsocket_t *sock, TSizeBuf *data);
+int			NetNull_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *data);
+boolean		NetNull_CanSendMessage(qsocket_t *sock);
+boolean		NetNull_CanSendUnreliableMessage(qsocket_t *sock);
+void		NetNull_Close(qsocket_t *sock);
+void		NetNull_Shutdown(void);
 
 //**************************************************************************
 //
 //	$Log$
-//	Revision 1.4  2001/12/01 17:40:41  dj_jl
+//	Revision 1.1  2001/12/01 17:40:41  dj_jl
 //	Added support for bots
 //
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl

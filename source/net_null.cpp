@@ -26,7 +26,8 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
-#include "sv_local.h"
+#include "net_loc.h"
+#include "net_null.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -40,214 +41,161 @@
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern bool			sv_loading;
-
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-// PRIVATE DATA DEFINITIONS ------------------------------------------------
+bool		net_connect_bot = false;
 
-static TCvarI		sv_maxmove("sv_maxmove", "400", CVAR_ARCHIVE);
+// PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	SV_ReadMove
+//	NetNull_Init
 //
 //==========================================================================
 
-void SV_ReadMove(void)
+int NetNull_Init(void)
 {
-    ticcmd_t	cmd;
-
-	sv_player->viewangles.yaw = ByteToAngle(net_msg.ReadByte());
-	sv_player->viewangles.pitch = ByteToAngle(net_msg.ReadByte());
-	sv_player->viewangles.roll = ByteToAngle(net_msg.ReadByte());
-	net_msg >> cmd.forwardmove
-			>> cmd.sidemove
-			>> cmd.flymove
-			>> cmd.buttons
-			>> cmd.impulse;
-
-	// Don't move faster than maxmove
-	if (cmd.forwardmove > sv_maxmove)
-	{
-		cmd.forwardmove = sv_maxmove;
-	}
-	else if (cmd.forwardmove < -sv_maxmove)
-	{
-		cmd.forwardmove = -sv_maxmove;
-	}
-	if (cmd.sidemove > sv_maxmove)
-	{
-		cmd.sidemove = sv_maxmove;
-	}
-	else if (cmd.sidemove < -sv_maxmove)
-	{
-		cmd.sidemove = -sv_maxmove;
-	}
-
-	sv_player->forwardmove = cmd.forwardmove;
-	sv_player->sidemove = cmd.sidemove;
-	sv_player->flymove = cmd.flymove;
-	sv_player->buttons = cmd.buttons;
-	if (cmd.impulse)
-	{
-		sv_player->impulse = cmd.impulse;
-	}
+	return 0;
 }
 
 //==========================================================================
 //
-//	SV_RunClientCommand
+//	NetNull_Listen
 //
 //==========================================================================
 
-void SV_RunClientCommand(const char *cmd)
+void NetNull_Listen(boolean)
 {
-	Cmd_ExecuteString(cmd, src_client);
 }
 
 //==========================================================================
 //
-//	SV_ReadFromUserInfo
+//	NetNull_SearchForHosts
 //
 //==========================================================================
 
-void SV_ReadFromUserInfo(void)
+void NetNull_SearchForHosts(boolean)
 {
-	if (!sv_loading)
+}
+
+//==========================================================================
+//
+//	NetNull_Connect
+//
+//==========================================================================
+
+qsocket_t *NetNull_Connect(char *)
+{
+	return NULL;
+}
+
+//==========================================================================
+//
+//	NetNull_CheckNewConnections
+//
+//==========================================================================
+
+qsocket_t *NetNull_CheckNewConnections(void)
+{
+	qsocket_t *sock;
+
+	if (!net_connect_bot)
+		return NULL;
+
+	net_connect_bot = false;
+	sock = NET_NewQSocket();
+	if (!sock)
 	{
-		sv_player->baseclass = atoi(Info_ValueForKey(sv_player->userinfo, "class"));
+		con << "Server is full\n";
+		return NULL;
 	}
-	strcpy(sv_player->name, Info_ValueForKey(sv_player->userinfo, "name"));
-	sv_player->color = atoi(Info_ValueForKey(sv_player->userinfo, "color"));
-	svpr.Exec("UserinfoChanged", (int)sv_player);
+	strcpy(sock->address, "NULL");
+	return sock;
 }
 
 //==========================================================================
 //
-//	SV_SetUserInfo
+//	NetNull_GetMessage
 //
 //==========================================================================
 
-void SV_SetUserInfo(const char *info)
+int NetNull_GetMessage(qsocket_t *)
 {
-	strcpy(sv_player->userinfo, info);
-	SV_ReadFromUserInfo();
-	sv_reliable << (byte)svc_userinfo
-				<< (byte)(sv_player - players)
-				<< sv_player->userinfo;
+	return 0;
 }
 
 //==========================================================================
 //
-//	SV_ReadClientMessages
+//	NetNull_SendMessage
 //
 //==========================================================================
 
-bool SV_ReadClientMessages(int clientnum)
+int NetNull_SendMessage(qsocket_t *, TSizeBuf *)
 {
-	int			ret;
-	byte		cmd_type;
+	return 1;
+}
 
-	sv_player = &players[clientnum];
-	do
-	{
-		ret = NET_GetMessage(sv_player->netcon);
-		if (ret == -1)
-		{
-			cond << "Bad read\n";
-			return false;
-		}
+//==========================================================================
+//
+//	NetNull_SendUnreliableMessage
+//
+//==========================================================================
 
-		if (ret == 0)
-			return true;
+int NetNull_SendUnreliableMessage(qsocket_t *, TSizeBuf *)
+{
+	return 1;
+}
 
-		net_msg.BeginReading();
+//==========================================================================
+//
+//	NetNull_CanSendMessage
+//
+//==========================================================================
 
-		while (1)
-		{
-			if (net_msg.badread)
-			{
-				cond << "Packet corupted";
-				return false;
-			}
-
-			net_msg >> cmd_type;
-
-			if (net_msg.badread)
-				break; // Here this means end of packet
-
-			switch (cmd_type)
-			{
-			 case clc_nop:
-				break;
-
-			 case clc_move:
-				SV_ReadMove();
-				break;
-
-			 case clc_disconnect:
-				return false;
-	
-			 case clc_player_info:
-				SV_SetUserInfo(net_msg.ReadString());
-				break;
-
-			 case clc_stringcmd:
-				SV_RunClientCommand(net_msg.ReadString());
-				break;
-
-			 default:
-				cond << "Invalid command\n";
-				return false;
-			}
-		}
-	} while (ret == 1);
-
+boolean NetNull_CanSendMessage(qsocket_t *)
+{
 	return true;
 }
 
 //==========================================================================
 //
-//	COMMAND SetInfo
+//	NetNull_CanSendUnreliableMessage
 //
 //==========================================================================
 
-COMMAND(SetInfo)
+boolean NetNull_CanSendUnreliableMessage(qsocket_t *)
 {
-	if (cmd_source != src_client)
-	{
-		con << "SetInfo is not valid from console\n";
-		return;
-	}
+	return true;
+}
 
-	if (Argc() != 3)
-	{
-		return;
-	}
+//==========================================================================
+//
+//	NetNull_Close
+//
+//==========================================================================
 
-	Info_SetValueForKey(sv_player->userinfo, Argv(1), Argv(2));
-	sv_reliable << (byte)svc_setinfo
-				<< (byte)(sv_player - players)
-				<< Argv(1)
-				<< Argv(2);
-	SV_ReadFromUserInfo();
+void NetNull_Close(qsocket_t *)
+{
+}
+
+//==========================================================================
+//
+//	NetNull_Shutdown
+//
+//==========================================================================
+
+void NetNull_Shutdown(void)
+{
 }
 
 //**************************************************************************
 //
 //	$Log$
-//	Revision 1.6  2001/12/01 17:40:41  dj_jl
+//	Revision 1.1  2001/12/01 17:40:41  dj_jl
 //	Added support for bots
 //
-//	Revision 1.5  2001/10/22 17:25:55  dj_jl
-//	Floatification of angles
-//	
-//	Revision 1.4  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

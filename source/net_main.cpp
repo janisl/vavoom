@@ -719,7 +719,7 @@ int	NET_GetMessage(qsocket_t *sock)
 	ret = sfunc.QGetMessage(sock);
 
 	// see if this connection has timed out
-	if (ret == 0 && sock->driver)
+	if (ret == 0 && sock->driver > 1)
 	{
 		if (net_time - sock->lastMessageTime > net_messagetimeout)
 		{
@@ -890,9 +890,12 @@ slist_t * GetSlist(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/12/01 17:40:41  dj_jl
+//	Added support for bots
+//
 //	Revision 1.6  2001/10/09 17:25:02  dj_jl
 //	Finished slist moving stuff
-//
+//	
 //	Revision 1.5  2001/10/08 17:27:53  dj_jl
 //	Moved slist menu builtins here
 //	

@@ -27,6 +27,7 @@
 #include "net_loc.h"
 
 #include "net_loop.h"
+#include "net_null.h"
 #include "net_dgrm.h"
 #include "net_ser.h"
 
@@ -47,6 +48,23 @@ net_driver_t net_drivers[MAX_NET_DRIVERS] =
 	Loop_CanSendUnreliableMessage,
 	Loop_Close,
 	Loop_Shutdown
+	}
+	,
+	{
+	"Null",
+	false,
+	NetNull_Init,
+	NetNull_Listen,
+	NetNull_SearchForHosts,
+	NetNull_Connect,
+	NetNull_CheckNewConnections,
+	NetNull_GetMessage,
+	NetNull_SendMessage,
+	NetNull_SendUnreliableMessage,
+	NetNull_CanSendMessage,
+	NetNull_CanSendUnreliableMessage,
+	NetNull_Close,
+	NetNull_Shutdown
 	}
 	,
 	{
@@ -84,7 +102,7 @@ net_driver_t net_drivers[MAX_NET_DRIVERS] =
 	}
 };
 
-int net_numdrivers = 2;//3;
+int net_numdrivers = 3;//4;
 
 #include "net_bw.h"
 #include "net_ipx.h"
@@ -170,9 +188,12 @@ int net_numlandrivers = 3;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/12/01 17:40:41  dj_jl
+//	Added support for bots
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

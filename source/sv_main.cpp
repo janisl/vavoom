@@ -2277,6 +2277,58 @@ void SV_CheckForNewClients(void)
 
 //==========================================================================
 //
+//	SV_ConnectBot
+//
+//==========================================================================
+
+extern bool net_connect_bot;
+void SV_RunClientCommand(const char *cmd);
+void SV_SetUserInfo(const char *info);
+
+void SV_ConnectBot(void)
+{
+	qsocket_t	*sock;
+	int			i;
+		
+	net_connect_bot = true;
+	sock = NET_CheckNewConnections();
+	if (!sock)
+		return;
+
+	//
+	// init a new client structure
+	//
+	for (i = 0; i < svs.max_clients; i++)
+		if (!players[i].active)
+			break;
+	if (i == svs.max_clients)
+		Sys_Error("SV_ConnectBot: no free clients");
+
+	players[i].netcon = sock;
+	players[i].is_bot = true;
+	SV_ConnectClient(&players[i]);
+	svs.num_connected++;
+
+	sv_player = &players[i];
+	SV_RunClientCommand("PreSpawn\n");
+	SV_SetUserInfo("name\\bot\\color\\0\\class\\0\\");
+	SV_RunClientCommand("Spawn\n");
+	SV_RunClientCommand("Begin\n");
+}
+
+//==========================================================================
+//
+//	COMMAND AddBot
+//
+//==========================================================================
+
+COMMAND(AddBot)
+{
+	SV_ConnectBot();
+}
+
+//==========================================================================
+//
 //  Map
 //
 //==========================================================================
@@ -2488,9 +2540,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2001/12/01 17:40:41  dj_jl
+//	Added support for bots
+//
 //	Revision 1.19  2001/10/27 07:51:27  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.18  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
 //	
