@@ -348,6 +348,8 @@ static void ProcessChar(void)
 			Chr = '"';
 		else if (Chr == 't')
 			Chr = '\t';
+		else if (Chr == '\\')
+			Chr = '\\';
 		else
 			ERR_Exit(ERR_UNKNOWN_ESC_CHAR, true, NULL);
 	}
@@ -1112,11 +1114,14 @@ void TK_Expect(Punctuation punct, error_t error)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/12/04 18:19:03  dj_jl
+//	Escape character for \ symbol
+//
 //	Revision 1.8  2001/12/03 19:25:44  dj_jl
 //	Fixed calling of parent function
 //	Added defaultproperties
 //	Fixed vectors as arguments to methods
-//
+//	
 //	Revision 1.7  2001/12/01 18:17:09  dj_jl
 //	Fixed calling of parent method, speedup
 //	
