@@ -292,6 +292,24 @@ static void PF_FatalError(void)
 
 //==========================================================================
 //
+//	PF_CreateCvar
+//
+//==========================================================================
+
+PF(CreateCvar)
+{
+	int name;
+	int def;
+	int flags;
+
+	flags = Pop();
+	def = Pop();
+	name = Pop();
+	new TCvar(PROG_TO_STR(name), PROG_TO_STR(def), flags);
+}
+
+//==========================================================================
+//
 //  PF_GetCvar
 //
 //==========================================================================
@@ -1272,6 +1290,20 @@ static void PF_AddExtraFloor(void)
 	sv_signon << (byte)svc_extra_floor
 				<< (short)(line - level.lines)
 				<< (short)(dst - level.sectors);
+}
+
+//==========================================================================
+//
+//	PF_MapBlock
+//
+//==========================================================================
+
+static void PF_MapBlock(void)
+{
+	float x;
+
+	x = Popf();
+	Push(MapBlock(x));
 }
 
 //**************************************************************************
@@ -2888,12 +2920,13 @@ builtin_info_t BuiltinInfo[] =
 	{"FatalError", PF_FatalError},
 
 	//	Cvar functions
-    {"GetCvar", PF_GetCvar},
-    {"SetCvar", PF_SetCvar},
-    {"GetCvarF", PF_GetCvarF},
-    {"SetCvarF", PF_SetCvarF},
-    {"GetCvarS", PF_GetCvarS},
-    {"SetCvarS", PF_SetCvarS},
+	_(CreateCvar),
+    _(GetCvar),
+    _(SetCvar),
+    _(GetCvarF),
+    _(SetCvarF),
+    _(GetCvarS),
+    _(SetCvarS),
 
 	//	Math functions
 	_(AngleMod360),
@@ -3023,6 +3056,7 @@ builtin_info_t BuiltinInfo[] =
 	{"PointInRegion", PF_PointInRegion},
 	{"PointContents", PF_PointContents},
 	{"AddExtraFloor", PF_AddExtraFloor},
+	{"MapBlock", PF_MapBlock},
 
 	//	Mobj utilites
     {"NewMobjThinker", PF_NewMobjThinker},
@@ -3096,9 +3130,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2001/10/27 07:50:55  dj_jl
+//	Some new builtins
+//
 //	Revision 1.18  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
-//
+//	
 //	Revision 1.17  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	
