@@ -768,7 +768,7 @@ void VOpenGLDrawer::GeneratePicFromPatch(int handle)
 	int h = LittleShort(patch->height);
 
 	char HighResName[80];
-	sprintf(HighResName, "textures/patches/%s.png", pic_list[handle].name);
+	sprintf(HighResName, "textures/pics/%s.png", pic_list[handle].name);
 	for (int i = 0; HighResName[i]; i++)
 		HighResName[i] = tolower(HighResName[i]);
 	if (FL_FindFile(HighResName, NULL))
@@ -861,7 +861,7 @@ void VOpenGLDrawer::GeneratePicFromRaw(int handle)
 	int i;
 
 	char HighResName[80];
-	sprintf(HighResName, "textures/patches/%s.png", pic_list[handle].name);
+	sprintf(HighResName, "textures/pics/%s.png", pic_list[handle].name);
 	for (i = 0; HighResName[i]; i++)
 		HighResName[i] = tolower(HighResName[i]);
 	if (FL_FindFile(HighResName, NULL))
@@ -1301,9 +1301,12 @@ void VOpenGLDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2005/03/28 07:25:40  dj_jl
+//	Changed location of hi-res 2D graphics.
+//
 //	Revision 1.23  2005/01/24 12:53:54  dj_jl
 //	Skybox fixes.
-//
+//	
 //	Revision 1.22  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
 //	
