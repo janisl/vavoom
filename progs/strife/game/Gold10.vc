@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Gold10:MoneyPickup
+class Gold10 : MoneyPickup
 	__mobjinfo__(138);
 
 __states__
@@ -34,15 +34,20 @@ __states__
 defaultproperties
 {
 	ConversationID = 169;
-	ClassName = '10_gold';
+	PickupString = "10 gold";
 	bDropped = true;
 	bNoDeathmatch = true;
 	IdleState = S_GOLD10;
+	ItemType = ITEM_Coin;
+	ItemAmount = 10;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/10/02 17:09:19  dj_jl
+//  Inventory items.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

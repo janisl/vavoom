@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Guard_Uniform:InventoryItem
+class Guard_Uniform : InventoryItem
 	__mobjinfo__(90);
 
 __states__
@@ -34,15 +34,19 @@ __states__
 defaultproperties
 {
 	ConversationID = 162;
-	ClassName = 'Guard_Uniform';
+	PickupString = "Guard Uniform";
 	StepSpeed = 15.0;
 	bUnknown5 = true;
 	IdleState = S_GUARD_UNIFORM;
+	ItemType = ITEM_GuardUniform;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/10/02 17:14:05  dj_jl
+//  Inventory items.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

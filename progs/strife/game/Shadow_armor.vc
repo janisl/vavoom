@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Shadow_armor:InventoryItem
+class Shadow_armor : InventoryItem
 	__mobjinfo__(2024);
 
 __states__
@@ -37,14 +37,18 @@ __states__
 defaultproperties
 {
 	ConversationID = 160;
-	ClassName = 'Shadow_armor';
+	PickupString = "Shadow armor";
 	Mass = 2.0;
 	IdleState = S_SHADOW_ARMOR1;
+	ItemType = ITEM_ShadowArmor;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/10/02 17:17:21  dj_jl
+//  Inventory items.
+//
 //  Revision 1.1  2002/11/02 08:20:57  dj_jl
 //  New style classes.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Oracle_Pass:InventoryItem;
+class Oracle_Pass : InventoryItem;
 
 __states__
 {
@@ -33,15 +33,19 @@ __states__
 defaultproperties
 {
 	ConversationID = 311;
-	ClassName = 'Oracle_Pass';
+	PickupString = "Oracle Pass";
 	StepSpeed = 18.0;
 	bUnknown5 = true;
 	IdleState = S_ORACLE_PASS;
+	ItemType = ITEM_OraclePass;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/10/02 17:15:47  dj_jl
+//  Inventory items.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Officers_Uniform:InventoryItem
+class Officers_Uniform : InventoryItem
 	__mobjinfo__(52);
 
 __states__
@@ -34,14 +34,18 @@ __states__
 defaultproperties
 {
 	ConversationID = 163;
-	ClassName = 'Officer\'s_Uniform';
+	PickupString = "Officer's Uniform";
 	bNoDeathmatch = true;
 	IdleState = S_OFFICERS_UNIFORM;
+	ItemType = ITEM_OfficersUniform;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/10/02 17:15:47  dj_jl
+//  Inventory items.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BrokenPowerCoupling:InventoryItem
+class BrokenPowerCoupling : InventoryItem
 	__mobjinfo__(226);
 
 __states__
@@ -35,7 +35,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 289;
-	ClassName = 'BROKEN_POWER_COUPLING';
+	PickupString = "BROKEN POWER COUPLING";
 	Health = 40;
 	Radius = 16.0;
 	Height = 8.0;
@@ -44,11 +44,15 @@ defaultproperties
 	bUnknown5 = true;
 	bDropped = true;
 	IdleState = S_BROKEN_POWER_COUPLING;
+	ItemType = ITEM_BrokenPowerCoupling;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/10/02 17:09:19  dj_jl
+//  Inventory items.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

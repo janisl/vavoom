@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Coin:MoneyPickup
+class Coin : MoneyPickup
 	__mobjinfo__(93);
 
 __states__
@@ -34,16 +34,20 @@ __states__
 defaultproperties
 {
 	ConversationID = 168;
-	ClassName = 'coin';
+	PickupString = "coin";
 	Mass = 99999.0;
 	bDropped = true;
 	bNoDeathmatch = true;
 	IdleState = S_COIN;
+	ItemType = ITEM_Coin;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/10/02 17:09:19  dj_jl
+//  Inventory items.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Offering_Chalice:InventoryItem
+class Offering_Chalice : InventoryItem
 	__mobjinfo__(205);
 
 __states__
@@ -34,18 +34,22 @@ __states__
 defaultproperties
 {
 	ConversationID = 174;
-	ClassName = 'Offering_Chalice';
+	PickupString = "Offering Chalice";
 	Radius = 10.0;
 	Height = 8.0;
 	StepSpeed = 2.0;
 	bUnknown5 = true;
 	bDropped = true;
 	IdleState = S_CHALICE;
+	ItemType = ITEM_OfferingChalice;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/10/02 17:15:47  dj_jl
+//  Inventory items.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Targeter:InventoryItem
+class Targeter : InventoryItem
 	__mobjinfo__(207);
 
 __states__
@@ -34,14 +34,18 @@ __states__
 defaultproperties
 {
 	ConversationID = 167;
-	ClassName = 'Targeter';
+	PickupString = "Targeter";
 	Mass = 5.0;
 	IdleState = S_TARGETER;
+	ItemType = ITEM_Targeter;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/10/02 17:17:21  dj_jl
+//  Inventory items.
+//
 //  Revision 1.1  2002/11/02 08:20:57  dj_jl
 //  New style classes.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Environmental_Suit:InventoryItem
+class Environmental_Suit : InventoryItem
 	__mobjinfo__(2025);
 
 __states__
@@ -34,14 +34,18 @@ __states__
 defaultproperties
 {
 	ConversationID = 161;
-	ClassName = 'Environmental_Suit';
+	PickupString = "Environmental Suit";
 	Mass = 5.0;
 	IdleState = S_ENV_SUIT;
+	ItemType = ITEM_EnvironmentalSuit;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/10/02 17:15:47  dj_jl
+//  Inventory items.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

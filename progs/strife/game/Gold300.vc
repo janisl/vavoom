@@ -23,21 +23,26 @@
 //**
 //**************************************************************************
 
-class Gold300:MoneyPickup;
+class Gold300 : MoneyPickup;
 
 defaultproperties
 {
 	ConversationID = 172;
-	ClassName = '300_gold';
+	PickupString = "300 gold";
 	StepSpeed = 3.0;
 	bUnknown5 = true;
 	bDropped = true;
 	IdleState = S_TOKENS;
+	ItemType = ITEM_Coin;
+	ItemAmount = 300;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/10/02 17:09:19  dj_jl
+//  Inventory items.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Toughness:InventoryItem;
+class Toughness : InventoryItem;
 
 __states__
 {
@@ -33,13 +33,17 @@ __states__
 defaultproperties
 {
 	ConversationID = 309;
-	ClassName = 'Toughness';
+	PickupString = "Toughness";
 	IdleState = S_TOUGHNESS;
+	ItemType = ITEM_Toughness;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/10/02 17:14:05  dj_jl
+//  Inventory items.
+//
 //  Revision 1.1  2002/11/02 08:20:57  dj_jl
 //  New style classes.
 //
