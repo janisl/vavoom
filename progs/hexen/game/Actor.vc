@@ -1482,7 +1482,7 @@ void SpawnBloodSplatter(TVec org)
 	mo.Instigator = self;
 	mo.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
 	mo.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
-	mo.Velocity.z = 3.0 * 35.0;
+	mo.Velocity.z = 3.0 * 35.0 / 20.0;
 }
 
 //===========================================================================
@@ -3931,6 +3931,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2004/10/11 06:56:14  dj_jl
+//  Fixed flying blood.
+//
 //  Revision 1.7  2004/08/23 19:23:59  dj_jl
 //  Moved weapon utilites to player class.
 //
