@@ -128,17 +128,6 @@ enum
 
 #define TOCENTER		-128.0
 
-//
-//  Bounding box
-//
-enum
-{
-	BOXTOP,
-	BOXBOTTOM,
-	BOXLEFT,
-	BOXRIGHT
-};
-
 enum
 {
 	DI_EAST,
@@ -282,6 +271,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/09/07 16:28:21  dj_jl
+//  Added Level class.
+//
 //  Revision 1.16  2002/07/23 16:32:19  dj_jl
 //  Changed version number.
 //

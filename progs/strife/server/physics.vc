@@ -386,7 +386,7 @@ void Actor::PlayerLandedOnThing(void)
 //
 //==========================================================================
 
-boolean Actor::Physics(void)
+bool Actor::Physics(void)
 {
 	Actor onmo;
 
@@ -538,6 +538,9 @@ void Actor::Tick(float deltaTime)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.31  2002/09/07 16:28:26  dj_jl
+//  Added Level class.
+//
 //  Revision 1.30  2002/07/23 13:07:32  dj_jl
 //  Final touches for switching to floating-point time, beautification.
 //

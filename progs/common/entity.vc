@@ -43,7 +43,7 @@
 //  The sound code uses the x,y, and z fields to do stereo positioning of any
 // sound effited by the Entity.
 //
-//  The play simulation uses the blocklinks, x,y,z, radius, height to
+//  The play simulation uses the BlockLinks, x,y,z, radius, height to
 // determine when mobj_ts are touching each other, touching lines in the map,
 // or hit by trace lines (gunshots, lines of sight, etc). The Entity->flags
 // element has various bit flags used by the simulation.
@@ -126,7 +126,7 @@ int ValidCount;
 //	Flags
 bool bSolid;		// Blocks.
 bool bHidden;		// don't update to clients (invisible but touchable)
-bool bNoBlockmap;	// don't use the blocklinks (inert but displayable)
+bool bNoBlockmap;	// don't use the BlockLinks (inert but displayable)
 bool bIsPlayer;		// PLayer or player-bot
 
 int Health;
@@ -180,20 +180,20 @@ int WaterType;
 
 native void Remove(void);
 
-native boolean SetState(int state);
+native bool SetState(int state);
 
 native void PlaySound(name SoundName, int Channel);
 native void PlayFullVolumeSound(name SoundName, int Channel);
 native void StopSound(int Channel);
 
-native boolean CheckPosition(TVec Pos);
-native boolean CheckRelPosition(TVec Pos);
-native boolean TryMove(TVec newPos);
+native bool CheckPosition(TVec Pos);
+native bool CheckRelPosition(TVec Pos);
+native bool TryMove(TVec newPos);
 
 native void SlideMove(void);
 native void BounceWall(float overbounce);
 
-native boolean CheckWater(void);
+native bool CheckWater(void);
 
 native void UpdateVelocity(void);
 
@@ -202,7 +202,9 @@ native Entity CheckOnmobj(void);
 native void LinkToWorld(void);
 native void UnlinkFromWorld(void);
 
-native boolean CanSee(Entity Other);
+native bool CanSee(Entity Other);
+
+native Entity RoughMonsterSearch(int distance);
 
 //==========================================================================
 //
@@ -220,7 +222,7 @@ void Destroyed(void)
 //
 //==========================================================================
 
-boolean Touch(Entity Other)
+bool Touch(Entity Other)
 {
 	return !Other.bSolid;
 }
@@ -275,6 +277,28 @@ void ApplyFriction(void)
 {
 }
 
+//==========================================================================
+//
+//	SectorChanged
+//
+//==========================================================================
+
+bool SectorChanged(int CrushChange)
+{
+	return true;
+}
+
+//===========================================================================
+//
+//  RoughCheckThing
+//
+//===========================================================================
+
+bool RoughCheckThing(Entity Other)
+{
+	return false;
+}
+
 //
 //	States
 //
@@ -325,8 +349,8 @@ struct tmtrace_t
 	sec_plane_t *Floor;
 	sec_plane_t *Ceiling;
 
-	boolean FloatOk;	// if true, move would be ok if
-						// within tmtrace.FloorZ - tmtrace.CeilingZ
+	bool bFloatOk;	// if true, move would be ok if
+					// within tmtrace.FloorZ - tmtrace.CeilingZ
 
 	// keep track of the line that lowers the ceiling,
 	// so missiles don't explode against sky hack walls
@@ -355,6 +379,9 @@ tmtrace_t *tmtrace;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/09/07 16:28:21  dj_jl
+//  Added Level class.
+//
 //  Revision 1.17  2002/08/28 16:36:36  dj_jl
 //  Merged MapObject with Entity, some natives, beautification.
 //

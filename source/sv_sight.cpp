@@ -332,12 +332,7 @@ static bool CrossSubsector(int num)
 	int 			polyCount;
 	seg_t**			polySeg;
 
-#ifdef PARANOID
-	if (num >= level.numsubsectors)
-		Sys_Error("CrossSubsector: ss %i with numss = %i", num, level.numsubsectors);
-#endif
-
-	sub = &level.subsectors[num];
+	sub = &GLevel->Subsectors[num];
 
 	if (sub->poly)
 	{
@@ -355,7 +350,7 @@ static bool CrossSubsector(int num)
 
 	// check lines
 	count = sub->numlines;
-	seg = &level.segs[sub->firstline];
+	seg = &GLevel->Segs[sub->firstline];
 
 	for ( ; count ; seg++, count--)
 	{
@@ -389,7 +384,7 @@ static bool CrossBSPNode(int bspnum)
 			return CrossSubsector(bspnum & (~NF_SUBSECTOR));
 	}
 
-	bsp = &level.nodes[bspnum];
+	bsp = &GLevel->Nodes[bspnum];
 
 	// decide which side the start point is on
 	side = PlaneSide2(sightstart, bsp);
@@ -424,7 +419,7 @@ static bool	SightTraceLine(sector_t *sec)
 
 	linestart = sightstart;
 	// the head node is the last node output
-	if (!CrossBSPNode(level.numnodes - 1))
+	if (!CrossBSPNode(GLevel->NumNodes - 1))
 	{
 		return false;
 	}
@@ -458,8 +453,8 @@ bool VEntity::CanSee(VEntity* Other)
 
 	//	Determine subsector entries in GL_PVS table.
 	//	First check for trivial rejection.
-	byte *vis = LeafPVS(level, SubSector);
-	s2 = Other->SubSector - level.subsectors;
+	byte *vis = XLevel->LeafPVS(SubSector);
+	s2 = Other->SubSector - XLevel->Subsectors;
 	if (!(vis[s2 >> 3] & (1 << (s2 & 7))))
 	{
 		// can't possibly be connected
@@ -469,11 +464,11 @@ bool VEntity::CanSee(VEntity* Other)
 	//	Determine subsector entries in REJECT table.
 	//	We must do this because REJECT can have some special effects like
 	// "safe sectors"
-	s1 = Sector - level.sectors;
-	s2 = Other->Sector - level.sectors;
-	pnum = s1 * level.numsectors + s2;
+	s1 = Sector - XLevel->Sectors;
+	s2 = Other->Sector - XLevel->Sectors;
+	pnum = s1 * XLevel->NumSectors + s2;
 	// Check in REJECT table.
-	if (level.rejectmatrix[pnum >> 3] & (1 << (pnum & 7)))
+	if (XLevel->RejectMatrix[pnum >> 3] & (1 << (pnum & 7)))
 	{
 		// can't possibly be connected
 		return false;
@@ -526,9 +521,12 @@ bool VEntity::CanSee(VEntity* Other)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/09/07 16:31:51  dj_jl
+//	Added Level class.
+//
 //	Revision 1.12  2002/08/28 16:41:10  dj_jl
 //	Merged VMapObject with VEntity, some natives.
-//
+//	
 //	Revision 1.11  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
 //	

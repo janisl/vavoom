@@ -41,7 +41,7 @@ int ArmorClass;
 //
 //==========================================================================
 
-boolean HandlePickup(Actor Toucher)
+bool HandlePickup(Actor Toucher)
 {
 	if (!Toucher.GiveArmor(ArmorClass))
 		return false;
@@ -122,7 +122,7 @@ class ItemHealthBonus:Pickup
 //
 //==========================================================================
 
-boolean HandlePickup(Actor Toucher)
+bool HandlePickup(Actor Toucher)
 {
 	Toucher.Player->Health++;	// can go over 100%
 	if (Toucher.Player->Health > 200)
@@ -169,7 +169,7 @@ class ItemArmorBonus:Pickup
 //
 //==========================================================================
 
-boolean HandlePickup(Actor Toucher)
+bool HandlePickup(Actor Toucher)
 {
 	Toucher.Player->ArmorPoints++;	// can go over 100%
 	if (Toucher.Player->ArmorPoints > 200)
@@ -218,7 +218,7 @@ int KeyType;
 //
 //==========================================================================
 
-boolean HandlePickup(Actor Toucher)
+bool HandlePickup(Actor Toucher)
 {
 	if (Toucher.GiveCard(KeyType))
 		cprint(Toucher.Player, PickupMessage);
@@ -403,7 +403,7 @@ int HealthAmount;
 //
 //==========================================================================
 
-boolean HandlePickup(Actor Toucher)
+bool HandlePickup(Actor Toucher)
 {
 	if (!Toucher.GiveBody(HealthAmount, MAXHEALTH))
 		return false;
@@ -483,7 +483,7 @@ class ItemSoulSphere:Pickup
 //
 //==========================================================================
 
-boolean HandlePickup(Actor Toucher)
+bool HandlePickup(Actor Toucher)
 {
 	Toucher.Player->Health += SOULSPHERE_HEALTH;
 	if (Toucher.Player->Health > SOULSPHERE_MAX)
@@ -532,7 +532,7 @@ int PowerType;
 //
 //==========================================================================
 
-boolean HandlePickup(Actor Toucher)
+bool HandlePickup(Actor Toucher)
 {
 	if (!Toucher.GivePower(PowerType))
 		return false;
@@ -698,7 +698,7 @@ class ItemComputerMap:Pickup
 //
 //==========================================================================
 
-boolean HandlePickup(Actor Toucher)
+bool HandlePickup(Actor Toucher)
 {
 	if (!Toucher.GiveItem(IT_ALL_MAP))
 		return false;
@@ -743,7 +743,7 @@ class ItemMegaSphere:Pickup
 //
 //==========================================================================
 
-boolean HandlePickup(Actor Toucher)
+bool HandlePickup(Actor Toucher)
 {
 	Toucher.Player->Health = MEGASPHERE_HEALTH;
 	Toucher.Health = Toucher.Player->Health;
@@ -791,7 +791,7 @@ int AmmoCount;
 //
 //==========================================================================
 
-boolean HandlePickup(Actor Toucher)
+bool HandlePickup(Actor Toucher)
 {
 	if (bDropped)
 	{
@@ -1030,7 +1030,7 @@ class ItemBackpack:Pickup
 //
 //==========================================================================
 
-boolean HandlePickup(Actor Toucher)
+bool HandlePickup(Actor Toucher)
 {
 	int i;
 
@@ -1080,7 +1080,7 @@ int WeaponType;
 //
 //==========================================================================
 
-boolean HandlePickup(Actor Toucher)
+bool HandlePickup(Actor Toucher)
 {
 	if (!Toucher.GiveWeapon(WeaponType, bDropped))
 		return false;
@@ -1268,6 +1268,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2002/09/07 16:28:24  dj_jl
+//  Added Level class.
+//
 //  Revision 1.3  2002/06/14 15:51:20  dj_jl
 //  A lots of changes, new functions etc for DDF.
 //

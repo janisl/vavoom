@@ -289,13 +289,7 @@ static void RenderSubRegion(subregion_t *region, int clipflags)
 static void RenderSubsector(int num, int clipflags)
 {
 	guard(RenderSubsector);
-//FIXME do this in node loading
-#ifdef PARANOID
-    if (num >= cl_level.numsubsectors)
-		Sys_Error("RenderSubsector: ss %i with numss = %i", num, cl_level.numsubsectors);
-#endif
-
-    r_sub = &cl_level.subsectors[num];
+    r_sub = &GClLevel->Subsectors[num];
 
 	if (r_sub->VisFrame != r_visframecount)
  	{
@@ -374,7 +368,7 @@ static void RenderBSPNode(int bspnum, float *bbox, int clipflags)
 		return;
     }
 		
-	node_t* bsp = &cl_level.nodes[bspnum];
+	node_t* bsp = &GClLevel->Nodes[bspnum];
     
 	if (bsp->VisFrame != r_visframecount)
  	{
@@ -407,7 +401,7 @@ void R_RenderWorld(void)
 
 	sky_is_visible = false;
 
-	RenderBSPNode(cl_level.numnodes - 1, dummy_bbox, 15);	// head node is the last node output
+	RenderBSPNode(GClLevel->NumNodes - 1, dummy_bbox, 15);	// head node is the last node output
 
 	if (sky_is_visible)
 	{
@@ -421,9 +415,12 @@ void R_RenderWorld(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/09/07 16:31:51  dj_jl
+//	Added Level class.
+//
 //	Revision 1.11  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
-//
+//	
 //	Revision 1.10  2002/07/13 07:39:08  dj_jl
 //	Removed back to front drawing.
 //	

@@ -219,7 +219,7 @@ void ParseExplosion2(void)
 //
 //==========================================================================
 
-boolean ParseServerCommand(int cmd_type)
+bool ParseServerCommand(int cmd_type)
 {
 	switch (cmd_type)
 	{
@@ -389,6 +389,9 @@ void CL_UpdateMobj(clmobj_t * mobj, int key)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/09/07 16:28:24  dj_jl
+//  Added Level class.
+//
 //  Revision 1.7  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

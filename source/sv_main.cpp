@@ -203,7 +203,6 @@ void SV_Clear(void)
     S_StopAllSound();
 #endif
 	Z_FreeTag(PU_LEVEL);
-	Z_FreeTag(PU_LEVSPEC);
 	unguard;
 }
 
@@ -387,9 +386,9 @@ void SV_CreateBaseline(void)
 	guard(SV_CreateBaseline);
 	int		i;
 
-	for (i = 0; i < level.numsectors; i++)
+	for (i = 0; i < GLevel->NumSectors; i++)
 	{
-		sector_t &sec = level.sectors[i];
+		sector_t &sec = GLevel->Sectors[i];
 		if (sec.floor.translucency)
 		{
 			sv_signon << (byte)svc_sec_transluc
@@ -560,7 +559,7 @@ void SV_SectorStartSound(const sector_t *sector, int sound_id, int channel,
 	if (sector)
 	{
 		SV_StartSound(sector->soundorg,
-			(sector - level.sectors) + GMaxEntities,
+			(sector - GLevel->Sectors) + GMaxEntities,
 			sound_id, channel, volume);
 	}
 	else
@@ -579,7 +578,7 @@ void SV_SectorStartSound(const sector_t *sector, int sound_id, int channel,
 void SV_SectorStopSound(const sector_t *sector, int channel)
 {
 	guard(SV_SectorStopSound);
-	SV_StopSound((sector - level.sectors) + GMaxEntities, channel);
+	SV_StopSound((sector - GLevel->Sectors) + GMaxEntities, channel);
 	unguard;
 }
 
@@ -627,7 +626,7 @@ void SV_SectorStartSequence(const sector_t *sector, const char *name)
 	if (sector)
 	{
 		SV_StartSequence(sector->soundorg,
-			(sector - level.sectors) + GMaxEntities, name);
+			(sector - GLevel->Sectors) + GMaxEntities, name);
 	}
 	else
 	{
@@ -645,7 +644,7 @@ void SV_SectorStartSequence(const sector_t *sector, const char *name)
 void SV_SectorStopSequence(const sector_t *sector)
 {
 	guard(SV_SectorStopSequence);
-	SV_StopSequence((sector - level.sectors) + GMaxEntities);
+	SV_StopSequence((sector - GLevel->Sectors) + GMaxEntities);
 	unguard;
 }
 
@@ -659,7 +658,7 @@ void SV_PolyobjStartSequence(const polyobj_t *poly, const char *name)
 {
 	guard(SV_PolyobjStartSequence);
 	SV_StartSequence(poly->startSpot,
-		(poly - level.polyobjs) + GMaxEntities + level.numsectors, name);
+		(poly - GLevel->PolyObjs) + GMaxEntities + GLevel->NumSectors, name);
 	unguard;
 }
 
@@ -672,7 +671,7 @@ void SV_PolyobjStartSequence(const polyobj_t *poly, const char *name)
 void SV_PolyobjStopSequence(const polyobj_t *poly)
 {
 	guard(SV_PolyobjStopSequence);
-	SV_StopSequence((poly - level.polyobjs) + GMaxEntities + level.numsectors);
+	SV_StopSequence((poly - GLevel->PolyObjs) + GMaxEntities + GLevel->NumSectors);
 	unguard;
 }
 
@@ -870,7 +869,7 @@ void SV_UpdateMobj(int i, TMessage &msg)
 
 int SV_CheckFatPVS(subsector_t *subsector)
 {
-	int ss = subsector - level.subsectors;
+	int ss = subsector - GLevel->Subsectors;
 	return fatpvs[ss / 8] & (1 << (ss & 7));
 }
 
@@ -904,13 +903,13 @@ void SV_UpdateLevel(TMessage &msg)
 	int		i;
 	int		bits;
 
-	fatpvs = LeafPVS(level, sv_player->MO->SubSector);
+	fatpvs = GLevel->LeafPVS(sv_player->MO->SubSector);
 
-	for (i = 0; i < level.numsectors; i++)
+	for (i = 0; i < GLevel->NumSectors; i++)
 	{
 		sector_t	*sec;
 
-		sec = &level.sectors[i];
+		sec = &GLevel->Sectors[i];
 		if (!SV_SecCheckFatPVS(sec))
 			continue;
 
@@ -963,11 +962,11 @@ void SV_UpdateLevel(TMessage &msg)
 		if (bits & SUB_CEIL_Y)
 			msg << (byte)(sec->ceiling.yoffs);
 	}
-	for (i = 0; i < level.numsides; i++)
+	for (i = 0; i < GLevel->NumSides; i++)
 	{
 		side_t		*side;
 
-		side = &level.sides[i];
+		side = &GLevel->Sides[i];
 		if (!SV_SecCheckFatPVS(side->sector))
 			continue;
 
@@ -987,11 +986,11 @@ void SV_UpdateLevel(TMessage &msg)
 			<< (word)side->rowoffset;
 	}
 
-	for (i = 0; i < level.numpolyobjs; i++)
+	for (i = 0; i < GLevel->NumPolyObjs; i++)
 	{
 		polyobj_t	*po;
 
-		po = &level.polyobjs[i];
+		po = &GLevel->PolyObjs[i];
 		if (!SV_CheckFatPVS(po->subsector))
 			continue;
 
@@ -1137,7 +1136,7 @@ void SV_SendClientDatagram(void)
 		msg.Clear();
 
 		msg << (byte)svc_time
-			<< level.tictime;
+			<< level.time;
 
 		SV_WriteViewData(players[i], msg);
 
@@ -1452,24 +1451,24 @@ void SV_SetLineTexture(int side, int position, int texture)
 	guard(SV_SetLineTexture);
 	if (position == TEXTURE_MIDDLE)
 	{
-		level.sides[side].midtexture = texture;
+		GLevel->Sides[side].midtexture = texture;
 		sv_reliable << (byte)svc_side_mid
 					<< (word)side
-					<< (word)level.sides[side].midtexture;
+					<< (word)GLevel->Sides[side].midtexture;
 	}
 	else if (position == TEXTURE_BOTTOM)
 	{
-		level.sides[side].bottomtexture = texture;
+		GLevel->Sides[side].bottomtexture = texture;
 		sv_reliable << (byte)svc_side_bot
 					<< (word)side
-					<< (word)level.sides[side].bottomtexture;
+					<< (word)GLevel->Sides[side].bottomtexture;
 	}
 	else
 	{ // TEXTURE_TOP
-		level.sides[side].toptexture = texture;
+		GLevel->Sides[side].toptexture = texture;
 		sv_reliable << (byte)svc_side_top
 					<< (word)side
-					<< (word)level.sides[side].toptexture;
+					<< (word)GLevel->Sides[side].toptexture;
 	}
 	unguard;
 }
@@ -1485,7 +1484,7 @@ void SV_SetLineTransluc(line_t *line, int trans)
 	guard(SV_SetLineTransluc);
 	line->translucency = trans;
 	sv_signon	<< (byte)svc_line_transluc
-				<< (short)(line - level.lines)
+				<< (short)(line - GLevel->Lines)
 				<< (byte)trans;
 	unguard;
 }
@@ -1499,10 +1498,10 @@ void SV_SetLineTransluc(line_t *line, int trans)
 void SV_SetFloorPic(int i, int texture)
 {
 	guard(SV_SetFloorPic);
-	level.sectors[i].floor.pic = texture;
+	GLevel->Sectors[i].floor.pic = texture;
 	sv_reliable << (byte)svc_sec_floor
 				<< (word)i
-				<< (word)level.sectors[i].floor.pic;
+				<< (word)GLevel->Sectors[i].floor.pic;
 	unguard;
 }
 
@@ -1515,10 +1514,10 @@ void SV_SetFloorPic(int i, int texture)
 void SV_SetCeilPic(int i, int texture)
 {
 	guard(SV_SetCeilPic);
-	level.sectors[i].ceiling.pic = texture;
+	GLevel->Sectors[i].ceiling.pic = texture;
 	sv_reliable << (byte)svc_sec_ceil
 				<< (word)i
-				<< (word)level.sectors[i].ceiling.pic;
+				<< (word)GLevel->Sectors[i].ceiling.pic;
 	unguard;
 }
 
@@ -2070,11 +2069,11 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 
     P_InitThinkers();
 	FFunction *pf_spawn_map_thing = svpr.FuncForName("P_SpawnMapThing");
-	for (i = 0; i < level.numthings; i++)
+	for (i = 0; i < GLevel->NumThings; i++)
 	{
-		svpr.Exec(pf_spawn_map_thing, (int)&level.things[i], spawn_thinkers);
+		svpr.Exec(pf_spawn_map_thing, (int)&GLevel->Things[i], spawn_thinkers);
 	}
-	Z_Free(level.things);
+	Z_Free(GLevel->Things);
 	PO_Init(); // Initialize the polyobjs
 	P_LoadACScripts(spawn_thinkers);
 
@@ -2176,9 +2175,9 @@ static void SV_WriteChangedTextures(TMessage &msg)
 {
 	int			i;
 
-	for (i = 0; i < level.numsides; i++)
+	for (i = 0; i < GLevel->NumSides; i++)
 	{
-		side_t &s = level.sides[i];
+		side_t &s = GLevel->Sides[i];
 		if (s.midtexture != s.base_midtexture)
 		{
 			msg << (byte)svc_side_mid
@@ -2199,9 +2198,9 @@ static void SV_WriteChangedTextures(TMessage &msg)
 		}
 	}
 
-	for (i = 0; i < level.numsectors; i++)
+	for (i = 0; i < GLevel->NumSectors; i++)
 	{
-		sector_t &s = level.sectors[i];
+		sector_t &s = GLevel->Sectors[i];
 		if (s.floor.pic != s.floor.base_pic)
 		{
 			msg << (byte)svc_sec_floor
@@ -2837,9 +2836,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.50  2002/09/07 16:31:51  dj_jl
+//	Added Level class.
+//
 //	Revision 1.49  2002/08/28 16:41:09  dj_jl
 //	Merged VMapObject with VEntity, some natives.
-//
+//	
 //	Revision 1.48  2002/08/08 18:05:20  dj_jl
 //	Release fixes.
 //	

@@ -51,11 +51,11 @@ void PlayerPawn::SetPlayerRunState(void)
 //
 //==========================================================================
 
-boolean G_CheckSpot(int playernum, mthing_t * mthing)
+bool G_CheckSpot(int playernum, mthing_t * mthing)
 {
 	float x;
 	float y;
-	subsector_t *ss;
+	sector_t *sec;
 	float an;
 	Actor A;
 	int mtnum;
@@ -87,11 +87,11 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	bodyqueslot++;
 
 	// spawn a teleport fog 
-	ss = PointInSubsector(x, y);
+	sec = GLevel.PointInSector(vector(x, y, 0.0));
 	an = itof(45 * (mthing->angle / 45));
 
 	A = Spawn(TeleportFog, vector(x + 20.0 * cos(an), y + 20.0 * sin(an),
-		ss->sector->floorheight));
+		sec->floorheight));
 	A.PlaySound('Teleport', CHAN_VOICE);
 
 	return true;
@@ -126,7 +126,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 	x = mthing->x;
 	y = mthing->y;
 	z = ONFLOORZ;
-	PP = Spawn(DoomPlayer, vector(x, y, z));
+	PP = PlayerPawn(Spawn(DoomPlayer, vector(x, y, z)));
 
 	// set color translations for player sprites
 	PP.Translation = p->Color;
@@ -201,6 +201,9 @@ Actor PlayerPawn::SpawnPlayerMissile(classid type)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2002/09/07 16:28:25  dj_jl
+//  Added Level class.
+//
 //  Revision 1.29  2002/07/23 13:07:29  dj_jl
 //  Final touches for switching to floating-point time, beautification.
 //

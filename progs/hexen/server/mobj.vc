@@ -814,7 +814,7 @@ void Actor::MinotaurSlam(Actor source)
 //
 //==========================================================================
 
-boolean Actor::MorphPlayer(void)
+bool Actor::MorphPlayer(void)
 {
 	Actor fog;
 	Actor beastMo;
@@ -862,7 +862,7 @@ boolean Actor::MorphPlayer(void)
 //
 //==========================================================================
 
-boolean Actor::MorphMonster(void)
+bool Actor::MorphMonster(void)
 {
 	Actor master;
 	Actor monster;
@@ -1426,7 +1426,7 @@ void Actor::PoisonPlayer(Actor poisoner, int poison)
 //
 //==========================================================================
 
-void Actor::PoisonDamage(Actor source, int damage, boolean playPainSound)
+void Actor::PoisonDamage(Actor source, int damage, bool playPainSound)
 {
 	Actor inflictor;
 
@@ -1755,7 +1755,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 //
 //==========================================================================
 
-void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
+void P_SpawnMapThing(mthing_t * mthing, bool spawn_thinkers)
 {
 	int i;
 	int spawnMask;
@@ -1809,8 +1809,8 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 
 	if (mthing->type >= 1400 && mthing->type < 1410)
 	{
-		PointInSubsector(mthing->x,
-			mthing->y)->sector->seqType = mthing->type - 1400;
+		GLevel.PointInSector(vector(mthing->x,
+			mthing->y, 0.0))->seqType = mthing->type - 1400;
 		return;
 	}
 
@@ -2056,10 +2056,10 @@ void RecursiveSound(sector_t * sec, int soundblocks)
 				continue;	// closed door
 		}
 
-		if (level->sides[check->sidenum[0]].sector == sec)
-			other = level->sides[check->sidenum[1]].sector;
+		if (GLevel.Sides[check->sidenum[0]].sector == sec)
+			other = GLevel.Sides[check->sidenum[1]].sector;
 		else
-			other = level->sides[check->sidenum[0]].sector;
+			other = GLevel.Sides[check->sidenum[0]].sector;
 
 		if (check->flags & ML_SOUNDBLOCK)
 		{
@@ -2090,6 +2090,9 @@ void NoiseAlert(Actor target, Actor emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.50  2002/09/07 16:28:26  dj_jl
+//  Added Level class.
+//
 //  Revision 1.49  2002/08/28 16:36:39  dj_jl
 //  Merged MapObject with Entity, some natives, beautification.
 //

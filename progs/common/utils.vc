@@ -193,7 +193,7 @@ TVec lineend;
 //
 //==========================================================================
 
-boolean TraceHitPlane(sec_plane_t * plane)
+bool TraceHitPlane(sec_plane_t * plane)
 {
 	float org_dist;
 	float hit_dist;
@@ -230,7 +230,7 @@ boolean TraceHitPlane(sec_plane_t * plane)
 //
 //==========================================================================
 
-boolean TraceCheckPlanes(sector_t * sec)
+bool TraceCheckPlanes(sector_t * sec)
 {
 	sec_region_t *reg;
 	sec_region_t *startreg;
@@ -271,13 +271,13 @@ boolean TraceCheckPlanes(sector_t * sec)
 //
 //==========================================================================
 
-boolean TraceTraverse(intercept_t * in)
+bool TraceTraverse(intercept_t * in)
 {
 	TVec hit_point;
 	line_t *li;
 	sector_t *sec;
 
-	if (!in->isaline)
+	if (!in->bIsALine)
 	{
 		Error("TraceLine: Not a line?");
 	}
@@ -333,7 +333,7 @@ boolean TraceTraverse(intercept_t * in)
 //
 //==========================================================================
 
-boolean TraceLine(TVec start, TVec end)
+bool TraceLine(TVec start, TVec end)
 {
 	trace_start = start;
 	trace_end = end;
@@ -343,7 +343,7 @@ boolean TraceLine(TVec start, TVec end)
 			'TraceTraverse'))
 	{
 		lineend = end;
-		return TraceCheckPlanes(PointInSubsector(end.x, end.y)->sector);
+		return TraceCheckPlanes(GLevel.PointInSector(end));
 	}
 	return false;
 }
@@ -469,6 +469,9 @@ class SectorMover:SectorThinker
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/09/07 16:28:22  dj_jl
+//  Added Level class.
+//
 //  Revision 1.27  2002/08/28 16:36:36  dj_jl
 //  Merged MapObject with Entity, some natives, beautification.
 //

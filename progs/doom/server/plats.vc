@@ -65,7 +65,6 @@ class Platform:SectorMover
 	int type;
 	int tag;
 	float speed;
-	boolean crush;
 	float low;
 	float high;
 	float time;
@@ -88,9 +87,9 @@ void Tick(float deltaTime)
 	switch (status)
 	{
 	case PLAT_UP:
-		res = T_MovePlane(sector, speed * deltaTime, high, crush, 0, 1);
+		res = T_MovePlane(sector, speed * deltaTime, high, false, 0, 1);
 
-		if (res == RES_CRUSHED && (!crush))
+		if (res == RES_CRUSHED)
 		{
 			time = wait;
 			status = PLAT_DOWN;
@@ -206,7 +205,7 @@ int EV_DoPlat(line_t * line, int *args, int type)
 
 	while ((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
 	{
-		sec = &level->sectors[secnum];
+		sec = &GLevel.Sectors[secnum];
 
 		if (sec->SpecialData)
 			continue;
@@ -218,7 +217,6 @@ int EV_DoPlat(line_t * line, int *args, int type)
 		Plat.type = type;
 		Plat.sector = sec;
 		Plat.sector->SpecialData = Plat;
-		Plat.crush = false;
 		Plat.tag = args[0];
 		Plat.speed = itof(args[1]) * 4.0;
 
@@ -314,6 +312,9 @@ int EV_StopPlat(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/09/07 16:28:25  dj_jl
+//  Added Level class.
+//
 //  Revision 1.12  2002/04/11 16:48:09  dj_jl
 //  New base classes for sector thinkers, Tick function.
 //

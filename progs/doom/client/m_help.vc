@@ -81,7 +81,7 @@ class MenuScreenHelp:MenuScreen
 		Pic = MenuHelpPage(NewChild(MenuHelpPage));
 	}
 
-	boolean Key(int key)
+	bool Key(int key)
 	{
 		LocalSound('MenuClose');
 #ifdef DOOM2
@@ -113,6 +113,9 @@ void menu_help(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/09/07 16:28:24  dj_jl
+//  Added Level class.
+//
 //  Revision 1.9  2002/05/29 16:50:26  dj_jl
 //  Started a work on native Window classes.
 //

@@ -48,7 +48,7 @@ Actor Spawn(classid type, TVec AOrigin);
 //
 //==========================================================================
 
-boolean Pickup::ValidTouch(Actor Toucher)
+bool Pickup::ValidTouch(Actor Toucher)
 {
 	if (!Toucher.bIsPlayer)
 	{
@@ -71,7 +71,7 @@ boolean Pickup::ValidTouch(Actor Toucher)
 //
 //==========================================================================
 
-boolean Pickup::HandlePickup(Actor Toucher)
+bool Pickup::HandlePickup(Actor Toucher)
 {
 	cprint(Toucher.Player, "Unimplemented pickup %n", ClassName);
 	return true;
@@ -154,7 +154,7 @@ void Pickup::TouchSpecial(Actor Toucher)
 //
 //==========================================================================
 
-boolean PlayerPawn::GiveAmmo(int ammo, int num)
+bool PlayerPawn::GiveAmmo(int ammo, int num)
 {
 	int oldammo;
 	int max;
@@ -244,10 +244,10 @@ boolean PlayerPawn::GiveAmmo(int ammo, int num)
 //
 //==========================================================================
 
-boolean PlayerPawn::GiveWeapon(int weapon, boolean dropped)
+bool PlayerPawn::GiveWeapon(int weapon, bool dropped)
 {
-	boolean gaveammo;
-	boolean gaveweapon;
+	bool gaveammo;
+	bool gaveweapon;
 
 	if (netgame && (deathmatch < 2) && !dropped)
 	{
@@ -300,7 +300,7 @@ boolean PlayerPawn::GiveWeapon(int weapon, boolean dropped)
 //
 //==========================================================================
 
-boolean PlayerPawn::GiveBody(int num)
+bool PlayerPawn::GiveBody(int num)
 {
 	if (Health >= MAXHEALTH)
 		return false;
@@ -321,7 +321,7 @@ boolean PlayerPawn::GiveBody(int num)
 //
 //==========================================================================
 
-boolean PlayerPawn::GiveArmor(int armortype)
+bool PlayerPawn::GiveArmor(int armortype)
 {
 	int hits;
 
@@ -341,7 +341,7 @@ boolean PlayerPawn::GiveArmor(int armortype)
 //
 //==========================================================================
 
-boolean PlayerPawn::GiveKey(int key)
+bool PlayerPawn::GiveKey(int key)
 {
 	if (Player->Keys & (1 << key))
 		return false;
@@ -357,7 +357,7 @@ boolean PlayerPawn::GiveKey(int key)
 //
 //==========================================================================
 
-boolean PlayerPawn::GiveItem(int item)
+bool PlayerPawn::GiveItem(int item)
 {
 	if (Player->Items & item)
 	{
@@ -374,7 +374,7 @@ boolean PlayerPawn::GiveItem(int item)
 //
 //==========================================================================
 
-boolean PlayerPawn::GivePower(int power)
+bool PlayerPawn::GivePower(int power)
 {
 	if (power == pw_invulnerability)
 	{
@@ -741,6 +741,9 @@ void Actor::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/09/07 16:28:26  dj_jl
+//  Added Level class.
+//
 //  Revision 1.19  2002/07/23 13:07:31  dj_jl
 //  Final touches for switching to floating-point time, beautification.
 //

@@ -109,7 +109,7 @@ int EV_DoFloor(line_t * line, int *args, int floortype)
 	for (secnum = FindSectorFromTag(args[0], -1); secnum >= 0;
 		secnum = FindSectorFromTag(args[0], secnum))
 	{
-		sec = &level->sectors[secnum];
+		sec = &GLevel.Sectors[secnum];
 
 		//      ALREADY MOVING?  IF SO, KEEP GOING...
 		if (sec->SpecialData)
@@ -217,10 +217,10 @@ int EV_DoFloor(line_t * line, int *args, int floortype)
 //
 //==========================================================================
 
-int EV_DoFloorAndCeiling(line_t * line, int *args, boolean raise)
+int EV_DoFloorAndCeiling(line_t * line, int *args, bool raise)
 {
-	boolean floor;
-	boolean ceiling;
+	bool floor;
+	bool ceiling;
 	int secnum;
 	sector_t *sec;
 
@@ -230,7 +230,7 @@ int EV_DoFloorAndCeiling(line_t * line, int *args, boolean raise)
 		for (secnum = FindSectorFromTag(args[0], -1); secnum >= 0;
 			secnum = FindSectorFromTag(args[0], secnum))
 		{
-			sec = &level->sectors[secnum];
+			sec = &GLevel.Sectors[secnum];
 			sec->SpecialData = none;
 		}
 		ceiling = EV_DoCeiling(line, args, CLEV_RAISEBYVALUE);
@@ -241,7 +241,7 @@ int EV_DoFloorAndCeiling(line_t * line, int *args, boolean raise)
 		for (secnum = FindSectorFromTag(args[0], -1); secnum >= 0;
 			secnum = FindSectorFromTag(args[0], secnum))
 		{
-			sec = &level->sectors[secnum];
+			sec = &GLevel.Sectors[secnum];
 			sec->SpecialData = none;
 		}
 		ceiling = EV_DoCeiling(line, args, CLEV_LOWERBYVALUE);
@@ -258,7 +258,7 @@ int EV_DoFloorAndCeiling(line_t * line, int *args, boolean raise)
 int EV_FloorCrushStop(line_t * line, int *args)
 {
 	FloorMover Floor;
-	boolean rtn;
+	bool rtn;
 
 	rtn = 0;
 	FOREACH(FloorMover, Floor)
@@ -576,7 +576,7 @@ int EV_BuildStairs(line_t * line, int *args, int direction, int stairsType)
 	for (secnum = FindSectorFromTag(args[0], -1); secnum >= 0;
 		secnum = FindSectorFromTag(args[0], secnum))
 	{
-		sec = &level->sectors[secnum];
+		sec = &GLevel.Sectors[secnum];
 
 		StairTexture = sec->floor.pic;
 		StairStartHeight = sec->floorheight;
@@ -645,7 +645,7 @@ void Tick(float deltaTime)
 //
 //==========================================================================
 
-int EV_BuildPillar(line_t * line, int *args, boolean crush)
+int EV_BuildPillar(line_t * line, int *args, bool crush)
 {
 	int secnum;
 	sector_t *sec;
@@ -657,7 +657,7 @@ int EV_BuildPillar(line_t * line, int *args, boolean crush)
 	for (secnum = FindSectorFromTag(args[0], -1); secnum >= 0;
 		secnum = FindSectorFromTag(args[0], secnum))
 	{
-		sec = &level->sectors[secnum];
+		sec = &GLevel.Sectors[secnum];
 		if (sec->SpecialData)
 			continue;	// already moving
 		if (sec->floorheight == sec->ceilingheight)
@@ -724,7 +724,7 @@ int EV_OpenPillar(line_t * line, int *args)
 	for (secnum = FindSectorFromTag(args[0], -1); secnum >= 0;
 		secnum = FindSectorFromTag(args[0], secnum))
 	{
-		sec = &level->sectors[secnum];
+		sec = &GLevel.Sectors[secnum];
 		if (sec->SpecialData)
 			continue;	// already moving
 		if (sec->floorheight != sec->ceilingheight)
@@ -850,19 +850,19 @@ void Tick(float deltaTime)
 //
 //==========================================================================
 
-boolean EV_StartFloorWaggle(int tag, int height, int speed, int offset,
+bool EV_StartFloorWaggle(int tag, int height, int speed, int offset,
 	int timer)
 {
 	int sectorIndex;
 	sector_t *sector;
 	FloorWaggle Waggle;
-	boolean retCode;
+	bool retCode;
 
 	retCode = false;
 	for (sectorIndex = FindSectorFromTag(tag, -1); sectorIndex >= 0;
 		sectorIndex = FindSectorFromTag(tag, sectorIndex))
 	{
-		sector = &level->sectors[sectorIndex];
+		sector = &GLevel.Sectors[sectorIndex];
 		if (sector->SpecialData)
 		{
 			// Already busy with another thinker
@@ -888,6 +888,9 @@ boolean EV_StartFloorWaggle(int tag, int height, int speed, int offset,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/09/07 16:28:26  dj_jl
+//  Added Level class.
+//
 //  Revision 1.14  2002/04/11 16:48:10  dj_jl
 //  New base classes for sector thinkers, Tick function.
 //

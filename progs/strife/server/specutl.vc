@@ -35,8 +35,6 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-boolean P_ChangeSector(sector_t * sector, int crunch);
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -281,8 +279,8 @@ int FindSectorFromTag(int tag, int start)
 {
 	int i;
 
-	for (i = start + 1; i < level->numsectors; i++)
-		if (level->sectors[i].tag == tag)
+	for (i = start + 1; i < GLevel.NumSectors; i++)
+		if (GLevel.Sectors[i].tag == tag)
 			return i;
 
 	return -1;
@@ -305,7 +303,7 @@ int FindSectorFromTag(int tag, int start)
 int T_MovePlane(sector_t * sector, float amount, float dest,
 	int crush, int floorOrCeiling, int direction)
 {
-	boolean flag;
+	bool flag;
 	float lastpos;
 
 	switch (floorOrCeiling)
@@ -451,14 +449,14 @@ int T_MovePlane(sector_t * sector, float amount, float dest,
 //
 //==========================================================================
 
-boolean TagBusy(int tag)
+bool TagBusy(int tag)
 {
 	int sectorIndex;
 
 	sectorIndex = -1;
 	while ((sectorIndex = FindSectorFromTag(tag, sectorIndex)) >= 0)
 	{
-		if (level->sectors[sectorIndex].SpecialData)
+		if (GLevel.Sectors[sectorIndex].SpecialData)
 		{
 			return true;
 		}
@@ -469,6 +467,9 @@ boolean TagBusy(int tag)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/09/07 16:28:26  dj_jl
+//  Added Level class.
+//
 //  Revision 1.7  2002/07/23 16:31:44  dj_jl
 //  Beautification.
 //

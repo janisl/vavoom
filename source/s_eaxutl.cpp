@@ -288,7 +288,7 @@ static bool CrossSubsector(int num)
 	int 			polyCount;
 	seg_t**			polySeg;
 
-    sub = &cl_level.subsectors[num];
+    sub = &GClLevel->Subsectors[num];
     
 	if (sub->poly)
 	{
@@ -306,7 +306,7 @@ static bool CrossSubsector(int num)
 
     // check lines
     count = sub->numlines;
-    seg = &cl_level.segs[sub->firstline];
+    seg = &GClLevel->Segs[sub->firstline];
 
     for ( ; count ; seg++, count--)
     {
@@ -340,7 +340,7 @@ static bool CrossBSPNode(int bspnum)
 		    return CrossSubsector(bspnum & (~NF_SUBSECTOR));
     }
 		
-    bsp = &cl_level.nodes[bspnum];
+    bsp = &GClLevel->Nodes[bspnum];
     
     // decide which side the start point is on
     side = PlaneSide2(trace_start, bsp);
@@ -381,7 +381,7 @@ static float EAXTraceLine(const TVec &start, const TVec &end)
 	linestart = trace_start;
 
     // the head node is the last node output
-    if (CrossBSPNode(cl_level.numnodes - 1))
+    if (CrossBSPNode(GClLevel->NumNodes - 1))
 	{
 		lineend = trace_end;
 	    CheckPlanes(CL_PointInSubsector(end.x, end.y)->sector);
@@ -430,7 +430,10 @@ float EAX_CalcEnvSize(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2002/09/07 16:31:51  dj_jl
+//	Added Level class.
+//
 //	Revision 1.1  2002/07/20 14:51:39  dj_jl
 //	Slit out EAX utilites for use on multiple platforms/drivers.
-//
+//	
 //**************************************************************************

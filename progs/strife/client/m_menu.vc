@@ -57,9 +57,9 @@ MenuScreen CurrentMenuScreen;
 
 class MenuObject:Window
 {
-	boolean bSelected;
+	bool bSelected;
 
-	boolean Key(int key)
+	bool Key(int key)
 	{
 		return false;
 	}
@@ -192,7 +192,7 @@ class MenuScreen:MenuObject
 	{
 		if (SelectorType)
 		{
-			Selector = NewChild(SelectorType);
+			Selector = MenuObject(NewChild(SelectorType));
 		}
 	}
 
@@ -277,7 +277,7 @@ class MenuScreen:MenuObject
 		CursorMoved();
 	}
 
-	boolean Key(int key)
+	bool Key(int key)
 	{
 		if (Items[CursorPos].Key(key))
 		{
@@ -341,7 +341,7 @@ void InputLine_Init(TILine * iline)
 //
 //==========================================================================
 
-boolean InputLine_Key(TILine * iline, int ch)
+bool InputLine_Key(TILine * iline, int ch)
 {
     if (ch >= 32 && ch < 128)
 	{
@@ -533,7 +533,7 @@ class MenuStaticAnim:MenuObject
 	int Speed;
 	int NumFrames;
 	int StartFrame;
-	boolean bBackwards;
+	bool bBackwards;
 	int Frames[32];
 	string FrameNames[32];
 	float Time;
@@ -731,7 +731,7 @@ class MenuTextButton:MenuChoice
 	{
 	}
 
-	boolean Key(int key)
+	bool Key(int key)
 	{
 		if (key == K_ENTER || key == K_PADENTER ||
 			key == K_MOUSE1 || key == K_JOY1)
@@ -794,7 +794,7 @@ class MenuSmallTextButton:MenuTextButton
 class MenuChoiceEnum:MenuChoice
 {
 	string Text;
-	boolean bLeftAlign;
+	bool bLeftAlign;
 
 	int Value;
 	int MaxValue;
@@ -805,7 +805,7 @@ class MenuChoiceEnum:MenuChoice
 		return 0;
 	}
 
-	boolean SetNewValue(int newValue)
+	bool SetNewValue(int newValue)
 	{
 		return false;
 	}
@@ -857,7 +857,7 @@ class MenuChoiceEnum:MenuChoice
 		gc.DrawText(xx, 0, EnumNames[Value]);
 	}
 
-	boolean Key(int key)
+	bool Key(int key)
 	{
 		int newValue;
 
@@ -938,7 +938,7 @@ class MenuChoiceSlider:MenuChoice
 		return 0.0;
 	}
 
-	boolean SetNewValue(float newValue)
+	bool SetNewValue(float newValue)
 	{
 		return false;
 	}
@@ -981,7 +981,7 @@ class MenuChoiceSlider:MenuChoice
 		gc.DrawIcon(xx, 0, pic_M_THERMO);
 	}
 
-	boolean Key(int key)
+	bool Key(int key)
 	{
 		float newValue;
 
@@ -1042,7 +1042,7 @@ int pic_M_LSRGHT;
 //
 //==========================================================================
 
-int DrawSlot(GC gc, int y, string text, boolean entering)
+int DrawSlot(GC gc, int y, string text, bool entering)
 {
 	int xx;
 	int j;
@@ -1085,7 +1085,7 @@ void InitSlot(void)
 
 #define SLOTTEXTLEN 		24
 
-boolean enteringText;
+bool enteringText;
 TILine slot_enter_text;
 
 class MenuSaveSlot:MenuChoice
@@ -1116,7 +1116,7 @@ class MenuSaveSlot:MenuChoice
 	{
 	}
 
-	boolean Key(int key)
+	bool Key(int key)
 	{
 		if (enteringText)
 		{
@@ -1198,7 +1198,7 @@ class MenuInputLine:MenuChoice
 			DrawSlot(gc, 12, ARR2STR(Value), false);
 	}
 
-	boolean Key(int key)
+	bool Key(int key)
 	{
 		if (enteringText)
 		{
@@ -1335,7 +1335,7 @@ class MenuSList:MenuChoice
 			}
 		}
 
-		if (slist->inProgress)
+		if (slist->bInProgress)
 		{
 			DrawTextBox(gc, "Searching...");
 		}
@@ -1345,11 +1345,11 @@ class MenuSList:MenuChoice
 		}
 	}
 
-	boolean Key(int key)
+	bool Key(int key)
 	{
 		slist = GetSlist();
 
-		if (slist->inProgress)
+		if (slist->bInProgress)
 		{
 			return true;
 		}
@@ -1402,6 +1402,9 @@ class MenuSList:MenuChoice
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/09/07 16:28:26  dj_jl
+//  Added Level class.
+//
 //  Revision 1.24  2002/07/20 14:45:24  dj_jl
 //  Fixed join game menu.
 //

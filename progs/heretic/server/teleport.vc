@@ -34,7 +34,7 @@ float teleport_y;
 //
 //==========================================================================
 
-boolean PIT_StompThing(Entity Other)
+bool PIT_StompThing(Entity Other)
 {
 	float blockdist;
 
@@ -75,7 +75,7 @@ boolean PIT_StompThing(Entity Other)
 //
 //==========================================================================
 
-boolean Actor::TeleportMove(TVec newOrg)
+bool Actor::TeleportMove(TVec newOrg)
 {
 	int xl;
 	int xh;
@@ -91,10 +91,10 @@ boolean Actor::TeleportMove(TVec newOrg)
 	teleport_y = newOrg.y;
 
 	// stomp on any things contacted
-	xl = MapBlock(newOrg.x - Radius - level->bmaporgx - MAXRADIUS);
-	xh = MapBlock(newOrg.x + Radius - level->bmaporgx + MAXRADIUS);
-	yl = MapBlock(newOrg.y - Radius - level->bmaporgy - MAXRADIUS);
-	yh = MapBlock(newOrg.y + Radius - level->bmaporgy + MAXRADIUS);
+	xl = MapBlock(newOrg.x - Radius - XLevel.BlockMapOrgX - MAXRADIUS);
+	xh = MapBlock(newOrg.x + Radius - XLevel.BlockMapOrgX + MAXRADIUS);
+	yl = MapBlock(newOrg.y - Radius - XLevel.BlockMapOrgY - MAXRADIUS);
+	yh = MapBlock(newOrg.y + Radius - XLevel.BlockMapOrgY + MAXRADIUS);
 
 	for (bx = xl; bx <= xh; bx++)
 		for (by = yl; by <= yh; by++)
@@ -118,7 +118,7 @@ boolean Actor::TeleportMove(TVec newOrg)
 //
 //==========================================================================
 
-boolean Actor::Teleport(float x, float y, float angle)
+bool Actor::Teleport(float x, float y, float angle)
 {
 	TVec oldOrg;
 	float aboveFloor;
@@ -201,7 +201,7 @@ boolean Actor::Teleport(float x, float y, float angle)
 //
 //==========================================================================
 
-boolean EV_Teleport(int tag, Actor thing, boolean usefog)
+bool EV_Teleport(int tag, Actor thing, bool usefog)
 {
 	int i;
 	Actor m;
@@ -240,8 +240,8 @@ boolean EV_Teleport(int tag, Actor thing, boolean usefog)
 //
 //==========================================================================
 
-boolean EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
-							boolean reverse)
+bool EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
+							bool reverse)
 {
 	int searcher;
 	line_t *l;
@@ -331,6 +331,9 @@ boolean EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/09/07 16:28:25  dj_jl
+//  Added Level class.
+//
 //  Revision 1.26  2002/08/28 16:36:39  dj_jl
 //  Merged MapObject with Entity, some natives, beautification.
 //

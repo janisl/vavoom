@@ -132,7 +132,7 @@ void R_AddStaticLight(const TVec &origin, float radius, dword color)
 	lights[num_lights].radius = radius;
 	lights[num_lights].color = color;
 	lights[num_lights].leafnum = CL_PointInSubsector(origin.x, origin.y) -
-		cl_level.subsectors;
+		GClLevel->Subsectors;
 	num_lights++;
 	unguard;
 }
@@ -479,7 +479,7 @@ void R_LightFace(surface_t *surf, subsector_t *leaf)
 	int			i, s, t, w, h;
 	float		total;
 
-	facevis = LeafPVS(cl_level, leaf);
+	facevis = GClLevel->LeafPVS(leaf);
 	points_calculated = false;
 	light_hit = false;
 	is_colored = false;
@@ -654,7 +654,7 @@ void R_MarkLights(dlight_t *light, int bit, int bspnum)
 		    num = 0;
 		else
 		    num = bspnum & (~NF_SUBSECTOR);
-	    subsector_t *ss = &cl_level.subsectors[num];
+	    subsector_t *ss = &GClLevel->Subsectors[num];
 		if (ss->dlightframe != r_dlightframecount)
 		{
 			ss->dlightbits = 0;
@@ -664,7 +664,7 @@ void R_MarkLights(dlight_t *light, int bit, int bspnum)
 	}
 	else
 	{
-		node_t* node = &cl_level.nodes[bspnum];
+		node_t* node = &GClLevel->Nodes[bspnum];
 		float dist = DotProduct(light->origin, node->normal) - node->dist;
 	
 		if (dist > -light->radius)
@@ -703,7 +703,7 @@ void R_PushDlights(void)
 	{
 		if (l->die < cl.time || !l->radius)
 			continue;
-		R_MarkLights(l, 1 << i, cl_level.numnodes - 1);
+		R_MarkLights(l, 1 << i, GClLevel->NumNodes - 1);
 	}
 	unguard;
 }
@@ -1071,9 +1071,12 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/09/07 16:31:51  dj_jl
+//	Added Level class.
+//
 //	Revision 1.16  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
-//
+//	
 //	Revision 1.15  2002/07/13 07:51:48  dj_jl
 //	Replacing console's iostream with output device.
 //	

@@ -287,7 +287,7 @@ struct polyobj_t
 	int 		tag;			// reference tag assigned in HereticEd
 	int			bbox[4];
 	int 		validcount;
-	boolean 	crush; 			// should the polyobj attempt to crush mobjs?
+	dword	 	bCrush:1; 			// should the polyobj attempt to crush mobjs?
 	int 		seqType;
 	subsector_t	*subsector;
 	float		base_x;
@@ -413,37 +413,126 @@ struct FRogueConSpeech
 #define MAXDEATHMATCHSTARTS		16
 #define MAX_PLAYER_STARTS 		8
 
+class VLevel:public VObject
+{
+	DECLARE_CLASS(VLevel, VObject, 0)
+	NO_DEFAULT_CONSTRUCTOR(VLevel)
+
+	//	Flags.
+	dword bForServer:1;		//	True if this level belongs to the server.
+	dword bExtended:1;		//	True if level was in Hexen format.
+
+	//
+	//	MAP related Lookup tables.
+	//	Store VERTEXES, LINEDEFS, SIDEDEFS, etc.
+	//
+
+	int				NumVertexes;
+	vertex_t		*Vertexes;
+
+	int				NumSectors;
+	sector_t		*Sectors;
+
+	int				NumSides;
+	side_t			*Sides;
+
+	int				NumLines;
+	line_t			*Lines;
+
+	int				NumSegs;
+	seg_t			*Segs;
+
+	int				NumSubsectors;
+	subsector_t		*Subsectors;
+
+	int				NumNodes;
+	node_t			*Nodes;
+
+	byte			*VisData;
+	byte			*NoVis;
+
+	// !!! Used only during level loading
+	int				NumThings;
+	mthing_t		*Things;
+
+	int				BehaviorSize;
+	int				*Behavior;
+
+	//
+	//	BLOCKMAP
+	//	Created from axis aligned bounding box of the map, a rectangular
+	// array of blocks of size ...
+	// Used to speed up collision detection by spatial subdivision in 2D.
+	//
+	short			*BlockMapLump;	// offsets in blockmap are from here
+	word			*BlockMap;		// int for larger maps
+	int				BlockMapWidth;	// Blockmap size.
+	int				BlockMapHeight;	// size in mapblocks
+	float			BlockMapOrgX;	// origin of block map
+	float			BlockMapOrgY;
+	VEntity			**BlockLinks;	// for thing chains
+	polyblock_t		**PolyBlockMap;
+
+	//
+	//	REJECT
+	//	For fast sight rejection.
+	//	Speeds up enemy AI by skipping detailed LineOf Sight calculation.
+	// 	Without special effect, this could be used as a PVS lookup as well.
+	//
+	byte			*RejectMatrix;
+
+	//	Strife conversations.
+	int				NumGenericSpeeches;
+	FRogueConSpeech	*GenericSpeeches;
+
+	int				NumLevelSpeeches;
+	FRogueConSpeech	*LevelSpeeches;
+
+	//	List of all poly-objects on the level.
+	int 			NumPolyObjs;
+	polyobj_t		*PolyObjs;
+
+	//	Map loader.
+	void LoadMap(const char *MapName);
+
+	subsector_t* PointInSubsector(const TVec &point) const;
+	byte *LeafPVS(const subsector_t *ss) const;
+
+private:
+	//	Map loaders.
+	void LoadVertexes(int Lump, int GLLump);
+	void LoadSectors(int Lump);
+	void LoadSideDefs(int Lump);
+	void LoadLineDefs1(int Lump);
+	void LoadLineDefs2(int Lump);
+	void LoadGLSegs(int Lump);
+	void LoadSubsectors(int Lump);
+	void LoadNodes(int Lump);
+	void LoadPVS(int Lump);
+	void LoadBlockMap(int Lump);
+	void LoadThings1(int Lump);
+	void LoadThings2(int Lump);
+
+	//	Map loading helpers.
+	int FTNumForName(const char *name) const;
+	int TFNumForName(const char *name) const;
+	void SetupLineSides(line_t *ld) const;
+
+	//	Post-loading routines.
+	void GroupLines(void) const;
+	void LinkNode(int BSPNum, node_t *pParent) const;
+	void ClearBox(float *box) const;
+	void AddToBox(float* box, float x, float y) const;
+
+	//	Loader of the Strife conversations.
+	void LoadRogueConScript(const char *LumpName,
+		FRogueConSpeech *&SpeechList, int &NumSpeeches) const;
+
+	DECLARE_FUNCTION(PointInSector)
+};
+
 struct base_level_t
 {
-	//
-	// MAP related Lookup tables.
-	// Store VERTEXES, LINEDEFS, SIDEDEFS, etc.
-	//
-	// Lookup tables for map data.
-	int			numvertexes;
-	vertex_t	*vertexes;
-
-	int			numsegs;
-	seg_t		*segs;
-
-	int			numsectors;
-	sector_t	*sectors;
-
-	int			numsubsectors;
-	subsector_t	*subsectors;
-
-	int			numnodes;
-	node_t		*nodes;
-
-	int			numlines;
-	line_t		*lines;
-
-	int			numsides;
-	side_t		*sides;
-
-	int 		numpolyobjs;
-	polyobj_t	*polyobjs; // list of all poly-objects on the level
-
 	float		time;
 	int			tictime;
 
@@ -454,47 +543,10 @@ struct base_level_t
 	char		mapname[12];
 	char		nextmap[12];
 	char		level_name[32];
-
-	byte		*vis_data;
-
-	FRogueConSpeech		*GenericSpeeches;
-	int					NumGenericSpeeches;
-
-	FRogueConSpeech		*LevelSpeeches;
-	int					NumLevelSpeeches;
 };
 
 struct sv_level_t:base_level_t
 {
-	// !!! Valid only during level loading
-	int			numthings;
-	mthing_t	*things;
-	int			behaviorsize;
-	int			*behavior;
-
-	//
-	//	BLOCKMAP
-	//	Created from axis aligned bounding box of the map, a rectangular
-	// array of blocks of size ...
-	// Used to speed up collision detection by spatial subdivision in 2D.
-	//
-	short		*blockmaplump;	// offsets in blockmap are from here
-	word		*blockmap;		// int for larger maps
-	int			bmapwidth;      // Blockmap size.
-	int			bmapheight;     // size in mapblocks
-	float		bmaporgx;       // origin of block map
-	float		bmaporgy;
-	VEntity		**blocklinks;	// for thing chains
-	polyblock_t **PolyBlockMap;
-
-	//
-	//	REJECT
-	//	For fast sight rejection.
-	//	Speeds up enemy AI by skipping detailed LineOf Sight calculation.
-	// 	Without special effect, this could be used as a PVS lookup as well.
-	//
-	byte		*rejectmatrix;
-
 	// Maintain single and multi player starting spots.
 	mthing_t	deathmatchstarts[MAXDEATHMATCHSTARTS];  // Player spawn spots for deathmatch.
 	int			numdeathmatchstarts;
@@ -511,10 +563,9 @@ void CalcLine(line_t *line);
 void CalcSeg(seg_t *seg);
 void LoadLevel(sv_level_t &lev, const char *mapname);
 void LoadLevel(cl_level_t &lev, const char *mapname);
-subsector_t* PointInSubsector(const base_level_t &lev, float x, float y);
-byte *LeafPVS(const base_level_t &lev, const subsector_t *ss);
 sec_region_t *AddExtraFloor(line_t *line, sector_t *dst);
 void SwapPlanes(sector_t *);
+void CalcSecMinMaxs(sector_t *sector);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
@@ -523,12 +574,18 @@ extern int				GMaxEntities;
 extern sv_level_t		level;
 extern cl_level_t		cl_level;
 
+extern VLevel*			GLevel;
+extern VLevel*			GClLevel;
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2002/09/07 16:31:51  dj_jl
+//	Added Level class.
+//
 //	Revision 1.23  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
-//
+//	
 //	Revision 1.22  2002/08/24 14:51:50  dj_jl
 //	Fixes for large blockmaps.
 //	

@@ -39,7 +39,7 @@ int sb_height = 42;
 int HealthMarker;
 int ChainWiggle;
 
-boolean hitCenterFrame;
+bool hitCenterFrame;
 
 // Graphics
 int pic_barback;
@@ -505,7 +505,7 @@ void SB_DrawIcons(void)
 
 void SB_DrawPause(void)
 {
-	if (cl->paused && GetCvar("draw_pause"))
+	if (cl->bPaused && GetCvar("draw_pause"))
 	{
 		R_DrawPic(160, netgame ? 70 : 20, pic_paused);
 	}
@@ -584,6 +584,9 @@ void SB_UpdateWidgets(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/09/07 16:28:25  dj_jl
+//  Added Level class.
+//
 //  Revision 1.11  2002/06/29 15:58:14  dj_jl
 //  Added total frags count.
 //

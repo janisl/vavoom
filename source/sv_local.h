@@ -42,7 +42,10 @@
 class VThinker:public VObject
 {
 	DECLARE_CLASS(VThinker, VObject, 0)
-	NO_DEFAULT_CONSTRUCTOR(VThinker)
+
+	VThinker() : XLevel(GLevel) {}
+
+	VLevel		*XLevel;		//	Level object.
 
 	//	VThinker interface.
 	virtual void Tick(float DeltaTime);
@@ -214,6 +217,8 @@ class VEntity:public VThinker
 	static int FIndex_PushLine;
 	static int FIndex_HandleFloorclip;
 	static int FIndex_CrossSpecialLine;
+	static int FIndex_SectorChanged;
+	static int FIndex_RoughCheckThing;
 
 	static void InitFuncIndexes(void);
 
@@ -248,6 +253,14 @@ class VEntity:public VThinker
 	{
 		svpr.Exec(GetVFunction(FIndex_CrossSpecialLine), (int)this, (int)ld, side);
 	}
+	bool eventSectorChanged(int CrushChange)
+	{
+		return !!svpr.Exec(GetVFunction(FIndex_SectorChanged), (int)this, CrushChange);
+	}
+	bool eventRoughCheckThing(VEntity *Other)
+	{
+		return !!svpr.Exec(GetVFunction(FIndex_SectorChanged), (int)this, (int)Other);
+	}
 
 	void Remove(void)
 	{
@@ -265,6 +278,8 @@ class VEntity:public VThinker
 	void UpdateVelocity(void);
 	void FakeZMovement(void);
 	VEntity *CheckOnmobj(void);
+	VEntity *RoughBlockCheck(int index);
+	VEntity *RoughMonsterSearch(int distance);
 
 	void LinkToWorld(void);
 	void UnlinkFromWorld(void);
@@ -286,6 +301,7 @@ class VEntity:public VThinker
 	DECLARE_FUNCTION(LinkToWorld)
 	DECLARE_FUNCTION(UnlinkFromWorld)
 	DECLARE_FUNCTION(CanSee)
+	DECLARE_FUNCTION(RoughMonsterSearch)
 };
 
 //==========================================================================
@@ -378,7 +394,7 @@ struct opening_t
 struct intercept_t
 {
     float		frac;		// along trace line
-    boolean		isaline;
+    dword		bIsALine:1;
 	VEntity		*thing;
 	line_t		*line;
 };
@@ -397,6 +413,7 @@ sec_region_t *SV_FindThingGap(sec_region_t *gaps, const TVec &point, float z1, f
 opening_t *SV_FindOpening(opening_t *gaps, float z1, float z2);
 sec_region_t *SV_PointInRegion(sector_t *sector, const TVec &p);
 int SV_PointContents(const sector_t *sector, const TVec &p);
+bool P_ChangeSector(sector_t * sector, int crunch);
 
 //==========================================================================
 //
@@ -533,7 +550,7 @@ extern boolean			paused;
 
 inline subsector_t* SV_PointInSubsector(float x, float y)
 {
-	return PointInSubsector(level, x, y);
+	return GLevel->PointInSubsector(TVec(x, y, 0));
 }
 
 #endif
@@ -541,9 +558,12 @@ inline subsector_t* SV_PointInSubsector(float x, float y)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2002/09/07 16:31:51  dj_jl
+//	Added Level class.
+//
 //	Revision 1.26  2002/08/28 16:41:09  dj_jl
 //	Merged VMapObject with VEntity, some natives.
-//
+//	
 //	Revision 1.25  2002/07/23 13:10:37  dj_jl
 //	Some fixes for switching to floating-point time.
 //	

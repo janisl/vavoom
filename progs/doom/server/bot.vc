@@ -195,13 +195,13 @@ float BotPlayer::AngleTo(TVec dest)
 //
 //==========================================================================
 
-boolean BotPlayer::CheckItem(Actor item)
+bool BotPlayer::CheckItem(Actor item)
 {
 	int weapon;
 	int ammo;
 
-	newItemIsWeapon = false;
-	newItemIsPowerup = false;
+	bNewItemIsWeapon = false;
+	bNewItemIsPowerup = false;
 //?????
     if (!item)
 		return false;
@@ -211,7 +211,7 @@ boolean BotPlayer::CheckItem(Actor item)
 	weapon = WeapFromItem(item);
 	if (weapon != -1)
 	{
-		newItemIsWeapon = true;
+		bNewItemIsWeapon = true;
 
 		// If we don't have the weapon, pick it up
 		if (!player->WeaponOwned[weapon])
@@ -295,7 +295,7 @@ void BotPlayer::SetEnemy(void)
 		return;
 	}
 
-	allround = !!enemy;
+	bAllRound = !!enemy;
 	enemy = FindEnemy();
 
 	if (!enemy)
@@ -314,7 +314,7 @@ void BotPlayer::SetEnemy(void)
 //
 //==========================================================================
 
-boolean BotPlayer::CheckTo(TVec pos)
+bool BotPlayer::CheckTo(TVec pos)
 {
 	float dist;
 	float an;
@@ -515,8 +515,8 @@ void BotPlayer::Scan(void)
 				if (CheckItem(actor))
 				{
 					item = actor;
-					itemIsWeapon = newItemIsWeapon;
-					itemIsPowerup = newItemIsPowerup;
+					bItemIsWeapon = bNewItemIsWeapon;
+					bItemIsPowerup = bNewItemIsPowerup;
 				}
 			}
 			else if (!missile && actor.bMissile &&
@@ -800,7 +800,7 @@ int BotPlayer::AmmoFromItem(Actor item)
 //
 //==========================================================================
 
-boolean IsDangerous(sector_t *sec)
+bool IsDangerous(sector_t *sec)
 {
 	int special = sec->special & ~SECRET_MASK;
 
@@ -843,7 +843,7 @@ boolean IsDangerous(sector_t *sec)
 float bottracerange;
 TVec bottracedir;
 
-boolean PTR_BotPathTraverse(intercept_t *in)
+bool PTR_BotPathTraverse(intercept_t *in)
 {
 	Actor th;
 	line_t *ld;
@@ -854,7 +854,7 @@ boolean PTR_BotPathTraverse(intercept_t *in)
 	bot = usething.Player->Bot;
 	botmo = usething;
 
-	if (in->isaline)
+	if (in->bIsALine)
 	{
 		sector_t *back;
 		sector_t *front;
@@ -962,7 +962,7 @@ boolean PTR_BotPathTraverse(intercept_t *in)
 //
 //==========================================================================
 
-boolean BotPlayer::CheckPath(float ang, float dist)
+bool BotPlayer::CheckPath(float ang, float dist)
 {
 	float x1, y1, x2, y2;
 
@@ -998,7 +998,7 @@ boolean BotPlayer::CheckPath(float ang, float dist)
 //
 //==========================================================================
 
-boolean BotPlayer::Check_LOS(Actor to, float vangle)
+bool BotPlayer::Check_LOS(Actor to, float vangle)
 {
 	if (!botmo.CanSee(to))
 		return false; // out of sight
@@ -1170,7 +1170,7 @@ AActor *B_SetAlly (skullb_s *bot)
 void BotPlayer::BotAim(void)
 {
 	float dist;
-	boolean right;
+	bool right;
 	float an;
 
 	if (!enemy)
@@ -1299,11 +1299,11 @@ Actor BotPlayer::FindEnemy(void)
 	int i;
 
 	//Note: It's hard to ambush a bot who is not alone
-	if (allround || ally)
+	if (bAllRound || ally)
 		vangle = 360.0;
 	else
 		vangle = ENEMY_SCAN_FOV;
-	allround = false;
+	bAllRound = false;
 
 #if 0
 	// Look for monster enemy
@@ -1617,9 +1617,12 @@ void BotPlayer::Move(float deltaTime)
 	// Now handle attack movement
 	if (enemy)
 	{
-		boolean noforward = false, noside = false;
+		bool noforward;
+		bool noside;
 		float an;
 
+		noforward = false;
+		noside = false;
 		if (!sidemove )
 			sidemove = SIDERUN;
 
@@ -1642,8 +1645,8 @@ void BotPlayer::Move(float deltaTime)
 		// Check if we'd rather pick up something than fight
 		if (item)
 		{
-			if (itemIsPowerup ||
-				(itemIsWeapon && player->ReadyWeapon == wp_pistol))
+			if (bItemIsPowerup ||
+				(bItemIsWeapon && player->ReadyWeapon == wp_pistol))
 			{
 				Roam();
 				return;
@@ -2262,6 +2265,9 @@ void BotPlayer::OnSpawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/09/07 16:28:24  dj_jl
+//  Added Level class.
+//
 //  Revision 1.20  2002/07/13 08:01:48  dj_jl
 //  Moved some functions to the Entity class.
 //

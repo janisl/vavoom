@@ -509,10 +509,11 @@ void A_WraithRaiseInit(void)
 // 
 //============================================================================
 
-boolean RaiseFromFloor(void)
+bool RaiseFromFloor(void)
 {
-	boolean done = true;
+	bool done;
 
+	done = true;
 	// Raise a mobj from the ground
 	if (FloorClip > 0.0)
 	{
@@ -571,6 +572,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/09/07 16:28:26  dj_jl
+//  Added Level class.
+//
 //  Revision 1.26  2002/06/29 15:54:35  dj_jl
 //  Floatized PainChance.
 //

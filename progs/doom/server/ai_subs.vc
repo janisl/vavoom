@@ -44,7 +44,7 @@ float yspeed[8] =
 //
 //==========================================================================
 
-boolean Actor::CheckMeleeRange(void)
+bool Actor::CheckMeleeRange(void)
 {
 	float dist;
 
@@ -74,7 +74,7 @@ boolean Actor::CheckMeleeRange(void)
 //
 //==========================================================================
 
-boolean Actor::CheckMissileRange(void)
+bool Actor::CheckMissileRange(void)
 {
 	float dist;
 
@@ -132,7 +132,7 @@ boolean Actor::CheckMissileRange(void)
 //
 //==========================================================================
 
-boolean Actor::FindOther(void)
+bool Actor::FindOther(void)
 {
 	Actor Other;
 
@@ -153,7 +153,7 @@ boolean Actor::FindOther(void)
 //
 //==========================================================================
 
-boolean Actor::LookForMonsters(boolean allaround)
+bool Actor::LookForMonsters(bool allaround)
 {
 	Actor mo;
 	float an;
@@ -202,7 +202,7 @@ boolean Actor::LookForMonsters(boolean allaround)
 //
 //==========================================================================
 
-boolean Actor::LookForMonsters2(boolean allaround)
+bool Actor::LookForMonsters2(bool allaround)
 {
 	Actor mo;
 	float an;
@@ -259,7 +259,7 @@ boolean Actor::LookForMonsters2(boolean allaround)
 //
 //==========================================================================
 
-boolean Actor::LookForPlayers(boolean allaround)
+bool Actor::LookForPlayers(bool allaround)
 {
 	int c;
 	int stop;
@@ -337,13 +337,13 @@ boolean Actor::LookForPlayers(boolean allaround)
 //
 //==========================================================================
 
-boolean Actor::StepMove(void)
+bool Actor::StepMove(void)
 {
 	float tryx;
 	float tryy;
 
 	line_t *ld;
-	boolean good;
+	bool good;
 
 	if (MoveDir == DI_NODIR)
 		return false;
@@ -359,7 +359,7 @@ boolean Actor::StepMove(void)
 	if (!TryMove(vector(tryx, tryy, Origin.z)))
 	{
 		// open any specials
-		if (bFloat && tmtrace->FloatOk)
+		if (bFloat && tmtrace->bFloatOk)
 		{
 			// must adjust height
 			if (Origin.z < tmtrace->FloorZ)
@@ -412,7 +412,7 @@ boolean Actor::StepMove(void)
 //
 //==========================================================================
 
-boolean Actor::TryWalk(void)
+bool Actor::TryWalk(void)
 {
 	if (!StepMove())
 	{
@@ -556,6 +556,9 @@ void Actor::NewChaseDir(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/09/07 16:28:24  dj_jl
+//  Added Level class.
+//
 //  Revision 1.23  2002/07/13 08:01:48  dj_jl
 //  Moved some functions to the Entity class.
 //

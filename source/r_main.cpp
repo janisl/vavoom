@@ -401,13 +401,13 @@ static void R_MarkLeaves(void)
 	r_visframecount++;
 	r_oldviewleaf = r_viewleaf;
 
-	vis = LeafPVS(cl_level, r_viewleaf);
+	vis = GClLevel->LeafPVS(r_viewleaf);
 
-	for (i = 0; i < cl_level.numsubsectors; i++)
+	for (i = 0; i < GClLevel->NumSubsectors; i++)
 	{
 		if (vis[i >> 3] & (1 << (i & 7)))
 		{
-			subsector_t *sub = &cl_level.subsectors[i];
+			subsector_t *sub = &GClLevel->Subsectors[i];
 			sub->VisFrame = r_visframecount;
 			node = sub->parent;
 			while (node)
@@ -699,9 +699,12 @@ void V_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2002/09/07 16:31:51  dj_jl
+//	Added Level class.
+//
 //	Revision 1.22  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
-//
+//	
 //	Revision 1.21  2002/07/15 17:51:09  dj_jl
 //	Made VSubsystem global.
 //	

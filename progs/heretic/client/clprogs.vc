@@ -27,8 +27,8 @@
 
 #include "../herdefs.vc"
 
-boolean shareware;
-boolean ExtendedWAD;
+bool shareware;
+bool ExtendedWAD;
 
 #include "effects.vc"
 
@@ -70,6 +70,9 @@ boolean ExtendedWAD;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/09/07 16:28:25  dj_jl
+//  Added Level class.
+//
 //  Revision 1.11  2002/01/07 12:23:17  dj_jl
 //  Changed copyright year
 //

@@ -103,7 +103,7 @@ void PlayerPawn::MorphPlayerThink(void)
 //
 //==========================================================================
 
-boolean PlayerPawn::UndoPlayerMorph(void)
+bool PlayerPawn::UndoPlayerMorph(void)
 {
 	Actor fog;
 	Actor A;
@@ -586,11 +586,11 @@ void PlayerPawn::UseArtiBlastRadius(void)
 //
 //==========================================================================
 
-boolean G_CheckSpot(int playernum, mthing_t * mthing)
+bool G_CheckSpot(int playernum, mthing_t * mthing)
 {
 	float x;
 	float y;
-	subsector_t *ss;
+	sector_t *sec;
 	float an;
 	Actor A;
 	int i;
@@ -617,19 +617,65 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	players[playernum].MO.bNoPassMobj = false;
 
 	// spawn a teleport fog 
-	ss = PointInSubsector(x, y);
+	sec = GLevel.PointInSector(vector(x, y, 0.0));
 	an = itof(45 * (mthing->angle / 45));
 
 	A = Spawn(TeleportFog, vector(x + 20.0 * cos(an), y + 20.0 * sin(an),
-		ss->sector->floorheight + TELEFOGHEIGHT));
+		sec->floorheight + TELEFOGHEIGHT));
 	A.PlaySound('Teleport', CHAN_VOICE);
 
 	return true;
 }
 
+//===========================================================================
+//
+//  PlayerPawn::RoughCheckThing
+//
+//	Minotaur looking around player
+//
+//===========================================================================
+
+bool PlayerPawn::RoughCheckThing(Entity Other)
+{
+	Actor link = Actor(Other);
+	
+	if (!bIsPlayer)
+	{
+		return false;
+	}
+	if (!link.bCountKill && (!link.bIsPlayer || link == self))
+	{
+		return false;
+	}
+	if (!link.bShootable)
+	{
+		return false;
+	}
+	if (link.bDormant)
+	{
+		return false;
+	}
+	if (link.IsA('Minotaur') && *link._SpecialMobj1 == self)
+	{
+		return false;
+	}
+	if (netgame && !deathmatch && link.bIsPlayer)
+	{
+		return false;
+	}
+	if (CanSee(link))
+	{
+		return true;
+	}
+	return false;
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.31  2002/09/07 16:28:26  dj_jl
+//  Added Level class.
+//
 //  Revision 1.30  2002/07/23 13:07:31  dj_jl
 //  Final touches for switching to floating-point time, beautification.
 //

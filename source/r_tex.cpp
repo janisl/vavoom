@@ -1033,17 +1033,17 @@ else\
 {\
 	texturepresent[tex] = true;\
 }
-	for (i = 0; i < cl_level.numsectors; i++)
+	for (i = 0; i < GClLevel->NumSectors; i++)
 	{
-		MARK(cl_level.sectors[i].floor.pic)
-		MARK(cl_level.sectors[i].ceiling.pic)
+		MARK(GClLevel->Sectors[i].floor.pic)
+		MARK(GClLevel->Sectors[i].ceiling.pic)
 	}
 	
-	for (i = 0; i < cl_level.numsides; i++)
+	for (i = 0; i < GClLevel->NumSides; i++)
 	{
-		MARK(cl_level.sides[i].toptexture)
-		MARK(cl_level.sides[i].midtexture)
-		MARK(cl_level.sides[i].bottomtexture)
+		MARK(GClLevel->Sides[i].toptexture)
+		MARK(GClLevel->Sides[i].midtexture)
+		MARK(GClLevel->Sides[i].bottomtexture)
 	}
 
 	// Precache flats.
@@ -1322,9 +1322,12 @@ void R_ShadeRect(int x, int y, int width, int height, int shade)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2002/09/07 16:31:51  dj_jl
+//	Added Level class.
+//
 //	Revision 1.20  2002/07/27 18:10:11  dj_jl
 //	Implementing Strife conversations.
-//
+//	
 //	Revision 1.19  2002/07/13 07:51:49  dj_jl
 //	Replacing console's iostream with output device.
 //	

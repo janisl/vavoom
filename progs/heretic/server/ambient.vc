@@ -222,7 +222,7 @@ void P_AmbientSound(void)
 {
 	int cmd;
 	int sound;
-	boolean done;
+	bool done;
 
 	if (!AmbSfxCount)
 	{
@@ -306,6 +306,9 @@ void P_AmbientSound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/09/07 16:28:25  dj_jl
+//  Added Level class.
+//
 //  Revision 1.8  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

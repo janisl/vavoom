@@ -1363,8 +1363,8 @@ PF(AddExtraFloor)
 	line = (line_t*)Pop();
 	Push((int)AddExtraFloor(line, dst));
 	sv_signon << (byte)svc_extra_floor
-				<< (short)(line - level.lines)
-				<< (short)(dst - level.sectors);
+				<< (short)(line - GLevel->Lines)
+				<< (short)(dst - GLevel->Sectors);
 }
 
 //==========================================================================
@@ -1379,7 +1379,7 @@ PF(SwapPlanes)
 
 	s = (sector_t *)Pop();
 	SwapPlanes(s);
-	sv_signon << (byte)svc_swap_planes << (short)(s - level.sectors);
+	sv_signon << (byte)svc_swap_planes << (short)(s - GLevel->Sectors);
 }
 
 //==========================================================================
@@ -1394,6 +1394,22 @@ PF(MapBlock)
 
 	x = Popf();
 	Push(MapBlock(x));
+}
+
+//==========================================================================
+//
+//	PF_P_ChangeSector
+//
+//==========================================================================
+
+PF(P_ChangeSector)
+{
+	sector_t*	sec;
+	int			crunch;
+
+	crunch = Pop();
+	sec = (sector_t *)Pop();
+	Push(P_ChangeSector(sec, crunch));
 }
 
 //**************************************************************************
@@ -1904,7 +1920,7 @@ PF(SectorToNum)
 
 	sector = (sector_t*)Pop();
 	if (sector)
-		Push(sector - level.sectors);
+		Push(sector - GLevel->Sectors);
 	else
     	Push(-1);
 }
@@ -1921,7 +1937,7 @@ PF(NumToSector)
 
     num = Pop();
 	if (num >= 0)
-	    Push((int)&level.sectors[num]);
+	    Push((int)&GLevel->Sectors[num]);
 	else
     	Push(0);
 }
@@ -2065,22 +2081,6 @@ PF(P_GetPlayerNum)
 
 //==========================================================================
 //
-// 	PF_PointInSubsector
-//
-//==========================================================================
-
-PF(PointInSubsector)
-{
-	float		x;
-    float		y;
-
-    y = Popf();
-    x = Popf();
-    Push((int)SV_PointInSubsector(x, y));
-}
-
-//==========================================================================
-//
 //	PF_SB_Start
 //
 //==========================================================================
@@ -2116,7 +2116,7 @@ PF(SetFloorPic)
 
 	texture = Pop();
 	sec = (sector_t*)Pop();
-	SV_SetFloorPic(sec - level.sectors, texture);
+	SV_SetFloorPic(sec - GLevel->Sectors, texture);
 }
 
 //==========================================================================
@@ -2132,7 +2132,7 @@ PF(SetCeilPic)
 
 	texture = Pop();
 	sec = (sector_t*)Pop();
-	SV_SetCeilPic(sec - level.sectors, texture);
+	SV_SetCeilPic(sec - GLevel->Sectors, texture);
 }
 
 //==========================================================================
@@ -2164,7 +2164,7 @@ PF(SendFloorSlope)
 	sector = (sector_t*)Pop();
 	sector->floor.CalcBits();
 	sv_signon << (byte)svc_sec_floor_plane
-			<< (word)(sector - level.sectors)
+			<< (word)(sector - GLevel->Sectors)
 			<< sector->floor.normal.x
 			<< sector->floor.normal.y
 			<< sector->floor.normal.z
@@ -2184,7 +2184,7 @@ PF(SendCeilingSlope)
 	sector = (sector_t*)Pop();
 	sector->ceiling.CalcBits();
 	sv_signon << (byte)svc_sec_ceil_plane
-			<< (word)(sector - level.sectors)
+			<< (word)(sector - GLevel->Sectors)
 			<< sector->ceiling.normal.x
 			<< sector->ceiling.normal.y
 			<< sector->ceiling.normal.z
@@ -2206,7 +2206,7 @@ PF(SetSecLightColor)
 	sector = (sector_t*)Pop();
 	sector->params.LightColor = Col;
 	sv_signon << (byte)svc_sec_light_color
-			<< (word)(sector - level.sectors)
+			<< (word)(sector - GLevel->Sectors)
 			<< (byte)(Col >> 16)
 			<< (byte)(Col >> 8)
 			<< (byte)Col;
@@ -3071,6 +3071,7 @@ builtin_info_t BuiltinInfo[] =
 	_(AddExtraFloor),
 	_(SwapPlanes),
 	_(MapBlock),
+	_(P_ChangeSector),
 
 	//	Mobj utilites
     _(NewMobjThinker),
@@ -3117,7 +3118,6 @@ builtin_info_t BuiltinInfo[] =
     _(G_ExitLevel),
     _(G_SecretExitLevel),
     _(G_Completed),
-    _(PointInSubsector),
     _(P_GetPlayerNum),
     _(SB_Start),
     _(ClearPlayer),
@@ -3140,9 +3140,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.44  2002/09/07 16:31:51  dj_jl
+//	Added Level class.
+//
 //	Revision 1.43  2002/08/28 16:41:09  dj_jl
 //	Merged VMapObject with VEntity, some natives.
-//
+//	
 //	Revision 1.42  2002/07/27 18:10:11  dj_jl
 //	Implementing Strife conversations.
 //	

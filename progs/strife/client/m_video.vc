@@ -47,7 +47,7 @@ class MenuChoice_ScreenSize:MenuChoiceSlider
 		return itof(GetCvar("screen_size"));
 	}
 
-	boolean SetNewValue(float newValue)
+	bool SetNewValue(float newValue)
 	{
 		SetCvar("screen_size", ftoi(newValue));
 		return true;
@@ -74,7 +74,7 @@ class MenuChoice_Brightness:MenuChoiceSlider
 		return itof(GetCvar("brightness"));
 	}
 
-	boolean SetNewValue(float newValue)
+	bool SetNewValue(float newValue)
 	{
 		SetCvar("brightness", ftoi(newValue));
 		return true;
@@ -100,7 +100,7 @@ class MenuChoice_Darkening:MenuChoiceSlider
 		return itof(GetCvar("menu_darkening"));
 	}
 
-	boolean SetNewValue(float newValue)
+	bool SetNewValue(float newValue)
 	{
 		SetCvar("menu_darkening", ftoi(newValue));
 		return true;
@@ -126,7 +126,7 @@ class MenuChoice_Croshair:MenuChoiceEnum
 		return GetCvar("croshair");
 	}
 
-	boolean SetNewValue(int newValue)
+	bool SetNewValue(int newValue)
 	{
 		SetCvar("croshair", newValue);
 		return true;
@@ -155,7 +155,7 @@ class MenuChoice_DarkenLights:MenuChoice_OnOff
 		return GetCvar("r_darken");
 	}
 
-	boolean SetNewValue(int newValue)
+	bool SetNewValue(int newValue)
 	{
 		SetCvar("r_darken", newValue);
 		return true;
@@ -180,7 +180,7 @@ class MenuChoice_ExtraSamples:MenuChoice_OnOff
 		return GetCvar("r_extrasamples");
 	}
 
-	boolean SetNewValue(int newValue)
+	bool SetNewValue(int newValue)
 	{
 		SetCvar("r_extrasamples", newValue);
 		return true;
@@ -205,7 +205,7 @@ class MenuChoice_DynamicLights:MenuChoice_OnOff
 		return GetCvar("r_dynamic");
 	}
 
-	boolean SetNewValue(int newValue)
+	bool SetNewValue(int newValue)
 	{
 		SetCvar("r_dynamic", newValue);
 		return true;
@@ -230,7 +230,7 @@ class MenuChoice_ColoredLights:MenuChoice_OnOff
 		return GetCvar("d_colored_lights");
 	}
 
-	boolean SetNewValue(int newValue)
+	bool SetNewValue(int newValue)
 	{
 		SetCvar("d_colored_lights", newValue);
 		return true;
@@ -255,7 +255,7 @@ class MenuChoice_SpanDrawing:MenuChoiceEnum
 		return GetCvar("d_subdiv") - 1;
 	}
 
-	boolean SetNewValue(int newValue)
+	bool SetNewValue(int newValue)
 	{
 		SetCvar("d_subdiv", newValue + 1);
 		return true;
@@ -282,7 +282,7 @@ class MenuChoice_GLBlendSprites:MenuChoice_OnOff
 		return GetCvar("gl_blend_sprites");
 	}
 
-	boolean SetNewValue(int newValue)
+	bool SetNewValue(int newValue)
 	{
 		SetCvar("gl_blend_sprites", newValue);
 		return true;
@@ -307,7 +307,7 @@ class MenuChoice_D3DBlendSprites:MenuChoice_GLBlendSprites
 		return GetCvar("d3d_blend_sprites");
 	}
 
-	boolean SetNewValue(int newValue)
+	bool SetNewValue(int newValue)
 	{
 		SetCvar("d3d_blend_sprites", newValue);
 		return true;
@@ -370,6 +370,9 @@ void menu_video(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/09/07 16:28:26  dj_jl
+//  Added Level class.
+//
 //  Revision 1.9  2002/05/29 16:50:26  dj_jl
 //  Started a work on native Window classes.
 //

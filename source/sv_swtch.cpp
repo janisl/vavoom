@@ -184,9 +184,9 @@ void P_ChangeSwitchTexture(line_t* line, int useAgain)
 {
 	guard(P_ChangeSwitchTexture);
 	int sidenum = line->sidenum[0];
-    int texTop = level.sides[sidenum].toptexture;
-    int texMid = level.sides[sidenum].midtexture;
-    int texBot = level.sides[sidenum].bottomtexture;
+    int texTop = GLevel->Sides[sidenum].toptexture;
+    int texMid = GLevel->Sides[sidenum].midtexture;
+    int texBot = GLevel->Sides[sidenum].bottomtexture;
 
     for (TArray<TSwitch>::TIterator sw(Switches); sw; ++sw)
     {
@@ -235,7 +235,7 @@ void P_ChangeSwitchTexture(line_t* line, int useAgain)
 			continue;
 		}
 
-		SV_SectorStartSound(level.sides[sidenum].sector, sw->Sound, 0, 127);
+		SV_SectorStartSound(GLevel->Sides[sidenum].sector, sw->Sound, 0, 127);
 		SV_SetLineTexture(sidenum, where, toTex);
 	    if (useAgain)
 		{
@@ -329,9 +329,12 @@ int SV_TerrainType(int pic)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/09/07 16:31:51  dj_jl
+//	Added Level class.
+//
 //	Revision 1.8  2002/07/13 07:50:58  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.7  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

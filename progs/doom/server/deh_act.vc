@@ -117,7 +117,7 @@ void DropStuff(void)
 //
 //==========================================================================
 
-boolean HandlePickup(Actor Toucher)
+bool HandlePickup(Actor Toucher)
 {
 	int i;
 	name sound;
@@ -1087,10 +1087,10 @@ void A_VileChase(void)
 		viletryy = Origin.y + StepSpeed * yspeed[MoveDir];
 		vileobj = self;
 
-		xl = MapBlock(viletryx - level->bmaporgx - MAXRADIUS * 2.0);
-		xh = MapBlock(viletryx - level->bmaporgx + MAXRADIUS * 2.0);
-		yl = MapBlock(viletryy - level->bmaporgy - MAXRADIUS * 2.0);
-		yh = MapBlock(viletryy - level->bmaporgy + MAXRADIUS * 2.0);
+		xl = MapBlock(viletryx - XLevel.BlockMapOrgX - MAXRADIUS * 2.0);
+		xh = MapBlock(viletryx - XLevel.BlockMapOrgX + MAXRADIUS * 2.0);
+		yl = MapBlock(viletryy - XLevel.BlockMapOrgY - MAXRADIUS * 2.0);
+		yh = MapBlock(viletryy - XLevel.BlockMapOrgY + MAXRADIUS * 2.0);
 
 		for (bx = xl; bx <= xh; bx++)
 		{
@@ -1669,6 +1669,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/09/07 16:28:24  dj_jl
+//  Added Level class.
+//
 //  Revision 1.6  2002/08/08 18:04:40  dj_jl
 //  Fixes for renamed functions.
 //

@@ -273,8 +273,8 @@ class Actor:Entity
 	int MoveDir;	// 0-7
 	int MoveCount;	// when 0, select a new dir
 
-	boolean TestLocation(void);
-	boolean	Touch(Entity Other);
+	bool TestLocation(void);
+	bool Touch(Entity Other);
 	void PushLine(void);
 	void CrossSpecialLine(line_t *ld, int side);
 	void HandleFloorclip(void);
@@ -289,9 +289,9 @@ class Actor:Entity
 	void Kill(Actor source);
 	void MinotaurSlam(Actor Other);
 	void TouchWhirlwind(Actor Other);
-	boolean ChickenMorphPlayer(void);
-	boolean ChickenMorph(void);
-	boolean AutoUseChaosDevice(void);
+	bool ChickenMorphPlayer(void);
+	bool ChickenMorph(void);
+	bool AutoUseChaosDevice(void);
 	void AutoUseHealth(int saveHealth);
 	void Damage(Actor inflictor, Actor source, int damage);
 	void SpawnBloodSplatter(TVec org);
@@ -301,33 +301,34 @@ class Actor:Entity
 	void Thrust(float angle, float move);
 	void NightmareRespawn(void);
 
-	boolean HeightClip(void);
-	void RadiusAttack(int damage, int distance, boolean damageSource);
+	bool HeightClip(void);
+	bool SectorChanged(int CrushChange);
+	void RadiusAttack(int damage, int distance, bool damageSource);
 
 	// Physics
 	void ApplyFriction(void);
 	void XYMovement(void);
 	void ZMovement(void);
-	boolean BlasterPhysics(void);
+	bool BlasterPhysics(void);
 	void PlayerLandedOnThing(void);
-	boolean Physics(void);
+	bool Physics(void);
 
-	boolean CheckMissileSpawn(void);
+	bool CheckMissileSpawn(void);
 	Actor SpawnMissile(Actor dest, classid type);
 	Actor SpawnMissileAngles(classid type, float yaw, float pitch);
 	Actor SpawnPlayerMissile(classid type);
 	Actor SpawnPlayerMissileAngle(classid type, float angle);
-	boolean SeekerMissile(float thresh, float turnMax);
+	bool SeekerMissile(float thresh, float turnMax);
 
-	boolean TeleportMove(TVec newOrg);
-	boolean Teleport(float x, float y, float angle);
+	bool TeleportMove(TVec newOrg);
+	bool Teleport(float x, float y, float angle);
 
-	boolean CheckMeleeRange(void);
-	boolean CheckMissileRange(void);
-	boolean LookForMonsters(void);
-	boolean LookForPlayers(boolean allaround);
-	boolean StepMove(void);
-	boolean TryWalk(void);
+	bool CheckMeleeRange(void);
+	bool CheckMissileRange(void);
+	bool LookForMonsters(void);
+	bool LookForPlayers(bool allaround);
+	bool StepMove(void);
+	bool TryWalk(void);
 	void NewChaseDir(void);
 
 	// Action functions
@@ -387,14 +388,14 @@ class PlayerPawn:Pawn
 
 	bool bSafeToRemove;
 
-	boolean GiveAmmo(int ammo, int count);
-	boolean GiveWeapon(int weapon);
-	boolean GiveBody(int num);
-	boolean GiveArmor(int armortype);
-	boolean GiveKey(int key);
-	boolean GivePower(int power);
-	boolean GiveItem(int item);
-	boolean GiveArtifact(int arti);
+	bool GiveAmmo(int ammo, int count);
+	bool GiveWeapon(int weapon);
+	bool GiveBody(int num);
+	bool GiveArmor(int armortype);
+	bool GiveKey(int key);
+	bool GivePower(int power);
+	bool GiveItem(int item);
+	bool GiveArtifact(int arti);
 
 	void InventoryLeft(void);
 	void InventoryRight(void);
@@ -414,17 +415,17 @@ class PlayerPawn:Pawn
 	void PaletteFlash(void);
 	void SetViewPos(void);
 	void UseArtiTele(void);
-	boolean UseArtifact(int arti);
+	bool UseArtifact(int arti);
 	void PlayerUseArtifact(int arti);
 	void PlayerNextArtifact(void);
 	void PlayerRemoveArtifact(int slot);
 
 	void ChickenPlayerThink(void);
-	boolean UndoPlayerChicken(void);
+	bool UndoPlayerChicken(void);
 	void SetPlayerRunState(void);
 	void DeathPlayerTick(float deltaTime);
 	void UseArtiEgg(void);
-	boolean UseArtiTomeOfPower(void);
+	bool UseArtiTomeOfPower(void);
 	void UseArtiFireBomb(void);
 
 	void A_AddPlayerCorpse(void);
@@ -657,16 +658,16 @@ class BotPlayer:Object
 
 	// Destinations
 	Actor item;			// Item (roam towards weapon, etc)
-	boolean itemIsWeapon;
-	boolean itemIsPowerup;
+	bool bItemIsWeapon;
+	bool bItemIsPowerup;
 	Actor goal;			// Teamgame goal spot
 	Actor node;			// Node we're heading towards
 	Actor prev;			// Previous node we were at
 	TVec posdest;			// Position of our destination (doesn't have to be an actor)
-	boolean posdest_valid;
+	bool posdest_valid;
 	Actor enemy;			// The dead meat.
 	TVec lastpos;			// Last place we saw our enemy
-	boolean lastpos_valid;
+	bool lastpos_valid;
 	Actor missile;			// A threathing missile that got to be avoided.
 
 	Actor ally;			// Ally to tag along with
@@ -700,9 +701,9 @@ class BotPlayer:Object
 	float sidemove;
 
 	// Misc booleans
-	boolean allround;
-	boolean newItemIsWeapon;
-	boolean newItemIsPowerup;
+	bool bAllRound;
+	bool bNewItemIsWeapon;
+	bool bNewItemIsPowerup;
 
 /*	chatline_t	*chatline;	// For when t_chat expires
 
@@ -725,14 +726,14 @@ class BotPlayer:Object
 	void OnBeginPlay(void);
 	void OnSpawn(void);
 	void BotTick(float deltaTime);
-	boolean CheckTo(TVec pos);
+	bool CheckTo(TVec pos);
 	void CheckStuff(void);
 	float GetAngle(void);
-	boolean CheckPath(float ang, float dist);
+	bool CheckPath(float ang, float dist);
 	void SetEnemy(void);
 	Actor FindEnemy(void);
-	boolean Check_LOS(Actor to, float vangle);
-	boolean CheckItem(Actor item);
+	bool Check_LOS(Actor to, float vangle);
+	bool CheckItem(Actor item);
 	void Scan(void);
 	int WeapFromItem(Actor item);
 	int AmmoFromItem(Actor item);
@@ -799,7 +800,7 @@ addfields player_t
 	// Refired shots are less accurate.
 	int Refire;
 
-	boolean Backpack;
+	bool Backpack;
 
 	// Bit flags, for cheats and debug.
 	// See cheat_t, above.
@@ -808,7 +809,7 @@ addfields player_t
 	// Is wp_nochange if not changing.
 	int PendingWeapon;
 
-	boolean WeaponOwned[NUMWEAPONS];
+	bool WeaponOwned[NUMWEAPONS];
 
 	// Who did damage (NULL for floors/ceilings).
 	Actor *Attacker;
@@ -870,6 +871,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.35  2002/09/07 16:28:25  dj_jl
+//  Added Level class.
+//
 //  Revision 1.34  2002/08/28 16:36:39  dj_jl
 //  Merged MapObject with Entity, some natives, beautification.
 //

@@ -881,7 +881,7 @@ boolean NET_CanSendMessage(qsocket_t *sock)
 
 struct slist_t
 {
-	boolean		inProgress;
+	dword		bInProgress:1;
 	int			count;
 	hostcache_t	cache[HOSTCACHESIZE];
 	char		return_reason[32];
@@ -921,7 +921,7 @@ slist_t * GetSlist(void)
 		memset(m_return_reason, 0, sizeof(m_return_reason));
 	}
 
-	slist.inProgress = slistInProgress;
+	slist.bInProgress = slistInProgress;
 	slist.count = hostCacheCount;
 	memcpy(slist.cache, hostcache, sizeof(hostcache));
 	strcpy(slist.return_reason, m_return_reason);
@@ -934,9 +934,12 @@ slist_t * GetSlist(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/09/07 16:31:51  dj_jl
+//	Added Level class.
+//
 //	Revision 1.11  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.10  2002/06/14 15:41:35  dj_jl
 //	Got rid of a warning.
 //	

@@ -257,7 +257,7 @@ void F_Drawer(void)
 //
 //===========================================================================
 
-boolean F_Responder(event_t * event)
+bool F_Responder(event_t * event)
 {
 	return false;
 }
@@ -265,6 +265,9 @@ boolean F_Responder(event_t * event)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/09/07 16:28:25  dj_jl
+//  Added Level class.
+//
 //  Revision 1.8  2002/03/04 18:31:35  dj_jl
 //  Replaced bNoClip with two seperate flags, beautification.
 //

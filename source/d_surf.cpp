@@ -355,7 +355,7 @@ surfcache_t *D_CacheSkySurface(surface_t *surface, int texture1,
 
 	if (cache && cache->texture == texture1 &&
 		*(float *)&cache->dlight == offs1 &&
-		cache->Light == texture2 && cache->mipscale == offs2)
+		(int)cache->Light == texture2 && cache->mipscale == offs2)
 	{
 		return cache;
 	}
@@ -2253,9 +2253,12 @@ void D_DrawDoubleSkySurf_32(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/09/07 16:31:51  dj_jl
+//	Added Level class.
+//
 //	Revision 1.11  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
-//
+//	
 //	Revision 1.10  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
 //	

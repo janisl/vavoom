@@ -32,7 +32,7 @@
 struct scores_t
 {
 	char		name[64];
-	boolean		active;
+	dword		bActive:1;
 	int			frags[MAXPLAYERS];
 	int			killcount;
 	int			itemcount;
@@ -70,9 +70,12 @@ extern im_t				im;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/09/07 16:31:51  dj_jl
+//	Added Level class.
+//
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

@@ -39,7 +39,7 @@ Actor Spawn(classid type, TVec AOrigin);
 //
 //==========================================================================
 
-boolean Actor::GiveAmmo(int ammo, int num)
+bool Actor::GiveAmmo(int ammo, int num)
 {
 	int oldammo;
 	int max;
@@ -127,7 +127,7 @@ boolean Actor::GiveAmmo(int ammo, int num)
 //
 //==========================================================================
 
-boolean Actor::GiveWeapon(int weapon, boolean dropped)
+bool Actor::GiveWeapon(int weapon, bool dropped)
 {
 #ifdef DDF
 	if (Player->WeaponOwned[weapon])
@@ -138,8 +138,8 @@ boolean Actor::GiveWeapon(int weapon, boolean dropped)
 	Player->PendingWeapon = weapon;
 	return true;
 #else
-	boolean gaveammo;
-	boolean gaveweapon;
+	bool gaveammo;
+	bool gaveweapon;
 	int ammoCount;
 
 	ammoCount = clipammo[weapon_ammo_type[weapon]];
@@ -193,7 +193,7 @@ boolean Actor::GiveWeapon(int weapon, boolean dropped)
 //
 //==========================================================================
 
-boolean Actor::GiveBody(int num, int max)
+bool Actor::GiveBody(int num, int max)
 {
 	if (Health >= max)
 	{
@@ -218,7 +218,7 @@ boolean Actor::GiveBody(int num, int max)
 //
 //==========================================================================
 
-boolean Actor::GiveArmor(int armortype)
+bool Actor::GiveArmor(int armortype)
 {
 	int hits;
 
@@ -240,7 +240,7 @@ boolean Actor::GiveArmor(int armortype)
 //
 //==========================================================================
 
-boolean Actor::GiveArmor2(int armortype, int num, int max)
+bool Actor::GiveArmor2(int armortype, int num, int max)
 {
 	if (Player->ArmorPoints >= max)
 	{
@@ -264,7 +264,7 @@ boolean Actor::GiveArmor2(int armortype, int num, int max)
 //
 //==========================================================================
 
-boolean Actor::GiveCard(int card)
+bool Actor::GiveCard(int card)
 {
 	if (Player->Keys & (1 << card))
 		return false;
@@ -280,7 +280,7 @@ boolean Actor::GiveCard(int card)
 //
 //==========================================================================
 
-boolean Actor::GiveItem(int item)
+bool Actor::GiveItem(int item)
 {
 	if (Player->Items & item)
 	{
@@ -297,7 +297,7 @@ boolean Actor::GiveItem(int item)
 //
 //==========================================================================
 
-boolean Actor::GivePower(int power)
+bool Actor::GivePower(int power)
 {
 	if (power == pw_invulnerability)
 	{
@@ -346,7 +346,7 @@ boolean Actor::GivePower(int power)
 //
 //==========================================================================
 
-boolean Actor::GivePower2(int power, float duration, float max)
+bool Actor::GivePower2(int power, float duration, float max)
 {
 	if (Player->Powers[power] >= max)
 		return false;	// already got it
@@ -416,7 +416,7 @@ void Actor::HideSpecial(void)
 //
 //==========================================================================
 
-boolean Actor::HandlePickup(Actor Toucher)
+bool Actor::HandlePickup(Actor Toucher)
 {
 	return false;
 }
@@ -456,6 +456,9 @@ void Actor::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/09/07 16:28:24  dj_jl
+//  Added Level class.
+//
 //  Revision 1.20  2002/07/23 13:07:29  dj_jl
 //  Final touches for switching to floating-point time, beautification.
 //

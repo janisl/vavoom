@@ -2386,7 +2386,7 @@ string manaText[4] = {
 //
 //==========================================================================
 
-boolean PlayerPawn::GiveMana(int mana, int count)
+bool PlayerPawn::GiveMana(int mana, int count)
 {
 	int prevMana;
 
@@ -2435,7 +2435,7 @@ boolean PlayerPawn::GiveMana(int mana, int count)
 //
 //==========================================================================
 
-boolean PlayerPawn::GiveBody(int num)
+bool PlayerPawn::GiveBody(int num)
 {
 	int max;
 
@@ -2465,7 +2465,7 @@ boolean PlayerPawn::GiveBody(int num)
 //
 //==========================================================================
 
-boolean PlayerPawn::GiveArmor(int armortype, int amount)
+bool PlayerPawn::GiveArmor(int armortype, int amount)
 {
 	float hits;
 	float totalArmor;
@@ -2508,7 +2508,7 @@ boolean PlayerPawn::GiveArmor(int armortype, int amount)
 //
 //==========================================================================
 
-boolean PlayerPawn::GiveKey(int key)
+bool PlayerPawn::GiveKey(int key)
 {
 	if (Player->Keys & (1 << key))
 	{
@@ -2527,7 +2527,7 @@ boolean PlayerPawn::GiveKey(int key)
 //
 //==========================================================================
 
-boolean PlayerPawn::GivePower(int power)
+bool PlayerPawn::GivePower(int power)
 {
 	if (power == pw_invulnerability)
 	{
@@ -2602,11 +2602,11 @@ boolean PlayerPawn::GivePower(int power)
 //
 //==========================================================================
 
-boolean PlayerPawn::GiveArtifact(int arti)
+bool PlayerPawn::GiveArtifact(int arti)
 {
 	int i;
 	int j;
-	boolean slidePointer;
+	bool slidePointer;
 
 	slidePointer = false;
 	i = 0;
@@ -2787,9 +2787,9 @@ void Artifact::TouchSpecial(Actor Toucher)
 void WeaponPickup::TouchSpecial(Actor Toucher)
 {
 	PlayerPawn P;
-	boolean remove;
-	boolean gaveMana;
-	boolean gaveWeapon;
+	bool remove;
+	bool gaveMana;
+	bool gaveWeapon;
 
 	if (!Toucher.bPickUp)
 	{
@@ -2914,9 +2914,9 @@ void WeaponPickup::TouchSpecial(Actor Toucher)
 void WeaponPiece::TouchSpecial(Actor Toucher)
 {
 	PlayerPawn P;
-	boolean remove;
-	boolean checkAssembled;
-	boolean gaveWeapon;
+	bool remove;
+	bool checkAssembled;
+	bool gaveWeapon;
 	int gaveMana;
 
 	if (!Toucher.bPickUp)
@@ -3177,6 +3177,9 @@ void Key::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/09/07 16:28:26  dj_jl
+//  Added Level class.
+//
 //  Revision 1.23  2002/07/23 13:07:30  dj_jl
 //  Final touches for switching to floating-point time, beautification.
 //

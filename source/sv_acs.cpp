@@ -360,12 +360,12 @@ void P_LoadACScripts(boolean spawn_thinkers)
 
 	pf_TagBusy = svpr.FuncForName("TagBusy");
 
-	if (!level.behavior)
+	if (!GLevel->Behavior)
     {
 		ACScriptCount = 0;
 		return;
     }
-	header = (acsHeader_t *)level.behavior;
+	header = (acsHeader_t *)GLevel->Behavior;
 	ActionCodeBase = (byte *)header;
 	buffer = (int *)((byte *)header+header->infoOffset);
 	ACScriptCount = *buffer++;
@@ -680,7 +680,7 @@ IMPLEMENT_FUNCTION(VACS, Archive)
 
 	acs = (VACS *)PR_Pop();
 	acs->ip = (int *)((int)(acs->ip) - (int)ActionCodeBase);
-	acs->line = acs->line ? (line_t *)(acs->line - level.lines) : (line_t *)-1;
+	acs->line = acs->line ? (line_t *)(acs->line - acs->XLevel->Lines) : (line_t *)-1;
 	acs->Activator = (VEntity *)GetMobjNum(acs->Activator);
 	unguard;
 }
@@ -704,7 +704,7 @@ IMPLEMENT_FUNCTION(VACS, Unarchive)
 	}
 	else
 	{
-		acs->line = &level.lines[(int)acs->line];
+		acs->line = &acs->XLevel->Lines[(int)acs->line];
 	}
 	acs->Activator = (VEntity *)SetMobjPtr((int)acs->Activator);
 	unguard;
@@ -794,8 +794,8 @@ static int FindSectorFromTag(int tag, int start)
 {
     int	i;
 	
-    for (i = start + 1; i < level.numsectors; i++)
-		if (level.sectors[i].tag == tag)
+    for (i = start + 1; i < GLevel->NumSectors; i++)
+		if (GLevel->Sectors[i].tag == tag)
 		    return i;
     
     return -1;
@@ -1814,9 +1814,12 @@ static int CmdSetLineSpecial(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2002/09/07 16:31:51  dj_jl
+//	Added Level class.
+//
 //	Revision 1.21  2002/08/28 16:41:09  dj_jl
 //	Merged VMapObject with VEntity, some natives.
-//
+//	
 //	Revision 1.20  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
 //	

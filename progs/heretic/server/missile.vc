@@ -46,7 +46,7 @@ Actor MissileMobj;
 //
 //==========================================================================
 
-boolean Actor::CheckMissileSpawn(void)
+bool Actor::CheckMissileSpawn(void)
 {
 	// move a little forward so an angle can be computed if it
 	// immediately explodes
@@ -239,7 +239,7 @@ Actor Actor::SpawnPlayerMissileAngle(classid type, float angle)
 //
 //==========================================================================
 
-boolean Actor::SeekerMissile(float thresh, float turnMax)
+bool Actor::SeekerMissile(float thresh, float turnMax)
 {
 	int dir;
 	float dist;
@@ -296,6 +296,9 @@ boolean Actor::SeekerMissile(float thresh, float turnMax)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/09/07 16:28:25  dj_jl
+//  Added Level class.
+//
 //  Revision 1.21  2002/04/11 16:52:14  dj_jl
 //  Made TryMove native.
 //

@@ -397,7 +397,7 @@ void MStaffSpawn2(float angle)
 	if (mo)
 	{
 		mo.Instigator = self;
-		mo.Enemy = mo.RoughMonsterSearch(10);
+		mo.Enemy = Actor(mo.RoughMonsterSearch(10));
 	}
 }
 
@@ -477,6 +477,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/09/07 16:28:26  dj_jl
+//  Added Level class.
+//
 //  Revision 1.25  2002/07/13 08:01:49  dj_jl
 //  Moved some functions to the Entity class.
 //

@@ -360,37 +360,37 @@ static void AM_restoreScaleAndLoc(void)
 
 static void AM_findMinMaxBoundaries(void)
 {
-    int i;
+	int		i;
 	float	a;
 	float	b;
 
-    min_x = min_y =  99999.0;
-    max_x = max_y = -99999.0;
-  
-    for (i=0;i<cl_level.numvertexes;i++)
-    {
-		if (cl_level.vertexes[i].x < min_x)
-		    min_x = cl_level.vertexes[i].x;
-		else if (cl_level.vertexes[i].x > max_x)
-		    max_x = cl_level.vertexes[i].x;
-    
-		if (cl_level.vertexes[i].y < min_y)
-		    min_y = cl_level.vertexes[i].y;
-		else if (cl_level.vertexes[i].y > max_y)
-		    max_y = cl_level.vertexes[i].y;
-    }
-  
-    max_w = max_x - min_x;
-    max_h = max_y - min_y;
+	min_x = min_y =  99999.0;
+	max_x = max_y = -99999.0;
 
-    min_w = 2.0 * PLAYERRADIUS; // const? never changed?
-    min_h = 2.0 * PLAYERRADIUS;
+	for (i = 0; i < GClLevel->NumVertexes; i++)
+	{
+		if (GClLevel->Vertexes[i].x < min_x)
+			min_x = GClLevel->Vertexes[i].x;
+		else if (GClLevel->Vertexes[i].x > max_x)
+			max_x = GClLevel->Vertexes[i].x;
 
-    a = (float)f_w / max_w;
-    b = (float)f_h / max_h;
-  
-    min_scale_mtof = a < b ? a : b;
-    max_scale_mtof = (float)f_h / (2.0 * PLAYERRADIUS);
+		if (GClLevel->Vertexes[i].y < min_y)
+			min_y = GClLevel->Vertexes[i].y;
+		else if (GClLevel->Vertexes[i].y > max_y)
+			max_y = GClLevel->Vertexes[i].y;
+	}
+
+	max_w = max_x - min_x;
+	max_h = max_y - min_y;
+
+	min_w = 2.0 * PLAYERRADIUS;	// const? never changed?
+	min_h = 2.0 * PLAYERRADIUS;
+
+	a = (float)f_w / max_w;
+	b = (float)f_h / max_h;
+
+	min_scale_mtof = a < b ? a : b;
+	max_scale_mtof = (float)f_h / (2.0 * PLAYERRADIUS);
 }
 
 //==========================================================================
@@ -1089,34 +1089,35 @@ static void AM_drawWalls(void)
     int 			i;
     static mline_t	l;
 
-    for (i = 0; i < cl_level.numlines; i++)
+    for (i = 0; i < GClLevel->NumLines; i++)
     {
-		l.a.x = cl_level.lines[i].v1->x;
-		l.a.y = cl_level.lines[i].v1->y;
-		l.b.x = cl_level.lines[i].v2->x;
-		l.b.y = cl_level.lines[i].v2->y;
-		if (am_cheating || (cl_level.lines[i].flags & ML_MAPPED))
+		line_t &line = GClLevel->Lines[i];
+		l.a.x = line.v1->x;
+		l.a.y = line.v1->y;
+		l.b.x = line.v2->x;
+		l.b.y = line.v2->y;
+		if (am_cheating || (line.flags & ML_MAPPED))
 		{
-		    if ((cl_level.lines[i].flags & LINE_NEVERSEE) && !am_cheating)
+		    if ((line.flags & LINE_NEVERSEE) && !am_cheating)
 				continue;
-		    if (!cl_level.lines[i].backsector)
+		    if (!line.backsector)
 		    {
 				AM_drawMline(&l, WallColor);
 		    }
-			else if (cl_level.lines[i].flags & ML_SECRET) // secret door
+			else if (line.flags & ML_SECRET) // secret door
 			{
 			    if (am_cheating)
 			    	AM_drawMline(&l, SecretWallColor);
 			    else
 			    	AM_drawMline(&l, WallColor);
 			}
-			else if (cl_level.lines[i].backsector->floor.minz
-				   != cl_level.lines[i].frontsector->floor.minz)
+			else if (line.backsector->floor.minz
+				!= line.frontsector->floor.minz)
 			{
 			    AM_drawMline(&l, FDWallColor); // floor level change
 			}
-			else if (cl_level.lines[i].backsector->ceiling.maxz
-				   != cl_level.lines[i].frontsector->ceiling.maxz)
+			else if (line.backsector->ceiling.maxz
+				!= line.frontsector->ceiling.maxz)
 			{
 			    AM_drawMline(&l, CDWallColor); // ceiling level change
 			}
@@ -1127,7 +1128,7 @@ static void AM_drawWalls(void)
 		}
 		else if (cl.items & IT_ALL_MAP)
 		{
-		    if (!(cl_level.lines[i].flags & LINE_NEVERSEE))
+		    if (!(line.flags & LINE_NEVERSEE))
 		    	AM_drawMline(&l, PowerWallColor);
 		}
     }
@@ -1522,9 +1523,12 @@ void AM_Drawer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/09/07 16:31:50  dj_jl
+//	Added Level class.
+//
 //	Revision 1.13  2002/08/28 16:42:04  dj_jl
 //	Configurable entity limit.
-//
+//	
 //	Revision 1.12  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
 //	

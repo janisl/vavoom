@@ -68,6 +68,8 @@ int VEntity::FIndex_ApplyFriction;
 int VEntity::FIndex_PushLine;
 int VEntity::FIndex_HandleFloorclip;
 int VEntity::FIndex_CrossSpecialLine;
+int VEntity::FIndex_SectorChanged;
+int VEntity::FIndex_RoughCheckThing;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -371,10 +373,10 @@ boolean VEntity::CheckPosition(TVec Pos)
 	// because mobj_ts are grouped into mapblocks
 	// based on their origin point, and can overlap
 	// into adjacent blocks by up to MAXRADIUS units.
-	xl = MapBlock(cptrace.bbox[BOXLEFT] - level.bmaporgx - MAXRADIUS);
-	xh = MapBlock(cptrace.bbox[BOXRIGHT] - level.bmaporgx + MAXRADIUS);
-	yl = MapBlock(cptrace.bbox[BOXBOTTOM] - level.bmaporgy - MAXRADIUS);
-	yh = MapBlock(cptrace.bbox[BOXTOP] - level.bmaporgy + MAXRADIUS);
+	xl = MapBlock(cptrace.bbox[BOXLEFT] - XLevel->BlockMapOrgX - MAXRADIUS);
+	xh = MapBlock(cptrace.bbox[BOXRIGHT] - XLevel->BlockMapOrgX + MAXRADIUS);
+	yl = MapBlock(cptrace.bbox[BOXBOTTOM] - XLevel->BlockMapOrgY - MAXRADIUS);
+	yh = MapBlock(cptrace.bbox[BOXTOP] - XLevel->BlockMapOrgY + MAXRADIUS);
 
 	for (bx = xl; bx <= xh; bx++)
 		for (by = yl; by <= yh; by++)
@@ -382,10 +384,10 @@ boolean VEntity::CheckPosition(TVec Pos)
 				return false;
 
 	// check lines
-	xl = MapBlock(cptrace.bbox[BOXLEFT] - level.bmaporgx);
-	xh = MapBlock(cptrace.bbox[BOXRIGHT] - level.bmaporgx);
-	yl = MapBlock(cptrace.bbox[BOXBOTTOM] - level.bmaporgy);
-	yh = MapBlock(cptrace.bbox[BOXTOP] - level.bmaporgy);
+	xl = MapBlock(cptrace.bbox[BOXLEFT] - XLevel->BlockMapOrgX);
+	xh = MapBlock(cptrace.bbox[BOXRIGHT] - XLevel->BlockMapOrgX);
+	yl = MapBlock(cptrace.bbox[BOXBOTTOM] - XLevel->BlockMapOrgY);
+	yh = MapBlock(cptrace.bbox[BOXTOP] - XLevel->BlockMapOrgY);
 
 	for (bx = xl; bx <= xh; bx++)
 		for (by = yl; by <= yh; by++)
@@ -413,7 +415,7 @@ struct tmtrace_t
 	sec_plane_t *Floor;
 	sec_plane_t *Ceiling;
 
-	boolean FloatOk;	// if true, move would be ok if
+	dword bFloatOk:1;	// if true, move would be ok if
 						// within tmtrace.FloorZ - tmtrace.CeilingZ
 
 	// keep track of the line that lowers the ceiling,
@@ -674,10 +676,10 @@ boolean VEntity::CheckRelPosition(TVec Pos)
 	// into adjacent blocks by up to MAXRADIUS units.
 	if (bColideWithThings)
 	{
-		xl = MapBlock(tmtrace.BBox[BOXLEFT] - level.bmaporgx - MAXRADIUS);
-		xh = MapBlock(tmtrace.BBox[BOXRIGHT] - level.bmaporgx + MAXRADIUS);
-		yl = MapBlock(tmtrace.BBox[BOXBOTTOM] - level.bmaporgy - MAXRADIUS);
-		yh = MapBlock(tmtrace.BBox[BOXTOP] - level.bmaporgy + MAXRADIUS);
+		xl = MapBlock(tmtrace.BBox[BOXLEFT] - XLevel->BlockMapOrgX - MAXRADIUS);
+		xh = MapBlock(tmtrace.BBox[BOXRIGHT] - XLevel->BlockMapOrgX + MAXRADIUS);
+		yl = MapBlock(tmtrace.BBox[BOXBOTTOM] - XLevel->BlockMapOrgY - MAXRADIUS);
+		yh = MapBlock(tmtrace.BBox[BOXTOP] - XLevel->BlockMapOrgY + MAXRADIUS);
 
 		for (bx = xl; bx <= xh; bx++)
 			for (by = yl; by <= yh; by++)
@@ -690,10 +692,10 @@ boolean VEntity::CheckRelPosition(TVec Pos)
 	// check lines
 	if (bColideWithWorld)
 	{
-		xl = MapBlock(tmtrace.BBox[BOXLEFT] - level.bmaporgx);
-		xh = MapBlock(tmtrace.BBox[BOXRIGHT] - level.bmaporgx);
-		yl = MapBlock(tmtrace.BBox[BOXBOTTOM] - level.bmaporgy);
-		yh = MapBlock(tmtrace.BBox[BOXTOP] - level.bmaporgy);
+		xl = MapBlock(tmtrace.BBox[BOXLEFT] - XLevel->BlockMapOrgX);
+		xh = MapBlock(tmtrace.BBox[BOXRIGHT] - XLevel->BlockMapOrgX);
+		yl = MapBlock(tmtrace.BBox[BOXBOTTOM] - XLevel->BlockMapOrgY);
+		yh = MapBlock(tmtrace.BBox[BOXTOP] - XLevel->BlockMapOrgY);
 
 		for (bx = xl; bx <= xh; bx++)
 			for (by = yl; by <= yh; by++)
@@ -722,7 +724,7 @@ boolean VEntity::TryMove(TVec newPos)
 	line_t *ld;
 
 	check = CheckRelPosition(newPos);
-	tmtrace.FloatOk = false;
+	tmtrace.bFloatOk = false;
 	if (!check)
 	{
 		VEntity *O = tmtrace.BlockingMobj;
@@ -745,7 +747,7 @@ boolean VEntity::TryMove(TVec newPos)
 			return false;
 		}
 
-		tmtrace.FloatOk = true;
+		tmtrace.bFloatOk = true;
 
 		if (tmtrace.CeilingZ - Origin.z < Height && !bFly
 //			&& Class != LightningCeiling
@@ -883,7 +885,7 @@ static boolean PTR_SlideTraverse(intercept_t * in)
 	TVec hit_point;
 	opening_t *open;
 
-	if (!in->isaline)
+	if (!in->bIsALine)
 		Host_Error("PTR_SlideTraverse: not a line?");
 
 	li = in->line;
@@ -1063,7 +1065,7 @@ static boolean PTR_BounceTraverse(intercept_t * in)
 	TVec hit_point;
 	opening_t *open;
 
-	if (!in->isaline)
+	if (!in->bIsALine)
 		Host_Error("PTR_BounceTraverse: not a line?");
 
 	li = in->line;
@@ -1289,10 +1291,10 @@ VEntity *VEntity::CheckOnmobj(void)
 	// into mapblocks based on their origin point, and can overlap into adjacent
 	// blocks by up to MAXRADIUS units
 	//
-	xl = MapBlock(Origin.x - Radius - level.bmaporgx - MAXRADIUS);
-	xh = MapBlock(Origin.x + Radius - level.bmaporgx + MAXRADIUS);
-	yl = MapBlock(Origin.y - Radius - level.bmaporgy - MAXRADIUS);
-	yh = MapBlock(Origin.y + Radius - level.bmaporgy + MAXRADIUS);
+	xl = MapBlock(Origin.x - Radius - XLevel->BlockMapOrgX - MAXRADIUS);
+	xh = MapBlock(Origin.x + Radius - XLevel->BlockMapOrgX + MAXRADIUS);
+	yl = MapBlock(Origin.y - Radius - XLevel->BlockMapOrgY - MAXRADIUS);
+	yh = MapBlock(Origin.y + Radius - XLevel->BlockMapOrgY + MAXRADIUS);
 
 	for (bx = xl; bx <= xh; bx++)
 	{
@@ -1301,6 +1303,149 @@ VEntity *VEntity::CheckOnmobj(void)
 			if (!SV_BlockThingsIterator(bx, by, PIT_CheckOnmobjZ, NULL))
 			{
 				return onmobj;
+			}
+		}
+	}
+	return NULL;
+}
+
+//===========================================================================
+//
+//  VEntity::RoughBlockCheck
+//
+//===========================================================================
+
+VEntity *VEntity::RoughBlockCheck(int index)
+{
+	VEntity *link;
+
+	for (link = XLevel->BlockLinks[index]; link; link = link->BlockMapNext)
+	{
+		if (eventRoughCheckThing(link))
+		{
+			return link;
+		}
+	}
+	return NULL;
+}
+
+//===========================================================================
+//
+//	VEntity::RoughMonsterSearch
+//
+//	Searches though the surrounding mapblocks for monsters/players
+//      distance is in MAPBLOCKUNITS
+//
+//===========================================================================
+
+VEntity *VEntity::RoughMonsterSearch(int distance)
+{
+	int blockX;
+	int blockY;
+	int startX, startY;
+	int blockIndex;
+	int firstStop;
+	int secondStop;
+	int thirdStop;
+	int finalStop;
+	int count;
+	VEntity *newEnemy;
+
+	startX = MapBlock(Origin.x - XLevel->BlockMapOrgX);
+	startY = MapBlock(Origin.y - XLevel->BlockMapOrgY);
+
+	if (startX >= 0 && startX < XLevel->BlockMapWidth &&
+		startY >= 0 && startY < XLevel->BlockMapHeight)
+	{
+		newEnemy = RoughBlockCheck(startY * XLevel->BlockMapWidth + startX);
+		if (newEnemy)
+		{
+			// found a target right away
+			return newEnemy;
+		}
+	}
+	for (count = 1; count <= distance; count++)
+	{
+		blockX = startX - count;
+		blockY = startY - count;
+
+		if (blockY < 0)
+		{
+			blockY = 0;
+		}
+		else if (blockY >= XLevel->BlockMapHeight)
+		{
+			blockY = XLevel->BlockMapHeight - 1;
+		}
+		if (blockX < 0)
+		{
+			blockX = 0;
+		}
+		else if (blockX >= XLevel->BlockMapWidth)
+		{
+			blockX = XLevel->BlockMapWidth - 1;
+		}
+		blockIndex = blockY * XLevel->BlockMapWidth + blockX;
+		firstStop = startX + count;
+		if (firstStop < 0)
+		{
+			continue;
+		}
+		if (firstStop >= XLevel->BlockMapWidth)
+		{
+			firstStop = XLevel->BlockMapWidth - 1;
+		}
+		secondStop = startY + count;
+		if (secondStop < 0)
+		{
+			continue;
+		}
+		if (secondStop >= XLevel->BlockMapHeight)
+		{
+			secondStop = XLevel->BlockMapHeight - 1;
+		}
+		thirdStop = secondStop * XLevel->BlockMapWidth + blockX;
+		secondStop = secondStop * XLevel->BlockMapWidth + firstStop;
+		firstStop += blockY * XLevel->BlockMapWidth;
+		finalStop = blockIndex;
+
+		// Trace the first block section (along the top)
+		for (; blockIndex <= firstStop; blockIndex++)
+		{
+			newEnemy = RoughBlockCheck(blockIndex);
+			if (newEnemy)
+			{
+				return newEnemy;
+			}
+		}
+		// Trace the second block section (right edge)
+		for (blockIndex--; blockIndex <= secondStop;
+			blockIndex += XLevel->BlockMapWidth)
+		{
+			newEnemy = RoughBlockCheck(blockIndex);
+			if (newEnemy)
+			{
+				return newEnemy;
+			}
+		}
+		// Trace the third block section (bottom edge)
+		for (blockIndex -= XLevel->BlockMapWidth; blockIndex >= thirdStop;
+			blockIndex--)
+		{
+			newEnemy = RoughBlockCheck(blockIndex);
+			if (newEnemy)
+			{
+				return newEnemy;
+			}
+		}
+		// Trace the final block section (left edge)
+		for (blockIndex++; blockIndex > finalStop;
+			blockIndex -= XLevel->BlockMapWidth)
+		{
+			newEnemy = RoughBlockCheck(blockIndex);
+			if (newEnemy)
+			{
+				return newEnemy;
 			}
 		}
 	}
@@ -1510,6 +1655,13 @@ IMPLEMENT_FUNCTION(VEntity, CanSee)
 	PR_Push(Self->CanSee(Other));
 }
 
+IMPLEMENT_FUNCTION(VEntity, RoughMonsterSearch)
+{
+	int Distance = PR_Pop();
+	VEntity *Self = (VEntity *)PR_Pop();
+	PR_Push((int)Self->RoughMonsterSearch(Distance));
+}
+
 //===========================================================================
 //
 //  VViewEntity::SetState
@@ -1573,6 +1725,8 @@ void VEntity::InitFuncIndexes(void)
 	FIndex_PushLine = StaticClass()->GetFunctionIndex("PushLine");
 	FIndex_HandleFloorclip = StaticClass()->GetFunctionIndex("HandleFloorclip");
 	FIndex_CrossSpecialLine = StaticClass()->GetFunctionIndex("CrossSpecialLine");
+	FIndex_SectorChanged = StaticClass()->GetFunctionIndex("SectorChanged");
+	FIndex_RoughCheckThing = StaticClass()->GetFunctionIndex("RoughCheckThing");
 }
 
 //==========================================================================
@@ -1598,9 +1752,12 @@ void EntInit(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/09/07 16:31:51  dj_jl
+//	Added Level class.
+//
 //	Revision 1.9  2002/08/28 16:41:09  dj_jl
 //	Merged VMapObject with VEntity, some natives.
-//
+//	
 //	Revision 1.8  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
 //	

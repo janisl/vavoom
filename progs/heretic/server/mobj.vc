@@ -473,7 +473,7 @@ void Actor::TouchWhirlwind(Actor Other)
 //
 //==========================================================================
 
-boolean Actor::ChickenMorphPlayer(void)
+bool Actor::ChickenMorphPlayer(void)
 {
 	Actor fog;
 	Actor chicken;
@@ -524,7 +524,7 @@ boolean Actor::ChickenMorphPlayer(void)
 //
 //==========================================================================
 
-boolean Actor::ChickenMorph(void)
+bool Actor::ChickenMorph(void)
 {
 	Actor fog;
 	Actor chicken;
@@ -567,7 +567,7 @@ boolean Actor::ChickenMorph(void)
 //
 //==========================================================================
 
-boolean Actor::AutoUseChaosDevice(void)
+bool Actor::AutoUseChaosDevice(void)
 {
 	int i;
 
@@ -1068,7 +1068,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 //
 //==========================================================================
 
-void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
+void P_SpawnMapThing(mthing_t * mthing, bool spawn_thinkers)
 {
 	int i;
 	int bit;
@@ -1325,10 +1325,10 @@ void P_RecursiveSound(sector_t * sec, int soundblocks)
 				continue;	// closed door
 		}
 
-		if (level->sides[check->sidenum[0]].sector == sec)
-			other = level->sides[check->sidenum[1]].sector;
+		if (GLevel.Sides[check->sidenum[0]].sector == sec)
+			other = GLevel.Sides[check->sidenum[1]].sector;
 		else
-			other = level->sides[check->sidenum[0]].sector;
+			other = GLevel.Sides[check->sidenum[0]].sector;
 
 		if (check->flags & ML_SOUNDBLOCK)
 		{
@@ -1405,6 +1405,9 @@ void Actor::NightmareRespawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.48  2002/09/07 16:28:25  dj_jl
+//  Added Level class.
+//
 //  Revision 1.47  2002/07/23 16:31:44  dj_jl
 //  Beautification.
 //

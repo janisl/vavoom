@@ -54,29 +54,29 @@ struct tagged_line_t
 //
 //  Thing specials
 //
-boolean EV_ThingProjectile(int *args, boolean gravity);
-boolean EV_ThingSpawn(int *args, boolean fog);
-boolean EV_ThingActivate(int tid);
-boolean EV_ThingDeactivate(int tid);
-boolean EV_ThingRemove(int tid);
-boolean EV_ThingDestroy(int tid);
+bool EV_ThingProjectile(int *args, bool gravity);
+bool EV_ThingSpawn(int *args, bool fog);
+bool EV_ThingActivate(int tid);
+bool EV_ThingDeactivate(int tid);
+bool EV_ThingRemove(int tid);
+bool EV_ThingDestroy(int tid);
 
 //
 //  Teleportation
 //
-boolean EV_Teleport(int tid, Actor thing, boolean fog);
-boolean EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
-							boolean reverse);
+bool EV_Teleport(int tid, Actor thing, bool fog);
+bool EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
+							bool reverse);
 
 //
 //  Quake
 //
-boolean A_LocalQuake(int *args);
+bool A_LocalQuake(int *args);
 
 //
 //
 //
-boolean EV_LineSearchForPuzzleItem(line_t * line, int *args, Actor A);
+bool EV_LineSearchForPuzzleItem(line_t * line, int *args, Actor A);
 void InitLava(void);
 
 // DATA DECLARATIONS -------------------------------------------------------
@@ -106,7 +106,7 @@ string TextKeyMessages[] = {
 //
 //============================================================================
 
-boolean CheckedLockedDoor(Actor A, int lock)
+bool CheckedLockedDoor(Actor A, int lock)
 {
 	if (!A.bIsPlayer)
 	{
@@ -131,7 +131,7 @@ boolean CheckedLockedDoor(Actor A, int lock)
 //
 //==========================================================================
 
-boolean StartLockedACS(line_t * line, int *args, Actor A, int side)
+bool StartLockedACS(line_t * line, int *args, Actor A, int side)
 {
 	int i;
 	int newArgs[5];
@@ -154,10 +154,10 @@ boolean StartLockedACS(line_t * line, int *args, Actor A, int side)
 //
 //=========================================================================
 
-boolean EV_SectorSoundChange(int *args)
+bool EV_SectorSoundChange(int *args)
 {
 	int secNum;
-	boolean rtn;
+	bool rtn;
 
 	if (!args[0])
 	{
@@ -168,7 +168,7 @@ boolean EV_SectorSoundChange(int *args)
 	for (secNum = FindSectorFromTag(args[0], -1); secNum >= 0;
 		secNum = FindSectorFromTag(args[0], secNum))
 	{
-		level->sectors[secNum].seqType = args[1];
+		GLevel.Sectors[secNum].seqType = args[1];
 		rtn = true;
 	}
 	return rtn;
@@ -180,10 +180,10 @@ boolean EV_SectorSoundChange(int *args)
 //
 //==========================================================================
 
-boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
+bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	Actor A)
 {
-	boolean buttonSuccess;
+	bool buttonSuccess;
 
 	buttonSuccess = false;
 	switch (special)
@@ -518,12 +518,11 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 //
 //============================================================================
 
-boolean P_ActivateLine(line_t * line, Actor A, int side,
-	int activationType)
+bool P_ActivateLine(line_t * line, Actor A, int side, int activationType)
 {
 	int lineActivation;
-	boolean repeat;
-	boolean buttonSuccess;
+	bool repeat;
+	bool buttonSuccess;
 
 	lineActivation = GET_SPAC(line->flags);
 	if (lineActivation != activationType)
@@ -564,7 +563,7 @@ boolean P_ActivateLine(line_t * line, Actor A, int side,
 //
 //============================================================================
 
-void P_SpawnSpecials(boolean spawn_thinkers)
+void P_SpawnSpecials(bool spawn_thinkers)
 {
 	sector_t *sector;
 	int i;
@@ -577,9 +576,9 @@ void P_SpawnSpecials(boolean spawn_thinkers)
 		//
 		//      Init special SECTORs
 		//
-		for (i = 0; i < level->numsectors; i++)
+		for (i = 0; i < GLevel.NumSectors; i++)
 		{
-			sector = &level->sectors[i];
+			sector = &GLevel.Sectors[i];
 			if (!sector->special)
 				continue;
 			switch (sector->special)
@@ -638,65 +637,65 @@ void P_SpawnSpecials(boolean spawn_thinkers)
 		//
 		//      Init line EFFECTs
 		//
-		for (i = 0; i < level->numlines; i++)
+		for (i = 0; i < GLevel.NumLines; i++)
 		{
-			switch (level->lines[i].special)
+			switch (GLevel.Lines[i].special)
 			{
 			case 100:	// Scroll_Texture_Left
-				SpawnWallScroller(&level->lines[i], 1, 0);
+				SpawnWallScroller(&GLevel.Lines[i], 1, 0);
 				break;
 			case 101:	// Scroll_Texture_Right
-				SpawnWallScroller(&level->lines[i], -1, 0);
+				SpawnWallScroller(&GLevel.Lines[i], -1, 0);
 				break;
 			case 102:	// Scroll_Texture_Up
-				SpawnWallScroller(&level->lines[i], 0, 1);
+				SpawnWallScroller(&GLevel.Lines[i], 0, 1);
 				break;
 			case 103:	// Scroll_Texture_Down
-				SpawnWallScroller(&level->lines[i], 0, -1);
+				SpawnWallScroller(&GLevel.Lines[i], 0, -1);
 				break;
 			}
 		}
 	}
 
 	TaggedLineCount = 0;
-	for (i = 0; i < level->numlines; i++)
+	for (i = 0; i < GLevel.NumLines; i++)
 	{
-		switch (level->lines[i].special)
+		switch (GLevel.Lines[i].special)
 		{
 		case 121:	// Line_SetIdentification
 		case 208:	// TranslucentLine
 		case 215:	// Teleport_Line
-			if (level->lines[i].arg1)
+			if (GLevel.Lines[i].arg1)
 			{
 				if (TaggedLineCount == MAX_TAGGED_LINES)
 				{
 					Error("P_SpawnSpecials: MAX_TAGGED_LINES exceeded.");
 				}
-				TaggedLines[TaggedLineCount].line = &level->lines[i];
-				TaggedLines[TaggedLineCount++].lineTag = level->lines[i].arg1;
+				TaggedLines[TaggedLineCount].line = &GLevel.Lines[i];
+				TaggedLines[TaggedLineCount++].lineTag = GLevel.Lines[i].arg1;
 			}
-			if (level->lines[i].special == 121)
+			if (GLevel.Lines[i].special == 121)
 			{
-				level->lines[i].special = 0;
+				GLevel.Lines[i].special = 0;
 			}
 			break;
 		}
 	}
 
 	//	Process translucent lines
-	for (i = 0; i < level->numlines; i++)
+	for (i = 0; i < GLevel.NumLines; i++)
 	{
-		if (level->lines[i].special != 208)
+		if (GLevel.Lines[i].special != 208)
 		{
 			continue;
 		}
 
-		int trans = (255 - level->lines[i].arg2) * 100 / 255;
-		if (level->lines[i].arg1)
+		int trans = (255 - GLevel.Lines[i].arg2) * 100 / 255;
+		if (GLevel.Lines[i].arg1)
 		{
 			for (j = 0; j < TaggedLineCount; j++)
 			{
-				if (TaggedLines[j].lineTag == level->lines[i].arg1)
+				if (TaggedLines[j].lineTag == GLevel.Lines[i].arg1)
 				{
 					SetLineTransluc(TaggedLines[j].line, trans);
 				}
@@ -704,9 +703,9 @@ void P_SpawnSpecials(boolean spawn_thinkers)
 		}
 		else
 		{
-			SetLineTransluc(&level->lines[i], trans);
+			SetLineTransluc(&GLevel.Lines[i], trans);
 		}
-		level->lines[i].special = 0;
+		GLevel.Lines[i].special = 0;
 	}
 }
 
@@ -745,6 +744,9 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/09/07 16:28:26  dj_jl
+//  Added Level class.
+//
 //  Revision 1.21  2002/03/16 17:47:47  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

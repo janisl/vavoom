@@ -47,7 +47,7 @@ void MakeFloorSlope(mthing_t * mthing)
 	line_t *line;
 	int i;
 
-	sec = PointInSubsector(mthing->x, mthing->y)->sector;
+	sec = GLevel.PointInSector(vector(mthing->x, mthing->y, 0.0));
 	for (i = 0; i < sec->linecount; i++)
 	{
 		line = sec->lines[i];
@@ -97,7 +97,7 @@ void MakeCeilingSlope(mthing_t * mthing)
 	line_t *line;
 	int i;
 
-	sec = PointInSubsector(mthing->x, mthing->y)->sector;
+	sec = GLevel.PointInSector(vector(mthing->x, mthing->y, 0.0));
 	for (i = 0; i < sec->linecount; i++)
 	{
 		line = sec->lines[i];
@@ -141,29 +141,30 @@ void MakeCeilingSlope(mthing_t * mthing)
 //
 //==========================================================================
 
-boolean SetVertexHeights(int ThingID)
+bool SetVertexHeights(int ThingID)
 {
 	int i;
 	int j;
-	boolean ret = false;
+	bool ret;
 	mthing_t * mthing;
 	
+	ret = false;
 	//	Clean all
-	for (i = 0; i < level->numvertexes; i++)
+	for (i = 0; i < GLevel.NumVertexes; i++)
 	{
-		level->vertexes[i].z = 0.1;
+		GLevel.Vertexes[i].z = 0.1;
 	}
-	for (j = 0; j < level->numthings; j++)
+	for (j = 0; j < GLevel.NumThings; j++)
 	{
-		mthing = &level->things[j];
+		mthing = &GLevel.Things[j];
 		if (mthing->type == ThingID)
 		{
-			for (i = 0; i < level->numvertexes; i++)
+			for (i = 0; i < GLevel.NumVertexes; i++)
 			{
-				if (level->vertexes[i].x == mthing->x &&
-					level->vertexes[i].y == mthing->y)
+				if (GLevel.Vertexes[i].x == mthing->x &&
+					GLevel.Vertexes[i].y == mthing->y)
 				{
-					level->vertexes[i].z = mthing->height;
+					GLevel.Vertexes[i].z = mthing->height;
 					ret = true;
 				}
 			}
@@ -182,9 +183,9 @@ void CleanVertexHeights(void)
 {
 	int i;
 	
-	for (i = 0; i < level->numvertexes; i++)
+	for (i = 0; i < GLevel.NumVertexes; i++)
 	{
-		level->vertexes[i].z = 0.0;
+		GLevel.Vertexes[i].z = 0.0;
 	}
 }
 
@@ -208,9 +209,9 @@ void MakeVertexFloorHeights(void)
 	{
 		return;
 	}
-	for (i = 0; i < level->numsectors; i++)
+	for (i = 0; i < GLevel.NumSectors; i++)
 	{
-		sec = &level->sectors[i];
+		sec = &GLevel.Sectors[i];
 		if (sec->linecount != 3)
 			continue;
 		p1 = *sec->lines[0]->v1;
@@ -281,9 +282,9 @@ void MakeVertexCeilingHeights(void)
 	{
 		return;
 	}
-	for (i = 0; i < level->numsectors; i++)
+	for (i = 0; i < GLevel.NumSectors; i++)
 	{
-		sec = &level->sectors[i];
+		sec = &GLevel.Sectors[i];
 		if (sec->linecount != 3)
 			continue;
 		p1 = *sec->lines[0]->v1;
@@ -428,13 +429,13 @@ void SetSlopes(void)
 {
 	int i, s;
 
-	for (i = 0; i < level->numlines; i++)
+	for (i = 0; i < GLevel.NumLines; i++)
 	{
-		if (level->lines[i].special == 181)
+		if (GLevel.Lines[i].special == 181)
 		{
-			level->lines[i].special = 0;
-//			level->lines[i].id = lines[i].args[2];
-			if (level->lines[i].backsector != NULL)
+			GLevel.Lines[i].special = 0;
+//			GLevel.Lines[i].id = GLevel.Lines[i].args[2];
+			if (GLevel.Lines[i].backsector != NULL)
 			{
 				// args[0] is for floor, args[1] is for ceiling
 				//
@@ -442,18 +443,18 @@ void SetSlopes(void)
 				// then args[0], bits 2-3 are for ceiling.
 				for (s = 0; s < 2; s++)
 				{
-					int bits = (s == 0 ? level->lines[i].arg1 :
- 						level->lines[i].arg2) & 3;
+					int bits = (s == 0 ? GLevel.Lines[i].arg1 :
+ 						GLevel.Lines[i].arg2) & 3;
 
 					if (s == 1 && bits == 0)
-						bits = (level->lines[i].arg1 >> 2) & 3;
+						bits = (GLevel.Lines[i].arg1 >> 2) & 3;
 
 					if (bits == 1)			// align front side to back
-						AlignPlane(level->lines[i].frontsector,
-							&level->lines[i], s);
+						AlignPlane(GLevel.Lines[i].frontsector,
+							&GLevel.Lines[i], s);
 					else if (bits == 2)		// align back side to front
-						AlignPlane(level->lines[i].backsector,
-							&level->lines[i], s);
+						AlignPlane(GLevel.Lines[i].backsector,
+							&GLevel.Lines[i], s);
 				}
 			}
 		}
@@ -470,11 +471,11 @@ void SpawnExtraFloors(line_t * line)
 {
 	int j;
 
-	for (j = 0; j < level->numsectors; j++)
+	for (j = 0; j < GLevel.NumSectors; j++)
 	{
-		if (line->arg1 == level->sectors[j].tag)
+		if (line->arg1 == GLevel.Sectors[j].tag)
 		{
-			AddExtraFloor(line, &level->sectors[j]);
+			AddExtraFloor(line, &GLevel.Sectors[j]);
 		}
 	}
 }
@@ -541,9 +542,9 @@ void SpawnWorld(void)
 
 	//  Spawn slopes first
 	SetSlopes();
-	for (i = 0; i < level->numthings; i++)
+	for (i = 0; i < GLevel.NumThings; i++)
 	{
-		mthing = &level->things[i];
+		mthing = &GLevel.Things[i];
 
 		if (mthing->type == 1500)
 		{
@@ -564,15 +565,15 @@ void SpawnWorld(void)
 	CleanVertexHeights();
 
 	//  Spawn 3D floors
-	for (i = 0; i < level->numlines; i++)
+	for (i = 0; i < GLevel.NumLines; i++)
 	{
-		if (level->lines[i].special == 160)
+		if (GLevel.Lines[i].special == 160)
 		{
-			SpawnExtraFloors(&level->lines[i]);
+			SpawnExtraFloors(&GLevel.Lines[i]);
 		}
-		if (level->lines[i].special == 161)
+		if (GLevel.Lines[i].special == 161)
 		{
-			MakeContents(&level->lines[i]);
+			MakeContents(&GLevel.Lines[i]);
 		}
 	}
 }
@@ -580,6 +581,9 @@ void SpawnWorld(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/09/07 16:28:25  dj_jl
+//  Added Level class.
+//
 //  Revision 1.6  2002/08/28 16:36:39  dj_jl
 //  Merged MapObject with Entity, some natives, beautification.
 //

@@ -29,7 +29,7 @@
 //
 //==========================================================================
 
-boolean Pawn::Activate(void)
+bool Pawn::Activate(void)
 {
 	// Monster
 	if (bDormant)
@@ -47,7 +47,7 @@ boolean Pawn::Activate(void)
 //
 //==========================================================================
 
-boolean Pawn::Deactivate(void)
+bool Pawn::Deactivate(void)
 {
 	// Monster
 	if (!bDormant)
@@ -790,6 +790,9 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.31  2002/09/07 16:28:26  dj_jl
+//  Added Level class.
+//
 //  Revision 1.30  2002/07/23 13:07:30  dj_jl
 //  Final touches for switching to floating-point time, beautification.
 //

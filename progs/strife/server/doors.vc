@@ -220,7 +220,7 @@ int EV_DoDoor(line_t * line, int *args, int type)
 
 	while ((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
 	{
-		sec = &level->sectors[secnum];
+		sec = &GLevel.Sectors[secnum];
 		if (sec->SpecialData)
 			continue;
 
@@ -326,7 +326,7 @@ int EV_VerticalDoor(line_t * line, Actor thing)
 	speed = itof(line->arg2) * 4.0;
 
 	// if the sector has an active thinker, use it
-	sec = level->sides[line->sidenum[side ^ 1]].sector;
+	sec = GLevel.Sides[line->sidenum[side ^ 1]].sector;
 
 	if (sec->SpecialData)
 	{
@@ -429,6 +429,9 @@ void P_SpawnDoorRaiseIn5Mins(sector_t * sec)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/09/07 16:28:26  dj_jl
+//  Added Level class.
+//
 //  Revision 1.13  2002/04/11 16:48:10  dj_jl
 //  New base classes for sector thinkers, Tick function.
 //

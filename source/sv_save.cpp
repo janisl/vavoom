@@ -540,72 +540,6 @@ static void UnarchivePlayers(void)
 
 //==========================================================================
 //
-//	CalcSecMinMaxs
-//
-//==========================================================================
-
-static void CalcSecMinMaxs(sector_t *sector)
-{
-	guard(CalcSecMinMaxs);
-	float	minz;
-	float	maxz;
-	int		i;
-
-	if (sector->floor.normal.z == 1.0)
-	{
-		//	Horisontal floor
-		sector->floor.minz = sector->floor.dist;
-		sector->floor.maxz = sector->floor.dist;
-	}
-	else
-	{
-		//	Sloped floor
-		minz = 99999.0;
-		maxz = -99999.0;
-		for (i = 0; i < sector->linecount; i++)
-		{
-			float z;
-			z = sector->floor.GetPointZ(*sector->lines[i]->v1);
-			if (minz > z)
-				minz = z;
-			if (maxz < z)
-				maxz = z;
-		}
-		sector->floor.minz = minz;
-		sector->floor.maxz = maxz;
-	}
-
-	if (sector->ceiling.normal.z == -1.0)
-	{
-		//	Horisontal ceiling
-		sector->ceiling.minz = -sector->ceiling.dist;
-		sector->ceiling.maxz = -sector->ceiling.dist;
-	}
-	else
-	{
-		//	Sloped ceiling
-		minz = 99999.0;
-		maxz = -99999.0;
-		for (i = 0; i < sector->linecount; i++)
-		{
-			float z;
-			z = sector->ceiling.GetPointZ(*sector->lines[i]->v1);
-			if (minz > z)
-				minz = z;
-			if (maxz < z)
-				maxz = z;
-		}
-		sector->ceiling.minz = minz;
-		sector->ceiling.maxz = maxz;
-	}
-
-	sector->floorheight = sector->floor.minz;
-	sector->ceilingheight = sector->ceiling.maxz;
-	unguard;
-}
-
-//==========================================================================
-//
 //	Level__Serialize
 //
 //==========================================================================
@@ -622,7 +556,7 @@ static void Level__Serialize(FArchive &Ar)
 	//
 	//	Sectors
 	//
-	for (i = 0, sec = level.sectors; i < level.numsectors; i++, sec++)
+	for (i = 0, sec = GLevel->Sectors; i < GLevel->NumSectors; i++, sec++)
 	{
 		Ar << sec->floor.dist
 			<< sec->ceiling.dist
@@ -641,7 +575,7 @@ static void Level__Serialize(FArchive &Ar)
 	//
 	//	Lines
 	//
-	for (i = 0, li = level.lines; i < level.numlines; i++, li++)
+	for (i = 0, li = GLevel->Lines; i < GLevel->NumLines; i++, li++)
 	{
 		Ar << li->flags
 			<< li->special
@@ -656,7 +590,7 @@ static void Level__Serialize(FArchive &Ar)
 			{
 				continue;
 			}
-			si = &level.sides[li->sidenum[j]];
+			si = &GLevel->Sides[li->sidenum[j]];
 			Ar << si->textureoffset 
 				<< si->rowoffset
 				<< si->toptexture 
@@ -668,13 +602,13 @@ static void Level__Serialize(FArchive &Ar)
 	//
 	//	Polyobjs
 	//
-	for (i = 0; i < level.numpolyobjs; i++)
+	for (i = 0; i < GLevel->NumPolyObjs; i++)
 	{
 		if (Ar.IsSaving())
 		{
-			Ar << level.polyobjs[i].angle
-				<< level.polyobjs[i].startSpot.x
-				<< level.polyobjs[i].startSpot.y;
+			Ar << GLevel->PolyObjs[i].angle
+				<< GLevel->PolyObjs[i].startSpot.x
+				<< GLevel->PolyObjs[i].startSpot.y;
 		}
 		else
 		{
@@ -683,10 +617,10 @@ static void Level__Serialize(FArchive &Ar)
 			Ar << angle 
 				<< polyX 
 				<< polyY;
-			PO_RotatePolyobj(level.polyobjs[i].tag, angle);
-			PO_MovePolyobj(level.polyobjs[i].tag, 
-				polyX - level.polyobjs[i].startSpot.x, 
-				polyY - level.polyobjs[i].startSpot.y);
+			PO_RotatePolyobj(GLevel->PolyObjs[i].tag, angle);
+			PO_MovePolyobj(GLevel->PolyObjs[i].tag, 
+				polyX - GLevel->PolyObjs[i].startSpot.x, 
+				polyY - GLevel->PolyObjs[i].startSpot.y);
 		}
 	}
 	unguard;
@@ -1499,9 +1433,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2002/09/07 16:31:51  dj_jl
+//	Added Level class.
+//
 //	Revision 1.29  2002/08/28 16:41:09  dj_jl
 //	Merged VMapObject with VEntity, some natives.
-//
+//	
 //	Revision 1.28  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
 //	

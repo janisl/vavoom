@@ -76,7 +76,7 @@ class Chicken:Pawn
 //
 //==========================================================================
 
-boolean UpdateChicken(int tics)
+bool UpdateChicken(int tics)
 {
 	Actor fog;
 	classid moType;
@@ -257,6 +257,9 @@ void Pawn::A_Feathers(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/09/07 16:28:25  dj_jl
+//  Added Level class.
+//
 //  Revision 1.23  2002/07/13 08:01:49  dj_jl
 //  Moved some functions to the Entity class.
 //

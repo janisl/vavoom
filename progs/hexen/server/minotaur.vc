@@ -234,8 +234,46 @@ int FloorFireState;
 int FloorFireRefireState;
 int ChargeState;
 
-#define MINOTAUR_LOOK_DIST		(16.0 * 54.0)
-#define MNTR_CHARGE_SPEED		805.0
+float MinotaurLookDist;
+float ChargeSpeed;
+
+//===========================================================================
+//
+//  RoughCheckThing
+//
+//===========================================================================
+
+bool RoughCheckThing(Entity Other)
+{
+	Actor link = Actor(Other);
+	
+	if (!link.bCountKill && (!link.bIsPlayer || link == *_SpecialMobj1))
+	{
+		return false;
+	}
+	if (!link.bShootable)
+	{
+		return false;
+	}
+	if (link.bDormant)
+	{
+		return false;
+	}
+	if ((link.Class == Minotaur) &&
+		(link._SpecialMobj1 == _SpecialMobj1))
+	{
+		return false;
+	}
+	if (netgame && !deathmatch && link.bIsPlayer)
+	{
+		return false;
+	}
+	if (!CanSee(link))
+	{
+		return false;
+	}
+	return true;
+}
 
 //============================================================================
 //
@@ -301,7 +339,7 @@ void A_MinotaurLook(void)
 			if (mo.Health <= 0)
 				continue;
 			dist = MobjDist(self, mo);
-			if (dist > MINOTAUR_LOOK_DIST)
+			if (dist > MinotaurLookDist)
 				continue;
 			Enemy = mo;
 			break;
@@ -311,9 +349,9 @@ void A_MinotaurLook(void)
 	if (!Enemy)	// Near player monster search
 	{
 		if (master && (master.Health > 0) && master.bIsPlayer)
-			Enemy = master.RoughMonsterSearch(20);
+			Enemy = Actor(master.RoughMonsterSearch(20));
 		else
-			Enemy = RoughMonsterSearch(20);
+			Enemy = Actor(RoughMonsterSearch(20));
 	}
 
 	if (!Enemy)	// Normal monster search
@@ -327,7 +365,7 @@ void A_MinotaurLook(void)
 			if (!mo.bShootable)
 				continue;
 			dist = MobjDist(self, mo);
-			if (dist > MINOTAUR_LOOK_DIST)
+			if (dist > MinotaurLookDist)
 				continue;
 			if ((mo == master) || (mo == self))
 				continue;
@@ -496,7 +534,7 @@ void A_MinotaurDecide(void)
 		SetState(ChargeState);
 		bSkullFly = true;
 		A_FaceTarget();
-		Velocity = Normalize(Enemy.Origin - Origin) * MNTR_CHARGE_SPEED;
+		Velocity = Normalize(Enemy.Origin - Origin) * ChargeSpeed;
 		Args[4] = 35 / 2;	// Charge duration
 	}
 	else if (Enemy.Origin.z == Enemy.FloorZ &&
@@ -730,6 +768,8 @@ defaultproperties
 	PainChance = 0.09765625;
 	MissileDamage = 7;
 	Translucency = 66;
+	ChargeSpeed = 805.0;
+	MinotaurLookDist = 16.0 * 54.0;
 	IdleState = S_MNTR_SPAWN1;
 	LookState = S_MNTR_LOOK1;
 	SeeState = S_MNTR_WALK1;
@@ -869,6 +909,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.34  2002/09/07 16:28:26  dj_jl
+//  Added Level class.
+//
 //  Revision 1.33  2002/08/05 17:17:21  dj_jl
 //  Working on models.
 //

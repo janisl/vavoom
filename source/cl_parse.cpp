@@ -80,7 +80,6 @@ void CL_Clear(void)
 	    // Make sure all sounds are stopped before Z_FreeTags.
 	    S_StopAllSound();
 		Z_FreeTag(PU_LEVEL);
-		Z_FreeTag(PU_LEVSPEC);
 	}
 	cls.signon = 0;
 
@@ -232,47 +231,6 @@ static void CL_ParseUpdateMobj(void)
 	unguard;
 }
 
-//==========================================================================
-//
-//	CalcSecMinMaxs
-//
-//==========================================================================
-
-static void CalcSecMinMaxs(sector_t *sector)
-{
-	float	minz;
-	float	maxz;
-	int		i;
-
-	minz = 99999.0;
-	maxz = -99999.0;
-	for (i = 0; i < sector->linecount; i++)
-	{
-		float z;
-		z = sector->floor.GetPointZ(*sector->lines[i]->v1);
-		if (minz > z)
-			minz = z;
-		if (maxz < z)
-			maxz = z;
-	}
-	sector->floor.minz = minz;
-	sector->floor.maxz = maxz;
-
-	minz = 99999.0;
-	maxz = -99999.0;
-	for (i = 0; i < sector->linecount; i++)
-	{
-		float z;
-		z = sector->ceiling.GetPointZ(*sector->lines[i]->v1);
-		if (minz > z)
-			minz = z;
-		if (maxz < z)
-			maxz = z;
-	}
-	sector->ceiling.minz = minz;
-	sector->ceiling.maxz = maxz;
-}
-
 static void CL_ParseSecUpdate(void)
 {
 	int			bits;
@@ -285,21 +243,21 @@ static void CL_ParseSecUpdate(void)
 		i = net_msg.ReadByte();
 
 	if (bits & SUB_FLOOR)
-		cl_level.sectors[i].floor.dist = net_msg.ReadShort();
+		GClLevel->Sectors[i].floor.dist = net_msg.ReadShort();
 	if (bits & SUB_CEIL)
-		cl_level.sectors[i].ceiling.dist = net_msg.ReadShort();
+		GClLevel->Sectors[i].ceiling.dist = net_msg.ReadShort();
 	if (bits & SUB_LIGHT)
-		cl_level.sectors[i].params.lightlevel = net_msg.ReadByte() << 2;
+		GClLevel->Sectors[i].params.lightlevel = net_msg.ReadByte() << 2;
 	if (bits & SUB_FLOOR_X)
-		cl_level.sectors[i].floor.xoffs = net_msg.ReadByte() & 63;
+		GClLevel->Sectors[i].floor.xoffs = net_msg.ReadByte() & 63;
 	if (bits & SUB_FLOOR_Y)
-		cl_level.sectors[i].floor.yoffs = net_msg.ReadByte() & 63;
+		GClLevel->Sectors[i].floor.yoffs = net_msg.ReadByte() & 63;
 	if (bits & SUB_CEIL_X)
-		cl_level.sectors[i].ceiling.xoffs = net_msg.ReadByte() & 63;
+		GClLevel->Sectors[i].ceiling.xoffs = net_msg.ReadByte() & 63;
 	if (bits & SUB_CEIL_Y)
-		cl_level.sectors[i].ceiling.yoffs = net_msg.ReadByte() & 63;
+		GClLevel->Sectors[i].ceiling.yoffs = net_msg.ReadByte() & 63;
 	if (bits & (SUB_FLOOR | SUB_CEIL))
-		CalcSecMinMaxs(&cl_level.sectors[i]);
+		CalcSecMinMaxs(&GClLevel->Sectors[i]);
 }
 
 static void CL_ParseViewData(void)
@@ -419,7 +377,7 @@ static void CL_ParseStopSeq(void)
 static void CL_ParseTime()
 {
 	guard(CL_ParseTime);
-	int		new_time;
+	float	new_time;
 	int		i;
 
 	if (cls.signon == SIGNONS - 1)
@@ -432,9 +390,9 @@ static void CL_ParseTime()
 	if (cls.signon != SIGNONS)
 		Sys_Error("Update when at %d", cls.signon);
 
-	for (i = 0; i < cl_level.numsectors; i++)
+	for (i = 0; i < GClLevel->NumSectors; i++)
 	{
-		sector_t &sec = cl_level.sectors[i];
+		sector_t &sec = GClLevel->Sectors[i];
 		if (sec.floor.dist != sec.base_floorheight ||
 			sec.ceiling.dist != sec.base_ceilingheight)
 		{
@@ -442,17 +400,17 @@ static void CL_ParseTime()
 			sec.ceiling.dist = sec.base_ceilingheight;
 			CalcSecMinMaxs(&sec);
 		}
-		cl_level.sectors[i].params.lightlevel = cl_level.sectors[i].base_lightlevel;
-		cl_level.sectors[i].floor.xoffs = 0.0;
-		cl_level.sectors[i].floor.yoffs = 0.0;
-		cl_level.sectors[i].ceiling.xoffs = 0.0;
-		cl_level.sectors[i].ceiling.yoffs = 0.0;
+		sec.params.lightlevel = sec.base_lightlevel;
+		sec.floor.xoffs = 0.0;
+		sec.floor.yoffs = 0.0;
+		sec.ceiling.xoffs = 0.0;
+		sec.ceiling.yoffs = 0.0;
 	}
 
-	for (i = 0; i < cl_level.numsides; i++)
+	for (i = 0; i < GClLevel->NumSides; i++)
 	{
-		cl_level.sides[i].textureoffset = cl_level.sides[i].base_textureoffset;
-		cl_level.sides[i].rowoffset = cl_level.sides[i].base_rowoffset;
+		GClLevel->Sides[i].textureoffset = GClLevel->Sides[i].base_textureoffset;
+		GClLevel->Sides[i].rowoffset = GClLevel->Sides[i].base_rowoffset;
 	}
 
 	for (i = 0; i < GMaxEntities; i++)
@@ -473,8 +431,10 @@ static void CL_ParseTime()
 
 	R_AnimateSurfaces();
 	net_msg >> new_time;
-	cl_level.tictime = new_time;
-	cl_level.time = (float)new_time / 35.0;
+	cl_level.tictime = int(new_time * 35);
+	cl_level.time = new_time;
+	cl.mtime[1] = cl.mtime[0];
+	cl.mtime[0] = new_time;
 	unguard;
 }
 
@@ -575,7 +535,7 @@ static void CL_ParseIntermission(void)
 	im.time = cl_level.time;
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		scores[i].active = net_msg.ReadByte();
+		scores[i].bActive = net_msg.ReadByte();
 		for (j = 0; j < MAXPLAYERS; j++)
 			scores[i].frags[j] = (char)net_msg.ReadByte();
 		scores[i].killcount = net_msg.ReadShort();
@@ -669,7 +629,7 @@ static void CL_ParseLineTransuc(void)
 {
 	int i = net_msg.ReadShort();
 	int fuzz = net_msg.ReadByte();
-	cl_level.lines[i].translucency = fuzz;
+	GClLevel->Lines[i].translucency = fuzz;
 }
 
 //==========================================================================
@@ -682,7 +642,7 @@ static void CL_ParseExtraFloor(void)
 {
 	int i = net_msg.ReadShort();
 	int j = net_msg.ReadShort();
-	AddExtraFloor(&cl_level.lines[i], &cl_level.sectors[j]);
+	AddExtraFloor(&GClLevel->Lines[i], &GClLevel->Sectors[j]);
 }
 
 //==========================================================================
@@ -748,33 +708,33 @@ void CL_ParseServerMessage(void)
 
 		 case svc_side_top:
 			i = net_msg.ReadShort();
-			cl_level.sides[i].toptexture = net_msg.ReadShort();
+			GClLevel->Sides[i].toptexture = net_msg.ReadShort();
 			break;
 
 		 case svc_side_mid:
 			i = net_msg.ReadShort();
-			cl_level.sides[i].midtexture = net_msg.ReadShort();
+			GClLevel->Sides[i].midtexture = net_msg.ReadShort();
 			break;
 
 		 case svc_side_bot:
 			i = net_msg.ReadShort();
-			cl_level.sides[i].bottomtexture = net_msg.ReadShort();
+			GClLevel->Sides[i].bottomtexture = net_msg.ReadShort();
 			break;
 
 		 case svc_side_ofs:
 			i = net_msg.ReadShort();
-			cl_level.sides[i].textureoffset = net_msg.ReadShort();
-			cl_level.sides[i].rowoffset = net_msg.ReadShort();
+			GClLevel->Sides[i].textureoffset = net_msg.ReadShort();
+			GClLevel->Sides[i].rowoffset = net_msg.ReadShort();
 			break;
 
 		 case svc_sec_floor:
 			i = net_msg.ReadShort();
-			cl_level.sectors[i].floor.pic = (word)net_msg.ReadShort();
+			GClLevel->Sectors[i].floor.pic = (word)net_msg.ReadShort();
 			break;
 
 		 case svc_sec_ceil:
 			i = net_msg.ReadShort();
-			cl_level.sectors[i].ceiling.pic = (word)net_msg.ReadShort();
+			GClLevel->Sectors[i].ceiling.pic = (word)net_msg.ReadShort();
 			break;
 
 		 case svc_sec_update:
@@ -854,8 +814,8 @@ void CL_ParseServerMessage(void)
 			break;
 
 		 case svc_pause:
-		 	cl.paused = net_msg.ReadByte();
-   			if (cl.paused)
+		 	cl.bPaused = net_msg.ReadByte();
+   			if (cl.bPaused)
 				S_PauseSound();
    			else
 				S_ResumeSound();
@@ -898,22 +858,22 @@ void CL_ParseServerMessage(void)
 
 		 case svc_sec_floor_plane:
 			i = net_msg.ReadShort();
-			net_msg >> cl_level.sectors[i].floor.normal.x
-					>> cl_level.sectors[i].floor.normal.y
-					>> cl_level.sectors[i].floor.normal.z
-					>> cl_level.sectors[i].floor.dist;
-			cl_level.sectors[i].base_floorheight = cl_level.sectors[i].floor.dist;
-			CalcSecMinMaxs(&cl_level.sectors[i]);
+			net_msg >> GClLevel->Sectors[i].floor.normal.x
+					>> GClLevel->Sectors[i].floor.normal.y
+					>> GClLevel->Sectors[i].floor.normal.z
+					>> GClLevel->Sectors[i].floor.dist;
+			GClLevel->Sectors[i].base_floorheight = GClLevel->Sectors[i].floor.dist;
+			CalcSecMinMaxs(&GClLevel->Sectors[i]);
 			break;
 
 		 case svc_sec_ceil_plane:
 			i = net_msg.ReadShort();
-			net_msg >> cl_level.sectors[i].ceiling.normal.x
-					>> cl_level.sectors[i].ceiling.normal.y
-					>> cl_level.sectors[i].ceiling.normal.z
-					>> cl_level.sectors[i].ceiling.dist;
-			cl_level.sectors[i].base_ceilingheight  = cl_level.sectors[i].ceiling.dist;
-			CalcSecMinMaxs(&cl_level.sectors[i]);
+			net_msg >> GClLevel->Sectors[i].ceiling.normal.x
+					>> GClLevel->Sectors[i].ceiling.normal.y
+					>> GClLevel->Sectors[i].ceiling.normal.z
+					>> GClLevel->Sectors[i].ceiling.dist;
+			GClLevel->Sectors[i].base_ceilingheight  = GClLevel->Sectors[i].ceiling.dist;
+			CalcSecMinMaxs(&GClLevel->Sectors[i]);
 			break;
 
 		 case svc_serverinfo:
@@ -956,7 +916,7 @@ void CL_ParseServerMessage(void)
 		 case svc_sec_transluc:
 			i = net_msg.ReadShort();
 			trans = net_msg.ReadByte();
-			sec = &cl_level.sectors[i];
+			sec = &GClLevel->Sectors[i];
 			sec->floor.translucency = trans;
 			sec->ceiling.translucency = trans;
 			for (i = 0; i < sec->linecount; i++)
@@ -971,7 +931,7 @@ void CL_ParseServerMessage(void)
 
 		 case svc_swap_planes:
 			i = net_msg.ReadShort();
-			SwapPlanes(&cl_level.sectors[i]);
+			SwapPlanes(&GClLevel->Sectors[i]);
 			break;
 
 		 case svc_static_light:
@@ -992,7 +952,7 @@ void CL_ParseServerMessage(void)
 			break;
 
 		 case svc_sec_light_color:
-			sec = &cl_level.sectors[net_msg.ReadShort()];
+			sec = &GClLevel->Sectors[net_msg.ReadShort()];
 			sec->params.LightColor = (net_msg.ReadByte() << 16) |
 				(net_msg.ReadByte() << 8) | net_msg.ReadByte();
 			break;
@@ -1018,9 +978,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2002/09/07 16:31:50  dj_jl
+//	Added Level class.
+//
 //	Revision 1.29  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
-//
+//	
 //	Revision 1.28  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
 //	

@@ -32,7 +32,7 @@
 #include "../doomdefs.vc"
 
 #ifndef DOOM2
-boolean ExtendedWAD;
+bool ExtendedWAD;
 #endif
 
 #include "effects.vc"
@@ -75,6 +75,9 @@ boolean ExtendedWAD;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/09/07 16:28:24  dj_jl
+//  Added Level class.
+//
 //  Revision 1.12  2002/06/14 15:51:20  dj_jl
 //  A lots of changes, new functions etc for DDF.
 //

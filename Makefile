@@ -150,6 +150,7 @@ OBJ_FILES = $(SYS_OBJS) \
 	obj/infostr.o \
 	obj/l_glbsp.o \
 	obj/l_glvis.o \
+	obj/level.o \
 	obj/mapinfo.o \
 	obj/maths.o \
 	obj/menu.o \

@@ -23,8 +23,6 @@
 //**
 //**************************************************************************
 
-typedef int boolean;
-
 struct sector_t;
 struct line_t;
 struct subsector_t;
@@ -43,8 +41,8 @@ class Object
 	classid Class;
 
 	native void Destroy(void);
-	native boolean IsA(name CheckName);
-	native boolean IsDestroyed(void);
+	native bool IsA(name CheckName);
+	native bool IsDestroyed(void);
 
 	defaultproperties
 	{
@@ -255,18 +253,18 @@ struct polyobj_t
 	void *__segs;
 	TVec startSpot;
 	void *__originalPts;	// used as the base for the rotations
-	void *__prevPts;	// use to restore the old point values
+	void *__prevPts;		// use to restore the old point values
 	float angle;
-	int tag;	// reference tag assigned in HereticEd
+	int tag;				// reference tag assigned in HereticEd
 	int __bbox[4];
 	int validcount;
-	boolean crush;	// should the polyobj attempt to crush mobjs?
+	bool bCrush;			// should the polyobj attempt to crush mobjs?
 	int seqType;
 	subsector_t *__subsector;
 	float __base_x;
 	float __base_y;
 	float __base_angle;
-	boolean __changed;
+	int __changed;
 	addfields 3;
 };
 
@@ -313,71 +311,138 @@ struct subsector_t
 //	Strife conversation scripts
 //
 
-struct FRogueConChoice
+struct RogueConChoice
 {
-	int			Unknown1;
-	int			Unknown2;
-	int			Unknown3;
-	int			Unknown4;
-	int			Unknown5;
-	int			Unknown6;
-	int			Unknown7;
-	int			Text[32/4];	//	Text of the answer
-	int			TextOK[80/4];	//	Message displayed on success
-	int			Next;		//	Dialog to go on success, negative values to go
-							// here immediately
-	int			Objectives;	//	Mission objectives, LOGxxxx lump
-	int			TextNo[80/4];	//	Message displayed on failure (player doesn't
-							// have needed thing, it haves enough health/ammo,
-							// item is not ready, quest is not completed)
+	int Unknown1;
+	int Unknown2;
+	int Unknown3;
+	int Unknown4;
+	int Unknown5;
+	int Unknown6;
+	int Unknown7;
+	int Text[32/4];		//	Text of the answer
+	int TextOK[80/4];	//	Message displayed on success
+	int Next;			//	Dialog to go on success, negative values to go
+						// here immediately
+	int Objectives;		//	Mission objectives, LOGxxxx lump
+	int TextNo[80/4];	//	Message displayed on failure (player doesn't
+						// have needed thing, it haves enough health/ammo,
+						// item is not ready, quest is not completed)
 };
 
-struct FRogueConSpeech
+struct RogueConSpeech
 {
-	int			SpeakerID;	//	Type of the object (MT_xxx)
-	int			Unknown1;
-	int			Unknown2;
-	int			Unknown3;
-	int			Unknown4;
-	int			Unknown5;
-	int			Name[16/4];	//	Name of the character
-	int			Voice[8/4];	//	Voice to play
-	int			BackPic[8/4];	//	Picture of the speaker
-	int			Text[320/4];	//	Message
-	FRogueConChoice	Choices[5];	//	Choices
+	int SpeakerID;		//	Type of the object (MT_xxx)
+	int Unknown1;
+	int Unknown2;
+	int Unknown3;
+	int Unknown4;
+	int Unknown5;
+	int Name[16/4];		//	Name of the character
+	int Voice[8/4];		//	Voice to play
+	int BackPic[8/4];	//	Picture of the speaker
+	int Text[320/4];	//	Message
+	RogueConChoice Choices[5];	//	Choices
 };
+
+//**************************************************************************
+//
+//	Level
+//
+//**************************************************************************
+
+class Level:Object
+	native
+{
+
+//	Flags.
+bool bForServer;	//	True if this level belongs to the server.
+bool bExtended;		//	True if level was in Hexen format.
+
+//
+//	MAP related Lookup tables.
+//	Store VERTEXES, LINEDEFS, SIDEDEFS, etc.
+//
+
+int NumVertexes;
+TVec *Vertexes;
+
+int NumSectors;
+sector_t *Sectors;
+
+int NumSides;
+side_t *Sides;
+
+int NumLines;
+line_t *Lines;
+
+int __NumSegs;
+void *__Segs;
+
+int __NumSubsectors;
+void *__Subsectors;
+
+int __NumNodes;
+void *__Nodes;
+
+void *__VisData;
+void *__NoVis;
+
+// !!! Used only during level loading
+int NumThings;
+mthing_t *Things;
+
+int BehaviorSize;
+int *Behavior;
+
+//
+//  BLOCKMAP
+//  Created from axis aligned bounding box of the map, a rectangular
+// array of blocks of size ...
+// Used to speed up collision detection by spatial subdivision in 2D.
+//
+void *__BlockMapLump;	// offsets in blockmap are from here
+void *__BlockMap;	// int for larger maps
+int __BlockMapWidth;	// Blockmap size.
+int __BlockMapHeight;	// size in mapblocks
+float BlockMapOrgX;	// origin of block map
+float BlockMapOrgY;
+void *__BlockLinks;
+void *__PolyBlockMap;
+
+//
+//  REJECT
+//  For fast sight rejection.
+//  Speeds up enemy AI by skipping detailed LineOf Sight calculation.
+//  Without special effect, this could be used as a PVS lookup as well.
+//
+void *__RejectMatrix;
+
+//	Strife conversations.
+int NumGenericSpeeches;
+RogueConSpeech *GenericSpeeches;
+
+int NumLevelSpeeches;
+RogueConSpeech *LevelSpeeches;
+
+//	List of all poly-objects on the level.
+int __NumPolyObjs;
+void *__PolyObjs;
+
+//
+//	Natives
+//
+
+native sector_t *PointInSector(TVec Point);
+
+defaultproperties
+{
+}
+
+}
 
 struct base_level_t
 {
-	//
-	// MAP related Lookup tables.
-	// Store VERTEXES, LINEDEFS, SIDEDEFS, etc.
-	//
-	// Lookup tables for map data.
-	int numvertexes;
-	TVec *vertexes;
-
-	int __numsegs;
-	void *__segs;
-
-	int numsectors;
-	sector_t *sectors;
-
-	int __numsubsectors;
-	void *__subsectors;
-
-	int __numnodes;
-	void *__nodes;
-
-	int numlines;
-	line_t *lines;
-
-	int numsides;
-	side_t *sides;
-
-	int __numpolyobjs;
-	void *__polyobjs;	// list of all poly-objects on the level
-
 	float time;
 	int tictime;
 
@@ -388,14 +453,6 @@ struct base_level_t
 	int mapname[3];
 	int __nextmap[3];
 	int __level_name[8];
-
-	void *__vis_data;
-
-	FRogueConSpeech		*GenericSpeeches;
-	int					NumGenericSpeeches;
-
-	FRogueConSpeech		*LevelSpeeches;
-	int					NumLevelSpeeches;
 };
 
 //**************************************************************************
@@ -416,6 +473,8 @@ class Thinker:Object
 	native
 	abstract
 {
+	Level XLevel;		//	Level object.
+
 	void Tick(float deltaTime)
 	{
 	}
@@ -575,39 +634,8 @@ struct player_t
 //
 //==========================================================================
 
-#define BlockLink(num)	(*level->BlockLinks[num])
-
 struct sv_level_t:base_level_t
 {
-	// !!! Valid only during level loading
-	int numthings;
-	mthing_t *things;
-	int behaviorsize;
-	int *behavior;
-
-	//
-	//  BLOCKMAP
-	//  Created from axis aligned bounding box of the map, a rectangular
-	// array of blocks of size ...
-	// Used to speed up collision detection by spatial subdivision in 2D.
-	//
-	void *__blockmaplump;	// offsets in blockmap are from here
-	void *__blockmap;	// int for larger maps
-	int bmapwidth;	// Blockmap size.
-	int bmapheight;	// size in mapblocks
-	float bmaporgx;	// origin of block map
-	float bmaporgy;
-	Entity **BlockLinks;	// for thing chains
-	void *__PolyBlockMap;
-
-	//
-	//  REJECT
-	//  For fast sight rejection.
-	//  Speeds up enemy AI by skipping detailed LineOf Sight calculation.
-	//  Without special effect, this could be used as a PVS lookup as well.
-	//
-	void *__rejectmatrix;
-
 	// Maintain single and multi player starting spots.
 	mthing_t deathmatchstarts[MAXDEATHMATCHSTARTS];	// Player spawn spots for deathmatch.
 	int numdeathmatchstarts;
@@ -638,7 +666,7 @@ struct opening_t
 struct intercept_t
 {
 	float frac;	// along trace line
-	boolean isaline;
+	bool bIsALine;
 	Entity Thing;
 	line_t *line;
 };
@@ -724,7 +752,7 @@ struct client_state_t
 	// Focal origin above r.z
 	TVec vieworg;
 	TAVec viewangles;
-	boolean centering;
+	int centering;
 
 	// This is only used between levels,
 	// mo->health is used during levels.
@@ -753,11 +781,11 @@ struct client_state_t
 	float pspriteSY;
 
 	// True if secret level has been done.
-	boolean didsecret;
+	bool bDidSecret;
+
+	bool bPaused;
 
 	int worldTimer;	// total time the player's been playing
-
-	boolean paused;
 
 	// Overlay view sprites (gun, etc).
 	int translucency;
@@ -765,7 +793,9 @@ struct client_state_t
 	int maxclients;
 	int deathmatch;
 
+	float mtime[2];
 	float time;
+	float oldtime;
 
 	int serverinfo[MAX_INFO_STRING / 4];
 
@@ -806,7 +836,7 @@ struct hostcache_t
 
 struct slist_t
 {
-	boolean inProgress;
+	bool bInProgress;
 	int count;
 	hostcache_t cache[HOSTCACHESIZE];
 	int return_reason[32 / 4];
@@ -815,7 +845,7 @@ struct slist_t
 struct scores_t
 {
 	int Name[64 / 4];
-	boolean active;
+	bool bActive;
 	int frags[MAXPLAYERS];
 	int killcount;
 	int itemcount;
@@ -869,7 +899,7 @@ struct particle_t
 
 struct clmobj_t
 {
-	boolean in_use;
+	int in_use;
 
 	TVec origin;	// position
 	TAVec angles;	// orientation
@@ -894,6 +924,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.44  2002/09/07 16:28:22  dj_jl
+//  Added Level class.
+//
 //  Revision 1.43  2002/08/28 16:36:36  dj_jl
 //  Merged MapObject with Entity, some natives, beautification.
 //

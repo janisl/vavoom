@@ -193,7 +193,7 @@ int EV_DoDoor(line_t * line, int *args, int type)
 	retcode = 0;
 	while ((secnum = FindSectorFromTag(line->arg1, secnum)) >= 0)
 	{
-		sec = &level->sectors[secnum];
+		sec = &GLevel.Sectors[secnum];
 		if (sec->SpecialData)
 		{
 			continue;
@@ -243,7 +243,7 @@ int EV_DoDoor(line_t * line, int *args, int type)
 //
 //==========================================================================
 
-boolean CheckLockedDoor(Actor user, int lock)
+bool CheckLockedDoor(Actor user, int lock)
 {
 	if (!user.bIsPlayer)
 	{
@@ -268,7 +268,7 @@ boolean CheckLockedDoor(Actor user, int lock)
 //
 //==========================================================================
 
-boolean EV_VerticalDoor(line_t * line, Actor thing)
+bool EV_VerticalDoor(line_t * line, Actor thing)
 {
 	sector_t *sec;
 	VerticalDoor Door;
@@ -277,7 +277,7 @@ boolean EV_VerticalDoor(line_t * line, Actor thing)
 	side = 0;	// only front sides can be used
 
 	// if the sector has an active thinker, use it
-	sec = level->sides[line->sidenum[side ^ 1]].sector;
+	sec = GLevel.Sides[line->sidenum[side ^ 1]].sector;
 	if (sec->SpecialData)
 	{
 		Door = VerticalDoor(sec->SpecialData);
@@ -380,6 +380,9 @@ void P_SpawnDoorRaiseIn5Mins(sector_t * sec, int secnum)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/09/07 16:28:25  dj_jl
+//  Added Level class.
+//
 //  Revision 1.14  2002/04/11 16:48:10  dj_jl
 //  New base classes for sector thinkers, Tick function.
 //

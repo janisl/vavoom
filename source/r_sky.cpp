@@ -181,11 +181,11 @@ static void R_InitOldSky(const mapInfo_t &info)
 	if (info.lightning)
 	{
 		int secCount = 0;
-		for (int i = 0; i < cl_level.numsectors; i++)
+		for (int i = 0; i < GClLevel->NumSectors; i++)
 		{
-			if (cl_level.sectors[i].ceiling.pic == skyflatnum ||
-				cl_level.sectors[i].special == LIGHTNING_SPECIAL ||
-				cl_level.sectors[i].special == LIGHTNING_SPECIAL2)
+			if (GClLevel->Sectors[i].ceiling.pic == skyflatnum ||
+				GClLevel->Sectors[i].special == LIGHTNING_SPECIAL ||
+				GClLevel->Sectors[i].special == LIGHTNING_SPECIAL2)
 			{
 				secCount++;
 			}
@@ -508,8 +508,8 @@ static void R_LightningFlash(void)
 		if (LightningFlash)
 		{
 			tempLight = LightningLightLevels;
-			tempSec = cl_level.sectors;
-			for (i = 0; i < cl_level.numsectors; i++, tempSec++)
+			tempSec = GClLevel->Sectors;
+			for (i = 0; i < GClLevel->NumSectors; i++, tempSec++)
 			{
 				if (tempSec->ceiling.pic == skyflatnum ||
 					tempSec->special == LIGHTNING_SPECIAL ||
@@ -526,8 +526,8 @@ static void R_LightningFlash(void)
 		else
 		{ // remove the alternate lightning flash special
 			tempLight = LightningLightLevels;
-			tempSec = cl_level.sectors;
-			for (i = 0; i < cl_level.numsectors; i++, tempSec++)
+			tempSec = GClLevel->Sectors;
+			for (i = 0; i < GClLevel->NumSectors; i++, tempSec++)
 			{
 				if (tempSec->ceiling.pic == skyflatnum
 					|| tempSec->special == LIGHTNING_SPECIAL
@@ -547,10 +547,10 @@ static void R_LightningFlash(void)
 
 	LightningFlash = (rand() & 7) + 8;
 	flashLight = 200 + (rand() & 31);
-	tempSec = cl_level.sectors;
+	tempSec = GClLevel->Sectors;
 	tempLight = LightningLightLevels;
 	foundSec = false;
-	for (i = 0; i < cl_level.numsectors; i++, tempSec++)
+	for (i = 0; i < GClLevel->NumSectors; i++, tempSec++)
 	{
 		if (tempSec->ceiling.pic == skyflatnum ||
 			tempSec->special == LIGHTNING_SPECIAL ||
@@ -659,9 +659,12 @@ void R_DrawSky(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/09/07 16:31:51  dj_jl
+//	Added Level class.
+//
 //	Revision 1.11  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
-//
+//	
 //	Revision 1.10  2002/03/28 17:58:02  dj_jl
 //	Added support for scaled textures.
 //	

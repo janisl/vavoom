@@ -138,12 +138,12 @@ static void	SetupSky(void)
 {
 	guard(SetupSky);
 	skyheight = -99999.0;
-	for (int i = 0; i < cl_level.numsectors; i++)
+	for (int i = 0; i < GClLevel->NumSectors; i++)
 	{
-		if (cl_level.sectors[i].ceiling.pic == skyflatnum &&
-			cl_level.sectors[i].ceiling.maxz > skyheight)
+		if (GClLevel->Sectors[i].ceiling.pic == skyflatnum &&
+			GClLevel->Sectors[i].ceiling.maxz > skyheight)
 		{
-			skyheight = cl_level.sectors[i].ceiling.maxz;
+			skyheight = GClLevel->Sectors[i].ceiling.maxz;
 		}
 	}
 	sky_plane.Set(TVec(0, 0, -1), -skyheight);
@@ -416,7 +416,7 @@ static sec_surface_t *CreateSecSurface(subsector_t *sub, sec_plane_t *splane)
 	ssurf->texinfo.translucency = splane->translucency ? splane->translucency + 1 : 0;
 
 	surf->count = sub->numlines;
-    seg_t *line = &cl_level.segs[sub->firstline];
+    seg_t *line = &GClLevel->Segs[sub->firstline];
 	int vlindex = (splane->normal.z < 0);
    	for (int i = 0; i < surf->count; i++)
     {
@@ -1057,7 +1057,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 
 			TPlane *extratop = reg->floor;
 			TPlane *extrabot = reg->prev->ceiling;
-			side_t *extraside = &cl_level.sides[reg->prev->extraline->sidenum[0]];
+			side_t *extraside = &GClLevel->Sides[reg->prev->extraline->sidenum[0]];
 
 			float extratopz1 = extratop->GetPointZ(*seg->v1);
 			float extratopz2 = extratop->GetPointZ(*seg->v2);
@@ -1520,7 +1520,7 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 		{
 			TPlane *extratop = reg->next->floor;
 			TPlane *extrabot = reg->ceiling;
-			side_t *extraside = &cl_level.sides[reg->extraline->sidenum[0]];
+			side_t *extraside = &GClLevel->Sides[reg->extraline->sidenum[0]];
 
 			sp->texinfo.pic = extraside->midtexture;
 			if (FASI(sp->frontTopDist) != FASI(r_ceiling->dist) ||
@@ -1639,9 +1639,9 @@ void R_PreRender(void)
 	count = 0;
 	dscount = 0;
 	spcount = 0;
-	for (i = 0; i < cl_level.numsubsectors; i++)
+	for (i = 0; i < GClLevel->NumSubsectors; i++)
 	{
-		sub = &cl_level.subsectors[i];
+		sub = &GClLevel->Subsectors[i];
 		if (!sub->sector->linecount)
 		{
 			//	Skip sectors containing original polyobjs
@@ -1658,7 +1658,7 @@ void R_PreRender(void)
 			}
 			for (j = 0; j < sub->numlines; j++)
 			{
-				spcount += CountSegParts(&cl_level.segs[sub->firstline + j]);
+				spcount += CountSegParts(&GClLevel->Segs[sub->firstline + j]);
 			}
 			if (sub->poly)
 			{
@@ -1673,13 +1673,13 @@ void R_PreRender(void)
 	pspart = (segpart_t*)Z_Calloc(spcount * sizeof(segpart_t), PU_LEVEL, 0);
 
 	//	Add dplanes
-	for (i = 0; i < cl_level.numsubsectors; i++)
+	for (i = 0; i < GClLevel->NumSubsectors; i++)
 	{
 		if (!(i & 7))
 		{
 			CL_KeepaliveMessage();
 		}
-		sub = &cl_level.subsectors[i];
+		sub = &GClLevel->Subsectors[i];
 		if (!sub->sector->linecount)
 		{
 			//	Skip sectors containing original polyobjs
@@ -1707,7 +1707,7 @@ void R_PreRender(void)
 			r_ceiling = reg->ceiling;
 			for (j = 0; j < sub->numlines; j++)
 			{
-				CreateSegParts(&sreg->lines[j], &cl_level.segs[sub->firstline + j]);
+				CreateSegParts(&sreg->lines[j], &GClLevel->Segs[sub->firstline + j]);
 			}
 			if (sub->poly)
 			{
@@ -1789,13 +1789,7 @@ static void UpdateSubRegion(subregion_t *region)
 static void UpdateSubsector(int num, float *bbox)
 {
 	guard(UpdateSubsector);
-//FIXME do this in node loading
-#ifdef PARANOID
-    if (num >= cl_level.numsubsectors)
-		Sys_Error("UpdateSubsector: ss %i with numss = %i", num, cl_level.numsubsectors);
-#endif
-
-    r_sub = &cl_level.subsectors[num];
+    r_sub = &GClLevel->Subsectors[num];
     frontsector = r_sub->sector;
 
 	if (r_sub->VisFrame != r_visframecount)
@@ -1838,7 +1832,7 @@ static void UpdateBSPNode(int bspnum, float *bbox)
 		return;
     }
 		
-	node_t* bsp = &cl_level.nodes[bspnum];
+	node_t* bsp = &GClLevel->Nodes[bspnum];
     
 	if (bsp->VisFrame != r_visframecount)
  	{
@@ -1863,16 +1857,19 @@ void R_UpdateWorld(void)
 	guard(R_UpdateWorld);
 	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 9999, 99999};
 
-	UpdateBSPNode(cl_level.numnodes - 1, dummy_bbox);	// head node is the last node output
+	UpdateBSPNode(GClLevel->NumNodes - 1, dummy_bbox);	// head node is the last node output
 	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/09/07 16:31:51  dj_jl
+//	Added Level class.
+//
 //	Revision 1.11  2002/07/13 07:51:48  dj_jl
 //	Replacing console's iostream with output device.
-//
+//	
 //	Revision 1.10  2002/03/28 17:58:02  dj_jl
 //	Added support for scaled textures.
 //	

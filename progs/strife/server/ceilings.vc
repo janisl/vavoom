@@ -63,7 +63,7 @@ class CeilingMover:SectorMover
 	float bottomheight;
 	float topheight;
 	float speed;
-	boolean crush;
+	int crush;
 	int direction;	// 1 = up, 0 = waiting, -1 = down
 	int tag;
 	int olddirection;
@@ -247,7 +247,7 @@ int EV_DoCeiling(line_t * line, int *args, int type)
 
 	while ((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
 	{
-		sec = &level->sectors[secnum];
+		sec = &GLevel.Sectors[secnum];
 		if (sec->SpecialData)
 			continue;
 
@@ -366,6 +366,9 @@ int EV_CeilingCrushStop(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/09/07 16:28:26  dj_jl
+//  Added Level class.
+//
 //  Revision 1.12  2002/04/11 16:48:10  dj_jl
 //  New base classes for sector thinkers, Tick function.
 //

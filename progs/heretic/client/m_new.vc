@@ -189,7 +189,7 @@ class MenuChoice_MPEpisode:MenuChoiceEnum
 		MaxValue = shareware ? 1 : ExtendedWAD ? 5 : 3;
 	}
 
-	boolean SetNewValue(int newValue)
+	bool SetNewValue(int newValue)
 	{
 		Levels.InitMapList(newValue);
 		return true;
@@ -307,6 +307,9 @@ void menu_new_game(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/09/07 16:28:25  dj_jl
+//  Added Level class.
+//
 //  Revision 1.8  2002/05/29 16:50:26  dj_jl
 //  Started a work on native Window classes.
 //

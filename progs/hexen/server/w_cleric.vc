@@ -613,7 +613,7 @@ void A_CFlameMissile(void)
 
 	A_UnHideThing();
 	PlaySound('ClericFlameExplode', CHAN_VOICE);
-	bmo = tmtrace->BlockingMobj;
+	bmo = Actor(tmtrace->BlockingMobj);
 	if (bmo && bmo.bShootable)
 	{
 		// Hit something, so spawn the flame circle around the thing
@@ -786,7 +786,7 @@ int WeaveZ;
 //
 //==========================================================================
 
-boolean Touch(Entity InOther)
+bool Touch(Entity InOther)
 {
 	int damage;
 	Actor Other;
@@ -852,6 +852,39 @@ boolean Touch(Entity InOther)
 	return ::Touch(InOther);
 }
 
+//===========================================================================
+//
+//  RoughCheckThing
+//
+//===========================================================================
+
+bool RoughCheckThing(Entity Other)
+{
+	Actor link = Actor(Other);
+	
+	if ((!link.bCountKill && !link.bIsPlayer) || link.bDormant)
+	{
+		return false;
+	}
+	if (!link.bShootable)
+	{
+		return false;
+	}
+	if (netgame && !deathmatch && link.bIsPlayer)
+	{
+		return false;
+	}
+	if (link == Instigator)
+	{
+		return false;
+	}
+	if (CanSee(link))
+	{
+		return true;
+	}
+	return false;
+}
+
 //============================================================================
 //
 //  CHolyFindTarget
@@ -862,7 +895,7 @@ void CHolyFindTarget(void)
 {
 	Actor targ;
 
-	targ = RoughMonsterSearch(6);
+	targ = Actor(RoughMonsterSearch(6));
 	if (targ)
 	{
 		Enemy = targ;
@@ -1415,6 +1448,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.32  2002/09/07 16:28:26  dj_jl
+//  Added Level class.
+//
 //  Revision 1.31  2002/08/28 16:36:39  dj_jl
 //  Merged MapObject with Entity, some natives, beautification.
 //

@@ -124,7 +124,7 @@ struct client_state_t
     // Focal origin above r.z
 	TVec			vieworg;
 	TAVec			viewangles;
-	boolean			centering;
+	int				centering;
 
     // This is only used between levels,
     // mo->health is used during levels.
@@ -153,11 +153,11 @@ struct client_state_t
 	float			pspriteSY;
 
     // True if secret level has been done.
-    boolean			didsecret;
+    dword			bDidSecret:1;
+
+	dword			bPaused:1;
 
 	dword 			worldTimer;				// total time the player's been playing
-
-	boolean			paused;
 
     // Overlay view sprites (gun, etc).
 	int				translucency;
@@ -165,7 +165,9 @@ struct client_state_t
 	int				maxclients;
 	int				deathmatch;
 
+	float			mtime[2];
 	float			time;
+	float			oldtime;
 
 	char			serverinfo[MAX_INFO_STRING];
 
@@ -173,90 +175,6 @@ struct client_state_t
 
 	//	128 integers for user defined fields in PROGS
 	int				user_fields[128];
-#if 0
-	int			movemessages;	// since connecting to this server
-								// throw out the first couple, so the player
-								// doesn't accidentally do something the 
-								// first frame
-	usercmd_t	cmd;			// last command sent to the server
-
-// information for local display
-	int			stats[MAX_CL_STATS];	// health, etc
-	int			items;			// inventory bit flags
-	float	item_gettime[32];	// cl.time of aquiring item, for blinking
-	float		faceanimtime;	// use anim frame if cl.time < this
-
-// the client maintains its own idea of view angles, which are
-// sent to the server each frame.  The server sets punchangle when
-// the view is temporarliy offset, and an angle reset commands at the start
-// of each level and after teleporting.
-	vec3_t		mviewangles[2];	// during demo playback viewangles is lerped
-								// between these
-	vec3_t		viewangles;
-	
-	vec3_t		mvelocity[2];	// update by server, used for lean+bob
-								// (0 is newest)
-	vec3_t		velocity;		// lerped between mvelocity[0] and [1]
-
-	vec3_t		punchangle;		// temporary offset
-	
-// pitch drifting vars
-	float		idealpitch;
-	float		pitchvel;
-	qboolean	nodrift;
-	float		driftmove;
-	double		laststop;
-
-	float		viewheight;
-	float		crouch;			// local amount for smoothing stepups
-
-	qboolean	paused;			// send over by server
-	qboolean	onground;
-	qboolean	inwater;
-	
-	int			intermission;	// don't change view angle, full screen, etc
-	int			completed_time;	// latched at intermission start
-	
-	double		mtime[2];		// the timestamp of last two messages	
-	double		time;			// clients view of time, should be between
-								// servertime and oldservertime to generate
-								// a lerp point for other data
-	double		oldtime;		// previous cl.time, time-oldtime is used
-								// to decay light values and smooth step ups
-	
-
-	float		last_received_message;	// (realtime) for net trouble icon
-
-//
-// information that is static for the entire time connected to a server
-//
-	struct model_s		*model_precache[MAX_MODELS];
-	struct sfx_s		*sound_precache[MAX_SOUNDS];
-
-	char		levelname[40];	// for display on solo scoreboard
-	int			viewentity;
-	int			maxclients;
-	int			gametype;
-
-// refresh related state
-	struct model_s	*worldmodel;	// cl_entitites[0].model
-	struct efrag_s	*free_efrags;
-	int			num_entities;	// held in cl_entities array
-	int			num_statics;	// held in cl_staticentities array
-	entity_t	viewent;			// the gun model
-
-	int			cdtrack, looptrack;	// cd audio
-
-// frag scoreboard
-	scoreboard_t	*scores;		// [cl.maxclients]
-
-#ifdef QUAKE2
-// light level at player's position including dlights
-// this is sent back to the server each frame
-// architectually ugly but it works
-	int			light_level;
-#endif
-#endif
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -272,9 +190,12 @@ extern TProgs			clpr;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/09/07 16:31:51  dj_jl
+//	Added Level class.
+//
 //	Revision 1.9  2002/06/29 16:00:45  dj_jl
 //	Added total frags count.
-//
+//	
 //	Revision 1.8  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	

@@ -281,7 +281,7 @@ void F_Drawer(void)
 //
 //===========================================================================
 
-boolean F_Responder(event_t * event)
+bool F_Responder(event_t * event)
 {
 	return false;
 }
@@ -311,10 +311,10 @@ static int castnum;
 static int *castorder;
 static state_t *caststate;
 static float casttime;
-static boolean castdeath;
+static bool castdeath;
 static int castframes;
 static int castonmelee;
-static boolean castattacking;
+static bool castattacking;
 
 // Casting by id Software. in order of appearance
 int castorder[] = {
@@ -562,7 +562,7 @@ void F_CastTicker(void)
 //
 //==========================================================================
 
-boolean F_CastResponder(event_t * ev)
+bool F_CastResponder(event_t * ev)
 {
 #if 0
 	if (ev->type != ev_keydown)
@@ -649,7 +649,7 @@ void F_Drawer(void)
 //
 //===========================================================================
 
-boolean F_Responder(event_t * event)
+bool F_Responder(event_t * event)
 {
 	return F_CastResponder(event);
 }
@@ -659,6 +659,9 @@ boolean F_Responder(event_t * event)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/09/07 16:28:24  dj_jl
+//  Added Level class.
+//
 //  Revision 1.7  2002/01/11 18:19:40  dj_jl
 //  Started to use names in progs
 //

@@ -40,7 +40,7 @@ class MenuChoice_MouseXSensitivity:MenuChoiceSlider
 		return GetCvarF("mouse_x_sensitivity");
 	}
 
-	boolean SetNewValue(float newValue)
+	bool SetNewValue(float newValue)
 	{
 		SetCvarF("mouse_x_sensitivity", newValue);
 		return true;
@@ -67,7 +67,7 @@ class MenuChoice_MouseYSensitivity:MenuChoiceSlider
 		return GetCvarF("mouse_y_sensitivity");
 	}
 
-	boolean SetNewValue(float newValue)
+	bool SetNewValue(float newValue)
 	{
 		SetCvarF("mouse_y_sensitivity", newValue);
 		return true;
@@ -94,7 +94,7 @@ class MenuChoice_MouseLook:MenuChoice_OnOff
 		return GetCvar("mouse_look");
 	}
 
-	boolean SetNewValue(int newValue)
+	bool SetNewValue(int newValue)
 	{
 		SetCvar("mouse_look", newValue);
 		return true;
@@ -119,7 +119,7 @@ class MenuChoice_InvertMouse:MenuChoice_OnOff
 		return GetCvar("invert_mouse");
 	}
 
-	boolean SetNewValue(int newValue)
+	bool SetNewValue(int newValue)
 	{
 		SetCvar("invert_mouse", newValue);
 		return true;
@@ -144,7 +144,7 @@ class MenuChoice_Lookspring:MenuChoice_OnOff
 		return GetCvar("lookspring");
 	}
 
-	boolean SetNewValue(int newValue)
+	bool SetNewValue(int newValue)
 	{
 		SetCvar("lookspring", newValue);
 		return true;
@@ -169,7 +169,7 @@ class MenuChoice_LookStrafe:MenuChoice_OnOff
 		return GetCvar("lookstrafe");
 	}
 
-	boolean SetNewValue(int newValue)
+	bool SetNewValue(int newValue)
 	{
 		SetCvar("lookstrafe", newValue);
 		return true;
@@ -212,6 +212,9 @@ void menu_mouse(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/09/07 16:28:26  dj_jl
+//  Added Level class.
+//
 //  Revision 1.6  2002/01/23 17:54:23  dj_jl
 //  Object-oriented menus, got rid of C-style type casting.
 //

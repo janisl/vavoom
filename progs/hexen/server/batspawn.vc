@@ -176,7 +176,7 @@ __states__
 //
 //==========================================================================
 
-boolean Activate(void)
+bool Activate(void)
 {
 	SetState(S_SPAWNBATS1);
 	return true;
@@ -188,7 +188,7 @@ boolean Activate(void)
 //
 //==========================================================================
 
-boolean Deactivate(void)
+bool Deactivate(void)
 {
 	SetState(S_SPAWNBATS_OFF);
 	return true;
@@ -213,6 +213,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/09/07 16:28:25  dj_jl
+//  Added Level class.
+//
 //  Revision 1.18  2002/06/22 07:16:01  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //

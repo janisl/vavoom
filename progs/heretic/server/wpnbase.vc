@@ -270,7 +270,7 @@ void MovePsprites(player_t * player)
 //
 //===========================================================================
 
-boolean CheckAmmo(player_t * player)
+bool CheckAmmo(player_t * player)
 {
 	int ammo;
 	int *ammoUse;
@@ -610,6 +610,9 @@ void Weapon::A_Light0(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2002/09/07 16:28:25  dj_jl
+//  Added Level class.
+//
 //  Revision 1.2  2002/07/23 13:07:30  dj_jl
 //  Final touches for switching to floating-point time, beautification.
 //

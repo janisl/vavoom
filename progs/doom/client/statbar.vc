@@ -156,7 +156,7 @@ int st_faceindex = 0;
 int st_facecount = 0;
 
 // used for evil grin
-boolean oldweaponsowned[NUMWEAPONS];
+bool oldweaponsowned[NUMWEAPONS];
 
 // used to use appopriately pained face
 int st_oldhealth = -1;
@@ -257,7 +257,7 @@ void SB_StartMap(void)
 //
 //==========================================================================
 
-void SB_DrawTallNum(int x, int y, int num, int trans, boolean perc)
+void SB_DrawTallNum(int x, int y, int num, int trans, bool perc)
 {
 	int w;
 	int neg;
@@ -464,7 +464,7 @@ void SB_DrawFullscreenStats(void)
 
 void SB_DrawPause(void)
 {
-	if (cl->paused && GetCvar("draw_pause"))
+	if (cl->bPaused && GetCvar("draw_pause"))
 	{
 		R_DrawPic(126, 4, pic_pause);
 	}
@@ -526,7 +526,7 @@ void UpdateFaceWidget(void)
 	int i;
 //	float badguyangle;
 //	float diffang;
-	boolean doevilgrin;
+	bool doevilgrin;
 
 	// a random number per tick
 	int st_randomnumber;
@@ -703,6 +703,9 @@ void SB_UpdateWidgets(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/09/07 16:28:24  dj_jl
+//  Added Level class.
+//
 //  Revision 1.12  2002/07/23 13:07:29  dj_jl
 //  Final touches for switching to floating-point time, beautification.
 //

@@ -259,13 +259,13 @@ void VEntity::UnlinkFromWorld(void)
 		    BlockMapPrev->BlockMapNext = BlockMapNext;
 		else
 		{
-		    int blockx = MapBlock(Origin.x - level.bmaporgx);
-		    int blocky = MapBlock(Origin.y - level.bmaporgy);
+		    int blockx = MapBlock(Origin.x - XLevel->BlockMapOrgX);
+		    int blocky = MapBlock(Origin.y - XLevel->BlockMapOrgY);
 
-		    if (blockx >= 0 && blockx < level.bmapwidth &&
-		    	blocky >= 0 && blocky < level.bmapheight)
+		    if (blockx >= 0 && blockx < XLevel->BlockMapWidth &&
+		    	blocky >= 0 && blocky < XLevel->BlockMapHeight)
 		    {
-				level.blocklinks[blocky * level.bmapwidth + blockx] =
+				XLevel->BlockLinks[blocky * XLevel->BlockMapWidth + blockx] =
 					BlockMapNext;
 		    }
 		}
@@ -319,13 +319,14 @@ void VEntity::LinkToWorld(void)
     if (!bNoBlockmap)
     {
 		// inert things don't need to be in blockmap
-		int blockx = MapBlock(Origin.x - level.bmaporgx);
-		int blocky = MapBlock(Origin.y - level.bmaporgy);
+		int blockx = MapBlock(Origin.x - XLevel->BlockMapOrgX);
+		int blocky = MapBlock(Origin.y - XLevel->BlockMapOrgY);
 
-		if (blockx >= 0 && blockx < level.bmapwidth &&
-			blocky >= 0 && blocky < level.bmapheight)
+		if (blockx >= 0 && blockx < XLevel->BlockMapWidth &&
+			blocky >= 0 && blocky < XLevel->BlockMapHeight)
 		{
-		    VEntity** link = &level.blocklinks[blocky * level.bmapwidth + blockx];
+		    VEntity** link = &XLevel->BlockLinks[
+				blocky * XLevel->BlockMapWidth + blockx];
 	    	BlockMapPrev = NULL;
 		    BlockMapNext = *link;
 		    if (*link)
@@ -372,15 +373,15 @@ boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*))
 	polyblock_t	*polyLink;
 	seg_t		**tempSeg;
 
-    if (x < 0 || y < 0 || x >= level.bmapwidth || y >= level.bmapheight)
+    if (x < 0 || y < 0 || x >= GLevel->BlockMapWidth || y >= GLevel->BlockMapHeight)
     {
 		return true;
     }
     
-    offset = y * level.bmapwidth + x;
+    offset = y * GLevel->BlockMapWidth + x;
 
     //	Check polyobj blockmap
-	polyLink = level.PolyBlockMap[offset];
+	polyLink = GLevel->PolyBlockMap[offset];
 	while (polyLink)
 	{
 		if (polyLink->polyobj)
@@ -406,15 +407,15 @@ boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*))
 		polyLink = polyLink->next;
 	}
 
-    offset = *(level.blockmap + offset);
+    offset = *(GLevel->BlockMap + offset);
 
-    for (list = level.blockmaplump + offset; *list != -1; list++)
+    for (list = GLevel->BlockMapLump + offset; *list != -1; list++)
     {
 #ifdef PARANOID
-		if (*list < 0 || *list >= level.numlines)
+		if (*list < 0 || *list >= GLevel->NumLines)
 			Host_Error("Broken blockmap - line %d", *list);
 #endif
-		ld = &level.lines[*list];
+		ld = &GLevel->Lines[*list];
 
 		if (ld->validcount == validcount)
 	    	continue; 	// line has already been checked
@@ -438,12 +439,12 @@ boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(VEntity*),
 	FFunction *prfunc)
 {
 	guard(SV_BlockThingsIterator);
-    if (x < 0 || y < 0 || x >= level.bmapwidth || y >= level.bmapheight)
+    if (x < 0 || y < 0 || x >= GLevel->BlockMapWidth || y >= GLevel->BlockMapHeight)
     {
 		return true;
     }
     
-    for (VEntity *Ent = level.blocklinks[y * level.bmapwidth + x]; Ent;
+    for (VEntity *Ent = GLevel->BlockLinks[y * GLevel->BlockMapWidth + x]; Ent;
 		Ent = Ent->BlockMapNext)
     {
 		if (func && !func(Ent))
@@ -530,7 +531,7 @@ static boolean PIT_AddLineIntercepts(line_t* ld)
 	else
 	{
 		intercept_p->frac = frac;
-		intercept_p->isaline = true;
+		intercept_p->bIsALine = true;
 		intercept_p->line = ld;
 		intercept_p++;
 	}
@@ -569,7 +570,7 @@ static boolean PIT_AddThingIntercepts(VEntity* thing)
 	else
 	{
 		intercept_p->frac = frac;
-		intercept_p->isaline = false;
+		intercept_p->bIsALine = false;
 		intercept_p->thing = thing;
 		intercept_p++;
 	}
@@ -618,12 +619,12 @@ boolean SV_PathTraverse(float x1, float y1, float x2, float y2,
     intercept_p = intercepts;
 	memset(intercepts, 0, sizeof(intercepts));
 
-	if (((FX(x1 - level.bmaporgx)) & (MAPBLOCKSIZE - 1)) == 0)
-//	if (fmod(x1 - level.bmaporgx, MAPBLOCKSIZE) == 0.0)
+	if (((FX(x1 - GLevel->BlockMapOrgX)) & (MAPBLOCKSIZE - 1)) == 0)
+//	if (fmod(x1 - GLevel->BlockMapOrgX, MAPBLOCKSIZE) == 0.0)
 		x1 += 1.0;	// don't side exactly on a line
     
-	if (((FX(y1 - level.bmaporgy)) & (MAPBLOCKSIZE - 1)) == 0)
-//	if (fmod(y1 - level.bmaporgy, MAPBLOCKSIZE) == 0.0)
+	if (((FX(y1 - GLevel->BlockMapOrgY)) & (MAPBLOCKSIZE - 1)) == 0)
+//	if (fmod(y1 - GLevel->BlockMapOrgY, MAPBLOCKSIZE) == 0.0)
 		y1 += 1.0;	// don't side exactly on a line
 
 	trace_org = TVec(x1, y1, 0);
@@ -634,13 +635,13 @@ boolean SV_PathTraverse(float x1, float y1, float x2, float y2,
 
 	trace_plane.SetPointDir(trace_org, trace_delta);
 
-	x1 -= level.bmaporgx;
-	y1 -= level.bmaporgy;
+	x1 -= GLevel->BlockMapOrgX;
+	y1 -= GLevel->BlockMapOrgY;
 	xt1 = MapBlock(x1);
 	yt1 = MapBlock(y1);
 
-	x2 -= level.bmaporgx;
-	y2 -= level.bmaporgy;
+	x2 -= GLevel->BlockMapOrgX;
+	y2 -= GLevel->BlockMapOrgY;
 	xt2 = MapBlock(x2);
 	yt2 = MapBlock(y2);
 
@@ -1008,10 +1009,69 @@ int SV_PointContents(const sector_t *sector, const TVec &p)
 
 //**************************************************************************
 //
+//  SECTOR HEIGHT CHANGING
+//
+//  After modifying a sectors floor or ceiling height, call this routine to
+// adjust the positions of all things that touch the sector.
+//  If anything doesn't fit anymore, true will be returned. If crunch is
+// true, they will take damage as they are being crushed.
+//  If Crunch is false, you should set the sector height back the way it was
+// and call P_ChangeSector again to undo the changes.
+//
+//**************************************************************************
+
+static int crushchange;
+static bool nofit;
+
+//==========================================================================
+//
+//  PIT_ChangeSector
+//
+//==========================================================================
+
+boolean PIT_ChangeSector(VEntity *Other)
+{
+	if (!Other->eventSectorChanged(crushchange))
+	{
+		// keep checking (crush other things)
+		nofit = true;	//don't fit
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  P_ChangeSector
+//
+//==========================================================================
+
+bool P_ChangeSector(sector_t * sector, int crunch)
+{
+	int x;
+	int y;
+
+	CalcSecMinMaxs(sector);
+
+	nofit = false;
+	crushchange = crunch;
+
+	// re-check heights for all things near the moving sector
+	for (x = sector->blockbox[BOXLEFT]; x <= sector->blockbox[BOXRIGHT]; x++)
+		for (y = sector->blockbox[BOXBOTTOM]; y <= sector->blockbox[BOXTOP]; y++)
+			SV_BlockThingsIterator(x, y, PIT_ChangeSector, NULL);
+
+	return nofit;
+}
+
+//**************************************************************************
+//
 //	$Log$
+//	Revision 1.18  2002/09/07 16:31:51  dj_jl
+//	Added Level class.
+//
 //	Revision 1.17  2002/08/28 16:41:10  dj_jl
 //	Merged VMapObject with VEntity, some natives.
-//
+//	
 //	Revision 1.16  2002/08/24 14:49:43  dj_jl
 //	Beautification.
 //	

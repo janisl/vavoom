@@ -213,7 +213,7 @@ void IM_InitStats(void)
 			killPercent[i] = 0;
 			bonusPercent[i] = 0;
 			secretPercent[i] = 0;
-			if (scores[i].active)
+			if (scores[i].bActive)
 			{
 				if (im->totalkills)
 				{
@@ -243,12 +243,12 @@ void IM_InitStats(void)
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
 			totalFrags[i] = 0;
-			if (scores[i].active)
+			if (scores[i].bActive)
 			{
 				playercount++;
 				for (j = 0; j < MAXPLAYERS; j++)
 				{
-					if (scores[j].active)
+					if (scores[j].bActive)
 					{
 						totalFrags[i] += scores[i].frags[j];
 					}
@@ -419,7 +419,7 @@ void IM_DrawCoopStats(void)
 //  for (i = 0; i < MAXPLAYERS; i++)
 	for (i = 0; i < 4; i++)
 	{
-		if (scores[i].active)
+		if (scores[i].bActive)
 		{
 			R_DrawShadowedPic(25, ypos, patchFaceOkay[i]);
 			if (intertime < 1.25)
@@ -475,7 +475,7 @@ void IM_DrawDMStats(void)
 	{
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
-			if (scores[i].active)
+			if (scores[i].bActive)
 			{
 				R_DrawShadowedPic(40,
 					ypos + ftoi(dSlideY[i] * 35.0 * intertime),
@@ -503,7 +503,7 @@ void IM_DrawDMStats(void)
 //  for (i = 0; i < MAXPLAYERS; i++)
 	for (i = 0; i < 4; i++)
 	{
-		if (scores[i].active)
+		if (scores[i].bActive)
 		{
 			if (intertime < 3.0 || i == cl->clientnum)
 			{
@@ -519,7 +519,7 @@ void IM_DrawDMStats(void)
 //          for (j = 0; j < MAXPLAYERS; j++)
 			for (j = 0; j < 4; j++)
 			{
-				if (scores[j].active)
+				if (scores[j].bActive)
 				{
 					T_DrawText(kpos, ypos + 10, va("%d", scores[i].frags[j]));
 					kpos += 43;
@@ -584,7 +584,7 @@ void IM_DrawOldLevel(void)
 			R_DrawPic(YAHspot[im_episode - 1][i].x,
 				YAHspot[im_episode - 1][i].y, patchBEENTHERE);
 		}
-		if (cl->didsecret)
+		if (cl->bDidSecret)
 		{
 			R_DrawPic(YAHspot[im_episode - 1][8].x,
 				YAHspot[im_episode - 1][8].y, patchBEENTHERE);
@@ -626,7 +626,7 @@ void IM_DrawYAH(void)
 		R_DrawPic(YAHspot[im_episode - 1][i].x, YAHspot[im_episode - 1][i].y,
 			patchBEENTHERE);
 	}
-	if (cl->didsecret)
+	if (cl->bDidSecret)
 	{
 		R_DrawPic(YAHspot[im_episode - 1][8].x, YAHspot[im_episode - 1][8].y,
 			patchBEENTHERE);
@@ -821,6 +821,9 @@ void IM_Start(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/09/07 16:28:25  dj_jl
+//  Added Level class.
+//
 //  Revision 1.8  2002/02/02 19:17:25  dj_jl
 //  Replacing pointers with references, beautification.
 //

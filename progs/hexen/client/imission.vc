@@ -71,7 +71,7 @@ int totalFrags[MAXPLAYERS];
 int tallytop;
 int tallylft;
 
-boolean showTotals;
+bool showTotals;
 
 string ClusMsgLumpNames[] = {
 	"clus1msg",
@@ -157,12 +157,12 @@ void IM_InitStats(void)
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
 			totalFrags[i] = 0;
-			if (scores[i].active)
+			if (scores[i].bActive)
 			{
 				playercount++;
 				for (j = 0; j < MAXPLAYERS; j++)
 				{
-					if (scores[j].active)
+					if (scores[j].bActive)
 					{
 						totalFrags[i] += scores[i].frags[j];
 					}
@@ -268,7 +268,7 @@ void IM_DrawDeathTally(void)
 	float xDelta, yDelta;
 	float xStart, scale;
 	int x, y;
-	boolean bold;
+	bool bold;
 
 	R_DrawPic(TALLY_TOP_X, TALLY_TOP_Y, tallytop);
 	R_DrawPic(TALLY_LEFT_X, TALLY_LEFT_Y, tallylft);
@@ -303,7 +303,7 @@ void IM_DrawDeathTally(void)
 		{
 			x = ftoi(xPos);
 			bold = (i == cl->clientnum || j == cl->clientnum);
-			if (scores[i].active && scores[j].active)
+			if (scores[i].bActive && scores[j].bActive)
 			{
 				if (bold)
 				{
@@ -328,7 +328,7 @@ void IM_DrawDeathTally(void)
 				T_DrawText(x, y, "--");
 			}
 		}
-		if (showTotals && scores[i].active && !((slaughterboy & (1 << i)) &&
+		if (showTotals && scores[i].bActive && !((slaughterboy & (1 << i)) &&
 				!(ftoi(32.0 * intertime) & 16)))
 		{
 			IM_DrawNumber(totalFrags[i], TALLY_TOTALS_X, y, 1000);
@@ -420,6 +420,9 @@ void IM_Start(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/09/07 16:28:25  dj_jl
+//  Added Level class.
+//
 //  Revision 1.6  2002/01/11 18:19:41  dj_jl
 //  Started to use names in progs
 //

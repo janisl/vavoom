@@ -48,13 +48,13 @@ void QuitResponse(int ch);
 //
 //  MESSAGE BOX
 //
-boolean messageToPrint;
+bool messageToPrint;
 int msgBoxX;
 int msgBoxY;
 int msgBoxW;
 int msgBoxH;
 int messageString[256 / 4];	// ...and here is the message string!
-boolean messageNeedsInput;	// timed message = no input from user
+bool messageNeedsInput;	// timed message = no input from user
 int messageType;
 
 // CODE --------------------------------------------------------------------
@@ -65,7 +65,7 @@ int messageType;
 //
 //==========================================================================
 
-void MB_StartMessage(string text, int type, boolean input)
+void MB_StartMessage(string text, int type, bool input)
 {
 	messageToPrint = true;
 	strcpy(ARR2STR(messageString), text);
@@ -110,7 +110,7 @@ void MB_Drawer(void)
 //
 //==========================================================================
 
-boolean MB_Responder(event_t * event)
+bool MB_Responder(event_t * event)
 {
 	// Take care of any messages that need input
 	if (messageToPrint && event->type == ev_keydown)
@@ -153,7 +153,7 @@ boolean MB_Responder(event_t * event)
 //
 //==========================================================================
 
-boolean MB_Active(void)
+bool MB_Active(void)
 {
 	return messageToPrint;
 }
@@ -161,6 +161,9 @@ boolean MB_Active(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/09/07 16:28:25  dj_jl
+//  Added Level class.
+//
 //  Revision 1.6  2002/03/09 17:52:52  dj_jl
 //  Got rid of function pointers
 //

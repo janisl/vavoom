@@ -452,22 +452,22 @@ class Actor:Entity
 	int SpreadCount;
 #endif
 
-	boolean GiveAmmo(int ammo, int num);
-	boolean GiveWeapon(int weapon, boolean dropped);
-	boolean GiveBody(int num, int max);
-	boolean GiveArmor(int armortype);
-	boolean GiveArmor2(int armortype, int num, int max);
-	boolean GiveCard(int card);
-	boolean GiveItem(int item);
-	boolean GivePower(int power);
-	boolean GivePower2(int power, float duration, float max);
+	bool GiveAmmo(int ammo, int num);
+	bool GiveWeapon(int weapon, bool dropped);
+	bool GiveBody(int num, int max);
+	bool GiveArmor(int armortype);
+	bool GiveArmor2(int armortype, int num, int max);
+	bool GiveCard(int card);
+	bool GiveItem(int item);
+	bool GivePower(int power);
+	bool GivePower2(int power, float duration, float max);
 	void HideSpecial(void);
 	void TouchSpecial(Actor Toucher);
-	boolean HandlePickup(Actor Toucher);
+	bool HandlePickup(Actor Toucher);
 
-	boolean Touch(Entity Other);
+	bool Touch(Entity Other);
 	void Thrust(float angle, float move);
-	boolean TeleportMove(TVec org);
+	bool TeleportMove(TVec org);
 	int Teleport(float x, float y, float angle);
 	void CrossSpecialLine(line_t *ld, int side);
 
@@ -479,8 +479,9 @@ class Actor:Entity
 	void DropStuff(void);
 	void NightmareRespawn(void);
 
-	boolean HeightClip(void);
-	void RadiusAttack(int damage, int distance, boolean damageSource);
+	bool HeightClip(void);
+	bool SectorChanged(int CrushChange);
+	void RadiusAttack(int damage, int distance, bool damageSource);
 
 	void Tick(float deltaTime);
 	void OnMapSpawn(mthing_t *mthing);
@@ -492,16 +493,16 @@ class Actor:Entity
 	void ZMovement(void);
 	void ApplyFriction(void);
 	void PlayerLandedOnThing(void);
-	boolean Physics(void);
+	bool Physics(void);
 
-	boolean CheckMeleeRange(void);
-	boolean CheckMissileRange(void);
-	boolean FindOther(void);
-	boolean LookForMonsters(boolean allaround);
-	boolean LookForMonsters2(boolean allaround);
-	boolean LookForPlayers(boolean allaround);
-	boolean StepMove(void);
-	boolean TryWalk(void);
+	bool CheckMeleeRange(void);
+	bool CheckMissileRange(void);
+	bool FindOther(void);
+	bool LookForMonsters(bool allaround);
+	bool LookForMonsters2(bool allaround);
+	bool LookForPlayers(bool allaround);
+	bool StepMove(void);
+	bool TryWalk(void);
 	void NewChaseDir(void);
 
 	void A_Explode(void);
@@ -1016,16 +1017,16 @@ class BotPlayer:Object
 
 	// Destinations
 	Actor item;			// Item (roam towards weapon, etc)
-	boolean itemIsWeapon;
-	boolean itemIsPowerup;
+	bool bItemIsWeapon;
+	bool bItemIsPowerup;
 	Actor goal;			// Teamgame goal spot
 	Actor node;			// Node we're heading towards
 	Actor prev;			// Previous node we were at
 	TVec posdest;			// Position of our destination (doesn't have to be an actor)
-	boolean posdest_valid;
+	bool posdest_valid;
 	Actor enemy;			// The dead meat.
 	TVec lastpos;			// Last place we saw our enemy
-	boolean lastpos_valid;
+	bool lastpos_valid;
 	Actor missile;			// A threathing missile that got to be avoided.
 
 	Actor ally;			// Ally to tag along with
@@ -1059,9 +1060,9 @@ class BotPlayer:Object
 	float sidemove;
 
 	// Misc booleans
-	boolean allround;
-	boolean newItemIsWeapon;
-	boolean newItemIsPowerup;
+	bool bAllRound;
+	bool bNewItemIsWeapon;
+	bool bNewItemIsPowerup;
 
 /*	chatline_t	*chatline;	// For when t_chat expires
 
@@ -1084,14 +1085,14 @@ class BotPlayer:Object
 	void OnBeginPlay(void);
 	void OnSpawn(void);
 	void BotTick(float deltaTime);
-	boolean CheckTo(TVec pos);
+	bool CheckTo(TVec pos);
 	void CheckStuff(void);
 	float GetAngle(void);
-	boolean CheckPath(float ang, float dist);
+	bool CheckPath(float ang, float dist);
 	void SetEnemy(void);
 	Actor FindEnemy(void);
-	boolean Check_LOS(Actor to, float vangle);
-	boolean CheckItem(Actor item);
+	bool Check_LOS(Actor to, float vangle);
+	bool CheckItem(Actor item);
 	void Scan(void);
 	int WeapFromItem(Actor item);
 	int AmmoFromItem(Actor item);
@@ -1121,7 +1122,7 @@ addfields player_t
 	int MaxAmmo[NUMAMMO];
 	int ReadyAmmo;
 
-	boolean WeaponOwned[NUMWEAPONS];
+	bool WeaponOwned[NUMWEAPONS];
 
 	int ArmorPoints;
 
@@ -1135,7 +1136,7 @@ addfields player_t
 	//  ----------
 	//
 
-	boolean Backpack;
+	bool Backpack;
 
 	// Bit flags, for cheats and debug.
 	// See cheat_t, above.
@@ -1180,7 +1181,7 @@ addfields player_t
 
 int num_stats = NUM_STATS + 2 * NUMAMMO + NUMWEAPONS + 5;
 
-boolean respawnmonsters;
+bool respawnmonsters;
 
 float FloatBobOffsets[64] = {
 	0.0, 0.7841339111, 1.560714722, 2.322265625,
@@ -1212,6 +1213,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.40  2002/09/07 16:28:25  dj_jl
+//  Added Level class.
+//
 //  Revision 1.39  2002/08/28 16:36:39  dj_jl
 //  Merged MapObject with Entity, some natives, beautification.
 //

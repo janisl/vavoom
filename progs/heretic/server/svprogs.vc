@@ -25,8 +25,8 @@
 
 #include <server.vc>
 
-boolean shareware;
-boolean respawnmonsters;
+bool shareware;
+bool respawnmonsters;
 
 #include "../herdefs.vc"
 #include "svdefs.vc"
@@ -92,6 +92,9 @@ boolean respawnmonsters;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/09/07 16:28:25  dj_jl
+//  Added Level class.
+//
 //  Revision 1.15  2002/06/22 07:16:01  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //

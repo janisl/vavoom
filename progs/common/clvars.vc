@@ -23,13 +23,14 @@
 //**
 //**************************************************************************
 
-boolean local_server = true;
+bool local_server = true;
 
 int netgame;
 int deathmatch;
 
 client_state_t *cl;
 cl_level_t *level;
+Level GLevel;
 
 float frametime;
 
@@ -37,11 +38,14 @@ scores_t *scores;
 im_t *im;
 
 // used to accelerate or skip a stage
-boolean skipintermission;
+bool skipintermission;
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/09/07 16:28:21  dj_jl
+//  Added Level class.
+//
 //  Revision 1.7  2002/01/07 12:19:56  dj_jl
 //  Changed copyright year
 //

@@ -51,7 +51,7 @@ struct dlight_t
 // Client side Map Object definition.
 struct clmobj_t
 {
-	boolean		in_use;
+	int			in_use;
 
 	TVec		origin;	// position
 	TAVec		angles;	// orientation
@@ -127,7 +127,7 @@ extern float ScaleY640;
 
 inline subsector_t* CL_PointInSubsector(float x, float y)
 {
-	return PointInSubsector(cl_level, x, y);
+	return GClLevel->PointInSubsector(TVec(x, y, 0));
 }
 
 extern dlight_t			cl_dlights[MAX_DLIGHTS];
@@ -137,9 +137,12 @@ extern dlight_t			cl_dlights[MAX_DLIGHTS];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/09/07 16:31:50  dj_jl
+//	Added Level class.
+//
 //	Revision 1.12  2002/08/28 16:42:04  dj_jl
 //	Configurable entity limit.
-//
+//	
 //	Revision 1.11  2002/04/11 16:44:44  dj_jl
 //	Got rid of some warnings.
 //	

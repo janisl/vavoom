@@ -278,7 +278,7 @@ static bool CrossSubsector(int num)
 	int 			polyCount;
 	seg_t**			polySeg;
 
-    sub = &cl_level.subsectors[num];
+    sub = &GClLevel->Subsectors[num];
     
 	if (sub->poly)
 	{
@@ -296,7 +296,7 @@ static bool CrossSubsector(int num)
 
     // check lines
     count = sub->numlines;
-    seg = &cl_level.segs[sub->firstline];
+    seg = &GClLevel->Segs[sub->firstline];
 
     for ( ; count ; seg++, count--)
     {
@@ -332,7 +332,7 @@ static bool CrossBSPNode(int bspnum)
 		    return CrossSubsector(bspnum & (~NF_SUBSECTOR));
     }
 		
-    bsp = &cl_level.nodes[bspnum];
+    bsp = &GClLevel->Nodes[bspnum];
     
     // decide which side the start point is on
     side = PlaneSide2(trace_start, bsp);
@@ -375,7 +375,7 @@ bool CL_TraceLine(const TVec &start, const TVec &end)
 	linestart = trace_start;
 
     // the head node is the last node output
-    if (CrossBSPNode(cl_level.numnodes - 1))
+    if (CrossBSPNode(GClLevel->NumNodes - 1))
 	{
 		lineend = trace_end;
 	    return CheckPlanes(CL_PointInSubsector(end.x, end.y)->sector);
@@ -387,9 +387,12 @@ bool CL_TraceLine(const TVec &start, const TVec &end)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/09/07 16:31:50  dj_jl
+//	Added Level class.
+//
 //	Revision 1.8  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.7  2002/04/11 16:44:44  dj_jl
 //	Got rid of some warnings.
 //	

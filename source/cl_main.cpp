@@ -194,8 +194,7 @@ void CL_DecayLights(void)
 	dlight_t	*dl;
 	float		time;
 	
-//	time = cl.time - cl.oldtime;
-	time = host_frametime;
+	time = cl.time - cl.oldtime;
 
 	dl = cl_dlights;
 	for (i = 0; i < MAX_DLIGHTS; i++, dl++)
@@ -245,7 +244,7 @@ void CL_ReadFromServer(void)
 	if (cls.state != ca_connected)
 		return;
 
-//	cl.oldtime = cl.time;
+	cl.oldtime = cl.time;
 	cl.time += host_frametime;
 	
 	do
@@ -377,9 +376,9 @@ void CL_KeepaliveMessage(void)
 void CL_Disconnect(void)
 {
 	guard(CL_Disconnect);
-    if (cl.paused)
+    if (cl.bPaused)
     { 
-		cl.paused = false;
+		cl.bPaused = false;
 		S_ResumeSound();
     } 
 	
@@ -539,9 +538,12 @@ COMMAND(Say)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2002/09/07 16:31:50  dj_jl
+//	Added Level class.
+//
 //	Revision 1.15  2002/08/28 16:42:04  dj_jl
 //	Configurable entity limit.
-//
+//	
 //	Revision 1.14  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
 //	

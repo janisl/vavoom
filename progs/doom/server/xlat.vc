@@ -435,7 +435,8 @@ void TranslateThing(mthing_t * mthing)
 		mthing->options &= ~MTF_GSINGLE;
 	if (mthing->type == 14)
 	{
-		mthing->tid = PointInSubsector(mthing->x, mthing->y)->sector->tag;
+		mthing->tid =
+			GLevel.PointInSector(vector(mthing->x, mthing->y, 0.0))->tag;
 	}
 }
 
@@ -449,25 +450,28 @@ void TranslateLevel(void)
 {
 	int i;
 
-	for (i = 0; i < level->numlines; i++)
+	for (i = 0; i < GLevel.NumLines; i++)
 	{
-		TranslateLine(&level->lines[i]);
+		TranslateLine(&GLevel.Lines[i]);
 	}
 
-	for (i = 0; i < level->numsectors; i++)
+	for (i = 0; i < GLevel.NumSectors; i++)
 	{
-		TranslateSector(&level->sectors[i]);
+		TranslateSector(&GLevel.Sectors[i]);
 	}
 
-	for (i = 0; i < level->numthings; i++)
+	for (i = 0; i < GLevel.NumThings; i++)
 	{
-		TranslateThing(&level->things[i]);
+		TranslateThing(&GLevel.Things[i]);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/09/07 16:28:25  dj_jl
+//  Added Level class.
+//
 //  Revision 1.6  2002/01/11 08:04:26  dj_jl
 //  Added support for EDGE 3D floors
 //

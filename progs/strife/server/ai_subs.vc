@@ -141,7 +141,7 @@ int Actor::CheckMissileRange(void)
 //
 //==========================================================================
 
-boolean Actor::LookForMonsters(boolean allaround)
+bool Actor::LookForMonsters(bool allaround)
 {
 	Actor mo;
 	float an;
@@ -198,7 +198,7 @@ boolean Actor::LookForMonsters(boolean allaround)
 //
 //==========================================================================
 
-boolean Actor::LookForPlayers(boolean allaround)
+bool Actor::LookForPlayers(bool allaround)
 {
 	int c;
 	int stop;
@@ -271,13 +271,13 @@ boolean Actor::LookForPlayers(boolean allaround)
 //
 //==========================================================================
 
-boolean Actor::StepMove(void)
+bool Actor::StepMove(void)
 {
 	float tryx;
 	float tryy;
 
 	line_t *ld;
-	boolean good;
+	bool good;
 
 	if (MoveDir == DI_NODIR)
 		return false;
@@ -293,7 +293,7 @@ boolean Actor::StepMove(void)
 	if (!TryMove(vector(tryx, tryy, Origin.z)))
 	{
 		// open any specials
-		if (bFloat && tmtrace->FloatOk)
+		if (bFloat && tmtrace->bFloatOk)
 		{
 			// must adjust height
 			if (Origin.z < tmtrace->FloorZ)
@@ -346,7 +346,7 @@ boolean Actor::StepMove(void)
 //
 //==========================================================================
 
-boolean Actor::TryWalk(void)
+bool Actor::TryWalk(void)
 {
 	if (!StepMove())
 	{
@@ -490,6 +490,9 @@ void Actor::NewChaseDir(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/09/07 16:28:26  dj_jl
+//  Added Level class.
+//
 //  Revision 1.21  2002/07/13 07:56:42  dj_jl
 //  Huge work on Strife: splitting, merging, implementing stuff, etc.
 //

@@ -173,7 +173,7 @@ void MovePsprites(player_t * player)
 //
 //==========================================================================
 
-boolean P_CheckMana(player_t * player)
+bool P_CheckMana(player_t * player)
 {
 	int mana;
 	int count;
@@ -465,6 +465,9 @@ void Weapon::A_Light0(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/09/07 16:28:26  dj_jl
+//  Added Level class.
+//
 //  Revision 1.17  2002/07/23 13:07:31  dj_jl
 //  Final touches for switching to floating-point time, beautification.
 //

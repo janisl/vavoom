@@ -108,15 +108,15 @@ native void Destroy(void);
 native Window NewChild(classid ChildClass);
 native void Raise(void);
 native void Lower(void);
-native void SetVisibility(boolean bNewVisibility);
+native void SetVisibility(bool bNewVisibility);
 native void Show(void);
 native void Hide(void);
-native boolean IsVisible(void);
-native void SetSensitivity(boolean bNewSensitivity);
+native bool IsVisible(void);
+native void SetSensitivity(bool bNewSensitivity);
 native void Enable(void);
 native void Disable(void);
-native boolean IsSensitive(void);
-native void SetSelectability(boolean bNewSelectability);
+native bool IsSensitive(void);
+native void SetSelectability(bool bNewSelectability);
 
 native RootWindow GetRootWindow(void);
 native ModalWindow GetModalWindow(void);
@@ -128,10 +128,10 @@ native void SetConfiguration(int NewX, int NewY, int NewWidth, int NewHeight);
 native void SetWidth(int NewWidth);
 native void SetHeight(int NewHeight);
 
-native Window GetBottomChild(boolean bVisibleOnly);
-native Window GetTopChild(boolean bVisibleOnly);
-native Window GetLowerSibling(boolean bVisibleOnly);
-native Window GetHigherSibling(boolean bVisibleOnly);
+native Window GetBottomChild(bool bVisibleOnly);
+native Window GetTopChild(bool bVisibleOnly);
+native Window GetLowerSibling(bool bVisibleOnly);
+native Window GetHigherSibling(bool bVisibleOnly);
 
 native void DestroyAllChildren(void);
 
@@ -239,7 +239,7 @@ void ConfigurationChanged(void)
 //
 //==========================================================================
 
-void VisibilityChanged(boolean bNewVisibility)
+void VisibilityChanged(bool bNewVisibility)
 {
 }
 
@@ -251,7 +251,7 @@ void VisibilityChanged(boolean bNewVisibility)
 //
 //==========================================================================
 
-void SensitivityChanged(boolean bNewSensitivity)
+void SensitivityChanged(bool bNewSensitivity)
 {
 }
 
@@ -336,6 +336,9 @@ RootWindow GRoot;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2002/09/07 16:28:22  dj_jl
+//  Added Level class.
+//
 //  Revision 1.3  2002/07/27 18:12:30  dj_jl
 //  Added Selectability flag.
 //

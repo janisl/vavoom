@@ -454,7 +454,7 @@ int ZigZagCount;	// Only for floor
 //
 //==========================================================================
 
-boolean Touch(Entity InOther)
+bool Touch(Entity InOther)
 {
 	int damage;
 	Actor Other;
@@ -915,6 +915,45 @@ defaultproperties
 class MageStaffFX2:Projectile
 {
 
+//===========================================================================
+//
+//  RoughCheckThing
+//
+//===========================================================================
+
+bool RoughCheckThing(Entity Other)
+{
+	float angle;
+	Actor link = Actor(Other);
+	
+	if (!(link.bCountKill || link.bIsPlayer) || link == Instigator ||
+		link.bDormant)
+	{
+		return false;
+	}
+	if (!link.bShootable)
+	{
+		return false;
+	}
+	if (netgame && !deathmatch && link.bIsPlayer)
+	{
+		return false;
+	}
+	if (CanSee(link))
+	{
+		angle = AngleMod360(atan2(
+			link.Origin.y - Instigator.Origin.y,
+			link.Origin.x - Instigator.Origin.x) -
+			Instigator.Angles.yaw);
+		if (angle > 226.0 * 360.0 / 256.0 ||
+			angle < 30.0 * 360.0 / 256.0)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 //==========================================================================
 //
 //  A_MStaffTrack
@@ -925,7 +964,7 @@ void A_MStaffTrack(void)
 {
 	if (!Enemy && (P_Random() < 50))
 	{
-		Enemy = RoughMonsterSearch(10);
+		Enemy = Actor(RoughMonsterSearch(10));
 	}
 	SeekerMissile(2.0, 10.0);
 }
@@ -982,7 +1021,7 @@ void MStaffSpawn(float angle)
 	if (mo)
 	{
 		mo.Instigator = Player->MO;
-		mo.Enemy = mo.RoughMonsterSearch(10);
+		mo.Enemy = Actor(mo.RoughMonsterSearch(10));
 	}
 }
 
@@ -1186,6 +1225,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.31  2002/09/07 16:28:26  dj_jl
+//  Added Level class.
+//
 //  Revision 1.30  2002/08/28 16:36:39  dj_jl
 //  Merged MapObject with Entity, some natives, beautification.
 //

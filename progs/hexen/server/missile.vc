@@ -44,7 +44,7 @@
 //
 //==========================================================================
 
-boolean Actor::CheckMissileSpawn(void)
+bool Actor::CheckMissileSpawn(void)
 {
 	// move a little forward so an angle can be computed if it
 	// immediately explodes
@@ -257,7 +257,7 @@ Actor Pawn::SpawnKoraxMissile(TVec org, Actor dest, classid type)
 //
 //==========================================================================
 
-boolean Actor::SeekerMissile(float thresh, float turnMax)
+bool Actor::SeekerMissile(float thresh, float turnMax)
 {
 	int dir;
 	float dist;
@@ -478,7 +478,7 @@ Actor PlayerPawn::SpawnPlayerMissileAngleXYZ(TVec org, classid type, float angle
 //
 //==========================================================================
 
-boolean Actor::ExplodeMissile(void)
+bool Actor::ExplodeMissile(void)
 {
 	Velocity = vector(0.0, 0.0, 0.0);
 	if (!SetState(DeathState))
@@ -521,6 +521,9 @@ boolean Actor::ExplodeMissile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/09/07 16:28:26  dj_jl
+//  Added Level class.
+//
 //  Revision 1.26  2002/04/11 16:52:16  dj_jl
 //  Made TryMove native.
 //

@@ -47,7 +47,6 @@ static void UnLinkPolyobj(polyobj_t *po);
 static void LinkPolyobj(polyobj_t *po);
 static boolean CheckMobjBlocking(seg_t *seg, polyobj_t *po);
 static void InitBlockMap(void);
-static void IterFindPolySegs(float x, float y, seg_t **segList);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -79,11 +78,11 @@ polyobj_t *PO_GetPolyobj(int polyNum)
 	guard(PO_GetPolyobj);
 	int i;
 
-	for (i = 0; i < level.numpolyobjs; i++)
+	for (i = 0; i < GLevel->NumPolyObjs; i++)
 	{
-		if (level.polyobjs[i].tag == polyNum)
+		if (GLevel->PolyObjs[i].tag == polyNum)
 		{
-			return &level.polyobjs[i];
+			return &GLevel->PolyObjs[i];
 		}
 	}
 	return NULL;
@@ -101,11 +100,11 @@ int PO_GetPolyobjMirror(int poly)
 	guard(PO_GetPolyobjMirror);
 	int i;
 
-	for(i = 0; i < level.numpolyobjs; i++)
+	for(i = 0; i < GLevel->NumPolyObjs; i++)
 	{
-		if(level.polyobjs[i].tag == poly)
+		if (GLevel->PolyObjs[i].tag == poly)
 		{
-			return((*level.polyobjs[i].segs)->linedef->arg2);
+			return((*GLevel->PolyObjs[i].segs)->linedef->arg2);
 		}
 	}
 	return 0;
@@ -335,12 +334,13 @@ static void UnLinkPolyobj(polyobj_t *po)
 	// remove the polyobj from each blockmap section
 	for (j = po->bbox[BOXBOTTOM]; j <= po->bbox[BOXTOP]; j++)
 	{
-		index = j * level.bmapwidth;
-		for(i = po->bbox[BOXLEFT]; i <= po->bbox[BOXRIGHT]; i++)
+		index = j * GLevel->BlockMapWidth;
+		for (i = po->bbox[BOXLEFT]; i <= po->bbox[BOXRIGHT]; i++)
 		{
-			if (i >= 0 && i < level.bmapwidth && j >= 0 && j < level.bmapheight)
+			if (i >= 0 && i < GLevel->BlockMapWidth &&
+				j >= 0 && j < GLevel->BlockMapHeight)
 			{
-				link = level.PolyBlockMap[index+i];
+				link = GLevel->PolyBlockMap[index + i];
 				while (link != NULL && link->polyobj != po)
 				{
 					link = link->next;
@@ -396,21 +396,24 @@ static void LinkPolyobj(polyobj_t *po)
 			bottomY = (*tempSeg)->v1->y;
 		}
 	}
-	po->bbox[BOXRIGHT] = MapBlock(rightX - level.bmaporgx);
-	po->bbox[BOXLEFT] = MapBlock(leftX - level.bmaporgx);
-	po->bbox[BOXTOP] = MapBlock(topY - level.bmaporgy);
-	po->bbox[BOXBOTTOM] = MapBlock(bottomY - level.bmaporgy);
+	po->bbox[BOXRIGHT] = MapBlock(rightX - GLevel->BlockMapOrgX);
+	po->bbox[BOXLEFT] = MapBlock(leftX - GLevel->BlockMapOrgX);
+	po->bbox[BOXTOP] = MapBlock(topY - GLevel->BlockMapOrgY);
+	po->bbox[BOXBOTTOM] = MapBlock(bottomY - GLevel->BlockMapOrgY);
 	// add the polyobj to each blockmap section
-	for(j = po->bbox[BOXBOTTOM]*level.bmapwidth; j <= po->bbox[BOXTOP]*level.bmapwidth;
-		j += level.bmapwidth)
+	for (j = po->bbox[BOXBOTTOM] * GLevel->BlockMapWidth;
+		j <= po->bbox[BOXTOP] * GLevel->BlockMapWidth;
+		j += GLevel->BlockMapWidth)
 	{
-		for(i = po->bbox[BOXLEFT]; i <= po->bbox[BOXRIGHT]; i++)
+		for (i = po->bbox[BOXLEFT]; i <= po->bbox[BOXRIGHT]; i++)
 		{
-			if(i >= 0 && i < level.bmapwidth && j >= 0 && j < level.bmapheight*level.bmapwidth)
+			if (i >= 0 && i < GLevel->BlockMapWidth &&
+				j >= 0 && j < GLevel->BlockMapHeight * GLevel->BlockMapWidth)
 			{
-				link = &level.PolyBlockMap[j+i];
-				if(!(*link))
-				{ // Create a new link at the current block cell
+				link = &GLevel->PolyBlockMap[j + i];
+				if (!(*link))
+				{ 
+					// Create a new link at the current block cell
 					*link = (polyblock_t*)Z_Malloc(sizeof(polyblock_t), PU_LEVEL, 0);
 					(*link)->next = NULL;
 					(*link)->prev = NULL;
@@ -420,12 +423,12 @@ static void LinkPolyobj(polyobj_t *po)
 				else
 				{
 					tempLink = *link;
-					while(tempLink->next != NULL && tempLink->polyobj != NULL)
+					while (tempLink->next != NULL && tempLink->polyobj != NULL)
 					{
 						tempLink = tempLink->next;
 					}
 				}
-				if(tempLink->polyobj == NULL)
+				if (tempLink->polyobj == NULL)
 				{
 					tempLink->polyobj = po;
 					continue;
@@ -463,28 +466,28 @@ static boolean CheckMobjBlocking(seg_t *seg, polyobj_t *po)
 
 	ld = seg->linedef;
 
-	top = MapBlock(ld->bbox[BOXTOP] - level.bmaporgy + MAXRADIUS);
-	bottom = MapBlock(ld->bbox[BOXBOTTOM] - level.bmaporgy - MAXRADIUS);
-	left = MapBlock(ld->bbox[BOXLEFT] - level.bmaporgx - MAXRADIUS);
-	right = MapBlock(ld->bbox[BOXRIGHT] - level.bmaporgx + MAXRADIUS);
+	top = MapBlock(ld->bbox[BOXTOP] - GLevel->BlockMapOrgY + MAXRADIUS);
+	bottom = MapBlock(ld->bbox[BOXBOTTOM] - GLevel->BlockMapOrgY - MAXRADIUS);
+	left = MapBlock(ld->bbox[BOXLEFT] - GLevel->BlockMapOrgX - MAXRADIUS);
+	right = MapBlock(ld->bbox[BOXRIGHT] - GLevel->BlockMapOrgX + MAXRADIUS);
 
 	blocked = false;
 
 	bottom = bottom < 0 ? 0 : bottom;
-	bottom = bottom >= level.bmapheight ? level.bmapheight-1 : bottom;
+	bottom = bottom >= GLevel->BlockMapHeight ? GLevel->BlockMapHeight - 1 : bottom;
 	top = top < 0 ? 0 : top;
-	top = top >= level.bmapheight  ? level.bmapheight-1 : top;
+	top = top >= GLevel->BlockMapHeight  ? GLevel->BlockMapHeight - 1 : top;
 	left = left < 0 ? 0 : left;
-	left = left >= level.bmapwidth ? level.bmapwidth-1 : left;
+	left = left >= GLevel->BlockMapWidth ? GLevel->BlockMapWidth - 1 : left;
 	right = right < 0 ? 0 : right;
-	right = right >= level.bmapwidth ?  level.bmapwidth-1 : right;
+	right = right >= GLevel->BlockMapWidth ?  GLevel->BlockMapWidth - 1 : right;
 
-	for (j = bottom * level.bmapwidth; j <= top * level.bmapwidth;
-		j += level.bmapwidth)
+	for (j = bottom * GLevel->BlockMapWidth; j <= top * GLevel->BlockMapWidth;
+		j += GLevel->BlockMapWidth)
 	{
 		for (i = left; i <= right; i++)
 		{
-			for (mobj = level.blocklinks[j + i]; mobj; mobj = mobj->BlockMapNext)
+			for (mobj = GLevel->BlockLinks[j + i]; mobj; mobj = mobj->BlockMapNext)
 			{
 				if (mobj->bSolid || mobj->bIsPlayer)
 				{
@@ -525,14 +528,12 @@ static void InitBlockMap(void)
 	guard(InitBlockMap);
 	int		i;
 
-	level.PolyBlockMap = (polyblock_t**)Z_Malloc(level.bmapwidth *
-		level.bmapheight * sizeof(polyblock_t *), PU_LEVEL, 0);
-	memset(level.PolyBlockMap, 0, level.bmapwidth * level.bmapheight *
-		sizeof(polyblock_t *));
+	GLevel->PolyBlockMap = Z_CNew<polyblock_t *>(GLevel->BlockMapWidth *
+		GLevel->BlockMapHeight, PU_LEVEL, 0);
 
-	for (i = 0; i < level.numpolyobjs; i++)
+	for (i = 0; i < GLevel->NumPolyObjs; i++)
 	{
-		LinkPolyobj(&level.polyobjs[i]);
+		LinkPolyobj(&GLevel->PolyObjs[i]);
 	}
 	unguard;
 }
@@ -546,19 +547,19 @@ static void InitBlockMap(void)
 //
 //==========================================================================
 
-static void IterFindPolySegs(float x, float y, seg_t **segList)
+static void IterFindPolySegs(TVec From, seg_t **segList)
 {
 	int i;
 
-	if (x == PolyStartX && y == PolyStartY)
+	if (From.x == PolyStartX && From.y == PolyStartY)
 	{
 		return;
 	}
-	for (i = 0; i < level.numsegs; i++)
+	for (i = 0; i < GLevel->NumSegs; i++)
 	{
-		if (!level.segs[i].linedef)
+		if (!GLevel->Segs[i].linedef)
 			continue;
-		if (level.segs[i].v1->x == x && level.segs[i].v1->y == y)
+		if (*GLevel->Segs[i].v1 == From)
 		{
 			if (!segList)
 			{
@@ -566,9 +567,9 @@ static void IterFindPolySegs(float x, float y, seg_t **segList)
 			}
 			else
 			{
-				*segList++ = &level.segs[i];
+				*segList++ = &GLevel->Segs[i];
 			}
-			IterFindPolySegs(level.segs[i].v2->x, level.segs[i].v2->y, segList);
+			IterFindPolySegs(*GLevel->Segs[i].v2, segList);
 			return;
 		}
 	}
@@ -597,79 +598,78 @@ void PO_SpawnPolyobj(float x, float y, int tag, int crush)
 				<< (word)y
 				<< (byte)tag;
 
-	index = level.numpolyobjs++;
-	if (level.numpolyobjs == 1)
+	index = GLevel->NumPolyObjs++;
+	if (GLevel->NumPolyObjs == 1)
     {
-		level.polyobjs = (polyobj_t*)Z_Malloc(sizeof(polyobj_t), PU_LEVEL, 0);
+		GLevel->PolyObjs = (polyobj_t*)Z_Malloc(sizeof(polyobj_t), PU_LEVEL, 0);
 	}
     else
     {
-    	Z_Resize((void**)&level.polyobjs, level.numpolyobjs * sizeof(polyobj_t));
+    	Z_Resize((void**)&GLevel->PolyObjs, GLevel->NumPolyObjs * sizeof(polyobj_t));
     }
-	memset(&level.polyobjs[index], 0, sizeof(polyobj_t));
+	memset(&GLevel->PolyObjs[index], 0, sizeof(polyobj_t));
 
-	level.polyobjs[index].startSpot.x = x;
-	level.polyobjs[index].startSpot.y = y;
-	for (i = 0; i < level.numsegs; i++)
+	GLevel->PolyObjs[index].startSpot.x = x;
+	GLevel->PolyObjs[index].startSpot.y = y;
+	for (i = 0; i < GLevel->NumSegs; i++)
 	{
-		if (!level.segs[i].linedef)
+		if (!GLevel->Segs[i].linedef)
 			continue;
-		if (level.segs[i].linedef->special == PO_LINE_START &&
-			level.segs[i].linedef->arg1 == tag)
+		if (GLevel->Segs[i].linedef->special == PO_LINE_START &&
+			GLevel->Segs[i].linedef->arg1 == tag)
 		{
-			if (level.polyobjs[index].segs)
+			if (GLevel->PolyObjs[index].segs)
 			{
             	//	Immpossible, because it is just cleared out
 				Sys_Error("PO_SpawnPolyobj:  Polyobj %d already spawned.\n", tag);
 			}
-			level.segs[i].linedef->special = 0;
-			level.segs[i].linedef->arg1 = 0;
+			GLevel->Segs[i].linedef->special = 0;
+			GLevel->Segs[i].linedef->arg1 = 0;
 			PolySegCount = 1;
-			PolyStartX = level.segs[i].v1->x;
-			PolyStartY = level.segs[i].v1->y;
-			IterFindPolySegs(level.segs[i].v2->x, level.segs[i].v2->y, NULL);
+			PolyStartX = GLevel->Segs[i].v1->x;
+			PolyStartY = GLevel->Segs[i].v1->y;
+			IterFindPolySegs(*GLevel->Segs[i].v2, NULL);
 
-			level.polyobjs[index].numsegs = PolySegCount;
-			level.polyobjs[index].segs = (seg_t**)Z_Malloc(PolySegCount*sizeof(seg_t *),
+			GLevel->PolyObjs[index].numsegs = PolySegCount;
+			GLevel->PolyObjs[index].segs = (seg_t**)Z_Malloc(PolySegCount*sizeof(seg_t *),
 				PU_LEVEL, 0);
-			*(level.polyobjs[index].segs) = &level.segs[i]; // insert the first seg
-			IterFindPolySegs(level.segs[i].v2->x, level.segs[i].v2->y,
-				level.polyobjs[index].segs + 1);
-			level.polyobjs[index].crush = crush;
-			level.polyobjs[index].tag = tag;
-			level.polyobjs[index].seqType = level.segs[i].linedef->arg3;
-//			if(level.polyobjs[index].seqType < 0
-//				|| level.polyobjs[index].seqType >= SEQTYPE_NUMSEQ)
+			*(GLevel->PolyObjs[index].segs) = &GLevel->Segs[i]; // insert the first seg
+			IterFindPolySegs(*GLevel->Segs[i].v2, GLevel->PolyObjs[index].segs + 1);
+			GLevel->PolyObjs[index].bCrush = crush;
+			GLevel->PolyObjs[index].tag = tag;
+			GLevel->PolyObjs[index].seqType = GLevel->Segs[i].linedef->arg3;
+//			if (GLevel->PolyObjs[index].seqType < 0 ||
+//				GLevel->PolyObjs[index].seqType >= SEQTYPE_NUMSEQ)
 //			{
-//				level.polyobjs[index].seqType = 0;
+//				GLevel->PolyObjs[index].seqType = 0;
 //			}
 			break;
 		}
 	}
-	if (!level.polyobjs[index].segs)
+	if (!GLevel->PolyObjs[index].segs)
 	{
 		// didn't find a polyobj through PO_LINE_START
 		psIndex = 0;
-		level.polyobjs[index].numsegs = 0;
+		GLevel->PolyObjs[index].numsegs = 0;
 		for(j = 1; j < PO_MAXPOLYSEGS; j++)
 		{
 			psIndexOld = psIndex;
-			for (i = 0; i < level.numsegs; i++)
+			for (i = 0; i < GLevel->NumSegs; i++)
 			{
-				if (!level.segs[i].linedef)
+				if (!GLevel->Segs[i].linedef)
 					continue;
-				if (level.segs[i].linedef->special == PO_LINE_EXPLICIT &&
-					level.segs[i].linedef->arg1 == tag)
+				if (GLevel->Segs[i].linedef->special == PO_LINE_EXPLICIT &&
+					GLevel->Segs[i].linedef->arg1 == tag)
 				{
-					if(!level.segs[i].linedef->arg2)
+					if (!GLevel->Segs[i].linedef->arg2)
 					{
 						Sys_Error("PO_SpawnPolyobj:  Explicit line missing order number (probably %d) in poly %d.\n",
 							j+1, tag);
 					}
-					if(level.segs[i].linedef->arg2 == j)
+					if (GLevel->Segs[i].linedef->arg2 == j)
 					{
-						polySegList[psIndex] = &level.segs[i];
-						level.polyobjs[index].numsegs++;
+						polySegList[psIndex] = &GLevel->Segs[i];
+						GLevel->PolyObjs[index].numsegs++;
 						psIndex++;
 						if(psIndex > PO_MAXPOLYSEGS)
 						{
@@ -681,27 +681,28 @@ void PO_SpawnPolyobj(float x, float y, int tag, int crush)
 			// Clear out any specials for these segs...we cannot clear them out
 			// 	in the above loop, since we aren't guaranteed one seg per
 			//		linedef.
-			for (i = 0; i < level.numsegs; i++)
+			for (i = 0; i < GLevel->NumSegs; i++)
 			{
-				if (!level.segs[i].linedef)
+				if (!GLevel->Segs[i].linedef)
 					continue;
-				if(level.segs[i].linedef->special == PO_LINE_EXPLICIT &&
-					level.segs[i].linedef->arg1 == tag && level.segs[i].linedef->arg2 == j)
+				if (GLevel->Segs[i].linedef->special == PO_LINE_EXPLICIT &&
+					GLevel->Segs[i].linedef->arg1 == tag &&
+					GLevel->Segs[i].linedef->arg2 == j)
 				{
-					level.segs[i].linedef->special = 0;
-					level.segs[i].linedef->arg1 = 0;
+					GLevel->Segs[i].linedef->special = 0;
+					GLevel->Segs[i].linedef->arg1 = 0;
 				}
 			}
 			if(psIndex == psIndexOld)
 			{ // Check if an explicit line order has been skipped
 				// A line has been skipped if there are any more explicit
 				// lines with the current tag value
-				for (i = 0; i < level.numsegs; i++)
+				for (i = 0; i < GLevel->NumSegs; i++)
 				{
-					if (!level.segs[i].linedef)
+					if (!GLevel->Segs[i].linedef)
 						continue;
-					if (level.segs[i].linedef->special == PO_LINE_EXPLICIT &&
-						level.segs[i].linedef->arg1 == tag)
+					if (GLevel->Segs[i].linedef->special == PO_LINE_EXPLICIT &&
+						GLevel->Segs[i].linedef->arg1 == tag)
 					{
 						Sys_Error("PO_SpawnPolyobj:  Missing explicit line %d for poly %d\n",
 							j, tag);
@@ -709,23 +710,23 @@ void PO_SpawnPolyobj(float x, float y, int tag, int crush)
 				}
 			}
 		}
-		if(level.polyobjs[index].numsegs)
+		if (GLevel->PolyObjs[index].numsegs)
 		{
-			PolySegCount = level.polyobjs[index].numsegs; // PolySegCount used globally
-			level.polyobjs[index].crush = crush;
-			level.polyobjs[index].tag = tag;
-			level.polyobjs[index].segs = (seg_t**)Z_Malloc(level.polyobjs[index].numsegs
+			PolySegCount = GLevel->PolyObjs[index].numsegs; // PolySegCount used globally
+			GLevel->PolyObjs[index].bCrush = crush;
+			GLevel->PolyObjs[index].tag = tag;
+			GLevel->PolyObjs[index].segs = (seg_t**)Z_Malloc(GLevel->PolyObjs[index].numsegs
 				* sizeof(seg_t *), PU_LEVEL, 0);
-			for(i = 0; i < level.polyobjs[index].numsegs; i++)
+			for(i = 0; i < GLevel->PolyObjs[index].numsegs; i++)
 			{
-				level.polyobjs[index].segs[i] = polySegList[i];
+				GLevel->PolyObjs[index].segs[i] = polySegList[i];
 			}
-			level.polyobjs[index].seqType = (*level.polyobjs[index].segs)->linedef->arg4;
+			GLevel->PolyObjs[index].seqType = (*GLevel->PolyObjs[index].segs)->linedef->arg4;
 		}
 		// Next, change the polyobjs first line to point to a mirror
 		//		if it exists
-		(*level.polyobjs[index].segs)->linedef->arg2 =
-			(*level.polyobjs[index].segs)->linedef->arg3;
+		(*GLevel->PolyObjs[index].segs)->linedef->arg2 =
+			(*GLevel->PolyObjs[index].segs)->linedef->arg3;
 	}
 	unguard;
 }
@@ -781,11 +782,11 @@ static void TranslateToStartSpot(float originX, float originY, int tag)
 				<< (byte)tag;
 
 	po = NULL;
-	for(i = 0; i < level.numpolyobjs; i++)
+	for(i = 0; i < GLevel->NumPolyObjs; i++)
 	{
-		if(level.polyobjs[i].tag == tag)
+		if (GLevel->PolyObjs[i].tag == tag)
 		{
-			po = &level.polyobjs[i];
+			po = &GLevel->PolyObjs[i];
 			break;
 		}
 	}
@@ -867,12 +868,12 @@ void PO_Init(void)
     NumAnchorPoints = 0;
 
 	// check for a startspot without an anchor point
-	for (i = 0; i < level.numpolyobjs; i++)
+	for (i = 0; i < GLevel->NumPolyObjs; i++)
 	{
-		if (!level.polyobjs[i].originalPts)
+		if (!GLevel->PolyObjs[i].originalPts)
 		{
 			Sys_Error("PO_Init:  StartSpot located without an Anchor point: %d\n",
-				level.polyobjs[i].tag);
+				GLevel->PolyObjs[i].tag);
 		}
 	}
 	InitBlockMap();
@@ -895,9 +896,12 @@ boolean PO_Busy(int polyobj)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/09/07 16:31:51  dj_jl
+//	Added Level class.
+//
 //	Revision 1.16  2002/08/28 16:41:09  dj_jl
 //	Merged VMapObject with VEntity, some natives.
-//
+//	
 //	Revision 1.15  2002/08/08 18:05:20  dj_jl
 //	Release fixes.
 //	

@@ -224,7 +224,7 @@ anim_t epsd2animinfo[] = {
 anim_t *anims;
 int numanims;
 
-boolean snl_pointeron = false;
+bool snl_pointeron = false;
 
 //
 // Data needed to add patches to full screen intermission pics.
@@ -785,7 +785,7 @@ void IM_InitCooperativeStats(void)
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (!scores[i].active)
+		if (!scores[i].bActive)
 			continue;
 
 		cnt_kills[i] = 0;
@@ -829,7 +829,7 @@ void IM_DrawCooperativeStats(void)
 //  for (i = 0; i < MAXPLAYERS; i++)
 	for (i = 0; i < 4; i++)
 	{
-		if (!scores[i].active)
+		if (!scores[i].bActive)
 			continue;
 
 		x = NG_STATSX;
@@ -867,7 +867,7 @@ int FragSum(int playernum)
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (scores[i].active && i != playernum)
+		if (scores[i].bActive && i != playernum)
 		{
 			frags += scores[playernum].frags[i];
 		}
@@ -891,7 +891,7 @@ void IM_UpdateCooperativeStats(void)
 	int i;
 	int fsum;
 
-	boolean stillticking;
+	bool stillticking;
 
 	if (skipintermission && ng_state != 10)
 	{
@@ -899,7 +899,7 @@ void IM_UpdateCooperativeStats(void)
 
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
-			if (!scores[i].active)
+			if (!scores[i].bActive)
 				continue;
 
 			cnt_kills[i] = (scores[i].killcount * 100) / im->totalkills;
@@ -920,7 +920,7 @@ void IM_UpdateCooperativeStats(void)
 
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
-			if (!scores[i].active)
+			if (!scores[i].bActive)
 				continue;
 
 			cnt_kills[i] += 2;
@@ -946,7 +946,7 @@ void IM_UpdateCooperativeStats(void)
 
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
-			if (!scores[i].active)
+			if (!scores[i].bActive)
 				continue;
 
 			cnt_items[i] += 2;
@@ -970,7 +970,7 @@ void IM_UpdateCooperativeStats(void)
 
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
-			if (!scores[i].active)
+			if (!scores[i].bActive)
 				continue;
 
 			cnt_secret[i] += 2;
@@ -998,7 +998,7 @@ void IM_UpdateCooperativeStats(void)
 
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
-			if (!scores[i].active)
+			if (!scores[i].bActive)
 				continue;
 
 			cnt_frags[i] += 1;
@@ -1057,10 +1057,10 @@ void IM_InitDeathmatchStats(void)
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (scores[i].active)
+		if (scores[i].bActive)
 		{
 			for (j = 0; j < MAXPLAYERS; j++)
-				if (scores[j].active)
+				if (scores[j].bActive)
 					dm_frags[i][j] = 0;
 
 			dm_totals[i] = 0;
@@ -1102,7 +1102,7 @@ void IM_DrawDeathmatchStats(void)
 //  for (i = 0; i < MAXPLAYERS; i++)
 	for (i = 0; i < 4; i++)
 	{
-		if (scores[i].active)
+		if (scores[i].bActive)
 		{
 			R_GetPicInfo(p[i], &info);
 			R_DrawPic(x - info.width / 2, DM_MATRIXY - WI_SPACINGY, p[i]);
@@ -1129,12 +1129,12 @@ void IM_DrawDeathmatchStats(void)
 	{
 		x = DM_MATRIXX + DM_SPACINGX;
 
-		if (scores[i].active)
+		if (scores[i].bActive)
 		{
 //          for (j = 0; j < MAXPLAYERS; j++)
 			for (j = 0; j < 4; j++)
 			{
-				if (scores[j].active)
+				if (scores[j].bActive)
 				{
 					T_DrawText(x + w, y, va("%d", dm_frags[i][j]));
 				}
@@ -1157,7 +1157,7 @@ void IM_UpdateDeathmatchStats(void)
 	int i;
 	int j;
 
-	boolean stillticking;
+	bool stillticking;
 
 	if (skipintermission && dm_state != 4)
 	{
@@ -1165,10 +1165,10 @@ void IM_UpdateDeathmatchStats(void)
 
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
-			if (scores[i].active)
+			if (scores[i].bActive)
 			{
 				for (j = 0; j < MAXPLAYERS; j++)
-					if (scores[j].active)
+					if (scores[j].bActive)
 						dm_frags[i][j] = scores[i].frags[j];
 
 				dm_totals[i] = FragSum(i);
@@ -1188,11 +1188,11 @@ void IM_UpdateDeathmatchStats(void)
 
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
-			if (scores[i].active)
+			if (scores[i].bActive)
 			{
 				for (j = 0; j < MAXPLAYERS; j++)
 				{
-					if (scores[j].active
+					if (scores[j].bActive
 						&& dm_frags[i][j] != scores[i].frags[j])
 					{
 						if (scores[i].frags[j] < 0)
@@ -1280,9 +1280,10 @@ void IM_DrawOnLnode(int n, int *c)
 	int top;
 	int right;
 	int bottom;
-	boolean fits = false;
+	bool fits;
 	picinfo_t info;
 
+	fits = false;
 	i = 0;
 	do
 	{
@@ -1335,7 +1336,7 @@ void IM_DrawNextLoc(void)
 			IM_DrawOnLnode(i, &splat);
 
 		// splat the secret level?
-		if (cl->didsecret)
+		if (cl->bDidSecret)
 			IM_DrawOnLnode(8, &splat);
 
 		// draw flashing ptr
@@ -1738,6 +1739,9 @@ void IM_Start(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/09/07 16:28:24  dj_jl
+//  Added Level class.
+//
 //  Revision 1.8  2002/07/23 16:31:43  dj_jl
 //  Beautification.
 //

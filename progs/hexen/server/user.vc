@@ -33,13 +33,13 @@ Actor Spawn(classid type, TVec position);
 
 void SetWeapon(player_t *player, int NewWeapon);
 void MovePsprites(player_t * player);
-boolean G_CheckSpot(int playernum, mthing_t * mthing);
-boolean P_UsePuzzleItem(player_t * player, int itemType);
+bool G_CheckSpot(int playernum, mthing_t * mthing);
+bool P_UsePuzzleItem(player_t * player, int itemType);
 void P_UseLines(player_t * player);
 
 Actor LavaInflictor;
 
-boolean onground;
+bool onground;
 
 //==========================================================================
 //
@@ -1170,7 +1170,7 @@ void SetViewPos(player_t * player)
 //
 //==========================================================================
 
-boolean PlayerPawn::UseArtiHealRadius(void)
+bool PlayerPawn::UseArtiHealRadius(void)
 {
 	PlayerPawn P;
 	float dist;
@@ -1269,7 +1269,7 @@ void PlayerPawn::UseArtiTele(void)
 //
 //==========================================================================
 
-boolean PlayerPawn::UseArtifact(int arti)
+bool PlayerPawn::UseArtifact(int arti)
 {
 	int i;
 	int count;
@@ -1598,7 +1598,7 @@ void Actor::TeleportOther(void)
 //
 //==========================================================================
 
-boolean EV_LineSearchForPuzzleItem(line_t * line, int *args, Actor A)
+bool EV_LineSearchForPuzzleItem(line_t * line, int *args, Actor A)
 {
 	int i;
 	int type, arti;
@@ -1646,7 +1646,7 @@ boolean EV_LineSearchForPuzzleItem(line_t * line, int *args, Actor A)
 //
 //==========================================================================
 
-void G_PlayerExitMap(int playerNumber, boolean clusterChange)
+void G_PlayerExitMap(int playerNumber, bool clusterChange)
 {
 	int i;
 	player_t *player;
@@ -1734,10 +1734,10 @@ void G_DeathMatchSpawnPlayer(int playernum)
 void NetGameReborn(int playernum)
 {
 	int i;
-	boolean oldWeaponowned[NUMWEAPONS];
+	bool oldWeaponowned[NUMWEAPONS];
 	int oldKeys;
 	int oldPieces;
-	boolean foundSpot;
+	bool foundSpot;
 	int bestWeapon;
 
 	// respawn at the start
@@ -1883,8 +1883,8 @@ void SpawnClient(int i)
 	int j;
 	int oldKeys;
 	int oldPieces;
-	boolean oldWeaponowned[NUMWEAPONS];
-	boolean playerWasReborn;
+	bool oldWeaponowned[NUMWEAPONS];
+	bool playerWasReborn;
 	int bestWeapon;
 
 	player = &players[i];
@@ -1991,6 +1991,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.38  2002/09/07 16:28:26  dj_jl
+//  Added Level class.
+//
 //  Revision 1.37  2002/07/23 13:07:31  dj_jl
 //  Final touches for switching to floating-point time, beautification.
 //

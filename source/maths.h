@@ -184,7 +184,7 @@ class TPlane
 	}
 
 	//	Returns side 0 (front) or 1 (back).
-	int PointOnSide(const TVec &point)
+	int PointOnSide(const TVec &point) const
 	{
 		return DotProduct(point, normal) - dist < 0;
 	}
@@ -193,9 +193,12 @@ class TPlane
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/09/07 16:31:51  dj_jl
+//	Added Level class.
+//
 //	Revision 1.8  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.7  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

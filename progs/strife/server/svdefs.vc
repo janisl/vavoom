@@ -300,7 +300,7 @@ class Actor:Entity
 	void HideSpecial(void);
 	void TouchSpecial(Actor Toucher);
 
-	boolean Touch(Entity Other);
+	bool Touch(Entity Other);
 	void CrossSpecialLine(line_t *ld, int side);
 
 	void Tick(float deltaTime);
@@ -314,7 +314,7 @@ class Actor:Entity
 	void Damage(Actor inflictor, Actor source, int damage);
 	void NightmareRespawn(void);
 
-	boolean TeleportMove(TVec org);
+	bool TeleportMove(TVec org);
 	int Teleport(float x, float y, float angle);
 
 	void Thrust(float angle, float move);
@@ -324,17 +324,18 @@ class Actor:Entity
 	void ZMovement(void);
 	void ApplyFriction(void);
 	void PlayerLandedOnThing(void);
-	boolean Physics(void);
+	bool Physics(void);
 
-	boolean HeightClip(void);
-	void RadiusAttack(int damage, int distance, boolean damageSource);
+	bool HeightClip(void);
+	bool SectorChanged(int CrushChange);
+	void RadiusAttack(int damage, int distance, bool damageSource);
 
 	int CheckMeleeRange(void);
 	int CheckMissileRange(void);
-	boolean LookForMonsters(boolean allaround);
-	boolean LookForPlayers(boolean allaround);
-	boolean StepMove(void);
-	boolean TryWalk(void);
+	bool LookForMonsters(bool allaround);
+	bool LookForPlayers(bool allaround);
+	bool StepMove(void);
+	bool TryWalk(void);
 	void NewChaseDir(void);
 
 	// Action functions
@@ -432,13 +433,13 @@ class Pawn:Actor
 class PlayerPawn:Pawn
 	abstract
 {
-	boolean GiveAmmo(int ammo, int num);
-	boolean GiveWeapon(int weapon, boolean dropped);
-	boolean GiveBody(int num);
-	boolean GiveArmor(int armortype);
-	boolean GiveKey(int key);
-	boolean GiveItem(int item);
-	boolean GivePower(int power);
+	bool GiveAmmo(int ammo, int num);
+	bool GiveWeapon(int weapon, bool dropped);
+	bool GiveBody(int num);
+	bool GiveArmor(int armortype);
+	bool GiveKey(int key);
+	bool GiveItem(int item);
+	bool GivePower(int power);
 
 	void ThrustPlayer(float angle, float move, float deltaTime);
 	void CalcHeight(float deltaTime);
@@ -472,8 +473,8 @@ class Pickup:Actor
 	name PickupSound;
 	string PickupString;
 
-	boolean ValidTouch(Actor Toucher);
-	boolean HandlePickup(Actor Toucher);
+	bool ValidTouch(Actor Toucher);
+	bool HandlePickup(Actor Toucher);
 	void HideSpecial(void);
 	void TouchSpecial(Actor Toucher);
 
@@ -548,13 +549,13 @@ addfields player_t
 	int Ammo[NUMAMMO];
 	int ReadyAmmo;
 
-	boolean WeaponOwned[NUMWEAPONS];
+	bool WeaponOwned[NUMWEAPONS];
 
 	int ArmorPoints;
 
 	int Keys;
 
-	boolean Backpack;
+	bool Backpack;
 
 	int ReadyWeapon;
 
@@ -598,7 +599,7 @@ addfields player_t
 // DATA DECLARATIONS -------------------------------------------------------
 
 int num_stats = 0;
-boolean respawnmonsters;
+bool respawnmonsters;
 
 float FloatBobOffsets[64] = {
 	0.0, 0.7841339111, 1.560714722, 2.322265625,
@@ -624,6 +625,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.41  2002/09/07 16:28:26  dj_jl
+//  Added Level class.
+//
 //  Revision 1.40  2002/08/28 16:36:39  dj_jl
 //  Merged MapObject with Entity, some natives, beautification.
 //

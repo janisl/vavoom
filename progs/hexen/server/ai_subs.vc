@@ -43,7 +43,7 @@ float yspeed[8] =
 //
 //==========================================================================
 
-boolean Pawn::CheckMeleeRange(void)
+bool Pawn::CheckMeleeRange(void)
 {
 	float dist;
 
@@ -79,7 +79,7 @@ boolean Pawn::CheckMeleeRange(void)
 //
 //==========================================================================
 
-boolean Pawn::CheckMeleeRange2(void)
+bool Pawn::CheckMeleeRange2(void)
 {
 	float dist;
 
@@ -115,7 +115,7 @@ boolean Pawn::CheckMeleeRange2(void)
 //
 //==========================================================================
 
-boolean Pawn::CheckMissileRange(void)
+bool Pawn::CheckMissileRange(void)
 {
 	float dist;
 
@@ -197,7 +197,7 @@ void Pawn::FaceMovementDirection(void)
 #define MONS_LOOK_RANGE (16.0 * 64.0)
 #define MONS_LOOK_LIMIT 64
 
-boolean Pawn::LookForMonsters(void)
+bool Pawn::LookForMonsters(void)
 {
 	int count;
 	Actor mo;
@@ -258,7 +258,7 @@ boolean Pawn::LookForMonsters(void)
 //
 //============================================================================
 
-boolean Pawn::LookForPlayers(boolean allaround)
+bool Pawn::LookForPlayers(bool allaround)
 {
 	int c;
 	int stop;
@@ -340,13 +340,13 @@ boolean Pawn::LookForPlayers(boolean allaround)
 //
 //==========================================================================
 
-boolean Pawn::StepMove(void)
+bool Pawn::StepMove(void)
 {
 	float tryx;
 	float tryy;
 
 	line_t *ld;
-	boolean good;
+	bool good;
 
 	if (bBlasted)
 		return true;
@@ -364,7 +364,7 @@ boolean Pawn::StepMove(void)
 	if (!TryMove(vector(tryx, tryy, Origin.z)))
 	{
 		// open any specials
-		if (bFloat && tmtrace->FloatOk)
+		if (bFloat && tmtrace->bFloatOk)
 		{
 			// must adjust height
 			if (Origin.z < tmtrace->FloorZ)
@@ -421,7 +421,7 @@ boolean Pawn::StepMove(void)
 //
 //==========================================================================
 
-boolean Pawn::TryWalk(void)
+bool Pawn::TryWalk(void)
 {
 	if (!StepMove())
 	{
@@ -543,253 +543,12 @@ void Pawn::NewChaseDir(void)
 	MoveDir = DI_NODIR;	// can't move
 }
 
-//===========================================================================
-//
-//  Actor::RoughBlockCheck
-//
-//===========================================================================
-
-Actor Actor::RoughBlockCheck(int index)
-{
-	Actor link;
-	float angle;
-
-	for (link = Actor(BlockLink(index)); link;
-		link = Actor(link.BlockMapNext))
-	{
-		if (bIsPlayer)	// Minotaur looking around player
-		{
-			if (link.bCountKill || (link.bIsPlayer && (link != self)))
-			{
-				if (!link.bShootable)
-				{
-					continue;
-				}
-				if (link.bDormant)
-				{
-					continue;
-				}
-				if ((link.Class == Minotaur) &&
-					(*link._SpecialMobj1 == self))
-				{
-					continue;
-				}
-				if (netgame && !deathmatch && link.bIsPlayer)
-				{
-					continue;
-				}
-				if (CanSee(link))
-				{
-					return link;
-				}
-			}
-		}
-		else if (Class == Minotaur)	// looking around minotaur
-		{
-			if (link.bCountKill || (link.bIsPlayer && (link != *_SpecialMobj1)))
-			{
-				if (!link.bShootable)
-				{
-					continue;
-				}
-				if (link.bDormant)
-				{
-					continue;
-				}
-				if ((link.Class == Minotaur) &&
-					(link._SpecialMobj1 == _SpecialMobj1))
-				{
-					continue;
-				}
-				if (netgame && !deathmatch && link.bIsPlayer)
-				{
-					continue;
-				}
-				if (CanSee(link))
-				{
-					return link;
-				}
-			}
-		}
-		else if (Class == MageStaffFX2)	// bloodscourge
-		{
-			if ((link.bCountKill || link.bIsPlayer) && link != Instigator &&
-				!link.bDormant)
-			{
-				if (!link.bShootable)
-				{
-					continue;
-				}
-				if (netgame && !deathmatch && link.bIsPlayer)
-				{
-					continue;
-				}
-				else if (CanSee(link))
-				{
-					angle = AngleMod360(atan2(
-						link.Origin.y - Instigator.Origin.y,
-						link.Origin.x - Instigator.Origin.x) -
-						Instigator.Angles.yaw);
-					if (angle > 226.0 * 360.0 / 256.0 ||
-						angle < 30.0 * 360.0 / 256.0)
-					{
-						return link;
-					}
-				}
-			}
-		}
-		else	// spirits
-		{
-			if ((link.bCountKill || link.bIsPlayer) && !link.bDormant)
-			{
-				if (!link.bShootable)
-				{
-					continue;
-				}
-				if (netgame && !deathmatch && link.bIsPlayer)
-				{
-					continue;
-				}
-				if (link == Instigator)
-				{
-					continue;
-				}
-				else if (CanSee(link))
-				{
-					return link;
-				}
-			}
-		}
-	}
-	return none;
-}
-
-//===========================================================================
-//
-//	Actor::RoughMonsterSearch
-//
-//	Searches though the surrounding mapblocks for monsters/players
-//      distance is in MAPBLOCKUNITS
-//
-//===========================================================================
-
-Actor Actor::RoughMonsterSearch(int distance)
-{
-	int blockX;
-	int blockY;
-	int startX, startY;
-	int blockIndex;
-	int firstStop;
-	int secondStop;
-	int thirdStop;
-	int finalStop;
-	int count;
-	Actor newEnemy;
-
-	startX = MapBlock(Origin.x - level->bmaporgx);
-	startY = MapBlock(Origin.y - level->bmaporgy);
-
-	if (startX >= 0 && startX < level->bmapwidth && startY >= 0
-		&& startY < level->bmapheight)
-	{
-		newEnemy = RoughBlockCheck(startY * level->bmapwidth + startX);
-		if (newEnemy)
-		{
-			// found a target right away
-			return newEnemy;
-		}
-	}
-	for (count = 1; count <= distance; count++)
-	{
-		blockX = startX - count;
-		blockY = startY - count;
-
-		if (blockY < 0)
-		{
-			blockY = 0;
-		}
-		else if (blockY >= level->bmapheight)
-		{
-			blockY = level->bmapheight - 1;
-		}
-		if (blockX < 0)
-		{
-			blockX = 0;
-		}
-		else if (blockX >= level->bmapwidth)
-		{
-			blockX = level->bmapwidth - 1;
-		}
-		blockIndex = blockY * level->bmapwidth + blockX;
-		firstStop = startX + count;
-		if (firstStop < 0)
-		{
-			continue;
-		}
-		if (firstStop >= level->bmapwidth)
-		{
-			firstStop = level->bmapwidth - 1;
-		}
-		secondStop = startY + count;
-		if (secondStop < 0)
-		{
-			continue;
-		}
-		if (secondStop >= level->bmapheight)
-		{
-			secondStop = level->bmapheight - 1;
-		}
-		thirdStop = secondStop * level->bmapwidth + blockX;
-		secondStop = secondStop * level->bmapwidth + firstStop;
-		firstStop += blockY * level->bmapwidth;
-		finalStop = blockIndex;
-
-		// Trace the first block section (along the top)
-		for (; blockIndex <= firstStop; blockIndex++)
-		{
-			newEnemy = RoughBlockCheck(blockIndex);
-			if (newEnemy)
-			{
-				return newEnemy;
-			}
-		}
-		// Trace the second block section (right edge)
-		for (blockIndex--; blockIndex <= secondStop;
-			blockIndex += level->bmapwidth)
-		{
-			newEnemy = RoughBlockCheck(blockIndex);
-			if (newEnemy)
-			{
-				return newEnemy;
-			}
-		}
-		// Trace the third block section (bottom edge)
-		for (blockIndex -= level->bmapwidth; blockIndex >= thirdStop;
-			blockIndex--)
-		{
-			newEnemy = RoughBlockCheck(blockIndex);
-			if (newEnemy)
-			{
-				return newEnemy;
-			}
-		}
-		// Trace the final block section (left edge)
-		for (blockIndex++; blockIndex > finalStop;
-			blockIndex -= level->bmapwidth)
-		{
-			newEnemy = RoughBlockCheck(blockIndex);
-			if (newEnemy)
-			{
-				return newEnemy;
-			}
-		}
-	}
-	return none;
-}
-
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/09/07 16:28:25  dj_jl
+//  Added Level class.
+//
 //  Revision 1.23  2002/07/13 08:01:49  dj_jl
 //  Moved some functions to the Entity class.
 //

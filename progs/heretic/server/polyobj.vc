@@ -109,8 +109,7 @@ void Tick(float deltaTime)
 //
 //==========================================================================
 
-boolean EV_RotatePoly(line_t * line, int *args, int direction, boolean
-	overRide)
+bool EV_RotatePoly(line_t * line, int *args, int direction, bool overRide)
 {
 	int mirror;
 	int polyNum;
@@ -255,8 +254,7 @@ void Tick(float deltaTime)
 //
 //==========================================================================
 
-boolean EV_MovePoly(line_t * line, int *args, boolean timesEight, boolean
-	overRide)
+bool EV_MovePoly(line_t * line, int *args, bool timesEight, bool overRide)
 {
 	int mirror;
 	int polyNum;
@@ -340,7 +338,7 @@ class PolyobjDoor:PolyobjThinker
 	float totalDist;
 	float time;
 	float waitTime;
-	boolean close;
+	bool bClose;
 
 //==========================================================================
 //
@@ -375,10 +373,10 @@ void Tick(float deltaTime)
 			{
 				poly = GetPolyobj(polyobj);
 				PolyobjStopSequence(poly);
-				if (!close)
+				if (!bClose)
 				{
 					dist = totalDist;
-					close = true;
+					bClose = true;
 					time = waitTime;
 					xSpeed = -xSpeed;
 					ySpeed = -ySpeed;
@@ -397,7 +395,7 @@ void Tick(float deltaTime)
 		else
 		{
 			poly = GetPolyobj(polyobj);
-			if (poly->crush || !close)
+			if (poly->bCrush || !bClose)
 			{
 				// continue moving if the poly is a crusher, or is opening
 				return;
@@ -408,7 +406,7 @@ void Tick(float deltaTime)
 				dist = totalDist - dist;
 				xSpeed = -xSpeed;
 				ySpeed = -ySpeed;
-				close = false;
+				bClose = false;
 				PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
 			}
 		}
@@ -423,10 +421,10 @@ void Tick(float deltaTime)
 			{
 				poly = GetPolyobj(polyobj);
 				PolyobjStopSequence(poly);
-				if (!close)
+				if (!bClose)
 				{
 					dist = totalDist;
-					close = true;
+					bClose = true;
 					time = waitTime;
 					speed = -speed;
 				}
@@ -444,7 +442,7 @@ void Tick(float deltaTime)
 		else
 		{
 			poly = GetPolyobj(polyobj);
-			if (poly->crush || !close)
+			if (poly->bCrush || !bClose)
 			{
 				// continue moving if the poly is a crusher, or is opening
 				return;
@@ -454,7 +452,7 @@ void Tick(float deltaTime)
 				// open back up and rewait
 				dist = totalDist - dist;
 				speed = -speed;
-				close = false;
+				bClose = false;
 				PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
 			}
 		}
@@ -473,7 +471,7 @@ void Tick(float deltaTime)
 //
 //==========================================================================
 
-boolean EV_OpenPolyDoor(line_t * line, int *args, int type)
+bool EV_OpenPolyDoor(line_t * line, int *args, int type)
 {
 	int mirror;
 	int polyNum;
@@ -604,7 +602,7 @@ void PolyThrustMobj(Actor A, TVec thrustDir, polyobj_t * po)
 	}
 
 	A.Velocity += force * thrustDir;
-	if (po->crush)
+	if (po->bCrush)
 	{
 		TVec testPos;
 
@@ -622,7 +620,7 @@ void PolyThrustMobj(Actor A, TVec thrustDir, polyobj_t * po)
 //
 //==========================================================================
 
-boolean PolyBusy(int polyobj)
+bool PolyBusy(int polyobj)
 {
 	polyobj_t *poly;
 
@@ -640,6 +638,9 @@ boolean PolyBusy(int polyobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/09/07 16:28:25  dj_jl
+//  Added Level class.
+//
 //  Revision 1.13  2002/04/11 16:48:10  dj_jl
 //  New base classes for sector thinkers, Tick function.
 //

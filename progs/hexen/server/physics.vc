@@ -232,7 +232,7 @@ void Actor::HitMobj(Entity Other)
 				{
 					Enemy = Instigator;
 				}
-				Instigator = Other;
+				Instigator = Actor(Other);
 				return;
 			}
 		}
@@ -433,7 +433,7 @@ void Actor::XYMovement(void)
 //
 //==========================================================================
 
-boolean Actor::HitFloor(void)
+bool Actor::HitFloor(void)
 {
 	float vdot;
 
@@ -555,7 +555,7 @@ boolean Actor::HitFloor(void)
 //
 //==========================================================================
 
-boolean Actor::HitCeiling(void)
+bool Actor::HitCeiling(void)
 {
 	float vdot;
 
@@ -615,7 +615,7 @@ boolean Actor::HitCeiling(void)
 //
 //==========================================================================
 
-boolean Actor::ZMovement(void)
+bool Actor::ZMovement(void)
 {
 	float dist;
 	float delta;
@@ -727,14 +727,14 @@ void Actor::PlayerLandedOnThing(void)
 //
 //==========================================================================
 
-boolean Actor::BlasterPhysics(void)
+bool Actor::BlasterPhysics(void)
 {
 	int i;
 	float xfrac;
 	float yfrac;
 	float zfrac;
 	float z;
-	boolean changexy;
+	bool changexy;
 	Actor A;
 
 	// Handle movement
@@ -805,7 +805,7 @@ boolean Actor::BlasterPhysics(void)
 //
 //==========================================================================
 
-boolean Actor::Physics(void)
+bool Actor::Physics(void)
 {
 	Actor onmo;
 
@@ -938,6 +938,9 @@ void Actor::Tick(float deltaTime)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.36  2002/09/07 16:28:26  dj_jl
+//  Added Level class.
+//
 //  Revision 1.35  2002/07/23 13:07:30  dj_jl
 //  Final touches for switching to floating-point time, beautification.
 //

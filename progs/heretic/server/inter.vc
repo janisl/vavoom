@@ -462,7 +462,7 @@ string AmmoText[] = {
 //
 //==========================================================================
 
-boolean PlayerPawn::GiveAmmo(int ammo, int count)
+bool PlayerPawn::GiveAmmo(int ammo, int count)
 {
 	int prevAmmo;
 	int max;
@@ -517,10 +517,10 @@ boolean PlayerPawn::GiveAmmo(int ammo, int count)
 //
 //==========================================================================
 
-boolean PlayerPawn::GiveWeapon(int weapon)
+bool PlayerPawn::GiveWeapon(int weapon)
 {
-	boolean gaveAmmo;
-	boolean gaveWeapon;
+	bool gaveAmmo;
+	bool gaveWeapon;
 
 	if (netgame && !deathmatch)
 	{
@@ -562,7 +562,7 @@ boolean PlayerPawn::GiveWeapon(int weapon)
 //
 //==========================================================================
 
-boolean PlayerPawn::GiveBody(int num)
+bool PlayerPawn::GiveBody(int num)
 {
 	int max;
 
@@ -592,7 +592,7 @@ boolean PlayerPawn::GiveBody(int num)
 //
 //==========================================================================
 
-boolean PlayerPawn::GiveArmor(int armortype)
+bool PlayerPawn::GiveArmor(int armortype)
 {
 	int hits;
 
@@ -612,7 +612,7 @@ boolean PlayerPawn::GiveArmor(int armortype)
 //
 //==========================================================================
 
-boolean PlayerPawn::GiveKey(int key)
+bool PlayerPawn::GiveKey(int key)
 {
 	if ((Player->Keys & (1 << key)))
 	{
@@ -631,7 +631,7 @@ boolean PlayerPawn::GiveKey(int key)
 //
 //==========================================================================
 
-boolean PlayerPawn::GivePower(int power)
+bool PlayerPawn::GivePower(int power)
 {
 	if (power == pw_invulnerability)
 	{
@@ -704,7 +704,7 @@ boolean PlayerPawn::GivePower(int power)
 //
 //==========================================================================
 
-boolean PlayerPawn::GiveItem(int item)
+bool PlayerPawn::GiveItem(int item)
 {
 	if (Player->Items & item)
 	{
@@ -722,7 +722,7 @@ boolean PlayerPawn::GiveItem(int item)
 //
 //==========================================================================
 
-boolean PlayerPawn::GiveArtifact(int arti)
+bool PlayerPawn::GiveArtifact(int arti)
 {
 	int i;
 
@@ -993,6 +993,9 @@ void Ammo::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/09/07 16:28:25  dj_jl
+//  Added Level class.
+//
 //  Revision 1.21  2002/08/28 16:36:39  dj_jl
 //  Merged MapObject with Entity, some natives, beautification.
 //

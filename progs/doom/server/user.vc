@@ -43,14 +43,14 @@ float air_control = 1.0 / 256.0;
 void SetWeapon(player_t * player, int NewWeapon);
 void MovePsprites(player_t * player);
 void ChangeWeapon(player_t * player, int newweapon);
-boolean G_CheckSpot(int playernum, mthing_t * mthing);
+bool G_CheckSpot(int playernum, mthing_t * mthing);
 void P_SpawnPlayer(mthing_t * mthing);
 void P_UseLines(player_t * player);
 #ifdef DDF
 void SetInitialWeapons(player_t *player);
 #endif
 
-boolean onground;
+bool onground;
 
 //==========================================================================
 //
@@ -821,7 +821,7 @@ void G_PlayerReborn(int player)
 //
 //==========================================================================
 
-void G_PlayerExitMap(int player, boolean clusterChange)
+void G_PlayerExitMap(int player, bool clusterChange)
 {
 	player_t *p;
 	int i;
@@ -1059,6 +1059,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2002/09/07 16:28:25  dj_jl
+//  Added Level class.
+//
 //  Revision 1.29  2002/07/23 13:07:29  dj_jl
 //  Final touches for switching to floating-point time, beautification.
 //

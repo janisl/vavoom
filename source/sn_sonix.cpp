@@ -367,7 +367,7 @@ void SN_UpdateActiveSequences(void)
 	seqnode_t *node;
 	boolean sndPlaying;
 
-	if (!ActiveSequences || cl.paused)
+	if (!ActiveSequences || cl.bPaused)
 	{ // No sequences currently playing/game is paused
 		return;
 	}
@@ -500,10 +500,13 @@ void SN_ChangeNodeData(int nodeNum, int seqOffset, int delayTics, int volume,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/09/07 16:31:51  dj_jl
+//	Added Level class.
+//
 //	Revision 1.6  2002/01/11 08:11:05  dj_jl
 //	Changes in sound list
 //	Added guard macros
-//
+//	
 //	Revision 1.5  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	
