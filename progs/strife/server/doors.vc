@@ -232,6 +232,88 @@ int EV_VerticalDoor(line_t * line, Actor thing)
 
 //==========================================================================
 //
+//  EV_TextureChangeDoor
+//
+//==========================================================================
+
+int EV_TextureChangeDoor(line_t* line, int* args)
+{
+	int secnum;
+	int rtn;
+	sector_t* sec;
+	TextureChangeDoor Door;
+
+	secnum = -1;
+	rtn = 0;
+
+	while ((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
+	{
+		sec = &GLevel.Sectors[secnum];
+		if (sec->SpecialData)
+			continue;
+
+		// new door thinker
+		rtn = 1;
+		Door = NewSpecialThinker(TextureChangeDoor);
+		sec->SpecialData = Door;
+
+		Door.sector = sec;
+		Door.topwait = 160.0 / 35.0;
+		Door.speed = 99999.0;
+		Door.line = line;
+
+		Door.direction = 1;
+		Door.topheight = FindLowestCeilingSurrounding(sec);
+		Door.StartAnim();
+	}
+	return rtn;
+}
+
+//==========================================================================
+//
+//  EV_ManualTextureChangeDoor : open a door manually, no tag value
+//
+//  int return value?
+//
+//==========================================================================
+
+int EV_ManualTextureChangeDoor(line_t * line, Actor thing)
+{
+	sector_t *sec;
+	TextureChangeDoor Door;
+	int side;
+	float speed;
+	int type;
+
+	side = 0;	// only front sides can be used
+
+	speed = itof(line->arg2) * 4.0;
+
+	// if the sector has an active thinker, use it
+	sec = GLevel.Sides[line->sidenum[side ^ 1]].sector;
+
+	if (sec->SpecialData)
+	{
+		return 1;
+	}
+
+	// new door thinker
+	Door = NewSpecialThinker(TextureChangeDoor);
+	sec->SpecialData = Door;
+	Door.sector = sec;
+	Door.line = line;
+	Door.direction = 1;
+	Door.speed = 99999.0;
+	Door.topwait = 160.0 / 35.0;
+
+	// find the top and bottom of the movement range
+	Door.topheight = FindLowestCeilingSurrounding(sec);
+	Door.StartAnim();
+	return 1;
+}
+
+//==========================================================================
+//
 //  P_SpawnDoorCloseIn30
 //
 //  Spawn a door that closes after 30 seconds
@@ -284,6 +366,9 @@ void P_SpawnDoorRaiseIn5Mins(sector_t * sec)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2004/10/13 06:41:14  dj_jl
+//  Implemented animated doors.
+//
 //  Revision 1.15  2002/11/02 08:22:37  dj_jl
 //  New style classes.
 //

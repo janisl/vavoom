@@ -206,7 +206,7 @@ spec_trans_t spec_trans_tab[] = {
 	{197, -1, 8, 8, 10, 0, SPAC_CROSS, false},	//  141
 	{102, 64, 0, 0, 0, 0, SPAC_CROSS, false},	//  142
 	{103, 64, 0, 0, 0, 0, SPAC_CROSS, false},	//  143
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  144 S1 Open Sliding Door (spcl txt)
+	{262, -1, 0, 0, 0, 0, SPAC_USE, true},	//  144 S1 Open Sliding Door (spcl txt)
 	{80, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  145
 	{217, -1, 4, 128 + 16, 0, 0, SPAC_USE, false},	//  146
 	{259, -1, 0, 0, 0, 0, SPAC_USE, false},	//  147
@@ -254,7 +254,7 @@ spec_trans_t spec_trans_tab[] = {
 	{70, -1, 0, 0, 0, 0, SPAC_CROSS, true},	//  185 Silent
 	{80, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  186
 	{83, 0, 0, 0, 0, 33 + QUEST_BlownUpCrystal, SPAC_CROSS, false},	//  187 Crystal
-	{13, -1, 16, 0, 33 + QUEST_10, 0, SPAC_CROSS, false},	//  188 ??? Quest
+	{13, -1, 16, 0, 33 + QUEST_GotPrisonPass, 0, SPAC_CROSS, false},	//  188 ??? Quest
 	{251, -1, 8, 0, 0, 0, SPAC_USE, false},	//  189 O
 
 	{13, 0, 16, 150, 14, 0, SPAC_USE, true},	//  190
@@ -275,7 +275,7 @@ spec_trans_t spec_trans_tab[] = {
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  204 W1 PlayMusic UNUSED
 	{13, 0, 0, 0, 254, 0, SPAC_USE, true},	//  205
 	{256, 2, 0, 0, 0, 0, SPAC_CROSS, false},	//  206 Chalice
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  207 SR Open Sliding Door (spcl txt) UNUSED
+	{262, -1, 0, 0, 0, 0, SPAC_USE, true},	//  207 SR Open Sliding Door (spcl txt) UNUSED
 	{256, 2, 0, 0, 0, 0, SPAC_CROSS, false},	//  208 CommUnit UNUSED
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  209 S1 LowerStairs Chalice UNUSED
 
@@ -482,6 +482,9 @@ void TranslateLevel(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2004/10/13 06:41:14  dj_jl
+//  Implemented animated doors.
+//
 //  Revision 1.9  2004/10/12 06:39:08  dj_jl
 //  Various improvements.
 //

@@ -1,0 +1,227 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class TextureChangeDoor : SectorMover;
+
+float topheight;
+float speed;
+int direction;		// 1 = up, 0 = waiting, -1 = down
+float topwait;		// time to wait at the top
+float toptime;		// (keep in case a door going down is reset)
+					// when it reaches 0, start going down
+name closesound;
+line_t* line;
+
+//==========================================================================
+//
+//	StartAnim
+//
+//==========================================================================
+
+void StartAnim()
+{
+	int		texTop;
+	name	opensound;
+
+	texTop = XLevel.Sides[line->sidenum[0]].toptexture;	
+	if (texTop == TextureNumForName("DORALN01"))
+	{
+		opensound = 'DoorOpen';
+		closesound = 'DoorClose';
+	}
+	else if (texTop == TextureNumForName("DORCHN01"))
+	{
+		opensound = 'DoorChainedOpen';
+		closesound = 'DoorChainedClose';
+	}
+	else if (texTop == TextureNumForName("DORCRG01"))
+	{
+		opensound = 'DoorLongWood';
+		closesound = 'DoorShortWood';
+	}
+	else if (texTop == TextureNumForName("DORIRS01"))
+	{
+		opensound = 'Airlock';
+		closesound = 'Airlock';
+	}
+	else if (texTop == TextureNumForName("DORQTR01"))
+	{
+		opensound = 'Airlock';
+		closesound = 'Airlock';
+	}
+	else if (texTop == TextureNumForName("DORSTN01"))
+	{
+		opensound = 'DoorLongWood';
+		closesound = 'DoorShortWood';
+	}
+	else
+	{
+		opensound = 'BlazeDoorOpen';
+		closesound = 'BlazeDoorClose';
+	}
+	SectorStartSoundName(sector, opensound, CHAN_VOICE);
+	SetLineTexture(line->sidenum[0], 1, texTop);
+	SetLineTexture(line->sidenum[1], 1, texTop);
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float deltaTime)
+{
+	int		res;
+	int		texTop;
+	int		NewMidTexture;
+
+	texTop = XLevel.Sides[line->sidenum[0]].toptexture;	
+	switch (direction)
+	{
+	case 0:
+		// WAITING
+		print("Top time %d", ftoi(toptime * 35.0));
+		NewMidTexture = 0;
+		switch (ftoi(toptime * 7.0))
+		{
+		case 32:
+			NewMidTexture = texTop;
+			NewMidTexture = texTop;
+			break;
+		case 31:
+			NewMidTexture = texTop + 1;
+			NewMidTexture = texTop + 1;
+			break;
+		case 30:
+			NewMidTexture = texTop + 2;
+			NewMidTexture = texTop + 2;
+			break;
+		case 29:
+			NewMidTexture = texTop + 3;
+			NewMidTexture = texTop + 3;
+			break;
+		case 28:
+			NewMidTexture = texTop + 4;
+			NewMidTexture = texTop + 4;
+			break;
+		case 27:
+			NewMidTexture = texTop + 5;
+			NewMidTexture = texTop + 5;
+			break;
+		case 26:
+			NewMidTexture = texTop + 6;
+			NewMidTexture = texTop + 6;
+			break;
+		case 25:
+			NewMidTexture = texTop + 7;
+			NewMidTexture = texTop + 7;
+			break;
+		case 8:
+			NewMidTexture = texTop + 6;
+			NewMidTexture = texTop + 6;
+			SectorStartSoundName(sector, closesound, CHAN_VOICE);
+			break;
+		case 7:
+			NewMidTexture = texTop + 5;
+			NewMidTexture = texTop + 5;
+			break;
+		case 6:
+			NewMidTexture = texTop + 4;
+			NewMidTexture = texTop + 4;
+			break;
+		case 5:
+			NewMidTexture = texTop + 3;
+			NewMidTexture = texTop + 3;
+			break;
+		case 4:
+			NewMidTexture = texTop + 2;
+			NewMidTexture = texTop + 2;
+			break;
+		case 3:
+			NewMidTexture = texTop + 1;
+			NewMidTexture = texTop + 1;
+			break;
+		case 2:
+			NewMidTexture = texTop;
+			NewMidTexture = texTop;
+			break;
+		}
+		if (NewMidTexture)
+		{
+			SetLineTexture(line->sidenum[0], 1, NewMidTexture);
+			SetLineTexture(line->sidenum[1], 1, NewMidTexture);
+		}
+		toptime -= deltaTime;
+		if (toptime <= 0.0)
+		{
+			toptime = 0.0;
+			direction = -1;	// time to go back down
+		}
+		break;
+
+	case -1:
+		// DOWN
+		res = T_MovePlane(sector, speed * deltaTime,
+			sector->floorheight, false, 1, direction);
+		if (res == RES_PASTDEST)
+		{
+			//	Clear mid texture in a case door will be open from other side.
+			SetLineTexture(line->sidenum[0], 1, 0);
+			SetLineTexture(line->sidenum[1], 1, 0);
+			sector->SpecialData = none;
+			RemoveSpecialThinker(self);	// unlink and free
+		}
+		else if (res == RES_CRUSHED)
+		{
+			direction = 0;
+			toptime = 4.0;
+		}
+		break;
+
+	case 1:
+		// UP
+		res = T_MovePlane(sector, speed * deltaTime, topheight,
+			false, 1, direction);
+		if (res == RES_PASTDEST)
+		{
+			direction = 0;	// wait at top
+			toptime = topwait;
+		}
+		break;
+	}
+}
+
+defaultproperties
+{
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2004/10/13 06:41:13  dj_jl
+//  Implemented animated doors.
+//
+//**************************************************************************

@@ -82,6 +82,7 @@ bool CheckLock(Actor user, int lock)
 		//	Quests.
 		if (!(user.Player.Quests & (1 << (lock - 33))))
 		{
+			cprint(user.Player, "You need quest %d", lock - 33);
 			return false;
 		}
 	}
@@ -608,6 +609,16 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 261:	// Give quest.
 		A.Player.GiveQuest(args[0]);
 		break;
+	case 262:
+		if (!args[0])
+		{
+			buttonSuccess = EV_ManualTextureChangeDoor(line, A);
+		}
+		else
+		{
+			buttonSuccess = EV_TextureChangeDoor(line, args);
+		}
+		break;
 
 		// Inert Line specials
 	default:
@@ -937,6 +948,9 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2004/10/13 06:41:14  dj_jl
+//  Implemented animated doors.
+//
 //  Revision 1.26  2004/10/12 06:39:08  dj_jl
 //  Various improvements.
 //

@@ -111,4 +111,5 @@ special
 		258:ForceField(0),
 		259:RemoveForceField(1),
 		260:CommUnitSound(1),
-		261:GiveQuest(1);
+		261:GiveQuest(1),
+		262:Door_TextureChange(1);
