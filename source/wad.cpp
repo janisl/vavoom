@@ -66,6 +66,7 @@ class WadFile
 	void Open(const char *filename);
 	void OpenSingleLump(const char *filename);
 	void CloseFile(void);
+	bool CanClose(void);
 	void Close(void);
 	int CheckNumForName(const char* name);
 	void ReadLump(int lump, void* dest);
@@ -220,6 +221,24 @@ void WadFile::CloseFile(void)
 		Sys_FileClose(Handle);
 		Handle = -1;
 	}
+}
+
+//==========================================================================
+//
+//	WadFile::CanClose
+//
+//==========================================================================
+
+bool WadFile::CanClose(void)
+{
+	for (int i = 0; i < NumLumps; i++)
+	{
+		if (LumpCache[i])
+		{
+			return false;
+		}
+	}
+	return true;
 }
 
 //==========================================================================
@@ -440,6 +459,13 @@ void W_BuildPVS(int lump, int gllump)
 	int glfi = FILE_INDEX(gllump);
 	char glname[MAX_OSPATH];
 	strcpy(glname, wad_files[glfi].Name);
+
+	if (!wad_files[glfi].CanClose())
+	{
+		con << "Can't close " << glname << ", some lumps are in use\n";
+		con << "PVS build not performed\n";
+		return;
+	}
 
 	// Close old file
 	wad_files[glfi].Close();
@@ -755,6 +781,9 @@ void W_Profile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/09/25 17:07:06  dj_jl
+//  Safe PVS build
+//
 //  Revision 1.6  2001/09/14 16:51:46  dj_jl
 //  Object oriented wad files, added dynamic build of GWA file
 //
