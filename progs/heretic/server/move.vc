@@ -25,8 +25,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define	FLOATSPEED		140.0
-
 // keep track of special lines as they are hit,
 // but don't process them until the move is proven valid
 #define MAXSPECIALCROSS	32
@@ -38,13 +36,6 @@
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
-
-float xspeed[8] =
-	{ 1.0, 0.7171630859, 0.0, -0.7171630859, -1.0, -0.7171630859, 0.0,
-		0.7171630859 };
-float yspeed[8] =
-	{ 0.0, 0.7171630859, 1.0, 0.7171630859, 0.0, -0.7171630859, -1.0,
-		-0.7171630859 };
 
 boolean floatok;	// if true, move would be ok if
 
@@ -412,7 +403,7 @@ boolean	Actor::Touch(Actor Other)
 	if (Other.Flags & MF_SPECIAL)
 	{
 		solid = Other.Flags & MF_SOLID;
-		P_TouchSpecialThing(&Other, this);
+		Other.TouchSpecial(self);
 		return !solid;
 	}
 
@@ -849,87 +840,12 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	return true;
 }
 
-//==========================================================================
-//
-//  P_Move
-//
-//  Move in the current direction, returns false if the move is blocked.
-//
-//==========================================================================
-
-boolean P_Move(mobj_t * actor)
-{
-	float tryx;
-	float tryy;
-
-	line_t *ld;
-	boolean good;
-
-	if (actor->movedir == DI_NODIR)
-		return false;
-
-#ifdef RANGECHECK
-	if (actor->movedir >= 8 || actor->movedir < 0)
-		I_Error("Weird actor->movedir!");
-#endif
-
-	tryx =
-		actor->origin.x + actor->Speed * frametime * xspeed[actor->movedir];
-	tryy =
-		actor->origin.y + actor->Speed * frametime * yspeed[actor->movedir];
-
-	if (!P_TryMove(actor, tryx, tryy))
-	{
-		// open any specials
-		if (actor->Flags & MF_FLOAT && floatok)
-		{
-			// must adjust height
-			if (actor->origin.z < saved_tmfloorz)
-				actor->origin.z += FLOATSPEED * frametime;
-			else
-				actor->origin.z -= FLOATSPEED * frametime;
-
-			actor->Flags |= MF_INFLOAT;
-			return true;
-		}
-
-		if (!numspechit)
-			return false;
-
-		actor->movedir = DI_NODIR;
-		good = false;
-		while (numspechit--)
-		{
-			ld = spechit[numspechit];
-			// if the special is not a door
-			// that can be opened,
-			// return false
-			if (P_ActivateLine(ld, actor, 0, SPAC_USE))
-			{
-				good = true;
-			}
-		}
-		return good;
-	}
-	else
-	{
-		actor->Flags &= ~MF_INFLOAT;
-	}
-
-	if (!(actor->Flags & MF_FLOAT))
-	{
-		if (actor->origin.z > actor->floorz)
-		{
-			P_HitFloor(actor);
-		}
-		actor->origin.z = actor->floorz;
-	}
-	return true;
-}
-
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.12  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

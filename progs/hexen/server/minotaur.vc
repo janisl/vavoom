@@ -86,7 +86,7 @@ void Actor::A_Summon(void)
 		else
 		{
 			mo->specialmobj1 = specialmobj1;	// Pointer to master (mobj_t *)
-			P_GivePower(master->player, pw_minotaur);
+			master->GivePower(pw_minotaur);
 		}
 
 		// Make smoke puff
@@ -134,9 +134,9 @@ void Actor::A_MinotaurLook(void)
 	if (!target)	// Near player monster search
 	{
 		if (master && (master->Health > 0) && (master->player))
-			mo = P_RoughMonsterSearch(master, 20);
+			mo = &master->RoughMonsterSearch(20);
 		else
-			mo = P_RoughMonsterSearch(this, 20);
+			mo = &RoughMonsterSearch(20);
 		target = mo;
 	}
 
@@ -200,11 +200,11 @@ void Actor::A_MinotaurChase(void)
 		return;
 	}
 
-	FaceMovementDirection(this);
+	FaceMovementDirection();
 	ReactionCount = 0;
 
 	// Melee attack
-	if (MeleeState && CheckMeleeRange(this))
+	if (MeleeState && CheckMeleeRange())
 	{
 		if (sound_attack)
 		{
@@ -215,16 +215,16 @@ void Actor::A_MinotaurChase(void)
 	}
 
 	// Missile attack
-	if (MissileState && CheckMissileRange(this))
+	if (MissileState && CheckMissileRange())
 	{
 		SetState(MissileState);
 		return;
 	}
 
 	// chase towards target
-	if (!P_Move(this))
+	if (!StepMove())
 	{
-		P_NewChaseDir(this);
+		NewChaseDir();
 	}
 
 	// Active sound
@@ -260,16 +260,16 @@ void Actor::A_MinotaurRoam(void)
 	{
 		//Choose new direction
 		movedir = P_Random() % 8;
-		FaceMovementDirection(this);
+		FaceMovementDirection();
 	}
-	if (!P_Move(this))
+	if (!StepMove())
 	{
 		// Turn
 		if (P_Random() & 1)
 			movedir = (++movedir) % 8;
 		else
 			movedir = (movedir + 7) % 8;
-		FaceMovementDirection(this);
+		FaceMovementDirection();
 	}
 }
 
@@ -289,7 +289,7 @@ void Actor::A_MinotaurAtk1(void)
 	}
 
 	StartSoundName(this, 'MaulatorHamSwing', CHAN_WEAPON);
-	if (CheckMeleeRange(this))
+	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(4));
 	}
@@ -357,7 +357,7 @@ void Actor::A_MinotaurAtk2(void)
 		return;
 
 	StartSoundName(this, 'MaulatorHamSwing', CHAN_WEAPON);
-	if (CheckMeleeRange(this))
+	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(3));
 		return;
@@ -395,7 +395,7 @@ void Actor::A_MinotaurAtk3(void)
 	{
 		return;
 	}
-	if (CheckMeleeRange(this))
+	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(3));
 		if (target->player)
@@ -512,6 +512,9 @@ void Actor::A_SmokePuffExit(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.15  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

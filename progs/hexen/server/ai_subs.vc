@@ -30,37 +30,42 @@ int opposite[] = {
 
 int diags[] = { DI_NORTHWEST, DI_NORTHEAST, DI_SOUTHWEST, DI_SOUTHEAST };
 
+float xspeed[8] =
+	{ 1.0, 0.7171630859, 0.0, -0.7171630859, -1.0, -0.7171630859, 0.0,
+		0.7171630859 };
+float yspeed[8] =
+	{ 0.0, 0.7171630859, 1.0, 0.7171630859, 0.0, -0.7171630859, -1.0,
+		-0.7171630859 };
+
 //==========================================================================
 //
-//  CheckMeleeRange
+//  Actor::CheckMeleeRange
 //
 //==========================================================================
 
-int CheckMeleeRange(mobj_t * actor)
+boolean Actor::CheckMeleeRange(void)
 {
-	mobj_t *mo;
 	float dist;
 
-	if (!actor->target)
+	if (!target)
 	{
 		return false;
 	}
-	mo = actor->target;
-	dist = MobjDist(mo, actor);
+	dist = MobjDist(target, this);
 	if (dist >= MELEERANGE)
 	{
 		return false;
 	}
-	if (!P_CheckSight(actor, mo))
+	if (!P_CheckSight(this, target))
 	{
 		return false;
 	}
-	if (mo->origin.z > actor->origin.z + actor->Height)
+	if (target->origin.z > origin.z + Height)
 	{
 		// Target is higher than the attacker
 		return false;
 	}
-	else if (actor->origin.z > mo->origin.z + mo->Height)
+	else if (origin.z > target->origin.z + target->Height)
 	{
 		// Attacker is higher
 		return false;
@@ -70,35 +75,33 @@ int CheckMeleeRange(mobj_t * actor)
 
 //==========================================================================
 //
-//  CheckMeleeRange2
+//  Actor::CheckMeleeRange2
 //
 //==========================================================================
 
-int CheckMeleeRange2(mobj_t * actor)
+boolean Actor::CheckMeleeRange2(void)
 {
-	mobj_t *mo;
 	float dist;
 
-	if (!actor->target)
+	if (!target)
 	{
 		return false;
 	}
-	mo = actor->target;
-	dist = MobjDist(mo, actor);
+	dist = MobjDist(target, this);
 	if (dist >= MELEERANGE * 2.0 || dist < MELEERANGE)
 	{
 		return false;
 	}
-	if (!P_CheckSight(actor, mo))
+	if (!P_CheckSight(this, target))
 	{
 		return false;
 	}
-	if (mo->origin.z > actor->origin.z + actor->Height)
+	if (target->origin.z > origin.z + Height)
 	{
 		// Target is higher than the attacker
 		return false;
 	}
-	else if (actor->origin.z > mo->origin.z + mo->Height)
+	else if (origin.z > target->origin.z + target->Height)
 	{
 		// Attacker is higher
 		return false;
@@ -108,31 +111,31 @@ int CheckMeleeRange2(mobj_t * actor)
 
 //==========================================================================
 //
-//  CheckMissileRange
+//  Actor::CheckMissileRange
 //
 //==========================================================================
 
-int CheckMissileRange(mobj_t * actor)
+boolean Actor::CheckMissileRange(void)
 {
 	float dist;
 
-	if (!P_CheckSight(actor, actor->target))
+	if (!P_CheckSight(this, target))
 	{
 		return false;
 	}
-	if (actor->Flags & MF_JUSTHIT)
+	if (Flags & MF_JUSTHIT)
 	{
 		// The target just hit the enemy, so fight back!
-		actor->Flags &= ~MF_JUSTHIT;
+		Flags &= ~MF_JUSTHIT;
 		return true;
 	}
-	if (actor->ReactionCount)
+	if (ReactionCount)
 	{
 		// Don't attack yet
 		return false;
 	}
-	dist = MobjDist(actor, actor->target) - 64.0;
-	if (!actor->MeleeState)
+	dist = MobjDist(this, target) - 64.0;
+	if (!MeleeState)
 	{
 		// No melee attack, so fire more frequently
 		dist -= 128.0;
@@ -150,92 +153,97 @@ int CheckMissileRange(mobj_t * actor)
 
 //==========================================================================
 //
-//  FaceMovementDirection
+//  Actor::FaceMovementDirection
 //
 //==========================================================================
 
-void FaceMovementDirection(mobj_t * actor)
+void Actor::FaceMovementDirection(void)
 {
-	switch (actor->movedir)
+	switch (movedir)
 	{
 	case DI_EAST:
-		actor->angles.yaw = 0.0;
+		angles.yaw = 0.0;
 		break;
 	case DI_NORTHEAST:
-		actor->angles.yaw = 45.0;
+		angles.yaw = 45.0;
 		break;
 	case DI_NORTH:
-		actor->angles.yaw = 90.0;
+		angles.yaw = 90.0;
 		break;
 	case DI_NORTHWEST:
-		actor->angles.yaw = 135.0;
+		angles.yaw = 135.0;
 		break;
 	case DI_WEST:
-		actor->angles.yaw = 180.0;
+		angles.yaw = 180.0;
 		break;
 	case DI_SOUTHWEST:
-		actor->angles.yaw = 225.0;
+		angles.yaw = 225.0;
 		break;
 	case DI_SOUTH:
-		actor->angles.yaw = 270.0;
+		angles.yaw = 270.0;
 		break;
 	case DI_SOUTHEAST:
-		actor->angles.yaw = 315.0;
+		angles.yaw = 315.0;
 		break;
 	}
 }
 
 //============================================================================
 //
-//  P_LookForMonsters
+//  Actor::LookForMonsters
 //
 //============================================================================
 
 #define MONS_LOOK_RANGE (16.0 * 64.0)
 #define MONS_LOOK_LIMIT 64
 
-boolean P_LookForMonsters(mobj_t * actor)
+boolean Actor::LookForMonsters(void)
 {
 	int count;
-	mobj_t *mo;
+	Actor mo;
 
-	if (!P_CheckSight(players[0].mo, actor))
-	{	// Player can't see monster
-		return (false);
+	if (!P_CheckSight(players[0].mo, this))
+	{
+		// Player can't see monster
+		return false;
 	}
 	count = 0;
-	for (mo = NextMobj(NULL); mo; mo = NextMobj(mo))
+	for (mo = *NextMobj(NULL); mo; mo = *NextMobj(&mo))
 	{
-		if (!(mo->Flags & MF_COUNTKILL) || (mo == actor) || (mo->Health <= 0))
-		{	// Not a valid monster
+		if (!(mo.Flags & MF_COUNTKILL) || (mo == self) || (mo.Health <= 0))
+		{
+			// Not a valid monster
 			continue;
 		}
-		if (MobjDist(actor, mo) > MONS_LOOK_RANGE)
-		{	// Out of range
+		if (MobjDist(this, (&mo)) > MONS_LOOK_RANGE)
+		{
+			// Out of range
 			continue;
 		}
 		if (P_Random() < 16)
-		{	// Skip
+		{
+			// Skip
 			continue;
 		}
 		if (count++ > MONS_LOOK_LIMIT)
-		{	// Stop searching
+		{
+			// Stop searching
 			return false;
 		}
-		if (!P_CheckSight(actor, mo))
-		{	// Out of sight
+		if (!P_CheckSight(this, &mo))
+		{
+			// Out of sight
 			continue;
 		}
-		if (actor->Class == Minotaur)
+		if (Class == Minotaur)
 		{
-			if ((mo->Class == Minotaur) &&
-				(mo->target != actor->specialmobj1))
+			if ((mo.Class == Minotaur) && (mo.target != specialmobj1))
 			{
 				continue;
 			}
 		}
 		// Found a target monster
-		actor->target = mo;
+		target = &mo;
 		return true;
 	}
 	return false;
@@ -243,127 +251,206 @@ boolean P_LookForMonsters(mobj_t * actor)
 
 //============================================================================
 //
-//  P_LookForPlayers
+//  Actor::LookForPlayers
 //
 //  If allaround is false, only look 180 degrees in front
 //  returns true if a player is targeted
 //
 //============================================================================
 
-boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
+boolean Actor::LookForPlayers(boolean allaround)
 {
 	int c;
 	int stop;
-	player_t *player;
-	sector_t *sector;
+	player_t *P;
 	float an;
 	float dist;
 
 	if (!netgame && players[0].spawned && players[0].health <= 0)
-	{	// Single player game and player is dead, look for monsters
-		return P_LookForMonsters(actor);
-	}
-	sector = actor->subsector->sector;
-	c = 0;
-	stop = (actor->lastlook - 1) & 3;
-	for (;; actor->lastlook = (actor->lastlook + 1) & 3)
 	{
-		if (actor->lastlook == stop)
+		// Single player game and player is dead, look for monsters
+		return LookForMonsters();
+	}
+	c = 0;
+	stop = (lastlook - 1) & 3;
+	for (;; lastlook = (lastlook + 1) & 3)
+	{
+		if (lastlook == stop)
 			return false;	// done looking
 
-		if (!players[actor->lastlook].active)
+		if (!players[lastlook].active)
 			continue;
 
 		if (c++ == 2)
 			return false;	// done looking
 
-		player = &players[actor->lastlook];
-		if (!player->spawned || !player->mo)
+		P = &players[lastlook];
+		if (!P->spawned || !P->mo)
 			continue;	//  not spawned yet
-		if (player->health <= 0)
+		if (P->health <= 0)
 			continue;	// dead
-		if (!P_CheckSight(actor, player->mo))
+		if (!P_CheckSight(this, P->mo))
 			continue;	// out of sight
 
 		if (!allaround)
 		{
-			an = AngleMod360(atan2(player->mo->origin.y - actor->origin.y,
-				player->mo->origin.x - actor->origin.x) - actor->angles.yaw);
+			an = AngleMod360(atan2(P->mo->origin.y - origin.y,
+				P->mo->origin.x - origin.x) - angles.yaw);
 			if (an > 90.0 && an < 270.0)
 			{
-				dist = MobjDist(player->mo, actor);
+				dist = MobjDist(P->mo, this);
 				// if real close, react anyway
 				if (dist > MELEERANGE)
 					continue;	// behind back
 			}
 		}
-		if (player->mo->Translucency)
+		if (P->mo->Translucency)
 		{
 			// Player is invisible
-			if (MobjDist(player->mo, actor) > 2.0 * MELEERANGE &&
-				Length(player->mo->velocity) < 5.0 * 35.0)
-			{	// Player is sneaking - can't detect
+			if (MobjDist(P->mo, this) > 2.0 * MELEERANGE &&
+				Length(P->mo->velocity) < 5.0 * 35.0)
+			{
+				// Player is sneaking - can't detect
 				return false;
 			}
 			if (P_Random() < 225)
-			{	// Player isn't sneaking, but still didn't detect
+			{
+				// Player isn't sneaking, but still didn't detect
 				return false;
 			}
 		}
-		if (actor->Class == Minotaur)
+		if (Class == Minotaur)
 		{
-			if (actor->specialmobj1 == player->mo)
+			if (specialmobj1 == P->mo)
 			{
 				continue;	// Don't target master
 			}
 		}
-		actor->target = player->mo;
+		target = P->mo;
 		return true;
 	}
 	return false;
 }
 
-//============================================================================
+//==========================================================================
 //
-//  P_TryWalk
+//  Actor::StepMove
+//
+//  Move in the current direction, returns false if the move is blocked.
+//
+//==========================================================================
+
+boolean Actor::StepMove(void)
+{
+	float tryx;
+	float tryy;
+
+	line_t *ld;
+	boolean good;
+
+	if (Flags2 & MF2_BLASTED)
+		return true;
+	if (movedir == DI_NODIR)
+		return false;
+
+#ifdef RANGECHECK
+	if (movedir >= 8 || movedir < 0)
+		Error("Weird actor->movedir!");
+#endif
+
+	tryx = origin.x + Speed * frametime * xspeed[movedir];
+	tryy = origin.y + Speed * frametime * yspeed[movedir];
+
+	if (!P_TryMove(this, tryx, tryy))
+	{
+		// open any specials
+		if (Flags & MF_FLOAT && floatok)
+		{
+			// must adjust height
+			if (origin.z < saved_tmfloorz)
+				origin.z += FLOATSPEED * frametime;
+			else
+				origin.z -= FLOATSPEED * frametime;
+
+			Flags |= MF_INFLOAT;
+			return true;
+		}
+
+		if (!numspechit)
+			return false;
+
+		movedir = DI_NODIR;
+		good = false;
+		while (numspechit--)
+		{
+			ld = spechit[numspechit];
+			// if the special is not a door
+			// that can be opened,
+			// return false
+			if (P_ActivateLine(ld, this, 0, SPAC_USE))
+			{
+				good = true;
+			}
+		}
+		return good;
+	}
+	else
+	{
+		Flags &= ~MF_INFLOAT;
+	}
+
+	if (!(Flags & MF_FLOAT))
+	{
+		if (origin.z > floorz)
+		{
+			P_HitFloor(this);
+		}
+		origin.z = floorz;
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  Actor::TryWalk
 //
 //  Attempts to move actor in its current (ob->moveangle) direction.
 //  If blocked by either a wall or an actor returns FALSE.
 //  If move is either clear of block only by a door, returns TRUE and sets.
 //  If a door is in the way, an OpenDoor call is made to start it opening.
 //
-//----------------------------------------------------------------------------
+//==========================================================================
 
-boolean P_TryWalk(mobj_t * actor)
+boolean Actor::TryWalk(void)
 {
-	if (!P_Move(actor))
+	if (!StepMove())
 	{
 		return false;
 	}
-	actor->movecount = P_Random() & 15;
+	movecount = P_Random() & 15;
 	return true;
 }
 
 //============================================================================
 //
-//  P_NewChaseDir
+//  Actor::NewChaseDir
 //
 //============================================================================
 
-void P_NewChaseDir(mobj_t * actor)
+void Actor::NewChaseDir(void)
 {
 	float deltax, deltay;
 	int d[3];
 	int tdir, olddir, turnaround;
 
-	if (!actor->target)
-		Error("P_NewChaseDir: called with no target");
+	if (!target)
+		Error("NewChaseDir: called with no target");
 
-	olddir = actor->movedir;
+	olddir = movedir;
 	turnaround = opposite[olddir];
 
-	deltax = actor->target->origin.x - actor->origin.x;
-	deltay = actor->target->origin.y - actor->origin.y;
+	deltax = target->origin.x - origin.x;
+	deltay = target->origin.y - origin.y;
 	if (deltax > 10.0)
 		d[1] = DI_EAST;
 	else if (deltax < -10.0)
@@ -377,15 +464,15 @@ void P_NewChaseDir(mobj_t * actor)
 	else
 		d[2] = DI_NODIR;
 
-// try direct route
+	// try direct route
 	if (d[1] != DI_NODIR && d[2] != DI_NODIR)
 	{
-		actor->movedir = diags[((deltay < 0.0) << 1) + (deltax > 0.0)];
-		if (actor->movedir != turnaround && P_TryWalk(actor))
+		movedir = diags[((deltay < 0.0) << 1) + (deltax > 0.0)];
+		if (movedir != turnaround && TryWalk())
 			return;
 	}
 
-// try other directions
+	// try other directions
 	if (P_Random() > 200 || fabs(deltay) > fabs(deltax))
 	{
 		tdir = d[1];
@@ -400,24 +487,24 @@ void P_NewChaseDir(mobj_t * actor)
 
 	if (d[1] != DI_NODIR)
 	{
-		actor->movedir = d[1];
-		if (P_TryWalk(actor))
+		movedir = d[1];
+		if (TryWalk())
 			return;	/*either moved forward or attacked */
 	}
 
 	if (d[2] != DI_NODIR)
 	{
-		actor->movedir = d[2];
-		if (P_TryWalk(actor))
+		movedir = d[2];
+		if (TryWalk())
 			return;
 	}
 
-/* there is no direct path to the player, so pick another direction */
+	/* there is no direct path to the player, so pick another direction */
 
 	if (olddir != DI_NODIR)
 	{
-		actor->movedir = olddir;
-		if (P_TryWalk(actor))
+		movedir = olddir;
+		if (TryWalk())
 			return;
 	}
 
@@ -427,8 +514,8 @@ void P_NewChaseDir(mobj_t * actor)
 		{
 			if (tdir != turnaround)
 			{
-				actor->movedir = tdir;
-				if (P_TryWalk(actor))
+				movedir = tdir;
+				if (TryWalk())
 					return;
 			}
 		}
@@ -439,8 +526,8 @@ void P_NewChaseDir(mobj_t * actor)
 		{
 			if (tdir != turnaround)
 			{
-				actor->movedir = tdir;
-				if (P_TryWalk(actor))
+				movedir = tdir;
+				if (TryWalk())
 					return;
 			}
 		}
@@ -448,33 +535,32 @@ void P_NewChaseDir(mobj_t * actor)
 
 	if (turnaround != DI_NODIR)
 	{
-		actor->movedir = turnaround;
-		if (P_TryWalk(actor))
+		movedir = turnaround;
+		if (TryWalk())
 			return;
 	}
 
-	actor->movedir = DI_NODIR;	// can't move
+	movedir = DI_NODIR;	// can't move
 }
 
 //===========================================================================
 //
-//  RoughBlockCheck
+//  Actor::RoughBlockCheck
 //
 //===========================================================================
 
-mobj_t *RoughBlockCheck(mobj_t * mo, int index)
+Actor Actor::RoughBlockCheck(int index)
 {
 	Actor link;
-	mobj_t *master;
 	float angle;
 
 	link = *BlockLink(index);
 	while (link)
 	{
-		if (mo->player)	// Minotaur looking around player
+		if (player)	// Minotaur looking around player
 		{
 			if ((link.Flags & MF_COUNTKILL) ||
-				(link.player && (link != *mo)))
+				(link.player && (link != self)))
 			{
 				if (!(link.Flags & MF_SHOOTABLE))
 				{
@@ -487,7 +573,7 @@ mobj_t *RoughBlockCheck(mobj_t * mo, int index)
 					continue;
 				}
 				if ((link.Class == Minotaur) &&
-					((link.specialmobj1) == mo))
+					(*link.specialmobj1 == self))
 				{
 					link = Actor(link.BlockMapNext);
 					continue;
@@ -497,18 +583,17 @@ mobj_t *RoughBlockCheck(mobj_t * mo, int index)
 					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				if (P_CheckSight(mo, &link))
+				if (P_CheckSight(this, &link))
 				{
-					return &link;
+					return link;
 				}
 			}
 			link = Actor(link.BlockMapNext);
 		}
-		else if (mo->Class == Minotaur)	// looking around minotaur
+		else if (Class == Minotaur)	// looking around minotaur
 		{
-			master = mo->specialmobj1;
 			if ((link.Flags & MF_COUNTKILL) ||
-				(link.player && (link != *master)))
+				(link.player && (link != *specialmobj1)))
 			{
 				if (!(link.Flags & MF_SHOOTABLE))
 				{
@@ -521,7 +606,7 @@ mobj_t *RoughBlockCheck(mobj_t * mo, int index)
 					continue;
 				}
 				if ((link.Class == Minotaur) &&
-					(link.specialmobj1 == mo->specialmobj1))
+					(link.specialmobj1 == specialmobj1))
 				{
 					link = Actor(link.BlockMapNext);
 					continue;
@@ -531,17 +616,17 @@ mobj_t *RoughBlockCheck(mobj_t * mo, int index)
 					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				if (P_CheckSight(mo, &link))
+				if (P_CheckSight(this, &link))
 				{
-					return &link;
+					return link;
 				}
 			}
 			link = Actor(link.BlockMapNext);
 		}
-		else if (mo->Class == MageStaffFX2)	// bloodscourge
+		else if (Class == MageStaffFX2)	// bloodscourge
 		{
 			if ((link.Flags & MF_COUNTKILL ||
-					(link.player && link != *mo->target))
+					(link.player && link != *target))
 				&& !(link.Flags2 & MF2_DORMANT))
 			{
 				if (!(link.Flags & MF_SHOOTABLE))
@@ -554,17 +639,16 @@ mobj_t *RoughBlockCheck(mobj_t * mo, int index)
 					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				else if (P_CheckSight(mo, &link))
+				else if (P_CheckSight(this, &link))
 				{
-					master = mo->target;
 					angle = AngleMod360(atan2(
-						link.origin.y - master->origin.y,
-						link.origin.x - master->origin.x) -
-						master->angles.yaw);
+						link.origin.y - target->origin.y,
+						link.origin.x - target->origin.x) -
+						target->angles.yaw);
 					if (angle > 226.0 * 360.0 / 256.0 ||
 						angle < 30.0 * 360.0 / 256.0)
 					{
-						return &link;
+						return link;
 					}
 				}
 			}
@@ -573,7 +657,7 @@ mobj_t *RoughBlockCheck(mobj_t * mo, int index)
 		else	// spirits
 		{
 			if ((link.Flags & MF_COUNTKILL ||
-					(link.player && link != *mo->target))
+					(link.player && link != *target))
 				&& !(link.Flags2 & MF2_DORMANT))
 			{
 				if (!(link.Flags & MF_SHOOTABLE))
@@ -586,31 +670,32 @@ mobj_t *RoughBlockCheck(mobj_t * mo, int index)
 					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				if (link == *mo->target)
+				if (link == *target)
 				{
 					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				else if (P_CheckSight(mo, &link))
+				else if (P_CheckSight(this, &link))
 				{
-					return &link;
+					return link;
 				}
 			}
 			link = Actor(link.BlockMapNext);
 		}
 	}
-	return NULL;
+	return none;
 }
 
 //===========================================================================
 //
-// P_RoughMonsterSearch
+//	Actor::RoughMonsterSearch
 //
-// Searches though the surrounding mapblocks for monsters/players
+//	Searches though the surrounding mapblocks for monsters/players
 //      distance is in MAPBLOCKUNITS
+//
 //===========================================================================
 
-mobj_t *P_RoughMonsterSearch(mobj_t * mo, int distance)
+Actor Actor::RoughMonsterSearch(int distance)
 {
 	int blockX;
 	int blockY;
@@ -621,18 +706,19 @@ mobj_t *P_RoughMonsterSearch(mobj_t * mo, int distance)
 	int thirdStop;
 	int finalStop;
 	int count;
-	mobj_t *target;
+	Actor newEnemy;
 
-	startX = MapBlock(mo->origin.x - level->bmaporgx);
-	startY = MapBlock(mo->origin.y - level->bmaporgy);
+	startX = MapBlock(origin.x - level->bmaporgx);
+	startY = MapBlock(origin.y - level->bmaporgy);
 
 	if (startX >= 0 && startX < level->bmapwidth && startY >= 0
 		&& startY < level->bmapheight)
 	{
-		if ((target =
-				RoughBlockCheck(mo, startY * level->bmapwidth + startX)))
-		{	// found a target right away
-			return target;
+		newEnemy = RoughBlockCheck(startY * level->bmapwidth + startX);
+		if (newEnemy)
+		{
+			// found a target right away
+			return newEnemy;
 		}
 	}
 	for (count = 1; count <= distance; count++)
@@ -683,45 +769,52 @@ mobj_t *P_RoughMonsterSearch(mobj_t * mo, int distance)
 		// Trace the first block section (along the top)
 		for (; blockIndex <= firstStop; blockIndex++)
 		{
-			if ((target = RoughBlockCheck(mo, blockIndex)))
+			newEnemy = RoughBlockCheck(blockIndex);
+			if (newEnemy)
 			{
-				return target;
+				return newEnemy;
 			}
 		}
 		// Trace the second block section (right edge)
 		for (blockIndex--; blockIndex <= secondStop;
 			blockIndex += level->bmapwidth)
 		{
-			if ((target = RoughBlockCheck(mo, blockIndex)))
+			newEnemy = RoughBlockCheck(blockIndex);
+			if (newEnemy)
 			{
-				return target;
+				return newEnemy;
 			}
 		}
 		// Trace the third block section (bottom edge)
 		for (blockIndex -= level->bmapwidth; blockIndex >= thirdStop;
 			blockIndex--)
 		{
-			if ((target = RoughBlockCheck(mo, blockIndex)))
+			newEnemy = RoughBlockCheck(blockIndex);
+			if (newEnemy)
 			{
-				return target;
+				return newEnemy;
 			}
 		}
 		// Trace the final block section (left edge)
 		for (blockIndex++; blockIndex > finalStop;
 			blockIndex -= level->bmapwidth)
 		{
-			if ((target = RoughBlockCheck(mo, blockIndex)))
+			newEnemy = RoughBlockCheck(blockIndex);
+			if (newEnemy)
 			{
-				return target;
+				return newEnemy;
 			}
 		}
 	}
-	return NULL;
+	return none;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.9  2002/01/17 18:15:54  dj_jl
 //  Renamed all map object classes
 //

@@ -33,7 +33,6 @@
 
 void DropWeapon(player_t * player);
 void ActivateBeak(player_t * player);
-void DSparilTeleport(mobj_t * actor);
 void SetupPsprites(player_t * player);
 void AddBossSpot(float x, float y, float angle);
 void AddMaceSpot(float x, float y);
@@ -409,7 +408,7 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 				if (source->player->chickenTics)
 				{
 					// Make a super chicken
-					P_GivePower(source->player, pw_weaponlevel2);
+					source->GivePower(pw_weaponlevel2);
 				}
 			}
 		}
@@ -534,7 +533,7 @@ boolean ChickenMorphPlayer(player_t * player)
 			&& !player->powers[pw_weaponlevel2])
 		{
 			// Make a super chicken
-			P_GivePower(player, pw_weaponlevel2);
+			player->mo->GivePower(pw_weaponlevel2);
 		}
 		return false;
 	}
@@ -828,7 +827,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 			if (Class == Sorcerer2 && P_Random() < 96)
 			{
 				// D'Sparil teleports away
-				DSparilTeleport(this);
+				DSparilTeleport();
 				return;
 			}
 			break;
@@ -1464,6 +1463,9 @@ void P_NightmareRespawn(mobj_t * mobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.24  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

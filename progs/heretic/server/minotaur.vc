@@ -52,7 +52,7 @@ void Actor::A_MinotaurAtk1(void)
 		return;
 	}
 	StartSoundName(this, 'StaffHit2', CHAN_WEAPON);
-	if (P_CheckMeleeRange(this))
+	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(4));
 		if (target->player)
@@ -128,7 +128,7 @@ void Actor::A_MinotaurAtk2(void)
 		return;
 	}
 	StartSoundName(this, 'MinotaurAttack2', CHAN_WEAPON);
-	if (P_CheckMeleeRange(this))
+	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(5));
 		return;
@@ -166,7 +166,7 @@ void Actor::A_MinotaurAtk3(void)
 	{
 		return;
 	}
-	if (P_CheckMeleeRange(this))
+	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(5));
 		if (target->player)
@@ -237,6 +237,9 @@ void Actor::A_MntrFloorFire(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.14  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

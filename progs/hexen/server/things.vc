@@ -27,8 +27,6 @@
 //**
 //**************************************************************************
 
-void A_BridgeRemove(mobj_t * actor);
-
 classid TranslateThingType[] = {
 	MapSpot,	// T_NONE
 	Centaur,	// T_CENTAUR
@@ -462,7 +460,7 @@ boolean EV_ThingRemove(int tid)
 	{
 		if (mobj->Class == Bridge)
 		{
-			A_BridgeRemove(mobj);
+			mobj->A_BridgeRemove();
 			return true;
 		}
 		P_RemoveMobj(mobj);
@@ -562,6 +560,9 @@ int ThingCount(int type, int tid)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.15  2002/01/24 18:19:27  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

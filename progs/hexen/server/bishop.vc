@@ -134,7 +134,7 @@ void Actor::A_BishopAttack(void)
 		return;
 	}
 	StartSound(this, sound_attack, CHAN_WEAPON);
-	if (CheckMeleeRange(this))
+	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(4));
 		return;
@@ -262,6 +262,9 @@ void Actor::A_BishopMissileSeek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.13  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

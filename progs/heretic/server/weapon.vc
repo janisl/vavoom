@@ -868,7 +868,7 @@ void Weapon::A_GauntletAttack(void)
 	}
 	if (player->powers[pw_weaponlevel2])
 	{
-		P_GiveBody(player, damage >> 1);
+		player->mo->GiveBody(damage >> 1);
 		StartSoundName(player->mo, 'GauntletHit2', CHAN_WEAPON);
 	}
 	else
@@ -1786,6 +1786,9 @@ void Actor::A_DeathBallImpact(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.14  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

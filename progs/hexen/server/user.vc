@@ -1177,10 +1177,10 @@ boolean ArtiHealRadius(player_t * player)
 		switch (player->pclass)
 		{
 		case PCLASS_FIGHTER:	// Radius armor boost
-			if ((P_GiveArmor(mo->player, ARMOR_ARMOR, 1)) ||
-				(P_GiveArmor(mo->player, ARMOR_SHIELD, 1)) ||
-				(P_GiveArmor(mo->player, ARMOR_HELMET, 1)) ||
-				(P_GiveArmor(mo->player, ARMOR_AMULET, 1)))
+			if ((mo->GiveArmor(ARMOR_ARMOR, 1)) ||
+				(mo->GiveArmor(ARMOR_SHIELD, 1)) ||
+				(mo->GiveArmor(ARMOR_HELMET, 1)) ||
+				(mo->GiveArmor(ARMOR_AMULET, 1)))
 			{
 				effective = true;
 				StartSoundName(mo, 'MysticIncant', CHAN_ITEM);
@@ -1188,7 +1188,7 @@ boolean ArtiHealRadius(player_t * player)
 			break;
 		case PCLASS_CLERIC:	// Radius heal
 			amount = 50 + (P_Random() % 50);
-			if (P_GiveBody(mo->player, amount))
+			if (mo->GiveBody(amount))
 			{
 				effective = true;
 				StartSoundName(mo, 'MysticIncant', CHAN_ITEM);
@@ -1196,8 +1196,8 @@ boolean ArtiHealRadius(player_t * player)
 			break;
 		case PCLASS_MAGE:	// Radius mana boost
 			amount = 50 + (P_Random() % 50);
-			if ((P_GiveMana(mo->player, MANA_1, amount)) ||
-				(P_GiveMana(mo->player, MANA_2, amount)))
+			if ((mo->GiveMana(MANA_1, amount)) ||
+				(mo->GiveMana(MANA_2, amount)))
 			{
 				effective = true;
 				StartSoundName(mo, 'MysticIncant', CHAN_ITEM);
@@ -1263,31 +1263,31 @@ boolean UseArtifact(player_t * player, int arti)
 	switch (arti)
 	{
 	case arti_health:
-		if (!P_GiveBody(player, 25))
+		if (!player->mo->GiveBody(25))
 		{
 			return false;
 		}
 		break;
 	case arti_superhealth:
-		if (!P_GiveBody(player, 100))
+		if (!player->mo->GiveBody(100))
 		{
 			return false;
 		}
 		break;
 	case arti_invulnerability:
-		if (!P_GivePower(player, pw_invulnerability))
+		if (!player->mo->GivePower(pw_invulnerability))
 		{
 			return false;
 		}
 		break;
 	case arti_torch:
-		if (!P_GivePower(player, pw_infrared))
+		if (!player->mo->GivePower(pw_infrared))
 		{
 			return false;
 		}
 		break;
 	case arti_fly:
-		if (!P_GivePower(player, pw_flight))
+		if (!player->mo->GivePower(pw_flight))
 		{
 			return false;
 		}
@@ -1321,15 +1321,15 @@ boolean UseArtifact(player_t * player, int arti)
 		ArtiTeleportOther(player);
 		break;
 	case arti_speed:
-		if (!P_GivePower(player, pw_speed))
+		if (!player->mo->GivePower(pw_speed))
 		{
 			return (false);
 		}
 		break;
 	case arti_boostmana:
-		if (!P_GiveMana(player, MANA_1, MAX_MANA))
+		if (!player->mo->GiveMana(MANA_1, MAX_MANA))
 		{
-			if (!P_GiveMana(player, MANA_2, MAX_MANA))
+			if (!player->mo->GiveMana(MANA_2, MAX_MANA))
 			{
 				return false;
 			}
@@ -1337,7 +1337,7 @@ boolean UseArtifact(player_t * player, int arti)
 		}
 		else
 		{
-			P_GiveMana(player, MANA_2, MAX_MANA);
+			player->mo->GiveMana(MANA_2, MAX_MANA);
 		}
 		break;
 	case arti_boostarmor:
@@ -1345,7 +1345,7 @@ boolean UseArtifact(player_t * player, int arti)
 
 		for (i = 0; i < NUMARMOR; i++)
 		{
-			count += P_GiveArmor(player, i, 1);	// 1 point per armor type
+			count += player->mo->GiveArmor(i, 1);	// 1 point per armor type
 		}
 		if (!count)
 		{
@@ -1971,6 +1971,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.21  2002/01/24 18:19:27  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

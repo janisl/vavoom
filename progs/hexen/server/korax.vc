@@ -188,102 +188,102 @@ void Actor::A_KoraxDecide(void)
 // Arm 1 projectile
 //============================================================================
 
-void KoraxFire1(mobj_t * actor, classid type)
+void Actor::KoraxFire1(classid type)
 {
 	mobj_t *mo;
 	float ang;
 	float x, y, z;
 
-	ang = AngleMod360(actor->angles.yaw - KORAX_DELTAANGLE);
-	x = actor->origin.x + KORAX_ARM_EXTENSION_SHORT * cos(ang);
-	y = actor->origin.y + KORAX_ARM_EXTENSION_SHORT * sin(ang);
-	z = actor->origin.z - actor->floorclip + KORAX_ARM1_HEIGHT;
-	mo = SpawnKoraxMissile(x, y, z, actor, actor->target, type);
+	ang = AngleMod360(angles.yaw - KORAX_DELTAANGLE);
+	x = origin.x + KORAX_ARM_EXTENSION_SHORT * cos(ang);
+	y = origin.y + KORAX_ARM_EXTENSION_SHORT * sin(ang);
+	z = origin.z - floorclip + KORAX_ARM1_HEIGHT;
+	mo = SpawnKoraxMissile(x, y, z, this, target, type);
 }
 
 //============================================================================
 // Arm 2 projectile
 //============================================================================
 
-void KoraxFire2(mobj_t * actor, classid type)
+void Actor::KoraxFire2(classid type)
 {
 	mobj_t *mo;
 	float ang;
 	float x, y, z;
 
-	ang = AngleMod360(actor->angles.yaw - KORAX_DELTAANGLE);
-	x = actor->origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
-	y = actor->origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
-	z = actor->origin.z - actor->floorclip + KORAX_ARM2_HEIGHT;
-	mo = SpawnKoraxMissile(x, y, z, actor, actor->target, type);
+	ang = AngleMod360(angles.yaw - KORAX_DELTAANGLE);
+	x = origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
+	y = origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
+	z = origin.z - floorclip + KORAX_ARM2_HEIGHT;
+	mo = SpawnKoraxMissile(x, y, z, this, target, type);
 }
 
 //============================================================================
 // Arm 3 projectile
 //============================================================================
 
-void KoraxFire3(mobj_t * actor, classid type)
+void Actor::KoraxFire3(classid type)
 {
 	mobj_t *mo;
 	float ang;
 	float x, y, z;
 
-	ang = AngleMod360(actor->angles.yaw - KORAX_DELTAANGLE);
-	x = actor->origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
-	y = actor->origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
-	z = actor->origin.z - actor->floorclip + KORAX_ARM3_HEIGHT;
-	mo = SpawnKoraxMissile(x, y, z, actor, actor->target, type);
+	ang = AngleMod360(angles.yaw - KORAX_DELTAANGLE);
+	x = origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
+	y = origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
+	z = origin.z - floorclip + KORAX_ARM3_HEIGHT;
+	mo = SpawnKoraxMissile(x, y, z, this, target, type);
 }
 
 //============================================================================
 // Arm 4 projectile
 //============================================================================
 
-void KoraxFire4(mobj_t * actor, classid type)
+void Actor::KoraxFire4(classid type)
 {
 	mobj_t *mo;
 	float ang;
 	float x, y, z;
 
-	ang = AngleMod360(actor->angles.yaw + KORAX_DELTAANGLE);
-	x = actor->origin.x + KORAX_ARM_EXTENSION_SHORT * cos(ang);
-	y = actor->origin.y + KORAX_ARM_EXTENSION_SHORT * sin(ang);
-	z = actor->origin.z - actor->floorclip + KORAX_ARM4_HEIGHT;
-	mo = SpawnKoraxMissile(x, y, z, actor, actor->target, type);
+	ang = AngleMod360(angles.yaw + KORAX_DELTAANGLE);
+	x = origin.x + KORAX_ARM_EXTENSION_SHORT * cos(ang);
+	y = origin.y + KORAX_ARM_EXTENSION_SHORT * sin(ang);
+	z = origin.z - floorclip + KORAX_ARM4_HEIGHT;
+	mo = SpawnKoraxMissile(x, y, z, this, target, type);
 }
 
 //============================================================================
 // Arm 5 projectile
 //============================================================================
 
-void KoraxFire5(mobj_t * actor, classid type)
+void Actor::KoraxFire5(classid type)
 {
 	mobj_t *mo;
 	float ang;
 	float x, y, z;
 
-	ang = AngleMod360(actor->angles.yaw + KORAX_DELTAANGLE);
-	x = actor->origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
-	y = actor->origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
-	z = actor->origin.z - actor->floorclip + KORAX_ARM5_HEIGHT;
-	mo = SpawnKoraxMissile(x, y, z, actor, actor->target, type);
+	ang = AngleMod360(angles.yaw + KORAX_DELTAANGLE);
+	x = origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
+	y = origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
+	z = origin.z - floorclip + KORAX_ARM5_HEIGHT;
+	mo = SpawnKoraxMissile(x, y, z, this, target, type);
 }
 
 //============================================================================
 // Arm 6 projectile
 //============================================================================
 
-void KoraxFire6(mobj_t * actor, classid type)
+void Actor::KoraxFire6(classid type)
 {
 	mobj_t *mo;
 	float ang;
 	float x, y, z;
 
-	ang = AngleMod360(actor->angles.yaw + KORAX_DELTAANGLE);
-	x = actor->origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
-	y = actor->origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
-	z = actor->origin.z - actor->floorclip + KORAX_ARM6_HEIGHT;
-	mo = SpawnKoraxMissile(x, y, z, actor, actor->target, type);
+	ang = AngleMod360(angles.yaw + KORAX_DELTAANGLE);
+	x = origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
+	y = origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
+	z = origin.z - floorclip + KORAX_ARM6_HEIGHT;
+	mo = SpawnKoraxMissile(x, y, z, this, target, type);
 }
 
 //============================================================================
@@ -329,12 +329,12 @@ void Actor::A_KoraxMissile(void)
 
 	// Fire all 6 missiles at once
 	StartSoundName(NULL, sound, CHAN_VOICE);
-	KoraxFire1(this, mtype);
-	KoraxFire2(this, mtype);
-	KoraxFire3(this, mtype);
-	KoraxFire4(this, mtype);
-	KoraxFire5(this, mtype);
-	KoraxFire6(this, mtype);
+	KoraxFire1(mtype);
+	KoraxFire2(mtype);
+	KoraxFire3(mtype);
+	KoraxFire4(mtype);
+	KoraxFire5(mtype);
+	KoraxFire6(mtype);
 }
 
 //============================================================================
@@ -389,31 +389,29 @@ void Actor::A_KoraxCommand(void)
 
 //============================================================================
 //
-//  KSpiritInit
+//  Actor::KSpiritInit
 //
 //============================================================================
 
-void KSpiritInit(mobj_t * spirit, mobj_t * korax)
+void Actor::KSpiritInit(Actor korax)
 {
 	int i;
 	mobj_t *tail;
 	mobj_t *next;
 
-	spirit->Health = KORAX_SPIRIT_LIFETIME;
+	Health = KORAX_SPIRIT_LIFETIME;
 
-	spirit->specialmobj1 = korax;	// Swarm around korax
-	spirit->special2 = 32 + (P_Random() & 7);	// Float bob index
-	spirit->args[0] = 10;	// initial turn value
-	spirit->args[1] = 0;	// initial look angle
+	specialmobj1 = &korax;	// Swarm around korax
+	special2 = 32 + (P_Random() & 7);	// Float bob index
+	args[0] = 10;	// initial turn value
+	args[1] = 0;	// initial look angle
 
 	// Spawn a tail for spirit
-	tail = P_SpawnMobj(spirit->origin.x, spirit->origin.y, spirit->origin.z,
-		HolyTail);
-	tail->specialmobj2 = spirit;	// parent
+	tail = P_SpawnMobj(origin.x, origin.y, origin.z, HolyTail);
+	tail->specialmobj2 = this;	// parent
 	for (i = 1; i < 3; i++)
 	{
-		next = P_SpawnMobj(spirit->origin.x, spirit->origin.y,
-			spirit->origin.z, HolyTail);
+		next = P_SpawnMobj(origin.x, origin.y, origin.z, HolyTail);
 		next->SetState(next->SpawnState + 1);
 		tail->specialmobj1 = next;
 		tail = next;
@@ -436,48 +434,48 @@ void Actor::A_KoraxBonePop(void)
 	// Spawn 6 spirits equalangularly
 	mo = SpawnMissileAngle(this, KoraxSpirit1, 60.0 * 0.0, 5.0);
 	if (mo)
-		KSpiritInit(mo, this);
+		mo->KSpiritInit(self);
 	mo = SpawnMissileAngle(this, KoraxSpirit2, 60.0 * 1.0, 5.0);
 	if (mo)
-		KSpiritInit(mo, this);
+		mo->KSpiritInit(self);
 	mo = SpawnMissileAngle(this, KoraxSpirit3, 60.0 * 2.0, 5.0);
 	if (mo)
-		KSpiritInit(mo, this);
+		mo->KSpiritInit(self);
 	mo = SpawnMissileAngle(this, KoraxSpirit4, 60.0 * 3.0, 5.0);
 	if (mo)
-		KSpiritInit(mo, this);
+		mo->KSpiritInit(self);
 	mo = SpawnMissileAngle(this, KoraxSpirit5, 60.0 * 4.0, 5.0);
 	if (mo)
-		KSpiritInit(mo, this);
+		mo->KSpiritInit(self);
 	mo = SpawnMissileAngle(this, KoraxSpirit6, 60.0 * 5.0, 5.0);
 	if (mo)
-		KSpiritInit(mo, this);
+		mo->KSpiritInit(self);
 
 	StartACS(255, 0, &args[0], this, NULL, 0);	// Death script
 }
 
 //============================================================================
 //
-//  A_KSpiritSeeker
+//  Actor::A_KSpiritSeeker
 //
 //============================================================================
 
-void A_KSpiritSeeker(mobj_t * actor, float thresh, float turnMax)
+void Actor::A_KSpiritSeeker(float thresh, float turnMax)
 {
 	int dir;
 	float dist;
 	float delta;
 	float angle;
-	mobj_t *target;
+	mobj_t *tempTarget;
 	float newZ;
 	float deltaZ;
 
-	target = actor->specialmobj1;
-	if (target == NULL)
+	tempTarget = specialmobj1;
+	if (tempTarget == NULL)
 	{
 		return;
 	}
-	dir = P_FaceMobj(actor, target, &delta);
+	dir = P_FaceMobj(this, tempTarget, &delta);
 	if (delta > thresh)
 	{
 		delta /= 2.0;
@@ -489,23 +487,23 @@ void A_KSpiritSeeker(mobj_t * actor, float thresh, float turnMax)
 	if (dir)
 	{
 		// Turn clockwise
-		actor->angles.yaw = AngleMod360(actor->angles.yaw + delta);
+		angles.yaw = AngleMod360(angles.yaw + delta);
 	}
 	else
 	{
 		// Turn counter clockwise
-		actor->angles.yaw = AngleMod360(actor->angles.yaw - delta);
+		angles.yaw = AngleMod360(angles.yaw - delta);
 	}
-	angle = actor->angles.yaw;
-	actor->velocity.x = actor->Speed * cos(angle);
-	actor->velocity.y = actor->Speed * sin(angle);
+	angle = angles.yaw;
+	velocity.x = Speed * cos(angle);
+	velocity.y = Speed * sin(angle);
 
 	if (!(level->tictime & 15) ||
-		actor->origin.z > target->origin.z + target->Height ||
-		actor->origin.z + actor->Height < target->origin.z)
+		origin.z > tempTarget->origin.z + tempTarget->Height ||
+		origin.z + Height < tempTarget->origin.z)
 	{
-		newZ = target->origin.z + Random() * target->Height;
-		deltaZ = newZ - actor->origin.z;
+		newZ = tempTarget->origin.z + Random() * tempTarget->Height;
+		deltaZ = newZ - origin.z;
 		if (fabs(deltaZ) > 15.0)
 		{
 			if (deltaZ > 0.0)
@@ -517,42 +515,42 @@ void A_KSpiritSeeker(mobj_t * actor, float thresh, float turnMax)
 				deltaZ = -15.0;
 			}
 		}
-		dist = MobjDist2(target, actor);
-		dist = dist / actor->Speed;
+		dist = MobjDist2(tempTarget, this);
+		dist = dist / Speed;
 		if (dist < 1.0)
 		{
 			dist = 1.0;
 		}
-		actor->velocity.z = deltaZ / dist;
+		velocity.z = deltaZ / dist;
 	}
 	return;
 }
 
 //============================================================================
 //
-//  A_KSpiritWeave
+//  Actor::A_KSpiritWeave
 //
 //============================================================================
 
-void A_KSpiritWeave(mobj_t * actor)
+void Actor::A_KSpiritWeave(void)
 {
 	float newX, newY;
 	int weaveXY, weaveZ;
 	float angle;
 
-	weaveXY = actor->special2 >> 16;
-	weaveZ = actor->special2 & 0xFFFF;
-	angle = AngleMod360(actor->angles.yaw + 90.0);
-	newX = actor->origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
-	newY = actor->origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
+	weaveXY = special2 >> 16;
+	weaveZ = special2 & 0xFFFF;
+	angle = AngleMod360(angles.yaw + 90.0);
+	newX = origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
+	newY = origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	weaveXY = (weaveXY + (P_Random() % 5)) & 63;
 	newX += cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	newY += sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
-	P_TryMove(actor, newX, newY);
-	actor->origin.z -= FloatBobOffsets[weaveZ] * 2.0;
+	P_TryMove(this, newX, newY);
+	origin.z -= FloatBobOffsets[weaveZ] * 2.0;
 	weaveZ = (weaveZ + (P_Random() % 5)) & 63;
-	actor->origin.z += FloatBobOffsets[weaveZ] * 2.0;
-	actor->special2 = weaveZ + (weaveXY << 16);
+	origin.z += FloatBobOffsets[weaveZ] * 2.0;
+	special2 = weaveZ + (weaveXY << 16);
 }
 
 //============================================================================
@@ -572,9 +570,9 @@ void Actor::A_KSpiritRoam(void)
 	{
 		if (specialmobj1)
 		{
-			A_KSpiritSeeker(this, itof(args[0]), itof(args[0]) * 2.0);
+			A_KSpiritSeeker(itof(args[0]), itof(args[0]) * 2.0);
 		}
-		A_KSpiritWeave(this);
+		A_KSpiritWeave();
 		if (P_Random() < 50)
 		{
 			StartSoundName(NULL, 'SpiritActive', CHAN_VOICE);
@@ -628,6 +626,9 @@ void Actor::A_KBolt(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.11  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

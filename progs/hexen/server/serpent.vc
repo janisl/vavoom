@@ -88,7 +88,7 @@ void Actor::A_SerpentChase(void)
 	if (!target || !(target->Flags & MF_SHOOTABLE))
 	{
 		// look for a new target
-		if (P_LookForPlayers(this, true))
+		if (LookForPlayers(true))
 		{
 			// got a new target
 			return;
@@ -104,14 +104,14 @@ void Actor::A_SerpentChase(void)
 	{
 		Flags &= ~MF_JUSTATTACKED;
 		if (gameskill != sk_nightmare)
-			P_NewChaseDir(this);
+			NewChaseDir();
 		return;
 	}
 
 	//
 	// check for melee attack
 	//
-	if (MeleeState && CheckMeleeRange(this))
+	if (MeleeState && CheckMeleeRange())
 	{
 		if (sound_attack)
 		{
@@ -126,7 +126,7 @@ void Actor::A_SerpentChase(void)
 	//
 	if (netgame && !threshold && !P_CheckSight(this, target))
 	{
-		if (P_LookForPlayers(this, true))
+		if (LookForPlayers(true))
 			return;	// got a new target
 	}
 
@@ -136,14 +136,14 @@ void Actor::A_SerpentChase(void)
 	oldX = origin.x;
 	oldY = origin.y;
 	oldFloor = subsector->sector->floor.pic;
-	if (--movecount < 0 || !P_Move(this))
+	if (--movecount < 0 || !StepMove())
 	{
-		P_NewChaseDir(this);
+		NewChaseDir();
 	}
 	if (subsector->sector->floor.pic != oldFloor)
 	{
 		P_TryMove(this, oldX, oldY);
-		P_NewChaseDir(this);
+		NewChaseDir();
 	}
 
 	//
@@ -183,7 +183,7 @@ void Actor::A_SerpentHumpDecide(void)
 	{
 		return;
 	}
-	if (!CheckMeleeRange(this))
+	if (!CheckMeleeRange())
 	{
 		// The hump shouldn't occur when within melee range
 		if (Class == SerpentLeader && P_Random() < 128)
@@ -295,17 +295,17 @@ void Actor::A_SerpentCheckForAttack(void)
 	}
 	if (Class == SerpentLeader)
 	{
-		if (!CheckMeleeRange(this))
+		if (!CheckMeleeRange())
 		{
 			SetState(S_SERPENT_ATK1);
 			return;
 		}
 	}
-	if (CheckMeleeRange2(this))
+	if (CheckMeleeRange2())
 	{
 		SetState(S_SERPENT_WALK1);
 	}
-	else if (CheckMeleeRange(this))
+	else if (CheckMeleeRange())
 	{
 		if (P_Random() < 32)
 		{
@@ -382,7 +382,7 @@ void Actor::A_SerpentWalk(void)
 	if (!target || !(target->Flags & MF_SHOOTABLE))
 	{
 		// look for a new target
-		if (P_LookForPlayers(this, true))
+		if (LookForPlayers(true))
 		{
 			// got a new target
 			return;
@@ -398,14 +398,14 @@ void Actor::A_SerpentWalk(void)
 	{
 		Flags &= ~MF_JUSTATTACKED;
 		if (gameskill != sk_nightmare)
-			P_NewChaseDir(this);
+			NewChaseDir();
 		return;
 	}
 
 	//
 	// check for melee attack
 	//
-	if (MeleeState && CheckMeleeRange(this))
+	if (MeleeState && CheckMeleeRange())
 	{
 		if (sound_attack)
 		{
@@ -419,16 +419,16 @@ void Actor::A_SerpentWalk(void)
 	//
 	if (netgame && !threshold && !P_CheckSight(this, target))
 	{
-		if (P_LookForPlayers(this, true))
+		if (LookForPlayers(true))
 			return;	// got a new target
 	}
 
 	//
 	// chase towards player
 	//
-	if (--movecount < 0 || !P_Move(this))
+	if (--movecount < 0 || !StepMove())
 	{
-		P_NewChaseDir(this);
+		NewChaseDir();
 	}
 }
 
@@ -440,7 +440,7 @@ void Actor::A_SerpentWalk(void)
 
 void Actor::A_SerpentChooseAttack(void)
 {
-	if (!target || CheckMeleeRange(this))
+	if (!target || CheckMeleeRange())
 	{
 		return;
 	}
@@ -462,7 +462,7 @@ void Actor::A_SerpentMeleeAttack(void)
 	{
 		return;
 	}
-	if (CheckMeleeRange(this))
+	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(5));
 		StartSoundName(this, 'SerpentMeleeHit', CHAN_WEAPON);
@@ -598,6 +598,9 @@ void Actor::A_DelayGib(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.13  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

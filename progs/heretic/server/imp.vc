@@ -48,7 +48,7 @@ void Actor::A_ImpMeAttack(void)
 		return;
 	}
 	StartSound(this, sound_attack, CHAN_WEAPON);
-	if (P_CheckMeleeRange(this))
+	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, 5 + (P_Random() & 7));
 	}
@@ -102,7 +102,7 @@ void Actor::A_ImpMsAttack2(void)
 		return;
 	}
 	StartSound(this, sound_attack, CHAN_WEAPON);
-	if (P_CheckMeleeRange(this))
+	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, 5 + (P_Random() & 7));
 		return;
@@ -183,6 +183,9 @@ void Actor::A_ImpExplode(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.11  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

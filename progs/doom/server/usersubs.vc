@@ -75,7 +75,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	x = mthing->x;
 	y = mthing->y;
 
-	if (!P_CheckPosition(players[playernum].mo, x, y))
+	if (!P_CheckPosition(players[playernum].mo, x, y, ONFLOORZ))
 	{
 		return false;
 	}
@@ -206,6 +206,9 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/01/25 18:04:33  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.15  2002/01/24 18:19:25  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

@@ -47,14 +47,14 @@ void Actor::A_Look(void)
 		{
 			if (!P_CheckSight(this, target))
 			{
-				if (!P_LookForPlayers(this, false))
+				if (!LookForPlayers(false))
 					return;
 			}
 		}
 	}
 	else
 	{
-		if (!P_LookForPlayers(this, false))
+		if (!LookForPlayers(false))
 			return;
 	}
 
@@ -153,7 +153,7 @@ void Actor::A_Chase(void)
 	if (!target || !(target->Flags & MF_SHOOTABLE))
 	{
 		// look for a new target
-		if (P_LookForPlayers(this, true))
+		if (LookForPlayers(true))
 		{
 			return;	// got a new target
 		}
@@ -167,13 +167,13 @@ void Actor::A_Chase(void)
 		Flags &= ~MF_JUSTATTACKED;
 		if (!fastparm)
 		{
-			P_NewChaseDir(this);
+			NewChaseDir();
 		}
 		return;
 	}
 
 	// check for melee attack
-	if (MeleeState && P_CheckMeleeRange(this))
+	if (MeleeState && CheckMeleeRange())
 	{
 		if (sound_attack)
 		{
@@ -188,7 +188,7 @@ void Actor::A_Chase(void)
 	{
 		if (fastparm || !movecount)
 		{
-			if (P_CheckMissileRange(this))
+			if (CheckMissileRange())
 			{
 				SetState(MissileState);
 				Flags |= MF_JUSTATTACKED;
@@ -202,15 +202,15 @@ void Actor::A_Chase(void)
 	{
 		if (!P_CheckSight(this, target))
 		{
-			if (P_LookForPlayers(this, true))
+			if (LookForPlayers(true))
 				return;	// got a new target
 		}
 	}
 
 	// chase towards player
-	if (--movecount < 0 || !P_Move(this))
+	if (--movecount < 0 || !StepMove())
 	{
-		P_NewChaseDir(this);
+		NewChaseDir();
 	}
 
 	// make active sound
@@ -560,6 +560,9 @@ void Actor::A_BossDeath(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/01/25 18:04:33  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.13  2002/01/24 18:19:25  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

@@ -218,13 +218,13 @@ void A_MLightningAttack2(mobj_t * actor)
 	{
 		fmo->specialmobj1 = NULL;
 		fmo->specialmobj2 = cmo;
-		Actor(*fmo).A_LightningZap();
+		fmo->A_LightningZap();
 	}
 	if (cmo)
 	{
 		cmo->specialmobj1 = NULL;	// mobj that it will track
 		cmo->specialmobj2 = fmo;
-		Actor(*cmo).A_LightningZap();
+		cmo->A_LightningZap();
 	}
 	StartSoundName(actor, 'MageLightningFire', CHAN_WEAPON);
 }
@@ -433,7 +433,7 @@ void MStaffSpawn(mobj_t * pmo, float angle)
 	if (mo)
 	{
 		mo->target = pmo;
-		mo->specialmobj1 = P_RoughMonsterSearch(mo, 10);
+		mo->specialmobj1 = &mo->RoughMonsterSearch(10);
 	}
 }
 
@@ -523,7 +523,7 @@ void Actor::A_MStaffTrack(void)
 {
 	if (!specialmobj1 && (P_Random() < 50))
 	{
-		specialmobj1 = P_RoughMonsterSearch(this, 10);
+		specialmobj1 = &RoughMonsterSearch(10);
 	}
 	SeekerMissile(this, 2.0, 10.0);
 }
@@ -531,6 +531,9 @@ void Actor::A_MStaffTrack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.15  2002/01/24 18:19:27  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

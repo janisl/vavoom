@@ -37,13 +37,69 @@
 
 //==========================================================================
 //
+//  Actor::UpdateChicken
+//
+//  Returns true if the chicken morphs.
+//
+//==========================================================================
+
+boolean Actor::UpdateChicken(int tics)
+{
+	mobj_t *fog;
+	float x;
+	float y;
+	float z;
+	classid moType;
+	float angle;
+	int flags;
+	int health;
+	mobj_t *targ;
+	mobj_t *mo;
+
+	special1 -= tics;
+	if (special1 > 0)
+	{
+		return false;
+	}
+	moType = specialcid;
+	x = origin.x;
+	y = origin.y;
+	z = origin.z;
+	angle = angles.yaw;
+	flags = Flags;
+	health = Health;
+	targ = target;
+	SetState(S_FREETARGMOBJ);
+	mo = P_SpawnMobj(x, y, z, moType);
+	if (P_TestMobjLocation(mo) == false)
+	{
+		// Didn't fit
+		P_RemoveMobj(mo);
+		mo = P_SpawnMobj(x, y, z, Chicken);
+		mo->angles.yaw = angle;
+		mo->Flags = flags;
+		mo->Health = health;
+		mo->target = targ;
+		mo->special1 = 5 * 35;	// Next try in 5 seconds
+		mo->specialcid = moType;
+		return false;
+	}
+	mo->angles.yaw = angle;
+	mo->target = targ;
+	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, TeleportFog);
+	StartSoundName(fog, 'Teleport', CHAN_VOICE);
+	return true;
+}
+
+//==========================================================================
+//
 //  Actor::A_ChicLook
 //
 //==========================================================================
 
 void Actor::A_ChicLook(void)
 {
-	if (UpdateChicken(this, 10))
+	if (UpdateChicken(10))
 	{
 		return;
 	}
@@ -58,7 +114,7 @@ void Actor::A_ChicLook(void)
 
 void Actor::A_ChicChase(void)
 {
-	if (UpdateChicken(this, 3))
+	if (UpdateChicken(3))
 	{
 		return;
 	}
@@ -106,7 +162,7 @@ void Actor::A_Feathers(void)
 
 void Actor::A_ChicAttack(void)
 {
-	if (UpdateChicken(this, 18))
+	if (UpdateChicken(18))
 	{
 		return;
 	}
@@ -114,7 +170,7 @@ void Actor::A_ChicAttack(void)
 	{
 		return;
 	}
-	if (P_CheckMeleeRange(this))
+	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, 1 + (P_Random() & 1));
 	}
@@ -128,7 +184,7 @@ void Actor::A_ChicAttack(void)
 
 void Actor::A_ChicPain(void)
 {
-	if (UpdateChicken(this, 10))
+	if (UpdateChicken(10))
 	{
 		return;
 	}
@@ -138,6 +194,9 @@ void Actor::A_ChicPain(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.10  2002/01/24 18:19:25  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

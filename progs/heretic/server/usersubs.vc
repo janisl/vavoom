@@ -338,7 +338,7 @@ boolean ArtiTomeOfPower(player_t * player)
 	}
 	else
 	{
-		if (!P_GivePower(player, pw_weaponlevel2))
+		if (!player->mo->GivePower(pw_weaponlevel2))
 		{
 			return false;
 		}
@@ -461,6 +461,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.15  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

@@ -127,7 +127,7 @@ void Cheat_Gimme(void)
 		{
 			for (j = 0; j < 25; j++)
 			{
-				P_GiveArtifact(&players[0], i, NULL);
+				players[0].mo->GiveArtifact(i);
 			}
 		}
 		cprint(&players[0], "ALL ARTIFACTS\n");
@@ -138,7 +138,7 @@ void Cheat_Gimme(void)
 
 		for (i = arti_firstpuzzitem; i < NUMARTIFACTS; i++)
 		{
-			P_GiveArtifact(&players[0], i, NULL);
+			players[0].mo->GiveArtifact(i);
 		}
 		cprint(&players[0], "ALL ARTIFACTS\n");
 	}
@@ -263,6 +263,9 @@ void Cheat_Class(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.8  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

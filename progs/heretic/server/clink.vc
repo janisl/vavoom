@@ -50,7 +50,7 @@ void Actor::A_ClinkAttack(void)
 		return;
 	}
 	StartSound(this, sound_attack, CHAN_WEAPON);
-	if (P_CheckMeleeRange(this))
+	if (CheckMeleeRange())
 	{
 		damage = ((P_Random() % 7) + 3);
 		target->Damage(self, self, damage);
@@ -60,6 +60,9 @@ void Actor::A_ClinkAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.8  2002/01/24 18:19:25  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

@@ -162,15 +162,15 @@ void Actor::A_WraithFX3(void)
 
 //============================================================================
 //
-//  A_WraithFX4
+//  Actor::A_WraithFX4
 //
 //  Spawn an FX4 during movement.
 //
 //============================================================================
 
-void A_WraithFX4(mobj_t * actor)
+void Actor::A_WraithFX4(void)
 {
-	mobj_t *mo;
+	Actor mo;
 	int chance = P_Random();
 	int spawn4, spawn5;
 
@@ -197,26 +197,24 @@ void A_WraithFX4(mobj_t * actor)
 
 	if (spawn4)
 	{
-		mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
-			WraithFleshDrip1);
+		mo = SpawnActor(origin, WraithFleshDrip1);
 		if (mo)
 		{
-			mo->origin.x += (Random() - 0.5) * 16.0;
-			mo->origin.y += (Random() - 0.5) * 16.0;
-			mo->origin.z += Random() * 4.0;
-			mo->target = actor;
+			mo.origin.x += (Random() - 0.5) * 16.0;
+			mo.origin.y += (Random() - 0.5) * 16.0;
+			mo.origin.z += Random() * 4.0;
+			mo.target = this;
 		}
 	}
 	if (spawn5)
 	{
-		mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
-			WraithFleshDrip2);
+		mo = SpawnActor(origin, WraithFleshDrip2);
 		if (mo)
 		{
-			mo->origin.x += (Random() - 0.5) * 8.0;
-			mo->origin.y += (Random() - 0.5) * 8.0;
-			mo->origin.z += Random() * 4.0;
-			mo->target = actor;
+			mo.origin.x += (Random() - 0.5) * 8.0;
+			mo.origin.y += (Random() - 0.5) * 8.0;
+			mo.origin.z += Random() * 4.0;
+			mo.target = this;
 		}
 	}
 }
@@ -239,7 +237,7 @@ void Actor::A_WraithChase(void)
 //      return;
 //  }
 	A_Chase();
-	A_WraithFX4(this);
+	A_WraithFX4();
 }
 
 //============================================================================
@@ -253,7 +251,7 @@ void Actor::A_WraithMelee(void)
 	int amount;
 
 	// Steal health from target and give to player
-	if (CheckMeleeRange(this) && (P_Random() < 220))
+	if (CheckMeleeRange() && (P_Random() < 220))
 	{
 		amount = HITDICE(2);
 		target->Damage(self, self, amount);
@@ -281,6 +279,9 @@ void Actor::A_WraithMissile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.12  2002/01/24 18:19:27  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

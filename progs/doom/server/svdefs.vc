@@ -263,6 +263,15 @@ class Actor:Entity
 	int waterlevel;
 	int watertype;
 
+	boolean GiveAmmo(int ammo, int num);
+	boolean GiveWeapon(int weapon, boolean dropped);
+	boolean GiveBody(int num);
+	boolean GiveArmor(int armortype);
+	boolean GiveCard(int card);
+	boolean GiveItem(int item);
+	boolean GivePower(int power);
+	void TouchSpecial(Actor Toucher);
+
 	boolean Touch(Actor Other);
 
 	void Think(void);
@@ -284,6 +293,20 @@ class Actor:Entity
 	Actor CheckOnmobj(void);
 	void PlayerLandedOnThing(void);
 	boolean Physics(void);
+
+	boolean CheckMeleeRange(void);
+	boolean CheckMissileRange(void);
+	boolean FindOther(void);
+	boolean LookForMonsters(boolean allaround);
+	boolean LookForMonsters2(boolean allaround);
+	boolean LookForPlayers(boolean allaround);
+	boolean StepMove(void);
+	boolean TryWalk(void);
+	void NewChaseDir(void);
+
+#ifdef DOOM2
+	void A_PainShootSkull(float angle);
+#endif
 
 	void A_BFGSpray(void);
 	void A_Explode(void);
@@ -342,6 +365,7 @@ class Actor:Entity
 	{
 	}
 }
+boolean P_CheckPosition(mobj_t * thing, float x, float y, float z);
 
 class Weapon:ViewEntity
 {
@@ -686,6 +710,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/01/25 18:04:33  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.15  2002/01/24 18:19:25  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

@@ -70,7 +70,7 @@ void Actor::A_SkelFist(void)
 
 	A_FaceTarget();
 
-	if (P_CheckMeleeRange(this))
+	if (CheckMeleeRange())
 	{
 		damage = ((P_Random() % 10) + 1) * 6;
 		StartSoundName(this, 'RavenantPunch', CHAN_WEAPON);
@@ -180,6 +180,9 @@ void Actor::A_Tracer(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2002/01/25 18:04:33  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.2  2002/01/24 18:19:25  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

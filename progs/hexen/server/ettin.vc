@@ -43,7 +43,7 @@
 
 void Actor::A_EttinAttack(void)
 {
-	if (CheckMeleeRange(this))
+	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(2));
 	}
@@ -72,6 +72,9 @@ void Actor::A_DropMace(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.10  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

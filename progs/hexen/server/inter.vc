@@ -164,14 +164,14 @@ string artifactMessages[NUMARTIFACTS] = {
 
 //==========================================================================
 //
-//  P_GiveMana
+//  Actor::GiveMana
 //
 //  Returns true if the player accepted the mana, false if it was
 // refused (player has MAX_MANA).
 //
 //==========================================================================
 
-boolean P_GiveMana(player_t * player, int mana, int count)
+boolean Actor::GiveMana(int mana, int count)
 {
 	int prevMana;
 
@@ -181,8 +181,7 @@ boolean P_GiveMana(player_t * player, int mana, int count)
 	}
 	if (mana < 0 || mana > NUMMANA)
 	{
-//      I_Error("P_GiveMana: bad type %i", mana);
-		Error("P_GiveMana: bad mana type");
+		Error("Actor::GiveMana: bad type %i", mana);
 	}
 	if (player->mana[mana] == MAX_MANA)
 	{
@@ -210,12 +209,12 @@ boolean P_GiveMana(player_t * player, int mana, int count)
 
 //==========================================================================
 //
-// TryPickupWeapon
+//	Actor::TryPickupWeapon
 //
 //==========================================================================
 
-void TryPickupWeapon(player_t * player, int weaponClass,
-	int weaponType, mobj_t * weapon, string message)
+void Actor::TryPickupWeapon(int weaponClass, int weaponType,
+	Actor weapon, string message)
 {
 	boolean remove;
 	boolean gaveMana;
@@ -232,14 +231,14 @@ void TryPickupWeapon(player_t * player, int weaponClass,
 		}
 		if (weaponType == WP_SECOND)
 		{
-			if (!P_GiveMana(player, MANA_1, 25))
+			if (!GiveMana(MANA_1, 25))
 			{
 				return;
 			}
 		}
 		else
 		{
-			if (!P_GiveMana(player, MANA_2, 25))
+			if (!GiveMana(MANA_2, 25))
 			{
 				return;
 			}
@@ -255,11 +254,11 @@ void TryPickupWeapon(player_t * player, int weaponClass,
 		player->weaponowned[weaponType] = true;
 		if (weaponType == WP_SECOND)
 		{
-			P_GiveMana(player, MANA_1, 25);
+			GiveMana(MANA_1, 25);
 		}
 		else
 		{
-			P_GiveMana(player, MANA_2, 25);
+			GiveMana(MANA_2, 25);
 		}
 		player->pendingweapon = weaponType;
 		remove = false;
@@ -269,11 +268,11 @@ void TryPickupWeapon(player_t * player, int weaponClass,
 		// Deathmatch or single player game
 		if (weaponType == WP_SECOND)
 		{
-			gaveMana = P_GiveMana(player, MANA_1, 25);
+			gaveMana = GiveMana(MANA_1, 25);
 		}
 		else
 		{
-			gaveMana = P_GiveMana(player, MANA_2, 25);
+			gaveMana = GiveMana(MANA_2, 25);
 		}
 		if (player->weaponowned[weaponType])
 		{
@@ -297,37 +296,36 @@ void TryPickupWeapon(player_t * player, int weaponClass,
 	}
 
 	cprint(player, "%s\n", message);
-	if (weapon->special)
+	if (weapon.special)
 	{
-		ExecuteLineSpecial(weapon->special, &weapon->args[0],
-			NULL, 0, player->mo);
-		weapon->special = 0;
+		ExecuteLineSpecial(weapon.special, &weapon.args[0], NULL, 0, this);
+		weapon.special = 0;
 	}
 
 	if (remove)
 	{
-		if (deathmatch && !(weapon->Flags2 & MF2_DROPPED))
+		if (deathmatch && !(weapon.Flags2 & MF2_DROPPED))
 		{
-			P_HideSpecialThing(weapon);
+			P_HideSpecialThing(&weapon);
 		}
 		else
 		{
-			P_RemoveMobj(weapon);
+			P_RemoveMobj(&weapon);
 		}
 	}
 
 	player->bonuscount += BONUSADD;
-	StartSoundName(player->mo, 'PickupWeapon', CHAN_ITEM);
+	StartSoundName(this, 'PickupWeapon', CHAN_ITEM);
 }
 
 //==========================================================================
 //
-// TryPickupWeaponPiece
+//	Actor::TryPickupWeaponPiece
 //
 //==========================================================================
 
-void TryPickupWeaponPiece(player_t * player, int matchClass,
-	int pieceValue, mobj_t * pieceMobj)
+void Actor::TryPickupWeaponPiece(int matchClass, int pieceValue,
+	Actor pieceMobj)
 {
 	boolean remove;
 	boolean checkAssembled;
@@ -346,8 +344,7 @@ void TryPickupWeaponPiece(player_t * player, int matchClass,
 			return;
 		}
 		checkAssembled = false;
-		gaveMana = P_GiveMana(player, MANA_1, 20) +
-			P_GiveMana(player, MANA_2, 20);
+		gaveMana = GiveMana(MANA_1, 20) + GiveMana(MANA_2, 20);
 		if (!gaveMana)
 		{
 			// Didn't need the mana, so don't pick it up
@@ -363,15 +360,14 @@ void TryPickupWeaponPiece(player_t * player, int matchClass,
 			return;
 		}
 		pieceValue = pieceValueTrans[pieceValue];
-		P_GiveMana(player, MANA_1, 20);
-		P_GiveMana(player, MANA_2, 20);
+		GiveMana(MANA_1, 20);
+		GiveMana(MANA_2, 20);
 		remove = false;
 	}
 	else
 	{
 		// Deathmatch or single player game
-		gaveMana = P_GiveMana(player, MANA_1, 20) +
-			P_GiveMana(player, MANA_2, 20);
+		gaveMana = GiveMana(MANA_1, 20) + GiveMana(MANA_2, 20);
 		if (player->pieces & pieceValue)
 		{
 			// Already has the piece, check if mana needed
@@ -385,21 +381,21 @@ void TryPickupWeaponPiece(player_t * player, int matchClass,
 	}
 
 	// Pick up the weapon piece
-	if (pieceMobj->special)
+	if (pieceMobj.special)
 	{
-		ExecuteLineSpecial(pieceMobj->special, &pieceMobj->args[0],
-			NULL, 0, player->mo);
-		pieceMobj->special = 0;
+		ExecuteLineSpecial(pieceMobj.special, &pieceMobj.args[0], NULL, 0,
+			this);
+		pieceMobj.special = 0;
 	}
 	if (remove)
 	{
-		if (deathmatch && !(pieceMobj->Flags2 & MF2_DROPPED))
+		if (deathmatch && !(pieceMobj.Flags2 & MF2_DROPPED))
 		{
-			P_HideSpecialThing(pieceMobj);
+			P_HideSpecialThing(&pieceMobj);
 		}
 		else
 		{
-			P_RemoveMobj(pieceMobj);
+			P_RemoveMobj(&pieceMobj);
 		}
 	}
 	player->bonuscount += BONUSADD;
@@ -425,19 +421,19 @@ void TryPickupWeaponPiece(player_t * player, int matchClass,
 	else
 	{
 		cprint(player, "%s\n", weaponPieceText[matchClass]);
-		StartSoundName(player->mo, 'PickupWeapon', CHAN_ITEM);	//FIXME must be PickupPiece
+		StartSoundName(this, 'PickupWeapon', CHAN_ITEM);	//FIXME must be PickupPiece
 	}
 }
 
 //==========================================================================
 //
-//  P_GiveBody
+//  Actor::GiveBody
 //
 //  Returns false if the body isn't needed at all.
 //
 //==========================================================================
 
-boolean P_GiveBody(player_t * player, int num)
+boolean Actor::GiveBody(int num)
 {
 	int max;
 
@@ -455,19 +451,19 @@ boolean P_GiveBody(player_t * player, int num)
 	{
 		player->health = max;
 	}
-	player->mo->Health = player->health;
+	Health = player->health;
 	return true;
 }
 
 //==========================================================================
 //
-//  P_GiveArmor
+//  Actor::GiveArmor
 //
 //  Returns false if the armor is worse than the current armor.
 //
 //==========================================================================
 
-boolean P_GiveArmor(player_t * player, int armortype, int amount)
+boolean Actor::GiveArmor(int armortype, int amount)
 {
 	float hits;
 	float totalArmor;
@@ -506,11 +502,11 @@ boolean P_GiveArmor(player_t * player, int armortype, int amount)
 
 //==========================================================================
 //
-//  P_GiveKey
+//  Actor::GiveKey
 //
 //==========================================================================
 
-int P_GiveKey(player_t * player, int key)
+boolean Actor::GiveKey(int key)
 {
 	if (player->keys & (1 << key))
 	{
@@ -523,13 +519,13 @@ int P_GiveKey(player_t * player, int key)
 
 //==========================================================================
 //
-//  P_GivePower
+//  Actor::GivePower
 //
 //  Returns true if power accepted.
 //
 //==========================================================================
 
-boolean P_GivePower(player_t * player, int power)
+boolean Actor::GivePower(int power)
 {
 	if (power == pw_invulnerability)
 	{
@@ -539,10 +535,10 @@ boolean P_GivePower(player_t * player, int power)
 			return false;
 		}
 		player->powers[power] = ftoi(INVULNTIME * 35.0);
-		player->mo->Flags2 |= MF2_INVULNERABLE;
+		Flags2 |= MF2_INVULNERABLE;
 		if (player->pclass == PCLASS_MAGE)
 		{
-			player->mo->Flags2 |= MF2_REFLECTIVE;
+			Flags2 |= MF2_REFLECTIVE;
 		}
 		return true;
 	}
@@ -554,9 +550,9 @@ boolean P_GivePower(player_t * player, int power)
 			return false;
 		}
 		player->powers[power] = ftoi(FLIGHTTIME * 35.0);
-		player->mo->Flags2 |= MF2_FLY;
-		player->mo->Flags |= MF_NOGRAVITY;
-		if (player->mo->origin.z <= player->mo->floorz)
+		Flags2 |= MF2_FLY;
+		Flags |= MF_NOGRAVITY;
+		if (origin.z <= floorz)
 		{
 			player->flyheight = 10;	// thrust the player in the air a bit
 		}
@@ -598,13 +594,13 @@ boolean P_GivePower(player_t * player, int power)
 
 //==========================================================================
 //
-//  P_GiveArtifact
+//  Actor::GiveArtifact
 //
 //  Returns true if artifact accepted.
 //
 //==========================================================================
 
-boolean P_GiveArtifact(player_t * player, int arti, mobj_t * mo)
+boolean Actor::GiveArtifact(int arti)
 {
 	int i;
 	int j;
@@ -674,25 +670,25 @@ boolean P_GiveArtifact(player_t * player, int arti, mobj_t * mo)
 
 //==========================================================================
 //
-// TryPickupArtifact
+//	Actor::TryPickupArtifact
 //
 //==========================================================================
 
-void TryPickupArtifact(player_t * player, int artifactType, mobj_t * artifact)
+void Actor::TryPickupArtifact(int artifactType, Actor artifact)
 {
-	if (P_GiveArtifact(player, artifactType, artifact))
+	if (GiveArtifact(artifactType))
 	{
-		if (artifact->special)
+		if (artifact.special)
 		{
-			ExecuteLineSpecial(artifact->special, &artifact->args[0],
+			ExecuteLineSpecial(artifact.special, &artifact.args[0],
 				NULL, 0, NULL);
-			artifact->special = 0;
+			artifact.special = 0;
 		}
 		player->bonuscount += BONUSADD;
 		if (artifactType < arti_firstpuzzitem)
 		{
-			SetDormantArtifact(artifact);
-			StartSoundName(artifact, 'PickupArtifact', CHAN_ITEM);
+			SetDormantArtifact(&artifact);
+			StartSoundName(&artifact, 'PickupArtifact', CHAN_ITEM);
 			cprint(player, "%s\n", artifactMessages[artifactType]);
 		}
 		else
@@ -703,7 +699,7 @@ void TryPickupArtifact(player_t * player, int artifactType, mobj_t * artifact)
 			if (!netgame || deathmatch)
 			{
 				// Remove puzzle items if not cooperative netplay
-				P_RemoveMobj(artifact);
+				P_RemoveMobj(&artifact);
 			}
 		}
 	}
@@ -711,66 +707,64 @@ void TryPickupArtifact(player_t * player, int artifactType, mobj_t * artifact)
 
 //==========================================================================
 //
-//  P_TouchSpecialThing
+//  Actor::TouchSpecial
 //
 //==========================================================================
 
-void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
+void Actor::TouchSpecial(Actor Toucher)
 {
-	player_t *player;
 	name sound;
 	boolean respawn;
 
-	if (!(toucher->Flags & MF_PICKUP))
+	if (!(Toucher.Flags & MF_PICKUP))
 	{
 		// Can't be picked up by toucher
 		return;
 	}
-	if (toucher->Health <= 0)
+	if (Toucher.Health <= 0)
 	{
 		// Toucher is dead
 		return;
 	}
 	sound = 'PickupItem';
-	player = toucher->player;
 	respawn = true;
-	switch (special->sprite)
+	switch (sprite)
 	{
 		// Items
 	case SPR_PTN1:	// Item_HealingPotion
-		if (!P_GiveBody(player, 10))
+		if (!Toucher.GiveBody(10))
 		{
 			return;
 		}
-		cprint(player, "%s\n", TXT_ITEMHEALTH);
+		cprint(Toucher.player, "%s\n", TXT_ITEMHEALTH);
 		break;
 	case SPR_ARM1:
-		if (!P_GiveArmor(player, ARMOR_ARMOR, -1))
+		if (!Toucher.GiveArmor(ARMOR_ARMOR, -1))
 		{
 			return;
 		}
-		cprint(player, "%s\n", TXT_ARMOR1);
+		cprint(Toucher.player, "%s\n", TXT_ARMOR1);
 		break;
 	case SPR_ARM2:
-		if (!P_GiveArmor(player, ARMOR_SHIELD, -1))
+		if (!Toucher.GiveArmor(ARMOR_SHIELD, -1))
 		{
 			return;
 		}
-		cprint(player, "%s\n", TXT_ARMOR2);
+		cprint(Toucher.player, "%s\n", TXT_ARMOR2);
 		break;
 	case SPR_ARM3:
-		if (!P_GiveArmor(player, ARMOR_HELMET, -1))
+		if (!Toucher.GiveArmor(ARMOR_HELMET, -1))
 		{
 			return;
 		}
-		cprint(player, "%s\n", TXT_ARMOR3);
+		cprint(Toucher.player, "%s\n", TXT_ARMOR3);
 		break;
 	case SPR_ARM4:
-		if (!P_GiveArmor(player, ARMOR_AMULET, -1))
+		if (!Toucher.GiveArmor(ARMOR_AMULET, -1))
 		{
 			return;
 		}
-		cprint(player, "%s\n", TXT_ARMOR4);
+		cprint(Toucher.player, "%s\n", TXT_ARMOR4);
 		break;
 
 		// Keys
@@ -785,20 +779,19 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 	case SPR_KEY9:
 	case SPR_KEYA:
 	case SPR_KEYB:
-		if (!P_GiveKey(player, special->sprite - SPR_KEY1))
+		if (!Toucher.GiveKey(sprite - SPR_KEY1))
 		{
 			return;
 		}
-		cprint(player, "%s\n", TextKeyMessages[special->sprite - SPR_KEY1]);
+		cprint(Toucher.player, "%s\n", TextKeyMessages[sprite - SPR_KEY1]);
 		sound = 'PickupKey';
 
 		// Check and process the special now in case the key doesn't
 		// get removed for coop netplay
-		if (special->special)
+		if (special)
 		{
-			ExecuteLineSpecial(special->special, &special->args[0],
-				NULL, 0, toucher);
-			special->special = 0;
+			ExecuteLineSpecial(special, &args[0], NULL, 0, &Toucher);
+			special = 0;
 		}
 
 		if (!netgame)
@@ -806,223 +799,225 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 			// Only remove keys in single player game
 			break;
 		}
-		player->bonuscount += BONUSADD;
-		StartSoundName(player->mo, sound, CHAN_ITEM);
+		Toucher.player->bonuscount += BONUSADD;
+		StartSoundName(&Toucher, sound, CHAN_ITEM);
 		return;
 
 		// Artifacts
 	case SPR_PTN2:
-		TryPickupArtifact(player, arti_health, special);
+		Toucher.TryPickupArtifact(arti_health, self);
 		return;
 	case SPR_SOAR:
-		TryPickupArtifact(player, arti_fly, special);
+		Toucher.TryPickupArtifact(arti_fly, self);
 		return;
 	case SPR_INVU:
-		TryPickupArtifact(player, arti_invulnerability, special);
+		Toucher.TryPickupArtifact(arti_invulnerability, self);
 		return;
 	case SPR_SUMN:
-		TryPickupArtifact(player, arti_summon, special);
+		Toucher.TryPickupArtifact(arti_summon, self);
 		return;
 	case SPR_PORK:
-		TryPickupArtifact(player, arti_egg, special);
+		Toucher.TryPickupArtifact(arti_egg, self);
 		return;
 	case SPR_SPHL:
-		TryPickupArtifact(player, arti_superhealth, special);
+		Toucher.TryPickupArtifact(arti_superhealth, self);
 		return;
 	case SPR_HRAD:
-		TryPickupArtifact(player, arti_healingradius, special);
+		Toucher.TryPickupArtifact(arti_healingradius, self);
 		return;
 	case SPR_TRCH:
-		TryPickupArtifact(player, arti_torch, special);
+		Toucher.TryPickupArtifact(arti_torch, self);
 		return;
 	case SPR_ATLP:
-		TryPickupArtifact(player, arti_teleport, special);
+		Toucher.TryPickupArtifact(arti_teleport, self);
 		return;
 	case SPR_TELO:
-		TryPickupArtifact(player, arti_teleportother, special);
+		Toucher.TryPickupArtifact(arti_teleportother, self);
 		return;
 	case SPR_PSBG:
-		TryPickupArtifact(player, arti_poisonbag, special);
+		Toucher.TryPickupArtifact(arti_poisonbag, self);
 		return;
 	case SPR_SPED:
-		TryPickupArtifact(player, arti_speed, special);
+		Toucher.TryPickupArtifact(arti_speed, self);
 		return;
 	case SPR_BMAN:
-		TryPickupArtifact(player, arti_boostmana, special);
+		Toucher.TryPickupArtifact(arti_boostmana, self);
 		return;
 	case SPR_BRAC:
-		TryPickupArtifact(player, arti_boostarmor, special);
+		Toucher.TryPickupArtifact(arti_boostarmor, self);
 		return;
 	case SPR_BLST:
-		TryPickupArtifact(player, arti_blastradius, special);
+		Toucher.TryPickupArtifact(arti_blastradius, self);
 		return;
 
 		// Puzzle artifacts
 	case SPR_ASKU:
-		TryPickupArtifact(player, arti_puzzskull, special);
+		Toucher.TryPickupArtifact(arti_puzzskull, self);
 		return;
 	case SPR_ABGM:
-		TryPickupArtifact(player, arti_puzzgembig, special);
+		Toucher.TryPickupArtifact(arti_puzzgembig, self);
 		return;
 	case SPR_AGMR:
-		TryPickupArtifact(player, arti_puzzgemred, special);
+		Toucher.TryPickupArtifact(arti_puzzgemred, self);
 		return;
 	case SPR_AGMG:
-		TryPickupArtifact(player, arti_puzzgemgreen1, special);
+		Toucher.TryPickupArtifact(arti_puzzgemgreen1, self);
 		return;
 	case SPR_AGG2:
-		TryPickupArtifact(player, arti_puzzgemgreen2, special);
+		Toucher.TryPickupArtifact(arti_puzzgemgreen2, self);
 		return;
 	case SPR_AGMB:
-		TryPickupArtifact(player, arti_puzzgemblue1, special);
+		Toucher.TryPickupArtifact(arti_puzzgemblue1, self);
 		return;
 	case SPR_AGB2:
-		TryPickupArtifact(player, arti_puzzgemblue2, special);
+		Toucher.TryPickupArtifact(arti_puzzgemblue2, self);
 		return;
 	case SPR_ABK1:
-		TryPickupArtifact(player, arti_puzzbook1, special);
+		Toucher.TryPickupArtifact(arti_puzzbook1, self);
 		return;
 	case SPR_ABK2:
-		TryPickupArtifact(player, arti_puzzbook2, special);
+		Toucher.TryPickupArtifact(arti_puzzbook2, self);
 		return;
 	case SPR_ASK2:
-		TryPickupArtifact(player, arti_puzzskull2, special);
+		Toucher.TryPickupArtifact(arti_puzzskull2, self);
 		return;
 	case SPR_AFWP:
-		TryPickupArtifact(player, arti_puzzfweapon, special);
+		Toucher.TryPickupArtifact(arti_puzzfweapon, self);
 		return;
 	case SPR_ACWP:
-		TryPickupArtifact(player, arti_puzzcweapon, special);
+		Toucher.TryPickupArtifact(arti_puzzcweapon, self);
 		return;
 	case SPR_AMWP:
-		TryPickupArtifact(player, arti_puzzmweapon, special);
+		Toucher.TryPickupArtifact(arti_puzzmweapon, self);
 		return;
 	case SPR_AGER:
-		TryPickupArtifact(player, arti_puzzgear1, special);
+		Toucher.TryPickupArtifact(arti_puzzgear1, self);
 		return;
 	case SPR_AGR2:
-		TryPickupArtifact(player, arti_puzzgear2, special);
+		Toucher.TryPickupArtifact(arti_puzzgear2, self);
 		return;
 	case SPR_AGR3:
-		TryPickupArtifact(player, arti_puzzgear3, special);
+		Toucher.TryPickupArtifact(arti_puzzgear3, self);
 		return;
 	case SPR_AGR4:
-		TryPickupArtifact(player, arti_puzzgear4, special);
+		Toucher.TryPickupArtifact(arti_puzzgear4, self);
 		return;
 
 		// Mana
 	case SPR_MAN1:
-		if (!P_GiveMana(player, MANA_1, 15))
+		if (!Toucher.GiveMana(MANA_1, 15))
 		{
 			return;
 		}
-		cprint(player, "%s\n", TXT_MANA_1);
+		cprint(Toucher.player, "%s\n", TXT_MANA_1);
 		break;
 	case SPR_MAN2:
-		if (!P_GiveMana(player, MANA_2, 15))
+		if (!Toucher.GiveMana(MANA_2, 15))
 		{
 			return;
 		}
-		cprint(player, "%s\n", TXT_MANA_2);
+		cprint(Toucher.player, "%s\n", TXT_MANA_2);
 		break;
 	case SPR_MAN3:	// Double Mana Dodecahedron
-		if (!P_GiveMana(player, MANA_1, 20))
+		if (!Toucher.GiveMana(MANA_1, 20))
 		{
-			if (!P_GiveMana(player, MANA_2, 20))
+			if (!Toucher.GiveMana(MANA_2, 20))
 			{
 				return;
 			}
 		}
 		else
 		{
-			P_GiveMana(player, MANA_2, 20);
+			Toucher.GiveMana(MANA_2, 20);
 		}
-		cprint(player, "%s\n", TXT_MANA_BOTH);
+		cprint(Toucher.player, "%s\n", TXT_MANA_BOTH);
 		break;
 
 		// 2nd and 3rd Mage Weapons
 	case SPR_WMCS:	// Frost Shards
-		TryPickupWeapon(player, PCLASS_MAGE, WP_SECOND,
-			special, TXT_WEAPON_M2);
+		Toucher.TryPickupWeapon(PCLASS_MAGE, WP_SECOND,
+			self, TXT_WEAPON_M2);
 		return;
 	case SPR_WMLG:	// Arc of Death
-		TryPickupWeapon(player, PCLASS_MAGE, WP_THIRD,
-			special, TXT_WEAPON_M3);
+		Toucher.TryPickupWeapon(PCLASS_MAGE, WP_THIRD,
+			self, TXT_WEAPON_M3);
 		return;
 
 		// 2nd and 3rd Fighter Weapons
 	case SPR_WFAX:	// Timon's Axe
-		TryPickupWeapon(player, PCLASS_FIGHTER, WP_SECOND,
-			special, TXT_WEAPON_F2);
+		Toucher.TryPickupWeapon(PCLASS_FIGHTER, WP_SECOND,
+			self, TXT_WEAPON_F2);
 		return;
 	case SPR_WFHM:	// Hammer of Retribution
-		TryPickupWeapon(player, PCLASS_FIGHTER, WP_THIRD,
-			special, TXT_WEAPON_F3);
+		Toucher.TryPickupWeapon(PCLASS_FIGHTER, WP_THIRD,
+			self, TXT_WEAPON_F3);
 		return;
 
 		// 2nd and 3rd Cleric Weapons
 	case SPR_WCSS:	// Serpent Staff
-		TryPickupWeapon(player, PCLASS_CLERIC, WP_SECOND,
-			special, TXT_WEAPON_C2);
+		Toucher.TryPickupWeapon(PCLASS_CLERIC, WP_SECOND,
+			self, TXT_WEAPON_C2);
 		return;
 	case SPR_WCFM:	// Firestorm
-		TryPickupWeapon(player, PCLASS_CLERIC, WP_THIRD,
-			special, TXT_WEAPON_C3);
+		Toucher.TryPickupWeapon(PCLASS_CLERIC, WP_THIRD,
+			self, TXT_WEAPON_C3);
 		return;
 
 		// Fourth Weapon Pieces
 	case SPR_WFR1:
-		TryPickupWeaponPiece(player, PCLASS_FIGHTER, WPIECE1, special);
+		Toucher.TryPickupWeaponPiece(PCLASS_FIGHTER, WPIECE1, self);
 		return;
 	case SPR_WFR2:
-		TryPickupWeaponPiece(player, PCLASS_FIGHTER, WPIECE2, special);
+		Toucher.TryPickupWeaponPiece(PCLASS_FIGHTER, WPIECE2, self);
 		return;
 	case SPR_WFR3:
-		TryPickupWeaponPiece(player, PCLASS_FIGHTER, WPIECE3, special);
+		Toucher.TryPickupWeaponPiece(PCLASS_FIGHTER, WPIECE3, self);
 		return;
 	case SPR_WCH1:
-		TryPickupWeaponPiece(player, PCLASS_CLERIC, WPIECE1, special);
+		Toucher.TryPickupWeaponPiece(PCLASS_CLERIC, WPIECE1, self);
 		return;
 	case SPR_WCH2:
-		TryPickupWeaponPiece(player, PCLASS_CLERIC, WPIECE2, special);
+		Toucher.TryPickupWeaponPiece(PCLASS_CLERIC, WPIECE2, self);
 		return;
 	case SPR_WCH3:
-		TryPickupWeaponPiece(player, PCLASS_CLERIC, WPIECE3, special);
+		Toucher.TryPickupWeaponPiece(PCLASS_CLERIC, WPIECE3, self);
 		return;
 	case SPR_WMS1:
-		TryPickupWeaponPiece(player, PCLASS_MAGE, WPIECE1, special);
+		Toucher.TryPickupWeaponPiece(PCLASS_MAGE, WPIECE1, self);
 		return;
 	case SPR_WMS2:
-		TryPickupWeaponPiece(player, PCLASS_MAGE, WPIECE2, special);
+		Toucher.TryPickupWeaponPiece(PCLASS_MAGE, WPIECE2, self);
 		return;
 	case SPR_WMS3:
-		TryPickupWeaponPiece(player, PCLASS_MAGE, WPIECE3, special);
+		Toucher.TryPickupWeaponPiece(PCLASS_MAGE, WPIECE3, self);
 		return;
 
 	default:
 		Error("P_TouchSpecialThing: Unknown gettable thing");
 	}
-	if (special->special)
+	if (special)
 	{
-		ExecuteLineSpecial(special->special, &special->args[0], NULL,
-			0, toucher);
-		special->special = 0;
+		ExecuteLineSpecial(special, &args[0], NULL, 0, &Toucher);
+		special = 0;
 	}
-	if (deathmatch && respawn && !(special->Flags2 & MF2_DROPPED))
+	if (deathmatch && respawn && !(Flags2 & MF2_DROPPED))
 	{
-		P_HideSpecialThing(special);
+		P_HideSpecialThing(this);
 	}
 	else
 	{
-		P_RemoveMobj(special);
+		P_RemoveMobj(this);
 	}
-	player->bonuscount += BONUSADD;
-	StartSoundName(player->mo, sound, CHAN_ITEM);
+	Toucher.player->bonuscount += BONUSADD;
+	StartSoundName(&Toucher, sound, CHAN_ITEM);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.8  2002/01/17 18:15:54  dj_jl
 //  Renamed all map object classes
 //

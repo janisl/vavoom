@@ -240,20 +240,23 @@ void Actor::A_BridgeInit(void)
 
 //==========================================================================
 //
-//  A_BridgeRemove
+//  Actor::A_BridgeRemove
 //
 //==========================================================================
 
-void A_BridgeRemove(mobj_t *actor)
+void Actor::A_BridgeRemove(void)
 {
-	actor->special1 = true;	// Removing the bridge
-	actor->Flags &= ~MF_SOLID;
-	actor->SetState(S_FREE_BRIDGE1);
+	special1 = true;	// Removing the bridge
+	Flags &= ~MF_SOLID;
+	SetState(S_FREE_BRIDGE1);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.11  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

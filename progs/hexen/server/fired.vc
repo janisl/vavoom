@@ -46,14 +46,14 @@
 
 //============================================================================
 //
-//  A_FiredSpawnRock
+//  Actor::A_FiredSpawnRock
 //
 //============================================================================
 
-void A_FiredSpawnRock(mobj_t * actor)
+void Actor::A_FiredSpawnRock(void)
 {
-	mobj_t *mo;
-	float x, y, z;
+	Actor mo;
+	TVec rockOrg;
 	classid rtype;
 
 	switch (P_Random() % 5)
@@ -75,22 +75,22 @@ void A_FiredSpawnRock(mobj_t * actor)
 		break;
 	}
 
-	x = actor->origin.x + (Random() - 0.5) * 16.0;
-	y = actor->origin.y + (Random() - 0.5) * 16.0;
-	z = actor->origin.z + Random() * 8.0;
-	mo = P_SpawnMobj(x, y, z, rtype);
+	rockOrg.x = origin.x + (Random() - 0.5) * 16.0;
+	rockOrg.y = origin.y + (Random() - 0.5) * 16.0;
+	rockOrg.z = origin.z + Random() * 8.0;
+	mo = SpawnActor(rockOrg, rtype);
 	if (mo)
 	{
-		mo->target = actor;
-		mo->velocity.x = (Random() - 0.5) * 4.0 * 35.0;
-		mo->velocity.y = (Random() - 0.5) * 4.0 * 35.0;
-		mo->velocity.z = Random() * 4.0 * 35.0;
-		mo->special1 = 2;	// Number bounces
+		mo.target = this;
+		mo.velocity.x = (Random() - 0.5) * 4.0 * 35.0;
+		mo.velocity.y = (Random() - 0.5) * 4.0 * 35.0;
+		mo.velocity.z = Random() * 4.0 * 35.0;
+		mo.special1 = 2;	// Number bounces
 	}
 
 	// Initialize fire demon
-	actor->special2 = 0;
-	actor->Flags &= ~MF_JUSTATTACKED;
+	special2 = 0;
+	Flags &= ~MF_JUSTATTACKED;
 }
 
 //============================================================================
@@ -101,11 +101,11 @@ void A_FiredSpawnRock(mobj_t * actor)
 
 void Actor::A_FiredRocks(void)
 {
-	A_FiredSpawnRock(this);
-	A_FiredSpawnRock(this);
-	A_FiredSpawnRock(this);
-	A_FiredSpawnRock(this);
-	A_FiredSpawnRock(this);
+	A_FiredSpawnRock();
+	A_FiredSpawnRock();
+	A_FiredSpawnRock();
+	A_FiredSpawnRock();
+	A_FiredSpawnRock();
 }
 
 //============================================================================
@@ -138,7 +138,7 @@ void Actor::A_FiredChase(void)
 	if (!target || !(target->Flags & MF_SHOOTABLE))
 	{
 		// Invalid target
-		P_LookForPlayers(this, true);
+		LookForPlayers(true);
 		return;
 	}
 
@@ -170,21 +170,21 @@ void Actor::A_FiredChase(void)
 		}
 	}
 
-	FaceMovementDirection(this);
+	FaceMovementDirection();
 
 	// Normal movement
 	if (!special2)
 	{
-		if (--movecount < 0 || !P_Move(this))
+		if (--movecount < 0 || !StepMove())
 		{
-			P_NewChaseDir(this);
+			NewChaseDir();
 		}
 	}
 
 	// Do missile attack
 	if (!(Flags & MF_JUSTATTACKED))
 	{
-		if (CheckMissileRange(this) && (P_Random() < 20))
+		if (CheckMissileRange() && (P_Random() < 20))
 		{
 			SetState(MissileState);
 			Flags |= MF_JUSTATTACKED;
@@ -262,6 +262,9 @@ void Actor::A_SmBounce(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.11  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

@@ -305,294 +305,294 @@ boolean P_GivePower(player_t * player, int power)
 
 //==========================================================================
 //
-// P_TouchSpecialThing
+//	Actor::TouchSpecial
 //
 //==========================================================================
 
-void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
+void Actor::TouchSpecial(Actor Toucher)
 {
 	player_t *player;
 	int i;
 	name sound;
 
-	if (!(toucher->Flags & MF_PICKUP))
+	if (!(Toucher.Flags & MF_PICKUP))
 	{
 		// can remove thing
 		return;
 	}
 	// Dead thing touching.
 	// Can happen with a sliding player corpse.
-	if (toucher->Health <= 0)
+	if (Toucher.Health <= 0)
 		return;
 
 	sound = 'PickupItem';
-	player = toucher->player;
+	Toucher.player = Toucher.player;
 
 	// Identify by sprite.
-/*    switch (special->sprite)
+/*    switch (_self->sprite)
     {
 		// armor
       case SPR_ARM1:
-		if (!P_GiveArmor(player, 1))
+		if (!P_GiveArmor(Toucher.player, 1))
 		    return;
-		P_SetMessage(player, GOTARMOR, false);
+		P_SetMessage(Toucher.player, GOTARMOR, false);
 		break;
 		
       case SPR_ARM2:
-		if (!P_GiveArmor(player, 2))
+		if (!P_GiveArmor(Toucher.player, 2))
 		    return;
-		P_SetMessage(player, GOTMEGA, false);
+		P_SetMessage(Toucher.player, GOTMEGA, false);
 		break;
 	
 		// bonus items
       case SPR_BON1:
-		player->health++;		// can go over 100%
-		if (player->health > 200)
-	    	player->health = 200;
-		player->mo->health = player->health;
-		P_SetMessage(player, GOTHTHBONUS, false);
+		Toucher.player->health++;		// can go over 100%
+		if (Toucher.player->health > 200)
+	    	Toucher.player->health = 200;
+		Toucher.player->mo->health = Toucher.player->health;
+		P_SetMessage(Toucher.player, GOTHTHBONUS, false);
 		break;
 	
       case SPR_BON2:
-		player->armorpoints++;		// can go over 100%
-		if (player->armorpoints > 200)
-		    player->armorpoints = 200;
-		if (!player->armortype)
-		    player->armortype = 1;
-		P_SetMessage(player, GOTARMBONUS, false);
+		Toucher.player->armorpoints++;		// can go over 100%
+		if (Toucher.player->armorpoints > 200)
+		    Toucher.player->armorpoints = 200;
+		if (!Toucher.player->armortype)
+		    Toucher.player->armortype = 1;
+		P_SetMessage(Toucher.player, GOTARMBONUS, false);
 		break;
 	
       case SPR_SOUL:
-		player->health += SOULSPHERE_HEALTH;
-		if (player->health > SOULSPHERE_MAX)
-		    player->health = SOULSPHERE_MAX;
-		player->mo->health = player->health;
-		P_SetMessage(player, GOTSUPER, false);
+		Toucher.player->health += SOULSPHERE_HEALTH;
+		if (Toucher.player->health > SOULSPHERE_MAX)
+		    Toucher.player->health = SOULSPHERE_MAX;
+		Toucher.player->mo->health = Toucher.player->health;
+		P_SetMessage(Toucher.player, GOTSUPER, false);
 		sound = 'PickupPower';
 		break;
 
 		// cards
 		// leave cards for everyone
       case SPR_BKEY:
-		if (P_GiveCard(player, it_bluecard))
-		    P_SetMessage(player, GOTBLUECARD, false);
+		if (P_GiveCard(Toucher.player, it_bluecard))
+		    P_SetMessage(Toucher.player, GOTBLUECARD, false);
 		if (!netgame)
 		    break;
 		return;
 	
       case SPR_YKEY:
-		if (P_GiveCard(player, it_yellowcard))
-		    P_SetMessage(player, GOTYELWCARD, false);
+		if (P_GiveCard(Toucher.player, it_yellowcard))
+		    P_SetMessage(Toucher.player, GOTYELWCARD, false);
 		if (!netgame)
 		    break;
 		return;
 	
       case SPR_RKEY:
-		if (P_GiveCard(player, it_redcard))
-		    P_SetMessage(player, GOTREDCARD, false);
+		if (P_GiveCard(Toucher.player, it_redcard))
+		    P_SetMessage(Toucher.player, GOTREDCARD, false);
 		if (!netgame)
 		    break;
 		return;
 	
       case SPR_BSKU:
-		if (P_GiveCard(player, it_blueskull))
-		    P_SetMessage(player, GOTBLUESKUL, false);
+		if (P_GiveCard(Toucher.player, it_blueskull))
+		    P_SetMessage(Toucher.player, GOTBLUESKUL, false);
 		if (!netgame)
 		    break;
 		return;
 	
       case SPR_YSKU:
-		if (P_GiveCard(player, it_yellowskull))
-		    P_SetMessage(player, GOTYELWSKUL, false);
+		if (P_GiveCard(Toucher.player, it_yellowskull))
+		    P_SetMessage(Toucher.player, GOTYELWSKUL, false);
 		if (!netgame)
 	    	break;
 		return;
 	
       case SPR_RSKU:
-		if (P_GiveCard(player, it_redskull))
-		    P_SetMessage(player, GOTREDSKULL, false);
+		if (P_GiveCard(Toucher.player, it_redskull))
+		    P_SetMessage(Toucher.player, GOTREDSKULL, false);
 		if (!netgame)
 	    	break;
 		return;
 	
 		// medikits, heals
       case SPR_STIM:
-		if (!P_GiveBody (player, 10))
+		if (!P_GiveBody (Toucher.player, 10))
 		    return;
-		P_SetMessage(player, GOTSTIM, false);
+		P_SetMessage(Toucher.player, GOTSTIM, false);
 		break;
 	
       case SPR_MEDI:
-		if (!P_GiveBody (player, 25))
+		if (!P_GiveBody (Toucher.player, 25))
 		    return;
 
-		if (player->health < 25)
-		    P_SetMessage(player, GOTMEDINEED, false);
+		if (Toucher.player->health < 25)
+		    P_SetMessage(Toucher.player, GOTMEDINEED, false);
 		else
-		    P_SetMessage(player, GOTMEDIKIT, false);
+		    P_SetMessage(Toucher.player, GOTMEDIKIT, false);
 		break;
 
 	
 		// power ups
       case SPR_PINV:
-		if (!P_GivePower (player, pw_invulnerability))
+		if (!P_GivePower (Toucher.player, pw_invulnerability))
 		    return;
-		P_SetMessage(player, GOTINVUL, false);
+		P_SetMessage(Toucher.player, GOTINVUL, false);
 		sound = 'PickupPower';
 		break;
 	
       case SPR_PSTR:
-		if (!P_GivePower (player, pw_strength))
+		if (!P_GivePower (Toucher.player, pw_strength))
 		    return;
-		P_SetMessage(player, GOTBERSERK, false);
-		if (player->readyweapon != wp_fist)
-		    player->pendingweapon = wp_fist;
+		P_SetMessage(Toucher.player, GOTBERSERK, false);
+		if (Toucher.player->readyweapon != wp_fist)
+		    Toucher.player->pendingweapon = wp_fist;
 		sound = 'PickupPower';
 		break;
 	
       case SPR_PINS:
-		if (!P_GivePower (player, pw_invisibility))
+		if (!P_GivePower (Toucher.player, pw_invisibility))
 		    return;
-		P_SetMessage(player, GOTINVIS, false);
+		P_SetMessage(Toucher.player, GOTINVIS, false);
 		sound = 'PickupPower';
 		break;
 	
       case SPR_SUIT:
-		if (!P_GivePower (player, pw_ironfeet))
+		if (!P_GivePower (Toucher.player, pw_ironfeet))
 		    return;
-		P_SetMessage(player, GOTSUIT, false);
+		P_SetMessage(Toucher.player, GOTSUIT, false);
 		sound = 'PickupPower';
 		break;
 	
       case SPR_PVIS:
-		if (!P_GivePower (player, pw_infrared))
+		if (!P_GivePower (Toucher.player, pw_infrared))
 		    return;
-		P_SetMessage(player, GOTVISOR, false);
+		P_SetMessage(Toucher.player, GOTVISOR, false);
 		sound = 'PickupPower';
 		break;
 
 	    //	Items
       case SPR_PMAP:
-		if (!P_GiveItem(player, IT_ALL_MAP))
+		if (!P_GiveItem(Toucher.player, IT_ALL_MAP))
 		    return;
-		P_SetMessage(player, GOTMAP, false);
+		P_SetMessage(Toucher.player, GOTMAP, false);
 		sound = 'PickupPower';
 		break;
 	
 		// ammo
       case SPR_CLIP:
-		if (special->Flags & MF_DROPPED)
+		if (_self->Flags & MF_DROPPED)
 		{
-		    if (!P_GiveAmmo (player,am_clip,0))
+		    if (!P_GiveAmmo (Toucher.player,am_clip,0))
 				return;
 		}
 		else
 		{
-		    if (!P_GiveAmmo (player,am_clip,1))
+		    if (!P_GiveAmmo (Toucher.player,am_clip,1))
 				return;
 		}
-		P_SetMessage(player, GOTCLIP, false);
+		P_SetMessage(Toucher.player, GOTCLIP, false);
 		break;
 	
       case SPR_AMMO:
-		if (!P_GiveAmmo (player, am_clip,5))
+		if (!P_GiveAmmo (Toucher.player, am_clip,5))
 		    return;
-		P_SetMessage(player, GOTCLIPBOX, false);
+		P_SetMessage(Toucher.player, GOTCLIPBOX, false);
 		break;
 	
       case SPR_ROCK:
-		if (!P_GiveAmmo (player, am_misl,1))
+		if (!P_GiveAmmo (Toucher.player, am_misl,1))
 		    return;
-		P_SetMessage(player, GOTROCKET, false);
+		P_SetMessage(Toucher.player, GOTROCKET, false);
 		break;
 
       case SPR_BROK:
-		if (!P_GiveAmmo (player, am_misl,5))
+		if (!P_GiveAmmo (Toucher.player, am_misl,5))
 		    return;
-		P_SetMessage(player, GOTROCKBOX, false);
+		P_SetMessage(Toucher.player, GOTROCKBOX, false);
 		break;
 	
       case SPR_CELL:
-		if (!P_GiveAmmo (player, am_cell,1))
+		if (!P_GiveAmmo (Toucher.player, am_cell,1))
 		    return;
-		P_SetMessage(player, GOTCELL, false);
+		P_SetMessage(Toucher.player, GOTCELL, false);
 		break;
 	
       case SPR_CELP:
-		if (!P_GiveAmmo (player, am_cell,5))
+		if (!P_GiveAmmo (Toucher.player, am_cell,5))
 		    return;
-		P_SetMessage(player, GOTCELLBOX, false);
+		P_SetMessage(Toucher.player, GOTCELLBOX, false);
 		break;
 	
       case SPR_SHEL:
-		if (!P_GiveAmmo (player, am_shell,1))
+		if (!P_GiveAmmo (Toucher.player, am_shell,1))
 		    return;
-		P_SetMessage(player, GOTSHELLS, false);
+		P_SetMessage(Toucher.player, GOTSHELLS, false);
 		break;
 	
       case SPR_SBOX:
-		if (!P_GiveAmmo (player, am_shell,5))
+		if (!P_GiveAmmo (Toucher.player, am_shell,5))
 		    return;
-		P_SetMessage(player, GOTSHELLBOX, false);
+		P_SetMessage(Toucher.player, GOTSHELLBOX, false);
 		break;
 	
       case SPR_BPAK:
-	    player->backpack = true;
+	    Toucher.player->backpack = true;
 		for (i=0 ; i<NUMAMMO; i++)
         {
-		    P_GiveAmmo (player, i, 1);
+		    P_GiveAmmo (Toucher.player, i, 1);
 		}
-		P_SetMessage(player, GOTBACKPACK, false);
+		P_SetMessage(Toucher.player, GOTBACKPACK, false);
 		break;
 	
 		// weapons
       case SPR_BFUG:
-		if (!P_GiveWeapon (player, wp_bfg, false))
+		if (!P_GiveWeapon (Toucher.player, wp_bfg, false))
 		    return;
-		P_SetMessage(player, GOTBFG9000, false);
+		P_SetMessage(Toucher.player, GOTBFG9000, false);
 		sound = 'PickupWeapon';
 		break;
 	
       case SPR_MGUN:
-		if (!P_GiveWeapon (player, wp_chaingun, special->Flags&MF_DROPPED) )
+		if (!P_GiveWeapon (Toucher.player, wp_chaingun, _self->Flags&MF_DROPPED) )
 		    return;
-		P_SetMessage(player, GOTCHAINGUN, false);
+		P_SetMessage(Toucher.player, GOTCHAINGUN, false);
 		sound = 'PickupWeapon';
 		break;
 	
       case SPR_CSAW:
-		if (!P_GiveWeapon (player, wp_chainsaw, false) )
+		if (!P_GiveWeapon (Toucher.player, wp_chainsaw, false) )
 		    return;
-		P_SetMessage(player, GOTCHAINSAW, false);
+		P_SetMessage(Toucher.player, GOTCHAINSAW, false);
 		sound = 'PickupWeapon';
 		break;
 	
       case SPR_LAUN:
-		if (!P_GiveWeapon (player, wp_missile, false) )
+		if (!P_GiveWeapon (Toucher.player, wp_missile, false) )
 		    return;
-		P_SetMessage(player, GOTLAUNCHER, false);
+		P_SetMessage(Toucher.player, GOTLAUNCHER, false);
 		sound = 'PickupWeapon';
 		break;
 	
       case SPR_PLAS:
-		if (!P_GiveWeapon (player, wp_plasma, false) )
+		if (!P_GiveWeapon (Toucher.player, wp_plasma, false) )
 		    return;
-		P_SetMessage(player, GOTPLASMA, false);
+		P_SetMessage(Toucher.player, GOTPLASMA, false);
 		sound = 'PickupWeapon';
 		break;
 	
       case SPR_SHOT:
-		if (!P_GiveWeapon (player, wp_shotgun, special->Flags&MF_DROPPED ) )
+		if (!P_GiveWeapon (Toucher.player, wp_shotgun, _self->Flags&MF_DROPPED ) )
 		    return;
-		P_SetMessage(player, GOTSHOTGUN, false);
+		P_SetMessage(Toucher.player, GOTSHOTGUN, false);
 		sound = 'PickupWeapon';
 		break;
 
 #ifdef GRENADE_LAUNCHER
       case SPR_GLAU:
-		if (!P_GiveWeapon(player, wp_grenade, false))
+		if (!P_GiveWeapon(Toucher.player, wp_grenade, false))
 		    return;
-		P_SetMessage(player, "Piched up a grenade launcher", false);
+		P_SetMessage(Toucher.player, "Piched up a grenade launcher", false);
 		sound = 'PickupWeapon';
 		break;
 #endif
@@ -601,16 +601,19 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 		Error("P_SpecialThing: Unknown gettable thing");
     }*/
 
-	if (special->Flags & MF_COUNTITEM)
-		player->itemcount++;
-	P_RemoveMobj(special);
-	player->bonuscount += BONUSADD;
-	StartSoundName(player->mo, sound, CHAN_ITEM);
+	if (Flags & MF_COUNTITEM)
+		Toucher.player->itemcount++;
+	P_RemoveMobj(this);
+	Toucher.player->bonuscount += BONUSADD;
+	StartSoundName(&Toucher, sound, CHAN_ITEM);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.8  2002/01/17 18:15:55  dj_jl
 //  Renamed all map object classes
 //

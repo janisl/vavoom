@@ -453,56 +453,57 @@ void Actor::A_CHolyAttack2(void)
 
 //============================================================================
 //
-//  CHolyFindTarget
+//  Actor::CHolyFindTarget
 //
 //============================================================================
 
-void CHolyFindTarget(mobj_t * actor)
+void Actor::CHolyFindTarget(void)
 {
-	mobj_t *target;
+	Actor targ;
 
-	if ((target = P_RoughMonsterSearch(actor, 6)))
+	targ = RoughMonsterSearch(6);
+	if (targ)
 	{
-		actor->specialmobj1 = target;
-		actor->Flags |= MF_NOCLIP | MF_SKULLFLY;
-		actor->Flags &= ~MF_MISSILE;
+		specialmobj1 = &targ;
+		Flags |= MF_NOCLIP | MF_SKULLFLY;
+		Flags &= ~MF_MISSILE;
 	}
 }
 
 //============================================================================
 //
-//  CHolySeekerMissile
+//  Actor::CHolySeekerMissile
 //
 //  Similar to SeekerMissile, but seeks to a random Z on the target
 //
 //============================================================================
 
-void CHolySeekerMissile(mobj_t * actor, float thresh, float turnMax)
+void Actor::CHolySeekerMissile(float thresh, float turnMax)
 {
 	int dir;
 	float dist;
 	float delta;
 	float angle;
-	mobj_t *target;
+	mobj_t *targ;
 	float newZ;
 	float deltaZ;
 
-	target = actor->specialmobj1;
-	if (!target)
+	targ = specialmobj1;
+	if (!targ)
 	{
 		return;
 	}
-	if (!(target->Flags & MF_SHOOTABLE)
-		|| (!(target->Flags & MF_COUNTKILL) && !target->player))
+	if (!(targ->Flags & MF_SHOOTABLE)
+		|| (!(targ->Flags & MF_COUNTKILL) && !targ->player))
 	{
 		// Target died/target isn't a player or creature
-		actor->specialmobj1 = NULL;
-		actor->Flags &= ~(MF_NOCLIP | MF_SKULLFLY);
-		actor->Flags |= MF_MISSILE;
-		CHolyFindTarget(actor);
+		specialmobj1 = NULL;
+		Flags &= ~(MF_NOCLIP | MF_SKULLFLY);
+		Flags |= MF_MISSILE;
+		CHolyFindTarget();
 		return;
 	}
-	dir = P_FaceMobj(actor, target, &delta);
+	dir = P_FaceMobj(this, targ, &delta);
 	if (delta > thresh)
 	{
 		delta /= 2.0;
@@ -514,23 +515,23 @@ void CHolySeekerMissile(mobj_t * actor, float thresh, float turnMax)
 	if (dir)
 	{
 		// Turn clockwise
-		actor->angles.yaw += delta;
+		angles.yaw += delta;
 	}
 	else
 	{
 		// Turn counter clockwise
-		actor->angles.yaw -= delta;
+		angles.yaw -= delta;
 	}
-	actor->angles.yaw = AngleMod360(actor->angles.yaw);
-	angle = actor->angles.yaw;
-	actor->velocity.x = actor->Speed * cos(angle);
-	actor->velocity.y = actor->Speed * sin(angle);
+	angles.yaw = AngleMod360(angles.yaw);
+	angle = angles.yaw;
+	velocity.x = Speed * cos(angle);
+	velocity.y = Speed * sin(angle);
 	if (!(level->tictime & 15) ||
-		actor->origin.z > target->origin.z + target->Height ||
-		actor->origin.z + actor->Height < target->origin.z)
+		origin.z > targ->origin.z + targ->Height ||
+		origin.z + Height < targ->origin.z)
 	{
-		newZ = target->origin.z + Random() * target->Height;
-		deltaZ = newZ - actor->origin.z;
+		newZ = targ->origin.z + Random() * targ->Height;
+		deltaZ = newZ - origin.z;
 		if (fabs(deltaZ) > 15.0)
 		{
 			if (deltaZ > 0.0)
@@ -542,42 +543,42 @@ void CHolySeekerMissile(mobj_t * actor, float thresh, float turnMax)
 				deltaZ = -15.0;
 			}
 		}
-		dist = MobjDist2(target, actor);
-		dist = dist / actor->Speed;
+		dist = MobjDist2(targ, this);
+		dist = dist / Speed;
 		if (dist < 1.0)
 		{
 			dist = 1.0;
 		}
-		actor->velocity.z = deltaZ / dist;
+		velocity.z = deltaZ / dist;
 	}
 	return;
 }
 
 //============================================================================
 //
-// CHolyWeave
+//	Actor::CHolyWeave
 //
 //============================================================================
 
-void CHolyWeave(mobj_t * actor)
+void Actor::CHolyWeave(void)
 {
 	float newX, newY;
 	int weaveXY, weaveZ;
 	float angle;
 
-	weaveXY = actor->special2 >> 16;
-	weaveZ = actor->special2 & 0xFFFF;
-	angle = AngleMod360(actor->angles.yaw + 90.0);
-	newX = actor->origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
-	newY = actor->origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
+	weaveXY = special2 >> 16;
+	weaveZ = special2 & 0xFFFF;
+	angle = AngleMod360(angles.yaw + 90.0);
+	newX = origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
+	newY = origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	weaveXY = (weaveXY + (P_Random() % 5)) & 63;
 	newX += cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	newY += sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
-	P_TryMove(actor, newX, newY);
-	actor->origin.z -= FloatBobOffsets[weaveZ] * 2.0;
+	P_TryMove(this, newX, newY);
+	origin.z -= FloatBobOffsets[weaveZ] * 2.0;
 	weaveZ = (weaveZ + (P_Random() % 5)) & 63;
-	actor->origin.z += FloatBobOffsets[weaveZ] * 2.0;
-	actor->special2 = weaveZ + (weaveXY << 16);
+	origin.z += FloatBobOffsets[weaveZ] * 2.0;
+	special2 = weaveZ + (weaveXY << 16);
 }
 
 //============================================================================
@@ -600,13 +601,13 @@ void Actor::A_CHolySeek(void)
 	}
 	if (specialmobj1)
 	{
-		CHolySeekerMissile(this, itof(args[0]), itof(args[0]) * 2.0);
+		CHolySeekerMissile(itof(args[0]), itof(args[0]) * 2.0);
 		if (!((level->tictime + 7) & 15))
 		{
 			args[0] = 5 + (P_Random() / 20);
 		}
 	}
-	CHolyWeave(this);
+	CHolyWeave();
 }
 
 //============================================================================
@@ -624,70 +625,69 @@ void Actor::A_CHolyCheckScream(void)
 	}
 	if (!specialmobj1)
 	{
-		CHolyFindTarget(this);
+		CHolyFindTarget();
 	}
 }
 
 //============================================================================
 //
-// CHolyTailFollow
+//	Actor::CHolyTailFollow
 //
 //============================================================================
 
-void CHolyTailFollow(mobj_t * actor, float dist)
+void Actor::CHolyTailFollow(float dist)
 {
 	mobj_t *child;
 	float an;
 	float oldDistance, newDistance;
 
-	child = actor->specialmobj1;
+	child = specialmobj1;
 	if (child)
 	{
-		an = atan2(child->origin.y - actor->origin.y,
-			actor->origin.x - child->origin.x);
-		oldDistance = MobjDist(child, actor);
-		if (P_TryMove(child, actor->origin.x + dist * cos(an),
-				actor->origin.y + dist * sin(an)))
+		an = atan2(child->origin.y - origin.y,
+			origin.x - child->origin.x);
+		oldDistance = MobjDist(child, this);
+		if (P_TryMove(child, origin.x + dist * cos(an),
+				origin.y + dist * sin(an)))
 		{
-			newDistance = MobjDist2(child, actor) - 1.0;
+			newDistance = MobjDist2(child, this) - 1.0;
 			if (oldDistance < 1.0)
 			{
-				if (child->origin.z < actor->origin.z)
+				if (child->origin.z < origin.z)
 				{
-					child->origin.z = actor->origin.z - dist;
+					child->origin.z = origin.z - dist;
 				}
 				else
 				{
-					child->origin.z = actor->origin.z + dist;
+					child->origin.z = origin.z + dist;
 				}
 			}
 			else
 			{
-				child->origin.z = actor->origin.z +
-					newDistance / oldDistance * (child->origin.z -
-					actor->origin.z);
+				child->origin.z = origin.z + newDistance / oldDistance *
+					(child->origin.z - origin.z);
 			}
 		}
-		CHolyTailFollow(child, dist - 1.0);
+		child->CHolyTailFollow(dist - 1.0);
 	}
 }
 
 //============================================================================
 //
-// CHolyTailRemove
+//	Actor::CHolyTailRemove
 //
 //============================================================================
 
-void CHolyTailRemove(mobj_t * actor)
+void Actor::CHolyTailRemove(void)
 {
 	mobj_t *child;
 
-	child = actor->specialmobj1;
+	child = specialmobj1;
 	if (child)
 	{
-		CHolyTailRemove(child);
+		child->CHolyTailRemove();
 	}
-	P_RemoveMobj(actor);
+	P_RemoveMobj(this);
 }
 
 //============================================================================
@@ -707,7 +707,7 @@ void Actor::A_CHolyTail(void)
 		if (parent->statenum >= parent->DeathState)
 		{
 			// Ghost removed, so remove all tail parts
-			CHolyTailRemove(this);
+			CHolyTailRemove();
 			return;
 		}
 		else if (P_TryMove(this,
@@ -716,7 +716,7 @@ void Actor::A_CHolyTail(void)
 		{
 			origin.z = parent->origin.z - 5.0;
 		}
-		CHolyTailFollow(this, 10.0);
+		CHolyTailFollow(10.0);
 	}
 }
 
@@ -734,6 +734,9 @@ void Actor::A_CHolySpawnPuff(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.12  2002/01/24 18:19:27  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

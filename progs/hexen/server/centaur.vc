@@ -47,7 +47,7 @@ void Actor::A_CentaurAttack(void)
 	{
 		return;
 	}
-	if (CheckMeleeRange(this))
+	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, P_Random() % 7 + 3);
 	}
@@ -81,7 +81,7 @@ void Actor::A_SetReflective(void)
 
 	if (IsA(Centaur) || IsA(CentaurLeader))
 	{
-		A_SetInvulnerable(this);
+		A_SetInvulnerable();
 	}
 }
 
@@ -110,7 +110,7 @@ void Actor::A_UnSetReflective(void)
 void Actor::A_CentaurDefend(void)
 {
 	A_FaceTarget();
-	if (CheckMeleeRange(this) && P_Random() < 32)
+	if (CheckMeleeRange() && P_Random() < 32)
 	{
 		A_UnSetInvulnerable();
 		SetState(MeleeState);
@@ -171,6 +171,9 @@ void Actor::A_CheckFloor(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.13  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

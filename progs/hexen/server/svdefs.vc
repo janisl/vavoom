@@ -334,6 +334,19 @@ class Actor:Entity
 	int waterlevel;
 	int watertype;
 
+	boolean GiveMana(int mana, int count);
+	void TryPickupWeapon(int weaponClass, int weaponType,
+		Actor weapon, string message);
+	void TryPickupWeaponPiece(int matchClass, int pieceValue,
+		Actor pieceMobj);
+	boolean GiveBody(int num);
+	boolean GiveArmor(int armortype, int amount);
+	boolean GiveKey(int key);
+	boolean GivePower(int power);
+	boolean GiveArtifact(int arti);
+	void TryPickupArtifact(int artifactType, Actor artifact);
+	void TouchSpecial(Actor Toucher);
+
 	boolean Touch(Actor Other);
 
 	void Think(void);
@@ -362,6 +375,57 @@ class Actor:Entity
 	void Archive(void);
 	void Unarchive(void);
 	void OnMapSpawn(mthing_t *mthing);
+
+	boolean CheckMeleeRange(void);
+	boolean CheckMeleeRange2(void);
+	boolean CheckMissileRange(void);
+	void FaceMovementDirection(void);
+	boolean LookForMonsters(void);
+	boolean LookForPlayers(boolean allaround);
+	boolean StepMove(void);
+	boolean TryWalk(void);
+	void NewChaseDir(void);
+	Actor RoughBlockCheck(int index);
+	Actor RoughMonsterSearch(int distance);
+
+	// Misc weapon functions
+	void CHolyFindTarget(void);
+	void CHolySeekerMissile(float thresh, float turnMax);
+	void CHolyWeave(void);
+	void CHolyTailFollow(float dist);
+	void CHolyTailRemove(void);
+
+	// Misc action functions
+	void A_SetInvulnerable(void);
+	void A_BridgeRemove(void);
+
+	// Misc enemy functions
+	void A_DeQueueCorpse(void);
+	int UpdateMorphedMonster(int tics);
+	void A_FiredSpawnRock(void);
+	void A_WraithFX4(void);
+	void DragonSeek(float thresh, float turnMax);
+	void A_SlowBalls(void);
+	void A_StopBalls(void);
+	void A_AccelBalls(void);
+	void A_DecelBalls(void);
+	void A_SorcUpdateBallAngle(void);
+	void A_SorcOffense1(void);
+	void A_SorcOffense2(void);
+	void A_CastSorcererSpell(void);
+	void A_FSwordAttack2(void);
+	void A_CHolyAttack3(void);
+	void MStaffSpawn2(float angle);
+	void A_MStaffAttack2(void);
+	void KoraxFire1(classid type);
+	void KoraxFire2(classid type);
+	void KoraxFire3(classid type);
+	void KoraxFire4(classid type);
+	void KoraxFire5(classid type);
+	void KoraxFire6(classid type);
+	void KSpiritInit(Actor korax);
+	void A_KSpiritSeeker(float thresh, float turnMax);
+	void A_KSpiritWeave(void);
 
 	// Action functions
 	void A_FreeTargMobj(void);
@@ -765,6 +829,9 @@ name door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.14  2002/01/24 18:19:27  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

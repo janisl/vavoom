@@ -48,11 +48,11 @@
 
 //===========================================================================
 //
-// A_LocalQuake
+//	A_LocalQuake
 //
 //===========================================================================
 
-boolean A_LocalQuake(int *args, mobj_t * actor)
+boolean A_LocalQuake(int *args)
 {
 	mobj_t *focus;
 	mobj_t *target;
@@ -139,6 +139,9 @@ void Actor::A_Quake(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.10  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

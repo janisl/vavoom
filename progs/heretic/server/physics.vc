@@ -25,6 +25,8 @@
 
 // MACROS ------------------------------------------------------------------
 
+#define	FLOATSPEED		140.0
+
 #define	GRAVITY			1225.0
 #define	MAXMOVE			1050.0
 #define STOPSPEED		2.1875
@@ -1166,6 +1168,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.16  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

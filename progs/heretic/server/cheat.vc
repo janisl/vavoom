@@ -148,7 +148,7 @@ void Cheat_Gimme(void)
 			}
 			for (j = 0; j < 16; j++)
 			{
-				P_GiveArtifact(&players[0], i, NULL);
+				players[0].mo->GiveArtifact(i, none);
 			}
 		}
 		cprint(&players[0], "YOU GOT IT\n");
@@ -265,6 +265,9 @@ void Cheat_Class(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/25 18:04:34  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.8  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

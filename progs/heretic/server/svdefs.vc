@@ -316,6 +316,16 @@ class Actor:Entity
 	int waterlevel;
 	int watertype;
 
+	boolean GiveAmmo(int ammo, int count);
+	boolean GiveWeapon(int weapon);
+	boolean GiveBody(int num);
+	boolean GiveArmor(int armortype);
+	boolean GiveKey(int key);
+	boolean GivePower(int power);
+	boolean GiveItem(int item);
+	boolean GiveArtifact(int arti, Actor mo);
+	void TouchSpecial(Actor Toucher);
+
 	boolean	Touch(Actor Other);
 
 	void Think(void);
@@ -339,6 +349,18 @@ class Actor:Entity
 	void ZMovement(void);
 	boolean BlasterPhysics(void);
 	boolean Physics(void);
+
+	boolean CheckMeleeRange(void);
+	boolean CheckMissileRange(void);
+	boolean LookForMonsters(void);
+	boolean LookForPlayers(boolean allaround);
+	boolean StepMove(void);
+	boolean TryWalk(void);
+	void NewChaseDir(void);
+
+	boolean UpdateChicken(int tics);
+	void DropItem(classid type, int special, int chance);
+	void DSparilTeleport(void);
 
 	// Action functions
 	void A_FreeTargMobj(void);
@@ -817,6 +839,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.15  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

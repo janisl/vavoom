@@ -272,13 +272,13 @@ void Actor::A_ESound(void)
 
 //============================================================================
 //
-//  A_SetInvulnerable
+//  Actor::A_SetInvulnerable
 //
 //============================================================================
 
-void A_SetInvulnerable(mobj_t *actor)
+void Actor::A_SetInvulnerable(void)
 {
-	actor->Flags2 |= MF2_INVULNERABLE;
+	Flags2 |= MF2_INVULNERABLE;
 }
 
 //============================================================================
@@ -295,6 +295,9 @@ void Actor::A_UnSetInvulnerable(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.11  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

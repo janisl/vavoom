@@ -277,19 +277,19 @@ void Cheat_Gimme(void)
 
 	// Powers
 	if (i1 & GIMME_INVULNERABILITY)
-		P_GivePower(&players[0], pw_invulnerability);
+		players[0].mo->GivePower(pw_invulnerability);
 	if (i1 & GIMME_STRENGTH)
-		P_GivePower(&players[0], pw_strength);
+		players[0].mo->GivePower(pw_strength);
 	if (i1 & GIMME_INVISIBILITY)
-		P_GivePower(&players[0], pw_invisibility);
+		players[0].mo->GivePower(pw_invisibility);
 	if (i1 & GIMME_IRONFEET)
-		P_GivePower(&players[0], pw_ironfeet);
+		players[0].mo->GivePower(pw_ironfeet);
 	if (i1 & GIMME_INFRARED)
-		P_GivePower(&players[0], pw_infrared);
+		players[0].mo->GivePower(pw_infrared);
 
 	//  Items
 	if (i1 & GIMME_ALLMAP)
-		P_GiveItem(&players[0], IT_ALL_MAP);
+		players[0].mo->GiveItem(IT_ALL_MAP);
 
 	// Health
 	if ((i1 & GIMME_HEALTH) && (players[0].health < 100))
@@ -355,6 +355,9 @@ void Cheat_KillAll(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/25 18:04:33  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.7  2002/01/24 18:19:25  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

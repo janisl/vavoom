@@ -108,7 +108,7 @@ void Actor::A_FastChase(void)
 	if (!target || !(target->Flags & MF_SHOOTABLE))
 	{
 		// look for a new target
-		if (P_LookForPlayers(this, true))
+		if (LookForPlayers(true))
 		{
 			// got a new target
 			return;
@@ -124,7 +124,7 @@ void Actor::A_FastChase(void)
 	{
 		Flags &= ~MF_JUSTATTACKED;
 		if (gameskill != sk_nightmare)
-			P_NewChaseDir(this);
+			NewChaseDir();
 		return;
 	}
 
@@ -163,7 +163,7 @@ void Actor::A_FastChase(void)
 	{
 		if ((gameskill == sk_nightmare) || !movecount)
 		{
-			if (CheckMissileRange(this))
+			if (CheckMissileRange())
 			{
 				SetState(MissileState);
 				Flags |= MF_JUSTATTACKED;
@@ -177,7 +177,7 @@ void Actor::A_FastChase(void)
 	//
 	if (netgame && !threshold && !P_CheckSight(this, target))
 	{
-		if (P_LookForPlayers(this, true))
+		if (LookForPlayers(true))
 			return;	// got a new target
 	}
 
@@ -186,33 +186,33 @@ void Actor::A_FastChase(void)
 	//
 	if (!special2)
 	{
-		if (--movecount < 0 || !P_Move(this))
+		if (--movecount < 0 || !StepMove())
 		{
-			P_NewChaseDir(this);
+			NewChaseDir();
 		}
 	}
 }
 
 //============================================================================
 //
-//	A_FSwordAttack2
+//	Actor::A_FSwordAttack2
 //
 //============================================================================
 
-void A_FSwordAttack2(mobj_t * actor)
+void Actor::A_FSwordAttack2(void)
 {
-	float angle = actor->angles.yaw;
+	float angle = angles.yaw;
 
-	SpawnMissileAngle(actor, FighterSwordMissile,
+	SpawnMissileAngle(this, FighterSwordMissile,
 		AngleMod360(angle + 45.0 / 4.0), 0.0);
-	SpawnMissileAngle(actor, FighterSwordMissile,
+	SpawnMissileAngle(this, FighterSwordMissile,
 		AngleMod360(angle + 45.0 / 8.0), 0.0);
-	SpawnMissileAngle(actor, FighterSwordMissile, angle, 0.0);
-	SpawnMissileAngle(actor, FighterSwordMissile,
+	SpawnMissileAngle(this, FighterSwordMissile, angle, 0.0);
+	SpawnMissileAngle(this, FighterSwordMissile,
 		AngleMod360(angle - 45.0 / 8.0), 0.0);
-	SpawnMissileAngle(actor, FighterSwordMissile,
+	SpawnMissileAngle(this, FighterSwordMissile,
 		AngleMod360(angle - 45.0 / 4.0), 0.0);
-	StartSoundName(actor, 'FighterSwordFire', CHAN_WEAPON);
+	StartSoundName(this, 'FighterSwordFire', CHAN_WEAPON);
 }
 
 //============================================================================
@@ -225,21 +225,21 @@ void Actor::A_FighterAttack(void)
 {
 	if (!target)
 		return;
-	A_FSwordAttack2(this);
+	A_FSwordAttack2();
 }
 
 //============================================================================
 //
-//	A_CHolyAttack3
+//	Actor::A_CHolyAttack3
 //
 //  Spawns the spirits
 //
 //============================================================================
 
-void A_CHolyAttack3(mobj_t * actor)
+void Actor::A_CHolyAttack3(void)
 {
-	SpawnMissile(actor, actor->target, HolyMissile);
-	StartSoundName(actor, 'HolySymbolFire', CHAN_WEAPON);
+	SpawnMissile(this, target, HolyMissile);
+	StartSoundName(this, 'HolySymbolFire', CHAN_WEAPON);
 }
 
 //============================================================================
@@ -252,42 +252,42 @@ void Actor::A_ClericAttack(void)
 {
 	if (!target)
 		return;
-	A_CHolyAttack3(this);
+	A_CHolyAttack3();
 }
 
 //============================================================================
 //
-//  MStaffSpawn2
+//  Actor::MStaffSpawn2
 //
 //============================================================================
 
-void MStaffSpawn2(mobj_t * actor, float angle)
+void Actor::MStaffSpawn2(float angle)
 {
 	mobj_t *mo;
 
-	mo = SpawnMissileAngle(actor, MageStaffFX2, angle, 0.0);
+	mo = SpawnMissileAngle(this, MageStaffFX2, angle, 0.0);
 	if (mo)
 	{
-		mo->target = actor;
-		mo->specialmobj1 = P_RoughMonsterSearch(mo, 10);
+		mo->target = this;
+		mo->specialmobj1 = &mo->RoughMonsterSearch(10);
 	}
 }
 
 //============================================================================
 //
-//	A_MStaffAttack2 - for use by mage class boss
+//	Actor::A_MStaffAttack2 - for use by mage class boss
 //
 //============================================================================
 
-void A_MStaffAttack2(mobj_t * actor)
+void Actor::A_MStaffAttack2(void)
 {
 	float angle;
 
-	angle = actor->angles.yaw;
-	MStaffSpawn2(actor, angle);
-	MStaffSpawn2(actor, AngleMod360(angle - 5.0));
-	MStaffSpawn2(actor, AngleMod360(angle + 5.0));
-	StartSoundName(actor, 'MageStaffFire', CHAN_WEAPON);
+	angle = angles.yaw;
+	MStaffSpawn2(angle);
+	MStaffSpawn2(AngleMod360(angle - 5.0));
+	MStaffSpawn2(AngleMod360(angle + 5.0));
+	StartSoundName(this, 'MageStaffFire', CHAN_WEAPON);
 }
 
 //============================================================================
@@ -300,12 +300,15 @@ void Actor::A_MageAttack(void)
 {
 	if (!target)
 		return;
-	A_MStaffAttack2(this);
+	A_MStaffAttack2();
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.11  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

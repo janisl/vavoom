@@ -42,7 +42,6 @@ void P_PoisonDamage(player_t * player, mobj_t * source, int damage,
 void DropWeapon(player_t * player);
 void SetupPsprites(player_t * player);
 void P_InsertMobjIntoTIDList(mobj_t * mobj, int tid);
-void A_DeQueueCorpse(mobj_t * actor);
 void P_NoiseAlert(mobj_t * target, mobj_t * emmiter);
 mobj_t *P_SpawnMobj(float x, float y, float z, classid type);
 
@@ -287,6 +286,22 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 
 //==========================================================================
 //
+//	SpawnActor
+//
+//==========================================================================
+
+Actor SpawnActor(TVec position, classid type)
+{
+	Actor A;
+
+	A = *NewMobjThinker(type);
+	A.origin = position;
+	A.OnMapSpawn(NULL);
+	return A;
+}
+
+//==========================================================================
+//
 // P_SpawnMobj
 //
 //==========================================================================
@@ -312,7 +327,7 @@ void P_RemoveMobj(mobj_t * mobj)
 	// Remove from creature queue
 	if (mobj->Flags & MF_COUNTKILL && mobj->Flags & MF_CORPSE)
 	{
-		A_DeQueueCorpse(mobj);
+		mobj->A_DeQueueCorpse();
 	}
 
 	if (mobj->tid)
@@ -2302,6 +2317,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.25  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

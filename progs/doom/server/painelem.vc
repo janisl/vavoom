@@ -41,13 +41,13 @@
 
 //==========================================================================
 //
-//  A_PainShootSkull
+//  Actor::A_PainShootSkull
 //
 //  Spawn a lost soul and launch it at the target
 //
 //==========================================================================
 
-void A_PainShootSkull(mobj_t * actor, float angle)
+void Actor::A_PainShootSkull(float angle)
 {
 	float x;
 	float y;
@@ -72,11 +72,11 @@ void A_PainShootSkull(mobj_t * actor, float angle)
 		return;
 
 	// okay, there's playe for another one
-	prestep = 4.0 + 3.0 * (actor->Radius + SKULL_RADIUS) / 2.0;
+	prestep = 4.0 + 3.0 * (Radius + SKULL_RADIUS) / 2.0;
 
-	x = actor->origin.x + prestep * cos(angle);
-	y = actor->origin.y + prestep * sin(angle);
-	z = actor->origin.z + 8.0;
+	x = origin.x + prestep * cos(angle);
+	y = origin.y + prestep * sin(angle);
+	z = origin.z + 8.0;
 
 	newmobj = P_SpawnMobj(x, y, z, LostSoul);
 
@@ -84,12 +84,12 @@ void A_PainShootSkull(mobj_t * actor, float angle)
 	if (!P_TryMove(newmobj, newmobj->origin.x, newmobj->origin.y))
 	{
 		// kill it immediately
-		newmobj->Damage(*actor, *actor, 10000);
+		newmobj->Damage(self, self, 10000);
 		return;
 	}
 
-	newmobj->target = actor->target;
-	Actor(*newmobj).A_SkullAttack();
+	newmobj->target = target;
+	newmobj->A_SkullAttack();
 }
 
 //==========================================================================
@@ -106,7 +106,7 @@ void Actor::A_PainAttack(void)
 		return;
 
 	A_FaceTarget();
-	A_PainShootSkull(this, angles.yaw);
+	A_PainShootSkull(angles.yaw);
 }
 
 //==========================================================================
@@ -120,9 +120,9 @@ void Actor::A_PainAttack(void)
 void Actor::A_PainDie(void)
 {
 	A_Fall();
-	A_PainShootSkull(this, angles.yaw + 90.0);
-	A_PainShootSkull(this, angles.yaw + 180.0);
-	A_PainShootSkull(this, angles.yaw + 270.0);
+	A_PainShootSkull(angles.yaw + 90.0);
+	A_PainShootSkull(angles.yaw + 180.0);
+	A_PainShootSkull(angles.yaw + 270.0);
 }
 
 #else
@@ -142,6 +142,9 @@ void Actor::A_PainDie(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/25 18:04:33  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.12  2002/01/24 18:19:25  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

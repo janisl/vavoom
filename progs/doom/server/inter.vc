@@ -33,14 +33,14 @@ void P_RemoveMobj(mobj_t * mobj);
 
 //==========================================================================
 //
-//  P_GiveAmmo
+//	Actor::GiveAmmo
 //
-//  Num is the number of clip loads, not the individual count (0= 1/2 clip).
+//	Num is the number of clip loads, not the individual count (0= 1/2 clip).
 // Returns false if the ammo can't be picked up at all
 //
 //==========================================================================
 
-boolean P_GiveAmmo(player_t * player, int ammo, int num)
+boolean Actor::GiveAmmo(int ammo, int num)
 {
 	int oldammo;
 	int max;
@@ -49,8 +49,7 @@ boolean P_GiveAmmo(player_t * player, int ammo, int num)
 		return false;
 
 	if (ammo < 0 || ammo > NUMAMMO)
-//      I_Error ("P_GiveAmmo: bad type %i", ammo);
-		Error("P_GiveAmmo: bad type");
+		Error("P_GiveAmmo: bad type %i", ammo);
 
 	max = player->backpack ? maxammo[ammo] * 2 : maxammo[ammo];
 	if (player->ammo[ammo] == max)
@@ -128,13 +127,13 @@ boolean P_GiveAmmo(player_t * player, int ammo, int num)
 
 //==========================================================================
 //
-//  P_GiveWeapon
+//  Actor::GiveWeapon
 //
 //  The weapon name may have a MF_DROPPED flag ored in.
 //
 //==========================================================================
 
-boolean P_GiveWeapon(player_t * player, int weapon, boolean dropped)
+boolean Actor::GiveWeapon(int weapon, boolean dropped)
 {
 	boolean gaveammo;
 	boolean gaveweapon;
@@ -149,12 +148,12 @@ boolean P_GiveWeapon(player_t * player, int weapon, boolean dropped)
 		player->weaponowned[weapon] = true;
 
 		if (deathmatch)
-			P_GiveAmmo(player, weapon_ammo_type[weapon], 5);
+			GiveAmmo(weapon_ammo_type[weapon], 5);
 		else
-			P_GiveAmmo(player, weapon_ammo_type[weapon], 2);
+			GiveAmmo(weapon_ammo_type[weapon], 2);
 		player->pendingweapon = weapon;
 
-		StartSoundName(player->mo, 'PickupWeapon', CHAN_ITEM);
+		StartSoundName(this, 'PickupWeapon', CHAN_ITEM);
 		return false;
 	}
 
@@ -163,9 +162,9 @@ boolean P_GiveWeapon(player_t * player, int weapon, boolean dropped)
 		// give one clip with a dropped weapon,
 		// two clips with a found weapon
 		if (dropped)
-			gaveammo = P_GiveAmmo(player, weapon_ammo_type[weapon], 1);
+			gaveammo = GiveAmmo(weapon_ammo_type[weapon], 1);
 		else
-			gaveammo = P_GiveAmmo(player, weapon_ammo_type[weapon], 2);
+			gaveammo = GiveAmmo(weapon_ammo_type[weapon], 2);
 	}
 	else
 		gaveammo = false;
@@ -184,12 +183,13 @@ boolean P_GiveWeapon(player_t * player, int weapon, boolean dropped)
 
 //==========================================================================
 //
-// P_GiveBody
-// Returns false if the body isn't needed at all
+//	Actor::GiveBody
+//
+//	Returns false if the body isn't needed at all
 //
 //==========================================================================
 
-boolean P_GiveBody(player_t * player, int num)
+boolean Actor::GiveBody(int num)
 {
 	if (player->health >= MAXHEALTH)
 		return false;
@@ -197,20 +197,20 @@ boolean P_GiveBody(player_t * player, int num)
 	player->health += num;
 	if (player->health > MAXHEALTH)
 		player->health = MAXHEALTH;
-	player->mo->Health = player->health;
+	Health = player->health;
 
 	return true;
 }
 
 //==========================================================================
 //
-// P_GiveArmor
-// Returns false if the armor is worse
-// than the current armor.
+//	Actor::GiveArmor
+//
+//	Returns false if the armor is worse than the current armor.
 //
 //==========================================================================
 
-boolean P_GiveArmor(player_t * player, int armortype)
+boolean Actor::GiveArmor(int armortype)
 {
 	int hits;
 
@@ -226,11 +226,11 @@ boolean P_GiveArmor(player_t * player, int armortype)
 
 //==========================================================================
 //
-// P_GiveCard
+//	Actor::GiveCard
 //
 //==========================================================================
 
-boolean P_GiveCard(player_t * player, int card)
+boolean Actor::GiveCard(int card)
 {
 	if (player->keys & (1 << card))
 		return false;
@@ -242,11 +242,11 @@ boolean P_GiveCard(player_t * player, int card)
 
 //==========================================================================
 //
-//  P_GiveItem
+//  Actor::GiveItem
 //
 //==========================================================================
 
-boolean P_GiveItem(player_t * player, int item)
+boolean Actor::GiveItem(int item)
 {
 	if (player->items & item)
 	{
@@ -259,11 +259,11 @@ boolean P_GiveItem(player_t * player, int item)
 
 //==========================================================================
 //
-// P_GivePower
+//	Actor::GivePower
 //
 //==========================================================================
 
-boolean P_GivePower(player_t * player, int power)
+boolean Actor::GivePower(int power)
 {
 	if (power == pw_invulnerability)
 	{
@@ -274,7 +274,7 @@ boolean P_GivePower(player_t * player, int power)
 	if (power == pw_invisibility)
 	{
 		player->powers[power] = ftoi(INVISTIME * 35.0);
-		player->mo->Translucency = 90;
+		Translucency = 90;
 		return true;
 	}
 
@@ -292,7 +292,7 @@ boolean P_GivePower(player_t * player, int power)
 
 	if (power == pw_strength)
 	{
-		P_GiveBody(player, 100);
+		GiveBody(100);
 		player->powers[power] = 1;
 		return true;
 	}
@@ -306,17 +306,16 @@ boolean P_GivePower(player_t * player, int power)
 
 //==========================================================================
 //
-// P_TouchSpecialThing
+//	Actor::TouchSpecial
 //
 //==========================================================================
 
-void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
+void Actor::TouchSpecial(Actor Toucher)
 {
-	player_t *player;
 	int i;
 	name sound;
 
-	if (!(toucher->Flags & MF_PICKUP))
+	if (!(Toucher.Flags & MF_PICKUP))
 	{
 		// can't remove thing
 		return;
@@ -324,61 +323,60 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 
 	// Dead thing touching.
 	// Can happen with a sliding player corpse.
-	if (toucher->Health <= 0)
+	if (Toucher.Health <= 0)
 		return;
 
 	sound = 'PickupItem';
-	player = toucher->player;
 
 	// Identify by sprite.
-	switch (special->sprite)
+	switch (sprite)
 	{
 		// armor
 	case SPR_ARM1:
-		if (!P_GiveArmor(player, 1))
+		if (!Toucher.GiveArmor(1))
 			return;
-		cprint(player, "%s\n", GOTARMOR);
+		cprint(Toucher.player, "%s\n", GOTARMOR);
 		break;
 
 	case SPR_ARM2:
-		if (!P_GiveArmor(player, 2))
+		if (!Toucher.GiveArmor(2))
 			return;
-		cprint(player, "%s\n", GOTMEGA);
+		cprint(Toucher.player, "%s\n", GOTMEGA);
 		break;
 
 		// bonus items
 	case SPR_BON1:
-		player->health++;	// can go over 100%
-		if (player->health > 200)
-			player->health = 200;
-		player->mo->Health = player->health;
-		cprint(player, "%s\n", GOTHTHBONUS);
+		Toucher.player->health++;	// can go over 100%
+		if (Toucher.player->health > 200)
+			Toucher.player->health = 200;
+		Toucher.Health = Toucher.player->health;
+		cprint(Toucher.player, "%s\n", GOTHTHBONUS);
 		break;
 
 	case SPR_BON2:
-		player->armorpoints++;	// can go over 100%
-		if (player->armorpoints > 200)
-			player->armorpoints = 200;
-		if (!player->armortype)
-			player->armortype = 1;
-		cprint(player, "%s\n", GOTARMBONUS);
+		Toucher.player->armorpoints++;	// can go over 100%
+		if (Toucher.player->armorpoints > 200)
+			Toucher.player->armorpoints = 200;
+		if (!Toucher.player->armortype)
+			Toucher.player->armortype = 1;
+		cprint(Toucher.player, "%s\n", GOTARMBONUS);
 		break;
 
 	case SPR_SOUL:
-		player->health += SOULSPHERE_HEALTH;
-		if (player->health > SOULSPHERE_MAX)
-			player->health = SOULSPHERE_MAX;
-		player->mo->Health = player->health;
-		cprint(player, "%s\n", GOTSUPER);
+		Toucher.player->health += SOULSPHERE_HEALTH;
+		if (Toucher.player->health > SOULSPHERE_MAX)
+			Toucher.player->health = SOULSPHERE_MAX;
+		Toucher.player->mo->Health = Toucher.player->health;
+		cprint(Toucher.player, "%s\n", GOTSUPER);
 		sound = 'PickupPower';
 		break;
 
 #ifdef DOOM2
 	case SPR_MEGA:
-		player->health = MEGASPHERE_HEALTH;
-		player->mo->Health = player->health;
-		P_GiveArmor(player, 2);
-		cprint(player, "%s\n", GOTMSPHERE);
+		Toucher.player->health = MEGASPHERE_HEALTH;
+		Toucher.Health = Toucher.player->health;
+		Toucher.GiveArmor(2);
+		cprint(Toucher.player, "%s\n", GOTMSPHERE);
 		sound = 'PickupPower';
 		break;
 #endif
@@ -386,249 +384,251 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 		// cards
 		// leave cards for everyone
 	case SPR_BKEY:
-		if (P_GiveCard(player, it_bluecard))
-			cprint(player, "%s\n", GOTBLUECARD);
+		if (Toucher.GiveCard(it_bluecard))
+			cprint(Toucher.player, "%s\n", GOTBLUECARD);
 		if (!netgame)
 			break;
 		return;
 
 	case SPR_YKEY:
-		if (P_GiveCard(player, it_yellowcard))
-			cprint(player, "%s\n", GOTYELWCARD);
+		if (Toucher.GiveCard(it_yellowcard))
+			cprint(Toucher.player, "%s\n", GOTYELWCARD);
 		if (!netgame)
 			break;
 		return;
 
 	case SPR_RKEY:
-		if (P_GiveCard(player, it_redcard))
-			cprint(player, "%s\n", GOTREDCARD);
+		if (Toucher.GiveCard(it_redcard))
+			cprint(Toucher.player, "%s\n", GOTREDCARD);
 		if (!netgame)
 			break;
 		return;
 
 	case SPR_BSKU:
-		if (P_GiveCard(player, it_blueskull))
-			cprint(player, "%s\n", GOTBLUESKUL);
+		if (Toucher.GiveCard(it_blueskull))
+			cprint(Toucher.player, "%s\n", GOTBLUESKUL);
 		if (!netgame)
 			break;
 		return;
 
 	case SPR_YSKU:
-		if (P_GiveCard(player, it_yellowskull))
-			cprint(player, "%s\n", GOTYELWSKUL);
+		if (Toucher.GiveCard(it_yellowskull))
+			cprint(Toucher.player, "%s\n", GOTYELWSKUL);
 		if (!netgame)
 			break;
 		return;
 
 	case SPR_RSKU:
-		if (P_GiveCard(player, it_redskull))
-			cprint(player, "%s\n", GOTREDSKULL);
+		if (Toucher.GiveCard(it_redskull))
+			cprint(Toucher.player, "%s\n", GOTREDSKULL);
 		if (!netgame)
 			break;
 		return;
 
 		// medikits, heals
 	case SPR_STIM:
-		if (!P_GiveBody(player, 10))
+		if (!Toucher.GiveBody(10))
 			return;
-		cprint(player, "%s\n", GOTSTIM);
+		cprint(Toucher.player, "%s\n", GOTSTIM);
 		break;
 
 	case SPR_MEDI:
-		if (!P_GiveBody(player, 25))
+		if (!Toucher.GiveBody(25))
 			return;
 
-		if (player->health < 25)
-			cprint(player, "%s\n", GOTMEDINEED);
+		if (Toucher.player->health < 25)
+			cprint(Toucher.player, "%s\n", GOTMEDINEED);
 		else
-			cprint(player, "%s\n", GOTMEDIKIT);
+			cprint(Toucher.player, "%s\n", GOTMEDIKIT);
 		break;
 
 		// power ups
 	case SPR_PINV:
-		if (!P_GivePower(player, pw_invulnerability))
+		if (!Toucher.GivePower(pw_invulnerability))
 			return;
-		cprint(player, "%s\n", GOTINVUL);
+		cprint(Toucher.player, "%s\n", GOTINVUL);
 		sound = 'PickupPower';
 		break;
 
 	case SPR_PSTR:
-		if (!P_GivePower(player, pw_strength))
+		if (!Toucher.GivePower(pw_strength))
 			return;
-		cprint(player, "%s\n", GOTBERSERK);
-		if (player->readyweapon != wp_fist)
-			player->pendingweapon = wp_fist;
+		cprint(Toucher.player, "%s\n", GOTBERSERK);
+		if (Toucher.player->readyweapon != wp_fist)
+			Toucher.player->pendingweapon = wp_fist;
 		sound = 'PickupPower';
 		break;
 
 	case SPR_PINS:
-		if (!P_GivePower(player, pw_invisibility))
+		if (!Toucher.GivePower(pw_invisibility))
 			return;
-		cprint(player, "%s\n", GOTINVIS);
+		cprint(Toucher.player, "%s\n", GOTINVIS);
 		sound = 'PickupPower';
 		break;
 
 	case SPR_SUIT:
-		if (!P_GivePower(player, pw_ironfeet))
+		if (!Toucher.GivePower(pw_ironfeet))
 			return;
-		cprint(player, "%s\n", GOTSUIT);
+		cprint(Toucher.player, "%s\n", GOTSUIT);
 		sound = 'PickupPower';
 		break;
 
 	case SPR_PVIS:
-		if (!P_GivePower(player, pw_infrared))
+		if (!Toucher.GivePower(pw_infrared))
 			return;
-		cprint(player, "%s\n", GOTVISOR);
+		cprint(Toucher.player, "%s\n", GOTVISOR);
 		sound = 'PickupPower';
 		break;
 
 		//  Items
 	case SPR_PMAP:
-		if (!P_GiveItem(player, IT_ALL_MAP))
+		if (!Toucher.GiveItem(IT_ALL_MAP))
 			return;
-		cprint(player, "%s\n", GOTMAP);
+		cprint(Toucher.player, "%s\n", GOTMAP);
 		sound = 'PickupPower';
 		break;
 
 		// ammo
 	case SPR_CLIP:
-		if (special->Flags & MF_DROPPED)
+		if (Flags & MF_DROPPED)
 		{
-			if (!P_GiveAmmo(player, am_clip, 0))
+			if (!Toucher.GiveAmmo(am_clip, 0))
 				return;
 		}
 		else
 		{
-			if (!P_GiveAmmo(player, am_clip, 1))
+			if (!Toucher.GiveAmmo(am_clip, 1))
 				return;
 		}
-		cprint(player, "%s\n", GOTCLIP);
+		cprint(Toucher.player, "%s\n", GOTCLIP);
 		break;
 
 	case SPR_AMMO:
-		if (!P_GiveAmmo(player, am_clip, 5))
+		if (!Toucher.GiveAmmo(am_clip, 5))
 			return;
-		cprint(player, "%s\n", GOTCLIPBOX);
+		cprint(Toucher.player, "%s\n", GOTCLIPBOX);
 		break;
 
 	case SPR_ROCK:
-		if (!P_GiveAmmo(player, am_misl, 1))
+		if (!Toucher.GiveAmmo(am_misl, 1))
 			return;
-		cprint(player, "%s\n", GOTROCKET);
+		cprint(Toucher.player, "%s\n", GOTROCKET);
 		break;
 
 	case SPR_BROK:
-		if (!P_GiveAmmo(player, am_misl, 5))
+		if (!Toucher.GiveAmmo(am_misl, 5))
 			return;
-		cprint(player, "%s\n", GOTROCKBOX);
+		cprint(Toucher.player, "%s\n", GOTROCKBOX);
 		break;
 
 	case SPR_CELL:
-		if (!P_GiveAmmo(player, am_cell, 1))
+		if (!Toucher.GiveAmmo(am_cell, 1))
 			return;
-		cprint(player, "%s\n", GOTCELL);
+		cprint(Toucher.player, "%s\n", GOTCELL);
 		break;
 
 	case SPR_CELP:
-		if (!P_GiveAmmo(player, am_cell, 5))
+		if (!Toucher.GiveAmmo(am_cell, 5))
 			return;
-		cprint(player, "%s\n", GOTCELLBOX);
+		cprint(Toucher.player, "%s\n", GOTCELLBOX);
 		break;
 
 	case SPR_SHEL:
-		if (!P_GiveAmmo(player, am_shell, 1))
+		if (!Toucher.GiveAmmo(am_shell, 1))
 			return;
-		cprint(player, "%s\n", GOTSHELLS);
+		cprint(Toucher.player, "%s\n", GOTSHELLS);
 		break;
 
 	case SPR_SBOX:
-		if (!P_GiveAmmo(player, am_shell, 5))
+		if (!Toucher.GiveAmmo(am_shell, 5))
 			return;
-		cprint(player, "%s\n", GOTSHELLBOX);
+		cprint(Toucher.player, "%s\n", GOTSHELLBOX);
 		break;
 
 	case SPR_BPAK:
-		player->backpack = true;
+		Toucher.player->backpack = true;
 		for (i = 0; i < NUMAMMO; i++)
 		{
-			P_GiveAmmo(player, i, 1);
+			Toucher.GiveAmmo(i, 1);
 		}
-		cprint(player, "%s\n", GOTBACKPACK);
+		cprint(Toucher.player, "%s\n", GOTBACKPACK);
 		break;
 
 		// weapons
 	case SPR_BFUG:
-		if (!P_GiveWeapon(player, wp_bfg, false))
+		if (!Toucher.GiveWeapon(wp_bfg, false))
 			return;
-		cprint(player, "%s\n", GOTBFG9000);
+		cprint(Toucher.player, "%s\n", GOTBFG9000);
 		sound = 'PickupWeapon';
 		break;
 
 	case SPR_MGUN:
-		if (!P_GiveWeapon(player, wp_chaingun, special->Flags & MF_DROPPED))
+		if (!Toucher.GiveWeapon(wp_chaingun, Flags & MF_DROPPED))
 			return;
-		cprint(player, "%s\n", GOTCHAINGUN);
+		cprint(Toucher.player, "%s\n", GOTCHAINGUN);
 		sound = 'PickupWeapon';
 		break;
 
 	case SPR_CSAW:
-		if (!P_GiveWeapon(player, wp_chainsaw, false))
+		if (!Toucher.GiveWeapon(wp_chainsaw, false))
 			return;
-		cprint(player, "%s\n", GOTCHAINSAW);
+		cprint(Toucher.player, "%s\n", GOTCHAINSAW);
 		sound = 'PickupWeapon';
 		break;
 
 	case SPR_LAUN:
-		if (!P_GiveWeapon(player, wp_missile, false))
+		if (!Toucher.GiveWeapon(wp_missile, false))
 			return;
-		cprint(player, "%s\n", GOTLAUNCHER);
+		cprint(Toucher.player, "%s\n", GOTLAUNCHER);
 		sound = 'PickupWeapon';
 		break;
 
 	case SPR_PLAS:
-		if (!P_GiveWeapon(player, wp_plasma, false))
+		if (!Toucher.GiveWeapon(wp_plasma, false))
 			return;
-		cprint(player, "%s\n", GOTPLASMA);
+		cprint(Toucher.player, "%s\n", GOTPLASMA);
 		sound = 'PickupWeapon';
 		break;
 
 	case SPR_SHOT:
-		if (!P_GiveWeapon(player, wp_shotgun, special->Flags & MF_DROPPED))
+		if (!Toucher.GiveWeapon(wp_shotgun, Flags & MF_DROPPED))
 			return;
-		cprint(player, "%s\n", GOTSHOTGUN);
+		cprint(Toucher.player, "%s\n", GOTSHOTGUN);
 		sound = 'PickupWeapon';
 		break;
 
 #ifdef DOOM2
 	case SPR_SGN2:
-		if (!P_GiveWeapon(player, wp_supershotgun,
-				special->Flags & MF_DROPPED))
+		if (!Toucher.GiveWeapon(wp_supershotgun, Flags & MF_DROPPED))
 			return;
-		cprint(player, "%s\n", GOTSHOTGUN2);
+		cprint(Toucher.player, "%s\n", GOTSHOTGUN2);
 		sound = 'PickupWeapon';
 		break;
 #endif
 
 #ifdef GRENADE_LAUNCHER
 	case SPR_GLAU:
-		if (!P_GiveWeapon(player, wp_grenade, false))
+		if (!Toucher.GiveWeapon(wp_grenade, false))
 			return;
-		cprint(player, "Piched up a grenade launcher\n");
+		cprint(Toucher.player, "Piched up a grenade launcher\n");
 		sound = 'PickupWeapon';
 		break;
 #endif
 	}
 
-	if (special->Flags & MF_COUNTITEM)
-		player->itemcount++;
-	P_RemoveMobj(special);
-	player->bonuscount += BONUSADD;
-	StartSoundName(player->mo, sound, CHAN_ITEM);
+	if (Flags & MF_COUNTITEM)
+		Toucher.player->itemcount++;
+	P_RemoveMobj(this);
+	Toucher.player->bonuscount += BONUSADD;
+	StartSoundName(&Toucher, sound, CHAN_ITEM);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/25 18:04:33  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.8  2002/01/17 18:15:52  dj_jl
 //  Renamed all map object classes
 //

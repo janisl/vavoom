@@ -25,6 +25,8 @@
 
 // MACROS ------------------------------------------------------------------
 
+#define MAX_BOSS_SPOTS 8
+
 // CONSTANTS ---------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
@@ -33,7 +35,43 @@
 
 // DATA DECLARATIONS -------------------------------------------------------
 
+int BossSpotCount;
+TVec BossSpot[MAX_BOSS_SPOTS];
+float BossSpot_angle[MAX_BOSS_SPOTS];
+
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//  InitMonsters
+//
+//  Called at level load.
+//
+//==========================================================================
+
+void InitMonsters(void)
+{
+	BossSpotCount = 0;
+}
+
+//==========================================================================
+//
+//  P_AddBossSpot
+//
+//==========================================================================
+
+void AddBossSpot(float x, float y, float angle)
+{
+	if (BossSpotCount == MAX_BOSS_SPOTS)
+	{
+		Error("Too many boss spots.");
+	}
+	BossSpot[BossSpotCount].x = x;
+	BossSpot[BossSpotCount].y = y;
+	BossSpot[BossSpotCount].z = 0.0;	//FIXME
+	BossSpot_angle[BossSpotCount] = angle;
+	BossSpotCount++;
+}
 
 //==========================================================================
 //
@@ -70,7 +108,7 @@ void Actor::A_Srcr1Attack(void)
 		return;
 	}
 	StartSound(this, sound_attack, CHAN_WEAPON);
-	if (P_CheckMeleeRange(this))
+	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(8));
 		return;
@@ -175,6 +213,51 @@ void Actor::A_SorSightSnd(void)
 
 //==========================================================================
 //
+//  Actor::DSparilTeleport
+//
+//==========================================================================
+
+void Actor::DSparilTeleport(void)
+{
+	int i;
+	float x;
+	float y;
+	float prevX;
+	float prevY;
+	float prevZ;
+	TVec dir;
+	mobj_t *mo;
+
+	if (!BossSpotCount)
+	{	// No spots
+		return;
+	}
+	i = P_Random();
+	do
+	{
+		i++;
+		x = BossSpot[i % BossSpotCount].x;
+		y = BossSpot[i % BossSpotCount].y;
+		dir = BossSpot[i % BossSpotCount] - origin;
+	}
+	while (Length(dir) < 128.0);
+	prevX = origin.x;
+	prevY = origin.y;
+	prevZ = origin.z;
+	if (P_TeleportMove(this, x, y))
+	{
+		mo = P_SpawnMobj(prevX, prevY, prevZ, Sorcerer2TeleFade);
+		StartSoundName(mo, 'Teleport', CHAN_VOICE);
+		SetState(S_SOR2_TELE1);
+		StartSoundName(this, 'Teleport', CHAN_VOICE);
+		origin.z = floorz;
+		angles.yaw = BossSpot_angle[i % BossSpotCount];
+		velocity = vector(0.0, 0.0, 0.0);
+	}
+}
+
+//==========================================================================
+//
 //  Actor::A_Srcr2Decide
 //
 //==========================================================================
@@ -220,7 +303,7 @@ void Actor::A_Srcr2Decide(void)
 	}
 	if (P_Random() < chance)
 	{
-		DSparilTeleport(this);
+		DSparilTeleport();
 	}
 }
 
@@ -239,7 +322,7 @@ void Actor::A_Srcr2Attack(void)
 		return;
 	}
 	StartSound(NULL, sound_attack, CHAN_AUTO);
-	if (P_CheckMeleeRange(this))
+	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(20));
 		return;
@@ -369,6 +452,9 @@ void Actor::A_GenWizard(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.13  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

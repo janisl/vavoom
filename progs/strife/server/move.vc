@@ -350,7 +350,7 @@ boolean Actor::Touch(Actor Other)
 	if (Other.Flags & MF_SPECIAL)
 	{
 		solid = Other.Flags & MF_SOLID;
-		P_TouchSpecialThing(&Other, this);
+		Other.TouchSpecial(self);
 		return !solid;
 	}
 
@@ -800,6 +800,9 @@ boolean P_Move(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.11  2002/01/24 18:19:27  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

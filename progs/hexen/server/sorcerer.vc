@@ -92,10 +92,10 @@ void Actor::A_SpeedBalls(void)
 //
 //============================================================================
 
-void A_SlowBalls(mobj_t * actor)
+void Actor::A_SlowBalls(void)
 {
-	actor->args[3] = SORC_DECELERATE;	// slow mode
-	actor->args[2] = SORCBALL_INITIAL_SPEED;	// target speed
+	args[3] = SORC_DECELERATE;	// slow mode
+	args[2] = SORCBALL_INITIAL_SPEED;	// target speed
 }
 
 //============================================================================
@@ -111,7 +111,7 @@ void Actor::A_SorcSpinBalls(void)
 	mobj_t *mo;
 	float z;
 
-	A_SlowBalls(this);
+	A_SlowBalls();
 	args[0] = 0;	// Currently no defense
 	args[3] = SORC_NORMAL;
 	args[4] = SORCBALL_INITIAL_SPEED;	// Initial orbit speed
@@ -134,46 +134,45 @@ void Actor::A_SorcSpinBalls(void)
 
 //============================================================================
 //
-//  A_StopBalls
+//  Actor::A_StopBalls
 //
 //  Instant stop when rotation gets to ball in special2
 // actor is sorcerer
 //
 //============================================================================
 
-void A_StopBalls(mobj_t * actor)
+void Actor::A_StopBalls(void)
 {
 	int chance = P_Random();
 
-	actor->args[3] = SORC_STOPPING;	// stopping mode
-	actor->args[1] = 0;	// Reset rotation counter
+	args[3] = SORC_STOPPING;	// stopping mode
+	args[1] = 0;	// Reset rotation counter
 
-	if ((actor->args[0] <= 0) && (chance < 200))
+	if ((args[0] <= 0) && (chance < 200))
 	{
-		actor->specialcid = SorcererBall2;	// Blue
+		specialcid = SorcererBall2;	// Blue
 	}
-	else if ((actor->Health < (actor->spawnhealth >> 1)) && (chance < 200))
+	else if ((Health < (spawnhealth >> 1)) && (chance < 200))
 	{
-		actor->specialcid = SorcererBall3;	// Green
+		specialcid = SorcererBall3;	// Green
 	}
 	else
 	{
-		actor->specialcid = SorcererBall1;	// Yellow
+		specialcid = SorcererBall1;	// Yellow
 	}
-
 }
 
 //============================================================================
 //
-//  A_AccelBalls
+//  Actor::A_AccelBalls
 //
 //  Increase ball orbit speed - actor is ball
 //
 //============================================================================
 
-void A_AccelBalls(mobj_t * actor)
+void Actor::A_AccelBalls(void)
 {
-	mobj_t *sorc = actor->target;
+	mobj_t *sorc = target;
 
 	if (sorc->args[4] < sorc->args[2])
 	{
@@ -185,22 +184,22 @@ void A_AccelBalls(mobj_t * actor)
 		if (sorc->args[4] >= SORCBALL_TERMINAL_SPEED)
 		{
 			// Reached terminal velocity - stop balls
-			A_StopBalls(sorc);
+			sorc->A_StopBalls();
 		}
 	}
 }
 
 //============================================================================
 //
-//  A_DecelBalls
+//  Actor::A_DecelBalls
 //
 //  Decrease ball orbit speed - actor is ball
 //
 //============================================================================
 
-void A_DecelBalls(mobj_t * actor)
+void Actor::A_DecelBalls(void)
 {
-	mobj_t *sorc = actor->target;
+	mobj_t *sorc = target;
 
 	if (sorc->args[4] > sorc->args[2])
 	{
@@ -214,37 +213,37 @@ void A_DecelBalls(mobj_t * actor)
 
 //============================================================================
 //
-//  A_SorcUpdateBallAngle
+//  Actor::A_SorcUpdateBallAngle
 //
 //  Update angle if first ball - actor is ball
 //
 //============================================================================
 
-void A_SorcUpdateBallAngle(mobj_t * actor)
+void Actor::A_SorcUpdateBallAngle(void)
 {
-	if (actor->Class == SorcererBall1)
+	if (Class == SorcererBall1)
 	{
-		actor->target->special1f = AngleMod360(actor->target->special1f +
-			itof(actor->target->args[4]));
+		target->special1f = AngleMod360(target->special1f +
+			itof(target->args[4]));
 	}
 }
 
 //============================================================================
 //
-//  A_SorcOffense1
+//  Actor::A_SorcOffense1
 //
 //  Actor is ball.
 //
 //============================================================================
 
-void A_SorcOffense1(mobj_t * actor)
+void Actor::A_SorcOffense1(void)
 {
 	mobj_t *mo;
 	float ang1, ang2;
-	mobj_t *parent = actor->target;
+	mobj_t *parent = target;
 
-	ang1 = AngleMod360(actor->angles.yaw + 70.0);
-	ang2 = AngleMod360(actor->angles.yaw - 70.0);
+	ang1 = AngleMod360(angles.yaw + 70.0);
+	ang2 = AngleMod360(angles.yaw - 70.0);
 	mo = SpawnMissileAngle(parent, SorcererFX1, ang1, 0.0);
 	if (mo)
 	{
@@ -265,25 +264,25 @@ void A_SorcOffense1(mobj_t * actor)
 
 //============================================================================
 //
-//  A_SorcOffense2
+//  Actor::A_SorcOffense2
 //
 //  Actor is ball
 //
 //============================================================================
 
-void A_SorcOffense2(mobj_t * actor)
+void Actor::A_SorcOffense2(void)
 {
 	float ang1;
 	mobj_t *mo;
 	float delta, index;
-	mobj_t *parent = actor->target;
+	mobj_t *parent = target;
 	mobj_t *dest = parent->target;
 	float dist;
 
-	index = itof(actor->args[4]) * 360.0 / 256.0;
-	actor->args[4] = (actor->args[4] + 15) & 0xff;
+	index = itof(args[4]) * 360.0 / 256.0;
+	args[4] = (args[4] + 15) & 0xff;
 	delta = sin(index) * SORCFX4_SPREAD_ANGLE;
-	ang1 = AngleMod360(actor->angles.yaw + delta);
+	ang1 = AngleMod360(angles.yaw + delta);
 	mo = SpawnMissileAngle(parent, SorcererFX4, ang1, 0.0);
 	if (mo)
 	{
@@ -298,19 +297,19 @@ void A_SorcOffense2(mobj_t * actor)
 
 //============================================================================
 //
-//  A_CastSorcererSpell
+//  Actor::A_CastSorcererSpell
 //
 //  Actor is ball.
 //
 //============================================================================
 
-void A_CastSorcererSpell(mobj_t * actor)
+void Actor::A_CastSorcererSpell(void)
 {
 	mobj_t *mo;
-	classid spell = actor->Class;
+	classid spell = Class;
 	float ang1, ang2;
 	float z;
-	mobj_t *parent = actor->target;
+	mobj_t *parent = target;
 
 	StartSoundName(NULL, 'SorcererSpellCast', CHAN_VOICE);
 
@@ -321,20 +320,20 @@ void A_CastSorcererSpell(mobj_t * actor)
 	switch (spell)
 	{
 	case SorcererBall1:	// Offensive
-		A_SorcOffense1(actor);
+		A_SorcOffense1();
 		break;
 	case SorcererBall2:	// Defensive
 		z = parent->origin.z - parent->floorclip + SORC_DEFENSE_HEIGHT;
-		mo = P_SpawnMobj(actor->origin.x, actor->origin.y, z, SorcererFX2);
+		mo = P_SpawnMobj(origin.x, origin.y, z, SorcererFX2);
 		parent->Flags2 |= MF2_REFLECTIVE | MF2_INVULNERABLE;
 		parent->args[0] = SORC_DEFENSE_TIME;
 		if (mo)
 			mo->target = parent;
 		break;
 	case SorcererBall3:	// Reinforcements
-		ang1 = AngleMod360(actor->angles.yaw - 45.0);
-		ang2 = AngleMod360(actor->angles.yaw + 45.0);
-		if (actor->Health < (actor->spawnhealth / 3))
+		ang1 = AngleMod360(angles.yaw - 45.0);
+		ang2 = AngleMod360(angles.yaw + 45.0);
+		if (Health < (spawnhealth / 3))
 		{	// Spawn 2 at a time
 			mo = SpawnMissileAngle(parent, SorcererFX3, ang1, 4.0);
 			if (mo)
@@ -396,15 +395,15 @@ void Actor::A_SorcBallOrbit(void)
 	switch (mode)
 	{
 	case SORC_NORMAL:	// Balls rotating normally
-		A_SorcUpdateBallAngle(this);
+		A_SorcUpdateBallAngle();
 		break;
 	case SORC_DECELERATE:	// Balls decelerating
-		A_DecelBalls(this);
-		A_SorcUpdateBallAngle(this);
+		A_DecelBalls();
+		A_SorcUpdateBallAngle();
 		break;
 	case SORC_ACCELERATE:	// Balls accelerating
-		A_AccelBalls(this);
-		A_SorcUpdateBallAngle(this);
+		A_AccelBalls();
+		A_SorcUpdateBallAngle();
 		break;
 	case SORC_STOPPING:	// Balls stopping
 		if ((parent->specialcid == Class) &&
@@ -436,7 +435,7 @@ void Actor::A_SorcBallOrbit(void)
 		}
 		else
 		{
-			A_SorcUpdateBallAngle(this);
+			A_SorcUpdateBallAngle();
 		}
 		break;
 	case SORC_FIRESPELL:	// Casting spell
@@ -455,7 +454,7 @@ void Actor::A_SorcBallOrbit(void)
 			}
 			else
 			{
-				A_CastSorcererSpell(this);
+				A_CastSorcererSpell();
 				parent->args[3] = SORC_STOPPED;
 			}
 		}
@@ -474,7 +473,7 @@ void Actor::A_SorcBallOrbit(void)
 			else
 			{
 				// Do rapid fire spell
-				A_SorcOffense2(this);
+				A_SorcOffense2();
 			}
 		}
 		break;
@@ -770,6 +769,9 @@ void Actor::A_SorcFX4Check(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.13  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

@@ -46,14 +46,14 @@ void Actor::A_Look(void)
 		{
 			if (!P_CheckSight(this, target))
 			{
-				if (!P_LookForPlayers(this, false))
+				if (!LookForPlayers(false))
 					return;
 			}
 		}
 	}
 	else
 	{
-		if (!P_LookForPlayers(this, false))
+		if (!LookForPlayers(false))
 			return;
 	}
 
@@ -132,7 +132,7 @@ void Actor::A_Chase(void)
 	if (!target || !(target->Flags & MF_SHOOTABLE))
 	{
 		// look for a new target
-		if (P_LookForPlayers(this, true))
+		if (LookForPlayers(true))
 		{
 			return;	// got a new target
 		}
@@ -146,13 +146,13 @@ void Actor::A_Chase(void)
 		Flags &= ~MF_JUSTATTACKED;
 		if (!fastparm)
 		{
-			P_NewChaseDir(this);
+			NewChaseDir();
 		}
 		return;
 	}
 
 	// check for melee attack
-	if (MeleeState && P_CheckMeleeRange(this))
+	if (MeleeState && CheckMeleeRange())
 	{
 		if (sound_attack)
 		{
@@ -167,7 +167,7 @@ void Actor::A_Chase(void)
 	{
 		if (fastparm || !movecount)
 		{
-			if (P_CheckMissileRange(this))
+			if (CheckMissileRange())
 			{
 				SetState(MissileState);
 				Flags |= MF_JUSTATTACKED;
@@ -181,15 +181,15 @@ void Actor::A_Chase(void)
 	{
 		if (!P_CheckSight(this, target))
 		{
-			if (P_LookForPlayers(this, true))
+			if (LookForPlayers(true))
 				return;	// got a new target
 		}
 	}
 
 	// chase towards player
-	if (--movecount < 0 || !P_Move(this))
+	if (--movecount < 0 || !StepMove())
 	{
-		P_NewChaseDir(this);
+		NewChaseDir();
 	}
 
 	// make active sound
@@ -356,11 +356,11 @@ void Actor::A_Explode(void)
 
 //==========================================================================
 //
-//  P_DropItem
+//  Actor::DropItem
 //
 //==========================================================================
 
-void P_DropItem(mobj_t * source, classid type, int special, int chance)
+void Actor::DropItem(classid type, int amount, int chance)
 {
 	mobj_t *mo;
 
@@ -368,13 +368,12 @@ void P_DropItem(mobj_t * source, classid type, int special, int chance)
 	{
 		return;
 	}
-	mo = P_SpawnMobj(source->origin.x, source->origin.y,
-		source->origin.z + source->Height / 2.0, type);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + Height / 2.0, type);
 	mo->velocity.x = (Random() - Random()) * 35.0;
 	mo->velocity.y = (Random() - Random()) * 35.0;
 	mo->velocity.z = (5.0 + Random() * 4.0) * 35.0;
 	mo->Flags |= MF_DROPPED;
-	mo->Health = special;
+	mo->Health = amount;
 }
 
 //==========================================================================
@@ -393,32 +392,32 @@ void Actor::A_NoBlocking(void)
 	case MummyLeader:
 	case MummyGhost:
 	case MummyLeaderGhost:
-		P_DropItem(this, ItemAmmoGoldWandWimpy, 3, 84);
+		DropItem(ItemAmmoGoldWandWimpy, 3, 84);
 		break;
 	case Knight:
 	case KnightGhost:
-		P_DropItem(this, ItemAmmoCrossbowWimpy, 5, 84);
+		DropItem(ItemAmmoCrossbowWimpy, 5, 84);
 		break;
 	case Wizard:
-		P_DropItem(this, ItemAmmoBlasterWimpy, 10, 84);
-		P_DropItem(this, ArtifactTomeOfPower, 0, 4);
+		DropItem(ItemAmmoBlasterWimpy, 10, 84);
+		DropItem(ArtifactTomeOfPower, 0, 4);
 		break;
 	case Head:
-		P_DropItem(this, ItemAmmoBlasterWimpy, 10, 84);
-		P_DropItem(this, ArtifactEgg, 0, 51);
+		DropItem(ItemAmmoBlasterWimpy, 10, 84);
+		DropItem(ArtifactEgg, 0, 51);
 		break;
 	case Beast:
-		P_DropItem(this, ItemAmmoCrossbowWimpy, 10, 84);
+		DropItem(ItemAmmoCrossbowWimpy, 10, 84);
 		break;
 	case Clink:
-		P_DropItem(this, ItemAmmoSkullRodWimpy, 20, 84);
+		DropItem(ItemAmmoSkullRodWimpy, 20, 84);
 		break;
 	case Snake:
-		P_DropItem(this, ItemAmmoPhoenixWimpy, 5, 84);
+		DropItem(ItemAmmoPhoenixWimpy, 5, 84);
 		break;
 	case Minotaur:
-		P_DropItem(this, ArtifactSuperHeal, 0, 51);
-		P_DropItem(this, ItemAmmoPhoenixWimpy, 10, 84);
+		DropItem(ArtifactSuperHeal, 0, 51);
+		DropItem(ItemAmmoPhoenixWimpy, 10, 84);
 		break;
 	}
 }
@@ -626,6 +625,9 @@ void Actor::A_ContMobjSound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/01/25 18:04:35  dj_jl
+//  Many global functions made Actor functions
+//
 //  Revision 1.13  2002/01/24 18:19:25  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //
