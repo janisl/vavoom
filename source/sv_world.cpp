@@ -371,9 +371,9 @@ void SV_LinkToWorld(VMapObject* thing)
 boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*))
 {
 	guard(SV_BlockLinesIterator);
-    int			offset;
-    short*		list;
-    line_t*		ld;
+	int			offset;
+	short*		list;
+	line_t*		ld;
 	int 		i;
 	polyblock_t	*polyLink;
 	seg_t		**tempSeg;
@@ -416,8 +416,10 @@ boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*))
 
     for (list = level.blockmaplump + offset; *list != -1; list++)
     {
+#ifdef PARANOID
 		if (*list < 0 || *list >= level.numlines)
 			Host_Error("Broken blockmap - line %d", *list);
+#endif
 		ld = &level.lines[*list];
 
 		if (ld->validcount == validcount)
@@ -1016,9 +1018,12 @@ int SV_PointContents(const sector_t *sector, const TVec &p)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2002/08/24 14:49:43  dj_jl
+//	Beautification.
+//
 //	Revision 1.15  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.14  2002/07/13 07:50:58  dj_jl
 //	Added guarding.
 //	
