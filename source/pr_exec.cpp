@@ -576,7 +576,7 @@ extern "C" void PR_RFInvalidOpcode(void)
 
 extern "C" VObject *PR_DynamicCast(VObject *object, VClass *SomeClass)
 {
-	if (!object->IsA(SomeClass))
+	if (!object || !object->IsA(SomeClass))
 	{
 		return NULL;
 	}
@@ -1307,7 +1307,8 @@ static void RunFunction(FFunction *func)
 	}
 
     goto func_loop;
-	unguardfSlow(("(%s)", *func->Name));
+	unguardfSlow(("(%s %d)", *func->Name, 
+		current_statement - (int *)func->FirstStatement));
 }
 
 #endif
@@ -1669,9 +1670,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2002/01/28 18:44:44  dj_jl
+//	Fixed dynamic cast
+//
 //	Revision 1.20  2002/01/25 18:06:53  dj_jl
 //	Little changes for progs profiling
-//
+//	
 //	Revision 1.19  2002/01/17 18:21:40  dj_jl
 //	Fixed Hexen class bug
 //	
