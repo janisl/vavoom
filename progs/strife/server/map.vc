@@ -33,6 +33,66 @@
 
 // DATA DECLARATIONS -------------------------------------------------------
 
+classid InvItemCID[NUMINVITEMS] =
+{
+	MedPatch,
+	MedicalKit,
+	SurgeryKit,
+	DegninOre,
+	MetalArmor,
+	LeatherArmor,
+	Shadow_armor,
+	Environmental_Suit,
+	Guard_Uniform,
+	Officers_Uniform,
+	Map,
+	Scanner,
+	Teleporter_Beacon,
+	Targeter,
+	Coin,
+	Ring,
+	Offering_Chalice,
+	Ear,
+	Flame_thrower_Parts,
+	BrokenPowerCoupling,
+	Prison_pass,
+	Report,
+	Toughness,
+	Accuracy,
+	Oracle_Pass,
+};
+
+classid KeyCID[NUMKEYS] =
+{
+	ItemBaseKey,
+	ItemGovsKey,
+	ItemPasscard,
+	ItemIDBadge,
+	ItemPrisonKey,
+	ItemSeveredHand,
+	ItemPower1Key,
+	ItemPower2Key,
+	ItemGoldKey,
+	ItemPower3Key,
+	ItemIDCard,
+	ItemSilverKey,
+	ItemOracleKey,
+	ItemMilitaryID,
+	ItemOrderKey,
+	ItemWarehouseKey,
+	ItemBrassKey,
+	ItemRedCrystalKey,
+	ItemBlueCrystalKey,
+	ItemChapelKey,
+	ItemCatacombKey,
+	ItemSecurityKey,
+	ItemCoreKey,
+	ItemMaulerKey,
+	ItemFactoryKey,
+	ItemMineKey,
+	ItemNewKey5,
+};
+
 // CODE --------------------------------------------------------------------
 
 //**************************************************************************
@@ -127,16 +187,57 @@ bool StartConversation(Actor User, Actor UseOn)
 	{
 		CurrentSpeaker = UseOn;
 		CurrentSpeakingTo = User;
-		CurrentSpeechIndex = SpeechNum;
 		OldSpeakerAngle = UseOn.Angles.yaw;
 		UseOn.Angles.yaw = atan2(User.Origin.y - UseOn.Origin.y,
 			User.Origin.x - UseOn.Origin.x);
-
-		MSG_Select(MSG_SV_RELIABLE);
-		MSG_WriteByte(svc_speech);
-		MSG_WriteShort(SpeechNum);
+		StartSpeech(SpeechNum);
 	}
 	return true;
+}
+
+//==========================================================================
+//
+//	StartSpeech
+//
+//==========================================================================
+
+void StartSpeech(int SpeechNum)
+{
+	RogueConSpeech *Speech;
+	bool conJumped;
+
+	do
+	{
+		conJumped = false;
+		if (!SpeechNum)
+		{
+			StopSpeech();
+			return;
+		}
+		if (SpeechNum < 0)
+		{
+			Speech = &GLevel.GenericSpeeches[-SpeechNum - 1];
+		}
+		else
+		{
+			Speech = &GLevel.LevelSpeeches[SpeechNum - 1];
+		}
+		if (Speech->JumpToConv &&
+			CheckForNeededItem(CurrentSpeakingTo, Speech->CheckItem1, 1) != -2 &&
+			CheckForNeededItem(CurrentSpeakingTo, Speech->CheckItem2, 1) != -2 &&
+			CheckForNeededItem(CurrentSpeakingTo, Speech->CheckItem3, 1) != -2)
+		{
+			CurrentSpeaker.CurrentSpeech = Speech->JumpToConv;
+			SpeechNum = GetSpeech(CurrentSpeaker);
+			conJumped = true;
+		}
+	}
+	while (conJumped);
+	CurrentSpeechIndex = SpeechNum;
+
+	MSG_Select(MSG_SV_RELIABLE);
+	MSG_WriteByte(svc_speech);
+	MSG_WriteShort(SpeechNum);
 }
 
 //==========================================================================
@@ -147,7 +248,221 @@ bool StartConversation(Actor User, Actor UseOn)
 
 bool CheckChoice(RogueConChoice *Choice)
 {
+	int Item1;
+	int Item2;
+	int Item3;
+	classid ItemType;
+	Pickup Item;
+
+	Item1 = CheckForNeededItem(CurrentSpeakingTo, Choice->NeedItem1, Choice->NeedAmount1);
+	Item2 = CheckForNeededItem(CurrentSpeakingTo, Choice->NeedItem2, Choice->NeedAmount2);
+	Item3 = CheckForNeededItem(CurrentSpeakingTo, Choice->NeedItem3, Choice->NeedAmount3);
+	if (Item1 == -2 || Item2 == -2 || Item3 == -2)
+	{
+		return false;
+	}
+	if (Item1 != -1)
+		PlayerPawn(CurrentSpeakingTo).RemoveInvItem(Item1, Choice->NeedAmount1);
+	if (Item2 != -1)
+		PlayerPawn(CurrentSpeakingTo).RemoveInvItem(Item2, Choice->NeedAmount2);
+	if (Item3 != -1)
+		PlayerPawn(CurrentSpeakingTo).RemoveInvItem(Item3, Choice->NeedAmount3);
+	if (Choice->GiveItem > 0)
+	{
+		ItemType = GetClassFromID(Choice->GiveItem);
+		if (ItemType != classidNone)
+		{
+			Item = Pickup(Spawn(ItemType, vector(0.0, 0.0, 0.0)));
+			Item.HandlePickup(CurrentSpeakingTo);
+			Item.Remove();
+		}
+	}
+	if (Choice->Objectives)
+	{
+		CurrentSpeakingTo.Player->Objectives = Choice->Objectives;
+	}
 	return true;
+}
+
+//==========================================================================
+//
+//	GetClassFromID
+//
+//==========================================================================
+
+classid GetClassFromID(int ID)
+{
+	switch (ID)
+	{
+	case 125:	return MedPatch;
+	case 126:	return MedicalKit;
+	case 127:	return SurgeryKit;
+	case 128:	return DegninOre;
+	case 129:	return MetalArmor;
+	case 130:	return LeatherArmor;
+	case 133:	return ItemBaseKey;
+	case 134:	return ItemGovsKey;
+	case 135:	return ItemPasscard;
+	case 136:	return ItemIDBadge;
+	case 137:	return ItemPrisonKey;
+	case 138:	return ItemSeveredHand;
+	case 139:	return ItemPower1Key;
+	case 140:	return ItemPower2Key;
+	case 141:	return ItemPower3Key;
+	case 142:	return ItemGoldKey;
+	case 143:	return ItemIDCard;
+	case 144:	return ItemSilverKey;
+	case 145:	return ItemOracleKey;
+	case 146:	return ItemMilitaryID;
+	case 147:	return ItemOrderKey;
+	case 148:	return ItemWarehouseKey;
+	case 149:	return ItemBrassKey;
+	case 150:	return ItemRedCrystalKey;
+	case 151:	return ItemBlueCrystalKey;
+	case 152:	return ItemChapelKey;
+	case 153:	return ItemCatacombKey;
+	case 154:	return ItemSecurityKey;
+	case 155:	return ItemCoreKey;
+	case 156:	return ItemMaulerKey;
+	case 157:	return ItemFactoryKey;
+	case 158:	return ItemMineKey;
+	case 159:	return ItemNewKey5;
+	case 160:	return Shadow_armor;
+	case 161:	return Environmental_Suit;
+	case 162:	return Guard_Uniform;
+	case 163:	return Officers_Uniform;
+	case 164:	return Map;
+	case 165:	return Scanner;
+	case 166:	return Teleporter_Beacon;
+	case 167:	return Targeter;
+	case 168:	return Coin;
+	case 169:	return Gold10;
+	case 170:	return Gold25;
+	case 171:	return Gold50;
+	case 172:	return Gold300;
+	case 173:	return Ring;
+	case 174:	return Offering_Chalice;
+	case 175:	return Ear;
+	case 176:	return Communicator;
+	case 177:	return ItemAmmoHEGrenadeRounds;
+	case 178:	return ItemAmmoPhosphorusGrenadeRounds;
+	case 179:	return ItemAmmoClipOfBullets;
+	case 180:	return ItemAmmoBoxOfBullets;
+	case 181:	return ItemAmmoMiniMissiles;
+	case 182:	return ItemAmmoCrateOfMissiles;
+	case 183:	return ItemAmmoEnergyPod;
+	case 184:	return ItemAmmoEnergyPack;
+	case 185:	return ItemAmmoPoisonBolts;
+	case 186:	return ItemAmmoElectricBolts;
+	case 187:	return Ammo_satchel;
+	case 188:	return ItemWeaponAssaultGun;
+	case 189:	return ItemWeaponAssaultGun2;
+	case 190:	return ItemWeaponFlameThrower;
+	case 191:	return Flame_thrower_Parts;
+	case 192:	return ItemWeaponMiniMissileLauncher;
+	case 193:	return ItemWeaponMauler;
+	case 194:	return ItemWeaponCrossbow;
+	case 195:	return ItemWeaponGrenadeLauncher;
+	case 196:	return ItemWeaponSigil1;
+	case 197:	return ItemWeaponSigil2;
+	case 198:	return ItemWeaponSigil3;
+	case 199:	return ItemWeaponSigil4;
+	case 200:	return ItemWeaponSigil5;
+	case 289:	return BrokenPowerCoupling;
+	case 298:	return Ammo2;
+	case 299:	return Health1;
+	case 300:	return Info1;
+	case 301:	return Alarm1;
+	case 302:	return ConversationItem302;
+	case 303:	return ConversationItem303;
+	case 304:	return Prison_pass;
+	case 305:	return ConversationItem305;
+	case 306:	return ConversationItem306;
+	case 307:	return ConversationItem307;
+	case 308:	return Report;
+	case 309:	return Toughness;
+	case 310:	return Accuracy;
+	case 311:	return Oracle_Pass;
+	case 312:	return Quest1;
+	case 313:	return Quest2;
+	case 314:	return Quest3;
+	case 315:	return Quest4;
+	case 316:	return Quest5;
+	case 317:	return Quest6;
+	case 318:	return Quest7;
+	case 319:	return Quest8;
+	case 320:	return Quest9;
+	case 321:	return Quest10;
+	case 322:	return Quest11;
+	case 323:	return Quest12;
+	case 324:	return Quest13;
+	case 325:	return Quest14;
+	case 326:	return Quest15;
+	case 327:	return Quest16;
+	case 328:	return Quest17;
+	case 329:	return Quest18;
+	case 330:	return Quest19;
+	case 331:	return Quest20;
+	case 332:	return Quest21;
+	case 333:	return Quest22;
+	case 334:	return Quest23;
+	case 335:	return Quest24;
+	case 336:	return Quest25;
+	case 337:	return Quest26;
+	case 338:	return Quest27;
+	case 339:	return Quest28;
+	case 340:	return Quest29;
+	case 341:	return Quest30;
+	case 342:	return Quest31;
+	case 343:	return ConversationItem343;
+	}
+	if (ID)
+	{
+		print("Unknown item %d", ID);
+	}
+	return classidNone;
+}
+
+//==========================================================================
+//
+//	CheckForNeededItem
+//
+//==========================================================================
+
+int CheckForNeededItem(Actor A, int ID, int Amount)
+{
+	classid CID;
+	int i;
+
+	//	Get class ID.
+	CID = GetClassFromID(ID);
+	//	Check inventory items.
+	for (i = 0; i < NUMINVITEMS; i++)
+	{
+		if (InvItemCID[i] == CID)
+		{
+			return A.Player->Inventory[i] < Amount ? -2 : i;
+		}
+	}
+	//	Check keys.
+	for (i = 0; i < NUMKEYS; i++)
+	{
+		if (KeyCID[i] == CID)
+		{
+			return A.Player->Keys & (1 << i) ? -1 : -2;
+		}
+	}
+	//	Check quests.
+	if (ID >= 312 && ID <= 342)
+	{
+		return A.Player->Quests & (1 << (ID - 312)) ? -1 : -2;
+	}
+	//	Check Communicator.
+	if (CID == Communicator)
+	{
+		return A.Player->Communicator ? -1 : -2;
+	}
+	return -1;
 }
 
 //==========================================================================
@@ -200,23 +515,15 @@ void ConChoiceImpulse(int ChoiceNum)
 		StopSpeech();
 		return;
 	}
-	cprint(CurrentSpeakingTo.Player, ARR2STR(Choice->TextOK));
+	if (strcmp(ARR2STR(Choice->TextOK), "") &&
+		strcmp(ARR2STR(Choice->TextOK), "_"))
+	{
+		cprint(CurrentSpeakingTo.Player, ARR2STR(Choice->TextOK));
+	}
 	if (Choice->Next < 0)
 	{
 		CurrentSpeaker.CurrentSpeech = -Choice->Next;
-		SpeechNum = GetSpeech(CurrentSpeaker);
-		if (SpeechNum)
-		{
-			CurrentSpeechIndex = SpeechNum;
-
-			MSG_Select(MSG_SV_RELIABLE);
-			MSG_WriteByte(svc_speech);
-			MSG_WriteShort(SpeechNum);
-		}
-		else
-		{
-			StopSpeech();
-		}
+		StartSpeech(GetSpeech(CurrentSpeaker));
 	}
 	else
 	{
@@ -850,6 +1157,9 @@ bool PIT_RadiusAttack(Entity Other)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2003/10/02 18:03:20  dj_jl
+//  Fully working conversations.
+//
 //  Revision 1.29  2002/11/02 08:22:38  dj_jl
 //  New style classes.
 //

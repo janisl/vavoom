@@ -295,13 +295,13 @@ struct subsector_t
 
 struct RogueConChoice
 {
-	int Unknown1;
-	int Unknown2;
-	int Unknown3;
-	int Unknown4;
-	int Unknown5;
-	int Unknown6;
-	int Unknown7;
+	int GiveItem;		//	Item given on success
+	int NeedItem1;		//	Required item 1
+	int NeedItem2;		//	Required item 2
+	int NeedItem3;		//	Required item 3
+	int NeedAmount1;	//	Amount of item 1
+	int NeedAmount2;	//	Amount of item 2
+	int NeedAmount3;	//	Amount of item 3
 	int Text[32/4];		//	Text of the answer
 	int TextOK[80/4];	//	Message displayed on success
 	int Next;			//	Dialog to go on success, negative values to go
@@ -315,11 +315,11 @@ struct RogueConChoice
 struct RogueConSpeech
 {
 	int SpeakerID;		//	Type of the object (MT_xxx)
-	int Unknown1;
-	int Unknown2;
-	int Unknown3;
-	int Unknown4;
-	int Unknown5;
+	int DropItem;		//	Item dropped when killed
+	int CheckItem1;		//	Item 1 to check for jump
+	int CheckItem2;		//	Item 2 to check for jump
+	int CheckItem3;		//	Item 3 to check for jump
+	int JumpToConv;		//	Jump to conversation if have certain item(s)
 	int Name[16/4];		//	Name of the character
 	int Voice[8/4];		//	Voice to play
 	int BackPic[8/4];	//	Picture of the speaker
@@ -762,6 +762,9 @@ struct ClipRect
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.49  2003/10/02 18:05:22  dj_jl
+//  Fully working conversations.
+//
 //  Revision 1.48  2003/07/03 18:13:45  dj_jl
 //  Moving extrafloors
 //
