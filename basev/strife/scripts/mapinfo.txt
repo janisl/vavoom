@@ -74,7 +74,7 @@ ACSHelper strfhelp
 
 map MAP10 "New Front Base"
 next MAP11
-sky1 SKYMNT02 0
+sky1 SKYMNT01 0
 music d_march
 cluster 1
 RogueConScript script10
@@ -82,7 +82,7 @@ ACSHelper strfhelp
 
 map MAP11 "Borderlands"
 next MAP12
-sky1 SKYMNT02 0
+sky1 SKYMNT01 0
 music d_danger
 cluster 1
 RogueConScript script11
@@ -90,7 +90,7 @@ ACSHelper strfhelp
 
 map MAP12 "temple of the oracle"
 next MAP13
-sky1 SKYMNT02 0
+sky1 SKYMNT01 0
 music d_mood
 cluster 1
 RogueConScript script12
@@ -98,14 +98,14 @@ ACSHelper strfhelp
 
 map MAP13 "Catacombs"
 next MAP14
-sky1 SKYMNT02 0
+sky1 SKYMNT01 0
 music d_castle
 cluster 1
 ACSHelper strfhelp
 
 map MAP14 "mines"
 next MAP15
-sky1 SKYMNT02 0
+sky1 SKYMNT01 0
 music d_darker
 cluster 1
 RogueConScript script14
@@ -113,7 +113,7 @@ ACSHelper strfhelp
 
 map MAP15 "Fortress: Administration"
 next MAP16
-sky1 SKYMNT02 0
+sky1 SKYMNT01 0
 music d_action
 cluster 1
 RogueConScript script15
@@ -121,14 +121,14 @@ ACSHelper strfhelp
 
 map MAP16 "Fortress: Bishop's Tower"
 next MAP17
-sky1 SKYMNT02 0
+sky1 SKYMNT01 0
 music d_fight
 cluster 1
 ACSHelper strfhelp
 
 map MAP17 "Fortress: The Bailey"
 next MAP18
-sky1 SKYMNT02 0
+sky1 SKYMNT01 0
 music d_spense
 cluster 1
 RogueConScript script17
@@ -136,7 +136,7 @@ ACSHelper strfhelp
 
 map MAP18 "Fortress: Stores"
 next MAP19
-sky1 SKYMNT02 0
+sky1 SKYMNT01 0
 music d_slide
 cluster 1
 RogueConScript script18
@@ -144,7 +144,7 @@ ACSHelper strfhelp
 
 map MAP19 "Fortress: Security Complex"
 next MAP20
-sky1 SKYMNT02 0
+sky1 SKYMNT01 0
 music d_strike
 cluster 1
 RogueConScript script19
@@ -152,28 +152,28 @@ ACSHelper strfhelp
 
 map MAP20 "Factory: Receiving"
 next MAP21
-sky1 SKYMNT02 0
+sky1 SKYMNT01 0
 music d_dark
 cluster 1
 ACSHelper strfhelp
 
 map MAP21 "Factory: Manufacturing"
 next MAP22
-sky1 SKYMNT02 0
+sky1 SKYMNT01 0
 music d_tech
 cluster 1
 ACSHelper strfhelp
 
 map MAP22 "Factory: Forge"
 next MAP23
-sky1 SKYMNT02 0
+sky1 SKYMNT01 0
 music d_slide
 cluster 1
 ACSHelper strfhelp
 
 map MAP23 "Order Commons"
 next MAP24
-sky1 SKYMNT02 0
+sky1 SKYMNT01 0
 music d_drone
 RogueConScript script23
 cluster 1
@@ -181,28 +181,28 @@ ACSHelper strfhelp
 
 map MAP24 "Factory: Conversion Chapel"
 next MAP25
-sky1 SKYMNT02 0
+sky1 SKYMNT01 0
 music d_panthr
 cluster 1
 ACSHelper strfhelp
 
 map MAP25 "Catacombs: Ruined Temple"
 next MAP26
-sky1 SKYMNT02 0
+sky1 SKYMNT01 0
 music d_sad
 cluster 1
 ACSHelper strfhelp
 
 map MAP26 "proving grounds"
 next MAP27
-sky1 SKYMNT02 0
+sky1 SKYMNT01 0
 music d_instry
 cluster 1
 ACSHelper strfhelp
 
 map MAP27 "The Lab"
 next MAP28
-sky1 SKYMNT02 0
+sky1 SKYMNT01 0
 music d_tech
 cluster 1
 RogueConScript script27
@@ -210,28 +210,28 @@ ACSHelper strfhelp
 
 map MAP28 "Alien Ship"
 next MAP29
-sky1 SKYMNT02 0
+sky1 SKYMNT01 0
 music d_action
 cluster 1
 ACSHelper strfhelp
 
 map MAP29 "Entity's Lair"
 next MAP30
-sky1 SKYMNT02 0
+sky1 SKYMNT01 0
 music d_instry
 cluster 1
 ACSHelper strfhelp
 
 map MAP30 "Abondoned Front Base"
 next MAP31
-sky1 SKYMNT02 0
+sky1 SKYMNT01 0
 music d_drone
 cluster 1
 ACSHelper strfhelp
 
 map MAP31 "Training Facility"
 next MAP01
-sky1 SKYMNT02 0
+sky1 SKYMNT01 0
 music d_fight
 cluster 1
 RogueConScript script31
