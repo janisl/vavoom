@@ -48,11 +48,7 @@ void CL_Disconnect(void);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern boolean	slistSorted;
-
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
-
-char			m_return_reason[32];
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -118,6 +114,11 @@ void MN_DeactivateMenu(void)
 
 boolean MN_Responder(event_t* event)
 {
+	if (clpr.Exec("MB_Responder", (int)event))
+	{
+		return true;
+	}
+
     // Pop-up menu?
     if (!MN_Active() && event->type == ev_keydown && !C_Active() &&
 		(cls.state != ca_connected || cls.demoplayback) &&
@@ -127,12 +128,7 @@ boolean MN_Responder(event_t* event)
 		return true;
 	}
 
-	if (clpr.Exec("MN_Responder", (int)event))
-	{
-		return true;
-	}
-
-	return clpr.Exec("MB_Responder", (int)event);
+	return clpr.Exec("MN_Responder", (int)event);
 }
 
 //==========================================================================
@@ -162,9 +158,12 @@ boolean MN_Active(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/10/09 17:25:02  dj_jl
+//	Finished slist moving stuff
+//
 //	Revision 1.7  2001/10/08 17:34:57  dj_jl
 //	A lots of small changes and cleanups
-//
+//	
 //	Revision 1.6  2001/09/25 17:04:45  dj_jl
 //	Replaced menu commands with command SetMenu
 //	

@@ -835,6 +835,8 @@ boolean NET_CanSendMessage(qsocket_t *sock)
 //
 //==========================================================================
 
+#ifdef CLIENT
+
 struct slist_t
 {
 	boolean		inProgress;
@@ -844,6 +846,8 @@ struct slist_t
 };
 
 slist_t slist;
+
+char			m_return_reason[32];
 
 void StartSearch(void)
 {
@@ -881,12 +885,17 @@ slist_t * GetSlist(void)
 	return &slist;
 }
 
+#endif
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/09 17:25:02  dj_jl
+//	Finished slist moving stuff
+//
 //	Revision 1.5  2001/10/08 17:27:53  dj_jl
 //	Moved slist menu builtins here
-//
+//	
 //	Revision 1.4  2001/10/04 17:23:29  dj_jl
 //	Got rid of some warnings
 //	
