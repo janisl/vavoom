@@ -393,21 +393,21 @@ boolean C_Responder(event_t* ev)
 
     switch (ev->data1)
 	{
-     // Close console
-     case K_ESCAPE:
+    // Close console
+    case K_ESCAPE:
 		if (consolestate != cons_open)
 			return false;
 
-	 case '`':
+	case '`':
 		if (consolestate == cons_closing)
 			C_Start();
 		else
 			C_Stop();
 		return true;
 
-     // Execute entered command
-	 case K_ENTER:
-	 case K_PADENTER:
+    // Execute entered command
+	case K_ENTER:
+	case K_PADENTER:
    		//	Print it
 		GCon->Logf(">%s", c_iline.Data);
 
@@ -426,34 +426,40 @@ boolean C_Responder(event_t* ev)
 		c_autocompleteIndex = -1;
         return true;
 
-     // Scroll lines up
-     case K_PAGEUP:
-        if (last_line > 1)
+	// Scroll lines up
+	case K_PAGEUP:
+		for (i = 0; i < (shiftdown ? 1 : 5); i++)
 		{
-			last_line--;
+			if (last_line > 1)
+			{
+				last_line--;
+			}
 		}
        	return true;
 
-     // Scroll lines down
-     case K_PAGEDOWN:
-		if (last_line < num_lines)
+	// Scroll lines down
+	case K_PAGEDOWN:
+		for (i = 0; i < (shiftdown ? 1 : 5); i++)
 		{
-           	last_line++;
+			if (last_line < num_lines)
+			{
+				last_line++;
+			}
 		}
        	return true;
 
-     // Go to first line
-     case K_HOME:
+	// Go to first line
+	case K_HOME:
 		last_line = 1;
        	return true;
 
-     // Go to last line
-     case K_END:
+	// Go to last line
+	case K_END:
 		last_line = num_lines;
        	return true;
 
-     // Command history up
-     case K_UPARROW:
+	// Command history up
+	case K_UPARROW:
 		c_history_current++;
 		c_iline.Init();
 		if (c_history_current >= c_history_size)
@@ -469,8 +475,8 @@ boolean C_Responder(event_t* ev)
 		c_autocompleteIndex = -1;
        	return true;
 
-     // Command history down
-     case K_DOWNARROW:
+	// Command history down
+	case K_DOWNARROW:
         c_history_current--;
 		c_iline.Init();
         if (c_history_current < 0)
@@ -486,8 +492,8 @@ boolean C_Responder(event_t* ev)
 		c_autocompleteIndex = -1;
        	return true;
 
-     // Auto complete
-     case K_TAB:
+	// Auto complete
+	case K_TAB:
         if (!c_iline.Data[0])
 			return true;
 
@@ -524,8 +530,8 @@ boolean C_Responder(event_t* ev)
 		}
        	return true;
 
-     // Add character to input line
-     default:
+	// Add character to input line
+	default:
     	eat = c_iline.Key((byte)ev->data1);
         if (eat)
 			c_autocompleteIndex = -1;
@@ -789,9 +795,12 @@ void C_DrawCenterMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2002/07/27 18:11:46  dj_jl
+//	Scrolling by 5 lines.
+//
 //	Revision 1.18  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.17  2002/07/13 07:47:05  dj_jl
 //	Console device now echos messages to debugfile.
 //	
