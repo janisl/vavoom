@@ -373,6 +373,8 @@ void TDirect3DDrawer::SetTexture(int tex)
 	}
 
 	RenderDevice->SetTexture(0, texturedata[tex]);
+	RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP);
+	RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSV, D3DTADDRESS_WRAP);
 	tex_iw = textureiw[tex];
 	tex_ih = textureih[tex];
 	unguard;
@@ -420,6 +422,8 @@ void TDirect3DDrawer::SetSkyTexture(int tex, bool double_sky)
 			skymaps[tex].height = SkinHeight;
 		}
 		RenderDevice->SetTexture(0, skymapdata[tex]);
+		RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
+		RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
 		tex_iw = 1.0 / skymaps[tex].width;
 		tex_ih = 1.0 / skymaps[tex].height;
 	}
@@ -434,6 +438,8 @@ void TDirect3DDrawer::SetSkyTexture(int tex, bool double_sky)
 
 		int tstage = maxMultiTex >= 2 && double_sky ? 1 : 0;
 		RenderDevice->SetTexture(tstage, texturedata[tex]);
+		RenderDevice->SetTextureStageState(tstage, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP);
+		RenderDevice->SetTextureStageState(tstage, D3DTSS_ADDRESSV, D3DTADDRESS_WRAP);
 		tex_iw = textureiw[tex];
 		tex_ih = textureih[tex];
 	}
@@ -484,6 +490,8 @@ void TDirect3DDrawer::SetFlat(int num)
 		GenerateFlat(num);
 	}
     RenderDevice->SetTexture(0, flatdata[num]);
+	RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP);
+	RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSV, D3DTADDRESS_WRAP);
 	tex_iw = 1.0 / 64.0;
 	tex_ih = 1.0 / 64.0;
 	unguard;
@@ -627,6 +635,8 @@ void TDirect3DDrawer::SetSpriteLump(int lump, int translation)
 				if (trsprlump[i] == lump && trsprtnum[i] == translation)
 				{
 					RenderDevice->SetTexture(0, trsprdata[i]);
+					RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
+					RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
 					tex_iw = trspriw[i];
 					tex_ih = trsprih[i];
 					return;
@@ -645,6 +655,8 @@ void TDirect3DDrawer::SetSpriteLump(int lump, int translation)
 		}
 		GenerateTranslatedSprite(lump, avail, translation);
 		RenderDevice->SetTexture(0, trsprdata[avail]);
+		RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
+		RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
 		tex_iw = trspriw[avail];
 		tex_ih = trsprih[avail];
 	}
@@ -655,6 +667,8 @@ void TDirect3DDrawer::SetSpriteLump(int lump, int translation)
 			GenerateSprite(lump);
 		}
 		RenderDevice->SetTexture(0, spritedata[lump]);
+		RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
+		RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
 		tex_iw = spriteiw[lump];
 		tex_ih = spriteih[lump];
 	}
@@ -688,6 +702,8 @@ void TDirect3DDrawer::SetPic(int handle)
 	}
 
 	RenderDevice->SetTexture(0, picdata[handle]);
+	RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
+	RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
 	tex_iw = piciw[handle];
 	tex_ih = picih[handle];
 	unguard;
@@ -842,6 +858,8 @@ void TDirect3DDrawer::SetSkin(const char *name)
 	}
 
 	RenderDevice->SetTexture(0, skin_data[avail]);
+	RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP);
+	RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSV, D3DTADDRESS_WRAP);
 	unguard;
 }
 
@@ -1310,9 +1328,12 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureNoMip(int width, int height, 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2002/03/28 17:55:08  dj_jl
+//	Added wrapping/clamping.
+//
 //	Revision 1.19  2002/03/20 19:09:53  dj_jl
 //	DeepSea tall patches support.
-//
+//	
 //	Revision 1.18  2002/01/15 18:30:43  dj_jl
 //	Some fixes and improvements suggested by Malcolm Nixon
 //	
