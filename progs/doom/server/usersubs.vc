@@ -205,7 +205,7 @@ mobj_t* SpawnPlayerMissile(mobj_t* source, int type)
     th->target = source;
     avcpy(angles, th->angles);
 	AngleVector(&angles, &vforward);
-    vscale(vforward, th->speed, th->velocity);
+    th->velocity = vforward * th->speed;
 
     CheckMissileSpawn(th);
 
@@ -215,9 +215,12 @@ mobj_t* SpawnPlayerMissile(mobj_t* source, int type)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/31 17:17:23  dj_jl
+//	Removed vector macros
+//
 //	Revision 1.3  2001/08/29 17:42:13  dj_jl
 //	Added sound channel
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:51  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

@@ -1279,18 +1279,12 @@ void DamageMobj(mobj_t *target,mobj_t *inflictor,mobj_t *source,int damage)
 	if (inflictor && (!source || !source->player)
 		&& !(inflictor->flags2&MF2_NODMGTHRUST))
 	{
-		TVec		org1;
-		TVec		org2;
 		TVec		dir;
 	    float		thrust;
 
 		thrust = itof(damage) / target->mass * 656.25;
-
-		CopyMobjCenter(target, org1);
-		CopyMobjCenter(inflictor, org2);
-		vsub(org1, org2, dir);
-		vnorm(dir);
-		vma(target->velocity, dir, thrust, target->velocity);
+		dir = Normalize(MobjCenter(target) - MobjCenter(inflictor));
+		target->velocity += dir * thrust;
 	}
 
 	//
@@ -2325,9 +2319,12 @@ void P_NoiseAlert(mobj_t* target, mobj_t* emmiter)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/31 17:17:23  dj_jl
+//	Removed vector macros
+//
 //	Revision 1.5  2001/08/30 17:33:17  dj_jl
 //	Added sound channels
-//
+//	
 //	Revision 1.4  2001/08/29 17:42:13  dj_jl
 //	Added sound channel
 //	

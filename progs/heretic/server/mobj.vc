@@ -859,8 +859,6 @@ void DamageMobj(mobj_t *target,mobj_t *inflictor,mobj_t *source,int damage)
 		source->player->readyweapon != wp_gauntlets)
 		&& !(inflictor->flags2 & MF2_NODMGTHRUST))
 	{
-		TVec		org1;
-		TVec		org2;
 		TVec		dir;
 	    float		thrust;
 
@@ -876,15 +874,12 @@ void DamageMobj(mobj_t *target,mobj_t *inflictor,mobj_t *source,int damage)
 			thrust = itof(damage) / target->mass * 656.25;
 		}
 
-		CopyMobjCenter(target, org1);
-		CopyMobjCenter(inflictor, org2);
-		vsub(org1, org2, dir);
+		dir = MobjCenter(target) - MobjCenter(inflictor);
 		if (target->flags & MF_NOGRAVITY)
 		{
 			dir.z = 0.0;
 		}
-		vnorm(dir);
-		vma(target->velocity, dir, thrust, target->velocity);
+		target->velocity += Normalize(dir) * thrust;
 	}
 
 	//
@@ -1406,9 +1401,12 @@ void P_NoiseAlert(mobj_t* target, mobj_t* emmiter)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/31 17:17:23  dj_jl
+//	Removed vector macros
+//
 //	Revision 1.4  2001/08/29 17:42:13  dj_jl
 //	Added sound channel
-//
+//	
 //	Revision 1.3  2001/07/31 16:59:30  dj_jl
 //	Set model when spawning object
 //

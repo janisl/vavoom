@@ -21,11 +21,17 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:51  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
+
+#define MobjCenter(mobj)\
+	(mobj->origin + vector(0.0, 0.0, mobj->height * 0.5 - mobj->floorclip))
+
+#define avcpy(src, dst)\
+{\
+	dst.pitch = src.pitch;\
+	dst.yaw = src.yaw;\
+	dst.roll = src.roll;\
+}
 
 void P_RemoveMobj(mobj_t* mobj);
 
@@ -256,14 +262,7 @@ int MapBlock(float val)
 
 float MobjDist(mobj_t *mo1, mobj_t *mo2)
 {
-	TVec		o1;
-	TVec		o2;
-	TVec		dir;
-
-	CopyMobjCenter(mo1, o1);
-	CopyMobjCenter(mo2, o2);
-	vsub(o2, o1, dir);
-	return vlen(dir);
+	return Length(MobjCenter(mo2) - MobjCenter(mo1));
 }
 
 //==========================================================================
@@ -276,9 +275,9 @@ float MobjDist2(mobj_t *mo1, mobj_t *mo2)
 {
 	TVec		dir;
 
-	vsub(mo2->origin, mo1->origin, dir);
+	dir = mo2->origin - mo1->origin;
 	dir.z = 0.0;
-	return vlen(dir);
+	return Length(dir);
 }
 
 //==========================================================================
@@ -306,6 +305,20 @@ float GetPlanePointZ(TPlane *plane,	TVec point)
 int PointOnPlaneSide(TVec point, TPlane* plane)
 {
 	return DotProduct(point, plane->normal) - plane->dist < 0.0;
+}
+
+//==========================================================================
+//
+//	VectorRotateAroundZ
+//
+//==========================================================================
+
+void VectorRotateAroundZ(TVec *vec, angle_t angle)
+{
+	float dstx = vec->x * cos(angle) - vec->y * sin(angle);
+	float dsty = vec->x * sin(angle) + vec->y * cos(angle);
+	vec->x = dstx;
+	vec->y = dsty;
 }
 
 //**************************************************************************
@@ -557,3 +570,13 @@ __mobjinfo__
 	MT_STATIC_RGB_LIGHT { 1503, misc_static_rgb_light }
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/31 17:17:23  dj_jl
+//	Removed vector macros
+//
+//	Revision 1.2  2001/07/27 14:27:51  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************
