@@ -388,13 +388,14 @@ void TVisBuilder::LoadSubsectors(int lump)
 		while (count--)
 		{
 			line->leaf = i;
-			if (line->secnum >= 0)
+			if (ss->secnum == -1 && line->secnum >= 0)
 			{
-				if (ss->secnum != -1 && ss->secnum != line->secnum)
-				{
-					throw GLVisError("Segs from different sectors");
-				}
 				ss->secnum = line->secnum;
+			}
+			else if (ss->secnum != -1 && line->secnum >= 0 &&
+				ss->secnum != line->secnum)
+			{
+				Owner.DisplayMessage("Segs from different sectors\n");
 			}
 			line++;
 		}
@@ -645,7 +646,10 @@ void TVisBuilder::BuildWAD(void)
 
 			LoadLevel(i, gl_lump);
 			BuildPVS();
-			BuildReject();
+			if (!Owner.no_reject)
+			{
+				BuildReject();
+			}
 
 			//	Write lumps. Assume GL-nodes immediately follows map data
 			for (int mi = i; mi < gl_lump + 5; mi++)
@@ -791,9 +795,12 @@ void TGLVis::Build(const char *srcfile)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/10/27 07:53:03  dj_jl
+//	Fixes for non-closed sectors
+//
 //	Revision 1.6  2001/10/18 17:41:47  dj_jl
 //	Added reject building
-//
+//	
 //	Revision 1.5  2001/09/20 16:38:05  dj_jl
 //	Moved TGLVis out of namespace
 //	
