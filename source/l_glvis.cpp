@@ -29,8 +29,6 @@
 #include "cl_local.h"
 #include "../utils/glvis/glvis.h"
 
-using namespace VavoomUtils;
-
 // MACROS ------------------------------------------------------------------
 
 #define MESSAGE1	"VAVOOM IS NOW BUILDING THE VIS DATA..."
@@ -118,7 +116,7 @@ void TGLVisGUI::DisplayStartMap(const char *name)
 	T_DrawText(160, 16, MESSAGE1);
 	T_DrawText(160, 32, MESSAGE2);
 	T_SetAlign(hleft, vtop);
-	T_DrawText(BARTEXTX, BARTEXTY, name);
+	T_DrawText(BARTEXTX, BARTEXTY, va("Creating vis data for %s", name));
 
 	Drawer->FillRect(barx - barborderw, bary1 - barborderh,
 		barx + barw + barborderw, bary2 + barborderh, 0xffff0000);
@@ -242,9 +240,12 @@ COMMAND(glVIS)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2001/09/20 16:23:40  dj_jl
+//	Beautification
+//
 //	Revision 1.2  2001/09/14 16:52:14  dj_jl
 //	Added dynamic build of GWA file
-//
+//	
 //	Revision 1.1  2001/09/12 17:37:47  dj_jl
 //	Added glBSP and glVIS plugins
 //	

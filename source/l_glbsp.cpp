@@ -54,6 +54,9 @@ struct gb_bar_t
 	float y2;
 
 	int limit;
+	float position;
+
+	char text[64];
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -75,9 +78,64 @@ static gb_bar_t bars[2];
 static float barborderw;
 static float barborderh;
 
+static displaytype_e CurrentDisplay;
 static double lastprog;
 
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	GLBSP_Draw
+//
+//==========================================================================
+
+static void GLBSP_Draw(void)
+{
+	Drawer->StartUpdate();
+
+	Drawer->FillRect(0, 0, ScreenWidth, ScreenHeight, 0xff000000);
+
+	T_SetFont(font_small);
+	T_SetAlign(hcenter, vcenter);
+	T_DrawText(160, 16, MESSAGE1);
+	T_DrawText(160, 32, MESSAGE2);
+	T_SetAlign(hleft, vtop);
+
+	int i;
+
+	int num_bars;
+
+	switch (CurrentDisplay)
+	{
+	case DIS_BUILDPROGRESS:
+		num_bars = 2;
+		break;
+
+	case DIS_FILEPROGRESS:
+		num_bars = 1;
+		break;
+
+	default:
+		return;
+	}
+
+	for (i = 0; i < num_bars; i++)
+	{
+		gb_bar_t &b = bars[i];
+		Drawer->FillRect(b.x - barborderw, b.y1 - barborderh,
+			b.x + b.w + barborderw, b.y2 + barborderh, 0xffff0000);
+		Drawer->FillRect(b.x, b.y1, b.x + b.w, b.y2, 0xff000000);
+		Drawer->FillRect(b.x, b.y1, b.x + b.w * b.position, b.y2, 0xff00ff00);
+	}
+
+	T_DrawText(BARTEXTX, BARTEXT1Y, bars[0].text);
+	if (num_bars > 1)
+	{
+		T_DrawText(BARTEXTX, BARTEXT2Y, bars[1].text);
+	}
+
+	Drawer->Update();
+}
 
 //==========================================================================
 //
@@ -133,44 +191,8 @@ static void GLBSP_Ticker(void)
 
 static boolean_g GLBSP_DisplayOpen(displaytype_e type)
 {
-	Drawer->StartUpdate();
-
-	Drawer->FillRect(0, 0, ScreenWidth, ScreenHeight, 0xff000000);
-
-	T_SetFont(font_small);
-	T_SetAlign(hcenter, vcenter);
-	T_DrawText(160, 16, MESSAGE1);
-	T_DrawText(160, 32, MESSAGE2);
-	T_SetAlign(hleft, vtop);
-
-	int i;
-
-	int num_bars;
-
-	switch (type)
-	{
-	case DIS_BUILDPROGRESS:
-		num_bars = 2;
-		break;
-
-	case DIS_FILEPROGRESS:
-		num_bars = 1;
-		break;
-
-	default:
-		return false;
-	}
-
-	for (i = 0; i < num_bars; i++)
-	{
-		gb_bar_t &b = bars[i];
-		Drawer->FillRect(b.x - barborderw, b.y1 - barborderh,
-			b.x + b.w + barborderw, b.y2 + barborderh, 0xffff0000);
-		Drawer->FillRect(b.x, b.y1, b.x + b.w, b.y2, 0xff000000);
-	}
-
-	Drawer->Update();
-
+	CurrentDisplay = type;
+	GLBSP_Draw();
 	return true;
 }
 
@@ -194,19 +216,9 @@ static void GLBSP_DisplaySetTitle(const char *)
 static void GLBSP_DisplaySetBarText(int barnum, const char *str)
 {
 	gb_bar_t &b = bars[barnum - 1];
-	Drawer->BeginDirectUpdate();
-
-	if (barnum == 1)
-	{
-		T_DrawText(BARTEXTX, BARTEXT1Y, str);
-	}
-	else
-	{
-		T_DrawText(BARTEXTX, BARTEXT2Y, str);
-	}
-
-	Drawer->FillRect(b.x, b.y1, b.x + b.w, b.y2, 0xff000000);
-	Drawer->EndDirectUpdate();
+	strcpy(b.text, str);
+	b.position = 0;
+	GLBSP_Draw();
 }
 
 //==========================================================================
@@ -229,13 +241,14 @@ static void GLBSP_DisplaySetBarLimit(int barnum, int limit)
 static void GLBSP_DisplaySetBar(int barnum, int count)
 {
 	gb_bar_t &b = bars[barnum - 1];
+	b.position = float(count) / float(b.limit);
 	if (barnum == 1 && count > 0 && count < b.limit &&
 		Sys_Time() - lastprog < 0.2)
 	{
 		return;
 	}
 	Drawer->BeginDirectUpdate();
-	Drawer->FillRect(b.x, b.y1, b.x + b.w * float(count) / b.limit, b.y2, 0xff00ff00);
+	Drawer->FillRect(b.x, b.y1, b.x + b.w * b.position, b.y2, 0xff00ff00);
 	Drawer->EndDirectUpdate();
 	if (barnum == 1)
 	{
@@ -330,9 +343,12 @@ COMMAND(glBSP)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2001/09/20 16:23:40  dj_jl
+//	Beautification
+//
 //	Revision 1.2  2001/09/14 16:52:14  dj_jl
 //	Added dynamic build of GWA file
-//
+//	
 //	Revision 1.1  2001/09/12 17:37:47  dj_jl
 //	Added glBSP and glVIS plugins
 //	
