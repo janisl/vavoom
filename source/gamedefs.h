@@ -54,8 +54,8 @@
 
 // if rangecheck is undefined, most parameter validation debugging code
 // will not be compiled
-//#define PARANOID
-//#define DEVELOPER
+#define PARANOID
+#define DEVELOPER
 
 #define VERSION_MAJOR	1
 #define VERSION_MINOR	10
@@ -83,6 +83,7 @@
 #include "files.h"
 #include "wad.h"		//	WAD file I/O routines
 #include "scripts.h"	//	Script parsing
+#include "vobject.h"
 #include "progs.h"		//	Progs
 #include "input.h"		//	Input from keyboard, mouse and joystick
 #include "network.h"
@@ -114,9 +115,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/12/01 17:39:26  dj_jl
+//	Back to work
+//
 //	Revision 1.10  2001/11/09 14:36:57  dj_jl
 //	Switched to release
-//
+//	
 //	Revision 1.9  2001/10/08 17:34:57  dj_jl
 //	A lots of small changes and cleanups
 //	
