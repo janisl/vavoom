@@ -181,8 +181,7 @@ PickupPower                     dsgetpow
 //
 //==========================================================================
 
-Chat                            dsradio
-Chat2                           dstink
+Chat                            dstink
 ShotgunCocking                  dssgcock
 
 MenuActivate                    dsswtchn

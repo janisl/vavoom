@@ -1,3 +1,13 @@
+../../progs/doom2/clprogs.dat
+../../progs/doom2/svprogs.dat
+
+animdefs.txt
+sfxinfo.txt
+sndinfo.txt
+sndseq.txt
+switches.txt
+terrains.txt
+
 $load palette.pcx
 
 RGBTABLE rgbtable
@@ -11,3 +21,5 @@ TRANSP50 tinttab 50
 CONSMAP scalemap 0 0 1
 
 TRANSLAT raw 0 0 256 8
+
+$wad jldoom.wad

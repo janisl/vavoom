@@ -1,5 +1,3 @@
-$srcdir tnt
-
 mapinfo.txt
 fin1text.txt
 fin2text.txt

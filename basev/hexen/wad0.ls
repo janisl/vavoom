@@ -1,3 +1,12 @@
+../../progs/hexen/clprogs.dat
+../../progs/hexen/svprogs.dat
+
+switches.txt
+terrains.txt
+sfxinfo.txt
+
+$wad hexendat.wad
+
 $load palette.pcx
 
 RGBTABLE rgbtable
@@ -10,4 +19,4 @@ TRANSP50 tinttab 50
 
 CONSMAP scalemap 0 0 1
 
-TRANSLAT raw 0 0 256 11
+TRANSLAT raw 0 0 256 22

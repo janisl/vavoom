@@ -1,5 +1,3 @@
-$srcdir doom2
-
 mapinfo.txt
 fin1text.txt
 fin2text.txt
