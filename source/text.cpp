@@ -40,9 +40,9 @@ struct font_t
 	int			Pics[96];
 	picinfo_t	PicInfo[96];
 
-    //Empty character width and empty strinh height
+	//Empty character width and empty strinh height
 	int			SpaceWidth;
-    int			SpaceHeight;
+	int			SpaceHeight;
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -51,8 +51,8 @@ struct font_t
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static void T_LoadFont(font_e FontNr, char* Name, int SpaceW, int SpaceH);
-static void T_LoadFont2(font_e FontNr, char* Name, int SpaceW, int SpaceH);
+static void T_LoadFont(font_e FontNr, const char* Name, int SpaceW, int SpaceH);
+static void T_LoadFont2(font_e FontNr, const char* Name, int SpaceW, int SpaceH);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -94,18 +94,18 @@ static int				LastY;
 
 void T_Init(void)
 {
-    // Load fonts
+	// Load fonts
 	if (W_CheckNumForName("STCFN033") >= 0)
 	{
-	    T_LoadFont2(font_small, "STCFN", 4, 7);
-	    T_LoadFont2(font_yellow, "STBFN", 4, 7);
+		T_LoadFont2(font_small, "STCFN", 4, 7);
+		T_LoadFont2(font_yellow, "STBFN", 4, 7);
 	}
 	else
 	{
-	    T_LoadFont(font_small, "FONTA", 4, 7);
-	    T_LoadFont(font_yellow, "FONTAY", 4, 7);
+		T_LoadFont(font_small, "FONTA", 4, 7);
+		T_LoadFont(font_yellow, "FONTAY", 4, 7);
 	}
-    T_LoadFont(font_big, "FONTB", 8, 10);
+	T_LoadFont(font_big, "FONTB", 8, 10);
 
 	// Set default values
 	T_SetFont(font_small);
@@ -119,17 +119,17 @@ void T_Init(void)
 //
 //==========================================================================
 
-static void T_LoadFont(font_e FontNr, char* Name, int SpaceW, int SpaceH)
+static void T_LoadFont(font_e FontNr, const char* Name, int SpaceW, int SpaceH)
 {
 	int		i;
-    char   	buffer[10];
+	char   	buffer[10];
 
 	Fonts[FontNr] = (font_t*)Z_Malloc(sizeof(font_t), PU_STATIC, 0);
 	memset(Fonts[FontNr], 0, sizeof(font_t));
-    Fonts[FontNr]->SpaceWidth = SpaceW;
-    Fonts[FontNr]->SpaceHeight = SpaceH;
-    for (i = 0; i < 96; i++)
-    {
+	Fonts[FontNr]->SpaceWidth = SpaceW;
+	Fonts[FontNr]->SpaceHeight = SpaceH;
+	for (i = 0; i < 96; i++)
+	{
 		sprintf(buffer, "%s%02d", Name, i);
 		if (W_CheckNumForName(buffer) >= 0)
 		{
@@ -148,7 +148,7 @@ static void T_LoadFont(font_e FontNr, char* Name, int SpaceW, int SpaceH)
 				Fonts[FontNr]->PicInfo[i + 'a' - 'A'] = Fonts[FontNr]->PicInfo[i];
 			}
 		}
-    }
+	}
 	Z_FreeTag(PU_CACHE);
 }
 
@@ -158,17 +158,17 @@ static void T_LoadFont(font_e FontNr, char* Name, int SpaceW, int SpaceH)
 //
 //==========================================================================
 
-static void T_LoadFont2(font_e FontNr, char* Name, int SpaceW, int SpaceH)
+static void T_LoadFont2(font_e FontNr, const char* Name, int SpaceW, int SpaceH)
 {
 	int		i;
-    char   	buffer[10];
+	char   	buffer[10];
 
 	Fonts[FontNr] = (font_t*)Z_Malloc(sizeof(font_t), PU_STATIC, 0);
 	memset(Fonts[FontNr], 0, sizeof(font_t));
-    Fonts[FontNr]->SpaceWidth = SpaceW;
-    Fonts[FontNr]->SpaceHeight = SpaceH;
-    for (i = 0; i < 64; i++)
-    {
+	Fonts[FontNr]->SpaceWidth = SpaceW;
+	Fonts[FontNr]->SpaceHeight = SpaceH;
+	for (i = 0; i < 64; i++)
+	{
 		sprintf(buffer, "%s%03d", Name, i + 32);
 		if (W_CheckNumForName(buffer) >= 0)
 		{
@@ -187,7 +187,7 @@ static void T_LoadFont2(font_e FontNr, char* Name, int SpaceW, int SpaceH)
 				Fonts[FontNr]->PicInfo[i + 'a' - 'A'] = Fonts[FontNr]->PicInfo[i];
 			}
 		}
-    }
+	}
 	Z_FreeTag(PU_CACHE);
 }
 
@@ -223,7 +223,7 @@ void T_SetDist(int HDist, int VDist)
 void T_SetAlign(halign_e NewHAlign, valign_e NewVAlign)
 {
 	HAlign = NewHAlign;
-    VAlign = NewVAlign;
+	VAlign = NewVAlign;
 }
 
 //==========================================================================
@@ -243,24 +243,24 @@ void T_SetShadow(bool state)
 //
 //==========================================================================
 
-int T_StringWidth(char* String)
+int T_StringWidth(const char* String)
 {
-    int             i;
-    int             w = 0;
-    int             c;
+	int				i;
+	int				w = 0;
+	int				c;
 	
-    for (i = 0; i < (int)strlen(String);i++)
-    {
+	for (i = 0; i < (int)strlen(String);i++)
+	{
 		c = String[i] - 32;
 
 		if (c < 0 || c >= 96 || !Font->Pics[c])
-	    	w += Font->SpaceWidth + HDistance;
+			w += Font->SpaceWidth + HDistance;
 		else
-	    	w += Font->PicInfo[c].width + HDistance;
-    }
+			w += Font->PicInfo[c].width + HDistance;
+	}
 	if (w) w -= HDistance;
 		
-    return w;
+	return w;
 }
 
 //==========================================================================
@@ -269,22 +269,22 @@ int T_StringWidth(char* String)
 //
 //==========================================================================
 
-int T_StringHeight(char* String)
+int T_StringHeight(const char* String)
 {
-    int		i;
-    int		c;
-    int		h = Font->SpaceHeight;
+	int		i;
+	int		c;
+	int		h = Font->SpaceHeight;
 
-    for (i = 0;i < (int)strlen(String);i++)
-    {
+	for (i = 0;i < (int)strlen(String);i++)
+	{
 		c = String[i] - 32;
 
 		if (c >= 0 && c < 96 && Font->Pics[c]
-            && (h < Font->PicInfo[c].height))
-          		h = Font->PicInfo[c].height;
-    }
+			&& (h < Font->PicInfo[c].height))
+		  		h = Font->PicInfo[c].height;
+	}
 		
-    return h;
+	return h;
 }
 
 //==========================================================================
@@ -293,22 +293,22 @@ int T_StringHeight(char* String)
 //
 //==========================================================================
 
-int T_TextWidth(char* String)
+int T_TextWidth(const char* String)
 {
-	char		cs[40];
-    int			i;
+	char		cs[256];
+	int			i;
 	int			w1;
-    int         w = 0;
-    int         start = 0;
+	int			w = 0;
+	int			start = 0;
 
 	for (i = 0; i <= (int)strlen(String); i++)
 		if ((String[i] == '\n') || !String[i])
 		{
-		    memset(cs,0,40);
-		    strncpy(cs, String + start, i - start);
+			memset(cs, 0, sizeof(cs));
+			strncpy(cs, String + start, i - start);
 			w1 = T_StringWidth(cs);
 			if (w1 > w) w = w1;
-		    start = i;
+			start = i;
 		}
 	return w;
 }
@@ -319,20 +319,20 @@ int T_TextWidth(char* String)
 //
 //==========================================================================
 
-int T_TextHeight(char* String)
+int T_TextHeight(const char* String)
 {
-	char		cs[40];
-    int			i;
-    int         h = 0;
-    int         start = 0;
+	char		cs[256];
+	int			i;
+	int			h = 0;
+	int			start = 0;
 
 	for (i=0; i <= (int)strlen(String); i++)
 		if ((String[i] == '\n') || !String[i])
 		{
-		    memset(cs,0,40);
-		    strncpy(cs, String + start, i - start);
+			memset(cs, 0, sizeof(cs));
+			strncpy(cs, String + start, i - start);
 			h += T_StringHeight(cs) + VDistance;
-		    start = i;
+			start = i;
 		}
 	h -= VDistance;
 	return h;
@@ -346,60 +346,60 @@ int T_TextHeight(char* String)
 //
 //==========================================================================
 
-void T_DrawNString(int x,int y,char* String,int lenght)
+void T_DrawNString(int x, int y, const char* String, int lenght)
 {
-    int		w;
-    int		c;
-    int		cx;
-    int		cy;
-    int		i;
+	int		w;
+	int		c;
+	int		cx;
+	int		cy;
+	int		i;
 		
 	if (!String)
 		return;
 		
-    cx = x;
-    cy = y;
+	cx = x;
+	cy = y;
 
 	if (HAlign == hcenter)
-    	cx -= T_StringWidth(String) / 2;
+		cx -= T_StringWidth(String) / 2;
 	if (HAlign == hright)
 		cx -= T_StringWidth(String);
 
-    if (lenght > (int)strlen(String))
+	if (lenght > (int)strlen(String))
 		lenght = (int)strlen(String);
 	
 	if ((cx < 0) || (cy < 0) || (cx >= 320) || (cy >= 200))
 	{
-       	cond << "T_DrawNString: Draw text \"" << String << "\" at ("
-       		<< cx << "," << cy << ")\n";
-      	return;
+	   	cond << "T_DrawNString: Draw text \"" << String << "\" at ("
+	   		<< cx << "," << cy << ")\n";
+	  	return;
 	}
 
-    for (i=0; i<lenght; i++)
-    {
+	for (i=0; i<lenght; i++)
+	{
 		c = String[i] - 32;
 
 		if (c < 0)
 		{
-	    	continue;
+			continue;
 		}
 		if (c >= 96 || !Font->Pics[c])
 		{
-	    	cx += Font->SpaceWidth + HDistance;
-	    	continue;
+			cx += Font->SpaceWidth + HDistance;
+			continue;
 		}
 		
 		w = Font->PicInfo[c].width;
 		if (cx + w > ScreenWidth)
-	    	break;
+			break;
 		if (t_shadowed)
 			R_DrawShadowedPic(cx, cy, Font->Pics[c]);
 		else
 			R_DrawPic(cx, cy, Font->Pics[c]);
 		cx += w + HDistance;
-    }
+	}
 	LastX = cx;
-    LastY = cy;
+	LastY = cy;
 }
 
 //==========================================================================
@@ -408,9 +408,9 @@ void T_DrawNString(int x,int y,char* String,int lenght)
 //
 //==========================================================================
 
-void T_DrawString(int x,int y,char* String)
+void T_DrawString(int x, int y, const char* String)
 {
-    T_DrawNString(x, y, String, strlen(String));
+	T_DrawNString(x, y, String, strlen(String));
 }
 
 //==========================================================================
@@ -419,34 +419,34 @@ void T_DrawString(int x,int y,char* String)
 //
 //==========================================================================
 
-void T_DrawNText(int x,int y,char* String,int lenght)
+void T_DrawNText(int x, int y, const char* String, int lenght)
 {
 	int			start = 0;
-    int			cx;
-    int			cy;
-    char		cs[80];
-    int			i;
+	int			cx;
+	int			cy;
+	char		cs[80];
+	int			i;
 
-    cx = x;
-    cy = y;
+	cx = x;
+	cy = y;
 
 	if (VAlign == vcenter)
 		cy -= T_TextHeight(String) / 2;
 	if (VAlign == vbottom)
 		cy -= T_TextHeight(String);
 
-    if (lenght > (int)strlen(String))
+	if (lenght > (int)strlen(String))
 		lenght = (int)strlen(String);
 
 	for (i=0; i<lenght; i++)
 	{
 		if (String[i] == '\n')
 		{
-		    memset(cs, 0, sizeof(cs));
-		    strncpy(cs, String + start, i - start);
+			memset(cs, 0, sizeof(cs));
+			strncpy(cs, String + start, i - start);
 			T_DrawNString(cx, cy, cs, lenght - start);
-    		cy += T_StringHeight(cs) + VDistance;
-		    start = i + 1;
+			cy += T_StringHeight(cs) + VDistance;
+			start = i + 1;
 		}
 		if (i == lenght - 1)
 		{
@@ -455,7 +455,7 @@ void T_DrawNText(int x,int y,char* String,int lenght)
 	}
 	//	Need this for correct cursor position with empty strings.
 	LastX = cx;
-    LastY = cy;
+	LastY = cy;
 }
 
 //==========================================================================
@@ -464,7 +464,7 @@ void T_DrawNText(int x,int y,char* String,int lenght)
 //
 //==========================================================================
 
-void T_DrawText(int x,int y,char* String)
+void T_DrawText(int x, int y, const char* String)
 {
 	T_DrawNText(x, y, String, strlen(String));
 }
@@ -475,7 +475,7 @@ void T_DrawText(int x,int y,char* String)
 //
 //==========================================================================
 
-void T_DrawCursor()
+void T_DrawCursor(void)
 {
  	T_DrawCursorAt(LastX, LastY);
 }
@@ -500,23 +500,23 @@ void T_DrawCursorAt(int x, int y)
 //
 //==========================================================================
 
-void T_DrawString8(int x, int y, char* String)
+void T_DrawString8(int x, int y, const char* String)
 {
-    int		w;
-    int		c;
-    int		cx;
-    int		cy;
-    int		i;
-    int		lenght;
+	int		w;
+	int		c;
+	int		cx;
+	int		cy;
+	int		i;
+	int		lenght;
 
 	if (!String)
 		return;
 		
-    cx = x;
-    cy = y;
+	cx = x;
+	cy = y;
 
 	if (HAlign == hcenter)
-    	cx -= T_StringWidth(String) / 2;
+		cx -= T_StringWidth(String) / 2;
 	if (HAlign == hright)
 		cx -= T_StringWidth(String);
 
@@ -524,23 +524,23 @@ void T_DrawString8(int x, int y, char* String)
 	
 	if ((cx >= 320) || (cy >= 200))
 	{
-       	cond << "T_DrawString8: Draw text \"" << String << "\" at ("
-       		<< cx << "," << cy << ")\n";
-      	return;
+	   	cond << "T_DrawString8: Draw text \"" << String << "\" at ("
+	   		<< cx << "," << cy << ")\n";
+	  	return;
 	}
 
-    for (i = 0; i < lenght && cx < 320; i++)
-    {
+	for (i = 0; i < lenght && cx < 320; i++)
+	{
 		c = String[i] - 32;
 
 		if (c < 0)
 		{
-	    	continue;
+			continue;
 		}
 		if (c >= 96 || !Font->Pics[c])
 		{
-	    	cx += 8;
-	    	continue;
+			cx += 8;
+			continue;
 		}
 		
 		w = Font->PicInfo[c].width;
@@ -549,17 +549,20 @@ void T_DrawString8(int x, int y, char* String)
 		else
 			R_DrawPic(cx + (8 - w) / 2, cy, Font->Pics[c]);
 		cx += 8;
-    }
+	}
 	LastX = cx;
-    LastY = cy;
+	LastY = cy;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/09/12 17:34:09  dj_jl
+//	Added consts
+//
 //	Revision 1.4  2001/08/30 17:44:07  dj_jl
 //	Removed memory leaks after startup
-//
+//	
 //	Revision 1.3  2001/07/31 17:12:43  dj_jl
 //	Fixed cursor for empty strings
 //	

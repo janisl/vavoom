@@ -32,61 +32,58 @@
 //
 // Fonts
 //
-typedef enum
+enum font_e
 {
- 	font_small,
+	font_small,
 	font_yellow,
-    font_big,
+	font_big,
 
-    NUMFONTTYPES
-
-} font_e;
+	NUMFONTTYPES
+};
 
 //
 // Horisontal alignement
 //
-typedef enum
+enum halign_e
 {
- 	hleft,		//Left
-    hcenter,	//Centred
-    hright		//Right
-
-} halign_e;
+	hleft,		//Left
+	hcenter,	//Centred
+	hright		//Right
+};
 
 //
 // Vertical alignement
 //
-typedef enum
+enum valign_e
 {
- 	vtop,		//Top
-    vcenter,	//Center
-    vbottom		//Bottom
-
-} valign_e;
+	vtop,		//Top
+	vcenter,	//Center
+	vbottom		//Bottom
+};
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void T_Init();
+void T_Init(void);
 
 void T_SetFont(font_e);
 void T_SetDist(int, int);
 void T_SetAlign(halign_e, valign_e);
 void T_SetShadow(bool);
 
-int T_StringWidth(char*);
-int T_StringHeight(char*);
+int T_StringWidth(const char*);
+int T_StringHeight(const char*);
 
-int T_TextWidth(char*);
-int T_TextHeight(char*);
+int T_TextWidth(const char*);
+int T_TextHeight(const char*);
 
-void T_DrawString(int, int, char*);
-void T_DrawString8(int, int, char*);
-void T_DrawText(int, int, char*);
+void T_DrawString(int, int, const char*);
+void T_DrawString8(int, int, const char*);
+void T_DrawText(int, int, const char*);
 
-void T_DrawNString(int, int, char*, int);
-void T_DrawNText(int, int, char*, int);
+void T_DrawNString(int, int, const char*, int);
+void T_DrawNText(int, int, const char*, int);
 
-void T_DrawCursor();
+void T_DrawCursor(void);
 void T_DrawCursorAt(int, int);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
@@ -94,9 +91,12 @@ void T_DrawCursorAt(int, int);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/09/12 17:34:09  dj_jl
+//	Added consts
+//
 //	Revision 1.4  2001/08/15 17:20:06  dj_jl
 //	Moved prototype of T_DrawString8 from console.cpp
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	
