@@ -336,187 +336,72 @@ class Actor:Entity
 	boolean TryWalk(void);
 	void NewChaseDir(void);
 
-#ifdef TEASER
 	// Action functions
-	void A_24(void);
+	void A_Unknown24(void);
+	void A_Unknown25(void);
 	void A_DecReactionCount(void);
 	void A_Unknown27(void);
 	void A_FireGrenadeExplode(void);
-	void A_Explode2(void);
-	void A_29(void);
+#ifdef TEASER
 	void A_GasGrenadeExplode(void);
-	void A_Unknown24(void);
-	void A_Unknown31(void);
-	void A_33(void);
-	void A_SpawnPuff(void);
-	void A_35(void);
-	void A_ActiveSound(void);
-	void A_37(void);
-	void A_Explode(void);
-	void A_Pain(void);
-	void A_PlayerScream(void);
-	void A_Fall(void);
-	void A_XDying(void);
-	void A_XScream(void);
-	void A_Stand(void);
-	void A_Scream(void);
-	void A_Burn(void);
-	void A_Walk(void);
-	void A_Dying(void);
-	void A_FaceTarget(void);
-	void A_PeasantAttack(void);
-	void A_ResetHealth(void);
-	void A_AcolyteArmorPain(void);
-	void A_55(void);
-	void A_Unknown55(void);
-	void A_Unknown56(void);
-	void A_Look(void);
-	void A_Chase(void);
-	void A_CheckRefire(void);
-	void A_RiffleAttack(void);
-	void A_MacilDeath(void);
-	void A_RobotMelee(void);
-	void A_RobotMissile(void);
-	void A_Unknown64(void);
-	void A_AcolyteChase(void);
-	void A_CrusaderAttack1(void);
-	void A_CrusaderAttack2(void);
-	void A_CrusaderAttack3(void);
-	void A_CrusaderAttack4(void);
-	void A_Unknown72(void);
-	void A_BishopAttack(void);
-	void A_BishopDeath(void);
-	void A_TemplarAttack(void);
-	void A_OracleDeath(void);
-	void A_FlightChase(void);
-	void A_SpecterMelee(void);
-	void A_LoremasterAttack(void);
-	void A_LoremasterDeath(void);
-	void A_SpecterAttack(void);
-	void A_SpecterDying(void);
-	void A_Specter2Attack(void);
-	void A_Specter3Attack(void);
-	void A_Specter4Attack(void);
-	void A_Specter5Attack(void);
-	void A_EntityAttack(void);
-	void A_EntityDeath(void);
-	void A_EntityBossRaise(void);
-	void A_89(void);
-	void A_90(void);
-	void A_91(void);
-	void A_SentinelAttack(void);
-	void A_StalkerInit(void);
-	void A_StalkerChase2(void);
-	void A_StalkerChase(void);
-	void A_StalkerAttack(void);
-	void A_StalkerLand(void);
-	void A_InquisitorChase(void);
-	void A_InquisitorChase2(void);
-	void A_InquisitorAttack2(void);
-	void A_InquisitorInitJump(void);
-	void A_InquisitorJump(void);
-	void A_ProgrammerMelee(void);
-	void A_ProgrammerDeath(void);
-	void A_FlameFXExplode(void);
-	void A_CheckAlarm(void);
-	void A_AlarmActive(void);
-	void A_Unknown110(void);
-	void A_Unknown112(void);
-	void A_Unknown114(void);
-	void A_Unknown113(void);
-	void A_SummonRebel(void);
-#else
-	void A_Unknown24(void);
-	void A_25(void);
-	void A_DecReactionCount(void);
-	void A_Unknown27(void);
-	void A_FireGrenadeExplode(void);
-	void A_Explode2(void);
-	void A_30(void);
-	void A_Unknown31(void);
-	void A_32(void);
-	void A_RocketTrail(void);
-	void A_34(void);
-	void A_ActiveSound(void);
-	void A_36(void);
-	void A_Explode(void);
-	void A_Pain(void);
-	void A_PlayerScream(void);
-	void A_Fall(void);
-	void A_XDying(void);
-	void A_XScream(void);
-	void A_Stand(void);
-	void A_Scream(void);
-	void A_Burn(void);
-	void A_Walk(void);
-	void A_Dying(void);
-	void A_FaceTarget(void);
-	void A_PeasantAttack(void);
-	void A_ResetHealth(void);
-	void A_AcolyteArmorPain(void);
-	void A_54(void);
-	void A_Unknown55(void);
-	void A_Unknown56(void);
-	void A_Look(void);
-	void A_Chase(void);
-	void A_CheckRefire(void);
-	void A_RiffleAttack(void);
-	void A_MacilDeath(void);
-	void A_RobotMelee(void);
-	void A_RobotMissile(void);
-	void A_Unknown64(void);
-	void A_AcolyteChase(void);
-	void A_AcolyteDeath(void);
-	void A_TemplarAttack(void);
-	void A_CrusaderAttack1(void);
-	void A_CrusaderAttack2(void);
-	void A_CrusaderAttack3(void);
-	void A_CrusaderAttack4(void);
-	void A_Unknown72(void);
-	void A_BishopAttack(void);
-	void A_BishopDeath(void);
-	void A_OracleDeath(void);
-	void A_FlightChase(void);
-	void A_SpecterMelee(void);
-	void A_LoremasterAttack(void);
-	void A_LoremasterDeath(void);
-	void A_SpecterAttack(void);
-	void A_SpecterDying(void);
-	void A_SpecterDeath(void);
-	void A_Specter2Attack(void);
-	void A_Specter3Attack(void);
-	void A_Specter4Attack(void);
-	void A_Specter5Attack(void);
-	void A_EntityAttack(void);
-	void A_EntityDeath(void);
-	void A_EntityBossRaise(void);
-	void A_90(void);
-	void A_91(void);
-	void A_92(void);
-	void A_SentinelAttack(void);
-	void A_StalkerInit(void);
-	void A_StalkerChase2(void);
-	void A_StalkerChase(void);
-	void A_StalkerAttack(void);
-	void A_StalkerLand(void);
-	void A_InquisitorChase(void);
-	void A_InquisitorChase2(void);
-	void A_InquisitorAttack2(void);
-	void A_InquisitorInitJump(void);
-	void A_InquisitorJump(void);
-	void A_InquisitorDropArms(void);
-	void A_ProgrammerMelee(void);
-	void A_ProgrammerDeath(void);
-	void A_FlameFXExplode(void);
-	void A_CheckAlarm(void);
-	void A_AlarmActive(void);
-	void A_Unknown110(void);
-	void A_SpawnPuff(void);
-	void A_Unknown112(void);
-	void A_Unknown113(void);
-	void A_Unknown114(void);
-	void A_SummonRebel(void);
 #endif
+	void A_Explode2(void);
+	void A_Unknown30(void);
+	void A_Unknown31(void);
+	void A_Unknown32(void);
+#ifndef TEASER
+	void A_RocketTrail(void);
+#endif
+	void A_Unknown34(void);
+	void A_ActiveSound(void);
+	void A_MaulerTorpedoExplode(void);
+	void A_Explode(void);
+	void A_Pain(void);
+	void A_PlayerScream(void);
+	void A_Fall(void);
+	void A_XDying(void);
+	void A_XScream(void);
+	void A_Stand(void);
+	void A_Scream(void);
+	void A_Burn(void);
+	void A_Walk(void);
+	void A_Dying(void);
+	void A_FaceTarget(void);
+	void A_ResetHealth(void);
+	void A_Unknown54(void);
+	void A_Unknown55(void);
+	void A_Unknown56(void);
+	void A_Look(void);
+	void A_Chase(void);
+	void A_CheckRefire(void);
+	void A_RiffleAttack(void);
+	void A_RobotMelee(void);
+	void A_RobotMissile(void);
+	void A_Unknown64(void);
+	void A_Unknown72(void);
+	void A_FlightChase(void);
+	void A_SpecterMelee(void);
+	void A_SpecterAttack(void);
+	void A_SpecterDying(void);
+#ifndef TEASER
+	void A_SpecterDeath(void);
+#endif
+	void A_Specter2Attack(void);
+	void A_Specter3Attack(void);
+	void A_Specter4Attack(void);
+	void A_Specter5Attack(void);
+	void A_Unknown90(void);
+	void A_Unknown91(void);
+	void A_Unknown92(void);
+	void A_FlameFXExplode(void);
+	void A_CheckAlarm(void);
+	void A_AlarmActive(void);
+	void A_Unknown110(void);
+	void A_SpawnPuff(void);
+	void A_Unknown112(void);
+	void A_Unknown113(void);
+	void A_Unknown114(void);
+	void A_SummonRebel(void);
 
 	defaultproperties
 	{
@@ -617,6 +502,15 @@ class Projectile:Actor
 		bNoGravity = true;
 		bDropOff = true;
 		bActivateMCross = true;
+	}
+}
+
+class Effect:Actor
+{
+	defaultproperties
+	{
+		bNoBlockmap = true;
+		bNoGravity = true;
 	}
 }
 
@@ -736,6 +630,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.36  2002/07/13 07:56:42  dj_jl
+//  Huge work on Strife: splitting, merging, implementing stuff, etc.
+//
 //  Revision 1.35  2002/06/29 15:59:26  dj_jl
 //  Split out items, projectiles and decorations.
 //

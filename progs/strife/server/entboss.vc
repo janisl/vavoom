@@ -33,6 +33,13 @@ class EntityBoss:Pawn
 	__mobjinfo__(128)
 {
 
+void A_EntityAttack(void)
+{
+}
+void A_EntityDeath(void)
+{
+}
+
 __states__
 {
 	S_ENTITY_RAISE1('MNAM', 0, 100.0 / 35.0, S_ENTITY_RAISE2) { A_FlightChase(); }
@@ -151,6 +158,10 @@ class EntityBossPod:Decoration
 	__mobjinfo__(198)
 {
 
+void A_EntityBossRaise(void)
+{
+}
+
 __states__
 {
 	S_ENT_POD('PODD', 0, 60.0 / 35.0, S_ENT_POD) { A_Look(); }
@@ -207,6 +218,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/07/13 07:56:42  dj_jl
+//  Huge work on Strife: splitting, merging, implementing stuff, etc.
+//
 //  Revision 1.4  2002/06/29 15:54:35  dj_jl
 //  Floatized PainChance.
 //

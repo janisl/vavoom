@@ -33,6 +33,10 @@ class Templar:Pawn
 	__mobjinfo__(3003)
 {
 
+void A_TemplarAttack(void)
+{
+}
+
 __states__
 {
 	S_TEMPLAR_STAND('PGRD', 0, 5.0 / 35.0, S_TEMPLAR_STAND) { A_Stand(); }
@@ -110,6 +114,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/07/13 07:56:42  dj_jl
+//  Huge work on Strife: splitting, merging, implementing stuff, etc.
+//
 //  Revision 1.4  2002/06/29 15:54:35  dj_jl
 //  Floatized PainChance.
 //

@@ -31,149 +31,69 @@
 
 __states__(Weapon)
 {
-	S_LIGHTDONE('PNCH', 0, 0.0 / 35.0, S_NULL) { A_Light0(); }
+	S_LIGHTDONE('', 0, 0.0 / 35.0, S_NULL) { A_Light0(); }
 	S_WAVE1('WAVE', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_WAVE2) { }
 	S_WAVE2('WAVE', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_WAVE3) { }
 	S_WAVE3('WAVE', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_WAVE4) { }
 	S_WAVE4('WAVE', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_WAVE1) { }
-	S_6('RBPY', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_7) { }
-	S_7('RBPY', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_8) { }
-	S_8('RBPY', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_9) { }
-	S_9('RBPY', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_6) { }
+	S_RBPY_1('RBPY', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_RBPY_2) { }
+	S_RBPY_2('RBPY', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_RBPY_3) { }
+	S_RBPY_3('RBPY', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_RBPY_4) { }
+	S_RBPY_4('RBPY', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_RBPY_1) { }
 	S_TARGETER1('TRGT', 0, -1.0, S_NULL) { }
 	S_TARGETER2('TRGT', 1, -1.0, S_NULL) { }
 	S_TARGETER3('TRGT', 2, -1.0, S_NULL) { }
 }
+
 __states__(Actor)
 {
-	S_131('POW1', 0, 4.0 / 35.0, S_132) { }
-	S_132('POW1', 1, 4.0 / 35.0, S_133) { }
-	S_133('POW1', 2, 4.0 / 35.0, S_134) { }
-	S_134('POW1', 3, 4.0 / 35.0, S_135) { }
-	S_135('POW1', 4, 4.0 / 35.0, S_NULL) { }
-	S_136('POW1', 5, 4.0 / 35.0, S_137) { }
-	S_137('POW1', 6, 4.0 / 35.0, S_138) { }
-	S_138('POW1', 7, 4.0 / 35.0, S_139) { }
-	S_139('POW1', 8, 4.0 / 35.0, S_140) { }
-	S_140('POW1', 9, 4.0 / 35.0, S_NULL) { }
-	S_141('POW2', 0, 4.0 / 35.0, S_142) { }
-	S_142('POW2', 1, 4.0 / 35.0, S_143) { }
-	S_143('POW2', 2, 4.0 / 35.0, S_144) { }
-	S_144('POW2', 3, 4.0 / 35.0, S_NULL) { }
-	S_145('POW3', 0, 3.0 / 35.0, S_146) { }
-	S_146('POW3', 1, 3.0 / 35.0, S_147) { }
-	S_147('POW3', 2, 3.0 / 35.0, S_148) { }
-	S_148('POW3', 3, 3.0 / 35.0, S_149) { }
-	S_149('POW3', 4, 3.0 / 35.0, S_150) { }
-	S_150('POW3', 5, 3.0 / 35.0, S_151) { }
-	S_151('POW3', 6, 3.0 / 35.0, S_152) { }
-	S_152('POW3', 7, 3.0 / 35.0, S_NULL) { }
-	S_153('ZAP1', 1, 3.0 / 35.0, S_155) { A_Unknown24(); }
-	S_ZAP1_0('ZAP1', 0, 3.0 / 35.0, S_155) { A_25(); }
-	S_155('ZAP1', 1, 3.0 / 35.0, S_156) { }
-	S_156('ZAP1', 2, 3.0 / 35.0, S_157) { }
-	S_157('ZAP1', 3, 3.0 / 35.0, S_158) { }
-	S_158('ZAP1', 4, 3.0 / 35.0, S_159) { }
-	S_159('ZAP1', 5, 3.0 / 35.0, S_160) { }
-	S_160('ZAP1', 4, 3.0 / 35.0, S_161) { }
-	S_161('ZAP1', 3, 2.0 / 35.0, S_162) { }
-	S_162('ZAP1', 2, 2.0 / 35.0, S_163) { }
-	S_163('ZAP1', 1, 2.0 / 35.0, S_164) { }
-	S_164('ZAP1', 0, 1.0 / 35.0, S_NULL) { }
-	S_165('SPRY', 0, 3.0 / 35.0, S_166) { }
-	S_166('SPRY', 1, 3.0 / 35.0, S_167) { }
-	S_167('SPRY', 2, 3.0 / 35.0, S_168) { }
-	S_168('SPRY', 3, 3.0 / 35.0, S_169) { }
-	S_169('SPRY', 4, 3.0 / 35.0, S_170) { }
-	S_170('SPRY', 5, 3.0 / 35.0, S_171) { }
-	S_171('SPRY', 6, 2.0 / 35.0, S_NULL) { }
+	S_PUNCH_PUFF_1('POW2', 0, 4.0 / 35.0, S_PUNCH_PUFF_2) { }
+	S_PUNCH_PUFF_2('POW2', 1, 4.0 / 35.0, S_PUNCH_PUFF_3) { }
+	S_PUNCH_PUFF_3('POW2', 2, 4.0 / 35.0, S_PUNCH_PUFF_4) { }
+	S_PUNCH_PUFF_4('POW2', 3, 4.0 / 35.0, S_NULL) { }
+
+#ifndef TEASER
+	S_ZAP1_1('ZAP1', 1, 3.0 / 35.0, S_ZAP1_2) { A_Unknown24(); }
+#endif
+	S_ZAP1_0('ZAP1', 0, 3.0 / 35.0, S_ZAP1_2) { A_Unknown25(); }
+	S_ZAP1_2('ZAP1', 1, 3.0 / 35.0, S_ZAP1_3) { }
+	S_ZAP1_3('ZAP1', 2, 3.0 / 35.0, S_ZAP1_4) { }
+	S_ZAP1_4('ZAP1', 3, 3.0 / 35.0, S_ZAP1_5) { }
+	S_ZAP1_5('ZAP1', 4, 3.0 / 35.0, S_ZAP1_6) { }
+	S_ZAP1_6('ZAP1', 5, 3.0 / 35.0, S_ZAP1_7) { }
+	S_ZAP1_7('ZAP1', 4, 3.0 / 35.0, S_ZAP1_8) { }
+	S_ZAP1_8('ZAP1', 3, 2.0 / 35.0, S_ZAP1_9) { }
+	S_ZAP1_9('ZAP1', 2, 2.0 / 35.0, S_ZAP1_10) { }
+	S_ZAP1_10('ZAP1', 1, 2.0 / 35.0, S_ZAP1_11) { }
+	S_ZAP1_11('ZAP1', 0, 1.0 / 35.0, S_NULL) { }
+
 	S_BLOOD1('BLOD', 2, 8.0 / 35.0, S_BLOOD2) { }
 	S_BLOOD2('BLOD', 1, 8.0 / 35.0, S_BLOOD3) { }
 	S_BLOOD3('BLOD', 0, 8.0 / 35.0, S_NULL) { }
-	S_PUFF1('PUFY', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_PUFF2) { }
-	S_PUFF2('PUFY', 1, 4.0 / 35.0, S_PUFF3) { }
-	S_PUFF3('PUFY', 2, 4.0 / 35.0, S_PUFF4) { }
-	S_PUFF4('PUFY', 3, 4.0 / 35.0, S_NULL) { }
-	S_179('SHT1', 0, 4.0 / 35.0, S_180) { }
-	S_180('SHT1', 1, 4.0 / 35.0, S_179) { }
-	S_181('SHT2', 0, 5.0 / 35.0, S_182) { }
-	S_182('SHT2', 1, 5.0 / 35.0, S_131) { }
-	S_187('UBAM', 0, 3.0 / 35.0, S_188) { A_DecReactionCount(); }
-	S_188('UBAM', 1, 3.0 / 35.0, S_187) { A_DecReactionCount(); }
-	S_189('BNG2', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_190) { A_Unknown27(); }
-	S_190('BNG2', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_191) { }
-	S_191('BNG2', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_192) { }
-	S_192('BNG2', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_193) { }
-	S_193('BNG2', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_194) { }
-	S_194('BNG2', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_195) { }
-	S_195('BNG2', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_196) { }
-	S_196('BNG2', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_197) { }
-	S_197('BNG2', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
-	S_221('BNG3', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_222) { A_Explode2(); }
-	S_222('BNG3', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_223) { A_DecReactionCount(); }
-	S_223('FLBE', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_224) { A_30(); }
-	S_224('FLBE', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_225) { A_DecReactionCount(); }
-	S_225('FLBE', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_226) { A_Explode2(); }
-	S_226('FLBE', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_227) { A_DecReactionCount(); }
-	S_227('FLBE', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_228) { A_Explode2(); }
-	S_228('FLBE', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_229) { A_DecReactionCount(); }
-	S_229('FLBE', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_226) { A_30(); }
-	S_230('FLBE', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_231) { }
-	S_231('FLBE', 8 | FF_FULLBRIGHT, 2.0 / 35.0, S_232) { A_30(); }
-	S_232('FLBE', 9 | FF_FULLBRIGHT, 2.0 / 35.0, S_233) { }
-	S_233('FLBE', 10 | FF_FULLBRIGHT, 2.0 / 35.0, S_NULL) { }
-	S_234('XPRK', 0, 1.0 / 35.0, S_NULL) { A_Unknown31(); }
-	S_235('OCLW', 0, 2.0 / 35.0, S_235) { A_32(); }
-	S_236('CCLW', 0, 6.0 / 35.0, S_NULL) { }
-	S_237('TEND', 0, 20.0 / 35.0, S_NULL) { }
-	S_MINI_MISSILE('MICR', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_MINI_MISSILE) { A_RocketTrail(); }
-	S_239('MISS', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_240) { A_RocketTrail(); }
-	S_240('MISS', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_239) { A_34(); }
-	S_244('TORP', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_245) { }
-	S_245('TORP', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_246) { }
-	S_246('TORP', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_247) { }
-	S_247('TORP', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_244) { }
-	S_248('THIT', 0 | FF_FULLBRIGHT, 8.0 / 35.0, S_249) { }
-	S_249('THIT', 1 | FF_FULLBRIGHT, 8.0 / 35.0, S_250) { }
-	S_250('THIT', 2 | FF_FULLBRIGHT, 8.0 / 35.0, S_251) { A_36(); }
-	S_251('THIT', 3 | FF_FULLBRIGHT, 8.0 / 35.0, S_252) { }
-	S_252('THIT', 4 | FF_FULLBRIGHT, 8.0 / 35.0, S_NULL) { }
-	S_253('TWAV', 0 | FF_FULLBRIGHT, 9.0 / 35.0, S_254) { }
-	S_254('TWAV', 1 | FF_FULLBRIGHT, 9.0 / 35.0, S_255) { }
-	S_255('TWAV', 2 | FF_FULLBRIGHT, 9.0 / 35.0, S_NULL) { }
-	S_MISSILE_NO_EXPLODE('MISL', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_MISSILE_X2) { }
-	S_MISSILE_X1('MISL', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_MISSILE_X2) { A_Explode(); }
-	S_MISSILE_X2('MISL', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_MISSILE_X3) { }
-	S_MISSILE_X3('MISL', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_MISSILE_X4) { }
-	S_MISSILE_X4('MISL', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE_X5) { }
-	S_MISSILE_X5('MISL', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE_X6) { }
-	S_MISSILE_X6('MISL', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE_X7) { }
-	S_MISSILE_X7('MISL', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_NULL) { }
-	S_TFOG1('TFOG', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG2) { }
-	S_TFOG2('TFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG3) { }
-	S_TFOG3('TFOG', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG4) { }
-	S_TFOG4('TFOG', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG5) { }
-	S_TFOG5('TFOG', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG6) { }
-	S_TFOG6('TFOG', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG7) { }
-	S_TFOG7('TFOG', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG8) { }
-	S_TFOG8('TFOG', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG9) { }
-	S_TFOG9('TFOG', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG10) { }
-	S_TFOG10('TFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
-	S_IFOG1('IFOG', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG2) { }
-	S_IFOG2('IFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG3) { }
-	S_IFOG3('IFOG', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG4) { }
-	S_IFOG4('IFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG5) { }
-	S_IFOG5('IFOG', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG6) { }
-	S_IFOG6('IFOG', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG7) { }
-	S_IFOG7('IFOG', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
-	S_281('SHRD', 0, 128.0 / 35.0, S_NULL) { }
-	S_282('SHRD', 1, 128.0 / 35.0, S_NULL) { }
-	S_283('SHRD', 2, 128.0 / 35.0, S_NULL) { }
-	S_284('SHRD', 3, 128.0 / 35.0, S_NULL) { }
-	S_285('SHRD', 4, 128.0 / 35.0, S_NULL) { }
-	S_286('SHRD', 5, 128.0 / 35.0, S_NULL) { }
-	S_PLAY_DIE10('PLAY', 15, 700.0 / 35.0, S_PLAY_XDIE8) { }
-	S_PLAY_XDIE8('RGIB', 7, 1400.0 / 35.0, S_NULL) { }
+
+	S_SHARD_1('SHRD', 0, 128.0 / 35.0, S_NULL) { }
+	S_SHARD_2('SHRD', 1, 128.0 / 35.0, S_NULL) { }
+	S_SHARD_3('SHRD', 2, 128.0 / 35.0, S_NULL) { }
+#ifndef TEASER
+	S_SHARD_4('SHRD', 3, 128.0 / 35.0, S_NULL) { }
+	S_SHARD_5('SHRD', 4, 128.0 / 35.0, S_NULL) { }
+	S_SHARD_6('SHRD', 5, 128.0 / 35.0, S_NULL) { }
+#endif
+
+	S_MINI_MISSILE2_1('MICR', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_MINI_MISSILE2_2) { A_Unknown34(); }
+	S_MINI_MISSILE2_2('MICR', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_MINI_MISSILE2_1) { A_Unknown34(); }
+
+	S_TOKENS('TOKN', 0, -1.0, S_NULL) { }
+
+	S_GIBS('DIE1', 0, -1.0, S_NULL) { }
+
+#ifndef TEASER
+	S_ANKH('ANKH', 0, -1.0, S_NULL) { }
+#endif
+}
+
+__states__(Pawn)
+{
 	S_BURN1('BURN', 0, 3.0 / 35.0, S_BURN2) { A_Scream(); }
 	S_BURN2('BURN', 1, 3.0 / 35.0, S_BURN3) { A_Burn(); }
 	S_BURN3('BURN', 2, 3.0 / 35.0, S_BURN4) { A_Walk(); }
@@ -198,7 +118,12 @@ __states__(Actor)
 	S_BURN22('BURN', 19, 7.0 / 35.0, S_BURN23) { }
 	S_BURN23('BURN', 20, 7.0 / 35.0, S_BURN24) { }
 	S_BURN24('BURN', 21, 700.0 / 35.0, S_NULL) { A_Dying(); }
+
+#ifdef TEASER
+	S_DISRUPT1('DISR', 0, 5.0 / 35.0, S_DISRUPT2) { A_Scream(); }
+#else
 	S_DISRUPT1('DISR', 0, 5.0 / 35.0, S_DISRUPT2) { }
+#endif
 	S_DISRUPT2('DISR', 1, 5.0 / 35.0, S_DISRUPT3) { }
 	S_DISRUPT3('DISR', 2, 5.0 / 35.0, S_DISRUPT4) { }
 	S_DISRUPT4('DISR', 3, 5.0 / 35.0, S_DISRUPT5) { A_Fall(); }
@@ -207,168 +132,19 @@ __states__(Actor)
 	S_DISRUPT7('DISR', 6, 4.0 / 35.0, S_DISRUPT8) { }
 	S_DISRUPT8('DISR', 7, 4.0 / 35.0, S_DISRUPT9) { }
 	S_DISRUPT9('DISR', 8, 4.0 / 35.0, S_DISRUPT10) { }
-	S_DISRUPT10('DISR', 9, 4.0 / 35.0, S_MEAT_4) { }
-	S_PEASANT_DIE11('PEAS', 13, 1400.0 / 35.0, S_PEASANT_XDIE9) { }
-	S_PEASANT_XDIE1('GIBS', 12, 5.0 / 35.0, S_PEASANT_XDIE2) { A_XDying(); }
-	S_PEASANT_XDIE2('GIBS', 13, 5.0 / 35.0, S_PEASANT_XDIE3) { A_XScream(); }
-	S_PEASANT_XDIE3('GIBS', 14, 5.0 / 35.0, S_PEASANT_XDIE4) { A_Fall(); }
-	S_PEASANT_XDIE4('GIBS', 15, 4.0 / 35.0, S_PEASANT_XDIE5) { A_XDying(); }
-	S_PEASANT_XDIE5('GIBS', 16, 4.0 / 35.0, S_PEASANT_XDIE6) { A_XDying(); }
-	S_PEASANT_XDIE6('GIBS', 17, 4.0 / 35.0, S_PEASANT_XDIE7) { A_XDying(); }
-	S_PEASANT_XDIE7('GIBS', 18, 4.0 / 35.0, S_PEASANT_XDIE8) { A_XDying(); }
-	S_PEASANT_XDIE8('GIBS', 19, 4.0 / 35.0, S_PEASANT_XDIE9) { }
-	S_PEASANT_XDIE9('GIBS', 20, 5.0 / 35.0, S_PEASANT_XDIE10) { }
-	S_PEASANT_XDIE10('GIBS', 21, 1400.0 / 35.0, S_NULL) { }
-	S_PEASANT2_STAND('PEAS', 0, 5.0 / 35.0, S_PEASANT2_STAND) { A_ResetHealth(); }
-	S_PEASANT2_PAIN('AGRD', 0, 5.0 / 35.0, S_PEASANT2_PAIN) { A_ResetHealth(); }
-	S_422('PLAY', 0, 175.0 / 35.0, S_422) { A_54(); }
-	S_REBEL_DIE8('HMN1', 13, -1.0, S_NULL) { }
-	S_560('PUFY', 1, 4.0 / 35.0, S_561) { }
-	S_561('PUFY', 2, 4.0 / 35.0, S_562) { }
-	S_562('PUFY', 1, 4.0 / 35.0, S_563) { }
-	S_563('PUFY', 2, 4.0 / 35.0, S_564) { }
-	S_564('PUFY', 3, 4.0 / 35.0, S_NULL) { }
-	S_565('MICR', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_566) { A_34(); }
-	S_566('MICR', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_565) { A_34(); }
-	S_REAVER_DIE9('ROB1', 17, -1.0, S_NULL) { }
-	S_ACOLYTE_DIE8('AGRD', 13, 1400.0 / 35.0, S_ACOLYTE_XDIE11) { }
-	S_ACOLYTE_XDIE1('GIBS', 0, 5.0 / 35.0, S_ACOLYTE_XDIE2) { A_Fall(); }
-	S_ACOLYTE_XDIE2('GIBS', 1, 5.0 / 35.0, S_ACOLYTE_XDIE3) { A_XDying(); }
-	S_ACOLYTE_XDIE3('GIBS', 2, 5.0 / 35.0, S_ACOLYTE_XDIE4) { A_XDying(); }
-	S_ACOLYTE_XDIE4('GIBS', 3, 4.0 / 35.0, S_ACOLYTE_XDIE5) { A_XDying(); }
-	S_ACOLYTE_XDIE5('GIBS', 4, 4.0 / 35.0, S_ACOLYTE_XDIE6) { A_XScream(); }
-	S_ACOLYTE_XDIE6('GIBS', 5, 4.0 / 35.0, S_ACOLYTE_XDIE7) { A_XDying(); }
-	S_ACOLYTE_XDIE7('GIBS', 6, 4.0 / 35.0, S_ACOLYTE_XDIE8) { }
-	S_ACOLYTE_XDIE8('GIBS', 7, 4.0 / 35.0, S_ACOLYTE_XDIE9) { }
-	S_ACOLYTE_XDIE9('GIBS', 8, 5.0 / 35.0, S_ACOLYTE_XDIE10) { }
-	S_ACOLYTE_XDIE10('GIBS', 9, 5.0 / 35.0, S_ACOLYTE_XDIE11) { A_AcolyteDeath(); }
-	S_ACOLYTE_XDIE11('GIBS', 10, 5.0 / 35.0, S_ACOLYTE_XDIE12) { }
-	S_ACOLYTE_XDIE12('GIBS', 11, 1400.0 / 35.0, S_NULL) { }
-	S_CRUSADER_DIE9('ROB2', 14, 4.0 / 35.0, S_CRUSADER_DIE10) { A_Explode(); }
-	S_CRUSADER_DIE10('ROB2', 15, -1.0, S_NULL) { A_Unknown72(); }
-	S_834('NODE', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_835) { }
-	S_835('NODE', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_836) { }
-	S_836('NODE', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_837) { }
-	S_837('NODE', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_838) { }
-	S_838('NODE', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_839) { }
-	S_839('NODE', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_840) { }
-	S_840('NODE', 6 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
-	S_841('MTHD', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_842) { }
-	S_842('MTHD', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_843) { }
-	S_843('MTHD', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_844) { }
-	S_844('MTHD', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_845) { }
-	S_845('MTHD', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_846) { }
-	S_846('MTHD', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_847) { }
-	S_847('MTHD', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_848) { }
-	S_848('MTHD', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_849) { }
-	S_849('MTHD', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_850) { }
-	S_850('MTHD', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_851) { }
-	S_851('MTHD', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
-	S_965('ZAP6', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_966) { }
-	S_966('ZAP6', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_967) { A_90(); }
-	S_967('ZAP6', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_965) { A_90(); }
-	S_968('ZOT3', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_969) { }
-	S_969('ZOT3', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_970) { }
-	S_970('ZOT3', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_971) { }
-	S_971('ZOT3', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_972) { }
-	S_972('ZOT3', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_968) { }
-	S_973('ZAP6', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_974) { }
-	S_974('ZAP6', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_975) { }
-	S_975('ZAP6', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
-	S_976('ZAP7', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_977) { A_91(); }
-	S_977('ZAP7', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_978) { A_91(); }
-	S_978('ZAP7', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_979) { A_91(); }
-	S_979('ZAP7', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_980) { A_91(); }
-	S_980('ZAP7', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_976) { A_91(); }
-	S_981('ZOT1', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_982) { }
-	S_982('ZOT1', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_983) { }
-	S_983('ZOT1', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_984) { }
-	S_984('ZOT1', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_985) { }
-	S_985('ZOT1', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_981) { }
-	S_986('ZAP5', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_987) { A_DecReactionCount(); }
-	S_987('ZAP5', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_988) { A_92(); }
-	S_988('ZAP5', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_989) { A_DecReactionCount(); }
-	S_989('ZAP5', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_986) { A_DecReactionCount(); }
-	S_990('ZOT2', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_991) { A_34(); }
-	S_991('ZOT2', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_992) { A_34(); }
-	S_992('ZOT2', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_993) { A_34(); }
-	S_993('ZOT2', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_994) { A_34(); }
-	S_994('ZOT2', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_990) { A_34(); }
-	S_1090('RBB3', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_1091) { }
-	S_1091('RBB3', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_1092) { }
-	S_1092('RBB3', 7, -1.0, S_NULL) { }
-	S_1127('BASE', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_1128) { A_Unknown24(); }
-	S_1128('BASE', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_1129) { }
-	S_1129('BASE', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_1130) { }
-	S_1130('BASE', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_1131) { }
-	S_1131('BASE', 4, 5.0 / 35.0, S_1132) { }
-	S_1132('BASE', 5, 5.0 / 35.0, S_1133) { }
-	S_1133('BASE', 6, 5.0 / 35.0, S_1134) { }
-	S_1134('BASE', 7, -1.0, S_NULL) { }
-	S_FLAMEFX_1('FRBL', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEFX_2) { }
-	S_FLAMEFX_2('FRBL', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEFX_3) { }
-	S_FLAMEFX_3('FRBL', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEFX_1) { A_DecReactionCount(); }
-	S_FLAMEFX_X1('FRBL', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X2) { A_FlameFXExplode(); }
-	S_FLAMEFX_X2('FRBL', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X3) { }
-	S_FLAMEFX_X3('FRBL', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X4) { }
-	S_FLAMEFX_X4('FRBL', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X5) { }
-	S_FLAMEFX_X5('FRBL', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X6) { }
-	S_FLAMEFX_X6('FRBL', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
-	S_TOKENS('TOKN', 0, -1.0, S_NULL) { }
-	S_MEAT_1('MEAT', 0, 700.0 / 35.0, S_NULL) { }
-	S_MEAT_2('MEAT', 1, 700.0 / 35.0, S_NULL) { }
-	S_MEAT_3('MEAT', 2, 700.0 / 35.0, S_NULL) { }
-	S_MEAT_4('MEAT', 3, 700.0 / 35.0, S_NULL) { }
-	S_MEAT_5('MEAT', 4, 700.0 / 35.0, S_NULL) { }
-	S_MEAT_6('MEAT', 5, 700.0 / 35.0, S_NULL) { }
-	S_MEAT_7('MEAT', 6, 700.0 / 35.0, S_NULL) { }
-	S_MEAT_8('MEAT', 7, 700.0 / 35.0, S_NULL) { }
-	S_MEAT_9('MEAT', 8, 700.0 / 35.0, S_NULL) { }
-	S_MEAT_10('MEAT', 9, 700.0 / 35.0, S_NULL) { }
-	S_MEAT_11('MEAT', 10, 700.0 / 35.0, S_NULL) { }
-	S_MEAT_12('MEAT', 11, 700.0 / 35.0, S_NULL) { }
-	S_MEAT_13('MEAT', 12, 700.0 / 35.0, S_NULL) { }
-	S_MEAT_14('MEAT', 13, 700.0 / 35.0, S_NULL) { }
-	S_MEAT_15('MEAT', 14, 700.0 / 35.0, S_NULL) { }
-	S_MEAT_16('MEAT', 15, 700.0 / 35.0, S_NULL) { }
-	S_MEAT_17('MEAT', 16, 700.0 / 35.0, S_NULL) { }
-	S_MEAT_18('MEAT', 17, 700.0 / 35.0, S_NULL) { }
-	S_MEAT_19('MEAT', 18, 700.0 / 35.0, S_NULL) { }
-	S_MEAT_20('MEAT', 19, 700.0 / 35.0, S_NULL) { }
-	S_1267('JUNK', 0, 700.0 / 35.0, S_NULL) { }
-	S_1268('JUNK', 1, 700.0 / 35.0, S_NULL) { }
-	S_1269('JUNK', 2, 700.0 / 35.0, S_NULL) { }
-	S_1270('JUNK', 3, 700.0 / 35.0, S_NULL) { }
-	S_1271('JUNK', 4, 700.0 / 35.0, S_NULL) { }
-	S_1272('JUNK', 5, 700.0 / 35.0, S_NULL) { }
-	S_1273('JUNK', 6, 700.0 / 35.0, S_NULL) { }
-	S_1274('JUNK', 7, 700.0 / 35.0, S_NULL) { }
-	S_1275('JUNK', 8, 700.0 / 35.0, S_NULL) { }
-	S_1276('JUNK', 9, 700.0 / 35.0, S_NULL) { }
-	S_1277('JUNK', 10, 700.0 / 35.0, S_NULL) { }
-	S_1278('JUNK', 11, 700.0 / 35.0, S_NULL) { }
-	S_1279('JUNK', 12, 700.0 / 35.0, S_NULL) { }
-	S_1280('JUNK', 13, 700.0 / 35.0, S_NULL) { }
-	S_1281('JUNK', 14, 700.0 / 35.0, S_NULL) { }
-	S_1282('JUNK', 15, 700.0 / 35.0, S_NULL) { }
-	S_1283('JUNK', 16, 700.0 / 35.0, S_NULL) { }
-	S_1284('JUNK', 17, 700.0 / 35.0, S_NULL) { }
-	S_1285('JUNK', 18, 700.0 / 35.0, S_NULL) { }
-	S_1286('JUNK', 19, 700.0 / 35.0, S_NULL) { }
-	S_1287('FFOT', 0, 9.0 / 35.0, S_1288) { }
-	S_1288('FFOT', 1, 9.0 / 35.0, S_1289) { }
-	S_1289('FFOT', 2, 9.0 / 35.0, S_1290) { }
-	S_1290('FFOT', 3, 9.0 / 35.0, S_NULL) { }
-	S_1291('DIE1', 0, -1.0, S_NULL) { }
-	S_1381('ANKH', 0, -1.0, S_NULL) { }
+	S_DISRUPT10('DISR', 9, 4.0 / 35.0, S_DISRUPT11) { }
+	S_DISRUPT11('MEAT', 3, 700.0 / 35.0, S_NULL) { }
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/07/13 07:56:42  dj_jl
+//	Huge work on Strife: splitting, merging, implementing stuff, etc.
+//
 //	Revision 1.13  2002/06/29 15:59:26  dj_jl
 //	Split out items, projectiles and decorations.
-//
+//	
 //	Revision 1.12  2002/06/22 07:18:44  dj_jl
 //	Seperated all pickup items.
 //	

@@ -60,6 +60,7 @@ __states__
 	S_REAVER_DIE6('ROB1', 14 | FF_FULLBRIGHT, 5.0 / 35.0, S_REAVER_DIE7) { }
 	S_REAVER_DIE7('ROB1', 15 | FF_FULLBRIGHT, 5.0 / 35.0, S_REAVER_DIE8) { }
 	S_REAVER_DIE8('ROB1', 16 | FF_FULLBRIGHT, 6.0 / 35.0, S_REAVER_DIE9) { A_Unknown24(); }
+	S_REAVER_DIE9('ROB1', 17, -1.0, S_NULL) { }
 	S_REAVER_XDIE1('ROB1', 11 | FF_FULLBRIGHT, 5.0 / 35.0, S_REAVER_XDIE2) { A_XDying(); }
 	S_REAVER_XDIE2('ROB1', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_REAVER_XDIE3) { A_XScream(); }
 	S_REAVER_XDIE3('ROB1', 13 | FF_FULLBRIGHT, 5.0 / 35.0, S_REAVER_XDIE4) { A_XDying(); }
@@ -105,9 +106,14 @@ class ReaverCarcass:Decoration
 	__mobjinfo__(20)
 {
 
+__states__
+{
+	S_DEAD_REAVER('ROB1', 17, -1.0, S_NULL) { }
+}
+
 defaultproperties
 {
-	IdleState = S_REAVER_DIE9;
+	IdleState = S_DEAD_REAVER;
 }
 
 }
@@ -115,6 +121,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/07/13 07:56:42  dj_jl
+//  Huge work on Strife: splitting, merging, implementing stuff, etc.
+//
 //  Revision 1.4  2002/06/29 15:54:35  dj_jl
 //  Floatized PainChance.
 //

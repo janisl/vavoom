@@ -46,18 +46,10 @@
 
 #include "world.vc"
 
-#define S_GIBS		S_NULL
-#define Blood		Puff
-
-#include "savegame.vc"
-#ifdef TEASER
-#include "teaser_states.vc"
-#include "teaser_mobjinfo.vc"
-#else
 #include "states.vc"
 #include "mobjinfo.vc"
-#endif
 #include "wpninfo.vc"
+#include "savegame.vc"
 #include "inter.vc"
 #include "user.vc"
 #include "mobj.vc"
@@ -71,13 +63,11 @@
 #include "enemy.vc"
 #include "cheat.vc"
 
-#ifdef TEASER
-#include "teaser_adummy.vc"
-#else
-#include "adummy.vc"
-#endif
-
+#include "miscobj.vc"
 #include "weapons.vc"
+#include "items.vc"
+#include "decorat.vc"
+#include "questobj.vc"
 
 #include "player.vc"
 #include "merchant.vc"
@@ -103,14 +93,14 @@
 #include "rat.vc"
 #include "prayer.vc"
 
-#include "items.vc"
-#include "decorat.vc"
-
 #include "svmain.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/07/13 07:56:42  dj_jl
+//  Huge work on Strife: splitting, merging, implementing stuff, etc.
+//
 //  Revision 1.16  2002/06/29 15:59:27  dj_jl
 //  Split out items, projectiles and decorations.
 //

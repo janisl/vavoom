@@ -33,6 +33,10 @@ class Oracle:Pawn
 	__mobjinfo__(199)
 {
 
+void A_OracleDeath(void)
+{
+}
+
 __states__
 {
 	S_ORACLE('ORCL', 0, -1.0, S_NULL) { }
@@ -110,6 +114,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/07/13 07:56:42  dj_jl
+//  Huge work on Strife: splitting, merging, implementing stuff, etc.
+//
 //  Revision 1.4  2002/06/29 15:54:35  dj_jl
 //  Floatized PainChance.
 //

@@ -25,6 +25,69 @@
 
 //**************************************************************************
 //
+//	SentinelShotTrail
+//
+//**************************************************************************
+
+class SentinelShotTrail:Projectile
+{
+
+__states__
+{
+	S_SENTINEL_SHOT_1('SHT1', 0, 4.0 / 35.0, S_SENTINEL_SHOT_2) { }
+	S_SENTINEL_SHOT_2('SHT1', 1, 4.0 / 35.0, S_SENTINEL_SHOT_1) { }
+#ifndef TEASER
+	S_SENTINEL_SHOT_X1('POW1', 5, 4.0 / 35.0, S_SENTINEL_SHOT_X2) { }
+	S_SENTINEL_SHOT_X2('POW1', 6, 4.0 / 35.0, S_SENTINEL_SHOT_X3) { }
+	S_SENTINEL_SHOT_X3('POW1', 7, 4.0 / 35.0, S_SENTINEL_SHOT_X4) { }
+	S_SENTINEL_SHOT_X4('POW1', 8, 4.0 / 35.0, S_SENTINEL_SHOT_X5) { }
+	S_SENTINEL_SHOT_X5('POW1', 9, 4.0 / 35.0, S_NULL) { }
+#endif
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 8.0;
+	Speed = 1400.0;
+	IdleState = S_SENTINEL_SHOT_1;
+#ifdef TEASER
+	DeathState = S_POW1_5;
+#else
+	DeathState = S_SENTINEL_SHOT_X5;
+#endif
+}
+
+}
+
+//**************************************************************************
+//
+//	SentinelShot
+//
+//**************************************************************************
+
+class SentinelShot:Projectile
+{
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 8.0;
+	Speed = 1400.0;
+	MissileDamage = 1;
+	IdleState = S_SENTINEL_SHOT_1;
+#ifdef TEASER
+	DeathState = S_POW1_1;
+#else
+	DeathState = S_SENTINEL_SHOT_X1;
+#endif
+	SightSound = 'SentinelFire';
+}
+
+}
+
+//**************************************************************************
+//
 //	Sentinel
 //
 //**************************************************************************
@@ -32,6 +95,10 @@
 class Sentinel:Pawn
 	__mobjinfo__(3006)
 {
+
+void A_SentinelAttack(void)
+{
+}
 
 __states__
 {
@@ -84,6 +151,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/07/13 07:56:42  dj_jl
+//  Huge work on Strife: splitting, merging, implementing stuff, etc.
+//
 //  Revision 1.4  2002/06/29 15:54:35  dj_jl
 //  Floatized PainChance.
 //

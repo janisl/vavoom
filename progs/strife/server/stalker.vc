@@ -33,6 +33,22 @@ class Stalker:Pawn
 	__mobjinfo__(186)
 {
 
+void A_StalkerInit(void)
+{
+}
+void A_StalkerChase2(void)
+{
+}
+void A_StalkerChase(void)
+{
+}
+void A_StalkerAttack(void)
+{
+}
+void A_StalkerLand(void)
+{
+}
+
 __states__
 {
 	S_STALKER_INIT('SPID', 0, 1.0 / 35.0, S_STALKER_INIT) { A_StalkerInit(); }
@@ -109,6 +125,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/07/13 07:56:42  dj_jl
+//  Huge work on Strife: splitting, merging, implementing stuff, etc.
+//
 //  Revision 1.4  2002/06/29 15:54:35  dj_jl
 //  Floatized PainChance.
 //

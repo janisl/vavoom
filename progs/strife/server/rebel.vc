@@ -66,6 +66,7 @@ __states__
 	S_REBEL_DIE5('HMN1', 10, 3.0 / 35.0, S_REBEL_DIE6) { }
 	S_REBEL_DIE6('HMN1', 11, 3.0 / 35.0, S_REBEL_DIE7) { }
 	S_REBEL_DIE7('HMN1', 12, 3.0 / 35.0, S_REBEL_DIE8) { }
+	S_REBEL_DIE8('HMN1', 13, -1.0, S_NULL) { }
 	S_REBEL_XDIE1('RGIB', 0, 4.0 / 35.0, S_REBEL_XDIE2) { A_XDying(); }
 	S_REBEL_XDIE2('RGIB', 1, 4.0 / 35.0, S_REBEL_XDIE3) { A_XScream(); }
 	S_REBEL_XDIE3('RGIB', 2, 3.0 / 35.0, S_REBEL_XDIE4) { A_Fall(); }
@@ -201,9 +202,14 @@ class RebelCarcass:Decoration
 	__mobjinfo__(19)
 {
 
+__states__
+{
+	S_DEAD_REBEL('HMN1', 13, -1.0, S_NULL) { }
+}
+
 defaultproperties
 {
-	IdleState = S_REBEL_DIE8;
+	IdleState = S_DEAD_REBEL;
 }
 
 }
@@ -211,6 +217,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/07/13 07:56:42  dj_jl
+//  Huge work on Strife: splitting, merging, implementing stuff, etc.
+//
 //  Revision 1.4  2002/06/29 15:54:35  dj_jl
 //  Floatized PainChance.
 //

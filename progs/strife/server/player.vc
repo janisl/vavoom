@@ -52,6 +52,7 @@ __states__
 	S_PLAY_DIE7('PLAY', 12, 4.0 / 35.0, S_PLAY_DIE8) { }
 	S_PLAY_DIE8('PLAY', 13, 4.0 / 35.0, S_PLAY_DIE9) { }
 	S_PLAY_DIE9('PLAY', 14, 4.0 / 35.0, S_PLAY_DIE10) { }
+	S_PLAY_DIE10('PLAY', 15, 700.0 / 35.0, S_PLAY_XDIE8) { }
 	S_PLAY_XDIE1('RGIB', 0, 5.0 / 35.0, S_PLAY_XDIE2) { A_XDying(); }
 	S_PLAY_XDIE2('RGIB', 1, 5.0 / 35.0, S_PLAY_XDIE3) { A_XScream(); }
 	S_PLAY_XDIE3('RGIB', 2, 5.0 / 35.0, S_PLAY_XDIE4) { A_Fall(); }
@@ -59,6 +60,7 @@ __states__
 	S_PLAY_XDIE5('RGIB', 4, 5.0 / 35.0, S_PLAY_XDIE6) { A_XDying(); }
 	S_PLAY_XDIE6('RGIB', 5, 5.0 / 35.0, S_PLAY_XDIE7) { A_XDying(); }
 	S_PLAY_XDIE7('RGIB', 6, 5.0 / 35.0, S_PLAY_XDIE8) { A_XDying(); }
+	S_PLAY_XDIE8('RGIB', 7, 1400.0 / 35.0, S_NULL) { }
 }
 
 defaultproperties
@@ -94,9 +96,16 @@ class PlayerCarcass:Decoration
 	__mobjinfo__(15)
 {
 
+__states__
+{
+	// FIXME should it really remove self?
+	S_DEAD_PLAYER('PLAY', 15, 700.0 / 35.0, S_DEAD_PLAYER_2) { }
+	S_DEAD_PLAYER_2('RGIB', 7, 1400.0 / 35.0, S_NULL) { }
+}
+
 defaultproperties
 {
-	IdleState = S_PLAY_DIE10;
+	IdleState = S_DEAD_PLAYER;
 }
 
 }
@@ -104,6 +113,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/07/13 07:56:42  dj_jl
+//  Huge work on Strife: splitting, merging, implementing stuff, etc.
+//
 //  Revision 1.4  2002/06/29 15:54:35  dj_jl
 //  Floatized PainChance.
 //

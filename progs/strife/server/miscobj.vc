@@ -1,0 +1,421 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+//**************************************************************************
+//
+//	ReactorPuff
+//
+//**************************************************************************
+
+class ReactorPuff:Effect
+{
+
+__states__
+{
+	S_R_PUFF_1('PUFY', 1, 4.0 / 35.0, S_R_PUFF_2) { }
+	S_R_PUFF_2('PUFY', 2, 4.0 / 35.0, S_R_PUFF_3) { }
+	S_R_PUFF_3('PUFY', 1, 4.0 / 35.0, S_R_PUFF_4) { }
+	S_R_PUFF_4('PUFY', 2, 4.0 / 35.0, S_R_PUFF_5) { }
+	S_R_PUFF_5('PUFY', 3, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Translucency = 66;
+	IdleState = S_R_PUFF_1;
+	SightSound = 'ReactorActive2';
+}
+
+}
+
+//**************************************************************************
+//
+//	Puff
+//
+//**************************************************************************
+
+class Puff:Effect
+{
+
+__states__
+{
+	S_PUFF1('PUFY', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_PUFF2) { }
+	S_PUFF2('PUFY', 1, 4.0 / 35.0, S_PUFF3) { }
+	S_PUFF3('PUFY', 2, 4.0 / 35.0, S_PUFF4) { }
+	S_PUFF4('PUFY', 3, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Translucency = 66;
+	IdleState = S_PUFF1;
+}
+
+}
+
+//**************************************************************************
+//
+//	PuffPow3
+//
+//**************************************************************************
+
+class PuffPow3:Effect
+{
+
+__states__
+{
+	S_POW3_1('POW3', 0, 3.0 / 35.0, S_POW3_2) { }
+	S_POW3_2('POW3', 1, 3.0 / 35.0, S_POW3_3) { }
+	S_POW3_3('POW3', 2, 3.0 / 35.0, S_POW3_4) { }
+	S_POW3_4('POW3', 3, 3.0 / 35.0, S_POW3_5) { }
+	S_POW3_5('POW3', 4, 3.0 / 35.0, S_POW3_6) { }
+	S_POW3_6('POW3', 5, 3.0 / 35.0, S_POW3_7) { }
+	S_POW3_7('POW3', 6, 3.0 / 35.0, S_POW3_8) { }
+	S_POW3_8('POW3', 7, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_POW3_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	Blood
+//
+//**************************************************************************
+
+class Blood:Effect
+{
+
+__states__
+{
+	S_BLOOD_SPRAY_1('SPRY', 0, 3.0 / 35.0, S_BLOOD_SPRAY_2) { }
+	S_BLOOD_SPRAY_2('SPRY', 1, 3.0 / 35.0, S_BLOOD_SPRAY_3) { }
+	S_BLOOD_SPRAY_3('SPRY', 2, 3.0 / 35.0, S_BLOOD_SPRAY_4) { }
+	S_BLOOD_SPRAY_4('SPRY', 3, 3.0 / 35.0, S_BLOOD_SPRAY_5) { }
+	S_BLOOD_SPRAY_5('SPRY', 4, 3.0 / 35.0, S_BLOOD_SPRAY_6) { }
+	S_BLOOD_SPRAY_6('SPRY', 5, 3.0 / 35.0, S_BLOOD_SPRAY_7) { }
+	S_BLOOD_SPRAY_7('SPRY', 6, 2.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bNoGravity = false;
+	IdleState = S_BLOOD_SPRAY_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	TeleportFog
+//
+//**************************************************************************
+
+class TeleportFog:Effect
+{
+
+__states__
+{
+	S_TFOG1('TFOG', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG2) { }
+	S_TFOG2('TFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG3) { }
+	S_TFOG3('TFOG', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG4) { }
+	S_TFOG4('TFOG', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG5) { }
+	S_TFOG5('TFOG', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG6) { }
+	S_TFOG6('TFOG', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG7) { }
+	S_TFOG7('TFOG', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG8) { }
+	S_TFOG8('TFOG', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG9) { }
+	S_TFOG9('TFOG', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG10) { }
+	S_TFOG10('TFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Translucency = 66;
+	IdleState = S_TFOG1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ItemRespawnFog
+//
+//**************************************************************************
+
+class ItemRespawnFog:Effect
+{
+
+__states__
+{
+	S_IFOG1('IFOG', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG2) { }
+	S_IFOG2('IFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG3) { }
+	S_IFOG3('IFOG', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG4) { }
+	S_IFOG4('IFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG5) { }
+	S_IFOG5('IFOG', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG6) { }
+	S_IFOG6('IFOG', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG7) { }
+	S_IFOG7('IFOG', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Translucency = 66;
+	IdleState = S_IFOG1;
+}
+
+}
+
+//**************************************************************************
+//
+//	MeatChunk
+//
+//**************************************************************************
+
+class MeatChunk:Effect
+{
+
+__states__
+{
+	S_MEAT_1('MEAT', 0, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_2('MEAT', 1, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_3('MEAT', 2, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_4('MEAT', 3, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_5('MEAT', 4, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_6('MEAT', 5, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_7('MEAT', 6, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_8('MEAT', 7, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_9('MEAT', 8, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_10('MEAT', 9, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_11('MEAT', 10, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_12('MEAT', 11, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_13('MEAT', 12, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_14('MEAT', 13, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_15('MEAT', 14, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_16('MEAT', 15, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_17('MEAT', 16, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_18('MEAT', 17, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_19('MEAT', 18, 700.0 / 35.0, S_NULL) { }
+	S_MEAT_20('MEAT', 19, 700.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bNoGravity = false;
+	bColideWithThings = false;
+	bColideWithWorld = false;
+	IdleState = S_MEAT_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	TechJunk
+//
+//**************************************************************************
+
+class TechJunk:Effect
+{
+
+__states__
+{
+	S_JUNK_1('JUNK', 0, 700.0 / 35.0, S_NULL) { }
+	S_JUNK_2('JUNK', 1, 700.0 / 35.0, S_NULL) { }
+	S_JUNK_3('JUNK', 2, 700.0 / 35.0, S_NULL) { }
+	S_JUNK_4('JUNK', 3, 700.0 / 35.0, S_NULL) { }
+	S_JUNK_5('JUNK', 4, 700.0 / 35.0, S_NULL) { }
+	S_JUNK_6('JUNK', 5, 700.0 / 35.0, S_NULL) { }
+	S_JUNK_7('JUNK', 6, 700.0 / 35.0, S_NULL) { }
+	S_JUNK_8('JUNK', 7, 700.0 / 35.0, S_NULL) { }
+	S_JUNK_9('JUNK', 8, 700.0 / 35.0, S_NULL) { }
+	S_JUNK_10('JUNK', 9, 700.0 / 35.0, S_NULL) { }
+	S_JUNK_11('JUNK', 10, 700.0 / 35.0, S_NULL) { }
+	S_JUNK_12('JUNK', 11, 700.0 / 35.0, S_NULL) { }
+	S_JUNK_13('JUNK', 12, 700.0 / 35.0, S_NULL) { }
+	S_JUNK_14('JUNK', 13, 700.0 / 35.0, S_NULL) { }
+	S_JUNK_15('JUNK', 14, 700.0 / 35.0, S_NULL) { }
+	S_JUNK_16('JUNK', 15, 700.0 / 35.0, S_NULL) { }
+	S_JUNK_17('JUNK', 16, 700.0 / 35.0, S_NULL) { }
+	S_JUNK_18('JUNK', 17, 700.0 / 35.0, S_NULL) { }
+	S_JUNK_19('JUNK', 18, 700.0 / 35.0, S_NULL) { }
+	S_JUNK_20('JUNK', 19, 700.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bNoGravity = false;
+	bColideWithThings = false;
+	bColideWithWorld = false;
+	IdleState = S_JUNK_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	FireFoot
+//
+//**************************************************************************
+
+class FireFoot:Effect
+{
+
+__states__
+{
+	S_FFOT_1('FFOT', 0, 9.0 / 35.0, S_FFOT_2) { }
+	S_FFOT_2('FFOT', 1, 9.0 / 35.0, S_FFOT_3) { }
+	S_FFOT_3('FFOT', 2, 9.0 / 35.0, S_FFOT_4) { }
+	S_FFOT_4('FFOT', 3, 9.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bNoGravity = false;
+	bColideWithThings = false;
+	bColideWithWorld = false;
+	IdleState = S_FFOT_1;
+}
+
+}
+
+#ifdef TEASER
+//**************************************************************************
+//
+//	MiscGass
+//
+//**************************************************************************
+
+class MiscGass:Effect
+{
+
+__states__
+{
+	S_GASS_1('GASS', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_GASS_2) { }
+	S_GASS_2('GASS', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_GASS_3) { }
+	S_GASS_3('GASS', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_GASS_4) { }
+	S_GASS_4('GASS', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_GASS_5) { }
+	S_GASS_5('GASS', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_GASS_6) { }
+	S_GASS_6('GASS', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_GASS_7) { }
+	S_GASS_7('GASS', 6 | FF_FULLBRIGHT, 6.0 / 35.0, S_GASS_8) { }
+	S_GASS_8('GASS', 7 | FF_FULLBRIGHT, 6.0 / 35.0, S_GASS_9) { }
+	S_GASS_9('GASS', 8 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Translucency = 66;
+	bUnknown2 = true;
+	IdleState = S_GASS_1;
+}
+
+}
+#endif
+
+//**************************************************************************
+//
+//	ForceFieldGuardian
+//
+//**************************************************************************
+
+class ForceFieldGuardian:Actor
+	__mobjinfo__(25)
+{
+
+__states__
+{
+	S_REMOVE_FORCE_FIELD('', 0, 1.0 / 35.0, S_NULL) { A_Unknown31(); }
+}
+
+defaultproperties
+{
+	Health = 10;
+	Radius = 2.0;
+	Height = 1.0;
+	Mass = 10000.0;
+	bShootable = true;
+	bHidden = true;
+#ifndef TEASER
+	bUnknown4 = true;
+#endif
+	IdleState = S_TOKENS;
+	DeathState = S_REMOVE_FORCE_FIELD;
+}
+
+}
+
+//**************************************************************************
+//
+//	PeasantSpawner
+//
+//**************************************************************************
+
+class PeasantSpawner:Actor
+	__mobjinfo__(170)
+{
+
+__states__
+{
+	S_PEASANT_SPAWNER('', 0, 175.0 / 35.0, S_PEASANT_SPAWNER) { A_Unknown54(); }
+}
+
+defaultproperties
+{
+	Health = 20;
+	bShootable = true;
+	bHidden = true;
+	IdleState = S_PEASANT_SPAWNER;
+	ActiveSound = 'Teleport';
+}
+
+}
+
+//**************************************************************************
+//
+//	TeleportSpot
+//
+//**************************************************************************
+
+class TeleportSpot:Actor
+	__mobjinfo__(14)
+{
+
+defaultproperties
+{
+	bHidden = true;
+	bNoBlockmap = true;
+}
+
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/07/13 07:56:42  dj_jl
+//  Huge work on Strife: splitting, merging, implementing stuff, etc.
+//
+//**************************************************************************

@@ -25,11 +25,45 @@
 
 //**************************************************************************
 //
+//	PeasantBase
+//
+//**************************************************************************
+
+class PeasantBase:Pawn
+	abstract
+{
+
+void A_PeasantAttack(void)
+{
+}
+
+__states__
+{
+	S_PEASANT_XDIE1('GIBS', 12, 5.0 / 35.0, S_PEASANT_XDIE2) { A_XDying(); }
+	S_PEASANT_XDIE2('GIBS', 13, 5.0 / 35.0, S_PEASANT_XDIE3) { A_XScream(); }
+	S_PEASANT_XDIE3('GIBS', 14, 5.0 / 35.0, S_PEASANT_XDIE4) { A_Fall(); }
+	S_PEASANT_XDIE4('GIBS', 15, 4.0 / 35.0, S_PEASANT_XDIE5) { A_XDying(); }
+	S_PEASANT_XDIE5('GIBS', 16, 4.0 / 35.0, S_PEASANT_XDIE6) { A_XDying(); }
+	S_PEASANT_XDIE6('GIBS', 17, 4.0 / 35.0, S_PEASANT_XDIE7) { A_XDying(); }
+	S_PEASANT_XDIE7('GIBS', 18, 4.0 / 35.0, S_PEASANT_XDIE8) { A_XDying(); }
+	S_PEASANT_XDIE8('GIBS', 19, 4.0 / 35.0, S_PEASANT_XDIE9) { }
+	S_PEASANT_XDIE9('GIBS', 20, 5.0 / 35.0, S_PEASANT_XDIE10) { }
+	S_PEASANT_XDIE10('GIBS', 21, 1400.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+}
+
+}
+
+//**************************************************************************
+//
 //	Peasant
 //
 //**************************************************************************
 
-class Peasant:Pawn
+class Peasant:PeasantBase
 	__mobjinfo__(3004)
 {
 
@@ -59,6 +93,7 @@ __states__
 	S_PEASANT_DIE8('PEAS', 10, 5.0 / 35.0, S_PEASANT_DIE9) { }
 	S_PEASANT_DIE9('PEAS', 11, 6.0 / 35.0, S_PEASANT_DIE10) { }
 	S_PEASANT_DIE10('PEAS', 12, 8.0 / 35.0, S_PEASANT_DIE11) { }
+	S_PEASANT_DIE11('PEAS', 13, 1400.0 / 35.0, S_PEASANT_XDIE9) { }
 }
 
 defaultproperties
@@ -491,9 +526,15 @@ defaultproperties
 //
 //**************************************************************************
 
-class PeasantDummy:Pawn
+class PeasantDummy:PeasantBase
 	__mobjinfo__(169)
 {
+
+__states__
+{
+	S_PEASANT2_STAND('PEAS', 0, 5.0 / 35.0, S_PEASANT2_STAND) { A_ResetHealth(); }
+	S_PEASANT2_PAIN('AGRD', 0, 5.0 / 35.0, S_PEASANT2_PAIN) { A_ResetHealth(); }
+}
 
 defaultproperties
 {
@@ -520,9 +561,16 @@ class PeasantCarcass:Decoration
 	__mobjinfo__(18)
 {
 
+__states__
+{
+	S_DEAD_PEASANT('PEAS', 13, 1400.0 / 35.0, S_DEAD_PEASANT_2) { }
+	S_DEAD_PEASANT_2('GIBS', 20, 5.0 / 35.0, S_DEAD_PEASANT_3) { }
+	S_DEAD_PEASANT_3('GIBS', 21, 1400.0 / 35.0, S_NULL) { }
+}
+
 defaultproperties
 {
-	IdleState = S_PEASANT_DIE11;
+	IdleState = S_DEAD_PEASANT;
 }
 
 }
@@ -530,6 +578,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/07/13 07:56:42  dj_jl
+//  Huge work on Strife: splitting, merging, implementing stuff, etc.
+//
 //  Revision 1.4  2002/06/29 15:54:35  dj_jl
 //  Floatized PainChance.
 //

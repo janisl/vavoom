@@ -816,7 +816,7 @@ boolean PIT_RadiusAttack(MapObject Other)
 	if (dist >= bombdamage)
 		return true;	// out of range
 
-	if (P_CheckSight(Other, bombspot))
+	if (Actor(Other).CanSee(bombspot))
 	{
 		// must be in direct path
 		Actor(Other).Damage(bombspot, bombsource, ftoi(bombdamage - dist));
@@ -862,6 +862,9 @@ void Actor::RadiusAttack(int damage, int distance, boolean damageSource)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/07/13 07:56:42  dj_jl
+//  Huge work on Strife: splitting, merging, implementing stuff, etc.
+//
 //  Revision 1.24  2002/03/28 18:15:35  dj_jl
 //  Renamed mo in player_t to MO.
 //

@@ -25,6 +25,32 @@
 
 //**************************************************************************
 //
+//	RobotMissile2
+//
+//**************************************************************************
+
+class RobotMissile2:MiniMissile
+{
+
+__states__
+{
+#ifdef TEASER
+	S_ROBOT_MISSILE2_1('MISS', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_ROBOT_MISSILE2_2) { A_SpawnPuff(); }
+#else
+	S_ROBOT_MISSILE2_1('MISS', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_ROBOT_MISSILE2_2) { A_RocketTrail(); }
+#endif
+	S_ROBOT_MISSILE2_2('MISS', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_ROBOT_MISSILE2_1) { A_Unknown34(); }
+}
+
+defaultproperties
+{
+	IdleState = S_ROBOT_MISSILE2_1;
+}
+
+}
+
+//**************************************************************************
+//
 //	Bishop
 //
 //**************************************************************************
@@ -32,6 +58,13 @@
 class Bishop:Pawn
 	__mobjinfo__(187)
 {
+
+void A_BishopAttack(void)
+{
+}
+void A_BishopDeath(void)
+{
+}
 
 __states__
 {
@@ -94,6 +127,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/07/13 07:56:42  dj_jl
+//  Huge work on Strife: splitting, merging, implementing stuff, etc.
+//
 //  Revision 1.4  2002/06/29 15:54:35  dj_jl
 //  Floatized PainChance.
 //

@@ -25,6 +25,172 @@
 
 //**************************************************************************
 //
+//	SpecterFX1
+//
+//**************************************************************************
+
+class SpecterFX1:SigilFX1
+{
+
+defaultproperties
+{
+	MissileDamage = 20;
+}
+
+}
+
+//**************************************************************************
+//
+//	SpecterFX1_2
+//
+//**************************************************************************
+
+class SpecterFX1_2:SigilFX1
+{
+
+defaultproperties
+{
+	MissileDamage = 10;
+}
+
+}
+
+//**************************************************************************
+//
+//	SpecterFX2
+//
+//**************************************************************************
+
+class SpecterFX2:SigilFX2
+{
+
+defaultproperties
+{
+	MissileDamage = 20;
+}
+
+}
+
+//**************************************************************************
+//
+//	SpecterFX3
+//
+//**************************************************************************
+
+class SpecterFX3:SigilFX3
+{
+
+defaultproperties
+{
+	MissileDamage = 30;
+}
+
+}
+
+#ifndef TEASER
+//**************************************************************************
+//
+//	SpecterFX4
+//
+//**************************************************************************
+
+class SpecterFX4:SigilFX4
+{
+
+defaultproperties
+{
+	MissileDamage = 50;
+}
+
+}
+#endif
+
+//**************************************************************************
+//
+//	SpecterFX5
+//
+//**************************************************************************
+
+class SpecterFX5:SigilFX5
+{
+
+defaultproperties
+{
+	MissileDamage = 60;
+}
+
+}
+
+//**************************************************************************
+//
+//	SpecterChunk
+//
+//**************************************************************************
+
+class SpecterChunk:Effect
+{
+
+__states__
+{
+	S_SPECTER_CHUNK_1('NODE', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_SPECTER_CHUNK_2) { }
+	S_SPECTER_CHUNK_2('NODE', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SPECTER_CHUNK_3) { }
+	S_SPECTER_CHUNK_3('NODE', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_SPECTER_CHUNK_4) { }
+	S_SPECTER_CHUNK_4('NODE', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_SPECTER_CHUNK_5) { }
+	S_SPECTER_CHUNK_5('NODE', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_SPECTER_CHUNK_6) { }
+	S_SPECTER_CHUNK_6('NODE', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_SPECTER_CHUNK_7) { }
+	S_SPECTER_CHUNK_7('NODE', 6 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+#ifndef TEASER
+	bNoGravity = false;
+	bColideWithThings = false;
+	bColideWithWorld = false;
+#endif
+	IdleState = S_SPECTER_CHUNK_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	SpecterHead
+//
+//**************************************************************************
+
+class SpecterHead:Effect
+{
+
+__states__
+{
+	S_SPECTER_HEAD_1('MTHD', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_HEAD_2) { }
+	S_SPECTER_HEAD_2('MTHD', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_HEAD_3) { }
+	S_SPECTER_HEAD_3('MTHD', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_HEAD_4) { }
+	S_SPECTER_HEAD_4('MTHD', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_HEAD_5) { }
+	S_SPECTER_HEAD_5('MTHD', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_HEAD_6) { }
+	S_SPECTER_HEAD_6('MTHD', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_HEAD_7) { }
+	S_SPECTER_HEAD_7('MTHD', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_HEAD_8) { }
+	S_SPECTER_HEAD_8('MTHD', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_HEAD_9) { }
+	S_SPECTER_HEAD_9('MTHD', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_HEAD_10) { }
+	S_SPECTER_HEAD_10('MTHD', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_HEAD_11) { }
+	S_SPECTER_HEAD_11('MTHD', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+#ifndef TEASER
+	bNoGravity = false;
+	bColideWithThings = false;
+	bColideWithWorld = false;
+#endif
+	IdleState = S_SPECTER_HEAD_1;
+}
+
+}
+
+//**************************************************************************
+//
 //	Specter1
 //
 //**************************************************************************
@@ -386,6 +552,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/07/13 07:56:42  dj_jl
+//  Huge work on Strife: splitting, merging, implementing stuff, etc.
+//
 //  Revision 1.4  2002/06/29 15:54:35  dj_jl
 //  Floatized PainChance.
 //

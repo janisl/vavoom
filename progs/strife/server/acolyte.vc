@@ -25,13 +25,59 @@
 
 //**************************************************************************
 //
+//	AcolyteBase
+//
+//**************************************************************************
+
+class AcolyteBase:Pawn
+	abstract
+{
+
+#ifndef TEASER
+void A_AcolyteDeath(void)
+{
+}
+#endif
+
+__states__
+{
+	S_ACOLYTE_XDIE1('GIBS', 0, 5.0 / 35.0, S_ACOLYTE_XDIE2) { A_Fall(); }
+	S_ACOLYTE_XDIE2('GIBS', 1, 5.0 / 35.0, S_ACOLYTE_XDIE3) { A_XDying(); }
+	S_ACOLYTE_XDIE3('GIBS', 2, 5.0 / 35.0, S_ACOLYTE_XDIE4) { A_XDying(); }
+	S_ACOLYTE_XDIE4('GIBS', 3, 4.0 / 35.0, S_ACOLYTE_XDIE5) { A_XDying(); }
+	S_ACOLYTE_XDIE5('GIBS', 4, 4.0 / 35.0, S_ACOLYTE_XDIE6) { A_XScream(); }
+	S_ACOLYTE_XDIE6('GIBS', 5, 4.0 / 35.0, S_ACOLYTE_XDIE7) { A_XDying(); }
+	S_ACOLYTE_XDIE7('GIBS', 6, 4.0 / 35.0, S_ACOLYTE_XDIE8) { }
+	S_ACOLYTE_XDIE8('GIBS', 7, 4.0 / 35.0, S_ACOLYTE_XDIE9) { }
+	S_ACOLYTE_XDIE9('GIBS', 8, 5.0 / 35.0, S_ACOLYTE_XDIE10) { }
+#ifdef TEASER
+	S_ACOLYTE_XDIE10('GIBS', 9, 5.0 / 35.0, S_ACOLYTE_XDIE11) { }
+#else
+	S_ACOLYTE_XDIE10('GIBS', 9, 5.0 / 35.0, S_ACOLYTE_XDIE11) { A_AcolyteDeath(); }
+#endif
+	S_ACOLYTE_XDIE11('GIBS', 10, 5.0 / 35.0, S_ACOLYTE_XDIE12) { }
+	S_ACOLYTE_XDIE12('GIBS', 11, 1400.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+}
+
+}
+
+//**************************************************************************
+//
 //	Acolyte
 //
 //**************************************************************************
 
-class Acolyte:Pawn
+class Acolyte:AcolyteBase
 	__mobjinfo__(3002)
 {
+
+void A_AcolyteChase(void)
+{
+}
 
 __states__
 {
@@ -66,6 +112,7 @@ __states__
 #else
 	S_ACOLYTE_DIE7('AGRD', 12, 3.0 / 35.0, S_ACOLYTE_DIE8) { A_AcolyteDeath(); }
 #endif
+	S_ACOLYTE_DIE8('AGRD', 13, 1400.0 / 35.0, S_ACOLYTE_XDIE11) { }
 }
 
 defaultproperties
@@ -234,11 +281,11 @@ defaultproperties
 
 //**************************************************************************
 //
-//	AcolyteDummy
+//	AcolyteShadow
 //
 //**************************************************************************
 
-class AcolyteDummy:Acolyte
+class AcolyteShadow:Acolyte
 	__mobjinfo__(58)
 {
 
@@ -269,9 +316,13 @@ defaultproperties
 //
 //**************************************************************************
 
-class AcolyteArmor:Pawn
+class AcolyteArmor:AcolyteBase
 	__mobjinfo__(201)
 {
+
+void A_AcolyteArmorPain(void)
+{
+}
 
 __states__
 {
@@ -304,9 +355,16 @@ class AcolyteCarcass:Decoration
 	__mobjinfo__(21)
 {
 
+__states__
+{
+	S_DEAD_ACOLYTE('AGRD', 13, 1400.0 / 35.0, S_DEAD_ACOLYTE_2) { }
+	S_DEAD_ACOLYTE_2('GIBS', 10, 5.0 / 35.0, S_DEAD_ACOLYTE_3) { }
+	S_DEAD_ACOLYTE_3('GIBS', 11, 1400.0 / 35.0, S_NULL) { }
+}
+
 defaultproperties
 {
-	IdleState = S_ACOLYTE_DIE8;
+	IdleState = S_DEAD_ACOLYTE;
 }
 
 }
@@ -314,6 +372,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/07/13 07:56:42  dj_jl
+//  Huge work on Strife: splitting, merging, implementing stuff, etc.
+//
 //  Revision 1.4  2002/06/29 15:54:35  dj_jl
 //  Floatized PainChance.
 //

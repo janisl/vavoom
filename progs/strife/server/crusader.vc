@@ -25,6 +25,46 @@
 
 //**************************************************************************
 //
+//	FlameFX2
+//
+//**************************************************************************
+
+class FlameFX2:FlameFX1
+{
+
+defaultproperties
+{
+	Mass = 50.0;
+	Speed = 1225.0;
+	MissileDamage = 1;
+}
+
+}
+
+//**************************************************************************
+//
+//	RobotMissile
+//
+//**************************************************************************
+
+class RobotMissile:MiniMissile
+{
+
+__states__
+{
+	S_MISSILE_NO_EXPLODE('MISL', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_MISSILE_X2) { }
+}
+
+defaultproperties
+{
+	MissileDamage = 7;
+	DeathState = S_MISSILE_NO_EXPLODE;
+}
+
+}
+
+//**************************************************************************
+//
 //	Crusader
 //
 //**************************************************************************
@@ -32,6 +72,19 @@
 class Crusader:Pawn
 	__mobjinfo__(3005)
 {
+
+void A_CrusaderAttack1(void)
+{
+}
+void A_CrusaderAttack2(void)
+{
+}
+void A_CrusaderAttack3(void)
+{
+}
+void A_CrusaderAttack4(void)
+{
+}
 
 __states__
 {
@@ -69,9 +122,12 @@ __states__
 #ifdef TEASER
 	S_CRUSADER_DIE7('ROB2', 12, 4.0 / 35.0, S_CRUSADER_DIE8) { }
 	S_CRUSADER_DIE8('ROB2', 13, 4.0 / 35.0, S_CRUSADER_DIE9) { }
+	S_CRUSADER_DIE9('ROB2', 14, 4.0 / 35.0, S_NULL) { A_Unknown72(); }
 #else
 	S_CRUSADER_DIE7('ROB2', 12, 4.0 / 35.0, S_CRUSADER_DIE8) { A_XDying(); }
 	S_CRUSADER_DIE8('ROB2', 13, 4.0 / 35.0, S_CRUSADER_DIE9) { A_XDying(); }
+	S_CRUSADER_DIE9('ROB2', 14, 4.0 / 35.0, S_CRUSADER_DIE10) { A_Explode(); }
+	S_CRUSADER_DIE10('ROB2', 15, -1.0, S_NULL) { A_Unknown72(); }
 #endif
 }
 
@@ -108,9 +164,20 @@ class CrusaderCarcass:Decoration
 	__mobjinfo__(22)
 {
 
+__states__
+{
+	// FIXME this sucks!
+#ifdef TEASER
+	S_DEAD_CRUSADER('ROB2', 14, 4.0 / 35.0, S_NULL) { A_Unknown72(); }
+#else
+	S_DEAD_CRUSADER('ROB2', 14, 4.0 / 35.0, S_DEAD_CRUSADER_2) { A_Explode(); }
+	S_DEAD_CRUSADER_2('ROB2', 15, -1.0, S_NULL) { A_Unknown72(); }
+#endif
+}
+
 defaultproperties
 {
-	IdleState = S_CRUSADER_DIE9;
+	IdleState = S_DEAD_CRUSADER;
 }
 
 }
@@ -118,6 +185,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/07/13 07:56:42  dj_jl
+//  Huge work on Strife: splitting, merging, implementing stuff, etc.
+//
 //  Revision 1.4  2002/06/29 15:54:35  dj_jl
 //  Floatized PainChance.
 //

@@ -45,7 +45,7 @@ void Actor::A_Look(void)
 
 		if (bAmbush)
 		{
-			if (!P_CheckSight(self, Enemy))
+			if (!CanSee(Enemy))
 			{
 				if (!LookForPlayers(false))
 					return;
@@ -163,7 +163,7 @@ void Actor::A_Chase(void)
 	// possibly choose another target
 	if (netgame && !Threshold)
 	{
-		if (!P_CheckSight(self, Enemy))
+		if (!CanSee(Enemy))
 		{
 			if (LookForPlayers(true))
 				return;	// got a new target
@@ -361,15 +361,163 @@ void Actor::A_CheckRefire(void)
 	if (P_Random() < 40)
 		return;
 
-	if (!Enemy || Enemy.Health <= 0 || !P_CheckSight(self, Enemy))
+	if (!Enemy || Enemy.Health <= 0 || !CanSee(Enemy))
 	{
 		SetState(SeeState);
 	}
 }
 
+void Actor::A_Unknown24(void)
+{
+}
+void Actor::A_Unknown25(void)
+{
+}
+void Actor::A_DecReactionCount(void)
+{
+}
+void Actor::A_Unknown27(void)
+{
+}
+void Actor::A_FireGrenadeExplode(void)
+{
+}
+#ifdef TEASER
+void Actor::A_GasGrenadeExplode(void)
+{
+}
+#endif
+void Actor::A_Unknown30(void)
+{
+}
+void Actor::A_Unknown31(void)
+{
+}
+void Actor::A_Unknown32(void)
+{
+}
+#ifndef TEASER
+void Actor::A_RocketTrail(void)
+{
+}
+#endif
+void Actor::A_Unknown34(void)
+{
+}
+void Actor::A_MaulerTorpedoExplode(void)
+{
+}
+void Actor::A_XDying(void)
+{
+}
+void Actor::A_Stand(void)
+{
+}
+void Actor::A_Burn(void)
+{
+}
+void Actor::A_Walk(void)
+{
+}
+void Actor::A_Dying(void)
+{
+}
+void Actor::A_ResetHealth(void)
+{
+}
+void Actor::A_Unknown54(void)
+{
+}
+void Actor::A_Unknown55(void)
+{
+}
+void Actor::A_Unknown56(void)
+{
+}
+void Actor::A_RobotMelee(void)
+{
+}
+void Actor::A_RobotMissile(void)
+{
+}
+void Actor::A_Unknown64(void)
+{
+}
+void Actor::A_Unknown72(void)
+{
+}
+void Actor::A_FlightChase(void)
+{
+}
+void Actor::A_SpecterMelee(void)
+{
+}
+void Actor::A_SpecterAttack(void)
+{
+}
+void Actor::A_SpecterDying(void)
+{
+}
+#ifndef TEASER
+void Actor::A_SpecterDeath(void)
+{
+}
+#endif
+void Actor::A_Specter2Attack(void)
+{
+}
+void Actor::A_Specter3Attack(void)
+{
+}
+void Actor::A_Specter4Attack(void)
+{
+}
+void Actor::A_Specter5Attack(void)
+{
+}
+void Actor::A_Unknown90(void)
+{
+}
+void Actor::A_Unknown91(void)
+{
+}
+void Actor::A_Unknown92(void)
+{
+}
+void Actor::A_FlameFXExplode(void)
+{
+}
+void Actor::A_CheckAlarm(void)
+{
+}
+void Actor::A_AlarmActive(void)
+{
+}
+void Actor::A_Unknown110(void)
+{
+}
+void Actor::A_SpawnPuff(void)
+{
+}
+void Actor::A_Unknown112(void)
+{
+}
+void Actor::A_Unknown113(void)
+{
+}
+void Actor::A_Unknown114(void)
+{
+}
+void Actor::A_SummonRebel(void)
+{
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/07/13 07:56:42  dj_jl
+//  Huge work on Strife: splitting, merging, implementing stuff, etc.
+//
 //  Revision 1.23  2002/06/29 15:59:26  dj_jl
 //  Split out items, projectiles and decorations.
 //

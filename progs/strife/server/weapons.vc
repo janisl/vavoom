@@ -307,6 +307,18 @@ defaultproperties
 class MiniMissile:Projectile
 {
 
+__states__
+{
+	S_MINI_MISSILE('MICR', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_MINI_MISSILE) { A_SpawnPuff(); }
+	S_MISSILE_X1('MISL', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_MISSILE_X2) { A_Explode(); }
+	S_MISSILE_X2('MISL', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_MISSILE_X3) { }
+	S_MISSILE_X3('MISL', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_MISSILE_X4) { }
+	S_MISSILE_X4('MISL', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE_X5) { }
+	S_MISSILE_X5('MISL', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE_X6) { }
+	S_MISSILE_X6('MISL', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE_X7) { }
+	S_MISSILE_X7('MISL', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_NULL) { }
+}
+
 defaultproperties
 {
 	Radius = 10.0;
@@ -315,6 +327,7 @@ defaultproperties
 	MissileDamage = 10;
 	IdleState = S_MINI_MISSILE;
 	DeathState = S_MISSILE_X1;
+
 	SightSound = 'FireMissile';
 	DeathSound = 'MissileExplode';
 }
@@ -415,6 +428,42 @@ defaultproperties
 
 //**************************************************************************
 //
+//	GrenadeFlame
+//
+//**************************************************************************
+
+class GrenadeFlame:Effect
+{
+
+__states__
+{
+	S_GRENADE_FLAME_1('BNG3', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_GRENADE_FLAME_2) { A_Explode2(); }
+	S_GRENADE_FLAME_2('BNG3', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_GRENADE_FLAME_3) { A_DecReactionCount(); }
+	S_GRENADE_FLAME_3('FLBE', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_GRENADE_FLAME_4) { A_Unknown30(); }
+	S_GRENADE_FLAME_4('FLBE', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_GRENADE_FLAME_5) { A_DecReactionCount(); }
+	S_GRENADE_FLAME_5('FLBE', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_GRENADE_FLAME_6) { A_Explode2(); }
+	S_GRENADE_FLAME_6('FLBE', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_FLAME_7) { A_DecReactionCount(); }
+	S_GRENADE_FLAME_7('FLBE', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_FLAME_8) { A_Explode2(); }
+	S_GRENADE_FLAME_8('FLBE', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_FLAME_9) { A_DecReactionCount(); }
+	S_GRENADE_FLAME_9('FLBE', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_FLAME_6) { A_Unknown30(); }
+	S_GRENADE_FLAME_X1('FLBE', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_GRENADE_FLAME_X2) { }
+	S_GRENADE_FLAME_X2('FLBE', 8 | FF_FULLBRIGHT, 2.0 / 35.0, S_GRENADE_FLAME_X3) { A_Unknown30(); }
+	S_GRENADE_FLAME_X3('FLBE', 9 | FF_FULLBRIGHT, 2.0 / 35.0, S_GRENADE_FLAME_X4) { }
+	S_GRENADE_FLAME_X4('FLBE', 10 | FF_FULLBRIGHT, 2.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ReactionCount = 120;
+	bNoGravity = false;
+	IdleState = S_GRENADE_FLAME_1;
+	DeathState = S_GRENADE_FLAME_X1;
+}
+
+}
+
+//**************************************************************************
+//
 //	FireGrenade
 //
 //**************************************************************************
@@ -447,6 +496,37 @@ defaultproperties
 }
 
 #ifdef TEASER
+//**************************************************************************
+//
+//	GasCloud
+//
+//**************************************************************************
+
+class GasCloud:Effect
+{
+
+__states__
+{
+	S_GAS_CLOUD_1('GASC', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAS_CLOUD_2) { }
+	S_GAS_CLOUD_2('GASC', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAS_CLOUD_3) { }
+	S_GAS_CLOUD_3('GASC', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAS_CLOUD_4) { }
+	S_GAS_CLOUD_4('GASC', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAS_CLOUD_5) { }
+	S_GAS_CLOUD_5('GASC', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAS_CLOUD_6) { A_Unknown24(); }
+	S_GAS_CLOUD_6('GASC', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAS_CLOUD_7) { A_DecReactionCount(); }
+	S_GAS_CLOUD_7('GASC', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAS_CLOUD_8) { A_DecReactionCount(); }
+	S_GAS_CLOUD_8('GASC', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAS_CLOUD_5) { A_DecReactionCount(); }
+}
+
+defaultproperties
+{
+	ReactionCount = 80;
+	Translucency = 66;
+	bUnknown2 = true;
+	IdleState = S_GAS_CLOUD_1;
+}
+
+}
+
 //**************************************************************************
 //
 //	GasGrenade
@@ -550,6 +630,29 @@ defaultproperties
 class FlameFX1:Projectile
 {
 
+__states__
+{
+	S_FLAMEFX_1('FRBL', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEFX_2) { }
+#ifdef TEASER
+	S_FLAMEFX_2('FRBL', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEFX_1) { A_DecReactionCount(); }
+	S_FLAMEFX_X1('FRBL', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X2) { A_FlameFXExplode(); }
+	S_FLAMEFX_X2('FRBL', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X3) { }
+	S_FLAMEFX_X3('FRBL', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X4) { }
+	S_FLAMEFX_X4('FRBL', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X5) { }
+	S_FLAMEFX_X5('FRBL', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X6) { }
+	S_FLAMEFX_X6('FRBL', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
+#else
+	S_FLAMEFX_2('FRBL', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEFX_3) { }
+	S_FLAMEFX_3('FRBL', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEFX_1) { A_DecReactionCount(); }
+	S_FLAMEFX_X1('FRBL', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X2) { A_FlameFXExplode(); }
+	S_FLAMEFX_X2('FRBL', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X3) { }
+	S_FLAMEFX_X3('FRBL', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X4) { }
+	S_FLAMEFX_X4('FRBL', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X5) { }
+	S_FLAMEFX_X5('FRBL', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X6) { }
+	S_FLAMEFX_X6('FRBL', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
+#endif
+}
+
 defaultproperties
 {
 	Radius = 8.0;
@@ -614,6 +717,97 @@ defaultproperties
 
 //**************************************************************************
 //
+//	MaulerPuff
+//
+//**************************************************************************
+
+class MaulerPuff:Effect
+{
+
+__states__
+{
+	S_MAULER_FX_1('SHT2', 0, 5.0 / 35.0, S_MAULER_FX_2) { }
+	S_MAULER_FX_2('SHT2', 1, 5.0 / 35.0, S_POW1_1) { }
+	S_POW1_1('POW1', 0, 4.0 / 35.0, S_POW1_2) { }
+	S_POW1_2('POW1', 1, 4.0 / 35.0, S_POW1_3) { }
+	S_POW1_3('POW1', 2, 4.0 / 35.0, S_POW1_4) { }
+	S_POW1_4('POW1', 3, 4.0 / 35.0, S_POW1_5) { }
+	S_POW1_5('POW1', 4, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_MAULER_FX_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	MaulerTorpedoWav
+//
+//**************************************************************************
+
+class MaulerTorpedoWav:Projectile
+{
+
+__states__
+{
+	S_TORPEDO_WAV1('TWAV', 0 | FF_FULLBRIGHT, 9.0 / 35.0, S_TORPEDO_WAV2) { }
+	S_TORPEDO_WAV2('TWAV', 1 | FF_FULLBRIGHT, 9.0 / 35.0, S_TORPEDO_WAV3) { }
+	S_TORPEDO_WAV3('TWAV', 2 | FF_FULLBRIGHT, 9.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 13.0;
+	Height = 13.0;
+	Speed = 1225.0;
+	MissileDamage = 10;
+	IdleState = S_TORPEDO_WAV1;
+	DeathState = S_TORPEDO_WAV3;
+}
+
+}
+
+//**************************************************************************
+//
+//	MaulerTorpedoMissile
+//
+//**************************************************************************
+
+class MaulerTorpedoMissile:Projectile
+{
+
+__states__
+{
+	S_TORPEDO_1('TORP', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_TORPEDO_2) { }
+	S_TORPEDO_2('TORP', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_TORPEDO_3) { }
+	S_TORPEDO_3('TORP', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_TORPEDO_4) { }
+	S_TORPEDO_4('TORP', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_TORPEDO_1) { }
+	S_TORPEDO_X1('THIT', 0 | FF_FULLBRIGHT, 8.0 / 35.0, S_TORPEDO_X2) { }
+	S_TORPEDO_X2('THIT', 1 | FF_FULLBRIGHT, 8.0 / 35.0, S_TORPEDO_X3) { }
+	S_TORPEDO_X3('THIT', 2 | FF_FULLBRIGHT, 8.0 / 35.0, S_TORPEDO_X4) { A_MaulerTorpedoExplode(); }
+	S_TORPEDO_X4('THIT', 3 | FF_FULLBRIGHT, 8.0 / 35.0, S_TORPEDO_X5) { }
+	S_TORPEDO_X5('THIT', 4 | FF_FULLBRIGHT, 8.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 13.0;
+	Height = 8.0;
+	Speed = 700.0;
+	MissileDamage = 1;
+	IdleState = S_TORPEDO_1;
+	DeathState = S_TORPEDO_X1;
+	SightSound = 'MaulerTorpedoFire';
+	DeathSound = 'Explode';
+}
+
+}
+
+//**************************************************************************
+//
 //	WeaponMauler
 //
 //**************************************************************************
@@ -631,6 +825,8 @@ void A_FireBlasterSound(void)
 
 void A_FireBlaster2(void)
 {
+	Player->Ammo[Ammo]--;
+	PlayerPawn(Player->MO).SpawnPlayerMissile(MaulerTorpedoMissile);
 }
 
 __states__
@@ -671,6 +867,234 @@ defaultproperties
 	DownState = S_BLASTERDOWN;
 	ReadyState = S_BLASTER;
 	AttackState = S_BLASTER1;
+}
+
+}
+
+//**************************************************************************
+//
+//	SigilFX1
+//
+//**************************************************************************
+
+class SigilFX1:Projectile
+{
+
+__states__
+{
+	S_SIGIL_FX1_1('ZAP6', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX1_2) { }
+	S_SIGIL_FX1_2('ZAP6', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX1_3) { A_Unknown90(); }
+	S_SIGIL_FX1_3('ZAP6', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX1_1) { A_Unknown90(); }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 16.0;
+	Speed = 1050.0;
+	MissileDamage = 70;
+	bUnknown3 = true;
+	IdleState = S_SIGIL_FX1_1;
+#ifdef TEASER
+	DeathState = S_ZAP1_2;
+#else
+	DeathState = S_ZAP1_1;
+#endif
+	SightSound = 'SigilFire';
+	DeathSound = 'SigilHit';
+}
+
+}
+
+//**************************************************************************
+//
+//	SigilFX2
+//
+//**************************************************************************
+
+class SigilFX2:Projectile
+{
+
+__states__
+{
+	S_SIGIL_FX2_1('ZOT3', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX2_2) { }
+	S_SIGIL_FX2_2('ZOT3', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX2_3) { }
+	S_SIGIL_FX2_3('ZOT3', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX2_4) { }
+	S_SIGIL_FX2_4('ZOT3', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX2_5) { }
+	S_SIGIL_FX2_5('ZOT3', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX2_1) { }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 16.0;
+	Speed = 1050.0;
+	MissileDamage = 70;
+	bUnknown3 = true;
+	IdleState = S_SIGIL_FX2_1;
+#ifdef TEASER
+	DeathState = S_ZAP1_2;
+#else
+	DeathState = S_ZAP1_1;
+#endif
+	SightSound = 'SigilFire';
+	DeathSound = 'SigilHit';
+}
+
+}
+
+//**************************************************************************
+//
+//	SigilFX3
+//
+//**************************************************************************
+
+class SigilFX3:Projectile
+{
+
+__states__
+{
+	S_SIGIL_FX3_1('ZAP7', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX3_2) { A_Unknown91(); }
+	S_SIGIL_FX3_2('ZAP7', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX3_3) { A_Unknown91(); }
+	S_SIGIL_FX3_3('ZAP7', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGIL_FX3_4) { A_Unknown91(); }
+	S_SIGIL_FX3_4('ZAP7', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGIL_FX3_5) { A_Unknown91(); }
+	S_SIGIL_FX3_5('ZAP7', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGIL_FX3_1) { A_Unknown91(); }
+}
+
+defaultproperties
+{
+	Radius = 20.0;
+	Height = 40.0;
+	Speed = 630.0;
+	MissileDamage = 130;
+	bUnknown3 = true;
+	IdleState = S_SIGIL_FX3_1;
+	DeathState = S_ZAP1_2;
+	SightSound = 'SigilFire';
+	DeathSound = 'SigilHit';
+}
+
+}
+
+//**************************************************************************
+//
+//	SigilFX4
+//
+//**************************************************************************
+
+class SigilFX4:Projectile
+{
+
+__states__
+{
+	S_SIGIL_FX4_1('ZOT1', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX4_2) { }
+	S_SIGIL_FX4_2('ZOT1', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX4_3) { }
+	S_SIGIL_FX4_3('ZOT1', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGIL_FX4_4) { }
+	S_SIGIL_FX4_4('ZOT1', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGIL_FX4_5) { }
+	S_SIGIL_FX4_5('ZOT1', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGIL_FX4_1) { }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 24.0;
+	Speed = 770.0;
+	MissileDamage = 100;
+	bUnknown3 = true;
+	IdleState = S_SIGIL_FX4_1;
+	DeathState = S_ZAP1_6;
+	SightSound = 'SigilFire';
+	DeathSound = 'SigilHit';
+}
+
+}
+
+//**************************************************************************
+//
+//	SigilFX5
+//
+//**************************************************************************
+
+class SigilFX5:Projectile
+{
+
+__states__
+{
+	S_SIGIL_FX5_1('ZOT2', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX5_2) { A_Unknown34(); }
+	S_SIGIL_FX5_2('ZOT2', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX5_3) { A_Unknown34(); }
+	S_SIGIL_FX5_3('ZOT2', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGIL_FX5_4) { A_Unknown34(); }
+	S_SIGIL_FX5_4('ZOT2', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGIL_FX5_5) { A_Unknown34(); }
+	S_SIGIL_FX5_5('ZOT2', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_SIGIL_FX5_1) { A_Unknown34(); }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 16.0;
+	Speed = 980.0;
+	MissileDamage = 120;
+	bUnknown3 = true;
+	IdleState = S_SIGIL_FX5_1;
+	DeathState = S_ZAP1_0;
+	SightSound = 'SigilFire';
+	DeathSound = 'SigilHit';
+}
+
+}
+
+//**************************************************************************
+//
+//	SigilZap
+//
+//**************************************************************************
+
+class SigilZap:Effect
+{
+
+__states__
+{
+	S_ZAP6_1('ZAP6', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZAP6_2) { }
+	S_ZAP6_2('ZAP6', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZAP6_3) { }
+	S_ZAP6_3('ZAP6', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bDropOff = true;
+	IdleState = S_ZAP6_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	SigilFloor
+//
+//**************************************************************************
+
+class SigilFloor:Effect
+{
+
+__states__
+{
+	S_SIGIL_FLOOR_1('ZAP5', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FLOOR_2) { A_DecReactionCount(); }
+	S_SIGIL_FLOOR_2('ZAP5', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FLOOR_3) { A_Unknown92(); }
+	S_SIGIL_FLOOR_3('ZAP5', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FLOOR_4) { A_DecReactionCount(); }
+	S_SIGIL_FLOOR_4('ZAP5', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FLOOR_1) { A_DecReactionCount(); }
+}
+
+defaultproperties
+{
+	Speed = 630.0;
+#ifdef TEASER
+	ReactionCount = 90;
+#else
+	ReactionCount = 70;
+#endif
+	Translucency = 66;
+	bNoGravity = false;
+	IdleState = S_SIGIL_FLOOR_1;
+	DeathState = S_ZAP1_0;
 }
 
 }
@@ -730,15 +1154,12 @@ defaultproperties
 
 }
 
-#ifdef TEASER
-#else
-#endif
-
-#ifndef TEASER
-#endif
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/07/13 07:56:42  dj_jl
+//  Huge work on Strife: splitting, merging, implementing stuff, etc.
+//
 //  Revision 1.23  2002/06/29 15:59:28  dj_jl
 //  Split out items, projectiles and decorations.
 //
