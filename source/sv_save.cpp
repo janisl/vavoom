@@ -74,6 +74,7 @@ typedef enum
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 void SV_SpawnServer(char *mapname, boolean spawn_thinkers);
+void SV_SendServerInfoToClients();
 void SV_ShutdownServer(boolean);
 void CL_Disconnect(void);
 
@@ -1099,6 +1100,9 @@ static void SV_LoadMap(char *mapname, int slot)
 	delete Loader;
 
 	Z_Free(NameRemap);
+
+	//	Do this here so that clients have loaded info, not initial one.
+	SV_SendServerInfoToClients();
 	unguard;
 }
 
@@ -1492,9 +1496,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.40  2005/04/04 07:48:13  dj_jl
+//	Fix for loading level variables.
+//
 //	Revision 1.39  2005/03/28 07:24:36  dj_jl
 //	Saving a net game.
-//
+//	
 //	Revision 1.38  2005/01/24 12:56:58  dj_jl
 //	Saving of level time.
 //	

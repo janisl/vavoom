@@ -2110,6 +2110,32 @@ void SV_SendServerInfo(VBasePlayer *player)
 
 //==========================================================================
 //
+//	SV_SendServerInfoToClients
+//
+//==========================================================================
+
+void SV_SendServerInfoToClients()
+{
+	guard(SV_SendServerInfoToClients);
+	for (int i = 0; i < svs.max_clients; i++)
+	{
+		if (svvars.Players[i])
+		{
+			SV_SendServerInfo(svvars.Players[i]);
+			if (svvars.Players[i]->bIsBot)
+			{
+				sv_player = svvars.Players[i];
+				SV_RunClientCommand("PreSpawn\n");
+				SV_RunClientCommand("Spawn\n");
+				SV_RunClientCommand("Begin\n");
+			}
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	SV_SpawnServer
 //
 //==========================================================================
@@ -2233,20 +2259,6 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 	Z_CheckHeap();
 
 	SV_InitModelLists();
-	for (i = 0; i < svs.max_clients; i++)
-	{
-		if (svvars.Players[i])
-		{
-			SV_SendServerInfo(svvars.Players[i]);
-			if (svvars.Players[i]->bIsBot)
-			{
-				sv_player = svvars.Players[i];
-				SV_RunClientCommand("PreSpawn\n");
-				SV_RunClientCommand("Spawn\n");
-				SV_RunClientCommand("Begin\n");
-			}
-		}
-	}
 
 	if (!spawn_thinkers)
 	{
@@ -2256,6 +2268,8 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 //		}
 		return;
 	}
+
+	SV_SendServerInfoToClients();
 
 	//	Start open scripts.
 	P_StartTypedACScripts(SCRIPT_Open);
@@ -2985,9 +2999,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.64  2005/04/04 07:48:05  dj_jl
+//	Fix for loading level variables.
+//
 //	Revision 1.63  2005/03/28 07:24:36  dj_jl
 //	Saving a net game.
-//
+//	
 //	Revision 1.62  2005/03/16 15:04:44  dj_jl
 //	More work on line specials.
 //	
