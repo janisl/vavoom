@@ -1,9 +1,9 @@
 progs/clprogs.dat
 progs/svprogs.dat
 
-switches.txt
-terrains.txt
-sfxinfo.txt
+scripts/switches.txt
+scripts/terrains.txt
+scripts/sfxinfo.txt
 
 $wad hexendat.wad
 

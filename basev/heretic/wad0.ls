@@ -1,21 +1,21 @@
 progs/clprogs.dat
 progs/svprogs.dat
 
-mapinfo.txt
+scripts/mapinfo.txt
 
-fin1text.txt
-fin2text.txt
-fin3text.txt
-fin4text.txt
-fin5text.txt
+scripts/fin1text.txt
+scripts/fin2text.txt
+scripts/fin3text.txt
+scripts/fin4text.txt
+scripts/fin5text.txt
 
-animdefs.txt
-switches.txt
-terrains.txt
+scripts/animdefs.txt
+scripts/switches.txt
+scripts/terrains.txt
 
-sfxinfo.txt
-sndinfo.txt
-sndseq.txt
+scripts/sfxinfo.txt
+scripts/sndinfo.txt
+scripts/sndseq.txt
 
 $load palette.pcx
 

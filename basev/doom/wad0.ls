@@ -1,9 +1,9 @@
-animdefs.txt
-sfxinfo.txt
-sndinfo.txt
-sndseq.txt
-switches.txt
-terrains.txt
+scripts/animdefs.txt
+scripts/sfxinfo.txt
+scripts/sndinfo.txt
+scripts/sndseq.txt
+scripts/switches.txt
+scripts/terrains.txt
 
 $load palette.pcx
 
