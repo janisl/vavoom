@@ -65,7 +65,6 @@ IMPLEMENT_CLASS(VSubsystem);	// FIXME
 
 VObject::VObject(void)
 {
-	Register();
 }
 
 //==========================================================================
@@ -160,6 +159,7 @@ VObject *VObject::StaticSpawnObject(VClass *AClass, VObject *AOuter, int tag)
 	Obj->Class = AClass;
 	Obj->Outer = AOuter;
 	Obj->vtable = AClass->ClassVTable;
+	Obj->Register();
 	if (Obj->vtable)
 	{
 		TProgs::Exec(Obj->vtable[0], (int)Obj);
@@ -409,9 +409,12 @@ IMPLEMENT_FUNCTION(VObject, IsDestroyed)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/08/28 16:43:13  dj_jl
+//	Fixed object registration.
+//
 //	Revision 1.9  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.8  2002/07/15 17:51:09  dj_jl
 //	Made VSubsystem global.
 //	
