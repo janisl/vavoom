@@ -171,7 +171,7 @@ void S_PlayVoice(const char *Name)
 //
 //==========================================================================
 
-void S_PlayTillDone(char *sound)
+void S_PlayTillDone(const char *sound)
 {
 	GSoundDevice->PlaySoundTillDone(sound);
 }
@@ -215,7 +215,7 @@ boolean S_GetSoundPlayingInfo(int origin_id, int sound_id)
 //
 //==========================================================================
 
-void S_StartSong(char* song, int track, boolean loop)
+void S_StartSong(const char* song, int track, boolean loop)
 {
 	guard(S_StartSong);
 	if (CDMusic)
@@ -344,9 +344,12 @@ void S_UpdateSounds(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2004/11/30 07:17:17  dj_jl
+//	Made string pointers const.
+//
 //	Revision 1.11  2004/08/21 19:10:44  dj_jl
 //	Changed sound driver declaration.
-//
+//	
 //	Revision 1.10  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
 //	

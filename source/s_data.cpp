@@ -237,7 +237,7 @@ int S_GetSoundID(FName Name)
 //
 //==========================================================================
 
-int S_GetSoundID(char *name)
+int S_GetSoundID(const char *name)
 {
 	guard(S_GetSoundID);
 	for (TArray<sfxinfo_t>::TIterator It(S_sfx); It; ++It)
@@ -404,9 +404,12 @@ void S_Init(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2004/11/30 07:17:17  dj_jl
+//	Made string pointers const.
+//
 //	Revision 1.11  2004/11/23 12:43:10  dj_jl
 //	Wad file lump namespaces.
-//
+//	
 //	Revision 1.10  2002/07/27 18:10:11  dj_jl
 //	Implementing Strife conversations.
 //	

@@ -62,7 +62,7 @@ public:
 	void PlaySound(int sound_id, const TVec &origin, const TVec &velocity,
 		int origin_id, int channel, float volume);
 	void PlayVoice(const char *Name);
-	void PlaySoundTillDone(char *sound);
+	void PlaySoundTillDone(const char *sound);
 	void StopSound(int origin_id, int channel);
 	void StopAllSound(void);
 	bool IsSoundPlaying(int origin_id, int sound_id);
@@ -600,7 +600,7 @@ void VSDLSoundDevice::PlayVoice(const char *Name)
 //
 //==========================================================================
 
-void VSDLSoundDevice::PlaySoundTillDone(char *sound)
+void VSDLSoundDevice::PlaySoundTillDone(const char *sound)
 {
 	guard(VSDLSoundDevice::PlaySoundTillDone);
 	int    sound_id;
@@ -846,9 +846,12 @@ bool VSDLSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2004/11/30 07:17:17  dj_jl
+//	Made string pointers const.
+//
 //	Revision 1.11  2004/10/18 06:36:45  dj_jl
 //	Some fixes.
-//
+//	
 //	Revision 1.10  2004/10/11 06:49:57  dj_jl
 //	SDL patches.
 //	

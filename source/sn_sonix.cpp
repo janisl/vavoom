@@ -76,7 +76,7 @@ struct seq_info_t
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 static void VerifySequencePtr(int *base, int *ptr);
-static int GetSoundOffset(char *name);
+static int GetSoundOffset(const char *name);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -116,7 +116,7 @@ static void VerifySequencePtr(int *base, int *ptr)
 //
 //==========================================================================
 
-static int GetSoundOffset(char *name)
+static int GetSoundOffset(const char *name)
 {
 	guard(GetSoundOffset);
 	for (TArray<sfxinfo_t>::TIterator It(S_sfx); It; ++It)
@@ -299,7 +299,7 @@ void SN_StartSequence(int origin_id, const TVec &origin, int sequence)
 //
 //==========================================================================
 
-void SN_StartSequenceName(int origin_id, const TVec &origin, char *name)
+void SN_StartSequenceName(int origin_id, const TVec &origin, const char *name)
 {
 	guard(SN_StartSequenceName);
 	int i;
@@ -500,9 +500,12 @@ void SN_ChangeNodeData(int nodeNum, int seqOffset, int delayTics, int volume,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2004/11/30 07:17:17  dj_jl
+//	Made string pointers const.
+//
 //	Revision 1.7  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.6  2002/01/11 08:11:05  dj_jl
 //	Changes in sound list
 //	Added guard macros

@@ -91,7 +91,7 @@ public:
 	{}
 	virtual void PlayVoice(const char *)
 	{}
-	virtual void PlaySoundTillDone(char *)
+	virtual void PlaySoundTillDone(const char *)
 	{}
 	virtual void StopSound(int, int)
 	{}
@@ -167,9 +167,12 @@ extern TCvarI		swap_stereo;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2004/11/30 07:17:17  dj_jl
+//	Made string pointers const.
+//
 //	Revision 1.11  2004/08/21 19:10:44  dj_jl
 //	Changed sound driver declaration.
-//
+//	
 //	Revision 1.10  2003/03/08 12:08:04  dj_jl
 //	Beautification.
 //	

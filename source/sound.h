@@ -52,12 +52,12 @@ struct seqnode_t
 //
 void S_Init(void);
 void S_Start(const mapInfo_t &info);
-void S_StartSong(char* name, int track, boolean loop);
+void S_StartSong(const char* name, int track, boolean loop);
 void S_PauseSound(void);
 void S_ResumeSound(void);
 void S_UpdateSounds(void);
 int S_GetSoundID(FName Name);
-int S_GetSoundID(char *name);
+int S_GetSoundID(const char *name);
 void S_Shutdown(void);
 
 //
@@ -69,7 +69,7 @@ inline void S_StartSound(int sound_id)
 	S_StartSound(sound_id, TVec(0, 0, 0), TVec(0, 0, 0), 0, 0, 127);
 }
 void S_PlayVoice(const char *);
-void S_PlayTillDone(char *);
+void S_PlayTillDone(const char *);
 void S_StopSound(int, int);
 void S_StopAllSound(void);
 boolean S_GetSoundPlayingInfo(int origin_id, int sound_id);
@@ -79,7 +79,7 @@ boolean S_GetSoundPlayingInfo(int origin_id, int sound_id);
 //
 void SN_InitSequenceScript(void);
 void SN_StartSequence(int origin_id, const TVec &origin, int sequence);
-void SN_StartSequenceName(int origin_id, const TVec &origin, char *name);
+void SN_StartSequenceName(int origin_id, const TVec &origin, const char *name);
 void SN_StopSequence(int origin_id);
 void SN_UpdateActiveSequences(void);
 void SN_StopAllSequences(void);
@@ -95,9 +95,12 @@ extern seqnode_t	*SequenceListHead;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2004/11/30 07:17:17  dj_jl
+//	Made string pointers const.
+//
 //	Revision 1.7  2002/07/27 18:10:11  dj_jl
 //	Implementing Strife conversations.
-//
+//	
 //	Revision 1.6  2002/01/11 08:15:06  dj_jl
 //	Sound index retrieval by FName
 //	

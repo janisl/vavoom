@@ -98,7 +98,7 @@ public:
 	void PlaySound(int sound_id, const TVec &origin, const TVec &velocity,
 		int origin_id, int channel, float volume);
 	void PlayVoice(const char *Name);
-	void PlaySoundTillDone(char *sound);
+	void PlaySoundTillDone(const char *sound);
 	void StopSound(int origin_id, int channel);
 	void StopAllSound(void);
 	bool IsSoundPlaying(int origin_id, int sound_id);
@@ -536,7 +536,7 @@ void VOpenALDevice::PlayVoice(const char *Name)
 //
 //==========================================================================
 
-void VOpenALDevice::PlaySoundTillDone(char *sound)
+void VOpenALDevice::PlaySoundTillDone(const char *sound)
 {
 	guard(VOpenALDevice::PlaySoundTillDone);
 	//	Get sound ID
@@ -830,9 +830,12 @@ bool VOpenALDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2004/11/30 07:17:16  dj_jl
+//	Made string pointers const.
+//
 //	Revision 1.7  2004/08/21 19:10:44  dj_jl
 //	Changed sound driver declaration.
-//
+//	
 //	Revision 1.6  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
 //	
