@@ -104,6 +104,9 @@
  externdef _fadetable32b
  externdef _viewwidth
  externdef _viewheight
+ externdef _viewforward
+ externdef _viewright
+ externdef _viewup
  externdef _vrectx_adj
  externdef _vrecty_adj
  externdef _vrectw_adj
@@ -245,7 +248,7 @@ _D_PolysetDraw:
  sub esp,offset (1024 + 1 + 1 + 1) * 32  
  mov eax,esp
  add eax,32  - 1
- and eax,offset not (32  - 1)
+ and eax,offset -32
  mov ds:dword ptr[_a_spans],eax
  push ebp
  push edi

@@ -252,6 +252,9 @@
 .extern	C(viewwidth)
 .extern	C(viewheight)
 
+.extern	C(viewforward)
+.extern	C(viewright)
+.extern	C(viewup)
 .extern	C(vrectx_adj)
 .extern	C(vrecty_adj)
 .extern	C(vrectw_adj)
@@ -389,9 +392,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/08/15 17:44:41  dj_jl
+//	Added missing externs
+//
 //	Revision 1.6  2001/08/15 17:12:23  dj_jl
 //	Optimized model drawing
-//
+//	
 //	Revision 1.5  2001/08/04 17:32:39  dj_jl
 //	Beautification
 //	

@@ -104,6 +104,9 @@
  externdef _fadetable32b
  externdef _viewwidth
  externdef _viewheight
+ externdef _viewforward
+ externdef _viewright
+ externdef _viewup
  externdef _vrectx_adj
  externdef _vrecty_adj
  externdef _vrectw_adj
