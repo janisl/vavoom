@@ -1,9 +1,7 @@
 ifdef DJGPP
 EXE=.exe
-INSTALLDIR=../bin
 else
 EXE=
-INSTALLDIR=/usr/local/bin
 endif
 
 CFLAGS = -Wall -O3 -ffast-math -fomit-frame-pointer -mpentiumpro
@@ -48,7 +46,4 @@ vcpp/libcpp.a: $(CPP_OBJS)
 
 vcpp/%.o : vcpp/%.cpp vcpp/cpp.h
 	gcc $(CFLAGS) -c -o $@ $<
-
-install: vcc$(EXE)
-	cp vcc$(EXE) $(INSTALLDIR)
 
