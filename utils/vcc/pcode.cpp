@@ -216,6 +216,8 @@ static struct
 	{"RETURNL", 0},
 	{"RETURNV", 0},
 	{"PUSHSTRING", 1},
+
+	{"COPY", 0},
 };
 
 // CODE --------------------------------------------------------------------
@@ -583,6 +585,20 @@ void PC_WriteObject(char *name)
 		fwrite(&gdef, 1, sizeof(globaldef_t), f);
 	}
 
+	progs.ofs_classinfo = ftell(f);
+	progs.num_classinfo = numclasses;
+	for (i = 0; i < numclasses; i++)
+	{
+		dclassinfo_t ci;
+		TType *ct = classtypes[i];
+
+		ci.s_name = ct->s_name;
+		ci.vtable = ct->vtable;
+		ci.size = ct->size;
+		ci.parent = ct->aux_type ? ct->aux_type->classid : 0;
+		fwrite(&ci, 1, sizeof(ci), f);
+	}
+
 	dprintf("            count   size\n");
 	dprintf("Header     %6d %6ld\n", 1, sizeof(progs));
 	dprintf("Strings    %6d %6d\n", StringCount, strofs);
@@ -592,6 +608,7 @@ void PC_WriteObject(char *name)
 	dprintf("Functions  %6d %6ld\n", numfunctions, numfunctions * sizeof(dfunction_t));
 	dprintf("Builtins   %6d\n", numbuiltins);
 	dprintf("Globaldefs %6d %6ld\n", numglobaldefs, numglobaldefs * sizeof(globaldef_t));
+	dprintf("Class info %6d %6ld\n", numclasses, numclasses * sizeof(dclassinfo_t));
 	dprintf("TOTAL SIZE        %6d\n", (int)ftell(f));
 
 	memcpy(progs.magic, PROG_MAGIC, 4);
@@ -691,9 +708,12 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/20 16:09:55  dj_jl
+//	Added basic object-oriented support
+//
 //	Revision 1.3  2001/08/21 17:52:54  dj_jl
 //	Added support for real string pointers, beautification
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:56  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

@@ -34,7 +34,7 @@
 
 // TYPES -------------------------------------------------------------------
 
-typedef enum
+enum chr_t
 {
 	CHR_EOF,
 	CHR_LETTER,
@@ -42,7 +42,7 @@ typedef enum
 	CHR_QUOTE,
 	CHR_SINGLE_QUOTE,
 	CHR_SPECIAL
-} chr_t;
+};
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -84,6 +84,8 @@ static char* Keywords[] =
 	"addfields",
 	"break",
 	"case",
+	"class",
+	"classid",
 	"continue",
 	"default",
 	"do",
@@ -99,6 +101,7 @@ static char* Keywords[] =
 	"string",
 	"struct",
 	"switch",
+	"this",
 	"typedef",
    	"uint",
 	"vector",
@@ -116,7 +119,7 @@ static char* Punctuations[] =
 	"&&", "||",
 	"<<", ">>",
 	"++", "--",
-	"->",
+	"->", "::",
 
 	"<", ">" , "?",
 	"&" , "|", "^", "~", "!",
@@ -613,9 +616,12 @@ void TK_Expect(char *string, error_t error)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/20 16:09:55  dj_jl
+//	Added basic object-oriented support
+//
 //	Revision 1.3  2001/08/21 17:52:54  dj_jl
 //	Added support for real string pointers, beautification
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:56  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

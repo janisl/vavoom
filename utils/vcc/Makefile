@@ -20,15 +20,34 @@ OBJS = \
 	types.o \
 	vcc.o
 
+CPP_OBJS = \
+	cpp/cpp.o \
+	cpp/eval.o \
+	cpp/getopt.o \
+	cpp/hideset.o \
+	cpp/include.o \
+	cpp/lex.o \
+	cpp/macro.o \
+	cpp/nlist.o \
+	cpp/tokens.o \
+	cpp/unix.o
+
 all: vcc$(EXE)
 
-vcc$(EXE): $(OBJS)
-	gcc -s -o $@ $(OBJS)
+vcc$(EXE): $(OBJS) cpp/libcpp.a
+	gcc -s -o $@ $^
+
+cpp/libcpp.a: $(CPP_OBJS)
+	ar rc $@ $^
+	ranlib $@
 
 %.o : %.cpp vcc.h ../../source/progdefs.h ../common/cmdlib.h
 	gcc $(CFLAGS) -I../common -c -o $@ $<
 
 %.o : ../common/%.cpp ../common/cmdlib.h
+	gcc $(CFLAGS) -c -o $@ $<
+
+cpp/%.o : cpp/%.cpp cpp/cpp.h
 	gcc $(CFLAGS) -c -o $@ $<
 
 install: vcc$(EXE)

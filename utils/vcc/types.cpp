@@ -60,10 +60,17 @@ TType		type_state("state_t", ev_struct, &type_function, NULL, -1);
 TType		type_mobjinfo("mobjinfo_t", ev_struct, &type_state, NULL, -1);
 TType		type_void_ptr("", ev_pointer, &type_mobjinfo, &type_void, 4);
 TType		type_vector("", ev_vector, &type_void_ptr, NULL, 12);
+TType		type_classid("classid", ev_classid, &type_vector, NULL, 4);
 
-TType		*types = &type_vector;
+TType		*types = &type_classid;
+
+TType		**classtypes;
+
+TType		NoneClass("", ev_class, NULL, NULL, 0);
 
 typedef_t	*typedefs;
+
+int			numclasses = 1;
 
 // CODE --------------------------------------------------------------------
 
@@ -283,7 +290,8 @@ void TypeCheck3(TType *t1, TType *t2)
 		{
 			return;
 		}
-		if (t1->type == ev_struct && t2->type == ev_struct)
+		if ((t1->type == ev_struct && t2->type == ev_struct) ||
+			(t1->type == ev_class && t2->type == ev_class))
 		{
 			while (t1->aux_type)
 			{
@@ -471,7 +479,7 @@ void AddFields(void)
 	}
 
 	//  PÆrbauda, vai tas ir struktÝras tips
-	if (struct_type->type != ev_struct)
+	if (struct_type->type != ev_struct && struct_type->type != ev_class)
 	{
 	 	ParseError("Parent must be a struct.");
 		return;
@@ -657,6 +665,241 @@ void ParseVector(void)
 
 //==========================================================================
 //
+//	ParseClass
+//
+//==========================================================================
+
+#define BASE_CLASS_SIZE			4
+#define BASE_NUM_METHODS		2
+
+void ParseClass(void)
+{
+	field_t		fields[128];
+	field_t		*fi;
+	field_t		*otherfield;
+	int			size;
+	int			i;
+	TType		*t;
+	TType		*type;
+	TType		*class_type;
+
+	class_type = CheckForType();
+	if (class_type)
+	{
+		if (class_type->type != ev_class)
+		{
+			ParseError("Not a class type");
+			return;
+		}
+		if (class_type->size != -1)
+		{
+			ParseError("Class definition already completed");
+			return;
+		}
+	}
+	else
+	{
+		if (tk_Token != TK_IDENTIFIER)
+		{
+			ParseError("Class name expected");
+		}
+		//  Pievieno pie tipiem
+		class_type = new TType;
+		memset(class_type, 0, sizeof(TType));
+		strcpy(class_type->name, tk_String);
+		class_type->s_name = FindString(tk_String);
+		class_type->type = ev_class;
+		class_type->next = types;
+		class_type->classid = numclasses++;
+		types = class_type;
+		TK_NextToken();
+		dprintf("Added new class %s\n", class_type->name);
+	}
+
+	if (TK_Check(";"))
+	{
+		class_type->size = -1;
+		return;
+	}
+
+	class_type->numfields = 0;
+	class_type->num_methods = BASE_NUM_METHODS;
+	size = BASE_CLASS_SIZE;
+
+	if (TK_Check(":"))
+	{
+		dprintf("Class is inherited from %s\n", tk_String);
+		type = CheckForType();
+		if (!type)
+		{
+			ParseError("Parent class type expected");
+		}
+		else if (type->type != ev_class)
+		{
+			ParseError("Parent type must be a class");
+		}
+		else
+		{
+			class_type->aux_type = type;
+			class_type->num_methods = type->num_methods;
+			size = TypeSize(type);
+		}
+	}
+
+   	class_type->available_size = 0;
+   	class_type->available_ofs = 0;
+	class_type->fields = fields;
+	class_type->size = size;
+	TK_Expect("{", ERR_MISSING_LBRACE);
+	while (!TK_Check("}"))
+	{
+		if (TK_Check("addfields"))
+		{
+	   		if (class_type->available_size)
+			{
+				ParseError("Addfields already defined");
+			}
+			if (tk_Token != TK_INTEGER)
+			{
+				ParseError("Field count expacted");
+			}
+	   		class_type->available_size = tk_Number * 4;
+   			class_type->available_ofs = size;
+			size += tk_Number * 4;
+			TK_NextToken();
+			TK_Expect(";", ERR_MISSING_SEMICOLON);
+			continue;
+		}
+		type = CheckForType();
+		if (!type)
+		{
+			ParseError("Field type expected.");
+		}
+		do
+		{
+			t = type;
+			while (TK_Check("*"))
+			{
+				t = MakePointerType(t);
+			}
+			if (tk_Token != TK_IDENTIFIER)
+			{
+				ParseError("Field name expected");
+				continue;
+			}
+			fi = &fields[class_type->numfields];
+			strcpy(fi->name, tk_String);
+			otherfield = CheckForField(class_type);
+			if (!otherfield)
+			{
+				TK_NextToken();
+			}
+			if (TK_Check("("))
+			{
+				TType functype;
+				memset(&functype, 0, sizeof(TType));
+				functype.type = ev_method;
+				functype.aux_type = t;
+
+				do
+				{
+					if (TK_Check("..."))
+					{
+						functype.num_params |= PF_VARARGS;
+						break;
+					}
+
+					type = CheckForType();
+
+					if (!type)
+					{
+						if (functype.num_params == 0)
+						{
+							break;
+						}
+						ERR_Exit(ERR_BAD_VAR_TYPE, true, NULL);
+					}
+					while (TK_Check("*"))
+					{
+					   	type = MakePointerType(type);
+					}
+					if (functype.num_params == 0 && type == &type_void)
+					{
+						break;
+					}
+					TypeCheckPassable(type);
+
+					if (functype.num_params == MAX_PARAMS)
+					{
+						ERR_Exit(ERR_PARAMS_OVERFLOW, true, NULL);
+					}
+			   		if (tk_Token == TK_IDENTIFIER)
+					{
+						TK_NextToken();
+					}
+					functype.param_types[functype.num_params] = type;
+					functype.num_params++;
+					functype.params_size += TypeSize(type) / 4;
+				} while (TK_Check(","));
+				TK_Expect(")", ERR_MISSING_RPAREN);
+
+				fi->type = FindType(&functype);
+				if (otherfield)
+				{
+					if (otherfield->type != fi->type)
+					{
+						ParseError("Method redefined with different type");
+						break;
+					}
+					fi->ofs = otherfield->ofs;
+					dprintf("Overrided method\n");
+				}
+				else
+				{
+					fi->ofs = class_type->num_methods;
+					class_type->num_methods++;
+					dprintf("New method\n");
+				}
+				fi->func_num = 0;
+				dprintf("Method %d %s, ofs %d, type %d.\n",
+					class_type->numfields, fi->name, fi->ofs, fi->type);
+				class_type->numfields++;
+				break;
+			}
+			if (otherfield)
+			{
+				ParseError("Redeclared field");
+				continue;
+			}
+			if (t == &type_void)
+			{
+				ParseError("Field cannot have void type.");
+			}
+			fi->ofs = size;
+			while (TK_Check("["))
+			{
+				i = EvalConstExpression(ev_int);
+				TK_Expect("]", ERR_MISSING_RFIGURESCOPE);
+				t = MakeArrayType(t, i);
+			}
+		   	size += TypeSize(t);
+			fi->type = t;
+			dprintf("Field %d %s, ofs %d, type %d.\n",
+				class_type->numfields, fi->name, fi->ofs, fi->type);
+			class_type->numfields++;
+		} while (TK_Check(","));
+		TK_Expect(";", ERR_MISSING_SEMICOLON);
+	}
+	TK_Expect(";", ERR_MISSING_SEMICOLON);
+
+	//	Pievieno pie tipa
+	class_type->fields = new field_t[class_type->numfields];
+	memcpy(class_type->fields, fields, class_type->numfields * sizeof(*fields));
+   	class_type->size = size;
+}
+
+//==========================================================================
+//
 //	ParseField
 //
 //==========================================================================
@@ -666,7 +909,7 @@ field_t* ParseField(TType *t)
 	field_t		*fi;
 	int			i;
 
-	if (t->type != ev_struct && t->type != ev_vector)
+	if (t->type != ev_struct && t->type != ev_vector && t->type != ev_class)
 	{
 	 	ParseError(ERR_NOT_A_STRUCT, "Base type required.");
 		return NULL;
@@ -695,6 +938,41 @@ field_t* ParseField(TType *t)
 	}
 	ParseError(ERR_NOT_A_FIELD, "Identifier: %s", tk_String);
 	return NULL;
+}
+
+//==========================================================================
+//
+//	CheckForField
+//
+//==========================================================================
+
+field_t* CheckForField(TType *t)
+{
+	if (!t)
+	{
+		return NULL;
+	}
+	if (t->type != ev_class)
+	{
+		return NULL;
+	}
+	if (t->size == -1)
+	{
+		return NULL;
+	}
+	if (tk_Token != TK_IDENTIFIER)
+	{
+		return NULL;
+	}
+	field_t *fi = t->fields;
+	for (int i = 0; i < t->numfields; i++)
+	{
+		if (TK_Check(fi[i].name))
+		{
+			return &fi[i];
+		}
+	}
+	return CheckForField(t->aux_type);
 }
 
 //==========================================================================
@@ -814,12 +1092,74 @@ void ParseTypeDef(void)
 	TK_Expect(";", ERR_MISSING_SEMICOLON);
 }
 
+//==========================================================================
+//
+//	AddVTable
+//
+//==========================================================================
+
+static void AddVTable(TType *t)
+{
+	if (t->vtable)
+	{
+		return;
+	}
+	classtypes[t->classid] = t;
+	t->vtable = numglobals;
+	int *vtable = globals + numglobals;
+	numglobals += t->num_methods;
+	if (t->aux_type)
+	{
+		AddVTable(t->aux_type);
+		memcpy(vtable, globals + t->aux_type->vtable,
+			t->aux_type->num_methods * 4);
+	}
+	vtable[0] = t->classid;
+	vtable[1] = t->size;
+	for (int i = 0; i < t->numfields; i++)
+	{
+		field_t &f = t->fields[i];
+		if (f.type->type != ev_method)
+		{
+			continue;
+		}
+		if (!f.func_num)
+		{
+			ParseError("Method %s::%s not defined", t->name, f.name);
+		}
+		vtable[f.ofs] = f.func_num;
+	}
+}
+
+//==========================================================================
+//
+//	AddVirtualTables
+//
+//==========================================================================
+
+void AddVirtualTables(void)
+{
+	classtypes = new TType*[numclasses];
+	NoneClass.num_methods = BASE_NUM_METHODS;
+	AddVTable(&NoneClass);
+	for (TType *t = types; t; t = t->next)
+	{
+		if (t->type == ev_class)
+		{
+			AddVTable(t);
+		}
+	}
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/20 16:09:55  dj_jl
+//	Added basic object-oriented support
+//
 //	Revision 1.3  2001/08/21 17:52:54  dj_jl
 //	Added support for real string pointers, beautification
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:56  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

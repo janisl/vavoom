@@ -396,6 +396,7 @@ static float FCExprLevI(void)
 int EvalConstExpression(int type)
 {
 	int		ret;
+	TType	*t;
 
  	switch (type)
 	{
@@ -436,6 +437,17 @@ int EvalConstExpression(int type)
 		}
 		break;
 
+	 case ev_classid:
+		t = CheckForType();
+		if (t && t->type == ev_class)
+		{
+			return t->classid;
+		}
+		else
+		{
+			ERR_Exit(ERR_NONE, true, "Bad classid");
+		}
+
 	 default:
 	 	ERR_Exit(ERR_NONE, true, "Constant value of this variable type cannot be defined.");
 	}
@@ -457,9 +469,12 @@ float ConstFloatExpression(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/20 16:09:55  dj_jl
+//	Added basic object-oriented support
+//
 //	Revision 1.3  2001/08/21 17:52:54  dj_jl
 //	Added support for real string pointers, beautification
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:56  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

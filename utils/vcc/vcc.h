@@ -60,6 +60,9 @@ enum
 	ev_array,
 	ev_struct,
 	ev_vector,
+	ev_class,
+	ev_method,
+	ev_classid,
 
 	NUM_BASIC_TYPES
 };
@@ -71,6 +74,7 @@ struct field_t
 	char		name[MAX_IDENTIFIER_LENGTH];
 	int			ofs;
 	TType		*type;
+	int			func_num;	// Method's function
 };
 
 class TType
@@ -84,6 +88,7 @@ class TType
 	}
 
 	char		name[MAX_IDENTIFIER_LENGTH];
+	int			s_name;
 	int			type;
 	TType		*next;
 	TType		*aux_type;
@@ -95,6 +100,11 @@ class TType
 	//	Addfield info
 	int			available_size;
 	int			available_ofs;
+
+	//  Class stuff
+	int			classid;
+	int			num_methods;
+	int			vtable;
 
 	//	Function params
 	int			num_params;
@@ -216,33 +226,34 @@ struct constant_t
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void 	PA_Parse(void);
+void PA_Parse(void);
 
 void ERR_Exit(error_t error, boolean info, char *text, ...);
-void ParseError(error_t error, const char *text = NULL, ...) __attribute__ ((format(printf, 2, 3)));
+void ParseError(error_t error);
+void ParseError(error_t error, const char *text, ...) __attribute__ ((format(printf, 2, 3)));
 void ParseError(const char *text, ...) __attribute__ ((format(printf, 1, 2)));
 void ParseWarning(const char *text, ...) __attribute__ ((format(printf, 1, 2)));
 void BailOut(void) __attribute__((noreturn));
 void ERR_RemoveErrorFile(void);
 
-int	 	dprintf(const char *text, ...);
+int dprintf(const char *text, ...);
 
-void 	TK_Init(void);
-void 	TK_OpenSource(char *fileName);
-void 	TK_CloseSource(void);
-void 	TK_NextToken(void);
+void TK_Init(void);
+void TK_OpenSource(char *fileName);
+void TK_CloseSource(void);
+void TK_NextToken(void);
 boolean TK_Check(char *string);
-void 	TK_Expect(char *string, error_t error);
-void 	TK_AddConstant(char* name, int value);
+void TK_Expect(char *string, error_t error);
+void TK_AddConstant(char* name, int value);
 
-void 	PC_Init(void);
-int 	FindString(char *str);
-int* 	AddStatement(int statement);
-int* 	AddStatement(int statement, int parm1);
-int* 	AddStatement(int statement, int parm1, int parm2);
-int 	UndoStatement(void);
-void 	PC_WriteObject(char *name);
-void 	PC_DumpAsm(char* name);
+void PC_Init(void);
+int FindString(char *str);
+int *AddStatement(int statement);
+int *AddStatement(int statement, int parm1);
+int *AddStatement(int statement, int parm1, int parm2);
+int UndoStatement(void);
+void PC_WriteObject(char *name);
+void PC_DumpAsm(char* name);
 
 TType *CheckForType(void);
 TType *FindType(TType *type);
@@ -254,15 +265,18 @@ void TypeCheck1(TType *t);
 void TypeCheck2(TType *t);
 void TypeCheck3(TType *t1, TType *t2);
 void ParseStruct(void);
+void ParseClass(void);
 void AddFields(void);
 void ParseVector(void);
 field_t* ParseField(TType *t);
+field_t* CheckForField(TType *t);
 void ParseTypeDef(void);
+void AddVirtualTables(void);
 
-void 	InitInfoTables(void);
-void 	AddInfoTables(void);
+void InitInfoTables(void);
+void AddInfoTables(void);
 
-int 	EvalConstExpression(int type);
+int EvalConstExpression(int type);
 float ConstFloatExpression(void);
 
 TType *ParseExpression(void);
@@ -300,6 +314,9 @@ extern constant_t		Constants[MAX_CONSTANTS];
 extern int				numconstants;
 extern int				ConstLookup[256];
 
+extern TType			*ThisType;
+
+
 extern char*    		strings;
 extern int              strofs;
 
@@ -307,16 +324,21 @@ extern int				NumErrors;
 
 extern localvardef_t	localdefs[MAX_LOCAL_DEFS];
 
-extern TType		type_void;
-extern TType		type_int;
-extern TType		type_uint;
-extern TType		type_float;
-extern TType		type_string;
-extern TType		type_function;
-extern TType		type_state;
-extern TType		type_mobjinfo;
-extern TType		type_void_ptr;
-extern TType		type_vector;
+extern TType			type_void;
+extern TType			type_int;
+extern TType			type_uint;
+extern TType			type_float;
+extern TType			type_string;
+extern TType			type_function;
+extern TType			type_state;
+extern TType			type_mobjinfo;
+extern TType			type_void_ptr;
+extern TType			type_vector;
+extern TType			type_classid;
+
+extern int				numclasses;
+
+extern TType			**classtypes;
 
 // INLINE CODE -------------------------------------------------------------
 
@@ -343,9 +365,12 @@ inline int PassFloat(float f)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/09/20 16:09:55  dj_jl
+//	Added basic object-oriented support
+//
 //	Revision 1.4  2001/09/12 17:29:54  dj_jl
 //	VavoomUtils namespace usage
-//
+//	
 //	Revision 1.3  2001/08/21 17:52:54  dj_jl
 //	Added support for real string pointers, beautification
 //	

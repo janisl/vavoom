@@ -16,16 +16,16 @@ VERSION = BCB.05.03
 PROJECT = obj\vcc.exe
 OBJFILES = obj\error.obj obj\fields.obj obj\info.obj obj\misc.obj obj\parse.obj \
     obj\pcode.obj obj\token.obj obj\vcc.obj obj\constexp.obj
-RESFILES = 
+RESFILES =
 MAINSOURCE = vcc.bpf
 RESDEPEN = $(RESFILES)
-LIBFILES = 
-IDLFILES = 
-IDLGENFILES = 
-LIBRARIES = 
-PACKAGES = 
-SPARELIBS = 
-DEFFILE = 
+LIBFILES =
+IDLFILES =
+IDLGENFILES =
+LIBRARIES =
+PACKAGES =
+SPARELIBS =
+DEFFILE =
 # ---------------------------------------------------------------------------
 PATHCPP = .;source
 PATHASM = .;
@@ -39,7 +39,7 @@ INCLUDEPATH = source;$(BCB)\include;$(BCB)\include\mfc;$(BCB)\include\atl
 LIBPATH = source;$(BCB)\lib;$(RELEASELIBPATH);$(BCB)\lib\psdk
 WARNINGS= -w-8026 -w-8027 -w-par
 # ---------------------------------------------------------------------------
-CFLAG1 = -O2 -w -x- -VF -X- -a4 -b -k -vi -q -c
+CFLAG1 = -O2 -w -VF -X- -a4 -b -k -vi -q -c
 IDLCFLAGS = -Isource -I$(BCB)\include -I$(BCB)\include\mfc -I$(BCB)\include\atl \
     -src_suffix cpp -D_CONSOLE -DWIN32 -DNDEBUG -D_MBCS
 PFLAGS = -N2obj -N0obj -$YD

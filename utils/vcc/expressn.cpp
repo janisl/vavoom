@@ -105,6 +105,26 @@ class TOp
 	TOperator	*oper;
 };
 
+class TOpCopy : public TOp
+{
+ public:
+	TOpCopy(TOp *Aop) : op(Aop)
+	{
+		type = op->type;
+	}
+	~TOpCopy(void)
+	{
+		if (op) delete op;
+	}
+	void Code(void)
+	{
+		if (op) op->Code();
+		AddStatement(OPC_COPY);
+	}
+
+	TOp			*op;
+};
+
 class TOp1 : public TOp
 {
  public:
@@ -793,6 +813,7 @@ static TOp *ParseExpressionPriority0(void)
 	TType		*type;
 	int			num;
 	int			arg;
+	field_t		*field;
 
    	switch (tk_Token)
 	{
@@ -844,6 +865,19 @@ static TOp *ParseExpressionPriority0(void)
 			TOp *op3 = ParseExpressionPriority14();
 			TK_Expect(")", ERR_MISSING_RPAREN);
 			return new TOpVector(op1, op2, op3);
+		}
+		if (TK_Check("this"))
+		{
+			if (!ThisType)
+			{
+				ParseError("this used outside member function\n");
+			}
+			else
+			{
+				op = new TOpLocal(0, MakePointerType(ThisType));
+				op = new TOpPushPointed(op,	ThisType);
+				return op;
+			}
 		}
 		break;
 
@@ -935,6 +969,43 @@ static TOp *ParseExpressionPriority0(void)
 			}
 			return fop;
 		}
+
+		if (ThisType)
+		{
+			field = CheckForField(ThisType->aux_type);
+			if (field)
+			{
+				op = new TOpLocal(0, MakePointerType(ThisType));
+				op = new TOpPushPointed(op,	ThisType);
+				if (field->type->type == ev_method)
+				{
+					op = new TOpCopy(op);
+					op = new TOpPushPointed(op,	field->type);
+					op = new TOpField(op, field->ofs * 4, field->type);
+					op = new TOpPushPointed(op,	field->type);
+				}
+				else
+				{
+					op = new TOpField(op, field->ofs, field->type);
+					op = new TOpPushPointed(op,	field->type);
+				}
+				return op;
+			}
+		}
+
+		type = CheckForType();
+		if (type)
+		{
+			if (type->type != ev_class)
+			{
+				ParseError(ERR_ILLEGAL_EXPR_IDENT, "Identifier: %s", tk_String);
+			}
+			else
+			{
+			   	return new TOpConst(type->classid, &type_classid);
+			}
+		}
+
 		ERR_Exit(ERR_ILLEGAL_EXPR_IDENT, true, "Identifier: %s", tk_String);
 		break;
 
@@ -975,8 +1046,18 @@ static TOp *ParseExpressionPriority1(void)
 			field = ParseField(type);
 			if (field)
 			{
-				op = new TOpField(op, field->ofs, field->type);
-				op = new TOpPushPointed(op,	field->type);
+				if (field->type->type == ev_method)
+				{
+					op = new TOpCopy(op);
+					op = new TOpPushPointed(op,	field->type);
+					op = new TOpField(op, field->ofs * 4, field->type);
+					op = new TOpPushPointed(op,	field->type);
+				}
+				else
+				{
+					op = new TOpField(op, field->ofs, field->type);
+					op = new TOpPushPointed(op,	field->type);
+				}
 			}
    		}
    		else if (TK_Check("."))
@@ -1020,7 +1101,7 @@ static TOp *ParseExpressionPriority1(void)
 			TOpIndirectFuncCall *fop;
 			TType *ftype = op->type;
 
-			if (ftype->type != ev_function)
+			if (ftype->type != ev_function && ftype->type != ev_method)
 			{
 				ParseError("Not a function");
 				return op;
@@ -1534,7 +1615,7 @@ static TOp* ParseExpressionPriority14(void)
 			op1 = op1->GetAddress();
    			op2 = ParseExpressionPriority14();
 			oper = FindOperator(AssignOps[i].opid, type, op2->type);
-			TypeCheck3(type, op2->type);
+			TypeCheck3(op2->type, type);
 		   	op1 = new TOp2(op1, op2, oper);
 			op1->type = type;
 			return op1;
@@ -1561,9 +1642,12 @@ TType *ParseExpression(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/09/20 16:09:55  dj_jl
+//	Added basic object-oriented support
+//
 //	Revision 1.4  2001/09/05 12:19:20  dj_jl
 //	Release changes
-//
+//	
 //	Revision 1.3  2001/08/21 17:52:54  dj_jl
 //	Added support for real string pointers, beautification
 //	

@@ -30,9 +30,16 @@
 
 // MACROS ------------------------------------------------------------------
 
+#define TEMP_FILE_NAME	"vcc_temp.i"
+
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
+
+void cpp_init(void);
+int cpp_main(char *, char *);
+void cpp_add_include(char *);
+void cpp_add_define(int, char *);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -48,16 +55,13 @@ static void Preprocess(void);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-char		SourceFileName[MAX_FILE_NAME_LENGTH];
-char		ObjectFileName[MAX_FILE_NAME_LENGTH];
-char		TempFileName[MAX_FILE_NAME_LENGTH];
+char			SourceFileName[MAX_FILE_NAME_LENGTH];
+static char		ObjectFileName[MAX_FILE_NAME_LENGTH];
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static int		num_dump_asm;
 static char*	dump_asm_names[1024];
-static bool		cpp_borland;
-static char		cpp_params[2048];
 static boolean 	DebugMode;
 static FILE*	DebugFile;
 
@@ -75,15 +79,17 @@ int main(int argc, char **argv)
 	int		endtime;
 
 	starttime = time(0);
+	cpp_init();
 	Init();
 	ProcessArgs(argc, argv);
 
 	Preprocess();
-	TK_OpenSource(TempFileName);
+	TK_OpenSource(TEMP_FILE_NAME);
 	PA_Parse();
 	TK_CloseSource();
 	PC_WriteObject(ObjectFileName);
 	ERR_RemoveErrorFile();
+	remove(TEMP_FILE_NAME);
 	DumpAsm();
 	endtime = time(0);
 	dprintf("Time elapsed: %2d:%2d\n",
@@ -99,25 +105,12 @@ int main(int argc, char **argv)
 
 static void Init(void)
 {
-	char*	tempdir;
-
-	//	Izveido pagaidu faila v∆rdu
-	tempdir = getenv("TEMP");
-	if (!tempdir)
-	{
-		tempdir = getenv("TMP");
-		if (!tempdir)
-		{
-			tempdir = ".";
-		}
-	}
-	sprintf(TempFileName, "%s/vcc_temp.i", tempdir);
-
-	//	Iznÿcina pagaidu failu, ja t∆ds jau eksistÒ
-	remove(TempFileName);
+	char		pvbuf[32];
 
 	//	Izveido apstr∆des programmas komandlÿniju
-	sprintf(cpp_params, "-DPROG_VERSION=%d", PROG_VERSION);
+	memset(pvbuf, 0, 32);
+	sprintf(pvbuf, "PROG_VERSION=%d", PROG_VERSION);
+	cpp_add_define('D', pvbuf);
 
 	DebugMode = false;
 	DebugFile = NULL;
@@ -140,8 +133,6 @@ static void DisplayUsage(void)
 	printf("Usage: vcc [options] source[.c] [object[.dat]]\n");
 	printf("    -d<file>     Output debugging information into specified file\n");
 	printf("    -a<function> Output function's ASM statements into debug file\n");
-	printf("    -b           Use Borland's preprocessor\n");
-	printf("The following params are passed directly to the proprocessor:\n");
 	printf("    -D<name>[=<value>] Define macro\n");
 	printf("    -U<name>           Unefine macro\n");
 	printf("    -I<directory>      Include files directory\n");
@@ -189,18 +180,12 @@ static void ProcessArgs(int ArgCount, char **ArgVector)
 					}
 					dump_asm_names[num_dump_asm++] = text;
 					break;
-				case 'b':
-					if (*text)
-					{
-						DisplayUsage();
-					}
-					cpp_borland = true;
+				case 'I':
+					cpp_add_include(text);
 					break;
 				case 'D':
 				case 'U':
-				case 'I':
-					strcat(cpp_params, " ");
-					strcat(cpp_params, ArgVector[i]);
+					cpp_add_define(option, text);
 					break;
 				default:
 					DisplayUsage();
@@ -246,35 +231,14 @@ static void ProcessArgs(int ArgCount, char **ArgVector)
 
 static void Preprocess(void)
 {
-	int		ret;
-	char	cmd_line[2048];
-
 	//	Izdod pazi∑ojumu
 	dprintf("Preprocessing\n");
 
-	//	Pievieno pie komandlÿnijas failu v∆rdus
-	if (cpp_borland)
-	{
-		sprintf(cmd_line, "cpp32 -P- %s -o%s %s", cpp_params, TempFileName, SourceFileName);
-	}
-	else
-	{
-		sprintf(cmd_line, "gcc -E -x c++ %s %s -o %s", cpp_params, SourceFileName, TempFileName);
-//		sprintf(cmd_line, "cpp %s %s -o %s", cpp_params, SourceFileName, TempFileName);
-	}
+	//	Iznÿcina pagaidu failu, ja t∆ds jau eksistÒ
+	remove(TEMP_FILE_NAME);
 
 	//	Izpilda komandu
-	ret = system(cmd_line);
-
-	if (ret)
-	{
-		if (ret == -1)
-		{
-			//	SistÒmas kı›da
-			perror("Preprocessor error");
-		}
-		exit(1);
-	}
+	cpp_main(SourceFileName, TEMP_FILE_NAME);
 }
 
 //==========================================================================
@@ -331,12 +295,35 @@ int dprintf(const char *text, ...)
 	return ret;
 }
 
+void *operator new(size_t size)
+{
+	return Malloc(size);
+}
+
+void *operator new[](size_t size)
+{
+	return Malloc(size);
+}
+
+void operator delete(void *ptr)
+{
+	Free(ptr);
+}
+
+void operator delete[](void *ptr)
+{
+	Free(ptr);
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/20 16:09:55  dj_jl
+//	Added basic object-oriented support
+//
 //	Revision 1.3  2001/08/21 17:52:54  dj_jl
 //	Added support for real string pointers, beautification
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:56  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

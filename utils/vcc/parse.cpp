@@ -70,6 +70,8 @@ constant_t				Constants[MAX_CONSTANTS];
 int						numconstants;
 int						ConstLookup[256];
 
+TType					*ThisType;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static int				numlocaldefs = 1;
@@ -489,6 +491,12 @@ static void ParseStatement(void)
 
 				WriteBreaks();
 			}
+			else if (!strcmp(tk_String, "this"))
+			{
+				t = ParseExpression();
+				AddDrop(t);
+				TK_Expect(";", ERR_MISSING_SEMICOLON);
+			}
 			else
 			{
 				ERR_Exit(ERR_INVALID_STATEMENT, true, "Symbol: %s", tk_String);
@@ -538,7 +546,7 @@ static void ParseCompoundStatement(void)
 				}
 				if (t == &type_void)
 				{
-					ParseError(ERR_BAD_VAR_TYPE, NULL);
+					ParseError(ERR_BAD_VAR_TYPE);
 				}
 				if (tk_Token != TK_IDENTIFIER)
 				{
@@ -547,7 +555,7 @@ static void ParseCompoundStatement(void)
 				}
 				if (numlocaldefs == MAX_LOCAL_DEFS)
 				{
-					ParseError(ERR_LOCALS_OVERFLOW, NULL);
+					ParseError(ERR_LOCALS_OVERFLOW);
 					continue;
 				}
 				strcpy(localdefs[numlocaldefs].name, tk_String);
@@ -636,16 +644,6 @@ static bool ParseFields(TType *type, int *dst)
 
 static TType* ParseGlobalData(TType *type, int *dst)
 {
-/*	ev_void,
-	ev_int,
-	ev_uint,
-	ev_float,
-	ev_string,
-	ev_function,
-	ev_pointer,
-	*ev_array,
-	ev_struct,
-	ev_vector,*/
 	int numinitialisers;
 
 	switch (type->type)
@@ -678,6 +676,22 @@ static TType* ParseGlobalData(TType *type, int *dst)
 		break;
 
 	 case ev_struct:
+		TK_Expect("{", ERR_MISSING_LBRACE);
+		if (ParseFields(type, dst))
+		{
+			TK_Expect("}", ERR_MISSING_RBRACE);
+		}
+		break;
+
+	 case ev_class: // FIXME allowed?
+		TK_Expect("{", ERR_MISSING_LBRACE);
+		if (ParseFields(type, dst))
+		{
+			TK_Expect("}", ERR_MISSING_RBRACE);
+		}
+		break;
+
+	 case ev_vector:
 		TK_Expect("{", ERR_MISSING_LBRACE);
 		if (ParseFields(type, dst))
 		{
@@ -734,9 +748,10 @@ static TType *ParseArrayDimensions(TType *type)
 
 static void ParseDef(TType *type, boolean builtin)
 {
-	int			s_name;
+	int			s_name = 0;
 	int			num;
 	TType		*t;
+	field_t		*method = NULL;
 
 	t = type;
 	while (TK_Check("*"))
@@ -747,10 +762,44 @@ static void ParseDef(TType *type, boolean builtin)
 	{
 		ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
 	}
-	s_name = FindString(tk_String);
-	TK_NextToken();
 
-	if (!TK_Check("("))
+	numlocaldefs = 1;
+	localsofs = 0;
+	maxlocalsofs = 0;
+	ThisType = NULL;
+
+	TType *ctype = CheckForType();
+	if (ctype)
+	{
+		TK_Expect("::", ERR_NONE);
+		if (tk_Token != TK_IDENTIFIER)
+		{
+			ParseError("Method name expected");
+		}
+		s_name = FindString(va("%s::%s", ctype->name, tk_String));
+		method = CheckForField(ctype);
+		if (!method || method->type->type != ev_method)
+		{
+			ParseError("No such method");
+		}
+		if (!method)
+		{
+			TK_NextToken();
+		}
+		ThisType = MakePointerType(ctype);
+		localsofs = 1;
+	}
+	else
+	{
+		s_name = FindString(tk_String);
+		TK_NextToken();
+	}
+
+	if (ThisType)
+	{
+		TK_Expect("(", ERR_NONE);
+	}
+	else if (!TK_Check("("))
 	{
 		if (builtin)
 		{
@@ -803,9 +852,6 @@ static void ParseDef(TType *type, boolean builtin)
 		return;
 	}
 
-	numlocaldefs = 1;
-	localsofs = 0;
-	maxlocalsofs = 0;
 	BreakLevel = 0;
 	ContinueLevel = 0;
 	FuncRetType = t;
@@ -862,23 +908,24 @@ static void ParseDef(TType *type, boolean builtin)
 		{
 			ERR_Exit(ERR_PARAMS_OVERFLOW, true, NULL);
 		}
-   		if (tk_Token != TK_IDENTIFIER)
+   		if (tk_Token == TK_IDENTIFIER)
 		{
-   			ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
+			if (CheckForLocalVar(tk_String))
+			{
+				ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Identifier: %s", tk_String);
+			}
+			strcpy(localdefs[numlocaldefs].name, tk_String);
+			localdefs[numlocaldefs].type = type;
+			localdefs[numlocaldefs].ofs = localsofs;
+			numlocaldefs++;
+			TK_NextToken();
 		}
-		if (CheckForLocalVar(tk_String))
+		else
 		{
-			ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Identifier: %s", tk_String);
+			localdefs[numlocaldefs].name[0] = 0;
 		}
-
-		strcpy(localdefs[numlocaldefs].name, tk_String);
-		localdefs[numlocaldefs].type = type;
-		localdefs[numlocaldefs].ofs = localsofs;
 		functype.param_types[functype.num_params] = type;
 		functype.num_params++;
-
-		TK_NextToken();
-		numlocaldefs++;
 		localsofs += TypeSize(type) / 4;
 	} while (TK_Check(","));
 	TK_Expect(")", ERR_MISSING_RPAREN);
@@ -913,6 +960,10 @@ static void ParseDef(TType *type, boolean builtin)
 		}
 		functions[num].type = FindType(&functype);
 		numfunctions++;
+	}
+	if (method)
+	{
+		method->func_num = num;
 	}
 
 	if (TK_Check("{"))
@@ -1034,6 +1085,10 @@ void PA_Parse(void)
 				{
 					ParseStruct();
 				}
+				else if (TK_Check("class"))
+				{
+					ParseClass();
+				}
 				else if (TK_Check("addfields"))
 				{
 					AddFields();
@@ -1079,6 +1134,7 @@ void PA_Parse(void)
 	}
 
 	AddInfoTables();
+	AddVirtualTables();
 	// check to make sure all functions prototyped have code
 	done = true;
 	for (i = 1 ; i < numfunctions ; i++)
@@ -1103,9 +1159,12 @@ void PA_Parse(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/20 16:09:55  dj_jl
+//	Added basic object-oriented support
+//
 //	Revision 1.3  2001/08/21 17:52:54  dj_jl
 //	Added support for real string pointers, beautification
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:56  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
