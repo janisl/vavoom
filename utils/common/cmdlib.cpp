@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
@@ -121,11 +117,11 @@ void operator delete[](void *ptr)
 
 void Error(const char *error, ...)
 {
-    va_list		argptr;
+	va_list		argptr;
 
-    va_start(argptr, error);
-    vfprintf(stderr, error, argptr);
-    va_end(argptr);
+	va_start(argptr, error);
+	vfprintf(stderr, error, argptr);
+	va_end(argptr);
 
 	exit(1);
 }
@@ -182,10 +178,10 @@ int LittleLong(int val)
 
 void DefaultPath(char *path, const char *basepath)
 {
-	char    temp[128];
+	char	temp[128];
 
 	if (path[0] == '/')
-		return;                   // absolute path location
+		return;					// absolute path location
 	strcpy(temp, path);
 	strcpy(path, basepath);
 	strcat(path, temp);
@@ -199,7 +195,7 @@ void DefaultPath(char *path, const char *basepath)
 
 void DefaultExtension(char *path, const char *extension)
 {
-	char    *src;
+	char	*src;
 
 	//
 	// if path doesn't have a .EXT, append extension
@@ -210,8 +206,8 @@ void DefaultExtension(char *path, const char *extension)
 	while (*src != '/' && src != path)
 	{
 		if (*src == '.')
-        {
-			return;                 // it has an extension
+		{
+			return;			// it has an extension
 		}
 		src--;
 	}
@@ -227,7 +223,7 @@ void DefaultExtension(char *path, const char *extension)
 
 void StripFilename(char *path)
 {
-	int             length;
+	int			 length;
 
 	length = strlen(path)-1;
 	while (length > 0 && path[length] != '/')
@@ -243,7 +239,7 @@ void StripFilename(char *path)
 
 void StripExtension(char *path)
 {
-	char *search;
+	char	*search;
 
 	search = path + strlen(path) - 1;
 	while (*search != '/' && search != path)
@@ -265,7 +261,7 @@ void StripExtension(char *path)
 
 void ExtractFilePath(const char *path, char *dest)
 {
-	const char    *src;
+	const char	*src;
 
 	src = path + strlen(path) - 1;
 
@@ -287,7 +283,7 @@ void ExtractFilePath(const char *path, char *dest)
 
 void ExtractFileBase(const char *path, char *dest)
 {
-	const char    *src;
+	const char	*src;
 
 	src = path + strlen(path) - 1;
 
@@ -312,7 +308,7 @@ void ExtractFileBase(const char *path, char *dest)
 
 void ExtractFileExtension(const char *path, char *dest)
 {
-	const char    *src;
+	const char	*src;
 
 	src = path + strlen(path) - 1;
 
@@ -323,7 +319,7 @@ void ExtractFileExtension(const char *path, char *dest)
 		src--;
 	if (src == path)
 	{
-		*dest = 0;	// no extension
+		*dest = 0;		// no extension
 		return;
 	}
 
@@ -341,7 +337,7 @@ int LoadFile(const char *name, void **bufferptr)
 	FILE		*f;
 	int			length;
 	int			count;
-	void    	*buffer;
+	void		*buffer;
 
 	f = fopen(name, "rb");
 	if (!f)
@@ -367,4 +363,13 @@ int LoadFile(const char *name, void **bufferptr)
 	return length;
 }
 
-
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/21 17:51:21  dj_jl
+//	Beautification
+//
+//	Revision 1.2  2001/07/27 14:27:54  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

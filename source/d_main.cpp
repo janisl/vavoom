@@ -420,23 +420,18 @@ void TSoftwareDrawer::SetupView(const refdef_t *rd)
 {
 	int			i;
 
+	viewwidth = rd->width;
+	viewheight = rd->height;
+
 	//	Setup projection
+	xprojection = (float)(rd->width / 2) / rd->fovx;
+	yprojection = (float)(rd->height / 2) / rd->fovy;
+
     centerxfrac = (float)(rd->width / 2) - 0.5;
     centeryfrac = (float)(rd->height / 2) - 0.5;
 
     aliasxcenter = (float)(rd->width / 2);
     aliasycenter = (float)(rd->height / 2);
-
-	xprojection = (float)(rd->width / 2) / rd->fovx;
-	yprojection = (float)(rd->height / 2) / rd->fovy;
-
-	viewwidth = rd->width;
-	viewheight = rd->height;
-
-	vrectx_adj = -0.5;
-	vrecty_adj = -0.5;
-	vrectw_adj = viewwidth - 0.5;
-	vrecth_adj = viewheight - 0.5;
 
     // Preclaculate all row offsets.
     for (i = 0; i < rd->height; i++)
@@ -444,51 +439,59 @@ void TSoftwareDrawer::SetupView(const refdef_t *rd)
 		ylookup[i] = rd->x + (rd->height - 1 - i + rd->y) * ScreenWidth;
 	}
 
-	if (rd->drawworld)
-	{
-		scale_for_mip = xprojection;
-		if (yprojection > xprojection)
-			scale_for_mip = yprojection;
-
-		//	Setup for particles
-		xscaleshrink = (float)(rd->width - 6) / 2 / rd->fovx;
-		yscaleshrink = xscaleshrink * PixelAspect;
-
-		d_pix_min = rd->width / 320;
-		if (d_pix_min < 1)
-			d_pix_min = 1;
-
-		d_pix_max = (int)((float)rd->width / (320.0 / 4.0) + 0.5);
-		d_pix_shift = 8 - (int)((float)rd->width / 320.0 + 0.5);
-		if (d_pix_max < 1)
-			d_pix_max = 1;
-
-		if (PixelAspect > 1.4)
-			d_y_aspect_shift = 1;
-		else
-			d_y_aspect_shift = 0;
-
-		d_particle_right = rd->width - d_pix_max;
-		d_particle_top = rd->height - (d_pix_max << d_y_aspect_shift);
-
-		// draw the border
-		if (rd->width * rd->height != viewarea)
-		{
-			InitViewBorder();
-			viewarea = rd->width * rd->height;
-		}
-		else if (rd->width != ScreenWidth)
-		{
-			EraseViewBorder();
-		}
-	}
-	else
+	if (!rd->drawworld)
 	{
 		//	Since world will be not drawn we must clear z-buffer
 		for (i = 0; i < viewheight; i++)
 		{
 			memset(zbuffer + ylookup[i], 0, viewwidth * 2);
 		}
+
+		// make FDIV fast.
+		Sys_LowFPPrecision();
+
+		return;
+	}
+
+	vrectx_adj = -0.5;
+	vrecty_adj = -0.5;
+	vrectw_adj = viewwidth - 0.5;
+	vrecth_adj = viewheight - 0.5;
+
+	scale_for_mip = xprojection;
+	if (yprojection > xprojection)
+		scale_for_mip = yprojection;
+
+	//	Setup for particles
+	xscaleshrink = (float)(rd->width - 6) / 2 / rd->fovx;
+	yscaleshrink = xscaleshrink * PixelAspect;
+
+	d_pix_min = rd->width / 320;
+	if (d_pix_min < 1)
+		d_pix_min = 1;
+
+	d_pix_max = (int)((float)rd->width / (320.0 / 4.0) + 0.5);
+	d_pix_shift = 8 - (int)((float)rd->width / 320.0 + 0.5);
+	if (d_pix_max < 1)
+		d_pix_max = 1;
+
+	if (PixelAspect > 1.4)
+		d_y_aspect_shift = 1;
+	else
+		d_y_aspect_shift = 0;
+
+	d_particle_right = rd->width - d_pix_max;
+	d_particle_top = rd->height - (d_pix_max << d_y_aspect_shift);
+
+	// draw the border
+	if (rd->width * rd->height != viewarea)
+	{
+		InitViewBorder();
+		viewarea = rd->width * rd->height;
+	}
+	else if (rd->width != ScreenWidth)
+	{
+		EraseViewBorder();
 	}
 
 #ifdef USEASM
@@ -535,7 +538,7 @@ void TSoftwareDrawer::SetupView(const refdef_t *rd)
 	Sys_LowFPPrecision();
 
 	UpdatePalette();
-	D_ClearPolys();
+	D_BeginEdgeFrame();
 }
 
 //==========================================================================
@@ -621,9 +624,12 @@ void *TSoftwareDrawer::ReadScreen(int *bpp, bool *bot2top)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/08/21 17:50:55  dj_jl
+//	Beautification
+//
 //	Revision 1.6  2001/08/15 17:15:55  dj_jl
 //	Drawer API changes, removed wipes
-//
+//	
 //	Revision 1.5  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
 //	
