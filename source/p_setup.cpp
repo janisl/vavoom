@@ -1,29 +1,29 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
-//**	
-//**	Do all the WAD I/O, get map description, set up initial state and
+//**
+//**    Do all the WAD I/O, get map description, set up initial state and
 //**  misc. LUTs.
 //**
 //**************************************************************************
@@ -51,34 +51,34 @@ void BuildPVS(void);
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 #ifdef CLIENT
-level_t			cl_level;
+level_t cl_level;
 #endif
 #ifdef SERVER
-level_t			level;
+level_t level;
 #endif
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static vertex_t*		gl_vertexes;
-static int				numglvertexes;
+static vertex_t *gl_vertexes;
+static int numglvertexes;
 
-static byte				novis[32 * 1024 / 8];
-static bool				AuxiliaryMap;
+static byte novis[32 * 1024 / 8];
+static bool AuxiliaryMap;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	FTNumForName
+//  FTNumForName
 //
-//	Retrieval, get a texture or flat number for a name.
+//  Retrieval, get a texture or flat number for a name.
 //
 //==========================================================================
 
-int FTNumForName(const char* name)
+int FTNumForName(const char *name)
 {
-	char	namet[9];
-	int		i;
+	char namet[9];
+	int i;
 
 	i = R_CheckFlatNumForName(name);
 	if (i == -1)
@@ -87,7 +87,7 @@ int FTNumForName(const char* name)
 		if (i == -1)
 		{
 			namet[8] = 0;
-			memcpy(namet, name,8);
+			memcpy(namet, name, 8);
 			Host_Error("FTNumForName: %s not found", namet);
 		}
 	}
@@ -96,16 +96,16 @@ int FTNumForName(const char* name)
 
 //==========================================================================
 //
-//	TFNumForName
+//  TFNumForName
 //
-//	Retrieval, get a texture or flat number for a name.
+//  Retrieval, get a texture or flat number for a name.
 //
 //==========================================================================
 
-int TFNumForName(const char* name)
+int TFNumForName(const char *name)
 {
-	char	namet[9];
-	int		i;
+	char namet[9];
+	int i;
 
 	i = R_CheckTextureNumForName(name);
 	if (i == -1)
@@ -114,7 +114,7 @@ int TFNumForName(const char* name)
 		if (i == -1)
 		{
 			namet[8] = 0;
-			memcpy(namet, name,8);
+			memcpy(namet, name, 8);
 			Host_Error("TFNumForName: %s not found", namet);
 		}
 	}
@@ -123,14 +123,14 @@ int TFNumForName(const char* name)
 
 //==========================================================================
 //
-//	LoadBlockMap
+//  LoadBlockMap
 //
 //==========================================================================
 
 static void LoadBlockMap(int lump, level_t &loadlevel)
 {
-    int         i;
-    int         count;
+	int i;
+	int count;
 
    	loadlevel.blockmaplump = (short*)W_CacheLumpNum(lump, PU_LEVEL);
    	loadlevel.blockmap = loadlevel.blockmaplump + 4;
@@ -139,53 +139,53 @@ static void LoadBlockMap(int lump, level_t &loadlevel)
    	for (i=0 ; i<count ; i++)
 		loadlevel.blockmaplump[i] = LittleShort(loadlevel.blockmaplump[i]);
 
-   	loadlevel.bmaporgx = loadlevel.blockmaplump[0];
-   	loadlevel.bmaporgy = loadlevel.blockmaplump[1];
-   	loadlevel.bmapwidth = loadlevel.blockmaplump[2];
-   	loadlevel.bmapheight = loadlevel.blockmaplump[3];
+	loadlevel.bmaporgx = loadlevel.blockmaplump[0];
+	loadlevel.bmaporgy = loadlevel.blockmaplump[1];
+	loadlevel.bmapwidth = loadlevel.blockmaplump[2];
+	loadlevel.bmapheight = loadlevel.blockmaplump[3];
 
-   	// clear out mobj chains
-   	count = sizeof(*loadlevel.blocklinks) * loadlevel.bmapwidth * loadlevel.bmapheight;
-   	loadlevel.blocklinks = (mobj_t**)Z_Malloc(count, PU_LEVEL, 0);
-   	memset(loadlevel.blocklinks, 0, count);
+	// clear out mobj chains
+	count = loadlevel.bmapwidth * loadlevel.bmapheight;
+	loadlevel.blocklinks = Z_CNew<mobj_t*>(count, PU_LEVEL, 0);
 }
 
 //==========================================================================
 //
-//	LoadVertexes
+//  LoadVertexes
 //
 //==========================================================================
 
 static void LoadVertexes(int lump, int gl_lump, level_t &loadlevel)
 {
-    int				i;
-	void*			data;
-    mapvertex_t*	ml;
-    vertex_t*		li;
-	int				base_verts;
-	int				gl_verts;
+	int i;
+	void *data;
+	mapvertex_t *ml;
+	vertex_t *li;
+	int base_verts;
+	int gl_verts;
 
-	// Determine number of lumps:
-	//  total lump length / vertex record length.
+	//  Determine number of lumps:
+	// total lump length / vertex record length.
 	base_verts = W_LumpLength(lump) / sizeof(mapvertex_t);
 	gl_verts = W_LumpLength(gl_lump) / sizeof(mapvertex_t);
 	loadlevel.numvertexes = base_verts + gl_verts;
 
-    // Allocate zone memory for buffer.
-	li = loadlevel.vertexes = (vertex_t*)Z_Calloc(loadlevel.numvertexes * sizeof(vertex_t), PU_LEVEL, 0);
+	// Allocate zone memory for buffer.
+	loadlevel.vertexes = Z_CNew<vertex_t>(loadlevel.numvertexes, PU_LEVEL, 0);
 
-    // Load data into cache.
+	// Load data into cache.
 	data = W_CacheLumpNum(lump, PU_STATIC);
-    ml = (mapvertex_t *)data;
+	ml = (mapvertex_t *)data;
+	li = loadlevel.vertexes;
 
-    // Copy and convert vertex, internal representation as vector.
-    for (i = 0; i < base_verts; i++, li++, ml++)
-    {
+	// Copy and convert vertex, internal representation as vector.
+	for (i = 0; i < base_verts; i++, li++, ml++)
+	{
 		*li = TVec(LittleShort(ml->x), LittleShort(ml->y), 0);
-    }
+	}
 
-    // Free buffer memory.
-    Z_Free(data);
+	// Free buffer memory.
+	Z_Free(data);
 
 	//	Save pointer to GL vertexes for seg loading
 	gl_vertexes = li;
@@ -194,61 +194,61 @@ static void LoadVertexes(int lump, int gl_lump, level_t &loadlevel)
 	data = W_CacheLumpNum(gl_lump, PU_STATIC);
 	if (!strncmp((char*)data, GL_V2_VERTEX_MAGIC, 4))
 	{
-	    gl_mapvertex_t*		glml;
+		gl_mapvertex_t *glml;
 
 		gl_verts = (W_LumpLength(gl_lump) - 4) / sizeof(gl_mapvertex_t);
 		loadlevel.numvertexes = base_verts + gl_verts;
 		Z_Resize((void**)&loadlevel.vertexes, loadlevel.numvertexes * sizeof(vertex_t));
-	    glml = (gl_mapvertex_t *)((byte*)data + 4);
+		glml = (gl_mapvertex_t *)((byte*)data + 4);
 
-	    // Copy and convert vertex, internal representation as vector.
-    	for (i = 0; i < gl_verts; i++, li++, glml++)
-	    {
+		// Copy and convert vertex, internal representation as vector.
+		for (i = 0; i < gl_verts; i++, li++, glml++)
+		{
 			*li = TVec(FL(LittleLong(glml->x)), FL(LittleLong(glml->y)), 0);
-	    }
+		}
 	}
 	else
 	{
-	    ml = (mapvertex_t *)data;
+		ml = (mapvertex_t *)data;
 
-	    // Copy and convert vertex, internal representation as vector.
-    	for (i = 0; i < gl_verts; i++, li++, ml++)
-	    {
+		// Copy and convert vertex, internal representation as vector.
+		for (i = 0; i < gl_verts; i++, li++, ml++)
+		{
 			*li = TVec(LittleShort(ml->x), LittleShort(ml->y), 0);
-	    }
+		}
 	}
 	numglvertexes = gl_verts;
 
    	// Free buffer memory.
-    Z_Free(data);
+	Z_Free(data);
 }
 
 //==========================================================================
 //
-//	LoadSectors
+//  LoadSectors
 //
 //==========================================================================
 
 static void LoadSectors(int lump, level_t &loadlevel)
 {
-    byte*               data;
-    int                 i;
-    mapsector_t*        ms;
-    sector_t*           ss;
-	sec_region_t*		region;
+	byte *data;
+	int i;
+	mapsector_t *ms;
+	sector_t *ss;
+	sec_region_t *region;
 
-    loadlevel.numsectors = W_LumpLength(lump) / sizeof(mapsector_t);
-    loadlevel.sectors = (sector_t*)Z_Calloc(loadlevel.numsectors * sizeof(sector_t), PU_LEVEL, 0);
-    data = (byte*)W_CacheLumpNum(lump, PU_STATIC);
+	loadlevel.numsectors = W_LumpLength(lump) / sizeof(mapsector_t);
+	loadlevel.sectors = Z_CNew<sector_t>(loadlevel.numsectors, PU_LEVEL, 0);
+	data = (byte*)W_CacheLumpNum(lump, PU_STATIC);
 
 	// Make sure primary lumps are used for flat searching
 	W_UsePrimary();
 
-    ms = (mapsector_t *)data;
-    ss = loadlevel.sectors;
+	ms = (mapsector_t *)data;
+	ss = loadlevel.sectors;
 
-    for (i=0 ; i<loadlevel.numsectors ; i++, ss++, ms++)
-    {
+	for (i=0 ; i<loadlevel.numsectors ; i++, ss++, ms++)
+	{
 		//	Floor
 		ss->floor.Set(TVec(0, 0, 1), LittleShort(ms->floorheight));
 		ss->floor.pic = FTNumForName(ms->floorpic);
@@ -271,7 +271,7 @@ static void LoadSectors(int lump, level_t &loadlevel)
 		ss->params.lightlevel = LittleShort(ms->lightlevel);
 
 		//	Region
-		region = (sec_region_t*)Z_Calloc(sizeof(sec_region_t), PU_LEVEL, 0);
+		region = Z_CNew<sec_region_t>(PU_LEVEL, 0);
 		region->floor = &ss->floor;
 		region->ceiling = &ss->ceiling;
 		region->params = &ss->params;
@@ -287,31 +287,31 @@ static void LoadSectors(int lump, level_t &loadlevel)
 		ss->base_floorheight = ss->floor.dist;
 		ss->base_ceilingheight = ss->ceiling.dist;
 		ss->base_lightlevel = ss->params.lightlevel;
-    }
+	}
 
 	if (AuxiliaryMap)
 	{
 		W_UseAuxiliary();
 	}
 
-    Z_Free(data);
+	Z_Free(data);
 }
 
 //==========================================================================
 //
-//	LoadSideDefs
+//  LoadSideDefs
 //
 //==========================================================================
 
 static void LoadSideDefs(int lump, level_t &loadlevel)
 {
-	byte*				data;
-	int					i;
-	mapsidedef_t*		msd;
-	side_t*				sd;
+	byte *data;
+	int i;
+	mapsidedef_t *msd;
+	side_t *sd;
 
 	loadlevel.numsides = W_LumpLength(lump) / sizeof(mapsidedef_t);
-	loadlevel.sides = (side_t*)Z_Calloc(loadlevel.numsides * sizeof(side_t), PU_LEVEL, 0);
+	loadlevel.sides = Z_CNew<side_t>(loadlevel.numsides, PU_LEVEL, 0);
 	data = (byte*)W_CacheLumpNum(lump, PU_STATIC);
 
 	msd = (mapsidedef_t *)data;
@@ -346,7 +346,7 @@ static void LoadSideDefs(int lump, level_t &loadlevel)
 
 //==========================================================================
 //
-//	CalcLine
+//  CalcLine
 //
 //==========================================================================
 
@@ -401,7 +401,7 @@ void CalcLine(line_t *line)
 
 //==========================================================================
 //
-//	LoadLineDefs1
+//  LoadLineDefs1
 //
 //  For Doom and Heretic
 //
@@ -409,19 +409,19 @@ void CalcLine(line_t *line)
 
 static void LoadLineDefs1(int lump, level_t &loadlevel)
 {
-    byte*               data;
-    int                 i;
-    maplinedef1_t		*mld;
-    line_t*             ld;
+	byte *data;
+	int i;
+	maplinedef1_t *mld;
+	line_t *ld;
 
-    loadlevel.numlines = W_LumpLength(lump) / sizeof(maplinedef1_t);
-    loadlevel.lines = (line_t*)Z_Calloc(loadlevel.numlines * sizeof(line_t), PU_LEVEL, 0);
-    data = (byte*)W_CacheLumpNum(lump, PU_STATIC);
+	loadlevel.numlines = W_LumpLength(lump) / sizeof(maplinedef1_t);
+	loadlevel.lines = Z_CNew<line_t>(loadlevel.numlines, PU_LEVEL, 0);
+	data = (byte*)W_CacheLumpNum(lump, PU_STATIC);
 
-    mld = (maplinedef1_t *)data;
-    ld = loadlevel.lines;
-    for (i = 0; i < loadlevel.numlines; i++, mld++, ld++)
-    {
+	mld = (maplinedef1_t *)data;
+	ld = loadlevel.lines;
+	for (i = 0; i < loadlevel.numlines; i++, mld++, ld++)
+	{
 		ld->flags = LittleShort(mld->flags);
 		ld->special = LittleShort(mld->special);
 		ld->arg1 = LittleShort(mld->tag);
@@ -442,28 +442,28 @@ static void LoadLineDefs1(int lump, level_t &loadlevel)
 			ld->backsector = loadlevel.sides[ld->sidenum[1]].sector;
 		else
 			ld->backsector = 0;
-    }
+	}
 
-    Z_Free(data);
+	Z_Free(data);
 }
 
 //==========================================================================
 //
-//	LoadLineDefs2
+//  LoadLineDefs2
 //
-//	For Hexen
+//  For Hexen
 //
 //==========================================================================
 
 static void LoadLineDefs2(int lump, level_t &loadlevel)
 {
-	byte			*data;
-	int				i;
-	maplinedef2_t	*mld;
-	line_t			*ld;
+	byte *data;
+	int i;
+	maplinedef2_t *mld;
+	line_t *ld;
 
 	loadlevel.numlines = W_LumpLength(lump) / sizeof(maplinedef2_t);
-	loadlevel.lines = (line_t*)Z_Calloc(loadlevel.numlines * sizeof(line_t), PU_LEVEL, 0);
+	loadlevel.lines = Z_CNew<line_t>(loadlevel.numlines, PU_LEVEL, 0);
 	data = (byte*)W_CacheLumpNum(lump, PU_STATIC);
 
 	mld = (maplinedef2_t *)data;
@@ -502,7 +502,7 @@ static void LoadLineDefs2(int lump, level_t &loadlevel)
 
 //==========================================================================
 //
-//	CalcSeg
+//  CalcSeg
 //
 //==========================================================================
 
@@ -513,29 +513,29 @@ void CalcSeg(seg_t *seg)
 
 //==========================================================================
 //
-//	LoadGLSegs
+//  LoadGLSegs
 //
 //==========================================================================
 
 static void LoadGLSegs(int lump, level_t &loadlevel)
 {
-    void*		data;
-    int			i;
-    mapglseg_t*	ml;
-    seg_t*		li;
-    line_t*		ldef;
-    int			linedef;
-    int			side;
+	void *data;
+	int i;
+	mapglseg_t *ml;
+	seg_t *li;
+	line_t *ldef;
+	int linedef;
+	int side;
 
-    loadlevel.numsegs = W_LumpLength(lump) / sizeof(mapglseg_t);
-    loadlevel.segs = (seg_t*)Z_Calloc(loadlevel.numsegs * sizeof(seg_t), PU_LEVEL, 0);
-    data = W_CacheLumpNum(lump, PU_STATIC);
+	loadlevel.numsegs = W_LumpLength(lump) / sizeof(mapglseg_t);
+	loadlevel.segs = Z_CNew<seg_t>(loadlevel.numsegs, PU_LEVEL, 0);
+	data = W_CacheLumpNum(lump, PU_STATIC);
 
-    ml = (mapglseg_t *)data;
-    li = loadlevel.segs;
+	ml = (mapglseg_t *)data;
+	li = loadlevel.segs;
 
-    for (i=0 ; i<loadlevel.numsegs ; i++, li++, ml++)
-    {
+	for (i=0 ; i<loadlevel.numsegs ; i++, li++, ml++)
+	{
 		word	v1num =	LittleShort(ml->v1);
 		word	v2num =	LittleShort(ml->v2);
 
@@ -583,35 +583,35 @@ static void LoadGLSegs(int lump, level_t &loadlevel)
 
 		//	Calc seg's plane params
 		CalcSeg(li);
-    }
+	}
 
-    Z_Free(data);
+	Z_Free(data);
 }
 
 //==========================================================================
 //
-//	LoadSubsectors
+//  LoadSubsectors
 //
 //==========================================================================
 
 static void LoadSubsectors(int lump, level_t &loadlevel)
 {
-    void*				data;
-    int					i;
-	int					j;
-    mapsubsector_t*		ms;
-    subsector_t*		ss;
-    seg_t*				seg;
+	void *data;
+	int i;
+	int j;
+	mapsubsector_t *ms;
+	subsector_t *ss;
+	seg_t *seg;
 
-    loadlevel.numsubsectors = W_LumpLength(lump) / sizeof(mapsubsector_t);
-    loadlevel.subsectors = (subsector_t*)Z_Calloc(loadlevel.numsubsectors * sizeof(subsector_t), PU_LEVEL, 0);
-    data = W_CacheLumpNum(lump, PU_STATIC);
+	loadlevel.numsubsectors = W_LumpLength(lump) / sizeof(mapsubsector_t);
+	loadlevel.subsectors = Z_CNew<subsector_t>(loadlevel.numsubsectors, PU_LEVEL, 0);
+	data = W_CacheLumpNum(lump, PU_STATIC);
 
-    ms = (mapsubsector_t *)data;
-    ss = loadlevel.subsectors;
+	ms = (mapsubsector_t *)data;
+	ss = loadlevel.subsectors;
 
-    for (i = 0; i < loadlevel.numsubsectors; i++, ss++, ms++)
-    {
+	for (i = 0; i < loadlevel.numsubsectors; i++, ss++, ms++)
+	{
 		ss->numlines = LittleShort(ms->numsegs);
 		ss->firstline = LittleShort(ms->firstseg);
 
@@ -629,34 +629,34 @@ static void LoadSubsectors(int lump, level_t &loadlevel)
 		}
 		if (!ss->sector)
 			Sys_Error("Subsector %d without sector", i);
-    }
+	}
 
-    Z_Free(data);
+	Z_Free(data);
 }
 
 //==========================================================================
 //
-//	LoadNodes
+//  LoadNodes
 //
 //==========================================================================
 
 static void LoadNodes(int lump, level_t &loadlevel)
 {
-    byte*       data;
-    int         i;
-    int         j;
-    mapnode_t*	mn;
-    node_t*		no;
+	byte *data;
+	int i;
+	int j;
+	mapnode_t *mn;
+	node_t *no;
 
-    loadlevel.numnodes = W_LumpLength(lump) / sizeof(mapnode_t);
-    loadlevel.nodes = (node_t*)Z_Calloc(loadlevel.numnodes * sizeof(node_t), PU_LEVEL, 0);
-    data = (byte*)W_CacheLumpNum(lump,PU_STATIC);
+	loadlevel.numnodes = W_LumpLength(lump) / sizeof(mapnode_t);
+	loadlevel.nodes = Z_CNew<node_t>(loadlevel.numnodes, PU_LEVEL, 0);
+	data = (byte*)W_CacheLumpNum(lump,PU_STATIC);
 
-    mn = (mapnode_t *)data;
-    no = loadlevel.nodes;
+	mn = (mapnode_t *)data;
+	no = loadlevel.nodes;
 
-    for (i = 0; i < loadlevel.numnodes; i++, no++, mn++)
-    {
+	for (i = 0; i < loadlevel.numnodes; i++, no++, mn++)
+	{
 		no->SetPointDir(TVec(LittleShort(mn->x), LittleShort(mn->y), 0),
 			TVec(LittleShort(mn->dx), LittleShort(mn->dy), 0));
 
@@ -670,13 +670,13 @@ static void LoadNodes(int lump, level_t &loadlevel)
 			no->bbox[j][4] = LittleShort(mn->bbox[j][BOXTOP]);
 			no->bbox[j][5] = 32768.0;
 		}
-    }
-    Z_Free(data);
+	}
+	Z_Free(data);
 }
 
 //==========================================================================
 //
-//	LoadPVS
+//  LoadPVS
 //
 //==========================================================================
 
@@ -697,52 +697,52 @@ static void	LoadPVS(int lump, level_t &loadlevel)
 #ifdef SERVER
 //==========================================================================
 //
-//	LoadThings1
+//  LoadThings1
 //
 //==========================================================================
 
 static void LoadThings1(int lump)
 {
 	level_t &loadlevel = level;
-    byte*		data;
-    int			i;
-    mapthing1_t	*mt;
-	mthing_t	*mth;
+	byte *data;
+	int i;
+	mapthing1_t *mt;
+	mthing_t *mth;
 
-    data = (byte*)W_CacheLumpNum(lump,PU_STATIC);
-    loadlevel.numthings = W_LumpLength(lump) / sizeof(mapthing1_t);
-	loadlevel.things = (mthing_t*)Z_Calloc(loadlevel.numthings * sizeof(mthing_t), PU_HIGH, 0);
+	data = (byte*)W_CacheLumpNum(lump,PU_STATIC);
+	loadlevel.numthings = W_LumpLength(lump) / sizeof(mapthing1_t);
+	loadlevel.things = Z_CNew<mthing_t>(loadlevel.numthings, PU_HIGH, 0);
 
-    mt = (mapthing1_t *)data;
+	mt = (mapthing1_t *)data;
 	mth = loadlevel.things;
-    for (i = 0; i < loadlevel.numthings; i++, mt++, mth++)
-    {
+	for (i = 0; i < loadlevel.numthings; i++, mt++, mth++)
+	{
 		mth->x = LittleShort(mt->x);
 		mth->y = LittleShort(mt->y);
 		mth->angle = LittleShort(mt->angle);
 		mth->type = LittleShort(mt->type);
 		mth->options = LittleShort(mt->options);
-    }
-    Z_Free(data);
+	}
+	Z_Free(data);
 }
 
 //==========================================================================
 //
-//	LoadThings2
+//  LoadThings2
 //
 //==========================================================================
 
 static void LoadThings2(int lump)
 {
 	level_t &loadlevel = level;
-	byte 		*data;
-	int 		i;
-	mapthing2_t	*mt;
-	mthing_t	*mth;
+	byte *data;
+	int i;
+	mapthing2_t *mt;
+	mthing_t *mth;
 
 	data = (byte*)W_CacheLumpNum(lump, PU_STATIC);
 	loadlevel.numthings = W_LumpLength(lump)/sizeof(mapthing2_t);
-	loadlevel.things = (mthing_t*)Z_Calloc(loadlevel.numthings * sizeof(mthing_t), PU_HIGH, 0);
+	loadlevel.things = Z_CNew<mthing_t>(loadlevel.numthings, PU_HIGH, 0);
 
 	mt = (mapthing2_t *)data;
 	mth = loadlevel.things;
@@ -768,89 +768,89 @@ static void LoadThings2(int lump)
 
 //==========================================================================
 //
-//	ClearBox
+//  ClearBox
 //
 //==========================================================================
 
 static void ClearBox(float *box)
 {
-    box[BOXTOP] = box[BOXRIGHT] = -99999.0;
-    box[BOXBOTTOM] = box[BOXLEFT] = 99999.0;
+	box[BOXTOP] = box[BOXRIGHT] = -99999.0;
+	box[BOXBOTTOM] = box[BOXLEFT] = 99999.0;
 }
 
 //==========================================================================
 //
-//	AddToBox
+//  AddToBox
 //
 //==========================================================================
 
 static void AddToBox(float* box, float x, float y)
 {
-    if (x < box[BOXLEFT])
+	if (x < box[BOXLEFT])
 		box[BOXLEFT] = x;
-    else if (x > box[BOXRIGHT])
+	else if (x > box[BOXRIGHT])
 		box[BOXRIGHT] = x;
-    if (y < box[BOXBOTTOM])
+	if (y < box[BOXBOTTOM])
 		box[BOXBOTTOM] = y;
-    else if (y > box[BOXTOP])
+	else if (y > box[BOXTOP])
 		box[BOXTOP] = y;
 }
 
 //==========================================================================
 //
-//	LinkNode
+//  LinkNode
 //
 //==========================================================================
 
 static void LinkNode(int bspnum, node_t *parent, level_t &loadlevel)
 {
-    if (bspnum & NF_SUBSECTOR)
-    {
+	if (bspnum & NF_SUBSECTOR)
+	{
 		int num;
 
 		if (bspnum == -1)
-		    num = 0;
+			num = 0;
 		else
-		    num = bspnum & (~NF_SUBSECTOR);
-	    loadlevel.subsectors[num].parent = parent;
-    }
+			num = bspnum & (~NF_SUBSECTOR);
+		loadlevel.subsectors[num].parent = parent;
+	}
 	else
 	{
 		node_t* bsp = &loadlevel.nodes[bspnum];
 		bsp->parent = parent;
-    
-    	LinkNode(bsp->children[0], bsp, loadlevel);
+	
+		LinkNode(bsp->children[0], bsp, loadlevel);
 		LinkNode(bsp->children[1], bsp, loadlevel);
 	}
 }
 
 //==========================================================================
 //
-//	GroupLines
+//  GroupLines
 //
-// 	Builds sector line lists and subsector sector numbers. Finds block
+//  Builds sector line lists and subsector sector numbers. Finds block
 // bounding boxes for sectors.
 //
 //==========================================================================
 
 static void GroupLines(level_t &loadlevel)
 {
-    line_t**            linebuffer;
-    int                 i;
-    int                 j;
-    int                 total;
-    line_t*             li;
-    sector_t*           sector;
-	float				bbox[4];
-    int                 block;
+	line_t ** linebuffer;
+	int i;
+	int j;
+	int total;
+	line_t *li;
+	sector_t *sector;
+	float bbox[4];
+	int block;
 
 	LinkNode(loadlevel.numnodes - 1, NULL, loadlevel);
 
-    // count number of lines in each sector
-    li = loadlevel.lines;
-    total = 0;
-    for (i = 0; i < loadlevel.numlines; i++, li++)
-    {
+	// count number of lines in each sector
+	li = loadlevel.lines;
+	total = 0;
+	for (i = 0; i < loadlevel.numlines; i++, li++)
+	{
 		total++;
 		li->frontsector->linecount++;
 
@@ -859,13 +859,13 @@ static void GroupLines(level_t &loadlevel)
 			li->backsector->linecount++;
 			total++;
 		}
-    }
+	}
 
-    // build line tables for each sector
-    linebuffer = (line_t**)Z_Malloc(total * 4, PU_LEVEL, 0);
-    sector = loadlevel.sectors;
-    for (i = 0; i < loadlevel.numsectors; i++, sector++)
-    {
+	// build line tables for each sector
+	linebuffer = Z_New<line_t*>(total, PU_LEVEL, 0);
+	sector = loadlevel.sectors;
+	for (i = 0; i < loadlevel.numsectors; i++, sector++)
+	{
 		ClearBox(bbox);
 		sector->lines = linebuffer;
 		li = loadlevel.lines;
@@ -901,18 +901,18 @@ static void GroupLines(level_t &loadlevel)
 		block = (FX(bbox[BOXLEFT] - loadlevel.bmaporgx - MAXRADIUS)) >> MAPBLOCKSHIFT;
 		block = block < 0 ? 0 : block;
 		sector->blockbox[BOXLEFT] = block;
-    }
+	}
 }
 
 //==========================================================================
 //
-//	LoadLevel
+//  LoadLevel
 //
 //==========================================================================
 
 void LoadLevel(level_t &lev, const char *mapname, bool server_level)
 {
-    // if working with a devlopment map, reload it
+	// if working with a devlopment map, reload it
 	if (fl_devmode)
 	{
 		char	aux_file_name[256];
@@ -928,7 +928,7 @@ void LoadLevel(level_t &lev, const char *mapname, bool server_level)
 		}
 	}
 
-    int lumpnum = W_CheckNumForName(mapname);
+	int lumpnum = W_CheckNumForName(mapname);
 	if (lumpnum < 0)
 	{
 		Host_Error("Map %s not found\n", mapname);
@@ -938,31 +938,31 @@ void LoadLevel(level_t &lev, const char *mapname, bool server_level)
 	{
 		Host_Error("Map %s haves no \"GL Nodes\"", mapname);
 	}
-    bool extended = !strcmp(W_LumpName(lumpnum + ML_BEHAVIOR), "BEHAVIOR");
+	bool extended = !strcmp(W_LumpName(lumpnum + ML_BEHAVIOR), "BEHAVIOR");
 
 	//
 	// Begin processing map lumps
 	// Note: most of this ordering is important
 	//
-    LoadBlockMap(lumpnum + ML_BLOCKMAP, lev);
-    LoadVertexes(lumpnum + ML_VERTEXES, gl_lumpnum + ML_GL_VERT, lev);
-    LoadSectors(lumpnum + ML_SECTORS, lev);
-    LoadSideDefs(lumpnum + ML_SIDEDEFS, lev);
-    if (!extended)
-    {
+	LoadBlockMap(lumpnum + ML_BLOCKMAP, lev);
+	LoadVertexes(lumpnum + ML_VERTEXES, gl_lumpnum + ML_GL_VERT, lev);
+	LoadSectors(lumpnum + ML_SECTORS, lev);
+	LoadSideDefs(lumpnum + ML_SIDEDEFS, lev);
+	if (!extended)
+	{
 		LoadLineDefs1(lumpnum + ML_LINEDEFS, lev);
 	}
-    else
-    {
+	else
+	{
 		LoadLineDefs2(lumpnum + ML_LINEDEFS, lev);
 	}
-    LoadGLSegs(gl_lumpnum + ML_GL_SEGS, lev);
-    LoadSubsectors(gl_lumpnum + ML_GL_SSECT, lev);
+	LoadGLSegs(gl_lumpnum + ML_GL_SEGS, lev);
+	LoadSubsectors(gl_lumpnum + ML_GL_SSECT, lev);
    	LoadNodes(gl_lumpnum + ML_GL_NODES, lev);
 	LoadPVS(gl_lumpnum + ML_GL_PVS, lev);
 
-    lev.rejectmatrix = (byte*)W_CacheLumpNum(lumpnum + ML_REJECT, PU_LEVEL);
-    GroupLines(lev);
+	lev.rejectmatrix = (byte*)W_CacheLumpNum(lumpnum + ML_REJECT, PU_LEVEL);
+	GroupLines(lev);
 
 #ifdef SERVER
 	if (server_level)
@@ -970,13 +970,13 @@ void LoadLevel(level_t &lev, const char *mapname, bool server_level)
 		if (extended)
 		{
 			LoadThings2(lumpnum + ML_THINGS);
-	        //	ACS object code
+			//	ACS object code
 			lev.behavior = (int*)W_CacheLumpNum(lumpnum + ML_BEHAVIOR, PU_LEVEL);
 		}
-    	else
-	    {
+		else
+		{
 			LoadThings1(lumpnum + ML_THINGS);
-        	//	Inform ACS, that we don't have scripts
+			//	Inform ACS, that we don't have scripts
 			lev.behavior = NULL;
 			//	Translate level to Hexen format
 			svpr.Exec("TranslateLevel");
@@ -999,35 +999,35 @@ void LoadLevel(level_t &lev, const char *mapname, bool server_level)
 
 //==========================================================================
 //
-// 	PointInSubsector
+//  PointInSubsector
 //
 //==========================================================================
 
 subsector_t* PointInSubsector(const level_t &lev, float x, float y)
 {
-    node_t*     node;
-    int         side;
-    int         nodenum;
-	TVec		point(x, y, 0);
+	node_t *node;
+	int side;
+	int nodenum;
+	TVec point(x, y, 0);
 
-    // single subsector is a special case
-    if (!lev.numnodes)
-        return lev.subsectors;
+	// single subsector is a special case
+	if (!lev.numnodes)
+		return lev.subsectors;
 
-    nodenum = lev.numnodes - 1;
+	nodenum = lev.numnodes - 1;
 
-    while (!(nodenum & NF_SUBSECTOR))
-    {
-        node = &lev.nodes[nodenum];
-        side = node->PointOnSide(point);
-        nodenum = node->children[side];
-    }
-    return &lev.subsectors[nodenum & ~NF_SUBSECTOR];
+	while (!(nodenum & NF_SUBSECTOR))
+	{
+		node = &lev.nodes[nodenum];
+		side = node->PointOnSide(point);
+		nodenum = node->children[side];
+	}
+	return &lev.subsectors[nodenum & ~NF_SUBSECTOR];
 }
 
 //==========================================================================
 //
-//	LeafPVS
+//  LeafPVS
 //
 //==========================================================================
 
@@ -1046,15 +1046,15 @@ byte *LeafPVS(const level_t &lev, const subsector_t *ss)
 
 //==========================================================================
 //
-//	AddExtraFloor
+//  AddExtraFloor
 //
 //==========================================================================
 
 sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 {
-	sec_region_t	*region;
-	sec_region_t	*inregion;
-	sector_t		*src;
+	sec_region_t *region;
+	sec_region_t *inregion;
+	sector_t *src;
 
 	src = line->frontsector;
 	float floorz = src->floor.GetPointZ(dst->soundorg.origin);
@@ -1065,7 +1065,7 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 		float inceilz = inregion->ceiling->GetPointZ(dst->soundorg.origin);
 		if (infloorz <= ceilz && inceilz >= floorz)
 		{
-			region = (sec_region_t*)Z_Calloc(sizeof(sec_region_t), PU_LEVEL, 0);
+			region = Z_CNew<sec_region_t>(PU_LEVEL, 0);
 			region->floor = inregion->floor;
 			region->ceiling = &src->ceiling;
 			region->params = &src->params;
@@ -1091,20 +1091,23 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.6  2001/08/21 17:42:42  dj_jl
-//	Removed -devmaps code, in devgame mode look for map in <gamedir>/maps
+//  $Log$
+//  Revision 1.7  2001/09/12 17:36:20  dj_jl
+//  Using new zone templates
 //
-//	Revision 1.5  2001/08/02 17:46:38  dj_jl
-//	Added sending info about changed textures to new clients
+//  Revision 1.6  2001/08/21 17:42:42  dj_jl
+//  Removed -devmaps code, in devgame mode look for map in <gamedir>/maps
 //	
-//	Revision 1.4  2001/08/01 17:37:34  dj_jl
-//	Made walls check texture list before flats
+//  Revision 1.5  2001/08/02 17:46:38  dj_jl
+//  Added sending info about changed textures to new clients
 //	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
+//  Revision 1.4  2001/08/01 17:37:34  dj_jl
+//  Made walls check texture list before flats
 //	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/07/31 17:16:31  dj_jl
+//  Just moved Log to the end of file
+//	
+//  Revision 1.2  2001/07/27 14:27:54  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************
