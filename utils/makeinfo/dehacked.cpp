@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "makeinfo.h"
+#include "info.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -56,9 +57,6 @@ extern char*				mobj_names[];
 //extern char* 				flagnames2[32];
 //extern char*				ammo_names[];
 //extern state_action_info_t	StateActionInfo[];
-extern int					numstates;
-extern int					nummobjtypes;
-//extern int					numweapons;
 extern int					num_sfx;
 extern state_t				states[];
 extern mobjinfo_t			mobjinfo[];
@@ -87,7 +85,6 @@ extern bool					Hacked;
 //static int		maxammo;
 //static int		clipammo;
 //static int		num_states;
-//static int		nummobjtypes;
 static int*		functions;
 
 static char		*Patch;
@@ -182,7 +179,7 @@ static bool ParseParam(void)
 static void ReadThing(int num)
 {
 	num--; // begin at 0 not 1;
-	if (num >= nummobjtypes || num < 0)
+	if (num >= NUMMOBJTYPES || num < 0)
     {
 		printf("WARNING! Invalid thing num %d\n", num);
 		while (ParseParam());
@@ -249,7 +246,7 @@ static void ReadSound(int num)
 
 static void ReadState(int num)
 {
-	if (num >= numstates || num < 0)
+	if (num >= NUMSTATES || num < 0)
     {
     	printf("WARNING! Invalid state num %d\n", num);
 		while (ParseParam());
@@ -332,7 +329,7 @@ static void ReadPointer(int num)
     int		i;
     int		j;
 
-	for (i=0, j=0; i < numstates; i++)
+	for (i=0, j=0; i < NUMSTATES; i++)
 	{
 		if (functions[i])
 		{
@@ -703,8 +700,8 @@ void ProcessDehackedFiles(int argc, char **argv)
 
 	Hacked = true;
 
-    functions = (int*)malloc(numstates * 4);
-	for (i = 0; i < numstates; i++)
+    functions = (int*)malloc(NUMSTATES * 4);
+	for (i = 0; i < NUMSTATES; i++)
 		functions[i] = states[i].action_num;
 
 	while (++p != argc && argv[p][0] != '-')
@@ -718,9 +715,12 @@ void ProcessDehackedFiles(int argc, char **argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/07/13 08:17:19  dj_jl
+//	Removed all non-Doom stuff, since it's now used only for DeHackEd.
+//
 //	Revision 1.7  2002/01/11 18:21:49  dj_jl
 //	Started to use names in progs
-//
+//	
 //	Revision 1.6  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
 //	

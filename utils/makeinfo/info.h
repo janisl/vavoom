@@ -29,7 +29,7 @@
 
 enum
 {
-    SPR1_TROO = 0,
+    SPR1_TROO,
     SPR1_SHTG,
     SPR1_PUNG,
     SPR1_PISG,
@@ -168,7 +168,7 @@ enum
     SPR1_TLMP,
     SPR1_TLP2,
 
-    NUMDOOMSPRITES
+	NUMSPRITES
 };
 
 enum
@@ -250,12 +250,12 @@ enum
     SA1_SpawnFly,
     SA1_BrainExplode,
 
-    NUM_DOOM_STATE_ACTIONS
+	NUM_STATE_ACTIONS
 };
 
 enum
 {
-    S1_NULL= 0,
+    S1_NULL,
     S1_LIGHTDONE,
     S1_PUNCH,
     S1_PUNCHDOWN,
@@ -1223,7 +1223,7 @@ enum
     S1_TECH2LAMP3,
     S1_TECH2LAMP4,
 
-    NUMDOOMSTATES
+	NUMSTATES
 };
 
 enum
@@ -1365,13 +1365,22 @@ enum
     MT1_MISC84,
     MT1_MISC85,
     MT1_MISC86,
-#if 0
-    MT1_PUSH,
-    MT1_PULL,
-#endif
 
-    NUMDOOMMOBJTYPES
+	NUMMOBJTYPES
 };
+
+// Ammunition types defined.
+enum
+{
+    am_clip,	// Pistol / chaingun ammo.
+    am_shell,	// Shotgun / double barreled shotgun.
+    am_cell,	// Plasma rifle, BFG.
+    am_misl,	// Missile launcher.
+    NUMAMMO,
+    am_noammo	// Unlimited for chainsaw / fist.
+};
+
+#define NUM_WEAPONS		9
 
 enum
 {
@@ -1485,15 +1494,18 @@ enum
     sfx1_skeatk,
     sfx1_radio,
 
-    NUMDOOMSFX
+	NUMSFX
 };
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.1  2002/07/13 08:17:19  dj_jl
+//	Removed all non-Doom stuff, since it's now used only for DeHackEd.
+//
 //	Revision 1.4  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/09/20 16:33:14  dj_jl
 //	Beautification
 //	

@@ -22,10 +22,23 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
-//**
-//** States.h
-//**
-//**************************************************************************
+
+char *sprnames[] = {
+    "TROO","SHTG","PUNG","PISG","PISF","SHTF","SHT2","CHGG","CHGF","MISG",
+    "MISF","SAWG","PLSG","PLSF","BFGG","BFGF","BLUD","PUFF","BAL1","BAL2",
+    "PLSS","PLSE","MISL","BFS1","BFE1","BFE2","TFOG","IFOG","PLAY","POSS",
+    "SPOS","VILE","FIRE","FATB","FBXP","SKEL","MANF","FATT","CPOS","SARG",
+    "HEAD","BAL7","BOSS","BOS2","SKUL","SPID","BSPI","APLS","APBX","CYBR",
+    "PAIN","SSWV","KEEN","BBRN","BOSF","ARM1","ARM2","BAR1","BEXP","FCAN",
+    "BON1","BON2","BKEY","RKEY","YKEY","BSKU","RSKU","YSKU","STIM","MEDI",
+    "SOUL","PINV","PSTR","PINS","MEGA","SUIT","PMAP","PVIS","CLIP","AMMO",
+    "ROCK","BROK","CELL","CELP","SHEL","SBOX","BPAK","BFUG","MGUN","CSAW",
+    "LAUN","PLAS","SHOT","SGN2","COLU","SMT2","GOR1","POL2","POL5","POL4",
+    "POL3","POL1","POL6","GOR2","GOR3","GOR4","GOR5","SMIT","COL1","COL2",
+    "COL3","COL4","CAND","CBRA","COL6","TRE1","TRE2","ELEC","CEYE","FSKU",
+    "COL5","TBLU","TGRN","TRED","SMBT","SMGT","SMRT","HDB1","HDB2","HDB3",
+    "HDB4","HDB5","HDB6","POB1","POB2","BRS1","TLMP","TLP2", 0
+};
 
 char* statename[] =
 {
@@ -998,16 +1011,251 @@ char* statename[] =
     "S_TECH2LAMP4",
 };
 
+char* mt_names[] =
+{
+    "DoomPlayer",
+    "Zombieman",
+    "ShotgunGuy",
+    "ArchVile",
+    "ArchvileFire",
+    "Revenant",
+    "RevenantTracer",
+    "RevenantTracerSmoke",
+    "Mancubus",
+    "MancubusMissile",
+    "ChaingunGuy",
+    "Imp",
+    "Demon",
+    "Shadows",
+    "Cacodemon",
+    "BaronOfHell",
+    "BruiserShot",
+    "HellKnight",
+    "LostSoul",
+    "SpiderMastermind",
+    "Arachnotron",
+    "Cyberdemon",
+    "PainElemental",
+    "WolfSS",
+    "CommanderKeen",
+    "BossBrain",
+    "BossEye",
+    "BossTarget",
+    "SpawnShot",
+    "SpawnFire",
+    "Barrel",
+    "ImpMissile",
+    "CacodemonMissile",
+    "Rocket",
+    "PlasmaShot",
+    "BFGShot",
+    "ArachnotronPlasma",
+    "Puff",
+    "Blood",
+    "TeleportFog",
+    "ItemRespawnFog",
+    "TeleportSpot",
+    "ExtraBFG",
+    "ItemArmor1",
+    "ItemArmor2",
+    "ItemHealthBonus",
+    "ItemArmorBonus",
+    "ItemKeyBlueCard",
+    "ItemKeyRedCard",
+    "ItemKeyYellowCard",
+    "ItemKeyYellowSkull",
+    "ItemKeyRedSkull",
+    "ItemKeyBlueSkull",
+    "ItemStimPack",
+    "ItemMedikit",
+    "ItemSoulSphere",
+    "ItemInvulnerability",
+    "ItemBerserk",
+    "ItemInvisibility",
+    "ItemRadiationSuit",
+    "ItemComputerMap",
+    "ItemInfrared",
+    "ItemMegaSphere",
+    "ItemAmmoBulletClip",
+    "ItemAmmoBulletBox",
+    "ItemAmmoRocket",
+    "ItemAmmoRocketBox",
+    "ItemAmmoCells",
+    "ItemAmmoCellsPack",
+    "ItemAmmoShells",
+    "ItemAmmoShellsBox",
+    "ItemBackpack",
+    "ItemWeaponBFG",
+    "ItemWeaponChaingun",
+    "ItemWeaponChainsaw",
+    "ItemWeaponRocketLauncher",
+    "ItemWeaponPlasmaGun",
+    "ItemWeaponShotgun",
+    "ItemWeaponSuperShotgun",
+    "TechLamp",
+    "TechLamp2",
+    "ColumnLamp",
+    "ColumnGreenTall",
+    "ColumnGreenShort",
+    "ColumnRedTall",
+    "ColumnRedShort",
+    "ColumnWithSkull",
+    "ColumnWithHearth",
+    "EvilEye",
+    "FloatingSkull",
+    "TorchTree",
+    "TorchBlue",
+    "TorchGreen",
+    "TorchRed",
+    "TorchBlueShort",
+    "TorchGreenShort",
+    "TorchRedShort",
+    "Stalagtite",
+    "TechPillar",
+    "CandleStick",
+    "Candelabra",
+    "BloodyTwitch",
+    "Meat2",
+    "Meat3",
+    "Meat4",
+    "Meat5",
+    "Meat2NoBlock",
+    "Meat4NoBlock",
+    "Meat3NoBlock",
+    "Meat5NoBlock",
+    "BloodyTwitchNoBlock",
+    "DeadCacodemon",
+    "DeadPlayer",
+    "DeadZombieman",
+    "DeadDemon",
+    "DeadLostSoul",
+    "DeadImp",
+    "DeadShotgunGuy",
+    "DeadPlayerGibs",
+    "DeadPlayerGibs2",
+    "HeadsOnStick",
+    "Gibs",
+    "HeadOnAStick",
+    "HeadCandles",
+    "DeadStick",
+    "LiveStick",
+    "BigTree",
+    "BurningBarrel",
+    "HangingNoGuts",
+    "HangingNoBrain",
+    "HangingTorsoLookDown",
+    "HangingTorsoSkull",
+    "HangingTorsoLookUp",
+    "HangingTorsoNoBrain",
+    "ColonGibs",
+    "SmallPool",
+    "BrainStem",
+};
+
+char* flagnames1[32] =
+{
+    "bSpecial",
+    "bSolid",
+    "bShootable",
+    "bHidden",
+    "bNoBlockmap",
+    "bAmbush",
+    "bJustHit",
+    "bJustAttacked",
+
+    "bSpawnCeiling",
+    "bNoGravity",
+    "bDropOff",
+    "bPickUp",
+    "bNoClip",
+    "bSlide",
+    "bFloat",
+    "bTeleport",
+
+    "bMissile",
+    "bDropped",
+    "MF_SHADOW",
+    "bNoBlood",
+    "bCorpse",
+    "bInFloat",
+    "bCountKill",
+    "bCountItem",
+
+    "bSkullFly",
+    "bNoDeathmatch",
+    "MF_TRANSLATION1",
+    "MF_TRANSLATION2",
+	"MF_UNUSED1",
+	"MF_UNUSED2",
+	"MF_UNUSED3",
+    "MF_TRANSLUCENT",
+};
+char* flagnames2[32] =
+{
+    "MF2_LOGRAV",
+    "MF2_WINDTHRUST",
+    "MF2_FLOORBOUNCE",
+    "MF2_THRUGHOST",
+    "MF2_FLY",
+    "MF2_FOOTCLIP",
+    "MF2_SPAWNFLOAT",
+    "MF2_NOTELEPORT",
+
+    "MF2_RIP",
+    "MF2_PUSHABLE",
+    "MF2_SLIDE",
+    "MF2_ONMOBJ",
+    "MF2_PASSMOBJ",
+    "MF2_CANNOTPUSH",
+    "MF2_FEETARECLIPPED",
+    "MF2_BOSS",
+
+    "MF2_FIREDAMAGE",
+    "MF2_NODMGTHRUST",
+    "MF2_TELESTOMP",
+    "MF2_FLOATBOB",
+    "MF2_DONTDRAW",
+    "MF2_IMPACT",
+    "MF2_PUSHWALL",
+    "bActivateMCross",
+
+    "bActivatePCross",
+    "MF2_CANTLEAVEFLOORPIC",
+    "MF2_NONSHOOTABLE",
+    "MF2_INVULNERABLE",
+    "bDormant",
+    "MF2_ICEDAMAGE",
+    "MF2_SEEKERMISSILE",
+    "MF2_REFLECTIVE",
+};
+
+char* ammo_names[] =
+{
+    "am_clip",	// Pistol / chaingun ammo.
+    "am_shell",	// Shotgun / double barreled shotgun.
+    "am_cell",	// Plasma rifle, BFG.
+    "am_misl",	// Missile launcher.
+    "NUMAMMO",
+    "am_noammo"	// Unlimited for chainsaw / fist.
+};
+
+char* weapon_names[] =
+{
+    "WeaponFist",
+    "WeaponPistol",
+    "WeaponShotgun",
+    "WeaponChaingun",
+    "WeaponMissile",
+    "WeaponPlasma",
+    "WeaponBFG",
+    "WeaponChainsaw",
+    "WeaponSuperShotgun",
+};
+
 //**************************************************************************
 //
 //	$Log$
-//	Revision 1.4  2002/01/07 12:30:05  dj_jl
-//	Changed copyright year
-//
-//	Revision 1.3  2001/09/20 16:33:14  dj_jl
-//	Beautification
-//	
-//	Revision 1.2  2001/07/27 14:27:55  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//	Revision 1.1  2002/07/13 08:17:19  dj_jl
+//	Removed all non-Doom stuff, since it's now used only for DeHackEd.
 //
 //**************************************************************************

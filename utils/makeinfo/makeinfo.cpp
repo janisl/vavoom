@@ -24,6 +24,7 @@
 //**************************************************************************
 
 #include "makeinfo.h"
+#include "info.h"
 
 void ProcessDehackedFiles(int argc, char** argv);
 void MarkSpecialWeaponStates(void);
@@ -37,9 +38,6 @@ extern char* 				flagnames2[32];
 extern char*				weapon_names[];
 extern char*				ammo_names[];
 extern state_action_info_t	StateActionInfo[];
-extern int					numstates;
-extern int					nummobjtypes;
-extern int					numweapons;
 extern int					num_sfx;
 extern state_t				states[];
 extern mobjinfo_t			mobjinfo[];
@@ -48,20 +46,60 @@ extern sfxinfo_t			sfx[];
 extern string_def_t			strings[];
 extern string_def_t			txtlumps[];
 extern map_info_t			map_info[];
-extern int					maxammo[];
-extern int					perammo[];
-extern int					numammo;
-extern int					initial_health;
-extern int					initial_ammo;
-extern int					bfg_cells;
-extern int					soulsphere_max;
-extern int					soulsphere_health;
-extern int					megasphere_health;
-extern int					god_health;
-extern int					shadow;
-extern int					altshadow;
+
+int		maxammo[] = {200, 50, 300, 50};
+int		perammo[] = {10, 4, 20, 1};
+int		numammo = 4;
+
+int		initial_health = 100;
+int		initial_ammo = 50;
+int		bfg_cells = 40;
+int		soulsphere_max = 200;
+int		soulsphere_health = 100;
+int		megasphere_health = 200;
+int		god_health = 100;
 
 bool						Hacked;
+
+//==========================================================================
+//
+//	FixupHeights
+//
+//==========================================================================
+
+void FixupHeights(void)
+{
+	mobjinfo[MT1_MISC29].height = 72*FRACUNIT;
+	mobjinfo[MT1_MISC30].height = 56*FRACUNIT;
+	mobjinfo[MT1_MISC31].height = 48*FRACUNIT;
+	mobjinfo[MT1_MISC32].height = 52*FRACUNIT;
+	mobjinfo[MT1_MISC33].height = 40*FRACUNIT;
+	mobjinfo[MT1_MISC34].height = 52*FRACUNIT;
+	mobjinfo[MT1_MISC35].height = 40*FRACUNIT;
+	mobjinfo[MT1_MISC36].height = 40*FRACUNIT;
+	mobjinfo[MT1_MISC37].height = 40*FRACUNIT;
+	mobjinfo[MT1_MISC39].height = 48*FRACUNIT;
+	mobjinfo[MT1_MISC40].height = 64*FRACUNIT;
+	mobjinfo[MT1_MISC41].height = 64*FRACUNIT;
+	mobjinfo[MT1_MISC42].height = 64*FRACUNIT;
+	mobjinfo[MT1_MISC43].height = 64*FRACUNIT;
+	mobjinfo[MT1_MISC44].height = 40*FRACUNIT;
+	mobjinfo[MT1_MISC45].height = 40*FRACUNIT;
+	mobjinfo[MT1_MISC46].height = 40*FRACUNIT;
+	mobjinfo[MT1_MISC47].height = 40*FRACUNIT;
+	mobjinfo[MT1_MISC48].height = 120*FRACUNIT;
+	mobjinfo[MT1_MISC50].height = 56*FRACUNIT;
+	mobjinfo[MT1_MISC70].height = 64*FRACUNIT;
+	mobjinfo[MT1_MISC72].height = 56*FRACUNIT;
+	mobjinfo[MT1_MISC73].height = 48*FRACUNIT;
+	mobjinfo[MT1_MISC74].height = 64*FRACUNIT;
+	mobjinfo[MT1_MISC75].height = 64*FRACUNIT;
+	mobjinfo[MT1_MISC76].height = 96*FRACUNIT;
+	mobjinfo[MT1_MISC77].height = 32*FRACUNIT;
+
+	// Mark these unused super shotgun states
+	MarkWeaponState(S1_DSNR1);
+}
 
 //==========================================================================
 //
@@ -88,7 +126,7 @@ void MarkWeaponStates(void)
 {
 	int			i;
 
-	for (i = 0; i < numweapons; i++)
+	for (i = 0; i < NUM_WEAPONS; i++)
     {
 		MarkWeaponState(weaponinfo[i].upstate);
 		MarkWeaponState(weaponinfo[i].downstate);
@@ -98,7 +136,19 @@ void MarkWeaponStates(void)
 		MarkWeaponState(weaponinfo[i].flashstate);
 	}
 	// Mark states set by code
-	MarkSpecialWeaponStates();
+	MarkWeaponState(S1_CHAINFLASH2);
+	MarkWeaponState(S1_PLASMAFLASH2);
+	if (Hacked)
+	{
+		//	Need this for unused states with weapon action functions.
+		for (int i = 1; i < NUMSTATES; i++)
+		{
+			if (StateActionInfo[states[i].action_num].weapon_action)
+			{
+				states[i].weapon_state = true;
+			}
+		}
+	}
 }
 
 //==========================================================================
@@ -186,7 +236,7 @@ void WriteStates(void)
 	{
 		fprintf(f, "__states__(%s)\n{\n", Hacked ? "HackedActor" : "Actor");
 	}
-	for (i=1; i<numstates; i++)
+	for (i=1; i<NUMSTATES; i++)
     {
 		if (in_weapon && !states[i].weapon_state)
 		{
@@ -216,21 +266,10 @@ void WriteStates(void)
 			fprintf(f, ", %d.0 / 35.0", states[i].tics);
 		fprintf(f, ", %s", statename[states[i].nextstate]);
 		fprintf(f, ") { ");
-#ifdef HEXEN
-		if (states[i].misc1)
-        {
-			fprintf(f, "SX = %.1f; ", (float)states[i].misc1);
-		}
-		if (states[i].misc2)
-        {
-			fprintf(f, "SY = %.1f; ", (float)states[i].misc2);
-		}
-#else
 		if (states[i].misc1)
         {
 			fprintf(f, "SX = %.1f; SY = %.1f; ", (float)states[i].misc1, (float)states[i].misc2);
 		}
-#endif
 		if (states[i].action_num)
 			fprintf(f, "%s(); ", StateActionInfo[states[i].action_num].fname);
 		fprintf(f, "}\n");
@@ -271,7 +310,7 @@ void WriteMobjInfo(void)
     fprintf(f, "//**************************************************************************\n");
 	fprintf(f, "\n");
 
-	for (i = 0; i < nummobjtypes; i++)
+	for (i = 0; i < NUMMOBJTYPES; i++)
     {
     	//	A standard comment before function
 		fprintf(f, "//==========================================================================\n");
@@ -286,18 +325,10 @@ void WriteMobjInfo(void)
 
 		//  ------------- Class declaration ------------
 		parent = "Actor";
-#ifndef NODEH
 		if (Hacked)
 			parent = "HackedActor";
-#endif
-#if defined DOOM || defined DOOM2
 		if (i == 0)
 			parent = "PlayerPawn";
-#endif
-#ifdef STRIFE
-		if (i == 1)
-			parent = "PlayerPawn";
-#endif
 		fprintf(f, "class %s:%s\n", mt_names[i], parent);
 		if (mobjinfo[i].doomednum > 0)
 		{
@@ -306,11 +337,7 @@ void WriteMobjInfo(void)
 		fprintf(f, "{\n");
 
         //  ------------ OnMapSpawn method -----------
-#ifdef NODEH
-		bool no_monsters = flags & MF_COUNTKILL;
-#else
 		bool no_monsters = flags & MF_COUNTKILL || mobjinfo[i].doomednum == 3006;
-#endif
 		if (mobjinfo[i].extra)
 		{
     	    fprintf(f, "\tvoid OnMapSpawn(mthing_t *mthing)\n");
@@ -334,11 +361,7 @@ void WriteMobjInfo(void)
 
 		if (flags & MF_SPECIAL)
 		{
-#if defined HERETIC || defined HEXEN
-			mobjinfo[i].height  = 32 * FRACUNIT;
-#else
 			mobjinfo[i].height  = 8 * FRACUNIT;
-#endif
 		}
 
 		if (mobjinfo[i].classname)
@@ -348,11 +371,7 @@ void WriteMobjInfo(void)
 		if (mobjinfo[i].spawnhealth)
 			fprintf(f, "\t\tHealth = %d;\n", mobjinfo[i].spawnhealth);
 		if (mobjinfo[i].spawnhealth && mobjinfo[i].xdeathstate)
-#ifdef NODEH
-			fprintf(f, "\t\tGibsHealth = -%d;\n", mobjinfo[i].spawnhealth >> 1);
-#else
 			fprintf(f, "\t\tGibsHealth = -%d;\n", mobjinfo[i].spawnhealth);
-#endif
 		if (mobjinfo[i].radius)
 			fprintf(f, "\t\tRadius = %.1f;\n", (float)mobjinfo[i].radius / (float)FRACUNIT);
 		if (mobjinfo[i].height)
@@ -379,47 +398,18 @@ void WriteMobjInfo(void)
 		if (flags2 & MF2_DONTDRAW)
 			fprintf(f, "\t\tTranslucency = 100;\n");
 		else if (flags & MF_SHADOW)
-			fprintf(f, "\t\tTranslucency = %d;\n", shadow);
-		else if (flags & MF_ALTSHADOW && altshadow)
-			fprintf(f, "\t\tTranslucency = %d;\n", altshadow);
-#ifndef STRIFE
+			fprintf(f, "\t\tTranslucency = 90;\n");
 		else if (flags & MF_TRANSLUCENT)
 			fprintf(f, "\t\tTranslucency = 33;\n");
-#endif
 
 		//	Translation
-#ifdef STRIFE
-        if (flags & 0x70000000)
-			fprintf(f, "\t\tTranslation = %d;\n", (flags >> 28) & 7);
-#else
         if (flags & MF_TRANSLATION)
 			fprintf(f, "\t\tTranslation = %d;\n", (flags & MF_TRANSLATION) >> MF_TRANSSHIFT);
-#endif
 
 		//	Clear replaced flags
         flags &= ~(MF_SHADOW);
-		if (altshadow) flags &= ~MF_ALTSHADOW;
-#ifdef STRIFE
-		flags &= ~(0x70000000);
-#else
 		flags &= ~(MF_TRANSLUCENT|MF_TRANSLATION);
-#endif
         flags2 &= ~(MF2_DONTDRAW);
-
-#ifdef STRIFE
-		//	Add MCROSS and PCROSS flags.
-		if (flags & MF_COUNTKILL)
-			flags2 |= MF2_MCROSS;
-		else if (flags & MF_MISSILE)
-			flags2 |= MF2_MCROSS;
-#endif
-
-#if defined HERETIC || defined HEXEN
-		//	Add passmobj flag to all missiles and invert it
-		if (flags & MF_MISSILE)
-			flags2 |= MF2_PASSMOBJ;
-		flags2 ^= MF2_PASSMOBJ;
-#endif
 
         //	Flags
    	    for (j = 0; j < 32; j++)
@@ -450,7 +440,6 @@ void WriteMobjInfo(void)
 			fprintf(f, "\t\tIdleState = %s;\n", statename[mobjinfo[i].spawnstate]);
         if (mobjinfo[i].seestate)
 			fprintf(f, "\t\tSeeState = %s;\n", statename[mobjinfo[i].seestate]);
-#if defined DOOM || defined DOOM2
         if (i == 0)
 		{
         	if (mobjinfo[i].missilestate)
@@ -458,7 +447,6 @@ void WriteMobjInfo(void)
 			fprintf(f, "\t\tMissileState = S_PLAY_ATK2;\n");
 		}
 		else
-#endif
 		{
 	        if (mobjinfo[i].meleestate)
 				fprintf(f, "\t\tMeleeState = %s;\n", statename[mobjinfo[i].meleestate]);
@@ -499,15 +487,6 @@ void WriteMobjInfo(void)
 		fprintf(f, "\n");
     }
 
-/*	fprintf(f, "__mobjinfo__\n{\n");
-	for (i=0; i<nummobjtypes; i++)
-    {
-		if (mobjinfo[i].doomednum > 0)
-		{
-	    	fprintf(f, "\t{ %d, %s }\n", mobjinfo[i].doomednum, mt_names[i]);
-		}
-    }
-    fprintf(f, "}\n\n");*/
     WriteFooter(f);
 	fclose(f);
 }
@@ -539,28 +518,25 @@ void WriteWeaponInfo(void)
     fprintf(f, "//**************************************************************************\n");
 	fprintf(f, "\n");
 
-	for (i=0; i<(numweapons == 18 ? 9 : numweapons); i++)
+	for (i=0; i<NUM_WEAPONS; i++)
     {
         fprintf(f, "class %s;\n", weapon_names[i]);
 	}
     fprintf(f, "\n");
 
 	fprintf(f, "classid WeaponClasses[] = {\n");
-	for (i=0; i<(numweapons == 18 ? 9 : numweapons); i++)
+	for (i=0; i<NUM_WEAPONS; i++)
     {
         fprintf(f, "\t%s,\n", weapon_names[i]);
     }
     fprintf(f, "};\n\n");
 
-	if (!altshadow)
-    {
-        fprintf(f, "int weapon_ammo_type[] =\n{\n");
-		for (i=0; i<(numweapons == 18 ? 9 : numweapons); i++)
-    	{
-        	fprintf(f, "\t%s,\n", ammo_names[weaponinfo[i].ammo]);
-	    }
-    	fprintf(f, "};\n\n");
-	}
+	fprintf(f, "int weapon_ammo_type[] =\n{\n");
+	for (i=0; i<NUM_WEAPONS; i++)
+   	{
+       	fprintf(f, "\t%s,\n", ammo_names[weaponinfo[i].ammo]);
+    }
+   	fprintf(f, "};\n\n");
     WriteFooter(f);
 	fclose(f);
 
@@ -579,7 +555,7 @@ void WriteWeaponInfo(void)
     fprintf(f, "//**************************************************************************\n");
 	fprintf(f, "\n");
 
-	for (i=0; i<(numweapons == 18 ? 9 : numweapons); i++)
+	for (i=0; i<NUM_WEAPONS; i++)
     {
     	//	A standard comment before function
 		fprintf(f, "//==========================================================================\n");
@@ -595,27 +571,13 @@ void WriteWeaponInfo(void)
         fprintf(f, "\tdefaultproperties\n");
         fprintf(f, "\t{\n");
 
-        if (altshadow)
-	        fprintf(f, "\t\tMana = %s;\n", ammo_names[weaponinfo[i].ammo]);
-		else
-	        fprintf(f, "\t\tAmmo = %s;\n", ammo_names[weaponinfo[i].ammo]);
+        fprintf(f, "\t\tAmmo = %s;\n", ammo_names[weaponinfo[i].ammo]);
 		fprintf(f, "\t\tUpState = %s;\n", statename[weaponinfo[i].upstate]);
 		fprintf(f, "\t\tDownState = %s;\n", statename[weaponinfo[i].downstate]);
 		fprintf(f, "\t\tReadyState = %s;\n", statename[weaponinfo[i].readystate]);
 		fprintf(f, "\t\tAttackState = %s;\n", statename[weaponinfo[i].atkstate]);
 		fprintf(f, "\t\tHoldAttackState = %s;\n", statename[weaponinfo[i].holdatkstate]);
 		fprintf(f, "\t\tFlashState = %s;\n", statename[weaponinfo[i].flashstate]);
-
-        if (numweapons == 18)
-        {
-	        fprintf(f, "\tplayer->w2_ammo = %s;\n", ammo_names[weaponinfo[9+i].ammo]);
-			fprintf(f, "\tplayer->w2_upstate = %s;\n", statename[weaponinfo[9+i].upstate]);
-			fprintf(f, "\tplayer->w2_downstate = %s;\n", statename[weaponinfo[9+i].downstate]);
-			fprintf(f, "\tplayer->w2_readystate = %s;\n", statename[weaponinfo[9+i].readystate]);
-			fprintf(f, "\tplayer->w2_atkstate = %s;\n", statename[weaponinfo[9+i].atkstate]);
-			fprintf(f, "\tplayer->w2_holdatkstate = %s;\n", statename[weaponinfo[9+i].holdatkstate]);
-			fprintf(f, "\tplayer->w2_flashstate = %s;\n", statename[weaponinfo[9+i].flashstate]);
-        }
 
         //	End of function
         fprintf(f, "\t}\n");
@@ -625,8 +587,6 @@ void WriteWeaponInfo(void)
     WriteFooter(f);
 	fclose(f);
 }
-
-#ifndef NODEH
 
 //==========================================================================
 //
@@ -757,8 +717,6 @@ static void WriteTxtLumps(void)
     }
 }
 
-#endif
-
 //==========================================================================
 //
 //	main
@@ -767,21 +725,17 @@ static void WriteTxtLumps(void)
 
 int main(int argc, char** argv)
 {
-#ifndef NODEH
 	ProcessDehackedFiles(argc, argv);
-#endif
 	MarkWeaponStates();
 	WriteStates();
     WriteMobjInfo();
     WriteWeaponInfo();
-#ifndef NODEH
 	if (Hacked)
 	{
 	    WriteStrings();
     	WriteMisc();
 		WriteTxtLumps();
 	}
-#endif
 
 	return 0;
 }
@@ -789,9 +743,12 @@ int main(int argc, char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2002/07/13 08:17:19  dj_jl
+//	Removed all non-Doom stuff, since it's now used only for DeHackEd.
+//
 //	Revision 1.27  2002/06/29 16:01:54  dj_jl
 //	Floatized PainChance.
-//
+//	
 //	Revision 1.26  2002/06/14 15:34:09  dj_jl
 //	Some fixes.
 //	
