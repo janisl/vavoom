@@ -447,3 +447,149 @@
 ******************************************************************************
                             VERSION 1.16
 ******************************************************************************
+
+15.01.2005
+  Fixed bug with incrementing/decrementing ACS map variables.
+  Level time saved in savegame.
+  Created common ACS scripts.
+16.01.2005
+  Created enum for line specials and started to add all common specials.
+17.01.2005
+  All common line specials are added to the enum.
+  Created initialisation routine in door class.
+18.01.2005
+  In all games door specials now use the same constants.
+  Moved special utilities to common, started to update them to correctly work
+ with slopes.
+19.01.2005
+  Finished updating action special utilities, added some more utilities that
+ will be needed for Boom support.
+  Fixed bug that caused infinite spawning of phased light specials.
+  Fixed wrong Heretic episode 5 finale.
+20.01.2005
+  Updated door specials to use new utilities and added support for gradual
+ lighting effects.
+21.01.2005
+  Additional fixes for changing moving door's direction, updated door closing
+ in 30 seconds.
+23.01.2005
+  In OpenGL properly using clamp to edge extension for skyboxes.
+26.01.2005
+  In ceiling mover class added function to initialise, stop crusher and resume
+ ceiling in stasis.
+27.01.2005
+  Updated ceiling specials to use new utilities, made all types available in
+ all games and added many new ones.
+  Decided to release version 1.16.1 with several bugs fixed, but without the
+ new stuff.
+28.01.2005
+  Added generic door and ceiling specials.
+29-01-2005
+  In SectorMover added function Finished that properly destroys it.
+  Added Init function to floor movers.
+30.01.2005
+  To floor movers also added functions to initialise stair and donut movers
+ and to stop crushing floor.
+  Added init, stop and activate in stasis function to moving platorm specials.
+31.01.2005
+  Made all floor specials available in all games.
+  For doors moved code of initialisation of open in 30 secs and reusing of a
+ door to functions in door class.
+01.02.2005
+  Made all platform specials available in all games.
+  Updated floor movers and platforms to use new special utilities.
+02.02.2005
+  Firebrand created icons for fullscreen mode. Must tweek them a bit.
+  Worked on Hexen's stair building specials. Old stair step queue replaced
+ with linked list of stair stem movers. All stair processing code moved to
+ stair step mover class.
+03.02.2005
+  Updated stair step movers to new special utilities, some more tweeking.
+04-02-2005
+  Some more improvements in initialisation of stair step movers.
+05.02.2005
+  In sectors changed special data to 3 separate specials for ceiling, floor
+ and light, like in Boom.
+27.02.2005
+  My new PC is ready for development. :)
+  Added windowed mode to Allegro drivers. There have been some changes in
+ Allegro since now mouse doesn't work properly with OpenGL driver where I'm
+ recreating the window - a BIG hack.
+.03.2005
+  Exit specials now take posittion argument.
+  Added new ACS specials to all games.
+  Started working on lighting specials.
+03.03.2005
+  Added base class for lighting effects so they can be stopped.
+  Created separate lighting line special functions that doesn't spawn thinker.
+05.03.2005
+  Made teleport line specials accept sector tag.
+06.03.2005
+  Added support for more teleportation line specials.
+08.03.2005
+  Added new TID argument to thing spawn line specials.
+  In UDP driver added check on retrieval of local host name.
+10.03.2005
+  Worked on floor waggle and pillars. Added ceiling waggle.
+  Added thing spawn IDs to vdefs acs file.
+13.03.2005
+  Added floor transfer numeric and trigger line specials. Added Boom linedef
+ types to conversion table as well as handling of generic types.
+14.03.2005
+  In all games now using texture scrolling specials, added scrolling by
+ offsets.
+15.03.2005
+  Added elevator line specials.
+16.03.2005
+  Added Doom style and generic stair line specials to all games.
+  Added OpenGL driver for AllegroGL library. No more problems with mouse.
+17.03.2005
+  Added more scrolling specials.
+21.03.2005
+  Implemented transfer floor and ceiling light line specials.
+22.03.2005
+  Temporary fix for crash in ACS thinker.
+  Rearanged Doom fulscreen stats.
+23.03.2005
+  Started testing with BOOM's demo level.
+  Fully implemented UseThrough and PTouch line activation types.
+  Fixed texture model scrolling.
+24.03.2005
+  Added builtin MSG_CheckSpace to avoid overflows.
+  Fixed accelerated scrolling.
+  Manual activation of ceilngs, floors, plats and stairs.
+  Added door's light effect.
+  Fixed teleporting with sector tag.
+  Split loading sidedefs in 2 parts so that depending on line special can have
+ special meanings of texture names. Now BOOM demo level loads without errors.
+25.03.2005
+  Implemented custom sector damage and friction specials.
+  Better implementation of Strife's animated door.
+  Strifes' NoiseAlert, ForceField and ClearForceField available in all games.
+  Implemented saving a network game. I can't test it but I hope it works.
+  Changed location of 2D graphics hi-res texture directory to
+ <gamedir>/textures/pics.
+26.03.2005
+  Added Strife qiut game screen.
+  Fixed finding of model sector returning passed-in sector.
+  Fixed several bugs in Strife. Spectral creatures now take damage only from
+ Sigil. Health upgrade also gives full health. Implemented "Patch me up" and
+ "I'm out of bullets". Added bInCombat flag, you can't talk with persons that
+ are fighting. Implemented waving burning hands. Loremaster's chain now pulls
+ player up. Implemented teleporter beacon.
+27.03.2005
+  In all games correctly activating push wall and impact specials.
+  Correct action when destroying power coupling. Also giving prison pass opens
+ the door. Made breaking of glass work properly.
+29.03.2005
+  Stats upgrade when killed Loremaster also gives health.
+31.03.2005
+  In Strife fixed wrong voices when killed boses.
+01.03.2005
+  A fix when loading a savegame having palette effect.
+  When loading savegame server info is sent after loading level data from file
+ so clients have loaded data.
+
+******************************************************************************
+                            VERSION 1.17
+******************************************************************************
