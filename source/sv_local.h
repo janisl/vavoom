@@ -32,6 +32,21 @@
 
 //==========================================================================
 //
+//								THINKERS
+//
+//==========================================================================
+
+//
+//	Doubly linked list of actors.
+//
+class VThinker:public VObject
+{
+	DECLARE_ABSTRACT_CLASS(VThinker, VObject, 0)
+	NO_DEFAULT_CONSTRUCTOR(VThinker)
+};
+
+//==========================================================================
+//
 //								MAPOBJ DATA
 //
 // 	NOTES: VMapObject
@@ -92,6 +107,9 @@ struct player_t;
 class VMapObject:public VThinker
 {
 	DECLARE_CLASS(VMapObject, VThinker, 0)
+
+	VMapObject(void);
+	virtual ~VMapObject(void);
 
 	// Info for drawing: position.
 	TVec			origin;
@@ -319,8 +337,6 @@ int SV_TerrainType(int pic);
 //==========================================================================
 
 void P_InitThinkers(void);
-void P_AddThinker(VThinker *thinker);
-void P_RemoveThinker(VThinker *thinker);
 void P_Ticker(void);
 
 extern int 			TimerGame; // tic countdown for deathmatch
@@ -430,19 +446,17 @@ inline subsector_t* SV_PointInSubsector(float x, float y)
 	return PointInSubsector(level, x, y);
 }
 
-inline bool SV_CanCast(VThinker *th, VClass *Class)
-{
-	return !th->destroyed && th->IsA(Class);
-}
-
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2001/12/27 17:33:29  dj_jl
+//	Removed thinker list
+//
 //	Revision 1.14  2001/12/18 19:03:16  dj_jl
 //	A lots of work on VObject
-//
+//	
 //	Revision 1.13  2001/12/04 18:14:46  dj_jl
 //	Renamed thinker_t to VThinker
 //	

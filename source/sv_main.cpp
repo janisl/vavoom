@@ -141,6 +141,8 @@ static char		models[MAX_MODELS][MAX_VPATH];
 static int		numskins;
 static char		skins[MAX_SKINS][MAX_VPATH];
 
+static int		pg_frametime;
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -159,6 +161,8 @@ void SV_Init(void)
     svpr.SetGlobal("validcount", (int)&validcount);
 	svpr.SetGlobal("level", (int)&level);
 	svpr.SetGlobal("skyflatnum", skyflatnum);
+
+	pg_frametime = svpr.GlobalNumForName("frametime");
 
 	num_stats = svpr.GetGlobal("num_stats");
 	if (num_stats > 96)
@@ -207,6 +211,26 @@ void SV_ClearDatagram(void)
 
 //==========================================================================
 //
+//	VMapObject::VMapObject
+//
+//==========================================================================
+
+VMapObject::VMapObject(void)
+{
+}
+
+//==========================================================================
+//
+//	VMapObject::~VMapObject
+//
+//==========================================================================
+
+VMapObject::~VMapObject(void)
+{
+}
+
+//==========================================================================
+//
 //	SV_SpawnMobj
 //
 //==========================================================================
@@ -217,7 +241,6 @@ VMapObject *SV_SpawnMobj(VClass *Class)
     VMapObject*		mobj;
 
     mobj = (VMapObject*)VObject::StaticSpawnObject(Class, NULL, PU_LEVSPEC);
-    P_AddThinker(mobj);
 
 	//	Client treats first objects as player objects and will use
 	// models and skins from player info
@@ -343,7 +366,7 @@ void SV_RemoveMobj(VMapObject *mobj)
 	SV_StopSound(mobj, 0);
     
 	sv_mobjs[mobj->netID] = NULL;
-	P_RemoveThinker(mobj);
+	mobj->Destroy();
 
 	sv_mo_free_time[mobj->netID] = level.time;
 }
@@ -1305,7 +1328,7 @@ void SV_Ticker(void)
 	host_frametime = 1.0 / 35.0;
 #endif
 
-	svpr.SetGlobal("frametime", PassFloat(host_frametime));
+	svpr.SetGlobal(pg_frametime, PassFloat(host_frametime));
 	SV_RunClients();
 
 	if (sv_loading)
@@ -1960,10 +1983,10 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 
 	if (!spawn_thinkers)
 	{
-	    if (level.thinkerHead)
-    	{
-    		Sys_Error("Spawned a thinker when it's not allowed");
-	    }
+//	    if (level.thinkerHead)
+//   	{
+//    		Sys_Error("Spawned a thinker when it's not allowed");
+//	    }
 		return;
 	}
 
@@ -2638,9 +2661,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2001/12/27 17:33:29  dj_jl
+//	Removed thinker list
+//
 //	Revision 1.24  2001/12/18 19:03:16  dj_jl
 //	A lots of work on VObject
-//
+//	
 //	Revision 1.23  2001/12/12 19:28:49  dj_jl
 //	Some little changes, beautification
 //	

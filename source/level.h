@@ -45,29 +45,12 @@
 
 //==========================================================================
 //
-//								THINKERS
-//
-//==========================================================================
-
-//
-//	Doubly linked list of actors.
-//
-class VThinker:public VObject
-{
-	DECLARE_ABSTRACT_CLASS(VThinker, VObject, 0)
-public:
-	VThinker	*prev;
-	VThinker	*next;
-	boolean		destroyed;
-};
-
-//==========================================================================
-//
 //								MAP
 //
 //==========================================================================
 
 struct sector_t;
+class VThinker;
 class VMapObject;
 
 //
@@ -471,9 +454,6 @@ struct sv_level_t:base_level_t
 	mthing_t	deathmatchstarts[MAXDEATHMATCHSTARTS];  // Player spawn spots for deathmatch.
 	int			numdeathmatchstarts;
 	mthing_t	playerstarts[MAX_PLAYER_STARTS * MAXPLAYERS];// Player spawn spots.
- 
-	VThinker	*thinkerHead;	// the head of the thinker list
-	VThinker	*thinkerTail;	// the tail of the thinker list
 };
 
 struct cl_level_t:base_level_t
@@ -498,9 +478,12 @@ extern cl_level_t		cl_level;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2001/12/27 17:33:29  dj_jl
+//	Removed thinker list
+//
 //	Revision 1.15  2001/12/18 19:03:16  dj_jl
 //	A lots of work on VObject
-//
+//	
 //	Revision 1.14  2001/12/12 19:28:49  dj_jl
 //	Some little changes, beautification
 //	

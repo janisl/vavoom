@@ -35,6 +35,8 @@
 
 // MACROS ------------------------------------------------------------------
 
+#define USE_STDIO
+
 #define MAX_TARGET_PLAYERS 512
 #define MAX_MAPS	99
 #define BASE_SLOT	8
@@ -49,7 +51,7 @@
    	sprintf(_name, "%s/saves/%s.vs%d", fl_gamedir, _map, _slot)
 
 #define SAVE_DESCRIPTION_LENGTH		24
-#define SAVE_VERSION_TEXT			"Version 1.10"
+#define SAVE_VERSION_TEXT			"Version 1.11"
 #define SAVE_VERSION_TEXT_LENGTH	16
 
 // TYPES -------------------------------------------------------------------
@@ -57,6 +59,7 @@
 typedef enum
 {
 	ASEG_GAME_HEADER = 101,
+	ASEG_NAMES,
 	ASEG_MAP_HEADER,
 	ASEG_BASELINE,
 	ASEG_WORLD,
@@ -81,7 +84,11 @@ public:
 	void OpenWrite(const char *FileName);
 	void Close(void);
 private:
+#ifdef USE_STDIO
+	FILE *Handle;
+#else
 	int Handle;
+#endif
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -93,8 +100,6 @@ void CL_Disconnect(void);
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
-
-void CreateSavePath(void);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -119,11 +124,17 @@ inline float _GET_FLOAT(void) { float F; Saver.Serialize(&F, 4); return F; }
 #define GET_LONG	_GET_LONG()
 #define GET_FLOAT	_GET_FLOAT()
 
+static FName		*NameRemap;
+
 // CODE --------------------------------------------------------------------
 
 void FSaver::OpenRead(const char *FileName)
 {
+#ifdef USE_STDIO
+	Handle = fopen(FileName, "rb");
+#else
 	Handle = Sys_FileOpenRead(FileName);
+#endif
 	ArIsLoading = true;
 	ArIsSaving = false;
 	ArIsPersistent = true;
@@ -131,7 +142,11 @@ void FSaver::OpenRead(const char *FileName)
 
 void FSaver::OpenWrite(const char *FileName)
 {
+#ifdef USE_STDIO
+	Handle = fopen(FileName, "wb");
+#else
 	Handle = Sys_FileOpenWrite(FileName);
+#endif
 	ArIsLoading = false;
 	ArIsSaving = true;
 	ArIsPersistent = true;
@@ -139,22 +154,38 @@ void FSaver::OpenWrite(const char *FileName)
 
 void FSaver::Close(void)
 {
+#ifdef USE_STDIO
+	if (Handle)
+	{
+		fclose(Handle);
+		Handle = NULL;
+	}
+#else
 	if (Handle >= 0)
 	{
 		Sys_FileClose(Handle);
 		Handle = -1;
 	}
+#endif
 }
 
 void FSaver::Serialize(void *V, int Length)
 {
 	if (ArIsLoading)
 	{
+#ifdef USE_STDIO
+		fread(V, 1, Length, Handle);
+#else
 		Sys_FileRead(Handle, V, Length);
+#endif
 	}
 	else
 	{
+#ifdef USE_STDIO
+		fwrite(V, 1, Length, Handle);
+#else
 		Sys_FileWrite(Handle, V, Length);
+#endif
 	}
 }
 
@@ -263,6 +294,17 @@ static void CloseStreamOut(void)
 
 //==========================================================================
 //
+// CreateSavePath
+//
+//==========================================================================
+
+void CreateSavePath(void)
+{
+	Sys_CreateDirectory(va("%s/saves", fl_gamedir));
+}
+
+//==========================================================================
+//
 //	ClearSaveSlot
 //
 //	Deletes all save game files associated with a slot number.
@@ -367,7 +409,7 @@ int GetMobjNum(VMapObject *mobj)
 {
 	try
 	{
-		if (!mobj || mobj->destroyed || (mobj->player && !SavingPlayers))
+		if (!mobj || (mobj->player && !SavingPlayers))
 		{
 			return MOBJ_NULL;
 		}
@@ -397,6 +439,53 @@ VMapObject* SetMobjPtr(int id)
 
 //==========================================================================
 //
+//	ArchiveNames
+//
+//==========================================================================
+
+static void ArchiveNames(FArchive &Ar)
+{
+	StreamOutLong(FName::GetMaxNames());
+	for (int i = 0; i < FName::GetMaxNames(); i++)
+	{
+		FNameEntry *E = FName::GetEntry(i);
+		StreamOutByte(strlen(E->Name) + 1);
+		Ar.Serialize(E->Name, strlen(E->Name) + 1);
+	}
+}
+
+//==========================================================================
+//
+//	UnarchiveNames
+//
+//==========================================================================
+
+static void UnarchiveNames(FArchive &Ar)
+{
+	int total = GET_LONG;
+	NameRemap = (FName *)Z_StrMalloc(total * 4);
+	for (int i = 0; i < total; i++)
+	{
+		int len = GET_BYTE;
+		char buf[NAME_SIZE];
+		Ar.Serialize(buf, len);
+		NameRemap[i] = FName(buf);
+	}
+}
+
+//==========================================================================
+//
+//	SV_GetClass
+//
+//==========================================================================
+
+VClass *SV_GetClass(int NameIndex)
+{
+	return VClass::FindClass(*NameRemap[NameIndex]);
+}
+
+//==========================================================================
+//
 //	WriteVObject
 //
 //==========================================================================
@@ -405,8 +494,7 @@ void WriteVObject(VObject *Obj)
 {
 	VClass *Class = Obj->GetClass();
 
-	StreamOutByte(strlen(Class->GetName()) + 1);
-	StreamOutBuffer(Class->GetName(), strlen(Class->GetName()) + 1);
+	StreamOutLong(Class->GetFName().GetIndex());
 	StreamOutBuffer((byte *)Obj + sizeof(VObject),
 		Class->ClassSize - sizeof(VObject));
 }
@@ -419,18 +507,14 @@ void WriteVObject(VObject *Obj)
 
 VObject *ReadVObject(int tag)
 {
-	char NameBuf[256];
-	int NameLen;
-
 	try
 	{
 		//  Get params
-		NameLen = GET_BYTE;
-		Saver.Serialize(NameBuf, NameLen);
-		VClass *Class = VClass::FindClass(NameBuf);
+		int NameIndex = GET_LONG;
+		VClass *Class = SV_GetClass(NameIndex);
 		if (!Class)
 		{
-			Sys_Error("ReadVObject: No such class %s\n", NameBuf);
+			Sys_Error("No such class %s", *NameRemap[NameIndex]);
 		}
 
 		//  Allocate object and copy data
@@ -440,7 +524,7 @@ VObject *ReadVObject(int tag)
 	}
 	catch (...)
 	{
-		dprintf("- ReadVObject %s %d\n", NameBuf, NameLen);
+		dprintf("- ReadVObject\n");
 		throw;
 	}
 }
@@ -741,23 +825,16 @@ static void UnarchiveWorld(void)
 
 static void ArchiveThinkers(void)
 {
-	VThinker	*thinker;
-
 	int pf_archive_thinker = svpr.FuncNumForName("ArchiveThinker");
 
 	StreamOutLong(ASEG_THINKERS);
 
-	for (thinker = level.thinkerHead; thinker; thinker = thinker->next)
+	for (TObjectIterator<VThinker> It; It; ++It)
 	{
-		if (thinker->destroyed)
-		{
-			continue;
-		}
-
-		int size = thinker->GetClass()->ClassSize;
+		int size = It->GetClass()->ClassSize;
 
 		VThinker *th = (VThinker*)Z_Malloc(size);
-		memcpy(th, thinker, size);
+		memcpy(th, *It, size);
 
 		VMapObject *mobj = Cast<VMapObject>(th);
 		if (mobj)
@@ -803,9 +880,6 @@ static void UnarchiveThinkers(void)
 	{
 		thinker = (VThinker *)ReadVObject(PU_LEVSPEC);
 
-		//  Add to thinker list
-		P_AddThinker(thinker);
-
 		//  Handle mobjs
 		VMapObject *mobj = Cast<VMapObject>(thinker);
 		if (mobj)
@@ -824,9 +898,9 @@ static void UnarchiveThinkers(void)
 	//  Call unarchive function for each thinker.
 	int pf_unarchive_thinker = svpr.FuncNumForName("UnarchiveThinker");
 
-	for (thinker = level.thinkerHead; thinker; thinker = thinker->next)
+	for (TObjectIterator<VThinker> It; It; ++It)
 	{
-		svpr.Exec(pf_unarchive_thinker, (int)thinker);
+		svpr.Exec(pf_unarchive_thinker, (int)*It);
 	}
 
 	svpr.Exec("AfterUnarchiveThinkers");
@@ -953,6 +1027,9 @@ static void SV_SaveMap(int slot, boolean savePlayers)
 {
 	char fileName[100];
 
+	// Make sure we don't have any garbage
+	VObject::CollectGarbage();
+
 	SavingPlayers = savePlayers;
 
 	CreateSavePath();
@@ -960,6 +1037,9 @@ static void SV_SaveMap(int slot, boolean savePlayers)
 	// Open the output file
 	SAVE_MAP_NAME(fileName, slot, level.mapname);
 	OpenStreamOut(fileName);
+
+	StreamOutLong(ASEG_NAMES);
+	ArchiveNames(Saver);
 
 	// Place a header marker
 	StreamOutLong(ASEG_MAP_HEADER);
@@ -1010,6 +1090,10 @@ static void SV_LoadMap(char *mapname, int slot)
 	// Load the file
 	Saver.OpenRead(fileName);
 
+	// Load names
+	AssertSegment(ASEG_NAMES);
+	UnarchiveNames(Saver);
+
 	AssertSegment(ASEG_MAP_HEADER);
 
 	// Read the level timer
@@ -1036,6 +1120,8 @@ static void SV_LoadMap(char *mapname, int slot)
 
 	// Free save buffer
 	Saver.Close();
+
+	Z_Free(NameRemap);
 }
 
 //==========================================================================
@@ -1062,6 +1148,10 @@ void SV_SaveGame(int slot, char* description)
 	memset(versionText, 0, SAVE_VERSION_TEXT_LENGTH);
 	strcpy(versionText, SAVE_VERSION_TEXT);
 	StreamOutBuffer(versionText, SAVE_VERSION_TEXT_LENGTH);
+
+	// Write names
+	StreamOutLong(ASEG_NAMES);
+	ArchiveNames(Saver);
 
 	// Place a header marker
 	StreamOutLong(ASEG_GAME_HEADER);
@@ -1138,6 +1228,10 @@ void SV_LoadGame(int slot)
 		return;
 	}
 
+	// Load names
+	AssertSegment(ASEG_NAMES);
+	UnarchiveNames(Saver);
+
 	AssertSegment(ASEG_GAME_HEADER);
 
 	gameskill = (skill_t)GET_BYTE;
@@ -1157,6 +1251,8 @@ void SV_LoadGame(int slot)
 	AssertSegment(ASEG_END);
 
 	Saver.Close();
+
+	Z_Free(NameRemap);
 
 	sv_loading = true;
 
@@ -1284,17 +1380,6 @@ void SV_MapTeleport(char *map)
 	}
 }
 
-//==========================================================================
-//
-// CreateSavePath
-//
-//==========================================================================
-
-void CreateSavePath(void)
-{
-	Sys_CreateDirectory(va("%s/saves", fl_gamedir));
-}
-
 #ifdef CLIENT
 
 void Draw_SaveIcon(void);
@@ -1386,9 +1471,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2001/12/27 17:33:29  dj_jl
+//	Removed thinker list
+//
 //	Revision 1.16  2001/12/18 19:03:16  dj_jl
 //	A lots of work on VObject
-//
+//	
 //	Revision 1.15  2001/12/12 19:28:49  dj_jl
 //	Some little changes, beautification
 //	

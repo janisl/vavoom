@@ -195,6 +195,8 @@ static char **ACStrings;
 static char PrintBuffer[PRINT_BUFFER_SIZE];
 static VACS *NewScript;
 
+static int pf_TagBusy;
+
 static int (*PCodeCmds[])(void) =
 {
 	CmdNOP,
@@ -333,6 +335,8 @@ void P_LoadACScripts(boolean spawn_thinkers)
 	acsHeader_t *header;
 	acsInfo_t *info;
 
+	pf_TagBusy = svpr.FuncNumForName("TagBusy");
+
 	if (!level.behavior)
     {
 		ACScriptCount = 0;
@@ -395,7 +399,6 @@ static void StartOpenACS(int number, int infoIndex, int *address)
 
 	script->infoIndex = infoIndex;
 	script->ip = address;
-	P_AddThinker(script);
 }
 
 //==========================================================================
@@ -479,7 +482,6 @@ boolean P_StartACS(int number, int map_num, int *args, VMapObject *activator,
 		script->vars[i] = args[i];
 	}
 	*statePtr = ASTE_RUNNING;
-	P_AddThinker(script);
 	NewScript = script;
 	return true;
 }
@@ -601,7 +603,7 @@ void SV_InterpretACS(VACS *script)
 	{
 		ACSInfo[script->infoIndex].state = ASTE_INACTIVE;
 		ScriptFinished(ACScript->number);
-		P_RemoveThinker(ACScript);
+		ACScript->Destroy();
 		return;
 	}
 	if(ACSInfo[script->infoIndex].state != ASTE_RUNNING)
@@ -625,7 +627,7 @@ void SV_InterpretACS(VACS *script)
 	{
 		ACSInfo[script->infoIndex].state = ASTE_INACTIVE;
 		ScriptFinished(ACScript->number);
-		P_RemoveThinker(ACScript);
+		ACScript->Destroy();
 	}
 }
 
@@ -724,7 +726,7 @@ static int FindSectorFromTag(int tag, int start)
 
 static boolean TagBusy(int tag)
 {
-	return svpr.Exec("TagBusy", tag);
+	return svpr.Exec(pf_TagBusy, tag);
 }
 
 //==========================================================================
@@ -1729,9 +1731,12 @@ static int CmdSetLineSpecial(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/12/27 17:33:29  dj_jl
+//	Removed thinker list
+//
 //	Revision 1.9  2001/12/18 19:03:16  dj_jl
 //	A lots of work on VObject
-//
+//	
 //	Revision 1.8  2001/10/12 17:31:13  dj_jl
 //	no message
 //	

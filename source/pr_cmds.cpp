@@ -65,6 +65,7 @@ void SV_RemoveMobj(VMapObject *mobj);
 void SV_ForceLightning(void);
 void SV_SetFloorPic(int i, int texture);
 void SV_SetCeilPic(int i, int texture);
+VClass *SV_GetClass(int NameIndex);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -1098,6 +1099,12 @@ PF(Spawn)
 	Push((int)VObject::StaticSpawnObject(Class, Outer, PU_STRING));
 }
 
+//**************************************************************************
+//
+//	VObject methods
+//
+//**************************************************************************
+
 //==========================================================================
 //
 //	PF_Object__Destroy
@@ -1110,6 +1117,36 @@ PF_M(Object, Destroy)
 
 	ptr = (VObject *)Pop();
 	ptr->Destroy();
+}
+
+//==========================================================================
+//
+//	PF_Object__IsA
+//
+//==========================================================================
+
+PF_M(Object, IsA)
+{
+	VObject *ptr;
+	VClass	*c;
+
+	c = (VClass *)Pop();
+	ptr = (VObject *)Pop();
+	Push(ptr->IsA(c));
+}
+
+//==========================================================================
+//
+//	PF_Object__IsDestroyed
+//
+//==========================================================================
+
+PF_M(Object, IsDestroyed)
+{
+	VObject *ptr;
+
+	ptr = (VObject *)Pop();
+	Push(ptr->GetFlags() & OF_Destroyed);
 }
 
 #ifdef SERVER
@@ -1431,25 +1468,27 @@ static void PF_P_UnsetThingPosition(void)
 
 static void PF_NextMobj(void)
 {
-    VThinker*	th;
+    VObject *th;
+	int i;
 
-    th = (VThinker*)Pop();
+    th = (VObject*)Pop();
 	if (!th)
     {
-    	th = level.thinkerHead;
+    	i = 0;
 	}
 	else
 	{
-		th = th->next;
+		i = th->GetIndex() + 1;
 	}
-    while (th)
+    while (i < VObject::GetObjectsCount())
     {
-        if (SV_CanCast(th, VMapObject::StaticClass()))
+		th = VObject::GetIndexObject(i);
+        if (th && th->IsA(VMapObject::StaticClass()))
         {
             Push((int)th);
             return;
 		}
-		th = th->next;
+		i++;
     }
 	Push(0);
 }
@@ -1489,7 +1528,6 @@ PF(NewSpecialThinker)
 
 	Class = (VClass *)Pop();
 	spec = (VThinker*)VObject::StaticSpawnObject(Class, NULL, PU_LEVSPEC);
-	P_AddThinker(spec);
 	Push((int)spec);
 }
 
@@ -1504,7 +1542,7 @@ static void PF_RemoveSpecialThinker(void)
 	VThinker	*spec;
 
     spec = (VThinker*)Pop();
-    P_RemoveThinker(spec);
+    spec->Destroy();
 }
 
 //==========================================================================
@@ -1531,27 +1569,29 @@ static void PF_P_ChangeSwitchTexture(void)
 
 PF(NextThinker)
 {
-	VThinker *th;
+	VObject *th;
 	VClass *Class;
+	int i;
 
 	Class = (VClass *)Pop();
-	th = (VThinker*)Pop();
+	th = (VObject*)Pop();
 	if (!th)
 	{
-		th = level.thinkerHead;
+		i = 0;
 	}
 	else
 	{
-		th = th->next;
+		i = th->GetIndex() + 1;
 	}
-	while (th)
+	while (i < VObject::GetObjectsCount())
 	{
-		if (SV_CanCast(th, Class))
+		th = VObject::GetIndexObject(i);
+		if (th && th->IsA(Class))
 		{
 			Push((int)th);
 			return;
 		}
-		th = th->next;
+		i++;
 	}
 	Push(0);
 }
@@ -2059,6 +2099,48 @@ static void PF_NumToMobj(void)
 
 	archiveNum = Pop();
     Push((int)SetMobjPtr(archiveNum));
+}
+
+//==========================================================================
+//
+//  PF_ClassIDToNum
+//
+//==========================================================================
+
+PF(ClassIDToNum)
+{
+	VClass	*Class;
+
+	Class = (VClass *)Pop();
+	if (Class)
+	{
+		Push(Class->GetFName().GetIndex());
+	}
+	else
+	{
+		Push(-1);
+	}
+}
+
+//==========================================================================
+//
+//  PF_NumToClassID
+//
+//==========================================================================
+
+PF(NumToClassID)
+{
+	int		archiveNum;
+
+	archiveNum = Pop();
+	if (archiveNum == -1)
+	{
+		Push(0);
+	}
+	else
+	{
+		Push((int)SV_GetClass(archiveNum));
+	}
 }
 
 //==========================================================================
@@ -3046,6 +3128,8 @@ builtin_info_t BuiltinInfo[] =
 	_(WadLumpPresent),
 	_(Spawn),
 	_M(Object, Destroy),
+	_M(Object, IsA),
+	_M(Object, IsDestroyed),
 
 #ifdef CLIENT
 	_(P_GetMapName),
@@ -3160,6 +3244,8 @@ builtin_info_t BuiltinInfo[] =
     {"NumToSector", PF_NumToSector},
     {"NumToMobj", PF_NumToMobj},
     {"MobjToNum", PF_MobjToNum},
+	_(ClassIDToNum),
+	_(NumToClassID),
 
     {"G_ExitLevel", PF_G_ExitLevel},
     {"G_SecretExitLevel", PF_G_SecretExitLevel},
@@ -3185,9 +3271,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2001/12/27 17:33:29  dj_jl
+//	Removed thinker list
+//
 //	Revision 1.24  2001/12/18 19:03:16  dj_jl
 //	A lots of work on VObject
-//
+//	
 //	Revision 1.23  2001/12/12 19:28:49  dj_jl
 //	Some little changes, beautification
 //	

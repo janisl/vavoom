@@ -71,8 +71,6 @@ void P_InitThinkers(void)
 	pf_UpdateSpecials = svpr.FuncNumForName("P_UpdateSpecials");
     pf_SetViewPos = svpr.FuncNumForName("SetViewPos");
 	pf_RunThink = svpr.FuncNumForName("RunThink");
-	level.thinkerHead = NULL;
- 	level.thinkerTail = NULL;
 }
 
 //==========================================================================
@@ -83,52 +81,11 @@ void P_InitThinkers(void)
 
 void SV_DestroyAllThinkers(void)
 {
-	for (VThinker *th = level.thinkerHead; th; th = th->next)
+	for (TObjectIterator<VThinker> It; It; ++It)
 	{
-		th->Destroy();
+		It->Destroy();
 	}
-	level.thinkerHead = NULL;
- 	level.thinkerTail = NULL;
-}
-
-//==========================================================================
-//
-//	P_AddThinker
-//
-//	Adds a new thinker at the end of the list.
-//
-//==========================================================================
-
-void P_AddThinker(VThinker *thinker)
-{
-	if (level.thinkerHead)
-	{
-		thinker->next = NULL;
-		thinker->prev = level.thinkerTail;
-		level.thinkerTail->next = thinker;
-		level.thinkerTail = thinker;
-	}
-	else
-	{
-		thinker->prev = NULL;
-		thinker->next = NULL;
-		level.thinkerHead = thinker;
-		level.thinkerTail = thinker;
-	}
-}
-
-//==========================================================================
-//
-//	P_RemoveThinker
-//
-//	Deallocation is lazy -- it will not actually be freed until its
-// thinking turn comes up.
-//
-//==========================================================================
-
-void P_RemoveThinker(VThinker *thinker)
-{
-	thinker->destroyed = true;
+	VObject::CollectGarbage();
 }
 
 //==========================================================================
@@ -139,37 +96,20 @@ void P_RemoveThinker(VThinker *thinker)
 
 static void RunThinkers(void)
 {
-	VThinker *currentthinker;
-
-	currentthinker = level.thinkerHead;
-	while (currentthinker)
+	try
 	{
-		if (!currentthinker->destroyed)
+		for (TObjectIterator<VThinker> It; It; ++It)
 		{
-			svpr.Exec(pf_RunThink, (int)currentthinker);
+			if (!(It->GetFlags() & OF_Destroyed))
+			{
+				svpr.Exec(pf_RunThink, (int)*It);
+			}
 		}
-        else
-		{
-			// Time to remove it
-			if (currentthinker->next)
-			{
-				currentthinker->next->prev = currentthinker->prev;
-			}
-			else
-			{
-				level.thinkerTail = currentthinker->prev;
-			}
-			if (currentthinker->prev)
-			{
-				currentthinker->prev->next = currentthinker->next;
-			}
-			else
-			{
-				level.thinkerHead = currentthinker->next;
-			}
-			currentthinker->Destroy();
-		}
-		currentthinker = currentthinker->next;
+	}
+	catch (...)
+	{
+		dprintf("- RunThinkers\n");
+		throw;
 	}
 }
 
@@ -202,9 +142,12 @@ void P_Ticker(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/12/27 17:33:29  dj_jl
+//	Removed thinker list
+//
 //	Revision 1.6  2001/12/18 19:03:17  dj_jl
 //	A lots of work on VObject
-//
+//	
 //	Revision 1.5  2001/12/04 18:14:46  dj_jl
 //	Renamed thinker_t to VThinker
 //	
