@@ -276,8 +276,8 @@ void TranslateSector(sector_t * sector)
 		sector->special =
 			(sector->special == 9) ? SECRET_MASK :
 			((sector->special & 0xfe0) << 3) |
-			((sector->special & 0x01f) + (((sector->special & 0x1f) <
-					21) ? 64 : -20));
+			((sector->special & 0x01f) +
+			(((sector->special & 0x1f) < 21) ? 64 : -20));
 	}
 }
 
@@ -331,6 +331,9 @@ void TranslateLevel(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2001/10/09 17:41:16  dj_jl
+//  Beautification
+//
 //  Revision 1.3  2001/09/24 17:24:09  dj_jl
 //  Beautification
 //

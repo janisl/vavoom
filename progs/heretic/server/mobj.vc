@@ -1278,7 +1278,7 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 
 	if (i == num_mobj_types)
 	{
-		dprint("P_SpawnMapThing: Unknown type %i at (%f, %f)",
+		dprint("P_SpawnMapThing: Unknown type %i at (%f, %f)\n",
 			mthing->type, mthing->x, mthing->y);
 		return;
 	}
@@ -1482,6 +1482,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2001/10/09 17:41:17  dj_jl
+//  Beautification
+//
 //  Revision 1.8  2001/10/02 17:42:38  dj_jl
 //  Possibility to declare function's code inside class declaration
 //

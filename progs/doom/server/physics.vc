@@ -385,7 +385,7 @@ boolean CheckWater(mobj_t * mobj)
 //
 //==========================================================================
 
-void P_XYMovement(mobj_t * mo)
+boolean P_XYMovement(mobj_t * mo)
 {
 	float ptryx;
 	float ptryy;
@@ -400,9 +400,12 @@ void P_XYMovement(mobj_t * mo)
 			mo->flags &= ~MF_SKULLFLY;
 			mo->velocity.x = mo->velocity.y = mo->velocity.z = 0.0;
 
-			SetMobjState(mo, mo->spawnstate);
+			if (!SetMobjState(mo, mo->spawnstate))
+			{
+				return false;
+			}
 		}
-		return;
+		return true;
 	}
 
 	if (mo->velocity.x > MAXMOVE)
@@ -484,7 +487,11 @@ void P_XYMovement(mobj_t * mo)
 							StartSound(mo, mo->sound_pain, CHAN_VOICE);
 						}
 					}
-					return;
+					if (mo->destroyed)
+					{
+						return false;	// mobj was removed
+					}
+					return true;
 				}
 
 				// explode a missile
@@ -496,7 +503,7 @@ void P_XYMovement(mobj_t * mo)
 					// against the sky.
 					// Does not handle sky floors.
 					P_RemoveMobj(mo);
-					return;
+					return false;
 				}
 				P_ExplodeMissile(mo);
 			}
@@ -507,6 +514,11 @@ void P_XYMovement(mobj_t * mo)
 		}
 	}
 	while (xmove || ymove);
+	if (mo->destroyed)
+	{
+		return false;	// mobj was removed
+	}
+	return true;
 }
 
 //==========================================================================
@@ -887,26 +899,13 @@ void PlayerLandedOnThing(mobj_t * mo, mobj_t * onmobj)
 
 //==========================================================================
 //
-//  P_MobjThinker
+//	MobjPhysics
 //
 //==========================================================================
 
-void P_MobjThinker(mobj_t * mobj)
+boolean MobjPhysics(mobj_t * mobj)
 {
 	mobj_t *onmo;
-
-	//  In my deathmatch mode remove dropped weapons after 30 seconds
-	// because otherwise they are spawned fastar than player(s) can pick 
-	// them up and the game is going slower and slower and slower ...
-	if ((mobj->flags & MF_DROPPED) && (deathmatch == 3))
-	{
-		mobj->movecount++;
-		if (mobj->movecount >= 30 * 35)
-		{
-			P_RemoveMobj(mobj);
-			return;
-		}
-	}
 
 	CheckWater(mobj);
 	UpdateVelocity(mobj);
@@ -914,11 +913,9 @@ void P_MobjThinker(mobj_t * mobj)
 	// momentum movement
 	if (mobj->velocity.x || mobj->velocity.y || (mobj->flags & MF_SKULLFLY))
 	{
-		P_XYMovement(mobj);
-
-		if (mobj->destroyed)
+		if (!P_XYMovement(mobj))
 		{
-			return;	// mobj was removed
+			return false;
 		}
 	}
 	if ((mobj->origin.z != mobj->floorz) || mobj->velocity.z || BlockingMobj)
@@ -959,8 +956,36 @@ void P_MobjThinker(mobj_t * mobj)
 		}
 		if (mobj->destroyed)
 		{
-			return;	// mobj was removed
+			return false;	// mobj was removed
 		}
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  P_MobjThinker
+//
+//==========================================================================
+
+void P_MobjThinker(mobj_t * mobj)
+{
+	//  In my deathmatch mode remove dropped weapons after 30 seconds
+	// because otherwise they are spawned fastar than player(s) can pick 
+	// them up and the game is going slower and slower and slower ...
+	if ((mobj->flags & MF_DROPPED) && (deathmatch == 3))
+	{
+		mobj->movecount++;
+		if (mobj->movecount >= 30 * 35)
+		{
+			P_RemoveMobj(mobj);
+			return;
+		}
+	}
+
+	if (!MobjPhysics(mobj))
+	{
+		return;
 	}
 
 	// cycle through states,
@@ -1023,6 +1048,9 @@ void mobj_t::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/10/09 17:41:16  dj_jl
+//  Beautification
+//
 //  Revision 1.6  2001/10/02 17:42:37  dj_jl
 //  Possibility to declare function's code inside class declaration
 //
