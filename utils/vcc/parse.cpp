@@ -436,7 +436,8 @@ static void ParseStatement(void)
 				} CaseInfo[MAX_CASE];
 
 				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-				TypeCheck1(ParseExpression());
+				TType *etype = ParseExpression();
+				TypeCheck1(etype);
 				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 
 				switcherAddrPtr = AddStatement(OPC_GOTO, 0);
@@ -453,7 +454,7 @@ static void ParseStatement(void)
 						{
 							ERR_Exit(ERR_CASE_OVERFLOW, true, NULL);
 						}
-						CaseInfo[numcases].value = EvalConstExpression(ev_int);
+						CaseInfo[numcases].value = EvalConstExpression(etype->type);
 						CaseInfo[numcases].address = CodeBufferSize;
 						numcases++;
 						TK_Expect(PU_COLON, ERR_MISSING_COLON);
@@ -1294,9 +1295,12 @@ void PA_Parse(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/10/22 17:31:34  dj_jl
+//	Posibility to use classid constants in switch statement
+//
 //	Revision 1.7  2001/10/02 17:40:48  dj_jl
 //	Possibility to declare function's code inside class declaration
-//
+//	
 //	Revision 1.6  2001/09/25 17:03:50  dj_jl
 //	Added calling of parent functions
 //	
