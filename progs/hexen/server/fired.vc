@@ -78,7 +78,7 @@ void A_FiredSpawnRock(void)
 	rockOrg.x = Origin.x + (Random() - 0.5) * 16.0;
 	rockOrg.y = Origin.y + (Random() - 0.5) * 16.0;
 	rockOrg.z = Origin.z + Random() * 8.0;
-	mo = SpawnActor(rockOrg, rtype);
+	mo = Spawn(rtype, rockOrg);
 	if (mo)
 	{
 		mo.Owner = self;
@@ -227,21 +227,21 @@ void A_FiredAttack(void)
 
 void A_FiredSplotch(void)
 {
-	mobj_t *mo;
+	Actor A;
 
-	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, FireDemonSplotch1);
-	if (mo)
+	A = Spawn(FireDemonSplotch1, Origin);
+	if (A)
 	{
-		mo->Velocity.x = (Random() - 0.5) * 8.0 * 35.0;
-		mo->Velocity.y = (Random() - 0.5) * 8.0 * 35.0;
-		mo->Velocity.z = (3.0 + Random() * 4.0) * 35.0;
+		A.Velocity.x = (Random() - 0.5) * 8.0 * 35.0;
+		A.Velocity.y = (Random() - 0.5) * 8.0 * 35.0;
+		A.Velocity.z = (3.0 + Random() * 4.0) * 35.0;
 	}
-	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, FireDemonSplotch2);
-	if (mo)
+	A = Spawn(FireDemonSplotch2, Origin);
+	if (A)
 	{
-		mo->Velocity.x = (Random() - 0.5) * 8.0 * 35.0;
-		mo->Velocity.y = (Random() - 0.5) * 8.0 * 35.0;
-		mo->Velocity.z = (3.0 + Random() * 4.0) * 35.0;
+		A.Velocity.x = (Random() - 0.5) * 8.0 * 35.0;
+		A.Velocity.y = (Random() - 0.5) * 8.0 * 35.0;
+		A.Velocity.z = (3.0 + Random() * 4.0) * 35.0;
 	}
 }
 
@@ -331,6 +331,9 @@ void Actor::A_SmBounce(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/03/16 17:47:46  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.20  2002/03/02 17:58:36  dj_jl
 //  Created Pawn class as a base class for all creatures.
 //  Moved all monster classes into corresponding files.

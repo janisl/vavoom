@@ -59,7 +59,7 @@ void A_FPunchAttack(void)
 	{
 		angles = Owner.Angles;
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
-		AimLineAttack(&Owner, &angles, 2.0 * MELEERANGE);
+		AimLineAttack(Owner, &angles, 2.0 * MELEERANGE);
 		if (linetarget)
 		{
 			PunchCount++;
@@ -70,7 +70,7 @@ void A_FPunchAttack(void)
 				PuffType = HammerPuff;
 			}
 			AngleVector(&angles, &vforward);
-			if (LineAttack(&Owner, &vforward, 2.0 * MELEERANGE, damage))
+			if (LineAttack(Owner, &vforward, 2.0 * MELEERANGE, damage))
 			{
 				if (PuffType == HammerPuff)
 				{
@@ -81,16 +81,16 @@ void A_FPunchAttack(void)
 					Owner.PlaySound('FighterPunchMiss', CHAN_WEAPON);
 				}
 			}
-			if (linetarget->bCountKill || linetarget->bIsPlayer)
+			if (linetarget.bCountKill || linetarget.bIsPlayer)
 			{
-				linetarget->Thrust(angles.yaw, power);
+				linetarget.Thrust(angles.yaw, power);
 			}
-			AdjustPlayerAngle(&Owner);
+			PlayerPawn(Owner).AdjustPlayerAngle();
 			break;
 		}
 		angles = Owner.Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
-		AimLineAttack(&Owner, &angles, 2.0 * MELEERANGE);
+		AimLineAttack(Owner, &angles, 2.0 * MELEERANGE);
 		if (linetarget)
 		{
 			PunchCount++;
@@ -101,7 +101,7 @@ void A_FPunchAttack(void)
 				PuffType = HammerPuff;
 			}
 			AngleVector(&angles, &vforward);
-			if (LineAttack(&Owner, &vforward, 2.0 * MELEERANGE, damage))
+			if (LineAttack(Owner, &vforward, 2.0 * MELEERANGE, damage))
 			{
 				if (PuffType == HammerPuff)
 				{
@@ -112,11 +112,11 @@ void A_FPunchAttack(void)
 					Owner.PlaySound('FighterPunchMiss', CHAN_WEAPON);
 				}
 			}
-			if (linetarget->bCountKill || linetarget->bIsPlayer)
+			if (linetarget.bCountKill || linetarget.bIsPlayer)
 			{
-				linetarget->Thrust(angles.yaw, power);
+				linetarget.Thrust(angles.yaw, power);
 			}
-			AdjustPlayerAngle(&Owner);
+			PlayerPawn(Owner).AdjustPlayerAngle();
 			break;
 		}
 	}
@@ -126,9 +126,9 @@ void A_FPunchAttack(void)
 		PunchCount = 0;
 
 		angles = Owner.Angles;
-		AimLineAttack(&Owner, &angles, MELEERANGE);
+		AimLineAttack(Owner, &angles, MELEERANGE);
 		AngleVector(&angles, &vforward);
-		if (LineAttack(&Owner, &vforward, MELEERANGE, damage))
+		if (LineAttack(Owner, &vforward, MELEERANGE, damage))
 		{
 			Owner.PlaySound('FighterPunchMiss', CHAN_WEAPON);
 		}
@@ -226,37 +226,37 @@ void A_FAxeAttack(void)
 	{
 		angles = Owner.Angles;
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
-		AimLineAttack(&Owner, &angles, AXERANGE);
+		AimLineAttack(Owner, &angles, AXERANGE);
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (LineAttack(&Owner, &vforward, AXERANGE, damage))
+			if (LineAttack(Owner, &vforward, AXERANGE, damage))
 			{
 				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
-			if (linetarget->bCountKill || linetarget->bIsPlayer)
+			if (linetarget.bCountKill || linetarget.bIsPlayer)
 			{
-				linetarget->Thrust(angles.yaw, power);
+				linetarget.Thrust(angles.yaw, power);
 			}
-			AdjustPlayerAngle(&Owner);
+			PlayerPawn(Owner).AdjustPlayerAngle();
 			useMana++;
 			break;
 		}
 		angles = Owner.Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
-		AimLineAttack(&Owner, &angles, AXERANGE);
+		AimLineAttack(Owner, &angles, AXERANGE);
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (LineAttack(&Owner, &vforward, AXERANGE, damage))
+			if (LineAttack(Owner, &vforward, AXERANGE, damage))
 			{
 				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
-			if (linetarget->bCountKill || linetarget->bIsPlayer)
+			if (linetarget.bCountKill || linetarget.bIsPlayer)
 			{
-				linetarget->Thrust(angles.yaw, power);
+				linetarget.Thrust(angles.yaw, power);
 			}
-			AdjustPlayerAngle(&Owner);
+			PlayerPawn(Owner).AdjustPlayerAngle();
 			useMana++;
 			break;
 		}
@@ -265,9 +265,9 @@ void A_FAxeAttack(void)
 	{
 		// didn't find any creatures, so try to strike any walls
 		angles = Owner.Angles;
-		AimLineAttack(&Owner, &angles, MELEERANGE);
+		AimLineAttack(Owner, &angles, MELEERANGE);
 		AngleVector(&angles, &vforward);
-		if (LineAttack(&Owner, &vforward, MELEERANGE, damage))
+		if (LineAttack(Owner, &vforward, MELEERANGE, damage))
 		{
 			Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 		}
@@ -463,36 +463,36 @@ void A_FHammerAttack(void)
 	{
 		angles = Owner.Angles;
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 32.0));
-		AimLineAttack(&Owner, &angles, HAMMER_RANGE);
+		AimLineAttack(Owner, &angles, HAMMER_RANGE);
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (LineAttack(&Owner, &vforward, HAMMER_RANGE, damage))
+			if (LineAttack(Owner, &vforward, HAMMER_RANGE, damage))
 			{
 				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
-			AdjustPlayerAngle(&Owner);
-			if (linetarget->bCountKill || linetarget->bIsPlayer)
+			PlayerPawn(Owner).AdjustPlayerAngle();
+			if (linetarget.bCountKill || linetarget.bIsPlayer)
 			{
-				linetarget->Thrust(angles.yaw, power);
+				linetarget.Thrust(angles.yaw, power);
 			}
 			bThrowHammer = false;	// Don't throw a hammer
 			break;
 		}
 		angles = Owner.Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 32.0));
-		AimLineAttack(&Owner, &angles, HAMMER_RANGE);
+		AimLineAttack(Owner, &angles, HAMMER_RANGE);
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (LineAttack(&Owner, &vforward, HAMMER_RANGE, damage))
+			if (LineAttack(Owner, &vforward, HAMMER_RANGE, damage))
 			{
 				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
-			AdjustPlayerAngle(&Owner);
-			if (linetarget->bCountKill || linetarget->bIsPlayer)
+			PlayerPawn(Owner).AdjustPlayerAngle();
+			if (linetarget.bCountKill || linetarget.bIsPlayer)
 			{
-				linetarget->Thrust(angles.yaw, power);
+				linetarget.Thrust(angles.yaw, power);
 			}
 			bThrowHammer = false;	// Don't throw a hammer
 			break;
@@ -501,11 +501,11 @@ void A_FHammerAttack(void)
 	if (i == 16)
 	{
 		// didn't find any targets in meleerange, so set to throw out a hammer
-		PuffSpawned = NULL;
+		PuffSpawned = none;
 		angles = Owner.Angles;
-		AimLineAttack(&Owner, &angles, HAMMER_RANGE);
+		AimLineAttack(Owner, &angles, HAMMER_RANGE);
 		AngleVector(&angles, &vforward);
-		if (LineAttack(&Owner, &vforward, HAMMER_RANGE, damage))
+		if (LineAttack(Owner, &vforward, HAMMER_RANGE, damage))
 		{
 			Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 		}
@@ -673,15 +673,17 @@ void Actor::A_FSwordFlames(void)
 
 	for (i = 1 + (P_Random() & 3); i; i--)
 	{
-		P_SpawnMobj(Origin.x + (Random() - 0.5) * 16.0,
-			Origin.y + (Random() - 0.5) * 16.0,
-			Origin.z + (Random() - 0.5) * 8.0, FighterSwordFlame);
+		Spawn(FighterSwordFlame, Origin + vector((Random() - 0.5) * 16.0,
+			(Random() - 0.5) * 16.0, (Random() - 0.5) * 8.0));
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/03/16 17:47:47  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.18  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

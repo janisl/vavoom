@@ -38,18 +38,16 @@
 void ActivateMorphWeapon(player_t * player);
 void DropWeapon(player_t * player);
 void SetupPsprites(player_t * player);
-void P_InsertMobjIntoTIDList(mobj_t * mobj, int tid);
-void P_NoiseAlert(mobj_t * target, mobj_t * emmiter);
-mobj_t *P_SpawnMobj(float x, float y, float z, classid type);
+void NoiseAlert(Actor target, Actor emmiter);
 
 // DATA DECLARATIONS -------------------------------------------------------
 
 classid PuffType;
-mobj_t *PuffSpawned;
-mobj_t *linetarget;	// who got hit (or NULL)
+Actor PuffSpawned;
+Actor linetarget;	// who got hit (or none)
 
 int TIDList[MAX_TID_COUNT + 1];	// +1 for termination marker
-mobj_t *TIDMobj[MAX_TID_COUNT];
+Actor TIDMobj[MAX_TID_COUNT];
 
 int classFlags[] = {
 	MTF_FIGHTER,
@@ -189,7 +187,7 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 		if (Class == ZLynchedNoHeart)
 		{
 			// Special stuff
-			P_SpawnMobj(x, y, ONFLOORZ, BloodPool);
+			Spawn(BloodPool, vector(x, y, ONFLOORZ));
 		}
 
 		if (bSpawnCeiling)
@@ -298,46 +296,29 @@ Actor Spawn(classid type, TVec position)
 	A.OnMapSpawn(NULL);
 	return A;
 }
-#define SpawnActor(position, type)	Spawn(type, position)
 
 //==========================================================================
 //
-// P_SpawnMobj
+//	Actor::Remove
 //
 //==========================================================================
 
-mobj_t *P_SpawnMobj(float x, float y, float z, classid type)
-{
-	mobj_t *mobj;
-
-	mobj = &Actor(NewMobjThinker(type));
-	mobj->Origin = vector(x, y, z);
-	mobj->OnMapSpawn(NULL);
-	return mobj;
-}
-
-//==========================================================================
-//
-// P_RemoveMobj
-//
-//==========================================================================
-
-void P_RemoveMobj(mobj_t * mobj)
+void Actor::Remove(void)
 {
 	// Remove from creature queue
-	if (mobj->bCountKill && mobj->bCorpse)
+	if (bCountKill && bCorpse)
 	{
-		mobj->A_DeQueueCorpse();
+		A_DeQueueCorpse();
 	}
 
-	if (mobj->TID)
+	if (TID)
 	{
 		// Remove from TID list
-		P_RemoveMobjFromTIDList(mobj);
+		RemoveFromTIDList();
 	}
 
 	// Free block
-	RemoveMobjThinker(*mobj);
+	::Remove();
 }
 
 //==========================================================================
@@ -348,7 +329,7 @@ void P_RemoveMobj(mobj_t * mobj)
 
 int Actor::HitFloorType(void)
 {
-	mobj_t *mo;
+	Actor A;
 	int smallsplash = false;
 
 	if (FloorZ != Sector->floorheight)
@@ -380,64 +361,64 @@ int Actor::HitFloorType(void)
 	case FLOOR_WATER:
 		if (smallsplash)
 		{
-			mo = P_SpawnMobj(Origin.x, Origin.y, ONFLOORZ, SplashBase);
-			if (mo)
-				mo->FloorClip += SMALLSPLASHCLIP;
-			mo->PlaySound('Ambient10', CHAN_VOICE);	// small drip
+			A = Spawn(SplashBase, vector(Origin.x, Origin.y, ONFLOORZ));
+			if (A)
+				A.FloorClip += SMALLSPLASHCLIP;
+			A.PlaySound('Ambient10', CHAN_VOICE);	// small drip
 		}
 		else
 		{
-			mo = P_SpawnMobj(Origin.x, Origin.y, ONFLOORZ, Splash);
-			mo->Owner = self;
-			mo->Velocity.x = (Random() - Random()) * 35.0;
-			mo->Velocity.y = (Random() - Random()) * 35.0;
-			mo->Velocity.z = (2.0 + Random()) * 35.0;
-			mo = P_SpawnMobj(Origin.x, Origin.y, ONFLOORZ, SplashBase);
+			A = Spawn(Splash, vector(Origin.x, Origin.y, ONFLOORZ));
+			A.Owner = self;
+			A.Velocity.x = (Random() - Random()) * 35.0;
+			A.Velocity.y = (Random() - Random()) * 35.0;
+			A.Velocity.z = (2.0 + Random()) * 35.0;
+			A = Spawn(SplashBase, vector(Origin.x, Origin.y, ONFLOORZ));
 			if (bIsPlayer)
-				P_NoiseAlert(this, this);
-			mo->PlaySound('WaterSplash', CHAN_VOICE);
+				NoiseAlert(self, self);
+			A.PlaySound('WaterSplash', CHAN_VOICE);
 		}
 		return FLOOR_WATER;
 	case FLOOR_LAVA:
 		if (smallsplash)
 		{
-			mo = P_SpawnMobj(Origin.x, Origin.y, ONFLOORZ, LavaSplash);
-			if (mo)
-				mo->FloorClip += SMALLSPLASHCLIP;
+			A = Spawn(LavaSplash, vector(Origin.x, Origin.y, ONFLOORZ));
+			if (A)
+				A.FloorClip += SMALLSPLASHCLIP;
 		}
 		else
 		{
-			mo = P_SpawnMobj(Origin.x, Origin.y, ONFLOORZ, LavaSmoke);
-			mo->Velocity.z = (1.0 + Random() / 2.0) * 35.0;
-			mo = P_SpawnMobj(Origin.x, Origin.y, ONFLOORZ, LavaSplash);
+			A = Spawn(LavaSmoke, vector(Origin.x, Origin.y, ONFLOORZ));
+			A.Velocity.z = (1.0 + Random() / 2.0) * 35.0;
+			A = Spawn(LavaSplash, vector(Origin.x, Origin.y, ONFLOORZ));
 			if (bIsPlayer)
-				P_NoiseAlert(this, this);
+				NoiseAlert(self, self);
 		}
-		mo->PlaySound('LavaSizzle', CHAN_VOICE);
+		A.PlaySound('LavaSizzle', CHAN_VOICE);
 		if (bIsPlayer && level->tictime & 31)
 		{
-			Damage(*LavaInflictor, none, 5);
+			Damage(LavaInflictor, none, 5);
 		}
 		return FLOOR_LAVA;
 	case FLOOR_SLUDGE:
 		if (smallsplash)
 		{
-			mo = P_SpawnMobj(Origin.x, Origin.y, ONFLOORZ, SludgeSplash);
-			if (mo)
-				mo->FloorClip += SMALLSPLASHCLIP;
+			A = Spawn(SludgeSplash, vector(Origin.x, Origin.y, ONFLOORZ));
+			if (A)
+				A.FloorClip += SMALLSPLASHCLIP;
 		}
 		else
 		{
-			mo = P_SpawnMobj(Origin.x, Origin.y, ONFLOORZ, SludgeChunk);
-			mo->Owner = self;
-			mo->Velocity.x = (Random() - Random()) * 35.0;
-			mo->Velocity.y = (Random() - Random()) * 35.0;
-			mo->Velocity.z = (1.0 + Random()) * 35.0;
-			mo = P_SpawnMobj(Origin.x, Origin.y, ONFLOORZ, SludgeSplash);
+			A = Spawn(SludgeChunk, vector(Origin.x, Origin.y, ONFLOORZ));
+			A.Owner = self;
+			A.Velocity.x = (Random() - Random()) * 35.0;
+			A.Velocity.y = (Random() - Random()) * 35.0;
+			A.Velocity.z = (1.0 + Random()) * 35.0;
+			A = Spawn(SludgeSplash, vector(Origin.x, Origin.y, ONFLOORZ));
 			if (bIsPlayer)
-				P_NoiseAlert(this, this);
+				NoiseAlert(self, self);
 		}
-		mo->PlaySound('SludgeGloop', CHAN_VOICE);
+		A.PlaySound('SludgeGloop', CHAN_VOICE);
 		return FLOOR_SLUDGE;
 	}
 	return FLOOR_SOLID;
@@ -461,7 +442,7 @@ void Actor::FloorBounceMissile(void)
 		case SorcererBall3:
 			break;
 		default:
-			P_RemoveMobj(this);
+			Remove();
 			return;
 		}
 	}
@@ -634,7 +615,7 @@ Actor Actor::ActiveMinotaur(void)
 void Actor::Died(Actor source)
 {
 	int dummy[5];
-	mobj_t *master;
+	Actor master;
 
 	bShootable = false;
 	bNoGravity = false;
@@ -658,7 +639,7 @@ void Actor::Died(Actor source)
 		}
 		else
 		{
-			ExecuteLineSpecial(Special, &Args[0], NULL, 0, this);
+			ExecuteLineSpecial(Special, &Args[0], NULL, 0, self);
 		}
 	}
 	if (source && source.bIsPlayer)
@@ -696,7 +677,7 @@ void Actor::Died(Actor source)
 		}
 		bSolid = false;
 		bFly = false;
-		Player->Powers[pw_flight] = 0;
+		Player->Powers[pw_flight] = 0.0;
 		Player->PlayerState = PST_DEAD;
 		DropWeapon(Player);
 		if (bFireDamage)
@@ -766,12 +747,12 @@ void Actor::Died(Actor source)
 
 	if (Class == Minotaur)
 	{
-		master = _SpecialMobj1;
-		if (master->Health > 0)
+		master = *_SpecialMobj1;
+		if (master.Health > 0)
 		{
-			if (!master->ActiveMinotaur())
+			if (!master.ActiveMinotaur())
 			{
-				master->Player->Powers[pw_minotaur] = 0;
+				master.Player->Powers[pw_minotaur] = 0.0;
 			}
 		}
 	}
@@ -848,10 +829,10 @@ boolean Actor::MorphPlayer(void)
 		return false;
 	}
 
-	fog = SpawnActor(Origin + vector(0.0, 0.0, TELEFOGHEIGHT), TeleportFog);
+	fog = Spawn(TeleportFog, Origin + vector(0.0, 0.0, TELEFOGHEIGHT));
 	fog.PlaySound('Teleport', CHAN_VOICE);
 
-	beastMo = SpawnActor(Origin, PlayerPig);
+	beastMo = Spawn(PlayerPig, Origin);
 	beastMo._Special1 = Player->ReadyWeapon;
 	beastMo.Angles = Angles;
 	beastMo.Player = Player;
@@ -901,12 +882,12 @@ boolean Actor::MorphMonster(void)
 		return false;
 	}
 
-	P_RemoveMobjFromTIDList(this);
+	RemoveFromTIDList();
 
-	fog = SpawnActor(Origin + vector(0.0, 0.0, TELEFOGHEIGHT), TeleportFog);
+	fog = Spawn(TeleportFog, Origin + vector(0.0, 0.0, TELEFOGHEIGHT));
 	fog.PlaySound('Teleport', CHAN_VOICE);
 
-	monster = SpawnActor(Origin, Pig);
+	monster = Spawn(Pig, Origin);
 	monster.SpecialCID = Class;
 	monster._Special1 = ftoi(MORPHTIME * 35.0) + P_Random();
 	monster.Translucency = Translucency;
@@ -914,7 +895,7 @@ boolean Actor::MorphMonster(void)
 	monster.Angles.yaw = Angles.yaw;
 	monster.TID = TID;
 	monster.Special = Special;
-	P_InsertMobjIntoTIDList(&monster, TID);
+	monster.InsertIntoTIDList(TID);
 	for (i = 0; i < 5; i++)
 	{
 		monster.Args[i] = Args[i];
@@ -928,7 +909,7 @@ boolean Actor::MorphMonster(void)
 		{
 			if (!master.ActiveMinotaur())
 			{
-				master.Player->Powers[pw_minotaur] = 0;
+				master.Player->Powers[pw_minotaur] = 0.0;
 			}
 		}
 	}
@@ -975,7 +956,8 @@ void Actor::AutoUseHealth(int saveHealth)
 		for (i = 0; i < count; i++)
 		{
 			Health += 25;
-			PlayerRemoveArtifact(Player, normalSlot);
+//FIXME
+			PlayerPawn(self).PlayerRemoveArtifact(normalSlot);
 		}
 	}
 	else if (superCount * 100 >= saveHealth)
@@ -985,7 +967,8 @@ void Actor::AutoUseHealth(int saveHealth)
 		for (i = 0; i < count; i++)
 		{
 			Health += 100;
-			PlayerRemoveArtifact(Player, superSlot);
+//FIXME
+			PlayerPawn(self).PlayerRemoveArtifact(superSlot);
 		}
 	}
 	else if ((gameskill == sk_baby)
@@ -997,14 +980,16 @@ void Actor::AutoUseHealth(int saveHealth)
 		for (i = 0; i < count; i++)
 		{
 			Health += 25;
-			PlayerRemoveArtifact(Player, normalSlot);
+//FIXME
+			PlayerPawn(self).PlayerRemoveArtifact(normalSlot);
 		}
 		count = (saveHealth + 99) / 100;
 		for (i = 0; i < count; i++)
 		{
 			Health += 100;
 			// The same as in HERETIC
-			PlayerRemoveArtifact(Player, normalSlot);
+//FIXME
+			PlayerPawn(self).PlayerRemoveArtifact(normalSlot);
 		}
 	}
 	Player->Health = Health;
@@ -1027,7 +1012,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 {
 	float saved;
 	float savedPercent;
-	mobj_t *master;
+	Actor master;
 	int i;
 
 	if (!bShootable)
@@ -1117,7 +1102,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 			if (bCountKill && !bBoss &&
 				(Class != Serpent) && (Class != SerpentLeader))
 			{
-				TeleportOther(this);
+				TeleportOther();
 			}
 			return;
 		case Minotaur:
@@ -1293,11 +1278,11 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 		if (source && (source.Class == Minotaur))
 		{
 			// Minotaur's kills go to his master
-			master = source._SpecialMobj1;
+			master = *source._SpecialMobj1;
 			// Make sure still alive and not a pointer to fighter head
-			if (master->bIsPlayer && (master->Player->mo == master))
+			if (master.bIsPlayer && (*master.Player->mo == master))
 			{
-				source = *master;
+				source = master;
 			}
 		}
 		if (source && (source.bIsPlayer) &&
@@ -1514,7 +1499,7 @@ void SpawnPuff(TVec org)
 	Actor puff;
 
 	org.z += (Random() - Random()) * 4.0;
-	puff = SpawnActor(org, PuffType);
+	puff = Spawn(PuffType, org);
 	if (linetarget && puff.SightSound)
 	{
 		// Hit thing sound
@@ -1533,7 +1518,7 @@ void SpawnPuff(TVec org)
 		puff.Velocity.z = 8.0 / 10.0 * 35.0;
 		break;
 	}
-	PuffSpawned = &puff;
+	PuffSpawned = puff;
 }
 
 //==========================================================================
@@ -1546,7 +1531,7 @@ void Actor::SpawnBloodSplatter(TVec org)
 {
 	Actor mo;
 
-	mo = SpawnActor(org, BloodSplatter);
+	mo = Spawn(BloodSplatter, org);
 	mo.Owner = self;
 	mo.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
 	mo.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
@@ -1565,7 +1550,7 @@ void Actor::SpawnBloodSplatter2(TVec org)
 
 	org.x += (Random() - 0.5) * 8.0;
 	org.y += (Random() - 0.5) * 8.0;
-	mo = SpawnActor(org, AxeBlood);
+	mo = Spawn(AxeBlood, org);
 	mo.Owner = self;
 }
 
@@ -1583,7 +1568,7 @@ void Actor::SpawnRipperBlood(void)
 	org.x = Origin.x + (Random() - Random()) * 16.0;
 	org.y = Origin.y + (Random() - Random()) * 16.0;
 	org.z = Origin.z + (Random() - Random()) * 16.0;
-	th = SpawnActor(org, Blood);
+	th = Spawn(Blood, org);
 	th.Velocity.x = Velocity.x / 2.0;
 	th.Velocity.y = Velocity.y / 2.0;
 	th.StateTime += Random() * 0.1;
@@ -1629,7 +1614,7 @@ void Actor::SpawnDirt(float radius)
 		dtype = Dirt6;
 		break;
 	}
-	dirt = SpawnActor(org, dtype);
+	dirt = Spawn(dtype, org);
 	if (dirt)
 	{
 		dirt.Velocity.z = Random() * 4.0 * 35.0;
@@ -1682,7 +1667,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 {
 	player_t *p;
 	float x, y, z;
-	mobj_t *mobj;
+	PlayerPawn pp;
 
 	p = &players[mthing->type - 1];
 	if (!p->bActive)
@@ -1715,24 +1700,24 @@ void P_SpawnPlayer(mthing_t * mthing)
 	switch (p->PClass)
 	{
 	case PCLASS_FIGHTER:
-		mobj = P_SpawnMobj(x, y, z, PlayerFighter);
+		pp = PlayerPawn(Spawn(PlayerFighter, vector(x, y, z)));
 		break;
 	case PCLASS_CLERIC:
-		mobj = P_SpawnMobj(x, y, z, PlayerCleric);
+		pp = PlayerPawn(Spawn(PlayerCleric, vector(x, y, z)));
 		break;
 	case PCLASS_MAGE:
-		mobj = P_SpawnMobj(x, y, z, PlayerMage);
+		pp = PlayerPawn(Spawn(PlayerMage, vector(x, y, z)));
 		break;
 	default:
 		Error("P_SpawnPlayer: Unknown class type");
 		break;
 	}
 
-	mobj->Angles.yaw = itof(45 * (mthing->angle / 45));
-	mobj->Player = p;
-	mobj->bIsPlayer = true;
-	mobj->Health = p->Health;
-	p->mo = mobj;
+	pp.Angles.yaw = itof(45 * (mthing->angle / 45));
+	pp.Player = p;
+	pp.bIsPlayer = true;
+	pp.Health = p->Health;
+	p->mo = &pp;
 	p->PlayerState = PST_LIVE;
 	p->Refire = 0;
 	p->DamageCount = 0;
@@ -1742,7 +1727,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 	p->ExtraLight = 0;
 	p->FixedColormap = 0;
 	p->ViewHeight = VIEWHEIGHT;
-	p->ViewAngles = mobj->Angles;
+	p->ViewAngles = pp.Angles;
 	p->bFixAngle = true;
 	SetupPsprites(p);
 	if (deathmatch)
@@ -1771,7 +1756,7 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 {
 	int i;
 	int spawnMask;
-	mobj_t *mobj;
+	Actor A;
 
 	if (mthing->type <= 0)
 		return;
@@ -1902,8 +1887,8 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 	{
 		if (mthing->type == mobjinfo[i].doomednum)
 		{
-			mobj = &Actor(NewMobjThinker(mobjinfo[i].class_id));
-			mobj->OnMapSpawn(mthing);
+			A = Actor(NewMobjThinker(mobjinfo[i].class_id));
+			A.OnMapSpawn(mthing);
 			return;
 		}
 	}
@@ -1934,7 +1919,7 @@ void P_CreateTIDList(void)
 				Error("P_CreateTIDList: MAX_TID_COUNT exceeded.");
 			}
 			TIDList[i] = mobj.TID;
-			TIDMobj[i++] = &mobj;
+			TIDMobj[i++] = mobj;
 		}
 	}
 	// Add termination marker
@@ -1943,11 +1928,11 @@ void P_CreateTIDList(void)
 
 //==========================================================================
 //
-// P_InsertMobjIntoTIDList
+//	Actor::InsertIntoTIDList
 //
 //==========================================================================
 
-void P_InsertMobjIntoTIDList(mobj_t * mobj, int tid)
+void Actor::InsertIntoTIDList(int tid)
 {
 	int i;
 	int index;
@@ -1972,41 +1957,41 @@ void P_InsertMobjIntoTIDList(mobj_t * mobj, int tid)
 		index = i;
 		TIDList[index + 1] = 0;
 	}
-	mobj->TID = tid;
+	TID = tid;
 	TIDList[index] = tid;
-	TIDMobj[index] = mobj;
+	TIDMobj[index] = self;
 }
 
 //==========================================================================
 //
-// P_RemoveMobjFromTIDList
+//	Actor::RemoveFromTIDList
 //
 //==========================================================================
 
-void P_RemoveMobjFromTIDList(mobj_t * mobj)
+void Actor::RemoveFromTIDList(void)
 {
 	int i;
 
 	for (i = 0; TIDList[i] != 0; i++)
 	{
-		if (TIDMobj[i] == mobj)
+		if (TIDMobj[i] == self)
 		{
 			TIDList[i] = -1;
-			TIDMobj[i] = NULL;
-			mobj->TID = 0;
+			TIDMobj[i] = none;
+			TID = 0;
 			return;
 		}
 	}
-	mobj->TID = 0;
+	TID = 0;
 }
 
 //==========================================================================
 //
-// P_FindMobjFromTID
+//	FindMobjFromTID
 //
 //==========================================================================
 
-mobj_t *P_FindMobjFromTID(int tid, int *searchPosition)
+Actor FindMobjFromTID(int tid, int *searchPosition)
 {
 	int i;
 
@@ -2019,7 +2004,7 @@ mobj_t *P_FindMobjFromTID(int tid, int *searchPosition)
 		}
 	}
 	*searchPosition = -1;
-	return NULL;
+	return none;
 }
 
 //**************************************************************************
@@ -2028,18 +2013,18 @@ mobj_t *P_FindMobjFromTID(int tid, int *searchPosition)
 //
 //**************************************************************************
 
-mobj_t *soundtarget;
+Actor soundtarget;
 
 //==========================================================================
 //
-//  P_RecursiveSound
+//  RecursiveSound
 //
-//  Called by P_NoiseAlert. Recursively traverse adjacent sectors, sound
+//  Called by NoiseAlert. Recursively traverse adjacent sectors, sound
 // blocking lines cut off traversal.
 //
 //==========================================================================
 
-void P_RecursiveSound(sector_t * sec, int soundblocks)
+void RecursiveSound(sector_t * sec, int soundblocks)
 {
 	int i;
 	line_t *check;
@@ -2054,7 +2039,7 @@ void P_RecursiveSound(sector_t * sec, int soundblocks)
 
 	sec->validcount = *validcount;
 	sec->soundtraversed = soundblocks + 1;
-	sec->SoundTarget = *soundtarget;
+	sec->SoundTarget = soundtarget;
 
 	for (i = 0; i < sec->linecount; i++)
 	{
@@ -2076,32 +2061,35 @@ void P_RecursiveSound(sector_t * sec, int soundblocks)
 		if (check->flags & ML_SOUNDBLOCK)
 		{
 			if (!soundblocks)
-				P_RecursiveSound(other, 1);
+				RecursiveSound(other, 1);
 		}
 		else
-			P_RecursiveSound(other, soundblocks);
+			RecursiveSound(other, soundblocks);
 	}
 }
 
 //==========================================================================
 //
-//  P_NoiseAlert
+//  NoiseAlert
 //
 //  If a monster yells at a player, it will alert other monsters to the
 // player.
 //
 //==========================================================================
 
-void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
+void NoiseAlert(Actor target, Actor emmiter)
 {
 	soundtarget = target;
 	(*validcount)++;
-	P_RecursiveSound(emmiter->Sector, 0);
+	RecursiveSound(emmiter.Sector, 0);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.40  2002/03/16 17:47:47  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.39  2002/03/12 19:19:16  dj_jl
 //  Pickup classes
 //

@@ -27,7 +27,7 @@
 #define BLAST_FULLSTRENGTH	0.0038909912
 #define BLAST_SPEED			20.0
 
-class TLavaInflictor:mobj_t
+class TLavaInflictor:Actor
 {
 	void Think(void)
 	{
@@ -38,7 +38,7 @@ class TLavaInflictor:mobj_t
 	}
 	void Unarchive(void)
 	{
-		LavaInflictor = this;
+		LavaInflictor = self;
 	}
 
 	defaultproperties
@@ -60,158 +60,143 @@ void PostMorphWeapon(player_t * player, int weapon);
 
 void InitLava(void)
 {
-	LavaInflictor = &Actor(NewMobjThinker(TLavaInflictor));
+	LavaInflictor = Actor(NewMobjThinker(TLavaInflictor));
 //	LavaInflictor->type = MT_CIRCLEFLAME;
 }
 
 //==========================================================================
 //
-//  MorphPlayerThink
+//  PlayerPawn::MorphPlayerThink
 //
 //==========================================================================
 
-void MorphPlayerThink(player_t * player)
+void PlayerPawn::MorphPlayerThink(void)
 {
-	mobj_t *pmo;
-
-	if (player->MorphTics & 15)
+	if (Player->MorphTics & 15)
 	{
 		return;
 	}
-	pmo = player->mo;
-	if (!(pmo->Velocity.x + pmo->Velocity.y) && P_Random() < 64)
+	if (!(Velocity.x + Velocity.y) && P_Random() < 64)
 	{
 		// Snout sniff
-		Weapon(player->ViewEnts[ps_weapon]).SnoutSniff();
-		pmo->PlaySound('PigActive1', CHAN_VOICE);	// snort
+		Weapon(Player->ViewEnts[ps_weapon]).SnoutSniff();
+		PlaySound('PigActive1', CHAN_VOICE);	// snort
 		return;
 	}
 	if (P_Random() < 48)
 	{
 		if (P_Random() < 128)
 		{
-			pmo->PlaySound('PigActive1', CHAN_VOICE);
+			PlaySound('PigActive1', CHAN_VOICE);
 		}
 		else
 		{
-			pmo->PlaySound('PigActive2', CHAN_VOICE);
+			PlaySound('PigActive2', CHAN_VOICE);
 		}
 	}
 }
 
 //==========================================================================
 //
-//  UndoPlayerMorph
+//  PlayerPawn::UndoPlayerMorph
 //
 //==========================================================================
 
-boolean UndoPlayerMorph(player_t * player)
+boolean PlayerPawn::UndoPlayerMorph(void)
 {
-	mobj_t *fog;
-	mobj_t *mo;
-	mobj_t *pmo;
-	float x;
-	float y;
-	float z;
-	float angle;
-	int weapon;
-	boolean OldbFly;
+	Actor fog;
+	Actor A;
 
-	pmo = player->mo;
-	P_UnsetThingPosition(*pmo);
-	x = pmo->Origin.x;
-	y = pmo->Origin.y;
-	z = pmo->Origin.z;
-	angle = pmo->Angles.yaw;
-	weapon = pmo->_Special1;
-	OldbFly = pmo->bFly;
-	switch (player->BaseClass)
+	P_UnsetThingPosition(self);
+	switch (Player->BaseClass)
 	{
 	case PCLASS_FIGHTER:
-		mo = P_SpawnMobj(x, y, z, PlayerFighter);
+		A = Spawn(PlayerFighter, Origin);
 		break;
 	case PCLASS_CLERIC:
-		mo = P_SpawnMobj(x, y, z, PlayerCleric);
+		A = Spawn(PlayerCleric, Origin);
 		break;
 	case PCLASS_MAGE:
-		mo = P_SpawnMobj(x, y, z, PlayerMage);
+		A = Spawn(PlayerMage, Origin);
 		break;
 	default:
-		Error("UndoPlayerMorph: Unknown player class %d", player->PClass);
+		Error("UndoPlayerMorph: Unknown player class %d", Player->BaseClass);
 	}
-	if (!P_TestMobjLocation(mo))
+	if (!A.TestLocation())
 	{
 		// Didn't fit
-		P_RemoveMobj(mo);
-		P_SetThingPosition(*pmo);
-		player->MorphTics = 2 * 35;
+		A.Remove();
+		P_SetThingPosition(self);
+		Player->MorphTics = 2 * 35;
 		return false;
 	}
-	P_SetThingPosition(*pmo);
-	pmo->SetState(S_FREETARGMOBJ);
-	SetPlayerColor(player);
-	mo->Angles.yaw = angle;
-	mo->Player = player;
-	mo->bIsPlayer = true;
-	mo->ReactionTime = 0.5;
-	if (OldbFly)
+	P_SetThingPosition(self);
+	A.Angles = Angles;
+	A.Player = Player;
+	A.bIsPlayer = true;
+	A.ReactionTime = 0.5;
+	if (bFly)
 	{
-		mo->bFly = true;
-		mo->bNoGravity = true;
+		A.bFly = true;
+		A.bNoGravity = true;
 	}
-	player->MorphTics = 0;
-	mo->Health = MAXHEALTH;
-	player->Health = mo->Health;
-	player->mo = mo;
-	player->PClass = player->BaseClass;
-	fog = P_SpawnMobj(x + 20.0 * cos(angle),
-		y + 20.0 * sin(angle), z + TELEFOGHEIGHT, TeleportFog);
-	fog->PlaySound('Teleport', CHAN_VOICE);
-	PostMorphWeapon(player, weapon);
+	Player->MorphTics = 0;
+	A.Health = MAXHEALTH;
+	Player->Health = A.Health;
+	Player->mo = &A;
+	Player->PClass = Player->BaseClass;
+	SetPlayerColor(Player);
+	PostMorphWeapon(Player, _Special1);
+
+	fog = Spawn(TeleportFog, Origin + vector(20.0 * cos(Angles.yaw),
+		20.0 * sin(Angles.yaw), TELEFOGHEIGHT));
+	fog.PlaySound('Teleport', CHAN_VOICE);
+
+	SetState(S_FREETARGMOBJ);
 	return true;
 }
 
 //==========================================================================
 //
-//  SetPlayerRunState
+//  PlayerPawn::SetPlayerRunState
 //
 //==========================================================================
 
-void SetPlayerRunState(player_t * player)
+void PlayerPawn::SetPlayerRunState(void)
 {
-	if (player->mo->StateNum == player->mo->SpawnState)
+	if (StateNum == SpawnState)
 	{
-		player->mo->SetState(player->mo->SeeState);
+		SetState(SeeState);
 	}
 }
 
 //==========================================================================
 //
-//  DeathPlayerThink
+//  PlayerPawn::DeathPlayerTick
 //
 //  Fall on your face when dying. Decrease POV height to floor height.
 //
 //==========================================================================
 
-void DeathPlayerThink(player_t * player)
+void PlayerPawn::DeathPlayerTick(float deltaTime)
 {
 	int dir;
 	float delta;
 	int lookDelta;
 
-	MovePsprites(player);
-	if (player->mo->WaterLevel > 1)
+	MovePsprites(Player);
+	if (WaterLevel > 1)
 	{
-		player->mo->Velocity.z -= 60.0;	// drift towards bottom
+		Velocity.z -= 60.0;	// drift towards bottom
 	}
 
-	onground = (player->mo->Origin.z <= player->mo->FloorZ);
+	onground = (Origin.z <= FloorZ);
 
-	if (player->mo->Class == BloodySkull || player->mo->Class == IceChunk)
+	if (Class == BloodySkull || Class == IceChunk)
 	{
 		// Flying bloody skull or flying ice chunk
-		player->ViewHeight = 6.0;
-		player->DeltaViewHeight = 0.0;
+		Player->ViewHeight = 6.0;
+		Player->DeltaViewHeight = 0.0;
 		//player->damagecount = 20;
 		if (onground)
 		{
@@ -232,17 +217,17 @@ void DeathPlayerThink(player_t * player)
 #endif
 		}
 	}
-	else if (!player->mo->bIceDamage)
+	else if (!bIceDamage)
 	{
 		// Fall to ground (if not frozen)
-		player->DeltaViewHeight = 0.0;
-		if (player->ViewHeight > 6.0)
+		Player->DeltaViewHeight = 0.0;
+		if (Player->ViewHeight > 6.0)
 		{
-			player->ViewHeight -= 1.0;
+			Player->ViewHeight -= 35.0 * deltaTime;
 		}
-		if (player->ViewHeight < 6.0)
+		if (Player->ViewHeight < 6.0)
 		{
-			player->ViewHeight = 6.0;
+			Player->ViewHeight = 6.0;
 		}
 #ifdef FIXME
 		if (player->lookdir > 0)
@@ -259,22 +244,22 @@ void DeathPlayerThink(player_t * player)
 		}
 #endif
 	}
-	CalcHeight(player);
+	CalcHeight(deltaTime);
 
-	if (player->Attacker && player->Attacker != player->mo)
+	if (Player->Attacker && Player->Attacker != this)
 	{
 		// Watch killer
-		dir = player->mo->FaceActor(*player->Attacker, &delta);
+		dir = FaceActor(*Player->Attacker, &delta);
 		if (delta < 10.0)
 		{
 			// Looking at killer, so fade damage and poison counters
-			if (player->DamageCount)
+			if (Player->DamageCount)
 			{
-				player->DamageCount--;
+				Player->DamageCount--;
 			}
-			if (player->PoisonCount)
+			if (Player->PoisonCount)
 			{
-				player->PoisonCount--;
+				Player->PoisonCount--;
 			}
 		}
 		delta = delta / 8.0;
@@ -285,203 +270,186 @@ void DeathPlayerThink(player_t * player)
 		if (dir)
 		{
 			// Turn clockwise
-			player->mo->Angles.yaw += delta;
+			Angles.yaw += delta;
 		}
 		else
 		{	// Turn counter clockwise
-			player->mo->Angles.yaw -= delta;
+			Angles.yaw -= delta;
 		}
 	}
-	else if (player->DamageCount || player->PoisonCount)
+	else if (Player->DamageCount || Player->PoisonCount)
 	{
-		if (player->DamageCount)
+		if (Player->DamageCount)
 		{
-			player->DamageCount--;
+			Player->DamageCount--;
 		}
 		else
 		{
-			player->PoisonCount--;
+			Player->PoisonCount--;
 		}
 	}
 
-	if (player->Buttons & BT_USE)
+	if (Player->Buttons & BT_USE)
 	{
-		player->Palette = 0;
-		player->WeaponPalette = 0;
-		player->InvPtr = 0;
-		player->InvCurPos = 0;
-		player->NewTorch = 0;
-		player->NewTorchDelta = 0;
-		player->PlayerState = PST_REBORN;
-		player->mo->_Special1 = player->PClass;
-		if (player->mo->_Special1 > 2)
+		Player->Palette = 0;
+		Player->WeaponPalette = 0;
+		Player->InvPtr = 0;
+		Player->InvCurPos = 0;
+		Player->NewTorch = 0;
+		Player->NewTorchDelta = 0;
+		Player->PlayerState = PST_REBORN;
+		_Special1 = Player->PClass;
+		if (_Special1 > 2)
 		{
-			player->mo->_Special1 = 0;
+			_Special1 = 0;
 		}
 		// Let the mobj know the player has entered the reborn state.  Some
 		// mobjs need to know when it's ok to remove themselves.
-		player->mo->_Special2 = 666;
+		_Special2 = 666;
 	}
 }
 
 //==========================================================================
 //
-//  SpawnSpeedMobj
+//  PlayerPawn::UseArtiPig
 //
 //==========================================================================
 
-mobj_t *SpawnSpeedMobj(mobj_t * pmo)
+void PlayerPawn::UseArtiPig(void)
 {
-	return P_SpawnMobj(pmo->Origin.x, pmo->Origin.y, pmo->Origin.z,
-		PlayerSpeed);
+	SpawnPlayerMissile(EggMissile);
+	SpawnPlayerMissileAngle(EggMissile,
+		AngleMod360(Angles.yaw - 45.0 / 6.0));
+	SpawnPlayerMissileAngle(EggMissile,
+		AngleMod360(Angles.yaw + 45.0 / 6.0));
+	SpawnPlayerMissileAngle(EggMissile,
+		AngleMod360(Angles.yaw - 45.0 / 3.0));
+	SpawnPlayerMissileAngle(EggMissile,
+		AngleMod360(Angles.yaw + 45.0 / 3.0));
 }
 
 //==========================================================================
 //
-//  ArtiPig
+//  PlayerPawn::UseArtiSummon
 //
 //==========================================================================
 
-void ArtiPig(mobj_t * mo)
-{
-	PlayerPawn(*mo).SpawnPlayerMissile(EggMissile);
-	PlayerPawn(*mo).SpawnPlayerMissileAngle(EggMissile,
-		AngleMod360(mo->Angles.yaw - 45.0 / 6.0));
-	PlayerPawn(*mo).SpawnPlayerMissileAngle(EggMissile,
-		AngleMod360(mo->Angles.yaw + 45.0 / 6.0));
-	PlayerPawn(*mo).SpawnPlayerMissileAngle(EggMissile,
-		AngleMod360(mo->Angles.yaw - 45.0 / 3.0));
-	PlayerPawn(*mo).SpawnPlayerMissileAngle(EggMissile,
-		AngleMod360(mo->Angles.yaw + 45.0 / 3.0));
-}
-
-//==========================================================================
-//
-//  ArtiSummon
-//
-//==========================================================================
-
-void ArtiSummon(player_t * player)
+void PlayerPawn::UseArtiSummon(void)
 {
 	Actor mo;
 
-	mo = PlayerPawn(*player->mo).SpawnPlayerMissile(SummonMissile);
+	mo = SpawnPlayerMissile(SummonMissile);
 	if (mo)
 	{
-		mo.Owner = *player->mo;
-		mo._SpecialMobj1 = player->mo;
+		mo.Owner = self;
+		mo._SpecialMobj1 = this;
 		mo.Velocity.z = 5.0 * 35.0;
 	}
 }
 
 //==========================================================================
 //
-//  ArtiPoisonBag
+//  PlayerPawn::UseArtiPoisonBag
 //
 //==========================================================================
 
-void ArtiPoisonBag(player_t * player)
+void PlayerPawn::UseArtiPoisonBag(void)
 {
 	float angle;
-	mobj_t *mo;
-	mobj_t *bomb;
+	Actor bomb;
 
-	angle = player->mo->Angles.yaw;
-	if (player->PClass == PCLASS_CLERIC)
+	angle = Angles.yaw;
+	if (Player->PClass == PCLASS_CLERIC)
 	{
-		mo = P_SpawnMobj(player->mo->Origin.x + 16.0 * cos(angle),
-			player->mo->Origin.y + 24.0 * sin(angle),
-			player->mo->Origin.z - player->mo->FloorClip + 8.0, PoisonBag);
-		if (mo)
+		bomb = Spawn(PoisonBag, Origin +
+			vector(16.0 * cos(angle), 24.0 * sin(angle), 8.0 - FloorClip));
+		if (bomb)
 		{
-			mo->Owner = *player->mo;
+			bomb.Owner = self;
 		}
 	}
-	else if (player->PClass == PCLASS_MAGE)
+	else if (Player->PClass == PCLASS_MAGE)
 	{
-		mo = P_SpawnMobj(player->mo->Origin.x + 16.0 * cos(angle),
-			player->mo->Origin.y + 24.0 * sin(angle),
-			player->mo->Origin.z - player->mo->FloorClip + 8.0, FireBomb);
-		if (mo)
+		bomb = Spawn(FireBomb, Origin +
+			vector(16.0 * cos(angle), 24.0 * sin(angle), 8.0 - FloorClip));
+		if (bomb)
 		{
-			mo->Owner = *player->mo;
+			bomb.Owner = self;
 		}
 	}
 	else	// PCLASS_FIGHTER, obviously (also pig, not so obviously)
 	{
-		bomb = P_SpawnMobj(player->mo->Origin.x, player->mo->Origin.y,
-			player->mo->Origin.z - player->mo->FloorClip + 35.0,
-			ThrowingBomb);
+		bomb = Spawn(ThrowingBomb, Origin +
+			vector(0.0, 0.0, 35.0 - FloorClip));
 		if (bomb)
 		{
-			bomb->Angles.yaw = AngleMod360(player->mo->Angles.yaw +
+			bomb.Angles.yaw = AngleMod360(Angles.yaw +
 				(Random() * 2.0 - 1.0) * 45.0 / 8.0);
-			bomb->Velocity.z =
-				(4.0 + 173.0 * -tan(player->mo->Angles.pitch) / 16.0) * 35.0;
-			bomb->Origin.z += 173.0 * -tan(player->mo->Angles.pitch) / 16.0;
-			bomb->Thrust(bomb->Angles.yaw, bomb->Speed * frametime);
-			bomb->Velocity.x += player->mo->Velocity.x / 2.0;
-			bomb->Velocity.y += player->mo->Velocity.y / 2.0;
-			bomb->Owner = *player->mo;
-			bomb->StateTime -= Random() * 0.1;
-			bomb->CheckMissileSpawn();
+			bomb.Velocity.z =
+				(4.0 + 173.0 * -tan(Angles.pitch) / 16.0) * 35.0;
+			bomb.Origin.z += 173.0 * -tan(Angles.pitch) / 16.0;
+			bomb.Thrust(bomb.Angles.yaw, bomb.Speed * frametime);
+			bomb.Velocity.x += Velocity.x / 2.0;
+			bomb.Velocity.y += Velocity.y / 2.0;
+			bomb.Owner = self;
+			bomb.StateTime -= Random() * 0.1;
+			bomb.CheckMissileSpawn();
 		}
 	}
 }
 
 //==========================================================================
 //
-//  ArtiTeleportOther
+//  PlayerPawn::UseArtiTeleportOther
 //
 //==========================================================================
 
-void ArtiTeleportOther(player_t * player)
+void PlayerPawn::UseArtiTeleportOther(void)
 {
 	Actor mo;
 
-	mo = PlayerPawn(*player->mo).SpawnPlayerMissile(TeleportOtherFX1);
+	mo = SpawnPlayerMissile(TeleportOtherFX1);
 	if (mo)
 	{
-		mo.Owner = *player->mo;
+		mo.Owner = self;
 	}
 }
 
 //==========================================================================
 //
-//  BlastMobj
+//  Actor::Blast
 //
 //==========================================================================
 
-void BlastMobj(mobj_t * source, mobj_t * victim, float strength)
+void Actor::Blast(Actor source, float strength)
 {
 	float angle;
 	float ang;
-	mobj_t *mo;
+	Actor A;
 	float x;
 	float y;
 	float z;
 
-	angle = atan2(victim->Origin.y - source->Origin.y,
-		victim->Origin.x - source->Origin.x);
+	angle = atan2(Origin.y - source.Origin.y, Origin.x - source.Origin.x);
 	if (strength < BLAST_FULLSTRENGTH)
 	{
-		victim->Velocity.x = strength * cos(angle) * 35.0;
-		victim->Velocity.y = strength * sin(angle) * 35.0;
-		if (victim->bIsPlayer)
+		Velocity.x = strength * cos(angle) * 35.0;
+		Velocity.y = strength * sin(angle) * 35.0;
+		if (bIsPlayer)
 		{
 			// Players handled automatically
 		}
 		else
 		{
-			victim->bSlide = true;
-			victim->bBlasted = true;
+			bSlide = true;
+			bBlasted = true;
 		}
 	}
 	else	// full strength blast from artifact
 	{
-		if (victim->bMissile)
+		if (bMissile)
 		{
-			switch (victim->Class)
+			switch (Class)
 			{
 			case SorcererBall1:	// don't blast sorcerer balls
 			case SorcererBall2:
@@ -489,78 +457,76 @@ void BlastMobj(mobj_t * source, mobj_t * victim, float strength)
 				return;
 				break;
 			case MageStaffFX2:	// Reflect to originator
-				victim->Target = victim->Owner;
-				victim->Owner = *source;
+				Target = Owner;
+				Owner = source;
 				break;
 			default:
 				break;
 			}
 		}
-		if (victim->Class == HolyFX)
+		if (Class == HolyFX)
 		{
-			if (victim->Target == *source)
+			if (Target == source)
 			{
-				victim->Target = victim->Owner;
-				victim->Owner = *source;
+				Target = Owner;
+				Owner = source;
 			}
 		}
-		victim->Velocity.x = BLAST_SPEED * cos(angle) * 35.0;
-		victim->Velocity.y = BLAST_SPEED * sin(angle) * 35.0;
+		Velocity.x = BLAST_SPEED * cos(angle) * 35.0;
+		Velocity.y = BLAST_SPEED * sin(angle) * 35.0;
 
 		// Spawn blast puff
-		ang = atan2(source->Origin.y - victim->Origin.y,
-			source->Origin.x - victim->Origin.x);
-		x = victim->Origin.x + (victim->Radius + 1.0) * cos(ang);
-		y = victim->Origin.y + (victim->Radius + 1.0) * sin(ang);
-		z = victim->Origin.z - victim->FloorClip + victim->Height / 2.0;
-		mo = P_SpawnMobj(x, y, z, BlastEffect);
-		if (mo)
+		ang = atan2(source.Origin.y - Origin.y, source.Origin.x - Origin.x);
+		x = Origin.x + (Radius + 1.0) * cos(ang);
+		y = Origin.y + (Radius + 1.0) * sin(ang);
+		z = Origin.z - FloorClip + Height / 2.0;
+		A = Spawn(BlastEffect, vector(x, y, z));
+		if (A)
 		{
-			mo->Velocity.x = victim->Velocity.x;
-			mo->Velocity.y = victim->Velocity.y;
+			A.Velocity.x = Velocity.x;
+			A.Velocity.y = Velocity.y;
 		}
 
-		if (victim->bMissile)
+		if (bMissile)
 		{
-			victim->Velocity.z = 8.0 * 35.0;
-			mo->Velocity.z = victim->Velocity.z;
+			Velocity.z = 8.0 * 35.0;
+			A.Velocity.z = Velocity.z;
 		}
 		else
 		{
-			victim->Velocity.z = 1000.0 / victim->Mass * 35.0;
+			Velocity.z = 1000.0 / Mass * 35.0;
 		}
-		if (victim->bIsPlayer)
+		if (bIsPlayer)
 		{
 			// Players handled automatically
 		}
 		else
 		{
-			victim->bSlide = true;
-			victim->bBlasted = true;
+			bSlide = true;
+			bBlasted = true;
 		}
 	}
 }
 
 //==========================================================================
 //
-//  ArtiBlastRadius
+//  PlayerPawn::UseArtiBlastRadius
 //
 //  Blast all mobj things away
 //
 //==========================================================================
 
-void ArtiBlastRadius(player_t * player)
+void PlayerPawn::UseArtiBlastRadius(void)
 {
 	Actor mo;
-	mobj_t *pmo = player->mo;
 	float dist;
 
-	pmo->PlaySound('BlastRadius', CHAN_ITEM);
-	P_NoiseAlert(player->mo, player->mo);
+	PlaySound('BlastRadius', CHAN_ITEM);
+	NoiseAlert(self, self);
 
 	FOREACH(Actor, mo)
 	{
-		if ((mo == *pmo) || mo.bBoss)
+		if ((mo == self) || mo.bBoss)
 		{
 			// Not a valid monster
 			continue;
@@ -584,7 +550,7 @@ void ArtiBlastRadius(player_t * player)
 		{
 			continue;	// no dormant creatures
 		}
-		if ((mo.Class == WraithBuried) && (mo.Translucency >= 100))
+		if ((mo.Class == WraithBuried) && mo.bHidden)
 		{
 			continue;	// no underground wraiths
 		}
@@ -596,13 +562,13 @@ void ArtiBlastRadius(player_t * player)
 		{
 			continue;
 		}
-		dist = MobjDist(*pmo, mo);
+		dist = MobjDist(self, mo);
 		if (dist > BLAST_RADIUS_DIST)
 		{
 			// Out of range
 			continue;
 		}
-		BlastMobj(pmo, &mo, BLAST_FULLSTRENGTH);
+		mo.Blast(self, BLAST_FULLSTRENGTH);
 	}
 }
 
@@ -621,7 +587,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	float y;
 	subsector_t *ss;
 	float an;
-	mobj_t *mo;
+	Actor A;
 	int i;
 
 	if (!players[playernum].mo)
@@ -649,9 +615,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	ss = PointInSubsector(x, y);
 	an = itof(45 * (mthing->angle / 45));
 
-	mo = P_SpawnMobj(x + 20.0 * cos(an), y + 20.0 * sin(an),
-		ss->sector->floorheight + TELEFOGHEIGHT, TeleportFog);
-	mo->PlaySound('Teleport', CHAN_VOICE);
+	A = Spawn(TeleportFog, vector(x + 20.0 * cos(an), y + 20.0 * sin(an),
+		ss->sector->floorheight + TELEFOGHEIGHT));
+	A.PlaySound('Teleport', CHAN_VOICE);
 
 	return true;
 }
@@ -659,6 +625,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/03/16 17:47:47  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.24  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

@@ -51,15 +51,15 @@
 
 void Actor::A_TeloSpawnA(void)
 {
-	mobj_t *mo;
+	Actor A;
 
-	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, TeleportOtherFX2);
-	if (mo)
+	A = Spawn(TeleportOtherFX2, Origin);
+	if (A)
 	{
-		mo->_Special1 = TELEPORT_LIFE;	// Lifetime countdown
-		mo->Angles.yaw = Angles.yaw;
-		mo->Owner = Owner;
-		mo->Velocity = Velocity / 2.0;
+		A._Special1 = TELEPORT_LIFE;	// Lifetime countdown
+		A.Angles.yaw = Angles.yaw;
+		A.Owner = Owner;
+		A.Velocity = Velocity / 2.0;
 	}
 }
 
@@ -71,15 +71,15 @@ void Actor::A_TeloSpawnA(void)
 
 void Actor::A_TeloSpawnB(void)
 {
-	mobj_t *mo;
+	Actor A;
 
-	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, TeleportOtherFX3);
-	if (mo)
+	A = Spawn(TeleportOtherFX3, Origin);
+	if (A)
 	{
-		mo->_Special1 = TELEPORT_LIFE;	// Lifetime countdown
-		mo->Angles.yaw = Angles.yaw;
-		mo->Owner = Owner;
-		mo->Velocity = Velocity / 2.0;
+		A._Special1 = TELEPORT_LIFE;	// Lifetime countdown
+		A.Angles.yaw = Angles.yaw;
+		A.Owner = Owner;
+		A.Velocity = Velocity / 2.0;
 	}
 }
 
@@ -91,15 +91,15 @@ void Actor::A_TeloSpawnB(void)
 
 void Actor::A_TeloSpawnC(void)
 {
-	mobj_t *mo;
+	Actor A;
 
-	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, TeleportOtherFX4);
-	if (mo)
+	A = Spawn(TeleportOtherFX4, Origin);
+	if (A)
 	{
-		mo->_Special1 = TELEPORT_LIFE;	// Lifetime countdown
-		mo->Angles.yaw = Angles.yaw;
-		mo->Owner = Owner;
-		mo->Velocity = Velocity / 2.0;
+		A._Special1 = TELEPORT_LIFE;	// Lifetime countdown
+		A.Angles.yaw = Angles.yaw;
+		A.Owner = Owner;
+		A.Velocity = Velocity / 2.0;
 	}
 }
 
@@ -111,15 +111,15 @@ void Actor::A_TeloSpawnC(void)
 
 void Actor::A_TeloSpawnD(void)
 {
-	mobj_t *mo;
+	Actor A;
 
-	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, TeleportOtherFX5);
-	if (mo)
+	A = Spawn(TeleportOtherFX5, Origin);
+	if (A)
 	{
-		mo->_Special1 = TELEPORT_LIFE;	// Lifetime countdown
-		mo->Angles.yaw = Angles.yaw;
-		mo->Owner = Owner;
-		mo->Velocity = Velocity / 2.0;
+		A._Special1 = TELEPORT_LIFE;	// Lifetime countdown
+		A.Angles.yaw = Angles.yaw;
+		A.Owner = Owner;
+		A.Velocity = Velocity / 2.0;
 	}
 }
 
@@ -140,6 +140,9 @@ void Actor::A_CheckTeleRing(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/03/16 17:47:47  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.12  2002/03/02 18:00:17  dj_jl
 //  Some smaller changes, beautification.
 //

@@ -118,7 +118,7 @@ void A_KoraxStep2(void)
 
 void A_KoraxChase(void)
 {
-	mobj_t *spot;
+	Actor spot;
 	int search;
 	int args[3];
 
@@ -128,11 +128,10 @@ void A_KoraxChase(void)
 	if (!bDidBelowHalfHealth && (Health <= (SpawnHealth / 2)))
 	{
 		search = 0;
-		spot = P_FindMobjFromTID(KORAX_FIRST_TELEPORT_TID, &search);
+		spot = FindMobjFromTID(KORAX_FIRST_TELEPORT_TID, &search);
 		if (spot)
 		{
-			P_Teleport(this, spot->Origin.x, spot->Origin.y,
-				spot->Angles.yaw, true);
+			Teleport(spot.Origin, spot.Angles.yaw, true);
 		}
 
 		StartACS(249, 0, &args[0], self, NULL, 0);
@@ -157,11 +156,10 @@ void A_KoraxChase(void)
 	{
 		if (P_Random() < 10)
 		{
-			spot = P_FindMobjFromTID(KORAX_TELEPORT_TID, &_Special1);
+			spot = FindMobjFromTID(KORAX_TELEPORT_TID, &_Special1);
 			if (spot)
 			{
-				P_Teleport(this, spot->Origin.x, spot->Origin.y,
-					spot->Angles.yaw, true);
+				Teleport(spot.Origin, spot.Angles.yaw, true);
 			}
 		}
 	}
@@ -353,7 +351,7 @@ void A_KoraxCommand(void)
 	x = Origin.x + KORAX_COMMAND_OFFSET * cos(ang);
 	y = Origin.y + KORAX_COMMAND_OFFSET * sin(ang);
 	z = Origin.z + KORAX_COMMAND_HEIGHT;
-	P_SpawnMobj(x, y, z, KoraxBolt);
+	Spawn(KoraxBolt, vector(x, y, z));
 
 	if (Health <= (SpawnHealth >> 1))
 	{
@@ -507,8 +505,8 @@ defaultproperties
 void Actor::KSpiritInit(Actor korax)
 {
 	int i;
-	mobj_t *tail;
-	mobj_t *next;
+	Actor tail;
+	Actor next;
 
 	Health = KORAX_SPIRIT_LIFETIME;
 
@@ -518,16 +516,16 @@ void Actor::KSpiritInit(Actor korax)
 	Args[1] = 0;	// initial look angle
 
 	// Spawn a tail for spirit
-	tail = P_SpawnMobj(Origin.x, Origin.y, Origin.z, HolyTail);
-	tail->SpecialMobj2 = this;	// parent
+	tail = Spawn(HolyTail, Origin);
+	tail.SpecialMobj2 = this;	// parent
 	for (i = 1; i < 3; i++)
 	{
-		next = P_SpawnMobj(Origin.x, Origin.y, Origin.z, HolyTail);
-		next->SetState(next->SpawnState + 1);
-		tail->_SpecialMobj1 = next;
+		next = Spawn(HolyTail, Origin);
+		next.SetState(next.SpawnState + 1);
+		tail._SpecialMobj1 = &next;
 		tail = next;
 	}
-	tail->_SpecialMobj1 = NULL;	// last tail bit
+	tail._SpecialMobj1 = NULL;	// last tail bit
 }
 
 //============================================================================
@@ -620,7 +618,7 @@ void Actor::A_KSpiritWeave(void)
 	weaveXY = (weaveXY + (P_Random() % 5)) & 63;
 	newX += cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	newY += sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
-	P_TryMove(this, newX, newY);
+	TryMove(newX, newY);
 	Origin.z -= FloatBobOffsets[weaveZ] * 2.0;
 	weaveZ = (weaveZ + (P_Random() % 5)) & 63;
 	Origin.z += FloatBobOffsets[weaveZ] * 2.0;
@@ -662,7 +660,7 @@ void Actor::A_KSpiritRoam(void)
 
 void Actor::A_KBoltRaise(void)
 {
-	mobj_t *mo;
+	Actor A;
 	float z;
 
 	// Spawn a child upward
@@ -670,10 +668,10 @@ void Actor::A_KBoltRaise(void)
 
 	if (z + KORAX_BOLT_HEIGHT < CeilingZ)
 	{
-		mo = P_SpawnMobj(Origin.x, Origin.y, z, KoraxBolt);
-		if (mo)
+		A = Spawn(KoraxBolt, vector(Origin.x, Origin.y, z));
+		if (A)
 		{
-			mo->_Special1 = KORAX_BOLT_LIFETIME;
+			A._Special1 = KORAX_BOLT_LIFETIME;
 		}
 	}
 	else
@@ -700,6 +698,9 @@ void Actor::A_KBolt(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/03/16 17:47:46  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.18  2002/03/02 17:58:36  dj_jl
 //  Created Pawn class as a base class for all creatures.
 //  Moved all monster classes into corresponding files.

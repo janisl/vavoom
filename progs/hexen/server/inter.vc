@@ -2297,8 +2297,6 @@ defaultproperties
 
 #define BONUSADD 	6
 
-void P_RemoveMobj(mobj_t * mobj);
-
 float ArmorMax[NUMCLASSES] = { 20.0, 18.0, 16.0, 1.0 };
 
 int pieceValueTrans[] = {
@@ -2533,12 +2531,12 @@ boolean PlayerPawn::GivePower(int power)
 {
 	if (power == pw_invulnerability)
 	{
-		if (Player->Powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		if (Player->Powers[power] > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Player->Powers[power] = ftoi(INVULNTIME * 35.0);
+		Player->Powers[power] = INVULNTIME;
 		bInvulnerable = true;
 		if (Player->PClass == PCLASS_MAGE)
 		{
@@ -2548,12 +2546,12 @@ boolean PlayerPawn::GivePower(int power)
 	}
 	if (power == pw_flight)
 	{
-		if (Player->Powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		if (Player->Powers[power] > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Player->Powers[power] = ftoi(FLIGHTTIME * 35.0);
+		Player->Powers[power] = FLIGHTTIME;
 		bFly = true;
 		bNoGravity = true;
 		if (Origin.z <= FloorZ)
@@ -2564,35 +2562,35 @@ boolean PlayerPawn::GivePower(int power)
 	}
 	if (power == pw_infrared)
 	{
-		if (Player->Powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		if (Player->Powers[power] > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Player->Powers[power] = ftoi(INFRATIME * 35.0);
+		Player->Powers[power] = INFRATIME;
 		return true;
 	}
 	if (power == pw_speed)
 	{
-		if (Player->Powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		if (Player->Powers[power] > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Player->Powers[power] = ftoi(SPEEDTIME * 35.0);
+		Player->Powers[power] = SPEEDTIME;
 		return true;
 	}
 	if (power == pw_minotaur)
 	{
 		// Doesn't matter if already have power, renew ticker
-		Player->Powers[power] = ftoi(MAULATORTIME * 35.0);
+		Player->Powers[power] = MAULATORTIME;
 		return true;
 	}
 	if (Player->Powers[power])
 	{
 		return false;	// already got it
 	}
-	Player->Powers[power] = 1;
+	Player->Powers[power] = 1.0;
 	return true;
 }
 
@@ -2711,7 +2709,7 @@ void Pickup::TouchSpecial(Actor Toucher)
 	}
 	if (Special)
 	{
-		ExecuteLineSpecial(Special, &Args[0], NULL, 0, &P);
+		ExecuteLineSpecial(Special, &Args[0], NULL, 0, P);
 		Special = 0;
 	}
 	if (deathmatch && !bDropped)
@@ -2720,7 +2718,7 @@ void Pickup::TouchSpecial(Actor Toucher)
 	}
 	else
 	{
-		P_RemoveMobj(this);
+		Remove();
 	}
 	P.Player->BonusCount += BONUSADD;
 	P.PlaySound('PickupItem', CHAN_ITEM);
@@ -2756,7 +2754,7 @@ void Artifact::TouchSpecial(Actor Toucher)
 	{
 		if (Special)
 		{
-			ExecuteLineSpecial(Special, &Args[0], NULL, 0, NULL);
+			ExecuteLineSpecial(Special, &Args[0], NULL, 0, none);
 			Special = 0;
 		}
 		P.Player->BonusCount += BONUSADD;
@@ -2774,7 +2772,7 @@ void Artifact::TouchSpecial(Actor Toucher)
 			if (!netgame || deathmatch)
 			{
 				// Remove puzzle items if not cooperative netplay
-				P_RemoveMobj(this);
+				Remove();
 			}
 		}
 	}
@@ -2887,7 +2885,7 @@ void WeaponPickup::TouchSpecial(Actor Toucher)
 	cprint(P.Player, weaponMessages[WeaponClass * 2 + WeaponType - 1]);
 	if (Special)
 	{
-		ExecuteLineSpecial(Special, &Args[0], NULL, 0, &P);
+		ExecuteLineSpecial(Special, &Args[0], NULL, 0, P);
 		Special = 0;
 	}
 
@@ -2899,7 +2897,7 @@ void WeaponPickup::TouchSpecial(Actor Toucher)
 		}
 		else
 		{
-			P_RemoveMobj(this);
+			Remove();
 		}
 	}
 
@@ -2987,7 +2985,7 @@ void WeaponPiece::TouchSpecial(Actor Toucher)
 	// Pick up the weapon piece
 	if (Special)
 	{
-		ExecuteLineSpecial(Special, &Args[0], NULL, 0, &P);
+		ExecuteLineSpecial(Special, &Args[0], NULL, 0, P);
 		Special = 0;
 	}
 	if (remove)
@@ -2998,7 +2996,7 @@ void WeaponPiece::TouchSpecial(Actor Toucher)
 		}
 		else
 		{
-			P_RemoveMobj(this);
+			Remove();
 		}
 	}
 	P.Player->BonusCount += BONUSADD;
@@ -3061,7 +3059,7 @@ void Armor::TouchSpecial(Actor Toucher)
 	cprint(P.Player, armorText[ArmorType]);
 	if (Special)
 	{
-		ExecuteLineSpecial(Special, &Args[0], NULL, 0, &P);
+		ExecuteLineSpecial(Special, &Args[0], NULL, 0, P);
 		Special = 0;
 	}
 	if (deathmatch && !bDropped)
@@ -3070,7 +3068,7 @@ void Armor::TouchSpecial(Actor Toucher)
 	}
 	else
 	{
-		P_RemoveMobj(this);
+		Remove();
 	}
 	P.Player->BonusCount += BONUSADD;
 	P.PlaySound('PickupItem', CHAN_ITEM);
@@ -3109,7 +3107,7 @@ void Mana::TouchSpecial(Actor Toucher)
 	cprint(P.Player, manaText[ManaType]);
 	if (Special)
 	{
-		ExecuteLineSpecial(Special, &Args[0], NULL, 0, &P);
+		ExecuteLineSpecial(Special, &Args[0], NULL, 0, P);
 		Special = 0;
 	}
 	if (deathmatch && !bDropped)
@@ -3118,7 +3116,7 @@ void Mana::TouchSpecial(Actor Toucher)
 	}
 	else
 	{
-		P_RemoveMobj(this);
+		Remove();
 	}
 	P.Player->BonusCount += BONUSADD;
 	P.PlaySound('PickupItem', CHAN_ITEM);
@@ -3157,7 +3155,7 @@ void Key::TouchSpecial(Actor Toucher)
 	cprint(P.Player, TextKeyMessages[KeyType]);
 	if (Special)
 	{
-		ExecuteLineSpecial(Special, &Args[0], NULL, 0, &P);
+		ExecuteLineSpecial(Special, &Args[0], NULL, 0, P);
 		Special = 0;
 	}
 	if (!netgame)
@@ -3169,7 +3167,7 @@ void Key::TouchSpecial(Actor Toucher)
 		}
 		else
 		{
-			P_RemoveMobj(this);
+			Remove();
 		}
 	}
 	P.Player->BonusCount += BONUSADD;
@@ -3179,6 +3177,9 @@ void Key::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/03/16 17:47:46  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.18  2002/03/12 19:19:16  dj_jl
 //  Pickup classes
 //

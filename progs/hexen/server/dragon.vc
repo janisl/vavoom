@@ -52,7 +52,7 @@ void A_DragonInitFlight(void)
 	do
 	{
 		// find the first tid identical to the dragon's tid
-		FlightTarget = *P_FindMobjFromTID(TID, &search);
+		FlightTarget = FindMobjFromTID(TID, &search);
 		if (search == -1)
 		{
 			SetState(SpawnState);
@@ -60,7 +60,7 @@ void A_DragonInitFlight(void)
 		}
 	}
 	while (FlightTarget == self);
-	P_RemoveMobjFromTIDList(this);
+	RemoveFromTIDList();
 }
 
 //============================================================================
@@ -80,7 +80,7 @@ void DragonSeek(float thresh, float turnMax)
 	int bestArg;
 	float bestAngle;
 	float angleToSpot, angleToTarget;
-	mobj_t *mo;
+	Actor A;
 	Actor oldTarget;
 
 	tempTarget = FlightTarget;
@@ -163,9 +163,9 @@ void DragonSeek(float thresh, float turnMax)
 					continue;
 				}
 				search = -1;
-				mo = P_FindMobjFromTID(tempTarget.Args[i], &search);
-				angleToSpot = atan2(mo->Origin.y - Origin.y,
-					mo->Origin.x - Origin.x);
+				A = FindMobjFromTID(tempTarget.Args[i], &search);
+				angleToSpot = atan2(A.Origin.y - Origin.y,
+					A.Origin.x - Origin.x);
 				delta = fabs(AngleMod180(angleToSpot - angleToTarget));
 				if (delta < bestAngle)
 				{
@@ -176,7 +176,7 @@ void DragonSeek(float thresh, float turnMax)
 			if (bestArg != -1)
 			{
 				search = -1;
-				FlightTarget = *P_FindMobjFromTID(tempTarget.Args[bestArg],
+				FlightTarget = FindMobjFromTID(tempTarget.Args[bestArg],
 					&search);
 			}
 		}
@@ -188,7 +188,7 @@ void DragonSeek(float thresh, float turnMax)
 			}
 			while (!tempTarget.Args[i]);
 			search = -1;
-			FlightTarget = *P_FindMobjFromTID(tempTarget.Args[i], &search);
+			FlightTarget = FindMobjFromTID(tempTarget.Args[i], &search);
 		}
 	}
 }
@@ -383,6 +383,9 @@ void Actor::A_DragonFX2(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/03/16 17:47:46  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.21  2002/03/02 17:58:36  dj_jl
 //  Created Pawn class as a base class for all creatures.
 //  Moved all monster classes into corresponding files.

@@ -217,15 +217,15 @@ void Actor::A_BridgeInit(void)
 	_Special1 = 0;
 
 	// Spawn triad into world
-	ball1 = SpawnActor(Origin, BridgeBall);
+	ball1 = Spawn(BridgeBall, Origin);
 	ball1.Args[0] = startangle;
 	ball1.Owner = self;
 
-	ball2 = SpawnActor(Origin, BridgeBall);
+	ball2 = Spawn(BridgeBall, Origin);
 	ball2.Args[0] = (startangle + 85) & 255;
 	ball2.Owner = self;
 
-	ball3 = SpawnActor(Origin, BridgeBall);
+	ball3 = Spawn(BridgeBall, Origin);
 	ball3.Args[0] = (startangle + 170) & 255;
 	ball3.Owner = self;
 
@@ -250,6 +250,9 @@ void Actor::A_BridgeRemove(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/03/16 17:47:46  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.16  2002/03/02 18:00:15  dj_jl
 //  Some smaller changes, beautification.
 //

@@ -54,26 +54,25 @@
 
 boolean A_LocalQuake(int *args)
 {
-	mobj_t *focus;
-	mobj_t *target;
+	Actor focus;
+	Actor target;
 	int lastfound = 0;
 	int success = false;
 
 	// Find all quake foci
 	do
 	{
-		target = P_FindMobjFromTID(args[4], &lastfound);
+		target = FindMobjFromTID(args[4], &lastfound);
 		if (target)
 		{
-			focus = P_SpawnMobj(target->Origin.x,
-				target->Origin.y, target->Origin.z, QuakeFocus);
+			focus = Spawn(QuakeFocus, target.Origin);
 			if (focus)
 			{
-				focus->Args[0] = args[0];
-				focus->Args[1] = args[1] >> 1;	// decremented every 2 tics
-				focus->Args[2] = args[2];
-				focus->Args[3] = args[3];
-				focus->Args[4] = args[4];
+				focus.Args[0] = args[0];
+				focus.Args[1] = args[1] >> 1;	// decremented every 2 tics
+				focus.Args[2] = args[2];
+				focus.Args[3] = args[3];
+				focus.Args[4] = args[4];
 				success = true;
 			}
 		}
@@ -139,6 +138,9 @@ void Actor::A_Quake(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/03/16 17:47:47  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.15  2002/02/26 17:49:49  dj_jl
 //  no message
 //

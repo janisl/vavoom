@@ -50,11 +50,11 @@ void UnarchivePlayer(player_t * player)
 
 //==========================================================================
 //
-//  mobj_t::Archive
+//  Actor::Archive
 //
 //==========================================================================
 
-void mobj_t::Archive(void)
+void Actor::Archive(void)
 {
 	if (bCorpse)
 	{
@@ -111,11 +111,11 @@ void mobj_t::Archive(void)
 
 //==========================================================================
 //
-//  mobj_t::Unarchive
+//  Actor::Unarchive
 //
 //==========================================================================
 
-void mobj_t::Unarchive(void)
+void Actor::Unarchive(void)
 {
 	switch (Class)
 	{
@@ -147,6 +147,9 @@ void mobj_t::Unarchive(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/03/16 17:47:47  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.15  2002/03/02 18:00:16  dj_jl
 //  Some smaller changes, beautification.
 //

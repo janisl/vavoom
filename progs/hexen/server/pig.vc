@@ -82,18 +82,18 @@ int UpdateMorphedMonster(int tics)
 	oldArgs[4] = Args[4];
 
 	P_UnsetThingPosition(self);
-	mo = SpawnActor(oldOrigin, originalClass);
+	mo = Spawn(originalClass, oldOrigin);
 
-	if (!P_TestMobjLocation(&mo))
+	if (!mo.TestLocation())
 	{
 		// Didn't fit
-		P_RemoveMobj(&mo);
+		mo.Remove();
 		P_SetThingPosition(self);
 		mo._Special1 = 5 * 35;	// Next try in 5 seconds
 		return false;
 	}
-		P_SetThingPosition(self);
-	P_RemoveMobjFromTIDList(this);
+	P_SetThingPosition(self);
+	RemoveFromTIDList();
 	SetState(S_FREETARGMOBJ);
 	mo.Angles.yaw = oldAngle;
 	mo.Target = oldEnemy;
@@ -104,9 +104,8 @@ int UpdateMorphedMonster(int tics)
 	mo.Args[2] = oldArgs[2];
 	mo.Args[3] = oldArgs[3];
 	mo.Args[4] = oldArgs[4];
-	P_InsertMobjIntoTIDList(&mo, oldTID);
-	fog = SpawnActor(oldOrigin + vector(0.0, 0.0, TELEFOGHEIGHT),
-		TeleportFog);
+	mo.InsertIntoTIDList(oldTID);
+	fog = Spawn(TeleportFog, oldOrigin + vector(0.0, 0.0, TELEFOGHEIGHT));
 	fog.PlaySound('Teleport', CHAN_VOICE);
 	return true;
 }
@@ -231,6 +230,9 @@ void Actor::A_PigPain(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/03/16 17:47:47  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.21  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

@@ -195,7 +195,7 @@ void Cheat_Morph(void)
 {
 	if (players[0].MorphTics)
 	{
-		UndoPlayerMorph(&players[0]);
+		PlayerPawn(*players[0].mo).UndoPlayerMorph();
 	}
 	else
 	{
@@ -266,6 +266,9 @@ void Cheat_Class(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/03/16 17:47:46  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.14  2002/03/12 19:21:24  dj_jl
 //  No need for linefeed in client-printing
 //

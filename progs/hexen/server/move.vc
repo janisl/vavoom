@@ -37,23 +37,22 @@
 
 //==========================================================================
 //
-//  P_TestMobjLocation
+//  Actor::TestLocation
 //
 //  Returns true if the mobj is not blocked by anything at its current
 // location, otherwise returns false.
 //
 //==========================================================================
 
-boolean P_TestMobjLocation(mobj_t * mobj)
+boolean Actor::TestLocation(void)
 {
-	if (!mobj->bColideWithThings && !mobj->bColideWithWorld)
+	if (!bColideWithThings && !bColideWithWorld)
 		return true;
 
-	if (mobj->CheckPosition(mobj->Origin))
+	if (CheckPosition(Origin))
 	{
 		// XY is ok, now check Z
-		if ((mobj->Origin.z < mobj->FloorZ) ||
-			(mobj->Origin.z + mobj->Height > mobj->CeilingZ))
+		if ((Origin.z < FloorZ) || (Origin.z + Height > CeilingZ))
 		{
 			// Bad Z
 			return false;
@@ -121,7 +120,7 @@ boolean Actor::Touch(MapObject InOther)
 					Other.Damage(self, Owner, damage);
 					if (P_Random() < 128)
 					{
-						P_SpawnMobj(Origin.x, Origin.y, Origin.z, HolyPuff);
+						Spawn(HolyPuff, Origin);
 						PlaySound('SpiritAttack', CHAN_VOICE);
 						if (Other.bCountKill && P_Random() < 128
 							&& !GetSoundPlayingInfo(Other,
@@ -247,28 +246,28 @@ boolean Actor::Touch(MapObject InOther)
 		}
 		else if (Class == LightningZap)
 		{
-			mobj_t *lmo;
+			Actor lmo;
 
 			if (Other.bShootable && Other != Owner)
 			{
-				lmo = SpecialMobj2;
+				lmo = *SpecialMobj2;
 				if (lmo)
 				{
-					if (lmo->Class == LightningFloor)
+					if (lmo.Class == LightningFloor)
 					{
-						if (lmo->SpecialMobj2 &&
-							!lmo->SpecialMobj2->_SpecialMobj1)
+						if (lmo.SpecialMobj2 &&
+							!lmo.SpecialMobj2->_SpecialMobj1)
 						{
-							lmo->SpecialMobj2->_SpecialMobj1 = &Other;
+							lmo.SpecialMobj2->_SpecialMobj1 = &Other;
 						}
 					}
-					else if (!lmo->_SpecialMobj1)
+					else if (!lmo._SpecialMobj1)
 					{
-						lmo->_SpecialMobj1 = &Other;
+						lmo._SpecialMobj1 = &Other;
 					}
 					if (!(level->tictime & 3))
 					{
-						lmo->Health--;
+						lmo.Health--;
 					}
 				}
 			}
@@ -372,11 +371,11 @@ void Actor::CheckForPushSpecial(line_t * line, int side)
 	{
 		if (bActivatePushWall)
 		{
-			P_ActivateLine(line, this, side, SPAC_PUSH);
+			P_ActivateLine(line, self, side, SPAC_PUSH);
 		}
 		else if (bActivateImpact)
 		{
-			P_ActivateLine(line, this, side, SPAC_IMPACT);
+			P_ActivateLine(line, self, side, SPAC_IMPACT);
 		}
 	}
 }
@@ -402,21 +401,21 @@ float saved_tmfloorz;
 
 //==========================================================================
 //
-//  PushLine
+//  Actor::PushLine
 //
 //==========================================================================
 
-void PushLine(mobj_t * thing)
+void Actor::PushLine(void)
 {
-	if (!thing->bTeleport && thing->bColideWithWorld)
+	if (bColideWithWorld)
 	{
 		int numSpecHitTemp;
 		line_t *ld;
 		int side;
 
-		if (thing->bBlasted)
+		if (bBlasted)
 		{
-			thing->Damage(none, none, ftoi(thing->Mass) >> 5);
+			Damage(none, none, ftoi(Mass) >> 5);
 		}
 		numSpecHitTemp = tmtrace->NumSpecHit;
 		while (numSpecHitTemp > 0)
@@ -424,22 +423,21 @@ void PushLine(mobj_t * thing)
 			numSpecHitTemp--;
 			// see if the line was crossed
 			ld = tmtrace->SpecHit[numSpecHitTemp];
-			side = PointOnPlaneSide(thing->Origin, ld);
-			thing->CheckForPushSpecial(ld, side);
+			side = PointOnPlaneSide(Origin, ld);
+			CheckForPushSpecial(ld, side);
 		}
 	}
 }
 
 //==========================================================================
 //
-//  P_TryMove
+//  Actor::TryMove
 //
-//  Attempt to move to a new position, crossing special lines unless
-// bTeleport is set.
+//  Attempt to move to a new position, crossing special lines.
 //
 //==========================================================================
 
-boolean P_TryMove(mobj_t * thing, float x, float y)
+boolean Actor::TryMove(float x, float y)
 {
 	boolean check;
 	TVec oldorg;
@@ -447,75 +445,73 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	int oldside;
 	line_t *ld;
 
-	check = thing->CheckRelPosition(vector(x, y, thing->Origin.z));
+	check = CheckRelPosition(vector(x, y, Origin.z));
 	floatok = false;
 	saved_tmfloorz = tmtrace->FloorZ;
 	if (!check)
 	{
-		if (!tmtrace->BlockingMobj || tmtrace->BlockingMobj.bIsPlayer || !thing->bIsPlayer ||
-			tmtrace->BlockingMobj.Origin.z + tmtrace->BlockingMobj.Height - thing->Origin.z >
-			24.0
+		if (!tmtrace->BlockingMobj || tmtrace->BlockingMobj.bIsPlayer ||
+			!bIsPlayer || tmtrace->BlockingMobj.Origin.z +
+			tmtrace->BlockingMobj.Height - Origin.z > 24.0
 			|| (tmtrace->BlockingMobj.Sector->ceilingheight -
-		   (tmtrace->BlockingMobj.Origin.z + tmtrace->BlockingMobj.Height) < thing->Height)
+		   (tmtrace->BlockingMobj.Origin.z + tmtrace->BlockingMobj.Height) < Height)
 			|| (tmtrace->CeilingZ - (tmtrace->BlockingMobj.Origin.z + tmtrace->BlockingMobj.Height) <
-				thing->Height))
+				Height))
 		{
-			PushLine(thing);
+			PushLine();
 			return false;
 		}
 	}
 
-	if (thing->bColideWithWorld)
+	if (bColideWithWorld)
 	{
-		if (tmtrace->CeilingZ - tmtrace->FloorZ < thing->Height)
+		if (tmtrace->CeilingZ - tmtrace->FloorZ < Height)
 		{
 			// Doesn't fit
-			PushLine(thing);
+			PushLine();
 			return false;
 		}
 
 		floatok = true;
 
-		if (!thing->bTeleport &&
-			tmtrace->CeilingZ - thing->Origin.z < thing->Height &&
-			thing->Class != LightningCeiling && !thing->bFly)
+		if (tmtrace->CeilingZ - Origin.z < Height &&
+			Class != LightningCeiling && !bFly)
 		{
 			// mobj must lower itself to fit
-			PushLine(thing);
+			PushLine();
 			return false;
 		}
-		if (thing->bFly)
+		if (bFly)
 		{
-			if (thing->Origin.z + thing->Height > tmtrace->CeilingZ)
+			if (Origin.z + Height > tmtrace->CeilingZ)
 			{
-				thing->Velocity.z = -8.0 * 35.0;
-				PushLine(thing);
+				Velocity.z = -8.0 * 35.0;
+				PushLine();
 				return false;
 			}
-			else if (thing->Origin.z < tmtrace->FloorZ
+			else if (Origin.z < tmtrace->FloorZ
 				&& tmtrace->FloorZ - tmtrace->DropOffZ > 24.0)
 			{
-				thing->Velocity.z = 8.0 * 35.0;
-				PushLine(thing);
+				Velocity.z = 8.0 * 35.0;
+				PushLine();
 				return false;
 			}
 		}
-		if (!thing->bTeleport
-			// The Minotaur floor fire (MinotaurFloorFire1) can step up any amount
-			&& thing->Class != MinotaurFloorFire1 && thing->Class != LightningFloor
-			&& tmtrace->FloorZ - thing->Origin.z > 24.0)
+		// The Minotaur floor fire (MinotaurFloorFire1) can step up any amount
+		if (Class != MinotaurFloorFire1 && Class != LightningFloor &&
+			tmtrace->FloorZ - Origin.z > 24.0)
 		{
-			PushLine(thing);
+			PushLine();
 			return false;
 		}
-		if (!thing->bDropOff && !thing->bFloat &&
-			(tmtrace->FloorZ - tmtrace->DropOffZ > 24.0) && !thing->bBlasted)
+		if (!bDropOff && !bFloat &&
+			(tmtrace->FloorZ - tmtrace->DropOffZ > 24.0) && !bBlasted)
 		{
 			// Can't move over a dropoff unless it's been blasted
 			return false;
 		}
-		if (thing->bCantLeaveFloorpic && (tmtrace->Floor->pic != thing->Floor->pic
-				|| tmtrace->FloorZ != thing->Origin.z))
+		if (bCantLeaveFloorpic && (tmtrace->Floor->pic != Floor->pic
+				|| tmtrace->FloorZ != Origin.z))
 		{
 			// must stay within a sector of a certain floor type
 			return false;
@@ -524,58 +520,58 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 
 	// the move is ok,
 	// so link the thing into its new position
-	P_UnsetThingPosition(*thing);
+	P_UnsetThingPosition(self);
 
-	oldorg = thing->Origin;
-	thing->Origin.x = x;
-	thing->Origin.y = y;
+	oldorg = Origin;
+	Origin.x = x;
+	Origin.y = y;
 
-	P_SetThingPosition(*thing);
-	thing->Floor = tmtrace->Floor;
-	thing->Ceiling = tmtrace->Ceiling;
-	thing->FloorZ = tmtrace->FloorZ;
-	thing->CeilingZ = tmtrace->CeilingZ;
+	P_SetThingPosition(self);
+	Floor = tmtrace->Floor;
+	Ceiling = tmtrace->Ceiling;
+	FloorZ = tmtrace->FloorZ;
+	CeilingZ = tmtrace->CeilingZ;
 
-	if (thing->bFloorClip)
+	if (bFloorClip)
 	{
-		if (thing->Origin.z == thing->Sector->floorheight &&
-			thing->GetFloorType() >= FLOOR_LIQUID)
+		if (Origin.z == Sector->floorheight &&
+			GetFloorType() >= FLOOR_LIQUID)
 		{
-			thing->FloorClip = 10.0;
+			FloorClip = 10.0;
 		}
 		else
 		{
-			thing->FloorClip = 0.0;
+			FloorClip = 0.0;
 		}
 	}
 
 	//
 	// if any special lines were hit, do the effect
 	//
-	if (!thing->bTeleport && thing->bColideWithWorld)
+	if (bColideWithWorld)
 	{
 		while (tmtrace->NumSpecHit > 0)
 		{
 			tmtrace->NumSpecHit--;
 			// see if the line was crossed
 			ld = tmtrace->SpecHit[tmtrace->NumSpecHit];
-			side = PointOnPlaneSide(thing->Origin, ld);
+			side = PointOnPlaneSide(Origin, ld);
 			oldside = PointOnPlaneSide(oldorg, ld);
 			if (side != oldside)
 			{
 				if (ld->special)
 				{
-					if (thing->bIsPlayer)
+					if (bIsPlayer)
 					{
-						P_ActivateLine(ld, thing, oldside, SPAC_CROSS);
+						P_ActivateLine(ld, self, oldside, SPAC_CROSS);
 					}
-					else if (thing->bActivateMCross)
+					else if (bActivateMCross)
 					{
-						P_ActivateLine(ld, thing, oldside, SPAC_MCROSS);
+						P_ActivateLine(ld, self, oldside, SPAC_MCROSS);
 					}
-					else if (thing->bActivatePCross)
+					else if (bActivatePCross)
 					{
-						P_ActivateLine(ld, thing, oldside, SPAC_PCROSS);
+						P_ActivateLine(ld, self, oldside, SPAC_PCROSS);
 					}
 				}
 			}
@@ -588,6 +584,9 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/03/16 17:47:47  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.26  2002/03/12 19:19:17  dj_jl
 //  Pickup classes
 //

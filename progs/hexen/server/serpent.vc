@@ -146,7 +146,7 @@ void A_SerpentChase(void)
 	}
 	if (Sector->floor.pic != oldFloor)
 	{
-		P_TryMove(this, oldX, oldY);
+		TryMove(oldX, oldY);
 		NewChaseDir();
 	}
 
@@ -773,6 +773,9 @@ void Actor::A_DelayGib(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/03/16 17:47:47  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.21  2002/03/02 17:58:36  dj_jl
 //  Created Pawn class as a base class for all creatures.
 //  Moved all monster classes into corresponding files.

@@ -106,7 +106,7 @@ void A_ThrustRaise(void)
 	// Lose the dirt clump
 	if ((FloorClip < Height) && SpawnedDirt)
 	{
-		P_RemoveMobj(&SpawnedDirt);
+		SpawnedDirt.Remove();
 		SpawnedDirt = none;
 	}
 
@@ -160,7 +160,7 @@ void A_ThrustBlock(void)
 void A_ThrustImpale(void)
 {
 	// Impale all shootables in radius
-	PIT_ThrustSpike(this);
+	PIT_ThrustSpike(self);
 }
 
 __states__
@@ -275,6 +275,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/03/16 17:47:47  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.15  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

@@ -313,7 +313,7 @@ void Actor::A_BishopMissileWeave(void)
 	weaveXY = (weaveXY + 2) & 63;
 	newX += cos(angle) * FloatBobOffsets[weaveXY] * 2.0;
 	newY += sin(angle) * FloatBobOffsets[weaveXY] * 2.0;
-	P_TryMove(this, newX, newY);
+	TryMove(newX, newY);
 	Origin.z -= FloatBobOffsets[weaveZ];
 	weaveZ = (weaveZ + 2) & 63;
 	Origin.z += FloatBobOffsets[weaveZ];
@@ -334,6 +334,9 @@ void Actor::A_BishopMissileSeek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/03/16 17:47:46  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.20  2002/03/02 17:58:36  dj_jl
 //  Created Pawn class as a base class for all creatures.
 //  Moved all monster classes into corresponding files.

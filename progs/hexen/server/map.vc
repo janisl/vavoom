@@ -171,48 +171,48 @@ boolean Actor::HeightClip(void)
 //
 //==========================================================================
 
-boolean PIT_ChangeSector(MapObject Other)
+boolean PIT_ChangeSector(MapObject InOther)
 {
-	mobj_t *mo;
-	mobj_t *thing;
+	Actor B;
+	Actor Other;
 
-	thing = &Actor(Other);
-	if (thing->HeightClip())
+	Other = Actor(InOther);
+	if (Other.HeightClip())
 	{
 		// keep checking
 		return true;
 	}
 
 	// crunch bodies to giblets
-	if (thing->bCorpse && (thing->Health <= 0))
+	if (Other.bCorpse && (Other.Health <= 0))
 	{
-		if (thing->bNoBlood)
+		if (Other.bNoBlood)
 		{
-			P_RemoveMobj(thing);
+			Other.Remove();
 		}
 		else
 		{
-			if (thing->StateNum != S_GIBS1)
+			if (Other.StateNum != S_GIBS1)
 			{
-				thing->SetState(S_GIBS1);
-				thing->Height = 0.0;
-				thing->Radius = 0.0;
-				thing->PlaySound('PlayerFallingSplat', CHAN_VOICE);
+				Other.SetState(S_GIBS1);
+				Other.Height = 0.0;
+				Other.Radius = 0.0;
+				Other.PlaySound('PlayerFallingSplat', CHAN_VOICE);
 			}
 		}
 		return true;	// keep checking
 	}
 
 	// crunch dropped items
-	if (thing->bDropped)
+	if (Other.bDropped)
 	{
-		P_RemoveMobj(thing);
+		Other.Remove();
 
 		// keep checking
 		return true;
 	}
 
-	if (!thing->bShootable)
+	if (!Other.bShootable)
 	{
 		// assume it is bloody gibs or something
 		return true;
@@ -220,15 +220,15 @@ boolean PIT_ChangeSector(MapObject Other)
 
 	if (crushchange && !(level->tictime & 3))
 	{
-		thing->Damage(none, none, crushchange);
+		Other.Damage(none, none, crushchange);
 
 		// spray blood in a random direction
-		if (!thing->bNoBlood && !thing->bInvulnerable)
+		if (!Other.bNoBlood && !Other.bInvulnerable)
 		{
-			mo = P_SpawnMobj(thing->Origin.x, thing->Origin.y,
-				thing->Origin.z + thing->Height / 2.0, Blood);
-			mo->Velocity.x = (Random() - Random()) * 16.0 * 35.0;
-			mo->Velocity.y = (Random() - Random()) * 16.0 * 35.0;
+			B = Spawn(Blood, Other.Origin +
+				vector(0.0, 0.0, Other.Height / 2.0));
+			B.Velocity.x = (Random() - Random()) * 16.0 * 35.0;
+			B.Velocity.y = (Random() - Random()) * 16.0 * 35.0;
 		}
 	}
 
@@ -349,7 +349,7 @@ boolean PTR_UseTraverse(intercept_t * in)
 	if (PointOnPlaneSide(usething.Origin, in->line) == 1)
 		return false;	// don't use back sides
 
-	P_ActivateLine(in->line, &usething, 0, SPAC_USE);
+	P_ActivateLine(in->line, usething, 0, SPAC_USE);
 
 	return false;	// can't use for than one special line in a row
 }
@@ -387,7 +387,7 @@ void P_UseLines(player_t * player)
 
 #define USE_PUZZLE_ITEM_SPECIAL 129
 
-mobj_t *PuzzleItemUser;
+Actor PuzzleItemUser;
 int PuzzleItemType;
 boolean PuzzleActivated;
 TVec PuzzleUseDir;
@@ -408,7 +408,7 @@ boolean PTR_PuzzleItemTraverse(intercept_t * in)
 	{
 		// Check line
 		hit_point =
-			PuzzleItemUser->Origin + (USERANGE * in->frac) * PuzzleUseDir;
+			PuzzleItemUser.Origin + (USERANGE * in->frac) * PuzzleUseDir;
 		if (in->line->special != USE_PUZZLE_ITEM_SPECIAL)
 		{
 			open = LineOpenings(in->line, hit_point);
@@ -417,9 +417,9 @@ boolean PTR_PuzzleItemTraverse(intercept_t * in)
 				name sound;
 
 				sound = 'None';
-				if (PuzzleItemUser->bIsPlayer)
+				if (PuzzleItemUser.bIsPlayer)
 				{
-					switch (PuzzleItemUser->Player->PClass)
+					switch (PuzzleItemUser.Player->PClass)
 					{
 					case PCLASS_FIGHTER:
 						sound = 'PuzzleFailFighter';
@@ -432,12 +432,12 @@ boolean PTR_PuzzleItemTraverse(intercept_t * in)
 						break;
 					}
 				}
-				PuzzleItemUser->PlaySound(sound, CHAN_VOICE);
+				PuzzleItemUser.PlaySound(sound, CHAN_VOICE);
 				return false;	// can't use through a wall
 			}
 			return true;	// Continue searching
 		}
-		if (PointOnPlaneSide(PuzzleItemUser->Origin, in->line) == 1)
+		if (PointOnPlaneSide(PuzzleItemUser.Origin, in->line) == 1)
 		{
 			// Don't use back sides
 			return false;
@@ -448,7 +448,7 @@ boolean PTR_PuzzleItemTraverse(intercept_t * in)
 			return false;
 		}
 		StartACS(in->line->arg2, 0, &in->line->arg3,
-			*PuzzleItemUser, in->line, 0);
+			PuzzleItemUser, in->line, 0);
 		in->line->special = 0;
 		PuzzleActivated = true;
 		return false;	// Stop searching
@@ -465,7 +465,7 @@ boolean PTR_PuzzleItemTraverse(intercept_t * in)
 		// Item type doesn't match
 		return true;
 	}
-	StartACS(mobj.Args[1], 0, &mobj.Args[2], *PuzzleItemUser, NULL, 0);
+	StartACS(mobj.Args[1], 0, &mobj.Args[2], PuzzleItemUser, NULL, 0);
 	mobj.Special = 0;
 	PuzzleActivated = true;
 	return false;	// Stop searching
@@ -484,7 +484,7 @@ boolean P_UsePuzzleItem(player_t * player, int itemType)
 	float x1, y1, x2, y2;
 
 	PuzzleItemType = itemType;
-	PuzzleItemUser = player->mo;
+	PuzzleItemUser = *player->mo;
 	PuzzleActivated = false;
 	AngleVector(&player->mo->Angles, &PuzzleUseDir);
 	x1 = player->mo->Origin.x;
@@ -502,7 +502,7 @@ boolean P_UsePuzzleItem(player_t * player, int itemType)
 //
 //**************************************************************************
 
-mobj_t *aim_thing;
+Actor aim_thing;
 
 // Height if not aiming up or down
 // ???: use slope for monsters?
@@ -545,7 +545,7 @@ boolean PTR_AimTraverse(intercept_t * in)
 		// A two sided line will restrict
 		// the possible target ranges.
 		dist = aim_range * in->frac;
-		hit_point = aim_thing->Origin + dist * aim_dir;
+		hit_point = aim_thing.Origin + dist * aim_dir;
 		open = LineOpenings(li, hit_point);
 		open = FindOpening(open, hit_point.z, hit_point.z);
 
@@ -575,7 +575,7 @@ boolean PTR_AimTraverse(intercept_t * in)
 
 	// shoot a thing
 	th = Actor(in->Thing);
-	if (th == *aim_thing)
+	if (th == aim_thing)
 		return true;	// can't shoot self
 
 	if (!th.bShootable)
@@ -607,7 +607,7 @@ boolean PTR_AimTraverse(intercept_t * in)
 		thingbottomslope = aim_bottomslope;
 
 	aim_slope = (thingtopslope + thingbottomslope) / 2.0;
-	linetarget = &th;
+	linetarget = th;
 
 	return false;	// don't go any farther
 }
@@ -618,7 +618,7 @@ boolean PTR_AimTraverse(intercept_t * in)
 //
 //==========================================================================
 
-void AimLineAttack(mobj_t * t1, TAVec * angles, float distance)
+void AimLineAttack(Actor t1, TAVec * angles, float distance)
 {
 	float x2;
 	float y2;
@@ -628,9 +628,9 @@ void AimLineAttack(mobj_t * t1, TAVec * angles, float distance)
 	aim_thing = t1;
 
 	AngleVector(angles, &aim_dir);
-	x2 = t1->Origin.x + distance * aim_dir.x;
-	y2 = t1->Origin.y + distance * aim_dir.y;
-	aim_z = t1->Origin.z + t1->Height / 2.0 + 8.0 - t1->FloorClip;
+	x2 = t1.Origin.x + distance * aim_dir.x;
+	y2 = t1.Origin.y + distance * aim_dir.y;
+	aim_z = t1.Origin.z + t1.Height / 2.0 + 8.0 - t1.FloorClip;
 	aim_range2d =
 		Length(vector(distance * aim_dir.x, distance * aim_dir.y, 0.0));
 
@@ -645,9 +645,9 @@ void AimLineAttack(mobj_t * t1, TAVec * angles, float distance)
 	aim_bottomslope = tan(botangle);
 
 	aim_range = distance;
-	linetarget = NULL;
+	linetarget = none;
 
-	P_PathTraverse(t1->Origin.x, t1->Origin.y, x2, y2,
+	P_PathTraverse(t1.Origin.x, t1.Origin.y, x2, y2,
 		PT_ADDLINES | PT_ADDTHINGS, 'PTR_AimTraverse');
 
 	if (linetarget)
@@ -662,7 +662,7 @@ void AimLineAttack(mobj_t * t1, TAVec * angles, float distance)
 //
 //**************************************************************************
 
-mobj_t *shoot_thing;
+Actor shoot_thing;
 float shoot_range;
 TVec shoot_origin;
 TVec shoot_dir;
@@ -847,7 +847,7 @@ boolean PTR_ShootTraverse(intercept_t * in)
 	// shoot a thing
 	th = Actor(in->Thing);
 
-	if (th == *shoot_thing)
+	if (th == shoot_thing)
 		return true;	// can't shoot self
 
 	if (!th.bShootable)
@@ -890,11 +890,11 @@ boolean PTR_ShootTraverse(intercept_t * in)
 		if (PuffType == FlamePuff2)
 		{
 			// Cleric FlameStrike does fire damage
-			th.Damage(*LavaInflictor, *shoot_thing, la_damage);
+			th.Damage(LavaInflictor, shoot_thing, la_damage);
 		}
 		else
 		{
-			th.Damage(*shoot_thing, *shoot_thing, la_damage);
+			th.Damage(shoot_thing, shoot_thing, la_damage);
 		}
 	}
 
@@ -910,22 +910,22 @@ boolean PTR_ShootTraverse(intercept_t * in)
 //
 //==========================================================================
 
-int LineAttack(mobj_t * t1, TVec * dir, float distance, int damage)
+int LineAttack(Actor t1, TVec * dir, float distance, int damage)
 {
 	TVec dst;
 
 	shoot_thing = t1;
 	la_damage = damage;
 
-	shoot_origin = t1->Origin;
-	shoot_origin.z += t1->Height * 0.5 + 8.0 - t1->FloorClip;
+	shoot_origin = t1.Origin;
+	shoot_origin.z += t1.Height * 0.5 + 8.0 - t1.FloorClip;
 
 	shoot_dir = *dir;
 	shoot_range = distance;
 
 	dst = shoot_origin + shoot_range * shoot_dir;
 	linestart = shoot_origin;
-	if (!P_PathTraverse(t1->Origin.x, t1->Origin.y, dst.x, dst.y,
+	if (!P_PathTraverse(t1.Origin.x, t1.Origin.y, dst.x, dst.y,
 			PT_ADDLINES | PT_ADDTHINGS, 'PTR_ShootTraverse'))
 	{
 		return false;
@@ -940,8 +940,8 @@ int LineAttack(mobj_t * t1, TVec * dir, float distance, int damage)
 //
 //**************************************************************************
 
-mobj_t *bombsource;
-mobj_t *bombspot;
+Actor bombsource;
+Actor bombspot;
 int bombdamage;
 float bombdistance;
 boolean DamageSource;
@@ -968,19 +968,19 @@ boolean PIT_RadiusAttack(MapObject Other)
 //		// Bosses take no damage from PIT_RadiusAttack
 //      return true;
 //  }
-	if (!DamageSource && Other == *bombsource)
+	if (!DamageSource && Other == bombsource)
 	{
 		// don't damage the source of the explosion
 		return true;
 	}
 #if 0
-	if (abs(ftoi(Other.Origin.z - bombspot->Origin.z)) > 2 * bombdistance)
+	if (abs(ftoi(Other.Origin.z - bombspot.Origin.z)) > 2 * bombdistance)
 	{
 		// too high/low
 		return true;
 	}
 #endif
-	dist = Length(MobjCenter(Other) - MobjCenter((*bombspot))) - Other.Radius;
+	dist = Length(MobjCenter(Other) - MobjCenter(bombspot)) - Other.Radius;
 	if (dist < 0.0)
 	{
 		dist = 0.0;
@@ -990,7 +990,7 @@ boolean PIT_RadiusAttack(MapObject Other)
 		// Out of range
 		return true;
 	}
-	if (P_CheckSight(Other, *bombspot))
+	if (P_CheckSight(Other, bombspot))
 	{
 		// OK to damage, target is in direct path
 		damage = (bombdamage * ftoi(bombdistance - dist) /
@@ -999,7 +999,7 @@ boolean PIT_RadiusAttack(MapObject Other)
 		{
 			damage >>= 2;
 		}
-		Actor(Other).Damage(*bombspot, *bombsource, damage);
+		Actor(Other).Damage(bombspot, bombsource, damage);
 	}
 	return true;
 }
@@ -1012,15 +1012,15 @@ boolean PIT_RadiusAttack(MapObject Other)
 //
 //==========================================================================
 
-void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage,
+void P_RadiusAttack(Actor spot, Actor source, int damage,
 	float distance, boolean damageSource)
 {
 	int x, y, xl, xh, yl, yh;
 
-	yh = MapBlock(spot->Origin.y + distance - level->bmaporgy);
-	yl = MapBlock(spot->Origin.y - distance - level->bmaporgy);
-	xh = MapBlock(spot->Origin.x + distance - level->bmaporgx);
-	xl = MapBlock(spot->Origin.x - distance - level->bmaporgx);
+	yh = MapBlock(spot.Origin.y + distance - level->bmaporgy);
+	yl = MapBlock(spot.Origin.y - distance - level->bmaporgy);
+	xh = MapBlock(spot.Origin.x + distance - level->bmaporgx);
+	xl = MapBlock(spot.Origin.x - distance - level->bmaporgx);
 	bombspot = spot;
 	bombsource = source;
 	bombdamage = damage;
@@ -1041,7 +1041,7 @@ void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage,
 //
 //**************************************************************************
 
-mobj_t *tsthing;
+Actor tsthing;
 
 //==========================================================================
 //
@@ -1056,19 +1056,19 @@ boolean PIT_ThrustStompThing(MapObject Other)
 	if (!Actor(Other).bShootable)
 		return true;
 
-	blockdist = Other.Radius + tsthing->Radius;
-	if (fabs(Other.Origin.x - tsthing->Origin.x) >= blockdist ||
-		fabs(Other.Origin.y - tsthing->Origin.y) >= blockdist ||
-		(Other.Origin.z > tsthing->Origin.z + tsthing->Height))
+	blockdist = Other.Radius + tsthing.Radius;
+	if (fabs(Other.Origin.x - tsthing.Origin.x) >= blockdist ||
+		fabs(Other.Origin.y - tsthing.Origin.y) >= blockdist ||
+		(Other.Origin.z > tsthing.Origin.z + tsthing.Height))
 	{
 		return true;	// didn't hit it
 	}
 
-	if (Other == *tsthing)
+	if (Other == tsthing)
 		return true;	// don't clip against self
 
-	Actor(Other).Damage(*tsthing, *tsthing, 10001);
-	tsthing->Args[1] = 1;	// Mark thrust thing as bloody
+	Actor(Other).Damage(tsthing, tsthing, 10001);
+	tsthing.Args[1] = 1;	// Mark thrust thing as bloody
 
 	return true;
 }
@@ -1079,17 +1079,17 @@ boolean PIT_ThrustStompThing(MapObject Other)
 //
 //==========================================================================
 
-void PIT_ThrustSpike(mobj_t * actor)
+void PIT_ThrustSpike(Actor actor)
 {
 	int xl, xh, yl, yh, bx, by;
 	float x0, x2, y0, y2;
 
 	tsthing = actor;
 
-	x0 = actor->Origin.x - actor->Radius;
-	x2 = actor->Origin.x + actor->Radius;
-	y0 = actor->Origin.y - actor->Radius;
-	y2 = actor->Origin.y + actor->Radius;
+	x0 = actor.Origin.x - actor.Radius;
+	x2 = actor.Origin.x + actor.Radius;
+	y0 = actor.Origin.y - actor.Radius;
+	y2 = actor.Origin.y + actor.Radius;
 
 	xl = MapBlock(x0 - level->bmaporgx - MAXRADIUS);
 	xh = MapBlock(x2 - level->bmaporgx + MAXRADIUS);
@@ -1105,6 +1105,9 @@ void PIT_ThrustSpike(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/03/16 17:47:46  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.24  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

@@ -53,36 +53,36 @@ void A_CMaceAttack(void)
 	{
 		angles = Player->mo->Angles;
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
-		AimLineAttack(Player->mo, &angles, 2.0 * MELEERANGE);
+		AimLineAttack(*Player->mo, &angles, 2.0 * MELEERANGE);
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (LineAttack(Player->mo, &vforward, 2.0 * MELEERANGE, damage))
+			if (LineAttack(*Player->mo, &vforward, 2.0 * MELEERANGE, damage))
 			{
 				Player->mo->PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
-			AdjustPlayerAngle(Player->mo);
+			PlayerPawn(*Player->mo).AdjustPlayerAngle();
 			return;
 		}
 		angles = Player->mo->Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
-		AimLineAttack(Player->mo, &angles, 2.0 * MELEERANGE);
+		AimLineAttack(*Player->mo, &angles, 2.0 * MELEERANGE);
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (LineAttack(Player->mo, &vforward, 2.0 * MELEERANGE, damage))
+			if (LineAttack(*Player->mo, &vforward, 2.0 * MELEERANGE, damage))
 			{
 				Player->mo->PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
-			AdjustPlayerAngle(Player->mo);
+			PlayerPawn(*Player->mo).AdjustPlayerAngle();
 			return;
 		}
 	}
 	// didn't find any creatures, so try to strike any walls
 	avcpy(Player->mo->Angles, angles);
-	AimLineAttack(Player->mo, &angles, MELEERANGE);
+	AimLineAttack(*Player->mo, &angles, MELEERANGE);
 	AngleVector(&angles, &vforward);
-	if (LineAttack(Player->mo, &vforward, MELEERANGE, damage))
+	if (LineAttack(*Player->mo, &vforward, MELEERANGE, damage))
 	{
 		Player->mo->PlaySound('FighterHammerMiss', CHAN_WEAPON);
 	}
@@ -174,33 +174,33 @@ void A_CStaffCheckBlink(void)
 
 void A_CStaffCheck(void)
 {
-	mobj_t *pmo;
+	Actor pmo;
 	int damage;
 	int newLife;
 	int i;
 	TAVec angles;
 	TVec vforward;
 
-	pmo = Player->mo;
+	pmo = *Player->mo;
 	damage = 20 + (P_Random() & 15);
 	PuffType = ClericStaffPuff;
 	for (i = 0; i < 3; i++)
 	{
-		angles = pmo->Angles;
+		angles = pmo.Angles;
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
 		AimLineAttack(pmo, &angles, 3.0 * MELEERANGE / 2.0);
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
 			LineAttack(pmo, &vforward, 1.5 * MELEERANGE, damage);
-			pmo->Angles.yaw = atan2(linetarget->Origin.y - pmo->Origin.y,
-				linetarget->Origin.x - pmo->Origin.x);
-			if ((linetarget->bIsPlayer || linetarget->bCountKill) &&
-				!linetarget->bDormant && !linetarget->bInvulnerable)
+			pmo.Angles.yaw = atan2(linetarget.Origin.y - pmo.Origin.y,
+				linetarget.Origin.x - pmo.Origin.x);
+			if ((linetarget.bIsPlayer || linetarget.bCountKill) &&
+				!linetarget.bDormant && !linetarget.bInvulnerable)
 			{
 				newLife = Player->Health + (damage >> 3);
 				newLife = newLife > 100 ? 100 : newLife;
-				pmo->Health = newLife;
+				pmo.Health = newLife;
 				Player->Health = newLife;
 				SetState(Attack2State);
 			}
@@ -208,21 +208,21 @@ void A_CStaffCheck(void)
 				WeaponManaUse(Player->PClass, Player->ReadyWeapon);
 			break;
 		}
-		angles = pmo->Angles;
+		angles = pmo.Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
-		AimLineAttack(Player->mo, &angles, 3.0 * MELEERANGE / 2.0);
+		AimLineAttack(*Player->mo, &angles, 3.0 * MELEERANGE / 2.0);
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
 			LineAttack(pmo, &vforward, 1.5 * MELEERANGE, damage);
-			pmo->Angles.yaw = atan2(linetarget->Origin.y - pmo->Origin.y,
-				linetarget->Origin.x - pmo->Origin.x);
-			if (linetarget->bIsPlayer || linetarget->bCountKill)
+			pmo.Angles.yaw = atan2(linetarget.Origin.y - pmo.Origin.y,
+				linetarget.Origin.x - pmo.Origin.x);
+			if (linetarget.bIsPlayer || linetarget.bCountKill)
 			{
 				newLife = Player->Health + (damage >> 4);
 				newLife = newLife > 100 ? 100 : newLife;
-				pmo->Health = newLife;
-				Player->Health = pmo->Health;
+				pmo.Health = newLife;
+				Player->Health = pmo.Health;
 				SetState(Attack2State);
 			}
 			Player->Mana[MANA_1] -=
@@ -499,7 +499,7 @@ void Actor::A_CStaffMissileSlither(void)
 	weaveXY = (weaveXY + 3) & 63;
 	newX += cos(angle) * FloatBobOffsets[weaveXY];
 	newY += sin(angle) * FloatBobOffsets[weaveXY];
-	P_TryMove(this, newX, newY);
+	TryMove(newX, newY);
 	_Special2 = weaveXY;
 }
 
@@ -516,44 +516,42 @@ void Actor::A_CFlameMissile(void)
 	int i;
 	float an;
 	float dist;
-	mobj_t *mo;
-	mobj_t *bmo;
+	Actor A;
+	Actor bmo;
 
 	A_UnHideThing();
 	PlaySound('ClericFlameExplode', CHAN_VOICE);
-	bmo = &tmtrace->BlockingMobj;
-	if (bmo && bmo->bShootable)
+	bmo = tmtrace->BlockingMobj;
+	if (bmo && bmo.bShootable)
 	{
 		// Hit something, so spawn the flame circle around the thing
-		dist = bmo->Radius + 18.0;
+		dist = bmo.Radius + 18.0;
 		for (i = 0; i < 4; i++)
 		{
 			an = itof(i) * 45.0;
-			mo = P_SpawnMobj(bmo->Origin.x + dist * cos(an),
-				bmo->Origin.y + dist * sin(an),
-				bmo->Origin.z + 5.0, CircleFlame);
-			if (mo)
+			A = Spawn(CircleFlame, bmo.Origin +
+				vector(dist * cos(an), dist * sin(an), 5.0));
+			if (A)
 			{
-				mo->Angles.yaw = an;
-				mo->Owner = Owner;
-				mo->Velocity.x = FLAMESPEED * cos(an);
-				mo->Velocity.y = FLAMESPEED * sin(an);
-				mo->Special1f = mo->Velocity.x;
-				mo->Special2f = mo->Velocity.y;
-				mo->StateTime -= Random() * 0.1;
+				A.Angles.yaw = an;
+				A.Owner = Owner;
+				A.Velocity.x = FLAMESPEED * cos(an);
+				A.Velocity.y = FLAMESPEED * sin(an);
+				A.Special1f = A.Velocity.x;
+				A.Special2f = A.Velocity.y;
+				A.StateTime -= Random() * 0.1;
 			}
-			mo = P_SpawnMobj(bmo->Origin.x - dist * cos(an),
-				bmo->Origin.y - dist * sin(an),
-				bmo->Origin.z + 5.0, CircleFlame);
-			if (mo)
+			A = Spawn(CircleFlame, bmo.Origin +
+				vector(-dist * cos(an), -dist * sin(an), 5.0));
+			if (A)
 			{
-				mo->Angles.yaw = AngleMod360(180.0 + an);
-				mo->Owner = Owner;
-				mo->Velocity.x = -FLAMESPEED * cos(an);
-				mo->Velocity.y = -FLAMESPEED * sin(an);
-				mo->Special1f = mo->Velocity.x;
-				mo->Special2f = mo->Velocity.y;
-				mo->StateTime -= Random() * 0.1;
+				A.Angles.yaw = AngleMod360(180.0 + an);
+				A.Owner = Owner;
+				A.Velocity.x = -FLAMESPEED * cos(an);
+				A.Velocity.y = -FLAMESPEED * sin(an);
+				A.Special1f = A.Velocity.x;
+				A.Special2f = A.Velocity.y;
+				A.StateTime -= Random() * 0.1;
 			}
 		}
 		SetState(S_FLAMEPUFF2_1);
@@ -603,65 +601,63 @@ void Actor::A_CHolyAttack2(void)
 {
 	int j;
 	int i;
-	mobj_t *mo;
-	mobj_t *tail;
-	mobj_t *next;
+	Actor A;
+	Actor tail;
+	Actor next;
 
 	for (j = 0; j < 4; j++)
 	{
-		mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, HolyFX);
-		if (!mo)
+		A = Spawn(HolyFX, Origin);
+		if (!A)
 		{
 			continue;
 		}
 		switch (j)
 		{	// float bob index
 		case 0:
-			mo->_Special2 = P_Random() & 7;	// upper-left
+			A._Special2 = P_Random() & 7;	// upper-left
 			break;
 		case 1:
-			mo->_Special2 = 32 + (P_Random() & 7);	// upper-right
+			A._Special2 = 32 + (P_Random() & 7);	// upper-right
 			break;
 		case 2:
-			mo->_Special2 = (32 + (P_Random() & 7)) << 16;	// lower-left
+			A._Special2 = (32 + (P_Random() & 7)) << 16;	// lower-left
 			break;
 		case 3:
-			mo->_Special2 =
+			A._Special2 =
 				((32 + (P_Random() & 7)) << 16) + 32 + (P_Random() & 7);
 			break;
 		}
-		mo->Origin.z = Origin.z;
-		mo->Angles.yaw = AngleMod360(Angles.yaw +
+		A.Origin.z = Origin.z;
+		A.Angles.yaw = AngleMod360(Angles.yaw +
 			(45.0 + 45.0 / 2.0) - 45.0 * itof(j));
-		mo->Thrust(mo->Angles.yaw, mo->Speed * frametime);
-		mo->Owner = Owner;
-		mo->Args[0] = 10;	// initial turn value
-		mo->Args[1] = 0;	// initial look angle
+		A.Thrust(A.Angles.yaw, A.Speed * frametime);
+		A.Owner = Owner;
+		A.Args[0] = 10;	// initial turn value
+		A.Args[1] = 0;	// initial look angle
 		if (deathmatch)
 		{
 			// Ghosts last slightly less longer in DeathMatch
-			mo->Health = 85;
+			A.Health = 85;
 		}
 		if (linetarget)
 		{
-			mo->Target = *linetarget;
+			A.Target = linetarget;
 			//	Don't colide with world but colide with things, i.e explode
-			mo->bColideWithWorld = false;
-			mo->bSkullFly = true;
-			mo->bMissile = false;
+			A.bColideWithWorld = false;
+			A.bSkullFly = true;
+			A.bMissile = false;
 		}
-		tail = P_SpawnMobj(mo->Origin.x, mo->Origin.y, mo->Origin.z,
-			HolyTail);
-		tail->SpecialMobj2 = mo;	// parent
+		tail = Spawn(HolyTail, A.Origin);
+		tail.SpecialMobj2 = &A;	// parent
 		for (i = 1; i < 3; i++)
 		{
-			next = P_SpawnMobj(mo->Origin.x, mo->Origin.y, mo->Origin.z,
-				HolyTail);
-			next->SetState(next->SpawnState + 1);
-			tail->_SpecialMobj1 = next;
+			next = Spawn(HolyTail, A.Origin);
+			next.SetState(next.SpawnState + 1);
+			tail._SpecialMobj1 = &next;
 			tail = next;
 		}
-		tail->_SpecialMobj1 = NULL;	// last tail bit
+		tail._SpecialMobj1 = NULL;	// last tail bit
 	}
 }
 
@@ -787,7 +783,7 @@ void Actor::CHolyWeave(void)
 	weaveXY = (weaveXY + (P_Random() % 5)) & 63;
 	newX += cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	newY += sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
-	P_TryMove(this, newX, newY);
+	TryMove(newX, newY);
 	Origin.z -= FloatBobOffsets[weaveZ] * 2.0;
 	weaveZ = (weaveZ + (P_Random() % 5)) & 63;
 	Origin.z += FloatBobOffsets[weaveZ] * 2.0;
@@ -850,38 +846,38 @@ void Actor::A_CHolyCheckScream(void)
 
 void Actor::CHolyTailFollow(float dist)
 {
-	mobj_t *child;
+	Actor child;
 	float an;
 	float oldDistance, newDistance;
 
-	child = _SpecialMobj1;
+	child = *_SpecialMobj1;
 	if (child)
 	{
-		an = atan2(child->Origin.y - Origin.y,
-			Origin.x - child->Origin.x);
-		oldDistance = MobjDist(*child, self);
-		if (P_TryMove(child, Origin.x + dist * cos(an),
+		an = atan2(child.Origin.y - Origin.y,
+			Origin.x - child.Origin.x);
+		oldDistance = MobjDist(child, self);
+		if (child.TryMove(Origin.x + dist * cos(an),
 				Origin.y + dist * sin(an)))
 		{
-			newDistance = MobjDist2(*child, self) - 1.0;
+			newDistance = MobjDist2(child, self) - 1.0;
 			if (oldDistance < 1.0)
 			{
-				if (child->Origin.z < Origin.z)
+				if (child.Origin.z < Origin.z)
 				{
-					child->Origin.z = Origin.z - dist;
+					child.Origin.z = Origin.z - dist;
 				}
 				else
 				{
-					child->Origin.z = Origin.z + dist;
+					child.Origin.z = Origin.z + dist;
 				}
 			}
 			else
 			{
-				child->Origin.z = Origin.z + newDistance / oldDistance *
-					(child->Origin.z - Origin.z);
+				child.Origin.z = Origin.z + newDistance / oldDistance *
+					(child.Origin.z - Origin.z);
 			}
 		}
-		child->CHolyTailFollow(dist - 1.0);
+		child.CHolyTailFollow(dist - 1.0);
 	}
 }
 
@@ -893,14 +889,11 @@ void Actor::CHolyTailFollow(float dist)
 
 void Actor::CHolyTailRemove(void)
 {
-	mobj_t *child;
-
-	child = _SpecialMobj1;
-	if (child)
+	if (_SpecialMobj1)
 	{
-		child->CHolyTailRemove();
+		_SpecialMobj1->CHolyTailRemove();
 	}
-	P_RemoveMobj(this);
+	Remove();
 }
 
 //============================================================================
@@ -911,23 +904,23 @@ void Actor::CHolyTailRemove(void)
 
 void Actor::A_CHolyTail(void)
 {
-	mobj_t *parent;
+	Actor parent;
 
-	parent = SpecialMobj2;
+	parent = *SpecialMobj2;
 
 	if (parent)
 	{
-		if (parent->StateNum >= parent->DeathState)
+		if (parent.StateNum >= parent.DeathState)
 		{
 			// Ghost removed, so remove all tail parts
 			CHolyTailRemove();
 			return;
 		}
-		else if (P_TryMove(this,
-				parent->Origin.x - 14.0 * cos(parent->Angles.yaw),
-				parent->Origin.y - 14.0 * sin(parent->Angles.yaw)))
+		else if (TryMove(
+				parent.Origin.x - 14.0 * cos(parent.Angles.yaw),
+				parent.Origin.y - 14.0 * sin(parent.Angles.yaw)))
 		{
-			Origin.z = parent->Origin.z - 5.0;
+			Origin.z = parent.Origin.z - 5.0;
 		}
 		CHolyTailFollow(10.0);
 	}
@@ -941,12 +934,15 @@ void Actor::A_CHolyTail(void)
 
 void Actor::A_CHolySpawnPuff(void)
 {
-	P_SpawnMobj(Origin.x, Origin.y, Origin.z, HolyMissilePuff);
+	Spawn(HolyMissilePuff, Origin);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/03/16 17:47:47  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.22  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

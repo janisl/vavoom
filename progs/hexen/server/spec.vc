@@ -64,8 +64,8 @@ boolean EV_ThingDestroy(int tid);
 //
 //  Teleportation
 //
-boolean EV_Teleport(int tid, mobj_t * thing, boolean fog);
-boolean EV_SilentLineTeleport(line_t *line, int side, Actor *thing, int id,
+boolean EV_Teleport(int tid, Actor thing, boolean fog);
+boolean EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
 							boolean reverse);
 
 //
@@ -76,7 +76,7 @@ boolean A_LocalQuake(int *args);
 //
 //
 //
-boolean EV_LineSearchForPuzzleItem(line_t * line, int *args, mobj_t * mo);
+boolean EV_LineSearchForPuzzleItem(line_t * line, int *args, Actor A);
 void InitLava(void);
 
 // DATA DECLARATIONS -------------------------------------------------------
@@ -102,13 +102,13 @@ string TextKeyMessages[] = {
 
 //============================================================================
 //
-// CheckedLockedDoor
+//	CheckedLockedDoor
 //
 //============================================================================
 
-boolean CheckedLockedDoor(mobj_t * mo, int lock)
+boolean CheckedLockedDoor(Actor A, int lock)
 {
-	if (!mo->bIsPlayer)
+	if (!A.bIsPlayer)
 	{
 		return false;
 	}
@@ -116,11 +116,10 @@ boolean CheckedLockedDoor(mobj_t * mo, int lock)
 	{
 		return true;
 	}
-	if (!(mo->Player->Keys & (1 << (lock - 1))))
+	if (!(A.Player->Keys & (1 << (lock - 1))))
 	{
-		centerprint(mo->Player, "YOU NEED THE %s",
-			TextKeyMessages[lock - 1]);
-		mo->PlaySound('DoorLocked', CHAN_ITEM);
+		centerprint(A.Player, "YOU NEED THE %s", TextKeyMessages[lock - 1]);
+		A.PlaySound('DoorLocked', CHAN_ITEM);
 		return false;
 	}
 	return true;
@@ -132,12 +131,12 @@ boolean CheckedLockedDoor(mobj_t * mo, int lock)
 //
 //==========================================================================
 
-boolean StartLockedACS(line_t * line, int *args, mobj_t * mo, int side)
+boolean StartLockedACS(line_t * line, int *args, Actor A, int side)
 {
 	int i;
 	int newArgs[5];
 
-	if (!CheckedLockedDoor(mo, args[4]))
+	if (!CheckedLockedDoor(A, args[4]))
 	{
 		return false;
 	}
@@ -146,7 +145,7 @@ boolean StartLockedACS(line_t * line, int *args, mobj_t * mo, int side)
 		newArgs[i] = args[i];
 	}
 	newArgs[4] = 0;
-	return StartACS(newArgs[0], newArgs[1], &newArgs[2], *mo, line, side);
+	return StartACS(newArgs[0], newArgs[1], &newArgs[2], A, line, side);
 }
 
 //=========================================================================
@@ -182,7 +181,7 @@ boolean EV_SectorSoundChange(int *args)
 //==========================================================================
 
 boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
-	mobj_t * mo)
+	Actor A)
 {
 	boolean buttonSuccess;
 
@@ -235,7 +234,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		}
 		break;
 	case 13:	// Door Locked_Raise
-		if (CheckedLockedDoor(mo, args[3]))
+		if (CheckedLockedDoor(A, args[3]))
 		{
 			if (!args[0])
 			{
@@ -346,37 +345,37 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 70:	// Teleport
 		if (side == 0)
 		{	// Only teleport when crossing the front side of a line
-			buttonSuccess = EV_Teleport(args[0], mo, true);
+			buttonSuccess = EV_Teleport(args[0], A, true);
 		}
 		break;
 	case 71:	// Teleport, no fog
 		if (side == 0)
 		{	// Only teleport when crossing the front side of a line
-			buttonSuccess = EV_Teleport(args[0], mo, false);
+			buttonSuccess = EV_Teleport(args[0], A, false);
 		}
 		break;
 	case 72:	// Thrust Mobj
 		if (!side)	// Only thrust on side 0
 		{
-			mo->Thrust(itof(args[0]) * (90.0 / 64.0), itof(args[1]));
+			A.Thrust(itof(args[0]) * (90.0 / 64.0), itof(args[1]));
 			buttonSuccess = 1;
 		}
 		break;
 	case 73:	// Damage Mobj
 		if (args[0])
 		{
-			mo->Damage(none, none, args[0]);
+			A.Damage(none, none, args[0]);
 		}
 		else
 		{	// If arg1 is zero, then guarantee a kill
-			mo->Damage(none, none, 10000);
+			A.Damage(none, none, 10000);
 		}
 		buttonSuccess = 1;
 		break;
 	case 74:	// Teleport_NewMap
 		if (side == 0)
 		{	// Only teleport when crossing the front side of a line
-			if (!(mo && mo->bIsPlayer && mo->Player->PlayerState == PST_DEAD))	// Players must be alive to teleport
+			if (!(A && A.bIsPlayer && A.Player->PlayerState == PST_DEAD))	// Players must be alive to teleport
 			{
 				G_Completed(args[0], args[1]);
 				buttonSuccess = true;
@@ -386,7 +385,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 75:	// Teleport_EndGame
 		if (side == 0)
 		{	// Only teleport when crossing the front side of a line
-			if (!(mo && mo->bIsPlayer && mo->Player->PlayerState == PST_DEAD))	// Players must be alive to teleport
+			if (!(A && A.bIsPlayer && A.Player->PlayerState == PST_DEAD))	// Players must be alive to teleport
 			{
 				buttonSuccess = true;
 				if (deathmatch)
@@ -401,7 +400,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		}
 		break;
 	case 80:	// ACS_Execute
-		buttonSuccess = StartACS(args[0], args[1], &args[2], *mo, line, side);
+		buttonSuccess = StartACS(args[0], args[1], &args[2], A, line, side);
 		break;
 	case 81:	// ACS_Suspend
 		buttonSuccess = SuspendACS(args[0], args[1]);
@@ -410,7 +409,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		buttonSuccess = TerminateACS(args[0], args[1]);
 		break;
 	case 83:	// ACS_LockedExecute
-		buttonSuccess = StartLockedACS(line, args, mo, side);
+		buttonSuccess = StartLockedACS(line, args, A, side);
 		break;
 	case 90:	// Poly Rotate Left Override
 		buttonSuccess = EV_RotatePoly(line, args, 1, true);
@@ -462,7 +461,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		buttonSuccess = A_LocalQuake(args);
 		break;
 	case 129:	// UsePuzzleItem
-		buttonSuccess = EV_LineSearchForPuzzleItem(line, args, mo);
+		buttonSuccess = EV_LineSearchForPuzzleItem(line, args, A);
 		break;
 	case 130:	// Thing_Activate
 		buttonSuccess = EV_ThingActivate(args[0]);
@@ -496,7 +495,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		buttonSuccess = EV_SectorSoundChange(args);
 		break;
 	case 215:	// Teleport_Line
-		buttonSuccess = EV_SilentLineTeleport(line, side, mo, args[1], args[2]);
+		buttonSuccess = EV_SilentLineTeleport(line, side, A, args[1], args[2]);
 		break;
 
 		// Line specials only processed during level initialization
@@ -519,7 +518,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 //
 //============================================================================
 
-boolean P_ActivateLine(line_t * line, mobj_t * mo, int side,
+boolean P_ActivateLine(line_t * line, Actor A, int side,
 	int activationType)
 {
 	int lineActivation;
@@ -531,7 +530,7 @@ boolean P_ActivateLine(line_t * line, mobj_t * mo, int side,
 	{
 		return false;
 	}
-	if (!mo->bIsPlayer && !mo->bMissile)
+	if (!A.bIsPlayer && !A.bMissile)
 	{
 		if (lineActivation != SPAC_MCROSS)
 		{
@@ -545,7 +544,7 @@ boolean P_ActivateLine(line_t * line, mobj_t * mo, int side,
 	buttonSuccess = false;
 
 	buttonSuccess = ExecuteLineSpecial(line->special, &line->arg1, line,
-		side, mo);
+		side, A);
 	if (!repeat && buttonSuccess)
 	{
 		// clear the special on non-retriggerable lines
@@ -746,6 +745,9 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/03/16 17:47:47  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.20  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

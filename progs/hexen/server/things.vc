@@ -152,8 +152,8 @@ boolean EV_ThingProjectile(int *args, boolean gravity)
 	float speed;
 	float vspeed;
 	classid moType;
-	mobj_t *mobj;
-	mobj_t *newMobj;
+	Actor A;
+	Actor newA;
 	int searcher;
 	boolean success;
 
@@ -164,27 +164,26 @@ boolean EV_ThingProjectile(int *args, boolean gravity)
 	angle = itof(args[2]) * (360.0 / 256.0);
 	speed = itof(args[3]) / 8.0;
 	vspeed = itof(args[4]) / 8.0;
-	for (mobj = P_FindMobjFromTID(tid, &searcher); mobj != NULL;
-		mobj = P_FindMobjFromTID(tid, &searcher))
+	for (A = FindMobjFromTID(tid, &searcher); A;
+		A = FindMobjFromTID(tid, &searcher))
 	{
-		newMobj = P_SpawnMobj(mobj->Origin.x, mobj->Origin.y,
-			mobj->Origin.z, moType);
-		if (newMobj->SightSound)
+		newA = Spawn(moType, A.Origin);
+		if (newA.SightSound)
 		{
-			newMobj->PlaySound(newMobj->SightSound, CHAN_VOICE);
+			newA.PlaySound(newA.SightSound, CHAN_VOICE);
 		}
-		newMobj->Owner = *mobj;	// Originator
-		newMobj->Angles.yaw = angle;
-		newMobj->Velocity.x = speed * cos(angle) * 35.0;
-		newMobj->Velocity.y = speed * sin(angle) * 35.0;
-		newMobj->Velocity.z = vspeed * 35.0;
-		newMobj->bDropped = true;	// Don't respawn
+		newA.Owner = A;	// Originator
+		newA.Angles.yaw = angle;
+		newA.Velocity.x = speed * cos(angle) * 35.0;
+		newA.Velocity.y = speed * sin(angle) * 35.0;
+		newA.Velocity.z = vspeed * 35.0;
+		newA.bDropped = true;	// Don't respawn
 		if (gravity)
 		{
-			newMobj->bNoGravity = false;
-			newMobj->Mass = 12.5;
+			newA.bNoGravity = false;
+			newA.Mass = 12.5;
 		}
-		if (newMobj->CheckMissileSpawn())
+		if (newA.CheckMissileSpawn())
 		{
 			success = true;
 		}
@@ -202,9 +201,9 @@ boolean EV_ThingSpawn(int *args, boolean fog)
 {
 	int tid;
 	float angle;
-	mobj_t *mobj;
-	mobj_t *newMobj;
-	mobj_t *fogMobj;
+	Actor A;
+	Actor newAct;
+	Actor fogAct;
 	classid moType;
 	int searcher;
 	boolean success;
@@ -214,34 +213,33 @@ boolean EV_ThingSpawn(int *args, boolean fog)
 	tid = args[0];
 	moType = TranslateThingType[args[1]];
 	angle = itof(args[2]) * 360.0 / 256.0;
-	for (mobj = P_FindMobjFromTID(tid, &searcher); mobj != NULL;
-		mobj = P_FindMobjFromTID(tid, &searcher))
+	for (A = FindMobjFromTID(tid, &searcher); A;
+		A = FindMobjFromTID(tid, &searcher))
 	{
-		newMobj = P_SpawnMobj(mobj->Origin.x, mobj->Origin.y, mobj->Origin.z,
-			moType);
-		if (newMobj->bFloatBob)
+		newAct = Spawn(moType, A.Origin);
+		if (newAct.bFloatBob)
 		{
-			newMobj->Origin.z = mobj->Origin.z - mobj->FloorZ;
-			newMobj->SetOrigin2(newMobj->Origin);
+			newAct.Origin.z = A.Origin.z - A.FloorZ;
+			newAct.SetOrigin2(newAct.Origin);
 		}
-		if (P_TestMobjLocation(newMobj) == false)
+		if (newAct.TestLocation() == false)
 		{
 			// Didn't fit
-			P_RemoveMobj(newMobj);
+			newAct.Remove();
 		}
 		else
 		{
-			newMobj->Angles.yaw = angle;
+			newAct.Angles.yaw = angle;
 			if (fog == true)
 			{
-				fogMobj = P_SpawnMobj(mobj->Origin.x, mobj->Origin.y,
-					mobj->Origin.z + TELEFOGHEIGHT, TeleportFog);
-				fogMobj->PlaySound('Teleport', CHAN_VOICE);
+				fogAct = Spawn(TeleportFog, A.Origin + vector(0.0, 0.0,
+					TELEFOGHEIGHT));
+				fogAct.PlaySound('Teleport', CHAN_VOICE);
 			}
-			newMobj->bDropped = true;	// Don't respawn
-			if (newMobj->bFloatBob)
+			newAct.bDropped = true;	// Don't respawn
+			if (newAct.bFloatBob)
 			{
-				newMobj->Special1f = newMobj->Origin.z - newMobj->FloorZ;
+				newAct.Special1f = newAct.Origin.z - newAct.FloorZ;
 			}
 			success = true;
 		}
@@ -317,16 +315,16 @@ boolean Actor::Activate(void)
 
 boolean EV_ThingActivate(int tid)
 {
-	mobj_t *mobj;
+	Actor A;
 	int searcher;
 	boolean success;
 
 	success = false;
 	searcher = -1;
-	for (mobj = P_FindMobjFromTID(tid, &searcher); mobj != NULL;
-		mobj = P_FindMobjFromTID(tid, &searcher))
+	for (A = FindMobjFromTID(tid, &searcher); A;
+		A = FindMobjFromTID(tid, &searcher))
 	{
-		if (mobj->Activate())
+		if (A.Activate())
 		{
 			success = true;
 		}
@@ -384,16 +382,16 @@ boolean Actor::Deactivate(void)
 
 boolean EV_ThingDeactivate(int tid)
 {
-	mobj_t *mobj;
+	Actor A;
 	int searcher;
 	boolean success;
 
 	success = false;
 	searcher = -1;
-	for (mobj = P_FindMobjFromTID(tid, &searcher); mobj != NULL;
-		mobj = P_FindMobjFromTID(tid, &searcher))
+	for (A = FindMobjFromTID(tid, &searcher); A;
+		A = FindMobjFromTID(tid, &searcher))
 	{
-		if (mobj->Deactivate())
+		if (A.Deactivate())
 		{
 			success = true;
 		}
@@ -409,21 +407,21 @@ boolean EV_ThingDeactivate(int tid)
 
 boolean EV_ThingRemove(int tid)
 {
-	mobj_t *mobj;
+	Actor A;
 	int searcher;
 	boolean success;
 
 	success = false;
 	searcher = -1;
-	for (mobj = P_FindMobjFromTID(tid, &searcher); mobj != NULL;
-		mobj = P_FindMobjFromTID(tid, &searcher))
+	for (A = FindMobjFromTID(tid, &searcher); A;
+		A = FindMobjFromTID(tid, &searcher))
 	{
-		if (mobj->Class == Bridge)
+		if (A.Class == Bridge)
 		{
-			mobj->A_BridgeRemove();
+			A.A_BridgeRemove();
 			return true;
 		}
-		P_RemoveMobj(mobj);
+		A.Remove();
 		success = true;
 	}
 	return success;
@@ -437,18 +435,18 @@ boolean EV_ThingRemove(int tid)
 
 boolean EV_ThingDestroy(int tid)
 {
-	mobj_t *mobj;
+	Actor A;
 	int searcher;
 	boolean success;
 
 	success = false;
 	searcher = -1;
-	for (mobj = P_FindMobjFromTID(tid, &searcher); mobj != NULL;
-		mobj = P_FindMobjFromTID(tid, &searcher))
+	for (A = FindMobjFromTID(tid, &searcher); A;
+		A = FindMobjFromTID(tid, &searcher))
 	{
-		if (mobj->bShootable)
+		if (A.bShootable)
 		{
-			mobj->Damage(none, none, 10000);
+			A.Damage(none, none, 10000);
 			success = true;
 		}
 	}
@@ -479,8 +477,8 @@ int ThingCount(int type, int tid)
 	if (tid)
 	{
 		// Count TID things
-		for (Ent = *P_FindMobjFromTID(tid, &searcher); Ent != none;
-			Ent = *P_FindMobjFromTID(tid, &searcher))
+		for (Ent = FindMobjFromTID(tid, &searcher); Ent != none;
+			Ent = FindMobjFromTID(tid, &searcher))
 		{
 			if (type == 0)
 			{
@@ -522,6 +520,9 @@ int ThingCount(int type, int tid)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/03/16 17:47:47  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.24  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

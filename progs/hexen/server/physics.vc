@@ -175,9 +175,9 @@ void Actor::SlideMove(void)
 		if (++hitcount == 3)
 		{
 			// don't loop forever
-			if (!P_TryMove(this, Origin.x, Origin.y + Velocity.y * frametime))
+			if (!TryMove(Origin.x, Origin.y + Velocity.y * frametime))
 			{
-				P_TryMove(this, Origin.x + Velocity.x * frametime, Origin.y);
+				TryMove(Origin.x + Velocity.x * frametime, Origin.y);
 			}
 			return;
 		}
@@ -215,9 +215,9 @@ void Actor::SlideMove(void)
 		if (bestslidefrac == 1.00001)
 		{
 			// the move most have hit the middle, so stairstep
-			if (!P_TryMove(this, Origin.x, Origin.y + Velocity.y * frametime))
+			if (!TryMove(Origin.x, Origin.y + Velocity.y * frametime))
 			{
-				P_TryMove(this, Origin.x + Velocity.x * frametime, Origin.y);
+				TryMove(Origin.x + Velocity.x * frametime, Origin.y);
 			}
 			return;
 		}
@@ -229,13 +229,11 @@ void Actor::SlideMove(void)
 			newx = Velocity.x * frametime * bestslidefrac;
 			newy = Velocity.y * frametime * bestslidefrac;
 
-			if (!P_TryMove(this, Origin.x + newx, Origin.y + newy))
+			if (!TryMove(Origin.x + newx, Origin.y + newy))
 			{
-				if (!P_TryMove(this, Origin.x,
-						Origin.y + Velocity.y * frametime))
+				if (!TryMove(Origin.x, Origin.y + Velocity.y * frametime))
 				{
-					P_TryMove(this, Origin.x + Velocity.x * frametime,
-						Origin.y);
+					TryMove(Origin.x + Velocity.x * frametime, Origin.y);
 				}
 				return;
 			}
@@ -256,7 +254,7 @@ void Actor::SlideMove(void)
 			bestslideline->normal, 1.0);
 
 	}
-	while (!P_TryMove(this, Origin.x + Velocity.x * frametime,
+	while (!TryMove(Origin.x + Velocity.x * frametime,
 			Origin.y + Velocity.y * frametime));
 }
 
@@ -545,14 +543,13 @@ boolean Actor::HitMobj(Entity Other)
 		{
 			// Try to slide along it
 			// Slide against mobj
-//			if (P_TryMove(this, Origin.x, ptryy))
-			if (P_TryMove(this, Origin.x, Origin.y + Velocity.y * frametime))
+//			if (TryMove(Origin.x, ptryy))
+			if (TryMove(Origin.x, Origin.y + Velocity.y * frametime))
 			{
 				Velocity.x = 0.0;
 			}
-//			else if (P_TryMove(this, ptryx, Origin.y))
-			else if (P_TryMove(this, Origin.x + Velocity.x * frametime,
-				Origin.y))
+//			else if (TryMove(ptryx, Origin.y))
+			else if (TryMove(Origin.x + Velocity.x * frametime, Origin.y))
 			{
 				Velocity.y = 0.0;
 			}
@@ -620,7 +617,7 @@ boolean Actor::HitLine(void)
 			}
 			else
 			{
-				P_RemoveMobj(this);
+				Remove();
 				return false;
 			}
 			return true;
@@ -720,7 +717,7 @@ boolean Actor::XYMovement(void)
 			xmove = 0.0;
 			ymove = 0.0;
 		}
-		if (!P_TryMove(this, ptryx, ptryy))
+		if (!TryMove(ptryx, ptryy))
 		{
 			// Blocked move
 			if (tmtrace->BlockingMobj)
@@ -807,7 +804,7 @@ boolean Actor::HitFloor(void)
 				if (vdot < -23.0 * 35.0)
 				{
 					FallingDamage();
-					P_NoiseAlert(this, this);
+					NoiseAlert(self, self);
 				}
 				else if (vdot < -GRAVITY * 0.375
 					&& !Player->MorphTics)
@@ -905,7 +902,7 @@ boolean Actor::HitCeiling(void)
 			}
 			else
 			{
-				P_RemoveMobj(this);
+				Remove();
 				return false;
 			}
 			return true;
@@ -1005,7 +1002,7 @@ void Actor::PlayerLandedOnThing(void)
 	if (Velocity.z < -23.0 * 35.0)
 	{
 		FallingDamage();
-		P_NoiseAlert(this, this);
+		NoiseAlert(self, self);
 	}
 	else if (Velocity.z < -GRAVITY * 0.375 && !Player->MorphTics)
 	{
@@ -1046,7 +1043,7 @@ boolean Actor::BlasterPhysics(void)
 	float zfrac;
 	float z;
 	boolean changexy;
-	Actor *mo;
+	Actor A;
 
 	// Handle movement
 	if (Velocity.x || Velocity.y || (Origin.z != FloorZ) || Velocity.z)
@@ -1059,7 +1056,7 @@ boolean Actor::BlasterPhysics(void)
 		{
 			if (changexy)
 			{
-				if (!P_TryMove(this, Origin.x + xfrac, Origin.y + yfrac))
+				if (!TryMove(Origin.x + xfrac, Origin.y + yfrac))
 				{
 					// Blocked move
 					return ExplodeMissile();
@@ -1088,7 +1085,7 @@ boolean Actor::BlasterPhysics(void)
 					{
 						z = FloorZ;
 					}
-					P_SpawnMobj(Origin.x, Origin.y, z, MageWandSmoke);
+					Spawn(MageWandSmoke, vector(Origin.x, Origin.y, z));
 				}
 				else if (Class != MageWandMissile && !--_Special1)
 				{
@@ -1098,10 +1095,10 @@ boolean Actor::BlasterPhysics(void)
 					{
 						z = FloorZ;
 					}
-					mo = P_SpawnMobj(Origin.x, Origin.y, z, ClericFlameFloor);
-					if (mo)
+					A = Spawn(ClericFlameFloor, vector(Origin.x, Origin.y, z));
+					if (A)
 					{
-						mo->Angles.yaw = Angles.yaw;
+						A.Angles.yaw = Angles.yaw;
 					}
 				}
 			}
@@ -1248,6 +1245,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2002/03/16 17:47:47  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.29  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

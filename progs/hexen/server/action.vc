@@ -116,8 +116,7 @@ void Actor::A_CorpseBloodDrip(void)
 	{
 		return;
 	}
-	P_SpawnMobj(Origin.x, Origin.y, Origin.z + Height / 2.0,
-		CorpseBloodDrip);
+	Spawn(CorpseBloodDrip, Origin + vector(0.0, 0.0, Height / 2.0));
 }
 
 //============================================================================
@@ -128,31 +127,31 @@ void Actor::A_CorpseBloodDrip(void)
 
 void Actor::A_CorpseExplode(void)
 {
-	mobj_t *mo;
+	Actor A;
 	int i;
 
 	for (i = (P_Random() & 3) + 3; i; i--)
 	{
-		mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, CorpseBit);
-		mo->SetState(mo->SpawnState + (P_Random() % 3));
-		if (mo)
+		A = Spawn(CorpseBit, Origin);
+		A.SetState(A.SpawnState + (P_Random() % 3));
+		if (A)
 		{
-			mo->Velocity.x = (Random() - Random()) * 4.0 * 35.0;
-			mo->Velocity.y = (Random() - Random()) * 4.0 * 35.0;
-			mo->Velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
+			A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+			A.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+			A.Velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
 		}
 	}
 	// Spawn a skull
-	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, CorpseBit);
-	mo->SetState(S_CORPSEBIT_4);
-	if (mo)
+	A = Spawn(CorpseBit, Origin);
+	A.SetState(S_CORPSEBIT_4);
+	if (A)
 	{
-		mo->Velocity.x = (Random() - Random()) * 4.0 * 35.0;
-		mo->Velocity.y = (Random() - Random()) * 4.0 * 35.0;
-		mo->Velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
-		mo->PlaySound('FireDemonDeath', CHAN_VOICE);
+		A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+		A.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+		A.Velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
+		A.PlaySound('FireDemonDeath', CHAN_VOICE);
 	}
-	P_RemoveMobj(this);
+	Remove();
 }
 
 //===========================================================================
@@ -165,30 +164,28 @@ void Actor::A_CorpseExplode(void)
 
 void Actor::A_SoAExplode(void)
 {
-	mobj_t *mo;
+	Actor A;
 	int i;
 
 	for (i = 0; i < 10; i++)
 	{
-		mo = P_SpawnMobj(Origin.x + (Random() - 0.5) * 16.0,
-			Origin.y + (Random() - 0.5) * 16.0,
-			Origin.z + Random() * Height, ZArmorChunk);
-		mo->SetState(mo->SpawnState + i);
-		if (mo)
+		A = Spawn(ZArmorChunk, Origin + vector((Random() - 0.5) * 16.0,
+			(Random() - 0.5) * 16.0, Random() * Height));
+		A.SetState(A.SpawnState + i);
+		if (A)
 		{
-			mo->Velocity.x = (Random() - Random()) * 4.0 * 35.0;
-			mo->Velocity.y = (Random() - Random()) * 4.0 * 35.0;
-			mo->Velocity.z = (Random() * 8.0 + 5.0) * 35.0;
+			A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+			A.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+			A.Velocity.z = (Random() * 8.0 + 5.0) * 35.0;
 		}
 	}
 	if (Args[0])
 	{
 		// Spawn an item
-		P_SpawnMobj(Origin.x, Origin.y, Origin.z,
-			TranslateThingType[Args[0]]);
+		Spawn(TranslateThingType[Args[0]], Origin);
 	}
-	mo->PlaySound('SuitofArmorBreak', CHAN_VOICE);
-	P_RemoveMobj(this);
+	A.PlaySound('SuitofArmorBreak', CHAN_VOICE);
+	Remove();
 }
 
 //==========================================================================
@@ -256,6 +253,9 @@ void Actor::A_UnSetInvulnerable(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/03/16 17:47:46  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.17  2002/03/12 19:19:16  dj_jl
 //  Pickup classes
 //

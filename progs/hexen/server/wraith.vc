@@ -384,14 +384,14 @@ defaultproperties
 
 void Actor::A_WraithFX2(void)
 {
-	mobj_t *mo;
+	Actor A;
 	float angle;
 	int i;
 
 	for (i = 0; i < 2; i++)
 	{
-		mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, WraithSparkDrip);
-		if (mo)
+		A = Spawn(WraithSparkDrip, Origin);
+		if (A)
 		{
 			if (Random() < 0.5)
 			{
@@ -401,11 +401,11 @@ void Actor::A_WraithFX2(void)
 			{
 				angle = AngleMod360(Angles.yaw - Random() * 90.0);
 			}
-			mo->Velocity.z = 0.0;
-			mo->Velocity.x = (Random() / 2.0 + 1.0) * cos(angle) * 35.0;
-			mo->Velocity.y = (Random() / 2.0 + 1.0) * sin(angle) * 35.0;
-			mo->Owner = self;
-			mo->FloorClip = 10.0;
+			A.Velocity.z = 0.0;
+			A.Velocity.x = (Random() / 2.0 + 1.0) * cos(angle) * 35.0;
+			A.Velocity.y = (Random() / 2.0 + 1.0) * sin(angle) * 35.0;
+			A.Owner = self;
+			A.FloorClip = 10.0;
 		}
 	}
 }
@@ -413,6 +413,9 @@ void Actor::A_WraithFX2(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/03/16 17:47:47  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.20  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

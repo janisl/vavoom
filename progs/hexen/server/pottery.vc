@@ -43,28 +43,26 @@ class Pottery1:Actor
 
 void A_PotteryExplode(void)
 {
-	mobj_t *mo = NULL;
+	Actor A;
 	int i;
 
 	for (i = (P_Random() & 3) + 3; i; i--)
 	{
-		mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, PotteryBit);
-		mo->SetState(mo->SpawnState + (P_Random() % 5));
-		if (mo)
+		A = Spawn(PotteryBit, Origin);
+		A.SetState(A.SpawnState + (P_Random() % 5));
+		if (A)
 		{
-			mo->Velocity.x = (Random() - Random()) * 4.0 * 35.0;
-			mo->Velocity.y = (Random() - Random()) * 4.0 * 35.0;
-			mo->Velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
+			A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+			A.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+			A.Velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
 		}
 	}
-	mo->PlaySound('PotteryExplode', CHAN_VOICE);
+	A.PlaySound('PotteryExplode', CHAN_VOICE);
 	if (Args[0])
 	{
 		// Spawn an item
-		P_SpawnMobj(Origin.x, Origin.y, Origin.z,
-			TranslateThingType[Args[0]]);
+		Spawn(TranslateThingType[Args[0]], Origin);
 	}
-//	P_RemoveMobj(this);
 }
 
 __states__
@@ -175,7 +173,7 @@ void A_PotteryChooseBit(void)
 void A_PotteryCheck(void)
 {
 	int i;
-	mobj_t *pmo;
+	Actor pmo;
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
@@ -183,10 +181,10 @@ void A_PotteryCheck(void)
 		{
 			continue;
 		}
-		pmo = players[i].mo;
-		if (P_CheckSight(self, *pmo) &&
-			(fabs(AngleMod180(atan2(Origin.y - pmo->Origin.y,
-			Origin.x - pmo->Origin.x) - pmo->Angles.yaw)) <= 45.0))
+		pmo = *players[i].mo;
+		if (P_CheckSight(self, pmo) &&
+			(fabs(AngleMod180(atan2(Origin.y - pmo.Origin.y,
+			Origin.x - pmo.Origin.x) - pmo.Angles.yaw)) <= 45.0))
 		{
 			// Previous state (pottery bit waiting state)
 			SetState(StateNum - 1);
@@ -232,6 +230,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/03/16 17:47:47  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.16  2002/03/12 19:19:17  dj_jl
 //  Pickup classes
 //

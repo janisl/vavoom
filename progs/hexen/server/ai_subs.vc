@@ -361,7 +361,7 @@ boolean Pawn::StepMove(void)
 	tryx = Origin.x + StepSpeed * xspeed[MoveDir];
 	tryy = Origin.y + StepSpeed * yspeed[MoveDir];
 
-	if (!P_TryMove(this, tryx, tryy))
+	if (!TryMove(tryx, tryy))
 	{
 		// open any specials
 		if (bFloat && floatok)
@@ -387,7 +387,7 @@ boolean Pawn::StepMove(void)
 			// if the special is not a door
 			// that can be opened,
 			// return false
-			if (P_ActivateLine(ld, this, 0, SPAC_USE))
+			if (P_ActivateLine(ld, self, 0, SPAC_USE))
 			{
 				good = true;
 			}
@@ -790,6 +790,9 @@ Actor Actor::RoughMonsterSearch(int distance)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/03/16 17:47:46  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.18  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

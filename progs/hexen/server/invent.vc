@@ -37,110 +37,114 @@
 
 //==========================================================================
 //
-//  InventoryLeft
+//  PlayerPawn::InventoryLeft
 //
 //==========================================================================
 
-void InventoryLeft(player_t * player)
+void PlayerPawn::InventoryLeft(void)
 {
-	if (!player->InventoryTics)
+	if (!Player->InventoryTime)
 	{
-		player->InventoryTics = 5 * 35;
+		Player->InventoryTime = 5.0;
 		return;
 	}
-	player->InventoryTics = 5 * 35;
-	player->InvPtr--;
-	if (player->InvPtr < 0)
+	Player->InventoryTime = 5.0;
+	Player->InvPtr--;
+	if (Player->InvPtr < 0)
 	{
-		player->InvPtr = 0;
+		Player->InvPtr = 0;
 	}
 	else
 	{
-		player->InvCurPos--;
-		if (player->InvCurPos < 0)
+		Player->InvCurPos--;
+		if (Player->InvCurPos < 0)
 		{
-			player->InvCurPos = 0;
+			Player->InvCurPos = 0;
 		}
 	}
 }
 
 //==========================================================================
 //
-//  InventoryRight
+//  PlayerPawn::InventoryRight
 //
 //==========================================================================
 
-void InventoryRight(player_t * player)
+void PlayerPawn::InventoryRight(void)
 {
-	if (!player->InventoryTics)
+	if (!Player->InventoryTime)
 	{
-		player->InventoryTics = 5 * 35;
+		Player->InventoryTime = 5.0;
 		return;
 	}
-	player->InventoryTics = 5 * 35;
-	player->InvPtr++;
-	if (player->InvPtr >= player->InventorySlotNum)
+	Player->InventoryTime = 5.0;
+	Player->InvPtr++;
+	if (Player->InvPtr >= Player->InventorySlotNum)
 	{
-		player->InvPtr--;
-		if (player->InvPtr < 0)
-			player->InvPtr = 0;
+		Player->InvPtr--;
+		if (Player->InvPtr < 0)
+			Player->InvPtr = 0;
 	}
 	else
 	{
-		player->InvCurPos++;
-		if (player->InvCurPos > 6)
+		Player->InvCurPos++;
+		if (Player->InvCurPos > 6)
 		{
-			player->InvCurPos = 6;
+			Player->InvCurPos = 6;
 		}
 	}
 }
 
 //==========================================================================
 //
-//  InventoryUse
+//  PlayerPawn::InventoryUse
 //
 //==========================================================================
 
-void InventoryUse(player_t * player)
+void PlayerPawn::InventoryUse(void)
 {
-	player->ReadyArtifact = player->Inventory[player->InvPtr].type;
+	Player->ReadyArtifact = Player->Inventory[Player->InvPtr].type;
 	// flag to denote that it's okay to use an artifact
-	if (player->InventoryTics)
+	if (Player->InventoryTime)
 	{
-		player->InventoryTics = 0;
+		Player->InventoryTime = 0.0;
 	}
 	else
 	{
-		player->Arti = player->ReadyArtifact;
+		Player->Arti = Player->ReadyArtifact;
 	}
 }
 
 //==========================================================================
 //
-//  InventoryTick
+//  PlayerPawn::InventoryTick
 //
 //==========================================================================
 
-void InventoryTick(player_t * player)
+void PlayerPawn::InventoryTick(float deltaTime)
 {
 	// turn inventory off after a certain amount of time
-	if (player->InventoryTics)
+	if (Player->InventoryTime)
 	{
-		player->InventoryTics--;
-		if (!player->InventoryTics)
+		Player->InventoryTime -= deltaTime;
+		if (Player->InventoryTime <= 0.0)
 		{
-			player->ReadyArtifact = player->Inventory[player->InvPtr].type;
+			Player->InventoryTime = 0.0;
+			Player->ReadyArtifact = Player->Inventory[Player->InvPtr].type;
 		}
 	}
-	if (player->ArtifactFlash)
+	if (Player->ArtifactFlash)
 	{
-		player->ArtifactFlash--;
+		Player->ArtifactFlash--;
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/03/16 17:47:46  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.6  2002/02/22 18:00:22  dj_jl
 //  A lots of the renaming, beautification.
 //

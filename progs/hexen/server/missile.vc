@@ -49,7 +49,7 @@ boolean Actor::CheckMissileSpawn(void)
 	// move a little forward so an angle can be computed if it
 	// immediately explodes
 	Origin += Velocity * 0.0142857143;
-	if (!P_TryMove(this, Origin.x, Origin.y))
+	if (!TryMove(Origin.x, Origin.y))
 	{
 		ExplodeMissile();
 		return false;
@@ -62,7 +62,7 @@ boolean Actor::CheckMissileSpawn(void)
 //  Pawn::SpawnMissile
 //
 //  Returns NULL if the missile exploded immediately, otherwise returns
-// a mobj_t pointer to the missile.
+// a Actor reference to the missile.
 //
 //==========================================================================
 
@@ -95,7 +95,7 @@ Actor Pawn::SpawnMissile(Actor dest, classid type)
 		break;
 	}
 	org.z -= FloorClip;
-	th = SpawnActor(org, type);
+	th = Spawn(type, org);
 	if (th.SightSound)
 	{
 		th.PlaySound(th.SightSound, CHAN_VOICE);
@@ -118,7 +118,7 @@ Actor Pawn::SpawnMissile(Actor dest, classid type)
 //  Pawn::SpawnMissileXYZ
 //
 //  Returns NULL if the missile exploded immediately, otherwise returns
-// a mobj_t pointer to the missile.
+// a Actor reference to the missile.
 //
 //==========================================================================
 
@@ -128,7 +128,7 @@ Actor Pawn::SpawnMissileXYZ(TVec org, Actor dest, classid type)
 	Actor th;
 
 	org.z -= FloorClip;
-	th = SpawnActor(org, type);
+	th = Spawn(type, org);
 	if (th.SightSound)
 	{
 		th.PlaySound(th.SightSound, CHAN_VOICE);
@@ -151,7 +151,7 @@ Actor Pawn::SpawnMissileXYZ(TVec org, Actor dest, classid type)
 //  Actor::SpawnMissileAngle
 //
 //  Returns NULL if the missile exploded immediately, otherwise returns
-// a mobj_t pointer to the missile.
+// a Actor reference to the missile.
 //
 //==========================================================================
 
@@ -180,7 +180,7 @@ Actor Actor::SpawnMissileAngle(classid type, float angle, float momz)
 		break;
 	}
 	org.z -= FloorClip;
-	mo = SpawnActor(org, type);
+	mo = Spawn(type, org);
 	if (mo.SightSound)
 	{
 		mo.PlaySound(mo.SightSound, CHAN_VOICE);
@@ -198,7 +198,7 @@ Actor Actor::SpawnMissileAngle(classid type, float angle, float momz)
 //  Actor::SpawnMissileAngleSpeed
 //
 //  Returns NULL if the missile exploded immediately, otherwise returns
-// a mobj_t pointer to the missile.
+// a Actor reference to the missile.
 //
 //==========================================================================
 
@@ -210,7 +210,7 @@ Actor Actor::SpawnMissileAngleSpeed(classid type, float angle,
 
 	org = Origin;
 	org.z -= FloorClip;
-	mo = SpawnActor(org, type);
+	mo = Spawn(type, org);
 	mo.Owner = self;	// Originator
 	mo.Angles.yaw = angle;
 	mo.Velocity.x = speed * cos(angle);
@@ -231,7 +231,7 @@ Actor Pawn::SpawnKoraxMissile(TVec org, Actor dest, classid type)
 	Actor th;
 
 	org.z -= FloorClip;
-	th = SpawnActor(org, type);
+	th = Spawn(type, org);
 	if (th.SightSound)
 	{
 		th.PlaySound(th.SightSound, CHAN_VOICE);
@@ -330,15 +330,15 @@ Actor PlayerPawn::SpawnPlayerMissile(classid type)
 
 	// Try to find a target
 	avcpy(Angles, angles);
-	AimLineAttack(this, &angles, 16.0 * 64.0);
+	AimLineAttack(self, &angles, 16.0 * 64.0);
 	if (!linetarget)
 	{
 		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
-		AimLineAttack(this, &angles, 16.0 * 64.0);
+		AimLineAttack(self, &angles, 16.0 * 64.0);
 		if (!linetarget)
 		{
 			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
-			AimLineAttack(this, &angles, 16.0 * 64.0);
+			AimLineAttack(self, &angles, 16.0 * 64.0);
 			if (!linetarget)
 			{
 				angles.yaw = Angles.yaw;
@@ -361,7 +361,7 @@ Actor PlayerPawn::SpawnPlayerMissile(classid type)
 		org.z = Origin.z + 4.0 * 8.0 - tan(Angles.pitch);
 		org.z -= FloorClip;
 	}
-	MissileMobj = SpawnActor(org, type);
+	MissileMobj = Spawn(type, org);
 	MissileMobj.Owner = self;
 	avcpy(angles, MissileMobj.Angles);
 	AngleVector(&angles, &vforward);
@@ -377,7 +377,7 @@ Actor PlayerPawn::SpawnPlayerMissile(classid type)
 		// Normal missile
 		MissileMobj.Origin += MissileMobj.Velocity * frametime / 2.0;
 	}
-	if (!P_TryMove(&MissileMobj, MissileMobj.Origin.x, MissileMobj.Origin.y))
+	if (!MissileMobj.TryMove(MissileMobj.Origin.x, MissileMobj.Origin.y))
 	{
 		// Exploded immediately
 		MissileMobj.ExplodeMissile();
@@ -404,15 +404,15 @@ Actor PlayerPawn::SpawnPlayerMissileAngle(classid type, float angle)
 	//
 	angles = Angles;
 	angles.yaw = angle;
-	AimLineAttack(this, &angles, 16.0 * 64.0);
+	AimLineAttack(self, &angles, 16.0 * 64.0);
 	if (!linetarget)
 	{
 		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
-		AimLineAttack(this, &angles, 16.0 * 64.0);
+		AimLineAttack(self, &angles, 16.0 * 64.0);
 		if (!linetarget)
 		{
 			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
-			AimLineAttack(this, &angles, 16.0 * 64.0);
+			AimLineAttack(self, &angles, 16.0 * 64.0);
 			if (!linetarget)
 			{
 				angles.yaw = angle;
@@ -422,7 +422,7 @@ Actor PlayerPawn::SpawnPlayerMissileAngle(classid type, float angle)
 	org = Origin;
 	org.z = Origin.z + 4.0 * 8.0 - tan(Angles.pitch);
 	org.z -= FloorClip;
-	th = SpawnActor(org, type);
+	th = Spawn(type, org);
 	th.Owner = self;
 	th.Angles = angles;
 	AngleVector(&angles, &vforward);
@@ -447,15 +447,15 @@ Actor PlayerPawn::SpawnPlayerMissileAngleXYZ(TVec org, classid type, float angle
 	//
 	angles = Angles;
 	angles.yaw = angle;
-	AimLineAttack(this, &angles, 16.0 * 64.0);
+	AimLineAttack(self, &angles, 16.0 * 64.0);
 	if (!linetarget)
 	{
 		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
-		AimLineAttack(this, &angles, 16.0 * 64.0);
+		AimLineAttack(self, &angles, 16.0 * 64.0);
 		if (!linetarget)
 		{
 			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
-			AimLineAttack(this, &angles, 16.0 * 64.0);
+			AimLineAttack(self, &angles, 16.0 * 64.0);
 			if (!linetarget)
 			{
 				angles.yaw = angle;
@@ -464,7 +464,7 @@ Actor PlayerPawn::SpawnPlayerMissileAngleXYZ(TVec org, classid type, float angle
 	}
 	org.z += 4.0 * 8.0 - tan(Angles.pitch);
 	org.z -= FloorClip;
-	th = SpawnActor(org, type);
+	th = Spawn(type, org);
 	th.Owner = self;
 	th.Angles = angles;
 	AngleVector(&angles, &vforward);
@@ -521,6 +521,9 @@ boolean Actor::ExplodeMissile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/03/16 17:47:47  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.23  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

@@ -50,16 +50,16 @@ void A_SnoutAttack(void)
 
 	damage = 3 + (P_Random() & 3);
 	avcpy(Player->mo->Angles, angles);
-	AimLineAttack(Player->mo, &angles, MELEERANGE);
+	AimLineAttack(*Player->mo, &angles, MELEERANGE);
 	PuffType = SnoutPuff;
-	PuffSpawned = NULL;
+	PuffSpawned = none;
 	AngleVector(&angles, &vforward);
-	LineAttack(Player->mo, &vforward, MELEERANGE, damage);
+	LineAttack(*Player->mo, &vforward, MELEERANGE, damage);
 	Player->mo->PlaySound((P_Random() & 1) ? 'PigActive2' : 'PigActive1',
 		CHAN_VOICE);
 	if (linetarget)
 	{
-		AdjustPlayerAngle(Player->mo);
+		PlayerPawn(*Player->mo).AdjustPlayerAngle();
 		if (PuffSpawned)
 		{
 			// Bit something
@@ -106,6 +106,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/03/16 17:47:47  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.14  2002/03/02 17:35:56  dj_jl
 //  Weapon classes
 //

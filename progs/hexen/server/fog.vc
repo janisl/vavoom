@@ -56,7 +56,7 @@
 
 void Actor::A_FogSpawn(void)
 {
-	mobj_t *mo = NULL;
+	Actor A;
 	float delta;
 
 	if (_Special1-- > 0)
@@ -67,30 +67,30 @@ void Actor::A_FogSpawn(void)
 	switch (P_Random() % 3)
 	{
 	case 0:
-		mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, FogPatchSmall);
+		A = Spawn(FogPatchSmall, Origin);
 		break;
 	case 1:
-		mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, FogPatchMedium);
+		A = Spawn(FogPatchMedium, Origin);
 		break;
 	case 2:
-		mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, FogPatchLarge);
+		A = Spawn(FogPatchLarge, Origin);
 		break;
 	}
 
-	if (mo)
+	if (A)
 	{
 		delta = itof(Args[1]);
 		if (delta == 0.0)
 			delta = 1.0;
-		mo->Angles.yaw = AngleMod360(Angles.yaw +
+		A.Angles.yaw = AngleMod360(Angles.yaw +
 			((Random() * delta) - (delta * 0.5)) * 360.0 / 256.0);
-		mo->Owner = self;
+		A.Owner = self;
 		if (Args[0] < 1)
 			Args[0] = 1;
-		mo->Args[0] = (P_Random() % (Args[0])) + 1;	// P_Random speed
-		mo->Args[3] = Args[3];	// Set lifetime
-		mo->Args[4] = 1;	// Set to moving
-		mo->_Special2 = P_Random() & 63;
+		A.Args[0] = (P_Random() % (Args[0])) + 1;	// P_Random speed
+		A.Args[3] = Args[3];	// Set lifetime
+		A.Args[4] = 1;	// Set to moving
+		A._Special2 = P_Random() & 63;
 	}
 }
 
@@ -130,6 +130,9 @@ void Actor::A_FogMove(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/03/16 17:47:46  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.13  2002/03/02 18:00:15  dj_jl
 //  Some smaller changes, beautification.
 //

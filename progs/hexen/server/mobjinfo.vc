@@ -4422,7 +4422,7 @@ class PunchPuff:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-
+		SpriteType = SPR_VP_PARALLEL;
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -7330,9 +7330,12 @@ class Bat:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2002/03/16 17:47:47  dj_jl
+//	Got rid of mobj_t and some other legacy.
+//
 //	Revision 1.27  2002/03/12 19:19:16  dj_jl
 //	Pickup classes
-//
+//	
 //	Revision 1.26  2002/03/09 17:57:02  dj_jl
 //	Got rid of function pointers, made most of the physics functions native.
 //	

@@ -42,9 +42,8 @@
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 float teleport_bbox[4];
-mobj_t *teleport_thing;
-float teleport_x;
-float teleport_y;
+Actor teleport_thing;
+TVec teleport_pos;
 
 // CODE --------------------------------------------------------------------
 
@@ -63,39 +62,39 @@ boolean PIT_StompThing(MapObject Other)
 		return true;
 	}
 
-	blockdist = Other.Radius + teleport_thing->Radius;
+	blockdist = Other.Radius + teleport_thing.Radius;
 
-	if (fabs(Other.Origin.x - teleport_x) >= blockdist
-		|| fabs(Other.Origin.y - teleport_y) >= blockdist)
+	if (fabs(Other.Origin.x - teleport_pos.x) >= blockdist ||
+		fabs(Other.Origin.y - teleport_pos.y) >= blockdist)
 	{
 		// didn't hit it
 		return true;
 	}
 
 	// don't clip against self
-	if (Other == *teleport_thing)
+	if (Other == teleport_thing)
 	{
 		return true;
 	}
 
 	//  Check if allowed to stomp things
-	if (!teleport_thing->bTelestomp)
+	if (!teleport_thing.bTelestomp)
 	{
 		return false;
 	}
 
-	Actor(Other).Damage(*teleport_thing, *teleport_thing, 10000);
+	Actor(Other).Damage(teleport_thing, teleport_thing, 10000);
 
 	return true;
 }
 
 //==========================================================================
 //
-//  P_TeleportMove
+//  Actor::TeleportMove
 //
 //==========================================================================
 
-boolean P_TeleportMove(mobj_t * thing, float x, float y)
+boolean Actor::TeleportMove(TVec pos)
 {
 	int xl;
 	int xh;
@@ -105,16 +104,15 @@ boolean P_TeleportMove(mobj_t * thing, float x, float y)
 	int by;
 
 	// kill anything occupying the position
-	teleport_thing = thing;
+	teleport_thing = self;
 
-	teleport_x = x;
-	teleport_y = y;
+	teleport_pos = pos;
 
 	// stomp on any things contacted
-	xl = MapBlock(x - thing->Radius - level->bmaporgx - MAXRADIUS);
-	xh = MapBlock(x + thing->Radius - level->bmaporgx + MAXRADIUS);
-	yl = MapBlock(y - thing->Radius - level->bmaporgy - MAXRADIUS);
-	yh = MapBlock(y + thing->Radius - level->bmaporgy + MAXRADIUS);
+	xl = MapBlock(pos.x - Radius - level->bmaporgx - MAXRADIUS);
+	xh = MapBlock(pos.x + Radius - level->bmaporgx + MAXRADIUS);
+	yl = MapBlock(pos.y - Radius - level->bmaporgy - MAXRADIUS);
+	yh = MapBlock(pos.y + Radius - level->bmaporgy + MAXRADIUS);
 
 	for (bx = xl; bx <= xh; bx++)
 		for (by = yl; by <= yh; by++)
@@ -123,113 +121,105 @@ boolean P_TeleportMove(mobj_t * thing, float x, float y)
 
 	// the move is ok,
 	// so link the thing into its new position
-	P_UnsetThingPosition(*thing);
+	P_UnsetThingPosition(self);
 
-	thing->Origin.x = x;
-	thing->Origin.y = y;
+	Origin = pos;
 
-	P_SetThingPosition(*thing);
+	P_SetThingPosition(self);
 
 	return true;
 }
 
 //==========================================================================
 //
-// P_Teleport
+//	Actor::Teleport
 //
 //==========================================================================
 
-boolean P_Teleport(mobj_t * thing, float x, float y, float angle,
-	boolean useFog)
+boolean Actor::Teleport(TVec pos, float angle, boolean useFog)
 {
-	float oldx;
-	float oldy;
-	float oldz;
+	TVec oldOrg;
 	float aboveFloor;
 	float fogDelta;
-	player_t *player;
-	mobj_t *fog;
+	Actor fog;
 
-	oldx = thing->Origin.x;
-	oldy = thing->Origin.y;
-	oldz = thing->Origin.z;
-	aboveFloor = thing->Origin.z - thing->FloorZ;
-	if (!P_TeleportMove(thing, x, y))
+	oldOrg = Origin;
+	aboveFloor = Origin.z - FloorZ;
+	pos.z = ONFLOORZ;
+	if (!TeleportMove(pos))
 	{
 		return false;
 	}
-	if (thing->bIsPlayer)
+	if (bIsPlayer)
 	{
-		player = thing->Player;
-		if (player->Powers[pw_flight] && aboveFloor)
+		if (Player->Powers[pw_flight] && aboveFloor)
 		{
-			thing->Origin.z = thing->FloorZ + aboveFloor;
-			if (thing->Origin.z + thing->Height > thing->CeilingZ)
+			Origin.z = FloorZ + aboveFloor;
+			if (Origin.z + Height > CeilingZ)
 			{
-				thing->Origin.z = thing->CeilingZ - thing->Height;
+				Origin.z = CeilingZ - Height;
 			}
-			player->ViewOrg.z = thing->Origin.z + player->ViewHeight;
+			Player->ViewOrg.z = Origin.z + Player->ViewHeight;
 		}
 		else
 		{
-			thing->Origin.z = thing->FloorZ;
-			player->ViewOrg.z = thing->Origin.z + player->ViewHeight;
+			Origin.z = FloorZ;
+			Player->ViewOrg.z = Origin.z + Player->ViewHeight;
 			if (useFog)
 			{
-				thing->Angles.pitch = 0.0;
+				Angles.pitch = 0.0;
 			}
 		}
 	}
-	else if (thing->bMissile)
+	else if (bMissile)
 	{
-		thing->Origin.z = thing->FloorZ + aboveFloor;
-		if (thing->Origin.z + thing->Height > thing->CeilingZ)
+		Origin.z = FloorZ + aboveFloor;
+		if (Origin.z + Height > CeilingZ)
 		{
-			thing->Origin.z = thing->CeilingZ - thing->Height;
+			Origin.z = CeilingZ - Height;
 		}
 	}
 	else
 	{
-		thing->Origin.z = thing->FloorZ;
+		Origin.z = FloorZ;
 	}
 	// Spawn teleport fog at source and destination
 	if (useFog)
 	{
-		fogDelta = thing->bMissile ? 0.0 : TELEFOGHEIGHT;
-		fog = P_SpawnMobj(oldx, oldy, oldz + fogDelta, TeleportFog);
-		fog->PlaySound('Teleport', CHAN_VOICE);
-		fog = P_SpawnMobj(x + 20.0 * cos(angle),
-			y + 20.0 * sin(angle), thing->Origin.z + fogDelta, TeleportFog);
-		fog->PlaySound('Teleport', CHAN_VOICE);
-		if (thing->bIsPlayer && !thing->Player->Powers[pw_speed])
+		fogDelta = bMissile ? 0.0 : TELEFOGHEIGHT;
+		fog = Spawn(TeleportFog, oldOrg + vector(0.0, 0.0, fogDelta));
+		fog.PlaySound('Teleport', CHAN_VOICE);
+		fog = Spawn(TeleportFog, Origin + vector(20.0 * cos(angle),
+			20.0 * sin(angle), fogDelta));
+		fog.PlaySound('Teleport', CHAN_VOICE);
+		if (bIsPlayer && !Player->Powers[pw_speed])
 		{
 			// Freeze player for about .5 sec
-			thing->ReactionTime = 0.5;
+			ReactionTime = 0.5;
 		}
-		thing->Angles.yaw = angle;
-		if (thing->bIsPlayer)
-			thing->Player->bFixAngle = true;
+		Angles.yaw = angle;
+		if (bIsPlayer)
+			Player->bFixAngle = true;
 	}
-	if (thing->bFloorClip)
+	if (bFloorClip)
 	{
-		if (thing->Origin.z == thing->Sector->floorheight &&
-			thing->GetFloorType() > FLOOR_SOLID)
+		if (Origin.z == FloorZ && GetFloorType() > FLOOR_SOLID)
 		{
-			thing->FloorClip = 10.0;
+			FloorClip = 10.0;
 		}
 		else
 		{
-			thing->FloorClip = 0.0;
+			FloorClip = 0.0;
 		}
 	}
-	if (thing->bMissile)
+	if (bMissile)
 	{
-		thing->Velocity.x = thing->Speed * cos(angle);
-		thing->Velocity.y = thing->Speed * sin(angle);
+		Velocity.x = Speed * cos(angle);
+		Velocity.y = Speed * sin(angle);
 	}
 	else if (useFog)	// no fog doesn't alter the player's momentums
 	{
-		thing->Velocity = vector(0.0, 0.0, 0.0);
+		Velocity = vector(0.0, 0.0, 0.0);
 	}
 	return true;
 }
@@ -240,11 +230,11 @@ boolean P_Teleport(mobj_t * thing, float x, float y, float angle,
 //
 //==========================================================================
 
-boolean EV_Teleport(int tid, mobj_t * thing, boolean fog)
+boolean EV_Teleport(int tid, Actor thing, boolean fog)
 {
 	int i;
 	int count;
-	mobj_t *mo;
+	Actor A;
 	int searcher;
 
 	if (!thing)
@@ -252,13 +242,13 @@ boolean EV_Teleport(int tid, mobj_t * thing, boolean fog)
 		// Teleport function called with an invalid mobj
 		return false;
 	}
-	if (thing->bNoTeleport)
+	if (thing.bNoTeleport)
 	{
 		return false;
 	}
 	count = 0;
 	searcher = -1;
-	while (P_FindMobjFromTID(tid, &searcher) != NULL)
+	while (FindMobjFromTID(tid, &searcher) != none)
 	{
 		count++;
 	}
@@ -270,11 +260,11 @@ boolean EV_Teleport(int tid, mobj_t * thing, boolean fog)
 	searcher = -1;
 	for (i = 0; i < count; i++)
 	{
-		mo = P_FindMobjFromTID(tid, &searcher);
+		A = FindMobjFromTID(tid, &searcher);
 	}
-	if (!mo)
+	if (!A)
 		Error("Can't find teleport mapspot\n");
-	return P_Teleport(thing, mo->Origin.x, mo->Origin.y, mo->Angles.yaw, fog);
+	return thing.Teleport(A.Origin, A.Angles.yaw, fog);
 }
 
 //==========================================================================
@@ -290,13 +280,13 @@ boolean EV_Teleport(int tid, mobj_t * thing, boolean fog)
 //
 //==========================================================================
 
-boolean EV_SilentLineTeleport(line_t *line, int side, Actor *thing, int id,
+boolean EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
 							boolean reverse)
 {
 	int searcher;
 	line_t *l;
 
-	if (side || thing->bNoTeleport || !line)
+	if (side || thing.bNoTeleport || !line)
 	{
 		return false;
 	}
@@ -304,10 +294,6 @@ boolean EV_SilentLineTeleport(line_t *line, int side, Actor *thing, int id,
 	searcher = -1;
 	for (l = P_FindLine(id, &searcher); l; l = P_FindLine(id, &searcher))
 	{
-		if (l == line || !l->backsector)
-		{
-			continue;
-		}
 		TVec SrcXAxis;
 		TVec SrcYAxis;
 		TVec DstXAxis;
@@ -318,11 +304,18 @@ boolean EV_SilentLineTeleport(line_t *line, int side, Actor *thing, int id,
 		float pos;
 		float TempX;
 		float TempY;
+		float oldZ;
+
+		if (l == line || !l->backsector)
+		{
+			continue;
+		}
 
 		// Get the thing's position along the source linedef
 		SrcXAxis = Normalize(*line->v2 - *line->v1);
 		SrcYAxis = -line->normal;
-		pos = DotProduct(SrcXAxis, thing->Origin - *line->v1);
+		pos = DotProduct(SrcXAxis, thing.Origin - *line->v1);
+		oldZ = thing.Origin.z;
 
 		// Interpolate position across the exit linedef
 		if (reverse)
@@ -330,8 +323,8 @@ boolean EV_SilentLineTeleport(line_t *line, int side, Actor *thing, int id,
 			DstXAxis = Normalize(*l->v2 - *l->v1);
 			DstYAxis = -l->normal;
 			newPos = *l->v1 + pos * DstXAxis;
-			newPos.z = thing->Origin.z - GetPlanePointZ(
-				line->frontsector->botregion->floor, thing->Origin) +
+			newPos.z = thing.Origin.z - GetPlanePointZ(
+				line->frontsector->botregion->floor, thing.Origin) +
 				GetPlanePointZ(l->frontsector->botregion->floor, newPos);
 		}
 		else
@@ -339,48 +332,36 @@ boolean EV_SilentLineTeleport(line_t *line, int side, Actor *thing, int id,
 			DstXAxis = Normalize(*l->v1 - *l->v2);
 			DstYAxis = l->normal;
 			newPos = *l->v2 + pos * DstXAxis;
-			newPos.z = thing->Origin.z - GetPlanePointZ(
-				line->frontsector->botregion->floor, thing->Origin) +
+			newPos.z = thing.Origin.z - GetPlanePointZ(
+				line->frontsector->botregion->floor, thing.Origin) +
 				GetPlanePointZ(l->backsector->botregion->floor, newPos);
 		}
 
 		// Attempt to teleport, aborting if blocked
-		//if (!P_TeleportMove(thing, newPos.x, newPos.y, newPos.z, false))
-		if (!P_TeleportMove(thing, newPos.x, newPos.y))
+		if (!thing.TeleportMove(newPos))
 		{
 			return false;
 		}
-		thing->Origin.z = newPos.z;
 
 		// Rotate thing's orientation according to difference in linedef angles
 		TempV.x = DotProduct(DstXAxis, SrcXAxis);
 		TempV.y = DotProduct(DstYAxis, SrcXAxis);
 		TempV.z = 0.0;
 		VectorAngles(&TempV, &TempA);
-		thing->Angles.yaw = AngleMod360(thing->Angles.yaw - TempA.yaw);
+		thing.Angles.yaw = AngleMod360(thing.Angles.yaw - TempA.yaw);
 
 		// Rotate thing's momentum to come out of exit just like it entered
-		TempX = DotProduct(thing->Velocity, SrcXAxis);
-		TempY = DotProduct(thing->Velocity, SrcYAxis);
-		thing->Velocity.x = TempX * DstXAxis.x + TempY * DstYAxis.x;
-		thing->Velocity.y = TempX * DstXAxis.y + TempY * DstYAxis.y;
+		TempX = DotProduct(thing.Velocity, SrcXAxis);
+		TempY = DotProduct(thing.Velocity, SrcYAxis);
+		thing.Velocity.x = TempX * DstXAxis.x + TempY * DstYAxis.x;
+		thing.Velocity.y = TempX * DstXAxis.y + TempY * DstYAxis.y;
 
 		// Adjust a player's view, in case there has been a height change
-		if (thing->bIsPlayer)
+		if (thing.bIsPlayer)
 		{
-			// Save the current deltaviewheight, used in stepping
-			float DeltaViewHeight = thing->Player->DeltaViewHeight;
+			thing.Player->ViewOrg.z += thing.Origin.z - oldZ;
 
-			// Clear DeltaViewHeight, since we don't want any changes now
-			thing->Player->DeltaViewHeight = 0.0;
-
-			// Set player's view according to the newly set parameters
-			CalcHeight(thing->Player);
-
-			// Reset the delta to have the same dynamics as before
-			thing->Player->DeltaViewHeight = DeltaViewHeight;
-
-			thing->Player->bFixAngle = true;
+			thing.Player->bFixAngle = true;
 		}
 		return true;
 	}
@@ -390,6 +371,9 @@ boolean EV_SilentLineTeleport(line_t *line, int side, Actor *thing, int id,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/03/16 17:47:47  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.19  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

@@ -213,7 +213,6 @@ class Actor:Entity
 	bool bDropOff;			// allow jumps from high places
 	bool bPickUp;			// for players to pick up items
 	bool bFloat;			// allow moves to any height, no gravity
-	bool bTeleport;			// don't cross lines or look at heights
 	bool bMissile;			// don't hit same species, explode on block
 	bool bNoBlood;			// don't bleed when shot (use puff)
 	bool bCorpse;			// don't stop moving halfway off a step
@@ -283,13 +282,20 @@ class Actor:Entity
 	boolean Touch(MapObject Other);
 	void CheckForPushSpecial(line_t * line, int side);
 	void BlockedByLine(line_t * ld);
+	boolean TestLocation(void);
+	void PushLine(void);
+	boolean TryMove(float x, float y);
 
 	void Think(void);
+
+	void TeleportToPlayerStarts(void);
+	void TeleportToDeathmatchStarts(void);
+	void TeleportOther(void);
 
 	int GetFloorType(void);
 	void SetOrigin2(TVec origin);
 	void OnMapSpawn(mthing_t *mthing);
-	//void Remove(void);
+	void Remove(void);
 	int HitFloorType(void);
 	void FloorBounceMissile(void);
 	void Thrust(float angle, float move);
@@ -301,6 +307,8 @@ class Actor:Entity
 	boolean MorphPlayer(void);
 	boolean MorphMonster(void);
 	void AutoUseHealth(int saveHealth);
+	void InsertIntoTIDList(int tid);
+	void RemoveFromTIDList(void);
 
 	void Damage(Actor inflictor, Actor source, int damage);
 	void FallingDamage(void);
@@ -345,7 +353,12 @@ class Actor:Entity
 	Actor SpawnMissileAngleSpeed(classid type, float angle, float momz,
 		float speed);
 
+	boolean TeleportMove(TVec pos);
+	boolean Teleport(TVec pos, float angle, boolean useFog);
+
 	boolean HeightClip(void);
+
+	void Blast(Actor source, float strength);
 
 	Actor RoughBlockCheck(int index);
 	Actor RoughMonsterSearch(int distance);
@@ -533,6 +546,11 @@ class Pawn:Actor
 class PlayerPawn:Pawn
 	abstract
 {
+	// For cleric's invulnerability effect
+	bool bAltShadow;
+	bool bShadow;
+	bool bDontDraw;
+
 	int AttackEndState;
 
 	boolean GiveMana(int mana, int count);
@@ -542,9 +560,46 @@ class PlayerPawn:Pawn
 	boolean GivePower(int power);
 	boolean GiveArtifact(int arti);
 
+	void InventoryLeft(void);
+	void InventoryRight(void);
+	void InventoryUse(void);
+	void InventoryTick(float deltaTime);
+
+	void MovePlayer(float deltaTime);
+	void CheckWaterJump(void);
+	void WaterMove(float deltaTime);
+	void WaterJump(void);
+	void ThrustPlayer(float angle, float move, float deltaTime);
+	void CalcHeight(float deltaTime);
+	void PlayerInSpecialSector(float deltaTime);
+	void PlayerOnSpecialFlat(int floorType);
+	void PlayerInContents(void);
+	void PlayerImpulse(void);
+	void PlayerTick(float deltaTime);
+	void PaletteFlash(void);
+	void SetViewPos(void);
+	boolean UseArtiHealRadius(void);
+	void UseArtiTele(void);
+	boolean UseArtifact(int arti);
+	void PlayerUseArtifact(int arti);
+	void PlayerNextArtifact(void);
+	void PlayerRemoveArtifact(int slot);
+
+	void MorphPlayerThink(void);
+	boolean UndoPlayerMorph(void);
+	void SetPlayerRunState(void);
+	void DeathPlayerTick(float deltaTime);
+	void UseArtiPig(void);
+	void UseArtiSummon(void);
+	void UseArtiPoisonBag(void);
+	void UseArtiTeleportOther(void);
+	void UseArtiBlastRadius(void);
+
 	Actor SpawnPlayerMissile(classid type);
 	Actor SpawnPlayerMissileAngle(classid type, float angle);
 	Actor SpawnPlayerMissileAngleXYZ(TVec org, classid type, float angle);
+
+	void AdjustPlayerAngle(void);
 
 	defaultproperties
 	{
@@ -800,7 +855,7 @@ addfields player_t
 
 	float ArmorPoints[NUMARMOR];
 
-	int InventoryTics;
+	float InventoryTime;
 
 	int ArtifactFlash;
 	int ReadyArtifact;
@@ -818,7 +873,7 @@ addfields player_t
 	int Keys;
 
 	// Power ups. invinc and invis are tic counters.
-	int Powers[NUMPOWERS];
+	float Powers[NUMPOWERS];
 
 	int Arti;	// artitype_t to use
 
@@ -953,6 +1008,9 @@ name door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/03/16 17:47:47  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.27  2002/03/12 19:19:18  dj_jl
 //  Pickup classes
 //

@@ -43,20 +43,20 @@
 
 void Actor::A_LeafSpawn(void)
 {
-	mobj_t *mo;
+	Actor A;
 	int i;
 
 	for (i = (P_Random() & 3) + 1; i; i--)
 	{
-		mo = P_SpawnMobj(Origin.x + (Random() - Random()) * 64.0,
-			Origin.y + (Random() - Random()) * 64.0,
-			Origin.z + Random() * 64.0,
-			P_Random() & 1 ? Leaf2 : Leaf1);
-		if (mo)
+		A = Spawn(P_Random() & 1 ? Leaf2 : Leaf1, Origin + vector(
+			(Random() - Random()) * 64.0,
+			(Random() - Random()) * 64.0,
+			Random() * 64.0));
+		if (A)
 		{
-			mo->Thrust(Angles.yaw, Random() * 2.0 + 3.0);
-			mo->Owner = self;
-			mo->_Special1 = 0;
+			A.Thrust(Angles.yaw, Random() * 2.0 + 3.0);
+			A.Owner = self;
+			A._Special1 = 0;
 		}
 	}
 }
@@ -130,6 +130,9 @@ void Actor::A_TreeDeath(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/03/16 17:47:47  dj_jl
+//  Got rid of mobj_t and some other legacy.
+//
 //  Revision 1.15  2002/03/02 18:00:17  dj_jl
 //  Some smaller changes, beautification.
 //
