@@ -367,6 +367,11 @@ void Kill(Actor source)
 	bCorpse = true;
 	bNoPassMobj = true;
 	Height /= 4.0;
+	if (bCountKill && Special)
+	{
+		// Initiate monster death actions
+		ExecuteLineSpecial(Special, &Args[0], NULL, 0, self);
+	}
 	if (source && source.bIsPlayer)
 	{
 		if (bCountKill)
@@ -2914,6 +2919,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2004/03/12 07:21:39  dj_jl
+//  Monster desth special action
+//
 //  Revision 1.4  2003/11/12 16:49:43  dj_jl
 //  Changed player structure into a class
 //

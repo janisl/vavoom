@@ -356,6 +356,11 @@ void Died(Actor source)
 	bCorpse = true;
 	Height /= 4.0;
 
+	if (bCountKill && Special)
+	{
+		// Initiate monster death actions
+		ExecuteLineSpecial(Special, &Args[0], NULL, 0, self);
+	}
 	if (source && source.bIsPlayer)
 	{
 		// count for intermission
@@ -1990,6 +1995,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2004/03/12 07:22:14  dj_jl
+//  Monster desth special action
+//
 //  Revision 1.7  2004/02/04 07:32:58  dj_jl
 //  Implemented many action functions
 //
