@@ -490,7 +490,8 @@ void AddFields(void)
 	}
 
 	//  PÆrbauda, vai tas ir struktÝras tips
-	if (struct_type->type != ev_struct && struct_type->type != ev_class)
+	if (struct_type->type != ev_struct && (
+		!ClassAddfields || struct_type->type != ev_class))
 	{
 	 	ParseError("Parent must be a struct.");
 		return;
@@ -758,7 +759,7 @@ void ParseClass(void)
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	while (!TK_Check(PU_RBRACE))
 	{
-		if (TK_Check(KW_ADDFIELDS))
+		if (ClassAddfields && TK_Check(KW_ADDFIELDS))
 		{
 	   		if (class_type->available_size)
 			{
@@ -1106,9 +1107,12 @@ void AddVirtualTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/10/09 17:31:55  dj_jl
+//	Addfields to class disabled by default
+//
 //	Revision 1.7  2001/10/02 17:40:48  dj_jl
 //	Possibility to declare function's code inside class declaration
-//
+//	
 //	Revision 1.6  2001/09/25 17:03:50  dj_jl
 //	Added calling of parent functions
 //	

@@ -311,7 +311,7 @@ struct constant_t
 
 void PA_Parse(void);
 
-void ERR_Exit(error_t error, boolean info, char *text, ...);
+void ERR_Exit(error_t error, boolean info, char *text, ...) __attribute__((noreturn));
 void ParseError(error_t error);
 void ParseError(error_t error, const char *text, ...) __attribute__ ((format(printf, 2, 3)));
 void ParseError(const char *text, ...) __attribute__ ((format(printf, 1, 2)));
@@ -373,6 +373,7 @@ int CheckForConstant(const char *name);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
+extern bool				ClassAddfields;
 extern char				tk_SourceName[MAX_FILE_NAME_LENGTH];
 extern int				tk_IncludedLines;
 extern tokenType_t		tk_Token;
@@ -472,9 +473,12 @@ inline bool TK_Check(Punctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/10/09 17:31:55  dj_jl
+//	Addfields to class disabled by default
+//
 //	Revision 1.7  2001/10/02 17:44:52  dj_jl
 //	Some optimizations
-//
+//	
 //	Revision 1.6  2001/09/24 17:31:38  dj_jl
 //	Some fixes
 //	

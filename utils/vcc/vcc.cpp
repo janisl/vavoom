@@ -52,6 +52,7 @@ static void DumpAsm(void);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+bool			ClassAddfields = false;
 char			SourceFileName[MAX_FILE_NAME_LENGTH];
 static char		ObjectFileName[MAX_FILE_NAME_LENGTH];
 
@@ -165,6 +166,12 @@ static void ProcessArgs(int ArgCount, char **ArgVector)
 			option = *text++;
 			switch (option)
 			{
+				case 'c':
+					if (*text == 'a' && !text[1])
+					{
+						ClassAddfields = true;
+					}
+					break;
 				case 'd':
 					DebugMode = true;
 					if (*text)
@@ -279,9 +286,12 @@ int dprintf(const char *text, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/10/09 17:31:55  dj_jl
+//	Addfields to class disabled by default
+//
 //	Revision 1.6  2001/10/02 17:46:04  dj_jl
 //	Preprocessing into a memory buffer
-//
+//	
 //	Revision 1.5  2001/09/24 17:31:38  dj_jl
 //	Some fixes
 //	
