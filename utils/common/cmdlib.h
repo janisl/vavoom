@@ -82,6 +82,7 @@ int LoadFile(const char *name, void **bufferptr);
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern void *(*Malloc)(size_t size);
+extern void *(*Realloc)(void *data, size_t size);
 extern void (*Free)(void *ptr);
 
 template<class T> T* New(void)
@@ -106,9 +107,12 @@ inline void Delete(void *ptr)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/12/12 19:18:07  dj_jl
+//	Added Realloc
+//
 //	Revision 1.4  2001/09/12 17:28:38  dj_jl
 //	Created glVIS plugin
-//
+//	
 //	Revision 1.3  2001/08/21 17:51:21  dj_jl
 //	Beautification
 //	

@@ -40,6 +40,7 @@ namespace VavoomUtils {
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 static void *DefaultMalloc(size_t size);
+static void *DefaultRealloc(void *data, size_t size);
 static void DefaultFree(void *ptr);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
@@ -47,6 +48,7 @@ static void DefaultFree(void *ptr);
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 void *(*Malloc)(size_t size) = DefaultMalloc;
+void *(*Realloc)(void *data, size_t size) = DefaultRealloc;
 void (*Free)(void *ptr) = DefaultFree;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
@@ -74,6 +76,22 @@ static void *DefaultMalloc(size_t size)
 		Error("Couldn't alloc %ld bytes", size);
 	}
 	memset(ptr, 0, size);
+	return ptr;
+}
+
+//==========================================================================
+//
+//	DefaultRealloc
+//
+//==========================================================================
+
+static void *DefaultRealloc(void *data, size_t size)
+{
+	void *ptr = realloc(data, size);
+	if (!ptr)
+	{
+		Error("Couldn't realloc %ld bytes", size);
+	}
 	return ptr;
 }
 
@@ -350,9 +368,12 @@ int LoadFile(const char *name, void **bufferptr)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/12/12 19:18:07  dj_jl
+//	Added Realloc
+//
 //	Revision 1.4  2001/09/12 17:28:38  dj_jl
 //	Created glVIS plugin
-//
+//	
 //	Revision 1.3  2001/08/21 17:51:21  dj_jl
 //	Beautification
 //	
