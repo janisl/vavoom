@@ -1610,15 +1610,15 @@ static int CmdTimer(void)
 static int CmdSectorSound(void)
 {
 	int volume;
-	VMapObject *mobj;
+	sector_t *sector;
 
-	mobj = NULL;
-	if(ACScript->line)
+	sector = NULL;
+	if (ACScript->line)
 	{
-		mobj = (VMapObject *)&ACScript->line->frontsector->soundorg;
+		sector = ACScript->line->frontsector;
 	}
 	volume = Pop();
-	SV_StartSound(mobj, S_GetSoundID(ACStrings[Pop()]), 0, volume);
+	SV_SectorStartSound(sector, S_GetSoundID(ACStrings[Pop()]), 0, volume);
 	return SCRIPT_CONTINUE;
 }
 
@@ -1731,9 +1731,12 @@ static int CmdSetLineSpecial(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/01/11 08:13:35  dj_jl
+//	Fixed sector sound
+//
 //	Revision 1.11  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.10  2001/12/27 17:33:29  dj_jl
 //	Removed thinker list
 //	
