@@ -31,17 +31,18 @@
 
 //==========================================================================
 //
-//	MT_MISC0
+//	ItemHealthPotion
 //
 //==========================================================================
 
-class MT_MISC0:Actor
+class ItemHealthPotion:Actor
+	__mobjinfo__(81)
 {
 	defaultproperties
 	{
 		Health = 1000;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL;
@@ -52,17 +53,18 @@ class MT_MISC0:Actor
 
 //==========================================================================
 //
-//	MT_ITEMSHIELD1
+//	ItemShield1
 //
 //==========================================================================
 
-class MT_ITEMSHIELD1:Actor
+class ItemShield1:Actor
+	__mobjinfo__(85)
 {
 	defaultproperties
 	{
 		Health = 1000;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL;
@@ -73,17 +75,18 @@ class MT_ITEMSHIELD1:Actor
 
 //==========================================================================
 //
-//	MT_ITEMSHIELD2
+//	ItemShield2
 //
 //==========================================================================
 
-class MT_ITEMSHIELD2:Actor
+class ItemShield2:Actor
+	__mobjinfo__(31)
 {
 	defaultproperties
 	{
 		Health = 1000;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL;
@@ -94,17 +97,18 @@ class MT_ITEMSHIELD2:Actor
 
 //==========================================================================
 //
-//	MT_MISC1
+//	ItemBagOfHolding
 //
 //==========================================================================
 
-class MT_MISC1:Actor
+class ItemBagOfHolding:Actor
+	__mobjinfo__(8)
 {
 	defaultproperties
 	{
 		Health = 1000;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL|MF_COUNTITEM;
@@ -115,17 +119,18 @@ class MT_MISC1:Actor
 
 //==========================================================================
 //
-//	MT_MISC2
+//	ItemMap
 //
 //==========================================================================
 
-class MT_MISC2:Actor
+class ItemMap:Actor
+	__mobjinfo__(35)
 {
 	defaultproperties
 	{
 		Health = 1000;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL|MF_COUNTITEM;
@@ -136,17 +141,18 @@ class MT_MISC2:Actor
 
 //==========================================================================
 //
-//	MT_ARTIINVISIBILITY
+//	ArtifactInvisibility
 //
 //==========================================================================
 
-class MT_ARTIINVISIBILITY:Actor
+class ArtifactInvisibility:Actor
+	__mobjinfo__(75)
 {
 	defaultproperties
 	{
 		Health = 1000;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Translucency = 33;
@@ -158,17 +164,18 @@ class MT_ARTIINVISIBILITY:Actor
 
 //==========================================================================
 //
-//	MT_MISC3
+//	ArtifactHealthFlask
 //
 //==========================================================================
 
-class MT_MISC3:Actor
+class ArtifactHealthFlask:Actor
+	__mobjinfo__(82)
 {
 	defaultproperties
 	{
 		Health = 1000;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL|MF_COUNTITEM;
@@ -179,17 +186,18 @@ class MT_MISC3:Actor
 
 //==========================================================================
 //
-//	MT_ARTIFLY
+//	ArtifactFly
 //
 //==========================================================================
 
-class MT_ARTIFLY:Actor
+class ArtifactFly:Actor
+	__mobjinfo__(83)
 {
 	defaultproperties
 	{
 		Health = 1000;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL|MF_COUNTITEM;
@@ -200,17 +208,18 @@ class MT_ARTIFLY:Actor
 
 //==========================================================================
 //
-//	MT_ARTIINVULNERABILITY
+//	ArtifactInvulnerability
 //
 //==========================================================================
 
-class MT_ARTIINVULNERABILITY:Actor
+class ArtifactInvulnerability:Actor
+	__mobjinfo__(84)
 {
 	defaultproperties
 	{
 		Health = 1000;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL|MF_COUNTITEM;
@@ -221,17 +230,18 @@ class MT_ARTIINVULNERABILITY:Actor
 
 //==========================================================================
 //
-//	MT_ARTITOMEOFPOWER
+//	ArtifactTomeOfPower
 //
 //==========================================================================
 
-class MT_ARTITOMEOFPOWER:Actor
+class ArtifactTomeOfPower:Actor
+	__mobjinfo__(86)
 {
 	defaultproperties
 	{
 		Health = 1000;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL|MF_COUNTITEM;
@@ -242,17 +252,18 @@ class MT_ARTITOMEOFPOWER:Actor
 
 //==========================================================================
 //
-//	MT_ARTIEGG
+//	ArtifactEgg
 //
 //==========================================================================
 
-class MT_ARTIEGG:Actor
+class ArtifactEgg:Actor
+	__mobjinfo__(30)
 {
 	defaultproperties
 	{
 		Health = 1000;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL|MF_COUNTITEM;
@@ -263,11 +274,11 @@ class MT_ARTIEGG:Actor
 
 //==========================================================================
 //
-//	MT_EGGFX
+//	EggMissile
 //
 //==========================================================================
 
-class MT_EGGFX:Actor
+class EggMissile:Actor
 {
 	defaultproperties
 	{
@@ -287,17 +298,18 @@ class MT_EGGFX:Actor
 
 //==========================================================================
 //
-//	MT_ARTISUPERHEAL
+//	ArtifactSuperHeal
 //
 //==========================================================================
 
-class MT_ARTISUPERHEAL:Actor
+class ArtifactSuperHeal:Actor
+	__mobjinfo__(32)
 {
 	defaultproperties
 	{
 		Health = 1000;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL|MF_COUNTITEM;
@@ -308,17 +320,18 @@ class MT_ARTISUPERHEAL:Actor
 
 //==========================================================================
 //
-//	MT_MISC4
+//	ArtifactTorch
 //
 //==========================================================================
 
-class MT_MISC4:Actor
+class ArtifactTorch:Actor
+	__mobjinfo__(33)
 {
 	defaultproperties
 	{
 		Health = 1000;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL|MF_COUNTITEM;
@@ -329,17 +342,18 @@ class MT_MISC4:Actor
 
 //==========================================================================
 //
-//	MT_MISC5
+//	ArtifactFireBomb
 //
 //==========================================================================
 
-class MT_MISC5:Actor
+class ArtifactFireBomb:Actor
+	__mobjinfo__(34)
 {
 	defaultproperties
 	{
 		Health = 1000;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL|MF_COUNTITEM;
@@ -350,11 +364,11 @@ class MT_MISC5:Actor
 
 //==========================================================================
 //
-//	MT_FIREBOMB
+//	FireBomb
 //
 //==========================================================================
 
-class MT_FIREBOMB:Actor
+class FireBomb:Actor
 {
 	defaultproperties
 	{
@@ -372,17 +386,18 @@ class MT_FIREBOMB:Actor
 
 //==========================================================================
 //
-//	MT_ARTITELEPORT
+//	ArtifactTeleport
 //
 //==========================================================================
 
-class MT_ARTITELEPORT:Actor
+class ArtifactTeleport:Actor
+	__mobjinfo__(36)
 {
 	defaultproperties
 	{
 		Health = 1000;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL|MF_COUNTITEM;
@@ -393,11 +408,12 @@ class MT_ARTITELEPORT:Actor
 
 //==========================================================================
 //
-//	MT_POD
+//	Pod
 //
 //==========================================================================
 
-class MT_POD:Actor
+class Pod:Actor
+	__mobjinfo__(2035)
 {
 	defaultproperties
 	{
@@ -418,11 +434,11 @@ class MT_POD:Actor
 
 //==========================================================================
 //
-//	MT_PODGOO
+//	PodGoo
 //
 //==========================================================================
 
-class MT_PODGOO:Actor
+class PodGoo:Actor
 {
 	defaultproperties
 	{
@@ -440,11 +456,12 @@ class MT_PODGOO:Actor
 
 //==========================================================================
 //
-//	MT_PODGENERATOR
+//	PodGenerator
 //
 //==========================================================================
 
-class MT_PODGENERATOR:Actor
+class PodGenerator:Actor
+	__mobjinfo__(43)
 {
 	defaultproperties
 	{
@@ -460,11 +477,11 @@ class MT_PODGENERATOR:Actor
 
 //==========================================================================
 //
-//	MT_SPLASH
+//	Splash
 //
 //==========================================================================
 
-class MT_SPLASH:Actor
+class Splash:Actor
 {
 	defaultproperties
 	{
@@ -482,11 +499,11 @@ class MT_SPLASH:Actor
 
 //==========================================================================
 //
-//	MT_SPLASHBASE
+//	SplashBase
 //
 //==========================================================================
 
-class MT_SPLASHBASE:Actor
+class SplashBase:Actor
 {
 	defaultproperties
 	{
@@ -502,11 +519,11 @@ class MT_SPLASHBASE:Actor
 
 //==========================================================================
 //
-//	MT_LAVASPLASH
+//	LavaSplash
 //
 //==========================================================================
 
-class MT_LAVASPLASH:Actor
+class LavaSplash:Actor
 {
 	defaultproperties
 	{
@@ -522,11 +539,11 @@ class MT_LAVASPLASH:Actor
 
 //==========================================================================
 //
-//	MT_LAVASMOKE
+//	LavaSmoke
 //
 //==========================================================================
 
-class MT_LAVASMOKE:Actor
+class LavaSmoke:Actor
 {
 	defaultproperties
 	{
@@ -543,11 +560,11 @@ class MT_LAVASMOKE:Actor
 
 //==========================================================================
 //
-//	MT_SLUDGECHUNK
+//	SludgeChunk
 //
 //==========================================================================
 
-class MT_SLUDGECHUNK:Actor
+class SludgeChunk:Actor
 {
 	defaultproperties
 	{
@@ -565,11 +582,11 @@ class MT_SLUDGECHUNK:Actor
 
 //==========================================================================
 //
-//	MT_SLUDGESPLASH
+//	SludgeSplash
 //
 //==========================================================================
 
-class MT_SLUDGESPLASH:Actor
+class SludgeSplash:Actor
 {
 	defaultproperties
 	{
@@ -585,11 +602,12 @@ class MT_SLUDGESPLASH:Actor
 
 //==========================================================================
 //
-//	MT_SKULLHANG70
+//	SkullHang70
 //
 //==========================================================================
 
-class MT_SKULLHANG70:Actor
+class SkullHang70:Actor
+	__mobjinfo__(17)
 {
 	defaultproperties
 	{
@@ -605,11 +623,12 @@ class MT_SKULLHANG70:Actor
 
 //==========================================================================
 //
-//	MT_SKULLHANG60
+//	SkullHang60
 //
 //==========================================================================
 
-class MT_SKULLHANG60:Actor
+class SkullHang60:Actor
+	__mobjinfo__(24)
 {
 	defaultproperties
 	{
@@ -625,11 +644,12 @@ class MT_SKULLHANG60:Actor
 
 //==========================================================================
 //
-//	MT_SKULLHANG45
+//	SkullHang45
 //
 //==========================================================================
 
-class MT_SKULLHANG45:Actor
+class SkullHang45:Actor
+	__mobjinfo__(25)
 {
 	defaultproperties
 	{
@@ -645,11 +665,12 @@ class MT_SKULLHANG45:Actor
 
 //==========================================================================
 //
-//	MT_SKULLHANG35
+//	SkullHang35
 //
 //==========================================================================
 
-class MT_SKULLHANG35:Actor
+class SkullHang35:Actor
+	__mobjinfo__(26)
 {
 	defaultproperties
 	{
@@ -665,11 +686,12 @@ class MT_SKULLHANG35:Actor
 
 //==========================================================================
 //
-//	MT_CHANDELIER
+//	Chandelier
 //
 //==========================================================================
 
-class MT_CHANDELIER:Actor
+class Chandelier:Actor
+	__mobjinfo__(28)
 {
 	defaultproperties
 	{
@@ -692,11 +714,12 @@ class MT_CHANDELIER:Actor
 
 //==========================================================================
 //
-//	MT_SERPTORCH
+//	SerpentTorch
 //
 //==========================================================================
 
-class MT_SERPTORCH:Actor
+class SerpentTorch:Actor
+	__mobjinfo__(27)
 {
 	defaultproperties
 	{
@@ -719,11 +742,12 @@ class MT_SERPTORCH:Actor
 
 //==========================================================================
 //
-//	MT_SMALLPILLAR
+//	SmallPillar
 //
 //==========================================================================
 
-class MT_SMALLPILLAR:Actor
+class SmallPillar:Actor
+	__mobjinfo__(29)
 {
 	defaultproperties
 	{
@@ -739,11 +763,12 @@ class MT_SMALLPILLAR:Actor
 
 //==========================================================================
 //
-//	MT_STALAGMITESMALL
+//	StalagmiteSmall
 //
 //==========================================================================
 
-class MT_STALAGMITESMALL:Actor
+class StalagmiteSmall:Actor
+	__mobjinfo__(37)
 {
 	defaultproperties
 	{
@@ -759,11 +784,12 @@ class MT_STALAGMITESMALL:Actor
 
 //==========================================================================
 //
-//	MT_STALAGMITELARGE
+//	StalagmiteLarge
 //
 //==========================================================================
 
-class MT_STALAGMITELARGE:Actor
+class StalagmiteLarge:Actor
+	__mobjinfo__(38)
 {
 	defaultproperties
 	{
@@ -779,11 +805,12 @@ class MT_STALAGMITELARGE:Actor
 
 //==========================================================================
 //
-//	MT_STALACTITESMALL
+//	StalactiteSmall
 //
 //==========================================================================
 
-class MT_STALACTITESMALL:Actor
+class StalactiteSmall:Actor
+	__mobjinfo__(39)
 {
 	defaultproperties
 	{
@@ -799,11 +826,12 @@ class MT_STALACTITESMALL:Actor
 
 //==========================================================================
 //
-//	MT_STALACTITELARGE
+//	StalactiteLarge
 //
 //==========================================================================
 
-class MT_STALACTITELARGE:Actor
+class StalactiteLarge:Actor
+	__mobjinfo__(40)
 {
 	defaultproperties
 	{
@@ -819,11 +847,12 @@ class MT_STALACTITELARGE:Actor
 
 //==========================================================================
 //
-//	MT_MISC6
+//	FireBrazier
 //
 //==========================================================================
 
-class MT_MISC6:Actor
+class FireBrazier:Actor
+	__mobjinfo__(76)
 {
 	defaultproperties
 	{
@@ -846,11 +875,12 @@ class MT_MISC6:Actor
 
 //==========================================================================
 //
-//	MT_BARREL
+//	Barrel
 //
 //==========================================================================
 
-class MT_BARREL:Actor
+class Barrel:Actor
+	__mobjinfo__(44)
 {
 	defaultproperties
 	{
@@ -866,11 +896,12 @@ class MT_BARREL:Actor
 
 //==========================================================================
 //
-//	MT_MISC7
+//	BrownPillar
 //
 //==========================================================================
 
-class MT_MISC7:Actor
+class BrownPillar:Actor
+	__mobjinfo__(47)
 {
 	defaultproperties
 	{
@@ -886,11 +917,12 @@ class MT_MISC7:Actor
 
 //==========================================================================
 //
-//	MT_MISC8
+//	Moss1
 //
 //==========================================================================
 
-class MT_MISC8:Actor
+class Moss1:Actor
+	__mobjinfo__(48)
 {
 	defaultproperties
 	{
@@ -906,11 +938,12 @@ class MT_MISC8:Actor
 
 //==========================================================================
 //
-//	MT_MISC9
+//	Moss2
 //
 //==========================================================================
 
-class MT_MISC9:Actor
+class Moss2:Actor
+	__mobjinfo__(49)
 {
 	defaultproperties
 	{
@@ -926,11 +959,12 @@ class MT_MISC9:Actor
 
 //==========================================================================
 //
-//	MT_MISC10
+//	WallTorch
 //
 //==========================================================================
 
-class MT_MISC10:Actor
+class WallTorch:Actor
+	__mobjinfo__(50)
 {
 	defaultproperties
 	{
@@ -953,11 +987,12 @@ class MT_MISC10:Actor
 
 //==========================================================================
 //
-//	MT_MISC11
+//	HangingCorpse
 //
 //==========================================================================
 
-class MT_MISC11:Actor
+class HangingCorpse:Actor
+	__mobjinfo__(51)
 {
 	defaultproperties
 	{
@@ -973,11 +1008,12 @@ class MT_MISC11:Actor
 
 //==========================================================================
 //
-//	MT_KEYGIZMOBLUE
+//	KeyGizmoBlue
 //
 //==========================================================================
 
-class MT_KEYGIZMOBLUE:Actor
+class KeyGizmoBlue:Actor
+	__mobjinfo__(94)
 {
 	defaultproperties
 	{
@@ -993,11 +1029,12 @@ class MT_KEYGIZMOBLUE:Actor
 
 //==========================================================================
 //
-//	MT_KEYGIZMOGREEN
+//	KeyGizmoGreen
 //
 //==========================================================================
 
-class MT_KEYGIZMOGREEN:Actor
+class KeyGizmoGreen:Actor
+	__mobjinfo__(95)
 {
 	defaultproperties
 	{
@@ -1013,11 +1050,12 @@ class MT_KEYGIZMOGREEN:Actor
 
 //==========================================================================
 //
-//	MT_KEYGIZMOYELLOW
+//	KeyGizmoYellow
 //
 //==========================================================================
 
-class MT_KEYGIZMOYELLOW:Actor
+class KeyGizmoYellow:Actor
+	__mobjinfo__(96)
 {
 	defaultproperties
 	{
@@ -1033,11 +1071,11 @@ class MT_KEYGIZMOYELLOW:Actor
 
 //==========================================================================
 //
-//	MT_KEYGIZMOFLOAT
+//	KeyGizmoFloat
 //
 //==========================================================================
 
-class MT_KEYGIZMOFLOAT:Actor
+class KeyGizmoFloat:Actor
 {
 	defaultproperties
 	{
@@ -1053,11 +1091,12 @@ class MT_KEYGIZMOFLOAT:Actor
 
 //==========================================================================
 //
-//	MT_MISC12
+//	Volcano
 //
 //==========================================================================
 
-class MT_MISC12:Actor
+class Volcano:Actor
+	__mobjinfo__(87)
 {
 	defaultproperties
 	{
@@ -1073,11 +1112,11 @@ class MT_MISC12:Actor
 
 //==========================================================================
 //
-//	MT_VOLCANOBLAST
+//	VolcanoBlast
 //
 //==========================================================================
 
-class MT_VOLCANOBLAST:Actor
+class VolcanoBlast:Actor
 {
 	defaultproperties
 	{
@@ -1099,11 +1138,11 @@ class MT_VOLCANOBLAST:Actor
 
 //==========================================================================
 //
-//	MT_VOLCANOTBLAST
+//	VolcanoTBlast
 //
 //==========================================================================
 
-class MT_VOLCANOTBLAST:Actor
+class VolcanoTBlast:Actor
 {
 	defaultproperties
 	{
@@ -1124,11 +1163,12 @@ class MT_VOLCANOTBLAST:Actor
 
 //==========================================================================
 //
-//	MT_TELEGLITGEN
+//	TeleGlitGen
 //
 //==========================================================================
 
-class MT_TELEGLITGEN:Actor
+class TeleGlitGen:Actor
+	__mobjinfo__(74)
 {
 	defaultproperties
 	{
@@ -1144,11 +1184,12 @@ class MT_TELEGLITGEN:Actor
 
 //==========================================================================
 //
-//	MT_TELEGLITGEN2
+//	TeleGlitGen2
 //
 //==========================================================================
 
-class MT_TELEGLITGEN2:Actor
+class TeleGlitGen2:Actor
+	__mobjinfo__(52)
 {
 	defaultproperties
 	{
@@ -1164,11 +1205,11 @@ class MT_TELEGLITGEN2:Actor
 
 //==========================================================================
 //
-//	MT_TELEGLITTER
+//	TeleGlitter
 //
 //==========================================================================
 
-class MT_TELEGLITTER:Actor
+class TeleGlitter:Actor
 {
 	defaultproperties
 	{
@@ -1184,11 +1225,11 @@ class MT_TELEGLITTER:Actor
 
 //==========================================================================
 //
-//	MT_TELEGLITTER2
+//	TeleGlitter2
 //
 //==========================================================================
 
-class MT_TELEGLITTER2:Actor
+class TeleGlitter2:Actor
 {
 	defaultproperties
 	{
@@ -1204,11 +1245,11 @@ class MT_TELEGLITTER2:Actor
 
 //==========================================================================
 //
-//	MT_TFOG
+//	TeleportFog
 //
 //==========================================================================
 
-class MT_TFOG:Actor
+class TeleportFog:Actor
 {
 	defaultproperties
 	{
@@ -1224,11 +1265,12 @@ class MT_TFOG:Actor
 
 //==========================================================================
 //
-//	MT_TELEPORTMAN
+//	TeleportSpot
 //
 //==========================================================================
 
-class MT_TELEPORTMAN:Actor
+class TeleportSpot:Actor
+	__mobjinfo__(14)
 {
 	defaultproperties
 	{
@@ -1243,11 +1285,11 @@ class MT_TELEPORTMAN:Actor
 
 //==========================================================================
 //
-//	MT_STAFFPUFF
+//	StaffPuff
 //
 //==========================================================================
 
-class MT_STAFFPUFF:Actor
+class StaffPuff:Actor
 {
 	defaultproperties
 	{
@@ -1264,11 +1306,11 @@ class MT_STAFFPUFF:Actor
 
 //==========================================================================
 //
-//	MT_STAFFPUFF2
+//	StaffPuff2
 //
 //==========================================================================
 
-class MT_STAFFPUFF2:Actor
+class StaffPuff2:Actor
 {
 	defaultproperties
 	{
@@ -1285,11 +1327,11 @@ class MT_STAFFPUFF2:Actor
 
 //==========================================================================
 //
-//	MT_BEAKPUFF
+//	BeakPuff
 //
 //==========================================================================
 
-class MT_BEAKPUFF:Actor
+class BeakPuff:Actor
 {
 	defaultproperties
 	{
@@ -1306,17 +1348,18 @@ class MT_BEAKPUFF:Actor
 
 //==========================================================================
 //
-//	MT_MISC13
+//	ItemWeaponGauntlets
 //
 //==========================================================================
 
-class MT_MISC13:Actor
+class ItemWeaponGauntlets:Actor
+	__mobjinfo__(2005)
 {
 	defaultproperties
 	{
 		Health = 1000;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL;
@@ -1326,11 +1369,11 @@ class MT_MISC13:Actor
 
 //==========================================================================
 //
-//	MT_GAUNTLETPUFF1
+//	GauntletPuff1
 //
 //==========================================================================
 
-class MT_GAUNTLETPUFF1:Actor
+class GauntletPuff1:Actor
 {
 	defaultproperties
 	{
@@ -1347,11 +1390,11 @@ class MT_GAUNTLETPUFF1:Actor
 
 //==========================================================================
 //
-//	MT_GAUNTLETPUFF2
+//	GauntletPuff2
 //
 //==========================================================================
 
-class MT_GAUNTLETPUFF2:Actor
+class GauntletPuff2:Actor
 {
 	defaultproperties
 	{
@@ -1368,17 +1411,18 @@ class MT_GAUNTLETPUFF2:Actor
 
 //==========================================================================
 //
-//	MT_MISC14
+//	ItemWeaponBlaster
 //
 //==========================================================================
 
-class MT_MISC14:Actor
+class ItemWeaponBlaster:Actor
+	__mobjinfo__(53)
 {
 	defaultproperties
 	{
 		Health = 1000;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL;
@@ -1388,11 +1432,11 @@ class MT_MISC14:Actor
 
 //==========================================================================
 //
-//	MT_BLASTERFX1
+//	BlasterFX1
 //
 //==========================================================================
 
-class MT_BLASTERFX1:Actor
+class BlasterFX1:Actor
 {
 	defaultproperties
 	{
@@ -1414,11 +1458,11 @@ class MT_BLASTERFX1:Actor
 
 //==========================================================================
 //
-//	MT_BLASTERSMOKE
+//	BlasterSmoke
 //
 //==========================================================================
 
-class MT_BLASTERSMOKE:Actor
+class BlasterSmoke:Actor
 {
 	defaultproperties
 	{
@@ -1436,11 +1480,11 @@ class MT_BLASTERSMOKE:Actor
 
 //==========================================================================
 //
-//	MT_RIPPER
+//	Ripper
 //
 //==========================================================================
 
-class MT_RIPPER:Actor
+class Ripper:Actor
 {
 	defaultproperties
 	{
@@ -1461,11 +1505,11 @@ class MT_RIPPER:Actor
 
 //==========================================================================
 //
-//	MT_BLASTERPUFF1
+//	BlasterPuff1
 //
 //==========================================================================
 
-class MT_BLASTERPUFF1:Actor
+class BlasterPuff1:Actor
 {
 	defaultproperties
 	{
@@ -1481,11 +1525,11 @@ class MT_BLASTERPUFF1:Actor
 
 //==========================================================================
 //
-//	MT_BLASTERPUFF2
+//	BlasterPuff2
 //
 //==========================================================================
 
-class MT_BLASTERPUFF2:Actor
+class BlasterPuff2:Actor
 {
 	defaultproperties
 	{
@@ -1501,17 +1545,18 @@ class MT_BLASTERPUFF2:Actor
 
 //==========================================================================
 //
-//	MT_WMACE
+//	ItemWeaponMace
 //
 //==========================================================================
 
-class MT_WMACE:Actor
+class ItemWeaponMace:Actor
+	__mobjinfo__(2002)
 {
 	defaultproperties
 	{
 		Health = 1000;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL;
@@ -1521,11 +1566,11 @@ class MT_WMACE:Actor
 
 //==========================================================================
 //
-//	MT_MACEFX1
+//	MaceFX1
 //
 //==========================================================================
 
-class MT_MACEFX1:Actor
+class MaceFX1:Actor
 {
 	defaultproperties
 	{
@@ -1546,11 +1591,11 @@ class MT_MACEFX1:Actor
 
 //==========================================================================
 //
-//	MT_MACEFX2
+//	MaceFX2
 //
 //==========================================================================
 
-class MT_MACEFX2:Actor
+class MaceFX2:Actor
 {
 	defaultproperties
 	{
@@ -1570,11 +1615,11 @@ class MT_MACEFX2:Actor
 
 //==========================================================================
 //
-//	MT_MACEFX3
+//	MaceFX3
 //
 //==========================================================================
 
-class MT_MACEFX3:Actor
+class MaceFX3:Actor
 {
 	defaultproperties
 	{
@@ -1594,11 +1639,11 @@ class MT_MACEFX3:Actor
 
 //==========================================================================
 //
-//	MT_MACEFX4
+//	MaceFX4
 //
 //==========================================================================
 
-class MT_MACEFX4:Actor
+class MaceFX4:Actor
 {
 	defaultproperties
 	{
@@ -1618,17 +1663,18 @@ class MT_MACEFX4:Actor
 
 //==========================================================================
 //
-//	MT_WSKULLROD
+//	ItemWeaponSkullRod
 //
 //==========================================================================
 
-class MT_WSKULLROD:Actor
+class ItemWeaponSkullRod:Actor
+	__mobjinfo__(2004)
 {
 	defaultproperties
 	{
 		Health = 1000;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL;
@@ -1638,11 +1684,11 @@ class MT_WSKULLROD:Actor
 
 //==========================================================================
 //
-//	MT_HORNRODFX1
+//	HornRodMissile1
 //
 //==========================================================================
 
-class MT_HORNRODFX1:Actor
+class HornRodMissile1:Actor
 {
 	defaultproperties
 	{
@@ -1665,11 +1711,11 @@ class MT_HORNRODFX1:Actor
 
 //==========================================================================
 //
-//	MT_HORNRODFX2
+//	HornRodMissile2
 //
 //==========================================================================
 
-class MT_HORNRODFX2:Actor
+class HornRodMissile2:Actor
 {
 	defaultproperties
 	{
@@ -1692,11 +1738,11 @@ class MT_HORNRODFX2:Actor
 
 //==========================================================================
 //
-//	MT_RAINPLR1
+//	RainPlayer1
 //
 //==========================================================================
 
-class MT_RAINPLR1:Actor
+class RainPlayer1:Actor
 {
 	defaultproperties
 	{
@@ -1716,11 +1762,11 @@ class MT_RAINPLR1:Actor
 
 //==========================================================================
 //
-//	MT_RAINPLR2
+//	RainPlayer2
 //
 //==========================================================================
 
-class MT_RAINPLR2:Actor
+class RainPlayer2:Actor
 {
 	defaultproperties
 	{
@@ -1740,11 +1786,11 @@ class MT_RAINPLR2:Actor
 
 //==========================================================================
 //
-//	MT_RAINPLR3
+//	RainPlayer3
 //
 //==========================================================================
 
-class MT_RAINPLR3:Actor
+class RainPlayer3:Actor
 {
 	defaultproperties
 	{
@@ -1764,11 +1810,11 @@ class MT_RAINPLR3:Actor
 
 //==========================================================================
 //
-//	MT_RAINPLR4
+//	RainPlayer4
 //
 //==========================================================================
 
-class MT_RAINPLR4:Actor
+class RainPlayer4:Actor
 {
 	defaultproperties
 	{
@@ -1788,11 +1834,11 @@ class MT_RAINPLR4:Actor
 
 //==========================================================================
 //
-//	MT_GOLDWANDFX1
+//	GoldWandMissile1
 //
 //==========================================================================
 
-class MT_GOLDWANDFX1:Actor
+class GoldWandMissile1:Actor
 {
 	defaultproperties
 	{
@@ -1814,11 +1860,11 @@ class MT_GOLDWANDFX1:Actor
 
 //==========================================================================
 //
-//	MT_GOLDWANDFX2
+//	GoldWandMissile2
 //
 //==========================================================================
 
-class MT_GOLDWANDFX2:Actor
+class GoldWandMissile2:Actor
 {
 	defaultproperties
 	{
@@ -1839,11 +1885,11 @@ class MT_GOLDWANDFX2:Actor
 
 //==========================================================================
 //
-//	MT_GOLDWANDPUFF1
+//	GoldWandPuff1
 //
 //==========================================================================
 
-class MT_GOLDWANDPUFF1:Actor
+class GoldWandPuff1:Actor
 {
 	defaultproperties
 	{
@@ -1859,11 +1905,11 @@ class MT_GOLDWANDPUFF1:Actor
 
 //==========================================================================
 //
-//	MT_GOLDWANDPUFF2
+//	GoldWandPuff2
 //
 //==========================================================================
 
-class MT_GOLDWANDPUFF2:Actor
+class GoldWandPuff2:Actor
 {
 	defaultproperties
 	{
@@ -1879,17 +1925,18 @@ class MT_GOLDWANDPUFF2:Actor
 
 //==========================================================================
 //
-//	MT_WPHOENIXROD
+//	ItemWeaponPhoenixRod
 //
 //==========================================================================
 
-class MT_WPHOENIXROD:Actor
+class ItemWeaponPhoenixRod:Actor
+	__mobjinfo__(2003)
 {
 	defaultproperties
 	{
 		Health = 1000;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL;
@@ -1899,11 +1946,11 @@ class MT_WPHOENIXROD:Actor
 
 //==========================================================================
 //
-//	MT_PHOENIXFX1
+//	PhoenixFX1
 //
 //==========================================================================
 
-class MT_PHOENIXFX1:Actor
+class PhoenixFX1:Actor
 {
 	defaultproperties
 	{
@@ -1926,11 +1973,11 @@ class MT_PHOENIXFX1:Actor
 
 //==========================================================================
 //
-//	MT_PHOENIXPUFF
+//	PhoenixPuff
 //
 //==========================================================================
 
-class MT_PHOENIXPUFF:Actor
+class PhoenixPuff:Actor
 {
 	defaultproperties
 	{
@@ -1948,11 +1995,11 @@ class MT_PHOENIXPUFF:Actor
 
 //==========================================================================
 //
-//	MT_PHOENIXFX2
+//	PhoenixFX2
 //
 //==========================================================================
 
-class MT_PHOENIXFX2:Actor
+class PhoenixFX2:Actor
 {
 	defaultproperties
 	{
@@ -1973,17 +2020,18 @@ class MT_PHOENIXFX2:Actor
 
 //==========================================================================
 //
-//	MT_MISC15
+//	ItemWeaponCrossbow
 //
 //==========================================================================
 
-class MT_MISC15:Actor
+class ItemWeaponCrossbow:Actor
+	__mobjinfo__(2001)
 {
 	defaultproperties
 	{
 		Health = 1000;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL;
@@ -1993,11 +2041,11 @@ class MT_MISC15:Actor
 
 //==========================================================================
 //
-//	MT_CRBOWFX1
+//	CrossbowFX1
 //
 //==========================================================================
 
-class MT_CRBOWFX1:Actor
+class CrossbowFX1:Actor
 {
 	defaultproperties
 	{
@@ -2019,11 +2067,11 @@ class MT_CRBOWFX1:Actor
 
 //==========================================================================
 //
-//	MT_CRBOWFX2
+//	CrossbowFX2
 //
 //==========================================================================
 
-class MT_CRBOWFX2:Actor
+class CrossbowFX2:Actor
 {
 	defaultproperties
 	{
@@ -2046,11 +2094,11 @@ class MT_CRBOWFX2:Actor
 
 //==========================================================================
 //
-//	MT_CRBOWFX3
+//	CrossbowFX3
 //
 //==========================================================================
 
-class MT_CRBOWFX3:Actor
+class CrossbowFX3:Actor
 {
 	defaultproperties
 	{
@@ -2072,11 +2120,11 @@ class MT_CRBOWFX3:Actor
 
 //==========================================================================
 //
-//	MT_CRBOWFX4
+//	CrossbowFX4
 //
 //==========================================================================
 
-class MT_CRBOWFX4:Actor
+class CrossbowFX4:Actor
 {
 	defaultproperties
 	{
@@ -2093,11 +2141,11 @@ class MT_CRBOWFX4:Actor
 
 //==========================================================================
 //
-//	MT_BLOOD
+//	Blood
 //
 //==========================================================================
 
-class MT_BLOOD:Actor
+class Blood:Actor
 {
 	defaultproperties
 	{
@@ -2113,11 +2161,11 @@ class MT_BLOOD:Actor
 
 //==========================================================================
 //
-//	MT_BLOODSPLATTER
+//	BloodSplatter
 //
 //==========================================================================
 
-class MT_BLOODSPLATTER:Actor
+class BloodSplatter:Actor
 {
 	defaultproperties
 	{
@@ -2135,11 +2183,11 @@ class MT_BLOODSPLATTER:Actor
 
 //==========================================================================
 //
-//	MT_PLAYER
+//	PlayerEntity
 //
 //==========================================================================
 
-class MT_PLAYER:Actor
+class PlayerEntity:Actor
 {
 	defaultproperties
 	{
@@ -2164,11 +2212,11 @@ class MT_PLAYER:Actor
 
 //==========================================================================
 //
-//	MT_BLOODYSKULL
+//	BloodySkull
 //
 //==========================================================================
 
-class MT_BLOODYSKULL:Actor
+class BloodySkull:Actor
 {
 	defaultproperties
 	{
@@ -2185,11 +2233,11 @@ class MT_BLOODYSKULL:Actor
 
 //==========================================================================
 //
-//	MT_CHICPLAYER
+//	ChickenPlayer
 //
 //==========================================================================
 
-class MT_CHICPLAYER:Actor
+class ChickenPlayer:Actor
 {
 	defaultproperties
 	{
@@ -2212,11 +2260,11 @@ class MT_CHICPLAYER:Actor
 
 //==========================================================================
 //
-//	MT_CHICKEN
+//	Chicken
 //
 //==========================================================================
 
-class MT_CHICKEN:Actor
+class Chicken:Actor
 {
 	defaultproperties
 	{
@@ -2254,11 +2302,11 @@ class MT_CHICKEN:Actor
 
 //==========================================================================
 //
-//	MT_FEATHER
+//	Feather
 //
 //==========================================================================
 
-class MT_FEATHER:Actor
+class Feather:Actor
 {
 	defaultproperties
 	{
@@ -2276,11 +2324,12 @@ class MT_FEATHER:Actor
 
 //==========================================================================
 //
-//	MT_MUMMY
+//	Mummy
 //
 //==========================================================================
 
-class MT_MUMMY:Actor
+class Mummy:Actor
+	__mobjinfo__(68)
 {
 	defaultproperties
 	{
@@ -2318,11 +2367,12 @@ class MT_MUMMY:Actor
 
 //==========================================================================
 //
-//	MT_MUMMYLEADER
+//	MummyLeader
 //
 //==========================================================================
 
-class MT_MUMMYLEADER:Actor
+class MummyLeader:Actor
+	__mobjinfo__(45)
 {
 	defaultproperties
 	{
@@ -2361,11 +2411,12 @@ class MT_MUMMYLEADER:Actor
 
 //==========================================================================
 //
-//	MT_MUMMYGHOST
+//	MummyGhost
 //
 //==========================================================================
 
-class MT_MUMMYGHOST:Actor
+class MummyGhost:Actor
+	__mobjinfo__(69)
 {
 	defaultproperties
 	{
@@ -2404,11 +2455,12 @@ class MT_MUMMYGHOST:Actor
 
 //==========================================================================
 //
-//	MT_MUMMYLEADERGHOST
+//	MummyLeaderGhost
 //
 //==========================================================================
 
-class MT_MUMMYLEADERGHOST:Actor
+class MummyLeaderGhost:Actor
+	__mobjinfo__(46)
 {
 	defaultproperties
 	{
@@ -2448,11 +2500,11 @@ class MT_MUMMYLEADERGHOST:Actor
 
 //==========================================================================
 //
-//	MT_MUMMYSOUL
+//	MummySoul
 //
 //==========================================================================
 
-class MT_MUMMYSOUL:Actor
+class MummySoul:Actor
 {
 	defaultproperties
 	{
@@ -2468,11 +2520,11 @@ class MT_MUMMYSOUL:Actor
 
 //==========================================================================
 //
-//	MT_MUMMYFX1
+//	MummyMissile
 //
 //==========================================================================
 
-class MT_MUMMYFX1:Actor
+class MummyMissile:Actor
 {
 	defaultproperties
 	{
@@ -2493,11 +2545,12 @@ class MT_MUMMYFX1:Actor
 
 //==========================================================================
 //
-//	MT_BEAST
+//	Beast
 //
 //==========================================================================
 
-class MT_BEAST:Actor
+class Beast:Actor
+	__mobjinfo__(70)
 {
 	defaultproperties
 	{
@@ -2537,11 +2590,11 @@ class MT_BEAST:Actor
 
 //==========================================================================
 //
-//	MT_BEASTBALL
+//	BeastBall
 //
 //==========================================================================
 
-class MT_BEASTBALL:Actor
+class BeastBall:Actor
 {
 	defaultproperties
 	{
@@ -2562,11 +2615,11 @@ class MT_BEASTBALL:Actor
 
 //==========================================================================
 //
-//	MT_BURNBALL
+//	BurnBall
 //
 //==========================================================================
 
-class MT_BURNBALL:Actor
+class BurnBall:Actor
 {
 	defaultproperties
 	{
@@ -2587,11 +2640,11 @@ class MT_BURNBALL:Actor
 
 //==========================================================================
 //
-//	MT_BURNBALLFB
+//	BurnBallFB
 //
 //==========================================================================
 
-class MT_BURNBALLFB:Actor
+class BurnBallFB:Actor
 {
 	defaultproperties
 	{
@@ -2612,11 +2665,11 @@ class MT_BURNBALLFB:Actor
 
 //==========================================================================
 //
-//	MT_PUFFY
+//	Puffy
 //
 //==========================================================================
 
-class MT_PUFFY:Actor
+class Puffy:Actor
 {
 	defaultproperties
 	{
@@ -2636,11 +2689,12 @@ class MT_PUFFY:Actor
 
 //==========================================================================
 //
-//	MT_SNAKE
+//	Snake
 //
 //==========================================================================
 
-class MT_SNAKE:Actor
+class Snake:Actor
+	__mobjinfo__(92)
 {
 	defaultproperties
 	{
@@ -2678,11 +2732,11 @@ class MT_SNAKE:Actor
 
 //==========================================================================
 //
-//	MT_SNAKEPRO_A
+//	SnakeProjectileA
 //
 //==========================================================================
 
-class MT_SNAKEPRO_A:Actor
+class SnakeProjectileA:Actor
 {
 	defaultproperties
 	{
@@ -2703,11 +2757,11 @@ class MT_SNAKEPRO_A:Actor
 
 //==========================================================================
 //
-//	MT_SNAKEPRO_B
+//	SnakeProjectileB
 //
 //==========================================================================
 
-class MT_SNAKEPRO_B:Actor
+class SnakeProjectileB:Actor
 {
 	defaultproperties
 	{
@@ -2728,11 +2782,12 @@ class MT_SNAKEPRO_B:Actor
 
 //==========================================================================
 //
-//	MT_HEAD
+//	Head
 //
 //==========================================================================
 
-class MT_HEAD:Actor
+class Head:Actor
+	__mobjinfo__(6)
 {
 	defaultproperties
 	{
@@ -2770,11 +2825,11 @@ class MT_HEAD:Actor
 
 //==========================================================================
 //
-//	MT_HEADFX1
+//	HeadMissile1
 //
 //==========================================================================
 
-class MT_HEADFX1:Actor
+class HeadMissile1:Actor
 {
 	defaultproperties
 	{
@@ -2795,11 +2850,11 @@ class MT_HEADFX1:Actor
 
 //==========================================================================
 //
-//	MT_HEADFX2
+//	HeadMissile2
 //
 //==========================================================================
 
-class MT_HEADFX2:Actor
+class HeadMissile2:Actor
 {
 	defaultproperties
 	{
@@ -2820,11 +2875,11 @@ class MT_HEADFX2:Actor
 
 //==========================================================================
 //
-//	MT_HEADFX3
+//	HeadMissile3
 //
 //==========================================================================
 
-class MT_HEADFX3:Actor
+class HeadMissile3:Actor
 {
 	defaultproperties
 	{
@@ -2845,11 +2900,11 @@ class MT_HEADFX3:Actor
 
 //==========================================================================
 //
-//	MT_WHIRLWIND
+//	WhirlWind
 //
 //==========================================================================
 
-class MT_WHIRLWIND:Actor
+class WhirlWind:Actor
 {
 	defaultproperties
 	{
@@ -2870,11 +2925,12 @@ class MT_WHIRLWIND:Actor
 
 //==========================================================================
 //
-//	MT_CLINK
+//	Clink
 //
 //==========================================================================
 
-class MT_CLINK:Actor
+class Clink:Actor
+	__mobjinfo__(90)
 {
 	defaultproperties
 	{
@@ -2912,11 +2968,12 @@ class MT_CLINK:Actor
 
 //==========================================================================
 //
-//	MT_WIZARD
+//	Wizard
 //
 //==========================================================================
 
-class MT_WIZARD:Actor
+class Wizard:Actor
+	__mobjinfo__(15)
 {
 	defaultproperties
 	{
@@ -2954,11 +3011,11 @@ class MT_WIZARD:Actor
 
 //==========================================================================
 //
-//	MT_WIZFX1
+//	WizardMissile
 //
 //==========================================================================
 
-class MT_WIZFX1:Actor
+class WizardMissile:Actor
 {
 	defaultproperties
 	{
@@ -2979,11 +3036,12 @@ class MT_WIZFX1:Actor
 
 //==========================================================================
 //
-//	MT_IMP
+//	Imp
 //
 //==========================================================================
 
-class MT_IMP:Actor
+class Imp:Actor
+	__mobjinfo__(66)
 {
 	defaultproperties
 	{
@@ -3025,11 +3083,12 @@ class MT_IMP:Actor
 
 //==========================================================================
 //
-//	MT_IMPLEADER
+//	ImpLeader
 //
 //==========================================================================
 
-class MT_IMPLEADER:Actor
+class ImpLeader:Actor
+	__mobjinfo__(5)
 {
 	defaultproperties
 	{
@@ -3070,11 +3129,11 @@ class MT_IMPLEADER:Actor
 
 //==========================================================================
 //
-//	MT_IMPCHUNK1
+//	ImpChunk1
 //
 //==========================================================================
 
-class MT_IMPCHUNK1:Actor
+class ImpChunk1:Actor
 {
 	defaultproperties
 	{
@@ -3090,11 +3149,11 @@ class MT_IMPCHUNK1:Actor
 
 //==========================================================================
 //
-//	MT_IMPCHUNK2
+//	ImpChunk2
 //
 //==========================================================================
 
-class MT_IMPCHUNK2:Actor
+class ImpChunk2:Actor
 {
 	defaultproperties
 	{
@@ -3110,11 +3169,11 @@ class MT_IMPCHUNK2:Actor
 
 //==========================================================================
 //
-//	MT_IMPBALL
+//	ImpBall
 //
 //==========================================================================
 
-class MT_IMPBALL:Actor
+class ImpBall:Actor
 {
 	defaultproperties
 	{
@@ -3135,11 +3194,12 @@ class MT_IMPBALL:Actor
 
 //==========================================================================
 //
-//	MT_KNIGHT
+//	Knight
 //
 //==========================================================================
 
-class MT_KNIGHT:Actor
+class Knight:Actor
+	__mobjinfo__(64)
 {
 	defaultproperties
 	{
@@ -3178,11 +3238,12 @@ class MT_KNIGHT:Actor
 
 //==========================================================================
 //
-//	MT_KNIGHTGHOST
+//	KnightGhost
 //
 //==========================================================================
 
-class MT_KNIGHTGHOST:Actor
+class KnightGhost:Actor
+	__mobjinfo__(65)
 {
 	defaultproperties
 	{
@@ -3222,11 +3283,11 @@ class MT_KNIGHTGHOST:Actor
 
 //==========================================================================
 //
-//	MT_KNIGHTAXE
+//	KnightAxe
 //
 //==========================================================================
 
-class MT_KNIGHTAXE:Actor
+class KnightAxe:Actor
 {
 	defaultproperties
 	{
@@ -3248,11 +3309,11 @@ class MT_KNIGHTAXE:Actor
 
 //==========================================================================
 //
-//	MT_REDAXE
+//	KnightRedAxe
 //
 //==========================================================================
 
-class MT_REDAXE:Actor
+class KnightRedAxe:Actor
 {
 	defaultproperties
 	{
@@ -3274,11 +3335,12 @@ class MT_REDAXE:Actor
 
 //==========================================================================
 //
-//	MT_SORCERER1
+//	Sorcerer1
 //
 //==========================================================================
 
-class MT_SORCERER1:Actor
+class Sorcerer1:Actor
+	__mobjinfo__(7)
 {
 	defaultproperties
 	{
@@ -3316,11 +3378,11 @@ class MT_SORCERER1:Actor
 
 //==========================================================================
 //
-//	MT_SRCRFX1
+//	Sorcerer1Missile
 //
 //==========================================================================
 
-class MT_SRCRFX1:Actor
+class Sorcerer1Missile:Actor
 {
 	defaultproperties
 	{
@@ -3341,11 +3403,11 @@ class MT_SRCRFX1:Actor
 
 //==========================================================================
 //
-//	MT_SORCERER2
+//	Sorcerer2
 //
 //==========================================================================
 
-class MT_SORCERER2:Actor
+class Sorcerer2:Actor
 {
 	defaultproperties
 	{
@@ -3382,11 +3444,11 @@ class MT_SORCERER2:Actor
 
 //==========================================================================
 //
-//	MT_SOR2FX1
+//	Sorcerer2Missile1
 //
 //==========================================================================
 
-class MT_SOR2FX1:Actor
+class Sorcerer2Missile1:Actor
 {
 	defaultproperties
 	{
@@ -3407,11 +3469,11 @@ class MT_SOR2FX1:Actor
 
 //==========================================================================
 //
-//	MT_SOR2FXSPARK
+//	Sorcerer2MissileSpark
 //
 //==========================================================================
 
-class MT_SOR2FXSPARK:Actor
+class Sorcerer2MissileSpark:Actor
 {
 	defaultproperties
 	{
@@ -3428,11 +3490,11 @@ class MT_SOR2FXSPARK:Actor
 
 //==========================================================================
 //
-//	MT_SOR2FX2
+//	Sorcerer2Missile2
 //
 //==========================================================================
 
-class MT_SOR2FX2:Actor
+class Sorcerer2Missile2:Actor
 {
 	defaultproperties
 	{
@@ -3453,11 +3515,11 @@ class MT_SOR2FX2:Actor
 
 //==========================================================================
 //
-//	MT_SOR2TELEFADE
+//	Sorcerer2TeleFade
 //
 //==========================================================================
 
-class MT_SOR2TELEFADE:Actor
+class Sorcerer2TeleFade:Actor
 {
 	defaultproperties
 	{
@@ -3473,11 +3535,12 @@ class MT_SOR2TELEFADE:Actor
 
 //==========================================================================
 //
-//	MT_MINOTAUR
+//	Minotaur
 //
 //==========================================================================
 
-class MT_MINOTAUR:Actor
+class Minotaur:Actor
+	__mobjinfo__(9)
 {
 	defaultproperties
 	{
@@ -3517,11 +3580,11 @@ class MT_MINOTAUR:Actor
 
 //==========================================================================
 //
-//	MT_MNTRFX1
+//	MinotaurMissile
 //
 //==========================================================================
 
-class MT_MNTRFX1:Actor
+class MinotaurMissile:Actor
 {
 	defaultproperties
 	{
@@ -3542,11 +3605,11 @@ class MT_MNTRFX1:Actor
 
 //==========================================================================
 //
-//	MT_MNTRFX2
+//	MinotaurFloorFire
 //
 //==========================================================================
 
-class MT_MNTRFX2:Actor
+class MinotaurFloorFire:Actor
 {
 	defaultproperties
 	{
@@ -3568,11 +3631,11 @@ class MT_MNTRFX2:Actor
 
 //==========================================================================
 //
-//	MT_MNTRFX3
+//	MinotaurFloorFire2
 //
 //==========================================================================
 
-class MT_MNTRFX3:Actor
+class MinotaurFloorFire2:Actor
 {
 	defaultproperties
 	{
@@ -3593,17 +3656,18 @@ class MT_MNTRFX3:Actor
 
 //==========================================================================
 //
-//	MT_AKYY
+//	ItemKeyGreen
 //
 //==========================================================================
 
-class MT_AKYY:Actor
+class ItemKeyGreen:Actor
+	__mobjinfo__(73)
 {
 	defaultproperties
 	{
 		Health = 1000;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL;
@@ -3613,17 +3677,18 @@ class MT_AKYY:Actor
 
 //==========================================================================
 //
-//	MT_BKYY
+//	ItemKeyBlue
 //
 //==========================================================================
 
-class MT_BKYY:Actor
+class ItemKeyBlue:Actor
+	__mobjinfo__(79)
 {
 	defaultproperties
 	{
 		Health = 1000;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL;
@@ -3633,17 +3698,18 @@ class MT_BKYY:Actor
 
 //==========================================================================
 //
-//	MT_CKEY
+//	ItemKeyYellow
 //
 //==========================================================================
 
-class MT_CKEY:Actor
+class ItemKeyYellow:Actor
+	__mobjinfo__(80)
 {
 	defaultproperties
 	{
 		Health = 1000;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL;
@@ -3653,17 +3719,18 @@ class MT_CKEY:Actor
 
 //==========================================================================
 //
-//	MT_AMGWNDWIMPY
+//	ItemAmmoGoldWandWimpy
 //
 //==========================================================================
 
-class MT_AMGWNDWIMPY:Actor
+class ItemAmmoGoldWandWimpy:Actor
+	__mobjinfo__(10)
 {
 	defaultproperties
 	{
 		Health = 10;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL;
@@ -3673,17 +3740,18 @@ class MT_AMGWNDWIMPY:Actor
 
 //==========================================================================
 //
-//	MT_AMGWNDHEFTY
+//	ItemAmmoGoldWandHefty
 //
 //==========================================================================
 
-class MT_AMGWNDHEFTY:Actor
+class ItemAmmoGoldWandHefty:Actor
+	__mobjinfo__(12)
 {
 	defaultproperties
 	{
 		Health = 50;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL;
@@ -3693,17 +3761,18 @@ class MT_AMGWNDHEFTY:Actor
 
 //==========================================================================
 //
-//	MT_AMMACEWIMPY
+//	ItemAmmoMaceWimpy
 //
 //==========================================================================
 
-class MT_AMMACEWIMPY:Actor
+class ItemAmmoMaceWimpy:Actor
+	__mobjinfo__(13)
 {
 	defaultproperties
 	{
 		Health = 20;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL;
@@ -3713,17 +3782,18 @@ class MT_AMMACEWIMPY:Actor
 
 //==========================================================================
 //
-//	MT_AMMACEHEFTY
+//	ItemAmmoMaceHefty
 //
 //==========================================================================
 
-class MT_AMMACEHEFTY:Actor
+class ItemAmmoMaceHefty:Actor
+	__mobjinfo__(16)
 {
 	defaultproperties
 	{
 		Health = 100;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL;
@@ -3733,17 +3803,18 @@ class MT_AMMACEHEFTY:Actor
 
 //==========================================================================
 //
-//	MT_AMCBOWWIMPY
+//	ItemAmmoCrossbowWimpy
 //
 //==========================================================================
 
-class MT_AMCBOWWIMPY:Actor
+class ItemAmmoCrossbowWimpy:Actor
+	__mobjinfo__(18)
 {
 	defaultproperties
 	{
 		Health = 5;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL;
@@ -3753,17 +3824,18 @@ class MT_AMCBOWWIMPY:Actor
 
 //==========================================================================
 //
-//	MT_AMCBOWHEFTY
+//	ItemAmmoCrossbowHefty
 //
 //==========================================================================
 
-class MT_AMCBOWHEFTY:Actor
+class ItemAmmoCrossbowHefty:Actor
+	__mobjinfo__(19)
 {
 	defaultproperties
 	{
 		Health = 20;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL;
@@ -3773,17 +3845,18 @@ class MT_AMCBOWHEFTY:Actor
 
 //==========================================================================
 //
-//	MT_AMSKRDWIMPY
+//	ItemAmmoSkullRodWimpy
 //
 //==========================================================================
 
-class MT_AMSKRDWIMPY:Actor
+class ItemAmmoSkullRodWimpy:Actor
+	__mobjinfo__(20)
 {
 	defaultproperties
 	{
 		Health = 20;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL;
@@ -3793,17 +3866,18 @@ class MT_AMSKRDWIMPY:Actor
 
 //==========================================================================
 //
-//	MT_AMSKRDHEFTY
+//	ItemAmmoSkullRodHefty
 //
 //==========================================================================
 
-class MT_AMSKRDHEFTY:Actor
+class ItemAmmoSkullRodHefty:Actor
+	__mobjinfo__(21)
 {
 	defaultproperties
 	{
 		Health = 100;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL;
@@ -3813,17 +3887,18 @@ class MT_AMSKRDHEFTY:Actor
 
 //==========================================================================
 //
-//	MT_AMPHRDWIMPY
+//	ItemAmmoPhoenixWimpy
 //
 //==========================================================================
 
-class MT_AMPHRDWIMPY:Actor
+class ItemAmmoPhoenixWimpy:Actor
+	__mobjinfo__(22)
 {
 	defaultproperties
 	{
 		Health = 1;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL;
@@ -3833,17 +3908,18 @@ class MT_AMPHRDWIMPY:Actor
 
 //==========================================================================
 //
-//	MT_AMPHRDHEFTY
+//	ItemAmmoPhoenixHefty
 //
 //==========================================================================
 
-class MT_AMPHRDHEFTY:Actor
+class ItemAmmoPhoenixHefty:Actor
+	__mobjinfo__(23)
 {
 	defaultproperties
 	{
 		Health = 10;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL;
@@ -3853,17 +3929,18 @@ class MT_AMPHRDHEFTY:Actor
 
 //==========================================================================
 //
-//	MT_AMBLSRWIMPY
+//	ItemAmmoBlasterWimpy
 //
 //==========================================================================
 
-class MT_AMBLSRWIMPY:Actor
+class ItemAmmoBlasterWimpy:Actor
+	__mobjinfo__(54)
 {
 	defaultproperties
 	{
 		Health = 10;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL;
@@ -3873,17 +3950,18 @@ class MT_AMBLSRWIMPY:Actor
 
 //==========================================================================
 //
-//	MT_AMBLSRHEFTY
+//	ItemAmmoBlasterHefty
 //
 //==========================================================================
 
-class MT_AMBLSRHEFTY:Actor
+class ItemAmmoBlasterHefty:Actor
+	__mobjinfo__(55)
 {
 	defaultproperties
 	{
 		Health = 25;
 		Radius = 20.0;
-		Height = 16.0;
+		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
 		Flags = MF_SPECIAL;
@@ -3893,11 +3971,12 @@ class MT_AMBLSRHEFTY:Actor
 
 //==========================================================================
 //
-//	MT_SOUNDWIND
+//	SoundWind
 //
 //==========================================================================
 
-class MT_SOUNDWIND:Actor
+class SoundWind:Actor
+	__mobjinfo__(42)
 {
 	defaultproperties
 	{
@@ -3913,11 +3992,12 @@ class MT_SOUNDWIND:Actor
 
 //==========================================================================
 //
-//	MT_SOUNDWATERFALL
+//	SoundWaterfall
 //
 //==========================================================================
 
-class MT_SOUNDWATERFALL:Actor
+class SoundWaterfall:Actor
+	__mobjinfo__(41)
 {
 	defaultproperties
 	{
@@ -3931,97 +4011,16 @@ class MT_SOUNDWATERFALL:Actor
 	}
 };
 
-__mobjinfo__
-{
-	{ 81, MT_MISC0 }
-	{ 85, MT_ITEMSHIELD1 }
-	{ 31, MT_ITEMSHIELD2 }
-	{ 8, MT_MISC1 }
-	{ 35, MT_MISC2 }
-	{ 75, MT_ARTIINVISIBILITY }
-	{ 82, MT_MISC3 }
-	{ 83, MT_ARTIFLY }
-	{ 84, MT_ARTIINVULNERABILITY }
-	{ 86, MT_ARTITOMEOFPOWER }
-	{ 30, MT_ARTIEGG }
-	{ 32, MT_ARTISUPERHEAL }
-	{ 33, MT_MISC4 }
-	{ 34, MT_MISC5 }
-	{ 36, MT_ARTITELEPORT }
-	{ 2035, MT_POD }
-	{ 43, MT_PODGENERATOR }
-	{ 17, MT_SKULLHANG70 }
-	{ 24, MT_SKULLHANG60 }
-	{ 25, MT_SKULLHANG45 }
-	{ 26, MT_SKULLHANG35 }
-	{ 28, MT_CHANDELIER }
-	{ 27, MT_SERPTORCH }
-	{ 29, MT_SMALLPILLAR }
-	{ 37, MT_STALAGMITESMALL }
-	{ 38, MT_STALAGMITELARGE }
-	{ 39, MT_STALACTITESMALL }
-	{ 40, MT_STALACTITELARGE }
-	{ 76, MT_MISC6 }
-	{ 44, MT_BARREL }
-	{ 47, MT_MISC7 }
-	{ 48, MT_MISC8 }
-	{ 49, MT_MISC9 }
-	{ 50, MT_MISC10 }
-	{ 51, MT_MISC11 }
-	{ 94, MT_KEYGIZMOBLUE }
-	{ 95, MT_KEYGIZMOGREEN }
-	{ 96, MT_KEYGIZMOYELLOW }
-	{ 87, MT_MISC12 }
-	{ 74, MT_TELEGLITGEN }
-	{ 52, MT_TELEGLITGEN2 }
-	{ 14, MT_TELEPORTMAN }
-	{ 2005, MT_MISC13 }
-	{ 53, MT_MISC14 }
-	{ 2002, MT_WMACE }
-	{ 2004, MT_WSKULLROD }
-	{ 2003, MT_WPHOENIXROD }
-	{ 2001, MT_MISC15 }
-	{ 68, MT_MUMMY }
-	{ 45, MT_MUMMYLEADER }
-	{ 69, MT_MUMMYGHOST }
-	{ 46, MT_MUMMYLEADERGHOST }
-	{ 70, MT_BEAST }
-	{ 92, MT_SNAKE }
-	{ 6, MT_HEAD }
-	{ 90, MT_CLINK }
-	{ 15, MT_WIZARD }
-	{ 66, MT_IMP }
-	{ 5, MT_IMPLEADER }
-	{ 64, MT_KNIGHT }
-	{ 65, MT_KNIGHTGHOST }
-	{ 7, MT_SORCERER1 }
-	{ 9, MT_MINOTAUR }
-	{ 73, MT_AKYY }
-	{ 79, MT_BKYY }
-	{ 80, MT_CKEY }
-	{ 10, MT_AMGWNDWIMPY }
-	{ 12, MT_AMGWNDHEFTY }
-	{ 13, MT_AMMACEWIMPY }
-	{ 16, MT_AMMACEHEFTY }
-	{ 18, MT_AMCBOWWIMPY }
-	{ 19, MT_AMCBOWHEFTY }
-	{ 20, MT_AMSKRDWIMPY }
-	{ 21, MT_AMSKRDHEFTY }
-	{ 22, MT_AMPHRDWIMPY }
-	{ 23, MT_AMPHRDHEFTY }
-	{ 54, MT_AMBLSRWIMPY }
-	{ 55, MT_AMBLSRHEFTY }
-	{ 42, MT_SOUNDWIND }
-	{ 41, MT_SOUNDWATERFALL }
-}
-
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2002/01/17 18:15:53  dj_jl
+//	Renamed all map object classes
+//
 //	Revision 1.15  2002/01/15 18:27:00  dj_jl
 //	Some property names with logical words starting with capital letter.
 //	Moved everything from Entity class into Actor class.
-//
+//	
 //	Revision 1.14  2002/01/12 18:00:47  dj_jl
 //	Sound names initialized as names
 //	

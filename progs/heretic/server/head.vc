@@ -70,20 +70,20 @@ void Actor::A_HeadAttack(void)
 	if (randAttack < (dist ? 150 : 50))
 	{
 		// Ice ball
-		SpawnMissile(this, target, MT_HEADFX1);
+		SpawnMissile(this, target, HeadMissile1);
 		StartSoundName(this, 'HeadAttack2', CHAN_WEAPON);
 	}
 	else if (randAttack < (dist ? 200 : 150))
 	{
 		// Fire column
-		baseFire = SpawnMissile(this, target, MT_HEADFX3);
+		baseFire = SpawnMissile(this, target, HeadMissile3);
 		if (baseFire != NULL)
 		{
 			SetMobjState(baseFire, S_HEADFX3_4);	// Don't grow
 			for (i = 0; i < 5; i++)
 			{
 				fire = P_SpawnMobj(baseFire->origin.x, baseFire->origin.y,
-					baseFire->origin.z, MT_HEADFX3);
+					baseFire->origin.z, HeadMissile3);
 				if (i == 0)
 				{
 					StartSoundName(this, 'HeadAttack1', CHAN_WEAPON);
@@ -100,7 +100,7 @@ void Actor::A_HeadAttack(void)
 	else
 	{
 		// Whirlwind
-		mo = SpawnMissile(this, target, MT_WHIRLWIND);
+		mo = SpawnMissile(this, target, WhirlWind);
 		if (mo != NULL)
 		{
 			mo->origin.z -= 32.0;
@@ -126,7 +126,7 @@ void Actor::A_HeadIceImpact(void)
 
 	for (i = 0; i < 8; i++)
 	{
-		shard = P_SpawnMobj(origin.x, origin.y, origin.z, MT_HEADFX2);
+		shard = P_SpawnMobj(origin.x, origin.y, origin.z, HeadMissile2);
 		angle = itof(i) * 45.0;
 		shard->target = target;
 		shard->angles.yaw = angle;
@@ -184,6 +184,9 @@ void Actor::A_WhirlwindSeek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/17 18:15:53  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.10  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

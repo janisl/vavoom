@@ -458,6 +458,7 @@ void P_SpawnLightSequence(sector_t * sector, float indexStep)
 //==========================================================================
 
 class misc_static_light:mobj_t
+	__mobjinfo__(1502)
 {
 	void OnMapSpawn(mthing_t * mthing)
 	{
@@ -479,6 +480,7 @@ class misc_static_light:mobj_t
 //==========================================================================
 
 class misc_static_rgb_light:mobj_t
+	__mobjinfo__(1503)
 {
 	void OnMapSpawn(mthing_t * mthing)
 	{
@@ -494,15 +496,12 @@ class misc_static_rgb_light:mobj_t
 	}
 };
 
-__mobjinfo__
-{
-	{ 1502, misc_static_light }
-	{ 1503, misc_static_rgb_light }
-}
-
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/17 18:15:54  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.9  2002/01/15 08:12:26  dj_jl
 //  Replaced some pointers with references
 //

@@ -91,7 +91,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	an = itof(45 * (mthing->angle / 45));
 
 	mo = P_SpawnMobj(x + 20.0 * cos(an), y + 20.0 * sin(an),
-		ss->sector->floorheight, MT_TFOG);
+		ss->sector->floorheight, TeleportFog);
 	StartSoundName(mo, 'Teleport', CHAN_VOICE);	// don't start sound on first frame
 
 	return true;
@@ -127,7 +127,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 	x = mthing->x;
 	y = mthing->y;
 	z = ONFLOORZ;
-	mobj = P_SpawnMobj(x, y, z, MT_PLAYER);
+	mobj = P_SpawnMobj(x, y, z, PlayerEntity);
 
 	// set color translations for player sprites
 	mobj->Translation = p->color;
@@ -217,6 +217,9 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/17 18:15:55  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.12  2002/01/15 18:27:01  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

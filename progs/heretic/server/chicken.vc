@@ -89,7 +89,7 @@ void Actor::A_Feathers(void)
 	}
 	for (i = 0; i < count; i++)
 	{
-		mo = P_SpawnMobj(origin.x, origin.y, origin.z + 20.0, MT_FEATHER);
+		mo = P_SpawnMobj(origin.x, origin.y, origin.z + 20.0, Feather);
 		mo->target = this;
 		mo->velocity.x = (Random() - Random()) * 35.0;
 		mo->velocity.y = (Random() - Random()) * 35.0;
@@ -138,6 +138,9 @@ void Actor::A_ChicPain(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/17 18:15:53  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.8  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

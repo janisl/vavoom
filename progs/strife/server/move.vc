@@ -322,16 +322,19 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 	if (thing == tmthing)
 		return true;
 
-	BlockingMobj = thing;
-	if (tmthing->Flags & MF_MISSILE || !(thing->Flags & MF_SPECIAL))
+	// see if it went over / under
+	if (tmthing->origin.z >= thing->origin.z + thing->Height)
 	{
-		// see if it went over / under
-		if (tmthing->origin.z >= thing->origin.z + thing->Height)
-			return true;	// overhead
-		if (tmthing->origin.z + tmthing->Height < thing->origin.z)
-			return true;	// underneath
+		// overhead
+		return true;
+	}
+	if (tmthing->origin.z + tmthing->Height < thing->origin.z)
+	{
+		// underneath
+		return true;
 	}
 
+	BlockingMobj = thing;
 	// check for skulls slamming into things
 	if (tmthing->Flags & MF_SKULLFLY)
 	{
@@ -352,7 +355,7 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 			if (thing == tmthing->target)
 				return true;
 
-			if (thing->Class != MT_PLAYER)
+			if (thing->Class != PlayerEntity)
 			{
 				// Explode, but do no damage.
 				// Let players missile other players.
@@ -377,11 +380,7 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 	if (thing->Flags & MF_SPECIAL)
 	{
 		solid = thing->Flags & MF_SOLID;
-		if (tmthing->Flags & MF_PICKUP)
-		{
-			// can remove thing
-			P_TouchSpecialThing(thing, tmthing);
-		}
+		P_TouchSpecialThing(thing, tmthing);
 		return !solid;
 	}
 
@@ -789,6 +788,9 @@ boolean P_Move(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/17 18:15:55  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.9  2002/01/15 18:27:01  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

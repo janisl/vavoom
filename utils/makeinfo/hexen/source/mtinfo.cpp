@@ -32,7 +32,7 @@ int		nummobjtypes = NUMHEXENMOBJTYPES;
 
 mobjinfo_t mobjinfo[NUMHEXENMOBJTYPES] = {
 
-{		// MT_MAPSPOT
+{		// MapSpot
 9001,		// doomednum
 S3_MAPSPOT,		// spawnstate
 1000,		// spawnhealth
@@ -59,7 +59,7 @@ MF_NOBLOCKMAP|MF_NOSECTOR|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_MAPSPOTGRAVITY
+{		// MapSpotGravity
 9013,		// doomednum
 S3_MAPSPOT,		// spawnstate
 1000,		// spawnhealth
@@ -86,7 +86,7 @@ SFX_NONE,		// activesound
 MF2_DONTDRAW		// flags2
  },
 
-{		// MT_FIREBALL1
+{		// FireBall1
 -1,		// doomednum
 S3_FIREBALL1_1,		// spawnstate
 1000,		// spawnhealth
@@ -116,7 +116,7 @@ MF2_NOTELEPORT|MF2_FIREDAMAGE,		// flags2
 "EF_DL_RED"
  },
 
-{		// MT_ARROW
+{		// Arrow
 -1,		// doomednum
 S3_ARROW_1,		// spawnstate
 1000,		// spawnhealth
@@ -143,7 +143,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_DART
+{		// Dart
 -1,		// doomednum
 S3_DART_1,		// spawnstate
 1000,		// spawnhealth
@@ -170,7 +170,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_POISONDART
+{		// PoisonDart
 -1,		// doomednum
 S3_POISONDART_1,		// spawnstate
 1000,		// spawnhealth
@@ -197,7 +197,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_RIPPERBALL
+{		// RipperBall
 -1,		// doomednum
 S3_RIPPERBALL_1,		// spawnstate
 1000,		// spawnhealth
@@ -224,7 +224,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT|MF2_RIP		// flags2
  },
 
-{		// MT_PROJECTILE_BLADE
+{		// ProjectileBlade
 -1,		// doomednum
 S3_PRJ_BLADE1,		// spawnstate
 1000,		// spawnhealth
@@ -251,7 +251,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_ICESHARD
+{		// IceShard
 -1,		// doomednum
 S3_ICESHARD1,		// spawnstate
 1000,		// spawnhealth
@@ -281,7 +281,7 @@ MF2_NOTELEPORT|MF2_ICEDAMAGE,		// flags2
 "EF_DL_BLUE"
  },
 
-{		// MT_FLAME_SMALL_TEMP
+{		// FlameSmallTemp
 10500,		// doomednum
 S3_FLAME_TSMALL1,		// spawnstate
 1000,		// spawnhealth
@@ -308,7 +308,7 @@ SFX_NONE,		// activesound
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_FLAME_LARGE_TEMP
+{		// FlameLargeTemp
 10502,		// doomednum
 S3_FLAME_TLARGE1,		// spawnstate
 1000,		// spawnhealth
@@ -335,7 +335,7 @@ SFX_NONE,		// activesound
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_FLAME_SMALL
+{		// FlameSmall
 10501,		// doomednum
 S3_FLAME_SMALL1,		// spawnstate
 1000,		// spawnhealth
@@ -367,7 +367,7 @@ MF2_NOTELEPORT|MF2_DONTDRAW,		// flags2
 "\t\t\tAddStaticLight(origin, 64.0);"
  },
 
-{		// MT_FLAME_LARGE
+{		// FlameLarge
 10503,		// doomednum
 S3_FLAME_LARGE1,		// spawnstate
 1000,		// spawnhealth
@@ -399,7 +399,7 @@ MF2_NOTELEPORT|MF2_DONTDRAW,		// flags2
 "\t\t\tAddStaticLight(origin, 128.0);"
  },
 
-{		// MT_HEALINGBOTTLE
+{		// ItemHealingBottle
 81,		// doomednum
 S3_ITEM_PTN1_1,		// spawnstate
 1000,		// spawnhealth
@@ -426,7 +426,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_HEALTHFLASK
+{		// ArtifactHealthFlask
 82,		// doomednum
 S3_ARTI_PTN2_1,		// spawnstate
 1000,		// spawnhealth
@@ -453,7 +453,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_ARTIFLY
+{		// ArtifactFly
 83,		// doomednum
 S3_ARTI_SOAR1,		// spawnstate
 1000,		// spawnhealth
@@ -480,7 +480,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_ARTIINVULNERABILITY
+{		// ArtifactInvulnerability
 84,		// doomednum
 S3_ARTI_INVU1,		// spawnstate
 1000,		// spawnhealth
@@ -507,7 +507,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_SUMMONMAULATOR
+{		// ArtifactSummonMaulator
 86,		// doomednum
 S3_ARTI_SUMMON,		// spawnstate
 1000,		// spawnhealth
@@ -534,7 +534,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_SUMMON_FX
+{		// SummonMissile
 -1,		// doomednum
 S3_SUMMON_FX1_1,		// spawnstate
 1000,		// spawnhealth
@@ -561,7 +561,7 @@ MF_MISSILE|MF_DROPOFF|MF_NOBLOCKMAP,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_THRUSTFLOOR_UP
+{		// ThrustFloorUp
 10091,		// doomednum
 S3_THRUSTINIT2_1,		// spawnstate
 1000,		// spawnhealth
@@ -588,7 +588,7 @@ MF_SOLID,		// flags
 MF2_NOTELEPORT|MF2_FLOORCLIP		// flags2
  },
 
-{		// MT_THRUSTFLOOR_DOWN
+{		// ThrustFloorDown
 10090,		// doomednum
 S3_THRUSTINIT1_1,		// spawnstate
 1000,		// spawnhealth
@@ -615,7 +615,7 @@ SFX_NONE,		// activesound
 MF2_NOTELEPORT|MF2_FLOORCLIP|MF2_DONTDRAW		// flags2
  },
 
-{		// MT_TELEPORTOTHER
+{		// ArtifactTeleportOther
 10040,		// doomednum
 S3_ARTI_TELOTHER1,		// spawnstate
 1000,		// spawnhealth
@@ -642,7 +642,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_TELOTHER_FX1
+{		// TeleportOtherFX1
 -1,		// doomednum
 S3_TELO_FX1,		// spawnstate
 1000,		// spawnhealth
@@ -669,7 +669,7 @@ MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY|MF_NOBLOCKMAP,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_TELOTHER_FX2
+{		// TeleportOtherFX2
 -1,		// doomednum
 S3_TELO_FX2_1,		// spawnstate
 1000,		// spawnhealth
@@ -696,7 +696,7 @@ MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY|MF_NOBLOCKMAP,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_TELOTHER_FX3
+{		// TeleportOtherFX3
 -1,		// doomednum
 S3_TELO_FX3_1,		// spawnstate
 1000,		// spawnhealth
@@ -723,7 +723,7 @@ MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY|MF_NOBLOCKMAP,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_TELOTHER_FX4
+{		// TeleportOtherFX4
 -1,		// doomednum
 S3_TELO_FX4_1,		// spawnstate
 1000,		// spawnhealth
@@ -750,7 +750,7 @@ MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY|MF_NOBLOCKMAP,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_TELOTHER_FX5
+{		// TeleportOtherFX5
 -1,		// doomednum
 S3_TELO_FX5_1,		// spawnstate
 1000,		// spawnhealth
@@ -777,7 +777,7 @@ MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY|MF_NOBLOCKMAP,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_DIRT1
+{		// Dirt1
 -1,		// doomednum
 S3_DIRT1_1,		// spawnstate
 1000,		// spawnhealth
@@ -804,7 +804,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_DIRT2
+{		// Dirt2
 -1,		// doomednum
 S3_DIRT2_1,		// spawnstate
 1000,		// spawnhealth
@@ -831,7 +831,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_DIRT3
+{		// Dirt3
 -1,		// doomednum
 S3_DIRT3_1,		// spawnstate
 1000,		// spawnhealth
@@ -858,7 +858,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_DIRT4
+{		// Dirt4
 -1,		// doomednum
 S3_DIRT4_1,		// spawnstate
 1000,		// spawnhealth
@@ -885,7 +885,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE,		// flags
 MF2_NOTELEPORT|MF2_LOGRAV		// flags2
  },
 
-{		// MT_DIRT5
+{		// Dirt5
 -1,		// doomednum
 S3_DIRT5_1,		// spawnstate
 1000,		// spawnhealth
@@ -912,7 +912,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE,		// flags
 MF2_NOTELEPORT|MF2_LOGRAV		// flags2
  },
 
-{		// MT_DIRT6
+{		// Dirt6
 -1,		// doomednum
 S3_DIRT6_1,		// spawnstate
 1000,		// spawnhealth
@@ -939,7 +939,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE,		// flags
 MF2_NOTELEPORT|MF2_LOGRAV		// flags2
  },
 
-{		// MT_DIRTCLUMP
+{		// DirtClump
 -1,		// doomednum
 S3_DIRTCLUMP1,		// spawnstate
 1000,		// spawnhealth
@@ -966,7 +966,7 @@ MF_NOBLOCKMAP,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_ROCK1
+{		// Rock1
 -1,		// doomednum
 S3_ROCK1_1,		// spawnstate
 1000,		// spawnhealth
@@ -993,7 +993,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_ROCK2
+{		// Rock2
 -1,		// doomednum
 S3_ROCK2_1,		// spawnstate
 1000,		// spawnhealth
@@ -1020,7 +1020,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_ROCK3
+{		// Rock3
 -1,		// doomednum
 S3_ROCK3_1,		// spawnstate
 1000,		// spawnhealth
@@ -1047,7 +1047,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_FOGSPAWNER
+{		// FogSpawner
 10000,		// doomednum
 S3_SPAWNFOG1,		// spawnstate
 1000,		// spawnhealth
@@ -1074,7 +1074,7 @@ MF_NOBLOCKMAP|MF_NOSECTOR,		// flags
 MF2_DONTDRAW|MF2_FLOATBOB		// flags2
  },
 
-{		// MT_FOGPATCHS
+{		// FogPatchSmall
 10001,		// doomednum
 S3_FOGPATCHS1,		// spawnstate
 1000,		// spawnhealth
@@ -1101,7 +1101,7 @@ MF_NOBLOCKMAP|MF_FLOAT|MF_NOGRAVITY|MF_SHADOW|MF_NOCLIP,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_FOGPATCHM
+{		// FogPatchMedium
 10002,		// doomednum
 S3_FOGPATCHM1,		// spawnstate
 1000,		// spawnhealth
@@ -1128,7 +1128,7 @@ MF_NOBLOCKMAP|MF_FLOAT|MF_NOGRAVITY|MF_SHADOW|MF_NOCLIP,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_FOGPATCHL
+{		// FogPatchLarge
 10003,		// doomednum
 S3_FOGPATCHL1,		// spawnstate
 1000,		// spawnhealth
@@ -1155,7 +1155,7 @@ MF_NOBLOCKMAP|MF_FLOAT|MF_NOGRAVITY|MF_SHADOW|MF_NOCLIP,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_QUAKE_FOCUS
+{		// QuakeFocus
 -1,		// doomednum
 S3_QUAKE_ACTIVE1,		// spawnstate
 1000,		// spawnhealth
@@ -1182,7 +1182,7 @@ MF_NOBLOCKMAP|MF_NOSECTOR,		// flags
 MF2_DONTDRAW		// flags2
  },
 
-{		// MT_SGSHARD1
+{		// StainedGlassShard1
 -1,		// doomednum
 S3_SGSHARD1_1,		// spawnstate
 1000,		// spawnhealth
@@ -1209,7 +1209,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT|MF2_FLOORBOUNCE		// flags2
  },
 
-{		// MT_SGSHARD2
+{		// StainedGlassShard2
 -1,		// doomednum
 S3_SGSHARD2_1,		// spawnstate
 1000,		// spawnhealth
@@ -1236,7 +1236,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT|MF2_FLOORBOUNCE		// flags2
  },
 
-{		// MT_SGSHARD3
+{		// StainedGlassShard3
 -1,		// doomednum
 S3_SGSHARD3_1,		// spawnstate
 1000,		// spawnhealth
@@ -1263,7 +1263,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT|MF2_FLOORBOUNCE		// flags2
  },
 
-{		// MT_SGSHARD4
+{		// StainedGlassShard4
 -1,		// doomednum
 S3_SGSHARD4_1,		// spawnstate
 1000,		// spawnhealth
@@ -1290,7 +1290,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT|MF2_FLOORBOUNCE		// flags2
  },
 
-{		// MT_SGSHARD5
+{		// StainedGlassShard5
 -1,		// doomednum
 S3_SGSHARD5_1,		// spawnstate
 1000,		// spawnhealth
@@ -1317,7 +1317,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT|MF2_FLOORBOUNCE		// flags2
  },
 
-{		// MT_SGSHARD6
+{		// StainedGlassShard6
 -1,		// doomednum
 S3_SGSHARD6_1,		// spawnstate
 1000,		// spawnhealth
@@ -1344,7 +1344,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT|MF2_FLOORBOUNCE		// flags2
  },
 
-{		// MT_SGSHARD7
+{		// StainedGlassShard7
 -1,		// doomednum
 S3_SGSHARD7_1,		// spawnstate
 1000,		// spawnhealth
@@ -1371,7 +1371,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT|MF2_FLOORBOUNCE		// flags2
  },
 
-{		// MT_SGSHARD8
+{		// StainedGlassShard8
 -1,		// doomednum
 S3_SGSHARD8_1,		// spawnstate
 1000,		// spawnhealth
@@ -1398,7 +1398,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT|MF2_FLOORBOUNCE		// flags2
  },
 
-{		// MT_SGSHARD9
+{		// StainedGlassShard9
 -1,		// doomednum
 S3_SGSHARD9_1,		// spawnstate
 1000,		// spawnhealth
@@ -1425,7 +1425,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT|MF2_FLOORBOUNCE		// flags2
  },
 
-{		// MT_SGSHARD0
+{		// StainedGlassShard0
 -1,		// doomednum
 S3_SGSHARD0_1,		// spawnstate
 1000,		// spawnhealth
@@ -1452,7 +1452,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT|MF2_FLOORBOUNCE		// flags2
  },
 
-{		// MT_ARTIEGG
+{		// ArtifactEgg
 30,		// doomednum
 S3_ARTI_EGGC1,		// spawnstate
 1000,		// spawnhealth
@@ -1479,7 +1479,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_EGGFX
+{		// EggMissile
 -1,		// doomednum
 S3_EGGFX1,		// spawnstate
 1000,		// spawnhealth
@@ -1506,7 +1506,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_ARTISUPERHEAL
+{		// ArtifactSuperHeal
 32,		// doomednum
 S3_ARTI_SPHL1,		// spawnstate
 1000,		// spawnhealth
@@ -1533,7 +1533,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_ZWINGEDSTATUENOSKULL
+{		// ZWingedStatueNoSkull
 9011,		// doomednum
 S3_ZWINGEDSTATUENOSKULL,		// spawnstate
 1000,		// spawnhealth
@@ -1560,7 +1560,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_ZGEMPEDESTAL
+{		// ZGemPedestal
 9012,		// doomednum
 S3_ZGEMPEDESTAL1,		// spawnstate
 1000,		// spawnhealth
@@ -1587,7 +1587,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_ARTIPUZZSKULL
+{		// ArtifactPuzzleSkull
 9002,		// doomednum
 S3_ARTIPUZZSKULL,		// spawnstate
 1000,		// spawnhealth
@@ -1614,7 +1614,7 @@ MF_SPECIAL|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_ARTIPUZZGEMBIG
+{		// ArtifactPuzzleGemBig
 9003,		// doomednum
 S3_ARTIPUZZGEMBIG,		// spawnstate
 1000,		// spawnhealth
@@ -1641,7 +1641,7 @@ MF_SPECIAL|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_ARTIPUZZGEMRED
+{		// ArtifactPuzzleGemRed
 9004,		// doomednum
 S3_ARTIPUZZGEMRED,		// spawnstate
 1000,		// spawnhealth
@@ -1668,7 +1668,7 @@ MF_SPECIAL|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_ARTIPUZZGEMGREEN1
+{		// ArtifactPuzzleGemGreen1
 9005,		// doomednum
 S3_ARTIPUZZGEMGREEN1,		// spawnstate
 1000,		// spawnhealth
@@ -1695,7 +1695,7 @@ MF_SPECIAL|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_ARTIPUZZGEMGREEN2
+{		// ArtifactPuzzleGemGreen2
 9009,		// doomednum
 S3_ARTIPUZZGEMGREEN2,		// spawnstate
 1000,		// spawnhealth
@@ -1722,7 +1722,7 @@ MF_SPECIAL|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_ARTIPUZZGEMBLUE1
+{		// ArtifactPuzzleGemBlue1
 9006,		// doomednum
 S3_ARTIPUZZGEMBLUE1,		// spawnstate
 1000,		// spawnhealth
@@ -1749,7 +1749,7 @@ MF_SPECIAL|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_ARTIPUZZGEMBLUE2
+{		// ArtifactPuzzleGemBlue2
 9010,		// doomednum
 S3_ARTIPUZZGEMBLUE2,		// spawnstate
 1000,		// spawnhealth
@@ -1776,7 +1776,7 @@ MF_SPECIAL|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_ARTIPUZZBOOK1
+{		// ArtifactPuzzleBook1
 9007,		// doomednum
 S3_ARTIPUZZBOOK1,		// spawnstate
 1000,		// spawnhealth
@@ -1803,7 +1803,7 @@ MF_SPECIAL|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_ARTIPUZZBOOK2
+{		// ArtifactPuzzleBook2
 9008,		// doomednum
 S3_ARTIPUZZBOOK2,		// spawnstate
 1000,		// spawnhealth
@@ -1830,7 +1830,7 @@ MF_SPECIAL|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_ARTIPUZZSKULL2
+{		// ArtifactPuzzleSkull2
 9014,		// doomednum
 S3_ARTIPUZZSKULL2,		// spawnstate
 1000,		// spawnhealth
@@ -1857,7 +1857,7 @@ MF_SPECIAL|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_ARTIPUZZFWEAPON
+{		// ArtifactPuzzleFWeapon
 9015,		// doomednum
 S3_ARTIPUZZFWEAPON,		// spawnstate
 1000,		// spawnhealth
@@ -1884,7 +1884,7 @@ MF_SPECIAL|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_ARTIPUZZCWEAPON
+{		// ArtifactPuzzleCWeapon
 9016,		// doomednum
 S3_ARTIPUZZCWEAPON,		// spawnstate
 1000,		// spawnhealth
@@ -1911,7 +1911,7 @@ MF_SPECIAL|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_ARTIPUZZMWEAPON
+{		// ArtifactPuzzleMWeapon
 9017,		// doomednum
 S3_ARTIPUZZMWEAPON,		// spawnstate
 1000,		// spawnhealth
@@ -1938,7 +1938,7 @@ MF_SPECIAL|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_ARTIPUZZGEAR
+{		// ArtifactPuzzleGear
 9018,		// doomednum
 S3_ARTIPUZZGEAR_1,		// spawnstate
 1000,		// spawnhealth
@@ -1965,7 +1965,7 @@ MF_SPECIAL|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_ARTIPUZZGEAR2
+{		// ArtifactPuzzleGear2
 9019,		// doomednum
 S3_ARTIPUZZGEAR2_1,		// spawnstate
 1000,		// spawnhealth
@@ -1992,7 +1992,7 @@ MF_SPECIAL|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_ARTIPUZZGEAR3
+{		// ArtifactPuzzleGear3
 9020,		// doomednum
 S3_ARTIPUZZGEAR3_1,		// spawnstate
 1000,		// spawnhealth
@@ -2019,7 +2019,7 @@ MF_SPECIAL|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_ARTIPUZZGEAR4
+{		// ArtifactPuzzleGear4
 9021,		// doomednum
 S3_ARTIPUZZGEAR4_1,		// spawnstate
 1000,		// spawnhealth
@@ -2046,7 +2046,7 @@ MF_SPECIAL|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_ARTITORCH
+{		// ArtifactTorch
 33,		// doomednum
 S3_ARTI_TRCH1,		// spawnstate
 1000,		// spawnhealth
@@ -2073,7 +2073,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_FIREBOMB
+{		// FireBomb
 -1,		// doomednum
 S3_FIREBOMB1,		// spawnstate
 1000,		// spawnhealth
@@ -2100,7 +2100,7 @@ MF_NOGRAVITY|MF_ALTSHADOW,		// flags
 MF2_FIREDAMAGE		// flags2
  },
 
-{		// MT_ARTITELEPORT
+{		// ArtifactTeleport
 36,		// doomednum
 S3_ARTI_ATLP1,		// spawnstate
 1000,		// spawnhealth
@@ -2127,7 +2127,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_ARTIPOISONBAG
+{		// ArtifactFlechette
 8000,		// doomednum
 S3_ARTI_PSBG1,		// spawnstate
 1000,		// spawnhealth
@@ -2154,7 +2154,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_POISONBAG
+{		// PoisonBag
 -1,		// doomednum
 S3_POISONBAG1,		// spawnstate
 1000,		// spawnhealth
@@ -2181,7 +2181,7 @@ MF_NOGRAVITY|MF_NOBLOCKMAP,		// flags
 0		// flags2
  },
 
-{		// MT_POISONCLOUD
+{		// PoisonCloud
 -1,		// doomednum
 S3_POISONCLOUD1,		// spawnstate
 1000,		// spawnhealth
@@ -2208,7 +2208,7 @@ MF_NOGRAVITY|MF_NOBLOCKMAP|MF_SHADOW|MF_NOCLIP|MF_DROPOFF,		// flags
 MF2_NODMGTHRUST		// flags2
  },
 
-{		// MT_THROWINGBOMB
+{		// ThrowingBomb
 -1,		// doomednum
 S3_THROWINGBOMB1,		// spawnstate
 48,		// spawnhealth
@@ -2235,7 +2235,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE,		// flags
 MF2_FLOORBOUNCE|MF2_FIREDAMAGE		// flags2
  },
 
-{		// MT_SPEEDBOOTS
+{		// ArtifactSpeedBoots
 8002,		// doomednum
 S3_ARTI_BOOTS1,		// spawnstate
 1000,		// spawnhealth
@@ -2262,7 +2262,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_BOOSTMANA
+{		// ArtifactBoostMana
 8003,		// doomednum
 S3_ARTI_MANA,		// spawnstate
 1000,		// spawnhealth
@@ -2289,7 +2289,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_BOOSTARMOR
+{		// ArtifactBoostArmor
 8041,		// doomednum
 S3_ARTI_ARMOR1,		// spawnstate
 1000,		// spawnhealth
@@ -2316,7 +2316,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_BLASTRADIUS
+{		// ArtifactBlastRadius
 10110,		// doomednum
 S3_ARTI_BLAST1,		// spawnstate
 1000,		// spawnhealth
@@ -2343,7 +2343,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_HEALRADIUS
+{		// ArtifactHealRadius
 10120,		// doomednum
 S3_ARTI_HEALRAD1,		// spawnstate
 1000,		// spawnhealth
@@ -2370,7 +2370,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_SPLASH
+{		// Splash
 -1,		// doomednum
 S3_SPLASH1,		// spawnstate
 1000,		// spawnhealth
@@ -2397,7 +2397,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF,		// flags
 MF2_NOTELEPORT|MF2_LOGRAV|MF2_CANNOTPUSH		// flags2
  },
 
-{		// MT_SPLASHBASE
+{		// SplashBase
 -1,		// doomednum
 S3_SPLASHBASE1,		// spawnstate
 1000,		// spawnhealth
@@ -2424,7 +2424,7 @@ MF_NOBLOCKMAP,		// flags
 0		// flags2
  },
 
-{		// MT_LAVASPLASH
+{		// LavaSplash
 -1,		// doomednum
 S3_LAVASPLASH1,		// spawnstate
 1000,		// spawnhealth
@@ -2451,7 +2451,7 @@ MF_NOBLOCKMAP,		// flags
 0		// flags2
  },
 
-{		// MT_LAVASMOKE
+{		// LavaSmoke
 -1,		// doomednum
 S3_LAVASMOKE1,		// spawnstate
 1000,		// spawnhealth
@@ -2478,7 +2478,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_SHADOW,		// flags
 0		// flags2
  },
 
-{		// MT_SLUDGECHUNK
+{		// SludgeChunk
 -1,		// doomednum
 S3_SLUDGECHUNK1,		// spawnstate
 1000,		// spawnhealth
@@ -2505,7 +2505,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF,		// flags
 MF2_NOTELEPORT|MF2_LOGRAV|MF2_CANNOTPUSH		// flags2
  },
 
-{		// MT_SLUDGESPLASH
+{		// SludgeSplash
 -1,		// doomednum
 S3_SLUDGESPLASH1,		// spawnstate
 1000,		// spawnhealth
@@ -2532,7 +2532,7 @@ MF_NOBLOCKMAP,		// flags
 0		// flags2
  },
 
-{		// MT_MISC0
+{		// ZWingedStatue
 5,		// doomednum
 S3_ZWINGEDSTATUE1,		// spawnstate
 1000,		// spawnhealth
@@ -2559,7 +2559,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC1
+{		// ZRock1
 6,		// doomednum
 S3_ZROCK1_1,		// spawnstate
 1000,		// spawnhealth
@@ -2586,7 +2586,7 @@ SFX_NONE,		// activesound
 0		// flags2
  },
 
-{		// MT_MISC2
+{		// ZRock2
 7,		// doomednum
 S3_ZROCK2_1,		// spawnstate
 1000,		// spawnhealth
@@ -2613,7 +2613,7 @@ SFX_NONE,		// activesound
 0		// flags2
  },
 
-{		// MT_MISC3
+{		// ZRock3
 9,		// doomednum
 S3_ZROCK3_1,		// spawnstate
 1000,		// spawnhealth
@@ -2640,7 +2640,7 @@ SFX_NONE,		// activesound
 0		// flags2
  },
 
-{		// MT_MISC4
+{		// ZRock4
 15,		// doomednum
 S3_ZROCK4_1,		// spawnstate
 1000,		// spawnhealth
@@ -2667,7 +2667,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC5
+{		// ZChandelier
 17,		// doomednum
 S3_ZCHANDELIER1,		// spawnstate
 1000,		// spawnhealth
@@ -2699,7 +2699,7 @@ MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 "\t\t\tAddStaticLight(origin, 128.0);"
  },
 
-{		// MT_MISC6
+{		// ZChandelierUnlit
 8063,		// doomednum
 S3_ZCHANDELIER_U,		// spawnstate
 1000,		// spawnhealth
@@ -2726,7 +2726,7 @@ MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_MISC7
+{		// ZTreeDead
 24,		// doomednum
 S3_ZTREEDEAD1,		// spawnstate
 1000,		// spawnhealth
@@ -2753,7 +2753,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC8
+{		// ZTree
 25,		// doomednum
 S3_ZTREE,		// spawnstate
 1000,		// spawnhealth
@@ -2780,7 +2780,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_TREEDESTRUCTIBLE
+{		// TreeDestructible
 8062,		// doomednum
 S3_ZTREEDESTRUCTIBLE1,		// spawnstate
 70,		// spawnhealth
@@ -2807,7 +2807,7 @@ MF_SOLID|MF_SHOOTABLE|MF_NOBLOOD,		// flags
 0		// flags2
  },
 
-{		// MT_MISC9
+{		// ZTreeSwamp1
 26,		// doomednum
 S3_ZTREESWAMP182_1,		// spawnstate
 1000,		// spawnhealth
@@ -2834,7 +2834,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC10
+{		// ZTreeSwamp2
 27,		// doomednum
 S3_ZTREESWAMP172_1,		// spawnstate
 1000,		// spawnhealth
@@ -2861,7 +2861,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC11
+{		// ZStumpBurned
 28,		// doomednum
 S3_ZSTUMPBURNED1,		// spawnstate
 1000,		// spawnhealth
@@ -2888,7 +2888,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC12
+{		// ZStumpBare
 29,		// doomednum
 S3_ZSTUMPBARE1,		// spawnstate
 1000,		// spawnhealth
@@ -2915,7 +2915,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC13
+{		// ZStumpSwamp1
 37,		// doomednum
 S3_ZSTUMPSWAMP1_1,		// spawnstate
 1000,		// spawnhealth
@@ -2942,7 +2942,7 @@ SFX_NONE,		// activesound
 0		// flags2
  },
 
-{		// MT_MISC14
+{		// ZStumpSwamp2
 38,		// doomednum
 S3_ZSTUMPSWAMP2_1,		// spawnstate
 1000,		// spawnhealth
@@ -2969,7 +2969,7 @@ SFX_NONE,		// activesound
 0		// flags2
  },
 
-{		// MT_MISC15
+{		// ZShroomLarge1
 39,		// doomednum
 S3_ZSHROOMLARGE1_1,		// spawnstate
 1000,		// spawnhealth
@@ -2996,7 +2996,7 @@ SFX_NONE,		// activesound
 0		// flags2
  },
 
-{		// MT_MISC16
+{		// ZShroomLarge2
 40,		// doomednum
 S3_ZSHROOMLARGE2_1,		// spawnstate
 1000,		// spawnhealth
@@ -3023,7 +3023,7 @@ SFX_NONE,		// activesound
 0		// flags2
  },
 
-{		// MT_MISC17
+{		// ZShroomLarge3
 41,		// doomednum
 S3_ZSHROOMLARGE3_1,		// spawnstate
 1000,		// spawnhealth
@@ -3050,7 +3050,7 @@ SFX_NONE,		// activesound
 0		// flags2
  },
 
-{		// MT_MISC18
+{		// ZShroomSmall1
 42,		// doomednum
 S3_ZSHROOMSMALL1_1,		// spawnstate
 1000,		// spawnhealth
@@ -3077,7 +3077,7 @@ SFX_NONE,		// activesound
 0		// flags2
  },
 
-{		// MT_MISC19
+{		// ZShroomSmall2
 44,		// doomednum
 S3_ZSHROOMSMALL2_1,		// spawnstate
 1000,		// spawnhealth
@@ -3104,7 +3104,7 @@ SFX_NONE,		// activesound
 0		// flags2
  },
 
-{		// MT_MISC20
+{		// ZShroomSmall3
 45,		// doomednum
 S3_ZSHROOMSMALL3_1,		// spawnstate
 1000,		// spawnhealth
@@ -3131,7 +3131,7 @@ SFX_NONE,		// activesound
 0		// flags2
  },
 
-{		// MT_MISC21
+{		// ZShroomSmall4
 46,		// doomednum
 S3_ZSHROOMSMALL4_1,		// spawnstate
 1000,		// spawnhealth
@@ -3158,7 +3158,7 @@ SFX_NONE,		// activesound
 0		// flags2
  },
 
-{		// MT_MISC22
+{		// ZShroomSmall5
 47,		// doomednum
 S3_ZSHROOMSMALL5_1,		// spawnstate
 1000,		// spawnhealth
@@ -3185,7 +3185,7 @@ SFX_NONE,		// activesound
 0		// flags2
  },
 
-{		// MT_MISC23
+{		// ZStalagmitePillar
 48,		// doomednum
 S3_ZSTALAGMITEPILLAR1,		// spawnstate
 1000,		// spawnhealth
@@ -3212,7 +3212,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC24
+{		// ZStalagmiteLarge
 49,		// doomednum
 S3_ZSTALAGMITELARGE1,		// spawnstate
 1000,		// spawnhealth
@@ -3239,7 +3239,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC25
+{		// ZStalagmiteMedium
 50,		// doomednum
 S3_ZSTALAGMITEMEDIUM1,		// spawnstate
 1000,		// spawnhealth
@@ -3266,7 +3266,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC26
+{		// ZStalagmiteSmall
 51,		// doomednum
 S3_ZSTALAGMITESMALL1,		// spawnstate
 1000,		// spawnhealth
@@ -3293,7 +3293,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC27
+{		// ZStalactiteLarge
 52,		// doomednum
 S3_ZSTALACTITELARGE1,		// spawnstate
 1000,		// spawnhealth
@@ -3320,7 +3320,7 @@ MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_MISC28
+{		// ZStalactiteMedium
 56,		// doomednum
 S3_ZSTALACTITEMEDIUM1,		// spawnstate
 1000,		// spawnhealth
@@ -3347,7 +3347,7 @@ MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_MISC29
+{		// ZStalactiteSmall
 57,		// doomednum
 S3_ZSTALACTITESMALL1,		// spawnstate
 1000,		// spawnhealth
@@ -3374,7 +3374,7 @@ MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_MISC30
+{		// ZMossCeiling1
 58,		// doomednum
 S3_ZMOSSCEILING1_1,		// spawnstate
 1000,		// spawnhealth
@@ -3401,7 +3401,7 @@ MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_MISC31
+{		// ZMossCeiling2
 59,		// doomednum
 S3_ZMOSSCEILING2_1,		// spawnstate
 1000,		// spawnhealth
@@ -3428,7 +3428,7 @@ MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_MISC32
+{		// ZSwampVine
 60,		// doomednum
 S3_ZSWAMPVINE1,		// spawnstate
 1000,		// spawnhealth
@@ -3455,7 +3455,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC33
+{		// ZCorpseKabob
 61,		// doomednum
 S3_ZCORPSEKABOB1,		// spawnstate
 1000,		// spawnhealth
@@ -3482,7 +3482,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC34
+{		// ZCorpseSleeping
 62,		// doomednum
 S3_ZCORPSESLEEPING1,		// spawnstate
 1000,		// spawnhealth
@@ -3509,7 +3509,7 @@ SFX_NONE,		// activesound
 0		// flags2
  },
 
-{		// MT_MISC35
+{		// ZTombStoneRip
 63,		// doomednum
 S3_ZTOMBSTONERIP1,		// spawnstate
 1000,		// spawnhealth
@@ -3536,7 +3536,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC36
+{		// ZTombStoneShane
 64,		// doomednum
 S3_ZTOMBSTONESHANE1,		// spawnstate
 1000,		// spawnhealth
@@ -3563,7 +3563,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC37
+{		// ZTombStoneBigCross
 65,		// doomednum
 S3_ZTOMBSTONEBIGCROSS1,		// spawnstate
 1000,		// spawnhealth
@@ -3590,7 +3590,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC38
+{		// ZTombStoneBrianR
 66,		// doomednum
 S3_ZTOMBSTONEBRIANR1,		// spawnstate
 1000,		// spawnhealth
@@ -3617,7 +3617,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC39
+{		// ZTombStoneCrossCircle
 67,		// doomednum
 S3_ZTOMBSTONECROSSCIRCLE1,		// spawnstate
 1000,		// spawnhealth
@@ -3644,7 +3644,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC40
+{		// ZTombStoneSmallCross
 68,		// doomednum
 S3_ZTOMBSTONESMALLCROSS1,		// spawnstate
 1000,		// spawnhealth
@@ -3671,7 +3671,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC41
+{		// ZTombStoneBrianP
 69,		// doomednum
 S3_ZTOMBSTONEBRIANP1,		// spawnstate
 1000,		// spawnhealth
@@ -3698,7 +3698,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC42
+{		// CorpseHanging
 71,		// doomednum
 S3_CORPSEHANGING_1,		// spawnstate
 1000,		// spawnhealth
@@ -3725,7 +3725,7 @@ MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_MISC43
+{		// ZStatueGargoyleGreenTall
 72,		// doomednum
 S3_ZSTATUEGARGOYLEGREENTALL_1,		// spawnstate
 1000,		// spawnhealth
@@ -3752,7 +3752,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC44
+{		// ZStatueGargoyleBlueTall
 73,		// doomednum
 S3_ZSTATUEGARGOYLEBLUETALL_1,		// spawnstate
 1000,		// spawnhealth
@@ -3779,7 +3779,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC45
+{		// ZStatueGargoyleGreenShort
 74,		// doomednum
 S3_ZSTATUEGARGOYLEGREENSHORT_1,		// spawnstate
 1000,		// spawnhealth
@@ -3806,7 +3806,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC46
+{		// ZStatueGargoyleBlueShort
 76,		// doomednum
 S3_ZSTATUEGARGOYLEBLUESHORT_1,		// spawnstate
 1000,		// spawnhealth
@@ -3833,7 +3833,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC47
+{		// ZStatueGargoyleStripeTall
 8044,		// doomednum
 S3_ZSTATUEGARGOYLESTRIPETALL_1,		// spawnstate
 1000,		// spawnhealth
@@ -3860,7 +3860,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC48
+{		// ZStatueGargoyleDarkRedTall
 8045,		// doomednum
 S3_ZSTATUEGARGOYLEDARKREDTALL_1,		// spawnstate
 1000,		// spawnhealth
@@ -3887,7 +3887,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC49
+{		// ZStatueGargoyleRedTall
 8046,		// doomednum
 S3_ZSTATUEGARGOYLEREDTALL_1,		// spawnstate
 1000,		// spawnhealth
@@ -3914,7 +3914,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC50
+{		// ZStatueGargoyleTanTall
 8047,		// doomednum
 S3_ZSTATUEGARGOYLETANTALL_1,		// spawnstate
 1000,		// spawnhealth
@@ -3941,7 +3941,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC51
+{		// ZStatueGargoyleRustTall
 8048,		// doomednum
 S3_ZSTATUEGARGOYLERUSTTALL_1,		// spawnstate
 1000,		// spawnhealth
@@ -3968,7 +3968,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC52
+{		// ZStatueGargoyleDarkRedShort
 8049,		// doomednum
 S3_ZSTATUEGARGOYLEDARKREDSHORT_1,		// spawnstate
 1000,		// spawnhealth
@@ -3995,7 +3995,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC53
+{		// ZStatueGargoyleRedShort
 8050,		// doomednum
 S3_ZSTATUEGARGOYLEREDSHORT_1,		// spawnstate
 1000,		// spawnhealth
@@ -4022,7 +4022,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC54
+{		// ZStatueGargoyleTanShort
 8051,		// doomednum
 S3_ZSTATUEGARGOYLETANSHORT_1,		// spawnstate
 1000,		// spawnhealth
@@ -4049,7 +4049,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC55
+{		// ZStatueGargoyleRustShort
 8052,		// doomednum
 S3_ZSTATUEGARGOYLERUSTSHORT_1,		// spawnstate
 1000,		// spawnhealth
@@ -4076,7 +4076,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC56
+{		// ZBannerTattered
 77,		// doomednum
 S3_ZBANNERTATTERED_1,		// spawnstate
 1000,		// spawnhealth
@@ -4103,7 +4103,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC57
+{		// ZTreeLarge1
 78,		// doomednum
 S3_ZTREELARGE1,		// spawnstate
 1000,		// spawnhealth
@@ -4130,7 +4130,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC58
+{		// ZTreeLarge2
 79,		// doomednum
 S3_ZTREELARGE2,		// spawnstate
 1000,		// spawnhealth
@@ -4157,7 +4157,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC59
+{		// ZTreeGnarled1
 80,		// doomednum
 S3_ZTREEGNARLED1,		// spawnstate
 1000,		// spawnhealth
@@ -4184,7 +4184,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC60
+{		// ZTreeGnarled2
 87,		// doomednum
 S3_ZTREEGNARLED2,		// spawnstate
 1000,		// spawnhealth
@@ -4211,7 +4211,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC61
+{		// ZLog
 88,		// doomednum
 S3_ZLOG,		// spawnstate
 1000,		// spawnhealth
@@ -4238,7 +4238,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC62
+{		// ZStalactiteIceLarge
 89,		// doomednum
 S3_ZSTALACTITEICELARGE,		// spawnstate
 1000,		// spawnhealth
@@ -4265,7 +4265,7 @@ MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_MISC63
+{		// ZStalactiteIceMedium
 90,		// doomednum
 S3_ZSTALACTITEICEMEDIUM,		// spawnstate
 1000,		// spawnhealth
@@ -4292,7 +4292,7 @@ MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_MISC64
+{		// ZStalactiteIceSmall
 91,		// doomednum
 S3_ZSTALACTITEICESMALL,		// spawnstate
 1000,		// spawnhealth
@@ -4319,7 +4319,7 @@ MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_MISC65
+{		// ZStalactiteIceTiny
 92,		// doomednum
 S3_ZSTALACTITEICETINY,		// spawnstate
 1000,		// spawnhealth
@@ -4346,7 +4346,7 @@ MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_MISC66
+{		// ZStalagmiteIceLarge
 93,		// doomednum
 S3_ZSTALAGMITEICELARGE,		// spawnstate
 1000,		// spawnhealth
@@ -4373,7 +4373,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC67
+{		// ZStalagmiteIceMedium
 94,		// doomednum
 S3_ZSTALAGMITEICEMEDIUM,		// spawnstate
 1000,		// spawnhealth
@@ -4400,7 +4400,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC68
+{		// ZStalagmiteIceSmall
 95,		// doomednum
 S3_ZSTALAGMITEICESMALL,		// spawnstate
 1000,		// spawnhealth
@@ -4427,7 +4427,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC69
+{		// ZStalagmiteIceTiny
 96,		// doomednum
 S3_ZSTALAGMITEICETINY,		// spawnstate
 1000,		// spawnhealth
@@ -4454,7 +4454,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC70
+{		// ZRockBrown1
 97,		// doomednum
 S3_ZROCKBROWN1,		// spawnstate
 1000,		// spawnhealth
@@ -4481,7 +4481,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC71
+{		// ZRockBrown2
 98,		// doomednum
 S3_ZROCKBROWN2,		// spawnstate
 1000,		// spawnhealth
@@ -4508,7 +4508,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC72
+{		// ZRockBlack
 99,		// doomednum
 S3_ZROCKBLACK,		// spawnstate
 1000,		// spawnhealth
@@ -4535,7 +4535,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC73
+{		// ZRubble1
 100,		// doomednum
 S3_ZRUBBLE1,		// spawnstate
 1000,		// spawnhealth
@@ -4562,7 +4562,7 @@ SFX_NONE,		// activesound
 0		// flags2
  },
 
-{		// MT_MISC74
+{		// ZRubble2
 101,		// doomednum
 S3_ZRUBBLE2,		// spawnstate
 1000,		// spawnhealth
@@ -4589,7 +4589,7 @@ SFX_NONE,		// activesound
 0		// flags2
  },
 
-{		// MT_MISC75
+{		// ZRubble3
 102,		// doomednum
 S3_ZRUBBLE3,		// spawnstate
 1000,		// spawnhealth
@@ -4616,7 +4616,7 @@ SFX_NONE,		// activesound
 0		// flags2
  },
 
-{		// MT_MISC76
+{		// ZVasePillar
 103,		// doomednum
 S3_ZVASEPILLAR,		// spawnstate
 1000,		// spawnhealth
@@ -4643,7 +4643,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_POTTERY1
+{		// Pottery1
 104,		// doomednum
 S3_ZPOTTERY1,		// spawnstate
 15,		// spawnhealth
@@ -4670,7 +4670,7 @@ MF_SOLID|MF_SHOOTABLE|MF_NOBLOOD|MF_DROPOFF,		// flags
 MF2_SLIDE|MF2_PUSHABLE|MF2_TELESTOMP|MF2_PASSMOBJ		// flags2
  },
 
-{		// MT_POTTERY2
+{		// Pottery2
 105,		// doomednum
 S3_ZPOTTERY2,		// spawnstate
 15,		// spawnhealth
@@ -4697,7 +4697,7 @@ MF_SOLID|MF_SHOOTABLE|MF_NOBLOOD|MF_DROPOFF,		// flags
 MF2_SLIDE|MF2_PUSHABLE|MF2_TELESTOMP|MF2_PASSMOBJ		// flags2
  },
 
-{		// MT_POTTERY3
+{		// Pottery3
 106,		// doomednum
 S3_ZPOTTERY3,		// spawnstate
 15,		// spawnhealth
@@ -4724,7 +4724,7 @@ MF_SOLID|MF_SHOOTABLE|MF_NOBLOOD|MF_DROPOFF,		// flags
 MF2_SLIDE|MF2_PUSHABLE|MF2_TELESTOMP|MF2_PASSMOBJ		// flags2
  },
 
-{		// MT_POTTERYBIT1
+{		// PotteryBit
 -1,		// doomednum
 S3_POTTERYBIT_1,		// spawnstate
 1000,		// spawnhealth
@@ -4751,7 +4751,7 @@ MF_MISSILE,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_MISC77
+{		// ZCorpseLynched
 108,		// doomednum
 S3_ZCORPSELYNCHED1,		// spawnstate
 1000,		// spawnhealth
@@ -4778,7 +4778,7 @@ MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_ZLYNCHED_NOHEART
+{		// ZLynchedNoHeart
 109,		// doomednum
 S3_ZCORPSELYNCHED2,		// spawnstate
 1000,		// spawnhealth
@@ -4805,7 +4805,7 @@ MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_MISC78
+{		// ZCorpseSitting
 110,		// doomednum
 S3_ZCORPSESITTING,		// spawnstate
 30,		// spawnhealth
@@ -4832,7 +4832,7 @@ MF_SOLID|MF_SHOOTABLE|MF_NOBLOOD,		// flags
 0		// flags2
  },
 
-{		// MT_CORPSEBIT
+{		// CorpseBit
 -1,		// doomednum
 S3_CORPSEBIT_1,		// spawnstate
 1000,		// spawnhealth
@@ -4859,7 +4859,7 @@ MF_NOBLOCKMAP,		// flags
 MF2_TELESTOMP		// flags2
  },
 
-{		// MT_CORPSEBLOODDRIP
+{		// CorpseBloodDrip
 -1,		// doomednum
 S3_CORPSEBLOODDRIP,		// spawnstate
 1000,		// spawnhealth
@@ -4886,7 +4886,7 @@ MF_MISSILE,		// flags
 MF2_LOGRAV		// flags2
  },
 
-{		// MT_BLOODPOOL
+{		// BloodPool
 111,		// doomednum
 S3_BLOODPOOL,		// spawnstate
 1000,		// spawnhealth
@@ -4913,7 +4913,7 @@ MF_NOBLOCKMAP,		// flags
 0		// flags2
  },
 
-{		// MT_MISC79
+{		// ZCandle
 119,		// doomednum
 S3_ZCANDLE1,		// spawnstate
 1000,		// spawnhealth
@@ -4944,7 +4944,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 "AddStaticLight(origin, 128.0);"
  },
 
-{		// MT_MISC80
+{		// ZLeafSpawner
 113,		// doomednum
 S3_ZLEAFSPAWNER,		// spawnstate
 1000,		// spawnhealth
@@ -4971,7 +4971,7 @@ MF_NOBLOCKMAP|MF_NOSECTOR,		// flags
 MF2_DONTDRAW		// flags2
  },
 
-{		// MT_LEAF1
+{		// Leaf1
 -1,		// doomednum
 S3_LEAF1_1,		// spawnstate
 1000,		// spawnhealth
@@ -4998,7 +4998,7 @@ MF_NOBLOCKMAP|MF_MISSILE,		// flags
 MF2_NOTELEPORT|MF2_LOGRAV		// flags2
  },
 
-{		// MT_LEAF2
+{		// Leaf2
 -1,		// doomednum
 S3_LEAF2_1,		// spawnstate
 1000,		// spawnhealth
@@ -5025,7 +5025,7 @@ MF_NOBLOCKMAP|MF_MISSILE,		// flags
 MF2_NOTELEPORT|MF2_LOGRAV		// flags2
  },
 
-{		// MT_ZTWINEDTORCH
+{		// ZTWinedTorch
 116,		// doomednum
 S3_ZTWINEDTORCH_1,		// spawnstate
 1000,		// spawnhealth
@@ -5056,7 +5056,7 @@ MF_SOLID,		// flags
 "AddStaticLight(origin + vector(0.0, 0.0, 64.0), 200.0);"
  },
 
-{		// MT_ZTWINEDTORCH_UNLIT
+{		// ZTWinedTorchUnlit
 117,		// doomednum
 S3_ZTWINEDTORCH_UNLIT,		// spawnstate
 1000,		// spawnhealth
@@ -5083,7 +5083,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_BRIDGE
+{		// Bridge
 118,		// doomednum
 S3_BRIDGE1,		// spawnstate
 1000,		// spawnhealth
@@ -5110,7 +5110,7 @@ MF_SOLID|MF_NOGRAVITY,		// flags
 MF2_DONTDRAW		// flags2
  },
 
-{		// MT_BRIDGEBALL
+{		// BridgeBall
 -1,		// doomednum
 S3_BBALL1,		// spawnstate
 1000,		// spawnhealth
@@ -5137,7 +5137,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_ZWALLTORCH
+{		// ZWallTorch
 54,		// doomednum
 S3_ZWALLTORCH1,		// spawnstate
 1000,		// spawnhealth
@@ -5170,7 +5170,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 "\t\t\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 128.0);"
  },
 
-{		// MT_ZWALLTORCH_UNLIT
+{		// ZWallTorchUnlit
 55,		// doomednum
 S3_ZWALLTORCH_U,		// spawnstate
 1000,		// spawnhealth
@@ -5197,7 +5197,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_ZBARREL
+{		// ZBarrel
 8100,		// doomednum
 S3_ZBARREL1,		// spawnstate
 1000,		// spawnhealth
@@ -5224,7 +5224,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_ZSHRUB1
+{		// ZShrub1
 8101,		// doomednum
 S3_ZSHRUB1,		// spawnstate
 20,		// spawnhealth
@@ -5251,7 +5251,7 @@ MF_SOLID|MF_SHOOTABLE|MF_NOBLOOD,		// flags
 0		// flags2
  },
 
-{		// MT_ZSHRUB2
+{		// ZShrub2
 8102,		// doomednum
 S3_ZSHRUB2,		// spawnstate
 10,		// spawnhealth
@@ -5278,7 +5278,7 @@ MF_SOLID|MF_SHOOTABLE|MF_NOBLOOD,		// flags
 0		// flags2
  },
 
-{		// MT_ZBUCKET
+{		// ZBucket
 8103,		// doomednum
 S3_ZBUCKET1,		// spawnstate
 1000,		// spawnhealth
@@ -5305,7 +5305,7 @@ MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_ZPOISONSHROOM
+{		// ZPoisonShroom
 8104,		// doomednum
 S3_ZPOISONSHROOM1,		// spawnstate
 30,		// spawnhealth
@@ -5332,7 +5332,7 @@ MF_SHOOTABLE|MF_SOLID|MF_NOBLOOD,		// flags
 0		// flags2
  },
 
-{		// MT_ZFIREBULL
+{		// ZFireBull
 8042,		// doomednum
 S3_ZFIREBULL1,		// spawnstate
 1000,		// spawnhealth
@@ -5364,7 +5364,7 @@ MF_SOLID,		// flags
 "\t\t\tAddStaticLight(origin + vector(0.0, 0.0, 32.0), 200.0);"
  },
 
-{		// MT_ZFIREBULL_UNLIT
+{		// ZFireBullUnlit
 8043,		// doomednum
 S3_ZFIREBULL_U,		// spawnstate
 1000,		// spawnhealth
@@ -5391,7 +5391,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_FIRETHING
+{		// FireThing
 8060,		// doomednum
 S3_ZFIRETHING1,		// spawnstate
 1000,		// spawnhealth
@@ -5423,7 +5423,7 @@ MF_SOLID,		// flags
 "\t\t\tAddStaticLight(origin + vector(0.0, 0.0, 16.0), 160.0);"
  },
 
-{		// MT_BRASSTORCH
+{		// BrassTorch
 8061,		// doomednum
 S3_ZBRASSTORCH1,		// spawnstate
 1000,		// spawnhealth
@@ -5455,7 +5455,7 @@ MF_SOLID,		// flags
 "\t\t\tAddStaticLight(origin + vector(0.0, 0.0, 48.0), 160.0);"
  },
 
-{		// MT_ZSUITOFARMOR
+{		// ZSuitOfArmor
 8064,		// doomednum
 S3_ZSUITOFARMOR,		// spawnstate
 60,		// spawnhealth
@@ -5482,7 +5482,7 @@ MF_SOLID|MF_SHOOTABLE|MF_NOBLOOD,		// flags
 0		// flags2
  },
 
-{		// MT_ZARMORCHUNK
+{		// ZArmorChunk
 -1,		// doomednum
 S3_ZARMORCHUNK1,		// spawnstate
 1000,		// spawnhealth
@@ -5509,7 +5509,7 @@ SFX_NONE,		// activesound
 0		// flags2
  },
 
-{		// MT_ZBELL
+{		// ZBell
 8065,		// doomednum
 S3_ZBELL,		// spawnstate
 5,		// spawnhealth
@@ -5536,7 +5536,7 @@ MF_SOLID|MF_SHOOTABLE|MF_NOBLOOD|MF_NOGRAVITY|MF_SPAWNCEILING,		// flags
 0		// flags2
  },
 
-{		// MT_ZBLUE_CANDLE
+{		// ZBlueCandle
 8066,		// doomednum
 S3_ZBLUE_CANDLE1,		// spawnstate
 1000,		// spawnhealth
@@ -5568,7 +5568,7 @@ MF_NOBLOCKMAP,		// flags
 "\t\t\tAddStaticLightRGB(origin, 128.0, RGB(0, 0, 255));"
  },
 
-{		// MT_ZIRON_MAIDEN
+{		// ZIronMaiden
 8067,		// doomednum
 S3_ZIRON_MAIDEN,		// spawnstate
 1000,		// spawnhealth
@@ -5595,7 +5595,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_ZXMAS_TREE
+{		// ZXmasTree
 8068,		// doomednum
 S3_ZXMAS_TREE,		// spawnstate
 20,		// spawnhealth
@@ -5622,7 +5622,7 @@ MF_SOLID|MF_SHOOTABLE|MF_NOBLOOD,		// flags
 0		// flags2
  },
 
-{		// MT_ZCAULDRON
+{		// ZCauldron
 8069,		// doomednum
 S3_ZCAULDRON1,		// spawnstate
 1000,		// spawnhealth
@@ -5654,7 +5654,7 @@ MF_SOLID,		// flags
 "\t\t\tAddStaticLight(origin, 128.0);"
  },
 
-{		// MT_ZCAULDRON_UNLIT
+{		// ZCauldronUnlit
 8070,		// doomednum
 S3_ZCAULDRON_U,		// spawnstate
 1000,		// spawnhealth
@@ -5681,7 +5681,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_ZCHAINBIT32
+{		// ZChainBit32
 8071,		// doomednum
 S3_ZCHAINBIT32,		// spawnstate
 1000,		// spawnhealth
@@ -5708,7 +5708,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_SPAWNCEILING,		// flags
 0		// flags2
  },
 
-{		// MT_ZCHAINBIT64
+{		// ZChainBit64
 8072,		// doomednum
 S3_ZCHAINBIT64,		// spawnstate
 1000,		// spawnhealth
@@ -5735,7 +5735,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_SPAWNCEILING,		// flags
 0		// flags2
  },
 
-{		// MT_ZCHAINEND_HEART
+{		// ZChainEndHearth
 8073,		// doomednum
 S3_ZCHAINEND_HEART,		// spawnstate
 1000,		// spawnhealth
@@ -5762,7 +5762,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_SPAWNCEILING,		// flags
 0		// flags2
  },
 
-{		// MT_ZCHAINEND_HOOK1
+{		// ZChainEndHook1
 8074,		// doomednum
 S3_ZCHAINEND_HOOK1,		// spawnstate
 1000,		// spawnhealth
@@ -5789,7 +5789,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_SPAWNCEILING,		// flags
 0		// flags2
  },
 
-{		// MT_ZCHAINEND_HOOK2
+{		// ZChainEndHook2
 8075,		// doomednum
 S3_ZCHAINEND_HOOK2,		// spawnstate
 1000,		// spawnhealth
@@ -5816,7 +5816,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_SPAWNCEILING,		// flags
 0		// flags2
  },
 
-{		// MT_ZCHAINEND_SPIKE
+{		// ZChainEndSpike
 8076,		// doomednum
 S3_ZCHAINEND_SPIKE,		// spawnstate
 1000,		// spawnhealth
@@ -5843,7 +5843,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_SPAWNCEILING,		// flags
 0		// flags2
  },
 
-{		// MT_ZCHAINEND_SKULL
+{		// ZChainEndSkull
 8077,		// doomednum
 S3_ZCHAINEND_SKULL,		// spawnstate
 1000,		// spawnhealth
@@ -5870,7 +5870,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_SPAWNCEILING,		// flags
 0		// flags2
  },
 
-{		// MT_TABLE_SHIT1
+{		// TableShit1
 8500,		// doomednum
 S3_TABLE_SHIT1,		// spawnstate
 1000,		// spawnhealth
@@ -5897,7 +5897,7 @@ MF_NOBLOCKMAP,		// flags
 0		// flags2
  },
 
-{		// MT_TABLE_SHIT2
+{		// TableShit2
 8501,		// doomednum
 S3_TABLE_SHIT2,		// spawnstate
 1000,		// spawnhealth
@@ -5924,7 +5924,7 @@ MF_NOBLOCKMAP,		// flags
 0		// flags2
  },
 
-{		// MT_TABLE_SHIT3
+{		// TableShit3
 8502,		// doomednum
 S3_TABLE_SHIT3,		// spawnstate
 1000,		// spawnhealth
@@ -5951,7 +5951,7 @@ MF_NOBLOCKMAP,		// flags
 0		// flags2
  },
 
-{		// MT_TABLE_SHIT4
+{		// TableShit4
 8503,		// doomednum
 S3_TABLE_SHIT4,		// spawnstate
 1000,		// spawnhealth
@@ -5978,7 +5978,7 @@ MF_NOBLOCKMAP,		// flags
 0		// flags2
  },
 
-{		// MT_TABLE_SHIT5
+{		// TableShit5
 8504,		// doomednum
 S3_TABLE_SHIT5,		// spawnstate
 1000,		// spawnhealth
@@ -6005,7 +6005,7 @@ MF_NOBLOCKMAP,		// flags
 0		// flags2
  },
 
-{		// MT_TABLE_SHIT6
+{		// TableShit6
 8505,		// doomednum
 S3_TABLE_SHIT6,		// spawnstate
 1000,		// spawnhealth
@@ -6032,7 +6032,7 @@ MF_NOBLOCKMAP,		// flags
 0		// flags2
  },
 
-{		// MT_TABLE_SHIT7
+{		// TableShit7
 8506,		// doomednum
 S3_TABLE_SHIT7,		// spawnstate
 1000,		// spawnhealth
@@ -6059,7 +6059,7 @@ MF_NOBLOCKMAP,		// flags
 0		// flags2
  },
 
-{		// MT_TABLE_SHIT8
+{		// TableShit8
 8507,		// doomednum
 S3_TABLE_SHIT8,		// spawnstate
 1000,		// spawnhealth
@@ -6086,7 +6086,7 @@ MF_NOBLOCKMAP,		// flags
 0		// flags2
  },
 
-{		// MT_TABLE_SHIT9
+{		// TableShit9
 8508,		// doomednum
 S3_TABLE_SHIT9,		// spawnstate
 1000,		// spawnhealth
@@ -6113,7 +6113,7 @@ MF_NOBLOCKMAP,		// flags
 0		// flags2
  },
 
-{		// MT_TABLE_SHIT10
+{		// TableShit10
 8509,		// doomednum
 S3_TABLE_SHIT10,		// spawnstate
 1000,		// spawnhealth
@@ -6140,7 +6140,7 @@ MF_NOBLOCKMAP,		// flags
 0		// flags2
  },
 
-{		// MT_TFOG
+{		// TeleportFog
 -1,		// doomednum
 S3_TFOG1,		// spawnstate
 1000,		// spawnhealth
@@ -6167,7 +6167,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_MISC81
+{		// TeleSmoke
 140,		// doomednum
 S3_TELESMOKE1,		// spawnstate
 1000,		// spawnhealth
@@ -6194,7 +6194,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_TELEPORTMAN
+{		// TeleportSpot
 14,		// doomednum
 S3_NULL,		// spawnstate
 1000,		// spawnhealth
@@ -6221,7 +6221,7 @@ MF_NOBLOCKMAP|MF_NOSECTOR,		// flags
 0		// flags2
  },
 
-{		// MT_PUNCHPUFF
+{		// PunchPuff
 -1,		// doomednum
 S3_PUNCHPUFF1,		// spawnstate
 1000,		// spawnhealth
@@ -6248,7 +6248,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_SHADOW,		// flags
 0		// flags2
  },
 
-{		// MT_FW_AXE
+{		// WeaponFAxe
 8010,		// doomednum
 S3_AXE,		// spawnstate
 1000,		// spawnhealth
@@ -6275,7 +6275,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_AXEPUFF
+{		// AxePuff
 -1,		// doomednum
 S3_HAMMERPUFF1,		// spawnstate
 1000,		// spawnhealth
@@ -6302,7 +6302,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_SHADOW,		// flags
 0		// flags2
  },
 
-{		// MT_AXEPUFF_GLOW
+{		// AxePuffGlow
 -1,		// doomednum
 S3_AXEPUFF_GLOW1,		// spawnstate
 1000,		// spawnhealth
@@ -6329,7 +6329,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_AXEBLOOD
+{		// AxeBlood
 -1,		// doomednum
 S3_AXEBLOOD1,		// spawnstate
 1000,		// spawnhealth
@@ -6356,7 +6356,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF,		// flags
 MF2_NOTELEPORT|MF2_CANNOTPUSH		// flags2
  },
 
-{		// MT_FW_HAMMER
+{		// WeaponFHammer
 123,		// doomednum
 S3_HAMM,		// spawnstate
 1000,		// spawnhealth
@@ -6383,7 +6383,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_HAMMER_MISSILE
+{		// HammerMissile
 -1,		// doomednum
 S3_HAMMER_MISSILE_1,		// spawnstate
 1000,		// spawnhealth
@@ -6413,7 +6413,7 @@ MF2_NOTELEPORT|MF2_IMPACT|MF2_PCROSS|MF2_FIREDAMAGE,		// flags2
 "EF_DL_RED"
  },
 
-{		// MT_HAMMERPUFF
+{		// HammerPuff
 -1,		// doomednum
 S3_HAMMERPUFF1,		// spawnstate
 1000,		// spawnhealth
@@ -6440,7 +6440,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_SHADOW,		// flags
 0		// flags2
  },
 
-{		// MT_FSWORD_MISSILE
+{		// FighterSwordMissile
 -1,		// doomednum
 S3_FSWORD_MISSILE1,		// spawnstate
 1000,		// spawnhealth
@@ -6470,7 +6470,7 @@ MF2_NOTELEPORT|MF2_IMPACT|MF2_PCROSS,		// flags2
 "EF_DL_GREEN"
  },
 
-{		// MT_FSWORD_FLAME
+{		// FighterSwordFlame
 -1,		// doomednum
 S3_FSWORD_FLAME1,		// spawnstate
 1000,		// spawnhealth
@@ -6497,7 +6497,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_SHADOW,		// flags
 0		// flags2
  },
 
-{		// MT_CW_SERPSTAFF
+{		// WeaponCSerpentStaff
 10,		// doomednum
 S3_CSTAFF,		// spawnstate
 1000,		// spawnhealth
@@ -6524,7 +6524,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_CSTAFF_MISSILE
+{		// ClericStaffMissile
 -1,		// doomednum
 S3_CSTAFF_MISSILE1,		// spawnstate
 1000,		// spawnhealth
@@ -6554,7 +6554,7 @@ MF2_NOTELEPORT|MF2_IMPACT|MF2_PCROSS,		// flags2
 "EF_DL_GREEN"
  },
 
-{		// MT_CSTAFFPUFF
+{		// ClericStaffPuff
 -1,		// doomednum
 S3_CSTAFFPUFF1,		// spawnstate
 1000,		// spawnhealth
@@ -6581,7 +6581,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_SHADOW,		// flags
 0		// flags2
  },
 
-{		// MT_CW_FLAME
+{		// WeaponCFlame
 8009,		// doomednum
 S3_CFLAME1,		// spawnstate
 1000,		// spawnhealth
@@ -6608,7 +6608,7 @@ MF_SPECIAL|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_CFLAMEFLOOR
+{		// ClericFlameFloor
 -1,		// doomednum
 S3_CFLAMEFLOOR1,		// spawnstate
 1000,		// spawnhealth
@@ -6635,7 +6635,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_FLAMEPUFF
+{		// FlamePuff
 -1,		// doomednum
 S3_FLAMEPUFF1,		// spawnstate
 1000,		// spawnhealth
@@ -6662,7 +6662,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_FLAMEPUFF2
+{		// FlamePuff2
 -1,		// doomednum
 S3_FLAMEPUFF2_1,		// spawnstate
 1000,		// spawnhealth
@@ -6689,7 +6689,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_CIRCLEFLAME
+{		// CircleFlame
 -1,		// doomednum
 S3_CIRCLE_FLAME1,		// spawnstate
 1000,		// spawnhealth
@@ -6719,7 +6719,7 @@ MF2_NOTELEPORT|MF2_FIREDAMAGE,		// flags2
 "EF_DL_WHITE"
  },
 
-{		// MT_CFLAME_MISSILE
+{		// ClericFlameMissile
 -1,		// doomednum
 S3_CFLAME_MISSILE1,		// spawnstate
 1000,		// spawnhealth
@@ -6749,7 +6749,7 @@ MF2_NOTELEPORT|MF2_IMPACT|MF2_PCROSS|MF2_DONTDRAW|MF2_FIREDAMAGE,		// flags2
 "EF_DL_WHITE"
  },
 
-{		// MT_HOLY_FX
+{		// HolyFX
 -1,		// doomednum
 S3_HOLY_FX1,		// spawnstate
 105,		// spawnhealth
@@ -6776,7 +6776,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_NOGRAVITY|MF_ALTSHADOW|MF_MISSILE,		// flags
 MF2_NOTELEPORT|MF2_SEEKERMISSILE|MF2_RIP|MF2_IMPACT|MF2_PCROSS		// flags2
  },
 
-{		// MT_HOLY_TAIL
+{		// HolyTail
 -1,		// doomednum
 S3_HOLY_TAIL1,		// spawnstate
 1000,		// spawnhealth
@@ -6803,7 +6803,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_NOGRAVITY|MF_NOCLIP|MF_ALTSHADOW,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_HOLY_PUFF
+{		// HolyPuff
 -1,		// doomednum
 S3_HOLY_PUFF1,		// spawnstate
 1000,		// spawnhealth
@@ -6830,7 +6830,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_SHADOW,		// flags
 0		// flags2
  },
 
-{		// MT_HOLY_MISSILE
+{		// HolyMissile
 -1,		// doomednum
 S3_HOLY_MISSILE1,		// spawnstate
 1000,		// spawnhealth
@@ -6860,7 +6860,7 @@ MF2_NOTELEPORT,		// flags2
 "EF_DL_WHITE"
  },
 
-{		// MT_HOLY_MISSILE_PUFF
+{		// HolyMissilePuff
 -1,		// doomednum
 S3_HOLY_MISSILE_P1,		// spawnstate
 1000,		// spawnhealth
@@ -6887,7 +6887,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_NOGRAVITY|MF_ALTSHADOW,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_MWANDPUFF
+{		// MageWandPuff
 -1,		// doomednum
 S3_MWANDPUFF1,		// spawnstate
 1000,		// spawnhealth
@@ -6914,7 +6914,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT|MF2_CANNOTPUSH|MF2_NODMGTHRUST		// flags2
  },
 
-{		// MT_MWANDSMOKE
+{		// MageWandSmoke
 -1,		// doomednum
 S3_MWANDSMOKE1,		// spawnstate
 1000,		// spawnhealth
@@ -6941,7 +6941,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_SHADOW,		// flags
 MF2_NOTELEPORT|MF2_CANNOTPUSH|MF2_NODMGTHRUST		// flags2
  },
 
-{		// MT_MWAND_MISSILE
+{		// MageWandMissile
 -1,		// doomednum
 S3_MWAND_MISSILE1,		// spawnstate
 1000,		// spawnhealth
@@ -6971,7 +6971,7 @@ MF2_NOTELEPORT|MF2_RIP|MF2_IMPACT|MF2_PCROSS|MF2_NODMGTHRUST|MF2_CANNOTPUSH,		//
 "EF_DL_WHITE"
  },
 
-{		// MT_MW_LIGHTNING
+{		// WeaponMLightning
 8040,		// doomednum
 S3_MW_LIGHTNING1,		// spawnstate
 1000,		// spawnhealth
@@ -6998,7 +6998,7 @@ MF_SPECIAL|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_LIGHTNING_CEILING
+{		// LightningCeiling
 -1,		// doomednum
 S3_LIGHTNING_CEILING1,		// spawnstate
 144,		// spawnhealth
@@ -7028,7 +7028,7 @@ MF2_NOTELEPORT|MF2_IMPACT|MF2_PCROSS,		// flags2
 "EF_DL_BLUE"
  },
 
-{		// MT_LIGHTNING_FLOOR
+{		// LightningFloor
 -1,		// doomednum
 S3_LIGHTNING_FLOOR1,		// spawnstate
 144,		// spawnhealth
@@ -7058,7 +7058,7 @@ MF2_NOTELEPORT|MF2_IMPACT|MF2_PCROSS,		// flags2
 "EF_DL_BLUE"
  },
 
-{		// MT_LIGHTNING_ZAP
+{		// LightningZap
 -1,		// doomednum
 S3_LIGHTNING_ZAP1,		// spawnstate
 1000,		// spawnhealth
@@ -7088,7 +7088,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE|MF_DROPOFF,		// flags
 "EF_DL_BLUE"
  },
 
-{		// MT_MSTAFF_FX
+{		// MageStaffFX
 -1,		// doomednum
 S3_MSTAFF_FX1_1,		// spawnstate
 1000,		// spawnhealth
@@ -7118,7 +7118,7 @@ MF2_NOTELEPORT|MF2_FIREDAMAGE|MF2_RIP|MF2_IMPACT|MF2_PCROSS,		// flags2
 "EF_DL_RED"
  },
 
-{		// MT_MSTAFF_FX2
+{		// MageStaffFX2
 -1,		// doomednum
 S3_MSTAFF_FX2_1,		// spawnstate
 1000,		// spawnhealth
@@ -7148,7 +7148,7 @@ MF2_NOTELEPORT|MF2_FIREDAMAGE|MF2_IMPACT|MF2_PCROSS|MF2_SEEKERMISSILE,		// flags
 "EF_DL_RED"
  },
 
-{		// MT_FW_SWORD1
+{		// WeaponFSwordPiece1
 12,		// doomednum
 S3_FSWORD1,		// spawnstate
 1000,		// spawnhealth
@@ -7175,7 +7175,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_FW_SWORD2
+{		// WeaponFSwordPiece2
 13,		// doomednum
 S3_FSWORD2,		// spawnstate
 1000,		// spawnhealth
@@ -7202,7 +7202,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_FW_SWORD3
+{		// WeaponFSwordPiece3
 16,		// doomednum
 S3_FSWORD3,		// spawnstate
 1000,		// spawnhealth
@@ -7229,7 +7229,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_CW_HOLY1
+{		// WeaponCHolyPiece1
 18,		// doomednum
 S3_CHOLY1,		// spawnstate
 1000,		// spawnhealth
@@ -7256,7 +7256,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_CW_HOLY2
+{		// WeaponCHolyPiece2
 19,		// doomednum
 S3_CHOLY2,		// spawnstate
 1000,		// spawnhealth
@@ -7283,7 +7283,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_CW_HOLY3
+{		// WeaponCHolyPiece3
 20,		// doomednum
 S3_CHOLY3,		// spawnstate
 1000,		// spawnhealth
@@ -7310,7 +7310,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_MW_STAFF1
+{		// WeaponMStaffPiece1
 21,		// doomednum
 S3_MSTAFF1,		// spawnstate
 1000,		// spawnhealth
@@ -7337,7 +7337,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_MW_STAFF2
+{		// WeaponMStaffPiece2
 22,		// doomednum
 S3_MSTAFF2,		// spawnstate
 1000,		// spawnhealth
@@ -7364,7 +7364,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_MW_STAFF3
+{		// WeaponMStaffPiece3
 23,		// doomednum
 S3_MSTAFF3,		// spawnstate
 1000,		// spawnhealth
@@ -7391,7 +7391,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_SNOUTPUFF
+{		// SnoutPuff
 -1,		// doomednum
 S3_PUNCHPUFF1,		// spawnstate
 1000,		// spawnhealth
@@ -7418,7 +7418,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_SHADOW,		// flags
 0		// flags2
  },
 
-{		// MT_MW_CONE
+{		// WeaponMCone
 53,		// doomednum
 S3_COS1,		// spawnstate
 1000,		// spawnhealth
@@ -7445,7 +7445,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_SHARDFX1
+{		// ShardMissile
 -1,		// doomednum
 S3_SHARDFX1_1,		// spawnstate
 1000,		// spawnhealth
@@ -7472,7 +7472,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT|MF2_IMPACT|MF2_PCROSS|MF2_ICEDAMAGE		// flags2
  },
 
-{		// MT_BLOOD
+{		// Blood
 -1,		// doomednum
 S3_BLOOD1,		// spawnstate
 1000,		// spawnhealth
@@ -7499,7 +7499,7 @@ MF_NOBLOCKMAP,		// flags
 0		// flags2
  },
 
-{		// MT_BLOODSPLATTER
+{		// BloodSplatter
 -1,		// doomednum
 S3_BLOODSPLATTER1,		// spawnstate
 1000,		// spawnhealth
@@ -7526,7 +7526,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF,		// flags
 MF2_NOTELEPORT|MF2_CANNOTPUSH		// flags2
  },
 
-{		// MT_GIBS
+{		// Gibs
 -1,		// doomednum
 S3_GIBS1,		// spawnstate
 1000,		// spawnhealth
@@ -7553,7 +7553,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_CORPSE,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_PLAYER_FIGHTER
+{		// PlayerFighter
 -1,		// doomednum
 S3_FPLAY,		// spawnstate
 100,		// spawnhealth
@@ -7580,7 +7580,7 @@ MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_PICKUP|MF_NOTDMATCH,		// flags
 MF2_WINDTHRUST|MF2_FLOORCLIP|MF2_SLIDE|MF2_PASSMOBJ|MF2_TELESTOMP|MF2_PUSHWALL		// flags2
  },
 
-{		// MT_BLOODYSKULL
+{		// BloodySkull
 -1,		// doomednum
 S3_BLOODYSKULL1,		// spawnstate
 1000,		// spawnhealth
@@ -7607,7 +7607,7 @@ MF_NOBLOCKMAP|MF_DROPOFF,		// flags
 MF2_LOGRAV|MF2_CANNOTPUSH		// flags2
  },
 
-{		// MT_PLAYER_SPEED
+{		// PlayerSpeed
 -1,		// doomednum
 S3_PLAYER_SPEED1,		// spawnstate
 1000,		// spawnhealth
@@ -7634,7 +7634,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_ALTSHADOW,		// flags
 0		// flags2
  },
 
-{		// MT_ICECHUNK
+{		// IceChunk
 -1,		// doomednum
 S3_ICECHUNK1,		// spawnstate
 1000,		// spawnhealth
@@ -7661,7 +7661,7 @@ MF_NOBLOCKMAP|MF_DROPOFF,		// flags
 MF2_LOGRAV|MF2_CANNOTPUSH|MF2_FLOORCLIP		// flags2
  },
 
-{		// MT_PLAYER_CLERIC
+{		// PlayerCleric
 -1,		// doomednum
 S3_CPLAY,		// spawnstate
 100,		// spawnhealth
@@ -7688,7 +7688,7 @@ MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_PICKUP|MF_NOTDMATCH,		// flags
 MF2_WINDTHRUST|MF2_FLOORCLIP|MF2_SLIDE|MF2_PASSMOBJ|MF2_TELESTOMP|MF2_PUSHWALL		// flags2
  },
 
-{		// MT_PLAYER_MAGE
+{		// PlayerMage
 -1,		// doomednum
 S3_MPLAY,		// spawnstate
 100,		// spawnhealth
@@ -7715,7 +7715,7 @@ MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_PICKUP|MF_NOTDMATCH,		// flags
 MF2_WINDTHRUST|MF2_FLOORCLIP|MF2_SLIDE|MF2_PASSMOBJ|MF2_TELESTOMP|MF2_PUSHWALL		// flags2
  },
 
-{		// MT_PIGPLAYER
+{		// PlayerPig
 -1,		// doomednum
 S3_PIGPLAY,		// spawnstate
 100,		// spawnhealth
@@ -7742,7 +7742,7 @@ MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_NOTDMATCH,		// flags
 MF2_WINDTHRUST|MF2_SLIDE|MF2_PASSMOBJ|MF2_FLOORCLIP|MF2_TELESTOMP|MF2_PUSHWALL		// flags2
  },
 
-{		// MT_PIG
+{		// Pig
 -1,		// doomednum
 S3_PIG_LOOK1,		// spawnstate
 25,		// spawnhealth
@@ -7769,7 +7769,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
 MF2_WINDTHRUST|MF2_FLOORCLIP|MF2_PASSMOBJ|MF2_PUSHWALL|MF2_TELESTOMP		// flags2
  },
 
-{		// MT_CENTAUR
+{		// Centaur
 107,		// doomednum
 S3_CENTAUR_LOOK1,		// spawnstate
 200,		// spawnhealth
@@ -7796,7 +7796,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
 MF2_FLOORCLIP|MF2_PASSMOBJ|MF2_PUSHWALL|MF2_MCROSS|MF2_TELESTOMP		// flags2
  },
 
-{		// MT_CENTAURLEADER
+{		// CentaurLeader
 115,		// doomednum
 S3_CENTAUR_LOOK1,		// spawnstate
 250,		// spawnhealth
@@ -7823,7 +7823,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
 MF2_FLOORCLIP|MF2_PASSMOBJ|MF2_PUSHWALL|MF2_MCROSS|MF2_TELESTOMP		// flags2
  },
 
-{		// MT_CENTAUR_FX
+{		// CentaurMissile
 -1,		// doomednum
 S3_CENTAUR_FX1,		// spawnstate
 1000,		// spawnhealth
@@ -7853,7 +7853,7 @@ MF2_NOTELEPORT|MF2_IMPACT|MF2_PCROSS,		// flags2
 "EF_DL_BLUE"
  },
 
-{		// MT_CENTAUR_SHIELD
+{		// CentaurShield
 -1,		// doomednum
 S3_CENTAUR_SHIELD1,		// spawnstate
 1000,		// spawnhealth
@@ -7880,7 +7880,7 @@ MF_DROPOFF|MF_CORPSE,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_CENTAUR_SWORD
+{		// CentaurSword
 -1,		// doomednum
 S3_CENTAUR_SWORD1,		// spawnstate
 1000,		// spawnhealth
@@ -7907,7 +7907,7 @@ MF_DROPOFF|MF_CORPSE,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_DEMON
+{		// Demon
 31,		// doomednum
 S3_DEMN_LOOK1,		// spawnstate
 250,		// spawnhealth
@@ -7934,7 +7934,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
 MF2_FLOORCLIP|MF2_PASSMOBJ|MF2_MCROSS|MF2_TELESTOMP		// flags2
  },
 
-{		// MT_DEMONCHUNK1
+{		// DemonChunk1
 -1,		// doomednum
 S3_DEMONCHUNK1_1,		// spawnstate
 1000,		// spawnhealth
@@ -7961,7 +7961,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_CORPSE,		// flags
 MF2_NOTELEPORT|MF2_FLOORCLIP		// flags2
  },
 
-{		// MT_DEMONCHUNK2
+{		// DemonChunk2
 -1,		// doomednum
 S3_DEMONCHUNK2_1,		// spawnstate
 1000,		// spawnhealth
@@ -7988,7 +7988,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_CORPSE,		// flags
 MF2_NOTELEPORT|MF2_FLOORCLIP		// flags2
  },
 
-{		// MT_DEMONCHUNK3
+{		// DemonChunk3
 -1,		// doomednum
 S3_DEMONCHUNK3_1,		// spawnstate
 1000,		// spawnhealth
@@ -8015,7 +8015,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_CORPSE,		// flags
 MF2_NOTELEPORT|MF2_FLOORCLIP		// flags2
  },
 
-{		// MT_DEMONCHUNK4
+{		// DemonChunk4
 -1,		// doomednum
 S3_DEMONCHUNK4_1,		// spawnstate
 1000,		// spawnhealth
@@ -8042,7 +8042,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_CORPSE,		// flags
 MF2_NOTELEPORT|MF2_FLOORCLIP		// flags2
  },
 
-{		// MT_DEMONCHUNK5
+{		// DemonChunk5
 -1,		// doomednum
 S3_DEMONCHUNK5_1,		// spawnstate
 1000,		// spawnhealth
@@ -8069,7 +8069,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_CORPSE,		// flags
 MF2_NOTELEPORT|MF2_FLOORCLIP		// flags2
  },
 
-{		// MT_DEMONFX1
+{		// DemonMissile
 -1,		// doomednum
 S3_DEMONFX_MOVE1,		// spawnstate
 1000,		// spawnhealth
@@ -8099,7 +8099,7 @@ MF2_NOTELEPORT|MF2_IMPACT|MF2_PCROSS|MF2_FIREDAMAGE,		// flags2
 "EF_DL_WHITE"
  },
 
-{		// MT_DEMON2
+{		// Demon2
 8080,		// doomednum
 S3_DEMN2_LOOK1,		// spawnstate
 250,		// spawnhealth
@@ -8126,7 +8126,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
 MF2_FLOORCLIP|MF2_PASSMOBJ|MF2_MCROSS|MF2_TELESTOMP		// flags2
  },
 
-{		// MT_DEMON2CHUNK1
+{		// Demon2Chunk1
 -1,		// doomednum
 S3_DEMON2CHUNK1_1,		// spawnstate
 1000,		// spawnhealth
@@ -8153,7 +8153,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_CORPSE,		// flags
 MF2_NOTELEPORT|MF2_FLOORCLIP		// flags2
  },
 
-{		// MT_DEMON2CHUNK2
+{		// Demon2Chunk2
 -1,		// doomednum
 S3_DEMON2CHUNK2_1,		// spawnstate
 1000,		// spawnhealth
@@ -8180,7 +8180,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_CORPSE,		// flags
 MF2_NOTELEPORT|MF2_FLOORCLIP		// flags2
  },
 
-{		// MT_DEMON2CHUNK3
+{		// Demon2Chunk3
 -1,		// doomednum
 S3_DEMON2CHUNK3_1,		// spawnstate
 1000,		// spawnhealth
@@ -8207,7 +8207,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_CORPSE,		// flags
 MF2_NOTELEPORT|MF2_FLOORCLIP		// flags2
  },
 
-{		// MT_DEMON2CHUNK4
+{		// Demon2Chunk4
 -1,		// doomednum
 S3_DEMON2CHUNK4_1,		// spawnstate
 1000,		// spawnhealth
@@ -8261,7 +8261,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_CORPSE,		// flags
 MF2_NOTELEPORT|MF2_FLOORCLIP		// flags2
  },
 
-{		// MT_DEMON2FX1
+{		// Demon2Missile
 -1,		// doomednum
 S3_DEMON2FX_MOVE1,		// spawnstate
 1000,		// spawnhealth
@@ -8291,7 +8291,7 @@ MF2_NOTELEPORT|MF2_IMPACT|MF2_PCROSS|MF2_FIREDAMAGE,		// flags2
 "EF_DL_GREEN"
  },
 
-{		// MT_WRAITHB
+{		// WraithBuried
 10011,		// doomednum
 S3_WRAITH_LOOK1,		// spawnstate
 150,		// spawnhealth
@@ -8318,7 +8318,7 @@ MF_DROPOFF|MF_NOGRAVITY|MF_FLOAT|MF_COUNTKILL,		// flags
 MF2_FLOORCLIP|MF2_PASSMOBJ|MF2_PUSHWALL|MF2_TELESTOMP|MF2_DONTDRAW		// flags2
  },
 
-{		// MT_WRAITH
+{		// Wraith
 34,		// doomednum
 S3_WRAITH_INIT1,		// spawnstate
 150,		// spawnhealth
@@ -8345,7 +8345,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_DROPOFF|MF_NOGRAVITY|MF_FLOAT,		// flags
 MF2_FLOORCLIP|MF2_PASSMOBJ|MF2_PUSHWALL|MF2_TELESTOMP		// flags2
  },
 
-{		// MT_WRAITHFX1
+{		// WraithMissile
 -1,		// doomednum
 S3_WRTHFX_MOVE1,		// spawnstate
 1000,		// spawnhealth
@@ -8375,7 +8375,7 @@ MF2_NOTELEPORT|MF2_IMPACT|MF2_PCROSS|MF2_FLOORCLIP|MF2_FIREDAMAGE,		// flags2
 "EF_DL_RED"
  },
 
-{		// MT_WRAITHFX2
+{		// WraithSparkDrip
 -1,		// doomednum
 S3_WRTHFX_SIZZLE1,		// spawnstate
 1000,		// spawnhealth
@@ -8402,7 +8402,7 @@ MF_NOBLOCKMAP|MF_DROPOFF,		// flags
 MF2_NOTELEPORT|MF2_FLOORCLIP		// flags2
  },
 
-{		// MT_WRAITHFX3
+{		// WraithFX3
 -1,		// doomednum
 S3_WRTHFX_DROP1,		// spawnstate
 1000,		// spawnhealth
@@ -8429,7 +8429,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE,		// flags
 MF2_NOTELEPORT|MF2_FLOORCLIP		// flags2
  },
 
-{		// MT_WRAITHFX4
+{		// WraithFleshDrip1
 -1,		// doomednum
 S3_WRTHFX_ADROP1,		// spawnstate
 1000,		// spawnhealth
@@ -8456,7 +8456,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_WRAITHFX5
+{		// WraithFleshDrip2
 -1,		// doomednum
 S3_WRTHFX_BDROP1,		// spawnstate
 1000,		// spawnhealth
@@ -8483,7 +8483,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_MINOTAUR
+{		// Minotaur
 9,		// doomednum
 S3_MNTR_SPAWN1,		// spawnstate
 2500,		// spawnhealth
@@ -8510,7 +8510,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_SHADOW,		// flags
 MF2_FLOORCLIP|MF2_PASSMOBJ|MF2_PUSHWALL|MF2_TELESTOMP		// flags2
  },
 
-{		// MT_MNTRFX1
+{		// MinotaurMissile
 -1,		// doomednum
 S3_MNTRFX1_1,		// spawnstate
 1000,		// spawnhealth
@@ -8540,7 +8540,7 @@ MF2_NOTELEPORT|MF2_FIREDAMAGE,		// flags2
 "EF_DL_WHITE"
  },
 
-{		// MT_MNTRFX2
+{		// MinotaurFloorFire1
 -1,		// doomednum
 S3_MNTRFX2_1,		// spawnstate
 1000,		// spawnhealth
@@ -8570,7 +8570,7 @@ MF2_NOTELEPORT|MF2_FIREDAMAGE,		// flags2
 "EF_DL_WHITE"
  },
 
-{		// MT_MNTRFX3
+{		// MinotaurFloorFire2
 -1,		// doomednum
 S3_MNTRFX3_1,		// spawnstate
 1000,		// spawnhealth
@@ -8600,7 +8600,7 @@ MF2_NOTELEPORT|MF2_FIREDAMAGE,		// flags2
 "EF_DL_WHITE"
  },
 
-{		// MT_MNTRSMOKE
+{		// MinotaurSmoke
 -1,		// doomednum
 S3_MINOSMOKE1,		// spawnstate
 1000,		// spawnhealth
@@ -8627,7 +8627,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_SHADOW,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_MNTRSMOKEEXIT
+{		// MinotaurSmokeExit
 -1,		// doomednum
 S3_MINOSMOKEX1,		// spawnstate
 1000,		// spawnhealth
@@ -8654,7 +8654,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_SHADOW,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_SERPENT
+{		// Serpent
 121,		// doomednum
 S3_SERPENT_LOOK1,		// spawnstate
 90,		// spawnhealth
@@ -8681,7 +8681,7 @@ MF_SOLID|MF_COUNTKILL|MF_NOBLOOD,		// flags
 MF2_PASSMOBJ|MF2_DONTDRAW|MF2_CANTLEAVEFLOORPIC|MF2_NONSHOOTABLE|MF2_MCROSS		// flags2
  },
 
-{		// MT_SERPENTLEADER
+{		// SerpentLeader
 120,		// doomednum
 S3_SERPENT_LOOK1,		// spawnstate
 90,		// spawnhealth
@@ -8708,7 +8708,7 @@ MF_SOLID|MF_COUNTKILL|MF_NOBLOOD,		// flags
 MF2_PASSMOBJ|MF2_DONTDRAW|MF2_CANTLEAVEFLOORPIC|MF2_NONSHOOTABLE|MF2_MCROSS		// flags2
  },
 
-{		// MT_SERPENTFX
+{		// SerpentMissile
 -1,		// doomednum
 S3_SERPENT_FX1,		// spawnstate
 1000,		// spawnhealth
@@ -8738,7 +8738,7 @@ MF2_NOTELEPORT,		// flags2
 "EF_DL_GREEN"
  },
 
-{		// MT_SERPENT_HEAD
+{		// SerpentHead
 -1,		// doomednum
 S3_SERPENT_HEAD1,		// spawnstate
 1000,		// spawnhealth
@@ -8765,7 +8765,7 @@ MF_NOBLOCKMAP,		// flags
 MF2_LOGRAV		// flags2
  },
 
-{		// MT_SERPENT_GIB1
+{		// SerpentGib1
 -1,		// doomednum
 S3_SERPENT_GIB1_1,		// spawnstate
 1000,		// spawnhealth
@@ -8792,7 +8792,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_SERPENT_GIB2
+{		// SerpentGib2
 -1,		// doomednum
 S3_SERPENT_GIB2_1,		// spawnstate
 1000,		// spawnhealth
@@ -8819,7 +8819,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_SERPENT_GIB3
+{		// SerpentGib3
 -1,		// doomednum
 S3_SERPENT_GIB3_1,		// spawnstate
 1000,		// spawnhealth
@@ -8846,7 +8846,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_BISHOP
+{		// Bishop
 114,		// doomednum
 S3_BISHOP_LOOK1,		// spawnstate
 130,		// spawnhealth
@@ -8873,7 +8873,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_FLOAT|MF_NOGRAVITY|MF_NOBLOOD,		// flags
 MF2_PASSMOBJ|MF2_PUSHWALL|MF2_TELESTOMP		// flags2
  },
 
-{		// MT_BISHOP_PUFF
+{		// BishopPuff
 -1,		// doomednum
 S3_BISHOP_PUFF1,		// spawnstate
 1000,		// spawnhealth
@@ -8900,7 +8900,7 @@ MF_SHADOW|MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_BISHOPBLUR
+{		// BishopBlur
 -1,		// doomednum
 S3_BISHOPBLUR1,		// spawnstate
 1000,		// spawnhealth
@@ -8927,7 +8927,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_SHADOW,		// flags
 0		// flags2
  },
 
-{		// MT_BISHOPPAINBLUR
+{		// BishopPainBlur
 -1,		// doomednum
 S3_BISHOPPAINBLUR1,		// spawnstate
 1000,		// spawnhealth
@@ -8954,7 +8954,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_SHADOW,		// flags
 0		// flags2
  },
 
-{		// MT_BISH_FX
+{		// BishopMissile
 -1,		// doomednum
 S3_BISHFX1_1,		// spawnstate
 1000,		// spawnhealth
@@ -8984,7 +8984,7 @@ MF2_NOTELEPORT|MF2_SEEKERMISSILE,		// flags2
 "EF_DL_GREEN"
  },
 
-{		// MT_DRAGON
+{		// Dragon
 254,		// doomednum
 S3_DRAGON_LOOK1,		// spawnstate
 640,		// spawnhealth
@@ -9011,7 +9011,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_FLOAT|MF_NOGRAVITY|MF_NOBLOOD,		// flags
 MF2_PASSMOBJ|MF2_BOSS		// flags2
  },
 
-{		// MT_DRAGON_FX
+{		// DragonMissile
 -1,		// doomednum
 S3_DRAGON_FX1_1,		// spawnstate
 1000,		// spawnhealth
@@ -9041,7 +9041,7 @@ MF2_NOTELEPORT|MF2_FIREDAMAGE,		// flags2
 "EF_DL_WHITE"
  },
 
-{		// MT_DRAGON_FX2
+{		// DragonFX2
 -1,		// doomednum
 S3_DRAGON_FX2_1,		// spawnstate
 1000,		// spawnhealth
@@ -9068,7 +9068,7 @@ MF_NOBLOCKMAP,		// flags
 MF2_NOTELEPORT|MF2_FIREDAMAGE|MF2_DONTDRAW		// flags2
  },
 
-{		// MT_ARMOR_1
+{		// ItemArmor1
 8005,		// doomednum
 S3_ARMOR_1,		// spawnstate
 1000,		// spawnhealth
@@ -9095,7 +9095,7 @@ MF_SPECIAL|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_ARMOR_2
+{		// ItemArmor2
 8006,		// doomednum
 S3_ARMOR_2,		// spawnstate
 1000,		// spawnhealth
@@ -9122,7 +9122,7 @@ MF_SPECIAL|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_ARMOR_3
+{		// ItemArmor3
 8007,		// doomednum
 S3_ARMOR_3,		// spawnstate
 1000,		// spawnhealth
@@ -9149,7 +9149,7 @@ MF_SPECIAL|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_ARMOR_4
+{		// ItemArmor4
 8008,		// doomednum
 S3_ARMOR_4,		// spawnstate
 1000,		// spawnhealth
@@ -9176,7 +9176,7 @@ MF_SPECIAL|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_MANA1
+{		// ItemManaBlue
 122,		// doomednum
 S3_MANA1_1,		// spawnstate
 10,		// spawnhealth
@@ -9203,7 +9203,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_MANA2
+{		// ItemManaGreen
 124,		// doomednum
 S3_MANA2_1,		// spawnstate
 10,		// spawnhealth
@@ -9230,7 +9230,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_MANA3
+{		// ItemManaCombined
 8004,		// doomednum
 S3_MANA3_1,		// spawnstate
 20,		// spawnhealth
@@ -9257,7 +9257,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_KEY1
+{		// ItemKey1
 8030,		// doomednum
 S3_KEY1,		// spawnstate
 1000,		// spawnhealth
@@ -9284,7 +9284,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_KEY2
+{		// ItemKey2
 8031,		// doomednum
 S3_KEY2,		// spawnstate
 1000,		// spawnhealth
@@ -9311,7 +9311,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_KEY3
+{		// ItemKey3
 8032,		// doomednum
 S3_KEY3,		// spawnstate
 1000,		// spawnhealth
@@ -9338,7 +9338,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_KEY4
+{		// ItemKey4
 8033,		// doomednum
 S3_KEY4,		// spawnstate
 1000,		// spawnhealth
@@ -9365,7 +9365,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_KEY5
+{		// ItemKey5
 8034,		// doomednum
 S3_KEY5,		// spawnstate
 1000,		// spawnhealth
@@ -9392,7 +9392,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_KEY6
+{		// ItemKey6
 8035,		// doomednum
 S3_KEY6,		// spawnstate
 1000,		// spawnhealth
@@ -9419,7 +9419,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_KEY7
+{		// ItemKey7
 8036,		// doomednum
 S3_KEY7,		// spawnstate
 1000,		// spawnhealth
@@ -9446,7 +9446,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_KEY8
+{		// ItemKey8
 8037,		// doomednum
 S3_KEY8,		// spawnstate
 1000,		// spawnhealth
@@ -9473,7 +9473,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_KEY9
+{		// ItemKey9
 8038,		// doomednum
 S3_KEY9,		// spawnstate
 1000,		// spawnhealth
@@ -9500,7 +9500,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_KEYA
+{		// ItemKeyA
 8039,		// doomednum
 S3_KEYA,		// spawnstate
 1000,		// spawnhealth
@@ -9527,7 +9527,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_KEYB
+{		// ItemKeyB
 8200,		// doomednum
 S3_KEYB,		// spawnstate
 1000,		// spawnhealth
@@ -9554,7 +9554,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_SOUNDWIND
+{		// SoundWind
 1410,		// doomednum
 S3_SND_WIND1,		// spawnstate
 1000,		// spawnhealth
@@ -9581,7 +9581,7 @@ MF_NOBLOCKMAP|MF_NOSECTOR,		// flags
 0		// flags2
  },
 
-{		// MT_SOUNDWATERFALL
+{		// SoundWaterfall
 41,		// doomednum
 S3_SND_WATERFALL,		// spawnstate
 1000,		// spawnhealth
@@ -9608,7 +9608,7 @@ MF_NOBLOCKMAP|MF_NOSECTOR,		// flags
 0		// flags2
  },
 
-{		// MT_ETTIN
+{		// Ettin
 10030,		// doomednum
 S3_ETTIN_LOOK1,		// spawnstate
 175,		// spawnhealth
@@ -9635,7 +9635,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
 MF2_FLOORCLIP|MF2_PUSHWALL|MF2_MCROSS|MF2_TELESTOMP		// flags2
  },
 
-{		// MT_ETTIN_MACE
+{		// EttinMace
 -1,		// doomednum
 S3_ETTIN_MACE1,		// spawnstate
 1000,		// spawnhealth
@@ -9662,7 +9662,7 @@ MF_DROPOFF|MF_CORPSE,		// flags
 MF2_NOTELEPORT|MF2_FLOORCLIP		// flags2
  },
 
-{		// MT_FIREDEMON
+{		// FireDemon
 10060,		// doomednum
 S3_FIRED_SPAWN1,		// spawnstate
 80,		// spawnhealth
@@ -9692,7 +9692,7 @@ MF2_FLOORCLIP|MF2_PASSMOBJ|MF2_PUSHWALL|MF2_INVULNERABLE|MF2_MCROSS|MF2_TELESTOM
 "EF_DL_WHITE"
  },
 
-{		// MT_FIREDEMON_SPLOTCH1
+{		// FireDemonSplotch1
 -1,		// doomednum
 S3_FIRED_CORPSE1,		// spawnstate
 1000,		// spawnhealth
@@ -9719,7 +9719,7 @@ MF_DROPOFF|MF_CORPSE,		// flags
 MF2_NOTELEPORT|MF2_FLOORCLIP		// flags2
  },
 
-{		// MT_FIREDEMON_SPLOTCH2
+{		// FireDemonSplotch2
 -1,		// doomednum
 S3_FIRED_CORPSE4,		// spawnstate
 1000,		// spawnhealth
@@ -9746,7 +9746,7 @@ MF_DROPOFF|MF_CORPSE,		// flags
 MF2_NOTELEPORT|MF2_FLOORCLIP		// flags2
  },
 
-{		// MT_FIREDEMON_FX1
+{		// FireDemonRock1
 -1,		// doomednum
 S3_FIRED_RDROP1,		// spawnstate
 1000,		// spawnhealth
@@ -9773,7 +9773,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE,		// flags
 MF2_NOTELEPORT,		// flags2
  },
 
-{		// MT_FIREDEMON_FX2
+{		// FireDemonRock2
 -1,		// doomednum
 S3_FIRED_RDROP2,		// spawnstate
 1000,		// spawnhealth
@@ -9800,7 +9800,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_FIREDEMON_FX3
+{		// FireDemonRock3
 -1,		// doomednum
 S3_FIRED_RDROP3,		// spawnstate
 1000,		// spawnhealth
@@ -9827,7 +9827,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_FIREDEMON_FX4
+{		// FireDemonRock4
 -1,		// doomednum
 S3_FIRED_RDROP4,		// spawnstate
 1000,		// spawnhealth
@@ -9854,7 +9854,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_FIREDEMON_FX5
+{		// FireDemonRock5
 -1,		// doomednum
 S3_FIRED_RDROP5,		// spawnstate
 1000,		// spawnhealth
@@ -9881,7 +9881,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_FIREDEMON_FX6
+{		// FireDemonMissile
 -1,		// doomednum
 S3_FIRED_FX6_1,		// spawnstate
 1000,		// spawnhealth
@@ -9911,7 +9911,7 @@ MF2_NOTELEPORT|MF2_IMPACT|MF2_PCROSS|MF2_FLOORCLIP|MF2_FIREDAMAGE,		// flags2
 "EF_DL_WHITE"
  },
 
-{		// MT_ICEGUY
+{		// IceGuy
 8020,		// doomednum
 S3_ICEGUY_LOOK,		// spawnstate
 120,		// spawnhealth
@@ -9938,7 +9938,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_NOBLOOD,		// flags
 MF2_PASSMOBJ|MF2_PUSHWALL|MF2_ICEDAMAGE|MF2_MCROSS|MF2_TELESTOMP		// flags2
  },
 
-{		// MT_ICEGUY_FX
+{		// IceGuyMissile
 -1,		// doomednum
 S3_ICEGUY_FX1,		// spawnstate
 1000,		// spawnhealth
@@ -9968,7 +9968,7 @@ MF2_NOTELEPORT|MF2_ICEDAMAGE,		// flags2
 "EF_DL_BLUE"
  },
 
-{		// MT_ICEFX_PUFF
+{		// IceGuyMissilePuff
 -1,		// doomednum
 S3_ICEFX_PUFF1,		// spawnstate
 1000,		// spawnhealth
@@ -9995,7 +9995,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_SHADOW|MF_DROPOFF,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_ICEGUY_FX2
+{		// IceGuyMissile2
 -1,		// doomednum
 S3_ICEGUY_FX2_1,		// spawnstate
 1000,		// spawnhealth
@@ -10022,7 +10022,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE,		// flags
 MF2_NOTELEPORT|MF2_LOGRAV|MF2_ICEDAMAGE		// flags2
  },
 
-{		// MT_ICEGUY_BIT
+{		// IceGuyBit
 -1,		// doomednum
 S3_ICEGUY_BIT1,		// spawnstate
 1000,		// spawnhealth
@@ -10049,7 +10049,7 @@ MF_NOBLOCKMAP|MF_DROPOFF,		// flags
 MF2_NOTELEPORT|MF2_LOGRAV		// flags2
  },
 
-{		// MT_ICEGUY_WISP1
+{		// IceGuyWisp1
 -1,		// doomednum
 S3_ICEGUY_WISP1_1,		// spawnstate
 1000,		// spawnhealth
@@ -10076,7 +10076,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_NOGRAVITY|MF_ALTSHADOW|MF_MISSILE,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_ICEGUY_WISP2
+{		// IceGuyWisp2
 -1,		// doomednum
 S3_ICEGUY_WISP2_1,		// spawnstate
 1000,		// spawnhealth
@@ -10103,7 +10103,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_NOGRAVITY|MF_ALTSHADOW|MF_MISSILE,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_FIGHTER_BOSS
+{		// FighterBoss
 10100,		// doomednum
 S3_FIGHTER,		// spawnstate
 800,		// spawnhealth
@@ -10130,7 +10130,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
 MF2_FLOORCLIP|MF2_PASSMOBJ|MF2_TELESTOMP|MF2_PUSHWALL|MF2_MCROSS		// flags2
  },
 
-{		// MT_CLERIC_BOSS
+{		// ClericBoss
 10101,		// doomednum
 S3_CLERIC,		// spawnstate
 800,		// spawnhealth
@@ -10157,7 +10157,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
 MF2_FLOORCLIP|MF2_PASSMOBJ|MF2_TELESTOMP|MF2_PUSHWALL|MF2_MCROSS		// flags2
  },
 
-{		// MT_MAGE_BOSS
+{		// MageBoss
 10102,		// doomednum
 S3_MAGE,		// spawnstate
 800,		// spawnhealth
@@ -10184,7 +10184,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
 MF2_FLOORCLIP|MF2_PASSMOBJ|MF2_TELESTOMP|MF2_PUSHWALL|MF2_MCROSS		// flags2
  },
 
-{		// MT_SORCBOSS
+{		// Sorcerer
 10080,		// doomednum
 S3_SORC_SPAWN1,		// spawnstate
 5000,		// spawnhealth
@@ -10211,7 +10211,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_NOBLOOD,		// flags
 MF2_FLOORCLIP|MF2_PASSMOBJ|MF2_PUSHWALL|MF2_BOSS|MF2_MCROSS		// flags2
  },
 
-{		// MT_SORCBALL1
+{		// SorcererBall1
 -1,		// doomednum
 S3_SORCBALL1_1,		// spawnstate
 1000,		// spawnhealth
@@ -10238,7 +10238,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE,		// flags
 MF2_NOTELEPORT|MF2_FLOORBOUNCE		// flags2
  },
 
-{		// MT_SORCBALL2
+{		// SorcererBall2
 -1,		// doomednum
 S3_SORCBALL2_1,		// spawnstate
 1000,		// spawnhealth
@@ -10265,7 +10265,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE,		// flags
 MF2_NOTELEPORT|MF2_FLOORBOUNCE		// flags2
  },
 
-{		// MT_SORCBALL3
+{		// SorcererBall3
 -1,		// doomednum
 S3_SORCBALL3_1,		// spawnstate
 1000,		// spawnhealth
@@ -10292,7 +10292,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE,		// flags
 MF2_NOTELEPORT|MF2_FLOORBOUNCE		// flags2
  },
 
-{		// MT_SORCFX1
+{		// SorcererFX1
 -1,		// doomednum
 S3_SORCFX1_1,		// spawnstate
 1000,		// spawnhealth
@@ -10322,7 +10322,7 @@ MF2_NOTELEPORT|MF2_FLOORBOUNCE,		// flags2
 "EF_DL_WHITE"
  },
 
-{		// MT_SORCFX2
+{		// SorcererFX2
 -1,		// doomednum
 S3_SORCFX2_SPLIT1,		// spawnstate
 1000,		// spawnhealth
@@ -10349,7 +10349,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_SORCFX2_T1
+{		// SorcererFX2_T1
 -1,		// doomednum
 S3_SORCFX2T1,		// spawnstate
 1000,		// spawnhealth
@@ -10376,7 +10376,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_ALTSHADOW,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_SORCFX3
+{		// SorcererFX3
 -1,		// doomednum
 S3_SORCFX3_1,		// spawnstate
 1000,		// spawnhealth
@@ -10406,7 +10406,7 @@ MF2_NOTELEPORT,		// flags2
 "EF_DL_WHITE"
  },
 
-{		// MT_SORCFX3_EXPLOSION
+{		// SorcererFX3Explosion
 -1,		// doomednum
 S3_SORCFX3_EXP1,		// spawnstate
 1000,		// spawnhealth
@@ -10433,7 +10433,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_ALTSHADOW,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_SORCFX4
+{		// SorcererFX4
 -1,		// doomednum
 S3_SORCFX4_1,		// spawnstate
 1000,		// spawnhealth
@@ -10463,7 +10463,7 @@ MF2_NOTELEPORT,		// flags2
 "EF_DL_WHITE"
  },
 
-{		// MT_SORCSPARK1
+{		// SorcererSpark
 -1,		// doomednum
 S3_SORCSPARK1,		// spawnstate
 1000,		// spawnhealth
@@ -10490,7 +10490,7 @@ MF_NOBLOCKMAP|MF_DROPOFF,		// flags
 MF2_NOTELEPORT|MF2_LOGRAV		// flags2
  },
 
-{		// MT_BLASTEFFECT
+{		// BlastEffect
 -1,		// doomednum
 S3_BLASTEFFECT1,		// spawnstate
 1000,		// spawnhealth
@@ -10517,7 +10517,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_NOCLIP|MF_ALTSHADOW,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_WATER_DRIP
+{		// WaterDrip
 -1,		// doomednum
 S3_WATERDRIP1,		// spawnstate
 1000,		// spawnhealth
@@ -10544,7 +10544,7 @@ MF_MISSILE,		// flags
 MF2_LOGRAV|MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_KORAX
+{		// Korax
 10200,		// doomednum
 S3_KORAX_LOOK1,		// spawnstate
 5000,		// spawnhealth
@@ -10571,7 +10571,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
 MF2_FLOORCLIP|MF2_PUSHWALL|MF2_MCROSS|MF2_TELESTOMP|MF2_BOSS		// flags2
  },
 
-{		// MT_KORAX_SPIRIT1
+{		// KoraxSpirit1
 -1,		// doomednum
 S3_KSPIRIT_ROAM1,		// spawnstate
 1000,		// spawnhealth
@@ -10598,7 +10598,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_NOGRAVITY|MF_ALTSHADOW|MF_MISSILE|MF_NOCLIP,		// fla
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_KORAX_SPIRIT2
+{		// KoraxSpirit2
 -1,		// doomednum
 S3_KSPIRIT_ROAM1,		// spawnstate
 1000,		// spawnhealth
@@ -10625,7 +10625,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_NOGRAVITY|MF_ALTSHADOW|MF_MISSILE|MF_NOCLIP,		// fla
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_KORAX_SPIRIT3
+{		// KoraxSpirit3
 -1,		// doomednum
 S3_KSPIRIT_ROAM1,		// spawnstate
 1000,		// spawnhealth
@@ -10652,7 +10652,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_NOGRAVITY|MF_ALTSHADOW|MF_MISSILE|MF_NOCLIP,		// fla
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_KORAX_SPIRIT4
+{		// KoraxSpirit4
 -1,		// doomednum
 S3_KSPIRIT_ROAM1,		// spawnstate
 1000,		// spawnhealth
@@ -10679,7 +10679,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_NOGRAVITY|MF_ALTSHADOW|MF_MISSILE|MF_NOCLIP,		// fla
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_KORAX_SPIRIT5
+{		// KoraxSpirit5
 -1,		// doomednum
 S3_KSPIRIT_ROAM1,		// spawnstate
 1000,		// spawnhealth
@@ -10706,7 +10706,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_NOGRAVITY|MF_ALTSHADOW|MF_MISSILE|MF_NOCLIP,		// fla
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_KORAX_SPIRIT6
+{		// KoraxSpirit6
 -1,		// doomednum
 S3_KSPIRIT_ROAM1,		// spawnstate
 1000,		// spawnhealth
@@ -10733,7 +10733,7 @@ MF_NOBLOCKMAP|MF_DROPOFF|MF_NOGRAVITY|MF_ALTSHADOW|MF_MISSILE|MF_NOCLIP,		// fla
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_DEMON_MASH
+{		// DemonMash
 -1,		// doomednum
 S3_DEMN_LOOK1,		// spawnstate
 250,		// spawnhealth
@@ -10760,7 +10760,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_ALTSHADOW|MF_NOBLOOD,		// flags
 MF2_FLOORCLIP|MF2_PASSMOBJ|MF2_MCROSS|MF2_PUSHWALL|MF2_BLASTED		// flags2
  },
 
-{		// MT_DEMON2_MASH
+{		// Demon2Mash
 -1,		// doomednum
 S3_DEMN2_LOOK1,		// spawnstate
 250,		// spawnhealth
@@ -10787,7 +10787,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_ALTSHADOW|MF_NOBLOOD,		// flags
 MF2_FLOORCLIP|MF2_PASSMOBJ|MF2_MCROSS|MF2_PUSHWALL|MF2_BLASTED		// flags2
  },
 
-{		// MT_ETTIN_MASH
+{		// EttinMash
 -1,		// doomednum
 S3_ETTIN_LOOK1,		// spawnstate
 175,		// spawnhealth
@@ -10814,7 +10814,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_ALTSHADOW|MF_NOBLOOD,		// flags
 MF2_FLOORCLIP|MF2_PASSMOBJ|MF2_MCROSS|MF2_PUSHWALL|MF2_BLASTED		// flags2
  },
 
-{		// MT_CENTAUR_MASH
+{		// CentaurMash
 -1,		// doomednum
 S3_CENTAUR_LOOK1,		// spawnstate
 200,		// spawnhealth
@@ -10841,7 +10841,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_ALTSHADOW|MF_NOBLOOD,		// flags
 MF2_FLOORCLIP|MF2_PASSMOBJ|MF2_MCROSS|MF2_PUSHWALL|MF2_BLASTED		// flags2
  },
 
-{		// MT_KORAX_BOLT
+{		// KoraxBolt
 -1,		// doomednum
 S3_KBOLT1,		// spawnstate
 1000,		// spawnhealth
@@ -10871,7 +10871,7 @@ MF2_NOTELEPORT,		// flags2
 "EF_DL_WHITE"
  },
 
-{		// MT_BAT_SPAWNER
+{		// BatSpawner
 10225,		// doomednum
 S3_SPAWNBATS1,		// spawnstate
 1000,		// spawnhealth
@@ -10898,7 +10898,7 @@ MF_NOBLOCKMAP|MF_NOSECTOR|MF_NOGRAVITY,		// flags
 MF2_DONTDRAW		// flags2
  },
 
-{		// MT_BAT
+{		// Bat
 -1,		// doomednum
 S3_BAT1,		// spawnstate
 1000,		// spawnhealth
@@ -10929,9 +10929,12 @@ MF2_PASSMOBJ|MF2_NOTELEPORT		// flags2
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/01/17 18:18:13  dj_jl
+//	Renamed all map object classes
+//
 //	Revision 1.6  2002/01/07 12:30:06  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.5  2001/11/02 18:36:59  dj_jl
 //	no message
 //	

@@ -144,11 +144,11 @@ int P_Teleport(mobj_t * thing, float x, float y, float angle)
 			thing->origin.z + thing->player->viewheight;
 
 	// spawn teleport fog at source and destination
-	fog = P_SpawnMobj(oldx, oldy, oldz, MT_TFOG);
+	fog = P_SpawnMobj(oldx, oldy, oldz, TeleportFog);
 	StartSoundName(fog, 'Teleport', CHAN_VOICE);
 
 	fog = P_SpawnMobj(x + 20.0 * cos(angle),
-		y + 20.0 * sin(angle), thing->origin.z, MT_TFOG);
+		y + 20.0 * sin(angle), thing->origin.z, TeleportFog);
 
 	// emit sound, where?
 	StartSoundName(fog, 'Teleport', CHAN_VOICE);
@@ -184,7 +184,7 @@ int EV_Teleport(int tag, mobj_t * thing, boolean usefog)
 	for (m = NextMobj(NULL); m; m = NextMobj(m))
 	{
 		// not a teleportman
-		if (m->Class != MT_TELEPORTMAN)
+		if (m->Class != TeleportSpot)
 			continue;
 
 		// wrong sector
@@ -199,6 +199,9 @@ int EV_Teleport(int tag, mobj_t * thing, boolean usefog)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/17 18:15:53  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.10  2002/01/15 18:26:59  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

@@ -69,9 +69,9 @@ void Actor::A_FatAttack1(void)
 	A_FaceTarget();
 	// Change direction  to ...
 	angles.yaw = AngleMod360(angles.yaw + FATSPREAD);
-	SpawnMissile(this, target, MT_FATSHOT);
+	SpawnMissile(this, target, MancubusMissile);
 
-	mo = SpawnMissile(this, target, MT_FATSHOT);
+	mo = SpawnMissile(this, target, MancubusMissile);
 	mo->angles.yaw = AngleMod360(mo->angles.yaw + FATSPREAD);
 	VectorRotateAroundZ(&mo->velocity, FATSPREAD);
 }
@@ -91,9 +91,9 @@ void Actor::A_FatAttack2(void)
 	A_FaceTarget();
 	// Now here choose opposite deviation.
 	angles.yaw = AngleMod360(angles.yaw - FATSPREAD);
-	SpawnMissile(this, target, MT_FATSHOT);
+	SpawnMissile(this, target, MancubusMissile);
 
-	mo = SpawnMissile(this, target, MT_FATSHOT);
+	mo = SpawnMissile(this, target, MancubusMissile);
 	mo->angles.yaw = AngleMod360(mo->angles.yaw - FATSPREAD * 2.0);
 	VectorRotateAroundZ(&mo->velocity, -FATSPREAD * 2.0);
 }
@@ -112,11 +112,11 @@ void Actor::A_FatAttack3(void)
 
 	A_FaceTarget();
 
-	mo = SpawnMissile(this, target, MT_FATSHOT);
+	mo = SpawnMissile(this, target, MancubusMissile);
 	mo->angles.yaw = AngleMod360(mo->angles.yaw - FATSPREAD / 2.0);
 	VectorRotateAroundZ(&mo->velocity, -FATSPREAD / 2.0);
 
-	mo = SpawnMissile(this, target, MT_FATSHOT);
+	mo = SpawnMissile(this, target, MancubusMissile);
 	mo->angles.yaw = AngleMod360(mo->angles.yaw + FATSPREAD / 2.0);
 	VectorRotateAroundZ(&mo->velocity, FATSPREAD / 2.0);
 }
@@ -148,6 +148,9 @@ void Actor::A_FatAttack3(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/17 18:15:53  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.8  2002/01/11 18:19:40  dj_jl
 //  Started to use names in progs
 //

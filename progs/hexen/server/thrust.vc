@@ -78,7 +78,7 @@ void Actor::A_ThrustInitDn(void)
 	Flags = 0;
 	Flags2 = MF2_NOTELEPORT | MF2_FLOORCLIP;
 	Translucency = 100;
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_DIRTCLUMP);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, DirtClump);
 	specialmobj1 = mo;
 }
 
@@ -157,6 +157,9 @@ void Actor::A_ThrustImpale(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/17 18:15:55  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.7  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

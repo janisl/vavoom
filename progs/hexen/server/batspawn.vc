@@ -83,7 +83,7 @@ void Actor::A_BatSpawn(void)
 		delta = 1.0;
 	angle = AngleMod360(angles.yaw +
 		delta * (Random() - 0.5) * 360.0 / 256.0);
-	mo = SpawnMissileAngle(this, MT_BAT, angle, 0.0);
+	mo = SpawnMissileAngle(this, Bat, angle, 0.0);
 	if (mo)
 	{
 		mo->args[0] = P_Random() & 63;	// floatbob index
@@ -135,6 +135,9 @@ void Actor::A_BatMove(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/17 18:15:54  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.9  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

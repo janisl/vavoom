@@ -133,19 +133,19 @@ void Actor::A_MinotaurAtk2(void)
 		target->Damage(this, this, HITDICE(5));
 		return;
 	}
-	mo = SpawnMissile(this, target, MT_MNTRFX1);
+	mo = SpawnMissile(this, target, MinotaurMissile);
 	if (mo)
 	{
 		StartSoundName(mo, 'MinotaurAttack2', CHAN_WEAPON);
 		VectorAngles(&mo->velocity, &ang);
 		angle = mo->angles.yaw;
-		SpawnMissileAngles(this, MT_MNTRFX1,
+		SpawnMissileAngles(this, MinotaurMissile,
 			AngleMod360(angle - (45.0 / 8.0)), ang.pitch);
-		SpawnMissileAngles(this, MT_MNTRFX1,
+		SpawnMissileAngles(this, MinotaurMissile,
 			AngleMod360(angle + (45.0 / 8.0)), ang.pitch);
-		SpawnMissileAngles(this, MT_MNTRFX1,
+		SpawnMissileAngles(this, MinotaurMissile,
 			AngleMod360(angle - (45.0 / 16.0)), ang.pitch);
-		SpawnMissileAngles(this, MT_MNTRFX1,
+		SpawnMissileAngles(this, MinotaurMissile,
 			AngleMod360(angle + (45.0 / 16.0)), ang.pitch);
 	}
 }
@@ -177,7 +177,7 @@ void Actor::A_MinotaurAtk3(void)
 	}
 	else
 	{
-		mo = SpawnMissile(this, target, MT_MNTRFX2);
+		mo = SpawnMissile(this, target, MinotaurFloorFire);
 		if (mo != NULL)
 		{
 			StartSoundName(mo, 'MinotaurAttack1', CHAN_VOICE);
@@ -202,7 +202,7 @@ void Actor::A_MinotaurCharge(void)
 
 	if (special1)
 	{
-		puff = P_SpawnMobj(origin.x, origin.y, origin.z, MT_PHOENIXPUFF);
+		puff = P_SpawnMobj(origin.x, origin.y, origin.z, PhoenixPuff);
 		puff->velocity.z = 2.0 * 35.0;
 		special1--;
 	}
@@ -228,7 +228,7 @@ void Actor::A_MntrFloorFire(void)
 	origin.z = floorz;
 	i1 = origin.x + (Random() - Random()) * 4.0;
 	i2 = origin.y + (Random() - Random()) * 4.0;
-	mo = P_SpawnMobj(i1, i2, ONFLOORZ, MT_MNTRFX3);
+	mo = P_SpawnMobj(i1, i2, ONFLOORZ, MinotaurFloorFire2);
 	mo->target = target;
 	mo->velocity.x = 0.00001;	// Force block checking
 	CheckMissileSpawn(mo);
@@ -237,6 +237,9 @@ void Actor::A_MntrFloorFire(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/17 18:15:53  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.12  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

@@ -235,15 +235,15 @@ boolean BotPlayer::CheckItem(Actor item)
 			return false;
 	}
 
-	if ((item.Class == MT_MISC10 || item.Class == MT_MISC11) &&
+	if ((item.Class == ItemStimPack || item.Class == ItemMedikit) &&
 		(botmo.Health >= MAXHEALTH))
 		return false;
-	if ((item.Class == MT_MISC12 || item.Class == MT_MEGA) &&
+	if ((item.Class == ItemSoulSphere || item.Class == ItemMegaSphere) &&
 		(botmo.Health >= 2 * MAXHEALTH))
 		return false;
-	if (item.Class == MT_MISC0 && (player->armorpoints >= 100))
+	if (item.Class == ItemArmor1 && (player->armorpoints >= 100))
 		return false;
-	if ((item.Class == MT_MISC1 || item.Class == MT_MEGA) &&
+	if ((item.Class == ItemArmor2 || item.Class == ItemMegaSphere) &&
 		(player->armorpoints >= 200))
 		return false;
 #if 0
@@ -734,19 +734,19 @@ int BotPlayer::WeapFromItem(Actor item)
 {
 	switch (item.Class)
 	{
-	case MT_CHAINGUN:
+	case ItemWeaponChainsaw:
 		return wp_chainsaw;
-	case MT_SHOTGUN:
+	case ItemWeaponShotgun:
 		return wp_shotgun;
-	case MT_SUPERSHOTGUN:
+	case ItemWeaponSuperShotgun:
 		return wp_supershotgun;
-	case MT_CHAINGUN:
+	case ItemWeaponChaingun:
 		return wp_chaingun;
-	case MT_MISC27:
+	case ItemWeaponRocketLauncher:
 		return wp_missile;
-	case MT_MISC28:
+	case ItemWeaponPlasmaGun:
 		return wp_plasma;
-	case MT_MISC25:
+	case ItemWeaponBFG:
 		return wp_bfg;
 	}
 	return -1;
@@ -765,17 +765,17 @@ int BotPlayer::AmmoFromItem(Actor item)
 {
 	switch (item.Class)
 	{
-	case MT_CLIP:
-	case MT_MISC17:
+	case ItemAmmoBulletClip:
+	case ItemAmmoBulletBox:
 		return am_clip;
-	case MT_MISC22:
-	case MT_MISC23:
+	case ItemAmmoShells:
+	case ItemAmmoShellsBox:
 		return am_shell;
-	case MT_MISC18:
-	case MT_MISC19:
+	case ItemAmmoRocket:
+	case ItemAmmoRocketBox:
 		return am_misl;
-	case MT_MISC20:
-	case MT_MISC21:
+	case ItemAmmoCells:
+	case ItemAmmoCellsPack:
 		return am_cell;
 	}
 	return -1;
@@ -2251,6 +2251,9 @@ void BotPlayer::OnSpawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/17 18:15:52  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.8  2002/01/15 18:26:59  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

@@ -49,7 +49,7 @@ void Weapon::A_CMaceAttack(void)
 	TVec vforward;
 
 	damage = 25 + (P_Random() & 15);
-	PuffType = MT_HAMMERPUFF;
+	PuffType = HammerPuff;
 	for (i = 0; i < 16; i++)
 	{
 		angles = player->mo->angles;
@@ -134,7 +134,7 @@ void Weapon::A_CStaffCheck(void)
 
 	pmo = player->mo;
 	damage = 20 + (P_Random() & 15);
-	PuffType = MT_CSTAFFPUFF;
+	PuffType = ClericStaffPuff;
 	for (i = 0; i < 3; i++)
 	{
 		angles = pmo->angles;
@@ -195,13 +195,13 @@ void Weapon::A_CStaffAttack(void)
 	player->mana[MANA_1] -=
 		WeaponManaUse(player->pclass, player->readyweapon);
 	pmo = player->mo;
-	mo = SpawnPlayerMissileAngle(pmo, MT_CSTAFF_MISSILE,
+	mo = SpawnPlayerMissileAngle(pmo, ClericStaffMissile,
 		pmo->angles.yaw - (45.0 / 15.0));
 	if (mo)
 	{
 		mo->special2 = 32;
 	}
-	mo = SpawnPlayerMissileAngle(pmo, MT_CSTAFF_MISSILE,
+	mo = SpawnPlayerMissileAngle(pmo, ClericStaffMissile,
 		pmo->angles.yaw + (45.0 / 15.0));
 	if (mo)
 	{
@@ -243,7 +243,7 @@ void Weapon::A_CFlameAttack(void)
 {
 	mobj_t *mo;
 
-	mo = SpawnPlayerMissile(player->mo, MT_CFLAME_MISSILE);
+	mo = SpawnPlayerMissile(player->mo, ClericFlameMissile);
 	if (mo)
 	{
 		mo->blaster = true;
@@ -283,7 +283,7 @@ void Actor::A_CFlameMissile(void)
 			an = itof(i) * 45.0;
 			mo = P_SpawnMobj(bmo->origin.x + dist * cos(an),
 				bmo->origin.y + dist * sin(an),
-				bmo->origin.z + 5.0, MT_CIRCLEFLAME);
+				bmo->origin.z + 5.0, CircleFlame);
 			if (mo)
 			{
 				mo->angles.yaw = an;
@@ -294,7 +294,7 @@ void Actor::A_CFlameMissile(void)
 			}
 			mo = P_SpawnMobj(bmo->origin.x - dist * cos(an),
 				bmo->origin.y - dist * sin(an),
-				bmo->origin.z + 5.0, MT_CIRCLEFLAME);
+				bmo->origin.z + 5.0, CircleFlame);
 			if (mo)
 			{
 				mo->angles.yaw = AngleMod360(180.0 + an);
@@ -353,7 +353,7 @@ void Weapon::A_CHolyAttack(void)
 		WeaponManaUse(player->pclass, player->readyweapon);
 	player->mana[MANA_2] -=
 		WeaponManaUse(player->pclass, player->readyweapon);
-	mo = SpawnPlayerMissile(player->mo, MT_HOLY_MISSILE);
+	mo = SpawnPlayerMissile(player->mo, HolyMissile);
 	player->damagecount = 0;
 	player->bonuscount = 0;
 	player->weapon_palette = STARTHOLYPAL;
@@ -397,7 +397,7 @@ void Actor::A_CHolyAttack2(void)
 
 	for (j = 0; j < 4; j++)
 	{
-		mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_HOLY_FX);
+		mo = P_SpawnMobj(origin.x, origin.y, origin.z, HolyFX);
 		if (!mo)
 		{
 			continue;
@@ -437,12 +437,12 @@ void Actor::A_CHolyAttack2(void)
 			mo->Flags &= ~MF_MISSILE;
 		}
 		tail = P_SpawnMobj(mo->origin.x, mo->origin.y, mo->origin.z,
-			MT_HOLY_TAIL);
+			HolyTail);
 		tail->specialmobj2 = mo;	// parent
 		for (i = 1; i < 3; i++)
 		{
 			next = P_SpawnMobj(mo->origin.x, mo->origin.y, mo->origin.z,
-				MT_HOLY_TAIL);
+				HolyTail);
 			SetMobjState(next, next->SpawnState + 1);
 			tail->specialmobj1 = next;
 			tail = next;
@@ -728,12 +728,15 @@ void Actor::A_CHolyTail(void)
 
 void Actor::A_CHolySpawnPuff(void)
 {
-	P_SpawnMobj(origin.x, origin.y, origin.z, MT_HOLY_MISSILE_PUFF);
+	P_SpawnMobj(origin.x, origin.y, origin.z, HolyMissilePuff);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/17 18:15:55  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.10  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

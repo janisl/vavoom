@@ -221,15 +221,15 @@ void Actor::A_BridgeInit(void)
 	special1 = 0;
 
 	// Spawn triad into world
-	ball1 = P_SpawnMobj(cx, cy, cz, MT_BRIDGEBALL);
+	ball1 = P_SpawnMobj(cx, cy, cz, BridgeBall);
 	ball1->args[0] = startangle;
 	ball1->target = this;
 
-	ball2 = P_SpawnMobj(cx, cy, cz, MT_BRIDGEBALL);
+	ball2 = P_SpawnMobj(cx, cy, cz, BridgeBall);
 	ball2->args[0] = (startangle + 85) & 255;
 	ball2->target = this;
 
-	ball3 = P_SpawnMobj(cx, cy, cz, MT_BRIDGEBALL);
+	ball3 = P_SpawnMobj(cx, cy, cz, BridgeBall);
 	ball3->args[0] = (startangle + 170) & 255;
 	ball3->target = this;
 
@@ -254,6 +254,9 @@ void A_BridgeRemove(mobj_t *actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/17 18:15:54  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.9  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

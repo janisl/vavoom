@@ -66,7 +66,7 @@ boolean A_LocalQuake(int *args, mobj_t * actor)
 		if (target)
 		{
 			focus = P_SpawnMobj(target->origin.x,
-				target->origin.y, target->origin.z, MT_QUAKE_FOCUS);
+				target->origin.y, target->origin.z, QuakeFocus);
 			if (focus)
 			{
 				focus->args[0] = args[0];
@@ -139,6 +139,9 @@ void Actor::A_Quake(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/17 18:15:55  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.8  2002/01/07 12:25:58  dj_jl
 //  Changed copyright year
 //

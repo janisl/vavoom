@@ -225,9 +225,8 @@ boolean PIT_ChangeSector(mobj_t * thing)
 		if ((!(thing->Flags & MF_NOBLOOD)) &&
 			(!(thing->Flags2 & MF2_INVULNERABLE)))
 		{
-			mo =
-				P_SpawnMobj(thing->origin.x, thing->origin.y,
-				thing->origin.z + thing->Height / 2.0, MT_BLOOD);
+			mo = P_SpawnMobj(thing->origin.x, thing->origin.y,
+				thing->origin.z + thing->Height / 2.0, Blood);
 			mo->velocity.x = (Random() - Random()) * 16.0 * 35.0;
 			mo->velocity.y = (Random() - Random()) * 16.0 * 35.0;
 		}
@@ -872,7 +871,7 @@ boolean PTR_ShootTraverse(intercept_t * in)
 	{
 		if (!(th->Flags & MF_NOBLOOD) && !(th->Flags2 & MF2_INVULNERABLE))
 		{
-			if (PuffType == MT_AXEPUFF || PuffType == MT_AXEPUFF_GLOW)
+			if (PuffType == AxePuff || PuffType == AxePuffGlow)
 			{
 				P_BloodSplatter2(hit_point.x, hit_point.y, hit_point.z, th);
 			}
@@ -888,7 +887,7 @@ boolean PTR_ShootTraverse(intercept_t * in)
 				P_BloodSplatter(hit_point.x, hit_point.y, hit_point.z, th);
 			}
 		}
-		if (PuffType == MT_FLAMEPUFF2)
+		if (PuffType == FlamePuff2)
 		{
 			// Cleric FlameStrike does fire damage
 			th->Damage(LavaInflictor, shoot_thing, la_damage);
@@ -1101,6 +1100,9 @@ void PIT_ThrustSpike(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/17 18:15:54  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.14  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

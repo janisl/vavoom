@@ -53,7 +53,7 @@ void Actor::A_TeloSpawnA(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_TELOTHER_FX2);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, TeleportOtherFX2);
 	if (mo)
 	{
 		mo->special1 = TELEPORT_LIFE;	// Lifetime countdown
@@ -73,7 +73,7 @@ void Actor::A_TeloSpawnB(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_TELOTHER_FX3);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, TeleportOtherFX3);
 	if (mo)
 	{
 		mo->special1 = TELEPORT_LIFE;	// Lifetime countdown
@@ -93,7 +93,7 @@ void Actor::A_TeloSpawnC(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_TELOTHER_FX4);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, TeleportOtherFX4);
 	if (mo)
 	{
 		mo->special1 = TELEPORT_LIFE;	// Lifetime countdown
@@ -113,7 +113,7 @@ void Actor::A_TeloSpawnD(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_TELOTHER_FX5);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, TeleportOtherFX5);
 	if (mo)
 	{
 		mo->special1 = TELEPORT_LIFE;	// Lifetime countdown
@@ -140,6 +140,9 @@ void Actor::A_CheckTeleRing(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/17 18:15:55  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.7  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

@@ -59,19 +59,19 @@ void A_FiredSpawnRock(mobj_t * actor)
 	switch (P_Random() % 5)
 	{
 	case 0:
-		rtype = MT_FIREDEMON_FX1;
+		rtype = FireDemonRock1;
 		break;
 	case 1:
-		rtype = MT_FIREDEMON_FX2;
+		rtype = FireDemonRock2;
 		break;
 	case 2:
-		rtype = MT_FIREDEMON_FX3;
+		rtype = FireDemonRock3;
 		break;
 	case 3:
-		rtype = MT_FIREDEMON_FX4;
+		rtype = FireDemonRock4;
 		break;
 	case 4:
-		rtype = MT_FIREDEMON_FX5;
+		rtype = FireDemonRock5;
 		break;
 	}
 
@@ -213,7 +213,7 @@ void Actor::A_FiredAttack(void)
 {
 	mobj_t *mo;
 
-	mo = SpawnMissile(this, target, MT_FIREDEMON_FX6);
+	mo = SpawnMissile(this, target, FireDemonMissile);
 	if (mo)
 		StartSoundName(this, 'FireDemonAttack', CHAN_WEAPON);
 }
@@ -228,14 +228,14 @@ void Actor::A_FiredSplotch(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_FIREDEMON_SPLOTCH1);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, FireDemonSplotch1);
 	if (mo)
 	{
 		mo->velocity.x = (Random() - 0.5) * 8.0 * 35.0;
 		mo->velocity.y = (Random() - 0.5) * 8.0 * 35.0;
 		mo->velocity.z = (3.0 + Random() * 4.0) * 35.0;
 	}
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_FIREDEMON_SPLOTCH2);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, FireDemonSplotch2);
 	if (mo)
 	{
 		mo->velocity.x = (Random() - 0.5) * 8.0 * 35.0;
@@ -262,6 +262,9 @@ void Actor::A_SmBounce(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/17 18:15:54  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.9  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

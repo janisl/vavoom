@@ -302,27 +302,27 @@ void Actor::A_KoraxMissile(void)
 	switch (P_Random() % 6)
 	{
 	case 0:
-		mtype = MT_WRAITHFX1;
+		mtype = WraithMissile;
 		sound = 'WraithMissileFire';
 		break;
 	case 1:
-		mtype = MT_DEMONFX1;
+		mtype = DemonMissile;
 		sound = 'DemonMissileFire';
 		break;
 	case 2:
-		mtype = MT_DEMON2FX1;
+		mtype = Demon2Missile;
 		sound = 'DemonMissileFire';
 		break;
 	case 3:
-		mtype = MT_FIREDEMON_FX6;
+		mtype = FireDemonMissile;
 		sound = 'FireDemonAttack';
 		break;
 	case 4:
-		mtype = MT_CENTAUR_FX;
+		mtype = CentaurMissile;
 		sound = 'CentaurLeaderAttack';
 		break;
 	case 5:
-		mtype = MT_SERPENTFX;
+		mtype = SerpentMissile;
 		sound = 'CentaurLeaderAttack';
 		break;
 	}
@@ -356,7 +356,7 @@ void Actor::A_KoraxCommand(void)
 	x = origin.x + KORAX_COMMAND_OFFSET * cos(ang);
 	y = origin.y + KORAX_COMMAND_OFFSET * sin(ang);
 	z = origin.z + KORAX_COMMAND_HEIGHT;
-	P_SpawnMobj(x, y, z, MT_KORAX_BOLT);
+	P_SpawnMobj(x, y, z, KoraxBolt);
 
 	if (Health <= (spawnhealth >> 1))
 	{
@@ -408,12 +408,12 @@ void KSpiritInit(mobj_t * spirit, mobj_t * korax)
 
 	// Spawn a tail for spirit
 	tail = P_SpawnMobj(spirit->origin.x, spirit->origin.y, spirit->origin.z,
-		MT_HOLY_TAIL);
+		HolyTail);
 	tail->specialmobj2 = spirit;	// parent
 	for (i = 1; i < 3; i++)
 	{
 		next = P_SpawnMobj(spirit->origin.x, spirit->origin.y,
-			spirit->origin.z, MT_HOLY_TAIL);
+			spirit->origin.z, HolyTail);
 		SetMobjState(next, next->SpawnState + 1);
 		tail->specialmobj1 = next;
 		tail = next;
@@ -434,22 +434,22 @@ void Actor::A_KoraxBonePop(void)
 
 	args[0] = args[1] = args[2] = 0;
 	// Spawn 6 spirits equalangularly
-	mo = SpawnMissileAngle(this, MT_KORAX_SPIRIT1, 60.0 * 0.0, 5.0);
+	mo = SpawnMissileAngle(this, KoraxSpirit1, 60.0 * 0.0, 5.0);
 	if (mo)
 		KSpiritInit(mo, this);
-	mo = SpawnMissileAngle(this, MT_KORAX_SPIRIT2, 60.0 * 1.0, 5.0);
+	mo = SpawnMissileAngle(this, KoraxSpirit2, 60.0 * 1.0, 5.0);
 	if (mo)
 		KSpiritInit(mo, this);
-	mo = SpawnMissileAngle(this, MT_KORAX_SPIRIT3, 60.0 * 2.0, 5.0);
+	mo = SpawnMissileAngle(this, KoraxSpirit3, 60.0 * 2.0, 5.0);
 	if (mo)
 		KSpiritInit(mo, this);
-	mo = SpawnMissileAngle(this, MT_KORAX_SPIRIT4, 60.0 * 3.0, 5.0);
+	mo = SpawnMissileAngle(this, KoraxSpirit4, 60.0 * 3.0, 5.0);
 	if (mo)
 		KSpiritInit(mo, this);
-	mo = SpawnMissileAngle(this, MT_KORAX_SPIRIT5, 60.0 * 4.0, 5.0);
+	mo = SpawnMissileAngle(this, KoraxSpirit5, 60.0 * 4.0, 5.0);
 	if (mo)
 		KSpiritInit(mo, this);
-	mo = SpawnMissileAngle(this, MT_KORAX_SPIRIT6, 60.0 * 5.0, 5.0);
+	mo = SpawnMissileAngle(this, KoraxSpirit6, 60.0 * 5.0, 5.0);
 	if (mo)
 		KSpiritInit(mo, this);
 
@@ -598,7 +598,7 @@ void Actor::A_KBoltRaise(void)
 
 	if (z + KORAX_BOLT_HEIGHT < ceilingz)
 	{
-		mo = P_SpawnMobj(origin.x, origin.y, z, MT_KORAX_BOLT);
+		mo = P_SpawnMobj(origin.x, origin.y, z, KoraxBolt);
 		if (mo)
 		{
 			mo->special1 = KORAX_BOLT_LIFETIME;
@@ -628,6 +628,9 @@ void Actor::A_KBolt(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/17 18:15:54  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.9  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

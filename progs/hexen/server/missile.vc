@@ -78,19 +78,19 @@ mobj_t *SpawnMissile(mobj_t * source, mobj_t * dest, classid type)
 
 	switch (type)
 	{
-	case MT_MNTRFX1:	// Minotaur swing attack missile
+	case MinotaurMissile:	// Minotaur swing attack missile
 		z = source->origin.z + 40.0;
 		break;
-	case MT_MNTRFX2:	// Minotaur floor fire missile
+	case MinotaurFloorFire1:	// Minotaur floor fire missile
 		z = ONFLOORZ + source->floorclip;
 		break;
-	case MT_CENTAUR_FX:
+	case CentaurMissile:
 		z = source->origin.z + 45.0;
 		break;
-	case MT_ICEGUY_FX:
+	case IceGuyMissile:
 		z = source->origin.z + 40.0;
 		break;
-	case MT_HOLY_MISSILE:
+	case HolyMissile:
 		z = source->origin.z + 40.0;
 		break;
 	default:
@@ -165,16 +165,16 @@ mobj_t *SpawnMissileAngle(mobj_t * source, classid type, float angle,
 
 	switch (type)
 	{
-	case MT_MNTRFX1:	// Minotaur swing attack missile
+	case MinotaurMissile:	// Minotaur swing attack missile
 		z = source->origin.z + 40.0;
 		break;
-	case MT_MNTRFX2:	// Minotaur floor fire missile
+	case MinotaurFloorFire1:	// Minotaur floor fire missile
 		z = ONFLOORZ + source->floorclip;
 		break;
-	case MT_ICEGUY_FX2:	// Secondary Projectiles of the Ice Guy
+	case IceGuyMissile2:	// Secondary Projectiles of the Ice Guy
 		z = source->origin.z + 3.0;
 		break;
-	case MT_MSTAFF_FX2:
+	case MageStaffFX2:
 		z = source->origin.z + 40.0;
 		break;
 	default:
@@ -355,12 +355,12 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 	}
 	x = source->origin.x;
 	y = source->origin.y;
-	if (type == MT_LIGHTNING_FLOOR)
+	if (type == LightningFloor)
 	{
 		z = ONFLOORZ;
 		angles.pitch = 0.0;
 	}
-	else if (type == MT_LIGHTNING_CEILING)
+	else if (type == LightningCeiling)
 	{
 		z = ONCEILINGZ;
 		angles.pitch = 0.0;
@@ -379,8 +379,8 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 	avcpy(angles, MissileMobj->angles);
 	AngleVector(&angles, &vforward);
 	MissileMobj->velocity = vforward * MissileMobj->Speed;
-	if (MissileMobj->Class == MT_MWAND_MISSILE ||
-		MissileMobj->Class == MT_CFLAME_MISSILE)
+	if (MissileMobj->Class == MageWandMissile ||
+		MissileMobj->Class == ClericFlameMissile)
 	{
 		// Ultra-fast ripper spawning missile
 		MissileMobj->origin.x += MissileMobj->velocity.x * frametime / 8.0;
@@ -517,12 +517,12 @@ boolean P_ExplodeMissile(mobj_t * mo)
 
 	switch (mo->Class)
 	{
-	case MT_SORCBALL1:
-	case MT_SORCBALL2:
-	case MT_SORCBALL3:
+	case SorcererBall1:
+	case SorcererBall2:
+	case SorcererBall3:
 		StartSoundName(NULL, 'SorcererBigBallExplode', CHAN_AUTO);
 		break;
-	case MT_SORCFX1:
+	case SorcererFX1:
 		StartSoundName(NULL, 'SorcererHeadScream', CHAN_AUTO);
 		break;
 	default:
@@ -548,6 +548,9 @@ boolean P_ExplodeMissile(mobj_t * mo)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/17 18:15:54  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.12  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

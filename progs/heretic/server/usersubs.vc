@@ -125,12 +125,12 @@ boolean UndoPlayerChicken(player_t * player)
 	oldFlags = pmo->Flags;
 	oldFlags2 = pmo->Flags2;
 	SetMobjState(pmo, S_FREETARGMOBJ);
-	mo = P_SpawnMobj(x, y, z, MT_PLAYER);
+	mo = P_SpawnMobj(x, y, z, PlayerEntity);
 	if (!P_TestMobjLocation(mo))
 	{
 		// Didn't fit
 		P_RemoveMobj(mo);
-		mo = P_SpawnMobj(x, y, z, MT_CHICPLAYER);
+		mo = P_SpawnMobj(x, y, z, ChickenPlayer);
 		mo->angles.yaw = angle;
 		mo->Health = player->health;
 		mo->special1 = weapon;
@@ -156,7 +156,7 @@ boolean UndoPlayerChicken(player_t * player)
 	player->health = mo->Health = MAXHEALTH;
 	player->mo = mo;
 	fog = P_SpawnMobj(x + 20.0 * cos(angle), y + 20.0 * sin(angle),
-		z + TELEFOGHEIGHT, MT_TFOG);
+		z + TELEFOGHEIGHT, TeleportFog);
 	StartSoundName(fog, 'Teleport', CHAN_VOICE);
 	PostChickenWeapon(player, weapon);
 	return true;
@@ -204,7 +204,7 @@ void DeathPlayerThink(player_t * player)
 
 	onground = (player->mo->origin.z <= player->mo->floorz);
 
-	if (player->mo->Class == MT_BLOODYSKULL)
+	if (player->mo->Class == BloodySkull)
 	{
 		// Flying bloody skull
 		player->viewheight = 6.0;
@@ -302,11 +302,15 @@ void DeathPlayerThink(player_t * player)
 
 void ArtiEgg(mobj_t * mo)
 {
-	SpawnPlayerMissile(mo, MT_EGGFX);
-	SpawnPlayerMissileAngle(mo, MT_EGGFX, AngleMod360(mo->angles.yaw - (45.0 / 6.0)));
-	SpawnPlayerMissileAngle(mo, MT_EGGFX, AngleMod360(mo->angles.yaw + (45.0 / 6.0)));
-	SpawnPlayerMissileAngle(mo, MT_EGGFX, AngleMod360(mo->angles.yaw - (45.0 / 3.0)));
-	SpawnPlayerMissileAngle(mo, MT_EGGFX, AngleMod360(mo->angles.yaw + (45.0 / 3.0)));
+	SpawnPlayerMissile(mo, EggMissile);
+	SpawnPlayerMissileAngle(mo, EggMissile,
+		AngleMod360(mo->angles.yaw - (45.0 / 6.0)));
+	SpawnPlayerMissileAngle(mo, EggMissile,
+		AngleMod360(mo->angles.yaw + (45.0 / 6.0)));
+	SpawnPlayerMissileAngle(mo, EggMissile,
+		AngleMod360(mo->angles.yaw - (45.0 / 3.0)));
+	SpawnPlayerMissileAngle(mo, EggMissile,
+		AngleMod360(mo->angles.yaw + (45.0 / 3.0)));
 }
 
 //==========================================================================
@@ -362,7 +366,7 @@ void ArtiFireBomb(player_t * player)
 	mobj_t *mo = P_SpawnMobj(player->mo->origin.x + 24.0 * cos(angle),
 		player->mo->origin.y + 24.0 * sin(angle),
 		player->mo->origin.z - player->mo->floorclip,
-		MT_FIREBOMB);
+		FireBomb);
 
 	mo->target = player->mo;
 }
@@ -378,8 +382,8 @@ void ArtiFireBomb(player_t * player)
 void P_SetDormantArtifact(mobj_t * arti)
 {
 	arti->Flags &= ~MF_SPECIAL;
-	if (deathmatch && (arti->Class != MT_ARTIINVULNERABILITY)
-		&& (arti->Class != MT_ARTIINVISIBILITY))
+	if (deathmatch && (arti->Class != ArtifactInvulnerability)
+		&& (arti->Class != ArtifactInvisibility))
 	{
 		SetMobjState(arti, S_DORMANTARTI1);
 	}
@@ -448,7 +452,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	an = itof(45 * (mthing->angle / 45));
 
 	mo = P_SpawnMobj(x + 20.0 * cos(an), y + 20.0 * sin(an),
-		ss->sector->floorheight + TELEFOGHEIGHT, MT_TFOG);
+		ss->sector->floorheight + TELEFOGHEIGHT, TeleportFog);
 	StartSoundName(mo, 'Teleport', CHAN_VOICE);
 
 	return true;
@@ -457,6 +461,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/01/17 18:15:53  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.13  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

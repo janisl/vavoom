@@ -297,14 +297,27 @@ void WriteMobjInfo(void)
 #endif
 			parent = "Actor";
 		fprintf(f, "class %s:%s\n", mt_names[i], parent);
+		if (mobjinfo[i].doomednum > 0)
+		{
+	    	fprintf(f, "\t__mobjinfo__(%d)\n", mobjinfo[i].doomednum);
+		}
 		fprintf(f, "{\n");
 
 		//  ------------ DefaultProperties -------------
 		fprintf(f, "\tdefaultproperties\n");
 		fprintf(f, "\t{\n");
 
+		if (flags & MF_SPECIAL)
+		{
+#if defined HERETIC || defined HEXEN
+			mobjinfo[i].height  = 32 * FRACUNIT;
+#else
+			mobjinfo[i].height  = 8 * FRACUNIT;
+#endif
+		}
+
 		if (mobjinfo[i].classname)
-	    	fprintf(f, "\t\tClassName = \"%s\";\n", mobjinfo[i].classname);
+	    	fprintf(f, "\t\tClassName = \'%s\';\n", mobjinfo[i].classname);
 
 		//	Misc params
 		if (mobjinfo[i].spawnhealth)
@@ -471,7 +484,7 @@ void WriteMobjInfo(void)
 		fprintf(f, "\n");
     }
 
-	fprintf(f, "__mobjinfo__\n{\n");
+/*	fprintf(f, "__mobjinfo__\n{\n");
 	for (i=0; i<nummobjtypes; i++)
     {
 		if (mobjinfo[i].doomednum > 0)
@@ -479,7 +492,7 @@ void WriteMobjInfo(void)
 	    	fprintf(f, "\t{ %d, %s }\n", mobjinfo[i].doomednum, mt_names[i]);
 		}
     }
-    fprintf(f, "}\n\n");
+    fprintf(f, "}\n\n");*/
     WriteFooter(f);
 	fclose(f);
 }
@@ -741,9 +754,12 @@ int main(int argc, char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2002/01/17 18:18:12  dj_jl
+//	Renamed all map object classes
+//
 //	Revision 1.15  2002/01/15 18:28:58  dj_jl
 //	Some property names with logical words starting with capital letter.
-//
+//	
 //	Revision 1.14  2002/01/12 18:06:34  dj_jl
 //	New style of state functions, some other changes
 //	

@@ -203,14 +203,14 @@ void A_FSwordAttack2(mobj_t * actor)
 {
 	float angle = actor->angles.yaw;
 
-	SpawnMissileAngle(actor, MT_FSWORD_MISSILE,
+	SpawnMissileAngle(actor, FighterSwordMissile,
 		AngleMod360(angle + 45.0 / 4.0), 0.0);
-	SpawnMissileAngle(actor, MT_FSWORD_MISSILE,
+	SpawnMissileAngle(actor, FighterSwordMissile,
 		AngleMod360(angle + 45.0 / 8.0), 0.0);
-	SpawnMissileAngle(actor, MT_FSWORD_MISSILE, angle, 0.0);
-	SpawnMissileAngle(actor, MT_FSWORD_MISSILE,
+	SpawnMissileAngle(actor, FighterSwordMissile, angle, 0.0);
+	SpawnMissileAngle(actor, FighterSwordMissile,
 		AngleMod360(angle - 45.0 / 8.0), 0.0);
-	SpawnMissileAngle(actor, MT_FSWORD_MISSILE,
+	SpawnMissileAngle(actor, FighterSwordMissile,
 		AngleMod360(angle - 45.0 / 4.0), 0.0);
 	StartSoundName(actor, 'FighterSwordFire', CHAN_WEAPON);
 }
@@ -238,7 +238,7 @@ void Actor::A_FighterAttack(void)
 
 void A_CHolyAttack3(mobj_t * actor)
 {
-	SpawnMissile(actor, actor->target, MT_HOLY_MISSILE);
+	SpawnMissile(actor, actor->target, HolyMissile);
 	StartSoundName(actor, 'HolySymbolFire', CHAN_WEAPON);
 }
 
@@ -265,7 +265,7 @@ void MStaffSpawn2(mobj_t * actor, float angle)
 {
 	mobj_t *mo;
 
-	mo = SpawnMissileAngle(actor, MT_MSTAFF_FX2, angle, 0.0);
+	mo = SpawnMissileAngle(actor, MageStaffFX2, angle, 0.0);
 	if (mo)
 	{
 		mo->target = actor;
@@ -306,6 +306,9 @@ void Actor::A_MageAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/17 18:15:54  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.9  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

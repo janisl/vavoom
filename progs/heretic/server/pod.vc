@@ -58,7 +58,7 @@ void Actor::A_MakePod(void)
 	x = origin.x;
 	y = origin.y;
 	z = origin.z;
-	mo = P_SpawnMobj(x, y, ONFLOORZ, MT_POD);
+	mo = P_SpawnMobj(x, y, ONFLOORZ, Pod);
 	if (!P_CheckPosition(mo, x, y))
 	{
 		// Didn't fit
@@ -93,7 +93,7 @@ void Actor::A_PodPain(void)
 	count = chance > 240 ? 2 : 1;
 	for (i = 0; i < count; i++)
 	{
-		goo = P_SpawnMobj(origin.x, origin.y, origin.z + 48.0, MT_PODGOO);
+		goo = P_SpawnMobj(origin.x, origin.y, origin.z + 48.0, PodGoo);
 		goo->target = this;
 		goo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
 		goo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
@@ -124,6 +124,9 @@ void Actor::A_RemovePod(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/17 18:15:53  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.8  2002/01/11 18:19:41  dj_jl
 //  Started to use names in progs
 //

@@ -33,7 +33,7 @@
 
 void Actor::A_RestoreSpecialThing1(void)
 {
-	if (Class == MT_WMACE)
+	if (Class == ItemWeaponMace)
 	{
 		// Do random mace placement
 		RepositionMace(this);
@@ -102,19 +102,19 @@ void Actor::A_InitKeyGizmo(void)
 
 	switch (Class)
 	{
-	case MT_KEYGIZMOBLUE:
+	case KeyGizmoBlue:
 		state = S_KGZ_BLUEFLOAT1;
 		break;
-	case MT_KEYGIZMOGREEN:
+	case KeyGizmoGreen:
 		state = S_KGZ_GREENFLOAT1;
 		break;
-	case MT_KEYGIZMOYELLOW:
+	case KeyGizmoYellow:
 		state = S_KGZ_YELLOWFLOAT1;
 		break;
 	default:
 		break;
 	}
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 60.0, MT_KEYGIZMOFLOAT);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 60.0, KeyGizmoFloat);
 	SetMobjState(mo, state);
 }
 
@@ -128,10 +128,10 @@ void Actor::A_ESound(void)
 {
 	switch (Class)
 	{
-	case MT_SOUNDWATERFALL:
+	case SoundWaterfall:
 		StartSoundName(this, 'Waterfall', CHAN_VOICE);
 		break;
-	case MT_SOUNDWIND:
+	case SoundWind:
 		StartSoundName(this, 'Wind', CHAN_VOICE);
 		break;
 	}
@@ -140,6 +140,9 @@ void Actor::A_ESound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/17 18:15:53  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.9  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

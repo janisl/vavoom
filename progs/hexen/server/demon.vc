@@ -60,13 +60,13 @@ void Actor::A_DemonAttack2(void)
 	mobj_t *mo;
 	classid fireBall;
 
-	if (IsA(MT_DEMON))
+	if (Class == Demon)
 	{
-		fireBall = MT_DEMONFX1;
+		fireBall = DemonMissile;
 	}
 	else
 	{
-		fireBall = MT_DEMON2FX1;
+		fireBall = Demon2Missile;
 	}
 	mo = SpawnMissile(this, target, fireBall);
 	if (mo)
@@ -87,7 +87,7 @@ void Actor::A_DemonDeath(void)
 	mobj_t *mo;
 	float angle;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, MT_DEMONCHUNK1);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, DemonChunk1);
 	if (mo)
 	{
 		angle = AngleMod360(angles.yaw + 90.0);
@@ -96,7 +96,7 @@ void Actor::A_DemonDeath(void)
 		mo->velocity.z = 8.0 * 35.0;
 		mo->target = this;
 	}
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, MT_DEMONCHUNK2);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, DemonChunk2);
 	if (mo)
 	{
 		angle = AngleMod360(angles.yaw - 90.0);
@@ -105,7 +105,7 @@ void Actor::A_DemonDeath(void)
 		mo->velocity.z = 8.0 * 35.0;
 		mo->target = this;
 	}
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, MT_DEMONCHUNK3);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, DemonChunk3);
 	if (mo)
 	{
 		angle = AngleMod360(angles.yaw - 90.0);
@@ -114,7 +114,7 @@ void Actor::A_DemonDeath(void)
 		mo->velocity.z = 8.0 * 35.0;
 		mo->target = this;
 	}
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, MT_DEMONCHUNK4);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, DemonChunk4);
 	if (mo)
 	{
 		angle = AngleMod360(angles.yaw - 90.0);
@@ -123,7 +123,7 @@ void Actor::A_DemonDeath(void)
 		mo->velocity.z = 8.0 * 35.0;
 		mo->target = this;
 	}
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, MT_DEMONCHUNK5);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, DemonChunk5);
 	if (mo)
 	{
 		angle = AngleMod360(angles.yaw - 90.0);
@@ -145,7 +145,7 @@ void Actor::A_Demon2Death(void)
 	mobj_t *mo;
 	float angle;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, MT_DEMON2CHUNK1);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, Demon2Chunk1);
 	if (mo)
 	{
 		angle = AngleMod360(angles.yaw + 90.0);
@@ -154,7 +154,7 @@ void Actor::A_Demon2Death(void)
 		mo->velocity.z = 8.0 * 35.0;
 		mo->target = this;
 	}
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, MT_DEMON2CHUNK2);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, Demon2Chunk2);
 	if (mo)
 	{
 		angle = AngleMod360(angles.yaw - 90.0);
@@ -163,7 +163,7 @@ void Actor::A_Demon2Death(void)
 		mo->velocity.z = 8.0 * 35.0;
 		mo->target = this;
 	}
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, MT_DEMON2CHUNK3);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, Demon2Chunk3);
 	if (mo)
 	{
 		angle = AngleMod360(angles.yaw - 90.0);
@@ -172,7 +172,7 @@ void Actor::A_Demon2Death(void)
 		mo->velocity.z = 8.0 * 35.0;
 		mo->target = this;
 	}
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, MT_DEMON2CHUNK4);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, Demon2Chunk4);
 	if (mo)
 	{
 		angle = AngleMod360(angles.yaw - 90.0);
@@ -181,7 +181,7 @@ void Actor::A_Demon2Death(void)
 		mo->velocity.z = 8.0 * 35.0;
 		mo->target = this;
 	}
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, MT_DEMON2CHUNK5);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, Demon2Chunk5);
 	if (mo)
 	{
 		angle = AngleMod360(angles.yaw - 90.0);
@@ -195,6 +195,9 @@ void Actor::A_Demon2Death(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/17 18:15:54  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.10  2002/01/11 18:19:41  dj_jl
 //  Started to use names in progs
 //

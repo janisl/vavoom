@@ -68,10 +68,10 @@ int UpdateMorphedMonster(mobj_t * actor, int tics)
 	moType = actor->specialcid;
 	switch (moType)
 	{
-	case MT_WRAITHB:	// These must remain morphed
-	case MT_SERPENT:
-	case MT_SERPENTLEADER:
-	case MT_MINOTAUR:
+	case WraithBuried:	// These must remain morphed
+	case Serpent:
+	case SerpentLeader:
+	case Minotaur:
 		return false;
 	default:
 		break;
@@ -127,7 +127,7 @@ int UpdateMorphedMonster(mobj_t * actor, int tics)
 	mo->args[3] = args[3];
 	mo->args[4] = args[4];
 	P_InsertMobjIntoTIDList(mo, tid);
-	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, MT_TFOG);
+	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, TeleportFog);
 	StartSoundName(fog, 'Teleport', CHAN_VOICE);
 	return true;
 }
@@ -203,6 +203,9 @@ void Actor::A_PigPain(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/17 18:15:55  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.11  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

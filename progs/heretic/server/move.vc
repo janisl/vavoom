@@ -102,8 +102,8 @@ boolean PIT_CheckThing(mobj_t * thing)
 	if (tmthing->Flags2 & MF2_PASSMOBJ)
 	{
 		// check if a mobj passed over/under another object
-		if ((tmthing->Class == MT_IMP || tmthing->Class == MT_WIZARD)
-			&& (thing->Class == MT_IMP || thing->Class == MT_WIZARD))
+		if ((tmthing->Class == Imp || tmthing->Class == Wizard)
+			&& (thing->Class == Imp || thing->Class == Wizard))
 		{
 			// don't let imps/wizards fly over other imps/wizards
 			return false;
@@ -168,7 +168,7 @@ boolean PIT_CheckLine(line_t * ld)
 	}
 
 	if (!tmthing->player && ld->flags & ML_BLOCKMONSTERS
-		&& tmthing->Class != MT_POD)
+		&& tmthing->Class != Pod)
 	{
 		// Block monsters only
 		return false;
@@ -344,22 +344,21 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 	if (thing == tmthing)
 		return true;
 
-	if (tmthing->Flags2 & MF2_PASSMOBJ)
+	if ((tmthing->Flags & MF_MISSILE) || (tmthing->Flags2 & MF2_PASSMOBJ) ||
+		(thing->Flags & MF_SPECIAL))
 	{
 		// check if a mobj passed over/under another object
-		if ((tmthing->Class == MT_IMP || tmthing->Class == MT_WIZARD)
-			&& (thing->Class == MT_IMP || thing->Class == MT_WIZARD))
+		if ((tmthing->Class == Imp || tmthing->Class == Wizard)
+			&& (thing->Class == Imp || thing->Class == Wizard))
 		{
 			// don't let imps/wizards fly over other imps/wizards
 			return false;
 		}
-		if (tmthing->origin.z > thing->origin.z + thing->Height
-			&& !(thing->Flags & MF_SPECIAL))
+		if (tmthing->origin.z > thing->origin.z + thing->Height)
 		{
 			return true;
 		}
-		else if (tmthing->origin.z + tmthing->Height < thing->origin.z
-			&& !(thing->Flags & MF_SPECIAL))
+		if (tmthing->origin.z + tmthing->Height < thing->origin.z)
 		{
 			// under thing
 			return true;
@@ -385,11 +384,6 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 		{
 			return true;
 		}
-		// see if it went over / under
-		if (tmthing->origin.z > thing->origin.z + thing->Height)
-			return true;	// overhead
-		if (tmthing->origin.z + tmthing->Height < thing->origin.z)
-			return true;	// underneath
 
 		if (tmthing->target && tmthing->target->Class == thing->Class)
 		{
@@ -399,7 +393,7 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 				// Don't missile self
 				return true;
 			}
-			if (thing->Class != MT_PLAYER)
+			if (thing->Class != PlayerEntity)
 			{
 				// Hit same species as originator, explode, no damage
 				return false;
@@ -458,11 +452,7 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 	if (thing->Flags & MF_SPECIAL)
 	{
 		solid = thing->Flags & MF_SOLID;
-		if (tmthing->Flags & MF_PICKUP)
-		{
-			// can remove thing
-			P_TouchSpecialThing(thing, tmthing);
-		}
+		P_TouchSpecialThing(thing, tmthing);
 		return !solid;
 	}
 
@@ -517,7 +507,7 @@ boolean PIT_CheckRelLine(line_t * ld)
 		}
 
 		if (!tmthing->player && ld->flags & ML_BLOCKMONSTERS
-			&& tmthing->Class != MT_POD)
+			&& tmthing->Class != Pod)
 		{
 			// Block monsters only
 			return false;
@@ -770,8 +760,9 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 			}
 		}
 		if (!(thing->Flags & MF_TELEPORT)
-			// The Minotaur floor fire (MT_MNTRFX2) can step up any amount
-			&& thing->Class != MT_MNTRFX2 && tmfloorz - thing->origin.z > 24.0)
+			// The Minotaur floor fire can step up any amount
+			&& thing->Class != MinotaurFloorFire &&
+			tmfloorz - thing->origin.z > 24.0)
 		{
 			// Too big a step up
 			PushLine(thing);
@@ -930,6 +921,9 @@ boolean P_Move(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/17 18:15:53  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.10  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

@@ -834,7 +834,7 @@ void Weapon::A_FireCGun(void)
 void Weapon::A_FireMissile(void)
 {
 	player->ammo[player->w_ammo]--;
-	SpawnPlayerMissile(player->mo, MT_ROCKET);
+	SpawnPlayerMissile(player->mo, Rocket);
 }
 
 //===========================================================================
@@ -893,7 +893,7 @@ void Weapon::A_FirePlasma(void)
 
 	SetPsprite(player, ps_flash, player->w_flashstate + (P_Random() & 1));
 
-	SpawnPlayerMissile(player->mo, MT_PLASMA);
+	SpawnPlayerMissile(player->mo, PlasmaShot);
 }
 
 //===========================================================================
@@ -916,7 +916,7 @@ void Weapon::A_BFGsound(void)
 void Weapon::A_FireBFG(void)
 {
 	player->ammo[player->w_ammo] -= BFGCELLS;
-	SpawnPlayerMissile(player->mo, MT_BFG);
+	SpawnPlayerMissile(player->mo, BFGShot);
 }
 
 //===========================================================================
@@ -950,7 +950,7 @@ void Actor::A_BFGSpray(void)
 		}
 
 		emo = P_SpawnMobj(linetarget->origin.x, linetarget->origin.y,
-			linetarget->origin.z + linetarget->Height / 4.0, MT_EXTRABFG);
+			linetarget->origin.z + linetarget->Height / 4.0, ExtraBFG);
 
 		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion2);
@@ -970,6 +970,9 @@ void Actor::A_BFGSpray(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/01/17 18:15:53  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.13  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

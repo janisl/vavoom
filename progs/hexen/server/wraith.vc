@@ -113,7 +113,7 @@ void Actor::A_WraithFX2(void)
 
 	for (i = 0; i < 2; i++)
 	{
-		mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_WRAITHFX2);
+		mo = P_SpawnMobj(origin.x, origin.y, origin.z, WraithSparkDrip);
 		if (mo)
 		{
 			if (Random() < 0.5)
@@ -149,7 +149,7 @@ void Actor::A_WraithFX3(void)
 
 	for (i = 0; i < numdropped; i++)
 	{
-		mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_WRAITHFX3);
+		mo = P_SpawnMobj(origin.x, origin.y, origin.z, WraithFX3);
 		if (mo)
 		{
 			mo->origin.x += (Random() - 0.5) * 8.0;
@@ -197,9 +197,8 @@ void A_WraithFX4(mobj_t * actor)
 
 	if (spawn4)
 	{
-		mo =
-			P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
-			MT_WRAITHFX4);
+		mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
+			WraithFleshDrip1);
 		if (mo)
 		{
 			mo->origin.x += (Random() - 0.5) * 16.0;
@@ -210,9 +209,8 @@ void A_WraithFX4(mobj_t * actor)
 	}
 	if (spawn5)
 	{
-		mo =
-			P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
-			MT_WRAITHFX5);
+		mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
+			WraithFleshDrip2);
 		if (mo)
 		{
 			mo->origin.x += (Random() - 0.5) * 8.0;
@@ -273,7 +271,7 @@ void Actor::A_WraithMissile(void)
 {
 	mobj_t *mo;
 
-	mo = SpawnMissile(this, target, MT_WRAITHFX1);
+	mo = SpawnMissile(this, target, WraithMissile);
 	if (mo)
 	{
 		StartSoundName(this, 'WraithMissileFire', CHAN_WEAPON);
@@ -283,6 +281,9 @@ void Actor::A_WraithMissile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/17 18:15:55  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.10  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

@@ -43,7 +43,7 @@ int		nummobjtypes = NUMHERETICMOBJTYPES;
 
 mobjinfo_t mobjinfo[NUMHERETICMOBJTYPES] = {
 
-{		// MT_MISC0
+{		// ItemHealthPotion
 81,		// doomednum
 S2_ITEM_PTN1_1,		// spawnstate
 1000,		// spawnhealth
@@ -70,7 +70,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_ITEMSHIELD1
+{		// ItemShield1
 85,		// doomednum
 S2_ITEM_SHLD1,		// spawnstate
 1000,		// spawnhealth
@@ -97,7 +97,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_ITEMSHIELD2
+{		// ItemShield2
 31,		// doomednum
 S2_ITEM_SHD2_1,		// spawnstate
 1000,		// spawnhealth
@@ -124,7 +124,7 @@ MF_SPECIAL,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_MISC1
+{		// ItemBagOfHolding
 8,		// doomednum
 S2_ITEM_BAGH1,		// spawnstate
 1000,		// spawnhealth
@@ -151,7 +151,7 @@ MF_SPECIAL|MF_COUNTITEM,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_MISC2
+{		// ItemMap
 35,		// doomednum
 S2_ITEM_SPMP1,		// spawnstate
 1000,		// spawnhealth
@@ -178,7 +178,7 @@ MF_SPECIAL|MF_COUNTITEM,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_ARTIINVISIBILITY
+{		// ArtifactInvisibility
 75,		// doomednum
 S2_ARTI_INVS1,		// spawnstate
 1000,		// spawnhealth
@@ -205,7 +205,7 @@ MF_SPECIAL|MF_SHADOW|MF_COUNTITEM,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_MISC3
+{		// ArtifactHealthFlask
 82,		// doomednum
 S2_ARTI_PTN2_1,		// spawnstate
 1000,		// spawnhealth
@@ -232,7 +232,7 @@ MF_SPECIAL|MF_COUNTITEM,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_ARTIFLY
+{		// ArtifactFly
 83,		// doomednum
 S2_ARTI_SOAR1,		// spawnstate
 1000,		// spawnhealth
@@ -259,7 +259,7 @@ MF_SPECIAL|MF_COUNTITEM,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_ARTIINVULNERABILITY
+{		// ArtifactInvulnerability
 84,		// doomednum
 S2_ARTI_INVU1,		// spawnstate
 1000,		// spawnhealth
@@ -286,7 +286,7 @@ MF_SPECIAL|MF_COUNTITEM,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_ARTITOMEOFPOWER
+{		// ArtifactTomeOfPower
 86,		// doomednum
 S2_ARTI_PWBK1,		// spawnstate
 1000,		// spawnhealth
@@ -313,7 +313,7 @@ MF_SPECIAL|MF_COUNTITEM,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_ARTIEGG
+{		// ArtifactEgg
 30,		// doomednum
 S2_ARTI_EGGC1,		// spawnstate
 1000,		// spawnhealth
@@ -340,7 +340,7 @@ MF_SPECIAL|MF_COUNTITEM,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_EGGFX
+{		// EggMissile
 -1,		// doomednum
 S2_EGGFX1,		// spawnstate
 1000,		// spawnhealth
@@ -367,7 +367,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_ARTISUPERHEAL
+{		// ArtifactSuperHeal
 32,		// doomednum
 S2_ARTI_SPHL1,		// spawnstate
 1000,		// spawnhealth
@@ -394,7 +394,7 @@ MF_SPECIAL|MF_COUNTITEM,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_MISC4
+{		// ArtifactTorch
 33,		// doomednum
 S2_ARTI_TRCH1,		// spawnstate
 1000,		// spawnhealth
@@ -421,7 +421,7 @@ MF_SPECIAL|MF_COUNTITEM,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_MISC5
+{		// ArtifactFireBomb
 34,		// doomednum
 S2_ARTI_FBMB1,		// spawnstate
 1000,		// spawnhealth
@@ -448,7 +448,7 @@ MF_SPECIAL|MF_COUNTITEM,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_FIREBOMB
+{		// FireBomb
 -1,		// doomednum
 S2_FIREBOMB1,		// spawnstate
 1000,		// spawnhealth
@@ -475,7 +475,7 @@ MF_NOGRAVITY|MF_SHADOW,		// flags
 0		// flags2
  },
 
-{		// MT_ARTITELEPORT
+{		// ArtifactTeleport
 36,		// doomednum
 S2_ARTI_ATLP1,		// spawnstate
 1000,		// spawnhealth
@@ -502,7 +502,7 @@ MF_SPECIAL|MF_COUNTITEM,		// flags
 MF2_FLOATBOB		// flags2
  },
 
-{		// MT_POD
+{		// Pod
 2035,		// doomednum
 S2_POD_WAIT1,		// spawnstate
 45,		// spawnhealth
@@ -529,7 +529,7 @@ MF_SOLID|MF_NOBLOOD|MF_SHOOTABLE|MF_DROPOFF,		// flags
 MF2_WINDTHRUST|MF2_PUSHABLE|MF2_SLIDE|MF2_PASSMOBJ|MF2_TELESTOMP		// flags2
  },
 
-{		// MT_PODGOO
+{		// PodGoo
 -1,		// doomednum
 S2_PODGOO1,		// spawnstate
 1000,		// spawnhealth
@@ -556,7 +556,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF,		// flags
 MF2_NOTELEPORT|MF2_LOGRAV|MF2_CANNOTPUSH		// flags2
  },
 
-{		// MT_PODGENERATOR
+{		// PodGenerator
 43,		// doomednum
 S2_PODGENERATOR,		// spawnstate
 1000,		// spawnhealth
@@ -583,7 +583,7 @@ MF_NOBLOCKMAP|MF_NOSECTOR,		// flags
 0		// flags2
  },
 
-{		// MT_SPLASH
+{		// Splash
 -1,		// doomednum
 S2_SPLASH1,		// spawnstate
 1000,		// spawnhealth
@@ -610,7 +610,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF,		// flags
 MF2_NOTELEPORT|MF2_LOGRAV|MF2_CANNOTPUSH		// flags2
  },
 
-{		// MT_SPLASHBASE
+{		// SplashBase
 -1,		// doomednum
 S2_SPLASHBASE1,		// spawnstate
 1000,		// spawnhealth
@@ -637,7 +637,7 @@ MF_NOBLOCKMAP,		// flags
 0		// flags2
  },
 
-{		// MT_LAVASPLASH
+{		// LavaSplash
 -1,		// doomednum
 S2_LAVASPLASH1,		// spawnstate
 1000,		// spawnhealth
@@ -664,7 +664,7 @@ MF_NOBLOCKMAP,		// flags
 0		// flags2
  },
 
-{		// MT_LAVASMOKE
+{		// LavaSmoke
 -1,		// doomednum
 S2_LAVASMOKE1,		// spawnstate
 1000,		// spawnhealth
@@ -691,7 +691,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_SHADOW,		// flags
 0		// flags2
  },
 
-{		// MT_SLUDGECHUNK
+{		// SludgeChunk
 -1,		// doomednum
 S2_SLUDGECHUNK1,		// spawnstate
 1000,		// spawnhealth
@@ -718,7 +718,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF,		// flags
 MF2_NOTELEPORT|MF2_LOGRAV|MF2_CANNOTPUSH		// flags2
  },
 
-{		// MT_SLUDGESPLASH
+{		// SludgeSplash
 -1,		// doomednum
 S2_SLUDGESPLASH1,		// spawnstate
 1000,		// spawnhealth
@@ -745,7 +745,7 @@ MF_NOBLOCKMAP,		// flags
 0		// flags2
  },
 
-{		// MT_SKULLHANG70
+{		// SkullHang70
 17,		// doomednum
 S2_SKULLHANG70_1,		// spawnstate
 1000,		// spawnhealth
@@ -772,7 +772,7 @@ MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_SKULLHANG60
+{		// SkullHang60
 24,		// doomednum
 S2_SKULLHANG60_1,		// spawnstate
 1000,		// spawnhealth
@@ -799,7 +799,7 @@ MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_SKULLHANG45
+{		// SkullHang45
 25,		// doomednum
 S2_SKULLHANG45_1,		// spawnstate
 1000,		// spawnhealth
@@ -826,7 +826,7 @@ MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_SKULLHANG35
+{		// SkullHang35
 26,		// doomednum
 S2_SKULLHANG35_1,		// spawnstate
 1000,		// spawnhealth
@@ -853,7 +853,7 @@ MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_CHANDELIER
+{		// Chandelier
 28,		// doomednum
 S2_CHANDELIER1,		// spawnstate
 1000,		// spawnhealth
@@ -885,7 +885,7 @@ MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 "\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);"
  },
 
-{		// MT_SERPTORCH
+{		// SerpentTorch
 27,		// doomednum
 S2_SERPTORCH1,		// spawnstate
 1000,		// spawnhealth
@@ -917,7 +917,7 @@ MF_SOLID,		// flags
 "\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 128.0);"
  },
 
-{		// MT_SMALLPILLAR
+{		// SmallPillar
 29,		// doomednum
 S2_SMALLPILLAR,		// spawnstate
 1000,		// spawnhealth
@@ -944,7 +944,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_STALAGMITESMALL
+{		// StalagmiteSmall
 37,		// doomednum
 S2_STALAGMITESMALL,		// spawnstate
 1000,		// spawnhealth
@@ -971,7 +971,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_STALAGMITELARGE
+{		// StalagmiteLarge
 38,		// doomednum
 S2_STALAGMITELARGE,		// spawnstate
 1000,		// spawnhealth
@@ -998,7 +998,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_STALACTITESMALL
+{		// StalactiteSmall
 39,		// doomednum
 S2_STALACTITESMALL,		// spawnstate
 1000,		// spawnhealth
@@ -1025,7 +1025,7 @@ MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_STALACTITELARGE
+{		// StalactiteLarge
 40,		// doomednum
 S2_STALACTITELARGE,		// spawnstate
 1000,		// spawnhealth
@@ -1052,7 +1052,7 @@ MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_MISC6
+{		// FireBrazier
 76,		// doomednum
 S2_FIREBRAZIER1,		// spawnstate
 1000,		// spawnhealth
@@ -1084,7 +1084,7 @@ MF_SOLID,		// flags
 "\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);"
  },
 
-{		// MT_BARREL
+{		// Barrel
 44,		// doomednum
 S2_BARREL,		// spawnstate
 1000,		// spawnhealth
@@ -1111,7 +1111,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC7
+{		// BrownPillar
 47,		// doomednum
 S2_BRPILLAR,		// spawnstate
 1000,		// spawnhealth
@@ -1138,7 +1138,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_MISC8
+{		// Moss1
 48,		// doomednum
 S2_MOSS1,		// spawnstate
 1000,		// spawnhealth
@@ -1165,7 +1165,7 @@ MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_MISC9
+{		// Moss2
 49,		// doomednum
 S2_MOSS2,		// spawnstate
 1000,		// spawnhealth
@@ -1192,7 +1192,7 @@ MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_MISC10
+{		// WallTorch
 50,		// doomednum
 S2_WALLTORCH1,		// spawnstate
 1000,		// spawnhealth
@@ -1224,7 +1224,7 @@ MF_NOGRAVITY,		// flags
 "\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);"
  },
 
-{		// MT_MISC11
+{		// HangingCorpse
 51,		// doomednum
 S2_HANGINGCORPSE,		// spawnstate
 1000,		// spawnhealth
@@ -1251,7 +1251,7 @@ MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_KEYGIZMOBLUE
+{		// KeyGizmoBlue
 94,		// doomednum
 S2_KEYGIZMO1,		// spawnstate
 1000,		// spawnhealth
@@ -1278,7 +1278,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_KEYGIZMOGREEN
+{		// KeyGizmoGreen
 95,		// doomednum
 S2_KEYGIZMO1,		// spawnstate
 1000,		// spawnhealth
@@ -1305,7 +1305,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_KEYGIZMOYELLOW
+{		// KeyGizmoYellow
 96,		// doomednum
 S2_KEYGIZMO1,		// spawnstate
 1000,		// spawnhealth
@@ -1332,7 +1332,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_KEYGIZMOFLOAT
+{		// KeyGizmoFloat
 -1,		// doomednum
 S2_KGZ_START,		// spawnstate
 1000,		// spawnhealth
@@ -1359,7 +1359,7 @@ MF_SOLID|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_MISC12
+{		// Volcano
 87,		// doomednum
 S2_VOLCANO1,		// spawnstate
 1000,		// spawnhealth
@@ -1386,7 +1386,7 @@ MF_SOLID,		// flags
 0		// flags2
  },
 
-{		// MT_VOLCANOBLAST
+{		// VolcanoBlast
 -1,		// doomednum
 S2_VOLCANOBALL1,		// spawnstate
 1000,		// spawnhealth
@@ -1416,7 +1416,7 @@ MF2_LOGRAV|MF2_NOTELEPORT|MF2_FIREDAMAGE,		// flags2
 "EF_DL_RED"
  },
 
-{		// MT_VOLCANOTBLAST
+{		// VolcanoTBlast
 -1,		// doomednum
 S2_VOLCANOTBALL1,		// spawnstate
 1000,		// spawnhealth
@@ -1446,7 +1446,7 @@ MF2_LOGRAV|MF2_NOTELEPORT|MF2_FIREDAMAGE,		// flags2
 "EF_DL_RED"
  },
 
-{		// MT_TELEGLITGEN
+{		// TeleGlitGen
 74,		// doomednum
 S2_TELEGLITGEN1,		// spawnstate
 1000,		// spawnhealth
@@ -1473,7 +1473,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_NOSECTOR,		// flags
 0		// flags2
  },
 
-{		// MT_TELEGLITGEN2
+{		// TeleGlitGen2
 52,		// doomednum
 S2_TELEGLITGEN2,		// spawnstate
 1000,		// spawnhealth
@@ -1500,7 +1500,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_NOSECTOR,		// flags
 0		// flags2
  },
 
-{		// MT_TELEGLITTER
+{		// TeleGlitter
 -1,		// doomednum
 S2_TELEGLITTER1_1,		// spawnstate
 1000,		// spawnhealth
@@ -1527,7 +1527,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE,		// flags
 0		// flags2
  },
 
-{		// MT_TELEGLITTER2
+{		// TeleGlitter2
 -1,		// doomednum
 S2_TELEGLITTER2_1,		// spawnstate
 1000,		// spawnhealth
@@ -1554,7 +1554,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE,		// flags
 0		// flags2
  },
 
-{		// MT_TFOG
+{		// TeleportFog
 -1,		// doomednum
 S2_TFOG1,		// spawnstate
 1000,		// spawnhealth
@@ -1581,7 +1581,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_TELEPORTMAN
+{		// TeleportSpot
 14,		// doomednum
 S2_NULL,		// spawnstate
 1000,		// spawnhealth
@@ -1608,7 +1608,7 @@ MF_NOBLOCKMAP|MF_NOSECTOR,		// flags
 0		// flags2
  },
 
-{		// MT_STAFFPUFF
+{		// StaffPuff
 -1,		// doomednum
 S2_STAFFPUFF1,		// spawnstate
 1000,		// spawnhealth
@@ -1635,7 +1635,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_STAFFPUFF2
+{		// StaffPuff2
 -1,		// doomednum
 S2_STAFFPUFF2_1,		// spawnstate
 1000,		// spawnhealth
@@ -1662,7 +1662,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_BEAKPUFF
+{		// BeakPuff
 -1,		// doomednum
 S2_STAFFPUFF1,		// spawnstate
 1000,		// spawnhealth
@@ -1689,7 +1689,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_MISC13
+{		// ItemWeaponGauntlets
 2005,		// doomednum
 S2_WGNT,		// spawnstate
 1000,		// spawnhealth
@@ -1716,7 +1716,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_GAUNTLETPUFF1
+{		// GauntletPuff1
 -1,		// doomednum
 S2_GAUNTLETPUFF1_1,		// spawnstate
 1000,		// spawnhealth
@@ -1743,7 +1743,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_SHADOW,		// flags
 0		// flags2
  },
 
-{		// MT_GAUNTLETPUFF2
+{		// GauntletPuff2
 -1,		// doomednum
 S2_GAUNTLETPUFF2_1,		// spawnstate
 1000,		// spawnhealth
@@ -1770,7 +1770,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_SHADOW,		// flags
 0		// flags2
  },
 
-{		// MT_MISC14
+{		// ItemWeaponBlaster
 53,		// doomednum
 S2_BLSR,		// spawnstate
 1000,		// spawnhealth
@@ -1797,7 +1797,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_BLASTERFX1
+{		// BlasterFX1
 -1,		// doomednum
 S2_BLASTERFX1_1,		// spawnstate
 1000,		// spawnhealth
@@ -1827,7 +1827,7 @@ MF2_NOTELEPORT,		// flags2
 "EF_DL_BLUE"
  },
 
-{		// MT_BLASTERSMOKE
+{		// BlasterSmoke
 -1,		// doomednum
 S2_BLASTERSMOKE1,		// spawnstate
 1000,		// spawnhealth
@@ -1854,7 +1854,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_SHADOW,		// flags
 MF2_NOTELEPORT|MF2_CANNOTPUSH		// flags2
  },
 
-{		// MT_RIPPER
+{		// Ripper
 -1,		// doomednum
 S2_RIPPER1,		// spawnstate
 1000,		// spawnhealth
@@ -1881,7 +1881,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT|MF2_RIP		// flags2
  },
 
-{		// MT_BLASTERPUFF1
+{		// BlasterPuff1
 -1,		// doomednum
 S2_BLASTERPUFF1_1,		// spawnstate
 1000,		// spawnhealth
@@ -1908,7 +1908,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_BLASTERPUFF2
+{		// BlasterPuff2
 -1,		// doomednum
 S2_BLASTERPUFF2_1,		// spawnstate
 1000,		// spawnhealth
@@ -1935,7 +1935,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_WMACE
+{		// ItemWeaponMace
 2002,		// doomednum
 S2_WMCE,		// spawnstate
 1000,		// spawnhealth
@@ -1962,7 +1962,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_MACEFX1
+{		// MaceFX1
 -1,		// doomednum
 S2_MACEFX1_1,		// spawnstate
 1000,		// spawnhealth
@@ -1989,7 +1989,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
 MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_MACEFX2
+{		// MaceFX2
 -1,		// doomednum
 S2_MACEFX2_1,		// spawnstate
 1000,		// spawnhealth
@@ -2016,7 +2016,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF,		// flags
 MF2_LOGRAV|MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_MACEFX3
+{		// MaceFX3
 -1,		// doomednum
 S2_MACEFX3_1,		// spawnstate
 1000,		// spawnhealth
@@ -2043,7 +2043,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF,		// flags
 MF2_LOGRAV|MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_MACEFX4
+{		// MaceFX4
 -1,		// doomednum
 S2_MACEFX4_1,		// spawnstate
 1000,		// spawnhealth
@@ -2070,7 +2070,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF,		// flags
 MF2_LOGRAV|MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_TELESTOMP		// flags2
  },
 
-{		// MT_WSKULLROD
+{		// ItemWeaponSkullRod
 2004,		// doomednum
 S2_WSKL,		// spawnstate
 1000,		// spawnhealth
@@ -2097,7 +2097,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_HORNRODFX1
+{		// HornRodMissile1
 -1,		// doomednum
 S2_HRODFX1_1,		// spawnstate
 1000,		// spawnhealth
@@ -2127,7 +2127,7 @@ MF2_WINDTHRUST|MF2_NOTELEPORT,		// flags2
 "EF_DL_RED"
  },
 
-{		// MT_HORNRODFX2
+{		// HornRodMissile2
 -1,		// doomednum
 S2_HRODFX2_1,		// spawnstate
 4*35,		// spawnhealth
@@ -2157,7 +2157,7 @@ MF2_NOTELEPORT,		// flags2
 "EF_DL_RED"
  },
 
-{		// MT_RAINPLR1
+{		// RainPlayer1
 -1,		// doomednum
 S2_RAINPLR1_1,		// spawnstate
 1000,		// spawnhealth
@@ -2184,7 +2184,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_RAINPLR2
+{		// RainPlayer2
 -1,		// doomednum
 S2_RAINPLR2_1,		// spawnstate
 1000,		// spawnhealth
@@ -2211,7 +2211,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_RAINPLR3
+{		// RainPlayer3
 -1,		// doomednum
 S2_RAINPLR3_1,		// spawnstate
 1000,		// spawnhealth
@@ -2238,7 +2238,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_RAINPLR4
+{		// RainPlayer4
 -1,		// doomednum
 S2_RAINPLR4_1,		// spawnstate
 1000,		// spawnhealth
@@ -2265,7 +2265,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_GOLDWANDFX1
+{		// GoldWandMissile1
 -1,		// doomednum
 S2_GWANDFX1_1,		// spawnstate
 1000,		// spawnhealth
@@ -2295,7 +2295,7 @@ MF2_NOTELEPORT,	// flags2
 "EF_DL_WHITE"
  },
 
-{		// MT_GOLDWANDFX2
+{		// GoldWandMissile2
 -1,		// doomednum
 S2_GWANDFX2_1,		// spawnstate
 1000,		// spawnhealth
@@ -2325,7 +2325,7 @@ MF2_NOTELEPORT,		// flags2
 "EF_DL_WHITE"
  },
 
-{		// MT_GOLDWANDPUFF1
+{		// GoldWandPuff1
 -1,		// doomednum
 S2_GWANDPUFF1_1,		// spawnstate
 1000,		// spawnhealth
@@ -2352,7 +2352,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_GOLDWANDPUFF2
+{		// GoldWandPuff2
 -1,		// doomednum
 S2_GWANDFXI1_1,		// spawnstate
 1000,		// spawnhealth
@@ -2379,7 +2379,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_WPHOENIXROD
+{		// ItemWeaponPhoenixRod
 2003,		// doomednum
 S2_WPHX,		// spawnstate
 1000,		// spawnhealth
@@ -2406,7 +2406,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_PHOENIXFX1
+{		// PhoenixFX1
 -1,		// doomednum
 S2_PHOENIXFX1_1,		// spawnstate
 1000,		// spawnhealth
@@ -2436,7 +2436,7 @@ MF2_THRUGHOST|MF2_NOTELEPORT,		// flags2
 "EF_DL_RED"
  },
 
-{		// MT_PHOENIXPUFF
+{		// PhoenixPuff
 -1,		// doomednum
 S2_PHOENIXPUFF1,		// spawnstate
 1000,		// spawnhealth
@@ -2463,7 +2463,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_SHADOW,		// flags
 MF2_NOTELEPORT|MF2_CANNOTPUSH		// flags2
  },
 
-{		// MT_PHOENIXFX2
+{		// PhoenixFX2
 -1,		// doomednum
 S2_PHOENIXFX2_1,		// spawnstate
 1000,		// spawnhealth
@@ -2493,7 +2493,7 @@ MF2_NOTELEPORT|MF2_FIREDAMAGE,		// flags2
 "EF_DL_WHITE"
  },
 
-{		// MT_MISC15
+{		// ItemWeaponCrossbow
 2001,		// doomednum
 S2_WBOW,		// spawnstate
 1000,		// spawnhealth
@@ -2520,7 +2520,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_CRBOWFX1
+{		// CrossbowFX1
 -1,		// doomednum
 S2_CRBOWFX1,		// spawnstate
 1000,		// spawnhealth
@@ -2547,7 +2547,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_CRBOWFX2
+{		// CrossbowFX2
 -1,		// doomednum
 S2_CRBOWFX2,		// spawnstate
 1000,		// spawnhealth
@@ -2577,7 +2577,7 @@ MF2_NOTELEPORT,		// flags2
 "EF_DL_GREEN"
  },
 
-{		// MT_CRBOWFX3
+{		// CrossbowFX3
 -1,		// doomednum
 S2_CRBOWFX3,		// spawnstate
 1000,		// spawnhealth
@@ -2607,7 +2607,7 @@ MF2_WINDTHRUST|MF2_THRUGHOST|MF2_NOTELEPORT,		// flags2
 "EF_DL_GREEN"
  },
 
-{		// MT_CRBOWFX4
+{		// CrossbowFX4
 -1,		// doomednum
 S2_CRBOWFX4_1,		// spawnstate
 1000,		// spawnhealth
@@ -2634,7 +2634,7 @@ MF_NOBLOCKMAP,		// flags
 MF2_LOGRAV		// flags2
  },
 
-{		// MT_BLOOD
+{		// Blood
 -1,		// doomednum
 S2_BLOOD1,		// spawnstate
 1000,		// spawnhealth
@@ -2661,7 +2661,7 @@ MF_NOBLOCKMAP,		// flags
 0		// flags2
  },
 
-{		// MT_BLOODSPLATTER
+{		// BloodSplatter
 -1,		// doomednum
 S2_BLOODSPLATTER1,		// spawnstate
 1000,		// spawnhealth
@@ -2688,7 +2688,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF,		// flags
 MF2_NOTELEPORT|MF2_CANNOTPUSH		// flags2
  },
 
-{		// MT_PLAYER
+{		// PlayerEntity
 -1,		// doomednum
 S2_PLAY,		// spawnstate
 100,		// spawnhealth
@@ -2715,7 +2715,7 @@ MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_PICKUP|MF_NOTDMATCH,		// flags
 MF2_WINDTHRUST|MF2_FOOTCLIP|MF2_SLIDE|MF2_PASSMOBJ|MF2_TELESTOMP		// flags2
  },
 
-{		// MT_BLOODYSKULL
+{		// BloodySkull
 -1,		// doomednum
 S2_BLOODYSKULL1,		// spawnstate
 1000,		// spawnhealth
@@ -2742,7 +2742,7 @@ MF_NOBLOCKMAP|MF_DROPOFF,		// flags
 MF2_LOGRAV|MF2_CANNOTPUSH		// flags2
  },
 
-{		// MT_CHICPLAYER
+{		// ChickenPlayer
 -1,		// doomednum
 S2_CHICPLAY,		// spawnstate
 100,		// spawnhealth
@@ -2769,7 +2769,7 @@ MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_NOTDMATCH,		// flags
 MF2_WINDTHRUST|MF2_SLIDE|MF2_PASSMOBJ|MF2_FOOTCLIP|MF2_LOGRAV|MF2_TELESTOMP		// flags2
  },
 
-{		// MT_CHICKEN
+{		// Chicken
 -1,		// doomednum
 S2_CHICKEN_LOOK1,		// spawnstate
 10,		// spawnhealth
@@ -2796,7 +2796,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_DROPOFF,		// flags
 MF2_WINDTHRUST|MF2_FOOTCLIP|MF2_PASSMOBJ		// flags2
  },
 
-{		// MT_FEATHER
+{		// Feather
 -1,		// doomednum
 S2_FEATHER1,		// spawnstate
 1000,		// spawnhealth
@@ -2823,7 +2823,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF,		// flags
 MF2_NOTELEPORT|MF2_LOGRAV|MF2_CANNOTPUSH|MF2_WINDTHRUST		// flags2
  },
 
-{		// MT_MUMMY
+{		// Mummy
 68,		// doomednum
 S2_MUMMY_LOOK1,		// spawnstate
 80,		// spawnhealth
@@ -2850,7 +2850,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
 MF2_FOOTCLIP|MF2_PASSMOBJ		// flags2
  },
 
-{		// MT_MUMMYLEADER
+{		// MummyLeader
 45,		// doomednum
 S2_MUMMY_LOOK1,		// spawnstate
 100,		// spawnhealth
@@ -2877,7 +2877,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
 MF2_FOOTCLIP|MF2_PASSMOBJ		// flags2
  },
 
-{		// MT_MUMMYGHOST
+{		// MummyGhost
 69,		// doomednum
 S2_MUMMY_LOOK1,		// spawnstate
 80,		// spawnhealth
@@ -2904,7 +2904,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_SHADOW,		// flags
 MF2_FOOTCLIP|MF2_PASSMOBJ		// flags2
  },
 
-{		// MT_MUMMYLEADERGHOST
+{		// MummyLeaderGhost
 46,		// doomednum
 S2_MUMMY_LOOK1,		// spawnstate
 100,		// spawnhealth
@@ -2931,7 +2931,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_SHADOW,		// flags
 MF2_FOOTCLIP|MF2_PASSMOBJ		// flags2
  },
 
-{		// MT_MUMMYSOUL
+{		// MummySoul
 -1,		// doomednum
 S2_MUMMY_SOUL1,		// spawnstate
 1000,		// spawnhealth
@@ -2958,7 +2958,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 0		// flags2
  },
 
-{		// MT_MUMMYFX1
+{		// MummyMissile
 -1,		// doomednum
 S2_MUMMYFX1_1,		// spawnstate
 1000,		// spawnhealth
@@ -2988,7 +2988,7 @@ MF2_NOTELEPORT,		// flags2
 "EF_DL_WHITE"
  },
 
-{		// MT_BEAST
+{		// Beast
 70,		// doomednum
 S2_BEAST_LOOK1,		// spawnstate
 220,		// spawnhealth
@@ -3015,7 +3015,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
 MF2_FOOTCLIP|MF2_PASSMOBJ		// flags2
  },
 
-{		// MT_BEASTBALL
+{		// BeastBall
 -1,		// doomednum
 S2_BEASTBALL1,		// spawnstate
 1000,		// spawnhealth
@@ -3045,7 +3045,7 @@ MF2_WINDTHRUST|MF2_NOTELEPORT,		// flags2
 "EF_DL_RED"
  },
 
-{		// MT_BURNBALL
+{		// BurnBall
 -1,		// doomednum
 S2_BURNBALL1,		// spawnstate
 1000,		// spawnhealth
@@ -3075,7 +3075,7 @@ MF2_NOTELEPORT,		// flags2
 "EF_DL_RED"
  },
 
-{		// MT_BURNBALLFB
+{		// BurnBallFB
 -1,		// doomednum
 S2_BURNBALLFB1,		// spawnstate
 1000,		// spawnhealth
@@ -3105,7 +3105,7 @@ MF2_NOTELEPORT,		// flags2
 "EF_DL_RED"
  },
 
-{		// MT_PUFFY
+{		// Puffy
 -1,		// doomednum
 S2_PUFFY1,		// spawnstate
 1000,		// spawnhealth
@@ -3132,7 +3132,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_SNAKE
+{		// Snake
 92,		// doomednum
 S2_SNAKE_LOOK1,		// spawnstate
 280,		// spawnhealth
@@ -3159,7 +3159,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
 MF2_FOOTCLIP|MF2_PASSMOBJ		// flags2
  },
 
-{		// MT_SNAKEPRO_A
+{		// SnakeProjectileA
 -1,		// doomednum
 S2_SNAKEPRO_A1,		// spawnstate
 1000,		// spawnhealth
@@ -3189,7 +3189,7 @@ MF2_WINDTHRUST|MF2_NOTELEPORT,		// flags2
 "EF_DL_MAGENTA"
  },
 
-{		// MT_SNAKEPRO_B
+{		// SnakeProjectileB
 -1,		// doomednum
 S2_SNAKEPRO_B1,		// spawnstate
 1000,		// spawnhealth
@@ -3219,7 +3219,7 @@ MF2_NOTELEPORT,		// flags2
 "EF_DL_WHITE"
  },
 
-{		// MT_HEAD
+{		// Head
 6,		// doomednum
 S2_HEAD_LOOK,		// spawnstate
 700,		// spawnhealth
@@ -3246,7 +3246,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_NOBLOOD,		// flags
 MF2_PASSMOBJ		// flags2
  },
 
-{		// MT_HEADFX1
+{		// HeadMissile1
 -1,		// doomednum
 S2_HEADFX1_1,		// spawnstate
 1000,		// spawnhealth
@@ -3276,7 +3276,7 @@ MF2_NOTELEPORT|MF2_THRUGHOST,		// flags2
 "EF_DL_BLUE"
  },
 
-{		// MT_HEADFX2
+{		// HeadMissile2
 -1,		// doomednum
 S2_HEADFX2_1,		// spawnstate
 1000,		// spawnhealth
@@ -3306,7 +3306,7 @@ MF2_NOTELEPORT,		// flags2
 "EF_DL_BLUE"
  },
 
-{		// MT_HEADFX3
+{		// HeadMissile3
 -1,		// doomednum
 S2_HEADFX3_1,		// spawnstate
 1000,		// spawnhealth
@@ -3336,7 +3336,7 @@ MF2_WINDTHRUST|MF2_NOTELEPORT,		// flags2
 "EF_DL_WHITE"
  },
 
-{		// MT_WHIRLWIND
+{		// WhirlWind
 -1,		// doomednum
 S2_HEADFX4_1,		// spawnstate
 1000,		// spawnhealth
@@ -3363,7 +3363,7 @@ MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY|MF_SHADOW,		// flags
 MF2_NOTELEPORT		// flags2
  },
 
-{		// MT_CLINK
+{		// Clink
 90,		// doomednum
 S2_CLINK_LOOK1,		// spawnstate
 150,		// spawnhealth
@@ -3390,7 +3390,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_NOBLOOD,		// flags
 MF2_FOOTCLIP|MF2_PASSMOBJ		// flags2
  },
 
-{		// MT_WIZARD
+{		// Wizard
 15,		// doomednum
 S2_WIZARD_LOOK1,		// spawnstate
 180,		// spawnhealth
@@ -3417,7 +3417,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_FLOAT|MF_NOGRAVITY,		// flags
 MF2_PASSMOBJ		// flags2
  },
 
-{		// MT_WIZFX1
+{		// WizardMissile
 -1,		// doomednum
 S2_WIZFX1_1,		// spawnstate
 1000,		// spawnhealth
@@ -3447,7 +3447,7 @@ MF2_NOTELEPORT,		// flags2
 "EF_DL_MAGENTA"
  },
 
-{		// MT_IMP
+{		// Imp
 66,		// doomednum
 S2_IMP_LOOK1,		// spawnstate
 40,		// spawnhealth
@@ -3474,7 +3474,7 @@ MF_SOLID|MF_SHOOTABLE|MF_FLOAT|MF_NOGRAVITY|MF_COUNTKILL,		// flags
 MF2_SPAWNFLOAT|MF2_PASSMOBJ		// flags2
  },
 
-{		// MT_IMPLEADER
+{		// ImpLeader
 5,		// doomednum
 S2_IMP_LOOK1,		// spawnstate
 80,		// spawnhealth
@@ -3501,7 +3501,7 @@ MF_SOLID|MF_SHOOTABLE|MF_FLOAT|MF_NOGRAVITY|MF_COUNTKILL,		// flags
 MF2_SPAWNFLOAT|MF2_PASSMOBJ		// flags2
  },
 
-{		// MT_IMPCHUNK1
+{		// ImpChunk1
 -1,		// doomednum
 S2_IMP_CHUNKA1,		// spawnstate
 1000,		// spawnhealth
@@ -3528,7 +3528,7 @@ MF_NOBLOCKMAP,		// flags
 0		// flags2
  },
 
-{		// MT_IMPCHUNK2
+{		// ImpChunk2
 -1,		// doomednum
 S2_IMP_CHUNKB1,		// spawnstate
 1000,		// spawnhealth
@@ -3555,7 +3555,7 @@ MF_NOBLOCKMAP,		// flags
 0		// flags2
  },
 
-{		// MT_IMPBALL
+{		// ImpBall
 -1,		// doomednum
 S2_IMPFX1,		// spawnstate
 1000,		// spawnhealth
@@ -3585,7 +3585,7 @@ MF2_WINDTHRUST|MF2_NOTELEPORT,		// flags2
 "EF_DL_WHITE"
  },
 
-{		// MT_KNIGHT
+{		// Knight
 64,		// doomednum
 S2_KNIGHT_STND1,		// spawnstate
 200,		// spawnhealth
@@ -3612,7 +3612,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
 MF2_FOOTCLIP|MF2_PASSMOBJ		// flags2
  },
 
-{		// MT_KNIGHTGHOST
+{		// KnightGhost
 65,		// doomednum
 S2_KNIGHT_STND1,		// spawnstate
 200,		// spawnhealth
@@ -3639,7 +3639,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_SHADOW,		// flags
 MF2_FOOTCLIP|MF2_PASSMOBJ		// flags2
  },
 
-{		// MT_KNIGHTAXE
+{		// KnightAxe
 -1,		// doomednum
 S2_SPINAXE1,		// spawnstate
 1000,		// spawnhealth
@@ -3669,7 +3669,7 @@ MF2_WINDTHRUST|MF2_NOTELEPORT|MF2_THRUGHOST,		// flags2
 "EF_DL_GREEN"
  },
 
-{		// MT_REDAXE
+{		// KnightRedAxe
 -1,		// doomednum
 S2_REDAXE1,		// spawnstate
 1000,		// spawnhealth
@@ -3699,7 +3699,7 @@ MF2_NOTELEPORT|MF2_THRUGHOST,		// flags2
 "EF_DL_RED"
  },
 
-{		// MT_SORCERER1
+{		// Sorcerer1
 7,		// doomednum
 S2_SRCR1_LOOK1,		// spawnstate
 2000,		// spawnhealth
@@ -3726,7 +3726,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,		// flags
 MF2_FOOTCLIP|MF2_PASSMOBJ|MF2_BOSS		// flags2
  },
 
-{		// MT_SRCRFX1
+{		// Sorcerer1Missile
 -1,		// doomednum
 S2_SRCRFX1_1,		// spawnstate
 1000,		// spawnhealth
@@ -3756,7 +3756,7 @@ MF2_NOTELEPORT|MF2_FIREDAMAGE,		// flags2
 "EF_DL_WHITE"
  },
 
-{		// MT_SORCERER2
+{		// Sorcerer2
 -1,		// doomednum
 S2_SOR2_LOOK1,		// spawnstate
 3500,		// spawnhealth
@@ -3783,7 +3783,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_DROPOFF,		// flags
 MF2_FOOTCLIP|MF2_PASSMOBJ|MF2_BOSS		// flags2
  },
 
-{		// MT_SOR2FX1
+{		// Sorcerer2Missile1
 -1,		// doomednum
 S2_SOR2FX1_1,		// spawnstate
 1000,		// spawnhealth
@@ -3813,7 +3813,7 @@ MF2_NOTELEPORT,		// flags2
 "EF_DL_BLUE"
  },
 
-{		// MT_SOR2FXSPARK
+{		// Sorcerer2MissileSpark
 -1,		// doomednum
 S2_SOR2FXSPARK1,		// spawnstate
 1000,		// spawnhealth
@@ -3840,7 +3840,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 MF2_NOTELEPORT|MF2_CANNOTPUSH		// flags2
  },
 
-{		// MT_SOR2FX2
+{		// Sorcerer2Missile2
 -1,		// doomednum
 S2_SOR2FX2_1,		// spawnstate
 1000,		// spawnhealth
@@ -3870,7 +3870,7 @@ MF2_NOTELEPORT,		// flags2
 "EF_DL_BLUE"
  },
 
-{		// MT_SOR2TELEFADE
+{		// Sorcerer2TeleFade
 -1,		// doomednum
 S2_SOR2TELEFADE1,		// spawnstate
 1000,		// spawnhealth
@@ -3897,7 +3897,7 @@ MF_NOBLOCKMAP,		// flags
 0		// flags2
  },
 
-{		// MT_MINOTAUR
+{		// Minotaur
 9,		// doomednum
 S2_MNTR_LOOK1,		// spawnstate
 3000,		// spawnhealth
@@ -3924,7 +3924,7 @@ MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_DROPOFF,		// flags
 MF2_FOOTCLIP|MF2_PASSMOBJ|MF2_BOSS		// flags2
  },
 
-{		// MT_MNTRFX1
+{		// MinotaurMissile
 -1,		// doomednum
 S2_MNTRFX1_1,		// spawnstate
 1000,		// spawnhealth
@@ -3954,7 +3954,7 @@ MF2_NOTELEPORT|MF2_FIREDAMAGE,		// flags2
 "EF_DL_WHITE"
  },
 
-{		// MT_MNTRFX2
+{		// MinotaurFloorFire
 -1,		// doomednum
 S2_MNTRFX2_1,		// spawnstate
 1000,		// spawnhealth
@@ -3984,7 +3984,7 @@ MF2_NOTELEPORT|MF2_FIREDAMAGE,		// flags2
 "EF_DL_WHITE"
  },
 
-{		// MT_MNTRFX3
+{		// MinotaurFloorFire2
 -1,		// doomednum
 S2_MNTRFX3_1,		// spawnstate
 1000,		// spawnhealth
@@ -4014,7 +4014,7 @@ MF2_NOTELEPORT|MF2_FIREDAMAGE,		// flags2
 "EF_DL_WHITE"
  },
 
-{		// MT_AKYY
+{		// ItemKeyGreen
 73,		// doomednum
 S2_AKYY1,		// spawnstate
 1000,		// spawnhealth
@@ -4041,7 +4041,7 @@ MF_SPECIAL|MF_NOTDMATCH,		// flags
 0		// flags2
  },
 
-{		// MT_BKYY
+{		// ItemKeyBlue
 79,		// doomednum
 S2_BKYY1,		// spawnstate
 1000,		// spawnhealth
@@ -4068,7 +4068,7 @@ MF_SPECIAL|MF_NOTDMATCH,		// flags
 0		// flags2
  },
 
-{		// MT_CKEY
+{		// ItemKeyYellow
 80,		// doomednum
 S2_CKYY1,		// spawnstate
 1000,		// spawnhealth
@@ -4095,7 +4095,7 @@ MF_SPECIAL|MF_NOTDMATCH,		// flags
 0		// flags2
  },
 
-{		// MT_AMGWNDWIMPY
+{		// ItemAmmoGWNDWimpy
 10,		// doomednum
 S2_AMG1,		// spawnstate
 AMMO_GWND_WIMPY,		// spawnhealth
@@ -4122,7 +4122,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_AMGWNDHEFTY
+{		// ItemAmmoGWNDHefty
 12,		// doomednum
 S2_AMG2_1,		// spawnstate
 AMMO_GWND_HEFTY,		// spawnhealth
@@ -4149,7 +4149,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_AMMACEWIMPY
+{		// ItemAmmoMACEWimpy
 13,		// doomednum
 S2_AMM1,		// spawnstate
 AMMO_MACE_WIMPY,		// spawnhealth
@@ -4176,7 +4176,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_AMMACEHEFTY
+{		// ItemAmmoMACEHefty
 16,		// doomednum
 S2_AMM2,		// spawnstate
 AMMO_MACE_HEFTY,		// spawnhealth
@@ -4203,7 +4203,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_AMCBOWWIMPY
+{		// ItemAmmoCBOWWimpy
 18,		// doomednum
 S2_AMC1,		// spawnstate
 AMMO_CBOW_WIMPY,		// spawnhealth
@@ -4230,7 +4230,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_AMCBOWHEFTY
+{		// ItemAmmoCBOWHefty
 19,		// doomednum
 S2_AMC2_1,		// spawnstate
 AMMO_CBOW_HEFTY,		// spawnhealth
@@ -4257,7 +4257,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_AMSKRDWIMPY
+{		// ItemAmmoSKRDWimpy
 20,		// doomednum
 S2_AMS1_1,		// spawnstate
 AMMO_SKRD_WIMPY,		// spawnhealth
@@ -4284,7 +4284,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_AMSKRDHEFTY
+{		// ItemAmmoSKRDHefty
 21,		// doomednum
 S2_AMS2_1,		// spawnstate
 AMMO_SKRD_HEFTY,		// spawnhealth
@@ -4311,7 +4311,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_AMPHRDWIMPY
+{		// ItemAmmoPHRDWimpy
 22,		// doomednum
 S2_AMP1_1,		// spawnstate
 AMMO_PHRD_WIMPY,		// spawnhealth
@@ -4338,7 +4338,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_AMPHRDHEFTY
+{		// ItemAmmoPHRDHefty
 23,		// doomednum
 S2_AMP2_1,		// spawnstate
 AMMO_PHRD_HEFTY,		// spawnhealth
@@ -4365,7 +4365,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_AMBLSRWIMPY
+{		// ItemAmmoBLSRWimpy
 54,		// doomednum
 S2_AMB1_1,		// spawnstate
 AMMO_BLSR_WIMPY,		// spawnhealth
@@ -4392,7 +4392,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_AMBLSRHEFTY
+{		// ItemAmmoBLSRHefty
 55,		// doomednum
 S2_AMB2_1,		// spawnstate
 AMMO_BLSR_HEFTY,		// spawnhealth
@@ -4419,7 +4419,7 @@ MF_SPECIAL,		// flags
 0		// flags2
  },
 
-{		// MT_SOUNDWIND
+{		// SoundWind
 42,		// doomednum
 S2_SND_WIND,		// spawnstate
 1000,		// spawnhealth
@@ -4446,7 +4446,7 @@ MF_NOBLOCKMAP|MF_NOSECTOR,		// flags
 0		// flags2
  },
 
-{		// MT_SOUNDWATERFALL
+{		// SoundWaterfall
 41,		// doomednum
 S2_SND_WATERFALL,		// spawnstate
 1000,		// spawnhealth
@@ -4477,9 +4477,12 @@ MF_NOBLOCKMAP|MF_NOSECTOR,		// flags
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/01/17 18:18:13  dj_jl
+//	Renamed all map object classes
+//
 //	Revision 1.5  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2001/09/27 17:04:39  dj_jl
 //	Effects and static lights in mobjinfo, mobj classes
 //	

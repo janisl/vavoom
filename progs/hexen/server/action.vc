@@ -156,7 +156,7 @@ void Actor::A_CorpseBloodDrip(void)
 		return;
 	}
 	P_SpawnMobj(origin.x, origin.y, origin.z + Height / 2.0,
-		MT_CORPSEBLOODDRIP);
+		CorpseBloodDrip);
 }
 
 //============================================================================
@@ -172,7 +172,7 @@ void Actor::A_CorpseExplode(void)
 
 	for (i = (P_Random() & 3) + 3; i; i--)
 	{
-		mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_CORPSEBIT);
+		mo = P_SpawnMobj(origin.x, origin.y, origin.z, CorpseBit);
 		SetMobjState(mo, mo->SpawnState + (P_Random() % 3));
 		if (mo)
 		{
@@ -182,7 +182,7 @@ void Actor::A_CorpseExplode(void)
 		}
 	}
 	// Spawn a skull
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_CORPSEBIT);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, CorpseBit);
 	SetMobjState(mo, S_CORPSEBIT_4);
 	if (mo)
 	{
@@ -211,7 +211,7 @@ void Actor::A_SoAExplode(void)
 	{
 		mo = P_SpawnMobj(origin.x + (Random() - 0.5) * 16.0,
 			origin.y + (Random() - 0.5) * 16.0,
-			origin.z + Random() * Height, MT_ZARMORCHUNK);
+			origin.z + Random() * Height, ZArmorChunk);
 		SetMobjState(mo, mo->SpawnState + i);
 		if (mo)
 		{
@@ -240,13 +240,13 @@ void Actor::A_ContMobjSound(void)
 {
 	switch (Class)
 	{
-	case MT_SERPENTFX:
+	case SerpentMissile:
 		StartSoundName(this, 'SerpentFXContinuous', CHAN_VOICE);
 		break;
-	case MT_HAMMER_MISSILE:
+	case HammerMissile:
 		StartSoundName(this, 'FighterHammerContinuous', CHAN_VOICE);
 		break;
-	case MT_QUAKE_FOCUS:
+	case QuakeFocus:
 		StartSoundName(this, 'Earthquake', CHAN_VOICE);
 		break;
 	default:
@@ -264,7 +264,7 @@ void Actor::A_ESound(void)
 {
 	switch (Class)
 	{
-	case MT_SOUNDWIND:
+	case SoundWind:
 		StartSoundName(this, 'Wind', CHAN_VOICE);
 		break;
 	}
@@ -295,6 +295,9 @@ void Actor::A_UnSetInvulnerable(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/17 18:15:54  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.9  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

@@ -196,11 +196,11 @@ void Actor::A_Chase(void)
 	// make active sound
 	if (sound_active && P_Random() < 3)
 	{
-		if (Class == MT_BISHOP && P_Random() < 128)
+		if (Class == Bishop && P_Random() < 128)
 		{
 			StartSound(this, sound_sight, CHAN_VOICE);
 		}
-		else if (Class == MT_PIG)
+		else if (Class == Pig)
 		{
 			StartSound(this, GetSoundID('PigActive1') + (P_Random() & 1),
 				CHAN_VOICE);
@@ -377,64 +377,64 @@ void Actor::A_Explode(void)
 	damageSelf = true;
 	switch (Class)
 	{
-	case MT_FIREBOMB:	// Time Bombs
+	case FireBomb:	// Time Bombs
 		origin.z += 32.0;
 		Translucency = 0;
 		break;
-	case MT_MNTRFX2:	// Minotaur floor fire
+	case MinotaurFloorFire1:	// Minotaur floor fire
 		damage = 24;
 		break;
-	case MT_BISHOP:	// Bishop radius death
+	case Bishop:	// Bishop radius death
 		damage = 25 + (P_Random() & 15);
 		break;
-	case MT_HAMMER_MISSILE:	// Fighter Hammer
+	case HammerMissile:	// Fighter Hammer
 		damage = 128;
 		damageSelf = false;
 		break;
-	case MT_FSWORD_MISSILE:	// Fighter Runesword
+	case FighterSwordMissile:	// Fighter Runesword
 		damage = 64;
 		damageSelf = false;
 		break;
-	case MT_CIRCLEFLAME:	// Cleric Flame secondary flames
+	case CircleFlame:	// Cleric Flame secondary flames
 		damage = 20;
 		damageSelf = false;
 		break;
-	case MT_SORCBALL1:	// Sorcerer balls
-	case MT_SORCBALL2:
-	case MT_SORCBALL3:
+	case SorcererBall1:	// Sorcerer balls
+	case SorcererBall2:
+	case SorcererBall3:
 		distance = 255.0;
 		damage = 255;
 		args[0] = 1;	// don't play bounce
 		break;
-	case MT_SORCFX1:	// Sorcerer spell 1
+	case SorcererFX1:	// Sorcerer spell 1
 		damage = 30;
 		break;
-	case MT_SORCFX4:	// Sorcerer spell 4
+	case SorcererFX4:	// Sorcerer spell 4
 		damage = 20;
 		break;
-	case MT_TREEDESTRUCTIBLE:
+	case TreeDestructible:
 		damage = 10;
 		break;
-	case MT_DRAGON_FX2:
+	case DragonFX2:
 		damage = 80;
 		damageSelf = false;
 		break;
-	case MT_MSTAFF_FX:
+	case MageStaffFX:
 		damage = 64;
 		distance = 192.0;
 		damageSelf = false;
 		break;
-	case MT_MSTAFF_FX2:
+	case MageStaffFX2:
 		damage = 80;
 		distance = 192.0;
 		damageSelf = false;
 		break;
-	case MT_POISONCLOUD:
+	case PoisonCloud:
 		damage = 4;
 		distance = 40.0;
 		break;
-	case MT_ZXMAS_TREE:
-	case MT_ZSHRUB2:
+	case ZXmasTree:
+	case ZShrub2:
 		damage = 30;
 		distance = 64.0;
 		break;
@@ -442,7 +442,7 @@ void Actor::A_Explode(void)
 		break;
 	}
 	P_RadiusAttack(this, target, damage, distance, damageSelf);
-	if (origin.z <= floorz + distance && Class != MT_POISONCLOUD)
+	if (origin.z <= floorz + distance && Class != PoisonCloud)
 	{
 		P_HitFloor(this);
 	}
@@ -495,7 +495,7 @@ void Actor::A_SkullPop(void)
 		return;
 	}
 	Flags &= ~MF_SOLID;
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 48.0, MT_BLOODYSKULL);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 48.0, BloodySkull);
 	mo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
 	mo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
 	mo->velocity.z = (2.0 + Random() / 4.0) * 35.0;
@@ -583,7 +583,7 @@ void Actor::A_FreezeDeathChunks(void)
 	{
 		mo = P_SpawnMobj(origin.x + (Random() - 0.5) * 2.0 * Radius,
 			origin.y + (Random() - 0.5) * 2.0 * Radius,
-			origin.z + Random() * Height, MT_ICECHUNK);
+			origin.z + Random() * Height, IceChunk);
 		SetMobjState(mo, mo->SpawnState + (P_Random() % 3));
 		if (mo)
 		{
@@ -597,7 +597,7 @@ void Actor::A_FreezeDeathChunks(void)
 	{
 		mo = P_SpawnMobj(origin.x + (Random() - 0.5) * 2.0 * Radius,
 			origin.y + (Random() - 0.5) * 2.0 * Radius,
-			origin.z + Random() * Height, MT_ICECHUNK);
+			origin.z + Random() * Height, IceChunk);
 		SetMobjState(mo, mo->SpawnState + (P_Random() % 3));
 		if (mo)
 		{
@@ -610,8 +610,7 @@ void Actor::A_FreezeDeathChunks(void)
 	if (player)
 	{
 		// attach the player's view to a chunk of ice
-		mo = P_SpawnMobj(origin.x, origin.y, origin.z + VIEWHEIGHT,
-			MT_ICECHUNK);
+		mo = P_SpawnMobj(origin.x, origin.y, origin.z + VIEWHEIGHT, IceChunk);
 		SetMobjState(mo, S_ICECHUNK_HEAD);
 		mo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
 		mo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
@@ -787,30 +786,30 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 		// Only corpses that call A_QueueCorpse from death routine
 		switch (mo->Class)
 		{
-		case MT_CENTAUR:
-		case MT_CENTAURLEADER:
-		case MT_DEMON:
-		case MT_DEMON2:
-		case MT_WRAITH:
-		case MT_WRAITHB:
-		case MT_BISHOP:
-		case MT_ETTIN:
-		case MT_PIG:
-		case MT_CENTAUR_SHIELD:
-		case MT_CENTAUR_SWORD:
-		case MT_DEMONCHUNK1:
-		case MT_DEMONCHUNK2:
-		case MT_DEMONCHUNK3:
-		case MT_DEMONCHUNK4:
-		case MT_DEMONCHUNK5:
-		case MT_DEMON2CHUNK1:
-		case MT_DEMON2CHUNK2:
-		case MT_DEMON2CHUNK3:
-		case MT_DEMON2CHUNK4:
-		case MT_DEMON2CHUNK5:
-		case MT_FIREDEMON_SPLOTCH1:
-		case MT_FIREDEMON_SPLOTCH2:
-			Actor(*mo).A_QueueCorpse();	// Add corpse to queue
+		case Centaur:
+		case CentaurLeader:
+		case Demon:
+		case Demon2:
+		case Wraith:
+		case WraithBuried:
+		case Bishop:
+		case Ettin:
+		case Pig:
+		case CentaurShield:
+		case CentaurSword:
+		case DemonChunk1:
+		case DemonChunk2:
+		case DemonChunk3:
+		case DemonChunk4:
+		case DemonChunk5:
+		case Demon2Chunk1:
+		case Demon2Chunk2:
+		case Demon2Chunk3:
+		case Demon2Chunk4:
+		case Demon2Chunk5:
+		case FireDemonSplotch1:
+		case FireDemonSplotch2:
+			mo->A_QueueCorpse();	// Add corpse to queue
 			break;
 		default:
 			break;
@@ -821,6 +820,9 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/17 18:15:54  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.12  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

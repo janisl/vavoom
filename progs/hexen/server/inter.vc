@@ -718,14 +718,12 @@ void TryPickupArtifact(player_t * player, int artifactType, mobj_t * artifact)
 void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 {
 	player_t *player;
-	float delta;
 	name sound;
 	boolean respawn;
 
-	delta = special->origin.z - toucher->origin.z;
-	if (delta > toucher->Height || delta < -32.0)
+	if (!(toucher->Flags & MF_PICKUP))
 	{
-		// Out of reach
+		// Can't be picked up by toucher
 		return;
 	}
 	if (toucher->Health <= 0)
@@ -1025,6 +1023,9 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/17 18:15:54  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.7  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

@@ -53,7 +53,7 @@ void Actor::A_BeastAttack(void)
 		target->Damage(this, this, HITDICE(3));
 		return;
 	}
-	SpawnMissile(this, target, MT_BEASTBALL);
+	SpawnMissile(this, target, BeastBall);
 }
 
 //==========================================================================
@@ -73,13 +73,16 @@ void Actor::A_BeastPuff(void)
 		i1 = origin.x + (Random() - Random()) * 4.0;
 		i2 = origin.y + (Random() - Random()) * 4.0;
 		i3 = origin.z + (Random() - Random()) * 4.0;
-		P_SpawnMobj(i1, i2, i3, MT_PUFFY);
+		P_SpawnMobj(i1, i2, i3, Puffy);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/17 18:15:53  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.7  2002/01/07 12:23:17  dj_jl
 //  Changed copyright year
 //

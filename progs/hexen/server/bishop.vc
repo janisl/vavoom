@@ -101,7 +101,7 @@ void Actor::A_BishopSpawnBlur(void)
 			SetMobjState(this, S_BISHOP_ATK1);
 		}
 	}
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_BISHOPBLUR);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, BishopBlur);
 	if (mo)
 	{
 		mo->angles.yaw = angles.yaw;
@@ -160,7 +160,7 @@ void Actor::A_BishopAttack2(void)
 		SetMobjState(this, S_BISHOP_WALK1);
 		return;
 	}
-	mo = SpawnMissile(this, target, MT_BISH_FX);
+	mo = SpawnMissile(this, target, BishopMissile);
 	if (mo)
 	{
 		mo->specialmobj1 = target;
@@ -186,7 +186,7 @@ void Actor::A_BishopPainBlur(void)
 	}
 	mo = P_SpawnMobj(origin.x + (Random() - Random()) * 16.0,
 		origin.y + (Random() - Random()) * 16.0,
-		origin.z + (Random() - Random()) * 8.0, MT_BISHOPPAINBLUR);
+		origin.z + (Random() - Random()) * 8.0, BishopPainBlur);
 	if (mo)
 	{
 		mo->angles.yaw = angles.yaw;
@@ -203,7 +203,7 @@ void Actor::A_BishopPuff(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 40.0, MT_BISHOP_PUFF);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 40.0, BishopPuff);
 	if (mo)
 	{
 		mo->velocity.z = 0.5 * 35.0;
@@ -262,6 +262,9 @@ void Actor::A_BishopMissileSeek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/17 18:15:54  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.11  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

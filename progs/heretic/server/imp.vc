@@ -107,7 +107,7 @@ void Actor::A_ImpMsAttack2(void)
 		target->Damage(this, this, 5 + (P_Random() & 7));
 		return;
 	}
-	SpawnMissile(this, target, MT_IMPBALL);
+	SpawnMissile(this, target, ImpBall);
 }
 
 //==========================================================================
@@ -165,11 +165,11 @@ void Actor::A_ImpExplode(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_IMPCHUNK1);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, ImpChunk1);
 	mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
 	mo->velocity.y = (Random() - Random()) * 4.0 * 35.0;
 	mo->velocity.z = 9.0 * 35.0;
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_IMPCHUNK2);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, ImpChunk2);
 	mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
 	mo->velocity.y = (Random() - Random()) * 4.0 * 35.0;
 	mo->velocity.z = 9.0 * 35.0;
@@ -183,6 +183,9 @@ void Actor::A_ImpExplode(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/17 18:15:53  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.9  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

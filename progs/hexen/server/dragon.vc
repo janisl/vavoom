@@ -113,7 +113,7 @@ void DragonSeek(mobj_t * actor, float thresh, float turnMax)
 			}
 			else if (P_Random() < 128 && CheckMissileRange(actor))
 			{
-				SpawnMissile(actor, target, MT_DRAGON_FX);
+				SpawnMissile(actor, target, DragonMissile);
 				StartSoundName(actor, 'DragonAttack', CHAN_WEAPON);
 			}
 			actor->target = oldTarget;
@@ -255,7 +255,7 @@ void Actor::A_DragonFlap(void)
 
 void Actor::A_DragonAttack(void)
 {
-	SpawnMissile(this, target, MT_DRAGON_FX);
+	SpawnMissile(this, target, DragonMissile);
 }
 
 //============================================================================
@@ -305,7 +305,7 @@ void Actor::A_DragonFX2(void)
 	{
 		mo = P_SpawnMobj(origin.x + (Random() - 0.5) * 64.0,
 			origin.y + (Random() - 0.5) * 64.0,
-			origin.z + (Random() - 0.5) * 16.0, MT_DRAGON_FX2);
+			origin.z + (Random() - 0.5) * 16.0, DragonFX2);
 		if (mo)
 		{
 			mo->time = delay + Random() * 0.2 * itof(i);
@@ -317,6 +317,9 @@ void Actor::A_DragonFX2(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/17 18:15:54  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.10  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

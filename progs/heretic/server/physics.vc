@@ -629,7 +629,7 @@ void Actor::XYMovement(void)
 					ceilingline->backsector->ceiling.pic == skyflatnum)
 				{
 					// Hack to prevent missiles exploding against the sky
-					if (Class == MT_BLOODYSKULL)
+					if (Class == BloodySkull)
 					{
 						velocity.x = velocity.y = 0.0;
 						velocity.z = -1.0 * 35.0;
@@ -880,7 +880,7 @@ void Actor::ZMovement(void)
 				P_FloorBounceMissile(this);
 				return;
 			}
-			else if (Class == MT_MNTRFX2)
+			else if (Class == MinotaurFloorFire)
 			{
 				// Minotaur floor fire can go up steps
 				return;
@@ -935,7 +935,7 @@ void Actor::ZMovement(void)
 		{
 			if (subsector->sector->ceiling.pic == skyflatnum)
 			{
-				if (Class == MT_BLOODYSKULL)
+				if (Class == BloodySkull)
 				{
 					velocity.x = velocity.y = 0.0;
 					velocity.z = -1.0 * 35.0;
@@ -1011,7 +1011,7 @@ boolean Actor::BlasterPhysics(void)
 				{
 					z = floorz;
 				}
-				P_SpawnMobj(origin.x, origin.y, z, MT_BLASTERSMOKE);
+				P_SpawnMobj(origin.x, origin.y, z, BlasterSmoke);
 			}
 		}
 	}
@@ -1070,7 +1070,7 @@ boolean Actor::Physics(void)
 					Flags2 |= MF2_ONMOBJ;
 					velocity.z = 0.0;
 				}
-				if (player && (onmo.player || onmo.Class == MT_POD))
+				if (player && (onmo.player || onmo.Class == Pod))
 				{
 					velocity.x = onmo.velocity.x;
 					velocity.y = onmo.velocity.y;
@@ -1166,6 +1166,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/17 18:15:53  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.14  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

@@ -78,19 +78,19 @@ void Actor::A_Srcr1Attack(void)
 	if (Health > (spawnhealth / 3) * 2)
 	{
 		// Spit one fireball
-		SpawnMissile(this, target, MT_SRCRFX1);
+		SpawnMissile(this, target, Sorcerer1Missile);
 	}
 	else
 	{
 		// Spit three fireballs
-		mo = SpawnMissile(this, target, MT_SRCRFX1);
+		mo = SpawnMissile(this, target, Sorcerer1Missile);
 		if (mo)
 		{
 			VectorAngles(&mo->velocity, &ang);
 			angle = mo->angles.yaw;
-			SpawnMissileAngles(this, MT_SRCRFX1,
+			SpawnMissileAngles(this, Sorcerer1Missile,
 				AngleMod360(angle - 3.0), ang.pitch);
-			SpawnMissileAngles(this, MT_SRCRFX1,
+			SpawnMissileAngles(this, Sorcerer1Missile,
 				AngleMod360(angle + 3.0), ang.pitch);
 		}
 		if (Health < spawnhealth / 3)
@@ -145,7 +145,7 @@ void Actor::A_SorcererRise(void)
 	mobj_t *mo;
 
 	Flags &= ~MF_SOLID;
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_SORCERER2);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, Sorcerer2);
 	SetMobjState(mo, S_SOR2_RISE1);
 	mo->angles.yaw = angles.yaw;
 	mo->target = target;
@@ -248,15 +248,15 @@ void Actor::A_Srcr2Attack(void)
 	if (P_Random() < chance)
 	{
 		// Wizard spawners
-		SpawnMissileAngles(this, MT_SOR2FX2,
+		SpawnMissileAngles(this, Sorcerer2Missile2,
 			AngleMod360(angles.yaw - 45.0), 30.0);
-		SpawnMissileAngles(this, MT_SOR2FX2,
+		SpawnMissileAngles(this, Sorcerer2Missile2,
 			AngleMod360(angles.yaw + 45.0), 30.0);
 	}
 	else
 	{
 		// Blue bolt
-		SpawnMissile(this, target, MT_SOR2FX1);
+		SpawnMissile(this, target, Sorcerer2Missile1);
 	}
 }
 
@@ -333,7 +333,7 @@ void Actor::A_BlueSpark(void)
 
 	for (i = 0; i < 2; i++)
 	{
-		mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_SOR2FXSPARK);
+		mo = P_SpawnMobj(origin.x, origin.y, origin.z, Sorcerer2MissileSpark);
 		mo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
 		mo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
 		mo->velocity.z = (1.0 + Random()) * 35.0;
@@ -351,7 +351,7 @@ void Actor::A_GenWizard(void)
 	mobj_t *mo;
 	mobj_t *fog;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_WIZARD);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, Wizard);
 	mo->origin.z = origin.z - mo->Height / 2.0;
 	if (!P_TestMobjLocation(mo))
 	{
@@ -362,13 +362,16 @@ void Actor::A_GenWizard(void)
 	velocity = vector(0.0, 0.0, 0.0);
 	SetMobjState(this, DeathState);
 	Flags &= ~MF_MISSILE;
-	fog = P_SpawnMobj(origin.x, origin.y, origin.z, MT_TFOG);
+	fog = P_SpawnMobj(origin.x, origin.y, origin.z, TeleportFog);
 	StartSoundName(fog, 'Teleport', CHAN_VOICE);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/17 18:15:53  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.11  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

@@ -209,7 +209,7 @@ boolean PIT_ChangeSector(mobj_t * thing)
 		// spray blood in a random direction
 		mo =
 			P_SpawnMobj(thing->origin.x, thing->origin.y,
-			thing->origin.z + thing->Height / 2.0, MT_BLOOD);
+			thing->origin.z + thing->Height / 2.0, Blood);
 		mo->velocity.x = (Random() - Random()) * 16.0 * 35.0;
 		mo->velocity.y = (Random() - Random()) * 16.0 * 35.0;
 	}
@@ -399,7 +399,7 @@ boolean PTR_AimTraverse(intercept_t * in)
 	if (!(th->Flags & MF_SHOOTABLE))
 		return true;	// corpse or something
 
-	if (th->Class == MT_POD)
+	if (th->Class == Pod)
 	{
 		// Can't auto-aim at pods
 		return true;
@@ -698,14 +698,13 @@ boolean PTR_ShootTraverse(intercept_t * in)
 		return true;
 	}
 
-	if (PuffType == MT_BLASTERPUFF1)
+	if (PuffType == BlasterPuff1)
 	{
 		// Make blaster big puff
 		mobj_t *mo;
 
-		mo =
-			P_SpawnMobj(hit_point.x, hit_point.y, hit_point.z,
-			MT_BLASTERPUFF2);
+		mo = P_SpawnMobj(hit_point.x, hit_point.y, hit_point.z,
+			BlasterPuff2);
 		StartSoundName(mo, 'BlasterFire', CHAN_VOICE);
 	}
 	else
@@ -789,8 +788,8 @@ boolean PIT_RadiusAttack(mobj_t * thing)
 	if (!(thing->Flags & MF_SHOOTABLE))
 		return true;
 
-	if (thing->Class == MT_MINOTAUR ||
-		thing->Class == MT_SORCERER1 || thing->Class == MT_SORCERER2)
+	if (thing->Class == Minotaur ||
+		thing->Class == Sorcerer1 || thing->Class == Sorcerer2)
 	{
 		// Episode 2 and 3 bosses take no damage from PIT_RadiusAttack
 		return true;
@@ -840,7 +839,7 @@ void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage, int distance,
 	xh = MapBlock(spot->origin.x + dist - level->bmaporgx);
 	xl = MapBlock(spot->origin.x - dist - level->bmaporgx);
 	bombspot = spot;
-	if (spot->Class == MT_POD && spot->target)
+	if (spot->Class == Pod && spot->target)
 	{
 		bombsource = spot->target;
 	}
@@ -858,6 +857,9 @@ void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage, int distance,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/17 18:15:53  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.14  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

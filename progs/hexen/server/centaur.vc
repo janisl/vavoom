@@ -65,7 +65,7 @@ void Actor::A_CentaurAttack2(void)
 	{
 		return;
 	}
-	SpawnMissile(this, target, MT_CENTAUR_FX);
+	SpawnMissile(this, target, CentaurMissile);
 	StartSoundName(this, 'CentaurLeaderAttack', CHAN_WEAPON);
 }
 
@@ -79,7 +79,7 @@ void Actor::A_SetReflective(void)
 {
 	Flags2 |= MF2_REFLECTIVE;
 
-	if (IsA(MT_CENTAUR) || IsA(MT_CENTAURLEADER))
+	if (IsA(Centaur) || IsA(CentaurLeader))
 	{
 		A_SetInvulnerable(this);
 	}
@@ -95,7 +95,7 @@ void Actor::A_UnSetReflective(void)
 {
 	Flags2 &= ~MF2_REFLECTIVE;
 
-	if (IsA(MT_CENTAUR) || IsA(MT_CENTAURLEADER))
+	if (IsA(Centaur) || IsA(CentaurLeader))
 	{
 		A_UnSetInvulnerable();
 	}
@@ -130,7 +130,7 @@ void Actor::A_CentaurDropStuff(void)
 	mobj_t *mo;
 	float angle;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, MT_CENTAUR_SHIELD);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, CentaurShield);
 	if (mo)
 	{
 		angle = AngleMod360(angles.yaw + 90.0);
@@ -139,7 +139,7 @@ void Actor::A_CentaurDropStuff(void)
 		mo->velocity.z = 8.0 + Random() * 4.0 * 35.0;
 		mo->target = this;
 	}
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, MT_CENTAUR_SWORD);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, CentaurSword);
 	if (mo)
 	{
 		angle = AngleMod360(angles.yaw - 90.0);
@@ -171,6 +171,9 @@ void Actor::A_CheckFloor(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/17 18:15:54  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.11  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

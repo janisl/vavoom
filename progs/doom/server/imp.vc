@@ -60,12 +60,15 @@ void Actor::A_TroopAttack(void)
 	}
 
 	// launch a missile
-	SpawnMissile(this, target, MT_TROOPSHOT);
+	SpawnMissile(this, target, ImpMissile);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/17 18:15:52  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.8  2002/01/11 18:19:40  dj_jl
 //  Started to use names in progs
 //

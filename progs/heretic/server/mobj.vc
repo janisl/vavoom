@@ -410,7 +410,7 @@ boolean P_TestMobjLocation(mobj_t * mobj)
 
 void P_ExplodeMissile(mobj_t * mo)
 {
-	if (mo->Class == MT_WHIRLWIND)
+	if (mo->Class == WhirlWind)
 	{
 		if (++mo->special2 < 60)
 		{
@@ -622,9 +622,9 @@ boolean ChickenMorphPlayer(player_t * player)
 	angle = pmo->angles.yaw;
 	oldFlags2 = pmo->Flags2;
 	SetMobjState(pmo, S_FREETARGMOBJ);
-	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, MT_TFOG);
+	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, TeleportFog);
 	StartSoundName(fog, 'Teleport', CHAN_VOICE);
-	chicken = P_SpawnMobj(x, y, z, MT_CHICPLAYER);
+	chicken = P_SpawnMobj(x, y, z, ChickenPlayer);
 	chicken->special1 = player->readyweapon;
 	chicken->angles.yaw = angle;
 	chicken->player = player;
@@ -667,12 +667,12 @@ boolean P_ChickenMorph(mobj_t * actor)
 	moType = actor->Class;
 	switch (moType)
 	{
-	case MT_POD:
-	case MT_CHICKEN:
-	case MT_HEAD:
-	case MT_MINOTAUR:
-	case MT_SORCERER1:
-	case MT_SORCERER2:
+	case Pod:
+	case Chicken:
+	case Head:
+	case Minotaur:
+	case Sorcerer1:
+	case Sorcerer2:
 		return false;
 	default:
 		break;
@@ -684,9 +684,9 @@ boolean P_ChickenMorph(mobj_t * actor)
 	ghost = actor->Translucency;
 	target = actor->target;
 	SetMobjState(actor, S_FREETARGMOBJ);
-	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, MT_TFOG);
+	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, TeleportFog);
 	StartSoundName(fog, 'Teleport', CHAN_VOICE);
-	chicken = P_SpawnMobj(x, y, z, MT_CHICKEN);
+	chicken = P_SpawnMobj(x, y, z, Chicken);
 	chicken->specialcid = moType;
 	chicken->special1 = ftoi(CHICKENTIME * 35.0) + P_Random();
 	chicken->Translucency = ghost;
@@ -818,7 +818,7 @@ void Actor::Damage(Actor * inflictor, Actor * source, int damage)
 	}
 	if (Flags & MF_SKULLFLY)
 	{
-		if (Class == MT_MINOTAUR)
+		if (Class == Minotaur)
 		{
 			// Minotaur is invulnerable during charge attack
 			return;
@@ -835,7 +835,7 @@ void Actor::Damage(Actor * inflictor, Actor * source, int damage)
 	{
 		switch (inflictor->Class)
 		{
-		case MT_EGGFX:
+		case EggMissile:
 			if (player)
 			{
 				ChickenMorphPlayer(player);
@@ -845,10 +845,10 @@ void Actor::Damage(Actor * inflictor, Actor * source, int damage)
 				P_ChickenMorph(this);
 			}
 			return;	// Always return
-		case MT_WHIRLWIND:
+		case WhirlWind:
 			P_TouchWhirlwind(this);
 			return;
-		case MT_MINOTAUR:
+		case Minotaur:
 			if (inflictor->Flags & MF_SKULLFLY)
 			{
 				// Slam only when in charge mode
@@ -856,8 +856,8 @@ void Actor::Damage(Actor * inflictor, Actor * source, int damage)
 				return;
 			}
 			break;
-		case MT_MACEFX4:	// Death ball
-			if ((Flags2 & MF2_BOSS) || Class == MT_HEAD)
+		case MaceFX4:	// Death ball
+			if ((Flags2 & MF2_BOSS) || Class == Head)
 			{
 				// Don't allow cheap boss kills
 				break;
@@ -878,35 +878,35 @@ void Actor::Damage(Actor * inflictor, Actor * source, int damage)
 			}
 			damage = 10000;	// Something's gonna die
 			break;
-		case MT_PHOENIXFX2:	// Flame thrower
+		case PhoenixFX2:	// Flame thrower
 			if (player && P_Random() < 128)
 			{
 				// Freeze player for a bit
 				ReactionTime += 0.125;
 			}
 			break;
-		case MT_RAINPLR1:	// Rain missiles
-		case MT_RAINPLR2:
-		case MT_RAINPLR3:
-		case MT_RAINPLR4:
+		case RainPlayer1:	// Rain missiles
+		case RainPlayer2:
+		case RainPlayer3:
+		case RainPlayer4:
 			if (Flags2 & MF2_BOSS)
 			{
 				// Decrease damage for bosses
 				damage = (P_Random() & 7) + 1;
 			}
 			break;
-		case MT_HORNRODFX2:
-		case MT_PHOENIXFX1:
-			if (Class == MT_SORCERER2 && P_Random() < 96)
+		case HornRodMissile2:
+		case PhoenixFX1:
+			if (Class == Sorcerer2 && P_Random() < 96)
 			{
 				// D'Sparil teleports away
 				DSparilTeleport(this);
 				return;
 			}
 			break;
-		case MT_BLASTERFX1:
-		case MT_RIPPER:
-			if (Class == MT_HEAD)
+		case BlasterFX1:
+		case Ripper:
+			if (Class == Head)
 			{
 				// Less damage to Ironlich bosses
 				damage = P_Random() & 1;
@@ -1004,7 +1004,7 @@ void Actor::Damage(Actor * inflictor, Actor * source, int damage)
 	{
 		// Death
 		special1 = damage;
-		if (Class == MT_POD && source && source->Class != MT_POD)
+		if (Class == Pod && source && source->Class != Pod)
 		{
 			// Make sure players get frags for chain-reaction kills
 			target = source;
@@ -1013,7 +1013,7 @@ void Actor::Damage(Actor * inflictor, Actor * source, int damage)
 		{
 			// Check for flame death
 			if ((inflictor->Flags2 & MF2_FIREDAMAGE)
-				|| ((inflictor->Class == MT_PHOENIXFX1)
+				|| ((inflictor->Class == PhoenixFX1)
 					&& (Health > -50) && (damage > 25)))
 			{
 				Flags2 |= MF2_FIREDAMAGE;
@@ -1029,7 +1029,7 @@ void Actor::Damage(Actor * inflictor, Actor * source, int damage)
 	}
 	ReactionCount = 0;	// we're awake now...
 	if (!threshold && source && !(source->Flags2 & MF2_BOSS)
-		&& !(Class == MT_SORCERER2 && source->Class == MT_WIZARD))
+		&& !(Class == Sorcerer2 && source->Class == Wizard))
 	{
 		// Target actor is not intent on another actor,
 		// so make him chase after source
@@ -1060,17 +1060,17 @@ void SpawnPuff(float x, float y, float z)
 	}
 	switch (PuffType)
 	{
-	case MT_BEAKPUFF:
-	case MT_STAFFPUFF:
+	case BeakPuff:
+	case StaffPuff:
 		puff->velocity.z = 1.0 * 35.0;
 		break;
-	case MT_GAUNTLETPUFF1:
-	case MT_GAUNTLETPUFF2:
+	case GauntletPuff1:
+	case GauntletPuff2:
 		puff->velocity.z = 0.8 * 35.0;
 	default:
 		break;
 	}
-	if (PuffType == MT_GOLDWANDPUFF1)
+	if (PuffType == GoldWandPuff1)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion);
@@ -1079,7 +1079,7 @@ void SpawnPuff(float x, float y, float z)
 		MSG_WriteShort(ftoi(y));
 		MSG_WriteShort(ftoi(z));
 	}
-	if (PuffType == MT_BLASTERPUFF1)
+	if (PuffType == BlasterFX1)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion);
@@ -1100,7 +1100,7 @@ void P_BloodSplatter(float x, float y, float z, mobj_t * originator)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(x, y, z, MT_BLOODSPLATTER);
+	mo = P_SpawnMobj(x, y, z, BloodSplatter);
 	mo->target = originator;
 	mo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
 	mo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
@@ -1121,7 +1121,7 @@ void P_RipperBlood(mobj_t * mo)
 	x = mo->origin.x + (Random() - Random()) * 16.0;
 	y = mo->origin.y + (Random() - Random()) * 16.0;
 	z = mo->origin.z + (Random() - Random()) * 16.0;
-	th = P_SpawnMobj(x, y, z, MT_BLOOD);
+	th = P_SpawnMobj(x, y, z, Blood);
 	th->Flags |= MF_NOGRAVITY;
 	th->velocity.x = mo->velocity.x / 2.0;
 	th->velocity.y = mo->velocity.y / 2.0;
@@ -1156,7 +1156,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 	y = mthing->y;
 
 	z = ONFLOORZ;
-	mobj = P_SpawnMobj(x, y, z, MT_PLAYER);
+	mobj = P_SpawnMobj(x, y, z, PlayerEntity);
 	// set color translations for player sprites
 	mobj->Translation = p->color;
 
@@ -1300,24 +1300,24 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 	switch (mobjinfo[i].class_id)
 	{
 		// Special stuff
-	case MT_WSKULLROD:
-	case MT_WPHOENIXROD:
-	case MT_AMSKRDWIMPY:
-	case MT_AMSKRDHEFTY:
-	case MT_AMPHRDWIMPY:
-	case MT_AMPHRDHEFTY:
-	case MT_AMMACEWIMPY:
-	case MT_AMMACEHEFTY:
-	case MT_ARTISUPERHEAL:
-	case MT_ARTITELEPORT:
-	case MT_ITEMSHIELD2:
+	case ItemWeaponSkullRod:
+	case ItemWeaponPhoenixRod:
+	case ItemAmmoSkullRodWimpy:
+	case ItemAmmoSkullRodHefty:
+	case ItemAmmoPhoenixWimpy:
+	case ItemAmmoPhoenixHefty:
+	case ItemAmmoMaceWimpy:
+	case ItemAmmoMaceHefty:
+	case ArtifactSuperHeal:
+	case ArtifactTeleport:
+	case ItemShield2:
 		if (shareware)
 		{
 			// Don't place on map in shareware version
 			return;
 		}
 		break;
-	case MT_WMACE:
+	case ItemWeaponMace:
 		if (!shareware)
 		{
 			// Put in the mace spot list
@@ -1355,11 +1355,8 @@ int P_HitFloor(mobj_t * thing)
 	switch (P_GetThingFloorType(thing))
 	{
 	case FLOOR_WATER:
-		P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ,
-			MT_SPLASHBASE);
-		mo =
-			P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ,
-			MT_SPLASH);
+		P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ, SplashBase);
+		mo = P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ, Splash);
 		mo->target = thing;
 		mo->velocity.x = (Random() - Random()) * 35.0;
 		mo->velocity.y = (Random() - Random()) * 35.0;
@@ -1367,20 +1364,17 @@ int P_HitFloor(mobj_t * thing)
 		StartSoundName(mo, 'WaterSplash', CHAN_VOICE);
 		return FLOOR_WATER;
 	case FLOOR_LAVA:
-		P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ,
-			MT_LAVASPLASH);
-		mo =
-			P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ,
-			MT_LAVASMOKE);
+		P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ, LavaSplash);
+		mo = P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ,
+			LavaSmoke);
 		mo->velocity.z = (1.0 + Random() / 2.0) * 35.0;
 		StartSoundName(mo, 'Burn', CHAN_VOICE);
 		return FLOOR_LAVA;
 	case FLOOR_SLUDGE:
 		P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ,
-			MT_SLUDGESPLASH);
-		mo =
-			P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ,
-			MT_SLUDGECHUNK);
+			SludgeSplash);
+		mo = P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ,
+			SludgeChunk);
 		mo->target = thing;
 		mo->velocity.x = (Random() - Random()) * 35.0;
 		mo->velocity.y = (Random() - Random()) * 35.0;
@@ -1510,12 +1504,12 @@ void P_NightmareRespawn(mobj_t * mobj)
 		return;	// somthing is occupying it's position
 
 	// spawn a teleport fog at old spot
-	mo = P_SpawnMobj(mobj->origin.x, mobj->origin.y, ONFLOORZ, MT_TFOG);
+	mo = P_SpawnMobj(mobj->origin.x, mobj->origin.y, ONFLOORZ, TeleportFog);
 	mo->origin.z += TELEFOGHEIGHT;
 	StartSoundName(mo, 'Teleport', CHAN_VOICE);
 
 	// spawn a teleport fog at the new spot
-	mo = P_SpawnMobj(x, y, ONFLOORZ, MT_TFOG);
+	mo = P_SpawnMobj(x, y, ONFLOORZ, TeleportFog);
 	mo->origin.z += TELEFOGHEIGHT;
 	StartSoundName(mo, 'Teleport', CHAN_VOICE);
 
@@ -1542,6 +1536,9 @@ void P_NightmareRespawn(mobj_t * mobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/01/17 18:15:53  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.22  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

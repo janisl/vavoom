@@ -172,7 +172,7 @@ boolean P_LookForMonsters(mobj_t * actor, boolean allaround)
 		if (mo == actor)
 			continue;
 
-		if ((mo->Class != MT_PLAYER) && !(mo->Flags & MF_COUNTKILL))
+		if ((mo->Class != PlayerEntity) && !(mo->Flags & MF_COUNTKILL))
 			continue;
 
 		if (!P_CheckSight(actor, mo))
@@ -489,6 +489,9 @@ void P_NewChaseDir(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/17 18:15:55  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.7  2002/01/15 18:27:01  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

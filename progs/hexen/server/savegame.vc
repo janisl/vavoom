@@ -71,14 +71,14 @@ void mobj_t::Archive(void)
 	switch (Class)
 	{
 		// Just specialmobj1
-	case MT_BISH_FX:
-	case MT_HOLY_FX:
-	case MT_DRAGON:
-	case MT_THRUSTFLOOR_UP:
-	case MT_THRUSTFLOOR_DOWN:
-	case MT_MINOTAUR:
-	case MT_SORCFX1:
-	case MT_MSTAFF_FX2:
+	case BishopMissile:
+	case HolyFX:
+	case Dragon:
+	case ThrustFloorUp:
+	case ThrustFloorDown:
+	case Minotaur:
+	case SorcererFX1:
+	case MageStaffFX2:
 		if (corpse)
 		{
 			specialmobj1 = MobjToNum(NULL);
@@ -90,8 +90,8 @@ void mobj_t::Archive(void)
 		break;
 
 		// Just specialmobj2
-	case MT_LIGHTNING_FLOOR:
-	case MT_LIGHTNING_ZAP:
+	case LightningFloor:
+	case LightningZap:
 		if (corpse)
 		{
 			specialmobj2 = MobjToNum(NULL);
@@ -103,8 +103,8 @@ void mobj_t::Archive(void)
 		break;
 
 		// Both specialmobj1 and specialmobj2
-	case MT_HOLY_TAIL:
-	case MT_LIGHTNING_CEILING:
+	case HolyTail:
+	case LightningCeiling:
 		if (corpse)
 		{
 			specialmobj1 = MobjToNum(NULL);
@@ -118,7 +118,7 @@ void mobj_t::Archive(void)
 		break;
 
 		// Miscellaneous
-	case MT_KORAX:
+	case Korax:
 		special1 = 0;	// Searching index
 		break;
 
@@ -140,25 +140,25 @@ void mobj_t::Unarchive(void)
 	switch (Class)
 	{
 		// Just specialmobj1
-	case MT_BISH_FX:
-	case MT_HOLY_FX:
-	case MT_DRAGON:
-	case MT_THRUSTFLOOR_UP:
-	case MT_THRUSTFLOOR_DOWN:
-	case MT_MINOTAUR:
-	case MT_SORCFX1:
+	case BishopMissile:
+	case HolyFX:
+	case Dragon:
+	case ThrustFloorUp:
+	case ThrustFloorDown:
+	case Minotaur:
+	case SorcererFX1:
 		specialmobj1 = NumToMobj(specialmobj1);
 		break;
 
 		// Just special2
-	case MT_LIGHTNING_FLOOR:
-	case MT_LIGHTNING_ZAP:
+	case LightningFloor:
+	case LightningZap:
 		specialmobj2 = NumToMobj(specialmobj2);
 		break;
 
 		// Both special1 and special2
-	case MT_HOLY_TAIL:
-	case MT_LIGHTNING_CEILING:
+	case HolyTail:
+	case LightningCeiling:
 		specialmobj1 = NumToMobj(specialmobj1);
 		specialmobj2 = NumToMobj(specialmobj2);
 		break;
@@ -177,6 +177,9 @@ void mobj_t::Unarchive(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/17 18:15:55  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.8  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

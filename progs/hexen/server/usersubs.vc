@@ -141,13 +141,13 @@ boolean UndoPlayerMorph(player_t * player)
 	switch (player->baseclass)
 	{
 	case PCLASS_FIGHTER:
-		mo = P_SpawnMobj(x, y, z, MT_PLAYER_FIGHTER);
+		mo = P_SpawnMobj(x, y, z, PlayerFighter);
 		break;
 	case PCLASS_CLERIC:
-		mo = P_SpawnMobj(x, y, z, MT_PLAYER_CLERIC);
+		mo = P_SpawnMobj(x, y, z, PlayerCleric);
 		break;
 	case PCLASS_MAGE:
-		mo = P_SpawnMobj(x, y, z, MT_PLAYER_MAGE);
+		mo = P_SpawnMobj(x, y, z, PlayerMage);
 		break;
 	default:
 		Error("UndoPlayerMorph: Unknown player class %d", player->pclass);
@@ -181,7 +181,7 @@ boolean UndoPlayerMorph(player_t * player)
 	player->mo = mo;
 	player->pclass = player->baseclass;
 	fog = P_SpawnMobj(x + 20.0 * cos(angle),
-		y + 20.0 * sin(angle), z + TELEFOGHEIGHT, MT_TFOG);
+		y + 20.0 * sin(angle), z + TELEFOGHEIGHT, TeleportFog);
 	StartSoundName(fog, 'Teleport', CHAN_VOICE);
 	PostMorphWeapon(player, weapon);
 	return true;
@@ -223,7 +223,7 @@ void DeathPlayerThink(player_t * player)
 
 	onground = (player->mo->origin.z <= player->mo->floorz);
 
-	if (player->mo->Class == MT_BLOODYSKULL || player->mo->Class == MT_ICECHUNK)
+	if (player->mo->Class == BloodySkull || player->mo->Class == IceChunk)
 	{
 		// Flying bloody skull or flying ice chunk
 		player->viewheight = 6.0;
@@ -347,7 +347,7 @@ void DeathPlayerThink(player_t * player)
 mobj_t *SpawnSpeedMobj(mobj_t * pmo)
 {
 	return P_SpawnMobj(pmo->origin.x, pmo->origin.y, pmo->origin.z,
-		MT_PLAYER_SPEED);
+		PlayerSpeed);
 }
 
 //==========================================================================
@@ -358,14 +358,14 @@ mobj_t *SpawnSpeedMobj(mobj_t * pmo)
 
 void ArtiPig(mobj_t * mo)
 {
-	SpawnPlayerMissile(mo, MT_EGGFX);
-	SpawnPlayerMissileAngle(mo, MT_EGGFX,
+	SpawnPlayerMissile(mo, EggMissile);
+	SpawnPlayerMissileAngle(mo, EggMissile,
 		AngleMod360(mo->angles.yaw - 45.0 / 6.0));
-	SpawnPlayerMissileAngle(mo, MT_EGGFX,
+	SpawnPlayerMissileAngle(mo, EggMissile,
 		AngleMod360(mo->angles.yaw + 45.0 / 6.0));
-	SpawnPlayerMissileAngle(mo, MT_EGGFX,
+	SpawnPlayerMissileAngle(mo, EggMissile,
 		AngleMod360(mo->angles.yaw - 45.0 / 3.0));
-	SpawnPlayerMissileAngle(mo, MT_EGGFX,
+	SpawnPlayerMissileAngle(mo, EggMissile,
 		AngleMod360(mo->angles.yaw + 45.0 / 3.0));
 }
 
@@ -379,7 +379,7 @@ void ArtiSummon(player_t * player)
 {
 	mobj_t *mo;
 
-	mo = SpawnPlayerMissile(player->mo, MT_SUMMON_FX);
+	mo = SpawnPlayerMissile(player->mo, SummonMissile);
 	if (mo)
 	{
 		mo->target = player->mo;
@@ -405,7 +405,7 @@ void ArtiPoisonBag(player_t * player)
 	{
 		mo = P_SpawnMobj(player->mo->origin.x + 16.0 * cos(angle),
 			player->mo->origin.y + 24.0 * sin(angle),
-			player->mo->origin.z - player->mo->floorclip + 8.0, MT_POISONBAG);
+			player->mo->origin.z - player->mo->floorclip + 8.0, PoisonBag);
 		if (mo)
 		{
 			mo->target = player->mo;
@@ -415,7 +415,7 @@ void ArtiPoisonBag(player_t * player)
 	{
 		mo = P_SpawnMobj(player->mo->origin.x + 16.0 * cos(angle),
 			player->mo->origin.y + 24.0 * sin(angle),
-			player->mo->origin.z - player->mo->floorclip + 8.0, MT_FIREBOMB);
+			player->mo->origin.z - player->mo->floorclip + 8.0, FireBomb);
 		if (mo)
 		{
 			mo->target = player->mo;
@@ -425,7 +425,7 @@ void ArtiPoisonBag(player_t * player)
 	{
 		bomb = P_SpawnMobj(player->mo->origin.x, player->mo->origin.y,
 			player->mo->origin.z - player->mo->floorclip + 35.0,
-			MT_THROWINGBOMB);
+			ThrowingBomb);
 		if (bomb)
 		{
 			bomb->angles.yaw = AngleMod360(player->mo->angles.yaw +
@@ -453,7 +453,7 @@ void ArtiTeleportOther(player_t * player)
 {
 	mobj_t *mo;
 
-	mo = SpawnPlayerMissile(player->mo, MT_TELOTHER_FX1);
+	mo = SpawnPlayerMissile(player->mo, TeleportOtherFX1);
 	if (mo)
 	{
 		mo->target = player->mo;
@@ -497,12 +497,12 @@ void BlastMobj(mobj_t * source, mobj_t * victim, float strength)
 		{
 			switch (victim->Class)
 			{
-			case MT_SORCBALL1:	// don't blast sorcerer balls
-			case MT_SORCBALL2:
-			case MT_SORCBALL3:
+			case SorcererBall1:	// don't blast sorcerer balls
+			case SorcererBall2:
+			case SorcererBall3:
 				return;
 				break;
-			case MT_MSTAFF_FX2:	// Reflect to originator
+			case MageStaffFX2:	// Reflect to originator
 				victim->specialmobj1 = victim->target;
 				victim->target = source;
 				break;
@@ -510,7 +510,7 @@ void BlastMobj(mobj_t * source, mobj_t * victim, float strength)
 				break;
 			}
 		}
-		if (victim->Class == MT_HOLY_FX)
+		if (victim->Class == HolyFX)
 		{
 			if (victim->specialmobj1 == source)
 			{
@@ -527,7 +527,7 @@ void BlastMobj(mobj_t * source, mobj_t * victim, float strength)
 		x = victim->origin.x + (victim->Radius + 1.0) * cos(ang);
 		y = victim->origin.y + (victim->Radius + 1.0) * sin(ang);
 		z = victim->origin.z - victim->floorclip + victim->Height / 2.0;
-		mo = P_SpawnMobj(x, y, z, MT_BLASTEFFECT);
+		mo = P_SpawnMobj(x, y, z, BlastEffect);
 		if (mo)
 		{
 			mo->velocity.x = victim->velocity.x;
@@ -580,8 +580,8 @@ void ArtiBlastRadius(player_t * player)
 			// Not a valid monster
 			continue;
 		}
-		if ((mo->Class == MT_POISONCLOUD) ||	// poison cloud
-			(mo->Class == MT_HOLY_FX) ||	// holy fx
+		if ((mo->Class == PoisonCloud) ||	// poison cloud
+			(mo->Class == HolyFX) ||	// holy fx
 			(mo->Flags & MF_ICECORPSE))	// frozen corpse
 		{
 			// Let these special cases go
@@ -600,15 +600,15 @@ void ArtiBlastRadius(player_t * player)
 		{
 			continue;	// no dormant creatures
 		}
-		if ((mo->Class == MT_WRAITHB) && (mo->Translucency >= 100))
+		if ((mo->Class == WraithBuried) && (mo->Translucency >= 100))
 		{
 			continue;	// no underground wraiths
 		}
-		if ((mo->Class == MT_SPLASHBASE) || (mo->Class == MT_SPLASH))
+		if ((mo->Class == SplashBase) || (mo->Class == Splash))
 		{
 			continue;
 		}
-		if (mo->Class == MT_SERPENT || mo->Class == MT_SERPENTLEADER)
+		if (mo->Class == Serpent || mo->Class == SerpentLeader)
 		{
 			continue;
 		}
@@ -666,7 +666,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	an = itof(45 * (mthing->angle / 45));
 
 	mo = P_SpawnMobj(x + 20.0 * cos(an), y + 20.0 * sin(an),
-		ss->sector->floorheight + TELEFOGHEIGHT, MT_TFOG);
+		ss->sector->floorheight + TELEFOGHEIGHT, TeleportFog);
 	StartSoundName(mo, 'Teleport', CHAN_VOICE);
 
 	return true;
@@ -675,6 +675,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/17 18:15:55  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.12  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

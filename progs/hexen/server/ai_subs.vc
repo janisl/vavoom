@@ -226,9 +226,9 @@ boolean P_LookForMonsters(mobj_t * actor)
 		{	// Out of sight
 			continue;
 		}
-		if (actor->Class == MT_MINOTAUR)
+		if (actor->Class == Minotaur)
 		{
-			if ((mo->Class == MT_MINOTAUR) &&
+			if ((mo->Class == Minotaur) &&
 				(mo->target != actor->specialmobj1))
 			{
 				continue;
@@ -310,7 +310,7 @@ boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
 				return false;
 			}
 		}
-		if (actor->Class == MT_MINOTAUR)
+		if (actor->Class == Minotaur)
 		{
 			if (actor->specialmobj1 == player->mo)
 			{
@@ -486,7 +486,7 @@ mobj_t *RoughBlockCheck(mobj_t * mo, int index)
 					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				if ((link.Class == MT_MINOTAUR) &&
+				if ((link.Class == Minotaur) &&
 					((link.specialmobj1) == mo))
 				{
 					link = Actor(link.BlockMapNext);
@@ -504,7 +504,7 @@ mobj_t *RoughBlockCheck(mobj_t * mo, int index)
 			}
 			link = Actor(link.BlockMapNext);
 		}
-		else if (mo->Class == MT_MINOTAUR)	// looking around minotaur
+		else if (mo->Class == Minotaur)	// looking around minotaur
 		{
 			master = mo->specialmobj1;
 			if ((link.Flags & MF_COUNTKILL) ||
@@ -520,7 +520,7 @@ mobj_t *RoughBlockCheck(mobj_t * mo, int index)
 					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				if ((link.Class == MT_MINOTAUR) &&
+				if ((link.Class == Minotaur) &&
 					(link.specialmobj1 == mo->specialmobj1))
 				{
 					link = Actor(link.BlockMapNext);
@@ -538,7 +538,7 @@ mobj_t *RoughBlockCheck(mobj_t * mo, int index)
 			}
 			link = Actor(link.BlockMapNext);
 		}
-		else if (mo->Class == MT_MSTAFF_FX2)	// bloodscourge
+		else if (mo->Class == MageStaffFX2)	// bloodscourge
 		{
 			if ((link.Flags & MF_COUNTKILL ||
 					(link.player && link != *mo->target))
@@ -722,6 +722,9 @@ mobj_t *P_RoughMonsterSearch(mobj_t * mo, int distance)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/17 18:15:54  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.8  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

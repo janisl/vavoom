@@ -74,7 +74,7 @@ void Actor::A_Look(void)
 			sound = sfx_bgsit + P_Random() % 2;
 		}
 
-		if (Class == MT_SPIDER || Class == MT_CYBORG)
+		if (Class == SpiderMastermind || Class == Cyberdemon)
 		{
 			// Full volume
 			StartSound(NULL, sound, CHAN_VOICE);
@@ -320,7 +320,7 @@ void Actor::A_Scream(void)
 		}
 
 		// Check for bosses.
-		if (Class == MT_SPIDER || Class == MT_CYBORG)
+		if (Class == SpiderMastermind || Class == Cyberdemon)
 		{
 			// full volume
 			StartSound(NULL, sound, CHAN_VOICE);
@@ -421,27 +421,27 @@ void Actor::A_BossDeath(void)
 
 	if (!strcmp(mapname, "E1M8"))
 	{
-		if (Class != MT_BRUISER)
+		if (Class != BaronOfHell)
 			return;
 	}
 	else if (!strcmp(mapname, "E2M8"))
 	{
-		if (Class != MT_CYBORG)
+		if (Class != Cyberdemon)
 			return;
 	}
 	else if (!strcmp(mapname, "E3M8"))
 	{
-		if (Class != MT_SPIDER)
+		if (Class != SpiderMastermind)
 			return;
 	}
 	else if (!strcmp(mapname, "E4M6"))
 	{
-		if (Class != MT_CYBORG)
+		if (Class != Cyberdemon)
 			return;
 	}
 	else if (!strcmp(mapname, "E4M8"))
 	{
-		if (Class != MT_SPIDER)
+		if (Class != SpiderMastermind)
 			return;
 	}
 	else
@@ -519,7 +519,7 @@ void Actor::A_BossDeath(void)
 		return;
 	}
 
-	if ((Class != MT_FATSO) && (Class != MT_BABY))
+	if ((Class != Mancubus) && (Class != Arachnotron))
 		return;
 
 	// make sure there is a player alive for victory
@@ -541,7 +541,7 @@ void Actor::A_BossDeath(void)
 	}
 
 	// victory!
-	if (Class == MT_FATSO)
+	if (Class == Mancubus)
 	{
 		args[0] = 666;
 		args[1] = 8;
@@ -560,6 +560,9 @@ void Actor::A_BossDeath(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/17 18:15:52  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.11  2002/01/15 18:26:59  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

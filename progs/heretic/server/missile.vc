@@ -74,17 +74,17 @@ mobj_t *SpawnMissile(mobj_t * source, mobj_t * dest, classid type)
 
 	switch (type)
 	{
-	case MT_MNTRFX1:	// Minotaur swing attack missile
+	case MinotaurMissile:	// Minotaur swing attack missile
 		z = source->origin.z + 40.0;
 		break;
-	case MT_MNTRFX2:	// Minotaur floor fire missile
+	case MinotaurFloorFire:	// Minotaur floor fire missile
 		z = ONFLOORZ;
 		break;
-	case MT_SRCRFX1:	// Sorcerer Demon fireball
+	case Sorcerer1Missile:	// Sorcerer Demon fireball
 		z = source->origin.z + 48.0;
 		break;
-	case MT_KNIGHTAXE:	// Knight normal axe
-	case MT_REDAXE:	// Knight red power axe
+	case KnightAxe:	// Knight normal axe
+	case KnightRedAxe:	// Knight red power axe
 		z = source->origin.z + 36.0;
 		break;
 	default:
@@ -128,13 +128,13 @@ mobj_t *SpawnMissileAngles(mobj_t * source, classid type, float yaw,
 
 	switch (type)
 	{
-	case MT_MNTRFX1:	// Minotaur swing attack missile
+	case MinotaurMissile:	// Minotaur swing attack missile
 		z = source->origin.z + 40.0;
 		break;
-	case MT_MNTRFX2:	// Minotaur floor fire missile
+	case MinotaurFloorFire:	// Minotaur floor fire missile
 		z = ONFLOORZ;
 		break;
-	case MT_SRCRFX1:	// Sorcerer Demon fireball
+	case Sorcerer1Missile:	// Sorcerer Demon fireball
 		z = source->origin.z + 48.0;
 		break;
 	default:
@@ -200,7 +200,7 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 	MissileMobj->angles = angles;
 	AngleVector(&angles, &vforward);
 	MissileMobj->velocity = vforward * MissileMobj->Speed;
-	if (MissileMobj->Class == MT_BLASTERFX1)
+	if (MissileMobj->Class == BlasterFX1)
 	{
 		// Ultra-fast ripper spawning missile
 		MissileMobj->origin += MissileMobj->velocity * 0.00357;
@@ -334,6 +334,9 @@ boolean P_SeekerMissile(mobj_t * actor, float thresh, float turnMax)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/17 18:15:53  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.10  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

@@ -52,7 +52,7 @@ void Weapon::A_FPunchAttack(void)
 
 	damage = 40 + (P_Random() & 15);
 	power = 2.0;
-	PuffType = MT_PUNCHPUFF;
+	PuffType = PunchPuff;
 	for (i = 0; i < 16; i++)
 	{
 		avcpy(pmo->angles, angles);
@@ -65,12 +65,12 @@ void Weapon::A_FPunchAttack(void)
 			{
 				damage <<= 1;
 				power = 6.0;
-				PuffType = MT_HAMMERPUFF;
+				PuffType = HammerPuff;
 			}
 			AngleVector(&angles, &vforward);
 			if (LineAttack(pmo, &vforward, 2.0 * MELEERANGE, damage))
 			{
-				if (PuffType == MT_HAMMERPUFF)
+				if (PuffType == HammerPuff)
 				{
 					StartSoundName(pmo, 'FighterHammerMiss', CHAN_WEAPON);
 				}
@@ -96,12 +96,12 @@ void Weapon::A_FPunchAttack(void)
 			{
 				damage <<= 1;
 				power = 6.0;
-				PuffType = MT_HAMMERPUFF;
+				PuffType = HammerPuff;
 			}
 			AngleVector(&angles, &vforward);
 			if (LineAttack(pmo, &vforward, 2.0 * MELEERANGE, damage))
 			{
-				if (PuffType == MT_HAMMERPUFF)
+				if (PuffType == HammerPuff)
 				{
 					StartSoundName(pmo, 'FighterHammerMiss', CHAN_WEAPON);
 				}
@@ -164,12 +164,12 @@ void Weapon::A_FAxeAttack(void)
 	{
 		damage <<= 1;
 		power = 6.0;
-		PuffType = MT_AXEPUFF_GLOW;
+		PuffType = AxePuffGlow;
 		useMana = 1;
 	}
 	else
 	{
-		PuffType = MT_AXEPUFF;
+		PuffType = AxePuff;
 		useMana = 0;
 	}
 	for (i = 0; i < 16; i++)
@@ -255,7 +255,7 @@ void Weapon::A_FHammerAttack(void)
 
 	damage = 60 + (P_Random() & 63);
 	power = 10.0;
-	PuffType = MT_HAMMERPUFF;
+	PuffType = HammerPuff;
 	for (i = 0; i < 16; i++)
 	{
 		avcpy(pmo->angles, angles);
@@ -341,7 +341,7 @@ void Weapon::A_FHammerThrow(void)
 	}
 	player->mana[MANA_2] -=
 		WeaponManaUse(player->pclass, player->readyweapon);
-	mo = SpawnPlayerMissile(player->mo, MT_HAMMER_MISSILE);
+	mo = SpawnPlayerMissile(player->mo, HammerMissile);
 	if (mo)
 	{
 		mo->special1 = 0;
@@ -364,18 +364,18 @@ void Weapon::A_FSwordAttack(void)
 		WeaponManaUse(player->pclass, player->readyweapon);
 	pmo = player->mo;
 	SpawnPlayerMissileAngleXYZ(pmo, pmo->origin.x, pmo->origin.y,
-		pmo->origin.z - 10.0, MT_FSWORD_MISSILE,
+		pmo->origin.z - 10.0, FighterSwordMissile,
 		AngleMod360(pmo->angles.yaw + 45.0 / 4.0));
 	SpawnPlayerMissileAngleXYZ(pmo, pmo->origin.x, pmo->origin.y,
-		pmo->origin.z - 5.0, MT_FSWORD_MISSILE,
+		pmo->origin.z - 5.0, FighterSwordMissile,
 		AngleMod360(pmo->angles.yaw + 45.0 / 8.0));
 	SpawnPlayerMissileAngleXYZ(pmo, pmo->origin.x, pmo->origin.y,
-		pmo->origin.z, MT_FSWORD_MISSILE, pmo->angles.yaw);
+		pmo->origin.z, FighterSwordMissile, pmo->angles.yaw);
 	SpawnPlayerMissileAngleXYZ(pmo, pmo->origin.x, pmo->origin.y,
-		pmo->origin.z + 5.0, MT_FSWORD_MISSILE,
+		pmo->origin.z + 5.0, FighterSwordMissile,
 		AngleMod360(pmo->angles.yaw - 45.0 / 8.0));
 	SpawnPlayerMissileAngleXYZ(pmo, pmo->origin.x, pmo->origin.y,
-		pmo->origin.z + 10.0, MT_FSWORD_MISSILE,
+		pmo->origin.z + 10.0, FighterSwordMissile,
 		AngleMod360(pmo->angles.yaw - 45.0 / 4.0));
 	StartSoundName(pmo, 'FighterSwordFire', CHAN_WEAPON);
 }
@@ -394,13 +394,16 @@ void Actor::A_FSwordFlames(void)
 	{
 		P_SpawnMobj(origin.x + (Random() - 0.5) * 16.0,
 			origin.y + (Random() - 0.5) * 16.0,
-			origin.z + (Random() - 0.5) * 8.0, MT_FSWORD_FLAME);
+			origin.z + (Random() - 0.5) * 8.0, FighterSwordFlame);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/17 18:15:55  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.10  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

@@ -45,7 +45,7 @@ void Weapon::A_MWandAttack(void)
 {
 	mobj_t *mo;
 
-	mo = SpawnPlayerMissile(player->mo, MT_MWAND_MISSILE);
+	mo = SpawnPlayerMissile(player->mo, MageWandMissile);
 	if (mo)
 	{
 		mo->blaster = true;
@@ -92,7 +92,7 @@ void Weapon::A_FireConePL1(void)
 	// didn't find any creatures, so fire projectiles
 	if (!conedone)
 	{
-		mo = SpawnPlayerMissile(pmo, MT_SHARDFX1);
+		mo = SpawnPlayerMissile(pmo, ShardMissile);
 		if (mo)
 		{
 			mo->special1 = SHARDSPAWN_LEFT | SHARDSPAWN_DOWN | SHARDSPAWN_UP
@@ -124,7 +124,7 @@ void Actor::A_ShedShard(void)
 	// every so many calls, spawn a new missile in it's set directions
 	if (spawndir & SHARDSPAWN_LEFT)
 	{
-		mo = SpawnMissileAngleSpeed(this, MT_SHARDFX1,
+		mo = SpawnMissileAngleSpeed(this, ShardMissile,
 			angles.yaw + (45.0 / 9.0), 0.0, itof(20 + 2 * spermcount));
 		if (mo)
 		{
@@ -137,7 +137,7 @@ void Actor::A_ShedShard(void)
 	}
 	if (spawndir & SHARDSPAWN_RIGHT)
 	{
-		mo = SpawnMissileAngleSpeed(this, MT_SHARDFX1,
+		mo = SpawnMissileAngleSpeed(this, ShardMissile,
 			angles.yaw - (45.0 / 9.0), 0.0, itof(20 + 2 * spermcount));
 		if (mo)
 		{
@@ -150,7 +150,7 @@ void Actor::A_ShedShard(void)
 	}
 	if (spawndir & SHARDSPAWN_UP)
 	{
-		mo = SpawnMissileAngleSpeed(this, MT_SHARDFX1, angles.yaw,
+		mo = SpawnMissileAngleSpeed(this, ShardMissile, angles.yaw,
 			0.0, itof(15 + 2 * spermcount));
 		if (mo)
 		{
@@ -168,7 +168,7 @@ void Actor::A_ShedShard(void)
 	}
 	if (spawndir & SHARDSPAWN_DOWN)
 	{
-		mo = SpawnMissileAngleSpeed(this, MT_SHARDFX1, angles.yaw,
+		mo = SpawnMissileAngleSpeed(this, ShardMissile, angles.yaw,
 			0.0, itof(15 + 2 * spermcount));
 		if (mo)
 		{
@@ -212,8 +212,8 @@ void A_MLightningAttack2(mobj_t * actor)
 	mobj_t *fmo;
 	mobj_t *cmo;
 
-	fmo = SpawnPlayerMissile(actor, MT_LIGHTNING_FLOOR);
-	cmo = SpawnPlayerMissile(actor, MT_LIGHTNING_CEILING);
+	fmo = SpawnPlayerMissile(actor, LightningFloor);
+	cmo = SpawnPlayerMissile(actor, LightningCeiling);
 	if (fmo)
 	{
 		fmo->specialmobj1 = NULL;
@@ -256,17 +256,17 @@ void Actor::A_LightningClip(void)
 	mobj_t *targ;
 	int zigZag;
 
-	if (Class == MT_LIGHTNING_FLOOR)
+	if (Class == LightningFloor)
 	{
 		origin.z = floorz;
 		targ = specialmobj2->specialmobj1;
 	}
-	else if (Class == MT_LIGHTNING_CEILING)
+	else if (Class == LightningCeiling)
 	{
 		origin.z = ceilingz - Height;
 		targ = specialmobj1;
 	}
-	if (Class == MT_LIGHTNING_FLOOR)
+	if (Class == LightningFloor)
 	{
 		// floor lightning zig-zags, and forces the ceiling lightning to mimic
 		cMo = specialmobj2;
@@ -326,7 +326,7 @@ void Actor::A_LightningZap(void)
 		SetMobjState(this, DeathState);
 		return;
 	}
-	if (Class == MT_LIGHTNING_FLOOR)
+	if (Class == LightningFloor)
 	{
 		deltaZ = 10.0;
 	}
@@ -336,14 +336,14 @@ void Actor::A_LightningZap(void)
 	}
 	mo = P_SpawnMobj(origin.x + (Random() - 0.5) * Radius,
 		origin.y + (Random() - 0.5) * Radius,
-		origin.z + deltaZ, MT_LIGHTNING_ZAP);
+		origin.z + deltaZ, LightningZap);
 	if (mo)
 	{
 		mo->specialmobj2 = this;
 		mo->velocity.x = velocity.x;
 		mo->velocity.y = velocity.y;
 		mo->target = target;
-		if (Class == MT_LIGHTNING_FLOOR)
+		if (Class == LightningFloor)
 		{
 			mo->velocity.z = 20.0 * 35.0;
 		}
@@ -352,7 +352,7 @@ void Actor::A_LightningZap(void)
 			mo->velocity.z = -20.0 * 35.0;
 		}
 	}
-	if (Class == MT_LIGHTNING_FLOOR && P_Random() < 160)
+	if (Class == LightningFloor && P_Random() < 160)
 	{
 		StartSoundName(this, 'MageLightningContinuous', CHAN_VOICE);
 	}
@@ -393,7 +393,7 @@ void Actor::A_LastZap(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_LIGHTNING_ZAP);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, LightningZap);
 	if (mo)
 	{
 		SetMobjState(mo, S_LIGHTNING_ZAP_X1);
@@ -429,7 +429,7 @@ void MStaffSpawn(mobj_t * pmo, float angle)
 {
 	mobj_t *mo;
 
-	mo = SpawnPlayerMissileAngle(pmo, MT_MSTAFF_FX2, angle);
+	mo = SpawnPlayerMissileAngle(pmo, MageStaffFX2, angle);
 	if (mo)
 	{
 		mo->target = pmo;
@@ -531,6 +531,9 @@ void Actor::A_MStaffTrack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/01/17 18:15:55  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.13  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

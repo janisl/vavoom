@@ -103,7 +103,7 @@ void DSparilTeleport(mobj_t * actor)
 	prevZ = actor->origin.z;
 	if (P_TeleportMove(actor, x, y))
 	{
-		mo = P_SpawnMobj(prevX, prevY, prevZ, MT_SOR2TELEFADE);
+		mo = P_SpawnMobj(prevX, prevY, prevZ, Sorcerer2TeleFade);
 		StartSoundName(mo, 'Teleport', CHAN_VOICE);
 		SetMobjState(actor, S_SOR2_TELE1);
 		StartSoundName(actor, 'Teleport', CHAN_VOICE);
@@ -172,7 +172,7 @@ int P_CheckMissileRange(mobj_t * actor)
 		// No melee attack, so fire more frequently
 		dist -= 128.0;
 	}
-	if (actor->Class == MT_IMP)
+	if (actor->Class == Imp)
 	{
 		// Imp's fly attack from far away
 		dist /= 2.0;
@@ -228,7 +228,7 @@ int UpdateChicken(mobj_t * actor, int tics)
 	{
 		// Didn't fit
 		P_RemoveMobj(mo);
-		mo = P_SpawnMobj(x, y, z, MT_CHICKEN);
+		mo = P_SpawnMobj(x, y, z, Chicken);
 		mo->angles.yaw = angle;
 		mo->Flags = flags;
 		mo->Health = health;
@@ -239,7 +239,7 @@ int UpdateChicken(mobj_t * actor, int tics)
 	}
 	mo->angles.yaw = angle;
 	mo->target = target;
-	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, MT_TFOG);
+	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, TeleportFog);
 	StartSoundName(fog, 'Teleport', CHAN_VOICE);
 	return true;
 }
@@ -526,6 +526,9 @@ void P_NewChaseDir(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/17 18:15:53  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.11  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

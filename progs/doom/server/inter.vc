@@ -314,24 +314,21 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 {
 	player_t *player;
 	int i;
-	float delta;
 	name sound;
 
-	delta = special->origin.z - toucher->origin.z;
-
-	if (delta > toucher->Height || delta < -8.0)
+	if (!(toucher->Flags & MF_PICKUP))
 	{
-		// out of reach
+		// can't remove thing
 		return;
 	}
-
-	sound = 'PickupItem';
-	player = toucher->player;
 
 	// Dead thing touching.
 	// Can happen with a sliding player corpse.
 	if (toucher->Health <= 0)
 		return;
+
+	sound = 'PickupItem';
+	player = toucher->player;
 
 	// Identify by sprite.
 	switch (special->sprite)
@@ -620,9 +617,6 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 		sound = 'PickupWeapon';
 		break;
 #endif
-
-	default:
-		Error("P_SpecialThing: Unknown gettable thing");
 	}
 
 	if (special->Flags & MF_COUNTITEM)
@@ -635,6 +629,9 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/17 18:15:52  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.7  2002/01/15 18:26:59  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

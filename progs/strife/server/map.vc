@@ -210,7 +210,7 @@ boolean PIT_ChangeSector(mobj_t * thing)
 		// spray blood in a random direction
 		mo =
 			P_SpawnMobj(thing->origin.x, thing->origin.y,
-			thing->origin.z + thing->Height / 2.0, MT_BLOOD);
+			thing->origin.z + thing->Height / 2.0, Blood);
 		mo->velocity.x = (Random() - Random()) * 16.0 * 35.0;
 		mo->velocity.y = (Random() - Random()) * 16.0 * 35.0;
 	}
@@ -823,6 +823,9 @@ void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage, int distance,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/01/17 18:15:55  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.13  2002/01/15 18:27:01  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

@@ -46,7 +46,7 @@
 #include "world.vc"
 
 #define S_GIBS		S_NULL
-#define MT_BLOOD	MT_PUFF
+#define Blood		Puff
 
 #include "savegame.vc"
 #include "states.vc"
@@ -72,6 +72,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/17 18:15:55  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.10  2002/01/15 18:27:01  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

@@ -195,11 +195,11 @@ void Actor::A_Chase(void)
 	// make active sound
 	if (sound_active && P_Random() < 3)
 	{
-		if (Class == MT_WIZARD && P_Random() < 128)
+		if (Class == Wizard && P_Random() < 128)
 		{
 			StartSound(this, sound_sight, CHAN_VOICE);
 		}
-		else if (Class == MT_SORCERER2)
+		else if (Class == Sorcerer2)
 		{
 			StartSound(NULL, sound_active, CHAN_VOICE);
 		}
@@ -272,13 +272,13 @@ void Actor::A_Scream(void)
 {
 	switch (Class)
 	{
-	case MT_CHICPLAYER:
-	case MT_SORCERER1:
-	case MT_MINOTAUR:
+	case ChickenPlayer:
+	case Sorcerer1:
+	case Minotaur:
 		// Make boss death sounds full volume
 		StartSound(NULL, sound_death, CHAN_VOICE);
 		break;
-	case MT_PLAYER:
+	case PlayerEntity:
 		// Handle the different player death screams
 		if (special1 < 10)
 		{	// Wimpy death sound
@@ -318,14 +318,14 @@ void Actor::A_Explode(void)
 	damage = 128;
 	switch (Class)
 	{
-	case MT_FIREBOMB:	// Time Bombs
+	case FireBomb:	// Time Bombs
 		origin.z += 32.0;
 		Translucency = 0;
 		break;
-	case MT_MNTRFX2:	// Minotaur floor fire
+	case MinotaurFloorFire:	// Minotaur floor fire
 		damage = 24;
 		break;
-	case MT_SOR2FX1:	// D'Sparil missile
+	case Sorcerer2Missile1:	// D'Sparil missile
 		damage = 80 + (P_Random() & 31);
 		break;
 	default:
@@ -333,7 +333,7 @@ void Actor::A_Explode(void)
 	}
 	P_RadiusAttack(this, target, damage, 0, 0);
 	P_HitFloor(this);
-	if (Class == MT_FIREBOMB)
+	if (Class == FireBomb)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion);
@@ -342,7 +342,7 @@ void Actor::A_Explode(void)
 		MSG_WriteShort(ftoi(origin.y));
 		MSG_WriteShort(ftoi(origin.z));
 	}
-	if (Class == MT_POD)
+	if (Class == Pod)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion);
@@ -388,38 +388,36 @@ void Actor::A_NoBlocking(void)
 	// Check for monsters dropping things
 	switch (Class)
 	{
-	case MT_MUMMY:
-	case MT_MUMMYLEADER:
-	case MT_MUMMYGHOST:
-	case MT_MUMMYLEADERGHOST:
-		P_DropItem(this, MT_AMGWNDWIMPY, 3, 84);
+	case Mummy:
+	case MummyLeader:
+	case MummyGhost:
+	case MummyLeaderGhost:
+		P_DropItem(this, ItemAmmoGoldWandWimpy, 3, 84);
 		break;
-	case MT_KNIGHT:
-	case MT_KNIGHTGHOST:
-		P_DropItem(this, MT_AMCBOWWIMPY, 5, 84);
+	case Knight:
+	case KnightGhost:
+		P_DropItem(this, ItemAmmoCrossbowWimpy, 5, 84);
 		break;
-	case MT_WIZARD:
-		P_DropItem(this, MT_AMBLSRWIMPY, 10, 84);
-		P_DropItem(this, MT_ARTITOMEOFPOWER, 0, 4);
+	case Wizard:
+		P_DropItem(this, ItemAmmoBlasterWimpy, 10, 84);
+		P_DropItem(this, ArtifactTomeOfPower, 0, 4);
 		break;
-	case MT_HEAD:
-		P_DropItem(this, MT_AMBLSRWIMPY, 10, 84);
-		P_DropItem(this, MT_ARTIEGG, 0, 51);
+	case Head:
+		P_DropItem(this, ItemAmmoBlasterWimpy, 10, 84);
+		P_DropItem(this, ArtifactEgg, 0, 51);
 		break;
-	case MT_BEAST:
-		P_DropItem(this, MT_AMCBOWWIMPY, 10, 84);
+	case Beast:
+		P_DropItem(this, ItemAmmoCrossbowWimpy, 10, 84);
 		break;
-	case MT_CLINK:
-		P_DropItem(this, MT_AMSKRDWIMPY, 20, 84);
+	case Clink:
+		P_DropItem(this, ItemAmmoSkullRodWimpy, 20, 84);
 		break;
-	case MT_SNAKE:
-		P_DropItem(this, MT_AMPHRDWIMPY, 5, 84);
+	case Snake:
+		P_DropItem(this, ItemAmmoPhoenixWimpy, 5, 84);
 		break;
-	case MT_MINOTAUR:
-		P_DropItem(this, MT_ARTISUPERHEAL, 0, 51);
-		P_DropItem(this, MT_AMPHRDWIMPY, 10, 84);
-		break;
-	default:
+	case Minotaur:
+		P_DropItem(this, ArtifactSuperHeal, 0, 51);
+		P_DropItem(this, ItemAmmoPhoenixWimpy, 10, 84);
 		break;
 	}
 }
@@ -456,7 +454,7 @@ void Actor::A_SkullPop(void)
 	mobj_t *mo;
 
 	Flags &= ~MF_SOLID;
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 48.0, MT_BLOODYSKULL);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 48.0, BloodySkull);
 	mo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
 	mo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
 	mo->velocity.z = (2.0 + Random() / 4.0) * 35.0;
@@ -540,7 +538,7 @@ void Actor::A_BossDeath(void)
 
 	if (!strcmp(mapname, "E1M8"))
 	{
-		if (Class != MT_HEAD)
+		if (Class != Head)
 		{
 			// Not considered a boss in this episode
 			return;
@@ -548,7 +546,7 @@ void Actor::A_BossDeath(void)
 	}
 	else if (!strcmp(mapname, "E2M8"))
 	{
-		if (Class != MT_MINOTAUR)
+		if (Class != Minotaur)
 		{
 			// Not considered a boss in this episode
 			return;
@@ -556,7 +554,7 @@ void Actor::A_BossDeath(void)
 	}
 	else if (!strcmp(mapname, "E3M8"))
 	{
-		if (Class != MT_SORCERER2)
+		if (Class != Sorcerer2)
 		{
 			// Not considered a boss in this episode
 			return;
@@ -564,7 +562,7 @@ void Actor::A_BossDeath(void)
 	}
 	else if (!strcmp(mapname, "E4M8"))
 	{
-		if (Class != MT_HEAD)
+		if (Class != Head)
 		{
 			// Not considered a boss in this episode
 			return;
@@ -572,7 +570,7 @@ void Actor::A_BossDeath(void)
 	}
 	else if (!strcmp(mapname, "E5M8"))
 	{
-		if (Class != MT_MINOTAUR)
+		if (Class != Minotaur)
 		{
 			// Not considered a boss in this episode
 			return;
@@ -613,10 +611,10 @@ void Actor::A_ContMobjSound(void)
 {
 	switch (Class)
 	{
-	case MT_KNIGHTAXE:
+	case KnightAxe:
 		StartSoundName(this, 'KnightAttack1', CHAN_VOICE);
 		break;
-	case MT_MUMMYFX1:
+	case MummyMissile:
 		StartSoundName(this, 'MumyHeadExplode', CHAN_VOICE);
 		break;
 	default:
@@ -627,6 +625,9 @@ void Actor::A_ContMobjSound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/17 18:15:53  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.11  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

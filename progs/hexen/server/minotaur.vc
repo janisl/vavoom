@@ -62,14 +62,15 @@ void Actor::A_Summon(void)
 	mobj_t *mo;
 	mobj_t *master;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_MINOTAUR);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, Minotaur);
 	if (mo)
 	{
 		if (P_TestMobjLocation(mo) == false || !specialmobj1)
 		{
 			// Didn't fit - change back to artifact
 			SetMobjState(mo, S_NULL);
-			mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_SUMMONMAULATOR);
+			mo = P_SpawnMobj(origin.x, origin.y, origin.z,
+				ArtifactSummonMaulator);
 			if (mo)
 				mo->Flags2 |= MF2_DROPPED;
 			return;
@@ -89,7 +90,7 @@ void Actor::A_Summon(void)
 		}
 
 		// Make smoke puff
-		P_SpawnMobj(origin.x, origin.y, origin.z, MT_MNTRSMOKE);
+		P_SpawnMobj(origin.x, origin.y, origin.z, MinotaurSmoke);
 		StartSoundName(this, 'MaulatorActive', CHAN_VOICE);
 	}
 }
@@ -154,7 +155,7 @@ void Actor::A_MinotaurLook(void)
 				continue;
 			if ((mo == master) || (mo == this))
 				continue;
-			if ((mo->Class == MT_MINOTAUR) &&
+			if ((mo->Class == Minotaur) &&
 				(mo->specialmobj1 == specialmobj1)) continue;
 			target = mo;
 			break;	// Found mobj to attack
@@ -361,19 +362,19 @@ void Actor::A_MinotaurAtk2(void)
 		target->Damage(this, this, HITDICE(3));
 		return;
 	}
-	mo = SpawnMissile(this, target, MT_MNTRFX1);
+	mo = SpawnMissile(this, target, MinotaurMissile);
 	if (mo)
 	{
 		//StartSoundName(mo, sfx_minat2);
 		momz = mo->velocity.z * frametime;
 		angle = mo->angles.yaw;
-		SpawnMissileAngle(this, MT_MNTRFX1,
+		SpawnMissileAngle(this, MinotaurMissile,
 			AngleMod360(angle - (45.0 / 8.0)), momz);
-		SpawnMissileAngle(this, MT_MNTRFX1,
+		SpawnMissileAngle(this, MinotaurMissile,
 			AngleMod360(angle + (45.0 / 8.0)), momz);
-		SpawnMissileAngle(this, MT_MNTRFX1,
+		SpawnMissileAngle(this, MinotaurMissile,
 			AngleMod360(angle - (45.0 / 16.0)), momz);
-		SpawnMissileAngle(this, MT_MNTRFX1,
+		SpawnMissileAngle(this, MinotaurMissile,
 			AngleMod360(angle + (45.0 / 16.0)), momz);
 	}
 }
@@ -405,7 +406,7 @@ void Actor::A_MinotaurAtk3(void)
 	}
 	else
 	{
-		mo = SpawnMissile(this, target, MT_MNTRFX2);
+		mo = SpawnMissile(this, target, MinotaurFloorFire1);
 		if (mo != NULL)
 		{
 			StartSoundName(mo, 'MaulatorHamHit', CHAN_VOICE);
@@ -433,7 +434,7 @@ void Actor::A_MinotaurCharge(void)
 
 	if (args[4] > 0)
 	{
-		puff = P_SpawnMobj(origin.x, origin.y, origin.z, MT_PUNCHPUFF);
+		puff = P_SpawnMobj(origin.x, origin.y, origin.z, PunchPuff);
 		puff->velocity.z = 2.0 * 35.0;
 		args[4]--;
 	}
@@ -491,7 +492,7 @@ void Actor::A_MntrFloorFire(void)
 
 	origin.z = floorz;
 	mo = P_SpawnMobj(origin.x + (Random() - Random()) * 4.0,
-		origin.y + (Random() - Random()) * 4.0, ONFLOORZ, MT_MNTRFX3);
+		origin.y + (Random() - Random()) * 4.0, ONFLOORZ, MinotaurFloorFire2);
 	mo->target = target;
 	mo->velocity.x = 0.00001;	// Force block checking
 	CheckMissileSpawn(mo);
@@ -505,12 +506,15 @@ void Actor::A_MntrFloorFire(void)
 
 void Actor::A_SmokePuffExit(void)
 {
-	P_SpawnMobj(origin.x, origin.y, origin.z, MT_MNTRSMOKEEXIT);
+	P_SpawnMobj(origin.x, origin.y, origin.z, MinotaurSmokeExit);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/01/17 18:15:54  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.13  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

@@ -82,14 +82,14 @@ void Actor::A_WizAtk3(void)
 		target->Damage(this, this, HITDICE(4));
 		return;
 	}
-	mo = SpawnMissile(this, target, MT_WIZFX1);
+	mo = SpawnMissile(this, target, WizardMissile);
 	if (mo)
 	{
 		VectorAngles(&mo->velocity, &ang);
 		angle = mo->angles.yaw;
-		SpawnMissileAngles(this, MT_WIZFX1,
+		SpawnMissileAngles(this, WizardMissile,
 			AngleMod360(angle - (45.0 / 8.0)), ang.pitch);
-		SpawnMissileAngles(this, MT_WIZFX1,
+		SpawnMissileAngles(this, WizardMissile,
 			AngleMod360(angle + (45.0 / 8.0)), ang.pitch);
 	}
 }
@@ -108,6 +108,9 @@ void Actor::A_GhostOff(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/17 18:15:54  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.10  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

@@ -48,7 +48,7 @@ void Actor::A_PotteryExplode(void)
 
 	for (i = (P_Random() & 3) + 3; i; i--)
 	{
-		mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_POTTERYBIT1);
+		mo = P_SpawnMobj(origin.x, origin.y, origin.z, PotteryBit);
 		SetMobjState(mo, mo->SpawnState + (P_Random() % 5));
 		if (mo)
 		{
@@ -111,6 +111,9 @@ void Actor::A_PotteryCheck(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/17 18:15:55  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.10  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

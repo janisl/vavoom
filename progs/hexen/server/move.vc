@@ -109,7 +109,7 @@ boolean PIT_CheckThing(mobj_t * thing)
 	if (tmthing->Flags2 & MF2_PASSMOBJ)
 	{
 		// check if a mobj passed over/under another object
-		if (tmthing->Class == MT_BISHOP && thing->Class == MT_BISHOP)
+		if (tmthing->Class == Bishop && thing->Class == Bishop)
 		{
 			// don't let bishops fly over other bishops
 			return false;
@@ -335,21 +335,20 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 		return true;
 
 	BlockingMobj = thing;
-	if (tmthing->Flags2 & MF2_PASSMOBJ)
+	if ((tmthing->Flags & MF_MISSILE) || (tmthing->Flags2 & MF2_PASSMOBJ) ||
+		(thing->Flags & MF_SPECIAL))
 	{
 		// check if a mobj passed over/under another object
-		if (tmthing->Class == MT_BISHOP && thing->Class == MT_BISHOP)
+		if (tmthing->Class == Bishop && thing->Class == Bishop)
 		{
 			// don't let bishops fly over other bishops
 			return false;
 		}
-		if (tmthing->origin.z >= thing->origin.z + thing->Height
-			&& !(thing->Flags & MF_SPECIAL))
+		if (tmthing->origin.z >= thing->origin.z + thing->Height)
 		{
 			return true;
 		}
-		else if (tmthing->origin.z + tmthing->Height < thing->origin.z
-			&& !(thing->Flags & MF_SPECIAL))
+		if (tmthing->origin.z + tmthing->Height < thing->origin.z)
 		{
 			// under thing
 			return true;
@@ -358,7 +357,7 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 	// Check for skulls slamming into things
 	if (tmthing->Flags & MF_SKULLFLY)
 	{
-		if (tmthing->Class == MT_MINOTAUR)
+		if (tmthing->Class == Minotaur)
 		{
 			// Slamming minotaurs shouldn't move non-creatures
 			if (!(thing->Flags & MF_COUNTKILL))
@@ -366,7 +365,7 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 				return false;
 			}
 		}
-		else if (tmthing->Class == MT_HOLY_FX)
+		else if (tmthing->Class == HolyFX)
 		{
 			if (thing->Flags & MF_SHOOTABLE && thing != tmthing->target)
 			{
@@ -399,15 +398,15 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 					if (P_Random() < 128)
 					{
 						P_SpawnMobj(tmthing->origin.x, tmthing->origin.y,
-							tmthing->origin.z, MT_HOLY_PUFF);
+							tmthing->origin.z, HolyPuff);
 						StartSoundName(tmthing, 'SpiritAttack', CHAN_VOICE);
 						if (thing->Flags & MF_COUNTKILL && P_Random() < 128
 							&& !GetSoundPlayingInfo(thing,
 								GetSoundID('PuppyBeat')))
 						{
-							if ((thing->Class == MT_CENTAUR) ||
-								(thing->Class == MT_CENTAURLEADER) ||
-								(thing->Class == MT_ETTIN))
+							if ((thing->Class == Centaur) ||
+								(thing->Class == CentaurLeader) ||
+								(thing->Class == Ettin))
 							{
 								StartSoundName(thing, 'PuppyBeat',
 									CHAN_VOICE);
@@ -455,15 +454,6 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 		{
 			return true;
 		}
-		// Check if it went over / under
-		if (tmthing->origin.z > thing->origin.z + thing->Height)
-		{	// Over thing
-			return true;
-		}
-		if (tmthing->origin.z + tmthing->Height < thing->origin.z)
-		{	// Under thing
-			return true;
-		}
 		if (tmthing->Flags2 & MF2_FLOORBOUNCE)
 		{
 			if (tmthing->target == thing || !(thing->Flags & MF_SOLID))
@@ -475,8 +465,8 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 				return false;
 			}
 		}
-		if (tmthing->Class == MT_LIGHTNING_FLOOR
-			|| tmthing->Class == MT_LIGHTNING_CEILING)
+		if (tmthing->Class ==  LightningFloor
+			|| tmthing->Class == LightningCeiling)
 		{
 			if (thing->Flags & MF_SHOOTABLE && thing != tmthing->target)
 			{
@@ -488,8 +478,8 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 				if ((!thing->player && !(thing->Flags2 & MF2_BOSS))
 					|| !(level->tictime & 1))
 				{
-					if (thing->Class == MT_CENTAUR
-						|| thing->Class == MT_CENTAURLEADER)
+					if (thing->Class ==	Centaur
+						|| thing->Class == CentaurLeader)
 					{	// Lightning does more damage to centaurs
 						thing->Damage(tmthing, tmthing->target, 9);
 					}
@@ -507,9 +497,9 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 						&& !GetSoundPlayingInfo(thing,
 							GetSoundID('PuppyBeat')))
 					{
-						if ((thing->Class == MT_CENTAUR) ||
-							(thing->Class == MT_CENTAURLEADER) ||
-							(thing->Class == MT_ETTIN))
+						if ((thing->Class == Centaur) ||
+							(thing->Class == CentaurLeader) ||
+							(thing->Class == Ettin))
 						{
 							StartSoundName(thing, 'PuppyBeat', CHAN_VOICE);
 						}
@@ -520,7 +510,7 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 				{
 					return false;
 				}
-				if (tmthing->Class == MT_LIGHTNING_FLOOR)
+				if (tmthing->Class == LightningFloor)
 				{
 					if (tmthing->specialmobj2 &&
 						!tmthing->specialmobj2->specialmobj1)
@@ -535,7 +525,7 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 			}
 			return true;	// lightning zaps through all sprites
 		}
-		else if (tmthing->Class == MT_LIGHTNING_ZAP)
+		else if (tmthing->Class == LightningZap)
 		{
 			mobj_t *lmo;
 
@@ -544,7 +534,7 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 				lmo = tmthing->specialmobj2;
 				if (lmo)
 				{
-					if (lmo->Class == MT_LIGHTNING_FLOOR)
+					if (lmo->Class == LightningFloor)
 					{
 						if (lmo->specialmobj2 &&
 							!lmo->specialmobj2->specialmobj1)
@@ -563,20 +553,19 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 				}
 			}
 		}
-		else if (tmthing->Class == MT_MSTAFF_FX2 && thing != tmthing->target)
+		else if (tmthing->Class == MageStaffFX2 && thing != tmthing->target)
 		{
 			if (!thing->player && !(thing->Flags2 & MF2_BOSS))
 			{
 				switch (thing->Class)
 				{
-				case MT_FIGHTER_BOSS:	// these not flagged boss
-				case MT_CLERIC_BOSS:	// so they can be blasted
-				case MT_MAGE_BOSS:
+				case FighterBoss:	// these not flagged boss
+				case ClericBoss:	// so they can be blasted
+				case MageBoss:
 					break;
 				default:
 					thing->Damage(tmthing, tmthing->target, 10);
 					return true;
-					break;
 				}
 			}
 		}
@@ -626,11 +615,11 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 			if (!(thing->Flags & MF_NOBLOOD) &&
 				!(thing->Flags2 & MF2_REFLECTIVE) &&
 				!(thing->Flags2 & MF2_INVULNERABLE) &&
-				!(tmthing->Class == MT_TELOTHER_FX1) &&
-				!(tmthing->Class == MT_TELOTHER_FX2) &&
-				!(tmthing->Class == MT_TELOTHER_FX3) &&
-				!(tmthing->Class == MT_TELOTHER_FX4) &&
-				!(tmthing->Class == MT_TELOTHER_FX5) && (P_Random() < 192))
+				!(tmthing->Class == TeleportOtherFX1) &&
+				!(tmthing->Class == TeleportOtherFX2) &&
+				!(tmthing->Class == TeleportOtherFX3) &&
+				!(tmthing->Class == TeleportOtherFX4) &&
+				!(tmthing->Class == TeleportOtherFX5) && (P_Random() < 192))
 			{
 				P_BloodSplatter(tmthing->origin.x, tmthing->origin.y,
 					tmthing->origin.z, thing);
@@ -649,11 +638,7 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 	if (thing->Flags & MF_SPECIAL)
 	{
 		solid = thing->Flags & MF_SOLID;
-		if (tmthing->Flags & MF_PICKUP)
-		{
-			// Can be picked up by tmthing
-			P_TouchSpecialThing(thing, tmthing);	// Can remove thing
-		}
+		P_TouchSpecialThing(thing, tmthing);	// Can remove thing
 		return !solid;
 	}
 	return !(thing->Flags & MF_SOLID);
@@ -990,7 +975,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 
 		if (!(thing->Flags & MF_TELEPORT) &&
 			tmceilingz - thing->origin.z < thing->Height &&
-			thing->Class != MT_LIGHTNING_CEILING && !(thing->Flags2 & MF2_FLY))
+			thing->Class != LightningCeiling && !(thing->Flags2 & MF2_FLY))
 		{
 			// mobj must lower itself to fit
 			PushLine(thing);
@@ -1013,8 +998,8 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 			}
 		}
 		if (!(thing->Flags & MF_TELEPORT)
-			// The Minotaur floor fire (MT_MNTRFX2) can step up any amount
-			&& thing->Class != MT_MNTRFX2 && thing->Class != MT_LIGHTNING_FLOOR
+			// The Minotaur floor fire (MinotaurFloorFire1) can step up any amount
+			&& thing->Class != MinotaurFloorFire1 && thing->Class != LightningFloor
 			&& tmfloorz - thing->origin.z > 24.0)
 		{
 			PushLine(thing);
@@ -1181,6 +1166,9 @@ boolean P_Move(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/17 18:15:55  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.11  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

@@ -78,7 +78,7 @@ void Actor::A_MummyAttack2(void)
 		target->Damage(this, this, HITDICE(2));
 		return;
 	}
-	mo = SpawnMissile(this, target, MT_MUMMYFX1);
+	mo = SpawnMissile(this, target, MummyMissile);
 	if (mo)
 	{
 		mo->specialmobj1 = target;
@@ -95,7 +95,7 @@ void Actor::A_MummySoul(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 10.0, MT_MUMMYSOUL);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 10.0, MummySoul);
 	mo->velocity.z = 1.0 * 35.0;
 }
 
@@ -113,6 +113,9 @@ void Actor::A_MummyFX1Seek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/17 18:15:53  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.9  2002/01/11 18:19:41  dj_jl
 //  Started to use names in progs
 //

@@ -548,7 +548,7 @@ void KillMobj(mobj_t * source, mobj_t * target)
 
 	target->Flags &= ~(MF_SHOOTABLE | MF_FLOAT | MF_SKULLFLY);
 
-	if (target->Class != MT_SKULL)
+	if (target->Class != LostSoul)
 		target->Flags &= ~MF_NOGRAVITY;
 
 	target->Flags |= MF_CORPSE | MF_DROPOFF;
@@ -624,17 +624,17 @@ void KillMobj(mobj_t * source, mobj_t * target)
 	// during the death frame of a thing.
 	switch (target->Class)
 	{
-	case MT_WOLFSS:
-	case MT_POSSESSED:
-		item = MT_CLIP;
+	case WolfSS:
+	case Zombieman:
+		item = ItemAmmoBulletClip;
 		break;
 
-	case MT_SHOTGUY:
-		item = MT_SHOTGUN;
+	case ShotgunGuy:
+		item = ItemWeaponShotgun;
 		break;
 
-	case MT_CHAINGUY:
-		item = MT_CHAINGUN;
+	case ChaingunGuy:
+		item = ItemWeaponChaingun;
 		break;
 
 	default:
@@ -748,8 +748,8 @@ void Actor::Damage(Actor * inflictor, Actor * source, int damage)
 
 	ReactionCount = 0;	// we're awake now...
 
-	if ((!threshold || Class == MT_VILE)
-		&& source && source != this && source->Class != MT_VILE)
+	if ((!threshold || Class == ArchVile)
+		&& source && source != this && source->Class != ArchVile)
 	{
 		// if not intent on another player,
 		// chase after this one
@@ -772,7 +772,8 @@ void Actor::Damage(Actor * inflictor, Actor * source, int damage)
 void P_RemoveMobj(mobj_t * mobj)
 {
 	if ((mobj->Flags & MF_SPECIAL) && !(mobj->Flags & MF_DROPPED)
-		&& (mobj->Class != MT_INV) && (mobj->Class != MT_INS))
+		&& (mobj->Class != ItemInvulnerability) &&
+		(mobj->Class != ItemInvisibility))
 	{
 		CopyMThing(&mobj->spawnpoint, &itemrespawnque[iquehead]);
 		itemrespawntime[iquehead] = level->tictime;
@@ -822,7 +823,7 @@ void P_RespawnSpecials(void)
 	y = mthing->y;
 
 	// spawn a teleport fog at the new spot
-	mo = P_SpawnMobj(x, y, ONFLOORZ, MT_IFOG);
+	mo = P_SpawnMobj(x, y, ONFLOORZ, ItemRespawnFog);
 	StartSoundName(mo, 'ItemRespawn', CHAN_ITEM);
 
 	// find which type to spawn
@@ -871,13 +872,13 @@ void P_NightmareRespawn(mobj_t * mobj)
 
 	// spawn a teleport fog at old spot
 	// because of removal of the body?
-	mo = P_SpawnMobj(mobj->origin.x, mobj->origin.y, ONFLOORZ, MT_TFOG);
+	mo = P_SpawnMobj(mobj->origin.x, mobj->origin.y, ONFLOORZ, TeleportFog);
 
 	// initiate teleport sound
 	StartSoundName(mo, 'Teleport', CHAN_BODY);
 
 	// spawn a teleport fog at the new spot
-	mo = P_SpawnMobj(x, y, ONFLOORZ, MT_TFOG);
+	mo = P_SpawnMobj(x, y, ONFLOORZ, TeleportFog);
 
 	StartSoundName(mo, 'Teleport', CHAN_BODY);
 
@@ -916,12 +917,12 @@ int CanActivateCross(mobj_t * thing)
 {
 	switch (thing->Class)
 	{
-	case MT_ROCKET:
-	case MT_PLASMA:
-	case MT_BFG:
-	case MT_TROOPSHOT:
-	case MT_HEADSHOT:
-	case MT_BRUISERSHOT:
+	case Rocket:
+	case PlasmaShot:
+	case BFGShot:
+	case ImpMissile:
+	case CacodemonMissile:
+	case BruiserShot:
 		return false;
 	}
 	return true;
@@ -1007,6 +1008,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/01/17 18:15:53  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.21  2002/01/15 18:26:59  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

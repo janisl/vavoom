@@ -349,13 +349,14 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 		return true;
 
 	BlockingMobj = thing;
-	if (tmthing->Flags & MF_MISSILE || !(thing->Flags & MF_SPECIAL))
+	// see if it went over / under
+	if (tmthing->origin.z >= thing->origin.z + thing->Height)
 	{
-		// see if it went over / under
-		if (tmthing->origin.z >= thing->origin.z + thing->Height)
-			return true;	// overhead
-		if (tmthing->origin.z + tmthing->Height < thing->origin.z)
-			return true;	// underneath
+		return true;	// overhead
+	}
+	if (tmthing->origin.z + tmthing->Height < thing->origin.z)
+	{
+		return true;	// underneath
 	}
 
 	// check for skulls slamming into things
@@ -373,16 +374,16 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 	if (tmthing->Flags & MF_MISSILE)
 	{
 		if (tmthing->target && (tmthing->target->Class == thing->Class ||
-				(tmthing->target->Class == MT_KNIGHT
-					&& thing->Class == MT_BRUISER)
-				|| (tmthing->target->Class == MT_BRUISER
-					&& thing->Class == MT_KNIGHT)))
+				(tmthing->target->Class == HellKnight
+					&& thing->Class == BaronOfHell)
+				|| (tmthing->target->Class == BaronOfHell
+					&& thing->Class == HellKnight)))
 		{
 			// Don't hit same species as originator.
 			if (thing == tmthing->target)
 				return true;
 
-			if (thing->Class != MT_PLAYER)
+			if (thing->Class != PlayerEntity)
 			{
 				// Explode, but do no damage.
 				// Let players missile other players.
@@ -407,11 +408,7 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 	if (thing->Flags & MF_SPECIAL)
 	{
 		solid = thing->Flags & MF_SOLID;
-		if (tmthing->Flags & MF_PICKUP)
-		{
-			// can remove thing
-			P_TouchSpecialThing(thing, tmthing);
-		}
+		P_TouchSpecialThing(thing, tmthing);
 		return !solid;
 	}
 
@@ -820,6 +817,9 @@ boolean P_Move(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/17 18:15:53  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.8  2002/01/15 18:26:59  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

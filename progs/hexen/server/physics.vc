@@ -289,8 +289,7 @@ boolean PTR_BounceTraverse(intercept_t * in)
 	{
 		hit_point = slideorg + in->frac * slidedir;
 		open = LineOpenings(li, hit_point);	// set openrange, opentop, openbottom
-		open =
-			FindOpening(open, slidemo.origin.z,
+		open = FindOpening(open, slidemo.origin.z,
 			slidemo.origin.z + slidemo.Height);
 		if (open && open->range >= slidemo.Height &&	// fits
 			open->top - slidemo.origin.z >= slidemo.Height)	// mobj is not too high
@@ -351,9 +350,13 @@ void Actor::BounceWall(void)
 	bestslidefrac = 1.00001;
 	slideorg = vector(leadx, leady, origin.z);
 	slidedir = velocity * frametime;
+	bestslideline = NULL;
 	P_PathTraverse(leadx, leady, leadx + slidedir.x, leady + slidedir.y,
 		PT_ADDLINES, PTR_BounceTraverse);
-	velocity = ClipVelocity(velocity * 0.75, bestslideline->normal, 2.0);
+	if (bestslideline)
+	{
+		velocity = ClipVelocity(velocity * 0.75, bestslideline->normal, 2.0);
+	}
 }
 
 //**************************************************************************
@@ -439,7 +442,7 @@ void Actor::UpdateVelocity(void)
 		!(Flags2 & MF2_FLY) && !(Flags2 & MF2_ONMOBJ))
 	{
 		// No friction when falling
-		if (Class != MT_BLASTEFFECT)
+		if (Class != BlastEffect)
 			return;
 	}
 
@@ -558,21 +561,21 @@ boolean Actor::HitMobj(void)
 			// Change angle for delflection/reflection
 			switch (BlockingMobj->Class)
 			{
-			case MT_CENTAUR:
-			case MT_CENTAURLEADER:
+			case Centaur:
+			case CentaurLeader:
 				if (fabs(AngleMod180(angle -
 					BlockingMobj->angles.yaw)) > 45.0 * 45.0 / 32.0)
 				{
 					explode = true;
 					break;
 				}
-				if (Class == MT_HOLY_FX)
+				if (Class == HolyFX)
 				{
 					explode = true;
 					break;
 				}
 				// Drop through to sorcerer full reflection
-			case MT_SORCBOSS:
+			case Sorcerer:
 				// Deflection
 				if (P_Random() < 128)
 					angle = AngleMod360(angle + 45.0);
@@ -649,10 +652,10 @@ boolean Actor::HitLine(void)
 			BounceWall();
 			switch (Class)
 			{
-			case MT_SORCBALL1:
-			case MT_SORCBALL2:
-			case MT_SORCBALL3:
-			case MT_SORCFX1:
+			case SorcererBall1:
+			case SorcererBall2:
+			case SorcererBall3:
+			case SorcererFX1:
 				break;
 			default:
 				if (sound_sight)
@@ -669,12 +672,12 @@ boolean Actor::HitLine(void)
 			&& ceilingline->backsector->ceiling.pic == skyflatnum)
 		{
 			// Hack to prevent missiles exploding against the sky
-			if (Class == MT_BLOODYSKULL)
+			if (Class == BloodySkull)
 			{
 				velocity.x = velocity.y = 0.0;
 				velocity.z = -1.0 * 35.0;
 			}
-			else if (Class == MT_HOLY_FX)
+			else if (Class == HolyFX)
 			{
 				if (!P_ExplodeMissile(this))
 				{
@@ -981,14 +984,14 @@ boolean Actor::HitFloor(void)
 			P_FloorBounceMissile(this);
 			return true;
 		}
-		else if (Class == MT_HOLY_FX)
+		else if (Class == HolyFX)
 		{
 			// The spirit struck the ground
 			velocity.z = 0.0;
 			P_HitFloor(this);
 			return true;
 		}
-		else if (Class == MT_MNTRFX2 || Class == MT_LIGHTNING_FLOOR)
+		else if (Class == MinotaurFloorFire1 || Class == LightningFloor)
 		{
 			// Minotaur floor fire can go up steps
 			return true;
@@ -1066,7 +1069,7 @@ boolean Actor::HitFloor(void)
 //FIXME				player->centering = true;
 			}
 		}
-		else if (Class == MT_POTTERY1 || Class == MT_POTTERY2 || Class == MT_POTTERY3)
+		else if (Class == Pottery1 || Class == Pottery2 || Class == Pottery3)
 		{
 			Damage(NULL, NULL, 25);
 		}
@@ -1120,18 +1123,18 @@ boolean Actor::HitCeiling(void)
 			}
 			return true;
 		}
-		if (Class == MT_LIGHTNING_CEILING)
+		if (Class == LightningCeiling)
 		{
 			return true;
 		}
 		if (ceiling->pic == skyflatnum)
 		{
-			if (Class == MT_BLOODYSKULL)
+			if (Class == BloodySkull)
 			{
 				velocity.x = velocity.y = 0.0;
 				velocity.z = -1.0 * 35.0;
 			}
-			else if (Class == MT_HOLY_FX)
+			else if (Class == HolyFX)
 			{
 				return P_ExplodeMissile(this);
 			}
@@ -1314,16 +1317,16 @@ boolean Actor::BlasterPhysics(void)
 			}
 			if (changexy)
 			{
-				if (Class == MT_MWAND_MISSILE && (P_Random() < 128))
+				if (Class == MageWandMissile && (P_Random() < 128))
 				{
 					z = origin.z - 8.0;
 					if (z < floorz)
 					{
 						z = floorz;
 					}
-					P_SpawnMobj(origin.x, origin.y, z, MT_MWANDSMOKE);
+					P_SpawnMobj(origin.x, origin.y, z, MageWandSmoke);
 				}
-				else if (Class != MT_MWAND_MISSILE && !--special1)
+				else if (Class != MageWandMissile && !--special1)
 				{
 					special1 = 4;
 					z = origin.z - 12.0;
@@ -1331,7 +1334,7 @@ boolean Actor::BlasterPhysics(void)
 					{
 						z = floorz;
 					}
-					mo = P_SpawnMobj(origin.x, origin.y, z, MT_CFLAMEFLOOR);
+					mo = P_SpawnMobj(origin.x, origin.y, z, ClericFlameFloor);
 					if (mo)
 					{
 						mo->angles.yaw = angles.yaw;
@@ -1480,6 +1483,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/01/17 18:15:55  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.16  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

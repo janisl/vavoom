@@ -166,7 +166,7 @@ void Actor::A_SerpentChase(void)
 
 void Actor::A_SerpentHumpDecide(void)
 {
-	if (Class == MT_SERPENTLEADER)
+	if (Class == SerpentLeader)
 	{
 		if (P_Random() > 30)
 		{
@@ -186,7 +186,7 @@ void Actor::A_SerpentHumpDecide(void)
 	if (!CheckMeleeRange(this))
 	{
 		// The hump shouldn't occur when within melee range
-		if (Class == MT_SERPENTLEADER && P_Random() < 128)
+		if (Class == SerpentLeader && P_Random() < 128)
 		{
 			SetMobjState(this, S_SERPENT_SURFACE1);
 		}
@@ -293,7 +293,7 @@ void Actor::A_SerpentCheckForAttack(void)
 	{
 		return;
 	}
-	if (Class == MT_SERPENTLEADER)
+	if (Class == SerpentLeader)
 	{
 		if (!CheckMeleeRange(this))
 		{
@@ -444,7 +444,7 @@ void Actor::A_SerpentChooseAttack(void)
 	{
 		return;
 	}
-	if (Class == MT_SERPENTLEADER)
+	if (Class == SerpentLeader)
 	{
 		SetMobjState(this, S_SERPENT_MISSILE1);
 	}
@@ -487,7 +487,7 @@ void Actor::A_SerpentMissileAttack(void)
 	{
 		return;
 	}
-	mo = SpawnMissile(this, target, MT_SERPENTFX);
+	mo = SpawnMissile(this, target, SerpentMissile);
 }
 
 //============================================================================
@@ -498,7 +498,7 @@ void Actor::A_SerpentMissileAttack(void)
 
 void Actor::A_SerpentHeadPop(void)
 {
-	P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, MT_SERPENT_HEAD);
+	P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, SerpentHead);
 }
 
 //============================================================================
@@ -513,7 +513,7 @@ void Actor::A_SerpentSpawnGibs(void)
 
 	mo = P_SpawnMobj(origin.x + (Random() - 0.5) * 16.0,
 		origin.y + (Random() - 0.5) * 16.0, floorz + 1.0,
-		MT_SERPENT_GIB1);
+		SerpentGib1);
 	if (mo)
 	{
 		mo->velocity.x = (Random() - 0.5) / 4.0 * 35.0;
@@ -522,7 +522,7 @@ void Actor::A_SerpentSpawnGibs(void)
 	}
 	mo = P_SpawnMobj(origin.x + (Random() - 0.5) * 16.0,
 		origin.y + (Random() - 0.5) * 16.0, floorz + 1.0,
-		MT_SERPENT_GIB2);
+		SerpentGib2);
 	if (mo)
 	{
 		mo->velocity.x = (Random() - 0.5) / 4.0 * 35.0;
@@ -531,7 +531,7 @@ void Actor::A_SerpentSpawnGibs(void)
 	}
 	mo = P_SpawnMobj(origin.x + (Random() - 0.5) * 16.0,
 		origin.y + (Random() - 0.5) * 16.0, floorz + 1.0,
-		MT_SERPENT_GIB3);
+		SerpentGib3);
 	if (mo)
 	{
 		mo->velocity.x = (Random() - 0.5) / 4.0 * 35.0;
@@ -598,6 +598,9 @@ void Actor::A_DelayGib(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/17 18:15:55  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.11  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

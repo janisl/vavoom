@@ -29,7 +29,7 @@ int nummobjtypes = 316;
 
 mobjinfo_t mobjinfo[] =
 {
-	// MT_0
+	// Thing0
 	{
 		25, //doomednum
 		1295, //spawnstate
@@ -58,7 +58,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_1
+	// PlayerEntity
 	{
 		-1, //doomednum
 		289, //spawnstate
@@ -87,7 +87,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_2
+	// Weapon_Smith
 	{
 		116, //doomednum
 		322, //spawnstate
@@ -116,7 +116,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Weapon_Smith" //classname
 	},
-	// MT_3
+	// Bar_Keep
 	{
 		72, //doomednum
 		322, //spawnstate
@@ -145,7 +145,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Bar_Keep" //classname
 	},
-	// MT_4
+	// Amorer
 	{
 		73, //doomednum
 		322, //spawnstate
@@ -174,7 +174,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Amorer" //classname
 	},
-	// MT_5
+	// Medic
 	{
 		74, //doomednum
 		322, //spawnstate
@@ -203,7 +203,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Medic" //classname
 	},
-	// MT_6
+	// Thing6
 	{
 		3004, //doomednum
 		385, //spawnstate
@@ -232,7 +232,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_7
+	// Thing7
 	{
 		130, //doomednum
 		385, //spawnstate
@@ -261,7 +261,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_8
+	// Thing8
 	{
 		131, //doomednum
 		385, //spawnstate
@@ -290,7 +290,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_9
+	// Thing9
 	{
 		65, //doomednum
 		385, //spawnstate
@@ -319,7 +319,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_10
+	// Thing10
 	{
 		132, //doomednum
 		385, //spawnstate
@@ -348,7 +348,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_11
+	// Thing11
 	{
 		133, //doomednum
 		385, //spawnstate
@@ -377,7 +377,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_12
+	// Thing12
 	{
 		66, //doomednum
 		385, //spawnstate
@@ -406,7 +406,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_13
+	// Thing13
 	{
 		134, //doomednum
 		385, //spawnstate
@@ -435,7 +435,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_14
+	// Thing14
 	{
 		135, //doomednum
 		385, //spawnstate
@@ -464,7 +464,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_15
+	// Thing15
 	{
 		67, //doomednum
 		385, //spawnstate
@@ -493,7 +493,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_16
+	// Thing16
 	{
 		136, //doomednum
 		385, //spawnstate
@@ -522,7 +522,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_17
+	// Thing17
 	{
 		137, //doomednum
 		385, //spawnstate
@@ -551,7 +551,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_18
+	// Thing18
 	{
 		172, //doomednum
 		385, //spawnstate
@@ -580,7 +580,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_19
+	// Thing19
 	{
 		173, //doomednum
 		385, //spawnstate
@@ -609,7 +609,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_20
+	// Thing20
 	{
 		174, //doomednum
 		385, //spawnstate
@@ -638,7 +638,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_21
+	// Thing21
 	{
 		175, //doomednum
 		385, //spawnstate
@@ -667,7 +667,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_22
+	// Thing22
 	{
 		176, //doomednum
 		385, //spawnstate
@@ -696,7 +696,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_23
+	// Thing23
 	{
 		177, //doomednum
 		385, //spawnstate
@@ -725,7 +725,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_24
+	// Thing24
 	{
 		178, //doomednum
 		385, //spawnstate
@@ -754,7 +754,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_25
+	// Thing25
 	{
 		179, //doomednum
 		385, //spawnstate
@@ -783,7 +783,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_26
+	// Thing26
 	{
 		180, //doomednum
 		385, //spawnstate
@@ -812,7 +812,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_27
+	// Thing27
 	{
 		181, //doomednum
 		385, //spawnstate
@@ -841,7 +841,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_28
+	// Thing28
 	{
 		169, //doomednum
 		420, //spawnstate
@@ -870,7 +870,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_29
+	// Thing29
 	{
 		201, //doomednum
 		422, //spawnstate
@@ -899,7 +899,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_30
+	// Thing30
 	{
 		170, //doomednum
 		424, //spawnstate
@@ -928,7 +928,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_31
+	// Thing31
 	{
 		209, //doomednum
 		426, //spawnstate
@@ -957,7 +957,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_32
+	// Thing32
 	{
 		210, //doomednum
 		429, //spawnstate
@@ -986,7 +986,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_33
+	// Thing33
 	{
 		211, //doomednum
 		432, //spawnstate
@@ -1015,7 +1015,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_34
+	// Thing34
 	{
 		213, //doomednum
 		435, //spawnstate
@@ -1044,7 +1044,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_35
+	// Thing35
 	{
 		214, //doomednum
 		438, //spawnstate
@@ -1073,7 +1073,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_36
+	// Thing36
 	{
 		229, //doomednum
 		441, //spawnstate
@@ -1102,7 +1102,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_37
+	// Thing37
 	{
 		204, //doomednum
 		444, //spawnstate
@@ -1131,7 +1131,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_38
+	// Beggar1
 	{
 		141, //doomednum
 		458, //spawnstate
@@ -1160,7 +1160,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Beggar" //classname
 	},
-	// MT_39
+	// Beggar2
 	{
 		155, //doomednum
 		458, //spawnstate
@@ -1189,7 +1189,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Beggar" //classname
 	},
-	// MT_40
+	// Beggar3
 	{
 		156, //doomednum
 		458, //spawnstate
@@ -1218,7 +1218,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Beggar" //classname
 	},
-	// MT_41
+	// Beggar4
 	{
 		157, //doomednum
 		458, //spawnstate
@@ -1247,7 +1247,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Beggar" //classname
 	},
-	// MT_42
+	// Beggar5
 	{
 		158, //doomednum
 		458, //spawnstate
@@ -1276,7 +1276,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Beggar" //classname
 	},
-	// MT_43
+	// Rebel1
 	{
 		9, //doomednum
 		481, //spawnstate
@@ -1305,7 +1305,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Rebel" //classname
 	},
-	// MT_44
+	// Rebel2
 	{
 		144, //doomednum
 		481, //spawnstate
@@ -1334,7 +1334,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Rebel" //classname
 	},
-	// MT_45
+	// Rebel3
 	{
 		145, //doomednum
 		481, //spawnstate
@@ -1363,7 +1363,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Rebel" //classname
 	},
-	// MT_46
+	// Rebel4
 	{
 		149, //doomednum
 		481, //spawnstate
@@ -1392,7 +1392,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Rebel" //classname
 	},
-	// MT_47
+	// Rebel5
 	{
 		150, //doomednum
 		481, //spawnstate
@@ -1421,7 +1421,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Rebel" //classname
 	},
-	// MT_48
+	// Rebel6
 	{
 		151, //doomednum
 		481, //spawnstate
@@ -1450,7 +1450,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Rebel" //classname
 	},
-	// MT_49
+	// Macil1
 	{
 		64, //doomednum
 		521, //spawnstate
@@ -1479,7 +1479,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"MACIL" //classname
 	},
-	// MT_50
+	// Macil2
 	{
 		200, //doomednum
 		521, //spawnstate
@@ -1508,7 +1508,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"MACIL" //classname
 	},
-	// MT_51
+	// Thing51
 	{
 		-1, //doomednum
 		562, //spawnstate
@@ -1537,7 +1537,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_52
+	// Thing52
 	{
 		3001, //doomednum
 		569, //spawnstate
@@ -1566,7 +1566,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_53
+	// Acolyte1
 	{
 		3002, //doomednum
 		602, //spawnstate
@@ -1595,7 +1595,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"ACOLYTE" //classname
 	},
-	// MT_54
+	// Acolyte2
 	{
 		142, //doomednum
 		602, //spawnstate
@@ -1624,7 +1624,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"ACOLYTE" //classname
 	},
-	// MT_55
+	// Acolyte3
 	{
 		143, //doomednum
 		602, //spawnstate
@@ -1653,7 +1653,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"ACOLYTE" //classname
 	},
-	// MT_56
+	// Acolyte4
 	{
 		146, //doomednum
 		602, //spawnstate
@@ -1682,7 +1682,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"ACOLYTE" //classname
 	},
-	// MT_57
+	// Acolyte5
 	{
 		147, //doomednum
 		602, //spawnstate
@@ -1711,7 +1711,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"ACOLYTE" //classname
 	},
-	// MT_58
+	// Acolyte6
 	{
 		148, //doomednum
 		602, //spawnstate
@@ -1740,7 +1740,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"ACOLYTE" //classname
 	},
-	// MT_59
+	// Acolyte7
 	{
 		58, //doomednum
 		602, //spawnstate
@@ -1769,7 +1769,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"ACOLYTE" //classname
 	},
-	// MT_60
+	// Thing60
 	{
 		3005, //doomednum
 		645, //spawnstate
@@ -1798,7 +1798,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_61
+	// Thing61
 	{
 		187, //doomednum
 		674, //spawnstate
@@ -1827,7 +1827,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_62
+	// Enforcer
 	{
 		3003, //doomednum
 		702, //spawnstate
@@ -1856,7 +1856,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Enforcer" //classname
 	},
-	// MT_63
+	// Oracle
 	{
 		199, //doomednum
 		740, //spawnstate
@@ -1885,7 +1885,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"ORACLE" //classname
 	},
-	// MT_64
+	// Priest
 	{
 		12, //doomednum
 		757, //spawnstate
@@ -1914,7 +1914,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"PRIEST" //classname
 	},
-	// MT_65
+	// Thing65
 	{
 		129, //doomednum
 		797, //spawnstate
@@ -1943,7 +1943,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_66
+	// Thing66
 	{
 		-1, //doomednum
 		834, //spawnstate
@@ -1972,7 +1972,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_67
+	// Thing67
 	{
 		-1, //doomednum
 		843, //spawnstate
@@ -2001,7 +2001,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_68
+	// Thing68
 	{
 		-1, //doomednum
 		850, //spawnstate
@@ -2030,7 +2030,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_69
+	// Thing69
 	{
 		75, //doomednum
 		861, //spawnstate
@@ -2059,7 +2059,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_70
+	// Thing70
 	{
 		76, //doomednum
 		881, //spawnstate
@@ -2088,7 +2088,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_71
+	// Thing71
 	{
 		167, //doomednum
 		910, //spawnstate
@@ -2117,7 +2117,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_72
+	// Thing72
 	{
 		168, //doomednum
 		930, //spawnstate
@@ -2146,7 +2146,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_73
+	// Thing73
 	{
 		128, //doomednum
 		950, //spawnstate
@@ -2175,7 +2175,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_74
+	// Thing74
 	{
 		-1, //doomednum
 		988, //spawnstate
@@ -2204,7 +2204,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_75
+	// Thing75
 	{
 		26, //doomednum
 		1017, //spawnstate
@@ -2233,7 +2233,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_76
+	// Thing76
 	{
 		198, //doomednum
 		1018, //spawnstate
@@ -2262,7 +2262,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_77
+	// Thing77
 	{
 		-1, //doomednum
 		1024, //spawnstate
@@ -2291,7 +2291,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_78
+	// Thing78
 	{
 		-1, //doomednum
 		1024, //spawnstate
@@ -2320,7 +2320,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_79
+	// Thing79
 	{
 		-1, //doomednum
 		1027, //spawnstate
@@ -2349,7 +2349,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_80
+	// Thing80
 	{
 		-1, //doomednum
 		1027, //spawnstate
@@ -2378,7 +2378,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_81
+	// Thing81
 	{
 		-1, //doomednum
 		1024, //spawnstate
@@ -2407,7 +2407,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_82
+	// Thing82
 	{
 		-1, //doomednum
 		1032, //spawnstate
@@ -2436,7 +2436,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_83
+	// Thing83
 	{
 		-1, //doomednum
 		1035, //spawnstate
@@ -2465,7 +2465,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_84
+	// Thing84
 	{
 		-1, //doomednum
 		1035, //spawnstate
@@ -2494,7 +2494,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_85
+	// Thing85
 	{
 		-1, //doomednum
 		1040, //spawnstate
@@ -2523,7 +2523,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_86
+	// Thing86
 	{
 		-1, //doomednum
 		1045, //spawnstate
@@ -2552,7 +2552,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_87
+	// Thing87
 	{
 		-1, //doomednum
 		1049, //spawnstate
@@ -2581,7 +2581,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_88
+	// Thing88
 	{
 		-1, //doomednum
 		1049, //spawnstate
@@ -2610,7 +2610,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_89
+	// Thing89
 	{
 		3006, //doomednum
 		1054, //spawnstate
@@ -2639,7 +2639,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_90
+	// Thing90
 	{
 		186, //doomednum
 		1067, //spawnstate
@@ -2668,7 +2668,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_91
+	// Thing91
 	{
 		16, //doomednum
 		1105, //spawnstate
@@ -2697,7 +2697,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_92
+	// Thing92
 	{
 		71, //doomednum
 		1146, //spawnstate
@@ -2726,7 +2726,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_93
+	// Thing93
 	{
 		-1, //doomednum
 		1180, //spawnstate
@@ -2755,7 +2755,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_94
+	// Thing94
 	{
 		-1, //doomednum
 		240, //spawnstate
@@ -2784,7 +2784,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_95
+	// Thing95
 	{
 		-1, //doomednum
 		242, //spawnstate
@@ -2813,7 +2813,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_96
+	// Thing96
 	{
 		-1, //doomednum
 		243, //spawnstate
@@ -2842,7 +2842,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_97
+	// Thing97
 	{
 		-1, //doomednum
 		243, //spawnstate
@@ -2871,7 +2871,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_98
+	// Thing98
 	{
 		-1, //doomednum
 		244, //spawnstate
@@ -2900,7 +2900,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_99
+	// Thing99
 	{
 		-1, //doomednum
 		246, //spawnstate
@@ -2929,7 +2929,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_100
+	// Thing100
 	{
 		-1, //doomednum
 		247, //spawnstate
@@ -2958,7 +2958,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_101
+	// Thing101
 	{
 		-1, //doomednum
 		173, //spawnstate
@@ -2987,7 +2987,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_102
+	// Thing102
 	{
 		-1, //doomednum
 		173, //spawnstate
@@ -3016,7 +3016,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_103
+	// Thing103
 	{
 		-1, //doomednum
 		179, //spawnstate
@@ -3045,7 +3045,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_104
+	// Thing104
 	{
 		-1, //doomednum
 		177, //spawnstate
@@ -3074,7 +3074,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_105
+	// Thing105
 	{
 		-1, //doomednum
 		181, //spawnstate
@@ -3103,7 +3103,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_106
+	// Thing106
 	{
 		-1, //doomednum
 		183, //spawnstate
@@ -3132,7 +3132,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_107
+	// Thing107
 	{
 		-1, //doomednum
 		231, //spawnstate
@@ -3161,7 +3161,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_108
+	// Thing108
 	{
 		-1, //doomednum
 		217, //spawnstate
@@ -3190,7 +3190,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_109
+	// Thing109
 	{
 		-1, //doomednum
 		249, //spawnstate
@@ -3219,7 +3219,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_110
+	// Thing110
 	{
 		-1, //doomednum
 		258, //spawnstate
@@ -3248,7 +3248,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_111
+	// Thing111
 	{
 		-1, //doomednum
 		1188, //spawnstate
@@ -3277,7 +3277,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_112
+	// Thing112
 	{
 		-1, //doomednum
 		1188, //spawnstate
@@ -3306,7 +3306,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_113
+	// Thing113
 	{
 		-1, //doomednum
 		175, //spawnstate
@@ -3335,7 +3335,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_114
+	// Puff
 	{
 		-1, //doomednum
 		169, //spawnstate
@@ -3364,7 +3364,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_115
+	// Thing115
 	{
 		-1, //doomednum
 		140, //spawnstate
@@ -3393,7 +3393,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_116
+	// Thing116
 	{
 		-1, //doomednum
 		159, //spawnstate
@@ -3422,7 +3422,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_117
+	// TeleportFog
 	{
 		-1, //doomednum
 		269, //spawnstate
@@ -3451,7 +3451,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_118
+	// ItemRespawnFog
 	{
 		-1, //doomednum
 		279, //spawnstate
@@ -3480,7 +3480,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_119
+	// TeleportSpot
 	{
 		14, //doomednum
 		0, //spawnstate
@@ -3509,7 +3509,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_120
+	// Thing120
 	{
 		24, //doomednum
 		1196, //spawnstate
@@ -3538,7 +3538,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_121
+	// Thing121
 	{
 		27, //doomednum
 		1199, //spawnstate
@@ -3567,7 +3567,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_122
+	// Thing122
 	{
 		45, //doomednum
 		1210, //spawnstate
@@ -3596,7 +3596,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_123
+	// Thing123
 	{
 		182, //doomednum
 		1221, //spawnstate
@@ -3625,7 +3625,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_124
+	// MedPatch
 	{
 		2011, //doomednum
 		1429, //spawnstate
@@ -3654,7 +3654,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Med_patch" //classname
 	},
-	// MT_125
+	// MedicalKit
 	{
 		2012, //doomednum
 		1430, //spawnstate
@@ -3683,7 +3683,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Medical_kit" //classname
 	},
-	// MT_126
+	// FullHealth
 	{
 		83, //doomednum
 		1298, //spawnstate
@@ -3712,7 +3712,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"full_health" //classname
 	},
-	// MT_127
+	// ThaliteOre
 	{
 		59, //doomednum
 		1239, //spawnstate
@@ -3741,7 +3741,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Thalite_Ore" //classname
 	},
-	// MT_128
+	// MetalArmor
 	{
 		2019, //doomednum
 		1348, //spawnstate
@@ -3770,7 +3770,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Metal_Armor" //classname
 	},
-	// MT_129
+	// LeatherArmor
 	{
 		2018, //doomednum
 		1349, //spawnstate
@@ -3799,7 +3799,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Leather_Armor" //classname
 	},
-	// MT_130
+	// Thing130
 	{
 		2014, //doomednum
 		1401, //spawnstate
@@ -3828,7 +3828,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_131
+	// Thing131
 	{
 		164, //doomednum
 		1402, //spawnstate
@@ -3857,7 +3857,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_132
+	// Base_Key
 	{
 		-1, //doomednum
 		1295, //spawnstate
@@ -3886,7 +3886,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Base_Key" //classname
 	},
-	// MT_133
+	// Rebel_Key
 	{
 		-1, //doomednum
 		1295, //spawnstate
@@ -3915,7 +3915,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Rebel_Key" //classname
 	},
-	// MT_134
+	// Passcard
 	{
 		185, //doomednum
 		1405, //spawnstate
@@ -3944,7 +3944,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Passcard" //classname
 	},
-	// MT_135
+	// ID_Badge
 	{
 		184, //doomednum
 		1403, //spawnstate
@@ -3973,7 +3973,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"ID_Badge" //classname
 	},
-	// MT_136
+	// Prison_Key
 	{
 		-1, //doomednum
 		1416, //spawnstate
@@ -4002,7 +4002,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Prison_Key" //classname
 	},
-	// MT_137
+	// Severed_Hand
 	{
 		91, //doomednum
 		1409, //spawnstate
@@ -4031,7 +4031,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Severed_Hand" //classname
 	},
-	// MT_138
+	// Power1_Key
 	{
 		-1, //doomednum
 		1417, //spawnstate
@@ -4060,7 +4060,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Power1_Key" //classname
 	},
-	// MT_139
+	// Power2_Key
 	{
 		-1, //doomednum
 		1418, //spawnstate
@@ -4089,7 +4089,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Power2_Key" //classname
 	},
-	// MT_140
+	// Power3_Key
 	{
 		-1, //doomednum
 		1419, //spawnstate
@@ -4118,7 +4118,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Power3_Key" //classname
 	},
-	// MT_141
+	// Gold_Key
 	{
 		40, //doomednum
 		1406, //spawnstate
@@ -4147,7 +4147,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Gold_Key" //classname
 	},
-	// MT_142
+	// ID_Card
 	{
 		13, //doomednum
 		1404, //spawnstate
@@ -4176,7 +4176,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"ID_Card" //classname
 	},
-	// MT_143
+	// Silver_Key
 	{
 		38, //doomednum
 		1407, //spawnstate
@@ -4205,7 +4205,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Silver_Key" //classname
 	},
-	// MT_144
+	// Oracle_Key
 	{
 		61, //doomednum
 		1420, //spawnstate
@@ -4234,7 +4234,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Oracle_Key" //classname
 	},
-	// MT_145
+	// Military_ID
 	{
 		-1, //doomednum
 		1421, //spawnstate
@@ -4263,7 +4263,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Military_ID" //classname
 	},
-	// MT_146
+	// Order_Key
 	{
 		86, //doomednum
 		1422, //spawnstate
@@ -4292,7 +4292,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Order_Key" //classname
 	},
-	// MT_147
+	// Warehouse_Key
 	{
 		166, //doomednum
 		1423, //spawnstate
@@ -4321,7 +4321,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Warehouse_Key" //classname
 	},
-	// MT_148
+	// Brass_Key
 	{
 		39, //doomednum
 		1408, //spawnstate
@@ -4350,7 +4350,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Brass_Key" //classname
 	},
-	// MT_149
+	// Red_Crystal_Key
 	{
 		192, //doomednum
 		1424, //spawnstate
@@ -4379,7 +4379,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Red_Crystal_Key" //classname
 	},
-	// MT_150
+	// Blue_Crystal_Key
 	{
 		193, //doomednum
 		1425, //spawnstate
@@ -4408,7 +4408,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Blue_Crystal_Key" //classname
 	},
-	// MT_151
+	// Chapel_Key
 	{
 		195, //doomednum
 		1426, //spawnstate
@@ -4437,7 +4437,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Chapel_Key" //classname
 	},
-	// MT_152
+	// Tunnel_Key
 	{
 		-1, //doomednum
 		1427, //spawnstate
@@ -4466,7 +4466,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Tunnel_Key" //classname
 	},
-	// MT_153
+	// Security_Key
 	{
 		-1, //doomednum
 		1428, //spawnstate
@@ -4495,7 +4495,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Security_Key" //classname
 	},
-	// MT_154
+	// New_Key1
 	{
 		-1, //doomednum
 		1428, //spawnstate
@@ -4524,7 +4524,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"New_Key1" //classname
 	},
-	// MT_155
+	// New_Key2
 	{
 		-1, //doomednum
 		1428, //spawnstate
@@ -4553,7 +4553,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"New_Key2" //classname
 	},
-	// MT_156
+	// New_Key3
 	{
 		-1, //doomednum
 		1428, //spawnstate
@@ -4582,7 +4582,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"New_Key3" //classname
 	},
-	// MT_157
+	// New_Key4
 	{
 		-1, //doomednum
 		1428, //spawnstate
@@ -4611,7 +4611,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"New_Key4" //classname
 	},
-	// MT_158
+	// New_Key5
 	{
 		-1, //doomednum
 		1428, //spawnstate
@@ -4640,7 +4640,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"New_Key5" //classname
 	},
-	// MT_159
+	// Shadow_armor
 	{
 		2024, //doomednum
 		1435, //spawnstate
@@ -4669,7 +4669,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Shadow_armor" //classname
 	},
-	// MT_160
+	// Environmental_Suit
 	{
 		2025, //doomednum
 		1439, //spawnstate
@@ -4698,7 +4698,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Environmental_Suit" //classname
 	},
-	// MT_161
+	// Guard_Uniform
 	{
 		90, //doomednum
 		1440, //spawnstate
@@ -4727,7 +4727,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Guard_Uniform" //classname
 	},
-	// MT_162
+	// Officers_Uniform
 	{
 		52, //doomednum
 		1441, //spawnstate
@@ -4754,9 +4754,9 @@ mobjinfo_t mobjinfo[] =
 		33554433, //flags
 		0, //flags2
 		0, //raisestate
-		"Officer's_Uniform" //classname
+		"Officer\\\'s_Uniform" //classname
 	},
-	// MT_163
+	// Map
 	{
 		2026, //doomednum
 		1442, //spawnstate
@@ -4785,7 +4785,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Map" //classname
 	},
-	// MT_164
+	// MapRadar
 	{
 		2027, //doomednum
 		1444, //spawnstate
@@ -4814,7 +4814,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Map-Radar" //classname
 	},
-	// MT_165
+	// Coin
 	{
 		93, //doomednum
 		1431, //spawnstate
@@ -4843,7 +4843,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"coin" //classname
 	},
-	// MT_166
+	//   Gold10
 	{
 		138, //doomednum
 		1432, //spawnstate
@@ -4872,7 +4872,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"10_gold" //classname
 	},
-	// MT_167
+	// Gold25
 	{
 		139, //doomednum
 		1433, //spawnstate
@@ -4901,7 +4901,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"25_gold" //classname
 	},
-	// MT_168
+	// Gold50
 	{
 		140, //doomednum
 		1434, //spawnstate
@@ -4930,7 +4930,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"50_gold" //classname
 	},
-	// MT_169
+	// Ring
 	{
 		-1, //doomednum
 		1241, //spawnstate
@@ -4959,7 +4959,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"ring" //classname
 	},
-	// MT_170
+	// Offering_Chalice
 	{
 		205, //doomednum
 		1460, //spawnstate
@@ -4988,7 +4988,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Offering_Chalice" //classname
 	},
-	// MT_171
+	// Ear
 	{
 		-1, //doomednum
 		1242, //spawnstate
@@ -5017,7 +5017,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"ear" //classname
 	},
-	// MT_172
+	// Communicator
 	{
 		206, //doomednum
 		1243, //spawnstate
@@ -5046,7 +5046,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Communicator" //classname
 	},
-	// MT_173
+	// Targeter
 	{
 		207, //doomednum
 		1244, //spawnstate
@@ -5075,7 +5075,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Targeter" //classname
 	},
-	// MT_174
+	// HEGrenade_Rounds
 	{
 		152, //doomednum
 		1456, //spawnstate
@@ -5104,7 +5104,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"HE-Grenade_Rounds" //classname
 	},
-	// MT_175
+	// FireGrenade_Rounds
 	{
 		153, //doomednum
 		1457, //spawnstate
@@ -5133,7 +5133,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Fire-Grenade_Rounds" //classname
 	},
-	// MT_176
+	// GasGrenade_Rounds
 	{
 		84, //doomednum
 		1458, //spawnstate
@@ -5162,7 +5162,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Gas-Grenade_Rounds" //classname
 	},
-	// MT_177
+	// Bullets
 	{
 		2007, //doomednum
 		1446, //spawnstate
@@ -5191,7 +5191,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"bullets" //classname
 	},
-	// MT_178
+	// Ammo1
 	{
 		2048, //doomednum
 		1447, //spawnstate
@@ -5220,7 +5220,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"ammo" //classname
 	},
-	// MT_179
+	// Rocket
 	{
 		2010, //doomednum
 		1448, //spawnstate
@@ -5249,7 +5249,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"rocket" //classname
 	},
-	// MT_180
+	// Box_of_rockets
 	{
 		2046, //doomednum
 		1449, //spawnstate
@@ -5278,7 +5278,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"box_of_rockets" //classname
 	},
-	// MT_181
+	// Energy_pod
 	{
 		2047, //doomednum
 		1450, //spawnstate
@@ -5307,7 +5307,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"energy_pod" //classname
 	},
-	// MT_182
+	// Energy_pack
 	{
 		17, //doomednum
 		1452, //spawnstate
@@ -5336,7 +5336,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"energy_pack" //classname
 	},
-	// MT_183
+	// Poison_arrows
 	{
 		115, //doomednum
 		1454, //spawnstate
@@ -5365,7 +5365,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"poison_arrows" //classname
 	},
-	// MT_184
+	// Electric_arrows
 	{
 		114, //doomednum
 		1455, //spawnstate
@@ -5394,7 +5394,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"electric_arrows" //classname
 	},
-	// MT_185
+	// Back_pack
 	{
 		183, //doomednum
 		1459, //spawnstate
@@ -5423,7 +5423,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Back_pack" //classname
 	},
-	// MT_186
+	// Assault_gun
 	{
 		2002, //doomednum
 		1461, //spawnstate
@@ -5452,7 +5452,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"assault_gun" //classname
 	},
-	// MT_187
+	// Pulse_rifle
 	{
 		2006, //doomednum
 		1462, //spawnstate
@@ -5481,7 +5481,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"pulse_rifle" //classname
 	},
-	// MT_188
+	// Flame_thrower
 	{
 		2005, //doomednum
 		1463, //spawnstate
@@ -5510,7 +5510,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"flame_thrower" //classname
 	},
-	// MT_189
+	// Flame_thrower_Parts
 	{
 		-1, //doomednum
 		1464, //spawnstate
@@ -5539,7 +5539,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"flame_thrower_Parts" //classname
 	},
-	// MT_190
+	// Missile_gun
 	{
 		2003, //doomednum
 		1465, //spawnstate
@@ -5568,7 +5568,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"missile_gun" //classname
 	},
-	// MT_191
+	// Blaster
 	{
 		2004, //doomednum
 		1466, //spawnstate
@@ -5597,7 +5597,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"blaster" //classname
 	},
-	// MT_192
+	// Crossbow
 	{
 		2001, //doomednum
 		1468, //spawnstate
@@ -5626,7 +5626,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"crossbow" //classname
 	},
-	// MT_193
+	// Grenade_launcher
 	{
 		154, //doomednum
 		1467, //spawnstate
@@ -5655,7 +5655,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Grenade_launcher" //classname
 	},
-	// MT_194
+	// Sigil1
 	{
 		77, //doomednum
 		1469, //spawnstate
@@ -5684,7 +5684,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"SIGIL" //classname
 	},
-	// MT_195
+	// Sigil2
 	{
 		78, //doomednum
 		1470, //spawnstate
@@ -5713,7 +5713,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"SIGIL" //classname
 	},
-	// MT_196
+	// Sigil3
 	{
 		79, //doomednum
 		1471, //spawnstate
@@ -5742,7 +5742,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"SIGIL" //classname
 	},
-	// MT_197
+	// Sigil4
 	{
 		80, //doomednum
 		1472, //spawnstate
@@ -5771,7 +5771,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"SIGIL" //classname
 	},
-	// MT_198
+	// Sigil5
 	{
 		81, //doomednum
 		1473, //spawnstate
@@ -5800,7 +5800,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"SIGIL" //classname
 	},
-	// MT_199
+	// Thing199
 	{
 		92, //doomednum
 		1410, //spawnstate
@@ -5829,7 +5829,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_200
+	// Rat_buddy
 	{
 		85, //doomednum
 		1270, //spawnstate
@@ -5858,7 +5858,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"rat_buddy" //classname
 	},
-	// MT_201
+	// Thing201
 	{
 		82, //doomednum
 		1350, //spawnstate
@@ -5887,7 +5887,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_202
+	// Thing202
 	{
 		94, //doomednum
 		1358, //spawnstate
@@ -5916,7 +5916,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_203
+	// Thing203
 	{
 		208, //doomednum
 		1277, //spawnstate
@@ -5945,7 +5945,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_204
+	// Thing204
 	{
 		95, //doomednum
 		1477, //spawnstate
@@ -5974,7 +5974,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_205
+	// Thing205
 	{
 		96, //doomednum
 		1478, //spawnstate
@@ -6003,7 +6003,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_206
+	// Thing206
 	{
 		97, //doomednum
 		1479, //spawnstate
@@ -6032,7 +6032,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_207
+	// Thing207
 	{
 		2028, //doomednum
 		1474, //spawnstate
@@ -6061,7 +6061,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_208
+	// Thing208
 	{
 		48, //doomednum
 		1551, //spawnstate
@@ -6090,7 +6090,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_209
+	// Thing209
 	{
 		54, //doomednum
 		1552, //spawnstate
@@ -6119,7 +6119,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_210
+	// Thing210
 	{
 		55, //doomednum
 		1553, //spawnstate
@@ -6148,7 +6148,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_211
+	// Thing211
 	{
 		56, //doomednum
 		1554, //spawnstate
@@ -6177,7 +6177,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_212
+	// Thing212
 	{
 		57, //doomednum
 		1555, //spawnstate
@@ -6206,7 +6206,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_213
+	// Thing213
 	{
 		227, //doomednum
 		1518, //spawnstate
@@ -6235,7 +6235,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_214
+	// Thing214
 	{
 		98, //doomednum
 		1561, //spawnstate
@@ -6264,7 +6264,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_215
+	// Thing215
 	{
 		161, //doomednum
 		1559, //spawnstate
@@ -6293,7 +6293,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_216
+	// Thing216
 	{
 		160, //doomednum
 		1560, //spawnstate
@@ -6322,7 +6322,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_217
+	// Thing217
 	{
 		159, //doomednum
 		1562, //spawnstate
@@ -6351,7 +6351,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_218
+	// Thing218
 	{
 		162, //doomednum
 		1563, //spawnstate
@@ -6380,7 +6380,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_219
+	// Thing219
 	{
 		163, //doomednum
 		1564, //spawnstate
@@ -6409,7 +6409,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_220
+	// Thing220
 	{
 		34, //doomednum
 		1475, //spawnstate
@@ -6438,7 +6438,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_221
+	// Thing221
 	{
 		35, //doomednum
 		1476, //spawnstate
@@ -6467,7 +6467,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_222
+	// Thing222
 	{
 		103, //doomednum
 		1520, //spawnstate
@@ -6496,7 +6496,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_223
+	// Thing223
 	{
 		104, //doomednum
 		1532, //spawnstate
@@ -6525,7 +6525,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_224
+	// Thing224
 	{
 		53, //doomednum
 		1528, //spawnstate
@@ -6554,7 +6554,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_225
+	// Thing225
 	{
 		112, //doomednum
 		1540, //spawnstate
@@ -6583,7 +6583,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_226
+	// Thing226
 	{
 		113, //doomednum
 		1544, //spawnstate
@@ -6612,7 +6612,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_227
+	// Thing227
 	{
 		23, //doomednum
 		1547, //spawnstate
@@ -6641,7 +6641,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_228
+	// Thing228
 	{
 		22, //doomednum
 		673, //spawnstate
@@ -6670,7 +6670,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_229
+	// Thing229
 	{
 		15, //doomednum
 		307, //spawnstate
@@ -6699,7 +6699,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_230
+	// Thing230
 	{
 		18, //doomednum
 		409, //spawnstate
@@ -6728,7 +6728,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_231
+	// Thing231
 	{
 		21, //doomednum
 		632, //spawnstate
@@ -6757,7 +6757,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_232
+	// Thing232
 	{
 		20, //doomednum
 		594, //spawnstate
@@ -6786,7 +6786,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_233
+	// Thing233
 	{
 		19, //doomednum
 		512, //spawnstate
@@ -6815,7 +6815,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_234
+	// Thing234
 	{
 		212, //doomednum
 		425, //spawnstate
@@ -6844,7 +6844,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_235
+	// Thing235
 	{
 		54, //doomednum
 		1280, //spawnstate
@@ -6873,7 +6873,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_236
+	// Thing236
 	{
 		70, //doomednum
 		1372, //spawnstate
@@ -6902,7 +6902,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_237
+	// Thing237
 	{
 		105, //doomednum
 		1376, //spawnstate
@@ -6931,7 +6931,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_238
+	// Thing238
 	{
 		106, //doomednum
 		1380, //spawnstate
@@ -6960,7 +6960,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_239
+	// Thing239
 	{
 		107, //doomednum
 		1384, //spawnstate
@@ -6989,7 +6989,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_240
+	// Thing240
 	{
 		108, //doomednum
 		1400, //spawnstate
@@ -7018,7 +7018,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_241
+	// Thing241
 	{
 		109, //doomednum
 		1496, //spawnstate
@@ -7047,7 +7047,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_242
+	// Thing242
 	{
 		28, //doomednum
 		1500, //spawnstate
@@ -7076,7 +7076,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_243
+	// Thing243
 	{
 		110, //doomednum
 		1497, //spawnstate
@@ -7105,7 +7105,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_244
+	// Thing244
 	{
 		44, //doomednum
 		1498, //spawnstate
@@ -7134,7 +7134,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_245
+	// Thing245
 	{
 		111, //doomednum
 		1388, //spawnstate
@@ -7163,7 +7163,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_246
+	// Thing246
 	{
 		43, //doomednum
 		1370, //spawnstate
@@ -7192,7 +7192,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_247
+	// Thing247
 	{
 		46, //doomednum
 		1371, //spawnstate
@@ -7221,7 +7221,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_248
+	// Thing248
 	{
 		99, //doomednum
 		1480, //spawnstate
@@ -7250,7 +7250,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_249
+	// Thing249
 	{
 		100, //doomednum
 		1481, //spawnstate
@@ -7279,7 +7279,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_250
+	// Thing250
 	{
 		101, //doomednum
 		1482, //spawnstate
@@ -7308,7 +7308,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_251
+	// Thing251
 	{
 		102, //doomednum
 		1483, //spawnstate
@@ -7337,7 +7337,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_252
+	// Thing252
 	{
 		215, //doomednum
 		1484, //spawnstate
@@ -7366,7 +7366,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_253
+	// Thing253
 	{
 		29, //doomednum
 		1488, //spawnstate
@@ -7395,7 +7395,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_254
+	// Thing254
 	{
 		30, //doomednum
 		1489, //spawnstate
@@ -7424,7 +7424,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_255
+	// Thing255
 	{
 		31, //doomednum
 		1490, //spawnstate
@@ -7453,7 +7453,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_256
+	// Thing256
 	{
 		32, //doomednum
 		1491, //spawnstate
@@ -7482,7 +7482,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_257
+	// Thing257
 	{
 		36, //doomednum
 		1492, //spawnstate
@@ -7511,7 +7511,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_258
+	// Thing258
 	{
 		37, //doomednum
 		1493, //spawnstate
@@ -7540,7 +7540,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_259
+	// Thing259
 	{
 		41, //doomednum
 		1494, //spawnstate
@@ -7569,7 +7569,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_260
+	// Thing260
 	{
 		42, //doomednum
 		1495, //spawnstate
@@ -7598,7 +7598,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_261
+	// Thing261
 	{
 		117, //doomednum
 		1499, //spawnstate
@@ -7627,7 +7627,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_262
+	// Thing262
 	{
 		47, //doomednum
 		1392, //spawnstate
@@ -7656,7 +7656,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_263
+	// Thing263
 	{
 		50, //doomednum
 		1396, //spawnstate
@@ -7685,7 +7685,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_264
+	// Thing264
 	{
 		51, //doomednum
 		1501, //spawnstate
@@ -7714,7 +7714,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_265
+	// Thing265
 	{
 		202, //doomednum
 		1502, //spawnstate
@@ -7743,7 +7743,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_266
+	// Thing266
 	{
 		203, //doomednum
 		1503, //spawnstate
@@ -7772,7 +7772,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_267
+	// Thing267
 	{
 		33, //doomednum
 		1504, //spawnstate
@@ -7801,7 +7801,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_268
+	// Thing268
 	{
 		60, //doomednum
 		1505, //spawnstate
@@ -7830,7 +7830,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_269
+	// Thing269
 	{
 		62, //doomednum
 		1506, //spawnstate
@@ -7859,7 +7859,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_270
+	// Thing270
 	{
 		63, //doomednum
 		1507, //spawnstate
@@ -7888,7 +7888,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_271
+	// Thing271
 	{
 		69, //doomednum
 		1508, //spawnstate
@@ -7917,7 +7917,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_272
+	// Thing272
 	{
 		165, //doomednum
 		1509, //spawnstate
@@ -7946,7 +7946,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_273
+	// Thing273
 	{
 		188, //doomednum
 		1510, //spawnstate
@@ -7975,7 +7975,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_274
+	// Thing274
 	{
 		189, //doomednum
 		1511, //spawnstate
@@ -8004,7 +8004,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_275
+	// Thing275
 	{
 		190, //doomednum
 		1512, //spawnstate
@@ -8033,7 +8033,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_276
+	// Thing276
 	{
 		191, //doomednum
 		1513, //spawnstate
@@ -8062,7 +8062,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_277
+	// Thing277
 	{
 		194, //doomednum
 		1514, //spawnstate
@@ -8091,7 +8091,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_278
+	// Thing278
 	{
 		196, //doomednum
 		1515, //spawnstate
@@ -8120,7 +8120,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_279
+	// Thing279
 	{
 		197, //doomednum
 		1516, //spawnstate
@@ -8149,7 +8149,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_280
+	// Thing280
 	{
 		68, //doomednum
 		1517, //spawnstate
@@ -8178,7 +8178,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_281
+	// Thing281
 	{
 		228, //doomednum
 		1519, //spawnstate
@@ -8207,7 +8207,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_282
+	// Thing282
 	{
 		216, //doomednum
 		1281, //spawnstate
@@ -8236,7 +8236,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_283
+	// Thing283
 	{
 		217, //doomednum
 		1282, //spawnstate
@@ -8265,7 +8265,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_284
+	// Thing284
 	{
 		218, //doomednum
 		1283, //spawnstate
@@ -8294,7 +8294,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_285
+	// Thing285
 	{
 		219, //doomednum
 		1284, //spawnstate
@@ -8323,7 +8323,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_286
+	// Thing286
 	{
 		220, //doomednum
 		1285, //spawnstate
@@ -8352,7 +8352,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_287
+	// PowerCoupling
 	{
 		226, //doomednum
 		1287, //spawnstate
@@ -8381,7 +8381,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"POWER_COUPLING" //classname
 	},
-	// MT_288
+	// Thing288
 	{
 		221, //doomednum
 		1288, //spawnstate
@@ -8410,7 +8410,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_289
+	// Thing289
 	{
 		222, //doomednum
 		1289, //spawnstate
@@ -8439,7 +8439,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_290
+	// Thing290
 	{
 		223, //doomednum
 		1289, //spawnstate
@@ -8468,7 +8468,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_291
+	// Thing291
 	{
 		224, //doomednum
 		1291, //spawnstate
@@ -8497,7 +8497,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_292
+	// Thing292
 	{
 		225, //doomednum
 		1292, //spawnstate
@@ -8526,7 +8526,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_293
+	// TeleportorBeacon
 	{
 		10, //doomednum
 		1345, //spawnstate
@@ -8555,7 +8555,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Teleportor_Beacon" //classname
 	},
-	// MT_294
+	// Thing294
 	{
 		-1, //doomednum
 		1300, //spawnstate
@@ -8584,7 +8584,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_295
+	// Thing295
 	{
 		-1, //doomednum
 		1320, //spawnstate
@@ -8613,7 +8613,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_296
+	// Thing296
 	{
 		-1, //doomednum
 		1340, //spawnstate
@@ -8642,7 +8642,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_297
+	// Ammo2
 	{
 		-1, //doomednum
 		1295, //spawnstate
@@ -8671,7 +8671,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Ammo" //classname
 	},
-	// MT_298
+	// Health1
 	{
 		-1, //doomednum
 		1295, //spawnstate
@@ -8700,7 +8700,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Health" //classname
 	},
-	// MT_299
+	// Info1
 	{
 		-1, //doomednum
 		1295, //spawnstate
@@ -8729,7 +8729,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"info" //classname
 	},
-	// MT_300
+	// Alarm1
 	{
 		-1, //doomednum
 		1295, //spawnstate
@@ -8758,7 +8758,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"alarm" //classname
 	},
-	// MT_301
+	// Thing301
 	{
 		-1, //doomednum
 		1295, //spawnstate
@@ -8787,7 +8787,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_302
+	// Thing302
 	{
 		-1, //doomednum
 		1295, //spawnstate
@@ -8816,7 +8816,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_303
+	// Prison_pass
 	{
 		-1, //doomednum
 		1295, //spawnstate
@@ -8845,7 +8845,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Prison_pass" //classname
 	},
-	// MT_304
+	// Thing304
 	{
 		-1, //doomednum
 		1295, //spawnstate
@@ -8874,7 +8874,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_305
+	// Thing305
 	{
 		-1, //doomednum
 		1295, //spawnstate
@@ -8903,7 +8903,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_306
+	// Report
 	{
 		-1, //doomednum
 		1295, //spawnstate
@@ -8932,7 +8932,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"report" //classname
 	},
-	// MT_307
+	// Toughness
 	{
 		-1, //doomednum
 		1296, //spawnstate
@@ -8961,7 +8961,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Toughness" //classname
 	},
-	// MT_308
+	// Accuracy
 	{
 		-1, //doomednum
 		1297, //spawnstate
@@ -8990,7 +8990,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Accuracy" //classname
 	},
-	// MT_309
+	// Oracle_Pass
 	{
 		-1, //doomednum
 		1295, //spawnstate
@@ -9019,7 +9019,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Oracle_Pass" //classname
 	},
-	// MT_310
+	// Thing310
 	{
 		-1, //doomednum
 		1295, //spawnstate
@@ -9048,7 +9048,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		NULL //classname
 	},
-	// MT_311
+	// Blown_Up_the_Crystal
 	{
 		-1, //doomednum
 		1295, //spawnstate
@@ -9077,7 +9077,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Blown_Up_the_Crystal" //classname
 	},
-	// MT_312
+	// Blown_Up_the_Gates
 	{
 		-1, //doomednum
 		1295, //spawnstate
@@ -9106,7 +9106,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"Blown_Up_the_Gates" //classname
 	},
-	// MT_313
+	// Quest4
 	{
 		-1, //doomednum
 		1295, //spawnstate
@@ -9135,7 +9135,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"quest4" //classname
 	},
-	// MT_314
+	// Quest5
 	{
 		-1, //doomednum
 		1295, //spawnstate
@@ -9164,7 +9164,7 @@ mobjinfo_t mobjinfo[] =
 		0, //raisestate
 		"quest5" //classname
 	},
-	// MT_315
+	// Quest6
 	{
 		-1, //doomednum
 		1295, //spawnstate
@@ -9198,9 +9198,12 @@ mobjinfo_t mobjinfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/01/17 18:18:13  dj_jl
+//	Renamed all map object classes
+//
 //	Revision 1.4  2002/01/07 12:31:35  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/09/20 16:35:58  dj_jl
 //	Beautification
 //	

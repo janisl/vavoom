@@ -235,16 +235,16 @@ boolean BotPlayer::CheckItem(Actor item)
 			return false;
 	}
 
-	if (item.Class == MT_MISC0 && (botmo.Health >= MAXHEALTH))
+	if (item.Class == ItemHealthPotion && (botmo.Health >= MAXHEALTH))
 		return false;
 #if 0
 	if ((item.Class == MT_MISC12 || item.Class == MT_MEGA) &&
 		(botmo.Health >= 2 * MAXHEALTH))
 		return false;
 #endif
-	if (item.Class == MT_ITEMSHIELD1 && (player->armorpoints >= 100))
+	if (item.Class == ItemShield1 && (player->armorpoints >= 100))
 		return false;
-	if (item.Class == MT_ITEMSHIELD2 && (player->armorpoints >= 200))
+	if (item.Class == ItemShield2 && (player->armorpoints >= 200))
 		return false;
 #if 0
 	if (teamgame.value && item->flags3 & MF3_KEY && !(item->Flags & MF_DROPPED))
@@ -733,17 +733,17 @@ int BotPlayer::WeapFromItem(Actor item)
 {
 	switch (item.Class)
 	{
-	case MT_MISC13:
+	case ItemWeaponGauntlets:
 		return wp_gauntlets;
-	case MT_MISC15:
+	case ItemWeaponCrossbow:
 		return wp_crossbow;
-	case MT_MISC14:
+	case ItemWeaponBlaster:
 		return wp_blaster;
-	case MT_WSKULLROD:
+	case ItemWeaponSkullRod:
 		return wp_skullrod;
-	case MT_WPHOENIXROD:
+	case ItemWeaponPhoenixRod:
 		return wp_phoenixrod;
-	case MT_WMACE:
+	case ItemWeaponMace:
 		return wp_mace;
 	}
 	return -1;
@@ -762,23 +762,23 @@ int BotPlayer::AmmoFromItem(Actor item)
 {
 	switch (item.Class)
 	{
-	case MT_AMGWNDWIMPY:
-	case MT_AMGWNDHEFTY:
+	case ItemAmmoGoldWandWimpy:
+	case ItemAmmoGoldWandHefty:
 		return am_goldwand;
-	case MT_AMCBOWWIMPY:
-	case MT_AMCBOWHEFTY:
+	case ItemAmmoCrossbowWimpy:
+	case ItemAmmoCrossbowHefty:
 		return am_crossbow;
-	case MT_AMBLSRWIMPY:
-	case MT_AMBLSRHEFTY:
+	case ItemAmmoBlasterWimpy:
+	case ItemAmmoBlasterHefty:
 		return am_blaster;
-	case MT_AMSKRDWIMPY:
-	case MT_AMSKRDHEFTY:
+	case ItemAmmoSkullRodWimpy:
+	case ItemAmmoSkullRodHefty:
 		return am_skullrod;
-	case MT_AMPHRDWIMPY:
-	case MT_AMPHRDHEFTY:
+	case ItemAmmoPhoenixWimpy:
+	case ItemAmmoPhoenixHefty:
 		return am_phoenixrod;
-	case MT_AMMACEWIMPY:
-	case MT_AMMACEHEFTY:
+	case ItemAmmoMaceWimpy:
+	case ItemAmmoMaceHefty:
 		return am_mace;
 	}
 	return -1;
@@ -2037,6 +2037,9 @@ void BotPlayer::OnSpawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/17 18:15:53  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.6  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

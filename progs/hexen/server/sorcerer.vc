@@ -118,16 +118,16 @@ void Actor::A_SorcSpinBalls(void)
 	special1f = 1.0;
 	z = origin.z - floorclip + Height;
 
-	mo = P_SpawnMobj(origin.x, origin.y, z, MT_SORCBALL1);
+	mo = P_SpawnMobj(origin.x, origin.y, z, SorcererBall1);
 	if (mo)
 	{
 		mo->target = this;
 		mo->special2 = SORCFX4_RAPIDFIRE_TIME;
 	}
-	mo = P_SpawnMobj(origin.x, origin.y, z, MT_SORCBALL2);
+	mo = P_SpawnMobj(origin.x, origin.y, z, SorcererBall2);
 	if (mo)
 		mo->target = this;
-	mo = P_SpawnMobj(origin.x, origin.y, z, MT_SORCBALL3);
+	mo = P_SpawnMobj(origin.x, origin.y, z, SorcererBall3);
 	if (mo)
 		mo->target = this;
 }
@@ -150,15 +150,15 @@ void A_StopBalls(mobj_t * actor)
 
 	if ((actor->args[0] <= 0) && (chance < 200))
 	{
-		actor->specialcid = MT_SORCBALL2;	// Blue
+		actor->specialcid = SorcererBall2;	// Blue
 	}
 	else if ((actor->Health < (actor->spawnhealth >> 1)) && (chance < 200))
 	{
-		actor->specialcid = MT_SORCBALL3;	// Green
+		actor->specialcid = SorcererBall3;	// Green
 	}
 	else
 	{
-		actor->specialcid = MT_SORCBALL1;	// Yellow
+		actor->specialcid = SorcererBall1;	// Yellow
 	}
 
 }
@@ -222,7 +222,7 @@ void A_DecelBalls(mobj_t * actor)
 
 void A_SorcUpdateBallAngle(mobj_t * actor)
 {
-	if (actor->Class == MT_SORCBALL1)
+	if (actor->Class == SorcererBall1)
 	{
 		actor->target->special1f = AngleMod360(actor->target->special1f +
 			itof(actor->target->args[4]));
@@ -245,7 +245,7 @@ void A_SorcOffense1(mobj_t * actor)
 
 	ang1 = AngleMod360(actor->angles.yaw + 70.0);
 	ang2 = AngleMod360(actor->angles.yaw - 70.0);
-	mo = SpawnMissileAngle(parent, MT_SORCFX1, ang1, 0.0);
+	mo = SpawnMissileAngle(parent, SorcererFX1, ang1, 0.0);
 	if (mo)
 	{
 		mo->target = parent;
@@ -253,7 +253,7 @@ void A_SorcOffense1(mobj_t * actor)
 		mo->args[4] = BOUNCE_TIME_UNIT;
 		mo->args[3] = 15;	// Bounce time in seconds
 	}
-	mo = SpawnMissileAngle(parent, MT_SORCFX1, ang2, 0.0);
+	mo = SpawnMissileAngle(parent, SorcererFX1, ang2, 0.0);
 	if (mo)
 	{
 		mo->target = parent;
@@ -284,7 +284,7 @@ void A_SorcOffense2(mobj_t * actor)
 	actor->args[4] = (actor->args[4] + 15) & 0xff;
 	delta = sin(index) * SORCFX4_SPREAD_ANGLE;
 	ang1 = AngleMod360(actor->angles.yaw + delta);
-	mo = SpawnMissileAngle(parent, MT_SORCFX4, ang1, 0.0);
+	mo = SpawnMissileAngle(parent, SorcererFX4, ang1, 0.0);
 	if (mo)
 	{
 		mo->special2 = 35 * 5 / 2;	// 5 seconds
@@ -320,26 +320,26 @@ void A_CastSorcererSpell(mobj_t * actor)
 
 	switch (spell)
 	{
-	case MT_SORCBALL1:	// Offensive
+	case SorcererBall1:	// Offensive
 		A_SorcOffense1(actor);
 		break;
-	case MT_SORCBALL2:	// Defensive
+	case SorcererBall2:	// Defensive
 		z = parent->origin.z - parent->floorclip + SORC_DEFENSE_HEIGHT;
-		mo = P_SpawnMobj(actor->origin.x, actor->origin.y, z, MT_SORCFX2);
+		mo = P_SpawnMobj(actor->origin.x, actor->origin.y, z, SorcererFX2);
 		parent->Flags2 |= MF2_REFLECTIVE | MF2_INVULNERABLE;
 		parent->args[0] = SORC_DEFENSE_TIME;
 		if (mo)
 			mo->target = parent;
 		break;
-	case MT_SORCBALL3:	// Reinforcements
+	case SorcererBall3:	// Reinforcements
 		ang1 = AngleMod360(actor->angles.yaw - 45.0);
 		ang2 = AngleMod360(actor->angles.yaw + 45.0);
 		if (actor->Health < (actor->spawnhealth / 3))
 		{	// Spawn 2 at a time
-			mo = SpawnMissileAngle(parent, MT_SORCFX3, ang1, 4.0);
+			mo = SpawnMissileAngle(parent, SorcererFX3, ang1, 4.0);
 			if (mo)
 				mo->target = parent;
-			mo = SpawnMissileAngle(parent, MT_SORCFX3, ang2, 4.0);
+			mo = SpawnMissileAngle(parent, SorcererFX3, ang2, 4.0);
 			if (mo)
 				mo->target = parent;
 		}
@@ -347,7 +347,7 @@ void A_CastSorcererSpell(mobj_t * actor)
 		{
 			if (P_Random() < 128)
 				ang1 = ang2;
-			mo = SpawnMissileAngle(parent, MT_SORCFX3, ang1, 4.0);
+			mo = SpawnMissileAngle(parent, SorcererFX3, ang1, 4.0);
 			if (mo)
 				mo->target = parent;
 		}
@@ -378,13 +378,13 @@ void Actor::A_SorcBallOrbit(void)
 	baseangle = parent->special1f;
 	switch (Class)
 	{
-	case MT_SORCBALL1:
+	case SorcererBall1:
 		angle = AngleMod360(baseangle + BALL1_ANGLEOFFSET);
 		break;
-	case MT_SORCBALL2:
+	case SorcererBall2:
 		angle = AngleMod360(baseangle + BALL2_ANGLEOFFSET);
 		break;
-	case MT_SORCBALL3:
+	case SorcererBall3:
 		angle = AngleMod360(baseangle + BALL3_ANGLEOFFSET);
 		break;
 	default:
@@ -418,15 +418,15 @@ void Actor::A_SorcBallOrbit(void)
 			// Set angle so ball angle == sorcerer angle
 			switch (Class)
 			{
-			case MT_SORCBALL1:
+			case SorcererBall1:
 				parent->special1f = AngleMod360(parent->angles.yaw -
 					BALL1_ANGLEOFFSET);
 				break;
-			case MT_SORCBALL2:
+			case SorcererBall2:
 				parent->special1f = AngleMod360(parent->angles.yaw -
 					BALL2_ANGLEOFFSET);
 				break;
-			case MT_SORCBALL3:
+			case SorcererBall3:
 				parent->special1f = AngleMod360(parent->angles.yaw -
 					BALL3_ANGLEOFFSET);
 				break;
@@ -446,7 +446,7 @@ void Actor::A_SorcBallOrbit(void)
 			if (parent->Health > 0)
 				SetMobjStateNF(parent, S_SORC_ATTACK1);
 
-			if (Class == MT_SORCBALL1 && P_Random() < 200)
+			if (Class == SorcererBall1 && P_Random() < 200)
 			{
 				StartSoundName(NULL, 'SorcererSpellCast', CHAN_VOICE);
 				special2 = SORCFX4_RAPIDFIRE_TIME;
@@ -533,7 +533,7 @@ void Actor::A_SpawnFizzle(void)
 	z = origin.z - floorclip + Height / 2.0;
 	for (ix = 0; ix < 5; ix++)
 	{
-		mo = P_SpawnMobj(x, y, z, MT_SORCSPARK1);
+		mo = P_SpawnMobj(x, y, z, SorcererSpark);
 		if (mo)
 		{
 			rangle = angle + Random() * 5.0 * 90.0 / 1024.0;
@@ -581,12 +581,12 @@ void Actor::A_BounceCheck(void)
 			SetMobjState(this, DeathState);
 			switch (Class)
 			{
-			case MT_SORCBALL1:
-			case MT_SORCBALL2:
-			case MT_SORCBALL3:
+			case SorcererBall1:
+			case SorcererBall2:
+			case SorcererBall3:
 				StartSoundName(NULL, 'SorcererBigBallExplode', CHAN_VOICE);
 				break;
-			case MT_SORCFX1:
+			case SorcererFX1:
 				StartSoundName(NULL, 'SorcererHeadScream', CHAN_VOICE);
 				break;
 			default:
@@ -637,7 +637,7 @@ void Actor::A_SorcFX2Split(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_SORCFX2);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, SorcererFX2);
 	if (mo)
 	{
 		mo->target = target;
@@ -645,7 +645,7 @@ void Actor::A_SorcFX2Split(void)
 		mo->special1f = angles.yaw;	// Set angle
 		SetMobjStateNF(mo, S_SORCFX2_ORBIT1);
 	}
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_SORCFX2);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, SorcererFX2);
 	if (mo)
 	{
 		mo->target = target;
@@ -697,7 +697,7 @@ void Actor::A_SorcFX2Orbit(void)
 		z = parent->origin.z - parent->floorclip + SORC_DEFENSE_HEIGHT;
 		z += 15.0 * cos(angle);
 		// Spawn trailer
-		P_SpawnMobj(x, y, z, MT_SORCFX2_T1);
+		P_SpawnMobj(x, y, z, SorcererFX2_T1);
 	}
 	else	// Clock wise
 	{
@@ -708,7 +708,7 @@ void Actor::A_SorcFX2Orbit(void)
 		z = parent->origin.z - parent->floorclip + SORC_DEFENSE_HEIGHT;
 		z += 20.0 * sin(angle);
 		// Spawn trailer
-		P_SpawnMobj(x, y, z, MT_SORCFX2_T1);
+		P_SpawnMobj(x, y, z, SorcererFX2_T1);
 	}
 
 	origin.x = x;
@@ -728,7 +728,7 @@ void Actor::A_SpawnBishop(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_BISHOP);
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z, Bishop);
 	if (mo)
 	{
 		if (!P_TestMobjLocation(mo))
@@ -747,7 +747,7 @@ void Actor::A_SpawnBishop(void)
 
 void Actor::A_SorcererBishopEntry(void)
 {
-	P_SpawnMobj(origin.x, origin.y, origin.z, MT_SORCFX3_EXPLOSION);
+	P_SpawnMobj(origin.x, origin.y, origin.z, SorcererFX3Explosion);
 	StartSound(this, sound_sight, CHAN_VOICE);
 }
 
@@ -770,6 +770,9 @@ void Actor::A_SorcFX4Check(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/17 18:15:55  dj_jl
+//  Renamed all map object classes
+//
 //  Revision 1.11  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.
