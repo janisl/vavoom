@@ -52,10 +52,6 @@
 #include "mobjinfo.vc"
 #include "wpninfo.vc"
 
-#ifdef GRENADE_LAUNCHER
-#include "grlaunch.vc"
-#endif
-
 #include "inter.vc"
 #include "user.vc"
 #include "mobj.vc"
@@ -68,6 +64,10 @@
 #include "weapons.vc"
 #include "enemy.vc"
 #include "cheat.vc"
+
+#ifdef GRENADE_LAUNCHER
+#include "grlaunch.vc"
+#endif
 
 #include "bot.vc"
 
@@ -96,6 +96,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/03/16 17:38:37  dj_jl
+//  Moved grenade firing into weapon class.
+//
 //  Revision 1.14  2002/01/17 18:15:53  dj_jl
 //  Renamed all map object classes
 //

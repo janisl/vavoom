@@ -96,7 +96,47 @@ class missile_grenade:Actor
 
 class WeaponGrenade:Weapon
 {
-	void A_FireGrenade(void);
+
+//===========================================================================
+//
+//  A_FireGrenade
+//
+//===========================================================================
+
+void A_FireGrenade(void)
+{
+	Actor A;
+
+	Player->Ammo[Ammo]--;
+
+	A = Spawn(missile_grenade, Player->mo->Origin + vector(0.0, 0.0, 32.0));
+
+	if (A.SightSound)
+		A.PlaySound(A.SightSound, CHAN_VOICE);
+
+	A.Owner = *Player->mo;
+
+	//  See which target is to be aimed at
+	if (Player->mo->Angles.pitch)
+	{
+		TVec v_forward;
+		TVec v_right;
+		TVec v_up;
+
+		AngleVectors(&Player->mo->Angles, &v_forward, &v_right, &v_up);
+		A.Velocity = v_forward * A.Speed + v_up * A.Speed / 3.0 +
+			((Random() - 0.5) * 20.0) * v_right +
+			((Random() - 0.5) * 20.0) * v_up;
+	}
+	else
+	{
+		A.Velocity = Aim(Player->mo, 16.0 * 64.0) * A.Speed;
+		A.Velocity.z = A.Speed / 3.0;
+	}
+	VectorAngles(&A.Velocity, &A.Angles);
+
+	CheckMissileSpawn(&A);
+}
 
 	__states__
 	{
@@ -128,6 +168,9 @@ class WeaponGrenade:Weapon
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/03/16 17:38:37  dj_jl
+//  Moved grenade firing into weapon class.
+//
 //  Revision 1.13  2002/03/02 17:41:12  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //
