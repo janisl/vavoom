@@ -60,6 +60,7 @@ class TConBuf : public streambuf
 
 	int sync();
 	int overflow(int ch);
+	int underflow(void);	//	In MSVC it's abstract
 
 	bool		dev_only;
 };
@@ -683,6 +684,17 @@ int TConBuf::overflow(int ch)
 	return 0;
 }
 
+//==========================================================================
+//
+//  TConBuf::underflow
+//
+//==========================================================================
+
+int TConBuf::underflow(void)
+{
+	return 0;
+}
+
 //**************************************************************************
 //**************************************************************************
 
@@ -799,9 +811,12 @@ void C_DrawCenterMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/12/04 18:11:59  dj_jl
+//	Fixes for compiling with MSVC
+//
 //	Revision 1.10  2001/11/09 14:36:33  dj_jl
 //	No moving on last line on adding new line if scrolled
-//
+//	
 //	Revision 1.9  2001/10/12 17:31:13  dj_jl
 //	no message
 //	

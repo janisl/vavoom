@@ -456,7 +456,7 @@ extern "C" void D_DrawZSpans(espan_t *pspan)
 {
 	int				count, doublecount, izistep;
 	dword			izi;
-	word			*pdest;
+	short			*pdest;
 	unsigned		ltemp;
 	double			zi;
 	float			du, dv;
@@ -513,9 +513,12 @@ extern "C" void D_DrawZSpans(espan_t *pspan)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/12/04 18:12:55  dj_jl
+//	Fixes for compiling with MSVC
+//
 //	Revision 1.5  2001/11/02 18:35:54  dj_jl
 //	Sky optimizations
-//
+//	
 //	Revision 1.4  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	

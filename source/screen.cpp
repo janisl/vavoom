@@ -261,14 +261,14 @@ void WritePCXfile(char* filename, void* data, int width, int height, int bpp,
 			{
 				if ((src[i] & 0xc0) == 0xc0)
 				{
-					s.put(0xc1);
+					s.put((byte)0xc1);
 				}
 				s.put(src[i]);
 			}
 		}
 
 		// write the palette
-		s.put(0x0c);	// palette ID byte
+		s.put((byte)0x0c);	// palette ID byte
 		s.write((char *)palette, 768);
 	}
 	else if	(bpp == 24)
@@ -280,7 +280,7 @@ void WritePCXfile(char* filename, void* data, int width, int height, int bpp,
 			{
 				if ((src[i].r & 0xc0) == 0xc0)
 				{
-					s.put(0xc1);
+					s.put((byte)0xc1);
 				}
 				s.put(src[i].r);
 			}
@@ -288,7 +288,7 @@ void WritePCXfile(char* filename, void* data, int width, int height, int bpp,
 			{
 				if ((src[i].g & 0xc0) == 0xc0)
 				{
-					s.put(0xc1);
+					s.put((byte)0xc1);
 				}
 				s.put(src[i].g);
 			}
@@ -296,7 +296,7 @@ void WritePCXfile(char* filename, void* data, int width, int height, int bpp,
 			{
 				if ((src[i].b & 0xc0) == 0xc0)
 				{
-					s.put(0xc1);
+					s.put((byte)0xc1);
 				}
 				s.put(src[i].b);
 			}
@@ -691,9 +691,12 @@ void Draw_LoadIcon(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2001/12/04 18:11:59  dj_jl
+//	Fixes for compiling with MSVC
+//
 //	Revision 1.13  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.12  2001/10/08 17:34:57  dj_jl
 //	A lots of small changes and cleanups
 //	

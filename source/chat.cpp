@@ -47,18 +47,28 @@ boolean					chatmodeon;
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static TILine			w_chat;
-static TCvarS			chat_macros[10] =
+static TCvarS ChatMacro0("Chatmacro0", "No", CVAR_ARCHIVE);
+static TCvarS ChatMacro1("Chatmacro1", "I'm ready to kick butt!", CVAR_ARCHIVE);
+static TCvarS ChatMacro2("Chatmacro2", "I'm OK.", CVAR_ARCHIVE);
+static TCvarS ChatMacro3("Chatmacro3", "I'm not looking too good!", CVAR_ARCHIVE);
+static TCvarS ChatMacro4("Chatmacro4", "Help!", CVAR_ARCHIVE);
+static TCvarS ChatMacro5("Chatmacro5", "You suck!", CVAR_ARCHIVE);
+static TCvarS ChatMacro6("Chatmacro6", "Next time, scumbag...", CVAR_ARCHIVE);
+static TCvarS ChatMacro7("Chatmacro7", "Come here!", CVAR_ARCHIVE);
+static TCvarS ChatMacro8("Chatmacro8", "I'll take care of it.", CVAR_ARCHIVE);
+static TCvarS ChatMacro9("Chatmacro9", "Yes", CVAR_ARCHIVE);
+static TCvarS *chat_macros[10] =
 {
-    TCvarS("Chatmacro0", "No", CVAR_ARCHIVE),
-    TCvarS("Chatmacro1", "I'm ready to kick butt!", CVAR_ARCHIVE),
-    TCvarS("Chatmacro2", "I'm OK.", CVAR_ARCHIVE),
-    TCvarS("Chatmacro3", "I'm not looking too good!", CVAR_ARCHIVE),
-    TCvarS("Chatmacro4", "Help!", CVAR_ARCHIVE),
-    TCvarS("Chatmacro5", "You suck!", CVAR_ARCHIVE),
-    TCvarS("Chatmacro6", "Next time, scumbag...", CVAR_ARCHIVE),
-    TCvarS("Chatmacro7", "Come here!", CVAR_ARCHIVE),
-    TCvarS("Chatmacro8", "I'll take care of it.", CVAR_ARCHIVE),
-    TCvarS("Chatmacro9", "Yes", CVAR_ARCHIVE)
+    &ChatMacro0,
+    &ChatMacro1,
+    &ChatMacro2,
+    &ChatMacro3,
+    &ChatMacro4,
+    &ChatMacro5,
+    &ChatMacro6,
+    &ChatMacro7,
+    &ChatMacro8,
+    &ChatMacro9,
 };
 
 // CODE --------------------------------------------------------------------
@@ -106,7 +116,7 @@ boolean CT_Responder(event_t *ev)
 	{
 		if (ev->data1 >= '0' && ev->data1 <= '9')
 		{
-			CmdBuf << "Say " << chat_macros[ev->data1 - '0'] << "\n";
+			CmdBuf << "Say " << *chat_macros[ev->data1 - '0'] << "\n";
 			CT_Stop();
 			return true;
 		}
@@ -159,9 +169,12 @@ void CT_Drawer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/12/04 18:11:59  dj_jl
+//	Fixes for compiling with MSVC
+//
 //	Revision 1.4  2001/10/04 17:23:29  dj_jl
 //	Got rid of some warnings
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

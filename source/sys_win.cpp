@@ -31,7 +31,9 @@
 #include <fcntl.h>
 #include <io.h>
 #include <direct.h>
+#ifdef __BORLANDC__
 #include <dirent.h>
+#endif
 #include <sys/stat.h>
 
 // MACROS ------------------------------------------------------------------
@@ -43,6 +45,15 @@
 
 #define PAUSE_SLEEP		50				// sleep time on pause or minimization
 #define NOT_FOCUS_SLEEP	20				// sleep time when not focus
+
+#ifndef __BORLANDC__
+// POSIX file type test macros.  The parameter is an st_mode value.
+#define S_ISDIR(m)  ((m) & S_IFDIR)
+#define S_ISCHR(m)  ((m) & S_IFCHR)
+#define S_ISBLK(m)  ((m) & S_IFBLK)
+#define S_ISREG(m)  ((m) & S_IFREG)
+#define S_ISFIFO(m) ((m) & S_IFIFO)
+#endif
 
 // TYPES -------------------------------------------------------------------
 
@@ -70,7 +81,9 @@ HINSTANCE			hInst;	//	Needed for DirectInput
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
+#ifdef __BORLANDC__
 static DIR *current_dir;
+#endif
 
 static double		pfreq;
 static double		curtime = 0.0;
@@ -212,8 +225,12 @@ int Sys_CreateDirectory(const char* path)
 
 int Sys_OpenDir(const char *path)
 {
+#ifdef __BORLANDC__
 	current_dir = opendir(path);
 	return current_dir != NULL;
+#else
+	return false;
+#endif
 }
 
 //==========================================================================
@@ -224,11 +241,13 @@ int Sys_OpenDir(const char *path)
 
 const char *Sys_ReadDir(void)
 {
+#ifdef __BORLANDC__
 	struct dirent *de = readdir(current_dir);
 	if (de)
 	{
 		return de->d_name;
 	}
+#endif
 	return NULL;
 }
 
@@ -240,7 +259,9 @@ const char *Sys_ReadDir(void)
 
 void Sys_CloseDir(void)
 {
+#ifdef __BORLANDC__
 	closedir(current_dir);
+#endif
 }
 
 //==========================================================================
@@ -816,9 +837,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/12/04 18:11:59  dj_jl
+//	Fixes for compiling with MSVC
+//
 //	Revision 1.9  2001/12/01 17:52:52  dj_jl
 //	no message
-//
+//	
 //	Revision 1.8  2001/11/09 14:19:42  dj_jl
 //	Functions for directory listing
 //	
