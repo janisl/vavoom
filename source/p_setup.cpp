@@ -67,6 +67,7 @@ static byte novis[32 * 1024 / 8];
 static bool AuxiliaryMap;
 
 static TCvarI ignore_missing_textures("ignore_missing_textures", "0");
+static TCvarI strict_level_errors("strict_level_errors", "1");
 
 // CODE --------------------------------------------------------------------
 
@@ -80,6 +81,7 @@ static TCvarI ignore_missing_textures("ignore_missing_textures", "0");
 
 int FTNumForName(const char *name)
 {
+	guard(FTNumForName);
 	char namet[9];
 	int i;
 
@@ -100,6 +102,7 @@ int FTNumForName(const char *name)
 		}
 	}
 	return i;
+	unguard;
 }
 
 //==========================================================================
@@ -112,6 +115,7 @@ int FTNumForName(const char *name)
 
 int TFNumForName(const char *name)
 {
+	guard(TFNumForName);
 	char namet[9];
 	int i;
 
@@ -132,6 +136,7 @@ int TFNumForName(const char *name)
 		}
 	}
 	return i;
+	unguard;
 }
 
 #ifdef SERVER
@@ -144,6 +149,7 @@ int TFNumForName(const char *name)
 
 static void LoadBlockMap(int lump, sv_level_t &loadlevel)
 {
+	guard(LoadBlockMap);
 	int i;
 	int count;
 
@@ -162,6 +168,7 @@ static void LoadBlockMap(int lump, sv_level_t &loadlevel)
 	// clear out mobj chains
 	count = loadlevel.bmapwidth * loadlevel.bmapheight;
 	loadlevel.blocklinks = Z_CNew<VMapObject*>(count, PU_LEVEL, 0);
+	unguard;
 }
 
 #endif
@@ -174,6 +181,7 @@ static void LoadBlockMap(int lump, sv_level_t &loadlevel)
 
 static void LoadVertexes(int lump, int gl_lump, base_level_t &loadlevel)
 {
+	guard(LoadVertexes);
 	int i;
 	void *data;
 	mapvertex_t *ml;
@@ -239,6 +247,7 @@ static void LoadVertexes(int lump, int gl_lump, base_level_t &loadlevel)
 
    	// Free buffer memory.
 	Z_Free(data);
+	unguard;
 }
 
 //==========================================================================
@@ -249,6 +258,7 @@ static void LoadVertexes(int lump, int gl_lump, base_level_t &loadlevel)
 
 static void LoadSectors(int lump, base_level_t &loadlevel)
 {
+	guard(LoadSectors);
 	byte *data;
 	int i;
 	mapsector_t *ms;
@@ -305,6 +315,7 @@ static void LoadSectors(int lump, base_level_t &loadlevel)
 	}
 
 	Z_Free(data);
+	unguard;
 }
 
 //==========================================================================
@@ -315,6 +326,7 @@ static void LoadSectors(int lump, base_level_t &loadlevel)
 
 static void LoadSideDefs(int lump, base_level_t &loadlevel)
 {
+	guard(LoadSideDefs);
 	byte *data;
 	int i;
 	mapsidedef_t *msd;
@@ -344,6 +356,7 @@ static void LoadSideDefs(int lump, base_level_t &loadlevel)
 	}
 
 	Z_Free(data);
+	unguard;
 }
 
 //==========================================================================
@@ -354,6 +367,7 @@ static void LoadSideDefs(int lump, base_level_t &loadlevel)
 
 void CalcLine(line_t *line)
 {
+	guard(CalcLine);
 	//	Calc line's slopetype
 	line->dir = *line->v2 - *line->v1;
 	if (!line->dir.x)
@@ -399,6 +413,61 @@ void CalcLine(line_t *line)
 		line->bbox[BOXBOTTOM] = line->v2->y;
 		line->bbox[BOXTOP] = line->v1->y;
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	SetupLineSides
+//
+//==========================================================================
+
+inline void SetupLineSides(line_t *ld, base_level_t &loadlevel)
+{
+	if (ld->sidenum[0] == -1)
+	{
+		if (strict_level_errors)
+		{
+			Host_Error("Bad WAD: Line %d has no front side",
+				ld - loadlevel.lines);
+		}
+		else
+		{
+			GCon->Logf("Bad WAD: Line %d has no front side",
+				ld - loadlevel.lines);
+			ld->sidenum[0] = 0;
+		}
+	}
+	ld->frontsector = loadlevel.sides[ld->sidenum[0]].sector;
+
+	if (ld->sidenum[1] != -1)
+	{
+		ld->backsector = loadlevel.sides[ld->sidenum[1]].sector;
+		// Just a warning
+		if (!(ld->flags & ML_TWOSIDED))
+		{
+			GCon->Logf("Bad WAD: Line %d is two-sided but has no TWO-SIDED flag set",
+				ld - loadlevel.lines);
+		}
+	}
+	else
+	{
+		if (ld->flags & ML_TWOSIDED)
+		{
+			if (strict_level_errors)
+			{
+				Host_Error("Bad WAD: Line %d is marked as TWO-SIDED but has only one side",
+					ld - loadlevel.lines);
+			}
+			else
+			{
+				GCon->Logf("Bad WAD: Line %d is marked as TWO-SIDED but has only one side",
+					ld - loadlevel.lines);
+				ld->flags &= ~ML_TWOSIDED;
+			}
+		}
+		ld->backsector = 0;
+	}
 }
 
 //==========================================================================
@@ -411,6 +480,7 @@ void CalcLine(line_t *line)
 
 static void LoadLineDefs1(int lump, base_level_t &loadlevel)
 {
+	guard(LoadLineDefs1);
 	byte *data;
 	int i;
 	maplinedef1_t *mld;
@@ -434,19 +504,11 @@ static void LoadLineDefs1(int lump, base_level_t &loadlevel)
 
 		ld->sidenum[0] = LittleShort(mld->sidenum[0]);
 		ld->sidenum[1] = LittleShort(mld->sidenum[1]);
-
-		if (ld->sidenum[0] != -1)
-			ld->frontsector = loadlevel.sides[ld->sidenum[0]].sector;
-		else
-			ld->frontsector = 0;
-
-		if (ld->sidenum[1] != -1)
-			ld->backsector = loadlevel.sides[ld->sidenum[1]].sector;
-		else
-			ld->backsector = 0;
+		SetupLineSides(ld, loadlevel);
 	}
 
 	Z_Free(data);
+	unguard;
 }
 
 //==========================================================================
@@ -459,6 +521,7 @@ static void LoadLineDefs1(int lump, base_level_t &loadlevel)
 
 static void LoadLineDefs2(int lump, base_level_t &loadlevel)
 {
+	guard(LoadLineDefs2);
 	byte *data;
 	int i;
 	maplinedef2_t *mld;
@@ -489,17 +552,11 @@ static void LoadLineDefs2(int lump, base_level_t &loadlevel)
 
 		ld->sidenum[0] = LittleShort(mld->sidenum[0]);
 		ld->sidenum[1] = LittleShort(mld->sidenum[1]);
-		if (ld->sidenum[0] != -1)
-			ld->frontsector = loadlevel.sides[ld->sidenum[0]].sector;
-		else
-			ld->frontsector = 0;
-		if (ld->sidenum[1] != -1)
-			ld->backsector = loadlevel.sides[ld->sidenum[1]].sector;
-		else
-			ld->backsector = 0;
+		SetupLineSides(ld, loadlevel);
 	}
 
 	Z_Free(data);
+	unguard;
 }
 
 //==========================================================================
@@ -510,7 +567,9 @@ static void LoadLineDefs2(int lump, base_level_t &loadlevel)
 
 void CalcSeg(seg_t *seg)
 {
+	guardSlow(CalcSeg);
 	seg->Set2Points(*seg->v1, *seg->v2);
+	unguardSlow;
 }
 
 //==========================================================================
@@ -521,6 +580,7 @@ void CalcSeg(seg_t *seg)
 
 static void LoadGLSegs(int lump, base_level_t &loadlevel)
 {
+	guard(LoadGLSegs);
 	void *data;
 	int i;
 	mapglseg_t *ml;
@@ -570,7 +630,7 @@ static void LoadGLSegs(int lump, base_level_t &loadlevel)
 			li->sidedef = &loadlevel.sides[ldef->sidenum[side]];
 			li->frontsector = loadlevel.sides[ldef->sidenum[side]].sector;
 
-			if (ldef-> flags & ML_TWOSIDED)
+			if (ldef->flags & ML_TWOSIDED)
 				li->backsector = loadlevel.sides[ldef->sidenum[side^1]].sector;
 
 			if (side)
@@ -588,6 +648,7 @@ static void LoadGLSegs(int lump, base_level_t &loadlevel)
 	}
 
 	Z_Free(data);
+	unguard;
 }
 
 //==========================================================================
@@ -598,6 +659,7 @@ static void LoadGLSegs(int lump, base_level_t &loadlevel)
 
 static void LoadSubsectors(int lump, base_level_t &loadlevel)
 {
+	guard(LoadSubsectors);
 	void *data;
 	int i;
 	int j;
@@ -614,8 +676,8 @@ static void LoadSubsectors(int lump, base_level_t &loadlevel)
 
 	for (i = 0; i < loadlevel.numsubsectors; i++, ss++, ms++)
 	{
-		ss->numlines = LittleShort(ms->numsegs);
-		ss->firstline = LittleShort(ms->firstseg);
+		ss->numlines = (word)LittleShort(ms->numsegs);
+		ss->firstline = (word)LittleShort(ms->firstseg);
 
 		// look up sector number for each subsector
 		seg = &loadlevel.segs[ss->firstline];
@@ -634,6 +696,7 @@ static void LoadSubsectors(int lump, base_level_t &loadlevel)
 	}
 
 	Z_Free(data);
+	unguard;
 }
 
 //==========================================================================
@@ -644,6 +707,7 @@ static void LoadSubsectors(int lump, base_level_t &loadlevel)
 
 static void LoadNodes(int lump, base_level_t &loadlevel)
 {
+	guard(LoadNodes);
 	byte *data;
 	int i;
 	int j;
@@ -674,6 +738,7 @@ static void LoadNodes(int lump, base_level_t &loadlevel)
 		}
 	}
 	Z_Free(data);
+	unguard;
 }
 
 //==========================================================================
@@ -684,6 +749,7 @@ static void LoadNodes(int lump, base_level_t &loadlevel)
 
 static void	LoadPVS(int lump, base_level_t &loadlevel)
 {
+	guard(LoadPVS);
 	if (strcmp(W_LumpName(lump), "GL_PVS") || W_LumpLength(lump) == 0)
 	{
 		cond << "Empty or missing PVS lump\n";
@@ -694,6 +760,7 @@ static void	LoadPVS(int lump, base_level_t &loadlevel)
 	{
 		loadlevel.vis_data = (byte*)W_CacheLumpNum(lump, PU_LEVEL);
 	}
+	unguard;
 }
 
 #ifdef SERVER
@@ -705,6 +772,7 @@ static void	LoadPVS(int lump, base_level_t &loadlevel)
 
 static void LoadThings1(int lump)
 {
+	guard(LoadThings1);
 	sv_level_t &loadlevel = level;
 	byte *data;
 	int i;
@@ -726,6 +794,7 @@ static void LoadThings1(int lump)
 		mth->options = LittleShort(mt->options);
 	}
 	Z_Free(data);
+	unguard;
 }
 
 //==========================================================================
@@ -736,6 +805,7 @@ static void LoadThings1(int lump)
 
 static void LoadThings2(int lump)
 {
+	guard(LoadThings2);
 	sv_level_t &loadlevel = level;
 	byte *data;
 	int i;
@@ -765,6 +835,7 @@ static void LoadThings2(int lump)
 		mth->arg5 = mt->arg5;
 	}
 	Z_Free(data);
+	unguard;
 }
 #endif
 
@@ -776,8 +847,10 @@ static void LoadThings2(int lump)
 
 static void ClearBox(float *box)
 {
+	guardSlow(ClearBox);
 	box[BOXTOP] = box[BOXRIGHT] = -99999.0;
 	box[BOXBOTTOM] = box[BOXLEFT] = 99999.0;
+	unguardSlow;
 }
 
 //==========================================================================
@@ -788,6 +861,7 @@ static void ClearBox(float *box)
 
 static void AddToBox(float* box, float x, float y)
 {
+	guardSlow(AddToBox);
 	if (x < box[BOXLEFT])
 		box[BOXLEFT] = x;
 	else if (x > box[BOXRIGHT])
@@ -796,6 +870,7 @@ static void AddToBox(float* box, float x, float y)
 		box[BOXBOTTOM] = y;
 	else if (y > box[BOXTOP])
 		box[BOXTOP] = y;
+	unguardSlow;
 }
 
 //==========================================================================
@@ -806,6 +881,7 @@ static void AddToBox(float* box, float x, float y)
 
 static void LinkNode(int bspnum, node_t *parent, base_level_t &loadlevel)
 {
+	guardSlow(LinkNode);
 	if (bspnum & NF_SUBSECTOR)
 	{
 		int num;
@@ -824,6 +900,7 @@ static void LinkNode(int bspnum, node_t *parent, base_level_t &loadlevel)
 		LinkNode(bsp->children[0], bsp, loadlevel);
 		LinkNode(bsp->children[1], bsp, loadlevel);
 	}
+	unguardSlow;
 }
 
 #ifdef SERVER
@@ -839,6 +916,7 @@ static void LinkNode(int bspnum, node_t *parent, base_level_t &loadlevel)
 
 static void GroupLines(sv_level_t &loadlevel)
 {
+	guard(GroupLines);
 	line_t ** linebuffer;
 	int i;
 	int j;
@@ -906,6 +984,7 @@ static void GroupLines(sv_level_t &loadlevel)
 		block = block < 0 ? 0 : block;
 		sector->blockbox[BOXLEFT] = block;
 	}
+	unguard;
 }
 
 #endif
@@ -922,6 +1001,7 @@ static void GroupLines(sv_level_t &loadlevel)
 
 static void GroupLines(cl_level_t &loadlevel)
 {
+	guard(GroupLines);
 	line_t ** linebuffer;
 	int i;
 	int j;
@@ -971,6 +1051,7 @@ static void GroupLines(cl_level_t &loadlevel)
 		sector->soundorg = TVec((bbox[BOXRIGHT] + bbox[BOXLEFT]) / 2.0,
 			(bbox[BOXTOP] + bbox[BOXBOTTOM]) / 2.0, 0);
 	}
+	unguard;
 }
 
 #endif
@@ -984,6 +1065,7 @@ static void GroupLines(cl_level_t &loadlevel)
 static bool LoadBaseLevel(base_level_t &lev, const char *mapname,
 	int &lumpnum, int &gl_lumpnum, bool open_aux)
 {
+	guard(LoadBaseLevel);
 	if (open_aux)
 	{
 		W_CloseAuxiliary();
@@ -1050,6 +1132,7 @@ static bool LoadBaseLevel(base_level_t &lev, const char *mapname,
 	LoadPVS(gl_lumpnum + ML_GL_PVS, lev);
 
 	return extended;
+	unguard;
 }
 
 #ifdef SERVER
@@ -1062,6 +1145,7 @@ static bool LoadBaseLevel(base_level_t &lev, const char *mapname,
 
 void LoadLevel(sv_level_t &lev, const char *mapname)
 {
+	guard(LoadLevel);
 	int lumpnum;
 	int gl_lumpnum;
 
@@ -1099,6 +1183,7 @@ void LoadLevel(sv_level_t &lev, const char *mapname)
 		W_CloseAuxiliaryFile();
 	}
 #endif
+	unguard;
 }
 
 #endif
@@ -1112,6 +1197,7 @@ void LoadLevel(sv_level_t &lev, const char *mapname)
 
 void LoadLevel(cl_level_t &lev, const char *mapname)
 {
+	guard(LoadLevel);
 	int lumpnum;
 	int gl_lumpnum;
 
@@ -1134,6 +1220,7 @@ void LoadLevel(cl_level_t &lev, const char *mapname)
 		// of the current auxiliary WAD (free lumps and info lists).
 		W_CloseAuxiliaryFile();
 	}
+	unguard;
 }
 
 #endif
@@ -1146,6 +1233,7 @@ void LoadLevel(cl_level_t &lev, const char *mapname)
 
 subsector_t* PointInSubsector(const base_level_t &lev, float x, float y)
 {
+	guard(PointInSubsector);
 	node_t *node;
 	int side;
 	int nodenum;
@@ -1164,6 +1252,7 @@ subsector_t* PointInSubsector(const base_level_t &lev, float x, float y)
 		nodenum = node->children[side];
 	}
 	return &lev.subsectors[nodenum & ~NF_SUBSECTOR];
+	unguard;
 }
 
 //==========================================================================
@@ -1174,6 +1263,7 @@ subsector_t* PointInSubsector(const base_level_t &lev, float x, float y)
 
 byte *LeafPVS(const base_level_t &lev, const subsector_t *ss)
 {
+	guard(LeafPVS);
 	int sub = ss - lev.subsectors;
 	if (lev.vis_data)
 	{
@@ -1183,6 +1273,7 @@ byte *LeafPVS(const base_level_t &lev, const subsector_t *ss)
 	{
 		return novis;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -1193,6 +1284,7 @@ byte *LeafPVS(const base_level_t &lev, const subsector_t *ss)
 
 sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 {
+	guard(AddExtraFloor);
 	sec_region_t *region;
 	sec_region_t *inregion;
 	sector_t *src;
@@ -1228,6 +1320,7 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 	}
 	con << "Invalid extra floor, tag " << dst->tag << endl;
 	return NULL;
+	unguard;
 }
 
 //==========================================================================
@@ -1238,6 +1331,7 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 
 void SwapPlanes(sector_t *s)
 {
+	guard(SwapPlanes);
 	float tempHeight;
 	int tempTexture;
 
@@ -1262,11 +1356,15 @@ void SwapPlanes(sector_t *s)
 	s->ceiling.base_pic = s->ceiling.pic;
 	s->base_floorheight = s->floor.dist;
 	s->base_ceilingheight = s->ceiling.dist;
+	unguard;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/07/13 07:44:50  dj_jl
+//  Added some error checks.
+//
 //  Revision 1.16  2002/01/11 08:09:34  dj_jl
 //  Added sector plane swapping
 //
