@@ -26,10 +26,6 @@
 class Specter4 : Specter1
 	__mobjinfo__(167);
 
-void A_Specter4Attack()
-{
-}
-
 __states__
 {
 	S_SPECTER4_ATK1('ALN1', 5, 4.0 / 35.0, S_SPECTER4_ATK2) { A_FaceTarget(); }
@@ -48,6 +44,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/10/18 06:35:21  dj_jl
+//  Implemented many monsters, sigil and some more.
+//
 //  Revision 1.2  2004/01/29 07:33:53  dj_jl
 //  Implemented many action functions
 //

@@ -35,10 +35,12 @@ class PowerCrystal : Decoration
 
 void A_Unknown112()
 {
-	//sys25768 (self, self->target, 512);
+	int i;
+
+	RadiusAttack(512, 512, true);
 	if (Enemy && Enemy.bIsPlayer)
 	{
-		// Store 5 in the dword at offset 0x307 in the player struct
+		Enemy.Player.ExtraLight = 5;
 	}
 }
 
@@ -77,7 +79,7 @@ void A_Unknown114()
 {
 	if (Enemy && Enemy.bIsPlayer)
 	{
-		// Store 0 in the dword at offset 0x307 in the player struct
+		Enemy.Player.ExtraLight = 0;
 	}
 }
 
@@ -135,6 +137,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2004/10/18 06:35:21  dj_jl
+//  Implemented many monsters, sigil and some more.
+//
 //  Revision 1.4  2004/10/13 06:36:30  dj_jl
 //  Implemented items also giving quests.
 //

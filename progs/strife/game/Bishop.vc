@@ -46,8 +46,20 @@ void A_BishopAttack()
 	}
 }
 
+//==========================================================================
+//
+//	A_BishopAttack
+//
+//==========================================================================
+
 void A_BishopDeath()
 {
+	Actor A;
+
+	//	Spawn Bishop's specter
+	A = Spawn(Specter2, Origin + vector(0.0, 0.0, Height));
+	A.Velocity.z += 2.0 * 35.0;
+	A.Angles.yaw = Angles.yaw;
 }
 
 __states__
@@ -107,6 +119,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/10/18 06:35:20  dj_jl
+//  Implemented many monsters, sigil and some more.
+//
 //  Revision 1.2  2004/01/29 07:25:05  dj_jl
 //  Implemented many action functions
 //

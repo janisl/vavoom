@@ -25,20 +25,104 @@
 
 class WeaponSigil : Weapon;
 
-void A_FireSigil1(void)
+//==========================================================================
+//
+//	A_SigilSound
+//
+//==========================================================================
+
+void A_SigilSound()
 {
+	Player.MO.PlaySound('SigilFire', CHAN_WEAPON);
 }
 
-void A_FireSigil2(void)
+//==========================================================================
+//
+//	A_SigilShowFlash
+//
+//==========================================================================
+
+void A_SigilShowFlash()
 {
+	Player.SetPsprite(ps_flash, FlashState);
 }
 
-void A_FireSigil3(void)
+//==========================================================================
+//
+//	A_FireSigil
+//
+//==========================================================================
+
+void A_FireSigil()
 {
+	Actor sigil;
+	float angle;
+	Actor sigilspread;
+	int i;
+
+	angle = Player.MO.Angles.yaw + 180.0;
+	Player.MO.Velocity.x += 4.0 * 35.0 * cos(angle);
+	Player.MO.Velocity.y += 4.0 * 35.0 * sin(angle);
+	P_NoiseAlert(Player.MO, Player.MO);
+
+	if (Player.Sigil == 4)
+	{
+		Player.SpawnPlayerMissile(SigilFX3);
+	}
+	else if (Player.Sigil == 3)
+	{
+		Player.SpawnPlayerMissile(SigilFX5);
+	}
+	else if (Player.Sigil == 2)
+	{
+		for (i = 0; i < 20; i++)
+		{
+			sigilspread = Player.SpawnPlayerMissileAngle(SigilFX2,
+				Player.MO.Angles.yaw - 90.0 + itof(i) * (45.0 / 4.0));
+			angle = sigilspread.Angles.yaw;
+			sigilspread.Velocity.x = sigilspread.Speed * cos(angle);
+			sigilspread.Velocity.y = sigilspread.Speed * sin(angle);
+		}
+	}
+	else if (Player.Sigil == 1)
+	{
+		Player.SpawnPlayerMissile(SigilFX1);
+	}
+	else
+	{
+		sigil = Player.SpawnPlayerMissile(SigilFloor);
+		if (sigil)
+		{
+			sigil.Origin.z = sigil.FloorZ;
+			if (!linetarget)
+			{
+				sigil.Origin.x = Player.MO.Origin.x;
+				sigil.Origin.y = Player.MO.Origin.y;
+				sigil.Velocity.x = 0.0;
+				sigil.Velocity.y = 0.0;
+			}
+			else
+			{
+				sigil.Origin.x = linetarget.Origin.x;
+				sigil.Origin.y = linetarget.Origin.y;
+				sigil.Velocity.x = 0.0;
+				sigil.Velocity.y = 0.0;
+			}
+		}
+	}
 }
 
-void A_SigilFlash(void)
+//==========================================================================
+//
+//	A_SigilFlash
+//
+//==========================================================================
+
+void A_SigilFlash()
 {
+	//Player.MiscTime = 10;
+	Player.MO.Damage(none, none, 5);
+	Player.FixedColormap = INVERSECOLORMAP;
 }
 
 __states__
@@ -50,13 +134,17 @@ __states__
 	S_SIGIL04('SIGH', 4 | FF_FULLBRIGHT, -1.0, S_NULL) { }
 	S_SIGILDOWN('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_SIGILDOWN) { A_Lower(); }
 	S_SIGILUP('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_SIGILUP) { A_Raise(); }
-	S_SIGIL1('SIGH', 0 | FF_FULLBRIGHT, 18.0 / 35.0, S_SIGIL2) { A_FireSigil1(); }
-	S_SIGIL2('SIGH', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SIGIL3) { A_FireSigil2(); }
-	S_SIGIL3('SIGH', 0, 10.0 / 35.0, S_SIGIL4) { A_FireSigil3(); }
+	S_SIGIL1('SIGH', 0 | FF_FULLBRIGHT, 18.0 / 35.0, S_SIGIL2) { A_SigilSound(); }
+	S_SIGIL2('SIGH', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SIGIL3) { A_SigilShowFlash(); }
+	S_SIGIL3('SIGH', 0, 10.0 / 35.0, S_SIGIL4) { A_FireSigil(); }
 	S_SIGIL4('SIGH', 0, 5.0 / 35.0, S_SIGIL) { A_ClearFlash(); }
 	S_SIGILFLASH1('SIGF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGILFLASH2) { A_Light2(); }
 	S_SIGILFLASH2('SIGF', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGILFLASH3) { A_SigilFlash(); }
-	S_SIGILFLASH3('SIGF', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE) { A_Light1(); }
+	S_SIGILFLASH3('SIGF', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE)
+	{
+		A_Light1(); 
+		Player.FixedColormap = 0;
+	}
 }
 
 defaultproperties
@@ -72,6 +160,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/10/18 06:35:21  dj_jl
+//  Implemented many monsters, sigil and some more.
+//
 //  Revision 1.2  2004/01/30 17:40:09  dj_jl
 //  Implemented many action functions.
 //

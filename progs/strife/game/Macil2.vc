@@ -23,11 +23,22 @@
 //**
 //**************************************************************************
 
-class Macil2:Macil
+class Macil2 : Macil
 	__mobjinfo__(200);
 
-void A_MacilDeath(void)
+//==========================================================================
+//
+//	A_MacilDeath
+//
+//==========================================================================
+
+void A_MacilDeath()
 {
+	Actor A;
+
+	A = Spawn(Specter4, Origin + vector(0.0, 0.0, Height));
+	A.Velocity.z += 2.0 * 35.0;
+	A.Angles.yaw = Angles.yaw;
 }
 
 __states__
@@ -70,6 +81,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/10/18 06:35:21  dj_jl
+//  Implemented many monsters, sigil and some more.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

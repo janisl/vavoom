@@ -26,6 +26,12 @@
 class AlarmIndicator : Decoration
 	__mobjinfo__(24);
 
+//==========================================================================
+//
+//	A_AlarmActive
+//
+//==========================================================================
+
 void A_AlarmActive()
 {
 	PlaySound('Alarm', CHAN_VOICE);
@@ -33,6 +39,7 @@ void A_AlarmActive()
 	if (!ReactionCount)
 	{
 		SetState(IdleState);
+		ReactionCount = 60;
 	}
 }
 
@@ -57,6 +64,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/10/18 06:35:20  dj_jl
+//  Implemented many monsters, sigil and some more.
+//
 //  Revision 1.2  2004/02/04 07:32:58  dj_jl
 //  Implemented many action functions
 //

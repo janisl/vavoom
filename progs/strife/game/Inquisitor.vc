@@ -23,26 +23,154 @@
 //**
 //**************************************************************************
 
-class Inquisitor:Pawn
+class Inquisitor : Pawn
 	__mobjinfo__(16);
 
-void A_InquisitorChase(void)
+int SeeState2;
+int JumpState;
+int MissileState2;
+int GrenadeState;
+name JumpSound;
+float JumpSpeed;
+
+//==========================================================================
+//
+//	A_InquisitorChase
+//
+//==========================================================================
+
+void A_InquisitorChase()
 {
+	float		ZSpeed;
+
+	if (!Enemy)
+		return;
+
+	ZSpeed = fabs(Velocity.z);
+	if (Origin.z < Enemy.Origin.z)
+	{
+		A_FaceTarget();
+		Origin.z = FloorZ + 80.0;
+		if (Radius && Origin.z > (CeilingZ - Height))
+			//	Don't let him jump while under a low ceiling
+			Origin.z = FloorZ;
+		else
+			SetState(JumpState);
+	}
+	else if (Origin.z != Enemy.Origin.z && Origin.z != FloorZ && 
+		ZSpeed > 21.0)
+	{
+		A_FaceTarget();
+		SetState(JumpState);
+	}
 }
-void A_InquisitorChase2(void)
+
+//==========================================================================
+//
+//	A_InquisitorChase2
+//
+//==========================================================================
+
+void A_InquisitorChase2()
 {
+	if (Origin.z != FloorZ)
+		return;
+
+	if (!CheckRobotRange())
+	{
+		SetState(GrenadeState);
+	}
+	else
+	{
+		SetState(MissileState2);
+	}
 }
-void A_InquisitorAttack2(void)
+
+//==========================================================================
+//
+//	A_InquisitorGrenade
+//
+//==========================================================================
+
+void A_InquisitorGrenade()
 {
+	Actor A;
+	float an;
+
+	if	(Origin.z != FloorZ)
+		return;
+
+	A_FaceTarget();
+
+	A = SpawnMissileZ(76.0, Enemy, InquisitorGrenade);
+	A.Angles.yaw += 45.0 / 16.0;
+	A.Velocity.x = A.Speed * cos(A.Angles.yaw);
+	A.Velocity.y = A.Speed * sin(A.Angles.yaw);
+	A.Velocity.z += 15.0;	//weeeeeeeeeee!!!!
+
+	A = SpawnMissileZ(76.0, Enemy, InquisitorGrenade);
+	A.Angles.yaw -= 45.0 / 16.0;
+	A.Velocity.x = A.Speed * cos(A.Angles.yaw);
+	A.Velocity.y = A.Speed * sin(A.Angles.yaw);
+	A.Velocity.z += 4.0;
 }
-void A_InquisitorInitJump(void)
+
+//==========================================================================
+//
+//	A_InquisitorInitJump
+//
+//==========================================================================
+
+void A_InquisitorInitJump()
 {
+	float an;
+	float dist;
+
+	if (!Enemy)
+		return;
+
+	bNoGravity = true;
+	bFloat = false;
+	A_FaceTarget();
+	Velocity.x = JumpSpeed * cos(Angles.yaw);
+	Velocity.y = JumpSpeed * sin(Angles.yaw);
+	dist = MobjDist2(self, Enemy);
+	dist = dist / JumpSpeed;
+	if (dist < 1.0)
+	{
+		dist = 1.0;
+	}
+	Velocity.z = (Enemy.Origin.z - Origin.z) / dist;
 }
-void A_InquisitorJump(void)
+
+//==========================================================================
+//
+//	A_InquisitorJump
+//
+//==========================================================================
+
+void A_InquisitorJump()
 {
+	PlaySound(JumpSound, CHAN_BODY);
+	if (Velocity.x == 0.0 && Velocity.y == 0.0 ||
+		Origin.z == FloorZ ||
+		fabs(Velocity.x) > JumpSpeed && fabs(Velocity.y) > JumpSpeed)
+	{
+		SetState(SeeState2);
+		bNoGravity = false;
+	}
 }
-void A_InquisitorDropArms(void)
+
+//==========================================================================
+//
+//	A_InquisitorDropArms
+//
+//==========================================================================
+
+void A_InquisitorDropArms()
 {
+	TossUpObject(InquisitorArm);
+	TossUpObject(InquisitorArm);
 }
 
 __states__
@@ -62,7 +190,7 @@ __states__
 	S_INQUISITOR_ATK1_3('ROB3', 6 | FF_FULLBRIGHT, 8.0 / 35.0, S_INQUISITOR_ATK1_4) { A_RobotMissile(); }
 	S_INQUISITOR_ATK1_4('ROB3', 6, 8.0 / 35.0, S_INQUISITOR_RUN1) { A_RobotMissile(); }
 	S_INQUISITOR_ATK2_1('ROB3', 10, 12.0 / 35.0, S_INQUISITOR_ATK2_2) { A_FaceTarget(); }
-	S_INQUISITOR_ATK2_2('ROB3', 9 | FF_FULLBRIGHT, 6.0 / 35.0, S_INQUISITOR_ATK2_3) { A_InquisitorAttack2(); }
+	S_INQUISITOR_ATK2_2('ROB3', 9 | FF_FULLBRIGHT, 6.0 / 35.0, S_INQUISITOR_ATK2_3) { A_InquisitorGrenade(); }
 	S_INQUISITOR_ATK2_3('ROB3', 10, 12.0 / 35.0, S_INQUISITOR_RUN1) { }
 	S_INQUISITOR_JUMP1('ROB3', 7 | FF_FULLBRIGHT, 8.0 / 35.0, S_INQUISITOR_JUMP2) { A_InquisitorInitJump(); }
 	S_INQUISITOR_JUMP2('ROB3', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_INQUISITOR_JUMP3) { A_InquisitorJump(); }
@@ -89,7 +217,7 @@ __states__
 	S_INQUISITOR_DIE20('RBB3', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_INQUISITOR_DIE21) { A_XDying(); }
 	S_INQUISITOR_DIE21('RBB3', 2, 3.0 / 35.0, S_INQUISITOR_DIE22) { A_XDying(); }
 	S_INQUISITOR_DIE22('RBB3', 3, 3.0 / 35.0, S_INQUISITOR_DIE23) { A_XDying(); }
-	S_INQUISITOR_DIE23('RBB3', 4, -1.0, S_NULL) { A_Unknown72(); }
+	S_INQUISITOR_DIE23('RBB3', 4, -1.0, S_NULL) { A_BossDeath(); }
 }
 
 defaultproperties
@@ -99,20 +227,29 @@ defaultproperties
 	Height = 110.0;
 	Mass = 1000.0;
 	StepSpeed = 12.0;
+	JumpSpeed = 6.0 * 35.0;
 	bDropOff = true;
 	bNoBlood = true;
 	IdleState = S_INQUISITOR_LOOK1;
 	SeeState = S_INQUISITOR_RUN1;
+	SeeState2 = S_INQUISITOR_RUN2;
 	MissileState = S_INQUISITOR_ATK1_1;
+	MissileState2 = S_INQUISITOR_ATK1_2;
+	GrenadeState = S_INQUISITOR_ATK2_1;
+	JumpState = S_INQUISITOR_JUMP1;
 	DeathState = S_INQUISITOR_DIE1;
 	SightSound = 'InquisitorSight';
 	ActiveSound = 'InquisitorActive';
+	JumpSound = 'InquisitorJump';
 	DeathSound = 'InquisitorDeath';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/10/18 06:35:21  dj_jl
+//  Implemented many monsters, sigil and some more.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

@@ -26,10 +26,6 @@
 class Specter3 : Specter1
 	__mobjinfo__(76);
 
-void A_Specter3Attack()
-{
-}
-
 __states__
 {
 	S_SPECTER3_LOOK1('ALN1', 0, 5.0 / 35.0, S_SPECTER3_LOOK2) { A_FlightChase(); }
@@ -78,6 +74,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/10/18 06:35:21  dj_jl
+//  Implemented many monsters, sigil and some more.
+//
 //  Revision 1.2  2004/01/29 07:33:53  dj_jl
 //  Implemented many action functions
 //

@@ -1658,6 +1658,36 @@ Actor SpawnPlayerMissile(classid type)
 	return A;
 }
 
+//==========================================================================
+//
+//  SpawnPlayerMissileAngle
+//
+//  Tries to aim at a nearby monster
+//
+//==========================================================================
+
+Actor SpawnPlayerMissileAngle(classid type, float angle)
+{
+	Actor A;
+	TVec dir;
+
+	// see which target is to be aimed at
+	dir = AimAngle(MO, 16.0 * 64.0, angle);
+
+	A = Spawn(type, MO.Origin + vector(0.0, 0.0, 32.0));
+
+	if (A.SightSound)
+		A.PlaySound(A.SightSound, CHAN_VOICE);
+
+	A.Instigator = MO;
+	A.Velocity = dir * A.Speed;
+	VectorAngles(&dir, &A.Angles);
+
+	A.CheckMissileSpawn();
+
+	return A;
+}
+
 //***************************************************************************
 //
 //  WEAPON UTILITES
@@ -1910,6 +1940,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2004/10/18 06:35:21  dj_jl
+//  Implemented many monsters, sigil and some more.
+//
 //  Revision 1.7  2004/10/14 06:21:35  dj_jl
 //  Implemented Programmer.
 //

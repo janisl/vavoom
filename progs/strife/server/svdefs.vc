@@ -65,6 +65,7 @@
 #define PUNCHRANGE		80.0
 #define MISSILERANGE	(32.0 * 64.0)
 #define MAULERRANGE		(33.0 * 64.0)
+#define ROBOTRANGE		264.0
 
 #define LOWERSPEED		6.0
 #define RAISESPEED		6.0
@@ -263,6 +264,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.48  2004/10/18 06:35:36  dj_jl
+//  Implemented many monsters, sigil and some more.
+//
 //  Revision 1.47  2004/10/13 06:36:38  dj_jl
 //  Implemented items also giving quests.
 //

@@ -23,14 +23,51 @@
 //**
 //**************************************************************************
 
-class EntityBoss:Pawn
+class EntityBoss : Pawn
 	__mobjinfo__(128);
 
-void A_EntityAttack(void)
+TVec BossSpawnPos;
+
+//==========================================================================
+//
+//	A_EntityAttack
+//
+//==========================================================================
+
+void A_EntityAttack()
 {
+	float r;
+
+	if (!Enemy)
+		return;
+
+	A_FaceTarget();
+
+	r = Random();
+	if (r < 0.25)
+		A_Specter3Attack();
+	else if (r < 0.375)
+		A_SpecterAttack();
+	else if (r < 0.5)
+		A_Specter4Attack();
+	else if (r < 0.625)
+		A_Specter5Attack();
+	else
+		A_Specter2Attack();
 }
-void A_EntityDeath(void)
+
+//==========================================================================
+//
+//	A_EntityDeath
+//
+//==========================================================================
+
+void A_EntityDeath()
 {
+	//	Of course this isn't 100% accurate, but it does its job		-kaiser
+	Spawn(SubEntity, BossSpawnPos + vector(-240.0, -itof(P_Random() & 192), 0.0));
+	Spawn(SubEntity, BossSpawnPos + vector(-itof(P_Random() & 192), 240.0, 0.0));
+	Spawn(SubEntity, BossSpawnPos + vector(itof(P_Random() & 192), -240.0, 0.0));
 }
 
 __states__
@@ -67,12 +104,12 @@ __states__
 	S_ENTITY_ATK2('MNAL', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_ENTITY_ATK3) { A_EntityAttack(); }
 	S_ENTITY_ATK3('MNAL', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_ENTITY_RUN11) { }
 	S_ENTITY_PAIN('MNAL', 9 | FF_FULLBRIGHT, 2.0 / 35.0, S_ENTITY_RUN7) { A_Pain(); }
-	S_ENTITY_DIE1('MNAL', 11 | FF_FULLBRIGHT, 7.0 / 35.0, S_ENTITY_DIE2) { A_SpecterDying(); }
+	S_ENTITY_DIE1('MNAL', 11 | FF_FULLBRIGHT, 7.0 / 35.0, S_ENTITY_DIE2) { A_SpecterTossChunk(); }
 	S_ENTITY_DIE2('MNAL', 12 | FF_FULLBRIGHT, 7.0 / 35.0, S_ENTITY_DIE3) { A_Scream(); }
-	S_ENTITY_DIE3('MNAL', 13 | FF_FULLBRIGHT, 7.0 / 35.0, S_ENTITY_DIE4) { A_SpecterDying(); }
-	S_ENTITY_DIE4('MNAL', 14 | FF_FULLBRIGHT, 7.0 / 35.0, S_ENTITY_DIE5) { A_SpecterDying(); }
-	S_ENTITY_DIE5('MNAL', 15 | FF_FULLBRIGHT, 7.0 / 35.0, S_ENTITY_DIE6) { A_SpecterDeath(); }
-	S_ENTITY_DIE6('MNAL', 16 | FF_FULLBRIGHT, 64.0 / 35.0, S_ENTITY_DIE7) { A_SpecterDying(); }
+	S_ENTITY_DIE3('MNAL', 13 | FF_FULLBRIGHT, 7.0 / 35.0, S_ENTITY_DIE4) { A_SpecterTossChunk(); }
+	S_ENTITY_DIE4('MNAL', 14 | FF_FULLBRIGHT, 7.0 / 35.0, S_ENTITY_DIE5) { A_SpecterTossChunk(); }
+	S_ENTITY_DIE5('MNAL', 15 | FF_FULLBRIGHT, 7.0 / 35.0, S_ENTITY_DIE6) { A_SpecterTossHead(); }
+	S_ENTITY_DIE6('MNAL', 16 | FF_FULLBRIGHT, 64.0 / 35.0, S_ENTITY_DIE7) { A_SpecterTossChunk(); }
 	S_ENTITY_DIE7('MNAL', 16 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { A_EntityDeath(); }
 }
 
@@ -109,6 +146,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/10/18 06:35:21  dj_jl
+//  Implemented many monsters, sigil and some more.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

@@ -26,8 +26,21 @@
 class Teleporter_Beacon : InventoryItem
 	__mobjinfo__(10);
 
+//==========================================================================
+//
+//	A_SummonRebel
+//
+//==========================================================================
+
 void A_SummonRebel()
 {
+	Actor A;
+	Actor TFog;
+
+	A = Spawn(Rebel, Origin + vector((Random() - 0.5) * 64.0,
+		(Random() - 0.5) * 64.0, 0.0));
+	TFog = Spawn(TeleportFog, A.Origin);
+	TFog.PlaySound('Teleport', CHAN_BODY);
 }
 
 __states__
@@ -54,6 +67,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2004/10/18 06:35:21  dj_jl
+//  Implemented many monsters, sigil and some more.
+//
 //  Revision 1.3  2004/01/30 17:46:30  dj_jl
 //  Implemented many action functions.
 //

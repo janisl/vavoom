@@ -880,6 +880,43 @@ TVec Aim(Actor A, float distance)
 	return dir;
 }
 
+//===========================================================================
+//
+//	AimAngle
+//
+//  Sets a slope so a near miss is at aproximately the height of the
+// intended target
+//
+//===========================================================================
+
+TVec AimAngle(Actor A, float distance, float angle)
+{
+	TAVec an;
+	TVec dir;
+
+	// see which target is to be aimed at
+	an = A.Angles;
+	an.yaw = angle;
+
+	dir = AimLineAttack(A, an, distance);
+	if (!linetarget)
+	{
+		an.yaw = AngleMod360(an.yaw + 45.0 / 8.0);
+		dir = AimLineAttack(A, an, distance);
+		if (!linetarget)
+		{
+			an.yaw = AngleMod360(an.yaw - 45.0 / 4.0);
+			dir = AimLineAttack(A, an, distance);
+			if (!linetarget)
+			{
+				an.yaw = AngleMod360(an.yaw + 45.0 / 8.0);
+				AngleVector(&an, &dir);
+			}
+		}
+	}
+	return dir;
+}
+
 //**************************************************************************
 //
 //  SHOOTING
@@ -1186,6 +1223,9 @@ bool PIT_RadiusAttack(Entity Other)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.36  2004/10/18 06:35:36  dj_jl
+//  Implemented many monsters, sigil and some more.
+//
 //  Revision 1.35  2004/10/13 06:36:38  dj_jl
 //  Implemented items also giving quests.
 //
