@@ -67,6 +67,10 @@ void Z_FreeTag(int tag);
 void Z_CheckHeap(void);
 int Z_FreeMemory(void);
 
+// PUBLIC DATA DECLARATIONS ------------------------------------------------
+
+// INLINE FUNCTIONS AND TEMPLATES ------------------------------------------
+
 inline void *Z_Malloc(int size)
 {
 	return Z_Malloc(size, PU_STATIC, 0);
@@ -95,14 +99,55 @@ inline char *Z_StrDup(const char *src)
 	return buf;
 }
 
-// PUBLIC DATA DECLARATIONS ------------------------------------------------
+template<class T> T* Z_New(void)
+{
+	return (T*)Z_Malloc(sizeof(T));
+}
+
+template<class T> T* Z_New(int elem_count)
+{
+	return (T*)Z_Malloc(elem_count * sizeof(T));
+}
+
+template<class T> T* Z_New(int tag, void** owner)
+{
+	return (T*)Z_Malloc(sizeof(T), tag, owner);
+}
+
+template<class T> T* Z_New(int elem_count, int tag, void** owner)
+{
+	return (T*)Z_Malloc(elem_count * sizeof(T), tag, owner);
+}
+
+template<class T> T* Z_CNew(void)
+{
+	return (T*)Z_Calloc(sizeof(T));
+}
+
+template<class T> T* Z_CNew(int elem_count)
+{
+	return (T*)Z_Calloc(elem_count * sizeof(T));
+}
+
+template<class T> T* Z_CNew(int tag, void** owner)
+{
+	return (T*)Z_Calloc(sizeof(T), tag, owner);
+}
+
+template<class T> T* Z_CNew(int elem_count, int tag, void** owner)
+{
+	return (T*)Z_Calloc(elem_count * sizeof(T), tag, owner);
+}
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/12 17:34:42  dj_jl
+//	Added memory allocation templates
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
