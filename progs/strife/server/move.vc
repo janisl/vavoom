@@ -296,6 +296,69 @@ boolean P_CheckPosition(mobj_t * thing, float x, float y)
 
 //==========================================================================
 //
+//	Actor::Touch
+//
+//==========================================================================
+
+boolean Actor::Touch(Actor Other)
+{
+	boolean solid;
+	int damage;
+
+	// check for skulls slamming into things
+	if (Flags & MF_SKULLFLY)
+	{
+		damage = ((P_Random() % 8) + 1) * MissileDamage;
+		Other.Damage(self, self, damage);
+		Flags &= ~MF_SKULLFLY;
+		velocity = vector(0.0, 0.0, 0.0);
+		SetState(SpawnState);
+		return false;	// stop moving
+	}
+
+	// missiles can hit other things
+	if (Flags & MF_MISSILE)
+	{
+		if (target && (target->Class == Other.Class))
+		{
+			// Don't hit same species as originator.
+			if (Other == *target)
+				return true;
+
+			if (Other.Class != PlayerEntity)
+			{
+				// Explode, but do no damage.
+				// Let players missile other players.
+				return false;
+			}
+		}
+
+		if (!(Other.Flags & MF_SHOOTABLE))
+		{
+			// didn't do any damage
+			return !(Other.Flags & MF_SOLID);
+		}
+
+		// damage / explode
+		damage = ((P_Random() % 8) + 1) * MissileDamage;
+		Other.Damage(self, *target, damage);
+		// don't traverse any more
+		return false;
+	}
+
+	// check for special pickup
+	if (Other.Flags & MF_SPECIAL)
+	{
+		solid = Other.Flags & MF_SOLID;
+		P_TouchSpecialThing(&Other, this);
+		return !solid;
+	}
+
+	return !(Other.Flags & MF_SOLID) || (Other.Flags & MF_NOCLIP);
+}
+
+//==========================================================================
+//
 //	PIT_CheckRelThing
 //
 //==========================================================================
@@ -303,8 +366,6 @@ boolean P_CheckPosition(mobj_t * thing, float x, float y)
 boolean PIT_CheckRelThing(mobj_t * thing)
 {
 	float blockdist;
-	boolean solid;
-	int damage;
 
 	if (!(thing->Flags & (MF_SOLID | MF_SPECIAL | MF_SHOOTABLE)))
 		return true;
@@ -335,56 +396,7 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 	}
 
 	BlockingMobj = thing;
-	// check for skulls slamming into things
-	if (tmthing->Flags & MF_SKULLFLY)
-	{
-		damage = ((P_Random() % 8) + 1) * tmthing->MissileDamage;
-		thing->Damage(tmthing, tmthing, damage);
-		tmthing->Flags &= ~MF_SKULLFLY;
-		tmthing->velocity = vector(0.0, 0.0, 0.0);
-		SetMobjState(tmthing, tmthing->SpawnState);
-		return false;	// stop moving
-	}
-
-	// missiles can hit other things
-	if (tmthing->Flags & MF_MISSILE)
-	{
-		if (tmthing->target && (tmthing->target->Class == thing->Class))
-		{
-			// Don't hit same species as originator.
-			if (thing == tmthing->target)
-				return true;
-
-			if (thing->Class != PlayerEntity)
-			{
-				// Explode, but do no damage.
-				// Let players missile other players.
-				return false;
-			}
-		}
-
-		if (!(thing->Flags & MF_SHOOTABLE))
-		{
-			// didn't do any damage
-			return !(thing->Flags & MF_SOLID);
-		}
-
-		// damage / explode
-		damage = ((P_Random() % 8) + 1) * tmthing->MissileDamage;
-		thing->Damage(tmthing, tmthing->target, damage);
-		// don't traverse any more
-		return false;
-	}
-
-	// check for special pickup
-	if (thing->Flags & MF_SPECIAL)
-	{
-		solid = thing->Flags & MF_SOLID;
-		P_TouchSpecialThing(thing, tmthing);
-		return !solid;
-	}
-
-	return !(thing->Flags & MF_SOLID) || (thing->Flags & MF_NOCLIP);
+	return tmthing->Touch(*thing);
 }
 
 //==========================================================================
@@ -788,6 +800,9 @@ boolean P_Move(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/24 18:19:27  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.10  2002/01/17 18:15:55  dj_jl
 //  Renamed all map object classes
 //

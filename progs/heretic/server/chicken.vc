@@ -94,7 +94,7 @@ void Actor::A_Feathers(void)
 		mo->velocity.x = (Random() - Random()) * 35.0;
 		mo->velocity.y = (Random() - Random()) * 35.0;
 		mo->velocity.z = (1.0 + Random() * 2.0) * 35.0;
-		SetMobjState(mo, S_FEATHER1 + (P_Random() & 7));
+		mo->SetState(S_FEATHER1 + (P_Random() & 7));
 	}
 }
 
@@ -116,7 +116,7 @@ void Actor::A_ChicAttack(void)
 	}
 	if (P_CheckMeleeRange(this))
 	{
-		target->Damage(this, this, 1 + (P_Random() & 1));
+		target->Damage(self, self, 1 + (P_Random() & 1));
 	}
 }
 
@@ -138,6 +138,9 @@ void Actor::A_ChicPain(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/24 18:19:25  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.9  2002/01/17 18:15:53  dj_jl
 //  Renamed all map object classes
 //

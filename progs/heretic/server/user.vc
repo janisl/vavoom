@@ -424,20 +424,20 @@ void PlayerInSpecialSector(player_t * player)
 	case 7:	// Damage_Sludge
 		if (!(level->tictime & 31))
 		{
-			player->mo->Damage(NULL, NULL, 4);
+			player->mo->Damage(none, none, 4);
 		}
 		break;
 	case 5:	// Damage_LavaWimpy
 		if (!(level->tictime & 15))
 		{
-			player->mo->Damage(LavaInflictor, NULL, 5);
+			player->mo->Damage(*LavaInflictor, none, 5);
 			P_HitFloor(player->mo);
 		}
 		break;
 	case 16:	// Damage_LavaHefty
 		if (!(level->tictime & 15))
 		{
-			player->mo->Damage(LavaInflictor, NULL, 8);
+			player->mo->Damage(*LavaInflictor, none, 8);
 			P_HitFloor(player->mo);
 		}
 		break;
@@ -445,7 +445,7 @@ void PlayerInSpecialSector(player_t * player)
 		ThrustPlayer(player, 0.0, 1024.0);
 		if (!(level->tictime & 15))
 		{
-			player->mo->Damage(LavaInflictor, NULL, 5);
+			player->mo->Damage(*LavaInflictor, none, 5);
 			P_HitFloor(player->mo);
 		}
 		break;
@@ -539,14 +539,14 @@ void PlayerInContents(player_t * player)
 	case CONTENTS_LAVA:
 		if (!(level->tictime & 15))
 		{
-			player->mo->Damage(LavaInflictor, NULL, 8);
+			player->mo->Damage(*LavaInflictor, none, 8);
 		}
 		break;
 
 	case CONTENTS_SLUDGE:
 		if (!(level->tictime & 31))
 		{
-			player->mo->Damage(NULL, NULL, 4);
+			player->mo->Damage(none, none, 4);
 		}
 		break;
 	}
@@ -610,7 +610,7 @@ void PlayerImpulse(player_t * player)
 	}
 	else if (impulse == 16)
 	{
-		player->mo->Damage(NULL, NULL, 10000);
+		player->mo->Damage(none, none, 10000);
 	}
 
 	if (player->arti)
@@ -1365,7 +1365,7 @@ void DisconnectClient(player_t * player)
 	if (player->mo)
 	{
 		player->mo->player = NULL;
-		player->mo->Damage(NULL, NULL, 10000);
+		player->mo->Damage(none, none, 10000);
 	}
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
@@ -1397,6 +1397,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/01/24 18:19:26  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.18  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

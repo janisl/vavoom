@@ -72,7 +72,7 @@ void Actor::A_Srcr1Attack(void)
 	StartSound(this, sound_attack, CHAN_WEAPON);
 	if (P_CheckMeleeRange(this))
 	{
-		target->Damage(this, this, HITDICE(8));
+		target->Damage(self, self, HITDICE(8));
 		return;
 	}
 	if (Health > (spawnhealth / 3) * 2)
@@ -105,7 +105,7 @@ void Actor::A_Srcr1Attack(void)
 			{
 				// Set state to attack again
 				special1 = 1;
-				SetMobjState(this, S_SRCR1_ATK4);
+				SetState(S_SRCR1_ATK4);
 			}
 		}
 	}
@@ -146,7 +146,7 @@ void Actor::A_SorcererRise(void)
 
 	Flags &= ~MF_SOLID;
 	mo = P_SpawnMobj(origin.x, origin.y, origin.z, Sorcerer2);
-	SetMobjState(mo, S_SOR2_RISE1);
+	mo->SetState(S_SOR2_RISE1);
 	mo->angles.yaw = angles.yaw;
 	mo->target = target;
 }
@@ -241,7 +241,7 @@ void Actor::A_Srcr2Attack(void)
 	StartSound(NULL, sound_attack, CHAN_AUTO);
 	if (P_CheckMeleeRange(this))
 	{
-		target->Damage(this, this, HITDICE(20));
+		target->Damage(self, self, HITDICE(20));
 		return;
 	}
 	chance = Health < spawnhealth / 2 ? 96 : 48;
@@ -294,7 +294,7 @@ void Actor::A_Sor2DthLoop(void)
 	if (--special1)
 	{
 		// Need to loop
-		SetMobjState(this, S_SOR2_DIE4);
+		SetState(S_SOR2_DIE4);
 	}
 }
 
@@ -360,7 +360,7 @@ void Actor::A_GenWizard(void)
 		return;
 	}
 	velocity = vector(0.0, 0.0, 0.0);
-	SetMobjState(this, DeathState);
+	SetState(DeathState);
 	Flags &= ~MF_MISSILE;
 	fog = P_SpawnMobj(origin.x, origin.y, origin.z, TeleportFog);
 	StartSoundName(fog, 'Teleport', CHAN_VOICE);
@@ -369,6 +369,9 @@ void Actor::A_GenWizard(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/24 18:19:26  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.12  2002/01/17 18:15:53  dj_jl
 //  Renamed all map object classes
 //

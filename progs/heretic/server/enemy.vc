@@ -70,7 +70,7 @@ void Actor::A_Look(void)
 		}
 	}
 
-	SetMobjState(this, SeeState);
+	SetState(SeeState);
 }
 
 //==========================================================================
@@ -136,7 +136,7 @@ void Actor::A_Chase(void)
 		{
 			return;	// got a new target
 		}
-		SetMobjState(this, SpawnState);
+		SetState(SpawnState);
 		return;
 	}
 
@@ -158,7 +158,7 @@ void Actor::A_Chase(void)
 		{
 			StartSound(this, sound_attack, CHAN_WEAPON);
 		}
-		SetMobjState(this, MeleeState);
+		SetState(MeleeState);
 		return;
 	}
 
@@ -169,7 +169,7 @@ void Actor::A_Chase(void)
 		{
 			if (P_CheckMissileRange(this))
 			{
-				SetMobjState(this, MissileState);
+				SetState(MissileState);
 				Flags |= MF_JUSTATTACKED;
 				return;
 			}
@@ -258,7 +258,8 @@ void Actor::A_FreeTargMobj(void)
 	origin.z = ceilingz + 4.0;
 	Flags &= ~(MF_SHOOTABLE | MF_FLOAT | MF_SKULLFLY | MF_SOLID);
 	Flags |= MF_CORPSE | MF_DROPOFF | MF_NOGRAVITY;
-	Flags2 &= ~(MF2_PASSMOBJ | MF2_LOGRAV);
+	Flags2 &= ~MF2_LOGRAV;
+	Flags2 |= MF2_NOPASSMOBJ;
 	player = NULL;
 }
 
@@ -488,7 +489,7 @@ void Actor::A_CheckBurnGone(void)
 {
 	if (special2 == 666)
 	{
-		SetMobjState(this, S_PLAY_FDTH20);
+		SetState(S_PLAY_FDTH20);
 	}
 }
 
@@ -502,7 +503,7 @@ void Actor::A_CheckSkullFloor(void)
 {
 	if (origin.z <= floorz)
 	{
-		SetMobjState(this, S_BLOODYSKULLX1);
+		SetState(S_BLOODYSKULLX1);
 	}
 }
 
@@ -516,7 +517,7 @@ void Actor::A_CheckSkullDone(void)
 {
 	if (special2 == 666)
 	{
-		SetMobjState(this, S_BLOODYSKULLX2);
+		SetState(S_BLOODYSKULLX2);
 	}
 }
 
@@ -625,6 +626,9 @@ void Actor::A_ContMobjSound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/24 18:19:25  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.12  2002/01/17 18:15:53  dj_jl
 //  Renamed all map object classes
 //

@@ -297,14 +297,14 @@ void PlayerInSpecialSector(player_t * player)
 		// HELLSLIME DAMAGE
 		if (!player->powers[pw_ironfeet])
 			if (!(level->tictime & 0x1f))
-				player->mo->Damage(NULL, NULL, 10);
+				player->mo->Damage(none, none, 10);
 		break;
 
 	case 7:
 		// NUKAGE DAMAGE
 		if (!player->powers[pw_ironfeet])
 			if (!(level->tictime & 0x1f))
-				player->mo->Damage(NULL, NULL, 5);
+				player->mo->Damage(none, none, 5);
 		break;
 
 	case 16:
@@ -314,7 +314,7 @@ void PlayerInSpecialSector(player_t * player)
 		if (!player->powers[pw_ironfeet] || (P_Random() < 5))
 		{
 			if (!(level->tictime & 0x1f))
-				player->mo->Damage(NULL, NULL, 20);
+				player->mo->Damage(none, none, 20);
 		}
 		break;
 
@@ -329,7 +329,7 @@ void PlayerInSpecialSector(player_t * player)
 		player->cheats &= ~CF_GODMODE;
 
 		if (!(level->tictime & 0x1f))
-			player->mo->Damage(NULL, NULL, 20);
+			player->mo->Damage(none, none, 20);
 
 		if (player->health <= 10)
 			G_ExitLevel();
@@ -357,14 +357,14 @@ void PlayerInContents(player_t * player)
 	case CONTENTS_SLUDGE:
 		if (!player->powers[pw_ironfeet])
 			if (!(level->tictime & 0x1f))
-				player->mo->Damage(NULL, NULL, 10);
+				player->mo->Damage(none, none, 10);
 		break;
 
 	case CONTENTS_LAVA:
 		if (!player->powers[pw_ironfeet] || (P_Random() < 5))
 		{
 			if (!(level->tictime & 0x1f))
-				player->mo->Damage(NULL, NULL, 20);
+				player->mo->Damage(none, none, 20);
 		}
 		break;
 	}
@@ -446,7 +446,7 @@ void PlayerImpulse(player_t * player)
 	else if (impulse == 16)
 	{
 		//  Suicide
-		player->mo->Damage(NULL, NULL, 10000);
+		player->mo->Damage(none, none, 10000);
 	}
 }
 
@@ -837,7 +837,7 @@ void DisconnectClient(player_t * player)
 	if (player->mo)
 	{
 		player->mo->player = NULL;
-		player->mo->Damage(NULL, NULL, 10000);
+		player->mo->Damage(none, none, 10000);
 	}
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
@@ -869,6 +869,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/01/24 18:19:27  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.13  2002/01/15 18:27:01  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

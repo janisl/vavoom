@@ -93,7 +93,7 @@ void Actor::A_SerpentChase(void)
 			// got a new target
 			return;
 		}
-		SetMobjState(this, SpawnState);
+		SetState(SpawnState);
 		return;
 	}
 
@@ -117,7 +117,7 @@ void Actor::A_SerpentChase(void)
 		{
 			StartSound(this, sound_attack, CHAN_WEAPON);
 		}
-		SetMobjState(this, MeleeState);
+		SetState(MeleeState);
 		return;
 	}
 
@@ -175,7 +175,7 @@ void Actor::A_SerpentHumpDecide(void)
 		else if (P_Random() < 40)
 		{
 			// Missile attack
-			SetMobjState(this, S_SERPENT_SURFACE1);
+			SetState(S_SERPENT_SURFACE1);
 			return;
 		}
 	}
@@ -188,11 +188,11 @@ void Actor::A_SerpentHumpDecide(void)
 		// The hump shouldn't occur when within melee range
 		if (Class == SerpentLeader && P_Random() < 128)
 		{
-			SetMobjState(this, S_SERPENT_SURFACE1);
+			SetState(S_SERPENT_SURFACE1);
 		}
 		else
 		{
-			SetMobjState(this, S_SERPENT_HUMP1);
+			SetState(S_SERPENT_HUMP1);
 			StartSoundName(this, 'SerpentActive', CHAN_VOICE);
 		}
 	}
@@ -297,23 +297,23 @@ void Actor::A_SerpentCheckForAttack(void)
 	{
 		if (!CheckMeleeRange(this))
 		{
-			SetMobjState(this, S_SERPENT_ATK1);
+			SetState(S_SERPENT_ATK1);
 			return;
 		}
 	}
 	if (CheckMeleeRange2(this))
 	{
-		SetMobjState(this, S_SERPENT_WALK1);
+		SetState(S_SERPENT_WALK1);
 	}
 	else if (CheckMeleeRange(this))
 	{
 		if (P_Random() < 32)
 		{
-			SetMobjState(this, S_SERPENT_WALK1);
+			SetState(S_SERPENT_WALK1);
 		}
 		else
 		{
-			SetMobjState(this, S_SERPENT_ATK1);
+			SetState(S_SERPENT_ATK1);
 		}
 	}
 }
@@ -387,7 +387,7 @@ void Actor::A_SerpentWalk(void)
 			// got a new target
 			return;
 		}
-		SetMobjState(this, SpawnState);
+		SetState(SpawnState);
 		return;
 	}
 
@@ -411,7 +411,7 @@ void Actor::A_SerpentWalk(void)
 		{
 			StartSound(this, sound_attack, CHAN_WEAPON);
 		}
-		SetMobjState(this, S_SERPENT_ATK1);
+		SetState(S_SERPENT_ATK1);
 		return;
 	}
 	//
@@ -446,7 +446,7 @@ void Actor::A_SerpentChooseAttack(void)
 	}
 	if (Class == SerpentLeader)
 	{
-		SetMobjState(this, S_SERPENT_MISSILE1);
+		SetState(S_SERPENT_MISSILE1);
 	}
 }
 
@@ -464,7 +464,7 @@ void Actor::A_SerpentMeleeAttack(void)
 	}
 	if (CheckMeleeRange(this))
 	{
-		target->Damage(this, this, HITDICE(5));
+		target->Damage(self, self, HITDICE(5));
 		StartSoundName(this, 'SerpentMeleeHit', CHAN_WEAPON);
 	}
 	if (P_Random() < 96)
@@ -553,11 +553,11 @@ void Actor::A_SerpentHeadCheck(void)
 		if (P_GetThingFloorType(this) >= FLOOR_LIQUID)
 		{
 			P_HitFloor(this);
-			SetMobjState(this, S_NULL);
+			SetState(S_NULL);
 		}
 		else
 		{
-			SetMobjState(this, S_SERPENT_HEAD_X1);
+			SetState(S_SERPENT_HEAD_X1);
 		}
 	}
 }
@@ -598,6 +598,9 @@ void Actor::A_DelayGib(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/24 18:19:26  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.12  2002/01/17 18:15:55  dj_jl
 //  Renamed all map object classes
 //

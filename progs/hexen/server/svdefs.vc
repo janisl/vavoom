@@ -154,7 +154,7 @@
 #define MF2_SLIDE			0x00000400	// slides against walls
 #define MF2_ONMOBJ			0x00000800	// mobj is resting on top of another
 										// mobj
-#define MF2_PASSMOBJ		0x00001000	// Enable z block checking.  If on,
+#define MF2_NOPASSMOBJ		0x00001000	// Disable z block checking.  If off,
 										// this flag will allow the mobj to
 										// pass over/under other mobjs.
 #define MF2_CANNOTPUSH		0x00002000	// cannot push other pushable mobjs
@@ -265,10 +265,6 @@ enum
 
 // TYPES -------------------------------------------------------------------
 
-class Entity:MapObject
-{
-};
-
 class Actor:Entity
 {
 	//  States
@@ -301,10 +297,6 @@ class Actor:Entity
 	int PainChance;
 	int spawnhealth;
 	int GibsHealth;
-
-	float time;	// state tic counter
-	int statenum;
-	int nextstate;
 
 	// Thing being chased/attacked (or NULL),
 	// also the originator for missiles.
@@ -342,9 +334,11 @@ class Actor:Entity
 	int waterlevel;
 	int watertype;
 
+	boolean Touch(Actor Other);
+
 	void Think(void);
 
-	void Damage(Actor * inflictor, Actor * source, int damage);
+	void Damage(Actor inflictor, Actor source, int damage);
 
 	//  Physics
 	boolean Physics(void);
@@ -771,6 +765,9 @@ name door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/01/24 18:19:27  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.13  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

@@ -304,7 +304,7 @@ void Actor::A_CFlameMissile(void)
 				mo->time -= Random() * 0.1;
 			}
 		}
-		SetMobjState(this, S_FLAMEPUFF2_1);
+		SetState(S_FLAMEPUFF2_1);
 	}
 }
 
@@ -443,7 +443,7 @@ void Actor::A_CHolyAttack2(void)
 		{
 			next = P_SpawnMobj(mo->origin.x, mo->origin.y, mo->origin.z,
 				HolyTail);
-			SetMobjState(next, next->SpawnState + 1);
+			next->SetState(next->SpawnState + 1);
 			tail->specialmobj1 = next;
 			tail = next;
 		}
@@ -594,7 +594,7 @@ void Actor::A_CHolySeek(void)
 		velocity.x /= 4.0;
 		velocity.y /= 4.0;
 		velocity.z = 0.0;
-		SetMobjState(this, DeathState);
+		SetState(DeathState);
 		time -= Random() * 0.1;
 		return;
 	}
@@ -734,6 +734,9 @@ void Actor::A_CHolySpawnPuff(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/24 18:19:27  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.11  2002/01/17 18:15:55  dj_jl
 //  Renamed all map object classes
 //

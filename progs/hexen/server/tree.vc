@@ -87,7 +87,7 @@ void Actor::A_LeafCheck(void)
 	special1++;
 	if (special1 >= 20)
 	{
-		SetMobjState(this, S_NULL);
+		SetState(S_NULL);
 		return;
 	}
 	if (P_Random() > 64)
@@ -98,7 +98,7 @@ void Actor::A_LeafCheck(void)
 		}
 		return;
 	}
-	SetMobjState(this, S_LEAF1_8);
+	SetState(S_LEAF1_8);
 	velocity.z = (Random() * 2.0 + 1.0) * 35.0;
 	P_ThrustMobj(this, target->angles.yaw, Random() * 2.0 + 2.0);
 	Flags |= MF_MISSILE;
@@ -122,13 +122,16 @@ void Actor::A_TreeDeath(void)
 	}
 	else
 	{
-		SetMobjState(this, MeleeState);
+		SetState(MeleeState);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/24 18:19:27  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.9  2002/01/17 18:15:55  dj_jl
 //  Renamed all map object classes
 //

@@ -68,7 +68,7 @@ void Actor::A_Summon(void)
 		if (P_TestMobjLocation(mo) == false || !specialmobj1)
 		{
 			// Didn't fit - change back to artifact
-			SetMobjState(mo, S_NULL);
+			mo->SetState(S_NULL);
 			mo = P_SpawnMobj(origin.x, origin.y, origin.z,
 				ArtifactSummonMaulator);
 			if (mo)
@@ -164,11 +164,11 @@ void Actor::A_MinotaurLook(void)
 
 	if (target)
 	{
-		SetMobjStateNF(this, S_MNTR_WALK1);
+		SetStateNF(S_MNTR_WALK1);
 	}
 	else
 	{
-		SetMobjStateNF(this, S_MNTR_ROAM1);
+		SetStateNF(S_MNTR_ROAM1);
 	}
 }
 
@@ -186,7 +186,7 @@ void Actor::A_MinotaurChase(void)
 
 	if ((level->tictime - starttime) >= ftoi(MAULATORTIME * 35.0))
 	{
-		Damage(NULL, NULL, 10000);
+		Damage(none, none, 10000);
 		return;
 	}
 
@@ -196,7 +196,7 @@ void Actor::A_MinotaurChase(void)
 	if (!target || (target->Health <= 0) || !(target->Flags & MF_SHOOTABLE))
 	{
 		// look for a new target
-		SetMobjState(this, S_MNTR_LOOK1);
+		SetState(S_MNTR_LOOK1);
 		return;
 	}
 
@@ -210,14 +210,14 @@ void Actor::A_MinotaurChase(void)
 		{
 			StartSound(this, sound_attack, CHAN_WEAPON);
 		}
-		SetMobjState(this, MeleeState);
+		SetState(MeleeState);
 		return;
 	}
 
 	// Missile attack
 	if (MissileState && CheckMissileRange(this))
 	{
-		SetMobjState(this, MissileState);
+		SetState(MissileState);
 		return;
 	}
 
@@ -249,7 +249,7 @@ void Actor::A_MinotaurRoam(void)
 
 	if ((level->tictime - starttime) >= ftoi(MAULATORTIME * 35.0))
 	{
-		Damage(NULL, NULL, 10000);
+		Damage(none, none, 10000);
 		return;
 	}
 
@@ -291,7 +291,7 @@ void Actor::A_MinotaurAtk1(void)
 	StartSoundName(this, 'MaulatorHamSwing', CHAN_WEAPON);
 	if (CheckMeleeRange(this))
 	{
-		target->Damage(this, this, HITDICE(4));
+		target->Damage(self, self, HITDICE(4));
 	}
 }
 
@@ -317,7 +317,7 @@ void Actor::A_MinotaurDecide(void)
 	{
 		// Charge attack
 		// Don't call the state function right away
-		SetMobjStateNF(this, S_MNTR_ATK4_1);
+		SetStateNF(S_MNTR_ATK4_1);
 		Flags |= MF_SKULLFLY;
 		A_FaceTarget();
 		velocity = Normalize(target->origin - origin) * MNTR_CHARGE_SPEED;
@@ -327,14 +327,14 @@ void Actor::A_MinotaurDecide(void)
 		dist < 9.0 * 64.0 && P_Random() < 100)
 	{
 		// Floor fire attack
-		SetMobjState(this, S_MNTR_ATK3_1);
+		SetState(S_MNTR_ATK3_1);
 		special2 = 0;
 	}
 	else
 	{
 		// Swing attack
 		A_FaceTarget();
-		// Don't need to call SetMobjState because the current state
+		// Don't need to call SetState because the current state
 		// falls through to the swing attack
 	}
 }
@@ -359,7 +359,7 @@ void Actor::A_MinotaurAtk2(void)
 	StartSoundName(this, 'MaulatorHamSwing', CHAN_WEAPON);
 	if (CheckMeleeRange(this))
 	{
-		target->Damage(this, this, HITDICE(3));
+		target->Damage(self, self, HITDICE(3));
 		return;
 	}
 	mo = SpawnMissile(this, target, MinotaurMissile);
@@ -397,7 +397,7 @@ void Actor::A_MinotaurAtk3(void)
 	}
 	if (CheckMeleeRange(this))
 	{
-		target->Damage(this, this, HITDICE(3));
+		target->Damage(self, self, HITDICE(3));
 		if (target->player)
 		{
 			// Squish the player
@@ -414,7 +414,7 @@ void Actor::A_MinotaurAtk3(void)
 	}
 	if (P_Random() < 192 && special2 == 0)
 	{
-		SetMobjState(this, S_MNTR_ATK3_4);
+		SetState(S_MNTR_ATK3_4);
 		special2 = 1;
 	}
 }
@@ -441,7 +441,7 @@ void Actor::A_MinotaurCharge(void)
 	else
 	{
 		Flags &= ~MF_SKULLFLY;
-		SetMobjState(this, SeeState);
+		SetState(SeeState);
 	}
 }
 
@@ -512,6 +512,9 @@ void Actor::A_SmokePuffExit(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/24 18:19:26  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.14  2002/01/17 18:15:54  dj_jl
 //  Renamed all map object classes
 //

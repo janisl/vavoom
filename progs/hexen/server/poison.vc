@@ -69,7 +69,7 @@ void Actor::A_PoisonBagCheck(void)
 {
 	if (!--special1)
 	{
-		SetMobjState(this, S_POISONCLOUD_X1);
+		SetState(S_POISONCLOUD_X1);
 	}
 }
 
@@ -104,6 +104,9 @@ void Actor::A_PoisonShroom(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/24 18:19:26  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.8  2002/01/17 18:15:55  dj_jl
 //  Renamed all map object classes
 //

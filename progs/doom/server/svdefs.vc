@@ -198,10 +198,6 @@ enum
 	CHAN_BODY
 };
 
-class Entity:MapObject
-{
-}
-
 class Actor:Entity
 {
 	//  States
@@ -235,11 +231,6 @@ class Actor:Entity
 	int spawnhealth;
 	int GibsHealth;
 
-	float time;	// state tic counter
-	int statenum;
-	int nextstate;
-	boolean fixed_model;
-
 	// Thing being chased/attacked (or NULL),
 	// also the originator for missiles.
 	mobj_t *target;
@@ -272,12 +263,14 @@ class Actor:Entity
 	int waterlevel;
 	int watertype;
 
+	boolean Touch(Actor Other);
+
 	void Think(void);
 	void Archive(void);
 	void Unarchive(void);
 	void OnMapSpawn(mthing_t *mthing);
 
-	void Damage(Actor * inflictor, Actor * source, int damage);
+	void Damage(Actor inflictor, Actor source, int damage);
 
 	// Physics
 	void SlideMove(void);
@@ -344,6 +337,10 @@ class Actor:Entity
 	void A_SpawnSound(void);
 	void A_SpawnFly(void);
 	void A_BrainExplode(void);
+
+	defaultproperties
+	{
+	}
 }
 
 class Weapon:ViewEntity
@@ -689,6 +686,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/24 18:19:25  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.14  2002/01/15 18:26:59  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

@@ -64,7 +64,7 @@ void Actor::A_UnHideThing(void)
 void Actor::A_RestoreArtifact(void)
 {
 	Flags |= MF_SPECIAL;
-	SetMobjState(this, SpawnState);
+	SetState(SpawnState);
 	StartSoundName(this, 'Respawn', CHAN_VOICE);
 }
 
@@ -91,7 +91,7 @@ void Actor::A_RestoreSpecialThing1(void)
 void Actor::A_RestoreSpecialThing2(void)
 {
 	Flags |= MF_SPECIAL;
-	SetMobjState(this, SpawnState);
+	SetState(SpawnState);
 }
 
 //===========================================================================
@@ -104,7 +104,7 @@ void Actor::A_FlameCheck(void)
 {
 	if (!args[0]--)	// Called every 8 tics
 	{
-		SetMobjState(this, S_NULL);
+		SetState(S_NULL);
 	}
 }
 
@@ -120,7 +120,7 @@ void Actor::A_CheckThrowBomb(void)
 		fabs(velocity.y) < 1.5 * 35.0 &&
 		velocity.z < 2.0 * 35.0 && statenum == S_THROWINGBOMB6)
 	{
-		SetMobjState(this, S_THROWINGBOMB7);
+		SetState(S_THROWINGBOMB7);
 		origin.z = floorz;
 		velocity.z = 0.0;
 		Flags2 &= ~MF2_FLOORBOUNCE;
@@ -128,7 +128,7 @@ void Actor::A_CheckThrowBomb(void)
 	}
 	if (!--Health)
 	{
-		SetMobjState(this, DeathState);
+		SetState(DeathState);
 	}
 }
 
@@ -173,7 +173,7 @@ void Actor::A_CorpseExplode(void)
 	for (i = (P_Random() & 3) + 3; i; i--)
 	{
 		mo = P_SpawnMobj(origin.x, origin.y, origin.z, CorpseBit);
-		SetMobjState(mo, mo->SpawnState + (P_Random() % 3));
+		mo->SetState(mo->SpawnState + (P_Random() % 3));
 		if (mo)
 		{
 			mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
@@ -183,7 +183,7 @@ void Actor::A_CorpseExplode(void)
 	}
 	// Spawn a skull
 	mo = P_SpawnMobj(origin.x, origin.y, origin.z, CorpseBit);
-	SetMobjState(mo, S_CORPSEBIT_4);
+	mo->SetState(S_CORPSEBIT_4);
 	if (mo)
 	{
 		mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
@@ -212,7 +212,7 @@ void Actor::A_SoAExplode(void)
 		mo = P_SpawnMobj(origin.x + (Random() - 0.5) * 16.0,
 			origin.y + (Random() - 0.5) * 16.0,
 			origin.z + Random() * Height, ZArmorChunk);
-		SetMobjState(mo, mo->SpawnState + i);
+		mo->SetState(mo->SpawnState + i);
 		if (mo)
 		{
 			mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
@@ -295,6 +295,9 @@ void Actor::A_UnSetInvulnerable(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/24 18:19:26  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.10  2002/01/17 18:15:54  dj_jl
 //  Renamed all map object classes
 //

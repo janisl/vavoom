@@ -56,50 +56,6 @@ int iquetail;
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
-//
-//  SetMobjState
-//
-//  Returns true if the mobj is still present.
-//
-//==========================================================================
-
-boolean SetMobjState(mobj_t * mobj, int state)
-{
-	state_t *st;
-
-	do
-	{
-		if (!state)
-		{
-			// Remove mobj
-			mobj->statenum = 0;
-			P_RemoveMobj(mobj);
-			return false;
-		}
-
-		st = &states[state];
-		mobj->time = st->time;
-		mobj->sprite = st->sprite;
-		mobj->frame = st->frame;
-		mobj->model_index = st->model_index;
-		mobj->alias_frame = st->model_frame;
-		mobj->statenum = st->statenum;
-		mobj->nextstate = st->nextstate;
-
-		// Modified handling.
-		// Call action functions when the state is set
-		if (st->function)
-		{
-			st->function(*mobj);
-		}
-
-		state = st->nextstate;
-	}
-	while (!mobj->time);
-	return true;
-}
-
-//==========================================================================
 //==========================================================================
 //
 //  GAME SPAWN FUNCTIONS
@@ -408,9 +364,9 @@ void P_SpawnBlood(float x, float y, float z, int damage)
 		th->time = 0.1;
 
 	if (damage <= 12 && damage >= 9)
-		SetMobjState(th, S_BLOOD2);
+		th->SetState(S_BLOOD2);
 	else if (damage < 9)
-		SetMobjState(th, S_BLOOD3);
+		th->SetState(S_BLOOD3);
 }
 
 //==========================================================================
@@ -423,7 +379,7 @@ void P_ExplodeMissile(mobj_t * mo)
 {
 	mo->velocity.x = mo->velocity.y = mo->velocity.z = 0.0;
 
-	SetMobjState(mo, mo->DeathState);
+	mo->SetState(mo->DeathState);
 
 	mo->time -= Random() * 0.1;
 
@@ -550,11 +506,11 @@ void KillMobj(mobj_t * source, mobj_t * target)
 
 	if (target->Health < target->GibsHealth && target->GibsDeathState)
 	{
-		SetMobjState(target, target->GibsDeathState);
+		target->SetState(target->GibsDeathState);
 	}
 	else
 	{
-		SetMobjState(target, target->DeathState);
+		target->SetState(target->DeathState);
 	}
 	target->time -= Random() * 0.1;
 
@@ -602,7 +558,7 @@ void KillMobj(mobj_t * source, mobj_t * target)
 //
 //==========================================================================
 
-void Actor::Damage(Actor * inflictor, Actor * source, int damage)
+void Actor::Damage(Actor inflictor, Actor source, int damage)
 {
 	int saved;
 
@@ -626,7 +582,7 @@ void Actor::Damage(Actor * inflictor, Actor * source, int damage)
 	if (inflictor && !(Flags & MF_NOCLIP))
 	{
 		velocity += (500.0 * itof(damage) / Mass) *
-			Normalize(MobjCenter(this) - MobjCenter(inflictor));
+			Normalize(MobjCenter(this) - MobjCenter((&inflictor)));
 	}
 
 	// player specific
@@ -666,7 +622,7 @@ void Actor::Damage(Actor * inflictor, Actor * source, int damage)
 		if (player->health < 0)
 			player->health = 0;
 
-		player->attacker = source;
+		player->attacker = &source;
 		player->damagecount += damage;	// add damage after armor / invuln
 
 		if (player->damagecount > 100)
@@ -677,27 +633,27 @@ void Actor::Damage(Actor * inflictor, Actor * source, int damage)
 	Health -= damage;
 	if (Health <= 0)
 	{
-		KillMobj(source, this);
+		KillMobj(&source, this);
 		return;
 	}
 
 	if ((P_Random() < PainChance) && !(Flags & MF_SKULLFLY))
 	{
 		Flags |= MF_JUSTHIT;	// fight back!
-		SetMobjState(this, PainState);
+		SetState(PainState);
 	}
 
 	ReactionCount = 0;	// we're awake now...
 
-	if ((!threshold) && source && source != this)
+	if ((!threshold) && source && source != self)
 	{
 		// if not intent on another player,
 		// chase after this one
-		target = source;
+		target = &source;
 		threshold = BASETHRESHOLD;
 		if (statenum == SpawnState && SeeState != S_NULL)
 		{
-			SetMobjState(this, SeeState);
+			SetState(SeeState);
 		}
 	}
 }
@@ -947,6 +903,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/01/24 18:19:27  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.21  2002/01/17 18:15:55  dj_jl
 //  Renamed all map object classes
 //

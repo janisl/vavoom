@@ -105,7 +105,7 @@ void DSparilTeleport(mobj_t * actor)
 	{
 		mo = P_SpawnMobj(prevX, prevY, prevZ, Sorcerer2TeleFade);
 		StartSoundName(mo, 'Teleport', CHAN_VOICE);
-		SetMobjState(actor, S_SOR2_TELE1);
+		actor->SetState(S_SOR2_TELE1);
 		StartSoundName(actor, 'Teleport', CHAN_VOICE);
 		actor->origin.z = actor->floorz;
 		actor->angles.yaw = BossSpot_angle[i % BossSpotCount];
@@ -222,7 +222,7 @@ int UpdateChicken(mobj_t * actor, int tics)
 	flags = actor->Flags;
 	health = actor->Health;
 	target = actor->target;
-	SetMobjState(actor, S_FREETARGMOBJ);
+	actor->SetState(S_FREETARGMOBJ);
 	mo = P_SpawnMobj(x, y, z, moType);
 	if (P_TestMobjLocation(mo) == false)
 	{
@@ -260,7 +260,7 @@ void P_Massacre(void)
 	{
 		if ((mo->Flags & MF_COUNTKILL) && (mo->Health > 0))
 		{
-			mo->Damage(NULL, NULL, 10000);
+			mo->Damage(none, none, 10000);
 		}
 	}
 }
@@ -526,6 +526,9 @@ void P_NewChaseDir(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/24 18:19:25  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.12  2002/01/17 18:15:53  dj_jl
 //  Renamed all map object classes
 //

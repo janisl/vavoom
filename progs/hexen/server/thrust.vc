@@ -95,9 +95,9 @@ void Actor::A_ThrustRaise(void)
 		// Reached it's target height
 		args[0] = 1;
 		if (args[1])
-			SetMobjStateNF(this, S_BTHRUSTINIT2_1);
+			SetStateNF(S_BTHRUSTINIT2_1);
 		else
-			SetMobjStateNF(this, S_THRUSTINIT2_1);
+			SetStateNF(S_THRUSTINIT2_1);
 	}
 
 	// Lose the dirt clump
@@ -125,9 +125,9 @@ void Actor::A_ThrustLower(void)
 	{
 		args[0] = 0;
 		if (args[1])
-			SetMobjStateNF(this, S_BTHRUSTINIT1_1);
+			SetStateNF(S_BTHRUSTINIT1_1);
 		else
-			SetMobjStateNF(this, S_THRUSTINIT1_1);
+			SetStateNF(S_THRUSTINIT1_1);
 	}
 }
 
@@ -157,6 +157,9 @@ void Actor::A_ThrustImpale(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/24 18:19:27  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.8  2002/01/17 18:15:55  dj_jl
 //  Renamed all map object classes
 //

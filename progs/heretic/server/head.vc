@@ -62,7 +62,7 @@ void Actor::A_HeadAttack(void)
 	A_FaceTarget();
 	if (P_CheckMeleeRange(this))
 	{
-		target->Damage(this, this, HITDICE(6));
+		target->Damage(self, self, HITDICE(6));
 		return;
 	}
 	dist = MobjDist2(this, target) > 8.0 * 64.0;
@@ -79,7 +79,7 @@ void Actor::A_HeadAttack(void)
 		baseFire = SpawnMissile(this, target, HeadMissile3);
 		if (baseFire != NULL)
 		{
-			SetMobjState(baseFire, S_HEADFX3_4);	// Don't grow
+			baseFire->SetState(S_HEADFX3_4);	// Don't grow
 			for (i = 0; i < 5; i++)
 			{
 				fire = P_SpawnMobj(baseFire->origin.x, baseFire->origin.y,
@@ -149,7 +149,7 @@ void Actor::A_HeadFireGrow(void)
 	origin.z += 9.0;
 	if (Health == 0)
 	{
-		SetMobjState(this, S_HEADFX3_4);
+		SetState(S_HEADFX3_4);
 	}
 }
 
@@ -165,7 +165,7 @@ void Actor::A_WhirlwindSeek(void)
 	if (Health < 0)
 	{
 		velocity = vector(0.0, 0.0, 0.0);
-		SetMobjState(this, DeathState);
+		SetState(DeathState);
 		Flags &= ~MF_MISSILE;
 		return;
 	}
@@ -184,6 +184,9 @@ void Actor::A_WhirlwindSeek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/24 18:19:26  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.11  2002/01/17 18:15:53  dj_jl
 //  Renamed all map object classes
 //

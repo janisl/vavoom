@@ -325,7 +325,7 @@ void FireWeapon(player_t * player)
 		return;
 	}
 
-	SetMobjState(player->mo, S_PLAY_ATK1);
+	player->mo->SetState(S_PLAY_ATK1);
 	SetPsprite(player, ps_weapon, player->w_atkstate);
 	P_NoiseAlert(player->mo, player->mo);
 }
@@ -379,7 +379,7 @@ void Weapon::A_WeaponReady(void)
 	if (player->mo->statenum == S_PLAY_ATK1 ||
 		player->mo->statenum == S_PLAY_ATK2)
 	{
-		SetMobjState(player->mo, S_PLAY);
+		player->mo->SetState(S_PLAY);
 	}
 
 	if (player->readyweapon == wp_chainsaw && statenum == S_SAW)
@@ -529,7 +529,7 @@ void Weapon::A_CheckReload(void)
 
 void Weapon::A_GunFlash(void)
 {
-	SetMobjState(player->mo, S_PLAY_ATK2);
+	player->mo->SetState(S_PLAY_ATK2);
 	SetPsprite(player, ps_flash, player->w_flashstate);
 }
 
@@ -670,7 +670,7 @@ void Weapon::A_FirePistol(void)
 
 	StartSoundName(player->mo, 'PistolFire', CHAN_WEAPON);
 
-	SetMobjState(player->mo, S_PLAY_ATK2);
+	player->mo->SetState(S_PLAY_ATK2);
 	player->ammo[player->w_ammo]--;
 
 	SetPsprite(player, ps_flash, player->w_flashstate);
@@ -692,7 +692,7 @@ void Weapon::A_FireShotgun(void)
 	TVec dir;
 
 	StartSoundName(player->mo, 'ShotgunFire', CHAN_WEAPON);
-	SetMobjState(player->mo, S_PLAY_ATK2);
+	player->mo->SetState(S_PLAY_ATK2);
 
 	player->ammo[player->w_ammo]--;
 
@@ -723,7 +723,7 @@ void Weapon::A_FireShotgun2(void)
 	TVec dir;
 
 	StartSoundName(player->mo, 'SuperShotgunFire', CHAN_WEAPON);
-	SetMobjState(player->mo, S_PLAY_ATK2);
+	player->mo->SetState(S_PLAY_ATK2);
 
 	player->ammo[player->w_ammo] -= 2;
 
@@ -815,7 +815,7 @@ void Weapon::A_FireCGun(void)
 	if (!player->ammo[player->w_ammo])
 		return;
 
-	SetMobjState(player->mo, S_PLAY_ATK2);
+	player->mo->SetState(S_PLAY_ATK2);
 	player->ammo[player->w_ammo]--;
 
 	SetPsprite(player, ps_flash, player->w_flashstate + statenum - S_CHAIN1);
@@ -963,13 +963,16 @@ void Actor::A_BFGSpray(void)
 		for (j = 0; j < 15; j++)
 			damage += (P_Random() & 7) + 1;
 
-		linetarget->Damage(target, target, damage);
+		linetarget->Damage(*target, *target, damage);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/24 18:19:25  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.14  2002/01/17 18:15:53  dj_jl
 //  Renamed all map object classes
 //

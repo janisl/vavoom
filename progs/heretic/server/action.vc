@@ -51,7 +51,7 @@ void Actor::A_RestoreSpecialThing1(void)
 void Actor::A_RestoreSpecialThing2(void)
 {
 	Flags |= MF_SPECIAL;
-	SetMobjState(this, SpawnState);
+	SetState(SpawnState);
 }
 
 //==========================================================================
@@ -85,7 +85,7 @@ void Actor::A_UnHideThing(void)
 void Actor::A_RestoreArtifact(void)
 {
 	Flags |= MF_SPECIAL;
-	SetMobjState(this, SpawnState);
+	SetState(SpawnState);
 	StartSoundName(this, 'Respawn', CHAN_VOICE);
 }
 
@@ -115,7 +115,7 @@ void Actor::A_InitKeyGizmo(void)
 		break;
 	}
 	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 60.0, KeyGizmoFloat);
-	SetMobjState(mo, state);
+	mo->SetState(state);
 }
 
 //==========================================================================
@@ -140,6 +140,9 @@ void Actor::A_ESound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/24 18:19:25  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.10  2002/01/17 18:15:53  dj_jl
 //  Renamed all map object classes
 //

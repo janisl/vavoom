@@ -79,7 +79,7 @@ void Actor::A_WraithRaise(void)
 	if (RaiseMobj(this))
 	{
 		// Reached it's target height
-		SetMobjState(this, S_WRAITH_CHASE1);
+		SetState(S_WRAITH_CHASE1);
 	}
 
 	SpawnDirt(this, Radius);
@@ -235,7 +235,7 @@ void Actor::A_WraithChase(void)
 	special1 = (weaveindex + 2) & 63;
 //  if (actor->floorclip > 0)
 //  {
-//      SetMobjState(actor, S_WRAITH_RAISE2);
+//      SetState(S_WRAITH_RAISE2);
 //      return;
 //  }
 	A_Chase();
@@ -256,7 +256,7 @@ void Actor::A_WraithMelee(void)
 	if (CheckMeleeRange(this) && (P_Random() < 220))
 	{
 		amount = HITDICE(2);
-		target->Damage(this, this, amount);
+		target->Damage(self, self, amount);
 		Health += amount;
 	}
 }
@@ -281,6 +281,9 @@ void Actor::A_WraithMissile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/24 18:19:27  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.11  2002/01/17 18:15:55  dj_jl
 //  Renamed all map object classes
 //

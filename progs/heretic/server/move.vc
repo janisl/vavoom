@@ -99,7 +99,7 @@ boolean PIT_CheckThing(mobj_t * thing)
 	if (thing == tmthing)
 		return true;
 
-	if (tmthing->Flags2 & MF2_PASSMOBJ)
+	if (!(tmthing->Flags2 & MF2_NOPASSMOBJ))
 	{
 		// check if a mobj passed over/under another object
 		if ((tmthing->Class == Imp || tmthing->Class == Wizard)
@@ -318,6 +318,109 @@ boolean P_CheckPosition(mobj_t * thing, float x, float y)
 
 //==========================================================================
 //
+//	Actor::Touch
+//
+//==========================================================================
+
+boolean	Actor::Touch(Actor Other)
+{
+	boolean solid;
+	int damage;
+
+	// check for skulls slamming into things
+	if (Flags & MF_SKULLFLY)
+	{
+		damage = ((P_Random() % 8) + 1) * MissileDamage;
+		Other.Damage(self, self, damage);
+		Flags &= ~MF_SKULLFLY;
+		velocity = vector(0.0, 0.0, 0.0);
+		SetState(SeeState);
+		return false;
+	}
+
+	// missiles can hit other things
+	if (Flags & MF_MISSILE)
+	{
+		// Check for passing through a ghost
+		if (Other.Translucency && (Flags2 & MF2_THRUGHOST))
+		{
+			return true;
+		}
+
+		if (target && target->Class == Other.Class)
+		{
+			// Don't hit same species as originator
+			if (Other == *target)
+			{
+				// Don't missile self
+				return true;
+			}
+			if (Other.Class != PlayerEntity)
+			{
+				// Hit same species as originator, explode, no damage
+				return false;
+			}
+		}
+
+		if (!(Other.Flags & MF_SHOOTABLE))
+		{
+			// didn't do any damage
+			return !(Other.Flags & MF_SOLID);
+		}
+
+		if (Flags2 & MF2_RIP)
+		{
+			if (!(Other.Flags & MF_NOBLOOD))
+			{
+				// Ok to spawn some blood
+				P_RipperBlood(this);
+			}
+			StartSoundName(this, 'RipSlop', CHAN_VOICE);
+			damage = ((P_Random() & 3) + 2) * MissileDamage;
+			Other.Damage(self, *target, damage);
+			if (Other.Flags2 & MF2_PUSHABLE && !(Flags2 & MF2_CANNOTPUSH))
+			{
+				// Push	thing
+				Other.velocity.x += velocity.x / 4.0;
+				Other.velocity.y += velocity.y / 4.0;
+			}
+			numspechit = 0;
+			return true;
+		}
+		// Do damage
+		damage = ((P_Random() % 8) + 1) * MissileDamage;
+		if (damage)
+		{
+			if (!(Other.Flags & MF_NOBLOOD) && P_Random() < 192)
+			{
+				P_BloodSplatter(origin.x, origin.y, origin.z, &Other);
+			}
+			Other.Damage(self, *target, damage);
+		}
+		// don't traverse any more
+		return false;
+	}
+
+	if (Other.Flags2 & MF2_PUSHABLE && !(Flags2 & MF2_CANNOTPUSH))
+	{
+		// Push thing
+		Other.velocity.x += velocity.x / 4.0;
+		Other.velocity.y += velocity.y / 4.0;
+	}
+
+	// check for special pickup
+	if (Other.Flags & MF_SPECIAL)
+	{
+		solid = Other.Flags & MF_SOLID;
+		P_TouchSpecialThing(&Other, this);
+		return !solid;
+	}
+
+	return !(Other.Flags & MF_SOLID);
+}
+
+//==========================================================================
+//
 //	PIT_CheckRelThing
 //
 //==========================================================================
@@ -325,8 +428,6 @@ boolean P_CheckPosition(mobj_t * thing, float x, float y)
 boolean PIT_CheckRelThing(mobj_t * thing)
 {
 	float blockdist;
-	boolean solid;
-	int damage;
 
 	if (!(thing->Flags & (MF_SOLID | MF_SPECIAL | MF_SHOOTABLE)))
 		return true;
@@ -344,8 +445,7 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 	if (thing == tmthing)
 		return true;
 
-	if ((tmthing->Flags & MF_MISSILE) || (tmthing->Flags2 & MF2_PASSMOBJ) ||
-		(thing->Flags & MF_SPECIAL))
+	if (!(tmthing->Flags2 & MF2_NOPASSMOBJ) || (thing->Flags & MF_SPECIAL))
 	{
 		// check if a mobj passed over/under another object
 		if ((tmthing->Class == Imp || tmthing->Class == Wizard)
@@ -365,98 +465,7 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 		}
 	}
 
-	// check for skulls slamming into things
-	if (tmthing->Flags & MF_SKULLFLY)
-	{
-		damage = ((P_Random() % 8) + 1) * tmthing->MissileDamage;
-		thing->Damage(tmthing, tmthing, damage);
-		tmthing->Flags &= ~MF_SKULLFLY;
-		tmthing->velocity = vector(0.0, 0.0, 0.0);
-		SetMobjState(tmthing, tmthing->SeeState);
-		return false;
-	}
-
-	// missiles can hit other things
-	if (tmthing->Flags & MF_MISSILE)
-	{
-		// Check for passing through a ghost
-		if (thing->Translucency && (tmthing->Flags2 & MF2_THRUGHOST))
-		{
-			return true;
-		}
-
-		if (tmthing->target && tmthing->target->Class == thing->Class)
-		{
-			// Don't hit same species as originator
-			if (thing == tmthing->target)
-			{
-				// Don't missile self
-				return true;
-			}
-			if (thing->Class != PlayerEntity)
-			{
-				// Hit same species as originator, explode, no damage
-				return false;
-			}
-		}
-
-		if (!(thing->Flags & MF_SHOOTABLE))
-		{
-			// didn't do any damage
-			return !(thing->Flags & MF_SOLID);
-		}
-
-		if (tmthing->Flags2 & MF2_RIP)
-		{
-			if (!(thing->Flags & MF_NOBLOOD))
-			{
-				// Ok to spawn some blood
-				P_RipperBlood(tmthing);
-			}
-			StartSoundName(tmthing, 'RipSlop', CHAN_VOICE);
-			damage = ((P_Random() & 3) + 2) * tmthing->MissileDamage;
-			thing->Damage(tmthing, tmthing->target, damage);
-			if (thing->Flags2 & MF2_PUSHABLE &&
-				!(tmthing->Flags2 & MF2_CANNOTPUSH))
-			{
-				// Push thing
-				thing->velocity.x += tmthing->velocity.x / 4.0;
-				thing->velocity.y += tmthing->velocity.y / 4.0;
-			}
-			numspechit = 0;
-			return true;
-		}
-		// Do damage
-		damage = ((P_Random() % 8) + 1) * tmthing->MissileDamage;
-		if (damage)
-		{
-			if (!(thing->Flags & MF_NOBLOOD) && P_Random() < 192)
-			{
-				P_BloodSplatter(tmthing->origin.x, tmthing->origin.y,
-					tmthing->origin.z, thing);
-			}
-			thing->Damage(tmthing, tmthing->target, damage);
-		}
-		// don't traverse any more
-		return false;
-	}
-
-	if (thing->Flags2 & MF2_PUSHABLE && !(tmthing->Flags2 & MF2_CANNOTPUSH))
-	{
-		// Push thing
-		thing->velocity.x += tmthing->velocity.x / 4.0;
-		thing->velocity.y += tmthing->velocity.y / 4.0;
-	}
-
-	// check for special pickup
-	if (thing->Flags & MF_SPECIAL)
-	{
-		solid = thing->Flags & MF_SOLID;
-		P_TouchSpecialThing(thing, tmthing);
-		return !solid;
-	}
-
-	return !(thing->Flags & MF_SOLID);
+	return tmthing->Touch(*thing);
 }
 
 //==========================================================================
@@ -921,6 +930,9 @@ boolean P_Move(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/24 18:19:26  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.11  2002/01/17 18:15:53  dj_jl
 //  Renamed all map object classes
 //

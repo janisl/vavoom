@@ -106,7 +106,7 @@ boolean PIT_CheckThing(mobj_t * thing)
 		return true;
 
 	BlockingMobj = thing;
-	if (tmthing->Flags2 & MF2_PASSMOBJ)
+	if (!(tmthing->Flags2 & MF2_NOPASSMOBJ))
 	{
 		// check if a mobj passed over/under another object
 		if (tmthing->Class == Bishop && thing->Class == Bishop)
@@ -308,6 +308,308 @@ boolean P_CheckPosition(mobj_t * thing, float x, float y)
 
 //==========================================================================
 //
+//	Actor::Touch
+//
+//==========================================================================
+
+boolean Actor::Touch(Actor Other)
+{
+	boolean solid;
+	int damage;
+
+	if (!(Other.Flags & (MF_SOLID | MF_SPECIAL | MF_SHOOTABLE)))
+		return true;
+
+	// Check for skulls slamming into things
+	if (Flags & MF_SKULLFLY)
+	{
+		if (Class == Minotaur)
+		{
+			// Slamming minotaurs shouldn't move non-creatures
+			if (!(Other.Flags & MF_COUNTKILL))
+			{
+				return false;
+			}
+		}
+		else if (Class == HolyFX)
+		{
+			if (Other.Flags & MF_SHOOTABLE && Other != *target)
+			{
+				if (netgame && !deathmatch && Other.player)
+				{
+					// don't attack other co-op players
+					return true;
+				}
+				if (Other.Flags2 & MF2_REFLECTIVE
+					&& (Other.player || Other.Flags2 & MF2_BOSS))
+				{
+					specialmobj1 = target;
+					target = &Other;
+					return true;
+				}
+				if (Other.Flags & MF_COUNTKILL || Other.player)
+				{
+					specialmobj1 = &Other;
+				}
+				if (P_Random() < 96)
+				{
+					damage = 12;
+					if (Other.player || Other.Flags2 & MF2_BOSS)
+					{
+						damage = 3;
+						// ghost burns out faster when attacking players/bosses
+						Health -= 6;
+					}
+					Other.Damage(self, *target, damage);
+					if (P_Random() < 128)
+					{
+						P_SpawnMobj(origin.x, origin.y, origin.z, HolyPuff);
+						StartSoundName(this, 'SpiritAttack', CHAN_VOICE);
+						if (Other.Flags & MF_COUNTKILL && P_Random() < 128
+							&& !GetSoundPlayingInfo(&Other,
+								GetSoundID('PuppyBeat')))
+						{
+							if ((Other.Class == Centaur) ||
+								(Other.Class == CentaurLeader) ||
+								(Other.Class == Ettin))
+							{
+								StartSoundName(&Other, 'PuppyBeat',
+									CHAN_VOICE);
+							}
+						}
+					}
+				}
+				if (Other.Health <= 0)
+				{
+					special1 = 0;
+					specialmobj1 = NULL;
+				}
+			}
+			return true;
+		}
+		damage = ((P_Random() % 8) + 1) * MissileDamage;
+		Other.Damage(self, self, damage);
+		Flags &= ~MF_SKULLFLY;
+		velocity = vector(0.0, 0.0, 0.0);
+		SetState(SeeState);
+		return false;
+	}
+	// Check for blasted thing running into another
+	if (Flags2 & MF2_BLASTED && Other.Flags & MF_SHOOTABLE)
+	{
+		if (!(Other.Flags2 & MF2_BOSS) && (Other.Flags & MF_COUNTKILL))
+		{
+			Other.velocity.x += velocity.x;
+			Other.velocity.y += velocity.y;
+			if ((Other.velocity.x + Other.velocity.y) > 3.0 * 35.0)
+			{
+				damage = (ftoi(Mass) / 100) + 1;
+				Other.Damage(self, self, damage);
+				damage = (ftoi(Other.Mass) / 100) + 1;
+				Damage(Other, Other, damage >> 2);
+			}
+			return false;
+		}
+	}
+	// Check for missile
+	if (Flags & MF_MISSILE)
+	{
+		// Check for a non-shootable mobj
+		if (Other.Flags2 & MF2_NONSHOOTABLE)
+		{
+			return true;
+		}
+		if (Flags2 & MF2_FLOORBOUNCE)
+		{
+			if (*target == Other || !(Other.Flags & MF_SOLID))
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		if (Class ==  LightningFloor || Class == LightningCeiling)
+		{
+			if (Other.Flags & MF_SHOOTABLE && Other != *target)
+			{
+				if (Other.Mass != 99999.0)
+				{
+					Other.velocity.x += velocity.x / 16.0;
+					Other.velocity.y += velocity.y / 16.0;
+				}
+				if ((!Other.player && !(Other.Flags2 & MF2_BOSS))
+					|| !(level->tictime & 1))
+				{
+					if (Other.Class == Centaur ||
+						Other.Class == CentaurLeader)
+					{
+						// Lightning does more damage to centaurs
+						Other.Damage(self, *target, 9);
+					}
+					else
+					{
+						Other.Damage(self, *target, 3);
+					}
+					if (!(GetSoundPlayingInfo(this,
+								GetSoundID('MageLightningZap'))))
+					{
+						StartSoundName(this, 'MageLightningZap',
+							CHAN_VOICE);
+					}
+					if (Other.Flags & MF_COUNTKILL && P_Random() < 64
+						&& !GetSoundPlayingInfo(&Other,
+							GetSoundID('PuppyBeat')))
+					{
+						if ((Other.Class == Centaur) ||
+							(Other.Class == CentaurLeader) ||
+							(Other.Class == Ettin))
+						{
+							StartSoundName(&Other, 'PuppyBeat', CHAN_VOICE);
+						}
+					}
+				}
+				Health--;
+				if (Health <= 0 || Other.Health <= 0)
+				{
+					return false;
+				}
+				if (Class == LightningFloor)
+				{
+					if (specialmobj2 && !specialmobj2->specialmobj1)
+					{
+						specialmobj2->specialmobj1 = &Other;
+					}
+				}
+				else if (!specialmobj1)
+				{
+					specialmobj1 = &Other;
+				}
+			}
+			return true;	// lightning zaps through all sprites
+		}
+		else if (Class == LightningZap)
+		{
+			mobj_t *lmo;
+
+			if (Other.Flags & MF_SHOOTABLE && Other != *target)
+			{
+				lmo = specialmobj2;
+				if (lmo)
+				{
+					if (lmo->Class == LightningFloor)
+					{
+						if (lmo->specialmobj2 &&
+							!lmo->specialmobj2->specialmobj1)
+						{
+							lmo->specialmobj2->specialmobj1 = &Other;
+						}
+					}
+					else if (!lmo->specialmobj1)
+					{
+						lmo->specialmobj1 = &Other;
+					}
+					if (!(level->tictime & 3))
+					{
+						lmo->Health--;
+					}
+				}
+			}
+		}
+		else if (Class == MageStaffFX2 && Other != *target)
+		{
+			if (!Other.player && !(Other.Flags2 & MF2_BOSS))
+			{
+				switch (Other.Class)
+				{
+				case FighterBoss:	// these not flagged boss
+				case ClericBoss:	// so they can be blasted
+				case MageBoss:
+					break;
+				default:
+					Other.Damage(self, *target, 10);
+					return true;
+				}
+			}
+		}
+		if (target && target->Class == Other.Class)
+		{
+			// Don't hit same species as originator
+			if (Other == *target)
+			{
+				// Don't missile self
+				return true;
+			}
+			if (!Other.player)
+			{
+				// Hit same species as originator, explode, no damage
+				return false;
+			}
+		}
+		if (!(Other.Flags & MF_SHOOTABLE))
+		{
+			// Didn't do any damage
+			return !(Other.Flags & MF_SOLID);
+		}
+		if (Flags2 & MF2_RIP)
+		{
+			if (!(Other.Flags & MF_NOBLOOD) &&
+				!(Other.Flags2 & MF2_REFLECTIVE) &&
+				!(Other.Flags2 & MF2_INVULNERABLE))
+			{
+				// Ok to spawn some blood
+				P_RipperBlood(this);
+			}
+			damage = ((P_Random() & 3) + 2) * MissileDamage;
+			Other.Damage(self, *target, damage);
+			if (Other.Flags2 & MF2_PUSHABLE
+				&& !(Flags2 & MF2_CANNOTPUSH))
+			{
+				// Push thing
+				Other.velocity.x += velocity.x / 4.0;
+				Other.velocity.y += velocity.y / 4.0;
+			}
+			numspechit = 0;
+			return true;
+		}
+		// Do damage
+		damage = ((P_Random() % 8) + 1) * MissileDamage;
+		if (damage)
+		{
+			if (!(Other.Flags & MF_NOBLOOD) &&
+				!(Other.Flags2 & MF2_REFLECTIVE) &&
+				!(Other.Flags2 & MF2_INVULNERABLE) &&
+				!(Class == TeleportOtherFX1) &&
+				!(Class == TeleportOtherFX2) &&
+				!(Class == TeleportOtherFX3) &&
+				!(Class == TeleportOtherFX4) &&
+				!(Class == TeleportOtherFX5) && (P_Random() < 192))
+			{
+				P_BloodSplatter(origin.x, origin.y, origin.z, &Other);
+			}
+			Other.Damage(self, *target, damage);
+		}
+		return false;
+	}
+	if (Other.Flags2 & MF2_PUSHABLE && !(Flags2 & MF2_CANNOTPUSH))
+	{
+		// Push thing
+		Other.velocity.x += velocity.x / 4.0;
+		Other.velocity.y += velocity.y / 4.0;
+	}
+	// Check for special thing
+	if (Other.Flags & MF_SPECIAL)
+	{
+		solid = Other.Flags & MF_SOLID;
+		P_TouchSpecialThing(&Other, this);	// Can remove thing
+		return !solid;
+	}
+	return !(Other.Flags & MF_SOLID);
+}
+
+//==========================================================================
+//
 //	PIT_CheckRelThing
 //
 //==========================================================================
@@ -315,11 +617,6 @@ boolean P_CheckPosition(mobj_t * thing, float x, float y)
 boolean PIT_CheckRelThing(mobj_t * thing)
 {
 	float blockdist;
-	boolean solid;
-	int damage;
-
-	if (!(thing->Flags & (MF_SOLID | MF_SPECIAL | MF_SHOOTABLE)))
-		return true;
 
 	blockdist = thing->Radius + tmthing->Radius;
 
@@ -335,8 +632,7 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 		return true;
 
 	BlockingMobj = thing;
-	if ((tmthing->Flags & MF_MISSILE) || (tmthing->Flags2 & MF2_PASSMOBJ) ||
-		(thing->Flags & MF_SPECIAL))
+	if (!(tmthing->Flags2 & MF2_NOPASSMOBJ) || (thing->Flags & MF_SPECIAL))
 	{
 		// check if a mobj passed over/under another object
 		if (tmthing->Class == Bishop && thing->Class == Bishop)
@@ -354,294 +650,7 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 			return true;
 		}
 	}
-	// Check for skulls slamming into things
-	if (tmthing->Flags & MF_SKULLFLY)
-	{
-		if (tmthing->Class == Minotaur)
-		{
-			// Slamming minotaurs shouldn't move non-creatures
-			if (!(thing->Flags & MF_COUNTKILL))
-			{
-				return false;
-			}
-		}
-		else if (tmthing->Class == HolyFX)
-		{
-			if (thing->Flags & MF_SHOOTABLE && thing != tmthing->target)
-			{
-				if (netgame && !deathmatch && thing->player)
-				{
-					// don't attack other co-op players
-					return true;
-				}
-				if (thing->Flags2 & MF2_REFLECTIVE
-					&& (thing->player || thing->Flags2 & MF2_BOSS))
-				{
-					tmthing->specialmobj1 = tmthing->target;
-					tmthing->target = thing;
-					return true;
-				}
-				if (thing->Flags & MF_COUNTKILL || thing->player)
-				{
-					tmthing->specialmobj1 = thing;
-				}
-				if (P_Random() < 96)
-				{
-					damage = 12;
-					if (thing->player || thing->Flags2 & MF2_BOSS)
-					{
-						damage = 3;
-						// ghost burns out faster when attacking players/bosses
-						tmthing->Health -= 6;
-					}
-					thing->Damage(tmthing, tmthing->target, damage);
-					if (P_Random() < 128)
-					{
-						P_SpawnMobj(tmthing->origin.x, tmthing->origin.y,
-							tmthing->origin.z, HolyPuff);
-						StartSoundName(tmthing, 'SpiritAttack', CHAN_VOICE);
-						if (thing->Flags & MF_COUNTKILL && P_Random() < 128
-							&& !GetSoundPlayingInfo(thing,
-								GetSoundID('PuppyBeat')))
-						{
-							if ((thing->Class == Centaur) ||
-								(thing->Class == CentaurLeader) ||
-								(thing->Class == Ettin))
-							{
-								StartSoundName(thing, 'PuppyBeat',
-									CHAN_VOICE);
-							}
-						}
-					}
-				}
-				if (thing->Health <= 0)
-				{
-					tmthing->special1 = 0;
-					tmthing->specialmobj1 = NULL;
-				}
-			}
-			return true;
-		}
-		damage = ((P_Random() % 8) + 1) * tmthing->MissileDamage;
-		thing->Damage(tmthing, tmthing, damage);
-		tmthing->Flags &= ~MF_SKULLFLY;
-		tmthing->velocity.x = tmthing->velocity.y = tmthing->velocity.z = 0.0;
-		SetMobjState(tmthing, tmthing->SeeState);
-		return false;
-	}
-	// Check for blasted thing running into another
-	if (tmthing->Flags2 & MF2_BLASTED && thing->Flags & MF_SHOOTABLE)
-	{
-		if (!(thing->Flags2 & MF2_BOSS) && (thing->Flags & MF_COUNTKILL))
-		{
-			thing->velocity.x += tmthing->velocity.x;
-			thing->velocity.y += tmthing->velocity.y;
-			if ((thing->velocity.x + thing->velocity.y) > 3.0 * 35.0)
-			{
-				damage = (ftoi(tmthing->Mass) / 100) + 1;
-				thing->Damage(tmthing, tmthing, damage);
-				damage = (ftoi(thing->Mass) / 100) + 1;
-				tmthing->Damage(thing, thing, damage >> 2);
-			}
-			return false;
-		}
-	}
-	// Check for missile
-	if (tmthing->Flags & MF_MISSILE)
-	{
-		// Check for a non-shootable mobj
-		if (thing->Flags2 & MF2_NONSHOOTABLE)
-		{
-			return true;
-		}
-		if (tmthing->Flags2 & MF2_FLOORBOUNCE)
-		{
-			if (tmthing->target == thing || !(thing->Flags & MF_SOLID))
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-		if (tmthing->Class ==  LightningFloor
-			|| tmthing->Class == LightningCeiling)
-		{
-			if (thing->Flags & MF_SHOOTABLE && thing != tmthing->target)
-			{
-				if (thing->Mass != 99999.0)
-				{
-					thing->velocity.x += tmthing->velocity.x / 16.0;
-					thing->velocity.y += tmthing->velocity.y / 16.0;
-				}
-				if ((!thing->player && !(thing->Flags2 & MF2_BOSS))
-					|| !(level->tictime & 1))
-				{
-					if (thing->Class ==	Centaur
-						|| thing->Class == CentaurLeader)
-					{	// Lightning does more damage to centaurs
-						thing->Damage(tmthing, tmthing->target, 9);
-					}
-					else
-					{
-						thing->Damage(tmthing, tmthing->target, 3);
-					}
-					if (!(GetSoundPlayingInfo(tmthing,
-								GetSoundID('MageLightningZap'))))
-					{
-						StartSoundName(tmthing, 'MageLightningZap',
-							CHAN_VOICE);
-					}
-					if (thing->Flags & MF_COUNTKILL && P_Random() < 64
-						&& !GetSoundPlayingInfo(thing,
-							GetSoundID('PuppyBeat')))
-					{
-						if ((thing->Class == Centaur) ||
-							(thing->Class == CentaurLeader) ||
-							(thing->Class == Ettin))
-						{
-							StartSoundName(thing, 'PuppyBeat', CHAN_VOICE);
-						}
-					}
-				}
-				tmthing->Health--;
-				if (tmthing->Health <= 0 || thing->Health <= 0)
-				{
-					return false;
-				}
-				if (tmthing->Class == LightningFloor)
-				{
-					if (tmthing->specialmobj2 &&
-						!tmthing->specialmobj2->specialmobj1)
-					{
-						tmthing->specialmobj2->specialmobj1 = thing;
-					}
-				}
-				else if (!tmthing->specialmobj1)
-				{
-					tmthing->specialmobj1 = thing;
-				}
-			}
-			return true;	// lightning zaps through all sprites
-		}
-		else if (tmthing->Class == LightningZap)
-		{
-			mobj_t *lmo;
-
-			if (thing->Flags & MF_SHOOTABLE && thing != tmthing->target)
-			{
-				lmo = tmthing->specialmobj2;
-				if (lmo)
-				{
-					if (lmo->Class == LightningFloor)
-					{
-						if (lmo->specialmobj2 &&
-							!lmo->specialmobj2->specialmobj1)
-						{
-							lmo->specialmobj2->specialmobj1 = thing;
-						}
-					}
-					else if (!lmo->specialmobj1)
-					{
-						lmo->specialmobj1 = thing;
-					}
-					if (!(level->tictime & 3))
-					{
-						lmo->Health--;
-					}
-				}
-			}
-		}
-		else if (tmthing->Class == MageStaffFX2 && thing != tmthing->target)
-		{
-			if (!thing->player && !(thing->Flags2 & MF2_BOSS))
-			{
-				switch (thing->Class)
-				{
-				case FighterBoss:	// these not flagged boss
-				case ClericBoss:	// so they can be blasted
-				case MageBoss:
-					break;
-				default:
-					thing->Damage(tmthing, tmthing->target, 10);
-					return true;
-				}
-			}
-		}
-		if (tmthing->target && tmthing->target->Class == thing->Class)
-		{
-			// Don't hit same species as originator
-			if (thing == tmthing->target)
-			{
-				// Don't missile self
-				return true;
-			}
-			if (!thing->player)
-			{
-				// Hit same species as originator, explode, no damage
-				return false;
-			}
-		}
-		if (!(thing->Flags & MF_SHOOTABLE))
-		{
-			// Didn't do any damage
-			return !(thing->Flags & MF_SOLID);
-		}
-		if (tmthing->Flags2 & MF2_RIP)
-		{
-			if (!(thing->Flags & MF_NOBLOOD) &&
-				!(thing->Flags2 & MF2_REFLECTIVE) &&
-				!(thing->Flags2 & MF2_INVULNERABLE))
-			{	// Ok to spawn some blood
-				P_RipperBlood(tmthing);
-			}
-			//StartSoundName(tmthing, sfx_ripslop);
-			damage = ((P_Random() & 3) + 2) * tmthing->MissileDamage;
-			thing->Damage(tmthing, tmthing->target, damage);
-			if (thing->Flags2 & MF2_PUSHABLE
-				&& !(tmthing->Flags2 & MF2_CANNOTPUSH))
-			{	// Push thing
-				thing->velocity.x += tmthing->velocity.x / 4.0;
-				thing->velocity.y += tmthing->velocity.y / 4.0;
-			}
-			numspechit = 0;
-			return true;
-		}
-		// Do damage
-		damage = ((P_Random() % 8) + 1) * tmthing->MissileDamage;
-		if (damage)
-		{
-			if (!(thing->Flags & MF_NOBLOOD) &&
-				!(thing->Flags2 & MF2_REFLECTIVE) &&
-				!(thing->Flags2 & MF2_INVULNERABLE) &&
-				!(tmthing->Class == TeleportOtherFX1) &&
-				!(tmthing->Class == TeleportOtherFX2) &&
-				!(tmthing->Class == TeleportOtherFX3) &&
-				!(tmthing->Class == TeleportOtherFX4) &&
-				!(tmthing->Class == TeleportOtherFX5) && (P_Random() < 192))
-			{
-				P_BloodSplatter(tmthing->origin.x, tmthing->origin.y,
-					tmthing->origin.z, thing);
-			}
-			thing->Damage(tmthing, tmthing->target, damage);
-		}
-		return false;
-	}
-	if (thing->Flags2 & MF2_PUSHABLE && !(tmthing->Flags2 & MF2_CANNOTPUSH))
-	{
-		// Push thing
-		thing->velocity.x += tmthing->velocity.x / 4.0;
-		thing->velocity.y += tmthing->velocity.y / 4.0;
-	}
-	// Check for special thing
-	if (thing->Flags & MF_SPECIAL)
-	{
-		solid = thing->Flags & MF_SOLID;
-		P_TouchSpecialThing(thing, tmthing);	// Can remove thing
-		return !solid;
-	}
-	return !(thing->Flags & MF_SOLID);
+	return tmthing->Touch(*thing);
 }
 
 //===========================================================================
@@ -703,7 +712,7 @@ boolean PIT_CheckRelLine(line_t * ld)
 		// One sided line
 		if (tmthing->Flags2 & MF2_BLASTED)
 		{
-			tmthing->Damage(NULL, NULL, ftoi(tmthing->Mass) >> 5);
+			tmthing->Damage(none, none, ftoi(tmthing->Mass) >> 5);
 		}
 		CheckForPushSpecial(ld, 0, tmthing);
 		return false;
@@ -716,7 +725,7 @@ boolean PIT_CheckRelLine(line_t * ld)
 			// Explicitly blocking everything
 			if (tmthing->Flags2 & MF2_BLASTED)
 			{
-				tmthing->Damage(NULL, NULL, ftoi(tmthing->Mass) >> 5);
+				tmthing->Damage(none, none, ftoi(tmthing->Mass) >> 5);
 			}
 			CheckForPushSpecial(ld, 0, tmthing);
 			return false;
@@ -727,7 +736,7 @@ boolean PIT_CheckRelLine(line_t * ld)
 			// Block monsters only
 			if (tmthing->Flags2 & MF2_BLASTED)
 			{
-				tmthing->Damage(NULL, NULL, ftoi(tmthing->Mass) >> 5);
+				tmthing->Damage(none, none, ftoi(tmthing->Mass) >> 5);
 			}
 			return false;
 		}
@@ -913,7 +922,7 @@ void PushLine(mobj_t * thing)
 
 		if (thing->Flags2 & MF2_BLASTED)
 		{
-			thing->Damage(NULL, NULL, ftoi(thing->Mass) >> 5);
+			thing->Damage(none, none, ftoi(thing->Mass) >> 5);
 		}
 		numSpecHitTemp = numspechit;
 		while (numSpecHitTemp > 0)
@@ -1166,6 +1175,9 @@ boolean P_Move(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/24 18:19:26  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.12  2002/01/17 18:15:55  dj_jl
 //  Renamed all map object classes
 //

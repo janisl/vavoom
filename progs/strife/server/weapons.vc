@@ -299,7 +299,7 @@ void FireWeapon(player_t * player)
 		return;
 	}
 
-	SetMobjState(player->mo, S_PLAY_ATK1);
+	player->mo->SetState(S_PLAY_ATK1);
 	SetPsprite(player, ps_weapon, player->w_atkstate);
 	P_NoiseAlert(player->mo, player->mo);
 }
@@ -327,7 +327,7 @@ void Weapon::A_WeaponReady(void)
 	if (player->mo->statenum == S_PLAY_ATK1
 		|| player->mo->statenum == S_PLAY_ATK2)
 	{
-		SetMobjState(player->mo, S_PLAY);
+		player->mo->SetState(S_PLAY);
 	}
 
 /*    if (player->readyweapon == wp_chainsaw && statenum == S_SAW)
@@ -479,7 +479,7 @@ void A_GunFlash(mobj_t * actor)
 {
 	player_t *player = actor->player;
 
-	SetMobjState(player->mo, S_PLAY_ATK2);
+	player->mo->SetState(S_PLAY_ATK2);
 	SetPsprite(player, ps_flash, player->w_flashstate);
 }
 
@@ -564,6 +564,9 @@ void Weapon::A_Punch(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/24 18:19:27  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.10  2002/01/11 18:19:43  dj_jl
 //  Started to use names in progs
 //

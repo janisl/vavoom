@@ -316,7 +316,7 @@ void A_CastSorcererSpell(mobj_t * actor)
 
 	// Put sorcerer into throw spell animation
 	if (parent->Health > 0)
-		SetMobjStateNF(parent, S_SORC_ATTACK4);
+		parent->SetStateNF(S_SORC_ATTACK4);
 
 	switch (spell)
 	{
@@ -373,7 +373,7 @@ void Actor::A_SorcBallOrbit(void)
 	float prevangle = special1f;
 
 	if (target->Health <= 0)
-		SetMobjState(this, PainState);
+		SetState(PainState);
 
 	baseangle = parent->special1f;
 	switch (Class)
@@ -444,7 +444,7 @@ void Actor::A_SorcBallOrbit(void)
 		{
 			// Put sorcerer into special throw spell anim
 			if (parent->Health > 0)
-				SetMobjStateNF(parent, S_SORC_ATTACK1);
+				parent->SetStateNF(S_SORC_ATTACK1);
 
 			if (Class == SorcererBall1 && P_Random() < 200)
 			{
@@ -469,7 +469,7 @@ void Actor::A_SorcBallOrbit(void)
 				parent->args[3] = SORC_STOPPED;
 				// Back to orbit balls
 				if (parent->Health > 0)
-					SetMobjStateNF(parent, S_SORC_ATTACK4);
+					parent->SetStateNF(S_SORC_ATTACK4);
 			}
 			else
 			{
@@ -578,7 +578,7 @@ void Actor::A_BounceCheck(void)
 	{
 		if (args[3]-- <= 0)
 		{
-			SetMobjState(this, DeathState);
+			SetState(DeathState);
 			switch (Class)
 			{
 			case SorcererBall1:
@@ -643,7 +643,7 @@ void Actor::A_SorcFX2Split(void)
 		mo->target = target;
 		mo->args[0] = 0;	// CW
 		mo->special1f = angles.yaw;	// Set angle
-		SetMobjStateNF(mo, S_SORCFX2_ORBIT1);
+		mo->SetStateNF(S_SORCFX2_ORBIT1);
 	}
 	mo = P_SpawnMobj(origin.x, origin.y, origin.z, SorcererFX2);
 	if (mo)
@@ -651,9 +651,9 @@ void Actor::A_SorcFX2Split(void)
 		mo->target = target;
 		mo->args[0] = 1;	// CCW
 		mo->special1f = angles.yaw;	// Set angle
-		SetMobjStateNF(mo, S_SORCFX2_ORBIT1);
+		mo->SetStateNF(S_SORCFX2_ORBIT1);
 	}
-	SetMobjState(this, S_NULL);
+	SetState(S_NULL);
 }
 
 //============================================================================
@@ -674,7 +674,7 @@ void Actor::A_SorcFX2Orbit(void)
 	if ((parent->Health <= 0) ||	// Sorcerer is dead
 		(!parent->args[0]))	// Time expired
 	{
-		SetMobjStateNF(this, DeathState);
+		SetStateNF(DeathState);
 		parent->args[0] = 0;
 		parent->Flags2 &= ~MF2_REFLECTIVE;
 		parent->Flags2 &= ~MF2_INVULNERABLE;
@@ -682,7 +682,7 @@ void Actor::A_SorcFX2Orbit(void)
 
 	if (args[0] && (parent->args[0]-- <= 0))	// Time expired
 	{
-		SetMobjStateNF(this, DeathState);
+		SetStateNF(DeathState);
 		parent->args[0] = 0;
 		parent->Flags2 &= ~MF2_REFLECTIVE;
 	}
@@ -733,10 +733,10 @@ void Actor::A_SpawnBishop(void)
 	{
 		if (!P_TestMobjLocation(mo))
 		{
-			SetMobjState(mo, S_NULL);
+			mo->SetState(S_NULL);
 		}
 	}
-	SetMobjState(this, S_NULL);
+	SetState(S_NULL);
 }
 
 //============================================================================
@@ -763,13 +763,16 @@ void Actor::A_SorcFX4Check(void)
 {
 	if (special2-- <= 0)
 	{
-		SetMobjStateNF(this, DeathState);
+		SetStateNF(DeathState);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/24 18:19:26  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.12  2002/01/17 18:15:55  dj_jl
 //  Renamed all map object classes
 //

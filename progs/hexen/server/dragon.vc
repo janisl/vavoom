@@ -108,7 +108,7 @@ void DragonSeek(mobj_t * actor, float thresh, float turnMax)
 			actor->target = target;
 			if (CheckMeleeRange(actor))
 			{
-				actor->target->Damage(actor, actor, HITDICE(10));
+				actor->target->Damage(*actor, *actor, HITDICE(10));
 				StartSoundName(actor, 'DragonAttack', CHAN_WEAPON);
 			}
 			else if (P_Random() < 128 && CheckMissileRange(actor))
@@ -181,7 +181,7 @@ void Actor::A_DragonInitFlight(void)
 		specialmobj1 = P_FindMobjFromTID(tid, &search);
 		if (search == -1)
 		{
-			SetMobjState(this, SpawnState);
+			SetState(SpawnState);
 			return;
 		}
 	}
@@ -213,12 +213,12 @@ void Actor::A_DragonFlight(void)
 		if (fabs(AngleMod180(angles.yaw - angle)) < 45.0 / 2.0
 			&& CheckMeleeRange(this))
 		{
-			target->Damage(this, this, HITDICE(8));
+			target->Damage(self, self, HITDICE(8));
 			StartSoundName(this, 'DragonAttack', CHAN_WEAPON);
 		}
 		else if (fabs(AngleMod180(angles.yaw - angle)) <= 20.0)
 		{
-			SetMobjState(this, MissileState);
+			SetState(MissileState);
 			StartSoundName(this, 'DragonAttack', CHAN_WEAPON);
 		}
 	}
@@ -270,7 +270,7 @@ void Actor::A_DragonPain(void)
 	if (!specialmobj1)
 	{
 		// no destination spot yet
-		SetMobjState(this, S_DRAGON_INIT);
+		SetState(S_DRAGON_INIT);
 	}
 }
 
@@ -284,7 +284,7 @@ void Actor::A_DragonCheckCrash(void)
 {
 	if (origin.z <= floorz)
 	{
-		SetMobjState(this, S_DRAGON_CRASH1);
+		SetState(S_DRAGON_CRASH1);
 	}
 }
 
@@ -317,6 +317,9 @@ void Actor::A_DragonFX2(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/24 18:19:26  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.11  2002/01/17 18:15:54  dj_jl
 //  Renamed all map object classes
 //

@@ -394,7 +394,7 @@ boolean Actor::XYMovement(void)
 			Flags &= ~MF_SKULLFLY;
 			velocity.x = velocity.y = velocity.z = 0.0;
 
-			if (!SetMobjState(this, SpawnState))
+			if (!SetState(SpawnState))
 			{
 				return false;
 			}
@@ -706,7 +706,7 @@ void Actor::UpdateVelocity(void)
 			// if in a walking frame, stop moving
 			sn = statenum;
 			if (sn >= S_PLAY_RUN1 && sn <= S_PLAY_RUN4)
-				SetMobjState(this, S_PLAY);
+				SetState(S_PLAY);
 		}
 		velocity = vector(0.0, 0.0, 0.0);
 	}
@@ -992,7 +992,7 @@ void Actor::Think(void)
 		if (time <= 0.0)
 		{
 			time = 0.0;
-			if (!SetMobjState(this, nextstate))
+			if (!SetState(nextstate))
 				return;	// freed itself
 		}
 	}
@@ -1037,6 +1037,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/24 18:19:25  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.14  2002/01/15 18:26:59  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

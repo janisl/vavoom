@@ -111,7 +111,7 @@ void Actor::A_FogMove(void)
 
 	if (args[3]-- <= 0)
 	{
-		SetMobjStateNF(this, DeathState);
+		SetStateNF(DeathState);
 		return;
 	}
 
@@ -130,6 +130,9 @@ void Actor::A_FogMove(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/24 18:19:26  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.9  2002/01/17 18:15:54  dj_jl
 //  Renamed all map object classes
 //

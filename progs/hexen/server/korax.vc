@@ -144,7 +144,7 @@ void Actor::A_KoraxChase(void)
 		return;
 	if (P_Random() < 30)
 	{
-		SetMobjState(this, MissileState);
+		SetState(MissileState);
 	}
 	else if (P_Random() < 30)
 	{
@@ -176,11 +176,11 @@ void Actor::A_KoraxDecide(void)
 {
 	if (P_Random() < 220)
 	{
-		SetMobjState(this, S_KORAX_MISSILE1);
+		SetState(S_KORAX_MISSILE1);
 	}
 	else
 	{
-		SetMobjState(this, S_KORAX_COMMAND1);
+		SetState(S_KORAX_COMMAND1);
 	}
 }
 
@@ -414,7 +414,7 @@ void KSpiritInit(mobj_t * spirit, mobj_t * korax)
 	{
 		next = P_SpawnMobj(spirit->origin.x, spirit->origin.y,
 			spirit->origin.z, HolyTail);
-		SetMobjState(next, next->SpawnState + 1);
+		next->SetState(next->SpawnState + 1);
 		tail->specialmobj1 = next;
 		tail = next;
 	}
@@ -566,7 +566,7 @@ void Actor::A_KSpiritRoam(void)
 	if (Health-- <= 0)
 	{
 		StartSoundName(this, 'SpiritDie', CHAN_VOICE);
-		SetMobjState(this, S_KSPIRIT_DEATH1);
+		SetState(S_KSPIRIT_DEATH1);
 	}
 	else
 	{
@@ -621,13 +621,16 @@ void Actor::A_KBolt(void)
 	// Countdown lifetime
 	if (special1-- <= 0)
 	{
-		SetMobjState(this, S_NULL);
+		SetState(S_NULL);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/24 18:19:26  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.10  2002/01/17 18:15:54  dj_jl
 //  Renamed all map object classes
 //

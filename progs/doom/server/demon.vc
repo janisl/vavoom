@@ -54,13 +54,16 @@ void Actor::A_SargAttack(void)
 	if (P_CheckMeleeRange(this))
 	{
 		damage = ((P_Random() % 10) + 1) * 4;
-		target->Damage(this, this, damage);
+		target->Damage(self, self, damage);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/24 18:19:25  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.6  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

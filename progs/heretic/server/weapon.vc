@@ -430,7 +430,7 @@ void FireWeapon(player_t * player)
 	{
 		return;
 	}
-	SetMobjState(player->mo, S_PLAY_ATK2);
+	player->mo->SetState(S_PLAY_ATK2);
 	if (player->powers[pw_weaponlevel2])
 	{
 		attackState = player->refire ? player->w2_holdatkstate
@@ -548,7 +548,7 @@ void Weapon::A_WeaponReady(void)
 	if (player->mo->statenum == S_PLAY_ATK1 ||
 		player->mo->statenum == S_PLAY_ATK2)
 	{
-		SetMobjState(player->mo, S_PLAY);
+		player->mo->SetState(S_PLAY);
 	}
 	// Check for staff PL2 active sound
 	if ((player->readyweapon == wp_staff) &&
@@ -608,7 +608,7 @@ void Weapon::A_BeakReady(void)
 	{
 		// Chicken beak attack
 		player->attackdown = true;
-		SetMobjState(player->mo, S_CHICPLAY_ATK1);
+		player->mo->SetState(S_CHICPLAY_ATK1);
 		if (player->powers[pw_weaponlevel2])
 		{
 			SetPsprite(player, ps_weapon, S_BEAKATK2_1);
@@ -623,7 +623,7 @@ void Weapon::A_BeakReady(void)
 	{
 		if (player->mo->statenum == S_CHICPLAY_ATK1)
 		{	// Take out of attack state
-			SetMobjState(player->mo, S_CHICPLAY);
+			player->mo->SetState(S_CHICPLAY);
 		}
 		player->attackdown = false;
 	}
@@ -1070,7 +1070,7 @@ void Weapon::A_FireSkullRodPL1(void)
 	// Randomize the first frame
 	if (mo && P_Random() > 128)
 	{
-		SetMobjState(mo, S_HRODFX1_2);
+		mo->SetState(S_HRODFX1_2);
 	}
 }
 
@@ -1468,7 +1468,7 @@ void Actor::A_SkullRodStorm(void)
 
 	if (Health-- == 0)
 	{
-		SetMobjState(this, S_NULL);
+		SetState(S_NULL);
 		playerNum = netgame ? special2 : 0;
 		player = &players[playerNum];
 		if (!player->active)
@@ -1528,7 +1528,7 @@ void Actor::A_RainImpact(void)
 {
 	if (origin.z > floorz)
 	{
-		SetMobjState(this, S_RAINAIRXPLR1_1 + special2);
+		SetState(S_RAINAIRXPLR1_1 + special2);
 	}
 	else if (P_Random() < 40)
 	{
@@ -1640,7 +1640,7 @@ void Actor::A_MaceBallImpact(void)
 		Health = MAGIC_JUNK;
 		velocity.z = velocity.z * 192.0 / 256.0;
 		Flags2 &= ~MF2_FLOORBOUNCE;
-		SetMobjState(this, SpawnState);
+		SetState(SpawnState);
 		StartSoundName(this, 'Bounce', CHAN_VOICE);
 	}
 	else
@@ -1680,7 +1680,7 @@ void Actor::A_MaceBallImpact2(void)
 	{
 		// Bounce
 		velocity.z = velocity.z * 192.0 / 256.0;
-		SetMobjState(this, SpawnState);
+		SetState(SpawnState);
 
 		tiny = P_SpawnMobj(origin.x, origin.y, origin.z, MaceFX3);
 		angle = AngleMod360(angles.yaw + 90.0);
@@ -1772,7 +1772,7 @@ void Actor::A_DeathBallImpact(void)
 			velocity.x = Speed * cos(angle);
 			velocity.y = Speed * sin(angle);
 		}
-		SetMobjState(this, SpawnState);
+		SetState(SpawnState);
 		StartSoundName(this, 'PlatformStop', CHAN_VOICE);
 	}
 	else
@@ -1786,6 +1786,9 @@ void Actor::A_DeathBallImpact(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/01/24 18:19:26  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.13  2002/01/17 18:15:53  dj_jl
 //  Renamed all map object classes
 //

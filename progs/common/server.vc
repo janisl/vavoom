@@ -31,10 +31,14 @@
 #include "builtins.vc"
 #include "svvars.vc"
 #include "utils.vc"
+#include "entity.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/01/24 18:19:25  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.5  2002/01/07 12:19:56  dj_jl
 //  Changed copyright year
 //

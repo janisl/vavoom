@@ -87,7 +87,7 @@ void ChickenPlayerThink(player_t * player)
 	{
 		// Jump and noise
 		pmo->velocity.z += 1.0 * 35.0;
-		SetMobjState(pmo, S_CHICPLAY_PAIN);
+		pmo->SetState(S_CHICPLAY_PAIN);
 		return;
 	}
 	if (P_Random() < 48)
@@ -124,7 +124,7 @@ boolean UndoPlayerChicken(player_t * player)
 	weapon = pmo->special1;
 	oldFlags = pmo->Flags;
 	oldFlags2 = pmo->Flags2;
-	SetMobjState(pmo, S_FREETARGMOBJ);
+	pmo->SetState(S_FREETARGMOBJ);
 	mo = P_SpawnMobj(x, y, z, PlayerEntity);
 	if (!P_TestMobjLocation(mo))
 	{
@@ -174,14 +174,14 @@ void SetPlayerRunState(player_t * player)
 	{
 		if (player->mo->statenum == S_CHICPLAY)
 		{
-			SetMobjState(player->mo, S_CHICPLAY_RUN1);
+			player->mo->SetState(S_CHICPLAY_RUN1);
 		}
 	}
 	else
 	{
 		if (player->mo->statenum == S_PLAY)
 		{
-			SetMobjState(player->mo, S_PLAY_RUN1);
+			player->mo->SetState(S_PLAY_RUN1);
 		}
 	}
 }
@@ -327,7 +327,7 @@ boolean ArtiTomeOfPower(player_t * player)
 		if (UndoPlayerChicken(player) == false)
 		{
 			// Failed
-			player->mo->Damage(NULL, NULL, 10000);
+			player->mo->Damage(none, none, 10000);
 		}
 		else
 		{
@@ -385,12 +385,12 @@ void P_SetDormantArtifact(mobj_t * arti)
 	if (deathmatch && (arti->Class != ArtifactInvulnerability)
 		&& (arti->Class != ArtifactInvisibility))
 	{
-		SetMobjState(arti, S_DORMANTARTI1);
+		arti->SetState(S_DORMANTARTI1);
 	}
 	else
 	{
 		// Don't respawn
-		SetMobjState(arti, S_DEADARTI1);
+		arti->SetState(S_DEADARTI1);
 	}
 	StartSoundName(arti, 'PickupArtifact', CHAN_ITEM);
 }
@@ -405,7 +405,7 @@ void P_HideSpecialThing(mobj_t * thing)
 {
 	thing->Flags &= ~MF_SPECIAL;
 	thing->Translucency += 100;
-	SetMobjState(thing, S_HIDESPECIAL1);
+	thing->SetState(S_HIDESPECIAL1);
 }
 
 //==========================================================================
@@ -439,13 +439,13 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	x = mthing->x;
 	y = mthing->y;
 
-	players[playernum].mo->Flags2 &= ~MF2_PASSMOBJ;
+	players[playernum].mo->Flags2 |= MF2_NOPASSMOBJ;
 	if (!P_CheckPosition(players[playernum].mo, x, y))
 	{
-		players[playernum].mo->Flags2 |= MF2_PASSMOBJ;
+		players[playernum].mo->Flags2 &= ~MF2_NOPASSMOBJ;
 		return false;
 	}
-	players[playernum].mo->Flags2 |= MF2_PASSMOBJ;
+	players[playernum].mo->Flags2 &= ~MF2_NOPASSMOBJ;
 
 	// spawn a teleport fog 
 	ss = PointInSubsector(x, y);
@@ -461,6 +461,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/24 18:19:26  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.14  2002/01/17 18:15:53  dj_jl
 //  Renamed all map object classes
 //

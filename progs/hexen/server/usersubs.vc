@@ -137,7 +137,7 @@ boolean UndoPlayerMorph(player_t * player)
 	oldFlags = pmo->Flags;
 	oldFlags2 = pmo->Flags2;
 	oldBeast = pmo->Class;
-	SetMobjState(pmo, S_FREETARGMOBJ);
+	pmo->SetState(S_FREETARGMOBJ);
 	switch (player->baseclass)
 	{
 	case PCLASS_FIGHTER:
@@ -197,7 +197,7 @@ void SetPlayerRunState(player_t * player)
 {
 	if (player->mo->statenum == PStateNormal[player->pclass])
 	{
-		SetMobjState(player->mo, PStateRun[player->pclass]);
+		player->mo->SetState(PStateRun[player->pclass]);
 	}
 }
 
@@ -653,13 +653,13 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	x = mthing->x;
 	y = mthing->y;
 
-	players[playernum].mo->Flags2 &= ~MF2_PASSMOBJ;
+	players[playernum].mo->Flags2 |= MF2_NOPASSMOBJ;
 	if (!P_CheckPosition(players[playernum].mo, x, y))
 	{
-		players[playernum].mo->Flags2 |= MF2_PASSMOBJ;
+		players[playernum].mo->Flags2 &= ~MF2_NOPASSMOBJ;
 		return false;
 	}
-	players[playernum].mo->Flags2 |= MF2_PASSMOBJ;
+	players[playernum].mo->Flags2 &= ~MF2_NOPASSMOBJ;
 
 	// spawn a teleport fog 
 	ss = PointInSubsector(x, y);
@@ -675,6 +675,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/01/24 18:19:27  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.13  2002/01/17 18:15:55  dj_jl
 //  Renamed all map object classes
 //

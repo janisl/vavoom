@@ -49,7 +49,7 @@ void Actor::A_PotteryExplode(void)
 	for (i = (P_Random() & 3) + 3; i; i--)
 	{
 		mo = P_SpawnMobj(origin.x, origin.y, origin.z, PotteryBit);
-		SetMobjState(mo, mo->SpawnState + (P_Random() % 5));
+		mo->SetState(mo->SpawnState + (P_Random() % 5));
 		if (mo)
 		{
 			mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
@@ -75,7 +75,7 @@ void Actor::A_PotteryExplode(void)
 
 void Actor::A_PotteryChooseBit(void)
 {
-	SetMobjState(this, DeathState + (P_Random() % 5) + 1);
+	SetState(DeathState + (P_Random() % 5) + 1);
 	time = 8.0 + Random() * 16.0;
 }
 
@@ -102,7 +102,7 @@ void Actor::A_PotteryCheck(void)
 			origin.x - pmo->origin.x) - pmo->angles.yaw)) <= 45.0))
 		{
 			// Previous state (pottery bit waiting state)
-			SetMobjState(this, statenum - 1);
+			SetState(statenum - 1);
 			return;
 		}
 	}
@@ -111,6 +111,9 @@ void Actor::A_PotteryCheck(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/24 18:19:26  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.11  2002/01/17 18:15:55  dj_jl
 //  Renamed all map object classes
 //

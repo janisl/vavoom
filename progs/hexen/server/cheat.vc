@@ -164,7 +164,7 @@ int P_Massacre(void)
 		{
 			mo->Flags2 &= ~(MF2_NONSHOOTABLE + MF2_INVULNERABLE);
 			mo->Flags |= MF_SHOOTABLE;
-			mo->Damage(NULL, NULL, 10000);
+			mo->Damage(none, none, 10000);
 			count++;
 		}
 	}
@@ -263,6 +263,9 @@ void Cheat_Class(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/24 18:19:26  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.7  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

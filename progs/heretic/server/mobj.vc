@@ -46,78 +46,6 @@ classid PuffType;
 
 // CODE --------------------------------------------------------------------
 
-//==========================================================================
-//
-//  SetMobjState
-//
-//  Returns true if the mobj is still present.
-//
-//==========================================================================
-
-boolean SetMobjState(mobj_t * mobj, int state)
-{
-	state_t *st;
-
-	if (!state)
-	{
-		// Remove mobj
-		mobj->statenum = 0;
-		P_RemoveMobj(mobj);
-		return false;
-	}
-
-	st = &states[state];
-	mobj->time = st->time;
-	mobj->sprite = st->sprite;
-	mobj->frame = st->frame;
-	mobj->model_index = st->model_index;
-	mobj->alias_frame = st->model_frame;
-	mobj->statenum = st->statenum;
-	mobj->nextstate = st->nextstate;
-
-	// Modified handling.
-	// Call action functions when the state is set
-	if (st->function)
-	{
-		st->function(*mobj);
-	}
-
-	state = st->nextstate;
-	return true;
-}
-
-//==========================================================================
-//
-//  SetMobjStateNF
-//
-//  Same as SetMobjState, but does not call the state function.
-//
-//==========================================================================
-
-boolean SetMobjStateNF(mobj_t * mobj, int state)
-{
-	state_t *st;
-
-	if (!state)
-	{
-		// Remove mobj
-		mobj->statenum = 0;
-		P_RemoveMobj(mobj);
-		return false;
-	}
-	st = &states[state];
-	mobj->time = st->time;
-	mobj->sprite = st->sprite;
-	mobj->frame = st->frame;
-	mobj->model_index = st->model_index;
-	mobj->alias_frame = st->model_frame;
-	mobj->statenum = st->statenum;
-	mobj->nextstate = st->nextstate;
-
-	state = st->nextstate;
-	return true;
-}
-
 //===========================================================================
 //
 //  P_GetThingFloorType
@@ -418,7 +346,7 @@ void P_ExplodeMissile(mobj_t * mo)
 		}
 	}
 	mo->velocity.x = mo->velocity.y = mo->velocity.z = 0.0;
-	SetMobjState(mo, mo->DeathState);
+	mo->SetState(mo->DeathState);
 	//mo->tics -= P_Random()&3;
 	mo->Flags &= ~MF_MISSILE;
 	if (mo->sound_death)
@@ -447,7 +375,7 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 {
 	target->Flags &= ~(MF_SHOOTABLE | MF_FLOAT | MF_SKULLFLY | MF_NOGRAVITY);
 	target->Flags |= MF_CORPSE | MF_DROPOFF;
-	target->Flags2 &= ~MF2_PASSMOBJ;
+	target->Flags2 |= MF2_NOPASSMOBJ;
 	target->Height /= 4.0;
 	if (source && source->player)
 	{
@@ -507,7 +435,7 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 		if (target->Flags2 & MF2_FIREDAMAGE)
 		{
 			// Player flame death
-			SetMobjState(target, S_PLAY_FDTH1);
+			target->SetState(S_PLAY_FDTH1);
 			//StartSoundName(target, sfx2_hedat1); // Burn sound
 			return;
 		}
@@ -515,12 +443,12 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 	if (target->Health < target->GibsHealth && target->GibsDeathState)
 	{
 		// Extreme death
-		SetMobjState(target, target->GibsDeathState);
+		target->SetState(target->GibsDeathState);
 	}
 	else
 	{
 		// Normal death
-		SetMobjState(target, target->DeathState);
+		target->SetState(target->DeathState);
 	}
 	target->time -= Random() * 0.1;
 }
@@ -541,7 +469,7 @@ void P_MinotaurSlam(mobj_t * source, mobj_t * target)
 	thrust = 16.0 + Random() * 4.0;
 	target->velocity.x += thrust * cos(angle) * 35.0;
 	target->velocity.y += thrust * sin(angle) * 35.0;
-	target->Damage(NULL, NULL, HITDICE(6));
+	target->Damage(none, none, HITDICE(6));
 	if (target->player)
 	{
 		target->ReactionTime = 0.4 + Random() * 0.2;
@@ -577,7 +505,7 @@ void P_TouchWhirlwind(mobj_t * target)
 	}
 	if (!(level->tictime & 7))
 	{
-		target->Damage(NULL, NULL, 3);
+		target->Damage(none, none, 3);
 	}
 }
 
@@ -621,7 +549,7 @@ boolean ChickenMorphPlayer(player_t * player)
 	z = pmo->origin.z;
 	angle = pmo->angles.yaw;
 	oldFlags2 = pmo->Flags2;
-	SetMobjState(pmo, S_FREETARGMOBJ);
+	pmo->SetState(S_FREETARGMOBJ);
 	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, TeleportFog);
 	StartSoundName(fog, 'Teleport', CHAN_VOICE);
 	chicken = P_SpawnMobj(x, y, z, ChickenPlayer);
@@ -683,7 +611,7 @@ boolean P_ChickenMorph(mobj_t * actor)
 	angle = actor->angles.yaw;
 	ghost = actor->Translucency;
 	target = actor->target;
-	SetMobjState(actor, S_FREETARGMOBJ);
+	actor->SetState(S_FREETARGMOBJ);
 	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, TeleportFog);
 	StartSoundName(fog, 'Teleport', CHAN_VOICE);
 	chicken = P_SpawnMobj(x, y, z, Chicken);
@@ -803,7 +731,7 @@ void P_AutoUseHealth(player_t * player, int saveHealth)
 //
 //==========================================================================
 
-void Actor::Damage(Actor * inflictor, Actor * source, int damage)
+void Actor::Damage(Actor inflictor, Actor source, int damage)
 {
 	int saved;
 
@@ -833,7 +761,7 @@ void Actor::Damage(Actor * inflictor, Actor * source, int damage)
 	// Special damage types
 	if (inflictor)
 	{
-		switch (inflictor->Class)
+		switch (inflictor.Class)
 		{
 		case EggMissile:
 			if (player)
@@ -849,10 +777,10 @@ void Actor::Damage(Actor * inflictor, Actor * source, int damage)
 			P_TouchWhirlwind(this);
 			return;
 		case Minotaur:
-			if (inflictor->Flags & MF_SKULLFLY)
+			if (inflictor.Flags & MF_SKULLFLY)
 			{
 				// Slam only when in charge mode
-				P_MinotaurSlam(inflictor, this);
+				P_MinotaurSlam(&inflictor, this);
 				return;
 			}
 			break;
@@ -921,16 +849,16 @@ void Actor::Damage(Actor * inflictor, Actor * source, int damage)
 		}
 	}
 	// Push the target unless source is using the gauntlets
-	if (inflictor && (!source || !source->player ||
-			source->player->readyweapon != wp_gauntlets)
-		&& !(inflictor->Flags2 & MF2_NODMGTHRUST))
+	if (inflictor && (!source || !source.player ||
+			source.player->readyweapon != wp_gauntlets)
+		&& !(inflictor.Flags2 & MF2_NODMGTHRUST))
 	{
 		TVec dir;
 		float thrust;
 
-		if (source && source->player && (source == inflictor)
-			&& source->player->powers[pw_weaponlevel2]
-			&& source->player->readyweapon == wp_staff)
+		if (source && source.player && (source == inflictor)
+			&& source.player->powers[pw_weaponlevel2]
+			&& source.player->readyweapon == wp_staff)
 		{
 			// Staff power level 2
 			thrust = 350.0;
@@ -940,7 +868,7 @@ void Actor::Damage(Actor * inflictor, Actor * source, int damage)
 			thrust = itof(damage) / Mass * 656.25;
 		}
 
-		dir = MobjCenter(this) - MobjCenter(inflictor);
+		dir = MobjCenter(this) - MobjCenter((&inflictor));
 		if (Flags & MF_NOGRAVITY)
 		{
 			dir.z = 0.0;
@@ -988,7 +916,7 @@ void Actor::Damage(Actor * inflictor, Actor * source, int damage)
 		{
 			player->health = 0;
 		}
-		player->attacker = source;
+		player->attacker = &source;
 		player->damagecount += damage;	// add damage after armor / invuln
 		if (player->damagecount > 100)
 		{
@@ -1004,40 +932,40 @@ void Actor::Damage(Actor * inflictor, Actor * source, int damage)
 	{
 		// Death
 		special1 = damage;
-		if (Class == Pod && source && source->Class != Pod)
+		if (Class == Pod && source && source.Class != Pod)
 		{
 			// Make sure players get frags for chain-reaction kills
-			target = source;
+			target = &source;
 		}
 		if (player && inflictor && !player->chickenTics)
 		{
 			// Check for flame death
-			if ((inflictor->Flags2 & MF2_FIREDAMAGE)
-				|| ((inflictor->Class == PhoenixFX1)
+			if ((inflictor.Flags2 & MF2_FIREDAMAGE)
+				|| ((inflictor.Class == PhoenixFX1)
 					&& (Health > -50) && (damage > 25)))
 			{
 				Flags2 |= MF2_FIREDAMAGE;
 			}
 		}
-		P_KillMobj(source, this);
+		P_KillMobj(&source, this);
 		return;
 	}
 	if ((P_Random() < PainChance) && !(Flags & MF_SKULLFLY))
 	{
 		Flags |= MF_JUSTHIT;	// fight back!
-		SetMobjState(this, PainState);
+		SetState(PainState);
 	}
 	ReactionCount = 0;	// we're awake now...
-	if (!threshold && source && !(source->Flags2 & MF2_BOSS)
-		&& !(Class == Sorcerer2 && source->Class == Wizard))
+	if (!threshold && source && !(source.Flags2 & MF2_BOSS)
+		&& !(Class == Sorcerer2 && source.Class == Wizard))
 	{
 		// Target actor is not intent on another actor,
 		// so make him chase after source
-		target = source;
+		target = &source;
 		threshold = BASETHRESHOLD;
 		if (statenum == SpawnState && SeeState != S_NULL)
 		{
-			SetMobjState(this, SeeState);
+			SetState(SeeState);
 		}
 	}
 }
@@ -1393,7 +1321,7 @@ int P_HitFloor(mobj_t * thing)
 void P_FloorBounceMissile(mobj_t * mo)
 {
 	mo->velocity.z = -mo->velocity.z;
-	SetMobjState(mo, mo->DeathState);
+	mo->SetState(mo->DeathState);
 }
 
 //===========================================================================
@@ -1536,6 +1464,9 @@ void P_NightmareRespawn(mobj_t * mobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/01/24 18:19:26  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.23  2002/01/17 18:15:53  dj_jl
 //  Renamed all map object classes
 //

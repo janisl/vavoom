@@ -64,7 +64,7 @@ void A_Look(mobj_t * actor)
 		StartSound(actor, actor->sound_sight, CHAN_VOICE);
 	}
 
-	SetMobjState(actor, actor->SeeState);
+	actor->SetState(actor->SeeState);
 }
 
 //==========================================================================
@@ -129,7 +129,7 @@ void A_Chase(mobj_t * actor)
 		{
 			return;	// got a new target
 		}
-		SetMobjState(actor, actor->SpawnState);
+		actor->SetState(actor->SpawnState);
 		return;
 	}
 
@@ -151,7 +151,7 @@ void A_Chase(mobj_t * actor)
 		{
 			StartSound(actor, actor->sound_attack, CHAN_WEAPON);
 		}
-		SetMobjState(actor, actor->MeleeState);
+		actor->SetState(actor->MeleeState);
 		return;
 	}
 
@@ -162,7 +162,7 @@ void A_Chase(mobj_t * actor)
 		{
 			if (P_CheckMissileRange(actor))
 			{
-				SetMobjState(actor, actor->MissileState);
+				actor->SetState(actor->MissileState);
 				actor->Flags |= MF_JUSTATTACKED;
 				return;
 			}
@@ -315,6 +315,9 @@ void Actor::A_PlayerScream(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/24 18:19:27  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.9  2002/01/15 18:27:01  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

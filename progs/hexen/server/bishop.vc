@@ -49,7 +49,7 @@ void Actor::A_BishopDecide(void)
 	}
 	else
 	{
-		SetMobjState(this, S_BISHOP_BLUR1);
+		SetState(S_BISHOP_BLUR1);
 	}
 }
 
@@ -94,11 +94,11 @@ void Actor::A_BishopSpawnBlur(void)
 		velocity.y = 0.0;
 		if (P_Random() > 96)
 		{
-			SetMobjState(this, S_BISHOP_WALK1);
+			SetState(S_BISHOP_WALK1);
 		}
 		else
 		{
-			SetMobjState(this, S_BISHOP_ATK1);
+			SetState(S_BISHOP_ATK1);
 		}
 	}
 	mo = P_SpawnMobj(origin.x, origin.y, origin.z, BishopBlur);
@@ -136,7 +136,7 @@ void Actor::A_BishopAttack(void)
 	StartSound(this, sound_attack, CHAN_WEAPON);
 	if (CheckMeleeRange(this))
 	{
-		target->Damage(this, this, HITDICE(4));
+		target->Damage(self, self, HITDICE(4));
 		return;
 	}
 	special1 = (P_Random() & 3) + 5;
@@ -157,7 +157,7 @@ void Actor::A_BishopAttack2(void)
 	if (!target || !special1)
 	{
 		special1 = 0;
-		SetMobjState(this, S_BISHOP_WALK1);
+		SetState(S_BISHOP_WALK1);
 		return;
 	}
 	mo = SpawnMissile(this, target, BishopMissile);
@@ -181,7 +181,7 @@ void Actor::A_BishopPainBlur(void)
 
 	if (P_Random() < 64)
 	{
-		SetMobjState(this, S_BISHOP_BLUR1);
+		SetState(S_BISHOP_BLUR1);
 		return;
 	}
 	mo = P_SpawnMobj(origin.x + (Random() - Random()) * 16.0,
@@ -262,6 +262,9 @@ void Actor::A_BishopMissileSeek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/24 18:19:26  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.12  2002/01/17 18:15:54  dj_jl
 //  Renamed all map object classes
 //

@@ -272,19 +272,19 @@ boolean ActivateThing(mobj_t * mobj)
 	{
 	case ZTWinedTorch:
 	case ZTWinedTorchUnlit:
-		SetMobjState(mobj, S_ZTWINEDTORCH_1);
+		mobj->SetState(S_ZTWINEDTORCH_1);
 		StartSoundName(mobj, 'Ignite', CHAN_VOICE);
 		break;
 	case ZWallTorch:
 	case ZWallTorchUnlit:
-		SetMobjState(mobj, S_ZWALLTORCH1);
+		mobj->SetState(S_ZWALLTORCH1);
 		StartSoundName(mobj, 'Ignite', CHAN_VOICE);
 		break;
 	case ZGemPedestal:
-		SetMobjState(mobj, S_ZGEMPEDESTAL2);
+		mobj->SetState(S_ZGEMPEDESTAL2);
 		break;
 	case ZWingedStatueNoSkull:
-		SetMobjState(mobj, S_ZWINGEDSTATUENOSKULL2);
+		mobj->SetState(S_ZWINGEDSTATUENOSKULL2);
 		break;
 	case ThrustFloorUp:
 	case ThrustFloorDown:
@@ -293,37 +293,37 @@ boolean ActivateThing(mobj_t * mobj)
 			StartSoundName(mobj, 'ThrustSpikeLower', CHAN_VOICE);
 			mobj->Translucency = 0;
 			if (mobj->args[1])
-				SetMobjState(mobj, S_BTHRUSTRAISE1);
+				mobj->SetState(S_BTHRUSTRAISE1);
 			else
-				SetMobjState(mobj, S_THRUSTRAISE1);
+				mobj->SetState(S_THRUSTRAISE1);
 		}
 		break;
 	case ZFireBull:
 	case ZFireBullUnlit:
-		SetMobjState(mobj, S_ZFIREBULL_BIRTH);
+		mobj->SetState(S_ZFIREBULL_BIRTH);
 		StartSoundName(mobj, 'Ignite', CHAN_VOICE);
 		break;
 	case ZBell:
 		if (mobj->Health > 0)
 		{
-			mobj->Damage(NULL, NULL, 10);	// 'ring' the bell
+			mobj->Damage(none, none, 10);	// 'ring' the bell
 		}
 		break;
 	case ZCauldron:
 	case ZCauldronUnlit:
-		SetMobjState(mobj, S_ZCAULDRON1);
+		mobj->SetState(S_ZCAULDRON1);
 		StartSoundName(mobj, 'Ignite', CHAN_VOICE);
 		break;
 	case FlameSmall:
 		StartSoundName(mobj, 'Ignite', CHAN_VOICE);
-		SetMobjState(mobj, S_FLAME_SMALL1);
+		mobj->SetState(S_FLAME_SMALL1);
 		break;
 	case FlameLarge:
 		StartSoundName(mobj, 'Ignite', CHAN_VOICE);
-		SetMobjState(mobj, S_FLAME_LARGE1);
+		mobj->SetState(S_FLAME_LARGE1);
 		break;
 	case BatSpawner:
-		SetMobjState(mobj, S_SPAWNBATS1);
+		mobj->SetState(S_SPAWNBATS1);
 		break;
 	default:
 		return false;
@@ -379,11 +379,11 @@ boolean DeactivateThing(mobj_t * mobj)
 	{
 	case ZTWinedTorch:
 	case ZTWinedTorchUnlit:
-		SetMobjState(mobj, S_ZTWINEDTORCH_UNLIT);
+		mobj->SetState(S_ZTWINEDTORCH_UNLIT);
 		break;
 	case ZWallTorch:
 	case ZWallTorchUnlit:
-		SetMobjState(mobj, S_ZWALLTORCH_U);
+		mobj->SetState(S_ZWALLTORCH_U);
 		break;
 	case ThrustFloorUp:
 	case ThrustFloorDown:
@@ -391,27 +391,27 @@ boolean DeactivateThing(mobj_t * mobj)
 		{
 			StartSoundName(mobj, 'ThrustSpikeRaise', CHAN_VOICE);
 			if (mobj->args[1])
-				SetMobjState(mobj, S_BTHRUSTLOWER);
+				mobj->SetState(S_BTHRUSTLOWER);
 			else
-				SetMobjState(mobj, S_THRUSTLOWER);
+				mobj->SetState(S_THRUSTLOWER);
 		}
 		break;
 	case ZFireBull:
 	case ZFireBullUnlit:
-		SetMobjState(mobj, S_ZFIREBULL_DEATH);
+		mobj->SetState(S_ZFIREBULL_DEATH);
 		break;
 	case ZCauldron:
 	case ZCauldronUnlit:
-		SetMobjState(mobj, S_ZCAULDRON_U);
+		mobj->SetState(S_ZCAULDRON_U);
 		break;
 	case FlameSmall:
-		SetMobjState(mobj, S_FLAME_SDORM1);
+		mobj->SetState(S_FLAME_SDORM1);
 		break;
 	case FlameLarge:
-		SetMobjState(mobj, S_FLAME_LDORM1);
+		mobj->SetState(S_FLAME_LDORM1);
 		break;
 	case BatSpawner:
-		SetMobjState(mobj, S_SPAWNBATS_OFF);
+		mobj->SetState(S_SPAWNBATS_OFF);
 		break;
 	default:
 		return false;
@@ -489,7 +489,7 @@ boolean EV_ThingDestroy(int tid)
 	{
 		if (mobj->Flags & MF_SHOOTABLE)
 		{
-			mobj->Damage(NULL, NULL, 10000);
+			mobj->Damage(none, none, 10000);
 			success = true;
 		}
 	}
@@ -562,6 +562,9 @@ int ThingCount(int type, int tid)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/24 18:19:27  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.14  2002/01/17 18:15:55  dj_jl
 //  Renamed all map object classes
 //

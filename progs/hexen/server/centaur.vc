@@ -49,7 +49,7 @@ void Actor::A_CentaurAttack(void)
 	}
 	if (CheckMeleeRange(this))
 	{
-		target->Damage(this, this, P_Random() % 7 + 3);
+		target->Damage(self, self, P_Random() % 7 + 3);
 	}
 }
 
@@ -113,7 +113,7 @@ void Actor::A_CentaurDefend(void)
 	if (CheckMeleeRange(this) && P_Random() < 32)
 	{
 		A_UnSetInvulnerable();
-		SetMobjState(this, MeleeState);
+		SetState(MeleeState);
 	}
 }
 
@@ -164,13 +164,16 @@ void Actor::A_CheckFloor(void)
 	{
 		origin.z = floorz;
 		Flags2 &= ~MF2_LOGRAV;
-		SetMobjState(this, DeathState);
+		SetState(DeathState);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/24 18:19:26  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.12  2002/01/17 18:15:54  dj_jl
 //  Renamed all map object classes
 //

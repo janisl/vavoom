@@ -84,7 +84,7 @@ void A_PainShootSkull(mobj_t * actor, float angle)
 	if (!P_TryMove(newmobj, newmobj->origin.x, newmobj->origin.y))
 	{
 		// kill it immediately
-		newmobj->Damage(actor, actor, 10000);
+		newmobj->Damage(*actor, *actor, 10000);
 		return;
 	}
 
@@ -142,6 +142,9 @@ void Actor::A_PainDie(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/24 18:19:25  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.11  2002/01/17 18:15:53  dj_jl
 //  Renamed all map object classes
 //

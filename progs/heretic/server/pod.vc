@@ -65,7 +65,7 @@ void Actor::A_MakePod(void)
 		P_RemoveMobj(mo);
 		return;
 	}
-	SetMobjState(mo, S_POD_GROW1);
+	mo->SetState(S_POD_GROW1);
 	P_ThrustMobj(mo, Random() * 360.0, 4.5);
 	StartSoundName(mo, 'PodNew', CHAN_VOICE);
 	special1++;	// Increment generated pod count
@@ -124,6 +124,9 @@ void Actor::A_RemovePod(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/24 18:19:26  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.9  2002/01/17 18:15:53  dj_jl
 //  Renamed all map object classes
 //

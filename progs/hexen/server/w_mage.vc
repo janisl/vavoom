@@ -82,7 +82,7 @@ void Weapon::A_FireConePL1(void)
 		if (linetarget)
 		{
 			pmo->Flags2 |= MF2_ICEDAMAGE;
-			linetarget->Damage(pmo, pmo, damage);
+			linetarget->Damage(*pmo, *pmo, damage);
 			pmo->Flags2 &= ~MF2_ICEDAMAGE;
 			conedone = true;
 			break;
@@ -323,7 +323,7 @@ void Actor::A_LightningZap(void)
 	Health -= 8;
 	if (Health <= 0)
 	{
-		SetMobjState(this, DeathState);
+		SetState(DeathState);
 		return;
 	}
 	if (Class == LightningFloor)
@@ -396,7 +396,7 @@ void Actor::A_LastZap(void)
 	mo = P_SpawnMobj(origin.x, origin.y, origin.z, LightningZap);
 	if (mo)
 	{
-		SetMobjState(mo, S_LIGHTNING_ZAP_X1);
+		mo->SetState(S_LIGHTNING_ZAP_X1);
 		mo->velocity.z = 40.0 * 35.0;
 	}
 }
@@ -531,6 +531,9 @@ void Actor::A_MStaffTrack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/24 18:19:27  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.14  2002/01/17 18:15:55  dj_jl
 //  Renamed all map object classes
 //

@@ -53,13 +53,16 @@ void Actor::A_SpidRefire(void)
 
 	if (!target || target->Health <= 0 || !P_CheckSight(this, target))
 	{
-		SetMobjState(this, SeeState);
+		SetState(SeeState);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/24 18:19:25  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.6  2002/01/15 18:26:59  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

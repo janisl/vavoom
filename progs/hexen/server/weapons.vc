@@ -324,7 +324,7 @@ void P_FireWeapon(player_t * player)
 	{
 		return;
 	}
-	SetMobjState(player->mo, PStateAttack[player->pclass]);
+	player->mo->SetState(PStateAttack[player->pclass]);
 	if (player->pclass == PCLASS_FIGHTER && player->readyweapon == WP_SECOND
 		&& player->mana[MANA_1] > 0)
 	{	// Glowing axe
@@ -423,7 +423,7 @@ void Weapon::A_WeaponReady(void)
 	if (player->mo->statenum >= PStateAttack[player->pclass] &&
 		player->mo->statenum <= PStateAttackEnd[player->pclass])
 	{
-		SetMobjState(player->mo, PStateNormal[player->pclass]);
+		player->mo->SetState(PStateNormal[player->pclass]);
 	}
 	// Put the weapon away if the player has a pending weapon or has
 	// died.
@@ -561,6 +561,9 @@ void Weapon::A_Light0(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/24 18:19:27  dj_jl
+//  Split common class Entity, made SetMobjState an Entity function
+//
 //  Revision 1.8  2002/01/07 12:25:58  dj_jl
 //  Changed copyright year
 //
