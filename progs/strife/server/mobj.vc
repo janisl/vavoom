@@ -138,7 +138,6 @@ void SetOrigin(mobj_t * mobj, TVec origin)
 
 void CopyMThing(mthing_t * from, mthing_t * to)
 {
-//most of the fields are unused
 	to->tid = from->tid;
 	to->x = from->x;
 	to->y = from->y;
@@ -156,11 +155,11 @@ void CopyMThing(mthing_t * from, mthing_t * to)
 
 //==========================================================================
 //
-//  generic_mobj_start
+//	Entity::OnMapSpawn
 //
 //==========================================================================
 
-void mobj_t::OnMapSpawn(mthing_t * mthing)
+void Entity::OnMapSpawn(mthing_t * mthing)
 {
 	state_t *st;
 
@@ -198,7 +197,23 @@ void mobj_t::OnMapSpawn(mthing_t * mthing)
 		else
 			z = ONFLOORZ;
 		SetOrigin(this, vector(x, y, z));
+		if (z == ONFLOORZ)
+		{
+			origin.z += mthing->height;
+		}
+		else if (z == ONCEILINGZ)
+		{
+			origin.z -= mthing->height;
+		}
+		P_SetThingPosition(this);
 
+		tid = mthing->tid;
+		special = mthing->special;
+		args[0] = mthing->arg1;
+		args[1] = mthing->arg2;
+		args[2] = mthing->arg3;
+		args[3] = mthing->arg4;
+		args[4] = mthing->arg5;
 		if (time > 0.0)
 			time = 0.1 + Random() * time;
 		if (flags & MF_COUNTKILL)
@@ -246,6 +261,7 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 	int i;
 	int bit;
 	mobj_t *mobj;
+	int spawnMask;
 
 	if (mthing->type <= 0)
 		return;
@@ -262,11 +278,26 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 		return;
 	}
 
+	if (mthing->type == PO_SPAWN_TYPE || mthing->type == PO_SPAWNCRUSH_TYPE)
+	{
+		// Polyobj StartSpot Pt.
+		SpawnPolyobj(mthing->x, mthing->y, mthing->angle,
+			(mthing->type == PO_SPAWNCRUSH_TYPE));
+		return;
+	}
+	if (mthing->type == PO_ANCHOR_TYPE)
+	{
+		// Polyobj Anchor Pt.
+		AddAnchorPoint(mthing->x, mthing->y, mthing->angle);
+		return;
+	}
+
 	// check for players specially
 	if (mthing->type <= 4)
 	{
 		// save spots for respawning in network games
-		CopyMThing(mthing, &level->playerstarts[mthing->type - 1]);
+		CopyMThing(mthing, &level->playerstarts[mthing->arg1 * MAXPLAYERS +
+			mthing->type - 1]);
 		return;
 	}
 
@@ -275,6 +306,25 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 	{
 		return;
 	}
+
+	// Check current game type with spawn flags
+	if (netgame == false)
+	{
+		spawnMask = MTF_GSINGLE;
+	}
+	else if (deathmatch)
+	{
+		spawnMask = MTF_GDEATHMATCH;
+	}
+	else
+	{
+		spawnMask = MTF_GCOOP;
+	}
+	if (!(mthing->options & spawnMask))
+	{
+		return;
+	}
+
 	// check for apropriate skill level
 	if (gameskill == sk_baby)
 		bit = 1;
@@ -284,9 +334,6 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 		bit = 1 << (gameskill - 1);
 
 	if (!(mthing->options & bit))
-		return;
-
-	if (!netgame && (mthing->options & 16))
 		return;
 
 	// find which type to spawn
@@ -301,7 +348,7 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 			return;
 		}
 	}
-	dprint("P_SpawnMapThing: Unknown type %i at (%f, %f)",
+	dprint("P_SpawnMapThing: Unknown type %d at (%f, %f)\n",
 		mthing->type, mthing->x, mthing->y);
 }
 
@@ -456,7 +503,7 @@ void KillMobj(mobj_t * source, mobj_t * target)
 
 	target->flags &= ~(MF_SHOOTABLE | MF_FLOAT | MF_SKULLFLY);
 
-//    if (target->type != MT_SKULL)
+//	if (target->type != MT_SKULL)
 	target->flags &= ~MF_NOGRAVITY;
 
 	target->flags |= MF_CORPSE | MF_DROPOFF;
@@ -510,23 +557,24 @@ void KillMobj(mobj_t * source, mobj_t * target)
 	if (target->time < 0.1)
 		target->time = 0.1;
 
+#if 0
 	// Drop stuff.
 	// This determines the kind of object spawned
 	// during the death frame of a thing.
 	switch (target->type)
 	{
-/*      case MT_WOLFSS:
-      case MT_POSSESSED:
+	case MT_WOLFSS:
+	case MT_POSSESSED:
 		item = MT_CLIP;
 		break;
 	
-      case MT_SHOTGUY:
+	case MT_SHOTGUY:
 		item = MT_SHOTGUN;
 		break;
 	
-      case MT_CHAINGUY:
+	case MT_CHAINGUY:
 		item = MT_CHAINGUN;
-		break;*/
+		break;
 
 	default:
 		return;
@@ -534,6 +582,7 @@ void KillMobj(mobj_t * source, mobj_t * target)
 
 	mo = P_SpawnMobj(target->origin.x, target->origin.y, ONFLOORZ, item);
 	mo->flags |= MF_DROPPED;	// special versions of items
+#endif
 }
 
 //==========================================================================
@@ -552,7 +601,6 @@ void KillMobj(mobj_t * source, mobj_t * target)
 void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 {
 	int saved;
-	player_t *player;
 
 	if (!(flags & MF_SHOOTABLE))
 		return;	// shouldn't happen...
@@ -565,7 +613,6 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 		velocity = vector(0.0, 0.0, 0.0);
 	}
 
-	player = player;
 	if (player && gameskill == sk_baby)
 		damage >>= 1;	// take half damage in trainer mode
 
@@ -582,16 +629,15 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 	if (player)
 	{
 		// end of game hell hack
-		if (subsector->sector->special == 11 && damage >= health)
+		if ((subsector->sector->special & 255) == 75 && damage >= health)
 		{
 			damage = health - 1;
 		}
 
 		// Below certain threshold,
 		// ignore damage in GOD mode, or with INVUL power.
-		if (damage < 1000
-			&& ((player->cheats & CF_GODMODE)
-  || player->powers[pw_invulnerability]))
+		if (damage < 1000 && ((player->cheats & CF_GODMODE)
+			|| player->powers[pw_invulnerability]))
 		{
 			return;
 		}
@@ -762,12 +808,12 @@ void P_NightmareRespawn(mobj_t * mobj)
 	mo = P_SpawnMobj(mobj->origin.x, mobj->origin.y, ONFLOORZ, MT_TFOG);
 
 	// initiate teleport sound
-	StartSoundName(mo, "Teleport", CHAN_VOICE);
+	StartSoundName(mo, "Teleport", CHAN_BODY);
 
 	// spawn a teleport fog at the new spot
 	mo = P_SpawnMobj(x, y, ONFLOORZ, MT_TFOG);
 
-	StartSoundName(mo, "Teleport", CHAN_VOICE);
+	StartSoundName(mo, "Teleport", CHAN_BODY);
 
 	// spawn the new monster
 	mthing = &mobj->spawnpoint;
@@ -802,16 +848,18 @@ void P_NightmareRespawn(mobj_t * mobj)
 
 int CanActivateCross(mobj_t * thing)
 {
-/*	switch (thing->type)
+#if 0
+	switch (thing->type)
 	{
-	 case MT_ROCKET:
-	 case MT_PLASMA:
-	 case MT_BFG:
-	 case MT_TROOPSHOT:
-	 case MT_HEADSHOT:
-	 case MT_BRUISERSHOT:
-	    return false;
-	}*/
+	case MT_ROCKET:
+	case MT_PLASMA:
+	case MT_BFG:
+	case MT_TROOPSHOT:
+	case MT_HEADSHOT:
+	case MT_BRUISERSHOT:
+		return false;
+	}
+#endif
 	return true;
 }
 
@@ -895,6 +943,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2001/12/18 18:34:09  dj_jl
+//  Fixed crash, added some missing things
+//
 //  Revision 1.14  2001/12/12 18:57:42  dj_jl
 //  State functions now are methods of Actor and Weapon classes
 //
