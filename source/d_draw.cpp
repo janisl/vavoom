@@ -677,6 +677,7 @@ static void GeneratePicFromPatch(int handle)
 	byte *block = (byte*)Z_Calloc(w * h, PU_CACHE, (void**)&picdata[handle]);
 	picdata[handle] = block;
 	picwidth[handle] = w;
+	int black = r_black_color[pic_list[handle].palnum];
 
 	for (int x = 0; x < w; x++)
 	{
@@ -691,12 +692,28 @@ static void GeneratePicFromPatch(int handle)
 
 	    	while (count--)
 	    	{
-				*dest = *source ? *source : r_black_color[0];
+				*dest = *source ? *source : black;
 				source++;
 				dest += w;
 	    	}
 			column = (column_t *)((byte *)column + column->length + 4);
 	    }
+	}
+
+	if (pic_list[handle].palnum)
+	{
+		byte remap[256];
+		rgba_t *pal = r_palette[pic_list[handle].palnum];
+
+		remap[0] = 0;
+		for (int pali = 1; pali < 256; pali++)
+		{
+			remap[pali] = MakeCol8(pal[pali].r, pal[pali].g, pal[pali].b);
+		}
+		for (int i = 0; i < w * h; i++)
+		{
+			block[i] = remap[block[i]];
+		}
 	}
 }
 
@@ -710,12 +727,29 @@ static void GeneratePicFromRaw(int handle)
 {
 	picdata[handle] = (byte*)Z_Malloc(320 * 200, PU_CACHE, (void**)&picdata[handle]);
 	W_ReadLump(W_GetNumForName(pic_list[handle].name), picdata[handle]);
+
+	byte remap[256];
+	if (pic_list[handle].palnum)
+	{
+		rgba_t *pal = r_palette[pic_list[handle].palnum];
+
+		for (int pali = 0; pali < 256; pali++)
+		{
+			remap[pali] = MakeCol8(pal[pali].r, pal[pali].g, pal[pali].b);
+		}
+	}
+	else
+	{
+		remap[0] = r_black_color[pic_list[handle].palnum];
+		for (int pali = 1; pali < 256; pali++)
+		{
+			remap[pali] = pali;
+		}
+	}
+
 	for (int i = 0; i < 320 * 200; i++)
 	{
-		if (!picdata[handle][i])
-		{
-			picdata[handle][i] = r_black_color[0];
-		}
+		picdata[handle][i] = remap[picdata[handle][i]];
 	}
 	picwidth[handle] = 320;
 }
@@ -1329,9 +1363,12 @@ void TSoftwareDrawer::EndAutomap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/11/09 14:20:48  dj_jl
+//	Drawing of images with different palettes
+//
 //	Revision 1.8  2001/09/12 17:31:27  dj_jl
 //	Rectangle drawing and direct update for plugins
-//
+//	
 //	Revision 1.7  2001/08/29 17:49:01  dj_jl
 //	Line colors in RGBA format
 //	
