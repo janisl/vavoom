@@ -170,6 +170,8 @@ void TOpenGLDrawer::InitResolution(void)
 
 	glDepthFunc(GL_LEQUAL);
 	glDepthRange(0.0, 1.0);
+
+	glDisable(GL_POLYGON_SMOOTH);
 }
 
 //==========================================================================
@@ -461,9 +463,13 @@ void TOpenGLDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2001/12/01 17:47:23  dj_jl
+//	Forced GL_POLYGON_SMOOTH to be disabled (possibly this caused those white
+//	dots around polygons)
+//
 //	Revision 1.15  2001/11/09 14:18:40  dj_jl
 //	Added specular highlights
-//
+//	
 //	Revision 1.14  2001/10/27 07:45:01  dj_jl
 //	Added gamma controls
 //	
