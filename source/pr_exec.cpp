@@ -244,7 +244,8 @@ void TProgs::Load(const char *AName)
 	{
 		ClassInfo[i].name = Strings + LittleLong(ClassInfo[i].s_name);
 		ClassInfo[i].vtable = LittleLong(ClassInfo[i].vtable);
-		ClassInfo[i].size = LittleLong(ClassInfo[i].size);
+		ClassInfo[i].size = LittleShort(ClassInfo[i].size);
+		ClassInfo[i].num_methods = LittleShort(ClassInfo[i].num_methods);
 		ClassInfo[i].parent = LittleLong(ClassInfo[i].parent);
 	}
 
@@ -255,16 +256,14 @@ void TProgs::Load(const char *AName)
 		ClassList[i] = VClass::FindClass(ClassInfo[i].name);
 		if (!ClassList[i])
 		{
-			//con << "New class " << ClassInfo[i].name << endl;
 			ClassList[i] = (VClass *)VObject::StaticSpawnObject(
 				VClass::StaticClass(), NULL, PU_STRING);
 			ClassList[i]->Name = ClassInfo[i].name;
 			ClassList[i]->ClassSize = ClassInfo[i].size;
-			ClassList[i]->ClassVTable = (int *)(Globals + ClassInfo[i].vtable);
 		}
-		else if (!ClassList[i]->ClassVTable)
+		if (!ClassList[i]->ClassVTable)
 		{
-			//con << "Loading class " << ClassInfo[i].name << endl;
+			ClassList[i]->ClassNumMethods = ClassInfo[i].num_methods;
 			ClassList[i]->ClassVTable = (int *)(Globals + ClassInfo[i].vtable);
 		}
 	}
@@ -1662,9 +1661,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2001/12/27 17:39:10  dj_jl
+//	Added method count to VClass
+//
 //	Revision 1.13  2001/12/18 19:03:16  dj_jl
 //	A lots of work on VObject
-//
+//	
 //	Revision 1.12  2001/12/12 19:27:46  dj_jl
 //	Added dynamic cast
 //	
