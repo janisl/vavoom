@@ -37,8 +37,8 @@
 
 class FloorScroll:SectorThinker
 {
-	float xspeed;
-	float yspeed;
+	float XSpeed;
+	float YSpeed;
 
 //==========================================================================
 //
@@ -46,10 +46,10 @@ class FloorScroll:SectorThinker
 //
 //==========================================================================
 
-void Tick(float deltaTime)
+void Tick(float DeltaTime)
 {
-	sector->floor.xoffs += xspeed * deltaTime;
-	sector->floor.yoffs += yspeed * deltaTime;
+	sector->floor.xoffs += XSpeed * DeltaTime;
+	sector->floor.yoffs += YSpeed * DeltaTime;
 }
 
 }
@@ -66,15 +66,15 @@ void SpawnScrollingFloor(sector_t * sector, int xdir, int ydir, int speed)
 
 	Scroll = NewSpecialThinker(FloorScroll);
 	Scroll.sector = sector;
-	Scroll.xspeed = itof(xdir) * itof(1 << speed) * 16.0;
-	Scroll.yspeed = itof(ydir) * itof(1 << speed) * 16.0;
+	Scroll.XSpeed = itof(xdir) * itof(1 << speed) * 16.0;
+	Scroll.YSpeed = itof(ydir) * itof(1 << speed) * 16.0;
 }
 
 class WallScroll:Thinker
 {
 	int index;
-	float xspeed;
-	float yspeed;
+	float XSpeed;
+	float YSpeed;
 
 //==========================================================================
 //
@@ -84,8 +84,8 @@ class WallScroll:Thinker
 
 void Tick(float deltaTime)
 {
-	level->sides[index].textureoffset += xspeed * deltaTime;
-	level->sides[index].rowoffset += yspeed * deltaTime;
+	level->sides[index].textureoffset += XSpeed * deltaTime;
+	level->sides[index].rowoffset += YSpeed * deltaTime;
 }
 
 }
@@ -102,13 +102,16 @@ void SpawnWallScroller(line_t * line, int xdir, int ydir)
 
 	Scroll = NewSpecialThinker(WallScroll);
 	Scroll.index = line->sidenum[0];
-	Scroll.xspeed = itof(xdir * line->arg1) / 2.0;
-	Scroll.yspeed = itof(ydir * line->arg1) / 2.0;
+	Scroll.XSpeed = itof(xdir * line->arg1) / 2.0;
+	Scroll.YSpeed = itof(ydir * line->arg1) / 2.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/08/24 14:53:42  dj_jl
+//  Little fix for 2 pass compiler.
+//
 //  Revision 1.7  2002/04/11 16:48:10  dj_jl
 //  New base classes for sector thinkers, Tick function.
 //
