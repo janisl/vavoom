@@ -87,9 +87,9 @@
 #include "scripts.h"	//	Script parsing
 #include "names.h"
 #include "name.h"
+#include "progs.h"		//	Progs
 #include "vobject.h"
 #include "vclass.h"
-#include "progs.h"		//	Progs
 #include "input.h"		//	Input from keyboard, mouse and joystick
 #include "network.h"
 #include "waddefs.h"    // 	External data types
@@ -119,9 +119,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2002/03/09 18:05:33  dj_jl
+//	Added support for defining native functions outside pr_cmds
+//
 //	Revision 1.17  2002/01/28 18:45:16  dj_jl
 //	Changed version
-//
+//	
 //	Revision 1.16  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

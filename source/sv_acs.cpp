@@ -51,6 +51,27 @@ struct acsHeader_t
 	int code;
 };
 
+class VACS:public VThinker
+{
+	DECLARE_CLASS(VACS, VThinker, 0)
+	NO_DEFAULT_CONSTRUCTOR(VACS)
+
+	VMapObject 	*activator;
+	line_t 		*line;
+	int 		side;
+	int 		number;
+	int 		infoIndex;
+	int 		delayCount;
+	int 		stack[ACS_STACK_DEPTH];
+	int			stackPtr;
+	int 		vars[MAX_ACS_SCRIPT_VARS];
+	int 		*ip;
+
+	DECLARE_FUNCTION(Think)
+	DECLARE_FUNCTION(Archive)
+	DECLARE_FUNCTION(Unarchive)
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -177,7 +198,6 @@ static void ThingCount(int type, int tid);
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 int ACScriptCount;
-byte *ActionCodeBase;
 acsInfo_t *ACSInfo;
 int MapVars[MAX_ACS_MAP_VARS];
 int WorldVars[MAX_ACS_WORLD_VARS];
@@ -187,6 +207,7 @@ acsstore_t ACSStore[MAX_ACS_STORE+1]; // +1 for termination marker
 
 IMPLEMENT_CLASS(VACS)
 
+static byte *ActionCodeBase;
 static VACS *ACScript;
 static int *PCodePtr;
 static int SpecArgs[8];
@@ -594,7 +615,7 @@ void P_ACSInitNewGame(void)
 //
 //==========================================================================
 
-void SV_InterpretACS(VACS *script)
+static void SV_InterpretACS(VACS *script)
 {
 	int cmd;
 	int action;
@@ -629,6 +650,59 @@ void SV_InterpretACS(VACS *script)
 		ScriptFinished(ACScript->number);
 		ACScript->Destroy();
 	}
+}
+
+//==========================================================================
+//
+//	ACS.Think
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VACS, Think)
+{
+	VACS	*script;
+
+	script = (VACS *)PR_Pop();
+	SV_InterpretACS(script);
+}
+
+//==========================================================================
+//
+//	ACS.Archive
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VACS, Archive)
+{
+	VACS	*acs;
+
+	acs = (VACS *)PR_Pop();
+	acs->ip = (int *)((int)(acs->ip) - (int)ActionCodeBase);
+	acs->line = acs->line ? (line_t *)(acs->line - level.lines) : (line_t *)-1;
+	acs->activator = (VMapObject *)GetMobjNum(acs->activator);
+}
+
+//==========================================================================
+//
+//	ACS.Unarchive
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VACS, Unarchive)
+{
+	VACS	*acs;
+
+	acs = (VACS *)PR_Pop();
+	acs->ip = (int *)(ActionCodeBase + (int)acs->ip);
+	if ((int)acs->line == -1)
+	{
+		acs->line = NULL;
+	}
+	else
+	{
+		acs->line = &level.lines[(int)acs->line];
+	}
+	acs->activator = SetMobjPtr((int)acs->activator);
 }
 
 //==========================================================================
@@ -1731,9 +1805,12 @@ static int CmdSetLineSpecial(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2002/03/09 18:05:34  dj_jl
+//	Added support for defining native functions outside pr_cmds
+//
 //	Revision 1.14  2002/02/15 19:12:04  dj_jl
 //	Property namig style change
-//
+//	
 //	Revision 1.13  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
 //	

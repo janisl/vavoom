@@ -213,23 +213,6 @@ struct acsInfo_t
 	int 	waitValue;
 };
 
-class VACS:public VThinker
-{
-	DECLARE_CLASS(VACS, VThinker, 0)
-	NO_DEFAULT_CONSTRUCTOR(VACS)
-
-	VMapObject 		*activator;
-	line_t 		*line;
-	int 		side;
-	int 		number;
-	int 		infoIndex;
-	int 		delayCount;
-	int 		stack[ACS_STACK_DEPTH];
-	int			stackPtr;
-	int 		vars[MAX_ACS_SCRIPT_VARS];
-	int 		*ip;
-};
-
 struct acsstore_t
 {
 	char	map[12];	// Target map
@@ -242,14 +225,12 @@ boolean P_StartACS(int number, int map, int *args, VMapObject *activator,
 	line_t *line, int side);
 boolean P_TerminateACS(int number, int map);
 boolean P_SuspendACS(int number, int map);
-void SV_InterpretACS(VACS *script);
 void P_TagFinished(int tag);
 void P_PolyobjFinished(int po);
 void P_ACSInitNewGame(void);
 void P_CheckACSStore(void);
 
 extern int 			ACScriptCount;
-extern byte 		*ActionCodeBase;
 extern acsInfo_t 	*ACSInfo;
 extern int 			MapVars[MAX_ACS_MAP_VARS];
 extern int 			WorldVars[MAX_ACS_WORLD_VARS];
@@ -300,8 +281,7 @@ int P_BoxOnLineSide(float* tmbox, line_t* ld);
 void SV_UnlinkFromWorld(VMapObject* thing);
 void SV_LinkToWorld(VMapObject* thing);
 
-boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*),
-	FFunction *prfunc);
+boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*));
 boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(VMapObject*),
 	FFunction *prfunc);
 boolean SV_PathTraverse(float x1, float y1, float x2, float y2,
@@ -436,6 +416,9 @@ void G_WorldDone(void);
 void G_PlayerReborn(int player);
 void G_StartNewInit(void);
 
+int GetMobjNum(VMapObject *mobj);
+VMapObject* SetMobjPtr(int archiveNum);
+
 extern player_t			players[MAXPLAYERS]; // Bookkeeping on players - state.
 
 extern skill_t			gameskill;
@@ -461,9 +444,12 @@ inline subsector_t* SV_PointInSubsector(float x, float y)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2002/03/09 18:05:34  dj_jl
+//	Added support for defining native functions outside pr_cmds
+//
 //	Revision 1.22  2002/02/22 18:09:52  dj_jl
 //	Some improvements, beautification.
-//
+//	
 //	Revision 1.21  2002/02/16 16:29:26  dj_jl
 //	Added support for bool variables
 //	

@@ -54,9 +54,6 @@ enum
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-int GetMobjNum(VMapObject *mobj);
-VMapObject* SetMobjPtr(int archiveNum);
-
 VMapObject *SV_SpawnMobj(VClass *Class);
 void SV_RemoveMobj(VMapObject *mobj);
 void SV_ForceLightning(void);
@@ -68,8 +65,6 @@ void SV_SetCeilPic(int i, int texture);
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
-
-extern "C" { extern int	*pr_stackPtr; }
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -1119,56 +1114,6 @@ PF(SpawnObject)
 	Push((int)VObject::StaticSpawnObject(Class, Outer, PU_STRING));
 }
 
-//**************************************************************************
-//
-//	VObject methods
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//	PF_Object__Destroy
-//
-//==========================================================================
-
-PF_M(Object, Destroy)
-{
-	VObject *ptr;
-
-	ptr = (VObject *)Pop();
-	ptr->Destroy();
-}
-
-//==========================================================================
-//
-//	PF_Object__IsA
-//
-//==========================================================================
-
-PF_M(Object, IsA)
-{
-	VObject *ptr;
-	VClass	*c;
-
-	c = (VClass *)Pop();
-	ptr = (VObject *)Pop();
-	Push(ptr->IsA(c));
-}
-
-//==========================================================================
-//
-//	PF_Object__IsDestroyed
-//
-//==========================================================================
-
-PF_M(Object, IsDestroyed)
-{
-	VObject *ptr;
-
-	ptr = (VObject *)Pop();
-	Push(ptr->GetFlags() & OF_Destroyed);
-}
-
 #ifdef SERVER
 //**************************************************************************
 //
@@ -1265,30 +1210,37 @@ static void PF_P_BlockThingsIterator(void)
 {
 	int		x;
     int		y;
-    FFunction *func;
+    FName	FuncName;
+	FFunction	*func = NULL;
+	static FName PrevNames[8];
+	static FFunction *PrevFuncs[8];
+	int i;
 
-	func = (FFunction *)Pop();
+	FuncName = PopName();
     y = Pop();
     x = Pop();
+	for (i = 0; i < 8; i++)
+	{
+		if (PrevNames[i] == FuncName)
+		{
+			func = PrevFuncs[i];
+			break;
+		}
+	}
+	if (!func)
+	{
+		func = svpr.FindFunctionChecked(FuncName);
+		for (i = 0; i < 8; i++)
+		{
+			if (PrevNames[i] == NAME_None)
+			{
+				PrevNames[i] = FuncName;
+				PrevFuncs[i] = func;
+				break;
+			}
+		}
+	}
 	Push(SV_BlockThingsIterator(x, y, NULL, func));
-}
-
-//==========================================================================
-//
-//	P_BlockLinesIterator
-//
-//==========================================================================
-
-static void PF_P_BlockLinesIterator(void)
-{
-	int			x;
-	int			y;
-	FFunction *func;
-
-	func = (FFunction *)Pop();
-	y = Pop();
-	x = Pop();
-	Push(SV_BlockLinesIterator(x, y, NULL, func));
 }
 
 //==========================================================================
@@ -1304,15 +1256,40 @@ static void PF_P_PathTraverse(void)
 	float	x2;
 	float	y2;
 	int		flags;
-	FFunction *trav;
+	FName	FuncName;
+	FFunction	*func = NULL;
+	static FName PrevNames[8];
+	static FFunction *PrevFuncs[8];
+	int i;
 
-	trav = (FFunction *)Pop();
+	FuncName = PopName();
 	flags = Pop();
 	y2 = Popf();
 	x2 = Popf();
 	y1 = Popf();
 	x1 = Popf();
-	Push(SV_PathTraverse(x1, y1, x2, y2, flags, NULL, trav));
+	for (i = 0; i < 8; i++)
+	{
+		if (PrevNames[i] == FuncName)
+		{
+			func = PrevFuncs[i];
+			break;
+		}
+	}
+	if (!func)
+	{
+		func = svpr.FindFunctionChecked(FuncName);
+		for (i = 0; i < 8; i++)
+		{
+			if (PrevNames[i] == NAME_None)
+			{
+				PrevNames[i] = FuncName;
+				PrevFuncs[i] = func;
+				break;
+			}
+		}
+	}
+	Push(SV_PathTraverse(x1, y1, x2, y2, flags, NULL, func));
 }
 
 //==========================================================================
@@ -1827,82 +1804,11 @@ static void PF_PolyobjFinished(void)
 	P_PolyobjFinished(tag);
 }
 
-//==========================================================================
-//
-//	PF_ACS__Think
-//
-//==========================================================================
-
-PF_M(ACS, Think)
-{
-	VACS	*script;
-
-	script = (VACS *)Pop();
-	SV_InterpretACS(script);
-}
-
-//==========================================================================
-//
-//	PF_ACS__Archive
-//
-//==========================================================================
-
-PF_M(ACS, Archive)
-{
-	VACS	*acs;
-
-	acs = (VACS *)Pop();
-	acs->ip = (int *)((int)(acs->ip) - (int)ActionCodeBase);
-	acs->line = acs->line ? (line_t *)(acs->line - level.lines) : (line_t *)-1;
-	acs->activator = (VMapObject *)GetMobjNum(acs->activator);
-}
-
-//==========================================================================
-//
-//	PF_ACS__Unarchive
-//
-//==========================================================================
-
-PF_M(ACS, Unarchive)
-{
-	VACS	*acs;
-
-	acs = (VACS *)Pop();
-	acs->ip = (int *)(ActionCodeBase + (int)acs->ip);
-	if ((int)acs->line == -1)
-	{
-		acs->line = NULL;
-	}
-	else
-	{
-		acs->line = &level.lines[(int)acs->line];
-	}
-	acs->activator = SetMobjPtr((int)acs->activator);
-}
-
 //**************************************************************************
 //
 //  Sound functions
 //
 //**************************************************************************
-
-//==========================================================================
-//
-//	PF_StartSound
-//
-//==========================================================================
-
-PF(StartSound)
-{
-	VMapObject*		mobj;
-    int			sound;
-	int			channel;
-
-	channel = Pop();
-    sound = Pop();
-    mobj = (VMapObject*)Pop();
-	SV_StartSound(mobj, sound, channel, 127);
-}
 
 //==========================================================================
 //
@@ -3138,9 +3044,6 @@ builtin_info_t BuiltinInfo[] =
 	_(Info_ValueForKey),
 	_(WadLumpPresent),
 	_(SpawnObject),
-	_M(Object, Destroy),
-	_M(Object, IsA),
-	_M(Object, IsDestroyed),
 
 #ifdef CLIENT
 	_(P_GetMapName),
@@ -3198,7 +3101,6 @@ builtin_info_t BuiltinInfo[] =
 	_(LineOpenings),
 	_(P_BoxOnLineSide),
     _(P_BlockThingsIterator),
-	_(P_BlockLinesIterator),
 	_(P_PathTraverse),
 	_(FindThingGap),
 	_(FindOpening),
@@ -3236,12 +3138,8 @@ builtin_info_t BuiltinInfo[] =
     _(TerminateACS),
     _(TagFinished),
     _(PolyobjFinished),
-	_M(ACS, Think),
-	_M(ACS, Archive),
-	_M(ACS, Unarchive),
 
 	//	Sound functions
-    _(StartSound),
     _(StartSoundAtVolume),
     _(StopSound),
     _(SectorStartSound),
@@ -3283,9 +3181,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.36  2002/03/09 18:05:34  dj_jl
+//	Added support for defining native functions outside pr_cmds
+//
 //	Revision 1.35  2002/03/02 17:27:48  dj_jl
 //	Renamed builtin Spawn to SpawnObject
-//
+//	
 //	Revision 1.34  2002/02/26 17:53:08  dj_jl
 //	Fixes for menus.
 //	

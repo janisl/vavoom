@@ -48,19 +48,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct FFunction
-{
-	FName	Name;
-	int		FirstStatement;
-	short	NumParms;
-	short	NumLocals;
-    short	Type;
-	short	Flags;
-	dword	Profile1;
-	dword	Profile2;
-	VClass	*OuterClass;
-};
-
 struct FGlobalDef
 {
 	FName	Name;
@@ -80,6 +67,8 @@ extern builtin_info_t	BuiltinInfo[];
 extern "C" void TestCaller(void);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
+
+FBuiltinInfo *FBuiltinInfo::Builtins;
 
 extern "C" { 
 int				*pr_stackPtr; 
@@ -111,6 +100,11 @@ void PR_Init(void)
 	pr_stack[0] = STACK_ID;
 	pr_stack[MAX_PROG_STACK - 1] = STACK_ID;
 	pr_stackPtr = pr_stack + 1;
+	for (int i = 0; BuiltinInfo[i].name; i++)
+	{
+		new FBuiltinInfo(BuiltinInfo[i].name, BuiltinInfo[i].OuterClass,
+				BuiltinInfo[i].func);
+	}
 }
 
 //==========================================================================
@@ -370,43 +364,45 @@ void TProgs::Load(const char *AName)
 
 	//	Set up builtins
 	for (i = 1; i < Progs->num_functions; i++)
-    {
-    	int		j;
+	{
+		FBuiltinInfo *B;
 
 		if (Functions[i].NumParms > 8)
-			Sys_Error("Function haves more than 8 params");
-        for (j = 0; BuiltinInfo[j].name; j++)
-        {
-        	if (Functions[i].OuterClass == BuiltinInfo[j].OuterClass &&
-        		!strcmp(*Functions[i].Name, BuiltinInfo[j].name))
+			Sys_Error("Function has more than 8 params");
+		for (B = FBuiltinInfo::Builtins; B; B = B->Next)
+		{
+			if (Functions[i].OuterClass == B->OuterClass &&
+				!strcmp(*Functions[i].Name, B->Name))
 			{
-            	if (Functions[i].Flags & FUNC_Native)
-                {
-					Functions[i].FirstStatement = (int)BuiltinInfo[j].func;
+				if (Functions[i].Flags & FUNC_Native)
+				{
+					Functions[i].FirstStatement = (int)B->Func;
 					break;
-                }
-                else
-                {
-                	Sys_Error("PR_LoadProgs: Builtin %s redefined", BuiltinInfo[j].name);
-                }
-            }
-        }
-		if (!BuiltinInfo[j].name && Functions[i].Flags & FUNC_Native)
-        {
-	    	//	Default builtin
+				}
+				else
+				{
+					Sys_Error("PR_LoadProgs: Builtin %s redefined", B->Name);
+				}
+			}
+		}
+		if (!B && Functions[i].Flags & FUNC_Native)
+		{
+			//	Default builtin
 			Functions[i].FirstStatement = (int)PF_Fixme;
 #if defined CLIENT && defined SERVER
-        	//	Don't abort with error, because it will be done, when this
-            // function will be called (if it will be called).
-        	cond << "WARNING: Builtin " << *Functions[i].Name << " not found!\n";
+			//	Don't abort with error, because it will be done, when this
+			// function will be called (if it will be called).
+			cond << "WARNING: Builtin " << (Functions[i].OuterClass ?
+				Functions[i].OuterClass->GetName() : "") <<
+				"." << *Functions[i].Name << " not found!\n";
 #endif
-        }
+		}
 		if (!(Functions[i].Flags & FUNC_Native))
 		{
 			Functions[i].FirstStatement =
 				(int)(Statements + Functions[i].FirstStatement);
 		}
-    }
+	}
 
 	//
 	//	Patch code
@@ -518,6 +514,25 @@ FFunction *TProgs::FuncForName(const char* name)
     	Sys_Error("FuncNumForName: function %s not found", name);
     }
     return func;
+}
+
+//==========================================================================
+//
+//	TProgs::FindFunctionChecked
+//
+//==========================================================================
+
+FFunction *TProgs::FindFunctionChecked(FName InName)
+{
+	for (int i = 1; i < Progs->num_functions; i++)
+    {
+    	if (!Functions[i].OuterClass && Functions[i].Name == InName)
+		{
+			return &Functions[i];
+		}
+    }
+	Sys_Error("Function %s not found", *InName);
+	return NULL;
 }
 
 //==========================================================================
@@ -1695,9 +1710,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2002/03/09 18:05:34  dj_jl
+//	Added support for defining native functions outside pr_cmds
+//
 //	Revision 1.24  2002/02/26 17:54:26  dj_jl
 //	Importing special property info from progs and using it in saving.
-//
+//	
 //	Revision 1.23  2002/02/16 16:29:26  dj_jl
 //	Added support for bool variables
 //	

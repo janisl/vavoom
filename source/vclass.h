@@ -81,14 +81,21 @@ class VClass:public VObject
 	{
 		return ParentClass;
 	}
+
+	FFunction *FindFunction(FName InName);
+	FFunction *FindFunctionChecked(FName InName);
+	int GetFunctionIndex(FName InName);
 };
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/03/09 18:05:34  dj_jl
+//	Added support for defining native functions outside pr_cmds
+//
 //	Revision 1.5  2002/02/26 17:54:26  dj_jl
 //	Importing special property info from progs and using it in saving.
-//
+//	
 //	Revision 1.4  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
 //	

@@ -60,6 +60,10 @@ class VViewEntity:public VObject
 	int			NextState;
     float		StateTime;
 	player_t	*Player;
+
+	void SetState(int stnum);
+
+	DECLARE_FUNCTION(SetState)
 };
 
 //
@@ -154,9 +158,12 @@ struct player_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/03/09 18:05:34  dj_jl
+//	Added support for defining native functions outside pr_cmds
+//
 //	Revision 1.12  2002/02/22 18:09:52  dj_jl
 //	Some improvements, beautification.
-//
+//	
 //	Revision 1.11  2002/02/15 19:12:03  dj_jl
 //	Property namig style change
 //	

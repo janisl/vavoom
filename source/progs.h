@@ -29,9 +29,23 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VClass;
+
 struct dprograms_t;
-struct FFunction;
 struct FGlobalDef;
+
+struct FFunction
+{
+	FName	Name;
+	int		FirstStatement;
+	short	NumParms;
+	short	NumLocals;
+    short	Type;
+	short	Flags;
+	dword	Profile1;
+	dword	Profile2;
+	VClass	*OuterClass;
+};
 
 typedef void (*builtin_t)(void);
 
@@ -40,6 +54,26 @@ struct builtin_info_t
 	char*		name;
     builtin_t	func;
 	VClass		*OuterClass;
+};
+
+class FBuiltinInfo
+{
+	const char		*Name;
+	VClass			*OuterClass;
+    builtin_t		Func;
+	FBuiltinInfo	*Next;
+
+	static FBuiltinInfo *Builtins;
+
+	friend class TProgs;
+
+public:
+	FBuiltinInfo(const char *InName, VClass *InClass, builtin_t InFunc)
+		: Name(InName), OuterClass(InClass), Func(InFunc)
+	{
+		Next = Builtins;
+		Builtins = this;
+	}
 };
 
 class TProgs
@@ -51,6 +85,7 @@ class TProgs
 	void Unload(void);
 
 	FFunction *FuncForName(const char* name);
+	FFunction *FindFunctionChecked(FName InName);
 	int GlobalNumForName(const char* name);
 
 	void SetGlobal(int num, int val)
@@ -158,12 +193,69 @@ void PR_Traceback(void);
 
 extern TProgs			svpr;
 
+extern "C" { extern int	*pr_stackPtr; }
+
+//**************************************************************************
+//
+//	Stack routines
+//
+//**************************************************************************
+
+inline void PR_Push(int value)
+{
+	*(pr_stackPtr++) = value;
+}
+
+inline int PR_Pop(void)
+{
+	return *(--pr_stackPtr);
+}
+
+inline void PR_Pushf(float value)
+{
+	*((float*)pr_stackPtr++) = value;
+}
+
+inline float PR_Popf(void)
+{
+	return *((float*)--pr_stackPtr);
+}
+
+inline void PR_Pushv(const TVec &v)
+{
+	PR_Pushf(v.x);
+	PR_Pushf(v.y);
+	PR_Pushf(v.z);
+}
+
+inline TVec PR_Popv(void)
+{
+	TVec v;
+	v.z = PR_Popf();
+	v.y = PR_Popf();
+	v.x = PR_Popf();
+	return v;
+}
+
+inline void PR_PushName(FName value)
+{
+	*((FName*)pr_stackPtr++) = value;
+}
+
+inline FName PR_PopName(void)
+{
+	return *((FName*)--pr_stackPtr);
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/03/09 18:05:34  dj_jl
+//	Added support for defining native functions outside pr_cmds
+//
 //	Revision 1.10  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
-//
+//	
 //	Revision 1.9  2002/01/11 08:07:18  dj_jl
 //	Added names to progs
 //	

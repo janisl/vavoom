@@ -339,12 +339,59 @@ int VObject::GetObjectsCount(void)
 	return GObjObjects.Num();
 }
 
+//==========================================================================
+//
+//	Object.Destroy
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VObject, Destroy)
+{
+	VObject *ptr;
+
+	ptr = (VObject *)PR_Pop();
+	ptr->Destroy();
+}
+
+//==========================================================================
+//
+//	Object.IsA
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VObject, IsA)
+{
+	VObject *ptr;
+	VClass	*c;
+
+	c = (VClass *)PR_Pop();
+	ptr = (VObject *)PR_Pop();
+	PR_Push(ptr->IsA(c));
+}
+
+//==========================================================================
+//
+//	Object.IsDestroyed
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VObject, IsDestroyed)
+{
+	VObject *ptr;
+
+	ptr = (VObject *)PR_Pop();
+	PR_Push(ptr->GetFlags() & OF_Destroyed);
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/03/09 18:05:34  dj_jl
+//	Added support for defining native functions outside pr_cmds
+//
 //	Revision 1.4  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2002/01/03 18:36:40  dj_jl
 //	Added GObjInitialized
 //	

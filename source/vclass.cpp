@@ -75,12 +75,73 @@ VClass *VClass::FindClass(const char *AName)
 	return NULL;
 }
 
+//==========================================================================
+//
+//	VClass::FindFunction
+//
+//==========================================================================
+
+FFunction *VClass::FindFunction(FName InName)
+{
+	guard(VClass::FindFunction);
+	for (int i = 0; i < ClassNumMethods; i++)
+	{
+		if (ClassVTable[i]->Name == InName)
+		{
+			return ClassVTable[i];
+		}
+	}
+	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::FindFunctionChecked
+//
+//==========================================================================
+
+FFunction *VClass::FindFunctionChecked(FName InName)
+{
+	guard(VClass::FindFunctionChecked);
+	FFunction *func = FindFunction(InName);
+	if (!func)
+	{
+		Sys_Error("Function %s not found", *InName);
+	}
+	return func;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::GetFunctionIndex
+//
+//==========================================================================
+
+int VClass::GetFunctionIndex(FName InName)
+{
+	guard(VClass::GetFunctionIndex);
+	for (int i = 0; i < ClassNumMethods; i++)
+	{
+		if (ClassVTable[i]->Name == InName)
+		{
+			return i;
+		}
+	}
+	return -1;
+	unguard;
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2002/03/09 18:05:34  dj_jl
+//	Added support for defining native functions outside pr_cmds
+//
 //	Revision 1.2  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.1  2001/12/27 17:35:41  dj_jl
 //	Split VClass in seperate module
 //	

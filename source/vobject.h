@@ -72,6 +72,15 @@ public: \
 	); \
 	VClass* autoclass##TClass = TClass::StaticClass();
 
+#define DECLARE_FUNCTION(func) \
+	static FBuiltinInfo funcinfo##func; \
+	static void exec##func(void);
+
+#define IMPLEMENT_FUNCTION(TClass, Func) \
+	FBuiltinInfo TClass::funcinfo##Func(#Func, TClass::StaticClass(), \
+		TClass::exec##Func); \
+	void TClass::exec##Func(void)
+
 // ENUMERATIONS ------------------------------------------------------------
 
 //
@@ -108,8 +117,6 @@ enum EObjectFlags
 };
 
 // TYPES -------------------------------------------------------------------
-
-struct	FFunction;
 
 class	FArchive;
 
@@ -228,6 +235,14 @@ public:
 	{
 		return Index;
 	}
+	FFunction *GetVFunction(int InIndex)
+	{
+		return vtable[InIndex];
+	}
+
+	DECLARE_FUNCTION(Destroy)
+	DECLARE_FUNCTION(IsA)
+	DECLARE_FUNCTION(IsDestroyed)
 };
 
 // Dynamically cast an object type-safely.
@@ -303,9 +318,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/03/09 18:05:34  dj_jl
+//	Added support for defining native functions outside pr_cmds
+//
 //	Revision 1.7  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
-//
+//	
 //	Revision 1.6  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	
