@@ -373,7 +373,7 @@ bool TDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
 
 	D3DDEVICEDESC7	DeviceDesc;
 	RenderDevice->GetCaps(&DeviceDesc);
-	Cvar_Set("r_sort_sprites", (int)(DeviceDesc.dwDevCaps & D3DDEVCAPS_SORTINCREASINGZ != 0));
+	Cvar_Set("r_sort_sprites", int((DeviceDesc.dwDevCaps & D3DDEVCAPS_SORTINCREASINGZ) != 0));
 	square_textures = (DeviceDesc.dpcTriCaps.dwTextureCaps & D3DPTEXTURECAPS_SQUAREONLY) != 0;
 	// needed?
 	//minTexSize = MAX(DeviceDesc.dwMinTextureWidth, DeviceDesc.dwMinTextureHeight);
@@ -1469,8 +1469,10 @@ ostream &operator << (ostream &str, const LPD3DDEVICEDESC7 dd)
 	}
 	str << endl;
 
-	str << "Line caps:\n" << dd->dpcLineCaps;
-	str << "Triangle caps:\n" << dd->dpcTriCaps;
+	str << "-- Line caps --\n" << dd->dpcLineCaps;
+	str << endl;
+
+	str << "-- Triangle caps --\n" << dd->dpcTriCaps;
  	str << endl;
 
 	str << "Rendering bit depth: ";
@@ -1514,7 +1516,7 @@ ostream &operator << (ostream &str, const LPD3DDEVICEDESC7 dd)
 	}
 	if (dd->dwStencilCaps & D3DSTENCILCAPS_DECRSAT)
 	{
-		str << "DECRSAT	";
+		str << "DECRSAT ";
 	}
 	if (dd->dwStencilCaps & D3DSTENCILCAPS_INCR)
 	{
@@ -1720,9 +1722,12 @@ ostream &operator << (ostream &str, const LPDDPIXELFORMAT pf)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/01 17:40:09  dj_jl
+//	Fixed check for sprite sorting, beautification
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
