@@ -2122,12 +2122,12 @@ static void PF_NumToSector(void)
 //
 //==========================================================================
 
-static void PF_MobjToNum(void)
+PF(MobjToNum)
 {
-	VMapObject*		mobj;
+	VMapObject**	mobj;
 
-    mobj = (VMapObject*)Pop();
-    Push(GetMobjNum(mobj));
+    mobj = (VMapObject**)Pop();
+    *mobj = (VMapObject*)GetMobjNum(*mobj);
 }
 
 //==========================================================================
@@ -2138,10 +2138,10 @@ static void PF_MobjToNum(void)
 
 static void PF_NumToMobj(void)
 {
-	int 	archiveNum;
+	VMapObject**	mobj;
 
-	archiveNum = Pop();
-    Push((int)SetMobjPtr(archiveNum));
+	mobj = (VMapObject**)Pop();
+    *mobj = SetMobjPtr((int)*mobj);
 }
 
 //==========================================================================
@@ -3330,9 +3330,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2002/01/29 18:17:27  dj_jl
+//	Fixed saving of mobj pointers
+//
 //	Revision 1.29  2002/01/12 18:04:01  dj_jl
 //	Added unarchieving of names
-//
+//	
 //	Revision 1.28  2002/01/11 18:22:41  dj_jl
 //	Started to use names in progs
 //	
