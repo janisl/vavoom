@@ -78,7 +78,7 @@ struct model_t
 class VDrawer:public VSubsystem
 {
 	DECLARE_ABSTRACT_CLASS(VDrawer, VSubsystem, 0)
-	NO_DEFAULT_CONSTRUCTOR(VDrawer);
+	NO_DEFAULT_CONSTRUCTOR(VDrawer)
 
 	virtual void Init(void) = 0;
 	virtual void InitData(void) = 0;
@@ -143,9 +143,12 @@ extern VDrawer			*Drawer;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2002/07/23 13:12:00  dj_jl
+//	Some compatibility fixes, beautification.
+//
 //	Revision 1.14  2002/07/15 17:51:09  dj_jl
 //	Made VSubsystem global.
-//
+//	
 //	Revision 1.13  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
 //	

@@ -59,8 +59,8 @@ struct sfxinfo_t
 //
 class VSoundDevice:public VSubsystem
 {
-	DECLARE_CLASS(VSoundDevice, VSubsystem, 0);
-	NO_DEFAULT_CONSTRUCTOR(VSoundDevice);
+	DECLARE_CLASS(VSoundDevice, VSubsystem, 0)
+	NO_DEFAULT_CONSTRUCTOR(VSoundDevice)
 
 	//	VSoundDevice interface.
 	virtual void Init(void)
@@ -124,9 +124,12 @@ extern TCvarI		swap_stereo;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/07/23 13:12:00  dj_jl
+//	Some compatibility fixes, beautification.
+//
 //	Revision 1.7  2002/07/20 14:49:41  dj_jl
 //	Implemented sound drivers.
-//
+//	
 //	Revision 1.6  2002/01/11 08:11:05  dj_jl
 //	Changes in sound list
 //	Added guard macros

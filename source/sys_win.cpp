@@ -42,7 +42,7 @@
 #include <d3d.h>
 #include <dsound.h>
 #include <dmusici.h>
-#include <eax.h>
+#include "eax.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -869,9 +869,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2002/07/23 13:12:00  dj_jl
+//	Some compatibility fixes, beautification.
+//
 //	Revision 1.18  2002/06/14 15:38:52  dj_jl
 //	All GUIDs are declared here.
-//
+//	
 //	Revision 1.17  2002/04/11 16:40:57  dj_jl
 //	Safe core dumps.
 //	

@@ -73,6 +73,11 @@ static VSoundDevice	*GSoundDevice;
 void S_Init(void)
 {
 	guard(S_Init);
+	//	Parse scripts BEFORE initializing device, because it may need to know
+	// total number of sounds.
+	S_InitScript();
+	SN_InitSequenceScript();
+
 	VClass *DeviceClass;
 	if (M_CheckParm("-openal"))
 	{
@@ -96,9 +101,6 @@ void S_Init(void)
 	GSoundDevice->Init();
 	S_InitMusic();
 	CD_Init();
-
-	S_InitScript();
-	SN_InitSequenceScript();
 	unguard;
 }
 
@@ -316,9 +318,12 @@ void S_UpdateSounds(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/07/23 13:12:00  dj_jl
+//	Some compatibility fixes, beautification.
+//
 //	Revision 1.6  2002/07/20 14:49:41  dj_jl
 //	Implemented sound drivers.
-//
+//	
 //	Revision 1.5  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
 //	

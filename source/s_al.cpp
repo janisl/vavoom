@@ -48,8 +48,8 @@ struct FALChannel
 
 class VOpenALDevice:public VSoundDevice
 {
-	DECLARE_CLASS(VOpenALDevice, VSoundDevice, 0);
-	NO_DEFAULT_CONSTRUCTOR(VOpenALDevice);
+	DECLARE_CLASS(VOpenALDevice, VSoundDevice, 0)
+	NO_DEFAULT_CONSTRUCTOR(VOpenALDevice)
 
 private:
 	enum { MAX_VOICES = 256 };
@@ -369,9 +369,22 @@ void VOpenALDevice::PlaySound(int sound_id, const TVec &origin,
 			return;
 		}
 
+		alGetError();	//	Clear error code.
 		alGenBuffers(1, &Buffers[sound_id]);
+		if (alGetError() != AL_NO_ERROR)
+		{
+			GCon->Log(NAME_Dev, "Failed to gen buffer");
+			S_DoneWithLump(sound_id);
+			return;
+		}
 		alBufferData(Buffers[sound_id], AL_FORMAT_MONO8,
 			S_sfx[sound_id].data, S_sfx[sound_id].len, S_sfx[sound_id].freq);
+		if (alGetError() != AL_NO_ERROR)
+		{
+			GCon->Log(NAME_Dev, "Failed to load buffer data");
+			S_DoneWithLump(sound_id);
+			return;
+		}
 
 		//	We don't need to keep lump static
 		S_DoneWithLump(sound_id);
@@ -424,7 +437,6 @@ void VOpenALDevice::PlaySound(int sound_id, const TVec &origin,
 	Channel[chan].priority = priority;
 	Channel[chan].volume = volume;
 	Channel[chan].source = src;
-
 	unguard;
 }
 
@@ -728,7 +740,10 @@ bool VOpenALDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2002/07/23 13:12:00  dj_jl
+//	Some compatibility fixes, beautification.
+//
 //	Revision 1.1  2002/07/20 14:50:47  dj_jl
 //	Added OpenAL driver.
-//
+//	
 //**************************************************************************

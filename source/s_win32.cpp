@@ -27,7 +27,7 @@
 
 #include "winlocal.h"
 #include <dsound.h>
-#include <eax.h>
+#include "eax.h"
 
 #include "gamedefs.h"
 #include "s_local.h"
@@ -64,8 +64,8 @@ struct free_buf_t
 
 class VDefaultSoundDevice:public VSoundDevice
 {
-	DECLARE_CLASS(VDefaultSoundDevice, VSoundDevice, 0);
-	NO_DEFAULT_CONSTRUCTOR(VDefaultSoundDevice);
+	DECLARE_CLASS(VDefaultSoundDevice, VSoundDevice, 0)
+	NO_DEFAULT_CONSTRUCTOR(VDefaultSoundDevice)
 
 	void Tick(float DeltaTime);
 
@@ -1134,9 +1134,12 @@ bool VDefaultSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2002/07/23 13:12:00  dj_jl
+//	Some compatibility fixes, beautification.
+//
 //	Revision 1.15  2002/07/20 14:49:41  dj_jl
 //	Implemented sound drivers.
-//
+//	
 //	Revision 1.14  2002/05/18 16:57:17  dj_jl
 //	Added EAX support.
 //	
