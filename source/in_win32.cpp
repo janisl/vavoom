@@ -352,24 +352,24 @@ static DIDATAFORMAT	df_Keyboard =
 
 typedef struct
 {
-	LONG  lX;                   // X axis goes here
-	LONG  lY;                   // Y axis goes here
-	LONG  lZ;                   // Z axis goes here
-	BYTE  bButtonA;             // One button goes here
-	BYTE  bButtonB;             // Another button goes here
-	BYTE  bButtonC;             // Another button goes here
-	BYTE  bButtonD;             // Another button goes here
+	LONG  lX;					// X axis goes here
+	LONG  lY;					// Y axis goes here
+	LONG  lZ;					// Z axis goes here
+	BYTE  bButtonA;				// One button goes here
+	BYTE  bButtonB;				// Another button goes here
+	BYTE  bButtonC;				// Another button goes here
+	BYTE  bButtonD;				// Another button goes here
 } MOUSE_DATA;
 
 static DIOBJECTDATAFORMAT rgodf_Mouse[] =
 {
-	{ &GUID_XAxis,    FIELD_OFFSET(MOUSE_DATA, lX),       DIDFT_AXIS | DIDFT_ANYINSTANCE,   0,},
-	{ &GUID_YAxis,    FIELD_OFFSET(MOUSE_DATA, lY),       DIDFT_AXIS | DIDFT_ANYINSTANCE,   0,},
-	{ &GUID_ZAxis,    FIELD_OFFSET(MOUSE_DATA, lZ),       0x80000000 | DIDFT_AXIS | DIDFT_ANYINSTANCE,   0,},
-	{ 0,              FIELD_OFFSET(MOUSE_DATA, bButtonA), DIDFT_BUTTON | DIDFT_ANYINSTANCE, 0,},
-	{ 0,              FIELD_OFFSET(MOUSE_DATA, bButtonB), DIDFT_BUTTON | DIDFT_ANYINSTANCE, 0,},
-	{ 0,              FIELD_OFFSET(MOUSE_DATA, bButtonC), 0x80000000 | DIDFT_BUTTON | DIDFT_ANYINSTANCE, 0,},
-	{ 0,              FIELD_OFFSET(MOUSE_DATA, bButtonD), 0x80000000 | DIDFT_BUTTON | DIDFT_ANYINSTANCE, 0,},
+	{ &GUID_XAxis,	FIELD_OFFSET(MOUSE_DATA, lX),		DIDFT_AXIS | DIDFT_ANYINSTANCE, 0},
+	{ &GUID_YAxis,	FIELD_OFFSET(MOUSE_DATA, lY),		DIDFT_AXIS | DIDFT_ANYINSTANCE, 0},
+	{ &GUID_ZAxis,	FIELD_OFFSET(MOUSE_DATA, lZ),		0x80000000 | DIDFT_AXIS | DIDFT_ANYINSTANCE, 0},
+	{ 0,			FIELD_OFFSET(MOUSE_DATA, bButtonA),	DIDFT_BUTTON | DIDFT_ANYINSTANCE, 0},
+	{ 0,			FIELD_OFFSET(MOUSE_DATA, bButtonB),	DIDFT_BUTTON | DIDFT_ANYINSTANCE, 0},
+	{ 0,			FIELD_OFFSET(MOUSE_DATA, bButtonC),	0x80000000 | DIDFT_BUTTON | DIDFT_ANYINSTANCE, 0},
+	{ 0,			FIELD_OFFSET(MOUSE_DATA, bButtonD),	0x80000000 | DIDFT_BUTTON | DIDFT_ANYINSTANCE, 0}
 };
 
 static DIDATAFORMAT	df_Mouse =
@@ -392,42 +392,42 @@ static DIOBJECTDATAFORMAT rgodf_Joy[] =
 	{ &GUID_RzAxis, 20, 0x80ffff03, 256},
 	{ &GUID_Slider, 24, 0x80ffff03, 256},
 	{ &GUID_Slider, 28, 0x80ffff03, 256},
-	{ &GUID_POV,    32, 0x80ffff10, 0},
-	{ &GUID_POV,    36, 0x80ffff10, 0},
-	{ &GUID_POV,    40, 0x80ffff10, 0},
-	{ &GUID_POV,    44, 0x80ffff10, 0},
-	{ 0,            48, 0x80ffff0c, 0},
-	{ 0,            49, 0x80ffff0c, 0},
-	{ 0,            50, 0x80ffff0c, 0},
-	{ 0,            51, 0x80ffff0c, 0},
-	{ 0,            52, 0x80ffff0c, 0},
-	{ 0,            53, 0x80ffff0c, 0},
-	{ 0,            54, 0x80ffff0c, 0},
-	{ 0,            55, 0x80ffff0c, 0},
-	{ 0,            56, 0x80ffff0c, 0},
-	{ 0,            57, 0x80ffff0c, 0},
-	{ 0,            58, 0x80ffff0c, 0},
-	{ 0,            59, 0x80ffff0c, 0},
-	{ 0,            60, 0x80ffff0c, 0},
-	{ 0,            61, 0x80ffff0c, 0},
-	{ 0,            62, 0x80ffff0c, 0},
-	{ 0,            63, 0x80ffff0c, 0},
-	{ 0,            64, 0x80ffff0c, 0},
-	{ 0,            65, 0x80ffff0c, 0},
-	{ 0,            66, 0x80ffff0c, 0},
-	{ 0,            67, 0x80ffff0c, 0},
-	{ 0,            68, 0x80ffff0c, 0},
-	{ 0,            69, 0x80ffff0c, 0},
-	{ 0,            70, 0x80ffff0c, 0},
-	{ 0,            71, 0x80ffff0c, 0},
-	{ 0,            72, 0x80ffff0c, 0},
-	{ 0,            73, 0x80ffff0c, 0},
-	{ 0,            74, 0x80ffff0c, 0},
-	{ 0,            75, 0x80ffff0c, 0},
-	{ 0,            76, 0x80ffff0c, 0},
-	{ 0,            77, 0x80ffff0c, 0},
-	{ 0,            78, 0x80ffff0c, 0},
-	{ 0,            79, 0x80ffff0c, 0},
+	{ &GUID_POV,	32, 0x80ffff10, 0},
+	{ &GUID_POV,	36, 0x80ffff10, 0},
+	{ &GUID_POV,	40, 0x80ffff10, 0},
+	{ &GUID_POV,	44, 0x80ffff10, 0},
+	{ 0,			48, 0x80ffff0c, 0},
+	{ 0,			49, 0x80ffff0c, 0},
+	{ 0,			50, 0x80ffff0c, 0},
+	{ 0,			51, 0x80ffff0c, 0},
+	{ 0,			52, 0x80ffff0c, 0},
+	{ 0,			53, 0x80ffff0c, 0},
+	{ 0,			54, 0x80ffff0c, 0},
+	{ 0,			55, 0x80ffff0c, 0},
+	{ 0,			56, 0x80ffff0c, 0},
+	{ 0,			57, 0x80ffff0c, 0},
+	{ 0,			58, 0x80ffff0c, 0},
+	{ 0,			59, 0x80ffff0c, 0},
+	{ 0,			60, 0x80ffff0c, 0},
+	{ 0,			61, 0x80ffff0c, 0},
+	{ 0,			62, 0x80ffff0c, 0},
+	{ 0,			63, 0x80ffff0c, 0},
+	{ 0,			64, 0x80ffff0c, 0},
+	{ 0,			65, 0x80ffff0c, 0},
+	{ 0,			66, 0x80ffff0c, 0},
+	{ 0,			67, 0x80ffff0c, 0},
+	{ 0,			68, 0x80ffff0c, 0},
+	{ 0,			69, 0x80ffff0c, 0},
+	{ 0,			70, 0x80ffff0c, 0},
+	{ 0,			71, 0x80ffff0c, 0},
+	{ 0,			72, 0x80ffff0c, 0},
+	{ 0,			73, 0x80ffff0c, 0},
+	{ 0,			74, 0x80ffff0c, 0},
+	{ 0,			75, 0x80ffff0c, 0},
+	{ 0,			76, 0x80ffff0c, 0},
+	{ 0,			77, 0x80ffff0c, 0},
+	{ 0,			78, 0x80ffff0c, 0},
+	{ 0,			79, 0x80ffff0c, 0},
 };
 
 static DIDATAFORMAT	df_Joystick =
@@ -471,7 +471,7 @@ static void StartupKeyboard(void)
 		Sys_Error("Failed to set keyboard data format");
 
 	//	Set cooperative level
-	Result = lpKeyboard->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE); 
+	Result = lpKeyboard->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
 	if (Result != DI_OK)
 		Sys_Error("Failed to set keyboard cooperative level");
 
@@ -536,7 +536,7 @@ static void ReadKeyboard(void)
 
 static void ShutdownKeyboard(void)
 {
-    if (lpKeyboard)
+	if (lpKeyboard)
 	{
 		lpKeyboard->Unacquire();
 		lpKeyboard->Release();
@@ -562,8 +562,8 @@ static void StartupMouse(void)
 {
 	HRESULT		Result;
 
-    if (M_CheckParm("-nomouse"))
-    	return;
+	if (M_CheckParm("-nomouse"))
+		return;
 
 	Result = DInput->CreateDevice(GUID_SysMouse, &lpMouse, NULL);
 	if (Result != DI_OK)
@@ -593,15 +593,15 @@ static void StartupMouse(void)
 static void ReadMouse(void)
 {
 	HRESULT			Result;
-    DIMOUSESTATE	MouseState;          
-    event_t 		event;
-    int 			xmickeys;
-    int				ymickeys;
-    int				mouse_x;
-    int				mouse_y;
-    static byte		lastbuttons[4] = {0, 0, 0, 0};
+	DIMOUSESTATE	MouseState;
+	event_t 		event;
+	int 			xmickeys;
+	int				ymickeys;
+	int				mouse_x;
+	int				mouse_y;
+	static byte		lastbuttons[4] = {0, 0, 0, 0};
 
-    if (!mousepresent)
+	if (!mousepresent)
 		return;
 
 	Result = lpMouse->GetDeviceState(sizeof(DIMOUSESTATE), &MouseState);
@@ -615,7 +615,7 @@ static void ReadMouse(void)
 	if (Result != DI_OK)
 		Sys_Error("Failed to read mouse state");
 
-    xmickeys = MouseState.lX;
+	xmickeys = MouseState.lX;
 	ymickeys = MouseState.lY;
 
 	if (m_filter == 2)
@@ -643,43 +643,43 @@ static void ReadMouse(void)
 	if (mouse_x || mouse_y)
 	{
 		event.type  = ev_mouse;
-      	event.data1 = 0;
-      	event.data2 = mouse_x;
-      	event.data3 = -mouse_y;
+	  	event.data1 = 0;
+	  	event.data2 = mouse_x;
+	  	event.data3 = -mouse_y;
 
-      	IN_PostEvent(&event);
-    }
+	  	IN_PostEvent(&event);
+	}
 	if ((MouseState.rgbButtons[0] ^ lastbuttons[0]) & 0x80)
-    {
-      	event.type  = (MouseState.rgbButtons[0] & 0x80)? 
+	{
+	  	event.type  = (MouseState.rgbButtons[0] & 0x80)? 
 						ev_keydown : ev_keyup;
-      	event.data1 = K_MOUSE1;
-      	event.data2 = 0;
-      	event.data3 = 0;
-      	IN_PostEvent(&event);
-    }
+	  	event.data1 = K_MOUSE1;
+	  	event.data2 = 0;
+	  	event.data3 = 0;
+	  	IN_PostEvent(&event);
+	}
 	lastbuttons[0] = MouseState.rgbButtons[0];
 
 	if ((MouseState.rgbButtons[1] ^ lastbuttons[1]) & 0x80)
-    {
-      	event.type  = (MouseState.rgbButtons[1] & 0x80)? 
+	{
+	  	event.type  = (MouseState.rgbButtons[1] & 0x80)? 
 						ev_keydown : ev_keyup;
-      	event.data1 = K_MOUSE2;
-      	event.data2 = 0;
-      	event.data3 = 0;
-      	IN_PostEvent(&event);
-    }
+	  	event.data1 = K_MOUSE2;
+	  	event.data2 = 0;
+	  	event.data3 = 0;
+	  	IN_PostEvent(&event);
+	}
 	lastbuttons[1] = MouseState.rgbButtons[1];
 
 	if ((MouseState.rgbButtons[2] ^ lastbuttons[2]) & 0x80)
-    {
-      	event.type  = (MouseState.rgbButtons[2] & 0x80)? 
+	{
+	  	event.type  = (MouseState.rgbButtons[2] & 0x80)? 
 						ev_keydown : ev_keyup;
-      	event.data1 = K_MOUSE3;
-      	event.data2 = 0;
-      	event.data3 = 0;
-      	IN_PostEvent(&event);
-    }
+	  	event.data1 = K_MOUSE3;
+	  	event.data2 = 0;
+	  	event.data3 = 0;
+	  	IN_PostEvent(&event);
+	}
 	lastbuttons[2] = MouseState.rgbButtons[2];
 }
 
@@ -691,12 +691,13 @@ static void ReadMouse(void)
 
 static void ShutdownMouse(void)
 {
-    if(lpMouse)
+	if (lpMouse)
 	{
 		lpMouse->Unacquire();
 		lpMouse->Release();
 		lpMouse = NULL;
 	}
+	mousepresent = false;
 }
 
 //**************************************************************************
@@ -736,34 +737,34 @@ static int FAR PASCAL JoystickEnumCallback(
 	if (Result != DI_OK)
 		return DIENUM_CONTINUE;
 
-	diprg.diph.dwSize       = sizeof(diprg); 
-	diprg.diph.dwHeaderSize = sizeof(diprg.diph); 
-	diprg.diph.dwObj        = DIJOFS_X; 
-	diprg.diph.dwHow        = DIPH_BYOFFSET; 
-	diprg.lMin              = -1000; 
-	diprg.lMax              = +1000;
+	diprg.diph.dwSize		= sizeof(diprg);
+	diprg.diph.dwHeaderSize	= sizeof(diprg.diph);
+	diprg.diph.dwObj		= DIJOFS_X;
+	diprg.diph.dwHow		= DIPH_BYOFFSET;
+	diprg.lMin				= -1000;
+	diprg.lMax				= +1000;
 
 	Result = lpJoystick->SetProperty(DIPROP_RANGE, &diprg.diph);
 	if (Result != DI_OK)
 		return DIENUM_CONTINUE;
 
-	diprg.diph.dwObj        = DIJOFS_Y; 
+	diprg.diph.dwObj		= DIJOFS_Y;
 
 	Result = lpJoystick->SetProperty(DIPROP_RANGE, &diprg.diph);
 	if (Result != DI_OK)
 		return DIENUM_CONTINUE;
 
-	dipdw.diph.dwSize       = sizeof(DIPROPDWORD);
-	dipdw.diph.dwHeaderSize = sizeof(dipdw.diph);
-	dipdw.diph.dwHow        = DIPH_BYOFFSET;
-	dipdw.dwData            = 1500;
-	dipdw.diph.dwObj        = DIJOFS_X;
+	dipdw.diph.dwSize		= sizeof(DIPROPDWORD);
+	dipdw.diph.dwHeaderSize	= sizeof(dipdw.diph);
+	dipdw.diph.dwHow		= DIPH_BYOFFSET;
+	dipdw.dwData			= 1500;
+	dipdw.diph.dwObj		= DIJOFS_X;
 
 	Result = lpJoystick->SetProperty(DIPROP_DEADZONE, &dipdw.diph);
 	if (Result != DI_OK)
 		return DIENUM_CONTINUE;
 
-	dipdw.diph.dwObj         = DIJOFS_Y;
+	dipdw.diph.dwObj		= DIJOFS_Y;
 
 	Result = lpJoystick->SetProperty(DIPROP_DEADZONE, &dipdw.diph);
 	if (Result != DI_OK)
@@ -786,7 +787,7 @@ static int FAR PASCAL JoystickEnumCallback(
 static void StartupJoystick(void)
 {
   	if (M_CheckParm("-nojoy"))
-    	return;
+		return;
 
 	DInput->EnumDevices(DIDEVTYPE_JOYSTICK, JoystickEnumCallback, NULL, DIEDFL_ATTACHEDONLY);
 }
@@ -799,14 +800,14 @@ static void StartupJoystick(void)
 
 static void ReadJoystick(void)
 {
-    DIJOYSTATE	JoyState;
+	DIJOYSTATE	JoyState;
 	HRESULT		Result;
-    event_t 	event;
-    static int	oldx = 0;
-    static int	oldy = 0;
+	event_t 	event;
+	static int	oldx = 0;
+	static int	oldy = 0;
 	static byte	oldb[4] = {0, 0, 0, 0};
 
-    if (!joystick_started)
+	if (!joystick_started)
 		return;
 
 	lpJoystick->Poll();
@@ -821,16 +822,16 @@ static void ReadJoystick(void)
 	if (Result != DI_OK)
 		Sys_Error("Failed to read joystick state");
 
-    if ((oldx != JoyState.lX) || (oldy != JoyState.lY))
-    {
+	if ((oldx != JoyState.lX) || (oldy != JoyState.lY))
+	{
 		event.type = ev_joystick;
 		event.data1 = 0;
 		event.data2 = JoyState.lX;
 		event.data3 = JoyState.lY;
 		IN_PostEvent(&event);
-    }
-    oldx = JoyState.lX;
-    oldy = JoyState.lY;
+	}
+	oldx = JoyState.lX;
+	oldy = JoyState.lY;
 
 	if ((JoyState.rgbButtons[0] ^ oldb[0]) & 0x80)
 	{
@@ -840,7 +841,7 @@ static void ReadJoystick(void)
 		event.data3 = 0;
 		IN_PostEvent(&event);
 	}
-    oldb[0] = JoyState.rgbButtons[0];
+	oldb[0] = JoyState.rgbButtons[0];
 
 	if ((JoyState.rgbButtons[1] ^ oldb[1]) & 0x80)
 	{
@@ -850,7 +851,7 @@ static void ReadJoystick(void)
 		event.data3 = 0;
 		IN_PostEvent(&event);
 	}
-    oldb[1] = JoyState.rgbButtons[1];
+	oldb[1] = JoyState.rgbButtons[1];
 
 	if ((JoyState.rgbButtons[2] ^ oldb[2]) & 0x80)
 	{
@@ -860,7 +861,7 @@ static void ReadJoystick(void)
 		event.data3 = 0;
 		IN_PostEvent(&event);
 	}
-    oldb[2] = JoyState.rgbButtons[2];
+	oldb[2] = JoyState.rgbButtons[2];
 
 	if ((JoyState.rgbButtons[3] ^ oldb[3]) & 0x80)
 	{
@@ -870,7 +871,7 @@ static void ReadJoystick(void)
 		event.data3 = 0;
 		IN_PostEvent(&event);
 	}
-    oldb[3] = JoyState.rgbButtons[3];
+	oldb[3] = JoyState.rgbButtons[3];
 }
 
 //==========================================================================
@@ -881,12 +882,13 @@ static void ReadJoystick(void)
 
 static void ShutdownJoystick(void)
 {
-    if (lpJoystick)
+	if (lpJoystick)
 	{
 		lpJoystick->Unacquire();
 		lpJoystick->Release();
 		lpJoystick = NULL;
 	}
+	joystick_started = false;
 }
 
 //**************************************************************************
@@ -915,8 +917,38 @@ void IN_Init(void)
 		Sys_Error("Failed to initialize DirectInput object");
 
 	StartupKeyboard();
-    StartupMouse();
+	StartupMouse();
 	StartupJoystick();
+}
+
+//==========================================================================
+//
+//	IN_SetActiveWindow
+//
+//==========================================================================
+
+void IN_SetActiveWindow(HWND window)
+{
+	if (lpKeyboard)
+	{
+		lpKeyboard->Unacquire();
+		lpKeyboard->SetCooperativeLevel(window, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+		lpKeyboard->Acquire();
+	}
+
+	if (mousepresent)
+	{
+		lpMouse->Unacquire();
+		lpMouse->SetCooperativeLevel(window, DISCL_EXCLUSIVE | DISCL_FOREGROUND);
+		lpMouse->Acquire();
+	}
+
+	if (joystick_started)
+	{
+		lpJoystick->Unacquire();
+		lpJoystick->SetCooperativeLevel(window, DISCL_EXCLUSIVE | DISCL_FOREGROUND);
+		lpJoystick->Acquire();
+	}
 }
 
 //==========================================================================
@@ -932,7 +964,7 @@ void IN_Init(void)
 
 void IN_ReadInput(void)
 {
-    ReadKeyboard();
+	ReadKeyboard();
 	ReadMouse();
 	ReadJoystick();
 }
@@ -945,23 +977,26 @@ void IN_ReadInput(void)
 
 void IN_Shutdown(void)
 {
-    ShutdownJoystick();
-    ShutdownMouse();
-    ShutdownKeyboard();
+	ShutdownJoystick();
+	ShutdownMouse();
+	ShutdownKeyboard();
 
 	if (DInput)
 	{
-        DInput->Release();
-        DInput = NULL; 
+		DInput->Release();
+		DInput = NULL; 
 	}
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/29 17:51:49  dj_jl
+//	Changes for OpenGL window
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
