@@ -36,7 +36,9 @@
 // MACROS ------------------------------------------------------------------
 
 #define PF(name)			static void PF_##name(void)
+#define PF_M(cname, name)	static void PF_##cname##__##name(void)
 #define _(name)				{#name, PF_##name}
+#define _M(cname, name)		{#cname"::"#name, PF_##cname##__##name}
 #define __(name)			{#name, name}
 
 #define PROG_TO_STR(ofs)	((char*)(ofs))
@@ -70,6 +72,7 @@ void SV_SetCeilPic(int i, int texture);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
+extern TProgs*			current_progs;
 extern char*			pr_strings;
 extern int				*pr_stackPtr;
 
@@ -933,9 +936,7 @@ PF(TextureHeight)
 PF(MSG_Select)
 {
 	int			msgtype;
-	player_t	*client;
 
-	client = (player_t*)Pop();
 	msgtype = Pop();
 	switch (msgtype)
 	{
@@ -949,9 +950,6 @@ PF(MSG_Select)
 	 case MSG_SV_SIGNON:
 		pr_msg = &sv_signon;
 		break;
-	 case MSG_SV_CLIENT:
-		pr_msg = &client->message;
-		break;
 #endif
 #ifdef CLIENT
 	 case MSG_CL_MESSAGE:
@@ -960,6 +958,31 @@ PF(MSG_Select)
 #endif
 	}
 }
+
+//==========================================================================
+//
+//	PF_MSG_SelectClientMsg
+//
+//==========================================================================
+
+#ifdef SERVER
+
+PF(MSG_SelectClientMsg)
+{
+	int			msgtype;
+	player_t	*client;
+
+	client = (player_t*)Pop();
+	msgtype = Pop();
+	switch (msgtype)
+	{
+	 case MSG_SV_CLIENT:
+		pr_msg = &client->message;
+		break;
+	}
+}
+
+#endif
 
 //==========================================================================
 //
@@ -1070,23 +1093,25 @@ PF(MSG_ReadLong)
 PF(Spawn)
 {
 	int cid;
+	VObject *owner;
 
+	owner = (VObject *)Pop();//Unused
 	cid = Pop();
-	Push((int)svpr.Spawn(cid, PU_LEVSPEC));
+	Push((int)current_progs->Spawn(cid, PU_STRING));
 }
 
 //==========================================================================
 //
-//	PF_Destroy
+//	PF_Object__Destroy
 //
 //==========================================================================
 
-PF(Destroy)
+PF_M(Object, Destroy)
 {
-	ClassBase *ptr;
+	VObject *ptr;
 
-	ptr = (ClassBase *)Pop();
-	svpr.Destroy(ptr);
+	ptr = (VObject *)Pop();
+	current_progs->Destroy(ptr);
 }
 
 #ifdef SERVER
@@ -1721,11 +1746,11 @@ static void PF_PolyobjFinished(void)
 
 //==========================================================================
 //
-//	PF_InterpretACS
+//	PF_ACS__Think
 //
 //==========================================================================
 
-PF(InterpretACS)
+PF_M(ACS, Think)
 {
 	acs_t	*script;
 
@@ -1735,11 +1760,11 @@ PF(InterpretACS)
 
 //==========================================================================
 //
-//	PF_ACS::Archive
+//	PF_ACS__Archive
 //
 //==========================================================================
 
-PF(ACS__Archive)
+PF_M(ACS, Archive)
 {
 	acs_t		*acs;
 
@@ -1751,11 +1776,11 @@ PF(ACS__Archive)
 
 //==========================================================================
 //
-//	PF_ACS::Unarchive
+//	PF_ACS__Unarchive
 //
 //==========================================================================
 
-PF(ACS__Unarchive)
+PF_M(ACS, Unarchive)
 {
 	acs_t		*acs;
 
@@ -2237,6 +2262,7 @@ static void	PF_SendFloorSlope(void)
 	sector_t	*sector;
 
 	sector = (sector_t*)Pop();
+	sector->floor.CalcBits();
 	sv_signon << (byte)svc_sec_floor_plane
 			<< (word)(sector - level.sectors)
 			<< sector->floor.normal.x
@@ -2256,6 +2282,7 @@ static void	PF_SendCeilingSlope(void)
 	sector_t	*sector;
 
 	sector = (sector_t*)Pop();
+	sector->ceiling.CalcBits();
 	sv_signon << (byte)svc_sec_ceil_plane
 			<< (word)(sector - level.sectors)
 			<< sector->ceiling.normal.x
@@ -2983,7 +3010,7 @@ builtin_info_t BuiltinInfo[] =
 	{"Info_ValueForKey", PF_Info_ValueForKey},
 	_(WadLumpPresent),
 	_(Spawn),
-	_(Destroy),
+	_M(Object, Destroy),
 
 #ifdef CLIENT
 	_(P_GetMapName),
@@ -3076,9 +3103,9 @@ builtin_info_t BuiltinInfo[] =
     {"TerminateACS", PF_TerminateACS},
     {"TagFinished", PF_TagFinished},
     {"PolyobjFinished", PF_PolyobjFinished},
-	{"ACS::Think", PF_InterpretACS},
-	{"ACS::Archive", PF_ACS__Archive},
-	{"ACS::Unarchive", PF_ACS__Unarchive},
+	_M(ACS, Think),
+	_M(ACS, Archive),
+	_M(ACS, Unarchive),
 
 	//	Sound functions
     _(StartSound),
@@ -3113,6 +3140,7 @@ builtin_info_t BuiltinInfo[] =
 	{"SetLineTransluc", PF_SetLineTransluc},
 	{"SendFloorSlope", PF_SendFloorSlope},
 	{"SendCeilingSlope", PF_SendCeilingSlope},
+	_(MSG_SelectClientMsg),
 #endif
     {NULL, NULL}
 };
@@ -3120,10 +3148,13 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2001/12/01 17:43:13  dj_jl
+//	Renamed ClassBase to VObject
+//
 //	Revision 1.20  2001/11/09 14:33:35  dj_jl
 //	Moved input line to progs
 //	Builtins for accessing and changing characters in strings
-//
+//	
 //	Revision 1.19  2001/10/27 07:50:55  dj_jl
 //	Some new builtins
 //	

@@ -341,6 +341,20 @@ void TProgs::Load(const char *AName)
 
 //==========================================================================
 //
+//	TProgs::Unload
+//
+//==========================================================================
+
+void TProgs::Unload(void)
+{
+	Z_Free(Progs);
+	Z_Free(Builtins);
+	Z_Free(Profile1);
+	Z_Free(Profile2);
+}
+
+//==========================================================================
+//
 //	TProgs::CheckFuncNumForName
 //
 //==========================================================================
@@ -1641,11 +1655,11 @@ int TProgs::GetClassID(const char *name)
 //
 //==========================================================================
 
-ClassBase *TProgs::Spawn(int cid, int tag)
+VObject *TProgs::Spawn(int cid, int tag)
 {
 	try
 	{
-		ClassBase *Obj = (ClassBase*)Z_Calloc(ClassInfo[cid].size, tag, 0);
+		VObject *Obj = (VObject*)Z_Calloc(ClassInfo[cid].size, tag, 0);
 		Obj->vtable = Globals + ClassInfo[cid].vtable;
 		Exec(Obj->vtable[4], (int)Obj);
 		return Obj;
@@ -1663,7 +1677,7 @@ ClassBase *TProgs::Spawn(int cid, int tag)
 //
 //==========================================================================
 
-void TProgs::Destroy(ClassBase *buf)
+void TProgs::Destroy(VObject *buf)
 {
 	Exec(buf->vtable[5], (int)buf);
 	Z_Free(buf);
@@ -1675,7 +1689,7 @@ void TProgs::Destroy(ClassBase *buf)
 //
 //==========================================================================
 
-bool TProgs::CanCast(ClassBase *object, int cid)
+bool TProgs::CanCast(VObject *object, int cid)
 {
 	return CanCast(object->vtable[0], cid);
 }
@@ -1699,12 +1713,33 @@ bool TProgs::CanCast(int fromid, int cid)
 	return false;
 }
 
+//==========================================================================
+//
+//	COMMAND ProgsTest
+//
+//==========================================================================
+
+COMMAND(ProgsTest)
+{
+	TProgs tst;
+
+	tst.Load("TSTPROGS");
+	if (Argc() > 1)
+	{
+		tst.Exec(Argv(1));
+	}
+	tst.Unload();
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/12/01 17:43:13  dj_jl
+//	Renamed ClassBase to VObject
+//
 //	Revision 1.9  2001/10/27 07:48:25  dj_jl
 //	Added constructors and destructors
-//
+//	
 //	Revision 1.8  2001/10/04 17:24:21  dj_jl
 //	Got rid of some warnings
 //	

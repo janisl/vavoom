@@ -52,8 +52,10 @@
 //
 //	Doubly linked list of actors.
 //
-struct thinker_t : ClassBase
+class thinker_t:public VObject
 {
+	DECLARE_CLASS(thinker_t, VObject, 0)
+public:
 	thinker_t	*prev;
 	thinker_t	*next;
 	boolean		destroyed;
@@ -560,6 +562,7 @@ struct sv_level_t:base_level_t
 	// !!! Valid only during level loading
 	int			numthings;
 	mthing_t	*things;
+	int			behaviorsize;
 	int			*behavior;
 
 	//
@@ -615,9 +618,12 @@ extern cl_level_t		cl_level;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2001/12/01 17:43:12  dj_jl
+//	Renamed ClassBase to VObject
+//
 //	Revision 1.11  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
-//
+//	
 //	Revision 1.10  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	

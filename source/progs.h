@@ -34,11 +34,6 @@ struct dfunction_t;
 struct globaldef_t;
 struct dclassinfo_t;
 
-struct ClassBase
-{
-	int *vtable;
-};
-
 typedef void (*builtin_t)(void);
 
 struct builtin_info_t
@@ -53,6 +48,7 @@ class TProgs
 	TCRC		crc;
 
 	void Load(const char*);
+	void Unload(void);
 
 	int FuncNumForName(const char* name);
 	int GlobalNumForName(const char* name);
@@ -141,13 +137,13 @@ class TProgs
 	void DumpProfile(void);
 
 	int GetClassID(const char *);
-	ClassBase *Spawn(int, int);
-	ClassBase *Spawn(const char *name, int tag)
+	VObject *Spawn(int, int);
+	VObject *Spawn(const char *name, int tag)
 	{
 		return Spawn(GetClassID(name), tag);
 	}
-	void Destroy(ClassBase *);
-	bool CanCast(ClassBase *, int);
+	void Destroy(VObject *);
+	bool CanCast(VObject *, int);
 	bool CanCast(int, int);
 
  private:
@@ -181,9 +177,12 @@ extern TProgs			svpr;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/12/01 17:43:13  dj_jl
+//	Renamed ClassBase to VObject
+//
 //	Revision 1.5  2001/09/20 16:30:28  dj_jl
 //	Started to use object-oriented stuff in progs
-//
+//	
 //	Revision 1.4  2001/08/21 17:39:22  dj_jl
 //	Real string pointers in progs
 //	
