@@ -150,9 +150,13 @@ void Host_Init(void)
 	SB_Init();
 #endif
 
-	R_Init();
-
+	R_InitTexture();
 	InitMapInfo();
+
+#ifdef CLIENT
+	R_Init();
+#endif
+
 #ifdef SERVER
 	SV_Init();
 #endif
@@ -544,9 +548,12 @@ void Host_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2001/11/09 14:22:09  dj_jl
+//	R_InitTexture now called from Host_init
+//
 //	Revision 1.11  2001/10/12 17:31:13  dj_jl
 //	no message
-//
+//	
 //	Revision 1.10  2001/10/08 17:26:17  dj_jl
 //	Started to use exceptions
 //	

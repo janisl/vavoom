@@ -117,7 +117,6 @@ static TCvarI			_driver("_driver", "0", CVAR_ROM);
 void R_Init(void)
 {
 	r_back2front = (Drawer != _SoftwareDrawer);
-	R_InitTexture();
 	R_InitSkyBoxes();
 	R_InitData();
 	Drawer->InitTextures();
@@ -651,9 +650,12 @@ void V_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2001/11/09 14:22:09  dj_jl
+//	R_InitTexture now called from Host_init
+//
 //	Revision 1.13  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
-//
+//	
 //	Revision 1.12  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	

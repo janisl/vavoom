@@ -113,7 +113,6 @@ void R_DrawSky(void);
 //
 //	R_Tex
 //
-void R_InitTexture(void);
 void R_PrecacheLevel(void);
 float R_TextureHeight(int pic);
 
@@ -150,9 +149,12 @@ extern refdef_t			refdef;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/11/09 14:22:09  dj_jl
+//	R_InitTexture now called from Host_init
+//
 //	Revision 1.5  2001/10/12 17:31:13  dj_jl
 //	no message
-//
+//	
 //	Revision 1.4  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
 //	

@@ -765,20 +765,7 @@ void R_InitTexture(void)
 	    skyflatnum = R_FlatNumForName("F_SKY1");
 }
 
-#ifndef CLIENT
-
-//==========================================================================
-//
-//  R_Init
-//
-//==========================================================================
-
-void R_Init(void)
-{
-	R_InitTexture();
-}
-
-#else
+#ifdef CLIENT
 
 //==========================================================================
 //
@@ -1115,9 +1102,12 @@ void R_ShadeRect(int x, int y, int width, int height, int shade)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2001/11/09 14:22:10  dj_jl
+//	R_InitTexture now called from Host_init
+//
 //	Revision 1.11  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.10  2001/10/08 17:34:57  dj_jl
 //	A lots of small changes and cleanups
 //	
