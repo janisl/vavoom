@@ -791,21 +791,25 @@ void SV_UpdateMobj(int i, TMessage &msg)
 	int bits;
 	int sendnum;
 
-	bits = SV_GetMobjBits(*sv_mobjs[i], sv_mo_base[i]);
-
 	if (sv_mobjs[i]->player)
 	{
 		sendnum = (sv_mobjs[i]->player - players) + 1;
+	}
+	else
+	{
+		sendnum = i;
+	}
+
+	bits = SV_GetMobjBits(*sv_mobjs[i], sv_mo_base[sendnum]);
+
+	if (sv_mobjs[i]->player)
+	{
 		//	Clear look angles, because they must not affect model orientation
 		bits &= ~(MOB_ANGLEP | MOB_ANGLER);
 		if (sv_mobjs[i]->player->weapon_model)
 		{
 			bits |= MOB_WEAPON;
 		}
-	}
-	else
-	{
-		sendnum = i;
 	}
 	if (sendnum > 255)
 		bits |=	MOB_BIG_NUM;
@@ -2672,9 +2676,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.31  2002/01/28 18:43:48  dj_jl
+//	Fixed "floating players"
+//
 //	Revision 1.30  2002/01/24 18:15:23  dj_jl
 //	Fixed "slow motion" bug
-//
+//	
 //	Revision 1.29  2002/01/11 18:22:41  dj_jl
 //	Started to use names in progs
 //	
