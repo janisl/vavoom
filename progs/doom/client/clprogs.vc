@@ -42,6 +42,10 @@ boolean			ExtendedWAD;
 
 #include "finale.vc"
 
+#include "border.vc"
+
+#include "msgbox.vc"
+
 #include "m_menu.vc"
 #include "m_main.vc"
 #include "m_single.vc"
@@ -71,9 +75,12 @@ boolean			ExtendedWAD;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/29 17:46:25  dj_jl
+//	Moved view border and message box to progs
+//
 //	Revision 1.5  2001/08/23 17:38:15  dj_jl
 //	Added video options menu
-//
+//	
 //	Revision 1.4  2001/08/04 17:18:35  dj_jl
 //	Moved title / demo loop to progs
 //	

@@ -27,93 +27,97 @@
 
 // CONSTANTS ---------------------------------------------------------------
 
-enum
-{
-	SBP_INVBACK,
-	SBP_INVTOP,
-	SBP_PAUSE,
-	NUM_SB_PATCHES
-};
-
 // TYPES -------------------------------------------------------------------
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-string		sb_patch_names[] =
-{
-    "INVBACK",
-	"INVTOP",
-	"M_PAUSE",
-	""
-};
-
-int 		sb_height = 32;
-
-//
-//	WIDGET VISIBILITY
-//
-
-// whether left-side main status bar is active
-boolean		st_statusbaron;
-
-// whether fullscreen statusbar is on
-boolean		st_fullscreen;
-
-boolean		st_pauseon;
+int		pic_brdr_t;
+int		pic_brdr_b;
+int		pic_brdr_l;
+int		pic_brdr_r;
+int		pic_brdr_tl;
+int		pic_brdr_tr;
+int		pic_brdr_bl;
+int		pic_brdr_br;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//  SB_CreateWidgets
+//	InitBorder
 //
 //==========================================================================
 
-void SB_CreateWidgets(void)
+void InitBorder(void)
 {
-	//	background
-	SB_CreateWidget(SBW_PATCH, 0, 168, SBP_INVBACK, SB_STYLE_NORMAL, &st_statusbaron, 0, NULL);
-	SB_CreateWidget(SBW_PATCH, 0, 160, SBP_INVTOP, SB_STYLE_NORMAL, &st_statusbaron, 0, NULL);
-
-	//	Pause
-	SB_CreateWidget(SBW_PATCH, 126, 4, SBP_PAUSE, SB_STYLE_NORMAL, &st_pauseon, 0, NULL);
+	pic_brdr_t = R_RegisterPic("brdr_t", PIC_PATCH);
+	pic_brdr_b = R_RegisterPic("brdr_b", PIC_PATCH);
+	pic_brdr_l = R_RegisterPic("brdr_l", PIC_PATCH);
+	pic_brdr_r = R_RegisterPic("brdr_r", PIC_PATCH);
+	pic_brdr_tl = R_RegisterPic("brdr_tl", PIC_PATCH);
+	pic_brdr_tr = R_RegisterPic("brdr_tr", PIC_PATCH);
+	pic_brdr_bl = R_RegisterPic("brdr_bl", PIC_PATCH);
+	pic_brdr_br = R_RegisterPic("brdr_br", PIC_PATCH);
 }
 
 //==========================================================================
 //
-//  SB_OnDraw
+//	DrawBorder
+//
+//	Draws border
 //
 //==========================================================================
 
-void SB_OnDraw(int sb_view)
+void DrawBorder(int x, int y, int w, int h)
 {
-	st_statusbaron = sb_view != SB_VIEW_FULLSCREEN;
-    st_fullscreen = !st_statusbaron;
-	st_pauseon = cl->paused && GetCvar("draw_pause");
+	int			i;
+
+	if (!pic_brdr_b)
+	{
+		InitBorder();
+	}
+
+	for (i = 0; i < w; i += 8)
+		R_DrawPic(x + i, y - 8, pic_brdr_t);
+
+	for (i = 0; i < w; i += 8)
+		R_DrawPic(x + i, y + h, pic_brdr_b);
+
+	for (i = 0 ; i < h; i += 8)
+		R_DrawPic(x - 8, y + i, pic_brdr_l);
+
+	for (i = 0; i < h; i += 8)
+		R_DrawPic(x + w, y + i, pic_brdr_r);
+
+	// Draw beveled edge.
+	R_DrawPic(x - 8, y - 8, pic_brdr_tl);
+	R_DrawPic(x + w, y - 8, pic_brdr_tr);
+	R_DrawPic(x - 8, y + h, pic_brdr_bl);
+	R_DrawPic(x + w, y + h, pic_brdr_br);
 }
 
 //==========================================================================
 //
-//  SB_UpdateWidgets
+//  DrawViewBorder
 //
 //==========================================================================
 
-void SB_UpdateWidgets(void)
+void DrawViewBorder(int x, int y, int w, int h)
 {
+#ifdef DOOM2
+	R_FillRectWithFlat(0, 0, 320, 200 - 32, "GRNROCK");
+#else
+	R_FillRectWithFlat(0, 0, 320, 200 - 32, "FLOOR7_2");
+#endif
+	DrawBorder(x, y, w, h);
 }
 
 //**************************************************************************
 //
 //	$Log$
-//	Revision 1.4  2001/08/29 17:46:25  dj_jl
+//	Revision 1.1  2001/08/29 17:46:25  dj_jl
 //	Moved view border and message box to progs
-//
-//	Revision 1.3  2001/08/15 17:07:37  dj_jl
-//	Fixed Strife status bar
-//
-//	Revision 1.2  2001/07/27 14:27:53  dj_jl
-//	Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

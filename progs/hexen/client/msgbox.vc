@@ -27,93 +27,114 @@
 
 // CONSTANTS ---------------------------------------------------------------
 
-enum
-{
-	SBP_INVBACK,
-	SBP_INVTOP,
-	SBP_PAUSE,
-	NUM_SB_PATCHES
-};
-
 // TYPES -------------------------------------------------------------------
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-string		sb_patch_names[] =
-{
-    "INVBACK",
-	"INVTOP",
-	"M_PAUSE",
-	""
-};
-
-int 		sb_height = 32;
-
 //
-//	WIDGET VISIBILITY
+//	MESSAGE BOX
 //
-
-// whether left-side main status bar is active
-boolean		st_statusbaron;
-
-// whether fullscreen statusbar is on
-boolean		st_fullscreen;
-
-boolean		st_pauseon;
+boolean			messageToPrint;
+int				msgBoxX;
+int				msgBoxY;
+int				msgBoxW;
+int				msgBoxH;
+int				messageString[256 / 4];	// ...and here is the message string!
+boolean			messageNeedsInput;	// timed message = no input from user
+mb_func_t  		messageRoutine;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//  SB_CreateWidgets
+//	MB_StartMessage
 //
 //==========================================================================
 
-void SB_CreateWidgets(void)
+void MB_StartMessage(string text, mb_func_t routine, boolean input)
 {
-	//	background
-	SB_CreateWidget(SBW_PATCH, 0, 168, SBP_INVBACK, SB_STYLE_NORMAL, &st_statusbaron, 0, NULL);
-	SB_CreateWidget(SBW_PATCH, 0, 160, SBP_INVTOP, SB_STYLE_NORMAL, &st_statusbaron, 0, NULL);
+	messageToPrint = true;
+	strcpy(ARR2STR(messageString), text);
+	messageRoutine = routine;
+	messageNeedsInput = input;
 
-	//	Pause
-	SB_CreateWidget(SBW_PATCH, 126, 4, SBP_PAUSE, SB_STYLE_NORMAL, &st_pauseon, 0, NULL);
+	T_SetFont(font_small);
+	msgBoxW = (T_TextWidth (ARR2STR(messageString)) + 16) & ~15;
+	msgBoxH = (T_TextHeight(ARR2STR(messageString)) + 16) & ~15;
+	if (msgBoxW > 304) msgBoxW = 304;
+	if (msgBoxH > 184) msgBoxH = 184;
+	msgBoxX = (320 - msgBoxW) / 2;
+	msgBoxY = (200 - msgBoxH) / 2;
 }
 
 //==========================================================================
 //
-//  SB_OnDraw
+//	MB_Drawer
 //
 //==========================================================================
 
-void SB_OnDraw(int sb_view)
+void MB_Drawer(void)
 {
-	st_statusbaron = sb_view != SB_VIEW_FULLSCREEN;
-    st_fullscreen = !st_statusbaron;
-	st_pauseon = cl->paused && GetCvar("draw_pause");
+	// Horiz. & Vertically center string and print it.
+	if (messageToPrint)
+	{
+		R_FillRectWithFlat(msgBoxX, msgBoxY, msgBoxW, msgBoxH, "F_019");
+		DrawBorder(msgBoxX, msgBoxY, msgBoxW, msgBoxH);
+		T_SetFont(font_small);
+		T_SetAlign(hcenter, vcenter);
+		T_DrawText(160, 100, ARR2STR(messageString));
+	}
 }
 
 //==========================================================================
 //
-//  SB_UpdateWidgets
+//	MB_Responder
 //
 //==========================================================================
 
-void SB_UpdateWidgets(void)
+boolean MB_Responder(event_t *event)
 {
+	// Take care of any messages that need input
+	if (messageToPrint && event->type == ev_keydown)
+	{
+		if (messageNeedsInput &&
+			event->data1 != ' ' &&
+			event->data1 != 'n' &&
+			event->data1 != 'y' &&
+			event->data1 != K_ESCAPE &&
+			event->data1 != K_MOUSE1 &&
+			event->data1 != K_MOUSE2)
+		{
+			return true;
+		}
+		
+		messageToPrint = false;
+		if (messageRoutine)
+			messageRoutine(event->data1);
+			
+//		S_StartSound(sfx1_swtchx);
+		return true;
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//	MB_Active
+//
+//==========================================================================
+
+boolean MB_Active(void)
+{
+	return messageToPrint;
 }
 
 //**************************************************************************
 //
 //	$Log$
-//	Revision 1.4  2001/08/29 17:46:25  dj_jl
+//	Revision 1.1  2001/08/29 17:46:25  dj_jl
 //	Moved view border and message box to progs
-//
-//	Revision 1.3  2001/08/15 17:07:37  dj_jl
-//	Fixed Strife status bar
-//
-//	Revision 1.2  2001/07/27 14:27:53  dj_jl
-//	Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************
