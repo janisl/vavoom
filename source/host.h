@@ -35,9 +35,9 @@ void Host_Init(void);
 void Host_Shutdown(void);
 void Host_Frame(void);
 void Host_EndGame(const char *message, ...)
-	__attribute__((format(printf, 1, 2))) __attribute__((noreturn));
+	__attribute__((noreturn, format(printf, 1, 2)));
 void Host_Error(const char *error, ...)
-	__attribute__((format(printf, 1, 2))) __attribute__((noreturn));
+	__attribute__((noreturn, format(printf, 1, 2)));
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
@@ -54,9 +54,12 @@ extern int			host_framecount;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/08/31 17:26:48  dj_jl
+//	Attribute syntax change
+//
 //	Revision 1.6  2001/08/30 17:46:21  dj_jl
 //	Removed game dependency
-//
+//	
 //	Revision 1.5  2001/08/21 17:41:33  dj_jl
 //	Removed -devmaps option
 //	

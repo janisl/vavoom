@@ -49,8 +49,7 @@ void Sys_GetBaseDir(char*);
 
 void* Sys_ZoneBase(int*);
 
-void Sys_Error(const char*, ...) __attribute__ ((noreturn))
-	__attribute__ ((format(printf, 1, 2)));
+void Sys_Error(const char*, ...) __attribute__ ((noreturn, format(printf, 1, 2)));
 void Sys_Quit(void) __attribute__ ((noreturn));
 void Sys_Shutdown(void);
 
@@ -75,9 +74,12 @@ void Sys_MakeCodeWriteable(unsigned long, unsigned long);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/31 17:26:48  dj_jl
+//	Attribute syntax change
+//
 //	Revision 1.4  2001/08/29 17:49:36  dj_jl
 //	Added file time functions
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	
