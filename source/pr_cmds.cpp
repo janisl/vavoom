@@ -1433,9 +1433,9 @@ static void PF_P_UnsetThingPosition(void)
 
 static void PF_NextMobj(void)
 {
-    thinker_t*	th;
+    VThinker*	th;
 
-    th = (thinker_t*)Pop();
+    th = (VThinker*)Pop();
 	if (!th)
     {
     	th = &level.thinkers;
@@ -1482,10 +1482,10 @@ static void PF_P_CheckSight(void)
 PF(NewSpecialThinker)
 {
 	int			cid;
-	thinker_t	*spec;
+	VThinker	*spec;
 
 	cid = Pop();
-	spec = (thinker_t*)svpr.Spawn(cid, PU_LEVSPEC);
+	spec = (VThinker*)svpr.Spawn(cid, PU_LEVSPEC);
 	P_AddThinker(spec);
 	Push((int)spec);
 }
@@ -1498,9 +1498,9 @@ PF(NewSpecialThinker)
 
 static void PF_RemoveSpecialThinker(void)
 {
-	thinker_t	*spec;
+	VThinker	*spec;
 
-    spec = (thinker_t*)Pop();
+    spec = (VThinker*)Pop();
     P_RemoveThinker(spec);
 }
 
@@ -1528,11 +1528,11 @@ static void PF_P_ChangeSwitchTexture(void)
 
 PF(NextThinker)
 {
-	thinker_t *th;
+	VThinker *th;
 	int cid;
 
 	cid = Pop();
-	th = (thinker_t*)Pop();
+	th = (VThinker*)Pop();
 	if (!th)
 	{
 		th = &level.thinkers;
@@ -2289,6 +2289,34 @@ static void	PF_SendCeilingSlope(void)
 			<< sector->ceiling.normal.y
 			<< sector->ceiling.normal.z
 			<< sector->ceiling.dist;
+}
+
+//==========================================================================
+//
+//	PF_FindModel
+//
+//==========================================================================
+
+PF(FindModel)
+{
+	char *name;
+
+	name = PROG_TO_STR(Pop());
+	Push(SV_FindModel(name));
+}
+
+//==========================================================================
+//
+//	PF_FindSkin
+//
+//==========================================================================
+
+PF(FindSkin)
+{
+	char *name;
+
+	name = PROG_TO_STR(Pop());
+	Push(SV_FindSkin(name));
 }
 #endif
 #ifdef CLIENT
@@ -3140,6 +3168,8 @@ builtin_info_t BuiltinInfo[] =
 	{"SetLineTransluc", PF_SetLineTransluc},
 	{"SendFloorSlope", PF_SendFloorSlope},
 	{"SendCeilingSlope", PF_SendCeilingSlope},
+	_(FindModel),
+	_(FindSkin),
 	_(MSG_SelectClientMsg),
 #endif
     {NULL, NULL}
@@ -3148,9 +3178,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2001/12/04 18:16:28  dj_jl
+//	Player models and skins handled by server
+//
 //	Revision 1.21  2001/12/01 17:43:13  dj_jl
 //	Renamed ClassBase to VObject
-//
+//	
 //	Revision 1.20  2001/11/09 14:33:35  dj_jl
 //	Moved input line to progs
 //	Builtins for accessing and changing characters in strings

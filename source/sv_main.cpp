@@ -41,6 +41,10 @@
 
 #define REBORN_DESCRIPTION	"TEMP GAME"
 
+#define MAX_MODELS		512
+#define MAX_SPRITES		512
+#define MAX_SKINS		256
+
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -128,6 +132,13 @@ static byte		*fatpvs;
 static TCvarI	show_mobj_overflow("show_mobj_overflow", "0", CVAR_ARCHIVE);
 
 static bool		mapteleport_issued;
+
+static int		numsprites;
+static char		sprites[MAX_SPRITES][MAX_VPATH];
+static int		nummodels;
+static char		models[MAX_MODELS][MAX_VPATH];
+static int		numskins;
+static char		skins[MAX_SKINS][MAX_VPATH];
 
 // CODE --------------------------------------------------------------------
 
@@ -267,6 +278,8 @@ int	SV_GetMobjBits(mobj_t &mobj, mobj_base_t &base)
 		bits |= MOB_EFFECTS;
 	if (base.model_index != mobj.model_index)
 		bits |= MOB_MODEL;
+	if (mobj.model_index && mobj.alias_skinnum)
+		bits |= MOB_SKIN;
 	if (mobj.model_index && base.alias_frame != mobj.alias_frame)
 		bits |= MOB_FRAME;
 
@@ -305,6 +318,8 @@ void SV_WriteMobj(int bits, mobj_t &mobj, TMessage &msg)
 		msg << (byte)mobj.effects;
 	if (bits & MOB_MODEL)
 		msg << (word)mobj.model_index;
+	if (bits & MOB_SKIN)
+		msg << (byte)mobj.alias_skinnum;
 	if (mobj.model_index && (bits & MOB_FRAME))
 		msg << (byte)mobj.alias_frame;
 	if (bits & MOB_WEAPON)
@@ -749,15 +764,15 @@ void SV_WriteViewData(player_t &player, TMessage &msg)
 
 void SV_UpdateMobj(int i, TMessage &msg)
 {
-	int		bits;
-	int		sendnum;
+	int bits;
+	int sendnum;
 
 	bits = SV_GetMobjBits(*sv_mobjs[i], sv_mo_base[i]);
 
 	if (sv_mobjs[i]->player)
 	{
 		sendnum = (sv_mobjs[i]->player - players) + 1;
-		//	Clear look bam_angles, because they must not affect model orientation
+		//	Clear look angles, because they must not affect model orientation
 		bits &= ~(MOB_ANGLEP | MOB_ANGLER);
 		if (sv_mobjs[i]->player->weapon_model)
 		{
@@ -1695,6 +1710,84 @@ int NET_SendToAll(TSizeBuf *data, int blocktime)
 
 //==========================================================================
 //
+//	SV_InitModels
+//
+//==========================================================================
+
+static void SV_InitModelLists(void)
+{
+	int i;
+	int num;
+
+	numsprites = svpr.GetGlobal("num_sprite_names");
+    num = svpr.GlobalNumForName("sprite_names");
+	for (i = 0; i < numsprites; i++)
+	{
+		strcpy(sprites[i], (char*)svpr.GetGlobal(num + i));
+	}
+
+	nummodels = svpr.GetGlobal("num_models");
+    num = svpr.GlobalNumForName("models");
+	for (i = 1; i < nummodels; i++)
+	{
+		strcpy(models[i], (char*)svpr.GetGlobal(num + i));
+	}
+
+	numskins = 1;
+}
+
+//==========================================================================
+//
+//	SV_FindModel
+//
+//==========================================================================
+
+int SV_FindModel(const char *name)
+{
+	int i;
+
+	for (i = 0; i < nummodels; i++)
+	{
+		if (!stricmp(name, models[i]))
+		{
+			return i;
+		}
+	}
+	strcpy(models[i], name);
+	nummodels++;
+	sv_reliable << (byte)svc_model
+				<< (short)i
+				<< name;
+	return i;
+}
+
+//==========================================================================
+//
+//	SV_FindSkin
+//
+//==========================================================================
+
+int SV_FindSkin(const char *name)
+{
+	int i;
+
+	for (i = 0; i < numskins; i++)
+	{
+		if (!stricmp(name, skins[i]))
+		{
+			return i;
+		}
+	}
+	strcpy(skins[i], name);
+	numskins++;
+	sv_reliable << (byte)svc_skin
+				<< (byte)i
+				<< name;
+	return i;
+}
+
+//==========================================================================
+//
 //	SV_SendServerInfo
 //
 //==========================================================================
@@ -1723,22 +1816,25 @@ void SV_SendServerInfo(player_t *player)
 			<< players[i].userinfo;
 	}
 
-	int numsprites = svpr.GetGlobal("num_sprite_names");
-    int num = svpr.GlobalNumForName("sprite_names");
 	msg << (byte)svc_sprites
 		<< (short)numsprites;
 	for (i = 0; i < numsprites; i++)
 	{
-		msg << (char*)svpr.GetGlobal(num + i);
+		msg << sprites[i];
 	}
 
-	int nummodels = svpr.GetGlobal("num_models");
-    num = svpr.GlobalNumForName("models");
-	msg << (byte)svc_models
-		<< (short)nummodels;
 	for (i = 1; i < nummodels; i++)
 	{
-		msg << (char*)svpr.GetGlobal(num + i);
+		msg << (byte)svc_model
+			<< (short)i
+			<< models[i];
+	}
+
+	for (i = 1; i < numskins; i++)
+	{
+		msg << (byte)svc_skin
+			<< (byte)i
+			<< skins[i];
 	}
 
 	msg << (byte)svc_signonnum
@@ -1856,6 +1952,7 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 
     Z_CheckHeap();
 
+	SV_InitModelLists();
 	for (i = 0; i < svs.max_clients; i++)
 	{
 		if (players[i].active)
@@ -2285,7 +2382,7 @@ extern bool net_connect_bot;
 void SV_RunClientCommand(const char *cmd);
 void SV_SetUserInfo(const char *info);
 
-void SV_ConnectBot(void)
+void SV_ConnectBot(const char *name)
 {
 	qsocket_t	*sock;
 	int			i;
@@ -2306,13 +2403,14 @@ void SV_ConnectBot(void)
 
 	players[i].netcon = sock;
 	players[i].is_bot = true;
+	strcpy(players[i].name, name);
 	SV_ConnectClient(&players[i]);
 	svs.num_connected++;
 
 	sv_player = &players[i];
 	SV_RunClientCommand("PreSpawn\n");
-	SV_SetUserInfo("\\name\\bot\\color\\0\\class\\0\\model\\doomguy\\skin\\green.pcx");
 	SV_RunClientCommand("Spawn\n");
+	SV_SetUserInfo(sv_player->userinfo);
 	SV_RunClientCommand("Begin\n");
 }
 
@@ -2324,7 +2422,7 @@ void SV_ConnectBot(void)
 
 COMMAND(AddBot)
 {
-	SV_ConnectBot();
+	SV_ConnectBot(Argv(1));
 }
 
 //==========================================================================
@@ -2540,9 +2638,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2001/12/04 18:16:28  dj_jl
+//	Player models and skins handled by server
+//
 //	Revision 1.21  2001/12/03 19:23:08  dj_jl
 //	Fixes for view angles at respawn
-//
+//	
 //	Revision 1.20  2001/12/01 17:40:41  dj_jl
 //	Added support for bots
 //	

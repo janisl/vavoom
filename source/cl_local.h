@@ -37,13 +37,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct clPlayerInfo_t
-{
-	model_t		*model;
-	model_t		*weapon_model;
-	char		skin[64];
-};
-
 struct dlight_t
 {
 	TVec	origin;		// origin of the light
@@ -103,7 +96,6 @@ void R_DrawPic640(int x, int y, int handle, int trans = 0);
 
 extern clmobj_t			cl_mobjs[MAX_MOBJS];
 extern clmobj_t			cl_weapon_mobjs[MAXPLAYERS];
-extern clPlayerInfo_t	clPlayerInfo[MAXPLAYERS];
 
 extern float fScaleX;
 extern float fScaleY;
@@ -125,9 +117,12 @@ extern dlight_t			cl_dlights[MAX_DLIGHTS];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/12/04 18:16:28  dj_jl
+//	Player models and skins handled by server
+//
 //	Revision 1.8  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.7  2001/10/08 17:34:57  dj_jl
 //	A lots of small changes and cleanups
 //	

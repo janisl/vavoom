@@ -67,7 +67,6 @@ void CL_SignonReply(void);
 
 clmobj_t		cl_mobjs[MAX_MOBJS];
 clmobj_t		cl_weapon_mobjs[MAXPLAYERS];
-clPlayerInfo_t	clPlayerInfo[MAXPLAYERS];
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -75,6 +74,8 @@ clPlayerInfo_t	clPlayerInfo[MAXPLAYERS];
 
 static clmobjbase_t		cl_mo_base[MAX_MOBJS];
 static model_t			*model_precache[1024];
+static model_t			*weapon_model_precache[1024];
+static char				skin_list[256][MAX_VPATH];
 
 // CODE --------------------------------------------------------------------
 
@@ -128,7 +129,7 @@ static void CL_ParseBaseline(void)
 	CL_ReadMobjBase(cl_mo_base[i]);
 }
 
-static void CL_ReadMobj(int bits, clmobj_t &mobj, const clmobjbase_t &base, int i)
+static void CL_ReadMobj(int bits, clmobj_t &mobj, const clmobjbase_t &base)
 {
 	if (bits & MOB_X)
 		mobj.origin.x = net_msg.ReadShort();
@@ -182,21 +183,19 @@ static void CL_ReadMobj(int bits, clmobj_t &mobj, const clmobjbase_t &base, int 
 	else
 		mobj.effects = base.effects;
 	if (bits & MOB_MODEL)
+	{
 		mobj.model_index = net_msg.ReadShort();
-	else
-		mobj.model_index = base.model_index;
-	if (i < cl.maxclients + 1 && clPlayerInfo[i - 1].model &&
-		!(model_precache[mobj.model_index] &&
-		!strstr(model_precache[mobj.model_index]->name, "tris.md2")))
-	{
-		mobj.alias_model = clPlayerInfo[i - 1].model;
-		strcpy(mobj.skin, clPlayerInfo[i - 1].skin);
-	}
-	else
-	{
 		mobj.alias_model = model_precache[mobj.model_index];
-		mobj.skin[0] = 0;
 	}
+	else
+	{
+		mobj.model_index = base.model_index;
+		mobj.alias_model = model_precache[mobj.model_index];
+	}
+	if (bits & MOB_SKIN)
+		strcpy(mobj.skin, skin_list[net_msg.ReadByte()]);
+	else
+		mobj.skin[0] = 0;
 	if (mobj.model_index && (bits & MOB_FRAME))
 		mobj.alias_frame = net_msg.ReadByte();
 	else
@@ -204,6 +203,8 @@ static void CL_ReadMobj(int bits, clmobj_t &mobj, const clmobjbase_t &base, int 
 }
 
 static void CL_ParseUpdateMobj(void)
+{
+try
 {
 	int		i;
 	int		bits;
@@ -217,14 +218,13 @@ static void CL_ParseUpdateMobj(void)
 	else
 		i = net_msg.ReadByte();
 
-	CL_ReadMobj(bits, cl_mobjs[i], cl_mo_base[i], i);
+	CL_ReadMobj(bits, cl_mobjs[i], cl_mo_base[i]);
 
 	//	Marking mobj in use
 	cl_mobjs[i].in_use = 2;
 
-	if (bits & MOB_WEAPON && i < cl.maxclients + 1 &&
-		clPlayerInfo[i - 1].weapon_model &&
-		cl_mobjs[i].alias_model == clPlayerInfo[i - 1].model)
+	if (bits & MOB_WEAPON && cl_mobjs[i].alias_model &&
+		weapon_model_precache[cl_mobjs[i].model_index])
 	{
 		clmobj_t &ent = cl_mobjs[i];
 		clmobj_t &wpent = cl_weapon_mobjs[i];
@@ -236,12 +236,18 @@ static void CL_ParseUpdateMobj(void)
 		wpent.alias_frame = 1;
 		wpent.translucency = ent.translucency;
 
-		R_PositionWeaponModel(wpent, clPlayerInfo[i - 1].weapon_model, ent.alias_frame);
+		R_PositionWeaponModel(wpent, weapon_model_precache[ent.model_index],
+			ent.alias_frame);
 	}
 	else if (bits & MOB_WEAPON)
 	{
 		net_msg.ReadShort();
 	}
+}
+catch (...)
+{
+	dprintf("- CL_ParseUpdateMobj\n");
+}
 }
 
 //==========================================================================
@@ -613,25 +619,51 @@ static void CL_ParseSpriteList(void)
 
 //==========================================================================
 //
-//	CL_ParseModelList
+//	CL_ParseModel
 //
 //==========================================================================
 
-static void CL_ParseModelList(void)
+static void CL_ParseModel(void)
 {
-	int count = net_msg.ReadShort();
-	for (int i = 1; i < count; i++)
+	int i = net_msg.ReadShort();
+	char *name = va("models/%s", net_msg.ReadString());
+	weapon_model_precache[i] = NULL;
+	if (FL_FindFile(name, NULL))
 	{
-		char *name = va("models/%s", net_msg.ReadString());
-		if (FL_FindFile(name, NULL))
+		model_precache[i] = Mod_FindName(name);
+		if (strstr(name, "tris.md2"))
 		{
-			model_precache[i] = Mod_FindName(name);
-		}
-		else if (Cvar_Value("r_models"))
-		{
-			con << "Can't find " << name << endl;
+			char wpname[MAX_VPATH];
+
+			strcpy(wpname, name);
+			FL_StripFilename(wpname);
+			strcat(wpname, "/weapon.md2");
+			if (FL_FindFile(wpname, NULL))
+			{
+				weapon_model_precache[i] = Mod_FindName(wpname);
+			}
+			else
+			{
+				con << "Can't find wepon info model " << wpname << endl;
+			}
 		}
 	}
+	else if (Cvar_Value("r_models"))
+	{
+		con << "Can't find " << name << endl;
+	}
+}
+
+//==========================================================================
+//
+//	CL_ParseSkin
+//
+//==========================================================================
+
+static void CL_ParseSkin(void)
+{
+	int i = net_msg.ReadByte();
+	strcpy(skin_list[i], va("models/%s", net_msg.ReadString()));
 }
 
 //==========================================================================
@@ -640,55 +672,8 @@ static void CL_ParseModelList(void)
 //
 //==========================================================================
 
-static void CL_ReadFromUserInfo(int i)
+static void CL_ReadFromUserInfo(int)
 {
-	clPlayerInfo[i].model = NULL;
-	clPlayerInfo[i].weapon_model = NULL;
-	clPlayerInfo[i].skin[0] = 0;
-
-	char *modelname = Info_ValueForKey(scores[i].userinfo, "model");
-	if (!*modelname)
-	{
-		//	Default model
-		return;
-	}
-
-	//	Find model
-	char *name = va("models/players/%s/tris.md2", modelname);
-	if (!FL_FindFile(name, NULL))
-	{
-		if (Cvar_Value("r_models"))
-		{
-			con << "Can't find model " << name << endl;
-		}
-		return;
-	}
-	clPlayerInfo[i].model = Mod_FindName(name);
-
-	//	Search for weapon model
-	name = va("models/players/%s/weapon.md2", modelname);
-	if (FL_FindFile(name, NULL))
-	{
-		clPlayerInfo[i].weapon_model = Mod_FindName(name);
-	}
-	else
-	{
-		con << "Can't find weapon model " << name << endl;
-	}
-
-	char *skinname = Info_ValueForKey(scores[i].userinfo, "skin");
-	if (*skinname)
-	{
-		name = va("models/players/%s/%s", modelname, skinname);
-		if (FL_FindFile(name, NULL))
-		{
-			strcpy(clPlayerInfo[i].skin, name);
-		}
-		else
-		{
-			con << "Can't find skin " << name << endl;
-		}
-	}
 }
 
 //==========================================================================
@@ -973,8 +958,12 @@ void CL_ParseServerMessage(void)
 			CL_ParseSpriteList();
 			break;
 
-		 case svc_models:
-			CL_ParseModelList();
+		 case svc_model:
+			CL_ParseModel();
+			break;
+
+		 case svc_skin:
+			CL_ParseSkin();
 			break;
 
 		 case svc_line_transluc:
@@ -1035,9 +1024,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2001/12/04 18:16:28  dj_jl
+//	Player models and skins handled by server
+//
 //	Revision 1.15  2001/12/01 17:51:46  dj_jl
 //	Little changes to compile with MSVC
-//
+//	
 //	Revision 1.14  2001/11/09 14:28:23  dj_jl
 //	Fixed parsing of sound starting
 //	

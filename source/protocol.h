@@ -85,7 +85,8 @@ enum
 	svc_setinfo,
 
 	svc_sprites,
-	svc_models,
+	svc_model,
+	svc_skin,
 
 	svc_line_transluc,
 	svc_sec_transluc,
@@ -111,7 +112,8 @@ enum
 #define MOB_Y			0x0002
 #define MOB_Z			0x0004
 #define MOB_ANGLE		0x0008
-#define MOB_FRAME		0x0020
+#define MOB_FRAME		0x0010
+#define MOB_EFFECTS		0x0020
 #define MOB_BIG_NUM		0x0040
 #define MOB_MORE_BITS	0x0080
 #define MOB_SPRITE		0x0100
@@ -119,7 +121,7 @@ enum
 #define MOB_TRANSL		0x0400
 #define MOB_ANGLEP		0x0800
 #define MOB_ANGLER		0x1000
-#define MOB_EFFECTS		0x2000
+#define MOB_SKIN		0x2000
 #define MOB_MODEL		0x4000
 #define MOB_WEAPON		0x8000
 
@@ -141,9 +143,12 @@ enum
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/12/04 18:16:28  dj_jl
+//	Player models and skins handled by server
+//
 //	Revision 1.5  2001/08/31 17:26:07  dj_jl
 //	Protocol varsion change
-//
+//	
 //	Revision 1.4  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
 //	
