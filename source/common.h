@@ -23,6 +23,18 @@
 //**
 //**************************************************************************
 
+#ifdef _MSC_VER
+// Disable some unwanted warnings
+#pragma warning(disable : 4127) // Conditional expression is constant
+#pragma warning(disable : 4244) // conversion to float, possible loss of data
+#pragma warning(disable : 4284) // return type is not a UDT or reference to a UDT
+#pragma warning(disable : 4291) // no matching operator delete found
+#pragma warning(disable : 4305) // truncation from 'const double' to 'float'
+#pragma warning(disable : 4512) // assignment operator could not be generated
+#pragma warning(disable : 4702) // unreachable code in inline expanded function
+#pragma warning(disable : 4710) // inline function not expanded
+#endif
+
 #ifndef __GNUC__
 #define __attribute__(whatever)
 #endif
@@ -124,9 +136,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/01/21 18:23:56  dj_jl
+//	Disabled some MSVC warnings
+//
 //	Revision 1.7  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.6  2002/01/03 18:38:25  dj_jl
 //	Added guard macros and core dumps
 //	
