@@ -159,6 +159,7 @@ static TVec				trans_sprite_verts[4 * MAX_TRANS_SPRITES];
 
 static void InstallSpriteLump(int lumpnr, int frame, int rotation, bool flipped)
 {
+	guard(InstallSpriteLump);
 	int			r;
 
 	if ((dword)frame >= 30 || (dword)rotation > 8)
@@ -199,6 +200,7 @@ static void InstallSpriteLump(int lumpnr, int frame, int rotation, bool flipped)
 
 	sprtemp[frame].lump[rotation] = lumpnr;
 	sprtemp[frame].flip[rotation] = flipped;
+	unguard;
 }
 
 //==========================================================================
@@ -216,6 +218,7 @@ static void InstallSpriteLump(int lumpnr, int frame, int rotation, bool flipped)
 
 void R_InstallSprite(const char *name, int index)
 {
+	guard(R_InstallSprite);
 	int			intname;
 	int			l;
 	int			frame;
@@ -301,6 +304,7 @@ void R_InstallSprite(const char *name, int index)
 	sprites[index].spriteframes = (spriteframe_t*)
 		Z_StrMalloc(maxframe * sizeof(spriteframe_t));
 	memcpy(sprites[index].spriteframes, sprtemp, maxframe * sizeof(spriteframe_t));
+	unguard;
 }
 
 //==========================================================================
@@ -311,12 +315,14 @@ void R_InstallSprite(const char *name, int index)
 
 static void	GetSpriteParams(int lump)
 {
+	guard(GetSpriteParams);
     patch_t	*patch = (patch_t*)W_CacheLumpNum(spritelumps[lump], PU_TEMP);
 
 	spritewidth[lump] = LittleShort(patch->width);
 	spriteheight[lump] = LittleShort(patch->height);
 	spriteoffset[lump] = LittleShort(patch->leftoffset);
 	spritetopoffset[lump] = LittleShort(patch->topoffset);
+	unguard;
 }
 
 //==========================================================================
@@ -328,6 +334,7 @@ static void	GetSpriteParams(int lump)
 void R_DrawTranslucentPoly(TVec *sv, int count, int lump,
 	int translucency, int translation, bool type, dword light)
 {
+	guard(R_DrawTranslucentPoly);
 	int i;
 
 	TVec mid(0, 0, 0);
@@ -435,6 +442,7 @@ void R_DrawTranslucentPoly(TVec *sv, int count, int lump,
 	{
 		Drawer->DrawMaskedPolygon(sv, count, lump, translucency);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -447,6 +455,7 @@ extern TCvarI		r_chasecam;
 
 static void RenderSprite(clmobj_t *thing)
 {
+	guard(RenderSprite);
 	if (thing == &cl_mobjs[cl.clientnum + 1] && !r_chasecam)
 	{
 		//	Don't draw client's mobj
@@ -666,6 +675,7 @@ static void RenderSprite(clmobj_t *thing)
 		Drawer->DrawSpritePolygon(sv, lump, thing->translucency,
 			thing->translation, light);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -676,6 +686,7 @@ static void RenderSprite(clmobj_t *thing)
 
 void RenderTranslucentAliasModel(model_t *model, char *skin, dword light, clmobj_t *mobj)
 {
+	guard(RenderTranslucentAliasModel);
 	int i;
 
 	float dist = fabs(DotProduct(mobj->origin - vieworg, viewforward));
@@ -746,6 +757,7 @@ void RenderTranslucentAliasModel(model_t *model, char *skin, dword light, clmobj
 	}
 	Drawer->DrawAliasModel(mobj->origin, mobj->angles, model,
 		mobj->alias_frame, skin, light, mobj->translucency, false);
+	unguard;
 }
 
 //==========================================================================
@@ -756,6 +768,7 @@ void RenderTranslucentAliasModel(model_t *model, char *skin, dword light, clmobj
 
 static void RenderAliasModel(clmobj_t *mobj)
 {
+	guard(RenderAliasModel);
 	if (!r_chasecam && (mobj == &cl_mobjs[cl.clientnum + 1] ||
 		mobj == &cl_weapon_mobjs[cl.clientnum + 1]))
 	{
@@ -790,6 +803,7 @@ static void RenderAliasModel(clmobj_t *mobj)
 		Drawer->DrawAliasModel(mobj->origin, mobj->angles, mobj->alias_model,
 			mobj->alias_frame, mobj->skin, light, 0, false);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -800,6 +814,7 @@ static void RenderAliasModel(clmobj_t *mobj)
 
 void R_RenderMobjs(void)
 {
+	guard(R_RenderMobjs);
 	int i;
 
 	if (!r_draw_mobjs)
@@ -832,6 +847,7 @@ void R_RenderMobjs(void)
 			}
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -842,6 +858,7 @@ void R_RenderMobjs(void)
 
 void R_DrawTranslucentPolys(void)
 {
+	guard(R_DrawTranslucentPolys);
 	int i, found;
 	do
 	{
@@ -890,6 +907,7 @@ void R_DrawTranslucentPolys(void)
 			spr.translucency = 0;
 		}
 	} while (found != -1);
+	unguard;
 }
 
 //==========================================================================
@@ -903,6 +921,7 @@ void R_DrawTranslucentPolys(void)
 
 static void RenderPSprite(cl_pspdef_t* psp)
 {
+	guard(RenderPSprite);
 	spritedef_t*		sprdef;
 	spriteframe_t*		sprframe;
 	int					lump;
@@ -985,6 +1004,7 @@ static void RenderPSprite(cl_pspdef_t* psp)
 	}
 
 	Drawer->DrawSpritePolygon(dv, lump, cl.translucency, 0, light);
+	unguard;
 }
 
 //==========================================================================
@@ -995,6 +1015,7 @@ static void RenderPSprite(cl_pspdef_t* psp)
 
 static void RenderViewModel(cl_pspdef_t *psp)
 {
+	guard(RenderViewModel);
 	TVec origin = vieworg + (psp->sx - 1.0) * viewright / 8.0 -
 		(psp->sy - 32.0) * viewup / 6.0;
 
@@ -1010,6 +1031,7 @@ static void RenderViewModel(cl_pspdef_t *psp)
 
 	Drawer->DrawAliasModel(origin, cl.viewangles, psp->alias_model,
 		psp->alias_frame, NULL, light, cl.translucency, true);
+	unguard;
 }
 
 //==========================================================================
@@ -1020,6 +1042,7 @@ static void RenderViewModel(cl_pspdef_t *psp)
 
 void R_DrawPlayerSprites(void)
 {
+	guard(R_DrawPlayerSprites);
     int         i;
     cl_pspdef_t	*psp;
 
@@ -1043,6 +1066,7 @@ void R_DrawPlayerSprites(void)
 			}
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -1053,6 +1077,7 @@ void R_DrawPlayerSprites(void)
 
 void R_DrawCroshair(void)
 {
+	guard(R_DrawCroshair);
 	if (croshair)
 	{
 		if (croshair_trans < 0)		croshair_trans = 0;
@@ -1066,6 +1091,7 @@ void R_DrawCroshair(void)
 		int handle = R_RegisterPic(va("CROSHAI%i", (int)croshair), PIC_PATCH);
 		R_DrawPic(160, cy, handle, croshair_trans);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -1076,6 +1102,7 @@ void R_DrawCroshair(void)
 
 void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot, int translation)
 {
+	guard(R_DrawSpritePatch);
     boolean			flip;
 	int				lump;
 
@@ -1099,6 +1126,7 @@ void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot, int transla
 	y2 *= fScaleY;
 
 	Drawer->DrawSpriteLump(x1, y1, x2, y2, lump, translation, flip);
+	unguard;
 }
 
 //==========================================================================
@@ -1110,6 +1138,7 @@ void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot, int transla
 void R_DrawModelFrame(const TVec &origin, float angle, model_t *model,
 	int frame, const char *skin)
 {
+	guard(R_DrawModelFrame);
 	viewangles.yaw = 180;
 	viewangles.pitch = 0;
 	viewangles.roll = 0;
@@ -1136,14 +1165,18 @@ void R_DrawModelFrame(const TVec &origin, float angle, model_t *model,
 	Drawer->DrawAliasModel(origin, angles, model, frame, skin, 0xffffffff, 0, false);
 
 	Drawer->EndView();
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/03/20 19:11:21  dj_jl
+//	Added guarding.
+//
 //	Revision 1.12  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.11  2001/10/27 07:46:14  dj_jl
 //	Fixed sprite rotations
 //	

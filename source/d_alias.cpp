@@ -863,6 +863,7 @@ void TSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	model_t *model, int frame, const char *skin, dword light, int translucency,
 	bool is_view_model)
 {
+	guard(TSoftwareDrawer::DrawAliasModel);
 	modelorg = vieworg - origin;
 
 	// see if the bounding box lets us trivially reject, also sets
@@ -873,14 +874,18 @@ void TSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	}
 
 	D_AliasDrawModel(angles, model, frame, skin, light, translucency, is_view_model);
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/03/20 19:11:20  dj_jl
+//	Added guarding.
+//
 //	Revision 1.11  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.10  2001/12/18 19:01:34  dj_jl
 //	Changes for MSVC asm
 //	

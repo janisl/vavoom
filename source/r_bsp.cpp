@@ -74,6 +74,7 @@ static bool			sky_is_visible;
 
 static void R_SetUpFrustumIndexes(void)
 {
+	guard(R_SetUpFrustumIndexes);
 	for (int i = 0; i < 4; i++)
 	{
 		int *pindex = r_frustum_indexes[i];
@@ -91,6 +92,7 @@ static void R_SetUpFrustumIndexes(void)
 			}
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -101,6 +103,7 @@ static void R_SetUpFrustumIndexes(void)
 
 static void DrawSurfaces(surface_t *surfs, texinfo_t *texinfo, int clipflags)
 {
+	guard(DrawSurfaces);
 	if (!surfs)
 	{
 		return;
@@ -146,6 +149,7 @@ static void DrawSurfaces(surface_t *surfs, texinfo_t *texinfo, int clipflags)
 		}
 		surfs = surfs->next;
 	} while (surfs);
+	unguard;
 }
 
 //==========================================================================
@@ -158,6 +162,7 @@ static void DrawSurfaces(surface_t *surfs, texinfo_t *texinfo, int clipflags)
 
 static void RenderLine(drawseg_t* dseg, int clipflags)
 {
+	guard(RenderLine);
 	seg_t *line = dseg->seg;
 
 	if (!line->linedef)
@@ -200,6 +205,7 @@ static void RenderLine(drawseg_t* dseg, int clipflags)
 			DrawSurfaces(sp->surfs, &sp->texinfo, clipflags);
 		}
     }
+	unguard;
 }
 
 //==========================================================================
@@ -210,6 +216,7 @@ static void RenderLine(drawseg_t* dseg, int clipflags)
 
 static void	RenderSecSurface(sec_surface_t *ssurf, int clipflags)
 {
+	guard(RenderSecSurface);
 	sec_plane_t &plane = *ssurf->secplane;
 
 	if (!plane.pic)
@@ -228,6 +235,7 @@ static void	RenderSecSurface(sec_surface_t *ssurf, int clipflags)
 	r_dist = plane.dist;
 
 	DrawSurfaces(ssurf->surfs, &ssurf->texinfo, clipflags);
+	unguard;
 }
 
 //==========================================================================
@@ -241,6 +249,7 @@ static void	RenderSecSurface(sec_surface_t *ssurf, int clipflags)
 
 static void RenderSubRegion(subregion_t *region, int clipflags)
 {
+	guard(RenderSubRegion);
     int				count;
 	int 			polyCount;
 	seg_t**			polySeg;
@@ -293,6 +302,7 @@ static void RenderSubRegion(subregion_t *region, int clipflags)
 	{
 		RenderSubRegion(region->next, clipflags);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -303,6 +313,7 @@ static void RenderSubRegion(subregion_t *region, int clipflags)
 
 static void RenderSubsector(int num, int clipflags)
 {
+	guard(RenderSubsector);
 //FIXME do this in node loading
 #ifdef PARANOID
     if (num >= cl_level.numsubsectors)
@@ -323,6 +334,7 @@ static void RenderSubsector(int num, int clipflags)
 	}
 
 	RenderSubRegion(r_sub->regions, clipflags);
+	unguard;
 }
 
 //==========================================================================
@@ -336,6 +348,7 @@ static void RenderSubsector(int num, int clipflags)
 
 static void RenderBSPNode(int bspnum, float *bbox, int clipflags)
 {
+	guard(RenderBSPNode);
 	// cull the clipping planes if not trivial accept
 	if (clipflags)
 	{
@@ -412,6 +425,7 @@ static void RenderBSPNode(int bspnum, float *bbox, int clipflags)
     	// Divide back space.
 		RenderBSPNode(bsp->children[side ^ 1], bsp->bbox[side ^ 1], clipflags);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -422,6 +436,7 @@ static void RenderBSPNode(int bspnum, float *bbox, int clipflags)
 
 void R_RenderWorld(void)
 {
+	guard(R_RenderWorld);
 	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 9999, 99999};
 
 	R_SetUpFrustumIndexes();
@@ -436,14 +451,18 @@ void R_RenderWorld(void)
 	}
 
 	Drawer->WorldDrawing();
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/03/20 19:11:21  dj_jl
+//	Added guarding.
+//
 //	Revision 1.7  2002/01/25 18:08:19  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.6  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

@@ -118,6 +118,7 @@ static TCvarI			_driver("_driver", "0", CVAR_ROM);
 
 void R_Init(void)
 {
+	guard(R_Init);
 	r_back2front = (Drawer != _SoftwareDrawer);
 	R_InitSkyBoxes();
 	R_InitData();
@@ -127,6 +128,7 @@ void R_Init(void)
 	pf_DrawViewBorder = clpr.FuncForName("DrawViewBorder");
 	pf_UpdateParticle = clpr.FuncForName("UpdateParticle");
 	pg_frametime = clpr.GlobalNumForName("frametime");
+	unguard;
 }
 
 //==========================================================================
@@ -137,6 +139,7 @@ void R_Init(void)
 
 void R_Start(const mapInfo_t &info)
 {
+	guard(R_Start);
 	r_oldviewleaf = NULL;
 
 	R_ClearLights();
@@ -155,6 +158,7 @@ void R_Start(const mapInfo_t &info)
 		R_PrecacheLevel();
 	}
 	Drawer->SetPalette(0);
+	unguard;
 }
 
 //==========================================================================
@@ -168,11 +172,13 @@ void R_Start(const mapInfo_t &info)
 
 void R_SetViewSize(int blocks)
 {
+	guard(R_SetViewSize);
 	if (blocks > 2)
     {
 		screen_size = blocks;
 	}
     set_resolutioon_needed = true;
+	unguard;
 }
 
 //==========================================================================
@@ -207,6 +213,7 @@ COMMAND(SizeUp)
 
 static void R_ExecuteSetViewSize(void)
 {
+	guard(R_ExecuteSetViewSize);
     set_resolutioon_needed = false;
 	if (screen_size < 3)
     {
@@ -258,6 +265,7 @@ static void R_ExecuteSetViewSize(void)
 	clip_base[3] = Normalize(TVec(1, 0, 1.0 / refdef.fovy));
 
 	refdef.drawworld = true;
+	unguard;
 }
 
 //==========================================================================
@@ -268,9 +276,11 @@ static void R_ExecuteSetViewSize(void)
 
 void R_DrawViewBorder(void)
 {
+	guard(R_DrawViewBorder);
 	clpr.Exec(pf_DrawViewBorder, 160 - screenblocks * 16,
 		(200 - sb_height - screenblocks * (200 - sb_height) / 10) / 2,
 		screenblocks * 32, screenblocks * (200 - sb_height) / 10);
+	unguard;
 }
 
 //==========================================================================
@@ -281,6 +291,7 @@ void R_DrawViewBorder(void)
 
 static void R_TransformFrustum(void)
 {
+	guard(R_TransformFrustum);
 	for (int i = 0; i < 4; i++)
 	{
 		TVec &v = clip_base[i];
@@ -295,6 +306,7 @@ static void R_TransformFrustum(void)
 		view_clipplanes[i].next = i == 3 ? NULL : &view_clipplanes[i + 1];
 		view_clipplanes[i].clipflag = 1 << i;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -311,6 +323,7 @@ TCvarI			r_chase_front("r_chase_front", "0", CVAR_ARCHIVE);
 
 static void R_SetupFrame(void)
 {
+	guard(R_SetupFrame);
     // change the view size if needed
 	if (screen_size != screenblocks || !screenblocks ||
 		set_resolutioon_needed || old_fov != fov)
@@ -357,6 +370,7 @@ static void R_SetupFrame(void)
 	r_viewleaf = CL_PointInSubsector(cl.vieworg.x, cl.vieworg.y);
 
 	Drawer->SetupView(&refdef);
+	unguard;
 }
 
 //==========================================================================
@@ -367,6 +381,7 @@ static void R_SetupFrame(void)
 
 static void R_MarkLeaves(void)
 {
+	guard(R_MarkLeaves);
 	byte	*vis;
 	node_t	*node;
 	int		i;
@@ -395,6 +410,7 @@ static void R_MarkLeaves(void)
 			}
 		}
 	}
+	unguard;
 }
 
 //**************************************************************************
@@ -421,6 +437,7 @@ int			r_numparticles;
 
 void R_InitParticles(void)
 {
+	guard(R_InitParticles);
 	int		i;
 
 	i = M_CheckParm("-particles");
@@ -437,6 +454,7 @@ void R_InitParticles(void)
 	}
 
 	particles = (particle_t *)Z_Malloc(r_numparticles * sizeof(particle_t));
+	unguard;
 }
 
 //==========================================================================
@@ -447,6 +465,7 @@ void R_InitParticles(void)
 
 void R_ClearParticles(void)
 {
+	guard(R_ClearParticles);
 	int		i;
 	
 	free_particles = &particles[0];
@@ -455,6 +474,7 @@ void R_ClearParticles(void)
 	for (i = 0; i < r_numparticles; i++)
 		particles[i].next = &particles[i + 1];
 	particles[r_numparticles - 1].next = NULL;
+	unguard;
 }
 
 //==========================================================================
@@ -465,6 +485,7 @@ void R_ClearParticles(void)
 
 particle_t *R_NewParticle(void)
 {
+	guard(R_NewParticle);
 	if (!free_particles)
 	{
 		//	No free particles
@@ -479,6 +500,7 @@ particle_t *R_NewParticle(void)
 	p->next = active_particles;
 	active_particles = p;
 	return p;
+	unguard;
 }
 
 //==========================================================================
@@ -489,6 +511,7 @@ particle_t *R_NewParticle(void)
 
 void R_DrawParticles(void)
 {
+	guard(R_DrawParticles);
 	particle_t		*p, *kill;
 	float			frametime;
 
@@ -526,6 +549,7 @@ void R_DrawParticles(void)
 	}
 
 	Drawer->EndParticles();
+	unguard;
 }
 
 //==========================================================================
@@ -536,6 +560,7 @@ void R_DrawParticles(void)
 
 void R_RenderPlayerView(void)
 {
+	guard(R_RenderPlayerView);
     R_SetupFrame();
 
 	R_MarkLeaves();
@@ -562,6 +587,7 @@ void R_RenderPlayerView(void)
 
 	// Draw croshair
 	R_DrawCroshair();
+	unguard;
 }
 
 //==========================================================================
@@ -574,6 +600,7 @@ void R_RenderPlayerView(void)
 
 COMMAND(TimeRefresh)
 {
+	guard(COMMAND TimeRefresh);
 	int			i;
 	double		start, stop, time;
 	float		startangle;
@@ -596,6 +623,7 @@ COMMAND(TimeRefresh)
 	con << time << " seconds (" << (128 / time) << " fps)\n";
 	
 	cl.viewangles.yaw = startangle;
+	unguard;
 }
 
 //==========================================================================
@@ -606,6 +634,7 @@ COMMAND(TimeRefresh)
 
 void V_Init(void)
 {
+	guard(V_Init);
 	if (M_CheckParm("-d3d"))
 	{
 		Drawer = _Direct3DDrawer;
@@ -634,6 +663,7 @@ void V_Init(void)
 		}
 	}
 	Drawer->Init();
+	unguard;
 }
 
 //==========================================================================
@@ -644,19 +674,24 @@ void V_Init(void)
 
 void V_Shutdown(void)
 {
+	guard(V_Shutdown);
 	if (Drawer)
 	{
 		Drawer->Shutdown();
 		Drawer = NULL;
 	}
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2002/03/20 19:11:21  dj_jl
+//	Added guarding.
+//
 //	Revision 1.18  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
-//
+//	
 //	Revision 1.17  2002/01/25 18:08:19  dj_jl
 //	Beautification
 //	

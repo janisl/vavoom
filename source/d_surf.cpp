@@ -167,6 +167,7 @@ static TCvarI d_colored_lights("d_colored_lights", "1", CVAR_ARCHIVE);
 
 surfcache_t *D_CacheSurface(surface_t *surface, int miplevel)
 {
+	guard(D_CacheSurface);
 	surfcache_t     *cache;
 	float           surfscale;
 	int				texture;
@@ -326,6 +327,7 @@ surfcache_t *D_CacheSurface(surface_t *surface, int miplevel)
 	}
 
 	return surface->cachespots[miplevel];
+	unguard;
 }
 
 //==========================================================================
@@ -337,6 +339,7 @@ surfcache_t *D_CacheSurface(surface_t *surface, int miplevel)
 surfcache_t *D_CacheSkySurface(surface_t *surface, int texture1,
 	int texture2, float offs1, float offs2)
 {
+	guard(D_CacheSkySurface);
 	surfcache_t     *cache;
 
 	//
@@ -431,6 +434,7 @@ surfcache_t *D_CacheSkySurface(surface_t *surface, int texture1,
 	}
 
 	return surface->cachespots[0];
+	unguard;
 }
 
 #ifndef USEASM
@@ -2249,9 +2253,12 @@ void D_DrawDoubleSkySurf_32(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/03/20 19:11:21  dj_jl
+//	Added guarding.
+//
 //	Revision 1.9  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.8  2001/12/18 19:01:34  dj_jl
 //	Changes for MSVC asm
 //	

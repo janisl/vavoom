@@ -110,6 +110,7 @@ static sky_t		sky[6];
 
 static int FindSkyMap(const char *name)
 {
+	guard(FindSkyMap);
 	for (int i = 0; i < numskymaps; i++)
 	{
 		if (!strcmp(skymaps[i].name, name))
@@ -121,6 +122,7 @@ static int FindSkyMap(const char *name)
 	Z_Resize((void **)&skymaps, numskymaps * sizeof(skymap_t));
 	strcpy(skymaps[numskymaps - 1].name, name);
 	return (numskymaps - 1) | TEXF_SKY_MAP;
+	unguard;
 }
 
 //==========================================================================
@@ -131,6 +133,7 @@ static int FindSkyMap(const char *name)
 
 void R_InitSkyBoxes(void)
 {
+	guard(R_InitSkyBoxes);
 	SC_Open("skyboxes");
 
 	skymaps = (skymap_t *)Z_StrMalloc(1);
@@ -158,6 +161,7 @@ void R_InitSkyBoxes(void)
 	}
 
 	SC_Close();
+	unguard;
 }
 
 //==========================================================================
@@ -168,6 +172,7 @@ void R_InitSkyBoxes(void)
 
 static void R_InitOldSky(const mapInfo_t &info)
 {
+	guard(R_InitOldSky);
 	memset(sky, 0, sizeof(sky));
 
 	// Check if the level is a lightning level
@@ -301,6 +306,7 @@ static void R_InitOldSky(const mapInfo_t &info)
 	//	Precache textures
 	Drawer->SetSkyTexture(info.sky1Texture, info.doubleSky);
 	Drawer->SetSkyTexture(info.sky2Texture, false);
+	unguard;
 }
 
 //==========================================================================
@@ -311,6 +317,7 @@ static void R_InitOldSky(const mapInfo_t &info)
 
 static void R_InitSkyBox(const mapInfo_t &info)
 {
+	guard(R_InitSkyBox);
 	int num;
 
 	for (num = 0; num < numskyboxes; num++)
@@ -408,6 +415,7 @@ static void R_InitSkyBox(const mapInfo_t &info)
 		sky[j].texinfo.saxis *= skymaps[smap].width / 256.0;
 		sky[j].texinfo.taxis *= skymaps[smap].height / 256.0;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -420,6 +428,7 @@ static void R_InitSkyBox(const mapInfo_t &info)
 
 void R_InitSky(const mapInfo_t &info)
 {
+	guard(R_InitSky);
 	if (info.skybox[0])
 	{
 		R_InitSkyBox(info);
@@ -428,6 +437,7 @@ void R_InitSky(const mapInfo_t &info)
 	{
 		R_InitOldSky(info);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -438,6 +448,7 @@ void R_InitSky(const mapInfo_t &info)
 
 void R_AnimateSky(void)
 {
+	guard(R_AnimateSky);
 	//	Update sky column offsets
 	for (int i = 0; i < 6; i++)
 	{
@@ -457,6 +468,7 @@ void R_AnimateSky(void)
 			NextLightningFlash--;
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -467,6 +479,7 @@ void R_AnimateSky(void)
 
 static void R_LightningFlash(void)
 {
+	guard(R_LightningFlash);
 	int 		i;
 	sector_t 	*tempSec;
 	int 		*tempLight;
@@ -584,6 +597,7 @@ static void R_LightningFlash(void)
 			}
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -594,7 +608,9 @@ static void R_LightningFlash(void)
 
 void R_ForceLightning(void)
 {
+	guard(R_ForceLightning);
 	NextLightningFlash = 0;
+	unguard;
 }
 
 //==========================================================================
@@ -605,6 +621,7 @@ void R_ForceLightning(void)
 
 void R_DrawSky(void)
 {
+	guard(R_DrawSky);
 	Drawer->BeginSky();
 
 	for (int i = 0; i < 6; i++)
@@ -624,14 +641,18 @@ void R_DrawSky(void)
 	}
 
 	Drawer->EndSky();
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/03/20 19:11:21  dj_jl
+//	Added guarding.
+//
 //	Revision 1.8  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.7  2001/11/02 18:35:55  dj_jl
 //	Sky optimizations
 //	

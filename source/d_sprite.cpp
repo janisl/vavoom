@@ -1835,7 +1835,9 @@ void D_SpriteDrawPolygon(TVec *cv, int count, surface_t *surf, int lump,
 void TSoftwareDrawer::DrawMaskedPolygon(TVec *cv, int count, int,
 	int translucency)
 {
+	guard(TSoftwareDrawer::DrawMaskedPolygon);
 	D_SpriteDrawPolygon(cv, count, r_surface, 0, 0, translucency, 0);
+	unguard;
 }
 
 //==========================================================================
@@ -1847,15 +1849,20 @@ void TSoftwareDrawer::DrawMaskedPolygon(TVec *cv, int count, int,
 void TSoftwareDrawer::DrawSpritePolygon(TVec *cv, int lump,
 	int translucency, int translation, dword light)
 {
+	guard(TSoftwareDrawer::DrawSpritePolygon);
 	D_SpriteDrawPolygon(cv, 4, NULL, lump, translation, translucency, light);
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/03/20 19:11:21  dj_jl
+//	Added guarding.
+//
 //	Revision 1.5  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2001/08/15 17:27:17  dj_jl
 //	Truecolor translucency with lookup table
 //	

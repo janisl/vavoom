@@ -68,6 +68,7 @@ surfcache_t		*sc_rover, *sc_base;
 
 int D_SurfaceCacheForRes(int width, int height, int bpp)
 {
+	guard(D_SurfaceCacheForRes);
 	int             size, pix, pixbytes;
 
 	if (M_CheckParm("-surfcachesize"))
@@ -84,6 +85,7 @@ int D_SurfaceCacheForRes(int width, int height, int bpp)
 		size += (pix - 64000) * 3;
 
 	return size;
+	unguard;
 }
 
 //==========================================================================
@@ -94,6 +96,7 @@ int D_SurfaceCacheForRes(int width, int height, int bpp)
 
 static void D_CheckCacheGuard(void)
 {
+	guard(D_CheckCacheGuard);
 	byte		*s;
 	int			i;
 
@@ -101,6 +104,7 @@ static void D_CheckCacheGuard(void)
 	for (i = 0; i < GUARDSIZE; i++)
 		if (s[i] != (byte)i)
 			Sys_Error("D_CheckCacheGuard: failed");
+	unguard;
 }
 
 //==========================================================================
@@ -111,12 +115,14 @@ static void D_CheckCacheGuard(void)
 
 static void D_ClearCacheGuard(void)
 {
+	guard(D_ClearCacheGuard);
 	byte    *s;
 	int             i;
 	
 	s = (byte *)sc_base + sc_size;
 	for (i = 0; i < GUARDSIZE; i++)
 		s[i] = (byte)i;
+	unguard;
 }
 
 //==========================================================================
@@ -127,6 +133,7 @@ static void D_ClearCacheGuard(void)
 
 void D_InitCaches(void *buffer, int size)
 {
+	guard(D_InitCaches);
 //	if (!msg_suppress_1)
 		con << (size / 1024) << "k surface cache\n";
 
@@ -139,6 +146,7 @@ void D_InitCaches(void *buffer, int size)
 	sc_base->size = sc_size;
 	
 	D_ClearCacheGuard();
+	unguard;
 }
 
 //==========================================================================
@@ -149,6 +157,7 @@ void D_InitCaches(void *buffer, int size)
 
 void D_FlushCaches(bool free_blocks)
 {
+	guard(D_FlushCaches);
 	surfcache_t     *c;
 	
 	if (!sc_base)
@@ -167,6 +176,7 @@ void D_FlushCaches(bool free_blocks)
 	sc_base->next = NULL;
 	sc_base->owner = NULL;
 	sc_base->size = sc_size;
+	unguard;
 }
 
 //==========================================================================
@@ -177,6 +187,7 @@ void D_FlushCaches(bool free_blocks)
 
 surfcache_t *D_SCAlloc(int width, int height)
 {
+	guard(D_SCAlloc);
 	surfcache_t		*newb;
 	bool			wrapped_this_time;
 
@@ -254,6 +265,7 @@ surfcache_t *D_SCAlloc(int width, int height)
 
 	D_CheckCacheGuard();   // DEBUG
 	return newb;
+	unguard;
 }
 
 //==========================================================================
@@ -264,8 +276,10 @@ surfcache_t *D_SCAlloc(int width, int height)
 
 void TSoftwareDrawer::FreeSurfCache(surfcache_t* cache)
 {
+	guard(TSoftwareDrawer::FreeSurfCache);
 	*cache->owner = NULL;
 	cache->owner = NULL;
+	unguard;
 }
 
 //==========================================================================
@@ -291,9 +305,12 @@ void D_SCDump(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/03/20 19:11:21  dj_jl
+//	Added guarding.
+//
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

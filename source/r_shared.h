@@ -64,9 +64,14 @@ struct texpatch_t
 struct texdef_t
 {
     // Keep name for switch changing, etc.
-    char		name[10];
+    char		name[12];
     short		width;
     short		height;
+
+	//	Scaling
+	float		SScale;
+	float		TScale;
+
     // All the patches[patchcount]
     //are drawn back to front into the cached texture.
     short		patchcount;
@@ -193,9 +198,12 @@ extern byte				gammatable[5][256];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2002/03/20 19:11:21  dj_jl
+//	Added guarding.
+//
 //	Revision 1.14  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.13  2001/12/27 17:36:47  dj_jl
 //	Some speedup
 //	

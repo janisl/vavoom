@@ -729,9 +729,11 @@ extern "C" void D_DrawParticle_32(particle_t *pparticle)
 
 void TSoftwareDrawer::StartParticles(void)
 {
+	guard(TSoftwareDrawer::StartParticles);
 	r_pright = viewright * xscaleshrink;
 	r_pup = viewup * yscaleshrink;
 	r_ppn = viewforward;
+	unguard;
 }
 
 //==========================================================================
@@ -742,10 +744,12 @@ void TSoftwareDrawer::StartParticles(void)
 
 void TSoftwareDrawer::DrawParticle(particle_t *pparticle)
 {
+	guard(TSoftwareDrawer::DrawParticle);
 	if (pparticle->color > 0x7fffffff)
 	{
 		D_DrawParticle(pparticle);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -761,9 +765,12 @@ void TSoftwareDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/03/20 19:11:21  dj_jl
+//	Added guarding.
+//
 //	Revision 1.6  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.5  2001/12/18 19:01:34  dj_jl
 //	Changes for MSVC asm
 //	

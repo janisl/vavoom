@@ -73,7 +73,54 @@ static int			c_subdivides;
 static surface_t	*free_wsurfs;
 static int			c_seg_div;
 
+static TCvarF		TS("ts", "1.0");
+static TCvarF		TT("tt", "1.0");
+
 // CODE --------------------------------------------------------------------
+
+//**************************************************************************
+//
+//	Scaling
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//	TextureSScale
+//
+//==========================================================================
+
+inline float TextureSScale(int pic)
+{
+#if 0
+	if (!(tex & TEXF_FLAT))
+	{
+		return textures[pic]->SScale;
+	}
+	return 1.0;
+#else
+	return TS;
+#endif
+}
+
+//==========================================================================
+//
+//	TextureTScale
+//
+//==========================================================================
+
+inline float TextureTScale(int pic)
+{
+#if 0
+	if (!(tex & TEXF_FLAT))
+	{
+		return textures[pic]->TScale;
+	}
+	return 1.0;
+#else
+	return TT;
+#endif
+}
 
 //**************************************************************************
 //**
@@ -89,6 +136,7 @@ static int			c_seg_div;
 
 static void	SetupSky(void)
 {
+	guard(SetupSky);
 	skyheight = -99999.0;
 	for (int i = 0; i < cl_level.numsectors; i++)
 	{
@@ -100,6 +148,7 @@ static void	SetupSky(void)
 	}
 	sky_plane.Set(TVec(0, 0, -1), -skyheight);
 	sky_plane.pic = skyflatnum;
+	unguard;
 }
 
 //==========================================================================
@@ -110,6 +159,7 @@ static void	SetupSky(void)
 
 static void InitSurfs(surface_t *surfs, texinfo_t *texinfo, TPlane *plane)
 {
+	guard(InitSurfs);
 	int i;
 	float dot;
 	float mins;
@@ -170,6 +220,7 @@ static void InitSurfs(surface_t *surfs, texinfo_t *texinfo, TPlane *plane)
 
 		surfs = surfs->next;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -180,6 +231,7 @@ static void InitSurfs(surface_t *surfs, texinfo_t *texinfo, TPlane *plane)
 
 static void FlushSurfCaches(surface_t *surfs)
 {
+	guard(FlushSurfCaches);
 	while (surfs)
 	{
 		for (int i = 0; i < 4; i++)
@@ -191,6 +243,7 @@ static void FlushSurfCaches(surface_t *surfs)
 		}
 		surfs = surfs->next;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -201,6 +254,7 @@ static void FlushSurfCaches(surface_t *surfs)
 
 static surface_t *SubdivideFace(surface_t *f, const TVec &axis, const TVec *nextaxis)
 {
+	guard(SubdivideFace);
 	int i;
 	float dot;
 	float mins = 99999.0;
@@ -322,6 +376,7 @@ static surface_t *SubdivideFace(surface_t *f, const TVec &axis, const TVec *next
 		back = SubdivideFace(back, *nextaxis, NULL);
 	}
 	return back;
+	unguard;
 }
 
 //==========================================================================
@@ -332,6 +387,7 @@ static surface_t *SubdivideFace(surface_t *f, const TVec &axis, const TVec *next
 
 static sec_surface_t *CreateSecSurface(subsector_t *sub, sec_plane_t *splane)
 {
+	guard(CreateSecSurface);
 	sec_surface_t	*ssurf;
 	surface_t		*surf;
 
@@ -348,14 +404,15 @@ static sec_surface_t *CreateSecSurface(subsector_t *sub, sec_plane_t *splane)
 
 	if (fabs(splane->normal.z) > 0.7)
 	{
-		ssurf->texinfo.saxis = TVec(1, 0, 0);
-		ssurf->texinfo.taxis = TVec(0, -1, 0);
+		ssurf->texinfo.saxis = TVec(1, 0, 0) * TextureSScale(splane->pic);
+		ssurf->texinfo.taxis = TVec(0, -1, 0) * TextureTScale(splane->pic);
 		ssurf->texinfo.texorg = TVec(-splane->xoffs, splane->yoffs, 0);
 	}
 	else
 	{
-		ssurf->texinfo.taxis = TVec(0, 0, -1);
-		ssurf->texinfo.saxis = Normalize(CrossProduct(splane->normal, ssurf->texinfo.taxis));
+		ssurf->texinfo.taxis = TVec(0, 0, -1) * TextureTScale(splane->pic);;
+		ssurf->texinfo.saxis = Normalize(CrossProduct(splane->normal, 
+			ssurf->texinfo.taxis)) * TextureSScale(splane->pic);
 		ssurf->texinfo.texorg = -splane->xoffs * ssurf->texinfo.saxis + -splane->yoffs * ssurf->texinfo.taxis;
 	}
 	ssurf->texinfo.pic = splane->pic;
@@ -386,6 +443,7 @@ static sec_surface_t *CreateSecSurface(subsector_t *sub, sec_plane_t *splane)
 	}
 
 	return ssurf;
+	unguard;
 }
 
 //==========================================================================
@@ -396,6 +454,7 @@ static sec_surface_t *CreateSecSurface(subsector_t *sub, sec_plane_t *splane)
 
 static void UpdateSecSurface(sec_surface_t *ssurf)
 {
+	guard(UpdateSecSurface);
 	sec_plane_t		*plane = ssurf->secplane;
 
 	if (!plane->pic)
@@ -429,6 +488,7 @@ static void UpdateSecSurface(sec_surface_t *ssurf)
 	{
 		ssurf->texinfo.pic = plane->pic;
 	}
+	unguard;
 }
 
 //**************************************************************************
@@ -445,6 +505,7 @@ static void UpdateSecSurface(sec_surface_t *ssurf)
 
 static surface_t *NewWSurf(void)
 {
+	guard(NewWSurf);
 	if (!free_wsurfs)
 	{
 		//	Allocate some more surfs
@@ -462,6 +523,7 @@ static surface_t *NewWSurf(void)
 	memset(surf, 0, WSURFSIZE);
 
 	return surf;
+	unguard;
 }
 
 //==========================================================================
@@ -472,6 +534,7 @@ static surface_t *NewWSurf(void)
 
 static void	FreeWSurfs(surface_t *surfs)
 {
+	guard(FreeWSurfs);
 	FlushSurfCaches(surfs);
 	while (surfs)
 	{
@@ -484,6 +547,7 @@ static void	FreeWSurfs(surface_t *surfs)
 		free_wsurfs = surfs;
 		surfs = next;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -494,6 +558,7 @@ static void	FreeWSurfs(surface_t *surfs)
 
 static surface_t *SubdivideSeg(surface_t *surf, const TVec &axis, const TVec *nextaxis)
 {
+	guard(SubdivideSeg);
 	int i;
 	float dot;
 	float mins = 99999.0;
@@ -604,6 +669,7 @@ static surface_t *SubdivideSeg(surface_t *surf, const TVec &axis, const TVec *ne
 		surf = SubdivideSeg(surf, *nextaxis, NULL);
 	}
 	return surf;
+	unguard;
 }
 
 //==========================================================================
@@ -614,6 +680,7 @@ static surface_t *SubdivideSeg(surface_t *surf, const TVec &axis, const TVec *ne
 
 static surface_t *CreateWSurfs(TVec *wv, texinfo_t *texinfo, seg_t *seg)
 {
+	guard(CreateWSurfs);
 	if (wv[1].z <= wv[0].z && wv[2].z <= wv[3].z)
 	{
 		return NULL;
@@ -643,6 +710,7 @@ static surface_t *CreateWSurfs(TVec *wv, texinfo_t *texinfo, seg_t *seg)
 	surf = SubdivideSeg(surf, texinfo->saxis, &texinfo->taxis);
 	InitSurfs(surf, texinfo, seg);
 	return surf;
+	unguard;
 }
 
 //==========================================================================
@@ -653,6 +721,7 @@ static surface_t *CreateWSurfs(TVec *wv, texinfo_t *texinfo, seg_t *seg)
 
 static int CountSegParts(seg_t *seg)
 {
+	guard(CountSegParts);
 	if (!seg->linedef)
 	{
 		//	Miniseg
@@ -673,6 +742,7 @@ static int CountSegParts(seg_t *seg)
 		}
 	}
 	return count;
+	unguard;
 }
 
 //==========================================================================
@@ -685,6 +755,7 @@ static segpart_t	*pspart;
 
 static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 {
+	guard(CreateSegParts);
 	TVec		wv[4];
 	segpart_t	*sp;
 	float		hdelta;
@@ -717,8 +788,8 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		dseg->mid = pspart++;
 		sp = dseg->mid;
 
-		sp->texinfo.saxis = segdir;
-		sp->texinfo.taxis = TVec(0, 0, -1);
+		sp->texinfo.saxis = segdir * TextureSScale(sidedef->midtexture);
+		sp->texinfo.taxis = TVec(0, 0, -1) * TextureTScale(sidedef->midtexture);
 		sp->texinfo.texorg = *seg->v1 - sp->texinfo.saxis *
 			(sidedef->textureoffset + seg->offset);
 		sp->texinfo.pic = sidedef->midtexture;
@@ -806,8 +877,8 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		dseg->top = pspart++;
 		sp = dseg->top;
 
-		sp->texinfo.saxis = segdir;
-		sp->texinfo.taxis = TVec(0, 0, -1);
+		sp->texinfo.saxis = segdir * TextureSScale(sidedef->toptexture);
+		sp->texinfo.taxis = TVec(0, 0, -1) * TextureTScale(sidedef->toptexture);
 		sp->texinfo.texorg = *seg->v1 - sp->texinfo.saxis *
 			(sidedef->textureoffset + seg->offset);
 		sp->texinfo.pic = sidedef->toptexture;
@@ -873,8 +944,8 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		dseg->bot = pspart++;
 		sp = dseg->bot;
 
-		sp->texinfo.saxis = segdir;
-		sp->texinfo.taxis = TVec(0, 0, -1);
+		sp->texinfo.saxis = segdir * TextureSScale(sidedef->bottomtexture);
+		sp->texinfo.taxis = TVec(0, 0, -1) * TextureTScale(sidedef->bottomtexture);
 		sp->texinfo.texorg = *seg->v1 - sp->texinfo.saxis *
 			(sidedef->textureoffset + seg->offset);
 		sp->texinfo.pic = sidedef->bottomtexture;
@@ -921,8 +992,8 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		dseg->mid = pspart++;
 		sp = dseg->mid;
 
-		sp->texinfo.saxis = segdir;
-		sp->texinfo.taxis = TVec(0, 0, -1);
+		sp->texinfo.saxis = segdir * TextureSScale(sidedef->midtexture);
+		sp->texinfo.taxis = TVec(0, 0, -1) * TextureTScale(sidedef->midtexture);
 
 		if (sidedef->midtexture)
 		{
@@ -988,8 +1059,8 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			float extrabotz1 = extrabot->GetPointZ(*seg->v1);
 			float extrabotz2 = extrabot->GetPointZ(*seg->v2);
 
-			sp->texinfo.saxis = segdir;
-			sp->texinfo.taxis = TVec(0, 0, -1);
+			sp->texinfo.saxis = segdir * TextureSScale(extraside->midtexture);
+			sp->texinfo.taxis = TVec(0, 0, -1) * TextureTScale(extraside->midtexture);
 			sp->texinfo.texorg = *seg->v1 - sp->texinfo.saxis *
 				(sidedef->textureoffset + seg->offset);
 
@@ -1019,6 +1090,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			sp->rowoffset = sidedef->rowoffset;
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -1029,10 +1101,12 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 
 static void	UpdateRowOffset(segpart_t *sp, float rowoffset)
 {
+	guard(UpdateRowOffset);
 	sp->texinfo.texorg.z += rowoffset - sp->rowoffset;
 	sp->rowoffset = rowoffset;
 	FlushSurfCaches(sp->surfs);
 	InitSurfs(sp->surfs, &sp->texinfo, NULL);
+	unguard;
 }
 
 //==========================================================================
@@ -1043,12 +1117,14 @@ static void	UpdateRowOffset(segpart_t *sp, float rowoffset)
 
 static void UpdateTextureOffset(segpart_t *sp, seg_t *seg, float textureoffset)
 {
+	guard(UpdateTextureOffset);
 	TVec tmp = *seg->v1 - sp->texinfo.saxis * (textureoffset + seg->offset);
 	sp->texinfo.texorg.x = tmp.x;
 	sp->texinfo.texorg.y = tmp.y;
 	sp->textureoffset = textureoffset;
 	FlushSurfCaches(sp->surfs);
 	InitSurfs(sp->surfs, &sp->texinfo, NULL);
+	unguard;
 }
 
 //==========================================================================
@@ -1059,6 +1135,7 @@ static void UpdateTextureOffset(segpart_t *sp, seg_t *seg, float textureoffset)
 
 static void UpdateDrawSeg(drawseg_t* dseg)
 {
+	guard(UpdateDrawSeg);
 	seg_t *seg = dseg->seg;
 	segpart_t *sp;
 	TVec wv[4];
@@ -1467,6 +1544,7 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 			sp = sp->next;
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -1477,6 +1555,7 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 
 void R_SegMoved(seg_t *seg)
 {
+	guard(R_SegMoved);
 	if (!seg->drawsegs)
 	{
 		//	Drawsegs not created yet
@@ -1491,12 +1570,15 @@ void R_SegMoved(seg_t *seg)
 		Sys_Error("R_SegMoved: two-sided");
 	}
 
-	seg->drawsegs->mid->texinfo.saxis = (*seg->v2 - *seg->v1) / seg->length;
-	seg->drawsegs->mid->texinfo.taxis = TVec(0, 0, -1);
+	seg->drawsegs->mid->texinfo.saxis = (*seg->v2 - *seg->v1) / seg->length *
+		TextureSScale(seg->drawsegs->mid->texinfo.pic);
+	seg->drawsegs->mid->texinfo.taxis = TVec(0, 0, -1) *
+		TextureTScale(seg->drawsegs->mid->texinfo.pic);
 
 	//	Force update
 	seg->drawsegs->mid->frontTopDist += 0.346;
 	seg->drawsegs->mid->textureoffset += 0.46;
+	unguard;
 }
 
 //==========================================================================
@@ -1507,6 +1589,7 @@ void R_SegMoved(seg_t *seg)
 
 void R_PreRender(void)
 {
+	guard(R_PreRender);
 	int				i, j;
 	int				count, dscount, spcount;
 	subregion_t		*sreg;
@@ -1616,6 +1699,7 @@ void R_PreRender(void)
 	cond << c_subdivides << " subdivides\n";
 	cond << c_seg_div << " seg subdivides\n";
 	cond << (light_mem / 1024) << "k light mem\n";
+	unguard;
 }
 
 //==========================================================================
@@ -1626,6 +1710,7 @@ void R_PreRender(void)
 
 static void UpdateSubRegion(subregion_t *region)
 {
+	guard(UpdateSubRegion);
     int				count;
 	int 			polyCount;
 	seg_t**			polySeg;
@@ -1660,6 +1745,7 @@ static void UpdateSubRegion(subregion_t *region)
 	{
 		UpdateSubRegion(region->next);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -1670,6 +1756,7 @@ static void UpdateSubRegion(subregion_t *region)
 
 static void UpdateSubsector(int num, float *bbox)
 {
+	guard(UpdateSubsector);
 //FIXME do this in node loading
 #ifdef PARANOID
     if (num >= cl_level.numsubsectors)
@@ -1697,6 +1784,7 @@ static void UpdateSubsector(int num, float *bbox)
 		bbox[5] = frontsector->ceiling.maxz;
 
 	UpdateSubRegion(r_sub->regions);
+	unguard;
 }
 
 //==========================================================================
@@ -1707,6 +1795,7 @@ static void UpdateSubsector(int num, float *bbox)
 
 static void UpdateBSPNode(int bspnum, float *bbox)
 {
+	guard(UpdateBSPNode);
     // Found a subsector?
     if (bspnum & NF_SUBSECTOR)
     {
@@ -1728,6 +1817,7 @@ static void UpdateBSPNode(int bspnum, float *bbox)
     UpdateBSPNode(bsp->children[1], bsp->bbox[1]);
 	bbox[2] = MIN(bsp->bbox[0][2], bsp->bbox[1][2]);
 	bbox[5] = MAX(bsp->bbox[0][5], bsp->bbox[1][5]);
+	unguard;
 }
 
 //==========================================================================
@@ -1738,17 +1828,22 @@ static void UpdateBSPNode(int bspnum, float *bbox)
 
 void R_UpdateWorld(void)
 {
+	guard(R_UpdateWorld);
 	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 9999, 99999};
 
 	UpdateBSPNode(cl_level.numnodes - 1, dummy_bbox);	// head node is the last node output
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/03/20 19:11:21  dj_jl
+//	Added guarding.
+//
 //	Revision 1.8  2002/01/25 18:08:19  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.7  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

@@ -189,10 +189,10 @@ static bool IsStrifeTexture(void)
 //
 //==========================================================================
 
-template<class T> void InitTextures(void)
+static void InitTextures(void)
 {
 	guard(InitTextures);
-	T*				mtexture;
+	maptexture_t*	mtexture;
 	texdef_t*		texture;
 	texpatch_t*		patch;
 
@@ -275,7 +275,7 @@ template<class T> void InitTextures(void)
 	    	Sys_Error("InitTextures: bad texture directory");
 		}
 	
-		mtexture = (T*)((byte *)maptex + offset);
+		mtexture = (maptexture_t*)((byte *)maptex + offset);
 
 		texture = textures[i] =
 	    	(texdef_t*)Z_Malloc(sizeof(texdef_t)
@@ -323,7 +323,153 @@ template<class T> void InitTextures(void)
     Z_Free(maptex1);
     if (maptex2)
 		Z_Free(maptex2);
-	unguardf(("%d", sizeof(T)));
+	unguard;
+}
+
+//==========================================================================
+//
+//	InitTextures2
+//
+// 	Initializes the texture list with the textures from the world map.
+//	Strife texture format version.
+//
+//==========================================================================
+
+static void InitTextures2(void)
+{
+	guard(InitTextures);
+	maptexture_strife_t	*mtexture;
+	texdef_t*			texture;
+	texpatch_t*			patch;
+
+    int				i;
+    int				j;
+
+    int*			maptex;
+    int*			maptex2;
+    int*			maptex1;
+    
+    char			name[9];
+    char*			names;
+    char*			name_p;
+    
+    int*			patchlookup;
+    
+    int				nummappatches;
+    int				offset;
+    int				maxoff;
+    int				maxoff2;
+    int				numtextures1;
+    int				numtextures2;
+
+    int*			directory;
+    
+    // Load the patch names from pnames.lmp.
+    name[8] = 0;
+    names = (char*)W_CacheLumpName("PNAMES", PU_STATIC);
+    nummappatches = LittleLong(*((int *)names));
+    name_p = names + 4;
+    patchlookup = (int*)Z_Malloc(nummappatches*sizeof(*patchlookup), PU_HIGH, 0);
+
+    for (i = 0; i < nummappatches; i++)
+	{
+		strncpy(name, name_p + i * 8, 8);
+		patchlookup[i] = W_CheckNumForName(name);
+	}
+    Z_Free(names);
+
+    // Load the map texture definitions from textures.lmp.
+    // The data is contained in one or two lumps,
+    //  TEXTURE1 for shareware, plus TEXTURE2 for commercial.
+    maptex = maptex1 = (int*)W_CacheLumpName("TEXTURE1", PU_HIGH);
+    numtextures1 = LittleLong(*maptex);
+    maxoff = W_LumpLength(W_GetNumForName("TEXTURE1"));
+    directory = maptex+1;
+	
+    if (W_CheckNumForName("TEXTURE2") != -1)
+    {
+		maptex2 = (int*)W_CacheLumpName("TEXTURE2", PU_HIGH);
+		numtextures2 = LittleLong(*maptex2);
+		maxoff2 = W_LumpLength(W_GetNumForName ("TEXTURE2"));
+    }
+    else
+    {
+		maptex2 = NULL;
+		numtextures2 = 0;
+		maxoff2 = 0;
+    }
+    numtextures = numtextures1 + numtextures2;
+
+    textures = (texdef_t**)Z_Calloc(numtextures * 4);
+    textureheight = (float*)Z_Calloc(numtextures * 4);
+    texturetranslation = (int*)Z_Calloc((numtextures + 1) * 4);
+
+    for (i=0 ; i<numtextures ; i++, directory++)
+    {
+		if (i == numtextures1)
+		{
+	    	// Start looking in second texture file.
+	    	maptex = maptex2;
+	    	maxoff = maxoff2;
+	    	directory = maptex+1;
+		}
+		
+		offset = LittleLong(*directory);
+
+		if (offset > maxoff)
+		{
+	    	Sys_Error("InitTextures: bad texture directory");
+		}
+	
+		mtexture = (maptexture_strife_t*)((byte *)maptex + offset);
+
+		texture = textures[i] =
+	    	(texdef_t*)Z_Malloc(sizeof(texdef_t)
+		      + sizeof(texpatch_t) * (LittleShort(mtexture->patchcount) - 1),
+		      PU_STATIC, 0);
+	
+		texture->width = LittleShort(mtexture->width);
+		texture->height = LittleShort(mtexture->height);
+		texture->patchcount = LittleShort(mtexture->patchcount);
+
+		memcpy(texture->name, mtexture->name, sizeof(texture->name));
+		patch = texture->patches;
+
+		for (j = 0; j < texture->patchcount; j++, patch++)
+		{
+	    	patch->originx = LittleShort(mtexture->patches[j].originx);
+	    	patch->originy = LittleShort(mtexture->patches[j].originy);
+	    	patch->patch = patchlookup[LittleShort(mtexture->patches[j].patch)];
+	    	if (patch->patch == -1)
+	    	{
+				Sys_Error("InitTextures: Missing patch in texture %s",
+			 		texture->name);
+	    	}
+		}
+
+		//	Fix sky texture heights for Heretic, but it can also be used
+		// for Doom and Strife
+		if (!strnicmp(texture->name, "SKY", 3) && texture->height == 128)
+		{
+			patch_t *realpatch = (patch_t*)W_CacheLumpNum(
+				texture->patches[0].patch, PU_TEMP);
+			if (LittleShort(realpatch->height) > texture->height)
+			{
+				texture->height = LittleShort(realpatch->height);
+			}
+		}
+
+		textureheight[i] = texture->height;
+		
+    	// Create translation table for global animation.
+		texturetranslation[i] = i;
+    }
+
+	Z_Free(patchlookup);
+    Z_Free(maptex1);
+    if (maptex2)
+		Z_Free(maptex2);
+	unguard;
 }
 
 //==========================================================================
@@ -584,6 +730,7 @@ static void InitFTAnims(void)
 	SC_Open(ANIM_SCRIPT_NAME);
 	while (SC_GetString())
 	{
+		memset(&ad, 0, sizeof(ad));
 		if (SC_Compare(SCI_FLAT))
 		{
 			ad.type = ANIM_FLAT;
@@ -766,11 +913,11 @@ void R_InitTexture(void)
 	if (IsStrifeTexture())
 	{
 		con << "Strife textures detected\n";
-		InitTextures<maptexture_strife_t>();
+		InitTextures2();
 	}
 	else
 	{
-		InitTextures<maptexture_t>();
+		InitTextures();
 	}
 	InitFlats();
 	InitSpriteLumps();
@@ -1153,9 +1300,12 @@ void R_ShadeRect(int x, int y, int width, int height, int shade)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/03/20 19:11:21  dj_jl
+//	Added guarding.
+//
 //	Revision 1.16  2002/02/22 18:09:52  dj_jl
 //	Some improvements, beautification.
-//
+//	
 //	Revision 1.15  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

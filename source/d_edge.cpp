@@ -171,6 +171,7 @@ static int		outofedges;
 
 void D_BeginEdgeFrame(void)
 {
+	guard(D_BeginEdgeFrame);
 	edge_p = r_edges;
 	edge_max = &r_edges[MAX_EDGES];
 
@@ -189,6 +190,7 @@ void D_BeginEdgeFrame(void)
 
 	outofsurfs = 0;
 	outofedges = 0;
+	unguard;
 }
 
 //==========================================================================
@@ -440,6 +442,7 @@ extern "C" void D_ClipEdge(const TVec &v0, const TVec &v1,
 
 void TSoftwareDrawer::DrawPolygon(TVec *cv, int count, int, int clipflags)
 {
+	guard(TSoftwareDrawer::DrawPolygon);
 	int		i;
 
 	if (surface_p == surf_max)
@@ -489,6 +492,7 @@ void TSoftwareDrawer::DrawPolygon(TVec *cv, int count, int, int clipflags)
 	surface_p->nearzi = r_nearzi;
 
 	surface_p++;
+	unguard;
 }
 
 //==========================================================================
@@ -510,6 +514,7 @@ void TSoftwareDrawer::BeginSky(void)
 void TSoftwareDrawer::DrawSkyPolygon(TVec *cv, int count,
 	int texture1, float offs1, int texture2, float offs2)
 {
+	guard(TSoftwareDrawer::DrawSkyPolygon);
 	int		i;
 
 	if (surface_p == surf_max)
@@ -564,6 +569,7 @@ void TSoftwareDrawer::DrawSkyPolygon(TVec *cv, int count,
 	surface_p->offs2 = offs2;
 
 	surface_p++;
+	unguard;
 }
 
 //==========================================================================
@@ -1008,6 +1014,7 @@ static void D_DrawSurfaces(void)
 
 void TSoftwareDrawer::WorldDrawing(void)
 {
+	guard(TSoftwareDrawer::WorldDrawing);
 	int			iv, bottom;
 	byte		basespans[MAX_SPANS * sizeof(espan_t) + CACHE_SIZE];
 	espan_t		*basespan_p;
@@ -1091,14 +1098,18 @@ void TSoftwareDrawer::WorldDrawing(void)
 
 	if (outofsurfs) cond << "Out of " << outofsurfs << " surfs\n";
 	if (outofedges) cond << "Out of " << outofedges << " edges\n";
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/03/20 19:11:21  dj_jl
+//	Added guarding.
+//
 //	Revision 1.10  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.9  2001/12/18 19:01:34  dj_jl
 //	Changes for MSVC asm
 //	

@@ -118,6 +118,7 @@ static int		mod_numknown;
 
 void *Mod_Extradata(model_t *mod)
 {
+	guard(Mod_Extradata);
 	void	*r;
 	
 	r = mod->data;
@@ -129,6 +130,7 @@ void *Mod_Extradata(model_t *mod)
 	if (!mod->data)
 		Sys_Error("Mod_Extradata: caching failed");
 	return mod->data;
+	unguard;
 }
 
 //==========================================================================
@@ -139,6 +141,7 @@ void *Mod_Extradata(model_t *mod)
 
 model_t *Mod_FindName(char *name)
 {
+	guard(Mod_FindName);
 	int		i;
 	model_t	*mod;
 
@@ -166,6 +169,7 @@ model_t *Mod_FindName(char *name)
 	}
 
 	return mod;
+	unguard;
 }
 
 //==========================================================================
@@ -176,6 +180,7 @@ model_t *Mod_FindName(char *name)
 
 static void Mod_SwapAliasModel(model_t *mod)
 {
+	guard(Mod_SwapAliasModel);
 	int					i, j;
 	mmdl_t				*pmodel;
 	mstvert_t			*pstverts;
@@ -267,6 +272,7 @@ static void Mod_SwapAliasModel(model_t *mod)
 	{
 		pcmds[i] = LittleLong(pcmds[i]);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -279,6 +285,7 @@ static void Mod_SwapAliasModel(model_t *mod)
 
 static model_t *Mod_LoadModel(model_t *mod)
 {
+	guard(Mod_LoadModel);
 	if (mod->data)
 	{
 		return mod;
@@ -297,6 +304,7 @@ static model_t *Mod_LoadModel(model_t *mod)
 	Mod_SwapAliasModel(mod);
 
 	return mod;
+	unguard;
 }
 
 //==========================================================================
@@ -307,6 +315,7 @@ static model_t *Mod_LoadModel(model_t *mod)
 
 static void LoadPCX(const char *filename, void **bufptr)
 {
+	guard(LoadPCX);
 	int			c;
 	int			bytes_per_line;
 	int			x, y;
@@ -384,6 +393,7 @@ static void LoadPCX(const char *filename, void **bufptr)
 	}
 
 	Z_Free(pcx);
+	unguard;
 }
 
 //==========================================================================
@@ -394,6 +404,7 @@ static void LoadPCX(const char *filename, void **bufptr)
 
 static void LoadTGA(const char *filename, void **bufptr)
 {
+	guard(LoadTGA);
 	tgaHeader_t *hdr;
 	byte *data;
 	int col;
@@ -752,6 +763,7 @@ static void LoadTGA(const char *filename, void **bufptr)
 
 
 	Z_Free(hdr);
+	unguard;
 }
 
 //==========================================================================
@@ -763,6 +775,7 @@ static void LoadTGA(const char *filename, void **bufptr)
 void WriteTGA(char* filename, void* data, int width, int height, int bpp,
 	byte* palette, bool bot2top)
 {
+	guard(WriteTGA);
 	ofstream s(filename, ios::out | ios::binary);
 	if (!s)
 	{
@@ -811,6 +824,7 @@ void WriteTGA(char* filename, void* data, int width, int height, int bpp,
 	}
 
 	s.close();
+	unguard;
 }
 
 //==========================================================================
@@ -821,6 +835,7 @@ void WriteTGA(char* filename, void* data, int width, int height, int bpp,
 
 void Mod_LoadSkin(const char *name, void **bufptr)
 {
+	guard(Mod_LoadSkin);
 	char ext[8];
 
 	FL_ExtractFileExtension(name, ext);
@@ -836,6 +851,7 @@ void Mod_LoadSkin(const char *name, void **bufptr)
 	{
 		Sys_Error("Unsupported graphics format");
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -846,6 +862,7 @@ void Mod_LoadSkin(const char *name, void **bufptr)
 
 void R_PositionWeaponModel(clmobj_t &wpent, model_t *wpmodel, int frame)
 {
+	guard(R_PositionWeaponModel);
 	mmdl_t *pmdl = (mmdl_t*)Mod_Extradata(wpmodel);
 	if ((frame >= pmdl->numframes) || (frame < 0))
 	{
@@ -870,14 +887,18 @@ void R_PositionWeaponModel(clmobj_t &wpent, model_t *wpmodel, int frame)
 	VectorAngles(p[1] - p[0], wangles);
 	wpent.angles.yaw = AngleMod(wpent.angles.yaw + wangles.yaw);
 	wpent.angles.pitch = AngleMod(wpent.angles.pitch + wangles.pitch);
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/03/20 19:11:21  dj_jl
+//	Added guarding.
+//
 //	Revision 1.4  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	

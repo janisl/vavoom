@@ -79,6 +79,7 @@ static rgb_t	host_basepal[256];
 
 static void CalcRGBTable8(void)
 {
+	guard(CalcRGBTable8);
 	rgb_t *pal = (rgb_t*)W_CacheLumpName("playpal", PU_CACHE);
 	int i = 0;
 	for (int tn = 0; tn < 32; tn++)
@@ -102,6 +103,7 @@ static void CalcRGBTable8(void)
 			fadetable16b[i] = (b >> 3) & 0x001f;
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -112,12 +114,14 @@ static void CalcRGBTable8(void)
 
 static void CalcCol16Table(void)
 {
+	guard(CalcCol16Table);
 	rgb_t *pal = (rgb_t*)W_CacheLumpName("playpal", PU_CACHE);
 	byte *gt = gammatable[usegamma];
 	for (int i = 0; i < 256; i++)
 	{
 		pal8_to16[i] = MakeCol(gt[pal[i].r], gt[pal[i].g], gt[pal[i].b]);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -128,6 +132,7 @@ static void CalcCol16Table(void)
 
 static void CalcFadetable16(rgb_t *pal)
 {
+	guard(CalcFadetable16);
 	byte *gt = gammatable[usegamma];
 	int i = 0;
 	for (int tn = 0; tn < 32; tn++)
@@ -165,6 +170,7 @@ static void CalcFadetable16(rgb_t *pal)
 
 	D_FlushCaches(true);
 	D_FlushTextureCaches();
+	unguard;
 }
 
 //==========================================================================
@@ -175,12 +181,14 @@ static void CalcFadetable16(rgb_t *pal)
 
 static void CalcCol32Table(void)
 {
+	guard(CalcCol32Table);
 	rgb_t *pal = (rgb_t*)W_CacheLumpName("playpal", PU_CACHE);
 	byte *gt = gammatable[usegamma];
 	for (int i = 0; i < 256; i++)
 	{
 		pal2rgb[i] = MakeCol(gt[pal[i].r], gt[pal[i].g], gt[pal[i].b]);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -191,6 +199,7 @@ static void CalcCol32Table(void)
 
 static void CalcFadetable32(rgb_t *pal)
 {
+	guard(CalcFadetable32);
 	byte *gt = gammatable[usegamma];
 	int i = 0;
 	for (int tn = 0; tn < 32; tn++)
@@ -228,6 +237,7 @@ static void CalcFadetable32(rgb_t *pal)
 
 	D_FlushCaches(true);
 	D_FlushTextureCaches();
+	unguard;
 }
 
 //==========================================================================
@@ -238,6 +248,7 @@ static void CalcFadetable32(rgb_t *pal)
 
 void TSoftwareDrawer::SetPalette(int num)
 {
+	guard(TSoftwareDrawer::SetPalette);
 	if (num < 0 || num >= 32)
 	{
 		cond << "Invalid palette num " << num << endl;
@@ -264,6 +275,7 @@ void TSoftwareDrawer::SetPalette(int num)
 	memcpy(host_basepal, pal, 768);
 	//	Must recalculate any cshifts
 	memset(cl.prev_cshifts, 0, sizeof(cl.prev_cshifts));
+	unguard;
 }
 
 //==========================================================================
@@ -274,6 +286,7 @@ void TSoftwareDrawer::SetPalette(int num)
 
 static void InitColormaps(void)
 {
+	guard(InitColormaps);
     // Load in the light tables,
     colormaps = (byte*)W_CacheLumpName("COLORMAP", PU_STATIC);
     fadetable = colormaps;
@@ -285,6 +298,7 @@ static void InitColormaps(void)
 	fadetable32r = (byte*)Z_Malloc(32 * 256);
 	fadetable32g = (byte*)Z_Malloc(32 * 256);
 	fadetable32b = (byte*)Z_Malloc(32 * 256);
+	unguard;
 }
 
 //==========================================================================
@@ -295,6 +309,7 @@ static void InitColormaps(void)
 
 static void InitTranslucencyTables(void)
 {
+	guard(InitTranslucencyTables);
     tinttables[0] = (byte*)W_CacheLumpName("TRANSP10", PU_STATIC);
     tinttables[1] = (byte*)W_CacheLumpName("TRANSP20", PU_STATIC);
     tinttables[2] = (byte*)W_CacheLumpName("TRANSP30", PU_STATIC);
@@ -308,6 +323,7 @@ static void InitTranslucencyTables(void)
 			scaletable[t][i] = (i << 8) * t / 31;
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -318,9 +334,11 @@ static void InitTranslucencyTables(void)
 
 void TSoftwareDrawer::InitData(void)
 {
+	guard(TSoftwareDrawer::InitData);
 	d_rgbtable = (byte*)W_CacheLumpName("RGBTABLE", PU_STATIC);
     InitColormaps();
 	InitTranslucencyTables();
+	unguard;
 }
 
 //==========================================================================
@@ -331,6 +349,7 @@ void TSoftwareDrawer::InitData(void)
 
 void TSoftwareDrawer::UpdatePalette(void)
 {
+	guard(TSoftwareDrawer::UpdatePalette);
 	int		i, j;
 	bool	newshifts;
 	byte	*basepal, *newpal;
@@ -395,6 +414,7 @@ void TSoftwareDrawer::UpdatePalette(void)
 		CalcCol32Table();
 		CalcFadetable32((rgb_t*)pal);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -405,6 +425,7 @@ void TSoftwareDrawer::UpdatePalette(void)
 
 void TSoftwareDrawer::NewMap(void)
 {
+	guard(TSoftwareDrawer::NewMap);
 	if (fadetable != colormaps)
 	{
 		Z_ChangeTag(fadetable, PU_CACHE);
@@ -438,14 +459,18 @@ void TSoftwareDrawer::NewMap(void)
 	}
 
 	D_FlushCaches(false);
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/03/20 19:11:21  dj_jl
+//	Added guarding.
+//
 //	Revision 1.8  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.7  2001/11/02 18:35:54  dj_jl
 //	Sky optimizations
 //	

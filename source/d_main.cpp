@@ -164,6 +164,7 @@ TSoftwareDrawer::TSoftwareDrawer(void)
 
 bool TSoftwareDrawer::AllocMemory(int width, int height, int bpp)
 {
+	guard(TSoftwareDrawer::AllocMemory);
 	scrn = (byte*)Z_Malloc(width * height * ((bpp + 7) >> 3), PU_VIDEO, 0);
 	if (!scrn)
 	{
@@ -188,6 +189,7 @@ bool TSoftwareDrawer::AllocMemory(int width, int height, int bpp)
 	D_InitCaches(buffer, size);
 
 	return true;
+	unguard;
 }
 
 //==========================================================================
@@ -198,6 +200,7 @@ bool TSoftwareDrawer::AllocMemory(int width, int height, int bpp)
 
 void TSoftwareDrawer::FreeMemory(void)
 {
+	guard(TSoftwareDrawer::FreeMemory);
 	D_FlushCaches(true);
 	D_FlushTextureCaches();
 //FIXME use Z_FreeTag(PU_VIDEO)
@@ -216,6 +219,7 @@ void TSoftwareDrawer::FreeMemory(void)
 		Z_Free(scrn);
 		scrn = NULL;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -228,6 +232,7 @@ void TSoftwareDrawer::FreeMemory(void)
 
 void TSoftwareDrawer::InitResolution(void)
 {
+	guard(TSoftwareDrawer::InitResolution);
 	scrn16 = (word*)scrn;
 
 	if (ScreenBPP == 8)
@@ -314,6 +319,7 @@ void TSoftwareDrawer::InitResolution(void)
 	d_rowbytes = -ScreenWidth * PixelBytes;
 	d_zrowbytes = -ScreenWidth * 2;
 #endif
+	unguard;
 }
 
 //==========================================================================
@@ -325,7 +331,8 @@ void TSoftwareDrawer::InitResolution(void)
 //==========================================================================
 
 static void InitViewBorder(const refdef_t *rd)
-{ 
+{
+	guard(InitViewBorder);
     if (r_backscreen)
     {
       	Z_Free(r_backscreen);
@@ -340,6 +347,7 @@ static void InitViewBorder(const refdef_t *rd)
 	R_DrawViewBorder();
 
 	memcpy(r_backscreen, scrn, ScreenWidth * (ScreenHeight - SB_REALHEIGHT) * PixelBytes);
+	unguard;
 } 
 
 //==========================================================================
@@ -366,7 +374,8 @@ static void VideoErase(unsigned ofs, int count)
 //==========================================================================
 
 static void EraseViewBorder(const refdef_t *rd)
-{ 
+{
+	guard(EraseViewBorder);
 	int top;
 	int side;
 	int ofs;
@@ -394,7 +403,8 @@ static void EraseViewBorder(const refdef_t *rd)
 		VideoErase(ofs, side);
 		ofs += ScreenWidth;
 	}
-} 
+	unguard;
+}
 
 //==========================================================================
 //
@@ -435,6 +445,7 @@ void TSoftwareDrawer::EndDirectUpdate(void)
 
 void TSoftwareDrawer::SetupView(const refdef_t *rd)
 {
+	guard(TSoftwareDrawer::SetupView);
 	int i;
 
 	viewx = rd->x;
@@ -558,6 +569,7 @@ void TSoftwareDrawer::SetupView(const refdef_t *rd)
 
 	UpdatePalette();
 	D_BeginEdgeFrame();
+	unguard;
 }
 
 //==========================================================================
@@ -568,6 +580,7 @@ void TSoftwareDrawer::SetupView(const refdef_t *rd)
 
 void TSoftwareDrawer::EndView(void)
 {
+	guard(TSoftwareDrawer::EndView);
 	// back to high floating-point precision
 	Sys_HighFPPrecision();
 
@@ -577,6 +590,7 @@ void TSoftwareDrawer::EndView(void)
 		T_SetAlign(hright, vtop);
 		T_DrawText(318, 10, "RAM");
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -587,6 +601,7 @@ void TSoftwareDrawer::EndView(void)
 
 void *TSoftwareDrawer::ReadScreen(int *bpp, bool *bot2top)
 {
+	guard(TSoftwareDrawer::ReadScreen);
 	void *dst;
 	if (ScreenBPP == 8)
 	{
@@ -638,14 +653,18 @@ void *TSoftwareDrawer::ReadScreen(int *bpp, bool *bot2top)
 	}
 	*bot2top = false;
 	return dst;
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/03/20 19:11:21  dj_jl
+//	Added guarding.
+//
 //	Revision 1.13  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.12  2001/12/18 19:01:34  dj_jl
 //	Changes for MSVC asm
 //	

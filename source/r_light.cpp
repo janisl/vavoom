@@ -104,12 +104,14 @@ static int			c_bad;
 
 void R_ClearLights(void)
 {
+	guard(R_ClearLights);
 	num_lights = 0;
 
 	for (int i = 0; i < 256; i++)
 	{
 		light_remap[i] = byte(i * i / 255);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -120,6 +122,7 @@ void R_ClearLights(void)
 
 void R_AddStaticLight(const TVec &origin, float radius, dword color)
 {
+	guard(R_AddStaticLight);
 	if (num_lights == MAX_STATIC_LIGHTS)
 	{
 		con << "Too many static lights\n";
@@ -131,6 +134,7 @@ void R_AddStaticLight(const TVec &origin, float radius, dword color)
 	lights[num_lights].leafnum = CL_PointInSubsector(origin.x, origin.y) -
 		cl_level.subsectors;
 	num_lights++;
+	unguard;
 }
 
 //==========================================================================
@@ -141,6 +145,7 @@ void R_AddStaticLight(const TVec &origin, float radius, dword color)
 
 static void CalcMinMaxs(surface_t *surf)
 {
+	guard(CalcMinMaxs);
 	smins = TVec(99999.0, 99999.0, 99999.0);
 	smaxs = TVec(-999999.0, -999999.0, -999999.0);
 
@@ -160,6 +165,7 @@ static void CalcMinMaxs(surface_t *surf)
 		if (smaxs.z < v.z)
 			smaxs.z = v.z;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -172,6 +178,7 @@ static void CalcMinMaxs(surface_t *surf)
 
 static float CastRay(const TVec &p1, const TVec &p2, float squaredist)
 {
+	guard(CastRay);
 	float	t;
 	bool	trace;
 	TVec	delta;
@@ -188,6 +195,7 @@ static float CastRay(const TVec &p1, const TVec &p2, float squaredist)
 	if (t == 0)
 		t = 1;			// don't blow up...
 	return sqrt(t);
+	unguard;
 }
 
 //==========================================================================
@@ -200,6 +208,7 @@ static float CastRay(const TVec &p1, const TVec &p2, float squaredist)
 
 static void CalcFaceVectors(surface_t *surf)
 {
+	guard(CalcFaceVectors);
 	texinfo_t	*tex;
 	int			i;
 	TVec		texnormal;
@@ -254,6 +263,7 @@ static void CalcFaceVectors(surface_t *surf)
 	dist = DotProduct(texorg, surf->plane->normal) - surf->plane->dist - 1;
 	dist *= distscale;
 	texorg = texorg - dist * texnormal;
+	unguard;
 }
 
 //==========================================================================
@@ -267,6 +277,7 @@ static void CalcFaceVectors(surface_t *surf)
 
 static void CalcPoints(surface_t *surf)
 {
+	guard(CalcPoints);
 	int		i;
 	int		s, t;
 	int		w, h;
@@ -360,6 +371,7 @@ static void CalcPoints(surface_t *surf)
 				c_bad++;
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -370,6 +382,7 @@ static void CalcPoints(surface_t *surf)
 
 static void SingleLightFace(light_t *light, surface_t *surf)
 {
+	guard(SingleLightFace);
 	float	dist;
 	TVec	incoming;
 	float	angle;
@@ -452,6 +465,7 @@ static void SingleLightFace(light_t *light, surface_t *surf)
 				is_colored = true;
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -462,6 +476,7 @@ static void SingleLightFace(light_t *light, surface_t *surf)
 
 void R_LightFace(surface_t *surf, subsector_t *leaf)
 {
+	guard(R_LightFace);
 	int			i, s, t, w, h;
 	float		total;
 
@@ -614,6 +629,7 @@ void R_LightFace(surface_t *surf, subsector_t *leaf)
 			surf->lightmap[i] = byte(total);
 		}
 	}
+	unguard;
 }
 
 //**************************************************************************
@@ -630,6 +646,7 @@ void R_LightFace(surface_t *surf, subsector_t *leaf)
 
 void R_MarkLights(dlight_t *light, int bit, int bspnum)
 {
+	guard(R_MarkLights);
     if (bspnum & NF_SUBSECTOR)
     {
 		int num;
@@ -660,6 +677,7 @@ void R_MarkLights(dlight_t *light, int bit, int bspnum)
 			R_MarkLights(light, bit, node->children[1]);
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -670,6 +688,7 @@ void R_MarkLights(dlight_t *light, int bit, int bspnum)
 
 void R_PushDlights(void)
 {
+	guard(R_PushDlights);
 	int			i;
 	dlight_t	*l;
 
@@ -687,6 +706,7 @@ void R_PushDlights(void)
 			continue;
 		R_MarkLights(l, 1 << i, cl_level.numnodes - 1);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -697,6 +717,7 @@ void R_PushDlights(void)
 
 dword R_LightPoint(const TVec &p)
 {
+	guard(R_LightPoint);
 	subsector_t		*sub;
 	subregion_t		*reg;
 	float			l, lr, lg, lb, d, add;
@@ -805,6 +826,7 @@ dword R_LightPoint(const TVec &p)
 		lb = 255;
 
 	return ((int)l << 24) | ((int)lr << 16) | ((int)lg << 8) | ((int)lb);
+	unguard;
 }
 
 //==========================================================================
@@ -815,6 +837,7 @@ dword R_LightPoint(const TVec &p)
 
 void R_AddDynamicLights(surface_t *surf)
 {
+	guard(R_AddDynamicLights);
 	int			lnum;
 	int			sd, td;
 	float		dist, rad, minlight, rmul, gmul, bmul;
@@ -880,6 +903,7 @@ void R_AddDynamicLights(surface_t *surf)
 			}
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -892,6 +916,7 @@ void R_AddDynamicLights(surface_t *surf)
 
 bool R_BuildLightMap(surface_t *surf, int shift)
 {
+	guard(R_BuildLightMap);
 	int			smax, tmax;
 	int			t;
 	int			i, size;
@@ -1034,14 +1059,18 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 	}
 
 	return is_colored;
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/03/20 19:11:21  dj_jl
+//	Added guarding.
+//
 //	Revision 1.12  2002/02/22 18:09:52  dj_jl
 //	Some improvements, beautification.
-//
+//	
 //	Revision 1.11  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	
