@@ -77,6 +77,7 @@ static void SB_LoadPatches(void)
     	sb_pics[i] = R_RegisterPic(names[i], PIC_PATCH);
 		R_GetPicInfo(sb_pics[i], &sb_pic_info[i]);
     }
+	Z_FreeTag(PU_CACHE);
 }
 
 //==========================================================================
@@ -449,9 +450,12 @@ void SB_Start(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/30 17:44:07  dj_jl
+//	Removed memory leaks after startup
+//
 //	Revision 1.5  2001/08/21 17:39:22  dj_jl
 //	Real string pointers in progs
-//
+//	
 //	Revision 1.4  2001/08/15 17:08:15  dj_jl
 //	Fixed Strife status bar
 //	

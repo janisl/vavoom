@@ -149,6 +149,7 @@ static void T_LoadFont(font_e FontNr, char* Name, int SpaceW, int SpaceH)
 			}
 		}
     }
+	Z_FreeTag(PU_CACHE);
 }
 
 //==========================================================================
@@ -187,6 +188,7 @@ static void T_LoadFont2(font_e FontNr, char* Name, int SpaceW, int SpaceH)
 			}
 		}
     }
+	Z_FreeTag(PU_CACHE);
 }
 
 //==========================================================================
@@ -555,9 +557,12 @@ void T_DrawString8(int x, int y, char* String)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/30 17:44:07  dj_jl
+//	Removed memory leaks after startup
+//
 //	Revision 1.3  2001/07/31 17:12:43  dj_jl
 //	Fixed cursor for empty strings
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

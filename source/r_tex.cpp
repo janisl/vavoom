@@ -789,7 +789,7 @@ void R_Init(void)
 
 void R_SetupPalette(int palnum, const char *name)
 {
-	byte *psrc = (byte*)W_CacheLumpName(name, PU_CACHE);
+	byte *psrc = (byte*)W_CacheLumpName(name, PU_TEMP);
 	rgba_t *pal = r_palette[palnum];
 	//	We use color 0 as transparent color, so we must find an alternate
 	// index for black color. In Doom, Heretic and Strife there is another
@@ -1050,9 +1050,12 @@ void R_DrawShadowedPic(int x, int y, int handle)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/08/30 17:44:07  dj_jl
+//	Removed memory leaks after startup
+//
 //	Revision 1.7  2001/08/23 17:47:22  dj_jl
 //	Started work on pics with custom palettes
-//
+//	
 //	Revision 1.6  2001/08/21 17:46:08  dj_jl
 //	Added R_TextureAnimation, made SetTexture recognize flats
 //	
