@@ -45,7 +45,10 @@ int Sys_FileExists(const char*);
 int Sys_FileTime(const char*);
 
 int Sys_CreateDirectory(const char*);
-void Sys_GetBaseDir(char*);
+int Sys_OpenDir(const char *);
+const char *Sys_ReadDir(void);
+void Sys_CloseDir(void);
+bool Sys_DirExists(const char *);
 
 void* Sys_ZoneBase(int*);
 
@@ -74,9 +77,12 @@ void Sys_MakeCodeWriteable(unsigned long, unsigned long);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/11/09 14:19:42  dj_jl
+//	Functions for directory listing
+//
 //	Revision 1.5  2001/08/31 17:26:48  dj_jl
 //	Attribute syntax change
-//
+//	
 //	Revision 1.4  2001/08/29 17:49:36  dj_jl
 //	Added file time functions
 //	

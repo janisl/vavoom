@@ -31,6 +31,7 @@
 #include <fcntl.h>
 #include <io.h>
 #include <direct.h>
+#include <dirent.h>
 #include <sys/stat.h>
 
 // MACROS ------------------------------------------------------------------
@@ -68,6 +69,8 @@ HWND				hwnd;	//	Needed for all DirectX interfaces
 HINSTANCE			hInst;	//	Needed for DirectInput
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
+
+static DIR *current_dir;
 
 static double		pfreq;
 static double		curtime = 0.0;
@@ -196,6 +199,61 @@ int	Sys_FileTime(const char *path)
 int Sys_CreateDirectory(const char* path)
 {
 	return mkdir(path);
+}
+
+//==========================================================================
+//
+//	Sys_OpenDir
+//
+//==========================================================================
+
+int Sys_OpenDir(const char *path)
+{
+	current_dir = opendir(path);
+	return current_dir != NULL;
+}
+
+//==========================================================================
+//
+//	Sys_ReadDir
+//
+//==========================================================================
+
+const char *Sys_ReadDir(void)
+{
+	struct dirent *de = readdir(current_dir);
+	if (de)
+	{
+		return de->d_name;
+	}
+	return NULL;
+}
+
+//==========================================================================
+//
+//	Sys_CloseDir
+//
+//==========================================================================
+
+void Sys_CloseDir(void)
+{
+	closedir(current_dir);
+}
+
+//==========================================================================
+//
+//	Sys_DirExists
+//
+//==========================================================================
+
+bool Sys_DirExists(const char *path)
+{
+	struct stat s;
+	
+	if (stat(path, &s) == -1)
+		return false;
+	
+	return !!S_ISDIR(s.st_mode);
 }
 
 //==========================================================================
@@ -452,7 +510,7 @@ void* Sys_ZoneBase(int* size)
 	if (heap < MINIMUM_HEAP_SIZE)
 		heap = MINIMUM_HEAP_SIZE;
 
-	if (heap < (lpBuffer.dwTotalPhys >> 1))
+	if (heap < int(lpBuffer.dwTotalPhys >> 1))
 		heap = lpBuffer.dwTotalPhys >> 1;
 
 	if (heap > maxzone)
@@ -747,9 +805,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/11/09 14:19:42  dj_jl
+//	Functions for directory listing
+//
 //	Revision 1.7  2001/10/08 17:26:17  dj_jl
 //	Started to use exceptions
-//
+//	
 //	Revision 1.6  2001/10/04 17:23:29  dj_jl
 //	Got rid of some warnings
 //	

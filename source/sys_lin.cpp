@@ -31,6 +31,7 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <signal.h>
+#include <dirent.h>
 #include <allegro.h>
 
 #include "gamedefs.h"
@@ -60,6 +61,8 @@ void Sys_SetFPCW(void);
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
+
+static DIR *current_dir;
 
 // CODE --------------------------------------------------------------------
 
@@ -184,6 +187,61 @@ int	Sys_FileTime(const char *path)
 int Sys_CreateDirectory(const char* path)
 {
 	return mkdir(path, 0777);
+}
+
+//==========================================================================
+//
+//	Sys_OpenDir
+//
+//==========================================================================
+
+int Sys_OpenDir(const char *path)
+{
+	current_dir = opendir(path);
+	return current_dir != NULL;
+}
+
+//==========================================================================
+//
+//	Sys_ReadDir
+//
+//==========================================================================
+
+const char *Sys_ReadDir(void)
+{
+	struct dirent *de = readdir(current_dir);
+	if (de)
+	{
+		return de->d_name;
+	}
+	return NULL;
+}
+
+//==========================================================================
+//
+//	Sys_CloseDir
+//
+//==========================================================================
+
+void Sys_CloseDir(void)
+{
+	closedir(current_dir);
+}
+
+//==========================================================================
+//
+//	Sys_DirExists
+//
+//==========================================================================
+
+bool Sys_DirExists(const char *path)
+{
+	struct stat s;
+	
+	if (stat(path, &s) == -1)
+		return false;
+	
+	return !!S_ISDIR(s.st_mode);
 }
 
 //==========================================================================
@@ -763,9 +821,12 @@ END_OF_MAIN()	//	For Allegro
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/11/09 14:19:42  dj_jl
+//	Functions for directory listing
+//
 //	Revision 1.9  2001/10/08 17:26:17  dj_jl
 //	Started to use exceptions
-//
+//	
 //	Revision 1.8  2001/09/20 16:27:43  dj_jl
 //	Improved zone allocation
 //	
