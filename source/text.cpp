@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
@@ -455,6 +451,9 @@ void T_DrawNText(int x,int y,char* String,int lenght)
 			T_DrawNString(cx, cy, String + start, lenght - start);
 		}
 	}
+	//	Need this for correct cursor position with empty strings.
+	LastX = cx;
+    LastY = cy;
 }
 
 //==========================================================================
@@ -553,4 +552,13 @@ void T_DrawString8(int x, int y, char* String)
     LastY = cy;
 }
 
-
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/07/31 17:12:43  dj_jl
+//	Fixed cursor for empty strings
+//
+//	Revision 1.2  2001/07/27 14:27:54  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************
