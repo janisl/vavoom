@@ -26,8 +26,10 @@ void VC_WriteWeapons(void)
 	int j;
 	FILE *f;
 	int best;
+	char fname[256];
 
-	f = fopen("../../progs/ddf/wpninfo.vc", "w");
+	sprintf(fname, "%s/wpninfo.vc", outdir);
+	f = fopen(fname, "w");
 	cur_file = f;
 	for (i = num_disabled_weapons; i < numweapons; i++)
 	{
@@ -46,7 +48,8 @@ void VC_WriteWeapons(void)
 	fprintf(f, "};\n");
 	fclose(f);
 
-	f = fopen("../../progs/ddf/weapons.vc", "w");
+	sprintf(fname, "%s/weapons.vc", outdir);
+	f = fopen(fname, "w");
 	cur_file = f;
 	for (i = num_disabled_weapons; i < numweapons; i++)
 	{

@@ -44,6 +44,7 @@ const char *gammamsg[5];
 const mapstuff_t *currentmap;
 
 char *ddfdir = "ddf";
+char *outdir = "../../progs/ddf";
 
 default_t defaults[] =
 {
