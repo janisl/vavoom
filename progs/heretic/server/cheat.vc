@@ -206,7 +206,7 @@ void P_Massacre(void);
 void Cheat_KillAll(void)
 {
 	P_Massacre();
-	cprint(&players[0], "MASSACRE");
+	cprint(&players[0], "MASSACRE\n");
 }
 
 //==========================================================================
@@ -265,6 +265,9 @@ void Cheat_Class(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/11/09 14:39:44  dj_jl
+//  Beautification
+//
 //  Revision 1.5  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

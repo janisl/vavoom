@@ -187,7 +187,7 @@ void menu_psetup(void)
 		AddMenuItem(&PSetupMenu.menu, &PSetupMenu.skin);
 
 		MenuModel_Init(&PSetupMenu.mdl, vector(-64.0, 32.0, -32.0),
-			330.0, model, 0);
+			345.0, model, 0);
 		PSetupMenu.mdl.skin = ARR2STR(skinbuf);
 		SetSkin();
 		AddMenuItem(&PSetupMenu.menu, &PSetupMenu.mdl);
@@ -202,6 +202,9 @@ void menu_psetup(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/11/09 14:39:44  dj_jl
+//  Beautification
+//
 //  Revision 1.5  2001/10/18 17:39:33  dj_jl
 //  A lots of changes for Alpha 2
 //

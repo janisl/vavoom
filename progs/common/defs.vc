@@ -229,8 +229,8 @@ enum
 
 enum
 {
-	PIC_PATCH,
-	PIC_RAW
+	PIC_PATCH,	// A standard Doom patch
+	PIC_RAW		// Raw screens in Heretic and Hexen
 };
 
 //
@@ -280,6 +280,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2001/11/09 14:39:44  dj_jl
+//  Beautification
+//
 //  Revision 1.8  2001/10/27 07:37:39  dj_jl
 //  Possibility to create new console variables
 //
