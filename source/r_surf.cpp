@@ -37,6 +37,9 @@
 #define MAXWVERTS	8
 #define WSURFSIZE	(sizeof(surface_t) + sizeof(TVec) * (MAXWVERTS - 1))
 
+//	This is used to compare floats like ints which is faster
+#define FASI(var)	(*(int*)&var)
+
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -400,7 +403,7 @@ static void UpdateSecSurface(sec_surface_t *ssurf)
 		return;
 	}
 
-	if (ssurf->dist != plane->dist)
+	if (FASI(ssurf->dist) != FASI(plane->dist))
 	{
 		ssurf->dist = plane->dist;
 		for (surface_t *surf = ssurf->surfs; surf; surf = surf->next)
@@ -413,8 +416,8 @@ static void UpdateSecSurface(sec_surface_t *ssurf)
 		FlushSurfCaches(ssurf->surfs);
 		InitSurfs(ssurf->surfs, &ssurf->texinfo, NULL);
 	}
-	if (ssurf->xoffs != plane->xoffs ||
-		ssurf->yoffs != plane->yoffs)
+	if (FASI(ssurf->xoffs) != FASI(plane->xoffs) ||
+		FASI(ssurf->yoffs) != FASI(plane->yoffs))
 	{
 		ssurf->texinfo.texorg = TVec(-plane->xoffs, plane->yoffs, 0);
 		ssurf->xoffs = plane->xoffs;
@@ -1069,8 +1072,8 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 	if (!backsector)
 	{
 		sp = dseg->mid;
-		if (sp->frontTopDist != r_ceiling->dist ||
-			sp->frontBotDist != r_floor->dist ||
+		if (FASI(sp->frontTopDist) != FASI(r_ceiling->dist) ||
+			FASI(sp->frontBotDist) != FASI(r_floor->dist) ||
 			sp->texinfo.pic != sidedef->midtexture)
 		{
 			float topz1 = r_ceiling->GetPointZ(*seg->v1);
@@ -1114,18 +1117,18 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 			sp->frontBotDist = r_floor->dist;
 			sp->rowoffset = sidedef->rowoffset;
 		}
-		else if (sp->rowoffset != sidedef->rowoffset)
+		else if (FASI(sp->rowoffset) != FASI(sidedef->rowoffset))
 		{
 			UpdateRowOffset(sp, sidedef->rowoffset);
 		}
-		if (sp->textureoffset != sidedef->textureoffset)
+		if (FASI(sp->textureoffset) != FASI(sidedef->textureoffset))
 		{
 			UpdateTextureOffset(sp, seg, sidedef->textureoffset);
 		}
 
 		sp = dseg->topsky;
        	if (r_ceiling->pic == skyflatnum &&
-			sp->frontTopDist != r_ceiling->dist)
+			FASI(sp->frontTopDist) != FASI(r_ceiling->dist))
 		{
 			float topz1 = r_ceiling->GetPointZ(*seg->v1);
 			float topz2 = r_ceiling->GetPointZ(*seg->v2);
@@ -1154,9 +1157,9 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 
 		// top wall
 		sp = dseg->top;
-		if (sp->frontTopDist != r_ceiling->dist ||
-			sp->frontBotDist != r_floor->dist ||
-			sp->backTopDist != r_back_ceiling->dist ||
+		if (FASI(sp->frontTopDist) != FASI(r_ceiling->dist) ||
+			FASI(sp->frontBotDist) != FASI(r_floor->dist) ||
+			FASI(sp->backTopDist) != FASI(r_back_ceiling->dist) ||
 			sp->texinfo.pic != sidedef->toptexture)
 		{
 			float topz1 = r_ceiling->GetPointZ(*seg->v1);
@@ -1211,11 +1214,11 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 			sp->backTopDist = r_back_ceiling->dist;
 			sp->rowoffset = sidedef->rowoffset;
 		}
-		else if (sp->rowoffset != sidedef->rowoffset)
+		else if (FASI(sp->rowoffset) != FASI(sidedef->rowoffset))
 		{
 			UpdateRowOffset(sp, sidedef->rowoffset);
 		}
-		if (sp->textureoffset != sidedef->textureoffset)
+		if (FASI(sp->textureoffset) != FASI(sidedef->textureoffset))
 		{
 			UpdateTextureOffset(sp, seg, sidedef->textureoffset);
 		}
@@ -1224,7 +1227,7 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 		sp = dseg->topsky;
 		if (r_ceiling->pic == skyflatnum &&
 			r_back_ceiling->pic != skyflatnum &&
-       		sp->frontTopDist != r_ceiling->dist)
+       		FASI(sp->frontTopDist) != FASI(r_ceiling->dist))
 		{
 			float topz1 = r_ceiling->GetPointZ(*seg->v1);
 			float topz2 = r_ceiling->GetPointZ(*seg->v2);
@@ -1248,9 +1251,9 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 
 		// bottom wall
 		sp = dseg->bot;
-		if (sp->frontTopDist != r_ceiling->dist ||
-			sp->frontBotDist != r_floor->dist ||
-			sp->backBotDist != r_back_floor->dist)
+		if (FASI(sp->frontTopDist) != FASI(r_ceiling->dist) ||
+			FASI(sp->frontBotDist) != FASI(r_floor->dist) ||
+			FASI(sp->backBotDist) != FASI(r_back_floor->dist))
 		{
 			float topz1 = r_ceiling->GetPointZ(*seg->v1);
 			float topz2 = r_ceiling->GetPointZ(*seg->v2);
@@ -1303,11 +1306,11 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 			sp->backBotDist = r_back_floor->dist;
 			sp->rowoffset = sidedef->rowoffset;
 		}
-		else if (sp->rowoffset != sidedef->rowoffset)
+		else if (FASI(sp->rowoffset) != FASI(sidedef->rowoffset))
 		{
 			UpdateRowOffset(sp, sidedef->rowoffset);
 		}
-		if (sp->textureoffset != sidedef->textureoffset)
+		if (FASI(sp->textureoffset) != FASI(sidedef->textureoffset))
 		{
 			UpdateTextureOffset(sp, seg, sidedef->textureoffset);
 		}
@@ -1318,11 +1321,11 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 
 		// masked midtexture
 		sp = dseg->mid;
-		if (sp->frontTopDist != r_ceiling->dist ||
-			sp->frontBotDist != r_floor->dist ||
-			sp->backTopDist != r_back_ceiling->dist ||
-			sp->backBotDist != r_back_floor->dist ||
-			sp->rowoffset != sidedef->rowoffset ||
+		if (FASI(sp->frontTopDist) != FASI(r_ceiling->dist) ||
+			FASI(sp->frontBotDist) != FASI(r_floor->dist) ||
+			FASI(sp->backTopDist) != FASI(r_back_ceiling->dist) ||
+			FASI(sp->backBotDist) != FASI(r_back_floor->dist) ||
+			FASI(sp->rowoffset) != FASI(sidedef->rowoffset) ||
 			sp->texinfo.pic != sidedef->midtexture)
 		{
 			FreeWSurfs(sp->surfs);
@@ -1394,7 +1397,7 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 			sp->backBotDist = r_back_floor->dist;
 			sp->rowoffset = sidedef->rowoffset;
 		}
-		if (sp->textureoffset != sidedef->textureoffset)
+		if (FASI(sp->textureoffset) != FASI(sidedef->textureoffset))
 		{
 			UpdateTextureOffset(sp, seg, sidedef->textureoffset);
 		}
@@ -1408,10 +1411,10 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 			side_t *extraside = &cl_level.sides[reg->extraline->sidenum[0]];
 
 			sp->texinfo.pic = extraside->midtexture;
-			if (sp->frontTopDist != r_ceiling->dist ||
-				sp->frontBotDist != r_floor->dist ||
-				sp->backTopDist != extratop->dist ||
-				sp->backBotDist != extrabot->dist)
+			if (FASI(sp->frontTopDist) != FASI(r_ceiling->dist) ||
+				FASI(sp->frontBotDist) != FASI(r_floor->dist) ||
+				FASI(sp->backTopDist) != FASI(extratop->dist) ||
+				FASI(sp->backBotDist) != FASI(extrabot->dist))
 			{
 				float topz1 = r_ceiling->GetPointZ(*seg->v1);
 				float topz2 = r_ceiling->GetPointZ(*seg->v2);
@@ -1448,11 +1451,11 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 				sp->backBotDist = extrabot->dist;
 				sp->rowoffset = sidedef->rowoffset;
 			}
-			else if (sp->rowoffset != sidedef->rowoffset)
+			else if (FASI(sp->rowoffset) != FASI(sidedef->rowoffset))
 			{
 				UpdateRowOffset(sp, sidedef->rowoffset);
 			}
-			if (sp->textureoffset != sidedef->textureoffset)
+			if (FASI(sp->textureoffset) != FASI(sidedef->textureoffset))
 			{
 				UpdateTextureOffset(sp, seg, sidedef->textureoffset);
 			}
@@ -1619,7 +1622,6 @@ void R_PreRender(void)
 static void UpdateSubRegion(subregion_t *region)
 {
     int				count;
-    seg_t*			line;
 	int 			polyCount;
 	seg_t**			polySeg;
 
@@ -1633,8 +1635,6 @@ static void UpdateSubRegion(subregion_t *region)
 		UpdateDrawSeg(ds);
 		ds++;
     }
-
-    line = &cl_level.segs[r_sub->firstline];
 
 	UpdateSecSurface(region->floor);
 	UpdateSecSurface(region->ceil);
@@ -1741,9 +1741,12 @@ void R_UpdateWorld(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/30 17:36:47  dj_jl
+//	Faster compares
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
