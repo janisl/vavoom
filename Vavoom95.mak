@@ -4,8 +4,9 @@ BCB = $(MAKEDIR)\..
 !endif
 
 # ---------------------------------------------------------------------------
-CFLAGS = -O2 -X- -a4 -4 -b -k- -vi -q -c -w -Ic:\mssdk\include -D_NO_VCL
-RFLAGS = /l 0x426 /d "NDEBUG" /i$(BCB)\include
+CFLAGS = -O2 -X- -a4 -4 -b -k- -vi -q -c -w -w-8071 -w-8027 \
+         -Ic:\mssdk\include -D_NO_VCL
+RFLAGS = /l 0x426
 AFLAGS = /ml /w2 /zn
 LFLAGS = -Iobj -aa -Tpe -x -Gn -w -q
 
@@ -13,7 +14,7 @@ PROJECT = Vavoom95.exe
 OBJFILES = obj\chat.obj obj\cheats.obj \
     obj\cmd.obj obj\crc.obj obj\cvar.obj obj\debug.obj \
     obj\host.obj obj\sys_win.obj \
-    obj\misc.obj obj\p_info.obj obj\p_setup.obj \
+    obj\misc.obj obj\mapinfo.obj obj\p_setup.obj \
     obj\pr_cmds.obj obj\pr_exec.obj \
     obj\sc_man.obj obj\maths.obj obj\sizebuf.obj \
     obj\wad.obj obj\zone.obj obj\message.obj obj\infostr.obj obj\files.obj \
@@ -35,7 +36,6 @@ OBJFILES = obj\chat.obj obj\cheats.obj \
     \
     obj\am_map.obj obj\menu.obj obj\sbar.obj obj\screen.obj obj\text.obj \
     obj\finale.obj obj\iline.obj obj\imission.obj obj\console.obj \
-    obj\v_draw.obj \
     \
     obj\r_bsp.obj obj\r_light.obj obj\r_main.obj obj\r_model.obj \
     obj\r_sky.obj obj\r_surf.obj obj\r_tex.obj obj\r_things.obj \

@@ -121,6 +121,7 @@ OBJ_FILES = $(SYS_OBJS) \
 	obj/infostr.o \
 	obj/l_glbsp.o \
 	obj/l_glvis.o \
+	obj/mapinfo.o \
 	obj/maths.o \
 	obj/menu.o \
 	obj/message.o \
@@ -128,7 +129,6 @@ OBJ_FILES = $(SYS_OBJS) \
 	obj/net_dgrm.o \
 	obj/net_loop.o \
 	obj/net_main.o \
-	obj/p_info.o \
 	obj/p_setup.o \
 	obj/pr_cmds.o \
 	obj/pr_exec.o \
@@ -160,7 +160,6 @@ OBJ_FILES = $(SYS_OBJS) \
 	obj/sv_user.o \
 	obj/sv_world.o \
 	obj/text.o \
-	obj/v_draw.o \
 	obj/wad.o \
 	obj/zone.o
 
