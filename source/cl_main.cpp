@@ -266,7 +266,6 @@ void CL_SignonReply(void)
 
 	 case 2:
 		R_PreRender();
-		cls.message << (byte)clc_player_info << cls.userinfo;
 		cls.message << (byte)clc_stringcmd << "Spawn\n";
 		break;
 
@@ -424,6 +423,8 @@ void CL_EstablishConnection(char *host)
 		return;
 	}
 	cond << "CL_EstablishConnection: connected to " << host << endl;
+
+	cls.message << (byte)clc_player_info << cls.userinfo;
 	
 	clpr.Exec("StopDemoLoop");
 	cls.state = ca_connected;
@@ -508,9 +509,12 @@ COMMAND(Say)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/12/28 16:23:04  dj_jl
+//	Full user info sent only when establishing connection
+//
 //	Revision 1.8  2001/12/27 17:36:47  dj_jl
 //	Some speedup
-//
+//	
 //	Revision 1.7  2001/10/08 17:34:57  dj_jl
 //	A lots of small changes and cleanups
 //	
