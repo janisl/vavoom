@@ -255,7 +255,6 @@ void WriteMobjInfo(void)
 	FILE*		f;
 	int			i;
     int			j;
-	int			firstflag;
     int			flags;
 	int			flags2;
     const char *parent;
@@ -421,41 +420,19 @@ void WriteMobjInfo(void)
 #endif
 
         //	Flags
-		if (flags)
-        {
-			fprintf(f, "\t\tFlags = ");
-			firstflag = 1;
-    	    for (j=0; j<32; j++)
-        	{
-        		if (flags & (1 << j))
-                {
-                	if (!firstflag)
-                    {
-                    	fprintf(f, "|");
-					}
-                    firstflag = 0;
-                    fprintf(f, "%s", flagnames1[j]);
-                }
+   	    for (j = 0; j < 32; j++)
+       	{
+       		if (flags & (1 << j))
+			{
+				fprintf(f, "\t\t%s = true;\n", flagnames1[j]);
 			}
-	        fprintf(f, ";\n");
 		}
-		if (flags2)
-        {
-			fprintf(f, "\t\tFlags2 = ");
-			firstflag = 1;
-    	    for (j=0; j<32; j++)
-        	{
-        		if (flags2 & (1 << j))
-                {
-                	if (!firstflag)
-                    {
-                    	fprintf(f, "|");
-					}
-                    firstflag = 0;
-                    fprintf(f, "%s", flagnames2[j]);
-                }
+   	    for (j = 0; j < 32; j++)
+       	{
+       		if (flags2 & (1 << j))
+			{
+				fprintf(f, "\t\t%s = true;\n", flagnames2[j]);
 			}
-	        fprintf(f, ";\n");
 		}
 
 		//	States
@@ -771,9 +748,12 @@ int main(int argc, char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2002/02/06 17:31:46  dj_jl
+//	Replaced Actor flags with boolean variables.
+//
 //	Revision 1.20  2002/02/02 19:13:06  dj_jl
 //	Fixed things not spawned in deathmatch.
-//
+//	
 //	Revision 1.19  2002/01/29 18:19:01  dj_jl
 //	Added MCROSS and PCROSS flags.
 //	

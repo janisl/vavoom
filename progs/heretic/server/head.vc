@@ -166,7 +166,7 @@ void Actor::A_WhirlwindSeek(void)
 	{
 		velocity = vector(0.0, 0.0, 0.0);
 		SetState(DeathState);
-		Flags &= ~MF_MISSILE;
+		bMissile = false;
 		return;
 	}
 	if ((special2 -= 3) < 0)
@@ -184,6 +184,9 @@ void Actor::A_WhirlwindSeek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/06 17:28:52  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.15  2002/02/02 19:17:25  dj_jl
 //  Replacing pointers with references, beautification.
 //

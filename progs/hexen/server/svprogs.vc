@@ -67,6 +67,8 @@
 #include "w_mage.vc"
 #include "w_pig.vc"
 
+#include "bot.vc"
+
 #include "thrust.vc"
 #include "pottery.vc"
 #include "tree.vc"
@@ -98,6 +100,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/02/06 17:28:53  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.9  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

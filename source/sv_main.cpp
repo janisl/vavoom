@@ -27,7 +27,6 @@
 
 #include "gamedefs.h"
 #include "sv_local.h"
-#include "moflags.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -404,7 +403,7 @@ void SV_CreateBaseline(void)
 	{
 		if (!sv_mobjs[i])
 			continue;
-		if (sv_mobjs[i]->flags & MF_NOSECTOR)
+		if (sv_mobjs[i]->bNoClient)
 			continue;
 
 		if (sv_signon.CurSize > sv_signon.MaxSize - 32)
@@ -1011,7 +1010,7 @@ void SV_UpdateLevel(TMessage &msg)
 		int index = (i + starti) % MAX_MOBJS;
 		if (!sv_mobjs[index])
 			continue;
-		if (sv_mobjs[index]->flags & MF_NOSECTOR)
+		if (sv_mobjs[index]->bNoClient)
 			continue;
 		if (sv_mobjs[index]->player)
 			continue;
@@ -2686,9 +2685,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.33  2002/02/06 17:30:36  dj_jl
+//	Replaced Actor flags with boolean variables.
+//
 //	Revision 1.32  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
-//
+//	
 //	Revision 1.31  2002/01/28 18:43:48  dj_jl
 //	Fixed "floating players"
 //	

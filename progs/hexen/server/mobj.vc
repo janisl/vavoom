@@ -124,12 +124,11 @@ void SetOrigin(mobj_t * mobj, TVec origin)
 			mobj->origin.z = mobj->floorz;
 		}
 	}
-	else if (mobj->Flags2 & MF2_FLOATBOB)
+	else if (mobj->bFloatBob)
 	{
 		mobj->origin.z = mobj->floorz + origin.z;	// artifact z passed in as height
 	}
-	if (mobj->Flags2 & MF2_FLOORCLIP &&
-		P_GetThingFloorType(mobj) >= FLOOR_LIQUID &&
+	if (mobj->bFloorClip && P_GetThingFloorType(mobj) >= FLOOR_LIQUID &&
 		mobj->origin.z == mobj->subsector->sector->floorheight)
 	{
 		mobj->floorclip = 10.0;
@@ -211,15 +210,15 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 			P_SpawnMobj(x, y, ONFLOORZ, BloodPool);
 		}
 
-		if (Flags & MF_SPAWNCEILING)
+		if (bSpawnCeiling)
 		{
 			z = ONCEILINGZ;
 		}
-		else if (Flags2 & MF2_SPAWNFLOAT)
+		else if (bSpawnFloat)
 		{
 			z = FLOATRANDZ;
 		}
-		else if (Flags2 & MF2_FLOATBOB)
+		else if (bFloatBob)
 		{
 			z = mthing->height;
 		}
@@ -244,7 +243,7 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 		args[2] = mthing->arg3;
 		args[3] = mthing->arg4;
 		args[4] = mthing->arg5;
-		if (Flags2 & MF2_FLOATBOB)
+		if (bFloatBob)
 		{
 			// Seed random starting index for bobbing motion
 			Health = P_Random();
@@ -254,7 +253,7 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 		{
 			time = 0.1 + Random() * time;
 		}
-		if (Flags & MF_COUNTKILL)
+		if (bCountKill)
 		{
 			// Quantize angle to 45 degree increments
 			angles.yaw = itof(45 * (mthing->angle / 45));
@@ -266,11 +265,11 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 		}
 		if (mthing->options & MTF_AMBUSH)
 		{
-			Flags |= MF_AMBUSH;
+			bAmbush = true;
 		}
 		if (mthing->options & MTF_DORMANT)
 		{
-			Flags2 |= MF2_DORMANT;
+			bDormant = true;
 			if (Class == IceGuy)
 			{
 				SetState(S_ICEGUY_DORMANT);
@@ -325,7 +324,7 @@ mobj_t *P_SpawnMobj(float x, float y, float z, classid type)
 void P_RemoveMobj(mobj_t * mobj)
 {
 	// Remove from creature queue
-	if (mobj->Flags & MF_COUNTKILL && mobj->Flags & MF_CORPSE)
+	if (mobj->bCountKill && mobj->bCorpse)
 	{
 		mobj->A_DeQueueCorpse();
 	}
@@ -627,9 +626,9 @@ mobj_t *ActiveMinotaur(player_t * master)
 			continue;
 		if (mo.Health <= 0)
 			continue;
-		if (!(mo.Flags & MF_COUNTKILL))
+		if (!mo.bCountKill)
 			continue;	// for morphed minotaurs
-		if (mo.Flags & MF_CORPSE)
+		if (mo.bCorpse)
 			continue;
 		if ((level->tictime - mo.args[0]) >= ftoi(MAULATORTIME * 35.0))
 			continue;
@@ -651,12 +650,15 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 	int dummy[5];
 	mobj_t *master;
 
-	target->Flags &= ~(MF_SHOOTABLE | MF_FLOAT | MF_SKULLFLY | MF_NOGRAVITY);
-	target->Flags |= MF_CORPSE | MF_DROPOFF;
-	target->Flags2 |= MF2_NOPASSMOBJ;
+	target->bShootable = false;
+	target->bNoGravity = false;
+	target->bFloat = false;
+	target->bSkullFly = false;
+	target->bDropOff = true;
+	target->bCorpse = true;
+	target->bNoPassMobj = true;
 	target->Height /= 4.0;
-	if ((target->Flags & MF_COUNTKILL || target->Class == ZBell)
-		&& target->special)
+	if ((target->bCountKill || target->Class == ZBell) && target->special)
 	{
 		// Initiate monster death actions
 		if (target->Class == Sorcerer)
@@ -674,6 +676,16 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 	{	// Check for frag changes
 		if (target->player)
 		{
+			if (source->player->is_bot)
+			{
+				source->player->Bot.Killed(*target);
+			}
+
+			if (target->player->is_bot)
+			{
+				target->player->Bot.Died(*source);
+			}
+
 			if (target == source)
 			{	// Self-frag
 				target->player->frags[P_GetPlayerNum(target->player)]--;
@@ -690,12 +702,12 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 		{	// Self-frag
 			target->player->frags[P_GetPlayerNum(target->player)]--;
 		}
-		target->Flags &= ~MF_SOLID;
-		target->Flags2 &= ~MF2_FLY;
+		target->bSolid = false;
+		target->bFly = false;
 		target->player->powers[pw_flight] = 0;
 		target->player->playerstate = PST_DEAD;
 		DropWeapon(target->player);
-		if (target->Flags2 & MF2_FIREDAMAGE)
+		if (target->bFireDamage)
 		{	// Player flame death
 			switch (target->player->pclass)
 			{
@@ -715,11 +727,11 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 				break;
 			}
 		}
-		if (target->Flags2 & MF2_ICEDAMAGE)
+		if (target->bIceDamage)
 		{
 			// Player ice death
 			target->Translation = 0;	//no translation
-			target->Flags |= MF_ICECORPSE;
+			target->bIceCorpse  = true;
 			switch (target->player->pclass)
 			{
 			case PCLASS_FIGHTER:
@@ -739,7 +751,7 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 			}
 		}
 	}
-	if (target->Flags2 & MF2_FIREDAMAGE)
+	if (target->bFireDamage)
 	{
 		if (target->Class == FighterBoss)
  		{
@@ -767,9 +779,9 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 			return;
 		}
 	}
-	if (target->Flags2 & MF2_ICEDAMAGE)
+	if (target->bIceDamage)
 	{
-		target->Flags |= MF_ICECORPSE;
+		target->bIceCorpse = true;
 		switch (target->Class)
 		{
 		case Bishop:
@@ -810,7 +822,7 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 			target->SetState(S_PIG_ICE);
 			return;
 		default:
-			target->Flags &= ~MF_ICECORPSE;
+			target->bIceCorpse = false;
 			break;
 		}
 	}
@@ -893,7 +905,7 @@ boolean P_MorphPlayer(player_t * player)
 	float y;
 	float z;
 	float angle;
-	int oldFlags2;
+	boolean OldbFly;
 	int i;
 
 	if (player->powers[pw_invulnerability])
@@ -909,7 +921,7 @@ boolean P_MorphPlayer(player_t * player)
 	y = pmo->origin.y;
 	z = pmo->origin.z;
 	angle = pmo->angles.yaw;
-	oldFlags2 = pmo->Flags2;
+	OldbFly = pmo->bFly;
 	pmo->SetState(S_FREETARGMOBJ);
 	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, TeleportFog);
 	StartSoundName(*fog, 'Teleport', CHAN_VOICE);
@@ -924,10 +936,7 @@ boolean P_MorphPlayer(player_t * player)
 		player->armorpoints[i] = 0.0;
 	}
 	player->pclass = PCLASS_PIG;
-	if (oldFlags2 & MF2_FLY)
-	{
-		beastMo->Flags2 |= MF2_FLY;
-	}
+	beastMo->bFly = OldbFly;
 	player->morphTics = ftoi(MORPHTIME * 35.0);
 	ActivateMorphWeapon(player);
 	return true;
@@ -959,9 +968,9 @@ boolean P_MorphMonster(mobj_t * actor)
 
 	if (actor->player)
 		return false;
-	if (!(actor->Flags & MF_COUNTKILL))
+	if (!actor->bCountKill)
 		return false;
-	if (actor->Flags2 & MF2_BOSS)
+	if (actor->bBoss)
 		return false;
 	moType = actor->Class;
 	switch (moType)
@@ -1112,18 +1121,18 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 	mobj_t *master;
 	int i;
 
-	if (!(Flags & MF_SHOOTABLE))
+	if (!bShootable)
 	{
 		// Shouldn't happen
 		return;
 	}
 	if (Health <= 0)
 	{
-		if (inflictor && inflictor.Flags2 & MF2_ICEDAMAGE)
+		if (inflictor && inflictor.bIceDamage)
 		{
 			return;
 		}
-		else if (Flags & MF_ICECORPSE)	// frozen
+		else if (bIceCorpse)	// frozen
 		{
 			time = 0.1;
 			velocity.x = 0.0;
@@ -1131,7 +1140,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 		}
 		return;
 	}
-	if ((Flags2 & MF2_INVULNERABLE) && damage < 10000)
+	if (bInvulnerable && damage < 10000)
 	{
 		// mobj is invulnerable
 		if (player)
@@ -1162,11 +1171,11 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 			return;
 		}
 	}
-	if (Flags & MF_SKULLFLY)
+	if (bSkullFly)
 	{
 		velocity = vector(0.0, 0.0, 0.0);
 	}
-	if (Flags2 & MF2_DORMANT)
+	if (bDormant)
 	{
 		// Invulnerable, and won't wake up
 		return;
@@ -1196,16 +1205,14 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 		case TeleportOtherFX3:
 		case TeleportOtherFX4:
 		case TeleportOtherFX5:
-			if ((Flags & MF_COUNTKILL) &&
-				(Class != Serpent) &&
-				(Class != SerpentLeader) &&
-				(!(Flags2 & MF2_BOSS)))
+			if (bCountKill && !bBoss &&
+				(Class != Serpent) && (Class != SerpentLeader))
 			{
 				TeleportOther(this);
 			}
 			return;
 		case Minotaur:
-			if (inflictor.Flags & MF_SKULLFLY)
+			if (inflictor.bSkullFly)
 			{	// Slam only when in charge mode
 				P_MinotaurSlam(&inflictor, this);
 				return;
@@ -1261,7 +1268,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 				}
 				return;
 			}
-			else if (!(Flags & MF_COUNTKILL))
+			else if (!bCountKill)
 			{	// only damage monsters/players with the poison cloud
 				return;
 			}
@@ -1277,8 +1284,8 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 		}
 	}
 	// Push the	target
-	if (inflictor && (!source || !source.player)
-		&& !(inflictor.Flags2 & MF2_NODMGTHRUST))
+	if (inflictor && (!source || !source.player) &&
+		!inflictor.bNoDamageThrust)
 	{
 		TVec dir;
 		float thrust;
@@ -1353,24 +1360,24 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 		if (inflictor)
 		{
 			// check for special fire damage or ice damage deaths
-			if (inflictor.Flags2 & MF2_FIREDAMAGE)
+			if (inflictor.bFireDamage)
 			{
 				if (player && !player->morphTics)
 				{
 					// Check for flame death
 					if (Health > -50 && damage > 25)
 					{
-						Flags2 |= MF2_FIREDAMAGE;
+						bFireDamage = true;
 					}
 				}
 				else
 				{
-					Flags2 |= MF2_FIREDAMAGE;
+					bFireDamage = true;
 				}
 			}
-			else if (inflictor.Flags2 & MF2_ICEDAMAGE)
+			else if (inflictor.bIceDamage)
 			{
-				Flags2 |= MF2_ICEDAMAGE;
+				bIceDamage = true;
 			}
 		}
 		if (source && (source.Class == Minotaur))
@@ -1392,21 +1399,21 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 		P_KillMobj(&source, this);
 		return;
 	}
-	if ((P_Random() < PainChance) && !(Flags & MF_SKULLFLY))
+	if ((P_Random() < PainChance) && !bSkullFly)
 	{
 		if (inflictor && (inflictor.Class == LightningFloor
 				|| inflictor.Class == LightningZap))
 		{
 			if (P_Random() < 96)
 			{
-				Flags |= MF_JUSTHIT;	// fight back!
+				bJustHit = true;	// fight back!
 				SetState(PainState);
 			}
 			else
 			{
 				// "electrocute" the target
 				frame |= FF_FULLBRIGHT;
-				if (Flags & MF_COUNTKILL && P_Random() < 128
+				if (bCountKill && P_Random() < 128
 					&& !GetSoundPlayingInfo(self, GetSoundID('PuppyBeat')))
 				{
 					if ((Class == Centaur) ||
@@ -1420,11 +1427,11 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 		}
 		else
 		{
-			Flags |= MF_JUSTHIT;	// fight back!
+			bJustHit = true;	// fight back!
 			SetState(PainState);
 			if (inflictor && inflictor.Class == PoisonCloud)
 			{
-				if (Flags & MF_COUNTKILL && P_Random() < 128
+				if (bCountKill && P_Random() < 128
 					&& !GetSoundPlayingInfo(self, GetSoundID('PuppyBeat')))
 				{
 					if ((Class == Centaur) ||
@@ -1438,8 +1445,8 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 		}
 	}
 	ReactionCount = 0;	// we're awake now...
-	if (!threshold && source && !(source.Flags2 & MF2_BOSS)
-		&& !(Class == Bishop) && !(Class == Minotaur))
+	if (!threshold && source && !source.bBoss &&
+		!(Class == Bishop) && !(Class == Minotaur))
 	{
 		// Target actor is not intent on another actor,
 		// so make him chase after source
@@ -1530,7 +1537,7 @@ void P_PoisonDamage(player_t * player, mobj_t * source, int damage,
 	{
 		return;
 	}
-	if (target->Flags2 & MF2_INVULNERABLE && damage < 10000)
+	if (target->bInvulnerable && damage < 10000)
 	{	// mobj is invulnerable
 		return;
 	}
@@ -1561,18 +1568,20 @@ void P_PoisonDamage(player_t * player, mobj_t * source, int damage,
 	//
 	target->Health -= damage;
 	if (target->Health <= 0)
-	{	// Death
+	{
+		// Death
 		target->special1 = damage;
 		if (player && inflictor && !player->morphTics)
-		{	// Check for flame death
-			if ((inflictor->Flags2 & MF2_FIREDAMAGE)
-				&& (target->Health > -50) && (damage > 25))
+		{
+			// Check for flame death
+			if (inflictor->bFireDamage &&
+				(target->Health > -50) && (damage > 25))
 			{
-				target->Flags2 |= MF2_FIREDAMAGE;
+				target->bFireDamage = true;
 			}
-			if (inflictor->Flags2 & MF2_ICEDAMAGE)
+			if (inflictor->bIceDamage)
 			{
-				target->Flags2 |= MF2_ICEDAMAGE;
+				target->bIceDamage = true;
 			}
 		}
 		P_KillMobj(source, target);
@@ -1793,7 +1802,7 @@ void SpawnDirt(mobj_t * actor, float radius)
 
 void P_HideSpecialThing(mobj_t * thing)
 {
-	thing->Flags &= ~MF_SPECIAL;
+	thing->bSpecial = false;
 	thing->Translucency += 100;
 	thing->SetState(S_HIDESPECIAL1);
 }
@@ -1802,14 +1811,14 @@ void P_HideSpecialThing(mobj_t * thing)
 //
 //  SetDormantArtifact
 //
-//  Removes the MF_SPECIAL flag and initiates the artifact pickup animation.
+//  Removes the bSpecial flag and initiates the artifact pickup animation.
 //
 //==========================================================================
 
 void SetDormantArtifact(mobj_t * arti)
 {
-	arti->Flags &= ~MF_SPECIAL;
-	if (deathmatch && !(arti->Flags2 & MF2_DROPPED))
+	arti->bSpecial = false;
+	if (deathmatch && !arti->bDropped)
 	{
 		if (arti->Class == ArtifactInvulnerability)
 		{
@@ -1843,10 +1852,13 @@ void SetDormantArtifact(mobj_t * arti)
 void G_PlayerReborn(int player)
 {
 	player_t *p;
+	BotPlayer B;
 
 	p = &players[player];
 
+	B = p->Bot;
 	ClearPlayer(p);
+	p->Bot = B;
 
 	p->pclass = p->baseclass;
 
@@ -1946,6 +1958,10 @@ void P_SpawnPlayer(mthing_t * mthing)
 
 	// Set translation table data
 	SetPlayerColor(p);
+	if (p->is_bot)
+	{
+		p->Bot.OnSpawn();
+	}
 }
 
 //==========================================================================
@@ -2316,6 +2332,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2002/02/06 17:28:53  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.28  2002/02/02 19:17:26  dj_jl
 //  Replacing pointers with references, beautification.
 //

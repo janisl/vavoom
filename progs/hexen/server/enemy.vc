@@ -38,11 +38,11 @@ void Actor::A_Look(void)
 	threshold = 0;	// any shot will wake up
 	targ = Actor(subsector->sector->SoundTarget);
 
-	if (targ && targ.Flags & MF_SHOOTABLE)
+	if (targ && targ.bShootable)
 	{
 		target = &targ;
 
-		if (Flags & MF_AMBUSH)
+		if (bAmbush)
 		{
 			if (!P_CheckSight(self, *target))
 			{
@@ -60,7 +60,7 @@ void Actor::A_Look(void)
 	// go into chase state
 	if (sound_sight)
 	{
-		if (Flags2 & MF2_BOSS)
+		if (bBoss)
 		{
 			// Full volume
 			StartSound(none, sound_sight, CHAN_VOICE);
@@ -130,7 +130,7 @@ void Actor::A_Chase(void)
 		}
 	}
 
-	if (!target || !(target->Flags & MF_SHOOTABLE))
+	if (!target || !target->bShootable)
 	{
 		// look for a new target
 		if (LookForPlayers(true))
@@ -142,9 +142,9 @@ void Actor::A_Chase(void)
 	}
 
 	// do not attack twice in a row
-	if (Flags & MF_JUSTATTACKED)
+	if (bJustAttacked)
 	{
-		Flags &= ~MF_JUSTATTACKED;
+		bJustAttacked = false;
 		if (!fastparm)
 		{
 			NewChaseDir();
@@ -171,7 +171,7 @@ void Actor::A_Chase(void)
 			if (CheckMissileRange())
 			{
 				SetState(MissileState);
-				Flags |= MF_JUSTATTACKED;
+				bJustAttacked = true;
 				return;
 			}
 		}
@@ -205,7 +205,7 @@ void Actor::A_Chase(void)
 			StartSound(self, GetSoundID('PigActive1') + (P_Random() & 1),
 				CHAN_VOICE);
 		}
-		else if (Flags2 & MF2_BOSS)
+		else if (bBoss)
 		{
 			StartSound(none, sound_active, CHAN_VOICE);
 		}
@@ -227,7 +227,7 @@ void Actor::A_FaceTarget(void)
 	if (!target)
 		return;
 
-	Flags &= ~MF_AMBUSH;
+	bAmbush = false;
 
 	angles.yaw = atan2(target->origin.y - origin.y,
 		target->origin.x - origin.x);
@@ -262,11 +262,16 @@ void Actor::A_FreeTargMobj(void)
 {
 	velocity = vector(0.0, 0.0, 0.0);
 	origin.z = ceilingz + 4.0;
-	Flags &=
-		~(MF_SHOOTABLE | MF_FLOAT | MF_SKULLFLY | MF_SOLID | MF_COUNTKILL);
-	Flags |= MF_CORPSE | MF_DROPOFF | MF_NOGRAVITY;
-	Flags2 &= ~MF2_LOGRAV;
-	Flags2 |= MF2_NOPASSMOBJ;
+	bSolid = false;
+	bShootable = false;
+	bFloat = false;
+	bCountKill = false;
+	bSkullFly = false;
+	bDropOff = true;
+	bNoGravity = true;
+	bCorpse = true;
+	bLowGravity = false;
+	bNoPassMobj = true;
 	Translucency = 100;
 	player = NULL;
 	Health = -1000;	// Don't resurrect
@@ -457,7 +462,7 @@ void Actor::A_Explode(void)
 
 void Actor::A_NoBlocking(void)
 {
-	Flags &= ~MF_SOLID;
+	bSolid = false;
 }
 
 //============================================================================
@@ -495,7 +500,7 @@ void Actor::A_SkullPop(void)
 	{
 		return;
 	}
-	Flags &= ~MF_SOLID;
+	bSolid = false;
 	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 48.0, BloodySkull);
 	mo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
 	mo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
@@ -519,9 +524,13 @@ void Actor::A_SkullPop(void)
 void Actor::A_FreezeDeath(void)
 {
 	time = 2.0 + Random() * 8.0 + Random() * 8.0;
-	Flags |= MF_SOLID | MF_SHOOTABLE | MF_NOBLOOD;
-	Flags2 |= MF2_PUSHABLE | MF2_TELESTOMP | MF2_SLIDE;
-	Flags2 &= ~MF2_NOPASSMOBJ;
+	bSolid = true;
+	bShootable = true;
+	bNoBlood = true;
+	bPushable = true;
+	bTelestomp = true;
+	bSlide = true;
+	bNoPassMobj = false;
 	Height *= 4.0;
 	StartSoundName(self, 'FreezeDeath', CHAN_VOICE);
 
@@ -533,7 +542,7 @@ void Actor::A_FreezeDeath(void)
 	}
 	else
 	{
-		if (Flags & MF_COUNTKILL && special)
+		if (bCountKill && special)
 		{
 			// Initiate monster death actions
 			ExecuteLineSpecial(special, &args[0], NULL, 0, this);
@@ -617,8 +626,8 @@ void Actor::A_FreezeDeathChunks(void)
 		mo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
 		mo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
 		mo->velocity.z = (mo->origin.z - origin.z) / Height * 4.0 * 35.0;
-		mo->Flags2 |= MF2_ICEDAMAGE;	// used to force blue palette
-		mo->Flags2 &= ~MF2_FLOORCLIP;
+		mo->bIceDamage = true;	// used to force blue palette
+		mo->bFloorClip = false;
 		mo->player = player;
 		player = NULL;
 		mo->Health = Health;
@@ -780,9 +789,9 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 	// Search mobj list for corpses and place them in this queue
 	FOREACH(Actor, mo)
 	{
-		if (!(mo.Flags & MF_CORPSE))
+		if (!mo.bCorpse)
 			continue;	// Must be a corpse
-		if (mo.Flags & MF_ICECORPSE)
+		if (mo.bIceCorpse)
 			continue;	// Not ice corpses
 		// Only corpses that call A_QueueCorpse from death routine
 		switch (mo.Class)
@@ -821,6 +830,9 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/06 17:28:52  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.17  2002/02/02 19:17:26  dj_jl
 //  Replacing pointers with references, beautification.
 //

@@ -90,8 +90,7 @@ void SetOrigin(mobj_t * mobj, TVec origin)
 			mobj->origin.z = mobj->floorz;
 		}
 	}
-	if (mobj->Flags2 & MF2_FOOTCLIP &&
-		P_GetThingFloorType(mobj) != FLOOR_SOLID &&
+	if (mobj->bFootClip && P_GetThingFloorType(mobj) != FLOOR_SOLID &&
 		mobj->floorz == mobj->subsector->sector->floorheight)
 	{
 		mobj->floorclip = FOOTCLIPSIZE;
@@ -167,11 +166,11 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 
 		x = mthing->x;
 		y = mthing->y;
-		if (Flags & MF_SPAWNCEILING)
+		if (bSpawnCeiling)
 		{
 			z = ONCEILINGZ;
 		}
-		else if (Flags2 & MF2_SPAWNFLOAT)
+		else if (bSpawnFloat)
 		{
 			z = FLOATRANDZ;
 		}
@@ -180,7 +179,7 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 			z = ONFLOORZ;
 		}
 		SetOrigin(this, vector(x, y, z));
-		if (Flags2 & MF2_FLOATBOB)
+		if (bFloatBob)
 		{
 			// Seed random starting index for bobbing motion
 			Health = P_Random();
@@ -205,23 +204,23 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 		{
 			time = 0.1 + Random() * time;
 		}
-		if (Flags & MF_COUNTKILL)
+		if (bCountKill)
 		{
 			level->totalkills++;
 			CopyMThing(mthing, &spawnpoint);
 		}
-		if (Flags & MF_COUNTITEM)
+		if (bCountItem)
 		{
 			level->totalitems++;
 		}
 		angles.yaw = itof(45 * (mthing->angle / 45));
 		if (mthing->options & MTF_AMBUSH)
 		{
-			Flags |= MF_AMBUSH;
+			bAmbush = true;
 		}
 		if (mthing->options & MTF_DORMANT)
 		{
-			Flags2 |= MF2_DORMANT;
+			bDormant = true;
 			time = -1.0;
 		}
 	}
@@ -352,7 +351,7 @@ void P_ExplodeMissile(mobj_t * mo)
 	mo->velocity.x = mo->velocity.y = mo->velocity.z = 0.0;
 	mo->SetState(mo->DeathState);
 	//mo->tics -= P_Random()&3;
-	mo->Flags &= ~MF_MISSILE;
+	mo->bMissile = false;
 	if (mo->sound_death)
 	{
 		StartSound(*mo, mo->sound_death, CHAN_VOICE);
@@ -377,13 +376,17 @@ void P_ExplodeMissile(mobj_t * mo)
 
 void P_KillMobj(mobj_t * source, mobj_t * target)
 {
-	target->Flags &= ~(MF_SHOOTABLE | MF_FLOAT | MF_SKULLFLY | MF_NOGRAVITY);
-	target->Flags |= MF_CORPSE | MF_DROPOFF;
-	target->Flags2 |= MF2_NOPASSMOBJ;
+	target->bShootable = false;
+	target->bNoGravity = false;
+	target->bFloat = false;
+	target->bSkullFly = false;
+	target->bDropOff = true;
+	target->bCorpse = true;
+	target->bNoPassMobj = true;
 	target->Height /= 4.0;
 	if (source && source->player)
 	{
-		if (target->Flags & MF_COUNTKILL)
+		if (target->bCountKill)
 		{
 			// Count for intermission
 			source->player->killcount++;
@@ -418,7 +421,7 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 			}
 		}
 	}
-	else if (!netgame && (target->Flags & MF_COUNTKILL))
+	else if (!netgame && target->bCountKill)
 	{
 		// Count all monster deaths
 		players[0].killcount++;
@@ -430,13 +433,13 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 			// Self-frag
 			target->player->frags[P_GetPlayerNum(target->player)]--;
 		}
-		target->Flags &= ~MF_SOLID;
-		target->Flags2 &= ~MF2_FLY;
+		target->bSolid = false;
+		target->bFly = false;
 		target->player->powers[pw_flight] = 0;
 		target->player->powers[pw_weaponlevel2] = 0;
 		target->player->playerstate = PST_DEAD;
 		DropWeapon(target->player);
-		if (target->Flags2 & MF2_FIREDAMAGE)
+		if (target->bFireDamage)
 		{
 			// Player flame death
 			target->SetState(S_PLAY_FDTH1);
@@ -494,7 +497,7 @@ void P_TouchWhirlwind(mobj_t * target)
 		(Random() - Random()) * 45.0 / 2.0);
 	target->velocity.x += (Random() - Random()) * 4.0 * 35.0;
 	target->velocity.y += (Random() - Random()) * 4.0 * 35.0;
-	if (level->tictime & 16 && !(target->Flags2 & MF2_BOSS))
+	if (level->tictime & 16 && !target->bBoss)
 	{
 		randVal = Random() * 4.0;
 		if (randVal > 2.5)
@@ -530,7 +533,7 @@ boolean ChickenMorphPlayer(player_t * player)
 	float y;
 	float z;
 	float angle;
-	int oldFlags2;
+	boolean OldbFly;
 
 	if (player->chickenTics)
 	{
@@ -552,7 +555,7 @@ boolean ChickenMorphPlayer(player_t * player)
 	y = pmo->origin.y;
 	z = pmo->origin.z;
 	angle = pmo->angles.yaw;
-	oldFlags2 = pmo->Flags2;
+	OldbFly = pmo->bFly;
 	pmo->SetState(S_FREETARGMOBJ);
 	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, TeleportFog);
 	StartSoundName(*fog, 'Teleport', CHAN_VOICE);
@@ -565,10 +568,7 @@ boolean ChickenMorphPlayer(player_t * player)
 	player->armorpoints = player->armortype = 0;
 	player->powers[pw_invisibility] = 0;
 	player->powers[pw_weaponlevel2] = 0;
-	if (oldFlags2 & MF2_FLY)
-	{
-		chicken->Flags2 |= MF2_FLY;
-	}
+	chicken->bFly = OldbFly;
 	player->chickenTics = ftoi(CHICKENTIME * 35.0);
 	ActivateBeak(player);
 	return true;
@@ -739,7 +739,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 {
 	int saved;
 
-	if (!(Flags & MF_SHOOTABLE))
+	if (!bShootable)
 	{
 		// Shouldn't happen
 		return;
@@ -748,7 +748,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 	{
 		return;
 	}
-	if (Flags & MF_SKULLFLY)
+	if (bSkullFly)
 	{
 		if (Class == Minotaur)
 		{
@@ -757,7 +757,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 		}
 		velocity = vector(0.0, 0.0, 0.0);
 	}
-	if (Flags2 & MF2_DORMANT)
+	if (bDormant)
 	{
 		// Invulnerable, and won't wake up
 		return;
@@ -786,7 +786,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 			P_TouchWhirlwind(this);
 			return;
 		case Minotaur:
-			if (inflictor.Flags & MF_SKULLFLY)
+			if (inflictor.bSkullFly)
 			{
 				// Slam only when in charge mode
 				P_MinotaurSlam(&inflictor, this);
@@ -794,7 +794,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 			}
 			break;
 		case MaceFX4:	// Death ball
-			if ((Flags2 & MF2_BOSS) || Class == Head)
+			if (bBoss || Class == Head)
 			{
 				// Don't allow cheap boss kills
 				break;
@@ -826,7 +826,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 		case RainPlayer2:
 		case RainPlayer3:
 		case RainPlayer4:
-			if (Flags2 & MF2_BOSS)
+			if (bBoss)
 			{
 				// Decrease damage for bosses
 				damage = (P_Random() & 7) + 1;
@@ -859,8 +859,8 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 	}
 	// Push the target unless source is using the gauntlets
 	if (inflictor && (!source || !source.player ||
-			source.player->readyweapon != wp_gauntlets)
-		&& !(inflictor.Flags2 & MF2_NODMGTHRUST))
+			source.player->readyweapon != wp_gauntlets) &&
+			!inflictor.bNoDamageThrust)
 	{
 		TVec dir;
 		float thrust;
@@ -878,7 +878,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 		}
 
 		dir = MobjCenter(self) - MobjCenter(inflictor);
-		if (Flags & MF_NOGRAVITY)
+		if (bNoGravity)
 		{
 			dir.z = 0.0;
 		}
@@ -949,24 +949,24 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 		if (player && inflictor && !player->chickenTics)
 		{
 			// Check for flame death
-			if ((inflictor.Flags2 & MF2_FIREDAMAGE)
+			if (inflictor.bFireDamage
 				|| ((inflictor.Class == PhoenixFX1)
 					&& (Health > -50) && (damage > 25)))
 			{
-				Flags2 |= MF2_FIREDAMAGE;
+				bFireDamage = true;
 			}
 		}
 		P_KillMobj(&source, this);
 		return;
 	}
-	if ((P_Random() < PainChance) && !(Flags & MF_SKULLFLY))
+	if ((P_Random() < PainChance) && !bSkullFly)
 	{
-		Flags |= MF_JUSTHIT;	// fight back!
+		bJustHit = true;	// fight back!
 		SetState(PainState);
 	}
 	ReactionCount = 0;	// we're awake now...
-	if (!threshold && source && !(source.Flags2 & MF2_BOSS)
-		&& !(Class == Sorcerer2 && source.Class == Wizard))
+	if (!threshold && source && !source.bBoss &&
+		!(Class == Sorcerer2 && source.Class == Wizard))
 	{
 		// Target actor is not intent on another actor,
 		// so make him chase after source
@@ -1059,7 +1059,7 @@ void P_RipperBlood(mobj_t * mo)
 	y = mo->origin.y + (Random() - Random()) * 16.0;
 	z = mo->origin.z + (Random() - Random()) * 16.0;
 	th = P_SpawnMobj(x, y, z, Blood);
-	th->Flags |= MF_NOGRAVITY;
+	th->bNoGravity = true;
 	th->velocity.x = mo->velocity.x / 2.0;
 	th->velocity.y = mo->velocity.y / 2.0;
 	th->time += Random() * 0.1;
@@ -1454,7 +1454,7 @@ void P_NightmareRespawn(mobj_t * mobj)
 	mthing = &mobj->spawnpoint;
 
 	// spawn it
-	if (mobj->Flags & MF_SPAWNCEILING)
+	if (mobj->bSpawnCeiling)
 		z = ONCEILINGZ;
 	else
 		z = ONFLOORZ;
@@ -1462,7 +1462,7 @@ void P_NightmareRespawn(mobj_t * mobj)
 	CopyMThing(&mobj->spawnpoint, &mo->spawnpoint);
 	mo->angles.yaw = itof(45 * (mthing->angle / 45));
 	if (mthing->options & MTF_AMBUSH)
-		mo->Flags |= MF_AMBUSH;
+		mo->bAmbush = true;
 
 	mo->ReactionCount = 18;
 
@@ -1473,6 +1473,9 @@ void P_NightmareRespawn(mobj_t * mobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2002/02/06 17:28:52  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.28  2002/02/02 19:17:25  dj_jl
 //  Replacing pointers with references, beautification.
 //

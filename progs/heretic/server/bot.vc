@@ -205,7 +205,7 @@ boolean BotPlayer::CheckItem(Actor item)
 //?????
     if (!item)
 		return false;
-	if (!(item.Flags & MF_SPECIAL))
+	if (!item.bSpecial)
 		return false;
 
 	weapon = WeapFromItem(item);
@@ -223,7 +223,7 @@ boolean BotPlayer::CheckItem(Actor item)
 			return false;
 
 		// Can't pick it up because we have it and it's not a dropped weapon
-		if (!(item.Flags & MF_DROPPED))
+		if (!item.bDropped)
 			return false;
 	}
 
@@ -292,7 +292,7 @@ void BotPlayer::SetEnemy(void)
 		return;
 	
 	// Double check the validity of the enemy
-	if (!(enemy.Flags & MF_SHOOTABLE))
+	if (!enemy.bShootable)
 		enemy = none;
 }
 
@@ -330,14 +330,14 @@ void BotPlayer::CheckStuff(void)
 {
 	if (item)
 	{
-		if (!(item.Flags & MF_SPECIAL) || item.IsDestroyed() || // somebody picked
+		if (!item.bSpecial || item.IsDestroyed() || // somebody picked
 				!CheckTo(item.origin)) // Can't reach
 			item = none;
 	}
 
 	if (missile)
 	{
-		if (!(missile.Flags & MF_MISSILE) || missile.IsDestroyed())
+		if (!missile.bMissile || missile.IsDestroyed())
 			missile = none;
 	}
 
@@ -375,7 +375,7 @@ void BotPlayer::CheckStuff(void)
 
 	if (enemy)
 	{
-		if (enemy.Health <= 0 || !(enemy.Flags & MF_SHOOTABLE))
+		if (enemy.Health <= 0 || !enemy.bShootable)
 			enemy = none;
 	}
 }
@@ -492,7 +492,7 @@ void BotPlayer::Scan(void)
 
 	FOREACH(Actor, actor)
 	{
-		if (!(actor.Flags & (MF_SPECIAL | MF_MISSILE)))
+		if (!actor.bSpecial && !actor.bMissile)
 		{
 			// Not interested in this one
 			continue;
@@ -500,7 +500,7 @@ void BotPlayer::Scan(void)
 		if (Check_LOS(actor, 90.0))
 		{
 			// Look for special items
-			if (!item && actor.Flags & MF_SPECIAL)
+			if (!item && actor.bSpecial)
 			{
 				if (CheckItem(actor))
 				{
@@ -509,7 +509,7 @@ void BotPlayer::Scan(void)
 					itemIsPowerup = newItemIsPowerup;
 				}
 			}
-			else if (!missile && actor.Flags & MF_MISSILE &&
+			else if (!missile && actor.bMissile &&
 				(MobjDist(botmo, actor) < AVOID_DIST))
 			{
 				missile = actor;
@@ -904,7 +904,7 @@ boolean PTR_BotPathTraverse(intercept_t *in)
 	if (th == botmo)
 		return true;
 
-	if (th.Flags & MF_SOLID)
+	if (th.bSolid)
 		return false;
 
 /*	fixed_t diffheight = (th->z + th->Height) - shootthing->z;
@@ -2037,6 +2037,9 @@ void BotPlayer::OnSpawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/02/06 17:28:52  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.9  2002/02/02 19:17:25  dj_jl
 //  Replacing pointers with references, beautification.
 //

@@ -45,7 +45,10 @@ class PlayerEntity:Actor
 		Height = 56.0;
 		Mass = 100.0;
 		PainChance = 255;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_PICKUP;
+		bSolid = true;
+		bShootable = true;
+		bDropOff = true;
+		bPickUp = true;
 		SpawnState = S_PLAY;
 		SeeState = S_PLAY_RUN1;
 		MissileState = S_PLAY_ATK1;
@@ -86,8 +89,10 @@ class Zombieman:Actor
 		Speed = 280.0;
 		ReactionCount = 8;
 		PainChance = 200;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bCountKill = true;
+		bActivateMCross = true;
 		SpawnState = S_POSS_STND;
 		SeeState = S_POSS_RUN1;
 		MissileState = S_POSS_ATK1;
@@ -132,8 +137,10 @@ class ShotgunGuy:Actor
 		Speed = 280.0;
 		ReactionCount = 8;
 		PainChance = 170;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bCountKill = true;
+		bActivateMCross = true;
 		SpawnState = S_SPOS_STND;
 		SeeState = S_SPOS_RUN1;
 		MissileState = S_SPOS_ATK1;
@@ -176,8 +183,10 @@ class ArchVile:Actor
 		Speed = 525.0;
 		ReactionCount = 8;
 		PainChance = 10;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bCountKill = true;
+		bActivateMCross = true;
 		SpawnState = S_VILE_STND;
 		SeeState = S_VILE_RUN1;
 		MissileState = S_VILE_ATK1;
@@ -206,7 +215,8 @@ class ArchvileFire:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Translucency = 33;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		bNoBlockmap = true;
+		bNoGravity = true;
 		SpawnState = S_FIRE1;
 		Effects = EF_DL_MISSILE;
 	}
@@ -240,8 +250,10 @@ class Revenant:Actor
 		Speed = 350.0;
 		ReactionCount = 8;
 		PainChance = 100;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bCountKill = true;
+		bActivateMCross = true;
 		SpawnState = S_SKEL_STND;
 		SeeState = S_SKEL_RUN1;
 		MeleeState = S_SKEL_FIST1;
@@ -274,8 +286,11 @@ class RevenantTracer:Actor
 		ReactionCount = 8;
 		MissileDamage = 10;
 		Translucency = 33;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bActivatePCross = true;
 		SpawnState = S_TRACER;
 		DeathState = S_TRACEEXP1;
 		SightSound = 'RavenantAttack';
@@ -300,7 +315,8 @@ class RevenantTracerSmoke:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Translucency = 33;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		bNoBlockmap = true;
+		bNoGravity = true;
 		SpawnState = S_SMOKE1;
 	}
 };
@@ -333,8 +349,10 @@ class Mancubus:Actor
 		Speed = 280.0;
 		ReactionCount = 8;
 		PainChance = 80;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bCountKill = true;
+		bActivateMCross = true;
 		SpawnState = S_FATT_STND;
 		SeeState = S_FATT_RUN1;
 		MissileState = S_FATT_ATK1;
@@ -366,8 +384,11 @@ class MancubusMissile:Actor
 		ReactionCount = 8;
 		MissileDamage = 8;
 		Translucency = 33;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bActivatePCross = true;
 		SpawnState = S_FATSHOT1;
 		DeathState = S_FATSHOTX1;
 		SightSound = 'FireballShoot';
@@ -405,8 +426,10 @@ class ChaingunGuy:Actor
 		Speed = 280.0;
 		ReactionCount = 8;
 		PainChance = 170;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bCountKill = true;
+		bActivateMCross = true;
 		SpawnState = S_CPOS_STND;
 		SeeState = S_CPOS_RUN1;
 		MissileState = S_CPOS_ATK1;
@@ -450,8 +473,10 @@ class Imp:Actor
 		Speed = 280.0;
 		ReactionCount = 8;
 		PainChance = 200;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bCountKill = true;
+		bActivateMCross = true;
 		SpawnState = S_TROO_STND;
 		SeeState = S_TROO_RUN1;
 		MeleeState = S_TROO_ATK1;
@@ -495,8 +520,10 @@ class Demon:Actor
 		Speed = 350.0;
 		ReactionCount = 8;
 		PainChance = 180;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bCountKill = true;
+		bActivateMCross = true;
 		SpawnState = S_SARG_STND;
 		SeeState = S_SARG_RUN1;
 		MeleeState = S_SARG_ATK1;
@@ -540,8 +567,10 @@ class Shadows:Actor
 		ReactionCount = 8;
 		PainChance = 180;
 		Translucency = 90;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bCountKill = true;
+		bActivateMCross = true;
 		SpawnState = S_SARG_STND;
 		SeeState = S_SARG_RUN1;
 		MeleeState = S_SARG_ATK1;
@@ -584,8 +613,12 @@ class Cacodemon:Actor
 		Speed = 280.0;
 		ReactionCount = 8;
 		PainChance = 128;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT|MF_COUNTKILL;
-		Flags2 = MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bNoGravity = true;
+		bFloat = true;
+		bCountKill = true;
+		bActivateMCross = true;
 		SpawnState = S_HEAD_STND;
 		SeeState = S_HEAD_RUN1;
 		MissileState = S_HEAD_ATK1;
@@ -627,8 +660,10 @@ class BaronOfHell:Actor
 		Speed = 280.0;
 		ReactionCount = 8;
 		PainChance = 50;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bCountKill = true;
+		bActivateMCross = true;
 		SpawnState = S_BOSS_STND;
 		SeeState = S_BOSS_RUN1;
 		MeleeState = S_BOSS_ATK1;
@@ -661,8 +696,11 @@ class BruiserShot:Actor
 		ReactionCount = 8;
 		MissileDamage = 8;
 		Translucency = 33;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bActivatePCross = true;
 		SpawnState = S_BRBALL1;
 		DeathState = S_BRBALLX1;
 		SightSound = 'FireballShoot';
@@ -699,8 +737,10 @@ class HellKnight:Actor
 		Speed = 280.0;
 		ReactionCount = 8;
 		PainChance = 50;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bCountKill = true;
+		bActivateMCross = true;
 		SpawnState = S_BOS2_STND;
 		SeeState = S_BOS2_RUN1;
 		MeleeState = S_BOS2_ATK1;
@@ -745,8 +785,11 @@ class LostSoul:Actor
 		PainChance = 256;
 		MissileDamage = 3;
 		Translucency = 33;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT;
-		Flags2 = MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bNoGravity = true;
+		bFloat = true;
+		bActivateMCross = true;
 		SpawnState = S_SKULL_STND;
 		SeeState = S_SKULL_RUN1;
 		MissileState = S_SKULL_ATK1;
@@ -788,8 +831,10 @@ class SpiderMastermind:Actor
 		Speed = 420.0;
 		ReactionCount = 8;
 		PainChance = 40;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bCountKill = true;
+		bActivateMCross = true;
 		SpawnState = S_SPID_STND;
 		SeeState = S_SPID_RUN1;
 		MissileState = S_SPID_ATK1;
@@ -831,8 +876,10 @@ class Arachnotron:Actor
 		Speed = 420.0;
 		ReactionCount = 8;
 		PainChance = 128;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bCountKill = true;
+		bActivateMCross = true;
 		SpawnState = S_BSPI_STND;
 		SeeState = S_BSPI_SIGHT;
 		MissileState = S_BSPI_ATK1;
@@ -874,8 +921,10 @@ class Cyberdemon:Actor
 		Speed = 560.0;
 		ReactionCount = 8;
 		PainChance = 20;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bCountKill = true;
+		bActivateMCross = true;
 		SpawnState = S_CYBER_STND;
 		SeeState = S_CYBER_RUN1;
 		MissileState = S_CYBER_ATK1;
@@ -916,8 +965,12 @@ class PainElemental:Actor
 		Speed = 280.0;
 		ReactionCount = 8;
 		PainChance = 128;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT|MF_COUNTKILL;
-		Flags2 = MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bNoGravity = true;
+		bFloat = true;
+		bCountKill = true;
+		bActivateMCross = true;
 		SpawnState = S_PAIN_STND;
 		SeeState = S_PAIN_RUN1;
 		MissileState = S_PAIN_ATK1;
@@ -960,8 +1013,10 @@ class WolfSS:Actor
 		Speed = 280.0;
 		ReactionCount = 8;
 		PainChance = 170;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bCountKill = true;
+		bActivateMCross = true;
 		SpawnState = S_SSWV_STND;
 		SeeState = S_SSWV_RUN1;
 		MissileState = S_SSWV_ATK1;
@@ -1003,8 +1058,12 @@ class CommanderKeen:Actor
 		Mass = 10000000.0;
 		ReactionCount = 8;
 		PainChance = 256;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_SPAWNCEILING|MF_NOGRAVITY|MF_COUNTKILL;
-		Flags2 = MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bSpawnCeiling = true;
+		bNoGravity = true;
+		bCountKill = true;
+		bActivateMCross = true;
 		SpawnState = S_KEENSTND;
 		PainState = S_KEENPAIN;
 		DeathState = S_COMMKEEN;
@@ -1030,7 +1089,8 @@ class BossBrain:Actor
 		Mass = 10000000.0;
 		ReactionCount = 8;
 		PainChance = 255;
-		Flags = MF_SOLID|MF_SHOOTABLE;
+		bSolid = true;
+		bShootable = true;
 		SpawnState = S_BRAIN;
 		PainState = S_BRAIN_PAIN;
 		DeathState = S_BRAIN_DIE1;
@@ -1055,7 +1115,8 @@ class BossEye:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOSECTOR|MF_NOBLOCKMAP;
+		bNoClient = true;
+		bNoBlockmap = true;
 		SpawnState = S_BRAINEYE;
 		SeeState = S_BRAINEYESEE;
 	}
@@ -1077,7 +1138,8 @@ class BossTarget:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOSECTOR|MF_NOBLOCKMAP;
+		bNoClient = true;
+		bNoBlockmap = true;
 	}
 };
 
@@ -1098,8 +1160,12 @@ class SpawnShot:Actor
 		Speed = 350.0;
 		ReactionCount = 8;
 		MissileDamage = 3;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_NOCLIP|MF_MISSILE;
-		Flags2 = MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bNoClip = true;
+		bMissile = true;
+		bActivatePCross = true;
 		SpawnState = S_SPAWN1;
 		SightSound = 'BossFire';
 		DeathSound = 'FireballExplode';
@@ -1122,7 +1188,8 @@ class SpawnFire:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Translucency = 33;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		bNoBlockmap = true;
+		bNoGravity = true;
 		SpawnState = S_SPAWNFIRE1;
 		Effects = EF_DL_MISSILE;
 	}
@@ -1144,7 +1211,9 @@ class Barrel:Actor
 		Height = 42.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_NOBLOOD;
+		bSolid = true;
+		bShootable = true;
+		bNoBlood = true;
 		SpawnState = S_BAR1;
 		DeathState = S_BEXP;
 		DeathSound = 'BarrelExplode';
@@ -1169,8 +1238,11 @@ class ImpMissile:Actor
 		ReactionCount = 8;
 		MissileDamage = 3;
 		Translucency = 33;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bActivatePCross = true;
 		SpawnState = S_TBALL1;
 		DeathState = S_TBALLX1;
 		SightSound = 'FireballShoot';
@@ -1197,8 +1269,11 @@ class CacodemonMissile:Actor
 		ReactionCount = 8;
 		MissileDamage = 5;
 		Translucency = 33;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bActivatePCross = true;
 		SpawnState = S_RBALL1;
 		DeathState = S_RBALLX1;
 		SightSound = 'FireballShoot';
@@ -1224,8 +1299,11 @@ class Rocket:Actor
 		Speed = 700.0;
 		ReactionCount = 8;
 		MissileDamage = 20;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bActivatePCross = true;
 		SpawnState = S_ROCKET;
 		DeathState = S_EXPLODE1;
 		SightSound = 'LauncherFire';
@@ -1252,8 +1330,11 @@ class PlasmaShot:Actor
 		ReactionCount = 8;
 		MissileDamage = 5;
 		Translucency = 33;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bActivatePCross = true;
 		SpawnState = S_PLASBALL;
 		DeathState = S_PLASEXP;
 		SightSound = 'PlasmaFire';
@@ -1280,8 +1361,11 @@ class BFGShot:Actor
 		ReactionCount = 8;
 		MissileDamage = 100;
 		Translucency = 33;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bActivatePCross = true;
 		SpawnState = S_BFGSHOT;
 		DeathState = S_BFGLAND;
 		DeathSound = 'RocketExplode';
@@ -1307,8 +1391,11 @@ class ArachnotronPlasma:Actor
 		ReactionCount = 8;
 		MissileDamage = 5;
 		Translucency = 33;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bActivatePCross = true;
 		SpawnState = S_ARACH_PLAZ;
 		DeathState = S_ARACH_PLEX;
 		SightSound = 'PlasmaFire';
@@ -1333,7 +1420,8 @@ class Puff:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Translucency = 33;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		bNoBlockmap = true;
+		bNoGravity = true;
 		SpawnState = S_PUFF1;
 	}
 };
@@ -1354,7 +1442,7 @@ class Blood:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Translucency = 33;
-		Flags = MF_NOBLOCKMAP;
+		bNoBlockmap = true;
 		SpawnState = S_BLOOD1;
 	}
 };
@@ -1375,7 +1463,8 @@ class TeleportFog:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Translucency = 33;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		bNoBlockmap = true;
+		bNoGravity = true;
 		SpawnState = S_TFOG;
 	}
 };
@@ -1396,7 +1485,8 @@ class ItemRespawnFog:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Translucency = 33;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		bNoBlockmap = true;
+		bNoGravity = true;
 		SpawnState = S_IFOG;
 	}
 };
@@ -1417,7 +1507,8 @@ class TeleportSpot:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOSECTOR|MF_NOBLOCKMAP;
+		bNoClient = true;
+		bNoBlockmap = true;
 	}
 };
 
@@ -1437,7 +1528,8 @@ class ExtraBFG:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Translucency = 33;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		bNoBlockmap = true;
+		bNoGravity = true;
 		SpawnState = S_BFGEXP;
 	}
 };
@@ -1458,7 +1550,7 @@ class ItemArmor1:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_ARM1;
 	}
 };
@@ -1479,7 +1571,7 @@ class ItemArmor2:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_ARM2;
 	}
 };
@@ -1501,7 +1593,8 @@ class ItemHealthBonus:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Translucency = 33;
-		Flags = MF_SPECIAL|MF_COUNTITEM;
+		bSpecial = true;
+		bCountItem = true;
 		SpawnState = S_BON1;
 	}
 };
@@ -1522,7 +1615,8 @@ class ItemArmorBonus:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL|MF_COUNTITEM;
+		bSpecial = true;
+		bCountItem = true;
 		SpawnState = S_BON2;
 	}
 };
@@ -1553,7 +1647,7 @@ class ItemKeyBlueCard:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_BKEY;
 	}
 };
@@ -1584,7 +1678,7 @@ class ItemKeyRedCard:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_RKEY;
 	}
 };
@@ -1615,7 +1709,7 @@ class ItemKeyYellowCard:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_YKEY;
 	}
 };
@@ -1646,7 +1740,7 @@ class ItemKeyYellowSkull:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_YSKULL;
 	}
 };
@@ -1677,7 +1771,7 @@ class ItemKeyRedSkull:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_RSKULL;
 	}
 };
@@ -1708,7 +1802,7 @@ class ItemKeyBlueSkull:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_BSKULL;
 	}
 };
@@ -1729,7 +1823,7 @@ class ItemStimPack:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_STIM;
 	}
 };
@@ -1750,7 +1844,7 @@ class ItemMedikit:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_MEDI;
 	}
 };
@@ -1772,7 +1866,8 @@ class ItemSoulSphere:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Translucency = 33;
-		Flags = MF_SPECIAL|MF_COUNTITEM;
+		bSpecial = true;
+		bCountItem = true;
 		SpawnState = S_SOUL;
 	}
 };
@@ -1794,7 +1889,8 @@ class ItemInvulnerability:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Translucency = 33;
-		Flags = MF_SPECIAL|MF_COUNTITEM;
+		bSpecial = true;
+		bCountItem = true;
 		SpawnState = S_PINV;
 	}
 };
@@ -1815,7 +1911,8 @@ class ItemBerserk:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL|MF_COUNTITEM;
+		bSpecial = true;
+		bCountItem = true;
 		SpawnState = S_PSTR;
 	}
 };
@@ -1837,7 +1934,8 @@ class ItemInvisibility:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Translucency = 33;
-		Flags = MF_SPECIAL|MF_COUNTITEM;
+		bSpecial = true;
+		bCountItem = true;
 		SpawnState = S_PINS;
 	}
 };
@@ -1858,7 +1956,7 @@ class ItemRadiationSuit:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_SUIT;
 	}
 };
@@ -1879,7 +1977,8 @@ class ItemComputerMap:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL|MF_COUNTITEM;
+		bSpecial = true;
+		bCountItem = true;
 		SpawnState = S_PMAP;
 	}
 };
@@ -1900,7 +1999,8 @@ class ItemInfrared:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL|MF_COUNTITEM;
+		bSpecial = true;
+		bCountItem = true;
 		SpawnState = S_PVIS;
 	}
 };
@@ -1922,7 +2022,8 @@ class ItemMegaSphere:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Translucency = 33;
-		Flags = MF_SPECIAL|MF_COUNTITEM;
+		bSpecial = true;
+		bCountItem = true;
 		SpawnState = S_MEGA;
 	}
 };
@@ -1943,7 +2044,7 @@ class ItemAmmoBulletClip:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_CLIP;
 	}
 };
@@ -1964,7 +2065,7 @@ class ItemAmmoBulletBox:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_AMMO;
 	}
 };
@@ -1985,7 +2086,7 @@ class ItemAmmoRocket:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_ROCK;
 	}
 };
@@ -2006,7 +2107,7 @@ class ItemAmmoRocketBox:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_BROK;
 	}
 };
@@ -2027,7 +2128,7 @@ class ItemAmmoCells:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_CELL;
 	}
 };
@@ -2048,7 +2149,7 @@ class ItemAmmoCellsPack:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_CELP;
 	}
 };
@@ -2069,7 +2170,7 @@ class ItemAmmoShells:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_SHEL;
 	}
 };
@@ -2090,7 +2191,7 @@ class ItemAmmoShellsBox:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_SBOX;
 	}
 };
@@ -2111,7 +2212,7 @@ class ItemBackpack:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_BPAK;
 	}
 };
@@ -2132,7 +2233,7 @@ class ItemWeaponBFG:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_BFUG;
 	}
 };
@@ -2153,7 +2254,7 @@ class ItemWeaponChaingun:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_MGUN;
 	}
 };
@@ -2174,7 +2275,7 @@ class ItemWeaponChainsaw:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_CSAW;
 	}
 };
@@ -2195,7 +2296,7 @@ class ItemWeaponRocketLauncher:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_LAUN;
 	}
 };
@@ -2216,7 +2317,7 @@ class ItemWeaponPlasmaGun:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_PLAS;
 	}
 };
@@ -2237,7 +2338,7 @@ class ItemWeaponShotgun:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_SHOT;
 	}
 };
@@ -2258,7 +2359,7 @@ class ItemWeaponSuperShotgun:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
+		bSpecial = true;
 		SpawnState = S_SHOT2;
 	}
 };
@@ -2286,7 +2387,7 @@ class TechLamp:Actor
 		Height = 72.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_TECHLAMP;
 	}
 };
@@ -2314,7 +2415,7 @@ class TechLamp2:Actor
 		Height = 56.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_TECH2LAMP;
 	}
 };
@@ -2342,7 +2443,7 @@ class ColumnLamp:Actor
 		Height = 48.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_COLU;
 	}
 };
@@ -2363,7 +2464,7 @@ class ColumnGreenTall:Actor
 		Height = 52.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_TALLGRNCOL;
 	}
 };
@@ -2384,7 +2485,7 @@ class ColumnGreenShort:Actor
 		Height = 40.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_SHRTGRNCOL;
 	}
 };
@@ -2405,7 +2506,7 @@ class ColumnRedTall:Actor
 		Height = 52.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_TALLREDCOL;
 	}
 };
@@ -2426,7 +2527,7 @@ class ColumnRedShort:Actor
 		Height = 40.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_SHRTREDCOL;
 	}
 };
@@ -2447,7 +2548,7 @@ class ColumnWithSkull:Actor
 		Height = 40.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_SKULLCOL;
 	}
 };
@@ -2468,7 +2569,7 @@ class ColumnWithHearth:Actor
 		Height = 40.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_HEARTCOL;
 	}
 };
@@ -2496,7 +2597,7 @@ class EvilEye:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_EVILEYE;
 	}
 };
@@ -2517,7 +2618,7 @@ class FloatingSkull:Actor
 		Height = 48.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_FLOATSKULL;
 	}
 };
@@ -2538,7 +2639,7 @@ class TorchTree:Actor
 		Height = 64.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_TORCHTREE;
 	}
 };
@@ -2566,7 +2667,7 @@ class TorchBlue:Actor
 		Height = 64.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_BLUETORCH;
 	}
 };
@@ -2594,7 +2695,7 @@ class TorchGreen:Actor
 		Height = 64.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_GREENTORCH;
 	}
 };
@@ -2622,7 +2723,7 @@ class TorchRed:Actor
 		Height = 64.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_REDTORCH;
 	}
 };
@@ -2650,7 +2751,7 @@ class TorchBlueShort:Actor
 		Height = 40.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_BTORCHSHRT;
 	}
 };
@@ -2678,7 +2779,7 @@ class TorchGreenShort:Actor
 		Height = 40.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_GTORCHSHRT;
 	}
 };
@@ -2706,7 +2807,7 @@ class TorchRedShort:Actor
 		Height = 40.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_RTORCHSHRT;
 	}
 };
@@ -2727,7 +2828,7 @@ class Stalagtite:Actor
 		Height = 40.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_STALAGTITE;
 	}
 };
@@ -2748,7 +2849,7 @@ class TechPillar:Actor
 		Height = 120.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_TECHPILLAR;
 	}
 };
@@ -2802,7 +2903,7 @@ class Candelabra:Actor
 		Height = 56.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_CANDELABRA;
 	}
 };
@@ -2823,7 +2924,9 @@ class BloodyTwitch:Actor
 		Height = 68.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
+		bSolid = true;
+		bSpawnCeiling = true;
+		bNoGravity = true;
 		SpawnState = S_BLOODYTWITCH;
 	}
 };
@@ -2844,7 +2947,9 @@ class Meat2:Actor
 		Height = 84.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
+		bSolid = true;
+		bSpawnCeiling = true;
+		bNoGravity = true;
 		SpawnState = S_MEAT2;
 	}
 };
@@ -2865,7 +2970,9 @@ class Meat3:Actor
 		Height = 84.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
+		bSolid = true;
+		bSpawnCeiling = true;
+		bNoGravity = true;
 		SpawnState = S_MEAT3;
 	}
 };
@@ -2886,7 +2993,9 @@ class Meat4:Actor
 		Height = 68.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
+		bSolid = true;
+		bSpawnCeiling = true;
+		bNoGravity = true;
 		SpawnState = S_MEAT4;
 	}
 };
@@ -2907,7 +3016,9 @@ class Meat5:Actor
 		Height = 52.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
+		bSolid = true;
+		bSpawnCeiling = true;
+		bNoGravity = true;
 		SpawnState = S_MEAT5;
 	}
 };
@@ -2928,7 +3039,8 @@ class Meat2NoBlock:Actor
 		Height = 84.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPAWNCEILING|MF_NOGRAVITY;
+		bSpawnCeiling = true;
+		bNoGravity = true;
 		SpawnState = S_MEAT2;
 	}
 };
@@ -2949,7 +3061,8 @@ class Meat4NoBlock:Actor
 		Height = 68.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPAWNCEILING|MF_NOGRAVITY;
+		bSpawnCeiling = true;
+		bNoGravity = true;
 		SpawnState = S_MEAT4;
 	}
 };
@@ -2970,7 +3083,8 @@ class Meat3NoBlock:Actor
 		Height = 52.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPAWNCEILING|MF_NOGRAVITY;
+		bSpawnCeiling = true;
+		bNoGravity = true;
 		SpawnState = S_MEAT3;
 	}
 };
@@ -2991,7 +3105,8 @@ class Meat5NoBlock:Actor
 		Height = 52.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPAWNCEILING|MF_NOGRAVITY;
+		bSpawnCeiling = true;
+		bNoGravity = true;
 		SpawnState = S_MEAT5;
 	}
 };
@@ -3012,7 +3127,8 @@ class BloodyTwitchNoBlock:Actor
 		Height = 68.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPAWNCEILING|MF_NOGRAVITY;
+		bSpawnCeiling = true;
+		bNoGravity = true;
 		SpawnState = S_BLOODYTWITCH;
 	}
 };
@@ -3213,7 +3329,7 @@ class HeadsOnStick:Actor
 		Height = 64.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_HEADSONSTICK;
 	}
 };
@@ -3254,7 +3370,7 @@ class HeadOnAStick:Actor
 		Height = 56.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_HEADONASTICK;
 	}
 };
@@ -3275,7 +3391,7 @@ class HeadCandles:Actor
 		Height = 48.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_HEADCANDLES;
 	}
 };
@@ -3296,7 +3412,7 @@ class DeadStick:Actor
 		Height = 64.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_DEADSTICK;
 	}
 };
@@ -3317,7 +3433,7 @@ class LiveStick:Actor
 		Height = 64.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_LIVESTICK;
 	}
 };
@@ -3338,7 +3454,7 @@ class BigTree:Actor
 		Height = 96.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_BIGTREE;
 	}
 };
@@ -3359,7 +3475,7 @@ class BurningBarrel:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
+		bSolid = true;
 		SpawnState = S_BBAR1;
 	}
 };
@@ -3380,7 +3496,9 @@ class HangingNoGuts:Actor
 		Height = 88.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
+		bSolid = true;
+		bSpawnCeiling = true;
+		bNoGravity = true;
 		SpawnState = S_HANGNOGUTS;
 	}
 };
@@ -3401,7 +3519,9 @@ class HangingNoBrain:Actor
 		Height = 88.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
+		bSolid = true;
+		bSpawnCeiling = true;
+		bNoGravity = true;
 		SpawnState = S_HANGBNOBRAIN;
 	}
 };
@@ -3422,7 +3542,9 @@ class HangingTorsoLookDown:Actor
 		Height = 64.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
+		bSolid = true;
+		bSpawnCeiling = true;
+		bNoGravity = true;
 		SpawnState = S_HANGTLOOKDN;
 	}
 };
@@ -3443,7 +3565,9 @@ class HangingTorsoSkull:Actor
 		Height = 64.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
+		bSolid = true;
+		bSpawnCeiling = true;
+		bNoGravity = true;
 		SpawnState = S_HANGTSKULL;
 	}
 };
@@ -3464,7 +3588,9 @@ class HangingTorsoLookUp:Actor
 		Height = 64.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
+		bSolid = true;
+		bSpawnCeiling = true;
+		bNoGravity = true;
 		SpawnState = S_HANGTLOOKUP;
 	}
 };
@@ -3485,7 +3611,9 @@ class HangingTorsoNoBrain:Actor
 		Height = 64.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
+		bSolid = true;
+		bSpawnCeiling = true;
+		bNoGravity = true;
 		SpawnState = S_HANGTNOBRAIN;
 	}
 };
@@ -3506,7 +3634,7 @@ class ColonGibs:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP;
+		bNoBlockmap = true;
 		SpawnState = S_COLONGIBS;
 	}
 };
@@ -3527,7 +3655,7 @@ class SmallPool:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP;
+		bNoBlockmap = true;
 		SpawnState = S_SMALLPOOL;
 	}
 };
@@ -3548,7 +3676,7 @@ class BrainStem:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP;
+		bNoBlockmap = true;
 		SpawnState = S_BRAINSTEM;
 	}
 };
@@ -3556,9 +3684,12 @@ class BrainStem:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2002/02/06 17:28:51  dj_jl
+//	Replaced Actor flags with boolean variables.
+//
 //	Revision 1.20  2002/02/02 19:14:08  dj_jl
 //	Fixed things not spawned in deathmatch.
-//
+//	
 //	Revision 1.19  2002/01/29 18:10:31  dj_jl
 //	Added MCROSS and PCROSS flags
 //	

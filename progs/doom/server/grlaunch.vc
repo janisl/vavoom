@@ -32,6 +32,7 @@ void P_ExplodeMissile(mobj_t * missile);
 //==========================================================================
 
 class weapon_grenade_launcher:Actor
+	__mobjinfo__(90)
 {
 	__states__
 	{
@@ -41,17 +42,12 @@ class weapon_grenade_launcher:Actor
 
 	defaultproperties
 	{
-		radius = 20.0;
-		height = 16.0;
-		flags = MF_SPECIAL;
-		spawnstate = S_GLAUNCH;
+		Radius = 20.0;
+		Height = 16.0;
+		Flags = MF_SPECIAL;
+		SpawnState = S_GLAUNCH;
 	}
 };
-
-__mobjinfo__
-{
-	{ 90, weapon_grenade_launcher }
-}
 
 //==========================================================================
 //
@@ -75,14 +71,14 @@ class missile_grenade:Actor
 
 	defaultproperties
 	{
-		radius = 11.0;
-		height = 8.0;
-		mass = 100.0;
-		speed = 600.0;
-		damage = 20;
-		flags = MF_NOBLOCKMAP | MF_DROPOFF | MF_MISSILE | MF_BOUNCE;
-		spawnstate = S_GRENADE;
-		deathstate = S_EXPLODE1;
+		Radius = 11.0;
+		Height = 8.0;
+		Mass = 100.0;
+		Speed = 600.0;
+		MissileDamage = 20;
+		Flags = MF_NOBLOCKMAP | MF_DROPOFF | MF_MISSILE | MF_BOUNCE;
+		SpawnState = S_GRENADE;
+		DeathState = S_EXPLODE1;
 		SightSound = 'LauncherFire';
 		PainSound = 'GrenadeBounce';
 		DeathSound = 'BarrelExplode';
@@ -102,7 +98,7 @@ __states__(Weapon)
 	S_GRENLAUNCHDOWN('GRLG', 0, 1.0 / 35.0, S_GRENLAUNCHDOWN) {	A_Lower(); }
 	S_GRENLAUNCHUP('GRLG', 0, 1.0 / 35.0, S_GRENLAUNCHUP) {	A_Raise(); }
 	S_GRENLAUNCH1('GRLG', 1, 8.0 / 35.0, S_GRENLAUNCH2) { A_GunFlash(); }
-	S_GRENLAUNCH2('GRLG', 1, 12.0 / 35.0, S_GRENLAUNCH3) { A_FireGrenade(); };
+	S_GRENLAUNCH2('GRLG', 1, 12.0 / 35.0, S_GRENLAUNCH3) { A_FireGrenade(); }
 	S_GRENLAUNCH3('GRLG', 1, 0.0 / 35.0, S_GRENLAUNCH) { A_ReFire(); }
 	S_GRENLAUNCHFLASH1('GRLF', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENLAUNCHFLASH2) { A_Light1();	}
 	S_GRENLAUNCHFLASH2('GRLF', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_GRENLAUNCHFLASH3) { }
@@ -125,6 +121,9 @@ void set_weapon_grenade(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/02/06 17:28:51  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.10  2002/01/12 17:58:03  dj_jl
 //  New style state functions
 //

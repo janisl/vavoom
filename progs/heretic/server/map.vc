@@ -181,7 +181,7 @@ boolean PIT_ChangeSector(MapObject Other)
 	// crunch bodies to giblets
 	if (thing->Health <= 0)
 	{
-		thing->Flags &= ~MF_SOLID;
+		thing->bSolid = false;
 		thing->Height = 0.0;
 		thing->Radius = 0.0;
 
@@ -190,7 +190,7 @@ boolean PIT_ChangeSector(MapObject Other)
 	}
 
 	// crunch dropped items
-	if (thing->Flags & MF_DROPPED)
+	if (thing->bDropped)
 	{
 		P_RemoveMobj(thing);
 
@@ -198,7 +198,7 @@ boolean PIT_ChangeSector(MapObject Other)
 		return true;	//fit
 	}
 
-	if (!(thing->Flags & MF_SHOOTABLE))
+	if (!thing->bShootable)
 	{
 		// assume it is bloody gibs or something
 		return true;	//fit
@@ -398,7 +398,7 @@ boolean PTR_AimTraverse(intercept_t * in)
 	if (th == *aim_thing)
 		return true;	// can't shoot self
 
-	if (!(th.Flags & MF_SHOOTABLE))
+	if (!th.bShootable)
 		return true;	// corpse or something
 
 	if (th.Class == Pod)
@@ -678,7 +678,7 @@ boolean PTR_ShootTraverse(intercept_t * in)
 	if (th == *shoot_thing)
 		return true;	// can't shoot self
 
-	if (!(th.Flags & MF_SHOOTABLE))
+	if (!th.bShootable)
 		return true;	// corpse or something
 
 	// check angles to see if the thing can be aimed at
@@ -715,7 +715,7 @@ boolean PTR_ShootTraverse(intercept_t * in)
 	}
 	if (la_damage)
 	{
-		if (!(th.Flags & MF_NOBLOOD) && P_Random() < 192)
+		if (!th.bNoBlood && P_Random() < 192)
 		{
 			MSG_Select(MSG_SV_DATAGRAM);
 			MSG_WriteByte(svc_blood);
@@ -787,7 +787,7 @@ boolean PIT_RadiusAttack(MapObject Other)
 {
 	float dist;
 
-	if (!(Other.Flags & MF_SHOOTABLE))
+	if (!Actor(Other).bShootable)
 		return true;
 
 	if (Other.Class == Minotaur ||
@@ -859,6 +859,9 @@ void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage, int distance,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/06 17:28:52  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.18  2002/02/02 19:17:25  dj_jl
 //  Replacing pointers with references, beautification.
 //

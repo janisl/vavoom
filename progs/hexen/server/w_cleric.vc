@@ -146,8 +146,8 @@ void Weapon::A_CStaffCheck(void)
 			LineAttack(pmo, &vforward, 1.5 * MELEERANGE, damage);
 			pmo->angles.yaw = atan2(linetarget->origin.y - pmo->origin.y,
 				linetarget->origin.x - pmo->origin.x);
-			if ((linetarget->player || linetarget->Flags & MF_COUNTKILL)
-				&& (!(linetarget->Flags2 & (MF2_DORMANT + MF2_INVULNERABLE))))
+			if ((linetarget->player || linetarget->bCountKill) &&
+				!linetarget->bDormant && !linetarget->bInvulnerable)
 			{
 				newLife = player->health + (damage >> 3);
 				newLife = newLife > 100 ? 100 : newLife;
@@ -167,7 +167,7 @@ void Weapon::A_CStaffCheck(void)
 			LineAttack(pmo, &vforward, 1.5 * MELEERANGE, damage);
 			pmo->angles.yaw = atan2(linetarget->origin.y - pmo->origin.y,
 				linetarget->origin.x - pmo->origin.x);
-			if (linetarget->player || linetarget->Flags & MF_COUNTKILL)
+			if (linetarget->player || linetarget->bCountKill)
 			{
 				newLife = player->health + (damage >> 4);
 				newLife = newLife > 100 ? 100 : newLife;
@@ -274,7 +274,7 @@ void Actor::A_CFlameMissile(void)
 	A_UnHideThing();
 	StartSoundName(self, 'ClericFlameExplode', CHAN_VOICE);
 	bmo = BlockingMobj;
-	if (bmo && bmo->Flags & MF_SHOOTABLE)
+	if (bmo && bmo->bShootable)
 	{
 		// Hit something, so spawn the flame circle around the thing
 		dist = bmo->Radius + 18.0;
@@ -433,8 +433,9 @@ void Actor::A_CHolyAttack2(void)
 		if (linetarget)
 		{
 			mo->specialmobj1 = linetarget;
-			mo->Flags |= MF_NOCLIP | MF_SKULLFLY;
-			mo->Flags &= ~MF_MISSILE;
+			mo->bNoClip = true;
+			mo->bSkullFly = true;
+			mo->bMissile = false;
 		}
 		tail = P_SpawnMobj(mo->origin.x, mo->origin.y, mo->origin.z,
 			HolyTail);
@@ -465,8 +466,9 @@ void Actor::CHolyFindTarget(void)
 	if (targ)
 	{
 		specialmobj1 = &targ;
-		Flags |= MF_NOCLIP | MF_SKULLFLY;
-		Flags &= ~MF_MISSILE;
+		bNoClip = true;
+		bSkullFly = true;
+		bMissile = false;
 	}
 }
 
@@ -493,13 +495,13 @@ void Actor::CHolySeekerMissile(float thresh, float turnMax)
 	{
 		return;
 	}
-	if (!(targ->Flags & MF_SHOOTABLE)
-		|| (!(targ->Flags & MF_COUNTKILL) && !targ->player))
+	if (!targ->bShootable || (!targ->bCountKill && !targ->player))
 	{
 		// Target died/target isn't a player or creature
 		specialmobj1 = NULL;
-		Flags &= ~(MF_NOCLIP | MF_SKULLFLY);
-		Flags |= MF_MISSILE;
+		bNoClip = false;
+		bSkullFly = false;
+		bMissile = true;
 		CHolyFindTarget();
 		return;
 	}
@@ -734,6 +736,9 @@ void Actor::A_CHolySpawnPuff(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/06 17:28:53  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.15  2002/02/02 19:17:26  dj_jl
 //  Replacing pointers with references, beautification.
 //

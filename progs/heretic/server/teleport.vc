@@ -38,7 +38,7 @@ boolean PIT_StompThing(MapObject Other)
 {
 	float blockdist;
 
-	if (!(Other.Flags & MF_SHOOTABLE))
+	if (!Actor(Other).bShootable)
 	{
 		return true;
 	}
@@ -59,7 +59,7 @@ boolean PIT_StompThing(MapObject Other)
 	}
 
 	//  Check if allowed to stomp things
-	if (!(teleport_thing->Flags2 & MF2_TELESTOMP))
+	if (!teleport_thing->bTelestomp)
 	{
 		return false;
 	}
@@ -157,7 +157,7 @@ boolean P_Teleport(mobj_t * thing, float x, float y, float angle)
 		}
 		player->fixangle = true;
 	}
-	else if (thing->Flags & MF_MISSILE)
+	else if (thing->bMissile)
 	{
 		thing->origin.z = thing->floorz + aboveFloor;
 		if (thing->origin.z + thing->Height > thing->ceilingz)
@@ -170,7 +170,7 @@ boolean P_Teleport(mobj_t * thing, float x, float y, float angle)
 		thing->origin.z = thing->floorz;
 	}
 	// Spawn teleport fog at source and destination
-	fogDelta = thing->Flags & MF_MISSILE ? 0.0 : TELEFOGHEIGHT;
+	fogDelta = thing->bMissile ? 0.0 : TELEFOGHEIGHT;
 	fog = P_SpawnMobj(oldx, oldy, oldz + fogDelta, TeleportFog);
 	StartSoundName(*fog, 'Teleport', CHAN_VOICE);
 	fog = P_SpawnMobj(x + 20.0 * cos(angle),
@@ -182,8 +182,7 @@ boolean P_Teleport(mobj_t * thing, float x, float y, float angle)
 		thing->ReactionTime = 0.5;
 	}
 	thing->angles.yaw = angle;
-	if (thing->Flags2 & MF2_FOOTCLIP &&
-		P_GetThingFloorType(thing) != FLOOR_SOLID)
+	if (thing->bFootClip && P_GetThingFloorType(thing) != FLOOR_SOLID)
 	{
 		thing->floorclip = FOOTCLIPSIZE;
 	}
@@ -191,7 +190,7 @@ boolean P_Teleport(mobj_t * thing, float x, float y, float angle)
 	{
 		thing->floorclip = 0.0;
 	}
-	if (thing->Flags & MF_MISSILE)
+	if (thing->bMissile)
 	{
 		thing->velocity.x = thing->Speed * cos(angle);
 		thing->velocity.y = thing->Speed * sin(angle);
@@ -214,7 +213,7 @@ boolean EV_Teleport(int tag, mobj_t * thing, boolean usefog)
 	int i;
 	Actor m;
 
-	if (thing->Flags2 & MF2_NOTELEPORT)
+	if (thing->bNoTeleport)
 	{
 		return false;
 	}
@@ -238,6 +237,9 @@ boolean EV_Teleport(int tag, mobj_t * thing, boolean usefog)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/02/06 17:28:52  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.14  2002/02/02 19:17:25  dj_jl
 //  Replacing pointers with references, beautification.
 //

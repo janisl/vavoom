@@ -761,7 +761,7 @@ boolean CheckActivation(int activationType, line_t * line, mobj_t * mo)
 	{
 		return false;
 	}
-	if (!mo->player && !(mo->Flags & MF_MISSILE))
+	if (!mo->player && !mo->bMissile)
 	{
 		if ((activationType == SPAC_USE || activationType == SPAC_PUSH)
 			&& (line->flags & ML_SECRET))
@@ -847,6 +847,9 @@ boolean P_ActivateLine(line_t * line, mobj_t * mo, int side,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/02/06 17:28:51  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.10  2002/01/29 18:12:09  dj_jl
 //  Added some thing specials
 //

@@ -177,11 +177,11 @@ boolean EV_ThingProjectile(int *args, boolean gravity)
 		newMobj->velocity.x = speed * cos(angle) * 35.0;
 		newMobj->velocity.y = speed * sin(angle) * 35.0;
 		newMobj->velocity.z = vspeed * 35.0;
-		newMobj->Flags2 |= MF2_DROPPED;	// Don't respawn
+		newMobj->bDropped = true;	// Don't respawn
 		if (gravity)
 		{
-			newMobj->Flags &= ~MF_NOGRAVITY;
-			newMobj->Flags2 |= MF2_LOGRAV;
+			newMobj->bNoGravity = false;
+			newMobj->bLowGravity = true;
 		}
 		if (CheckMissileSpawn(newMobj))
 		{
@@ -218,13 +218,14 @@ boolean EV_ThingSpawn(int *args, boolean fog)
 		newMobj =
 			P_SpawnMobj(mobj->origin.x, mobj->origin.y, mobj->origin.z,
 			moType);
-		if (newMobj->Flags2 & MF2_FLOATBOB)
+		if (newMobj->bFloatBob)
 		{
 			newMobj->origin.z = mobj->origin.z - mobj->floorz;
 			SetOrigin(newMobj, newMobj->origin);
 		}
 		if (P_TestMobjLocation(newMobj) == false)
-		{	// Didn't fit
+		{
+			// Didn't fit
 			P_RemoveMobj(newMobj);
 		}
 		else
@@ -236,8 +237,8 @@ boolean EV_ThingSpawn(int *args, boolean fog)
 					mobj->origin.z + TELEFOGHEIGHT, TeleportFog);
 				StartSoundName(*fogMobj, 'Teleport', CHAN_VOICE);
 			}
-			newMobj->Flags2 |= MF2_DROPPED;	// Don't respawn
-			if (newMobj->Flags2 & MF2_FLOATBOB)
+			newMobj->bDropped = true;	// Don't respawn
+			if (newMobj->bFloatBob)
 			{
 				newMobj->special1f = newMobj->origin.z - newMobj->floorz;
 			}
@@ -255,12 +256,12 @@ boolean EV_ThingSpawn(int *args, boolean fog)
 
 boolean ActivateThing(mobj_t * mobj)
 {
-	if (mobj->Flags & MF_COUNTKILL)
+	if (mobj->bCountKill)
 	{
 		// Monster
-		if (mobj->Flags2 & MF2_DORMANT)
+		if (mobj->bDormant)
 		{
-			mobj->Flags2 &= ~MF2_DORMANT;
+			mobj->bDormant = false;
 			mobj->time = 0.1;
 			return true;
 		}
@@ -362,12 +363,12 @@ boolean EV_ThingActivate(int tid)
 
 boolean DeactivateThing(mobj_t * mobj)
 {
-	if (mobj->Flags & MF_COUNTKILL)
+	if (mobj->bCountKill)
 	{
 		// Monster
-		if (!(mobj->Flags2 & MF2_DORMANT))
+		if (!mobj->bDormant)
 		{
-			mobj->Flags2 |= MF2_DORMANT;
+			mobj->bDormant = true;
 			mobj->time = -1.0;
 			return true;
 		}
@@ -485,7 +486,7 @@ boolean EV_ThingDestroy(int tid)
 	searcher = -1;
 	while ((mobj = P_FindMobjFromTID(tid, &searcher)) != NULL)
 	{
-		if (mobj->Flags & MF_SHOOTABLE)
+		if (mobj->bShootable)
 		{
 			mobj->Damage(none, none, 10000);
 			success = true;
@@ -504,7 +505,7 @@ int ThingCount(int type, int tid)
 {
 	int count;
 	int searcher;
-	Entity Ent;
+	Actor Ent;
 	classid moType;
 
 	if (!(type + tid))
@@ -527,7 +528,7 @@ int ThingCount(int type, int tid)
 			}
 			else if (moType == Ent.Class)
 			{
-				if (Ent.Flags & MF_COUNTKILL && Ent.Health <= 0)
+				if (Ent.bCountKill && Ent.Health <= 0)
 				{
 					// Don't count dead monsters
 					continue;
@@ -539,14 +540,14 @@ int ThingCount(int type, int tid)
 	else
 	{
 		// Count only types
-		FOREACH(Entity, Ent)
+		FOREACH(Actor, Ent)
 		{
 			if (Ent.Class != moType)
 			{
 				// Doesn't match
 				continue;
 			}
-			if (Ent.Flags & MF_COUNTKILL && Ent.Health <= 0)
+			if (Ent.bCountKill && Ent.Health <= 0)
 			{
 				// Don't count dead monsters
 				continue;
@@ -560,6 +561,9 @@ int ThingCount(int type, int tid)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/06 17:28:53  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.17  2002/01/28 18:50:19  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

@@ -49,13 +49,10 @@ int Actor::UpdateMorphedMonster(int tics)
 	TVec oldOrigin;
 	classid originalClass;
 	float oldAngle;
-	int oldFlags;
-	int oldHealth;
 	mobj_t *oldTarget;
 	int oldSpecial;
 	int oldTID;
 	int oldArgs[5];
-	classid pigClass;
 	Actor mo;
 
 	special1 -= tics;
@@ -76,8 +73,6 @@ int Actor::UpdateMorphedMonster(int tics)
 	}
 	oldOrigin = origin;
 	oldAngle = angles.yaw;
-	oldFlags = Flags;
-	oldHealth = Health;
 	oldTarget = target;
 	oldSpecial = special;
 	oldTID = tid;
@@ -86,33 +81,20 @@ int Actor::UpdateMorphedMonster(int tics)
 	oldArgs[2] = args[2];
 	oldArgs[3] = args[3];
 	oldArgs[4] = args[4];
-	pigClass = Class;
 
-	P_RemoveMobjFromTIDList(this);
-	SetState(S_FREETARGMOBJ);
+	P_UnsetThingPosition(self);
 	mo = SpawnActor(oldOrigin, originalClass);
 
 	if (!P_TestMobjLocation(&mo))
 	{
 		// Didn't fit
 		P_RemoveMobj(&mo);
-		mo = SpawnActor(oldOrigin, pigClass);
-		mo.angles.yaw = oldAngle;
-		mo.Flags = oldFlags;
-		mo.Health = oldHealth;
-		mo.target = oldTarget;
-		mo.special = oldSpecial;
+		P_SetThingPosition(self);
 		mo.special1 = 5 * 35;	// Next try in 5 seconds
-		mo.specialcid = originalClass;
-		mo.tid = oldTID;
-		mo.args[0] = oldArgs[0];
-		mo.args[1] = oldArgs[1];
-		mo.args[2] = oldArgs[2];
-		mo.args[3] = oldArgs[3];
-		mo.args[4] = oldArgs[4];
-		P_InsertMobjIntoTIDList(&mo, oldTID);
 		return false;
 	}
+	P_RemoveMobjFromTIDList(this);
+	SetState(S_FREETARGMOBJ);
 	mo.angles.yaw = oldAngle;
 	mo.target = oldTarget;
 	mo.tid = oldTID;
@@ -200,6 +182,9 @@ void Actor::A_PigPain(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/06 17:28:53  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.15  2002/01/28 18:50:19  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

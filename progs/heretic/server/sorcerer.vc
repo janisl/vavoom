@@ -182,7 +182,7 @@ void Actor::A_SorcererRise(void)
 {
 	mobj_t *mo;
 
-	Flags &= ~MF_SOLID;
+	bSolid = false;
 	mo = P_SpawnMobj(origin.x, origin.y, origin.z, Sorcerer2);
 	mo->SetState(S_SOR2_RISE1);
 	mo->angles.yaw = angles.yaw;
@@ -444,7 +444,7 @@ void Actor::A_GenWizard(void)
 	}
 	velocity = vector(0.0, 0.0, 0.0);
 	SetState(DeathState);
-	Flags &= ~MF_MISSILE;
+	bMissile = false;
 	fog = P_SpawnMobj(origin.x, origin.y, origin.z, TeleportFog);
 	StartSoundName(*fog, 'Teleport', CHAN_VOICE);
 }
@@ -452,6 +452,9 @@ void Actor::A_GenWizard(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/06 17:28:52  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.15  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

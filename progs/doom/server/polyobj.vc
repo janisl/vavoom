@@ -577,7 +577,7 @@ void PolyThrustMobj(mobj_t * mobj, TVec thrustDir, polyobj_t * po)
 	float force;
 	PolyobjThinker pe;
 
-	if (!(mobj->Flags & MF_SHOOTABLE) && !mobj->player)
+	if (!mobj->bShootable && !mobj->player)
 	{
 		return;
 	}
@@ -637,6 +637,9 @@ boolean PolyBusy(int polyobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/02/06 17:28:51  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.6  2002/01/25 18:04:33  dj_jl
 //  Many global functions made Actor functions
 //

@@ -27,7 +27,6 @@
 
 #include "gamedefs.h"
 #include "sv_local.h"
-#include "moflags.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -162,7 +161,8 @@ boolean PO_MovePolyobj(int num, float x, float y)
 	vertex_t *prevPts;
 	boolean blocked;
 
-	if (!(po = PO_GetPolyobj(num)))
+	po = PO_GetPolyobj(num);
+	if (!po)
 	{
 		Sys_Error("PO_MovePolyobj:  Invalid polyobj number: %d\n", num);
 	}
@@ -464,13 +464,14 @@ static boolean CheckMobjBlocking(seg_t *seg, polyobj_t *po)
 	right = right < 0 ? 0 : right;
 	right = right >= level.bmapwidth ?  level.bmapwidth-1 : right;
 
-	for(j = bottom*level.bmapwidth; j <= top*level.bmapwidth; j += level.bmapwidth)
+	for (j = bottom * level.bmapwidth; j <= top * level.bmapwidth;
+		j += level.bmapwidth)
 	{
-		for(i = left; i <= right; i++)
+		for (i = left; i <= right; i++)
 		{
-			for(mobj = level.blocklinks[j+i]; mobj; mobj = mobj->bnext)
+			for (mobj = level.blocklinks[j+i]; mobj; mobj = mobj->bnext)
 			{
-				if(mobj->flags&MF_SOLID || mobj->player)
+				if (mobj->bSolid || mobj->player)
 				{
 					tmbbox[BOXTOP] = mobj->origin.y + mobj->radius;
 					tmbbox[BOXBOTTOM] = mobj->origin.y - mobj->radius;
@@ -866,9 +867,12 @@ boolean PO_Busy(int polyobj)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/02/06 17:30:36  dj_jl
+//	Replaced Actor flags with boolean variables.
+//
 //	Revision 1.11  2002/01/15 18:30:43  dj_jl
 //	Some fixes and improvements suggested by Malcolm Nixon
-//
+//	
 //	Revision 1.10  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

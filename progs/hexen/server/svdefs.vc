@@ -101,85 +101,6 @@
 // 16 pixels of bob
 #define MAXBOB			16.0
 
-// --- mobj.flags ---
-
-#define	MF_SPECIAL		0x00000001	// call P_SpecialThing when touched
-#define	MF_SOLID		0x00000002	// Blocks.
-#define	MF_SHOOTABLE	0x00000004	// Can be hit.
-#define	MF_NOSECTOR		0x00000008	// don't use the sector links
-									// (invisible but touchable)
-#define	MF_NOBLOCKMAP	0x00000010	// don't use the blocklinks
-									// (inert but displayable)
-#define	MF_AMBUSH		0x00000020
-#define	MF_JUSTHIT		0x00000040	// try to attack right back
-#define	MF_JUSTATTACKED	0x00000080	// take at least one step before attacking
-#define	MF_SPAWNCEILING	0x00000100	// hang from ceiling instead of floor
-#define	MF_NOGRAVITY	0x00000200	// don't apply gravity every tic
-
-// movement flags
-#define	MF_DROPOFF		0x00000400	// allow jumps from high places
-#define	MF_PICKUP		0x00000800	// for players to pick up items
-#define	MF_NOCLIP		0x00001000	// player cheat
-#define	MF_SLIDE		0x00002000	// keep info about sliding along walls
-#define	MF_FLOAT		0x00004000	// allow moves to any height, no gravity
-#define	MF_TELEPORT		0x00008000	// don't cross lines or look at heights
-#define MF_MISSILE		0x00010000	// don't hit same species, explode on block
-
-#define	MF_NOBLOOD		0x00080000	// don't bleed when shot (use puff)
-#define	MF_CORPSE		0x00100000	// don't stop moving halfway off a step
-#define	MF_INFLOAT		0x00200000	// floating to a height for a move, don't
-									// auto float to target's height
-
-#define	MF_COUNTKILL	0x00400000	// count towards intermission kill total
-#define	MF_ICECORPSE	0x00800000	// a frozen corpse (for blasting)
-
-#define	MF_SKULLFLY		0x01000000	// skull in flight
-#define MF_WATERJUMP	0x80000000
-
-// --- mobj.flags2 ---
-
-#define MF2_LOGRAV			0x00000001	// alternate gravity setting
-#define MF2_WINDTHRUST		0x00000002	// gets pushed around by the wind
-										// specials
-#define MF2_FLOORBOUNCE		0x00000004	// bounces off the floor
-#define MF2_BLASTED			0x00000008	// missile will pass through ghosts
-#define MF2_FLY				0x00000010	// fly mode is active
-#define MF2_FLOORCLIP		0x00000020	// if feet are allowed to be clipped
-#define MF2_SPAWNFLOAT		0x00000040	// spawn random float z
-#define MF2_NOTELEPORT		0x00000080	// does not teleport
-#define MF2_RIP				0x00000100	// missile rips through solid
-										// targets
-#define MF2_PUSHABLE		0x00000200	// can be pushed by other moving
-										// mobjs
-#define MF2_SLIDE			0x00000400	// slides against walls
-#define MF2_ONMOBJ			0x00000800	// mobj is resting on top of another
-										// mobj
-#define MF2_NOPASSMOBJ		0x00001000	// Disable z block checking.  If off,
-										// this flag will allow the mobj to
-										// pass over/under other mobjs.
-#define MF2_CANNOTPUSH		0x00002000	// cannot push other pushable mobjs
-#define MF2_DROPPED			0x00004000	// dropped by a demon
-#define MF2_BOSS			0x00008000	// mobj is a major boss
-#define MF2_FIREDAMAGE		0x00010000	// does fire damage
-#define MF2_NODMGTHRUST		0x00020000	// does not thrust target when
-										// damaging
-#define MF2_TELESTOMP		0x00040000	// mobj can stomp another
-#define MF2_FLOATBOB		0x00080000	// use float bobbing z movement
-
-#define MF2_IMPACT			0x00200000	// an MF_MISSILE mobj can activate
-										// SPAC_IMPACT
-#define MF2_PUSHWALL		0x00400000	// mobj can push walls
-#define MF2_MCROSS			0x00800000	// can activate monster cross lines
-#define MF2_PCROSS			0x01000000	// can activate projectile cross lines
-#define MF2_CANTLEAVEFLOORPIC 0x02000000	// stay within a certain floor type
-#define MF2_NONSHOOTABLE	0x04000000	// mobj is totally non-shootable,
-										// but still considered solid
-#define MF2_INVULNERABLE	0x08000000	// mobj is invulnerable
-#define MF2_DORMANT			0x10000000	// thing is dormant
-#define MF2_ICEDAMAGE		0x20000000	// does ice damage
-#define MF2_SEEKERMISSILE	0x40000000	// is a seeker (for reflection)
-#define MF2_REFLECTIVE		0x80000000	// reflects missiles
-
 // CONSTANTS ---------------------------------------------------------------
 
 // Any floor type >= FLOOR_LIQUID will floorclip sprites
@@ -290,6 +211,65 @@ class Actor:Entity
 	int sound_attack;
 	int sound_pain;
 	int sound_death;
+
+	//	Flags
+	boolean bSpecial;		// call P_SpecialThing when touched
+	boolean bShootable;		// Can be hit.
+	boolean bAmbush;
+	boolean bJustHit;		// try to attack right back
+	boolean bJustAttacked;	// take at least one step before attacking
+	boolean bSpawnCeiling;	// hang from ceiling instead of floor
+	boolean bNoGravity;		// don't apply gravity every tic
+	// movement flags
+	boolean bDropOff;		// allow jumps from high places
+	boolean bPickUp;		// for players to pick up items
+	boolean bNoClip;		// player cheat
+	boolean bFloat;			// allow moves to any height, no gravity
+	boolean bTeleport;		// don't cross lines or look at heights
+	boolean bMissile;		// don't hit same species, explode on block
+	boolean bNoBlood;		// don't bleed when shot (use puff)
+	boolean bCorpse;		// don't stop moving halfway off a step
+	boolean bInFloat;		// floating to a height for a move, don't
+							// auto float to target's height
+	boolean bCountKill;		// count towards intermission kill total
+	boolean bIceCorpse;		// a frozen corpse (for blasting)
+	boolean bSkullFly;		// skull in flight
+	boolean bLowGravity;	// alternate gravity setting
+	boolean bWindThrust;	// gets pushed around by the wind specials
+	boolean bFloorBounce;	// bounces off the floor
+	boolean bBlasted;		// missile will pass through ghosts
+	boolean bFly;			// fly mode is active
+	boolean bFloorClip;		// if feet are allowed to be clipped
+	boolean bSpawnFloat;	// spawn random float z
+	boolean bNoTeleport;	// does not teleport
+	boolean bRip;			// missile rips through solid targets
+	boolean bPushable;		// can be pushed by other moving mobjs
+	boolean bSlide;			// slides against walls
+	boolean bOnMobj;		// mobj is resting on top of another mobj
+	boolean bNoPassMobj;	// Disable z block checking.  If off, this flag
+							// will allow the mobj to pass over/under other
+							// mobjs.
+	boolean bCannotPush;	// cannot push other pushable mobjs
+	boolean bDropped;		// dropped by a demon
+	boolean bBoss;			// mobj is a major boss
+	boolean bFireDamage;	// does fire damage
+	boolean bNoDamageThrust;	// does not thrust target when damaging
+	boolean bTelestomp;		// mobj can stomp another
+	boolean bFloatBob;		// use float bobbing z movement
+	boolean bActivateImpact;	// an MF_MISSILE mobj can activate
+								// SPAC_IMPACT
+	boolean bActivatePushWall;	// mobj can push walls
+	boolean bActivateMCross;	// can activate monster cross lines
+	boolean bActivatePCross;	// can activate projectile cross lines
+	boolean bCantLeaveFloorpic;	// stay within a certain floor type
+	boolean bNonShootable;	// mobj is totally non-shootable,
+							// but still considered solid
+	boolean bInvulnerable;	// mobj is invulnerable
+	boolean bDormant;		// thing is dormant
+	boolean bIceDamage;		// does ice damage
+	boolean bSeekerMissile;	// is a seeker (for reflection)
+	boolean bReflective;	// reflects missiles
+	boolean bWaterJump;
 
 	//  Params
 	float Mass;
@@ -660,6 +640,213 @@ class Weapon:ViewEntity
 	void A_FireConePL1(void);
 }
 
+/*
+
+  Class definitions for botinfo, chatinfo, and
+  other various bot information thingamabobers.
+*/
+
+enum
+{
+	bsk_verypoor,
+	bsk_poor,
+	bsk_low,
+	bsk_medium,
+	bsk_high,
+	bsk_excellent,
+	bsk_supreme
+};
+
+struct botinfo_t
+{
+	string Name;		// Bot's name*/
+	int accuracy;		// Accuracy with "instant" weapons (this includes "leading")
+	int intelect;		// Accuracy with "missile" weapons (rocket launcher, etc.)
+	int evade;			// Ability to dodge incoming missiles
+	int anticip;		// Ability to anticipate "instant" shots
+	int reaction;		// Overall reaction time (lower is "better")
+/*	int pisschance;		// Chance the bot will get pissed when his threshold is reached
+	int threshold;		// How much it takes to frustrate/piss off the bot
+	int dangerlevel;	// When health is below this, we need some health
+	int wpfav;			// Favorite weapon
+	int chatinfo;		// Bot's chat strings
+	int chattime;		// How long it takes us to type a line
+	int chatty;			// How talkative the bot is
+	char *color;		// Color (in form of a string)
+	char *gender;		// Male/female/it :)
+	char *skin;			// Skin
+	int railcolor;		// Railgun trail color
+	bool revealed;		// Hidden bots must be revealed*/
+	string userinfo;
+};
+
+/*struct chatline_t
+{
+	char		*string;
+	chattype_t  bot;
+	chatline_t	*line;
+};
+
+struct chatinfo_t
+{
+	chatline_t		intro[5];
+	chatline_t		inter[5];
+	chatline_t		rare[5];
+	chatline_t		frag[15];
+	chatline_t		died[10];
+	chatline_t		roam[10];
+	chatline_t		pissed[5];
+	chatline_t		frustrated[5];
+	chatline_t		special[20];
+} chatinfo_t;*/
+
+/*
+
+  The bot class, prototypes and definitions be here!
+
+*/
+
+#define FORWARDWALK		200.0
+#define FORWARDRUN		400.0
+#define SIDEWALK		192.0
+#define SIDERUN			320.0
+
+/*#define MAX_TRAVERSE_DIST			(1024*FRACUNIT)	//10 meters, used within b_func.c*/
+#define AVOID_DIST					512.0	//Try avoid incoming missiles once they reached this close
+#define SAFE_SELF_MISDIST			128.0	//Distance from self to target where it's safe to pull a rocket.
+/*#define FRIEND_DIST					(128*FRACUNIT)	//To friend.
+#define DARK_DIST					(256*FRACUNIT)	//Distance that bot can see enemies in the dark from.
+#define WHATS_DARK					64				//light value thats classed as dark.
+#define MAX_MONSTER_TARGET_DIST		(1024*FRACUNIT)	//Too high can slow down the performance, see P_mobj.c*/
+#define ENEMY_SCAN_FOV				120.0
+/*#define MAXMOVEHEIGHT				(32*FRACUNIT)	//MAXSTEPMOVE but with jumping counted in.
+#define GETINCOMBAT					(512*FRACUNIT)	//Max distance to item. if it's due to be icked up in a combat situation.*/
+#define SHOOTFOV					60.0
+/*#define MAXROAM						(5*TICRATE)		//When this time is elapsed the bot will roam after something else.*/
+
+// The things the bot knows about their enemy
+//struct enemyinfo_t
+//{
+//	int				health;
+//	weapontype_t	weap;
+//};
+
+//
+// Bot states
+//
+enum
+{
+	// Deciding what to do
+	BST_NOTHING,
+	// Bot is "fetching" something (skull, whatever)
+	BST_OFFENSE,
+	// Bot is defending something
+	BST_DEFENSE,
+	// Bot is heading to scoring place
+	BST_RETURN
+};
+
+// Main bot class
+class BotPlayer:Object
+{
+	player_t *player;		// Points to reference player
+	Actor botmo;
+
+	// Destinations
+	Actor item;			// Item (roam towards weapon, etc)
+	boolean itemIsWeapon;
+	boolean itemIsPowerup;
+	Actor goal;			// Teamgame goal spot
+	Actor node;			// Node we're heading towards
+	Actor prev;			// Previous node we were at
+	TVec posdest;			// Position of our destination (doesn't have to be an actor)
+	boolean posdest_valid;
+	Actor enemy;			// The dead meat.
+	TVec lastpos;			// Last place we saw our enemy
+	boolean lastpos_valid;
+	Actor missile;			// A threathing missile that got to be avoided.
+
+	Actor ally;			// Ally to tag along with
+/*	AActor		*last_mate;	// If bots mate dissapeared (not if died) that mate is
+							// pointed to by this. Allows bot to roam to it if
+							// necessary.
+
+	enemyinfo_t	enemyinfo;	// Things we know about our enemy
+
+	botstate_t	state;		// What we're doing in teamgame mode
+
+	fixed_t		lastx;		// Last known x location of bot's enemy (go there if enemy goes out of sight)
+	fixed_t		lasty;		// Last known y location of bot's enemy
+
+	// Tickers
+
+	float t_respawn;*/
+	float t_strafe;
+	float t_react;
+/*	float t_fight;
+	float t_rocket;
+	float t_turn;
+	float t_pissed;
+	float t_frust;*/
+	float t_fire;			// Tics left until our gun will actually fire again
+	float t_anticip;
+/*	float t_chat;			// Tics left until bots completes "typing" in what he's saying.
+							// Bot also doesn't do anything during this time.*/
+
+	float forwardmove;	// For building ucmd
+	float sidemove;
+
+	// Misc booleans
+	boolean allround;
+	boolean newItemIsWeapon;
+	boolean newItemIsPowerup;
+
+/*	chatline_t	*chatline;	// For when t_chat expires
+
+	bottype_t	bottype;	// Bot type*/
+	botinfo_t info;			// Aiming, name, perfection, yadda yadda
+
+/*	fixed_t		oldx;
+	fixed_t		oldy;
+
+	int			thingnum;*/
+	int angerlevel;
+
+/*	AActor		*things[NUMMOBJTYPES];*/
+	float combatdist[NUMWEAPONS * NUMCLASSES]; //different for each weapon.
+
+	float angle;			// The wanted angle that the bot tries to get every tic.
+
+/*	void LinkToPlayer (int playernum);*/
+
+	void OnBeginPlay(void);
+	void OnSpawn(void);
+	void Think(void);
+	boolean CheckTo(TVec pos);
+	void CheckStuff(void);
+	float GetAngle(void);
+	boolean CheckPath(float ang, float dist);
+	void SetEnemy(void);
+	Actor FindEnemy(void);
+	boolean Check_LOS(Actor to, float vangle);
+	boolean CheckItem(Actor item);
+	void Scan(void);
+	int WeapFromItem(Actor item);
+	int WeapPieceFromItem(Actor item);
+	int ManaFromItem(Actor item);
+	void Move(void);
+	void SetAngle(float an);
+	void Roam(void);
+	float AngleTo(TVec dest);
+	void Attack(void);
+	void Turn(void);
+	void BotAim(void);
+	void Pitch(void);
+	int SkillLower(int skill, int num);
+	void Killed(Actor victim);
+	void Died(Actor killer);
+}
+
 addfields player_t
 {
 	//
@@ -746,6 +933,8 @@ addfields player_t
 	int morphTics;	// player is a pig if > 0
 
 	TVec movedir;
+
+	BotPlayer Bot;
 };
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
@@ -829,6 +1018,9 @@ name door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/06 17:28:53  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.16  2002/02/02 19:17:26  dj_jl
 //  Replacing pointers with references, beautification.
 //

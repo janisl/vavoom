@@ -408,7 +408,7 @@ boolean Actor::CheckWater(void)
 void Actor::UpdateVelocity(void)
 {
 	if (origin.z <= floorz && !velocity.x && !velocity.y &&
-		!velocity.z && !(Flags & MF_COUNTKILL) && !player)
+		!velocity.z && !bCountKill && !player)
 	{
 		//  No gravity for non-moving things on ground to prevent
 		// static objects from sliding on slopes
@@ -419,22 +419,22 @@ void Actor::UpdateVelocity(void)
 	{
 		if (waterlevel < 2)
 		{
-			if (Flags2 & MF2_LOGRAV)
+			if (bLowGravity)
 			{
 				velocity.z -= GRAVITY / 8.0 * frametime;
 			}
-			else if (!(Flags & MF_NOGRAVITY))
+			else if (!bNoGravity)
 			{
 				velocity.z -= GRAVITY * frametime;
 			}
 		}
 		else if (!player)
 		{
-			if (Flags2 & MF2_LOGRAV)
+			if (bLowGravity)
 			{
 				velocity.z = -10.0;
 			}
-			else if (!(Flags & MF_NOGRAVITY))
+			else if (!bNoGravity)
 			{
 				velocity.z = -60.0;
 			}
@@ -443,14 +443,13 @@ void Actor::UpdateVelocity(void)
 
 	// Friction
 
-	if (Flags & (MF_MISSILE | MF_SKULLFLY))
+	if (bMissile || bSkullFly)
 	{
 		// No friction for missiles
 		return;
 	}
 
-	if (origin.z > floorz && waterlevel < 2 &&
-		!(Flags2 & MF2_FLY) && !(Flags2 & MF2_ONMOBJ))
+	if (origin.z > floorz && waterlevel < 2 && !bFly && !bOnMobj)
 	{
 		// No friction when falling
 		return;
@@ -467,7 +466,7 @@ void Actor::UpdateVelocity(void)
 		}
 	}
 
-	if (Flags & MF_CORPSE)
+	if (bCorpse)
 	{
 		// Don't stop sliding if halfway off a step with some momentum
 		if (velocity.x > 0.25 * 35.0 || velocity.x < -0.25 * 35.0 ||
@@ -517,8 +516,7 @@ void Actor::UpdateVelocity(void)
 		{
 			velocity -= velocity * FRICTION_WATER * frametime;
 		}
-		else if ((Flags2 & MF2_FLY) && !(origin.z <= floorz)
-			&& !(Flags2 & MF2_ONMOBJ))
+		else if (bFly && !(origin.z <= floorz) && !bOnMobj)
 		{
 			velocity -= velocity * FRICTION_FLY * frametime;
 		}
@@ -547,17 +545,17 @@ void Actor::XYMovement(void)
 
 	if (!velocity.x && !velocity.y)
 	{
-		if (Flags & MF_SKULLFLY)
+		if (bSkullFly)
 		{
 			// A flying mobj slammed into something
-			Flags &= ~MF_SKULLFLY;
+			bSkullFly = false;
 			velocity = vector(0.0, 0.0, 0.0);
 			SetState(SeeState);
 		}
 		return;
 	}
 	special = subsector->sector->special;
-	if (Flags2 & MF2_WINDTHRUST)
+	if (bWindThrust)
 	{
 		switch (special)
 		{
@@ -619,12 +617,12 @@ void Actor::XYMovement(void)
 		if (!P_TryMove(this, ptryx, ptryy))
 		{
 			// Blocked move
-			if (Flags2 & MF2_SLIDE)
+			if (bSlide)
 			{
 				// Try to slide along it
 				SlideMove();
 			}
-			else if (Flags & MF_MISSILE)
+			else if (bMissile)
 			{
 				// Explode a missile
 				if (ceilingline && ceilingline->backsector &&
@@ -679,7 +677,7 @@ boolean Actor::Iter_CheckOnmobjZ(Actor thing)
 {
 	float blockdist;
 
-	if (!(thing.Flags & (MF_SOLID | MF_SPECIAL | MF_SHOOTABLE)))
+	if (!thing.bSolid && !thing.bSpecial && !thing.bShootable)
 	{
 		// Can't hit thing
 		return true;
@@ -705,11 +703,11 @@ boolean Actor::Iter_CheckOnmobjZ(Actor thing)
 		// under thing
 		return true;
 	}
-	if (thing.Flags & MF_SOLID)
+	if (thing.bSolid)
 	{
 		onmobj = thing;
 	}
-	return (!(thing.Flags & MF_SOLID));
+	return !thing.bSolid;
 }
 
 //==========================================================================
@@ -740,10 +738,10 @@ void Actor::FakeZMovement(void)
 	//  adjust height
 	//
 	tzorg.z += velocity.z * frametime;
-	if (Flags & MF_FLOAT && target)
+	if (bFloat && target)
 	{
 		// float down towards target if too close
-		if (!(Flags & MF_SKULLFLY) && !(Flags & MF_INFLOAT))
+		if (!bSkullFly && !bInFloat)
 		{
 			dist = MobjDist2(self, *target);
 			delta = target->origin.z + Height / 2.0 - tzorg.z;
@@ -753,8 +751,7 @@ void Actor::FakeZMovement(void)
 				tzorg.z += FLOATSPEED * frametime;
 		}
 	}
-	if (player && Flags2 & MF2_FLY && !(tzorg.z <= floorz)
-		&& level->tictime & 2)
+	if (player && bFly && !(tzorg.z <= floorz) && level->tictime & 2)
 	{
 		tzorg.z += sin(90.0 * 35.0 / 20.0 * level->time);
 	}
@@ -766,7 +763,7 @@ void Actor::FakeZMovement(void)
 	{
 		// Hit the floor
 		tzorg.z = floorz;
-		if (CrashState && (Flags & MF_CORPSE))
+		if (CrashState && bCorpse)
 		{
 			return;
 		}
@@ -791,7 +788,7 @@ Actor Actor::CheckOnmobj(void)
 {
 	int xl, xh, yl, yh, bx, by;
 
-	if (Flags & MF_NOCLIP)
+	if (bNoClip)
 		return none;
 
 	tzmthing = self;
@@ -848,10 +845,10 @@ void Actor::ZMovement(void)
 	// adjust height
 	//
 	origin.z += velocity.z * frametime;
-	if (Flags & MF_FLOAT && target)
+	if (bFloat && target)
 	{
 		// float down towards target if too close
-		if (!(Flags & MF_SKULLFLY) && !(Flags & MF_INFLOAT))
+		if (!bSkullFly && !bInFloat)
 		{
 			dist = MobjDist(self, *target);
 			delta = target->origin.z + Height / 2.0 - origin.z;
@@ -861,8 +858,7 @@ void Actor::ZMovement(void)
 				origin.z += FLOATSPEED * frametime;
 		}
 	}
-	if (player && Flags2 & MF2_FLY && !(origin.z <= floorz)
-		&& level->tictime & 2)
+	if (player && bFly && !(origin.z <= floorz) && level->tictime & 2)
 	{
 		origin.z += sin(90.0 * 35.0 / 20.0 * level->time);
 	}
@@ -874,10 +870,10 @@ void Actor::ZMovement(void)
 	{
 		// Hit the floor
 		vdot = DotProduct(velocity, floor->normal);
-		if (Flags & MF_MISSILE)
+		if (bMissile)
 		{
 			origin.z = floorz;
-			if (Flags2 & MF2_FLOORBOUNCE)
+			if (bFloorBounce)
 			{
 				P_FloorBounceMissile(this);
 				return;
@@ -901,8 +897,7 @@ void Actor::ZMovement(void)
 		origin.z = floorz;
 		if (vdot < -0.1)
 		{
-			if (player && vdot < -GRAVITY * 0.25
-				&& !(Flags2 & MF2_FLY))	// squat down
+			if (player && vdot < -GRAVITY * 0.25 && !bFly)	// squat down
 			{
 				player->deltaviewheight = vdot * frametime / 8.0;
 				StartSoundName(self, 'PlayerLand', CHAN_BODY);
@@ -910,12 +905,12 @@ void Actor::ZMovement(void)
 			}
 			velocity -= vdot * floor->normal;
 		}
-		if (Flags & MF_SKULLFLY)
+		if (bSkullFly)
 		{
 			// The skull slammed into something
 			velocity -= vdot * floor->normal * 2.0;
 		}
-		if (CrashState && (Flags & MF_CORPSE))
+		if (CrashState && bCorpse)
 		{
 			SetState(CrashState);
 			return;
@@ -929,11 +924,11 @@ void Actor::ZMovement(void)
 		if (vdot < 0.0)
 			velocity -= vdot * ceiling->normal;
 		origin.z = ceilingz - Height;
-		if (Flags & MF_SKULLFLY)
+		if (bSkullFly)
 		{	// the skull slammed into something
 			velocity.z = -velocity.z;
 		}
-		if (Flags & MF_MISSILE)
+		if (bMissile)
 		{
 			if (subsector->sector->ceiling.pic == skyflatnum)
 			{
@@ -1036,13 +1031,13 @@ boolean Actor::Physics(void)
 	}
 
 	CheckWater();
-	if (!(Flags2 & MF2_FLOATBOB))
+	if (!bFloatBob)
 	{
 		UpdateVelocity();
 	}
 
 	// Handle X and Y momentums
-	if (velocity.x || velocity.y || (Flags & MF_SKULLFLY))
+	if (velocity.x || velocity.y || bSkullFly)
 	{
 		XYMovement();
 		if (IsDestroyed())
@@ -1051,7 +1046,7 @@ boolean Actor::Physics(void)
 			return false;
 		}
 	}
-	if (Flags2 & MF2_FLOATBOB)
+	if (bFloatBob)
 	{
 		// Floating item bobbing motion
 		origin.z = floorz + FloatBobOffsets[(Health++) & 63];
@@ -1059,7 +1054,7 @@ boolean Actor::Physics(void)
 	else if ((origin.z != floorz) || velocity.z)
 	{
 		// Handle Z momentum and gravity
-		if (!(Flags2 & MF2_NOPASSMOBJ))
+		if (!bNoPassMobj)
 		{
 			if (!(onmo = CheckOnmobj()))
 			{
@@ -1069,7 +1064,7 @@ boolean Actor::Physics(void)
 			{
 				if (player && velocity.z < 0.0)
 				{
-					Flags2 |= MF2_ONMOBJ;
+					bOnMobj = true;
 					velocity.z = 0.0;
 				}
 				if (player && (onmo.player || onmo.Class == Pod))
@@ -1140,7 +1135,7 @@ void Actor::Think(void)
 	else
 	{
 		// Check for monster respawn
-		if (!(Flags & MF_COUNTKILL))
+		if (!bCountKill)
 		{
 			return;
 		}
@@ -1168,6 +1163,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/06 17:28:52  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.19  2002/02/02 19:17:25  dj_jl
 //  Replacing pointers with references, beautification.
 //

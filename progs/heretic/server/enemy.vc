@@ -38,11 +38,11 @@ void Actor::A_Look(void)
 	threshold = 0;	// any shot will wake up
 	targ = Actor(subsector->sector->SoundTarget);
 
-	if (targ && targ.Flags & MF_SHOOTABLE)
+	if (targ && targ.bShootable)
 	{
 		target = &targ;
 
-		if (Flags & MF_AMBUSH)
+		if (bAmbush)
 		{
 			if (!P_CheckSight(self, *target))
 			{
@@ -60,8 +60,9 @@ void Actor::A_Look(void)
 	// go into chase state
 	if (sound_sight)
 	{
-		if (Flags2 & MF2_BOSS)
-		{	// Full volume
+		if (bBoss)
+		{
+			// Full volume
 			StartSound(none, sound_sight, CHAN_VOICE);
 		}
 		else
@@ -129,7 +130,7 @@ void Actor::A_Chase(void)
 		}
 	}
 
-	if (!target || !(target->Flags & MF_SHOOTABLE))
+	if (!target || !target->bShootable)
 	{
 		// look for a new target
 		if (LookForPlayers(true))
@@ -141,9 +142,9 @@ void Actor::A_Chase(void)
 	}
 
 	// do not attack twice in a row
-	if (Flags & MF_JUSTATTACKED)
+	if (bJustAttacked)
 	{
-		Flags &= ~MF_JUSTATTACKED;
+		bJustAttacked = false;
 		if (!fastparm)
 		{
 			NewChaseDir();
@@ -170,7 +171,7 @@ void Actor::A_Chase(void)
 			if (CheckMissileRange())
 			{
 				SetState(MissileState);
-				Flags |= MF_JUSTATTACKED;
+				bJustAttacked = true;
 				return;
 			}
 		}
@@ -221,7 +222,7 @@ void Actor::A_FaceTarget(void)
 	if (!target)
 		return;
 
-	Flags &= ~MF_AMBUSH;
+	bAmbush = false;
 
 	angles.yaw = atan2(target->origin.y - origin.y,
 		target->origin.x - origin.x);
@@ -256,10 +257,15 @@ void Actor::A_FreeTargMobj(void)
 {
 	velocity = vector(0.0, 0.0, 0.0);
 	origin.z = ceilingz + 4.0;
-	Flags &= ~(MF_SHOOTABLE | MF_FLOAT | MF_SKULLFLY | MF_SOLID);
-	Flags |= MF_CORPSE | MF_DROPOFF | MF_NOGRAVITY;
-	Flags2 &= ~MF2_LOGRAV;
-	Flags2 |= MF2_NOPASSMOBJ;
+	bSolid = false;
+	bShootable = false;
+	bFloat = false;
+	bSkullFly = false;
+	bNoGravity = true;
+	bDropOff = true;
+	bCorpse = true;
+	bLowGravity = false;
+	bNoPassMobj = true;
 	player = NULL;
 }
 
@@ -372,7 +378,7 @@ void Actor::DropItem(classid type, int amount, int chance)
 	mo->velocity.x = (Random() - Random()) * 35.0;
 	mo->velocity.y = (Random() - Random()) * 35.0;
 	mo->velocity.z = (5.0 + Random() * 4.0) * 35.0;
-	mo->Flags |= MF_DROPPED;
+	mo->bDropped = true;
 	mo->Health = amount;
 }
 
@@ -384,7 +390,7 @@ void Actor::DropItem(classid type, int amount, int chance)
 
 void Actor::A_NoBlocking(void)
 {
-	Flags &= ~MF_SOLID;
+	bSolid = false;
 	// Check for monsters dropping things
 	switch (Class)
 	{
@@ -453,7 +459,7 @@ void Actor::A_SkullPop(void)
 {
 	mobj_t *mo;
 
-	Flags &= ~MF_SOLID;
+	bSolid = false;
 	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 48.0, BloodySkull);
 	mo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
 	mo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
@@ -625,6 +631,9 @@ void Actor::A_ContMobjSound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/06 17:28:52  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.16  2002/02/02 19:17:25  dj_jl
 //  Replacing pointers with references, beautification.
 //

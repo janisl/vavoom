@@ -40,7 +40,15 @@ class TLavaInflictor:mobj_t
 	{
 		LavaInflictor = this;
 	}
-};
+
+	defaultproperties
+	{
+		bNoClient = true;
+		bNoBlockmap = true;
+		bFireDamage = true;
+		bNoDamageThrust = true;
+	}
+}
 
 void PostMorphWeapon(player_t * player, int weapon);
 void SetPspriteNF(player_t * player, int position, int stnum);
@@ -69,8 +77,6 @@ void InitLava(void)
 {
 	LavaInflictor = &Actor(NewMobjThinker(TLavaInflictor));
 //	LavaInflictor->type = MT_CIRCLEFLAME;
-	LavaInflictor->Flags = MF_NOSECTOR | MF_NOBLOCKMAP;
-	LavaInflictor->Flags2 = MF2_FIREDAMAGE | MF2_NODMGTHRUST;
 }
 
 //==========================================================================
@@ -124,20 +130,16 @@ boolean UndoPlayerMorph(player_t * player)
 	float z;
 	float angle;
 	int weapon;
-	int oldFlags;
-	int oldFlags2;
-	classid oldBeast;
+	boolean OldbFly;
 
 	pmo = player->mo;
+	P_UnsetThingPosition(*pmo);
 	x = pmo->origin.x;
 	y = pmo->origin.y;
 	z = pmo->origin.z;
 	angle = pmo->angles.yaw;
 	weapon = pmo->special1;
-	oldFlags = pmo->Flags;
-	oldFlags2 = pmo->Flags2;
-	oldBeast = pmo->Class;
-	pmo->SetState(S_FREETARGMOBJ);
+	OldbFly = pmo->bFly;
 	switch (player->baseclass)
 	{
 	case PCLASS_FIGHTER:
@@ -156,25 +158,19 @@ boolean UndoPlayerMorph(player_t * player)
 	{
 		// Didn't fit
 		P_RemoveMobj(mo);
-		mo = P_SpawnMobj(x, y, z, oldBeast);
-		mo->angles.yaw = angle;
-		mo->Health = player->health;
-		mo->special1 = weapon;
-		mo->player = player;
-		mo->Flags = oldFlags;
-		mo->Flags2 = oldFlags2;
-		player->mo = mo;
+		P_SetThingPosition(*pmo);
 		player->morphTics = 2 * 35;
 		return false;
 	}
+	pmo->SetState(S_FREETARGMOBJ);
 	SetPlayerColor(player);
 	mo->angles.yaw = angle;
 	mo->player = player;
 	mo->ReactionTime = 0.5;
-	if (oldFlags2 & MF2_FLY)
+	if (OldbFly)
 	{
-		mo->Flags2 |= MF2_FLY;
-		mo->Flags |= MF_NOGRAVITY;
+		mo->bFly = true;
+		mo->bNoGravity = true;
 	}
 	player->morphTics = 0;
 	player->health = mo->Health = MAXHEALTH;
@@ -248,8 +244,9 @@ void DeathPlayerThink(player_t * player)
 #endif
 		}
 	}
-	else if (!(player->mo->Flags2 & MF2_ICEDAMAGE))
-	{	// Fall to ground (if not frozen)
+	else if (!player->mo->bIceDamage)
+	{
+		// Fall to ground (if not frozen)
 		player->deltaviewheight = 0.0;
 		if (player->viewheight > 6.0)
 		{
@@ -487,13 +484,13 @@ void BlastMobj(mobj_t * source, mobj_t * victim, float strength)
 		}
 		else
 		{
-			victim->Flags2 |= MF2_SLIDE;
-			victim->Flags2 |= MF2_BLASTED;
+			victim->bSlide = true;
+			victim->bBlasted = true;
 		}
 	}
 	else	// full strength blast from artifact
 	{
-		if (victim->Flags & MF_MISSILE)
+		if (victim->bMissile)
 		{
 			switch (victim->Class)
 			{
@@ -534,7 +531,7 @@ void BlastMobj(mobj_t * source, mobj_t * victim, float strength)
 			mo->velocity.y = victim->velocity.y;
 		}
 
-		if (victim->Flags & MF_MISSILE)
+		if (victim->bMissile)
 		{
 			victim->velocity.z = 8.0 * 35.0;
 			mo->velocity.z = victim->velocity.z;
@@ -549,8 +546,8 @@ void BlastMobj(mobj_t * source, mobj_t * victim, float strength)
 		}
 		else
 		{
-			victim->Flags2 |= MF2_SLIDE;
-			victim->Flags2 |= MF2_BLASTED;
+			victim->bSlide = true;
+			victim->bBlasted = true;
 		}
 	}
 }
@@ -574,28 +571,27 @@ void ArtiBlastRadius(player_t * player)
 
 	FOREACH(Actor, mo)
 	{
-		if ((mo == *pmo) || (mo.Flags2 & MF2_BOSS))
+		if ((mo == *pmo) || mo.bBoss)
 		{
 			// Not a valid monster
 			continue;
 		}
 		if ((mo.Class == PoisonCloud) ||	// poison cloud
 			(mo.Class == HolyFX) ||	// holy fx
-			(mo.Flags & MF_ICECORPSE))	// frozen corpse
+			mo.bIceCorpse)	// frozen corpse
 		{
 			// Let these special cases go
 		}
-		else if ((mo.Flags & MF_COUNTKILL) && (mo.Health <= 0))
+		else if (mo.bCountKill && (mo.Health <= 0))
 		{
 			continue;
 		}
-		else if (!(mo.Flags & MF_COUNTKILL) && !(mo.player) &&
-			!(mo.Flags & MF_MISSILE))
+		else if (!mo.bCountKill && !mo.player && !mo.bMissile)
 		{
 			// Must be monster, player, or missile
 			continue;
 		}
-		if (mo.Flags2 & MF2_DORMANT)
+		if (mo.bDormant)
 		{
 			continue;	// no dormant creatures
 		}
@@ -652,13 +648,13 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	x = mthing->x;
 	y = mthing->y;
 
-	players[playernum].mo->Flags2 |= MF2_NOPASSMOBJ;
+	players[playernum].mo->bNoPassMobj = true;
 	if (!P_CheckPosition(players[playernum].mo, x, y))
 	{
-		players[playernum].mo->Flags2 &= ~MF2_NOPASSMOBJ;
+		players[playernum].mo->bNoPassMobj = false;
 		return false;
 	}
-	players[playernum].mo->Flags2 &= ~MF2_NOPASSMOBJ;
+	players[playernum].mo->bNoPassMobj = false;
 
 	// spawn a teleport fog 
 	ss = PointInSubsector(x, y);
@@ -674,6 +670,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/06 17:28:53  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.16  2002/02/02 19:17:26  dj_jl
 //  Replacing pointers with references, beautification.
 //

@@ -581,7 +581,7 @@ void PolyThrustMobj(mobj_t * mobj, TVec thrustDir, polyobj_t * po)
 	float force;
 	PolyobjThinker pe;
 
-	if (!(mobj->Flags & MF_SHOOTABLE) && !mobj->player)
+	if (!mobj->bShootable && !mobj->player)
 	{
 		return;
 	}
@@ -641,6 +641,9 @@ boolean PolyBusy(int polyobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/06 17:28:53  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.13  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

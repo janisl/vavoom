@@ -72,7 +72,7 @@ void Actor::A_ImpMsAttack(void)
 		return;
 	}
 	dest = target;
-	Flags |= MF_SKULLFLY;
+	bSkullFly = true;
 	StartSound(self, sound_attack, CHAN_WEAPON);
 	A_FaceTarget();
 	an = angles.yaw;
@@ -118,8 +118,8 @@ void Actor::A_ImpMsAttack2(void)
 
 void Actor::A_ImpDeath(void)
 {
-	Flags &= ~MF_SOLID;
-	Flags2 |= MF2_FOOTCLIP;
+	bSolid = false;
+	bFootClip = true;
 	if (origin.z <= floorz)
 	{
 		SetState(S_IMP_CRASH1);
@@ -134,9 +134,9 @@ void Actor::A_ImpDeath(void)
 
 void Actor::A_ImpXDeath1(void)
 {
-	Flags &= ~MF_SOLID;
-	Flags |= MF_NOGRAVITY;
-	Flags2 |= MF2_FOOTCLIP;
+	bSolid = false;
+	bNoGravity = true;
+	bFootClip = true;
 	special1 = 666;	// Flag the crash routine
 }
 
@@ -148,7 +148,7 @@ void Actor::A_ImpXDeath1(void)
 
 void Actor::A_ImpXDeath2(void)
 {
-	Flags &= ~MF_NOGRAVITY;
+	bNoGravity = false;
 	if (origin.z <= floorz)
 	{
 		SetState(S_IMP_CRASH1);
@@ -183,6 +183,9 @@ void Actor::A_ImpExplode(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/02/06 17:28:52  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.14  2002/02/02 19:17:25  dj_jl
 //  Replacing pointers with references, beautification.
 //

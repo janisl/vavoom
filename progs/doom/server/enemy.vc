@@ -39,11 +39,11 @@ void Actor::A_Look(void)
 	threshold = 0;	// any shot will wake up
 	targ = Actor(subsector->sector->SoundTarget);
 
-	if (targ && targ.Flags & MF_SHOOTABLE)
+	if (targ && targ.bShootable)
 	{
 		target = &targ;
 
-		if (Flags & MF_AMBUSH)
+		if (bAmbush)
 		{
 			if (!P_CheckSight(self, *target))
 			{
@@ -150,7 +150,7 @@ void Actor::A_Chase(void)
 		}
 	}
 
-	if (!target || !(target->Flags & MF_SHOOTABLE))
+	if (!target || !target->bShootable)
 	{
 		// look for a new target
 		if (LookForPlayers(true))
@@ -162,9 +162,9 @@ void Actor::A_Chase(void)
 	}
 
 	// do not attack twice in a row
-	if (Flags & MF_JUSTATTACKED)
+	if (bJustAttacked)
 	{
-		Flags &= ~MF_JUSTATTACKED;
+		bJustAttacked = false;
 		if (!fastparm)
 		{
 			NewChaseDir();
@@ -191,7 +191,7 @@ void Actor::A_Chase(void)
 			if (CheckMissileRange())
 			{
 				SetState(MissileState);
-				Flags |= MF_JUSTATTACKED;
+				bJustAttacked = true;
 				return;
 			}
 		}
@@ -231,7 +231,7 @@ void Actor::A_FaceTarget(void)
 	if (!target)
 		return;
 
-	Flags &= ~MF_AMBUSH;
+	bAmbush = false;
 
 	angles.yaw = atan2(target->origin.y - origin.y,
 		target->origin.x - origin.x);
@@ -368,7 +368,7 @@ void Actor::A_Fall(void)
 	}
 
 	// actor is on ground, it can be walked over
-	Flags &= ~MF_SOLID;
+	bSolid = false;
 
 	// So change this if corpse objects
 	// are meant to be obstacles.
@@ -560,6 +560,9 @@ void Actor::A_BossDeath(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/06 17:28:51  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.16  2002/02/02 19:17:25  dj_jl
 //  Replacing pointers with references, beautification.
 //

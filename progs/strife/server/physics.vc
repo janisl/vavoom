@@ -392,10 +392,10 @@ boolean Actor::XYMovement(void)
 
 	if (!velocity.x && !velocity.y)
 	{
-		if (Flags & MF_SKULLFLY)
+		if (bSkullFly)
 		{
 			// the skull slammed into something
-			Flags &= ~MF_SKULLFLY;
+			bSkullFly = false;
 			velocity.x = velocity.y = velocity.z = 0.0;
 
 			if (!SetState(SpawnState))
@@ -443,7 +443,7 @@ boolean Actor::XYMovement(void)
 				// try to slide along it
 				SlideMove();
 			}
-			else if (Flags & MF_MISSILE)
+			else if (bMissile)
 			{
 #if 0
 				if (Flags & MF_BOUNCE)
@@ -545,10 +545,10 @@ void Actor::ZMovement(void)
 	// adjust height
 	origin.z += velocity.z * frametime;
 
-	if (Flags & MF_FLOAT && target)
+	if (bFloat && target)
 	{
 		// float down towards target if too close
-		if (!(Flags & MF_SKULLFLY) && !(Flags & MF_INFLOAT))
+		if (!bSkullFly && !bInFloat)
 		{
 			dist = MobjDist2(self, *target);
 
@@ -570,7 +570,7 @@ void Actor::ZMovement(void)
 		// Note (id):
 		//  somebody left this after the setting momz to 0,
 		//  kinda useless there.
-		if (Flags & MF_SKULLFLY)
+		if (bSkullFly)
 		{
 			// the skull slammed into something
 			velocity.z = -velocity.z;
@@ -590,10 +590,10 @@ void Actor::ZMovement(void)
 		}
 		origin.z = floorz;
 
-		if (Flags & MF_MISSILE)
+		if (bMissile)
 		{
 //			if (!(Flags & (MF_NOCLIP | MF_BOUNCE)))
-			if (!(Flags & MF_NOCLIP))
+			if (!bNoClip)
 			{
 				P_ExplodeMissile(this);
 				return;
@@ -616,16 +616,16 @@ void Actor::ZMovement(void)
 
 		origin.z = ceilingz - Height;
 
-		if (Flags & MF_SKULLFLY)
+		if (bSkullFly)
 		{
 			// the skull slammed into something
 			velocity.z = -velocity.z;
 		}
 
-		if (Flags & MF_MISSILE)
+		if (bMissile)
 		{
 //			if (!(Flags & (MF_NOCLIP | MF_BOUNCE)))
-			if (!(Flags & MF_NOCLIP))
+			if (!bNoClip)
 			{
 				P_ExplodeMissile(this);
 				return;
@@ -651,15 +651,14 @@ void Actor::UpdateVelocity(void)
 	float dot;
 
 	if (origin.z <= floorz && !velocity.x && !velocity.y &&
-		!velocity.z && !(Flags & MF_COUNTKILL) && !player)
+		!velocity.z && !bCountKill && !player)
 	{
 		//  No gravity for non-moving things on ground to prevent
 		// static objects from sliding on slopes
 		return;
 	}
 
-	if (!(Flags & MF_NOGRAVITY) && (origin.z > floorz
-		|| floor->normal.z < 0.7))
+	if (!bNoGravity && (origin.z > floorz || floor->normal.z < 0.7))
 	{
 		if (waterlevel < 2)
 		{
@@ -675,11 +674,10 @@ void Actor::UpdateVelocity(void)
 
 	// slow down
 
-//	if (Flags & (MF_MISSILE | MF_SKULLFLY) && !(Flags & MF_BOUNCE))
-	if (Flags & (MF_MISSILE | MF_SKULLFLY))
+	if (bMissile || bSkullFly)
 		return;	// no friction for missiles ever
 
-	if (origin.z > floorz && !(Flags2 & MF2_ONMOBJ) && waterlevel < 2)
+	if (origin.z > floorz && !bOnMobj && waterlevel < 2)
 		return;	// no friction when airborne
 
 	//  Clip velocity
@@ -698,7 +696,7 @@ void Actor::UpdateVelocity(void)
 		}
 	}
 
-	if (Flags & MF_CORPSE)
+	if (bCorpse)
 	{
 		// do not stop sliding if halfway off a step with some momentum
 		if (velocity.x > 0.25 * 35.0 || velocity.x < -0.25 * 35.0 ||
@@ -758,7 +756,7 @@ boolean Actor::Iter_CheckOnmobjZ(Actor thing)
 {
 	float blockdist;
 
-	if (!(thing.Flags & (MF_SOLID | MF_SPECIAL | MF_SHOOTABLE)))
+	if (!thing.bSolid && !thing.bSpecial && !thing.bShootable)
 	{
 		// Can't hit thing
 		return true;
@@ -784,11 +782,11 @@ boolean Actor::Iter_CheckOnmobjZ(Actor thing)
 		// under thing
 		return true;
 	}
-	if (thing.Flags & MF_SOLID)
+	if (thing.bSolid)
 	{
 		onmobj = thing;
 	}
-	return (!(thing.Flags & MF_SOLID));
+	return (!thing.bSolid);
 }
 
 //==========================================================================
@@ -819,10 +817,10 @@ void Actor::FakeZMovement(void)
 	//  adjust height
 	//
 	tzorg.z += velocity.z * frametime;
-	if (Flags & MF_FLOAT && target)
+	if (bFloat && target)
 	{
 		// float down towards target if too close
-		if (!(Flags & MF_SKULLFLY) && !(Flags & MF_INFLOAT))
+		if (!bSkullFly && !bInFloat)
 		{
 			dist = MobjDist2(self, *target);
 			delta = target->origin.z + Height / 2.0 - tzorg.z;
@@ -860,7 +858,7 @@ Actor Actor::CheckOnmobj(void)
 {
 	int xl, xh, yl, yh, bx, by;
 
-	if (Flags & MF_NOCLIP)
+	if (bNoClip)
 		return none;
 
 	tzmthing = self;
@@ -920,7 +918,7 @@ boolean Actor::Physics(void)
 	UpdateVelocity();
 
 	// momentum movement
-	if (velocity.x || velocity.y || (Flags & MF_SKULLFLY))
+	if (velocity.x || velocity.y || bSkullFly)
 	{
 		if (!XYMovement())
 		{
@@ -933,9 +931,9 @@ boolean Actor::Physics(void)
 		if (!(onmo = CheckOnmobj()))
 		{
 			ZMovement();
-			if (player && Flags & MF2_ONMOBJ)
+			if (player && bOnMobj)
 			{
-				Flags2 &= ~MF2_ONMOBJ;
+				bOnMobj = false;
 			}
 		}
 		else
@@ -953,7 +951,7 @@ boolean Actor::Physics(void)
 					player->deltaviewheight =
 						(VIEWHEIGHT - player->viewheight) / 8.0;
 					origin.z = onmo.origin.z + onmo.Height;
-					Flags2 |= MF2_ONMOBJ;
+					bOnMobj = true;
 					velocity.z = 0.0;
 				}
 				else
@@ -982,7 +980,7 @@ void Actor::Think(void)
 	//  In my deathmatch mode remove dropped weapons after 30 seconds
 	// because otherwise they are spawned fastar than player(s) can pick 
 	// them up and the game is going slower and slower and slower ...
-	if ((Flags & MF_DROPPED) && (deathmatch == 3))
+	if (bDropped && (deathmatch == 3))
 	{
 		movecount++;
 		if (movecount >= 30 * 35)
@@ -1014,7 +1012,7 @@ void Actor::Think(void)
 	else
 	{
 		// check for nightmare respawn
-		if (!(Flags & MF_COUNTKILL))
+		if (!bCountKill)
 			return;
 
 		//  In my deathmatch mode monstars respawns very fast
@@ -1052,6 +1050,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/06 17:28:53  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.15  2002/02/02 19:17:26  dj_jl
 //  Replacing pointers with references, beautification.
 //

@@ -132,8 +132,8 @@ void MovePlayer(player_t * player)
 	// Do not let the player control movement
 	//  if not onground.
 	onground = (player->mo->origin.z <= player->mo->floorz)
-		|| (player->mo->Flags2 & MF2_ONMOBJ);
-	if (!(onground || player->mo->Flags2 & MF2_FLY))
+		|| player->mo->bOnMobj;
+	if (!(onground || player->mo->bFly))
 	{
 		//  not on ground, so little effect on velocity
 		forward *= air_control;
@@ -143,7 +143,7 @@ void MovePlayer(player_t * player)
 	AngleVectors(&player->mo->angles, &vforward, &vright, &vup);
 
 	wishvel = forward * vforward + side * vright;
-	if (onground && !(player->mo->Flags2 & MF2_FLY))
+	if (onground && !player->mo->bFly)
 	{
 		wishvel.z = 0.0;
 	}
@@ -161,10 +161,10 @@ void MovePlayer(player_t * player)
 		if (player->flymove != TOCENTER)
 		{
 			player->flyheight = fly * 2.0;
-			if (!(player->mo->Flags2 & MF2_FLY))
+			if (!player->mo->bFly)
 			{
-				player->mo->Flags2 |= MF2_FLY;
-				player->mo->Flags |= MF_NOGRAVITY;
+				player->mo->bFly = true;
+				player->mo->bNoGravity = true;
 				if (player->mo->velocity.z <= -39.0 * 35.0)
 				{
 					// stop falling scream
@@ -174,15 +174,15 @@ void MovePlayer(player_t * player)
 		}
 		else
 		{
-			player->mo->Flags2 &= ~MF2_FLY;
-			player->mo->Flags &= ~MF_NOGRAVITY;
+			player->mo->bFly = false;
+			player->mo->bNoGravity = false;
 		}
 	}
 	else if (fly > 0.0)
 	{
 		PlayerUseArtifact(player, arti_fly);
 	}
-	if (player->mo->Flags2 & MF2_FLY)
+	if (player->mo->bFly)
 	{
 		player->mo->velocity.z = player->flyheight * 35.0 + wishvel.z;
 		if (player->flyheight)
@@ -200,7 +200,7 @@ void MovePlayer(player_t * player)
 		{
 			player->mo->velocity.z = 9.0 * 35.0;
 		}
-		player->mo->Flags2 &= ~MF2_ONMOBJ;
+		player->mo->bOnMobj = false;
 		player->jumpTics = 18;
 	}
 }
@@ -233,7 +233,7 @@ void CheckWaterJump(player_t * player)
 		if (TraceLine(start, end))
 		{
 			// open at eye level
-			player->mo->Flags |= MF_WATERJUMP;
+			player->mo->bWaterJump = true;
 			player->mo->velocity.z = 350.0;
 			player->mo->ReactionTime = 2.0;	// safety net
 		}
@@ -258,7 +258,7 @@ void WaterMove(player_t * player)
 	// Do not let the player control movement
 	//  if not onground.
 	onground = (player->mo->origin.z <= player->mo->floorz)
-		|| (player->mo->Flags2 & MF2_ONMOBJ);
+		|| player->mo->bOnMobj;
 
 	AngleVectors(&player->mo->angles, &vforward, &vright, &vup);
 
@@ -332,7 +332,7 @@ void WaterJump(player_t * player)
 {
 	if (!player->mo->ReactionTime || !player->mo->waterlevel)
 	{
-		player->mo->Flags &= ~MF_WATERJUMP;
+		player->mo->bWaterJump = false;
 		player->mo->ReactionTime = 0.0;
 	}
 	player->mo->velocity.x = player->movedir.x;
@@ -386,7 +386,7 @@ void CalcHeight(player_t * player)
 	if (player->bob > MAXBOB)
 		player->bob = MAXBOB;
 
-	if (player->mo->Flags2 & MF2_FLY && !onground)
+	if (player->mo->bFly && !onground)
 	{
 		player->bob = 0.5;
 	}
@@ -705,20 +705,25 @@ void PlayerThink(player_t * player)
 	mobj_t *pmo;
 	mobj_t *speedMo;
 
+	if (player->is_bot)
+	{
+		player->Bot.Think();
+	}
+
 	// Copy view angles
 	player->mo->angles = player->viewangles;
 
 	// fixme: do this in the cheat code
 	if (player->cheats & CF_NOCLIP)
-		player->mo->Flags |= MF_NOCLIP;
+		player->mo->bNoClip = true;
 	else
-		player->mo->Flags &= ~MF_NOCLIP;
+		player->mo->bNoClip = false;
 
-	if (player->mo->Flags & MF_JUSTATTACKED)
+	if (player->mo->bJustAttacked)
 	{
 		player->forwardmove = 100.0;
 		player->sidemove = 0.0;
-		player->mo->Flags &= ~MF_JUSTATTACKED;
+		player->mo->bJustAttacked = false;
 	}
 
 	player->worldTimer++;
@@ -746,7 +751,7 @@ void PlayerThink(player_t * player)
 		player->mo->ReactionTime -= frametime;
 		if (player->mo->ReactionTime <= 0.0)
 			player->mo->ReactionTime = 0.0;
-		if (player->mo->Flags & MF_WATERJUMP)
+		if (player->mo->bWaterJump)
 			WaterJump(player);
 	}
 	else
@@ -917,10 +922,11 @@ void PlayerThink(player_t * player)
 		}
 		if (!(--player->powers[pw_invulnerability]))
 		{
-			player->mo->Flags2 &= ~(MF2_INVULNERABLE | MF2_REFLECTIVE);
+			player->mo->bInvulnerable = false;
+			player->mo->bReflective = false;
 			if (player->pclass == PCLASS_CLERIC)
 			{
-				player->mo->Flags2 &= ~(MF2_NONSHOOTABLE);
+				player->mo->bNonShootable = false;
 				player->mo->Translucency = 0;
 			}
 		}
@@ -943,8 +949,8 @@ void PlayerThink(player_t * player)
 			{
 //FIXME             player->centering = true;
 			}
-			player->mo->Flags2 &= ~MF2_FLY;
-			player->mo->Flags &= ~MF_NOGRAVITY;
+			player->mo->bFly = false;
+			player->mo->bNoGravity = false;
 		}
 	}
 
@@ -1065,8 +1071,9 @@ void SB_PaletteFlash(player_t * player)
 		}
 		player->palette += STARTBONUSPALS;
 	}
-	else if (player->mo->Flags2 & MF2_ICEDAMAGE)
-	{	// Frozen player
+	else if (player->mo->bIceDamage)
+	{
+		// Frozen player
 		player->palette = STARTICEPAL;
 	}
 	else
@@ -1134,7 +1141,7 @@ void SetViewPos(player_t * player)
 			player->stats.flags |= SBF_POWER_MINOTAUR;
 		}
 	}
-	if (!player->mo || player->mo->Flags2 & MF2_FLY)
+	if (player->mo->bFly)
 	{
 		player->stats.flags |= SBF_IN_FLIGHT;
 	}
@@ -1569,7 +1576,7 @@ void TeleportOther(mobj_t * victim)
 	else
 	{
 		// If death action, run it upon teleport
-		if (victim->Flags & MF_COUNTKILL && victim->special)
+		if (victim->bCountKill && victim->special)
 		{
 			P_RemoveMobjFromTIDList(victim);
 			ExecuteLineSpecial(victim->special, &victim->args[0],
@@ -1871,6 +1878,12 @@ void SpawnClient(int i)
 	player->ViewEnts[ps_weapon].player = player;
 	player->ViewEnts[ps_flash] = Spawn(Weapon, none);
 	player->ViewEnts[ps_flash].player = player;
+	if (players[i].is_bot)
+	{
+		players[i].Bot = Spawn(BotPlayer, none);
+		players[i].Bot.player = &players[i];
+		players[i].Bot.OnBeginPlay();
+	}
 
 	if (netgame && !deathmatch)
 	{
@@ -1930,6 +1943,11 @@ void DisconnectClient(player_t * player)
 {
 	int i;
 
+	if (player->Bot != none)
+	{
+		player->Bot.Destroy();
+		player->Bot = none;
+	}
 	if (player->mo)
 	{
 		player->mo->player = NULL;
@@ -1965,6 +1983,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/02/06 17:28:53  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.24  2002/02/02 19:17:26  dj_jl
 //  Replacing pointers with references, beautification.
 //

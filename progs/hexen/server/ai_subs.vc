@@ -123,10 +123,10 @@ boolean Actor::CheckMissileRange(void)
 	{
 		return false;
 	}
-	if (Flags & MF_JUSTHIT)
+	if (bJustHit)
 	{
 		// The target just hit the enemy, so fight back!
-		Flags &= ~MF_JUSTHIT;
+		bJustHit = false;
 		return true;
 	}
 	if (ReactionCount)
@@ -210,7 +210,7 @@ boolean Actor::LookForMonsters(void)
 	count = 0;
 	FOREACH(Actor, mo)
 	{
-		if (!(mo.Flags & MF_COUNTKILL) || (mo == self) || (mo.Health <= 0))
+		if (!mo.bCountKill || (mo == self) || (mo.Health <= 0))
 		{
 			// Not a valid monster
 			continue;
@@ -348,7 +348,7 @@ boolean Actor::StepMove(void)
 	line_t *ld;
 	boolean good;
 
-	if (Flags2 & MF2_BLASTED)
+	if (bBlasted)
 		return true;
 	if (movedir == DI_NODIR)
 		return false;
@@ -364,7 +364,7 @@ boolean Actor::StepMove(void)
 	if (!P_TryMove(this, tryx, tryy))
 	{
 		// open any specials
-		if (Flags & MF_FLOAT && floatok)
+		if (bFloat && floatok)
 		{
 			// must adjust height
 			if (origin.z < saved_tmfloorz)
@@ -372,7 +372,7 @@ boolean Actor::StepMove(void)
 			else
 				origin.z -= FLOATSPEED * frametime;
 
-			Flags |= MF_INFLOAT;
+			bInFloat = true;
 			return true;
 		}
 
@@ -396,10 +396,10 @@ boolean Actor::StepMove(void)
 	}
 	else
 	{
-		Flags &= ~MF_INFLOAT;
+		bInFloat = false;
 	}
 
-	if (!(Flags & MF_FLOAT))
+	if (!bFloat)
 	{
 		if (origin.z > floorz)
 		{
@@ -559,15 +559,14 @@ Actor Actor::RoughBlockCheck(int index)
 	{
 		if (player)	// Minotaur looking around player
 		{
-			if ((link.Flags & MF_COUNTKILL) ||
-				(link.player && (link != self)))
+			if (link.bCountKill || (link.player && (link != self)))
 			{
-				if (!(link.Flags & MF_SHOOTABLE))
+				if (!link.bShootable)
 				{
 					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				if (link.Flags2 & MF2_DORMANT)
+				if (link.bDormant)
 				{
 					link = Actor(link.BlockMapNext);
 					continue;
@@ -592,15 +591,14 @@ Actor Actor::RoughBlockCheck(int index)
 		}
 		else if (Class == Minotaur)	// looking around minotaur
 		{
-			if ((link.Flags & MF_COUNTKILL) ||
-				(link.player && (link != *specialmobj1)))
+			if (link.bCountKill || (link.player && (link != *specialmobj1)))
 			{
-				if (!(link.Flags & MF_SHOOTABLE))
+				if (!link.bShootable)
 				{
 					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				if (link.Flags2 & MF2_DORMANT)
+				if (link.bDormant)
 				{
 					link = Actor(link.BlockMapNext);
 					continue;
@@ -625,11 +623,10 @@ Actor Actor::RoughBlockCheck(int index)
 		}
 		else if (Class == MageStaffFX2)	// bloodscourge
 		{
-			if ((link.Flags & MF_COUNTKILL ||
-					(link.player && link != *target))
-				&& !(link.Flags2 & MF2_DORMANT))
+			if ((link.bCountKill || (link.player && link != *target)) &&
+				!link.bDormant)
 			{
-				if (!(link.Flags & MF_SHOOTABLE))
+				if (!link.bShootable)
 				{
 					link = Actor(link.BlockMapNext);
 					continue;
@@ -656,11 +653,10 @@ Actor Actor::RoughBlockCheck(int index)
 		}
 		else	// spirits
 		{
-			if ((link.Flags & MF_COUNTKILL ||
-					(link.player && link != *target))
-				&& !(link.Flags2 & MF2_DORMANT))
+			if ((link.bCountKill || (link.player && link != *target)) &&
+				!link.bDormant)
 			{
-				if (!(link.Flags & MF_SHOOTABLE))
+				if (!link.bShootable)
 				{
 					link = Actor(link.BlockMapNext);
 					continue;
@@ -812,6 +808,9 @@ Actor Actor::RoughMonsterSearch(int distance)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/02/06 17:28:52  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.12  2002/02/02 19:17:26  dj_jl
 //  Replacing pointers with references, beautification.
 //

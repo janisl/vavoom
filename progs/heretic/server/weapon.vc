@@ -892,7 +892,7 @@ void Weapon::A_GauntletAttack(void)
 		else
 			player->mo->angles.yaw = AngleMod360(player->mo->angles.yaw + 90.0 / 20.0);
 	}
-	player->mo->Flags |= MF_JUSTATTACKED;
+	player->mo->bJustAttacked = true;
 }
 
 //===========================================================================
@@ -1613,7 +1613,7 @@ void Actor::A_MacePL1Check(void)
 		return;
 	}
 	special1 = 0;
-	Flags2 |= MF2_LOGRAV;
+	bLowGravity = true;
 	angle = angles.yaw;
 	velocity.x = 7.0 * cos(angle) * 35.0;
 	velocity.y = 7.0 * sin(angle) * 35.0;
@@ -1639,15 +1639,15 @@ void Actor::A_MaceBallImpact(void)
 		// Bounce
 		Health = MAGIC_JUNK;
 		velocity.z = velocity.z * 192.0 / 256.0;
-		Flags2 &= ~MF2_FLOORBOUNCE;
+		bFloorBounce = false;
 		SetState(SpawnState);
 		StartSoundName(self, 'Bounce', CHAN_VOICE);
 	}
 	else
 	{
 		// Explode
-		Flags |= MF_NOGRAVITY;
-		Flags2 &= ~MF2_LOGRAV;
+		bNoGravity = true;
+		bLowGravity = false;
 		StartSoundName(self, 'MaceHit', CHAN_VOICE);
 	}
 }
@@ -1673,8 +1673,9 @@ void Actor::A_MaceBallImpact2(void)
 	{
 		// Explode
 		velocity = vector(0.0, 0.0, 0.0);
-		Flags |= MF_NOGRAVITY;
-		Flags2 &= ~(MF2_LOGRAV | MF2_FLOORBOUNCE);
+		bNoGravity = true;
+		bLowGravity = false;
+		bFloorBounce = false;
 	}
 	else
 	{
@@ -1733,7 +1734,7 @@ void Actor::A_DeathBallImpact(void)
 		targ = specialmobj1;
 		if (targ)
 		{
-			if (!(targ->Flags & MF_SHOOTABLE))
+			if (!targ->bShootable)
 			{
 				// Target died
 				specialmobj1 = NULL;
@@ -1777,8 +1778,8 @@ void Actor::A_DeathBallImpact(void)
 	}
 	else
 	{	// Explode
-		Flags |= MF_NOGRAVITY;
-		Flags2 &= ~MF2_LOGRAV;
+		bNoGravity = true;
+		bLowGravity = false;
 		StartSoundName(self, 'PhoenixHit', CHAN_VOICE);
 	}
 }
@@ -1786,6 +1787,9 @@ void Actor::A_DeathBallImpact(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/06 17:28:52  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.16  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

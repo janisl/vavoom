@@ -182,7 +182,7 @@ boolean PIT_ChangeSector(MapObject Other)
 	if (thing->Health <= 0)
 	{
 		thing->SetState(S_GIBS);
-		thing->Flags &= ~MF_SOLID;
+		thing->bSolid = false;
 		thing->Height = 0.0;
 		thing->Radius = 0.0;
 
@@ -191,7 +191,7 @@ boolean PIT_ChangeSector(MapObject Other)
 	}
 
 	// crunch dropped items
-	if (thing->Flags & MF_DROPPED)
+	if (thing->bDropped)
 	{
 		P_RemoveMobj(thing);
 
@@ -199,7 +199,7 @@ boolean PIT_ChangeSector(MapObject Other)
 		return true;
 	}
 
-	if (!(thing->Flags & MF_SHOOTABLE))
+	if (!thing->bShootable)
 	{
 		// assume it is bloody gibs or something
 		return true;
@@ -403,7 +403,7 @@ boolean PTR_AimTraverse(intercept_t * in)
 	if (th == *aim_thing)
 		return true;	// can't shoot self
 
-	if (!(th.Flags & MF_SHOOTABLE))
+	if (!th.bShootable)
 		return true;	// corpse or something
 
 #ifdef FIXME
@@ -678,7 +678,7 @@ boolean PTR_ShootTraverse(intercept_t * in)
 	if (th == *shoot_thing)
 		return true;	// can't shoot self
 
-	if (!(th.Flags & MF_SHOOTABLE))
+	if (!th.bShootable)
 		return true;	// corpse or something
 
 	// check angles to see if the thing can be aimed at
@@ -696,7 +696,7 @@ boolean PTR_ShootTraverse(intercept_t * in)
 
 	// Spawn bullet puffs or blod spots,
 	// depending on target type.
-	if (th.Flags & MF_NOBLOOD)
+	if (th.bNoBlood)
 		SpawnPuff(hit_point.x, hit_point.y, hit_point.z);
 	else
 		P_SpawnBlood(hit_point.x, hit_point.y, hit_point.z, la_damage);
@@ -762,7 +762,7 @@ boolean PIT_RadiusAttack(MapObject Other)
 {
 	float dist;
 
-	if (!(Other.Flags & MF_SHOOTABLE))
+	if (!Actor(Other).bShootable)
 		return true;
 
 	// Boss spider and cyborg
@@ -825,6 +825,9 @@ void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage, int distance,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/06 17:28:53  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.17  2002/02/02 19:17:26  dj_jl
 //  Replacing pointers with references, beautification.
 //

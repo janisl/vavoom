@@ -89,8 +89,8 @@ void Actor::A_VolcBallImpact(void)
 
 	if (origin.z <= floorz)
 	{
-		Flags |= MF_NOGRAVITY;
-		Flags2 &= ~MF2_LOGRAV;
+		bNoGravity = true;
+		bLowGravity = false;
 		origin.z += 28.0;
 	}
 	P_RadiusAttack(this, target, 25, 0, 0);
@@ -110,6 +110,9 @@ void Actor::A_VolcBallImpact(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/06 17:28:52  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.11  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

@@ -50,7 +50,7 @@ void Actor::A_SkullAttack(void)
 	if (!target)
 		return;
 
-	Flags |= MF_SKULLFLY;
+	bSkullFly = true;
 
 	StartSound(self, sound_attack, CHAN_VOICE);
 	A_FaceTarget();
@@ -60,6 +60,9 @@ void Actor::A_SkullAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/02/06 17:28:51  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.9  2002/02/02 19:17:25  dj_jl
 //  Replacing pointers with references, beautification.
 //

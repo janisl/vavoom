@@ -90,7 +90,7 @@ void Actor::A_FiredSpawnRock(void)
 
 	// Initialize fire demon
 	special2 = 0;
-	Flags &= ~MF_JUSTATTACKED;
+	bJustAttacked = false;
 }
 
 //============================================================================
@@ -135,7 +135,7 @@ void Actor::A_FiredChase(void)
 		origin.z += 2.0;
 	}
 
-	if (!target || !(target->Flags & MF_SHOOTABLE))
+	if (!target || !target->bShootable)
 	{
 		// Invalid target
 		LookForPlayers(true);
@@ -182,18 +182,18 @@ void Actor::A_FiredChase(void)
 	}
 
 	// Do missile attack
-	if (!(Flags & MF_JUSTATTACKED))
+	if (!bJustAttacked)
 	{
 		if (CheckMissileRange() && (P_Random() < 20))
 		{
 			SetState(MissileState);
-			Flags |= MF_JUSTATTACKED;
+			bJustAttacked = true;
 			return;
 		}
 	}
 	else
 	{
-		Flags &= ~MF_JUSTATTACKED;
+		bJustAttacked = false;
 	}
 
 	// make active sound
@@ -262,6 +262,9 @@ void Actor::A_SmBounce(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/02/06 17:28:53  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.14  2002/02/02 19:17:26  dj_jl
 //  Replacing pointers with references, beautification.
 //

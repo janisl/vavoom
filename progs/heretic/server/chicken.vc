@@ -51,8 +51,6 @@ boolean Actor::UpdateChicken(int tics)
 	float z;
 	classid moType;
 	float angle;
-	int flags;
-	int health;
 	mobj_t *targ;
 	mobj_t *mo;
 
@@ -66,24 +64,18 @@ boolean Actor::UpdateChicken(int tics)
 	y = origin.y;
 	z = origin.z;
 	angle = angles.yaw;
-	flags = Flags;
-	health = Health;
 	targ = target;
-	SetState(S_FREETARGMOBJ);
+	P_UnsetThingPosition(self);
 	mo = P_SpawnMobj(x, y, z, moType);
 	if (P_TestMobjLocation(mo) == false)
 	{
 		// Didn't fit
 		P_RemoveMobj(mo);
-		mo = P_SpawnMobj(x, y, z, Chicken);
-		mo->angles.yaw = angle;
-		mo->Flags = flags;
-		mo->Health = health;
-		mo->target = targ;
+		P_SetThingPosition(self);
 		mo->special1 = 5 * 35;	// Next try in 5 seconds
-		mo->specialcid = moType;
 		return false;
 	}
+	SetState(S_FREETARGMOBJ);
 	mo->angles.yaw = angle;
 	mo->target = targ;
 	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, TeleportFog);
@@ -194,6 +186,9 @@ void Actor::A_ChicPain(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/02/06 17:28:52  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.12  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

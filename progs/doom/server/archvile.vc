@@ -55,7 +55,7 @@ boolean PIT_VileCheck(MapObject Other)
 	float maxdist;
 	boolean check;
 
-	if (!(Other.Flags & MF_CORPSE))
+	if (!Actor(Other).bCorpse)
 		return true;	// not a monster
 
 	if (Actor(Other).time != -1.0)
@@ -141,8 +141,8 @@ void Actor::A_VileChase(void)
 #ifdef FIXME
 					CorpseHit.Flags = info->Flags;
 #else
-					CorpseHit.Flags |= MF_SOLID;
-					CorpseHit.Flags &= ~(MF_CORPSE);
+					CorpseHit.bSolid = true;
+					CorpseHit.bCorpse = false;
 #endif
 					CorpseHit.Health = CorpseHit.spawnhealth;
 					CorpseHit.target = NULL;
@@ -327,6 +327,9 @@ void Actor::A_FireCrackle(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/02/06 17:28:51  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.14  2002/02/02 19:17:25  dj_jl
 //  Replacing pointers with references, beautification.
 //

@@ -43,7 +43,7 @@
 
 void Actor::A_BellReset1(void)
 {
-	Flags |= MF_NOGRAVITY;
+	bNoGravity = true;
 	Height *= 4.0;
 }
 
@@ -55,14 +55,17 @@ void Actor::A_BellReset1(void)
 
 void Actor::A_BellReset2(void)
 {
-	Flags |= MF_SHOOTABLE;
-	Flags &= ~MF_CORPSE;
+	bShootable = true;
+	bCorpse = false;
 	Health = 5;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/02/06 17:28:52  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.7  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

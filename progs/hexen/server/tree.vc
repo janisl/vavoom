@@ -101,7 +101,7 @@ void Actor::A_LeafCheck(void)
 	SetState(S_LEAF1_8);
 	velocity.z = (Random() * 2.0 + 1.0) * 35.0;
 	P_ThrustMobj(this, target->angles.yaw, Random() * 2.0 + 2.0);
-	Flags |= MF_MISSILE;
+	bMissile = true;
 }
 
 //===========================================================================
@@ -112,11 +112,12 @@ void Actor::A_LeafCheck(void)
 
 void Actor::A_TreeDeath(void)
 {
-	if (!(Flags2 & MF2_FIREDAMAGE))
+	if (!bFireDamage)
 	{
 		Height *= 4.0;
-		Flags |= MF_SHOOTABLE;
-		Flags &= ~(MF_CORPSE + MF_DROPOFF);
+		bShootable = true;
+		bDropOff = false;
+		bCorpse = false;
 		Health = 35;
 		return;
 	}
@@ -129,6 +130,9 @@ void Actor::A_TreeDeath(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/02/06 17:28:53  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.10  2002/01/24 18:19:27  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

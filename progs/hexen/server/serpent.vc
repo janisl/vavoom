@@ -85,7 +85,7 @@ void Actor::A_SerpentChase(void)
 		}
 	}
 
-	if (!target || !(target->Flags & MF_SHOOTABLE))
+	if (!target || !target->bShootable)
 	{
 		// look for a new target
 		if (LookForPlayers(true))
@@ -100,9 +100,9 @@ void Actor::A_SerpentChase(void)
 	//
 	// don't attack twice in a row
 	//
-	if (Flags & MF_JUSTATTACKED)
+	if (bJustAttacked)
 	{
-		Flags &= ~MF_JUSTATTACKED;
+		bJustAttacked = false;
 		if (gameskill != sk_nightmare)
 			NewChaseDir();
 		return;
@@ -254,8 +254,8 @@ void Actor::A_SerpentHide(void)
 
 void Actor::A_SetShootable(void)
 {
-	Flags2 &= ~MF2_NONSHOOTABLE;
-	Flags |= MF_SHOOTABLE;
+	bNonShootable = false;
+	bShootable = true;
 }
 
 //==========================================================================
@@ -266,8 +266,8 @@ void Actor::A_SetShootable(void)
 
 void Actor::A_UnSetShootable(void)
 {
-	Flags2 |= MF2_NONSHOOTABLE;
-	Flags &= ~MF_SHOOTABLE;
+	bNonShootable = true;
+	bShootable = false;
 }
 
 //============================================================================
@@ -379,7 +379,7 @@ void Actor::A_SerpentWalk(void)
 		}
 	}
 
-	if (!target || !(target->Flags & MF_SHOOTABLE))
+	if (!target || !target->bShootable)
 	{
 		// look for a new target
 		if (LookForPlayers(true))
@@ -394,9 +394,9 @@ void Actor::A_SerpentWalk(void)
 	//
 	// don't attack twice in a row
 	//
-	if (Flags & MF_JUSTATTACKED)
+	if (bJustAttacked)
 	{
-		Flags &= ~MF_JUSTATTACKED;
+		bJustAttacked = false;
 		if (gameskill != sk_nightmare)
 			NewChaseDir();
 		return;
@@ -598,6 +598,9 @@ void Actor::A_DelayGib(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/06 17:28:53  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.15  2002/01/28 18:50:19  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

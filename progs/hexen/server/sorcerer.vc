@@ -325,7 +325,8 @@ void Actor::A_CastSorcererSpell(void)
 	case SorcererBall2:	// Defensive
 		z = parent->origin.z - parent->floorclip + SORC_DEFENSE_HEIGHT;
 		mo = P_SpawnMobj(origin.x, origin.y, z, SorcererFX2);
-		parent->Flags2 |= MF2_REFLECTIVE | MF2_INVULNERABLE;
+		parent->bInvulnerable = true;
+		parent->bReflective = true;
 		parent->args[0] = SORC_DEFENSE_TIME;
 		if (mo)
 			mo->target = parent;
@@ -554,8 +555,8 @@ void Actor::A_SpawnFizzle(void)
 void Actor::A_SorcBallPop(void)
 {
 	StartSoundName(none, 'SorcererBallPop', CHAN_VOICE);
-	Flags &= ~MF_NOGRAVITY;
-	Flags2 |= MF2_LOGRAV;
+	bNoGravity = false;
+	bLowGravity = true;
 	velocity.x = (Random() * 10.0 - 5.0) * 35.0;
 	velocity.y = (Random() * 10.0 - 5.0) * 35.0;
 	velocity.z = (2.0 + Random() * 3.0) * 35.0;
@@ -675,15 +676,15 @@ void Actor::A_SorcFX2Orbit(void)
 	{
 		SetStateNF(DeathState);
 		parent->args[0] = 0;
-		parent->Flags2 &= ~MF2_REFLECTIVE;
-		parent->Flags2 &= ~MF2_INVULNERABLE;
+		parent->bReflective = false;
+		parent->bInvulnerable = false;
 	}
 
 	if (args[0] && (parent->args[0]-- <= 0))	// Time expired
 	{
 		SetStateNF(DeathState);
 		parent->args[0] = 0;
-		parent->Flags2 &= ~MF2_REFLECTIVE;
+		parent->bReflective = false;
 	}
 
 	// Move to new position based on angle
@@ -769,6 +770,9 @@ void Actor::A_SorcFX4Check(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/06 17:28:53  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.16  2002/02/02 19:17:26  dj_jl
 //  Replacing pointers with references, beautification.
 //

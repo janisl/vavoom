@@ -57,8 +57,11 @@ void Actor::A_ThrustInitUp(void)
 	special2 = 5;	// Raise speed
 	args[0] = 1;	// Mark as up
 	floorclip = 0.0;
-	Flags = MF_SOLID;
-	Flags2 = MF2_NOTELEPORT | MF2_FLOORCLIP;
+	bSolid = true;
+	//Flags = 0;
+	bNoTeleport = true;
+	bFloorClip = true;
+	//Flags2 = 0;
 	specialmobj1 = NULL;
 }
 
@@ -75,8 +78,10 @@ void Actor::A_ThrustInitDn(void)
 	special2 = 5;	// Raise speed
 	args[0] = 0;	// Mark as down
 	floorclip = Height;
-	Flags = 0;
-	Flags2 = MF2_NOTELEPORT | MF2_FLOORCLIP;
+	//Flags = 0;
+	bNoTeleport = true;
+	bFloorClip = true;
+	//Flags2 = 0;
 	Translucency = 100;
 	mo = P_SpawnMobj(origin.x, origin.y, origin.z, DirtClump);
 	specialmobj1 = mo;
@@ -139,7 +144,7 @@ void Actor::A_ThrustLower(void)
 
 void Actor::A_ThrustBlock(void)
 {
-	Flags |= MF_SOLID;
+	bSolid = true;
 }
 
 //==========================================================================
@@ -157,6 +162,9 @@ void Actor::A_ThrustImpale(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/02/06 17:28:53  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.9  2002/01/24 18:19:27  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

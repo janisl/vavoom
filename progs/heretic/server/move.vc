@@ -48,7 +48,6 @@ line_t *ceilingline;
 
 float tmbbox[4];
 mobj_t *tmthing;
-int tmflags;
 float tmx;
 float tmy;
 float tmz;
@@ -74,7 +73,7 @@ boolean PIT_CheckThing(MapObject Other)
 {
 	float blockdist;
 
-	if (!(Other.Flags & MF_SOLID))
+	if (!Other.bSolid)
 		return true;
 
 	blockdist = Other.Radius + tmthing->Radius;
@@ -90,7 +89,7 @@ boolean PIT_CheckThing(MapObject Other)
 	if (Other == *tmthing)
 		return true;
 
-	if (!(tmthing->Flags2 & MF2_NOPASSMOBJ))
+	if (!tmthing->bNoPassMobj)
 	{
 		// check if a mobj passed over/under another object
 		if ((tmthing->Class == Imp || tmthing->Class == Wizard)
@@ -239,7 +238,6 @@ boolean P_CheckPosition(mobj_t * thing, float x, float y)
 	sec_region_t *reg;
 
 	tmthing = thing;
-	tmflags = thing->Flags;
 
 	tmx = x;
 	tmy = y;
@@ -275,7 +273,7 @@ boolean P_CheckPosition(mobj_t * thing, float x, float y)
 	(*validcount)++;
 	numspechit = 0;
 
-	if (tmflags & MF_NOCLIP)
+	if (tmthing->bNoClip)
 		return true;
 
 	// Check things first, possibly picking things up.
@@ -318,25 +316,25 @@ boolean	Actor::Touch(Actor Other)
 	boolean solid;
 	int damage;
 
-	if (!(Other.Flags & (MF_SOLID | MF_SPECIAL | MF_SHOOTABLE)))
+	if (!Other.bSolid && !Other.bSpecial && !Other.bShootable)
 		return true;
 
 	// check for skulls slamming into things
-	if (Flags & MF_SKULLFLY)
+	if (bSkullFly)
 	{
 		damage = ((P_Random() % 8) + 1) * MissileDamage;
 		Other.Damage(self, self, damage);
-		Flags &= ~MF_SKULLFLY;
+		bSkullFly = false;
 		velocity = vector(0.0, 0.0, 0.0);
 		SetState(SeeState);
 		return false;
 	}
 
 	// missiles can hit other things
-	if (Flags & MF_MISSILE)
+	if (bMissile)
 	{
 		// Check for passing through a ghost
-		if (Other.Translucency && (Flags2 & MF2_THRUGHOST))
+		if (Other.Translucency && bThruGhost)
 		{
 			return true;
 		}
@@ -356,15 +354,15 @@ boolean	Actor::Touch(Actor Other)
 			}
 		}
 
-		if (!(Other.Flags & MF_SHOOTABLE))
+		if (!Other.bShootable)
 		{
 			// didn't do any damage
-			return !(Other.Flags & MF_SOLID);
+			return !Other.bSolid;
 		}
 
-		if (Flags2 & MF2_RIP)
+		if (bRip)
 		{
-			if (!(Other.Flags & MF_NOBLOOD))
+			if (!Other.bNoBlood)
 			{
 				// Ok to spawn some blood
 				P_RipperBlood(this);
@@ -372,7 +370,7 @@ boolean	Actor::Touch(Actor Other)
 			StartSoundName(self, 'RipSlop', CHAN_VOICE);
 			damage = ((P_Random() & 3) + 2) * MissileDamage;
 			Other.Damage(self, *target, damage);
-			if (Other.Flags2 & MF2_PUSHABLE && !(Flags2 & MF2_CANNOTPUSH))
+			if (Other.bPushable && !bCannotPush)
 			{
 				// Push	thing
 				Other.velocity.x += velocity.x / 4.0;
@@ -385,7 +383,7 @@ boolean	Actor::Touch(Actor Other)
 		damage = ((P_Random() % 8) + 1) * MissileDamage;
 		if (damage)
 		{
-			if (!(Other.Flags & MF_NOBLOOD) && P_Random() < 192)
+			if (!Other.bNoBlood && P_Random() < 192)
 			{
 				P_BloodSplatter(origin.x, origin.y, origin.z, &Other);
 			}
@@ -395,7 +393,7 @@ boolean	Actor::Touch(Actor Other)
 		return false;
 	}
 
-	if (Other.Flags2 & MF2_PUSHABLE && !(Flags2 & MF2_CANNOTPUSH))
+	if (Other.bPushable && !bCannotPush)
 	{
 		// Push thing
 		Other.velocity.x += velocity.x / 4.0;
@@ -403,14 +401,14 @@ boolean	Actor::Touch(Actor Other)
 	}
 
 	// check for special pickup
-	if (Other.Flags & MF_SPECIAL)
+	if (Other.bSpecial)
 	{
-		solid = Other.Flags & MF_SOLID;
+		solid = Other.bSolid;
 		Other.TouchSpecial(self);
 		return !solid;
 	}
 
-	return !(Other.Flags & MF_SOLID);
+	return !Other.bSolid;
 }
 
 //==========================================================================
@@ -436,7 +434,7 @@ boolean PIT_CheckRelThing(MapObject Other)
 	if (Other == *tmthing)
 		return true;
 
-	if (!(tmthing->Flags2 & MF2_NOPASSMOBJ) || (Other.Flags & MF_SPECIAL))
+	if (!tmthing->bNoPassMobj || Actor(Other).bSpecial)
 	{
 		// check if a mobj passed over/under another object
 		if ((tmthing->Class == Imp || tmthing->Class == Wizard)
@@ -498,7 +496,7 @@ boolean PIT_CheckRelLine(line_t * ld)
 		return false;
 	}
 
-	if (!(tmthing->Flags & MF_MISSILE))
+	if (!tmthing->bMissile)
 	{
 		if (ld->flags & ML_BLOCKING)
 		{
@@ -513,7 +511,7 @@ boolean PIT_CheckRelLine(line_t * ld)
 			return false;
 		}
 	}
-	if (tmthing->Flags & MF_MISSILE)
+	if (tmthing->bMissile)
 	{
 		// Missiles can trigger impact specials
 		if (ld->special)
@@ -612,7 +610,6 @@ boolean P_CheckRelPosition(mobj_t * thing, float x, float y)
 	sec_region_t *reg;
 
 	tmthing = thing;
-	tmflags = thing->Flags;
 
 	tmx = x;
 	tmy = y;
@@ -648,7 +645,7 @@ boolean P_CheckRelPosition(mobj_t * thing, float x, float y)
 	(*validcount)++;
 	numspechit = 0;
 
-	if (tmflags & MF_NOCLIP)
+	if (thing->bNoClip)
 		return true;
 
 	// Check things first, possibly picking things up.
@@ -688,7 +685,7 @@ boolean P_CheckRelPosition(mobj_t * thing, float x, float y)
 
 void PushLine(mobj_t * thing)
 {
-	if (numspechit && (thing->Flags & MF_MISSILE) &&
+	if (numspechit && thing->bMissile &&
 		thing->target && thing->target->player)
 	{
 		int i;
@@ -726,7 +723,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 		return false;
 	}
 
-	if (!(thing->Flags & MF_NOCLIP))
+	if (!thing->bNoClip)
 	{
 		if (tmceilingz - tmfloorz < thing->Height)
 		{
@@ -737,43 +734,42 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 
 		floatok = true;
 
-		if (!(thing->Flags & MF_TELEPORT) &&
-			tmceilingz - thing->origin.z < thing->Height &&
-			!(thing->Flags2 & MF2_FLY))
+		if (!thing->bTeleport &&
+			tmceilingz - thing->origin.z < thing->Height && !thing->bFly)
 		{
 			// mobj must lower itself to fit
 			PushLine(thing);
 			return false;
 		}
-		if (thing->Flags2 & MF2_FLY)
+		if (thing->bFly)
 		{
 			if (thing->origin.z + thing->Height > tmceilingz)
 			{
 				thing->velocity.z = -8.0 * 35.0;
 				return false;
 			}
-			else if (thing->origin.z < tmfloorz
-				&& tmfloorz - tmdropoffz > 24.0)
+			else if (thing->origin.z < tmfloorz &&
+				tmfloorz - tmdropoffz > 24.0)
 			{
 				thing->velocity.z = 8.0 * 35.0;
 				return false;
 			}
 		}
-		if (!(thing->Flags & MF_TELEPORT)
+		if (!thing->bTeleport &&
 			// The Minotaur floor fire can step up any amount
-			&& thing->Class != MinotaurFloorFire &&
+			thing->Class != MinotaurFloorFire &&
 			tmfloorz - thing->origin.z > 24.0)
 		{
 			// Too big a step up
 			PushLine(thing);
 			return false;
 		}
-		if ((thing->Flags & MF_MISSILE) && tmfloorz > thing->origin.z)
+		if (thing->bMissile && tmfloorz > thing->origin.z)
 		{
 			PushLine(thing);
 		}
-		if (!(thing->Flags & (MF_DROPOFF | MF_FLOAT))
-			&& tmfloorz - tmdropoffz > 24.0)
+		if (!thing->bDropOff && !thing->bFloat &&
+			tmfloorz - tmdropoffz > 24.0)
 		{
 			// Can't move over a dropoff
 			return false;
@@ -794,8 +790,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	thing->floorz = tmfloorz;
 	thing->ceilingz = tmceilingz;
 
-	if (thing->Flags2 & MF2_FOOTCLIP &&
-		P_GetThingFloorType(thing) != FLOOR_SOLID)
+	if (thing->bFootClip && P_GetThingFloorType(thing) != FLOOR_SOLID)
 	{
 		thing->floorclip = FOOTCLIPSIZE;
 	}
@@ -807,7 +802,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	//
 	// if any special lines were hit, do the effect
 	//
-	if (!(thing->Flags & (MF_TELEPORT | MF_NOCLIP)))
+	if (!thing->bNoClip && !thing->bTeleport)
 	{
 		while (numspechit > 0)
 		{
@@ -824,11 +819,11 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 					{
 						P_ActivateLine(ld, thing, oldside, SPAC_CROSS);
 					}
-					else if (thing->Flags2 & MF2_MCROSS)
+					else if (thing->bActivateMCross)
 					{
 						P_ActivateLine(ld, thing, oldside, SPAC_MCROSS);
 					}
-					else if (thing->Flags2 & MF2_PCROSS)
+					else if (thing->bActivatePCross)
 					{
 						P_ActivateLine(ld, thing, oldside, SPAC_PCROSS);
 					}
@@ -848,6 +843,9 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/06 17:28:52  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.16  2002/02/02 19:17:25  dj_jl
 //  Replacing pointers with references, beautification.
 //

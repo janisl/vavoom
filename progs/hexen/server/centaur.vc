@@ -77,7 +77,7 @@ void Actor::A_CentaurAttack2(void)
 
 void Actor::A_SetReflective(void)
 {
-	Flags2 |= MF2_REFLECTIVE;
+	bReflective = true;
 
 	if (IsA(Centaur) || IsA(CentaurLeader))
 	{
@@ -93,7 +93,7 @@ void Actor::A_SetReflective(void)
 
 void Actor::A_UnSetReflective(void)
 {
-	Flags2 &= ~MF2_REFLECTIVE;
+	bReflective = false;
 
 	if (IsA(Centaur) || IsA(CentaurLeader))
 	{
@@ -163,7 +163,7 @@ void Actor::A_CheckFloor(void)
 	if (origin.z <= floorz)
 	{
 		origin.z = floorz;
-		Flags2 &= ~MF2_LOGRAV;
+		bLowGravity = false;
 		SetState(DeathState);
 	}
 }
@@ -171,6 +171,9 @@ void Actor::A_CheckFloor(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/06 17:28:52  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.15  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

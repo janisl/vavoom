@@ -153,7 +153,7 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 
 		x = mthing->x;
 		y = mthing->y;
-		if (Flags & MF_SPAWNCEILING)
+		if (bSpawnCeiling)
 			z = ONCEILINGZ;
 		else
 			z = ONFLOORZ;
@@ -177,19 +177,19 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 		args[4] = mthing->arg5;
 		if (time > 0.0)
 			time = 0.1 + Random() * time;
-		if (Flags & MF_COUNTKILL)
+		if (bCountKill)
 			level->totalkills++;
-		if (Flags & MF_COUNTITEM)
+		if (bCountItem)
 			level->totalitems++;
 
 		angles.yaw = itof(45 * (mthing->angle / 45));
 		if (mthing->options & MTF_AMBUSH)
 		{
-			Flags |= MF_AMBUSH;
+			bAmbush = true;
 		}
 		if (mthing->options & MTF_DORMANT)
 		{
-			Flags2 |= MF2_DORMANT;
+			bDormant = true;
 			time = -1.0;
 		}
 	}
@@ -420,7 +420,7 @@ void P_ExplodeMissile(mobj_t * mo)
 	if (mo->time < 0.1)
 		mo->time = 0.1;
 
-	mo->Flags &= ~(MF_MISSILE | MF_BOUNCE);
+	mo->bMissile = false;
 
 	if (mo->sound_death)
 		StartSound(*mo, mo->sound_death, CHAN_VOICE);
@@ -507,18 +507,21 @@ void KillMobj(mobj_t * source, mobj_t * target)
 	classid item;
 	mobj_t *mo;
 
-	target->Flags &= ~(MF_SHOOTABLE | MF_FLOAT | MF_SKULLFLY);
+	target->bShootable = false;
+	target->bFloat = false;
+	target->bSkullFly = false;
 
 	if (target->Class != LostSoul)
-		target->Flags &= ~MF_NOGRAVITY;
+		target->bNoGravity = false;
 
-	target->Flags |= MF_CORPSE | MF_DROPOFF;
+	target->bDropOff = true;
+	target->bCorpse = true;
 	target->Height /= 4.0;
 
 	if (source && source->player)
 	{
 		// count for intermission
-		if (target->Flags & MF_COUNTKILL)
+		if (target->bCountKill)
 			source->player->killcount++;
 
 		if (target->player)
@@ -536,7 +539,7 @@ void KillMobj(mobj_t * source, mobj_t * target)
 			source->player->frags[P_GetPlayerNum(target->player)]++;
 		}
 	}
-	else if (!netgame && (target->Flags & MF_COUNTKILL))
+	else if (!netgame && target->bCountKill)
 	{
 		// count all monster deaths,
 		// even those caused by other monsters
@@ -549,7 +552,7 @@ void KillMobj(mobj_t * source, mobj_t * target)
 		if (!source)
 			target->player->frags[P_GetPlayerNum(target->player)]++;
 
-		target->Flags &= ~MF_SOLID;
+		target->bSolid = false;
 		target->player->playerstate = PST_DEAD;
 		DropWeapon(target->player);
 #ifdef FIXME
@@ -604,7 +607,7 @@ void KillMobj(mobj_t * source, mobj_t * target)
 
 	mo =
 		P_SpawnMobj(target->origin.x, target->origin.y, target->floorz, item);
-	mo->Flags |= MF_DROPPED;	// special versions of items
+	mo->bDropped = true;	// special versions of items
 }
 
 //==========================================================================
@@ -624,17 +627,17 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 {
 	int saved;
 
-	if (!(Flags & MF_SHOOTABLE))
+	if (!bShootable)
 		return;	// shouldn't happen...
 
 	if (Health <= 0)
 		return;
 
-	if (Flags & MF_SKULLFLY)
+	if (bSkullFly)
 	{
 		velocity = vector(0.0, 0.0, 0.0);
 	}
-	if (Flags2 & MF2_DORMANT)
+	if (bDormant)
 	{
 		// Invulnerable, and won't wake up
 		return;
@@ -646,7 +649,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 	// Some close combat weapons should not
 	// inflict thrust and push the victim out of reach,
 	// thus kick away unless using the chainsaw.
-	if (inflictor && !(Flags & MF_NOCLIP) &&
+	if (inflictor && !bNoClip &&
 		(!source || !source.player ||
 			source.player->readyweapon != wp_chainsaw))
 	{
@@ -706,9 +709,9 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 		return;
 	}
 
-	if ((P_Random() < PainChance) && !(Flags & MF_SKULLFLY))
+	if ((P_Random() < PainChance) && !bSkullFly)
 	{
-		Flags |= MF_JUSTHIT;	// fight back!
+		bJustHit = true;	// fight back!
 		SetState(PainState);
 	}
 
@@ -737,8 +740,8 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 
 void P_RemoveMobj(mobj_t * mobj)
 {
-	if ((mobj->Flags & MF_SPECIAL) && !(mobj->Flags & MF_DROPPED)
-		&& (mobj->Class != ItemInvulnerability) &&
+	if (mobj->bSpecial && !mobj->bDropped &&
+		(mobj->Class != ItemInvulnerability) &&
 		(mobj->Class != ItemInvisibility))
 	{
 		CopyMThing(&mobj->spawnpoint, &itemrespawnque[iquehead]);
@@ -865,7 +868,7 @@ void P_NightmareRespawn(mobj_t * mobj)
 	mo->angles.yaw = itof(45 * (mthing->angle / 45));
 
 	if (mthing->options & MTF_AMBUSH)
-		mo->Flags |= MF_AMBUSH;
+		mo->bAmbush = true;
 
 	mo->ReactionCount = 18;
 
@@ -974,6 +977,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/02/06 17:28:51  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.27  2002/02/02 19:17:25  dj_jl
 //  Replacing pointers with references, beautification.
 //

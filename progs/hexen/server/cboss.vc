@@ -105,7 +105,7 @@ void Actor::A_FastChase(void)
 		}
 	}
 
-	if (!target || !(target->Flags & MF_SHOOTABLE))
+	if (!target || !target->bShootable)
 	{
 		// look for a new target
 		if (LookForPlayers(true))
@@ -120,9 +120,9 @@ void Actor::A_FastChase(void)
 	//
 	// don't attack twice in a row
 	//
-	if (Flags & MF_JUSTATTACKED)
+	if (bJustAttacked)
 	{
-		Flags &= ~MF_JUSTATTACKED;
+		bJustAttacked = false;
 		if (gameskill != sk_nightmare)
 			NewChaseDir();
 		return;
@@ -166,7 +166,7 @@ void Actor::A_FastChase(void)
 			if (CheckMissileRange())
 			{
 				SetState(MissileState);
-				Flags |= MF_JUSTATTACKED;
+				bJustAttacked = true;
 				return;
 			}
 		}
@@ -306,6 +306,9 @@ void Actor::A_MageAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/02/06 17:28:52  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.14  2002/02/02 19:17:26  dj_jl
 //  Replacing pointers with references, beautification.
 //

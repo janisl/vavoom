@@ -88,7 +88,7 @@ void Actor::A_MinotaurDecide(void)
 		// Charge attack
 		// Don't call the state function right away
 		SetStateNF(S_MNTR_ATK4_1);
-		Flags |= MF_SKULLFLY;
+		bSkullFly = true;
 		A_FaceTarget();
 		velocity = Normalize(target->origin - origin) * MNTR_CHARGE_SPEED;
 		special1 = 35 / 2;	// Charge duration
@@ -208,7 +208,7 @@ void Actor::A_MinotaurCharge(void)
 	}
 	else
 	{
-		Flags &= ~MF_SKULLFLY;
+		bSkullFly = false;
 		SetState(SeeState);
 	}
 }
@@ -237,6 +237,9 @@ void Actor::A_MntrFloorFire(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/06 17:28:52  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.17  2002/02/02 19:17:25  dj_jl
 //  Replacing pointers with references, beautification.
 //

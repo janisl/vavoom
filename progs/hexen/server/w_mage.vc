@@ -81,9 +81,9 @@ void Weapon::A_FireConePL1(void)
 		AimLineAttack(pmo, &ang, MELEERANGE);
 		if (linetarget)
 		{
-			pmo->Flags2 |= MF2_ICEDAMAGE;
+			pmo->bIceDamage = true;
 			linetarget->Damage(*pmo, *pmo, damage);
-			pmo->Flags2 &= ~MF2_ICEDAMAGE;
+			pmo->bIceDamage = false;
 			conedone = true;
 			break;
 		}
@@ -531,6 +531,9 @@ void Actor::A_MStaffTrack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/06 17:28:53  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.17  2002/01/28 18:50:19  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

@@ -79,12 +79,15 @@ void Actor::A_DripBlood(void)
 		origin.y + (Random() - Random()) * 8.0, origin.z, Blood);
 	mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
 	mo->velocity.y = (Random() - Random()) * 4.0 * 35.0;
-	mo->Flags2 |= MF2_LOGRAV;
+	mo->bLowGravity = true;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/02/06 17:28:52  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.14  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

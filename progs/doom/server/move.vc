@@ -48,7 +48,6 @@ line_t *ceilingline;
 
 float tmbbox[4];
 mobj_t *tmthing;
-int tmflags;
 float tmx;
 float tmy;
 float tmz;
@@ -82,7 +81,7 @@ boolean PIT_CheckAbsThing(MapObject Other)
 {
 	float blockdist;
 
-	if (!(Other.Flags & MF_SOLID))
+	if (!Other.bSolid)
 		return true;
 
 	blockdist = Other.Radius + tmthing->Radius;
@@ -105,7 +104,7 @@ boolean PIT_CheckAbsThing(MapObject Other)
 		return true;	// underneath
 
 	BlockingMobj = &Actor(Other);
-	return (Other.Flags & MF_NOCLIP);
+	return Actor(Other).bNoClip;
 }
 
 //==========================================================================
@@ -234,7 +233,6 @@ boolean P_CheckPosition(mobj_t * thing, float x, float y, float z)
 	sec_region_t *reg;
 
 	tmthing = thing;
-	tmflags = thing->Flags;
 
 	tmx = x;
 	tmy = y;
@@ -269,7 +267,7 @@ boolean P_CheckPosition(mobj_t * thing, float x, float y, float z)
 	(*validcount)++;
 	numspechit = 0;
 
-	if (tmflags & MF_NOCLIP)
+	if (thing->bNoClip)
 		return true;
 
 	BlockingMobj = NULL;
@@ -322,22 +320,22 @@ boolean Actor::Touch(Actor Other)
 	boolean solid;
 	int damage;
 
-	if (!(Other.Flags & (MF_SOLID | MF_SPECIAL | MF_SHOOTABLE)))
+	if (!Other.bSolid && !Other.bSpecial && !Other.bShootable)
 		return true;
 
 	// check for skulls slamming into things
-	if (Flags & MF_SKULLFLY)
+	if (bSkullFly)
 	{
 		damage = ((P_Random() % 8) + 1) * MissileDamage;
 		Other.Damage(self, self, damage);
-		Flags &= ~MF_SKULLFLY;
+		bSkullFly = false;
 		velocity = vector(0.0, 0.0, 0.0);
 		SetState(SpawnState);
 		return false;	// stop moving
 	}
 
 	// missiles can hit other things
-	if (Flags & MF_MISSILE)
+	if (bMissile)
 	{
 		if (target && (target->Class == Other.Class ||
 			(target->Class == HellKnight && Other.Class == BaronOfHell) ||
@@ -355,10 +353,10 @@ boolean Actor::Touch(Actor Other)
 			}
 		}
 
-		if (!(Other.Flags & MF_SHOOTABLE))
+		if (!Other.bShootable)
 		{
 			// didn't do any damage
-			return !(Other.Flags & MF_SOLID);
+			return !Other.bSolid;
 		}
 
 		// damage / explode
@@ -369,14 +367,14 @@ boolean Actor::Touch(Actor Other)
 	}
 
 	// check for special pickup
-	if (Other.Flags & MF_SPECIAL)
+	if (Other.bSpecial)
 	{
-		solid = Other.Flags & MF_SOLID;
+		solid = Other.bSolid;
 		Other.TouchSpecial(self);
 		return !solid;
 	}
 
-	return !(Other.Flags & MF_SOLID) || (Other.Flags & MF_NOCLIP);
+	return !Other.bSolid || Other.bNoClip;
 }
 
 //==========================================================================
@@ -455,7 +453,7 @@ boolean PIT_CheckRelLine(line_t * ld)
 		return false;
 	}
 
-	if (!(tmthing->Flags & MF_MISSILE))
+	if (!tmthing->bMissile)
 	{
 		if (ld->flags & ML_BLOCKING)
 		{
@@ -559,7 +557,6 @@ boolean P_CheckRelPosition(mobj_t * thing, float x, float y)
 	sec_region_t *reg;
 
 	tmthing = thing;
-	tmflags = thing->Flags;
 
 	tmx = x;
 	tmy = y;
@@ -595,7 +592,7 @@ boolean P_CheckRelPosition(mobj_t * thing, float x, float y)
 	(*validcount)++;
 	numspechit = 0;
 
-	if (tmflags & MF_NOCLIP)
+	if (thing->bNoClip)
 		return true;
 
 	BlockingMobj = NULL;
@@ -665,7 +662,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 		}
 	}
 
-	if (!(thing->Flags & MF_NOCLIP))
+	if (!thing->bNoClip)
 	{
 		if (tmceilingz - tmfloorz < thing->Height)
 		{
@@ -675,19 +672,18 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 
 		floatok = true;
 
-		if (!(thing->Flags & MF_TELEPORT)
-			&& tmceilingz - thing->origin.z < thing->Height)
+		if (!thing->bTeleport &&
+			tmceilingz - thing->origin.z < thing->Height)
 		{
 			// mobj must lower itself to fit
 			return false;
 		}
 
-		if (!(thing->Flags & MF_TELEPORT)
-			&& tmfloorz - thing->origin.z > 24.0)
+		if (!thing->bTeleport && tmfloorz - thing->origin.z > 24.0)
 			return false;	// too big a step up
 
-		if (!(thing->Flags & (MF_DROPOFF | MF_FLOAT))
-			&& tmfloorz - tmdropoffz > 24.0)
+		if (!thing->bDropOff && !thing->bFloat &&
+			tmfloorz - tmdropoffz > 24.0)
 			return false;	// don't stand over a dropoff
 	}
 
@@ -708,7 +704,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	//
 	// if any special lines were hit, do the effect
 	//
-	if (!(thing->Flags & (MF_TELEPORT | MF_NOCLIP)))
+	if (!thing->bTeleport && !thing->bNoClip)
 	{
 		while (numspechit > 0)
 		{
@@ -725,11 +721,11 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 					{
 						P_ActivateLine(ld, thing, oldside, SPAC_CROSS);
 					}
-					else if (thing->Flags2 & MF2_MCROSS)
+					else if (thing->bActivateMCross)
 					{
 						P_ActivateLine(ld, thing, oldside, SPAC_MCROSS);
 					}
-					else if (thing->Flags2 & MF2_PCROSS)
+					else if (thing->bActivatePCross)
 					{
 						P_ActivateLine(ld, thing, oldside, SPAC_PCROSS);
 					}
@@ -761,6 +757,9 @@ void P_ThrustMobj(mobj_t * mo, float angle, float move)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/02/06 17:28:51  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.14  2002/02/02 19:17:25  dj_jl
 //  Replacing pointers with references, beautification.
 //

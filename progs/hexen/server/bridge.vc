@@ -247,13 +247,16 @@ void Actor::A_BridgeInit(void)
 void Actor::A_BridgeRemove(void)
 {
 	special1 = true;	// Removing the bridge
-	Flags &= ~MF_SOLID;
+	bSolid = false;
 	SetState(S_FREE_BRIDGE1);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/02/06 17:28:52  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.12  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

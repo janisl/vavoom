@@ -654,7 +654,7 @@ void Weapon::A_Saw(void)
 			player->mo->angles.yaw += 90.0 / 20.0;
 	}
 	player->mo->angles.yaw = AngleMod360(player->mo->angles.yaw);
-	player->mo->Flags |= MF_JUSTATTACKED;
+	player->mo->bJustAttacked = true;
 	player->fixangle = 1;
 }
 
@@ -854,7 +854,7 @@ void Weapon::A_FireGrenade(void)
 		player->mo->origin.z + 32.0, missile_grenade);
 
 	if (mo->sound_sight)
-		StartSound(mo, mo->sound_sight, CHAN_VOICE);
+		StartSound(*mo, mo->sound_sight, CHAN_VOICE);
 
 	mo->target = player->mo;
 
@@ -866,14 +866,14 @@ void Weapon::A_FireGrenade(void)
 		TVec v_up;
 
 		AngleVectors(&player->mo->angles, &v_forward, &v_right, &v_up);
-		mo->velocity = v_forward * mo->speed + v_up * mo->speed / 3.0 +
+		mo->velocity = v_forward * mo->Speed + v_up * mo->Speed / 3.0 +
 			((Random() - 0.5) * 20.0) * v_right +
 			((Random() - 0.5) * 20.0) * v_up;
 	}
 	else
 	{
-		mo->velocity = Aim(player->mo, 16.0 * 64.0) * mo->speed;
-		mo->velocity.z = mo->speed / 3.0;
+		mo->velocity = Aim(player->mo, 16.0 * 64.0) * mo->Speed;
+		mo->velocity.z = mo->Speed / 3.0;
 	}
 	VectorAngles(&mo->velocity, &mo->angles);
 
@@ -970,6 +970,9 @@ void Actor::A_BFGSpray(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/06 17:28:52  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.16  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

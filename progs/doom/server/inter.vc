@@ -315,7 +315,7 @@ void Actor::TouchSpecial(Actor Toucher)
 	int i;
 	name sound;
 
-	if (!(Toucher.Flags & MF_PICKUP))
+	if (!Toucher.bPickUp)
 	{
 		// can't remove thing
 		return;
@@ -490,7 +490,7 @@ void Actor::TouchSpecial(Actor Toucher)
 
 		// ammo
 	case SPR_CLIP:
-		if (Flags & MF_DROPPED)
+		if (bDropped)
 		{
 			if (!Toucher.GiveAmmo(am_clip, 0))
 				return;
@@ -563,7 +563,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		break;
 
 	case SPR_MGUN:
-		if (!Toucher.GiveWeapon(wp_chaingun, Flags & MF_DROPPED))
+		if (!Toucher.GiveWeapon(wp_chaingun, bDropped))
 			return;
 		cprint(Toucher.player, "%s\n", GOTCHAINGUN);
 		sound = 'PickupWeapon';
@@ -591,7 +591,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		break;
 
 	case SPR_SHOT:
-		if (!Toucher.GiveWeapon(wp_shotgun, Flags & MF_DROPPED))
+		if (!Toucher.GiveWeapon(wp_shotgun, bDropped))
 			return;
 		cprint(Toucher.player, "%s\n", GOTSHOTGUN);
 		sound = 'PickupWeapon';
@@ -599,7 +599,7 @@ void Actor::TouchSpecial(Actor Toucher)
 
 #ifdef DOOM2
 	case SPR_SGN2:
-		if (!Toucher.GiveWeapon(wp_supershotgun, Flags & MF_DROPPED))
+		if (!Toucher.GiveWeapon(wp_supershotgun, bDropped))
 			return;
 		cprint(Toucher.player, "%s\n", GOTSHOTGUN2);
 		sound = 'PickupWeapon';
@@ -616,7 +616,7 @@ void Actor::TouchSpecial(Actor Toucher)
 #endif
 	}
 
-	if (Flags & MF_COUNTITEM)
+	if (bCountItem)
 		Toucher.player->itemcount++;
 	P_RemoveMobj(this);
 	Toucher.player->bonuscount += BONUSADD;
@@ -626,6 +626,9 @@ void Actor::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/02/06 17:28:51  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.10  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

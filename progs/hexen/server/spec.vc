@@ -526,7 +526,7 @@ boolean P_ActivateLine(line_t * line, mobj_t * mo, int side,
 	{
 		return false;
 	}
-	if (!mo->player && !(mo->Flags & MF_MISSILE))
+	if (!mo->player && !mo->bMissile)
 	{
 		if (lineActivation != SPAC_MCROSS)
 		{
@@ -709,6 +709,9 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/06 17:28:53  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.13  2002/01/28 18:50:19  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

@@ -63,7 +63,7 @@ void Actor::A_UnHideThing(void)
 
 void Actor::A_RestoreArtifact(void)
 {
-	Flags |= MF_SPECIAL;
+	bSpecial = true;
 	SetState(SpawnState);
 	StartSoundName(self, 'Respawn', CHAN_VOICE);
 }
@@ -90,7 +90,7 @@ void Actor::A_RestoreSpecialThing1(void)
 
 void Actor::A_RestoreSpecialThing2(void)
 {
-	Flags |= MF_SPECIAL;
+	bSpecial = true;
 	SetState(SpawnState);
 }
 
@@ -123,8 +123,8 @@ void Actor::A_CheckThrowBomb(void)
 		SetState(S_THROWINGBOMB7);
 		origin.z = floorz;
 		velocity.z = 0.0;
-		Flags2 &= ~MF2_FLOORBOUNCE;
-		Flags &= ~MF_MISSILE;
+		bFloorBounce = false;
+		bMissile = false;
 	}
 	if (!--Health)
 	{
@@ -140,7 +140,7 @@ void Actor::A_CheckThrowBomb(void)
 
 void Actor::A_NoGravity(void)
 {
-	Flags |= MF_NOGRAVITY;
+	bNoGravity = true;
 }
 
 //============================================================================
@@ -278,7 +278,7 @@ void Actor::A_ESound(void)
 
 void Actor::A_SetInvulnerable(void)
 {
-	Flags2 |= MF2_INVULNERABLE;
+	bInvulnerable = true;
 }
 
 //============================================================================
@@ -289,12 +289,15 @@ void Actor::A_SetInvulnerable(void)
 
 void Actor::A_UnSetInvulnerable(void)
 {
-	Flags2 &= ~MF2_INVULNERABLE;
+	bInvulnerable = false;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/06 17:28:52  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.13  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

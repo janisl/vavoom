@@ -25,41 +25,41 @@
 
 char* flagnames1[32] =
 {
-    "MF_SPECIAL",
-    "MF_SOLID",
-    "MF_SHOOTABLE",
-    "MF_NOSECTOR",
-    "MF_NOBLOCKMAP",
-    "MF_AMBUSH",
-    "MF_JUSTHIT",
-    "MF_JUSTATTACKED",
+    "bSpecial",
+    "bSolid",
+    "bShootable",
+    "bNoClient",
+    "bNoBlockmap",
+    "bAmbush",
+    "bJustHit",
+    "bJustAttacked",
 
-    "MF_SPAWNCEILING",
-    "MF_NOGRAVITY",
-    "MF_DROPOFF",
-    "MF_PICKUP",
-    "MF_NOCLIP",
-    "MF_SLIDE",
-    "MF_FLOAT",
-    "MF_TELEPORT",
+    "bSpawnCeiling",
+    "bNoGravity",
+    "bDropOff",
+    "bPickUp",
+    "bNoClip",
+    "bSlide",
+    "bFloat",
+    "bTeleport",
 
-    "MF_MISSILE",
-    "MF_DROPPED",
+    "bMissile",
+    "bDropped",
     "MF_SHADOW",
-    "MF_NOBLOOD",
-    "MF_CORPSE",
-    "MF_INFLOAT",
-    "MF_COUNTKILL",
-    "MF_COUNTITEM",
+    "bNoBlood",
+    "bCorpse",
+    "bInFloat",
+    "bCountKill",
+    "bCountItem",
 
-    "MF_SKULLFLY",
+    "bSkullFly",
     "MF_NOTDMATCH",
-    "MF_TRANSLATION1",
-    "MF_TRANSLATION2",
-	"MF_UNUSED1",
-	"MF_UNUSED2",
-	"MF_UNUSED3",
-    "MF_UNUSED4",
+    "bUnknown1",
+    "bUnknown2",
+	"MF_TRANSLATION1",
+	"MF_TRANSLATION2",
+	"MF_TRANSLATION3",
+    "bUnknown3",
 };
 char* flagnames2[32] =
 {
@@ -88,9 +88,9 @@ char* flagnames2[32] =
     "MF2_FLAG21",
     "MF2_FLAG22",
     "MF2_FLAG23",
-    "MF2_MCROSS",
+    "bActivateMCross",
 
-    "MF2_PCROSS",
+    "bActivatePCross",
     "MF2_FLAG26",
     "MF2_FLAG27",
     "MF2_FLAG28",
@@ -103,9 +103,12 @@ char* flagnames2[32] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/02/06 17:31:46  dj_jl
+//	Replaced Actor flags with boolean variables.
+//
 //	Revision 1.5  2002/01/29 18:19:01  dj_jl
 //	Added MCROSS and PCROSS flags.
-//
+//	
 //	Revision 1.4  2002/01/07 12:31:35  dj_jl
 //	Changed copyright year
 //	

@@ -58,7 +58,7 @@ void mobj_t::Archive(void)
 {
 	boolean corpse;
 
-	corpse = Flags & MF_CORPSE;
+	corpse = bCorpse;
 	if (corpse)
 	{
 		target = NULL;
@@ -168,6 +168,9 @@ void mobj_t::Unarchive(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/06 17:28:53  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.11  2002/01/29 18:08:56  dj_jl
 //  Fixed saving
 //

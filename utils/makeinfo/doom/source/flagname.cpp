@@ -25,34 +25,34 @@
 
 char* flagnames1[32] =
 {
-    "MF_SPECIAL",
-    "MF_SOLID",
-    "MF_SHOOTABLE",
-    "MF_NOSECTOR",
-    "MF_NOBLOCKMAP",
-    "MF_AMBUSH",
-    "MF_JUSTHIT",
-    "MF_JUSTATTACKED",
+    "bSpecial",
+    "bSolid",
+    "bShootable",
+    "bNoClient",
+    "bNoBlockmap",
+    "bAmbush",
+    "bJustHit",
+    "bJustAttacked",
 
-    "MF_SPAWNCEILING",
-    "MF_NOGRAVITY",
-    "MF_DROPOFF",
-    "MF_PICKUP",
-    "MF_NOCLIP",
-    "MF_SLIDE",
-    "MF_FLOAT",
-    "MF_TELEPORT",
+    "bSpawnCeiling",
+    "bNoGravity",
+    "bDropOff",
+    "bPickUp",
+    "bNoClip",
+    "bSlide",
+    "bFloat",
+    "bTeleport",
 
-    "MF_MISSILE",
-    "MF_DROPPED",
+    "bMissile",
+    "bDropped",
     "MF_SHADOW",
-    "MF_NOBLOOD",
-    "MF_CORPSE",
-    "MF_INFLOAT",
-    "MF_COUNTKILL",
-    "MF_COUNTITEM",
+    "bNoBlood",
+    "bCorpse",
+    "bInFloat",
+    "bCountKill",
+    "bCountItem",
 
-    "MF_SKULLFLY",
+    "bSkullFly",
     "MF_NOTDMATCH",
     "MF_TRANSLATION1",
     "MF_TRANSLATION2",
@@ -88,13 +88,13 @@ char* flagnames2[32] =
     "MF2_DONTDRAW",
     "MF2_IMPACT",
     "MF2_PUSHWALL",
-    "MF2_MCROSS",
+    "bActivateMCross",
 
-    "MF2_PCROSS",
+    "bActivatePCross",
     "MF2_CANTLEAVEFLOORPIC",
     "MF2_NONSHOOTABLE",
     "MF2_INVULNERABLE",
-    "MF2_DORMANT",
+    "bDormant",
     "MF2_ICEDAMAGE",
     "MF2_SEEKERMISSILE",
     "MF2_REFLECTIVE",
@@ -103,9 +103,12 @@ char* flagnames2[32] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/02/06 17:31:46  dj_jl
+//	Replaced Actor flags with boolean variables.
+//
 //	Revision 1.4  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/09/20 16:33:14  dj_jl
 //	Beautification
 //	

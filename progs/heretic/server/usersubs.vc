@@ -27,7 +27,7 @@ void UpdateBeak(player_t * player, ViewEntity e);
 void PostChickenWeapon(player_t * player, int weapon);
 void SetPsprite(player_t * player, int position, int stnum);
 
-class TLavaInflictor:mobj_t
+class TLavaInflictor:Actor
 {
 	void Think(void)
 	{
@@ -41,7 +41,15 @@ class TLavaInflictor:mobj_t
 	{
 		LavaInflictor = this;
 	}
-};
+
+	defaultproperties
+	{
+		bNoClient = true;
+		bNoBlockmap = true;
+		bFireDamage = true;
+		bNoDamageThrust = true;
+	}
+}
 
 //==========================================================================
 //
@@ -53,8 +61,6 @@ void InitLava(void)
 {
 	LavaInflictor = &TLavaInflictor(NewMobjThinker(TLavaInflictor));
 //	LavaInflictor->type = MT_PHOENIXFX2;
-	LavaInflictor->Flags = MF_NOSECTOR | MF_NOBLOCKMAP;
-	LavaInflictor->Flags2 = MF2_FIREDAMAGE | MF2_NODMGTHRUST;
 }
 
 //==========================================================================
@@ -113,43 +119,35 @@ boolean UndoPlayerChicken(player_t * player)
 	float z;
 	float angle;
 	int weapon;
-	int oldFlags;
-	int oldFlags2;
+	boolean OldbFly;
 
 	pmo = player->mo;
+	P_UnsetThingPosition(*pmo);
 	x = pmo->origin.x;
 	y = pmo->origin.y;
 	z = pmo->origin.z;
 	angle = pmo->angles.yaw;
 	weapon = pmo->special1;
-	oldFlags = pmo->Flags;
-	oldFlags2 = pmo->Flags2;
-	pmo->SetState(S_FREETARGMOBJ);
+	OldbFly = pmo->bFly;
 	mo = P_SpawnMobj(x, y, z, PlayerEntity);
 	if (!P_TestMobjLocation(mo))
 	{
 		// Didn't fit
 		P_RemoveMobj(mo);
-		mo = P_SpawnMobj(x, y, z, ChickenPlayer);
-		mo->angles.yaw = angle;
-		mo->Health = player->health;
-		mo->special1 = weapon;
-		mo->player = player;
-		mo->Flags = oldFlags;
-		mo->Flags2 = oldFlags2;
-		player->mo = mo;
+		P_SetThingPosition(*pmo);
 		player->chickenTics = 2 * 35;
 		return false;
 	}
+	pmo->SetState(S_FREETARGMOBJ);
 	// Set color translation
 	mo->Translation = player->color;
 	mo->angles.yaw = angle;
 	mo->player = player;
 	mo->ReactionTime = 0.5;
-	if (oldFlags2 & MF2_FLY)
+	if (OldbFly)
 	{
-		mo->Flags2 |= MF2_FLY;
-		mo->Flags |= MF_NOGRAVITY;
+		mo->bFly = true;
+		mo->bNoGravity = true;
 	}
 	player->chickenTics = 0;
 	player->powers[pw_weaponlevel2] = 0;
@@ -381,7 +379,7 @@ void ArtiFireBomb(player_t * player)
 
 void P_SetDormantArtifact(mobj_t * arti)
 {
-	arti->Flags &= ~MF_SPECIAL;
+	arti->bSpecial = false;
 	if (deathmatch && (arti->Class != ArtifactInvulnerability)
 		&& (arti->Class != ArtifactInvisibility))
 	{
@@ -403,7 +401,7 @@ void P_SetDormantArtifact(mobj_t * arti)
 
 void P_HideSpecialThing(mobj_t * thing)
 {
-	thing->Flags &= ~MF_SPECIAL;
+	thing->bSpecial = false;
 	thing->Translucency += 100;
 	thing->SetState(S_HIDESPECIAL1);
 }
@@ -439,13 +437,13 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	x = mthing->x;
 	y = mthing->y;
 
-	players[playernum].mo->Flags2 |= MF2_NOPASSMOBJ;
+	players[playernum].mo->bNoPassMobj = true;
 	if (!P_CheckPosition(players[playernum].mo, x, y))
 	{
-		players[playernum].mo->Flags2 &= ~MF2_NOPASSMOBJ;
+		players[playernum].mo->bNoPassMobj = false;
 		return false;
 	}
-	players[playernum].mo->Flags2 &= ~MF2_NOPASSMOBJ;
+	players[playernum].mo->bNoPassMobj = false;
 
 	// spawn a teleport fog 
 	ss = PointInSubsector(x, y);
@@ -461,6 +459,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/06 17:28:52  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.17  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

@@ -79,7 +79,7 @@ void Weapon::A_FPunchAttack(void)
 					StartSoundName(*pmo, 'FighterPunchMiss', CHAN_WEAPON);
 				}
 			}
-			if (linetarget->Flags & MF_COUNTKILL || linetarget->player)
+			if (linetarget->bCountKill || linetarget->player)
 			{
 				P_ThrustMobj(linetarget, angles.yaw, power);
 			}
@@ -110,7 +110,7 @@ void Weapon::A_FPunchAttack(void)
 					StartSoundName(*pmo, 'FighterPunchMiss', CHAN_WEAPON);
 				}
 			}
-			if (linetarget->Flags & MF_COUNTKILL || linetarget->player)
+			if (linetarget->bCountKill || linetarget->player)
 			{
 				P_ThrustMobj(linetarget, angles.yaw, power);
 			}
@@ -184,7 +184,7 @@ void Weapon::A_FAxeAttack(void)
 			{
 				StartSoundName(*pmo, 'FighterHammerMiss', CHAN_WEAPON);
 			}
-			if (linetarget->Flags & MF_COUNTKILL || linetarget->player)
+			if (linetarget->bCountKill || linetarget->player)
 			{
 				P_ThrustMobj(linetarget, angles.yaw, power);
 			}
@@ -202,7 +202,7 @@ void Weapon::A_FAxeAttack(void)
 			{
 				StartSoundName(*pmo, 'FighterHammerMiss', CHAN_WEAPON);
 			}
-			if (linetarget->Flags & MF_COUNTKILL || linetarget->player)
+			if (linetarget->bCountKill || linetarget->player)
 			{
 				P_ThrustMobj(linetarget, angles.yaw, power);
 			}
@@ -269,7 +269,7 @@ void Weapon::A_FHammerAttack(void)
 				StartSoundName(*pmo, 'FighterHammerMiss', CHAN_WEAPON);
 			}
 			AdjustPlayerAngle(pmo);
-			if (linetarget->Flags & MF_COUNTKILL || linetarget->player)
+			if (linetarget->bCountKill || linetarget->player)
 			{
 				P_ThrustMobj(linetarget, angles.yaw, power);
 			}
@@ -287,7 +287,7 @@ void Weapon::A_FHammerAttack(void)
 				StartSoundName(*pmo, 'FighterHammerMiss', CHAN_WEAPON);
 			}
 			AdjustPlayerAngle(pmo);
-			if (linetarget->Flags & MF_COUNTKILL || linetarget->player)
+			if (linetarget->bCountKill || linetarget->player)
 			{
 				P_ThrustMobj(linetarget, angles.yaw, power);
 			}
@@ -401,6 +401,9 @@ void Actor::A_FSwordFlames(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/02/06 17:28:53  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.12  2002/01/28 18:50:19  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

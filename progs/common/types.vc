@@ -505,8 +505,13 @@ class MapObject:Thinker
 	// If == validcount, already checked.
 	int validcount;
 
-	int Flags;
-	int Flags2;	// Heretic flags
+	//	Flags
+	boolean bSolid;			// Blocks.
+	boolean bNoClient;		// don't update to clients
+							// (invisible but touchable)
+	boolean bNoBlockmap;	// don't use the blocklinks
+							// (inert but displayable)
+
 	int Health;
 
 	// For movement checking.
@@ -969,6 +974,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2002/02/06 17:28:50  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.28  2002/02/02 19:17:25  dj_jl
 //  Replacing pointers with references, beautification.
 //

@@ -45,8 +45,9 @@ class ItemHealthPotion:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
-		Flags2 = MF2_NOPASSMOBJ|MF2_FLOATBOB;
+		bSpecial = true;
+		bNoPassMobj = true;
+		bFloatBob = true;
 		SpawnState = S_ITEM_PTN1_1;
 	}
 };
@@ -67,8 +68,9 @@ class ItemShield1:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
-		Flags2 = MF2_NOPASSMOBJ|MF2_FLOATBOB;
+		bSpecial = true;
+		bNoPassMobj = true;
+		bFloatBob = true;
 		SpawnState = S_ITEM_SHLD1;
 	}
 };
@@ -89,8 +91,9 @@ class ItemShield2:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
-		Flags2 = MF2_NOPASSMOBJ|MF2_FLOATBOB;
+		bSpecial = true;
+		bNoPassMobj = true;
+		bFloatBob = true;
 		SpawnState = S_ITEM_SHD2_1;
 	}
 };
@@ -111,8 +114,10 @@ class ItemBagOfHolding:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL|MF_COUNTITEM;
-		Flags2 = MF2_NOPASSMOBJ|MF2_FLOATBOB;
+		bSpecial = true;
+		bCountItem = true;
+		bNoPassMobj = true;
+		bFloatBob = true;
 		SpawnState = S_ITEM_BAGH1;
 	}
 };
@@ -133,8 +138,10 @@ class ItemMap:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL|MF_COUNTITEM;
-		Flags2 = MF2_NOPASSMOBJ|MF2_FLOATBOB;
+		bSpecial = true;
+		bCountItem = true;
+		bNoPassMobj = true;
+		bFloatBob = true;
 		SpawnState = S_ITEM_SPMP1;
 	}
 };
@@ -156,8 +163,10 @@ class ArtifactInvisibility:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Translucency = 33;
-		Flags = MF_SPECIAL|MF_COUNTITEM;
-		Flags2 = MF2_NOPASSMOBJ|MF2_FLOATBOB;
+		bSpecial = true;
+		bCountItem = true;
+		bNoPassMobj = true;
+		bFloatBob = true;
 		SpawnState = S_ARTI_INVS1;
 	}
 };
@@ -178,8 +187,10 @@ class ArtifactHealthFlask:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL|MF_COUNTITEM;
-		Flags2 = MF2_NOPASSMOBJ|MF2_FLOATBOB;
+		bSpecial = true;
+		bCountItem = true;
+		bNoPassMobj = true;
+		bFloatBob = true;
 		SpawnState = S_ARTI_PTN2_1;
 	}
 };
@@ -200,8 +211,10 @@ class ArtifactFly:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL|MF_COUNTITEM;
-		Flags2 = MF2_NOPASSMOBJ|MF2_FLOATBOB;
+		bSpecial = true;
+		bCountItem = true;
+		bNoPassMobj = true;
+		bFloatBob = true;
 		SpawnState = S_ARTI_SOAR1;
 	}
 };
@@ -222,8 +235,10 @@ class ArtifactInvulnerability:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL|MF_COUNTITEM;
-		Flags2 = MF2_NOPASSMOBJ|MF2_FLOATBOB;
+		bSpecial = true;
+		bCountItem = true;
+		bNoPassMobj = true;
+		bFloatBob = true;
 		SpawnState = S_ARTI_INVU1;
 	}
 };
@@ -244,8 +259,10 @@ class ArtifactTomeOfPower:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL|MF_COUNTITEM;
-		Flags2 = MF2_NOPASSMOBJ|MF2_FLOATBOB;
+		bSpecial = true;
+		bCountItem = true;
+		bNoPassMobj = true;
+		bFloatBob = true;
 		SpawnState = S_ARTI_PWBK1;
 	}
 };
@@ -266,8 +283,10 @@ class ArtifactEgg:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL|MF_COUNTITEM;
-		Flags2 = MF2_NOPASSMOBJ|MF2_FLOATBOB;
+		bSpecial = true;
+		bCountItem = true;
+		bNoPassMobj = true;
+		bFloatBob = true;
 		SpawnState = S_ARTI_EGGC1;
 	}
 };
@@ -289,8 +308,12 @@ class EggMissile:Actor
 		Speed = 630.0;
 		ReactionCount = 8;
 		MissileDamage = 1;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_EGGFX1;
 		DeathState = S_EGGFXI1_1;
 	}
@@ -312,8 +335,10 @@ class ArtifactSuperHeal:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL|MF_COUNTITEM;
-		Flags2 = MF2_NOPASSMOBJ|MF2_FLOATBOB;
+		bSpecial = true;
+		bCountItem = true;
+		bNoPassMobj = true;
+		bFloatBob = true;
 		SpawnState = S_ARTI_SPHL1;
 	}
 };
@@ -334,8 +359,10 @@ class ArtifactTorch:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL|MF_COUNTITEM;
-		Flags2 = MF2_NOPASSMOBJ|MF2_FLOATBOB;
+		bSpecial = true;
+		bCountItem = true;
+		bNoPassMobj = true;
+		bFloatBob = true;
 		SpawnState = S_ARTI_TRCH1;
 	}
 };
@@ -356,8 +383,10 @@ class ArtifactFireBomb:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL|MF_COUNTITEM;
-		Flags2 = MF2_NOPASSMOBJ|MF2_FLOATBOB;
+		bSpecial = true;
+		bCountItem = true;
+		bNoPassMobj = true;
+		bFloatBob = true;
 		SpawnState = S_ARTI_FBMB1;
 	}
 };
@@ -378,8 +407,8 @@ class FireBomb:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Translucency = 33;
-		Flags = MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_FIREBOMB1;
 		DeathSound = 'PhoenixHit';
 	}
@@ -401,8 +430,10 @@ class ArtifactTeleport:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL|MF_COUNTITEM;
-		Flags2 = MF2_NOPASSMOBJ|MF2_FLOATBOB;
+		bSpecial = true;
+		bCountItem = true;
+		bNoPassMobj = true;
+		bFloatBob = true;
 		SpawnState = S_ARTI_ATLP1;
 	}
 };
@@ -424,8 +455,14 @@ class Pod:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		PainChance = 255;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_NOBLOOD;
-		Flags2 = MF2_WINDTHRUST|MF2_PUSHABLE|MF2_SLIDE|MF2_TELESTOMP;
+		bSolid = true;
+		bShootable = true;
+		bDropOff = true;
+		bNoBlood = true;
+		bWindThrust = true;
+		bPushable = true;
+		bSlide = true;
+		bTelestomp = true;
 		SpawnState = S_POD_WAIT1;
 		PainState = S_POD_PAIN1;
 		DeathState = S_POD_DIE1;
@@ -448,8 +485,13 @@ class PodGoo:Actor
 		Height = 4.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_CANNOTPUSH|MF2_PCROSS;
+		bNoBlockmap = true;
+		bDropOff = true;
+		bMissile = true;
+		bLowGravity = true;
+		bNoTeleport = true;
+		bCannotPush = true;
+		bActivatePCross = true;
 		SpawnState = S_PODGOO1;
 		DeathState = S_PODGOOX;
 	}
@@ -471,8 +513,9 @@ class PodGenerator:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOSECTOR|MF_NOBLOCKMAP;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoClient = true;
+		bNoBlockmap = true;
+		bNoPassMobj = true;
 		SpawnState = S_PODGENERATOR;
 	}
 };
@@ -492,8 +535,13 @@ class Splash:Actor
 		Height = 4.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_CANNOTPUSH|MF2_PCROSS;
+		bNoBlockmap = true;
+		bDropOff = true;
+		bMissile = true;
+		bLowGravity = true;
+		bNoTeleport = true;
+		bCannotPush = true;
+		bActivatePCross = true;
 		SpawnState = S_SPLASH1;
 		DeathState = S_SPLASHX;
 	}
@@ -514,8 +562,8 @@ class SplashBase:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoBlockmap = true;
+		bNoPassMobj = true;
 		SpawnState = S_SPLASHBASE1;
 	}
 };
@@ -535,8 +583,8 @@ class LavaSplash:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoBlockmap = true;
+		bNoPassMobj = true;
 		SpawnState = S_LAVASPLASH1;
 	}
 };
@@ -557,8 +605,9 @@ class LavaSmoke:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Translucency = 33;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_LAVASMOKE1;
 	}
 };
@@ -578,8 +627,13 @@ class SludgeChunk:Actor
 		Height = 4.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_CANNOTPUSH|MF2_PCROSS;
+		bNoBlockmap = true;
+		bDropOff = true;
+		bMissile = true;
+		bLowGravity = true;
+		bNoTeleport = true;
+		bCannotPush = true;
+		bActivatePCross = true;
 		SpawnState = S_SLUDGECHUNK1;
 		DeathState = S_SLUDGECHUNKX;
 	}
@@ -600,8 +654,8 @@ class SludgeSplash:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoBlockmap = true;
+		bNoPassMobj = true;
 		SpawnState = S_SLUDGESPLASH1;
 	}
 };
@@ -622,8 +676,9 @@ class SkullHang70:Actor
 		Height = 70.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPAWNCEILING|MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpawnCeiling = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_SKULLHANG70_1;
 	}
 };
@@ -644,8 +699,9 @@ class SkullHang60:Actor
 		Height = 60.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPAWNCEILING|MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpawnCeiling = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_SKULLHANG60_1;
 	}
 };
@@ -666,8 +722,9 @@ class SkullHang45:Actor
 		Height = 45.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPAWNCEILING|MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpawnCeiling = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_SKULLHANG45_1;
 	}
 };
@@ -688,8 +745,9 @@ class SkullHang35:Actor
 		Height = 35.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPAWNCEILING|MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpawnCeiling = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_SKULLHANG35_1;
 	}
 };
@@ -717,8 +775,9 @@ class Chandelier:Actor
 		Height = 60.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPAWNCEILING|MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpawnCeiling = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_CHANDELIER1;
 	}
 };
@@ -746,8 +805,8 @@ class SerpentTorch:Actor
 		Height = 54.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSolid = true;
+		bNoPassMobj = true;
 		SpawnState = S_SERPTORCH1;
 	}
 };
@@ -768,8 +827,8 @@ class SmallPillar:Actor
 		Height = 34.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSolid = true;
+		bNoPassMobj = true;
 		SpawnState = S_SMALLPILLAR;
 	}
 };
@@ -790,8 +849,8 @@ class StalagmiteSmall:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSolid = true;
+		bNoPassMobj = true;
 		SpawnState = S_STALAGMITESMALL;
 	}
 };
@@ -812,8 +871,8 @@ class StalagmiteLarge:Actor
 		Height = 64.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSolid = true;
+		bNoPassMobj = true;
 		SpawnState = S_STALAGMITELARGE;
 	}
 };
@@ -834,8 +893,10 @@ class StalactiteSmall:Actor
 		Height = 36.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSolid = true;
+		bSpawnCeiling = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_STALACTITESMALL;
 	}
 };
@@ -856,8 +917,10 @@ class StalactiteLarge:Actor
 		Height = 68.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSolid = true;
+		bSpawnCeiling = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_STALACTITELARGE;
 	}
 };
@@ -885,8 +948,8 @@ class FireBrazier:Actor
 		Height = 44.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSolid = true;
+		bNoPassMobj = true;
 		SpawnState = S_FIREBRAZIER1;
 	}
 };
@@ -907,8 +970,8 @@ class Barrel:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSolid = true;
+		bNoPassMobj = true;
 		SpawnState = S_BARREL;
 	}
 };
@@ -929,8 +992,8 @@ class BrownPillar:Actor
 		Height = 128.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSolid = true;
+		bNoPassMobj = true;
 		SpawnState = S_BRPILLAR;
 	}
 };
@@ -951,8 +1014,9 @@ class Moss1:Actor
 		Height = 23.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPAWNCEILING|MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpawnCeiling = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_MOSS1;
 	}
 };
@@ -973,8 +1037,9 @@ class Moss2:Actor
 		Height = 27.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPAWNCEILING|MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpawnCeiling = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_MOSS2;
 	}
 };
@@ -1002,8 +1067,8 @@ class WallTorch:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_WALLTORCH1;
 	}
 };
@@ -1024,8 +1089,10 @@ class HangingCorpse:Actor
 		Height = 104.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSolid = true;
+		bSpawnCeiling = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_HANGINGCORPSE;
 	}
 };
@@ -1046,8 +1113,8 @@ class KeyGizmoBlue:Actor
 		Height = 50.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSolid = true;
+		bNoPassMobj = true;
 		SpawnState = S_KEYGIZMO1;
 	}
 };
@@ -1068,8 +1135,8 @@ class KeyGizmoGreen:Actor
 		Height = 50.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSolid = true;
+		bNoPassMobj = true;
 		SpawnState = S_KEYGIZMO1;
 	}
 };
@@ -1090,8 +1157,8 @@ class KeyGizmoYellow:Actor
 		Height = 50.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSolid = true;
+		bNoPassMobj = true;
 		SpawnState = S_KEYGIZMO1;
 	}
 };
@@ -1111,8 +1178,9 @@ class KeyGizmoFloat:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID|MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSolid = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_KGZ_START;
 	}
 };
@@ -1133,8 +1201,8 @@ class Volcano:Actor
 		Height = 20.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SOLID;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSolid = true;
+		bNoPassMobj = true;
 		SpawnState = S_VOLCANO1;
 	}
 };
@@ -1156,8 +1224,13 @@ class VolcanoBlast:Actor
 		Speed = 70.0;
 		ReactionCount = 8;
 		MissileDamage = 2;
-		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_FIREDAMAGE|MF2_PCROSS;
+		bNoBlockmap = true;
+		bDropOff = true;
+		bMissile = true;
+		bLowGravity = true;
+		bNoTeleport = true;
+		bFireDamage = true;
+		bActivatePCross = true;
 		SpawnState = S_VOLCANOBALL1;
 		DeathState = S_VOLCANOBALLX1;
 		DeathSound = 'VolcanoHit';
@@ -1182,8 +1255,13 @@ class VolcanoTBlast:Actor
 		Speed = 70.0;
 		ReactionCount = 8;
 		MissileDamage = 1;
-		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_FIREDAMAGE|MF2_PCROSS;
+		bNoBlockmap = true;
+		bDropOff = true;
+		bMissile = true;
+		bLowGravity = true;
+		bNoTeleport = true;
+		bFireDamage = true;
+		bActivatePCross = true;
 		SpawnState = S_VOLCANOTBALL1;
 		DeathState = S_VOLCANOTBALLX1;
 		Effects = EF_DL_RED;
@@ -1206,8 +1284,10 @@ class TeleGlitGen:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOSECTOR|MF_NOBLOCKMAP|MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoClient = true;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_TELEGLITGEN1;
 	}
 };
@@ -1228,8 +1308,10 @@ class TeleGlitGen2:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOSECTOR|MF_NOBLOCKMAP|MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoClient = true;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_TELEGLITGEN2;
 	}
 };
@@ -1249,7 +1331,9 @@ class TeleGlitter:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bMissile = true;
 		SpawnState = S_TELEGLITTER1_1;
 	}
 };
@@ -1269,7 +1353,9 @@ class TeleGlitter2:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bMissile = true;
 		SpawnState = S_TELEGLITTER2_1;
 	}
 };
@@ -1289,8 +1375,9 @@ class TeleportFog:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_TFOG1;
 	}
 };
@@ -1311,8 +1398,9 @@ class TeleportSpot:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOSECTOR|MF_NOBLOCKMAP;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoClient = true;
+		bNoBlockmap = true;
+		bNoPassMobj = true;
 	}
 };
 
@@ -1331,8 +1419,9 @@ class StaffPuff:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_STAFFPUFF1;
 		AttackSound = 'StaffHit';
 	}
@@ -1353,8 +1442,9 @@ class StaffPuff2:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_STAFFPUFF2_1;
 		AttackSound = 'StaffHit2';
 	}
@@ -1375,8 +1465,9 @@ class BeakPuff:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_STAFFPUFF1;
 		AttackSound = 'ChickenAttack';
 	}
@@ -1398,8 +1489,8 @@ class ItemWeaponGauntlets:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpecial = true;
+		bNoPassMobj = true;
 		SpawnState = S_WGNT;
 	}
 };
@@ -1420,8 +1511,9 @@ class GauntletPuff1:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Translucency = 33;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_GAUNTLETPUFF1_1;
 	}
 };
@@ -1442,8 +1534,9 @@ class GauntletPuff2:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Translucency = 33;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_GAUNTLETPUFF2_1;
 	}
 };
@@ -1464,8 +1557,8 @@ class ItemWeaponBlaster:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpecial = true;
+		bNoPassMobj = true;
 		SpawnState = S_BLSR;
 	}
 };
@@ -1487,8 +1580,12 @@ class BlasterFX1:Actor
 		Speed = 6440.0;
 		ReactionCount = 8;
 		MissileDamage = 2;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_BLASTERFX1_1;
 		DeathState = S_BLASTERFXI1_1;
 		DeathSound = 'BlasterHit';
@@ -1512,8 +1609,11 @@ class BlasterSmoke:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Translucency = 33;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		Flags2 = MF2_NOTELEPORT|MF2_NOPASSMOBJ|MF2_CANNOTPUSH;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bNoTeleport = true;
+		bNoPassMobj = true;
+		bCannotPush = true;
 		SpawnState = S_BLASTERSMOKE1;
 	}
 };
@@ -1535,8 +1635,13 @@ class Ripper:Actor
 		Speed = 490.0;
 		ReactionCount = 8;
 		MissileDamage = 1;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_RIP|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bRip = true;
+		bActivatePCross = true;
 		SpawnState = S_RIPPER1;
 		DeathState = S_RIPPERX1;
 		DeathSound = 'SkullRodHit';
@@ -1558,8 +1663,9 @@ class BlasterPuff1:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_BLASTERPUFF1_1;
 	}
 };
@@ -1579,8 +1685,9 @@ class BlasterPuff2:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_BLASTERPUFF2_1;
 	}
 };
@@ -1601,8 +1708,8 @@ class ItemWeaponMace:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpecial = true;
+		bNoPassMobj = true;
 		SpawnState = S_WMCE;
 	}
 };
@@ -1624,8 +1731,14 @@ class MaceFX1:Actor
 		Speed = 700.0;
 		ReactionCount = 8;
 		MissileDamage = 2;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bFloorBounce = true;
+		bThruGhost = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_MACEFX1_1;
 		DeathState = S_MACEFXI1_1;
 		SightSound = 'MaceFire';
@@ -1649,8 +1762,14 @@ class MaceFX2:Actor
 		Speed = 350.0;
 		ReactionCount = 8;
 		MissileDamage = 6;
-		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_LOGRAV|MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bDropOff = true;
+		bMissile = true;
+		bLowGravity = true;
+		bFloorBounce = true;
+		bThruGhost = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_MACEFX2_1;
 		DeathState = S_MACEFXI2_1;
 	}
@@ -1673,8 +1792,14 @@ class MaceFX3:Actor
 		Speed = 245.0;
 		ReactionCount = 8;
 		MissileDamage = 4;
-		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_LOGRAV|MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bDropOff = true;
+		bMissile = true;
+		bLowGravity = true;
+		bFloorBounce = true;
+		bThruGhost = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_MACEFX3_1;
 		DeathState = S_MACEFXI1_1;
 	}
@@ -1697,8 +1822,14 @@ class MaceFX4:Actor
 		Speed = 245.0;
 		ReactionCount = 8;
 		MissileDamage = 18;
-		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_LOGRAV|MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_TELESTOMP|MF2_PCROSS;
+		bNoBlockmap = true;
+		bDropOff = true;
+		bMissile = true;
+		bLowGravity = true;
+		bFloorBounce = true;
+		bThruGhost = true;
+		bTelestomp = true;
+		bActivatePCross = true;
 		SpawnState = S_MACEFX4_1;
 		DeathState = S_MACEFXI4_1;
 	}
@@ -1720,8 +1851,8 @@ class ItemWeaponSkullRod:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpecial = true;
+		bNoPassMobj = true;
 		SpawnState = S_WSKL;
 	}
 };
@@ -1743,8 +1874,13 @@ class HornRodMissile1:Actor
 		Speed = 770.0;
 		ReactionCount = 8;
 		MissileDamage = 3;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bWindThrust = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_HRODFX1_1;
 		DeathState = S_HRODFXI1_1;
 		SightSound = 'SkullRodFire';
@@ -1770,8 +1906,12 @@ class HornRodMissile2:Actor
 		Speed = 770.0;
 		ReactionCount = 8;
 		MissileDamage = 10;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_HRODFX2_1;
 		DeathState = S_HRODFXI2_1;
 		SightSound = 'SkullRodFire';
@@ -1797,8 +1937,12 @@ class RainPlayer1:Actor
 		Speed = 420.0;
 		ReactionCount = 8;
 		MissileDamage = 5;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_RAINPLR1_1;
 		DeathState = S_RAINPLR1X_1;
 	}
@@ -1821,8 +1965,12 @@ class RainPlayer2:Actor
 		Speed = 420.0;
 		ReactionCount = 8;
 		MissileDamage = 5;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_RAINPLR2_1;
 		DeathState = S_RAINPLR2X_1;
 	}
@@ -1845,8 +1993,12 @@ class RainPlayer3:Actor
 		Speed = 420.0;
 		ReactionCount = 8;
 		MissileDamage = 5;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_RAINPLR3_1;
 		DeathState = S_RAINPLR3X_1;
 	}
@@ -1869,8 +2021,12 @@ class RainPlayer4:Actor
 		Speed = 420.0;
 		ReactionCount = 8;
 		MissileDamage = 5;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_RAINPLR4_1;
 		DeathState = S_RAINPLR4X_1;
 	}
@@ -1893,8 +2049,12 @@ class GoldWandMissile1:Actor
 		Speed = 770.0;
 		ReactionCount = 8;
 		MissileDamage = 2;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_GWANDFX1_1;
 		DeathState = S_GWANDFXI1_1;
 		DeathSound = 'GoldWandFire';
@@ -1919,8 +2079,12 @@ class GoldWandMissile2:Actor
 		Speed = 630.0;
 		ReactionCount = 8;
 		MissileDamage = 1;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_GWANDFX2_1;
 		DeathState = S_GWANDFXI1_1;
 		Effects = EF_DL_WHITE;
@@ -1942,8 +2106,9 @@ class GoldWandPuff1:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_GWANDPUFF1_1;
 	}
 };
@@ -1963,8 +2128,9 @@ class GoldWandPuff2:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_GWANDFXI1_1;
 	}
 };
@@ -1985,8 +2151,8 @@ class ItemWeaponPhoenixRod:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpecial = true;
+		bNoPassMobj = true;
 		SpawnState = S_WPHX;
 	}
 };
@@ -2008,8 +2174,13 @@ class PhoenixFX1:Actor
 		Speed = 700.0;
 		ReactionCount = 8;
 		MissileDamage = 20;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_THRUGHOST|MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bThruGhost = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_PHOENIXFX1_1;
 		DeathState = S_PHOENIXFXI1_1;
 		SightSound = 'PhoenixFire';
@@ -2034,8 +2205,11 @@ class PhoenixPuff:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		Translucency = 33;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		Flags2 = MF2_NOTELEPORT|MF2_NOPASSMOBJ|MF2_CANNOTPUSH;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bNoTeleport = true;
+		bNoPassMobj = true;
+		bCannotPush = true;
 		SpawnState = S_PHOENIXPUFF1;
 	}
 };
@@ -2057,8 +2231,13 @@ class PhoenixFX2:Actor
 		Speed = 350.0;
 		ReactionCount = 8;
 		MissileDamage = 2;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bFireDamage = true;
+		bActivatePCross = true;
 		SpawnState = S_PHOENIXFX2_1;
 		DeathState = S_PHOENIXFXI2_1;
 		Effects = EF_DL_WHITE;
@@ -2081,8 +2260,8 @@ class ItemWeaponCrossbow:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpecial = true;
+		bNoPassMobj = true;
 		SpawnState = S_WBOW;
 	}
 };
@@ -2104,8 +2283,12 @@ class CrossbowFX1:Actor
 		Speed = 1050.0;
 		ReactionCount = 8;
 		MissileDamage = 10;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_CRBOWFX1;
 		DeathState = S_CRBOWFXI1_1;
 		SightSound = 'BowFire';
@@ -2130,8 +2313,12 @@ class CrossbowFX2:Actor
 		Speed = 1120.0;
 		ReactionCount = 8;
 		MissileDamage = 6;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_CRBOWFX2;
 		DeathState = S_CRBOWFXI1_1;
 		SightSound = 'BowFire';
@@ -2157,8 +2344,14 @@ class CrossbowFX3:Actor
 		Speed = 700.0;
 		ReactionCount = 8;
 		MissileDamage = 2;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_WINDTHRUST|MF2_THRUGHOST|MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bWindThrust = true;
+		bThruGhost = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_CRBOWFX3;
 		DeathState = S_CRBOWFXI3_1;
 		DeathSound = 'SkullRodHit';
@@ -2181,8 +2374,9 @@ class CrossbowFX4:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP;
-		Flags2 = MF2_LOGRAV|MF2_NOPASSMOBJ;
+		bNoBlockmap = true;
+		bLowGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_CRBOWFX4_1;
 	}
 };
@@ -2202,8 +2396,8 @@ class Blood:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoBlockmap = true;
+		bNoPassMobj = true;
 		SpawnState = S_BLOOD1;
 	}
 };
@@ -2223,8 +2417,12 @@ class BloodSplatter:Actor
 		Height = 4.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_CANNOTPUSH|MF2_PCROSS;
+		bNoBlockmap = true;
+		bDropOff = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bCannotPush = true;
+		bActivatePCross = true;
 		SpawnState = S_BLOODSPLATTER1;
 		DeathState = S_BLOODSPLATTERX;
 	}
@@ -2246,8 +2444,14 @@ class PlayerEntity:Actor
 		Height = 56.0;
 		Mass = 100.0;
 		PainChance = 255;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_PICKUP;
-		Flags2 = MF2_WINDTHRUST|MF2_FOOTCLIP|MF2_SLIDE|MF2_TELESTOMP;
+		bSolid = true;
+		bShootable = true;
+		bDropOff = true;
+		bPickUp = true;
+		bWindThrust = true;
+		bFootClip = true;
+		bSlide = true;
+		bTelestomp = true;
 		SpawnState = S_PLAY;
 		SeeState = S_PLAY_RUN1;
 		MissileState = S_PLAY_ATK1;
@@ -2274,8 +2478,11 @@ class BloodySkull:Actor
 		Height = 4.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP|MF_DROPOFF;
-		Flags2 = MF2_LOGRAV|MF2_NOPASSMOBJ|MF2_CANNOTPUSH;
+		bNoBlockmap = true;
+		bDropOff = true;
+		bLowGravity = true;
+		bNoPassMobj = true;
+		bCannotPush = true;
 		SpawnState = S_BLOODYSKULL1;
 	}
 };
@@ -2295,8 +2502,14 @@ class ChickenPlayer:Actor
 		Height = 24.0;
 		Mass = 100.0;
 		PainChance = 255;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF;
-		Flags2 = MF2_LOGRAV|MF2_WINDTHRUST|MF2_FOOTCLIP|MF2_SLIDE|MF2_TELESTOMP;
+		bSolid = true;
+		bShootable = true;
+		bDropOff = true;
+		bLowGravity = true;
+		bWindThrust = true;
+		bFootClip = true;
+		bSlide = true;
+		bTelestomp = true;
 		SpawnState = S_CHICPLAY;
 		SeeState = S_CHICPLAY_RUN1;
 		MissileState = S_CHICPLAY_ATK1;
@@ -2334,8 +2547,13 @@ class Chicken:Actor
 		Speed = 140.0;
 		ReactionCount = 8;
 		PainChance = 200;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_COUNTKILL;
-		Flags2 = MF2_WINDTHRUST|MF2_FOOTCLIP|MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bDropOff = true;
+		bCountKill = true;
+		bWindThrust = true;
+		bFootClip = true;
+		bActivateMCross = true;
 		SpawnState = S_CHICKEN_LOOK1;
 		SeeState = S_CHICKEN_WALK1;
 		MeleeState = S_CHICKEN_ATK1;
@@ -2364,8 +2582,14 @@ class Feather:Actor
 		Height = 4.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_LOGRAV|MF2_WINDTHRUST|MF2_NOTELEPORT|MF2_CANNOTPUSH|MF2_PCROSS;
+		bNoBlockmap = true;
+		bDropOff = true;
+		bMissile = true;
+		bLowGravity = true;
+		bWindThrust = true;
+		bNoTeleport = true;
+		bCannotPush = true;
+		bActivatePCross = true;
 		SpawnState = S_FEATHER1;
 		DeathState = S_FEATHERX;
 	}
@@ -2399,8 +2623,11 @@ class Mummy:Actor
 		Speed = 420.0;
 		ReactionCount = 8;
 		PainChance = 128;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_FOOTCLIP|MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bCountKill = true;
+		bFootClip = true;
+		bActivateMCross = true;
 		SpawnState = S_MUMMY_LOOK1;
 		SeeState = S_MUMMY_WALK1;
 		MeleeState = S_MUMMY_ATK1;
@@ -2442,8 +2669,11 @@ class MummyLeader:Actor
 		Speed = 420.0;
 		ReactionCount = 8;
 		PainChance = 64;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_FOOTCLIP|MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bCountKill = true;
+		bFootClip = true;
+		bActivateMCross = true;
 		SpawnState = S_MUMMY_LOOK1;
 		SeeState = S_MUMMY_WALK1;
 		MeleeState = S_MUMMY_ATK1;
@@ -2487,8 +2717,11 @@ class MummyGhost:Actor
 		ReactionCount = 8;
 		PainChance = 128;
 		Translucency = 33;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_FOOTCLIP|MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bCountKill = true;
+		bFootClip = true;
+		bActivateMCross = true;
 		SpawnState = S_MUMMY_LOOK1;
 		SeeState = S_MUMMY_WALK1;
 		MeleeState = S_MUMMY_ATK1;
@@ -2531,8 +2764,11 @@ class MummyLeaderGhost:Actor
 		ReactionCount = 8;
 		PainChance = 64;
 		Translucency = 33;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_FOOTCLIP|MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bCountKill = true;
+		bFootClip = true;
+		bActivateMCross = true;
 		SpawnState = S_MUMMY_LOOK1;
 		SeeState = S_MUMMY_WALK1;
 		MeleeState = S_MUMMY_ATK1;
@@ -2562,8 +2798,9 @@ class MummySoul:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
 		SpawnState = S_MUMMY_SOUL1;
 	}
 };
@@ -2585,8 +2822,12 @@ class MummyMissile:Actor
 		Speed = 315.0;
 		ReactionCount = 8;
 		MissileDamage = 4;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_MUMMYFX1_1;
 		DeathState = S_MUMMYFXI1_1;
 		Effects = EF_DL_WHITE;
@@ -2622,8 +2863,11 @@ class Beast:Actor
 		Speed = 490.0;
 		ReactionCount = 8;
 		PainChance = 100;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_FOOTCLIP|MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bCountKill = true;
+		bFootClip = true;
+		bActivateMCross = true;
 		SpawnState = S_BEAST_LOOK1;
 		SeeState = S_BEAST_WALK1;
 		MissileState = S_BEAST_ATK1;
@@ -2655,8 +2899,13 @@ class BeastBall:Actor
 		Speed = 420.0;
 		ReactionCount = 8;
 		MissileDamage = 4;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bWindThrust = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_BEASTBALL1;
 		DeathState = S_BEASTBALLX1;
 		Effects = EF_DL_RED;
@@ -2680,8 +2929,11 @@ class BurnBall:Actor
 		Speed = 350.0;
 		ReactionCount = 8;
 		MissileDamage = 2;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_BURNBALL1;
 		DeathState = S_BEASTBALLX1;
 		Effects = EF_DL_RED;
@@ -2705,8 +2957,11 @@ class BurnBallFB:Actor
 		Speed = 350.0;
 		ReactionCount = 8;
 		MissileDamage = 2;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_BURNBALLFB1;
 		DeathState = S_BEASTBALLX1;
 		Effects = EF_DL_RED;
@@ -2730,8 +2985,11 @@ class Puffy:Actor
 		Speed = 350.0;
 		ReactionCount = 8;
 		MissileDamage = 2;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_PUFFY1;
 		DeathState = S_PUFFY1;
 	}
@@ -2765,8 +3023,11 @@ class Snake:Actor
 		Speed = 350.0;
 		ReactionCount = 8;
 		PainChance = 48;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_FOOTCLIP|MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bCountKill = true;
+		bFootClip = true;
+		bActivateMCross = true;
 		SpawnState = S_SNAKE_LOOK1;
 		SeeState = S_SNAKE_WALK1;
 		MissileState = S_SNAKE_ATK1;
@@ -2797,8 +3058,13 @@ class SnakeProjectileA:Actor
 		Speed = 490.0;
 		ReactionCount = 8;
 		MissileDamage = 1;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bWindThrust = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_SNAKEPRO_A1;
 		DeathState = S_SNAKEPRO_AX1;
 		Effects = EF_DL_MAGENTA;
@@ -2822,8 +3088,12 @@ class SnakeProjectileB:Actor
 		Speed = 490.0;
 		ReactionCount = 8;
 		MissileDamage = 3;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_SNAKEPRO_B1;
 		DeathState = S_SNAKEPRO_BX1;
 		Effects = EF_DL_WHITE;
@@ -2858,8 +3128,11 @@ class Head:Actor
 		Speed = 210.0;
 		ReactionCount = 8;
 		PainChance = 32;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_NOBLOOD|MF_COUNTKILL;
-		Flags2 = MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bNoBlood = true;
+		bCountKill = true;
+		bActivateMCross = true;
 		SpawnState = S_HEAD_LOOK;
 		SeeState = S_HEAD_FLOAT;
 		MissileState = S_HEAD_ATK1;
@@ -2890,8 +3163,13 @@ class HeadMissile1:Actor
 		Speed = 455.0;
 		ReactionCount = 8;
 		MissileDamage = 1;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_THRUGHOST|MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bThruGhost = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_HEADFX1_1;
 		DeathState = S_HEADFXI1_1;
 		Effects = EF_DL_BLUE;
@@ -2915,8 +3193,12 @@ class HeadMissile2:Actor
 		Speed = 280.0;
 		ReactionCount = 8;
 		MissileDamage = 3;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_HEADFX2_1;
 		DeathState = S_HEADFXI2_1;
 		Effects = EF_DL_BLUE;
@@ -2940,8 +3222,13 @@ class HeadMissile3:Actor
 		Speed = 350.0;
 		ReactionCount = 8;
 		MissileDamage = 5;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bWindThrust = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_HEADFX3_1;
 		DeathState = S_HEADFXI3_1;
 		Effects = EF_DL_WHITE;
@@ -2966,8 +3253,12 @@ class WhirlWind:Actor
 		ReactionCount = 8;
 		MissileDamage = 1;
 		Translucency = 33;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_HEADFX4_1;
 		DeathState = S_HEADFXI4_1;
 	}
@@ -3001,8 +3292,12 @@ class Clink:Actor
 		Speed = 490.0;
 		ReactionCount = 8;
 		PainChance = 32;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_NOBLOOD|MF_COUNTKILL;
-		Flags2 = MF2_FOOTCLIP|MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bNoBlood = true;
+		bCountKill = true;
+		bFootClip = true;
+		bActivateMCross = true;
 		SpawnState = S_CLINK_LOOK1;
 		SeeState = S_CLINK_WALK1;
 		MeleeState = S_CLINK_ATK1;
@@ -3044,8 +3339,12 @@ class Wizard:Actor
 		Speed = 420.0;
 		ReactionCount = 8;
 		PainChance = 64;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT|MF_COUNTKILL;
-		Flags2 = MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bNoGravity = true;
+		bFloat = true;
+		bCountKill = true;
+		bActivateMCross = true;
 		SpawnState = S_WIZARD_LOOK1;
 		SeeState = S_WIZARD_WALK1;
 		MissileState = S_WIZARD_ATK1;
@@ -3076,8 +3375,12 @@ class WizardMissile:Actor
 		Speed = 630.0;
 		ReactionCount = 8;
 		MissileDamage = 3;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_WIZFX1_1;
 		DeathState = S_WIZFXI1_1;
 		Effects = EF_DL_MAGENTA;
@@ -3113,8 +3416,13 @@ class Imp:Actor
 		Speed = 350.0;
 		ReactionCount = 8;
 		PainChance = 200;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT|MF_COUNTKILL;
-		Flags2 = MF2_SPAWNFLOAT|MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bNoGravity = true;
+		bFloat = true;
+		bCountKill = true;
+		bSpawnFloat = true;
+		bActivateMCross = true;
 		SpawnState = S_IMP_LOOK1;
 		SeeState = S_IMP_FLY1;
 		MeleeState = S_IMP_MEATK1;
@@ -3160,8 +3468,13 @@ class ImpLeader:Actor
 		Speed = 350.0;
 		ReactionCount = 8;
 		PainChance = 200;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT|MF_COUNTKILL;
-		Flags2 = MF2_SPAWNFLOAT|MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bNoGravity = true;
+		bFloat = true;
+		bCountKill = true;
+		bSpawnFloat = true;
+		bActivateMCross = true;
 		SpawnState = S_IMP_LOOK1;
 		SeeState = S_IMP_FLY1;
 		MissileState = S_IMP_MSATK2_1;
@@ -3192,8 +3505,8 @@ class ImpChunk1:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoBlockmap = true;
+		bNoPassMobj = true;
 		SpawnState = S_IMP_CHUNKA1;
 	}
 };
@@ -3213,8 +3526,8 @@ class ImpChunk2:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoBlockmap = true;
+		bNoPassMobj = true;
 		SpawnState = S_IMP_CHUNKB1;
 	}
 };
@@ -3236,8 +3549,13 @@ class ImpBall:Actor
 		Speed = 350.0;
 		ReactionCount = 8;
 		MissileDamage = 1;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bWindThrust = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_IMPFX1;
 		DeathState = S_IMPFXI1;
 		Effects = EF_DL_WHITE;
@@ -3272,8 +3590,11 @@ class Knight:Actor
 		Speed = 420.0;
 		ReactionCount = 8;
 		PainChance = 100;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_FOOTCLIP|MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bCountKill = true;
+		bFootClip = true;
+		bActivateMCross = true;
 		SpawnState = S_KNIGHT_STND1;
 		SeeState = S_KNIGHT_WALK1;
 		MeleeState = S_KNIGHT_ATK1;
@@ -3317,8 +3638,11 @@ class KnightGhost:Actor
 		ReactionCount = 8;
 		PainChance = 100;
 		Translucency = 33;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_FOOTCLIP|MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bCountKill = true;
+		bFootClip = true;
+		bActivateMCross = true;
 		SpawnState = S_KNIGHT_STND1;
 		SeeState = S_KNIGHT_WALK1;
 		MeleeState = S_KNIGHT_ATK1;
@@ -3350,8 +3674,14 @@ class KnightAxe:Actor
 		Speed = 315.0;
 		ReactionCount = 8;
 		MissileDamage = 2;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_WINDTHRUST|MF2_THRUGHOST|MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bWindThrust = true;
+		bThruGhost = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_SPINAXE1;
 		DeathState = S_SPINAXEX1;
 		DeathSound = 'SkullRodHit';
@@ -3376,8 +3706,13 @@ class KnightRedAxe:Actor
 		Speed = 315.0;
 		ReactionCount = 8;
 		MissileDamage = 7;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_THRUGHOST|MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bThruGhost = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_REDAXE1;
 		DeathState = S_REDAXEX1;
 		DeathSound = 'SkullRodHit';
@@ -3413,8 +3748,12 @@ class Sorcerer1:Actor
 		Speed = 560.0;
 		ReactionCount = 8;
 		PainChance = 56;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		Flags2 = MF2_FOOTCLIP|MF2_BOSS|MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bCountKill = true;
+		bFootClip = true;
+		bBoss = true;
+		bActivateMCross = true;
 		SpawnState = S_SRCR1_LOOK1;
 		SeeState = S_SRCR1_WALK1;
 		MissileState = S_SRCR1_ATK1;
@@ -3445,8 +3784,13 @@ class Sorcerer1Missile:Actor
 		Speed = 700.0;
 		ReactionCount = 8;
 		MissileDamage = 10;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bFireDamage = true;
+		bActivatePCross = true;
 		SpawnState = S_SRCRFX1_1;
 		DeathState = S_SRCRFXI1_1;
 		Effects = EF_DL_WHITE;
@@ -3480,8 +3824,13 @@ class Sorcerer2:Actor
 		Speed = 490.0;
 		ReactionCount = 8;
 		PainChance = 32;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_COUNTKILL;
-		Flags2 = MF2_FOOTCLIP|MF2_BOSS|MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bDropOff = true;
+		bCountKill = true;
+		bFootClip = true;
+		bBoss = true;
+		bActivateMCross = true;
 		SpawnState = S_SOR2_LOOK1;
 		SeeState = S_SOR2_WALK1;
 		MissileState = S_SOR2_ATK1;
@@ -3511,8 +3860,12 @@ class Sorcerer2Missile1:Actor
 		Speed = 700.0;
 		ReactionCount = 8;
 		MissileDamage = 1;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_SOR2FX1_1;
 		DeathState = S_SOR2FXI1_1;
 		Effects = EF_DL_BLUE;
@@ -3534,8 +3887,11 @@ class Sorcerer2MissileSpark:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		Flags2 = MF2_NOTELEPORT|MF2_NOPASSMOBJ|MF2_CANNOTPUSH;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bNoTeleport = true;
+		bNoPassMobj = true;
+		bCannotPush = true;
 		SpawnState = S_SOR2FXSPARK1;
 	}
 };
@@ -3557,8 +3913,12 @@ class Sorcerer2Missile2:Actor
 		Speed = 210.0;
 		ReactionCount = 8;
 		MissileDamage = 10;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
 		SpawnState = S_SOR2FX2_1;
 		DeathState = S_SOR2FXI2_1;
 		Effects = EF_DL_BLUE;
@@ -3580,8 +3940,8 @@ class Sorcerer2TeleFade:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOBLOCKMAP;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoBlockmap = true;
+		bNoPassMobj = true;
 		SpawnState = S_SOR2TELEFADE1;
 	}
 };
@@ -3615,8 +3975,13 @@ class Minotaur:Actor
 		ReactionCount = 8;
 		PainChance = 25;
 		MissileDamage = 7;
-		Flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_COUNTKILL;
-		Flags2 = MF2_FOOTCLIP|MF2_BOSS|MF2_MCROSS;
+		bSolid = true;
+		bShootable = true;
+		bDropOff = true;
+		bCountKill = true;
+		bFootClip = true;
+		bBoss = true;
+		bActivateMCross = true;
 		SpawnState = S_MNTR_LOOK1;
 		SeeState = S_MNTR_WALK1;
 		MeleeState = S_MNTR_ATK1_1;
@@ -3648,8 +4013,13 @@ class MinotaurMissile:Actor
 		Speed = 700.0;
 		ReactionCount = 8;
 		MissileDamage = 3;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bFireDamage = true;
+		bActivatePCross = true;
 		SpawnState = S_MNTRFX1_1;
 		DeathState = S_MNTRFXI1_1;
 		Effects = EF_DL_WHITE;
@@ -3673,8 +4043,13 @@ class MinotaurFloorFire:Actor
 		Speed = 490.0;
 		ReactionCount = 8;
 		MissileDamage = 4;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bFireDamage = true;
+		bActivatePCross = true;
 		SpawnState = S_MNTRFX2_1;
 		DeathState = S_MNTRFXI2_1;
 		DeathSound = 'PhoenixHit';
@@ -3698,8 +4073,13 @@ class MinotaurFloorFire2:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		MissileDamage = 4;
-		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		Flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE|MF2_PCROSS;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bMissile = true;
+		bNoTeleport = true;
+		bFireDamage = true;
+		bActivatePCross = true;
 		SpawnState = S_MNTRFX3_1;
 		DeathState = S_MNTRFXI2_1;
 		DeathSound = 'PhoenixHit';
@@ -3733,8 +4113,8 @@ class ItemKeyGreen:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpecial = true;
+		bNoPassMobj = true;
 		SpawnState = S_AKYY1;
 	}
 };
@@ -3765,8 +4145,8 @@ class ItemKeyBlue:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpecial = true;
+		bNoPassMobj = true;
 		SpawnState = S_BKYY1;
 	}
 };
@@ -3797,8 +4177,8 @@ class ItemKeyYellow:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpecial = true;
+		bNoPassMobj = true;
 		SpawnState = S_CKYY1;
 	}
 };
@@ -3819,8 +4199,8 @@ class ItemAmmoGoldWandWimpy:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpecial = true;
+		bNoPassMobj = true;
 		SpawnState = S_AMG1;
 	}
 };
@@ -3841,8 +4221,8 @@ class ItemAmmoGoldWandHefty:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpecial = true;
+		bNoPassMobj = true;
 		SpawnState = S_AMG2_1;
 	}
 };
@@ -3863,8 +4243,8 @@ class ItemAmmoMaceWimpy:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpecial = true;
+		bNoPassMobj = true;
 		SpawnState = S_AMM1;
 	}
 };
@@ -3885,8 +4265,8 @@ class ItemAmmoMaceHefty:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpecial = true;
+		bNoPassMobj = true;
 		SpawnState = S_AMM2;
 	}
 };
@@ -3907,8 +4287,8 @@ class ItemAmmoCrossbowWimpy:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpecial = true;
+		bNoPassMobj = true;
 		SpawnState = S_AMC1;
 	}
 };
@@ -3929,8 +4309,8 @@ class ItemAmmoCrossbowHefty:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpecial = true;
+		bNoPassMobj = true;
 		SpawnState = S_AMC2_1;
 	}
 };
@@ -3951,8 +4331,8 @@ class ItemAmmoSkullRodWimpy:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpecial = true;
+		bNoPassMobj = true;
 		SpawnState = S_AMS1_1;
 	}
 };
@@ -3973,8 +4353,8 @@ class ItemAmmoSkullRodHefty:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpecial = true;
+		bNoPassMobj = true;
 		SpawnState = S_AMS2_1;
 	}
 };
@@ -3995,8 +4375,8 @@ class ItemAmmoPhoenixWimpy:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpecial = true;
+		bNoPassMobj = true;
 		SpawnState = S_AMP1_1;
 	}
 };
@@ -4017,8 +4397,8 @@ class ItemAmmoPhoenixHefty:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpecial = true;
+		bNoPassMobj = true;
 		SpawnState = S_AMP2_1;
 	}
 };
@@ -4039,8 +4419,8 @@ class ItemAmmoBlasterWimpy:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpecial = true;
+		bNoPassMobj = true;
 		SpawnState = S_AMB1_1;
 	}
 };
@@ -4061,8 +4441,8 @@ class ItemAmmoBlasterHefty:Actor
 		Height = 32.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_SPECIAL;
-		Flags2 = MF2_NOPASSMOBJ;
+		bSpecial = true;
+		bNoPassMobj = true;
 		SpawnState = S_AMB2_1;
 	}
 };
@@ -4083,8 +4463,9 @@ class SoundWind:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOSECTOR|MF_NOBLOCKMAP;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoClient = true;
+		bNoBlockmap = true;
+		bNoPassMobj = true;
 		SpawnState = S_SND_WIND;
 	}
 };
@@ -4105,8 +4486,9 @@ class SoundWaterfall:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		Flags = MF_NOSECTOR|MF_NOBLOCKMAP;
-		Flags2 = MF2_NOPASSMOBJ;
+		bNoClient = true;
+		bNoBlockmap = true;
+		bNoPassMobj = true;
 		SpawnState = S_SND_WATERFALL;
 	}
 };
@@ -4114,9 +4496,12 @@ class SoundWaterfall:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2002/02/06 17:28:52  dj_jl
+//	Replaced Actor flags with boolean variables.
+//
 //	Revision 1.20  2002/02/02 19:14:08  dj_jl
 //	Fixed things not spawned in deathmatch.
-//
+//	
 //	Revision 1.19  2002/01/29 18:10:31  dj_jl
 //	Added MCROSS and PCROSS flags
 //	

@@ -97,7 +97,7 @@ void Actor::DragonSeek(float thresh, float turnMax)
 		dist = MobjDist2(*tempTarget, self);
 		dist = dist / Speed;
 	}
-	if (tempTarget->Flags & MF_SHOOTABLE && P_Random() < 64)
+	if (tempTarget->bShootable && P_Random() < 64)
 	{
 		// attack the destination mobj if it's attackable
 		if (fabs(AngleMod180(angles.yaw -
@@ -203,7 +203,7 @@ void Actor::A_DragonFlight(void)
 	DragonSeek(4.0, 8.0);
 	if (target)
 	{
-		if (!(target->Flags & MF_SHOOTABLE))
+		if (!target->bShootable)
 		{
 			// target died
 			target = NULL;
@@ -318,6 +318,9 @@ void Actor::A_DragonFX2(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/06 17:28:52  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.15  2002/02/02 19:17:26  dj_jl
 //  Replacing pointers with references, beautification.
 //

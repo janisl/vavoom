@@ -28,34 +28,34 @@ int					altshadow = 0;
 
 char* flagnames1[32] =
 {
-    "MF_SPECIAL",
-    "MF_SOLID",
-    "MF_SHOOTABLE",
-    "MF_NOSECTOR",
-    "MF_NOBLOCKMAP",
-    "MF_AMBUSH",
-    "MF_JUSTHIT",
-    "MF_JUSTATTACKED",
+    "bSpecial",
+    "bSolid",
+    "bShootable",
+    "bNoClient",
+    "bNoBlockmap",
+    "bAmbush",
+    "bJustHit",
+    "bJustAttacked",
 
-    "MF_SPAWNCEILING",
-    "MF_NOGRAVITY",
-    "MF_DROPOFF",
-    "MF_PICKUP",
-    "MF_NOCLIP",
-    "MF_SLIDE",
-    "MF_FLOAT",
-    "MF_TELEPORT",
+    "bSpawnCeiling",
+    "bNoGravity",
+    "bDropOff",
+    "bPickUp",
+    "bNoClip",
+    "bSlide",
+    "bFloat",
+    "bTeleport",
 
-    "MF_MISSILE",
-    "MF_DROPPED",
+    "bMissile",
+    "bDropped",
     "MF_SHADOW",
-    "MF_NOBLOOD",
-    "MF_CORPSE",
-    "MF_INFLOAT",
-    "MF_COUNTKILL",
-    "MF_COUNTITEM",
+    "bNoBlood",
+    "bCorpse",
+    "bInFloat",
+    "bCountKill",
+    "bCountItem",
 
-    "MF_SKULLFLY",
+    "bSkullFly",
     "MF_NOTDMATCH",
     "MF_TRANSLATION1",
     "MF_TRANSLATION2",
@@ -66,34 +66,34 @@ char* flagnames1[32] =
 };
 char* flagnames2[32] =
 {
-    "MF2_LOGRAV",
-    "MF2_WINDTHRUST",
-    "MF2_FLOORBOUNCE",
-    "MF2_THRUGHOST",
-    "MF2_FLY",
-    "MF2_FOOTCLIP",
-    "MF2_SPAWNFLOAT",
-    "MF2_NOTELEPORT",
+    "bLowGravity",
+    "bWindThrust",
+    "bFloorBounce",
+    "bThruGhost",
+    "bFly",
+    "bFootClip",
+    "bSpawnFloat",
+    "bNoTeleport",
 
-    "MF2_RIP",
-    "MF2_PUSHABLE",
-    "MF2_SLIDE",
-    "MF2_ONMOBJ",
-    "MF2_NOPASSMOBJ",
-    "MF2_CANNOTPUSH",
+    "bRip",
+    "bPushable",
+    "bSlide",
+    "bOnMobj",
+    "bNoPassMobj",
+    "bCannotPush",
     "MF2_FEETARECLIPPED",
-    "MF2_BOSS",
+    "bBoss",
 
-    "MF2_FIREDAMAGE",
-    "MF2_NODMGTHRUST",
-    "MF2_TELESTOMP",
-    "MF2_FLOATBOB",
+    "bFireDamage",
+    "bNoDamageThrust",
+    "bTelestomp",
+    "bFloatBob",
     "MF2_DONTDRAW",
     "MF2_IMPACT",
     "MF2_PUSHWALL",
-    "MF2_MCROSS",
+    "bActivateMCross",
 
-    "MF2_PCROSS",
+    "bActivatePCross",
     "MF2_CANTLEAVEFLOORPIC",
     "MF2_NONSHOOTABLE",
     "MF2_INVULNERABLE",
@@ -106,9 +106,12 @@ char* flagnames2[32] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/02/06 17:31:46  dj_jl
+//	Replaced Actor flags with boolean variables.
+//
 //	Revision 1.5  2002/01/24 18:21:20  dj_jl
 //	Inverted passmobj flag
-//
+//	
 //	Revision 1.4  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
 //	

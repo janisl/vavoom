@@ -353,8 +353,8 @@ boolean Actor::GivePower(int power)
 			return false;
 		}
 		player->powers[power] = ftoi(FLIGHTTIME * 35.0);
-		Flags2 |= MF2_FLY;
-		Flags |= MF_NOGRAVITY;
+		bFly = true;
+		bNoGravity = true;
 		if (origin.z <= floorz)
 		{
 			player->flyheight = 10.0;	// thrust the player in the air a bit
@@ -432,7 +432,7 @@ boolean Actor::GiveArtifact(int arti, Actor mo)
 		player->readyArtifact = arti;
 	}
 	player->artifactCount++;
-	if (mo && (mo.Flags & MF_COUNTITEM))
+	if (mo && mo.bCountItem)
 	{
 		player->itemcount++;
 	}
@@ -451,7 +451,7 @@ void Actor::TouchSpecial(Actor Toucher)
 	name sound;
 	boolean respawn;
 
-	if (!(Toucher.Flags & MF_PICKUP))
+	if (!Toucher.bPickUp)
 	{
 		// can't remove thing
 		return;
@@ -749,11 +749,11 @@ void Actor::TouchSpecial(Actor Toucher)
 	default:
 		Error("P_SpecialThing: Unknown gettable thing");
 	}
-	if (Flags & MF_COUNTITEM)
+	if (bCountItem)
 	{
 		Toucher.player->itemcount++;
 	}
-	if (deathmatch && respawn && !(Flags & MF_DROPPED))
+	if (deathmatch && respawn && !bDropped)
 	{
 		P_HideSpecialThing(&self);
 	}
@@ -768,6 +768,9 @@ void Actor::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/02/06 17:28:52  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.10  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

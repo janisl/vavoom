@@ -304,7 +304,7 @@ void Actor::TryPickupWeapon(int weaponClass, int weaponType,
 
 	if (remove)
 	{
-		if (deathmatch && !(weapon.Flags2 & MF2_DROPPED))
+		if (deathmatch && !weapon.bDropped)
 		{
 			P_HideSpecialThing(&weapon);
 		}
@@ -389,7 +389,7 @@ void Actor::TryPickupWeaponPiece(int matchClass, int pieceValue,
 	}
 	if (remove)
 	{
-		if (deathmatch && !(pieceMobj.Flags2 & MF2_DROPPED))
+		if (deathmatch && !pieceMobj.bDropped)
 		{
 			P_HideSpecialThing(&pieceMobj);
 		}
@@ -535,10 +535,10 @@ boolean Actor::GivePower(int power)
 			return false;
 		}
 		player->powers[power] = ftoi(INVULNTIME * 35.0);
-		Flags2 |= MF2_INVULNERABLE;
+		bInvulnerable = true;
 		if (player->pclass == PCLASS_MAGE)
 		{
-			Flags2 |= MF2_REFLECTIVE;
+			bReflective = true;
 		}
 		return true;
 	}
@@ -550,8 +550,8 @@ boolean Actor::GivePower(int power)
 			return false;
 		}
 		player->powers[power] = ftoi(FLIGHTTIME * 35.0);
-		Flags2 |= MF2_FLY;
-		Flags |= MF_NOGRAVITY;
+		bFly = true;
+		bNoGravity = true;
 		if (origin.z <= floorz)
 		{
 			player->flyheight = 10.0;	// thrust the player in the air a bit
@@ -716,7 +716,7 @@ void Actor::TouchSpecial(Actor Toucher)
 	name sound;
 	boolean respawn;
 
-	if (!(Toucher.Flags & MF_PICKUP))
+	if (!Toucher.bPickUp)
 	{
 		// Can't be picked up by toucher
 		return;
@@ -1000,7 +1000,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		ExecuteLineSpecial(special, &args[0], NULL, 0, &Toucher);
 		special = 0;
 	}
-	if (deathmatch && respawn && !(Flags2 & MF2_DROPPED))
+	if (deathmatch && respawn && !bDropped)
 	{
 		P_HideSpecialThing(this);
 	}
@@ -1015,6 +1015,9 @@ void Actor::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/06 17:28:53  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.11  2002/02/02 19:17:26  dj_jl
 //  Replacing pointers with references, beautification.
 //

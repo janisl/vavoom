@@ -39,11 +39,11 @@ void A_Look(mobj_t * actor)
 	actor->threshold = 0;	// any shot will wake up
 	targ = Actor(actor->subsector->sector->SoundTarget);
 
-	if (targ && targ.Flags & MF_SHOOTABLE)
+	if (targ && targ.bShootable)
 	{
 		actor->target = &targ;
 
-		if (actor->Flags & MF_AMBUSH)
+		if (actor->bAmbush)
 		{
 			if (!P_CheckSight(*actor, *actor->target))
 			{
@@ -122,7 +122,7 @@ void A_Chase(mobj_t * actor)
 		}
 	}
 
-	if (!actor->target || !(actor->target->Flags & MF_SHOOTABLE))
+	if (!actor->target || !actor->target->bShootable)
 	{
 		// look for a new target
 		if (P_LookForPlayers(actor, true))
@@ -134,9 +134,9 @@ void A_Chase(mobj_t * actor)
 	}
 
 	// do not attack twice in a row
-	if (actor->Flags & MF_JUSTATTACKED)
+	if (actor->bJustAttacked)
 	{
-		actor->Flags &= ~MF_JUSTATTACKED;
+		actor->bJustAttacked = false;
 		if (!fastparm)
 		{
 			P_NewChaseDir(actor);
@@ -163,7 +163,7 @@ void A_Chase(mobj_t * actor)
 			if (P_CheckMissileRange(actor))
 			{
 				actor->SetState(actor->MissileState);
-				actor->Flags |= MF_JUSTATTACKED;
+				actor->bJustAttacked = true;
 				return;
 			}
 		}
@@ -203,7 +203,7 @@ void A_FaceTarget(mobj_t * actor)
 	if (!actor->target)
 		return;
 
-	actor->Flags &= ~MF_AMBUSH;
+	actor->bAmbush = false;
 
 	actor->angles.yaw = atan2(actor->target->origin.y - actor->origin.y,
 		actor->target->origin.x - actor->origin.x);
@@ -283,10 +283,7 @@ void A_XScream(mobj_t * actor)
 void Actor::A_Fall(void)
 {
 	// actor is on ground, it can be walked over
-	Flags &= ~MF_SOLID;
-
-	// So change this if corpse objects
-	// are meant to be obstacles.
+	bSolid = false;
 }
 
 //==========================================================================
@@ -315,6 +312,9 @@ void Actor::A_PlayerScream(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/02/06 17:28:53  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.12  2002/02/02 19:17:26  dj_jl
 //  Replacing pointers with references, beautification.
 //

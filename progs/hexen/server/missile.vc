@@ -277,7 +277,7 @@ boolean SeekerMissile(mobj_t * actor, float thresh, float turnMax)
 	{
 		return false;
 	}
-	if (!(target->Flags & MF_SHOOTABLE))
+	if (!target->bShootable)
 	{
 		// Target died
 		actor->specialmobj1 = NULL;
@@ -513,7 +513,7 @@ boolean P_ExplodeMissile(mobj_t * mo)
 		return false;
 	}
 	//mo->tics -= P_Random()&3;
-	mo->Flags &= ~MF_MISSILE;
+	mo->bMissile = false;
 
 	switch (mo->Class)
 	{
@@ -548,6 +548,9 @@ boolean P_ExplodeMissile(mobj_t * mo)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/06 17:28:53  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.16  2002/02/02 19:17:26  dj_jl
 //  Replacing pointers with references, beautification.
 //

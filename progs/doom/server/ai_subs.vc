@@ -83,11 +83,11 @@ boolean Actor::CheckMissileRange(void)
 		return false;
 	}
 
-	if (Flags & MF_JUSTHIT)
+	if (bJustHit)
 	{
 		// the target just hit the enemy,
 		// so fight back!
-		Flags &= ~MF_JUSTHIT;
+		bJustHit = false;
 		return true;
 	}
 
@@ -173,8 +173,8 @@ boolean Actor::LookForMonsters(boolean allaround)
 		if (mo == self)
 			continue;
 
-		if ((mo.Class != LostSoul) && (mo.Class != PlayerEntity)
-			&& !(mo.Flags & MF_COUNTKILL))
+		if (mo.Class != LostSoul && mo.Class != PlayerEntity &&
+			!mo.bCountKill)
 			continue;
 
 		if (!P_CheckSight(self, mo))
@@ -228,7 +228,7 @@ boolean Actor::LookForMonsters2(boolean allaround)
 		if (mo == self)
 			continue;	// self
 
-		if ((mo.Class != LostSoul) && !(mo.Flags & MF_COUNTKILL))
+		if ((mo.Class != LostSoul) && !mo.bCountKill)
 			continue;	// not a monster
 
 		if (!P_CheckSight(self, mo))
@@ -366,7 +366,7 @@ boolean Actor::StepMove(void)
 	if (!P_TryMove(this, tryx, tryy))
 	{
 		// open any specials
-		if (Flags & MF_FLOAT && floatok)
+		if (bFloat && floatok)
 		{
 			// must adjust height
 			if (origin.z < saved_tmfloorz)
@@ -374,7 +374,7 @@ boolean Actor::StepMove(void)
 			else
 				origin.z -= FLOATSPEED * frametime;
 
-			Flags |= MF_INFLOAT;
+			bInFloat = true;
 			return true;
 		}
 
@@ -398,10 +398,10 @@ boolean Actor::StepMove(void)
 	}
 	else
 	{
-		Flags &= ~MF_INFLOAT;
+		bInFloat = false;
 	}
 
-	if (!(Flags & MF_FLOAT))
+	if (!bFloat)
 	{
 		origin.z = floorz;
 	}
@@ -563,6 +563,9 @@ void Actor::NewChaseDir(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/06 17:28:51  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.11  2002/02/02 19:17:25  dj_jl
 //  Replacing pointers with references, beautification.
 //

@@ -33,7 +33,6 @@
 
 #include "gamedefs.h"
 #include "sv_local.h"
-#include "moflags.h"
 
 #define FRACBITS		16
 #define FRACUNIT		(1<<FRACBITS)
@@ -247,7 +246,7 @@ void SV_UnlinkFromWorld(VMapObject* thing)
 		return;
 	}
 
-    if (!(thing->flags & MF_NOBLOCKMAP))
+    if (!thing->bNoBlockmap)
     {
 		// inert things don't need to be in blockmap
 		// unlink from block map
@@ -313,7 +312,7 @@ void SV_LinkToWorld(VMapObject* thing)
 	thing->ceilingz = r->ceiling->GetPointZ(thing->origin);
 
     // link into blockmap
-    if (!(thing->flags & MF_NOBLOCKMAP))
+    if (!thing->bNoBlockmap)
     {
 		// inert things don't need to be in blockmap
 		blockx = MapBlock(thing->origin.x - level.bmaporgx);
@@ -992,9 +991,12 @@ int SV_PointContents(const sector_t *sector, const TVec &p)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/02/06 17:30:36  dj_jl
+//	Replaced Actor flags with boolean variables.
+//
 //	Revision 1.9  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
-//
+//	
 //	Revision 1.8  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

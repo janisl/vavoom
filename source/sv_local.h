@@ -152,8 +152,12 @@ class VMapObject:public VThinker
 	// If == validcount, already checked.
 	int				validcount;
 
-	int				flags;
-	int				flags2;			// Heretic flags
+	//	Flags
+	boolean			bSolid;			// Blocks.
+	boolean			bNoClient;		// don't update to clients
+									// (invisible but touchable)
+	boolean			bNoBlockmap;	// don't use the blocklinks
+									// (inert but displayable)
 	int				health;
 
 	// For movement checking.
@@ -453,9 +457,12 @@ inline subsector_t* SV_PointInSubsector(float x, float y)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2002/02/06 17:30:36  dj_jl
+//	Replaced Actor flags with boolean variables.
+//
 //	Revision 1.17  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
-//
+//	
 //	Revision 1.16  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

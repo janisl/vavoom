@@ -58,7 +58,7 @@ boolean PIT_StompThing(MapObject Other)
 {
 	float blockdist;
 
-	if (!(Other.Flags & MF_SHOOTABLE))
+	if (!Actor(Other).bShootable)
 	{
 		return true;
 	}
@@ -79,7 +79,7 @@ boolean PIT_StompThing(MapObject Other)
 	}
 
 	//  Check if allowed to stomp things
-	if (!(teleport_thing->Flags2 & MF2_TELESTOMP))
+	if (!teleport_thing->bTelestomp)
 	{
 		return false;
 	}
@@ -180,7 +180,7 @@ boolean P_Teleport(mobj_t * thing, float x, float y, float angle,
 			}
 		}
 	}
-	else if (thing->Flags & MF_MISSILE)
+	else if (thing->bMissile)
 	{
 		thing->origin.z = thing->floorz + aboveFloor;
 		if (thing->origin.z + thing->Height > thing->ceilingz)
@@ -195,7 +195,7 @@ boolean P_Teleport(mobj_t * thing, float x, float y, float angle,
 	// Spawn teleport fog at source and destination
 	if (useFog)
 	{
-		fogDelta = thing->Flags & MF_MISSILE ? 0.0 : TELEFOGHEIGHT;
+		fogDelta = thing->bMissile ? 0.0 : TELEFOGHEIGHT;
 		fog = P_SpawnMobj(oldx, oldy, oldz + fogDelta, TeleportFog);
 		StartSoundName(*fog, 'Teleport', CHAN_VOICE);
 		fog = P_SpawnMobj(x + 20.0 * cos(angle),
@@ -210,7 +210,7 @@ boolean P_Teleport(mobj_t * thing, float x, float y, float angle,
 		if (thing->player)
 			thing->player->fixangle = true;
 	}
-	if (thing->Flags2 & MF2_FLOORCLIP)
+	if (thing->bFloorClip)
 	{
 		if (thing->origin.z == thing->subsector->sector->floorheight &&
 			P_GetThingFloorType(thing) > FLOOR_SOLID)
@@ -222,7 +222,7 @@ boolean P_Teleport(mobj_t * thing, float x, float y, float angle,
 			thing->floorclip = 0.0;
 		}
 	}
-	if (thing->Flags & MF_MISSILE)
+	if (thing->bMissile)
 	{
 		thing->velocity.x = thing->Speed * cos(angle);
 		thing->velocity.y = thing->Speed * sin(angle);
@@ -248,10 +248,11 @@ boolean EV_Teleport(int tid, mobj_t * thing, boolean fog)
 	int searcher;
 
 	if (!thing)
-	{	// Teleport function called with an invalid mobj
+	{
+		// Teleport function called with an invalid mobj
 		return false;
 	}
-	if (thing->Flags2 & MF2_NOTELEPORT)
+	if (thing->bNoTeleport)
 	{
 		return false;
 	}
@@ -279,6 +280,9 @@ boolean EV_Teleport(int tid, mobj_t * thing, boolean fog)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/06 17:28:53  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.13  2002/02/02 19:17:26  dj_jl
 //  Replacing pointers with references, beautification.
 //

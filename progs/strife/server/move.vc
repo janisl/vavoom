@@ -57,7 +57,6 @@ line_t *ceilingline;
 
 float tmbbox[4];
 mobj_t *tmthing;
-int tmflags;
 float tmx;
 float tmy;
 float tmz;
@@ -91,7 +90,7 @@ boolean PIT_CheckThing(MapObject Other)
 {
 	float blockdist;
 
-	if (!(Other.Flags & MF_SOLID))
+	if (!Other.bSolid)
 		return true;
 
 	blockdist = Other.Radius + tmthing->Radius;
@@ -114,7 +113,7 @@ boolean PIT_CheckThing(MapObject Other)
 	if (tmthing->origin.z + tmthing->Height < Other.origin.z)
 		return true;	// underneath
 
-	return (Other.Flags & MF_NOCLIP);
+	return Actor(Other).bNoClip;
 }
 
 //==========================================================================
@@ -217,7 +216,6 @@ boolean P_CheckPosition(mobj_t * thing, float x, float y)
 	sec_region_t *reg;
 
 	tmthing = thing;
-	tmflags = thing->Flags;
 
 	tmx = x;
 	tmy = y;
@@ -252,7 +250,7 @@ boolean P_CheckPosition(mobj_t * thing, float x, float y)
 	(*validcount)++;
 	numspechit = 0;
 
-	if (tmflags & MF_NOCLIP)
+	if (thing->bNoClip)
 		return true;
 
 	BlockingMobj = NULL;
@@ -305,22 +303,22 @@ boolean Actor::Touch(Actor Other)
 	boolean solid;
 	int damage;
 
-	if (!(Other.Flags & (MF_SOLID | MF_SPECIAL | MF_SHOOTABLE)))
+	if (!Other.bSolid && !Other.bSpecial && !Other.bShootable)
 		return true;
 
 	// check for skulls slamming into things
-	if (Flags & MF_SKULLFLY)
+	if (bSkullFly)
 	{
 		damage = ((P_Random() % 8) + 1) * MissileDamage;
 		Other.Damage(self, self, damage);
-		Flags &= ~MF_SKULLFLY;
+		bSkullFly = false;
 		velocity = vector(0.0, 0.0, 0.0);
 		SetState(SpawnState);
 		return false;	// stop moving
 	}
 
 	// missiles can hit other things
-	if (Flags & MF_MISSILE)
+	if (bMissile)
 	{
 		if (target && (target->Class == Other.Class))
 		{
@@ -336,10 +334,10 @@ boolean Actor::Touch(Actor Other)
 			}
 		}
 
-		if (!(Other.Flags & MF_SHOOTABLE))
+		if (!Other.bShootable)
 		{
 			// didn't do any damage
-			return !(Other.Flags & MF_SOLID);
+			return !Other.bSolid;
 		}
 
 		// damage / explode
@@ -350,14 +348,14 @@ boolean Actor::Touch(Actor Other)
 	}
 
 	// check for special pickup
-	if (Other.Flags & MF_SPECIAL)
+	if (Other.bSpecial)
 	{
-		solid = Other.Flags & MF_SOLID;
+		solid = Other.bSolid;
 		Other.TouchSpecial(self);
 		return !solid;
 	}
 
-	return !(Other.Flags & MF_SOLID) || (Other.Flags & MF_NOCLIP);
+	return !Other.bSolid || Other.bNoClip;
 }
 
 //==========================================================================
@@ -438,7 +436,7 @@ boolean PIT_CheckRelLine(line_t * ld)
 		return false;
 	}
 
-	if (!(tmthing->Flags & MF_MISSILE))
+	if (!tmthing->bMissile)
 	{
 		if (ld->flags & ML_BLOCKING)
 		{
@@ -454,8 +452,7 @@ boolean PIT_CheckRelLine(line_t * ld)
 	}
 
 	// set openrange, opentop, openbottom
-	hit_point =
-		tmpos - (DotProduct(tmpos, ld->normal) - ld->dist) * ld->normal;
+	hit_point = tmpos - (DotProduct(tmpos, ld->normal) - ld->dist) * ld->normal;
 	open = LineOpenings(ld, hit_point);
 	open = FindOpening(open, tmz, tmz + tmthing->Height);
 
@@ -541,7 +538,6 @@ boolean P_CheckRelPosition(mobj_t * thing, float x, float y)
 	sec_region_t *reg;
 
 	tmthing = thing;
-	tmflags = thing->Flags;
 
 	tmx = x;
 	tmy = y;
@@ -577,7 +573,7 @@ boolean P_CheckRelPosition(mobj_t * thing, float x, float y)
 	(*validcount)++;
 	numspechit = 0;
 
-	if (tmflags & MF_NOCLIP)
+	if (thing->bNoClip)
 		return true;
 
 	BlockingMobj = NULL;
@@ -647,7 +643,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 		}
 	}
 
-	if (!(thing->Flags & MF_NOCLIP))
+	if (!thing->bNoClip)
 	{
 		if (tmceilingz - tmfloorz < thing->Height)
 		{
@@ -657,19 +653,18 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 
 		floatok = true;
 
-		if (!(thing->Flags & MF_TELEPORT)
-			&& tmceilingz - thing->origin.z < thing->Height)
+		if (!thing->bTeleport &&
+			tmceilingz - thing->origin.z < thing->Height)
 		{
 			// mobj must lower itself to fit
 			return false;
 		}
 
-		if (!(thing->Flags & MF_TELEPORT)
-			&& tmfloorz - thing->origin.z > 24.0)
+		if (!thing->bTeleport && tmfloorz - thing->origin.z > 24.0)
 			return false;	// too big a step up
 
-		if (!(thing->Flags & (MF_DROPOFF | MF_FLOAT))
-			&& tmfloorz - tmdropoffz > 24.0)
+		if (!thing->bDropOff && !thing->bFloat &&
+			tmfloorz - tmdropoffz > 24.0)
 			return false;	// don't stand over a dropoff
 	}
 
@@ -690,7 +685,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	//
 	// if any special lines were hit, do the effect
 	//
-	if (!(thing->Flags & (MF_TELEPORT | MF_NOCLIP)))
+	if (!thing->bNoClip && !thing->bTeleport)
 	{
 		while (numspechit > 0)
 		{
@@ -707,11 +702,11 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 					{
 						P_ActivateLine(ld, thing, oldside, SPAC_CROSS);
 					}
-					else if (thing->Flags2 & MF2_MCROSS)
+					else if (thing->bActivateMCross)
 					{
 						P_ActivateLine(ld, thing, oldside, SPAC_MCROSS);
 					}
-					else if (thing->Flags2 & MF2_PCROSS)
+					else if (thing->bActivatePCross)
 					{
 						P_ActivateLine(ld, thing, oldside, SPAC_PCROSS);
 					}
@@ -760,7 +755,7 @@ boolean P_Move(mobj_t * actor)
 	if (!P_TryMove(actor, tryx, tryy))
 	{
 		// open any specials
-		if (actor->Flags & MF_FLOAT && floatok)
+		if (actor->bFloat && floatok)
 		{
 			// must adjust height
 			if (actor->origin.z < saved_tmfloorz)
@@ -768,7 +763,7 @@ boolean P_Move(mobj_t * actor)
 			else
 				actor->origin.z -= FLOATSPEED * frametime;
 
-			actor->Flags |= MF_INFLOAT;
+			actor->bInFloat = true;
 			return true;
 		}
 
@@ -792,10 +787,10 @@ boolean P_Move(mobj_t * actor)
 	}
 	else
 	{
-		actor->Flags &= ~MF_INFLOAT;
+		actor->bInFloat = false;
 	}
 
-	if (!(actor->Flags & MF_FLOAT))
+	if (!actor->bFloat)
 	{
 		actor->origin.z = actor->floorz;
 	}
@@ -805,6 +800,9 @@ boolean P_Move(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/06 17:28:53  dj_jl
+//  Replaced Actor flags with boolean variables.
+//
 //  Revision 1.15  2002/02/02 19:17:26  dj_jl
 //  Replacing pointers with references, beautification.
 //
