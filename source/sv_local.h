@@ -217,6 +217,10 @@ class VEntity : public VThinker
 	static int FIndex_CrossSpecialLine;
 	static int FIndex_SectorChanged;
 	static int FIndex_RoughCheckThing;
+	static int FIndex_GiveInventory;
+	static int FIndex_TakeInventory;
+	static int FIndex_CheckInventory;
+	static int FIndex_GetSigilPieces;
 
 	static void InitFuncIndexes(void);
 
@@ -258,6 +262,22 @@ class VEntity : public VThinker
 	bool eventRoughCheckThing(VEntity *Other)
 	{
 		return !!svpr.Exec(GetVFunction(FIndex_RoughCheckThing), (int)this, (int)Other);
+	}
+	void eventGiveInventory(FName ItemName, int Amount)
+	{
+		svpr.Exec(GetVFunction(FIndex_GiveInventory), (int)this, ItemName.GetIndex(), Amount);
+	}
+	void eventTakeInventory(FName ItemName, int Amount)
+	{
+		svpr.Exec(GetVFunction(FIndex_TakeInventory), (int)this, ItemName.GetIndex(), Amount);
+	}
+	int eventCheckInventory(FName ItemName)
+	{
+		return svpr.Exec(GetVFunction(FIndex_CheckInventory), (int)this, ItemName.GetIndex());
+	}
+	int eventGetSigilPieces()
+	{
+		return svpr.Exec(GetVFunction(FIndex_GetSigilPieces), (int)this);
 	}
 
 	void Remove(void)
@@ -352,8 +372,9 @@ struct acsstore_t
 
 void P_LoadACScripts(int Lump);
 void P_StartTypedACScripts(int Type);
-boolean P_StartACS(int number, int map, int *args, VEntity *activator,
-	line_t *line, int side);
+bool P_StartACS(int number, int map, int arg1, int arg1, int arg1,
+	VEntity* activator, line_t* line, int side, bool Always,
+	bool WantResult);
 boolean P_TerminateACS(int number, int map);
 boolean P_SuspendACS(int number, int map);
 void P_TagFinished(int tag);
@@ -587,9 +608,12 @@ inline int SV_GetPlayerNum(VBasePlayer* player)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.33  2004/12/22 07:49:13  dj_jl
+//	More extended ACS support, more linedef flags.
+//
 //	Revision 1.32  2004/12/03 16:15:47  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
-//
+//	
 //	Revision 1.31  2003/11/12 16:47:40  dj_jl
 //	Changed player structure into a class
 //	

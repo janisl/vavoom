@@ -60,19 +60,12 @@ int TaggedLineCount;
 
 bool StartLockedACS(line_t * line, int *args, Actor A, int side)
 {
-	int i;
-	int newArgs[5];
-
 	if (!CheckLockedDoor(A, args[4]))
 	{
 		return false;
 	}
-	for (i = 0; i < 4; i++)
-	{
-		newArgs[i] = args[i];
-	}
-	newArgs[4] = 0;
-	return StartACS(newArgs[0], newArgs[1], &newArgs[2], A, line, side);
+	return StartACS(args[0], args[1], args[2], args[3], 0, A, line, side,
+		false, false);
 }
 
 //=========================================================================
@@ -143,7 +136,7 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 11:	// Door Open
 		if (!args[0])
 		{
-			buttonSuccess = EV_VerticalDoor(line, A);
+			buttonSuccess = EV_VerticalDoor(line, args, vd_open, A);
 		}
 		else
 		{
@@ -153,7 +146,7 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 12:	// Door Raise
 		if (!args[0])
 		{
-			buttonSuccess = EV_VerticalDoor(line, A);
+			buttonSuccess = EV_VerticalDoor(line, args, vd_normal, A);
 		}
 		else
 		{
@@ -165,7 +158,7 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		{
 			if (!args[0])
 			{
-				buttonSuccess = EV_VerticalDoor(line, A);
+				buttonSuccess = EV_VerticalDoor(line, args, vd_normal, A);
 			}
 			else
 			{
@@ -334,7 +327,8 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		}
 		break;
 	case 80:	// ACS_Execute
-		buttonSuccess = StartACS(args[0], args[1], &args[2], A, line, side);
+		buttonSuccess = StartACS(args[0], args[1], args[2], args[3], args[4],
+			A, line, side, false, false);
 		break;
 	case 81:	// ACS_Suspend
 		buttonSuccess = SuspendACS(args[0], args[1]);
@@ -903,6 +897,9 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2004/12/22 07:54:41  dj_jl
+//  More extended ACS support, more linedef flags.
+//
 //  Revision 1.24  2004/11/22 07:36:27  dj_jl
 //  Implemented all sector specials in all games.
 //

@@ -154,31 +154,22 @@ int EV_DoDoor(line_t * line, int *args, int type)
 //
 //==========================================================================
 
-int EV_VerticalDoor(line_t * line, Actor thing)
+int EV_VerticalDoor(line_t * line, int* args, int type, Actor thing)
 {
 	sector_t *sec;
 	VerticalDoor Door;
 	int side;
 	float speed;
-	int type;
 
 	side = 0;	// only front sides can be used
 
-	switch (line->special)
+	//HACK delay 0 means open
+	if (type == doorRaise && !args[2])
 	{
-	case 11:
 		type = doorOpen;
-		break;
-
-	case 12:
-		type = doorRaise;
-		break;
-
-	case 13:
-		type = line->arg3 ? doorRaise : doorOpen;
-		break;
 	}
-	speed = itof(line->arg2) * 4.0;
+
+	speed = itof(args[1]) * 4.0;
 
 	// if the sector has an active thinker, use it
 	sec = GLevel.Sides[line->sidenum[side ^ 1]].sector;
@@ -221,7 +212,7 @@ int EV_VerticalDoor(line_t * line, Actor thing)
 	Door.sector = sec;
 	Door.direction = 1;
 	Door.speed = speed;
-	Door.topwait = itof(line->arg3) / 35.0;
+	Door.topwait = itof(args[2]) / 35.0;
 	Door.type = type;
 
 	// find the top and bottom of the movement range
@@ -284,6 +275,9 @@ void P_SpawnDoorRaiseIn5Mins(sector_t * sec)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2004/12/22 07:54:40  dj_jl
+//  More extended ACS support, more linedef flags.
+//
 //  Revision 1.14  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

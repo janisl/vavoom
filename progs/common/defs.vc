@@ -25,8 +25,8 @@
 
 //  Since version 1.5 compiler defines PROG_VERSION, so we can check that
 // progs are compiled with the right version of compiler
-#if !defined PROG_VERSION || PROG_VERSION != 14
-#error These are version 14 progs
+#if !defined PROG_VERSION || PROG_VERSION != 16
+#error These are version 16 progs
 #endif
 
 enum
@@ -172,11 +172,16 @@ enum
 #define GET_SPAC(_flags_)	(((_flags_) & ML_SPAC_MASK) >> ML_SPAC_SHIFT)
 #define ML_MONSTERSCANACTIVATE	0x2000	//	Monsters (as well as players) can activate the line
 #define ML_BLOCKEVERYTHING	0x8000	//	Line blocks everything.
-#define ML_PASSUSE_BOOM		0x0200	//	Boom's ML_PASSUSE flag (conflicts with ML_REPEAT_SPECIAL)
-#define ML_BLOCKTEXTURE_STRIFE	0x0200
-#define ML_UNKNOWN1_STRIFE	0x0400
-#define ML_UNKNOWN2_STRIFE	0x0800
-#define ML_TRANSLUCENT_STRIFE	0x1000
+#define ML_RAILING			0x20000
+#define ML_BLOCK_FLOATERS	0x40000
+#define ML_CLIP_MIDTEX		0x80000	// Automatic for every Strife line
+
+//	These will be converted.
+#define ML_PASSUSE_BOOM				0x0200	//	Boom's ML_PASSUSE flag (conflicts with ML_REPEAT_SPECIAL)
+#define ML_RAILING_STRIFE			0x0200
+#define ML_BLOCK_FLOATERS_STRIFE	0x0400
+#define ML_UNKNOWN2_STRIFE			0x0800
+#define ML_TRANSLUCENT_STRIFE		0x1000
 
 //
 // Special activation types
@@ -188,6 +193,7 @@ enum
 #define SPAC_PUSH		4	// when player/monster pushes line
 #define SPAC_PCROSS		5	// when projectile crosses line
 #define SPAC_USETHROUGH	6	// SPAC_USE, but passes it through
+#define SPAC_PTOUCH		7	// when a projectiles crosses or hits line
 
 //
 //  SECTOR PLANE FLAGS
@@ -401,6 +407,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2004/12/22 07:54:31  dj_jl
+//  More extended ACS support, more linedef flags.
+//
 //  Revision 1.21  2004/11/22 07:36:23  dj_jl
 //  Implemented all sector specials in all games.
 //

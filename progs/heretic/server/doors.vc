@@ -148,7 +148,7 @@ bool CheckLockedDoor(Actor user, int lock)
 //
 //==========================================================================
 
-bool EV_VerticalDoor(line_t * line, Actor thing)
+bool EV_VerticalDoor(line_t * line, int* args, int type, Actor thing)
 {
 	sector_t *sec;
 	VerticalDoor Door;
@@ -156,15 +156,19 @@ bool EV_VerticalDoor(line_t * line, Actor thing)
 
 	side = 0;	// only front sides can be used
 
+	//HACK delay 0 means open
+	if (type == vd_normal && !args[2])
+	{
+		type = vd_open;
+	}
+
 	// if the sector has an active thinker, use it
 	sec = GLevel.Sides[line->sidenum[side ^ 1]].sector;
 	if (sec->SpecialData)
 	{
 		Door = VerticalDoor(sec->SpecialData);
-		switch (line->special)
+		if (type == vd_normal)
 		{
-		case 12:	// ONLY FOR "RAISE" DOORS, NOT "OPEN"s
-		case 13:
 			if (Door.direction == -1)
 			{
 				Door.direction = 1;	// go back up
@@ -191,20 +195,9 @@ bool EV_VerticalDoor(line_t * line, Actor thing)
 	sec->SpecialData = Door;
 	Door.sector = sec;
 	Door.direction = 1;
-	switch (line->special)
-	{
-	case 12:
-		Door.type = vd_normal;
-		break;
-	case 11:
-		Door.type = vd_open;
-		break;
-	case 13:
-		Door.type = line->arg3 ? vd_normal : vd_open;
-		break;
-	}
-	Door.speed = itof(line->arg2) * 4.0;
-	Door.topwait = itof(line->arg3) / 35.0;
+	Door.type = type;
+	Door.speed = itof(args[1]) * 4.0;
+	Door.topwait = itof(args[2]) / 35.0;
 
 	//
 	// find the top and bottom of the movement range
@@ -260,6 +253,9 @@ void P_SpawnDoorRaiseIn5Mins(sector_t * sec, int secnum)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2004/12/22 07:54:41  dj_jl
+//  More extended ACS support, more linedef flags.
+//
 //  Revision 1.17  2003/11/12 16:49:44  dj_jl
 //  Changed player structure into a class
 //

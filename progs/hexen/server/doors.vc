@@ -115,13 +115,19 @@ int EV_DoDoor(line_t * line, int *args, int type)
 //
 //==========================================================================
 
-bool EV_VerticalDoor(line_t * line)
+bool EV_VerticalDoor(line_t * line, int* args, int type)
 {
 	sector_t *sec;
 	VerticalDoor Door;
 	int side;
 
 	side = 0;	// only front sides can be used
+
+	//HACK delay 0 means open
+	if (type == DREV_NORMAL && !args[2])
+	{
+		type = DREV_OPEN;
+	}
 
 	// if the sector has an active thinker, use it
 	sec = GLevel.Sides[line->sidenum[side ^ 1]].sector;
@@ -136,22 +142,9 @@ bool EV_VerticalDoor(line_t * line)
 	sec->SpecialData = Door;
 	Door.sector = sec;
 	Door.direction = 1;
-	switch (line->special)
-	{
-	case 11:
-		Door.type = DREV_OPEN;
-		line->special = 0;
-		break;
-	case 12:
-	case 13:
-		Door.type = line->arg3 ? DREV_NORMAL : DREV_OPEN;
-		break;
-	default:
-		Door.type = DREV_NORMAL;
-		break;
-	}
-	Door.speed = itof(line->arg2) * 4.0;
-	Door.topwait = itof(line->arg3) / 35.0;
+	Door.type = type;
+	Door.speed = itof(args[1]) * 4.0;
+	Door.topwait = itof(args[2]) / 35.0;
 
 	//
 	// find the top and bottom of the movement range
@@ -217,6 +210,9 @@ void P_SpawnDoorRaiseIn5Mins(sector_t * sec)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2004/12/22 07:54:42  dj_jl
+//  More extended ACS support, more linedef flags.
+//
 //  Revision 1.13  2004/11/22 07:36:28  dj_jl
 //  Implemented all sector specials in all games.
 //

@@ -46,29 +46,39 @@
 //
 // LineDef attributes.
 //
-#define	ML_BLOCKING			0x0001  // Solid, is an obstacle.
-#define	ML_BLOCKMONSTERS	0x0002  // Blocks monsters only.
-#define	ML_TWOSIDED			0x0004	// Backside will not be present at all
-#define	ML_DONTPEGTOP		0x0008  // upper texture unpegged
-#define	ML_DONTPEGBOTTOM	0x0010  // lower texture unpegged
-#define ML_SECRET			0x0020	// don't map as two sided: IT'S A SECRET!
-#define ML_SOUNDBLOCK		0x0040	// don't let sound cross two of these
-#define	ML_DONTDRAW			0x0080	// don't draw on the automap
-#define	ML_MAPPED			0x0100	// set if already drawn in automap
-#define ML_REPEAT_SPECIAL	0x0200	// special is repeatable
-#define ML_SPAC_SHIFT		10
-#define ML_SPAC_MASK		0x1c00
-#define GET_SPAC(_flags_)	(((_flags_) & ML_SPAC_MASK) >> ML_SPAC_SHIFT)
+#define	ML_BLOCKING				0x0001  // Solid, is an obstacle.
+#define	ML_BLOCKMONSTERS		0x0002  // Blocks monsters only.
+#define	ML_TWOSIDED				0x0004	// Backside will not be present at all
+#define	ML_DONTPEGTOP			0x0008  // upper texture unpegged
+#define	ML_DONTPEGBOTTOM		0x0010  // lower texture unpegged
+#define ML_SECRET				0x0020	// don't map as two sided: IT'S A SECRET!
+#define ML_SOUNDBLOCK			0x0040	// don't let sound cross two of these
+#define	ML_DONTDRAW				0x0080	// don't draw on the automap
+#define	ML_MAPPED				0x0100	// set if already drawn in automap
+#define ML_REPEAT_SPECIAL		0x0200	// special is repeatable
+#define ML_SPAC_SHIFT			10
+#define ML_SPAC_MASK			0x1c00
+#define GET_SPAC(_flags_)		(((_flags_) & ML_SPAC_MASK) >> ML_SPAC_SHIFT)
+#define ML_MONSTERSCANACTIVATE	0x2000	//	Monsters (as well as players) can activate the line
+#define ML_BLOCKEVERYTHING		0x8000	//	Line blocks everything.
+#define ML_RAILING				0x20000
+#define ML_BLOCK_FLOATERS		0x40000
+#define ML_CLIP_MIDTEX			0x80000	// Automatic for every Strife line
 
 //
 // Special activation types
 //
-#define SPAC_CROSS		0	// when player crosses line
-#define SPAC_USE		1	// when player uses line
-#define SPAC_MCROSS		2	// when monster crosses line
-#define SPAC_IMPACT		3	// when projectile hits line
-#define SPAC_PUSH		4	// when player/monster pushes line
-#define SPAC_PCROSS		5	// when projectile crosses line
+enum
+{
+	SPAC_Cross,			// when player crosses line
+	SPAC_Use,			// when player uses line
+	SPAC_MCross,		// when monster crosses line
+	SPAC_Impact,		// when projectile hits line
+	SPAC_Push,			// when player/monster pushes line
+	SPAC_PCross,		// when projectile crosses line
+	SPAC_UseThrough,	// SPAC_USE, but passes it through
+	SPAC_PTouch			// when a projectiles crosses or hits line
+};
 
 //
 // Indicate a leaf.
@@ -95,9 +105,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2004/12/22 07:49:13  dj_jl
+//	More extended ACS support, more linedef flags.
+//
 //	Revision 1.4  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

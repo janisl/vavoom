@@ -193,15 +193,14 @@ COMMAND(Script)
 	if (CheatAllowed())
     {
 		int 	script;
-		int 	args[3];
 
         if (Argc() != 2) return;
 		script = atoi(Argv(1));
 		if (script < 1) return;
 		if (script > 99) return;
-		args[0] = args[1] = args[2] = 0;
 
-		if (P_StartACS(script, 0, args, svvars.Players[0]->MO, NULL, 0))
+		if (P_StartACS(script, 0, 0, 0, 0, svvars.Players[0]->MO, NULL, 0,
+			false, false))
 		{
 			GCon->Logf("Running script %d", script);
 		}
@@ -228,9 +227,12 @@ COMMAND(MyPos)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2004/12/22 07:50:06  dj_jl
+//	More extended ACS support, more linedef flags.
+//
 //	Revision 1.10  2003/11/12 16:47:40  dj_jl
 //	Changed player structure into a class
-//
+//	
 //	Revision 1.9  2003/07/11 16:45:20  dj_jl
 //	Made array of players with pointers
 //	

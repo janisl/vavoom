@@ -70,6 +70,10 @@ int VEntity::FIndex_HandleFloorclip;
 int VEntity::FIndex_CrossSpecialLine;
 int VEntity::FIndex_SectorChanged;
 int VEntity::FIndex_RoughCheckThing;
+int VEntity::FIndex_GiveInventory;
+int VEntity::FIndex_TakeInventory;
+int VEntity::FIndex_CheckInventory;
+int VEntity::FIndex_GetSigilPieces;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -266,16 +270,31 @@ static boolean PIT_CheckLine(line_t * ld)
 		return false;
 	}
 
-	if (cptrace.Thing->bCheckLineBlocking && ld->flags & ML_BLOCKING)
+	if (!(ld->flags & ML_RAILING))
 	{
-		// Explicitly blocking everything
-		return false;
-	}
+		if (ld->flags & ML_BLOCKEVERYTHING)
+		{
+			// Explicitly blocking everything
+			return false;
+		}
 
-	if (cptrace.Thing->bCheckLineBlockMonsters && ld->flags & ML_BLOCKMONSTERS)
-	{
-		// Block monsters only
-		return false;
+		if (cptrace.Thing->bCheckLineBlocking && ld->flags & ML_BLOCKING)
+		{
+			// Explicitly blocking everything
+			return false;
+		}
+
+		if (cptrace.Thing->bCheckLineBlockMonsters && ld->flags & ML_BLOCKMONSTERS)
+		{
+			// Block monsters only
+			return false;
+		}
+
+		if (cptrace.Thing->bFloat && ld->flags & ML_BLOCK_FLOATERS)
+		{
+			// Block floaters only
+			return false;
+		}
 	}
 
 	// set openrange, opentop, openbottom
@@ -303,6 +322,11 @@ static boolean PIT_CheckLine(line_t * ld)
 
 		if (open->lowfloor < cptrace.DropOffZ)
 			cptrace.DropOffZ = open->lowfloor;
+
+		if (ld->flags & ML_RAILING)
+		{
+			cptrace.FloorZ += 32;
+		}
 	}
 	else
 	{
@@ -528,18 +552,35 @@ static boolean PIT_CheckRelLine(line_t * ld)
 		return false;
 	}
 
-	if (tmtrace.Thing->bCheckLineBlocking && ld->flags & ML_BLOCKING)
+	if (!(ld->flags & ML_RAILING))
 	{
-		// Explicitly blocking everything
-		tmtrace.Thing->eventBlockedByLine(ld);
-		return false;
-	}
+		if (ld->flags & ML_BLOCKEVERYTHING)
+		{
+			// Explicitly blocking everything
+			tmtrace.Thing->eventBlockedByLine(ld);
+			return false;
+		}
 
-	if (tmtrace.Thing->bCheckLineBlockMonsters && ld->flags & ML_BLOCKMONSTERS)
-	{
-		// Block monsters only
-		tmtrace.Thing->eventBlockedByLine(ld);
-		return false;
+		if (tmtrace.Thing->bCheckLineBlocking && ld->flags & ML_BLOCKING)
+		{
+			// Explicitly blocking everything
+			tmtrace.Thing->eventBlockedByLine(ld);
+			return false;
+		}
+	
+		if (tmtrace.Thing->bCheckLineBlockMonsters && ld->flags & ML_BLOCKMONSTERS)
+		{
+			// Block monsters only
+			tmtrace.Thing->eventBlockedByLine(ld);
+			return false;
+		}
+
+		if (tmtrace.Thing->bFloat && ld->flags & ML_BLOCK_FLOATERS)
+		{
+			// Block floaters only
+			tmtrace.Thing->eventBlockedByLine(ld);
+			return false;
+		}
 	}
 
 	// set openrange, opentop, openbottom
@@ -569,6 +610,11 @@ static boolean PIT_CheckRelLine(line_t * ld)
 
 		if (open->lowfloor < tmtrace.DropOffZ)
 			tmtrace.DropOffZ = open->lowfloor;
+
+		if (ld->flags & ML_RAILING)
+		{
+			tmtrace.FloorZ += 32;
+		}
 	}
 	else
 	{
@@ -1727,6 +1773,10 @@ void VEntity::InitFuncIndexes(void)
 	FIndex_CrossSpecialLine = StaticClass()->GetFunctionIndex("CrossSpecialLine");
 	FIndex_SectorChanged = StaticClass()->GetFunctionIndex("SectorChanged");
 	FIndex_RoughCheckThing = StaticClass()->GetFunctionIndex("RoughCheckThing");
+	FIndex_GiveInventory = StaticClass()->GetFunctionIndex("GiveInventory");
+	FIndex_TakeInventory = StaticClass()->GetFunctionIndex("TakeInventory");
+	FIndex_CheckInventory = StaticClass()->GetFunctionIndex("CheckInventory");
+	FIndex_GetSigilPieces = StaticClass()->GetFunctionIndex("GetSigilPieces");
 }
 
 //==========================================================================
@@ -1752,9 +1802,12 @@ void EntInit(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2004/12/22 07:49:13  dj_jl
+//	More extended ACS support, more linedef flags.
+//
 //	Revision 1.11  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
-//
+//	
 //	Revision 1.10  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
 //	

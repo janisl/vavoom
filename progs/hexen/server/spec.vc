@@ -103,19 +103,12 @@ bool CheckedLockedDoor(Actor A, int lock)
 
 bool StartLockedACS(line_t * line, int *args, Actor A, int side)
 {
-	int i;
-	int newArgs[5];
-
 	if (!CheckedLockedDoor(A, args[4]))
 	{
 		return false;
 	}
-	for (i = 0; i < 4; i++)
-	{
-		newArgs[i] = args[i];
-	}
-	newArgs[4] = 0;
-	return StartACS(newArgs[0], newArgs[1], &newArgs[2], A, line, side);
+	return StartACS(args[0], args[1], args[2], args[3], 0, A, line, side,
+		false, false);
 }
 
 //=========================================================================
@@ -186,7 +179,7 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 11:	// Door Open
 		if (!args[0])
 		{
-			buttonSuccess = EV_VerticalDoor(line);
+			buttonSuccess = EV_VerticalDoor(line, args, DREV_OPEN);
 		}
 		else
 		{
@@ -196,7 +189,7 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 12:	// Door Raise
 		if (!args[0])
 		{
-			buttonSuccess = EV_VerticalDoor(line);
+			buttonSuccess = EV_VerticalDoor(line, args, DREV_NORMAL);
 		}
 		else
 		{
@@ -208,7 +201,7 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		{
 			if (!args[0])
 			{
-				buttonSuccess = EV_VerticalDoor(line);
+				buttonSuccess = EV_VerticalDoor(line, args, DREV_NORMAL);
 			}
 			else
 			{
@@ -370,7 +363,8 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		}
 		break;
 	case 80:	// ACS_Execute
-		buttonSuccess = StartACS(args[0], args[1], &args[2], A, line, side);
+		buttonSuccess = StartACS(args[0], args[1], args[2], args[3], args[4],
+			A, line, side, false, false);
 		break;
 	case 81:	// ACS_Suspend
 		buttonSuccess = SuspendACS(args[0], args[1]);
@@ -777,6 +771,9 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2004/12/22 07:54:42  dj_jl
+//  More extended ACS support, more linedef flags.
+//
 //  Revision 1.25  2004/11/22 07:36:28  dj_jl
 //  Implemented all sector specials in all games.
 //

@@ -110,11 +110,7 @@ void A_KoraxChase(void)
 {
 	Actor spot;
 	int search;
-	int args[3];
 
-	args[0] = 0;
-	args[1] = 0;
-	args[2] = 0;
 	if (!bDidBelowHalfHealth && (Health <= (SpawnHealth / 2)))
 	{
 		search = 0;
@@ -124,7 +120,7 @@ void A_KoraxChase(void)
 			Teleport(spot.Origin, spot.Angles.yaw, true);
 		}
 
-		StartACS(249, 0, &args[0], self, NULL, 0);
+		StartACS(249, 0, 0, 0, 0, self, NULL, 0, false, false);
 		bDidBelowHalfHealth = true;	// Don't run again
 
 		return;
@@ -359,11 +355,7 @@ void A_KoraxCommand(void)
 	float x, y, z;
 	float ang;
 	int numcommands;
-	int args[3];
 
-	args[0] = 0;
-	args[1] = 0;
-	args[2] = 0;
 	PlaySound('KoraxCommand', CHAN_VOICE);
 
 	// Shoot stream of lightning to ceiling
@@ -385,19 +377,19 @@ void A_KoraxCommand(void)
 	switch (P_Random() % numcommands)
 	{
 	case 0:
-		StartACS(250, 0, &args[0], self, NULL, 0);
+		StartACS(250, 0, 0, 0, 0, self, NULL, 0, false, false);
 		break;
 	case 1:
-		StartACS(251, 0, &args[0], self, NULL, 0);
+		StartACS(251, 0, 0, 0, 0, self, NULL, 0, false, false);
 		break;
 	case 2:
-		StartACS(252, 0, &args[0], self, NULL, 0);
+		StartACS(252, 0, 0, 0, 0, self, NULL, 0, false, false);
 		break;
 	case 3:
-		StartACS(253, 0, &args[0], self, NULL, 0);
+		StartACS(253, 0, 0, 0, 0, self, NULL, 0, false, false);
 		break;
 	case 4:
-		StartACS(254, 0, &args[0], self, NULL, 0);
+		StartACS(254, 0, 0, 0, 0, self, NULL, 0, false, false);
 		break;
 	}
 }
@@ -411,11 +403,7 @@ void A_KoraxCommand(void)
 void A_KoraxBonePop(void)
 {
 	Actor mo;
-	int args[3];
 
-	args[0] = 0;
-	args[1] = 0;
-	args[2] = 0;
 	// Spawn 6 spirits equalangularly
 	mo = SpawnMissileAngle(KoraxSpirit1, 60.0 * 0.0, 5.0 * 35.0);
 	if (mo)
@@ -436,7 +424,7 @@ void A_KoraxBonePop(void)
 	if (mo)
 		KoraxSpirit6(mo).KSpiritInit(self);
 
-	StartACS(255, 0, &args[0], self, NULL, 0);	// Death script
+	StartACS(255, 0, 0, 0, 0, self, NULL, 0, false, false);	// Death script
 }
 
 __states__
@@ -527,6 +515,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/12/22 07:54:41  dj_jl
+//  More extended ACS support, more linedef flags.
+//
 //  Revision 1.2  2004/11/01 07:38:23  dj_jl
 //  Almost all Hexen line specials are available in all games.
 //

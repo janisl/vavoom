@@ -40,7 +40,7 @@
 #define TEXTURE_TOP 0
 #define TEXTURE_MIDDLE 1
 #define TEXTURE_BOTTOM 2
-#define ACS_STACK_DEPTH		256 //32
+#define ACS_STACK_DEPTH		4096
 
 // TYPES -------------------------------------------------------------------
 
@@ -483,18 +483,17 @@ class VACS : public VThinker
 	DECLARE_CLASS(VACS, VThinker, 0)
 	NO_DEFAULT_CONSTRUCTOR(VACS)
 
-	VEntity 	*Activator;
-	line_t 		*line;
-	int 		side;
-	int 		number;
-	acsInfo_t*	info;
-	float		DelayTime;
-	int 		stack[ACS_STACK_DEPTH];
-	int			stackPtr;
-	int 		LocalVars[MAX_ACS_SCRIPT_VARS];
-	int 		*ip;
+	VEntity*			Activator;
+	line_t*				line;
+	int 				side;
+	int 				number;
+	acsInfo_t*			info;
+	float				DelayTime;
+	int*				LocalVars;
+	int*				ip;
 	FACScriptsObject*	activeObject;
 
+	int RunScript(float DeltaTime);
 	void Tick(float DeltaTime);
 
 	DECLARE_FUNCTION(Archive)
@@ -507,8 +506,9 @@ class VACS : public VThinker
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static boolean TagBusy(int tag);
-static boolean AddToACSStore(const char *map, int number, int *args);
+static bool TagBusy(int tag);
+static bool AddToACSStore(const char* map, int number, int arg1, int arg2,
+	int arg3);
 
 static int FindSectorFromTag(int tag, int start);
 static void GiveInventory(VEntity* Activator, const char* Type, int Amount);
@@ -530,12 +530,41 @@ acsstore_t ACSStore[MAX_ACS_STORE+1]; // +1 for termination marker
 
 IMPLEMENT_CLASS(V, ACS)
 
-static VACS*				NewScript;
 TArray<FACScriptsObject*>	FACScriptsObject::LoadedObjects;
+static int 					stack[ACS_STACK_DEPTH];
+static int					stackPtr;
 
 static FFunction*			pf_TagBusy;
 
 // CODE --------------------------------------------------------------------
+
+static VACS* SpawnScript(acsInfo_t* Info, FACScriptsObject* Object,
+	VEntity* Activator, line_t* Line, int Side, int Arg1, int Arg2, int Arg3,
+	bool Delayed)
+{
+	VACS* script = (VACS*)VObject::StaticSpawnObject(VACS::StaticClass(),
+		NULL, PU_LEVSPEC);
+	script->info = Info;
+	script->number = Info->number;
+	script->ip = Info->address;
+	script->activeObject = Object;
+	script->Activator = Activator;
+	script->line = Line;
+	script->side = Side;
+	script->LocalVars = (int*)Z_Malloc(Info->VarCount * 4, PU_LEVSPEC, 0);
+	script->LocalVars[0] = Arg1;
+	script->LocalVars[1] = Arg2;
+	script->LocalVars[2] = Arg3;
+	memset(script->LocalVars + Info->argCount, 0,
+		(Info->VarCount - Info->argCount) * 4);
+	if (Delayed)
+	{
+		//	World objects are allotted 1 second for initialization.
+		script->DelayTime = 1.0;
+	}
+	Info->state = ASTE_RUNNING;
+	return script;
+}
 
 static boolean P_ExecuteLineSpecial(int special, int *args, line_t *line, int side,
 	VEntity *mo)
@@ -557,6 +586,19 @@ static VEntity *P_FindMobjFromTID(int tid, int *searchPosition)
 static int ThingCount(int type, int tid)
 {
 	return svpr.Exec("ThingCount", type, tid);
+}
+
+static VEntity* EntityFromTID(int TID, VEntity* Default)
+{
+	if (!TID)
+	{
+		return Default;
+	}
+	else
+	{
+		int search = -1;
+		return P_FindMobjFromTID(TID, &search);
+	}
 }
 
 //==========================================================================
@@ -795,6 +837,10 @@ void FACScriptsObject::LoadEnhancedObject()
 			if (info)
 			{
 				info->VarCount = LittleShort(((word*)buffer)[1]);
+				//	Make sure it's at least 3 so in SpawnScript we can safely
+				// assign args to first 3 variables.
+				if (info->VarCount < 3)
+					info->VarCount = 3;
 			}
 		}
 	}
@@ -1347,17 +1393,8 @@ void FACScriptsObject::StartTypedACScripts(int Type)
 		if (Scripts[i].type == Type)
 		{
 			// Auto-activate
-			VACS* script = (VACS*)VObject::StaticSpawnObject(
-				VACS::StaticClass(), NULL, PU_LEVSPEC);
-			script->number = Scripts[i].number;
-			script->info = &Scripts[i];
-			script->activeObject = this;
-			script->ip = Scripts[i].address;
-
-			// World objects are allotted 1 second for initialization
-			script->DelayTime = 1.0;
-
-			Scripts[i].state = ASTE_RUNNING;
+			VACS* script = SpawnScript(&Scripts[i], this, NULL, NULL, 0,
+				0, 0, 0, true);
 		}
 	}
 	unguard;
@@ -1685,7 +1722,10 @@ void FACSGrowingArray::Serialise(FArchive& Ar)
 		Ar << NewSize;
 		Redim(NewSize);
 	}
-	Ar.Serialise(Data, Size * sizeof(int));
+	for (int i = 0; i < Size; i++)
+	{
+		Ar << Data[i];
+	}
 	unguard;
 }
 
@@ -1740,10 +1780,26 @@ void P_CheckACSStore(void)
 	{
 		if (!strcmp(store->map, level.mapname))
 		{
-			P_StartACS(store->script, 0, store->args, NULL, NULL, 0);
-			if (NewScript)
+			FACScriptsObject* Object;
+			acsInfo_t* info = FACScriptsObject::StaticFindScript(store->script, Object);
+			if (info)
 			{
-				NewScript->DelayTime = 1.0;
+				if (info->state == ASTE_SUSPENDED)
+				{
+					//	Resume a suspended script
+					info->state = ASTE_RUNNING;
+				}
+				else if (info->state == ASTE_INACTIVE)
+				{
+					SpawnScript(info, Object, NULL, NULL, 0, store->args[0],
+						store->args[1], store->args[2], true);
+				}
+			}
+			else
+			{
+				//	Script not found.
+				GCon->Logf(NAME_Dev, "P_CheckACSStore: Unknown script %d",
+					store->script);
 			}
 			strcpy(store->map, "-");
 		}
@@ -1753,17 +1809,14 @@ void P_CheckACSStore(void)
 
 //==========================================================================
 //
-// P_StartACS
+//	P_StartACS
 //
 //==========================================================================
 
-boolean P_StartACS(int number, int map_num, int *args, VEntity *activator,
-	line_t *line, int side)
+bool P_StartACS(int number, int map_num, int arg1, int arg2, int arg3,
+	VEntity *activator, line_t *line, int side, bool Always, bool WantResult)
 {
 	guard(P_StartACS);
-	int i;
-	VACS *script;
-	acsInfo_t* info;
 	char map[12] = "";
 	FACScriptsObject* Object;
 
@@ -1772,44 +1825,38 @@ boolean P_StartACS(int number, int map_num, int *args, VEntity *activator,
 		strcpy(map, SV_GetMapName(map_num));
 	}
 
-	NewScript = NULL;
 	if (map[0] && strcmp(map, level.mapname))
 	{
 		// Add to the script store
-		return AddToACSStore(map, number, args);
+		return AddToACSStore(map, number, arg1, arg2, arg3);
 	}
-	info = FACScriptsObject::StaticFindScript(number, Object);
+	acsInfo_t* info = FACScriptsObject::StaticFindScript(number, Object);
 	if (!info)
 	{
 		//	Script not found
 		GCon->Logf(NAME_Dev, "P_StartACS ERROR: Unknown script %d", number);
 		return false;
 	}
-	if (info->state == ASTE_SUSPENDED)
+	if (!Always)
 	{
-		//	Resume a suspended script
-		info->state = ASTE_RUNNING;
-		return true;
+		if (info->state == ASTE_SUSPENDED)
+		{
+			//	Resume a suspended script
+			info->state = ASTE_RUNNING;
+			return true;
+		}
+		if (info->state != ASTE_INACTIVE)
+		{
+			//	Script is already executing
+			return false;
+		}
 	}
-	if (info->state != ASTE_INACTIVE)
+	VACS* script = SpawnScript(info, Object, activator, line, side, arg1,
+		arg2, arg3, false);
+	if (WantResult)
 	{
-		//	Script is already executing
-		return false;
+		return script->RunScript(host_frametime);
 	}
-	script = (VACS *)VObject::StaticSpawnObject(VACS::StaticClass(), NULL, PU_LEVSPEC);
-	script->activeObject = Object;
-	script->number = number;
-	script->info = info;
-	script->Activator = (VEntity *)activator;
-	script->line = line;
-	script->side = side;
-	script->ip = info->address;
-	for(i = 0; i < info->argCount; i++)
-	{
-		script->LocalVars[i] = args[i];
-	}
-	info->state = ASTE_RUNNING;
-	NewScript = script;
 	return true;
 	unguard;
 }
@@ -1820,7 +1867,8 @@ boolean P_StartACS(int number, int map_num, int *args, VEntity *activator,
 //
 //==========================================================================
 
-static boolean AddToACSStore(const char *map, int number, int *args)
+static bool AddToACSStore(const char *map, int number, int arg1, int arg2,
+	int arg3)
 {
 	int i;
 	int index;
@@ -1829,16 +1877,19 @@ static boolean AddToACSStore(const char *map, int number, int *args)
 	for (i = 0; ACSStore[i].map[0]; i++)
 	{
 		if (ACSStore[i].script == number && !strcmp(ACSStore[i].map, map))
-		{ // Don't allow duplicates
+		{
+			// Don't allow duplicates
 			return false;
 		}
 		if (index == -1 && ACSStore[i].map[0] == '-')
-		{ // Remember first empty slot
+		{
+			// Remember first empty slot
 			index = i;
 		}
 	}
 	if (index == -1)
-	{ // Append required
+	{
+		// Append required
 		if (i == MAX_ACS_STORE)
 		{
 			Sys_Error("AddToACSStore: MAX_ACS_STORE (%d) exceeded.",
@@ -1849,9 +1900,9 @@ static boolean AddToACSStore(const char *map, int number, int *args)
 	}
 	strcpy(ACSStore[index].map, map);
 	ACSStore[index].script = number;
-	ACSStore[index].args[0] = args[0];
-	ACSStore[index].args[1] = args[1];
-	ACSStore[index].args[2] = args[2];
+	ACSStore[index].args[0] = arg1;
+	ACSStore[index].args[1] = arg2;
+	ACSStore[index].args[2] = arg3;
 	return true;
 }
 
@@ -1944,6 +1995,17 @@ void P_SerialiseScripts(FArchive& Ar)
 //
 //==========================================================================
 
+void VACS::Tick(float DeltaTime)
+{
+	RunScript(DeltaTime);
+}
+
+//==========================================================================
+//
+//	VACS::RunScript
+//
+//==========================================================================
+
 inline int getbyte(int*& pc)
 {
 	int res = *(byte*)pc;
@@ -1951,30 +2013,32 @@ inline int getbyte(int*& pc)
 	return res;
 }
 
-void VACS::Tick(float DeltaTime)
+int VACS::RunScript(float DeltaTime)
 {
 	int cmd;
 	int action;
 	int SpecArgs[8];
 	char PrintBuffer[PRINT_BUFFER_SIZE];
+	int resultValue = 1;
 
 	if (info->state == ASTE_TERMINATING)
 	{
 		info->state = ASTE_INACTIVE;
 		FACScriptsObject::StaticScriptFinished(number);
 		ConditionalDestroy();
-		return;
+		Z_Free(LocalVars);
+		return resultValue;
 	}
 	if (info->state != ASTE_RUNNING)
 	{
-		return;
+		return resultValue;
 	}
 	if (DelayTime)
 	{
 		DelayTime -= DeltaTime;
 		if (DelayTime < 0)
 			DelayTime = 0;
-		return;
+		return resultValue;
 	}
 	int optstart = -1;
 	int* locals = LocalVars;
@@ -3000,13 +3064,13 @@ void VACS::Tick(float DeltaTime)
 			break;
 
 		case PCD_CheckInventory:
-			//FIXME
-			stack[stackPtr - 1] = CheckInventory(Activator, FACScriptsObject::StaticGetString(stack[stackPtr - 1]));
+			stack[stackPtr - 1] = CheckInventory(Activator,
+				FACScriptsObject::StaticGetString(stack[stackPtr - 1]));
 			break;
 
 		case PCD_CheckInventoryDirect:
-			//FIXME
-			stack[stackPtr++] = CheckInventory(Activator, FACScriptsObject::StaticGetString(stack[PC_GET_INT]));
+			stack[stackPtr++] = CheckInventory(Activator,
+				FACScriptsObject::StaticGetString(stack[PC_GET_INT]));
 			break;
 
 		case PCD_Spawn:
@@ -3459,15 +3523,45 @@ void VACS::Tick(float DeltaTime)
 			break;
 
 		case PCD_GetActorX:
-			//FIXME implement.
+			{
+				VEntity* Ent = EntityFromTID(stack[stackPtr - 1], Activator);
+				if (!Ent)
+				{
+					stack[stackPtr - 1] = 0;
+				}
+				else
+				{
+					stack[stackPtr - 1] = int(Ent->Origin.x * 0x10000);
+				}
+			}
 			break;
 
 		case PCD_GetActorY:
-			//FIXME implement.
+			{
+				VEntity* Ent = EntityFromTID(stack[stackPtr - 1], Activator);
+				if (!Ent)
+				{
+					stack[stackPtr - 1] = 0;
+				}
+				else
+				{
+					stack[stackPtr - 1] = int(Ent->Origin.y * 0x10000);
+				}
+			}
 			break;
 
 		case PCD_GetActorZ:
-			//FIXME implement.
+			{
+				VEntity* Ent = EntityFromTID(stack[stackPtr - 1], Activator);
+				if (!Ent)
+				{
+					stack[stackPtr - 1] = 0;
+				}
+				else
+				{
+					stack[stackPtr - 1] = int(Ent->Origin.z * 0x10000);
+				}
+			}
 			break;
 
 		case PCD_StartTranslation:
@@ -4058,7 +4152,7 @@ void VACS::Tick(float DeltaTime)
 			break;
 
 		case PCD_SetResultValue:
-			//FIXME implement.
+			resultValue = stack[stackPtr - 1];
 			stackPtr--;
 			break;
 
@@ -4074,13 +4168,31 @@ void VACS::Tick(float DeltaTime)
 			break;
 
 		case PCD_GetActorFloorZ:
-			//FIXME implement.
-			stack[stackPtr - 1] = 0;
+			{
+				VEntity* Ent = EntityFromTID(stack[stackPtr - 1], Activator);
+				if (!Ent)
+				{
+					stack[stackPtr - 1] = 0;
+				}
+				else
+				{
+					stack[stackPtr - 1] = int(Ent->FloorZ * 0x10000);
+				}
+			}
 			break;
 
 		case PCD_GetActorAngle:
-			//FIXME implement.
-			stack[stackPtr - 1] = 0;
+			{
+				VEntity* Ent = EntityFromTID(stack[stackPtr - 1], Activator);
+				if (!Ent)
+				{
+					stack[stackPtr - 1] = 0;
+				}
+				else
+				{
+					stack[stackPtr - 1] = int(Ent->Angles.yaw * 0x10000 / 360) & 0xffff;
+				}
+			}
 			break;
 
 		case PCD_GetSectorFloorZ:
@@ -4134,8 +4246,10 @@ void VACS::Tick(float DeltaTime)
 			break;
 
 		case PCD_GetSigilPieces:
-			//FIXME implement.
-			stack[stackPtr++] = 0;
+			if (Activator)
+				stack[stackPtr++] = Activator->eventGetSigilPieces();
+			else
+				stack[stackPtr++] = 0;
 			break;
 
 			//	These opcodes are not supported. They will terminate script.
@@ -4183,7 +4297,9 @@ void VACS::Tick(float DeltaTime)
 		info->state = ASTE_INACTIVE;
 		FACScriptsObject::StaticScriptFinished(number);
 		ConditionalDestroy();
+		Z_Free(LocalVars);
 	}
+	return resultValue;
 }
 
 //==========================================================================
@@ -4279,9 +4395,9 @@ static int FindSectorFromTag(int tag, int start)
 //
 //==========================================================================
 
-static boolean TagBusy(int tag)
+static bool TagBusy(int tag)
 {
-	return svpr.Exec(pf_TagBusy, tag);
+	return !!svpr.Exec(pf_TagBusy, tag);
 }
 
 //============================================================================
@@ -4300,25 +4416,16 @@ static void GiveInventory(VEntity* Activator, const char* Type, int Amount)
 	{
 		Type = "BasicArmor";
 	}
-	VClass* ItemClass = VClass::FindClass(Type);
-	if (!ItemClass)
-	{
-		GCon->Logf("ACS: I don't know what %s is.", Type);
-	}
-//	else if (!ItemClass->IsDescendantOf(Vnventory::StaticClass()))
-//	{
-//		GCon->Logf("ACS: %s is not an inventory item.", Type);
-//	}
 	else if (Activator)
 	{
-//		DoGiveInv(Activator, ItemClass, Amount);
+		Activator->eventGiveInventory(Type, Amount);
 	}
 	else
 	{
 		for (int i = 0; i < MAXPLAYERS; i++)
 		{
-//			if (svvars.Players[i] && svvars.Players[i]->bSpawned)
-//				DoGiveInv(svvars.Players[i]->MO, ItemClass, Amount);
+			if (svvars.Players[i] && svvars.Players[i]->bSpawned)
+				svvars.Players[i]->MO->eventGiveInventory(Type, Amount);
 		}
 	}
 }
@@ -4339,21 +4446,16 @@ static void TakeInventory(VEntity* Activator, const char* Type, int Amount)
 	{
 		Type = "BasicArmor";
 	}
-	VClass* ItemClass = VClass::FindClass(Type);
-	if (!ItemClass)
-	{
-		return;
-	}
 	if (Activator)
 	{
-//		DoTakeInv(Activator, ItemClass, Amount);
+		Activator->eventTakeInventory(Type, Amount);
 	}
 	else
 	{
 		for (int i = 0; i < MAXPLAYERS; i++)
 		{
-//			if (svvars.Players[i] && svvars.Players[i]->bSpawned)
-//				DoTakeInv(svvars.Players[i]->MO, ItemClass, Amount);
+			if (svvars.Players[i] && svvars.Players[i]->bSpawned)
+				svvars.Players[i]->MO->eventTakeInventory(Type, Amount);
 		}
 	}
 }
@@ -4377,14 +4479,7 @@ static int CheckInventory(VEntity* Activator, const char* Type)
 	{
 		return Activator->Health;
 	}
-	VClass* ItemClass = VClass::FindClass(Type);
-	if (!ItemClass)
-	{
-		return 0;
-	}
-//	DoTakeInv(Activator, ItemClass, Amount);
-//FIXME
-	return 0;
+	return Activator->eventCheckInventory(Type);
 }
 
 //============================================================================
@@ -4475,9 +4570,12 @@ static void strbin(char *str)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2004/12/22 07:49:13  dj_jl
+//	More extended ACS support, more linedef flags.
+//
 //	Revision 1.29  2004/12/03 16:15:47  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
-//
+//	
 //	Revision 1.28  2004/11/01 07:31:15  dj_jl
 //	Replaced function pointer array with big swutch statement.
 //	

@@ -1675,18 +1675,27 @@ PF(StartACS)
 {
 	int		num;
     int		map;
-	int 	*args;
+	int 	arg1;
+	int 	arg2;
+	int 	arg3;
     VEntity	*activator;
     line_t	*line;
     int		side;
+	bool	Always;
+	bool	WantResult;
 
+	WantResult = !!Pop();
+	Always = !!Pop();
     side = Pop();
 	line = (line_t*)Pop();
     activator = (VEntity*)Pop();
-	args = (int*)Pop();
+	arg3 = Pop();
+	arg2 = Pop();
+	arg1 = Pop();
     map = Pop();
     num = Pop();
-	Push(P_StartACS(num, map, args, activator, line, side));
+	Push(P_StartACS(num, map, arg1, arg2, arg3, activator, line, side,
+		Always, WantResult));
 }
 
 //==========================================================================
@@ -3160,9 +3169,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.51  2004/12/22 07:49:13  dj_jl
+//	More extended ACS support, more linedef flags.
+//
 //	Revision 1.50  2004/08/18 18:05:46  dj_jl
 //	Support for higher virtual screen resolutions.
-//
+//	
 //	Revision 1.49  2003/11/12 16:47:40  dj_jl
 //	Changed player structure into a class
 //	
