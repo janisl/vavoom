@@ -1,0 +1,897 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class TempActor : Actor;
+
+bool bDidBeginPlay;
+
+void BeginPlay()
+{
+}
+
+void Tick(float DeltaTime)
+{
+	if (!bDidBeginPlay)
+	{
+		bDidBeginPlay = true;
+		BeginPlay();
+	}
+	::Tick(DeltaTime);
+}
+
+defaultproperties
+{
+}
+
+//**************************************************************************
+//**
+//**	SecurityCamera
+//**
+//**	args[0] = pitch
+//**	args[1] = amount camera turns to either side of its initial position
+//**			  (in degrees)
+//**	args[2] = octics to complete one cycle
+//**
+//**************************************************************************
+
+class SecurityCamera : TempActor
+	__mobjinfo__(9025);
+
+float Center;
+float Acc;
+float Delta;
+float Range;
+
+//==========================================================================
+//
+//	BeginPlay
+//
+//==========================================================================
+
+void BeginPlay()
+{
+	::BeginPlay();
+	Center = Angles.yaw;
+	if (Args[2])
+		Delta = 360.0 / (itof(Args[2]) / 8.0);
+	else
+		Delta = 0.0;
+	if (Args[1])
+		Delta /= 2.0;
+	Acc = 0.0;
+	Angles.pitch = itof(Args[0]);
+	if (Angles.pitch <= -90.0)
+		Angles.pitch = -89.0;
+	else if (Angles.pitch >= 90.0)
+		Angles.pitch = 89.0;
+	Range = itof(Args[1]);
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	::Tick(DeltaTime);
+	TickCamera(DeltaTime);
+}
+
+//==========================================================================
+//
+//	TickCamera
+//
+//==========================================================================
+
+void TickCamera(float DeltaTime)
+{
+	Acc += Delta * DeltaTime;
+	if (Range)
+		Angles.yaw = Center + Range * sin(Acc);
+	else if (Delta)
+		Angles.yaw = Acc;
+}
+
+defaultproperties
+{
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bHidden = true;
+}
+
+//**************************************************************************
+//**
+//**	AimingCamera
+//**
+//**	args[0] = pitch
+//**	args[1] = max turn (in degrees)
+//**	args[2] = max pitch turn (in degrees)
+//**	args[3] = tid of thing to look at
+//**
+//**************************************************************************
+
+class AimingCamera : SecurityCamera
+	__mobjinfo__(9073);
+
+float MaxPitchChange;
+
+//==========================================================================
+//
+//	BeginPlay
+//
+//==========================================================================
+
+void BeginPlay()
+{
+	Actor A;
+
+	MaxPitchChange = itof(Args[2]);
+
+	Args[2] = 0;
+	::BeginPlay();
+
+	FOREACH(Actor, A)
+	{
+		if (A.TID == Args[3])
+		{
+			Enemy = A;
+			break;
+		}
+	}
+	if (Enemy == none)
+	{
+		print("AimingCamera %d: Can't find thing %d", TID, Args[3]);
+	}
+}
+
+//==========================================================================
+//
+//	TickCamera
+//
+//==========================================================================
+
+void TickCamera(float DeltaTime)
+{
+	if (Enemy)
+	{
+		float delta;
+		int dir = FaceActor(Enemy, &delta);
+		if (delta > Range * DeltaTime)
+		{
+			delta = Range * DeltaTime;
+		}
+		if (dir)
+		{
+			Angles.yaw += delta;
+		}
+		else
+		{
+			Angles.yaw -= delta;
+		}
+		if (MaxPitchChange)
+		{
+			// Aim camera's pitch
+			TVec dv = MobjCenter(Enemy) - Origin;
+			TAVec d;
+			VectorAngles(&dv, &d);
+			if (fabs(d.pitch - Angles.pitch) < MaxPitchChange * DeltaTime)
+			{
+				Angles.pitch = d.pitch;
+			}
+			else if (d.pitch < Angles.pitch)
+			{
+				Angles.pitch -= MaxPitchChange * DeltaTime;
+			}
+			else
+			{
+				Angles.pitch += MaxPitchChange * DeltaTime;
+			}
+		}
+	}
+}
+
+defaultproperties
+{
+}
+
+//**************************************************************************
+//**
+//**	InterpolationPoint: node along a camera's path
+//**
+//**	args[0] = pitch
+//**	args[1] = time (in octics) to get here from previous node
+//**	args[2] = time (in octics) to stay here before moving to next node
+//**	args[3] = low byte of next node's tid
+//**	args[4] = high byte of next node's tid
+//**
+//**************************************************************************
+
+class InterpolationPoint : TempActor
+	__mobjinfo__(9070);
+
+InterpolationPoint Next;
+
+//==========================================================================
+//
+//	FormChain
+//
+//==========================================================================
+
+void FormChain()
+{
+	InterpolationPoint A;
+
+	if (bAmbush)
+		return;
+
+	bAmbush = true;
+
+	FOREACH(InterpolationPoint, A)
+	{
+		if (A.TID != Args[3] + 256 * Args[4])
+			continue;
+		if (A == self)	// Don't link to self
+			continue;
+		Next = A;
+		break;
+	}
+
+	if (Next == none && (Args[3] | Args[4]))
+		print("Can't find target for camera node %d", TID);
+
+	Angles.pitch = itof(Args[0]);
+	if (Angles.pitch <= -90.0)
+		Angles.pitch = -89.0;
+	else if (Angles.pitch >= 90.0)
+		Angles.pitch = 89.0;
+
+	if (Next != none)
+		Next.FormChain();
+}
+
+//==========================================================================
+//
+//	ScanForLoop
+//
+//	Return the node (if any) where a path loops, relative to this one.
+//
+//==========================================================================
+
+InterpolationPoint ScanForLoop()
+{
+	InterpolationPoint node = self;
+	while (node.Next && node.Next != self)
+	{
+		node = node.Next;
+	}
+	return node.Next ? node : none;
+}
+
+defaultproperties
+{
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bHidden = true;
+}
+
+//**************************************************************************
+//**
+//**	InterpolationSpecial: Holds a special to execute when a
+//**  PathFollower reaches an InterpolationPoint of the same TID.
+//**
+//**************************************************************************
+
+class InterpolationSpecial : Actor
+	__mobjinfo__(9075);
+
+defaultproperties
+{
+	bNoBlockmap = true;
+	bHidden = true;
+}
+
+//**************************************************************************
+//**
+//**	PathFollower: something that follows a camera path
+//**	Base class for some moving cameras
+//**
+//**	args[0] = low byte of first node in path's tid
+//**	args[1] = high byte of first node's tid
+//**	args[2] = bit 0 = follow a linear path (rather than curved)
+//**			  bit 1 = adjust angle
+//**			  bit 2 = adjust pitch
+//**			  bit 3 = aim in direction of motion
+//**
+//**************************************************************************
+
+class PathFollower : TempActor
+	__mobjinfo__(9071);
+
+bool bActive;
+bool bJustStepped;
+InterpolationPoint StartPrevNode;
+InterpolationPoint StartCurrNode;
+InterpolationPoint PrevNode;
+InterpolationPoint CurrNode;
+float Time;		// Runs from 0.0 to 1.0 between CurrNode and CurrNode->Next
+float HoldTime;
+
+//==========================================================================
+//
+//	SLerp
+//
+//	Interpolate between p2 and p3 along a Catmull-Rom spline.
+//	http://research.microsoft.com/~hollasch/cgindex/curves/catmull-rom.html
+//
+//==========================================================================
+
+float SLerp(float p1, float p2, float p3, float p4)
+{
+	float t = Time;
+	float res = 2.0 * p2;
+	res += (p3 - p1) * Time;
+	t *= Time;
+	res += (2.0 * p1 - 5.0 * p2 + 4.0 * p3 - p4) * t;
+	t *= Time;
+	res += (3.0 * p2 - 3.0 * p3 + p4 - p1) * t;
+	return 0.5 * res;
+}
+
+//==========================================================================
+//
+//	Lerp
+//
+//	Linearly interpolate between p1 and p2.
+//
+//==========================================================================
+
+float Lerp(float p1, float p2)
+{
+	return p2 * Time + p1 * (1.0 - Time);
+}
+
+//==========================================================================
+//
+//	BeginPlay
+//
+//==========================================================================
+
+void BeginPlay()
+{
+	InterpolationPoint A;
+	InterpolationPoint node;
+	InterpolationPoint prevnode;
+
+	::BeginPlay();
+
+	// Find first node of path
+	FOREACH(InterpolationPoint, A)
+	{
+		if (A.TID == Args[0] + 256 * Args[1])
+		{
+			node = A;
+			break;
+		}
+	}
+
+	StartCurrNode = node;
+
+	if (node == none)
+	{
+		print("PathFollower %d: Can't find interpolation pt %d",
+			TID, Args[0] + 256 * Args[1]);
+		return;
+	}
+
+	// Verify the path has enough nodes
+	node.FormChain();
+	if (Args[2] & 1)
+	{
+		// linear path; need 2 nodes
+		if (node.Next == none)
+		{
+			print("PathFollower %d: Path needs at least 2 nodes", TID);
+			return;
+		}
+		StartPrevNode = none;
+	}
+	else
+	{
+		// spline path; need 4 nodes
+		if (node.Next == none ||
+			node.Next.Next == none ||
+			node.Next.Next.Next == none)
+		{
+			print("PathFollower %d: Path needs at least 4 nodes", TID);
+			return;
+		}
+		// If the first node is in a loop, we can start there.
+		// Otherwise, we need to start at the second node in the path.
+		prevnode = node.ScanForLoop();
+		if (prevnode == none || prevnode.Next != node)
+		{
+			StartPrevNode = node;
+			StartCurrNode = node.Next;
+		}
+		else
+		{
+			StartPrevNode = prevnode;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	Deactivate
+//
+//==========================================================================
+
+void Deactivate()
+{
+	bActive = false;
+}
+
+//==========================================================================
+//
+//	Activate
+//
+//==========================================================================
+
+void Activate()
+{
+	if (!bActive)
+	{
+		CurrNode = StartCurrNode;
+		PrevNode = StartPrevNode;
+
+		if (CurrNode != none)
+		{
+			NewNode();
+			SetOrigin(CurrNode.Origin);
+			Time = 0.0;
+			HoldTime = 0.0;
+			bJustStepped = true;
+			bActive = true;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	::Tick(DeltaTime);
+	if (!bActive)
+		return;
+
+	if (bJustStepped)
+	{
+		bJustStepped = false;
+		if (CurrNode.Args[2])
+		{
+			HoldTime = level->time + itof(CurrNode.Args[2]) / 8.0;
+			Origin = CurrNode.Origin;
+		}
+	}
+
+	if (HoldTime > level->time)
+		return;
+
+	if (CurrNode.Next == none)
+	{
+		bActive = false;
+		return;
+	}
+
+	if (Interpolate())
+	{
+		Time += 8.0 / itof(CurrNode.Args[1]) * DeltaTime;
+		if (Time > 1.0)
+		{
+			Time -= 1.0;
+			bJustStepped = true;
+			PrevNode = CurrNode;
+			CurrNode = CurrNode.Next;
+			if (CurrNode != none)
+				NewNode();
+			if (CurrNode == none || CurrNode.Next == none)
+				Deactivate();
+			if ((Args[2] & 1) == 0 && CurrNode.Next.Next == none)
+				Deactivate();
+		}
+	}
+}
+
+//==========================================================================
+//
+//	NewNode
+//
+//==========================================================================
+
+void NewNode()
+{
+	InterpolationSpecial S;
+
+	FOREACH(InterpolationSpecial, S)
+	{
+		if (S.TID == CurrNode.TID)
+		{
+			ExecuteLineSpecial(S.Special, &S.Args[0], NULL, 0, none);
+		}
+	}
+}
+
+//==========================================================================
+//
+//	Interpolate
+//
+//==========================================================================
+
+bool Interpolate()
+{
+	TVec TempOrg;
+	TAVec TempAng;
+
+	if ((Args[2] & 8) && Time > 0.0)
+	{
+		TempOrg = Origin;
+	}
+
+	UnlinkFromWorld();
+	if (Args[2] & 1)
+	{
+		// linear
+		Origin.x = Lerp(CurrNode.Origin.x, CurrNode.Next.Origin.x);
+		Origin.y = Lerp(CurrNode.Origin.y, CurrNode.Next.Origin.y);
+		Origin.z = Lerp(CurrNode.Origin.z, CurrNode.Next.Origin.z);
+	}
+	else
+	{
+		// spline
+		Origin.x = SLerp(PrevNode.Origin.x, CurrNode.Origin.x,
+			CurrNode.Next.Origin.x, CurrNode.Next.Next.Origin.x);
+		Origin.y = SLerp(PrevNode.Origin.y, CurrNode.Origin.y,
+			CurrNode.Next.Origin.y, CurrNode.Next.Next.Origin.y);
+		Origin.z = SLerp(PrevNode.Origin.z, CurrNode.Origin.z,
+			CurrNode.Next.Origin.z, CurrNode.Next.Next.Origin.z);
+	}
+	LinkToWorld();
+
+	if (Args[2] & 6)
+	{
+		if (Args[2] & 8)
+		{
+			if (Args[2] & 1)
+			{
+				// linear
+				TempOrg = CurrNode.Next.Origin - CurrNode.Origin;
+			}
+			else if (Time > 0.0)
+			{
+				// spline
+				TempOrg = Origin - TempOrg;
+			}
+			else
+			{
+				int realarg = Args[2];
+				Args[2] &= ~(2 | 4 | 8);
+				Time += 0.1;
+				TempOrg = Origin;
+				Interpolate();
+				Time -= 0.1;
+				Args[2] = realarg;
+				TempOrg = Origin - TempOrg;
+				Origin -= TempOrg;
+			}
+			VectorAngles(&TempOrg, &TempAng);
+			if (Args[2] & 2)
+			{
+				// adjust yaw
+				Angles.yaw = TempAng.yaw;
+			}
+			if (Args[2] & 4)
+			{
+				// adjust pitch
+				Angles.pitch = TempAng.pitch;
+			}
+		}
+		else
+		{
+			if (Args[2] & 2)
+			{
+				// interpolate angle
+				float angle1 = CurrNode.Angles.yaw;
+				float angle2 = CurrNode.Next.Angles.yaw;
+				if (angle2 - angle1 <= -180.0)
+				{
+					float lerped = Lerp(angle1, angle2 + 360.0);
+					if (lerped >= 360.0)
+					{
+						Angles.yaw = lerped - 360.0;
+					}
+					else
+					{
+						Angles.yaw = lerped;
+					}
+				}
+				else if (angle2 - angle1 >= 180.0)
+				{
+					float lerped = Lerp(angle1, angle2 - 360.0);
+					if (lerped < 0.0)
+					{
+						Angles.yaw = lerped + 360.0;
+					}
+					else
+					{
+						Angles.yaw = lerped;
+					}
+				}
+				else
+				{
+					Angles.yaw = Lerp(angle1, angle2);
+				}
+			}
+			if (Args[2] & 4)
+			{
+				// interpolate pitch
+				if (Args[2] & 1)
+				{
+					// linear
+					Angles.pitch = Lerp(CurrNode.Angles.pitch, CurrNode.Next.Angles.pitch);
+				}
+				else
+				{
+					// spline
+					Angles.pitch = SLerp(PrevNode.Angles.pitch, CurrNode.Angles.pitch,
+						CurrNode.Next.Angles.pitch, CurrNode.Next.Next.Angles.pitch);
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
+defaultproperties
+{
+	bNoBlockmap = true;
+	bHidden = true;
+	bNoGravity = true;
+}
+
+//**************************************************************************
+//**
+//**	ActorMover: Moves any actor along a camera path
+//**
+//**	Same as PathFollower, except
+//**	args[2], bit 7: make nonsolid
+//**	args[3] = tid of thing to move
+//**
+//**************************************************************************
+
+class ActorMover : PathFollower
+	__mobjinfo__(9074);
+
+bool bSavedNoGravity;
+bool bSavedNoBlockmap;
+bool bSavedSolid;
+bool bSavedDormant;
+
+//==========================================================================
+//
+//	BeginPlay
+//
+//==========================================================================
+
+void BeginPlay()
+{
+	Actor A;
+
+	::BeginPlay();
+
+	FOREACH(Actor, A)
+	{
+		if (A.TID == Args[3])
+		{
+			Enemy = A;
+			break;
+		}
+	}
+
+	if (Enemy == none)
+	{
+		print("ActorMover %d: Can't find target %d", TID, Args[3]);
+	}
+}
+
+//==========================================================================
+//
+//	Interpolate
+//
+//==========================================================================
+
+bool Interpolate()
+{
+	if (Enemy == none)
+		return true;
+
+	if (::Interpolate())
+	{
+		if (!Enemy.TryMove(Origin))
+		{
+			return false;
+		}
+
+		if (Args[2] & 2)
+			Enemy.Angles.yaw = Angles.yaw;
+		if (Args[2] & 4)
+			Enemy.Angles.pitch = Angles.pitch;
+
+		return true;
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//	Activate
+//
+//==========================================================================
+
+void Activate()
+{
+	if (Enemy == none || bActive)
+		return;
+
+	::Activate();
+	bSavedNoGravity = Enemy.bNoGravity;
+	bSavedNoBlockmap = Enemy.bNoBlockmap;
+	bSavedSolid = Enemy.bSolid;
+	bSavedDormant = Enemy.bDormant;
+	Enemy.bNoGravity = true;
+	if (Args[2] & 128)
+	{
+		Enemy.UnlinkFromWorld();
+		Enemy.bNoBlockmap = true;
+		Enemy.bSolid = false;
+		Enemy.LinkToWorld();
+	}
+	if (Enemy.bMonster)
+	{
+		Enemy.bDormant = true;
+	}
+}
+
+//==========================================================================
+//
+//	Deactivate
+//
+//==========================================================================
+
+void Deactivate()
+{
+	::Deactivate();
+	if (Enemy != none)
+	{
+		Enemy.bSolid = bSavedSolid;
+		Enemy.bNoGravity = bSavedNoGravity;
+		Enemy.UnlinkFromWorld();
+		Enemy.bNoBlockmap = bSavedNoBlockmap;
+		Enemy.LinkToWorld();
+		Enemy.bDormant = bSavedDormant;
+	}
+}
+
+defaultproperties
+{
+}
+
+//**************************************************************************
+//**
+//**	LookAtCamera: Always look at specified actor.
+//**
+//**	Same as PathFollower, except
+//**	args[3] = tid of thing to look at (0 if none)
+//**
+//**************************************************************************
+
+class LookAtCamera : PathFollower
+	__mobjinfo__(9072);
+
+//==========================================================================
+//
+//	BeginPlay
+//
+//==========================================================================
+
+void BeginPlay()
+{
+	Actor A;
+
+	::BeginPlay();
+
+	if (Args[3] != 0)
+	{
+		FOREACH(Actor, A)
+		{
+			if (A.TID == Args[3])
+			{
+				Enemy = A;
+				break;
+			}
+		}
+		if (Enemy == none)
+		{
+			print("LookAtCamera %d: Can't find thing %d", TID, Args[3]);
+		}
+	}
+}
+
+//==========================================================================
+//
+//	Interpolate
+//
+//==========================================================================
+
+bool Interpolate()
+{
+	TVec delta;
+	TAVec ang;
+
+	if (Enemy == none)
+		return ::Interpolate();
+
+	if (::Interpolate())
+	{
+		delta = MobjCenter(Enemy) - Origin;
+		VectorAngles(&delta, &ang);
+		Angles.yaw = ang.yaw;
+		if (Args[2] & 4)
+		{
+			// Also aim camera's pitch
+			Angles.pitch = ang.pitch;
+		}
+		return true;
+	}
+	return false;
+}
+
+defaultproperties
+{
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2003/11/03 07:13:23  dj_jl
+//  Cameras
+//
+//**************************************************************************
