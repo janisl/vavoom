@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Actor:Entity
+class Actor : Entity
 	abstract;
 
 //  States
@@ -644,7 +644,9 @@ Actor SpawnMissile(Actor dest, classid type)
 
 void Died(Actor source)
 {
-	classid item;
+	int SpeechNum;
+	RogueConSpeech *Speech;
+	classid DropItemType;
 	Actor A;
 
 	bShootable = false;
@@ -719,32 +721,33 @@ void Died(Actor source)
 	if (StateTime < 0.1)
 		StateTime = 0.1;
 
-	// Drop stuff.
-	// This determines the kind of object spawned
-	// during the death frame of a thing.
-	switch (Class)
+	SpeechNum = GetSpeech(self);
+	if (SpeechNum)
 	{
-#if 0
-	case MT_WOLFSS:
-	case MT_POSSESSED:
-		item = MT_CLIP;
-		break;
-	
-	case MT_SHOTGUY:
-		item = MT_SHOTGUN;
-		break;
-	
-	case MT_CHAINGUY:
-		item = MT_CHAINGUN;
-		break;
-#endif
-
-	default:
-		return;
+		//	Drop stuff as determined by conversation.
+		if (SpeechNum < 0)
+		{
+			Speech = &XLevel.GenericSpeeches[-SpeechNum - 1];
+		}
+		else
+		{
+			Speech = &XLevel.LevelSpeeches[SpeechNum - 1];
+		}
+		DropItemType = GetClassFromID(Speech->DropItem);
+		if (DropItemType != classidNone)
+		{
+			A = Spawn(DropItemType, vector(Origin.x, Origin.y, ONFLOORZ));
+			if (Pickup(A) && Pickup(A).bDropAutoGive)
+			{
+				Pickup(A).HandlePickup(source);
+				A.Remove();
+			}
+			else
+			{
+				A.bDropped = true;	// special versions of items
+			}
+		}
 	}
-
-	A = Spawn(item, vector(Origin.x, Origin.y, ONFLOORZ));
-	A.bDropped = true;	// special versions of items
 }
 
 //==========================================================================
@@ -2737,6 +2740,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2003/10/02 17:59:30  dj_jl
+//  Dropped items.
+//
 //  Revision 1.4  2003/09/15 16:43:11  dj_jl
 //  Implemented stand action
 //
