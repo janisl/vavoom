@@ -44,7 +44,7 @@
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 static void CheckOpen(void);
-static void OpenScript(char *name, int type);
+static void OpenScript(const char *name, int type);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -78,7 +78,7 @@ static boolean 	AlreadyGot = false;
 //
 //==========================================================================
 
-void SC_Open(char *name)
+void SC_Open(const char *name)
 {
 	if (sc_FileScripts)
 	{
@@ -98,7 +98,7 @@ void SC_Open(char *name)
 //
 //==========================================================================
 
-void SC_OpenLump(char *name)
+void SC_OpenLump(const char *name)
 {
 	OpenScript(name, LUMP_SCRIPT);
 }
@@ -112,7 +112,7 @@ void SC_OpenLump(char *name)
 //
 //==========================================================================
 
-void SC_OpenFile(char *name)
+void SC_OpenFile(const char *name)
 {
 	OpenScript(name, FILE_ZONE_SCRIPT);
 }
@@ -123,7 +123,7 @@ void SC_OpenFile(char *name)
 //
 //==========================================================================
 
-static void OpenScript(char *name, int type)
+static void OpenScript(const char *name, int type)
 {
 	SC_Close();
 	if (type == LUMP_SCRIPT)
@@ -282,7 +282,7 @@ void SC_MustGetString(void)
 //
 //==========================================================================
 
-void SC_MustGetStringName(char *name)
+void SC_MustGetStringName(const char *name)
 {
 	SC_MustGetString();
 	if (SC_Compare(name) == false)
@@ -434,7 +434,7 @@ boolean SC_Check(void)
 //
 //==========================================================================
 
-int SC_MatchString(char **strings)
+int SC_MatchString(const char **strings)
 {
 	int i;
 
@@ -454,7 +454,7 @@ int SC_MatchString(char **strings)
 //
 //==========================================================================
 
-int SC_MustMatchString(char **strings)
+int SC_MustMatchString(const char **strings)
 {
 	int i;
 
@@ -472,7 +472,7 @@ int SC_MustMatchString(char **strings)
 //
 //==========================================================================
 
-boolean SC_Compare(char *text)
+boolean SC_Compare(const char *text)
 {
 	return !stricmp(text, sc_String);
 }
@@ -483,7 +483,7 @@ boolean SC_Compare(char *text)
 //
 //==========================================================================
 
-void SC_ScriptError(char *message)
+void SC_ScriptError(const char *message)
 {
 	if(message == NULL)
 	{
@@ -510,9 +510,12 @@ static void CheckOpen(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/04 17:27:39  dj_jl
+//	Added consts to script functions
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

@@ -31,23 +31,23 @@
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void SC_Open(char *name);
-void SC_OpenLump(char *name);
-void SC_OpenFile(char *name);
+void SC_Open(const char *name);
+void SC_OpenLump(const char *name);
+void SC_OpenFile(const char *name);
 void SC_Close(void);
 boolean SC_GetString(void);
 void SC_MustGetString(void);
-void SC_MustGetStringName(char *name);
+void SC_MustGetStringName(const char *name);
 boolean SC_GetNumber(void);
 void SC_MustGetNumber(void);
 boolean SC_GetFloat(void);
 void SC_MustGetFloat(void);
 void SC_UnGet(void);
 //boolean SC_Check(void);
-boolean SC_Compare(char *text);
-int SC_MatchString(char **strings);
-int SC_MustMatchString(char **strings);
-void SC_ScriptError(char *message);
+boolean SC_Compare(const char *text);
+int SC_MatchString(const char **strings);
+int SC_MustMatchString(const char **strings);
+void SC_ScriptError(const char *message);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
@@ -63,9 +63,12 @@ extern char 	*sc_ScriptsDir;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/04 17:27:39  dj_jl
+//	Added consts to script functions
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

@@ -71,7 +71,7 @@ enum
 static mapInfo_t	MapInfo[99];
 static int 			MapCount = 98;
 
-static char *MapCmdNames[] =
+static const char *MapCmdNames[] =
 {
 	"SKY1",
 	"SKY2",
@@ -434,9 +434,12 @@ int P_GetCDTitleTrack(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/04 17:27:39  dj_jl
+//	Added consts to script functions
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
