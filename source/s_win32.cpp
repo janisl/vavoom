@@ -178,9 +178,9 @@ void S_InitSfx(void)
 		wfx.nChannels          = 2;
 		wfx.nSamplesPerSec     = 11025;
 //		wfx.nSamplesPerSec     = 44100;
-		wfx.wBitsPerSample     = (WORD)8;
-//		wfx.wBitsPerSample     = (WORD)16;
-		wfx.nBlockAlign        = wfx.wBitsPerSample / 8 * wfx.nChannels;
+		wfx.wBitsPerSample     = WORD(8);
+//		wfx.wBitsPerSample     = WORD(16);
+		wfx.nBlockAlign        = WORD(wfx.wBitsPerSample / 8 * wfx.nChannels);
 		wfx.nAvgBytesPerSec    = wfx.nSamplesPerSec * wfx.nBlockAlign;
 		wfx.cbSize             = 0;
 
@@ -197,7 +197,7 @@ void S_InitSfx(void)
 				Sys_Error("Failed to get Listener");
 			}
 
-			Listener->SetDistanceFactor(1.0 / 200.0, DS3D_IMMEDIATE);
+			Listener->SetDistanceFactor(1.0 / 256.0, DS3D_IMMEDIATE);
 			Listener->SetDopplerFactor(1.0, DS3D_IMMEDIATE);
 			Listener->SetRolloffFactor(1.0, DS3D_IMMEDIATE);
 		}
@@ -508,8 +508,8 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id)
     pcmwf.wf.wFormatTag         = WAVE_FORMAT_PCM;      
     pcmwf.wf.nChannels          = 1;
 	pcmwf.wf.nSamplesPerSec     = S_sfx[sound_id].freq;
-    pcmwf.wBitsPerSample        = (WORD)8;
-    pcmwf.wf.nBlockAlign        = pcmwf.wBitsPerSample / 8 * pcmwf.wf.nChannels;
+    pcmwf.wBitsPerSample        = WORD(8);
+    pcmwf.wf.nBlockAlign        = WORD(pcmwf.wBitsPerSample / 8 * pcmwf.wf.nChannels);
     pcmwf.wf.nAvgBytesPerSec    = pcmwf.wf.nSamplesPerSec * pcmwf.wf.nBlockAlign;
 
     // Set up DSBUFFERDESC structure.
@@ -630,6 +630,7 @@ void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
 	}
 
 	Channel[chan].origin_id = origin_id;
+	Channel[chan].channel = channel;
 	Channel[chan].origin = origin;
 	Channel[chan].velocity = velocity;
 	Channel[chan].sound_id = sound_id;
@@ -1016,9 +1017,12 @@ boolean S_GetSoundPlayingInfo(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/09/05 12:21:42  dj_jl
+//	Release changes
+//
 //	Revision 1.6  2001/08/30 17:41:42  dj_jl
 //	Added entity sound channels
-//
+//	
 //	Revision 1.5  2001/08/29 17:55:42  dj_jl
 //	Added sound channels
 //	

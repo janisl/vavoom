@@ -123,7 +123,6 @@ OBJ_FILES = $(SYS_OBJS) \
 	obj/menu.o \
 	obj/message.o \
 	obj/misc.o \
-	obj/model.o \
 	obj/net_dgrm.o \
 	obj/net_loop.o \
 	obj/net_main.o \
@@ -135,6 +134,7 @@ OBJ_FILES = $(SYS_OBJS) \
 	obj/r_bsp.o \
 	obj/r_light.o \
 	obj/r_main.o \
+	obj/r_model.o \
 	obj/r_sky.o \
 	obj/r_surf.o \
 	obj/r_tex.o \
@@ -174,8 +174,6 @@ LIBS := -lMesaGL $(LIBS)
 else
 LIBS := -lGL $(LIBS)
 endif
-# Somehow in latest Allegro it's missing
-LIBS := -L/usr/X11R6/lib $(LIBS)
 endif
 
 #---------------------------------------
@@ -253,22 +251,6 @@ WAD_FILES = \
 	basev/hexen/wad0.wad \
 	basev/strife/wad0.wad
 
-#---------------------------------------
-#
-#	Install files
-#
-#---------------------------------------
-
-ifndef INSTALL_DIR
-INSTALL_DIR = /usr/local/games/Vavoom
-endif
-
-ifndef INSTALL_EXE
-INSTALL_EXE = Vavoom$(EXE)
-endif
-
-INSTALL_FILES = $(INSTALL_EXE) $(WAD_FILES) basev/default.cfg basev/startup.vs
-
 # ---------------------------------------
 
 C_ARGS   = -c -W -Wall -mpentiumpro -ffast-math
@@ -291,7 +273,7 @@ endif
 
 # ---------------------------------------
 
-.PHONY: all exe suid crash sv svexe utils progs data clean
+.PHONY: all exe suid crash sv svexe utils progs data clean install
 
 # ---------------------------------------
 
@@ -320,14 +302,6 @@ obj/%.o : source/%.s source/asm_i386.h
 
 # ---------------------------------------
 
-install: $(INSTALL_DIR)
-	ginstall -d $(INSTALL_FILES) $(INSTALL_DIR)
-
-$(INSTALL_DIR):
-	md $(INSTALL_DIR)
-
-# ---------------------------------------
-
 sv: svexe data
 
 svexe: VavoomSV$(EXE)
@@ -353,11 +327,11 @@ utils:
 	$(MAKE) -C utils/glvis
 
 progs: utils/vcc/vcc$(EXE)
-	$(MAKE) VCC=../../utils/vcc/vcc$(EXE) -C progs/doom
-	$(MAKE) VCC=../../utils/vcc/vcc$(EXE) -C progs/doom2
-	$(MAKE) VCC=../../utils/vcc/vcc$(EXE) -C progs/heretic
-	$(MAKE) VCC=../../utils/vcc/vcc$(EXE) -C progs/hexen
-	$(MAKE) VCC=../../utils/vcc/vcc$(EXE) -C progs/strife
+	$(MAKE) VCC=../../utils/vcc/vcc$(EXE) OUTDIR=../../basev/doom1/progs -C progs/doom
+	$(MAKE) VCC=../../utils/vcc/vcc$(EXE) OUTDIR=../../basev/doom2/progs -C progs/doom2
+	$(MAKE) VCC=../../utils/vcc/vcc$(EXE) OUTDIR=../../basev/heretic/progs -C progs/heretic
+	$(MAKE) VCC=../../utils/vcc/vcc$(EXE) OUTDIR=../../basev/hexen/progs -C progs/hexen
+	$(MAKE) VCC=../../utils/vcc/vcc$(EXE) OUTDIR=../../basev/strife/progs -C progs/strife
 
 data: progs $(WAD_FILES)
 
@@ -375,6 +349,59 @@ basev/doom2/wad0.wad : basev/doom2/progs/clprogs.dat basev/doom2/progs/svprogs.d
 basev/heretic/wad0.wad : basev/heretic/progs/clprogs.dat basev/heretic/progs/svprogs.dat
 basev/hexen/wad0.wad : basev/hexen/progs/clprogs.dat basev/hexen/progs/svprogs.dat
 basev/strife/wad0.wad : basev/strife/progs/clprogs.dat basev/strife/progs/svprogs.dat
+
+# ---------------------------------------
+
+ifndef INSTALL_DIR
+INSTALL_DIR = /usr/local/games/Vavoom
+endif
+
+ifndef INSTALL_UTILS_DIR
+INSTALL_UTILS_DIR = /usr/local/bin
+endif
+
+INSTALL_PARMS=-g root -o root -m 0755
+INSTALL_DIRPARMS=-m 0777 -d
+
+install: installdata installutils
+	install $(INSTALL_PARMS) Vavoom$(EXE) $(INSTALL_DIR)
+
+installsv: installdata
+	install $(INSTALL_PARMS) VavoomSV$(EXE) $(INSTALL_DIR)
+
+installdata:
+	install $(INSTALL_DIRPARMS) \
+		$(INSTALL_DIR) \
+		$(INSTALL_DIR)/basev \
+		$(INSTALL_DIR)/basev/doom \
+		$(INSTALL_DIR)/basev/doom1 \
+		$(INSTALL_DIR)/basev/doom2 \
+		$(INSTALL_DIR)/basev/tnt \
+		$(INSTALL_DIR)/basev/plutonia \
+		$(INSTALL_DIR)/basev/heretic \
+		$(INSTALL_DIR)/basev/hexen \
+		$(INSTALL_DIR)/basev/strife
+	install $(INSTALL_PARMS) basev/default.cfg basev/startup.vs \
+		basev/games.txt $(INSTALL_DIR)/basev
+	install $(INSTALL_PARMS) basev/doom/wad0.wad $(INSTALL_DIR)/basev/doom
+	install $(INSTALL_PARMS) basev/doom1/wad0.wad basev/doom1/base.txt \
+		$(INSTALL_DIR)/basev/doom1
+	install $(INSTALL_PARMS) basev/doom2/wad0.wad basev/doom2/base.txt \
+		$(INSTALL_DIR)/basev/doom2
+	install $(INSTALL_PARMS) basev/tnt/wad0.wad basev/tnt/base.txt \
+		$(INSTALL_DIR)/basev/tnt
+	install $(INSTALL_PARMS) basev/plutonia/wad0.wad \
+		basev/plutonia/base.txt $(INSTALL_DIR)/basev/plutonia
+	install $(INSTALL_PARMS) basev/heretic/wad0.wad \
+		$(INSTALL_DIR)/basev/heretic
+	install $(INSTALL_PARMS) basev/hexen/wad0.wad \
+		$(INSTALL_DIR)/basev/hexen
+	install $(INSTALL_PARMS) basev/strife/wad0.wad \
+		$(INSTALL_DIR)/basev/strife
+
+installutils:
+	install $(INSTALL_PARMS) utils/glbsp/glbsp$(EXE) \
+		utils/glvis/glvis$(EXE) $(INSTALL_UTILS_DIR)
 
 # ---------------------------------------
 

@@ -29,7 +29,6 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "iline.h"		//	Input line widget
-#include "model.h"
 #include "drawer.h"
 
 // MACROS ------------------------------------------------------------------
@@ -95,6 +94,9 @@ void R_InstallSprite(const char *name, int index);
 void R_DrawModelFrame(const TVec &origin, angle_t angle, model_t *model,
 	int frame, const char *skin);
 
+model_t *Mod_FindName(char *name);
+void R_PositionWeaponModel(clmobj_t &wpent, model_t *wpmodel, int frame);
+
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern clmobj_t			cl_mobjs[MAX_MOBJS];
@@ -118,9 +120,12 @@ extern dlight_t			cl_dlights[MAX_DLIGHTS];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/09/05 12:21:42  dj_jl
+//	Release changes
+//
 //	Revision 1.5  2001/08/15 17:24:02  dj_jl
 //	Improved object update on packet overflows
-//
+//	
 //	Revision 1.4  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
 //	

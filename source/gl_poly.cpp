@@ -553,7 +553,7 @@ void TOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 	if (texture2)
 	{
 		SetSkyTexture(texture2, true);
-		glEnable(GL_ALPHA_TEST);
+		glEnable(GL_BLEND);
 		glBegin(GL_POLYGON);
 		glColor4f(1, 1, 1, 1);
 		for (i = 0; i < count; i++)
@@ -564,7 +564,7 @@ void TOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 			glVertex(cv[i]);
 		}
 		glEnd();
-		glDisable(GL_ALPHA_TEST);
+		glDisable(GL_BLEND);
 	}
 
 	if (r_use_fog)
@@ -731,6 +731,9 @@ void TOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	//
 	pmdl = (mmdl_t *)Mod_Extradata(model);
 
+	// Hack to make sure that skin loading doesn't free model
+	Z_ChangeTag(pmdl, PU_STATIC);
+
 	//
 	// draw all the triangles
 	//
@@ -812,6 +815,9 @@ void TOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	{
 		glDepthRange(0.0, 1.0);
 	}
+
+	// Make it cachable again
+	Z_ChangeTag(pmdl, PU_CACHE);
 }
 
 //==========================================================================
@@ -822,21 +828,25 @@ void TOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 void TOpenGLDrawer::StartParticles(void)
 {
-	glBindTexture(GL_TEXTURE_2D, particle_texture);
-	if (tex_linear)
-	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	}
-	else
-	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	}
 	glEnable(GL_BLEND);
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0.0);
-	glBegin(GL_QUADS);
+	if (pointparmsable)
+	{
+		GLfloat parms[3] = { 0.0, 1.0, 0.0 };
+		p_PointParameterfv(GLenum(GL_DISTANCE_ATTENUATION_EXT), parms);
+		p_PointParameterf(GLenum(GL_POINT_FADE_THRESHOLD_SIZE_EXT), 1.0);
+		glDisable(GL_TEXTURE_2D);
+		glEnable(GL_POINT_SMOOTH);
+		glBegin(GL_POINTS);
+	}
+	else
+	{
+		glBindTexture(GL_TEXTURE_2D, particle_texture);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minfilter);
+		glBegin(GL_QUADS);
+	}
 }
 
 //==========================================================================
@@ -849,10 +859,17 @@ void TOpenGLDrawer::DrawParticle(particle_t *p)
 {
 	glColor4ub((p->color >> 16) & 0xff, (p->color >> 8) & 0xff,
 		p->color & 0xff, p->color >> 24);
-	glTexCoord2f(0, 0); glVertex(p->org - viewright + viewup);
-	glTexCoord2f(1, 0); glVertex(p->org + viewright + viewup);
-	glTexCoord2f(1, 1); glVertex(p->org + viewright - viewup);
-	glTexCoord2f(0, 1); glVertex(p->org - viewright - viewup);
+	if (pointparmsable)
+	{
+		glVertex(p->org);
+	}
+	else
+	{
+		glTexCoord2f(0, 0); glVertex(p->org - viewright + viewup);
+		glTexCoord2f(1, 0); glVertex(p->org + viewright + viewup);
+		glTexCoord2f(1, 1); glVertex(p->org + viewright - viewup);
+		glTexCoord2f(0, 1); glVertex(p->org - viewright - viewup);
+	}
 }
 
 //==========================================================================
@@ -867,14 +884,22 @@ void TOpenGLDrawer::EndParticles(void)
 	glDisable(GL_BLEND);
 	glDisable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0.666);
+	if (pointparmsable)
+	{
+		glDisable(GL_POINT_SMOOTH);
+		glEnable(GL_TEXTURE_2D);
+	}
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/09/05 12:21:42  dj_jl
+//	Release changes
+//
 //	Revision 1.8  2001/08/31 17:27:15  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.7  2001/08/21 17:46:08  dj_jl
 //	Added R_TextureAnimation, made SetTexture recognize flats
 //	

@@ -2,16 +2,20 @@ ifndef VCC
 VCC = vcc
 endif
 
-all: ../../basev/doom1/progs/clprogs.dat ../../basev/doom1/progs/svprogs.dat
-clprogs: ../../basev/doom1/progs/clprogs.dat
-svprogs: ../../basev/doom1/progs/svprogs.dat
+ifndef OUTDIR
+OUTDIR=.
+endif
+
+all: $(OUTDIR)/clprogs.dat $(OUTDIR)/svprogs.dat
+clprogs: $(OUTDIR)/clprogs.dat
+svprogs: $(OUTDIR)/svprogs.dat
 
 del:
-	rm ../../basev/doom1/progs/clprogs.dat ../../basev/doom1/progs/svprogs.dat
+	rm $(OUTDIR)/clprogs.dat $(OUTDIR)/svprogs.dat
 
-../../basev/doom1/progs/clprogs.dat: *.vc client/*.vc ../common/*.vc
-	$(VCC) client/clprogs.vc ../../basev/doom1/progs/clprogs.dat
+$(OUTDIR)/clprogs.dat: *.vc client/*.vc ../common/*.vc
+	$(VCC) client/clprogs.vc $@
 
-../../basev/doom1/progs/svprogs.dat: *.vc server/*.vc ../common/*.vc
-	$(VCC) server/svprogs.vc ../../basev/doom1/progs/svprogs.dat
+$(OUTDIR)/svprogs.dat: *.vc server/*.vc ../common/*.vc
+	$(VCC) server/svprogs.vc $@
 

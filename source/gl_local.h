@@ -57,22 +57,31 @@
 //	Extensions
 //
 
+// ARB_multitexture
 #ifndef GL_ARB_multitexture
-
 #define GL_TEXTURE0_ARB						0x84c0
 #define GL_TEXTURE1_ARB						0x84c1
-
-#endif
-
-#ifndef GL_EXT_texture_filter_anisotropic
-
-#define GL_TEXTURE_MAX_ANISOTROPY_EXT		0x84FE
-#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT	0x84FF
-
 #endif
 
 typedef void (APIENTRY*MultiTexCoord2f_t)(GLenum, GLfloat, GLfloat);
 typedef void (APIENTRY*SelectTexture_t)(GLenum);
+
+// EXT_point_parameters
+#ifndef GL_EXT_point_parameters
+#define GL_POINT_SIZE_MIN_EXT				0x8126
+#define GL_POINT_SIZE_MAX_EXT				0x8127
+#define GL_POINT_FADE_THRESHOLD_SIZE_EXT	0x8128
+#define GL_DISTANCE_ATTENUATION_EXT			0x8129
+#endif
+
+typedef void (APIENTRY*PointParameterf_t)(GLenum, GLfloat);
+typedef void (APIENTRY*PointParameterfv_t)(GLenum, const GLfloat *);
+
+// EXT_texture_filter_anisotropic
+#ifndef GL_EXT_texture_filter_anisotropic
+#define GL_TEXTURE_MAX_ANISOTROPY_EXT		0x84FE
+#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT	0x84FF
+#endif
 
 struct surfcache_t
 {
@@ -192,6 +201,9 @@ class TOpenGLDrawer : public TDrawer
 
 	TCvarI		tex_linear;
 	TCvarI		clear;
+	TCvarI		ext_multitexture;
+	TCvarI		ext_point_parameters;
+	TCvarI		ext_anisotropy;
 
 	GLuint		lmap_id[NUM_BLOCK_SURFS];
 	rgba_t		light_block[NUM_BLOCK_SURFS][BLOCK_WIDTH * BLOCK_HEIGHT];
@@ -238,6 +250,10 @@ class TOpenGLDrawer : public TDrawer
 	{
 		p_SelectTexture(GLenum(GL_TEXTURE0_ARB + level));
 	}
+
+	bool				pointparmsable;
+	PointParameterf_t	p_PointParameterf;
+	PointParameterfv_t	p_PointParameterfv;
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -249,9 +265,12 @@ class TOpenGLDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/09/05 12:21:42  dj_jl
+//	Release changes
+//
 //	Revision 1.10  2001/08/31 17:25:38  dj_jl
 //	Anisotropy filtering
-//
+//	
 //	Revision 1.9  2001/08/23 17:51:12  dj_jl
 //	My own mipmap creation code, glu not used anymore
 //	

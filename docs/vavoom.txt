@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                     version 1.8
+                                                     version 1.9
 
 Contents:
     0. Disclaimer
@@ -78,16 +78,143 @@ requires wad file from version 1.1. Strife support is just a test.
 3. Installation
 *****************************************************************************
 
+==============================================================================
+3.1 Installing DOS/Windows binaries
+==============================================================================
+
   First choose a directory, where you will place Vavoom - an existing Doom,
 Heretic and/or Hexen directory or new directory. If you decide to create a
-new directory, you must copy here main game wad file, LINUX users can create
-symbolic links to them (and save disk space). Then unarchieve here binaries
-or sources or all of them.
-  Since version 1.666 Vavoom needs "GL-Friendly Nodes" created with glbsp
-(http://glbsp.sourceforge.net) and PVS (Potentially Visible Set) data created
-with glvis utility (available in Vavoom homepage) at least in fast mode.
-Builtin poligonization is not planed.
-  Info on building sources can be found in file compile.txt.
+new directory, you must copy here main game wad file. Then unarchieve here
+binaries.
+
+  Since version 1.666 Vavoom needs "GL-Friendly Nodes" created with glBSP
+and PVS (Potentially Visible Set) data created with glVIS utility  at least
+in fast mode. Utilites are included with binaries.
+
+==============================================================================
+3.2 Linux/UNIX installation
+==============================================================================
+
+In order to compile and run Vavoom under Linux, you need the following:
+
+Compiler and tools:
+    * GNU C++ Compiler, GNU make (every LINUX user must have them)
+Libraries:
+    * Allegro game programming library - latest Work In Progress version
+  (http://www.talula.demon.co.uk/allegro)
+    * OpenGL: OpenGL implementation from your video card's manufacturer
+  or MESA (http://www.mesa3d.org) and X-Windows development libraries.
+
+  And of course Vavoom sources.
+
+Step by step:
+-------------
+
+  1. Create a new directory 'vavoom' somewhere where you will compile Vavoom
+and change into it:
+
+        md vavoom
+        cd vavoom
+
+  2. Unpack the Vavoom source package:
+
+        unzip v19_src.zip
+
+  Of course you have to replace '19' by the actual version!
+
+  3. Run fixunix.sh to convert text files to UNIX format:
+
+        ./fixunix.sh
+
+  4. If you don't have OpenGL or have problems with compiling OpenGL driver
+you can disable it by editing Makefile configuration part.
+
+  5. Run make in the main directory.
+
+        make
+
+  This will compile Vavoom executable, utilites, progs and will build
+additional wad files.
+
+  6. Then you install it:
+
+        su -c "make install"
+
+  This will install Vavoom into /usr/local/games/Vavoom and glbsp and glvis
+utilites into /usr/local/bin.
+
+  7. Change to this directory and copy the main .wad file here:
+
+        cd /usr/local/games/Vavoom
+        cp <where-your-wad-file-is> .
+   or:
+        cd /usr/local/games/Vavoom
+        ln -s <where-your-wad-file-is> .
+
+  8. Create "GL Nodes" with glBSP and PVS data with glVIS:
+
+     glbsp <wad-file>
+     glvis <wad-file>
+
+  "GL Nodes" are needed for rendering, and there's no difference which
+rasterizer driver (software, OpenGL or Direct3D) will be used.
+
+  PVS data created with glVIS is used to make it faster, but it will run also
+without it.
+
+==============================================================================
+3.3 Compiling LINUX / UNIX dedicated server
+==============================================================================
+
+Compiler and tools:
+    * GNU C++ Compiler, GNU make
+
+  First run fixunix.sh to convert text files to UNIX format:
+
+        ./fixunix.sh
+
+  Then you compile it:
+
+        make sv
+
+  Then you install it:
+
+        su -c "make installsv"
+
+==============================================================================
+3.4 Other source code compiling information for developers
+==============================================================================
+
+For DOS you need
+  Compiler and tools:
+      * DJGPP (http://www.delorie.com/djgpp)
+      * GNU make or RHIDE
+  Libraries:
+      * Allegro game programming library - latest Work In Progress version
+    (http://www.talula.demon.co.uk/allegro)
+      * OpenGL version: MESA (http://www.mesa3d.org) and Allegro driver for
+    MESA (http://www.geocities.com/SiliconValley/7259/)
+
+For Windows you need:
+  Compiler and tools:
+      * Borland C Compiler with Borland Turbo Assembler or Borland C++
+    Builder 5.0 (http://www.borland.com) Compiler itself is freeware, but I
+    don't know how about TASM.
+  Libraries:
+      * DirectX 7 SDK (http://www.microsoft.com/directx), already included
+    in Builder but some headers needed by DirectMusic are missing. In Allogro
+    website (http://www.talula.demon.co.uk/allegro) section Work In Progress
+    you will find a minimal version of DirectX 7 SDK.
+
+  The Makefile-s are for DOS and LINUX, for Windows the makefiles are files
+with extension .mak. For DOS there's also RHIDE project files, for Windows
+there's also Builder project files.
+
+  You can also compile main executable with MSVC, but it will abort with
+Segmentation violation during startup. I don't know, how MSVC is fucking
+with arrays of classes, but in the result chat macros are not constructed
+like it is expected. That's why I don't use it anymore. All project files
+are removed, so if you wanna try it, you will have to create a new ones.
 
 *****************************************************************************
 4. Starting a net game
@@ -99,10 +226,13 @@ fine (because the drivers are taken from Quake sources). Serial driver is not
 fixed (if you need this, please let me know or otherwise I will not fix it).
 Windows version supports Winsock TCP/IP and Winsock IPX driers. Linux version
 haves only TCP/IP driver.
+
   The default socket port is 26000. It can be changed in console with command
 "port <port>".
+
   Now network game can be launched from menu. It's Quake-like, so you should
 not have problems with it.
+
   Here is a list of most important server console variables and commands for
 dedicated server operators.
 
@@ -220,8 +350,14 @@ Game selection
 -DOOM look only for Doom IWAD files
 -doom
 
--DOOM2 look only for Doom 2 IWAD files
+-DOOM2 look only for Doom 2:Hell On Earth IWAD files
 -doom2
+
+-TNT look only for tnt.wad
+-tnt
+
+-PLUTONIA look only for plutonia.wad
+-plutonia
 
 -HERETIC look only for Heretic IWAD files
 -heretic
@@ -232,17 +368,14 @@ Game selection
 -STRIFE look only for Strife IWAD files
 -strife
 
-Development
------------
+Custom games and development
+----------------------------
 
--DEVMAPS enables map development mode. The script haves following format:
-        mapsdir <directory>
-        scriptsdir <directory>
-After these lines there can be any number of following lines:
-        file <file>
-mapsdir selects directory, where to look for map wad files. scriptsdir
-selects directory, where to look for scripts, file adds a file.
--devmaps <script_file>
+-GAME specifies custom game
+-game <directory>
+
+-DEVGAME like -game, but also sets Vavoom in development mode
+-devgame <directory>
 
 -SCRIPTS specifies directory, where to look for scripts
 -scripts <directory>
@@ -253,7 +386,7 @@ music are loaded form archive directory, which is specified in script.
 
 -PROGS specifies directory where to look for progs. Server progs are loaded
 from file svprogs.dat, client progs - clprogs.dat. Path must include ending
-slash. By default progs are loaded from wad file.
+slash.
 -progs <directory>  ex. -progs progs/myprogs/
 
 -FILE specifies additional files
@@ -295,15 +428,14 @@ Misc
     - Dynamic lighting.
     - Colored lighting.
     - Particles.
-    - Mipmapping (in software).
+    - Mipmapping.
     - Skyboxes.
     - Freelook.
     - Zooming.
     - Jumping.
+    - Models.
     - Progs - now you can forget about DeHackEd.
-    - Translucency. Misc things are translucent, also specters partial
-  invisibility is replaced with 10% visibility, so they are REALY hard to
-  see. Also new wipe effect using translucency.
+    - Translucency.
     - Consle. Call it witnh '`' key (also known as tilde). Special keys are:
         - Tab to complete command, press it again for next matching command;
         - Shift + Tab for reverse order;
@@ -582,6 +714,22 @@ Version 1.8
 * Console alias saved in config.
 * Progs virtual machine now allocates local vars from progs stack.
 
+==============================================================================
+Version 1.9
+==============================================================================
+
+* Support for md2 models.
+* Some renaming, game data directory now is called basev and VavoomC files
+ now haves extension vc.
+* Translucent 3D floors.
+* Mipmaping for OpenGL and Direct3D
+* Multitexture support in OpenGL.
+* Automap works in OpenGL and Direct3D
+* Confiurable automap colors.
+* Reworked filesystem. Now Vavoom uses a filesystem similar to Quake.
+* Some client/server improvements.
+* Up to 8 sounds per entity.
+
 *****************************************************************************
 8. Licencing
 *****************************************************************************
@@ -594,6 +742,9 @@ Version 1.8
 
   The Vavoom homepage:
     http://www.raven-games.com/hosted/vavoom/
+
+  The Vavoom SourceForfe project page:
+    http://sourceforge.net/projects/vavoom/
 
   The homepage for glBSP:
     http://glbsp.sourceforge.net/

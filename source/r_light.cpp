@@ -70,6 +70,7 @@ TCvarI				r_extrasamples("r_extrasamples", "0", CVAR_ARCHIVE);
 static int			num_lights;
 static light_t		lights[MAX_STATIC_LIGHTS];
 
+static TVec			smins, smaxs;
 static TVec			worldtotex[2];
 static TVec			textoworld[2];
 static TVec			texorg;
@@ -100,7 +101,7 @@ void R_ClearLights(void)
 
 	for (int i = 0; i < 256; i++)
 	{
-		light_remap[i] = i * i / 255;
+		light_remap[i] = byte(i * i / 255);
 	}
 }
 
@@ -123,6 +124,35 @@ void R_AddStaticLight(const TVec &origin, float radius, dword color)
 	lights[num_lights].leafnum = CL_PointInSubsector(origin.x, origin.y) -
 		cl_level.subsectors;
 	num_lights++;
+}
+
+//==========================================================================
+//
+//	CalcMinMaxs
+//
+//==========================================================================
+
+static void CalcMinMaxs(surface_t *surf)
+{
+	smins = TVec(99999.0, 99999.0, 99999.0);
+	smaxs = TVec(-999999.0, -999999.0, -999999.0);
+
+	for (int i = 0; i < surf->count; i++)
+	{
+		TVec &v = surf->verts[i];
+		if (smins.x > v.x)
+			smins.x = v.x;
+		if (smins.y > v.y)
+			smins.y = v.y;
+		if (smins.z > v.z)
+			smins.z = v.z;
+		if (smaxs.x < v.x)
+			smaxs.x = v.x;
+		if (smaxs.y < v.y)
+			smaxs.y = v.y;
+		if (smaxs.z < v.z)
+			smaxs.z = v.z;
+	}
 }
 
 //==========================================================================
@@ -342,8 +372,20 @@ static void SingleLightFace(light_t *light, surface_t *surf)
 	float	squaredist;
 	float	rmul, gmul, bmul;
 
+	// Check potential visibility
 	if (!(facevis[light->leafnum >> 3] & (1 << (light->leafnum & 7))))
 		return;
+
+	// Check bounding box
+	if (light->origin.x + light->radius < smins.x ||
+		light->origin.x - light->radius > smaxs.x ||
+		light->origin.y + light->radius < smins.y ||
+		light->origin.y - light->radius > smaxs.y ||
+		light->origin.z + light->radius < smins.z ||
+		light->origin.z - light->radius > smaxs.z)
+	{
+		return;
+	}
 
 	dist = DotProduct(light->origin, surf->plane->normal) - surf->plane->dist;
 	
@@ -424,6 +466,7 @@ void R_LightFace(surface_t *surf, subsector_t *leaf)
 	//
 	// cast all lights
 	//
+	CalcMinMaxs(surf);
 	for (i = 0; i < num_lights; i++)
 	{
 		SingleLightFace(&lights[i], surf);
@@ -483,7 +526,7 @@ void R_LightFace(surface_t *surf, subsector_t *leaf)
 					total = 255;
 				if (total < 0)
 					Sys_Error("light < 0");
-				surf->lightmap_rgb[i].r = (int)total;
+				surf->lightmap_rgb[i].r = byte(total);
 
 				if (r_extrasamples)
 				{
@@ -500,7 +543,7 @@ void R_LightFace(surface_t *surf, subsector_t *leaf)
 					total = 255;
 				if (total < 0)
 					Sys_Error("light < 0");
-				surf->lightmap_rgb[i].g = (int)total;
+				surf->lightmap_rgb[i].g = byte(total);
 
 				if (r_extrasamples)
 				{
@@ -517,7 +560,7 @@ void R_LightFace(surface_t *surf, subsector_t *leaf)
 					total = 255;
 				if (total < 0)
 					Sys_Error("light < 0");
-				surf->lightmap_rgb[i].b = (int)total;
+				surf->lightmap_rgb[i].b = byte(total);
 			}
 		}
 	}
@@ -561,7 +604,7 @@ void R_LightFace(surface_t *surf, subsector_t *leaf)
 				total = 255;
 			if (total < 0)
 				Sys_Error("light < 0");
-			surf->lightmap[i] = int(total);
+			surf->lightmap[i] = byte(total);
 		}
 	}
 }
@@ -923,9 +966,12 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/09/05 12:21:42  dj_jl
+//	Release changes
+//
 //	Revision 1.7  2001/08/30 17:36:21  dj_jl
 //	Fixed memory allocation bug
-//
+//	
 //	Revision 1.6  2001/08/24 17:04:32  dj_jl
 //	Added extra sampling
 //	

@@ -184,7 +184,9 @@ static void CL_ReadMobj(int bits, clmobj_t &mobj, const clmobjbase_t &base, int 
 		mobj.model_index = net_msg.ReadShort();
 	else
 		mobj.model_index = base.model_index;
-	if (i < cl.maxclients + 1 && clPlayerInfo[i - 1].model)
+	if (i < cl.maxclients + 1 && clPlayerInfo[i - 1].model &&
+		!(model_precache[mobj.model_index] &&
+		!strstr(model_precache[mobj.model_index]->name, "tris.md2")))
 	{
 		mobj.alias_model = clPlayerInfo[i - 1].model;
 		strcpy(mobj.skin, clPlayerInfo[i - 1].skin);
@@ -219,7 +221,9 @@ static void CL_ParseUpdateMobj(void)
 	//	Marking mobj in use
 	cl_mobjs[i].in_use = 2;
 
-	if (bits & MOB_WEAPON && i < cl.maxclients + 1 && clPlayerInfo[i - 1].weapon_model)
+	if (bits & MOB_WEAPON && i < cl.maxclients + 1 &&
+		clPlayerInfo[i - 1].weapon_model &&
+		cl_mobjs[i].alias_model == clPlayerInfo[i - 1].model)
 	{
 		clmobj_t &ent = cl_mobjs[i];
 		clmobj_t &wpent = cl_weapon_mobjs[i];
@@ -231,31 +235,7 @@ static void CL_ParseUpdateMobj(void)
 		wpent.alias_frame = 1;
 		wpent.translucency = ent.translucency;
 
-		mmdl_t *pmdl = (mmdl_t*)Mod_Extradata(clPlayerInfo[i - 1].weapon_model);
-		int frame = ent.alias_frame;
-		if ((frame >= pmdl->numframes) || (frame < 0))
-		{
-			frame = 0;
-		}
-		mtriangle_t *ptris = (mtriangle_t*)((byte*)pmdl + pmdl->ofstris);
-		mframe_t *pframe = (mframe_t*)((byte*)pmdl + pmdl->ofsframes +
-			frame * pmdl->framesize);
-		trivertx_t *pverts = (trivertx_t *)(pframe + 1);
-		TVec p[3];
-		for (int vi = 0; vi < 3; vi++)
-		{
-			p[vi].x = pverts[ptris[0].vertindex[vi]].v[0] * pframe->scale[0] + pframe->scale_origin[0];
-			p[vi].y = pverts[ptris[0].vertindex[vi]].v[1] * pframe->scale[1] + pframe->scale_origin[1];
-			p[vi].z = pverts[ptris[0].vertindex[vi]].v[2] * pframe->scale[2] + pframe->scale_origin[2];
-		}
-		TVec md_forward, md_left, md_up;
-		AngleVectors(ent.angles, md_forward, md_left, md_up);
-		md_left = -md_left;
-		wpent.origin += md_forward * p[0].x + md_left * p[0].y + md_up * p[0].z;
-		TAVec wangles;
-		VectorAngles(p[1] - p[0], wangles);
-		wpent.angles.yaw += wangles.yaw;
-		wpent.angles.pitch += wangles.pitch;
+		R_PositionWeaponModel(wpent, clPlayerInfo[i - 1].weapon_model, ent.alias_frame);
 	}
 	else if (bits & MOB_WEAPON)
 	{
@@ -1049,9 +1029,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/09/05 12:21:42  dj_jl
+//	Release changes
+//
 //	Revision 1.6  2001/08/29 17:55:42  dj_jl
 //	Added sound channels
-//
+//	
 //	Revision 1.5  2001/08/15 17:24:02  dj_jl
 //	Improved object update on packet overflows
 //	

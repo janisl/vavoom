@@ -87,7 +87,7 @@
 24-07-2001
   Nedaudz uzlaboju ievadu.
   KÆdu laiku atpakaõ es Allegro sorceforge.net lapÆ pastÆstØju par problñmÆm
- ar xalleg.h, kuras tika izlabotas.
+ ar xalleg.h, kuras tika izlabotas. Pieteicu Soundscape kõİdu.
   SÆku interesñties par sourceforge.net. PiereÖistrñjos kÆ lietotÆjs, kÆ arØ
  pieteicu Vavoom projektu. SÆku interesñties par CVS.
 25-07-2001
@@ -99,5 +99,211 @@
   Direct3D izmetu ÆrÆ visu, kas bija vajadzØgs priekı S3 Trio3D, kad man ir
  GeForce2, man tas vairs nav vajadzØgs, tÆpat kÆ jebkurai normÆlai 3D kartei.
   SÆku pievienot modeõus.
-  sourceforge.net projekts ir pie·emts. Sagatavoju aploudot iekı CVS.
-  
+  sourceforge.net projekts ir pie·emts. Sagatavoju aploudot iekı CVS, ko
+ vakarÆ arØ izdarØju. Tas prasØja õoti ilgu laiku, tas droıi vien ir tÆdñõ ka
+ dati netiek kompresñti, õoti nepatØkami.
+26-07-2001
+    AtklÆju ka TASM exterdef nav obligÆti vajadzØgs norÆdØt tipu. TÆdñjÆdi visi
+ eksterni tika pÆrnesti uz asm_i386.h, izveidoju kopØgu sistñmas asemblera
+ moduli sys_i386.s, priekı Windows tas tiek konvertñts. Windows asemblerØ arØ
+ izmetu ÆrÆ headeri un tagad .asm faili ir tØri Öenerñtie faili.
+  Pievienoti gandrØz visi pirmÆ Doom monstru modeõi, nolñmu modeõus kÆrtot pñc
+ tipa direktorijÆs - lai ir kÆrtØba.
+  PÆrtaisØju fixmd2, tagad viss tiek definñts komandrindÆ. Atseviıóas komandas
+ tiek prefiksñtas ar attiecØgu burtu, tagad to izmantot ir daudz parocØgÆk.
+  Pñc nelielÆm pİlñm izdevÆs Òekoutot no CVS - bija vispirms jÆieloginojas
+ CVS serverØ lai tiktu izveidota mana jİzera direktorija. Ğoreiz, atıóirØbÆ
+ no aplouda, tika ieslñgta datu kompresija. AtklÆju ko dara da÷as direktØvas.
+27-07-2001
+  Nolñmu visiem failiem pievienot Id un Log direktØvas lai CVS automÆtiski
+ dod logu kÆ tas ir da÷os citos projektos un kas man diezgan labi patØk. Pñc
+ tam veicu pirmo lielo komitu. Bija diezgan liels Òakars ar failu apskates
+ laikiem (kautkas saistØts ar RHIDE), bet beigÆs viss tika normÆli komitots.
+ Un protams smuki tika apdeitotas direktØvas, kÆ man tas patØk.
+  Salaboju apdeitu, ja trİkst modeõa. TÆpat modeõu caurredzamØba nestrÆdÆja
+ jo tÆ netika atõauta. TÆ arØ nestrÆdÆja korekti, jo modeõi netika pareizi
+ ıóiroti, ko es arØ izlaboju.
+  AizsİtØju skrØnıotu uz DoomCenter un DoomWorld.
+  Turpinu pievienot monstru modeõus. GandrØz visi Doom monstru modeõi ir jau
+ pievienoti, bet vñl nepÆrbaudØti.
+28-07-2001
+  Salaboju modeõus objektiem, kuri netiek animñti.
+  Lai samazinÆtu modeõu informÆcijas paketi direktorija models modeõa ceõÆ
+ netiek rakstØta.
+  Ar monstriem esmu ticis galÆ, sÆkas citi objekti.
+30-07-2001
+  Ar modeõiem iet uz beigÆm. TÆ izskatÆs, ka visi ir pievienoti. Bija jÆsalabo
+ ieroÒu modeõu rendñıana.
+  Vñl priekıÆ neliels darbi·ı pie spñlñtÆja "ÆdÆm" un ieroÒa modeõa.
+31-07-2001
+  Pabeidzu ar modeõiem, arØ no papildus paketes.
+  Ieviesu pilno apgaismojumu modeõiem.
+  SÆku darbu pie failu sistñmas. Tagad katrai atbalstØtajai spñlei ir sava
+ spñles direktorija. Tagad katrai spñlei bİs savi konfigurÆcijas faili, demo
+ faili un saglabÆtÆs spñles. KatrÆ spñles direktorijÆ tiek pievienoti visi wad
+ faili wad0.wad, wad1.wad ... lØdz viens trİkst.
+  Programmas tagad paıas nosaka kura spñles versija - normÆlÆ, shareware vai
+ paplaıinÆtÆ - tiek lietota pÆrbaudot vai ir vajadzØgÆ wad iedaõa (lump).
+  Nolñmu, ka titullapa un demo cikls ir jÆpÆrnes uz programmÆm. TÆdñjÆdi varñs
+ atbrØvoties no vienas atkarØbas no spñles.
+  Salaboju kursoru tukıÆm simbolu virknñm.
+01-08-2001
+  Salaboju translñtos spraitus OpenGL draiverØ - bija pÆris õoti nopietnas
+ kõİdas.
+  Salaboju spraita zØmñıanu spñlñtÆja konigurÆcijas menu.
+  Direct3D salaboju noteikıanu, kad vajag ıóirot spraitus.
+  OpenGL un Direct3D uzlaboju partikõu zØmñıanu.
+  MñÖinu salabot krÆsas dziõuma mai·u OpenGL Windows verijÆ - neveicÆs. BeigÆs
+ atradu iemeslu - SetPixelFormat logam var tikt lietots tikai vienu reizi.
+  SienÆm vispirms meklñ tekstİru tekstİru sarakstÆ un tikai pñc tam flatos.
+ Tas salaboja RaiseToTexture speciÆlu. Starp citu tajÆ es atradu vienu Doom
+ oriÖimÆlo kõudu - ·em vñrÆ tekstİru 0.
+02-08-2001
+  Jaunie klienti tiek informñti par mainØtajÆm tekstİrÆm.
+  Pievienoju trİkstoıÆs 32 bitu funkciju asemblera versijas.
+  SoftÆ izveidoju modeõu zØmñıanu ar krÆsaino apgaismojumu un caurspØdØgos
+ modeõus.
+  NovÆcu caurspØdØbu lÆpÆm - tomñr izskatÆs labÆk.
+  Direct3D izveidoju atbalstu ÆdÆm ar ne-2 pakÆpju izmñriem un lielÆkiem par
+ maksimÆlu izmñru. Atbalsts itkÆ to prasa, kaut arØ tas ir õoti nevñlami.
+ VisÆm ÆdÆm bİtu jÆbİt kvadrÆtiem ar 2 pakÆpes izmñriem. Pamatpaketes modeõu
+ Ædas visas atbilst ıØm prasØbÆm, bet papilduspaketñ 8 Ædas neatbilst. 7 Ædas
+ ar stulbÆm kõİdÆm tika izlabotas. Palika vñl plazmas ieroÒa Æda. Ar to bİs
+ nedaudz jÆpadarbojas vñlÆk. GalvenÆ problñma ir tÆ, ka tas ir Quake modelis
+ ar õoti platu Ædu. Puse Ædas tika pÆrnesta zem otras puses lai tÆ nebİtu tik
+ plata un nedaudz augstÆka. Tagad to vajag samazinÆt lØdz 256x256. Nu ko, bİs
+ jÆsÆk nodarboties ar modeõu veidoıanu.
+03-08-2001
+  PÆrnesu titullapu un demo ciklu uz prog÷iem. Pateicoties tam dzinim vairs
+ neinteresñ vai ir paplaıinÆtÆ wad versija. Heretic-Æ shareware versijÆ fonam
+ bija cits flats nekÆ reÖistrñtajÆ versijÆ. Atceõot to dzinim arØ neinteresñ
+ vai ir shareware, vai nñ. AtkarØba no spñles ir kõuvusi vñl mazÆka.
+  Ieviesu z-hakoıanu ieroÒu modeõiem. Tagad tie var bİt nedaudz lielÆku.
+  Salaboju miglu Direct3D.
+  OpenGL sÆku mñÖinÆt izmantot paplaıinÆjumus. ArØ izmetu ÆrÆ z triku.
+  Beidzot man atsİtØja jautÆjumus intervijai.
+04-08-2001
+  OpenGL ieviesu multitekstİru atbalstu. SÆkumÆ mñÖinÆju GL_SGIS_multitexture,
+ bet nestrÆdÆja. Tad pamñÖinÆju GL_ARB_multitexture. Nedaudz labÆk, bet arØ
+ kaut kas nestrÆdÆja. Pñc nelielÆm pİlñm noskaidroju, ka funkciju pointeri ir
+ jÆdefinñ kÆ APIENTRY, lai Windows zin kÆ pareizi tÆs izsaukt. KÆ rezultÆtÆ
+ aizgÆja. PamñÖinÆju atgriezsties pie GL_SGIS_multitexture, bet nez kÆpñc tas
+ nestrÆdÆja. TÆdñl es palieku pie GL_ARB_multitexture.
+  Ieviesu sÆkuma versiju spñles bÆzes skriptam.
+06-08-2001
+  StrÆdÆju pie spñlñtÆju modeõiem un ÆdÆm. Pirmie objekti ir rezervñti priekı
+ spñlñtÆju objektiem. Servera pusñ pagaidÆm tie ir tukıi un tikai apdeitojot
+ klientam reÆlie spñlñtÆju objekti tiek apdeitoti kÆ pirmie. TÆdñjÆdi klients
+ var atrast atbilstoıo modeli un Ædu. Katram spñlñtÆjam var bİt savs modelis
+ un sava Æda. Bet pats labÆkais ir tas, ka ierocis spñlñtÆja rokÆs ir nevis
+ kautkÆds mistisks ierocis, bet gan reÆlais ierocis. TÆdñjÆdi var pat redzñt
+ kÆds ierocis ir oponenta rokÆs. Tas tika realizñts sekojoıi: katrÆ spñlñtÆja
+ modeLa direktorijÆ jÆbİt diviem modeõiem - tris.md2 ar paıu modeli, kÆ arØ
+ weapon.md2 ar trijstİri, kurı attñlo ieroÒa pozØciju un virzienu. Vñl tikai
+ jÆsalabo modeõi.
+  Klienta pusñ atbrØvojos no floorclip.
+07-08-2001
+  NormÆli redz ieroci spñlñtÆja rokÆs. Vñl tikai jÆpielabo pozØcijas, arØ BFG
+ ir nedaudz par lielu. VispÆr vislabÆk bİtu, ja ierocis normÆli bİtu vñrsts uz
+ priekıu.
+  Atradu 2 Heretic modeõus, kurus arØ pievienoju.
+  Sagatavojos scñnas rendñıanai.
+  Seivgeimi ir apakıdirektorijÆ saves.
+08-08-2001
+  Konsole veroties ciet vairs nav aktØva.
+  DOS-Æ pievienoju pÆrbaudes klaviatİras inicializÆcijai. Da÷reiz nostrÆdÆja
+ aizsardzØba. Tas nozØmñ ka vairs nebİs gõuka, kad nospie÷ot tausti·u maıina
+ uzkarÆs vai pÆrstartñjÆs.
+  Pievienoju modeli spñlñtÆja konfigurÆcijas menu.
+  SÆku optimizñt modeõu rendñıanu pievienojot asembleri.
+09-08-2001
+  StrÆdÆju pie modeõu zØmñıanas asemblera.
+10-08-2001
+  Ieviesu iepriekı aprñóinÆtas tabulas izmantoıanu 32 bitu caurspØdØbai.
+  Bija vñl viens kõİda gadØjumÆ, kad nav modeõu.
+  AtbrØvojos no pÆris atkarØbÆm no spñles tekstİru daõÆ. Dzinis pats atpazØst
+ straifa tekstİru formÆtu un debesu tekstİru augstumi tiek pielaboti apskatot
+ patÒu.
+  Salaboju finÆlus - tagad tie strÆdÆ, bet vñl ıis tas ir jÆpielabo.
+  PadarØju strÆdÆjoıu Straifa statusbÆru, protams ne glu÷i strÆdÆjoıu, toties
+ dzinis vairs to neignorñs.
+11-08-2001
+  Salaboju Doom 3 epizodes finÆlu, vñl paliek Heretic 2 epizodes finÆls.
+  Uzlaboju objektu apdeitu.
+  Turpinu darbu pie modeõu rendñıanas asemblera.
+13-08-2001
+  Turpinu strÆdÆt ar asembleri.
+  Izmetu ÆrÆ wipe efektus - tie jau bija atslñgti, kÆpñc turñt?
+  Metodei FillRectWithFlat tiek iedoas tekstİru koordinÆtes.
+14-08-2001
+  Vñl divas r_alias.cpp funkcijas ir asembler.
+15-08-2001
+  Asembleris - vñl uzlaboju ıo to d_aliasa.s, sÆku veidot asemblera versijas
+ d_edge.cpp funkcijÆm, sÆku ar D_EmitEdge.
+16-08-2001
+  Asemblera versija D_ClipEdge, D_EmitEdge ir inlainots.
+17-08-2001
+  Linux distributØva mai·a. Man tagad ir Linux Mandrake 8.0 ar kuru beidzot
+ mana videokarte strÆdÆ. Diem÷ñl nestrÆdÆ OpenGL, droıivien vajadzØgi draiveri
+ no nVidia.
+20-08-2001
+  Nolñmu prog÷os simbolu virknes padarØt par reÆliem pointeriem.
+  Izveidoju video opciju menu.
+  SetTexture atpazØst flatus. Tekstİru animÆcijai ir speciÆla funkcija.
+  Optimizñju asemblerØ D_GenerateSpans.
+  Ieviesu fl_devmode (parametrs -devgame). Izmetu ÆrÆ -devmaps.
+  Lokalizñju GL/glu.h.
+  Pñc noklusñıanas r_darken ir atlñgts.
+22-08-2001
+  OpenGL mipmapu ÖenerÆciju veicu es pats, glu vairs netiek izmantots.
+23-08-2001
+  Video re÷Øma mai·a ir atseviıóÆ apakımenu kÆ iepriekı.
+  SÆkuma atbalsts zØmñjumiem ar citÆm paletñm. OpenGL zØmñ Heretic 2 epizodes
+ finÆlu kÆ vajag.
+  glVIS atpazØst visus GL lØme·us.
+  SÆku darbu pie mipmapinga Direct3D.
+  Praktiski atrisinÆju visas problñmas ar OpenGL uz LINUX.
+  IzrÆdÆs ka Allegro ir pievienoti jauni tausti·u kodi, tagad atkal uz LINUX
+ klaviatİrai strÆdÆ visi tausti·i.
+24-08-2001
+  Direct3D ir mipmapings.
+  PrecØzÆks gaismmapu atrñóinÆıanas re÷Øms.
+25-08-2001
+  Windows versijÆ OpenGL draiveris tagad izveido jaunu logu rendñıanai. Tagad
+ strÆdÆ video re÷Øma mai·a uz citu krÆsu dziõumu.
+  AtdalØju atseviıói d3d_info.cpp.
+  Ieviesu CVAR_LATCH.
+27-08-2001
+  Nedaudz uzlaboju objektu apdeitu.
+28-08-2001
+  Pievienoju Sys_FileTime, wad failu modulis to izmanto lai noteiktu, vai gwa
+ fails nav vecÆks par paıu wad failu.
+  Pievienoju opciju -iwad, pÆrstrÆdÆju komandlØniju parametru izmantoıanu
+ spñles noteikıanÆ pñc iwad faila.
+29-08-2001
+  PÆrnesu rÆmi un pazi·ojumu uz prog÷iem. Pauze ir statuslØnijas sastÆvdaõa.
+  Izveidoju konfigurÆjamas automama krÆsas.
+  PÆrdñvñju konsoles komandas Commands par CmdList un Cvars par CvarList.
+  Datagram tØkla savienoıanÆs pakete atkal sÆkas ar VAVOOM un nevis ar spñles
+ vÆrdu.
+  BeigÆs pilnØbÆ atbrØvojos no mainØgÆ Game. TieıÆm nedomÆju ka tik Ætri
+ tikÆu ar to galÆ.
+  Izveidoju objektiem ska·u kanÆlus.
+30-08-2001
+  Pabeidzu darbu pie objektu ska·u kanÆliem.
+  Atradu kõİdu ar rullñjoıÆm tekstİrÆm un gaismÆm.
+  LØme·a apdeitÆ izmantoju ÆtrÆku salØdzinÆSanu.
+  AtbrØvijos no atmi·as caurumiem pñc startupa.
+  FinÆla teksts LINUX versijai.
+31-08-2001
+  Prog÷os izmetu ÆrÆ vektoru makro.
+  Pievienoju anisotropo filtrÆciju.
+  Pilns bÆzes spñles skripts. ArØ spñõu identifikÆcijai ir Ærñjs skripts.
+01-09-2001
+  Salaboju "gibs" modeli spñlñtÆjam.
+03-09-2001
+  OpenGL partikõu efekts izmantojot GL_EXT_point_parameters.
+  PÆrdñvñju model.cpp par r_model.cpp, salaboju modeõu keıoıanu.
+04-09-2001
+  Da÷i zØki labojumi.
+  Nolñmu laist klajÆ.

@@ -1,10 +1,10 @@
 ifdef DJGPP
 EXE=.exe
-LIBS=-lalleg -lstdcxx
+LIBS=-lstdcxx
 INSTALLDIR=../bin
 else
 EXE=
-LIBS=`allegro-config --libs` -lstdc++
+LIBS=-lm -lstdc++
 INSTALLDIR=/usr/local/bin
 endif
 

@@ -99,6 +99,12 @@ struct refdef_t
 	boolean		drawworld;
 };
 
+struct model_t
+{
+	char		name[128];
+	void		*data;		// only access through Mod_Extradata
+};
+
 class TDrawer
 {
  public:
@@ -163,9 +169,12 @@ extern TDrawer			*_Direct3DDrawer;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/09/05 12:21:42  dj_jl
+//	Release changes
+//
 //	Revision 1.7  2001/08/15 17:15:55  dj_jl
 //	Drawer API changes, removed wipes
-//
+//	
 //	Revision 1.6  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
 //	

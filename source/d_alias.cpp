@@ -822,6 +822,9 @@ void D_AliasDrawModel(const TAVec &angles, model_t *model, int frame,
 
 	pmdl = (mmdl_t *)Mod_Extradata(model);
 
+	// Hack to make sure that skin loading doesn't free model
+	Z_ChangeTag(pmdl, PU_STATIC);
+
 	D_AliasSetupSkin(skin);
 	D_AliasSetUpTransform(angles, frame, a_trivial_accept);
 	D_AliasSetupLighting(light);
@@ -839,6 +842,9 @@ void D_AliasDrawModel(const TAVec &angles, model_t *model, int frame,
 		D_AliasPrepareUnclippedPoints();
 	else
 		D_AliasPreparePoints();
+
+	// Make it cachable again
+	Z_ChangeTag(pmdl, PU_CACHE);
 }
 
 //==========================================================================
@@ -866,9 +872,12 @@ void TSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/09/05 12:21:42  dj_jl
+//	Release changes
+//
 //	Revision 1.7  2001/08/15 17:12:23  dj_jl
 //	Optimized model drawing
-//
+//	
 //	Revision 1.6  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
 //	

@@ -50,17 +50,15 @@ Ltemp:	.long	0
 //
 //==========================================================================
 
+#ifndef GAS2TASM
+
 .globl C(D_PolysetDraw)
 C(D_PolysetDraw):
 	subl	$(SPAN_SIZE),%esp
 
 	movl	%esp,%eax
 	addl	$(CACHE_SIZE - 1),%eax
-#ifdef GAS2TASM
-	andl	$(-32),%eax
-#else
 	andl	$(~(CACHE_SIZE - 1)),%eax
-#endif
 	movl	%eax,C(a_spans)
 
 	pushl	%ebp
@@ -184,6 +182,8 @@ LNextTriangle:
 	popl	%ebp
 	addl	$(SPAN_SIZE),%esp
 	ret
+
+#endif
 
 //==========================================================================
 //
@@ -781,9 +781,12 @@ LSkip2:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2001/09/05 12:21:42  dj_jl
+//	Release changes
+//
 //	Revision 1.2  2001/08/15 17:44:41  dj_jl
 //	Added missing externs
-//
+//	
 //	Revision 1.1  2001/08/15 17:12:23  dj_jl
 //	Optimized model drawing
 //	

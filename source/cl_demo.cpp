@@ -36,6 +36,10 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
+//#define USEZLIB
+#ifdef USEZLIB
+#include <zlib.h>
+#endif
 
 // MACROS ------------------------------------------------------------------
 
@@ -54,6 +58,10 @@ void CL_Disconnect(void);
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
+
+#ifdef USEZLIB
+static gzFile		gzdemofile;
+#endif
 
 // CODE --------------------------------------------------------------------
 
@@ -93,7 +101,12 @@ void CL_StopPlayback(void)
 		return;
 	}
 
+#ifdef USEZLIB
+	gzclose(gzdemofile);
+	gzdemofile = NULL;
+#else
 	fclose(cls.demofile);
+#endif
 	cls.demoplayback = false;
 	cls.demofile = NULL;
 	cls.state = ca_disconnected;
@@ -117,6 +130,17 @@ void CL_WriteDemoMessage(void)
 	int			len;
 	angle_t		a;
 
+#ifdef USEZLIB
+	len = LittleLong(net_msg.CurSize);
+	gzwrite(gzdemofile, &len, 4);
+	a = LittleLong(cl.viewangles.pitch);
+	gzwrite(gzdemofile, &a, 4);
+	a = LittleLong(cl.viewangles.yaw);
+	gzwrite(gzdemofile, &a, 4);
+	a = LittleLong(cl.viewangles.roll);
+	gzwrite(gzdemofile, &a, 4);
+	gzwrite(gzdemofile, net_msg.Data, net_msg.CurSize);
+#else
 	len = LittleLong(net_msg.CurSize);
 	fwrite(&len, 4, 1, cls.demofile);
 	a = LittleLong(cl.viewangles.pitch);
@@ -127,6 +151,7 @@ void CL_WriteDemoMessage(void)
 	fwrite(&a, 4, 1, cls.demofile);
 	fwrite(net_msg.Data, net_msg.CurSize, 1, cls.demofile);
 	fflush(cls.demofile);
+#endif
 }
 
 //==========================================================================
@@ -168,6 +193,16 @@ int CL_GetMessage(void)
 		}
 
 		// get the next message
+#ifdef USEZLIB
+		gzread(gzdemofile, &net_msg.CurSize, 4);
+//		VectorCopy (cl.mviewangles[0], cl.mviewangles[1]);
+		gzread(gzdemofile, &a, 4);
+		cl.viewangles.pitch = LittleLong(a);
+		gzread(gzdemofile, &a, 4);
+		cl.viewangles.yaw = LittleLong(a);
+		gzread(gzdemofile, &a, 4);
+		cl.viewangles.roll = LittleLong(a);
+#else
 		fread(&net_msg.CurSize, 4, 1, cls.demofile);
 //		VectorCopy (cl.mviewangles[0], cl.mviewangles[1]);
 		fread(&a, 4, 1, cls.demofile);
@@ -176,11 +211,16 @@ int CL_GetMessage(void)
 		cl.viewangles.yaw = LittleLong(a);
 		fread(&a, 4, 1, cls.demofile);
 		cl.viewangles.roll = LittleLong(a);
-		
+#endif
+
 		net_msg.CurSize = LittleLong(net_msg.CurSize);
 		if (net_msg.CurSize > MAX_MSGLEN)
 			Sys_Error("Demo message > MAX_MSGLEN");
+#ifdef USEZLIB
+		r = gzread(gzdemofile, net_msg.Data, net_msg.CurSize);
+#else
 		r = fread(net_msg.Data, net_msg.CurSize, 1, cls.demofile);
+#endif
 		if (r != 1)
 		{
 			CL_StopPlayback();
@@ -226,7 +266,12 @@ void CL_StopRecording(void)
 	CL_WriteDemoMessage();
 
 	// finish up
+#ifdef USEZLIB
+	gzclose(gzdemofile);
+	gzdemofile = NULL;
+#else
 	fclose(cls.demofile);
+#endif
 	cls.demofile = NULL;
 	cls.demorecording = false;
 	con << "Completed demo\n";
@@ -293,7 +338,8 @@ COMMAND(Record)
 		return;
 	}
 
-	sprintf(name, "%s/%s", fl_gamedir, Argv(1));
+	Sys_CreateDirectory(va("%s/demos", fl_gamedir));
+	sprintf(name, "%s/demos/%s", fl_gamedir, Argv(1));
 
 	//
 	// start the map up
@@ -309,6 +355,16 @@ COMMAND(Record)
 	FL_DefaultExtension(name, ".dem");
 
 	con << "recording to " << name << ".\n";
+#ifdef USEZLIB
+	gzdemofile = gzopen(name, "wb9");
+	if (!gzdemofile)
+	{
+		con << "ERROR: couldn't open.\n";
+		return;
+	}
+
+	gzwrite(gzdemofile, "VDEM", 4);
+#else
 	cls.demofile = fopen(name, "wb");
 	if (!cls.demofile)
 	{
@@ -317,6 +373,7 @@ COMMAND(Record)
 	}
 
 	fwrite("VDEM", 1, 4, cls.demofile);
+#endif
 
 	cls.demorecording = true;
 }
@@ -332,6 +389,7 @@ COMMAND(Record)
 COMMAND(PlayDemo)
 {
 	char	name[256];
+	char	fname[MAX_OSPATH];
 	char	magic[8];
 
 	if (cmd_source != src_command)
@@ -353,11 +411,33 @@ COMMAND(PlayDemo)
 	//
 	// open the demo file
 	//
-	sprintf(name, "%s/%s", fl_gamedir, Argv(1));
+	sprintf(name, "demos/%s", Argv(1));
 	FL_DefaultExtension(name, ".dem");
 
 	con << "Playing demo from " << name << ".\n";
-	cls.demofile = fopen(name, "rb");
+	if (!FL_FindFile(name, fname))
+	{
+		con << "ERROR: not found\n";
+		return;
+	}
+#ifdef USEZLIB
+	gzdemofile = gzopen(fname, "rb");
+	if (!gzdemofile)
+	{
+		con << "ERROR: couldn't open.\n";
+		return;
+	}
+
+	gzread(gzdemofile, magic, 4);
+	magic[4] = 0;
+	if (strcmp(magic, "VDEM"))
+	{
+		gzclose(gzdemofile);
+		con << "ERROR: not a Vavoom demo.\n";
+		return;
+	}
+#else
+	cls.demofile = fopen(fname, "rb");
 	if (!cls.demofile)
 	{
 		con << "ERROR: couldn't open.\n";
@@ -372,6 +452,7 @@ COMMAND(PlayDemo)
 		con << "ERROR: not a Vavoom demo.\n";
 		return;
 	}
+#endif
 
 	cls.demoplayback = true;
 	cls.state = ca_connected;
@@ -411,10 +492,13 @@ COMMAND(TimeDemo)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/09/05 12:21:42  dj_jl
+//	Release changes
+//
 //	Revision 1.4  2001/08/04 17:25:14  dj_jl
 //	Moved title / demo loop to progs
 //	Removed shareware / ExtendedWAD from engine
-//
+//	
 //	Revision 1.3  2001/07/31 17:10:21  dj_jl
 //	Localizing demo loop
 //	

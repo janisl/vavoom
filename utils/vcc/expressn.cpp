@@ -138,6 +138,10 @@ class TOp2 : public TOp
 		else
 			type = oper->type;
 	}
+	TOp2(TOp *Aop1, TOp *Aop2) : op1(Aop1), op2(Aop2)
+	{
+		type = op1->type;
+	}
 	~TOp2(void)
 	{
 		if (op1) delete op1;
@@ -157,7 +161,7 @@ class TOp2 : public TOp
 class TOpAnd : public TOp2
 {
  public:
-	TOpAnd(TOp *Aop1, TOp *Aop2) : TOp2(Aop1, Aop2, NULL)
+	TOpAnd(TOp *Aop1, TOp *Aop2) : TOp2(Aop1, Aop2)
 	{
 		TypeCheck1(op1->type);
 		TypeCheck1(op2->type);
@@ -178,7 +182,7 @@ class TOpAnd : public TOp2
 class TOpOr : public TOp2
 {
  public:
-	TOpOr(TOp *Aop1, TOp *Aop2) : TOp2(Aop1, Aop2, NULL)
+	TOpOr(TOp *Aop1, TOp *Aop2) : TOp2(Aop1, Aop2)
 	{
 		TypeCheck1(op1->type);
 		TypeCheck1(op2->type);
@@ -1557,9 +1561,12 @@ TType *ParseExpression(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/05 12:19:20  dj_jl
+//	Release changes
+//
 //	Revision 1.3  2001/08/21 17:52:54  dj_jl
 //	Added support for real string pointers, beautification
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:56  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

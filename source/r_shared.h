@@ -33,6 +33,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "fgfxdefs.h"
+#include "fmd2defs.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -98,6 +99,9 @@ bool R_BuildLightMap(surface_t*, int);
 
 int R_TextureAnimation(int);
 
+void *Mod_Extradata(model_t *mod);	// handles caching
+void Mod_LoadSkin(const char *name, void **bufptr);
+
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern int				numtextures;
@@ -156,9 +160,12 @@ extern rgb_t			SkinPal[256];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/09/05 12:21:42  dj_jl
+//	Release changes
+//
 //	Revision 1.6  2001/08/23 17:47:22  dj_jl
 //	Started work on pics with custom palettes
-//
+//	
 //	Revision 1.5  2001/08/21 17:46:08  dj_jl
 //	Added R_TextureAnimation, made SetTexture recognize flats
 //	

@@ -59,7 +59,7 @@ void FL_ExtractFileBase(const char *path, char *dest);
 void FL_ExtractFileExtension(const char *path, char *dest);
 
 bool FL_FindFile(const char *fname, char *dest);
-int  FL_ReadFile(const char* name, byte** buffer, int tag);
+int FL_ReadFile(const char* name, void** buffer, int tag);
 bool FL_WriteFile(const char* name, const void* source, int length);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
@@ -71,9 +71,12 @@ extern char		fl_gamedir[MAX_OSPATH];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/09/05 12:21:42  dj_jl
+//	Release changes
+//
 //	Revision 1.4  2001/08/21 17:40:54  dj_jl
 //	Added devgame mode
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

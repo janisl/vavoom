@@ -314,6 +314,73 @@ bool FL_FindFile(const char *fname, char *dest)
 
 //==========================================================================
 //
+//	FL_ReadFile
+//
+//==========================================================================
+
+int FL_ReadFile(const char* name, void** buffer, int tag)
+{
+	int			handle;
+	int			count;
+	int			length;
+	byte		*buf;
+	char		realname[MAX_OSPATH];
+
+	if (!FL_FindFile(name, realname))
+	{
+		return -1;
+	}
+
+	handle = Sys_FileOpenRead(realname);
+	if (handle == -1)
+	{
+		Sys_Error("Couldn't open file %s", realname);
+	}
+	length = Sys_FileSize(handle);
+	buf = (byte*)Z_Malloc(length + 1, tag, buffer);
+	count = Sys_FileRead(handle, buf, length);
+	buf[length] = 0;
+	Sys_FileClose(handle);
+	
+	if (count < length)
+	{
+		Sys_Error("Couldn't read file %s", realname);
+	}
+		
+	return length;
+}
+
+//==========================================================================
+//
+//	FL_WriteFile
+//
+//==========================================================================
+
+bool FL_WriteFile(const char* name, const void* source, int length)
+{
+	int		handle;
+	int		count;
+	
+	handle = Sys_FileOpenWrite(va("%s/%s", fl_gamedir, name));
+
+	if (handle == -1)
+	{
+		return false;
+	}
+
+	count = Sys_FileWrite(handle, source, length);
+	Sys_FileClose(handle);
+	
+	if (count < length)
+	{
+		return false;
+	}
+		
+	return true;
+}
+
+//==========================================================================
+//
 //	FL_DefaultPath
 //
 //==========================================================================
@@ -580,9 +647,12 @@ int TFile::Close(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/09/05 12:21:42  dj_jl
+//	Release changes
+//
 //	Revision 1.7  2001/08/31 17:21:01  dj_jl
 //	Finished base game script
-//
+//	
 //	Revision 1.6  2001/08/30 17:46:21  dj_jl
 //	Removed game dependency
 //	

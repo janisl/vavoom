@@ -6,8 +6,54 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                   E D I  T I N G   R E F E R E N C E
+                   E D I T I N G   R E F E R E N C E
 
-Contents:
+!!! Under construction, wanna help?
 
 ******************************************************************************
+Filesystem
+******************************************************************************
+
+  Vavoom is now using a filesystem similar to the one of Quake.
+
+  The "game directory" is the first tree on the search path and directory
+that all generated files (savegames, screenshots, demos, config files) will
+be saved to. This can be overridden with the "-game" or "-devgame" command
+line parameter. "-devgame" option is used to put Vavoom into game development
+mode. This means that for some wad lumps Vavoom first tries to load them from
+files. In current version they are:
+
+    levels     - maps/<level-name>.wad
+    progs      - progs/<name>.dat
+    
+  For each game directory Vavoom searches for base.txt script file. It is
+used to setup game directory on which this game is based on. It consists of
+list of entries with the following format:
+
+    game <gamedir>
+    [iwad <iwad-file>]
+    [param <option>]
+    end
+
+  where
+
+    gamedir   - game directory of this game.
+    iwad-file - main wad file needed for this game.
+    option    - when multiple iwad files are present this command line option
+              can be used to force selection this game.
+
+  The entries are procesed in backwards order.
+
+  If "-game" and "-devgame" options are not used, basev/games.txt script is
+used to detect game. The format is same as base.txt script.
+    
+  The game directory can nevr be changed while Vavoom is executing. This is a
+precacution against having a malicious server instruct clients to write files
+over areas they shouldn't.
+
+  WAD files are added in the following order:
+    - main wad file;
+    - for each game directory all wad files in form wad0.wad, wad1.wad ...
+      until one is missing;
+    - files specified with "-file" option.
+    

@@ -13,58 +13,20 @@ BCB = $(MAKEDIR)\..
 
 VERSION = BCB.05.03
 # ---------------------------------------------------------------------------
-PROJECT = Vavoom95.exe
-OBJFILES = obj\chat.obj obj\cheats.obj \
-    obj\cmd.obj obj\crc.obj obj\cvar.obj obj\debug.obj \
-    obj\host.obj obj\sys_win.obj obj\sys_i386.obj \
-    obj\misc.obj obj\p_info.obj obj\p_setup.obj \
-    obj\pr_cmds.obj obj\pr_exec.obj obj\pr_execa.obj \
-    obj\sc_man.obj obj\maths.obj obj\sizebuf.obj \
-    obj\wad.obj obj\zone.obj obj\message.obj obj\infostr.obj obj\files.obj \
-    \
-    obj\net_dgrm.obj obj\net_loop.obj obj\net_main.obj obj\net_win.obj \
-    obj\net_wins.obj obj\net_wipx.obj \
-    \
-    obj\sv_acs.obj \
-    obj\sv_main.obj obj\sv_poly.obj obj\sv_save.obj obj\sv_sight.obj \
-    obj\sv_swtch.obj obj\sv_user.obj obj\sv_tick.obj obj\sv_world.obj \
-    \
-    obj\cl_demo.obj obj\cl_input.obj obj\cl_main.obj obj\cl_parse.obj \
-    obj\cl_poly.obj obj\cl_trace.obj \
-    \
-    obj\in_input.obj obj\in_win32.obj \
-    \
-    obj\cd_win32.obj obj\s_data.obj obj\s_sound.obj obj\s_win32.obj \
-    obj\s_win32m.obj obj\sn_sonix.obj \
-    \
-    obj\am_map.obj obj\menu.obj obj\sbar.obj obj\screen.obj obj\text.obj \
-    obj\finale.obj obj\iline.obj obj\imission.obj obj\console.obj \
-    obj\v_draw.obj \
-    \
-    obj\r_bsp.obj obj\r_light.obj obj\r_main.obj obj\r_model.obj \
-    obj\r_sky.obj obj\r_surf.obj obj\r_tex.obj obj\r_things.obj \
-    \
-    obj\d_aclip.obj obj\d_alias.obj obj\d_data.obj obj\d_draw.obj \
-    obj\d_edge.obj obj\d_main.obj obj\d_part.obj obj\d_polyse.obj \
-    obj\d_scache.obj obj\d_span.obj obj\d_sprite.obj obj\d_surf.obj \
-    obj\d_tex.obj obj\d_win32.obj \
-    obj\d_aclipa.obj obj\d_aliasa.obj obj\d_edgea.obj obj\d_polysa.obj \
-    obj\d_varsa.obj obj\d_zspan.obj \
-    obj\d8_part.obj obj\d8_poly.obj obj\d8_s16.obj obj\d8_span.obj \
-    obj\d8_spr.obj obj\d8_surf.obj \
-    obj\d16_part.obj obj\d16_poly.obj obj\d16_s16.obj obj\d16_span.obj \
-    obj\d16_spr.obj obj\d16_surf.obj \
-    obj\d32_part.obj obj\d32_poly.obj obj\d32_s16.obj obj\d32_span.obj \
-    obj\d32_spr.obj obj\d32_surf.obj \
-    \
-    obj\d3d_draw.obj obj\d3d_info.obj obj\d3d_main.obj obj\d3d_poly.obj \
-    obj\d3d_tex.obj \
-    \
-    obj\gl_draw.obj obj\gl_main.obj obj\gl_poly.obj obj\gl_tex.obj \
-    obj\gl_win32.obj
-
-RESFILES = source\vavoom.RES
-MAINSOURCE = Vavoom95.bpf
+PROJECT = vavm95sv.exe
+OBJFILES = obj\sv\zone.obj obj\sv\crc.obj obj\sv\cvar.obj obj\sv\debug.obj \
+    obj\sv\host.obj obj\sv\maths.obj obj\sv\message.obj obj\sv\misc.obj \
+    obj\sv\net_dgrm.obj obj\sv\net_loop.obj obj\sv\net_main.obj \
+    obj\sv\net_win.obj obj\sv\net_wins.obj obj\sv\net_wipx.obj \
+    obj\sv\p_info.obj obj\sv\p_setup.obj obj\sv\pr_cmds.obj obj\sv\pr_exec.obj \
+    obj\sv\sc_man.obj obj\sv\sizebuf.obj obj\sv\sv_main.obj obj\sv\sv_save.obj \
+    obj\sv\wad.obj obj\sv\cmd.obj obj\sv\pr_execa.obj obj\sv\sys_wind.obj \
+    obj\sv\sv_user.obj obj\sv\sv_poly.obj obj\sv\sv_sight.obj \
+    obj\sv\sv_swtch.obj obj\sv\sv_tick.obj obj\sv\sv_acs.obj \
+    obj\sv\sv_world.obj obj\sv\infostr.obj obj\sv\r_tex.obj obj\sv\files.obj \
+    obj\sv\s_data.obj
+RESFILES =
+MAINSOURCE = vavm95sv.bpf
 RESDEPEN = $(RESFILES)
 LIBFILES =
 IDLFILES =
@@ -74,27 +36,27 @@ PACKAGES =
 SPARELIBS =
 DEFFILE =
 # ---------------------------------------------------------------------------
-PATHCPP = source
-PATHASM = source
+PATHCPP = .;source
+PATHASM = .;source
 PATHPAS = .;
 PATHRC = .;
 DEBUGLIBPATH = $(BCB)\lib\debug
 RELEASELIBPATH = $(BCB)\lib\release
-USERDEFINES = _RWSTD_NO_EXCEPTIONS
-SYSDEFINES = _NO_VCL
-INCLUDEPATH = c:\mssdk\include
-LIBPATH = $(BCB)\lib
-WARNINGS= -w
+USERDEFINES = SERVER;_RWSTD_NO_EXCEPTIONS
+SYSDEFINES = NO_STRICT;_NO_VCL
+INCLUDEPATH = source;$(BCB)\include
+LIBPATH = source;$(BCB)\lib\obj;$(BCB)\lib
+WARNINGS= -w-par
 # ---------------------------------------------------------------------------
-CFLAG1 = -O2 -x- -RT- -X- -a4 -4 -b -k- -vi -q -c
-IDLCFLAGS = -Ic:\mssdk\include -src_suffix cpp -DNDEBUG \
-    -D_RWSTD_NO_EXCEPTIONS
-PFLAGS = -N2obj -N0obj -$Y- -$L- -$D-
-RFLAGS = /l 0x426 /d "NDEBUG" /i$(BCB)\include;$(BCB)\include\mfc
+CFLAG1 = -O2 -Vx -Ve -x- -RT- -X- -a8 -4 -b -k- -vi -tWC -tWM- -c
+IDLCFLAGS = -Isource -I$(BCB)\include -src_suffix cpp -DSERVER -D_RWSTD_NO_EXCEPTIONS \
+    -no_tie -boa
+PFLAGS = -N2obj\sv -N0obj\sv -$Y- -$L- -$D- -v -JPHNE -M
+RFLAGS =
 AFLAGS = /ml /w2 /zn
-LFLAGS = -Iobj -D"" -aa -Tpe -x -Gn -w -q
+LFLAGS = -Iobj\sv -D"" -ap -Tpe -x -Gn
 # ---------------------------------------------------------------------------
-ALLOBJ = c0w32.obj $(OBJFILES)
+ALLOBJ = c0x32.obj $(OBJFILES)
 ALLRES = $(RESFILES)
 ALLLIB = $(LIBFILES) $(LIBRARIES) import32.lib cw32.lib
 # ---------------------------------------------------------------------------

@@ -59,7 +59,10 @@ static TOpenGLDrawer	OpenGLDrawer;
 
 TOpenGLDrawer::TOpenGLDrawer(void) :
 	tex_linear("gl_tex_linear", "2", CVAR_ARCHIVE),
-	clear("gl_clear", "0", CVAR_ARCHIVE)
+	clear("gl_clear", "0", CVAR_ARCHIVE),
+	ext_multitexture("ext_multitexture", "1", CVAR_ARCHIVE),
+	ext_point_parameters("ext_point_parameters", "1", CVAR_ARCHIVE),
+	ext_anisotropy("ext_anisotropy", "1", CVAR_ARCHIVE)
 {
 	_OpenGLDrawer = this;
 }
@@ -89,7 +92,7 @@ void TOpenGLDrawer::InitResolution(void)
 	con << "Maximum texture size: " << maxTexSize << endl;
 
 	//	Check multi-texture extensions
-	if (CheckExtension("GL_ARB_multitexture"))
+	if (ext_multitexture && CheckExtension("GL_ARB_multitexture"))
 	{
 		con << "Found GL_ARB_multitexture...\n";
 
@@ -107,14 +110,38 @@ void TOpenGLDrawer::InitResolution(void)
 			mtexable = false;
 		}
 	}
-	if (CheckExtension("GL_EXT_texture_filter_anisotropic"))
+	else
+	{
+		mtexable = false;
+	}
+	if (ext_point_parameters && CheckExtension("GL_EXT_point_parameters"))
+	{
+		con << "Found GL_EXT_point_parameters...\n";
+
+		p_PointParameterf = PointParameterf_t(GetExtFuncPtr("glPointParameterfEXT"));
+		p_PointParameterfv = PointParameterfv_t(GetExtFuncPtr("glPointParameterfvEXT"));
+		if (p_PointParameterf && p_PointParameterfv)
+		{
+			con << "Point parameters extensions found\n";
+			pointparmsable = true;
+		}
+		else
+		{
+			con << "Symbol not found, disabled.\n";
+			pointparmsable = false;
+		}
+	}
+	else
+	{
+		pointparmsable = false;
+	}
+	if (ext_anisotropy && CheckExtension("GL_EXT_texture_filter_anisotropic"))
 	{
 		GLfloat		max_anisotropy;
 
-		con << "Found GL_EXT_texture_filter_anisotropic...\n";
-
 		glGetFloatv(GLenum(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT), &max_anisotropy);
 		glTexParameterfv(GL_TEXTURE_2D, GLenum(GL_TEXTURE_MAX_ANISOTROPY_EXT), &max_anisotropy);
+		con << "Max anisotropy " << max_anisotropy << endl;
 	}
 
 	glClearColor(0.0, 0.0, 0.0, 0.0);	// Black Background
@@ -297,6 +324,12 @@ void TOpenGLDrawer::SetupView(const refdef_t *rd)
 	if (r_use_fog)
 		glEnable(GL_FOG);
 
+	if (pointparmsable)
+	{
+		int shift = 8 - (int)((float)rd->width / 320.0 + 0.5);
+		glPointSize(0x8000 >> shift);
+	}
+
 	memset(light_chain, 0, sizeof(light_chain));
 }
 
@@ -384,9 +417,12 @@ void TOpenGLDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/09/05 12:21:42  dj_jl
+//	Release changes
+//
 //	Revision 1.8  2001/08/31 17:25:38  dj_jl
 //	Anisotropy filtering
-//
+//	
 //	Revision 1.7  2001/08/23 17:50:15  dj_jl
 //	Texture filtering mode set in globals
 //	

@@ -260,7 +260,7 @@ void D_PolysetSetupDrawer(int translucency)
 		[d_affinetridesc.coloredlight][fuzzfunc];
 }
 
-#ifndef USEASM
+#if !defined USEASM || defined _WIN32
 
 //==========================================================================
 //
@@ -2203,9 +2203,12 @@ extern "C" void D_PolysetDrawSpansRGBFuzz_32(spanpackage_t *pspanpackage)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/09/05 12:21:42  dj_jl
+//	Release changes
+//
 //	Revision 1.5  2001/08/15 17:12:23  dj_jl
 //	Optimized model drawing
-//
+//	
 //	Revision 1.4  2001/08/02 17:45:37  dj_jl
 //	Added support for colored lit and translucent models
 //	

@@ -589,9 +589,9 @@ void TDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 				(DotProduct(texpt, r_saxis) - offs2) * tex_iw,
 				DotProduct(texpt, r_taxis) * tex_ih);
 		}
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
+		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 		RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, D3DFVF_LVERTEX, out, count, 0);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
+		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 	}
 
 	if (r_use_fog)
@@ -755,6 +755,9 @@ void TDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	//
 	pmdl = (mmdl_t *)Mod_Extradata(model);
 
+	// Hack to make sure that skin loading doesn't free model
+	Z_ChangeTag(pmdl, PU_STATIC);
+
 	//
 	// draw all the triangles
 	//
@@ -823,6 +826,11 @@ void TDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 			primtype = D3DPT_TRIANGLESTRIP;
 		}
 
+		if (count > 256)
+		{
+			Sys_Error("Too many command verts");
+		}
+
 		for (i = 0; i < count; i++)
 		{
 			// texture coordinates come from the draw list
@@ -858,6 +866,9 @@ void TDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 		viewData.dvMaxZ = 1.0;
 		RenderDevice->SetViewport(&viewData);
 	}
+
+	// Make it cachable again
+	Z_ChangeTag(pmdl, PU_CACHE);
 }
 
 //==========================================================================
@@ -935,9 +946,12 @@ void TDirect3DDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/09/05 12:21:42  dj_jl
+//	Release changes
+//
 //	Revision 1.9  2001/08/29 17:47:55  dj_jl
 //	Added texture filtering variables
-//
+//	
 //	Revision 1.8  2001/08/24 17:03:57  dj_jl
 //	Added mipmapping, removed bumpmap test code
 //	

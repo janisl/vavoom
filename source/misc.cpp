@@ -66,7 +66,7 @@ void M_InitArgs(int argc, char **argv)
 {
 	//	Save args
 	myargc = argc;
-    myargv = argv;
+	myargv = argv;
 
 #ifndef DJGPP
 	M_FindResponseFile();
@@ -166,15 +166,15 @@ static void M_FindResponseFile(void)
 
 int M_CheckParm(const char *check)
 {
-    int		i;
+	int		i;
 
-    for (i = 1;i<myargc;i++)
-    {
+	for (i = 1; i < myargc; i++)
+	{
 		if (!stricmp(check, myargv[i]) )
-	    	return i;
-    }
+			return i;
+	}
 
-    return 0;
+	return 0;
 }
 
 //==========================================================================
@@ -257,29 +257,29 @@ void M_InitByteOrder(void)
 
 int M_ReadFile(const char* name, byte** buffer)
 {
-    int			handle;
-    int			count;
-    int			length;
-    byte		*buf;
+	int			handle;
+	int			count;
+	int			length;
+	byte		*buf;
 	
-    handle = Sys_FileOpenRead(name);
-    if (handle == -1)
+	handle = Sys_FileOpenRead(name);
+	if (handle == -1)
 	{
 		Sys_Error("Couldn't open file %s", name);
 	}
-    length = Sys_FileSize(handle);
-    buf = (byte*)Z_Malloc(length + 1, PU_STATIC, NULL);
-    count = Sys_FileRead(handle, buf, length);
+	length = Sys_FileSize(handle);
+	buf = (byte*)Z_Malloc(length + 1, PU_STATIC, NULL);
+	count = Sys_FileRead(handle, buf, length);
 	buf[length] = 0;
-    Sys_FileClose(handle);
+	Sys_FileClose(handle);
 	
-    if (count < length)
+	if (count < length)
 	{
 		Sys_Error("Couldn't read file %s", name);
 	}
-		
-    *buffer = buf;
-    return length;
+
+	*buffer = buf;
+	return length;
 }
 
 //==========================================================================
@@ -290,25 +290,24 @@ int M_ReadFile(const char* name, byte** buffer)
 
 boolean M_WriteFile(const char* name, const void* source, int length)
 {
-    int		handle;
-    int		count;
+	int		handle;
+	int		count;
 	
-    handle = Sys_FileOpenWrite(name);
-
-    if (handle == -1)
+	handle = Sys_FileOpenWrite(name);
+	if (handle == -1)
 	{
 		return false;
 	}
 
-    count = Sys_FileWrite(handle, source, length);
-    Sys_FileClose(handle);
+	count = Sys_FileWrite(handle, source, length);
+	Sys_FileClose(handle);
 	
-    if (count < length)
+	if (count < length)
 	{
 		return false;
 	}
 		
-    return true;
+	return true;
 }
 
 //==========================================================================
@@ -377,21 +376,24 @@ char *va(const char *text, ...)
 int PassFloat(float f)
 {
 	union
-    {
-    	float	f;
-        int		i;
+	{
+		float	f;
+		int		i;
 	} v;
 
-    v.f = f;
-    return v.i;
+	v.f = f;
+	return v.i;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/09/05 12:21:42  dj_jl
+//	Release changes
+//
 //	Revision 1.5  2001/08/30 17:42:04  dj_jl
 //	Cleanup
-//
+//	
 //	Revision 1.4  2001/08/04 17:25:14  dj_jl
 //	Moved title / demo loop to progs
 //	Removed shareware / ExtendedWAD from engine

@@ -73,13 +73,13 @@ class TCvarI : public TCvar
 	}
 
 	operator int(void) const
-    {
-    	return value;
-    }
-
-	TCvar &operator = (int AValue)
 	{
-    	Set(AValue);
+		return value;
+	}
+
+	TCvarI &operator = (int AValue)
+	{
+		Set(AValue);
 		return *this;
 	}
 };
@@ -94,13 +94,13 @@ class TCvarF : public TCvar
 	}
 
 	operator float(void) const
-    {
-    	return fvalue;
-    }
-
-	TCvar &operator = (float AValue)
 	{
-    	Set(AValue);
+		return fvalue;
+	}
+
+	TCvarF &operator = (float AValue)
+	{
+		Set(AValue);
 		return *this;
 	}
 };
@@ -115,16 +115,15 @@ class TCvarS : public TCvar
 	}
 
 	operator char*(void) const
-    {
-    	return string;
-    }
-
-	TCvar &operator = (const char *AValue)
 	{
-    	Set(AValue);
-		return *this;
+		return string;
 	}
 
+	TCvarS &operator = (const char *AValue)
+	{
+		Set(AValue);
+		return *this;
+	}
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -148,9 +147,12 @@ void Cvar_Write(FILE *f);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/09/05 12:21:42  dj_jl
+//	Release changes
+//
 //	Revision 1.4  2001/08/29 17:50:42  dj_jl
 //	Implemented CVAR_LATCH
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

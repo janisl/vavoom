@@ -42,8 +42,8 @@
 
 //#define PROGS_PROFILE
 
-#define MINIMUM_HEAP_SIZE	0x800000		//  8 meg
-#define MAXIMUM_HEAP_SIZE	0x2000000		// 32 meg
+#define MINIMUM_HEAP_SIZE	0x800000		//   8 meg
+#define MAXIMUM_HEAP_SIZE	0x8000000		// 128 meg
 
 // TYPES -------------------------------------------------------------------
 
@@ -453,8 +453,8 @@ void* Sys_ZoneBase(int* size)
 {
 	int			heap;
     void*		ptr;
-	// Maximum allocated for zone heap (16meg default)
-	int			maxzone = 0x1000000;
+	// Maximum allocated for zone heap (64meg default)
+	int			maxzone = 0x4000000;
 	int			p;
 
 	p = M_CheckParm("-mem");
@@ -655,9 +655,12 @@ int main(int argc,char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/09/05 12:21:42  dj_jl
+//	Release changes
+//
 //	Revision 1.5  2001/08/29 17:49:36  dj_jl
 //	Added file time functions
-//
+//	
 //	Revision 1.4  2001/08/15 17:28:11  dj_jl
 //	Added -mem option
 //	

@@ -2,7 +2,9 @@ ifndef VCC
 VCC=vcc
 endif
 
-OUTDIR=../../basev/strife/progs
+ifndef OUTDIR
+OUTDIR=.
+endif
 
 all: $(OUTDIR)/clprogs.dat $(OUTDIR)/svprogs.dat
 clprogs: $(OUTDIR)/clprogs.dat
