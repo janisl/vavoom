@@ -77,6 +77,7 @@ void StripExtension(char *path);
 void ExtractFilePath(const char *path, char *dest);
 void ExtractFileBase(const char *path, char *dest);
 void ExtractFileExtension(const char *path, char *dest);
+void FixFileSlashes(char *path);
 int LoadFile(const char *name, void **bufferptr);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
@@ -107,9 +108,12 @@ inline void Delete(void *ptr)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/12/27 17:42:07  dj_jl
+//	Added FixupPath
+//
 //	Revision 1.5  2001/12/12 19:18:07  dj_jl
 //	Added Realloc
-//
+//	
 //	Revision 1.4  2001/09/12 17:28:38  dj_jl
 //	Created glVIS plugin
 //	
