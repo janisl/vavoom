@@ -49,6 +49,8 @@
 #define strnicmp	strncasecmp
 #endif
 
+namespace VavoomUtils {
+
 // MACROS ------------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
@@ -59,9 +61,6 @@ typedef unsigned short	 	word;
 typedef unsigned long	 	dword;
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
-
-void *Malloc(size_t size);
-void Free(void *ptr);
 
 void Error(const char *error, ...) __attribute__ ((noreturn))
 	__attribute__ ((format(printf, 1, 2)));
@@ -82,14 +81,37 @@ int LoadFile(const char *name, void **bufferptr);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
+extern void *(*Malloc)(size_t size);
+extern void (*Free)(void *ptr);
+
+template<class T> T* New(void)
+{
+	return (T*)Malloc(sizeof(T));
+}
+
+template<class T> T* New(int numel)
+{
+	return (T*)Malloc(numel * sizeof(T));
+}
+
+inline void Delete(void *ptr)
+{
+	Free(ptr);
+}
+
+} // namespace VavoomUtils
+
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/12 17:28:38  dj_jl
+//	Created glVIS plugin
+//
 //	Revision 1.3  2001/08/21 17:51:21  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

@@ -8,14 +8,19 @@ LIBS=-lstdc++
 INSTALLDIR=/usr/local/bin
 endif
 
-CFLAGS = -Wall -O3 -ffast-math -fomit-frame-pointer -fno-rtti -fno-exceptions -mpentiumpro
-OBJS = cmdlib.o wadlib.o glvis.o level.o flow.o
+CFLAGS = -Wall -O3 -ffast-math -fomit-frame-pointer -mpentiumpro
+LIB_OBJS = cmdlib.o wadlib.o level.o flow.o
+OBJS = glvis.o
 LIBS += -lm
 
 all: glvis$(EXE)
 
-glvis$(EXE): $(OBJS)
-	gcc -s -o $@ $(OBJS) $(LIBS)
+glvis$(EXE): $(OBJS) libglvis.a
+	gcc -s -o $@ $^ $(LIBS)
+
+libglvis.a: $(LIB_OBJS)
+	ar rc $@ $^
+	ranlib $@
 
 %.o: %.cpp *.h ../common/*.h
 	gcc $(CFLAGS) -I../common -c -o $@ $<

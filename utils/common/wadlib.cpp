@@ -28,6 +28,8 @@
 #include "cmdlib.h"
 #include "wadlib.h"
 
+namespace VavoomUtils {
+
 #include "fwaddefs.h"
 
 // MACROS ------------------------------------------------------------------
@@ -65,7 +67,7 @@ void TIWadFile::Open(const char* filename)
 	handle = fopen(filename, "rb");
 	if (!handle)
 	{
-		Error("couldn't open %s", filename);
+		throw WadLibError(va("couldn't open %s", filename));
 	}
 
 	fread(&header, 1, sizeof(header), handle);
@@ -74,7 +76,8 @@ void TIWadFile::Open(const char* filename)
 		// Homebrew levels?
 		if (strncmp(header.identification, "PWAD", 4))
 		{
-			Error("Wad file %s doesn't have IWAD or PWAD id", filename);
+			throw WadLibError(va("Wad file %s doesn't have IWAD or PWAD id",
+				filename));
 		}
 	}
 	strcpy(wadid, header.identification);
@@ -115,10 +118,7 @@ int TIWadFile::LumpNumForName(const char* name)
 		if (!strcmp(buf, lumpinfo[i].name))
 			return i;
 	}
-	Error("W_GetNumForName: %s not found!", name);
-#ifndef __GNUC__
-	return 0;// Shut up compiler
-#endif
+	throw WadLibError(va("W_GetNumForName: %s not found!", name));
 }
 
 //==========================================================================
@@ -167,6 +167,7 @@ void TOWadFile::Open(const char *filename, const char *Awadid)
 	fwrite(&header, 1, sizeof(header), handle);
 	lumpinfo = new lumpinfo_t[8 * 1024];
 	strncpy(wadid, Awadid, 4);
+	numlumps = 0;
 }
 
 //==========================================================================
@@ -214,12 +215,17 @@ void TOWadFile::Close(void)
 	delete lumpinfo;
 }
 
+} // namespace VavoomUtils
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/12 17:28:38  dj_jl
+//	Created glVIS plugin
+//
 //	Revision 1.3  2001/08/24 17:08:34  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:55  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

@@ -29,6 +29,9 @@
 
 // HEADER FILES ------------------------------------------------------------
 
+#include <stdio.h>
+#include <stdarg.h>
+#include <iostream.h>
 #include <time.h>
 //	When compiling with -ansi isatty() is not declared
 #if defined __unix__ && !defined __STRICT_ANSI__
@@ -36,11 +39,22 @@
 #endif
 #include "glvis.h"
 
+namespace VavoomUtils {
+
 // MACROS ------------------------------------------------------------------
 
-#define TEMP_FILE	"$glvis$$.$$$"
-
 // TYPES -------------------------------------------------------------------
+
+class TConsoleGLVis:public TGLVis
+{
+ public:
+	void DisplayMessage(const char *text, ...)
+		__attribute__((format(printf, 2, 3)));
+	void DisplayStartMap(const char *levelname);
+	void DisplayBaseVisProgress(int count, int total);
+	void DisplayPortalVisProgress(int count, int total);
+	void DisplayMapDone(int accepts, int total);
+};
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -52,69 +66,95 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-TIWadFile		inwad;
-TIWadFile		gwa;
-TOWadFile		outwad;
-
-TIWadFile		*mainwad;
-TIWadFile		*glwad;
-
 bool			silent_mode = false;
-bool			show_progress = true;
-bool			fastvis = false;
-bool			verbose = false;
+static bool		show_progress = true;
 
-int				testlevel = 2;
+TConsoleGLVis	GLVis;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static int		num_specified_maps = 0;
-static char		specified_maps[100][16];
+static const char	progress_chars[] = {'|', '/', '-', '\\'};
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	IsLevelName
+//	TConsoleGLVis::DisplayMessage
 //
 //==========================================================================
 
-static bool	IsLevelName(int lump)
+void TConsoleGLVis::DisplayMessage(const char *text, ...)
 {
-	if (lump + 4 >= glwad->numlumps)
-	{
-		return false;
-	}
+	va_list		args;
 
-	const char	*name = glwad->LumpName(lump);
-
-	if (name[0] != 'G' || name[1] != 'L' || name[2] != '_')
+	if (!silent_mode)
 	{
-		return false;
+		va_start(args, text);
+		vfprintf(stderr, text, args);
+		va_end(args);
 	}
-
-	if (num_specified_maps)
-	{
-		for (int i = 0; i < num_specified_maps; i++)
-		{
-			if (!strcmp(specified_maps[i], name + 3))
-			{
-				return true;
-			}
-		}
-	}
-	else
-	{
-		if (!strcmp(glwad->LumpName(lump + 1), "GL_VERT") &&
-			!strcmp(glwad->LumpName(lump + 2), "GL_SEGS") &&
-			!strcmp(glwad->LumpName(lump + 3), "GL_SSECT") &&
-			!strcmp(glwad->LumpName(lump + 4), "GL_NODES"))
-		{
-			return true;
-		}
-	}
-	return false;
 }
+
+//==========================================================================
+//
+//	TConsoleGLVis::DisplayStartMap
+//
+//==========================================================================
+
+void TConsoleGLVis::DisplayStartMap(const char *)
+{
+	if (!silent_mode)
+	{
+		cerr << "Creating vis data ... ";
+	}
+}
+
+//==========================================================================
+//
+//	TConsoleGLVis::DisplayBaseVisProgress
+//
+//==========================================================================
+
+void TConsoleGLVis::DisplayBaseVisProgress(int count, int)
+{
+	if (show_progress && !(count & 0x1f))
+	{
+		fprintf(stderr, "%c\b", progress_chars[(count >> 5) & 3]);
+	}
+}
+
+//==========================================================================
+//
+//	TConsoleGLVis::DisplayPortalVisProgress
+//
+//==========================================================================
+
+void TConsoleGLVis::DisplayPortalVisProgress(int count, int total)
+{
+	if (show_progress && (!count || (total - count) % 10 == 0))
+	{
+		fprintf(stderr, "%05d\b\b\b\b\b", total - count);
+	}
+}
+
+//==========================================================================
+//
+//	TConsoleGLVis::DisplayMapDone
+//
+//==========================================================================
+
+void TConsoleGLVis::DisplayMapDone(int accepts, int total)
+{
+	if (!silent_mode)
+	{
+		cerr << accepts << " accepts, " << (total - accepts) << " rejects, "
+			<< (accepts * 100 / total) << "%\n";
+	}
+}
+
+} // namespace VavoomUtils
+
+using namespace VavoomUtils;
 
 //==========================================================================
 //
@@ -142,9 +182,6 @@ static void ShowUsage(void)
 
 int main(int argc, char *argv[])
 {
-	char filename[1024];
-	char destfile[1024];
-	char bakext[8];
 	char *srcfile = NULL;
 	int i;
 
@@ -162,19 +199,19 @@ int main(int argc, char *argv[])
 				break;
 
 			 case 'f':
-				fastvis = true;
+				GLVis.fastvis = true;
 				break;
 
 			 case 'v':
-				verbose = true;
+				GLVis.verbose = true;
 				break;
 
 			 case 't':
-				testlevel = arg[2] - '0';
+				GLVis.testlevel = arg[2] - '0';
 				break;
 
 			 case 'm':
-				CleanupName(arg + 2, specified_maps[num_specified_maps++]);
+				strcpy(arg + 2, GLVis.specified_maps[GLVis.num_specified_maps++]);
 				break;
 
 			 default:
@@ -203,69 +240,15 @@ int main(int argc, char *argv[])
 		show_progress = false;
 #endif
 
-	strcpy(filename, srcfile);
-	DefaultExtension(filename, ".wad");
-	strcpy(destfile, filename);
-	inwad.Open(filename);
-	mainwad = &inwad;
-
-	StripExtension(filename);
-	strcat(filename, ".gwa");
-	FILE *ff = fopen(filename, "rb");
-	if (ff)
+	try
 	{
-		fclose(ff);
-		gwa.Open(filename);
-		glwad = &gwa;
-		strcpy(destfile, filename);
-		strcpy(bakext, ".~gw");
+		GLVis.Build(srcfile);
 	}
-	else
+	catch (GLVisError &e)
 	{
-		glwad = &inwad;
-		strcpy(bakext, ".~wa");
+		fprintf(stderr, "%s", e.message);
+		return 1;
 	}
-
-	outwad.Open(TEMP_FILE, glwad->wadid);
-
-	//	Process lumps
-	i = 0;
-	while (i < glwad->numlumps)
-	{
-		void *ptr =	glwad->GetLump(i);
-		const char *name = glwad->LumpName(i);
-		outwad.AddLump(name, ptr, glwad->LumpSize(i));
-		Free(ptr);
-		if (IsLevelName(i))
-		{
-			LoadLevel(mainwad->LumpNumForName(name + 3), i);
-			i += 5;
-			if (!strcmp("GL_PVS", glwad->LumpName(i)))
-			{
-				i++;
-			}
-			BuildPVS();
-			FreeLevel();
-		}
-		else
-		{
-			i++;
-		}
-	}
-
-	inwad.Close();
-	if (gwa.handle)
-	{
-		gwa.Close();
-	}
-	outwad.Close();
-
-	strcpy(filename, destfile);
-	StripExtension(filename);
-	strcat(filename, bakext);
-	remove(filename);
-	rename(destfile, filename);
-	rename(TEMP_FILE, destfile);
 
 	if (!silent_mode)
 	{
@@ -279,9 +262,12 @@ int main(int argc, char *argv[])
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/09/12 17:28:38  dj_jl
+//	Created glVIS plugin
+//
 //	Revision 1.4  2001/08/30 17:47:47  dj_jl
 //	Overflow protection
-//
+//	
 //	Revision 1.3  2001/08/24 17:09:22  dj_jl
 //	Recognizes maps by checking GL lump names
 //	

@@ -25,10 +25,15 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#include "glvis.h"
+#include "glvisint.h"
+
+namespace VavoomUtils {
+
 #include "fmapdefs.h"
 
 // MACROS ------------------------------------------------------------------
+
+#define TEMP_FILE	"$glvis$$.$$$"
 
 // TYPES -------------------------------------------------------------------
 
@@ -42,31 +47,81 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-int			numvertexes;
-vertex_t	*vertexes;
-
-int			numsegs;
-seg_t		*segs;
-
-int			numsubsectors;
-subsector_t	*subsectors;
-
-int			numportals;
-portal_t	*portals;
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
-
-static vertex_t*		gl_vertexes;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	LoadVertexes
+//	GLVisMalloc
 //
 //==========================================================================
 
-static void LoadVertexes(int lump, int gl_lump)
+static void *GLVisMalloc(size_t size)
+{
+	void *ptr = malloc(size);
+	if (!ptr)
+	{
+		throw GLVisError("Couldn't alloc %ld bytes", size);
+	}
+	memset(ptr, 0, size);
+	return ptr;
+}
+
+//==========================================================================
+//
+//	GLVisFree
+//
+//==========================================================================
+
+static void GLVisFree(void *ptr)
+{
+	free(ptr);
+}
+
+//==========================================================================
+//
+//	GLVisError::GLVisError
+//
+//==========================================================================
+
+GLVisError::GLVisError(const char *error, ...)
+{
+	va_list		argptr;
+
+	va_start(argptr, error);
+	vsprintf(message, error, argptr);
+	va_end(argptr);
+}
+
+//==========================================================================
+//
+//	TVisBuilder::TVisBuilder
+//
+//==========================================================================
+
+TVisBuilder::TVisBuilder(TGLVis &AOwner) : Owner(AOwner),
+	numvertexes(0), vertexes(NULL), gl_vertexes(NULL),
+	numsegs(0), segs(NULL),
+	numsubsectors(0), subsectors(NULL),
+	numportals(0), portals(NULL),
+	vissize(0), vis(NULL),
+	bitbytes(0), bitlongs(0),
+	portalsee(0), c_leafsee(0), c_portalsee(0),
+	c_chains(0), c_portalskip(0), c_leafskip(0),
+	c_vistest(0), c_mighttest(0),
+	c_portaltest(0), c_portalpass(0), c_portalcheck(0),
+	totalvis(0), rowbytes(0)
+{
+}
+
+//==========================================================================
+//
+//	TVisBuilder::LoadVertexes
+//
+//==========================================================================
+
+void TVisBuilder::LoadVertexes(int lump, int gl_lump)
 {
 	int				i;
 	void*			data;
@@ -79,7 +134,8 @@ static void LoadVertexes(int lump, int gl_lump)
 	base_verts = mainwad->LumpSize(lump) / sizeof(mapvertex_t);
 
 	gldata = glwad->GetLump(gl_lump);
-	outwad.AddLump(glwad->LumpName(gl_lump), gldata, glwad->LumpSize(gl_lump));
+	outwad.AddLump(glwad->LumpName(gl_lump), gldata,
+		glwad->LumpSize(gl_lump));
 	if (!strncmp((char*)gldata, GL_V2_VERTEX_MAGIC, 4))
 	{
 		gl_verts = (glwad->LumpSize(gl_lump) - 4) / sizeof(gl_mapvertex_t);
@@ -91,7 +147,7 @@ static void LoadVertexes(int lump, int gl_lump)
 	numvertexes = base_verts + gl_verts;
 
 	// Allocate zone memory for buffer.
-	li = vertexes = new vertex_t[numvertexes];
+	li = vertexes = New<vertex_t>(numvertexes);
 
 	// Load data into cache.
 	data = mainwad->GetLump(lump);
@@ -133,17 +189,17 @@ static void LoadVertexes(int lump, int gl_lump)
 		}
 	}
 
-   	// Free buffer memory.
+	// Free buffer memory.
 	Free(gldata);
 }
 
 //==========================================================================
 //
-//	LoadSegs
+//	TVisBuilder::LoadSegs
 //
 //==========================================================================
 
-static void LoadSegs(int lump)
+void TVisBuilder::LoadSegs(int lump)
 {
 	void*		data;
 	int			i;
@@ -151,7 +207,7 @@ static void LoadSegs(int lump)
 	seg_t*		li;
 
 	numsegs = glwad->LumpSize(lump) / sizeof(mapglseg_t);
-	segs = new seg_t[numsegs];
+	segs = New<seg_t>(numsegs);
 	data = glwad->GetLump(lump);
 	outwad.AddLump(glwad->LumpName(lump), data, glwad->LumpSize(lump));
 
@@ -196,16 +252,16 @@ static void LoadSegs(int lump)
 
 	Free(data);
 
-	portals = new portal_t[numportals];
+	portals = New<portal_t>(numportals);
 }
 
 //==========================================================================
 //
-//	LoadSubsectors
+//	TVisBuilder::LoadSubsectors
 //
 //==========================================================================
 
-static void LoadSubsectors(int lump)
+void TVisBuilder::LoadSubsectors(int lump)
 {
 	void*				data;
 	int					i;
@@ -213,7 +269,7 @@ static void LoadSubsectors(int lump)
 	subsector_t*		ss;
 
 	numsubsectors = glwad->LumpSize(lump) / sizeof(mapsubsector_t);
-	subsectors = new subsector_t[numsubsectors];
+	subsectors = New<subsector_t>(numsubsectors);
 	data = glwad->GetLump(lump);
 	outwad.AddLump(glwad->LumpName(lump), data, glwad->LumpSize(lump));
 
@@ -237,11 +293,11 @@ static void LoadSubsectors(int lump)
 
 //==========================================================================
 //
-//	LoadNodes
+//	TVisBuilder::LoadNodes
 //
 //==========================================================================
 
-static void LoadNodes(int lump)
+void TVisBuilder::LoadNodes(int lump)
 {
 	void*	data;
 
@@ -252,11 +308,11 @@ static void LoadNodes(int lump)
 
 //==========================================================================
 //
-//	CreatePortals
+//	TVisBuilder::CreatePortals
 //
 //==========================================================================
 
-static void CreatePortals(void)
+void TVisBuilder::CreatePortals(void)
 {
 	int i;
 
@@ -269,7 +325,7 @@ static void CreatePortals(void)
 		{
 			// create portal
 			if (sub->numportals == MAX_PORTALS_ON_LEAF)
-				Error("Leaf with too many portals");
+				throw GLVisError("Leaf with too many portals");
 			sub->portals[sub->numportals] = p;
 			sub->numportals++;
 
@@ -283,17 +339,19 @@ static void CreatePortals(void)
 		}
 	}
 	if (p - portals != numportals)
-		Error("Portals miscounted");
+		throw GLVisError("Portals miscounted");
 }
 	
 //==========================================================================
 //
-//	LoadLevel
+//	TVisBuilder::LoadLevel
 //
 //==========================================================================
 
-void LoadLevel(int lumpnum, int gl_lumpnum)
+void TVisBuilder::LoadLevel(int lumpnum, int gl_lumpnum)
 {
+	const char *levelname = mainwad->LumpName(lumpnum);
+
 	LoadVertexes(lumpnum + ML_VERTEXES, gl_lumpnum + ML_GL_VERT);
 	LoadSegs(gl_lumpnum + ML_GL_SEGS);
 	LoadSubsectors(gl_lumpnum + ML_GL_SSECT);
@@ -301,33 +359,194 @@ void LoadLevel(int lumpnum, int gl_lumpnum)
 
 	CreatePortals();
 
-	cerr << "\nLoaded " << mainwad->LumpName(lumpnum) << ", "
-		<< numvertexes << " vertexes, "
-		<< numsegs << " segs, "
-		<< numsubsectors << " subsectors, "
-		<< numportals << " portals\n";
+	Owner.DisplayMessage(
+		"\nLoaded %s, %d vertexes, %d segs, %d subsectors, %d portals\n",
+		levelname, numvertexes, numsegs, numsubsectors, numportals);
+	Owner.DisplayStartMap(levelname);
 }
 
 //==========================================================================
 //
-//	FreeLevel
+//	TVisBuilder::FreeLevel
 //
 //==========================================================================
 
-void FreeLevel(void)
+void TVisBuilder::FreeLevel(void)
 {
-	delete vertexes;
-	delete segs;
-	delete subsectors;
-	delete portals;
+	Delete(vertexes);
+	Delete(segs);
+	Delete(subsectors);
+	Delete(portals);
+	Delete(vis);
 }
+
+//==========================================================================
+//
+//	TVisBuilder::IsLevelName
+//
+//==========================================================================
+
+bool TVisBuilder::IsLevelName(int lump)
+{
+	if (lump + 4 >= glwad->numlumps)
+	{
+		return false;
+	}
+
+	const char	*name = glwad->LumpName(lump);
+
+	if (name[0] != 'G' || name[1] != 'L' || name[2] != '_')
+	{
+		return false;
+	}
+
+	if (Owner.num_specified_maps)
+	{
+		for (int i = 0; i < Owner.num_specified_maps; i++)
+		{
+			if (!stricmp(Owner.specified_maps[i], name + 3))
+			{
+				return true;
+			}
+		}
+	}
+	else
+	{
+		if (!strcmp(glwad->LumpName(lump + 1), "GL_VERT") &&
+			!strcmp(glwad->LumpName(lump + 2), "GL_SEGS") &&
+			!strcmp(glwad->LumpName(lump + 3), "GL_SSECT") &&
+			!strcmp(glwad->LumpName(lump + 4), "GL_NODES"))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//	TVisBuilder::Run
+//
+//==========================================================================
+
+void TVisBuilder::Run(const char *srcfile)
+{
+	char filename[1024];
+	char destfile[1024];
+	char bakext[8];
+	int i;
+
+	if (Owner.Malloc && Owner.Free)
+	{
+		Malloc = Owner.Malloc;
+		Free = Owner.Free;
+	}
+	else
+	{
+		Malloc = GLVisMalloc;
+		Free = GLVisFree;
+	}
+
+	strcpy(filename, srcfile);
+	DefaultExtension(filename, ".wad");
+	strcpy(destfile, filename);
+	inwad.Open(filename);
+	mainwad = &inwad;
+
+	StripExtension(filename);
+	strcat(filename, ".gwa");
+	FILE *ff = fopen(filename, "rb");
+	if (ff)
+	{
+		fclose(ff);
+		gwa.Open(filename);
+		glwad = &gwa;
+		strcpy(destfile, filename);
+		strcpy(bakext, ".~gw");
+	}
+	else
+	{
+		glwad = &inwad;
+		strcpy(bakext, ".~wa");
+	}
+
+	outwad.Open(TEMP_FILE, glwad->wadid);
+
+	//	Process lumps
+	i = 0;
+	while (i < glwad->numlumps)
+	{
+		void *ptr =	glwad->GetLump(i);
+		const char *name = glwad->LumpName(i);
+		outwad.AddLump(name, ptr, glwad->LumpSize(i));
+		Free(ptr);
+		if (IsLevelName(i))
+		{
+			LoadLevel(mainwad->LumpNumForName(name + 3), i);
+			i += 5;
+			if (!strcmp("GL_PVS", glwad->LumpName(i)))
+			{
+				i++;
+			}
+			BuildPVS();
+
+			//	Write lump
+			outwad.AddLump("GL_PVS", vis, vissize);
+
+			FreeLevel();
+		}
+		else
+		{
+			i++;
+		}
+	}
+
+	inwad.Close();
+	if (gwa.handle)
+	{
+		gwa.Close();
+	}
+	outwad.Close();
+
+	strcpy(filename, destfile);
+	StripExtension(filename);
+	strcat(filename, bakext);
+	remove(filename);
+	rename(destfile, filename);
+	rename(TEMP_FILE, destfile);
+}
+
+//==========================================================================
+//
+//	TGLVis::Build
+//
+//==========================================================================
+
+void TGLVis::Build(const char *srcfile)
+{
+	try
+	{
+		TVisBuilder VisBuilder(*this);
+
+		VisBuilder.Run(srcfile);
+	}
+	catch (WadLibError &e)
+	{
+		throw GLVisError("%s", e.message);
+	}
+}
+
+} // namespace VavoomUtils
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/12 17:28:38  dj_jl
+//	Created glVIS plugin
+//
 //	Revision 1.3  2001/08/24 17:08:34  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:55  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

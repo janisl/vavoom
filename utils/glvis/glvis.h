@@ -28,121 +28,69 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#include <math.h>
-#include "cmdlib.h"
-#include "wadlib.h"
-
-#include "vector.h"
+namespace VavoomUtils {
 
 // MACROS ------------------------------------------------------------------
 
-#define	ON_EPSILON	0.1
-
-//
-// Indicate a leaf.
-//
-#define	NF_SUBSECTOR	0x8000
+#if !defined __GNUC__ && !defined __attribute__
+#define __attribute__(whatever)
+#endif
 
 // TYPES -------------------------------------------------------------------
 
-struct winding_t
+class GLVisError
 {
-	bool	original;			// don't free, it's part of the portal
-	TVec	points[2];
+ public:
+	GLVisError(const char *, ...) __attribute__((format(printf, 2, 3)));
+
+	char message[256];
 };
 
-enum vstatus_t { stat_none, stat_working, stat_done };
-struct portal_t : TPlane	// normal pointing into neighbor
+class TGLVis
 {
-	int			leaf;		// neighbor
-	winding_t	winding;
-	vstatus_t	status;
-	byte		*visbits;
-	byte		*mightsee;
-	int			nummightsee;
-	int			numcansee;
-};
+ public:
+	TGLVis(void) : Malloc(NULL), Free(NULL), fastvis(false), verbose(false),
+		testlevel(2), num_specified_maps(0)
+	{
+	}
 
-#define	MAX_PORTALS_ON_LEAF		128
-struct leaf_t
-{
-	int			numportals;
-	portal_t	*portals[MAX_PORTALS_ON_LEAF];
-};
+	void Build(const char *srcfile);
+	virtual void DisplayMessage(const char *text, ...)
+		__attribute__((format(printf, 2, 3))) = 0;
+	virtual void DisplayStartMap(const char *levelname) = 0;
+	virtual void DisplayBaseVisProgress(int count, int total) = 0;
+	virtual void DisplayPortalVisProgress(int count, int total) = 0;
+	virtual void DisplayMapDone(int accepts, int total) = 0;
 
-struct pstack_t
-{
-	pstack_t	*next;
-	leaf_t		*leaf;
-	portal_t	*portal;	// portal exiting
-	winding_t	*source, *pass;
-	TPlane		portalplane;
-	byte		*mightsee;		// bit string
-};
+	void *(*Malloc)(size_t);
+	void (*Free)(void *);
 
-struct threaddata_t
-{
-	byte		*leafvis;		// bit string
-	portal_t	*base;
-	pstack_t	pstack_head;
-};
+	bool fastvis;
+	bool verbose;
 
-typedef TVec vertex_t;
+	int testlevel;
 
-typedef leaf_t subsector_t;
-
-struct seg_t : public TPlane
-{
-	vertex_t	*v1;
-	vertex_t	*v2;
-
-	seg_t		*partner;
-	int			leaf;
+	int num_specified_maps;
+	char specified_maps[100][16];
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void LoadLevel(int lumpnum, int gl_lumpnum);
-void FreeLevel(void);
-
-void BuildPVS(void);
-
-void PortalFlow(portal_t *p);
-void BasePortalVis(void);
-
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-extern TIWadFile		*mainwad;
-extern TIWadFile		*glwad;
-extern TOWadFile		outwad;
-
-extern bool				silent_mode;
-extern bool				show_progress;
-extern bool				fastvis;
-extern bool				verbose;
-
-extern int				testlevel;
-
-extern int				numvertexes;
-extern vertex_t			*vertexes;
-
-extern int				numsegs;
-extern seg_t			*segs;
-
-extern int				numsubsectors;
-extern subsector_t		*subsectors;
-
-extern int				numportals;
-extern portal_t			*portals;
+} // namespace VavoomUtils
 
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/12 17:28:38  dj_jl
+//	Created glVIS plugin
+//
 //	Revision 1.3  2001/08/24 17:08:34  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:55  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

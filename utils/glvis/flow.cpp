@@ -29,7 +29,9 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#include "glvis.h"
+#include "glvisint.h"
+
+namespace VavoomUtils {
 
 // MACROS ------------------------------------------------------------------
 
@@ -47,32 +49,15 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static int			bitbytes;				// (portalleafs+63)>>3
-static int			bitlongs;
-
-static byte			*portalsee;
-static int			c_leafsee, c_portalsee;
-
-static int			c_chains;
-static int			c_portalskip, c_leafskip;
-static int			c_vistest, c_mighttest;
-static int			c_portaltest, c_portalpass, c_portalcheck;
-
-static int			totalvis;
-static int			rowbytes;
-static byte			*vis;
-
-static const char	progress_chars[] = {'|', '/', '-', '\\'};
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	SimpleFlood
+//	TVisBuilder::SimpleFlood
 //
 //==========================================================================
 
-static void SimpleFlood(portal_t *srcportal, int leafnum)
+void TVisBuilder::SimpleFlood(portal_t *srcportal, int leafnum)
 {
 	int			i;
 	leaf_t		*leaf;
@@ -96,29 +81,26 @@ static void SimpleFlood(portal_t *srcportal, int leafnum)
 
 //==========================================================================
 //
-//	BasePortalVis
+//	TVisBuilder::BasePortalVis
 //
 //	This is a rough first-order aproximation that is used to trivially
 // reject some of the final calculations.
 //
 //==========================================================================
 
-void BasePortalVis(void)
+void TVisBuilder::BasePortalVis(void)
 {
 	int			i, j, k;
 	portal_t	*tp, *p;
 	float		d;
 	winding_t	*w;
 
-	portalsee = new byte[numportals];
+	portalsee = New<byte>(numportals);
 	for (i = 0, p = portals; i < numportals; i++, p++)
 	{
-		if (show_progress && !(i & 0x1f))
-		{
-			fprintf(stderr, "%c\b", progress_chars[(i >> 5) & 3]);
-		}
+		Owner.DisplayBaseVisProgress(i, numportals);
 
-		p->mightsee = new byte[bitbytes];
+		p->mightsee = New<byte>(bitbytes);
 		
 		c_portalsee = 0;
 		memset(portalsee, 0, numportals);
@@ -155,49 +137,49 @@ void BasePortalVis(void)
 		c_leafsee = 0;
 		SimpleFlood(p, p->leaf);
 		p->nummightsee = c_leafsee;
-//		printf ("portal:%4i  c_leafsee:%4i \n", i, c_leafsee);
 	}
-	delete[] portalsee;
+	Owner.DisplayBaseVisProgress(numportals, numportals);
+	Delete(portalsee);
 }
 
 //==========================================================================
 //
-//	CheckStack
+//	TVisBuilder::CheckStack
 //
 //==========================================================================
 
-static void CheckStack(leaf_t *leaf, threaddata_t *thread)
+void TVisBuilder::CheckStack(leaf_t *leaf, threaddata_t *thread)
 {
 	pstack_t	*p;
 
 	for (p = thread->pstack_head.next; p; p = p->next)
 		if (p->leaf == leaf)
-			Error("CheckStack: leaf recursion");
+			throw GLVisError("CheckStack: leaf recursion");
 }
 
 //==========================================================================
 //
-//	FreeWinding
+//	TVisBuilder::FreeWinding
 //
 //==========================================================================
 
-static void FreeWinding(winding_t *w)
+void TVisBuilder::FreeWinding(winding_t *w)
 {
 	if (!w->original)
-		delete w;
+		Delete(w);
 }
 
 //==========================================================================
 //
-//	CopyWinding
+//	TVisBuilder::CopyWinding
 //
 //==========================================================================
 
-static winding_t *CopyWinding(winding_t *w)
+winding_t *TVisBuilder::CopyWinding(winding_t *w)
 {
 	winding_t	*c;
 	
-	c = new winding_t;
+	c = New<winding_t>();
 	c->points[0] = w->points[0];
 	c->points[1] = w->points[1];
 	c->original = false;
@@ -206,14 +188,14 @@ static winding_t *CopyWinding(winding_t *w)
 
 //==========================================================================
 //
-//	ClipWinding
+//	TVisBuilder::ClipWinding
 //
 //	Clips the winding to the plane, returning the new winding on the
 // positive side. Frees the input winding.
 //
 //==========================================================================
 
-static winding_t *ClipWinding(winding_t *in, TPlane *split)
+winding_t *TVisBuilder::ClipWinding(winding_t *in, TPlane *split)
 {
 	float		dists[2];
 	float		dot;
@@ -234,7 +216,7 @@ static winding_t *ClipWinding(winding_t *in, TPlane *split)
 		return in;
 	}
 	
-	neww = new winding_t;
+	neww = New<winding_t>();
 
 	// generate a split point
 	TVec &p1 = in->points[0];
@@ -276,7 +258,7 @@ static winding_t *ClipWinding(winding_t *in, TPlane *split)
 
 //==========================================================================
 //
-//	ClipToSeperators
+//	TVisBuilder::ClipToSeperators
 //
 //	Source, pass, and target are an ordering of portals.
 //	Generates seperating planes canidates by taking two points from source
@@ -285,7 +267,8 @@ static winding_t *ClipWinding(winding_t *in, TPlane *split)
 //
 //==========================================================================
 
-static winding_t *ClipToSeperators(winding_t *source, winding_t *pass, winding_t *target)
+winding_t *TVisBuilder::ClipToSeperators(winding_t *source, winding_t *pass,
+	winding_t *target)
 {
 	int			i, j;
 	TPlane		plane;
@@ -368,14 +351,15 @@ static winding_t *ClipToSeperators(winding_t *source, winding_t *pass, winding_t
 
 //==========================================================================
 //
-//	RecursiveLeafFlow
+//	TVisBuilder::RecursiveLeafFlow
 //
 //	Flood fill through the leafs
 //	If src_portal is NULL, this is the originating leaf
 //
 //==========================================================================
 
-static void RecursiveLeafFlow(int leafnum, threaddata_t *thread, pstack_t *prevstack)
+void TVisBuilder::RecursiveLeafFlow(int leafnum, threaddata_t *thread,
+	pstack_t *prevstack)
 {
 	pstack_t	stack;
 	portal_t	*p;
@@ -402,7 +386,7 @@ static void RecursiveLeafFlow(int leafnum, threaddata_t *thread, pstack_t *prevs
 	stack.next = NULL;
 	stack.leaf = leaf;
 	stack.portal = NULL;
-	stack.mightsee = new byte[bitbytes];
+	stack.mightsee = New<byte>(bitbytes);
 	might = (long *)stack.mightsee;
 	vis = (long *)thread->leafvis;
 	
@@ -485,7 +469,7 @@ static void RecursiveLeafFlow(int leafnum, threaddata_t *thread, pstack_t *prevs
 
 		c_portaltest++;
 
-		if (testlevel > 0)
+		if (Owner.testlevel > 0)
 		{
 			target = ClipToSeperators(source, prevstack->pass, target);
 			if (!target)
@@ -495,7 +479,7 @@ static void RecursiveLeafFlow(int leafnum, threaddata_t *thread, pstack_t *prevs
 			}
 		}
 		
-		if (testlevel > 1)
+		if (Owner.testlevel > 1)
 		{
 			source = ClipToSeperators(target, prevstack->pass, source);
 			if (!source)
@@ -517,24 +501,24 @@ static void RecursiveLeafFlow(int leafnum, threaddata_t *thread, pstack_t *prevs
 		FreeWinding(target);
 	}
 	
-	delete[] stack.mightsee;
+	Delete(stack.mightsee);
 }
 
 //==========================================================================
 //
-//	PortalFlow
+//	TVisBuilder::PortalFlow
 //
 //==========================================================================
 
-void PortalFlow(portal_t *p)
+void TVisBuilder::PortalFlow(portal_t *p)
 {
 	threaddata_t	data;
 
 	if (p->status != stat_working)
-		Error("PortalFlow: reflowed");
+		throw GLVisError("PortalFlow: reflowed");
 	p->status = stat_working;
 	
-	p->visbits = new byte[bitbytes];
+	p->visbits = New<byte>(bitbytes);
 
 	memset(&data, 0, sizeof(data));
 	data.leafvis = p->visbits;
@@ -547,13 +531,13 @@ void PortalFlow(portal_t *p)
 		
 	RecursiveLeafFlow(p->leaf, &data, &data.pstack_head);
 
-	delete[] p->mightsee;
+	Delete(p->mightsee);
 	p->status = stat_done;
 }
 
 //==========================================================================
 //
-//	GetNextPortal
+//	TVisBuilder::GetNextPortal
 //
 //	Returns the next portal for a thread to work on
 //	Returns the portals from the least complex, so the later ones can reuse
@@ -561,7 +545,7 @@ void PortalFlow(portal_t *p)
 //
 //==========================================================================
 
-static portal_t *GetNextPortal(void)
+portal_t *TVisBuilder::GetNextPortal(void)
 {
 	int			j;
 	portal_t	*p, *tp;
@@ -587,16 +571,16 @@ static portal_t *GetNextPortal(void)
 
 //==========================================================================
 //
-//	CalcPortalVis
+//	TVisBuilder::CalcPortalVis
 //
 //==========================================================================
 
-static void CalcPortalVis(void)
+void TVisBuilder::CalcPortalVis(void)
 {
 	int		i;
 
 	// fastvis just uses mightsee for a very loose bound
-	if (fastvis)
+	if (Owner.fastvis)
 	{
 		for (i = 0; i < numportals; i++)
 		{
@@ -611,10 +595,7 @@ static void CalcPortalVis(void)
 
 	do
 	{
-		if (show_progress && (!i || (numportals - i) % 10 == 0))
-		{
-			fprintf(stderr, "%05d\b\b\b\b\b", numportals - i);
-		}
+		Owner.DisplayPortalVisProgress(i, numportals);
 
 		p = GetNextPortal();
 		if (!p)
@@ -622,27 +603,28 @@ static void CalcPortalVis(void)
 			
 		PortalFlow(p);
 		
-		if (verbose)
-			printf("portal:%4i  mightsee:%4i  cansee:%4i\n", (int)(p - portals), p->nummightsee, p->numcansee);
+		if (Owner.verbose)
+			Owner.DisplayMessage("portal:%4i  mightsee:%4i  cansee:%4i\n", (int)(p - portals), p->nummightsee, p->numcansee);
 		i++;
 	} while (1);
+	Owner.DisplayPortalVisProgress(numportals, numportals);
 
-	if (verbose)
+	if (Owner.verbose)
 	{
-		printf("portalcheck: %i  portaltest: %i  portalpass: %i\n",c_portalcheck, c_portaltest, c_portalpass);
-		printf("c_vistest: %i  c_mighttest: %i\n",c_vistest, c_mighttest);
+		Owner.DisplayMessage("portalcheck: %i  portaltest: %i  portalpass: %i\n", c_portalcheck, c_portaltest, c_portalpass);
+		Owner.DisplayMessage("c_vistest: %i  c_mighttest: %i\n", c_vistest, c_mighttest);
 	}
 }
 
 //==========================================================================
 //
-//	LeafFlow
+//	TVisBuilder::LeafFlow
 //
 //	Builds the entire visibility list for a leaf
 //
 //==========================================================================
 
-static void LeafFlow(int leafnum)
+void TVisBuilder::LeafFlow(int leafnum)
 {
 	leaf_t		*leaf;
 	byte		*outbuffer;
@@ -659,14 +641,14 @@ static void LeafFlow(int leafnum)
 	{
 		p = leaf->portals[i];
 		if (p->status != stat_done)
-			Error("portal %d not done", (int)(p - portals));
+			throw GLVisError("portal %d not done", (int)(p - portals));
 		for (j = 0; j < rowbytes; j++)
 			outbuffer[j] |= p->visbits[j];
-		delete[] p->visbits;
+		Delete(p->visbits);
 	}
 
 	if (outbuffer[leafnum >> 3] & (1 << (leafnum & 7)))
-		Error("Leaf portals saw into leaf");
+		throw GLVisError("Leaf portals saw into leaf");
 		
 	outbuffer[leafnum >> 3] |= (1 << (leafnum & 7));
 
@@ -676,24 +658,21 @@ static void LeafFlow(int leafnum)
 			numvis++;
 	totalvis += numvis;
 			
-	if (verbose)
-		printf("leaf %4i : %4i visible\n", leafnum, numvis);
+	if (Owner.verbose)
+	{
+		Owner.DisplayMessage("leaf %4i : %4i visible\n", leafnum, numvis);
+	}
 }
 
 //==========================================================================
 //
-//	BuildPVS
+//	TVisBuilder::BuildPVS
 //
 //==========================================================================
 
-void BuildPVS(void)
+void TVisBuilder::BuildPVS(void)
 {
 	int i;
-
-	if (!silent_mode)
-	{
-		cerr << "Creating vis data ... ";
-	}
 
 	bitbytes = ((numsubsectors + 63) & ~63) >> 3;
 	bitlongs = bitbytes / sizeof(long);
@@ -707,31 +686,27 @@ void BuildPVS(void)
 	// assemble the leaf vis lists by oring and compressing the portal lists
 	//
 	totalvis = 0;
-	vis = new byte[rowbytes * numsubsectors];
+	vissize = rowbytes * numsubsectors;
+	vis = New<byte>(vissize);
 	for (i = 0; i < numsubsectors; i++)
 	{
 		LeafFlow(i);
 	}
 		
-	if (!silent_mode)
-	{
-		cerr << totalvis << " accepts, "
-			<< (numsubsectors * numsubsectors - totalvis) << " rejects, "
-			<< (totalvis * 100 / (numsubsectors * numsubsectors)) << "%\n";
-	}
-
-	//	Write lump
-	outwad.AddLump("GL_PVS", vis, rowbytes * numsubsectors);
-
-	delete vis;
+	Owner.DisplayMapDone(totalvis, numsubsectors * numsubsectors);
 }
+
+} // namespace VavoomUtils
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/09/12 17:28:38  dj_jl
+//	Created glVIS plugin
+//
 //	Revision 1.4  2001/08/30 17:47:47  dj_jl
 //	Overflow protection
-//
+//	
 //	Revision 1.3  2001/08/24 17:08:34  dj_jl
 //	Beautification
 //	

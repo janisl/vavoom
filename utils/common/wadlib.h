@@ -23,6 +23,11 @@
 //**
 //**************************************************************************
 
+#ifndef WADLIB_H
+#define WADLIB_H
+
+namespace VavoomUtils {
+
 // HEADER FILES ------------------------------------------------------------
 
 // MACROS ------------------------------------------------------------------
@@ -34,6 +39,17 @@ struct lumpinfo_t
 	char	name[12];
 	int		position;
 	int		size;
+};
+
+class WadLibError
+{
+ public:
+	WadLibError(const char *Amessage)
+	{
+		strcpy(message, Amessage);
+	}
+
+	char message[256];
 };
 
 class TIWadFile
@@ -120,12 +136,19 @@ inline void CleanupName(const char *src, char *dst)
 	}
 }
 
+} // namespace VavoomUtils
+
+#endif
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/09/12 17:28:38  dj_jl
+//	Created glVIS plugin
+//
 //	Revision 1.4  2001/08/30 17:47:47  dj_jl
 //	Overflow protection
-//
+//	
 //	Revision 1.3  2001/08/24 17:08:34  dj_jl
 //	Beautification
 //	

@@ -27,6 +27,8 @@
 
 #include "cmdlib.h"
 
+namespace VavoomUtils {
+
 // MACROS ------------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
@@ -37,9 +39,15 @@
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
+static void *DefaultMalloc(size_t size);
+static void DefaultFree(void *ptr);
+
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
+
+void *(*Malloc)(size_t size) = DefaultMalloc;
+void (*Free)(void *ptr) = DefaultFree;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -49,11 +57,11 @@ static int		empty_ptr;
 
 //==========================================================================
 //
-//	Malloc
+//	DefaultMalloc
 //
 //==========================================================================
 
-void *Malloc(size_t size)
+static void *DefaultMalloc(size_t size)
 {
 	if (!size)
 	{
@@ -71,42 +79,16 @@ void *Malloc(size_t size)
 
 //==========================================================================
 //
-//	Free
+//	DefaultFree
 //
 //==========================================================================
 
-void Free(void *ptr)
+static void DefaultFree(void *ptr)
 {
 	if (ptr != &empty_ptr)
 	{
 		free(ptr);
 	}
-}
-
-//==========================================================================
-//
-//	C++ operators
-//
-//==========================================================================
-
-void * operator new(size_t size)
-{
-	return Malloc(size);
-}
-
-void * operator new[](size_t size)
-{
-	return ::operator new(size);
-}
-
-void operator delete(void *ptr)
-{
-	Free(ptr);
-}
-
-void operator delete[](void *ptr)
-{
-	::operator delete(ptr);
 }
 
 //==========================================================================
@@ -363,12 +345,17 @@ int LoadFile(const char *name, void **bufferptr)
 	return length;
 }
 
+} // namespace VavoomUtils
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/12 17:28:38  dj_jl
+//	Created glVIS plugin
+//
 //	Revision 1.3  2001/08/21 17:51:21  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
