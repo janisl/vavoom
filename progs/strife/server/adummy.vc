@@ -23,320 +23,323 @@
 //**
 //**************************************************************************
 
-void A_6(mobj_t * self)
+void A_6(mobj_t * actor)
 {
 }
 
-void A_7(mobj_t * self)
+void A_7(mobj_t * actor)
 {
 }
-void A_8(mobj_t * self)
+void A_8(mobj_t * actor)
 {
 }
-void A_9(mobj_t * self)
+void A_9(mobj_t * actor)
 {
 }
-void A_10(mobj_t * self)
+void A_10(mobj_t * actor)
 {
 }
-void A_11(mobj_t * self)
+void A_11(mobj_t * actor)
 {
 }
-void A_12(mobj_t * self)
+void A_12(mobj_t * actor)
 {
 }
-void A_13(mobj_t * self)
+void A_13(mobj_t * actor)
 {
 }
-void A_14(mobj_t * self)
+void A_14(mobj_t * actor)
 {
 }
-void A_15(mobj_t * self)
+void A_15(mobj_t * actor)
 {
 }
-void A_16(mobj_t * self)
+void A_16(mobj_t * actor)
 {
 }
-void A_17(mobj_t * self)
+void A_17(mobj_t * actor)
 {
 }
-void A_18(mobj_t * self)
+void A_18(mobj_t * actor)
 {
 }
-void A_19(mobj_t * self)
+void A_19(mobj_t * actor)
 {
 }
-void A_20(mobj_t * self)
+void A_20(mobj_t * actor)
 {
 }
-void A_21(mobj_t * self)
+void A_21(mobj_t * actor)
 {
 }
-void A_22(mobj_t * self)
+void A_22(mobj_t * actor)
 {
 }
-void A_23(mobj_t * self)
+void A_23(mobj_t * actor)
 {
 }
-void A_24(mobj_t * self)
+void A_24(mobj_t * actor)
 {
 }
-void A_25(mobj_t * self)
+void A_25(mobj_t * actor)
 {
 }
-void A_26(mobj_t * self)
+void A_26(mobj_t * actor)
 {
 }
-void A_27(mobj_t * self)
+void A_27(mobj_t * actor)
 {
 }
-void A_28(mobj_t * self)
+void A_28(mobj_t * actor)
 {
 }
-void A_29(mobj_t * self)
+void A_29(mobj_t * actor)
 {
 }
-void A_30(mobj_t * self)
+void A_30(mobj_t * actor)
 {
 }
-void A_31(mobj_t * self)
+void A_31(mobj_t * actor)
 {
 }
-void A_32(mobj_t * self)
+void A_32(mobj_t * actor)
 {
 }
-void A_33(mobj_t * self)
+void A_33(mobj_t * actor)
 {
 }
-void A_34(mobj_t * self)
+void A_34(mobj_t * actor)
 {
 }
-void A_35(mobj_t * self)
+void A_35(mobj_t * actor)
 {
 }
-void A_36(mobj_t * self)
+void A_36(mobj_t * actor)
 {
 }
-void A_37(mobj_t * self)
+void A_37(mobj_t * actor)
 {
 }
-void A_38(mobj_t * self)
+void A_38(mobj_t * actor)
 {
 }
-void A_42(mobj_t * self)
+void A_42(mobj_t * actor)
 {
 }
-void A_43(mobj_t * self)
+void A_43(mobj_t * actor)
 {
 }
-void A_44(mobj_t * self)
+void A_44(mobj_t * actor)
 {
 }
-void A_45(mobj_t * self)
+void A_45(mobj_t * actor)
 {
 }
-void A_46(mobj_t * self)
+void A_46(mobj_t * actor)
 {
 }
-void A_48(mobj_t * self)
+void A_48(mobj_t * actor)
 {
 }
-void A_49(mobj_t * self)
+void A_49(mobj_t * actor)
 {
 }
-void A_50(mobj_t * self)
+void A_50(mobj_t * actor)
 {
 }
-void A_51(mobj_t * self)
+void A_51(mobj_t * actor)
 {
 }
-void A_52(mobj_t * self)
+void A_52(mobj_t * actor)
 {
 }
-void A_53(mobj_t * self)
+void A_53(mobj_t * actor)
 {
 }
-void A_54(mobj_t * self)
+void A_54(mobj_t * actor)
 {
 }
-void A_55(mobj_t * self)
+void A_55(mobj_t * actor)
 {
 }
-void A_56(mobj_t * self)
+void A_56(mobj_t * actor)
 {
 }
-void A_57(mobj_t * self)
+void A_57(mobj_t * actor)
 {
 }
-void A_58(mobj_t * self)
+void A_58(mobj_t * actor)
 {
 }
-void A_59(mobj_t * self)
+void A_59(mobj_t * actor)
 {
 }
-void A_60(mobj_t * self)
+void A_60(mobj_t * actor)
 {
 }
-void A_61(mobj_t * self)
+void A_61(mobj_t * actor)
 {
 }
-void A_62(mobj_t * self)
+void A_62(mobj_t * actor)
 {
 }
-void A_63(mobj_t * self)
+void A_63(mobj_t * actor)
 {
 }
-void A_64(mobj_t * self)
+void A_64(mobj_t * actor)
 {
 }
-void A_65(mobj_t * self)
+void A_65(mobj_t * actor)
 {
 }
-void A_66(mobj_t * self)
+void A_66(mobj_t * actor)
 {
 }
-void A_67(mobj_t * self)
+void A_67(mobj_t * actor)
 {
 }
-void A_68(mobj_t * self)
+void A_68(mobj_t * actor)
 {
 }
-void A_69(mobj_t * self)
+void A_69(mobj_t * actor)
 {
 }
-void A_70(mobj_t * self)
+void A_70(mobj_t * actor)
 {
 }
-void A_71(mobj_t * self)
+void A_71(mobj_t * actor)
 {
 }
-void A_72(mobj_t * self)
+void A_72(mobj_t * actor)
 {
 }
-void A_73(mobj_t * self)
+void A_73(mobj_t * actor)
 {
 }
-void A_74(mobj_t * self)
+void A_74(mobj_t * actor)
 {
 }
-void A_75(mobj_t * self)
+void A_75(mobj_t * actor)
 {
 }
-void A_76(mobj_t * self)
+void A_76(mobj_t * actor)
 {
 }
-void A_77(mobj_t * self)
+void A_77(mobj_t * actor)
 {
 }
-void A_78(mobj_t * self)
+void A_78(mobj_t * actor)
 {
 }
-void A_79(mobj_t * self)
+void A_79(mobj_t * actor)
 {
 }
-void A_80(mobj_t * self)
+void A_80(mobj_t * actor)
 {
 }
-void A_81(mobj_t * self)
+void A_81(mobj_t * actor)
 {
 }
-void A_82(mobj_t * self)
+void A_82(mobj_t * actor)
 {
 }
-void A_83(mobj_t * self)
+void A_83(mobj_t * actor)
 {
 }
-void A_84(mobj_t * self)
+void A_84(mobj_t * actor)
 {
 }
-void A_85(mobj_t * self)
+void A_85(mobj_t * actor)
 {
 }
-void A_86(mobj_t * self)
+void A_86(mobj_t * actor)
 {
 }
-void A_87(mobj_t * self)
+void A_87(mobj_t * actor)
 {
 }
-void A_88(mobj_t * self)
+void A_88(mobj_t * actor)
 {
 }
-void A_89(mobj_t * self)
+void A_89(mobj_t * actor)
 {
 }
-void A_90(mobj_t * self)
+void A_90(mobj_t * actor)
 {
 }
-void A_91(mobj_t * self)
+void A_91(mobj_t * actor)
 {
 }
-void A_92(mobj_t * self)
+void A_92(mobj_t * actor)
 {
 }
-void A_93(mobj_t * self)
+void A_93(mobj_t * actor)
 {
 }
-void A_94(mobj_t * self)
+void A_94(mobj_t * actor)
 {
 }
-void A_95(mobj_t * self)
+void A_95(mobj_t * actor)
 {
 }
-void A_96(mobj_t * self)
+void A_96(mobj_t * actor)
 {
 }
-void A_97(mobj_t * self)
+void A_97(mobj_t * actor)
 {
 }
-void A_98(mobj_t * self)
+void A_98(mobj_t * actor)
 {
 }
-void A_99(mobj_t * self)
+void A_99(mobj_t * actor)
 {
 }
-void A_100(mobj_t * self)
+void A_100(mobj_t * actor)
 {
 }
-void A_101(mobj_t * self)
+void A_101(mobj_t * actor)
 {
 }
-void A_102(mobj_t * self)
+void A_102(mobj_t * actor)
 {
 }
-void A_103(mobj_t * self)
+void A_103(mobj_t * actor)
 {
 }
-void A_104(mobj_t * self)
+void A_104(mobj_t * actor)
 {
 }
-void A_105(mobj_t * self)
+void A_105(mobj_t * actor)
 {
 }
-void A_106(mobj_t * self)
+void A_106(mobj_t * actor)
 {
 }
-void A_107(mobj_t * self)
+void A_107(mobj_t * actor)
 {
 }
-void A_108(mobj_t * self)
+void A_108(mobj_t * actor)
 {
 }
-void A_109(mobj_t * self)
+void A_109(mobj_t * actor)
 {
 }
-void A_110(mobj_t * self)
+void A_110(mobj_t * actor)
 {
 }
-void A_111(mobj_t * self)
+void A_111(mobj_t * actor)
 {
 }
-void A_112(mobj_t * self)
+void A_112(mobj_t * actor)
 {
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2001/12/01 18:12:40  dj_jl
+//  self is now a keyword
+//
 //  Revision 1.3  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //
