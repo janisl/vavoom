@@ -389,6 +389,7 @@ LOPCODE_TABLE:
  dd LOPC_PUSHFUNCTION
  dd LOPC_PUSHCLASSID
  dd LOPC_DYNAMIC_CAST
+ dd LOPC_CASE_GOTO_CLASSID
  align 4
 LINC_STATEMENT_POINTER:
  add edi,4
@@ -749,6 +750,7 @@ LOPC_IFNOTGOTO:
  jmp  dword ptr[LOPCODE_TABLE+eax*4]
  align 4
 LOPC_CASEGOTO:
+LOPC_CASE_GOTO_CLASSID:
  mov eax,dword ptr[edi]
  add edi,4
  cmp eax,dword ptr[-4+esi]
