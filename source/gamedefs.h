@@ -60,8 +60,8 @@
 
 #define VERSION_MAJOR	1
 #define VERSION_MINOR	11
-#define VERSION_RELEASE	1
-#define VERSION_TEXT	"1.11.1"
+#define VERSION_RELEASE	2
+#define VERSION_TEXT	"1.11.2"
 
 //==========================================================================
 //
@@ -119,9 +119,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/01/28 18:45:16  dj_jl
+//	Changed version
+//
 //	Revision 1.16  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.15  2002/01/03 18:38:25  dj_jl
 //	Added guard macros and core dumps
 //	
