@@ -560,6 +560,12 @@ bool PTR_UseThingTraverse(intercept_t * in)
 
 	if (!in->bIsALine)
 	{
+		//	Check height.
+		if (usething.Origin.z >= in->Thing.Origin.z + in->Thing.Height ||
+			usething.Origin.z + usething.Height <= in->Thing.Origin.z)
+		{
+			return true;
+		}
 		if (StartConversation(usething, Actor(in->Thing)))
 		{
 			return false;
@@ -1157,6 +1163,9 @@ bool PIT_RadiusAttack(Entity Other)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.32  2004/02/16 07:13:26  dj_jl
+//  Height check on using a thing
+//
 //  Revision 1.31  2003/11/12 16:51:33  dj_jl
 //  Changed player structure into a class
 //
