@@ -144,12 +144,83 @@ void InitInfoTables(void)
 
 //==========================================================================
 //
+//	FindState
+//
+//==========================================================================
+
+static int FindState(FName StateName)
+{
+	for (TArray<state_t>::TIterator It(states); It; ++It)
+	{
+		if (It->statename == StateName)
+		{
+			return It.GetIndex();
+		}
+	}
+	ParseError("No such state %s", *StateName);
+	return 0;
+}
+
+namespace Pass2 {
+
+//==========================================================================
+//
 //	ParseStates
 //
 //==========================================================================
 
 void ParseStates(TType *class_type)
 {
+#ifdef USE_2_PASSES
+	if (!class_type && TK_Check(PU_LPAREN))
+	{
+		class_type = CheckForType();
+		if (!class_type || class_type->type != ev_class)
+		{
+			ParseError("Class name expected");
+		}
+		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+	}
+	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+	while (!TK_Check(PU_RBRACE))
+	{
+		state_t &s = states[FindState(tk_Name)];
+
+		//	St∆vokıa identifik∆tors
+		if (tk_Token != TK_IDENTIFIER)
+		{
+			ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
+		}
+		TK_NextToken();
+		TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+		//	Spraita v∆rds
+		TK_NextToken();
+		TK_Expect(PU_COMMA, ERR_NONE);
+		//  Kadrs
+		EvalConstExpression(ev_int);
+		TK_Expect(PU_COMMA, ERR_NONE);
+		if (tk_Token == TK_NAME)
+		{
+			TK_NextToken();
+			TK_Expect(PU_COMMA, ERR_NONE);
+			//  Kadrs
+			EvalConstExpression(ev_int);
+			TK_Expect(PU_COMMA, ERR_NONE);
+		}
+		//  Taktis
+		ConstFloatExpression();
+		TK_Expect(PU_COMMA, ERR_NONE);
+		//  N∆ko˝ais st∆voklis
+		if (tk_Token != TK_IDENTIFIER)
+		{
+			ERR_Exit(ERR_NONE, true, NULL);
+		}
+		TK_NextToken();
+		TK_Expect(PU_RPAREN, ERR_NONE);
+		//	Code
+		ParseStateCode(class_type, s.function);
+	}
+#else
 	int i;
 
 	if (!class_type && TK_Check(PU_LPAREN))
@@ -240,23 +311,6 @@ void ParseStates(TType *class_type)
 		//  Taktis
 		s.time = ConstFloatExpression();
 		TK_Expect(PU_COMMA, ERR_NONE);
-#if 0
-		//	Funkcija
-		if (TK_Check(KW_NULL))
-		{
-			s.function = 0;
-		}
-		else
-		{
-			field_t *field = CheckForField(class_type);
-			if (!field || field->type->type != ev_method)
-			{
-				ERR_Exit(ERR_NONE, true, "Function name expected");
-			}
-			s.function = field->func_num;
-		}
-		TK_Expect(PU_COMMA, ERR_NONE);
-#endif
 		//  N∆ko˝ais st∆voklis
 		if (tk_Token != TK_IDENTIFIER)
 		{
@@ -268,8 +322,10 @@ void ParseStates(TType *class_type)
 		//	Code
 		s.function = ParseStateCode(class_type);
 	}
+#endif
 }
 
+#ifndef USE_2_PASSES
 //==========================================================================
 //
 //	AddToMobjInfo
@@ -282,6 +338,7 @@ void AddToMobjInfo(int Index, int ClassID)
 	mobj_info[i].doomednum = Index;
 	mobj_info[i].class_id = ClassID;
 }
+#endif
 
 //==========================================================================
 //
@@ -379,12 +436,151 @@ void AddInfoTables(void)
 				states.Num(), mobj_info.Num());
 }
 
+} // namespace Pass2
+
+//**************************************************************************
+//**************************************************************************
+
+#ifdef USE_2_PASSES
+namespace Pass1 {
+
+//==========================================================================
+//
+//	ParseStates
+//
+//==========================================================================
+
+void ParseStates(TType *class_type)
+{
+	int i;
+
+	if (!class_type && TK_Check(PU_LPAREN))
+	{
+		class_type = CheckForType();
+		if (!class_type || class_type->type != ev_class)
+		{
+			ParseError("Class name expected");
+		}
+		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+	}
+	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+	while (!TK_Check(PU_RBRACE))
+	{
+		state_t &s = *new(states) state_t;
+		memset(&s, 0, sizeof(s));
+		compstate_t &cs = *new(compstates) compstate_t;
+		memset(&cs, 0, sizeof(cs));
+
+		//	St∆vokıa identifik∆tors
+		if (tk_Token != TK_IDENTIFIER)
+		{
+			ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
+		}
+		s.statename = tk_Name;
+		AddConstant(tk_Name, states.Num() - 1);
+		TK_NextToken();
+		TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+		//	Spraita v∆rds
+		if (tk_Token != TK_NAME)
+		{
+			ERR_Exit(ERR_NONE, true, "Sprite name expected");
+		}
+		if (tk_Name != NAME_None)
+		{
+			if (strlen(*tk_Name) != 4)
+			{
+				ERR_Exit(ERR_NONE, true, "Invalid sprite name");
+			}
+			for (i = 0; i < sprite_names.Num(); i++)
+			{
+		   		if (sprite_names[i] == tk_Name)
+				{
+				   	break;
+				}
+			}
+			if (i == sprite_names.Num())
+			{
+			   	i = sprite_names.AddItem(tk_Name);
+			}
+			s.sprite = i;
+		}
+		else
+		{
+			s.sprite = 0;
+		}
+		TK_NextToken();
+		TK_Expect(PU_COMMA, ERR_NONE);
+		//  Kadrs
+		s.frame = EvalConstExpression(ev_int);
+		TK_Expect(PU_COMMA, ERR_NONE);
+		if (tk_Token == TK_NAME)
+		{
+			//	Modelis
+			for (i = 0; i < models.Num(); i++)
+			{
+		   		if (models[i] == tk_Name)
+				{
+				   	break;
+				}
+			}
+			if (i == models.Num())
+			{
+			   	i = models.AddItem(tk_Name);
+			}
+			s.model_index = i;
+			TK_NextToken();
+			TK_Expect(PU_COMMA, ERR_NONE);
+			//  Kadrs
+			s.model_frame = EvalConstExpression(ev_int);
+			TK_Expect(PU_COMMA, ERR_NONE);
+		}
+		else
+		{
+			s.model_index = 0;
+			s.model_frame = 0;
+		}
+		//  Taktis
+		s.time = ConstFloatExpression();
+		TK_Expect(PU_COMMA, ERR_NONE);
+		//  N∆ko˝ais st∆voklis
+		if (tk_Token != TK_IDENTIFIER)
+		{
+			ERR_Exit(ERR_NONE, true, NULL);
+		}
+		cs.NextName = tk_Name;
+		TK_NextToken();
+		TK_Expect(PU_RPAREN, ERR_NONE);
+		//	Code
+		s.function = ParseStateCode(class_type);
+	}
+}
+
+//==========================================================================
+//
+//	AddToMobjInfo
+//
+//==========================================================================
+
+void AddToMobjInfo(int Index, int ClassID)
+{
+	int i = mobj_info.Add();
+	mobj_info[i].doomednum = Index;
+	mobj_info[i].class_id = ClassID;
+}
+
+} // namespace Pass1
+
+#endif
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2002/08/24 14:45:38  dj_jl
+//	2 pass compiling.
+//
 //	Revision 1.19  2002/07/20 14:53:34  dj_jl
 //	Switched to dynamic arrays.
-//
+//	
 //	Revision 1.18  2002/06/14 15:33:45  dj_jl
 //	Some fixes.
 //	

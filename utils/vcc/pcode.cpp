@@ -34,7 +34,7 @@
 #define MAX_STRINGS				8192
 #define	MAX_STRINGS_BUF			500000
 
-#define OPCODE_STATS
+//#define OPCODE_STATS
 
 // TYPES -------------------------------------------------------------------
 
@@ -68,14 +68,20 @@ TFunction*		functions;
 int				numfunctions;
 int				numbuiltins;
 
+constant_t		Constants[MAX_CONSTANTS];
+int				numconstants;
+constant_t		*ConstantsHash[256];
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static int		undoOpcode;
-static int		undoSize;
+static int			undoOpcode;
+static int			undoSize;
 
+static char*		strings;
+static int			strofs;
 static TStringInfo	StringInfo[MAX_STRINGS];
-static int 		StringCount;
-static int		StringLookup[256];
+static int 			StringCount;
+static int			StringLookup[256];
 
 static struct
 {
@@ -182,6 +188,11 @@ int FindString(const char *str)
 
 int* AddStatement(int statement)
 {
+	if (CurrentPass == 1)
+	{
+		dprintf("AddStatement in pass 1\n");
+	}
+
 	if (CodeBufferSize >= CODE_BUFFER_SIZE)
 	{
 		ERR_Exit(ERR_NONE, false, "Code buffer overflow.");
@@ -338,6 +349,11 @@ int* AddStatement(int statement)
 
 int* AddStatement(int statement, int parm1)
 {
+	if (CurrentPass == 1)
+	{
+		dprintf("AddStatement in pass 1\n");
+	}
+
 	if (CodeBufferSize >= CODE_BUFFER_SIZE)
 	{
 		ERR_Exit(ERR_NONE, false, "Code buffer overflow.");
@@ -367,6 +383,11 @@ int* AddStatement(int statement, int parm1)
 
 int* AddStatement(int statement, int parm1, int parm2)
 {
+	if (CurrentPass == 1)
+	{
+		dprintf("AddStatement in pass 1\n");
+	}
+
 	if (CodeBufferSize >= CODE_BUFFER_SIZE)
 	{
 		ERR_Exit(ERR_NONE, false, "Code buffer overflow.");
@@ -397,6 +418,11 @@ int* AddStatement(int statement, int parm1, int parm2)
 
 int UndoStatement(void)
 {
+	if (CurrentPass == 1)
+	{
+		dprintf("UndoStatement in pass 1\n");
+	}
+
 	CodeBufferSize = undoSize;
 	return undoOpcode;
 }
@@ -667,9 +693,12 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2002/08/24 14:45:38  dj_jl
+//	2 pass compiling.
+//
 //	Revision 1.17  2002/02/26 17:52:20  dj_jl
 //	Exporting special property info into progs.
-//
+//	
 //	Revision 1.16  2002/02/16 16:28:36  dj_jl
 //	Added support for bool variables
 //	

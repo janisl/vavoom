@@ -39,6 +39,8 @@ using namespace VavoomUtils;
 
 // MACROS ------------------------------------------------------------------
 
+#define USE_2_PASSES
+
 //	Number of elements in an array.
 #define ARRAY_COUNT(array)				((int)(sizeof(array) / sizeof((array)[0])))
 
@@ -77,6 +79,7 @@ enum
 	ev_method,
 	ev_classid,
 	ev_bool,
+	ev_unknown,
 
 	NUM_BASIC_TYPES
 };
@@ -383,6 +386,7 @@ struct field_t:public FField
 	int			ofs;
 	TType		*type;
 	int			func_num;	// Method's function
+	FName		TypeName;
 };
 
 class TType:public FField
@@ -483,25 +487,76 @@ void PC_DumpAsm(char* name);
 int EvalConstExpression(int type);
 float ConstFloatExpression(void);
 
+void InitTypes(void);
+TType *FindType(TType *type);
+TType *MakePointerType(TType *type);
+TType *MakeReferenceType(TType *type);
+TType *MakeArrayType(TType *type, int elcount);
+TType *CheckForType(void);
+TType *CheckForType(FName Name);
+
+void InitInfoTables(void);
+
+// -- Pass 1 --
+
+namespace Pass1
+{
+
 void PA_Parse(void);
-void ParseLocalVar(TType *type);
+void ParseLocalVar(void);
 void ParseMethodDef(TType *, field_t *, field_t *, TType *, int);
 int ParseStateCode(TType *class_type);
 void ParseDefaultProperties(field_t *method, TType *class_type);
 
 int CheckForFunction(TType *InClass, FName Name);
 int CheckForGlobalVar(FName Name);
-int CheckForLocalVar(FName Name);
 int CheckForConstant(FName Name);
 void AddConstant(FName Name, int value);
 
-void InitTypes(void);
-TType *CheckForType(void);
-TType *CheckForType(FName Name);
-TType *FindType(TType *type);
-TType *MakePointerType(TType *type);
-TType *MakeReferenceType(TType *type);
-TType *MakeArrayType(TType *type, int elcount);
+void ParseExpression(bool = false);
+
+int TypeSize(TType *t);
+void TypeCheckPassable(TType *type);
+void ParseStruct(void);
+void ParseClass(void);
+void AddFields(void);
+void ParseVector(void);
+void ParseField(void);
+field_t* CheckForField(TType *, bool = true);
+field_t* CheckForField(FName, TType *, bool = true);
+void ParseTypeDef(void);
+void AddVirtualTables(void);
+
+void ParseStates(TType *class_type);
+void AddToMobjInfo(int Index, int ClassID);
+
+}
+
+// -- Pass2 --
+
+namespace Pass2
+{
+
+void PA_Parse(void);
+void ParseLocalVar(TType *type);
+void ParseMethodDef(TType *, field_t *, field_t *, TType *, int);
+#ifdef USE_2_PASSES
+void ParseStateCode(TType *class_type, int funcnum);
+#else
+int ParseStateCode(TType *class_type);
+#endif
+void ParseDefaultProperties(field_t *method, TType *class_type);
+
+int CheckForFunction(TType *InClass, FName Name);
+int CheckForGlobalVar(FName Name);
+int CheckForLocalVar(FName Name);
+int CheckForConstant(FName Name);
+#ifndef USE_2_PASSES
+void AddConstant(FName Name, int value);
+#endif
+
+TType *ParseExpression(bool = false);
+
 int TypeSize(TType *t);
 void TypeCheckPassable(TType *type);
 void TypeCheck1(TType *t);
@@ -518,12 +573,18 @@ field_t* FindConstructor(TType *t);
 void ParseTypeDef(void);
 void AddVirtualTables(void);
 
-void InitInfoTables(void);
 void ParseStates(TType *class_type);
 void AddInfoTables(void);
+#ifndef USE_2_PASSES
 void AddToMobjInfo(int Index, int ClassID);
+#endif
 
-TType *ParseExpression(bool = false);
+extern TType			*ThisType;
+extern TType			*SelfType;
+
+extern localvardef_t	localdefs[MAX_LOCAL_DEFS];
+
+}
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
@@ -556,16 +617,7 @@ extern int				numbuiltins;
 
 extern constant_t		Constants[MAX_CONSTANTS];
 extern int				numconstants;
-
-extern TType			*ThisType;
-extern TType			*SelfType;
-
-extern char*    		strings;
-extern int              strofs;
-
-extern int				NumErrors;
-
-extern localvardef_t	localdefs[MAX_LOCAL_DEFS];
+extern constant_t		*ConstantsHash[256];
 
 extern TType			type_void;
 extern TType			type_int;
@@ -582,9 +634,10 @@ extern TType			type_class;
 extern TType			type_none_ref;
 extern TType			type_bool;
 
+extern TType			**classtypes;
 extern int				numclasses;
 
-extern TType			**classtypes;
+extern int				NumErrors;
 
 extern int				CurrentPass;
 
@@ -653,9 +706,12 @@ inline bool TK_Check(Punctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2002/08/24 14:45:38  dj_jl
+//	2 pass compiling.
+//
 //	Revision 1.24  2002/03/16 17:54:25  dj_jl
 //	Added opcode for pushing virtual function.
-//
+//	
 //	Revision 1.23  2002/03/12 19:17:30  dj_jl
 //	Added keyword abstract
 //	

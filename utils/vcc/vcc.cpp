@@ -88,7 +88,13 @@ int main(int argc, char **argv)
 	dprintf("Preprocessing\n");
 	size = cpp_main(SourceFileName, &buf);
 	TK_OpenSource(buf, size);
-	PA_Parse();
+#ifdef USE_2_PASSES
+	CurrentPass = 1;
+	Pass1::PA_Parse();
+	TK_Restart();
+#endif
+	CurrentPass = 2;
+	Pass2::PA_Parse();
 	TK_CloseSource();
 	PC_WriteObject(ObjectFileName);
 	ERR_RemoveErrorFile();
@@ -294,9 +300,12 @@ int dprintf(const char *text, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/08/24 14:45:38  dj_jl
+//	2 pass compiling.
+//
 //	Revision 1.12  2002/01/11 08:17:31  dj_jl
 //	Added name subsystem, removed support for unsigned ints
-//
+//	
 //	Revision 1.11  2002/01/07 12:31:36  dj_jl
 //	Changed copyright year
 //	

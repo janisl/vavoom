@@ -27,6 +27,8 @@
 
 #include "vcc.h"
 
+namespace Pass2 {
+
 // MACROS ------------------------------------------------------------------
 
 #define MAX_ARG_COUNT		16
@@ -1806,12 +1808,17 @@ TType *ParseExpression(bool bLocals)
 	return t;
 }
 
+} // namespace Pass2
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2002/08/24 14:45:38  dj_jl
+//	2 pass compiling.
+//
 //	Revision 1.24  2002/06/14 15:33:45  dj_jl
 //	Some fixes.
-//
+//	
 //	Revision 1.23  2002/05/03 17:04:03  dj_jl
 //	Mangling of string pointers.
 //	

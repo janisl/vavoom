@@ -80,7 +80,12 @@ static int ConstExprFactor(void)
 			break;
 
 		case TK_IDENTIFIER:
-			num = CheckForConstant(tk_Name);
+#ifdef USE_2_PASSES
+			num = CurrentPass == 1 ? Pass1::CheckForConstant(tk_Name) :
+				Pass2::CheckForConstant(tk_Name);
+#else
+			num = Pass2::CheckForConstant(tk_Name);
+#endif
 			if (num != -1)
 			{
 				TK_NextToken();
@@ -431,7 +436,7 @@ int EvalConstExpression(int type)
 		}
 		else if (tk_Token == TK_IDENTIFIER)
 		{
-			ret = CheckForFunction(NULL, tk_Name);
+			ret = Pass2::CheckForFunction(NULL, tk_Name);
 			if (!ret)
 			{
 				ERR_Exit(ERR_NONE, true, "%s is not a function", *tk_Name);
@@ -477,9 +482,12 @@ float ConstFloatExpression(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/08/24 14:45:38  dj_jl
+//	2 pass compiling.
+//
 //	Revision 1.9  2002/01/11 08:17:31  dj_jl
 //	Added name subsystem, removed support for unsigned ints
-//
+//	
 //	Revision 1.8  2002/01/07 12:31:36  dj_jl
 //	Changed copyright year
 //	
