@@ -263,7 +263,7 @@ defaultproperties
 	bNoBlood = true;
 	bFloorClip = false;
 	bActivateMCross = false;
-	SpawnState = S_BISHOP_LOOK1;
+	IdleState = S_BISHOP_LOOK1;
 	BlurState = S_BISHOP_BLUR1;
 	SeeState = S_BISHOP_WALK1;
 	MissileState = S_BISHOP_ATK1;
@@ -334,6 +334,9 @@ void Actor::A_BishopMissileSeek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/05/18 17:00:00  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.23  2002/04/11 16:52:15  dj_jl
 //  Made TryMove native.
 //

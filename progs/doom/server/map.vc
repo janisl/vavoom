@@ -805,7 +805,7 @@ boolean PIT_RadiusAttack(MapObject Other)
 
 	// Boss spider and cyborg
 	// take no damage from concussion.
-	if (Other.Class == Cyberdemon || Other.Class == SpiderMastermind)
+	if (Actor(Other).bBoss)
 		return true;
 
 	dist = Length(MobjCenter(Other) - MobjCenter(bombspot)) - Other.Radius;
@@ -911,6 +911,9 @@ boolean PIT_VileCheck(MapObject Other)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/05/18 16:59:58  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.27  2002/05/03 17:11:54  dj_jl
 //  Object classes split up into their files.
 //

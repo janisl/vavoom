@@ -85,8 +85,6 @@ defaultproperties
 	DownState = S_PUNCHDOWN;
 	ReadyState = S_PUNCH;
 	AttackState = S_PUNCH1;
-	HoldAttackState = S_NULL;
-	FlashState = S_NULL;
 }
 
 }
@@ -141,7 +139,6 @@ defaultproperties
 	DownState = S_PISTOLDOWN;
 	ReadyState = S_PISTOL;
 	AttackState = S_PISTOL1;
-	HoldAttackState = S_NULL;
 	FlashState = S_PISTOLFLASH;
 	ThirdPersonModel = 'weapons/g_pistol.md2';
 }
@@ -208,7 +205,6 @@ defaultproperties
 	DownState = S_SGUNDOWN;
 	ReadyState = S_SGUN;
 	AttackState = S_SGUN1;
-	HoldAttackState = S_NULL;
 	FlashState = S_SGUNFLASH1;
 	ThirdPersonModel = 'weapons/g_shotg.md2';
 }
@@ -268,9 +264,40 @@ defaultproperties
 	DownState = S_CHAINDOWN;
 	ReadyState = S_CHAIN;
 	AttackState = S_CHAIN1;
-	HoldAttackState = S_NULL;
 	FlashState = S_CHAINFLASH1;
 	ThirdPersonModel = 'weapons/g_chain.md2';
+}
+
+}
+
+//**************************************************************************
+//
+//	Rocket
+//
+//**************************************************************************
+
+class Rocket:Projectile
+{
+
+__states__
+{
+	S_ROCKET('MISL', 0 | FF_FULLBRIGHT, 'missiles/rocket.md2', 0, 1.0 / 35.0, S_ROCKET) { }
+	S_EXPLODE1('MISL', 1 | FF_FULLBRIGHT, 8.0 / 35.0, S_EXPLODE2) { A_Explode(); }
+	S_EXPLODE2('MISL', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_EXPLODE3) { }
+	S_EXPLODE3('MISL', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 11.0;
+	Height = 8.0;
+	Speed = 700.0;
+	MissileDamage = 20;
+	IdleState = S_ROCKET;
+	DeathState = S_EXPLODE1;
+	SightSound = 'LauncherFire';
+	DeathSound = 'BarrelExplode';
+	Effects = EF_DL_MISSILE | EF_ROCKET;
 }
 
 }
@@ -317,7 +344,6 @@ defaultproperties
 	DownState = S_MISSILEDOWN;
 	ReadyState = S_MISSILE;
 	AttackState = S_MISSILE1;
-	HoldAttackState = S_NULL;
 	FlashState = S_MISSILEFLASH1;
 	ThirdPersonModel = 'weapons/g_launch.md2';
 }
@@ -326,32 +352,36 @@ defaultproperties
 
 //**************************************************************************
 //
-//	Rocket
+//	PlasmaShot
 //
 //**************************************************************************
 
-class Rocket:Projectile
+class PlasmaShot:Projectile
 {
 
 __states__
 {
-	S_ROCKET('MISL', 0 | FF_FULLBRIGHT, 'missiles/rocket.md2', 0, 1.0 / 35.0, S_ROCKET) { }
-	S_EXPLODE1('MISL', 1 | FF_FULLBRIGHT, 8.0 / 35.0, S_EXPLODE2) { A_Explode(); }
-	S_EXPLODE2('MISL', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_EXPLODE3) { }
-	S_EXPLODE3('MISL', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_PLASBALL('PLSS', 0 | FF_FULLBRIGHT, 'missiles/plasma.md2', 0, 6.0 / 35.0, S_PLASBALL2) { }
+	S_PLASBALL2('PLSS', 1 | FF_FULLBRIGHT, 'missiles/plasma.md2', 1, 6.0 / 35.0, S_PLASBALL) { }
+	S_PLASEXP('PLSE', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLASEXP2) { }
+	S_PLASEXP2('PLSE', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLASEXP3) { }
+	S_PLASEXP3('PLSE', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLASEXP4) { }
+	S_PLASEXP4('PLSE', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLASEXP5) { }
+	S_PLASEXP5('PLSE', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
 }
 
 defaultproperties
 {
-	Radius = 11.0;
+	Radius = 13.0;
 	Height = 8.0;
-	Speed = 700.0;
-	MissileDamage = 20;
-	SpawnState = S_ROCKET;
-	DeathState = S_EXPLODE1;
-	SightSound = 'LauncherFire';
-	DeathSound = 'BarrelExplode';
-	Effects = EF_DL_MISSILE | EF_ROCKET;
+	Speed = 875.0;
+	MissileDamage = 5;
+	Translucency = 33;
+	IdleState = S_PLASBALL;
+	DeathState = S_PLASEXP;
+	SightSound = 'PlasmaFire';
+	DeathSound = 'FireballExplode';
+	Effects = EF_DL_PLASMA;
 }
 
 }
@@ -398,7 +428,6 @@ defaultproperties
 	DownState = S_PLASMADOWN;
 	ReadyState = S_PLASMA;
 	AttackState = S_PLASMA1;
-	HoldAttackState = S_NULL;
 	FlashState = S_PLASMAFLASH1;
 	ThirdPersonModel = 'weapons/g_plasma.md2';
 }
@@ -407,95 +436,25 @@ defaultproperties
 
 //**************************************************************************
 //
-//	PlasmaShot
+//	ExtraBFG
 //
 //**************************************************************************
 
-class PlasmaShot:Projectile
+class ExtraBFG:Effect
 {
 
 __states__
 {
-	S_PLASBALL('PLSS', 0 | FF_FULLBRIGHT, 'missiles/plasma.md2', 0, 6.0 / 35.0, S_PLASBALL2) { }
-	S_PLASBALL2('PLSS', 1 | FF_FULLBRIGHT, 'missiles/plasma.md2', 1, 6.0 / 35.0, S_PLASBALL) { }
-	S_PLASEXP('PLSE', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLASEXP2) { }
-	S_PLASEXP2('PLSE', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLASEXP3) { }
-	S_PLASEXP3('PLSE', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLASEXP4) { }
-	S_PLASEXP4('PLSE', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLASEXP5) { }
-	S_PLASEXP5('PLSE', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_BFGEXP('BFE2', 0 | FF_FULLBRIGHT, 8.0 / 35.0, S_BFGEXP2) { }
+	S_BFGEXP2('BFE2', 1 | FF_FULLBRIGHT, 8.0 / 35.0, S_BFGEXP3) { }
+	S_BFGEXP3('BFE2', 2 | FF_FULLBRIGHT, 8.0 / 35.0, S_BFGEXP4) { }
+	S_BFGEXP4('BFE2', 3 | FF_FULLBRIGHT, 8.0 / 35.0, S_NULL) { }
 }
 
 defaultproperties
 {
-	Radius = 13.0;
-	Height = 8.0;
-	Speed = 875.0;
-	MissileDamage = 5;
 	Translucency = 33;
-	SpawnState = S_PLASBALL;
-	DeathState = S_PLASEXP;
-	SightSound = 'PlasmaFire';
-	DeathSound = 'FireballExplode';
-	Effects = EF_DL_PLASMA;
-}
-
-}
-
-//**************************************************************************
-//
-//	WeaponBFG
-//
-//**************************************************************************
-
-class WeaponBFG:Weapon
-{
-
-//===========================================================================
-//
-//  A_BFGsound
-//
-//===========================================================================
-
-void A_BFGsound(void)
-{
-	Player->MO.PlaySound('BFGFire', CHAN_WEAPON);
-}
-
-//===========================================================================
-//
-//  A_FireBFG
-//
-//===========================================================================
-
-void A_FireBFG(void)
-{
-	Player->Ammo[Ammo] -= BFGCELLS;
-	PlayerPawn(Player->MO).SpawnPlayerMissile(BFGShot);
-}
-
-__states__
-{
-	S_BFG('BFGG', 0, 'weapons/v_bfg.md2', 0, 1.0 / 35.0, S_BFG) { A_WeaponReady(); }
-	S_BFGDOWN('BFGG', 0, 'weapons/v_bfg.md2', 1, 1.0 / 35.0, S_BFGDOWN) { A_Lower(); }
-	S_BFGUP('BFGG', 0, 'weapons/v_bfg.md2', 2, 1.0 / 35.0, S_BFGUP) { A_Raise(); }
-	S_BFG1('BFGG', 0, 'weapons/v_bfg.md2', 3, 20.0 / 35.0, S_BFG2) { A_BFGsound(); }
-	S_BFG2('BFGG', 1, 'weapons/v_bfg.md2', 4, 10.0 / 35.0, S_BFG3) { A_GunFlash(); }
-	S_BFG3('BFGG', 1, 'weapons/v_bfg.md2', 5, 10.0 / 35.0, S_BFG4) { A_FireBFG(); }
-	S_BFG4('BFGG', 1, 'weapons/v_bfg.md2', 6, 20.0 / 35.0, S_BFG) { A_ReFire(); }
-	S_BFGFLASH1('BFGF', 0 | FF_FULLBRIGHT, 11.0 / 35.0, S_BFGFLASH2) { A_Light1(); }
-	S_BFGFLASH2('BFGF', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_LIGHTDONE) { A_Light2(); }
-}
-
-defaultproperties
-{
-	Ammo = am_cell;
-	UpState = S_BFGUP;
-	DownState = S_BFGDOWN;
-	ReadyState = S_BFG;
-	AttackState = S_BFG1;
-	HoldAttackState = S_NULL;
-	FlashState = S_BFGFLASH1;
-	ThirdPersonModel = 'weapons/g_bfg.md2';
+	IdleState = S_BFGEXP;
 }
 
 }
@@ -576,7 +535,7 @@ defaultproperties
 	Speed = 875.0;
 	MissileDamage = 100;
 	Translucency = 33;
-	SpawnState = S_BFGSHOT;
+	IdleState = S_BFGSHOT;
 	DeathState = S_BFGLAND;
 	DeathSound = 'RocketExplode';
 	Effects = EF_DL_GBALL;
@@ -586,25 +545,58 @@ defaultproperties
 
 //**************************************************************************
 //
-//	ExtraBFG
+//	WeaponBFG
 //
 //**************************************************************************
 
-class ExtraBFG:Effect
+class WeaponBFG:Weapon
 {
+
+//===========================================================================
+//
+//  A_BFGsound
+//
+//===========================================================================
+
+void A_BFGsound(void)
+{
+	Player->MO.PlaySound('BFGFire', CHAN_WEAPON);
+}
+
+//===========================================================================
+//
+//  A_FireBFG
+//
+//===========================================================================
+
+void A_FireBFG(void)
+{
+	Player->Ammo[Ammo] -= BFGCELLS;
+	PlayerPawn(Player->MO).SpawnPlayerMissile(BFGShot);
+}
 
 __states__
 {
-	S_BFGEXP('BFE2', 0 | FF_FULLBRIGHT, 8.0 / 35.0, S_BFGEXP2) { }
-	S_BFGEXP2('BFE2', 1 | FF_FULLBRIGHT, 8.0 / 35.0, S_BFGEXP3) { }
-	S_BFGEXP3('BFE2', 2 | FF_FULLBRIGHT, 8.0 / 35.0, S_BFGEXP4) { }
-	S_BFGEXP4('BFE2', 3 | FF_FULLBRIGHT, 8.0 / 35.0, S_NULL) { }
+	S_BFG('BFGG', 0, 'weapons/v_bfg.md2', 0, 1.0 / 35.0, S_BFG) { A_WeaponReady(); }
+	S_BFGDOWN('BFGG', 0, 'weapons/v_bfg.md2', 1, 1.0 / 35.0, S_BFGDOWN) { A_Lower(); }
+	S_BFGUP('BFGG', 0, 'weapons/v_bfg.md2', 2, 1.0 / 35.0, S_BFGUP) { A_Raise(); }
+	S_BFG1('BFGG', 0, 'weapons/v_bfg.md2', 3, 20.0 / 35.0, S_BFG2) { A_BFGsound(); }
+	S_BFG2('BFGG', 1, 'weapons/v_bfg.md2', 4, 10.0 / 35.0, S_BFG3) { A_GunFlash(); }
+	S_BFG3('BFGG', 1, 'weapons/v_bfg.md2', 5, 10.0 / 35.0, S_BFG4) { A_FireBFG(); }
+	S_BFG4('BFGG', 1, 'weapons/v_bfg.md2', 6, 20.0 / 35.0, S_BFG) { A_ReFire(); }
+	S_BFGFLASH1('BFGF', 0 | FF_FULLBRIGHT, 11.0 / 35.0, S_BFGFLASH2) { A_Light1(); }
+	S_BFGFLASH2('BFGF', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_LIGHTDONE) { A_Light2(); }
 }
 
 defaultproperties
 {
-	Translucency = 33;
-	SpawnState = S_BFGEXP;
+	Ammo = am_cell;
+	UpState = S_BFGUP;
+	DownState = S_BFGDOWN;
+	ReadyState = S_BFG;
+	AttackState = S_BFG1;
+	FlashState = S_BFGFLASH1;
+	ThirdPersonModel = 'weapons/g_bfg.md2';
 }
 
 }
@@ -687,8 +679,6 @@ defaultproperties
 	DownState = S_SAWDOWN;
 	ReadyState = S_SAW;
 	AttackState = S_SAW1;
-	HoldAttackState = S_NULL;
-	FlashState = S_NULL;
 	ThirdPersonModel = 'weapons/g_saw.md2';
 }
 
@@ -799,7 +789,6 @@ defaultproperties
 	DownState = S_DSGUNDOWN;
 	ReadyState = S_DSGUN;
 	AttackState = S_DSGUN1;
-	HoldAttackState = S_NULL;
 	FlashState = S_DSGUNFLASH1;
 	ThirdPersonModel = 'weapons/g_super.md2';
 }
@@ -809,6 +798,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/05/18 16:59:59  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.25  2002/05/03 17:11:55  dj_jl
 //  Object classes split up into their files.
 //

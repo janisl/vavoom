@@ -41,7 +41,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_ARM1;
+	IdleState = S_ARM1;
 }
 
 }
@@ -64,7 +64,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_ARM2;
+	IdleState = S_ARM2;
 }
 
 }
@@ -93,7 +93,7 @@ defaultproperties
 {
 	Translucency = 33;
 	bCountItem = true;
-	SpawnState = S_BON1;
+	IdleState = S_BON1;
 }
 
 }
@@ -121,7 +121,7 @@ __states__
 defaultproperties
 {
 	bCountItem = true;
-	SpawnState = S_BON2;
+	IdleState = S_BON2;
 }
 
 }
@@ -145,7 +145,7 @@ __states__
 defaultproperties
 {
 	bNoDeathmatch = true;
-	SpawnState = S_BKEY;
+	IdleState = S_BKEY;
 }
 
 }
@@ -169,7 +169,7 @@ __states__
 defaultproperties
 {
 	bNoDeathmatch = true;
-	SpawnState = S_RKEY;
+	IdleState = S_RKEY;
 }
 
 }
@@ -193,7 +193,7 @@ __states__
 defaultproperties
 {
 	bNoDeathmatch = true;
-	SpawnState = S_YKEY;
+	IdleState = S_YKEY;
 }
 
 }
@@ -217,7 +217,7 @@ __states__
 defaultproperties
 {
 	bNoDeathmatch = true;
-	SpawnState = S_YSKULL;
+	IdleState = S_YSKULL;
 }
 
 }
@@ -241,7 +241,7 @@ __states__
 defaultproperties
 {
 	bNoDeathmatch = true;
-	SpawnState = S_RSKULL;
+	IdleState = S_RSKULL;
 }
 
 }
@@ -265,7 +265,7 @@ __states__
 defaultproperties
 {
 	bNoDeathmatch = true;
-	SpawnState = S_BSKULL;
+	IdleState = S_BSKULL;
 }
 
 }
@@ -287,7 +287,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_STIM;
+	IdleState = S_STIM;
 }
 
 }
@@ -309,7 +309,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_MEDI;
+	IdleState = S_MEDI;
 }
 
 }
@@ -338,7 +338,7 @@ defaultproperties
 {
 	Translucency = 33;
 	bCountItem = true;
-	SpawnState = S_SOUL;
+	IdleState = S_SOUL;
 }
 
 }
@@ -365,7 +365,8 @@ defaultproperties
 {
 	Translucency = 33;
 	bCountItem = true;
-	SpawnState = S_PINV;
+	bNoRespawn = true;
+	IdleState = S_PINV;
 }
 
 }
@@ -388,7 +389,7 @@ __states__
 defaultproperties
 {
 	bCountItem = true;
-	SpawnState = S_PSTR;
+	IdleState = S_PSTR;
 }
 
 }
@@ -415,7 +416,8 @@ defaultproperties
 {
 	Translucency = 33;
 	bCountItem = true;
-	SpawnState = S_PINS;
+	bNoRespawn = true;
+	IdleState = S_PINS;
 }
 
 }
@@ -437,7 +439,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_SUIT;
+	IdleState = S_SUIT;
 }
 
 }
@@ -465,7 +467,7 @@ __states__
 defaultproperties
 {
 	bCountItem = true;
-	SpawnState = S_PMAP;
+	IdleState = S_PMAP;
 }
 
 }
@@ -489,7 +491,7 @@ __states__
 defaultproperties
 {
 	bCountItem = true;
-	SpawnState = S_PVIS;
+	IdleState = S_PVIS;
 }
 
 }
@@ -516,7 +518,7 @@ defaultproperties
 {
 	Translucency = 33;
 	bCountItem = true;
-	SpawnState = S_MEGA;
+	IdleState = S_MEGA;
 }
 
 }
@@ -538,7 +540,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_CLIP;
+	IdleState = S_CLIP;
 }
 
 }
@@ -560,7 +562,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_AMMO;
+	IdleState = S_AMMO;
 }
 
 }
@@ -582,7 +584,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_ROCK;
+	IdleState = S_ROCK;
 }
 
 }
@@ -604,7 +606,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_BROK;
+	IdleState = S_BROK;
 }
 
 }
@@ -626,7 +628,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_CELL;
+	IdleState = S_CELL;
 }
 
 }
@@ -648,7 +650,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_CELP;
+	IdleState = S_CELP;
 }
 
 }
@@ -670,7 +672,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_SHEL;
+	IdleState = S_SHEL;
 }
 
 }
@@ -692,7 +694,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_SBOX;
+	IdleState = S_SBOX;
 }
 
 }
@@ -714,7 +716,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_BPAK;
+	IdleState = S_BPAK;
 }
 
 }
@@ -736,7 +738,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_BFUG;
+	IdleState = S_BFUG;
 }
 
 }
@@ -758,7 +760,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_MGUN;
+	IdleState = S_MGUN;
 }
 
 }
@@ -780,7 +782,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_CSAW;
+	IdleState = S_CSAW;
 }
 
 }
@@ -802,7 +804,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_LAUN;
+	IdleState = S_LAUN;
 }
 
 }
@@ -824,7 +826,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_PLAS;
+	IdleState = S_PLAS;
 }
 
 }
@@ -846,7 +848,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_SHOT;
+	IdleState = S_SHOT;
 }
 
 }
@@ -868,7 +870,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_SHOT2;
+	IdleState = S_SHOT2;
 }
 
 }
@@ -876,6 +878,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2002/05/18 16:59:58  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.1  2002/05/03 17:11:53  dj_jl
 //  Object classes split up into their files.
 //

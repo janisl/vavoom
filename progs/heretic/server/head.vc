@@ -138,7 +138,7 @@ defaultproperties
 	PainChance = 32;
 	bNoBlood = true;
 	bFloorClip = false;
-	SpawnState = S_HEAD_LOOK;
+	IdleState = S_HEAD_LOOK;
 	SeeState = S_HEAD_FLOAT;
 	MissileState = S_HEAD_ATK1;
 	PainState = S_HEAD_PAIN1;
@@ -227,6 +227,9 @@ void Actor::A_WhirlwindSeek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/05/18 16:59:59  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.23  2002/04/11 16:52:14  dj_jl
 //  Made TryMove native.
 //

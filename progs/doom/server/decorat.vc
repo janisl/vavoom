@@ -52,7 +52,7 @@ defaultproperties
 	bSolid = true;
 	bShootable = true;
 	bNoBlood = true;
-	SpawnState = S_BAR1;
+	IdleState = S_BAR1;
 	DeathState = S_BEXP;
 	DeathSound = 'BarrelExplode';
 }
@@ -89,7 +89,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 72.0;
 	bSolid = true;
-	SpawnState = S_TECHLAMP;
+	IdleState = S_TECHLAMP;
 }
 
 }
@@ -124,7 +124,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 56.0;
 	bSolid = true;
-	SpawnState = S_TECH2LAMP;
+	IdleState = S_TECH2LAMP;
 }
 
 }
@@ -156,7 +156,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 48.0;
 	bSolid = true;
-	SpawnState = S_COLU;
+	IdleState = S_COLU;
 }
 
 }
@@ -181,7 +181,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 52.0;
 	bSolid = true;
-	SpawnState = S_TALLGRNCOL;
+	IdleState = S_TALLGRNCOL;
 }
 
 }
@@ -206,7 +206,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 40.0;
 	bSolid = true;
-	SpawnState = S_SHRTGRNCOL;
+	IdleState = S_SHRTGRNCOL;
 }
 
 }
@@ -231,7 +231,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 52.0;
 	bSolid = true;
-	SpawnState = S_TALLREDCOL;
+	IdleState = S_TALLREDCOL;
 }
 
 }
@@ -256,7 +256,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 40.0;
 	bSolid = true;
-	SpawnState = S_SHRTREDCOL;
+	IdleState = S_SHRTREDCOL;
 }
 
 }
@@ -281,7 +281,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 40.0;
 	bSolid = true;
-	SpawnState = S_SKULLCOL;
+	IdleState = S_SKULLCOL;
 }
 
 }
@@ -307,7 +307,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 40.0;
 	bSolid = true;
-	SpawnState = S_HEARTCOL;
+	IdleState = S_HEARTCOL;
 }
 
 }
@@ -342,7 +342,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 16.0;
 	bSolid = true;
-	SpawnState = S_EVILEYE;
+	IdleState = S_EVILEYE;
 }
 
 }
@@ -369,7 +369,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 48.0;
 	bSolid = true;
-	SpawnState = S_FLOATSKULL;
+	IdleState = S_FLOATSKULL;
 }
 
 }
@@ -394,7 +394,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 64.0;
 	bSolid = true;
-	SpawnState = S_TORCHTREE;
+	IdleState = S_TORCHTREE;
 }
 
 }
@@ -429,7 +429,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 64.0;
 	bSolid = true;
-	SpawnState = S_BLUETORCH;
+	IdleState = S_BLUETORCH;
 }
 
 }
@@ -464,7 +464,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 64.0;
 	bSolid = true;
-	SpawnState = S_GREENTORCH;
+	IdleState = S_GREENTORCH;
 }
 
 }
@@ -499,7 +499,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 64.0;
 	bSolid = true;
-	SpawnState = S_REDTORCH;
+	IdleState = S_REDTORCH;
 }
 
 }
@@ -534,7 +534,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 40.0;
 	bSolid = true;
-	SpawnState = S_BTORCHSHRT;
+	IdleState = S_BTORCHSHRT;
 }
 
 }
@@ -569,7 +569,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 40.0;
 	bSolid = true;
-	SpawnState = S_GTORCHSHRT;
+	IdleState = S_GTORCHSHRT;
 }
 
 }
@@ -604,7 +604,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 40.0;
 	bSolid = true;
-	SpawnState = S_RTORCHSHRT;
+	IdleState = S_RTORCHSHRT;
 }
 
 }
@@ -629,7 +629,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 40.0;
 	bSolid = true;
-	SpawnState = S_STALAGTITE;
+	IdleState = S_STALAGTITE;
 }
 
 }
@@ -654,7 +654,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 120.0;
 	bSolid = true;
-	SpawnState = S_TECHPILLAR;
+	IdleState = S_TECHPILLAR;
 }
 
 }
@@ -682,7 +682,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_CANDLESTIK;
+	IdleState = S_CANDLESTIK;
 }
 
 }
@@ -714,7 +714,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 56.0;
 	bSolid = true;
-	SpawnState = S_CANDELABRA;
+	IdleState = S_CANDELABRA;
 }
 
 }
@@ -744,7 +744,7 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	SpawnState = S_BLOODYTWITCH;
+	IdleState = S_BLOODYTWITCH;
 }
 
 }
@@ -771,7 +771,7 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	SpawnState = S_MEAT2;
+	IdleState = S_MEAT2;
 }
 
 }
@@ -798,7 +798,7 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	SpawnState = S_MEAT3;
+	IdleState = S_MEAT3;
 }
 
 }
@@ -825,7 +825,7 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	SpawnState = S_MEAT4;
+	IdleState = S_MEAT4;
 }
 
 }
@@ -852,7 +852,7 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	SpawnState = S_MEAT5;
+	IdleState = S_MEAT5;
 }
 
 }
@@ -959,7 +959,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_HEAD_DEAD;
+	IdleState = S_HEAD_DEAD;
 }
 
 }
@@ -981,7 +981,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_PLAY_DEAD;
+	IdleState = S_PLAY_DEAD;
 }
 
 }
@@ -1003,7 +1003,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_POSS_DEAD;
+	IdleState = S_POSS_DEAD;
 }
 
 }
@@ -1025,7 +1025,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_SARG_DEAD;
+	IdleState = S_SARG_DEAD;
 }
 
 }
@@ -1047,7 +1047,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_SKULL_DEAD;
+	IdleState = S_SKULL_DEAD;
 }
 
 }
@@ -1069,7 +1069,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_TROO_DEAD;
+	IdleState = S_TROO_DEAD;
 }
 
 }
@@ -1091,7 +1091,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_SPOS_DEAD;
+	IdleState = S_SPOS_DEAD;
 }
 
 }
@@ -1113,7 +1113,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_PLAY_GIBS;
+	IdleState = S_PLAY_GIBS;
 }
 
 }
@@ -1154,7 +1154,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 64.0;
 	bSolid = true;
-	SpawnState = S_HEADSONSTICK;
+	IdleState = S_HEADSONSTICK;
 }
 
 }
@@ -1175,7 +1175,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_GIBS;
+	IdleState = S_GIBS;
 }
 
 }
@@ -1200,7 +1200,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 56.0;
 	bSolid = true;
-	SpawnState = S_HEADONASTICK;
+	IdleState = S_HEADONASTICK;
 }
 
 }
@@ -1226,7 +1226,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 48.0;
 	bSolid = true;
-	SpawnState = S_HEADCANDLES;
+	IdleState = S_HEADCANDLES;
 }
 
 }
@@ -1251,7 +1251,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 64.0;
 	bSolid = true;
-	SpawnState = S_DEADSTICK;
+	IdleState = S_DEADSTICK;
 }
 
 }
@@ -1277,7 +1277,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 64.0;
 	bSolid = true;
-	SpawnState = S_LIVESTICK;
+	IdleState = S_LIVESTICK;
 }
 
 }
@@ -1302,7 +1302,7 @@ defaultproperties
 	Radius = 32.0;
 	Height = 96.0;
 	bSolid = true;
-	SpawnState = S_BIGTREE;
+	IdleState = S_BIGTREE;
 }
 
 }
@@ -1329,7 +1329,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 32.0;
 	bSolid = true;
-	SpawnState = S_BBAR1;
+	IdleState = S_BBAR1;
 }
 
 }
@@ -1356,7 +1356,7 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	SpawnState = S_HANGNOGUTS;
+	IdleState = S_HANGNOGUTS;
 }
 
 }
@@ -1383,7 +1383,7 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	SpawnState = S_HANGBNOBRAIN;
+	IdleState = S_HANGBNOBRAIN;
 }
 
 }
@@ -1410,7 +1410,7 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	SpawnState = S_HANGTLOOKDN;
+	IdleState = S_HANGTLOOKDN;
 }
 
 }
@@ -1437,7 +1437,7 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	SpawnState = S_HANGTSKULL;
+	IdleState = S_HANGTSKULL;
 }
 
 }
@@ -1464,7 +1464,7 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	SpawnState = S_HANGTLOOKUP;
+	IdleState = S_HANGTLOOKUP;
 }
 
 }
@@ -1491,7 +1491,7 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	SpawnState = S_HANGTNOBRAIN;
+	IdleState = S_HANGTNOBRAIN;
 }
 
 }
@@ -1514,7 +1514,7 @@ __states__
 defaultproperties
 {
 	bNoBlockmap = true;
-	SpawnState = S_COLONGIBS;
+	IdleState = S_COLONGIBS;
 }
 
 }
@@ -1537,7 +1537,7 @@ __states__
 defaultproperties
 {
 	bNoBlockmap = true;
-	SpawnState = S_SMALLPOOL;
+	IdleState = S_SMALLPOOL;
 }
 
 }
@@ -1560,7 +1560,7 @@ __states__
 defaultproperties
 {
 	bNoBlockmap = true;
-	SpawnState = S_BRAINSTEM;
+	IdleState = S_BRAINSTEM;
 }
 
 }
@@ -1568,6 +1568,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2002/05/18 16:59:58  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.1  2002/05/03 17:11:53  dj_jl
 //  Object classes split up into their files.
 //

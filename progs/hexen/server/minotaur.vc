@@ -500,7 +500,7 @@ defaultproperties
 	PainChance = 25;
 	MissileDamage = 7;
 	Translucency = 66;
-	SpawnState = S_MNTR_SPAWN1;
+	IdleState = S_MNTR_SPAWN1;
 	LookState = S_MNTR_LOOK1;
 	SeeState = S_MNTR_WALK1;
 	SeeStateNF = S_MNTR_WALK1_NF;
@@ -591,6 +591,9 @@ void Actor::A_MntrFloorFire(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/05/18 17:00:00  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.27  2002/03/28 18:15:35  dj_jl
 //  Renamed mo in player_t to MO.
 //

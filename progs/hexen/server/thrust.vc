@@ -242,7 +242,7 @@ defaultproperties
 	bNoTeleport = true;
 	bNoPassMobj = true;
 	bHidden = true;
-	SpawnState = S_THRUSTINIT1_1;
+	IdleState = S_THRUSTINIT1_1;
 	UpState = S_THRUSTINIT2_1;
 	BloodyUpState = S_BTHRUSTINIT2_1;
 	DownState = S_THRUSTINIT1_1;
@@ -267,7 +267,7 @@ defaultproperties
 {
 	bSolid = true;
 	bHidden = false;
-	SpawnState = S_THRUSTINIT2_1;
+	IdleState = S_THRUSTINIT2_1;
 }
 
 }
@@ -275,6 +275,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/05/18 17:00:00  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.16  2002/03/16 17:47:47  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

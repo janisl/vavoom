@@ -153,7 +153,7 @@ void Pawn::A_Chase(void)
 		{
 			return;	// got a new target
 		}
-		SetState(SpawnState);
+		SetState(IdleState);
 		return;
 	}
 
@@ -553,6 +553,9 @@ void Actor::A_ContMobjSound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/05/18 16:59:59  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.25  2002/03/20 19:07:46  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

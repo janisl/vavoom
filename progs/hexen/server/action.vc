@@ -133,7 +133,7 @@ void Actor::A_CorpseExplode(void)
 	for (i = (P_Random() & 3) + 3; i; i--)
 	{
 		A = Spawn(CorpseBit, Origin);
-		A.SetState(A.SpawnState + (P_Random() % 3));
+		A.SetState(A.IdleState + (P_Random() % 3));
 		if (A)
 		{
 			A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
@@ -171,7 +171,7 @@ void Actor::A_SoAExplode(void)
 	{
 		A = Spawn(ZArmorChunk, Origin + vector((Random() - 0.5) * 16.0,
 			(Random() - 0.5) * 16.0, Random() * Height));
-		A.SetState(A.SpawnState + i);
+		A.SetState(A.IdleState + i);
 		if (A)
 		{
 			A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
@@ -253,6 +253,9 @@ void Actor::A_UnSetInvulnerable(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/05/18 17:00:00  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.18  2002/03/16 17:47:46  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

@@ -293,7 +293,7 @@ defaultproperties
 	bDropOff = true;
 	bFloat = true;
 	bInvulnerable = true;
-	SpawnState = S_FIRED_SPAWN1;
+	IdleState = S_FIRED_SPAWN1;
 	SeeState = S_FIRED_LOOK4;
 	MissileState = S_FIRED_ATTACK1;
 	PainState = S_FIRED_PAIN1;
@@ -331,6 +331,9 @@ void Actor::A_SmBounce(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/05/18 17:00:00  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.22  2002/03/28 18:32:51  dj_jl
 //  Little renaming, some bug fixes.
 //

@@ -110,7 +110,7 @@ defaultproperties
 	StepSpeed = 12.0;
 	bDropOff = true;
 	bNoBlood = true;
-	SpawnState = S_INQUISITOR_LOOK1;
+	IdleState = S_INQUISITOR_LOOK1;
 	SeeState = S_INQUISITOR_RUN1;
 	MissileState = S_INQUISITOR_ATK1_1;
 	DeathState = S_INQUISITOR_DIE1;
@@ -124,6 +124,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2002/05/18 17:00:01  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.1  2002/04/27 17:04:54  dj_jl
 //  Merged all creatures.
 //

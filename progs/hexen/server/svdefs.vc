@@ -185,7 +185,7 @@ class Actor:Entity
 	abstract
 {
 	//  States
-	int SpawnState;
+	int IdleState;
 	int SeeState;
 	int PainState;
 	int MeleeState;
@@ -1004,6 +1004,9 @@ name door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.32  2002/05/18 17:00:00  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.31  2002/05/03 17:13:35  dj_jl
 //  Fixed content types.
 //

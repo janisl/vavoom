@@ -58,7 +58,7 @@ boolean Actor::Touch(MapObject InOther)
 		Other.Damage(self, self, damage);
 		bSkullFly = false;
 		Velocity = vector(0.0, 0.0, 0.0);
-		SetState(SpawnState);
+		SetState(IdleState);
 		return false;	// stop moving
 	}
 
@@ -134,6 +134,9 @@ void Actor::CrossSpecialLine(line_t *ld, int side)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2002/05/18 17:00:04  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.28  2002/04/11 16:52:17  dj_jl
 //  Made TryMove native.
 //

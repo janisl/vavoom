@@ -477,7 +477,7 @@ defaultproperties
 	MissileDamage = 15;
 	bNoPassMobj = true;
 	bBoss = true;
-	SpawnState = S_KORAX_LOOK1;
+	IdleState = S_KORAX_LOOK1;
 	SeeState = S_KORAX_CHASE2;
 	MissileState = S_KORAX_ATTACK1;
 	KoraxMissileState = S_KORAX_MISSILE1;
@@ -521,7 +521,7 @@ void Actor::KSpiritInit(Actor korax)
 	for (i = 1; i < 3; i++)
 	{
 		next = Spawn(HolyTail, Origin);
-		next.SetState(next.SpawnState + 1);
+		next.SetState(next.IdleState + 1);
 		tail._SpecialMobj1 = &next;
 		tail = next;
 	}
@@ -698,6 +698,9 @@ void Actor::A_KBolt(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/05/18 17:00:00  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.21  2002/04/11 16:52:15  dj_jl
 //  Made TryMove native.
 //

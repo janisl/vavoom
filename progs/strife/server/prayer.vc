@@ -64,7 +64,7 @@ defaultproperties
 	bUnknown4 = true;
 #endif
 	bNoBlood = true;
-	SpawnState = S_PRAYER_STAND1;
+	IdleState = S_PRAYER_STAND1;
 	SeeState = S_PRAYER_STAND1;
 	PainState = S_PRAYER_PAIN1;
 	DyingState = S_PRAYER_DIE1;
@@ -79,6 +79,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2002/05/18 17:00:04  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.1  2002/04/27 17:04:55  dj_jl
 //  Merged all creatures.
 //

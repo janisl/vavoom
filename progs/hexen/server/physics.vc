@@ -417,7 +417,7 @@ void Actor::ApplyFriction(void)
 			sn = StateNum - SeeState;
 			if (sn >= 0 && sn < 4)
 			{
-				SetState(SpawnState);
+				SetState(IdleState);
 			}
 		}
 		Velocity = vector(0.0, 0.0, 0.0);
@@ -1244,6 +1244,9 @@ void Actor::Tick(float deltaTime)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.33  2002/05/18 17:00:00  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.32  2002/04/11 16:50:53  dj_jl
 //  Made TryMove native, Tick function.
 //

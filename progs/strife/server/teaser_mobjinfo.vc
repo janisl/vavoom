@@ -47,7 +47,7 @@ class Thing0:Actor
 		ReactionCount = 8;
 		bShootable = true;
 		bHidden = true;
-		SpawnState = S_1295;
+		IdleState = S_1295;
 		DeathState = S_239;
 	}
 };
@@ -99,7 +99,7 @@ class Thing30:Actor
 		ReactionCount = 8;
 		bShootable = true;
 		bHidden = true;
-		SpawnState = S_424;
+		IdleState = S_424;
 		ActiveSound = 'Sound54';
 	}
 };
@@ -121,7 +121,7 @@ class Thing31:Actor
 		Mass = 50000.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_426;
+		IdleState = S_426;
 	}
 };
 
@@ -142,7 +142,7 @@ class Thing32:Actor
 		Mass = 50000.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_429;
+		IdleState = S_429;
 	}
 };
 
@@ -163,7 +163,7 @@ class Thing33:Actor
 		Mass = 50000.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_432;
+		IdleState = S_432;
 	}
 };
 
@@ -184,7 +184,7 @@ class Thing34:Actor
 		Mass = 50000.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_435;
+		IdleState = S_435;
 	}
 };
 
@@ -205,7 +205,7 @@ class Thing35:Actor
 		Mass = 50000.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_438;
+		IdleState = S_438;
 	}
 };
 
@@ -226,7 +226,7 @@ class Thing36:Actor
 		Mass = 50000.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_441;
+		IdleState = S_441;
 	}
 };
 
@@ -262,7 +262,7 @@ class Thing51:Actor
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
-		SpawnState = S_562;
+		IdleState = S_562;
 		SightSound = 'Sound72';
 	}
 };
@@ -300,7 +300,7 @@ class Thing66:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bUnknown2 = true;
-		SpawnState = S_834;
+		IdleState = S_834;
 	}
 };
 
@@ -321,7 +321,7 @@ class Thing67:Actor
 		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
-		SpawnState = S_843;
+		IdleState = S_843;
 	}
 };
 
@@ -342,7 +342,7 @@ class Thing68:Actor
 		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
-		SpawnState = S_850;
+		IdleState = S_850;
 	}
 };
 
@@ -369,7 +369,7 @@ class Thing75:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1017;
+		IdleState = S_1017;
 	}
 };
 
@@ -390,7 +390,7 @@ class Thing76:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1018;
+		IdleState = S_1018;
 		SeeState = S_1019;
 		SightSound = 'Slop';
 	}
@@ -419,7 +419,7 @@ class Thing77:Actor
 		bMissile = true;
 		bUnknown3 = true;
 		bActivateMCross = true;
-		SpawnState = S_1024;
+		IdleState = S_1024;
 		DeathState = S_149;
 		SightSound = 'Sound106';
 		DeathSound = 'Sound107';
@@ -449,7 +449,7 @@ class Thing78:Actor
 		bMissile = true;
 		bUnknown3 = true;
 		bActivateMCross = true;
-		SpawnState = S_1024;
+		IdleState = S_1024;
 		DeathState = S_149;
 		SightSound = 'Sound106';
 		DeathSound = 'Sound107';
@@ -479,7 +479,7 @@ class Thing79:Actor
 		bMissile = true;
 		bUnknown3 = true;
 		bActivateMCross = true;
-		SpawnState = S_1027;
+		IdleState = S_1027;
 		DeathState = S_149;
 		SightSound = 'Sound106';
 		DeathSound = 'Sound107';
@@ -509,7 +509,7 @@ class Thing80:Actor
 		bMissile = true;
 		bUnknown3 = true;
 		bActivateMCross = true;
-		SpawnState = S_1027;
+		IdleState = S_1027;
 		DeathState = S_149;
 		SightSound = 'Sound106';
 		DeathSound = 'Sound107';
@@ -539,7 +539,7 @@ class Thing81:Actor
 		bMissile = true;
 		bUnknown3 = true;
 		bActivateMCross = true;
-		SpawnState = S_1024;
+		IdleState = S_1024;
 		DeathState = S_149;
 		SightSound = 'Sound106';
 		DeathSound = 'Sound107';
@@ -564,7 +564,7 @@ class Thing82:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
-		SpawnState = S_1032;
+		IdleState = S_1032;
 	}
 };
 
@@ -591,7 +591,7 @@ class Thing83:Actor
 		bMissile = true;
 		bUnknown3 = true;
 		bActivateMCross = true;
-		SpawnState = S_1035;
+		IdleState = S_1035;
 		DeathState = S_149;
 		SightSound = 'Sound106';
 		DeathSound = 'Sound107';
@@ -621,7 +621,7 @@ class Thing84:Actor
 		bMissile = true;
 		bUnknown3 = true;
 		bActivateMCross = true;
-		SpawnState = S_1035;
+		IdleState = S_1035;
 		DeathState = S_149;
 		SightSound = 'Sound106';
 		DeathSound = 'Sound107';
@@ -651,7 +651,7 @@ class Thing85:Actor
 		bMissile = true;
 		bUnknown3 = true;
 		bActivateMCross = true;
-		SpawnState = S_1040;
+		IdleState = S_1040;
 		DeathState = S_153;
 		SightSound = 'Sound106';
 		DeathSound = 'Sound107';
@@ -676,7 +676,7 @@ class Thing86:Actor
 		ReactionCount = 90;
 		Translucency = 66;
 		bNoBlockmap = true;
-		SpawnState = S_1045;
+		IdleState = S_1045;
 		DeathState = S_148;
 	}
 };
@@ -704,7 +704,7 @@ class Thing87:Actor
 		bMissile = true;
 		bUnknown3 = true;
 		bActivateMCross = true;
-		SpawnState = S_1049;
+		IdleState = S_1049;
 		DeathState = S_148;
 		SightSound = 'Sound106';
 		DeathSound = 'Sound107';
@@ -734,7 +734,7 @@ class Thing88:Actor
 		bMissile = true;
 		bUnknown3 = true;
 		bActivateMCross = true;
-		SpawnState = S_1049;
+		IdleState = S_1049;
 		DeathState = S_148;
 		SightSound = 'Sound106';
 		DeathSound = 'Sound107';
@@ -762,7 +762,7 @@ class Thing93:Actor
 		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoBlood = true;
-		SpawnState = S_1180;
+		IdleState = S_1180;
 	}
 };
 
@@ -788,7 +788,7 @@ class Thing94:Actor
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_240;
+		IdleState = S_240;
 		DeathState = S_241;
 		SightSound = 'Sound101';
 		ActiveSound = 'PunchMiss';
@@ -812,7 +812,7 @@ class Thing95:Actor
 		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
-		SpawnState = S_242;
+		IdleState = S_242;
 		SightSound = 'LoremasterActive';
 	}
 };
@@ -839,7 +839,7 @@ class Thing96:Actor
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_243;
+		IdleState = S_243;
 		DeathState = S_262;
 		SightSound = 'Sound71';
 		DeathSound = 'MissileExplode';
@@ -868,7 +868,7 @@ class Thing97:Actor
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_243;
+		IdleState = S_243;
 		DeathState = S_261;
 		SightSound = 'Sound71';
 		DeathSound = 'MissileExplode';
@@ -897,7 +897,7 @@ class Thing98:Actor
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_244;
+		IdleState = S_244;
 		DeathState = S_262;
 		SightSound = 'Sound71';
 		DeathSound = 'MissileExplode';
@@ -926,7 +926,7 @@ class Thing99:Actor
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_246;
+		IdleState = S_246;
 		DeathState = S_148;
 		SightSound = 'PunchMiss';
 		ActiveSound = 'PunchMiss';
@@ -956,7 +956,7 @@ class Thing100:Actor
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_247;
+		IdleState = S_247;
 		DeathState = S_248;
 		SightSound = 'PunchMiss';
 		ActiveSound = 'PunchMiss';
@@ -984,7 +984,7 @@ class Thing101:Actor
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_173;
+		IdleState = S_173;
 		DeathState = S_135;
 	}
 };
@@ -1011,7 +1011,7 @@ class Thing102:Actor
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_173;
+		IdleState = S_173;
 		DeathState = S_131;
 		SightSound = 'Sound88';
 	}
@@ -1038,7 +1038,7 @@ class Thing103:Actor
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_179;
+		IdleState = S_179;
 		DeathState = S_194;
 		SightSound = 'Sound103';
 		DeathSound = 'Sound104';
@@ -1066,7 +1066,7 @@ class Thing104:Actor
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_177;
+		IdleState = S_177;
 		DeathState = S_216;
 		SightSound = 'Sound103';
 		DeathSound = 'Sound104';
@@ -1094,7 +1094,7 @@ class Thing105:Actor
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_181;
+		IdleState = S_181;
 		DeathState = S_230;
 		SightSound = 'Sound103';
 		DeathSound = 'Sound104';
@@ -1121,7 +1121,7 @@ class Thing106:Actor
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_183;
+		IdleState = S_183;
 		DeathState = S_185;
 		SightSound = 'Sound103';
 		DeathSound = 'Sound104';
@@ -1147,7 +1147,7 @@ class Thing107:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bUnknown2 = true;
-		SpawnState = S_231;
+		IdleState = S_231;
 	}
 };
 
@@ -1167,7 +1167,7 @@ class Thing108:Actor
 		Mass = 100.0;
 		ReactionCount = 120;
 		bNoBlockmap = true;
-		SpawnState = S_217;
+		IdleState = S_217;
 		DeathState = S_226;
 	}
 };
@@ -1194,7 +1194,7 @@ class Thing109:Actor
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_249;
+		IdleState = S_249;
 		DeathState = S_253;
 		SightSound = 'Sound87';
 		DeathSound = 'Sound104';
@@ -1223,7 +1223,7 @@ class Thing110:Actor
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_258;
+		IdleState = S_258;
 		DeathState = S_260;
 	}
 };
@@ -1249,7 +1249,7 @@ class Thing111:Actor
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_1188;
+		IdleState = S_1188;
 		DeathState = S_1190;
 		SightSound = 'Sound7';
 	}
@@ -1276,7 +1276,7 @@ class Thing112:Actor
 		bDropOff = true;
 		bMissile = true;
 		bActivateMCross = true;
-		SpawnState = S_1188;
+		IdleState = S_1188;
 		DeathState = S_1190;
 		SightSound = 'Sound7';
 	}
@@ -1299,7 +1299,7 @@ class Thing113:Actor
 		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
-		SpawnState = S_175;
+		IdleState = S_175;
 	}
 };
 
@@ -1321,7 +1321,7 @@ class Puff:Actor
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
-		SpawnState = S_PUFF1;
+		IdleState = S_PUFF1;
 	}
 };
 
@@ -1342,7 +1342,7 @@ class Thing115:Actor
 		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
-		SpawnState = S_140;
+		IdleState = S_140;
 	}
 };
 
@@ -1362,7 +1362,7 @@ class Thing116:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_159;
+		IdleState = S_159;
 	}
 };
 
@@ -1384,7 +1384,7 @@ class TeleportFog:Actor
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
-		SpawnState = S_TFOG1;
+		IdleState = S_TFOG1;
 	}
 };
 
@@ -1406,7 +1406,7 @@ class ItemRespawnFog:Actor
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
-		SpawnState = S_IFOG1;
+		IdleState = S_IFOG1;
 	}
 };
 
@@ -1451,7 +1451,7 @@ class Thing120:Actor
 		bAmbush = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
-		SpawnState = S_1196;
+		IdleState = S_1196;
 		SeeState = S_1197;
 	}
 };
@@ -1477,7 +1477,7 @@ class Thing122:Actor
 		bShootable = true;
 		bUnknown4 = true;
 		bNoBlood = true;
-		SpawnState = S_1210;
+		IdleState = S_1210;
 		DeathState = S_1212;
 		DeathSound = 'Sound104';
 	}
@@ -1503,7 +1503,7 @@ class Thing123:Actor
 		bShootable = true;
 		bUnknown4 = true;
 		bNoBlood = true;
-		SpawnState = S_1221;
+		IdleState = S_1221;
 		DeathState = S_1225;
 		DeathSound = 'Sound104';
 	}
@@ -1526,7 +1526,7 @@ class MedPatch:Pickup
 		Height = 8.0;
 		Mass = 20.0;
 		ReactionCount = 8;
-		SpawnState = S_1429;
+		IdleState = S_1429;
 	}
 };
 
@@ -1547,7 +1547,7 @@ class MedicalKit:Pickup
 		Height = 8.0;
 		Mass = 15.0;
 		ReactionCount = 8;
-		SpawnState = S_1430;
+		IdleState = S_1430;
 	}
 };
 
@@ -1568,7 +1568,7 @@ class FullHealth:Pickup
 		Height = 8.0;
 		Mass = 5.0;
 		ReactionCount = 8;
-		SpawnState = S_1298;
+		IdleState = S_1298;
 	}
 };
 
@@ -1593,7 +1593,7 @@ class ThaliteOre:Pickup
 		bShootable = true;
 		bUnknown4 = true;
 		bNoBlood = true;
-		SpawnState = S_1239;
+		IdleState = S_1239;
 		DeathState = S_1240;
 		DeathSound = 'Sound104';
 	}
@@ -1616,7 +1616,7 @@ class MetalArmor:Pickup
 		Height = 8.0;
 		Mass = 3.0;
 		ReactionCount = 8;
-		SpawnState = S_1348;
+		IdleState = S_1348;
 	}
 };
 
@@ -1637,7 +1637,7 @@ class LeatherArmor:Pickup
 		Height = 8.0;
 		Mass = 5.0;
 		ReactionCount = 8;
-		SpawnState = S_1349;
+		IdleState = S_1349;
 	}
 };
 
@@ -1657,7 +1657,7 @@ class Thing130:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1401;
+		IdleState = S_1401;
 	}
 };
 
@@ -1677,7 +1677,7 @@ class Thing131:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1402;
+		IdleState = S_1402;
 	}
 };
 
@@ -1697,7 +1697,7 @@ class Base_Key:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1295;
+		IdleState = S_1295;
 	}
 };
 
@@ -1717,7 +1717,7 @@ class Rebel_Key:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1295;
+		IdleState = S_1295;
 	}
 };
 
@@ -1739,7 +1739,7 @@ class Passcard:Pickup
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoDeathmatch = true;
-		SpawnState = S_1405;
+		IdleState = S_1405;
 	}
 };
 
@@ -1761,7 +1761,7 @@ class ID_Badge:Pickup
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoDeathmatch = true;
-		SpawnState = S_1403;
+		IdleState = S_1403;
 	}
 };
 
@@ -1781,7 +1781,7 @@ class Prison_Key:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1416;
+		IdleState = S_1416;
 	}
 };
 
@@ -1803,7 +1803,7 @@ class Severed_Hand:Pickup
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoDeathmatch = true;
-		SpawnState = S_1409;
+		IdleState = S_1409;
 	}
 };
 
@@ -1823,7 +1823,7 @@ class Power1_Key:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1417;
+		IdleState = S_1417;
 	}
 };
 
@@ -1843,7 +1843,7 @@ class Power2_Key:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1418;
+		IdleState = S_1418;
 	}
 };
 
@@ -1863,7 +1863,7 @@ class Power3_Key:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1419;
+		IdleState = S_1419;
 	}
 };
 
@@ -1885,7 +1885,7 @@ class Gold_Key:Pickup
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoDeathmatch = true;
-		SpawnState = S_1406;
+		IdleState = S_1406;
 	}
 };
 
@@ -1907,7 +1907,7 @@ class ID_Card:Pickup
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoDeathmatch = true;
-		SpawnState = S_1404;
+		IdleState = S_1404;
 	}
 };
 
@@ -1929,7 +1929,7 @@ class Silver_Key:Pickup
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoDeathmatch = true;
-		SpawnState = S_1407;
+		IdleState = S_1407;
 	}
 };
 
@@ -1951,7 +1951,7 @@ class Oracle_Key:Pickup
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoDeathmatch = true;
-		SpawnState = S_1420;
+		IdleState = S_1420;
 	}
 };
 
@@ -1971,7 +1971,7 @@ class Military_ID:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1421;
+		IdleState = S_1421;
 	}
 };
 
@@ -1993,7 +1993,7 @@ class Order_Key:Pickup
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoDeathmatch = true;
-		SpawnState = S_1422;
+		IdleState = S_1422;
 	}
 };
 
@@ -2015,7 +2015,7 @@ class Warehouse_Key:Pickup
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoDeathmatch = true;
-		SpawnState = S_1423;
+		IdleState = S_1423;
 	}
 };
 
@@ -2037,7 +2037,7 @@ class Brass_Key:Pickup
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoDeathmatch = true;
-		SpawnState = S_1408;
+		IdleState = S_1408;
 	}
 };
 
@@ -2059,7 +2059,7 @@ class Red_Crystal_Key:Pickup
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoDeathmatch = true;
-		SpawnState = S_1424;
+		IdleState = S_1424;
 	}
 };
 
@@ -2081,7 +2081,7 @@ class Blue_Crystal_Key:Pickup
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoDeathmatch = true;
-		SpawnState = S_1425;
+		IdleState = S_1425;
 	}
 };
 
@@ -2103,7 +2103,7 @@ class Chapel_Key:Pickup
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoDeathmatch = true;
-		SpawnState = S_1426;
+		IdleState = S_1426;
 	}
 };
 
@@ -2123,7 +2123,7 @@ class Tunnel_Key:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1427;
+		IdleState = S_1427;
 	}
 };
 
@@ -2143,7 +2143,7 @@ class Security_Key:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1428;
+		IdleState = S_1428;
 	}
 };
 
@@ -2163,7 +2163,7 @@ class New_Key1:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1428;
+		IdleState = S_1428;
 	}
 };
 
@@ -2183,7 +2183,7 @@ class New_Key2:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1428;
+		IdleState = S_1428;
 	}
 };
 
@@ -2203,7 +2203,7 @@ class New_Key3:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1428;
+		IdleState = S_1428;
 	}
 };
 
@@ -2223,7 +2223,7 @@ class New_Key4:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1428;
+		IdleState = S_1428;
 	}
 };
 
@@ -2243,7 +2243,7 @@ class New_Key5:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1428;
+		IdleState = S_1428;
 	}
 };
 
@@ -2264,7 +2264,7 @@ class Shadow_armor:Pickup
 		Height = 8.0;
 		Mass = 2.0;
 		ReactionCount = 8;
-		SpawnState = S_1435;
+		IdleState = S_1435;
 	}
 };
 
@@ -2285,7 +2285,7 @@ class Environmental_Suit:Pickup
 		Height = 8.0;
 		Mass = 5.0;
 		ReactionCount = 8;
-		SpawnState = S_1439;
+		IdleState = S_1439;
 	}
 };
 
@@ -2306,7 +2306,7 @@ class Guard_Uniform:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1440;
+		IdleState = S_1440;
 	}
 };
 
@@ -2328,7 +2328,7 @@ class Officers_Uniform:Pickup
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoDeathmatch = true;
-		SpawnState = S_1441;
+		IdleState = S_1441;
 	}
 };
 
@@ -2349,7 +2349,7 @@ class Map:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1442;
+		IdleState = S_1442;
 	}
 };
 
@@ -2370,7 +2370,7 @@ class MapRadar:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1444;
+		IdleState = S_1444;
 	}
 };
 
@@ -2392,7 +2392,7 @@ class Coin:Pickup
 		Mass = 99999.0;
 		ReactionCount = 8;
 		bDropped = true;
-		SpawnState = S_1431;
+		IdleState = S_1431;
 	}
 };
 
@@ -2414,7 +2414,7 @@ class Gold10:Pickup
 		Mass = 100.0;
 		ReactionCount = 8;
 		bDropped = true;
-		SpawnState = S_1432;
+		IdleState = S_1432;
 	}
 };
 
@@ -2436,7 +2436,7 @@ class Gold25:Pickup
 		Mass = 100.0;
 		ReactionCount = 8;
 		bDropped = true;
-		SpawnState = S_1433;
+		IdleState = S_1433;
 	}
 };
 
@@ -2458,7 +2458,7 @@ class Gold50:Pickup
 		Mass = 100.0;
 		ReactionCount = 8;
 		bDropped = true;
-		SpawnState = S_1434;
+		IdleState = S_1434;
 	}
 };
 
@@ -2478,7 +2478,7 @@ class Ring:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1241;
+		IdleState = S_1241;
 	}
 };
 
@@ -2500,7 +2500,7 @@ class Offering_Chalice:Pickup
 		Mass = 100.0;
 		ReactionCount = 8;
 		bDropped = true;
-		SpawnState = S_1460;
+		IdleState = S_1460;
 	}
 };
 
@@ -2520,7 +2520,7 @@ class Ear:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1242;
+		IdleState = S_1242;
 	}
 };
 
@@ -2542,7 +2542,7 @@ class Communicator:Pickup
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoDeathmatch = true;
-		SpawnState = S_1243;
+		IdleState = S_1243;
 	}
 };
 
@@ -2563,7 +2563,7 @@ class Targeter:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1244;
+		IdleState = S_1244;
 	}
 };
 
@@ -2584,7 +2584,7 @@ class HEGrenade_Rounds:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1456;
+		IdleState = S_1456;
 	}
 };
 
@@ -2605,7 +2605,7 @@ class FireGrenade_Rounds:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1457;
+		IdleState = S_1457;
 	}
 };
 
@@ -2626,7 +2626,7 @@ class GasGrenade_Rounds:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1458;
+		IdleState = S_1458;
 	}
 };
 
@@ -2647,7 +2647,7 @@ class Bullets:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1446;
+		IdleState = S_1446;
 	}
 };
 
@@ -2668,7 +2668,7 @@ class Ammo1:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1447;
+		IdleState = S_1447;
 	}
 };
 
@@ -2689,7 +2689,7 @@ class Rocket:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1448;
+		IdleState = S_1448;
 	}
 };
 
@@ -2710,7 +2710,7 @@ class Box_of_rockets:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1449;
+		IdleState = S_1449;
 	}
 };
 
@@ -2731,7 +2731,7 @@ class Energy_pod:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1450;
+		IdleState = S_1450;
 	}
 };
 
@@ -2752,7 +2752,7 @@ class Energy_pack:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1452;
+		IdleState = S_1452;
 	}
 };
 
@@ -2773,7 +2773,7 @@ class Poison_arrows:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1454;
+		IdleState = S_1454;
 	}
 };
 
@@ -2794,7 +2794,7 @@ class Electric_arrows:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1455;
+		IdleState = S_1455;
 	}
 };
 
@@ -2815,7 +2815,7 @@ class Back_pack:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1459;
+		IdleState = S_1459;
 	}
 };
 
@@ -2836,7 +2836,7 @@ class Assault_gun:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1461;
+		IdleState = S_1461;
 	}
 };
 
@@ -2857,7 +2857,7 @@ class Pulse_rifle:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1462;
+		IdleState = S_1462;
 	}
 };
 
@@ -2878,7 +2878,7 @@ class Flame_thrower:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1463;
+		IdleState = S_1463;
 	}
 };
 
@@ -2898,7 +2898,7 @@ class Flame_thrower_Parts:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1464;
+		IdleState = S_1464;
 	}
 };
 
@@ -2919,7 +2919,7 @@ class Missile_gun:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1465;
+		IdleState = S_1465;
 	}
 };
 
@@ -2940,7 +2940,7 @@ class Blaster:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1466;
+		IdleState = S_1466;
 	}
 };
 
@@ -2961,7 +2961,7 @@ class Crossbow:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1468;
+		IdleState = S_1468;
 	}
 };
 
@@ -2982,7 +2982,7 @@ class Grenade_launcher:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1467;
+		IdleState = S_1467;
 	}
 };
 
@@ -3003,7 +3003,7 @@ class Sigil1:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1469;
+		IdleState = S_1469;
 	}
 };
 
@@ -3024,7 +3024,7 @@ class Sigil2:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1470;
+		IdleState = S_1470;
 	}
 };
 
@@ -3045,7 +3045,7 @@ class Sigil3:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1471;
+		IdleState = S_1471;
 	}
 };
 
@@ -3066,7 +3066,7 @@ class Sigil4:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1472;
+		IdleState = S_1472;
 	}
 };
 
@@ -3087,7 +3087,7 @@ class Sigil5:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1473;
+		IdleState = S_1473;
 	}
 };
 
@@ -3110,7 +3110,7 @@ class Thing199:Actor
 		bSolid = true;
 		bShootable = true;
 		bNoBlood = true;
-		SpawnState = S_1410;
+		IdleState = S_1410;
 		DeathState = S_1245;
 		ActiveSound = 'Sound130';
 		DeathSound = 'Sound104';
@@ -3138,7 +3138,7 @@ class Thing201:Actor
 		bShootable = true;
 		bUnknown4 = true;
 		bNoBlood = true;
-		SpawnState = S_1350;
+		IdleState = S_1350;
 		DeathState = S_1351;
 		DeathSound = 'Sound60';
 	}
@@ -3164,7 +3164,7 @@ class Thing202:Actor
 		bShootable = true;
 		bUnknown4 = true;
 		bNoBlood = true;
-		SpawnState = S_1358;
+		IdleState = S_1358;
 		DeathState = S_1359;
 		DeathSound = 'Sound105';
 	}
@@ -3191,7 +3191,7 @@ class Thing203:Actor
 		bShootable = true;
 		bUnknown4 = true;
 		bNoBlood = true;
-		SpawnState = S_1277;
+		IdleState = S_1277;
 		PainState = S_1278;
 		PainSound = 'PunchHitMetal';
 	}
@@ -3214,7 +3214,7 @@ class Thing204:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1477;
+		IdleState = S_1477;
 	}
 };
 
@@ -3235,7 +3235,7 @@ class Thing205:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1478;
+		IdleState = S_1478;
 	}
 };
 
@@ -3256,7 +3256,7 @@ class Thing206:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1479;
+		IdleState = S_1479;
 	}
 };
 
@@ -3277,7 +3277,7 @@ class Thing207:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1474;
+		IdleState = S_1474;
 	}
 };
 
@@ -3298,7 +3298,7 @@ class Thing208:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1551;
+		IdleState = S_1551;
 	}
 };
 
@@ -3319,7 +3319,7 @@ class Thing209:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1552;
+		IdleState = S_1552;
 	}
 };
 
@@ -3340,7 +3340,7 @@ class Thing210:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1553;
+		IdleState = S_1553;
 	}
 };
 
@@ -3361,7 +3361,7 @@ class Thing211:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1554;
+		IdleState = S_1554;
 	}
 };
 
@@ -3382,7 +3382,7 @@ class Thing212:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1555;
+		IdleState = S_1555;
 	}
 };
 
@@ -3403,7 +3403,7 @@ class Thing213:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1518;
+		IdleState = S_1518;
 		ActiveSound = 'Sound119';
 	}
 };
@@ -3427,7 +3427,7 @@ class Thing214:Actor
 		bSolid = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
-		SpawnState = S_1561;
+		IdleState = S_1561;
 	}
 };
 
@@ -3450,7 +3450,7 @@ class Thing215:Actor
 		bSolid = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
-		SpawnState = S_1559;
+		IdleState = S_1559;
 	}
 };
 
@@ -3471,7 +3471,7 @@ class Thing216:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1560;
+		IdleState = S_1560;
 	}
 };
 
@@ -3494,7 +3494,7 @@ class Thing217:Actor
 		bSolid = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
-		SpawnState = S_1562;
+		IdleState = S_1562;
 	}
 };
 
@@ -3515,7 +3515,7 @@ class Thing218:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1563;
+		IdleState = S_1563;
 	}
 };
 
@@ -3536,7 +3536,7 @@ class Thing219:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1564;
+		IdleState = S_1564;
 	}
 };
 
@@ -3556,7 +3556,7 @@ class Thing220:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1475;
+		IdleState = S_1475;
 	}
 };
 
@@ -3577,7 +3577,7 @@ class Thing221:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1476;
+		IdleState = S_1476;
 	}
 };
 
@@ -3598,7 +3598,7 @@ class Thing222:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1520;
+		IdleState = S_1520;
 		ActiveSound = 'Sound45';
 	}
 };
@@ -3620,7 +3620,7 @@ class Thing223:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1532;
+		IdleState = S_1532;
 		ActiveSound = 'Sound44';
 	}
 };
@@ -3644,7 +3644,7 @@ class Thing224:Actor
 		bNoBlockmap = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
-		SpawnState = S_1528;
+		IdleState = S_1528;
 	}
 };
 
@@ -3665,7 +3665,7 @@ class Thing225:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1540;
+		IdleState = S_1540;
 		ActiveSound = 'Sound46';
 	}
 };
@@ -3687,7 +3687,7 @@ class Thing226:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1544;
+		IdleState = S_1544;
 	}
 };
 
@@ -3709,7 +3709,7 @@ class Thing227:Actor
 		ReactionCount = 8;
 		Translucency = 66;
 		bNoBlockmap = true;
-		SpawnState = S_1547;
+		IdleState = S_1547;
 	}
 };
 
@@ -3729,7 +3729,7 @@ class Thing228:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_CRUSADER_DIE9;
+		IdleState = S_CRUSADER_DIE9;
 	}
 };
 
@@ -3749,7 +3749,7 @@ class Thing229:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_PLAY_DIE10;
+		IdleState = S_PLAY_DIE10;
 	}
 };
 
@@ -3769,7 +3769,7 @@ class Thing230:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_PEASANT_DIE11;
+		IdleState = S_PEASANT_DIE11;
 	}
 };
 
@@ -3789,7 +3789,7 @@ class Thing231:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_ACOLYTE_DIE8;
+		IdleState = S_ACOLYTE_DIE8;
 	}
 };
 
@@ -3809,7 +3809,7 @@ class Thing232:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_REAVER_DIE9;
+		IdleState = S_REAVER_DIE9;
 	}
 };
 
@@ -3829,7 +3829,7 @@ class Thing233:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_REBEL_DIE8;
+		IdleState = S_REBEL_DIE8;
 	}
 };
 
@@ -3849,7 +3849,7 @@ class Thing234:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_425;
+		IdleState = S_425;
 	}
 };
 
@@ -3869,7 +3869,7 @@ class Thing235:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1280;
+		IdleState = S_1280;
 	}
 };
 
@@ -3890,7 +3890,7 @@ class Thing236:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1372;
+		IdleState = S_1372;
 	}
 };
 
@@ -3911,7 +3911,7 @@ class Thing237:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1376;
+		IdleState = S_1376;
 		ActiveSound = 'Sound23';
 	}
 };
@@ -3933,7 +3933,7 @@ class Thing238:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1380;
+		IdleState = S_1380;
 		ActiveSound = 'Sound23';
 	}
 };
@@ -3955,7 +3955,7 @@ class Thing239:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1384;
+		IdleState = S_1384;
 		ActiveSound = 'Sound23';
 	}
 };
@@ -3977,7 +3977,7 @@ class Thing240:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1400;
+		IdleState = S_1400;
 	}
 };
 
@@ -4000,7 +4000,7 @@ class Thing241:Actor
 		bNoBlockmap = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
-		SpawnState = S_1496;
+		IdleState = S_1496;
 	}
 };
 
@@ -4023,7 +4023,7 @@ class Thing242:Actor
 		bNoBlockmap = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
-		SpawnState = S_1500;
+		IdleState = S_1500;
 	}
 };
 
@@ -4044,7 +4044,7 @@ class Thing243:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1497;
+		IdleState = S_1497;
 	}
 };
 
@@ -4065,7 +4065,7 @@ class Thing244:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1498;
+		IdleState = S_1498;
 	}
 };
 
@@ -4086,7 +4086,7 @@ class Thing245:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1388;
+		IdleState = S_1388;
 	}
 };
 
@@ -4107,7 +4107,7 @@ class Thing246:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1370;
+		IdleState = S_1370;
 	}
 };
 
@@ -4128,7 +4128,7 @@ class Thing247:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1371;
+		IdleState = S_1371;
 	}
 };
 
@@ -4149,7 +4149,7 @@ class Thing248:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1480;
+		IdleState = S_1480;
 	}
 };
 
@@ -4170,7 +4170,7 @@ class Thing249:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1481;
+		IdleState = S_1481;
 	}
 };
 
@@ -4191,7 +4191,7 @@ class Thing250:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1482;
+		IdleState = S_1482;
 	}
 };
 
@@ -4212,7 +4212,7 @@ class Thing251:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1483;
+		IdleState = S_1483;
 	}
 };
 
@@ -4233,7 +4233,7 @@ class Thing252:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1484;
+		IdleState = S_1484;
 		ActiveSound = 'Sound43';
 	}
 };
@@ -4257,7 +4257,7 @@ class Thing253:Actor
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
-		SpawnState = S_1488;
+		IdleState = S_1488;
 	}
 };
 
@@ -4280,7 +4280,7 @@ class Thing254:Actor
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
-		SpawnState = S_1489;
+		IdleState = S_1489;
 	}
 };
 
@@ -4303,7 +4303,7 @@ class Thing255:Actor
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
-		SpawnState = S_1490;
+		IdleState = S_1490;
 	}
 };
 
@@ -4326,7 +4326,7 @@ class Thing256:Actor
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
-		SpawnState = S_1491;
+		IdleState = S_1491;
 	}
 };
 
@@ -4349,7 +4349,7 @@ class Thing257:Actor
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
-		SpawnState = S_1492;
+		IdleState = S_1492;
 	}
 };
 
@@ -4372,7 +4372,7 @@ class Thing258:Actor
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
-		SpawnState = S_1493;
+		IdleState = S_1493;
 	}
 };
 
@@ -4395,7 +4395,7 @@ class Thing259:Actor
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
-		SpawnState = S_1494;
+		IdleState = S_1494;
 	}
 };
 
@@ -4418,7 +4418,7 @@ class Thing260:Actor
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
-		SpawnState = S_1495;
+		IdleState = S_1495;
 	}
 };
 
@@ -4441,7 +4441,7 @@ class Thing261:Actor
 		bSolid = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
-		SpawnState = S_1499;
+		IdleState = S_1499;
 	}
 };
 
@@ -4462,7 +4462,7 @@ class Thing262:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1392;
+		IdleState = S_1392;
 		ActiveSound = 'Sound23';
 	}
 };
@@ -4484,7 +4484,7 @@ class Thing263:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1396;
+		IdleState = S_1396;
 		ActiveSound = 'Sound23';
 	}
 };
@@ -4506,7 +4506,7 @@ class Thing264:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1501;
+		IdleState = S_1501;
 	}
 };
 
@@ -4527,7 +4527,7 @@ class Thing265:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1502;
+		IdleState = S_1502;
 	}
 };
 
@@ -4548,7 +4548,7 @@ class Thing266:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1503;
+		IdleState = S_1503;
 	}
 };
 
@@ -4569,7 +4569,7 @@ class Thing267:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1504;
+		IdleState = S_1504;
 	}
 };
 
@@ -4590,7 +4590,7 @@ class Thing268:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1505;
+		IdleState = S_1505;
 	}
 };
 
@@ -4611,7 +4611,7 @@ class Thing269:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1506;
+		IdleState = S_1506;
 	}
 };
 
@@ -4632,7 +4632,7 @@ class Thing270:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1507;
+		IdleState = S_1507;
 	}
 };
 
@@ -4653,7 +4653,7 @@ class Thing271:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1508;
+		IdleState = S_1508;
 	}
 };
 
@@ -4674,7 +4674,7 @@ class Thing272:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1509;
+		IdleState = S_1509;
 	}
 };
 
@@ -4695,7 +4695,7 @@ class Thing273:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1510;
+		IdleState = S_1510;
 	}
 };
 
@@ -4716,7 +4716,7 @@ class Thing274:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1511;
+		IdleState = S_1511;
 	}
 };
 
@@ -4737,7 +4737,7 @@ class Thing275:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1512;
+		IdleState = S_1512;
 	}
 };
 
@@ -4758,7 +4758,7 @@ class Thing276:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1513;
+		IdleState = S_1513;
 	}
 };
 
@@ -4779,7 +4779,7 @@ class Thing277:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1514;
+		IdleState = S_1514;
 	}
 };
 
@@ -4800,7 +4800,7 @@ class Thing278:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1515;
+		IdleState = S_1515;
 	}
 };
 
@@ -4821,7 +4821,7 @@ class Thing279:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1516;
+		IdleState = S_1516;
 	}
 };
 
@@ -4842,7 +4842,7 @@ class Thing280:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1517;
+		IdleState = S_1517;
 	}
 };
 
@@ -4863,7 +4863,7 @@ class Thing281:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1519;
+		IdleState = S_1519;
 	}
 };
 
@@ -4884,7 +4884,7 @@ class Thing282:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1281;
+		IdleState = S_1281;
 	}
 };
 
@@ -4905,7 +4905,7 @@ class Thing283:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1282;
+		IdleState = S_1282;
 	}
 };
 
@@ -4926,7 +4926,7 @@ class Thing284:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1283;
+		IdleState = S_1283;
 	}
 };
 
@@ -4947,7 +4947,7 @@ class Thing285:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		SpawnState = S_1284;
+		IdleState = S_1284;
 	}
 };
 
@@ -4972,7 +4972,7 @@ class Thing286:Actor
 		bUnknown4 = true;
 		bDropped = true;
 		bNoBlood = true;
-		SpawnState = S_1285;
+		IdleState = S_1285;
 	}
 };
 
@@ -4994,7 +4994,7 @@ class PowerCoupling:Pickup
 		Mass = 1.0;
 		ReactionCount = 8;
 		bDropped = true;
-		SpawnState = S_1287;
+		IdleState = S_1287;
 	}
 };
 
@@ -5015,7 +5015,7 @@ class Thing288:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1288;
+		IdleState = S_1288;
 		ActiveSound = 'Sound122';
 	}
 };
@@ -5037,7 +5037,7 @@ class Thing289:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1289;
+		IdleState = S_1289;
 		ActiveSound = 'Sound123';
 	}
 };
@@ -5061,7 +5061,7 @@ class Thing290:Actor
 		bSolid = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
-		SpawnState = S_1289;
+		IdleState = S_1289;
 		ActiveSound = 'Sound121';
 	}
 };
@@ -5083,7 +5083,7 @@ class Thing291:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1291;
+		IdleState = S_1291;
 		ActiveSound = 'Sound120';
 	}
 };
@@ -5105,7 +5105,7 @@ class Thing292:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bSolid = true;
-		SpawnState = S_1292;
+		IdleState = S_1292;
 		ActiveSound = 'Sound118';
 	}
 };
@@ -5128,7 +5128,7 @@ class TeleportorBeacon:Pickup
 		Mass = 3.0;
 		ReactionCount = 8;
 		bDropped = true;
-		SpawnState = S_1345;
+		IdleState = S_1345;
 		SeeState = S_1346;
 	}
 };
@@ -5151,7 +5151,7 @@ class Thing294:Actor
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
-		SpawnState = S_MEAT_1;
+		IdleState = S_MEAT_1;
 	}
 };
 
@@ -5173,7 +5173,7 @@ class Thing295:Actor
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
-		SpawnState = S_1320;
+		IdleState = S_1320;
 	}
 };
 
@@ -5195,7 +5195,7 @@ class Thing296:Actor
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
-		SpawnState = S_1340;
+		IdleState = S_1340;
 	}
 };
 
@@ -5215,7 +5215,7 @@ class Ammo2:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1295;
+		IdleState = S_1295;
 	}
 };
 
@@ -5235,7 +5235,7 @@ class Health1:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1295;
+		IdleState = S_1295;
 	}
 };
 
@@ -5255,7 +5255,7 @@ class Info1:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1295;
+		IdleState = S_1295;
 	}
 };
 
@@ -5275,7 +5275,7 @@ class Alarm1:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1295;
+		IdleState = S_1295;
 	}
 };
 
@@ -5294,7 +5294,7 @@ class Thing301:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1295;
+		IdleState = S_1295;
 	}
 };
 
@@ -5313,7 +5313,7 @@ class Thing302:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1295;
+		IdleState = S_1295;
 	}
 };
 
@@ -5333,7 +5333,7 @@ class Prison_pass:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1295;
+		IdleState = S_1295;
 	}
 };
 
@@ -5352,7 +5352,7 @@ class Thing304:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1295;
+		IdleState = S_1295;
 	}
 };
 
@@ -5371,7 +5371,7 @@ class Thing305:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1295;
+		IdleState = S_1295;
 	}
 };
 
@@ -5391,7 +5391,7 @@ class Report:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1295;
+		IdleState = S_1295;
 	}
 };
 
@@ -5411,7 +5411,7 @@ class Toughness:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1296;
+		IdleState = S_1296;
 	}
 };
 
@@ -5431,7 +5431,7 @@ class Accuracy:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1297;
+		IdleState = S_1297;
 	}
 };
 
@@ -5451,7 +5451,7 @@ class Oracle_Pass:Pickup
 		Height = 8.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1295;
+		IdleState = S_1295;
 	}
 };
 
@@ -5470,7 +5470,7 @@ class Thing310:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1295;
+		IdleState = S_1295;
 	}
 };
 
@@ -5490,7 +5490,7 @@ class Blown_Up_the_Crystal:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1295;
+		IdleState = S_1295;
 	}
 };
 
@@ -5510,7 +5510,7 @@ class Blown_Up_the_Gates:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1295;
+		IdleState = S_1295;
 	}
 };
 
@@ -5530,7 +5530,7 @@ class Quest4:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1295;
+		IdleState = S_1295;
 	}
 };
 
@@ -5550,7 +5550,7 @@ class Quest5:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1295;
+		IdleState = S_1295;
 	}
 };
 
@@ -5570,16 +5570,19 @@ class Quest6:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		ReactionCount = 8;
-		SpawnState = S_1295;
+		IdleState = S_1295;
 	}
 };
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2002/05/18 17:00:04  dj_jl
+//	Renamed SpawnState to IdleState, other changes.
+//
 //	Revision 1.3  2002/05/03 17:17:32  dj_jl
 //	Started work on weapons and items.
-//
+//	
 //	Revision 1.2  2002/04/27 17:04:55  dj_jl
 //	Merged all creatures.
 //	

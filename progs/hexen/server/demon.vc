@@ -175,7 +175,7 @@ defaultproperties
 	StepSpeed = 13.0;
 	PainChance = 50;
 	bActivatePushWall = false;
-	SpawnState = S_DEMN_LOOK1;
+	IdleState = S_DEMN_LOOK1;
 	SeeState = S_DEMN_CHASE1;
 	MeleeState = S_DEMN_ATK1_1;
 	MissileState = S_DEMN_ATK2_1;
@@ -301,7 +301,7 @@ __states__
 
 defaultproperties
 {
-	SpawnState = S_DEMN2_LOOK1;
+	IdleState = S_DEMN2_LOOK1;
 	SeeState = S_DEMN2_CHASE1;
 	MeleeState = S_DEMN2_ATK1_1;
 	MissileState = S_DEMN2_ATK2_1;
@@ -368,6 +368,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/05/18 17:00:00  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.19  2002/03/28 18:32:51  dj_jl
 //  Little renaming, some bug fixes.
 //

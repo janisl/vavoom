@@ -115,7 +115,7 @@ void A_FastChase(void)
 			// got a new enemy
 			return;
 		}
-		SetState(SpawnState);
+		SetState(IdleState);
 		return;
 	}
 
@@ -277,7 +277,7 @@ defaultproperties
 	Mass = 100.0;
 	StepSpeed = 25.0;
 	PainChance = 50;
-	SpawnState = S_FIGHTER;
+	IdleState = S_FIGHTER;
 	SeeState = S_FIGHTER_RUN1;
 	MeleeState = S_FIGHTER_ATK1;
 	MissileState = S_FIGHTER_ATK1;
@@ -365,7 +365,7 @@ defaultproperties
 	Mass = 100.0;
 	StepSpeed = 25.0;
 	PainChance = 50;
-	SpawnState = S_CLERIC;
+	IdleState = S_CLERIC;
 	SeeState = S_CLERIC_RUN1;
 	MeleeState = S_CLERIC_ATK1;
 	MissileState = S_CLERIC_ATK1;
@@ -468,7 +468,7 @@ defaultproperties
 	Mass = 100.0;
 	StepSpeed = 25.0;
 	PainChance = 50;
-	SpawnState = S_MAGE;
+	IdleState = S_MAGE;
 	SeeState = S_MAGE_RUN1;
 	MeleeState = S_MAGE_ATK1;
 	MissileState = S_MAGE_ATK1;
@@ -485,6 +485,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/05/18 17:00:00  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.21  2002/03/28 18:32:51  dj_jl
 //  Little renaming, some bug fixes.
 //

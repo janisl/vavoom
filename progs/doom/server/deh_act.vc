@@ -36,6 +36,54 @@ int braintargeton;
 int brain_easy;
 Actor braintargets[32];
 
+//==========================================================================
+//
+//	State number retrievals
+//
+//==========================================================================
+
+int GetBrainExplodeState(void)
+{
+	return S_NULL;	//S_BRAINEXPLODE1;
+}
+
+//==========================================================================
+//
+//	DropStuff
+//
+//==========================================================================
+
+void DropStuff(void)
+{
+	classid item;
+	Actor A;
+
+	// Drop stuff.
+	// This determines the kind of object spawned
+	// during the death frame of a thing.
+	switch (Class)
+	{
+	case WolfSS:
+	case Zombieman:
+		item = ItemAmmoBulletClip;
+		break;
+
+	case ShotgunGuy:
+		item = ItemWeaponShotgun;
+		break;
+
+	case ChaingunGuy:
+		item = ItemWeaponChaingun;
+		break;
+
+	default:
+		return;
+	}
+
+	A = Spawn(item, vector(Origin.x, Origin.y, FloorZ));
+	A.bDropped = true;	// special versions of items
+}
+
 //===========================================================================
 //
 //  A_BFGSpray
@@ -710,12 +758,8 @@ void A_VileChase(void)
 					CorpseHit.SetState(CorpseHit.RaiseState);
 					CorpseHit.Height *= 4.0;
 					CorpseHit.bShootable = true;
-					if (CorpseHit.Class == Cacodemon ||
-						CorpseHit.Class == PainElemental)
-					{
-						CorpseHit.bFloat = true;
-						CorpseHit.bNoGravity = true;
-					}
+					CorpseHit.bFloat = CorpseHit.bDefaultFloat;
+					CorpseHit.bNoGravity = CorpseHit.bDefaultNoGravity;
 					CorpseHit.bDropOff = false;
 					CorpseHit.bSolid = true;
 					CorpseHit.bCorpse = false;
@@ -766,7 +810,7 @@ void A_VileTarget(void)
 	Instigator = fog;//FIXME!!!!!!!
 	fog.Instigator = self;
 	fog.Enemy = Enemy;
-	fog.SetState(fog.SpawnState);
+	fog.SetState(fog.IdleState);
 }
 
 //==========================================================================
@@ -889,7 +933,7 @@ void A_BrainScream(void)
 		A = Spawn(Rocket, org);
 		A.Velocity.z = Random() * 2.0 * 35.0;
 
-		A.SetState(S_BRAINEXPLODE1);
+		A.SetState(GetBrainExplodeState());
 
 		A.StateTime -= Random() * 0.2;
 		if (A.StateTime < 0.1)
@@ -918,7 +962,7 @@ void A_BrainExplode(void)
 	A = Spawn(Rocket, org);
 	A.Velocity.z = Random() * 2.0 * 35.0;
 
-	A.SetState(S_BRAINEXPLODE1);
+	A.SetState(GetBrainExplodeState());
 
 	A.StateTime -= Random() * 0.2;
 	if (A.StateTime < 0.1)
@@ -1097,6 +1141,168 @@ void A_KeenDie(void)
 	EV_DoDoor(NULL, &args[0], doorOpen);
 }
 
+//==========================================================================
+//
+//  A_BossDeath
+//
+//  Possibly trigger special effects if on first boss level
+//
+//==========================================================================
+
+void A_BossDeath(void)
+{
+	string mapname;
+	int i;
+	Actor Other;
+	int args[5];
+
+	mapname = ARR2STR(level->mapname);
+
+	if (!strcmp(mapname, "E1M8"))
+	{
+		if (Class != BaronOfHell)
+			return;
+	}
+	else if (!strcmp(mapname, "E2M8"))
+	{
+		if (Class != Cyberdemon)
+			return;
+	}
+	else if (!strcmp(mapname, "E3M8"))
+	{
+		if (Class != SpiderMastermind)
+			return;
+	}
+	else if (!strcmp(mapname, "E4M6"))
+	{
+		if (Class != Cyberdemon)
+			return;
+	}
+	else if (!strcmp(mapname, "E4M8"))
+	{
+		if (Class != SpiderMastermind)
+			return;
+	}
+	else if (!strcmp(mapname, "MAP07"))
+	{
+		if ((Class != Mancubus) && (Class != Arachnotron))
+			return;
+	}
+	else
+	{
+		//  Not a boss level
+		return;
+	}
+
+	// make sure there is a player alive for victory
+	for (i = 0; i < MAXPLAYERS; i++)
+		if (players[i].bSpawned && players[i].Health > 0)
+			break;
+
+	if (i == MAXPLAYERS)
+		return;	// no one left alive, so do not end game
+
+	// scan the remaining thinkers to see if all bosses are dead
+	FOREACH(Actor, Other)
+	{
+		if (Other != self && Other.Class == Class && Other.Health > 0)
+		{
+			// other boss not dead
+			return;
+		}
+	}
+
+	// victory!
+	if (!strcmp(mapname, "E1M8"))
+	{
+		args[0] = 666;
+		args[1] = 8;
+		EV_DoFloor(NULL, &args[0], FLEV_LOWERFLOORTOLOWEST);
+		return;
+	}
+	if (!strcmp(mapname, "E4M6"))
+	{
+		args[0] = 666;
+		args[1] = 64;
+		args[2] = 150;
+		args[3] = 0;
+		EV_DoDoor(NULL, &args[0], doorOpen);
+		return;
+	}
+	if (!strcmp(mapname, "E4M8"))
+	{
+		args[0] = 666;
+		args[1] = 8;
+		EV_DoFloor(NULL, &args[0], FLEV_LOWERFLOORTOLOWEST);
+		return;
+	}
+	if (!strcmp(mapname, "MAP07"))
+	{
+		if (Class == Mancubus)
+		{
+			args[0] = 666;
+			args[1] = 8;
+			EV_DoFloor(NULL, &args[0], FLEV_LOWERFLOORTOLOWEST);
+		}
+		else	// mo->Class == MT_BABY
+		{
+			args[0] = 667;
+			args[1] = 8;
+			EV_DoFloor(NULL, &args[0], FLEV_RAISETOTEXTURE);
+		}
+		return;
+	}
+
+	G_ExitLevel();
+}
+
+//==========================================================================
+//
+//	OnMapSpawn
+//
+//==========================================================================
+
+void OnMapSpawn(mthing_t *mthing)
+{
+	::OnMapSpawn(mthing);
+	if (Class == LostSoul)
+	{
+		bNoGravKill = true;
+		bTriggerHappy = true;
+	}
+	if (Class == BaronOfHell || Class == HellKnight)
+	{
+		ImuneMissileType = BruiserShot;
+	}
+	if (Class == Cyberdemon)
+	{
+		MissileChance = 160.0;
+		bTriggerHappy = true;
+		bBoss = true;
+	}
+	if (Class == SpiderMastermind)
+ 	{
+		bTriggerHappy = true;
+		bBoss = true;
+	}
+	if (Class == Revenant)
+	{
+		bTriggerHappy = true;
+		MissileMinRange = 196.0;
+	}
+	if (Class == ArchVile)
+	{
+		bNoGrudge = true;
+		bNeverTarget = true;
+		MissileMaxRange = 14.0 * 64.0;
+	}
+
+	if (Class == ItemInvulnerability || Class == ItemInvisibility)
+	{
+		bNoRespawn = true;
+	}
+}
+
 defaultproperties
 {
 }
@@ -1106,6 +1312,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2002/05/18 16:59:58  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.1  2002/05/03 17:11:53  dj_jl
 //  Object classes split up into their files.
 //

@@ -95,7 +95,7 @@ defaultproperties
 	bCkeckNoMonsters = false;
 	bActivateMCross = false;
 	bNoDeathmatch = true;
-	SpawnState = S_MERCHANDER_STAND1;
+	IdleState = S_MERCHANDER_STAND1;
 	SeeState = S_MERCHANDER_PAIN1;
 	PainState = S_MERCHANDER_PAIN1;
 	PainSound = 'PeasantPain';
@@ -171,6 +171,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2002/05/18 17:00:01  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.1  2002/04/27 17:04:54  dj_jl
 //  Merged all creatures.
 //

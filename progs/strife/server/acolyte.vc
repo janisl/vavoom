@@ -81,7 +81,7 @@ defaultproperties
 	Mass = 400.0;
 	StepSpeed = 7.0;
 	PainChance = 150;
-	SpawnState = S_ACOLYTE_STAND;
+	IdleState = S_ACOLYTE_STAND;
 	SeeState = S_ACOLYTE_RUN1;
 	MissileState = S_ACOLYTE_ATK1;
 	PainState = S_ACOLYTE_PAIN;
@@ -306,7 +306,7 @@ defaultproperties
 	Height = 56.0;
 	Mass = 100.0;
 	PainChance = 255;
-	SpawnState = S_ACOLYTEARM_STAND;
+	IdleState = S_ACOLYTEARM_STAND;
 	PainState = S_ACOLYTEARM_PAIN;
 	DeathState = S_ACOLYTE_XDIE1;
 	DeathSound = 'PeasantDeath';
@@ -317,6 +317,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2002/05/18 17:00:00  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.1  2002/04/27 17:04:54  dj_jl
 //  Merged all creatures.
 //

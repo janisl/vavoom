@@ -484,7 +484,7 @@ void Weapon::A_WeaponReady(void)
 	if (Player->MO.StateNum == Player->MO.MissileState ||
 		Player->MO.StateNum == PlayerPawn(Player->MO).Attack2State)
 	{
-		Player->MO.SetState(Player->MO.SpawnState);
+		Player->MO.SetState(Player->MO.IdleState);
 	}
 	// Put the weapon away if the player has a pending weapon or has
 	// died.
@@ -924,7 +924,7 @@ void Actor::A_MaceBallImpact(void)
 		Health = MAGIC_JUNK;
 		Velocity.z = Velocity.z * 192.0 / 256.0;
 		bFloorBounce = false;
-		SetState(SpawnState);
+		SetState(IdleState);
 		PlaySound('Bounce', CHAN_VOICE);
 	}
 	else
@@ -963,7 +963,7 @@ void Actor::A_MaceBallImpact2(void)
 	{
 		// Bounce
 		Velocity.z = Velocity.z * 192.0 / 256.0;
-		SetState(SpawnState);
+		SetState(IdleState);
 
 		tiny = Spawn(MaceFX3, Origin);
 		angle = AngleMod360(Angles.yaw + 90.0);
@@ -1053,7 +1053,7 @@ void Actor::A_DeathBallImpact(void)
 			Velocity.x = Speed * cos(angle);
 			Velocity.y = Speed * sin(angle);
 		}
-		SetState(SpawnState);
+		SetState(IdleState);
 		PlaySound('PlatformStop', CHAN_VOICE);
 	}
 	else
@@ -2098,7 +2098,7 @@ void A_BeakReady(void)
 		if (Player->MO.StateNum == Player->MO.MissileState)
 		{
 			// Take out of attack state
-			Player->MO.SetState(Player->MO.SpawnState);
+			Player->MO.SetState(Player->MO.IdleState);
 		}
 		Player->bAttackDown = false;
 	}
@@ -2218,6 +2218,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/05/18 17:00:00  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.25  2002/03/28 18:15:34  dj_jl
 //  Renamed mo in player_t to MO.
 //

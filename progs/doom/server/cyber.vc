@@ -78,6 +78,61 @@ void A_CyberAttack(void)
 	SpawnMissile(Enemy, Rocket);
 }
 
+//==========================================================================
+//
+//  A_BossDeath
+//
+//  Possibly trigger special effects if on first boss level
+//
+//==========================================================================
+
+void A_BossDeath(void)
+{
+	string mapname;
+	int i;
+	Actor Other;
+	int args[5];
+
+	mapname = ARR2STR(level->mapname);
+	if (strcmp(mapname, "E2M8") && strcmp(mapname, "E4M6"))
+	{
+		//  Not a boss level
+		return;
+	}
+
+	// make sure there is a player alive for victory
+	for (i = 0; i < MAXPLAYERS; i++)
+		if (players[i].bSpawned && players[i].Health > 0)
+			break;
+
+	if (i == MAXPLAYERS)
+		return;	// no one left alive, so do not end game
+
+	// scan the remaining thinkers to see if all bosses are dead
+	FOREACH(Actor, Other)
+	{
+		if (Other != self && Other.Class == Class && Other.Health > 0)
+		{
+			// other boss not dead
+			return;
+		}
+	}
+
+	// victory!
+	if (!strcmp(mapname, "E4M6"))
+	{
+		args[0] = 666;
+		args[1] = 64;
+		args[2] = 150;
+		args[3] = 0;
+		args[4] = 0;
+		EV_DoDoor(NULL, &args[0], doorOpen);
+		return;
+	}
+
+	G_ExitLevel();
+}
+
 __states__
 {
 	S_CYBER_STND('CYBR', 0, 'monsters/cyber.md2', 0, 10.0 / 35.0, S_CYBER_STND2) { A_Look(); }
@@ -117,7 +172,10 @@ defaultproperties
 	Mass = 1000.0;
 	StepSpeed = 16.0;
 	PainChance = 20;
-	SpawnState = S_CYBER_STND;
+	MissileChance = 160.0;
+	bBoss = true;
+	bTriggerHappy = true;
+	IdleState = S_CYBER_STND;
 	SeeState = S_CYBER_RUN1;
 	MissileState = S_CYBER_ATK1;
 	PainState = S_CYBER_PAIN;
@@ -133,6 +191,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/05/18 16:59:58  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.14  2002/05/03 17:11:53  dj_jl
 //  Object classes split up into their files.
 //

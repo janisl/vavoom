@@ -104,7 +104,7 @@ defaultproperties
 	Mass = 100.0;
 	PainChance = 255;
 	bPickUp = true;
-	SpawnState = S_FPLAY;
+	IdleState = S_FPLAY;
 	SeeState = S_FPLAY_RUN1;
 	MissileState = S_FPLAY_ATK1;
 	AttackEndState = S_FPLAY_ATK2;
@@ -172,7 +172,7 @@ defaultproperties
 	Mass = 100.0;
 	PainChance = 255;
 	bPickUp = true;
-	SpawnState = S_CPLAY;
+	IdleState = S_CPLAY;
 	SeeState = S_CPLAY_RUN1;
 	MissileState = S_CPLAY_ATK1;
 	AttackEndState = S_CPLAY_ATK3;
@@ -236,7 +236,7 @@ defaultproperties
 	Mass = 100.0;
 	PainChance = 255;
 	bPickUp = true;
-	SpawnState = S_MPLAY;
+	IdleState = S_MPLAY;
 	SeeState = S_MPLAY_RUN1;
 	MissileState = S_MPLAY_ATK1;
 	AttackEndState = S_MPLAY_ATK2;
@@ -288,7 +288,7 @@ defaultproperties
 	Height = 24.0;
 	Mass = 100.0;
 	PainChance = 255;
-	SpawnState = S_PIGPLAY;
+	IdleState = S_PIGPLAY;
 	SeeState = S_PIGPLAY_RUN1;
 	MissileState = S_PIGPLAY_ATK1;
 	AttackEndState = S_PIGPLAY_ATK1;
@@ -374,7 +374,7 @@ defaultproperties
 	bNoBlockmap = true;
 	bNoPassMobj = true;
 	bCannotPush = true;
-	SpawnState = S_BLOODYSKULL1;
+	IdleState = S_BLOODYSKULL1;
 	FloorState = S_BLOODYSKULLX1;
 	RemoveState = S_BLOODYSKULLX2;
 }
@@ -432,7 +432,7 @@ defaultproperties
 	bNoBlockmap = true;
 	bNoPassMobj = true;
 	bCannotPush = true;
-	SpawnState = S_ICECHUNK_HEAD;
+	IdleState = S_ICECHUNK_HEAD;
 	RemoveState = S_ICECHUNK_HEAD2;
 }
 
@@ -441,6 +441,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/05/18 17:00:00  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.4  2002/03/28 18:15:35  dj_jl
 //  Renamed mo in player_t to MO.
 //

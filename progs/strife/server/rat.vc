@@ -58,7 +58,7 @@ defaultproperties
 	bUnknown4 = true;
 #endif
 	bNoBlood = true;
-	SpawnState = S_RAT_LOOK;
+	IdleState = S_RAT_LOOK;
 	SeeState = S_RAT_RUN1;
 	MeleeState = S_RAT_WALK1;
 	DeathState = S_MEAT_17;
@@ -72,6 +72,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2002/05/18 17:00:04  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.1  2002/04/27 17:04:55  dj_jl
 //  Merged all creatures.
 //

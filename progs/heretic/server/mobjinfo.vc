@@ -63,7 +63,7 @@ class EggMissile:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_EGGFX1;
+		IdleState = S_EGGFX1;
 		DeathState = S_EGGFXI1_1;
 	}
 };
@@ -89,7 +89,7 @@ class FireBomb:Actor
 		Translucency = 33;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_FIREBOMB1;
+		IdleState = S_FIREBOMB1;
 		DeathSound = 'PhoenixHit';
 	}
 };
@@ -120,7 +120,7 @@ class Pod:Actor
 		bPushable = true;
 		bSlide = true;
 		bTelestomp = true;
-		SpawnState = S_POD_WAIT1;
+		IdleState = S_POD_WAIT1;
 		PainState = S_POD_PAIN1;
 		DeathState = S_POD_DIE1;
 		DeathSound = 'PodExplode';
@@ -148,7 +148,7 @@ class PodGoo:Actor
 		bNoTeleport = true;
 		bCannotPush = true;
 		bActivatePCross = true;
-		SpawnState = S_PODGOO1;
+		IdleState = S_PODGOO1;
 		DeathState = S_PODGOOX;
 	}
 };
@@ -172,7 +172,7 @@ class PodGenerator:Actor
 		bHidden = true;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_PODGENERATOR;
+		IdleState = S_PODGENERATOR;
 	}
 };
 
@@ -197,7 +197,7 @@ class Splash:Actor
 		bNoTeleport = true;
 		bCannotPush = true;
 		bActivatePCross = true;
-		SpawnState = S_SPLASH1;
+		IdleState = S_SPLASH1;
 		DeathState = S_SPLASHX;
 	}
 };
@@ -219,7 +219,7 @@ class SplashBase:Actor
 		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_SPLASHBASE1;
+		IdleState = S_SPLASHBASE1;
 	}
 };
 
@@ -240,7 +240,7 @@ class LavaSplash:Actor
 		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_LAVASPLASH1;
+		IdleState = S_LAVASPLASH1;
 	}
 };
 
@@ -263,7 +263,7 @@ class LavaSmoke:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_LAVASMOKE1;
+		IdleState = S_LAVASMOKE1;
 	}
 };
 
@@ -288,7 +288,7 @@ class SludgeChunk:Actor
 		bNoTeleport = true;
 		bCannotPush = true;
 		bActivatePCross = true;
-		SpawnState = S_SLUDGECHUNK1;
+		IdleState = S_SLUDGECHUNK1;
 		DeathState = S_SLUDGECHUNKX;
 	}
 };
@@ -310,7 +310,7 @@ class SludgeSplash:Actor
 		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_SLUDGESPLASH1;
+		IdleState = S_SLUDGESPLASH1;
 	}
 };
 
@@ -333,7 +333,7 @@ class SkullHang70:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_SKULLHANG70_1;
+		IdleState = S_SKULLHANG70_1;
 	}
 };
 
@@ -356,7 +356,7 @@ class SkullHang60:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_SKULLHANG60_1;
+		IdleState = S_SKULLHANG60_1;
 	}
 };
 
@@ -379,7 +379,7 @@ class SkullHang45:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_SKULLHANG45_1;
+		IdleState = S_SKULLHANG45_1;
 	}
 };
 
@@ -402,7 +402,7 @@ class SkullHang35:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_SKULLHANG35_1;
+		IdleState = S_SKULLHANG35_1;
 	}
 };
 
@@ -432,7 +432,7 @@ class Chandelier:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_CHANDELIER1;
+		IdleState = S_CHANDELIER1;
 	}
 };
 
@@ -461,7 +461,7 @@ class SerpentTorch:Actor
 		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_SERPTORCH1;
+		IdleState = S_SERPTORCH1;
 	}
 };
 
@@ -483,7 +483,7 @@ class SmallPillar:Actor
 		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_SMALLPILLAR;
+		IdleState = S_SMALLPILLAR;
 	}
 };
 
@@ -505,7 +505,7 @@ class StalagmiteSmall:Actor
 		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_STALAGMITESMALL;
+		IdleState = S_STALAGMITESMALL;
 	}
 };
 
@@ -527,7 +527,7 @@ class StalagmiteLarge:Actor
 		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_STALAGMITELARGE;
+		IdleState = S_STALAGMITELARGE;
 	}
 };
 
@@ -551,7 +551,7 @@ class StalactiteSmall:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_STALACTITESMALL;
+		IdleState = S_STALACTITESMALL;
 	}
 };
 
@@ -575,7 +575,7 @@ class StalactiteLarge:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_STALACTITELARGE;
+		IdleState = S_STALACTITELARGE;
 	}
 };
 
@@ -604,7 +604,7 @@ class FireBrazier:Actor
 		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_FIREBRAZIER1;
+		IdleState = S_FIREBRAZIER1;
 	}
 };
 
@@ -626,7 +626,7 @@ class Barrel:Actor
 		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_BARREL;
+		IdleState = S_BARREL;
 	}
 };
 
@@ -648,7 +648,7 @@ class BrownPillar:Actor
 		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_BRPILLAR;
+		IdleState = S_BRPILLAR;
 	}
 };
 
@@ -671,7 +671,7 @@ class Moss1:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_MOSS1;
+		IdleState = S_MOSS1;
 	}
 };
 
@@ -694,7 +694,7 @@ class Moss2:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_MOSS2;
+		IdleState = S_MOSS2;
 	}
 };
 
@@ -723,7 +723,7 @@ class WallTorch:Actor
 		ReactionCount = 8;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_WALLTORCH1;
+		IdleState = S_WALLTORCH1;
 	}
 };
 
@@ -747,7 +747,7 @@ class HangingCorpse:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_HANGINGCORPSE;
+		IdleState = S_HANGINGCORPSE;
 	}
 };
 
@@ -769,7 +769,7 @@ class KeyGizmoBlue:Actor
 		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_KEYGIZMO1;
+		IdleState = S_KEYGIZMO1;
 	}
 };
 
@@ -791,7 +791,7 @@ class KeyGizmoGreen:Actor
 		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_KEYGIZMO1;
+		IdleState = S_KEYGIZMO1;
 	}
 };
 
@@ -813,7 +813,7 @@ class KeyGizmoYellow:Actor
 		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_KEYGIZMO1;
+		IdleState = S_KEYGIZMO1;
 	}
 };
 
@@ -835,7 +835,7 @@ class KeyGizmoFloat:Actor
 		bSolid = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_KGZ_START;
+		IdleState = S_KGZ_START;
 	}
 };
 
@@ -857,7 +857,7 @@ class Volcano:Actor
 		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_VOLCANO1;
+		IdleState = S_VOLCANO1;
 	}
 };
 
@@ -884,7 +884,7 @@ class VolcanoBlast:Actor
 		bNoTeleport = true;
 		bFireDamage = true;
 		bActivatePCross = true;
-		SpawnState = S_VOLCANOBALL1;
+		IdleState = S_VOLCANOBALL1;
 		DeathState = S_VOLCANOBALLX1;
 		DeathSound = 'VolcanoHit';
 		Effects = EF_DL_RED;
@@ -914,7 +914,7 @@ class VolcanoTBlast:Actor
 		bNoTeleport = true;
 		bFireDamage = true;
 		bActivatePCross = true;
-		SpawnState = S_VOLCANOTBALL1;
+		IdleState = S_VOLCANOTBALL1;
 		DeathState = S_VOLCANOTBALLX1;
 		Effects = EF_DL_RED;
 	}
@@ -940,7 +940,7 @@ class TeleGlitGen:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_TELEGLITGEN1;
+		IdleState = S_TELEGLITGEN1;
 	}
 };
 
@@ -964,7 +964,7 @@ class TeleGlitGen2:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_TELEGLITGEN2;
+		IdleState = S_TELEGLITGEN2;
 	}
 };
 
@@ -986,7 +986,7 @@ class TeleGlitter:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bMissile = true;
-		SpawnState = S_TELEGLITTER1_1;
+		IdleState = S_TELEGLITTER1_1;
 	}
 };
 
@@ -1008,7 +1008,7 @@ class TeleGlitter2:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bMissile = true;
-		SpawnState = S_TELEGLITTER2_1;
+		IdleState = S_TELEGLITTER2_1;
 	}
 };
 
@@ -1030,7 +1030,7 @@ class TeleportFog:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_TFOG1;
+		IdleState = S_TFOG1;
 	}
 };
 
@@ -1074,7 +1074,7 @@ class StaffPuff:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_STAFFPUFF1;
+		IdleState = S_STAFFPUFF1;
 		AttackSound = 'StaffHit';
 	}
 };
@@ -1097,7 +1097,7 @@ class StaffPuff2:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_STAFFPUFF2_1;
+		IdleState = S_STAFFPUFF2_1;
 		AttackSound = 'StaffHit2';
 	}
 };
@@ -1120,7 +1120,7 @@ class BeakPuff:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_STAFFPUFF1;
+		IdleState = S_STAFFPUFF1;
 		AttackSound = 'ChickenAttack';
 	}
 };
@@ -1145,7 +1145,7 @@ class GauntletPuff1:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_GAUNTLETPUFF1_1;
+		IdleState = S_GAUNTLETPUFF1_1;
 	}
 };
 
@@ -1168,7 +1168,7 @@ class GauntletPuff2:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_GAUNTLETPUFF2_1;
+		IdleState = S_GAUNTLETPUFF2_1;
 	}
 };
 
@@ -1196,7 +1196,7 @@ class BlasterFX1:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_BLASTERFX1_1;
+		IdleState = S_BLASTERFX1_1;
 		DeathState = S_BLASTERFXI1_1;
 		DeathSound = 'BlasterHit';
 		Effects = EF_DL_BLUE;
@@ -1224,7 +1224,7 @@ class BlasterSmoke:Actor
 		bNoTeleport = true;
 		bNoPassMobj = true;
 		bCannotPush = true;
-		SpawnState = S_BLASTERSMOKE1;
+		IdleState = S_BLASTERSMOKE1;
 	}
 };
 
@@ -1252,7 +1252,7 @@ class Ripper:Actor
 		bNoTeleport = true;
 		bRip = true;
 		bActivatePCross = true;
-		SpawnState = S_RIPPER1;
+		IdleState = S_RIPPER1;
 		DeathState = S_RIPPERX1;
 		DeathSound = 'SkullRodHit';
 	}
@@ -1276,7 +1276,7 @@ class BlasterPuff1:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_BLASTERPUFF1_1;
+		IdleState = S_BLASTERPUFF1_1;
 	}
 };
 
@@ -1298,7 +1298,7 @@ class BlasterPuff2:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_BLASTERPUFF2_1;
+		IdleState = S_BLASTERPUFF2_1;
 	}
 };
 
@@ -1328,7 +1328,7 @@ class MaceFX1:Actor
 		bThruGhost = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_MACEFX1_1;
+		IdleState = S_MACEFX1_1;
 		DeathState = S_MACEFXI1_1;
 		SightSound = 'MaceFire';
 	}
@@ -1358,7 +1358,7 @@ class MaceFX2:Actor
 		bThruGhost = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_MACEFX2_1;
+		IdleState = S_MACEFX2_1;
 		DeathState = S_MACEFXI2_1;
 	}
 };
@@ -1387,7 +1387,7 @@ class MaceFX3:Actor
 		bThruGhost = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_MACEFX3_1;
+		IdleState = S_MACEFX3_1;
 		DeathState = S_MACEFXI1_1;
 	}
 };
@@ -1416,7 +1416,7 @@ class MaceFX4:Actor
 		bThruGhost = true;
 		bTelestomp = true;
 		bActivatePCross = true;
-		SpawnState = S_MACEFX4_1;
+		IdleState = S_MACEFX4_1;
 		DeathState = S_MACEFXI4_1;
 	}
 };
@@ -1446,7 +1446,7 @@ class HornRodMissile1:Actor
 		bWindThrust = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_HRODFX1_1;
+		IdleState = S_HRODFX1_1;
 		DeathState = S_HRODFXI1_1;
 		SightSound = 'SkullRodFire';
 		DeathSound = 'SkullRodHit';
@@ -1477,7 +1477,7 @@ class HornRodMissile2:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_HRODFX2_1;
+		IdleState = S_HRODFX2_1;
 		DeathState = S_HRODFXI2_1;
 		SightSound = 'SkullRodFire';
 		DeathSound = 'SkullRodHit';
@@ -1508,7 +1508,7 @@ class RainPlayer1:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_RAINPLR1_1;
+		IdleState = S_RAINPLR1_1;
 		DeathState = S_RAINPLR1X_1;
 	}
 };
@@ -1536,7 +1536,7 @@ class RainPlayer2:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_RAINPLR2_1;
+		IdleState = S_RAINPLR2_1;
 		DeathState = S_RAINPLR2X_1;
 	}
 };
@@ -1564,7 +1564,7 @@ class RainPlayer3:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_RAINPLR3_1;
+		IdleState = S_RAINPLR3_1;
 		DeathState = S_RAINPLR3X_1;
 	}
 };
@@ -1592,7 +1592,7 @@ class RainPlayer4:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_RAINPLR4_1;
+		IdleState = S_RAINPLR4_1;
 		DeathState = S_RAINPLR4X_1;
 	}
 };
@@ -1620,7 +1620,7 @@ class GoldWandMissile1:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_GWANDFX1_1;
+		IdleState = S_GWANDFX1_1;
 		DeathState = S_GWANDFXI1_1;
 		DeathSound = 'GoldWandFire';
 		Effects = EF_DL_WHITE;
@@ -1650,7 +1650,7 @@ class GoldWandMissile2:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_GWANDFX2_1;
+		IdleState = S_GWANDFX2_1;
 		DeathState = S_GWANDFXI1_1;
 		Effects = EF_DL_WHITE;
 	}
@@ -1674,7 +1674,7 @@ class GoldWandPuff1:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_GWANDPUFF1_1;
+		IdleState = S_GWANDPUFF1_1;
 	}
 };
 
@@ -1696,7 +1696,7 @@ class GoldWandPuff2:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_GWANDFXI1_1;
+		IdleState = S_GWANDFXI1_1;
 	}
 };
 
@@ -1725,7 +1725,7 @@ class PhoenixFX1:Actor
 		bThruGhost = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_PHOENIXFX1_1;
+		IdleState = S_PHOENIXFX1_1;
 		DeathState = S_PHOENIXFXI1_1;
 		SightSound = 'PhoenixFire';
 		DeathSound = 'PhoenixHit';
@@ -1754,7 +1754,7 @@ class PhoenixPuff:Actor
 		bNoTeleport = true;
 		bNoPassMobj = true;
 		bCannotPush = true;
-		SpawnState = S_PHOENIXPUFF1;
+		IdleState = S_PHOENIXPUFF1;
 	}
 };
 
@@ -1782,7 +1782,7 @@ class PhoenixFX2:Actor
 		bNoTeleport = true;
 		bFireDamage = true;
 		bActivatePCross = true;
-		SpawnState = S_PHOENIXFX2_1;
+		IdleState = S_PHOENIXFX2_1;
 		DeathState = S_PHOENIXFXI2_1;
 		Effects = EF_DL_WHITE;
 	}
@@ -1812,7 +1812,7 @@ class CrossbowFX1:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_CRBOWFX1;
+		IdleState = S_CRBOWFX1;
 		DeathState = S_CRBOWFXI1_1;
 		SightSound = 'BowFire';
 		DeathSound = 'SkullRodHit';
@@ -1842,7 +1842,7 @@ class CrossbowFX2:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_CRBOWFX2;
+		IdleState = S_CRBOWFX2;
 		DeathState = S_CRBOWFXI1_1;
 		SightSound = 'BowFire';
 		DeathSound = 'SkullRodHit';
@@ -1875,7 +1875,7 @@ class CrossbowFX3:Actor
 		bThruGhost = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_CRBOWFX3;
+		IdleState = S_CRBOWFX3;
 		DeathState = S_CRBOWFXI3_1;
 		DeathSound = 'SkullRodHit';
 		Effects = EF_DL_GREEN;
@@ -1899,7 +1899,7 @@ class CrossbowFX4:Actor
 		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_CRBOWFX4_1;
+		IdleState = S_CRBOWFX4_1;
 	}
 };
 
@@ -1920,7 +1920,7 @@ class Blood:Actor
 		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_BLOOD1;
+		IdleState = S_BLOOD1;
 	}
 };
 
@@ -1945,7 +1945,7 @@ class BloodSplatter:Actor
 		bNoTeleport = true;
 		bCannotPush = true;
 		bActivatePCross = true;
-		SpawnState = S_BLOODSPLATTER1;
+		IdleState = S_BLOODSPLATTER1;
 		DeathState = S_BLOODSPLATTERX;
 	}
 };
@@ -1976,7 +1976,7 @@ class Feather:Actor
 		bNoTeleport = true;
 		bCannotPush = true;
 		bActivatePCross = true;
-		SpawnState = S_FEATHER1;
+		IdleState = S_FEATHER1;
 		DeathState = S_FEATHERX;
 	}
 };
@@ -2003,7 +2003,7 @@ class MummySoul:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_MUMMY_SOUL1;
+		IdleState = S_MUMMY_SOUL1;
 	}
 };
 
@@ -2030,7 +2030,7 @@ class MummyMissile:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_MUMMYFX1_1;
+		IdleState = S_MUMMYFX1_1;
 		DeathState = S_MUMMYFXI1_1;
 		Effects = EF_DL_WHITE;
 	}
@@ -2061,7 +2061,7 @@ class BeastBall:Actor
 		bWindThrust = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_BEASTBALL1;
+		IdleState = S_BEASTBALL1;
 		DeathState = S_BEASTBALLX1;
 		Effects = EF_DL_RED;
 	}
@@ -2089,7 +2089,7 @@ class BurnBall:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_BURNBALL1;
+		IdleState = S_BURNBALL1;
 		DeathState = S_BEASTBALLX1;
 		Effects = EF_DL_RED;
 	}
@@ -2117,7 +2117,7 @@ class BurnBallFB:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_BURNBALLFB1;
+		IdleState = S_BURNBALLFB1;
 		DeathState = S_BEASTBALLX1;
 		Effects = EF_DL_RED;
 	}
@@ -2145,7 +2145,7 @@ class Puffy:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_PUFFY1;
+		IdleState = S_PUFFY1;
 		DeathState = S_PUFFY1;
 	}
 };
@@ -2175,7 +2175,7 @@ class SnakeProjectileA:Actor
 		bWindThrust = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_SNAKEPRO_A1;
+		IdleState = S_SNAKEPRO_A1;
 		DeathState = S_SNAKEPRO_AX1;
 		Effects = EF_DL_MAGENTA;
 	}
@@ -2204,7 +2204,7 @@ class SnakeProjectileB:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_SNAKEPRO_B1;
+		IdleState = S_SNAKEPRO_B1;
 		DeathState = S_SNAKEPRO_BX1;
 		Effects = EF_DL_WHITE;
 	}
@@ -2235,7 +2235,7 @@ class HeadMissile1:Actor
 		bThruGhost = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_HEADFX1_1;
+		IdleState = S_HEADFX1_1;
 		DeathState = S_HEADFXI1_1;
 		Effects = EF_DL_BLUE;
 	}
@@ -2264,7 +2264,7 @@ class HeadMissile2:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_HEADFX2_1;
+		IdleState = S_HEADFX2_1;
 		DeathState = S_HEADFXI2_1;
 		Effects = EF_DL_BLUE;
 	}
@@ -2294,7 +2294,7 @@ class HeadMissile3:Actor
 		bWindThrust = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_HEADFX3_1;
+		IdleState = S_HEADFX3_1;
 		DeathState = S_HEADFXI3_1;
 		Effects = EF_DL_WHITE;
 	}
@@ -2324,7 +2324,7 @@ class WhirlWind:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_HEADFX4_1;
+		IdleState = S_HEADFX4_1;
 		DeathState = S_HEADFXI4_1;
 	}
 };
@@ -2354,7 +2354,7 @@ class WizardMissile:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_WIZFX1_1;
+		IdleState = S_WIZFX1_1;
 		DeathState = S_WIZFXI1_1;
 		Effects = EF_DL_MAGENTA;
 	}
@@ -2379,7 +2379,7 @@ class ImpChunk1:Actor
 		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_IMP_CHUNKA1;
+		IdleState = S_IMP_CHUNKA1;
 	}
 };
 
@@ -2400,7 +2400,7 @@ class ImpChunk2:Actor
 		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_IMP_CHUNKB1;
+		IdleState = S_IMP_CHUNKB1;
 	}
 };
 
@@ -2428,7 +2428,7 @@ class ImpBall:Actor
 		bWindThrust = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_IMPFX1;
+		IdleState = S_IMPFX1;
 		DeathState = S_IMPFXI1;
 		Effects = EF_DL_WHITE;
 	}
@@ -2461,7 +2461,7 @@ class KnightAxe:Actor
 		bThruGhost = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_SPINAXE1;
+		IdleState = S_SPINAXE1;
 		DeathState = S_SPINAXEX1;
 		DeathSound = 'SkullRodHit';
 		Effects = EF_DL_GREEN;
@@ -2492,7 +2492,7 @@ class KnightRedAxe:Actor
 		bThruGhost = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_REDAXE1;
+		IdleState = S_REDAXE1;
 		DeathState = S_REDAXEX1;
 		DeathSound = 'SkullRodHit';
 		Effects = EF_DL_RED;
@@ -2524,7 +2524,7 @@ class Sorcerer1Missile:Actor
 		bNoTeleport = true;
 		bFireDamage = true;
 		bActivatePCross = true;
-		SpawnState = S_SRCRFX1_1;
+		IdleState = S_SRCRFX1_1;
 		DeathState = S_SRCRFXI1_1;
 		Effects = EF_DL_WHITE;
 	}
@@ -2554,7 +2554,7 @@ class Sorcerer2Missile1:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_SOR2FX1_1;
+		IdleState = S_SOR2FX1_1;
 		DeathState = S_SOR2FXI1_1;
 		Effects = EF_DL_BLUE;
 	}
@@ -2580,7 +2580,7 @@ class Sorcerer2MissileSpark:Actor
 		bNoTeleport = true;
 		bNoPassMobj = true;
 		bCannotPush = true;
-		SpawnState = S_SOR2FXSPARK1;
+		IdleState = S_SOR2FXSPARK1;
 	}
 };
 
@@ -2607,7 +2607,7 @@ class Sorcerer2Missile2:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bActivatePCross = true;
-		SpawnState = S_SOR2FX2_1;
+		IdleState = S_SOR2FX2_1;
 		DeathState = S_SOR2FXI2_1;
 		Effects = EF_DL_BLUE;
 	}
@@ -2630,7 +2630,7 @@ class Sorcerer2TeleFade:Actor
 		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_SOR2TELEFADE1;
+		IdleState = S_SOR2TELEFADE1;
 	}
 };
 
@@ -2659,7 +2659,7 @@ class MinotaurMissile:Actor
 		bNoTeleport = true;
 		bFireDamage = true;
 		bActivatePCross = true;
-		SpawnState = S_MNTRFX1_1;
+		IdleState = S_MNTRFX1_1;
 		DeathState = S_MNTRFXI1_1;
 		Effects = EF_DL_WHITE;
 	}
@@ -2689,7 +2689,7 @@ class MinotaurFloorFire:Actor
 		bNoTeleport = true;
 		bFireDamage = true;
 		bActivatePCross = true;
-		SpawnState = S_MNTRFX2_1;
+		IdleState = S_MNTRFX2_1;
 		DeathState = S_MNTRFXI2_1;
 		DeathSound = 'PhoenixHit';
 		Effects = EF_DL_WHITE;
@@ -2721,7 +2721,7 @@ class MinotaurFloorFire2:Actor
 		bNoTeleport = true;
 		bFireDamage = true;
 		bActivatePCross = true;
-		SpawnState = S_MNTRFX3_1;
+		IdleState = S_MNTRFX3_1;
 		DeathState = S_MNTRFXI2_1;
 		DeathSound = 'PhoenixHit';
 		Effects = EF_DL_WHITE;
@@ -2762,7 +2762,7 @@ class SoundWind:Actor
 		bHidden = true;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_SND_WIND;
+		IdleState = S_SND_WIND;
 	}
 };
 
@@ -2785,16 +2785,19 @@ class SoundWaterfall:Actor
 		bHidden = true;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_SND_WATERFALL;
+		IdleState = S_SND_WATERFALL;
 	}
 };
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2002/05/18 16:59:59  dj_jl
+//	Renamed SpawnState to IdleState, other changes.
+//
 //	Revision 1.27  2002/04/11 16:52:14  dj_jl
 //	Made TryMove native.
-//
+//	
 //	Revision 1.26  2002/03/20 19:07:46  dj_jl
 //	Got rid of a lots of legacy, beautification.
 //	

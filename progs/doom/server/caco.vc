@@ -25,6 +25,40 @@
 
 //**************************************************************************
 //
+//	CacodemonMissile
+//
+//**************************************************************************
+
+class CacodemonMissile:Projectile
+{
+
+__states__
+{
+	S_RBALL1('BAL2', 0 | FF_FULLBRIGHT, 'missiles/cacoball.md2', 0, 4.0 / 35.0, S_RBALL2) { }
+	S_RBALL2('BAL2', 1 | FF_FULLBRIGHT, 'missiles/cacoball.md2', 1, 4.0 / 35.0, S_RBALL1) { }
+	S_RBALLX1('BAL2', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_RBALLX2) { }
+	S_RBALLX2('BAL2', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_RBALLX3) { }
+	S_RBALLX3('BAL2', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 6.0;
+	Height = 8.0;
+	Speed = 350.0;
+	MissileDamage = 5;
+	Translucency = 33;
+	IdleState = S_RBALL1;
+	DeathState = S_RBALLX1;
+	SightSound = 'FireballShoot';
+	DeathSound = 'FireballExplode';
+	Effects = EF_DL_RBALL;
+}
+
+}
+
+//**************************************************************************
+//
 //	Cacodemon
 //
 //**************************************************************************
@@ -94,7 +128,7 @@ defaultproperties
 	PainChance = 128;
 	bNoGravity = true;
 	bFloat = true;
-	SpawnState = S_HEAD_STND;
+	IdleState = S_HEAD_STND;
 	SeeState = S_HEAD_RUN1;
 	MissileState = S_HEAD_ATK1;
 	PainState = S_HEAD_PAIN;
@@ -110,41 +144,10 @@ defaultproperties
 
 //**************************************************************************
 //
-//	CacodemonMissile
-//
-//**************************************************************************
-
-class CacodemonMissile:Projectile
-{
-
-__states__
-{
-	S_RBALL1('BAL2', 0 | FF_FULLBRIGHT, 'missiles/cacoball.md2', 0, 4.0 / 35.0, S_RBALL2) { }
-	S_RBALL2('BAL2', 1 | FF_FULLBRIGHT, 'missiles/cacoball.md2', 1, 4.0 / 35.0, S_RBALL1) { }
-	S_RBALLX1('BAL2', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_RBALLX2) { }
-	S_RBALLX2('BAL2', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_RBALLX3) { }
-	S_RBALLX3('BAL2', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
-}
-
-defaultproperties
-{
-	Radius = 6.0;
-	Height = 8.0;
-	Speed = 350.0;
-	MissileDamage = 5;
-	Translucency = 33;
-	SpawnState = S_RBALL1;
-	DeathState = S_RBALLX1;
-	SightSound = 'FireballShoot';
-	DeathSound = 'FireballExplode';
-	Effects = EF_DL_RBALL;
-}
-
-}
-
-//**************************************************************************
-//
 //  $Log$
+//  Revision 1.14  2002/05/18 16:59:58  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.13  2002/05/03 17:11:53  dj_jl
 //  Object classes split up into their files.
 //

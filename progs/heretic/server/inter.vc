@@ -60,7 +60,7 @@ void A_RestoreSpecialThing1(void)
 void A_RestoreSpecialThing2(void)
 {
 	bSpecial = true;
-	SetState(SpawnState);
+	SetState(IdleState);
 }
 
 __states__
@@ -125,7 +125,7 @@ __states__
 defaultproperties
 {
 	bFloatBob = true;
-	SpawnState = S_ITEM_PTN1_1;
+	IdleState = S_ITEM_PTN1_1;
 }
 
 }
@@ -150,7 +150,7 @@ __states__
 defaultproperties
 {
 	bFloatBob = true;
-	SpawnState = S_ITEM_SHLD1;
+	IdleState = S_ITEM_SHLD1;
 }
 
 }
@@ -175,7 +175,7 @@ __states__
 defaultproperties
 {
 	bFloatBob = true;
-	SpawnState = S_ITEM_SHD2_1;
+	IdleState = S_ITEM_SHD2_1;
 }
 
 }
@@ -201,7 +201,7 @@ defaultproperties
 {
 	bCountItem = true;
 	bFloatBob = true;
-	SpawnState = S_ITEM_BAGH1;
+	IdleState = S_ITEM_BAGH1;
 }
 
 }
@@ -227,7 +227,7 @@ defaultproperties
 {
 	bCountItem = true;
 	bFloatBob = true;
-	SpawnState = S_ITEM_SPMP1;
+	IdleState = S_ITEM_SPMP1;
 }
 
 }
@@ -280,7 +280,7 @@ void A_UnHideThing(void)
 void A_RestoreArtifact(void)
 {
 	bSpecial = true;
-	SetState(SpawnState);
+	SetState(IdleState);
 	PlaySound('Respawn', CHAN_VOICE);
 }
 
@@ -374,7 +374,7 @@ defaultproperties
 	ArtifactType = arti_invisibility;
 	bCanRespawn = false;
 	Translucency = 33;
-	SpawnState = S_ARTI_INVS1;
+	IdleState = S_ARTI_INVS1;
 }
 
 }
@@ -401,7 +401,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_health;
-	SpawnState = S_ARTI_PTN2_1;
+	IdleState = S_ARTI_PTN2_1;
 }
 
 }
@@ -429,7 +429,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_fly;
-	SpawnState = S_ARTI_SOAR1;
+	IdleState = S_ARTI_SOAR1;
 }
 
 }
@@ -458,7 +458,7 @@ defaultproperties
 {
 	ArtifactType = arti_invulnerability;
 	bCanRespawn = false;
-	SpawnState = S_ARTI_INVU1;
+	IdleState = S_ARTI_INVU1;
 }
 
 }
@@ -483,7 +483,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_tomeofpower;
-	SpawnState = S_ARTI_PWBK1;
+	IdleState = S_ARTI_PWBK1;
 }
 
 }
@@ -511,7 +511,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_egg;
-	SpawnState = S_ARTI_EGGC1;
+	IdleState = S_ARTI_EGGC1;
 }
 
 }
@@ -536,7 +536,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_superhealth;
-	SpawnState = S_ARTI_SPHL1;
+	IdleState = S_ARTI_SPHL1;
 }
 
 }
@@ -563,7 +563,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_torch;
-	SpawnState = S_ARTI_TRCH1;
+	IdleState = S_ARTI_TRCH1;
 }
 
 }
@@ -588,7 +588,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_firebomb;
-	SpawnState = S_ARTI_FBMB1;
+	IdleState = S_ARTI_FBMB1;
 }
 
 }
@@ -616,7 +616,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_teleport;
-	SpawnState = S_ARTI_ATLP1;
+	IdleState = S_ARTI_ATLP1;
 }
 
 }
@@ -663,7 +663,7 @@ __states__
 defaultproperties
 {
 	WeaponType = wp_gauntlets;
-	SpawnState = S_WGNT;
+	IdleState = S_WGNT;
 }
 
 }
@@ -688,7 +688,7 @@ __states__
 defaultproperties
 {
 	WeaponType = wp_blaster;
-	SpawnState = S_BLSR;
+	IdleState = S_BLSR;
 }
 
 }
@@ -715,7 +715,7 @@ __states__
 defaultproperties
 {
 	WeaponType = wp_mace;
-	SpawnState = S_WMCE;
+	IdleState = S_WMCE;
 }
 
 }
@@ -740,7 +740,7 @@ __states__
 defaultproperties
 {
 	WeaponType = wp_skullrod;
-	SpawnState = S_WSKL;
+	IdleState = S_WSKL;
 }
 
 }
@@ -765,7 +765,7 @@ __states__
 defaultproperties
 {
 	WeaponType = wp_phoenixrod;
-	SpawnState = S_WPHX;
+	IdleState = S_WPHX;
 }
 
 }
@@ -790,7 +790,7 @@ __states__
 defaultproperties
 {
 	WeaponType = wp_crossbow;
-	SpawnState = S_WBOW;
+	IdleState = S_WBOW;
 }
 
 }
@@ -856,7 +856,7 @@ __states__
 defaultproperties
 {
 	KeyType = key_green;
-	SpawnState = S_AKYY1;
+	IdleState = S_AKYY1;
 }
 
 }
@@ -890,7 +890,7 @@ __states__
 defaultproperties
 {
 	KeyType = key_blue;
-	SpawnState = S_BKYY1;
+	IdleState = S_BKYY1;
 }
 
 }
@@ -923,7 +923,7 @@ __states__
 defaultproperties
 {
 	KeyType = key_yellow;
-	SpawnState = S_CKYY1;
+	IdleState = S_CKYY1;
 }
 
 }
@@ -974,7 +974,7 @@ defaultproperties
 	AmmoType = am_goldwand;
 	AmmoCount = 10;
 	StringIndex = 0;
-	SpawnState = S_AMG1;
+	IdleState = S_AMG1;
 }
 
 }
@@ -1003,7 +1003,7 @@ defaultproperties
 	AmmoType = am_goldwand;
 	AmmoCount = 50;
 	StringIndex = 1;
-	SpawnState = S_AMG2_1;
+	IdleState = S_AMG2_1;
 }
 
 }
@@ -1030,7 +1030,7 @@ defaultproperties
 	AmmoType = am_mace;
 	AmmoCount = 20;
 	StringIndex = 2;
-	SpawnState = S_AMM1;
+	IdleState = S_AMM1;
 }
 
 }
@@ -1057,7 +1057,7 @@ defaultproperties
 	AmmoType = am_mace;
 	AmmoCount = 100;
 	StringIndex = 3;
-	SpawnState = S_AMM2;
+	IdleState = S_AMM2;
 }
 
 }
@@ -1084,7 +1084,7 @@ defaultproperties
 	AmmoType = am_crossbow;
 	AmmoCount = 5;
 	StringIndex = 4;
-	SpawnState = S_AMC1;
+	IdleState = S_AMC1;
 }
 
 }
@@ -1113,7 +1113,7 @@ defaultproperties
 	AmmoType = am_crossbow;
 	AmmoCount = 20;
 	StringIndex = 5;
-	SpawnState = S_AMC2_1;
+	IdleState = S_AMC2_1;
 }
 
 }
@@ -1141,7 +1141,7 @@ defaultproperties
 	AmmoType = am_skullrod;
 	AmmoCount = 20;
 	StringIndex = 8;
-	SpawnState = S_AMS1_1;
+	IdleState = S_AMS1_1;
 }
 
 }
@@ -1169,7 +1169,7 @@ defaultproperties
 	AmmoType = am_skullrod;
 	AmmoCount = 100;
 	StringIndex = 9;
-	SpawnState = S_AMS2_1;
+	IdleState = S_AMS2_1;
 }
 
 }
@@ -1198,7 +1198,7 @@ defaultproperties
 	AmmoType = am_phoenixrod;
 	AmmoCount = 1;
 	StringIndex = 10;
-	SpawnState = S_AMP1_1;
+	IdleState = S_AMP1_1;
 }
 
 }
@@ -1227,7 +1227,7 @@ defaultproperties
 	AmmoType = am_phoenixrod;
 	AmmoCount = 10;
 	StringIndex = 11;
-	SpawnState = S_AMP2_1;
+	IdleState = S_AMP2_1;
 }
 
 }
@@ -1256,7 +1256,7 @@ defaultproperties
 	AmmoType = am_blaster;
 	AmmoCount = 10;
 	StringIndex = 6;
-	SpawnState = S_AMB1_1;
+	IdleState = S_AMB1_1;
 }
 
 }
@@ -1285,7 +1285,7 @@ defaultproperties
 	AmmoType = am_blaster;
 	AmmoCount = 25;
 	StringIndex = 7;
-	SpawnState = S_AMB2_1;
+	IdleState = S_AMB2_1;
 }
 
 }
@@ -1984,6 +1984,9 @@ void Ammo::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/05/18 16:59:59  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.17  2002/03/20 19:07:46  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

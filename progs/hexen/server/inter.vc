@@ -64,7 +64,7 @@ void A_RestoreSpecialThing1(void)
 void A_RestoreSpecialThing2(void)
 {
 	bSpecial = true;
-	SetState(SpawnState);
+	SetState(IdleState);
 }
 
 __states__
@@ -130,7 +130,7 @@ __states__
 defaultproperties
 {
 	bFloatBob = true;
-	SpawnState = S_ITEM_PTN1_1;
+	IdleState = S_ITEM_PTN1_1;
 }
 
 }
@@ -181,7 +181,7 @@ void A_UnHideThing(void)
 void A_RestoreArtifact(void)
 {
 	bSpecial = true;
-	SetState(SpawnState);
+	SetState(IdleState);
 	PlaySound('Respawn', CHAN_VOICE);
 }
 
@@ -322,7 +322,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_health;
-	SpawnState = S_ARTI_PTN2_1;
+	IdleState = S_ARTI_PTN2_1;
 }
 
 }
@@ -350,7 +350,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_fly;
-	SpawnState = S_ARTI_SOAR1;
+	IdleState = S_ARTI_SOAR1;
 	DormantState = S_DORMANTARTI2_1;
 }
 
@@ -379,7 +379,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_invulnerability;
-	SpawnState = S_ARTI_INVU1;
+	IdleState = S_ARTI_INVU1;
 	DormantState = S_DORMANTARTI3_1;
 }
 
@@ -405,7 +405,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_summon;
-	SpawnState = S_ARTI_SUMMON;
+	IdleState = S_ARTI_SUMMON;
 	DormantState = S_DORMANTARTI2_1;
 }
 
@@ -434,7 +434,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_teleportother;
-	SpawnState = S_ARTI_TELOTHER1;
+	IdleState = S_ARTI_TELOTHER1;
 }
 
 }
@@ -466,7 +466,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_egg;
-	SpawnState = S_ARTI_EGGC1;
+	IdleState = S_ARTI_EGGC1;
 }
 
 }
@@ -491,7 +491,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_superhealth;
-	SpawnState = S_ARTI_SPHL1;
+	IdleState = S_ARTI_SPHL1;
 }
 
 }
@@ -518,7 +518,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_torch;
-	SpawnState = S_ARTI_TRCH1;
+	IdleState = S_ARTI_TRCH1;
 }
 
 }
@@ -546,7 +546,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_teleport;
-	SpawnState = S_ARTI_ATLP1;
+	IdleState = S_ARTI_ATLP1;
 }
 
 }
@@ -571,7 +571,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_poisonbag;
-	SpawnState = S_ARTI_PSBG1;
+	IdleState = S_ARTI_PSBG1;
 }
 
 }
@@ -603,7 +603,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_speed;
-	SpawnState = S_ARTI_BOOTS1;
+	IdleState = S_ARTI_BOOTS1;
 }
 
 }
@@ -628,7 +628,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_boostmana;
-	SpawnState = S_ARTI_MANA;
+	IdleState = S_ARTI_MANA;
 }
 
 }
@@ -660,7 +660,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_boostarmor;
-	SpawnState = S_ARTI_ARMOR1;
+	IdleState = S_ARTI_ARMOR1;
 }
 
 }
@@ -692,7 +692,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_blastradius;
-	SpawnState = S_ARTI_BLAST1;
+	IdleState = S_ARTI_BLAST1;
 }
 
 }
@@ -732,7 +732,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_healingradius;
-	SpawnState = S_ARTI_HEALRAD1;
+	IdleState = S_ARTI_HEALRAD1;
 }
 
 }
@@ -777,7 +777,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_puzzskull;
-	SpawnState = S_ARTIPUZZSKULL;
+	IdleState = S_ARTIPUZZSKULL;
 }
 
 }
@@ -802,7 +802,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_puzzgembig;
-	SpawnState = S_ARTIPUZZGEMBIG;
+	IdleState = S_ARTIPUZZGEMBIG;
 }
 
 }
@@ -827,7 +827,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_puzzgemred;
-	SpawnState = S_ARTIPUZZGEMRED;
+	IdleState = S_ARTIPUZZGEMRED;
 }
 
 }
@@ -852,7 +852,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_puzzgemgreen1;
-	SpawnState = S_ARTIPUZZGEMGREEN1;
+	IdleState = S_ARTIPUZZGEMGREEN1;
 }
 
 }
@@ -877,7 +877,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_puzzgemgreen2;
-	SpawnState = S_ARTIPUZZGEMGREEN2;
+	IdleState = S_ARTIPUZZGEMGREEN2;
 }
 
 }
@@ -902,7 +902,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_puzzgemblue1;
-	SpawnState = S_ARTIPUZZGEMBLUE1;
+	IdleState = S_ARTIPUZZGEMBLUE1;
 }
 
 }
@@ -927,7 +927,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_puzzgemblue2;
-	SpawnState = S_ARTIPUZZGEMBLUE2;
+	IdleState = S_ARTIPUZZGEMBLUE2;
 }
 
 }
@@ -952,7 +952,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_puzzbook1;
-	SpawnState = S_ARTIPUZZBOOK1;
+	IdleState = S_ARTIPUZZBOOK1;
 }
 
 }
@@ -977,7 +977,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_puzzbook2;
-	SpawnState = S_ARTIPUZZBOOK2;
+	IdleState = S_ARTIPUZZBOOK2;
 }
 
 }
@@ -1002,7 +1002,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_puzzskull2;
-	SpawnState = S_ARTIPUZZSKULL2;
+	IdleState = S_ARTIPUZZSKULL2;
 }
 
 }
@@ -1027,7 +1027,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_puzzfweapon;
-	SpawnState = S_ARTIPUZZFWEAPON;
+	IdleState = S_ARTIPUZZFWEAPON;
 }
 
 }
@@ -1052,7 +1052,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_puzzcweapon;
-	SpawnState = S_ARTIPUZZCWEAPON;
+	IdleState = S_ARTIPUZZCWEAPON;
 }
 
 }
@@ -1077,7 +1077,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_puzzmweapon;
-	SpawnState = S_ARTIPUZZMWEAPON;
+	IdleState = S_ARTIPUZZMWEAPON;
 }
 
 }
@@ -1109,7 +1109,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_puzzgear1;
-	SpawnState = S_ARTIPUZZGEAR_1;
+	IdleState = S_ARTIPUZZGEAR_1;
 }
 
 }
@@ -1141,7 +1141,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_puzzgear2;
-	SpawnState = S_ARTIPUZZGEAR2_1;
+	IdleState = S_ARTIPUZZGEAR2_1;
 }
 
 }
@@ -1173,7 +1173,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_puzzgear3;
-	SpawnState = S_ARTIPUZZGEAR3_1;
+	IdleState = S_ARTIPUZZGEAR3_1;
 }
 
 }
@@ -1205,7 +1205,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = arti_puzzgear4;
-	SpawnState = S_ARTIPUZZGEAR4_1;
+	IdleState = S_ARTIPUZZGEAR4_1;
 }
 
 }
@@ -1254,7 +1254,7 @@ defaultproperties
 {
 	WeaponClass = PCLASS_FIGHTER;
 	WeaponType = WP_SECOND;
-	SpawnState = S_AXE;
+	IdleState = S_AXE;
 }
 
 }
@@ -1280,7 +1280,7 @@ defaultproperties
 {
 	WeaponClass = PCLASS_FIGHTER;
 	WeaponType = WP_THIRD;
-	SpawnState = S_HAMM;
+	IdleState = S_HAMM;
 }
 
 }
@@ -1306,7 +1306,7 @@ defaultproperties
 {
 	WeaponClass = PCLASS_CLERIC;
 	WeaponType = WP_SECOND;
-	SpawnState = S_CSTAFF;
+	IdleState = S_CSTAFF;
 }
 
 }
@@ -1340,7 +1340,7 @@ defaultproperties
 	bNoGravity = true;
 	WeaponClass = PCLASS_CLERIC;
 	WeaponType = WP_THIRD;
-	SpawnState = S_CFLAME1;
+	IdleState = S_CFLAME1;
 }
 
 }
@@ -1368,7 +1368,7 @@ defaultproperties
 {
 	WeaponClass = PCLASS_MAGE;
 	WeaponType = WP_SECOND;
-	SpawnState = S_COS1;
+	IdleState = S_COS1;
 }
 
 }
@@ -1402,7 +1402,7 @@ defaultproperties
 	bNoGravity = true;
 	WeaponClass = PCLASS_MAGE;
 	WeaponType = WP_THIRD;
-	SpawnState = S_MW_LIGHTNING1;
+	IdleState = S_MW_LIGHTNING1;
 }
 
 }
@@ -1452,7 +1452,7 @@ defaultproperties
 {
 	PieceClass = PCLASS_FIGHTER;
 	PieceValue = WPIECE1;
-	SpawnState = S_FSWORD1;
+	IdleState = S_FSWORD1;
 }
 
 }
@@ -1478,7 +1478,7 @@ defaultproperties
 {
 	PieceClass = PCLASS_FIGHTER;
 	PieceValue = WPIECE2;
-	SpawnState = S_FSWORD2;
+	IdleState = S_FSWORD2;
 }
 
 }
@@ -1504,7 +1504,7 @@ defaultproperties
 {
 	PieceClass = PCLASS_FIGHTER;
 	PieceValue = WPIECE3;
-	SpawnState = S_FSWORD3;
+	IdleState = S_FSWORD3;
 }
 
 }
@@ -1530,7 +1530,7 @@ defaultproperties
 {
 	PieceClass = PCLASS_CLERIC;
 	PieceValue = WPIECE1;
-	SpawnState = S_CHOLY1;
+	IdleState = S_CHOLY1;
 }
 
 }
@@ -1556,7 +1556,7 @@ defaultproperties
 {
 	PieceClass = PCLASS_CLERIC;
 	PieceValue = WPIECE2;
-	SpawnState = S_CHOLY2;
+	IdleState = S_CHOLY2;
 }
 
 }
@@ -1582,7 +1582,7 @@ defaultproperties
 {
 	PieceClass = PCLASS_CLERIC;
 	PieceValue = WPIECE3;
-	SpawnState = S_CHOLY3;
+	IdleState = S_CHOLY3;
 }
 
 }
@@ -1608,7 +1608,7 @@ defaultproperties
 {
 	PieceClass = PCLASS_MAGE;
 	PieceValue = WPIECE1;
-	SpawnState = S_MSTAFF1;
+	IdleState = S_MSTAFF1;
 }
 
 }
@@ -1634,7 +1634,7 @@ defaultproperties
 {
 	PieceClass = PCLASS_MAGE;
 	PieceValue = WPIECE2;
-	SpawnState = S_MSTAFF2;
+	IdleState = S_MSTAFF2;
 }
 
 }
@@ -1660,7 +1660,7 @@ defaultproperties
 {
 	PieceClass = PCLASS_MAGE;
 	PieceValue = WPIECE3;
-	SpawnState = S_MSTAFF3;
+	IdleState = S_MSTAFF3;
 }
 
 }
@@ -1708,7 +1708,7 @@ __states__
 defaultproperties
 {
 	ArmorType = ARMOR_ARMOR;
-	SpawnState = S_ARMOR_1;
+	IdleState = S_ARMOR_1;
 }
 
 }
@@ -1733,7 +1733,7 @@ __states__
 defaultproperties
 {
 	ArmorType = ARMOR_SHIELD;
-	SpawnState = S_ARMOR_2;
+	IdleState = S_ARMOR_2;
 }
 
 }
@@ -1758,7 +1758,7 @@ __states__
 defaultproperties
 {
 	ArmorType = ARMOR_HELMET;
-	SpawnState = S_ARMOR_3;
+	IdleState = S_ARMOR_3;
 }
 
 }
@@ -1783,7 +1783,7 @@ __states__
 defaultproperties
 {
 	ArmorType = ARMOR_AMULET;
-	SpawnState = S_ARMOR_4;
+	IdleState = S_ARMOR_4;
 }
 
 }
@@ -1843,7 +1843,7 @@ defaultproperties
 {
 	ManaType = MANA_1;
 	ManaCount = 15;
-	SpawnState = S_MANA1_1;
+	IdleState = S_MANA1_1;
 }
 
 }
@@ -1884,7 +1884,7 @@ defaultproperties
 {
 	ManaType = MANA_2;
 	ManaCount = 15;
-	SpawnState = S_MANA2_1;
+	IdleState = S_MANA2_1;
 }
 
 }
@@ -1925,7 +1925,7 @@ defaultproperties
 {
 	ManaType = MANA_BOTH;
 	ManaCount = 20;
-	SpawnState = S_MANA3_1;
+	IdleState = S_MANA3_1;
 }
 
 }
@@ -1973,7 +1973,7 @@ __states__
 defaultproperties
 {
 	KeyType = KEY_1;
-	SpawnState = S_KEY1;
+	IdleState = S_KEY1;
 }
 
 }
@@ -1998,7 +1998,7 @@ __states__
 defaultproperties
 {
 	KeyType = KEY_2;
-	SpawnState = S_KEY2;
+	IdleState = S_KEY2;
 }
 
 }
@@ -2023,7 +2023,7 @@ __states__
 defaultproperties
 {
 	KeyType = KEY_3;
-	SpawnState = S_KEY3;
+	IdleState = S_KEY3;
 }
 
 }
@@ -2048,7 +2048,7 @@ __states__
 defaultproperties
 {
 	KeyType = KEY_4;
-	SpawnState = S_KEY4;
+	IdleState = S_KEY4;
 }
 
 }
@@ -2073,7 +2073,7 @@ __states__
 defaultproperties
 {
 	KeyType = KEY_5;
-	SpawnState = S_KEY5;
+	IdleState = S_KEY5;
 }
 
 }
@@ -2098,7 +2098,7 @@ __states__
 defaultproperties
 {
 	KeyType = KEY_6;
-	SpawnState = S_KEY6;
+	IdleState = S_KEY6;
 }
 
 }
@@ -2123,7 +2123,7 @@ __states__
 defaultproperties
 {
 	KeyType = KEY_7;
-	SpawnState = S_KEY7;
+	IdleState = S_KEY7;
 }
 
 }
@@ -2148,7 +2148,7 @@ __states__
 defaultproperties
 {
 	KeyType = KEY_8;
-	SpawnState = S_KEY8;
+	IdleState = S_KEY8;
 }
 
 }
@@ -2173,7 +2173,7 @@ __states__
 defaultproperties
 {
 	KeyType = KEY_9;
-	SpawnState = S_KEY9;
+	IdleState = S_KEY9;
 }
 
 }
@@ -2198,7 +2198,7 @@ __states__
 defaultproperties
 {
 	KeyType = KEY_A;
-	SpawnState = S_KEYA;
+	IdleState = S_KEYA;
 }
 
 }
@@ -2223,7 +2223,7 @@ __states__
 defaultproperties
 {
 	KeyType = KEY_B;
-	SpawnState = S_KEYB;
+	IdleState = S_KEYB;
 }
 
 }
@@ -3177,6 +3177,9 @@ void Key::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/05/18 17:00:00  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.20  2002/03/28 18:32:51  dj_jl
 //  Little renaming, some bug fixes.
 //

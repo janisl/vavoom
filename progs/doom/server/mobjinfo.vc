@@ -30,149 +30,20 @@
 //**************************************************************************
 
 class DoomPlayer;
-class Zombieman;
-class ShotgunGuy;
-class ArchVile;
-class ArchvileFire;
-class Revenant;
-class RevenantTracer;
-class RevenantTracerSmoke;
-class Mancubus;
-class MancubusMissile;
-class ChaingunGuy;
-class Imp;
-class Demon;
-class Shadows;
-class Cacodemon;
-class BaronOfHell;
-class BruiserShot;
-class HellKnight;
-class LostSoul;
-class SpiderMastermind;
-class Arachnotron;
-class Cyberdemon;
-class PainElemental;
-class WolfSS;
-class CommanderKeen;
-class BossBrain;
-class BossEye;
-class BossTarget;
-class SpawnShot;
-class SpawnFire;
-class Barrel;
-class ImpMissile;
-class CacodemonMissile;
-class Rocket;
-class PlasmaShot;
-class BFGShot;
-class ArachnotronPlasma;
-class Puff;
 class Blood;
 class TeleportFog;
 class ItemRespawnFog;
 class TeleportSpot;
-class ExtraBFG;
-class ItemArmor1;
-class ItemArmor2;
-class ItemHealthBonus;
-class ItemArmorBonus;
-class ItemKeyBlueCard;
-class ItemKeyRedCard;
-class ItemKeyYellowCard;
-class ItemKeyYellowSkull;
-class ItemKeyRedSkull;
-class ItemKeyBlueSkull;
-class ItemStimPack;
-class ItemMedikit;
-class ItemSoulSphere;
-class ItemInvulnerability;
-class ItemBerserk;
-class ItemInvisibility;
-class ItemRadiationSuit;
-class ItemComputerMap;
-class ItemInfrared;
-class ItemMegaSphere;
-class ItemAmmoBulletClip;
-class ItemAmmoBulletBox;
-class ItemAmmoRocket;
-class ItemAmmoRocketBox;
-class ItemAmmoCells;
-class ItemAmmoCellsPack;
-class ItemAmmoShells;
-class ItemAmmoShellsBox;
-class ItemBackpack;
-class ItemWeaponBFG;
-class ItemWeaponChaingun;
-class ItemWeaponChainsaw;
-class ItemWeaponRocketLauncher;
-class ItemWeaponPlasmaGun;
-class ItemWeaponShotgun;
-class ItemWeaponSuperShotgun;
-class TechLamp;
-class TechLamp2;
-class ColumnLamp;
-class ColumnGreenTall;
-class ColumnGreenShort;
-class ColumnRedTall;
-class ColumnRedShort;
-class ColumnWithSkull;
-class ColumnWithHearth;
-class EvilEye;
-class FloatingSkull;
-class TorchTree;
-class TorchBlue;
-class TorchGreen;
-class TorchRed;
-class TorchBlueShort;
-class TorchGreenShort;
-class TorchRedShort;
-class Stalagtite;
-class TechPillar;
-class CandleStick;
-class Candelabra;
-class BloodyTwitch;
-class Meat2;
-class Meat3;
-class Meat4;
-class Meat5;
-class Meat2NoBlock;
-class Meat4NoBlock;
-class Meat3NoBlock;
-class Meat5NoBlock;
-class BloodyTwitchNoBlock;
-class DeadCacodemon;
-class DeadPlayer;
-class DeadZombieman;
-class DeadDemon;
-class DeadLostSoul;
-class DeadImp;
-class DeadShotgunGuy;
-class DeadPlayerGibs;
-class DeadPlayerGibs2;
-class HeadsOnStick;
-class Gibs;
-class HeadOnAStick;
-class HeadCandles;
-class DeadStick;
-class LiveStick;
-class BigTree;
-class BurningBarrel;
-class HangingNoGuts;
-class HangingNoBrain;
-class HangingTorsoLookDown;
-class HangingTorsoSkull;
-class HangingTorsoLookUp;
-class HangingTorsoNoBrain;
-class ColonGibs;
-class SmallPool;
-class BrainStem;
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2002/05/18 16:59:58  dj_jl
+//	Renamed SpawnState to IdleState, other changes.
+//
 //	Revision 1.26  2002/05/03 17:11:55  dj_jl
 //	Object classes split up into their files.
-//
+//	
 //	Revision 1.25  2002/03/20 19:07:43  dj_jl
 //	Got rid of a lots of legacy, beautification.
 //	

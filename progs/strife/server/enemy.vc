@@ -120,7 +120,7 @@ void Actor::A_Chase(void)
 		{
 			return;	// got a new target
 		}
-		SetState(SpawnState);
+		SetState(IdleState);
 		return;
 	}
 
@@ -370,6 +370,9 @@ void Actor::A_CheckRefire(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/05/18 17:00:01  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.21  2002/05/03 17:14:33  dj_jl
 //  Added rifle attack and refire.
 //

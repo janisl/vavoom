@@ -195,7 +195,7 @@ defaultproperties
 	PainChance = 128;
 	bWindThrust = true;
 	bActivateMCross = false;
-	SpawnState = S_PIG_LOOK1;
+	IdleState = S_PIG_LOOK1;
 	SeeState = S_PIG_WALK1;
 	MeleeState = S_PIG_ATK1;
 	PainState = S_PIG_PAIN;
@@ -230,6 +230,9 @@ void Actor::A_PigPain(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/05/18 17:00:00  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.23  2002/03/28 18:32:51  dj_jl
 //  Little renaming, some bug fixes.
 //

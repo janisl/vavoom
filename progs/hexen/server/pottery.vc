@@ -49,7 +49,7 @@ void A_PotteryExplode(void)
 	for (i = (P_Random() & 3) + 3; i; i--)
 	{
 		A = Spawn(PotteryBit, Origin);
-		A.SetState(A.SpawnState + (P_Random() % 5));
+		A.SetState(A.IdleState + (P_Random() % 5));
 		if (A)
 		{
 			A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
@@ -84,7 +84,7 @@ defaultproperties
 	bPushable = true;
 	bSlide = true;
 	bTelestomp = true;
-	SpawnState = S_ZPOTTERY1;
+	IdleState = S_ZPOTTERY1;
 	DeathState = S_ZPOTTERY_EXPLODE;
 }
 
@@ -110,7 +110,7 @@ __states__
 defaultproperties
 {
 	Height = 25.0;
-	SpawnState = S_ZPOTTERY2;
+	IdleState = S_ZPOTTERY2;
 }
 
 }
@@ -136,7 +136,7 @@ defaultproperties
 {
 	Radius = 15.0;
 	Height = 25.0;
-	SpawnState = S_ZPOTTERY3;
+	IdleState = S_ZPOTTERY3;
 }
 
 }
@@ -221,7 +221,7 @@ defaultproperties
 	Mass = 100.0;
 	bMissile = true;
 	bNoTeleport = true;
-	SpawnState = S_POTTERYBIT_1;
+	IdleState = S_POTTERYBIT_1;
 	DeathState = S_POTTERYBIT_EX0;
 }
 
@@ -230,6 +230,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/05/18 17:00:00  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.18  2002/03/28 18:15:35  dj_jl
 //  Renamed mo in player_t to MO.
 //

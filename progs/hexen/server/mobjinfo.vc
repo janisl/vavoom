@@ -48,7 +48,7 @@ class MapSpot:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_MAPSPOT;
+		IdleState = S_MAPSPOT;
 	}
 };
 
@@ -69,7 +69,7 @@ class MapSpotGravity:Actor
 		Mass = 100.0;
 		Translucency = 100;
 		bNoPassMobj = true;
-		SpawnState = S_MAPSPOT;
+		IdleState = S_MAPSPOT;
 	}
 };
 
@@ -95,7 +95,7 @@ class FireBall1:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bFireDamage = true;
-		SpawnState = S_FIREBALL1_1;
+		IdleState = S_FIREBALL1_1;
 		DeathState = S_FIREBALL1_X1;
 		DeathSound = 'Fireball';
 		Effects = EF_DL_RED;
@@ -123,7 +123,7 @@ class Arrow:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_ARROW_1;
+		IdleState = S_ARROW_1;
 		DeathState = S_ARROW_X1;
 	}
 };
@@ -149,7 +149,7 @@ class Dart:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_DART_1;
+		IdleState = S_DART_1;
 		DeathState = S_DART_X1;
 	}
 };
@@ -175,7 +175,7 @@ class PoisonDart:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_POISONDART_1;
+		IdleState = S_POISONDART_1;
 		DeathState = S_POISONDART_X1;
 	}
 };
@@ -202,7 +202,7 @@ class RipperBall:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bRip = true;
-		SpawnState = S_RIPPERBALL_1;
+		IdleState = S_RIPPERBALL_1;
 		DeathState = S_RIPPERBALL_X1;
 	}
 };
@@ -228,7 +228,7 @@ class ProjectileBlade:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_PRJ_BLADE1;
+		IdleState = S_PRJ_BLADE1;
 		DeathState = S_PRJ_BLADE_X1;
 	}
 };
@@ -255,7 +255,7 @@ class IceShard:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bIceDamage = true;
-		SpawnState = S_ICESHARD1;
+		IdleState = S_ICESHARD1;
 		DeathState = S_SHARDFXE1_1;
 		DeathSound = 'MageShardsExplode';
 		Effects = EF_DL_BLUE;
@@ -279,7 +279,7 @@ class FlameSmallTemp:Actor
 		Mass = 100.0;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_FLAME_TSMALL1;
+		IdleState = S_FLAME_TSMALL1;
 	}
 };
 
@@ -300,7 +300,7 @@ class FlameLargeTemp:Actor
 		Mass = 100.0;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_FLAME_TLARGE1;
+		IdleState = S_FLAME_TLARGE1;
 	}
 };
 
@@ -329,7 +329,7 @@ class FlameSmall:Actor
 		Translucency = 100;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_FLAME_SMALL1;
+		IdleState = S_FLAME_SMALL1;
 	}
 };
 
@@ -358,7 +358,7 @@ class FlameLarge:Actor
 		Translucency = 100;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_FLAME_LARGE1;
+		IdleState = S_FLAME_LARGE1;
 	}
 };
 
@@ -387,7 +387,7 @@ class SummonMissile:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_SUMMON_FX1_1;
+		IdleState = S_SUMMON_FX1_1;
 		DeathState = S_SUMMON_FX2_1;
 	}
 };
@@ -417,7 +417,7 @@ class TeleportOtherFX1:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_TELO_FX1;
+		IdleState = S_TELO_FX1;
 		DeathState = S_TELO_FX9;
 	}
 };
@@ -443,7 +443,7 @@ class TeleportOtherFX2:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_TELO_FX2_1;
+		IdleState = S_TELO_FX2_1;
 		DeathState = S_TELO_FX9;
 	}
 };
@@ -469,7 +469,7 @@ class TeleportOtherFX3:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_TELO_FX3_1;
+		IdleState = S_TELO_FX3_1;
 		DeathState = S_TELO_FX9;
 	}
 };
@@ -495,7 +495,7 @@ class TeleportOtherFX4:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_TELO_FX4_1;
+		IdleState = S_TELO_FX4_1;
 		DeathState = S_TELO_FX9;
 	}
 };
@@ -521,7 +521,7 @@ class TeleportOtherFX5:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_TELO_FX5_1;
+		IdleState = S_TELO_FX5_1;
 		DeathState = S_TELO_FX9;
 	}
 };
@@ -544,7 +544,7 @@ class Dirt1:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_DIRT1_1;
+		IdleState = S_DIRT1_1;
 		DeathState = S_DIRT1_D;
 	}
 };
@@ -567,7 +567,7 @@ class Dirt2:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_DIRT2_1;
+		IdleState = S_DIRT2_1;
 		DeathState = S_DIRT2_D;
 	}
 };
@@ -590,7 +590,7 @@ class Dirt3:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_DIRT3_1;
+		IdleState = S_DIRT3_1;
 		DeathState = S_DIRT3_D;
 	}
 };
@@ -613,7 +613,7 @@ class Dirt4:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_DIRT4_1;
+		IdleState = S_DIRT4_1;
 		DeathState = S_DIRT4_D;
 	}
 };
@@ -636,7 +636,7 @@ class Dirt5:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_DIRT5_1;
+		IdleState = S_DIRT5_1;
 		DeathState = S_DIRT5_D;
 	}
 };
@@ -659,7 +659,7 @@ class Dirt6:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_DIRT6_1;
+		IdleState = S_DIRT6_1;
 		DeathState = S_DIRT6_D;
 	}
 };
@@ -681,7 +681,7 @@ class DirtClump:Actor
 		bNoBlockmap = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_DIRTCLUMP1;
+		IdleState = S_DIRTCLUMP1;
 	}
 };
 
@@ -703,7 +703,7 @@ class Rock1:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_ROCK1_1;
+		IdleState = S_ROCK1_1;
 		DeathState = S_ROCK1_D;
 	}
 };
@@ -726,7 +726,7 @@ class Rock2:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_ROCK2_1;
+		IdleState = S_ROCK2_1;
 		DeathState = S_ROCK2_D;
 	}
 };
@@ -749,7 +749,7 @@ class Rock3:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_ROCK3_1;
+		IdleState = S_ROCK3_1;
 		DeathState = S_ROCK3_D;
 	}
 };
@@ -774,7 +774,7 @@ class FogSpawner:Actor
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		bFloatBob = true;
-		SpawnState = S_SPAWNFOG1;
+		IdleState = S_SPAWNFOG1;
 	}
 };
 
@@ -802,7 +802,7 @@ class FogPatchSmall:Actor
 		bFloat = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_FOGPATCHS1;
+		IdleState = S_FOGPATCHS1;
 		DeathState = S_FOGPATCHS0;
 	}
 };
@@ -831,7 +831,7 @@ class FogPatchMedium:Actor
 		bFloat = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_FOGPATCHM1;
+		IdleState = S_FOGPATCHM1;
 		DeathState = S_FOGPATCHM0;
 	}
 };
@@ -860,7 +860,7 @@ class FogPatchLarge:Actor
 		bFloat = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_FOGPATCHL1;
+		IdleState = S_FOGPATCHL1;
 		DeathState = S_FOGPATCHL0;
 	}
 };
@@ -883,7 +883,7 @@ class QuakeFocus:Actor
 		bHidden = true;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_QUAKE_ACTIVE1;
+		IdleState = S_QUAKE_ACTIVE1;
 	}
 };
 
@@ -907,7 +907,7 @@ class StainedGlassShard1:Actor
 		bMissile = true;
 		bFloorBounce = true;
 		bNoTeleport = true;
-		SpawnState = S_SGSHARD1_1;
+		IdleState = S_SGSHARD1_1;
 		DeathState = S_SGSHARD1_D;
 	}
 };
@@ -932,7 +932,7 @@ class StainedGlassShard2:Actor
 		bMissile = true;
 		bFloorBounce = true;
 		bNoTeleport = true;
-		SpawnState = S_SGSHARD2_1;
+		IdleState = S_SGSHARD2_1;
 		DeathState = S_SGSHARD2_D;
 	}
 };
@@ -957,7 +957,7 @@ class StainedGlassShard3:Actor
 		bMissile = true;
 		bFloorBounce = true;
 		bNoTeleport = true;
-		SpawnState = S_SGSHARD3_1;
+		IdleState = S_SGSHARD3_1;
 		DeathState = S_SGSHARD3_D;
 	}
 };
@@ -982,7 +982,7 @@ class StainedGlassShard4:Actor
 		bMissile = true;
 		bFloorBounce = true;
 		bNoTeleport = true;
-		SpawnState = S_SGSHARD4_1;
+		IdleState = S_SGSHARD4_1;
 		DeathState = S_SGSHARD4_D;
 	}
 };
@@ -1007,7 +1007,7 @@ class StainedGlassShard5:Actor
 		bMissile = true;
 		bFloorBounce = true;
 		bNoTeleport = true;
-		SpawnState = S_SGSHARD5_1;
+		IdleState = S_SGSHARD5_1;
 		DeathState = S_SGSHARD5_D;
 	}
 };
@@ -1032,7 +1032,7 @@ class StainedGlassShard6:Actor
 		bMissile = true;
 		bFloorBounce = true;
 		bNoTeleport = true;
-		SpawnState = S_SGSHARD6_1;
+		IdleState = S_SGSHARD6_1;
 		DeathState = S_SGSHARD6_D;
 	}
 };
@@ -1057,7 +1057,7 @@ class StainedGlassShard7:Actor
 		bMissile = true;
 		bFloorBounce = true;
 		bNoTeleport = true;
-		SpawnState = S_SGSHARD7_1;
+		IdleState = S_SGSHARD7_1;
 		DeathState = S_SGSHARD7_D;
 	}
 };
@@ -1082,7 +1082,7 @@ class StainedGlassShard8:Actor
 		bMissile = true;
 		bFloorBounce = true;
 		bNoTeleport = true;
-		SpawnState = S_SGSHARD8_1;
+		IdleState = S_SGSHARD8_1;
 		DeathState = S_SGSHARD8_D;
 	}
 };
@@ -1107,7 +1107,7 @@ class StainedGlassShard9:Actor
 		bMissile = true;
 		bFloorBounce = true;
 		bNoTeleport = true;
-		SpawnState = S_SGSHARD9_1;
+		IdleState = S_SGSHARD9_1;
 		DeathState = S_SGSHARD9_D;
 	}
 };
@@ -1132,7 +1132,7 @@ class StainedGlassShard0:Actor
 		bMissile = true;
 		bFloorBounce = true;
 		bNoTeleport = true;
-		SpawnState = S_SGSHARD0_1;
+		IdleState = S_SGSHARD0_1;
 		DeathState = S_SGSHARD0_D;
 	}
 };
@@ -1159,7 +1159,7 @@ class EggMissile:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_EGGFX1;
+		IdleState = S_EGGFX1;
 		DeathState = S_EGGFXI1_1;
 	}
 };
@@ -1182,7 +1182,7 @@ class ZWingedStatueNoSkull:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZWINGEDSTATUENOSKULL;
+		IdleState = S_ZWINGEDSTATUENOSKULL;
 	}
 };
 
@@ -1203,7 +1203,7 @@ class ZGemPedestal:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZGEMPEDESTAL1;
+		IdleState = S_ZGEMPEDESTAL1;
 	}
 };
 
@@ -1243,7 +1243,7 @@ class FireBomb:Actor
 		bNoGravity = true;
 		bNoPassMobj = true;
 		bFireDamage = true;
-		SpawnState = S_FIREBOMB1;
+		IdleState = S_FIREBOMB1;
 		DeathSound = 'FlechetteExplode';
 	}
 };
@@ -1267,7 +1267,7 @@ class PoisonBag:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_POISONBAG1;
+		IdleState = S_POISONBAG1;
 	}
 };
 
@@ -1293,7 +1293,7 @@ class PoisonCloud:Actor
 		bColideWithThings = false;
 		bNoPassMobj = true;
 		bNoDamageThrust = true;
-		SpawnState = S_POISONCLOUD1;
+		IdleState = S_POISONCLOUD1;
 		DeathSound = 'PoisonShroomDeath';
 	}
 };
@@ -1318,7 +1318,7 @@ class ThrowingBomb:Actor
 		bMissile = true;
 		bFloorBounce = true;
 		bFireDamage = true;
-		SpawnState = S_THROWINGBOMB1;
+		IdleState = S_THROWINGBOMB1;
 		DeathState = S_THROWINGBOMB_X1;
 		SightSound = 'FlechetteBounce';
 		DeathSound = 'FlechetteExplode';
@@ -1349,7 +1349,7 @@ class Splash:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bCannotPush = true;
-		SpawnState = S_SPLASH1;
+		IdleState = S_SPLASH1;
 		DeathState = S_SPLASHX;
 	}
 };
@@ -1370,7 +1370,7 @@ class SplashBase:Actor
 		Mass = 100.0;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_SPLASHBASE1;
+		IdleState = S_SPLASHBASE1;
 	}
 };
 
@@ -1390,7 +1390,7 @@ class LavaSplash:Actor
 		Mass = 100.0;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_LAVASPLASH1;
+		IdleState = S_LAVASPLASH1;
 	}
 };
 
@@ -1412,7 +1412,7 @@ class LavaSmoke:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_LAVASMOKE1;
+		IdleState = S_LAVASMOKE1;
 	}
 };
 
@@ -1435,7 +1435,7 @@ class SludgeChunk:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bCannotPush = true;
-		SpawnState = S_SLUDGECHUNK1;
+		IdleState = S_SLUDGECHUNK1;
 		DeathState = S_SLUDGECHUNKX;
 	}
 };
@@ -1456,7 +1456,7 @@ class SludgeSplash:Actor
 		Mass = 100.0;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_SLUDGESPLASH1;
+		IdleState = S_SLUDGESPLASH1;
 	}
 };
 
@@ -1477,7 +1477,7 @@ class ZWingedStatue:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZWINGEDSTATUE1;
+		IdleState = S_ZWINGEDSTATUE1;
 	}
 };
 
@@ -1497,7 +1497,7 @@ class ZRock1:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		bNoPassMobj = true;
-		SpawnState = S_ZROCK1_1;
+		IdleState = S_ZROCK1_1;
 	}
 };
 
@@ -1517,7 +1517,7 @@ class ZRock2:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		bNoPassMobj = true;
-		SpawnState = S_ZROCK2_1;
+		IdleState = S_ZROCK2_1;
 	}
 };
 
@@ -1537,7 +1537,7 @@ class ZRock3:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		bNoPassMobj = true;
-		SpawnState = S_ZROCK3_1;
+		IdleState = S_ZROCK3_1;
 	}
 };
 
@@ -1558,7 +1558,7 @@ class ZRock4:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZROCK4_1;
+		IdleState = S_ZROCK4_1;
 	}
 };
 
@@ -1587,7 +1587,7 @@ class ZChandelier:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZCHANDELIER1;
+		IdleState = S_ZCHANDELIER1;
 	}
 };
 
@@ -1609,7 +1609,7 @@ class ZChandelierUnlit:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZCHANDELIER_U;
+		IdleState = S_ZCHANDELIER_U;
 	}
 };
 
@@ -1630,7 +1630,7 @@ class ZTreeDead:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZTREEDEAD1;
+		IdleState = S_ZTREEDEAD1;
 	}
 };
 
@@ -1651,7 +1651,7 @@ class ZTree:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZTREE;
+		IdleState = S_ZTREE;
 	}
 };
 
@@ -1674,7 +1674,7 @@ class TreeDestructible:Actor
 		bShootable = true;
 		bNoBlood = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZTREEDESTRUCTIBLE1;
+		IdleState = S_ZTREEDESTRUCTIBLE1;
 		DeathState = S_ZTREEDES_D1;
 		DeathSound = 'TreeBreak';
 	}
@@ -1697,7 +1697,7 @@ class ZTreeSwamp1:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZTREESWAMP182_1;
+		IdleState = S_ZTREESWAMP182_1;
 	}
 };
 
@@ -1718,7 +1718,7 @@ class ZTreeSwamp2:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZTREESWAMP172_1;
+		IdleState = S_ZTREESWAMP172_1;
 	}
 };
 
@@ -1739,7 +1739,7 @@ class ZStumpBurned:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTUMPBURNED1;
+		IdleState = S_ZSTUMPBURNED1;
 	}
 };
 
@@ -1760,7 +1760,7 @@ class ZStumpBare:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTUMPBARE1;
+		IdleState = S_ZSTUMPBARE1;
 	}
 };
 
@@ -1780,7 +1780,7 @@ class ZStumpSwamp1:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTUMPSWAMP1_1;
+		IdleState = S_ZSTUMPSWAMP1_1;
 	}
 };
 
@@ -1800,7 +1800,7 @@ class ZStumpSwamp2:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTUMPSWAMP2_1;
+		IdleState = S_ZSTUMPSWAMP2_1;
 	}
 };
 
@@ -1820,7 +1820,7 @@ class ZShroomLarge1:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		bNoPassMobj = true;
-		SpawnState = S_ZSHROOMLARGE1_1;
+		IdleState = S_ZSHROOMLARGE1_1;
 	}
 };
 
@@ -1840,7 +1840,7 @@ class ZShroomLarge2:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		bNoPassMobj = true;
-		SpawnState = S_ZSHROOMLARGE2_1;
+		IdleState = S_ZSHROOMLARGE2_1;
 	}
 };
 
@@ -1860,7 +1860,7 @@ class ZShroomLarge3:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		bNoPassMobj = true;
-		SpawnState = S_ZSHROOMLARGE3_1;
+		IdleState = S_ZSHROOMLARGE3_1;
 	}
 };
 
@@ -1880,7 +1880,7 @@ class ZShroomSmall1:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		bNoPassMobj = true;
-		SpawnState = S_ZSHROOMSMALL1_1;
+		IdleState = S_ZSHROOMSMALL1_1;
 	}
 };
 
@@ -1900,7 +1900,7 @@ class ZShroomSmall2:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		bNoPassMobj = true;
-		SpawnState = S_ZSHROOMSMALL2_1;
+		IdleState = S_ZSHROOMSMALL2_1;
 	}
 };
 
@@ -1920,7 +1920,7 @@ class ZShroomSmall3:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		bNoPassMobj = true;
-		SpawnState = S_ZSHROOMSMALL3_1;
+		IdleState = S_ZSHROOMSMALL3_1;
 	}
 };
 
@@ -1940,7 +1940,7 @@ class ZShroomSmall4:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		bNoPassMobj = true;
-		SpawnState = S_ZSHROOMSMALL4_1;
+		IdleState = S_ZSHROOMSMALL4_1;
 	}
 };
 
@@ -1960,7 +1960,7 @@ class ZShroomSmall5:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		bNoPassMobj = true;
-		SpawnState = S_ZSHROOMSMALL5_1;
+		IdleState = S_ZSHROOMSMALL5_1;
 	}
 };
 
@@ -1981,7 +1981,7 @@ class ZStalagmitePillar:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTALAGMITEPILLAR1;
+		IdleState = S_ZSTALAGMITEPILLAR1;
 	}
 };
 
@@ -2002,7 +2002,7 @@ class ZStalagmiteLarge:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTALAGMITELARGE1;
+		IdleState = S_ZSTALAGMITELARGE1;
 	}
 };
 
@@ -2023,7 +2023,7 @@ class ZStalagmiteMedium:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTALAGMITEMEDIUM1;
+		IdleState = S_ZSTALAGMITEMEDIUM1;
 	}
 };
 
@@ -2044,7 +2044,7 @@ class ZStalagmiteSmall:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTALAGMITESMALL1;
+		IdleState = S_ZSTALAGMITESMALL1;
 	}
 };
 
@@ -2067,7 +2067,7 @@ class ZStalactiteLarge:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTALACTITELARGE1;
+		IdleState = S_ZSTALACTITELARGE1;
 	}
 };
 
@@ -2090,7 +2090,7 @@ class ZStalactiteMedium:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTALACTITEMEDIUM1;
+		IdleState = S_ZSTALACTITEMEDIUM1;
 	}
 };
 
@@ -2113,7 +2113,7 @@ class ZStalactiteSmall:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTALACTITESMALL1;
+		IdleState = S_ZSTALACTITESMALL1;
 	}
 };
 
@@ -2135,7 +2135,7 @@ class ZMossCeiling1:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZMOSSCEILING1_1;
+		IdleState = S_ZMOSSCEILING1_1;
 	}
 };
 
@@ -2157,7 +2157,7 @@ class ZMossCeiling2:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZMOSSCEILING2_1;
+		IdleState = S_ZMOSSCEILING2_1;
 	}
 };
 
@@ -2178,7 +2178,7 @@ class ZSwampVine:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSWAMPVINE1;
+		IdleState = S_ZSWAMPVINE1;
 	}
 };
 
@@ -2199,7 +2199,7 @@ class ZCorpseKabob:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZCORPSEKABOB1;
+		IdleState = S_ZCORPSEKABOB1;
 	}
 };
 
@@ -2219,7 +2219,7 @@ class ZCorpseSleeping:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		bNoPassMobj = true;
-		SpawnState = S_ZCORPSESLEEPING1;
+		IdleState = S_ZCORPSESLEEPING1;
 	}
 };
 
@@ -2240,7 +2240,7 @@ class ZTombStoneRip:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZTOMBSTONERIP1;
+		IdleState = S_ZTOMBSTONERIP1;
 	}
 };
 
@@ -2261,7 +2261,7 @@ class ZTombStoneShane:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZTOMBSTONESHANE1;
+		IdleState = S_ZTOMBSTONESHANE1;
 	}
 };
 
@@ -2282,7 +2282,7 @@ class ZTombStoneBigCross:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZTOMBSTONEBIGCROSS1;
+		IdleState = S_ZTOMBSTONEBIGCROSS1;
 	}
 };
 
@@ -2303,7 +2303,7 @@ class ZTombStoneBrianR:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZTOMBSTONEBRIANR1;
+		IdleState = S_ZTOMBSTONEBRIANR1;
 	}
 };
 
@@ -2324,7 +2324,7 @@ class ZTombStoneCrossCircle:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZTOMBSTONECROSSCIRCLE1;
+		IdleState = S_ZTOMBSTONECROSSCIRCLE1;
 	}
 };
 
@@ -2345,7 +2345,7 @@ class ZTombStoneSmallCross:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZTOMBSTONESMALLCROSS1;
+		IdleState = S_ZTOMBSTONESMALLCROSS1;
 	}
 };
 
@@ -2366,7 +2366,7 @@ class ZTombStoneBrianP:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZTOMBSTONEBRIANP1;
+		IdleState = S_ZTOMBSTONEBRIANP1;
 	}
 };
 
@@ -2389,7 +2389,7 @@ class CorpseHanging:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_CORPSEHANGING_1;
+		IdleState = S_CORPSEHANGING_1;
 	}
 };
 
@@ -2410,7 +2410,7 @@ class ZStatueGargoyleGreenTall:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTATUEGARGOYLEGREENTALL_1;
+		IdleState = S_ZSTATUEGARGOYLEGREENTALL_1;
 	}
 };
 
@@ -2431,7 +2431,7 @@ class ZStatueGargoyleBlueTall:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTATUEGARGOYLEBLUETALL_1;
+		IdleState = S_ZSTATUEGARGOYLEBLUETALL_1;
 	}
 };
 
@@ -2452,7 +2452,7 @@ class ZStatueGargoyleGreenShort:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTATUEGARGOYLEGREENSHORT_1;
+		IdleState = S_ZSTATUEGARGOYLEGREENSHORT_1;
 	}
 };
 
@@ -2473,7 +2473,7 @@ class ZStatueGargoyleBlueShort:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTATUEGARGOYLEBLUESHORT_1;
+		IdleState = S_ZSTATUEGARGOYLEBLUESHORT_1;
 	}
 };
 
@@ -2494,7 +2494,7 @@ class ZStatueGargoyleStripeTall:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTATUEGARGOYLESTRIPETALL_1;
+		IdleState = S_ZSTATUEGARGOYLESTRIPETALL_1;
 	}
 };
 
@@ -2515,7 +2515,7 @@ class ZStatueGargoyleDarkRedTall:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTATUEGARGOYLEDARKREDTALL_1;
+		IdleState = S_ZSTATUEGARGOYLEDARKREDTALL_1;
 	}
 };
 
@@ -2536,7 +2536,7 @@ class ZStatueGargoyleRedTall:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTATUEGARGOYLEREDTALL_1;
+		IdleState = S_ZSTATUEGARGOYLEREDTALL_1;
 	}
 };
 
@@ -2557,7 +2557,7 @@ class ZStatueGargoyleTanTall:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTATUEGARGOYLETANTALL_1;
+		IdleState = S_ZSTATUEGARGOYLETANTALL_1;
 	}
 };
 
@@ -2578,7 +2578,7 @@ class ZStatueGargoyleRustTall:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTATUEGARGOYLERUSTTALL_1;
+		IdleState = S_ZSTATUEGARGOYLERUSTTALL_1;
 	}
 };
 
@@ -2599,7 +2599,7 @@ class ZStatueGargoyleDarkRedShort:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTATUEGARGOYLEDARKREDSHORT_1;
+		IdleState = S_ZSTATUEGARGOYLEDARKREDSHORT_1;
 	}
 };
 
@@ -2620,7 +2620,7 @@ class ZStatueGargoyleRedShort:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTATUEGARGOYLEREDSHORT_1;
+		IdleState = S_ZSTATUEGARGOYLEREDSHORT_1;
 	}
 };
 
@@ -2641,7 +2641,7 @@ class ZStatueGargoyleTanShort:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTATUEGARGOYLETANSHORT_1;
+		IdleState = S_ZSTATUEGARGOYLETANSHORT_1;
 	}
 };
 
@@ -2662,7 +2662,7 @@ class ZStatueGargoyleRustShort:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTATUEGARGOYLERUSTSHORT_1;
+		IdleState = S_ZSTATUEGARGOYLERUSTSHORT_1;
 	}
 };
 
@@ -2683,7 +2683,7 @@ class ZBannerTattered:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZBANNERTATTERED_1;
+		IdleState = S_ZBANNERTATTERED_1;
 	}
 };
 
@@ -2704,7 +2704,7 @@ class ZTreeLarge1:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZTREELARGE1;
+		IdleState = S_ZTREELARGE1;
 		DeathState = S_ZTREELARGE1;
 	}
 };
@@ -2726,7 +2726,7 @@ class ZTreeLarge2:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZTREELARGE2;
+		IdleState = S_ZTREELARGE2;
 		DeathState = S_ZTREELARGE2;
 	}
 };
@@ -2748,7 +2748,7 @@ class ZTreeGnarled1:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZTREEGNARLED1;
+		IdleState = S_ZTREEGNARLED1;
 	}
 };
 
@@ -2769,7 +2769,7 @@ class ZTreeGnarled2:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZTREEGNARLED2;
+		IdleState = S_ZTREEGNARLED2;
 	}
 };
 
@@ -2790,7 +2790,7 @@ class ZLog:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZLOG;
+		IdleState = S_ZLOG;
 	}
 };
 
@@ -2813,7 +2813,7 @@ class ZStalactiteIceLarge:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTALACTITEICELARGE;
+		IdleState = S_ZSTALACTITEICELARGE;
 	}
 };
 
@@ -2836,7 +2836,7 @@ class ZStalactiteIceMedium:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTALACTITEICEMEDIUM;
+		IdleState = S_ZSTALACTITEICEMEDIUM;
 	}
 };
 
@@ -2859,7 +2859,7 @@ class ZStalactiteIceSmall:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTALACTITEICESMALL;
+		IdleState = S_ZSTALACTITEICESMALL;
 	}
 };
 
@@ -2882,7 +2882,7 @@ class ZStalactiteIceTiny:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTALACTITEICETINY;
+		IdleState = S_ZSTALACTITEICETINY;
 	}
 };
 
@@ -2903,7 +2903,7 @@ class ZStalagmiteIceLarge:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTALAGMITEICELARGE;
+		IdleState = S_ZSTALAGMITEICELARGE;
 	}
 };
 
@@ -2924,7 +2924,7 @@ class ZStalagmiteIceMedium:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTALAGMITEICEMEDIUM;
+		IdleState = S_ZSTALAGMITEICEMEDIUM;
 	}
 };
 
@@ -2945,7 +2945,7 @@ class ZStalagmiteIceSmall:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTALAGMITEICESMALL;
+		IdleState = S_ZSTALAGMITEICESMALL;
 	}
 };
 
@@ -2966,7 +2966,7 @@ class ZStalagmiteIceTiny:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSTALAGMITEICETINY;
+		IdleState = S_ZSTALAGMITEICETINY;
 	}
 };
 
@@ -2987,7 +2987,7 @@ class ZRockBrown1:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZROCKBROWN1;
+		IdleState = S_ZROCKBROWN1;
 	}
 };
 
@@ -3008,7 +3008,7 @@ class ZRockBrown2:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZROCKBROWN2;
+		IdleState = S_ZROCKBROWN2;
 	}
 };
 
@@ -3029,7 +3029,7 @@ class ZRockBlack:Actor
 		Mass = 100.0;
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZROCKBLACK;
+		IdleState = S_ZROCKBLACK;
 	}
 };
 
@@ -3050,7 +3050,7 @@ class ZRubble1:Actor
 		Mass = 100.0;
 
 		bNoPassMobj = true;
-		SpawnState = S_ZRUBBLE1;
+		IdleState = S_ZRUBBLE1;
 	}
 };
 
@@ -3071,7 +3071,7 @@ class ZRubble2:Actor
 		Mass = 100.0;
 
 		bNoPassMobj = true;
-		SpawnState = S_ZRUBBLE2;
+		IdleState = S_ZRUBBLE2;
 	}
 };
 
@@ -3092,7 +3092,7 @@ class ZRubble3:Actor
 		Mass = 100.0;
 
 		bNoPassMobj = true;
-		SpawnState = S_ZRUBBLE3;
+		IdleState = S_ZRUBBLE3;
 	}
 };
 
@@ -3114,7 +3114,7 @@ class ZVasePillar:Actor
 
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZVASEPILLAR;
+		IdleState = S_ZVASEPILLAR;
 	}
 };
 
@@ -3143,7 +3143,7 @@ class ZCorpseLynched:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZCORPSELYNCHED1;
+		IdleState = S_ZCORPSELYNCHED1;
 	}
 };
 
@@ -3167,7 +3167,7 @@ class ZLynchedNoHeart:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZCORPSELYNCHED2;
+		IdleState = S_ZCORPSELYNCHED2;
 	}
 };
 
@@ -3191,7 +3191,7 @@ class ZCorpseSitting:Actor
 		bShootable = true;
 		bNoBlood = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZCORPSESITTING;
+		IdleState = S_ZCORPSESITTING;
 		DeathState = S_ZCORPSESITTING_X;
 	}
 };
@@ -3214,7 +3214,7 @@ class CorpseBit:Actor
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		bTelestomp = true;
-		SpawnState = S_CORPSEBIT_1;
+		IdleState = S_CORPSEBIT_1;
 	}
 };
 
@@ -3234,7 +3234,7 @@ class CorpseBloodDrip:Actor
 		Mass = 12.5;
 
 		bMissile = true;
-		SpawnState = S_CORPSEBLOODDRIP;
+		IdleState = S_CORPSEBLOODDRIP;
 		DeathState = S_CORPSEBLOODDRIP_X1;
 		DeathSound = 'Drip';
 	}
@@ -3258,7 +3258,7 @@ class BloodPool:Actor
 
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_BLOODPOOL;
+		IdleState = S_BLOODPOOL;
 	}
 };
 
@@ -3287,7 +3287,7 @@ class ZCandle:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZCANDLE1;
+		IdleState = S_ZCANDLE1;
 	}
 };
 
@@ -3311,7 +3311,7 @@ class ZLeafSpawner:Actor
 		bHidden = true;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZLEAFSPAWNER;
+		IdleState = S_ZLEAFSPAWNER;
 	}
 };
 
@@ -3333,7 +3333,7 @@ class Leaf1:Actor
 		bNoBlockmap = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_LEAF1_1;
+		IdleState = S_LEAF1_1;
 		DeathState = S_LEAF_X1;
 	}
 };
@@ -3356,7 +3356,7 @@ class Leaf2:Actor
 		bNoBlockmap = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_LEAF2_1;
+		IdleState = S_LEAF2_1;
 		DeathState = S_LEAF_X1;
 	}
 };
@@ -3385,7 +3385,7 @@ class ZTWinedTorch:Actor
 
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZTWINEDTORCH_1;
+		IdleState = S_ZTWINEDTORCH_1;
 	}
 };
 
@@ -3407,7 +3407,7 @@ class ZTWinedTorchUnlit:Actor
 
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZTWINEDTORCH_UNLIT;
+		IdleState = S_ZTWINEDTORCH_UNLIT;
 	}
 };
 
@@ -3431,7 +3431,7 @@ class Bridge:Actor
 		bSolid = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_BRIDGE1;
+		IdleState = S_BRIDGE1;
 	}
 };
 
@@ -3454,7 +3454,7 @@ class BridgeBall:Actor
 		bNoGravity = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_BBALL1;
+		IdleState = S_BBALL1;
 	}
 };
 
@@ -3485,7 +3485,7 @@ class ZWallTorch:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZWALLTORCH1;
+		IdleState = S_ZWALLTORCH1;
 	}
 };
 
@@ -3508,7 +3508,7 @@ class ZWallTorchUnlit:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZWALLTORCH_U;
+		IdleState = S_ZWALLTORCH_U;
 	}
 };
 
@@ -3530,7 +3530,7 @@ class ZBarrel:Actor
 
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZBARREL1;
+		IdleState = S_ZBARREL1;
 	}
 };
 
@@ -3554,7 +3554,7 @@ class ZShrub1:Actor
 		bShootable = true;
 		bNoBlood = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSHRUB1;
+		IdleState = S_ZSHRUB1;
 		MeleeState = S_ZSHRUB1_X1;
 		DeathState = S_ZSHRUB1_DIE;
 		DeathSound = 'TreeExplode';
@@ -3581,7 +3581,7 @@ class ZShrub2:Actor
 		bShootable = true;
 		bNoBlood = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSHRUB2;
+		IdleState = S_ZSHRUB2;
 		MeleeState = S_ZSHRUB2_X1;
 		DeathState = S_ZSHRUB2_DIE;
 		DeathSound = 'TreeExplode';
@@ -3608,7 +3608,7 @@ class ZBucket:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZBUCKET1;
+		IdleState = S_ZBUCKET1;
 	}
 };
 
@@ -3633,7 +3633,7 @@ class ZPoisonShroom:Actor
 		bShootable = true;
 		bNoBlood = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZPOISONSHROOM1;
+		IdleState = S_ZPOISONSHROOM1;
 		PainState = S_ZPOISONSHROOM_P1;
 		DeathState = S_ZPOISONSHROOM_X1;
 		PainSound = 'PoisonShroomPain';
@@ -3666,7 +3666,7 @@ class ZFireBull:Actor
 
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZFIREBULL1;
+		IdleState = S_ZFIREBULL1;
 	}
 };
 
@@ -3688,7 +3688,7 @@ class ZFireBullUnlit:Actor
 
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZFIREBULL_U;
+		IdleState = S_ZFIREBULL_U;
 	}
 };
 
@@ -3717,7 +3717,7 @@ class FireThing:Actor
 
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZFIRETHING1;
+		IdleState = S_ZFIRETHING1;
 	}
 };
 
@@ -3746,7 +3746,7 @@ class BrassTorch:Actor
 
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZBRASSTORCH1;
+		IdleState = S_ZBRASSTORCH1;
 	}
 };
 
@@ -3770,7 +3770,7 @@ class ZSuitOfArmor:Actor
 		bShootable = true;
 		bNoBlood = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZSUITOFARMOR;
+		IdleState = S_ZSUITOFARMOR;
 		DeathState = S_ZSUITOFARMOR_X1;
 		DeathSound = 'SuitofArmorBreak';
 	}
@@ -3792,7 +3792,7 @@ class ZArmorChunk:Actor
 		Mass = 100.0;
 
 		bNoPassMobj = true;
-		SpawnState = S_ZARMORCHUNK1;
+		IdleState = S_ZARMORCHUNK1;
 	}
 };
 
@@ -3818,7 +3818,7 @@ class ZBell:Actor
 		bNoGravity = true;
 		bNoBlood = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZBELL;
+		IdleState = S_ZBELL;
 		DeathState = S_ZBELL_X1;
 		DeathSound = 'BellRing';
 	}
@@ -3849,7 +3849,7 @@ class ZBlueCandle:Actor
 
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZBLUE_CANDLE1;
+		IdleState = S_ZBLUE_CANDLE1;
 	}
 };
 
@@ -3871,7 +3871,7 @@ class ZIronMaiden:Actor
 
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZIRON_MAIDEN;
+		IdleState = S_ZIRON_MAIDEN;
 	}
 };
 
@@ -3895,7 +3895,7 @@ class ZXmasTree:Actor
 		bShootable = true;
 		bNoBlood = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZXMAS_TREE;
+		IdleState = S_ZXMAS_TREE;
 		MeleeState = S_ZXMAS_TREE_X1;
 		DeathState = S_ZXMAS_TREE_DIE;
 		DeathSound = 'TreeExplode';
@@ -3927,7 +3927,7 @@ class ZCauldron:Actor
 
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZCAULDRON1;
+		IdleState = S_ZCAULDRON1;
 	}
 };
 
@@ -3949,7 +3949,7 @@ class ZCauldronUnlit:Actor
 
 		bSolid = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZCAULDRON_U;
+		IdleState = S_ZCAULDRON_U;
 	}
 };
 
@@ -3973,7 +3973,7 @@ class ZChainBit32:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZCHAINBIT32;
+		IdleState = S_ZCHAINBIT32;
 	}
 };
 
@@ -3997,7 +3997,7 @@ class ZChainBit64:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZCHAINBIT64;
+		IdleState = S_ZCHAINBIT64;
 	}
 };
 
@@ -4021,7 +4021,7 @@ class ZChainEndHearth:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZCHAINEND_HEART;
+		IdleState = S_ZCHAINEND_HEART;
 	}
 };
 
@@ -4045,7 +4045,7 @@ class ZChainEndHook1:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZCHAINEND_HOOK1;
+		IdleState = S_ZCHAINEND_HOOK1;
 	}
 };
 
@@ -4069,7 +4069,7 @@ class ZChainEndHook2:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZCHAINEND_HOOK2;
+		IdleState = S_ZCHAINEND_HOOK2;
 	}
 };
 
@@ -4093,7 +4093,7 @@ class ZChainEndSpike:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZCHAINEND_SPIKE;
+		IdleState = S_ZCHAINEND_SPIKE;
 	}
 };
 
@@ -4117,7 +4117,7 @@ class ZChainEndSkull:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_ZCHAINEND_SKULL;
+		IdleState = S_ZCHAINEND_SKULL;
 	}
 };
 
@@ -4139,7 +4139,7 @@ class TableShit1:Actor
 
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_TABLE_SHIT1;
+		IdleState = S_TABLE_SHIT1;
 	}
 };
 
@@ -4161,7 +4161,7 @@ class TableShit2:Actor
 
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_TABLE_SHIT2;
+		IdleState = S_TABLE_SHIT2;
 	}
 };
 
@@ -4183,7 +4183,7 @@ class TableShit3:Actor
 
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_TABLE_SHIT3;
+		IdleState = S_TABLE_SHIT3;
 	}
 };
 
@@ -4205,7 +4205,7 @@ class TableShit4:Actor
 
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_TABLE_SHIT4;
+		IdleState = S_TABLE_SHIT4;
 	}
 };
 
@@ -4227,7 +4227,7 @@ class TableShit5:Actor
 
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_TABLE_SHIT5;
+		IdleState = S_TABLE_SHIT5;
 	}
 };
 
@@ -4249,7 +4249,7 @@ class TableShit6:Actor
 
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_TABLE_SHIT6;
+		IdleState = S_TABLE_SHIT6;
 	}
 };
 
@@ -4271,7 +4271,7 @@ class TableShit7:Actor
 
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_TABLE_SHIT7;
+		IdleState = S_TABLE_SHIT7;
 	}
 };
 
@@ -4293,7 +4293,7 @@ class TableShit8:Actor
 
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_TABLE_SHIT8;
+		IdleState = S_TABLE_SHIT8;
 	}
 };
 
@@ -4315,7 +4315,7 @@ class TableShit9:Actor
 
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_TABLE_SHIT9;
+		IdleState = S_TABLE_SHIT9;
 	}
 };
 
@@ -4337,7 +4337,7 @@ class TableShit10:Actor
 
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_TABLE_SHIT10;
+		IdleState = S_TABLE_SHIT10;
 	}
 };
 
@@ -4359,7 +4359,7 @@ class TeleportFog:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_TFOG1;
+		IdleState = S_TFOG1;
 	}
 };
 
@@ -4382,7 +4382,7 @@ class TeleSmoke:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_TELESMOKE1;
+		IdleState = S_TELESMOKE1;
 	}
 };
 
@@ -4427,7 +4427,7 @@ class PunchPuff:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_PUNCHPUFF1;
+		IdleState = S_PUNCHPUFF1;
 		SightSound = 'FighterPunchHitThing';
 		AttackSound = 'FighterPunchHitWall';
 	}
@@ -4453,7 +4453,7 @@ class AxePuff:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_HAMMERPUFF1;
+		IdleState = S_HAMMERPUFF1;
 		SightSound = 'FighterAxeHitThing';
 		AttackSound = 'FighterHammerHitWall';
 	}
@@ -4477,7 +4477,7 @@ class AxePuffGlow:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_AXEPUFF_GLOW1;
+		IdleState = S_AXEPUFF_GLOW1;
 		SightSound = 'FighterAxeHitThing';
 		AttackSound = 'FighterHammerHitWall';
 	}
@@ -4504,7 +4504,7 @@ class AxeBlood:Actor
 		bNoTeleport = true;
 		bNoPassMobj = true;
 		bCannotPush = true;
-		SpawnState = S_AXEBLOOD1;
+		IdleState = S_AXEBLOOD1;
 		DeathState = S_AXEBLOOD6;
 	}
 };
@@ -4535,7 +4535,7 @@ class HammerMissile:Actor
 		bFireDamage = true;
 		bActivateImpact = true;
 		bActivatePCross = true;
-		SpawnState = S_HAMMER_MISSILE_1;
+		IdleState = S_HAMMER_MISSILE_1;
 		DeathState = S_HAMMER_MISSILE_X1;
 		DeathSound = 'FighterHammerExplode';
 		Effects = EF_DL_RED;
@@ -4561,7 +4561,7 @@ class HammerPuff:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_HAMMERPUFF1;
+		IdleState = S_HAMMERPUFF1;
 		SightSound = 'FighterHammerHitThing';
 		AttackSound = 'FighterHammerHitWall';
 	}
@@ -4591,7 +4591,7 @@ class FighterSwordMissile:Actor
 		bNoTeleport = true;
 		bActivateImpact = true;
 		bActivatePCross = true;
-		SpawnState = S_FSWORD_MISSILE1;
+		IdleState = S_FSWORD_MISSILE1;
 		DeathState = S_FSWORD_MISSILE_X1;
 		DeathSound = 'FighterSwordExplode';
 		Effects = EF_DL_GREEN;
@@ -4617,7 +4617,7 @@ class FighterSwordFlame:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_FSWORD_FLAME1;
+		IdleState = S_FSWORD_FLAME1;
 	}
 };
 
@@ -4646,7 +4646,7 @@ class ClericStaffMissile:Actor
 		bNoTeleport = true;
 		bActivateImpact = true;
 		bActivatePCross = true;
-		SpawnState = S_CSTAFF_MISSILE1;
+		IdleState = S_CSTAFF_MISSILE1;
 		DeathState = S_CSTAFF_MISSILE_X1;
 		DeathSound = 'ClericCStaffExplode';
 		Effects = EF_DL_GREEN;
@@ -4672,7 +4672,7 @@ class ClericStaffPuff:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_CSTAFFPUFF1;
+		IdleState = S_CSTAFFPUFF1;
 		SightSound = 'ClericCStaffHitThing';
 	}
 };
@@ -4696,7 +4696,7 @@ class ClericFlameFloor:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_CFLAMEFLOOR1;
+		IdleState = S_CFLAMEFLOOR1;
 	}
 };
 
@@ -4718,7 +4718,7 @@ class FlamePuff:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_FLAMEPUFF1;
+		IdleState = S_FLAMEPUFF1;
 		SightSound = 'ClericFlameExplode';
 		AttackSound = 'ClericFlameExplode';
 	}
@@ -4742,7 +4742,7 @@ class FlamePuff2:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_FLAMEPUFF2_1;
+		IdleState = S_FLAMEPUFF2_1;
 		SightSound = 'ClericFlameExplode';
 		AttackSound = 'ClericFlameExplode';
 	}
@@ -4770,7 +4770,7 @@ class CircleFlame:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bFireDamage = true;
-		SpawnState = S_CIRCLE_FLAME1;
+		IdleState = S_CIRCLE_FLAME1;
 		DeathState = S_CIRCLE_FLAME_X1;
 		DeathSound = 'ClericFlameCircle';
 		Effects = EF_DL_WHITE;
@@ -4803,7 +4803,7 @@ class ClericFlameMissile:Actor
 		bFireDamage = true;
 		bActivateImpact = true;
 		bActivatePCross = true;
-		SpawnState = S_CFLAME_MISSILE1;
+		IdleState = S_CFLAME_MISSILE1;
 		DeathState = S_CFLAME_MISSILE_X;
 		Effects = EF_DL_WHITE;
 	}
@@ -4836,7 +4836,7 @@ class HolyFX:Actor
 		bActivateImpact = true;
 		bActivatePCross = true;
 		bSeekerMissile = true;
-		SpawnState = S_HOLY_FX1;
+		IdleState = S_HOLY_FX1;
 		DeathState = S_HOLY_FX_X1;
 		DeathSound = 'SpiritDie';
 	}
@@ -4865,7 +4865,7 @@ class HolyTail:Actor
 		bColideWithThings = false;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_HOLY_TAIL1;
+		IdleState = S_HOLY_TAIL1;
 	}
 };
 
@@ -4888,7 +4888,7 @@ class HolyPuff:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_HOLY_PUFF1;
+		IdleState = S_HOLY_PUFF1;
 	}
 };
 
@@ -4914,7 +4914,7 @@ class HolyMissile:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_HOLY_MISSILE1;
+		IdleState = S_HOLY_MISSILE1;
 		DeathState = S_HOLY_MISSILE_X;
 		Effects = EF_DL_WHITE;
 	}
@@ -4941,7 +4941,7 @@ class HolyMissilePuff:Actor
 		bDropOff = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_HOLY_MISSILE_P1;
+		IdleState = S_HOLY_MISSILE_P1;
 	}
 };
 
@@ -4966,7 +4966,7 @@ class MageWandPuff:Actor
 		bNoPassMobj = true;
 		bCannotPush = true;
 		bNoDamageThrust = true;
-		SpawnState = S_MWANDPUFF1;
+		IdleState = S_MWANDPUFF1;
 	}
 };
 
@@ -4992,7 +4992,7 @@ class MageWandSmoke:Actor
 		bNoPassMobj = true;
 		bCannotPush = true;
 		bNoDamageThrust = true;
-		SpawnState = S_MWANDSMOKE1;
+		IdleState = S_MWANDSMOKE1;
 	}
 };
 
@@ -5023,7 +5023,7 @@ class MageWandMissile:Actor
 		bNoDamageThrust = true;
 		bActivateImpact = true;
 		bActivatePCross = true;
-		SpawnState = S_MWAND_MISSILE1;
+		IdleState = S_MWAND_MISSILE1;
 		DeathState = S_MWANDPUFF1;
 		Effects = EF_DL_WHITE;
 	}
@@ -5054,7 +5054,7 @@ class LightningCeiling:Actor
 		bNoTeleport = true;
 		bActivateImpact = true;
 		bActivatePCross = true;
-		SpawnState = S_LIGHTNING_CEILING1;
+		IdleState = S_LIGHTNING_CEILING1;
 		DeathState = S_LIGHTNING_C_X1;
 		Effects = EF_DL_BLUE;
 	}
@@ -5084,7 +5084,7 @@ class LightningFloor:Actor
 		bNoTeleport = true;
 		bActivateImpact = true;
 		bActivatePCross = true;
-		SpawnState = S_LIGHTNING_FLOOR1;
+		IdleState = S_LIGHTNING_FLOOR1;
 		DeathState = S_LIGHTNING_F_X1;
 		Effects = EF_DL_BLUE;
 		MaxStepHeight = 99999.0;
@@ -5111,7 +5111,7 @@ class LightningZap:Actor
 		bNoGravity = true;
 		bDropOff = true;
 		bMissile = true;
-		SpawnState = S_LIGHTNING_ZAP1;
+		IdleState = S_LIGHTNING_ZAP1;
 		DeathState = S_LIGHTNING_ZAP_X8;
 		Effects = EF_DL_BLUE;
 	}
@@ -5143,7 +5143,7 @@ class MageStaffFX:Actor
 		bFireDamage = true;
 		bActivateImpact = true;
 		bActivatePCross = true;
-		SpawnState = S_MSTAFF_FX1_1;
+		IdleState = S_MSTAFF_FX1_1;
 		DeathState = S_MSTAFF_FX_X1;
 		DeathSound = 'MageStaffExplode';
 		Effects = EF_DL_RED;
@@ -5176,7 +5176,7 @@ class MageStaffFX2:Actor
 		bActivateImpact = true;
 		bActivatePCross = true;
 		bSeekerMissile = true;
-		SpawnState = S_MSTAFF_FX2_1;
+		IdleState = S_MSTAFF_FX2_1;
 		DeathState = S_MSTAFF_FX2_X1;
 		DeathSound = 'MageStaffExplode';
 		Effects = EF_DL_RED;
@@ -5211,7 +5211,7 @@ class SnoutPuff:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_PUNCHPUFF1;
+		IdleState = S_PUNCHPUFF1;
 	}
 };
 
@@ -5241,7 +5241,7 @@ class ShardMissile:Actor
 		bActivateImpact = true;
 		bActivatePCross = true;
 		bIceDamage = true;
-		SpawnState = S_SHARDFX1_1;
+		IdleState = S_SHARDFX1_1;
 		DeathState = S_SHARDFXE1_1;
 		DeathSound = 'MageShardsExplode';
 	}
@@ -5264,7 +5264,7 @@ class Blood:Actor
 
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_BLOOD1;
+		IdleState = S_BLOOD1;
 	}
 };
 
@@ -5288,7 +5288,7 @@ class BloodSplatter:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bCannotPush = true;
-		SpawnState = S_BLOODSPLATTER1;
+		IdleState = S_BLOODSPLATTER1;
 		DeathState = S_BLOODSPLATTERX;
 	}
 };
@@ -5313,7 +5313,7 @@ class Gibs:Actor
 		bCorpse = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_GIBS1;
+		IdleState = S_GIBS1;
 	}
 };
 
@@ -5339,7 +5339,7 @@ class PlayerSpeed:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_PLAYER_SPEED1;
+		IdleState = S_PLAYER_SPEED1;
 	}
 };
 
@@ -5363,7 +5363,7 @@ class IceChunk:Actor
 		bFloorClip = true;
 		bNoPassMobj = true;
 		bCannotPush = true;
-		SpawnState = S_ICECHUNK1;
+		IdleState = S_ICECHUNK1;
 	}
 };
 
@@ -5399,7 +5399,7 @@ class CentaurMissile:Actor
 		bNoTeleport = true;
 		bActivateImpact = true;
 		bActivatePCross = true;
-		SpawnState = S_CENTAUR_FX1;
+		IdleState = S_CENTAUR_FX1;
 		DeathState = S_CENTAUR_FX_X1;
 		DeathSound = 'CentaurMissileExplode';
 		Effects = EF_DL_BLUE;
@@ -5425,7 +5425,7 @@ class CentaurShield:Actor
 		bCorpse = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_CENTAUR_SHIELD1;
+		IdleState = S_CENTAUR_SHIELD1;
 		DeathState = S_CENTAUR_SHIELD_X1;
 	}
 };
@@ -5449,7 +5449,7 @@ class CentaurSword:Actor
 		bCorpse = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_CENTAUR_SWORD1;
+		IdleState = S_CENTAUR_SWORD1;
 		DeathState = S_CENTAUR_SWORD_X1;
 	}
 };
@@ -5477,7 +5477,7 @@ class DemonChunk1:Actor
 		bCorpse = true;
 		bFloorClip = true;
 		bNoTeleport = true;
-		SpawnState = S_DEMONCHUNK1_1;
+		IdleState = S_DEMONCHUNK1_1;
 		DeathState = S_DEMONCHUNK1_4;
 	}
 };
@@ -5503,7 +5503,7 @@ class DemonChunk2:Actor
 		bCorpse = true;
 		bFloorClip = true;
 		bNoTeleport = true;
-		SpawnState = S_DEMONCHUNK2_1;
+		IdleState = S_DEMONCHUNK2_1;
 		DeathState = S_DEMONCHUNK2_4;
 	}
 };
@@ -5529,7 +5529,7 @@ class DemonChunk3:Actor
 		bCorpse = true;
 		bFloorClip = true;
 		bNoTeleport = true;
-		SpawnState = S_DEMONCHUNK3_1;
+		IdleState = S_DEMONCHUNK3_1;
 		DeathState = S_DEMONCHUNK3_4;
 	}
 };
@@ -5555,7 +5555,7 @@ class DemonChunk4:Actor
 		bCorpse = true;
 		bFloorClip = true;
 		bNoTeleport = true;
-		SpawnState = S_DEMONCHUNK4_1;
+		IdleState = S_DEMONCHUNK4_1;
 		DeathState = S_DEMONCHUNK4_4;
 	}
 };
@@ -5581,7 +5581,7 @@ class DemonChunk5:Actor
 		bCorpse = true;
 		bFloorClip = true;
 		bNoTeleport = true;
-		SpawnState = S_DEMONCHUNK5_1;
+		IdleState = S_DEMONCHUNK5_1;
 		DeathState = S_DEMONCHUNK5_4;
 	}
 };
@@ -5611,7 +5611,7 @@ class DemonMissile:Actor
 		bFireDamage = true;
 		bActivateImpact = true;
 		bActivatePCross = true;
-		SpawnState = S_DEMONFX_MOVE1;
+		IdleState = S_DEMONFX_MOVE1;
 		DeathState = S_DEMONFX_BOOM1;
 		DeathSound = 'DemonMissileExplode';
 		Effects = EF_DL_WHITE;
@@ -5641,7 +5641,7 @@ class Demon2Chunk1:Actor
 		bCorpse = true;
 		bFloorClip = true;
 		bNoTeleport = true;
-		SpawnState = S_DEMON2CHUNK1_1;
+		IdleState = S_DEMON2CHUNK1_1;
 		DeathState = S_DEMON2CHUNK1_4;
 	}
 };
@@ -5667,7 +5667,7 @@ class Demon2Chunk2:Actor
 		bCorpse = true;
 		bFloorClip = true;
 		bNoTeleport = true;
-		SpawnState = S_DEMON2CHUNK2_1;
+		IdleState = S_DEMON2CHUNK2_1;
 		DeathState = S_DEMON2CHUNK2_4;
 	}
 };
@@ -5693,7 +5693,7 @@ class Demon2Chunk3:Actor
 		bCorpse = true;
 		bFloorClip = true;
 		bNoTeleport = true;
-		SpawnState = S_DEMON2CHUNK3_1;
+		IdleState = S_DEMON2CHUNK3_1;
 		DeathState = S_DEMON2CHUNK3_4;
 	}
 };
@@ -5719,7 +5719,7 @@ class Demon2Chunk4:Actor
 		bCorpse = true;
 		bFloorClip = true;
 		bNoTeleport = true;
-		SpawnState = S_DEMON2CHUNK4_1;
+		IdleState = S_DEMON2CHUNK4_1;
 		DeathState = S_DEMON2CHUNK4_4;
 	}
 };
@@ -5745,7 +5745,7 @@ class Demon2Chunk5:Actor
 		bCorpse = true;
 		bFloorClip = true;
 		bNoTeleport = true;
-		SpawnState = S_DEMON2CHUNK5_1;
+		IdleState = S_DEMON2CHUNK5_1;
 		DeathState = S_DEMON2CHUNK5_4;
 	}
 };
@@ -5775,7 +5775,7 @@ class Demon2Missile:Actor
 		bFireDamage = true;
 		bActivateImpact = true;
 		bActivatePCross = true;
-		SpawnState = S_DEMON2FX_MOVE1;
+		IdleState = S_DEMON2FX_MOVE1;
 		DeathState = S_DEMON2FX_BOOM1;
 		DeathSound = 'DemonMissileExplode';
 		Effects = EF_DL_GREEN;
@@ -5811,7 +5811,7 @@ class WraithMissile:Actor
 		bFireDamage = true;
 		bActivateImpact = true;
 		bActivatePCross = true;
-		SpawnState = S_WRTHFX_MOVE1;
+		IdleState = S_WRTHFX_MOVE1;
 		DeathState = S_WRTHFX_BOOM1;
 		DeathSound = 'WraithMissileExplode';
 		Effects = EF_DL_RED;
@@ -5838,7 +5838,7 @@ class WraithSparkDrip:Actor
 		bFloorClip = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_WRTHFX_SIZZLE1;
+		IdleState = S_WRTHFX_SIZZLE1;
 	}
 };
 
@@ -5862,7 +5862,7 @@ class WraithFX3:Actor
 		bMissile = true;
 		bFloorClip = true;
 		bNoTeleport = true;
-		SpawnState = S_WRTHFX_DROP1;
+		IdleState = S_WRTHFX_DROP1;
 		DeathState = S_WRTHFX_DEAD1;
 		DeathSound = 'Drip';
 	}
@@ -5887,7 +5887,7 @@ class WraithFleshDrip1:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_WRTHFX_ADROP1;
+		IdleState = S_WRTHFX_ADROP1;
 		DeathState = S_WRTHFX_ADEAD1;
 		DeathSound = 'Drip';
 	}
@@ -5912,7 +5912,7 @@ class WraithFleshDrip2:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_WRTHFX_BDROP1;
+		IdleState = S_WRTHFX_BDROP1;
 		DeathState = S_WRTHFX_BDEAD1;
 		DeathSound = 'Drip';
 	}
@@ -5943,7 +5943,7 @@ class MinotaurMissile:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bFireDamage = true;
-		SpawnState = S_MNTRFX1_1;
+		IdleState = S_MNTRFX1_1;
 		DeathState = S_MNTRFXI1_1;
 		Effects = EF_DL_WHITE;
 	}
@@ -5972,7 +5972,7 @@ class MinotaurFloorFire1:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bFireDamage = true;
-		SpawnState = S_MNTRFX2_1;
+		IdleState = S_MNTRFX2_1;
 		DeathState = S_MNTRFXI2_1;
 		Effects = EF_DL_WHITE;
 		// The Minotaur floor fire can step up any amount
@@ -6002,7 +6002,7 @@ class MinotaurFloorFire2:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bFireDamage = true;
-		SpawnState = S_MNTRFX3_1;
+		IdleState = S_MNTRFX3_1;
 		DeathState = S_MNTRFXI2_1;
 		Effects = EF_DL_WHITE;
 	}
@@ -6028,7 +6028,7 @@ class MinotaurSmoke:Actor
 		bNoGravity = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_MINOSMOKE1;
+		IdleState = S_MINOSMOKE1;
 	}
 };
 
@@ -6052,7 +6052,7 @@ class MinotaurSmokeExit:Actor
 		bNoGravity = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_MINOSMOKEX1;
+		IdleState = S_MINOSMOKEX1;
 	}
 };
 
@@ -6081,7 +6081,7 @@ class SerpentMissile:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_SERPENT_FX1;
+		IdleState = S_SERPENT_FX1;
 		DeathState = S_SERPENT_FX_X1;
 		DeathSound = 'SerpentFXHit';
 		Effects = EF_DL_GREEN;
@@ -6105,7 +6105,7 @@ class SerpentHead:Actor
 
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_SERPENT_HEAD1;
+		IdleState = S_SERPENT_HEAD1;
 	}
 };
 
@@ -6127,7 +6127,7 @@ class SerpentGib1:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_SERPENT_GIB1_1;
+		IdleState = S_SERPENT_GIB1_1;
 	}
 };
 
@@ -6149,7 +6149,7 @@ class SerpentGib2:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_SERPENT_GIB2_1;
+		IdleState = S_SERPENT_GIB2_1;
 	}
 };
 
@@ -6171,7 +6171,7 @@ class SerpentGib3:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_SERPENT_GIB3_1;
+		IdleState = S_SERPENT_GIB3_1;
 	}
 };
 
@@ -6196,7 +6196,7 @@ class BishopPuff:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_BISHOP_PUFF1;
+		IdleState = S_BISHOP_PUFF1;
 	}
 };
 
@@ -6219,7 +6219,7 @@ class BishopBlur:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_BISHOPBLUR1;
+		IdleState = S_BISHOPBLUR1;
 	}
 };
 
@@ -6242,7 +6242,7 @@ class BishopPainBlur:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_BISHOPPAINBLUR1;
+		IdleState = S_BISHOPPAINBLUR1;
 	}
 };
 
@@ -6269,7 +6269,7 @@ class BishopMissile:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bSeekerMissile = true;
-		SpawnState = S_BISHFX1_1;
+		IdleState = S_BISHFX1_1;
 		DeathState = S_BISHFXI1_1;
 		DeathSound = 'BishopMissileExplode';
 		Effects = EF_DL_GREEN;
@@ -6301,7 +6301,7 @@ class DragonMissile:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bFireDamage = true;
-		SpawnState = S_DRAGON_FX1_1;
+		IdleState = S_DRAGON_FX1_1;
 		DeathState = S_DRAGON_FX1_X1;
 		DeathSound = 'DragonFireballExplode';
 		Effects = EF_DL_WHITE;
@@ -6328,7 +6328,7 @@ class DragonFX2:Actor
 		bNoTeleport = true;
 		bNoPassMobj = true;
 		bFireDamage = true;
-		SpawnState = S_DRAGON_FX2_1;
+		IdleState = S_DRAGON_FX2_1;
 		DeathSound = 'DragonFireballExplode';
 	}
 };
@@ -6370,7 +6370,7 @@ class SoundWind:Actor
 		bHidden = true;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_SND_WIND1;
+		IdleState = S_SND_WIND1;
 	}
 };
 
@@ -6393,7 +6393,7 @@ class SoundWaterfall:Actor
 		bHidden = true;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
-		SpawnState = S_SND_WATERFALL;
+		IdleState = S_SND_WATERFALL;
 	}
 };
 
@@ -6419,7 +6419,7 @@ class EttinMace:Actor
 		bFloorClip = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_ETTIN_MACE1;
+		IdleState = S_ETTIN_MACE1;
 		DeathState = S_ETTIN_MACE5;
 	}
 };
@@ -6446,7 +6446,7 @@ class FireDemonSplotch1:Actor
 		bFloorClip = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_FIRED_CORPSE1;
+		IdleState = S_FIRED_CORPSE1;
 	}
 };
 
@@ -6470,7 +6470,7 @@ class FireDemonSplotch2:Actor
 		bFloorClip = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_FIRED_CORPSE4;
+		IdleState = S_FIRED_CORPSE4;
 	}
 };
 
@@ -6494,7 +6494,7 @@ class FireDemonRock1:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_FIRED_RDROP1;
+		IdleState = S_FIRED_RDROP1;
 		DeathState = S_FIRED_RDEAD1_1;
 		GibsDeathState = S_FIRED_RDEAD1_2;
 	}
@@ -6520,7 +6520,7 @@ class FireDemonRock2:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_FIRED_RDROP2;
+		IdleState = S_FIRED_RDROP2;
 		DeathState = S_FIRED_RDEAD2_1;
 		GibsDeathState = S_FIRED_RDEAD2_2;
 	}
@@ -6546,7 +6546,7 @@ class FireDemonRock3:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_FIRED_RDROP3;
+		IdleState = S_FIRED_RDROP3;
 		DeathState = S_FIRED_RDEAD3_1;
 		GibsDeathState = S_FIRED_RDEAD3_2;
 	}
@@ -6571,7 +6571,7 @@ class FireDemonRock4:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_FIRED_RDROP4;
+		IdleState = S_FIRED_RDROP4;
 		DeathState = S_FIRED_RDEAD4_1;
 		GibsDeathState = S_FIRED_RDEAD4_2;
 	}
@@ -6596,7 +6596,7 @@ class FireDemonRock5:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_FIRED_RDROP5;
+		IdleState = S_FIRED_RDROP5;
 		DeathState = S_FIRED_RDEAD5_1;
 		GibsDeathState = S_FIRED_RDEAD5_2;
 	}
@@ -6627,7 +6627,7 @@ class FireDemonMissile:Actor
 		bFireDamage = true;
 		bActivateImpact = true;
 		bActivatePCross = true;
-		SpawnState = S_FIRED_FX6_1;
+		IdleState = S_FIRED_FX6_1;
 		DeathState = S_FIRED_FX6_2;
 		DeathSound = 'FireDemonMissileHit';
 		Effects = EF_DL_WHITE;
@@ -6658,7 +6658,7 @@ class IceGuyMissile:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bIceDamage = true;
-		SpawnState = S_ICEGUY_FX1;
+		IdleState = S_ICEGUY_FX1;
 		DeathState = S_ICEGUY_FX_X1;
 		DeathSound = 'IceGuyMissileExplode';
 		Effects = EF_DL_BLUE;
@@ -6686,7 +6686,7 @@ class IceGuyMissilePuff:Actor
 		bDropOff = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_ICEFX_PUFF1;
+		IdleState = S_ICEFX_PUFF1;
 	}
 };
 
@@ -6711,7 +6711,7 @@ class IceGuyMissile2:Actor
 		bMissile = true;
 		bNoTeleport = true;
 		bIceDamage = true;
-		SpawnState = S_ICEGUY_FX2_1;
+		IdleState = S_ICEGUY_FX2_1;
 	}
 };
 
@@ -6733,7 +6733,7 @@ class IceGuyBit:Actor
 		bDropOff = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_ICEGUY_BIT1;
+		IdleState = S_ICEGUY_BIT1;
 	}
 };
 
@@ -6757,7 +6757,7 @@ class IceGuyWisp1:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_ICEGUY_WISP1_1;
+		IdleState = S_ICEGUY_WISP1_1;
 	}
 };
 
@@ -6781,7 +6781,7 @@ class IceGuyWisp2:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_ICEGUY_WISP2_1;
+		IdleState = S_ICEGUY_WISP2_1;
 	}
 };
 
@@ -6810,7 +6810,7 @@ class SorcererBall1:Actor
 		bMissile = true;
 		bFloorBounce = true;
 		bNoTeleport = true;
-		SpawnState = S_SORCBALL1_1;
+		IdleState = S_SORCBALL1_1;
 		PainState = S_SORCBALL1_D1;
 		DeathState = S_SORCBALL1_D5;
 		SightSound = 'SorcererBallBounce';
@@ -6837,7 +6837,7 @@ class SorcererBall2:Actor
 		bMissile = true;
 		bFloorBounce = true;
 		bNoTeleport = true;
-		SpawnState = S_SORCBALL2_1;
+		IdleState = S_SORCBALL2_1;
 		PainState = S_SORCBALL2_D1;
 		DeathState = S_SORCBALL2_D5;
 		SightSound = 'SorcererBallBounce';
@@ -6864,7 +6864,7 @@ class SorcererBall3:Actor
 		bMissile = true;
 		bFloorBounce = true;
 		bNoTeleport = true;
-		SpawnState = S_SORCBALL3_1;
+		IdleState = S_SORCBALL3_1;
 		PainState = S_SORCBALL3_D1;
 		DeathState = S_SORCBALL3_D5;
 		SightSound = 'SorcererBallBounce';
@@ -6891,7 +6891,7 @@ class SorcererFX1:Actor
 		bMissile = true;
 		bFloorBounce = true;
 		bNoTeleport = true;
-		SpawnState = S_SORCFX1_1;
+		IdleState = S_SORCFX1_1;
 		DeathState = S_SORCFX1_D1;
 		GibsDeathState = S_SORCFX1_D1;
 		SightSound = 'SorcererBallBounce';
@@ -6918,7 +6918,7 @@ class SorcererFX2:Actor
 		bNoGravity = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_SORCFX2_SPLIT1;
+		IdleState = S_SORCFX2_SPLIT1;
 		DeathState = S_SORCFX2T1;
 	}
 };
@@ -6942,7 +6942,7 @@ class SorcererFX2_T1:Actor
 		bNoGravity = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_SORCFX2T1;
+		IdleState = S_SORCFX2T1;
 	}
 };
 
@@ -6964,7 +6964,7 @@ class SorcererFX3:Actor
 		bNoBlockmap = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_SORCFX3_1;
+		IdleState = S_SORCFX3_1;
 		DeathState = S_BISHMORPH1;
 		SightSound = 'SorcererBishopSpawn';
 		Effects = EF_DL_WHITE;
@@ -6990,7 +6990,7 @@ class SorcererFX3Explosion:Actor
 		bNoGravity = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_SORCFX3_EXP1;
+		IdleState = S_SORCFX3_EXP1;
 	}
 };
 
@@ -7014,7 +7014,7 @@ class SorcererFX4:Actor
 		bNoGravity = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_SORCFX4_1;
+		IdleState = S_SORCFX4_1;
 		DeathState = S_SORCFX4_D1;
 		DeathSound = 'SorcererBallExplode';
 		Effects = EF_DL_WHITE;
@@ -7039,7 +7039,7 @@ class SorcererSpark:Actor
 		bDropOff = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_SORCSPARK1;
+		IdleState = S_SORCSPARK1;
 	}
 };
 
@@ -7064,7 +7064,7 @@ class BlastEffect:Actor
 		bColideWithThings = false;
 		bNoTeleport = true;
 		bNoPassMobj = true;
-		SpawnState = S_BLASTEFFECT1;
+		IdleState = S_BLASTEFFECT1;
 	}
 };
 
@@ -7084,7 +7084,7 @@ class WaterDrip:Actor
 		Mass = 1.0;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_WATERDRIP1;
+		IdleState = S_WATERDRIP1;
 		DeathSound = 'Drip';
 	}
 };
@@ -7114,7 +7114,7 @@ class KoraxSpirit1:Actor
 		bColideWithThings = false;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_KSPIRIT_ROAM1;
+		IdleState = S_KSPIRIT_ROAM1;
 	}
 };
 
@@ -7141,7 +7141,7 @@ class KoraxSpirit2:Actor
 		bColideWithThings = false;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_KSPIRIT_ROAM1;
+		IdleState = S_KSPIRIT_ROAM1;
 	}
 };
 
@@ -7168,7 +7168,7 @@ class KoraxSpirit3:Actor
 		bColideWithThings = false;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_KSPIRIT_ROAM1;
+		IdleState = S_KSPIRIT_ROAM1;
 	}
 };
 
@@ -7195,7 +7195,7 @@ class KoraxSpirit4:Actor
 		bColideWithThings = false;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_KSPIRIT_ROAM1;
+		IdleState = S_KSPIRIT_ROAM1;
 	}
 };
 
@@ -7222,7 +7222,7 @@ class KoraxSpirit5:Actor
 		bColideWithThings = false;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_KSPIRIT_ROAM1;
+		IdleState = S_KSPIRIT_ROAM1;
 	}
 };
 
@@ -7249,7 +7249,7 @@ class KoraxSpirit6:Actor
 		bColideWithThings = false;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_KSPIRIT_ROAM1;
+		IdleState = S_KSPIRIT_ROAM1;
 	}
 };
 
@@ -7277,7 +7277,7 @@ class KoraxBolt:Actor
 		bDropOff = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_KBOLT1;
+		IdleState = S_KBOLT1;
 		Effects = EF_DL_WHITE;
 	}
 };
@@ -7302,7 +7302,7 @@ class BatSpawner:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
-		SpawnState = S_SPAWNBATS1;
+		IdleState = S_SPAWNBATS1;
 	}
 };
 
@@ -7325,7 +7325,7 @@ class Bat:Actor
 		bNoGravity = true;
 		bMissile = true;
 		bNoTeleport = true;
-		SpawnState = S_BAT1;
+		IdleState = S_BAT1;
 		DeathState = S_BAT_DEATH;
 	}
 };
@@ -7333,9 +7333,12 @@ class Bat:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2002/05/18 17:00:00  dj_jl
+//	Renamed SpawnState to IdleState, other changes.
+//
 //	Revision 1.29  2002/04/11 16:52:16  dj_jl
 //	Made TryMove native.
-//
+//	
 //	Revision 1.28  2002/03/16 17:47:47  dj_jl
 //	Got rid of mobj_t and some other legacy.
 //	

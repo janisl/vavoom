@@ -46,6 +46,9 @@ void ChangeWeapon(player_t * player, int newweapon);
 boolean G_CheckSpot(int playernum, mthing_t * mthing);
 void P_SpawnPlayer(mthing_t * mthing);
 void P_UseLines(player_t * player);
+#ifdef DDF
+void SetInitialWeapons(player_t *player);
+#endif
 
 boolean onground;
 
@@ -467,10 +470,12 @@ void PlayerPawn::PlayerImpulse(void)
 
 void PlayerPawn::PlayerTick(float deltaTime)
 {
+#ifndef	NO_BOTS
 	if (Player->bIsBot)
 	{
 		Player->Bot.BotTick(deltaTime);
 	}
+#endif
 
 	// fixme: do this in the cheat code
 	if (Player->Cheats & CF_NOCLIP)
@@ -739,24 +744,34 @@ void SetViewPos(player_t * player)
 void G_PlayerReborn(int player)
 {
 	player_t *p;
+#ifndef	NO_BOTS
 	BotPlayer b;
+#endif
 
 	p = &players[player];
 
 	//  Clear player struct
+#ifndef	NO_BOTS
 	b = p->Bot;
+#endif
 	ClearPlayer(p);
+#ifndef	NO_BOTS
 	p->Bot = b;
+#endif
 
 	//  Set initial data
 	p->bUseDown = true;	// don't do anything immediately
 	p->bAttackDown = true;
 	p->PlayerState = PST_LIVE;
 	p->Health = INITIAL_HEALTH;
+	p->Ammo[am_clip] = INITIAL_AMMO;
+#ifdef DDF
+	SetInitialWeapons(p);
+#else
 	p->WeaponOwned[wp_fist] = true;
 	p->WeaponOwned[wp_pistol] = true;
-	p->Ammo[am_clip] = INITIAL_AMMO;
 	SetWeapon(p, wp_pistol);
+#endif
 }
 
 //==========================================================================
@@ -891,12 +906,14 @@ void PutClientIntoServer(player_t * player)
 	player->ViewEnts[ps_weapon].Player = player;
 	player->ViewEnts[ps_flash] = SpawnObject(Weapon, none);
 	player->ViewEnts[ps_flash].Player = player;
+#ifndef	NO_BOTS
 	if (player->bIsBot)
 	{
 		player->Bot = SpawnObject(BotPlayer, none);
 		player->Bot.player = player;
 		player->Bot.OnBeginPlay();
 	}
+#endif
 }
 
 //==========================================================================
@@ -927,11 +944,13 @@ void DisconnectClient(player_t * player)
 {
 	int i;
 
+#ifndef	NO_BOTS
 	if (player->Bot != none)
 	{
 		player->Bot.Destroy();
 		player->Bot = none;
 	}
+#endif
 	if (player->MO)
 	{
 		player->MO.Player = NULL;
@@ -1001,6 +1020,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/05/18 16:59:59  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.26  2002/04/11 16:49:50  dj_jl
 //  Tick function.
 //

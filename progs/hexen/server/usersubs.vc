@@ -164,7 +164,7 @@ boolean PlayerPawn::UndoPlayerMorph(void)
 
 void PlayerPawn::SetPlayerRunState(void)
 {
-	if (StateNum == SpawnState)
+	if (StateNum == IdleState)
 	{
 		SetState(SeeState);
 	}
@@ -625,6 +625,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/05/18 17:00:00  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.27  2002/04/11 16:49:50  dj_jl
 //  Tick function.
 //

@@ -173,7 +173,7 @@ void Pawn::A_Chase(void)
 		{
 			return;	// got a new target
 		}
-		SetState(SpawnState);
+		SetState(IdleState);
 		return;
 	}
 
@@ -636,7 +636,7 @@ void Pawn::A_FreezeDeathChunks(void)
 			(Random() - 0.5) * 2.0 * Radius,
 			(Random() - 0.5) * 2.0 * Radius,
 			Random() * Height));
-		A.SetState(A.SpawnState + (P_Random() % 3));
+		A.SetState(A.IdleState + (P_Random() % 3));
 		if (A)
 		{
 			A.Velocity.z = (A.Origin.z - Origin.z) / Height * 4.0 * 35.0;
@@ -651,7 +651,7 @@ void Pawn::A_FreezeDeathChunks(void)
 			(Random() - 0.5) * 2.0 * Radius,
 			(Random() - 0.5) * 2.0 * Radius,
 			Random() * Height));
-		A.SetState(A.SpawnState + (P_Random() % 3));
+		A.SetState(A.IdleState + (P_Random() % 3));
 		if (A)
 		{
 			A.Velocity.z = (A.Origin.z - Origin.z) / Height * 4.0 * 35.0;
@@ -828,6 +828,9 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/05/18 17:00:00  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.26  2002/03/28 18:15:34  dj_jl
 //  Renamed mo in player_t to MO.
 //

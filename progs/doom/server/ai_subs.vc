@@ -102,29 +102,23 @@ boolean Actor::CheckMissileRange(void)
 	if (!MeleeState)
 		dist -= 128.0;	// no melee attack, so fire more
 
-	if (Class == ArchVile)
+	if (MissileMaxRange && dist > MissileMaxRange)
 	{
-		if (dist > 14.0 * 64.0)
-			return false;	// too far away
+		return false;	// too far away
 	}
 
-	if (Class == Revenant)
+	if (MissileMinRange && dist < MissileMinRange)
 	{
-		if (dist < 196.0)
-			return false;	// close for fist attack
-		dist /= 2.0;
+		return false;	// close for fist attack
 	}
 
-	if (Class == Cyberdemon || Class == SpiderMastermind || Class == LostSoul)
+	if (bTriggerHappy)
 	{
 		dist /= 2.0;
 	}
 
-	if (dist > 200.0)
-		dist = 200.0;
-
-	if (Class == Cyberdemon && dist > 160.0)
-		dist = 160.0;
+	if (dist > MissileChance)
+		dist = MissileChance;
 
 	if (Random() * 256.0 < dist)
 		return false;
@@ -173,7 +167,7 @@ boolean Actor::LookForMonsters(boolean allaround)
 		if (mo == self)
 			continue;
 
-		if (mo.Class != LostSoul && mo.Class != DoomPlayer && !mo.bCountKill)
+		if (!mo.bIsPlayer && !mo.bMonster)
 			continue;
 
 		if (!P_CheckSight(self, mo))
@@ -227,7 +221,7 @@ boolean Actor::LookForMonsters2(boolean allaround)
 		if (mo == self)
 			continue;	// self
 
-		if ((mo.Class != LostSoul) && !mo.bCountKill)
+		if (!mo.bMonster)
 			continue;	// not a monster
 
 		if (!P_CheckSight(self, mo))
@@ -562,6 +556,9 @@ void Actor::NewChaseDir(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/05/18 16:59:58  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.21  2002/04/11 16:52:13  dj_jl
 //  Made TryMove native.
 //

@@ -74,7 +74,7 @@ defaultproperties
 	StepSpeed = 4.0;
 	PainChance = 200;
 	bUnknown6 = true;
-	SpawnState = S_PEASANT_STAND;
+	IdleState = S_PEASANT_STAND;
 	SeeState = S_PEASANT_WALK1;
 	MeleeState = S_PEASANT_ATK1;
 	PainState = S_PEASANT_PAIN1;
@@ -548,7 +548,7 @@ defaultproperties
 	Height = 56.0;
 	Mass = 100.0;
 	Translation = 1;
-	SpawnState = S_PEASANT2_STAND;
+	IdleState = S_PEASANT2_STAND;
 	PainState = S_PEASANT2_PAIN;
 	DeathState = S_PEASANT_XDIE1;
 	DeathSound = 'PeasantDeath';
@@ -559,6 +559,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2002/05/18 17:00:04  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.1  2002/04/27 17:04:54  dj_jl
 //  Merged all creatures.
 //

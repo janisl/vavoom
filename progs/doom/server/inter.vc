@@ -327,7 +327,7 @@ __states__(Actor)
 
 		bHidden = false;
 		bSpecial = true;
-		SetState(SpawnState);
+		SetState(IdleState);
 
 		// spawn a teleport fog at the new spot
 		A = Spawn(ItemRespawnFog, Origin);
@@ -338,9 +338,7 @@ __states__(Actor)
 void Actor::HideSpecial(void)
 {
 	// only respawn items in deathmatch
-	if ((deathmatch == 2 || deathmatch == 3) &&
-		!bDropped && (Class != ItemInvulnerability) &&
-		(Class != ItemInvisibility))
+	if ((deathmatch == 2 || deathmatch == 3) && !bDropped && !bNoRespawn)
 	{
 		SetState(S_DORMANT_PICKUP1);
 	}
@@ -672,6 +670,9 @@ void Actor::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/05/18 16:59:58  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.17  2002/03/28 18:11:24  dj_jl
 //  Changed hiding of specials like in Raven games.
 //

@@ -159,7 +159,7 @@ class Actor:Entity
 	abstract
 {
 	//  States
-	int SpawnState;
+	int IdleState;
 	int SeeState;
 	int PainState;
 	int MeleeState;
@@ -202,8 +202,16 @@ class Actor:Entity
 	bool bWaterJump;
 	bool bSkullFly;		// skull in flight
 	bool bNoDeathmatch;
-	bool bCheckNoMonsters;
+	bool bMonster;
 	bool bTelestomp;
+	bool bDefaultFloat;
+	bool bDefaultNoGravity;
+	bool bTriggerHappy;
+	bool bNeverTarget;
+	bool bNoGrudge;
+	bool bNoGravKill;
+	bool bBoss;
+	bool bNoRespawn;
 
 	//  Params
 	float Speed;
@@ -238,6 +246,11 @@ class Actor:Entity
 	int MoveDir;	// 0-7
 	int MoveCount;	// when 0, select a new dir
 
+	float MissileChance;
+	float MissileMinRange;
+	float MissileMaxRange;
+	classid ImuneMissileType;
+
 	boolean GiveAmmo(int ammo, int num);
 	boolean GiveWeapon(int weapon, boolean dropped);
 	boolean GiveBody(int num);
@@ -259,6 +272,7 @@ class Actor:Entity
 	Actor SpawnMissile(Actor dest, classid type);
 	void ExplodeMissile(void);
 	void Died(Actor source);
+	void DropStuff(void);
 	void NightmareRespawn(void);
 
 	boolean HeightClip(void);
@@ -297,11 +311,11 @@ class Actor:Entity
 	void A_Chase(void);
 	void A_FaceTarget(void);
 	void A_Scream(void);
-	void A_BossDeath(void);
 
 	defaultproperties
 	{
 		MaxStepHeight = 24.0;
+		MissileChance = 200.0;
 	}
 }
 
@@ -314,12 +328,12 @@ class Pawn:Actor
 		bSolid = true;
 		bShootable = true;
 		bCountKill = true;
-		bCheckNoMonsters = true;
+		bMonster = true;
 		bActivateMCross = true;
 	}
 }
 
-class PlayerPawn:Actor
+class PlayerPawn:Pawn
 	abstract
 {
 	int Attack2State;
@@ -345,7 +359,7 @@ class PlayerPawn:Actor
 	{
 		ReactionCount = 0;
 		bCountKill = false;
-		bCheckNoMonsters = false;
+		bMonster = false;
 		bActivateMCross = false;
 		bTelestomp = true;
 	}
@@ -431,6 +445,7 @@ class Weapon:ViewEntity
 	}
 }
 
+#ifndef	NO_BOTS
 /*
 
   Class definitions for botinfo, chatinfo, and
@@ -636,6 +651,7 @@ class BotPlayer:Object
 	void Killed(Actor victim);
 	void Died(Actor killer);
 }
+#endif
 
 addfields player_t
 {
@@ -696,7 +712,9 @@ addfields player_t
 
 	TVec MoveDir;
 
+#ifndef	NO_BOTS
 	BotPlayer Bot;
+#endif
 };
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
@@ -737,6 +755,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.32  2002/05/18 16:59:59  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.31  2002/05/03 17:11:55  dj_jl
 //  Object classes split up into their files.
 //

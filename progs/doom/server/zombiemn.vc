@@ -63,6 +63,20 @@ void A_PosAttack(void)
 	Effects |= EF_DL_MUZZLEFLASH;
 }
 
+//==========================================================================
+//
+//	DropStuff
+//
+//==========================================================================
+
+void DropStuff(void)
+{
+	Actor A;
+
+	A = Spawn(ItemAmmoBulletClip, vector(Origin.x, Origin.y, FloorZ));
+	A.bDropped = true;	// special versions of items
+}
+
 __states__
 {
 	S_POSS_STND('POSS', 0, 'monsters/trooper.md2', 0, 10.0 / 35.0, S_POSS_STND2) { A_Look(); }
@@ -109,7 +123,7 @@ defaultproperties
 	Mass = 100.0;
 	StepSpeed = 8.0;
 	PainChance = 200;
-	SpawnState = S_POSS_STND;
+	IdleState = S_POSS_STND;
 	SeeState = S_POSS_RUN1;
 	MissileState = S_POSS_ATK1;
 	PainState = S_POSS_PAIN;
@@ -128,6 +142,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/05/18 16:59:59  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.17  2002/05/03 17:11:55  dj_jl
 //  Object classes split up into their files.
 //

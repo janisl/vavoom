@@ -97,7 +97,7 @@ void A_SerpentChase(void)
 			// got a new enemy
 			return;
 		}
-		SetState(SpawnState);
+		SetState(IdleState);
 		return;
 	}
 
@@ -373,7 +373,7 @@ void A_SerpentWalk(void)
 			// got a new target
 			return;
 		}
-		SetState(SpawnState);
+		SetState(IdleState);
 		return;
 	}
 
@@ -584,7 +584,7 @@ defaultproperties
 	bActivatePushWall = false;
 	bCantLeaveFloorpic = true;
 	bNonShootable = true;
-	SpawnState = S_SERPENT_LOOK1;
+	IdleState = S_SERPENT_LOOK1;
 	SeeState = S_SERPENT_SWIM1;
 	HumpState = S_SERPENT_HUMP1;
 	MeleeState = S_SERPENT_SURFACE1;
@@ -773,6 +773,9 @@ void Actor::A_DelayGib(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/05/18 17:00:00  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.24  2002/04/11 16:52:16  dj_jl
 //  Made TryMove native.
 //

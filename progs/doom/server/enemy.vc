@@ -92,7 +92,7 @@ void Actor::A_Look(void)
 			}
 		}
 
-		if (Class == SpiderMastermind || Class == Cyberdemon)
+		if (bBoss)
 		{
 			// Full volume
 			PlayFullVolumeSound(sound, CHAN_VOICE);
@@ -175,7 +175,7 @@ void Actor::A_Chase(void)
 		{
 			return;	// got a new target
 		}
-		SetState(SpawnState);
+		SetState(IdleState);
 		return;
 	}
 
@@ -354,7 +354,7 @@ void Actor::A_Scream(void)
 		}
 
 		// Check for bosses.
-		if (Class == SpiderMastermind || Class == Cyberdemon)
+		if (bBoss)
 		{
 			// full volume
 			PlayFullVolumeSound(sound, CHAN_VOICE);
@@ -433,167 +433,12 @@ void Actor::A_PlayerScream(void)
 	PlaySound(sound, CHAN_VOICE);
 }
 
-#ifndef DOOM2
-
-//==========================================================================
-//
-//  Actor::A_BossDeath
-//
-//  DOOM / Ultimate DOOM boss death
-//  Possibly trigger special effects if on first boss level
-//
-//==========================================================================
-
-void Actor::A_BossDeath(void)
-{
-	string mapname;
-	int i;
-	Actor Other;
-	int args[5];
-
-	mapname = ARR2STR(level->mapname);
-
-	if (!strcmp(mapname, "E1M8"))
-	{
-		if (Class != BaronOfHell)
-			return;
-	}
-	else if (!strcmp(mapname, "E2M8"))
-	{
-		if (Class != Cyberdemon)
-			return;
-	}
-	else if (!strcmp(mapname, "E3M8"))
-	{
-		if (Class != SpiderMastermind)
-			return;
-	}
-	else if (!strcmp(mapname, "E4M6"))
-	{
-		if (Class != Cyberdemon)
-			return;
-	}
-	else if (!strcmp(mapname, "E4M8"))
-	{
-		if (Class != SpiderMastermind)
-			return;
-	}
-	else
-	{
-		//  Not a boss level
-		return;
-	}
-
-	// make sure there is a player alive for victory
-	for (i = 0; i < MAXPLAYERS; i++)
-		if (players[i].bSpawned && players[i].Health > 0)
-			break;
-
-	if (i == MAXPLAYERS)
-		return;	// no one left alive, so do not end game
-
-	// scan the remaining thinkers to see if all bosses are dead
-	FOREACH(Actor, Other)
-	{
-		if (Other != self && Other.Class == Class && Other.Health > 0)
-		{
-			// other boss not dead
-			return;
-		}
-	}
-
-	// victory!
-	if (!strcmp(mapname, "E1M8"))
-	{
-		args[0] = 666;
-		args[1] = 8;
-		EV_DoFloor(NULL, &args[0], FLEV_LOWERFLOORTOLOWEST);
-		return;
-	}
-	if (!strcmp(mapname, "E4M6"))
-	{
-		args[0] = 666;
-		args[1] = 64;
-		args[2] = 150;
-		args[3] = 0;
-		EV_DoDoor(NULL, &args[0], doorOpen);
-		return;
-	}
-	if (!strcmp(mapname, "E4M8"))
-	{
-		args[0] = 666;
-		args[1] = 8;
-		EV_DoFloor(NULL, &args[0], FLEV_LOWERFLOORTOLOWEST);
-		return;
-	}
-
-	G_ExitLevel();
-}
-
-#else
-
-//==========================================================================
-//
-//  Actor::A_BossDeath
-//
-//  DOOM II boss death
-//  Possibly trigger special effects if on first boss level
-//
-//==========================================================================
-
-void Actor::A_BossDeath(void)
-{
-	int i;
-	Actor Other;
-	int args[5];
-
-	if (strcmp(ARR2STR(level->mapname), "MAP07"))
-	{
-		//  Not a boss level
-		return;
-	}
-
-	if ((Class != Mancubus) && (Class != Arachnotron))
-		return;
-
-	// make sure there is a player alive for victory
-	for (i = 0; i < MAXPLAYERS; i++)
-		if (players[i].bSpawned && players[i].Health > 0)
-			break;
-
-	if (i == MAXPLAYERS)
-		return;	// no one left alive, so do not end game
-
-	// scan the remaining thinkers to see if all bosses are dead
-	FOREACH(Actor, Other)
-	{
-		if (Other != self && Other.Class == Class && Other.Health > 0)
-		{
-			// other boss not dead
-			return;
-		}
-	}
-
-	// victory!
-	if (Class == Mancubus)
-	{
-		args[0] = 666;
-		args[1] = 8;
-		EV_DoFloor(NULL, &args[0], FLEV_LOWERFLOORTOLOWEST);
-	}
-	else	// mo->Class == MT_BABY
-	{
-		args[0] = 667;
-		args[1] = 8;
-		EV_DoFloor(NULL, &args[0], FLEV_RAISETOTEXTURE);
-	}
-}
-
-#endif
-
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/05/18 16:59:58  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.23  2002/03/20 19:07:43  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

@@ -27,11 +27,6 @@
 
 #ifndef DOOM2
 boolean shareware;
-
-void NotDoom2(void)
-{
-	FatalError("These progs don't support DOOM II.");
-}
 #endif
 
 enum
@@ -62,6 +57,13 @@ enum
 	am_shell,	// Shotgun / double barreled shotgun.
 	am_cell,	// Plasma rifle, BFG.
 	am_misl,	// Missile launcher.
+
+#ifdef DDF
+	am_pellet,
+	am_nail,
+	am_grenade,
+	am_gas,
+#endif
 
 	NUMAMMO,
 
@@ -137,6 +139,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/05/18 16:59:58  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.10  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

@@ -71,7 +71,7 @@ defaultproperties
 	bFloat = true;
 	bUnknown4 = true;
 	bNoBlood = true;
-	SpawnState = S_SENTINEL_LOOK;
+	IdleState = S_SENTINEL_LOOK;
 	SeeState = S_SENTINEL_RUN1;
 	MissileState = S_SENTINEL_ATK1;
 	PainState = S_SENTINEL_PAIN;
@@ -86,6 +86,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2002/05/18 17:00:04  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.1  2002/04/27 17:04:55  dj_jl
 //  Merged all creatures.
 //

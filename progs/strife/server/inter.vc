@@ -90,7 +90,7 @@ __states__(Pickup)
 
 		bHidden = false;
 		bSpecial = true;
-		SetState(SpawnState);
+		SetState(IdleState);
 
 		// spawn a teleport fog at the new spot
 		A = Spawn(ItemRespawnFog, Origin);
@@ -765,6 +765,9 @@ void Actor::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/05/18 17:00:01  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.16  2002/05/03 17:17:31  dj_jl
 //  Started work on weapons and items.
 //

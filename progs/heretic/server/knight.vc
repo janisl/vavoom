@@ -98,7 +98,7 @@ defaultproperties
 	Mass = 150.0;
 	StepSpeed = 12.0;
 	PainChance = 100;
-	SpawnState = S_KNIGHT_STND1;
+	IdleState = S_KNIGHT_STND1;
 	SeeState = S_KNIGHT_WALK1;
 	MeleeState = S_KNIGHT_ATK1;
 	MissileState = S_KNIGHT_ATK1;
@@ -155,6 +155,9 @@ void Actor::A_DripBlood(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/05/18 16:59:59  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.23  2002/03/20 19:07:46  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

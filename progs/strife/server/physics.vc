@@ -360,7 +360,7 @@ boolean Actor::XYMovement(void)
 			bSkullFly = false;
 			Velocity = vector(0.0, 0.0, 0.0);
 
-			if (!SetState(SpawnState))
+			if (!SetState(IdleState))
 			{
 				return false;
 			}
@@ -660,7 +660,7 @@ void Actor::ApplyFriction(void)
 			// if in a walking frame, stop moving
 			sn = StateNum - SeeState;
 			if (sn >= 0 && sn < 4)
-				SetState(SpawnState);
+				SetState(IdleState);
 		}
 		Velocity = vector(0.0, 0.0, 0.0);
 	}
@@ -839,6 +839,9 @@ void Actor::Tick(float deltaTime)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/05/18 17:00:04  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.27  2002/04/27 17:04:54  dj_jl
 //  Merged all creatures.
 //

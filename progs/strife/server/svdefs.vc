@@ -212,7 +212,7 @@ class Actor:Entity
 	abstract
 {
 	//  States
-	int SpawnState;
+	int IdleState;
 	int SeeState;
 	int MeleeState;
 	int MissileState;
@@ -711,6 +711,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.33  2002/05/18 17:00:04  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.32  2002/05/03 17:17:32  dj_jl
 //  Started work on weapons and items.
 //

@@ -36,7 +36,7 @@ int bodyqueslot;
 
 void PlayerPawn::SetPlayerRunState(void)
 {
-	if (StateNum == SpawnState)
+	if (StateNum == IdleState)
 	{
 		SetState(SeeState);
 	}
@@ -159,10 +159,12 @@ void P_SpawnPlayer(mthing_t * mthing)
 	// wake up the status bar
 	SB_Start();
 
+#ifndef	NO_BOTS
 	if (p->bIsBot)
 	{
 		p->Bot.OnSpawn();
 	}
+#endif
 
 	SetClientModel(p);
 }
@@ -199,6 +201,9 @@ Actor PlayerPawn::SpawnPlayerMissile(classid type)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/05/18 16:59:59  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.27  2002/05/03 17:11:55  dj_jl
 //  Object classes split up into their files.
 //

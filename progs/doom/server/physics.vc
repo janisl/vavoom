@@ -356,7 +356,7 @@ boolean Actor::XYMovement(void)
 			bSkullFly = false;
 			Velocity = vector(0.0, 0.0, 0.0);
 
-			if (!SetState(SpawnState))
+			if (!SetState(IdleState))
 			{
 				return false;
 			}
@@ -642,7 +642,7 @@ void Actor::ApplyFriction(void)
 		{
 			// if in a walking frame, stop moving
 			if (StateNum >= SeeState && StateNum <= SeeState + 3)
-				SetState(SpawnState);
+				SetState(IdleState);
 		}
 		Velocity = vector(0.0, 0.0, 0.0);
 	}
@@ -822,6 +822,9 @@ void Actor::Tick(float deltaTime)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2002/05/18 16:59:58  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.29  2002/05/03 17:11:55  dj_jl
 //  Object classes split up into their files.
 //

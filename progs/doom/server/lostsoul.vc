@@ -88,7 +88,9 @@ defaultproperties
 	bCountKill = false;
 	bNoGravity = true;
 	bFloat = true;
-	SpawnState = S_SKULL_STND;
+	bTriggerHappy = true;
+	bNoGravKill = true;
+	IdleState = S_SKULL_STND;
 	SeeState = S_SKULL_RUN1;
 	MissileState = S_SKULL_ATK1;
 	PainState = S_SKULL_PAIN;
@@ -105,6 +107,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/05/18 16:59:58  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.17  2002/05/03 17:11:53  dj_jl
 //  Object classes split up into their files.
 //

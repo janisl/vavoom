@@ -25,6 +25,112 @@
 
 //**************************************************************************
 //
+//	RevenantTracerSmoke
+//
+//**************************************************************************
+
+class RevenantTracerSmoke:Effect
+{
+
+__states__
+{
+	S_SMOKE1('PUFF', 1, 4.0 / 35.0, S_SMOKE2) { }
+	S_SMOKE2('PUFF', 2, 4.0 / 35.0, S_SMOKE3) { }
+	S_SMOKE3('PUFF', 1, 4.0 / 35.0, S_SMOKE4) { }
+	S_SMOKE4('PUFF', 2, 4.0 / 35.0, S_SMOKE5) { }
+	S_SMOKE5('PUFF', 3, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Translucency = 33;
+	IdleState = S_SMOKE1;
+}
+
+}
+
+//**************************************************************************
+//
+//	RevenantTracer
+//
+//**************************************************************************
+
+class RevenantTracer:Projectile
+{
+
+//==========================================================================
+//
+//  A_Tracer
+//
+//  Ravenant missile tracer.
+//
+//==========================================================================
+
+#define TRACEADJUST	0.2865921825
+
+void A_Tracer(void)
+{
+	Actor A;
+	TVec wishdir;
+	TVec currdir;
+	TVec delta;
+	float adjustlen;
+
+	if (level->tictime & 3)
+		return;
+
+	// spawn a puff of smoke behind the rocket      
+	SpawnPuff(Origin.x, Origin.y, Origin.z);
+
+	A = Spawn(RevenantTracerSmoke, Origin - Velocity * frametime);
+
+	A.Velocity.z = 1.0 * 35.0;
+	A.StateTime -= Random() * 0.1;
+	if (A.StateTime < 0.1)
+		A.StateTime = 0.1;
+
+	// adjust direction
+	if (!Enemy || Enemy.Health <= 0)
+		return;
+
+	wishdir = Normalize(MobjCenter(Enemy) - Origin);
+	currdir = Normalize(Velocity);
+	delta = wishdir - currdir;
+	adjustlen = Length(delta);
+	if (adjustlen > TRACEADJUST)
+		adjustlen = TRACEADJUST;
+	wishdir = currdir + delta * adjustlen;
+	Velocity = wishdir * Speed;
+	VectorAngles(&wishdir, &Angles);
+}
+
+__states__
+{
+	S_TRACER('FATB', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_TRACER2) { A_Tracer(); }
+	S_TRACER2('FATB', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_TRACER) { A_Tracer(); }
+	S_TRACEEXP1('FBXP', 0 | FF_FULLBRIGHT, 8.0 / 35.0, S_TRACEEXP2) { }
+	S_TRACEEXP2('FBXP', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_TRACEEXP3) { }
+	S_TRACEEXP3('FBXP', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 11.0;
+	Height = 8.0;
+	Speed = 350.0;
+	MissileDamage = 10;
+	Translucency = 33;
+	IdleState = S_TRACER;
+	DeathState = S_TRACEEXP1;
+	SightSound = 'RavenantAttack';
+	DeathSound = 'BarrelExplode';
+	Effects = EF_DL_RBALL;
+}
+
+}
+
+//**************************************************************************
+//
 //	Revenant
 //
 //**************************************************************************
@@ -146,7 +252,9 @@ defaultproperties
 	Mass = 500.0;
 	StepSpeed = 10.0;
 	PainChance = 100;
-	SpawnState = S_SKEL_STND;
+	MissileMinRange = 196.0;
+	bTriggerHappy = true;
+	IdleState = S_SKEL_STND;
 	SeeState = S_SKEL_RUN1;
 	MeleeState = S_SKEL_FIST1;
 	MissileState = S_SKEL_MISS1;
@@ -163,113 +271,10 @@ defaultproperties
 
 //**************************************************************************
 //
-//	RevenantTracer
-//
-//**************************************************************************
-
-class RevenantTracer:Projectile
-{
-
-//==========================================================================
-//
-//  A_Tracer
-//
-//  Ravenant missile tracer.
-//
-//==========================================================================
-
-#define TRACEADJUST	0.2865921825
-
-void A_Tracer(void)
-{
-	Actor A;
-	TVec wishdir;
-	TVec currdir;
-	TVec delta;
-	float adjustlen;
-
-	if (level->tictime & 3)
-		return;
-
-	// spawn a puff of smoke behind the rocket      
-	SpawnPuff(Origin.x, Origin.y, Origin.z);
-
-	A = Spawn(RevenantTracerSmoke, Origin - Velocity * frametime);
-
-	A.Velocity.z = 1.0 * 35.0;
-	A.StateTime -= Random() * 0.1;
-	if (A.StateTime < 0.1)
-		A.StateTime = 0.1;
-
-	// adjust direction
-	if (!Enemy || Enemy.Health <= 0)
-		return;
-
-	wishdir = Normalize(MobjCenter(Enemy) - Origin);
-	currdir = Normalize(Velocity);
-	delta = wishdir - currdir;
-	adjustlen = Length(delta);
-	if (adjustlen > TRACEADJUST)
-		adjustlen = TRACEADJUST;
-	wishdir = currdir + delta * adjustlen;
-	Velocity = wishdir * Speed;
-	VectorAngles(&wishdir, &Angles);
-}
-
-__states__
-{
-	S_TRACER('FATB', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_TRACER2) { A_Tracer(); }
-	S_TRACER2('FATB', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_TRACER) { A_Tracer(); }
-	S_TRACEEXP1('FBXP', 0 | FF_FULLBRIGHT, 8.0 / 35.0, S_TRACEEXP2) { }
-	S_TRACEEXP2('FBXP', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_TRACEEXP3) { }
-	S_TRACEEXP3('FBXP', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
-}
-
-defaultproperties
-{
-	Radius = 11.0;
-	Height = 8.0;
-	Speed = 350.0;
-	MissileDamage = 10;
-	Translucency = 33;
-	SpawnState = S_TRACER;
-	DeathState = S_TRACEEXP1;
-	SightSound = 'RavenantAttack';
-	DeathSound = 'BarrelExplode';
-	Effects = EF_DL_RBALL;
-}
-
-}
-
-//**************************************************************************
-//
-//	RevenantTracerSmoke
-//
-//**************************************************************************
-
-class RevenantTracerSmoke:Effect
-{
-
-__states__
-{
-	S_SMOKE1('PUFF', 1, 4.0 / 35.0, S_SMOKE2) { }
-	S_SMOKE2('PUFF', 2, 4.0 / 35.0, S_SMOKE3) { }
-	S_SMOKE3('PUFF', 1, 4.0 / 35.0, S_SMOKE4) { }
-	S_SMOKE4('PUFF', 2, 4.0 / 35.0, S_SMOKE5) { }
-	S_SMOKE5('PUFF', 3, 4.0 / 35.0, S_NULL) { }
-}
-
-defaultproperties
-{
-	Translucency = 33;
-	SpawnState = S_SMOKE1;
-}
-
-}
-
-//**************************************************************************
-//
 //  $Log$
+//  Revision 1.13  2002/05/18 16:59:59  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.12  2002/05/03 17:11:55  dj_jl
 //  Object classes split up into their files.
 //

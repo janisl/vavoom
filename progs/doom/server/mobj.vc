@@ -115,7 +115,7 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 		RemoveMobjThinker(self);
 		return;
 	}
-	if (bCheckNoMonsters && nomonsters)
+	if (bMonster && nomonsters)
 	{
 		RemoveMobjThinker(self);
 		return;
@@ -132,6 +132,8 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 			bCheckLineBlockMonsters = true;
 		}
 	}
+	bDefaultFloat = bFloat;
+	bDefaultNoGravity = bNoGravity;
 
 	if (gameskill == sk_nightmare)
 	{
@@ -141,7 +143,7 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 	LastLook = P_Random() % MAXPLAYERS;
 	// do not set the state with SetState,
 	// because action routines can not be called yet
-	st = &states[SpawnState];
+	st = &states[IdleState];
 	StateTime = st->time;
 	SpriteIndex = st->sprite;
 	SpriteName = sprite_names[st->sprite];
@@ -238,23 +240,6 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 	int bit;
 	Actor A;
 	int spawnMask;
-
-#ifndef DOOM2
-	switch (mthing->type)
-	{
-	case 68:	// Arachnotron
-	case 64:	// Archvile
-	case 88:	// Boss Brain
-	case 89:	// Boss Shooter
-	case 69:	// Hell Knight
-	case 67:	// Mancubus
-	case 71:	// Pain Elemental
-	case 65:	// Former Human Commando
-	case 66:	// Revenant
-	case 84:	// Wolf SS
-		NotDoom2();
-	}
-#endif
 
 	if (mthing->type <= 0)
 		return;
@@ -434,7 +419,7 @@ void Actor::ExplodeMissile(void)
 	if (DeathSound)
 		PlaySound(DeathSound, CHAN_VOICE);
 
-	if (Class != Rocket && (Effects & EF_DLIGHT_MASK))
+	if (!(Effects & EF_ROCKET) && (Effects & EF_DLIGHT_MASK))
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion2);
@@ -511,14 +496,11 @@ Actor Actor::SpawnMissile(Actor dest, classid type)
 
 void Actor::Died(Actor source)
 {
-	classid item;
-	Actor A;
-
 	bShootable = false;
 	bFloat = false;
 	bSkullFly = false;
 
-	if (Class != LostSoul)
+	if (!bNoGravKill)
 		bNoGravity = false;
 
 	bDropOff = true;
@@ -533,6 +515,7 @@ void Actor::Died(Actor source)
 
 		if (bIsPlayer)
 		{
+#ifndef	NO_BOTS
 			if (source.Player->bIsBot)
 			{
 				source.Player->Bot.Killed(self);
@@ -542,6 +525,7 @@ void Actor::Died(Actor source)
 			{
 				Player->Bot.Died(source);
 			}
+#endif
 
 			source.Player->Frags[P_GetPlayerNum(Player)]++;
 		}
@@ -590,30 +574,17 @@ void Actor::Died(Actor source)
 	if (StateTime < 0.1)
 		StateTime = 0.1;
 
-	// Drop stuff.
-	// This determines the kind of object spawned
-	// during the death frame of a thing.
-	switch (Class)
-	{
-	case WolfSS:
-	case Zombieman:
-		item = ItemAmmoBulletClip;
-		break;
+	DropStuff();
+}
 
-	case ShotgunGuy:
-		item = ItemWeaponShotgun;
-		break;
+//==========================================================================
+//
+//	Actor::DropStuff
+//
+//==========================================================================
 
-	case ChaingunGuy:
-		item = ItemWeaponChaingun;
-		break;
-
-	default:
-		return;
-	}
-
-	A = Spawn(item, vector(Origin.x, Origin.y, FloorZ));
-	A.bDropped = true;	// special versions of items
+void Actor::DropStuff(void)
+{
 }
 
 //==========================================================================
@@ -723,14 +694,14 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 
 	ReactionCount = 0;	// we're awake now...
 
-	if ((!Threshold || Class == ArchVile)
-		&& source && source != self && source.Class != ArchVile)
+	if ((!Threshold || bNoGrudge) &&
+		source && source != self && !source.bNeverTarget)
 	{
 		// if not intent on another player,
 		// chase after this one
 		Enemy = source;
 		Threshold = BASETHRESHOLD;
-		if (StateNum == SpawnState && SeeState != S_NULL)
+		if (StateNum == IdleState && SeeState != S_NULL)
 		{
 			SetState(SeeState);
 		}
@@ -876,6 +847,9 @@ void P_NoiseAlert(Actor target, Actor emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.42  2002/05/18 16:59:58  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.41  2002/05/03 17:11:54  dj_jl
 //  Object classes split up into their files.
 //

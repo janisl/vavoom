@@ -653,7 +653,7 @@ void Actor::A_CHolyAttack2(void)
 		for (i = 1; i < 3; i++)
 		{
 			next = Spawn(HolyTail, A.Origin);
-			next.SetState(next.SpawnState + 1);
+			next.SetState(next.IdleState + 1);
 			tail._SpecialMobj1 = &next;
 			tail = next;
 		}
@@ -940,6 +940,9 @@ void Actor::A_CHolySpawnPuff(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/05/18 17:00:00  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.26  2002/04/11 16:52:16  dj_jl
 //  Made TryMove native.
 //

@@ -25,6 +25,40 @@
 
 //**************************************************************************
 //
+//	BruiserShot
+//
+//**************************************************************************
+
+class BruiserShot:Projectile
+{
+
+__states__
+{
+	S_BRBALL1('BAL7', 0 | FF_FULLBRIGHT, 'missiles/grenball.md2', 0, 4.0 / 35.0, S_BRBALL2) { }
+	S_BRBALL2('BAL7', 1 | FF_FULLBRIGHT, 'missiles/grenball.md2', 1, 4.0 / 35.0, S_BRBALL1) { }
+	S_BRBALLX1('BAL7', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_BRBALLX2) { }
+	S_BRBALLX2('BAL7', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_BRBALLX3) { }
+	S_BRBALLX3('BAL7', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 6.0;
+	Height = 8.0;
+	Speed = 525.0;
+	MissileDamage = 8;
+	Translucency = 33;
+	IdleState = S_BRBALL1;
+	DeathState = S_BRBALLX1;
+	SightSound = 'FireballShoot';
+	DeathSound = 'FireballExplode';
+	Effects = EF_DL_GBALL;
+}
+
+}
+
+//**************************************************************************
+//
 //	BaronOfHell
 //
 //**************************************************************************
@@ -58,6 +92,53 @@ void A_BruisAttack(void)
 
 	// launch a missile
 	SpawnMissile(Enemy, BruiserShot);
+}
+
+//==========================================================================
+//
+//  A_BossDeath
+//
+//  Possibly trigger special effects if on first boss level
+//
+//==========================================================================
+
+void A_BossDeath(void)
+{
+	int i;
+	Actor Other;
+	int args[5];
+
+	if (strcmp(ARR2STR(level->mapname), "E1M8"))
+	{
+		//  Not a boss level
+		return;
+	}
+
+	// make sure there is a player alive for victory
+	for (i = 0; i < MAXPLAYERS; i++)
+		if (players[i].bSpawned && players[i].Health > 0)
+			break;
+
+	if (i == MAXPLAYERS)
+		return;	// no one left alive, so do not end game
+
+	// scan the remaining thinkers to see if all bosses are dead
+	FOREACH(Actor, Other)
+	{
+		if (Other != self && Other.Class == Class && Other.Health > 0)
+		{
+			// other boss not dead
+			return;
+		}
+	}
+
+	// victory!
+	args[0] = 666;
+	args[1] = 8;
+	args[2] = 0;
+	args[3] = 0;
+	args[4] = 0;
+	EV_DoFloor(NULL, &args[0], FLEV_LOWERFLOORTOLOWEST);
 }
 
 __states__
@@ -101,7 +182,8 @@ defaultproperties
 	Mass = 1000.0;
 	StepSpeed = 8.0;
 	PainChance = 50;
-	SpawnState = S_BOSS_STND;
+	ImuneMissileType = BruiserShot;
+	IdleState = S_BOSS_STND;
 	SeeState = S_BOSS_RUN1;
 	MeleeState = S_BOSS_ATK1;
 	MissileState = S_BOSS_ATK1;
@@ -118,41 +200,10 @@ defaultproperties
 
 //**************************************************************************
 //
-//	BruiserShot
-//
-//**************************************************************************
-
-class BruiserShot:Projectile
-{
-
-__states__
-{
-	S_BRBALL1('BAL7', 0 | FF_FULLBRIGHT, 'missiles/grenball.md2', 0, 4.0 / 35.0, S_BRBALL2) { }
-	S_BRBALL2('BAL7', 1 | FF_FULLBRIGHT, 'missiles/grenball.md2', 1, 4.0 / 35.0, S_BRBALL1) { }
-	S_BRBALLX1('BAL7', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_BRBALLX2) { }
-	S_BRBALLX2('BAL7', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_BRBALLX3) { }
-	S_BRBALLX3('BAL7', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
-}
-
-defaultproperties
-{
-	Radius = 6.0;
-	Height = 8.0;
-	Speed = 525.0;
-	MissileDamage = 8;
-	Translucency = 33;
-	SpawnState = S_BRBALL1;
-	DeathState = S_BRBALLX1;
-	SightSound = 'FireballShoot';
-	DeathSound = 'FireballExplode';
-	Effects = EF_DL_GBALL;
-}
-
-}
-
-//**************************************************************************
-//
 //  $Log$
+//  Revision 1.2  2002/05/18 16:59:58  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.1  2002/05/03 17:11:52  dj_jl
 //  Object classes split up into their files.
 //

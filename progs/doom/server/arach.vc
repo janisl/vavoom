@@ -25,6 +25,42 @@
 
 //**************************************************************************
 //
+//	ArachnotronPlasma
+//
+//**************************************************************************
+
+class ArachnotronPlasma:Projectile
+{
+
+__states__
+{
+	S_ARACH_PLAZ('APLS', 0 | FF_FULLBRIGHT, 'missiles/aplasma.md2', 0, 5.0 / 35.0, S_ARACH_PLAZ2) { }
+	S_ARACH_PLAZ2('APLS', 1 | FF_FULLBRIGHT, 'missiles/aplasma.md2', 1, 5.0 / 35.0, S_ARACH_PLAZ) { }
+	S_ARACH_PLEX('APBX', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_ARACH_PLEX2) { }
+	S_ARACH_PLEX2('APBX', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_ARACH_PLEX3) { }
+	S_ARACH_PLEX3('APBX', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_ARACH_PLEX4) { }
+	S_ARACH_PLEX4('APBX', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_ARACH_PLEX5) { }
+	S_ARACH_PLEX5('APBX', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 13.0;
+	Height = 8.0;
+	Speed = 875.0;
+	MissileDamage = 5;
+	Translucency = 33;
+	IdleState = S_ARACH_PLAZ;
+	DeathState = S_ARACH_PLEX;
+	SightSound = 'PlasmaFire';
+	DeathSound = 'FireballExplode';
+	Effects = EF_DL_MISSILE;
+}
+
+}
+
+//**************************************************************************
+//
 //	Arachnotron
 //
 //**************************************************************************
@@ -88,6 +124,53 @@ void A_SpidRefire(void)
 	}
 }
 
+//==========================================================================
+//
+//  A_BossDeath
+//
+//  Possibly trigger special effects if on first boss level
+//
+//==========================================================================
+
+void A_BossDeath(void)
+{
+	int i;
+	Actor Other;
+	int args[5];
+
+	if (strcmp(ARR2STR(level->mapname), "MAP07"))
+	{
+		//  Not a boss level
+		return;
+	}
+
+	// make sure there is a player alive for victory
+	for (i = 0; i < MAXPLAYERS; i++)
+		if (players[i].bSpawned && players[i].Health > 0)
+			break;
+
+	if (i == MAXPLAYERS)
+		return;	// no one left alive, so do not end game
+
+	// scan the remaining thinkers to see if all bosses are dead
+	FOREACH(Arachnotron, Other)
+	{
+		if (Other != self && Other.Health > 0)
+		{
+			// other boss not dead
+			return;
+		}
+	}
+
+	// victory!
+	args[0] = 667;
+	args[1] = 8;
+	args[2] = 0;
+	args[3] = 0;
+	args[4] = 0;
+	EV_DoFloor(NULL, &args[0], FLEV_RAISETOTEXTURE);
+}
+
 __states__
 {
 	S_BSPI_STND('BSPI', 0, 'monsters/arach.md2', 0, 10.0 / 35.0, S_BSPI_STND2) { A_Look(); }
@@ -135,7 +218,7 @@ defaultproperties
 	Mass = 600.0;
 	StepSpeed = 12.0;
 	PainChance = 128;
-	SpawnState = S_BSPI_STND;
+	IdleState = S_BSPI_STND;
 	SeeState = S_BSPI_SIGHT;
 	MissileState = S_BSPI_ATK1;
 	PainState = S_BSPI_PAIN;
@@ -151,43 +234,10 @@ defaultproperties
 
 //**************************************************************************
 //
-//	ArachnotronPlasma
-//
-//**************************************************************************
-
-class ArachnotronPlasma:Projectile
-{
-
-__states__
-{
-	S_ARACH_PLAZ('APLS', 0 | FF_FULLBRIGHT, 'missiles/aplasma.md2', 0, 5.0 / 35.0, S_ARACH_PLAZ2) { }
-	S_ARACH_PLAZ2('APLS', 1 | FF_FULLBRIGHT, 'missiles/aplasma.md2', 1, 5.0 / 35.0, S_ARACH_PLAZ) { }
-	S_ARACH_PLEX('APBX', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_ARACH_PLEX2) { }
-	S_ARACH_PLEX2('APBX', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_ARACH_PLEX3) { }
-	S_ARACH_PLEX3('APBX', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_ARACH_PLEX4) { }
-	S_ARACH_PLEX4('APBX', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_ARACH_PLEX5) { }
-	S_ARACH_PLEX5('APBX', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
-}
-
-defaultproperties
-{
-	Radius = 13.0;
-	Height = 8.0;
-	Speed = 875.0;
-	MissileDamage = 5;
-	Translucency = 33;
-	SpawnState = S_ARACH_PLAZ;
-	DeathState = S_ARACH_PLEX;
-	SightSound = 'PlasmaFire';
-	DeathSound = 'FireballExplode';
-	Effects = EF_DL_MISSILE;
-}
-
-}
-
-//**************************************************************************
-//
 //  $Log$
+//  Revision 1.15  2002/05/18 16:59:58  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.14  2002/05/03 17:11:52  dj_jl
 //  Object classes split up into their files.
 //

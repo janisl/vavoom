@@ -163,7 +163,7 @@ defaultproperties
 	bNoBlood = true;
 	bIceDamage = true;
 	bFloorClip = false;
-	SpawnState = S_ICEGUY_LOOK;
+	IdleState = S_ICEGUY_LOOK;
 	SeeState = S_ICEGUY_WALK1;
 	MissileState = S_ICEGUY_ATK1;
 	PainState = S_ICEGUY_PAIN1;
@@ -213,6 +213,9 @@ void Actor::A_IceGuyMissileExplode(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/05/18 17:00:00  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.16  2002/03/28 18:32:51  dj_jl
 //  Little renaming, some bug fixes.
 //

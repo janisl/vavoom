@@ -256,7 +256,7 @@ defaultproperties
 	bNoBlood = true;
 	bBoss = true;
 	bTelestomp = false;
-	SpawnState = S_SORC_SPAWN1;
+	IdleState = S_SORC_SPAWN1;
 	SeeState = S_SORC_WALK1;
 	MissileState = S_SORC_ATK2_1;
 	PainState = S_SORC_PAIN1;
@@ -833,6 +833,9 @@ void Actor::A_SorcFX4Check(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/05/18 17:00:00  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.25  2002/03/28 18:20:11  dj_jl
 //  Got rid of SetStateNF.
 //

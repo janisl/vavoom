@@ -81,6 +81,20 @@ void A_CPosRefire(void)
 	}
 }
 
+//==========================================================================
+//
+//	DropStuff
+//
+//==========================================================================
+
+void DropStuff(void)
+{
+	Actor A;
+
+	A = Spawn(ItemWeaponChaingun, vector(Origin.x, Origin.y, FloorZ));
+	A.bDropped = true;	// special versions of items
+}
+
 __states__
 {
 	S_CPOS_STND('CPOS', 0, 'monsters/chainguy.md2', 0, 10.0 / 35.0, S_CPOS_STND2) { A_Look(); }
@@ -130,7 +144,7 @@ defaultproperties
 	Mass = 100.0;
 	StepSpeed = 8.0;
 	PainChance = 170;
-	SpawnState = S_CPOS_STND;
+	IdleState = S_CPOS_STND;
 	SeeState = S_CPOS_RUN1;
 	MissileState = S_CPOS_ATK1;
 	PainState = S_CPOS_PAIN;
@@ -154,6 +168,20 @@ defaultproperties
 class WolfSS:ChaingunGuy
 	__mobjinfo__(84)
 {
+
+//==========================================================================
+//
+//	DropStuff
+//
+//==========================================================================
+
+void DropStuff(void)
+{
+	Actor A;
+
+	A = Spawn(ItemAmmoBulletClip, vector(Origin.x, Origin.y, FloorZ));
+	A.bDropped = true;	// special versions of items
+}
 
 __states__
 {
@@ -200,7 +228,7 @@ defaultproperties
 {
 	Health = 50;
 	GibsHealth = -50;
-	SpawnState = S_SSWV_STND;
+	IdleState = S_SSWV_STND;
 	SeeState = S_SSWV_RUN1;
 	MissileState = S_SSWV_ATK1;
 	PainState = S_SSWV_PAIN;
@@ -216,6 +244,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/05/18 16:59:58  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.18  2002/05/03 17:11:53  dj_jl
 //  Object classes split up into their files.
 //

@@ -65,6 +65,20 @@ void A_SPosAttack(void)
 	Effects |= EF_DL_MUZZLEFLASH;
 }
 
+//==========================================================================
+//
+//	DropStuff
+//
+//==========================================================================
+
+void DropStuff(void)
+{
+	Actor A;
+
+	A = Spawn(ItemWeaponShotgun, vector(Origin.x, Origin.y, FloorZ));
+	A.bDropped = true;	// special versions of items
+}
+
 __states__
 {
 	S_SPOS_STND('SPOS', 0, 'monsters/sargeant.md2', 0, 10.0 / 35.0, S_SPOS_STND2) { A_Look(); }
@@ -112,7 +126,7 @@ defaultproperties
 	Mass = 100.0;
 	StepSpeed = 8.0;
 	PainChance = 170;
-	SpawnState = S_SPOS_STND;
+	IdleState = S_SPOS_STND;
 	SeeState = S_SPOS_RUN1;
 	MissileState = S_SPOS_ATK1;
 	PainState = S_SPOS_PAIN;
@@ -130,6 +144,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/05/18 16:59:59  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.17  2002/05/03 17:11:55  dj_jl
 //  Object classes split up into their files.
 //

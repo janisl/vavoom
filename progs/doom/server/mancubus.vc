@@ -27,6 +27,40 @@
 
 //**************************************************************************
 //
+//	MancubusMissile
+//
+//**************************************************************************
+
+class MancubusMissile:Projectile
+{
+
+__states__
+{
+	S_FATSHOT1('MANF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_FATSHOT2) { }
+	S_FATSHOT2('MANF', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_FATSHOT1) { }
+	S_FATSHOTX1('MISL', 1 | FF_FULLBRIGHT, 8.0 / 35.0, S_FATSHOTX2) { }
+	S_FATSHOTX2('MISL', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_FATSHOTX3) { }
+	S_FATSHOTX3('MISL', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 6.0;
+	Height = 8.0;
+	Speed = 700.0;
+	MissileDamage = 8;
+	Translucency = 33;
+	IdleState = S_FATSHOT1;
+	DeathState = S_FATSHOTX1;
+	SightSound = 'FireballShoot';
+	DeathSound = 'FireballExplode';
+	Effects = EF_DL_RBALL;
+}
+
+}
+
+//**************************************************************************
+//
 //	Mancubus
 //
 //**************************************************************************
@@ -117,6 +151,53 @@ void A_FatAttack3(void)
 	VectorRotateAroundZ(&A.Velocity, FATSPREAD / 2.0);
 }
 
+//==========================================================================
+//
+//  A_BossDeath
+//
+//  Possibly trigger special effects if on first boss level
+//
+//==========================================================================
+
+void A_BossDeath(void)
+{
+	int i;
+	Mancubus Other;
+	int args[5];
+
+	if (strcmp(ARR2STR(level->mapname), "MAP07"))
+	{
+		//  Not a boss level
+		return;
+	}
+
+	// make sure there is a player alive for victory
+	for (i = 0; i < MAXPLAYERS; i++)
+		if (players[i].bSpawned && players[i].Health > 0)
+			break;
+
+	if (i == MAXPLAYERS)
+		return;	// no one left alive, so do not end game
+
+	// scan the remaining thinkers to see if all bosses are dead
+	FOREACH(Mancubus, Other)
+	{
+		if (Other != self && Other.Health > 0)
+		{
+			// other boss not dead
+			return;
+		}
+	}
+
+	// victory!
+	args[0] = 666;
+	args[1] = 8;
+	args[2] = 0;
+	args[3] = 0;
+	args[4] = 0;
+	EV_DoFloor(NULL, &args[0], FLEV_LOWERFLOORTOLOWEST);
+}
+
 __states__
 {
 	S_FATT_STND('FATT', 0, 'monsters/mancubus.md2', 0, 15.0 / 35.0, S_FATT_STND2) { A_Look(); }
@@ -173,7 +254,7 @@ defaultproperties
 	Mass = 1000.0;
 	StepSpeed = 8.0;
 	PainChance = 80;
-	SpawnState = S_FATT_STND;
+	IdleState = S_FATT_STND;
 	SeeState = S_FATT_RUN1;
 	MissileState = S_FATT_ATK1;
 	PainState = S_FATT_PAIN;
@@ -189,41 +270,10 @@ defaultproperties
 
 //**************************************************************************
 //
-//	MancubusMissile
-//
-//**************************************************************************
-
-class MancubusMissile:Projectile
-{
-
-__states__
-{
-	S_FATSHOT1('MANF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_FATSHOT2) { }
-	S_FATSHOT2('MANF', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_FATSHOT1) { }
-	S_FATSHOTX1('MISL', 1 | FF_FULLBRIGHT, 8.0 / 35.0, S_FATSHOTX2) { }
-	S_FATSHOTX2('MISL', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_FATSHOTX3) { }
-	S_FATSHOTX3('MISL', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
-}
-
-defaultproperties
-{
-	Radius = 6.0;
-	Height = 8.0;
-	Speed = 700.0;
-	MissileDamage = 8;
-	Translucency = 33;
-	SpawnState = S_FATSHOT1;
-	DeathState = S_FATSHOTX1;
-	SightSound = 'FireballShoot';
-	DeathSound = 'FireballExplode';
-	Effects = EF_DL_RBALL;
-}
-
-}
-
-//**************************************************************************
-//
 //  $Log$
+//  Revision 1.17  2002/05/18 16:59:58  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.16  2002/05/03 17:11:54  dj_jl
 //  Object classes split up into their files.
 //

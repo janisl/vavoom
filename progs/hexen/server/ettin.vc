@@ -116,7 +116,7 @@ defaultproperties
 	StepSpeed = 13.0;
 	PainChance = 60;
 	bNoPassMobj = true;
-	SpawnState = S_ETTIN_LOOK1;
+	IdleState = S_ETTIN_LOOK1;
 	SeeState = S_ETTIN_CHASE1;
 	MeleeState = S_ETTIN_ATK1_1;
 	PainState = S_ETTIN_PAIN1;
@@ -161,6 +161,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/05/18 17:00:00  dj_jl
+//  Renamed SpawnState to IdleState, other changes.
+//
 //  Revision 1.15  2002/03/28 18:32:51  dj_jl
 //  Little renaming, some bug fixes.
 //
