@@ -357,8 +357,13 @@ obj/%.o : source/%.s source/asm_i386.h
 
 # ---------------------------------------
 
+ifdef DJGPP
 utils/glbsp/plugin/libglbsp.a:
-	$(MAKE) -C utils/glbsp/plugin
+	$(MAKE) -C utils/glbsp/plugin -f makefile.dj
+else
+utils/glbsp/plugin/libglbsp.a:
+	$(MAKE) -C utils/glbsp/plugin -f makefile.unx
+endif
 
 utils/glvis/libglvis.a:
 	$(MAKE) -C utils/glvis libglvis.a
