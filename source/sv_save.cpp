@@ -834,6 +834,7 @@ static void UnarchiveThinkers(void)
 	while (GET_BYTE)
 	{
 		thinker = (VThinker *)ReadVObject(PU_LEVSPEC);
+		thinker->XLevel = GLevel;
 
 		//  Handle entities
 		VEntity *Ent = Cast<VEntity>(thinker);
@@ -1455,9 +1456,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.34  2004/01/30 17:32:59  dj_jl
+//	Fixed loading
+//
 //	Revision 1.33  2003/11/12 16:47:40  dj_jl
 //	Changed player structure into a class
-//
+//	
 //	Revision 1.32  2003/10/22 06:16:53  dj_jl
 //	Secret level info saved in savegame
 //	
