@@ -54,13 +54,13 @@
 
 // if rangecheck is undefined, most parameter validation debugging code
 // will not be compiled
-#define PARANOID
-#define DEVELOPER
+//#define PARANOID
+//#define DEVELOPER
 
 #define VERSION_MAJOR	1
-#define VERSION_MINOR	10
+#define VERSION_MINOR	11
 #define VERSION_RELEASE	0
-#define VERSION_TEXT	"1.10"
+#define VERSION_TEXT	"1.11"
 
 //==========================================================================
 //
@@ -84,9 +84,10 @@
 #include "files.h"
 #include "wad.h"		//	WAD file I/O routines
 #include "scripts.h"	//	Script parsing
-#include "name.h"
 #include "names.h"
+#include "name.h"
 #include "vobject.h"
+#include "vclass.h"
 #include "progs.h"		//	Progs
 #include "input.h"		//	Input from keyboard, mouse and joystick
 #include "network.h"
@@ -117,9 +118,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2001/12/27 17:41:09  dj_jl
+//	Switched to release
+//
 //	Revision 1.13  2001/12/18 19:07:46  dj_jl
 //	Added global name subsystem
-//
+//	
 //	Revision 1.12  2001/12/12 19:26:40  dj_jl
 //	Added dynamic arrays
 //	
