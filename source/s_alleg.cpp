@@ -394,6 +394,7 @@ void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
 
 	Channel[chan].origin_id = origin_id;
 	Channel[chan].origin = origin;
+	Channel[chan].channel = channel;
 	Channel[chan].velocity = velocity;
 	Channel[chan].sound_id = sound_id;
 	Channel[chan].priority = priority;
@@ -643,9 +644,12 @@ boolean S_GetSoundPlayingInfo(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/30 17:41:42  dj_jl
+//	Added entity sound channels
+//
 //	Revision 1.5  2001/08/29 17:55:42  dj_jl
 //	Added sound channels
-//
+//	
 //	Revision 1.4  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
 //	

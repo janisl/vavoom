@@ -44,6 +44,7 @@
 struct channel_t
 {
 	int			origin_id;
+	int			channel;
 	TVec		origin;
 	TVec		velocity;
 	int			sound_id;
@@ -322,7 +323,7 @@ static char* DS_Error(HRESULT result)
 //
 //==========================================================================
 
-static int GetChannel(int sound_id, int origin_id, int priority)
+static int GetChannel(int sound_id, int origin_id, int channel, int priority)
 {
 	int 		chan;
 	int			i;
@@ -361,14 +362,15 @@ static int GetChannel(int sound_id, int origin_id, int priority)
 	}
 
 	//	Mobjs can have only one sound
-	if (origin_id)
+	if (origin_id && channel)
     {
 		for (i = 0; i < snd_Channels; i++)
 		{
-			if (origin_id == Channel[i].origin_id)
+			if (Channel[i].origin_id == origin_id &&
+				Channel[i].channel == channel)
 			{
 				// only allow other mobjs one sound
-				S_StopSound(Channel[i].origin_id);
+				StopChannel(i);
 				return i;
 			}
 		}
@@ -615,7 +617,7 @@ void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
 
 	priority = CalcPriority(sound_id, dist);
 
-	chan = GetChannel(sound_id, origin_id, priority);
+	chan = GetChannel(sound_id, origin_id, channel, priority);
 	if (chan == -1)
 	{
 		return; //no free channels.
@@ -846,7 +848,7 @@ void S_UpdateSfx(void)
 		if (dist >= MAX_SND_DIST)
 		{
 			//	Too far away
-			S_StopSound(Channel[i].origin_id);
+			StopChannel(i);
 			continue;
 		}
 
@@ -942,13 +944,14 @@ static void StopChannel(int chan_num)
 //
 //==========================================================================
 
-void S_StopSound(int origin_id)
+void S_StopSound(int origin_id, int channel)
 {
 	int i;
 
     for (i = 0; i < snd_Channels; i++)
     {
-		if (Channel[i].origin_id == origin_id)
+		if (Channel[i].origin_id == origin_id &&
+			(!channel || Channel[i].channel == channel))
 		{
         	StopChannel(i);
 		}
@@ -1013,9 +1016,12 @@ boolean S_GetSoundPlayingInfo(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/30 17:41:42  dj_jl
+//	Added entity sound channels
+//
 //	Revision 1.5  2001/08/29 17:55:42  dj_jl
 //	Added sound channels
-//
+//	
 //	Revision 1.4  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
 //	

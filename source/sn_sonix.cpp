@@ -322,11 +322,11 @@ void SN_StopSequence(int origin_id)
 	{
 		if(node->origin_id == origin_id)
 		{
-			S_StopSound(origin_id);
+			S_StopSound(origin_id, 0);
 			if(node->stopSound)
 			{
 				S_StartSound(node->stopSound, node->origin, TVec(0, 0, 0),
-					node->origin_id, node->volume);
+					node->origin_id, 1, node->volume);
 			}
 			if(SequenceListHead == node)
 			{
@@ -376,7 +376,7 @@ void SN_UpdateActiveSequences(void)
 				{
 					node->currentSoundID = *(node->sequencePtr+1);
 					S_StartSound(node->currentSoundID, node->origin,
-						TVec(0, 0, 0), node->origin_id, node->volume);
+						TVec(0, 0, 0), node->origin_id, 1, node->volume);
 				}
 				node->sequencePtr += 2;
 				break;
@@ -392,7 +392,7 @@ void SN_UpdateActiveSequences(void)
 				{
 					node->currentSoundID = *(node->sequencePtr+1);
 					S_StartSound(node->currentSoundID, node->origin,
-						TVec(0, 0, 0), node->origin_id, node->volume);
+						TVec(0, 0, 0), node->origin_id, 1, node->volume);
 				}
 				break;
 			case SS_CMD_DELAY:
@@ -483,9 +483,12 @@ void SN_ChangeNodeData(int nodeNum, int seqOffset, int delayTics, int volume,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/30 17:41:42  dj_jl
+//	Added entity sound channels
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
