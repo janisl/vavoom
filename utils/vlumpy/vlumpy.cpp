@@ -22,9 +22,12 @@
 //**  GNU General Public License for more details.
 //**
 //**	$Log$
+//**	Revision 1.3  2001/08/31 17:19:53  dj_jl
+//**	Beautification
+//**
 //**	Revision 1.2  2001/07/27 14:27:56  dj_jl
 //**	Update with Id-s and Log-s, some fixes
-//**
+//**	
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
@@ -280,12 +283,12 @@ void GrabTranslucencyTable(void)
 	byte		table[256 * 256];
 	byte		temp[768];
 	int			i;
-    int			j;
+	int			j;
 	int			r;
-    int			g;
-    int			b;
-    byte*		p;
-    byte*		q;
+	int			g;
+	int			b;
+	byte*		p;
+	byte*		q;
 	int			transluc;
 
 	SC_MustGetNumber();
@@ -295,23 +298,23 @@ void GrabTranslucencyTable(void)
 
 	p = table;
 	for (i = 0; i < 256; i++)
-    {
-    	temp[i * 3]     = ImgPal[i].r * transluc / 100;
-    	temp[i * 3 + 1] = ImgPal[i].g * transluc / 100;
-    	temp[i * 3 + 2] = ImgPal[i].b * transluc / 100;
-    }
+	{
+		temp[i * 3]     = ImgPal[i].r * transluc / 100;
+		temp[i * 3 + 1] = ImgPal[i].g * transluc / 100;
+		temp[i * 3 + 2] = ImgPal[i].b * transluc / 100;
+	}
 	for (i = 0; i < 256; i++)
-    {
-    	r = ImgPal[i].r * (100 - transluc) / 100;
-    	g = ImgPal[i].g * (100 - transluc) / 100;
-    	b = ImgPal[i].b * (100 - transluc) / 100;
+	{
+		r = ImgPal[i].r * (100 - transluc) / 100;
+		g = ImgPal[i].g * (100 - transluc) / 100;
+		b = ImgPal[i].b * (100 - transluc) / 100;
 		q = temp;
-        for (j = 0; j < 256; j++)
-        {
-            *(p++) = makecol8(r + q[0], g + q[1], b + q[2]);
+		for (j = 0; j < 256; j++)
+		{
+			*(p++) = makecol8(r + q[0], g + q[1], b + q[2]);
 			q += 3;
-        }
-    }
+		}
+	}
 	outwad.AddLump(lumpname, table, 256 * 256);
 }
 
@@ -341,10 +344,10 @@ void GrabScaleMap(void)
 	SetupRGBTable();
 
 	for (i = 0; i < 256; i++)
-    {
-        double col = (ImgPal[i].r * 0.3 + ImgPal[i].g * 0.5 + ImgPal[i].b * 0.2);
+	{
+		double col = (ImgPal[i].r * 0.3 + ImgPal[i].g * 0.5 + ImgPal[i].b * 0.2);
 		map[i] = makecol8((int)(r * col), (int)(g * col), (int)(b * col));
-    }
+	}
 
 	outwad.AddLump(lumpname, map, 256);
 }
@@ -437,7 +440,6 @@ void ParseScript(const char *name)
 	strcpy(destfile, name);
 	DefaultExtension(destfile, ".ls");
 	SC_Open(destfile);
-	cout << "Procesing " << destfile << endl;
 	StripExtension(destfile);
 
 	bool OutputOpened = false;

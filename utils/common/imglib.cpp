@@ -22,9 +22,12 @@
 //**  GNU General Public License for more details.
 //**
 //**	$Log$
+//**	Revision 1.3  2001/08/31 17:19:53  dj_jl
+//**	Beautification
+//**
 //**	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //**	Update with Id-s and Log-s, some fixes
-//**
+//**	
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
@@ -38,28 +41,28 @@
 
 struct pcx_t
 {
-    char			manufacturer;
-    char			version;
-    char			encoding;
-    char			bits_per_pixel;
+	char			manufacturer;
+	char			version;
+	char			encoding;
+	char			bits_per_pixel;
 
-    unsigned short	xmin;
-    unsigned short	ymin;
-    unsigned short	xmax;
-    unsigned short	ymax;
-    
-    unsigned short	hres;
-    unsigned short	vres;
+	unsigned short	xmin;
+	unsigned short	ymin;
+	unsigned short	xmax;
+	unsigned short	ymax;
 
-    unsigned char	palette[48];
-    
-    char			reserved;
-    char			color_planes;
-    unsigned short	bytes_per_line;
-    unsigned short	palette_type;
-    
-    char			filler[58];
-    unsigned char	data;		// unbounded
+	unsigned short	hres;
+	unsigned short	vres;
+
+	unsigned char	palette[48];
+
+	char			reserved;
+	char			color_planes;
+	unsigned short	bytes_per_line;
+	unsigned short	palette_type;
+
+	char			filler[58];
+	unsigned char	data;		// unbounded
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -164,7 +167,7 @@ void LoadImage(const char *name)
 
 	ExtractFileExtension(name, ext);
 	if (!strcmp(ext, "pcx"))
-	    LoadPCX(name);
+		LoadPCX(name);
 	else
 		Error("Unknown extension");
 }
