@@ -137,20 +137,24 @@ void Actor::A_VileChase(void)
 
 					CorpseHit.SetState(CorpseHit.RaiseState);
 					CorpseHit.Height *= 4.0;
-#ifdef FIXME
-					CorpseHit.Flags = info->Flags;
-#else
+					CorpseHit.bShootable = true;
+					if (CorpseHit.Class == Cacodemon ||
+						CorpseHit.Class == PainElemental)
+					{
+						CorpseHit.bFloat = true;
+						CorpseHit.bNoGravity = true;
+					}
+					CorpseHit.bDropOff = false;
 					CorpseHit.bSolid = true;
 					CorpseHit.bCorpse = false;
-#endif
 					CorpseHit.Health = CorpseHit.SpawnHealth;
 					CorpseHit.Enemy = none;
-
-					return;
 				}
 			}
 		}
 	}
+
+
 	// Return to normal attack.
 	A_Chase();
 }
@@ -322,6 +326,9 @@ void Actor::A_FireCrackle(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/03/28 18:23:31  dj_jl
+//  Fixed archvile respawning unkillable monsters.
+//
 //  Revision 1.23  2002/03/20 19:07:43  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //
