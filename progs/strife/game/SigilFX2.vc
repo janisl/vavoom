@@ -1,0 +1,56 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class SigilFX2:Projectile;
+
+__states__
+{
+	S_SIGIL_FX2_1('ZOT3', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX2_2) { }
+	S_SIGIL_FX2_2('ZOT3', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX2_3) { }
+	S_SIGIL_FX2_3('ZOT3', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX2_4) { }
+	S_SIGIL_FX2_4('ZOT3', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX2_5) { }
+	S_SIGIL_FX2_5('ZOT3', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX2_1) { }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 16.0;
+	Speed = 1050.0;
+	MissileDamage = 70;
+	bUnknown3 = true;
+	IdleState = S_SIGIL_FX2_1;
+	DeathState = S_ZAP1_1;
+	SightSound = 'SigilFire';
+	DeathSound = 'SigilHit';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:57  dj_jl
+//  New style classes.
+//
+//**************************************************************************

@@ -1,0 +1,106 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Pawn:Actor
+	abstract;
+
+bool bCkeckNoMonsters;
+
+//==========================================================================
+//
+//	OnMapSpawn
+//
+//==========================================================================
+
+void OnMapSpawn(mthing_t *mthing)
+{
+	if (bCkeckNoMonsters && nomonsters)
+	{
+		Remove();
+		return;
+	}
+	::OnMapSpawn(mthing);
+}
+
+__states__
+{
+	S_BURN1('BURN', 0, 3.0 / 35.0, S_BURN2) { A_Scream(); }
+	S_BURN2('BURN', 1, 3.0 / 35.0, S_BURN3) { A_Burn(); }
+	S_BURN3('BURN', 2, 3.0 / 35.0, S_BURN4) { A_Walk(); }
+	S_BURN4('BURN', 3, 3.0 / 35.0, S_BURN5) { A_Fall(); }
+	S_BURN5('BURN', 4, 5.0 / 35.0, S_BURN6) { A_Burn(); }
+	S_BURN6('BURN', 5, 5.0 / 35.0, S_BURN7) { A_Walk(); }
+	S_BURN7('BURN', 6, 5.0 / 35.0, S_BURN8) { A_Walk(); }
+	S_BURN8('BURN', 7, 5.0 / 35.0, S_BURN9) { A_Walk(); }
+	S_BURN9('BURN', 8, 5.0 / 35.0, S_BURN10) { A_Burn(); }
+	S_BURN10('BURN', 9, 5.0 / 35.0, S_BURN11) { A_Walk(); }
+	S_BURN11('BURN', 10, 5.0 / 35.0, S_BURN12) { A_Walk(); }
+	S_BURN12('BURN', 11, 5.0 / 35.0, S_BURN13) { A_Walk(); }
+	S_BURN13('BURN', 12, 3.0 / 35.0, S_BURN14) { A_Burn(); }
+	S_BURN14('BURN', 13, 3.0 / 35.0, S_BURN15) { }
+	S_BURN15('BURN', 14, 5.0 / 35.0, S_BURN16) { }
+	S_BURN16('BURN', 15, 5.0 / 35.0, S_BURN17) { }
+	S_BURN17('BURN', 16, 5.0 / 35.0, S_BURN18) { }
+	S_BURN18('BURN', 15, 5.0 / 35.0, S_BURN19) { }
+	S_BURN19('BURN', 16, 5.0 / 35.0, S_BURN20) { }
+	S_BURN20('BURN', 17, 7.0 / 35.0, S_BURN21) { }
+	S_BURN21('BURN', 18, 7.0 / 35.0, S_BURN22) { }
+	S_BURN22('BURN', 19, 7.0 / 35.0, S_BURN23) { }
+	S_BURN23('BURN', 20, 7.0 / 35.0, S_BURN24) { }
+	S_BURN24('BURN', 21, 700.0 / 35.0, S_NULL) { A_Dying(); }
+
+	S_DISRUPT1('DISR', 0, 5.0 / 35.0, S_DISRUPT2) { }
+	S_DISRUPT2('DISR', 1, 5.0 / 35.0, S_DISRUPT3) { }
+	S_DISRUPT3('DISR', 2, 5.0 / 35.0, S_DISRUPT4) { }
+	S_DISRUPT4('DISR', 3, 5.0 / 35.0, S_DISRUPT5) { A_Fall(); }
+	S_DISRUPT5('DISR', 4, 5.0 / 35.0, S_DISRUPT6) { }
+	S_DISRUPT6('DISR', 5, 5.0 / 35.0, S_DISRUPT7) { }
+	S_DISRUPT7('DISR', 6, 4.0 / 35.0, S_DISRUPT8) { }
+	S_DISRUPT8('DISR', 7, 4.0 / 35.0, S_DISRUPT9) { }
+	S_DISRUPT9('DISR', 8, 4.0 / 35.0, S_DISRUPT10) { }
+	S_DISRUPT10('DISR', 9, 4.0 / 35.0, S_DISRUPT11) { }
+	S_DISRUPT11('MEAT', 3, 700.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 0;
+	Radius = 0.0;
+	Height = 0.0;
+	Mass = 0.0;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bCkeckNoMonsters = true;
+	bActivateMCross = true;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:56  dj_jl
+//  New style classes.
+//
+//**************************************************************************

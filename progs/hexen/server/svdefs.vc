@@ -96,6 +96,152 @@
 // 16 pixels of bob
 #define MAXBOB			16.0
 
+//
+// ---------- Intercept ----------------
+//
+
+// Mana
+
+#define TXT_MANA_1				"BLUE MANA"
+#define TXT_MANA_2				"GREEN MANA"
+#define TXT_MANA_BOTH			"COMBINED MANA"
+
+// Artifacts
+
+#define TXT_ARTIINVULNERABILITY		"ICON OF THE DEFENDER"
+#define TXT_ARTIHEALTH				"QUARTZ FLASK"
+#define TXT_ARTISUPERHEALTH			"MYSTIC URN"
+#define TXT_ARTISUMMON				"DARK SERVANT"
+#define TXT_ARTITORCH				"TORCH"
+#define TXT_ARTIEGG					"PORKALATOR"
+#define TXT_ARTIFLY					"WINGS OF WRATH"
+#define TXT_ARTITELEPORT			"CHAOS DEVICE"
+#define TXT_ARTIPOISONBAG			"FLECHETTE"
+#define TXT_ARTITELEPORTOTHER		"BANISHMENT DEVICE"
+#define TXT_ARTISPEED				"BOOTS OF SPEED"
+#define TXT_ARTIBOOSTMANA			"KRATER OF MIGHT"
+#define TXT_ARTIBOOSTARMOR			"DRAGONSKIN BRACERS"
+#define TXT_ARTIBLASTRADIUS			"DISC OF REPULSION"
+#define TXT_ARTIHEALINGRADIUS		"MYSTIC AMBIT INCANT"
+
+// Puzzle artifacts
+
+#define TXT_ARTIPUZZSKULL			"YORICK'S SKULL"
+#define TXT_ARTIPUZZGEMBIG			"HEART OF D'SPARIL"
+#define TXT_ARTIPUZZGEMRED			"RUBY PLANET"
+#define TXT_ARTIPUZZGEMGREEN1		"EMERALD PLANET"
+#define TXT_ARTIPUZZGEMGREEN2		"EMERALD PLANET"
+#define TXT_ARTIPUZZGEMBLUE1		"SAPPHIRE PLANET"
+#define TXT_ARTIPUZZGEMBLUE2		"SAPPHIRE PLANET"
+#define TXT_ARTIPUZZBOOK1			"DAEMON CODEX"
+#define TXT_ARTIPUZZBOOK2			"LIBER OSCURA"
+#define TXT_ARTIPUZZSKULL2			"FLAME MASK"
+#define TXT_ARTIPUZZFWEAPON			"GLAIVE SEAL"
+#define TXT_ARTIPUZZCWEAPON			"HOLY RELIC"
+#define TXT_ARTIPUZZMWEAPON			"SIGIL OF THE MAGUS"
+#define TXT_ARTIPUZZGEAR			"CLOCK GEAR"
+
+// Items
+
+#define TXT_ITEMHEALTH			"CRYSTAL VIAL"
+#define TXT_ARMOR1				"MESH ARMOR"
+#define TXT_ARMOR2				"FALCON SHIELD"
+#define TXT_ARMOR3				"PLATINUM HELMET"
+#define TXT_ARMOR4				"AMULET OF WARDING"
+
+// Weapons
+
+#define TXT_WEAPON_F2			"TIMON'S AXE"
+#define TXT_WEAPON_F3			"HAMMER OF RETRIBUTION"
+#define TXT_WEAPON_F4			"QUIETUS ASSEMBLED"
+#define TXT_WEAPON_C2			"SERPENT STAFF"
+#define TXT_WEAPON_C3			"FIRESTORM"
+#define TXT_WEAPON_C4			"WRAITHVERGE ASSEMBLED"
+#define TXT_WEAPON_M2			"FROST SHARDS"
+#define TXT_WEAPON_M3			"ARC OF DEATH"
+#define TXT_WEAPON_M4			"BLOODSCOURGE ASSEMBLED"
+#define TXT_QUIETUS_PIECE		"SEGMENT OF QUIETUS"
+#define TXT_WRAITHVERGE_PIECE	"SEGMENT OF WRAITHVERGE"
+#define TXT_BLOODSCOURGE_PIECE	"SEGMENT OF BLOODSCOURGE"
+
+#define BONUSADD	0.2
+
+//
+// ----- User ---------
+//
+
+#define HEAL_RADIUS_DIST	255.0
+
+#define TXT_USEPUZZLEFAILED			"YOU CANNOT USE THIS HERE"
+
+//
+// --------- Mobj ------------
+//
+
+#define MAX_TID_COUNT		200
+
+#define SMALLSPLASHCLIP		12.0
+
+//
+// --------- Physics --------
+//
+
+#define FLOATSPEED		140.0
+
+#define MAXMOVE 			1050.0
+#define MAXMOVESTEP			15.0	//MAXMOVE / (35.0 * 2.0)
+#define STOPSPEED			2.1875
+
+#define FRICTION_NORMAL		3.28125
+#define FRICTION_LOW		0.95703125
+#define FRICTION_FLY		2.87109375
+#define FRICTION_WATER		3.0
+
+//
+// --------- Map -----------
+//
+
+#define USERANGE 			64.0
+
+//
+// --------- UserSubs ---------
+//
+
+#define BLAST_RADIUS_DIST	255.0
+#define BLAST_FULLSTRENGTH	0.0038909912
+#define BLAST_SPEED			20.0
+
+//
+// ----------- Sorcerer --------------
+//
+
+#define SORCBALL_INITIAL_SPEED 		7
+#define SORCBALL_TERMINAL_SPEED		25
+#define SORCBALL_SPEED_ROTATIONS 	5
+#define SORCFX4_RAPIDFIRE_TIME		(6*3)	// 3 seconds
+#define SORCFX4_SPREAD_ANGLE		20.0
+#define SORC_DEFENSE_TIME			255
+#define SORC_DEFENSE_HEIGHT			45.0
+#define BOUNCE_TIME_UNIT			(35/2)
+
+#define SORC_DECELERATE		0
+#define SORC_ACCELERATE 	1
+#define SORC_STOPPING		2
+#define SORC_FIRESPELL		3
+#define SORC_STOPPED		4
+#define SORC_NORMAL			5
+#define SORC_FIRING_SPELL	6
+
+//
+// ---------- AI SUBS ---------------
+//
+
+#define MONS_LOOK_RANGE (16.0 * 64.0)
+#define MONS_LOOK_LIMIT 64
+
+#define BODYQUESIZE 		32
+#define CORPSEQUEUESIZE		64
+
 // CONSTANTS ---------------------------------------------------------------
 
 // Any floor type >= FLOOR_LIQUID will floorclip sprites
@@ -180,447 +326,6 @@ enum
 };
 
 // TYPES -------------------------------------------------------------------
-
-class Actor:Entity
-	abstract
-{
-	//  States
-	int IdleState;
-	int SeeState;
-	int PainState;
-	int MeleeState;
-	int MissileState;
-	int CrashState;
-	int DeathState;
-	int GibsDeathState;
-	int IceDeathState;
-
-	//  Sounds
-	name SightSound;
-	name ActiveSound;
-	name AttackSound;
-	name PainSound;
-	name DeathSound;
-
-	//	Flags
-	bool bSpecial;			// call P_SpecialThing when touched
-	bool bShootable;		// Can be hit.
-	bool bAmbush;
-	bool bJustHit;			// try to attack right back
-	bool bJustAttacked;		// take at least one step before attacking
-	bool bSpawnCeiling;		// hang from ceiling instead of floor
-	// movement flags
-	bool bPickUp;			// for players to pick up items
-	bool bMissile;		// don't hit same species, explode on block
-	bool bNoBlood;			// don't bleed when shot (use puff)
-	bool bCorpse;			// don't stop moving halfway off a step
-	bool bInFloat;			// floating to a height for a move, don't
-							// auto float to target's height
-	bool bSkullFly;			// skull in flight
-	bool bCountKill;		// count towards intermission kill total
-	bool bIceCorpse;		// a frozen corpse (for blasting)
-	bool bWindThrust;		// gets pushed around by the wind specials
-	bool bFloorBounce;		// bounces off the floor
-	bool bSpawnFloat;		// spawn random float z
-	bool bNoTeleport;		// does not teleport
-	bool bRip;				// missile rips through solid targets
-	bool bPushable;			// can be pushed by other moving mobjs
-	bool bSlide;			// slides against walls
-	bool bOnMobj;			// mobj is resting on top of another mobj
-	bool bCannotPush;		// cannot push other pushable mobjs
-	bool bDropped;			// dropped by a demon
-	bool bBoss;				// mobj is a major boss
-	bool bFireDamage;		// does fire damage
-	bool bNoDamageThrust;	// does not thrust target when damaging
-	bool bTelestomp;		// mobj can stomp another
-	bool bFloatBob;			// use float bobbing z movement
-	bool bActivateImpact;	// an MF_MISSILE mobj can activate
-							// SPAC_IMPACT
-	bool bActivatePushWall;	// mobj can push walls
-	bool bActivateMCross;	// can activate monster cross lines
-	bool bActivatePCross;	// can activate projectile cross lines
-	bool bNonShootable;		// mobj is totally non-shootable,
-							// but still considered solid
-	bool bInvulnerable;		// mobj is invulnerable
-	bool bDormant;			// thing is dormant
-	bool bIceDamage;		// does ice damage
-	bool bSeekerMissile;	// is a seeker (for reflection)
-	bool bReflective;		// reflects missiles
-	bool bWaterJump;
-	bool bBlaster;
-
-	//  Params
-	float Speed;
-	float PainChance;
-	int SpawnHealth;
-	int GibsHealth;
-
-	// Thing being chased/attacked (or none).
-	Actor Enemy;
-	// The originator for missiles.
-	Actor Instigator;
-
-	int _Special1;	// Special info
-	int _Special2;	// Special info
-	float Special1f;
-	float Special2f;
-	Actor *_SpecialMobj1;
-	Actor *SpecialMobj2;
-	classid SpecialCID;
-
-	int MissileDamage;	// For missiles
-
-	// Used by player to freeze a bit after teleporting.
-	float ReactionTime;
-
-	bool Touch(Entity Other);
-	void CheckForPushSpecial(line_t * line, int side);
-	void BlockedByLine(line_t * ld);
-	bool TestLocation(void);
-	void PushLine(void);
-	void CrossSpecialLine(line_t *ld, int side);
-	void HandleFloorclip(void);
-
-	void Tick(float deltaTime);
-
-	void TeleportToPlayerStarts(void);
-	void TeleportToDeathmatchStarts(void);
-	void TeleportOther(void);
-
-	int GetFloorType(void);
-	void SetOrigin2(TVec origin);
-	void OnMapSpawn(mthing_t *mthing);
-	void Destroyed(void);
-	int HitFloorType(void);
-	void FloorBounceMissile(void);
-	void Thrust(float angle, float move);
-	int FaceActor(Actor target, float *delta);
-	void MonsterFallingDamage(void);
-	Actor ActiveMinotaur(void);
-	void Died(Actor source);
-	void MinotaurSlam(Actor source);
-	bool MorphPlayer(void);
-	bool MorphMonster(void);
-	void AutoUseHealth(int saveHealth);
-	void InsertIntoTIDList(int tid);
-	void RemoveFromTIDList(void);
-
-	void Damage(Actor inflictor, Actor source, int damage);
-	void FallingDamage(void);
-	void PoisonDamage(Actor source, int damage, bool playPainSound);
-	void PoisonPlayer(Actor poisoner, int poison);
-	void SpawnBloodSplatter(TVec org);
-	void SpawnBloodSplatter2(TVec org);
-	void SpawnRipperBlood(void);
-	void SpawnDirt(float radius);
-
-	bool Activate(void)
-	{
-		return false;
-	}
-	bool Deactivate(void)
-	{
-		return false;
-	}
-	void RemoveThing(void)
-	{
-		Remove();
-	}
-
-	//  Physics
-	bool Physics(void);
-	void XYMovement(void);
-	bool ZMovement(void);
-	void HitMobj(Entity Other);
-	void HitLine(void);
-	bool HitFloor(void);
-	bool HitCeiling(void);
-	void ApplyFriction(void);
-	void ResetBlasted(void);
-	bool BlasterPhysics(void);
-	void PlayerLandedOnThing(void);
-
-	void SetDormant(void)
-	{
-		bDormant = true;
-		StateTime = -1.0;
-	}
-
-	void Archive(void);
-	void Unarchive(void);
-
-	bool CheckMissileSpawn(void);
-	bool SeekerMissile(float thresh, float turnMax);
-	bool ExplodeMissile(void);
-	Actor SpawnMissileAngle(classid type, float angle, float momz);
-	Actor SpawnMissileAngleSpeed(classid type, float angle, float momz,
-		float speed);
-
-	bool TeleportMove(TVec pos);
-	bool Teleport(TVec pos, float angle, bool useFog);
-
-	bool HeightClip(void);
-	bool SectorChanged(int CrushChange);
-
-	void Blast(Actor source, float strength);
-
-	// Misc action functions
-	void A_SetInvulnerable(void);
-
-	// Misc enemy functions
-	void A_DeQueueCorpse(void);
-
-	// Action functions
-	void A_FreeTargMobj(void);
-	void A_HideThing(void);
-	void A_UnHideThing(void);
-	void A_Scream(void);
-	void A_Explode(void);
-	void A_NoGravity(void);
-	void A_Pain(void);
-	void A_NoBlocking(void);
-	void A_AddPlayerCorpse(void);
-	void A_CheckBurnGone(void);
-	void A_PigPain(void);
-	void A_QueueCorpse(void);
-	void A_UnSetInvulnerable(void);
-
-	defaultproperties
-	{
-		MaxStepHeight = 24.0;
-	}
-}
-
-class Pawn:Actor
-	abstract
-{
-	bool bCheckNoMonsters;		// Don't spawn if monsters are disabled
-
-	float StepSpeed;
-
-	// Reaction time: if non 0, don't attack yet.
-	int ReactionCount;
-
-	// If >0, the target will be chased
-	// no matter what (even if shot)
-	int Threshold;
-
-	// Player number last looked for.
-	int LastLook;
-
-	// Movement direction, movement generation (zig-zagging).
-	int MoveDir;	// 0-7
-	int MoveCount;	// when 0, select a new dir
-
-	void OnMapSpawn(mthing_t *mthing);
-
-	bool Activate(void);
-	bool Deactivate(void);
-
-	Actor SpawnMissile(Actor dest, classid type);
-	Actor SpawnMissileXYZ(TVec org, Actor dest, classid type);
-	Actor SpawnKoraxMissile(TVec org, Actor dest, classid type);
-
-	bool CheckMeleeRange(void);
-	bool CheckMeleeRange2(void);
-	bool CheckMissileRange(void);
-	void FaceMovementDirection(void);
-	bool LookForMonsters(void);
-	bool LookForPlayers(bool allaround);
-	bool StepMove(void);
-	bool TryWalk(void);
-	void NewChaseDir(void);
-
-	void A_Look(void);
-	void A_Chase(void);
-	void A_FaceTarget(void);
-	void A_FreezeDeath(void);
-	void A_FreezeDeathChunks(void);
-
-	defaultproperties
-	{
-		ReactionCount = 8;
-		bSolid = true;
-		bShootable = true;
-		bCountKill = true;
-		bFloorClip = true;
-		bTelestomp = true;
-		bActivatePushWall = true;
-		bActivateMCross = true;
-		bCheckNoMonsters = true;
-	}
-}
-
-class PlayerPawn:Pawn
-	abstract
-{
-	// For cleric's invulnerability effect
-	bool bAltShadow;
-	bool bShadow;
-	bool bDontDraw;
-
-	int AttackEndState;
-
-	bool GiveMana(int mana, int count);
-	bool GiveBody(int num);
-	bool GiveArmor(int armortype, int amount);
-	bool GiveKey(int key);
-	bool GivePower(int power);
-	bool GiveArtifact(int arti);
-
-	void InventoryLeft(void);
-	void InventoryRight(void);
-	void InventoryUse(void);
-	void InventoryTick(float deltaTime);
-
-	void MovePlayer(float deltaTime);
-	void CheckWaterJump(void);
-	void WaterMove(float deltaTime);
-	void WaterJump(void);
-	void ThrustPlayer(float angle, float move, float deltaTime);
-	void CalcHeight(float deltaTime);
-	void PlayerInSpecialSector(float deltaTime);
-	void PlayerOnSpecialFlat(int floorType);
-	void PlayerInContents(void);
-	void PlayerImpulse(void);
-	void PlayerTick(float deltaTime);
-	void PaletteFlash(void);
-	void SetViewPos(void);
-	bool UseArtiHealRadius(void);
-	void UseArtiTele(void);
-	bool UseArtifact(int arti);
-	void PlayerUseArtifact(int arti);
-	void PlayerNextArtifact(void);
-	void PlayerRemoveArtifact(int slot);
-
-	void MorphPlayerThink(void);
-	bool UndoPlayerMorph(void);
-	void SetPlayerRunState(void);
-	void DeathPlayerTick(float deltaTime);
-	void UseArtiPig(void);
-	void UseArtiSummon(void);
-	void UseArtiPoisonBag(void);
-	void UseArtiTeleportOther(void);
-	void UseArtiBlastRadius(void);
-
-	Actor SpawnPlayerMissile(classid type);
-	Actor SpawnPlayerMissileAngle(classid type, float angle);
-	Actor SpawnPlayerMissileAngleXYZ(TVec org, classid type, float angle);
-
-	void AdjustPlayerAngle(void);
-
-	bool RoughCheckThing(Entity Other);
-
-	defaultproperties
-	{
-		ReactionCount = 0;
-		bCountKill = false;
-		bActivateMCross = false;
-		bCheckNoMonsters = false;
-		bDropOff = true;
-		bWindThrust = true;
-		bSlide = true;
-	}
-}
-
-class Projectile:Actor
-	abstract
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Mass = 100.0;
-		bMissile = true;
-		bNoBlockmap = true;
-		bDropOff = true;
-		bNoGravity = true;
-		bNoTeleport = true;
-		bActivateImpact = true;
-		bActivatePCross = true;
-	}
-}
-
-class Fragment:Projectile
-	abstract
-{
-	defaultproperties
-	{
-		Radius = 20.0;
-		Height = 16.0;
-		bActivateImpact = false;
-		bActivatePCross = false;
-	}
-}
-
-class Effect:Actor
-	abstract
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bNoPassMobj = true;
-	}
-}
-
-class Carcas:Actor
-	abstract
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		bCorpse = true;
-		bDropOff = true;
-		bNoTeleport = true;
-		bNoPassMobj = true;
-		bFloorClip = true;
-	}
-}
-
-class Decoration:Actor
-	abstract
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		bNoPassMobj = true;
-	}
-}
-
-class Weapon:ViewEntity
-	abstract
-{
-	int Mana;
-	int UpState;
-	int DownState;
-	int ReadyState;
-	int AttackState;
-	int HoldAttackState;
-	float PSpriteSY;		// Y-adjustment value for full screen
-
-	int GetUpState(void) { return UpState; }
-	int GetDownState(void) { return DownState; }
-	int GetReadyState(void) { return ReadyState; }
-	int GetAttackState(void);
-	void GotMana(int InMana) { }
-	void SnoutSniff(void) { }	// FIXME
-
-	void A_Light0(void);
-	void A_WeaponReady(void);
-	void A_Lower(void);
-	void A_Raise(void);
-	void A_ReFire(void);
-}
 
 /*
 
@@ -728,106 +433,10 @@ enum
 	BST_RETURN
 };
 
-// Main bot class
-class BotPlayer:Object
-{
-	player_t *player;		// Points to reference player
-	Actor botmo;
+class BotPlayer;
 
-	// Destinations
-	Actor item;			// Item (roam towards weapon, etc)
-	bool bItemIsWeapon;
-	bool bItemIsPowerup;
-	Actor goal;			// Teamgame goal spot
-	Actor node;			// Node we're heading towards
-	Actor prev;			// Previous node we were at
-	TVec posdest;			// Position of our destination (doesn't have to be an actor)
-	bool posdest_valid;
-	Actor enemy;			// The dead meat.
-	TVec lastpos;			// Last place we saw our enemy
-	bool lastpos_valid;
-	Actor missile;			// A threathing missile that got to be avoided.
-
-	Actor ally;			// Ally to tag along with
-/*	AActor		*last_mate;	// If bots mate dissapeared (not if died) that mate is
-							// pointed to by this. Allows bot to roam to it if
-							// necessary.
-
-	enemyinfo_t	enemyinfo;	// Things we know about our enemy
-
-	botstate_t	state;		// What we're doing in teamgame mode
-
-	fixed_t		lastx;		// Last known x location of bot's enemy (go there if enemy goes out of sight)
-	fixed_t		lasty;		// Last known y location of bot's enemy
-
-	// Tickers
-
-	float t_respawn;*/
-	float t_strafe;
-	float t_react;
-/*	float t_fight;
-	float t_rocket;
-	float t_turn;
-	float t_pissed;
-	float t_frust;*/
-	float t_fire;			// Tics left until our gun will actually fire again
-	float t_anticip;
-/*	float t_chat;			// Tics left until bots completes "typing" in what he's saying.
-							// Bot also doesn't do anything during this time.*/
-
-	float forwardmove;	// For building ucmd
-	float sidemove;
-
-	// Misc booleans
-	bool bAllRound;
-	bool bNewItemIsWeapon;
-	bool bNewItemIsPowerup;
-
-/*	chatline_t	*chatline;	// For when t_chat expires
-
-	bottype_t	bottype;	// Bot type*/
-	botinfo_t info;			// Aiming, name, perfection, yadda yadda
-
-/*	fixed_t		oldx;
-	fixed_t		oldy;
-
-	int			thingnum;*/
-	int angerlevel;
-
-/*	AActor		*things[NUMMOBJTYPES];*/
-	float combatdist[NUMWEAPONS * NUMCLASSES]; //different for each weapon.
-
-	float angle;			// The wanted angle that the bot tries to get every tic.
-
-/*	void LinkToPlayer (int playernum);*/
-
-	void OnBeginPlay(void);
-	void OnSpawn(void);
-	void BotTick(float deltaTime);
-	bool CheckTo(TVec pos);
-	void CheckStuff(void);
-	float GetAngle(void);
-	bool CheckPath(float ang, float dist);
-	void SetEnemy(void);
-	Actor FindEnemy(void);
-	bool Check_LOS(Actor to, float vangle);
-	bool CheckItem(Actor item);
-	void Scan(void);
-	int WeapFromItem(Actor item);
-	int WeapPieceFromItem(Actor item);
-	int ManaFromItem(Actor item);
-	void Move(float deltaTime);
-	void SetAngle(float an);
-	void Roam(void);
-	float AngleTo(TVec dest);
-	void Attack(void);
-	void Turn(void);
-	void BotAim(void);
-	void Pitch(void);
-	int SkillLower(int skill, int num);
-	void Killed(Actor victim);
-	void Died(Actor killer);
-}
+#define NUMTOTALBOTS	24
+#define	NUMBOTTYPES		24
 
 addfields player_t
 {
@@ -993,6 +602,9 @@ name door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.39  2002/11/02 08:24:11  dj_jl
+//  New style classes.
+//
 //  Revision 1.38  2002/09/07 16:28:26  dj_jl
 //  Added Level class.
 //

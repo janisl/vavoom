@@ -1,0 +1,81 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Sentinel:Pawn
+	__mobjinfo__(3006);
+
+void A_SentinelAttack(void)
+{
+}
+
+__states__
+{
+	S_SENTINEL_LOOK('SEWR', 0, 10.0 / 35.0, S_SENTINEL_LOOK) { A_Look(); }
+	S_SENTINEL_RUN1('SEWR', 0, 6.0 / 35.0, S_SENTINEL_RUN2) { A_FlightChase(); }
+	S_SENTINEL_RUN2('SEWR', 0, 6.0 / 35.0, S_SENTINEL_RUN1) { A_Chase(); }
+	S_SENTINEL_ATK1('SEWR', 1, 4.0 / 35.0, S_SENTINEL_ATK2) { A_FaceTarget(); }
+	S_SENTINEL_ATK2('SEWR', 2 | FF_FULLBRIGHT, 8.0 / 35.0, S_SENTINEL_ATK3) { A_SentinelAttack(); }
+	S_SENTINEL_ATK3('SEWR', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_SENTINEL_ATK2) { A_CheckRefire(); }
+	S_SENTINEL_PAIN('SEWR', 3, 5.0 / 35.0, S_SENTINEL_ATK3) { A_Pain(); }
+	S_SENTINEL_DIE1('SEWR', 3, 7.0 / 35.0, S_SENTINEL_DIE2) { A_Fall(); }
+	S_SENTINEL_DIE2('SEWR', 4 | FF_FULLBRIGHT, 8.0 / 35.0, S_SENTINEL_DIE3) { A_XDying(); }
+	S_SENTINEL_DIE3('SEWR', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_SENTINEL_DIE4) { A_Scream(); }
+	S_SENTINEL_DIE4('SEWR', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_SENTINEL_DIE5) { A_XDying(); }
+	S_SENTINEL_DIE5('SEWR', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_SENTINEL_DIE6) { A_XDying(); }
+	S_SENTINEL_DIE6('SEWR', 8, 4.0 / 35.0, S_SENTINEL_DIE7) { }
+	S_SENTINEL_DIE7('SEWR', 9, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 100;
+	Radius = 23.0;
+	Height = 53.0;
+	Mass = 300.0;
+	StepSpeed = 7.0;
+	PainChance = 1.0;
+	bSpawnCeiling = true;
+	bNoGravity = true;
+	bUnknown5 = true;
+	bFloat = true;
+	bUnknown4 = true;
+	bNoBlood = true;
+	IdleState = S_SENTINEL_LOOK;
+	SeeState = S_SENTINEL_RUN1;
+	MissileState = S_SENTINEL_ATK1;
+	PainState = S_SENTINEL_PAIN;
+	DeathState = S_SENTINEL_DIE1;
+	SightSound = 'SentinelSight';
+	ActiveSound = 'SentinelActive';
+	DeathSound = 'SentinelDeath';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:57  dj_jl
+//  New style classes.
+//
+//**************************************************************************

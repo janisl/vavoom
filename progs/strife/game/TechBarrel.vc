@@ -1,0 +1,65 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class TechBarrel:Decoration
+	__mobjinfo__(94);
+
+__states__
+{
+	S_TECH_BARREL('BART', 0, -1.0, S_NULL) { }
+	S_TECH_BARREL_X1('BART', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_TECH_BARREL_X2) { A_Scream(); }
+	S_TECH_BARREL_X2('BART', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_TECH_BARREL_X3) { }
+	S_TECH_BARREL_X3('BART', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_TECH_BARREL_X4) { }
+	S_TECH_BARREL_X4('BART', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_TECH_BARREL_X5) { A_Fall(); }
+	S_TECH_BARREL_X5('BART', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_TECH_BARREL_X6) { A_Explode(); }
+	S_TECH_BARREL_X6('BART', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_TECH_BARREL_X7) { }
+	S_TECH_BARREL_X7('BART', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_TECH_BARREL_X8) { }
+	S_TECH_BARREL_X8('BART', 8 | FF_FULLBRIGHT, 2.0 / 35.0, S_TECH_BARREL_X9) { }
+	S_TECH_BARREL_X9('BART', 9 | FF_FULLBRIGHT, 3.0 / 35.0, S_TECH_BARREL_X10) { }
+	S_TECH_BARREL_X10('BART', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_TECH_BARREL_X11) { }
+	S_TECH_BARREL_X11('BART', 11, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 30;
+	Radius = 10.0;
+	Height = 32.0;
+	bSolid = true;
+	bShootable = true;
+	bUnknown4 = true;
+	bNoBlood = true;
+	IdleState = S_TECH_BARREL;
+	DeathState = S_TECH_BARREL_X1;
+	DeathSound = 'BarrelExplode';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:57  dj_jl
+//  New style classes.
+//
+//**************************************************************************

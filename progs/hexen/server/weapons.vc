@@ -227,17 +227,6 @@ bool P_CheckMana(player_t * player)
 
 //==========================================================================
 //
-//	Weapon::GetAttackState
-//
-//==========================================================================
-
-int Weapon::GetAttackState(void)
-{
-	return Player->Refire ? HoldAttackState : AttackState;
-}
-
-//==========================================================================
-//
 //  P_FireWeapon
 //
 //==========================================================================
@@ -252,34 +241,6 @@ void P_FireWeapon(player_t * player)
 	player->ViewEnts[ps_weapon].SetState(
 		Weapon(player->ViewEnts[ps_weapon]).GetAttackState());
 	NoiseAlert(player->MO, player->MO);
-}
-
-//============================================================================
-//
-//  PlayerPawn::AdjustPlayerAngle
-//
-//============================================================================
-
-#define MAX_ANGLE_ADJUST	5.0
-
-void PlayerPawn::AdjustPlayerAngle(void)
-{
-	float angle;
-	float difference;
-
-	angle = atan2(linetarget.Origin.y - Origin.y,
-		linetarget.Origin.x - Origin.x);
-	difference = AngleMod180(angle - Angles.yaw);
-	if (fabs(difference) > MAX_ANGLE_ADJUST)
-	{
-		Angles.yaw +=
-			difference > 0.0 ? MAX_ANGLE_ADJUST : -MAX_ANGLE_ADJUST;
-	}
-	else
-	{
-		Angles.yaw = angle;
-	}
-	Player->bFixAngle = true;
 }
 
 //==========================================================================
@@ -309,162 +270,12 @@ void PostMorphWeapon(player_t * player, int weapon)
 	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).UpState);
 }
 
-//****************************************************************************
-//
-//  WEAPON ACTIONS
-//
-//****************************************************************************
-
-//==========================================================================
-//
-//  Weapon::A_WeaponReady
-//
-//  The player can fire the weapon or change to another weapon at this time.
-//
-//==========================================================================
-
-void Weapon::A_WeaponReady(void)
-{
-	float angle;
-
-	// Change player from attack state
-	if (Player->MO.StateNum >= Player->MO.MissileState &&
-		Player->MO.StateNum <= PlayerPawn(Player->MO).AttackEndState)
-	{
-		Player->MO.SetState(Player->MO.IdleState);
-	}
-	// Put the weapon away if the player has a pending weapon or has died.
-	if (Player->PendingWeapon != wp_nochange || !Player->Health)
-	{
-		SetPsprite(Player, ps_weapon, GetDownState());
-		return;
-	}
-
-	// Check for fire. 
-	if (Player->Buttons & BT_ATTACK)
-	{
-		Player->bAttackDown = true;
-		P_FireWeapon(Player);
-		return;
-	}
-	else
-	{
-		Player->bAttackDown = false;
-	}
-
-	if (!Player->MorphTime)
-	{
-		// Bob the weapon based on movement speed.
-		angle = AngleMod360(180.0 * level->time);
-		SX = 1.0 + Player->Bob * cos(angle);
-		if (angle >= 180.0)
-		{
-			angle -= 180.0;
-		}
-		SY = WEAPONTOP + Player->Bob * sin(angle);
-	}
-}
-
-//==========================================================================
-//
-//  Weapon::A_Lower
-//
-//==========================================================================
-
-void Weapon::A_Lower(void)
-{
-	if (Player->MorphTime)
-	{
-		SY = WEAPONBOTTOM;
-	}
-	else
-	{
-		//	FIXME!!
-		if (frametime < 1.0 / 35.0)
-			SY += LOWERSPEED;
-		else
-			SY += LOWERSPEED * 35.0 * frametime;
-	}
-	if (SY < WEAPONBOTTOM)
-	{
-		// Not lowered all the way yet
-		return;
-	}
-	if (Player->PlayerState == PST_DEAD)
-	{
-		// Player is dead, so don't bring up a pending weapon
-		SY = WEAPONBOTTOM;
-		return;
-	}
-	if (!Player->Health)
-	{
-		// Player is dead, so keep the weapon off screen
-		SetPsprite(Player, ps_weapon, S_NULL);
-		return;
-	}
-	SetWeapon(Player, Player->PendingWeapon);
-	BringUpWeapon(Player);
-}
-
-//==========================================================================
-//
-//  Weapon::A_Raise
-//
-//==========================================================================
-
-void Weapon::A_Raise(void)
-{
-	//	FIXME!!
-	if (frametime < 1.0 / 35.0)
-		SY -= RAISESPEED;
-	else
-		SY -= RAISESPEED * 35.0 * frametime;
-	if (SY > WEAPONTOP)
-	{
-		// Not raised all the way yet
-		return;
-	}
-	SY = WEAPONTOP;
-	SetPsprite(Player, ps_weapon, GetReadyState());
-}
-
-//==========================================================================
-//
-//  Weapon::A_ReFire
-//
-//  The player can re fire the weapon without lowering it entirely.
-//
-//==========================================================================
-
-void Weapon::A_ReFire(void)
-{
-	if ((Player->Buttons & BT_ATTACK) &&
-		Player->PendingWeapon == wp_nochange && Player->Health)
-	{
-		Player->Refire++;
-		P_FireWeapon(Player);
-	}
-	else
-	{
-		Player->Refire = 0;
-		P_CheckMana(Player);
-	}
-}
-
-//==========================================================================
-//
-//  Weapon::A_Light0
-//
-//==========================================================================
-
-void Weapon::A_Light0(void)
-{
-	Player->ExtraLight = 0;
-}
-
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/11/02 08:24:12  dj_jl
+//  New style classes.
+//
 //  Revision 1.18  2002/09/07 16:28:26  dj_jl
 //  Added Level class.
 //

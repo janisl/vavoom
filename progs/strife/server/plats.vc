@@ -60,105 +60,6 @@ enum
 
 // CODE --------------------------------------------------------------------
 
-class Platform:SectorMover
-{
-	int type;
-	int tag;
-	float speed;
-	float low;
-	float high;
-	float time;
-	float wait;
-	int status;
-	int oldstatus;
-
-//==========================================================================
-//
-//	Tick
-//
-//  Move a plat up and down
-//
-//==========================================================================
-
-void Tick(float deltaTime)
-{
-	int res;
-
-	switch (status)
-	{
-	case PLAT_UP:
-		res = T_MovePlane(sector, speed * deltaTime, high, false, 0, 1);
-
-		if (res == RES_CRUSHED)
-		{
-			time = wait;
-			status = PLAT_DOWN;
-			SectorStartSoundName(sector, 'PlatformStart', CHAN_VOICE);
-		}
-		else if (res == RES_PASTDEST)
-		{
-			time = wait;
-			status = PLAT_WAITING;
-			SectorStartSoundName(sector, 'PlatformStop', CHAN_VOICE);
-
-			switch (type)
-			{
-			case PLAT_DOWNWAITUPSTAY:
-			case PLAT_DOWNWAITUPSTAYLIP:
-			case PLAT_DOWNBYVALUEWAITUPSTAY:
-				sector->SpecialData = none;
-				TagFinished(sector->tag);
-				RemoveSpecialThinker(self);
-				break;
-
-			default:
-				break;
-			}
-		}
-		break;
-
-	case PLAT_DOWN:
-		res = T_MovePlane(sector, speed * deltaTime, low, false, 0, -1);
-
-		if (res == RES_PASTDEST)
-		{
-			time = wait;
-			status = PLAT_WAITING;
-			SectorStartSoundName(sector, 'PlatformStop', CHAN_VOICE);
-			switch (type)
-			{
-			case PLAT_UPWAITDOWNSTAY:
-			case PLAT_UPBYVALUEWAITDOWNSTAY:
-				sector->SpecialData = none;
-				TagFinished(sector->tag);
-				RemoveSpecialThinker(self);
-				break;
-			default:
-				break;
-			}
-		}
-		break;
-
-	case PLAT_WAITING:
-		time -= deltaTime;
-		if (time <= 0.0)
-		{
-			time = 0.0;
-			if (sector->floorheight == low)
-				status = PLAT_UP;
-			else
-				status = PLAT_DOWN;
-			SectorStartSoundName(sector, 'PlatformStart', CHAN_VOICE);
-		}
-		break;
-
-	case PLAT_IN_STASIS:
-		break;
-	}
-}
-
-}
-
 //==========================================================================
 //
 //  P_ActivateInStasis
@@ -312,6 +213,9 @@ int EV_StopPlat(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/11/02 08:22:38  dj_jl
+//  New style classes.
+//
 //  Revision 1.13  2002/09/07 16:28:26  dj_jl
 //  Added Level class.
 //

@@ -36,11 +36,6 @@ enum
 
 // TYPES -------------------------------------------------------------------
 
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-void ControlResponse(int key);
-void QuitResponse(int ch);
-
 // DATA DECLARATIONS -------------------------------------------------------
 
 //
@@ -156,6 +151,9 @@ bool MB_Active(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/11/02 08:20:56  dj_jl
+//  New style classes.
+//
 //  Revision 1.7  2002/09/07 16:28:26  dj_jl
 //  Added Level class.
 //

@@ -1,0 +1,68 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MenuScreenPlayerSetup:MenuScreen;
+
+MenuChoice_PlayerName PlayerName;
+MenuChoice_Color Color;
+MenuSpriteAnim Anim;
+
+void CreateChoices(void)
+{
+	PlayerName = MenuChoice_PlayerName(NewChild(MenuChoice_PlayerName));
+	PlayerName.SetPos(ChoicesStartX, ChoicesStartY);
+	ChoicesStartY += PlayerName.Height;
+
+	Color = MenuChoice_Color(NewChild(MenuChoice_Color));
+	Color.SetPos(ChoicesStartX, ChoicesStartY);
+	ChoicesStartY += Color.Height;
+
+	R_InstallSprite("PLAY", 500);
+
+	Anim = MenuSpriteAnim(NewChild(MenuSpriteAnim));
+	Anim.SetPos(200, 120);
+	Anim.SprDef = 500;
+	Anim.Speed = 8;
+	Anim.NumFrames = 4;
+	Anim.Translation = Color.Value;
+	Color.Anim = Anim;
+}
+
+defaultproperties
+{
+	Choices[0] = MenuChoice_PlayerName;
+	ChoicesStartX = 16;
+	ChoicesStartY = 40;
+	SelectorType = MenuSelector_SmallLeft;
+	Title = "PLAYER SETUP";
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:52  dj_jl
+//  New style classes.
+//
+//**************************************************************************

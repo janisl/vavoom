@@ -1,0 +1,50 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class LogInWater:Decoration
+	__mobjinfo__(215);
+
+__states__
+{
+	S_LOGG_1('LOGG', 0, 5.0 / 35.0, S_LOGG_2) { A_ActiveSound(); }
+	S_LOGG_2('LOGG', 1, 5.0 / 35.0, S_LOGG_3) { A_ActiveSound(); }
+	S_LOGG_3('LOGG', 2, 5.0 / 35.0, S_LOGG_4) { A_ActiveSound(); }
+	S_LOGG_4('LOGG', 3, 5.0 / 35.0, S_LOGG_1) { A_ActiveSound(); }
+}
+
+defaultproperties
+{
+	bNoBlockmap = true;
+	IdleState = S_LOGG_1;
+	ActiveSound = 'RiverFlow';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:56  dj_jl
+//  New style classes.
+//
+//**************************************************************************

@@ -25,8 +25,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define USERANGE 			64.0
-
 // CONSTANTS ---------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
@@ -36,115 +34,6 @@
 // DATA DECLARATIONS -------------------------------------------------------
 
 // CODE --------------------------------------------------------------------
-
-//==========================================================================
-//
-//  Actor::HeightClip
-//
-//  Takes a valid thing and adjusts the thing->FloorZ, thing->CeilingZ, and
-// possibly thing->z. This is called for all nearby monsters whenever a
-// sector changes height. If the thing doesn't fit, the z will be set to the
-// lowest value and false will be returned.
-//
-//==========================================================================
-
-bool Actor::HeightClip(void)
-{
-	bool onfloor;
-
-	onfloor = (Origin.z == FloorZ);
-
-	CheckRelPosition(Origin);
-	// what about stranding a monster partially off an edge?
-
-	FloorZ = tmtrace->FloorZ;
-	CeilingZ = tmtrace->CeilingZ;
-	Floor = tmtrace->Floor;
-	Ceiling = tmtrace->Ceiling;
-
-	if (onfloor)
-	{
-		// walking monsters rise and fall with the floor
-		if ((Origin.z - FloorZ < 9.0) || bNoGravity)
-		{
-			Origin.z = FloorZ;
-		}
-	}
-	else
-	{
-		// don't adjust a floating monster unless forced to
-		if (Origin.z + Height > CeilingZ)
-			Origin.z = CeilingZ - Height;
-	}
-
-	if (CeilingZ - FloorZ < Height)
-		return false;
-
-	return true;
-}
-
-//==========================================================================
-//
-//	Actor::SectorChanged
-//
-//==========================================================================
-
-bool Actor::SectorChanged(int CrushChange)
-{
-	Actor B;
-
-	if (HeightClip())
-	{
-		return true;
-	}
-
-	//	Crunch bodies to giblets
-	if (bCorpse && (Health <= 0))
-	{
-		if (bNoBlood)
-		{
-			Remove();
-		}
-		else
-		{
-			if (StateNum != S_GIBS1)
-			{
-				SetState(S_GIBS1);
-				Height = 0.0;
-				Radius = 0.0;
-				PlaySound('PlayerFallingSplat', CHAN_VOICE);
-			}
-		}
-		return true;
-	}
-
-	//	Crunch dropped items
-	if (bDropped)
-	{
-		Remove();
-		return true;
-	}
-
-	if (!bShootable)
-	{
-		//	Assume it is bloody gibs or something
-		return true;
-	}
-
-	if (CrushChange && !(level->tictime & 3))
-	{
-		Damage(none, none, CrushChange);
-
-		// spray blood in a random direction
-		if (!bNoBlood && !bInvulnerable)
-		{
-			B = Spawn(Blood, Origin + vector(0.0, 0.0, Height / 2.0));
-			B.Velocity.x = (Random() - Random()) * 16.0 * 35.0;
-			B.Velocity.y = (Random() - Random()) * 16.0 * 35.0;
-		}
-	}
-	return false;	//don't fit
-}
 
 //**************************************************************************
 //
@@ -773,7 +662,7 @@ bool PTR_ShootTraverse(intercept_t * in)
 		if (PuffType == FlamePuff2)
 		{
 			// Cleric FlameStrike does fire damage
-			th.Damage(LavaInflictor, shoot_thing, la_damage);
+			th.Damage(GLavaInflictor, shoot_thing, la_damage);
 		}
 		else
 		{
@@ -988,6 +877,9 @@ void PIT_ThrustSpike(Actor actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.31  2002/11/02 08:24:10  dj_jl
+//  New style classes.
+//
 //  Revision 1.30  2002/09/07 16:28:26  dj_jl
 //  Added Level class.
 //

@@ -1,0 +1,66 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class WeaponFlamethrower:Weapon;
+
+//==========================================================================
+//
+//	A_FireFlamethrower
+//
+//==========================================================================
+
+void A_FireFlamethrower(void)
+{
+	Player->Ammo[Ammo]--;
+	PlayerPawn(Player->MO).SpawnPlayerMissile(FlameFX1);
+}
+
+__states__
+{
+	S_FLAME('FLMT', 0, 3.0 / 35.0, S_FLAME01) { A_WeaponReady(); }
+	S_FLAME01('FLMT', 1, 3.0 / 35.0, S_FLAME) { A_WeaponReady(); }
+	S_FLAMEDOWN('FLMT', 0, 1.0 / 35.0, S_FLAMEDOWN) { A_Lower(); }
+	S_FLAMEUP('FLMT', 0, 1.0 / 35.0, S_FLAMEUP) { A_Raise(); }
+	S_FLAME1('FLMF', 0, 2.0 / 35.0, S_FLAME2) { A_FireFlamethrower(); }
+	S_FLAME2('FLMF', 1, 3.0 / 35.0, S_FLAME) { A_ReFire(); }
+}
+
+defaultproperties
+{
+	Ammo = am_cell;
+	UpState = S_FLAMEUP;
+	DownState = S_FLAMEDOWN;
+	ReadyState = S_FLAME;
+	AttackState = S_FLAME1;
+	FlashState = S_LIGHTDONE;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:57  dj_jl
+//  New style classes.
+//
+//**************************************************************************

@@ -1,0 +1,171 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class PolyobjDoor:PolyobjThinker;
+
+int type;
+float speed;
+float dist;
+float xSpeed;	// for sliding walls
+float ySpeed;
+float totalDist;
+float time;
+float waitTime;
+bool bClose;
+
+//==========================================================================
+//
+//  Tick
+//
+//==========================================================================
+
+void Tick(float deltaTime)
+{
+	polyobj_t *poly;
+	float move;
+
+	if (time)
+	{
+		time -= deltaTime;
+		if (time <= 0.0)
+		{
+			time = 0.0;
+			poly = GetPolyobj(polyobj);
+			PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
+		}
+		return;
+	}
+	switch (type)
+	{
+	case PODOOR_SLIDE:
+		move = speed * deltaTime;
+		if (PO_MovePolyobj(polyobj, move * xSpeed, move * ySpeed))
+		{
+			dist -= fabs(move);
+			if (dist <= 0.0)
+			{
+				poly = GetPolyobj(polyobj);
+				PolyobjStopSequence(poly);
+				if (!bClose)
+				{
+					dist = totalDist;
+					bClose = true;
+					time = waitTime;
+					xSpeed = -xSpeed;
+					ySpeed = -ySpeed;
+				}
+				else
+				{
+					if (poly->SpecialData == self)
+					{
+						poly->SpecialData = none;
+					}
+					PolyobjFinished(poly->tag);
+					RemoveSpecialThinker(self);
+				}
+			}
+		}
+		else
+		{
+			poly = GetPolyobj(polyobj);
+			if (poly->bCrush || !bClose)
+			{
+				// continue moving if the poly is a crusher, or is opening
+				return;
+			}
+			else
+			{
+				// open back up
+				dist = totalDist - dist;
+				xSpeed = -xSpeed;
+				ySpeed = -ySpeed;
+				bClose = false;
+				PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
+			}
+		}
+		break;
+
+	case PODOOR_SWING:
+		move = speed * deltaTime;
+		if (PO_RotatePolyobj(polyobj, move))
+		{
+			dist -= fabs(move);
+			if (dist <= 0.0)
+			{
+				poly = GetPolyobj(polyobj);
+				PolyobjStopSequence(poly);
+				if (!bClose)
+				{
+					dist = totalDist;
+					bClose = true;
+					time = waitTime;
+					speed = -speed;
+				}
+				else
+				{
+					if (poly->SpecialData == self)
+					{
+						poly->SpecialData = none;
+					}
+					PolyobjFinished(poly->tag);
+					RemoveSpecialThinker(self);
+				}
+			}
+		}
+		else
+		{
+			poly = GetPolyobj(polyobj);
+			if (poly->bCrush || !bClose)
+			{
+				// continue moving if the poly is a crusher, or is opening
+				return;
+			}
+			else
+			{
+				// open back up and rewait
+				dist = totalDist - dist;
+				speed = -speed;
+				bClose = false;
+				PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
+			}
+		}
+		break;
+
+	default:
+		break;
+	}
+}
+
+defaultproperties
+{
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:56  dj_jl
+//  New style classes.
+//
+//**************************************************************************

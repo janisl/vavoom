@@ -96,6 +96,56 @@ enum
 //#define POLY_SEQ_NAME(num)		va("Sequence%d", num)
 #define POLY_SEQ_NAME(num)		'Sequence0'
 
+//
+// --------- Inter -------------
+//
+
+#define BONUSADD	0.2
+
+//
+// -------- User ---------
+//
+
+#define INVERSECOLORMAP		32
+
+//
+//  PALETTE MACROS
+//
+
+// Palette indices.
+// For damage/bonus red-/gold-shifts
+#define STARTREDPALS		1
+#define STARTBONUSPALS		9
+#define NUMREDPALS			8
+#define NUMBONUSPALS		4
+// Radiation suit, green shift.
+#define RADIATIONPAL		13
+
+//
+// ---------- Mobj -----------
+//
+
+#define ITEMQUESIZE		128
+
+//
+// ----------- Physics --------
+//
+
+#define MAXMOVE			1050.0
+#define STOPSPEED		2.1875
+#define FRICTION		3.28125
+#define FRICTION_WATER	3.0
+
+#define BOUNCE_VAL		1.5
+
+#define FLOATSPEED		140.0
+
+//
+// --------- UserSubs -------
+//
+
+#define	BODYQUESIZE				32
+
 // CONSTANTS ---------------------------------------------------------------
 
 enum
@@ -209,341 +259,6 @@ enum
 
 // TYPES -------------------------------------------------------------------
 
-class Actor:Entity
-	abstract
-{
-	//  States
-	int IdleState;
-	int SeeState;
-	int MeleeState;
-	int MissileState;
-	int PainState;
-	int DyingState;
-	int DeathState;
-	int GibsDeathState;
-
-	//  Sounds
-	name SightSound;
-	name ActiveSound;
-	name AttackSound;
-	name PainSound;
-	name DeathSound;
-
-	//	Flags
-	bool bSpecial;			// call P_SpecialThing when touched
-	bool bShootable;		// Can be hit.
-	bool bAmbush;
-	bool bJustHit;			// try to attack right back
-	bool bJustAttacked;		// take at least one step before attacking
-	bool bSpawnCeiling;		// hang from ceiling instead of floor
-	// movement flags
-	bool bUnknown6;
-	bool bUnknown5;
-	bool bSlide;			// keep info about sliding along walls
-	bool bUnknown4;
-	bool bMissile;			// don't hit same species, explode on block
-	bool bDropped;			// dropped by a demon, not level spawned
-	bool bNoBlood;			// don't bleed when shot (use puff)
-	bool bCorpse;			// don't stop moving halfway off a step
-	bool bInFloat;			// floating to a height for a move, don't
-							// auto float to target's height
-	bool bSkullFly;			// skull in flight
-	bool bCountKill;		// count towards intermission kill total
-	bool bUnknown1;
-	bool bUnknown2;
-	bool bUnknown3;
-	bool bOnMobj;
-	bool bActivateMCross;	// can activate monster cross lines
-	bool bActivatePCross;	// can activate projectile cross lines
-	bool bDormant;			// thing is dormant
-	bool bWaterJump;
-	bool bNoDeathmatch;
-
-	//  Params
-	float Speed;
-	float StepSpeed;
-	float PainChance;
-	int SpawnHealth;
-	int GibsHealth;
-	name ClassName;
-
-	// Thing being chased/attacked (or NULL),
-	Actor Enemy;
-	// also the originator for missiles.
-	Actor Instigator;
-
-	int MissileDamage;	// For missiles
-
-	// Player number last looked for.
-	int LastLook;
-
-	// For nightmare respawn.
-	mthing_t SpawnSpot;
-
-	// Reaction time: if non 0, don't attack yet.
-	int ReactionCount;
-	// Used by player to freeze a bit after teleporting.
-	float ReactionTime;
-
-	// If >0, the target will be chased
-	// no matter what (even if shot)
-	int Threshold;
-
-	// Movement direction, movement generation (zig-zagging).
-	int MoveDir;	// 0-7
-	int MoveCount;	// when 0, select a new dir
-
-	// Identifier in conversation scripts, originaly index into mobjinfo.
-	int ConversationID;
-	int CurrentSpeech;	// Current speech index.
-
-	void HideSpecial(void);
-	void TouchSpecial(Actor Toucher);
-
-	bool Touch(Entity Other);
-	void CrossSpecialLine(line_t *ld, int side);
-
-	void Tick(float deltaTime);
-	void OnMapSpawn(mthing_t *mthing);
-
-	void SetOrigin2(TVec origin);
-	void ExplodeMissile(void);
-	void CheckMissileSpawn(void);
-	Actor SpawnMissile(Actor dest, classid type);
-	void Died(Actor source);
-	void Damage(Actor inflictor, Actor source, int damage);
-	void NightmareRespawn(void);
-
-	bool TeleportMove(TVec org);
-	int Teleport(float x, float y, float angle);
-
-	void Thrust(float angle, float move);
-
-	// Physics
-	void XYMovement(void);
-	void ZMovement(void);
-	void ApplyFriction(void);
-	void PlayerLandedOnThing(void);
-	bool Physics(void);
-
-	bool HeightClip(void);
-	bool SectorChanged(int CrushChange);
-	void RadiusAttack(int damage, int distance, bool damageSource);
-
-	int CheckMeleeRange(void);
-	int CheckMissileRange(void);
-	bool LookForMonsters(bool allaround);
-	bool LookForPlayers(bool allaround);
-	bool StepMove(void);
-	bool TryWalk(void);
-	void NewChaseDir(void);
-
-	// Action functions
-	void A_Unknown24(void);
-	void A_Unknown25(void);
-	void A_DecReactionCount(void);
-	void A_Unknown27(void);
-	void A_FireGrenadeExplode(void);
-	void A_Explode2(void);
-	void A_Unknown30(void);
-	void A_Unknown31(void);
-	void A_Unknown32(void);
-	void A_RocketTrail(void);
-	void A_Unknown34(void);
-	void A_ActiveSound(void);
-	void A_MaulerTorpedoExplode(void);
-	void A_Explode(void);
-	void A_Pain(void);
-	void A_PlayerScream(void);
-	void A_Fall(void);
-	void A_XDying(void);
-	void A_XScream(void);
-	void A_Stand(void);
-	void A_Scream(void);
-	void A_Burn(void);
-	void A_Walk(void);
-	void A_Dying(void);
-	void A_FaceTarget(void);
-	void A_ResetHealth(void);
-	void A_Unknown54(void);
-	void A_Unknown55(void);
-	void A_Unknown56(void);
-	void A_Look(void);
-	void A_Chase(void);
-	void A_CheckRefire(void);
-	void A_RiffleAttack(void);
-	void A_RobotMelee(void);
-	void A_RobotMissile(void);
-	void A_Unknown64(void);
-	void A_Unknown72(void);
-	void A_FlightChase(void);
-	void A_SpecterMelee(void);
-	void A_SpecterAttack(void);
-	void A_SpecterDying(void);
-	void A_SpecterDeath(void);
-	void A_Specter2Attack(void);
-	void A_Specter3Attack(void);
-	void A_Specter4Attack(void);
-	void A_Specter5Attack(void);
-	void A_Unknown90(void);
-	void A_Unknown91(void);
-	void A_Unknown92(void);
-	void A_FlameFXExplode(void);
-	void A_CheckAlarm(void);
-	void A_AlarmActive(void);
-	void A_Unknown110(void);
-	void A_SpawnPuff(void);
-	void A_Unknown112(void);
-	void A_Unknown113(void);
-	void A_Unknown114(void);
-	void A_SummonRebel(void);
-
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		MaxStepHeight = 16.0;
-		ReactionCount = 8;
-	}
-}
-
-class Pawn:Actor
-	abstract
-{
-	bool bCkeckNoMonsters;
-
-	void OnMapSpawn(mthing_t *mthing);
-
-	defaultproperties
-	{
-		Health = 0;
-		Radius = 0.0;
-		Height = 0.0;
-		Mass = 0.0;
-		bSolid = true;
-		bShootable = true;
-		bCountKill = true;
-		bCkeckNoMonsters = true;
-		bActivateMCross = true;
-	}
-}
-
-class PlayerPawn:Pawn
-	abstract
-{
-	bool GiveAmmo(int ammo, int num);
-	bool GiveWeapon(int weapon, bool dropped);
-	bool GiveBody(int num);
-	bool GiveArmor(int armortype);
-	bool GiveKey(int key);
-	bool GiveItem(int item);
-	bool GivePower(int power);
-
-	void ThrustPlayer(float angle, float move, float deltaTime);
-	void CalcHeight(float deltaTime);
-	void MovePlayer(float deltaTime);
-	void CheckWaterJump(void);
-	void WaterMove(float deltaTime);
-	void WaterJump(void);
-	void PlayerInSpecialSector(void);
-	void PlayerInContents(void);
-	void DeathPlayerTick(float deltaTime);
-	void PlayerImpulse(void);
-	void PlayerTick(float deltaTime);
-	void PaletteFlash(void);
-	void SetViewPos(void);
-
-	void SetPlayerRunState(void);
-	Actor SpawnPlayerMissile(classid type);
-
-	defaultproperties
-	{
-		ReactionCount = 0;
-		bCountKill = false;
-		bCkeckNoMonsters = false;
-		bActivateMCross = false;
-	}
-}
-
-class Pickup:Actor
-	abstract
-{
-	name PickupSound;
-	string PickupString;
-
-	bool ValidTouch(Actor Toucher);
-	bool HandlePickup(Actor Toucher);
-	void HideSpecial(void);
-	void TouchSpecial(Actor Toucher);
-
-	defaultproperties
-	{
-		Height = 8.0;
-		bSpecial = true;
-		PickupSound = 'PickupItem';
-		PickupString = "Item";
-	}
-}
-
-class Projectile:Actor
-	abstract
-{
-	defaultproperties
-	{
-		bMissile = true;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bActivateMCross = true;
-	}
-}
-
-class Effect:Actor
-{
-	defaultproperties
-	{
-		bNoBlockmap = true;
-		bNoGravity = true;
-	}
-}
-
-class Decoration:Actor
-	abstract
-{
-	defaultproperties
-	{
-	}
-}
-
-class Weapon:ViewEntity
-{
-	int Ammo;
-	int UpState;
-	int DownState;
-	int ReadyState;
-	int AttackState;
-	int HoldAttackState;
-	int FlashState;
-
-	void A_GunFlash(void);
-
-	void A_Light0(void);
-	void A_WeaponReady(void);
-	void A_Lower(void);
-	void A_Raise(void);
-	void A_ReFire(void);
-	void A_7(void);
-	void A_CheckReload(void);
-	void A_Light1(void);
-	void A_Light2(void);
-
-	defaultproperties
-	{
-	}
-}
-
 addfields player_t
 {
 	int Ammo[NUMAMMO];
@@ -625,6 +340,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.42  2002/11/02 08:22:38  dj_jl
+//  New style classes.
+//
 //  Revision 1.41  2002/09/07 16:28:26  dj_jl
 //  Added Level class.
 //

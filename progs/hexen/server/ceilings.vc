@@ -51,74 +51,6 @@ enum
 
 // CODE --------------------------------------------------------------------
 
-class CeilingMover:SectorMover
-{
-	int type;
-	float topheight;
-	float speed;
-	int direction;
-	float bottomheight;
-	int crush;
-	int tag;	// ID
-
-//==========================================================================
-//
-//	Tick
-//
-//==========================================================================
-
-void Tick(float deltaTime)
-{
-	int res;
-
-	switch (direction)
-	{
-	case 1:	// UP
-		res = T_MovePlane(sector, speed * deltaTime,
-			topheight, false, 1, direction);
-		if (res == RES_PASTDEST)
-		{
-			SectorStopSequence(sector);
-			switch (type)
-			{
-			case CLEV_CRUSHANDRAISE:
-				direction = -1;
-				speed = speed * 2.0;
-				break;
-			default:
-				sector->SpecialData = none;
-				TagFinished(sector->tag);
-				RemoveSpecialThinker(self);
-				break;
-			}
-		}
-		break;
-	case -1:	// DOWN
-		res = T_MovePlane(sector, speed * deltaTime,
-			bottomheight, crush, 1, direction);
-		if (res == RES_PASTDEST)
-		{
-			SectorStopSequence(sector);
-			switch (type)
-			{
-			case CLEV_CRUSHANDRAISE:
-			case CLEV_CRUSHRAISEANDSTAY:
-				direction = 1;
-				speed = speed / 2.0;
-				break;
-			default:
-				sector->SpecialData = none;
-				TagFinished(sector->tag);
-				RemoveSpecialThinker(self);
-				break;
-			}
-		}
-		break;
-	}
-}
-
-}
-
 //==================================================================
 //
 //  EV_DoCeiling
@@ -250,6 +182,9 @@ int EV_CeilingCrushStop(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/11/02 08:24:10  dj_jl
+//  New style classes.
+//
 //  Revision 1.13  2002/09/07 16:28:26  dj_jl
 //  Added Level class.
 //

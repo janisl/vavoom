@@ -1,0 +1,58 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class AcolyteArmor:AcolyteBase
+	__mobjinfo__(201);
+
+void A_AcolyteArmorPain(void)
+{
+}
+
+__states__
+{
+	S_ACOLYTEARM_STAND('ARMR', 0, -1.0, S_NULL) { }
+	S_ACOLYTEARM_PAIN('ARMR', 0, -1.0, S_NULL) { A_AcolyteArmorPain(); }
+}
+
+defaultproperties
+{
+	Health = 61;
+	Radius = 20.0;
+	Height = 56.0;
+	Mass = 100.0;
+	PainChance = 1.0;
+	IdleState = S_ACOLYTEARM_STAND;
+	PainState = S_ACOLYTEARM_PAIN;
+	DeathState = S_ACOLYTE_XDIE1;
+	DeathSound = 'PeasantDeath';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:56  dj_jl
+//  New style classes.
+//
+//**************************************************************************

@@ -1,0 +1,52 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class SigilFloor:Effect;
+
+__states__
+{
+	S_SIGIL_FLOOR_1('ZAP5', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FLOOR_2) { A_DecReactionCount(); }
+	S_SIGIL_FLOOR_2('ZAP5', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FLOOR_3) { A_Unknown92(); }
+	S_SIGIL_FLOOR_3('ZAP5', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FLOOR_4) { A_DecReactionCount(); }
+	S_SIGIL_FLOOR_4('ZAP5', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FLOOR_1) { A_DecReactionCount(); }
+}
+
+defaultproperties
+{
+	Speed = 630.0;
+	ReactionCount = 70;
+	Translucency = 66;
+	bNoGravity = false;
+	IdleState = S_SIGIL_FLOOR_1;
+	DeathState = S_ZAP1_0;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:57  dj_jl
+//  New style classes.
+//
+//**************************************************************************

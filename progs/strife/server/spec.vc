@@ -37,12 +37,6 @@ struct tagged_line_t
 	int lineTag;
 };
 
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-bool EV_Teleport(int tag, Actor thing, bool usefog);
-bool EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
-							bool reverse);
-
 // DATA DECLARATIONS -------------------------------------------------------
 
 //
@@ -819,6 +813,9 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/11/02 08:22:38  dj_jl
+//  New style classes.
+//
 //  Revision 1.21  2002/09/07 16:28:26  dj_jl
 //  Added Level class.
 //

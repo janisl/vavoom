@@ -1,0 +1,177 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MenuSList:MenuChoice;
+
+int Cursor;
+slist_t* slist;
+
+void InitWindow(void)
+{
+	::InitWindow();
+	StartSearch();
+}
+
+void DrawTextBox(GC gc, string text)
+{
+	int x;
+	int y;
+	int w;
+	int h;
+
+	// Horiz. & Vertically center string and print it.
+	T_SetFont(font_small);
+	T_SetAlign(hcenter, vcenter);
+
+	w = (T_TextWidth(text) + 16) & ~15;
+	h = (T_TextHeight(text) + 16) & ~15;
+	if (w > 304)
+		w = 304;
+	if (h > 184)
+		h = 184;
+	x = (320 - w) / 2;
+	y = (200 - h) / 2;
+
+	R_FillRectWithFlat(x, y, w, h, "F_PAVE01");
+	DrawBorder(x, y, w, h);
+
+	gc.DrawText(160, 100, text);
+}
+
+void DrawWindow(GC gc)
+{
+	int i;
+	int x;
+	int y;
+	int w;
+
+	slist = GetSlist();
+
+	T_SetFont(font_small);
+	T_SetAlign(hleft, vtop);
+	for (i = 0; i < slist->count; i++)
+	{
+		gc.DrawText(16, 32 + 10 * i, ARR2STR(slist->cache[i].Name));
+		gc.DrawText(16 + 128, 32 + 10 * i, ARR2STR(slist->cache[i].map));
+		if (slist->cache[i].maxusers)
+		{
+			gc.DrawText(16 + 256, 32 + 10 * i, va("%d/%d",
+				slist->cache[i].users, slist->cache[i].maxusers));
+		}
+	}
+	gc.DrawText(8, 32 + Cursor * 10, ">");
+
+	if (slist->return_reason[0])
+		gc.DrawText(16, 116, ARR2STR(slist->return_reason));
+
+	if (slist->count)
+	{
+		x = 8;
+		y = 124;
+		for (i = 0; i < 20 && slist->cache[Cursor].wadfiles[i][0]; i++)
+		{
+			w = T_TextWidth(ARR2STR(slist->cache[Cursor].wadfiles[i]));
+			if (x + w > 312)
+			{
+				x = 8;
+				y += 9;
+				if (y > 190)
+					break;
+			}
+			gc.DrawText(x, y, ARR2STR(slist->cache[Cursor].wadfiles[i]));
+			x += w + 8;
+		}
+	}
+
+	if (slist->bInProgress)
+	{
+		DrawTextBox(gc, "Searching...");
+	}
+	else if (!slist->count)
+	{
+		DrawTextBox(gc, "No servers found");
+	}
+}
+
+bool Key(int key)
+{
+	slist = GetSlist();
+
+	if (slist->bInProgress)
+	{
+		return true;
+	}
+
+	switch (key)
+	{
+	case K_DOWNARROW:
+		if (slist->count)
+		{
+			Cursor++;
+			if (Cursor >= slist->count)
+				Cursor = 0;
+			LocalSound('MenuMove');
+		}
+		return true;
+
+	case K_UPARROW:
+		if (slist->count)
+		{
+			Cursor--;
+			if (Cursor < 0)
+				Cursor = slist->count - 1;
+			LocalSound('MenuMove');
+		}
+		return true;
+
+	case K_ENTER:
+	case K_PADENTER:
+		if (slist->count)
+		{
+			LocalSound('MenuSelect');
+			CmdBuf_AddText("connect \"%s\"\n",
+				ARR2STR(slist->cache[Cursor].cname));
+		}
+		return true;
+
+	case K_SPACE:
+		Cursor = 0;
+		StartSearch();
+		return true;
+	}
+	return false;
+}
+
+defaultproperties
+{
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:53  dj_jl
+//  New style classes.
+//
+//**************************************************************************

@@ -1,0 +1,1017 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class PlayerPawn:Pawn
+	abstract;
+
+//==========================================================================
+//
+//  GiveAmmo
+//
+//  Num is the number of clip loads, not the individual count (0= 1/2 clip).
+// Returns false if the ammo can't be picked up at all
+//
+//==========================================================================
+
+bool GiveAmmo(int ammo, int num)
+{
+	int oldammo;
+	int max;
+
+	if (ammo == am_noammo)
+		return false;
+
+	if (ammo < 0 || ammo > NUMAMMO)
+//      I_Error ("P_GiveAmmo: bad type %i", ammo);
+		Error("P_GiveAmmo: bad type");
+
+	max = Player->Backpack ? maxammo[ammo] * 2 : maxammo[ammo];
+	if (Player->Ammo[ammo] == max)
+		return false;
+
+	if (num)
+		num *= clipammo[ammo];
+	else
+		num = clipammo[ammo] / 2;
+
+	if (gameskill == sk_baby || gameskill == sk_nightmare)
+	{
+		// give double ammo in trainer mode,
+		// you'll need in nightmare
+		num <<= 1;
+	}
+
+	oldammo = Player->Ammo[ammo];
+	Player->Ammo[ammo] += num;
+
+	if (Player->Ammo[ammo] > max)
+		Player->Ammo[ammo] = max;
+
+	// If non zero ammo, 
+	// don't change up weapons,
+	// player was lower on purpose.
+	if (oldammo)
+		return true;
+
+	// We were down to zero,
+	// so select a new weapon.
+	// Preferences are not user selectable.
+	switch (ammo)
+	{
+	case am_clip:
+		if (Player->ReadyWeapon == wp_fist)
+		{
+			if (Player->WeaponOwned[wp_riffle])
+				Player->PendingWeapon = wp_riffle;
+		}
+		break;
+
+	case am_electric_arrow:
+		if (Player->ReadyWeapon == wp_fist)
+		{
+			if (Player->WeaponOwned[wp_crossbow])
+				Player->PendingWeapon = wp_crossbow;
+		}
+		break;
+
+	case am_cell:
+		if (Player->ReadyWeapon == wp_fist)
+		{
+			if (Player->WeaponOwned[wp_flame])
+				Player->PendingWeapon = wp_flame;
+		}
+		break;
+
+	case am_misl:
+		if (Player->ReadyWeapon == wp_fist)
+		{
+			if (Player->WeaponOwned[wp_missile])
+				Player->PendingWeapon = wp_missile;
+		}
+	default:
+		break;
+	}
+
+	return true;
+}
+
+//==========================================================================
+//
+//  GiveWeapon
+//
+//  The weapon name may have a MF_DROPPED flag ored in.
+//
+//==========================================================================
+
+bool GiveWeapon(int weapon, bool dropped)
+{
+	bool gaveammo;
+	bool gaveweapon;
+
+	if (netgame && (deathmatch < 2) && !dropped)
+	{
+		// leave placed weapons forever on net games
+		if (Player->WeaponOwned[weapon])
+			return false;
+
+		Player->BonusFlash += BONUSADD;
+		Player->WeaponOwned[weapon] = true;
+
+		if (deathmatch)
+			GiveAmmo(weapon_ammo_type[weapon], 5);
+		else
+			GiveAmmo(weapon_ammo_type[weapon], 2);
+		Player->PendingWeapon = weapon;
+
+		PlaySound('PickupWeapon', CHAN_ITEM);
+		return false;
+	}
+
+	if (weapon_ammo_type[weapon] != am_noammo)
+	{
+		// give one clip with a dropped weapon,
+		// two clips with a found weapon
+		if (dropped)
+			gaveammo = GiveAmmo(weapon_ammo_type[weapon], 1);
+		else
+			gaveammo = GiveAmmo(weapon_ammo_type[weapon], 2);
+	}
+	else
+		gaveammo = false;
+
+	if (Player->WeaponOwned[weapon])
+		gaveweapon = false;
+	else
+	{
+		gaveweapon = true;
+		Player->WeaponOwned[weapon] = true;
+		Player->PendingWeapon = weapon;
+	}
+
+	return (gaveweapon || gaveammo);
+}
+
+//==========================================================================
+//
+//	GiveBody
+//
+//	Returns false if the body isn't needed at all
+//
+//==========================================================================
+
+bool GiveBody(int num)
+{
+	if (Health >= MAXHEALTH)
+		return false;
+
+	Health += num;
+	if (Health > MAXHEALTH)
+		Health = MAXHEALTH;
+	Player->Health = Health;
+
+	return true;
+}
+
+//==========================================================================
+//
+//	GiveArmor
+//
+//	Returns false if the armor is worse than the current armor.
+//
+//==========================================================================
+
+bool GiveArmor(int armortype)
+{
+	int hits;
+
+	hits = armortype * 100;
+	if (Player->ArmorPoints >= hits)
+		return false;	// don't pick up
+
+	Player->ArmorType = armortype;
+	Player->ArmorPoints = hits;
+
+	return true;
+}
+
+//==========================================================================
+//
+//	GiveKey
+//
+//==========================================================================
+
+bool GiveKey(int key)
+{
+	if (Player->Keys & (1 << key))
+		return false;
+
+	Player->BonusFlash = BONUSADD;
+	Player->Keys |= 1 << key;
+	return true;
+}
+
+//==========================================================================
+//
+//  GiveItem
+//
+//==========================================================================
+
+bool GiveItem(int item)
+{
+	if (Player->Items & item)
+	{
+		return false;	// already got it
+	}
+
+	Player->Items |= item;
+	return true;
+}
+
+//==========================================================================
+//
+//	GivePower
+//
+//==========================================================================
+
+bool GivePower(int power)
+{
+	if (power == pw_invulnerability)
+	{
+		Player->Powers[power] = INVULNTIME;
+		return true;
+	}
+
+	if (power == pw_invisibility)
+	{
+		Player->Powers[power] = INVISTIME;
+		Translucency = 90;
+		return true;
+	}
+
+	if (power == pw_infrared)
+	{
+		Player->Powers[power] = INFRATIME;
+		return true;
+	}
+
+	if (power == pw_ironfeet)
+	{
+		Player->Powers[power] = IRONTIME;
+		return true;
+	}
+
+	if (power == pw_strength)
+	{
+		GiveBody(100);
+		Player->Powers[power] = 1.0;
+		return true;
+	}
+
+	if (Player->Powers[power])
+		return false;	// already got it
+
+	Player->Powers[power] = 1.0;
+	return true;
+}
+
+//==========================================================================
+//
+//  ThrustPlayer
+//
+//  Moves the given origin along a given angle.
+//
+//==========================================================================
+
+void ThrustPlayer(float angle, float move, float deltaTime)
+{
+	Velocity.x += move * cos(angle) * deltaTime;
+	Velocity.y += move * sin(angle) * deltaTime;
+}
+
+//==========================================================================
+//
+//  CalcHeight
+//
+//  Calculate the walking / running height adjustment
+//
+//==========================================================================
+
+void CalcHeight(float deltaTime)
+{
+	float angle;
+	float Bob;
+
+	// Regular movement bobbing
+	// (needs to be calculated for gun swing
+	// even if not on ground)
+	// OPTIMIZE: tablify angle
+	// Note: a LUT allows for effects
+	//  like a ramp with low health.
+	Player->Bob = Velocity.x * Velocity.x + Velocity.y * Velocity.y;
+	Player->Bob /= 4.0 * 35.0 * 35.0;
+	if (Player->Bob > MAXBOB)
+		Player->Bob = MAXBOB;
+
+	angle = 180.0 * 35.0 / 10.0 * level->time;
+	Bob = Player->Bob / 2.0 * sin(angle);
+
+	// move viewheight
+	if (Player->PlayerState == PST_LIVE)
+	{
+		Player->ViewHeight += Player->DeltaViewHeight * deltaTime;
+
+		if (Player->ViewHeight > VIEWHEIGHT)
+		{
+			Player->ViewHeight = VIEWHEIGHT;
+			Player->DeltaViewHeight = 0.0;
+		}
+
+		if (Player->ViewHeight < VIEWHEIGHT / 2.0)
+		{
+			Player->ViewHeight = VIEWHEIGHT / 2.0;
+			if (Player->DeltaViewHeight <= 0.0)
+				Player->DeltaViewHeight = 0.00001;
+		}
+
+		if (Player->DeltaViewHeight)
+		{
+			Player->DeltaViewHeight += 256.0 * deltaTime;
+			if (!Player->DeltaViewHeight)
+				Player->DeltaViewHeight = 0.00001;
+		}
+	}
+	Player->ViewOrg.z = Origin.z + Player->ViewHeight + Bob;
+
+	if (Player->ViewOrg.z > CeilingZ - 4.0)
+		Player->ViewOrg.z = CeilingZ - 4.0;
+}
+
+//==========================================================================
+//
+//  MovePlayer
+//
+//==========================================================================
+
+void MovePlayer(float deltaTime)
+{
+	float forward;
+	float side;
+
+	// Do not let the player control movement
+	//  if not onground.
+	onground = Origin.z <= FloorZ || bOnMobj;
+
+	forward = Player->ForwardMove * 5.0;
+	side = Player->SideMove * 5.0;
+
+	if (!onground)
+	{
+		forward *= air_control;
+		side *= air_control;
+	}
+
+	if (forward)
+	{
+		ThrustPlayer(Angles.yaw, forward, deltaTime);
+	}
+	if (side)
+	{
+		ThrustPlayer(AngleMod360(Angles.yaw - 90.0), side, deltaTime);
+	}
+
+	if (forward || side)
+	{
+		SetPlayerRunState();
+	}
+
+	if ((Player->Buttons & BT_JUMP) && onground && !Player->JumpTime)
+	{
+		//  Jump
+		Velocity.z = 9.0 * 35.0;
+		Player->JumpTime = 0.5;
+	}
+}
+
+//==========================================================================
+//
+//  CheckWaterJump
+//
+//==========================================================================
+
+void CheckWaterJump(void)
+{
+	TVec start;
+	TVec end;
+	TVec vforward;
+
+	// check for a jump-out-of-water
+	AngleVector(&Angles, &vforward);
+	start = Origin;
+	start.z += Height * 0.5 + 8.0;
+	vforward.z = 0.0;
+	vforward = Normalize(vforward);
+	end = start + vforward * 24.0;
+	if (!TraceLine(start, end))
+	{
+		// solid at waist
+		start.z = Origin.z + Height;
+		end = start + vforward * 24.0;
+		Player->MoveDir = trace_plane_normal * -50.0;
+		if (TraceLine(start, end))
+		{
+			// open at eye level
+			bWaterJump = true;
+			Velocity.z = 320.0;
+			ReactionTime = 2.0;	// safety net
+		}
+	}
+}
+
+//==========================================================================
+//
+//  WaterMove
+//
+//==========================================================================
+
+void WaterMove(float deltaTime)
+{
+	float forward;
+	float side;
+	TVec vforward;
+	TVec vright;
+	TVec vup;
+	TVec wishvel;
+
+	// Do not let the player control movement
+	//  if not onground.
+	onground = Origin.z <= FloorZ || bOnMobj;
+
+	AngleVectors(&Angles, &vforward, &vright, &vup);
+
+	forward = Player->ForwardMove;
+	side = Player->SideMove;
+
+	wishvel = forward * vforward + side * vright;
+	if (!forward && !side /* && !cmd.upmove */ )
+		wishvel.z -= 60.0;	// drift towards bottom
+//  else
+//      wishvel.z += cmd.upmove;
+
+	Velocity += 3.5 * deltaTime * wishvel;
+
+	if (forward || side)
+	{
+		SetPlayerRunState();
+	}
+
+	if (Player->Buttons & BT_JUMP)
+	{
+		if (WaterType == CONTENTS_WATER)
+			Velocity.z = 100.0;
+		else if (WaterType == CONTENTS_SLUDGE)
+			Velocity.z = 80.0;
+		else
+			Velocity.z = 50.0;
+	}
+	CheckWaterJump();
+}
+
+//==========================================================================
+//
+//  WaterJump
+//
+//==========================================================================
+
+void WaterJump(void)
+{
+	if (!ReactionTime || !WaterLevel)
+	{
+		bWaterJump = false;
+		ReactionTime = 0.0;
+	}
+	Velocity.x = Player->MoveDir.x;
+	Velocity.y = Player->MoveDir.y;
+}
+
+//==========================================================================
+//
+//  PlayerInSpecialSector
+//
+//  Called every tic frame that the player origin is in a special sector
+//
+//==========================================================================
+
+void PlayerInSpecialSector(void)
+{
+	// Falling, not all the way down yet?
+	if (Origin.z != Sector->floorheight)
+		return;
+
+	// Has hitten ground.
+	switch (Sector->special)
+	{
+	case 5:
+		// HELLSLIME DAMAGE
+		if (!Player->Powers[pw_ironfeet])
+			if (!(level->tictime & 0x1f))
+				Damage(none, none, 10);
+		break;
+
+	case 7:
+		// NUKAGE DAMAGE
+		if (!Player->Powers[pw_ironfeet])
+			if (!(level->tictime & 0x1f))
+				Damage(none, none, 5);
+		break;
+
+	case 16:
+		// SUPER HELLSLIME DAMAGE
+	case 4:
+		// STROBE HURT
+		if (!Player->Powers[pw_ironfeet] || (P_Random() < 5))
+		{
+			if (!(level->tictime & 0x1f))
+				Damage(none, none, 20);
+		}
+		break;
+
+	case 9:
+		// SECRET SECTOR
+		Player->SecretCount++;
+		Sector->special = 0;
+		break;
+
+	case 11:
+		// EXIT SUPER DAMAGE! (for E1M8 finale)
+		Player->Cheats &= ~CF_GODMODE;
+
+		if (!(level->tictime & 0x1f))
+			Damage(none, none, 20);
+
+		if (Player->Health <= 10)
+			G_ExitLevel();
+		break;
+
+	default:
+		break;
+	};
+}
+
+//==========================================================================
+//
+//  PlayerInContents
+//
+//==========================================================================
+
+void PlayerInContents(void)
+{
+	if (!WaterLevel)
+	{
+		return;
+	}
+	switch (WaterType)
+	{
+	case CONTENTS_SLUDGE:
+		if (!Player->Powers[pw_ironfeet])
+			if (!(level->tictime & 0x1f))
+				Damage(none, none, 10);
+		break;
+
+	case CONTENTS_LAVA:
+		if (!Player->Powers[pw_ironfeet] || (P_Random() < 5))
+		{
+			if (!(level->tictime & 0x1f))
+				Damage(none, none, 20);
+		}
+		break;
+	}
+}
+
+//==========================================================================
+//
+//  DeathPlayerTick
+//
+//  Fall on your face when dying. Decrease POV height to floor height.
+//
+//==========================================================================
+
+void DeathPlayerTick(float deltaTime)
+{
+	float angle;
+	float delta;
+
+	MovePsprites(Player);
+
+	onground = Origin.z <= FloorZ || bOnMobj;
+
+	// fall to the ground
+	if (Player->ViewHeight > 6.0)
+		Player->ViewHeight -= 1.0;
+
+	if (Player->ViewHeight < 6.0)
+		Player->ViewHeight = 6.0;
+
+	Player->DeltaViewHeight = 0.0;
+	CalcHeight(deltaTime);
+
+	if (Player->Attacker && Player->Attacker != this)
+	{
+		angle = atan2(Player->Attacker->Origin.y - Origin.y,
+			Player->Attacker->Origin.x - Origin.x);
+
+		delta = AngleMod180(angle - Angles.yaw);
+
+		if (delta < 5.0 && delta > -5.0)
+		{
+			// Looking at killer,
+			//  so fade damage flash down.
+			Angles.yaw = angle;
+
+			if (Player->DamageFlash)
+			{
+				Player->DamageFlash -= deltaTime;
+				if (Player->DamageFlash <= 0.0)
+					Player->DamageFlash = 0.0;
+			}
+		}
+		else if (delta > 0.0)
+			Angles.yaw += 5.0;
+		else
+			Angles.yaw -= 5.0;
+	}
+	else if (Player->DamageFlash)
+	{
+		Player->DamageFlash -= deltaTime;
+		if (Player->DamageFlash <= 0.0)
+			Player->DamageFlash = 0.0;
+	}
+
+	if (Player->Buttons & BT_USE)
+		Player->PlayerState = PST_REBORN;
+}
+
+//==========================================================================
+//
+//  PlayerImpulse
+//
+//==========================================================================
+
+void PlayerImpulse(void)
+{
+	int impulse;
+
+	impulse = Player->Impulse;
+	Player->Impulse = 0;
+
+	if (impulse <= 8)
+	{
+		ChangeWeapon(Player, impulse - 1);
+	}
+	else if (impulse == 16)
+	{
+		//  Suicide
+		Damage(none, none, 10000);
+	}
+	else if (impulse >= 200 && impulse <= 205)
+	{
+		ConChoiceImpulse(impulse - 200);
+	}
+}
+
+//==========================================================================
+//
+//  PlayerTick
+//
+//==========================================================================
+
+void PlayerTick(float deltaTime)
+{
+	// Copy view angles
+	Angles = Player->ViewAngles;
+
+	// fixme: do this in the cheat code
+	if (Player->Cheats & CF_NOCLIP)
+	{
+		bColideWithThings = false;
+		bColideWithWorld = false;
+	}
+	else
+	{
+		bColideWithThings = true;
+		bColideWithWorld = true;
+	}
+
+	if (bJustAttacked)
+	{
+		Player->ForwardMove = 100.0;
+		Player->SideMove = 0.0;
+		bJustAttacked = false;
+	}
+
+	if (Player->PlayerState == PST_DEAD)
+	{
+		DeathPlayerTick(deltaTime);
+		return;
+	}
+
+	if (Player->JumpTime)
+	{
+		Player->JumpTime -= deltaTime;
+		if (Player->JumpTime <= 0.0)
+			Player->JumpTime = 0.0;
+	}
+
+	// Move around.
+	// Reactiontime is used to prevent movement
+	//  for a bit after a teleport.
+	if (ReactionTime)
+	{
+		ReactionTime -= deltaTime;
+		if (ReactionTime <= 0.0)
+			ReactionTime = 0.0;
+		if (bWaterJump)
+			WaterJump();
+	}
+	else
+	{
+		if (WaterLevel > 1)
+			WaterMove(deltaTime);
+		else
+			MovePlayer(deltaTime);
+	}
+
+	CalcHeight(deltaTime);
+
+	if (Sector->special)
+		PlayerInSpecialSector();
+	PlayerInContents();
+
+	// Check for weapon change.
+	if (Player->Impulse)
+	{
+		PlayerImpulse();
+	}
+
+	// check for use
+	if (Player->Buttons & BT_USE)
+	{
+		if (!Player->bUseDown)
+		{
+			P_UseLines(Player);
+			Player->bUseDown = true;
+		}
+	}
+	else
+	{
+		Player->bUseDown = false;
+	}
+
+	//  cycle psprites
+	MovePsprites(Player);
+
+	//  Counters, time dependend power ups.
+
+	//  Strength counts up to diminish fade.
+	if (Player->Powers[pw_strength])
+		Player->Powers[pw_strength] += deltaTime;
+
+	if (Player->Powers[pw_invulnerability])
+	{
+		Player->Powers[pw_invulnerability] -= deltaTime;
+		if (Player->Powers[pw_invulnerability] <= 0.0)
+			Player->Powers[pw_invulnerability] = 0.0;
+	}
+
+	if (Player->Powers[pw_invisibility])
+	{
+		Player->Powers[pw_invisibility] -= deltaTime;
+		if (Player->Powers[pw_invisibility] <= 0.0)
+		{
+			Player->Powers[pw_invisibility] = 0.0;
+			Translucency = 0;
+		}
+	}
+
+	if (Player->Powers[pw_infrared])
+	{
+		Player->Powers[pw_infrared] -= deltaTime;
+		if (Player->Powers[pw_infrared] <= 0.0)
+			Player->Powers[pw_infrared] = 0.0;
+	}
+
+	if (Player->Powers[pw_ironfeet])
+	{
+		Player->Powers[pw_ironfeet] -= deltaTime;
+		if (Player->Powers[pw_ironfeet] <= 0.0)
+			Player->Powers[pw_ironfeet] = 0.0;
+	}
+
+	if (Player->DamageFlash)
+	{
+		Player->DamageFlash -= deltaTime;
+		if (Player->DamageFlash <= 0.0)
+			Player->DamageFlash = 0.0;
+	}
+
+	if (Player->BonusFlash)
+	{
+		Player->BonusFlash -= deltaTime;
+		if (Player->BonusFlash <= 0.0)
+			Player->BonusFlash = 0.0;
+	}
+
+	// Handling colormaps.
+	if (Player->Powers[pw_invulnerability])
+	{
+		if (Player->Powers[pw_invulnerability] > 4.0 ||
+			(ftoi(4.0 * Player->Powers[pw_invulnerability]) & 1))
+			Player->FixedColormap = INVERSECOLORMAP;
+		else
+			Player->FixedColormap = 0;
+	}
+	else if (Player->Powers[pw_infrared])
+	{
+		if (Player->Powers[pw_infrared] > 4.0 ||
+			(ftoi(4.0 * Player->Powers[pw_infrared]) & 1))
+		{
+			// almost full bright
+			Player->FixedColormap = 1;
+		}
+		else
+			Player->FixedColormap = 0;
+	}
+	else
+		Player->FixedColormap = 0;
+}
+
+//==========================================================================
+//
+//  PaletteFlash
+//
+//  Do red-/gold-shifts from damage/items
+//
+//==========================================================================
+
+void PaletteFlash(void)
+{
+	int cnt;
+	int bzc;
+
+	Player->CShifts[CSHIFT_CONTENTS] = 0;
+	if (WaterLevel == 3)
+	{
+		switch (WaterType)
+		{
+		case CONTENTS_WATER:
+			Player->CShifts[CSHIFT_CONTENTS] = CSHIFT(130, 80, 50, 128);
+			break;
+
+		case CONTENTS_SLUDGE:
+			Player->CShifts[CSHIFT_CONTENTS] = CSHIFT(128, 160, 128, 150);
+			break;
+
+		case CONTENTS_LAVA:
+			Player->CShifts[CSHIFT_CONTENTS] = CSHIFT(255, 80, 0, 150);
+			break;
+		}
+	}
+
+	cnt = ftoi(32.0 * Player->DamageFlash);
+
+	if (Player->Powers[pw_strength])
+	{
+		// slowly fade the berzerk out
+		bzc = 12 - ftoi(Player->Powers[pw_strength] / 2.0);
+
+		if (bzc > cnt)
+			cnt = bzc;
+	}
+
+	if (cnt)
+	{
+		Player->Palette = (cnt + 7) >> 3;
+
+		if (Player->Palette >= NUMREDPALS)
+			Player->Palette = NUMREDPALS - 1;
+
+		Player->Palette += STARTREDPALS;
+	}
+	else if (Player->BonusFlash)
+	{
+		Player->Palette = (ftoi(32.0 * Player->BonusFlash) + 7) >> 3;
+
+		if (Player->Palette >= NUMBONUSPALS)
+			Player->Palette = NUMBONUSPALS - 1;
+
+		Player->Palette += STARTBONUSPALS;
+	}
+	else if (Player->Powers[pw_ironfeet] > 4.0 ||
+		ftoi(4.0 * Player->Powers[pw_ironfeet]) & 1)
+		Player->Palette = RADIATIONPAL;
+	else
+		Player->Palette = 0;
+}
+
+//==========================================================================
+//
+//  SetViewPos
+//
+//==========================================================================
+
+void SetViewPos(void)
+{
+	Player->ViewOrg.x = Origin.x;
+	Player->ViewOrg.y = Origin.y;
+
+	Player->ViewAngles = Angles;
+
+	PaletteFlash();
+
+	if (Weapon(Player->ViewEnts[ps_weapon]).Ammo == am_noammo)
+		Player->ReadyAmmo = 1994;	// means "n/a"
+	else
+		Player->ReadyAmmo = Player->Ammo[
+			Weapon(Player->ViewEnts[ps_weapon]).Ammo];
+}
+
+//==========================================================================
+//
+//  SetPlayerRunState
+//
+//==========================================================================
+
+void SetPlayerRunState(void)
+{
+	if (StateNum == IdleState)
+	{
+		SetState(SeeState);
+	}
+}
+
+//==========================================================================
+//
+//  SpawnPlayerMissile
+//
+//  Tries to aim at a nearby monster
+//
+//==========================================================================
+
+Actor SpawnPlayerMissile(classid type)
+{
+	Actor A;
+	TVec dir;
+
+	// see which target is to be aimed at
+	dir = Aim(self, 16.0 * 64.0);
+
+	A = Spawn(type, Origin + vector(0.0, 0.0, 32.0));
+
+	if (A.SightSound)
+		A.PlaySound(A.SightSound, CHAN_VOICE);
+
+	A.Instigator = self;
+	A.Velocity = dir * A.Speed;
+	VectorAngles(&dir, &A.Angles);
+
+	A.CheckMissileSpawn();
+
+	return A;
+}
+
+defaultproperties
+{
+	ReactionCount = 0;
+	bCountKill = false;
+	bCkeckNoMonsters = false;
+	bActivateMCross = false;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:56  dj_jl
+//  New style classes.
+//
+//**************************************************************************

@@ -1,0 +1,83 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class WeaponGrenadeLauncher:Weapon;
+
+//==========================================================================
+//
+//	A_FireGrenade
+//
+//==========================================================================
+
+void A_FireGrenade(void)
+{
+	// FIXME absolutely wrong
+	Player->Ammo[Ammo]--;
+	PlayerPawn(Player->MO).SpawnPlayerMissile(HEGrenade);
+}
+
+__states__
+{
+	S_GRENADE('GREN', 0, 1.0 / 35.0, S_GRENADE) { A_WeaponReady(); }
+	S_GRENADEDOWN('GREN', 0, 1.0 / 35.0, S_GRENADEDOWN) { A_Lower(); }
+	S_GRENADEUP('GREN', 0, 1.0 / 35.0, S_GRENADEUP) { A_Raise(); }
+	S_GRENADE1('GREN', 0, 5.0 / 35.0, S_GRENADE2) { A_FireGrenade(); }
+	S_GRENADE2('GREN', 1, 10.0 / 35.0, S_GRENADE3) { }
+	S_GRENADE3('GREN', 0, 5.0 / 35.0, S_GRENADE4) { A_FireGrenade(); }
+	S_GRENADE4('GREN', 2, 10.0 / 35.0, S_GRENADE5) { }
+	S_GRENADE5('GREN', 0, 0.0 / 35.0, S_GRENADE) { A_ReFire(); }
+	S_GRENADEFLASH1('GREF', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_LIGHTDONE) { A_Light1(); }
+	S_GRENADEFLASH2('GREF', 0, 10.0 / 35.0, S_LIGHTDONE) { A_Light0(); }
+	S_GRENADEFLASH3('GREF', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_LIGHTDONE) { A_Light2(); }
+	S_GRENADEHIGH('GREN', 3, 1.0 / 35.0, S_GRENADEHIGH) { A_WeaponReady(); }
+	S_GRENADEHIGHDOWN('GREN', 3, 1.0 / 35.0, S_GRENADEHIGHDOWN) { A_Lower(); }
+	S_GRENADEHIGHUP('GREN', 3, 1.0 / 35.0, S_GRENADEHIGHUP) { A_Raise(); }
+	S_GRENADEHIGH1('GREN', 3, 5.0 / 35.0, S_GRENADEHIGH2) { A_FireGrenade(); }
+	S_GRENADEHIGH2('GREN', 4, 10.0 / 35.0, S_GRENADEHIGH3) { }
+	S_GRENADEHIGH3('GREN', 3, 5.0 / 35.0, S_GRENADEHIGH4) { A_FireGrenade(); }
+	S_GRENADEHIGH4('GREN', 5, 10.0 / 35.0, S_GRENADEHIGH5) { }
+	S_GRENADEHIGH5('GREN', 0, 0.0 / 35.0, S_GRENADEHIGH) { A_ReFire(); }
+	S_GRENADEHIGHFLASH1('GREF', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_LIGHTDONE) { A_Light1(); }
+	S_GRENADEHIGHFLASH2('GREF', 2, 10.0 / 35.0, S_LIGHTDONE) { A_Light0(); }
+	S_GRENADEHIGHFLASH3('GREF', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_LIGHTDONE) { A_Light2(); }
+}
+
+defaultproperties
+{
+	Ammo = am_grenade1;
+	UpState = S_GRENADEUP;
+	DownState = S_GRENADEDOWN;
+	ReadyState = S_GRENADE;
+	AttackState = S_GRENADE1;
+	HoldAttackState = S_GRENADEFLASH1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:57  dj_jl
+//  New style classes.
+//
+//**************************************************************************

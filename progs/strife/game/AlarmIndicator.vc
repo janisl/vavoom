@@ -1,0 +1,53 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class AlarmIndicator:Decoration
+	__mobjinfo__(24);
+
+__states__
+{
+	S_KLAX('KLAX', 0, 5.0 / 35.0, S_KLAX) { A_CheckAlarm(); }
+	S_KLAX_ACT1('KLAX', 1, 6.0 / 35.0, S_KLAX_ACT2) { A_AlarmActive(); }
+	S_KLAX_ACT2('KLAX', 2, 60.0 / 35.0, S_KLAX_ACT1) { }
+}
+
+defaultproperties
+{
+	ReactionCount = 60;
+	bNoBlockmap = true;
+	bAmbush = true;
+	bSpawnCeiling = true;
+	bNoGravity = true;
+	IdleState = S_KLAX;
+	SeeState = S_KLAX_ACT1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:56  dj_jl
+//  New style classes.
+//
+//**************************************************************************

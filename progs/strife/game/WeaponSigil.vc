@@ -1,0 +1,78 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class WeaponSigil:Weapon;
+
+void A_FireSigil1(void)
+{
+}
+
+void A_FireSigil2(void)
+{
+}
+
+void A_FireSigil3(void)
+{
+}
+
+void A_SigilFlash(void)
+{
+}
+
+__states__
+{
+	S_SIGIL('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_SIGIL) { A_WeaponReady(); }
+	S_SIGIL01('SIGH', 1 | FF_FULLBRIGHT, -1.0, S_NULL) { }
+	S_SIGIL02('SIGH', 2 | FF_FULLBRIGHT, -1.0, S_NULL) { }
+	S_SIGIL03('SIGH', 3 | FF_FULLBRIGHT, -1.0, S_NULL) { }
+	S_SIGIL04('SIGH', 4 | FF_FULLBRIGHT, -1.0, S_NULL) { }
+	S_SIGILDOWN('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_SIGILDOWN) { A_Lower(); }
+	S_SIGILUP('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_SIGILUP) { A_Raise(); }
+	S_SIGIL1('SIGH', 0 | FF_FULLBRIGHT, 18.0 / 35.0, S_SIGIL2) { A_FireSigil1(); }
+	S_SIGIL2('SIGH', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SIGIL3) { A_FireSigil2(); }
+	S_SIGIL3('SIGH', 0, 10.0 / 35.0, S_SIGIL4) { A_FireSigil3(); }
+	S_SIGIL4('SIGH', 0, 5.0 / 35.0, S_SIGIL) { A_7(); }
+	S_SIGILFLASH1('SIGF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGILFLASH2) { A_Light2(); }
+	S_SIGILFLASH2('SIGF', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGILFLASH3) { A_SigilFlash(); }
+	S_SIGILFLASH3('SIGF', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE) { A_Light1(); }
+}
+
+defaultproperties
+{
+	Ammo = am_noammo;
+	UpState = S_SIGILUP;
+	DownState = S_SIGILDOWN;
+	ReadyState = S_SIGIL;
+	AttackState = S_SIGIL1;
+	HoldAttackState = S_SIGILFLASH1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:57  dj_jl
+//  New style classes.
+//
+//**************************************************************************

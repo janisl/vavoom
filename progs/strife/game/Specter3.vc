@@ -1,0 +1,80 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Specter3:Specter1
+	__mobjinfo__(76);
+
+__states__
+{
+	S_SPECTER3_LOOK1('ALN1', 0, 5.0 / 35.0, S_SPECTER3_LOOK2) { A_FlightChase(); }
+	S_SPECTER3_LOOK2('ALN1', 1, 5.0 / 35.0, S_SPECTER3_LOOK3) { A_FlightChase(); }
+	S_SPECTER3_LOOK3('ALN1', 2, 5.0 / 35.0, S_SPECTER3_LOOK4) { A_FlightChase(); }
+	S_SPECTER3_LOOK4('ALN1', 3, 5.0 / 35.0, S_SPECTER3_LOOK5) { A_FlightChase(); }
+	S_SPECTER3_LOOK5('ALN1', 4, 5.0 / 35.0, S_SPECTER3_LOOK6) { A_FlightChase(); }
+	S_SPECTER3_LOOK6('ALN1', 5, 5.0 / 35.0, S_SPECTER3_LOOK7) { A_FlightChase(); }
+	S_SPECTER3_LOOK7('ALN1', 6, 5.0 / 35.0, S_SPECTER3_LOOK8) { A_FlightChase(); }
+	S_SPECTER3_LOOK8('ALN1', 7, 5.0 / 35.0, S_SPECTER3_LOOK9) { A_FlightChase(); }
+	S_SPECTER3_LOOK9('ALN1', 8, 5.0 / 35.0, S_SPECTER3_LOOK10) { A_FlightChase(); }
+	S_SPECTER3_LOOK10('ALN1', 9, 5.0 / 35.0, S_SPECTER3_LOOK11) { A_FlightChase(); }
+	S_SPECTER3_LOOK11('ALN1', 10, 5.0 / 35.0, S_SPECTER3_LOOK1) { A_FlightChase(); }
+	S_SPECTER3_RUN1('ALN1', 0, 5.0 / 35.0, S_SPECTER3_RUN2) { A_Chase(); }
+	S_SPECTER3_RUN2('ALN1', 1, 5.0 / 35.0, S_SPECTER3_RUN3) { A_Chase(); }
+	S_SPECTER3_RUN3('ALN1', 2, 5.0 / 35.0, S_SPECTER3_RUN4) { A_FlightChase(); }
+	S_SPECTER3_RUN4('ALN1', 3, 5.0 / 35.0, S_SPECTER3_RUN5) { A_Chase(); }
+	S_SPECTER3_RUN5('ALN1', 4, 5.0 / 35.0, S_SPECTER3_RUN6) { A_Chase(); }
+	S_SPECTER3_RUN6('ALN1', 5, 5.0 / 35.0, S_SPECTER3_RUN7) { A_Chase(); }
+	S_SPECTER3_RUN7('ALN1', 6, 5.0 / 35.0, S_SPECTER3_RUN8) { A_FlightChase(); }
+	S_SPECTER3_RUN8('ALN1', 7, 5.0 / 35.0, S_SPECTER3_RUN9) { A_Chase(); }
+	S_SPECTER3_RUN9('ALN1', 8, 5.0 / 35.0, S_SPECTER3_RUN10) { A_Chase(); }
+	S_SPECTER3_RUN10('ALN1', 9, 5.0 / 35.0, S_SPECTER3_RUN11) { A_Chase(); }
+	S_SPECTER3_RUN11('ALN1', 10, 5.0 / 35.0, S_SPECTER3_RUN1) { A_FlightChase(); }
+	S_SPECTER3_MELEE1('ALN1', 9, 4.0 / 35.0, S_SPECTER3_MELEE2) { A_FaceTarget(); }
+	S_SPECTER3_MELEE2('ALN1', 8, 4.0 / 35.0, S_SPECTER3_MELEE3) { A_SpecterMelee(); }
+	S_SPECTER3_MELEE3('ALN1', 2, 4.0 / 35.0, S_SPECTER3_RUN3) { }
+	S_SPECTER3_ATK1('ALN1', 5, 4.0 / 35.0, S_SPECTER3_ATK2) { A_FaceTarget(); }
+	S_SPECTER3_ATK2('ALN1', 8, 4.0 / 35.0, S_SPECTER3_ATK3) { A_Specter3Attack(); }
+	S_SPECTER3_ATK3('ALN1', 4, 4.0 / 35.0, S_SPECTER3_RUN11) { }
+	S_SPECTER3_PAIN1('ALN1', 9, 2.0 / 35.0, S_SPECTER3_RUN7) { A_Pain(); }
+}
+
+defaultproperties
+{
+	Health = 1500;
+	Radius = 24.0;
+	PainChance = 0.1953125;
+	IdleState = S_SPECTER3_LOOK1;
+	SeeState = S_SPECTER3_RUN1;
+	MeleeState = S_SPECTER3_MELEE1;
+	MissileState = S_SPECTER3_ATK1;
+	PainState = S_SPECTER3_PAIN1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:57  dj_jl
+//  New style classes.
+//
+//**************************************************************************

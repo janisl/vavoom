@@ -1,0 +1,80 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MenuChoice_VideoMode:MenuChoiceEnum;
+
+int GetInitialValue(void)
+{
+	int w;
+	int h;
+	int mi;
+
+	w = GetCvar("screen_width");
+	h = GetCvar("screen_height");
+
+	for (mi = 0; mi < 8; mi++)
+	{
+		if (modes[mi].width == w && modes[mi].height == h)
+		{
+			break;
+		}
+	}
+	if (mi == 8)
+	{
+		mi = 0;
+	}
+	return mi;
+}
+
+int GetModeWidth(void)
+{
+	return modes[Value].width;
+}
+
+int GetModeHeight(void)
+{
+	return modes[Value].height;
+}
+
+defaultproperties
+{
+	Text = "Resolution";
+	EnumNames[0] = "320x200";
+	EnumNames[1] = "320x240";
+	EnumNames[2] = "640x400";
+	EnumNames[3] = "640x480";
+	EnumNames[4] = "800x600";
+	EnumNames[5] = "1024x768";
+	EnumNames[6] = "1152x864";
+	EnumNames[7] = "1280x1024";
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:52  dj_jl
+//  New style classes.
+//
+//**************************************************************************

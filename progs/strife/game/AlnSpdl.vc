@@ -1,0 +1,51 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class AlnSpdl:Decoration
+	__mobjinfo__(225);
+
+__states__
+{
+	S_SPDL_1('SPDL', 0, 5.0 / 35.0, S_SPDL_2) { A_ActiveSound(); }
+	S_SPDL_2('SPDL', 1, 5.0 / 35.0, S_SPDL_3) { A_ActiveSound(); }
+	S_SPDL_3('SPDL', 2, 5.0 / 35.0, S_SPDL_1) { A_ActiveSound(); }
+}
+
+defaultproperties
+{
+	Radius = 32.0;
+	Height = 56.0;
+	bSolid = true;
+	IdleState = S_SPDL_1;
+	ActiveSound = 'AlienShipAmbience1';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:56  dj_jl
+//  New style classes.
+//
+//**************************************************************************

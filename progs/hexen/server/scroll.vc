@@ -35,25 +35,6 @@
 
 // CODE --------------------------------------------------------------------
 
-class FloorScroll:SectorThinker
-{
-	float XSpeed;
-	float YSpeed;
-
-//==========================================================================
-//
-//	Tick
-//
-//==========================================================================
-
-void Tick(float DeltaTime)
-{
-	sector->floor.xoffs += XSpeed * DeltaTime;
-	sector->floor.yoffs += YSpeed * DeltaTime;
-}
-
-}
-
 //==========================================================================
 //
 //  SpawnScrollingFloor
@@ -68,26 +49,6 @@ void SpawnScrollingFloor(sector_t * sector, int xdir, int ydir, int speed)
 	Scroll.sector = sector;
 	Scroll.XSpeed = itof(xdir) * itof(1 << speed) * 16.0;
 	Scroll.YSpeed = itof(ydir) * itof(1 << speed) * 16.0;
-}
-
-class WallScroll:Thinker
-{
-	int index;
-	float XSpeed;
-	float YSpeed;
-
-//==========================================================================
-//
-//	Tick
-//
-//==========================================================================
-
-void Tick(float deltaTime)
-{
-	GLevel.Sides[index].textureoffset += XSpeed * deltaTime;
-	GLevel.Sides[index].rowoffset += YSpeed * deltaTime;
-}
-
 }
 
 //==========================================================================
@@ -109,6 +70,9 @@ void SpawnWallScroller(line_t * line, int xdir, int ydir)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/11/02 08:24:11  dj_jl
+//  New style classes.
+//
 //  Revision 1.9  2002/09/07 16:28:26  dj_jl
 //  Added Level class.
 //

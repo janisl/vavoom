@@ -44,58 +44,30 @@
 
 #include "world.vc"
 
-#include "states.vc"
 #include "mobjinfo.vc"
 #include "wpninfo.vc"
+
+#include "../game/classes.vc"
+
 #include "savegame.vc"
 #include "inter.vc"
 #include "user.vc"
 #include "mobj.vc"
-#include "move.vc"
-#include "physics.vc"
 #include "map.vc"
 #include "teleport.vc"
 #include "usersubs.vc"
 #include "ai_subs.vc"
 #include "wpnbase.vc"
-#include "enemy.vc"
 #include "cheat.vc"
-
-#include "miscobj.vc"
-#include "weapons.vc"
-#include "items.vc"
-#include "decorat.vc"
-#include "questobj.vc"
-
-#include "player.vc"
-#include "merchant.vc"
-#include "peasant.vc"
-#include "beggar.vc"
-#include "rebel.vc"
-#include "acolyte.vc"
-#include "turret.vc"
-#include "stalker.vc"
-#include "sentinel.vc"
-#include "reaver.vc"
-#include "templar.vc"
-#include "crusader.vc"
-#include "inquisitor.vc"
-#include "programmer.vc"
-#include "bishop.vc"
-#include "oracle.vc"
-#include "macil.vc"
-#include "loremaster.vc"
-#include "specter.vc"
-#include "entboss.vc"
-#include "subent.vc"
-#include "rat.vc"
-#include "prayer.vc"
 
 #include "svmain.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/11/02 08:22:38  dj_jl
+//  New style classes.
+//
 //  Revision 1.18  2002/07/15 17:54:19  dj_jl
 //  Removed all data from teaser exe.
 //

@@ -52,94 +52,6 @@ enum
 
 // CODE --------------------------------------------------------------------
 
-class Platform:SectorMover
-{
-	float speed;
-	float low;
-	float high;
-	int type;
-	int tag;	// ID
-	int status;
-	float time;
-	float wait;
-
-//==========================================================================
-//
-//	Tick
-//
-//  Move a plat up and down
-//
-//==========================================================================
-
-void Tick(float deltaTime)
-{
-	int res;
-
-	switch (status)
-	{
-	case PLAT_UP:
-		res = T_MovePlane(sector, speed * deltaTime, high, false, 0, 1);
-		if (res == RES_CRUSHED)
-		{
-			time = wait;
-			status = PLAT_DOWN;
-			SectorStartSequence(sector,
-				seq_name[SEQ_PLATFORM + sector->seqType]);
-		}
-		else if (res == RES_PASTDEST)
-		{
-			time = wait;
-			status = PLAT_WAITING;
-			SectorStopSequence(sector);
-			switch (type)
-			{
-			case PLAT_DOWNWAITUPSTAY:
-			case PLAT_DOWNBYVALUEWAITUPSTAY:
-				sector->SpecialData = none;
-				TagFinished(sector->tag);
-				RemoveSpecialThinker(self);
-				break;
-			default:
-				break;
-			}
-		}
-		break;
-	case PLAT_DOWN:
-		res = T_MovePlane(sector, speed * deltaTime, low, false, 0, -1);
-		if (res == RES_PASTDEST)
-		{
-			time = wait;
-			status = PLAT_WAITING;
-			SectorStopSequence(sector);
-			switch (type)
-			{
-			case PLAT_UPWAITDOWNSTAY:
-			case PLAT_UPBYVALUEWAITDOWNSTAY:
-				sector->SpecialData = none;
-				TagFinished(sector->tag);
-				RemoveSpecialThinker(self);
-				break;
-			default:
-				break;
-			}
-		}
-		break;
-	case PLAT_WAITING:
-		time -= deltaTime;
-		if (time <= 0.0)
-		{
-			if (sector->floorheight == low)
-				status = PLAT_UP;
-			else
-				status = PLAT_DOWN;
-			SectorStartSequence(sector,
-				seq_name[SEQ_PLATFORM + sector->seqType]);
-		}
-	}
-}
-
-}
-
 //==========================================================================
 //
 //  EV_DoPlat
@@ -250,6 +162,9 @@ void EV_StopPlat(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/11/02 08:24:11  dj_jl
+//  New style classes.
+//
 //  Revision 1.12  2002/09/07 16:28:26  dj_jl
 //  Added Level class.
 //

@@ -1,0 +1,69 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class HEGrenade:Projectile;
+
+__states__
+{
+	S_GRENADE_HE_1('GRAP', 0, 3.0 / 35.0, S_GRENADE_HE_2) { A_DecReactionCount(); }
+	S_GRENADE_HE_2('GRAP', 1, 3.0 / 35.0, S_GRENADE_HE_1) { A_DecReactionCount(); }
+	S_GRENADE_HE_X1('BNG4', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_GRENADE_HE_X2) { A_Unknown27(); }
+	S_GRENADE_HE_X2('BNG4', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X3) { }
+	S_GRENADE_HE_X3('BNG4', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X4) { }
+	S_GRENADE_HE_X4('BNG4', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X5) { }
+	S_GRENADE_HE_X5('BNG4', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X6) { }
+	S_GRENADE_HE_X6('BNG4', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X7) { }
+	S_GRENADE_HE_X7('BNG4', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X8) { }
+	S_GRENADE_HE_X8('BNG4', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X9) { }
+	S_GRENADE_HE_X9('BNG4', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X10) { }
+	S_GRENADE_HE_X10('BNG4', 9 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X11) { }
+	S_GRENADE_HE_X11('BNG4', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X12) { }
+	S_GRENADE_HE_X12('BNG4', 11 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X13) { }
+	S_GRENADE_HE_X13('BNG4', 12 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X14) { }
+	S_GRENADE_HE_X14('BNG4', 13 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 13.0;
+	Height = 13.0;
+	Mass = 20.0;
+	Speed = 525.0;
+	ReactionCount = 30;
+	MissileDamage = 1;
+	bNoGravity = false;
+	IdleState = S_GRENADE_HE_1;
+	DeathState = S_GRENADE_HE_X1;
+	SightSound = 'FireGrenade';
+	DeathSound = 'Explode';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:56  dj_jl
+//  New style classes.
+//
+//**************************************************************************

@@ -1,0 +1,96 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MenuScreenNewNetGame:MenuScreen;
+
+MenuChoice_Players Players;
+MenuChoice_Monsters Monsters;
+MenuChoice_DeathMatch DeathMatch;
+MenuChoice_MPSkill Skill;
+MenuChoice_TimeLimit TimeLimit;
+MenuChoice_Level Level;
+
+void CreateChoices(void)
+{
+	MenuChoice newChoice;
+
+	newChoice = MenuChoice(NewChild(MenuChoice_StartGame));
+	newChoice.SetPos(ChoicesStartX, ChoicesStartY);
+	ChoicesStartY += newChoice.Height;
+
+	Players = MenuChoice_Players(NewChild(MenuChoice_Players));
+	Players.SetPos(ChoicesStartX, ChoicesStartY);
+	ChoicesStartY += Players.Height;
+
+	Monsters = MenuChoice_Monsters(NewChild(MenuChoice_Monsters));
+	Monsters.SetPos(ChoicesStartX, ChoicesStartY);
+	ChoicesStartY += Monsters.Height;
+
+	DeathMatch = MenuChoice_DeathMatch(NewChild(MenuChoice_DeathMatch));
+	DeathMatch.SetPos(ChoicesStartX, ChoicesStartY);
+	ChoicesStartY += DeathMatch.Height;
+
+	Skill = MenuChoice_MPSkill(NewChild(MenuChoice_MPSkill));
+	Skill.SetPos(ChoicesStartX, ChoicesStartY);
+	ChoicesStartY += Skill.Height;
+
+	TimeLimit = MenuChoice_TimeLimit(NewChild(MenuChoice_TimeLimit));
+	TimeLimit.SetPos(ChoicesStartX, ChoicesStartY);
+	ChoicesStartY += TimeLimit.Height;
+
+	Level = MenuChoice_Level(NewChild(MenuChoice_Level));
+	Level.SetPos(ChoicesStartX, ChoicesStartY);
+	ChoicesStartY += Level.Height;
+}
+
+void StartNewGame(void)
+{
+	CmdBuf_AddText("Disconnect\n");
+	CmdBuf_AddText("MaxPlayers %d\n", Players.Value + 2);
+	CmdBuf_AddText("NoMonsters %d\n", !Monsters.Value);
+	CmdBuf_AddText("DeathMatch %d\n", DeathMatch.Value);
+	CmdBuf_AddText("TimeLimit %d\n", TimeLimit.Value * 5);
+	CmdBuf_AddText("Skill %d\n", Skill.Value);
+	if (Level.Value + 1 < 10)
+		CmdBuf_AddText("Map MAP0%d\n", Level.Value + 1);
+	else
+		CmdBuf_AddText("Map MAP%d\n", Level.Value + 1);
+}
+
+defaultproperties
+{
+	ChoicesStartX = 128;
+	ChoicesStartY = 40;
+	SelectorType = MenuSelector_SmallRight;
+	Title = "NEW GAME";
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:52  dj_jl
+//  New style classes.
+//
+//**************************************************************************

@@ -69,60 +69,6 @@ enum
 
 // CODE --------------------------------------------------------------------
 
-class FloorMover:SectorMover
-{
-	int type;
-	float speed;
-	int crush;
-	int direction;	// 1 = up, 0 = waiting, -1 = down
-	int newspecial;
-	int texture;
-	int textureChange;	// It's index delta, not texture num
-	float floordestheight;
-
-//==========================================================================
-//
-//	Tick
-//
-//  MOVE A FLOOR TO IT'S DESTINATION (UP OR DOWN)
-//
-//==========================================================================
-
-void Tick(float deltaTime)
-{
-	int res;
-
-	res = T_MovePlane(sector, speed * deltaTime,
-		floordestheight, crush, 0, direction);
-
-	//FIXME sound sequence
-	if (!(level->tictime & 7))
-	{
-		SectorStartSoundName(sector, 'StoneMoving', CHAN_VOICE);
-	}
-
-	if (res == RES_PASTDEST)
-	{
-		//FIXME sound sequence
-		SectorStartSoundName(sector, 'PlatformStop', CHAN_VOICE);
-		sector->SpecialData = none;
-		if ((direction == 1 && type == FLEV_DONUT) ||
-			(direction == -1 && type == FLEV_LOWERTOLOWESTCHANGE))
-		{
-			sector->special = newspecial;
-			SetFloorPic(sector, texture);
-		}
-		if (textureChange)
-		{
-			SetFloorPic(sector, sector->floor.pic - textureChange);
-		}
-		TagFinished(sector->tag);
-		RemoveSpecialThinker(self);
-	}
-}
-
-}
-
 //==========================================================================
 //
 //  EV_DoFloor
@@ -639,96 +585,6 @@ float StairStartDelayDelta;
 int StairTextureChange;
 float StairStartHeight;
 
-class StairStepMover:SectorMover
-{
-	float speed;
-	int direction;
-	int crush;
-	float floordestheight;
-	float delayTime;
-	float delayTotal;
-	float stairsDelayHeight;
-	float stairsDelayHeightDelta;
-	float resetHeight;
-	float resetDelay;
-	float resetDelayTime;
-	int textureChange;
-
-//==========================================================================
-//
-//	Tick
-//
-//  MOVE A FLOOR TO IT'S DESTINATION (UP OR DOWN)
-//
-//==========================================================================
-
-void Tick(float deltaTime)
-{
-	int res;
-
-	if (resetDelayTime)
-	{
-		resetDelayTime -= deltaTime;
-		if (resetDelayTime <= 0.0)
-		{
-			resetDelayTime = 0.0;
-			floordestheight = resetHeight;
-			direction = -direction;
-			resetDelay = 0.0;
-			delayTime = 0.0;
-			delayTotal = 0.0;
-		}
-	}
-	if (delayTime)
-	{
-		delayTime -= deltaTime;
-		if (delayTime <= 0.0)
- 		{
- 			delayTime = 0.0;
- 			if (textureChange)
-			{
-				SetFloorPic(sector, sector->floor.pic + textureChange);
-			}
-		}
-		return;
-	}
-
-	res = T_MovePlane(sector, speed * deltaTime,
-		floordestheight, crush, 0, direction);
-
-	if ((direction == 1 && sector->floorheight >=
-			stairsDelayHeight) || (direction == -1 &&
-			sector->floorheight <= stairsDelayHeight))
-	{
-		delayTime = delayTotal;
-		stairsDelayHeight += stairsDelayHeightDelta;
-	}
-	if (res == RES_PASTDEST)
-	{
-		SectorStopSequence(sector);
-		if (delayTotal)
-		{
-			delayTotal = 0.0;
-		}
-		if (resetDelay)
-		{
-//          resetDelayTime = resetDelay;
-//          resetDelay = 0.0;
-			return;
-		}
-		sector->SpecialData = none;
-		if (textureChange)
-		{
-			SetFloorPic(sector, sector->floor.pic - textureChange);
-		}
-		sector->SpecialData = none;
-		TagFinished(sector->tag);
-		RemoveSpecialThinker(self);
-	}
-}
-
-}
-
 //==========================================================================
 //
 //  QueueStairSector
@@ -926,43 +782,6 @@ int EV_BuildStairs(line_t * line, int *args, int direction, int stairsType)
 //
 //**************************************************************************
 
-class TPillar:SectorMover
-{
-	int direction;
-	int crush;
-	float ceilingSpeed;
-	float floorSpeed;
-	float floordest;
-	float ceilingdest;
-
-//==========================================================================
-//
-//	Tick
-//
-//==========================================================================
-
-void Tick(float deltaTime)
-{
-	int res1;
-	int res2;
-
-	// First, raise the floor
-	res1 = T_MovePlane(sector, floorSpeed * deltaTime, floordest,
-		crush, 0, direction);	// floorOrCeiling, direction
-	// Then, lower the ceiling
-	res2 = T_MovePlane(sector, ceilingSpeed * deltaTime,
-		ceilingdest, crush, 1, -direction);
-	if (res1 == RES_PASTDEST && res2 == RES_PASTDEST)
-	{
-		sector->SpecialData = none;
-		SectorStopSequence(sector);
-		TagFinished(sector->tag);
-		RemoveSpecialThinker(self);
-	}
-}
-
-}
-
 //==========================================================================
 //
 //  EV_BuildPillar
@@ -973,7 +792,7 @@ int EV_BuildPillar(line_t * line, int *args, bool crush)
 {
 	int secnum;
 	sector_t *sec;
-	TPillar Pillar;
+	Pillar pillar;
 	float newHeight;
 	int rtn;
 
@@ -1000,33 +819,33 @@ int EV_BuildPillar(line_t * line, int *args, bool crush)
 			newHeight = sec->floorheight + itof(args[2]);
 		}
 
-		Pillar = NewSpecialThinker(TPillar);
-		sec->SpecialData = Pillar;
-		Pillar.sector = sec;
+		pillar = NewSpecialThinker(Pillar);
+		sec->SpecialData = pillar;
+		pillar.sector = sec;
 		if (!args[2])
 		{
-			Pillar.floorSpeed = itof(args[1]) * 4.0;
-			Pillar.ceilingSpeed = Pillar.floorSpeed;
+			pillar.floorSpeed = itof(args[1]) * 4.0;
+			pillar.ceilingSpeed = pillar.floorSpeed;
 		}
 		else if (newHeight - sec->floorheight >
 			sec->ceilingheight - newHeight)
 		{
-			Pillar.floorSpeed = itof(args[1]) * 4.0;
-			Pillar.ceilingSpeed = (sec->ceilingheight - newHeight) *
-				Pillar.floorSpeed / (newHeight - sec->floorheight);
+			pillar.floorSpeed = itof(args[1]) * 4.0;
+			pillar.ceilingSpeed = (sec->ceilingheight - newHeight) *
+				pillar.floorSpeed / (newHeight - sec->floorheight);
 		}
 		else
 		{
-			Pillar.ceilingSpeed = itof(args[1]) * 4.0;
-			Pillar.floorSpeed = (newHeight - sec->floorheight) *
-				Pillar.ceilingSpeed / (sec->ceilingheight - newHeight);
+			pillar.ceilingSpeed = itof(args[1]) * 4.0;
+			pillar.floorSpeed = (newHeight - sec->floorheight) *
+				pillar.ceilingSpeed / (sec->ceilingheight - newHeight);
 		}
-		Pillar.floordest = newHeight;
-		Pillar.ceilingdest = newHeight;
-		Pillar.direction = 1;
-		Pillar.crush = crush * args[3];
-//FIXME		SectorStartSequence(Pillar.sector,
-//			seq_name[SEQ_PLATFORM + Pillar.sector->seqType]);
+		pillar.floordest = newHeight;
+		pillar.ceilingdest = newHeight;
+		pillar.direction = 1;
+		pillar.crush = crush * args[3];
+//FIXME		SectorStartSequence(pillar.sector,
+//			seq_name[SEQ_PLATFORM + pillar.sector->seqType]);
 	}
 	return rtn;
 }
@@ -1041,7 +860,7 @@ int EV_OpenPillar(line_t * line, int *args)
 {
 	int secnum;
 	sector_t *sec;
-	TPillar Pillar;
+	Pillar pillar;
 	int rtn;
 
 	rtn = 0;
@@ -1056,43 +875,43 @@ int EV_OpenPillar(line_t * line, int *args)
 			continue;
 		}
 		rtn = 1;
-		Pillar = NewSpecialThinker(TPillar);
-		sec->SpecialData = Pillar;
-		Pillar.sector = sec;
+		pillar = NewSpecialThinker(Pillar);
+		sec->SpecialData = pillar;
+		pillar.sector = sec;
 		if (!args[2])
 		{
-			Pillar.floordest = FindLowestFloorSurrounding(sec);
+			pillar.floordest = FindLowestFloorSurrounding(sec);
 		}
 		else
 		{
-			Pillar.floordest = sec->floorheight - itof(args[2]);
+			pillar.floordest = sec->floorheight - itof(args[2]);
 		}
 		if (!args[3])
 		{
-			Pillar.ceilingdest = FindHighestCeilingSurrounding(sec);
+			pillar.ceilingdest = FindHighestCeilingSurrounding(sec);
 		}
 		else
 		{
-			Pillar.ceilingdest = sec->ceilingheight + itof(args[3]);
+			pillar.ceilingdest = sec->ceilingheight + itof(args[3]);
 		}
-		if (sec->floorheight - Pillar.floordest >= Pillar.ceilingdest -
+		if (sec->floorheight - pillar.floordest >= pillar.ceilingdest -
 			sec->ceilingheight)
 		{
-			Pillar.floorSpeed = itof(args[1]) * 4.0;
-			Pillar.ceilingSpeed = (sec->ceilingheight -
-				Pillar.ceilingdest) * Pillar.floorSpeed /
-				(Pillar.floordest - sec->floorheight);
+			pillar.floorSpeed = itof(args[1]) * 4.0;
+			pillar.ceilingSpeed = (sec->ceilingheight -
+				pillar.ceilingdest) * pillar.floorSpeed /
+				(pillar.floordest - sec->floorheight);
 		}
 		else
 		{
-			Pillar.ceilingSpeed = itof(args[1]) * 4.0;
-			Pillar.floorSpeed = (Pillar.floordest -
-				sec->floorheight) * Pillar.ceilingSpeed /
-				(sec->ceilingheight - Pillar.ceilingdest);
+			pillar.ceilingSpeed = itof(args[1]) * 4.0;
+			pillar.floorSpeed = (pillar.floordest -
+				sec->floorheight) * pillar.ceilingSpeed /
+				(sec->ceilingheight - pillar.ceilingdest);
 		}
-		Pillar.direction = -1;	// open the pillar
-//FIXME		SectorStartSequence(Pillar.sector,
-//			seq_name[SEQ_PLATFORM + Pillar.sector->seqType]);
+		pillar.direction = -1;	// open the pillar
+//FIXME		SectorStartSequence(pillar.sector,
+//			seq_name[SEQ_PLATFORM + pillar.sector->seqType]);
 	}
 	return rtn;
 }
@@ -1106,67 +925,6 @@ int EV_OpenPillar(line_t * line, int *args)
 #define WGLSTATE_EXPAND 1
 #define WGLSTATE_STABLE 2
 #define WGLSTATE_REDUCE 3
-
-class FloorWaggle:SectorMover
-{
-	float originalHeight;
-	float accumulator;
-	float accSpeed;
-	float targetScale;
-	float scale;
-	float scaleSpeed;
-	float timer;
-	int state;
-
-//==========================================================================
-//
-//  Tick
-//
-//==========================================================================
-
-void Tick(float deltaTime)
-{
-	switch (state)
-	{
-	case WGLSTATE_EXPAND:
-		scale += scaleSpeed * deltaTime;
-		if (scale >= targetScale)
-		{
-			scale = targetScale;
-			state = WGLSTATE_STABLE;
-		}
-		break;
-	case WGLSTATE_REDUCE:
-		scale -= scaleSpeed * deltaTime;
-		if (scale <= 0.0)
-		{
-			// Remove
-			sector->floorheight = originalHeight;
-			P_ChangeSector(sector, true);
-			sector->SpecialData = none;
-			TagFinished(sector->tag);
-			RemoveSpecialThinker(self);
-			return;
-		}
-		break;
-	case WGLSTATE_STABLE:
-		if (timer >= 0.0)
-		{
-			timer -= deltaTime;
-			if (timer <= 0.0)
-			{
-				state = WGLSTATE_REDUCE;
-			}
-		}
-		break;
-	}
-	accumulator += accSpeed * deltaTime;
-	sector->floorheight = originalHeight +
-		FloatBobOffsets[ftoi(accumulator) & 63] * scale;
-	P_ChangeSector(sector, true);
-}
-
-}
 
 //==========================================================================
 //
@@ -1212,6 +970,9 @@ bool EV_StartFloorWaggle(int tag, int height, int speed, int offset,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/11/02 08:22:37  dj_jl
+//  New style classes.
+//
 //  Revision 1.14  2002/09/07 16:28:26  dj_jl
 //  Added Level class.
 //

@@ -1,0 +1,103 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Crusader:Pawn
+	__mobjinfo__(3005);
+
+void A_CrusaderAttack1(void)
+{
+}
+void A_CrusaderAttack2(void)
+{
+}
+void A_CrusaderAttack3(void)
+{
+}
+void A_CrusaderAttack4(void)
+{
+}
+
+__states__
+{
+	S_CRUSADER_LOOK('ROB2', 16, 10.0 / 35.0, S_CRUSADER_LOOK) { A_Look(); }
+	S_CRUSADER_RUN1('ROB2', 0, 3.0 / 35.0, S_CRUSADER_RUN2) { A_Chase(); }
+	S_CRUSADER_RUN2('ROB2', 0, 3.0 / 35.0, S_CRUSADER_RUN3) { A_Chase(); }
+	S_CRUSADER_RUN3('ROB2', 1, 3.0 / 35.0, S_CRUSADER_RUN4) { A_Chase(); }
+	S_CRUSADER_RUN4('ROB2', 1, 3.0 / 35.0, S_CRUSADER_RUN5) { A_Chase(); }
+	S_CRUSADER_RUN5('ROB2', 2, 3.0 / 35.0, S_CRUSADER_RUN6) { A_Chase(); }
+	S_CRUSADER_RUN6('ROB2', 2, 3.0 / 35.0, S_CRUSADER_RUN7) { A_Chase(); }
+	S_CRUSADER_RUN7('ROB2', 3, 3.0 / 35.0, S_CRUSADER_RUN8) { A_Chase(); }
+	S_CRUSADER_RUN8('ROB2', 3, 3.0 / 35.0, S_CRUSADER_RUN1) { A_Chase(); }
+	S_CRUSADER_ATK1('ROB2', 4, 3.0 / 35.0, S_CRUSADER_ATK2) { A_FaceTarget(); }
+	S_CRUSADER_ATK2('ROB2', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_CRUSADER_ATK3) { A_CrusaderAttack1(); }
+	S_CRUSADER_ATK3('ROB2', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_CRUSADER_ATK4) { A_CrusaderAttack2(); }
+	S_CRUSADER_ATK4('ROB2', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRUSADER_ATK5) { A_CrusaderAttack2(); }
+	S_CRUSADER_ATK5('ROB2', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_CRUSADER_ATK6) { A_CrusaderAttack2(); }
+	S_CRUSADER_ATK6('ROB2', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_CRUSADER_ATK7) { A_CrusaderAttack2(); }
+	S_CRUSADER_ATK7('ROB2', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_CRUSADER_ATK8) { A_CrusaderAttack3(); }
+	S_CRUSADER_ATK8('ROB2', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_CRUSADER_ATK9) { A_CrusaderAttack3(); }
+	S_CRUSADER_ATK9('ROB2', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_CRUSADER_ATK10) { A_CrusaderAttack3(); }
+	S_CRUSADER_ATK10('ROB2', 5, 2.0 / 35.0, S_CRUSADER_ATK1) { A_CrusaderAttack4(); }
+	S_CRUSADER_PAIN('ROB2', 3, 1.0 / 35.0, S_CRUSADER_RUN1) { A_Pain(); }
+	S_CRUSADER_DIE1('ROB2', 6, 3.0 / 35.0, S_CRUSADER_DIE2) { A_Scream(); }
+	S_CRUSADER_DIE2('ROB2', 7, 5.0 / 35.0, S_CRUSADER_DIE3) { A_XDying(); }
+	S_CRUSADER_DIE3('ROB2', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_CRUSADER_DIE4) { A_XDying(); }
+	S_CRUSADER_DIE4('ROB2', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_CRUSADER_DIE5) { A_Explode(); }
+	S_CRUSADER_DIE5('ROB2', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_CRUSADER_DIE6) { A_Fall(); }
+	S_CRUSADER_DIE6('ROB2', 11, 4.0 / 35.0, S_CRUSADER_DIE7) { A_Explode(); }
+	S_CRUSADER_DIE7('ROB2', 12, 4.0 / 35.0, S_CRUSADER_DIE8) { A_XDying(); }
+	S_CRUSADER_DIE8('ROB2', 13, 4.0 / 35.0, S_CRUSADER_DIE9) { A_XDying(); }
+	S_CRUSADER_DIE9('ROB2', 14, 4.0 / 35.0, S_CRUSADER_DIE10) { A_Explode(); }
+	S_CRUSADER_DIE10('ROB2', 15, -1.0, S_NULL) { A_Unknown72(); }
+}
+
+defaultproperties
+{
+	Health = 400;
+	Radius = 40.0;
+	Height = 56.0;
+	Mass = 400.0;
+	StepSpeed = 8.0;
+	PainChance = 0.5;
+	bUnknown4 = true;
+	bNoBlood = true;
+	IdleState = S_CRUSADER_LOOK;
+	SeeState = S_CRUSADER_RUN1;
+	MissileState = S_CRUSADER_ATK1;
+	PainState = S_CRUSADER_PAIN;
+	DeathState = S_CRUSADER_DIE1;
+	SightSound = 'CrusaderSight';
+	ActiveSound = 'CrusaderActive';
+	PainSound = 'CrusaderPain';
+	DeathSound = 'CrusaderDeath';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:56  dj_jl
+//  New style classes.
+//
+//**************************************************************************

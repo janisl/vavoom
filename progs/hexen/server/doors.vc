@@ -46,98 +46,6 @@ enum
 
 // CODE --------------------------------------------------------------------
 
-class VerticalDoor:SectorMover
-{
-	int type;
-	float topheight;
-	float speed;
-	int direction;	// 1 = up, 0 = waiting at top, -1 = down
-	float topwait;	// tics to wait at the top (keep in case a door going down is reset)
-	float toptime;	// when it reaches 0, start going down
-
-//==========================================================================
-//
-//	Tick
-//
-//==========================================================================
-
-void Tick(float deltaTime)
-{
-	int res;
-
-	switch (direction)
-	{
-	case 0:	// WAITING
-		toptime -= deltaTime;
-		if (toptime <= 0.0)
-			switch (type)
-			{
-			case DREV_NORMAL:
-				direction = -1;	// time to go back down
-				SectorStartSequence(sector,
-					seq_name[SEQ_DOOR_STONE + sector->seqType]);
-				break;
-			default:
-				break;
-			}
-		break;
-	case -1:	// DOWN
-		res = T_MovePlane(sector, speed * deltaTime,
-			sector->floorheight, false, 1, direction);
-		if (res == RES_PASTDEST)
-		{
-			SectorStopSequence(sector);
-			switch (type)
-			{
-			case DREV_NORMAL:
-			case DREV_CLOSE:
-				sector->SpecialData = none;
-				TagFinished(sector->tag);
-				RemoveSpecialThinker(self);	// unlink and free
-				break;
-			default:
-				break;
-			}
-		}
-		else if (res == RES_CRUSHED)
-		{
-			switch (type)
-			{
-			case DREV_CLOSE:	// DON'T GO BACK UP!
-				break;
-			default:
-				direction = 1;
-				break;
-			}
-		}
-		break;
-	case 1:	// UP
-		res = T_MovePlane(sector, speed * deltaTime,
-			topheight, false, 1, direction);
-		if (res == RES_PASTDEST)
-		{
-			SectorStopSequence(sector);
-			switch (type)
-			{
-			case DREV_NORMAL:
-				direction = 0;	// wait at top
-				toptime = topwait;
-				break;
-			case DREV_OPEN:
-				sector->SpecialData = none;
-				TagFinished(sector->tag);
-				RemoveSpecialThinker(self);	// unlink and free
-				break;
-			default:
-				break;
-			}
-		}
-		break;
-	}
-}
-
-}
-
 //==========================================================================
 //
 //  EV_DoDoor
@@ -257,6 +165,9 @@ bool EV_VerticalDoor(line_t * line)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/11/02 08:24:10  dj_jl
+//  New style classes.
+//
 //  Revision 1.11  2002/09/07 16:28:26  dj_jl
 //  Added Level class.
 //

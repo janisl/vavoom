@@ -1,0 +1,58 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class TrainingTarget:Decoration
+	__mobjinfo__(208);
+
+__states__
+{
+	S_TRAIN_TARGET('HOGN', 0, 2.0 / 35.0, S_TRAIN_TARGET) { A_ResetHealth(); }
+	S_TRAIN_TARGET_P1('HOGN', 1, 1.0 / 35.0, S_TRAIN_TARGET_P2) { A_ResetHealth(); }
+	S_TRAIN_TARGET_P2('HOGN', 2, 1.0 / 35.0, S_TRAIN_TARGET) { A_Pain(); }
+}
+
+defaultproperties
+{
+	Health = 99999999;
+	Radius = 10.0;
+	Height = 72.0;
+	Mass = 9999999.0;
+	PainChance = 1.0;
+	bSolid = true;
+	bShootable = true;
+	bUnknown4 = true;
+	bNoBlood = true;
+	IdleState = S_TRAIN_TARGET;
+	PainState = S_TRAIN_TARGET_P1;
+	PainSound = 'PunchHitMetal';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:57  dj_jl
+//  New style classes.
+//
+//**************************************************************************

@@ -1,0 +1,72 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class KneelingGyu:Pawn
+	__mobjinfo__(204);
+
+__states__
+{
+	S_PRAYER_STAND1('NEAL', 0, 15.0 / 35.0, S_PRAYER_STAND2) { A_ActiveSound(); }
+	S_PRAYER_STAND2('NEAL', 1, 40.0 / 35.0, S_PRAYER_STAND1) { A_ActiveSound(); }
+	S_PRAYER_PAIN1('NEAL', 2, 5.0 / 35.0, S_PRAYER_PAIN2) { A_Unknown55(); }
+	S_PRAYER_PAIN2('NEAL', 1, 4.0 / 35.0, S_PRAYER_PAIN3) { A_Pain(); }
+	S_PRAYER_PAIN3('NEAL', 2, 5.0 / 35.0, S_PRAYER_STAND1) { A_Unknown56(); }
+	S_PRAYER_DIE1('NEAL', 1, 6.0 / 35.0, S_PRAYER_DIE2) { }
+	S_PRAYER_DIE2('NEAL', 2, 13.0 / 35.0, S_PRAYER_DIE1) { A_Dying(); }
+	S_PRAYER_DIE3('NEAL', 3, 5.0 / 35.0, S_PRAYER_DIE4) { }
+	S_PRAYER_DIE4('NEAL', 4, 5.0 / 35.0, S_PRAYER_DIE5) { A_Scream(); }
+	S_PRAYER_DIE5('NEAL', 5, 6.0 / 35.0, S_PRAYER_DIE6) { }
+	S_PRAYER_DIE6('NEAL', 6, 5.0 / 35.0, S_PRAYER_DIE7) { A_Fall(); }
+	S_PRAYER_DIE7('NEAL', 7, 5.0 / 35.0, S_PRAYER_DIE8) { }
+	S_PRAYER_DIE8('NEAL', 8, 6.0 / 35.0, S_PRAYER_DIE9) { }
+	S_PRAYER_DIE9('NEAL', 9, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 51;
+	Radius = 6.0;
+	Height = 6.0;
+	Mass = 50000.0;
+	PainChance = 1.0;
+	bUnknown4 = true;
+	bNoBlood = true;
+	IdleState = S_PRAYER_STAND1;
+	SeeState = S_PRAYER_STAND1;
+	PainState = S_PRAYER_PAIN1;
+	DyingState = S_PRAYER_DIE1;
+	DeathState = S_PRAYER_DIE3;
+	ActiveSound = 'Chant';
+	PainSound = 'Static';
+	DeathSound = 'Static';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:56  dj_jl
+//  New style classes.
+//
+//**************************************************************************

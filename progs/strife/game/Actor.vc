@@ -1,0 +1,2719 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Actor:Entity
+	abstract;
+
+//  States
+int IdleState;
+int SeeState;
+int MeleeState;
+int MissileState;
+int PainState;
+int DyingState;
+int DeathState;
+int GibsDeathState;
+
+//  Sounds
+name SightSound;
+name ActiveSound;
+name AttackSound;
+name PainSound;
+name DeathSound;
+
+//	Flags
+bool bSpecial;			// call P_SpecialThing when touched
+bool bShootable;		// Can be hit.
+bool bAmbush;
+bool bJustHit;			// try to attack right back
+bool bJustAttacked;		// take at least one step before attacking
+bool bSpawnCeiling;		// hang from ceiling instead of floor
+// movement flags
+bool bUnknown6;
+bool bUnknown5;
+bool bSlide;			// keep info about sliding along walls
+bool bUnknown4;
+bool bMissile;			// don't hit same species, explode on block
+bool bDropped;			// dropped by a demon, not level spawned
+bool bNoBlood;			// don't bleed when shot (use puff)
+bool bCorpse;			// don't stop moving halfway off a step
+bool bInFloat;			// floating to a height for a move, don't
+						// auto float to target's height
+bool bSkullFly;			// skull in flight
+bool bCountKill;		// count towards intermission kill total
+bool bUnknown1;
+bool bUnknown2;
+bool bUnknown3;
+bool bOnMobj;
+bool bActivateMCross;	// can activate monster cross lines
+bool bActivatePCross;	// can activate projectile cross lines
+bool bDormant;			// thing is dormant
+bool bWaterJump;
+bool bNoDeathmatch;
+
+//  Params
+float Speed;
+float StepSpeed;
+float PainChance;
+int SpawnHealth;
+int GibsHealth;
+name ClassName;
+
+// Thing being chased/attacked (or NULL),
+Actor Enemy;
+// also the originator for missiles.
+Actor Instigator;
+
+int MissileDamage;	// For missiles
+
+// Player number last looked for.
+int LastLook;
+
+// For nightmare respawn.
+mthing_t SpawnSpot;
+
+// Reaction time: if non 0, don't attack yet.
+int ReactionCount;
+// Used by player to freeze a bit after teleporting.
+float ReactionTime;
+
+// If >0, the target will be chased
+// no matter what (even if shot)
+int Threshold;
+
+// Movement direction, movement generation (zig-zagging).
+int MoveDir;	// 0-7
+int MoveCount;	// when 0, select a new dir
+
+// Identifier in conversation scripts, originaly index into mobjinfo.
+int ConversationID;
+int CurrentSpeech;	// Current speech index.
+
+__states__
+{
+	S_HIDDEN_SPECIAL1('', 0, 30.0, S_HIDDEN_SPECIAL2)
+	{
+		bHidden = true;
+		bSpecial = false;
+	}
+	S_HIDDEN_SPECIAL2('', 0, -1.0, S_NULL)
+	{
+		Actor A;
+
+		bHidden = false;
+		bSpecial = true;
+
+		// spawn a teleport fog at the new spot
+		A = Spawn(ItemRespawnFog, Origin);
+		A.PlaySound('ItemRespawn', CHAN_VOICE);
+	}
+}
+
+//==========================================================================
+//
+//	HideSpecial
+//
+//==========================================================================
+
+void HideSpecial(void)
+{
+	// only respawn items in deathmatch
+	if ((deathmatch == 2 || deathmatch == 3) &&
+		!bDropped)
+	{
+		SetState(S_HIDDEN_SPECIAL1);
+	}
+	else
+	{
+		Remove();
+	}
+}
+
+//==========================================================================
+//
+//	TouchSpecial
+//
+//==========================================================================
+
+void TouchSpecial(Actor Toucher)
+{
+}
+
+	// Identify by sprite.
+/*    switch (_self->sprite)
+    {
+		// armor
+      case SPR_ARM1:
+		if (!P_GiveArmor(Toucher.player, 1))
+		    return;
+		P_SetMessage(Toucher.player, GOTARMOR, false);
+		break;
+		
+      case SPR_ARM2:
+		if (!P_GiveArmor(Toucher.player, 2))
+		    return;
+		P_SetMessage(Toucher.player, GOTMEGA, false);
+		break;
+	
+		// bonus items
+      case SPR_BON1:
+		Toucher.player->health++;		// can go over 100%
+		if (Toucher.player->health > 200)
+	    	Toucher.player->health = 200;
+		Toucher.player->mo->health = Toucher.player->health;
+		P_SetMessage(Toucher.player, GOTHTHBONUS, false);
+		break;
+	
+      case SPR_BON2:
+		Toucher.player->ArmorPoints++;		// can go over 100%
+		if (Toucher.player->ArmorPoints > 200)
+		    Toucher.player->ArmorPoints = 200;
+		if (!Toucher.player->ArmorType)
+		    Toucher.player->ArmorType = 1;
+		P_SetMessage(Toucher.player, GOTARMBONUS, false);
+		break;
+	
+      case SPR_SOUL:
+		Toucher.player->health += SOULSPHERE_HEALTH;
+		if (Toucher.player->health > SOULSPHERE_MAX)
+		    Toucher.player->health = SOULSPHERE_MAX;
+		Toucher.player->mo->health = Toucher.player->health;
+		P_SetMessage(Toucher.player, GOTSUPER, false);
+		sound = 'PickupPower';
+		break;
+
+		// cards
+		// leave cards for everyone
+      case SPR_BKEY:
+		if (P_GiveCard(Toucher.player, it_bluecard))
+		    P_SetMessage(Toucher.player, GOTBLUECARD, false);
+		if (!netgame)
+		    break;
+		return;
+	
+      case SPR_YKEY:
+		if (P_GiveCard(Toucher.player, it_yellowcard))
+		    P_SetMessage(Toucher.player, GOTYELWCARD, false);
+		if (!netgame)
+		    break;
+		return;
+	
+      case SPR_RKEY:
+		if (P_GiveCard(Toucher.player, it_redcard))
+		    P_SetMessage(Toucher.player, GOTREDCARD, false);
+		if (!netgame)
+		    break;
+		return;
+	
+      case SPR_BSKU:
+		if (P_GiveCard(Toucher.player, it_blueskull))
+		    P_SetMessage(Toucher.player, GOTBLUESKUL, false);
+		if (!netgame)
+		    break;
+		return;
+	
+      case SPR_YSKU:
+		if (P_GiveCard(Toucher.player, it_yellowskull))
+		    P_SetMessage(Toucher.player, GOTYELWSKUL, false);
+		if (!netgame)
+	    	break;
+		return;
+	
+      case SPR_RSKU:
+		if (P_GiveCard(Toucher.player, it_redskull))
+		    P_SetMessage(Toucher.player, GOTREDSKULL, false);
+		if (!netgame)
+	    	break;
+		return;
+	
+		// medikits, heals
+      case SPR_STIM:
+		if (!P_GiveBody (Toucher.player, 10))
+		    return;
+		P_SetMessage(Toucher.player, GOTSTIM, false);
+		break;
+	
+      case SPR_MEDI:
+		if (!P_GiveBody (Toucher.player, 25))
+		    return;
+
+		if (Toucher.player->health < 25)
+		    P_SetMessage(Toucher.player, GOTMEDINEED, false);
+		else
+		    P_SetMessage(Toucher.player, GOTMEDIKIT, false);
+		break;
+
+	
+		// power ups
+      case SPR_PINV:
+		if (!P_GivePower (Toucher.player, pw_invulnerability))
+		    return;
+		P_SetMessage(Toucher.player, GOTINVUL, false);
+		sound = 'PickupPower';
+		break;
+	
+      case SPR_PSTR:
+		if (!P_GivePower (Toucher.player, pw_strength))
+		    return;
+		P_SetMessage(Toucher.player, GOTBERSERK, false);
+		if (Toucher.player->ReadyWeapon != wp_fist)
+		    Toucher.player->PendingWeapon = wp_fist;
+		sound = 'PickupPower';
+		break;
+	
+      case SPR_PINS:
+		if (!P_GivePower (Toucher.player, pw_invisibility))
+		    return;
+		P_SetMessage(Toucher.player, GOTINVIS, false);
+		sound = 'PickupPower';
+		break;
+	
+      case SPR_SUIT:
+		if (!P_GivePower (Toucher.player, pw_ironfeet))
+		    return;
+		P_SetMessage(Toucher.player, GOTSUIT, false);
+		sound = 'PickupPower';
+		break;
+	
+      case SPR_PVIS:
+		if (!P_GivePower (Toucher.player, pw_infrared))
+		    return;
+		P_SetMessage(Toucher.player, GOTVISOR, false);
+		sound = 'PickupPower';
+		break;
+
+	    //	Items
+      case SPR_PMAP:
+		if (!P_GiveItem(Toucher.player, IT_ALL_MAP))
+		    return;
+		P_SetMessage(Toucher.player, GOTMAP, false);
+		sound = 'PickupPower';
+		break;
+	
+		// ammo
+      case SPR_CLIP:
+		if (_self->Flags & MF_DROPPED)
+		{
+		    if (!P_GiveAmmo (Toucher.player,am_clip,0))
+				return;
+		}
+		else
+		{
+		    if (!P_GiveAmmo (Toucher.player,am_clip,1))
+				return;
+		}
+		P_SetMessage(Toucher.player, GOTCLIP, false);
+		break;
+	
+      case SPR_AMMO:
+		if (!P_GiveAmmo (Toucher.player, am_clip,5))
+		    return;
+		P_SetMessage(Toucher.player, GOTCLIPBOX, false);
+		break;
+	
+      case SPR_ROCK:
+		if (!P_GiveAmmo (Toucher.player, am_misl,1))
+		    return;
+		P_SetMessage(Toucher.player, GOTROCKET, false);
+		break;
+
+      case SPR_BROK:
+		if (!P_GiveAmmo (Toucher.player, am_misl,5))
+		    return;
+		P_SetMessage(Toucher.player, GOTROCKBOX, false);
+		break;
+	
+      case SPR_CELL:
+		if (!P_GiveAmmo (Toucher.player, am_cell,1))
+		    return;
+		P_SetMessage(Toucher.player, GOTCELL, false);
+		break;
+	
+      case SPR_CELP:
+		if (!P_GiveAmmo (Toucher.player, am_cell,5))
+		    return;
+		P_SetMessage(Toucher.player, GOTCELLBOX, false);
+		break;
+	
+      case SPR_SHEL:
+		if (!P_GiveAmmo (Toucher.player, am_shell,1))
+		    return;
+		P_SetMessage(Toucher.player, GOTSHELLS, false);
+		break;
+	
+      case SPR_SBOX:
+		if (!P_GiveAmmo (Toucher.player, am_shell,5))
+		    return;
+		P_SetMessage(Toucher.player, GOTSHELLBOX, false);
+		break;
+	
+      case SPR_BPAK:
+	    Toucher.player->Backpack = true;
+		for (i=0 ; i<NUMAMMO; i++)
+        {
+		    P_GiveAmmo (Toucher.player, i, 1);
+		}
+		P_SetMessage(Toucher.player, GOTBACKPACK, false);
+		break;
+	
+		// weapons
+      case SPR_BFUG:
+		if (!P_GiveWeapon (Toucher.player, wp_bfg, false))
+		    return;
+		P_SetMessage(Toucher.player, GOTBFG9000, false);
+		sound = 'PickupWeapon';
+		break;
+	
+      case SPR_MGUN:
+		if (!P_GiveWeapon (Toucher.player, wp_chaingun, _self->Flags&MF_DROPPED) )
+		    return;
+		P_SetMessage(Toucher.player, GOTCHAINGUN, false);
+		sound = 'PickupWeapon';
+		break;
+	
+      case SPR_CSAW:
+		if (!P_GiveWeapon (Toucher.player, wp_chainsaw, false) )
+		    return;
+		P_SetMessage(Toucher.player, GOTCHAINSAW, false);
+		sound = 'PickupWeapon';
+		break;
+	
+      case SPR_LAUN:
+		if (!P_GiveWeapon (Toucher.player, wp_missile, false) )
+		    return;
+		P_SetMessage(Toucher.player, GOTLAUNCHER, false);
+		sound = 'PickupWeapon';
+		break;
+	
+      case SPR_PLAS:
+		if (!P_GiveWeapon (Toucher.player, wp_plasma, false) )
+		    return;
+		P_SetMessage(Toucher.player, GOTPLASMA, false);
+		sound = 'PickupWeapon';
+		break;
+	
+      case SPR_SHOT:
+		if (!P_GiveWeapon (Toucher.player, wp_shotgun, _self->Flags&MF_DROPPED ) )
+		    return;
+		P_SetMessage(Toucher.player, GOTSHOTGUN, false);
+		sound = 'PickupWeapon';
+		break;
+
+#ifdef GRENADE_LAUNCHER
+      case SPR_GLAU:
+		if (!P_GiveWeapon(Toucher.player, wp_grenade, false))
+		    return;
+		P_SetMessage(Toucher.player, "Piched up a grenade launcher", false);
+		sound = 'PickupWeapon';
+		break;
+#endif
+	
+      default:
+		Error("P_SpecialThing: Unknown gettable thing");
+    }*/
+
+//==========================================================================
+//
+//  SetOrigin2
+//
+//==========================================================================
+
+void SetOrigin2(TVec origin)
+{
+	Origin = origin;
+
+	// set subsector and/or block links
+	LinkToWorld();
+
+	if (origin.z == ONFLOORZ)
+	{
+		Origin.z = FloorZ;
+	}
+	else if (origin.z == ONCEILINGZ)
+	{
+		Origin.z = CeilingZ - Height;
+	}
+}
+
+//==========================================================================
+//
+//	OnMapSpawn
+//
+//==========================================================================
+
+void OnMapSpawn(mthing_t * mthing)
+{
+	state_t *st;
+
+	if (bNoDeathmatch && deathmatch)
+	{
+		Remove();
+		return;
+	}
+
+	SpawnHealth = Health;
+	bCheckLineBlocking = false;
+	bCheckLineBlockMonsters = false;
+	if (!bMissile)
+	{
+		bCheckLineBlocking = true;
+		if (Class != StrifePlayer)
+		{
+			bCheckLineBlockMonsters = true;
+		}
+	}
+
+	if (gameskill == sk_nightmare)
+	{
+		ReactionCount = 0;
+	}
+
+	LastLook = P_Random() % MAXPLAYERS;
+	// do not set the state with P_SetMobjState,
+	// because action routines can not be called yet
+	StateNum = IdleState;
+	st = &states[StateNum];
+	StateTime = st->time;
+	SpriteIndex = st->sprite;
+	SpriteName = sprite_names[st->sprite];
+	SpriteFrame = st->frame;
+	ModelIndex = st->model_index;
+	ModelFrame = st->model_frame;
+	NextState = st->nextstate;
+
+	if (mthing)
+	{
+		float x;
+		float y;
+		float z;
+
+		CopyMThing(mthing, &SpawnSpot);
+
+		x = mthing->x;
+		y = mthing->y;
+		if (bSpawnCeiling)
+			z = ONCEILINGZ;
+		else
+			z = ONFLOORZ;
+		SetOrigin2(vector(x, y, z));
+		if (z == ONFLOORZ)
+		{
+			Origin.z += mthing->height;
+		}
+		else if (z == ONCEILINGZ)
+		{
+			Origin.z -= mthing->height;
+		}
+		LinkToWorld();
+
+		TID = mthing->tid;
+		Special = mthing->special;
+		Args[0] = mthing->arg1;
+		Args[1] = mthing->arg2;
+		Args[2] = mthing->arg3;
+		Args[3] = mthing->arg4;
+		Args[4] = mthing->arg5;
+		if (StateTime > 0.0)
+			StateTime = 0.1 + Random() * StateTime;
+		if (bCountKill)
+			level->totalkills++;
+
+		Angles.yaw = itof(45 * (mthing->angle / 45));
+		if (mthing->options & MTF_AMBUSH)
+		{
+			bAmbush = true;
+		}
+		if (mthing->options & MTF_DORMANT)
+		{
+			bDormant = true;
+			StateTime = -1.0;
+		}
+	}
+	else
+	{
+		SetOrigin2(Origin);
+	}
+}
+
+//==========================================================================
+//
+//  ExplodeMissile
+//
+//==========================================================================
+
+void ExplodeMissile(void)
+{
+	Velocity = vector(0.0, 0.0, 0.0);
+
+	SetState(DeathState);
+
+	StateTime -= Random() * 0.1;
+
+	if (StateTime < 0.1)
+		StateTime = 0.1;
+
+	bMissile = false;
+
+	if (DeathSound)
+		PlaySound(DeathSound, CHAN_VOICE);
+}
+
+//==========================================================================
+//
+//  CheckMissileSpawn
+//
+//  Moves the missile forward a bit and possibly explodes it right there.
+//
+//==========================================================================
+
+void CheckMissileSpawn(void)
+{
+	StateTime -= Random() * 0.1;
+	if (StateTime < 0.1)
+		StateTime = 0.1;
+
+	// move a little forward so an angle can
+	// be computed if it immediately explodes
+	Origin += Velocity * 0.0142857143;
+
+	if (!TryMove(Origin))
+		ExplodeMissile();
+}
+
+//==========================================================================
+//
+//  SpawnMissile
+//
+//==========================================================================
+
+Actor SpawnMissile(Actor dest, classid type)
+{
+	Actor A;
+	TVec dir;
+
+	A = Spawn(type, Origin + vector(0.0, 0.0, 32.0));
+
+	if (A.SightSound)
+		A.PlaySound(A.SightSound, CHAN_VOICE);
+
+	A.Instigator = self;	// where it came from
+
+	dir = dest.Origin - Origin;
+	// fuzzy player
+	if (dest.Translucency)
+	{
+		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
+	}
+	dir = Normalize(dir);
+	A.Velocity = dir * A.Speed;
+
+	VectorAngles(&dir, &A.Angles);
+
+	A.CheckMissileSpawn();
+
+	return A;
+}
+
+//==========================================================================
+//
+//	Died
+//
+//==========================================================================
+
+void Died(Actor source)
+{
+	classid item;
+	Actor A;
+
+	bShootable = false;
+	bFloat = false;
+	bSkullFly = false;
+
+//	if (target->type != MT_SKULL)
+	bNoGravity = false;
+
+	bDropOff = true;
+	bCorpse = true;
+	Height /= 4.0;
+
+	if (source && source.bIsPlayer)
+	{
+		// count for intermission
+		if (bCountKill)
+			source.Player->KillCount++;
+
+		if (bIsPlayer)
+		{
+			source.Player->FragsStats[P_GetPlayerNum(Player)]++;
+			if (source == self)
+			{
+				Player->Frags--;
+			}
+			else
+			{
+				source.Player->Frags++;
+			}
+		}
+	}
+	else if (!netgame && bCountKill)
+	{
+		// count all monster deaths,
+		// even those caused by other monsters
+		players[0].KillCount++;
+	}
+
+	if (bIsPlayer)
+	{
+		// count environment kills against you
+		if (!source)
+		{
+			Player->FragsStats[P_GetPlayerNum(Player)]++;
+			Player->Frags--;
+		}
+
+		bSolid = false;
+		Player->PlayerState = PST_DEAD;
+		DropWeapon(Player);
+#ifdef FIXME
+		if (Player == &players[consoleplayer] && automapactive)
+		{
+			// don't die in auto map,
+			// switch view prior to dying
+			AM_Stop();
+		}
+#endif
+	}
+
+	if (Health < GibsHealth && GibsDeathState)
+	{
+		SetState(GibsDeathState);
+	}
+	else
+	{
+		SetState(DeathState);
+	}
+	StateTime -= Random() * 0.1;
+
+	if (StateTime < 0.1)
+		StateTime = 0.1;
+
+	// Drop stuff.
+	// This determines the kind of object spawned
+	// during the death frame of a thing.
+	switch (Class)
+	{
+#if 0
+	case MT_WOLFSS:
+	case MT_POSSESSED:
+		item = MT_CLIP;
+		break;
+	
+	case MT_SHOTGUY:
+		item = MT_SHOTGUN;
+		break;
+	
+	case MT_CHAINGUY:
+		item = MT_CHAINGUN;
+		break;
+#endif
+
+	default:
+		return;
+	}
+
+	A = Spawn(item, vector(Origin.x, Origin.y, ONFLOORZ));
+	A.bDropped = true;	// special versions of items
+}
+
+//==========================================================================
+//
+//  Damage
+//
+//  Damages both enemies and players.
+//  "inflictor" is the thing that caused the damage, creature or missile,
+// can be NULL (slime, etc).
+//  "source" is the thing to target after taking damage, creature or NULL.
+//  Source and inflictor are the same for melee attacks. Source can be NULL
+// for slime, barrel explosions and other environmental stuff.
+//
+//==========================================================================
+
+void Damage(Actor inflictor, Actor source, int damage)
+{
+	int saved;
+
+	if (!bShootable)
+		return;	// shouldn't happen...
+
+	if (Health <= 0)
+		return;
+
+	if (bSkullFly)
+	{
+		Velocity = vector(0.0, 0.0, 0.0);
+	}
+	if (bDormant)
+	{
+		// Invulnerable, and won't wake up
+		return;
+	}
+
+	if (bIsPlayer && gameskill == sk_baby)
+		damage >>= 1;	// take half damage in trainer mode
+
+	// Some close combat weapons should not
+	// inflict thrust and push the victim out of reach,
+	// thus kick away unless using the chainsaw.
+	if (inflictor && bColideWithThings)
+	{
+		Velocity += (500.0 * itof(damage) / Mass) *
+			Normalize(MobjCenter(self) - MobjCenter(inflictor));
+	}
+
+	// player specific
+	if (bIsPlayer)
+	{
+		// end of game hell hack
+		if ((Sector->special & 255) == 75 && damage >= Health)
+		{
+			damage = Health - 1;
+		}
+
+		// Below certain threshold,
+		// ignore damage in GOD mode, or with INVUL power.
+		if (damage < 1000 && ((Player->Cheats & CF_GODMODE)
+			|| Player->Powers[pw_invulnerability]))
+		{
+			return;
+		}
+
+		if (Player->ArmorType)
+		{
+			if (Player->ArmorType == 1)
+				saved = damage / 3;
+			else
+				saved = damage / 2;
+
+			if (Player->ArmorPoints <= saved)
+			{
+				// armor is used up
+				saved = Player->ArmorPoints;
+				Player->ArmorType = 0;
+			}
+			Player->ArmorPoints -= saved;
+			damage -= saved;
+		}
+		Player->Health -= damage;	// mirror mobj health here for Dave
+		if (Player->Health < 0)
+			Player->Health = 0;
+
+		Player->Attacker = &source;
+		Player->DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
+
+		if (Player->DamageFlash > 3.0)
+			Player->DamageFlash = 3.0;	// teleport stomp does 10k points...
+	}
+
+	// do the damage    
+	Health -= damage;
+	if (Health <= 0)
+	{
+		Died(source);
+		return;
+	}
+
+	if ((Random() < PainChance) && !bSkullFly)
+	{
+		bJustHit = true;	// fight back!
+		SetState(PainState);
+	}
+
+	ReactionCount = 0;	// we're awake now...
+
+	if ((!Threshold) && source && source != self)
+	{
+		// if not intent on another player,
+		// chase after this one
+		Enemy = source;
+		Threshold = BASETHRESHOLD;
+		if (StateNum == IdleState && SeeState != S_NULL)
+		{
+			SetState(SeeState);
+		}
+	}
+}
+
+//==========================================================================
+//
+//  NightmareRespawn
+//
+//==========================================================================
+
+void NightmareRespawn(void)
+{
+	float x;
+	float y;
+	float z;
+	Actor A;
+	mthing_t *mthing;
+
+	x = SpawnSpot.x;
+	y = SpawnSpot.y;
+
+	// somthing is occupying it's position?
+	if (!CheckPosition(vector(x, y, ONFLOORZ)))
+		return;	// no respwan
+
+	// spawn a teleport fog at old spot
+	// because of removal of the body?
+	A = Spawn(TeleportFog, vector(Origin.x, Origin.y, ONFLOORZ));
+
+	// initiate teleport sound
+	A.PlaySound('Teleport', CHAN_BODY);
+
+	// spawn a teleport fog at the new spot
+	A = Spawn(TeleportFog, vector(x, y, ONFLOORZ));
+
+	A.PlaySound('Teleport', CHAN_BODY);
+
+	// spawn the new monster
+	mthing = &SpawnSpot;
+
+	// spawn it
+	if (bSpawnCeiling)
+		z = ONCEILINGZ;
+	else
+		z = ONFLOORZ;
+
+	// inherit attributes from deceased one
+	A = Spawn(Class, vector(x, y, z));
+	CopyMThing(&SpawnSpot, &A.SpawnSpot);
+	A.Angles.yaw = itof(45 * (mthing->angle / 45));
+
+	if (mthing->options & MTF_AMBUSH)
+		A.bAmbush = true;
+
+	A.ReactionCount = 18;
+
+	// remove the old monster,
+	Remove();
+}
+
+//==========================================================================
+//
+//  Thrust
+//
+//==========================================================================
+
+void Thrust(float angle, float move)
+{
+	Velocity.x += move * cos(angle) * 35.0;
+	Velocity.y += move * sin(angle) * 35.0;
+}
+
+//==========================================================================
+//
+//	Touch
+//
+//==========================================================================
+
+bool Touch(Entity InOther)
+{
+	bool solid;
+	int damage;
+	Actor Other;
+
+	Other = Actor(InOther);
+	if (!Other.bSolid && !Other.bSpecial && !Other.bShootable)
+		return true;
+
+	// check for skulls slamming into things
+	if (bSkullFly)
+	{
+		damage = ((P_Random() % 8) + 1) * MissileDamage;
+		Other.Damage(self, self, damage);
+		bSkullFly = false;
+		Velocity = vector(0.0, 0.0, 0.0);
+		SetState(IdleState);
+		return false;	// stop moving
+	}
+
+	// missiles can hit other things
+	if (bMissile)
+	{
+		if (Instigator && (Instigator.Class == Other.Class))
+		{
+			// Don't hit same species as originator.
+			if (Other == Instigator)
+				return true;
+
+			if (Other.Class != StrifePlayer)
+			{
+				// Explode, but do no damage.
+				// Let players missile other players.
+				return false;
+			}
+		}
+
+		if (!Other.bShootable)
+		{
+			// didn't do any damage
+			return !Other.bSolid;
+		}
+
+		// damage / explode
+		damage = ((P_Random() % 8) + 1) * MissileDamage;
+		Other.Damage(self, Instigator, damage);
+		// don't traverse any more
+		return false;
+	}
+
+	// check for special pickup
+	if (Other.bSpecial)
+	{
+		solid = Other.bSolid;
+		Other.TouchSpecial(self);
+		return !solid;
+	}
+
+	//return !Other.bSolid || Other.bNoClip;
+	return !Other.bSolid;
+}
+
+//==========================================================================
+//
+//	CrossSpecialLine
+//
+//==========================================================================
+
+void CrossSpecialLine(line_t *ld, int side)
+{
+	if (bIsPlayer)
+	{
+		P_ActivateLine(ld, self, side, SPAC_CROSS);
+	}
+	else if (bActivateMCross)
+	{
+		P_ActivateLine(ld, self, side, SPAC_MCROSS);
+	}
+	else if (bActivatePCross)
+	{
+		P_ActivateLine(ld, self, side, SPAC_PCROSS);
+	}
+	else if (ld->special == 70)
+	{
+		//	Teleport hack
+		P_ActivateLine(ld, self, side, SPAC_MCROSS);
+	}
+}
+
+//**************************************************************************
+//
+//  OBJECT MOVEMENT
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//  XYMovement
+//
+//==========================================================================
+
+void XYMovement(void)
+{
+	float ptryx;
+	float ptryy;
+	float xmove;
+	float ymove;
+
+	if (Velocity.x > MAXMOVE)
+		Velocity.x = MAXMOVE;
+	else if (Velocity.x < -MAXMOVE)
+		Velocity.x = -MAXMOVE;
+
+	if (Velocity.y > MAXMOVE)
+		Velocity.y = MAXMOVE;
+	else if (Velocity.y < -MAXMOVE)
+		Velocity.y = -MAXMOVE;
+
+	xmove = Velocity.x * frametime;
+	ymove = Velocity.y * frametime;
+
+	do
+	{
+		if (xmove > MAXMOVE / (35.0 * 2.0) || ymove > MAXMOVE / (35.0 * 2.0))
+		{
+			ptryx = Origin.x + xmove / 2.0;
+			ptryy = Origin.y + ymove / 2.0;
+			xmove /= 2.0;
+			ymove /= 2.0;
+		}
+		else
+		{
+			ptryx = Origin.x + xmove;
+			ptryy = Origin.y + ymove;
+			xmove = 0.0;
+			ymove = 0.0;
+		}
+
+		if (!TryMove(vector(ptryx, ptryy, Origin.z)))
+		{
+			// blocked move
+			if (bIsPlayer)
+			{
+				// try to slide along it
+				SlideMove();
+			}
+			else if (bMissile)
+			{
+#if 0
+				if (Flags & MF_BOUNCE)
+				{
+					//  Bounce against walls and non-killable ofjects
+					if (BlockingMobj)
+					{
+						if ((!BlockingMobj->bIsPlayer) &&
+							(!(BlockingMobj->Flags & MF_COUNTKILL)))
+						{
+							float speed;
+							float angle;
+
+							angle = AngleMod360(
+								atan2(Origin.y - BlockingMobj->Origin.y,
+								Origin.x - BlockingMobj->Origin.x) +
+								(Random() * 16.0 - 8.0));
+							speed = Length(Velocity);
+							speed = speed * 0.75;
+							Angles.yaw = angle;
+							Velocity.x = speed * cos(angle);
+							Velocity.y = speed * sin(angle);
+							if (PainSound)
+							{
+								PlaySound(PainSound, CHAN_VOICE);
+							}
+						}
+						else
+						{
+							// Struck a player/creature
+							P_ExplodeMissile(this);
+						}
+					}
+					else
+					{
+						// Struck a wall
+						BounceWall(BOUNCE_VAL);
+						if (PainSound)
+						{
+							PlaySound(PainSound, CHAN_VOICE);
+						}
+					}
+					if (destroyed)
+					{
+						return false;	// mobj was removed
+					}
+					return true;
+				}
+#endif
+
+				// explode a missile
+				if (tmtrace->CeilingLine && tmtrace->CeilingLine->backsector &&
+					tmtrace->CeilingLine->backsector->ceiling.pic == skyflatnum)
+				{
+					// Hack to prevent missiles exploding
+					// against the sky.
+					// Does not handle sky floors.
+					Remove();
+					return;
+				}
+				ExplodeMissile();
+			}
+			else
+			{
+				Velocity.x = 0.0;
+				Velocity.y = 0.0;
+			}
+		}
+	}
+	while (xmove || ymove);
+}
+
+//==========================================================================
+//
+//	ZMovement
+//
+//==========================================================================
+
+void ZMovement(void)
+{
+	float dist;
+	float delta;
+	float vdot;
+
+	// check for smooth step up
+	if (bIsPlayer && Origin.z < FloorZ)
+	{
+		Player->ViewHeight -= FloorZ - Origin.z;
+		Player->DeltaViewHeight = (VIEWHEIGHT - Player->ViewHeight) * 4.0;
+	}
+
+	// adjust height
+	Origin.z += Velocity.z * frametime;
+
+	if (bFloat && Enemy)
+	{
+		// float down towards enemy if too close
+		if (!bSkullFly && !bInFloat)
+		{
+			dist = MobjDist2(self, Enemy);
+
+			delta = Enemy.Origin.z + Height / 2.0 - Origin.z;
+
+			if (delta < 0.0 && dist < -(delta * 3.0))
+				Origin.z -= FLOATSPEED * frametime;
+			else if (delta > 0.0 && dist < (delta * 3.0))
+				Origin.z += FLOATSPEED * frametime;
+		}
+	}
+
+	// clip movement
+	if (Origin.z <= FloorZ + 0.1)
+	{
+		// hit the floor
+
+		vdot = DotProduct(Velocity, Floor->normal);
+		// Note (id):
+		//  somebody left this after the setting momz to 0,
+		//  kinda useless there.
+		if (bSkullFly)
+		{
+			// the skull slammed into something
+			Velocity.z = -Velocity.z;
+		}
+
+		if (vdot < -0.1)
+		{
+			if (bIsPlayer && (vdot < -GRAVITY * 0.25))
+			{
+				// Squat down.
+				// Decrease ViewHeight for a moment
+				// after hitting the ground (hard),
+				// and utter appropriate sound.
+				Player->DeltaViewHeight = vdot / 8.0;
+				PlaySound('PlayerLand', CHAN_VOICE);
+			}
+		}
+		Origin.z = FloorZ;
+
+		if (bMissile)
+		{
+//			if (!(Flags & (MF_NOCLIP | MF_BOUNCE)))
+			if (bColideWithWorld)
+			{
+				ExplodeMissile();
+				return;
+			}
+#if 0
+			if (Flags & MF_BOUNCE && PainSound && Length(Velocity) > 256.0)
+			{
+				PlaySound(PainSound, CHAN_VOICE);
+			}
+#endif
+		}
+	}
+
+	if (Origin.z + Height > CeilingZ)
+	{
+		// hit the ceiling
+		vdot = DotProduct(Velocity, Ceiling->normal);
+		if (vdot < 0.0)
+			Velocity -= vdot * Ceiling->normal;
+
+		Origin.z = CeilingZ - Height;
+
+		if (bSkullFly)
+		{
+			// the skull slammed into something
+			Velocity.z = -Velocity.z;
+		}
+
+		if (bMissile)
+		{
+//			if (!(Flags & (MF_NOCLIP | MF_BOUNCE)))
+			if (bColideWithWorld)
+			{
+				ExplodeMissile();
+				return;
+			}
+#if 0
+			if (Flags & MF_BOUNCE && PainSound && Length(Velocity) > 256.0)
+			{
+				PlaySound(PainSound, CHAN_VOICE);
+			}
+#endif
+		}
+	}
+}
+
+//==========================================================================
+//
+//  ApplyFriction
+//
+//==========================================================================
+
+void ApplyFriction(void)
+{
+	float dot;
+
+	// slow down
+
+	if (bMissile || bSkullFly)
+		return;	// no friction for missiles ever
+
+	if (Origin.z > FloorZ && !bOnMobj && WaterLevel < 2)
+		return;	// no friction when airborne
+
+	//  Clip velocity
+	if (Origin.z <= FloorZ)
+	{
+		dot = DotProduct(Velocity, Floor->normal);
+		if (dot < 0.0)
+		{
+#if 0
+			if (Flags & MF_BOUNCE)
+			{
+				dot *= BOUNCE_VAL;
+			}
+#endif
+			Velocity -= dot * Floor->normal;
+		}
+	}
+
+	if (bCorpse)
+	{
+		// do not stop sliding if halfway off a step with some momentum
+		if (Velocity.x > 0.25 * 35.0 || Velocity.x < -0.25 * 35.0 ||
+			Velocity.y > 0.25 * 35.0 || Velocity.y < -0.25 * 35.0)
+		{
+			if (FloorZ != Sector->floorheight)
+				return;
+		}
+	}
+
+	if (Velocity.x > -STOPSPEED && Velocity.x < STOPSPEED &&
+		Velocity.y > -STOPSPEED && Velocity.y < STOPSPEED &&
+		Velocity.z > -STOPSPEED && Velocity.z < STOPSPEED &&
+		(!bIsPlayer || (!Player->ForwardMove && !Player->SideMove)))
+	{
+		if (bIsPlayer)
+		{
+			int sn;
+
+			// if in a walking frame, stop moving
+			sn = StateNum - SeeState;
+			if (sn >= 0 && sn < 4)
+				SetState(IdleState);
+		}
+		Velocity = vector(0.0, 0.0, 0.0);
+	}
+	else
+	{
+		if (WaterLevel > 1)
+		{
+			Velocity -= Velocity * (FRICTION_WATER * frametime);
+		}
+		else
+		{
+			Velocity -= Velocity * (FRICTION * frametime);
+		}
+	}
+}
+
+//===========================================================================
+//
+//  PlayerLandedOnThing
+//
+//===========================================================================
+
+void PlayerLandedOnThing(void)
+{
+	Player->DeltaViewHeight = Velocity.z / 8.0;
+	if (Velocity.z < -GRAVITY * 0.375)
+	{
+		PlaySound('PlayerLand', CHAN_VOICE);
+	}
+}
+
+//==========================================================================
+//
+//	Physics
+//
+//==========================================================================
+
+bool Physics(void)
+{
+	Actor onmo;
+
+	CheckWater();
+	UpdateVelocity();
+
+	// momentum movement
+	if (Velocity.x || Velocity.y)
+	{
+		XYMovement();
+		if (IsDestroyed())
+		{
+			return false;	// mobj was removed
+		}
+	}
+	else if (bSkullFly)
+	{
+		// the skull slammed into something
+		bSkullFly = false;
+		Velocity = vector(0.0, 0.0, 0.0);
+		if (!SetState(IdleState))
+		{
+			return false;
+		}
+	}
+	if ((Origin.z != FloorZ) || Velocity.z || tmtrace->BlockingMobj)
+	{
+		// Handle Z momentum and gravity
+		onmo = Actor(CheckOnmobj());
+		if (!onmo)
+		{
+			ZMovement();
+			if (bIsPlayer && bOnMobj)
+			{
+				bOnMobj = false;
+			}
+		}
+		else
+		{
+			if (bIsPlayer)
+			{
+				if (Velocity.z < -GRAVITY * 0.25)
+				{
+					PlayerLandedOnThing();
+				}
+				if (onmo.Origin.z + onmo.Height - Origin.z <= MaxStepHeight)
+				{
+					Player->ViewHeight -= onmo.Origin.z + onmo.Height
+						- Origin.z;
+					Player->DeltaViewHeight =
+						(VIEWHEIGHT - Player->ViewHeight) * 4.0;
+					Origin.z = onmo.Origin.z + onmo.Height;
+					bOnMobj = true;
+					Velocity.z = 0.0;
+				}
+				else
+				{
+					// hit the bottom of the blocking actor
+					Velocity.z = 0.0;
+				}
+			}
+		}
+		if (IsDestroyed())
+		{
+			return false;	// entity was removed
+		}
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float deltaTime)
+{
+	//  In my deathmatch mode remove dropped weapons after 30 seconds
+	// because otherwise they are spawned fastar than player(s) can pick 
+	// them up and the game is going slower and slower and slower ...
+	if (bDropped && (deathmatch == 3))
+	{
+		MoveCount++;
+		if (MoveCount >= 30 * 35)
+		{
+			Remove();
+			return;
+		}
+	}
+
+	if (!Physics())
+	{
+		return;
+	}
+
+	// cycle through states,
+	// calling action functions at transitions
+	if (StateTime != -1.0)
+	{
+		StateTime -= deltaTime;
+
+		// you can cycle through multiple states in a tic
+		if (StateTime <= 0.0)
+		{
+			StateTime = 0.0;
+			if (!SetState(NextState))
+				return;	// freed itself
+		}
+	}
+	else
+	{
+		// check for nightmare respawn
+		if (!bCountKill)
+			return;
+
+		//  In my deathmatch mode monstars respawns very fast
+		if (deathmatch == 3)
+		{
+			if (level->tictime & 31)
+				return;
+
+			if (P_Random() > 32)
+				return;
+
+			NightmareRespawn();
+		}
+		else
+		{
+			if (!respawnmonsters)
+				return;
+
+			MoveCount++;
+
+			if (MoveCount < 12 * 35)
+				return;
+
+			if (level->tictime & 31)
+				return;
+
+			if (P_Random() > 4)
+				return;
+
+			NightmareRespawn();
+		}
+	}
+}
+
+//==========================================================================
+//
+//  HeightClip
+//
+//  Takes a valid thing and adjusts the thing->FloorZ, thing->CeilingZ, and
+// possibly thing->z. This is called for all nearby monsters whenever a
+// sector changes height. If the thing doesn't fit, the z will be set to the
+// lowest value and false will be returned.
+//
+//==========================================================================
+
+bool HeightClip(void)
+{
+	bool onfloor;
+
+	onfloor = (Origin.z == FloorZ);
+
+	CheckRelPosition(Origin);
+	// what about stranding a monster partially off an edge?
+
+	Floor = tmtrace->Floor;
+	Ceiling = tmtrace->Ceiling;
+	FloorZ = tmtrace->FloorZ;
+	CeilingZ = tmtrace->CeilingZ;
+
+	if (onfloor)
+	{
+		// walking monsters rise and fall with the floor
+		Origin.z = FloorZ;
+	}
+	else
+	{
+		// don't adjust a floating monster unless forced to
+		if (Origin.z + Height > CeilingZ)
+			Origin.z = CeilingZ - Height;
+	}
+
+	if (CeilingZ - FloorZ < Height)
+		return false;
+
+	return true;
+}
+
+//==========================================================================
+//
+//	SectorChanged
+//
+//==========================================================================
+
+bool SectorChanged(int CrushChange)
+{
+	Actor A;
+
+	if (HeightClip())
+	{
+		return true;
+	}
+
+	//	Crunch bodies to giblets
+	if (Health <= 0)
+	{
+		SetState(S_GIBS);
+		bSolid = false;
+		Height = 0.0;
+		Radius = 0.0;
+		return true;
+	}
+
+	//	Crunch dropped items
+	if (bDropped)
+	{
+		Remove();
+		return true;
+	}
+
+	if (!bShootable)
+	{
+		//	Assume it is bloody gibs or something
+		return true;
+	}
+
+	if (CrushChange && !(level->tictime & 3))
+	{
+		Damage(none, none, CrushChange);
+
+		// spray blood in a random direction
+		A = Spawn(Blood, Origin + vector(0.0, 0.0, Height / 2.0));
+		A.Velocity.x = (Random() - Random()) * 16.0 * 35.0;
+		A.Velocity.y = (Random() - Random()) * 16.0 * 35.0;
+	}
+	return false;	//don't fit
+}
+
+//==========================================================================
+//
+//  RadiusAttack
+//
+//  Source is the creature that caused the explosion at spot.
+//
+//==========================================================================
+
+void RadiusAttack(int damage, int distance, bool damageSource)
+{
+	int x;
+	int y;
+
+	int xl;
+	int xh;
+	int yl;
+	int yh;
+
+	float dist;
+
+	dist = itof(damage);
+	yh = MapBlock(Origin.y + dist - XLevel.BlockMapOrgY);
+	yl = MapBlock(Origin.y - dist - XLevel.BlockMapOrgY);
+	xh = MapBlock(Origin.x + dist - XLevel.BlockMapOrgX);
+	xl = MapBlock(Origin.x - dist - XLevel.BlockMapOrgX);
+	bombspot = self;
+	bombsource = Instigator;
+	bombdamage = itof(damage);
+
+	for (y = yl; y <= yh; y++)
+		for (x = xl; x <= xh; x++)
+			P_BlockThingsIterator(x, y, 'PIT_RadiusAttack');
+}
+//==========================================================================
+//
+//  TeleportMove
+//
+//==========================================================================
+
+bool TeleportMove(TVec org)
+{
+	int xl;
+	int xh;
+	int yl;
+	int yh;
+	int bx;
+	int by;
+
+	// kill anything occupying the position
+	teleport_thing = self;
+
+	teleport_x = org.x;
+	teleport_y = org.y;
+
+	// stomp on any things contacted
+	xl = MapBlock(org.x - Radius - XLevel.BlockMapOrgX - MAXRADIUS);
+	xh = MapBlock(org.x + Radius - XLevel.BlockMapOrgX + MAXRADIUS);
+	yl = MapBlock(org.y - Radius - XLevel.BlockMapOrgY - MAXRADIUS);
+	yh = MapBlock(org.y + Radius - XLevel.BlockMapOrgY + MAXRADIUS);
+
+	for (bx = xl; bx <= xh; bx++)
+		for (by = yl; by <= yh; by++)
+			if (!P_BlockThingsIterator(bx, by, 'PIT_StompThing'))
+				return false;
+
+	// the move is ok,
+	// so link the thing into its new position
+	UnlinkFromWorld();
+	Origin = org;
+	LinkToWorld();
+
+	return true;
+}
+
+//==========================================================================
+//
+//  Teleport
+//
+//==========================================================================
+
+int Teleport(float x, float y, float angle)
+{
+	TVec oldOrg;
+	Actor fog;
+
+	oldOrg = Origin;
+
+	if (!TeleportMove(vector(x, y, Origin.z)))
+		return 0;
+
+	Origin.z = FloorZ;	//fixme: not needed?
+	if (bIsPlayer)
+		Player->ViewOrg.z = Origin.z + Player->ViewHeight;
+
+	// spawn teleport fog at source and destination
+	fog = Spawn(TeleportFog, oldOrg);
+	fog.PlaySound('Teleport', CHAN_VOICE);
+
+	fog = Spawn(TeleportFog, Origin +
+		vector(20.0 * cos(angle), 20.0 * sin(angle), 0.0));
+
+	// emit sound, where?
+	fog.PlaySound('Teleport', CHAN_VOICE);
+
+	// don't move for a bit
+	if (bIsPlayer)
+	{
+		ReactionTime = 0.5;
+		Player->bFixAngle = true;
+	}
+
+	Angles.yaw = angle;
+	Velocity = vector(0.0, 0.0, 0.0);
+	return 1;
+}
+
+
+//==========================================================================
+//
+//  CheckMeleeRange
+//
+//==========================================================================
+
+int CheckMeleeRange(void)
+{
+	float dist;
+
+	if (!Enemy)
+	{
+		return false;
+	}
+
+	dist = MobjDist(Enemy, self);
+
+	if (dist >= MELEERANGE - 20.0 + Enemy.Radius)
+	{
+		return false;
+	}
+
+	if (!CanSee(Enemy))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+//==========================================================================
+//
+//  CheckMissileRange
+//
+//==========================================================================
+
+int CheckMissileRange(void)
+{
+	float dist;
+
+	if (!CanSee(Enemy))
+	{
+		return false;
+	}
+
+	if (bJustHit)
+	{
+		// the target just hit the enemy,
+		// so fight back!
+		bJustHit = false;
+		return true;
+	}
+
+	if (ReactionCount)
+	{
+		return false;	// do not attack yet
+	}
+
+	// OPTIMIZE: get this from a global checksight
+	dist = MobjDist(self, Enemy) - 64.0;
+
+	if (!MeleeState)
+		dist -= 128.0;	// no melee attack, so fire more
+
+/*    if (actor->type == MT_VILE)
+    {
+		if (dist > 14.0 * 64.0)
+		    return false;	// too far away
+    }
+	
+
+    if (actor->type == MT_UNDEAD)
+    {
+		if (dist < 196.0)
+		    return false;	// close for fist attack
+		dist /= 2.0;
+    }
+	
+    if (actor->type == MT_CYBORG ||
+    	actor->type == MT_SPIDER ||
+    	actor->type == MT_SKULL)
+    {
+		dist /= 2.0;
+    }*/
+
+	if (dist > 200.0)
+		dist = 200.0;
+
+//    if (actor->type == MT_CYBORG && dist > 160.0)
+//      dist = 160.0;
+
+	if (Random() * 256.0 < dist)
+		return false;
+
+	return true;
+}
+
+//==========================================================================
+//
+//  LookForMonsters
+//
+//==========================================================================
+
+bool LookForMonsters(bool allaround)
+{
+	Actor mo;
+	float an;
+	float dist;
+
+	if (!players[0].MO.CanSee(self))
+	{
+		return false;	//  Not seen by player
+	}
+
+	FOREACH(Actor, mo)
+	{
+		if (mo.Health <= 0)
+			continue;	// dead
+
+		if (mo == self)
+			continue;	// self
+
+		if (!mo.bCountKill)
+			continue;	// not a monster
+
+		if (!CanSee(mo))
+			continue;	// out of sight
+
+		if (P_Random() > 128)
+			continue;	// sometimes skip
+
+		if (!allaround)
+		{
+			an = AngleMod360(atan2(mo.Origin.y - Origin.y,
+				mo.Origin.x - Origin.x) - Angles.yaw);
+
+			if (an > 90.0 && an < 270.0)
+			{
+				dist = MobjDist(mo, self);
+				// if real close, react anyway
+				if (dist > MELEERANGE)
+					continue;	// behind back
+			}
+		}
+
+		Enemy = mo;
+		return true;
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//  LookForPlayers
+//
+//  If allaround is false, only look 180 degrees in front.
+//  Returns true if a player is targeted.
+//
+//==========================================================================
+
+bool LookForPlayers(bool allaround)
+{
+	int c;
+	int stop;
+	player_t *player;
+	float an;
+	float dist;
+
+	if (!netgame && players[0].bSpawned && players[0].Health <= 0)
+	{
+		return LookForMonsters(allaround);
+	}
+
+	c = 0;
+	stop = (LastLook - 1) & (MAXPLAYERS - 1);
+
+	for (;; LastLook = (LastLook + 1) & (MAXPLAYERS - 1))
+	{
+		if (LastLook == stop)
+		{
+			// done looking
+			return false;
+		}
+
+		player = &players[LastLook];
+
+		if (!player->bActive)
+			continue;
+
+		if (c++ == 2)
+		{
+			// done looking
+			return false;
+		}
+
+		if (!player->bSpawned || !player->MO)
+			continue;	//  not spawned yet
+
+		if (player->Health <= 0)
+			continue;	// dead
+
+		if (!CanSee(player->MO))
+			continue;	//  out of sight
+
+		if (!allaround)
+		{
+			an = AngleMod360(atan2(player->MO.Origin.y - Origin.y,
+				player->MO.Origin.x - Origin.x) - Angles.yaw);
+
+			if (an > 90.0 && an < 270.0)
+			{
+				dist = MobjDist(player->MO, self);
+				// if real close, react anyway
+				if (dist > MELEERANGE)
+					continue;	// behind back
+			}
+		}
+
+		Enemy = player->MO;
+		return true;
+	}
+
+	return false;
+}
+
+//==========================================================================
+//
+//  StepMove
+//
+//  Move in the current direction, returns false if the move is blocked.
+//
+//==========================================================================
+
+bool StepMove(void)
+{
+	float tryx;
+	float tryy;
+
+	line_t *ld;
+	bool good;
+
+	if (MoveDir == DI_NODIR)
+		return false;
+
+#ifdef RANGECHECK
+	if (MoveDir >= 8 || MoveDir < 0)
+		I_Error("Weird MoveDir!");
+#endif
+
+	tryx = Origin.x + StepSpeed * xspeed[MoveDir];
+	tryy = Origin.y + StepSpeed * yspeed[MoveDir];
+
+	if (!TryMove(vector(tryx, tryy, Origin.z)))
+	{
+		// open any specials
+		if (bFloat && tmtrace->bFloatOk)
+		{
+			// must adjust height
+			if (Origin.z < tmtrace->FloorZ)
+				Origin.z += FLOATSPEED * frametime;
+			else
+				Origin.z -= FLOATSPEED * frametime;
+
+			bInFloat = true;
+			return true;
+		}
+
+		if (!tmtrace->NumSpecHit)
+			return false;
+
+		MoveDir = DI_NODIR;
+		good = false;
+		while (tmtrace->NumSpecHit--)
+		{
+			ld = tmtrace->SpecHit[tmtrace->NumSpecHit];
+			// if the special is not a door
+			// that can be opened,
+			// return false
+			if (P_ActivateLine(ld, self, 0, SPAC_USE))
+			{
+				good = true;
+			}
+		}
+		return good;
+	}
+	else
+	{
+		bInFloat = false;
+	}
+
+	if (!bFloat)
+	{
+		Origin.z = FloorZ;
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  TryWalk
+//
+//  Attempts to move actor on in its current (ob->moveangle) direction.
+// If blocked by either a wall or an actor returns FALSE
+// If move is either clear or blocked only by a door, returns TRUE and sets...
+// If a door is in the way, an OpenDoor call is made to start it opening.
+//
+//==========================================================================
+
+bool TryWalk(void)
+{
+	if (!StepMove())
+	{
+		return false;
+	}
+
+	MoveCount = P_Random() & 15;
+	return true;
+}
+
+//==========================================================================
+//
+//  NewChaseDir
+//
+//==========================================================================
+
+void NewChaseDir(void)
+{
+	float deltax;
+	float deltay;
+
+	int d[3];
+
+	int tdir;
+	int olddir;
+
+	int turnaround;
+
+	if (!Enemy)
+	{
+		Error("P_NewChaseDir: called with no target");
+	}
+
+	olddir = MoveDir;
+	turnaround = opposite[olddir];
+
+	deltax = Enemy.Origin.x - Origin.x;
+	deltay = Enemy.Origin.y - Origin.y;
+
+	if (deltax > 10.0)
+		d[1] = DI_EAST;
+	else if (deltax < -10.0)
+		d[1] = DI_WEST;
+	else
+		d[1] = DI_NODIR;
+
+	if (deltay < -10.0)
+		d[2] = DI_SOUTH;
+	else if (deltay > 10.0)
+		d[2] = DI_NORTH;
+	else
+		d[2] = DI_NODIR;
+
+	// try direct route
+	if (d[1] != DI_NODIR && d[2] != DI_NODIR)
+	{
+		MoveDir = diags[((deltay < 0.0) << 1) + (deltax > 0.0)];
+		if (MoveDir != turnaround && TryWalk())
+			return;
+	}
+
+	// try other directions
+	if (P_Random() > 200 || fabs(deltay) > fabs(deltax))
+	{
+		tdir = d[1];
+		d[1] = d[2];
+		d[2] = tdir;
+	}
+
+	if (d[1] == turnaround)
+		d[1] = DI_NODIR;
+	if (d[2] == turnaround)
+		d[2] = DI_NODIR;
+
+	if (d[1] != DI_NODIR)
+	{
+		MoveDir = d[1];
+		if (TryWalk())
+		{
+			// either moved forward or attacked
+			return;
+		}
+	}
+
+	if (d[2] != DI_NODIR)
+	{
+		MoveDir = d[2];
+
+		if (TryWalk())
+			return;
+	}
+
+	// there is no direct path to the player,
+	// so pick another direction.
+	if (olddir != DI_NODIR)
+	{
+		MoveDir = olddir;
+
+		if (TryWalk())
+			return;
+	}
+
+	// randomly determine direction of search
+	if (P_Random() & 1)
+	{
+		for (tdir = DI_EAST; tdir <= DI_SOUTHEAST; tdir++)
+		{
+			if (tdir != turnaround)
+			{
+				MoveDir = tdir;
+
+				if (TryWalk())
+					return;
+			}
+		}
+	}
+	else
+	{
+		for (tdir = DI_SOUTHEAST; tdir != (DI_EAST - 1); tdir--)
+		{
+			if (tdir != turnaround)
+			{
+				MoveDir = tdir;
+
+				if (TryWalk())
+					return;
+			}
+		}
+	}
+
+	if (turnaround != DI_NODIR)
+	{
+		MoveDir = turnaround;
+		if (TryWalk())
+			return;
+	}
+
+	MoveDir = DI_NODIR;	// can not move
+}
+
+//==========================================================================
+//
+//  A_Look
+//
+//  Stay in state until a player is sighted
+//
+//==========================================================================
+
+void A_Look(void)
+{
+	Actor targ;
+	int sound;
+
+	Threshold = 0;	// any shot will wake up
+	targ = Actor(Sector->SoundTarget);
+
+	if (targ && targ.bShootable)
+	{
+		Enemy = targ;
+
+		if (bAmbush)
+		{
+			if (!CanSee(Enemy))
+			{
+				if (!LookForPlayers(false))
+					return;
+			}
+		}
+	}
+	else
+	{
+		if (!LookForPlayers(false))
+			return;
+	}
+
+	// go into chase state
+	if (SightSound)
+	{
+		PlaySound(SightSound, CHAN_VOICE);
+	}
+
+	SetState(SeeState);
+}
+
+//==========================================================================
+//
+//  A_Chase
+//
+//  Actor has a melee attack, so it tries to close as fast as possible
+//
+//==========================================================================
+
+void A_Chase(void)
+{
+	float delta;
+
+	if (ReactionCount)
+	{
+		ReactionCount--;
+	}
+
+	// modify target threshold
+	if (Threshold)
+	{
+		if (!Enemy || Enemy.Health <= 0)
+		{
+			Threshold = 0;
+		}
+		else
+		{
+			Threshold--;
+		}
+	}
+
+	// turn towards movement direction if not there yet
+	if (MoveDir < 8)
+	{
+		Angles.yaw = itof(ftoi(Angles.yaw / 45.0)) * 45.0;
+		delta = AngleMod180(Angles.yaw - itof(MoveDir) * 45.0);
+
+		if (delta > 0.0)
+		{
+			Angles.yaw = AngleMod360(Angles.yaw - 45.0);
+		}
+		else if (delta < 0.0)
+		{
+			Angles.yaw = AngleMod360(Angles.yaw + 45.0);
+		}
+	}
+
+	if (!Enemy || !Enemy.bShootable)
+	{
+		// look for a new target
+		if (LookForPlayers(true))
+		{
+			return;	// got a new target
+		}
+		SetState(IdleState);
+		return;
+	}
+
+	// do not attack twice in a row
+	if (bJustAttacked)
+	{
+		bJustAttacked = false;
+		if (!fastparm)
+		{
+			NewChaseDir();
+		}
+		return;
+	}
+
+	// check for melee attack
+	if (MeleeState && CheckMeleeRange())
+	{
+		if (AttackSound)
+		{
+			PlaySound(AttackSound, CHAN_WEAPON);
+		}
+		SetState(MeleeState);
+		return;
+	}
+
+	// check for missile attack
+	if (MissileState)
+	{
+		if (fastparm || !MoveCount)
+		{
+			if (CheckMissileRange())
+			{
+				SetState(MissileState);
+				bJustAttacked = true;
+				return;
+			}
+		}
+	}
+
+	// possibly choose another target
+	if (netgame && !Threshold)
+	{
+		if (!CanSee(Enemy))
+		{
+			if (LookForPlayers(true))
+				return;	// got a new target
+		}
+	}
+
+	// chase towards player
+	if (--MoveCount < 0 || !StepMove())
+	{
+		NewChaseDir();
+	}
+
+	// make active sound
+	if (ActiveSound && P_Random() < 3)
+	{
+		PlaySound(ActiveSound, CHAN_VOICE);
+	}
+}
+
+//==========================================================================
+//
+//  A_FaceTarget
+//
+//==========================================================================
+
+void A_FaceTarget(void)
+{
+	if (!Enemy)
+		return;
+
+	bAmbush = false;
+
+	Angles.yaw = atan2(Enemy.Origin.y - Origin.y,
+		Enemy.Origin.x - Origin.x);
+
+	if (Enemy.Translucency)
+	{
+		Angles.yaw = AngleMod360(Angles.yaw + (Random() - Random()) * 45.0);
+	}
+}
+
+//==========================================================================
+//
+//	A_ActiveSound
+//
+//==========================================================================
+
+void A_ActiveSound(void)
+{
+	if (ActiveSound)
+	{
+		PlaySound(ActiveSound, CHAN_VOICE);
+	}
+}
+
+//==========================================================================
+//
+//  A_Pain
+//
+//==========================================================================
+
+void A_Pain(void)
+{
+	if (PainSound)
+	{
+		PlaySound(PainSound, CHAN_VOICE);
+	}
+}
+
+//==========================================================================
+//
+//  A_Explode
+//
+//  Rocket and barrel explosion.
+//
+//==========================================================================
+
+void A_Explode(void)
+{
+	RadiusAttack(64, 0, 0);
+}
+
+//==========================================================================
+//
+//  A_Explode2
+//
+//  Rocket and barrel explosion.
+//
+//==========================================================================
+
+void A_Explode2(void)
+{
+	RadiusAttack(128, 0, 0);
+}
+
+//==========================================================================
+//
+//  A_Scream
+//
+//  Death sound.
+//
+//==========================================================================
+
+void A_Scream(void)
+{
+	if (DeathSound)
+	{
+		PlaySound(DeathSound, CHAN_VOICE);
+	}
+}
+
+//==========================================================================
+//
+//  A_XScream
+//
+//  Explode death sound.
+//
+//==========================================================================
+
+void A_XScream(void)
+{
+	PlaySound('Slop', CHAN_VOICE);
+}
+
+//==========================================================================
+//
+//  A_Fall
+//
+//  Unset blocking.
+//
+//==========================================================================
+
+void A_Fall(void)
+{
+	// actor is on ground, it can be walked over
+	bSolid = false;
+}
+
+//==========================================================================
+//
+//  A_PlayerScream
+//
+//  Player death sound
+//
+//==========================================================================
+
+void A_PlayerScream(void)
+{
+	// Default death sound.
+	name sound = 'PlayerDeath';
+
+	if (Health < -50)
+	{
+		// IF THE PLAYER DIES
+		// LESS THAN -50% WITHOUT GIBBING
+		sound = 'PlayerExtremeDeath';
+	}
+
+	PlaySound(sound, CHAN_VOICE);
+}
+
+//==========================================================================
+//
+//	A_RiffleAttack
+//
+//==========================================================================
+
+void A_RiffleAttack(void)
+{
+	int damage;
+	TVec dir;
+
+	if (!Enemy)
+		return;
+
+	PlaySound('AssaultGunFire', CHAN_WEAPON);
+	A_FaceTarget();
+	dir = AimLineAttack(self, Angles, MISSILERANGE);
+	VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
+	damage = ((P_Random() % 5) + 1) * 3;
+	LineAttack(self, dir, MISSILERANGE, damage);
+}
+
+//==========================================================================
+//
+//	A_CheckRefire
+//
+//==========================================================================
+
+void A_CheckRefire(void)
+{
+	// keep firing unless target got out of sight
+	A_FaceTarget();
+
+	if (P_Random() < 40)
+		return;
+
+	if (!Enemy || Enemy.Health <= 0 || !CanSee(Enemy))
+	{
+		SetState(SeeState);
+	}
+}
+
+void A_Unknown24(void)
+{
+}
+void A_Unknown25(void)
+{
+}
+void A_DecReactionCount(void)
+{
+}
+void A_Unknown27(void)
+{
+}
+void A_FireGrenadeExplode(void)
+{
+}
+void A_Unknown30(void)
+{
+}
+void A_Unknown31(void)
+{
+}
+void A_Unknown32(void)
+{
+}
+void A_RocketTrail(void)
+{
+}
+void A_Unknown34(void)
+{
+}
+void A_MaulerTorpedoExplode(void)
+{
+}
+void A_XDying(void)
+{
+}
+void A_Stand(void)
+{
+}
+void A_Burn(void)
+{
+}
+void A_Walk(void)
+{
+}
+void A_Dying(void)
+{
+}
+void A_ResetHealth(void)
+{
+}
+void A_Unknown54(void)
+{
+}
+void A_Unknown55(void)
+{
+}
+void A_Unknown56(void)
+{
+}
+void A_RobotMelee(void)
+{
+}
+void A_RobotMissile(void)
+{
+}
+void A_Unknown64(void)
+{
+}
+void A_Unknown72(void)
+{
+}
+void A_FlightChase(void)
+{
+}
+void A_SpecterMelee(void)
+{
+}
+void A_SpecterAttack(void)
+{
+}
+void A_SpecterDying(void)
+{
+}
+void A_SpecterDeath(void)
+{
+}
+void A_Specter2Attack(void)
+{
+}
+void A_Specter3Attack(void)
+{
+}
+void A_Specter4Attack(void)
+{
+}
+void A_Specter5Attack(void)
+{
+}
+void A_Unknown90(void)
+{
+}
+void A_Unknown91(void)
+{
+}
+void A_Unknown92(void)
+{
+}
+void A_FlameFXExplode(void)
+{
+}
+void A_CheckAlarm(void)
+{
+}
+void A_AlarmActive(void)
+{
+}
+void A_Unknown110(void)
+{
+}
+void A_SpawnPuff(void)
+{
+}
+void A_Unknown112(void)
+{
+}
+void A_Unknown113(void)
+{
+}
+void A_Unknown114(void)
+{
+}
+void A_SummonRebel(void)
+{
+}
+
+__states__
+{
+	S_PUNCH_PUFF_1('POW2', 0, 4.0 / 35.0, S_PUNCH_PUFF_2) { }
+	S_PUNCH_PUFF_2('POW2', 1, 4.0 / 35.0, S_PUNCH_PUFF_3) { }
+	S_PUNCH_PUFF_3('POW2', 2, 4.0 / 35.0, S_PUNCH_PUFF_4) { }
+	S_PUNCH_PUFF_4('POW2', 3, 4.0 / 35.0, S_NULL) { }
+
+	S_ZAP1_1('ZAP1', 1, 3.0 / 35.0, S_ZAP1_2) { A_Unknown24(); }
+	S_ZAP1_0('ZAP1', 0, 3.0 / 35.0, S_ZAP1_2) { A_Unknown25(); }
+	S_ZAP1_2('ZAP1', 1, 3.0 / 35.0, S_ZAP1_3) { }
+	S_ZAP1_3('ZAP1', 2, 3.0 / 35.0, S_ZAP1_4) { }
+	S_ZAP1_4('ZAP1', 3, 3.0 / 35.0, S_ZAP1_5) { }
+	S_ZAP1_5('ZAP1', 4, 3.0 / 35.0, S_ZAP1_6) { }
+	S_ZAP1_6('ZAP1', 5, 3.0 / 35.0, S_ZAP1_7) { }
+	S_ZAP1_7('ZAP1', 4, 3.0 / 35.0, S_ZAP1_8) { }
+	S_ZAP1_8('ZAP1', 3, 2.0 / 35.0, S_ZAP1_9) { }
+	S_ZAP1_9('ZAP1', 2, 2.0 / 35.0, S_ZAP1_10) { }
+	S_ZAP1_10('ZAP1', 1, 2.0 / 35.0, S_ZAP1_11) { }
+	S_ZAP1_11('ZAP1', 0, 1.0 / 35.0, S_NULL) { }
+
+	S_BLOOD1('BLOD', 2, 8.0 / 35.0, S_BLOOD2) { }
+	S_BLOOD2('BLOD', 1, 8.0 / 35.0, S_BLOOD3) { }
+	S_BLOOD3('BLOD', 0, 8.0 / 35.0, S_NULL) { }
+
+	S_SHARD_1('SHRD', 0, 128.0 / 35.0, S_NULL) { }
+	S_SHARD_2('SHRD', 1, 128.0 / 35.0, S_NULL) { }
+	S_SHARD_3('SHRD', 2, 128.0 / 35.0, S_NULL) { }
+	S_SHARD_4('SHRD', 3, 128.0 / 35.0, S_NULL) { }
+	S_SHARD_5('SHRD', 4, 128.0 / 35.0, S_NULL) { }
+	S_SHARD_6('SHRD', 5, 128.0 / 35.0, S_NULL) { }
+
+	S_MINI_MISSILE2_1('MICR', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_MINI_MISSILE2_2) { A_Unknown34(); }
+	S_MINI_MISSILE2_2('MICR', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_MINI_MISSILE2_1) { A_Unknown34(); }
+
+	S_TOKENS('TOKN', 0, -1.0, S_NULL) { }
+
+	S_GIBS('DIE1', 0, -1.0, S_NULL) { }
+
+	S_ANKH('ANKH', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 1000;
+	Radius = 20.0;
+	Height = 16.0;
+	Mass = 100.0;
+	MaxStepHeight = 16.0;
+	ReactionCount = 8;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:56  dj_jl
+//  New style classes.
+//
+//**************************************************************************

@@ -1,0 +1,59 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+// 289 287
+
+class PowerCoupling:Decoration
+	__mobjinfo__(220);
+
+__states__
+{
+	S_COUPLING_1('COUP', 0, 5.0 / 35.0, S_COUPLING_2) { }
+	S_COUPLING_2('COUP', 1, 5.0 / 35.0, S_COUPLING_1) { }
+}
+
+defaultproperties
+{
+	Health = 40;
+	Radius = 17.0;
+	Height = 64.0;
+	Mass = 999999.0;
+	StepSpeed = 6.0;
+	bSolid = true;
+	bShootable = true;
+	bUnknown5 = true;
+	bUnknown4 = true;
+	bDropped = true;
+	bNoBlood = true;
+	bNoDeathmatch = true;
+	IdleState = S_COUPLING_1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:56  dj_jl
+//  New style classes.
+//
+//**************************************************************************

@@ -23,24 +23,8 @@
 //**
 //**************************************************************************
 
-#define	BODYQUESIZE				32
-
 Actor bodyque[BODYQUESIZE];
 int bodyqueslot;
-
-//==========================================================================
-//
-//  PlayerPawn::SetPlayerRunState
-//
-//==========================================================================
-
-void PlayerPawn::SetPlayerRunState(void)
-{
-	if (StateNum == IdleState)
-	{
-		SetState(SeeState);
-	}
-}
 
 //==========================================================================
 //
@@ -161,39 +145,12 @@ void P_SpawnPlayer(mthing_t * mthing)
 	SB_Start();
 }
 
-//==========================================================================
-//
-//  PlayerPawn::SpawnPlayerMissile
-//
-//  Tries to aim at a nearby monster
-//
-//==========================================================================
-
-Actor PlayerPawn::SpawnPlayerMissile(classid type)
-{
-	Actor A;
-	TVec dir;
-
-	// see which target is to be aimed at
-	dir = Aim(self, 16.0 * 64.0);
-
-	A = Spawn(type, Origin + vector(0.0, 0.0, 32.0));
-
-	if (A.SightSound)
-		A.PlaySound(A.SightSound, CHAN_VOICE);
-
-	A.Instigator = self;
-	A.Velocity = dir * A.Speed;
-	VectorAngles(&dir, &A.Angles);
-
-	A.CheckMissileSpawn();
-
-	return A;
-}
-
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2002/11/02 08:22:38  dj_jl
+//  New style classes.
+//
 //  Revision 1.28  2002/09/07 16:28:26  dj_jl
 //  Added Level class.
 //

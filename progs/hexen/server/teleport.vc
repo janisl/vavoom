@@ -90,142 +90,6 @@ bool PIT_StompThing(Entity Other)
 
 //==========================================================================
 //
-//  Actor::TeleportMove
-//
-//==========================================================================
-
-bool Actor::TeleportMove(TVec pos)
-{
-	int xl;
-	int xh;
-	int yl;
-	int yh;
-	int bx;
-	int by;
-
-	// kill anything occupying the position
-	teleport_thing = self;
-
-	teleport_pos = pos;
-
-	// stomp on any things contacted
-	xl = MapBlock(pos.x - Radius - XLevel.BlockMapOrgX - MAXRADIUS);
-	xh = MapBlock(pos.x + Radius - XLevel.BlockMapOrgX + MAXRADIUS);
-	yl = MapBlock(pos.y - Radius - XLevel.BlockMapOrgY - MAXRADIUS);
-	yh = MapBlock(pos.y + Radius - XLevel.BlockMapOrgY + MAXRADIUS);
-
-	for (bx = xl; bx <= xh; bx++)
-		for (by = yl; by <= yh; by++)
-			if (!P_BlockThingsIterator(bx, by, 'PIT_StompThing'))
-				return false;
-
-	// the move is ok,
-	// so link the thing into its new position
-	UnlinkFromWorld();
-
-	Origin = pos;
-
-	LinkToWorld();
-
-	return true;
-}
-
-//==========================================================================
-//
-//	Actor::Teleport
-//
-//==========================================================================
-
-bool Actor::Teleport(TVec pos, float angle, bool useFog)
-{
-	TVec oldOrg;
-	float aboveFloor;
-	float fogDelta;
-	Actor fog;
-
-	oldOrg = Origin;
-	aboveFloor = Origin.z - FloorZ;
-	pos.z = ONFLOORZ;
-	if (!TeleportMove(pos))
-	{
-		return false;
-	}
-	if (bIsPlayer)
-	{
-		if (Player->Powers[pw_flight] && aboveFloor)
-		{
-			Origin.z = FloorZ + aboveFloor;
-			if (Origin.z + Height > CeilingZ)
-			{
-				Origin.z = CeilingZ - Height;
-			}
-			Player->ViewOrg.z = Origin.z + Player->ViewHeight;
-		}
-		else
-		{
-			Origin.z = FloorZ;
-			Player->ViewOrg.z = Origin.z + Player->ViewHeight;
-			if (useFog)
-			{
-				Angles.pitch = 0.0;
-			}
-		}
-	}
-	else if (bMissile)
-	{
-		Origin.z = FloorZ + aboveFloor;
-		if (Origin.z + Height > CeilingZ)
-		{
-			Origin.z = CeilingZ - Height;
-		}
-	}
-	else
-	{
-		Origin.z = FloorZ;
-	}
-	// Spawn teleport fog at source and destination
-	if (useFog)
-	{
-		fogDelta = bMissile ? 0.0 : TELEFOGHEIGHT;
-		fog = Spawn(TeleportFog, oldOrg + vector(0.0, 0.0, fogDelta));
-		fog.PlaySound('Teleport', CHAN_VOICE);
-		fog = Spawn(TeleportFog, Origin + vector(20.0 * cos(angle),
-			20.0 * sin(angle), fogDelta));
-		fog.PlaySound('Teleport', CHAN_VOICE);
-		if (bIsPlayer && !Player->Powers[pw_speed])
-		{
-			// Freeze player for about .5 sec
-			ReactionTime = 0.5;
-		}
-		Angles.yaw = angle;
-		if (bIsPlayer)
-			Player->bFixAngle = true;
-	}
-	if (bFloorClip)
-	{
-		if (Origin.z == FloorZ && GetFloorType() > FLOOR_SOLID)
-		{
-			FloorClip = 10.0;
-		}
-		else
-		{
-			FloorClip = 0.0;
-		}
-	}
-	if (bMissile)
-	{
-		Velocity.x = Speed * cos(angle);
-		Velocity.y = Speed * sin(angle);
-	}
-	else if (useFog)	// no fog doesn't alter the player's momentums
-	{
-		Velocity = vector(0.0, 0.0, 0.0);
-	}
-	return true;
-}
-
-//==========================================================================
-//
 // EV_Teleport
 //
 //==========================================================================
@@ -371,6 +235,9 @@ bool EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/11/02 08:24:11  dj_jl
+//  New style classes.
+//
 //  Revision 1.23  2002/09/07 16:28:26  dj_jl
 //  Added Level class.
 //

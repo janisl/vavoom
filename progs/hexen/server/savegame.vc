@@ -23,9 +23,6 @@
 //**
 //**************************************************************************
 
-void G_DeathMatchSpawnPlayer(int playernum);
-void P_SpawnPlayer(mthing_t * mthing);
-
 //==========================================================================
 //
 //  ArchivePlayer
@@ -48,81 +45,12 @@ void UnarchivePlayer(player_t * player)
 	player->Poisoner = NULL;
 }
 
-//==========================================================================
-//
-//  Actor::Archive
-//
-//==========================================================================
-
-void Actor::Archive(void)
-{
-	if (bCorpse)
-	{
-		Enemy = none;
-	}
-
-	switch (Class)
-	{
-		// Just	SpecialMobj1
-	case ThrustFloorUp:
-	case ThrustFloorDown:
-	case Minotaur:
-		if (bCorpse)
-		{
-			_SpecialMobj1 = NULL;
-		}
-		MobjToNum(&_SpecialMobj1);
-		break;
-
-		// Just specialmobj2
-	case LightningFloor:
-	case LightningCeiling:
-	case LightningZap:
-		MobjToNum(&SpecialMobj2);
-		break;
-
-		// Miscellaneous
-	case Korax:
-		_Special1 = 0;	// Searching index
-		break;
-
-	default:
-		break;
-	}
-}
-
-//==========================================================================
-//
-//  Actor::Unarchive
-//
-//==========================================================================
-
-void Actor::Unarchive(void)
-{
-	switch (Class)
-	{
-		// Just	SpecialMobj1
-	case ThrustFloorUp:
-	case ThrustFloorDown:
-	case Minotaur:
-		NumToMobj(&_SpecialMobj1);
-		break;
-
-		// Just special2
-	case LightningFloor:
-	case LightningCeiling:
-	case LightningZap:
-		NumToMobj(&SpecialMobj2);
-		break;
-
-	default:
-		break;
-	}
-}
-
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/11/02 08:24:11  dj_jl
+//  New style classes.
+//
 //  Revision 1.19  2002/06/22 07:16:02  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //

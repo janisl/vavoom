@@ -1,0 +1,146 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Pickup:Actor
+	abstract;
+	
+name PickupSound;
+string PickupString;
+
+//==========================================================================
+//
+//	ValidTouch
+//
+//==========================================================================
+
+bool ValidTouch(Actor Toucher)
+{
+	if (!Toucher.bIsPlayer)
+	{
+		// can't remove thing
+		return false;
+	}
+	// Dead thing touching.
+	// Can happen with a sliding player corpse.
+	if (Toucher.Health <= 0)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+bool HandlePickup(Actor Toucher)
+{
+	cprint(Toucher.Player, "Unimplemented pickup %n", ClassName);
+	return true;
+}
+
+//==========================================================================
+//
+//	HideSpecial
+//
+//==========================================================================
+
+void HideSpecial(void)
+{
+	// only respawn items in deathmatch
+	if (deathmatch && !bDropped)
+	{
+		SetState(S_DORMANT_PICKUP1);
+	}
+	else
+	{
+		Remove();
+	}
+}
+
+//==========================================================================
+//
+//	TouchSpecial
+//
+//==========================================================================
+
+void TouchSpecial(Actor Toucher)
+{
+	if (!ValidTouch(Toucher))
+	{
+		// can't remove thing
+		return;
+	}
+
+	if (!HandlePickup(Toucher))
+	{
+		return;
+	}
+
+	cprint(Toucher.Player, "You picked up the %s.", PickupString);
+	HideSpecial();
+	Toucher.Player->BonusFlash += BONUSADD;
+	Toucher.PlaySound(PickupSound, CHAN_ITEM);
+}
+
+__states__
+{
+	S_DORMANT_PICKUP1('', 0, 30.0, S_DORMANT_PICKUP2)
+	{
+		bHidden = true;
+		bSpecial = false;
+	}
+	S_DORMANT_PICKUP2('', 0, -1.0, S_NULL)
+	{
+		Actor A;
+
+		bHidden = false;
+		bSpecial = true;
+		SetState(IdleState);
+
+		// spawn a teleport fog at the new spot
+		A = Spawn(ItemRespawnFog, Origin);
+		A.PlaySound('ItemRespawn', CHAN_ITEM);
+	}
+}
+
+defaultproperties
+{
+	Height = 8.0;
+	bSpecial = true;
+	PickupSound = 'PickupItem';
+	PickupString = "Item";
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:56  dj_jl
+//  New style classes.
+//
+//**************************************************************************

@@ -1,0 +1,96 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class SubEntity:Pawn;
+
+__states__
+{
+	S_SUBENT_LOOK('MNAL', 17 | FF_FULLBRIGHT, 10.0 / 35.0, S_SUBENT_LOOK) { A_Look(); }
+	S_SUBENT_RUN1('MNAL', 17 | FF_FULLBRIGHT, 5.0 / 35.0, S_SUBENT_RUN2) { A_FlightChase(); }
+	S_SUBENT_RUN2('MNAL', 18 | FF_FULLBRIGHT, 5.0 / 35.0, S_SUBENT_RUN3) { A_Chase(); }
+	S_SUBENT_RUN3('MNAL', 19 | FF_FULLBRIGHT, 5.0 / 35.0, S_SUBENT_RUN4) { A_Chase(); }
+	S_SUBENT_RUN4('MNAL', 20 | FF_FULLBRIGHT, 5.0 / 35.0, S_SUBENT_RUN5) { A_FlightChase(); }
+	S_SUBENT_RUN5('MNAL', 21 | FF_FULLBRIGHT, 5.0 / 35.0, S_SUBENT_RUN6) { A_Chase(); }
+	S_SUBENT_RUN6('MNAL', 22 | FF_FULLBRIGHT, 5.0 / 35.0, S_SUBENT_RUN1) { A_FlightChase(); }
+	S_SUBENT_MELEE1('MNAL', 18 | FF_FULLBRIGHT, 4.0 / 35.0, S_SUBENT_MELEE2) { A_FaceTarget(); }
+	S_SUBENT_MELEE2('MNAL', 17 | FF_FULLBRIGHT, 4.0 / 35.0, S_SUBENT_MELEE3) { A_SpecterMelee(); }
+	S_SUBENT_MELEE3('MNAL', 19 | FF_FULLBRIGHT, 4.0 / 35.0, S_SUBENT_RUN2) { A_FlightChase(); }
+	S_SUBENT_ATK1('MNAL', 22 | FF_FULLBRIGHT, 4.0 / 35.0, S_SUBENT_ATK2) { A_FaceTarget(); }
+	S_SUBENT_ATK2('MNAL', 20 | FF_FULLBRIGHT, 4.0 / 35.0, S_SUBENT_ATK3) { A_Specter2Attack(); }
+	S_SUBENT_ATK3('MNAL', 21 | FF_FULLBRIGHT, 4.0 / 35.0, S_SUBENT_RUN5) { A_FlightChase(); }
+	S_SUBENT_PAIN('MNAL', 17 | FF_FULLBRIGHT, 2.0 / 35.0, S_SUBENT_RUN1) { A_Pain(); }
+	S_SUBENT_DIE1('MDTH', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SUBENT_DIE2) { A_Scream(); }
+	S_SUBENT_DIE2('MDTH', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_SUBENT_DIE3) { A_XDying(); }
+	S_SUBENT_DIE3('MDTH', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_SUBENT_DIE4) { A_Fall(); }
+	S_SUBENT_DIE4('MDTH', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_SUBENT_DIE5) { A_XDying(); }
+	S_SUBENT_DIE5('MDTH', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_SUBENT_DIE6) { A_XDying(); }
+	S_SUBENT_DIE6('MDTH', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_SUBENT_DIE7) { A_XDying(); }
+	S_SUBENT_DIE7('MDTH', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_SUBENT_DIE8) { A_XDying(); }
+	S_SUBENT_DIE8('MDTH', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_SUBENT_DIE9) { A_XDying(); }
+	S_SUBENT_DIE9('MDTH', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_SUBENT_DIE10) { A_XDying(); }
+	S_SUBENT_DIE10('MDTH', 9 | FF_FULLBRIGHT, 3.0 / 35.0, S_SUBENT_DIE11) { A_XDying(); }
+	S_SUBENT_DIE11('MDTH', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_SUBENT_DIE12) { A_XDying(); }
+	S_SUBENT_DIE12('MDTH', 11 | FF_FULLBRIGHT, 3.0 / 35.0, S_SUBENT_DIE13) { A_XDying(); }
+	S_SUBENT_DIE13('MDTH', 12 | FF_FULLBRIGHT, 3.0 / 35.0, S_SUBENT_DIE14) { A_XDying(); }
+	S_SUBENT_DIE14('MDTH', 13 | FF_FULLBRIGHT, 3.0 / 35.0, S_SUBENT_DIE15) { A_XDying(); }
+	S_SUBENT_DIE15('MDTH', 14 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { A_Unknown72(); }
+}
+
+defaultproperties
+{
+	Health = 990;
+	Radius = 130.0;
+	Height = 8.0;
+	Mass = 1000.0;
+	StepSpeed = 14.0;
+	PainChance = 1.0;
+	Translucency = 66;
+	bSpecial = true;
+	bNoGravity = true;
+	bUnknown5 = true;
+	bFloat = true;
+	bUnknown4 = true;
+	bUnknown2 = true;
+	bUnknown3 = true;
+	IdleState = S_SUBENT_LOOK;
+	SeeState = S_SUBENT_RUN1;
+	MeleeState = S_SUBENT_MELEE1;
+	MissileState = S_SUBENT_ATK1;
+	PainState = S_SUBENT_PAIN;
+	DeathState = S_SUBENT_DIE1;
+	SightSound = 'SpecterSight';
+	ActiveSound = 'SpecterActive';
+	AttackSound = 'ReaverBlade';
+	PainSound = 'SpecterPain';
+	DeathSound = 'SpecterDeath';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:57  dj_jl
+//  New style classes.
+//
+//**************************************************************************

@@ -1,0 +1,54 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class WaterDrip:Decoration
+	__mobjinfo__(103);
+
+__states__
+{
+	S_WATER_DRIP_1('DRIP', 0, 6.0 / 35.0, S_WATER_DRIP_2) { A_ActiveSound(); }
+	S_WATER_DRIP_2('DRIP', 1, 4.0 / 35.0, S_WATER_DRIP_3) { }
+	S_WATER_DRIP_3('DRIP', 2, 4.0 / 35.0, S_WATER_DRIP_4) { }
+	S_WATER_DRIP_4('DRIP', 3, 4.0 / 35.0, S_WATER_DRIP_5) { A_ActiveSound(); }
+	S_WATER_DRIP_5('DRIP', 4, 4.0 / 35.0, S_WATER_DRIP_6) { }
+	S_WATER_DRIP_6('DRIP', 5, 4.0 / 35.0, S_WATER_DRIP_7) { }
+	S_WATER_DRIP_7('DRIP', 6, 4.0 / 35.0, S_WATER_DRIP_8) { A_ActiveSound(); }
+	S_WATER_DRIP_8('DRIP', 7, 4.0 / 35.0, S_WATER_DRIP_1) { }
+}
+
+defaultproperties
+{
+	bNoBlockmap = true;
+	IdleState = S_WATER_DRIP_1;
+	ActiveSound = 'WaterDrip';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:57  dj_jl
+//  New style classes.
+//
+//**************************************************************************

@@ -38,10 +38,7 @@ enum
 
 // TYPES -------------------------------------------------------------------
 
-class PolyobjThinker:Thinker
-{
-	float thrust_force;
-};
+class PolyobjThinker;
 
 addfields polyobj_t
 {
@@ -53,55 +50,6 @@ addfields polyobj_t
 // DATA DECLARATIONS -------------------------------------------------------
 
 // CODE --------------------------------------------------------------------
-
-class PolyobjRotator:PolyobjThinker
-{
-	int polyobj;
-	float dist;
-	float speed;
-
-//==========================================================================
-//
-//	Tick
-//
-//==========================================================================
-
-void Tick(float deltaTime)
-{
-	float move;
-	float absMove;
-	polyobj_t *poly;
-
-	move = speed * deltaTime;
-	absMove = fabs(move);
-	if (dist >= 0.0 && dist < absMove)
-	{
-		move = dist * (speed < 0.0 ? -1.0 : 1.0);
-	}
-	if (PO_RotatePolyobj(polyobj, move))
-	{
-		if (dist < 0.0)
-		{
-			// perpetual polyobj
-			return;
-		}
-		dist -= absMove;
-		if (dist <= 0.0)
-		{
-			poly = GetPolyobj(polyobj);
-			if (poly->SpecialData == self)
-			{
-				poly->SpecialData = none;
-			}
-			PolyobjStopSequence(poly);
-			PolyobjFinished(poly->tag);
-			RemoveSpecialThinker(self);
-			return;
-		}
-	}
-}
-
-}
 
 //==========================================================================
 //
@@ -201,55 +149,6 @@ bool EV_RotatePoly(line_t * line, int *args, int direction, bool overRide)
 	return true;
 }
 
-class PolyobjMover:PolyobjThinker
-{
-	int polyobj;
-	float speed;
-	float dist;
-	float angle;
-
-//==========================================================================
-//
-//	Tick
-//
-//==========================================================================
-
-void Tick(float deltaTime)
-{
-	float move;
-	float absMove;
-	float xMove;
-	float yMove;
-	polyobj_t *poly;
-
-	move = speed * deltaTime;
-	absMove = fabs(move);
-	if (dist < absMove)
-	{
-		move = dist * (move < 0.0 ? -1.0 : 1.0);
-	}
-	xMove = move * cos(angle);
-	yMove = move * sin(angle);
-	if (PO_MovePolyobj(polyobj, xMove, yMove))
-	{
-		dist -= absMove;
-		if (dist <= 0.0)
-		{
-			poly = GetPolyobj(polyobj);
-			if (poly->SpecialData == self)
-			{
-				poly->SpecialData = none;
-			}
-			PolyobjStopSequence(poly);
-			PolyobjFinished(poly->tag);
-			RemoveSpecialThinker(self);
-			return;
-		}
-	}
-}
-
-}
-
 //==========================================================================
 //
 // EV_MovePoly
@@ -329,144 +228,6 @@ bool EV_MovePoly(line_t * line, int *args, bool timesEight, bool overRide)
 		PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
 	}
 	return true;
-}
-
-class PolyobjDoor:PolyobjThinker
-{
-	int type;
-	int polyobj;
-	float speed;
-	float dist;
-	float xSpeed;	// for sliding walls
-	float ySpeed;
-	float totalDist;
-	float time;
-	float waitTime;
-	bool bClose;
-
-//==========================================================================
-//
-//  Tick
-//
-//==========================================================================
-
-void Tick(float deltaTime)
-{
-	polyobj_t *poly;
-	float move;
-
-	if (time)
-	{
-		time -= deltaTime;
-		if (time <= 0.0)
-		{
-			time = 0.0;
-			poly = GetPolyobj(polyobj);
-			PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
-		}
-		return;
-	}
-	switch (type)
-	{
-	case PODOOR_SLIDE:
-		move = speed * deltaTime;
-		if (PO_MovePolyobj(polyobj, move * xSpeed, move * ySpeed))
-		{
-			dist -= fabs(move);
-			if (dist <= 0.0)
-			{
-				poly = GetPolyobj(polyobj);
-				PolyobjStopSequence(poly);
-				if (!bClose)
-				{
-					dist = totalDist;
-					bClose = true;
-					time = waitTime;
-					xSpeed = -xSpeed;
-					ySpeed = -ySpeed;
-				}
-				else
-				{
-					if (poly->SpecialData == self)
-					{
-						poly->SpecialData = none;
-					}
-					PolyobjFinished(poly->tag);
-					RemoveSpecialThinker(self);
-				}
-			}
-		}
-		else
-		{
-			poly = GetPolyobj(polyobj);
-			if (poly->bCrush || !bClose)
-			{
-				// continue moving if the poly is a crusher, or is opening
-				return;
-			}
-			else
-			{
-				// open back up
-				dist = totalDist - dist;
-				xSpeed = -xSpeed;
-				ySpeed = -ySpeed;
-				bClose = false;
-				PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
-			}
-		}
-		break;
-
-	case PODOOR_SWING:
-		move = speed * frametime;
-		if (PO_RotatePolyobj(polyobj, move))
-		{
-			dist -= fabs(move);
-			if (dist <= 0.0)
-			{
-				poly = GetPolyobj(polyobj);
-				PolyobjStopSequence(poly);
-				if (!bClose)
-				{
-					dist = totalDist;
-					bClose = true;
-					time = waitTime;
-					speed = -speed;
-				}
-				else
-				{
-					if (poly->SpecialData == self)
-					{
-						poly->SpecialData = none;
-					}
-					PolyobjFinished(poly->tag);
-					RemoveSpecialThinker(self);
-				}
-			}
-		}
-		else
-		{
-			poly = GetPolyobj(polyobj);
-			if (poly->bCrush || !bClose)
-			{
-				// continue moving if the poly is a crusher, or is opening
-				return;
-			}
-			else
-			{
-				// open back up and rewait
-				dist = totalDist - dist;
-				speed = -speed;
-				bClose = false;
-				PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
-			}
-		}
-		break;
-
-	default:
-		break;
-	}
-}
-
 }
 
 //==========================================================================
@@ -644,6 +405,9 @@ bool PolyBusy(int polyobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/11/02 08:24:11  dj_jl
+//  New style classes.
+//
 //  Revision 1.22  2002/09/07 16:28:26  dj_jl
 //  Added Level class.
 //

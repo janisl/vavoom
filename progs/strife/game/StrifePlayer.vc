@@ -1,0 +1,86 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class StrifePlayer:PlayerPawn;
+
+__states__
+{
+	S_PLAY('PLAY', 0, -1.0, S_NULL) { }
+	S_PLAY_RUN1('PLAY', 0, 4.0 / 35.0, S_PLAY_RUN2) { }
+	S_PLAY_RUN2('PLAY', 1, 4.0 / 35.0, S_PLAY_RUN3) { }
+	S_PLAY_RUN3('PLAY', 2, 4.0 / 35.0, S_PLAY_RUN4) { }
+	S_PLAY_RUN4('PLAY', 3, 4.0 / 35.0, S_PLAY_RUN1) { }
+	S_PLAY_ATK1('PLAY', 4, 12.0 / 35.0, S_PLAY) { }
+	S_PLAY_ATK2('PLAY', 5, 6.0 / 35.0, S_PLAY_ATK1) { }
+	S_PLAY_PAIN('PLAY', 16, 4.0 / 35.0, S_PLAY_PAIN2) { A_Pain(); }
+	S_PLAY_PAIN2('PLAY', 16, 4.0 / 35.0, S_PLAY) { }
+	S_PLAY_DIE1('PLAY', 6, 4.0 / 35.0, S_PLAY_DIE2) { }
+	S_PLAY_DIE2('PLAY', 7, 3.0 / 35.0, S_PLAY_DIE3) { A_PlayerScream(); }
+	S_PLAY_DIE3('PLAY', 8, 3.0 / 35.0, S_PLAY_DIE4) { A_Fall(); }
+	S_PLAY_DIE4('PLAY', 9, 4.0 / 35.0, S_PLAY_DIE5) { }
+	S_PLAY_DIE5('PLAY', 10, 4.0 / 35.0, S_PLAY_DIE6) { }
+	S_PLAY_DIE6('PLAY', 11, 4.0 / 35.0, S_PLAY_DIE7) { }
+	S_PLAY_DIE7('PLAY', 12, 4.0 / 35.0, S_PLAY_DIE8) { }
+	S_PLAY_DIE8('PLAY', 13, 4.0 / 35.0, S_PLAY_DIE9) { }
+	S_PLAY_DIE9('PLAY', 14, 4.0 / 35.0, S_PLAY_DIE10) { }
+	S_PLAY_DIE10('PLAY', 15, 700.0 / 35.0, S_PLAY_XDIE8) { }
+	S_PLAY_XDIE1('RGIB', 0, 5.0 / 35.0, S_PLAY_XDIE2) { A_XDying(); }
+	S_PLAY_XDIE2('RGIB', 1, 5.0 / 35.0, S_PLAY_XDIE3) { A_XScream(); }
+	S_PLAY_XDIE3('RGIB', 2, 5.0 / 35.0, S_PLAY_XDIE4) { A_Fall(); }
+	S_PLAY_XDIE4('RGIB', 3, 5.0 / 35.0, S_PLAY_XDIE5) { A_XDying(); }
+	S_PLAY_XDIE5('RGIB', 4, 5.0 / 35.0, S_PLAY_XDIE6) { A_XDying(); }
+	S_PLAY_XDIE6('RGIB', 5, 5.0 / 35.0, S_PLAY_XDIE7) { A_XDying(); }
+	S_PLAY_XDIE7('RGIB', 6, 5.0 / 35.0, S_PLAY_XDIE8) { A_XDying(); }
+	S_PLAY_XDIE8('RGIB', 7, 1400.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 100;
+	GibsHealth = -50;
+	Radius = 18.0;
+	Height = 56.0;
+	Mass = 100.0;
+	PainChance = 1.0;
+	bDropOff = true;
+	bUnknown1 = true;
+	IdleState = S_PLAY;
+	SeeState = S_PLAY_RUN1;
+	MeleeState = S_PLAY_ATK1;
+	MissileState = S_PLAY_ATK2;
+	PainState = S_PLAY_PAIN;
+	DeathState = S_PLAY_DIE1;
+	GibsDeathState = S_PLAY_XDIE1;
+	PainSound = 'PlayerPain';
+	DeathSound = 'PlayerDeath';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:57  dj_jl
+//  New style classes.
+//
+//**************************************************************************

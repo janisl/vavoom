@@ -1,0 +1,66 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class DegninOre:InventoryItem
+	__mobjinfo__(59);
+
+__states__
+{
+	S_ORE('XPRK', 0, -1.0, S_NULL) { }
+	S_ORE_X('XPRK', 0, 1.0 / 35.0, S_ORE_X1) { A_Unknown31(); }
+	S_ORE_X1('BNG3', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X2) { A_Unknown27(); }
+	S_ORE_X2('BNG3', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X3) { }
+	S_ORE_X3('BNG3', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X4) { }
+	S_ORE_X4('BNG3', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X5) { }
+	S_ORE_X5('BNG3', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X6) { }
+	S_ORE_X6('BNG3', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X7) { }
+	S_ORE_X7('BNG3', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X8) { }
+	S_ORE_X8('BNG3', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	ConversationID = 128;
+	ClassName = 'Degnin_Ore';
+	Health = 10;
+	Radius = 16.0;
+	Height = 8.0;
+	Mass = 10.0;
+	bSolid = true;
+	bShootable = true;
+	bUnknown4 = true;
+	bNoBlood = true;
+	IdleState = S_ORE;
+	DeathState = S_ORE_X;
+	DeathSound = 'Explode';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:56  dj_jl
+//  New style classes.
+//
+//**************************************************************************

@@ -1,0 +1,51 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Latern:Decoration
+	__mobjinfo__(111);
+
+__states__
+{
+	S_LATERN_1('LTRH', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_LATERN_2) { }
+	S_LATERN_2('LTRH', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_LATERN_3) { }
+	S_LATERN_3('LTRH', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_LATERN_4) { }
+	S_LATERN_4('LTRH', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_LATERN_1) { }
+}
+
+defaultproperties
+{
+	Radius = 4.0;
+	Height = 72.0;
+	bSolid = true;
+	IdleState = S_LATERN_1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:56  dj_jl
+//  New style classes.
+//
+//**************************************************************************

@@ -1,0 +1,73 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+// 124
+
+class ComputerCore:Decoration
+	__mobjinfo__(182);
+
+__states__
+{
+	S_COMP_CORE_1('SECR', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_COMP_CORE_2) { }
+	S_COMP_CORE_2('SECR', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_COMP_CORE_3) { }
+	S_COMP_CORE_3('SECR', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_COMP_CORE_4) { }
+	S_COMP_CORE_4('SECR', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_COMP_CORE_1) { }
+	S_COMP_CORE_X1('SECR', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_COMP_CORE_X2) { A_SpawnPuff(); }
+	S_COMP_CORE_X2('SECR', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_COMP_CORE_X3) { A_Fall(); }
+	S_COMP_CORE_X3('SECR', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_COMP_CORE_X4) { A_Unknown110(); }
+	S_COMP_CORE_X4('SECR', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_COMP_CORE_X5) { A_XDying(); }
+	S_COMP_CORE_X5('SECR', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_COMP_CORE_X6) { A_SpawnPuff(); }
+	S_COMP_CORE_X6('SECR', 9, 5.0 / 35.0, S_COMP_CORE_X7) { }
+	S_COMP_CORE_X7('SECR', 10, 5.0 / 35.0, S_COMP_CORE_X8) { A_SpawnPuff(); }
+	S_COMP_CORE_X8('SECR', 11, 5.0 / 35.0, S_COMP_CORE_X9) { }
+	S_COMP_CORE_X9('SECR', 12, 5.0 / 35.0, S_COMP_CORE_X10) { A_SpawnPuff(); }
+	S_COMP_CORE_X10('SECR', 13, 5.0 / 35.0, S_COMP_CORE_X11) { }
+	S_COMP_CORE_X11('SECR', 14, 5.0 / 35.0, S_COMP_CORE_X12) { A_SpawnPuff(); }
+	S_COMP_CORE_X12('SECR', 15, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 80;
+	Radius = 26.0;
+	Height = 128.0;
+	Mass = 100000.0;
+	StepSpeed = 27.0;
+	bSolid = true;
+	bShootable = true;
+	bUnknown5 = true;
+	bUnknown4 = true;
+	bNoBlood = true;
+	IdleState = S_COMP_CORE_1;
+	DeathState = S_COMP_CORE_X1;
+	DeathSound = 'Explode';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/11/02 08:20:56  dj_jl
+//  New style classes.
+//
+//**************************************************************************
