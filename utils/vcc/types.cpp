@@ -1429,7 +1429,69 @@ static void AddVTable(TType *t)
 	}
 	if (!vtable[0])
 	{
-		ERR_Exit(ERR_NONE, false, "Missing defaultproperties");
+		ERR_Exit(ERR_NONE, false, "Missing defaultproperties for %s", *t->Name);
+	}
+}
+
+//==========================================================================
+//
+//	WritePropertyField
+//
+//==========================================================================
+
+void WritePropertyField(TType *t, dfield_t *df, TType *type, int ofs)
+{
+	int i;
+
+	switch (type->type)
+	{
+	case ev_void:
+	case ev_int:
+	case ev_float:
+	case ev_bool:
+		break;
+	case ev_name:
+		df[t->num_properties].type = PROPTYPE_Name;
+		df[t->num_properties].ofs = ofs;
+		t->num_properties++;
+		break;
+	case ev_string:
+		df[t->num_properties].type = PROPTYPE_String;
+		df[t->num_properties].ofs = ofs;
+		t->num_properties++;
+		break;
+	case ev_function:	// Do we support them anymore?
+		break;
+	case ev_pointer:	// FIXME
+		break;
+	case ev_reference:
+		df[t->num_properties].type = PROPTYPE_Reference;
+		df[t->num_properties].ofs = ofs;
+		t->num_properties++;
+		break;
+	case ev_array:
+		for (i = 0; i < type->size / type->aux_type->size; i++)
+		{
+			WritePropertyField(t, df, type->aux_type,
+				ofs + i * type->aux_type->size);
+		}
+		break;
+	case ev_struct:
+	case ev_vector:
+		for (i = 0; i < type->numfields; i++)
+		{
+			WritePropertyField(t, df, type->fields[i].type,
+				ofs + type->fields[i].ofs);
+		}
+	case ev_class:		// Can't contain classes
+		break;
+	case ev_method:		// Properties are not methods
+		break;
+	case ev_classid:
+		df[t->num_properties].type = PROPTYPE_ClassID;
+		df[t->num_properties].ofs = ofs;
+		t->num_properties++;
+		break;
 	}
 }
 
@@ -1446,32 +1508,7 @@ void WritePropertyInfo(TType *t)
 	dfield_t *df = (dfield_t *)(globals + numglobals);
 	for (int i = 0; i < t->numfields; i++)
 	{
-		field_t &F = t->fields[i];
-		switch (F.type->type)
-		{
-		case ev_name:
-			df[t->num_properties].type = PROPTYPE_Name;
-			df[t->num_properties].ofs = F.ofs;
-			t->num_properties++;
-			break;
-		case ev_string:
-			df[t->num_properties].type = PROPTYPE_String;
-			df[t->num_properties].ofs = F.ofs;
-			t->num_properties++;
-			break;
-		//	ev_function,
-		//	ev_pointer,
-		case ev_reference:
-			df[t->num_properties].type = PROPTYPE_Reference;
-			df[t->num_properties].ofs = F.ofs;
-			t->num_properties++;
-			break;
-		case ev_classid:
-			df[t->num_properties].type = PROPTYPE_ClassID;
-			df[t->num_properties].ofs = F.ofs;
-			t->num_properties++;
-			break;
-		}
+		WritePropertyField(t, df, t->fields[i].type, t->fields[i].ofs);
 	}
 	numglobals += t->num_properties * sizeof(dfield_t) / 4;
 }
@@ -1509,9 +1546,12 @@ void AddVirtualTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2002/06/14 15:33:45  dj_jl
+//	Some fixes.
+//
 //	Revision 1.25  2002/05/03 17:04:03  dj_jl
 //	Mangling of string pointers.
-//
+//	
 //	Revision 1.24  2002/03/12 19:17:30  dj_jl
 //	Added keyword abstract
 //	

@@ -43,9 +43,9 @@ struct state_t
 	int		model_index;
 	int		model_frame;
 	float	time;
-	int		statenum;
 	int		nextstate;
 	int		function;
+	FName	statename;
 };
 
 struct mobjinfo_t
@@ -56,7 +56,6 @@ struct mobjinfo_t
 
 struct compstate_t
 {
-	FName Name;
 	FName NextName;
 };
 
@@ -198,12 +197,10 @@ void ParseStates(TType *class_type)
 		{
 			ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
 		}
-		cs.Name = tk_Name;
+		s.statename = tk_Name;
 		AddConstant(tk_Name, num_states);
 		TK_NextToken();
 		TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-		//	Nummurs
-		s.statenum = num_states;
 		//	Spraita v∆rds
 		if (tk_Token != TK_NAME)
 		{
@@ -328,7 +325,7 @@ static void CheckStates(void)
 	{
 		for (j = 0; j < num_states; j++)
 		{
-			if (compstates[i].NextName == compstates[j].Name)
+			if (compstates[i].NextName == states[j].statename)
 			{
 				states[i].nextstate = j;
 				break;
@@ -387,6 +384,8 @@ void AddInfoTables(void)
 			globalinfo[numglobals + i * sizeof(*states) / 4 +
 				STRUCT_OFFSET(state_t, function) / 4] = 2;
 		}
+		globalinfo[numglobals + i * sizeof(*states) / 4 +
+			STRUCT_OFFSET(state_t, statename) / 4] = 4;
 	}
 	AddInfoData(gv_states, states, num_states * sizeof(*states), false);
 	//	Pievieno objektu aprakstu tabulu
@@ -406,9 +405,12 @@ void AddInfoTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2002/06/14 15:33:45  dj_jl
+//	Some fixes.
+//
 //	Revision 1.17  2002/02/22 18:11:53  dj_jl
 //	Removed misc fields from states.
-//
+//	
 //	Revision 1.16  2002/02/16 16:28:36  dj_jl
 //	Added support for bool variables
 //	

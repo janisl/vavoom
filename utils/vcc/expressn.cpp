@@ -597,6 +597,7 @@ static TOperator	NotLogical_str(TOperator::ID_NEGATELOGICAL, &type_int, &type_st
 static TOperator	NotLogical_func(TOperator::ID_NEGATELOGICAL, &type_int, &type_function, &type_void, OPC_NEGATELOGICAL);
 static TOperator	NotLogical_ptr(TOperator::ID_NEGATELOGICAL, &type_int, &type_void_ptr, &type_void, OPC_NEGATELOGICAL);
 static TOperator	NotLogical_ref(TOperator::ID_NEGATELOGICAL, &type_int, &type_none_ref, &type_void, OPC_NEGATELOGICAL);
+static TOperator	NotLogical_cid(TOperator::ID_NEGATELOGICAL, &type_int, &type_classid, &type_void, OPC_NEGATELOGICAL);
 
 static TOperator	BitInverse_int(TOperator::ID_BITINVERSE, &type_int, &type_int, &type_void, OPC_BITINVERSE);
 
@@ -1808,9 +1809,12 @@ TType *ParseExpression(bool bLocals)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2002/06/14 15:33:45  dj_jl
+//	Some fixes.
+//
 //	Revision 1.23  2002/05/03 17:04:03  dj_jl
 //	Mangling of string pointers.
-//
+//	
 //	Revision 1.22  2002/03/16 17:54:25  dj_jl
 //	Added opcode for pushing virtual function.
 //	
