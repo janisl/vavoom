@@ -24,7 +24,8 @@ OBJFILES = obj\sv\zone.obj obj\sv\crc.obj obj\sv\cvar.obj obj\sv\debug.obj \
     obj\sv\sv_user.obj obj\sv\sv_poly.obj obj\sv\sv_sight.obj \
     obj\sv\sv_swtch.obj obj\sv\sv_tick.obj obj\sv\sv_acs.obj \
     obj\sv\sv_world.obj obj\sv\infostr.obj obj\sv\r_tex.obj obj\sv\files.obj \
-    obj\sv\s_data.obj obj\sv\name.obj obj\sv\vobject.obj obj\sv\vclass.obj
+    obj\sv\s_data.obj obj\sv\name.obj obj\sv\vobject.obj obj\sv\vclass.obj \
+    obj\sv\net_null.obj
 RESFILES =
 MAINSOURCE = vavm95sv.bpf
 RESDEPEN = $(RESFILES)
