@@ -72,7 +72,7 @@ void A_PainShootSkull(mobj_t * actor, float angle)
 		return;
 
 	// okay, there's playe for another one
-	prestep = 4.0 + 3.0 * (actor->radius + SKULL_RADIUS) / 2.0;
+	prestep = 4.0 + 3.0 * (actor->Radius + SKULL_RADIUS) / 2.0;
 
 	x = actor->origin.x + prestep * cos(angle);
 	y = actor->origin.y + prestep * sin(angle);
@@ -142,6 +142,10 @@ void Actor::A_PainDie(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/15 18:26:59  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.9  2002/01/12 18:02:47  dj_jl
 //  Replaced some C style casts with dynamic casts
 //

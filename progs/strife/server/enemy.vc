@@ -39,11 +39,11 @@ void A_Look(mobj_t * actor)
 	actor->threshold = 0;	// any shot will wake up
 	targ = actor->subsector->sector->soundtarget;
 
-	if (targ && targ->flags & MF_SHOOTABLE)
+	if (targ && targ->Flags & MF_SHOOTABLE)
 	{
 		actor->target = targ;
 
-		if (actor->flags & MF_AMBUSH)
+		if (actor->Flags & MF_AMBUSH)
 		{
 			if (!P_CheckSight(actor, actor->target))
 			{
@@ -64,7 +64,7 @@ void A_Look(mobj_t * actor)
 		StartSound(actor, actor->sound_sight, CHAN_VOICE);
 	}
 
-	SetMobjState(actor, actor->seestate);
+	SetMobjState(actor, actor->SeeState);
 }
 
 //==========================================================================
@@ -79,15 +79,15 @@ void A_Chase(mobj_t * actor)
 {
 	float delta;
 
-	if (actor->reactiontime)
+	if (actor->ReactionCount)
 	{
-		actor->reactiontime--;
+		actor->ReactionCount--;
 	}
 
 	// modify target threshold
 	if (actor->threshold)
 	{
-		if (!actor->target || actor->target->health <= 0)
+		if (!actor->target || actor->target->Health <= 0)
 		{
 			actor->threshold = 0;
 		}
@@ -122,21 +122,21 @@ void A_Chase(mobj_t * actor)
 		}
 	}
 
-	if (!actor->target || !(actor->target->flags & MF_SHOOTABLE))
+	if (!actor->target || !(actor->target->Flags & MF_SHOOTABLE))
 	{
 		// look for a new target
 		if (P_LookForPlayers(actor, true))
 		{
 			return;	// got a new target
 		}
-		SetMobjState(actor, actor->spawnstate);
+		SetMobjState(actor, actor->SpawnState);
 		return;
 	}
 
 	// do not attack twice in a row
-	if (actor->flags & MF_JUSTATTACKED)
+	if (actor->Flags & MF_JUSTATTACKED)
 	{
-		actor->flags &= ~MF_JUSTATTACKED;
+		actor->Flags &= ~MF_JUSTATTACKED;
 		if (!fastparm)
 		{
 			P_NewChaseDir(actor);
@@ -145,25 +145,25 @@ void A_Chase(mobj_t * actor)
 	}
 
 	// check for melee attack
-	if (actor->meleestate && P_CheckMeleeRange(actor))
+	if (actor->MeleeState && P_CheckMeleeRange(actor))
 	{
 		if (actor->sound_attack)
 		{
 			StartSound(actor, actor->sound_attack, CHAN_WEAPON);
 		}
-		SetMobjState(actor, actor->meleestate);
+		SetMobjState(actor, actor->MeleeState);
 		return;
 	}
 
 	// check for missile attack
-	if (actor->missilestate)
+	if (actor->MissileState)
 	{
 		if (fastparm || !actor->movecount)
 		{
 			if (P_CheckMissileRange(actor))
 			{
-				SetMobjState(actor, actor->missilestate);
-				actor->flags |= MF_JUSTATTACKED;
+				SetMobjState(actor, actor->MissileState);
+				actor->Flags |= MF_JUSTATTACKED;
 				return;
 			}
 		}
@@ -203,12 +203,12 @@ void A_FaceTarget(mobj_t * actor)
 	if (!actor->target)
 		return;
 
-	actor->flags &= ~MF_AMBUSH;
+	actor->Flags &= ~MF_AMBUSH;
 
 	actor->angles.yaw = atan2(actor->target->origin.y - actor->origin.y,
 		actor->target->origin.x - actor->origin.x);
 
-	if (actor->target->translucency)
+	if (actor->target->Translucency)
 	{
 		actor->angles.yaw = AngleMod360(actor->angles.yaw +
 			(Random() - Random()) * 45.0);
@@ -239,7 +239,7 @@ void Actor::A_Pain(void)
 
 void A_Explode(mobj_t * thingy)
 {
-	thingy->translucency = 50;
+	thingy->Translucency = 50;
 	P_RadiusAttack(thingy, thingy->target, 128, 0, 0);
 }
 
@@ -283,7 +283,7 @@ void A_XScream(mobj_t * actor)
 void Actor::A_Fall(void)
 {
 	// actor is on ground, it can be walked over
-	flags &= ~MF_SOLID;
+	Flags &= ~MF_SOLID;
 
 	// So change this if corpse objects
 	// are meant to be obstacles.
@@ -302,7 +302,7 @@ void Actor::A_PlayerScream(void)
 	// Default death sound.
 	name sound = 'PlayerDeath';
 
-	if (health < -50)
+	if (Health < -50)
 	{
 		// IF THE PLAYER DIES
 		// LESS THAN -50% WITHOUT GIBBING
@@ -315,6 +315,10 @@ void Actor::A_PlayerScream(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/15 18:27:01  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.8  2002/01/11 18:19:42  dj_jl
 //  Started to use names in progs
 //

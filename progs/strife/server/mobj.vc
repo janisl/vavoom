@@ -126,7 +126,7 @@ void SetOrigin(mobj_t * mobj, TVec origin)
 	}
 	else if (origin.z == ONCEILINGZ)
 	{
-		mobj->origin.z = mobj->ceilingz - mobj->height;
+		mobj->origin.z = mobj->ceilingz - mobj->Height;
 	}
 }
 
@@ -155,15 +155,15 @@ void CopyMThing(mthing_t * from, mthing_t * to)
 
 //==========================================================================
 //
-//	Entity::OnMapSpawn
+//	Actor::OnMapSpawn
 //
 //==========================================================================
 
-void Entity::OnMapSpawn(mthing_t * mthing)
+void Actor::OnMapSpawn(mthing_t * mthing)
 {
 	state_t *st;
 
-	spawnhealth = health;
+	spawnhealth = Health;
 	sound_sight = GetSoundID(SightSound);
 	sound_active = GetSoundID(ActiveSound);
 	sound_attack = GetSoundID(AttackSound);
@@ -172,13 +172,13 @@ void Entity::OnMapSpawn(mthing_t * mthing)
 
 	if (gameskill == sk_nightmare)
 	{
-		reactiontime = 0;
+		ReactionCount = 0;
 	}
 
 	lastlook = P_Random() % MAXPLAYERS;
 	// do not set the state with P_SetMobjState,
 	// because action routines can not be called yet
-	st = &states[spawnstate];
+	st = &states[SpawnState];
 
 	time = st->time;
 	sprite = st->sprite;
@@ -198,7 +198,7 @@ void Entity::OnMapSpawn(mthing_t * mthing)
 
 		x = mthing->x;
 		y = mthing->y;
-		if (flags & MF_SPAWNCEILING)
+		if (Flags & MF_SPAWNCEILING)
 			z = ONCEILINGZ;
 		else
 			z = ONFLOORZ;
@@ -222,14 +222,14 @@ void Entity::OnMapSpawn(mthing_t * mthing)
 		args[4] = mthing->arg5;
 		if (time > 0.0)
 			time = 0.1 + Random() * time;
-		if (flags & MF_COUNTKILL)
+		if (Flags & MF_COUNTKILL)
 			level->totalkills++;
-		if (flags & MF_COUNTITEM)
+		if (Flags & MF_COUNTITEM)
 			level->totalitems++;
 
 		angles.yaw = itof(45 * (mthing->angle / 45));
 		if (mthing->options & MTF_AMBUSH)
-			flags |= MF_AMBUSH;
+			Flags |= MF_AMBUSH;
 	}
 	else
 	{
@@ -423,14 +423,14 @@ void P_ExplodeMissile(mobj_t * mo)
 {
 	mo->velocity.x = mo->velocity.y = mo->velocity.z = 0.0;
 
-	SetMobjState(mo, mo->deathstate);
+	SetMobjState(mo, mo->DeathState);
 
 	mo->time -= Random() * 0.1;
 
 	if (mo->time < 0.1)
 		mo->time = 0.1;
 
-	mo->flags &= ~MF_MISSILE;
+	mo->Flags &= ~MF_MISSILE;
 
 	if (mo->sound_death)
 		StartSound(mo, mo->sound_death, CHAN_VOICE);
@@ -480,12 +480,12 @@ mobj_t *SpawnMissile(mobj_t * source, mobj_t * dest, classid type)
 
 	dir = dest->origin - source->origin;
 	// fuzzy player
-	if (dest->translucency)
+	if (dest->Translucency)
 	{
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 	}
 	dir = Normalize(dir);
-	th->velocity = dir * th->speed;
+	th->velocity = dir * th->Speed;
 
 	VectorAngles(&dir, &th->angles);
 
@@ -505,24 +505,24 @@ void KillMobj(mobj_t * source, mobj_t * target)
 	classid item;
 	mobj_t *mo;
 
-	target->flags &= ~(MF_SHOOTABLE | MF_FLOAT | MF_SKULLFLY);
+	target->Flags &= ~(MF_SHOOTABLE | MF_FLOAT | MF_SKULLFLY);
 
 //	if (target->type != MT_SKULL)
-	target->flags &= ~MF_NOGRAVITY;
+	target->Flags &= ~MF_NOGRAVITY;
 
-	target->flags |= MF_CORPSE | MF_DROPOFF;
-	target->height /= 4.0;
+	target->Flags |= MF_CORPSE | MF_DROPOFF;
+	target->Height /= 4.0;
 
 	if (source && source->player)
 	{
 		// count for intermission
-		if (target->flags & MF_COUNTKILL)
+		if (target->Flags & MF_COUNTKILL)
 			source->player->killcount++;
 
 		if (target->player)
 			source->player->frags[P_GetPlayerNum(target->player)]++;
 	}
-	else if (!netgame && (target->flags & MF_COUNTKILL))
+	else if (!netgame && (target->Flags & MF_COUNTKILL))
 	{
 		// count all monster deaths,
 		// even those caused by other monsters
@@ -535,7 +535,7 @@ void KillMobj(mobj_t * source, mobj_t * target)
 		if (!source)
 			target->player->frags[P_GetPlayerNum(target->player)]++;
 
-		target->flags &= ~MF_SOLID;
+		target->Flags &= ~MF_SOLID;
 		target->player->playerstate = PST_DEAD;
 		DropWeapon(target->player);
 #ifdef FIXME
@@ -548,13 +548,13 @@ void KillMobj(mobj_t * source, mobj_t * target)
 #endif
 	}
 
-	if (target->health < target->gibshealth && target->xdeathstate)
+	if (target->Health < target->GibsHealth && target->GibsDeathState)
 	{
-		SetMobjState(target, target->xdeathstate);
+		SetMobjState(target, target->GibsDeathState);
 	}
 	else
 	{
-		SetMobjState(target, target->deathstate);
+		SetMobjState(target, target->DeathState);
 	}
 	target->time -= Random() * 0.1;
 
@@ -585,13 +585,13 @@ void KillMobj(mobj_t * source, mobj_t * target)
 	}
 
 	mo = P_SpawnMobj(target->origin.x, target->origin.y, ONFLOORZ, item);
-	mo->flags |= MF_DROPPED;	// special versions of items
+	mo->Flags |= MF_DROPPED;	// special versions of items
 #endif
 }
 
 //==========================================================================
 //
-//  Entity::Damage
+//  Actor::Damage
 //
 //  Damages both enemies and players.
 //  "inflictor" is the thing that caused the damage, creature or missile,
@@ -602,17 +602,17 @@ void KillMobj(mobj_t * source, mobj_t * target)
 //
 //==========================================================================
 
-void Entity::Damage(Entity * inflictor, Entity * source, int damage)
+void Actor::Damage(Actor * inflictor, Actor * source, int damage)
 {
 	int saved;
 
-	if (!(flags & MF_SHOOTABLE))
+	if (!(Flags & MF_SHOOTABLE))
 		return;	// shouldn't happen...
 
-	if (health <= 0)
+	if (Health <= 0)
 		return;
 
-	if (flags & MF_SKULLFLY)
+	if (Flags & MF_SKULLFLY)
 	{
 		velocity = vector(0.0, 0.0, 0.0);
 	}
@@ -623,9 +623,9 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 	// Some close combat weapons should not
 	// inflict thrust and push the victim out of reach,
 	// thus kick away unless using the chainsaw.
-	if (inflictor && !(flags & MF_NOCLIP))
+	if (inflictor && !(Flags & MF_NOCLIP))
 	{
-		velocity += (500.0 * itof(damage) / mass) *
+		velocity += (500.0 * itof(damage) / Mass) *
 			Normalize(MobjCenter(this) - MobjCenter(inflictor));
 	}
 
@@ -633,9 +633,9 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 	if (player)
 	{
 		// end of game hell hack
-		if ((subsector->sector->special & 255) == 75 && damage >= health)
+		if ((subsector->sector->special & 255) == 75 && damage >= Health)
 		{
-			damage = health - 1;
+			damage = Health - 1;
 		}
 
 		// Below certain threshold,
@@ -674,20 +674,20 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 	}
 
 	// do the damage    
-	health -= damage;
-	if (health <= 0)
+	Health -= damage;
+	if (Health <= 0)
 	{
 		KillMobj(source, this);
 		return;
 	}
 
-	if ((P_Random() < painchance) && !(flags & MF_SKULLFLY))
+	if ((P_Random() < PainChance) && !(Flags & MF_SKULLFLY))
 	{
-		flags |= MF_JUSTHIT;	// fight back!
-		SetMobjState(this, painstate);
+		Flags |= MF_JUSTHIT;	// fight back!
+		SetMobjState(this, PainState);
 	}
 
-	reactiontime = 0;	// we're awake now...   
+	ReactionCount = 0;	// we're awake now...
 
 	if ((!threshold) && source && source != this)
 	{
@@ -695,9 +695,9 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 		// chase after this one
 		target = source;
 		threshold = BASETHRESHOLD;
-		if (statenum == spawnstate && seestate != S_NULL)
+		if (statenum == SpawnState && SeeState != S_NULL)
 		{
-			SetMobjState(this, seestate);
+			SetMobjState(this, SeeState);
 		}
 	}
 }
@@ -710,7 +710,7 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 
 void P_RemoveMobj(mobj_t * mobj)
 {
-	if ((mobj->flags & MF_SPECIAL) && !(mobj->flags & MF_DROPPED))
+	if ((mobj->Flags & MF_SPECIAL) && !(mobj->Flags & MF_DROPPED))
 	{
 		CopyMThing(&mobj->spawnpoint, &itemrespawnque[iquehead]);
 		itemrespawntime[iquehead] = level->tictime;
@@ -772,7 +772,7 @@ void P_RespawnSpecials(void)
 
 	// spawn it
 #ifdef FIXME
-	if (mobjinfo[i].flags & MF_SPAWNCEILING)
+	if (mobjinfo[i].Flags & MF_SPAWNCEILING)
 		z = ONCEILINGZ;
 	else
 #endif
@@ -824,7 +824,7 @@ void P_NightmareRespawn(mobj_t * mobj)
 
 	// spawn it
 #ifdef FIXME
-	if (mobj->info->flags & MF_SPAWNCEILING)
+	if (mobj->info->Flags & MF_SPAWNCEILING)
 		z = ONCEILINGZ;
 	else
 #endif
@@ -836,9 +836,9 @@ void P_NightmareRespawn(mobj_t * mobj)
 	mo->angles.yaw = itof(45 * (mthing->angle / 45));
 
 	if (mthing->options & MTF_AMBUSH)
-		mo->flags |= MF_AMBUSH;
+		mo->Flags |= MF_AMBUSH;
 
-	mo->reactiontime = 18;
+	mo->ReactionCount = 18;
 
 	// remove the old monster,
 	P_RemoveMobj(mobj);
@@ -947,6 +947,10 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/01/15 18:27:01  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.19  2002/01/12 18:00:48  dj_jl
 //  Sound names initialized as names
 //

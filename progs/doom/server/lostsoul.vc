@@ -50,7 +50,7 @@ void Actor::A_SkullAttack(void)
 	if (!target)
 		return;
 
-	flags |= MF_SKULLFLY;
+	Flags |= MF_SKULLFLY;
 
 	StartSound(this, sound_attack, CHAN_VOICE);
 	A_FaceTarget();
@@ -60,6 +60,10 @@ void Actor::A_SkullAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/15 18:26:59  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.6  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

@@ -46,7 +46,7 @@
 //==========================================================================
 
 mobj_t *corpsehit;
-Entity vileobj;
+Actor vileobj;
 float viletryx;
 float viletryy;
 
@@ -55,16 +55,16 @@ boolean PIT_VileCheck(mobj_t * thing)
 	float maxdist;
 	boolean check;
 
-	if (!(thing->flags & MF_CORPSE))
+	if (!(thing->Flags & MF_CORPSE))
 		return true;	// not a monster
 
 	if (thing->time != -1.0)
 		return true;	// not lying still yet
 
-	if (thing->raisestate == S_NULL)
+	if (thing->RaiseState == S_NULL)
 		return true;	// monster doesn't have a raise state
 
-	maxdist = thing->radius + vileobj.radius;
+	maxdist = thing->Radius + vileobj.Radius;
 
 	if (fabs(thing->origin.x - viletryx) > maxdist ||
 		fabs(thing->origin.y - viletryy) > maxdist)
@@ -75,10 +75,10 @@ boolean PIT_VileCheck(mobj_t * thing)
 
 	corpsehit = thing;
 	corpsehit->velocity.x = corpsehit->velocity.y = 0.0;
-	corpsehit->height *= 4.0;
-	check =
-		P_CheckPosition(corpsehit, corpsehit->origin.x, corpsehit->origin.y);
-	corpsehit->height /= 4.0;
+	corpsehit->Height *= 4.0;
+	check = P_CheckPosition(corpsehit, corpsehit->origin.x,
+		corpsehit->origin.y);
+	corpsehit->Height /= 4.0;
 
 	if (!check)
 		return true;	// doesn't fit here
@@ -109,8 +109,8 @@ void Actor::A_VileChase(void)
 	if (movedir != DI_NODIR)
 	{
 		// check for corpses to raise
-		viletryx = origin.x + speed * frametime * xspeed[movedir];
-		viletryy = origin.y + speed * frametime * yspeed[movedir];
+		viletryx = origin.x + Speed * frametime * xspeed[movedir];
+		viletryy = origin.y + Speed * frametime * yspeed[movedir];
 		vileobj = self;
 
 		xl = MapBlock(viletryx - level->bmaporgx - MAXRADIUS * 2.0);
@@ -135,15 +135,15 @@ void Actor::A_VileChase(void)
 					SetMobjState(this, S_VILE_HEAL1);
 					StartSoundName(corpsehit, 'Slop', CHAN_BODY);
 
-					SetMobjState(corpsehit, corpsehit->raisestate);
-					corpsehit->height *= 4.0;
+					SetMobjState(corpsehit, corpsehit->RaiseState);
+					corpsehit->Height *= 4.0;
 #ifdef FIXME
-					corpsehit->flags = info->flags;
+					corpsehit->Flags = info->Flags;
 #else
-					corpsehit->flags |= MF_SOLID;
-					corpsehit->flags &= ~(MF_CORPSE);
+					corpsehit->Flags |= MF_SOLID;
+					corpsehit->Flags &= ~(MF_CORPSE);
 #endif
-					corpsehit->health = corpsehit->spawnhealth;
+					corpsehit->Health = corpsehit->spawnhealth;
 					corpsehit->target = NULL;
 
 					return;
@@ -216,7 +216,7 @@ void Actor::A_VileAttack(void)
 
 	StartSoundName(this, 'BarrelExplode', CHAN_WEAPON);
 	target->Damage(this, this, 20);
-	target->velocity.z = 1000.0 / target->mass * 35.0;
+	target->velocity.z = 1000.0 / target->Mass * 35.0;
 
 	fire = tracer;
 
@@ -326,6 +326,10 @@ void Actor::A_FireCrackle(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/15 18:26:59  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.9  2002/01/12 18:02:47  dj_jl
 //  Replaced some C style casts with dynamic casts
 //

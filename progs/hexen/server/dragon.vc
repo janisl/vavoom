@@ -79,13 +79,13 @@ void DragonSeek(mobj_t * actor, float thresh, float turnMax)
 		// Turn counter clockwise
 		actor->angles.yaw = AngleMod360(actor->angles.yaw - delta);
 	}
-	actor->velocity.x = actor->speed * cos(actor->angles.yaw);
-	actor->velocity.y = actor->speed * sin(actor->angles.yaw);
-	if (actor->origin.z + actor->height < target->origin.z ||
-		target->origin.z + target->height < actor->origin.z)
+	actor->velocity.x = actor->Speed * cos(actor->angles.yaw);
+	actor->velocity.y = actor->Speed * sin(actor->angles.yaw);
+	if (actor->origin.z + actor->Height < target->origin.z ||
+		target->origin.z + target->Height < actor->origin.z)
 	{
 		dist = MobjDist2(target, actor);
-		dist = dist / actor->speed;
+		dist = dist / actor->Speed;
 		if (dist < 1.0)
 		{
 			dist = 1.0;
@@ -95,9 +95,9 @@ void DragonSeek(mobj_t * actor, float thresh, float turnMax)
 	else
 	{
 		dist = MobjDist2(target, actor);
-		dist = dist / actor->speed;
+		dist = dist / actor->Speed;
 	}
-	if (target->flags & MF_SHOOTABLE && P_Random() < 64)
+	if (target->Flags & MF_SHOOTABLE && P_Random() < 64)
 	{
 		// attack the destination mobj if it's attackable
 		if (fabs(AngleMod180(actor->angles.yaw -
@@ -181,7 +181,7 @@ void Actor::A_DragonInitFlight(void)
 		specialmobj1 = P_FindMobjFromTID(tid, &search);
 		if (search == -1)
 		{
-			SetMobjState(this, spawnstate);
+			SetMobjState(this, SpawnState);
 			return;
 		}
 	}
@@ -202,7 +202,7 @@ void Actor::A_DragonFlight(void)
 	DragonSeek(this, 4.0, 8.0);
 	if (target)
 	{
-		if (!(target->flags & MF_SHOOTABLE))
+		if (!(target->Flags & MF_SHOOTABLE))
 		{
 			// target died
 			target = NULL;
@@ -218,7 +218,7 @@ void Actor::A_DragonFlight(void)
 		}
 		else if (fabs(AngleMod180(angles.yaw - angle)) <= 20.0)
 		{
-			SetMobjState(this, missilestate);
+			SetMobjState(this, MissileState);
 			StartSoundName(this, 'DragonAttack', CHAN_WEAPON);
 		}
 	}
@@ -317,6 +317,10 @@ void Actor::A_DragonFX2(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.9  2002/01/11 18:19:42  dj_jl
 //  Started to use names in progs
 //

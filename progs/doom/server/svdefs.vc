@@ -200,16 +200,19 @@ enum
 
 class Entity:MapObject
 {
+}
+
+class Actor:Entity
+{
 	//  States
-	int spawnstate;
-	int seestate;
-	int painstate;
-	int meleestate;
-	int missilestate;
-	int crashstate;
-	int deathstate;
-	int xdeathstate;
-	int raisestate;
+	int SpawnState;
+	int SeeState;
+	int PainState;
+	int MeleeState;
+	int MissileState;
+	int DeathState;
+	int GibsDeathState;
+	int RaiseState;
 
 	//	Sounds
 	name SightSound;
@@ -226,11 +229,11 @@ class Entity:MapObject
 	int sound_death;
 
 	//  Params
-	float mass;
-	float speed;
-	int painchance;
+	float Mass;
+	float Speed;
+	int PainChance;
 	int spawnhealth;
-	int gibshealth;
+	int GibsHealth;
 
 	float time;	// state tic counter
 	int statenum;
@@ -250,11 +253,12 @@ class Entity:MapObject
 	// For nightmare respawn.
 	mthing_t spawnpoint;
 
-	int damage;	// For missiles
+	int MissileDamage;	// For missiles
 
 	// Reaction time: if non 0, don't attack yet.
+	int ReactionCount;
 	// Used by player to freeze a bit after teleporting.
-	int reactiontime;
+	float ReactionTime;
 
 	// If >0, the target will be chased
 	// no matter what (even if shot)
@@ -273,7 +277,7 @@ class Entity:MapObject
 	void Unarchive(void);
 	void OnMapSpawn(mthing_t *mthing);
 
-	void Damage(Entity * inflictor, Entity * source, int damage);
+	void Damage(Actor * inflictor, Actor * source, int damage);
 
 	// Physics
 	void SlideMove(void);
@@ -283,14 +287,11 @@ class Entity:MapObject
 	void ZMovement(void);
 	void UpdateVelocity(void);
 	void FakeZMovement(void);
-	boolean Iter_CheckOnmobjZ(Entity thing);
-	Entity CheckOnmobj(void);
+	boolean Iter_CheckOnmobjZ(Actor thing);
+	Actor CheckOnmobj(void);
 	void PlayerLandedOnThing(void);
 	boolean Physics(void);
-}
 
-class Actor:Entity
-{
 	void A_BFGSpray(void);
 	void A_Explode(void);
 	void A_Pain(void);
@@ -484,23 +485,23 @@ enum
 class BotPlayer:Object
 {
 	player_t *player;		// Points to reference player
-	Entity botmo;
+	Actor botmo;
 
 	// Destinations
-	Entity item;			// Item (roam towards weapon, etc)
+	Actor item;			// Item (roam towards weapon, etc)
 	boolean itemIsWeapon;
 	boolean itemIsPowerup;
-	Entity goal;			// Teamgame goal spot
-	Entity node;			// Node we're heading towards
-	Entity prev;			// Previous node we were at
+	Actor goal;			// Teamgame goal spot
+	Actor node;			// Node we're heading towards
+	Actor prev;			// Previous node we were at
 	TVec posdest;			// Position of our destination (doesn't have to be an actor)
 	boolean posdest_valid;
-	Entity enemy;			// The dead meat.
+	Actor enemy;			// The dead meat.
 	TVec lastpos;			// Last place we saw our enemy
 	boolean lastpos_valid;
-	Entity missile;			// A threathing missile that got to be avoided.
+	Actor missile;			// A threathing missile that got to be avoided.
 
-	Entity ally;			// Ally to tag along with
+	Actor ally;			// Ally to tag along with
 /*	AActor		*last_mate;	// If bots mate dissapeared (not if died) that mate is
 							// pointed to by this. Allows bot to roam to it if
 							// necessary.
@@ -561,12 +562,12 @@ class BotPlayer:Object
 	float GetAngle(void);
 	boolean CheckPath(float ang, float dist);
 	void SetEnemy(void);
-	Entity FindEnemy(void);
-	boolean Check_LOS(Entity to, float vangle);
-	boolean CheckItem(Entity item);
+	Actor FindEnemy(void);
+	boolean Check_LOS(Actor to, float vangle);
+	boolean CheckItem(Actor item);
 	void Scan(void);
-	int WeapFromItem(Entity item);
-	int AmmoFromItem(Entity item);
+	int WeapFromItem(Actor item);
+	int AmmoFromItem(Actor item);
 	void Move(void);
 	void SetAngle(float an);
 	void Roam(void);
@@ -576,8 +577,8 @@ class BotPlayer:Object
 	void BotAim(void);
 	void Pitch(void);
 	int SkillLower(int skill, int num);
-	void Killed(Entity victim);
-	void Died(Entity killer);
+	void Killed(Actor victim);
+	void Died(Actor killer);
 }
 
 addfields player_t
@@ -688,6 +689,10 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/01/15 18:26:59  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.13  2002/01/12 18:00:47  dj_jl
 //  Sound names initialized as names
 //

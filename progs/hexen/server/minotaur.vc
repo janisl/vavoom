@@ -71,13 +71,13 @@ void Actor::A_Summon(void)
 			SetMobjState(mo, S_NULL);
 			mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_SUMMONMAULATOR);
 			if (mo)
-				mo->flags2 |= MF2_DROPPED;
+				mo->Flags2 |= MF2_DROPPED;
 			return;
 		}
 
 		mo->args[0] = level->tictime;
 		master = specialmobj1;
-		if (master->flags & MF_CORPSE)
+		if (master->Flags & MF_CORPSE)
 		{
 			// Master dead
 			mo->specialmobj1 = NULL;	// No master
@@ -120,7 +120,7 @@ void Actor::A_MinotaurLook(void)
 			mo = players[i].mo;
 			if (mo == master)
 				continue;
-			if (mo->health <= 0)
+			if (mo->Health <= 0)
 				continue;
 			dist = MobjDist(this, mo);
 			if (dist > MINOTAUR_LOOK_DIST)
@@ -132,7 +132,7 @@ void Actor::A_MinotaurLook(void)
 
 	if (!target)	// Near player monster search
 	{
-		if (master && (master->health > 0) && (master->player))
+		if (master && (master->Health > 0) && (master->player))
 			mo = P_RoughMonsterSearch(master, 20);
 		else
 			mo = P_RoughMonsterSearch(this, 20);
@@ -143,11 +143,11 @@ void Actor::A_MinotaurLook(void)
 	{
 		for (mo = NextMobj(NULL); mo; mo = NextMobj(mo))
 		{
-			if (!(mo->flags & MF_COUNTKILL))
+			if (!(mo->Flags & MF_COUNTKILL))
 				continue;
-			if (mo->health <= 0)
+			if (mo->Health <= 0)
 				continue;
-			if (!(mo->flags & MF_SHOOTABLE))
+			if (!(mo->Flags & MF_SHOOTABLE))
 				continue;
 			dist = MobjDist(this, mo);
 			if (dist > MINOTAUR_LOOK_DIST)
@@ -181,7 +181,7 @@ void Actor::A_MinotaurChase(void)
 {
 	int starttime = args[0];
 
-	translucency = 0;	// In case pain caused him to skip his fade in.
+	Translucency = 0;	// In case pain caused him to skip his fade in.
 
 	if ((level->tictime - starttime) >= ftoi(MAULATORTIME * 35.0))
 	{
@@ -192,7 +192,7 @@ void Actor::A_MinotaurChase(void)
 	if (P_Random() < 30)
 		A_MinotaurLook();	// adjust to closest target
 
-	if (!target || (target->health <= 0) || !(target->flags & MF_SHOOTABLE))
+	if (!target || (target->Health <= 0) || !(target->Flags & MF_SHOOTABLE))
 	{
 		// look for a new target
 		SetMobjState(this, S_MNTR_LOOK1);
@@ -200,23 +200,23 @@ void Actor::A_MinotaurChase(void)
 	}
 
 	FaceMovementDirection(this);
-	reactiontime = 0;
+	ReactionCount = 0;
 
 	// Melee attack
-	if (meleestate && CheckMeleeRange(this))
+	if (MeleeState && CheckMeleeRange(this))
 	{
 		if (sound_attack)
 		{
 			StartSound(this, sound_attack, CHAN_WEAPON);
 		}
-		SetMobjState(this, meleestate);
+		SetMobjState(this, MeleeState);
 		return;
 	}
 
 	// Missile attack
-	if (missilestate && CheckMissileRange(this))
+	if (MissileState && CheckMissileRange(this))
 	{
-		SetMobjState(this, missilestate);
+		SetMobjState(this, MissileState);
 		return;
 	}
 
@@ -244,7 +244,7 @@ void Actor::A_MinotaurRoam(void)
 {
 	int starttime = args[0];
 
-	translucency = 0;	// In case pain caused him to skip his fade in.
+	Translucency = 0;	// In case pain caused him to skip his fade in.
 
 	if ((level->tictime - starttime) >= ftoi(MAULATORTIME * 35.0))
 	{
@@ -310,14 +310,14 @@ void Actor::A_MinotaurDecide(void)
 		return;
 	dist = MobjDist(this, target);
 
-	if (target->origin.z + target->height > origin.z &&
-		target->origin.z + target->height < origin.z + height &&
+	if (target->origin.z + target->Height > origin.z &&
+		target->origin.z + target->Height < origin.z + Height &&
 		dist < 16.0 * 64.0 && dist > 1.0 * 64.0 && P_Random() < 230)
 	{
 		// Charge attack
 		// Don't call the state function right away
 		SetMobjStateNF(this, S_MNTR_ATK4_1);
-		flags |= MF_SKULLFLY;
+		Flags |= MF_SKULLFLY;
 		A_FaceTarget();
 		velocity = Normalize(target->origin - origin) * MNTR_CHARGE_SPEED;
 		args[4] = 35 / 2;	// Charge duration
@@ -439,8 +439,8 @@ void Actor::A_MinotaurCharge(void)
 	}
 	else
 	{
-		flags &= ~MF_SKULLFLY;
-		SetMobjState(this, seestate);
+		Flags &= ~MF_SKULLFLY;
+		SetMobjState(this, SeeState);
 	}
 }
 
@@ -452,7 +452,7 @@ void Actor::A_MinotaurCharge(void)
 
 void Actor::A_MinotaurFade0(void)
 {
-	translucency = 66;
+	Translucency = 66;
 }
 
 //============================================================================
@@ -464,7 +464,7 @@ void Actor::A_MinotaurFade0(void)
 void Actor::A_MinotaurFade1(void)
 {
 	// Second level of transparency
-	translucency = 33;
+	Translucency = 33;
 }
 
 //============================================================================
@@ -476,7 +476,7 @@ void Actor::A_MinotaurFade1(void)
 void Actor::A_MinotaurFade2(void)
 {
 	// Make fully visible
-	translucency = 0;
+	Translucency = 0;
 }
 
 //============================================================================
@@ -511,6 +511,10 @@ void Actor::A_SmokePuffExit(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.12  2002/01/11 18:19:42  dj_jl
 //  Started to use names in progs
 //

@@ -38,11 +38,11 @@ void Actor::A_Look(void)
 	threshold = 0;	// any shot will wake up
 	targ = subsector->sector->soundtarget;
 
-	if (targ && targ->flags & MF_SHOOTABLE)
+	if (targ && targ->Flags & MF_SHOOTABLE)
 	{
 		target = targ;
 
-		if (flags & MF_AMBUSH)
+		if (Flags & MF_AMBUSH)
 		{
 			if (!P_CheckSight(this, target))
 			{
@@ -60,7 +60,7 @@ void Actor::A_Look(void)
 	// go into chase state
 	if (sound_sight)
 	{
-		if (flags2 & MF2_BOSS)
+		if (Flags2 & MF2_BOSS)
 		{
 			// Full volume
 			StartSound(NULL, sound_sight, CHAN_VOICE);
@@ -71,7 +71,7 @@ void Actor::A_Look(void)
 		}
 	}
 
-	SetMobjState(this, seestate);
+	SetMobjState(this, SeeState);
 }
 
 //==========================================================================
@@ -86,15 +86,15 @@ void Actor::A_Chase(void)
 {
 	float delta;
 
-	if (reactiontime)
+	if (ReactionCount)
 	{
-		reactiontime--;
+		ReactionCount--;
 	}
 
 	// modify target threshold
 	if (threshold)
 	{
-		if (!target || target->health <= 0)
+		if (!target || target->Health <= 0)
 		{
 			threshold = 0;
 		}
@@ -130,21 +130,21 @@ void Actor::A_Chase(void)
 		}
 	}
 
-	if (!target || !(target->flags & MF_SHOOTABLE))
+	if (!target || !(target->Flags & MF_SHOOTABLE))
 	{
 		// look for a new target
 		if (P_LookForPlayers(this, true))
 		{
 			return;	// got a new target
 		}
-		SetMobjState(this, spawnstate);
+		SetMobjState(this, SpawnState);
 		return;
 	}
 
 	// do not attack twice in a row
-	if (flags & MF_JUSTATTACKED)
+	if (Flags & MF_JUSTATTACKED)
 	{
-		flags &= ~MF_JUSTATTACKED;
+		Flags &= ~MF_JUSTATTACKED;
 		if (!fastparm)
 		{
 			P_NewChaseDir(this);
@@ -153,25 +153,25 @@ void Actor::A_Chase(void)
 	}
 
 	// check for melee attack
-	if (meleestate && CheckMeleeRange(this))
+	if (MeleeState && CheckMeleeRange(this))
 	{
 		if (sound_attack)
 		{
 			StartSound(this, sound_attack, CHAN_WEAPON);
 		}
-		SetMobjState(this, meleestate);
+		SetMobjState(this, MeleeState);
 		return;
 	}
 
 	// check for missile attack
-	if (missilestate)
+	if (MissileState)
 	{
 		if (fastparm || !movecount)
 		{
 			if (CheckMissileRange(this))
 			{
-				SetMobjState(this, missilestate);
-				flags |= MF_JUSTATTACKED;
+				SetMobjState(this, MissileState);
+				Flags |= MF_JUSTATTACKED;
 				return;
 			}
 		}
@@ -205,7 +205,7 @@ void Actor::A_Chase(void)
 			StartSound(this, GetSoundID('PigActive1') + (P_Random() & 1),
 				CHAN_VOICE);
 		}
-		else if (flags2 & MF2_BOSS)
+		else if (Flags2 & MF2_BOSS)
 		{
 			StartSound(NULL, sound_active, CHAN_VOICE);
 		}
@@ -227,12 +227,12 @@ void Actor::A_FaceTarget(void)
 	if (!target)
 		return;
 
-	flags &= ~MF_AMBUSH;
+	Flags &= ~MF_AMBUSH;
 
 	angles.yaw = atan2(target->origin.y - origin.y,
 		target->origin.x - origin.x);
 
-	if (target->translucency)
+	if (target->Translucency)
 	{
 		angles.yaw = AngleMod360(angles.yaw + (Random() - Random()) * 45.0);
 	}
@@ -262,13 +262,13 @@ void Actor::A_FreeTargMobj(void)
 {
 	velocity = vector(0.0, 0.0, 0.0);
 	origin.z = ceilingz + 4.0;
-	flags &=
+	Flags &=
 		~(MF_SHOOTABLE | MF_FLOAT | MF_SKULLFLY | MF_SOLID | MF_COUNTKILL);
-	flags |= MF_CORPSE | MF_DROPOFF | MF_NOGRAVITY;
-	flags2 &= ~(MF2_PASSMOBJ | MF2_LOGRAV);
-	translucency = 100;
+	Flags |= MF_CORPSE | MF_DROPOFF | MF_NOGRAVITY;
+	Flags2 &= ~(MF2_PASSMOBJ | MF2_LOGRAV);
+	Translucency = 100;
 	player = NULL;
-	health = -1000;	// Don't resurrect
+	Health = -1000;	// Don't resurrect
 }
 
 //============================================================================
@@ -294,7 +294,7 @@ void Actor::A_Scream(void)
 				// Falling splat
 				StartSoundName(this, 'PlayerFallingSplat', CHAN_VOICE);
 			}
-			else if (health > -50)
+			else if (Health > -50)
 			{
 				// Normal death sound
 				switch (player->pclass)
@@ -313,7 +313,7 @@ void Actor::A_Scream(void)
 					break;
 				}
 			}
-			else if (health > -100)
+			else if (Health > -100)
 			{
 				// Crazy death sound
 				switch (player->pclass)
@@ -379,7 +379,7 @@ void Actor::A_Explode(void)
 	{
 	case MT_FIREBOMB:	// Time Bombs
 		origin.z += 32.0;
-		translucency = 0;
+		Translucency = 0;
 		break;
 	case MT_MNTRFX2:	// Minotaur floor fire
 		damage = 24;
@@ -456,7 +456,7 @@ void Actor::A_Explode(void)
 
 void Actor::A_NoBlocking(void)
 {
-	flags &= ~MF_SOLID;
+	Flags &= ~MF_SOLID;
 }
 
 //============================================================================
@@ -494,7 +494,7 @@ void Actor::A_SkullPop(void)
 	{
 		return;
 	}
-	flags &= ~MF_SOLID;
+	Flags &= ~MF_SOLID;
 	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 48.0, MT_BLOODYSKULL);
 	mo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
 	mo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
@@ -503,7 +503,7 @@ void Actor::A_SkullPop(void)
 	mo->player = player;
 	player = NULL;
 	special1 = mo->player->pclass;
-	mo->health = health;
+	mo->Health = Health;
 	mo->angles.yaw = angles.yaw;
 	mo->player->mo = mo;
 	mo->player->damagecount = 32;
@@ -518,9 +518,9 @@ void Actor::A_SkullPop(void)
 void Actor::A_FreezeDeath(void)
 {
 	time = 2.0 + Random() * 8.0 + Random() * 8.0;
-	flags |= MF_SOLID | MF_SHOOTABLE | MF_NOBLOOD;
-	flags2 |= MF2_PUSHABLE | MF2_TELESTOMP | MF2_PASSMOBJ | MF2_SLIDE;
-	height *= 4.0;
+	Flags |= MF_SOLID | MF_SHOOTABLE | MF_NOBLOOD;
+	Flags2 |= MF2_PUSHABLE | MF2_TELESTOMP | MF2_PASSMOBJ | MF2_SLIDE;
+	Height *= 4.0;
 	StartSoundName(this, 'FreezeDeath', CHAN_VOICE);
 
 	if (player)
@@ -531,7 +531,7 @@ void Actor::A_FreezeDeath(void)
 	}
 	else
 	{
-		if (flags & MF_COUNTKILL && special)
+		if (Flags & MF_COUNTKILL && special)
 		{
 			// Initiate monster death actions
 			ExecuteLineSpecial(special, &args[0], NULL, 0, this);
@@ -581,13 +581,13 @@ void Actor::A_FreezeDeathChunks(void)
 
 	for (i = 12 + (P_Random() & 15); i >= 0; i--)
 	{
-		mo = P_SpawnMobj(origin.x + (Random() - 0.5) * 2.0 * radius,
-			origin.y + (Random() - 0.5) * 2.0 * radius,
-			origin.z + Random() * height, MT_ICECHUNK);
-		SetMobjState(mo, mo->spawnstate + (P_Random() % 3));
+		mo = P_SpawnMobj(origin.x + (Random() - 0.5) * 2.0 * Radius,
+			origin.y + (Random() - 0.5) * 2.0 * Radius,
+			origin.z + Random() * Height, MT_ICECHUNK);
+		SetMobjState(mo, mo->SpawnState + (P_Random() % 3));
 		if (mo)
 		{
-			mo->velocity.z = (mo->origin.z - origin.z) / height * 4.0 * 35.0;
+			mo->velocity.z = (mo->origin.z - origin.z) / Height * 4.0 * 35.0;
 			mo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
 			mo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
 			Actor(*mo).A_IceSetTics();	// set a random tic wait
@@ -595,13 +595,13 @@ void Actor::A_FreezeDeathChunks(void)
 	}
 	for (i = 12 + (P_Random() & 15); i >= 0; i--)
 	{
-		mo = P_SpawnMobj(origin.x + (Random() - 0.5) * 2.0 * radius,
-			origin.y + (Random() - 0.5) * 2.0 * radius,
-			origin.z + Random() * height, MT_ICECHUNK);
-		SetMobjState(mo, mo->spawnstate + (P_Random() % 3));
+		mo = P_SpawnMobj(origin.x + (Random() - 0.5) * 2.0 * Radius,
+			origin.y + (Random() - 0.5) * 2.0 * Radius,
+			origin.z + Random() * Height, MT_ICECHUNK);
+		SetMobjState(mo, mo->SpawnState + (P_Random() % 3));
 		if (mo)
 		{
-			mo->velocity.z = (mo->origin.z - origin.z) / height * 4.0 * 35.0;
+			mo->velocity.z = (mo->origin.z - origin.z) / Height * 4.0 * 35.0;
 			mo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
 			mo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
 			Actor(*mo).A_IceSetTics();	// set a random tic wait
@@ -615,19 +615,19 @@ void Actor::A_FreezeDeathChunks(void)
 		SetMobjState(mo, S_ICECHUNK_HEAD);
 		mo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
 		mo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
-		mo->velocity.z = (mo->origin.z - origin.z) / height * 4.0 * 35.0;
-		mo->flags2 |= MF2_ICEDAMAGE;	// used to force blue palette
-		mo->flags2 &= ~MF2_FLOORCLIP;
+		mo->velocity.z = (mo->origin.z - origin.z) / Height * 4.0 * 35.0;
+		mo->Flags2 |= MF2_ICEDAMAGE;	// used to force blue palette
+		mo->Flags2 &= ~MF2_FLOORCLIP;
 		mo->player = player;
 		player = NULL;
-		mo->health = health;
+		mo->Health = Health;
 		mo->angles.yaw = angles.yaw;
 		mo->player->mo = mo;
 		mo->angles.pitch = 0.0;
 	}
 	P_RemoveMobjFromTIDList(this);
 	SetMobjState(this, S_FREETARGMOBJ);
-	translucency = 100;
+	Translucency = 100;
 }
 
 //============================================================================
@@ -681,7 +681,7 @@ void Actor::A_CheckSkullDone(void)
 
 void Actor::A_SpeedFade(void)
 {
-	translucency = 66;
+	Translucency = 66;
 	sprite = target->sprite;
 }
 
@@ -780,9 +780,9 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 	mo = NULL;
 	while (mo = NextMobj(mo))
 	{
-		if (!(mo->flags & MF_CORPSE))
+		if (!(mo->Flags & MF_CORPSE))
 			continue;	// Must be a corpse
-		if (mo->flags & MF_ICECORPSE)
+		if (mo->Flags & MF_ICECORPSE)
 			continue;	// Not ice corpses
 		// Only corpses that call A_QueueCorpse from death routine
 		switch (mo->Class)
@@ -821,6 +821,10 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.11  2002/01/12 18:02:48  dj_jl
 //  Replaced some C style casts with dynamic casts
 //

@@ -429,10 +429,10 @@ class Thinker:Object
 //==========================================================================
 
 struct player_t;
-class Entity;
+class Actor;
 
 typedef void (*state_func_t) (Object);
-typedef boolean(*thing_iter_func_t) (Entity *);
+typedef boolean(*thing_iter_func_t) (Actor *);
 
 struct state_t
 {
@@ -473,19 +473,19 @@ class MapObject:Thinker
 	int alias_frame;
 	int alias_skinnum;
 
-	int translucency;
-	int translation;
+	int Translucency;
+	int Translation;
 
 	float floorclip;	// value to use for floor clipping
 
-	int effects;
+	int Effects;
 
 	subsector_t *subsector;
 
 	// Interaction info, by BLOCKMAP.
 	// Links in blocks (if needed).
-	Entity *bnext;
-	Entity *bprev;
+	MapObject BlockMapNext;
+	MapObject BlockMapPrev;
 
 	// The closest interval over all contacted Sectors.
 	float floorz;
@@ -498,13 +498,13 @@ class MapObject:Thinker
 	// If == validcount, already checked.
 	int validcount;
 
-	int flags;
-	int flags2;	// Heretic flags
-	int health;
+	int Flags;
+	int Flags2;	// Heretic flags
+	int Health;
 
 	// For movement checking.
-	float radius;
-	float height;
+	float Radius;
+	float Height;
 
 	// Additional info record for player avatars only.
 	// Only valid if type == MT_PLAYER
@@ -568,7 +568,7 @@ struct player_t
 	int buttons;	// fire, use
 	int impulse;	// weapon changes, inventory, etc
 
-	Entity *mo;
+	Actor *mo;
 	int playerstate;
 
 	//  Model of current weapon
@@ -659,7 +659,7 @@ struct sv_level_t:base_level_t
 	int bmapheight;	// size in mapblocks
 	float bmaporgx;	// origin of block map
 	float bmaporgy;
-	Entity **blocklinks;	// for thing chains
+	Actor **blocklinks;	// for thing chains
 	void *__PolyBlockMap;
 
 	//
@@ -701,7 +701,7 @@ struct intercept_t
 {
 	float frac;	// along trace line
 	boolean isaline;
-	Entity *thing;
+	Actor *thing;
 	line_t *line;
 };
 
@@ -718,7 +718,7 @@ typedef boolean(*trav_func_t) (intercept_t *);
 
 class ACS:Thinker
 {
-	Entity *activator;
+	Actor *activator;
 	line_t *line;
 	int side;
 	int number;
@@ -740,7 +740,7 @@ addfields sector_t
 	int soundtraversed;
 
 	// thing that made a sound (or null)
-	Entity *soundtarget;
+	Actor *soundtarget;
 
 	// Thinker for reversable actions
 	Thinker SpecialData;
@@ -956,6 +956,10 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/01/15 18:26:58  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.24  2002/01/15 08:12:25  dj_jl
 //  Replaced some pointers with references
 //

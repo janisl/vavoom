@@ -29,7 +29,7 @@
 
 #include <server.vc>
 
-#define mobj_t Entity
+#define mobj_t Actor
 #include "../strfdefs.vc"
 #include "svdefs.vc"
 
@@ -72,6 +72,10 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/15 18:27:01  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.9  2002/01/07 12:27:42  dj_jl
 //  Changed copyright year
 //

@@ -90,7 +90,7 @@ void A_FiredSpawnRock(mobj_t * actor)
 
 	// Initialize fire demon
 	actor->special2 = 0;
-	actor->flags &= ~MF_JUSTATTACKED;
+	actor->Flags &= ~MF_JUSTATTACKED;
 }
 
 //============================================================================
@@ -120,8 +120,8 @@ void Actor::A_FiredChase(void)
 	float ang;
 	float dist;
 
-	if (reactiontime)
-		reactiontime--;
+	if (ReactionCount)
+		ReactionCount--;
 	if (threshold)
 		threshold--;
 
@@ -135,7 +135,7 @@ void Actor::A_FiredChase(void)
 		origin.z += 2.0;
 	}
 
-	if (!target || !(target->flags & MF_SHOOTABLE))
+	if (!target || !(target->Flags & MF_SHOOTABLE))
 	{
 		// Invalid target
 		P_LookForPlayers(this, true);
@@ -182,18 +182,18 @@ void Actor::A_FiredChase(void)
 	}
 
 	// Do missile attack
-	if (!(flags & MF_JUSTATTACKED))
+	if (!(Flags & MF_JUSTATTACKED))
 	{
 		if (CheckMissileRange(this) && (P_Random() < 20))
 		{
-			SetMobjState(this, missilestate);
-			flags |= MF_JUSTATTACKED;
+			SetMobjState(this, MissileState);
+			Flags |= MF_JUSTATTACKED;
 			return;
 		}
 	}
 	else
 	{
-		flags &= ~MF_JUSTATTACKED;
+		Flags &= ~MF_JUSTATTACKED;
 	}
 
 	// make active sound
@@ -262,6 +262,10 @@ void Actor::A_SmBounce(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.8  2002/01/11 18:19:42  dj_jl
 //  Started to use names in progs
 //

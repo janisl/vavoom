@@ -121,11 +121,11 @@ void Cheat_Gimme(void)
 	{
 		if (players[0].chickenTics)
 		{
-			players[0].health = players[0].mo->health = MAXCHICKENHEALTH;
+			players[0].health = players[0].mo->Health = MAXCHICKENHEALTH;
 		}
 		else
 		{
-			players[0].health = players[0].mo->health = MAXHEALTH;
+			players[0].health = players[0].mo->Health = MAXHEALTH;
 		}
 		cprint(&players[0], "FULL HEALTH\n");
 	}
@@ -265,6 +265,10 @@ void Cheat_Class(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.7  2002/01/07 12:23:17  dj_jl
 //  Changed copyright year
 //

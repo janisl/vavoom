@@ -306,7 +306,7 @@ void TryPickupWeapon(player_t * player, int weaponClass,
 
 	if (remove)
 	{
-		if (deathmatch && !(weapon->flags2 & MF2_DROPPED))
+		if (deathmatch && !(weapon->Flags2 & MF2_DROPPED))
 		{
 			P_HideSpecialThing(weapon);
 		}
@@ -393,7 +393,7 @@ void TryPickupWeaponPiece(player_t * player, int matchClass,
 	}
 	if (remove)
 	{
-		if (deathmatch && !(pieceMobj->flags2 & MF2_DROPPED))
+		if (deathmatch && !(pieceMobj->Flags2 & MF2_DROPPED))
 		{
 			P_HideSpecialThing(pieceMobj);
 		}
@@ -455,7 +455,7 @@ boolean P_GiveBody(player_t * player, int num)
 	{
 		player->health = max;
 	}
-	player->mo->health = player->health;
+	player->mo->Health = player->health;
 	return true;
 }
 
@@ -539,10 +539,10 @@ boolean P_GivePower(player_t * player, int power)
 			return false;
 		}
 		player->powers[power] = ftoi(INVULNTIME * 35.0);
-		player->mo->flags2 |= MF2_INVULNERABLE;
+		player->mo->Flags2 |= MF2_INVULNERABLE;
 		if (player->pclass == PCLASS_MAGE)
 		{
-			player->mo->flags2 |= MF2_REFLECTIVE;
+			player->mo->Flags2 |= MF2_REFLECTIVE;
 		}
 		return true;
 	}
@@ -554,8 +554,8 @@ boolean P_GivePower(player_t * player, int power)
 			return false;
 		}
 		player->powers[power] = ftoi(FLIGHTTIME * 35.0);
-		player->mo->flags2 |= MF2_FLY;
-		player->mo->flags |= MF_NOGRAVITY;
+		player->mo->Flags2 |= MF2_FLY;
+		player->mo->Flags |= MF_NOGRAVITY;
 		if (player->mo->origin.z <= player->mo->floorz)
 		{
 			player->flyheight = 10;	// thrust the player in the air a bit
@@ -723,12 +723,12 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 	boolean respawn;
 
 	delta = special->origin.z - toucher->origin.z;
-	if (delta > toucher->height || delta < -32.0)
+	if (delta > toucher->Height || delta < -32.0)
 	{
 		// Out of reach
 		return;
 	}
-	if (toucher->health <= 0)
+	if (toucher->Health <= 0)
 	{
 		// Toucher is dead
 		return;
@@ -1010,7 +1010,7 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 			0, toucher);
 		special->special = 0;
 	}
-	if (deathmatch && respawn && !(special->flags2 & MF2_DROPPED))
+	if (deathmatch && respawn && !(special->Flags2 & MF2_DROPPED))
 	{
 		P_HideSpecialThing(special);
 	}
@@ -1025,6 +1025,10 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.6  2002/01/11 18:19:42  dj_jl
 //  Started to use names in progs
 //

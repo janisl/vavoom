@@ -25,7 +25,7 @@
 
 #include <server.vc>
 
-#define mobj_t Entity
+#define mobj_t Actor
 boolean shareware;
 boolean respawnmonsters;
 
@@ -88,6 +88,10 @@ boolean respawnmonsters;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.11  2002/01/07 12:23:18  dj_jl
 //  Changed copyright year
 //

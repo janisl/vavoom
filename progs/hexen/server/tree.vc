@@ -101,7 +101,7 @@ void Actor::A_LeafCheck(void)
 	SetMobjState(this, S_LEAF1_8);
 	velocity.z = (Random() * 2.0 + 1.0) * 35.0;
 	P_ThrustMobj(this, target->angles.yaw, Random() * 2.0 + 2.0);
-	flags |= MF_MISSILE;
+	Flags |= MF_MISSILE;
 }
 
 //===========================================================================
@@ -112,23 +112,27 @@ void Actor::A_LeafCheck(void)
 
 void Actor::A_TreeDeath(void)
 {
-	if (!(flags2 & MF2_FIREDAMAGE))
+	if (!(Flags2 & MF2_FIREDAMAGE))
 	{
-		height *= 4.0;
-		flags |= MF_SHOOTABLE;
-		flags &= ~(MF_CORPSE + MF_DROPOFF);
-		health = 35;
+		Height *= 4.0;
+		Flags |= MF_SHOOTABLE;
+		Flags &= ~(MF_CORPSE + MF_DROPOFF);
+		Health = 35;
 		return;
 	}
 	else
 	{
-		SetMobjState(this, meleestate);
+		SetMobjState(this, MeleeState);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.7  2002/01/07 12:25:58  dj_jl
 //  Changed copyright year
 //

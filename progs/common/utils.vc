@@ -24,7 +24,7 @@
 //**************************************************************************
 
 #define MobjCenter(mobj)\
-	(mobj->origin + vector(0.0, 0.0, mobj->height * 0.5 - mobj->floorclip))
+	(mobj->origin + vector(0.0, 0.0, mobj->Height * 0.5 - mobj->floorclip))
 
 #define avcpy(src, dst)\
 {\
@@ -33,7 +33,7 @@
 	dst.roll = src.roll;\
 }
 
-void P_RemoveMobj(Entity * mobj);
+void P_RemoveMobj(Actor * mobj);
 
 //==========================================================================
 //
@@ -429,6 +429,10 @@ class SectorThinker:Thinker
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/01/15 18:26:58  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.18  2002/01/15 08:12:25  dj_jl
 //  Replaced some pointers with references
 //

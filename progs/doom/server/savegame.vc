@@ -46,11 +46,11 @@ void UnarchivePlayer(player_t * player)
 
 //==========================================================================
 //
-//  mobj_t::Archive
+//  Actor::Archive
 //
 //==========================================================================
 
-void mobj_t::Archive(void)
+void Actor::Archive(void)
 {
 	tracer = MobjToNum(tracer);
 	target = MobjToNum(target);
@@ -58,11 +58,11 @@ void mobj_t::Archive(void)
 
 //==========================================================================
 //
-//  mobj_t::Unarchive
+//  Actor::Unarchive
 //
 //==========================================================================
 
-void mobj_t::Unarchive(void)
+void Actor::Unarchive(void)
 {
 	tracer = NumToMobj(tracer);
 	target = NumToMobj(target);
@@ -76,6 +76,10 @@ void mobj_t::Unarchive(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/15 18:26:59  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.6  2002/01/12 18:01:33  dj_jl
 //  Sound names initialized as names
 //

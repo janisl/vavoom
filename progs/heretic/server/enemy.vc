@@ -38,11 +38,11 @@ void Actor::A_Look(void)
 	threshold = 0;	// any shot will wake up
 	targ = subsector->sector->soundtarget;
 
-	if (targ && targ->flags & MF_SHOOTABLE)
+	if (targ && targ->Flags & MF_SHOOTABLE)
 	{
 		target = targ;
 
-		if (flags & MF_AMBUSH)
+		if (Flags & MF_AMBUSH)
 		{
 			if (!P_CheckSight(this, target))
 			{
@@ -60,7 +60,7 @@ void Actor::A_Look(void)
 	// go into chase state
 	if (sound_sight)
 	{
-		if (flags2 & MF2_BOSS)
+		if (Flags2 & MF2_BOSS)
 		{	// Full volume
 			StartSound(NULL, sound_sight, CHAN_VOICE);
 		}
@@ -70,7 +70,7 @@ void Actor::A_Look(void)
 		}
 	}
 
-	SetMobjState(this, seestate);
+	SetMobjState(this, SeeState);
 }
 
 //==========================================================================
@@ -85,15 +85,15 @@ void Actor::A_Chase(void)
 {
 	float delta;
 
-	if (reactiontime)
+	if (ReactionCount)
 	{
-		reactiontime--;
+		ReactionCount--;
 	}
 
 	// modify target threshold
 	if (threshold)
 	{
-		if (!target || target->health <= 0)
+		if (!target || target->Health <= 0)
 		{
 			threshold = 0;
 		}
@@ -129,21 +129,21 @@ void Actor::A_Chase(void)
 		}
 	}
 
-	if (!target || !(target->flags & MF_SHOOTABLE))
+	if (!target || !(target->Flags & MF_SHOOTABLE))
 	{
 		// look for a new target
 		if (P_LookForPlayers(this, true))
 		{
 			return;	// got a new target
 		}
-		SetMobjState(this, spawnstate);
+		SetMobjState(this, SpawnState);
 		return;
 	}
 
 	// do not attack twice in a row
-	if (flags & MF_JUSTATTACKED)
+	if (Flags & MF_JUSTATTACKED)
 	{
-		flags &= ~MF_JUSTATTACKED;
+		Flags &= ~MF_JUSTATTACKED;
 		if (!fastparm)
 		{
 			P_NewChaseDir(this);
@@ -152,25 +152,25 @@ void Actor::A_Chase(void)
 	}
 
 	// check for melee attack
-	if (meleestate && P_CheckMeleeRange(this))
+	if (MeleeState && P_CheckMeleeRange(this))
 	{
 		if (sound_attack)
 		{
 			StartSound(this, sound_attack, CHAN_WEAPON);
 		}
-		SetMobjState(this, meleestate);
+		SetMobjState(this, MeleeState);
 		return;
 	}
 
 	// check for missile attack
-	if (missilestate)
+	if (MissileState)
 	{
 		if (fastparm || !movecount)
 		{
 			if (P_CheckMissileRange(this))
 			{
-				SetMobjState(this, missilestate);
-				flags |= MF_JUSTATTACKED;
+				SetMobjState(this, MissileState);
+				Flags |= MF_JUSTATTACKED;
 				return;
 			}
 		}
@@ -221,12 +221,12 @@ void Actor::A_FaceTarget(void)
 	if (!target)
 		return;
 
-	flags &= ~MF_AMBUSH;
+	Flags &= ~MF_AMBUSH;
 
 	angles.yaw = atan2(target->origin.y - origin.y,
 		target->origin.x - origin.x);
 
-	if (target->translucency)
+	if (target->Translucency)
 	{
 		angles.yaw = AngleMod360(angles.yaw + (Random() - Random()) * 45.0);
 	}
@@ -256,9 +256,9 @@ void Actor::A_FreeTargMobj(void)
 {
 	velocity = vector(0.0, 0.0, 0.0);
 	origin.z = ceilingz + 4.0;
-	flags &= ~(MF_SHOOTABLE | MF_FLOAT | MF_SKULLFLY | MF_SOLID);
-	flags |= MF_CORPSE | MF_DROPOFF | MF_NOGRAVITY;
-	flags2 &= ~(MF2_PASSMOBJ | MF2_LOGRAV);
+	Flags &= ~(MF_SHOOTABLE | MF_FLOAT | MF_SKULLFLY | MF_SOLID);
+	Flags |= MF_CORPSE | MF_DROPOFF | MF_NOGRAVITY;
+	Flags2 &= ~(MF2_PASSMOBJ | MF2_LOGRAV);
 	player = NULL;
 }
 
@@ -284,11 +284,11 @@ void Actor::A_Scream(void)
 		{	// Wimpy death sound
 			StartSoundName(this, 'PlayerWimpyDeath', CHAN_VOICE);
 		}
-		else if (health > -50)
+		else if (Health > -50)
 		{	// Normal death sound
 			StartSound(this, sound_death, CHAN_VOICE);
 		}
-		else if (health > -100)
+		else if (Health > -100)
 		{	// Crazy death sound
 			StartSoundName(this, 'PlayerCrazyDeath', CHAN_VOICE);
 		}
@@ -320,7 +320,7 @@ void Actor::A_Explode(void)
 	{
 	case MT_FIREBOMB:	// Time Bombs
 		origin.z += 32.0;
-		translucency = 0;
+		Translucency = 0;
 		break;
 	case MT_MNTRFX2:	// Minotaur floor fire
 		damage = 24;
@@ -368,12 +368,12 @@ void P_DropItem(mobj_t * source, classid type, int special, int chance)
 		return;
 	}
 	mo = P_SpawnMobj(source->origin.x, source->origin.y,
-		source->origin.z + source->height / 2.0, type);
+		source->origin.z + source->Height / 2.0, type);
 	mo->velocity.x = (Random() - Random()) * 35.0;
 	mo->velocity.y = (Random() - Random()) * 35.0;
 	mo->velocity.z = (5.0 + Random() * 4.0) * 35.0;
-	mo->flags |= MF_DROPPED;
-	mo->health = special;
+	mo->Flags |= MF_DROPPED;
+	mo->Health = special;
 }
 
 //==========================================================================
@@ -384,7 +384,7 @@ void P_DropItem(mobj_t * source, classid type, int special, int chance)
 
 void Actor::A_NoBlocking(void)
 {
-	flags &= ~MF_SOLID;
+	Flags &= ~MF_SOLID;
 	// Check for monsters dropping things
 	switch (Class)
 	{
@@ -455,7 +455,7 @@ void Actor::A_SkullPop(void)
 {
 	mobj_t *mo;
 
-	flags &= ~MF_SOLID;
+	Flags &= ~MF_SOLID;
 	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 48.0, MT_BLOODYSKULL);
 	mo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
 	mo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
@@ -463,7 +463,7 @@ void Actor::A_SkullPop(void)
 	// Attach player mobj to bloody skull
 	mo->player = player;
 	player = NULL;
-	mo->health = health;
+	mo->Health = Health;
 	mo->angles.yaw = angles.yaw;
 	mo->player->mo = mo;
 	mo->player->damagecount = 32;
@@ -587,7 +587,7 @@ void Actor::A_BossDeath(void)
 	// Make sure all bosses are dead
 	for (mo = NextMobj(NULL); mo; mo = NextMobj(mo))
 	{
-		if ((mo != this) && (mo->Class == Class) && (mo->health > 0))
+		if ((mo != this) && (mo->Class == Class) && (mo->Health > 0))
 		{
 			// Found a living boss
 			return;
@@ -627,6 +627,10 @@ void Actor::A_ContMobjSound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.10  2002/01/11 18:19:41  dj_jl
 //  Started to use names in progs
 //

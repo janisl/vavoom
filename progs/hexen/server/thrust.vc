@@ -57,8 +57,8 @@ void Actor::A_ThrustInitUp(void)
 	special2 = 5;	// Raise speed
 	args[0] = 1;	// Mark as up
 	floorclip = 0.0;
-	flags = MF_SOLID;
-	flags2 = MF2_NOTELEPORT | MF2_FLOORCLIP;
+	Flags = MF_SOLID;
+	Flags2 = MF2_NOTELEPORT | MF2_FLOORCLIP;
 	specialmobj1 = NULL;
 }
 
@@ -74,10 +74,10 @@ void Actor::A_ThrustInitDn(void)
 
 	special2 = 5;	// Raise speed
 	args[0] = 0;	// Mark as down
-	floorclip = height;
-	flags = 0;
-	flags2 = MF2_NOTELEPORT | MF2_FLOORCLIP;
-	translucency = 100;
+	floorclip = Height;
+	Flags = 0;
+	Flags2 = MF2_NOTELEPORT | MF2_FLOORCLIP;
+	Translucency = 100;
 	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_DIRTCLUMP);
 	specialmobj1 = mo;
 }
@@ -101,7 +101,7 @@ void Actor::A_ThrustRaise(void)
 	}
 
 	// Lose the dirt clump
-	if ((floorclip < height) && specialmobj1)
+	if ((floorclip < Height) && specialmobj1)
 	{
 		P_RemoveMobj(specialmobj1);
 		specialmobj1 = NULL;
@@ -109,7 +109,7 @@ void Actor::A_ThrustRaise(void)
 
 	// Spawn some dirt
 	if (P_Random() < 40)
-		SpawnDirt(this, radius);
+		SpawnDirt(this, Radius);
 	special2++;	// Increase raise speed
 }
 
@@ -139,7 +139,7 @@ void Actor::A_ThrustLower(void)
 
 void Actor::A_ThrustBlock(void)
 {
-	flags |= MF_SOLID;
+	Flags |= MF_SOLID;
 }
 
 //==========================================================================
@@ -157,6 +157,10 @@ void Actor::A_ThrustImpale(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.6  2002/01/07 12:25:58  dj_jl
 //  Changed copyright year
 //

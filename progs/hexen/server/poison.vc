@@ -54,9 +54,9 @@ void Actor::A_PoisonBagInit(void)
 	mo->special1 = 24 + (P_Random() & 7);
 	mo->special2 = 0;
 	mo->target = target;
-	mo->radius = 20.0;
-	mo->height = 30.0;
-	mo->flags &= ~MF_NOCLIP;
+	mo->Radius = 20.0;
+	mo->Height = 30.0;
+	mo->Flags &= ~MF_NOCLIP;
 }
 
 //===========================================================================
@@ -104,6 +104,10 @@ void Actor::A_PoisonShroom(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.6  2002/01/07 12:25:58  dj_jl
 //  Changed copyright year
 //

@@ -39,14 +39,14 @@ class MT_MISC0:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL;
-		flags2 = MF2_FLOATBOB;
-		spawnstate = S_ITEM_PTN1_1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL;
+		Flags2 = MF2_FLOATBOB;
+		SpawnState = S_ITEM_PTN1_1;
 	}
 };
 
@@ -60,14 +60,14 @@ class MT_ITEMSHIELD1:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL;
-		flags2 = MF2_FLOATBOB;
-		spawnstate = S_ITEM_SHLD1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL;
+		Flags2 = MF2_FLOATBOB;
+		SpawnState = S_ITEM_SHLD1;
 	}
 };
 
@@ -81,14 +81,14 @@ class MT_ITEMSHIELD2:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL;
-		flags2 = MF2_FLOATBOB;
-		spawnstate = S_ITEM_SHD2_1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL;
+		Flags2 = MF2_FLOATBOB;
+		SpawnState = S_ITEM_SHD2_1;
 	}
 };
 
@@ -102,14 +102,14 @@ class MT_MISC1:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL|MF_COUNTITEM;
-		flags2 = MF2_FLOATBOB;
-		spawnstate = S_ITEM_BAGH1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL|MF_COUNTITEM;
+		Flags2 = MF2_FLOATBOB;
+		SpawnState = S_ITEM_BAGH1;
 	}
 };
 
@@ -123,14 +123,14 @@ class MT_MISC2:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL|MF_COUNTITEM;
-		flags2 = MF2_FLOATBOB;
-		spawnstate = S_ITEM_SPMP1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL|MF_COUNTITEM;
+		Flags2 = MF2_FLOATBOB;
+		SpawnState = S_ITEM_SPMP1;
 	}
 };
 
@@ -144,15 +144,15 @@ class MT_ARTIINVISIBILITY:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		translucency = 33;
-		flags = MF_SPECIAL|MF_COUNTITEM;
-		flags2 = MF2_FLOATBOB;
-		spawnstate = S_ARTI_INVS1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Translucency = 33;
+		Flags = MF_SPECIAL|MF_COUNTITEM;
+		Flags2 = MF2_FLOATBOB;
+		SpawnState = S_ARTI_INVS1;
 	}
 };
 
@@ -166,14 +166,14 @@ class MT_MISC3:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL|MF_COUNTITEM;
-		flags2 = MF2_FLOATBOB;
-		spawnstate = S_ARTI_PTN2_1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL|MF_COUNTITEM;
+		Flags2 = MF2_FLOATBOB;
+		SpawnState = S_ARTI_PTN2_1;
 	}
 };
 
@@ -187,14 +187,14 @@ class MT_ARTIFLY:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL|MF_COUNTITEM;
-		flags2 = MF2_FLOATBOB;
-		spawnstate = S_ARTI_SOAR1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL|MF_COUNTITEM;
+		Flags2 = MF2_FLOATBOB;
+		SpawnState = S_ARTI_SOAR1;
 	}
 };
 
@@ -208,14 +208,14 @@ class MT_ARTIINVULNERABILITY:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL|MF_COUNTITEM;
-		flags2 = MF2_FLOATBOB;
-		spawnstate = S_ARTI_INVU1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL|MF_COUNTITEM;
+		Flags2 = MF2_FLOATBOB;
+		SpawnState = S_ARTI_INVU1;
 	}
 };
 
@@ -229,14 +229,14 @@ class MT_ARTITOMEOFPOWER:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL|MF_COUNTITEM;
-		flags2 = MF2_FLOATBOB;
-		spawnstate = S_ARTI_PWBK1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL|MF_COUNTITEM;
+		Flags2 = MF2_FLOATBOB;
+		SpawnState = S_ARTI_PWBK1;
 	}
 };
 
@@ -250,14 +250,14 @@ class MT_ARTIEGG:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL|MF_COUNTITEM;
-		flags2 = MF2_FLOATBOB;
-		spawnstate = S_ARTI_EGGC1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL|MF_COUNTITEM;
+		Flags2 = MF2_FLOATBOB;
+		SpawnState = S_ARTI_EGGC1;
 	}
 };
 
@@ -271,17 +271,17 @@ class MT_EGGFX:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 8.0;
-		height = 8.0;
-		mass = 100.0;
-		speed = 630.0;
-		reactiontime = 8;
-		damage = 1;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT;
-		spawnstate = S_EGGFX1;
-		deathstate = S_EGGFXI1_1;
+		Health = 1000;
+		Radius = 8.0;
+		Height = 8.0;
+		Mass = 100.0;
+		Speed = 630.0;
+		ReactionCount = 8;
+		MissileDamage = 1;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT;
+		SpawnState = S_EGGFX1;
+		DeathState = S_EGGFXI1_1;
 	}
 };
 
@@ -295,14 +295,14 @@ class MT_ARTISUPERHEAL:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL|MF_COUNTITEM;
-		flags2 = MF2_FLOATBOB;
-		spawnstate = S_ARTI_SPHL1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL|MF_COUNTITEM;
+		Flags2 = MF2_FLOATBOB;
+		SpawnState = S_ARTI_SPHL1;
 	}
 };
 
@@ -316,14 +316,14 @@ class MT_MISC4:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL|MF_COUNTITEM;
-		flags2 = MF2_FLOATBOB;
-		spawnstate = S_ARTI_TRCH1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL|MF_COUNTITEM;
+		Flags2 = MF2_FLOATBOB;
+		SpawnState = S_ARTI_TRCH1;
 	}
 };
 
@@ -337,14 +337,14 @@ class MT_MISC5:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL|MF_COUNTITEM;
-		flags2 = MF2_FLOATBOB;
-		spawnstate = S_ARTI_FBMB1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL|MF_COUNTITEM;
+		Flags2 = MF2_FLOATBOB;
+		SpawnState = S_ARTI_FBMB1;
 	}
 };
 
@@ -358,14 +358,14 @@ class MT_FIREBOMB:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		translucency = 33;
-		flags = MF_NOGRAVITY;
-		spawnstate = S_FIREBOMB1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Translucency = 33;
+		Flags = MF_NOGRAVITY;
+		SpawnState = S_FIREBOMB1;
 		DeathSound = 'PhoenixHit';
 	}
 };
@@ -380,14 +380,14 @@ class MT_ARTITELEPORT:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL|MF_COUNTITEM;
-		flags2 = MF2_FLOATBOB;
-		spawnstate = S_ARTI_ATLP1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL|MF_COUNTITEM;
+		Flags2 = MF2_FLOATBOB;
+		SpawnState = S_ARTI_ATLP1;
 	}
 };
 
@@ -401,17 +401,17 @@ class MT_POD:Actor
 {
 	defaultproperties
 	{
-		health = 45;
-		radius = 16.0;
-		height = 54.0;
-		mass = 100.0;
-		reactiontime = 8;
-		painchance = 255;
-		flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_NOBLOOD;
-		flags2 = MF2_WINDTHRUST|MF2_PUSHABLE|MF2_SLIDE|MF2_PASSMOBJ|MF2_TELESTOMP;
-		spawnstate = S_POD_WAIT1;
-		painstate = S_POD_PAIN1;
-		deathstate = S_POD_DIE1;
+		Health = 45;
+		Radius = 16.0;
+		Height = 54.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		PainChance = 255;
+		Flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_NOBLOOD;
+		Flags2 = MF2_WINDTHRUST|MF2_PUSHABLE|MF2_SLIDE|MF2_PASSMOBJ|MF2_TELESTOMP;
+		SpawnState = S_POD_WAIT1;
+		PainState = S_POD_PAIN1;
+		DeathState = S_POD_DIE1;
 		DeathSound = 'PodExplode';
 	}
 };
@@ -426,15 +426,15 @@ class MT_PODGOO:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 2.0;
-		height = 4.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_CANNOTPUSH;
-		spawnstate = S_PODGOO1;
-		deathstate = S_PODGOOX;
+		Health = 1000;
+		Radius = 2.0;
+		Height = 4.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_CANNOTPUSH;
+		SpawnState = S_PODGOO1;
+		DeathState = S_PODGOOX;
 	}
 };
 
@@ -448,13 +448,13 @@ class MT_PODGENERATOR:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOSECTOR|MF_NOBLOCKMAP;
-		spawnstate = S_PODGENERATOR;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOSECTOR|MF_NOBLOCKMAP;
+		SpawnState = S_PODGENERATOR;
 	}
 };
 
@@ -468,15 +468,15 @@ class MT_SPLASH:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 2.0;
-		height = 4.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_CANNOTPUSH;
-		spawnstate = S_SPLASH1;
-		deathstate = S_SPLASHX;
+		Health = 1000;
+		Radius = 2.0;
+		Height = 4.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_CANNOTPUSH;
+		SpawnState = S_SPLASH1;
+		DeathState = S_SPLASHX;
 	}
 };
 
@@ -490,13 +490,13 @@ class MT_SPLASHBASE:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOBLOCKMAP;
-		spawnstate = S_SPLASHBASE1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOBLOCKMAP;
+		SpawnState = S_SPLASHBASE1;
 	}
 };
 
@@ -510,13 +510,13 @@ class MT_LAVASPLASH:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOBLOCKMAP;
-		spawnstate = S_LAVASPLASH1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOBLOCKMAP;
+		SpawnState = S_LAVASPLASH1;
 	}
 };
 
@@ -530,14 +530,14 @@ class MT_LAVASMOKE:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		translucency = 33;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		spawnstate = S_LAVASMOKE1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Translucency = 33;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		SpawnState = S_LAVASMOKE1;
 	}
 };
 
@@ -551,15 +551,15 @@ class MT_SLUDGECHUNK:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 2.0;
-		height = 4.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_CANNOTPUSH;
-		spawnstate = S_SLUDGECHUNK1;
-		deathstate = S_SLUDGECHUNKX;
+		Health = 1000;
+		Radius = 2.0;
+		Height = 4.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_CANNOTPUSH;
+		SpawnState = S_SLUDGECHUNK1;
+		DeathState = S_SLUDGECHUNKX;
 	}
 };
 
@@ -573,13 +573,13 @@ class MT_SLUDGESPLASH:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOBLOCKMAP;
-		spawnstate = S_SLUDGESPLASH1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOBLOCKMAP;
+		SpawnState = S_SLUDGESPLASH1;
 	}
 };
 
@@ -593,13 +593,13 @@ class MT_SKULLHANG70:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 70.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPAWNCEILING|MF_NOGRAVITY;
-		spawnstate = S_SKULLHANG70_1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 70.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPAWNCEILING|MF_NOGRAVITY;
+		SpawnState = S_SKULLHANG70_1;
 	}
 };
 
@@ -613,13 +613,13 @@ class MT_SKULLHANG60:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 60.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPAWNCEILING|MF_NOGRAVITY;
-		spawnstate = S_SKULLHANG60_1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 60.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPAWNCEILING|MF_NOGRAVITY;
+		SpawnState = S_SKULLHANG60_1;
 	}
 };
 
@@ -633,13 +633,13 @@ class MT_SKULLHANG45:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 45.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPAWNCEILING|MF_NOGRAVITY;
-		spawnstate = S_SKULLHANG45_1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 45.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPAWNCEILING|MF_NOGRAVITY;
+		SpawnState = S_SKULLHANG45_1;
 	}
 };
 
@@ -653,13 +653,13 @@ class MT_SKULLHANG35:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 35.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPAWNCEILING|MF_NOGRAVITY;
-		spawnstate = S_SKULLHANG35_1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 35.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPAWNCEILING|MF_NOGRAVITY;
+		SpawnState = S_SKULLHANG35_1;
 	}
 };
 
@@ -673,13 +673,13 @@ class MT_CHANDELIER:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 60.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPAWNCEILING|MF_NOGRAVITY;
-		spawnstate = S_CHANDELIER1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 60.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPAWNCEILING|MF_NOGRAVITY;
+		SpawnState = S_CHANDELIER1;
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -700,13 +700,13 @@ class MT_SERPTORCH:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 12.0;
-		height = 54.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SOLID;
-		spawnstate = S_SERPTORCH1;
+		Health = 1000;
+		Radius = 12.0;
+		Height = 54.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SOLID;
+		SpawnState = S_SERPTORCH1;
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -727,13 +727,13 @@ class MT_SMALLPILLAR:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 16.0;
-		height = 34.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SOLID;
-		spawnstate = S_SMALLPILLAR;
+		Health = 1000;
+		Radius = 16.0;
+		Height = 34.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SOLID;
+		SpawnState = S_SMALLPILLAR;
 	}
 };
 
@@ -747,13 +747,13 @@ class MT_STALAGMITESMALL:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 8.0;
-		height = 32.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SOLID;
-		spawnstate = S_STALAGMITESMALL;
+		Health = 1000;
+		Radius = 8.0;
+		Height = 32.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SOLID;
+		SpawnState = S_STALAGMITESMALL;
 	}
 };
 
@@ -767,13 +767,13 @@ class MT_STALAGMITELARGE:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 12.0;
-		height = 64.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SOLID;
-		spawnstate = S_STALAGMITELARGE;
+		Health = 1000;
+		Radius = 12.0;
+		Height = 64.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SOLID;
+		SpawnState = S_STALAGMITELARGE;
 	}
 };
 
@@ -787,13 +787,13 @@ class MT_STALACTITESMALL:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 8.0;
-		height = 36.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
-		spawnstate = S_STALACTITESMALL;
+		Health = 1000;
+		Radius = 8.0;
+		Height = 36.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
+		SpawnState = S_STALACTITESMALL;
 	}
 };
 
@@ -807,13 +807,13 @@ class MT_STALACTITELARGE:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 12.0;
-		height = 68.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
-		spawnstate = S_STALACTITELARGE;
+		Health = 1000;
+		Radius = 12.0;
+		Height = 68.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
+		SpawnState = S_STALACTITELARGE;
 	}
 };
 
@@ -827,13 +827,13 @@ class MT_MISC6:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 16.0;
-		height = 44.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SOLID;
-		spawnstate = S_FIREBRAZIER1;
+		Health = 1000;
+		Radius = 16.0;
+		Height = 44.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SOLID;
+		SpawnState = S_FIREBRAZIER1;
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -854,13 +854,13 @@ class MT_BARREL:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 12.0;
-		height = 32.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SOLID;
-		spawnstate = S_BARREL;
+		Health = 1000;
+		Radius = 12.0;
+		Height = 32.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SOLID;
+		SpawnState = S_BARREL;
 	}
 };
 
@@ -874,13 +874,13 @@ class MT_MISC7:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 14.0;
-		height = 128.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SOLID;
-		spawnstate = S_BRPILLAR;
+		Health = 1000;
+		Radius = 14.0;
+		Height = 128.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SOLID;
+		SpawnState = S_BRPILLAR;
 	}
 };
 
@@ -894,13 +894,13 @@ class MT_MISC8:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 23.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPAWNCEILING|MF_NOGRAVITY;
-		spawnstate = S_MOSS1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 23.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPAWNCEILING|MF_NOGRAVITY;
+		SpawnState = S_MOSS1;
 	}
 };
 
@@ -914,13 +914,13 @@ class MT_MISC9:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 27.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPAWNCEILING|MF_NOGRAVITY;
-		spawnstate = S_MOSS2;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 27.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPAWNCEILING|MF_NOGRAVITY;
+		SpawnState = S_MOSS2;
 	}
 };
 
@@ -934,13 +934,13 @@ class MT_MISC10:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOGRAVITY;
-		spawnstate = S_WALLTORCH1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOGRAVITY;
+		SpawnState = S_WALLTORCH1;
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -961,13 +961,13 @@ class MT_MISC11:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 8.0;
-		height = 104.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
-		spawnstate = S_HANGINGCORPSE;
+		Health = 1000;
+		Radius = 8.0;
+		Height = 104.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
+		SpawnState = S_HANGINGCORPSE;
 	}
 };
 
@@ -981,13 +981,13 @@ class MT_KEYGIZMOBLUE:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 16.0;
-		height = 50.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SOLID;
-		spawnstate = S_KEYGIZMO1;
+		Health = 1000;
+		Radius = 16.0;
+		Height = 50.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SOLID;
+		SpawnState = S_KEYGIZMO1;
 	}
 };
 
@@ -1001,13 +1001,13 @@ class MT_KEYGIZMOGREEN:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 16.0;
-		height = 50.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SOLID;
-		spawnstate = S_KEYGIZMO1;
+		Health = 1000;
+		Radius = 16.0;
+		Height = 50.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SOLID;
+		SpawnState = S_KEYGIZMO1;
 	}
 };
 
@@ -1021,13 +1021,13 @@ class MT_KEYGIZMOYELLOW:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 16.0;
-		height = 50.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SOLID;
-		spawnstate = S_KEYGIZMO1;
+		Health = 1000;
+		Radius = 16.0;
+		Height = 50.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SOLID;
+		SpawnState = S_KEYGIZMO1;
 	}
 };
 
@@ -1041,13 +1041,13 @@ class MT_KEYGIZMOFLOAT:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 16.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SOLID|MF_NOGRAVITY;
-		spawnstate = S_KGZ_START;
+		Health = 1000;
+		Radius = 16.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SOLID|MF_NOGRAVITY;
+		SpawnState = S_KGZ_START;
 	}
 };
 
@@ -1061,13 +1061,13 @@ class MT_MISC12:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 12.0;
-		height = 20.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SOLID;
-		spawnstate = S_VOLCANO1;
+		Health = 1000;
+		Radius = 12.0;
+		Height = 20.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SOLID;
+		SpawnState = S_VOLCANO1;
 	}
 };
 
@@ -1081,19 +1081,19 @@ class MT_VOLCANOBLAST:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 8.0;
-		height = 8.0;
-		mass = 100.0;
-		speed = 70.0;
-		reactiontime = 8;
-		damage = 2;
-		flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_FIREDAMAGE;
-		spawnstate = S_VOLCANOBALL1;
-		deathstate = S_VOLCANOBALLX1;
+		Health = 1000;
+		Radius = 8.0;
+		Height = 8.0;
+		Mass = 100.0;
+		Speed = 70.0;
+		ReactionCount = 8;
+		MissileDamage = 2;
+		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_FIREDAMAGE;
+		SpawnState = S_VOLCANOBALL1;
+		DeathState = S_VOLCANOBALLX1;
 		DeathSound = 'VolcanoHit';
-		effects = EF_DL_RED;
+		Effects = EF_DL_RED;
 	}
 };
 
@@ -1107,18 +1107,18 @@ class MT_VOLCANOTBLAST:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 8.0;
-		height = 6.0;
-		mass = 100.0;
-		speed = 70.0;
-		reactiontime = 8;
-		damage = 1;
-		flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_FIREDAMAGE;
-		spawnstate = S_VOLCANOTBALL1;
-		deathstate = S_VOLCANOTBALLX1;
-		effects = EF_DL_RED;
+		Health = 1000;
+		Radius = 8.0;
+		Height = 6.0;
+		Mass = 100.0;
+		Speed = 70.0;
+		ReactionCount = 8;
+		MissileDamage = 1;
+		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_FIREDAMAGE;
+		SpawnState = S_VOLCANOTBALL1;
+		DeathState = S_VOLCANOTBALLX1;
+		Effects = EF_DL_RED;
 	}
 };
 
@@ -1132,13 +1132,13 @@ class MT_TELEGLITGEN:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOSECTOR|MF_NOBLOCKMAP|MF_NOGRAVITY;
-		spawnstate = S_TELEGLITGEN1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOSECTOR|MF_NOBLOCKMAP|MF_NOGRAVITY;
+		SpawnState = S_TELEGLITGEN1;
 	}
 };
 
@@ -1152,13 +1152,13 @@ class MT_TELEGLITGEN2:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOSECTOR|MF_NOBLOCKMAP|MF_NOGRAVITY;
-		spawnstate = S_TELEGLITGEN2;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOSECTOR|MF_NOBLOCKMAP|MF_NOGRAVITY;
+		SpawnState = S_TELEGLITGEN2;
 	}
 };
 
@@ -1172,13 +1172,13 @@ class MT_TELEGLITTER:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE;
-		spawnstate = S_TELEGLITTER1_1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE;
+		SpawnState = S_TELEGLITTER1_1;
 	}
 };
 
@@ -1192,13 +1192,13 @@ class MT_TELEGLITTER2:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE;
-		spawnstate = S_TELEGLITTER2_1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE;
+		SpawnState = S_TELEGLITTER2_1;
 	}
 };
 
@@ -1212,13 +1212,13 @@ class MT_TFOG:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		spawnstate = S_TFOG1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		SpawnState = S_TFOG1;
 	}
 };
 
@@ -1232,12 +1232,12 @@ class MT_TELEPORTMAN:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOSECTOR|MF_NOBLOCKMAP;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOSECTOR|MF_NOBLOCKMAP;
 	}
 };
 
@@ -1251,13 +1251,13 @@ class MT_STAFFPUFF:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		spawnstate = S_STAFFPUFF1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		SpawnState = S_STAFFPUFF1;
 		AttackSound = 'StaffHit';
 	}
 };
@@ -1272,13 +1272,13 @@ class MT_STAFFPUFF2:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		spawnstate = S_STAFFPUFF2_1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		SpawnState = S_STAFFPUFF2_1;
 		AttackSound = 'StaffHit2';
 	}
 };
@@ -1293,13 +1293,13 @@ class MT_BEAKPUFF:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		spawnstate = S_STAFFPUFF1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		SpawnState = S_STAFFPUFF1;
 		AttackSound = 'ChickenAttack';
 	}
 };
@@ -1314,13 +1314,13 @@ class MT_MISC13:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL;
-		spawnstate = S_WGNT;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL;
+		SpawnState = S_WGNT;
 	}
 };
 
@@ -1334,14 +1334,14 @@ class MT_GAUNTLETPUFF1:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		translucency = 33;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		spawnstate = S_GAUNTLETPUFF1_1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Translucency = 33;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		SpawnState = S_GAUNTLETPUFF1_1;
 	}
 };
 
@@ -1355,14 +1355,14 @@ class MT_GAUNTLETPUFF2:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		translucency = 33;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		spawnstate = S_GAUNTLETPUFF2_1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Translucency = 33;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		SpawnState = S_GAUNTLETPUFF2_1;
 	}
 };
 
@@ -1376,13 +1376,13 @@ class MT_MISC14:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL;
-		spawnstate = S_BLSR;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL;
+		SpawnState = S_BLSR;
 	}
 };
 
@@ -1396,19 +1396,19 @@ class MT_BLASTERFX1:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 12.0;
-		height = 8.0;
-		mass = 100.0;
-		speed = 6440.0;
-		reactiontime = 8;
-		damage = 2;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT;
-		spawnstate = S_BLASTERFX1_1;
-		deathstate = S_BLASTERFXI1_1;
+		Health = 1000;
+		Radius = 12.0;
+		Height = 8.0;
+		Mass = 100.0;
+		Speed = 6440.0;
+		ReactionCount = 8;
+		MissileDamage = 2;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT;
+		SpawnState = S_BLASTERFX1_1;
+		DeathState = S_BLASTERFXI1_1;
 		DeathSound = 'BlasterHit';
-		effects = EF_DL_BLUE;
+		Effects = EF_DL_BLUE;
 	}
 };
 
@@ -1422,15 +1422,15 @@ class MT_BLASTERSMOKE:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		translucency = 33;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		flags2 = MF2_NOTELEPORT|MF2_CANNOTPUSH;
-		spawnstate = S_BLASTERSMOKE1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Translucency = 33;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		Flags2 = MF2_NOTELEPORT|MF2_CANNOTPUSH;
+		SpawnState = S_BLASTERSMOKE1;
 	}
 };
 
@@ -1444,17 +1444,17 @@ class MT_RIPPER:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 8.0;
-		height = 6.0;
-		mass = 100.0;
-		speed = 490.0;
-		reactiontime = 8;
-		damage = 1;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT|MF2_RIP;
-		spawnstate = S_RIPPER1;
-		deathstate = S_RIPPERX1;
+		Health = 1000;
+		Radius = 8.0;
+		Height = 6.0;
+		Mass = 100.0;
+		Speed = 490.0;
+		ReactionCount = 8;
+		MissileDamage = 1;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT|MF2_RIP;
+		SpawnState = S_RIPPER1;
+		DeathState = S_RIPPERX1;
 		DeathSound = 'SkullRodHit';
 	}
 };
@@ -1469,13 +1469,13 @@ class MT_BLASTERPUFF1:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		spawnstate = S_BLASTERPUFF1_1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		SpawnState = S_BLASTERPUFF1_1;
 	}
 };
 
@@ -1489,13 +1489,13 @@ class MT_BLASTERPUFF2:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		spawnstate = S_BLASTERPUFF2_1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		SpawnState = S_BLASTERPUFF2_1;
 	}
 };
 
@@ -1509,13 +1509,13 @@ class MT_WMACE:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL;
-		spawnstate = S_WMCE;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL;
+		SpawnState = S_WMCE;
 	}
 };
 
@@ -1529,17 +1529,17 @@ class MT_MACEFX1:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 8.0;
-		height = 6.0;
-		mass = 100.0;
-		speed = 700.0;
-		reactiontime = 8;
-		damage = 2;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_NOTELEPORT;
-		spawnstate = S_MACEFX1_1;
-		deathstate = S_MACEFXI1_1;
+		Health = 1000;
+		Radius = 8.0;
+		Height = 6.0;
+		Mass = 100.0;
+		Speed = 700.0;
+		ReactionCount = 8;
+		MissileDamage = 2;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_NOTELEPORT;
+		SpawnState = S_MACEFX1_1;
+		DeathState = S_MACEFXI1_1;
 		SightSound = 'MaceFire';
 	}
 };
@@ -1554,17 +1554,17 @@ class MT_MACEFX2:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 8.0;
-		height = 6.0;
-		mass = 100.0;
-		speed = 350.0;
-		reactiontime = 8;
-		damage = 6;
-		flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_LOGRAV|MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_NOTELEPORT;
-		spawnstate = S_MACEFX2_1;
-		deathstate = S_MACEFXI2_1;
+		Health = 1000;
+		Radius = 8.0;
+		Height = 6.0;
+		Mass = 100.0;
+		Speed = 350.0;
+		ReactionCount = 8;
+		MissileDamage = 6;
+		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_LOGRAV|MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_NOTELEPORT;
+		SpawnState = S_MACEFX2_1;
+		DeathState = S_MACEFXI2_1;
 	}
 };
 
@@ -1578,17 +1578,17 @@ class MT_MACEFX3:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 8.0;
-		height = 6.0;
-		mass = 100.0;
-		speed = 245.0;
-		reactiontime = 8;
-		damage = 4;
-		flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_LOGRAV|MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_NOTELEPORT;
-		spawnstate = S_MACEFX3_1;
-		deathstate = S_MACEFXI1_1;
+		Health = 1000;
+		Radius = 8.0;
+		Height = 6.0;
+		Mass = 100.0;
+		Speed = 245.0;
+		ReactionCount = 8;
+		MissileDamage = 4;
+		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_LOGRAV|MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_NOTELEPORT;
+		SpawnState = S_MACEFX3_1;
+		DeathState = S_MACEFXI1_1;
 	}
 };
 
@@ -1602,17 +1602,17 @@ class MT_MACEFX4:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 8.0;
-		height = 6.0;
-		mass = 100.0;
-		speed = 245.0;
-		reactiontime = 8;
-		damage = 18;
-		flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_LOGRAV|MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_TELESTOMP;
-		spawnstate = S_MACEFX4_1;
-		deathstate = S_MACEFXI4_1;
+		Health = 1000;
+		Radius = 8.0;
+		Height = 6.0;
+		Mass = 100.0;
+		Speed = 245.0;
+		ReactionCount = 8;
+		MissileDamage = 18;
+		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_LOGRAV|MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_TELESTOMP;
+		SpawnState = S_MACEFX4_1;
+		DeathState = S_MACEFXI4_1;
 	}
 };
 
@@ -1626,13 +1626,13 @@ class MT_WSKULLROD:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL;
-		spawnstate = S_WSKL;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL;
+		SpawnState = S_WSKL;
 	}
 };
 
@@ -1646,20 +1646,20 @@ class MT_HORNRODFX1:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 12.0;
-		height = 8.0;
-		mass = 100.0;
-		speed = 770.0;
-		reactiontime = 8;
-		damage = 3;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT;
-		spawnstate = S_HRODFX1_1;
-		deathstate = S_HRODFXI1_1;
+		Health = 1000;
+		Radius = 12.0;
+		Height = 8.0;
+		Mass = 100.0;
+		Speed = 770.0;
+		ReactionCount = 8;
+		MissileDamage = 3;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT;
+		SpawnState = S_HRODFX1_1;
+		DeathState = S_HRODFXI1_1;
 		SightSound = 'SkullRodFire';
 		DeathSound = 'SkullRodHit';
-		effects = EF_DL_RED;
+		Effects = EF_DL_RED;
 	}
 };
 
@@ -1673,20 +1673,20 @@ class MT_HORNRODFX2:Actor
 {
 	defaultproperties
 	{
-		health = 140;
-		radius = 12.0;
-		height = 8.0;
-		mass = 100.0;
-		speed = 770.0;
-		reactiontime = 8;
-		damage = 10;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT;
-		spawnstate = S_HRODFX2_1;
-		deathstate = S_HRODFXI2_1;
+		Health = 140;
+		Radius = 12.0;
+		Height = 8.0;
+		Mass = 100.0;
+		Speed = 770.0;
+		ReactionCount = 8;
+		MissileDamage = 10;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT;
+		SpawnState = S_HRODFX2_1;
+		DeathState = S_HRODFXI2_1;
 		SightSound = 'SkullRodFire';
 		DeathSound = 'SkullRodHit';
-		effects = EF_DL_RED;
+		Effects = EF_DL_RED;
 	}
 };
 
@@ -1700,17 +1700,17 @@ class MT_RAINPLR1:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 5.0;
-		height = 12.0;
-		mass = 100.0;
-		speed = 420.0;
-		reactiontime = 8;
-		damage = 5;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT;
-		spawnstate = S_RAINPLR1_1;
-		deathstate = S_RAINPLR1X_1;
+		Health = 1000;
+		Radius = 5.0;
+		Height = 12.0;
+		Mass = 100.0;
+		Speed = 420.0;
+		ReactionCount = 8;
+		MissileDamage = 5;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT;
+		SpawnState = S_RAINPLR1_1;
+		DeathState = S_RAINPLR1X_1;
 	}
 };
 
@@ -1724,17 +1724,17 @@ class MT_RAINPLR2:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 5.0;
-		height = 12.0;
-		mass = 100.0;
-		speed = 420.0;
-		reactiontime = 8;
-		damage = 5;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT;
-		spawnstate = S_RAINPLR2_1;
-		deathstate = S_RAINPLR2X_1;
+		Health = 1000;
+		Radius = 5.0;
+		Height = 12.0;
+		Mass = 100.0;
+		Speed = 420.0;
+		ReactionCount = 8;
+		MissileDamage = 5;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT;
+		SpawnState = S_RAINPLR2_1;
+		DeathState = S_RAINPLR2X_1;
 	}
 };
 
@@ -1748,17 +1748,17 @@ class MT_RAINPLR3:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 5.0;
-		height = 12.0;
-		mass = 100.0;
-		speed = 420.0;
-		reactiontime = 8;
-		damage = 5;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT;
-		spawnstate = S_RAINPLR3_1;
-		deathstate = S_RAINPLR3X_1;
+		Health = 1000;
+		Radius = 5.0;
+		Height = 12.0;
+		Mass = 100.0;
+		Speed = 420.0;
+		ReactionCount = 8;
+		MissileDamage = 5;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT;
+		SpawnState = S_RAINPLR3_1;
+		DeathState = S_RAINPLR3X_1;
 	}
 };
 
@@ -1772,17 +1772,17 @@ class MT_RAINPLR4:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 5.0;
-		height = 12.0;
-		mass = 100.0;
-		speed = 420.0;
-		reactiontime = 8;
-		damage = 5;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT;
-		spawnstate = S_RAINPLR4_1;
-		deathstate = S_RAINPLR4X_1;
+		Health = 1000;
+		Radius = 5.0;
+		Height = 12.0;
+		Mass = 100.0;
+		Speed = 420.0;
+		ReactionCount = 8;
+		MissileDamage = 5;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT;
+		SpawnState = S_RAINPLR4_1;
+		DeathState = S_RAINPLR4X_1;
 	}
 };
 
@@ -1796,19 +1796,19 @@ class MT_GOLDWANDFX1:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 10.0;
-		height = 6.0;
-		mass = 100.0;
-		speed = 770.0;
-		reactiontime = 8;
-		damage = 2;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT;
-		spawnstate = S_GWANDFX1_1;
-		deathstate = S_GWANDFXI1_1;
+		Health = 1000;
+		Radius = 10.0;
+		Height = 6.0;
+		Mass = 100.0;
+		Speed = 770.0;
+		ReactionCount = 8;
+		MissileDamage = 2;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT;
+		SpawnState = S_GWANDFX1_1;
+		DeathState = S_GWANDFXI1_1;
 		DeathSound = 'GoldWandFire';
-		effects = EF_DL_WHITE;
+		Effects = EF_DL_WHITE;
 	}
 };
 
@@ -1822,18 +1822,18 @@ class MT_GOLDWANDFX2:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 10.0;
-		height = 6.0;
-		mass = 100.0;
-		speed = 630.0;
-		reactiontime = 8;
-		damage = 1;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT;
-		spawnstate = S_GWANDFX2_1;
-		deathstate = S_GWANDFXI1_1;
-		effects = EF_DL_WHITE;
+		Health = 1000;
+		Radius = 10.0;
+		Height = 6.0;
+		Mass = 100.0;
+		Speed = 630.0;
+		ReactionCount = 8;
+		MissileDamage = 1;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT;
+		SpawnState = S_GWANDFX2_1;
+		DeathState = S_GWANDFXI1_1;
+		Effects = EF_DL_WHITE;
 	}
 };
 
@@ -1847,13 +1847,13 @@ class MT_GOLDWANDPUFF1:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		spawnstate = S_GWANDPUFF1_1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		SpawnState = S_GWANDPUFF1_1;
 	}
 };
 
@@ -1867,13 +1867,13 @@ class MT_GOLDWANDPUFF2:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		spawnstate = S_GWANDFXI1_1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		SpawnState = S_GWANDFXI1_1;
 	}
 };
 
@@ -1887,13 +1887,13 @@ class MT_WPHOENIXROD:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL;
-		spawnstate = S_WPHX;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL;
+		SpawnState = S_WPHX;
 	}
 };
 
@@ -1907,20 +1907,20 @@ class MT_PHOENIXFX1:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 11.0;
-		height = 8.0;
-		mass = 100.0;
-		speed = 700.0;
-		reactiontime = 8;
-		damage = 20;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_THRUGHOST|MF2_NOTELEPORT;
-		spawnstate = S_PHOENIXFX1_1;
-		deathstate = S_PHOENIXFXI1_1;
+		Health = 1000;
+		Radius = 11.0;
+		Height = 8.0;
+		Mass = 100.0;
+		Speed = 700.0;
+		ReactionCount = 8;
+		MissileDamage = 20;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_THRUGHOST|MF2_NOTELEPORT;
+		SpawnState = S_PHOENIXFX1_1;
+		DeathState = S_PHOENIXFXI1_1;
 		SightSound = 'PhoenixFire';
 		DeathSound = 'PhoenixHit';
-		effects = EF_DL_RED;
+		Effects = EF_DL_RED;
 	}
 };
 
@@ -1934,15 +1934,15 @@ class MT_PHOENIXPUFF:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		translucency = 33;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		flags2 = MF2_NOTELEPORT|MF2_CANNOTPUSH;
-		spawnstate = S_PHOENIXPUFF1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Translucency = 33;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		Flags2 = MF2_NOTELEPORT|MF2_CANNOTPUSH;
+		SpawnState = S_PHOENIXPUFF1;
 	}
 };
 
@@ -1956,18 +1956,18 @@ class MT_PHOENIXFX2:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 6.0;
-		height = 8.0;
-		mass = 100.0;
-		speed = 350.0;
-		reactiontime = 8;
-		damage = 2;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE;
-		spawnstate = S_PHOENIXFX2_1;
-		deathstate = S_PHOENIXFXI2_1;
-		effects = EF_DL_WHITE;
+		Health = 1000;
+		Radius = 6.0;
+		Height = 8.0;
+		Mass = 100.0;
+		Speed = 350.0;
+		ReactionCount = 8;
+		MissileDamage = 2;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE;
+		SpawnState = S_PHOENIXFX2_1;
+		DeathState = S_PHOENIXFXI2_1;
+		Effects = EF_DL_WHITE;
 	}
 };
 
@@ -1981,13 +1981,13 @@ class MT_MISC15:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL;
-		spawnstate = S_WBOW;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL;
+		SpawnState = S_WBOW;
 	}
 };
 
@@ -2001,17 +2001,17 @@ class MT_CRBOWFX1:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 11.0;
-		height = 8.0;
-		mass = 100.0;
-		speed = 1050.0;
-		reactiontime = 8;
-		damage = 10;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT;
-		spawnstate = S_CRBOWFX1;
-		deathstate = S_CRBOWFXI1_1;
+		Health = 1000;
+		Radius = 11.0;
+		Height = 8.0;
+		Mass = 100.0;
+		Speed = 1050.0;
+		ReactionCount = 8;
+		MissileDamage = 10;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT;
+		SpawnState = S_CRBOWFX1;
+		DeathState = S_CRBOWFXI1_1;
 		SightSound = 'BowFire';
 		DeathSound = 'SkullRodHit';
 	}
@@ -2027,20 +2027,20 @@ class MT_CRBOWFX2:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 11.0;
-		height = 8.0;
-		mass = 100.0;
-		speed = 1120.0;
-		reactiontime = 8;
-		damage = 6;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT;
-		spawnstate = S_CRBOWFX2;
-		deathstate = S_CRBOWFXI1_1;
+		Health = 1000;
+		Radius = 11.0;
+		Height = 8.0;
+		Mass = 100.0;
+		Speed = 1120.0;
+		ReactionCount = 8;
+		MissileDamage = 6;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT;
+		SpawnState = S_CRBOWFX2;
+		DeathState = S_CRBOWFXI1_1;
 		SightSound = 'BowFire';
 		DeathSound = 'SkullRodHit';
-		effects = EF_DL_GREEN;
+		Effects = EF_DL_GREEN;
 	}
 };
 
@@ -2054,19 +2054,19 @@ class MT_CRBOWFX3:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 11.0;
-		height = 8.0;
-		mass = 100.0;
-		speed = 700.0;
-		reactiontime = 8;
-		damage = 2;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_WINDTHRUST|MF2_THRUGHOST|MF2_NOTELEPORT;
-		spawnstate = S_CRBOWFX3;
-		deathstate = S_CRBOWFXI3_1;
+		Health = 1000;
+		Radius = 11.0;
+		Height = 8.0;
+		Mass = 100.0;
+		Speed = 700.0;
+		ReactionCount = 8;
+		MissileDamage = 2;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_WINDTHRUST|MF2_THRUGHOST|MF2_NOTELEPORT;
+		SpawnState = S_CRBOWFX3;
+		DeathState = S_CRBOWFXI3_1;
 		DeathSound = 'SkullRodHit';
-		effects = EF_DL_GREEN;
+		Effects = EF_DL_GREEN;
 	}
 };
 
@@ -2080,14 +2080,14 @@ class MT_CRBOWFX4:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOBLOCKMAP;
-		flags2 = MF2_LOGRAV;
-		spawnstate = S_CRBOWFX4_1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOBLOCKMAP;
+		Flags2 = MF2_LOGRAV;
+		SpawnState = S_CRBOWFX4_1;
 	}
 };
 
@@ -2101,13 +2101,13 @@ class MT_BLOOD:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOBLOCKMAP;
-		spawnstate = S_BLOOD1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOBLOCKMAP;
+		SpawnState = S_BLOOD1;
 	}
 };
 
@@ -2121,15 +2121,15 @@ class MT_BLOODSPLATTER:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 2.0;
-		height = 4.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT|MF2_CANNOTPUSH;
-		spawnstate = S_BLOODSPLATTER1;
-		deathstate = S_BLOODSPLATTERX;
+		Health = 1000;
+		Radius = 2.0;
+		Height = 4.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT|MF2_CANNOTPUSH;
+		SpawnState = S_BLOODSPLATTER1;
+		DeathState = S_BLOODSPLATTERX;
 	}
 };
 
@@ -2143,20 +2143,20 @@ class MT_PLAYER:Actor
 {
 	defaultproperties
 	{
-		health = 100;
-		gibshealth = -50;
-		radius = 16.0;
-		height = 56.0;
-		mass = 100.0;
-		painchance = 255;
-		flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_PICKUP;
-		flags2 = MF2_WINDTHRUST|MF2_FOOTCLIP|MF2_SLIDE|MF2_PASSMOBJ|MF2_TELESTOMP;
-		spawnstate = S_PLAY;
-		seestate = S_PLAY_RUN1;
-		missilestate = S_PLAY_ATK1;
-		painstate = S_PLAY_PAIN;
-		deathstate = S_PLAY_DIE1;
-		xdeathstate = S_PLAY_XDIE1;
+		Health = 100;
+		GibsHealth = -50;
+		Radius = 16.0;
+		Height = 56.0;
+		Mass = 100.0;
+		PainChance = 255;
+		Flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_PICKUP;
+		Flags2 = MF2_WINDTHRUST|MF2_FOOTCLIP|MF2_SLIDE|MF2_PASSMOBJ|MF2_TELESTOMP;
+		SpawnState = S_PLAY;
+		SeeState = S_PLAY_RUN1;
+		MissileState = S_PLAY_ATK1;
+		PainState = S_PLAY_PAIN;
+		DeathState = S_PLAY_DIE1;
+		GibsDeathState = S_PLAY_XDIE1;
 		PainSound = 'PlayerPain';
 		DeathSound = 'PlayerDeath';
 	}
@@ -2172,14 +2172,14 @@ class MT_BLOODYSKULL:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 4.0;
-		height = 4.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOBLOCKMAP|MF_DROPOFF;
-		flags2 = MF2_LOGRAV|MF2_CANNOTPUSH;
-		spawnstate = S_BLOODYSKULL1;
+		Health = 1000;
+		Radius = 4.0;
+		Height = 4.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOBLOCKMAP|MF_DROPOFF;
+		Flags2 = MF2_LOGRAV|MF2_CANNOTPUSH;
+		SpawnState = S_BLOODYSKULL1;
 	}
 };
 
@@ -2193,18 +2193,18 @@ class MT_CHICPLAYER:Actor
 {
 	defaultproperties
 	{
-		health = 100;
-		radius = 16.0;
-		height = 24.0;
-		mass = 100.0;
-		painchance = 255;
-		flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF;
-		flags2 = MF2_LOGRAV|MF2_WINDTHRUST|MF2_FOOTCLIP|MF2_SLIDE|MF2_PASSMOBJ|MF2_TELESTOMP;
-		spawnstate = S_CHICPLAY;
-		seestate = S_CHICPLAY_RUN1;
-		missilestate = S_CHICPLAY_ATK1;
-		painstate = S_CHICPLAY_PAIN;
-		deathstate = S_CHICKEN_DIE1;
+		Health = 100;
+		Radius = 16.0;
+		Height = 24.0;
+		Mass = 100.0;
+		PainChance = 255;
+		Flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF;
+		Flags2 = MF2_LOGRAV|MF2_WINDTHRUST|MF2_FOOTCLIP|MF2_SLIDE|MF2_PASSMOBJ|MF2_TELESTOMP;
+		SpawnState = S_CHICPLAY;
+		SeeState = S_CHICPLAY_RUN1;
+		MissileState = S_CHICPLAY_ATK1;
+		PainState = S_CHICPLAY_PAIN;
+		DeathState = S_CHICKEN_DIE1;
 		PainSound = 'ChickenPain';
 		DeathSound = 'ChickenDeath';
 	}
@@ -2220,20 +2220,20 @@ class MT_CHICKEN:Actor
 {
 	defaultproperties
 	{
-		health = 10;
-		radius = 9.0;
-		height = 22.0;
-		mass = 40.0;
-		speed = 140.0;
-		reactiontime = 8;
-		painchance = 200;
-		flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_COUNTKILL;
-		flags2 = MF2_WINDTHRUST|MF2_FOOTCLIP|MF2_PASSMOBJ;
-		spawnstate = S_CHICKEN_LOOK1;
-		seestate = S_CHICKEN_WALK1;
-		meleestate = S_CHICKEN_ATK1;
-		painstate = S_CHICKEN_PAIN1;
-		deathstate = S_CHICKEN_DIE1;
+		Health = 10;
+		Radius = 9.0;
+		Height = 22.0;
+		Mass = 40.0;
+		Speed = 140.0;
+		ReactionCount = 8;
+		PainChance = 200;
+		Flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_COUNTKILL;
+		Flags2 = MF2_WINDTHRUST|MF2_FOOTCLIP|MF2_PASSMOBJ;
+		SpawnState = S_CHICKEN_LOOK1;
+		SeeState = S_CHICKEN_WALK1;
+		MeleeState = S_CHICKEN_ATK1;
+		PainState = S_CHICKEN_PAIN1;
+		DeathState = S_CHICKEN_DIE1;
 		SightSound = 'ChickenPain';
 		ActiveSound = 'ChickenActive';
 		AttackSound = 'ChickenAttack';
@@ -2262,15 +2262,15 @@ class MT_FEATHER:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 2.0;
-		height = 4.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_LOGRAV|MF2_WINDTHRUST|MF2_NOTELEPORT|MF2_CANNOTPUSH;
-		spawnstate = S_FEATHER1;
-		deathstate = S_FEATHERX;
+		Health = 1000;
+		Radius = 2.0;
+		Height = 4.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_LOGRAV|MF2_WINDTHRUST|MF2_NOTELEPORT|MF2_CANNOTPUSH;
+		SpawnState = S_FEATHER1;
+		DeathState = S_FEATHERX;
 	}
 };
 
@@ -2284,20 +2284,20 @@ class MT_MUMMY:Actor
 {
 	defaultproperties
 	{
-		health = 80;
-		radius = 22.0;
-		height = 62.0;
-		mass = 75.0;
-		speed = 420.0;
-		reactiontime = 8;
-		painchance = 128;
-		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ;
-		spawnstate = S_MUMMY_LOOK1;
-		seestate = S_MUMMY_WALK1;
-		meleestate = S_MUMMY_ATK1;
-		painstate = S_MUMMY_PAIN1;
-		deathstate = S_MUMMY_DIE1;
+		Health = 80;
+		Radius = 22.0;
+		Height = 62.0;
+		Mass = 75.0;
+		Speed = 420.0;
+		ReactionCount = 8;
+		PainChance = 128;
+		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		Flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ;
+		SpawnState = S_MUMMY_LOOK1;
+		SeeState = S_MUMMY_WALK1;
+		MeleeState = S_MUMMY_ATK1;
+		PainState = S_MUMMY_PAIN1;
+		DeathState = S_MUMMY_DIE1;
 		SightSound = 'MumySight';
 		ActiveSound = 'MumyActive';
 		AttackSound = 'MumyAttack1';
@@ -2326,21 +2326,21 @@ class MT_MUMMYLEADER:Actor
 {
 	defaultproperties
 	{
-		health = 100;
-		radius = 22.0;
-		height = 62.0;
-		mass = 75.0;
-		speed = 420.0;
-		reactiontime = 8;
-		painchance = 64;
-		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ;
-		spawnstate = S_MUMMY_LOOK1;
-		seestate = S_MUMMY_WALK1;
-		meleestate = S_MUMMY_ATK1;
-		missilestate = S_MUMMYL_ATK1;
-		painstate = S_MUMMY_PAIN1;
-		deathstate = S_MUMMY_DIE1;
+		Health = 100;
+		Radius = 22.0;
+		Height = 62.0;
+		Mass = 75.0;
+		Speed = 420.0;
+		ReactionCount = 8;
+		PainChance = 64;
+		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		Flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ;
+		SpawnState = S_MUMMY_LOOK1;
+		SeeState = S_MUMMY_WALK1;
+		MeleeState = S_MUMMY_ATK1;
+		MissileState = S_MUMMYL_ATK1;
+		PainState = S_MUMMY_PAIN1;
+		DeathState = S_MUMMY_DIE1;
 		SightSound = 'MumySight';
 		ActiveSound = 'MumyActive';
 		AttackSound = 'MumyAttack1';
@@ -2369,21 +2369,21 @@ class MT_MUMMYGHOST:Actor
 {
 	defaultproperties
 	{
-		health = 80;
-		radius = 22.0;
-		height = 62.0;
-		mass = 75.0;
-		speed = 420.0;
-		reactiontime = 8;
-		painchance = 128;
-		translucency = 33;
-		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ;
-		spawnstate = S_MUMMY_LOOK1;
-		seestate = S_MUMMY_WALK1;
-		meleestate = S_MUMMY_ATK1;
-		painstate = S_MUMMY_PAIN1;
-		deathstate = S_MUMMY_DIE1;
+		Health = 80;
+		Radius = 22.0;
+		Height = 62.0;
+		Mass = 75.0;
+		Speed = 420.0;
+		ReactionCount = 8;
+		PainChance = 128;
+		Translucency = 33;
+		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		Flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ;
+		SpawnState = S_MUMMY_LOOK1;
+		SeeState = S_MUMMY_WALK1;
+		MeleeState = S_MUMMY_ATK1;
+		PainState = S_MUMMY_PAIN1;
+		DeathState = S_MUMMY_DIE1;
 		SightSound = 'MumySight';
 		ActiveSound = 'MumyActive';
 		AttackSound = 'MumyAttack1';
@@ -2412,22 +2412,22 @@ class MT_MUMMYLEADERGHOST:Actor
 {
 	defaultproperties
 	{
-		health = 100;
-		radius = 22.0;
-		height = 62.0;
-		mass = 75.0;
-		speed = 420.0;
-		reactiontime = 8;
-		painchance = 64;
-		translucency = 33;
-		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ;
-		spawnstate = S_MUMMY_LOOK1;
-		seestate = S_MUMMY_WALK1;
-		meleestate = S_MUMMY_ATK1;
-		missilestate = S_MUMMYL_ATK1;
-		painstate = S_MUMMY_PAIN1;
-		deathstate = S_MUMMY_DIE1;
+		Health = 100;
+		Radius = 22.0;
+		Height = 62.0;
+		Mass = 75.0;
+		Speed = 420.0;
+		ReactionCount = 8;
+		PainChance = 64;
+		Translucency = 33;
+		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		Flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ;
+		SpawnState = S_MUMMY_LOOK1;
+		SeeState = S_MUMMY_WALK1;
+		MeleeState = S_MUMMY_ATK1;
+		MissileState = S_MUMMYL_ATK1;
+		PainState = S_MUMMY_PAIN1;
+		DeathState = S_MUMMY_DIE1;
 		SightSound = 'MumySight';
 		ActiveSound = 'MumyActive';
 		AttackSound = 'MumyAttack1';
@@ -2456,13 +2456,13 @@ class MT_MUMMYSOUL:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		spawnstate = S_MUMMY_SOUL1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		SpawnState = S_MUMMY_SOUL1;
 	}
 };
 
@@ -2476,18 +2476,18 @@ class MT_MUMMYFX1:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 8.0;
-		height = 14.0;
-		mass = 100.0;
-		speed = 315.0;
-		reactiontime = 8;
-		damage = 4;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT;
-		spawnstate = S_MUMMYFX1_1;
-		deathstate = S_MUMMYFXI1_1;
-		effects = EF_DL_WHITE;
+		Health = 1000;
+		Radius = 8.0;
+		Height = 14.0;
+		Mass = 100.0;
+		Speed = 315.0;
+		ReactionCount = 8;
+		MissileDamage = 4;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT;
+		SpawnState = S_MUMMYFX1_1;
+		DeathState = S_MUMMYFXI1_1;
+		Effects = EF_DL_WHITE;
 	}
 };
 
@@ -2501,22 +2501,22 @@ class MT_BEAST:Actor
 {
 	defaultproperties
 	{
-		health = 220;
-		gibshealth = -110;
-		radius = 32.0;
-		height = 74.0;
-		mass = 200.0;
-		speed = 490.0;
-		reactiontime = 8;
-		painchance = 100;
-		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ;
-		spawnstate = S_BEAST_LOOK1;
-		seestate = S_BEAST_WALK1;
-		missilestate = S_BEAST_ATK1;
-		painstate = S_BEAST_PAIN1;
-		deathstate = S_BEAST_DIE1;
-		xdeathstate = S_BEAST_XDIE1;
+		Health = 220;
+		GibsHealth = -110;
+		Radius = 32.0;
+		Height = 74.0;
+		Mass = 200.0;
+		Speed = 490.0;
+		ReactionCount = 8;
+		PainChance = 100;
+		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		Flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ;
+		SpawnState = S_BEAST_LOOK1;
+		SeeState = S_BEAST_WALK1;
+		MissileState = S_BEAST_ATK1;
+		PainState = S_BEAST_PAIN1;
+		DeathState = S_BEAST_DIE1;
+		GibsDeathState = S_BEAST_XDIE1;
 		SightSound = 'BeastSight';
 		ActiveSound = 'BeastActive';
 		AttackSound = 'BeastAttack';
@@ -2545,18 +2545,18 @@ class MT_BEASTBALL:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 9.0;
-		height = 8.0;
-		mass = 100.0;
-		speed = 420.0;
-		reactiontime = 8;
-		damage = 4;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT;
-		spawnstate = S_BEASTBALL1;
-		deathstate = S_BEASTBALLX1;
-		effects = EF_DL_RED;
+		Health = 1000;
+		Radius = 9.0;
+		Height = 8.0;
+		Mass = 100.0;
+		Speed = 420.0;
+		ReactionCount = 8;
+		MissileDamage = 4;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT;
+		SpawnState = S_BEASTBALL1;
+		DeathState = S_BEASTBALLX1;
+		Effects = EF_DL_RED;
 	}
 };
 
@@ -2570,18 +2570,18 @@ class MT_BURNBALL:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 6.0;
-		height = 8.0;
-		mass = 100.0;
-		speed = 350.0;
-		reactiontime = 8;
-		damage = 2;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT;
-		spawnstate = S_BURNBALL1;
-		deathstate = S_BEASTBALLX1;
-		effects = EF_DL_RED;
+		Health = 1000;
+		Radius = 6.0;
+		Height = 8.0;
+		Mass = 100.0;
+		Speed = 350.0;
+		ReactionCount = 8;
+		MissileDamage = 2;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT;
+		SpawnState = S_BURNBALL1;
+		DeathState = S_BEASTBALLX1;
+		Effects = EF_DL_RED;
 	}
 };
 
@@ -2595,18 +2595,18 @@ class MT_BURNBALLFB:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 6.0;
-		height = 8.0;
-		mass = 100.0;
-		speed = 350.0;
-		reactiontime = 8;
-		damage = 2;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT;
-		spawnstate = S_BURNBALLFB1;
-		deathstate = S_BEASTBALLX1;
-		effects = EF_DL_RED;
+		Health = 1000;
+		Radius = 6.0;
+		Height = 8.0;
+		Mass = 100.0;
+		Speed = 350.0;
+		ReactionCount = 8;
+		MissileDamage = 2;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT;
+		SpawnState = S_BURNBALLFB1;
+		DeathState = S_BEASTBALLX1;
+		Effects = EF_DL_RED;
 	}
 };
 
@@ -2620,17 +2620,17 @@ class MT_PUFFY:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 6.0;
-		height = 8.0;
-		mass = 100.0;
-		speed = 350.0;
-		reactiontime = 8;
-		damage = 2;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT;
-		spawnstate = S_PUFFY1;
-		deathstate = S_PUFFY1;
+		Health = 1000;
+		Radius = 6.0;
+		Height = 8.0;
+		Mass = 100.0;
+		Speed = 350.0;
+		ReactionCount = 8;
+		MissileDamage = 2;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT;
+		SpawnState = S_PUFFY1;
+		DeathState = S_PUFFY1;
 	}
 };
 
@@ -2644,20 +2644,20 @@ class MT_SNAKE:Actor
 {
 	defaultproperties
 	{
-		health = 280;
-		radius = 22.0;
-		height = 70.0;
-		mass = 100.0;
-		speed = 350.0;
-		reactiontime = 8;
-		painchance = 48;
-		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ;
-		spawnstate = S_SNAKE_LOOK1;
-		seestate = S_SNAKE_WALK1;
-		missilestate = S_SNAKE_ATK1;
-		painstate = S_SNAKE_PAIN1;
-		deathstate = S_SNAKE_DIE1;
+		Health = 280;
+		Radius = 22.0;
+		Height = 70.0;
+		Mass = 100.0;
+		Speed = 350.0;
+		ReactionCount = 8;
+		PainChance = 48;
+		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		Flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ;
+		SpawnState = S_SNAKE_LOOK1;
+		SeeState = S_SNAKE_WALK1;
+		MissileState = S_SNAKE_ATK1;
+		PainState = S_SNAKE_PAIN1;
+		DeathState = S_SNAKE_DIE1;
 		SightSound = 'SnakeSight';
 		ActiveSound = 'SnakeActive';
 		AttackSound = 'SnakeAttack';
@@ -2686,18 +2686,18 @@ class MT_SNAKEPRO_A:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 12.0;
-		height = 8.0;
-		mass = 100.0;
-		speed = 490.0;
-		reactiontime = 8;
-		damage = 1;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT;
-		spawnstate = S_SNAKEPRO_A1;
-		deathstate = S_SNAKEPRO_AX1;
-		effects = EF_DL_MAGENTA;
+		Health = 1000;
+		Radius = 12.0;
+		Height = 8.0;
+		Mass = 100.0;
+		Speed = 490.0;
+		ReactionCount = 8;
+		MissileDamage = 1;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT;
+		SpawnState = S_SNAKEPRO_A1;
+		DeathState = S_SNAKEPRO_AX1;
+		Effects = EF_DL_MAGENTA;
 	}
 };
 
@@ -2711,18 +2711,18 @@ class MT_SNAKEPRO_B:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 12.0;
-		height = 8.0;
-		mass = 100.0;
-		speed = 490.0;
-		reactiontime = 8;
-		damage = 3;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT;
-		spawnstate = S_SNAKEPRO_B1;
-		deathstate = S_SNAKEPRO_BX1;
-		effects = EF_DL_WHITE;
+		Health = 1000;
+		Radius = 12.0;
+		Height = 8.0;
+		Mass = 100.0;
+		Speed = 490.0;
+		ReactionCount = 8;
+		MissileDamage = 3;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT;
+		SpawnState = S_SNAKEPRO_B1;
+		DeathState = S_SNAKEPRO_BX1;
+		Effects = EF_DL_WHITE;
 	}
 };
 
@@ -2736,20 +2736,20 @@ class MT_HEAD:Actor
 {
 	defaultproperties
 	{
-		health = 700;
-		radius = 40.0;
-		height = 72.0;
-		mass = 325.0;
-		speed = 210.0;
-		reactiontime = 8;
-		painchance = 32;
-		flags = MF_SOLID|MF_SHOOTABLE|MF_NOBLOOD|MF_COUNTKILL;
-		flags2 = MF2_PASSMOBJ;
-		spawnstate = S_HEAD_LOOK;
-		seestate = S_HEAD_FLOAT;
-		missilestate = S_HEAD_ATK1;
-		painstate = S_HEAD_PAIN1;
-		deathstate = S_HEAD_DIE1;
+		Health = 700;
+		Radius = 40.0;
+		Height = 72.0;
+		Mass = 325.0;
+		Speed = 210.0;
+		ReactionCount = 8;
+		PainChance = 32;
+		Flags = MF_SOLID|MF_SHOOTABLE|MF_NOBLOOD|MF_COUNTKILL;
+		Flags2 = MF2_PASSMOBJ;
+		SpawnState = S_HEAD_LOOK;
+		SeeState = S_HEAD_FLOAT;
+		MissileState = S_HEAD_ATK1;
+		PainState = S_HEAD_PAIN1;
+		DeathState = S_HEAD_DIE1;
 		SightSound = 'HeadSight';
 		ActiveSound = 'HeadActive';
 		AttackSound = 'HeadAttack1';
@@ -2778,18 +2778,18 @@ class MT_HEADFX1:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 12.0;
-		height = 6.0;
-		mass = 100.0;
-		speed = 455.0;
-		reactiontime = 8;
-		damage = 1;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_THRUGHOST|MF2_NOTELEPORT;
-		spawnstate = S_HEADFX1_1;
-		deathstate = S_HEADFXI1_1;
-		effects = EF_DL_BLUE;
+		Health = 1000;
+		Radius = 12.0;
+		Height = 6.0;
+		Mass = 100.0;
+		Speed = 455.0;
+		ReactionCount = 8;
+		MissileDamage = 1;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_THRUGHOST|MF2_NOTELEPORT;
+		SpawnState = S_HEADFX1_1;
+		DeathState = S_HEADFXI1_1;
+		Effects = EF_DL_BLUE;
 	}
 };
 
@@ -2803,18 +2803,18 @@ class MT_HEADFX2:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 12.0;
-		height = 6.0;
-		mass = 100.0;
-		speed = 280.0;
-		reactiontime = 8;
-		damage = 3;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT;
-		spawnstate = S_HEADFX2_1;
-		deathstate = S_HEADFXI2_1;
-		effects = EF_DL_BLUE;
+		Health = 1000;
+		Radius = 12.0;
+		Height = 6.0;
+		Mass = 100.0;
+		Speed = 280.0;
+		ReactionCount = 8;
+		MissileDamage = 3;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT;
+		SpawnState = S_HEADFX2_1;
+		DeathState = S_HEADFXI2_1;
+		Effects = EF_DL_BLUE;
 	}
 };
 
@@ -2828,18 +2828,18 @@ class MT_HEADFX3:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 14.0;
-		height = 12.0;
-		mass = 100.0;
-		speed = 350.0;
-		reactiontime = 8;
-		damage = 5;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT;
-		spawnstate = S_HEADFX3_1;
-		deathstate = S_HEADFXI3_1;
-		effects = EF_DL_WHITE;
+		Health = 1000;
+		Radius = 14.0;
+		Height = 12.0;
+		Mass = 100.0;
+		Speed = 350.0;
+		ReactionCount = 8;
+		MissileDamage = 5;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT;
+		SpawnState = S_HEADFX3_1;
+		DeathState = S_HEADFXI3_1;
+		Effects = EF_DL_WHITE;
 	}
 };
 
@@ -2853,18 +2853,18 @@ class MT_WHIRLWIND:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 16.0;
-		height = 74.0;
-		mass = 100.0;
-		speed = 350.0;
-		reactiontime = 8;
-		damage = 1;
-		translucency = 33;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT;
-		spawnstate = S_HEADFX4_1;
-		deathstate = S_HEADFXI4_1;
+		Health = 1000;
+		Radius = 16.0;
+		Height = 74.0;
+		Mass = 100.0;
+		Speed = 350.0;
+		ReactionCount = 8;
+		MissileDamage = 1;
+		Translucency = 33;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT;
+		SpawnState = S_HEADFX4_1;
+		DeathState = S_HEADFXI4_1;
 	}
 };
 
@@ -2878,20 +2878,20 @@ class MT_CLINK:Actor
 {
 	defaultproperties
 	{
-		health = 150;
-		radius = 20.0;
-		height = 64.0;
-		mass = 75.0;
-		speed = 490.0;
-		reactiontime = 8;
-		painchance = 32;
-		flags = MF_SOLID|MF_SHOOTABLE|MF_NOBLOOD|MF_COUNTKILL;
-		flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ;
-		spawnstate = S_CLINK_LOOK1;
-		seestate = S_CLINK_WALK1;
-		meleestate = S_CLINK_ATK1;
-		painstate = S_CLINK_PAIN1;
-		deathstate = S_CLINK_DIE1;
+		Health = 150;
+		Radius = 20.0;
+		Height = 64.0;
+		Mass = 75.0;
+		Speed = 490.0;
+		ReactionCount = 8;
+		PainChance = 32;
+		Flags = MF_SOLID|MF_SHOOTABLE|MF_NOBLOOD|MF_COUNTKILL;
+		Flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ;
+		SpawnState = S_CLINK_LOOK1;
+		SeeState = S_CLINK_WALK1;
+		MeleeState = S_CLINK_ATK1;
+		PainState = S_CLINK_PAIN1;
+		DeathState = S_CLINK_DIE1;
 		SightSound = 'ClinkSight';
 		ActiveSound = 'ClinkActive';
 		AttackSound = 'ClinkAttack';
@@ -2920,20 +2920,20 @@ class MT_WIZARD:Actor
 {
 	defaultproperties
 	{
-		health = 180;
-		radius = 16.0;
-		height = 68.0;
-		mass = 100.0;
-		speed = 420.0;
-		reactiontime = 8;
-		painchance = 64;
-		flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT|MF_COUNTKILL;
-		flags2 = MF2_PASSMOBJ;
-		spawnstate = S_WIZARD_LOOK1;
-		seestate = S_WIZARD_WALK1;
-		missilestate = S_WIZARD_ATK1;
-		painstate = S_WIZARD_PAIN1;
-		deathstate = S_WIZARD_DIE1;
+		Health = 180;
+		Radius = 16.0;
+		Height = 68.0;
+		Mass = 100.0;
+		Speed = 420.0;
+		ReactionCount = 8;
+		PainChance = 64;
+		Flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT|MF_COUNTKILL;
+		Flags2 = MF2_PASSMOBJ;
+		SpawnState = S_WIZARD_LOOK1;
+		SeeState = S_WIZARD_WALK1;
+		MissileState = S_WIZARD_ATK1;
+		PainState = S_WIZARD_PAIN1;
+		DeathState = S_WIZARD_DIE1;
 		SightSound = 'WizardSight';
 		ActiveSound = 'WizardActive';
 		AttackSound = 'WizardAttack';
@@ -2962,18 +2962,18 @@ class MT_WIZFX1:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 10.0;
-		height = 6.0;
-		mass = 100.0;
-		speed = 630.0;
-		reactiontime = 8;
-		damage = 3;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT;
-		spawnstate = S_WIZFX1_1;
-		deathstate = S_WIZFXI1_1;
-		effects = EF_DL_MAGENTA;
+		Health = 1000;
+		Radius = 10.0;
+		Height = 6.0;
+		Mass = 100.0;
+		Speed = 630.0;
+		ReactionCount = 8;
+		MissileDamage = 3;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT;
+		SpawnState = S_WIZFX1_1;
+		DeathState = S_WIZFXI1_1;
+		Effects = EF_DL_MAGENTA;
 	}
 };
 
@@ -2987,24 +2987,24 @@ class MT_IMP:Actor
 {
 	defaultproperties
 	{
-		health = 40;
-		gibshealth = -20;
-		radius = 16.0;
-		height = 36.0;
-		mass = 50.0;
-		speed = 350.0;
-		reactiontime = 8;
-		painchance = 200;
-		flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT|MF_COUNTKILL;
-		flags2 = MF2_SPAWNFLOAT|MF2_PASSMOBJ;
-		spawnstate = S_IMP_LOOK1;
-		seestate = S_IMP_FLY1;
-		meleestate = S_IMP_MEATK1;
-		missilestate = S_IMP_MSATK1_1;
-		painstate = S_IMP_PAIN1;
-		crashstate = S_IMP_CRASH1;
-		deathstate = S_IMP_DIE1;
-		xdeathstate = S_IMP_XDIE1;
+		Health = 40;
+		GibsHealth = -20;
+		Radius = 16.0;
+		Height = 36.0;
+		Mass = 50.0;
+		Speed = 350.0;
+		ReactionCount = 8;
+		PainChance = 200;
+		Flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT|MF_COUNTKILL;
+		Flags2 = MF2_SPAWNFLOAT|MF2_PASSMOBJ;
+		SpawnState = S_IMP_LOOK1;
+		SeeState = S_IMP_FLY1;
+		MeleeState = S_IMP_MEATK1;
+		MissileState = S_IMP_MSATK1_1;
+		PainState = S_IMP_PAIN1;
+		CrashState = S_IMP_CRASH1;
+		DeathState = S_IMP_DIE1;
+		GibsDeathState = S_IMP_XDIE1;
 		SightSound = 'ImpSight';
 		ActiveSound = 'ImpActive';
 		AttackSound = 'ImpAttack1';
@@ -3033,23 +3033,23 @@ class MT_IMPLEADER:Actor
 {
 	defaultproperties
 	{
-		health = 80;
-		gibshealth = -40;
-		radius = 16.0;
-		height = 36.0;
-		mass = 50.0;
-		speed = 350.0;
-		reactiontime = 8;
-		painchance = 200;
-		flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT|MF_COUNTKILL;
-		flags2 = MF2_SPAWNFLOAT|MF2_PASSMOBJ;
-		spawnstate = S_IMP_LOOK1;
-		seestate = S_IMP_FLY1;
-		missilestate = S_IMP_MSATK2_1;
-		painstate = S_IMP_PAIN1;
-		crashstate = S_IMP_CRASH1;
-		deathstate = S_IMP_DIE1;
-		xdeathstate = S_IMP_XDIE1;
+		Health = 80;
+		GibsHealth = -40;
+		Radius = 16.0;
+		Height = 36.0;
+		Mass = 50.0;
+		Speed = 350.0;
+		ReactionCount = 8;
+		PainChance = 200;
+		Flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT|MF_COUNTKILL;
+		Flags2 = MF2_SPAWNFLOAT|MF2_PASSMOBJ;
+		SpawnState = S_IMP_LOOK1;
+		SeeState = S_IMP_FLY1;
+		MissileState = S_IMP_MSATK2_1;
+		PainState = S_IMP_PAIN1;
+		CrashState = S_IMP_CRASH1;
+		DeathState = S_IMP_DIE1;
+		GibsDeathState = S_IMP_XDIE1;
 		SightSound = 'ImpSight';
 		ActiveSound = 'ImpActive';
 		AttackSound = 'ImpAttack2';
@@ -3078,13 +3078,13 @@ class MT_IMPCHUNK1:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOBLOCKMAP;
-		spawnstate = S_IMP_CHUNKA1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOBLOCKMAP;
+		SpawnState = S_IMP_CHUNKA1;
 	}
 };
 
@@ -3098,13 +3098,13 @@ class MT_IMPCHUNK2:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOBLOCKMAP;
-		spawnstate = S_IMP_CHUNKB1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOBLOCKMAP;
+		SpawnState = S_IMP_CHUNKB1;
 	}
 };
 
@@ -3118,18 +3118,18 @@ class MT_IMPBALL:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 8.0;
-		height = 8.0;
-		mass = 100.0;
-		speed = 350.0;
-		reactiontime = 8;
-		damage = 1;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT;
-		spawnstate = S_IMPFX1;
-		deathstate = S_IMPFXI1;
-		effects = EF_DL_WHITE;
+		Health = 1000;
+		Radius = 8.0;
+		Height = 8.0;
+		Mass = 100.0;
+		Speed = 350.0;
+		ReactionCount = 8;
+		MissileDamage = 1;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT;
+		SpawnState = S_IMPFX1;
+		DeathState = S_IMPFXI1;
+		Effects = EF_DL_WHITE;
 	}
 };
 
@@ -3143,21 +3143,21 @@ class MT_KNIGHT:Actor
 {
 	defaultproperties
 	{
-		health = 200;
-		radius = 24.0;
-		height = 78.0;
-		mass = 150.0;
-		speed = 420.0;
-		reactiontime = 8;
-		painchance = 100;
-		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ;
-		spawnstate = S_KNIGHT_STND1;
-		seestate = S_KNIGHT_WALK1;
-		meleestate = S_KNIGHT_ATK1;
-		missilestate = S_KNIGHT_ATK1;
-		painstate = S_KNIGHT_PAIN1;
-		deathstate = S_KNIGHT_DIE1;
+		Health = 200;
+		Radius = 24.0;
+		Height = 78.0;
+		Mass = 150.0;
+		Speed = 420.0;
+		ReactionCount = 8;
+		PainChance = 100;
+		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		Flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ;
+		SpawnState = S_KNIGHT_STND1;
+		SeeState = S_KNIGHT_WALK1;
+		MeleeState = S_KNIGHT_ATK1;
+		MissileState = S_KNIGHT_ATK1;
+		PainState = S_KNIGHT_PAIN1;
+		DeathState = S_KNIGHT_DIE1;
 		SightSound = 'KnightSight';
 		ActiveSound = 'KnightActive';
 		AttackSound = 'KnightAttack1';
@@ -3186,22 +3186,22 @@ class MT_KNIGHTGHOST:Actor
 {
 	defaultproperties
 	{
-		health = 200;
-		radius = 24.0;
-		height = 78.0;
-		mass = 150.0;
-		speed = 420.0;
-		reactiontime = 8;
-		painchance = 100;
-		translucency = 33;
-		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ;
-		spawnstate = S_KNIGHT_STND1;
-		seestate = S_KNIGHT_WALK1;
-		meleestate = S_KNIGHT_ATK1;
-		missilestate = S_KNIGHT_ATK1;
-		painstate = S_KNIGHT_PAIN1;
-		deathstate = S_KNIGHT_DIE1;
+		Health = 200;
+		Radius = 24.0;
+		Height = 78.0;
+		Mass = 150.0;
+		Speed = 420.0;
+		ReactionCount = 8;
+		PainChance = 100;
+		Translucency = 33;
+		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		Flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ;
+		SpawnState = S_KNIGHT_STND1;
+		SeeState = S_KNIGHT_WALK1;
+		MeleeState = S_KNIGHT_ATK1;
+		MissileState = S_KNIGHT_ATK1;
+		PainState = S_KNIGHT_PAIN1;
+		DeathState = S_KNIGHT_DIE1;
 		SightSound = 'KnightSight';
 		ActiveSound = 'KnightActive';
 		AttackSound = 'KnightAttack1';
@@ -3230,19 +3230,19 @@ class MT_KNIGHTAXE:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 10.0;
-		height = 8.0;
-		mass = 100.0;
-		speed = 315.0;
-		reactiontime = 8;
-		damage = 2;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_WINDTHRUST|MF2_THRUGHOST|MF2_NOTELEPORT;
-		spawnstate = S_SPINAXE1;
-		deathstate = S_SPINAXEX1;
+		Health = 1000;
+		Radius = 10.0;
+		Height = 8.0;
+		Mass = 100.0;
+		Speed = 315.0;
+		ReactionCount = 8;
+		MissileDamage = 2;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_WINDTHRUST|MF2_THRUGHOST|MF2_NOTELEPORT;
+		SpawnState = S_SPINAXE1;
+		DeathState = S_SPINAXEX1;
 		DeathSound = 'SkullRodHit';
-		effects = EF_DL_GREEN;
+		Effects = EF_DL_GREEN;
 	}
 };
 
@@ -3256,19 +3256,19 @@ class MT_REDAXE:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 10.0;
-		height = 8.0;
-		mass = 100.0;
-		speed = 315.0;
-		reactiontime = 8;
-		damage = 7;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_THRUGHOST|MF2_NOTELEPORT;
-		spawnstate = S_REDAXE1;
-		deathstate = S_REDAXEX1;
+		Health = 1000;
+		Radius = 10.0;
+		Height = 8.0;
+		Mass = 100.0;
+		Speed = 315.0;
+		ReactionCount = 8;
+		MissileDamage = 7;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_THRUGHOST|MF2_NOTELEPORT;
+		SpawnState = S_REDAXE1;
+		DeathState = S_REDAXEX1;
 		DeathSound = 'SkullRodHit';
-		effects = EF_DL_RED;
+		Effects = EF_DL_RED;
 	}
 };
 
@@ -3282,20 +3282,20 @@ class MT_SORCERER1:Actor
 {
 	defaultproperties
 	{
-		health = 2000;
-		radius = 28.0;
-		height = 100.0;
-		mass = 800.0;
-		speed = 560.0;
-		reactiontime = 8;
-		painchance = 56;
-		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-		flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ|MF2_BOSS;
-		spawnstate = S_SRCR1_LOOK1;
-		seestate = S_SRCR1_WALK1;
-		missilestate = S_SRCR1_ATK1;
-		painstate = S_SRCR1_PAIN1;
-		deathstate = S_SRCR1_DIE1;
+		Health = 2000;
+		Radius = 28.0;
+		Height = 100.0;
+		Mass = 800.0;
+		Speed = 560.0;
+		ReactionCount = 8;
+		PainChance = 56;
+		Flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		Flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ|MF2_BOSS;
+		SpawnState = S_SRCR1_LOOK1;
+		SeeState = S_SRCR1_WALK1;
+		MissileState = S_SRCR1_ATK1;
+		PainState = S_SRCR1_PAIN1;
+		DeathState = S_SRCR1_DIE1;
 		SightSound = 'SorcererDemonSight';
 		ActiveSound = 'SorcererDemonActive';
 		AttackSound = 'SorcererDemonAttack';
@@ -3324,18 +3324,18 @@ class MT_SRCRFX1:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 10.0;
-		height = 10.0;
-		mass = 100.0;
-		speed = 700.0;
-		reactiontime = 8;
-		damage = 10;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE;
-		spawnstate = S_SRCRFX1_1;
-		deathstate = S_SRCRFXI1_1;
-		effects = EF_DL_WHITE;
+		Health = 1000;
+		Radius = 10.0;
+		Height = 10.0;
+		Mass = 100.0;
+		Speed = 700.0;
+		ReactionCount = 8;
+		MissileDamage = 10;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE;
+		SpawnState = S_SRCRFX1_1;
+		DeathState = S_SRCRFXI1_1;
+		Effects = EF_DL_WHITE;
 	}
 };
 
@@ -3349,20 +3349,20 @@ class MT_SORCERER2:Actor
 {
 	defaultproperties
 	{
-		health = 3500;
-		radius = 16.0;
-		height = 70.0;
-		mass = 300.0;
-		speed = 490.0;
-		reactiontime = 8;
-		painchance = 32;
-		flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_COUNTKILL;
-		flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ|MF2_BOSS;
-		spawnstate = S_SOR2_LOOK1;
-		seestate = S_SOR2_WALK1;
-		missilestate = S_SOR2_ATK1;
-		painstate = S_SOR2_PAIN1;
-		deathstate = S_SOR2_DIE1;
+		Health = 3500;
+		Radius = 16.0;
+		Height = 70.0;
+		Mass = 300.0;
+		Speed = 490.0;
+		ReactionCount = 8;
+		PainChance = 32;
+		Flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_COUNTKILL;
+		Flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ|MF2_BOSS;
+		SpawnState = S_SOR2_LOOK1;
+		SeeState = S_SOR2_WALK1;
+		MissileState = S_SOR2_ATK1;
+		PainState = S_SOR2_PAIN1;
+		DeathState = S_SOR2_DIE1;
 		SightSound = 'SorcererSight';
 		ActiveSound = 'SorcererActive';
 		AttackSound = 'SorcererAttack';
@@ -3390,18 +3390,18 @@ class MT_SOR2FX1:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 10.0;
-		height = 6.0;
-		mass = 100.0;
-		speed = 700.0;
-		reactiontime = 8;
-		damage = 1;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT;
-		spawnstate = S_SOR2FX1_1;
-		deathstate = S_SOR2FXI1_1;
-		effects = EF_DL_BLUE;
+		Health = 1000;
+		Radius = 10.0;
+		Height = 6.0;
+		Mass = 100.0;
+		Speed = 700.0;
+		ReactionCount = 8;
+		MissileDamage = 1;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT;
+		SpawnState = S_SOR2FX1_1;
+		DeathState = S_SOR2FXI1_1;
+		Effects = EF_DL_BLUE;
 	}
 };
 
@@ -3415,14 +3415,14 @@ class MT_SOR2FXSPARK:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-		flags2 = MF2_NOTELEPORT|MF2_CANNOTPUSH;
-		spawnstate = S_SOR2FXSPARK1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		Flags2 = MF2_NOTELEPORT|MF2_CANNOTPUSH;
+		SpawnState = S_SOR2FXSPARK1;
 	}
 };
 
@@ -3436,18 +3436,18 @@ class MT_SOR2FX2:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 10.0;
-		height = 6.0;
-		mass = 100.0;
-		speed = 210.0;
-		reactiontime = 8;
-		damage = 10;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT;
-		spawnstate = S_SOR2FX2_1;
-		deathstate = S_SOR2FXI2_1;
-		effects = EF_DL_BLUE;
+		Health = 1000;
+		Radius = 10.0;
+		Height = 6.0;
+		Mass = 100.0;
+		Speed = 210.0;
+		ReactionCount = 8;
+		MissileDamage = 10;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT;
+		SpawnState = S_SOR2FX2_1;
+		DeathState = S_SOR2FXI2_1;
+		Effects = EF_DL_BLUE;
 	}
 };
 
@@ -3461,13 +3461,13 @@ class MT_SOR2TELEFADE:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOBLOCKMAP;
-		spawnstate = S_SOR2TELEFADE1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOBLOCKMAP;
+		SpawnState = S_SOR2TELEFADE1;
 	}
 };
 
@@ -3481,22 +3481,22 @@ class MT_MINOTAUR:Actor
 {
 	defaultproperties
 	{
-		health = 3000;
-		radius = 28.0;
-		height = 100.0;
-		mass = 800.0;
-		speed = 560.0;
-		reactiontime = 8;
-		painchance = 25;
-		damage = 7;
-		flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_COUNTKILL;
-		flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ|MF2_BOSS;
-		spawnstate = S_MNTR_LOOK1;
-		seestate = S_MNTR_WALK1;
-		meleestate = S_MNTR_ATK1_1;
-		missilestate = S_MNTR_ATK2_1;
-		painstate = S_MNTR_PAIN1;
-		deathstate = S_MNTR_DIE1;
+		Health = 3000;
+		Radius = 28.0;
+		Height = 100.0;
+		Mass = 800.0;
+		Speed = 560.0;
+		ReactionCount = 8;
+		PainChance = 25;
+		MissileDamage = 7;
+		Flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_COUNTKILL;
+		Flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ|MF2_BOSS;
+		SpawnState = S_MNTR_LOOK1;
+		SeeState = S_MNTR_WALK1;
+		MeleeState = S_MNTR_ATK1_1;
+		MissileState = S_MNTR_ATK2_1;
+		PainState = S_MNTR_PAIN1;
+		DeathState = S_MNTR_DIE1;
 		SightSound = 'MinotaurSight';
 		ActiveSound = 'MinotaurActive';
 		AttackSound = 'MinotaurAttack1';
@@ -3525,18 +3525,18 @@ class MT_MNTRFX1:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 10.0;
-		height = 6.0;
-		mass = 100.0;
-		speed = 700.0;
-		reactiontime = 8;
-		damage = 3;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE;
-		spawnstate = S_MNTRFX1_1;
-		deathstate = S_MNTRFXI1_1;
-		effects = EF_DL_WHITE;
+		Health = 1000;
+		Radius = 10.0;
+		Height = 6.0;
+		Mass = 100.0;
+		Speed = 700.0;
+		ReactionCount = 8;
+		MissileDamage = 3;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE;
+		SpawnState = S_MNTRFX1_1;
+		DeathState = S_MNTRFXI1_1;
+		Effects = EF_DL_WHITE;
 	}
 };
 
@@ -3550,19 +3550,19 @@ class MT_MNTRFX2:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 5.0;
-		height = 12.0;
-		mass = 100.0;
-		speed = 490.0;
-		reactiontime = 8;
-		damage = 4;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE;
-		spawnstate = S_MNTRFX2_1;
-		deathstate = S_MNTRFXI2_1;
+		Health = 1000;
+		Radius = 5.0;
+		Height = 12.0;
+		Mass = 100.0;
+		Speed = 490.0;
+		ReactionCount = 8;
+		MissileDamage = 4;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE;
+		SpawnState = S_MNTRFX2_1;
+		DeathState = S_MNTRFXI2_1;
 		DeathSound = 'PhoenixHit';
-		effects = EF_DL_WHITE;
+		Effects = EF_DL_WHITE;
 	}
 };
 
@@ -3576,18 +3576,18 @@ class MT_MNTRFX3:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 8.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		damage = 4;
-		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-		flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE;
-		spawnstate = S_MNTRFX3_1;
-		deathstate = S_MNTRFXI2_1;
+		Health = 1000;
+		Radius = 8.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		MissileDamage = 4;
+		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		Flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE;
+		SpawnState = S_MNTRFX3_1;
+		DeathState = S_MNTRFXI2_1;
 		DeathSound = 'PhoenixHit';
-		effects = EF_DL_WHITE;
+		Effects = EF_DL_WHITE;
 	}
 };
 
@@ -3601,13 +3601,13 @@ class MT_AKYY:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL;
-		spawnstate = S_AKYY1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL;
+		SpawnState = S_AKYY1;
 	}
 };
 
@@ -3621,13 +3621,13 @@ class MT_BKYY:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL;
-		spawnstate = S_BKYY1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL;
+		SpawnState = S_BKYY1;
 	}
 };
 
@@ -3641,13 +3641,13 @@ class MT_CKEY:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL;
-		spawnstate = S_CKYY1;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL;
+		SpawnState = S_CKYY1;
 	}
 };
 
@@ -3661,13 +3661,13 @@ class MT_AMGWNDWIMPY:Actor
 {
 	defaultproperties
 	{
-		health = 10;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL;
-		spawnstate = S_AMG1;
+		Health = 10;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL;
+		SpawnState = S_AMG1;
 	}
 };
 
@@ -3681,13 +3681,13 @@ class MT_AMGWNDHEFTY:Actor
 {
 	defaultproperties
 	{
-		health = 50;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL;
-		spawnstate = S_AMG2_1;
+		Health = 50;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL;
+		SpawnState = S_AMG2_1;
 	}
 };
 
@@ -3701,13 +3701,13 @@ class MT_AMMACEWIMPY:Actor
 {
 	defaultproperties
 	{
-		health = 20;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL;
-		spawnstate = S_AMM1;
+		Health = 20;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL;
+		SpawnState = S_AMM1;
 	}
 };
 
@@ -3721,13 +3721,13 @@ class MT_AMMACEHEFTY:Actor
 {
 	defaultproperties
 	{
-		health = 100;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL;
-		spawnstate = S_AMM2;
+		Health = 100;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL;
+		SpawnState = S_AMM2;
 	}
 };
 
@@ -3741,13 +3741,13 @@ class MT_AMCBOWWIMPY:Actor
 {
 	defaultproperties
 	{
-		health = 5;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL;
-		spawnstate = S_AMC1;
+		Health = 5;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL;
+		SpawnState = S_AMC1;
 	}
 };
 
@@ -3761,13 +3761,13 @@ class MT_AMCBOWHEFTY:Actor
 {
 	defaultproperties
 	{
-		health = 20;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL;
-		spawnstate = S_AMC2_1;
+		Health = 20;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL;
+		SpawnState = S_AMC2_1;
 	}
 };
 
@@ -3781,13 +3781,13 @@ class MT_AMSKRDWIMPY:Actor
 {
 	defaultproperties
 	{
-		health = 20;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL;
-		spawnstate = S_AMS1_1;
+		Health = 20;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL;
+		SpawnState = S_AMS1_1;
 	}
 };
 
@@ -3801,13 +3801,13 @@ class MT_AMSKRDHEFTY:Actor
 {
 	defaultproperties
 	{
-		health = 100;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL;
-		spawnstate = S_AMS2_1;
+		Health = 100;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL;
+		SpawnState = S_AMS2_1;
 	}
 };
 
@@ -3821,13 +3821,13 @@ class MT_AMPHRDWIMPY:Actor
 {
 	defaultproperties
 	{
-		health = 1;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL;
-		spawnstate = S_AMP1_1;
+		Health = 1;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL;
+		SpawnState = S_AMP1_1;
 	}
 };
 
@@ -3841,13 +3841,13 @@ class MT_AMPHRDHEFTY:Actor
 {
 	defaultproperties
 	{
-		health = 10;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL;
-		spawnstate = S_AMP2_1;
+		Health = 10;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL;
+		SpawnState = S_AMP2_1;
 	}
 };
 
@@ -3861,13 +3861,13 @@ class MT_AMBLSRWIMPY:Actor
 {
 	defaultproperties
 	{
-		health = 10;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL;
-		spawnstate = S_AMB1_1;
+		Health = 10;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL;
+		SpawnState = S_AMB1_1;
 	}
 };
 
@@ -3881,13 +3881,13 @@ class MT_AMBLSRHEFTY:Actor
 {
 	defaultproperties
 	{
-		health = 25;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_SPECIAL;
-		spawnstate = S_AMB2_1;
+		Health = 25;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_SPECIAL;
+		SpawnState = S_AMB2_1;
 	}
 };
 
@@ -3901,13 +3901,13 @@ class MT_SOUNDWIND:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOSECTOR|MF_NOBLOCKMAP;
-		spawnstate = S_SND_WIND;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOSECTOR|MF_NOBLOCKMAP;
+		SpawnState = S_SND_WIND;
 	}
 };
 
@@ -3921,13 +3921,13 @@ class MT_SOUNDWATERFALL:Actor
 {
 	defaultproperties
 	{
-		health = 1000;
-		radius = 20.0;
-		height = 16.0;
-		mass = 100.0;
-		reactiontime = 8;
-		flags = MF_NOSECTOR|MF_NOBLOCKMAP;
-		spawnstate = S_SND_WATERFALL;
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		Flags = MF_NOSECTOR|MF_NOBLOCKMAP;
+		SpawnState = S_SND_WATERFALL;
 	}
 };
 
@@ -4018,9 +4018,13 @@ __mobjinfo__
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2002/01/15 18:27:00  dj_jl
+//	Some property names with logical words starting with capital letter.
+//	Moved everything from Entity class into Actor class.
+//
 //	Revision 1.14  2002/01/12 18:00:47  dj_jl
 //	Sound names initialized as names
-//
+//	
 //	Revision 1.13  2002/01/11 18:19:41  dj_jl
 //	Started to use names in progs
 //	

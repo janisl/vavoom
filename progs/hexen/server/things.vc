@@ -179,11 +179,11 @@ boolean EV_ThingProjectile(int *args, boolean gravity)
 		newMobj->velocity.x = speed * cos(angle) * 35.0;
 		newMobj->velocity.y = speed * sin(angle) * 35.0;
 		newMobj->velocity.z = vspeed * 35.0;
-		newMobj->flags2 |= MF2_DROPPED;	// Don't respawn
+		newMobj->Flags2 |= MF2_DROPPED;	// Don't respawn
 		if (gravity)
 		{
-			newMobj->flags &= ~MF_NOGRAVITY;
-			newMobj->flags2 |= MF2_LOGRAV;
+			newMobj->Flags &= ~MF_NOGRAVITY;
+			newMobj->Flags2 |= MF2_LOGRAV;
 		}
 		if (CheckMissileSpawn(newMobj))
 		{
@@ -220,7 +220,7 @@ boolean EV_ThingSpawn(int *args, boolean fog)
 		newMobj =
 			P_SpawnMobj(mobj->origin.x, mobj->origin.y, mobj->origin.z,
 			moType);
-		if (newMobj->flags2 & MF2_FLOATBOB)
+		if (newMobj->Flags2 & MF2_FLOATBOB)
 		{
 			newMobj->origin.z = mobj->origin.z - mobj->floorz;
 			SetOrigin(newMobj, newMobj->origin);
@@ -238,8 +238,8 @@ boolean EV_ThingSpawn(int *args, boolean fog)
 					mobj->origin.z + TELEFOGHEIGHT, MT_TFOG);
 				StartSoundName(fogMobj, 'Teleport', CHAN_VOICE);
 			}
-			newMobj->flags2 |= MF2_DROPPED;	// Don't respawn
-			if (newMobj->flags2 & MF2_FLOATBOB)
+			newMobj->Flags2 |= MF2_DROPPED;	// Don't respawn
+			if (newMobj->Flags2 & MF2_FLOATBOB)
 			{
 				newMobj->special1f = newMobj->origin.z - newMobj->floorz;
 			}
@@ -257,12 +257,12 @@ boolean EV_ThingSpawn(int *args, boolean fog)
 
 boolean ActivateThing(mobj_t * mobj)
 {
-	if (mobj->flags & MF_COUNTKILL)
+	if (mobj->Flags & MF_COUNTKILL)
 	{
 		// Monster
-		if (mobj->flags2 & MF2_DORMANT)
+		if (mobj->Flags2 & MF2_DORMANT)
 		{
-			mobj->flags2 &= ~MF2_DORMANT;
+			mobj->Flags2 &= ~MF2_DORMANT;
 			mobj->time = 0.1;
 			return true;
 		}
@@ -291,7 +291,7 @@ boolean ActivateThing(mobj_t * mobj)
 		if (mobj->args[0] == 0)
 		{
 			StartSoundName(mobj, 'ThrustSpikeLower', CHAN_VOICE);
-			mobj->translucency = 0;
+			mobj->Translucency = 0;
 			if (mobj->args[1])
 				SetMobjState(mobj, S_BTHRUSTRAISE1);
 			else
@@ -304,7 +304,7 @@ boolean ActivateThing(mobj_t * mobj)
 		StartSoundName(mobj, 'Ignite', CHAN_VOICE);
 		break;
 	case MT_ZBELL:
-		if (mobj->health > 0)
+		if (mobj->Health > 0)
 		{
 			mobj->Damage(NULL, NULL, 10);	// 'ring' the bell
 		}
@@ -364,12 +364,12 @@ boolean EV_ThingActivate(int tid)
 
 boolean DeactivateThing(mobj_t * mobj)
 {
-	if (mobj->flags & MF_COUNTKILL)
+	if (mobj->Flags & MF_COUNTKILL)
 	{
 		// Monster
-		if (!(mobj->flags2 & MF2_DORMANT))
+		if (!(mobj->Flags2 & MF2_DORMANT))
 		{
-			mobj->flags2 |= MF2_DORMANT;
+			mobj->Flags2 |= MF2_DORMANT;
 			mobj->time = -1.0;
 			return true;
 		}
@@ -487,7 +487,7 @@ boolean EV_ThingDestroy(int tid)
 	searcher = -1;
 	while ((mobj = P_FindMobjFromTID(tid, &searcher)) != NULL)
 	{
-		if (mobj->flags & MF_SHOOTABLE)
+		if (mobj->Flags & MF_SHOOTABLE)
 		{
 			mobj->Damage(NULL, NULL, 10000);
 			success = true;
@@ -529,7 +529,7 @@ int ThingCount(int type, int tid)
 			}
 			else if (moType == Ent.Class)
 			{
-				if (Ent.flags & MF_COUNTKILL && Ent.health <= 0)
+				if (Ent.Flags & MF_COUNTKILL && Ent.Health <= 0)
 				{
 					// Don't count dead monsters
 					continue;
@@ -548,7 +548,7 @@ int ThingCount(int type, int tid)
 				// Doesn't match
 				continue;
 			}
-			if (Ent.flags & MF_COUNTKILL && Ent.health <= 0)
+			if (Ent.Flags & MF_COUNTKILL && Ent.Health <= 0)
 			{
 				// Don't count dead monsters
 				continue;
@@ -562,6 +562,10 @@ int ThingCount(int type, int tid)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.12  2002/01/12 18:02:48  dj_jl
 //  Replaced some C style casts with dynamic casts
 //

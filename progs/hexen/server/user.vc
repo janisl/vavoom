@@ -132,8 +132,8 @@ void MovePlayer(player_t * player)
 	// Do not let the player control movement
 	//  if not onground.
 	onground = (player->mo->origin.z <= player->mo->floorz)
-		|| (player->mo->flags2 & MF2_ONMOBJ);
-	if (!(onground || player->mo->flags2 & MF2_FLY))
+		|| (player->mo->Flags2 & MF2_ONMOBJ);
+	if (!(onground || player->mo->Flags2 & MF2_FLY))
 	{
 		//  not on ground, so little effect on velocity
 		forward *= air_control;
@@ -143,7 +143,7 @@ void MovePlayer(player_t * player)
 	AngleVectors(&player->mo->angles, &vforward, &vright, &vup);
 
 	wishvel = forward * vforward + side * vright;
-	if (onground && !(player->mo->flags2 & MF2_FLY))
+	if (onground && !(player->mo->Flags2 & MF2_FLY))
 	{
 		wishvel.z = 0.0;
 	}
@@ -165,10 +165,10 @@ void MovePlayer(player_t * player)
 		if (fly != TOCENTER)
 		{
 			player->flyheight = fly * 2;
-			if (!(player->mo->flags2 & MF2_FLY))
+			if (!(player->mo->Flags2 & MF2_FLY))
 			{
-				player->mo->flags2 |= MF2_FLY;
-				player->mo->flags |= MF_NOGRAVITY;
+				player->mo->Flags2 |= MF2_FLY;
+				player->mo->Flags |= MF_NOGRAVITY;
 				if (player->mo->velocity.z <= -39.0 * 35.0)
 				{
 					// stop falling scream
@@ -178,15 +178,15 @@ void MovePlayer(player_t * player)
 		}
 		else
 		{
-			player->mo->flags2 &= ~MF2_FLY;
-			player->mo->flags &= ~MF_NOGRAVITY;
+			player->mo->Flags2 &= ~MF2_FLY;
+			player->mo->Flags &= ~MF_NOGRAVITY;
 		}
 	}
 	else if (fly > 0)
 	{
 		PlayerUseArtifact(player, arti_fly);
 	}
-	if (player->mo->flags2 & MF2_FLY)
+	if (player->mo->Flags2 & MF2_FLY)
 	{
 		player->mo->velocity.z = itof(player->flyheight) * 35.0 + wishvel.z;
 		if (player->flyheight)
@@ -204,7 +204,7 @@ void MovePlayer(player_t * player)
 		{
 			player->mo->velocity.z = 9.0 * 35.0;
 		}
-		player->mo->flags2 &= ~MF2_ONMOBJ;
+		player->mo->Flags2 &= ~MF2_ONMOBJ;
 		player->jumpTics = 18;
 	}
 }
@@ -224,22 +224,22 @@ void CheckWaterJump(player_t * player)
 	// check for a jump-out-of-water
 	AngleVector(&player->mo->angles, &vforward);
 	start = player->mo->origin;
-	start.z += player->mo->height * 0.5 + 8.0;
+	start.z += player->mo->Height * 0.5 + 8.0;
 	vforward.z = 0.0;
 	vforward = Normalize(vforward);
 	end = start + vforward * 24.0;
 	if (!TraceLine(start, end))
 	{
 		// solid at waist
-		start.z = player->mo->origin.z + player->mo->height;
+		start.z = player->mo->origin.z + player->mo->Height;
 		end = start + vforward * 24.0;
 		player->movedir = trace_plane_normal * -50.0;
 		if (TraceLine(start, end))
 		{
 			// open at eye level
-			player->mo->flags |= MF_WATERJUMP;
+			player->mo->Flags |= MF_WATERJUMP;
 			player->mo->velocity.z = 350.0;
-			player->mo->reactiontime = 70;	// safety net
+			player->mo->ReactionTime = 2.0;	// safety net
 		}
 	}
 }
@@ -262,7 +262,7 @@ void WaterMove(player_t * player)
 	// Do not let the player control movement
 	//  if not onground.
 	onground = (player->mo->origin.z <= player->mo->floorz)
-		|| (player->mo->flags2 & MF2_ONMOBJ);
+		|| (player->mo->Flags2 & MF2_ONMOBJ);
 
 	AngleVectors(&player->mo->angles, &vforward, &vright, &vup);
 
@@ -334,10 +334,10 @@ void WaterMove(player_t * player)
 
 void WaterJump(player_t * player)
 {
-	if (!player->mo->reactiontime || !player->mo->waterlevel)
+	if (!player->mo->ReactionTime || !player->mo->waterlevel)
 	{
-		player->mo->flags &= ~MF_WATERJUMP;
-		player->mo->reactiontime = 0;
+		player->mo->Flags &= ~MF_WATERJUMP;
+		player->mo->ReactionTime = 0.0;
 	}
 	player->mo->velocity.x = player->movedir.x;
 	player->mo->velocity.y = player->movedir.y;
@@ -390,7 +390,7 @@ void CalcHeight(player_t * player)
 	if (player->bob > MAXBOB)
 		player->bob = MAXBOB;
 
-	if (player->mo->flags2 & MF2_FLY && !onground)
+	if (player->mo->Flags2 & MF2_FLY && !onground)
 	{
 		player->bob = 0.5;
 	}
@@ -648,7 +648,7 @@ void PlayerImpulse(player_t * player)
 		{
 			player->arti = NUMARTIFACTS;
 		}
-		else if (impulse == 12 && (player->mo->health < MAXHEALTH))
+		else if (impulse == 12 && (player->mo->Health < MAXHEALTH))
 		{
 			player->arti = arti_health;
 		}
@@ -714,15 +714,15 @@ void PlayerThink(player_t * player)
 
 	// fixme: do this in the cheat code
 	if (player->cheats & CF_NOCLIP)
-		player->mo->flags |= MF_NOCLIP;
+		player->mo->Flags |= MF_NOCLIP;
 	else
-		player->mo->flags &= ~MF_NOCLIP;
+		player->mo->Flags &= ~MF_NOCLIP;
 
-	if (player->mo->flags & MF_JUSTATTACKED)
+	if (player->mo->Flags & MF_JUSTATTACKED)
 	{
 		player->forwardmove = 100.0;
 		player->sidemove = 0.0;
-		player->mo->flags &= ~MF_JUSTATTACKED;
+		player->mo->Flags &= ~MF_JUSTATTACKED;
 	}
 
 	player->worldTimer++;
@@ -744,11 +744,13 @@ void PlayerThink(player_t * player)
 	}
 
 	//  Move around.
-	//  Reactiontime is used to prevent movement for a bit after a teleport.
-	if (player->mo->reactiontime)
+	//  ReactionTime is used to prevent movement for a bit after a teleport.
+	if (player->mo->ReactionTime)
 	{
-		player->mo->reactiontime--;
-		if (player->mo->flags & MF_WATERJUMP)
+		player->mo->ReactionTime -= frametime;
+		if (player->mo->ReactionTime <= 0.0)
+			player->mo->ReactionTime = 0.0;
+		if (player->mo->Flags & MF_WATERJUMP)
 			WaterJump(player);
 	}
 	else
@@ -765,7 +767,7 @@ void PlayerThink(player_t * player)
 			if (speedMo)
 			{
 				speedMo->angles.yaw = pmo->angles.yaw;
-				speedMo->translation = pmo->translation;
+				speedMo->Translation = pmo->Translation;
 				speedMo->target = pmo;
 				speedMo->special1 = player->pclass;
 				if (speedMo->special1 > 2)
@@ -870,15 +872,15 @@ void PlayerThink(player_t * player)
 		if (player->pclass == PCLASS_CLERIC)
 		{
 #ifdef FIXME
-			if (mobj->flags2 & MF2_DONTDRAW)
+			if (mobj->Flags2 & MF2_DONTDRAW)
 			{
 				mobj->translucency = 100;
 			}
-			else if (mobj->flags & MF_SHADOW)
+			else if (mobj->Flags & MF_SHADOW)
 			{
 				mobj->translucency = 66;
 			}
-			else if (mobj->flags & MF_ALTSHADOW)
+			else if (mobj->Flags & MF_ALTSHADOW)
 			{
 				mobj->translucency = 33;
 			}
@@ -886,44 +888,44 @@ void PlayerThink(player_t * player)
 			{
 				mobj->translucency = 0;
 			}
-			if (!(level->tictime & 7) && player->mo->flags & MF_SHADOW
-				&& !(player->mo->flags2 & MF2_DONTDRAW))
+			if (!(level->tictime & 7) && player->mo->Flags & MF_SHADOW
+				&& !(player->mo->Flags2 & MF2_DONTDRAW))
 			{
-				player->mo->flags &= ~MF_SHADOW;
-				if (!(player->mo->flags & MF_ALTSHADOW))
+				player->mo->Flags &= ~MF_SHADOW;
+				if (!(player->mo->Flags & MF_ALTSHADOW))
 				{
-					player->mo->flags2 |= MF2_DONTDRAW | MF2_NONSHOOTABLE;
+					player->mo->Flags2 |= MF2_DONTDRAW | MF2_NONSHOOTABLE;
 				}
 			}
 			if (!(level->tictime & 31))
 			{
-				if (player->mo->flags2 & MF2_DONTDRAW)
+				if (player->mo->Flags2 & MF2_DONTDRAW)
 				{
-					if (!(player->mo->flags & MF_SHADOW))
+					if (!(player->mo->Flags & MF_SHADOW))
 					{
-						player->mo->flags |= MF_SHADOW | MF_ALTSHADOW;
+						player->mo->Flags |= MF_SHADOW | MF_ALTSHADOW;
 					}
 					else
 					{
-						player->mo->flags2 &=
+						player->mo->Flags2 &=
 							~(MF2_DONTDRAW | MF2_NONSHOOTABLE);
 					}
 				}
 				else
 				{
-					player->mo->flags |= MF_SHADOW;
-					player->mo->flags &= ~MF_ALTSHADOW;
+					player->mo->Flags |= MF_SHADOW;
+					player->mo->Flags &= ~MF_ALTSHADOW;
 				}
 			}
 #endif
 		}
 		if (!(--player->powers[pw_invulnerability]))
 		{
-			player->mo->flags2 &= ~(MF2_INVULNERABLE | MF2_REFLECTIVE);
+			player->mo->Flags2 &= ~(MF2_INVULNERABLE | MF2_REFLECTIVE);
 			if (player->pclass == PCLASS_CLERIC)
 			{
-				player->mo->flags2 &= ~(MF2_NONSHOOTABLE);
-				player->mo->translucency = 0;
+				player->mo->Flags2 &= ~(MF2_NONSHOOTABLE);
+				player->mo->Translucency = 0;
 			}
 		}
 	}
@@ -945,8 +947,8 @@ void PlayerThink(player_t * player)
 			{
 //FIXME             player->centering = true;
 			}
-			player->mo->flags2 &= ~MF2_FLY;
-			player->mo->flags &= ~MF_NOGRAVITY;
+			player->mo->Flags2 &= ~MF2_FLY;
+			player->mo->Flags &= ~MF_NOGRAVITY;
 		}
 	}
 
@@ -1067,7 +1069,7 @@ void SB_PaletteFlash(player_t * player)
 		}
 		player->palette += STARTBONUSPALS;
 	}
-	else if (player->mo->flags2 & MF2_ICEDAMAGE)
+	else if (player->mo->Flags2 & MF2_ICEDAMAGE)
 	{	// Frozen player
 		player->palette = STARTICEPAL;
 	}
@@ -1136,7 +1138,7 @@ void SetViewPos(player_t * player)
 			player->stats.flags |= SBF_POWER_MINOTAUR;
 		}
 	}
-	if (!player->mo || player->mo->flags2 & MF2_FLY)
+	if (!player->mo || player->mo->Flags2 & MF2_FLY)
 	{
 		player->stats.flags |= SBF_IN_FLIGHT;
 	}
@@ -1163,7 +1165,7 @@ boolean ArtiHealRadius(player_t * player)
 	{
 		if (!mo->player)
 			continue;
-		if (mo->health <= 0)
+		if (mo->Health <= 0)
 			continue;
 		dist = MobjDist(pmo, mo);
 		if (dist > HEAL_RADIUS_DIST)
@@ -1573,7 +1575,7 @@ void TeleportOther(mobj_t * victim)
 	else
 	{
 		// If death action, run it upon teleport
-		if (victim->flags & MF_COUNTKILL && victim->special)
+		if (victim->Flags & MF_COUNTKILL && victim->special)
 		{
 			P_RemoveMobjFromTIDList(victim);
 			ExecuteLineSpecial(victim->special, &victim->args[0],
@@ -1688,7 +1690,7 @@ void G_PlayerExitMap(int playerNumber, boolean clusterChange)
 		player->morphTics = 0;
 	}
 	player->mo->angles.pitch = 0.0;
-	player->mo->translucency = 0;	// Remove invisibility
+	player->mo->Translucency = 0;	// Remove invisibility
 	player->extralight = 0;	// Remove weapon flashes
 	player->fixedcolormap = 0;	// Remove torch
 	player->damagecount = 0;	// No palette changes
@@ -1828,24 +1830,24 @@ void NetGameReborn(int playernum)
 
 void SetPlayerColor(player_t * player)
 {
-	player->mo->translation = 0;
+	player->mo->Translation = 0;
 	if (player->pclass == PCLASS_FIGHTER)
 	{
 		// The first type should be blue, and the third should be the
 		// Fighter's original gold color
 		if (player->color == 0)
 		{
-			player->mo->translation = 2;
+			player->mo->Translation = 2;
 		}
 		else if (player->color != 2)
 		{
-			player->mo->translation = player->color;
+			player->mo->Translation = player->color;
 		}
 	}
 	else if (player->color)
 	{
 		// Set color translation bits for player sprites
-		player->mo->translation =
+		player->mo->Translation =
 			player->pclass * (MAXPLAYERS - 1) + player->color;
 	}
 }
@@ -1969,6 +1971,10 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.19  2002/01/11 18:19:42  dj_jl
 //  Started to use names in progs
 //

@@ -81,14 +81,14 @@ void Actor::A_MinotaurDecide(void)
 	}
 	StartSoundName(this, 'MinotaurSight', CHAN_VOICE);
 	dist = MobjDist(this, target);
-	if (target->origin.z + target->height > origin.z &&
-		target->origin.z + target->height < origin.z + height &&
+	if (target->origin.z + target->Height > origin.z &&
+		target->origin.z + target->Height < origin.z + Height &&
 		dist < 8.0 * 64.0 && dist > 1.0 * 64.0 && P_Random() < 150)
 	{
 		// Charge attack
 		// Don't call the state function right away
 		SetMobjStateNF(this, S_MNTR_ATK4_1);
-		flags |= MF_SKULLFLY;
+		Flags |= MF_SKULLFLY;
 		A_FaceTarget();
 		velocity = Normalize(target->origin - origin) * MNTR_CHARGE_SPEED;
 		special1 = 35 / 2;	// Charge duration
@@ -208,8 +208,8 @@ void Actor::A_MinotaurCharge(void)
 	}
 	else
 	{
-		flags &= ~MF_SKULLFLY;
-		SetMobjState(this, seestate);
+		Flags &= ~MF_SKULLFLY;
+		SetMobjState(this, SeeState);
 	}
 }
 
@@ -237,6 +237,10 @@ void Actor::A_MntrFloorFire(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.11  2002/01/11 18:19:41  dj_jl
 //  Started to use names in progs
 //

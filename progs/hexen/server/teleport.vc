@@ -58,12 +58,12 @@ boolean PIT_StompThing(mobj_t * thing)
 {
 	float blockdist;
 
-	if (!(thing->flags & MF_SHOOTABLE))
+	if (!(thing->Flags & MF_SHOOTABLE))
 	{
 		return true;
 	}
 
-	blockdist = thing->radius + teleport_thing->radius;
+	blockdist = thing->Radius + teleport_thing->Radius;
 
 	if (fabs(thing->origin.x - teleport_x) >= blockdist
 		|| fabs(thing->origin.y - teleport_y) >= blockdist)
@@ -79,7 +79,7 @@ boolean PIT_StompThing(mobj_t * thing)
 	}
 
 	//  Check if allowed to stomp things
-	if (!(teleport_thing->flags2 & MF2_TELESTOMP))
+	if (!(teleport_thing->Flags2 & MF2_TELESTOMP))
 	{
 		return false;
 	}
@@ -111,10 +111,10 @@ boolean P_TeleportMove(mobj_t * thing, float x, float y)
 	teleport_y = y;
 
 	// stomp on any things contacted
-	xl = MapBlock(x - thing->radius - level->bmaporgx - MAXRADIUS);
-	xh = MapBlock(x + thing->radius - level->bmaporgx + MAXRADIUS);
-	yl = MapBlock(y - thing->radius - level->bmaporgy - MAXRADIUS);
-	yh = MapBlock(y + thing->radius - level->bmaporgy + MAXRADIUS);
+	xl = MapBlock(x - thing->Radius - level->bmaporgx - MAXRADIUS);
+	xh = MapBlock(x + thing->Radius - level->bmaporgx + MAXRADIUS);
+	yl = MapBlock(y - thing->Radius - level->bmaporgy - MAXRADIUS);
+	yh = MapBlock(y + thing->Radius - level->bmaporgy + MAXRADIUS);
 
 	for (bx = xl; bx <= xh; bx++)
 		for (by = yl; by <= yh; by++)
@@ -164,9 +164,9 @@ boolean P_Teleport(mobj_t * thing, float x, float y, float angle,
 		if (player->powers[pw_flight] && aboveFloor)
 		{
 			thing->origin.z = thing->floorz + aboveFloor;
-			if (thing->origin.z + thing->height > thing->ceilingz)
+			if (thing->origin.z + thing->Height > thing->ceilingz)
 			{
-				thing->origin.z = thing->ceilingz - thing->height;
+				thing->origin.z = thing->ceilingz - thing->Height;
 			}
 			player->vieworg.z = thing->origin.z + player->viewheight;
 		}
@@ -180,12 +180,12 @@ boolean P_Teleport(mobj_t * thing, float x, float y, float angle,
 			}
 		}
 	}
-	else if (thing->flags & MF_MISSILE)
+	else if (thing->Flags & MF_MISSILE)
 	{
 		thing->origin.z = thing->floorz + aboveFloor;
-		if (thing->origin.z + thing->height > thing->ceilingz)
+		if (thing->origin.z + thing->Height > thing->ceilingz)
 		{
-			thing->origin.z = thing->ceilingz - thing->height;
+			thing->origin.z = thing->ceilingz - thing->Height;
 		}
 	}
 	else
@@ -195,21 +195,22 @@ boolean P_Teleport(mobj_t * thing, float x, float y, float angle,
 	// Spawn teleport fog at source and destination
 	if (useFog)
 	{
-		fogDelta = thing->flags & MF_MISSILE ? 0.0 : TELEFOGHEIGHT;
+		fogDelta = thing->Flags & MF_MISSILE ? 0.0 : TELEFOGHEIGHT;
 		fog = P_SpawnMobj(oldx, oldy, oldz + fogDelta, MT_TFOG);
 		StartSoundName(fog, 'Teleport', CHAN_VOICE);
 		fog = P_SpawnMobj(x + 20.0 * cos(angle),
 			y + 20.0 * sin(angle), thing->origin.z + fogDelta, MT_TFOG);
 		StartSoundName(fog, 'Teleport', CHAN_VOICE);
 		if (thing->player && !thing->player->powers[pw_speed])
-		{	// Freeze player for about .5 sec
-			thing->reactiontime = 18;
+		{
+			// Freeze player for about .5 sec
+			thing->ReactionTime = 0.5;
 		}
 		thing->angles.yaw = angle;
 		if (thing->player)
 			thing->player->fixangle = true;
 	}
-	if (thing->flags2 & MF2_FLOORCLIP)
+	if (thing->Flags2 & MF2_FLOORCLIP)
 	{
 		if (thing->origin.z == thing->subsector->sector->floorheight &&
 			P_GetThingFloorType(thing) > FLOOR_SOLID)
@@ -221,10 +222,10 @@ boolean P_Teleport(mobj_t * thing, float x, float y, float angle,
 			thing->floorclip = 0.0;
 		}
 	}
-	if (thing->flags & MF_MISSILE)
+	if (thing->Flags & MF_MISSILE)
 	{
-		thing->velocity.x = thing->speed * cos(angle);
-		thing->velocity.y = thing->speed * sin(angle);
+		thing->velocity.x = thing->Speed * cos(angle);
+		thing->velocity.y = thing->Speed * sin(angle);
 	}
 	else if (useFog)	// no fog doesn't alter the player's momentums
 	{
@@ -250,7 +251,7 @@ boolean EV_Teleport(int tid, mobj_t * thing, boolean fog)
 	{	// Teleport function called with an invalid mobj
 		return false;
 	}
-	if (thing->flags2 & MF2_NOTELEPORT)
+	if (thing->Flags2 & MF2_NOTELEPORT)
 	{
 		return false;
 	}
@@ -278,6 +279,10 @@ boolean EV_Teleport(int tid, mobj_t * thing, boolean fog)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.8  2002/01/11 18:19:42  dj_jl
 //  Started to use names in progs
 //

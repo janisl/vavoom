@@ -77,7 +77,7 @@ void Actor::A_Feathers(void)
 	int count;
 	mobj_t *mo;
 
-	if (health > 0)
+	if (Health > 0)
 	{
 		// Pain
 		count = P_Random() < 32 ? 2 : 1;
@@ -138,6 +138,10 @@ void Actor::A_ChicPain(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.7  2002/01/07 12:23:17  dj_jl
 //  Changed copyright year
 //

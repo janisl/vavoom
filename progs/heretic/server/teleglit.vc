@@ -75,7 +75,7 @@ void Actor::A_SpawnTeleGlitter2(void)
 
 void Actor::A_AccTeleGlitter(void)
 {
-	if (++health > 35)
+	if (++Health > 35)
 	{
 		velocity.z += velocity.z / 2.0;
 	}
@@ -84,6 +84,10 @@ void Actor::A_AccTeleGlitter(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.6  2002/01/07 12:23:18  dj_jl
 //  Changed copyright year
 //

@@ -83,10 +83,10 @@ boolean PIT_CheckThing(mobj_t * thing)
 {
 	float blockdist;
 
-	if (!(thing->flags & MF_SOLID))
+	if (!(thing->Flags & MF_SOLID))
 		return true;
 
-	blockdist = thing->radius + tmthing->radius;
+	blockdist = thing->Radius + tmthing->Radius;
 
 	if (fabs(thing->origin.x - tmx) >= blockdist
 		|| fabs(thing->origin.y - tmy) >= blockdist)
@@ -99,7 +99,7 @@ boolean PIT_CheckThing(mobj_t * thing)
 	if (thing == tmthing)
 		return true;
 
-	if (tmthing->flags2 & MF2_PASSMOBJ)
+	if (tmthing->Flags2 & MF2_PASSMOBJ)
 	{
 		// check if a mobj passed over/under another object
 		if ((tmthing->Class == MT_IMP || tmthing->Class == MT_WIZARD)
@@ -108,11 +108,11 @@ boolean PIT_CheckThing(mobj_t * thing)
 			// don't let imps/wizards fly over other imps/wizards
 			return false;
 		}
-		if (tmthing->origin.z > thing->origin.z + thing->height)
+		if (tmthing->origin.z > thing->origin.z + thing->Height)
 		{
 			return true;
 		}
-		if (tmthing->origin.z + tmthing->height < thing->origin.z)
+		if (tmthing->origin.z + tmthing->Height < thing->origin.z)
 		{
 			// under thing
 			return true;
@@ -178,7 +178,7 @@ boolean PIT_CheckLine(line_t * ld)
 	hit_point =
 		tmpos - (DotProduct(tmpos, ld->normal) - ld->dist) * ld->normal;
 	open = LineOpenings(ld, hit_point);
-	open = FindOpening(open, tmz, tmz + tmthing->height);
+	open = FindOpening(open, tmz, tmz + tmthing->Height);
 
 	if (open)
 	{
@@ -248,17 +248,17 @@ boolean P_CheckPosition(mobj_t * thing, float x, float y)
 	sec_region_t *reg;
 
 	tmthing = thing;
-	tmflags = thing->flags;
+	tmflags = thing->Flags;
 
 	tmx = x;
 	tmy = y;
 	tmz = thing->origin.z;
 	tmpos = vector(x, y, tmz);
 
-	tmbbox[BOXTOP] = y + tmthing->radius;
-	tmbbox[BOXBOTTOM] = y - tmthing->radius;
-	tmbbox[BOXRIGHT] = x + tmthing->radius;
-	tmbbox[BOXLEFT] = x - tmthing->radius;
+	tmbbox[BOXTOP] = y + tmthing->Radius;
+	tmbbox[BOXBOTTOM] = y - tmthing->Radius;
+	tmbbox[BOXRIGHT] = x + tmthing->Radius;
+	tmbbox[BOXLEFT] = x - tmthing->Radius;
 
 	newsubsec = PointInSubsector(x, y);
 	ceilingline = NULL;
@@ -269,7 +269,7 @@ boolean P_CheckPosition(mobj_t * thing, float x, float y)
 	// will adjust them.
 	gap =
 		FindThingGap(newsubsec->sector->botregion, tmpos, tmz,
-		tmz + thing->height);
+		tmz + thing->Height);
 	reg = gap;
 	while (reg->prev && reg->floor->flags & SPF_NOBLOCKING)
 		reg = reg->prev;
@@ -328,10 +328,10 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 	boolean solid;
 	int damage;
 
-	if (!(thing->flags & (MF_SOLID | MF_SPECIAL | MF_SHOOTABLE)))
+	if (!(thing->Flags & (MF_SOLID | MF_SPECIAL | MF_SHOOTABLE)))
 		return true;
 
-	blockdist = thing->radius + tmthing->radius;
+	blockdist = thing->Radius + tmthing->Radius;
 
 	if (fabs(thing->origin.x - tmx) >= blockdist
 		|| fabs(thing->origin.y - tmy) >= blockdist)
@@ -344,7 +344,7 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 	if (thing == tmthing)
 		return true;
 
-	if (tmthing->flags2 & MF2_PASSMOBJ)
+	if (tmthing->Flags2 & MF2_PASSMOBJ)
 	{
 		// check if a mobj passed over/under another object
 		if ((tmthing->Class == MT_IMP || tmthing->Class == MT_WIZARD)
@@ -353,13 +353,13 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 			// don't let imps/wizards fly over other imps/wizards
 			return false;
 		}
-		if (tmthing->origin.z > thing->origin.z + thing->height
-			&& !(thing->flags & MF_SPECIAL))
+		if (tmthing->origin.z > thing->origin.z + thing->Height
+			&& !(thing->Flags & MF_SPECIAL))
 		{
 			return true;
 		}
-		else if (tmthing->origin.z + tmthing->height < thing->origin.z
-			&& !(thing->flags & MF_SPECIAL))
+		else if (tmthing->origin.z + tmthing->Height < thing->origin.z
+			&& !(thing->Flags & MF_SPECIAL))
 		{
 			// under thing
 			return true;
@@ -367,28 +367,28 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 	}
 
 	// check for skulls slamming into things
-	if (tmthing->flags & MF_SKULLFLY)
+	if (tmthing->Flags & MF_SKULLFLY)
 	{
-		damage = ((P_Random() % 8) + 1) * tmthing->damage;
+		damage = ((P_Random() % 8) + 1) * tmthing->MissileDamage;
 		thing->Damage(tmthing, tmthing, damage);
-		tmthing->flags &= ~MF_SKULLFLY;
+		tmthing->Flags &= ~MF_SKULLFLY;
 		tmthing->velocity = vector(0.0, 0.0, 0.0);
-		SetMobjState(tmthing, tmthing->seestate);
+		SetMobjState(tmthing, tmthing->SeeState);
 		return false;
 	}
 
 	// missiles can hit other things
-	if (tmthing->flags & MF_MISSILE)
+	if (tmthing->Flags & MF_MISSILE)
 	{
 		// Check for passing through a ghost
-		if (thing->translucency && (tmthing->flags2 & MF2_THRUGHOST))
+		if (thing->Translucency && (tmthing->Flags2 & MF2_THRUGHOST))
 		{
 			return true;
 		}
 		// see if it went over / under
-		if (tmthing->origin.z > thing->origin.z + thing->height)
+		if (tmthing->origin.z > thing->origin.z + thing->Height)
 			return true;	// overhead
-		if (tmthing->origin.z + tmthing->height < thing->origin.z)
+		if (tmthing->origin.z + tmthing->Height < thing->origin.z)
 			return true;	// underneath
 
 		if (tmthing->target && tmthing->target->Class == thing->Class)
@@ -406,24 +406,24 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 			}
 		}
 
-		if (!(thing->flags & MF_SHOOTABLE))
+		if (!(thing->Flags & MF_SHOOTABLE))
 		{
 			// didn't do any damage
-			return !(thing->flags & MF_SOLID);
+			return !(thing->Flags & MF_SOLID);
 		}
 
-		if (tmthing->flags2 & MF2_RIP)
+		if (tmthing->Flags2 & MF2_RIP)
 		{
-			if (!(thing->flags & MF_NOBLOOD))
+			if (!(thing->Flags & MF_NOBLOOD))
 			{
 				// Ok to spawn some blood
 				P_RipperBlood(tmthing);
 			}
 			StartSoundName(tmthing, 'RipSlop', CHAN_VOICE);
-			damage = ((P_Random() & 3) + 2) * tmthing->damage;
+			damage = ((P_Random() & 3) + 2) * tmthing->MissileDamage;
 			thing->Damage(tmthing, tmthing->target, damage);
-			if (thing->flags2 & MF2_PUSHABLE &&
-				!(tmthing->flags2 & MF2_CANNOTPUSH))
+			if (thing->Flags2 & MF2_PUSHABLE &&
+				!(tmthing->Flags2 & MF2_CANNOTPUSH))
 			{
 				// Push thing
 				thing->velocity.x += tmthing->velocity.x / 4.0;
@@ -433,10 +433,10 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 			return true;
 		}
 		// Do damage
-		damage = ((P_Random() % 8) + 1) * tmthing->damage;
+		damage = ((P_Random() % 8) + 1) * tmthing->MissileDamage;
 		if (damage)
 		{
-			if (!(thing->flags & MF_NOBLOOD) && P_Random() < 192)
+			if (!(thing->Flags & MF_NOBLOOD) && P_Random() < 192)
 			{
 				P_BloodSplatter(tmthing->origin.x, tmthing->origin.y,
 					tmthing->origin.z, thing);
@@ -447,7 +447,7 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 		return false;
 	}
 
-	if (thing->flags2 & MF2_PUSHABLE && !(tmthing->flags2 & MF2_CANNOTPUSH))
+	if (thing->Flags2 & MF2_PUSHABLE && !(tmthing->Flags2 & MF2_CANNOTPUSH))
 	{
 		// Push thing
 		thing->velocity.x += tmthing->velocity.x / 4.0;
@@ -455,10 +455,10 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 	}
 
 	// check for special pickup
-	if (thing->flags & MF_SPECIAL)
+	if (thing->Flags & MF_SPECIAL)
 	{
-		solid = thing->flags & MF_SOLID;
-		if (tmthing->flags & MF_PICKUP)
+		solid = thing->Flags & MF_SOLID;
+		if (tmthing->Flags & MF_PICKUP)
 		{
 			// can remove thing
 			P_TouchSpecialThing(thing, tmthing);
@@ -466,7 +466,7 @@ boolean PIT_CheckRelThing(mobj_t * thing)
 		return !solid;
 	}
 
-	return !(thing->flags & MF_SOLID);
+	return !(thing->Flags & MF_SOLID);
 }
 
 //==========================================================================
@@ -508,7 +508,7 @@ boolean PIT_CheckRelLine(line_t * ld)
 		return false;
 	}
 
-	if (!(tmthing->flags & MF_MISSILE))
+	if (!(tmthing->Flags & MF_MISSILE))
 	{
 		if (ld->flags & ML_BLOCKING)
 		{
@@ -523,7 +523,7 @@ boolean PIT_CheckRelLine(line_t * ld)
 			return false;
 		}
 	}
-	if (tmthing->flags & MF_MISSILE)
+	if (tmthing->Flags & MF_MISSILE)
 	{
 		// Missiles can trigger impact specials
 		if (ld->special)
@@ -537,7 +537,7 @@ boolean PIT_CheckRelLine(line_t * ld)
 	hit_point =
 		tmpos - (DotProduct(tmpos, ld->normal) - ld->dist) * ld->normal;
 	open = LineOpenings(ld, hit_point);
-	open = FindOpening(open, tmz, tmz + tmthing->height);
+	open = FindOpening(open, tmz, tmz + tmthing->Height);
 
 	if (open)
 	{
@@ -622,17 +622,17 @@ boolean P_CheckRelPosition(mobj_t * thing, float x, float y)
 	sec_region_t *reg;
 
 	tmthing = thing;
-	tmflags = thing->flags;
+	tmflags = thing->Flags;
 
 	tmx = x;
 	tmy = y;
 	tmz = thing->origin.z;
 	tmpos = vector(x, y, tmz);
 
-	tmbbox[BOXTOP] = y + tmthing->radius;
-	tmbbox[BOXBOTTOM] = y - tmthing->radius;
-	tmbbox[BOXRIGHT] = x + tmthing->radius;
-	tmbbox[BOXLEFT] = x - tmthing->radius;
+	tmbbox[BOXTOP] = y + tmthing->Radius;
+	tmbbox[BOXBOTTOM] = y - tmthing->Radius;
+	tmbbox[BOXRIGHT] = x + tmthing->Radius;
+	tmbbox[BOXLEFT] = x - tmthing->Radius;
 
 	newsubsec = PointInSubsector(x, y);
 	ceilingline = NULL;
@@ -643,7 +643,7 @@ boolean P_CheckRelPosition(mobj_t * thing, float x, float y)
 	// will adjust them.
 	gap =
 		FindThingGap(newsubsec->sector->botregion, tmpos, tmz,
-		tmz + thing->height);
+		tmz + thing->Height);
 	reg = gap;
 	while (reg->prev && reg->floor->flags & SPF_NOBLOCKING)
 		reg = reg->prev;
@@ -698,7 +698,7 @@ boolean P_CheckRelPosition(mobj_t * thing, float x, float y)
 
 void PushLine(mobj_t * thing)
 {
-	if (numspechit && (thing->flags & MF_MISSILE) &&
+	if (numspechit && (thing->Flags & MF_MISSILE) &&
 		thing->target && thing->target->player)
 	{
 		int i;
@@ -736,9 +736,9 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 		return false;
 	}
 
-	if (!(thing->flags & MF_NOCLIP))
+	if (!(thing->Flags & MF_NOCLIP))
 	{
-		if (tmceilingz - tmfloorz < thing->height)
+		if (tmceilingz - tmfloorz < thing->Height)
 		{
 			// Doesn't fit
 			PushLine(thing);
@@ -747,17 +747,17 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 
 		floatok = true;
 
-		if (!(thing->flags & MF_TELEPORT) &&
-			tmceilingz - thing->origin.z < thing->height &&
-			!(thing->flags2 & MF2_FLY))
+		if (!(thing->Flags & MF_TELEPORT) &&
+			tmceilingz - thing->origin.z < thing->Height &&
+			!(thing->Flags2 & MF2_FLY))
 		{
 			// mobj must lower itself to fit
 			PushLine(thing);
 			return false;
 		}
-		if (thing->flags2 & MF2_FLY)
+		if (thing->Flags2 & MF2_FLY)
 		{
-			if (thing->origin.z + thing->height > tmceilingz)
+			if (thing->origin.z + thing->Height > tmceilingz)
 			{
 				thing->velocity.z = -8.0 * 35.0;
 				return false;
@@ -769,7 +769,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 				return false;
 			}
 		}
-		if (!(thing->flags & MF_TELEPORT)
+		if (!(thing->Flags & MF_TELEPORT)
 			// The Minotaur floor fire (MT_MNTRFX2) can step up any amount
 			&& thing->Class != MT_MNTRFX2 && tmfloorz - thing->origin.z > 24.0)
 		{
@@ -777,11 +777,11 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 			PushLine(thing);
 			return false;
 		}
-		if ((thing->flags & MF_MISSILE) && tmfloorz > thing->origin.z)
+		if ((thing->Flags & MF_MISSILE) && tmfloorz > thing->origin.z)
 		{
 			PushLine(thing);
 		}
-		if (!(thing->flags & (MF_DROPOFF | MF_FLOAT))
+		if (!(thing->Flags & (MF_DROPOFF | MF_FLOAT))
 			&& tmfloorz - tmdropoffz > 24.0)
 		{
 			// Can't move over a dropoff
@@ -803,7 +803,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	thing->floorz = tmfloorz;
 	thing->ceilingz = tmceilingz;
 
-	if (thing->flags2 & MF2_FOOTCLIP &&
+	if (thing->Flags2 & MF2_FOOTCLIP &&
 		P_GetThingFloorType(thing) != FLOOR_SOLID)
 	{
 		thing->floorclip = FOOTCLIPSIZE;
@@ -816,7 +816,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	//
 	// if any special lines were hit, do the effect
 	//
-	if (!(thing->flags & (MF_TELEPORT | MF_NOCLIP)))
+	if (!(thing->Flags & (MF_TELEPORT | MF_NOCLIP)))
 	{
 		while (numspechit > 0)
 		{
@@ -833,11 +833,11 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 					{
 						P_ActivateLine(ld, thing, oldside, SPAC_CROSS);
 					}
-					else if (thing->flags & MF_COUNTKILL)	//thing->flags2 & MF2_MCROSS)
+					else if (thing->Flags & MF_COUNTKILL)	//thing->Flags2 & MF2_MCROSS)
 					{
 						P_ActivateLine(ld, thing, oldside, SPAC_MCROSS);
 					}
-					else	/*if (thing->flags2 & MF2_PCROSS) */
+					else	/*if (thing->Flags2 & MF2_PCROSS) */
 					{
 						P_ActivateLine(ld, thing, oldside, SPAC_PCROSS);
 					}
@@ -874,14 +874,14 @@ boolean P_Move(mobj_t * actor)
 #endif
 
 	tryx =
-		actor->origin.x + actor->speed * frametime * xspeed[actor->movedir];
+		actor->origin.x + actor->Speed * frametime * xspeed[actor->movedir];
 	tryy =
-		actor->origin.y + actor->speed * frametime * yspeed[actor->movedir];
+		actor->origin.y + actor->Speed * frametime * yspeed[actor->movedir];
 
 	if (!P_TryMove(actor, tryx, tryy))
 	{
 		// open any specials
-		if (actor->flags & MF_FLOAT && floatok)
+		if (actor->Flags & MF_FLOAT && floatok)
 		{
 			// must adjust height
 			if (actor->origin.z < saved_tmfloorz)
@@ -889,7 +889,7 @@ boolean P_Move(mobj_t * actor)
 			else
 				actor->origin.z -= FLOATSPEED * frametime;
 
-			actor->flags |= MF_INFLOAT;
+			actor->Flags |= MF_INFLOAT;
 			return true;
 		}
 
@@ -913,10 +913,10 @@ boolean P_Move(mobj_t * actor)
 	}
 	else
 	{
-		actor->flags &= ~MF_INFLOAT;
+		actor->Flags &= ~MF_INFLOAT;
 	}
 
-	if (!(actor->flags & MF_FLOAT))
+	if (!(actor->Flags & MF_FLOAT))
 	{
 		if (actor->origin.z > actor->floorz)
 		{
@@ -930,6 +930,10 @@ boolean P_Move(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.9  2002/01/15 08:12:26  dj_jl
 //  Replaced some pointers with references
 //

@@ -80,8 +80,8 @@ int UpdateMorphedMonster(mobj_t * actor, int tics)
 	y = actor->origin.y;
 	z = actor->origin.z;
 	angle = actor->angles.yaw;
-	flags = actor->flags;
-	health = actor->health;
+	flags = actor->Flags;
+	health = actor->Health;
 	target = actor->target;
 	special = actor->special;
 	tid = actor->tid;
@@ -102,8 +102,8 @@ int UpdateMorphedMonster(mobj_t * actor, int tics)
 		P_RemoveMobj(mo);
 		mo = P_SpawnMobj(x, y, z, pig_type);
 		mo->angles.yaw = angle;
-		mo->flags = flags;
-		mo->health = health;
+		mo->Flags = flags;
+		mo->Health = health;
 		mo->target = target;
 		mo->special = special;
 		mo->special1 = 5 * 35;	// Next try in 5 seconds
@@ -203,6 +203,10 @@ void Actor::A_PigPain(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.10  2002/01/11 18:19:42  dj_jl
 //  Started to use names in progs
 //

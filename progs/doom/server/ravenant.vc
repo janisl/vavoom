@@ -139,7 +139,7 @@ void Actor::A_Tracer(void)
 	// adjust direction
 	dest = tracer;
 
-	if (!dest || dest->health <= 0)
+	if (!dest || dest->Health <= 0)
 		return;
 
 	wishdir = Normalize(MobjCenter(dest) - origin);
@@ -149,7 +149,7 @@ void Actor::A_Tracer(void)
 	if (adjustlen > TRACEADJUST)
 		adjustlen = TRACEADJUST;
 	wishdir = currdir + delta * adjustlen;
-	velocity = wishdir * speed;
+	velocity = wishdir * Speed;
 	VectorAngles(&wishdir, &angles);
 }
 
@@ -180,6 +180,10 @@ void Actor::A_Tracer(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/15 18:26:59  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.10  2002/01/11 18:19:40  dj_jl
 //  Started to use names in progs
 //

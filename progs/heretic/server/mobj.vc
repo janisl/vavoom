@@ -148,11 +148,11 @@ void SetOrigin(mobj_t * mobj, TVec origin)
 	}
 	else if (origin.z == ONCEILINGZ)
 	{
-		mobj->origin.z = mobj->ceilingz - mobj->height;
+		mobj->origin.z = mobj->ceilingz - mobj->Height;
 	}
 	else if (origin.z == FLOATRANDZ)
 	{
-		space = mobj->ceilingz - mobj->height - mobj->floorz;
+		space = mobj->ceilingz - mobj->Height - mobj->floorz;
 		if (space > 48.0)
 		{
 			space -= 40.0;
@@ -163,7 +163,7 @@ void SetOrigin(mobj_t * mobj, TVec origin)
 			mobj->origin.z = mobj->floorz;
 		}
 	}
-	if (mobj->flags2 & MF2_FOOTCLIP &&
+	if (mobj->Flags2 & MF2_FOOTCLIP &&
 		P_GetThingFloorType(mobj) != FLOOR_SOLID &&
 		mobj->floorz == mobj->subsector->sector->floorheight)
 	{
@@ -200,15 +200,15 @@ void CopyMThing(mthing_t * from, mthing_t * to)
 
 //==========================================================================
 //
-//	Entity::OnMapSpawn
+//	Actor::OnMapSpawn
 //
 //==========================================================================
 
-void Entity::OnMapSpawn(mthing_t * mthing)
+void Actor::OnMapSpawn(mthing_t * mthing)
 {
 	state_t *st;
 
-	spawnhealth = health;
+	spawnhealth = Health;
 	sound_sight = GetSoundID(SightSound);
 	sound_active = GetSoundID(ActiveSound);
 	sound_attack = GetSoundID(AttackSound);
@@ -217,7 +217,7 @@ void Entity::OnMapSpawn(mthing_t * mthing)
 
 	if (gameskill == sk_nightmare)
 	{
-		reactiontime = 0;
+		ReactionCount = 0;
 	}
 
 	lastlook = P_Random() % MAXPLAYERS;
@@ -225,7 +225,7 @@ void Entity::OnMapSpawn(mthing_t * mthing)
 	// Set the state, but do not use P_SetMobjState, because action
 	// routines can't be called yet.  If the spawnstate has an action
 	// routine, it will not be called.
-	st = &states[spawnstate];
+	st = &states[SpawnState];
 	time = st->time;
 	sprite = st->sprite;
 	frame = st->frame;
@@ -240,11 +240,11 @@ void Entity::OnMapSpawn(mthing_t * mthing)
 
 		x = mthing->x;
 		y = mthing->y;
-		if (flags & MF_SPAWNCEILING)
+		if (Flags & MF_SPAWNCEILING)
 		{
 			z = ONCEILINGZ;
 		}
-		else if (flags2 & MF2_SPAWNFLOAT)
+		else if (Flags2 & MF2_SPAWNFLOAT)
 		{
 			z = FLOATRANDZ;
 		}
@@ -253,10 +253,10 @@ void Entity::OnMapSpawn(mthing_t * mthing)
 			z = ONFLOORZ;
 		}
 		SetOrigin(this, vector(x, y, z));
-		if (flags2 & MF2_FLOATBOB)
+		if (Flags2 & MF2_FLOATBOB)
 		{
 			// Seed random starting index for bobbing motion
-			health = P_Random();
+			Health = P_Random();
 		}
 		if (z == ONFLOORZ)
 		{
@@ -278,19 +278,19 @@ void Entity::OnMapSpawn(mthing_t * mthing)
 		{
 			time = 0.1 + Random() * time;
 		}
-		if (flags & MF_COUNTKILL)
+		if (Flags & MF_COUNTKILL)
 		{
 			level->totalkills++;
 			CopyMThing(mthing, &spawnpoint);
 		}
-		if (flags & MF_COUNTITEM)
+		if (Flags & MF_COUNTITEM)
 		{
 			level->totalitems++;
 		}
 		angles.yaw = itof(45 * (mthing->angle / 45));
 		if (mthing->options & MTF_AMBUSH)
 		{
-			flags |= MF_AMBUSH;
+			Flags |= MF_AMBUSH;
 		}
 	}
 	else
@@ -392,7 +392,7 @@ boolean P_TestMobjLocation(mobj_t * mobj)
 	{
 		// XY is ok, now check Z
 		if ((mobj->origin.z < mobj->floorz) ||
-			(mobj->origin.z + mobj->height > mobj->ceilingz))
+			(mobj->origin.z + mobj->Height > mobj->ceilingz))
 		{
 			// Bad Z
 			return false;
@@ -418,22 +418,22 @@ void P_ExplodeMissile(mobj_t * mo)
 		}
 	}
 	mo->velocity.x = mo->velocity.y = mo->velocity.z = 0.0;
-	SetMobjState(mo, mo->deathstate);
+	SetMobjState(mo, mo->DeathState);
 	//mo->tics -= P_Random()&3;
-	mo->flags &= ~MF_MISSILE;
+	mo->Flags &= ~MF_MISSILE;
 	if (mo->sound_death)
 	{
 		StartSound(mo, mo->sound_death, CHAN_VOICE);
 	}
-	if (mo->effects & EF_DLIGHT_MASK)
+	if (mo->Effects & EF_DLIGHT_MASK)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion);
-		MSG_WriteByte(mo->effects & EF_DLIGHT_MASK);
+		MSG_WriteByte(mo->Effects & EF_DLIGHT_MASK);
 		MSG_WriteShort(ftoi(mo->origin.x));
 		MSG_WriteShort(ftoi(mo->origin.y));
 		MSG_WriteShort(ftoi(mo->origin.z));
-		mo->effects &= ~EF_DLIGHT_MASK;
+		mo->Effects &= ~EF_DLIGHT_MASK;
 	}
 }
 
@@ -445,13 +445,13 @@ void P_ExplodeMissile(mobj_t * mo)
 
 void P_KillMobj(mobj_t * source, mobj_t * target)
 {
-	target->flags &= ~(MF_SHOOTABLE | MF_FLOAT | MF_SKULLFLY | MF_NOGRAVITY);
-	target->flags |= MF_CORPSE | MF_DROPOFF;
-	target->flags2 &= ~MF2_PASSMOBJ;
-	target->height /= 4.0;
+	target->Flags &= ~(MF_SHOOTABLE | MF_FLOAT | MF_SKULLFLY | MF_NOGRAVITY);
+	target->Flags |= MF_CORPSE | MF_DROPOFF;
+	target->Flags2 &= ~MF2_PASSMOBJ;
+	target->Height /= 4.0;
 	if (source && source->player)
 	{
-		if (target->flags & MF_COUNTKILL)
+		if (target->Flags & MF_COUNTKILL)
 		{
 			// Count for intermission
 			source->player->killcount++;
@@ -486,7 +486,7 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 			}
 		}
 	}
-	else if (!netgame && (target->flags & MF_COUNTKILL))
+	else if (!netgame && (target->Flags & MF_COUNTKILL))
 	{
 		// Count all monster deaths
 		players[0].killcount++;
@@ -498,13 +498,13 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 			// Self-frag
 			target->player->frags[P_GetPlayerNum(target->player)]--;
 		}
-		target->flags &= ~MF_SOLID;
-		target->flags2 &= ~MF2_FLY;
+		target->Flags &= ~MF_SOLID;
+		target->Flags2 &= ~MF2_FLY;
 		target->player->powers[pw_flight] = 0;
 		target->player->powers[pw_weaponlevel2] = 0;
 		target->player->playerstate = PST_DEAD;
 		DropWeapon(target->player);
-		if (target->flags2 & MF2_FIREDAMAGE)
+		if (target->Flags2 & MF2_FIREDAMAGE)
 		{
 			// Player flame death
 			SetMobjState(target, S_PLAY_FDTH1);
@@ -512,15 +512,15 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 			return;
 		}
 	}
-	if (target->health < target->gibshealth && target->xdeathstate)
+	if (target->Health < target->GibsHealth && target->GibsDeathState)
 	{
 		// Extreme death
-		SetMobjState(target, target->xdeathstate);
+		SetMobjState(target, target->GibsDeathState);
 	}
 	else
 	{
 		// Normal death
-		SetMobjState(target, target->deathstate);
+		SetMobjState(target, target->DeathState);
 	}
 	target->time -= Random() * 0.1;
 }
@@ -544,7 +544,7 @@ void P_MinotaurSlam(mobj_t * source, mobj_t * target)
 	target->Damage(NULL, NULL, HITDICE(6));
 	if (target->player)
 	{
-		target->reactiontime = 14 + (P_Random() & 7);
+		target->ReactionTime = 0.4 + Random() * 0.2;
 	}
 }
 
@@ -562,7 +562,7 @@ void P_TouchWhirlwind(mobj_t * target)
 		(Random() - Random()) * 45.0 / 2.0);
 	target->velocity.x += (Random() - Random()) * 4.0 * 35.0;
 	target->velocity.y += (Random() - Random()) * 4.0 * 35.0;
-	if (level->tictime & 16 && !(target->flags2 & MF2_BOSS))
+	if (level->tictime & 16 && !(target->Flags2 & MF2_BOSS))
 	{
 		randVal = Random() * 4.0;
 		if (randVal > 2.5)
@@ -620,7 +620,7 @@ boolean ChickenMorphPlayer(player_t * player)
 	y = pmo->origin.y;
 	z = pmo->origin.z;
 	angle = pmo->angles.yaw;
-	oldFlags2 = pmo->flags2;
+	oldFlags2 = pmo->Flags2;
 	SetMobjState(pmo, S_FREETARGMOBJ);
 	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, MT_TFOG);
 	StartSoundName(fog, 'Teleport', CHAN_VOICE);
@@ -628,14 +628,14 @@ boolean ChickenMorphPlayer(player_t * player)
 	chicken->special1 = player->readyweapon;
 	chicken->angles.yaw = angle;
 	chicken->player = player;
-	player->health = chicken->health = MAXCHICKENHEALTH;
+	player->health = chicken->Health = MAXCHICKENHEALTH;
 	player->mo = chicken;
 	player->armorpoints = player->armortype = 0;
 	player->powers[pw_invisibility] = 0;
 	player->powers[pw_weaponlevel2] = 0;
 	if (oldFlags2 & MF2_FLY)
 	{
-		chicken->flags2 |= MF2_FLY;
+		chicken->Flags2 |= MF2_FLY;
 	}
 	player->chickenTics = ftoi(CHICKENTIME * 35.0);
 	ActivateBeak(player);
@@ -681,7 +681,7 @@ boolean P_ChickenMorph(mobj_t * actor)
 	y = actor->origin.y;
 	z = actor->origin.z;
 	angle = actor->angles.yaw;
-	ghost = actor->translucency;
+	ghost = actor->Translucency;
 	target = actor->target;
 	SetMobjState(actor, S_FREETARGMOBJ);
 	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, MT_TFOG);
@@ -689,7 +689,7 @@ boolean P_ChickenMorph(mobj_t * actor)
 	chicken = P_SpawnMobj(x, y, z, MT_CHICKEN);
 	chicken->specialcid = moType;
 	chicken->special1 = ftoi(CHICKENTIME * 35.0) + P_Random();
-	chicken->translucency = ghost;
+	chicken->Translucency = ghost;
 	chicken->target = target;
 	chicken->angles.yaw = angle;
 	return true;
@@ -710,7 +710,7 @@ boolean P_AutoUseChaosDevice(player_t * player)
 		if (player->inventory[i].type == arti_teleport)
 		{
 			PlayerUseArtifact(player, arti_teleport);
-			player->health = player->mo->health = (player->health + 1) / 2;
+			player->health = player->mo->Health = (player->health + 1) / 2;
 			return true;
 		}
 	}
@@ -787,12 +787,12 @@ void P_AutoUseHealth(player_t * player, int saveHealth)
 			PlayerRemoveArtifact(player, superSlot);
 		}
 	}
-	player->mo->health = player->health;
+	player->mo->Health = player->health;
 }
 
 //==========================================================================
 //
-//  Entity::Damage
+//  Actor::Damage
 //
 //  Damages both enemies and players.
 //  inflictor is the thing that caused the damage creature or missile, can
@@ -803,20 +803,20 @@ void P_AutoUseHealth(player_t * player, int saveHealth)
 //
 //==========================================================================
 
-void Entity::Damage(Entity * inflictor, Entity * source, int damage)
+void Actor::Damage(Actor * inflictor, Actor * source, int damage)
 {
 	int saved;
 
-	if (!(flags & MF_SHOOTABLE))
+	if (!(Flags & MF_SHOOTABLE))
 	{
 		// Shouldn't happen
 		return;
 	}
-	if (health <= 0)
+	if (Health <= 0)
 	{
 		return;
 	}
-	if (flags & MF_SKULLFLY)
+	if (Flags & MF_SKULLFLY)
 	{
 		if (Class == MT_MINOTAUR)
 		{
@@ -849,7 +849,7 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 			P_TouchWhirlwind(this);
 			return;
 		case MT_MINOTAUR:
-			if (inflictor->flags & MF_SKULLFLY)
+			if (inflictor->Flags & MF_SKULLFLY)
 			{
 				// Slam only when in charge mode
 				P_MinotaurSlam(inflictor, this);
@@ -857,7 +857,7 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 			}
 			break;
 		case MT_MACEFX4:	// Death ball
-			if ((flags2 & MF2_BOSS) || Class == MT_HEAD)
+			if ((Flags2 & MF2_BOSS) || Class == MT_HEAD)
 			{
 				// Don't allow cheap boss kills
 				break;
@@ -882,14 +882,14 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 			if (player && P_Random() < 128)
 			{
 				// Freeze player for a bit
-				reactiontime += 4;
+				ReactionTime += 0.125;
 			}
 			break;
 		case MT_RAINPLR1:	// Rain missiles
 		case MT_RAINPLR2:
 		case MT_RAINPLR3:
 		case MT_RAINPLR4:
-			if (flags2 & MF2_BOSS)
+			if (Flags2 & MF2_BOSS)
 			{
 				// Decrease damage for bosses
 				damage = (P_Random() & 7) + 1;
@@ -923,7 +923,7 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 	// Push the target unless source is using the gauntlets
 	if (inflictor && (!source || !source->player ||
 			source->player->readyweapon != wp_gauntlets)
-		&& !(inflictor->flags2 & MF2_NODMGTHRUST))
+		&& !(inflictor->Flags2 & MF2_NODMGTHRUST))
 	{
 		TVec dir;
 		float thrust;
@@ -937,11 +937,11 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 		}
 		else
 		{
-			thrust = itof(damage) / mass * 656.25;
+			thrust = itof(damage) / Mass * 656.25;
 		}
 
 		dir = MobjCenter(this) - MobjCenter(inflictor);
-		if (flags & MF_NOGRAVITY)
+		if (Flags & MF_NOGRAVITY)
 		{
 			dir.z = 0.0;
 		}
@@ -999,8 +999,8 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 	//
 	// do the damage
 	//
-	health -= damage;
-	if (health <= 0)
+	Health -= damage;
+	if (Health <= 0)
 	{
 		// Death
 		special1 = damage;
@@ -1012,32 +1012,32 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 		if (player && inflictor && !player->chickenTics)
 		{
 			// Check for flame death
-			if ((inflictor->flags2 & MF2_FIREDAMAGE)
+			if ((inflictor->Flags2 & MF2_FIREDAMAGE)
 				|| ((inflictor->Class == MT_PHOENIXFX1)
-					&& (health > -50) && (damage > 25)))
+					&& (Health > -50) && (damage > 25)))
 			{
-				flags2 |= MF2_FIREDAMAGE;
+				Flags2 |= MF2_FIREDAMAGE;
 			}
 		}
 		P_KillMobj(source, this);
 		return;
 	}
-	if ((P_Random() < painchance) && !(flags & MF_SKULLFLY))
+	if ((P_Random() < PainChance) && !(Flags & MF_SKULLFLY))
 	{
-		flags |= MF_JUSTHIT;	// fight back!
-		SetMobjState(this, painstate);
+		Flags |= MF_JUSTHIT;	// fight back!
+		SetMobjState(this, PainState);
 	}
-	reactiontime = 0;	// we're awake now...
-	if (!threshold && source && !(source->flags2 & MF2_BOSS)
+	ReactionCount = 0;	// we're awake now...
+	if (!threshold && source && !(source->Flags2 & MF2_BOSS)
 		&& !(Class == MT_SORCERER2 && source->Class == MT_WIZARD))
 	{
 		// Target actor is not intent on another actor,
 		// so make him chase after source
 		target = source;
 		threshold = BASETHRESHOLD;
-		if (statenum == spawnstate && seestate != S_NULL)
+		if (statenum == SpawnState && SeeState != S_NULL)
 		{
-			SetMobjState(this, seestate);
+			SetMobjState(this, SeeState);
 		}
 	}
 }
@@ -1122,7 +1122,7 @@ void P_RipperBlood(mobj_t * mo)
 	y = mo->origin.y + (Random() - Random()) * 16.0;
 	z = mo->origin.z + (Random() - Random()) * 16.0;
 	th = P_SpawnMobj(x, y, z, MT_BLOOD);
-	th->flags |= MF_NOGRAVITY;
+	th->Flags |= MF_NOGRAVITY;
 	th->velocity.x = mo->velocity.x / 2.0;
 	th->velocity.y = mo->velocity.y / 2.0;
 	th->time += Random() * 0.1;
@@ -1158,11 +1158,11 @@ void P_SpawnPlayer(mthing_t * mthing)
 	z = ONFLOORZ;
 	mobj = P_SpawnMobj(x, y, z, MT_PLAYER);
 	// set color translations for player sprites
-	mobj->translation = p->color;
+	mobj->Translation = p->color;
 
 	mobj->angles.yaw = itof(45 * (mthing->angle / 45));
 	mobj->player = p;
-	mobj->health = p->health;
+	mobj->Health = p->health;
 	p->mo = mobj;
 	p->playerstate = PST_LIVE;
 	p->refire = 0;
@@ -1399,7 +1399,7 @@ int P_HitFloor(mobj_t * thing)
 void P_FloorBounceMissile(mobj_t * mo)
 {
 	mo->velocity.z = -mo->velocity.z;
-	SetMobjState(mo, mo->deathstate);
+	SetMobjState(mo, mo->DeathState);
 }
 
 //===========================================================================
@@ -1523,7 +1523,7 @@ void P_NightmareRespawn(mobj_t * mobj)
 	mthing = &mobj->spawnpoint;
 
 	// spawn it
-	if (mobj->flags & MF_SPAWNCEILING)
+	if (mobj->Flags & MF_SPAWNCEILING)
 		z = ONCEILINGZ;
 	else
 		z = ONFLOORZ;
@@ -1531,9 +1531,9 @@ void P_NightmareRespawn(mobj_t * mobj)
 	CopyMThing(&mobj->spawnpoint, &mo->spawnpoint);
 	mo->angles.yaw = itof(45 * (mthing->angle / 45));
 	if (mthing->options & MTF_AMBUSH)
-		mo->flags |= MF_AMBUSH;
+		mo->Flags |= MF_AMBUSH;
 
-	mo->reactiontime = 18;
+	mo->ReactionCount = 18;
 
 	// remove the old monster
 	P_RemoveMobj(mobj);
@@ -1542,6 +1542,10 @@ void P_NightmareRespawn(mobj_t * mobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.21  2002/01/15 08:10:57  dj_jl
 //  Added P_CheckRelPosition
 //

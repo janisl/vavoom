@@ -35,9 +35,9 @@
 
 void Actor::A_HideThing(void)
 {
-	if (translucency < 100)
+	if (Translucency < 100)
 	{
-		translucency += 100;
+		Translucency += 100;
 	}
 }
 
@@ -49,9 +49,9 @@ void Actor::A_HideThing(void)
 
 void Actor::A_UnHideThing(void)
 {
-	if (translucency >= 100)
+	if (Translucency >= 100)
 	{
-		translucency -= 100;
+		Translucency -= 100;
 	}
 }
 
@@ -63,8 +63,8 @@ void Actor::A_UnHideThing(void)
 
 void Actor::A_RestoreArtifact(void)
 {
-	flags |= MF_SPECIAL;
-	SetMobjState(this, spawnstate);
+	Flags |= MF_SPECIAL;
+	SetMobjState(this, SpawnState);
 	StartSoundName(this, 'Respawn', CHAN_VOICE);
 }
 
@@ -78,7 +78,7 @@ void Actor::A_RestoreArtifact(void)
 
 void Actor::A_RestoreSpecialThing1(void)
 {
-	translucency -= 100;
+	Translucency -= 100;
 	StartSoundName(this, 'Respawn', CHAN_VOICE);
 }
 
@@ -90,8 +90,8 @@ void Actor::A_RestoreSpecialThing1(void)
 
 void Actor::A_RestoreSpecialThing2(void)
 {
-	flags |= MF_SPECIAL;
-	SetMobjState(this, spawnstate);
+	Flags |= MF_SPECIAL;
+	SetMobjState(this, SpawnState);
 }
 
 //===========================================================================
@@ -123,12 +123,12 @@ void Actor::A_CheckThrowBomb(void)
 		SetMobjState(this, S_THROWINGBOMB7);
 		origin.z = floorz;
 		velocity.z = 0.0;
-		flags2 &= ~MF2_FLOORBOUNCE;
-		flags &= ~MF_MISSILE;
+		Flags2 &= ~MF2_FLOORBOUNCE;
+		Flags &= ~MF_MISSILE;
 	}
-	if (!--health)
+	if (!--Health)
 	{
-		SetMobjState(this, deathstate);
+		SetMobjState(this, DeathState);
 	}
 }
 
@@ -140,7 +140,7 @@ void Actor::A_CheckThrowBomb(void)
 
 void Actor::A_NoGravity(void)
 {
-	flags |= MF_NOGRAVITY;
+	Flags |= MF_NOGRAVITY;
 }
 
 //============================================================================
@@ -155,7 +155,7 @@ void Actor::A_CorpseBloodDrip(void)
 	{
 		return;
 	}
-	P_SpawnMobj(origin.x, origin.y, origin.z + height / 2.0,
+	P_SpawnMobj(origin.x, origin.y, origin.z + Height / 2.0,
 		MT_CORPSEBLOODDRIP);
 }
 
@@ -173,7 +173,7 @@ void Actor::A_CorpseExplode(void)
 	for (i = (P_Random() & 3) + 3; i; i--)
 	{
 		mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_CORPSEBIT);
-		SetMobjState(mo, mo->spawnstate + (P_Random() % 3));
+		SetMobjState(mo, mo->SpawnState + (P_Random() % 3));
 		if (mo)
 		{
 			mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
@@ -211,8 +211,8 @@ void Actor::A_SoAExplode(void)
 	{
 		mo = P_SpawnMobj(origin.x + (Random() - 0.5) * 16.0,
 			origin.y + (Random() - 0.5) * 16.0,
-			origin.z + Random() * height, MT_ZARMORCHUNK);
-		SetMobjState(mo, mo->spawnstate + i);
+			origin.z + Random() * Height, MT_ZARMORCHUNK);
+		SetMobjState(mo, mo->SpawnState + i);
 		if (mo)
 		{
 			mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
@@ -278,7 +278,7 @@ void Actor::A_ESound(void)
 
 void A_SetInvulnerable(mobj_t *actor)
 {
-	actor->flags2 |= MF2_INVULNERABLE;
+	actor->Flags2 |= MF2_INVULNERABLE;
 }
 
 //============================================================================
@@ -289,12 +289,16 @@ void A_SetInvulnerable(mobj_t *actor)
 
 void Actor::A_UnSetInvulnerable(void)
 {
-	flags2 &= ~MF2_INVULNERABLE;
+	Flags2 &= ~MF2_INVULNERABLE;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.8  2002/01/11 18:19:41  dj_jl
 //  Started to use names in progs
 //

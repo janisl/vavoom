@@ -59,7 +59,7 @@ void Actor::A_DropMace(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + height / 2.0,
+	mo = P_SpawnMobj(origin.x, origin.y, origin.z + Height / 2.0,
 		MT_ETTIN_MACE);
 	if (mo)
 	{
@@ -73,6 +73,10 @@ void Actor::A_DropMace(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.7  2002/01/07 12:25:57  dj_jl
 //  Changed copyright year
 //

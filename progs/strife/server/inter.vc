@@ -196,7 +196,7 @@ boolean P_GiveBody(player_t * player, int num)
 	player->health += num;
 	if (player->health > MAXHEALTH)
 		player->health = MAXHEALTH;
-	player->mo->health = player->health;
+	player->mo->Health = player->health;
 
 	return true;
 }
@@ -273,7 +273,7 @@ boolean P_GivePower(player_t * player, int power)
 	if (power == pw_invisibility)
 	{
 		player->powers[power] = ftoi(INVISTIME * 35.0);
-		player->mo->translucency = 90;
+		player->mo->Translucency = 90;
 		return true;
 	}
 
@@ -318,7 +318,7 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 
 	delta = special->origin.z - toucher->origin.z;
 
-	if (delta > toucher->height || delta < -8.0)
+	if (delta > toucher->Height || delta < -8.0)
 	{
 		// out of reach
 		return;
@@ -329,7 +329,7 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 
 	// Dead thing touching.
 	// Can happen with a sliding player corpse.
-	if (toucher->health <= 0)
+	if (toucher->Health <= 0)
 		return;
 
 	// Identify by sprite.
@@ -485,7 +485,7 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 	
 		// ammo
       case SPR_CLIP:
-		if (special->flags & MF_DROPPED)
+		if (special->Flags & MF_DROPPED)
 		{
 		    if (!P_GiveAmmo (player,am_clip,0))
 				return;
@@ -558,7 +558,7 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 		break;
 	
       case SPR_MGUN:
-		if (!P_GiveWeapon (player, wp_chaingun, special->flags&MF_DROPPED) )
+		if (!P_GiveWeapon (player, wp_chaingun, special->Flags&MF_DROPPED) )
 		    return;
 		P_SetMessage(player, GOTCHAINGUN, false);
 		sound = 'PickupWeapon';
@@ -586,7 +586,7 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 		break;
 	
       case SPR_SHOT:
-		if (!P_GiveWeapon (player, wp_shotgun, special->flags&MF_DROPPED ) )
+		if (!P_GiveWeapon (player, wp_shotgun, special->Flags&MF_DROPPED ) )
 		    return;
 		P_SetMessage(player, GOTSHOTGUN, false);
 		sound = 'PickupWeapon';
@@ -605,7 +605,7 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 		Error("P_SpecialThing: Unknown gettable thing");
     }*/
 
-	if (special->flags & MF_COUNTITEM)
+	if (special->Flags & MF_COUNTITEM)
 		player->itemcount++;
 	P_RemoveMobj(special);
 	player->bonuscount += BONUSADD;
@@ -615,6 +615,10 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/15 18:27:01  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.6  2002/01/11 18:19:42  dj_jl
 //  Started to use names in progs
 //

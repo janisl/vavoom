@@ -55,12 +55,12 @@ int CheckMeleeRange(mobj_t * actor)
 	{
 		return false;
 	}
-	if (mo->origin.z > actor->origin.z + actor->height)
+	if (mo->origin.z > actor->origin.z + actor->Height)
 	{
 		// Target is higher than the attacker
 		return false;
 	}
-	else if (actor->origin.z > mo->origin.z + mo->height)
+	else if (actor->origin.z > mo->origin.z + mo->Height)
 	{
 		// Attacker is higher
 		return false;
@@ -93,12 +93,12 @@ int CheckMeleeRange2(mobj_t * actor)
 	{
 		return false;
 	}
-	if (mo->origin.z > actor->origin.z + actor->height)
+	if (mo->origin.z > actor->origin.z + actor->Height)
 	{
 		// Target is higher than the attacker
 		return false;
 	}
-	else if (actor->origin.z > mo->origin.z + mo->height)
+	else if (actor->origin.z > mo->origin.z + mo->Height)
 	{
 		// Attacker is higher
 		return false;
@@ -120,19 +120,19 @@ int CheckMissileRange(mobj_t * actor)
 	{
 		return false;
 	}
-	if (actor->flags & MF_JUSTHIT)
+	if (actor->Flags & MF_JUSTHIT)
 	{
 		// The target just hit the enemy, so fight back!
-		actor->flags &= ~MF_JUSTHIT;
+		actor->Flags &= ~MF_JUSTHIT;
 		return true;
 	}
-	if (actor->reactiontime)
+	if (actor->ReactionCount)
 	{
 		// Don't attack yet
-		return (false);
+		return false;
 	}
 	dist = MobjDist(actor, actor->target) - 64.0;
-	if (!actor->meleestate)
+	if (!actor->MeleeState)
 	{
 		// No melee attack, so fire more frequently
 		dist -= 128.0;
@@ -206,7 +206,7 @@ boolean P_LookForMonsters(mobj_t * actor)
 	count = 0;
 	for (mo = NextMobj(NULL); mo; mo = NextMobj(mo))
 	{
-		if (!(mo->flags & MF_COUNTKILL) || (mo == actor) || (mo->health <= 0))
+		if (!(mo->Flags & MF_COUNTKILL) || (mo == actor) || (mo->Health <= 0))
 		{	// Not a valid monster
 			continue;
 		}
@@ -297,7 +297,7 @@ boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
 					continue;	// behind back
 			}
 		}
-		if (player->mo->translucency)
+		if (player->mo->Translucency)
 		{
 			// Player is invisible
 			if (MobjDist(player->mo, actor) > 2.0 * MELEERANGE &&
@@ -464,139 +464,139 @@ void P_NewChaseDir(mobj_t * actor)
 
 mobj_t *RoughBlockCheck(mobj_t * mo, int index)
 {
-	mobj_t *link;
+	Actor link;
 	mobj_t *master;
 	float angle;
 
-	link = BlockLink(index);
+	link = *BlockLink(index);
 	while (link)
 	{
 		if (mo->player)	// Minotaur looking around player
 		{
-			if ((link->flags & MF_COUNTKILL) ||
-				(link->player && (link != mo)))
+			if ((link.Flags & MF_COUNTKILL) ||
+				(link.player && (link != *mo)))
 			{
-				if (!(link->flags & MF_SHOOTABLE))
+				if (!(link.Flags & MF_SHOOTABLE))
 				{
-					link = link->bnext;
+					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				if (link->flags2 & MF2_DORMANT)
+				if (link.Flags2 & MF2_DORMANT)
 				{
-					link = link->bnext;
+					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				if ((link->Class == MT_MINOTAUR) &&
-					((link->specialmobj1) == mo))
+				if ((link.Class == MT_MINOTAUR) &&
+					((link.specialmobj1) == mo))
 				{
-					link = link->bnext;
+					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				if (netgame && !deathmatch && link->player)
+				if (netgame && !deathmatch && link.player)
 				{
-					link = link->bnext;
+					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				if (P_CheckSight(mo, link))
+				if (P_CheckSight(mo, &link))
 				{
-					return link;
+					return &link;
 				}
 			}
-			link = link->bnext;
+			link = Actor(link.BlockMapNext);
 		}
 		else if (mo->Class == MT_MINOTAUR)	// looking around minotaur
 		{
 			master = mo->specialmobj1;
-			if ((link->flags & MF_COUNTKILL) ||
-				(link->player && (link != master)))
+			if ((link.Flags & MF_COUNTKILL) ||
+				(link.player && (link != *master)))
 			{
-				if (!(link->flags & MF_SHOOTABLE))
+				if (!(link.Flags & MF_SHOOTABLE))
 				{
-					link = link->bnext;
+					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				if (link->flags2 & MF2_DORMANT)
+				if (link.Flags2 & MF2_DORMANT)
 				{
-					link = link->bnext;
+					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				if ((link->Class == MT_MINOTAUR) &&
-					(link->specialmobj1 == mo->specialmobj1))
+				if ((link.Class == MT_MINOTAUR) &&
+					(link.specialmobj1 == mo->specialmobj1))
 				{
-					link = link->bnext;
+					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				if (netgame && !deathmatch && link->player)
+				if (netgame && !deathmatch && link.player)
 				{
-					link = link->bnext;
+					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				if (P_CheckSight(mo, link))
+				if (P_CheckSight(mo, &link))
 				{
-					return link;
+					return &link;
 				}
 			}
-			link = link->bnext;
+			link = Actor(link.BlockMapNext);
 		}
 		else if (mo->Class == MT_MSTAFF_FX2)	// bloodscourge
 		{
-			if ((link->flags & MF_COUNTKILL ||
-					(link->player && link != mo->target))
-				&& !(link->flags2 & MF2_DORMANT))
+			if ((link.Flags & MF_COUNTKILL ||
+					(link.player && link != *mo->target))
+				&& !(link.Flags2 & MF2_DORMANT))
 			{
-				if (!(link->flags & MF_SHOOTABLE))
+				if (!(link.Flags & MF_SHOOTABLE))
 				{
-					link = link->bnext;
+					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				if (netgame && !deathmatch && link->player)
+				if (netgame && !deathmatch && link.player)
 				{
-					link = link->bnext;
+					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				else if (P_CheckSight(mo, link))
+				else if (P_CheckSight(mo, &link))
 				{
 					master = mo->target;
 					angle = AngleMod360(atan2(
-						link->origin.y - master->origin.y,
-						link->origin.x - master->origin.x) -
+						link.origin.y - master->origin.y,
+						link.origin.x - master->origin.x) -
 						master->angles.yaw);
 					if (angle > 226.0 * 360.0 / 256.0 ||
 						angle < 30.0 * 360.0 / 256.0)
 					{
-						return link;
+						return &link;
 					}
 				}
 			}
-			link = link->bnext;
+			link = Actor(link.BlockMapNext);
 		}
 		else	// spirits
 		{
-			if ((link->flags & MF_COUNTKILL ||
-					(link->player && link != mo->target))
-				&& !(link->flags2 & MF2_DORMANT))
+			if ((link.Flags & MF_COUNTKILL ||
+					(link.player && link != *mo->target))
+				&& !(link.Flags2 & MF2_DORMANT))
 			{
-				if (!(link->flags & MF_SHOOTABLE))
+				if (!(link.Flags & MF_SHOOTABLE))
 				{
-					link = link->bnext;
+					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				if (netgame && !deathmatch && link->player)
+				if (netgame && !deathmatch && link.player)
 				{
-					link = link->bnext;
+					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				if (link == mo->target)
+				if (link == *mo->target)
 				{
-					link = link->bnext;
+					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				else if (P_CheckSight(mo, link))
+				else if (P_CheckSight(mo, &link))
 				{
-					return link;
+					return &link;
 				}
 			}
-			link = link->bnext;
+			link = Actor(link.BlockMapNext);
 		}
 	}
 	return NULL;
@@ -722,6 +722,10 @@ mobj_t *P_RoughMonsterSearch(mobj_t * mo, int distance)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.7  2002/01/07 12:25:57  dj_jl
 //  Changed copyright year
 //

@@ -69,8 +69,8 @@ void InitLava(void)
 {
 	LavaInflictor = NewMobjThinker(TLavaInflictor);
 //	LavaInflictor->type = MT_CIRCLEFLAME;
-	LavaInflictor->flags = MF_NOSECTOR | MF_NOBLOCKMAP;
-	LavaInflictor->flags2 = MF2_FIREDAMAGE | MF2_NODMGTHRUST;
+	LavaInflictor->Flags = MF_NOSECTOR | MF_NOBLOCKMAP;
+	LavaInflictor->Flags2 = MF2_FIREDAMAGE | MF2_NODMGTHRUST;
 }
 
 //==========================================================================
@@ -134,8 +134,8 @@ boolean UndoPlayerMorph(player_t * player)
 	z = pmo->origin.z;
 	angle = pmo->angles.yaw;
 	weapon = pmo->special1;
-	oldFlags = pmo->flags;
-	oldFlags2 = pmo->flags2;
+	oldFlags = pmo->Flags;
+	oldFlags2 = pmo->Flags2;
 	oldBeast = pmo->Class;
 	SetMobjState(pmo, S_FREETARGMOBJ);
 	switch (player->baseclass)
@@ -158,11 +158,11 @@ boolean UndoPlayerMorph(player_t * player)
 		P_RemoveMobj(mo);
 		mo = P_SpawnMobj(x, y, z, oldBeast);
 		mo->angles.yaw = angle;
-		mo->health = player->health;
+		mo->Health = player->health;
 		mo->special1 = weapon;
 		mo->player = player;
-		mo->flags = oldFlags;
-		mo->flags2 = oldFlags2;
+		mo->Flags = oldFlags;
+		mo->Flags2 = oldFlags2;
 		player->mo = mo;
 		player->morphTics = 2 * 35;
 		return false;
@@ -170,14 +170,14 @@ boolean UndoPlayerMorph(player_t * player)
 	SetPlayerColor(player);
 	mo->angles.yaw = angle;
 	mo->player = player;
-	mo->reactiontime = 18;
+	mo->ReactionTime = 0.5;
 	if (oldFlags2 & MF2_FLY)
 	{
-		mo->flags2 |= MF2_FLY;
-		mo->flags |= MF_NOGRAVITY;
+		mo->Flags2 |= MF2_FLY;
+		mo->Flags |= MF_NOGRAVITY;
 	}
 	player->morphTics = 0;
-	player->health = mo->health = MAXHEALTH;
+	player->health = mo->Health = MAXHEALTH;
 	player->mo = mo;
 	player->pclass = player->baseclass;
 	fog = P_SpawnMobj(x + 20.0 * cos(angle),
@@ -248,7 +248,7 @@ void DeathPlayerThink(player_t * player)
 #endif
 		}
 	}
-	else if (!(player->mo->flags2 & MF2_ICEDAMAGE))
+	else if (!(player->mo->Flags2 & MF2_ICEDAMAGE))
 	{	// Fall to ground (if not frozen)
 		player->deltaviewheight = 0.0;
 		if (player->viewheight > 6.0)
@@ -433,7 +433,7 @@ void ArtiPoisonBag(player_t * player)
 			bomb->velocity.z =
 				(4.0 + 173.0 * -tan(player->mo->angles.pitch) / 16.0) * 35.0;
 			bomb->origin.z += 173.0 * -tan(player->mo->angles.pitch) / 16.0;
-			P_ThrustMobj(bomb, bomb->angles.yaw, bomb->speed * frametime);
+			P_ThrustMobj(bomb, bomb->angles.yaw, bomb->Speed * frametime);
 			bomb->velocity.x += player->mo->velocity.x / 2.0;
 			bomb->velocity.y += player->mo->velocity.y / 2.0;
 			bomb->target = player->mo;
@@ -487,13 +487,13 @@ void BlastMobj(mobj_t * source, mobj_t * victim, float strength)
 		}
 		else
 		{
-			victim->flags2 |= MF2_SLIDE;
-			victim->flags2 |= MF2_BLASTED;
+			victim->Flags2 |= MF2_SLIDE;
+			victim->Flags2 |= MF2_BLASTED;
 		}
 	}
 	else	// full strength blast from artifact
 	{
-		if (victim->flags & MF_MISSILE)
+		if (victim->Flags & MF_MISSILE)
 		{
 			switch (victim->Class)
 			{
@@ -524,9 +524,9 @@ void BlastMobj(mobj_t * source, mobj_t * victim, float strength)
 		// Spawn blast puff
 		ang = atan2(source->origin.y - victim->origin.y,
 			source->origin.x - victim->origin.x);
-		x = victim->origin.x + (victim->radius + 1.0) * cos(ang);
-		y = victim->origin.y + (victim->radius + 1.0) * sin(ang);
-		z = victim->origin.z - victim->floorclip + victim->height / 2.0;
+		x = victim->origin.x + (victim->Radius + 1.0) * cos(ang);
+		y = victim->origin.y + (victim->Radius + 1.0) * sin(ang);
+		z = victim->origin.z - victim->floorclip + victim->Height / 2.0;
 		mo = P_SpawnMobj(x, y, z, MT_BLASTEFFECT);
 		if (mo)
 		{
@@ -534,14 +534,14 @@ void BlastMobj(mobj_t * source, mobj_t * victim, float strength)
 			mo->velocity.y = victim->velocity.y;
 		}
 
-		if (victim->flags & MF_MISSILE)
+		if (victim->Flags & MF_MISSILE)
 		{
 			victim->velocity.z = 8.0 * 35.0;
 			mo->velocity.z = victim->velocity.z;
 		}
 		else
 		{
-			victim->velocity.z = 1000.0 / victim->mass * 35.0;
+			victim->velocity.z = 1000.0 / victim->Mass * 35.0;
 		}
 		if (victim->player)
 		{
@@ -549,8 +549,8 @@ void BlastMobj(mobj_t * source, mobj_t * victim, float strength)
 		}
 		else
 		{
-			victim->flags2 |= MF2_SLIDE;
-			victim->flags2 |= MF2_BLASTED;
+			victim->Flags2 |= MF2_SLIDE;
+			victim->Flags2 |= MF2_BLASTED;
 		}
 	}
 }
@@ -575,32 +575,32 @@ void ArtiBlastRadius(player_t * player)
 	mo = NULL;
 	while ((mo = NextMobj(mo)))
 	{
-		if ((mo == pmo) || (mo->flags2 & MF2_BOSS))
+		if ((mo == pmo) || (mo->Flags2 & MF2_BOSS))
 		{
 			// Not a valid monster
 			continue;
 		}
 		if ((mo->Class == MT_POISONCLOUD) ||	// poison cloud
 			(mo->Class == MT_HOLY_FX) ||	// holy fx
-			(mo->flags & MF_ICECORPSE))	// frozen corpse
+			(mo->Flags & MF_ICECORPSE))	// frozen corpse
 		{
 			// Let these special cases go
 		}
-		else if ((mo->flags & MF_COUNTKILL) && (mo->health <= 0))
+		else if ((mo->Flags & MF_COUNTKILL) && (mo->Health <= 0))
 		{
 			continue;
 		}
-		else if (!(mo->flags & MF_COUNTKILL) && !(mo->player) &&
-			!(mo->flags & MF_MISSILE))
+		else if (!(mo->Flags & MF_COUNTKILL) && !(mo->player) &&
+			!(mo->Flags & MF_MISSILE))
 		{
 			// Must be monster, player, or missile
 			continue;
 		}
-		if (mo->flags2 & MF2_DORMANT)
+		if (mo->Flags2 & MF2_DORMANT)
 		{
 			continue;	// no dormant creatures
 		}
-		if ((mo->Class == MT_WRAITHB) && (mo->translucency >= 100))
+		if ((mo->Class == MT_WRAITHB) && (mo->Translucency >= 100))
 		{
 			continue;	// no underground wraiths
 		}
@@ -653,13 +653,13 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	x = mthing->x;
 	y = mthing->y;
 
-	players[playernum].mo->flags2 &= ~MF2_PASSMOBJ;
+	players[playernum].mo->Flags2 &= ~MF2_PASSMOBJ;
 	if (!P_CheckPosition(players[playernum].mo, x, y))
 	{
-		players[playernum].mo->flags2 |= MF2_PASSMOBJ;
+		players[playernum].mo->Flags2 |= MF2_PASSMOBJ;
 		return false;
 	}
-	players[playernum].mo->flags2 |= MF2_PASSMOBJ;
+	players[playernum].mo->Flags2 |= MF2_PASSMOBJ;
 
 	// spawn a teleport fog 
 	ss = PointInSubsector(x, y);
@@ -675,6 +675,10 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.11  2002/01/11 18:19:42  dj_jl
 //  Started to use names in progs
 //

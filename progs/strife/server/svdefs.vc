@@ -283,16 +283,19 @@ enum
 
 class Entity:MapObject
 {
+};
+
+class Actor:Entity
+{
 	//  States
-	int spawnstate;
-	int seestate;
-	int painstate;
-	int meleestate;
-	int missilestate;
-	int crashstate;
-	int deathstate;
-	int xdeathstate;
-	int raisestate;
+	int SpawnState;
+	int SeeState;
+	int MeleeState;
+	int MissileState;
+	int PainState;
+	int CrashState;
+	int DeathState;
+	int GibsDeathState;
 
 	//  Sounds
 	name SightSound;
@@ -309,12 +312,12 @@ class Entity:MapObject
 	int sound_death;
 
 	//  Params
-	float mass;
-	float speed;
-	int painchance;
+	float Mass;
+	float Speed;
+	int PainChance;
 	int spawnhealth;
-	int gibshealth;
-	string classname;
+	int GibsHealth;
+	string ClassName;
 
 	float time;	// state tic counter
 	int statenum;
@@ -324,7 +327,7 @@ class Entity:MapObject
 	// also the originator for missiles.
 	mobj_t *target;
 
-	int damage;	// For missiles
+	int MissileDamage;	// For missiles
 
 	// Player number last looked for.
 	int lastlook;
@@ -333,8 +336,9 @@ class Entity:MapObject
 	mthing_t spawnpoint;
 
 	// Reaction time: if non 0, don't attack yet.
+	int ReactionCount;
 	// Used by player to freeze a bit after teleporting.
-	int reactiontime;
+	float ReactionTime;
 
 	// If >0, the target will be chased
 	// no matter what (even if shot)
@@ -353,7 +357,7 @@ class Entity:MapObject
 	void Unarchive(void);
 	void OnMapSpawn(mthing_t *mthing);
 
-	void Damage(Entity * inflictor, Entity * source, int damage);
+	void Damage(Actor * inflictor, Actor * source, int damage);
 
 	// Physics
 	void SlideMove(void);
@@ -365,14 +369,12 @@ class Entity:MapObject
 	void ZMovement(void);
 	void UpdateVelocity(void);
 	void FakeZMovement(void);
-	boolean Iter_CheckOnmobjZ(Entity thing);
-	Entity CheckOnmobj(void);
+	boolean Iter_CheckOnmobjZ(Actor thing);
+	Actor CheckOnmobj(void);
 	void PlayerLandedOnThing(void);
 	boolean Physics(void);
-};
 
-class Actor:Entity
-{
+	// Action functions
 	void A_24(void);
 	void A_25(void);
 	void A_26(void);
@@ -580,6 +582,10 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/15 18:27:01  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.11  2002/01/12 18:00:48  dj_jl
 //  Sound names initialized as names
 //

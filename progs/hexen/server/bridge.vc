@@ -247,13 +247,17 @@ void Actor::A_BridgeInit(void)
 void A_BridgeRemove(mobj_t *actor)
 {
 	actor->special1 = true;	// Removing the bridge
-	actor->flags &= ~MF_SOLID;
+	actor->Flags &= ~MF_SOLID;
 	SetMobjState(actor, S_FREE_BRIDGE1);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.8  2002/01/12 18:02:48  dj_jl
 //  Replaced some C style casts with dynamic casts
 //

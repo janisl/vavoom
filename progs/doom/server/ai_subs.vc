@@ -50,7 +50,7 @@ int P_CheckMeleeRange(mobj_t * actor)
 	pl = actor->target;
 	dist = MobjDist(pl, actor);
 
-	if (dist >= MELEERANGE - 20.0 + pl->radius)
+	if (dist >= MELEERANGE - 20.0 + pl->Radius)
 	{
 		return false;
 	}
@@ -78,15 +78,15 @@ int P_CheckMissileRange(mobj_t * actor)
 		return false;
 	}
 
-	if (actor->flags & MF_JUSTHIT)
+	if (actor->Flags & MF_JUSTHIT)
 	{
 		// the target just hit the enemy,
 		// so fight back!
-		actor->flags &= ~MF_JUSTHIT;
+		actor->Flags &= ~MF_JUSTHIT;
 		return true;
 	}
 
-	if (actor->reactiontime)
+	if (actor->ReactionCount)
 	{
 		return false;	// do not attack yet
 	}
@@ -94,7 +94,7 @@ int P_CheckMissileRange(mobj_t * actor)
 	// OPTIMIZE: get this from a global checksight
 	dist = MobjDist(actor, actor->target) - 64.0;
 
-	if (!actor->meleestate)
+	if (!actor->MeleeState)
 		dist -= 128.0;	// no melee attack, so fire more
 
 	if (actor->Class == MT_VILE)
@@ -141,7 +141,7 @@ int P_FindOther(mobj_t * mo)
 	mo2 = NULL;
 	while ((mo2 = NextMobj(mo2)))
 	{
-		if (mo2 != mo && mo2->Class == mo->Class && mo2->health > 0)
+		if (mo2 != mo && mo2->Class == mo->Class && mo2->Health > 0)
 		{
 			// other mobj of the same Class not dead
 			return true;
@@ -164,14 +164,14 @@ boolean P_LookForMonsters(mobj_t * actor, boolean allaround)
 
 	for (mo = NextMobj(NULL); mo; mo = NextMobj(mo))
 	{
-		if (mo->health <= 0)
+		if (mo->Health <= 0)
 			continue;	// dead
 
 		if (mo == actor)
 			continue;
 
 		if ((mo->Class != MT_SKULL) && (mo->Class != MT_PLAYER)
-			&& !(mo->flags & MF_COUNTKILL))
+			&& !(mo->Flags & MF_COUNTKILL))
 			continue;
 
 		if (!P_CheckSight(actor, mo))
@@ -219,13 +219,13 @@ boolean P_LookForMonsters2(mobj_t * actor, boolean allaround)
 
 	for (mo = NextMobj(NULL); mo; mo = NextMobj(mo))
 	{
-		if (mo->health <= 0)
+		if (mo->Health <= 0)
 			continue;	// dead
 
 		if (mo == actor)
 			continue;	// self
 
-		if ((mo->Class != MT_SKULL) && !(mo->flags & MF_COUNTKILL))
+		if ((mo->Class != MT_SKULL) && !(mo->Flags & MF_COUNTKILL))
 			continue;	// not a monster
 
 		if (!P_CheckSight(actor, mo))
@@ -488,6 +488,10 @@ void P_NewChaseDir(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/15 18:26:59  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.6  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

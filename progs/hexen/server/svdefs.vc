@@ -267,16 +267,19 @@ enum
 
 class Entity:MapObject
 {
+};
+
+class Actor:Entity
+{
 	//  States
-	int spawnstate;
-	int seestate;
-	int painstate;
-	int meleestate;
-	int missilestate;
-	int crashstate;
-	int deathstate;
-	int xdeathstate;
-	int raisestate;
+	int SpawnState;
+	int SeeState;
+	int PainState;
+	int MeleeState;
+	int MissileState;
+	int CrashState;
+	int DeathState;
+	int GibsDeathState;
 
 	//  Sounds
 	name SightSound;
@@ -293,11 +296,11 @@ class Entity:MapObject
 	int sound_death;
 
 	//  Params
-	float mass;
-	float speed;
-	int painchance;
+	float Mass;
+	float Speed;
+	int PainChance;
 	int spawnhealth;
-	int gibshealth;
+	int GibsHealth;
 
 	float time;	// state tic counter
 	int statenum;
@@ -305,17 +308,17 @@ class Entity:MapObject
 
 	// Thing being chased/attacked (or NULL),
 	// also the originator for missiles.
-	Entity *target;
+	Actor *target;
 
 	int special1;	// Special info
 	int special2;	// Special info
 	float special1f;
 	float special2f;
-	Entity *specialmobj1;
-	Entity *specialmobj2;
+	Actor *specialmobj1;
+	Actor *specialmobj2;
 	classid specialcid;
 
-	int damage;	// For missiles
+	int MissileDamage;	// For missiles
 
 	boolean blaster;
 
@@ -323,8 +326,9 @@ class Entity:MapObject
 	int lastlook;
 
 	// Reaction time: if non 0, don't attack yet.
+	int ReactionCount;
 	// Used by player to freeze a bit after teleporting.
-	int reactiontime;
+	float ReactionTime;
 
 	// If >0, the target will be chased
 	// no matter what (even if shot)
@@ -340,7 +344,7 @@ class Entity:MapObject
 
 	void Think(void);
 
-	void Damage(Entity * inflictor, Entity * source, int damage);
+	void Damage(Actor * inflictor, Actor * source, int damage);
 
 	//  Physics
 	boolean Physics(void);
@@ -358,16 +362,14 @@ class Entity:MapObject
 	void SlideMove(void);
 	void BounceWall(void);
 	void FakeZMovement(void);
-	boolean Iter_CheckOnmobjZ(Entity thing);
-	Entity CheckOnmobj(void);
+	boolean Iter_CheckOnmobjZ(Actor thing);
+	Actor CheckOnmobj(void);
 
 	void Archive(void);
 	void Unarchive(void);
 	void OnMapSpawn(mthing_t *mthing);
-};
 
-class Actor:Entity
-{
+	// Action functions
 	void A_FreeTargMobj(void);
 	void A_FlameCheck(void);
 	void A_HideThing(void);
@@ -667,14 +669,14 @@ addfields player_t
 	boolean weaponowned[NUMWEAPONS];
 
 	// Who did damage (NULL for floors/ceilings).
-	Entity *attacker;
+	Actor *attacker;
 
 	// For screen flashing (red or bright).
 	int damagecount;
 	int bonuscount;
 
 	int poisoncount;	// screen flash for poison damage
-	Entity *poisoner;	// NULL for non-player mobjs
+	Actor *poisoner;	// NULL for non-player mobjs
 
 	int jumpTics;
 	int localQuakeHappening;
@@ -769,6 +771,10 @@ name door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.12  2002/01/12 18:00:48  dj_jl
 //  Sound names initialized as names
 //

@@ -130,11 +130,11 @@ void P_SpawnPlayer(mthing_t * mthing)
 	mobj = P_SpawnMobj(x, y, z, MT_PLAYER);
 
 	// set color translations for player sprites
-	mobj->translation = p->color;
+	mobj->Translation = p->color;
 
 	mobj->angles.yaw = itof(mthing->angle);
 	mobj->player = p;
-	mobj->health = p->health;
+	mobj->Health = p->health;
 
 	p->mo = mobj;
 	p->playerstate = PST_LIVE;
@@ -195,7 +195,7 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 		StartSound(th, th->sound_sight, CHAN_VOICE);
 
 	th->target = source;
-	th->velocity = dir * th->speed;
+	th->velocity = dir * th->Speed;
 	VectorAngles(&dir, &th->angles);
 
 	CheckMissileSpawn(th);
@@ -206,6 +206,10 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.12  2002/01/11 18:19:40  dj_jl
 //  Started to use names in progs
 //

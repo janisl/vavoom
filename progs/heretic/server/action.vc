@@ -38,7 +38,7 @@ void Actor::A_RestoreSpecialThing1(void)
 		// Do random mace placement
 		RepositionMace(this);
 	}
-	translucency -= 100;
+	Translucency -= 100;
 	StartSoundName(this, 'Respawn', CHAN_VOICE);
 }
 
@@ -50,8 +50,8 @@ void Actor::A_RestoreSpecialThing1(void)
 
 void Actor::A_RestoreSpecialThing2(void)
 {
-	flags |= MF_SPECIAL;
-	SetMobjState(this, spawnstate);
+	Flags |= MF_SPECIAL;
+	SetMobjState(this, SpawnState);
 }
 
 //==========================================================================
@@ -62,7 +62,7 @@ void Actor::A_RestoreSpecialThing2(void)
 
 void Actor::A_HideThing(void)
 {
-	translucency += 100;
+	Translucency += 100;
 }
 
 //==========================================================================
@@ -73,7 +73,7 @@ void Actor::A_HideThing(void)
 
 void Actor::A_UnHideThing(void)
 {
-	translucency -= 100;
+	Translucency -= 100;
 }
 
 //==========================================================================
@@ -84,8 +84,8 @@ void Actor::A_UnHideThing(void)
 
 void Actor::A_RestoreArtifact(void)
 {
-	flags |= MF_SPECIAL;
-	SetMobjState(this, spawnstate);
+	Flags |= MF_SPECIAL;
+	SetMobjState(this, SpawnState);
 	StartSoundName(this, 'Respawn', CHAN_VOICE);
 }
 
@@ -140,6 +140,10 @@ void Actor::A_ESound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.8  2002/01/11 18:19:41  dj_jl
 //  Started to use names in progs
 //

@@ -892,7 +892,7 @@ void Weapon::A_GauntletAttack(void)
 		else
 			player->mo->angles.yaw = AngleMod360(player->mo->angles.yaw + 90.0 / 20.0);
 	}
-	player->mo->flags |= MF_JUSTATTACKED;
+	player->mo->Flags |= MF_JUSTATTACKED;
 }
 
 //===========================================================================
@@ -1168,7 +1168,7 @@ void Weapon::A_FirePhoenixPL2(void)
 	mo->angles.yaw = pmo->angles.yaw;
 	mo->angles.pitch = pmo->angles.pitch;
 	AngleVector(&mo->angles, &dir);
-	mo->velocity = pmo->velocity + mo->speed * dir;
+	mo->velocity = pmo->velocity + mo->Speed * dir;
 	if (!player->refire || !(level->tictime % 38))
 	{
 		StartSoundName(player->mo, 'PhoenixHit2', CHAN_WEAPON);
@@ -1214,8 +1214,8 @@ void A_FireMacePL1B(mobj_t * actor)
 	ball->target = pmo;
 	ball->angles.yaw = angle;
 	ball->origin.z += 173.0 * -tan(player->mo->angles.pitch) / 16.0;
-	ball->velocity.x = pmo->velocity.x / 2.0 + ball->speed * cos(angle);
-	ball->velocity.y = pmo->velocity.y / 2.0 + ball->speed * sin(angle);
+	ball->velocity.x = pmo->velocity.x / 2.0 + ball->Speed * cos(angle);
+	ball->velocity.y = pmo->velocity.y / 2.0 + ball->Speed * sin(angle);
 	StartSoundName(ball, 'MaceFire', CHAN_WEAPON);
 	CheckMissileSpawn(ball);
 }
@@ -1380,8 +1380,8 @@ void Actor::A_SpawnRippers(void)
 		angle = itof(i) * 45.0;
 		ripper->target = target;
 		ripper->angles.yaw = angle;
-		ripper->velocity.x = ripper->speed * cos(angle);
-		ripper->velocity.y = ripper->speed * sin(angle);
+		ripper->velocity.x = ripper->Speed * cos(angle);
+		ripper->velocity.y = ripper->Speed * sin(angle);
 		CheckMissileSpawn(ripper);
 	}
 }
@@ -1423,19 +1423,19 @@ void Actor::A_AddPlayerRain(void)
 	if (player->rain1 && player->rain2)
 	{
 		// Terminate an active rain
-		if (player->rain1->health < player->rain2->health)
+		if (player->rain1->Health < player->rain2->Health)
 		{
-			if (player->rain1->health > 16)
+			if (player->rain1->Health > 16)
 			{
-				player->rain1->health = 16;
+				player->rain1->Health = 16;
 			}
 			player->rain1 = NULL;
 		}
 		else
 		{
-			if (player->rain2->health > 16)
+			if (player->rain2->Health > 16)
 			{
-				player->rain2->health = 16;
+				player->rain2->Health = 16;
 			}
 			player->rain2 = NULL;
 		}
@@ -1466,7 +1466,7 @@ void Actor::A_SkullRodStorm(void)
 	player_t *player;
 	classid rain_type;
 
-	if (health-- == 0)
+	if (Health-- == 0)
 	{
 		SetMobjState(this, S_NULL);
 		playerNum = netgame ? special2 : 0;
@@ -1508,7 +1508,7 @@ void Actor::A_SkullRodStorm(void)
 	mo = P_SpawnMobj(x, y, ONCEILINGZ, rain_type);
 	mo->target = target;
 	mo->velocity.x = 0.00001;	// Force collision detection
-	mo->velocity.z = -mo->speed;
+	mo->velocity.z = -mo->Speed;
 	mo->special2 = special2;	// Transfer player number
 	CheckMissileSpawn(mo);
 	if (!(special1 & 31))
@@ -1613,7 +1613,7 @@ void Actor::A_MacePL1Check(void)
 		return;
 	}
 	special1 = 0;
-	flags2 |= MF2_LOGRAV;
+	Flags2 |= MF2_LOGRAV;
 	angle = angles.yaw;
 	velocity.x = 7.0 * cos(angle) * 35.0;
 	velocity.y = 7.0 * sin(angle) * 35.0;
@@ -1634,20 +1634,20 @@ void Actor::A_MaceBallImpact(void)
 		P_RemoveMobj(this);
 		return;
 	}
-	if ((health != MAGIC_JUNK) && (origin.z <= floorz) && velocity.z)
+	if ((Health != MAGIC_JUNK) && (origin.z <= floorz) && velocity.z)
 	{
 		// Bounce
-		health = MAGIC_JUNK;
+		Health = MAGIC_JUNK;
 		velocity.z = velocity.z * 192.0 / 256.0;
-		flags2 &= ~MF2_FLOORBOUNCE;
-		SetMobjState(this, spawnstate);
+		Flags2 &= ~MF2_FLOORBOUNCE;
+		SetMobjState(this, SpawnState);
 		StartSoundName(this, 'Bounce', CHAN_VOICE);
 	}
 	else
 	{
 		// Explode
-		flags |= MF_NOGRAVITY;
-		flags2 &= ~MF2_LOGRAV;
+		Flags |= MF_NOGRAVITY;
+		Flags2 &= ~MF2_LOGRAV;
 		StartSoundName(this, 'MaceHit', CHAN_VOICE);
 	}
 }
@@ -1673,14 +1673,14 @@ void Actor::A_MaceBallImpact2(void)
 	{
 		// Explode
 		velocity = vector(0.0, 0.0, 0.0);
-		flags |= MF_NOGRAVITY;
-		flags2 &= ~(MF2_LOGRAV | MF2_FLOORBOUNCE);
+		Flags |= MF_NOGRAVITY;
+		Flags2 &= ~(MF2_LOGRAV | MF2_FLOORBOUNCE);
 	}
 	else
 	{
 		// Bounce
 		velocity.z = velocity.z * 192.0 / 256.0;
-		SetMobjState(this, spawnstate);
+		SetMobjState(this, SpawnState);
 
 		tiny = P_SpawnMobj(origin.x, origin.y, origin.z, MT_MACEFX3);
 		angle = AngleMod360(angles.yaw + 90.0);
@@ -1733,7 +1733,7 @@ void Actor::A_DeathBallImpact(void)
 		targ = specialmobj1;
 		if (targ)
 		{
-			if (!(targ->flags & MF_SHOOTABLE))
+			if (!(targ->Flags & MF_SHOOTABLE))
 			{
 				// Target died
 				specialmobj1 = NULL;
@@ -1769,16 +1769,16 @@ void Actor::A_DeathBallImpact(void)
 		if (newAngle)
 		{
 			angles.yaw = angle;
-			velocity.x = speed * cos(angle);
-			velocity.y = speed * sin(angle);
+			velocity.x = Speed * cos(angle);
+			velocity.y = Speed * sin(angle);
 		}
-		SetMobjState(this, spawnstate);
+		SetMobjState(this, SpawnState);
 		StartSoundName(this, 'PlatformStop', CHAN_VOICE);
 	}
 	else
 	{	// Explode
-		flags |= MF_NOGRAVITY;
-		flags2 &= ~MF2_LOGRAV;
+		Flags |= MF_NOGRAVITY;
+		Flags2 &= ~MF2_LOGRAV;
 		StartSoundName(this, 'PhoenixHit', CHAN_VOICE);
 	}
 }
@@ -1786,6 +1786,10 @@ void Actor::A_DeathBallImpact(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.11  2002/01/11 18:19:41  dj_jl
 //  Started to use names in progs
 //

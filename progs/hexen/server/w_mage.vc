@@ -81,9 +81,9 @@ void Weapon::A_FireConePL1(void)
 		AimLineAttack(pmo, &ang, MELEERANGE);
 		if (linetarget)
 		{
-			pmo->flags2 |= MF2_ICEDAMAGE;
+			pmo->Flags2 |= MF2_ICEDAMAGE;
 			linetarget->Damage(pmo, pmo, damage);
-			pmo->flags2 &= ~MF2_ICEDAMAGE;
+			pmo->Flags2 &= ~MF2_ICEDAMAGE;
 			conedone = true;
 			break;
 		}
@@ -263,7 +263,7 @@ void Actor::A_LightningClip(void)
 	}
 	else if (Class == MT_LIGHTNING_CEILING)
 	{
-		origin.z = ceilingz - height;
+		origin.z = ceilingz - Height;
 		targ = specialmobj1;
 	}
 	if (Class == MT_LIGHTNING_FLOOR)
@@ -292,7 +292,7 @@ void Actor::A_LightningClip(void)
 	}
 	if (targ)
 	{
-		if (targ->health <= 0)
+		if (targ->Health <= 0)
 		{
 			P_ExplodeMissile(this);
 		}
@@ -302,7 +302,7 @@ void Actor::A_LightningClip(void)
 				targ->origin.x - origin.x);
 			velocity.x = 0.0;
 			velocity.y = 0.0;
-			P_ThrustMobj(this, angles.yaw, speed * frametime / 2.0);
+			P_ThrustMobj(this, angles.yaw, Speed * frametime / 2.0);
 		}
 	}
 }
@@ -320,10 +320,10 @@ void Actor::A_LightningZap(void)
 
 	A_LightningClip();
 
-	health -= 8;
-	if (health <= 0)
+	Health -= 8;
+	if (Health <= 0)
 	{
-		SetMobjState(this, deathstate);
+		SetMobjState(this, DeathState);
 		return;
 	}
 	if (Class == MT_LIGHTNING_FLOOR)
@@ -334,8 +334,8 @@ void Actor::A_LightningZap(void)
 	{
 		deltaZ = -10.0;
 	}
-	mo = P_SpawnMobj(origin.x + (Random() - 0.5) * radius,
-		origin.y + (Random() - 0.5) * radius,
+	mo = P_SpawnMobj(origin.x + (Random() - 0.5) * Radius,
+		origin.y + (Random() - 0.5) * Radius,
 		origin.z + deltaZ, MT_LIGHTNING_ZAP);
 	if (mo)
 	{
@@ -371,7 +371,7 @@ void Actor::A_ZapMimic(void)
 	mo = specialmobj2;
 	if (mo)
 	{
-		if (mo->statenum >= mo->deathstate || mo->statenum == S_FREETARGMOBJ)
+		if (mo->statenum >= mo->DeathState || mo->statenum == S_FREETARGMOBJ)
 		{
 			P_ExplodeMissile(this);
 		}
@@ -531,6 +531,10 @@ void Actor::A_MStaffTrack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.12  2002/01/12 18:02:48  dj_jl
 //  Replaced some C style casts with dynamic casts
 //

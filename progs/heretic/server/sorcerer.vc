@@ -75,7 +75,7 @@ void Actor::A_Srcr1Attack(void)
 		target->Damage(this, this, HITDICE(8));
 		return;
 	}
-	if (health > (spawnhealth / 3) * 2)
+	if (Health > (spawnhealth / 3) * 2)
 	{
 		// Spit one fireball
 		SpawnMissile(this, target, MT_SRCRFX1);
@@ -93,7 +93,7 @@ void Actor::A_Srcr1Attack(void)
 			SpawnMissileAngles(this, MT_SRCRFX1,
 				AngleMod360(angle + 3.0), ang.pitch);
 		}
-		if (health < spawnhealth / 3)
+		if (Health < spawnhealth / 3)
 		{
 			// Maybe attack again
 			if (special1)
@@ -144,7 +144,7 @@ void Actor::A_SorcererRise(void)
 {
 	mobj_t *mo;
 
-	flags &= ~MF_SOLID;
+	Flags &= ~MF_SOLID;
 	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_SORCERER2);
 	SetMobjState(mo, S_SOR2_RISE1);
 	mo->angles.yaw = angles.yaw;
@@ -188,7 +188,7 @@ void Actor::A_Srcr2Decide(void)
 		// No spots
 		return;
 	}
-	switch (health / (spawnhealth / 8))
+	switch (Health / (spawnhealth / 8))
 	{
 	case 0:
 		chance = 192;
@@ -244,7 +244,7 @@ void Actor::A_Srcr2Attack(void)
 		target->Damage(this, this, HITDICE(20));
 		return;
 	}
-	chance = health < spawnhealth / 2 ? 96 : 48;
+	chance = Health < spawnhealth / 2 ? 96 : 48;
 	if (P_Random() < chance)
 	{
 		// Wizard spawners
@@ -352,7 +352,7 @@ void Actor::A_GenWizard(void)
 	mobj_t *fog;
 
 	mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_WIZARD);
-	mo->origin.z = origin.z - mo->height / 2.0;
+	mo->origin.z = origin.z - mo->Height / 2.0;
 	if (!P_TestMobjLocation(mo))
 	{
 		// Didn't fit
@@ -360,8 +360,8 @@ void Actor::A_GenWizard(void)
 		return;
 	}
 	velocity = vector(0.0, 0.0, 0.0);
-	SetMobjState(this, deathstate);
-	flags &= ~MF_MISSILE;
+	SetMobjState(this, DeathState);
+	Flags &= ~MF_MISSILE;
 	fog = P_SpawnMobj(origin.x, origin.y, origin.z, MT_TFOG);
 	StartSoundName(fog, 'Teleport', CHAN_VOICE);
 }
@@ -369,6 +369,10 @@ void Actor::A_GenWizard(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.10  2002/01/11 18:19:41  dj_jl
 //  Started to use names in progs
 //

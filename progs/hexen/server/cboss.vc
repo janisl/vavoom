@@ -49,7 +49,7 @@ void Actor::A_ClassBossHealth(void)
 	{
 		if (!special1)
 		{
-			health *= 5;
+			Health *= 5;
 			special1 = true;	// has been initialized
 		}
 	}
@@ -67,9 +67,9 @@ void Actor::A_FastChase(void)
 	float dist;
 	float ang;
 
-	if (reactiontime)
+	if (ReactionCount)
 	{
-		reactiontime--;
+		ReactionCount--;
 	}
 
 	// Modify target threshold
@@ -105,7 +105,7 @@ void Actor::A_FastChase(void)
 		}
 	}
 
-	if (!target || !(target->flags & MF_SHOOTABLE))
+	if (!target || !(target->Flags & MF_SHOOTABLE))
 	{
 		// look for a new target
 		if (P_LookForPlayers(this, true))
@@ -113,16 +113,16 @@ void Actor::A_FastChase(void)
 			// got a new target
 			return;
 		}
-		SetMobjState(this, spawnstate);
+		SetMobjState(this, SpawnState);
 		return;
 	}
 
 	//
 	// don't attack twice in a row
 	//
-	if (flags & MF_JUSTATTACKED)
+	if (Flags & MF_JUSTATTACKED)
 	{
-		flags &= ~MF_JUSTATTACKED;
+		Flags &= ~MF_JUSTATTACKED;
 		if (gameskill != sk_nightmare)
 			P_NewChaseDir(this);
 		return;
@@ -159,14 +159,14 @@ void Actor::A_FastChase(void)
 	//
 	// check for missile attack
 	//
-	if (missilestate)
+	if (MissileState)
 	{
 		if ((gameskill == sk_nightmare) || !movecount)
 		{
 			if (CheckMissileRange(this))
 			{
-				SetMobjState(this, missilestate);
-				flags |= MF_JUSTATTACKED;
+				SetMobjState(this, MissileState);
+				Flags |= MF_JUSTATTACKED;
 				return;
 			}
 		}
@@ -306,6 +306,10 @@ void Actor::A_MageAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.8  2002/01/11 18:19:41  dj_jl
 //  Started to use names in progs
 //

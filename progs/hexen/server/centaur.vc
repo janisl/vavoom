@@ -77,7 +77,7 @@ void Actor::A_CentaurAttack2(void)
 
 void Actor::A_SetReflective(void)
 {
-	flags2 |= MF2_REFLECTIVE;
+	Flags2 |= MF2_REFLECTIVE;
 
 	if (IsA(MT_CENTAUR) || IsA(MT_CENTAURLEADER))
 	{
@@ -93,7 +93,7 @@ void Actor::A_SetReflective(void)
 
 void Actor::A_UnSetReflective(void)
 {
-	flags2 &= ~MF2_REFLECTIVE;
+	Flags2 &= ~MF2_REFLECTIVE;
 
 	if (IsA(MT_CENTAUR) || IsA(MT_CENTAURLEADER))
 	{
@@ -113,7 +113,7 @@ void Actor::A_CentaurDefend(void)
 	if (CheckMeleeRange(this) && P_Random() < 32)
 	{
 		A_UnSetInvulnerable();
-		SetMobjState(this, meleestate);
+		SetMobjState(this, MeleeState);
 	}
 }
 
@@ -163,14 +163,18 @@ void Actor::A_CheckFloor(void)
 	if (origin.z <= floorz)
 	{
 		origin.z = floorz;
-		flags2 &= ~MF2_LOGRAV;
-		SetMobjState(this, deathstate);
+		Flags2 &= ~MF2_LOGRAV;
+		SetMobjState(this, DeathState);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.10  2002/01/11 18:19:41  dj_jl
 //  Started to use names in progs
 //

@@ -39,11 +39,11 @@ void Actor::A_Look(void)
 	threshold = 0;	// any shot will wake up
 	targ = subsector->sector->soundtarget;
 
-	if (targ && targ->flags & MF_SHOOTABLE)
+	if (targ && targ->Flags & MF_SHOOTABLE)
 	{
 		target = targ;
 
-		if (flags & MF_AMBUSH)
+		if (Flags & MF_AMBUSH)
 		{
 			if (!P_CheckSight(this, target))
 			{
@@ -85,7 +85,7 @@ void Actor::A_Look(void)
 		}
 	}
 
-	SetMobjState(this, seestate);
+	SetMobjState(this, SeeState);
 }
 
 //==========================================================================
@@ -100,21 +100,21 @@ void Actor::A_Chase(void)
 {
 	float delta;
 
-	if (reactiontime)
+	if (ReactionCount)
 	{
-		reactiontime--;
+		ReactionCount--;
 	}
 
 	//  Remove muzzle flash
-	if ((effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
+	if ((Effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
 	{
-		effects &= ~EF_DLIGHT_MASK;
+		Effects &= ~EF_DLIGHT_MASK;
 	}
 
 	// modify target threshold
 	if (threshold)
 	{
-		if (!target || target->health <= 0)
+		if (!target || target->Health <= 0)
 		{
 			threshold = 0;
 		}
@@ -150,21 +150,21 @@ void Actor::A_Chase(void)
 		}
 	}
 
-	if (!target || !(target->flags & MF_SHOOTABLE))
+	if (!target || !(target->Flags & MF_SHOOTABLE))
 	{
 		// look for a new target
 		if (P_LookForPlayers(this, true))
 		{
 			return;	// got a new target
 		}
-		SetMobjState(this, spawnstate);
+		SetMobjState(this, SpawnState);
 		return;
 	}
 
 	// do not attack twice in a row
-	if (flags & MF_JUSTATTACKED)
+	if (Flags & MF_JUSTATTACKED)
 	{
-		flags &= ~MF_JUSTATTACKED;
+		Flags &= ~MF_JUSTATTACKED;
 		if (!fastparm)
 		{
 			P_NewChaseDir(this);
@@ -173,25 +173,25 @@ void Actor::A_Chase(void)
 	}
 
 	// check for melee attack
-	if (meleestate && P_CheckMeleeRange(this))
+	if (MeleeState && P_CheckMeleeRange(this))
 	{
 		if (sound_attack)
 		{
 			StartSound(this, sound_attack, CHAN_WEAPON);
 		}
-		SetMobjState(this, meleestate);
+		SetMobjState(this, MeleeState);
 		return;
 	}
 
 	// check for missile attack
-	if (missilestate)
+	if (MissileState)
 	{
 		if (fastparm || !movecount)
 		{
 			if (P_CheckMissileRange(this))
 			{
-				SetMobjState(this, missilestate);
-				flags |= MF_JUSTATTACKED;
+				SetMobjState(this, MissileState);
+				Flags |= MF_JUSTATTACKED;
 				return;
 			}
 		}
@@ -231,12 +231,12 @@ void Actor::A_FaceTarget(void)
 	if (!target)
 		return;
 
-	flags &= ~MF_AMBUSH;
+	Flags &= ~MF_AMBUSH;
 
 	angles.yaw = atan2(target->origin.y - origin.y,
 		target->origin.x - origin.x);
 
-	if (target->translucency)
+	if (target->Translucency)
 	{
 		angles.yaw = AngleMod360(angles.yaw + (Random() - Random()) * 45.0);
 	}
@@ -251,9 +251,9 @@ void Actor::A_FaceTarget(void)
 void Actor::A_Pain(void)
 {
 	//  Remove muzzle flash
-	if ((effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
+	if ((Effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
 	{
-		effects &= ~EF_DLIGHT_MASK;
+		Effects &= ~EF_DLIGHT_MASK;
 	}
 
 	if (sound_pain)
@@ -272,7 +272,7 @@ void Actor::A_Pain(void)
 
 void Actor::A_Explode(void)
 {
-	translucency = 50;
+	Translucency = 50;
 	P_RadiusAttack(this, target, 128, 0, 0);
 
 	//  Spawn explosion effects - dynamic light and particles
@@ -280,10 +280,10 @@ void Actor::A_Explode(void)
 	MSG_WriteByte(svc_explosion);
 	MSG_WriteShort(ftoi(origin.x));
 	MSG_WriteShort(ftoi(origin.y));
-	MSG_WriteShort(ftoi(origin.z + height * 0.5));
+	MSG_WriteShort(ftoi(origin.z + Height * 0.5));
 
 	//  Clear old dynamic light effect
-	effects &= ~EF_DLIGHT_MASK;
+	Effects &= ~EF_DLIGHT_MASK;
 }
 
 //==========================================================================
@@ -299,9 +299,9 @@ void Actor::A_Scream(void)
 	int sound;
 
 	//  Remove muzzle flash
-	if ((effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
+	if ((Effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
 	{
-		effects &= ~EF_DLIGHT_MASK;
+		Effects &= ~EF_DLIGHT_MASK;
 	}
 
 	if (sound_death)
@@ -343,9 +343,9 @@ void Actor::A_Scream(void)
 void Actor::A_XScream(void)
 {
 	//  Remove muzzle flash
-	if ((effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
+	if ((Effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
 	{
-		effects &= ~EF_DLIGHT_MASK;
+		Effects &= ~EF_DLIGHT_MASK;
 	}
 
 	StartSoundName(this, 'Slop', CHAN_BODY);
@@ -362,13 +362,13 @@ void Actor::A_XScream(void)
 void Actor::A_Fall(void)
 {
 	//  Remove muzzle flash
-	if ((effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
+	if ((Effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
 	{
-		effects &= ~EF_DLIGHT_MASK;
+		Effects &= ~EF_DLIGHT_MASK;
 	}
 
 	// actor is on ground, it can be walked over
-	flags &= ~MF_SOLID;
+	Flags &= ~MF_SOLID;
 
 	// So change this if corpse objects
 	// are meant to be obstacles.
@@ -388,7 +388,7 @@ void Actor::A_PlayerScream(void)
 	name sound = 'PlayerDeath';
 
 #ifdef DOOM2
-	if (health < -50)
+	if (Health < -50)
 	{
 		// IF THE PLAYER DIES
 		// LESS THAN -50% WITHOUT GIBBING
@@ -461,7 +461,7 @@ void Actor::A_BossDeath(void)
 	// scan the remaining thinkers to see if all bosses are dead
 	for (mo2 = NextMobj(NULL); mo2; mo2 = NextMobj(mo2))
 	{
-		if (mo2 != this && mo2->Class == Class && mo2->health > 0)
+		if (mo2 != this && mo2->Class == Class && mo2->Health > 0)
 		{
 			// other boss not dead
 			return;
@@ -533,7 +533,7 @@ void Actor::A_BossDeath(void)
 	// scan the remaining thinkers to see if all bosses are dead
 	for (mo2 = NextMobj(NULL); mo2; mo2 = NextMobj(mo2))
 	{
-		if (mo2 != this && mo2->Class == Class && mo2->health > 0)
+		if (mo2 != this && mo2->Class == Class && mo2->Health > 0)
 		{
 			// other boss not dead
 			return;
@@ -560,6 +560,10 @@ void Actor::A_BossDeath(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/15 18:26:59  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.10  2002/01/11 18:19:40  dj_jl
 //  Started to use names in progs
 //

@@ -68,11 +68,11 @@ void Actor::A_ImpMsAttack(void)
 
 	if (!target || P_Random() > 64)
 	{
-		SetMobjState(this, seestate);
+		SetMobjState(this, SeeState);
 		return;
 	}
 	dest = target;
-	flags |= MF_SKULLFLY;
+	Flags |= MF_SKULLFLY;
 	StartSound(this, sound_attack, CHAN_WEAPON);
 	A_FaceTarget();
 	an = angles.yaw;
@@ -84,7 +84,7 @@ void Actor::A_ImpMsAttack(void)
 	{
 		dist = 1.0;
 	}
-	velocity.z = (dest->origin.z + dest->height / 2.0 - origin.z) / dist;
+	velocity.z = (dest->origin.z + dest->Height / 2.0 - origin.z) / dist;
 }
 
 //==========================================================================
@@ -118,8 +118,8 @@ void Actor::A_ImpMsAttack2(void)
 
 void Actor::A_ImpDeath(void)
 {
-	flags &= ~MF_SOLID;
-	flags2 |= MF2_FOOTCLIP;
+	Flags &= ~MF_SOLID;
+	Flags2 |= MF2_FOOTCLIP;
 	if (origin.z <= floorz)
 	{
 		SetMobjState(this, S_IMP_CRASH1);
@@ -134,9 +134,9 @@ void Actor::A_ImpDeath(void)
 
 void Actor::A_ImpXDeath1(void)
 {
-	flags &= ~MF_SOLID;
-	flags |= MF_NOGRAVITY;
-	flags2 |= MF2_FOOTCLIP;
+	Flags &= ~MF_SOLID;
+	Flags |= MF_NOGRAVITY;
+	Flags2 |= MF2_FOOTCLIP;
 	special1 = 666;	// Flag the crash routine
 }
 
@@ -148,7 +148,7 @@ void Actor::A_ImpXDeath1(void)
 
 void Actor::A_ImpXDeath2(void)
 {
-	flags &= ~MF_NOGRAVITY;
+	Flags &= ~MF_NOGRAVITY;
 	if (origin.z <= floorz)
 	{
 		SetMobjState(this, S_IMP_CRASH1);
@@ -183,6 +183,10 @@ void Actor::A_ImpExplode(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.8  2002/01/07 12:23:17  dj_jl
 //  Changed copyright year
 //

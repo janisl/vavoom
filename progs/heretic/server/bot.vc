@@ -195,7 +195,7 @@ float BotPlayer::AngleTo(TVec dest)
 //
 //==========================================================================
 
-boolean BotPlayer::CheckItem(Entity item)
+boolean BotPlayer::CheckItem(Actor item)
 {
 	int weapon;
 	int ammo;
@@ -205,7 +205,7 @@ boolean BotPlayer::CheckItem(Entity item)
 //?????
     if (!item)
 		return false;
-	if (!(item.flags & MF_SPECIAL))
+	if (!(item.Flags & MF_SPECIAL))
 		return false;
 
 	weapon = WeapFromItem(item);
@@ -223,7 +223,7 @@ boolean BotPlayer::CheckItem(Entity item)
 			return false;
 
 		// Can't pick it up because we have it and it's not a dropped weapon
-		if (!(item.flags & MF_DROPPED))
+		if (!(item.Flags & MF_DROPPED))
 			return false;
 	}
 
@@ -235,11 +235,11 @@ boolean BotPlayer::CheckItem(Entity item)
 			return false;
 	}
 
-	if (item.Class == MT_MISC0 && (botmo.health >= MAXHEALTH))
+	if (item.Class == MT_MISC0 && (botmo.Health >= MAXHEALTH))
 		return false;
 #if 0
 	if ((item.Class == MT_MISC12 || item.Class == MT_MEGA) &&
-		(botmo.health >= 2 * MAXHEALTH))
+		(botmo.Health >= 2 * MAXHEALTH))
 		return false;
 #endif
 	if (item.Class == MT_ITEMSHIELD1 && (player->armorpoints >= 100))
@@ -247,7 +247,7 @@ boolean BotPlayer::CheckItem(Entity item)
 	if (item.Class == MT_ITEMSHIELD2 && (player->armorpoints >= 200))
 		return false;
 #if 0
-	if (teamgame.value && item->flags3 & MF3_KEY && !(item->flags & MF_DROPPED))
+	if (teamgame.value && item->flags3 & MF3_KEY && !(item->Flags & MF_DROPPED))
 		return false;
 #endif
 
@@ -279,7 +279,7 @@ void BotPlayer::SetEnemy(void)
 	}
 #endif
 
-	if (enemy && enemy.health > 0 && player->mo &&
+	if (enemy && enemy.Health > 0 && player->mo &&
 		P_CheckSight(player->mo, &enemy))
 	{
 		return;
@@ -292,7 +292,7 @@ void BotPlayer::SetEnemy(void)
 		return;
 	
 	// Double check the validity of the enemy
-	if (!(enemy.flags & MF_SHOOTABLE))
+	if (!(enemy.Flags & MF_SHOOTABLE))
 		enemy = none;
 }
 
@@ -330,21 +330,21 @@ void BotPlayer::CheckStuff(void)
 {
 	if (item)
 	{
-		if (!(item.flags & MF_SPECIAL) || item.IsDestroyed() || // somebody picked
+		if (!(item.Flags & MF_SPECIAL) || item.IsDestroyed() || // somebody picked
 				!CheckTo(item.origin)) // Can't reach
 			item = none;
 	}
 
 	if (missile)
 	{
-		if (!(missile.flags & MF_MISSILE) || missile.IsDestroyed())
+		if (!(missile.Flags & MF_MISSILE) || missile.IsDestroyed())
 			missile = none;
 	}
 
 	if (node)
 	{
 		if (!CheckTo(node.origin) ||
-			(MobjDist2(&botmo, &node) < botmo.radius))
+			(MobjDist2(&botmo, &node) < botmo.Radius))
 		{
 			prev = node;
 			node = none;
@@ -356,7 +356,7 @@ void BotPlayer::CheckStuff(void)
 		TVec dir;
 		dir = posdest - botmo.origin;
 		dir.z = 0.0;
-		if ((Length(dir) < botmo.radius) || !CheckTo(posdest))
+		if ((Length(dir) < botmo.Radius) || !CheckTo(posdest))
 		{
 			posdest_valid = false;
 		}
@@ -367,7 +367,7 @@ void BotPlayer::CheckStuff(void)
 		TVec dir;
 		dir = lastpos - botmo.origin;
 		dir.z = 0.0;
-		if ((Length(dir) < botmo.radius) || !CheckTo(lastpos))
+		if ((Length(dir) < botmo.Radius) || !CheckTo(lastpos))
 		{
 			lastpos_valid = false;
 		}
@@ -375,7 +375,7 @@ void BotPlayer::CheckStuff(void)
 
 	if (enemy)
 	{
-		if (enemy.health <= 0 || !(enemy.flags & MF_SHOOTABLE))
+		if (enemy.Health <= 0 || !(enemy.Flags & MF_SHOOTABLE))
 			enemy = none;
 	}
 }
@@ -488,11 +488,11 @@ weapontype_t B_ChooseWeapon (skullb_s *bot)
 
 void BotPlayer::Scan(void)
 {
-	Entity actor;
+	Actor actor;
 
 	for (actor = *NextMobj(NULL); actor; actor = *NextMobj(&actor))
 	{
-		if (!(actor.flags & (MF_SPECIAL | MF_MISSILE)))
+		if (!(actor.Flags & (MF_SPECIAL | MF_MISSILE)))
 		{
 			// Not interested in this one
 			continue;
@@ -500,7 +500,7 @@ void BotPlayer::Scan(void)
 		if (Check_LOS(actor, 90.0))
 		{
 			// Look for special items
-			if (!item && actor.flags & MF_SPECIAL)
+			if (!item && actor.Flags & MF_SPECIAL)
 			{
 				if (CheckItem(actor))
 				{
@@ -509,7 +509,7 @@ void BotPlayer::Scan(void)
 					itemIsPowerup = newItemIsPowerup;
 				}
 			}
-			else if (!missile && actor.flags & MF_MISSILE &&
+			else if (!missile && actor.Flags & MF_MISSILE &&
 				(MobjDist(&botmo, &actor) < AVOID_DIST))
 			{
 				missile = actor;
@@ -729,7 +729,7 @@ float BotPlayer::GetAngle(void)
 //
 //==========================================================================
 
-int BotPlayer::WeapFromItem(Entity item)
+int BotPlayer::WeapFromItem(Actor item)
 {
 	switch (item.Class)
 	{
@@ -758,7 +758,7 @@ int BotPlayer::WeapFromItem(Entity item)
 //
 //==========================================================================
 
-int BotPlayer::AmmoFromItem(Entity item)
+int BotPlayer::AmmoFromItem(Actor item)
 {
 	switch (item.Class)
 	{
@@ -818,10 +818,10 @@ TVec bottracedir;
 
 boolean PTR_BotPathTraverse(intercept_t *in)
 {
-	Entity th;
+	Actor th;
 	line_t *ld;
 	BotPlayer bot;
-	Entity botmo;
+	Actor botmo;
 	TVec hit_point;
 
 	bot = usething->player->Bot;
@@ -862,7 +862,7 @@ boolean PTR_BotPathTraverse(intercept_t *in)
 
 		// crosses a two sided line
 		open = LineOpenings(ld, hit_point);
-		open = FindOpening(open, hit_point.z, hit_point.z + botmo.height);
+		open = FindOpening(open, hit_point.z, hit_point.z + botmo.Height);
 		// No valid openings
 		if (!open)
 		{
@@ -904,10 +904,10 @@ boolean PTR_BotPathTraverse(intercept_t *in)
 	if (th == botmo)
 		return true;
 
-	if (th.flags & MF_SOLID)
+	if (th.Flags & MF_SOLID)
 		return false;
 
-/*	fixed_t diffheight = (th->z + th->height) - shootthing->z;
+/*	fixed_t diffheight = (th->z + th->Height) - shootthing->z;
 
 	if (diffheight > 0)
 	{
@@ -971,7 +971,7 @@ boolean BotPlayer::CheckPath(float ang, float dist)
 //
 //==========================================================================
 
-boolean BotPlayer::Check_LOS(Entity to, float vangle)
+boolean BotPlayer::Check_LOS(Actor to, float vangle)
 {
 	if (!P_CheckSight(&botmo, &to))
 		return false; // out of sight
@@ -1066,7 +1066,7 @@ AActor *B_SetAlly (skullb_s *bot)
 	//is mate alive?
 	if (bot->ally)
 	{
-		if (!bot->ally->health)
+		if (!bot->ally->Health)
 			bot->ally = NULL;
 		else
 		{
@@ -1077,7 +1077,7 @@ AActor *B_SetAlly (skullb_s *bot)
 
 	//Check old_mates status.
 	if (bot->last_mate)
-		if (!bot->last_mate->health)
+		if (!bot->last_mate->Health)
 			bot->last_mate = NULL;
 
 	for (int i=0; i<MAXPLAYERS; i++)
@@ -1111,8 +1111,8 @@ AActor *B_SetAlly (skullb_s *bot)
 			&& players[i].mo
 			&& bot->player->mo != players[i].mo
 			&& (bot->player->mo->IsTeammate (players[i].mo) || !deathmatch.value)
-			&& players[i].mo->health
-			&& ((bot->player->health/2) <= players[i].mo->health || !deathmatch.value)
+			&& players[i].mo->Health
+			&& ((bot->player->health/2) <= players[i].mo->Health || !deathmatch.value)
 			&& !p_leader[i]) //taken?
 		{
 
@@ -1264,10 +1264,10 @@ void BotPlayer::BotAim(void)
 //
 //==========================================================================
 
-Entity BotPlayer::FindEnemy(void)
+Actor BotPlayer::FindEnemy(void)
 {
 	float closest_dist, temp;
-	Entity target;
+	Actor target;
 	float vangle;
 	int i;
 
@@ -1309,7 +1309,7 @@ Entity BotPlayer::FindEnemy(void)
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
 		if (players[i].active /*&& !mo->IsTeammate (players[i].mo)*/ &&
-			players[i].mo->health > 0 && botmo != *players[i].mo)
+			players[i].mo->Health > 0 && botmo != *players[i].mo)
 		{
 			 //Here's a strange one, when bot is standing still, the P_CheckSight within Check_LOS almost always returns false. tought it should be the same checksight as below but.. (below works) something must be fuckin wierd screded up. 
 			if (Check_LOS(*players[i].mo, vangle))
@@ -1346,10 +1346,10 @@ Entity BotPlayer::FindEnemy(void)
 // creating side-effects during gameplay.
 bool SafeCheckPosition (AActor *actor, fixed_t x, fixed_t y)
 {
-	int savedFlags = actor->flags;
-	actor->flags &= ~MF_PICKUP;
+	int savedFlags = actor->Flags;
+	actor->Flags &= ~MF_PICKUP;
 	bool res = P_CheckPosition (actor, x, y) ? true : false;
-	actor->flags = savedFlags;
+	actor->Flags = savedFlags;
 	return res;
 }
 #endif
@@ -1810,7 +1810,7 @@ void BotPlayer::Pitch(void)
 //
 //==========================================================================
 
-void BotPlayer::Killed(Entity victim)
+void BotPlayer::Killed(Actor victim)
 {
 #if 0
 	// [BC] Bot taunting
@@ -1836,7 +1836,7 @@ void BotPlayer::Killed(Entity victim)
 //
 //==========================================================================
 
-void BotPlayer::Died(Entity killer)
+void BotPlayer::Died(Actor killer)
 {
 #if 0
 	int x = P_Random() % 100;
@@ -2037,6 +2037,10 @@ void BotPlayer::OnSpawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.5  2002/01/11 08:03:12  dj_jl
 //  Renamed 'name' to "Name'
 //

@@ -47,7 +47,7 @@ void Cheat_God(void)
 	if (players[0].cheats & CF_GODMODE)
 	{
 		if (players[0].mo)
-			players[0].mo->health = GOD_HEALTH;
+			players[0].mo->Health = GOD_HEALTH;
 		players[0].health = GOD_HEALTH;
 		cprint(&players[0], "Degreelessness Mode On\n");
 	}
@@ -277,12 +277,12 @@ void Cheat_Gimme(void)
 	if ((i1 & GIMME_HEALTH) && (players[0].health < 100))
 	{
 		players[0].health = 100;
-		players[0].mo->health = 100;
+		players[0].mo->Health = 100;
 	}
 	if (i1 & GIMME_HEALTH2)
 	{
 		players[0].health = 200;
-		players[0].mo->health = 200;
+		players[0].mo->Health = 200;
 	}
 
 	// Armor
@@ -314,7 +314,7 @@ int P_Massacre(void)
 	count = 0;
 	for (mo = NextMobj(NULL); mo; mo = NextMobj(mo))
 	{
-		if ((mo->flags & MF_COUNTKILL) && (mo->health > 0))
+		if ((mo->Flags & MF_COUNTKILL) && (mo->Health > 0))
 		{
 			mo->Damage(NULL, NULL, 10000);
 			count++;
@@ -337,6 +337,10 @@ void Cheat_KillAll(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/01/15 18:27:01  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.5  2002/01/07 12:27:42  dj_jl
 //  Changed copyright year
 //

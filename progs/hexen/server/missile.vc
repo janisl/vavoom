@@ -105,12 +105,12 @@ mobj_t *SpawnMissile(mobj_t * source, mobj_t * dest, classid type)
 	}
 	th->target = source;	// Originator
 	dir = dest->origin - source->origin;
-	if (dest->translucency)
+	if (dest->Translucency)
 	{	// Invisible target
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0);
 	}
 	dir = Normalize(dir);
-	th->velocity = dir * th->speed;
+	th->velocity = dir * th->Speed;
 	VectorAngles(&dir, &th->angles);
 	return (CheckMissileSpawn(th) ? th : NULL);
 }
@@ -138,12 +138,12 @@ mobj_t *SpawnMissileXYZ(float x, float y, float z, mobj_t * source,
 	}
 	th->target = source;	// Originator
 	dir = dest->origin - source->origin;
-	if (dest->translucency)
+	if (dest->Translucency)
 	{	// Invisible target
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0);
 	}
 	dir = Normalize(dir);
-	th->velocity = dir * th->speed;
+	th->velocity = dir * th->Speed;
 	VectorAngles(&dir, &th->angles);
 	return (CheckMissileSpawn(th) ? th : NULL);
 }
@@ -189,8 +189,8 @@ mobj_t *SpawnMissileAngle(mobj_t * source, classid type, float angle,
 	}
 	mo->target = source;	// Originator
 	mo->angles.yaw = angle;
-	mo->velocity.x = mo->speed * cos(angle);
-	mo->velocity.y = mo->speed * sin(angle);
+	mo->velocity.x = mo->Speed * cos(angle);
+	mo->velocity.y = mo->Speed * sin(angle);
 	mo->velocity.z = momz * 35.0;
 	return (CheckMissileSpawn(mo) ? mo : NULL);
 }
@@ -245,12 +245,12 @@ mobj_t *SpawnKoraxMissile(float x, float y, float z,
 	}
 	th->target = source;	// Originator
 	dir = dest->origin - vector(x, y, z);
-	if (dest->translucency)
+	if (dest->Translucency)
 	{	// Invisible target
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0);
 	}
 	dir = Normalize(dir);
-	th->velocity = dir * th->speed;
+	th->velocity = dir * th->Speed;
 	VectorAngles(&dir, &th->angles);
 	return (CheckMissileSpawn(th) ? th : NULL);
 }
@@ -277,7 +277,7 @@ boolean SeekerMissile(mobj_t * actor, float thresh, float turnMax)
 	{
 		return false;
 	}
-	if (!(target->flags & MF_SHOOTABLE))
+	if (!(target->Flags & MF_SHOOTABLE))
 	{
 		// Target died
 		actor->specialmobj1 = NULL;
@@ -304,20 +304,20 @@ boolean SeekerMissile(mobj_t * actor, float thresh, float turnMax)
 	}
 	actor->angles.yaw = AngleMod360(actor->angles.yaw);
 	angle = actor->angles.yaw;
-	actor->velocity.x = actor->speed * cos(angle);
-	actor->velocity.y = actor->speed * sin(angle);
-	if (actor->origin.z + actor->height < target->origin.z ||
-		target->origin.z + target->height < actor->origin.z)
+	actor->velocity.x = actor->Speed * cos(angle);
+	actor->velocity.y = actor->Speed * sin(angle);
+	if (actor->origin.z + actor->Height < target->origin.z ||
+		target->origin.z + target->Height < actor->origin.z)
 	{
 		// Need to seek vertically
 		dist = MobjDist2(target, actor);
-		dist = dist / actor->speed;
+		dist = dist / actor->Speed;
 		if (dist < 1.0)
 		{
 			dist = 1.0;
 		}
-		actor->velocity.z = (target->origin.z + target->height / 2.0 -
-			actor->origin.z - actor->height / 2.0) / dist;
+		actor->velocity.z = (target->origin.z + target->Height / 2.0 -
+			actor->origin.z - actor->Height / 2.0) / dist;
 	}
 	return true;
 }
@@ -378,7 +378,7 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 	MissileMobj->target = source;
 	avcpy(angles, MissileMobj->angles);
 	AngleVector(&angles, &vforward);
-	MissileMobj->velocity = vforward * MissileMobj->speed;
+	MissileMobj->velocity = vforward * MissileMobj->Speed;
 	if (MissileMobj->Class == MT_MWAND_MISSILE ||
 		MissileMobj->Class == MT_CFLAME_MISSILE)
 	{
@@ -448,7 +448,7 @@ mobj_t *SpawnPlayerMissileAngle(mobj_t * source, classid type, float angle)
 	th->target = source;
 	avcpy(angles, th->angles);
 	AngleVector(&angles, &vforward);
-	th->velocity = vforward * th->speed;
+	th->velocity = vforward * th->Speed;
 	return (CheckMissileSpawn(th) ? th : NULL);
 }
 
@@ -495,7 +495,7 @@ mobj_t *SpawnPlayerMissileAngleXYZ(mobj_t * source, float x, float y,
 	th->target = source;
 	avcpy(angles, th->angles);
 	AngleVector(&angles, &vforward);
-	th->velocity = vforward * th->speed;
+	th->velocity = vforward * th->Speed;
 	return (CheckMissileSpawn(th) ? th : NULL);
 }
 
@@ -508,12 +508,12 @@ mobj_t *SpawnPlayerMissileAngleXYZ(mobj_t * source, float x, float y,
 boolean P_ExplodeMissile(mobj_t * mo)
 {
 	mo->velocity = vector(0.0, 0.0, 0.0);
-	if (!SetMobjState(mo, mo->deathstate))
+	if (!SetMobjState(mo, mo->DeathState))
 	{
 		return false;
 	}
 	//mo->tics -= P_Random()&3;
-	mo->flags &= ~MF_MISSILE;
+	mo->Flags &= ~MF_MISSILE;
 
 	switch (mo->Class)
 	{
@@ -532,15 +532,15 @@ boolean P_ExplodeMissile(mobj_t * mo)
 		}
 		break;
 	}
-	if (mo->effects & EF_DLIGHT_MASK)
+	if (mo->Effects & EF_DLIGHT_MASK)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion);
-		MSG_WriteByte(mo->effects & EF_DLIGHT_MASK);
+		MSG_WriteByte(mo->Effects & EF_DLIGHT_MASK);
 		MSG_WriteShort(ftoi(mo->origin.x));
 		MSG_WriteShort(ftoi(mo->origin.y));
 		MSG_WriteShort(ftoi(mo->origin.z));
-		mo->effects &= ~EF_DLIGHT_MASK;
+		mo->Effects &= ~EF_DLIGHT_MASK;
 	}
 	return true;
 }
@@ -548,6 +548,10 @@ boolean P_ExplodeMissile(mobj_t * mo)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.11  2002/01/11 18:19:42  dj_jl
 //  Started to use names in progs
 //

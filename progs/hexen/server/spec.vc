@@ -526,7 +526,7 @@ boolean P_ActivateLine(line_t * line, mobj_t * mo, int side,
 	{
 		return false;
 	}
-	if (!mo->player && !(mo->flags & MF_MISSILE))
+	if (!mo->player && !(mo->Flags & MF_MISSILE))
 	{
 		if (lineActivation != SPAC_MCROSS)
 		{
@@ -709,6 +709,10 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.9  2002/01/11 18:19:42  dj_jl
 //  Started to use names in progs
 //

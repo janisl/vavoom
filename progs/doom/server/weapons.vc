@@ -542,7 +542,7 @@ void Weapon::A_GunFlash(void)
 void Weapon::A_Light0(void)
 {
 	player->extralight = 0;
-	player->mo->effects &= ~EF_DLIGHT_MASK;
+	player->mo->Effects &= ~EF_DLIGHT_MASK;
 }
 
 //===========================================================================
@@ -654,7 +654,7 @@ void Weapon::A_Saw(void)
 			player->mo->angles.yaw += 90.0 / 20.0;
 	}
 	player->mo->angles.yaw = AngleMod360(player->mo->angles.yaw);
-	player->mo->flags |= MF_JUSTATTACKED;
+	player->mo->Flags |= MF_JUSTATTACKED;
 	player->fixangle = 1;
 }
 
@@ -677,7 +677,7 @@ void Weapon::A_FirePistol(void)
 
 	dir = Aim(player->mo, 16.0 * 64.0);
 	GunShot(player->mo, !player->refire, dir);
-	player->mo->effects |= EF_DL_MUZZLEFLASH;
+	player->mo->Effects |= EF_DL_MUZZLEFLASH;
 }
 
 //===========================================================================
@@ -703,7 +703,7 @@ void Weapon::A_FireShotgun(void)
 	{
 		GunShot(player->mo, false, dir);
 	}
-	player->mo->effects |= EF_DL_MUZZLEFLASH;
+	player->mo->Effects |= EF_DL_MUZZLEFLASH;
 }
 
 #ifdef DOOM2
@@ -739,7 +739,7 @@ void Weapon::A_FireShotgun2(void)
 		damage = 5 * (P_Random() % 3 + 1);
 		LineAttack(player->mo, &dir, MISSILERANGE, damage);
 	}
-	player->mo->effects |= EF_DL_MUZZLEFLASH;
+	player->mo->Effects |= EF_DL_MUZZLEFLASH;
 }
 
 //===========================================================================
@@ -822,7 +822,7 @@ void Weapon::A_FireCGun(void)
 
 	dir = Aim(player->mo, 16.0 * 64.0);
 	GunShot(player->mo, !player->refire, dir);
-	player->mo->effects |= EF_DL_MUZZLEFLASH;
+	player->mo->Effects |= EF_DL_MUZZLEFLASH;
 }
 
 //===========================================================================
@@ -950,7 +950,7 @@ void Actor::A_BFGSpray(void)
 		}
 
 		emo = P_SpawnMobj(linetarget->origin.x, linetarget->origin.y,
-			linetarget->origin.z + linetarget->height / 4.0, MT_EXTRABFG);
+			linetarget->origin.z + linetarget->Height / 4.0, MT_EXTRABFG);
 
 		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion2);
@@ -970,6 +970,10 @@ void Actor::A_BFGSpray(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.12  2002/01/11 18:19:40  dj_jl
 //  Started to use names in progs
 //

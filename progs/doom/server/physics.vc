@@ -67,7 +67,7 @@ TVec ClipVelocity(TVec in, TVec normal, float overbounce)
 float bestslidefrac;
 line_t *bestslideline;
 
-Entity slidemo;
+Actor slidemo;
 TVec slideorg;
 TVec slidedir;
 
@@ -96,10 +96,10 @@ boolean PTR_SlideTraverse(intercept_t * in)
 		open = LineOpenings(li, hit_point);
 		open =
 			FindOpening(open, slidemo.origin.z,
-			slidemo.origin.z + slidemo.height);
+			slidemo.origin.z + slidemo.Height);
 
-		if (open && (open->range >= slidemo.height) &&	//  fits
-			(open->top - slidemo.origin.z >= slidemo.height) &&	// mobj is not too high
+		if (open && (open->range >= slidemo.Height) &&	//  fits
+			(open->top - slidemo.origin.z >= slidemo.Height) &&	// mobj is not too high
 			(open->bottom - slidemo.origin.z <= 24.0))	// not too big a step up
 		{
 			// this line doesn't block movement
@@ -142,7 +142,7 @@ void SlidePathTraverse(float x, float y)
 
 //==========================================================================
 //
-//  Entity::SlideMove
+//  Actor::SlideMove
 //
 //  The momx / momy move is bad, so try to slide along a wall.
 //  Find the first line hit, move flush to it, and slide along it.
@@ -150,7 +150,7 @@ void SlidePathTraverse(float x, float y)
 //
 //==========================================================================
 
-void Entity::SlideMove(void)
+void Actor::SlideMove(void)
 {
 	float leadx;
 	float leady;
@@ -176,24 +176,24 @@ void Entity::SlideMove(void)
 		// trace along the three leading corners
 		if (velocity.x > 0.0)
 		{
-			leadx = origin.x + radius;
-			trailx = origin.x - radius;
+			leadx = origin.x + Radius;
+			trailx = origin.x - Radius;
 		}
 		else
 		{
-			leadx = origin.x - radius;
-			trailx = origin.x + radius;
+			leadx = origin.x - Radius;
+			trailx = origin.x + Radius;
 		}
 
 		if (velocity.y > 0.0)
 		{
-			leady = origin.y + radius;
-			traily = origin.y - radius;
+			leady = origin.y + Radius;
+			traily = origin.y - Radius;
 		}
 		else
 		{
-			leady = origin.y - radius;
-			traily = origin.y + radius;
+			leady = origin.y - Radius;
+			traily = origin.y + Radius;
 		}
 
 		bestslidefrac = 1.00001;
@@ -277,9 +277,9 @@ boolean PTR_BounceTraverse(intercept_t * in)
 		open = LineOpenings(li, hit_point);	// set openrange, opentop, openbottom
 		open =
 			FindOpening(open, slidemo.origin.z,
-			slidemo.origin.z + slidemo.height);
-		if (open && open->range >= slidemo.height &&	// fits
-			open->top - slidemo.origin.z >= slidemo.height)	// mobj is not too high
+			slidemo.origin.z + slidemo.Height);
+		if (open && open->range >= slidemo.Height &&	// fits
+			open->top - slidemo.origin.z >= slidemo.Height)	// mobj is not too high
 		{
 			return true;	// this line doesn't block movement
 		}
@@ -298,28 +298,28 @@ boolean PTR_BounceTraverse(intercept_t * in)
 
 //============================================================================
 //
-//  Entity::BounceWall
+//  Actor::BounceWall
 //
 //============================================================================
 
-void Entity::BounceWall(float overbounce)
+void Actor::BounceWall(float overbounce)
 {
 	slidemo = self;
 	if (velocity.x > 0.0)
 	{
-		slideorg.x = origin.x + radius;
+		slideorg.x = origin.x + Radius;
 	}
 	else
 	{
-		slideorg.x = origin.x - radius;
+		slideorg.x = origin.x - Radius;
 	}
 	if (velocity.y > 0.0)
 	{
-		slideorg.y = origin.y + radius;
+		slideorg.y = origin.y + Radius;
 	}
 	else
 	{
-		slideorg.y = origin.y - radius;
+		slideorg.y = origin.y - Radius;
 	}
 	slideorg.z = origin.z;
 	slidedir = velocity * frametime;
@@ -337,11 +337,11 @@ void Entity::BounceWall(float overbounce)
 
 //==========================================================================
 //
-//  Entity::CheckWater
+//  Actor::CheckWater
 //
 //==========================================================================
 
-boolean Entity::CheckWater(void)
+boolean Actor::CheckWater(void)
 {
 	TVec point;
 	int cont;
@@ -356,7 +356,7 @@ boolean Entity::CheckWater(void)
 	{
 		watertype = cont;
 		waterlevel = 1;
-		point.z = origin.z + height * 0.5;
+		point.z = origin.z + Height * 0.5;
 		cont = PointContents(subsector->sector, point);
 		if (cont >= CONTENTS_WATER)
 		{
@@ -375,11 +375,11 @@ boolean Entity::CheckWater(void)
 
 //==========================================================================
 //
-//  Entity::XYMovement
+//  Actor::XYMovement
 //
 //==========================================================================
 
-boolean Entity::XYMovement(void)
+boolean Actor::XYMovement(void)
 {
 	float ptryx;
 	float ptryy;
@@ -388,13 +388,13 @@ boolean Entity::XYMovement(void)
 
 	if (!velocity.x && !velocity.y)
 	{
-		if (flags & MF_SKULLFLY)
+		if (Flags & MF_SKULLFLY)
 		{
 			// the skull slammed into something
-			flags &= ~MF_SKULLFLY;
+			Flags &= ~MF_SKULLFLY;
 			velocity.x = velocity.y = velocity.z = 0.0;
 
-			if (!SetMobjState(this, spawnstate))
+			if (!SetMobjState(this, SpawnState))
 			{
 				return false;
 			}
@@ -439,15 +439,15 @@ boolean Entity::XYMovement(void)
 				// try to slide along it
 				SlideMove();
 			}
-			else if (flags & MF_MISSILE)
+			else if (Flags & MF_MISSILE)
 			{
-				if (flags & MF_BOUNCE)
+				if (Flags & MF_BOUNCE)
 				{
 					//  Bounce against walls and non-killable ofjects
 					if (BlockingMobj)
 					{
 						if ((!BlockingMobj->player) &&
-							(!(BlockingMobj->flags & MF_COUNTKILL)))
+							(!(BlockingMobj->Flags & MF_COUNTKILL)))
 						{
 							float speed;
 							float angle;
@@ -517,11 +517,11 @@ boolean Entity::XYMovement(void)
 
 //==========================================================================
 //
-//	Entity::ZMovement
+//	Actor::ZMovement
 //
 //==========================================================================
 
-void Entity::ZMovement(void)
+void Actor::ZMovement(void)
 {
 	float dist;
 	float delta;
@@ -539,14 +539,14 @@ void Entity::ZMovement(void)
 	// adjust height
 	origin.z += velocity.z * frametime;
 
-	if (flags & MF_FLOAT && target)
+	if (Flags & MF_FLOAT && target)
 	{
 		// float down towards target if too close
-		if (!(flags & MF_SKULLFLY) && !(flags & MF_INFLOAT))
+		if (!(Flags & MF_SKULLFLY) && !(Flags & MF_INFLOAT))
 		{
 			dist = MobjDist2(this, target);
 
-			delta = target->origin.z + height / 2.0 - origin.z;
+			delta = target->origin.z + Height / 2.0 - origin.z;
 
 			if (delta < 0.0 && dist < -(delta * 3.0))
 				origin.z -= FLOATSPEED * frametime;
@@ -564,7 +564,7 @@ void Entity::ZMovement(void)
 		// Note (id):
 		//  somebody left this after the setting momz to 0,
 		//  kinda useless there.
-		if (flags & MF_SKULLFLY)
+		if (Flags & MF_SKULLFLY)
 		{
 			// the skull slammed into something
 			velocity.z = -velocity.z;
@@ -584,43 +584,43 @@ void Entity::ZMovement(void)
 		}
 		origin.z = floorz;
 
-		if (flags & MF_MISSILE)
+		if (Flags & MF_MISSILE)
 		{
-			if (!(flags & (MF_NOCLIP | MF_BOUNCE)))
+			if (!(Flags & (MF_NOCLIP | MF_BOUNCE)))
 			{
 				P_ExplodeMissile(this);
 				return;
 			}
-			if (flags & MF_BOUNCE && sound_pain && Length(velocity) > 256.0)
+			if (Flags & MF_BOUNCE && sound_pain && Length(velocity) > 256.0)
 			{
 				StartSound(this, sound_pain, CHAN_VOICE);
 			}
 		}
 	}
 
-	if (origin.z + height > ceilingz)
+	if (origin.z + Height > ceilingz)
 	{
 		// hit the ceiling
 		vdot = DotProduct(velocity, ceiling->normal);
 		if (vdot < 0.0)
 			velocity -= vdot * ceiling->normal;
 
-		origin.z = ceilingz - height;
+		origin.z = ceilingz - Height;
 
-		if (flags & MF_SKULLFLY)
+		if (Flags & MF_SKULLFLY)
 		{
 			// the skull slammed into something
 			velocity.z = -velocity.z;
 		}
 
-		if (flags & MF_MISSILE)
+		if (Flags & MF_MISSILE)
 		{
-			if (!(flags & (MF_NOCLIP | MF_BOUNCE)))
+			if (!(Flags & (MF_NOCLIP | MF_BOUNCE)))
 			{
 				P_ExplodeMissile(this);
 				return;
 			}
-			if (flags & MF_BOUNCE && sound_pain && Length(velocity) > 256.0)
+			if (Flags & MF_BOUNCE && sound_pain && Length(velocity) > 256.0)
 			{
 				StartSound(this, sound_pain, CHAN_VOICE);
 			}
@@ -630,23 +630,23 @@ void Entity::ZMovement(void)
 
 //==========================================================================
 //
-//  Entity::UpdateVelocity
+//  Actor::UpdateVelocity
 //
 //==========================================================================
 
-void Entity::UpdateVelocity(void)
+void Actor::UpdateVelocity(void)
 {
 	float dot;
 
 	if (origin.z <= floorz && !velocity.x && !velocity.y &&
-		!velocity.z && !(flags & MF_COUNTKILL) && !player)
+		!velocity.z && !(Flags & MF_COUNTKILL) && !player)
 	{
 		//  No gravity for non-moving things on ground to prevent
 		// static objects from sliding on slopes
 		return;
 	}
 
-	if (!(flags & MF_NOGRAVITY) && (origin.z > floorz
+	if (!(Flags & MF_NOGRAVITY) && (origin.z > floorz
 		|| floor->normal.z < 0.7))
 	{
 		if (waterlevel < 2)
@@ -663,10 +663,10 @@ void Entity::UpdateVelocity(void)
 
 	// slow down
 
-	if (flags & (MF_MISSILE | MF_SKULLFLY) && !(flags & MF_BOUNCE))
+	if (Flags & (MF_MISSILE | MF_SKULLFLY) && !(Flags & MF_BOUNCE))
 		return;	// no friction for missiles ever
 
-	if (origin.z > floorz && !(flags2 & MF2_ONMOBJ) && waterlevel < 2)
+	if (origin.z > floorz && !(Flags2 & MF2_ONMOBJ) && waterlevel < 2)
 		return;	// no friction when airborne
 
 	//  Clip velocity
@@ -675,7 +675,7 @@ void Entity::UpdateVelocity(void)
 		dot = DotProduct(velocity, floor->normal);
 		if (dot < 0.0)
 		{
-			if (flags & MF_BOUNCE)
+			if (Flags & MF_BOUNCE)
 			{
 				dot *= BOUNCE_VAL;
 			}
@@ -683,7 +683,7 @@ void Entity::UpdateVelocity(void)
 		}
 	}
 
-	if (flags & MF_CORPSE)
+	if (Flags & MF_CORPSE)
 	{
 		// do not stop sliding if halfway off a step with some momentum
 		if (velocity.x > 0.25 * 35.0 || velocity.x < -0.25 * 35.0 ||
@@ -729,26 +729,26 @@ void Entity::UpdateVelocity(void)
 //
 //==========================================================================
 
-Entity tzmthing;
+Actor tzmthing;
 TVec tzorg;
-Entity onmobj;	//generic global onmobj...used for landing on pods/players
+Actor onmobj;	//generic global onmobj...used for landing on pods/players
 
 //==========================================================================
 //
-//  Entity::Iter_CheckOnmobjZ
+//  Actor::Iter_CheckOnmobjZ
 //
 //==========================================================================
 
-boolean Entity::Iter_CheckOnmobjZ(Entity thing)
+boolean Actor::Iter_CheckOnmobjZ(Actor thing)
 {
 	float blockdist;
 
-	if (!(thing.flags & (MF_SOLID | MF_SPECIAL | MF_SHOOTABLE)))
+	if (!(thing.Flags & (MF_SOLID | MF_SPECIAL | MF_SHOOTABLE)))
 	{
 		// Can't hit thing
 		return true;
 	}
-	blockdist = thing.radius + radius;
+	blockdist = thing.Radius + Radius;
 	if (fabs(thing.origin.x - tzorg.x) >= blockdist
 		|| fabs(thing.origin.y - tzorg.y) >= blockdist)
 	{
@@ -760,20 +760,20 @@ boolean Entity::Iter_CheckOnmobjZ(Entity thing)
 		// Don't clip against self
 		return true;
 	}
-	if (tzorg.z > thing.origin.z + thing.height)
+	if (tzorg.z > thing.origin.z + thing.Height)
 	{
 		return true;
 	}
-	else if (tzorg.z + height < thing.origin.z)
+	else if (tzorg.z + Height < thing.origin.z)
 	{
 		// under thing
 		return true;
 	}
-	if (thing.flags & MF_SOLID)
+	if (thing.Flags & MF_SOLID)
 	{
 		onmobj = thing;
 	}
-	return (!(thing.flags & MF_SOLID));
+	return (!(thing.Flags & MF_SOLID));
 }
 
 //==========================================================================
@@ -789,13 +789,13 @@ boolean PIT_CheckOnmobjZ(mobj_t * thing)
 
 //=============================================================================
 //
-//  Entity::FakeZMovement
+//  Actor::FakeZMovement
 //
 //  Fake the zmovement so that we can check if a move is legal
 //
 //=============================================================================
 
-void Entity::FakeZMovement(void)
+void Actor::FakeZMovement(void)
 {
 	float dist;
 	float delta;
@@ -804,13 +804,13 @@ void Entity::FakeZMovement(void)
 	//  adjust height
 	//
 	tzorg.z += velocity.z * frametime;
-	if (flags & MF_FLOAT && target)
+	if (Flags & MF_FLOAT && target)
 	{
 		// float down towards target if too close
-		if (!(flags & MF_SKULLFLY) && !(flags & MF_INFLOAT))
+		if (!(Flags & MF_SKULLFLY) && !(Flags & MF_INFLOAT))
 		{
 			dist = MobjDist2(this, target);
-			delta = target->origin.z + height / 2.0 - tzorg.z;
+			delta = target->origin.z + Height / 2.0 - tzorg.z;
 			if (delta < 0.0 && dist < -(delta * 3.0))
 				tzorg.z -= FLOATSPEED * frametime;
 			else if (delta > 0.0 && dist < (delta * 3.0))
@@ -826,26 +826,26 @@ void Entity::FakeZMovement(void)
 		// Hit the floor
 		tzorg.z = floorz;
 	}
-	if (tzorg.z + height > ceilingz)
+	if (tzorg.z + Height > ceilingz)
 	{
 		// hit the ceiling
-		tzorg.z = ceilingz - height;
+		tzorg.z = ceilingz - Height;
 	}
 }
 
 //=============================================================================
 //
-//  Entity::CheckOnmobj
+//  Actor::CheckOnmobj
 //
 //  Checks if the new Z position is legal
 //
 //=============================================================================
 
-Entity Entity::CheckOnmobj(void)
+Actor Actor::CheckOnmobj(void)
 {
 	int xl, xh, yl, yh, bx, by;
 
-	if (flags & MF_NOCLIP)
+	if (Flags & MF_NOCLIP)
 		return none;
 
 	tzmthing = self;
@@ -858,10 +858,10 @@ Entity Entity::CheckOnmobj(void)
 	// into mapblocks based on their origin point, and can overlap into adjacent
 	// blocks by up to MAXRADIUS units
 	//
-	xl = MapBlock(origin.x - radius - level->bmaporgx - MAXRADIUS);
-	xh = MapBlock(origin.x + radius - level->bmaporgx + MAXRADIUS);
-	yl = MapBlock(origin.y - radius - level->bmaporgy - MAXRADIUS);
-	yh = MapBlock(origin.y + radius - level->bmaporgy + MAXRADIUS);
+	xl = MapBlock(origin.x - Radius - level->bmaporgx - MAXRADIUS);
+	xh = MapBlock(origin.x + Radius - level->bmaporgx + MAXRADIUS);
+	yl = MapBlock(origin.y - Radius - level->bmaporgy - MAXRADIUS);
+	yh = MapBlock(origin.y + Radius - level->bmaporgy + MAXRADIUS);
 
 	for (bx = xl; bx <= xh; bx++)
 	{
@@ -878,11 +878,11 @@ Entity Entity::CheckOnmobj(void)
 
 //===========================================================================
 //
-//  Entity::PlayerLandedOnThing
+//  Actor::PlayerLandedOnThing
 //
 //===========================================================================
 
-void Entity::PlayerLandedOnThing(void)
+void Actor::PlayerLandedOnThing(void)
 {
 	player->deltaviewheight = velocity.z * frametime / 8.0;
 	if (velocity.z < -GRAVITY * 0.375)
@@ -893,19 +893,19 @@ void Entity::PlayerLandedOnThing(void)
 
 //==========================================================================
 //
-//	Entity::Physics
+//	Actor::Physics
 //
 //==========================================================================
 
-boolean Entity::Physics(void)
+boolean Actor::Physics(void)
 {
-	Entity onmo;
+	Actor onmo;
 
 	CheckWater();
 	UpdateVelocity();
 
 	// momentum movement
-	if (velocity.x || velocity.y || (flags & MF_SKULLFLY))
+	if (velocity.x || velocity.y || (Flags & MF_SKULLFLY))
 	{
 		if (!XYMovement())
 		{
@@ -918,9 +918,9 @@ boolean Entity::Physics(void)
 		if (!(onmo = CheckOnmobj()))
 		{
 			ZMovement();
-			if (player && flags & MF2_ONMOBJ)
+			if (player && Flags & MF2_ONMOBJ)
 			{
-				flags2 &= ~MF2_ONMOBJ;
+				Flags2 &= ~MF2_ONMOBJ;
 			}
 		}
 		else
@@ -931,14 +931,14 @@ boolean Entity::Physics(void)
 				{
 					PlayerLandedOnThing();
 				}
-				if (onmo.origin.z + onmo.height - origin.z <= 24.0)
+				if (onmo.origin.z + onmo.Height - origin.z <= 24.0)
 				{
-					player->viewheight -= onmo.origin.z + onmo.height
+					player->viewheight -= onmo.origin.z + onmo.Height
 						- origin.z;
 					player->deltaviewheight =
 						(VIEWHEIGHT - player->viewheight) / 8.0;
-					origin.z = onmo.origin.z + onmo.height;
-					flags2 |= MF2_ONMOBJ;
+					origin.z = onmo.origin.z + onmo.Height;
+					Flags2 |= MF2_ONMOBJ;
 					velocity.z = 0.0;
 				}
 				else
@@ -958,16 +958,16 @@ boolean Entity::Physics(void)
 
 //==========================================================================
 //
-//	Entity::Think
+//	Actor::Think
 //
 //==========================================================================
 
-void Entity::Think(void)
+void Actor::Think(void)
 {
 	//  In my deathmatch mode remove dropped weapons after 30 seconds
 	// because otherwise they are spawned fastar than player(s) can pick 
 	// them up and the game is going slower and slower and slower ...
-	if ((flags & MF_DROPPED) && (deathmatch == 3))
+	if ((Flags & MF_DROPPED) && (deathmatch == 3))
 	{
 		movecount++;
 		if (movecount >= 30 * 35)
@@ -999,7 +999,7 @@ void Entity::Think(void)
 	else
 	{
 		// check for nightmare respawn
-		if (!(flags & MF_COUNTKILL))
+		if (!(Flags & MF_COUNTKILL))
 			return;
 
 		//  In my deathmatch mode monstars respawns very fast
@@ -1037,6 +1037,10 @@ void Entity::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/01/15 18:26:59  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.13  2002/01/11 18:19:40  dj_jl
 //  Started to use names in progs
 //

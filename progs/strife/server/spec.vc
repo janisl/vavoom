@@ -757,7 +757,7 @@ boolean CheckActivation(int activationType, line_t * line, mobj_t * mo)
 	{
 		return false;
 	}
-	if (!mo->player && !(mo->flags & MF_MISSILE))
+	if (!mo->player && !(mo->Flags & MF_MISSILE))
 	{
 		if ((activationType == SPAC_USE || activationType == SPAC_PUSH)
 			&& (line->flags & ML_SECRET))
@@ -843,6 +843,10 @@ boolean P_ActivateLine(line_t * line, mobj_t * mo, int side,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/15 18:27:01  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.9  2002/01/11 18:19:43  dj_jl
 //  Started to use names in progs
 //

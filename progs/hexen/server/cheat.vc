@@ -105,11 +105,11 @@ void Cheat_Gimme(void)
 	{
 		if (players[0].morphTics)
 		{
-			players[0].health = players[0].mo->health = MAXMORPHHEALTH;
+			players[0].health = players[0].mo->Health = MAXMORPHHEALTH;
 		}
 		else
 		{
-			players[0].health = players[0].mo->health = MAXHEALTH;
+			players[0].health = players[0].mo->Health = MAXHEALTH;
 		}
 		cprint(&players[0], "FULL HEALTH\n");
 	}
@@ -160,10 +160,10 @@ int P_Massacre(void)
 	count = 0;
 	for (mo = NextMobj(NULL); mo; mo = NextMobj(mo))
 	{
-		if ((mo->flags & MF_COUNTKILL) && (mo->health > 0))
+		if ((mo->Flags & MF_COUNTKILL) && (mo->Health > 0))
 		{
-			mo->flags2 &= ~(MF2_NONSHOOTABLE + MF2_INVULNERABLE);
-			mo->flags |= MF_SHOOTABLE;
+			mo->Flags2 &= ~(MF2_NONSHOOTABLE + MF2_INVULNERABLE);
+			mo->Flags |= MF_SHOOTABLE;
 			mo->Damage(NULL, NULL, 10000);
 			count++;
 		}
@@ -263,6 +263,10 @@ void Cheat_Class(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.6  2002/01/07 12:25:57  dj_jl
 //  Changed copyright year
 //

@@ -94,7 +94,7 @@ void Actor::A_BrainSpit(void)
 	// spawn brain missile
 	newmobj = SpawnMissile(this, targ, MT_SPAWNSHOT);
 	newmobj->target = targ;
-	newmobj->reactiontime = ftoi((targ->origin.y - origin.y) /
+	newmobj->ReactionCount = ftoi((targ->origin.y - origin.y) /
 		newmobj->velocity.y / newmobj->time);
 
 	StartSoundName(NULL, 'BossFire', CHAN_WEAPON);
@@ -216,7 +216,7 @@ void Actor::A_SpawnFly(void)
 	int r;
 	classid type;
 
-	if (--reactiontime)
+	if (--ReactionCount)
 		return;	// still flying
 
 	targ = target;
@@ -257,7 +257,7 @@ void Actor::A_SpawnFly(void)
 	newmobj = P_SpawnMobj(targ->origin.x, targ->origin.y,
 		targ->origin.z, type);
 	if (P_LookForPlayers(newmobj, true))
-		SetMobjState(newmobj, newmobj->seestate);
+		SetMobjState(newmobj, newmobj->SeeState);
 
 	// telefrag anything in this spot
 	P_TeleportMove(newmobj, newmobj->origin.x, newmobj->origin.y);
@@ -313,6 +313,10 @@ void Actor::A_SpawnFly(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/15 18:26:59  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.9  2002/01/11 18:19:40  dj_jl
 //  Started to use names in progs
 //

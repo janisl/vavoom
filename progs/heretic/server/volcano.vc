@@ -89,8 +89,8 @@ void Actor::A_VolcBallImpact(void)
 
 	if (origin.z <= floorz)
 	{
-		flags |= MF_NOGRAVITY;
-		flags2 &= ~MF2_LOGRAV;
+		Flags |= MF_NOGRAVITY;
+		Flags2 &= ~MF2_LOGRAV;
 		origin.z += 28.0;
 	}
 	P_RadiusAttack(this, target, 25, 0, 0);
@@ -110,6 +110,10 @@ void Actor::A_VolcBallImpact(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.8  2002/01/11 18:19:41  dj_jl
 //  Started to use names in progs
 //

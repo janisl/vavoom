@@ -58,7 +58,7 @@ void mobj_t::Archive(void)
 {
 	boolean corpse;
 
-	corpse = flags & MF_CORPSE;
+	corpse = Flags & MF_CORPSE;
 	if (corpse)
 	{
 		target = MobjToNum(NULL);
@@ -177,6 +177,10 @@ void mobj_t::Unarchive(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.7  2002/01/12 18:01:33  dj_jl
 //  Sound names initialized as names
 //

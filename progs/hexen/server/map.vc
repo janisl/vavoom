@@ -148,7 +148,7 @@ boolean P_ThingHeightClip(mobj_t * thing)
 	{
 		// walking monsters rise and fall with the floor
 		if ((thing->origin.z - thing->floorz < 9.0) ||
-			(thing->flags & MF_NOGRAVITY))
+			(thing->Flags & MF_NOGRAVITY))
 		{
 			thing->origin.z = thing->floorz;
 		}
@@ -156,11 +156,11 @@ boolean P_ThingHeightClip(mobj_t * thing)
 	else
 	{
 		// don't adjust a floating monster unless forced to
-		if (thing->origin.z + thing->height > thing->ceilingz)
-			thing->origin.z = thing->ceilingz - thing->height;
+		if (thing->origin.z + thing->Height > thing->ceilingz)
+			thing->origin.z = thing->ceilingz - thing->Height;
 	}
 
-	if (thing->ceilingz - thing->floorz < thing->height)
+	if (thing->ceilingz - thing->floorz < thing->Height)
 		return false;
 
 	return true;
@@ -183,9 +183,9 @@ boolean PIT_ChangeSector(mobj_t * thing)
 	}
 
 	// crunch bodies to giblets
-	if ((thing->flags & MF_CORPSE) && (thing->health <= 0))
+	if ((thing->Flags & MF_CORPSE) && (thing->Health <= 0))
 	{
-		if (thing->flags & MF_NOBLOOD)
+		if (thing->Flags & MF_NOBLOOD)
 		{
 			P_RemoveMobj(thing);
 		}
@@ -194,8 +194,8 @@ boolean PIT_ChangeSector(mobj_t * thing)
 			if (thing->statenum != S_GIBS1)
 			{
 				SetMobjState(thing, S_GIBS1);
-				thing->height = 0.0;
-				thing->radius = 0.0;
+				thing->Height = 0.0;
+				thing->Radius = 0.0;
 				StartSoundName(thing, 'PlayerFallingSplat', CHAN_VOICE);
 			}
 		}
@@ -203,7 +203,7 @@ boolean PIT_ChangeSector(mobj_t * thing)
 	}
 
 	// crunch dropped items
-	if (thing->flags2 & MF2_DROPPED)
+	if (thing->Flags2 & MF2_DROPPED)
 	{
 		P_RemoveMobj(thing);
 
@@ -211,7 +211,7 @@ boolean PIT_ChangeSector(mobj_t * thing)
 		return true;
 	}
 
-	if (!(thing->flags & MF_SHOOTABLE))
+	if (!(thing->Flags & MF_SHOOTABLE))
 	{
 		// assume it is bloody gibs or something
 		return true;
@@ -222,12 +222,12 @@ boolean PIT_ChangeSector(mobj_t * thing)
 		thing->Damage(NULL, NULL, crushchange);
 
 		// spray blood in a random direction
-		if ((!(thing->flags & MF_NOBLOOD)) &&
-			(!(thing->flags2 & MF2_INVULNERABLE)))
+		if ((!(thing->Flags & MF_NOBLOOD)) &&
+			(!(thing->Flags2 & MF2_INVULNERABLE)))
 		{
 			mo =
 				P_SpawnMobj(thing->origin.x, thing->origin.y,
-				thing->origin.z + thing->height / 2.0, MT_BLOOD);
+				thing->origin.z + thing->Height / 2.0, MT_BLOOD);
 			mo->velocity.x = (Random() - Random()) * 16.0 * 35.0;
 			mo->velocity.y = (Random() - Random()) * 16.0 * 35.0;
 		}
@@ -290,8 +290,8 @@ boolean PTR_UseTraverse(intercept_t * in)
 	{
 		hit_point = usething->origin + (USERANGE * in->frac) * useDir;
 		open = LineOpenings(in->line, hit_point);
-		open = FindOpening(open, hit_point.z + usething->height / 2.0,
-			hit_point.z + usething->height);
+		open = FindOpening(open, hit_point.z + usething->Height / 2.0,
+			hit_point.z + usething->Height);
 		if (!open)
 		{
 			if (usething->player)
@@ -320,7 +320,7 @@ boolean PTR_UseTraverse(intercept_t * in)
 		}
 		if (usething->player)
 		{
-			pheight = usething->origin.z + usething->height / 2.0;
+			pheight = usething->origin.z + usething->Height / 2.0;
 			if ((open->top < pheight) || (open->bottom > pheight))
 			{
 				switch (usething->player->pclass)
@@ -579,7 +579,7 @@ boolean PTR_AimTraverse(intercept_t * in)
 	if (th == aim_thing)
 		return true;	// can't shoot self
 
-	if (!(th->flags & MF_SHOOTABLE))
+	if (!(th->Flags & MF_SHOOTABLE))
 		return true;	// corpse or something
 
 	if (th->player && netgame && !deathmatch)
@@ -590,7 +590,7 @@ boolean PTR_AimTraverse(intercept_t * in)
 
 	// check angles to see if the thing can be aimed at
 	dist = aim_range2d * in->frac;
-	thingtopslope = (th->origin.z + th->height - aim_z) / dist;
+	thingtopslope = (th->origin.z + th->Height - aim_z) / dist;
 
 	if (thingtopslope < aim_bottomslope)
 		return true;	// shot over the thing
@@ -631,7 +631,7 @@ void AimLineAttack(mobj_t * t1, TAVec * angles, float distance)
 	AngleVector(angles, &aim_dir);
 	x2 = t1->origin.x + distance * aim_dir.x;
 	y2 = t1->origin.y + distance * aim_dir.y;
-	aim_z = t1->origin.z + t1->height / 2.0 + 8.0 - t1->floorclip;
+	aim_z = t1->origin.z + t1->Height / 2.0 + 8.0 - t1->floorclip;
 	aim_range2d =
 		Length(vector(distance * aim_dir.x, distance * aim_dir.y, 0.0));
 
@@ -851,13 +851,13 @@ boolean PTR_ShootTraverse(intercept_t * in)
 	if (th == shoot_thing)
 		return true;	// can't shoot self
 
-	if (!(th->flags & MF_SHOOTABLE))
+	if (!(th->Flags & MF_SHOOTABLE))
 		return true;	// corpse or something
 
 	// check angles to see if the thing can be aimed at
 	hit_point = shoot_origin + (shoot_range * in->frac) * shoot_dir;
 
-	if (th->origin.z + th->height < hit_point.z)
+	if (th->origin.z + th->Height < hit_point.z)
 		return true;	// shot over the thing
 
 	if (th->origin.z > hit_point.z)
@@ -870,7 +870,7 @@ boolean PTR_ShootTraverse(intercept_t * in)
 	SpawnPuff(hit_point.x, hit_point.y, hit_point.z);
 	if (la_damage)
 	{
-		if (!(th->flags & MF_NOBLOOD) && !(th->flags2 & MF2_INVULNERABLE))
+		if (!(th->Flags & MF_NOBLOOD) && !(th->Flags2 & MF2_INVULNERABLE))
 		{
 			if (PuffType == MT_AXEPUFF || PuffType == MT_AXEPUFF_GLOW)
 			{
@@ -919,7 +919,7 @@ int LineAttack(mobj_t * t1, TVec * dir, float distance, int damage)
 	la_damage = damage;
 
 	shoot_origin = t1->origin;
-	shoot_origin.z += t1->height * 0.5 + 8.0 - t1->floorclip;
+	shoot_origin.z += t1->Height * 0.5 + 8.0 - t1->floorclip;
 
 	shoot_dir = *dir;
 	shoot_range = distance;
@@ -960,11 +960,11 @@ boolean PIT_RadiusAttack(mobj_t * thing)
 	float dist;
 	int damage;
 
-	if (!(thing->flags & MF_SHOOTABLE))
+	if (!(thing->Flags & MF_SHOOTABLE))
 	{
 		return true;
 	}
-//  if (thing->flags2 & MF2_BOSS)
+//  if (thing->Flags2 & MF2_BOSS)
 //  {   // Bosses take no damage from PIT_RadiusAttack
 //      return true;
 //  }
@@ -978,7 +978,7 @@ boolean PIT_RadiusAttack(mobj_t * thing)
 		return true;
 	}
 #endif
-	dist = Length(MobjCenter(thing) - MobjCenter(bombspot)) - thing->radius;
+	dist = Length(MobjCenter(thing) - MobjCenter(bombspot)) - thing->Radius;
 	if (dist < 0.0)
 	{
 		dist = 0.0;
@@ -1049,13 +1049,13 @@ boolean PIT_ThrustStompThing(mobj_t * thing)
 {
 	float blockdist;
 
-	if (!(thing->flags & MF_SHOOTABLE))
+	if (!(thing->Flags & MF_SHOOTABLE))
 		return true;
 
-	blockdist = thing->radius + tsthing->radius;
+	blockdist = thing->Radius + tsthing->Radius;
 	if (fabs(thing->origin.x - tsthing->origin.x) >= blockdist ||
 		fabs(thing->origin.y - tsthing->origin.y) >= blockdist ||
-		(thing->origin.z > tsthing->origin.z + tsthing->height))
+		(thing->origin.z > tsthing->origin.z + tsthing->Height))
 	{
 		return true;	// didn't hit it
 	}
@@ -1082,10 +1082,10 @@ void PIT_ThrustSpike(mobj_t * actor)
 
 	tsthing = actor;
 
-	x0 = actor->origin.x - actor->radius;
-	x2 = actor->origin.x + actor->radius;
-	y0 = actor->origin.y - actor->radius;
-	y2 = actor->origin.y + actor->radius;
+	x0 = actor->origin.x - actor->Radius;
+	x2 = actor->origin.x + actor->Radius;
+	y0 = actor->origin.y - actor->Radius;
+	y2 = actor->origin.y + actor->Radius;
 
 	xl = MapBlock(x0 - level->bmaporgx - MAXRADIUS);
 	xh = MapBlock(x2 - level->bmaporgx + MAXRADIUS);
@@ -1101,6 +1101,10 @@ void PIT_ThrustSpike(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.13  2002/01/15 08:10:57  dj_jl
 //  Added P_CheckRelPosition
 //

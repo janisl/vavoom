@@ -47,9 +47,9 @@ void Actor::A_SerpentChase(void)
 	float oldX, oldY;
 	int oldFloor;
 
-	if (reactiontime)
+	if (ReactionCount)
 	{
-		reactiontime--;
+		ReactionCount--;
 	}
 
 	// Modify target threshold
@@ -85,7 +85,7 @@ void Actor::A_SerpentChase(void)
 		}
 	}
 
-	if (!target || !(target->flags & MF_SHOOTABLE))
+	if (!target || !(target->Flags & MF_SHOOTABLE))
 	{
 		// look for a new target
 		if (P_LookForPlayers(this, true))
@@ -93,16 +93,16 @@ void Actor::A_SerpentChase(void)
 			// got a new target
 			return;
 		}
-		SetMobjState(this, spawnstate);
+		SetMobjState(this, SpawnState);
 		return;
 	}
 
 	//
 	// don't attack twice in a row
 	//
-	if (flags & MF_JUSTATTACKED)
+	if (Flags & MF_JUSTATTACKED)
 	{
-		flags &= ~MF_JUSTATTACKED;
+		Flags &= ~MF_JUSTATTACKED;
 		if (gameskill != sk_nightmare)
 			P_NewChaseDir(this);
 		return;
@@ -111,13 +111,13 @@ void Actor::A_SerpentChase(void)
 	//
 	// check for melee attack
 	//
-	if (meleestate && CheckMeleeRange(this))
+	if (MeleeState && CheckMeleeRange(this))
 	{
 		if (sound_attack)
 		{
 			StartSound(this, sound_attack, CHAN_WEAPON);
 		}
-		SetMobjState(this, meleestate);
+		SetMobjState(this, MeleeState);
 		return;
 	}
 
@@ -206,7 +206,7 @@ void Actor::A_SerpentHumpDecide(void)
 
 void Actor::A_SerpentUnHide(void)
 {
-	translucency = 0;
+	Translucency = 0;
 	floorclip = 24.0;
 }
 
@@ -242,7 +242,7 @@ void Actor::A_SerpentLowerHump(void)
 
 void Actor::A_SerpentHide(void)
 {
-	translucency = 100;
+	Translucency = 100;
 	floorclip = 0.0;
 }
 
@@ -254,8 +254,8 @@ void Actor::A_SerpentHide(void)
 
 void Actor::A_SetShootable(void)
 {
-	flags2 &= ~MF2_NONSHOOTABLE;
-	flags |= MF_SHOOTABLE;
+	Flags2 &= ~MF2_NONSHOOTABLE;
+	Flags |= MF_SHOOTABLE;
 }
 
 //==========================================================================
@@ -266,8 +266,8 @@ void Actor::A_SetShootable(void)
 
 void Actor::A_UnSetShootable(void)
 {
-	flags2 |= MF2_NONSHOOTABLE;
-	flags &= ~MF_SHOOTABLE;
+	Flags2 |= MF2_NONSHOOTABLE;
+	Flags &= ~MF_SHOOTABLE;
 }
 
 //============================================================================
@@ -341,9 +341,9 @@ void Actor::A_SerpentWalk(void)
 {
 	float delta;
 
-	if (reactiontime)
+	if (ReactionCount)
 	{
-		reactiontime--;
+		ReactionCount--;
 	}
 
 	// Modify target threshold
@@ -379,7 +379,7 @@ void Actor::A_SerpentWalk(void)
 		}
 	}
 
-	if (!target || !(target->flags & MF_SHOOTABLE))
+	if (!target || !(target->Flags & MF_SHOOTABLE))
 	{
 		// look for a new target
 		if (P_LookForPlayers(this, true))
@@ -387,16 +387,16 @@ void Actor::A_SerpentWalk(void)
 			// got a new target
 			return;
 		}
-		SetMobjState(this, spawnstate);
+		SetMobjState(this, SpawnState);
 		return;
 	}
 
 	//
 	// don't attack twice in a row
 	//
-	if (flags & MF_JUSTATTACKED)
+	if (Flags & MF_JUSTATTACKED)
 	{
-		flags &= ~MF_JUSTATTACKED;
+		Flags &= ~MF_JUSTATTACKED;
 		if (gameskill != sk_nightmare)
 			P_NewChaseDir(this);
 		return;
@@ -405,7 +405,7 @@ void Actor::A_SerpentWalk(void)
 	//
 	// check for melee attack
 	//
-	if (meleestate && CheckMeleeRange(this))
+	if (MeleeState && CheckMeleeRange(this))
 	{
 		if (sound_attack)
 		{
@@ -598,6 +598,10 @@ void Actor::A_DelayGib(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.10  2002/01/11 18:19:42  dj_jl
 //  Started to use names in progs
 //

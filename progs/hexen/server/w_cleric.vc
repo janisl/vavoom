@@ -146,12 +146,12 @@ void Weapon::A_CStaffCheck(void)
 			LineAttack(pmo, &vforward, 1.5 * MELEERANGE, damage);
 			pmo->angles.yaw = atan2(linetarget->origin.y - pmo->origin.y,
 				linetarget->origin.x - pmo->origin.x);
-			if ((linetarget->player || linetarget->flags & MF_COUNTKILL)
-				&& (!(linetarget->flags2 & (MF2_DORMANT + MF2_INVULNERABLE))))
+			if ((linetarget->player || linetarget->Flags & MF_COUNTKILL)
+				&& (!(linetarget->Flags2 & (MF2_DORMANT + MF2_INVULNERABLE))))
 			{
 				newLife = player->health + (damage >> 3);
 				newLife = newLife > 100 ? 100 : newLife;
-				pmo->health = player->health = newLife;
+				pmo->Health = player->health = newLife;
 				SetPsprite(player, ps_weapon, S_CSTAFFATK2_1);
 			}
 			player->mana[MANA_1] -=
@@ -167,11 +167,11 @@ void Weapon::A_CStaffCheck(void)
 			LineAttack(pmo, &vforward, 1.5 * MELEERANGE, damage);
 			pmo->angles.yaw = atan2(linetarget->origin.y - pmo->origin.y,
 				linetarget->origin.x - pmo->origin.x);
-			if (linetarget->player || linetarget->flags & MF_COUNTKILL)
+			if (linetarget->player || linetarget->Flags & MF_COUNTKILL)
 			{
 				newLife = player->health + (damage >> 4);
 				newLife = newLife > 100 ? 100 : newLife;
-				pmo->health = player->health = newLife;
+				pmo->Health = player->health = newLife;
 				SetPsprite(player, ps_weapon, S_CSTAFFATK2_1);
 			}
 			player->mana[MANA_1] -=
@@ -274,10 +274,10 @@ void Actor::A_CFlameMissile(void)
 	A_UnHideThing();
 	StartSoundName(this, 'ClericFlameExplode', CHAN_VOICE);
 	bmo = BlockingMobj;
-	if (bmo && bmo->flags & MF_SHOOTABLE)
+	if (bmo && bmo->Flags & MF_SHOOTABLE)
 	{
 		// Hit something, so spawn the flame circle around the thing
-		dist = bmo->radius + 18.0;
+		dist = bmo->Radius + 18.0;
 		for (i = 0; i < 4; i++)
 		{
 			an = itof(i) * 45.0;
@@ -421,20 +421,20 @@ void Actor::A_CHolyAttack2(void)
 		mo->origin.z = origin.z;
 		mo->angles.yaw = AngleMod360(angles.yaw +
 			(45.0 + 45.0 / 2.0) - 45.0 * itof(j));
-		P_ThrustMobj(mo, mo->angles.yaw, mo->speed * frametime);
+		P_ThrustMobj(mo, mo->angles.yaw, mo->Speed * frametime);
 		mo->target = target;
 		mo->args[0] = 10;	// initial turn value
 		mo->args[1] = 0;	// initial look angle
 		if (deathmatch)
 		{
 			// Ghosts last slightly less longer in DeathMatch
-			mo->health = 85;
+			mo->Health = 85;
 		}
 		if (linetarget)
 		{
 			mo->specialmobj1 = linetarget;
-			mo->flags |= MF_NOCLIP | MF_SKULLFLY;
-			mo->flags &= ~MF_MISSILE;
+			mo->Flags |= MF_NOCLIP | MF_SKULLFLY;
+			mo->Flags &= ~MF_MISSILE;
 		}
 		tail = P_SpawnMobj(mo->origin.x, mo->origin.y, mo->origin.z,
 			MT_HOLY_TAIL);
@@ -443,7 +443,7 @@ void Actor::A_CHolyAttack2(void)
 		{
 			next = P_SpawnMobj(mo->origin.x, mo->origin.y, mo->origin.z,
 				MT_HOLY_TAIL);
-			SetMobjState(next, next->spawnstate + 1);
+			SetMobjState(next, next->SpawnState + 1);
 			tail->specialmobj1 = next;
 			tail = next;
 		}
@@ -464,8 +464,8 @@ void CHolyFindTarget(mobj_t * actor)
 	if ((target = P_RoughMonsterSearch(actor, 6)))
 	{
 		actor->specialmobj1 = target;
-		actor->flags |= MF_NOCLIP | MF_SKULLFLY;
-		actor->flags &= ~MF_MISSILE;
+		actor->Flags |= MF_NOCLIP | MF_SKULLFLY;
+		actor->Flags &= ~MF_MISSILE;
 	}
 }
 
@@ -492,13 +492,13 @@ void CHolySeekerMissile(mobj_t * actor, float thresh, float turnMax)
 	{
 		return;
 	}
-	if (!(target->flags & MF_SHOOTABLE)
-		|| (!(target->flags & MF_COUNTKILL) && !target->player))
+	if (!(target->Flags & MF_SHOOTABLE)
+		|| (!(target->Flags & MF_COUNTKILL) && !target->player))
 	{
 		// Target died/target isn't a player or creature
 		actor->specialmobj1 = NULL;
-		actor->flags &= ~(MF_NOCLIP | MF_SKULLFLY);
-		actor->flags |= MF_MISSILE;
+		actor->Flags &= ~(MF_NOCLIP | MF_SKULLFLY);
+		actor->Flags |= MF_MISSILE;
 		CHolyFindTarget(actor);
 		return;
 	}
@@ -523,13 +523,13 @@ void CHolySeekerMissile(mobj_t * actor, float thresh, float turnMax)
 	}
 	actor->angles.yaw = AngleMod360(actor->angles.yaw);
 	angle = actor->angles.yaw;
-	actor->velocity.x = actor->speed * cos(angle);
-	actor->velocity.y = actor->speed * sin(angle);
+	actor->velocity.x = actor->Speed * cos(angle);
+	actor->velocity.y = actor->Speed * sin(angle);
 	if (!(level->tictime & 15) ||
-		actor->origin.z > target->origin.z + target->height ||
-		actor->origin.z + actor->height < target->origin.z)
+		actor->origin.z > target->origin.z + target->Height ||
+		actor->origin.z + actor->Height < target->origin.z)
 	{
-		newZ = target->origin.z + Random() * target->height;
+		newZ = target->origin.z + Random() * target->Height;
 		deltaZ = newZ - actor->origin.z;
 		if (fabs(deltaZ) > 15.0)
 		{
@@ -543,7 +543,7 @@ void CHolySeekerMissile(mobj_t * actor, float thresh, float turnMax)
 			}
 		}
 		dist = MobjDist2(target, actor);
-		dist = dist / actor->speed;
+		dist = dist / actor->Speed;
 		if (dist < 1.0)
 		{
 			dist = 1.0;
@@ -588,13 +588,13 @@ void CHolyWeave(mobj_t * actor)
 
 void Actor::A_CHolySeek(void)
 {
-	health--;
-	if (health <= 0)
+	Health--;
+	if (Health <= 0)
 	{
 		velocity.x /= 4.0;
 		velocity.y /= 4.0;
 		velocity.z = 0.0;
-		SetMobjState(this, deathstate);
+		SetMobjState(this, DeathState);
 		time -= Random() * 0.1;
 		return;
 	}
@@ -704,7 +704,7 @@ void Actor::A_CHolyTail(void)
 
 	if (parent)
 	{
-		if (parent->statenum >= parent->deathstate)
+		if (parent->statenum >= parent->DeathState)
 		{
 			// Ghost removed, so remove all tail parts
 			CHolyTailRemove(this);
@@ -734,6 +734,10 @@ void Actor::A_CHolySpawnPuff(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.9  2002/01/11 18:19:42  dj_jl
 //  Started to use names in progs
 //

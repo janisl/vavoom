@@ -124,7 +124,7 @@ void Actor::A_KoraxChase(void)
 	int args[3];
 
 	args[0] = args[1] = args[2] = 0;
-	if ((!special2) && (health <= (spawnhealth / 2)))
+	if ((!special2) && (Health <= (spawnhealth / 2)))
 	{
 		search = 0;
 		spot = P_FindMobjFromTID(KORAX_FIRST_TELEPORT_TID, &search);
@@ -144,7 +144,7 @@ void Actor::A_KoraxChase(void)
 		return;
 	if (P_Random() < 30)
 	{
-		SetMobjState(this, missilestate);
+		SetMobjState(this, MissileState);
 	}
 	else if (P_Random() < 30)
 	{
@@ -152,7 +152,7 @@ void Actor::A_KoraxChase(void)
 	}
 
 	// Teleport away
-	if (health < (spawnhealth >> 1))
+	if (Health < (spawnhealth >> 1))
 	{
 		if (P_Random() < 10)
 		{
@@ -358,7 +358,7 @@ void Actor::A_KoraxCommand(void)
 	z = origin.z + KORAX_COMMAND_HEIGHT;
 	P_SpawnMobj(x, y, z, MT_KORAX_BOLT);
 
-	if (health <= (spawnhealth >> 1))
+	if (Health <= (spawnhealth >> 1))
 	{
 		numcommands = 5;
 	}
@@ -399,7 +399,7 @@ void KSpiritInit(mobj_t * spirit, mobj_t * korax)
 	mobj_t *tail;
 	mobj_t *next;
 
-	spirit->health = KORAX_SPIRIT_LIFETIME;
+	spirit->Health = KORAX_SPIRIT_LIFETIME;
 
 	spirit->specialmobj1 = korax;	// Swarm around korax
 	spirit->special2 = 32 + (P_Random() & 7);	// Float bob index
@@ -407,16 +407,14 @@ void KSpiritInit(mobj_t * spirit, mobj_t * korax)
 	spirit->args[1] = 0;	// initial look angle
 
 	// Spawn a tail for spirit
-	tail =
-		P_SpawnMobj(spirit->origin.x, spirit->origin.y, spirit->origin.z,
+	tail = P_SpawnMobj(spirit->origin.x, spirit->origin.y, spirit->origin.z,
 		MT_HOLY_TAIL);
 	tail->specialmobj2 = spirit;	// parent
 	for (i = 1; i < 3; i++)
 	{
-		next =
-			P_SpawnMobj(spirit->origin.x, spirit->origin.y, spirit->origin.z,
-			MT_HOLY_TAIL);
-		SetMobjState(next, next->spawnstate + 1);
+		next = P_SpawnMobj(spirit->origin.x, spirit->origin.y,
+			spirit->origin.z, MT_HOLY_TAIL);
+		SetMobjState(next, next->SpawnState + 1);
 		tail->specialmobj1 = next;
 		tail = next;
 	}
@@ -499,14 +497,14 @@ void A_KSpiritSeeker(mobj_t * actor, float thresh, float turnMax)
 		actor->angles.yaw = AngleMod360(actor->angles.yaw - delta);
 	}
 	angle = actor->angles.yaw;
-	actor->velocity.x = actor->speed * cos(angle);
-	actor->velocity.y = actor->speed * sin(angle);
+	actor->velocity.x = actor->Speed * cos(angle);
+	actor->velocity.y = actor->Speed * sin(angle);
 
 	if (!(level->tictime & 15) ||
-		actor->origin.z > target->origin.z + target->height ||
-		actor->origin.z + actor->height < target->origin.z)
+		actor->origin.z > target->origin.z + target->Height ||
+		actor->origin.z + actor->Height < target->origin.z)
 	{
-		newZ = target->origin.z + Random() * target->height;
+		newZ = target->origin.z + Random() * target->Height;
 		deltaZ = newZ - actor->origin.z;
 		if (fabs(deltaZ) > 15.0)
 		{
@@ -520,7 +518,7 @@ void A_KSpiritSeeker(mobj_t * actor, float thresh, float turnMax)
 			}
 		}
 		dist = MobjDist2(target, actor);
-		dist = dist / actor->speed;
+		dist = dist / actor->Speed;
 		if (dist < 1.0)
 		{
 			dist = 1.0;
@@ -565,7 +563,7 @@ void A_KSpiritWeave(mobj_t * actor)
 
 void Actor::A_KSpiritRoam(void)
 {
-	if (health-- <= 0)
+	if (Health-- <= 0)
 	{
 		StartSoundName(this, 'SpiritDie', CHAN_VOICE);
 		SetMobjState(this, S_KSPIRIT_DEATH1);
@@ -630,6 +628,10 @@ void Actor::A_KBolt(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.8  2002/01/11 18:19:42  dj_jl
 //  Started to use names in progs
 //

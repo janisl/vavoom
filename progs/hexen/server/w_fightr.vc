@@ -79,7 +79,7 @@ void Weapon::A_FPunchAttack(void)
 					StartSoundName(pmo, 'FighterPunchMiss', CHAN_WEAPON);
 				}
 			}
-			if (linetarget->flags & MF_COUNTKILL || linetarget->player)
+			if (linetarget->Flags & MF_COUNTKILL || linetarget->player)
 			{
 				P_ThrustMobj(linetarget, angles.yaw, power);
 			}
@@ -110,7 +110,7 @@ void Weapon::A_FPunchAttack(void)
 					StartSoundName(pmo, 'FighterPunchMiss', CHAN_WEAPON);
 				}
 			}
-			if (linetarget->flags & MF_COUNTKILL || linetarget->player)
+			if (linetarget->Flags & MF_COUNTKILL || linetarget->player)
 			{
 				P_ThrustMobj(linetarget, angles.yaw, power);
 			}
@@ -184,7 +184,7 @@ void Weapon::A_FAxeAttack(void)
 			{
 				StartSoundName(pmo, 'FighterHammerMiss', CHAN_WEAPON);
 			}
-			if (linetarget->flags & MF_COUNTKILL || linetarget->player)
+			if (linetarget->Flags & MF_COUNTKILL || linetarget->player)
 			{
 				P_ThrustMobj(linetarget, angles.yaw, power);
 			}
@@ -202,7 +202,7 @@ void Weapon::A_FAxeAttack(void)
 			{
 				StartSoundName(pmo, 'FighterHammerMiss', CHAN_WEAPON);
 			}
-			if (linetarget->flags & MF_COUNTKILL || linetarget->player)
+			if (linetarget->Flags & MF_COUNTKILL || linetarget->player)
 			{
 				P_ThrustMobj(linetarget, angles.yaw, power);
 			}
@@ -269,7 +269,7 @@ void Weapon::A_FHammerAttack(void)
 				StartSoundName(pmo, 'FighterHammerMiss', CHAN_WEAPON);
 			}
 			AdjustPlayerAngle(pmo);
-			if (linetarget->flags & MF_COUNTKILL || linetarget->player)
+			if (linetarget->Flags & MF_COUNTKILL || linetarget->player)
 			{
 				P_ThrustMobj(linetarget, angles.yaw, power);
 			}
@@ -287,7 +287,7 @@ void Weapon::A_FHammerAttack(void)
 				StartSoundName(pmo, 'FighterHammerMiss', CHAN_WEAPON);
 			}
 			AdjustPlayerAngle(pmo);
-			if (linetarget->flags & MF_COUNTKILL || linetarget->player)
+			if (linetarget->Flags & MF_COUNTKILL || linetarget->player)
 			{
 				P_ThrustMobj(linetarget, angles.yaw, power);
 			}
@@ -401,6 +401,10 @@ void Actor::A_FSwordFlames(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.9  2002/01/11 18:19:42  dj_jl
 //  Started to use names in progs
 //

@@ -99,13 +99,13 @@ mobj_t *SpawnMissile(mobj_t * source, mobj_t * dest, classid type)
 	}
 	th->target = source;	// Originator
 	dir = dest->origin - source->origin;
-	if (dest->translucency)
+	if (dest->Translucency)
 	{
 		// Invisible target
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0);
 	}
 	dir = Normalize(dir);
-	th->velocity = dir * th->speed;
+	th->velocity = dir * th->Speed;
 	VectorAngles(&dir, &th->angles);
 	return CheckMissileSpawn(th) ? th : NULL;
 }
@@ -151,7 +151,7 @@ mobj_t *SpawnMissileAngles(mobj_t * source, classid type, float yaw,
 	mo->angles.yaw = yaw;
 	mo->angles.pitch = pitch;
 	AngleVector(&mo->angles, &dir);
-	mo->velocity = mo->speed * dir;
+	mo->velocity = mo->Speed * dir;
 	return (CheckMissileSpawn(mo) ? mo : NULL);
 }
 
@@ -199,7 +199,7 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 	MissileMobj->target = source;
 	MissileMobj->angles = angles;
 	AngleVector(&angles, &vforward);
-	MissileMobj->velocity = vforward * MissileMobj->speed;
+	MissileMobj->velocity = vforward * MissileMobj->Speed;
 	if (MissileMobj->Class == MT_BLASTERFX1)
 	{
 		// Ultra-fast ripper spawning missile
@@ -264,7 +264,7 @@ mobj_t *SpawnPlayerMissileAngle(mobj_t * source, classid type, float angle)
 	th->target = source;
 	th->angles = angles;
 	AngleVector(&angles, &vforward);
-	th->velocity = vforward * th->speed;
+	th->velocity = vforward * th->Speed;
 	return (CheckMissileSpawn(th) ? th : NULL);
 }
 
@@ -290,7 +290,7 @@ boolean P_SeekerMissile(mobj_t * actor, float thresh, float turnMax)
 	{
 		return false;
 	}
-	if (!(target->flags & MF_SHOOTABLE))
+	if (!(target->Flags & MF_SHOOTABLE))
 	{
 		// Target died
 		actor->specialmobj1 = NULL;
@@ -314,14 +314,14 @@ boolean P_SeekerMissile(mobj_t * actor, float thresh, float turnMax)
 		actor->angles.yaw = AngleMod360(actor->angles.yaw - delta);
 	}
 	angle = actor->angles.yaw;
-	actor->velocity.x = actor->speed * cos(angle);
-	actor->velocity.y = actor->speed * sin(angle);
-	if (actor->origin.z + actor->height < target->origin.z ||
-		target->origin.z + target->height < actor->origin.z)
+	actor->velocity.x = actor->Speed * cos(angle);
+	actor->velocity.y = actor->Speed * sin(angle);
+	if (actor->origin.z + actor->Height < target->origin.z ||
+		target->origin.z + target->Height < actor->origin.z)
 	{
 		// Need to seek vertically
 		dist = MobjDist2(target, actor);
-		dist = dist / actor->speed;
+		dist = dist / actor->Speed;
 		if (dist < 1.0)
 		{
 			dist = 1.0;
@@ -334,6 +334,10 @@ boolean P_SeekerMissile(mobj_t * actor, float thresh, float turnMax)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.9  2002/01/07 12:23:17  dj_jl
 //  Changed copyright year
 //

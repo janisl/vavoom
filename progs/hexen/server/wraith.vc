@@ -62,10 +62,10 @@ void Actor::A_WraithInit(void)
 
 void Actor::A_WraithRaiseInit(void)
 {
-	translucency = 0;
-	flags2 &= ~MF2_NONSHOOTABLE;
-	flags |= MF_SHOOTABLE | MF_SOLID;
-	floorclip = height;
+	Translucency = 0;
+	Flags2 &= ~MF2_NONSHOOTABLE;
+	Flags |= MF_SHOOTABLE | MF_SOLID;
+	floorclip = Height;
 }
 
 //============================================================================
@@ -82,7 +82,7 @@ void Actor::A_WraithRaise(void)
 		SetMobjState(this, S_WRAITH_CHASE1);
 	}
 
-	SpawnDirt(this, radius);
+	SpawnDirt(this, Radius);
 }
 
 //============================================================================
@@ -259,7 +259,7 @@ void Actor::A_WraithMelee(void)
 	{
 		amount = HITDICE(2);
 		target->Damage(this, this, amount);
-		health += amount;
+		Health += amount;
 	}
 }
 
@@ -283,6 +283,10 @@ void Actor::A_WraithMissile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.9  2002/01/11 18:19:42  dj_jl
 //  Started to use names in progs
 //

@@ -185,22 +185,22 @@ void CheckWaterJump(player_t * player)
 	// check for a jump-out-of-water
 	AngleVector(&player->mo->angles, &vforward);
 	start = player->mo->origin;
-	start.z += player->mo->height * 0.5 + 8.0;
+	start.z += player->mo->Height * 0.5 + 8.0;
 	vforward.z = 0.0;
 	vforward = Normalize(vforward);
 	end = start + vforward * 24.0;
 	if (!TraceLine(start, end))
 	{
 		// solid at waist
-		start.z = player->mo->origin.z + player->mo->height;
+		start.z = player->mo->origin.z + player->mo->Height;
 		end = start + vforward * 24.0;
 		player->movedir = trace_plane_normal * -50.0;
 		if (TraceLine(start, end))
 		{
 			// open at eye level
-			player->mo->flags |= MF_WATERJUMP;
+			player->mo->Flags |= MF_WATERJUMP;
 			player->mo->velocity.z = 320.0;
-			player->mo->reactiontime = 70;	// safety net
+			player->mo->ReactionTime = 2.0;	// safety net
 		}
 	}
 }
@@ -263,10 +263,10 @@ void WaterMove(player_t * player)
 
 void WaterJump(player_t * player)
 {
-	if (!player->mo->reactiontime || !player->mo->waterlevel)
+	if (!player->mo->ReactionTime || !player->mo->waterlevel)
 	{
-		player->mo->flags &= ~MF_WATERJUMP;
-		player->mo->reactiontime = 0;
+		player->mo->Flags &= ~MF_WATERJUMP;
+		player->mo->ReactionTime = 0.0;
 	}
 	player->mo->velocity.x = player->movedir.x;
 	player->mo->velocity.y = player->movedir.y;
@@ -463,15 +463,15 @@ void PlayerThink(player_t * player)
 
 	// fixme: do this in the cheat code
 	if (player->cheats & CF_NOCLIP)
-		player->mo->flags |= MF_NOCLIP;
+		player->mo->Flags |= MF_NOCLIP;
 	else
-		player->mo->flags &= ~MF_NOCLIP;
+		player->mo->Flags &= ~MF_NOCLIP;
 
-	if (player->mo->flags & MF_JUSTATTACKED)
+	if (player->mo->Flags & MF_JUSTATTACKED)
 	{
 		player->forwardmove = 100.0;
 		player->sidemove = 0.0;
-		player->mo->flags &= ~MF_JUSTATTACKED;
+		player->mo->Flags &= ~MF_JUSTATTACKED;
 	}
 
 	if (player->playerstate == PST_DEAD)
@@ -488,10 +488,12 @@ void PlayerThink(player_t * player)
 	// Move around.
 	// Reactiontime is used to prevent movement
 	//  for a bit after a teleport.
-	if (player->mo->reactiontime)
+	if (player->mo->ReactionTime)
 	{
-		player->mo->reactiontime--;
-		if (player->mo->flags & MF_WATERJUMP)
+		player->mo->ReactionTime -= frametime;
+		if (player->mo->ReactionTime <= 0.0)
+			player->mo->ReactionTime = 0.0;
+		if (player->mo->Flags & MF_WATERJUMP)
 			WaterJump(player);
 	}
 	else
@@ -542,7 +544,7 @@ void PlayerThink(player_t * player)
 
 	if (player->powers[pw_invisibility])
 		if (!--player->powers[pw_invisibility])
-			player->mo->translucency = 0;
+			player->mo->Translucency = 0;
 
 	if (player->powers[pw_infrared])
 		player->powers[pw_infrared]--;
@@ -717,7 +719,7 @@ void G_PlayerExitMap(int player, boolean clusterChange)
 	p->keys = 0;
 
 	p->mo->angles.pitch = 0.0;
-	p->mo->translucency = 0;	// cancel invisibility
+	p->mo->Translucency = 0;	// cancel invisibility
 	p->extralight = 0;	// cancel gun flashes 
 	p->fixedcolormap = 0;	// cancel ir gogles 
 	p->damagecount = 0;	// no palette changes 
@@ -861,12 +863,16 @@ void UserinfoChanged(player_t * player)
 	{
 		return;
 	}
-	player->mo->translation = player->color;
+	player->mo->Translation = player->color;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/15 18:27:01  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.12  2002/01/11 18:19:43  dj_jl
 //  Started to use names in progs
 //

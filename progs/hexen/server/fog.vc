@@ -111,7 +111,7 @@ void Actor::A_FogMove(void)
 
 	if (args[3]-- <= 0)
 	{
-		SetMobjStateNF(this, deathstate);
+		SetMobjStateNF(this, DeathState);
 		return;
 	}
 
@@ -130,6 +130,10 @@ void Actor::A_FogMove(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.7  2002/01/07 12:25:57  dj_jl
 //  Changed copyright year
 //

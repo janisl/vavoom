@@ -79,12 +79,16 @@ void Actor::A_DripBlood(void)
 		origin.y + (Random() - Random()) * 8.0, origin.z, MT_BLOOD);
 	mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
 	mo->velocity.y = (Random() - Random()) * 4.0 * 35.0;
-	mo->flags2 |= MF2_LOGRAV;
+	mo->Flags2 |= MF2_LOGRAV;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.9  2002/01/11 18:19:41  dj_jl
 //  Started to use names in progs
 //

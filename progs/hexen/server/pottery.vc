@@ -49,7 +49,7 @@ void Actor::A_PotteryExplode(void)
 	for (i = (P_Random() & 3) + 3; i; i--)
 	{
 		mo = P_SpawnMobj(origin.x, origin.y, origin.z, MT_POTTERYBIT1);
-		SetMobjState(mo, mo->spawnstate + (P_Random() % 5));
+		SetMobjState(mo, mo->SpawnState + (P_Random() % 5));
 		if (mo)
 		{
 			mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
@@ -64,7 +64,7 @@ void Actor::A_PotteryExplode(void)
 		P_SpawnMobj(origin.x, origin.y, origin.z,
 			TranslateThingType[args[0]]);
 	}
-	P_RemoveMobj(this);
+//	P_RemoveMobj(this);
 }
 
 //============================================================================
@@ -75,7 +75,7 @@ void Actor::A_PotteryExplode(void)
 
 void Actor::A_PotteryChooseBit(void)
 {
-	SetMobjState(this, deathstate + (P_Random() % 5) + 1);
+	SetMobjState(this, DeathState + (P_Random() % 5) + 1);
 	time = 8.0 + Random() * 16.0;
 }
 
@@ -111,6 +111,10 @@ void Actor::A_PotteryCheck(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.9  2002/01/11 18:19:42  dj_jl
 //  Started to use names in progs
 //

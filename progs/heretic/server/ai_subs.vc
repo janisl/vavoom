@@ -155,19 +155,19 @@ int P_CheckMissileRange(mobj_t * actor)
 	{
 		return false;
 	}
-	if (actor->flags & MF_JUSTHIT)
+	if (actor->Flags & MF_JUSTHIT)
 	{
 		// The target just hit the enemy, so fight back!
-		actor->flags &= ~MF_JUSTHIT;
+		actor->Flags &= ~MF_JUSTHIT;
 		return true;
 	}
-	if (actor->reactiontime)
+	if (actor->ReactionCount)
 	{
 		// Don't attack yet
 		return false;
 	}
 	dist = MobjDist(actor, actor->target) - 64.0;
-	if (!actor->meleestate)
+	if (!actor->MeleeState)
 	{
 		// No melee attack, so fire more frequently
 		dist -= 128.0;
@@ -219,8 +219,8 @@ int UpdateChicken(mobj_t * actor, int tics)
 	y = actor->origin.y;
 	z = actor->origin.z;
 	angle = actor->angles.yaw;
-	flags = actor->flags;
-	health = actor->health;
+	flags = actor->Flags;
+	health = actor->Health;
 	target = actor->target;
 	SetMobjState(actor, S_FREETARGMOBJ);
 	mo = P_SpawnMobj(x, y, z, moType);
@@ -230,8 +230,8 @@ int UpdateChicken(mobj_t * actor, int tics)
 		P_RemoveMobj(mo);
 		mo = P_SpawnMobj(x, y, z, MT_CHICKEN);
 		mo->angles.yaw = angle;
-		mo->flags = flags;
-		mo->health = health;
+		mo->Flags = flags;
+		mo->Health = health;
 		mo->target = target;
 		mo->special1 = 5 * 35;	// Next try in 5 seconds
 		mo->specialcid = moType;
@@ -258,7 +258,7 @@ void P_Massacre(void)
 
 	for (mo = NextMobj(NULL); mo; mo = NextMobj(mo))
 	{
-		if ((mo->flags & MF_COUNTKILL) && (mo->health > 0))
+		if ((mo->Flags & MF_COUNTKILL) && (mo->Health > 0))
 		{
 			mo->Damage(NULL, NULL, 10000);
 		}
@@ -286,7 +286,7 @@ boolean P_LookForMonsters(mobj_t * actor)
 	count = 0;
 	for (mo = NextMobj(NULL); mo; mo = NextMobj(mo))
 	{
-		if (!(mo->flags & MF_COUNTKILL) || (mo == actor) || (mo->health <= 0))
+		if (!(mo->Flags & MF_COUNTKILL) || (mo == actor) || (mo->Health <= 0))
 		{	// Not a valid monster
 			continue;
 		}
@@ -369,7 +369,7 @@ boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
 					continue;	// behind back
 			}
 		}
-		if (player->mo->translucency)
+		if (player->mo->Translucency)
 		{
 			// Player is invisible
 			if ((MobjDist(player->mo, actor) > 2.0 * MELEERANGE) &&
@@ -526,6 +526,10 @@ void P_NewChaseDir(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/15 18:27:00  dj_jl
+//  Some property names with logical words starting with capital letter.
+//  Moved everything from Entity class into Actor class.
+//
 //  Revision 1.10  2002/01/11 18:19:41  dj_jl
 //  Started to use names in progs
 //
