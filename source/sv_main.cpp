@@ -609,10 +609,7 @@ void SV_SectorStopSound(const sector_t *sector, int channel)
 void SV_StartSequence(const TVec &origin, int origin_id, const char *name)
 {
 	guard(SV_StartSequence);
-	if (!sv_datagram.CheckSpace(32))
-		return;
-
-	sv_datagram << (byte)svc_start_seq
+	sv_reliable << (byte)svc_start_seq
 				<< (word)origin_id
 				<< (word)origin.x
 				<< (word)origin.y
@@ -630,10 +627,7 @@ void SV_StartSequence(const TVec &origin, int origin_id, const char *name)
 void SV_StopSequence(int origin_id)
 {
 	guard(SV_StopSequence);
-	if (sv_datagram.CheckSpace(3))
-		return;
-
-	sv_datagram << (byte)svc_stop_seq
+	sv_reliable << (byte)svc_stop_seq
 				<< (word)origin_id;
 	unguard;
 }
@@ -2860,9 +2854,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.47  2002/08/05 17:21:00  dj_jl
+//	Made sound sequences reliable.
+//
 //	Revision 1.46  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.45  2002/07/23 13:10:37  dj_jl
 //	Some fixes for switching to floating-point time.
 //	
