@@ -389,7 +389,7 @@ bool LookForMonsters(void)
 		}
 		if (Class == Minotaur)
 		{
-			if ((mo.Class == Minotaur) && (mo.Enemy != *_SpecialMobj1))
+			if ((mo.Class == Minotaur) && (mo.Enemy != Instigator))
 			{
 				continue;
 			}
@@ -473,7 +473,7 @@ bool LookForPlayers(bool allaround)
 		}
 		if (Class == Minotaur)
 		{
-			if (*_SpecialMobj1 == P->MO)
+			if (Instigator == P->MO)
 			{
 				continue;	// Don't target master
 			}
@@ -1030,6 +1030,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/03/08 12:41:43  dj_jl
+//  Removing class pointers.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

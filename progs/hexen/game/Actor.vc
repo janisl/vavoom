@@ -106,8 +106,6 @@ int _Special1;	// Special info
 int _Special2;	// Special info
 float Special1f;
 float Special2f;
-Actor *_SpecialMobj1;
-Actor *SpecialMobj2;
 classid SpecialCID;
 
 int MissileDamage;	// For missiles
@@ -123,66 +121,11 @@ float ReactionTime;
 
 void Archive(void)
 {
-	if (bCorpse)
-	{
-		Enemy = none;
-	}
-
 	switch (Class)
 	{
-		// Just	SpecialMobj1
-	case ThrustFloorUp:
-	case ThrustFloorDown:
-	case Minotaur:
-		if (bCorpse)
-		{
-			_SpecialMobj1 = NULL;
-		}
-		MobjToNum(&_SpecialMobj1);
-		break;
-
-		// Just specialmobj2
-	case LightningFloor:
-	case LightningCeiling:
-	case LightningZap:
-		MobjToNum(&SpecialMobj2);
-		break;
-
 		// Miscellaneous
 	case Korax:
 		_Special1 = 0;	// Searching index
-		break;
-
-	default:
-		break;
-	}
-}
-
-//==========================================================================
-//
-//  Unarchive
-//
-//==========================================================================
-
-void Unarchive(void)
-{
-	switch (Class)
-	{
-		// Just	SpecialMobj1
-	case ThrustFloorUp:
-	case ThrustFloorDown:
-	case Minotaur:
-		NumToMobj(&_SpecialMobj1);
-		break;
-
-		// Just special2
-	case LightningFloor:
-	case LightningCeiling:
-	case LightningZap:
-		NumToMobj(&SpecialMobj2);
-		break;
-
-	default:
 		break;
 	}
 }
@@ -651,12 +594,10 @@ void MonsterFallingDamage(void)
 
 Actor ActiveMinotaur(void)
 {
-	Actor mo;
+	Minotaur mo;
 
-	FOREACH(Actor, mo)
+	FOREACH(Minotaur, mo)
 	{
-		if (mo.Class != Minotaur)
-			continue;
 		if (mo.Health <= 0)
 			continue;
 		if (!mo.bCountKill)
@@ -665,7 +606,7 @@ Actor ActiveMinotaur(void)
 			continue;
 		if ((level->tictime - mo.Args[0]) >= ftoi(MAULATORTIME * 35.0))
 			continue;
-		if (mo._SpecialMobj1 == this)
+		if (mo.Instigator == self)
 			return mo;
 	}
 	return none;
@@ -680,7 +621,6 @@ Actor ActiveMinotaur(void)
 void Died(Actor source)
 {
 	int dummy[5];
-	Actor master;
 
 	bShootable = false;
 	bNoGravity = false;
@@ -813,18 +753,7 @@ void Died(Actor source)
 		return;
 	}
 
-	if (Class == Minotaur)
-	{
-		master = *_SpecialMobj1;
-		if (master.Health > 0)
-		{
-			if (!master.ActiveMinotaur())
-			{
-				master.Player->Powers[pw_minotaur] = 0.0;
-			}
-		}
-	}
-	else if (Class == TreeDestructible)
+	if (Class == TreeDestructible)
 	{
 		Height = 24.0;
 	}
@@ -930,7 +859,6 @@ bool MorphPlayer(void)
 
 bool MorphMonster(void)
 {
-	Actor master;
 	Actor monster;
 	Actor fog;
 	int i;
@@ -967,19 +895,6 @@ bool MorphMonster(void)
 	for (i = 0; i < 5; i++)
 	{
 		monster.Args[i] = Args[i];
-	}
-
-	// check for turning off minotaur power for active icon
-	if (Class == Minotaur)
-	{
-		master = *_SpecialMobj1;
-		if (master.Health > 0)
-		{
-			if (!master.ActiveMinotaur())
-			{
-				master.Player->Powers[pw_minotaur] = 0.0;
-			}
-		}
 	}
 
 	SetState(S_FREETARGMOBJ);
@@ -1305,7 +1220,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 		{
 			Player->Health = 0;
 		}
-		Player->Attacker = &source;
+		Player->Attacker = source;
 		Player->DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
 		if (Player->DamageFlash > 3.0)
 		{
@@ -1343,12 +1258,12 @@ void Damage(Actor inflictor, Actor source, int damage)
 				bIceDamage = true;
 			}
 		}
-		if (source && (source.Class == Minotaur))
+		if (Minotaur(source))
 		{
 			// Minotaur's kills go to his master
-			master = *source._SpecialMobj1;
+			master = source.Instigator;
 			// Make sure still alive and not a pointer to fighter head
-			if (master.bIsPlayer && (master.Player->MO == master))
+			if (master && master.bIsPlayer && (master.Player->MO == master))
 			{
 				source = master;
 			}
@@ -1476,7 +1391,7 @@ void PoisonPlayer(Actor poisoner, int poison)
 		return;
 	}
 	Player->PoisonCount += poison;
-	Player->Poisoner = &poisoner;
+	Player->Poisoner = poisoner;
 	if (Player->PoisonCount > 100)
 	{
 		Player->PoisonCount = 100;
@@ -1526,7 +1441,7 @@ void PoisonDamage(Actor source, int damage, bool playPainSound)
 	{
 		Player->Health = 0;
 	}
-	Player->Attacker = &source;
+	Player->Attacker = source;
 
 	//
 	// do the damage
@@ -1897,35 +1812,7 @@ bool Touch(Entity InOther)
 				return false;
 			}
 		}
-		if (Class == LightningZap)
-		{
-			Actor lmo;
-
-			if (Other.bShootable && Other != Instigator)
-			{
-				lmo = *SpecialMobj2;
-				if (lmo)
-				{
-					if (lmo.Class == LightningFloor)
-					{
-						if (lmo.SpecialMobj2 &&
-							!lmo.SpecialMobj2->Enemy)
-						{
-							lmo.SpecialMobj2->Enemy = Other;
-						}
-					}
-					else if (!lmo.Enemy)
-					{
-						lmo.Enemy = Other;
-					}
-					if (!(level->tictime & 3))
-					{
-						lmo.Health--;
-					}
-				}
-			}
-		}
-		else if (Class == MageStaffFX2 && Other != Instigator)
+		if (Class == MageStaffFX2 && Other != Instigator)
 		{
 			if (!Other.bIsPlayer && !Other.bBoss)
 			{
@@ -4042,6 +3929,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/03/08 12:41:43  dj_jl
+//  Removing class pointers.
+//
 //  Revision 1.1  2002/10/26 16:32:25  dj_jl
 //  New style of defining classes.
 //

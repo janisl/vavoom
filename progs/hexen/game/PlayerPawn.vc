@@ -1323,7 +1323,7 @@ void PlayerTick(float deltaTime)
 			Player->PoisonCount = 0;
 		}
 		Player->LastPoisonTime = level->time;
-		PoisonDamage(*Player->Poisoner, 1, true);
+		PoisonDamage(Player->Poisoner, 1, true);
 	}
 
 	if (Player->DamageFlash)
@@ -1885,7 +1885,7 @@ Actor SpawnPlayerMissile(classid type)
 	TVec org;
 
 	// Try to find a target
-	avcpy(Angles, angles);
+	angles = Angles;
 	AimLineAttack(self, &angles, 16.0 * 64.0);
 	if (!linetarget)
 	{
@@ -1919,7 +1919,7 @@ Actor SpawnPlayerMissile(classid type)
 	}
 	MissileMobj = Spawn(type, org);
 	MissileMobj.Instigator = self;
-	avcpy(angles, MissileMobj.Angles);
+	MissileMobj.Angles = angles;
 	AngleVector(&angles, &vforward);
 	MissileMobj.Velocity = vforward * MissileMobj.Speed;
 	if (MissileMobj.Class == MageWandMissile ||
@@ -2211,10 +2211,10 @@ void DeathPlayerTick(float deltaTime)
 	}
 	CalcHeight(deltaTime);
 
-	if (Player->Attacker && Player->Attacker != this)
+	if (Player->Attacker && Player->Attacker != self)
 	{
 		// Watch killer
-		dir = FaceActor(*Player->Attacker, &delta);
+		dir = FaceActor(Player->Attacker, &delta);
 		if (delta < 10.0)
 		{
 			// Looking at killer, so fade damage and poison counters
@@ -2311,7 +2311,6 @@ void UseArtiSummon(void)
 	if (mo)
 	{
 		mo.Instigator = self;
-		mo._SpecialMobj1 = this;
 		mo.Velocity.z = 5.0 * 35.0;
 	}
 }
@@ -2476,7 +2475,7 @@ bool RoughCheckThing(Entity Other)
 	{
 		return false;
 	}
-	if (link.IsA('Minotaur') && *link._SpecialMobj1 == self)
+	if (link.IsA('Minotaur') && link.Instigator == self)
 	{
 		return false;
 	}
@@ -2530,6 +2529,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/03/08 12:41:44  dj_jl
+//  Removing class pointers.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

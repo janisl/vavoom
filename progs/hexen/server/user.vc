@@ -354,8 +354,8 @@ void SpawnClient(int i)
 
 	player = &players[i];
 
-	player->Attacker = NULL;
-	player->Poisoner = NULL;
+	player->Attacker = none;
+	player->Poisoner = none;
 
 	if (netgame && !deathmatch)
 	{
@@ -456,6 +456,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.40  2003/03/08 12:41:45  dj_jl
+//  Removing class pointers.
+//
 //  Revision 1.39  2002/11/02 08:24:12  dj_jl
 //  New style classes.
 //

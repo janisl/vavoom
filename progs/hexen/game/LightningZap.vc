@@ -25,6 +25,88 @@
 
 class LightningZap:Projectile;
 
+LightningMissile LightningOwner;	//	Lightning missile that spawned zap.
+
+//==========================================================================
+//
+//	Touch
+//
+//==========================================================================
+
+bool Touch(Entity InOther)
+{
+	int damage;
+	Actor Other;
+
+	Other = Actor(InOther);
+	if (!Other.bSolid && !Other.bSpecial && !Other.bShootable)
+		return true;
+
+	// Check for missile
+	if (bMissile)
+	{
+		// Check for a non-shootable mobj
+		if (Other.bNonShootable)
+		{
+			return true;
+		}
+		if (Other.bShootable && Other != Instigator)
+		{
+			if (LightningOwner)
+			{
+				if (LightningOwner.Class == LightningFloor)
+				{
+					if (LightningOwner.LightningLink &&
+						!LightningOwner.LightningLink.Enemy)
+					{
+						LightningOwner.LightningLink.Enemy = Other;
+					}
+				}
+				else if (!LightningOwner.Enemy)
+				{
+					LightningOwner.Enemy = Other;
+				}
+				if (!(level->tictime & 3))
+				{
+					LightningOwner.Health--;
+				}
+			}
+		}
+		if (Instigator && Instigator.Class == Other.Class)
+		{
+			// Don't hit same species as originator
+			if (Other == Instigator)
+			{
+				// Don't missile self
+				return true;
+			}
+			if (!Other.bIsPlayer)
+			{
+				// Hit same species as originator, explode, no damage
+				return false;
+			}
+		}
+		if (!Other.bShootable)
+		{
+			// Didn't do any damage
+			return !Other.bSolid;
+		}
+		// Do damage
+		damage = ((P_Random() % 8) + 1) * MissileDamage;
+		if (damage)
+		{
+			if (!Other.bNoBlood && !Other.bReflective &&
+				!Other.bInvulnerable && (P_Random() < 192))
+			{
+				Other.SpawnBloodSplatter(Origin);
+			}
+			Other.Damage(self, Instigator, damage);
+		}
+		return false;
+	}
+	return !Other.bSolid;
+}
+
 //==========================================================================
 //
 //  A_ZapMimic
@@ -33,19 +115,17 @@ class LightningZap:Projectile;
 
 void A_ZapMimic(void)
 {
-	Actor A;
-
-	A = *SpecialMobj2;
-	if (A)
+	if (LightningOwner)
 	{
-		if (A.StateNum >= A.DeathState || A.StateNum == S_FREETARGMOBJ)
+		if (LightningOwner.StateNum >= LightningOwner.DeathState ||
+			LightningOwner.StateNum == S_FREETARGMOBJ)
 		{
 			ExplodeMissile();
 		}
 		else
 		{
-			Velocity.x = A.Velocity.x;
-			Velocity.y = A.Velocity.y;
+			Velocity.x = LightningOwner.Velocity.x;
+			Velocity.y = LightningOwner.Velocity.y;
 		}
 	}
 }
@@ -83,6 +163,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/03/08 12:41:43  dj_jl
+//  Removing class pointers.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

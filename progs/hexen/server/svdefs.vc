@@ -496,8 +496,8 @@ addfields player_t
 
 	bool WeaponOwned[NUMWEAPONS];
 
-	// Who did damage (NULL for floors/ceilings).
-	Actor *Attacker;
+	// Who did damage (none for floors/ceilings).
+	Actor Attacker;
 
 	// For screen flashing (red or bright).
 	float DamageFlash;
@@ -505,7 +505,7 @@ addfields player_t
 
 	int PoisonCount;	// screen flash for poison damage
 	float LastPoisonTime;
-	Actor *Poisoner;	// NULL for non-player mobjs
+	Actor Poisoner;		// none for non-player mobjs
 
 	float JumpTime;
 	int LocalQuakeHappening;
@@ -602,6 +602,9 @@ name door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.40  2003/03/08 12:41:45  dj_jl
+//  Removing class pointers.
+//
 //  Revision 1.39  2002/11/02 08:24:11  dj_jl
 //  New style classes.
 //

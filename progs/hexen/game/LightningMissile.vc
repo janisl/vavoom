@@ -26,6 +26,7 @@
 class LightningMissile:Projectile
 	abstract;
 
+LightningMissile LightningLink;
 int ZigZagCount;	// Only for floor
 float ZagSpeed;
 
@@ -116,9 +117,9 @@ bool Touch(Entity InOther)
 	}
 	if (Class == LightningFloor)
 	{
-		if (SpecialMobj2 && !SpecialMobj2->Enemy)
+		if (LightningLink && !LightningLink.Enemy)
 		{
-			SpecialMobj2->Enemy = Other;
+			LightningLink.Enemy = Other;
 		}
 	}
 	else if (!Enemy)
@@ -136,15 +137,14 @@ bool Touch(Entity InOther)
 
 void A_LightningClip(void)
 {
-	Actor cMo;
 	Actor targ;
 	int zigZag;
 
 	if (Class == LightningFloor)
 	{
 		Origin.z = FloorZ;
-		if (SpecialMobj2)
-			targ = SpecialMobj2->Enemy;
+		if (LightningLink)
+			targ = LightningLink.Enemy;
 		else
 			targ = none;
 	}
@@ -156,23 +156,22 @@ void A_LightningClip(void)
 	if (Class == LightningFloor)
 	{
 		// floor lightning zig-zags, and forces the ceiling lightning to mimic
-		cMo = *SpecialMobj2;
 		zigZag = P_Random();
 		if ((zigZag > 128 && ZigZagCount < 2) || ZigZagCount < -2)
 		{
 			Thrust(Angles.yaw + 90.0, ZagSpeed);
-			if (cMo)
+			if (LightningLink)
 			{
-				cMo.Thrust(Angles.yaw + 90.0, ZagSpeed);
+				LightningLink.Thrust(Angles.yaw + 90.0, ZagSpeed);
 			}
 			ZigZagCount++;
 		}
 		else
 		{
 			Thrust(Angles.yaw - 90.0, ZagSpeed);
-			if (cMo)
+			if (LightningLink)
 			{
-				cMo.Thrust(cMo.Angles.yaw - 90.0, ZagSpeed);
+				LightningLink.Thrust(Angles.yaw - 90.0, ZagSpeed);
 			}
 			ZigZagCount--;
 		}
@@ -202,7 +201,7 @@ void A_LightningClip(void)
 
 void A_LightningZap(void)
 {
-	Actor A;
+	LightningZap Zap;
 	float deltaZ;
 
 	A_LightningClip();
@@ -221,21 +220,22 @@ void A_LightningZap(void)
 	{
 		deltaZ = -10.0;
 	}
-	A = Spawn(LightningZap, Origin + vector((Random() - 0.5) * Radius,
-		(Random() - 0.5) * Radius, deltaZ));
-	if (A)
+	Zap = LightningZap(Spawn(LightningZap,
+ 		Origin + vector((Random() - 0.5) * Radius,
+		(Random() - 0.5) * Radius, deltaZ)));
+	if (Zap)
 	{
-		A.SpecialMobj2 = this;
-		A.Velocity.x = Velocity.x;
-		A.Velocity.y = Velocity.y;
-		A.Instigator = Instigator;
+		Zap.LightningOwner = self;
+		Zap.Velocity.x = Velocity.x;
+		Zap.Velocity.y = Velocity.y;
+		Zap.Instigator = Instigator;
 		if (Class == LightningFloor)
 		{
-			A.Velocity.z = 20.0 * 35.0;
+			Zap.Velocity.z = 20.0 * 35.0;
 		}
 		else
 		{
-			A.Velocity.z = -20.0 * 35.0;
+			Zap.Velocity.z = -20.0 * 35.0;
 		}
 	}
 	if (Class == LightningFloor && P_Random() < 160)
@@ -252,10 +252,10 @@ void A_LightningZap(void)
 
 void A_LightningRemove(void)
 {
-	if (SpecialMobj2)
+	if (LightningLink)
 	{
-		SpecialMobj2->SpecialMobj2 = NULL;
-		SpecialMobj2->ExplodeMissile();
+		LightningLink.LightningLink = none;
+		LightningLink.ExplodeMissile();
 	}
 }
 
@@ -273,6 +273,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/03/08 12:41:43  dj_jl
+//  Removing class pointers.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

@@ -55,13 +55,13 @@ void A_MLightningAttack(void)
 	cmo = LightningCeiling(PlayerPawn(Player->MO).SpawnPlayerMissile(LightningCeiling));
 	if (fmo)
 	{
-		fmo.SpecialMobj2 = &cmo;
+		fmo.LightningLink = cmo;
 		fmo.A_LightningZap();
 	}
 	if (cmo)
 	{
 		cmo.Enemy = none;	// mobj that it will track
-		cmo.SpecialMobj2 = &fmo;
+		cmo.LightningLink = fmo;
 		cmo.A_LightningZap();
 	}
 	Player->MO.PlaySound('MageLightningFire', CHAN_WEAPON);
@@ -124,6 +124,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/03/08 12:41:44  dj_jl
+//  Removing class pointers.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

@@ -185,8 +185,8 @@
 #include "WeaponMageWand.vc"
 #include "ShardMissile.vc"
 #include "WeaponMageCone.vc"
-#include "LightningZap.vc"
 #include "LightningMissile.vc"
+#include "LightningZap.vc"
 #include "LightningFloor.vc"
 #include "LightningCeiling.vc"
 #include "WeaponMageLightning.vc"
@@ -491,6 +491,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/03/08 12:41:43  dj_jl
+//  Removing class pointers.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

@@ -40,7 +40,7 @@ void A_Summon(void)
 	A = Spawn(Minotaur, Origin);
 	if (A)
 	{
-		if (!A.TestLocation() || !_SpecialMobj1)
+		if (!A.TestLocation() || !Instigator)
 		{
 			// Didn't fit - change back to artifact
 			A.SetState(S_NULL);
@@ -51,15 +51,11 @@ void A_Summon(void)
 		}
 
 		A.Args[0] = level->tictime;
-		if (_SpecialMobj1->bCorpse)
+		if (!Instigator.bCorpse)
 		{
-			// Master dead
-			A._SpecialMobj1 = NULL;	// No master
-		}
-		else
-		{
-			A._SpecialMobj1 = _SpecialMobj1;	// Pointer to master
-			PlayerPawn(*_SpecialMobj1).GivePower(pw_minotaur);
+			//	Master isn't dead
+			A.Instigator = Instigator;	// Pointer to master
+			PlayerPawn(Instigator).GivePower(pw_minotaur);
 		}
 
 		// Make smoke puff
@@ -91,6 +87,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/03/08 12:41:44  dj_jl
+//  Removing class pointers.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //
