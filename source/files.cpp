@@ -59,6 +59,11 @@ static void SetupGameDir(const char *dirname);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+#ifdef DEVELOPER
+bool	fl_devmode = true;
+#else
+bool	fl_devmode = false;
+#endif
 char	fl_basedir[MAX_OSPATH];
 char	fl_gamedir[MAX_OSPATH];
 
@@ -304,6 +309,13 @@ void FL_Init(void)
 	int p =	M_CheckParm("-game");
 	if (p && p < myargc - 1)
 	{
+		SetupGameDir(myargv[p + 1]);
+	}
+
+	p =	M_CheckParm("-devgame");
+	if (p && p < myargc - 1)
+	{
+		fl_devmode = true;
 		SetupGameDir(myargv[p + 1]);
 	}
 
@@ -611,10 +623,13 @@ int TFile::Close(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/21 17:40:54  dj_jl
+//	Added devgame mode
+//
 //	Revision 1.4  2001/08/04 17:26:59  dj_jl
 //	Removed shareware / ExtendedWAD from engine
 //	Added support for script base.txt in game directory
-//
+//	
 //	Revision 1.3  2001/07/31 17:08:37  dj_jl
 //	Reworking filesystem
 //	
