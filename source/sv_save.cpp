@@ -1220,11 +1220,11 @@ void SV_LoadGame(int slot)
 	Loader->Serialise(GlobalVars, sizeof(GlobalVars));
 	for (i = 0; i < MAX_ACS_WORLD_VARS; i++)
 	{
-		WorldArrays[i].Serialise(*Saver);
+		WorldArrays[i].Serialise(*Loader);
 	}
 	for (i = 0; i < MAX_ACS_GLOBAL_VARS; i++)
 	{
-		GlobalArrays[i].Serialise(*Saver);
+		GlobalArrays[i].Serialise(*Loader);
 	}
 	Loader->Serialise(ACSStore, sizeof(ACSStore));
 
@@ -1462,9 +1462,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.36  2004/12/22 07:50:51  dj_jl
+//	Fixed loading of ACS arrays.
+//
 //	Revision 1.35  2004/12/03 16:15:47  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
-//
+//	
 //	Revision 1.34  2004/01/30 17:32:59  dj_jl
 //	Fixed loading
 //	
