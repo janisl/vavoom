@@ -23,8 +23,12 @@
 //**
 //**************************************************************************
 
-class Specter3:Specter1
+class Specter3 : Specter1
 	__mobjinfo__(76);
+
+void A_Specter3Attack()
+{
+}
 
 __states__
 {
@@ -74,6 +78,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/01/29 07:33:53  dj_jl
+//  Implemented many action functions
+//
 //  Revision 1.1  2002/11/02 08:20:57  dj_jl
 //  New style classes.
 //

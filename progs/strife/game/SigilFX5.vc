@@ -23,15 +23,15 @@
 //**
 //**************************************************************************
 
-class SigilFX5:Projectile;
+class SigilFX5 : Projectile;
 
 __states__
 {
-	S_SIGIL_FX5_1('ZOT2', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX5_2) { A_Unknown34(); }
-	S_SIGIL_FX5_2('ZOT2', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX5_3) { A_Unknown34(); }
-	S_SIGIL_FX5_3('ZOT2', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGIL_FX5_4) { A_Unknown34(); }
-	S_SIGIL_FX5_4('ZOT2', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGIL_FX5_5) { A_Unknown34(); }
-	S_SIGIL_FX5_5('ZOT2', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_SIGIL_FX5_1) { A_Unknown34(); }
+	S_SIGIL_FX5_1('ZOT2', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX5_2) { A_Tracer(); }
+	S_SIGIL_FX5_2('ZOT2', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX5_3) { A_Tracer(); }
+	S_SIGIL_FX5_3('ZOT2', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGIL_FX5_4) { A_Tracer(); }
+	S_SIGIL_FX5_4('ZOT2', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGIL_FX5_5) { A_Tracer(); }
+	S_SIGIL_FX5_5('ZOT2', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_SIGIL_FX5_1) { A_Tracer(); }
 }
 
 defaultproperties
@@ -50,6 +50,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/01/29 07:35:26  dj_jl
+//  Implemented many action functions
+//
 //  Revision 1.1  2002/11/02 08:20:57  dj_jl
 //  New style classes.
 //
