@@ -362,11 +362,19 @@ IMPLEMENT_FUNCTION(VObject, Destroy)
 IMPLEMENT_FUNCTION(VObject, IsA)
 {
 	VObject *ptr;
-	VClass	*c;
+	FName SomeName;
 
-	c = (VClass *)PR_Pop();
+	SomeName = PR_PopName();
 	ptr = (VObject *)PR_Pop();
-	PR_Push(ptr->IsA(c));
+	for (const VClass *c = ptr->Class; c; c = c->GetSuperClass())
+	{
+		if (c->GetFName() == SomeName)
+		{
+			PR_Push(true);
+			return;
+		}
+	}
+	PR_Push(false);
 }
 
 //==========================================================================
@@ -386,9 +394,12 @@ IMPLEMENT_FUNCTION(VObject, IsDestroyed)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/03/28 18:02:11  dj_jl
+//	Changed native IsA to take name as argument.
+//
 //	Revision 1.5  2002/03/09 18:05:34  dj_jl
 //	Added support for defining native functions outside pr_cmds
-//
+//	
 //	Revision 1.4  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	
