@@ -33,6 +33,18 @@
 
 // TYPES -------------------------------------------------------------------
 
+//	Boom namespaces.
+enum EWadNamespace
+{
+	WADNS_Global,
+	WADNS_Sprites,
+	WADNS_Flats,
+	WADNS_ColorMaps,
+	WADNS_ACSLibrary,
+	WADNS_NewTextures,
+	WADNS_Voices,
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void W_InitMultipleFiles(const char** filenames);
@@ -45,18 +57,20 @@ void W_CloseAuxiliary(void);
 void W_BuildGLNodes(int lump);
 void W_BuildPVS(int lump, int gllump);
 
-int	W_CheckNumForName(const char* name);
-int	W_GetNumForName(const char* name);
+int	W_CheckNumForName(const char* name, EWadNamespace NS = WADNS_Global);
+int	W_GetNumForName(const char* name, EWadNamespace NS = WADNS_Global);
 
 int	W_LumpLength(int lump);
 const char *W_LumpName(int lump);
 
 void W_ReadLump(int lump, void *dest);
 void* W_CacheLumpNum(int lump, int tag);
-void* W_CacheLumpName(const char* name, int tag);
-FArchive* W_CreateLumpReader(const char* name, int tag = 0);
+void* W_CacheLumpName(const char* name, int tag,
+	EWadNamespace NS = WADNS_Global);
+FArchive* W_CreateLumpReader(const char* name, int tag = 0,
+	EWadNamespace NS = WADNS_Global);
 
-bool W_ForEachLump(bool (*func)(int, const char*, int));
+bool W_ForEachLump(bool (*func)(int, const char*, int, EWadNamespace));
 
 void W_CleanupName(const char *src, char *dst);
 
@@ -65,9 +79,12 @@ void W_CleanupName(const char *src, char *dst);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2004/11/23 12:43:11  dj_jl
+//	Wad file lump namespaces.
+//
 //	Revision 1.6  2002/05/18 16:56:35  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.5  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

@@ -284,7 +284,7 @@ bool S_LoadSound(int sound_id, const char *VoiceName)
 		}
 		else
 		{
-			S_VoiceInfo.lumpnum = W_CheckNumForName(VoiceName);
+			S_VoiceInfo.lumpnum = W_CheckNumForName(VoiceName, WADNS_Voices);
 			if (S_VoiceInfo.lumpnum < 0)
 			{
 				GCon->Logf(NAME_Dev, "Voice %s not found", VoiceName);
@@ -318,7 +318,12 @@ bool S_LoadSound(int sound_id, const char *VoiceName)
 		  	// get lumpnum if necessary
 			if (S_sfx[sound_id].lumpnum < 0)
 			{
-				S_sfx[sound_id].lumpnum = W_CheckNumForName(S_sfx[sound_id].lumpname);
+				S_sfx[sound_id].lumpnum = W_CheckNumForName(
+					S_sfx[sound_id].lumpname);
+				//FIXME Strife quit sounds are voices.
+				if (S_sfx[sound_id].lumpnum < 0)
+					S_sfx[sound_id].lumpnum = W_CheckNumForName(
+						S_sfx[sound_id].lumpname, WADNS_Voices);
 				if (S_sfx[sound_id].lumpnum < 0)
 				{
 					GCon->Logf(NAME_Dev, "Sound lump %s not found",
@@ -399,9 +404,12 @@ void S_Init(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2004/11/23 12:43:10  dj_jl
+//	Wad file lump namespaces.
+//
 //	Revision 1.10  2002/07/27 18:10:11  dj_jl
 //	Implementing Strife conversations.
-//
+//	
 //	Revision 1.9  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
 //	

@@ -882,7 +882,11 @@ void* VSoftwareDrawer::SetSkin(const char *name)
 void VSoftwareDrawer::GeneratePicFromPatch(int handle)
 {
 	guard(GeneratePicFromPatch);
-	patch_t *patch = (patch_t*)W_CacheLumpName(pic_list[handle].name, PU_TEMP);
+	int LumpNum = W_CheckNumForName(pic_list[handle].name);
+	//	Some inventory pics are inside sprites.
+	if (LumpNum < 0)
+		LumpNum = W_GetNumForName(pic_list[handle].name, WADNS_Sprites);
+	patch_t *patch = (patch_t*)W_CacheLumpNum(LumpNum, PU_TEMP);
 	int w = LittleShort(patch->width);
 	int h = LittleShort(patch->height);
 	byte *block = (byte*)Z_Calloc(w * h, PU_CACHE, (void**)&picdata[handle]);
@@ -1005,9 +1009,12 @@ byte* VSoftwareDrawer::SetPic(int handle)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2004/11/23 12:43:10  dj_jl
+//	Wad file lump namespaces.
+//
 //	Revision 1.11  2002/11/16 17:11:15  dj_jl
 //	Improving software driver class.
-//
+//	
 //	Revision 1.10  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
 //	

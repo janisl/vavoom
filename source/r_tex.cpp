@@ -149,10 +149,7 @@ byte			r_black_color[MAX_PALETTES];
 static TArray<animDef_t>	AnimDefs;
 static TArray<frameDef_t>	FrameDefs;
 
-static bool			inflats;
-static bool			insprites;
-
-static float*		textureheight;		// needed for texture pegging
+static float*				textureheight;	// needed for texture pegging
 
 // CODE --------------------------------------------------------------------
 
@@ -229,6 +226,9 @@ static void InitTextures(void)
 	{
 		strncpy(name, name_p + i * 8, 8);
 		patchlookup[i] = W_CheckNumForName(name);
+		//	Sprites also can be used as patches.
+		if (patchlookup[i] < 0)
+			patchlookup[i] = W_CheckNumForName(name, WADNS_Sprites);
 	}
     Z_Free(names);
 
@@ -377,6 +377,9 @@ static void InitTextures2(void)
 	{
 		strncpy(name, name_p + i * 8, 8);
 		patchlookup[i] = W_CheckNumForName(name);
+		//	Sprites also can be used as patches.
+		if (patchlookup[i] < 0)
+			patchlookup[i] = W_CheckNumForName(name, WADNS_Sprites);
 	}
     Z_Free(names);
 
@@ -547,20 +550,10 @@ float R_TextureHeight(int pic)
 //
 //==========================================================================
 
-static bool FlatFunc(int lump, const char *name, int)
+static bool FlatFunc(int lump, const char* name, int, EWadNamespace NS)
 {
 	guard(FlatFunc);
-	if (!stricmp(name, "F_START") || !strnicmp(name, "FF_START", 8))
-	{
-		//	Found a start marker
-		inflats = true;
-	}
-	else if (!stricmp(name, "F_END") || !stricmp(name, "FF_END"))
-	{
-		//	Found end marker
-		inflats = false;
-	}
-	else if (inflats)
+	if (NS == WADNS_Flats)
 	{
 		//	Add flat
 		numflats++;
@@ -582,7 +575,6 @@ static void InitFlats(void)
 	guard(InitFlats);
 	flatlumps = (int*)Z_Malloc(1, PU_STATIC, 0);
     numflats = 0;
-	inflats = false;
 
 	W_ForEachLump(FlatFunc);
 
@@ -644,20 +636,10 @@ int R_FlatNumForName(const char* name)
 //
 //==========================================================================
 
-static bool	SpriteCallback(int lump, const char *name, int)
+static bool	SpriteCallback(int lump, const char *name, int, EWadNamespace NS)
 {
 	guard(SpriteCallback);
-	if (!stricmp(name, "S_START") || !strnicmp(name, "SS_START", 8))
-	{
-		//	Found start marker
-		insprites = true;
-	}
-	else if (!stricmp(name, "S_END") || !stricmp(name, "SS_END"))
-	{
-		//	Found end marker
-		insprites = false;
-	}
-	else if (insprites)
+	if (NS == WADNS_Sprites)
 	{
 		//	Add sprite lump
 		numspritelumps++;
@@ -681,7 +663,6 @@ static void InitSpriteLumps(void)
 
 	spritelumps = (int*)Z_Malloc (1, PU_STATIC, 0);
     numspritelumps = 0;
-	insprites = false;
 
 	W_ForEachLump(SpriteCallback);
 
@@ -1163,19 +1144,25 @@ void R_GetPicInfo(int handle, picinfo_t *info)
 	{
 		if (!pic_list[handle].width)
 		{
+			int LumpNum;
 			patch_t *patch;
 
 			switch (pic_list[handle].type)
-	 		{
-	 		 case PIC_PATCH:
-				patch = (patch_t*)W_CacheLumpName(pic_list[handle].name, PU_CACHE);
+			{
+			case PIC_PATCH:
+				LumpNum = W_CheckNumForName(pic_list[handle].name);
+				//	Some inventory pics are inside sprites.
+				if (LumpNum < 0)
+					LumpNum = W_GetNumForName(pic_list[handle].name, 
+						WADNS_Sprites);
+				patch = (patch_t*)W_CacheLumpNum(LumpNum, PU_CACHE);
 				pic_list[handle].width = LittleShort(patch->width);
 				pic_list[handle].height = LittleShort(patch->height);
 				pic_list[handle].xoffset = LittleShort(patch->leftoffset);
 				pic_list[handle].yoffset = LittleShort(patch->topoffset);
 				break;
 
-			 case PIC_RAW:
+			case PIC_RAW:
 				pic_list[handle].width = 320;
 				pic_list[handle].height = 200;
 				pic_list[handle].xoffset = 0;
@@ -1297,9 +1284,12 @@ void R_ShadeRect(int x, int y, int width, int height, int shade)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2004/11/23 12:43:10  dj_jl
+//	Wad file lump namespaces.
+//
 //	Revision 1.22  2004/08/18 18:05:47  dj_jl
 //	Support for higher virtual screen resolutions.
-//
+//	
 //	Revision 1.21  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
 //	

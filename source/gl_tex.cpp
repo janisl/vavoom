@@ -701,7 +701,11 @@ void VOpenGLDrawer::SetPic(int handle)
 void VOpenGLDrawer::GeneratePicFromPatch(int handle)
 {
 	guard(VOpenGLDrawer::GeneratePicFromPatch);
-	patch_t *patch = (patch_t*)W_CacheLumpName(pic_list[handle].name, PU_STATIC);
+	int LumpNum = W_CheckNumForName(pic_list[handle].name);
+	//	Some inventory pics are inside sprites.
+	if (LumpNum < 0)
+		LumpNum = W_GetNumForName(pic_list[handle].name, WADNS_Sprites);
+	patch_t *patch = (patch_t*)W_CacheLumpNum(LumpNum, PU_STATIC);
 	int w = LittleShort(patch->width);
 	int h = LittleShort(patch->height);
 
@@ -1168,9 +1172,12 @@ void VOpenGLDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2004/11/23 12:43:10  dj_jl
+//	Wad file lump namespaces.
+//
 //	Revision 1.19  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
-//
+//	
 //	Revision 1.18  2002/04/11 16:44:44  dj_jl
 //	Got rid of some warnings.
 //	

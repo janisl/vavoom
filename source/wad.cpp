@@ -45,14 +45,15 @@
 
 struct lumpinfo_t
 {
-	char name[12];
-	int position;
-	int size;
+	char			name[12];
+	int				position;
+	int				size;
+	EWadNamespace	Namespace;
 };
 
 class WadFile
 {
- public:
+public:
 	char Name[MAX_OSPATH];
 	int Handle;
 	int NumLumps;
@@ -68,9 +69,12 @@ class WadFile
 	void CloseFile(void);
 	bool CanClose(void);
 	void Close(void);
-	int CheckNumForName(const char* name);
+	int CheckNumForName(const char* name, EWadNamespace NS);
 	void ReadLump(int lump, void* dest);
 	void* CacheLumpNum(int lump, int tag);
+	void InitNamespaces();
+	void InitNamespace(EWadNamespace NS, const char* Start, const char* End,
+		bool AltMarkers);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -168,10 +172,14 @@ void WadFile::Open(const char *filename)
 		W_CleanupName(fileinfo->name, lump_p->name);
 		lump_p->position = LittleLong(fileinfo->filepos);
 		lump_p->size = LittleLong(fileinfo->size);
+		lump_p->Namespace = WADNS_Global;
 	}
 	
 	Z_Free(fi_p);
-	
+
+	//	Set up namespaces.
+	InitNamespaces();
+
 	// set up caching
 	LumpCache = Z_CNew<void*>(NumLumps);
 }
@@ -489,11 +497,11 @@ void W_BuildPVS(int lump, int gllump)
 //
 //==========================================================================
 
-int WadFile::CheckNumForName(const char* name)
+int WadFile::CheckNumForName(const char* name, EWadNamespace NS)
 {
 	for (int i = NumLumps - 1; i >= 0; i--)
 	{
-		if (!strcmp(name, LumpInfo[i].name))
+		if (LumpInfo[i].Namespace == NS && !strcmp(name, LumpInfo[i].name))
 		{
 			return i;
 		}
@@ -511,13 +519,13 @@ int WadFile::CheckNumForName(const char* name)
 //
 //==========================================================================
 
-int W_CheckNumForName(const char* name)
+int W_CheckNumForName(const char* name, EWadNamespace NS)
 {
 	char cleaned[12];
 	W_CleanupName(name, cleaned);
 	for (int wi = num_wad_files - 1; wi >= 0; wi--)
 	{
-		int i = wad_files[wi].CheckNumForName(cleaned);
+		int i = wad_files[wi].CheckNumForName(cleaned, NS);
 		if (i >= 0)
 		{
 			return MAKE_HANDLE(wi, i);
@@ -536,11 +544,11 @@ int W_CheckNumForName(const char* name)
 //
 //==========================================================================
 
-int W_GetNumForName(const char* name)
+int W_GetNumForName(const char* name, EWadNamespace NS)
 {
 	int	i;
 
-	i = W_CheckNumForName(name);
+	i = W_CheckNumForName(name, NS);
 	
 	if (i == -1)
 	{
@@ -689,9 +697,9 @@ void* W_CacheLumpNum(int lump, int tag)
 //
 //==========================================================================
 
-void* W_CacheLumpName(const char* name,int tag)
+void* W_CacheLumpName(const char* name,int tag, EWadNamespace NS)
 {
-	return W_CacheLumpNum(W_GetNumForName(name), tag);
+	return W_CacheLumpNum(W_GetNumForName(name, NS), tag);
 }
 
 //==========================================================================
@@ -755,14 +763,14 @@ protected:
 	int Tag;
 };
 
-FArchive* W_CreateLumpReader(const char* name, int tag)
+FArchive* W_CreateLumpReader(const char* name, int tag, EWadNamespace NS)
 {
 	int UseTag = tag;
 	if (UseTag == 0 || UseTag == PU_CACHE)
 	{
 		UseTag = PU_STATIC;
 	}
-	int LumpNum = W_GetNumForName(name);
+	int LumpNum = W_GetNumForName(name, NS);
 	return new FArchiveLumpReader((byte *)W_CacheLumpNum(LumpNum, tag), 
 		W_LumpLength(LumpNum), tag);
 }
@@ -773,20 +781,80 @@ FArchive* W_CreateLumpReader(const char* name, int tag)
 //
 //==========================================================================
 
-bool W_ForEachLump(bool (*func)(int, const char*, int))
+bool W_ForEachLump(bool (*func)(int, const char*, int, EWadNamespace))
 {
 	for (int wi = 0; wi < num_wad_files; wi++)
 	{
 		WadFile &w = wad_files[wi];
 		for (int i = 0; i < w.NumLumps; i++)
 		{
-			if (!func(MAKE_HANDLE(wi, i), w.LumpInfo[i].name, w.LumpInfo[i].size))
+			if (!func(MAKE_HANDLE(wi, i), w.LumpInfo[i].name, 
+				w.LumpInfo[i].size, w.LumpInfo[i].Namespace))
 			{
 				return false;
 			}
 		}
 	}
 	return true;
+}
+
+//==========================================================================
+//
+//  WadFile::InitNamespaces
+//
+//==========================================================================
+
+void WadFile::InitNamespaces()
+{
+	InitNamespace(WADNS_Sprites, "S_START", "S_END", true);
+	InitNamespace(WADNS_Flats, "F_START", "F_END", true);
+	InitNamespace(WADNS_ColorMaps, "C_START", "C_END", true);
+	InitNamespace(WADNS_ACSLibrary, "A_START", "A_END", true);
+	InitNamespace(WADNS_NewTextures, "TX_START", "TX_END", false);
+	InitNamespace(WADNS_Voices, "V_START", "V_END", true);
+}
+
+//==========================================================================
+//
+//  WadFile::InitNamespace
+//
+//==========================================================================
+
+void WadFile::InitNamespace(EWadNamespace NS, const char* Start,
+	const char* End, bool AltMarkers)
+{
+	bool InNS = false;
+	for (int i = 0; i < NumLumps; i++)
+	{
+		lumpinfo_t& L = LumpInfo[i];
+
+		//	Skip if lump is already in other namespace.
+		if (L.Namespace != WADNS_Global)
+			continue;
+
+		if (InNS)
+		{
+			//	Check for ending marker.
+			if (!strcmp(L.name, End) || (AltMarkers && 
+				L.name[0] == End[0] && !strcmp(L.name + 1, End)))
+			{
+				InNS = false;
+			}
+			else
+			{
+				L.Namespace = NS;
+			}
+		}
+		else
+		{
+			//	Check for starting marker.
+			if (!strcmp(L.name, Start) || (AltMarkers &&
+				L.name[0] == Start[0] && !strcmp(L.name + 1, Start)))
+			{
+				InNS = true;
+			}
+		}
+	}
 }
 
 //==========================================================================
@@ -858,6 +926,9 @@ void W_Profile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2004/11/23 12:43:10  dj_jl
+//  Wad file lump namespaces.
+//
 //  Revision 1.12  2003/03/08 12:08:05  dj_jl
 //  Beautification.
 //
