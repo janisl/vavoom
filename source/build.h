@@ -45,9 +45,9 @@
 
 // if rangecheck is undefined, most parameter validation debugging code
 // will not be compiled
-//#define PARANOID		1
+#define PARANOID		1
 
-//#define DEVELOPER		1
+#define DEVELOPER		1
 
 #define DO_GUARD		1
 
@@ -58,9 +58,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/08/24 14:50:30  dj_jl
+//	Switched to development.
+//
 //	Revision 1.5  2002/08/05 17:19:14  dj_jl
 //	Switched to release.
-//
+//	
 //	Revision 1.4  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
 //	
