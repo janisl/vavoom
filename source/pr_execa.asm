@@ -275,18 +275,12 @@ LOPCODE_TABLE:
  dd LOPC_MULTIPLY
  dd LOPC_DIVIDE
  dd LOPC_MODULUS
- dd LOPC_UDIVIDE
- dd LOPC_UMODULUS
  dd LOPC_EQ
  dd LOPC_NE
  dd LOPC_LT
  dd LOPC_GT
  dd LOPC_LE
  dd LOPC_GE
- dd LOPC_ULT
- dd LOPC_UGT
- dd LOPC_ULE
- dd LOPC_UGE
  dd LOPC_ANDLOGICAL
  dd LOPC_ORLOGICAL
  dd LOPC_NEGATELOGICAL
@@ -295,7 +289,6 @@ LOPCODE_TABLE:
  dd LOPC_XORBITWISE
  dd LOPC_LSHIFT
  dd LOPC_RSHIFT
- dd LOPC_URSHIFT
  dd LOPC_UNARYMINUS
  dd LOPC_BITINVERSE
  dd LOPC_CALL
@@ -310,14 +303,11 @@ LOPCODE_TABLE:
  dd LOPC_MULVAR
  dd LOPC_DIVVAR
  dd LOPC_MODVAR
- dd LOPC_UDIVVAR
- dd LOPC_UMODVAR
  dd LOPC_ANDVAR
  dd LOPC_ORVAR
  dd LOPC_XORVAR
  dd LOPC_LSHIFTVAR
  dd LOPC_RSHIFTVAR
- dd LOPC_URSHIFTVAR
  dd LOPC_PREINC
  dd LOPC_PREDEC
  dd LOPC_POSTINC
@@ -330,14 +320,11 @@ LOPCODE_TABLE:
  dd LOPC_MULVAR_DROP
  dd LOPC_DIVVAR_DROP
  dd LOPC_MODVAR_DROP
- dd LOPC_UDIVVAR_DROP
- dd LOPC_UMODVAR_DROP
  dd LOPC_ANDVAR_DROP
  dd LOPC_ORVAR_DROP
  dd LOPC_XORVAR_DROP
  dd LOPC_LSHIFTVAR_DROP
  dd LOPC_RSHIFTVAR_DROP
- dd LOPC_URSHIFTVAR_DROP
  dd LOPC_INC_DROP
  dd LOPC_DEC_DROP
  dd LOPC_FADD
@@ -390,6 +377,8 @@ LOPCODE_TABLE:
  dd LOPC_PUSHCLASSID
  dd LOPC_DYNAMIC_CAST
  dd LOPC_CASE_GOTO_CLASSID
+ dd LOPC_PUSHNAME
+ dd LOPC_CASE_GOTO_NAME
  align 4
 LINC_STATEMENT_POINTER:
  add edi,4
@@ -410,6 +399,7 @@ LOPC_GLOBALADDRESS:
 LOPC_PUSHSTRING:
 LOPC_PUSHFUNCTION:
 LOPC_PUSHCLASSID:
+LOPC_PUSHNAME:
  mov eax,dword ptr[edi]
  mov dword ptr[esi],eax
  add edi,4
@@ -481,26 +471,6 @@ LOPC_MODULUS:
  add edi,4
  jmp  dword ptr[LOPCODE_TABLE+eax*4]
  align 4
-LOPC_UDIVIDE:
- sub esi,4
- mov eax,dword ptr[-4+esi]
- xor edx,edx
- div dword ptr[esi]
- mov dword ptr[-4+esi],eax
- mov eax,dword ptr[edi]
- add edi,4
- jmp  dword ptr[LOPCODE_TABLE+eax*4]
- align 4
-LOPC_UMODULUS:
- sub esi,4
- mov eax,dword ptr[-4+esi]
- xor edx,edx
- div dword ptr[esi]
- mov dword ptr[-4+esi],edx
- mov eax,dword ptr[edi]
- add edi,4
- jmp  dword ptr[LOPCODE_TABLE+eax*4]
- align 4
 LOPC_EQ:
  sub esi,4
  mov eax,dword ptr[esi]
@@ -561,50 +531,6 @@ LOPC_GE:
  mov eax,dword ptr[esi]
  cmp dword ptr[-4+esi],eax
  setge al
- and eax,1
- mov dword ptr[-4+esi],eax
- mov eax,dword ptr[edi]
- add edi,4
- jmp  dword ptr[LOPCODE_TABLE+eax*4]
- align 4
-LOPC_ULT:
- sub esi,4
- mov eax,dword ptr[esi]
- cmp dword ptr[-4+esi],eax
- setb al
- and eax,1
- mov dword ptr[-4+esi],eax
- mov eax,dword ptr[edi]
- add edi,4
- jmp  dword ptr[LOPCODE_TABLE+eax*4]
- align 4
-LOPC_UGT:
- sub esi,4
- mov eax,dword ptr[esi]
- cmp dword ptr[-4+esi],eax
- seta al
- and eax,1
- mov dword ptr[-4+esi],eax
- mov eax,dword ptr[edi]
- add edi,4
- jmp  dword ptr[LOPCODE_TABLE+eax*4]
- align 4
-LOPC_ULE:
- sub esi,4
- mov eax,dword ptr[esi]
- cmp dword ptr[-4+esi],eax
- setbe al
- and eax,1
- mov dword ptr[-4+esi],eax
- mov eax,dword ptr[edi]
- add edi,4
- jmp  dword ptr[LOPCODE_TABLE+eax*4]
- align 4
-LOPC_UGE:
- sub esi,4
- mov eax,dword ptr[esi]
- cmp dword ptr[-4+esi],eax
- setae al
  and eax,1
  mov dword ptr[-4+esi],eax
  mov eax,dword ptr[edi]
@@ -692,14 +618,6 @@ LOPC_RSHIFT:
  add edi,4
  jmp  dword ptr[LOPCODE_TABLE+eax*4]
  align 4
-LOPC_URSHIFT:
- sub esi,4
- mov ecx,dword ptr[esi]
- shr dword ptr[-4+esi],cl
- mov eax,dword ptr[edi]
- add edi,4
- jmp  dword ptr[LOPCODE_TABLE+eax*4]
- align 4
 LOPC_UNARYMINUS:
  neg dword ptr[-4+esi]
  mov eax,dword ptr[edi]
@@ -751,6 +669,7 @@ LOPC_IFNOTGOTO:
  align 4
 LOPC_CASEGOTO:
 LOPC_CASE_GOTO_CLASSID:
+LOPC_CASE_GOTO_NAME:
  mov eax,dword ptr[edi]
  add edi,4
  cmp eax,dword ptr[-4+esi]
@@ -834,30 +753,6 @@ LOPC_MODVAR:
  add edi,4
  jmp  dword ptr[LOPCODE_TABLE+eax*4]
  align 4
-LOPC_UDIVVAR:
- sub esi,4
- mov ecx,dword ptr[-4+esi]
- mov eax,dword ptr[ecx]
- xor edx,edx
- div dword ptr[esi]
- mov dword ptr[ecx],eax
- mov dword ptr[-4+esi],eax
- mov eax,dword ptr[edi]
- add edi,4
- jmp  dword ptr[LOPCODE_TABLE+eax*4]
- align 4
-LOPC_UMODVAR:
- sub esi,4
- mov ecx,dword ptr[-4+esi]
- mov eax,dword ptr[ecx]
- xor edx,edx
- div dword ptr[esi]
- mov dword ptr[ecx],edx
- mov dword ptr[-4+esi],edx
- mov eax,dword ptr[edi]
- add edi,4
- jmp  dword ptr[LOPCODE_TABLE+eax*4]
- align 4
 LOPC_ANDVAR:
  sub esi,4
  mov edx,dword ptr[-4+esi]
@@ -907,17 +802,6 @@ LOPC_RSHIFTVAR:
  mov edx,dword ptr[-4+esi]
  mov ecx,dword ptr[esi]
  sar dword ptr[edx],cl
- mov eax,dword ptr[edx]
- mov dword ptr[-4+esi],eax
- mov eax,dword ptr[edi]
- add edi,4
- jmp  dword ptr[LOPCODE_TABLE+eax*4]
- align 4
-LOPC_URSHIFTVAR:
- sub esi,4
- mov edx,dword ptr[-4+esi]
- mov ecx,dword ptr[esi]
- shr dword ptr[edx],cl
  mov eax,dword ptr[edx]
  mov dword ptr[-4+esi],eax
  mov eax,dword ptr[edi]
@@ -1041,30 +925,6 @@ LOPC_MODVAR_DROP:
  add edi,4
  jmp  dword ptr[LOPCODE_TABLE+eax*4]
  align 4
-LOPC_UDIVVAR_DROP:
- sub esi,4
- mov ecx,dword ptr[-4+esi]
- mov eax,dword ptr[ecx]
- xor edx,edx
- div dword ptr[esi]
- mov dword ptr[ecx],eax
- sub esi,4
- mov eax,dword ptr[edi]
- add edi,4
- jmp  dword ptr[LOPCODE_TABLE+eax*4]
- align 4
-LOPC_UMODVAR_DROP:
- sub esi,4
- mov ecx,dword ptr[-4+esi]
- mov eax,dword ptr[ecx]
- xor edx,edx
- div dword ptr[esi]
- mov dword ptr[ecx],edx
- sub esi,4
- mov eax,dword ptr[edi]
- add edi,4
- jmp  dword ptr[LOPCODE_TABLE+eax*4]
- align 4
 LOPC_ANDVAR_DROP:
  sub esi,4
  mov eax,dword ptr[-4+esi]
@@ -1110,16 +970,6 @@ LOPC_RSHIFTVAR_DROP:
  mov eax,dword ptr[-4+esi]
  mov ecx,dword ptr[esi]
  sar dword ptr[eax],cl
- sub esi,4
- mov eax,dword ptr[edi]
- add edi,4
- jmp  dword ptr[LOPCODE_TABLE+eax*4]
- align 4
-LOPC_URSHIFTVAR_DROP:
- sub esi,4
- mov eax,dword ptr[-4+esi]
- mov ecx,dword ptr[esi]
- shr dword ptr[eax],cl
  sub esi,4
  mov eax,dword ptr[edi]
  add edi,4
