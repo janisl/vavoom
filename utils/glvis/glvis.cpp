@@ -31,7 +31,6 @@
 
 #include <string.h>
 #include <stdarg.h>
-#include <iostream.h>
 #include <time.h>
 //	When compiling with -ansi isatty() is not declared
 #if defined __unix__ && !defined __STRICT_ANSI__
@@ -103,7 +102,7 @@ void TConsoleGLVis::DisplayStartMap(const char *)
 {
 	if (!silent_mode)
 	{
-		cerr << "Creating vis data ... ";
+		fprintf(stderr, "Creating vis data ... ");
 	}
 }
 
@@ -145,8 +144,8 @@ void TConsoleGLVis::DisplayMapDone(int accepts, int total)
 {
 	if (!silent_mode)
 	{
-		cerr << accepts << " accepts, " << (total - accepts) << " rejects, "
-			<< (accepts * 100 / total) << "%\n";
+		fprintf(stderr, "%d accepts, %d rejects, %d%%\n",
+            accepts, total - accepts, accepts * 100 / total);
 	}
 }
 
@@ -158,14 +157,14 @@ void TConsoleGLVis::DisplayMapDone(int accepts, int total)
 
 static void ShowUsage(void)
 {
-	cerr << "\nGLVIS version 1.4, Copyright (c)2000-2002 JÆnis Legzdi·ý ("__DATE__" "__TIME__")\n";
-	cerr << "Usage: glvis [options] file[.wad]\n";
-	cerr << "    -s            silent mode\n";
-	cerr << "    -f            fast mode\n";
-	cerr << "    -v            verbose mode\n";
-	cerr << "    -t#           specify test level\n";
-	cerr << "    -m<LEVELNAME> specifies a level to process, can be used multiple times\n";
-	cerr << "    -noreject     don't create reject\n";
+	fprintf(stderr, "\nGLVIS version 1.4, Copyright (c)2000-2002 JÆnis Legzdi·ý ("__DATE__" "__TIME__")\n");
+	fprintf(stderr, "Usage: glvis [options] file[.wad]\n");
+	fprintf(stderr, "    -s            silent mode\n");
+	fprintf(stderr, "    -f            fast mode\n");
+	fprintf(stderr, "    -v            verbose mode\n");
+	fprintf(stderr, "    -t#           specify test level\n");
+	fprintf(stderr, "    -m<LEVELNAME> specifies a level to process, can be used multiple times\n");
+	fprintf(stderr, "    -noreject     don't create reject\n");
 	exit(1);
 }
 
@@ -264,9 +263,12 @@ int main(int argc, char *argv[])
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/08/24 14:41:35  dj_jl
+//	Removed usage of the iostream.
+//
 //	Revision 1.11  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.10  2002/01/04 18:24:13  dj_jl
 //	Changed version number
 //	

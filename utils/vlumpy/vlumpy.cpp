@@ -637,7 +637,7 @@ int main(int argc, char *argv[])
 {
 	if (argc < 2)
 	{
-		cerr << "Usage: vlumpy <script1> [<script2> ...]\n";
+		fprintf(stderr, "Usage: vlumpy <script1> [<script2> ...]\n");
 		return 1;
 	}
 
@@ -658,9 +658,12 @@ int main(int argc, char *argv[])
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/08/24 14:41:35  dj_jl
+//	Removed usage of the iostream.
+//
 //	Revision 1.8  2002/06/22 07:25:43  dj_jl
 //	Added transparent pixels to VPIC.
-//
+//	
 //	Revision 1.7  2002/04/11 16:54:01  dj_jl
 //	Added support for 15-bit vpics.
 //	

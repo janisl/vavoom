@@ -147,11 +147,6 @@ inline double DotProduct(const TVec& v1, const TVec& v2)
 	return v1.x * v2.x + v1.y * v2.y;
 }
 
-inline ostream &operator << (ostream &strm, const TVec &v)
-{
-	return strm << '(' << v.x << ',' << v.y << ')';
-}
-
 //==========================================================================
 //
 //								PLANES
@@ -187,9 +182,12 @@ class TPlane
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/08/24 14:41:35  dj_jl
+//	Removed usage of the iostream.
+//
 //	Revision 1.5  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2002/01/03 18:35:14  dj_jl
 //	Switched to doubles, some fixes
 //	

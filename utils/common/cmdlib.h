@@ -35,8 +35,25 @@
 #include <string.h>
 #include <ctype.h>
 
-//	C++ headers
-#include <iostream.h>
+#ifdef _MSC_VER
+// Disable some unwanted warnings
+#pragma warning(disable : 4097) // typedef-name '' used as synonym for class-name ''
+#pragma warning(disable : 4127) // Conditional expression is constant
+#pragma warning(disable : 4244) // conversion to float, possible loss of data
+#pragma warning(disable : 4284) // return type is not a UDT or reference to a UDT
+#pragma warning(disable : 4291) // no matching operator delete found
+#pragma warning(disable : 4305) // truncation from 'const double' to 'float'
+#pragma warning(disable : 4512) // assignment operator could not be generated
+#pragma warning(disable : 4514)	// unreferenced inline function has been removed
+#pragma warning(disable : 4702) // unreachable code in inline expanded function
+#pragma warning(disable : 4710) // inline function not expanded
+#endif
+
+#ifdef __BORLANDC__
+// Disable some unwanted warnings
+#pragma warn -8027		// inline function not expanded
+#pragma warn -8071		// conversation may loose significant digits
+#endif
 
 #ifndef __GNUC__
 #define __attribute__(whatever)
@@ -108,9 +125,12 @@ inline void Delete(void *ptr)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/08/24 14:41:32  dj_jl
+//	Removed usage of the iostream.
+//
 //	Revision 1.7  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.6  2001/12/27 17:42:07  dj_jl
 //	Added FixupPath
 //	
