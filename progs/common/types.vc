@@ -359,7 +359,7 @@ struct level_t
 	int totalitems;
 	int totalsecret;	// for intermission
 
-	int __thinkers[3];	// both the head and tail of the thinker list
+	int __thinkers[4];	// both the head and tail of the thinker list
 
 	int mapname[3];
 	int __nextmap[3];
@@ -950,6 +950,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2001/10/04 17:28:47  dj_jl
+//  Fixed thinkers size in level structure
+//
 //  Revision 1.11  2001/10/02 17:37:19  dj_jl
 //  Removed status bar widgets
 //
