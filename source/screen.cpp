@@ -80,7 +80,6 @@ int		ScreenHeight = 0;
 int		ScreenBPP = 0;
 
 int		PixelBytes;
-float	PixelAspect;
 
 float	fScaleX;
 float	fScaleY;
@@ -452,7 +451,6 @@ static void ChangeResolution(int width, int height, int bpp)
 	screen_bpp = ScreenBPP;
 
 	PixelBytes = (ScreenBPP + 7) / 8;
-	PixelAspect = ((float)ScreenHeight * 4.0) / ((float)ScreenWidth * 3.0);
 
     fScaleX = (float)ScreenWidth / 320.0;
     fScaleY = (float)ScreenHeight / 200.0;
@@ -711,9 +709,12 @@ void Draw_LoadIcon(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2002/08/28 16:42:45  dj_jl
+//	Moved PixelAspect to the rendering modules.
+//
 //	Revision 1.19  2002/08/24 14:52:16  dj_jl
 //	Fixed screenshots.
-//
+//	
 //	Revision 1.18  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
 //	

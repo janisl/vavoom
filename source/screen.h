@@ -45,14 +45,16 @@ extern int		ScreenHeight;
 extern int		ScreenBPP;
 
 extern int		PixelBytes;
-extern float	PixelAspect;
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/08/28 16:42:45  dj_jl
+//	Moved PixelAspect to the rendering modules.
+//
 //	Revision 1.4  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	
