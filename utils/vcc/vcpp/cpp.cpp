@@ -16,14 +16,16 @@ int incdepth;
 int ifdepth;
 int ifsatisfied[NIF];
 int skipping;
-int output_file;
+void *output_buf;
+size_t output_buf_size;
+size_t output_size;
 
 void cpp_init(void)
 {
 	expandlex();
 }
 
-int cpp_main(char *srcf, char *dstf)
+size_t cpp_main(char *srcf, void **dst_buf)
 {
 	Tokenrow tr;
 	time_t t;
@@ -33,16 +35,16 @@ int cpp_main(char *srcf, char *dstf)
 	t = time(NULL);
 	curtime = ctime(&t);
 	maketokenrow(3, &tr);
-	setup(srcf, dstf);
+	setup(srcf);
 	iniths();
 	genline();
 	process(&tr);
 	flushout();
 	unsetsource();
 	fflush(stderr);
-	close(output_file);
 	setbuf(stderr, NULL);
-	return 0;
+	*dst_buf = output_buf;
+	return output_size;
 }
 
 void process(Tokenrow * trp)

@@ -88,7 +88,7 @@ extern	unsigned long namebit[077+1];
 enum errtype { WARNING, ERROR, FATAL };
 
 void	expandlex(void);
-void setup(char *srcf, char *dstf);
+void setup(char *srcf);
 int	gettokens(Tokenrow *, int);
 int	comparetokens(Tokenrow *, Tokenrow *);
 Source	*setsource(char *, int, char *);
@@ -149,13 +149,15 @@ extern	int skipping;
 extern	Nlist *kwdefined;
 extern	Includelist includelist[NINCLUDE];
 extern	char wd[];
-extern	int output_file;
+extern	void *output_buf;
+extern	size_t output_buf_size;
+extern	size_t output_size;
 
 extern "C" {
 extern int creat(char *, int);
 extern int open(char *, int);
 extern int close(int);
 extern int dup2(int, int);
-extern int write(int, char *, size_t);
-extern int read(int, char *, size_t);
+extern int write(int, const void *, size_t);
+extern int read(int, void *, size_t);
 }

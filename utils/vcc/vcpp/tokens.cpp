@@ -73,6 +73,22 @@ static const char wstab[] = {
 	0,	/* UMINUS */
 };
 
+void write_out(const void *buf, size_t size)
+{
+	if (output_buf_size < output_size + size)
+	{
+		do
+		{
+			output_buf_size += 256 * 1024;
+		} while (output_buf_size < output_size + size);
+		output_buf = realloc(output_buf, output_buf_size);
+		if (!output_buf)
+			error(FATAL, "Couldn't realloc output buffer");
+	}
+	memcpy((char *)output_buf + output_size, buf, size);
+	output_size += size;
+}
+
 void maketokenrow(int size, Tokenrow * trp)
 {
 	trp->max = size;
@@ -270,8 +286,8 @@ void puttokens(Tokenrow * trp)
 		if (len > OBS / 2)
 		{	/* handle giant token */
 			if (wbp > wbuf)
-				write(output_file, wbuf, wbp - wbuf);
-			write(output_file, (char *)p, len);
+				write_out(wbuf, wbp - wbuf);
+			write_out(p, len);
 			wbp = wbuf;
 		}
 		else
@@ -281,7 +297,7 @@ void puttokens(Tokenrow * trp)
 		}
 		if (wbp >= &wbuf[OBS])
 		{
-			write(output_file, wbuf, OBS);
+			write_out(wbuf, OBS);
 			if (wbp > &wbuf[OBS])
 				memcpy(wbuf, wbuf + OBS, wbp - &wbuf[OBS]);
 			wbp -= OBS;
@@ -296,7 +312,7 @@ void flushout(void)
 {
 	if (wbp > wbuf)
 	{
-		write(output_file, wbuf, wbp - wbuf);
+		write_out(wbuf, wbp - wbuf);
 		wbp = wbuf;
 	}
 }

@@ -32,7 +32,7 @@ void cpp_add_define(int c, char *text)
 	unsetsource();
 }
 
-void setup(char *srcf, char *dstf)
+void setup(char *srcf)
 {
 	int fd;
 	char *fp, *dp;
@@ -53,9 +53,11 @@ void setup(char *srcf, char *dstf)
 	if ((fd = open(fp, 0)) <= 0)
 		error(FATAL, "Can't open input file %s", fp);
 
-	output_file = creat(dstf, 0666);
-	if (output_file < 0)
-		error(FATAL, "Can't open output file %s", dstf);
+	output_buf = malloc(256 * 1024);
+	if (output_buf < 0)
+		error(FATAL, "Can't alloc output buffer");
+	output_buf_size = 256 * 1024;
+	output_size = 0;
 
 	includelist[NINCLUDE - 1].always = 0;
 	includelist[NINCLUDE - 1].file = dp;

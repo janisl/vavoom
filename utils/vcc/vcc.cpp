@@ -30,14 +30,12 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define TEMP_FILE_NAME	"vcc_temp.i"
-
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 void cpp_init(void);
-int cpp_main(char *, char *);
+size_t cpp_main(char *, void **);
 void cpp_add_include(char *);
 void cpp_add_define(int, char *);
 
@@ -49,7 +47,6 @@ static void Init(void);
 static void ProcessArgs(int ArgCount, char **ArgVector);
 static void OpenDebugFile(char *name);
 static void DumpAsm(void);
-static void Preprocess(void);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -75,17 +72,19 @@ static FILE*	DebugFile;
 
 int main(int argc, char **argv)
 {
-	int		starttime;
-	int		endtime;
+	int starttime;
+	int endtime;
+	void *buf;
+	size_t size;
 
 	starttime = time(0);
 	cpp_init();
 	Init();
 	ProcessArgs(argc, argv);
 
-	Preprocess();
-	TK_OpenSource(TEMP_FILE_NAME);
-	remove(TEMP_FILE_NAME);
+	dprintf("Preprocessing\n");
+	size = cpp_main(SourceFileName, &buf);
+	TK_OpenSource(buf, size);
 	PA_Parse();
 	TK_CloseSource();
 	PC_WriteObject(ObjectFileName);
@@ -225,21 +224,6 @@ static void ProcessArgs(int ArgCount, char **ArgVector)
 
 //==========================================================================
 //
-//	Preprocess
-//
-//==========================================================================
-
-static void Preprocess(void)
-{
-	//	Izdod pazi·ojumu
-	dprintf("Preprocessing\n");
-
-	//	Izpilda komandu
-	cpp_main(SourceFileName, TEMP_FILE_NAME);
-}
-
-//==========================================================================
-//
 // 	OpenDebugFile
 //
 //==========================================================================
@@ -292,32 +276,15 @@ int dprintf(const char *text, ...)
 	return ret;
 }
 
-void *operator new(size_t size)
-{
-	return Malloc(size);
-}
-
-void *operator new[](size_t size)
-{
-	return Malloc(size);
-}
-
-void operator delete(void *ptr)
-{
-	Free(ptr);
-}
-
-void operator delete[](void *ptr)
-{
-	Free(ptr);
-}
-
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/02 17:46:04  dj_jl
+//	Preprocessing into a memory buffer
+//
 //	Revision 1.5  2001/09/24 17:31:38  dj_jl
 //	Some fixes
-//
+//	
 //	Revision 1.4  2001/09/20 16:09:55  dj_jl
 //	Added basic object-oriented support
 //	
