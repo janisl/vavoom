@@ -204,12 +204,12 @@ void TOpenGLDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 	SetSpriteLump(lump, translation);
 
 	float s1, s2;
-    if (flip)
+	if (flip)
 	{
 		s1 = spritewidth[lump] * tex_iw;
 		s2 = 0;
 	}
-    else
+	else
 	{
 		s1 = 0;
 		s2 = spritewidth[lump] * tex_iw;
@@ -279,9 +279,12 @@ void TOpenGLDrawer::EndAutomap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/08/31 17:27:15  dj_jl
+//	Beautification
+//
 //	Revision 1.6  2001/08/29 17:49:01  dj_jl
 //	Line colors in RGBA format
-//
+//	
 //	Revision 1.5  2001/08/15 17:15:55  dj_jl
 //	Drawer API changes, removed wipes
 //	

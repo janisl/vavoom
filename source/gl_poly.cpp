@@ -735,12 +735,12 @@ void TOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	// draw all the triangles
 	//
 
-    glPushMatrix();
-    glTranslatef(origin.x,  origin.y,  origin.z);
+	glPushMatrix();
+	glTranslatef(origin.x,  origin.y,  origin.z);
 
-    glRotatef(BAM2DEG(angles.yaw),  0, 0, 1);
-    glRotatef(BAM2DEG(angles.pitch),  0, 1, 0);
-    glRotatef(BAM2DEG(angles.roll),  1, 0, 0);
+	glRotatef(BAM2DEG(angles.yaw),  0, 0, 1);
+	glRotatef(BAM2DEG(angles.pitch),  0, 1, 0);
+	glRotatef(BAM2DEG(angles.roll),  1, 0, 0);
 
 	if ((frame >= pmdl->numframes) || (frame < 0))
 	{
@@ -872,9 +872,12 @@ void TOpenGLDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/08/31 17:27:15  dj_jl
+//	Beautification
+//
 //	Revision 1.7  2001/08/21 17:46:08  dj_jl
 //	Added R_TextureAnimation, made SetTexture recognize flats
-//
+//	
 //	Revision 1.6  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
 //	
