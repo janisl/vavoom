@@ -129,6 +129,7 @@ OBJ_FILES = $(SYS_OBJS) \
 	obj/net_dgrm.o \
 	obj/net_loop.o \
 	obj/net_main.o \
+	obj/net_null.o \
 	obj/p_setup.o \
 	obj/pr_cmds.o \
 	obj/pr_exec.o \
@@ -218,6 +219,7 @@ SV_OBJ_FILES = $(SV_SYS_OBJS) \
 	obj/sv/net_dgrm.o \
 	obj/sv/net_loop.o \
 	obj/sv/net_main.o \
+	obj/sv/net_null.o \
 	obj/sv/p_info.o \
 	obj/sv/p_setup.o \
 	obj/sv/pr_cmds.o \

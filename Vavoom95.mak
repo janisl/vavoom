@@ -19,8 +19,8 @@ OBJFILES = obj\chat.obj obj\cheats.obj \
     obj\sc_man.obj obj\maths.obj obj\sizebuf.obj \
     obj\wad.obj obj\zone.obj obj\message.obj obj\infostr.obj obj\files.obj \
     \
-    obj\net_dgrm.obj obj\net_loop.obj obj\net_main.obj obj\net_win.obj \
-    obj\net_wins.obj obj\net_wipx.obj \
+    obj\net_dgrm.obj obj\net_loop.obj obj\net_main.obj obj\net_null.obj \
+    obj\net_win.obj obj\net_wins.obj obj\net_wipx.obj \
     \
     obj\sv_acs.obj \
     obj\sv_main.obj obj\sv_poly.obj obj\sv_save.obj obj\sv_sight.obj \
