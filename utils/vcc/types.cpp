@@ -48,6 +48,9 @@ struct typedef_t
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
+void ParseMethodDef(TType *t, field_t *fi, field_t *otherfield,
+	TType *class_type);
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -360,10 +363,9 @@ void ParseStruct(void)
 		struct_type->next = types;
 		types = struct_type;
 		TK_NextToken();
-		dprintf("Added new struct %s\n", struct_type->name);
 	}
 
-	if (TK_Check(";"))
+	if (TK_Check(PU_SEMICOLON))
 	{
 		struct_type->size = -1;
 		return;
@@ -372,9 +374,8 @@ void ParseStruct(void)
 	num_fields = 0;
 	size = 0;
 
-	if (TK_Check(":"))
+	if (TK_Check(PU_COLON))
 	{
-		dprintf("Structure is inherited from %s\n", tk_String);
 		type = CheckForType();
 		if (!type)
 		{
@@ -393,10 +394,10 @@ void ParseStruct(void)
 
    	struct_type->available_size = 0;
    	struct_type->available_ofs = 0;
-	TK_Expect("{", ERR_MISSING_LBRACE);
-	while (!TK_Check("}"))
+	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+	while (!TK_Check(PU_RBRACE))
 	{
-		if (TK_Check("addfields"))
+		if (TK_Check(KW_ADDFIELDS))
 		{
 	   		if (struct_type->available_size)
 			{
@@ -410,7 +411,7 @@ void ParseStruct(void)
    			struct_type->available_ofs = size;
 			size += tk_Number * 4;
 			TK_NextToken();
-			TK_Expect(";", ERR_MISSING_SEMICOLON);
+			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 			continue;
 		}
 		type = CheckForType();
@@ -421,7 +422,7 @@ void ParseStruct(void)
 		do
 		{
 			t = type;
-			while (TK_Check("*"))
+			while (TK_Check(PU_ASTERISK))
 			{
 				t = MakePointerType(t);
 			}
@@ -437,10 +438,10 @@ void ParseStruct(void)
 			strcpy(fi->name, tk_String);
 			TK_NextToken();
 			fi->ofs = size;
-			while (TK_Check("["))
+			while (TK_Check(PU_LINDEX))
 			{
 				i = EvalConstExpression(ev_int);
-				TK_Expect("]", ERR_MISSING_RFIGURESCOPE);
+				TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
 				t = MakeArrayType(t, i);
 			}
 		   	size += TypeSize(t);
@@ -449,13 +450,11 @@ void ParseStruct(void)
 			{
 				ParseWarning("Class field");
 			}
-			dprintf("Field %d %s, ofs %d, type %d.\n",
-				num_fields, fi->name, fi->ofs, fi->type);
 			num_fields++;
-		} while (TK_Check(","));
-		TK_Expect(";", ERR_MISSING_SEMICOLON);
+		} while (TK_Check(PU_COMMA));
+		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 	}
-	TK_Expect(";", ERR_MISSING_SEMICOLON);
+	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 
 	//	Pievieno pie tipa
 	struct_type->fields = new field_t[num_fields];
@@ -512,8 +511,8 @@ void AddFields(void)
 	ofs = struct_type->available_ofs;
 
 	//	Pievieno laukus
-	TK_Expect("{", ERR_MISSING_LBRACE);
-	while (!TK_Check("}"))
+	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+	while (!TK_Check(PU_RBRACE))
 	{
 		type = CheckForType();
 		if (!type)
@@ -524,7 +523,7 @@ void AddFields(void)
 		do
 		{
 			t = type;
-			while (TK_Check("*"))
+			while (TK_Check(PU_ASTERISK))
 			{
 				t = MakePointerType(t);
 			}
@@ -540,10 +539,10 @@ void AddFields(void)
 			strcpy(fi->name, tk_String);
 			TK_NextToken();
 			fi->ofs = ofs;
-			while (TK_Check("["))
+			while (TK_Check(PU_LINDEX))
 			{
 				i = EvalConstExpression(ev_int);
-				TK_Expect("]", ERR_MISSING_RFIGURESCOPE);
+				TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
 				t = MakeArrayType(t, i);
 			}
 		   	size -= TypeSize(t);
@@ -557,13 +556,11 @@ void AddFields(void)
 			{
 				ParseWarning("Class field");
 			}
-			dprintf("Field %d %s, ofs %d, type %d.\n",
-				num_fields, fi->name, fi->ofs, fi->type);
 			num_fields++;
-		} while (TK_Check(","));
-		TK_Expect(";", ERR_MISSING_SEMICOLON);
+		} while (TK_Check(PU_COMMA));
+		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 	}
-	TK_Expect(";", ERR_MISSING_SEMICOLON);
+	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 
 	//	Atjauno TypeInfo
 	struct_type->fields = new field_t[num_fields];
@@ -616,10 +613,9 @@ void ParseVector(void)
 		struct_type->next = types;
 		types = struct_type;
 		TK_NextToken();
-		dprintf("Added new vector type %s\n", struct_type->name);
 	}
 
-	if (TK_Check(";"))
+	if (TK_Check(PU_SEMICOLON))
 	{
 		struct_type->size = -1;
 		return;
@@ -628,8 +624,8 @@ void ParseVector(void)
 	num_fields = 0;
 	size = 0;
 
-	TK_Expect("{", ERR_MISSING_LBRACE);
-	while (!TK_Check("}"))
+	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+	while (!TK_Check(PU_RBRACE))
 	{
 		type = CheckForType();
 		if (!type)
@@ -660,13 +656,11 @@ void ParseVector(void)
 			fi->ofs = size;
 		   	size += TypeSize(type);
 			fi->type = type;
-			dprintf("Field %d %s, ofs %d, type %d.\n",
-				num_fields, fi->name, fi->ofs, fi->type);
 			num_fields++;
-		} while (TK_Check(","));
-		TK_Expect(";", ERR_MISSING_SEMICOLON);
+		} while (TK_Check(PU_COMMA));
+		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 	}
-	TK_Expect(";", ERR_MISSING_SEMICOLON);
+	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 	if (num_fields != 3)
 	{
 		ParseError("Vector must have exactly 3 float fields");
@@ -726,10 +720,9 @@ void ParseClass(void)
 		class_type->classid = numclasses++;
 		types = class_type;
 		TK_NextToken();
-		dprintf("Added new class %s\n", class_type->name);
 	}
 
-	if (TK_Check(";"))
+	if (TK_Check(PU_SEMICOLON))
 	{
 		class_type->size = -1;
 		return;
@@ -739,9 +732,8 @@ void ParseClass(void)
 	class_type->num_methods = BASE_NUM_METHODS;
 	size = BASE_CLASS_SIZE;
 
-	if (TK_Check(":"))
+	if (TK_Check(PU_COLON))
 	{
-		dprintf("Class is inherited from %s\n", tk_String);
 		type = CheckForType();
 		if (!type)
 		{
@@ -763,10 +755,10 @@ void ParseClass(void)
    	class_type->available_ofs = 0;
 	class_type->fields = fields;
 	class_type->size = size;
-	TK_Expect("{", ERR_MISSING_LBRACE);
-	while (!TK_Check("}"))
+	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+	while (!TK_Check(PU_RBRACE))
 	{
-		if (TK_Check("addfields"))
+		if (TK_Check(KW_ADDFIELDS))
 		{
 	   		if (class_type->available_size)
 			{
@@ -780,7 +772,7 @@ void ParseClass(void)
    			class_type->available_ofs = size;
 			size += tk_Number * 4;
 			TK_NextToken();
-			TK_Expect(";", ERR_MISSING_SEMICOLON);
+			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 			continue;
 		}
 		type = CheckForType();
@@ -788,10 +780,11 @@ void ParseClass(void)
 		{
 			ParseError("Field type expected.");
 		}
+		bool need_semicolon = true;
 		do
 		{
 			t = type;
-			while (TK_Check("*"))
+			while (TK_Check(PU_ASTERISK))
 			{
 				t = MakePointerType(t);
 			}
@@ -807,76 +800,10 @@ void ParseClass(void)
 			{
 				TK_NextToken();
 			}
-			if (TK_Check("("))
+			if (TK_Check(PU_LPAREN))
 			{
-				TType functype;
-				memset(&functype, 0, sizeof(TType));
-				functype.type = ev_method;
-				functype.aux_type = t;
-
-				do
-				{
-					if (TK_Check("..."))
-					{
-						functype.num_params |= PF_VARARGS;
-						break;
-					}
-
-					type = CheckForType();
-
-					if (!type)
-					{
-						if (functype.num_params == 0)
-						{
-							break;
-						}
-						ERR_Exit(ERR_BAD_VAR_TYPE, true, NULL);
-					}
-					while (TK_Check("*"))
-					{
-					   	type = MakePointerType(type);
-					}
-					if (functype.num_params == 0 && type == &type_void)
-					{
-						break;
-					}
-					TypeCheckPassable(type);
-
-					if (functype.num_params == MAX_PARAMS)
-					{
-						ERR_Exit(ERR_PARAMS_OVERFLOW, true, NULL);
-					}
-			   		if (tk_Token == TK_IDENTIFIER)
-					{
-						TK_NextToken();
-					}
-					functype.param_types[functype.num_params] = type;
-					functype.num_params++;
-					functype.params_size += TypeSize(type) / 4;
-				} while (TK_Check(","));
-				TK_Expect(")", ERR_MISSING_RPAREN);
-
-				fi->type = FindType(&functype);
-				if (otherfield)
-				{
-					if (otherfield->type != fi->type)
-					{
-						ParseError("Method redefined with different type");
-						break;
-					}
-					fi->ofs = otherfield->ofs;
-					dprintf("Overrided method\n");
-				}
-				else
-				{
-					fi->ofs = class_type->num_methods;
-					class_type->num_methods++;
-					dprintf("New method\n");
-				}
-				fi->func_num = 0;
-				dprintf("Method %d %s, ofs %d, type %d.\n",
-					class_type->numfields, fi->name, fi->ofs, fi->type);
-				class_type->numfields++;
+				ParseMethodDef(t, fi, otherfield, class_type);
+				need_semicolon = false;
 				break;
 			}
 			if (otherfield)
@@ -889,10 +816,10 @@ void ParseClass(void)
 				ParseError("Field cannot have void type.");
 			}
 			fi->ofs = size;
-			while (TK_Check("["))
+			while (TK_Check(PU_LINDEX))
 			{
 				i = EvalConstExpression(ev_int);
-				TK_Expect("]", ERR_MISSING_RFIGURESCOPE);
+				TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
 				t = MakeArrayType(t, i);
 			}
 		   	size += TypeSize(t);
@@ -901,13 +828,16 @@ void ParseClass(void)
 			{
 				ParseWarning("Class field");
 			}
-			dprintf("Field %d %s, ofs %d, type %d.\n",
-				class_type->numfields, fi->name, fi->ofs, fi->type);
 			class_type->numfields++;
-		} while (TK_Check(","));
-		TK_Expect(";", ERR_MISSING_SEMICOLON);
+		} while (TK_Check(PU_COMMA));
+		if (need_semicolon)
+		{
+			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+		}
 	}
-	TK_Expect(";", ERR_MISSING_SEMICOLON);
+
+	//  Semikols beigÆs nav nepiecieýams
+	TK_Check(PU_SEMICOLON);
 
 	//	Pievieno pie tipa
 	class_type->fields = new field_t[class_type->numfields];
@@ -1014,12 +944,12 @@ void ParseTypeDef(void)
 		ParseError("Type name expected, found %s", tk_String);
 		return;
 	}
-	while (TK_Check("*"))
+	while (TK_Check(PU_ASTERISK))
 	{
 		type = MakePointerType(type);
 	}
 
-	if (TK_Check("("))
+	if (TK_Check(PU_LPAREN))
 	{
 		//	Function pointer type
 		TType		functype;
@@ -1030,7 +960,7 @@ void ParseTypeDef(void)
 		functype.size = 4;
 		functype.aux_type = type;
 
-		if (!TK_Check("*"))
+		if (!TK_Check(PU_ASTERISK))
 		{
 			ParseError("Missing *");
 			return;
@@ -1042,10 +972,10 @@ void ParseTypeDef(void)
 		}
 		strcpy(name, tk_String);
 		TK_NextToken();
-		TK_Expect(")", ERR_MISSING_RPAREN);
+		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 
 		//	Args
-		TK_Expect("(", ERR_MISSING_LPAREN);
+		TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
 		do
 		{
 			type = CheckForType();
@@ -1060,7 +990,7 @@ void ParseTypeDef(void)
 				continue;
 			}
 
-			while (TK_Check("*"))
+			while (TK_Check(PU_ASTERISK))
 			{
 		   		type = MakePointerType(type);
 			}
@@ -1082,9 +1012,9 @@ void ParseTypeDef(void)
 			functype.param_types[functype.num_params] = type;
 			functype.num_params++;
 			functype.params_size += TypeSize(type) / 4;
-		} while (TK_Check(","));
-		TK_Expect(")", ERR_MISSING_RPAREN);
-		TK_Expect(";", ERR_MISSING_SEMICOLON);
+		} while (TK_Check(PU_COMMA));
+		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 
 		//	Add to typedefs
 		tdef = new typedef_t;
@@ -1110,7 +1040,7 @@ void ParseTypeDef(void)
 	typedefs = tdef;
 
 	TK_NextToken();
-	TK_Expect(";", ERR_MISSING_SEMICOLON);
+	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 }
 
 //==========================================================================
@@ -1161,6 +1091,7 @@ static void AddVTable(TType *t)
 void AddVirtualTables(void)
 {
 	classtypes = new TType*[numclasses];
+	memset(classtypes, 0, numclasses * 4);
 	NoneClass.num_methods = BASE_NUM_METHODS;
 	AddVTable(&NoneClass);
 	for (TType *t = types; t; t = t->next)
@@ -1175,9 +1106,12 @@ void AddVirtualTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/10/02 17:40:48  dj_jl
+//	Possibility to declare function's code inside class declaration
+//
 //	Revision 1.6  2001/09/25 17:03:50  dj_jl
 //	Added calling of parent functions
-//
+//	
 //	Revision 1.5  2001/09/24 17:31:38  dj_jl
 //	Some fixes
 //	

@@ -72,183 +72,6 @@ int HITDICE(int a)
 
 //==========================================================================
 //
-//  SetMobjState
-//
-//  Returns true if the mobj is still present.
-//
-//==========================================================================
-
-boolean SetMobjState(mobj_t * mobj, int state)
-{
-	state_t *st;
-
-	do
-	{
-		if (!state)
-		{
-			// Remove mobj
-			mobj->statenum = 0;
-			P_RemoveMobj(mobj);
-			return false;
-		}
-
-		st = &states[state];
-		mobj->time = st->time;
-		mobj->sprite = st->sprite;
-		mobj->frame = st->frame;
-		mobj->model_index = st->model_index;
-		mobj->alias_frame = st->model_frame;
-		mobj->statenum = st->statenum;
-		mobj->nextstate = st->nextstate;
-
-		// Modified handling.
-		// Call action functions when the state is set
-		if (st->function)
-		{
-			st->function(mobj);
-		}
-
-		state = st->nextstate;
-	}
-	while (!mobj->time);
-	return true;
-}
-
-//==========================================================================
-//
-//  SetMobjStateNF
-//
-//  Same as SetMobjState, but does not call the state function.
-//
-//==========================================================================
-
-boolean SetMobjStateNF(mobj_t * mobj, int state)
-{
-	state_t *st;
-
-	do
-	{
-		if (!state)
-		{
-			// Remove mobj
-			mobj->statenum = 0;
-			P_RemoveMobj(mobj);
-			return false;
-		}
-		st = &states[state];
-		mobj->time = st->time;
-		mobj->sprite = st->sprite;
-		mobj->frame = st->frame;
-		mobj->model_index = st->model_index;
-		mobj->alias_frame = st->model_frame;
-		mobj->statenum = st->statenum;
-		mobj->nextstate = st->nextstate;
-
-		state = st->nextstate;
-	}
-	while (!mobj->time);
-	return true;
-}
-
-//===========================================================================
-//
-//  SetPsprite
-//
-//===========================================================================
-
-void SetPsprite(player_t * player, int position, int stnum)
-{
-	pspdef_t *psp;
-	state_t *state;
-
-	psp = &player->psprites[position];
-	do
-	{
-		if (!stnum)
-		{
-			// Object removed itself.
-			psp->statenum = 0;
-			break;
-		}
-		state = &states[stnum];
-		psp->time = state->time;	// could be 0
-		psp->sprite = state->sprite;
-		psp->frame = state->frame;
-		psp->model_index = state->model_index;
-		psp->alias_frame = state->model_frame;
-		psp->statenum = state->statenum;
-		psp->nextstate = state->nextstate;
-		if (state->misc1)
-		{
-			// Set coordinates.
-			psp->sx = state->misc1;
-//          psp->sy = state->misc2;//   Was in DOOM and HERETIC
-		}
-		if (state->misc2)
-		{
-			//  In DOOM and HERETIC this was set if misc1 != 0. In HEXEN it
-			// is moved outside. This will not affect anything in DOOM and
-			// HERETIC, because there they are not used.
-			psp->sy = state->misc2;
-		}
-		if (state->function)
-		{
-			// Call action routine.
-			state->function(player->mo);
-			if (!psp->statenum)
-			{
-				break;
-			}
-		}
-		stnum = psp->nextstate;
-	}
-	while (!psp->time);	// An initial state of 0 could cycle through.
-}
-
-//==========================================================================
-//
-//  SetPspriteNF
-//
-//  Identical to SetPsprite, without calling the action function
-//
-//==========================================================================
-
-void SetPspriteNF(player_t * player, int position, int stnum)
-{
-	pspdef_t *psp;
-	state_t *state;
-
-	psp = &player->psprites[position];
-	do
-	{
-		if (!stnum)
-		{	// Object removed itself.
-			psp->statenum = 0;
-			break;
-		}
-		state = &states[stnum];
-		psp->time = state->time;	// could be 0
-		psp->sprite = state->sprite;
-		psp->frame = state->frame;
-		psp->model_index = state->model_index;
-		psp->alias_frame = state->model_frame;
-		psp->statenum = state->statenum;
-		psp->nextstate = state->nextstate;
-		if (state->misc1)
-		{	// Set coordinates.
-			psp->sx = state->misc1;
-		}
-		if (state->misc2)
-		{
-			psp->sy = state->misc2;
-		}
-		stnum = psp->nextstate;
-	}
-	while (!psp->time);	// An initial state of 0 could cycle through.
-}
-
-//==========================================================================
-//
 //  MapBlock
 //
 //==========================================================================
@@ -542,20 +365,18 @@ void AddStaticLightRGB(TVec origin, float radius, int color)
 
 class misc_static_light:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t * mthing)
+	{
+		float l;
+
+		RemoveMobjThinker(this);
+		if (!mthing->arg1)
+			l = 200.0;
+		else
+			l = itof(mthing->arg1) * 8.0;
+		AddStaticLight(vector(mthing->x, mthing->y, mthing->height), l);
+	}
 };
-
-void misc_static_light::OnMapSpawn(mthing_t * mthing)
-{
-	float l;
-
-	RemoveMobjThinker(this);
-	if (!mthing->arg1)
-		l = 200.0;
-	else
-		l = itof(mthing->arg1) * 8.0;
-	AddStaticLight(vector(mthing->x, mthing->y, mthing->height), l);
-}
 
 //==========================================================================
 //
@@ -565,21 +386,19 @@ void misc_static_light::OnMapSpawn(mthing_t * mthing)
 
 class misc_static_rgb_light:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t * mthing)
+	{
+		float l;
+
+		RemoveMobjThinker(this);
+		if (!mthing->arg1)
+			l = 200.0;
+		else
+			l = itof(mthing->arg1) * 8.0;
+		AddStaticLightRGB(vector(mthing->x, mthing->y, mthing->height), l,
+			RGB(mthing->arg2, mthing->arg3, mthing->arg4));
+	}
 };
-
-void misc_static_rgb_light::OnMapSpawn(mthing_t * mthing)
-{
-	float l;
-
-	RemoveMobjThinker(this);
-	if (!mthing->arg1)
-		l = 200.0;
-	else
-		l = itof(mthing->arg1) * 8.0;
-	AddStaticLightRGB(vector(mthing->x, mthing->y, mthing->height), l,
-		RGB(mthing->arg2, mthing->arg3, mthing->arg4));
-}
 
 __mobjinfo__
 {
@@ -627,6 +446,9 @@ void UnarchiveThinker(Thinker * th)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/10/02 17:42:37  dj_jl
+//  Possibility to declare function's code inside class declaration
+//
 //  Revision 1.7  2001/09/27 17:08:19  dj_jl
 //  Removed spawn functions, added mobj classes
 //

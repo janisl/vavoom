@@ -65,7 +65,7 @@ void A_PotteryExplode(mobj_t * actor)
 		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
 			TranslateThingType[actor->args[0]]);
 	}
-//  P_RemoveMobj(actor);
+	P_RemoveMobj(actor);
 }
 
 //============================================================================
@@ -100,7 +100,7 @@ void A_PotteryCheck(mobj_t * actor)
 		pmo = players[i].mo;
 		if (P_CheckSight(actor, pmo)
 			&& (abs(atan2(actor->origin.y - pmo->origin.y,
-actor->origin.x - pmo->origin.x) - pmo->angles.yaw) <= ANG45))
+			actor->origin.x - pmo->origin.x) - pmo->angles.yaw) <= ANG45))
 		{
 			// Previous state (pottery bit waiting state)
 			SetMobjState(actor, actor->statenum - 1);
@@ -112,6 +112,9 @@ actor->origin.x - pmo->origin.x) - pmo->angles.yaw) <= ANG45))
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/02 17:42:38  dj_jl
+//  Possibility to declare function's code inside class declaration
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

@@ -202,6 +202,10 @@ addfields mobj_t
 	int spawnhealth;
 	int gibshealth;
 
+	float time;	// state tic counter
+	int statenum;
+	int nextstate;
+
 	// Thing being chased/attacked for tracers.
 	mobj_t *tracer;
 
@@ -230,13 +234,25 @@ addfields mobj_t
 
 addfields player_t
 {
-////  FIRST FIELDS ARE STATS THAT ARE SENT TO CLIENT FOR STATUS BAR//////  Long stats//////  Short stats//
-		int ammo[NUMAMMO];
+	//
+	//  FIRST FIELDS ARE STATS THAT ARE SENT TO CLIENT FOR STATUS BAR
+	//
+
+	//
+	//  Long stats
+	//
+
+	//
+	//  Short stats
+	//
+
+	int ammo[NUMAMMO];
 	int ready_ammo;
 
 	//
 	//  Byte stats
 	//
+
 	boolean weaponowned[NUMWEAPONS];
 
 	int armorpoints;
@@ -304,13 +320,25 @@ int byte_stats = NUMWEAPONS + 7 + NUMPOWERS;
 
 addfields client_state_t
 {
-////  STATS FOR STATUS BAR//////  Long stats//////  Short stats//AR//////  Long stats//////  Short stats//
-		int ammo[NUMAMMO];
+	//
+	//  STATS FOR STATUS BAR
+	//
+
+	//
+	//  Long stats
+	//
+
+	//
+	//  Short stats
+	//
+
+	int ammo[NUMAMMO];
 	int ready_ammo;
 
 	//
 	//  Byte stats
 	//
+
 	boolean weaponowned[NUMWEAPONS];
 
 	int armorpoints;
@@ -417,6 +445,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/02 17:42:37  dj_jl
+//  Possibility to declare function's code inside class declaration
+//
 //  Revision 1.5  2001/09/24 17:12:36  dj_jl
 //  Created thinker classes
 //

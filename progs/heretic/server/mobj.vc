@@ -65,6 +65,78 @@ float FloatBobOffsets[64] = {
 
 // CODE --------------------------------------------------------------------
 
+//==========================================================================
+//
+//  SetMobjState
+//
+//  Returns true if the mobj is still present.
+//
+//==========================================================================
+
+boolean SetMobjState(mobj_t * mobj, int state)
+{
+	state_t *st;
+
+	if (!state)
+	{
+		// Remove mobj
+		mobj->statenum = 0;
+		P_RemoveMobj(mobj);
+		return false;
+	}
+
+	st = &states[state];
+	mobj->time = st->time;
+	mobj->sprite = st->sprite;
+	mobj->frame = st->frame;
+	mobj->model_index = st->model_index;
+	mobj->alias_frame = st->model_frame;
+	mobj->statenum = st->statenum;
+	mobj->nextstate = st->nextstate;
+
+	// Modified handling.
+	// Call action functions when the state is set
+	if (st->function)
+	{
+		st->function(mobj);
+	}
+
+	state = st->nextstate;
+	return true;
+}
+
+//==========================================================================
+//
+//  SetMobjStateNF
+//
+//  Same as SetMobjState, but does not call the state function.
+//
+//==========================================================================
+
+boolean SetMobjStateNF(mobj_t * mobj, int state)
+{
+	state_t *st;
+
+	if (!state)
+	{
+		// Remove mobj
+		mobj->statenum = 0;
+		P_RemoveMobj(mobj);
+		return false;
+	}
+	st = &states[state];
+	mobj->time = st->time;
+	mobj->sprite = st->sprite;
+	mobj->frame = st->frame;
+	mobj->model_index = st->model_index;
+	mobj->alias_frame = st->model_frame;
+	mobj->statenum = st->statenum;
+	mobj->nextstate = st->nextstate;
+
+	state = st->nextstate;
+	return true;
+}
+
 //===========================================================================
 //
 //  P_GetThingFloorType
@@ -1410,6 +1482,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/10/02 17:42:38  dj_jl
+//  Possibility to declare function's code inside class declaration
+//
 //  Revision 1.7  2001/09/27 17:08:19  dj_jl
 //  Removed spawn functions, added mobj classes
 //

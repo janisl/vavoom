@@ -27,6 +27,18 @@ void UpdateBeak(player_t * player, pspdef_t * psp);
 void PostChickenWeapon(player_t * player, int weapon);
 void SetPsprite(player_t * player, int position, int stnum);
 
+class TLavaInflictor:mobj_t
+{
+	void Think(void)
+	{
+	}
+
+	void Unarchive(void)
+	{
+		LavaInflictor = this;
+	}
+};
+
 //==========================================================================
 //
 //  InitLava
@@ -439,6 +451,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/02 17:42:38  dj_jl
+//  Possibility to declare function's code inside class declaration
+//
 //  Revision 1.5  2001/09/27 17:09:51  dj_jl
 //  Changed LavaInflictor to pointer
 //

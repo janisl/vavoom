@@ -23,30 +23,8 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-class weapon_grenade_launcher:mobj_t
-{
-	void OnMapSpawn(mthing_t *);
-};
-
-class missile_grenade:mobj_t
-{
-	void OnMapSpawn(mthing_t *);
-};
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-void weapon_grenade_launcher(mobj_t * self, mthing_t * mthing);
-void missile_grenade(mobj_t * self, mthing_t * mthing);
 void A_FireGrenade(mobj_t * actor);	// in weapons.c
 void P_ExplodeMissile(mobj_t * mo);
-
-// DATA DECLARATIONS -------------------------------------------------------
 
 __states__
 {
@@ -70,28 +48,23 @@ __states__
 	S_GRENADE_EXPLODE { "GREN", 0 | FF_FULLBRIGHT, 0.0, P_ExplodeMissile, S_EXPLODE1}
 }
 
-__mobjinfo__
-{
-	MT_GLAUNCH { 90, weapon_grenade_launcher }
-	MT_GRENADE { -1, missile_grenade }
-}
-
-// CODE --------------------------------------------------------------------
-
 //==========================================================================
 //
 //  weapon_grenade_launcher
 //
 //==========================================================================
 
-void weapon_grenade_launcher::OnMapSpawn(mthing_t * mthing)
+class weapon_grenade_launcher:mobj_t
 {
-	radius = 20.0;
-	height = 16.0;
-	flags = MF_SPECIAL;
-	spawnstate = S_GLAUNCH;
-	generic_mobj_start(this, mthing);
-}
+	void OnMapSpawn(mthing_t * mthing)
+	{
+		radius = 20.0;
+		height = 16.0;
+		flags = MF_SPECIAL;
+		spawnstate = S_GLAUNCH;
+		generic_mobj_start(this, mthing);
+	}
+};
 
 //==========================================================================
 //
@@ -99,20 +72,29 @@ void weapon_grenade_launcher::OnMapSpawn(mthing_t * mthing)
 //
 //==========================================================================
 
-void missile_grenade::OnMapSpawn(mthing_t * mthing)
+class missile_grenade:mobj_t
 {
-	radius = 11.0;
-	height = 8.0;
-	mass = 100.0;
-	speed = 600.0;
-	damage = 20;
-	flags = MF_NOBLOCKMAP | MF_DROPOFF | MF_MISSILE | MF_BOUNCE;
-	spawnstate = S_GRENADE;
-	deathstate = S_EXPLODE1;
-	sound_sight = GetSoundID("LauncherFire");
-	sound_pain = GetSoundID("GrenadeBounce");
-	sound_death = GetSoundID("BarrelExplode");
-	generic_mobj_start(this, mthing);
+	void OnMapSpawn(mthing_t * mthing)
+	{
+		radius = 11.0;
+		height = 8.0;
+		mass = 100.0;
+		speed = 600.0;
+		damage = 20;
+		flags = MF_NOBLOCKMAP | MF_DROPOFF | MF_MISSILE | MF_BOUNCE;
+		spawnstate = S_GRENADE;
+		deathstate = S_EXPLODE1;
+		sound_sight = GetSoundID("LauncherFire");
+		sound_pain = GetSoundID("GrenadeBounce");
+		sound_death = GetSoundID("BarrelExplode");
+		generic_mobj_start(this, mthing);
+	}
+};
+
+__mobjinfo__
+{
+	MT_GLAUNCH { 90, weapon_grenade_launcher }
+	MT_GRENADE { -1, missile_grenade }
 }
 
 //==========================================================================
@@ -136,6 +118,9 @@ void set_weapon_grenade(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/02 17:42:37  dj_jl
+//  Possibility to declare function's code inside class declaration
+//
 //  Revision 1.5  2001/09/27 17:08:19  dj_jl
 //  Removed spawn functions, added mobj classes
 //

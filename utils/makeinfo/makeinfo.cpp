@@ -233,46 +233,43 @@ void WriteMobjInfo(void)
 		//  Class declaration
 		fprintf(f, "class %s:mobj_t\n", mobj_names[i]);
 		fprintf(f, "{\n");
-		fprintf(f, "\tvoid OnMapSpawn(mthing_t *);\n");
-		fprintf(f, "};\n");
-		fprintf(f, "\n");
 
         //	Start of function
-        fprintf(f, "void %s::OnMapSpawn(mthing_t *mthing)\n", mobj_names[i]);
-        fprintf(f, "{\n");
+        fprintf(f, "\tvoid OnMapSpawn(mthing_t *mthing)\n");
+        fprintf(f, "\t{\n");
 
         flags = mobjinfo[i].flags;
         flags2 = mobjinfo[i].flags2;
 
 		if (flags & MF_NOTDMATCH && mobjinfo[i].doomednum != -1)
-        	fprintf(f, "\tif (deathmatch)\n\t{\n\t\tRemoveMobjThinker(this);\n\t\treturn;\n\t}\n");
+        	fprintf(f, "\t\tif (deathmatch)\n\t\t{\n\t\t\tRemoveMobjThinker(this);\n\t\t\treturn;\n\t\t}\n");
 #ifdef NODEH
 		if (flags & MF_COUNTKILL)
 #else
 		if (flags & MF_COUNTKILL || mobjinfo[i].doomednum == 3006)
 #endif
-        	fprintf(f, "\tif (nomonsters)\n\t{\n\t\tRemoveMobjThinker(this);\n\t\treturn;\n\t}\n");
+        	fprintf(f, "\t\tif (nomonsters)\n\t\t{\n\t\t\tRemoveMobjThinker(this);\n\t\t\treturn;\n\t\t}\n");
 
 		if (mobjinfo[i].classname)
-	    	fprintf(f, "\tclassname = \"%s\";\n", mobjinfo[i].classname);
+	    	fprintf(f, "\t\tclassname = \"%s\";\n", mobjinfo[i].classname);
 
         //	Flag replacements
 		if (flags2 & MF2_DONTDRAW)
-			fprintf(f, "\ttranslucency = 100;\n");
+			fprintf(f, "\t\ttranslucency = 100;\n");
 		else if (flags & MF_SHADOW)
-			fprintf(f, "\ttranslucency = %d;\n", shadow);
+			fprintf(f, "\t\ttranslucency = %d;\n", shadow);
 		else if (flags & MF_ALTSHADOW && altshadow)
-			fprintf(f, "\ttranslucency = %d;\n", altshadow);
+			fprintf(f, "\t\ttranslucency = %d;\n", altshadow);
 #ifndef STRIFE
 		else if (flags & MF_TRANSLUCENT)
-			fprintf(f, "\ttranslucency = 33;\n");
+			fprintf(f, "\t\ttranslucency = 33;\n");
 #endif
 #ifdef STRIFE
         if (flags & 0x70000000)
-			fprintf(f, "\ttranslation = %d;\n", (flags >> 28) & 7);
+			fprintf(f, "\t\ttranslation = %d;\n", (flags >> 28) & 7);
 #else
         if (flags & MF_TRANSLATION)
-			fprintf(f, "\ttranslation = %d;\n", (flags & MF_TRANSLATION) >> MF_TRANSSHIFT);
+			fprintf(f, "\t\ttranslation = %d;\n", (flags & MF_TRANSLATION) >> MF_TRANSSHIFT);
 #endif
 
 		//	Clear replaced flags
@@ -287,35 +284,35 @@ void WriteMobjInfo(void)
 
 		//	Misc params
 		if (mobjinfo[i].spawnhealth)
-			fprintf(f, "\thealth = %d;\n\tspawnhealth = health;\n", mobjinfo[i].spawnhealth);
+			fprintf(f, "\t\thealth = %d;\n\t\tspawnhealth = health;\n", mobjinfo[i].spawnhealth);
 		if (mobjinfo[i].spawnhealth && mobjinfo[i].xdeathstate)
 #ifdef NODEH
-			fprintf(f, "\tgibshealth = -%d;\n", mobjinfo[i].spawnhealth >> 1);
+			fprintf(f, "\t\tgibshealth = -%d;\n", mobjinfo[i].spawnhealth >> 1);
 #else
-			fprintf(f, "\tgibshealth = -%d;\n", mobjinfo[i].spawnhealth);
+			fprintf(f, "\t\tgibshealth = -%d;\n", mobjinfo[i].spawnhealth);
 #endif
 		if (mobjinfo[i].radius)
-			fprintf(f, "\tradius = %.1f;\n", (float)mobjinfo[i].radius / (float)FRACUNIT);
+			fprintf(f, "\t\tradius = %.1f;\n", (float)mobjinfo[i].radius / (float)FRACUNIT);
 		if (mobjinfo[i].height)
-			fprintf(f, "\theight = %.1f;\n", (float)mobjinfo[i].height / (float)FRACUNIT);
+			fprintf(f, "\t\theight = %.1f;\n", (float)mobjinfo[i].height / (float)FRACUNIT);
 		if (mobjinfo[i].mass)
-			fprintf(f, "\tmass = %.1f;\n", mobjinfo[i].mass == 0x7fffffff ? 99999.0 : (float)mobjinfo[i].mass);
+			fprintf(f, "\t\tmass = %.1f;\n", mobjinfo[i].mass == 0x7fffffff ? 99999.0 : (float)mobjinfo[i].mass);
 		if (mobjinfo[i].speed)
-			fprintf(f, "\tspeed = %.1f;\n", 35.0 * (mobjinfo[i].speed < 100 ? (float)mobjinfo[i].speed : (float)mobjinfo[i].speed / (float)FRACUNIT));
+			fprintf(f, "\t\tspeed = %.1f;\n", 35.0 * (mobjinfo[i].speed < 100 ? (float)mobjinfo[i].speed : (float)mobjinfo[i].speed / (float)FRACUNIT));
 		if (mobjinfo[i].reactiontime)
         {
-        	fprintf(f, "\tif (gameskill != sk_nightmare)\n");
-			fprintf(f, "\t\treactiontime = %d;\n", mobjinfo[i].reactiontime);
+        	fprintf(f, "\t\tif (gameskill != sk_nightmare)\n");
+			fprintf(f, "\t\t\treactiontime = %d;\n", mobjinfo[i].reactiontime);
 		}
 		if (mobjinfo[i].painchance)
-			fprintf(f, "\tpainchance = %d;\n", mobjinfo[i].painchance);
+			fprintf(f, "\t\tpainchance = %d;\n", mobjinfo[i].painchance);
 		if (mobjinfo[i].damage)
-			fprintf(f, "\tdamage = %d;\n", mobjinfo[i].damage);
+			fprintf(f, "\t\tdamage = %d;\n", mobjinfo[i].damage);
 
         //	Flags
 		if (flags)
         {
-			fprintf(f, "\tflags = ");
+			fprintf(f, "\t\tflags = ");
 			firstflag = 1;
     	    for (j=0; j<32; j++)
         	{
@@ -333,7 +330,7 @@ void WriteMobjInfo(void)
 		}
 		if (flags2)
         {
-			fprintf(f, "\tflags2 = ");
+			fprintf(f, "\t\tflags2 = ");
 			firstflag = 1;
     	    for (j=0; j<32; j++)
         	{
@@ -352,50 +349,53 @@ void WriteMobjInfo(void)
 
 		//	States
         if (mobjinfo[i].spawnstate)
-			fprintf(f, "\tspawnstate = %s;\n", statename[mobjinfo[i].spawnstate]);
+			fprintf(f, "\t\tspawnstate = %s;\n", statename[mobjinfo[i].spawnstate]);
         if (mobjinfo[i].seestate)
-			fprintf(f, "\tseestate = %s;\n", statename[mobjinfo[i].seestate]);
+			fprintf(f, "\t\tseestate = %s;\n", statename[mobjinfo[i].seestate]);
         if (mobjinfo[i].meleestate)
-			fprintf(f, "\tmeleestate = %s;\n", statename[mobjinfo[i].meleestate]);
+			fprintf(f, "\t\tmeleestate = %s;\n", statename[mobjinfo[i].meleestate]);
         if (mobjinfo[i].missilestate)
-			fprintf(f, "\tmissilestate = %s;\n", statename[mobjinfo[i].missilestate]);
+			fprintf(f, "\t\tmissilestate = %s;\n", statename[mobjinfo[i].missilestate]);
         if (mobjinfo[i].painstate)
-			fprintf(f, "\tpainstate = %s;\n", statename[mobjinfo[i].painstate]);
+			fprintf(f, "\t\tpainstate = %s;\n", statename[mobjinfo[i].painstate]);
         if (mobjinfo[i].crashstate)
-			fprintf(f, "\tcrashstate = %s;\n", statename[mobjinfo[i].crashstate]);
+			fprintf(f, "\t\tcrashstate = %s;\n", statename[mobjinfo[i].crashstate]);
         if (mobjinfo[i].deathstate)
-			fprintf(f, "\tdeathstate = %s;\n", statename[mobjinfo[i].deathstate]);
+			fprintf(f, "\t\tdeathstate = %s;\n", statename[mobjinfo[i].deathstate]);
         if (mobjinfo[i].xdeathstate)
-			fprintf(f, "\txdeathstate = %s;\n", statename[mobjinfo[i].xdeathstate]);
+			fprintf(f, "\t\txdeathstate = %s;\n", statename[mobjinfo[i].xdeathstate]);
         if (mobjinfo[i].raisestate)
-			fprintf(f, "\traisestate = %s;\n", statename[mobjinfo[i].raisestate]);
+			fprintf(f, "\t\traisestate = %s;\n", statename[mobjinfo[i].raisestate]);
 
 		//	Sounds
         if (mobjinfo[i].seesound)
-			fprintf(f, "\tsound_sight = GetSoundID(\"%s\");\n", sfx[mobjinfo[i].seesound].tagName);
+			fprintf(f, "\t\tsound_sight = GetSoundID(\"%s\");\n", sfx[mobjinfo[i].seesound].tagName);
 		if (mobjinfo[i].activesound)
-			fprintf(f, "\tsound_active = GetSoundID(\"%s\");\n", sfx[mobjinfo[i].activesound].tagName);
+			fprintf(f, "\t\tsound_active = GetSoundID(\"%s\");\n", sfx[mobjinfo[i].activesound].tagName);
 		if (mobjinfo[i].attacksound)
-			fprintf(f, "\tsound_attack = GetSoundID(\"%s\");\n", sfx[mobjinfo[i].attacksound].tagName);
+			fprintf(f, "\t\tsound_attack = GetSoundID(\"%s\");\n", sfx[mobjinfo[i].attacksound].tagName);
 		if (mobjinfo[i].painsound)
-			fprintf(f, "\tsound_pain = GetSoundID(\"%s\");\n", sfx[mobjinfo[i].painsound].tagName);
+			fprintf(f, "\t\tsound_pain = GetSoundID(\"%s\");\n", sfx[mobjinfo[i].painsound].tagName);
 		if (mobjinfo[i].deathsound)
-			fprintf(f, "\tsound_death = GetSoundID(\"%s\");\n", sfx[mobjinfo[i].deathsound].tagName);
+			fprintf(f, "\t\tsound_death = GetSoundID(\"%s\");\n", sfx[mobjinfo[i].deathsound].tagName);
 
 		//  Effects
 		if (mobjinfo[i].effects)
-			fprintf(f, "\teffects = %s;\n", mobjinfo[i].effects);
+			fprintf(f, "\t\teffects = %s;\n", mobjinfo[i].effects);
 
 		//	Calling of start function
-		fprintf(f, "\tgeneric_mobj_start(this, mthing);\n");
+		fprintf(f, "\t\tgeneric_mobj_start(this, mthing);\n");
 
 		//	Static lights
 		if (mobjinfo[i].extra)
-			fprintf(f, "\t%s\n", mobjinfo[i].extra);
+			fprintf(f, "\t\t%s\n", mobjinfo[i].extra);
 
         //	End of function
-        fprintf(f, "}\n");
-        fprintf(f, "\n");
+        fprintf(f, "\t}\n");
+
+		//  End of class
+		fprintf(f, "};\n");
+		fprintf(f, "\n");
     }
 
 	fprintf(f, "__mobjinfo__\n{\n");
@@ -661,9 +661,12 @@ int main(int argc, char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/02 17:40:48  dj_jl
+//	Possibility to declare function's code inside class declaration
+//
 //	Revision 1.4  2001/09/27 17:04:39  dj_jl
 //	Effects and static lights in mobjinfo, mobj classes
-//
+//	
 //	Revision 1.3  2001/09/20 16:33:14  dj_jl
 //	Beautification
 //	

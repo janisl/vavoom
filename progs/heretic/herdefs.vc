@@ -189,8 +189,8 @@ struct inventory_t
 
 addfields mobj_t
 {
-	//  Statesp artifacts.fined..barriers.nd debug.e any moving sectors*********=== stats//////  Short stats//
-		int spawnstate;
+	//  States
+	int spawnstate;
 	int seestate;
 	int painstate;
 	int meleestate;
@@ -213,6 +213,10 @@ addfields mobj_t
 	int painchance;
 	int spawnhealth;
 	int gibshealth;
+
+	float time;	// state tic counter
+	int statenum;
+	int nextstate;
 
 	int special1;	// Special info
 	int special2;	// Special info
@@ -246,8 +250,19 @@ addfields mobj_t
 
 addfields player_t
 {
-////  FIRST FIELDS ARE STATS THAT ARE SENT TO CLIENT FOR STATUS BAR//////  Long stats//////  Short stats//
-		int ammo[NUMAMMO];
+	//
+	//  FIRST FIELDS ARE STATS THAT ARE SENT TO CLIENT FOR STATUS BAR
+	//
+
+	//
+	//  Long stats
+	//
+
+	//
+	//  Short stats
+	//
+
+	int ammo[NUMAMMO];
 
 	// Power ups. invinc and invis are tic counters.
 	int powers[NUMPOWERS];
@@ -354,8 +369,19 @@ int byte_stats = 10 + 2 * NUMARTIFACTS;
 
 addfields client_state_t
 {
-////  STATS FOR STATUS BAR//////  Long stats//////  Short stats//AR//////  Long stats//////  Short stats//
-		int ammo[NUMAMMO];
+	//
+	//  STATS FOR STATUS BAR
+	//
+
+	//
+	//  Long stats
+	//
+
+	//
+	//  Short stats
+	//
+
+	int ammo[NUMAMMO];
 
 	// Power ups. invinc and invis are tic counters.
 	int powers[NUMPOWERS];
@@ -482,6 +508,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/02 17:42:38  dj_jl
+//  Possibility to declare function's code inside class declaration
+//
 //  Revision 1.5  2001/09/24 17:15:00  dj_jl
 //  Created thinker classes
 //

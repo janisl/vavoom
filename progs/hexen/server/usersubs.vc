@@ -27,6 +27,18 @@
 #define BLAST_FULLSTRENGTH	0.0038909912
 #define BLAST_SPEED			20.0
 
+class TLavaInflictor:mobj_t
+{
+	void Think(void)
+	{
+	}
+
+	void Unarchive(void)
+	{
+		LavaInflictor = this;
+	}
+};
+
 void PostMorphWeapon(player_t * player, int weapon);
 void SetPspriteNF(player_t * player, int position, int stnum);
 
@@ -652,6 +664,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/02 17:42:38  dj_jl
+//  Possibility to declare function's code inside class declaration
+//
 //  Revision 1.5  2001/09/27 17:09:51  dj_jl
 //  Changed LavaInflictor to pointer
 //

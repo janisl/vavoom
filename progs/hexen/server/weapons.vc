@@ -41,6 +41,99 @@ int WeaponManaUseTable[NUMCLASSES * NUMWEAPONS] = {
 //
 //****************************************************************************
 
+//===========================================================================
+//
+//  SetPsprite
+//
+//===========================================================================
+
+void SetPsprite(player_t * player, int position, int stnum)
+{
+	pspdef_t *psp;
+	state_t *state;
+
+	psp = &player->psprites[position];
+	do
+	{
+		if (!stnum)
+		{
+			// Object removed itself.
+			psp->statenum = 0;
+			break;
+		}
+		state = &states[stnum];
+		psp->time = state->time;	// could be 0
+		psp->sprite = state->sprite;
+		psp->frame = state->frame;
+		psp->model_index = state->model_index;
+		psp->alias_frame = state->model_frame;
+		psp->statenum = state->statenum;
+		psp->nextstate = state->nextstate;
+		if (state->misc1)
+		{
+			// Set coordinates.
+			psp->sx = state->misc1;
+		}
+		if (state->misc2)
+		{
+			psp->sy = state->misc2;
+		}
+		if (state->function)
+		{
+			// Call action routine.
+			state->function(player->mo);
+			if (!psp->statenum)
+			{
+				break;
+			}
+		}
+		stnum = psp->nextstate;
+	}
+	while (!psp->time);	// An initial state of 0 could cycle through.
+}
+
+//==========================================================================
+//
+//  SetPspriteNF
+//
+//  Identical to SetPsprite, without calling the action function
+//
+//==========================================================================
+
+void SetPspriteNF(player_t * player, int position, int stnum)
+{
+	pspdef_t *psp;
+	state_t *state;
+
+	psp = &player->psprites[position];
+	do
+	{
+		if (!stnum)
+		{	// Object removed itself.
+			psp->statenum = 0;
+			break;
+		}
+		state = &states[stnum];
+		psp->time = state->time;	// could be 0
+		psp->sprite = state->sprite;
+		psp->frame = state->frame;
+		psp->model_index = state->model_index;
+		psp->alias_frame = state->model_frame;
+		psp->statenum = state->statenum;
+		psp->nextstate = state->nextstate;
+		if (state->misc1)
+		{	// Set coordinates.
+			psp->sx = state->misc1;
+		}
+		if (state->misc2)
+		{
+			psp->sy = state->misc2;
+		}
+		stnum = psp->nextstate;
+	}
+	while (!psp->time);	// An initial state of 0 could cycle through.
+}
+
 //==========================================================================
 //
 //  WeaponManaUse
@@ -477,6 +570,9 @@ void A_Light0(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/02 17:42:38  dj_jl
+//  Possibility to declare function's code inside class declaration
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

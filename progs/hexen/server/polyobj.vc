@@ -83,6 +83,11 @@ class TPolyDoor:PolyobjThinker
 	void Think(void);
 };
 
+addfields polyobj_t
+{
+	PolyobjThinker *specialdata;	// pointer a thinker, if the poly is moving
+};
+
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 void DamageMobj(mobj_t * target, mobj_t * inflictor, mobj_t * source,
@@ -596,7 +601,7 @@ void PolyThrustMobj(mobj_t * mobj, angle_t angle, polyobj_t * po)
 		return;
 	}
 
-	pe = (PolyobjThinker *)po->specialdata;
+	pe = po->specialdata;
 	if (pe)
 	{
 		force = pe->thrust_force;
@@ -628,9 +633,33 @@ void PolyThrustMobj(mobj_t * mobj, angle_t angle, polyobj_t * po)
 	}
 }
 
+//==========================================================================
+//
+//  PolyBusy
+//
+//==========================================================================
+
+boolean PolyBusy(int polyobj)
+{
+	polyobj_t *poly;
+
+	poly = GetPolyobj(polyobj);
+	if (!poly->specialdata)
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/02 17:42:38  dj_jl
+//  Possibility to declare function's code inside class declaration
+//
 //  Revision 1.4  2001/09/24 17:18:15  dj_jl
 //  Created thinker classes
 //

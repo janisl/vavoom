@@ -39,29 +39,27 @@ void generic_mobj_start(mobj_t *self, mthing_t *mthing);
 
 class misc_PLAYER:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 100;
+		spawnhealth = health;
+		gibshealth = -100;
+		radius = 16.0;
+		height = 56.0;
+		mass = 100.0;
+		painchance = 255;
+		flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_PICKUP;
+		spawnstate = S_PLAY;
+		seestate = S_PLAY_RUN1;
+		missilestate = S_PLAY_ATK1;
+		painstate = S_PLAY_PAIN;
+		deathstate = S_PLAY_DIE1;
+		xdeathstate = S_PLAY_XDIE1;
+		sound_pain = GetSoundID("PlayerPain");
+		sound_death = GetSoundID("PlayerDeath");
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_PLAYER::OnMapSpawn(mthing_t *mthing)
-{
-	health = 100;
-	spawnhealth = health;
-	gibshealth = -100;
-	radius = 16.0;
-	height = 56.0;
-	mass = 100.0;
-	painchance = 255;
-	flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_PICKUP;
-	spawnstate = S_PLAY;
-	seestate = S_PLAY_RUN1;
-	missilestate = S_PLAY_ATK1;
-	painstate = S_PLAY_PAIN;
-	deathstate = S_PLAY_DIE1;
-	xdeathstate = S_PLAY_XDIE1;
-	sound_pain = GetSoundID("PlayerPain");
-	sound_death = GetSoundID("PlayerDeath");
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -71,41 +69,39 @@ void misc_PLAYER::OnMapSpawn(mthing_t *mthing)
 
 class misc_zombieman:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_zombieman::OnMapSpawn(mthing_t *mthing)
-{
-	if (nomonsters)
+	void OnMapSpawn(mthing_t *mthing)
 	{
-		RemoveMobjThinker(this);
-		return;
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
+		health = 20;
+		spawnhealth = health;
+		gibshealth = -20;
+		radius = 20.0;
+		height = 56.0;
+		mass = 100.0;
+		speed = 280.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		painchance = 200;
+		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		spawnstate = S_POSS_STND;
+		seestate = S_POSS_RUN1;
+		missilestate = S_POSS_ATK1;
+		painstate = S_POSS_PAIN;
+		deathstate = S_POSS_DIE1;
+		xdeathstate = S_POSS_XDIE1;
+		raisestate = S_POSS_RAISE1;
+		sound_sight = GetSoundID("ZombieSight1");
+		sound_active = GetSoundID("ZombieActive");
+		sound_attack = GetSoundID("PistolFire");
+		sound_pain = GetSoundID("ZombiePain");
+		sound_death = GetSoundID("ZombieDeath1");
+		generic_mobj_start(this, mthing);
 	}
-	health = 20;
-	spawnhealth = health;
-	gibshealth = -20;
-	radius = 20.0;
-	height = 56.0;
-	mass = 100.0;
-	speed = 280.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	painchance = 200;
-	flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-	spawnstate = S_POSS_STND;
-	seestate = S_POSS_RUN1;
-	missilestate = S_POSS_ATK1;
-	painstate = S_POSS_PAIN;
-	deathstate = S_POSS_DIE1;
-	xdeathstate = S_POSS_XDIE1;
-	raisestate = S_POSS_RAISE1;
-	sound_sight = GetSoundID("ZombieSight1");
-	sound_active = GetSoundID("ZombieActive");
-	sound_attack = GetSoundID("PistolFire");
-	sound_pain = GetSoundID("ZombiePain");
-	sound_death = GetSoundID("ZombieDeath1");
-	generic_mobj_start(this, mthing);
-}
+};
 
 //==========================================================================
 //
@@ -115,40 +111,38 @@ void misc_zombieman::OnMapSpawn(mthing_t *mthing)
 
 class misc_shotgun_guy:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_shotgun_guy::OnMapSpawn(mthing_t *mthing)
-{
-	if (nomonsters)
+	void OnMapSpawn(mthing_t *mthing)
 	{
-		RemoveMobjThinker(this);
-		return;
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
+		health = 30;
+		spawnhealth = health;
+		gibshealth = -30;
+		radius = 20.0;
+		height = 56.0;
+		mass = 100.0;
+		speed = 280.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		painchance = 170;
+		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		spawnstate = S_SPOS_STND;
+		seestate = S_SPOS_RUN1;
+		missilestate = S_SPOS_ATK1;
+		painstate = S_SPOS_PAIN;
+		deathstate = S_SPOS_DIE1;
+		xdeathstate = S_SPOS_XDIE1;
+		raisestate = S_SPOS_RAISE1;
+		sound_sight = GetSoundID("ZombieSight2");
+		sound_active = GetSoundID("ZombieActive");
+		sound_pain = GetSoundID("ZombiePain");
+		sound_death = GetSoundID("ZombieDeath2");
+		generic_mobj_start(this, mthing);
 	}
-	health = 30;
-	spawnhealth = health;
-	gibshealth = -30;
-	radius = 20.0;
-	height = 56.0;
-	mass = 100.0;
-	speed = 280.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	painchance = 170;
-	flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-	spawnstate = S_SPOS_STND;
-	seestate = S_SPOS_RUN1;
-	missilestate = S_SPOS_ATK1;
-	painstate = S_SPOS_PAIN;
-	deathstate = S_SPOS_DIE1;
-	xdeathstate = S_SPOS_XDIE1;
-	raisestate = S_SPOS_RAISE1;
-	sound_sight = GetSoundID("ZombieSight2");
-	sound_active = GetSoundID("ZombieActive");
-	sound_pain = GetSoundID("ZombiePain");
-	sound_death = GetSoundID("ZombieDeath2");
-	generic_mobj_start(this, mthing);
-}
+};
 
 //==========================================================================
 //
@@ -158,37 +152,35 @@ void misc_shotgun_guy::OnMapSpawn(mthing_t *mthing)
 
 class misc_arch_vile:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_arch_vile::OnMapSpawn(mthing_t *mthing)
-{
-	if (nomonsters)
+	void OnMapSpawn(mthing_t *mthing)
 	{
-		RemoveMobjThinker(this);
-		return;
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
+		health = 700;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 56.0;
+		mass = 500.0;
+		speed = 525.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		painchance = 10;
+		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		spawnstate = S_VILE_STND;
+		seestate = S_VILE_RUN1;
+		missilestate = S_VILE_ATK1;
+		painstate = S_VILE_PAIN;
+		deathstate = S_VILE_DIE1;
+		sound_sight = GetSoundID("ArchVileSight");
+		sound_active = GetSoundID("ArchVileActive");
+		sound_pain = GetSoundID("ArchVilePain");
+		sound_death = GetSoundID("ArchVileDeath");
+		generic_mobj_start(this, mthing);
 	}
-	health = 700;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 56.0;
-	mass = 500.0;
-	speed = 525.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	painchance = 10;
-	flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-	spawnstate = S_VILE_STND;
-	seestate = S_VILE_RUN1;
-	missilestate = S_VILE_ATK1;
-	painstate = S_VILE_PAIN;
-	deathstate = S_VILE_DIE1;
-	sound_sight = GetSoundID("ArchVileSight");
-	sound_active = GetSoundID("ArchVileActive");
-	sound_pain = GetSoundID("ArchVilePain");
-	sound_death = GetSoundID("ArchVileDeath");
-	generic_mobj_start(this, mthing);
-}
+};
 
 //==========================================================================
 //
@@ -198,24 +190,22 @@ void misc_arch_vile::OnMapSpawn(mthing_t *mthing)
 
 class misc_FIRE:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		translucency = 33;
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		spawnstate = S_FIRE1;
+		effects = EF_DL_MISSILE;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_FIRE::OnMapSpawn(mthing_t *mthing)
-{
-	translucency = 33;
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-	spawnstate = S_FIRE1;
-	effects = EF_DL_MISSILE;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -225,39 +215,37 @@ void misc_FIRE::OnMapSpawn(mthing_t *mthing)
 
 class misc_REVENANT:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_REVENANT::OnMapSpawn(mthing_t *mthing)
-{
-	if (nomonsters)
+	void OnMapSpawn(mthing_t *mthing)
 	{
-		RemoveMobjThinker(this);
-		return;
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
+		health = 300;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 56.0;
+		mass = 500.0;
+		speed = 350.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		painchance = 100;
+		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		spawnstate = S_SKEL_STND;
+		seestate = S_SKEL_RUN1;
+		meleestate = S_SKEL_FIST1;
+		missilestate = S_SKEL_MISS1;
+		painstate = S_SKEL_PAIN;
+		deathstate = S_SKEL_DIE1;
+		raisestate = S_SKEL_RAISE1;
+		sound_sight = GetSoundID("RavenantSight");
+		sound_active = GetSoundID("RavenantActive");
+		sound_pain = GetSoundID("ZombiePain");
+		sound_death = GetSoundID("RavenantDeath");
+		generic_mobj_start(this, mthing);
 	}
-	health = 300;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 56.0;
-	mass = 500.0;
-	speed = 350.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	painchance = 100;
-	flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-	spawnstate = S_SKEL_STND;
-	seestate = S_SKEL_RUN1;
-	meleestate = S_SKEL_FIST1;
-	missilestate = S_SKEL_MISS1;
-	painstate = S_SKEL_PAIN;
-	deathstate = S_SKEL_DIE1;
-	raisestate = S_SKEL_RAISE1;
-	sound_sight = GetSoundID("RavenantSight");
-	sound_active = GetSoundID("RavenantActive");
-	sound_pain = GetSoundID("ZombiePain");
-	sound_death = GetSoundID("RavenantDeath");
-	generic_mobj_start(this, mthing);
-}
+};
 
 //==========================================================================
 //
@@ -267,29 +255,27 @@ void misc_REVENANT::OnMapSpawn(mthing_t *mthing)
 
 class misc_TRACER:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		translucency = 33;
+		health = 1000;
+		spawnhealth = health;
+		radius = 11.0;
+		height = 8.0;
+		mass = 100.0;
+		speed = 350.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		damage = 10;
+		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		spawnstate = S_TRACER;
+		deathstate = S_TRACEEXP1;
+		sound_sight = GetSoundID("RavenantAttack");
+		sound_death = GetSoundID("BarrelExplode");
+		effects = EF_DL_RBALL;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_TRACER::OnMapSpawn(mthing_t *mthing)
-{
-	translucency = 33;
-	health = 1000;
-	spawnhealth = health;
-	radius = 11.0;
-	height = 8.0;
-	mass = 100.0;
-	speed = 350.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	damage = 10;
-	flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-	spawnstate = S_TRACER;
-	deathstate = S_TRACEEXP1;
-	sound_sight = GetSoundID("RavenantAttack");
-	sound_death = GetSoundID("BarrelExplode");
-	effects = EF_DL_RBALL;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -299,23 +285,21 @@ void misc_TRACER::OnMapSpawn(mthing_t *mthing)
 
 class misc_SMOKE:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		translucency = 33;
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		spawnstate = S_SMOKE1;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_SMOKE::OnMapSpawn(mthing_t *mthing)
-{
-	translucency = 33;
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-	spawnstate = S_SMOKE1;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -325,38 +309,36 @@ void misc_SMOKE::OnMapSpawn(mthing_t *mthing)
 
 class misc_MANCUBUS:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_MANCUBUS::OnMapSpawn(mthing_t *mthing)
-{
-	if (nomonsters)
+	void OnMapSpawn(mthing_t *mthing)
 	{
-		RemoveMobjThinker(this);
-		return;
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
+		health = 600;
+		spawnhealth = health;
+		radius = 48.0;
+		height = 64.0;
+		mass = 1000.0;
+		speed = 280.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		painchance = 80;
+		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		spawnstate = S_FATT_STND;
+		seestate = S_FATT_RUN1;
+		missilestate = S_FATT_ATK1;
+		painstate = S_FATT_PAIN;
+		deathstate = S_FATT_DIE1;
+		raisestate = S_FATT_RAISE1;
+		sound_sight = GetSoundID("MancubusSight");
+		sound_active = GetSoundID("ZombieActive");
+		sound_pain = GetSoundID("MancubusPain");
+		sound_death = GetSoundID("MancubusDeath");
+		generic_mobj_start(this, mthing);
 	}
-	health = 600;
-	spawnhealth = health;
-	radius = 48.0;
-	height = 64.0;
-	mass = 1000.0;
-	speed = 280.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	painchance = 80;
-	flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-	spawnstate = S_FATT_STND;
-	seestate = S_FATT_RUN1;
-	missilestate = S_FATT_ATK1;
-	painstate = S_FATT_PAIN;
-	deathstate = S_FATT_DIE1;
-	raisestate = S_FATT_RAISE1;
-	sound_sight = GetSoundID("MancubusSight");
-	sound_active = GetSoundID("ZombieActive");
-	sound_pain = GetSoundID("MancubusPain");
-	sound_death = GetSoundID("MancubusDeath");
-	generic_mobj_start(this, mthing);
-}
+};
 
 //==========================================================================
 //
@@ -366,29 +348,27 @@ void misc_MANCUBUS::OnMapSpawn(mthing_t *mthing)
 
 class misc_FATSHOT:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		translucency = 33;
+		health = 1000;
+		spawnhealth = health;
+		radius = 6.0;
+		height = 8.0;
+		mass = 100.0;
+		speed = 700.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		damage = 8;
+		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		spawnstate = S_FATSHOT1;
+		deathstate = S_FATSHOTX1;
+		sound_sight = GetSoundID("FireballShoot");
+		sound_death = GetSoundID("FireballExplode");
+		effects = EF_DL_RBALL;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_FATSHOT::OnMapSpawn(mthing_t *mthing)
-{
-	translucency = 33;
-	health = 1000;
-	spawnhealth = health;
-	radius = 6.0;
-	height = 8.0;
-	mass = 100.0;
-	speed = 700.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	damage = 8;
-	flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-	spawnstate = S_FATSHOT1;
-	deathstate = S_FATSHOTX1;
-	sound_sight = GetSoundID("FireballShoot");
-	sound_death = GetSoundID("FireballExplode");
-	effects = EF_DL_RBALL;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -398,40 +378,38 @@ void misc_FATSHOT::OnMapSpawn(mthing_t *mthing)
 
 class misc_HEAVY_WEAPON_DUDE:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_HEAVY_WEAPON_DUDE::OnMapSpawn(mthing_t *mthing)
-{
-	if (nomonsters)
+	void OnMapSpawn(mthing_t *mthing)
 	{
-		RemoveMobjThinker(this);
-		return;
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
+		health = 70;
+		spawnhealth = health;
+		gibshealth = -70;
+		radius = 20.0;
+		height = 56.0;
+		mass = 100.0;
+		speed = 280.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		painchance = 170;
+		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		spawnstate = S_CPOS_STND;
+		seestate = S_CPOS_RUN1;
+		missilestate = S_CPOS_ATK1;
+		painstate = S_CPOS_PAIN;
+		deathstate = S_CPOS_DIE1;
+		xdeathstate = S_CPOS_XDIE1;
+		raisestate = S_CPOS_RAISE1;
+		sound_sight = GetSoundID("ZombieSight2");
+		sound_active = GetSoundID("ZombieActive");
+		sound_pain = GetSoundID("ZombiePain");
+		sound_death = GetSoundID("ZombieDeath2");
+		generic_mobj_start(this, mthing);
 	}
-	health = 70;
-	spawnhealth = health;
-	gibshealth = -70;
-	radius = 20.0;
-	height = 56.0;
-	mass = 100.0;
-	speed = 280.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	painchance = 170;
-	flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-	spawnstate = S_CPOS_STND;
-	seestate = S_CPOS_RUN1;
-	missilestate = S_CPOS_ATK1;
-	painstate = S_CPOS_PAIN;
-	deathstate = S_CPOS_DIE1;
-	xdeathstate = S_CPOS_XDIE1;
-	raisestate = S_CPOS_RAISE1;
-	sound_sight = GetSoundID("ZombieSight2");
-	sound_active = GetSoundID("ZombieActive");
-	sound_pain = GetSoundID("ZombiePain");
-	sound_death = GetSoundID("ZombieDeath2");
-	generic_mobj_start(this, mthing);
-}
+};
 
 //==========================================================================
 //
@@ -441,41 +419,39 @@ void misc_HEAVY_WEAPON_DUDE::OnMapSpawn(mthing_t *mthing)
 
 class misc_IMP:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_IMP::OnMapSpawn(mthing_t *mthing)
-{
-	if (nomonsters)
+	void OnMapSpawn(mthing_t *mthing)
 	{
-		RemoveMobjThinker(this);
-		return;
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
+		health = 60;
+		spawnhealth = health;
+		gibshealth = -60;
+		radius = 20.0;
+		height = 56.0;
+		mass = 100.0;
+		speed = 280.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		painchance = 200;
+		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		spawnstate = S_TROO_STND;
+		seestate = S_TROO_RUN1;
+		meleestate = S_TROO_ATK1;
+		missilestate = S_TROO_ATK1;
+		painstate = S_TROO_PAIN;
+		deathstate = S_TROO_DIE1;
+		xdeathstate = S_TROO_XDIE1;
+		raisestate = S_TROO_RAISE1;
+		sound_sight = GetSoundID("ImpSight1");
+		sound_active = GetSoundID("ImpActive");
+		sound_pain = GetSoundID("ZombiePain");
+		sound_death = GetSoundID("ImpDeath1");
+		generic_mobj_start(this, mthing);
 	}
-	health = 60;
-	spawnhealth = health;
-	gibshealth = -60;
-	radius = 20.0;
-	height = 56.0;
-	mass = 100.0;
-	speed = 280.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	painchance = 200;
-	flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-	spawnstate = S_TROO_STND;
-	seestate = S_TROO_RUN1;
-	meleestate = S_TROO_ATK1;
-	missilestate = S_TROO_ATK1;
-	painstate = S_TROO_PAIN;
-	deathstate = S_TROO_DIE1;
-	xdeathstate = S_TROO_XDIE1;
-	raisestate = S_TROO_RAISE1;
-	sound_sight = GetSoundID("ImpSight1");
-	sound_active = GetSoundID("ImpActive");
-	sound_pain = GetSoundID("ZombiePain");
-	sound_death = GetSoundID("ImpDeath1");
-	generic_mobj_start(this, mthing);
-}
+};
 
 //==========================================================================
 //
@@ -485,39 +461,37 @@ void misc_IMP::OnMapSpawn(mthing_t *mthing)
 
 class misc_DEMON:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_DEMON::OnMapSpawn(mthing_t *mthing)
-{
-	if (nomonsters)
+	void OnMapSpawn(mthing_t *mthing)
 	{
-		RemoveMobjThinker(this);
-		return;
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
+		health = 150;
+		spawnhealth = health;
+		radius = 30.0;
+		height = 56.0;
+		mass = 400.0;
+		speed = 350.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		painchance = 180;
+		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		spawnstate = S_SARG_STND;
+		seestate = S_SARG_RUN1;
+		meleestate = S_SARG_ATK1;
+		painstate = S_SARG_PAIN;
+		deathstate = S_SARG_DIE1;
+		raisestate = S_SARG_RAISE1;
+		sound_sight = GetSoundID("DemonSight");
+		sound_active = GetSoundID("DemonActive");
+		sound_attack = GetSoundID("DemonAttack");
+		sound_pain = GetSoundID("DemonPain");
+		sound_death = GetSoundID("DemonDeath");
+		generic_mobj_start(this, mthing);
 	}
-	health = 150;
-	spawnhealth = health;
-	radius = 30.0;
-	height = 56.0;
-	mass = 400.0;
-	speed = 350.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	painchance = 180;
-	flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-	spawnstate = S_SARG_STND;
-	seestate = S_SARG_RUN1;
-	meleestate = S_SARG_ATK1;
-	painstate = S_SARG_PAIN;
-	deathstate = S_SARG_DIE1;
-	raisestate = S_SARG_RAISE1;
-	sound_sight = GetSoundID("DemonSight");
-	sound_active = GetSoundID("DemonActive");
-	sound_attack = GetSoundID("DemonAttack");
-	sound_pain = GetSoundID("DemonPain");
-	sound_death = GetSoundID("DemonDeath");
-	generic_mobj_start(this, mthing);
-}
+};
 
 //==========================================================================
 //
@@ -527,40 +501,38 @@ void misc_DEMON::OnMapSpawn(mthing_t *mthing)
 
 class misc_SHADOWS:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_SHADOWS::OnMapSpawn(mthing_t *mthing)
-{
-	if (nomonsters)
+	void OnMapSpawn(mthing_t *mthing)
 	{
-		RemoveMobjThinker(this);
-		return;
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
+		translucency = 90;
+		health = 150;
+		spawnhealth = health;
+		radius = 30.0;
+		height = 56.0;
+		mass = 400.0;
+		speed = 350.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		painchance = 180;
+		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		spawnstate = S_SARG_STND;
+		seestate = S_SARG_RUN1;
+		meleestate = S_SARG_ATK1;
+		painstate = S_SARG_PAIN;
+		deathstate = S_SARG_DIE1;
+		raisestate = S_SARG_RAISE1;
+		sound_sight = GetSoundID("DemonSight");
+		sound_active = GetSoundID("DemonActive");
+		sound_attack = GetSoundID("DemonAttack");
+		sound_pain = GetSoundID("DemonPain");
+		sound_death = GetSoundID("DemonDeath");
+		generic_mobj_start(this, mthing);
 	}
-	translucency = 90;
-	health = 150;
-	spawnhealth = health;
-	radius = 30.0;
-	height = 56.0;
-	mass = 400.0;
-	speed = 350.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	painchance = 180;
-	flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-	spawnstate = S_SARG_STND;
-	seestate = S_SARG_RUN1;
-	meleestate = S_SARG_ATK1;
-	painstate = S_SARG_PAIN;
-	deathstate = S_SARG_DIE1;
-	raisestate = S_SARG_RAISE1;
-	sound_sight = GetSoundID("DemonSight");
-	sound_active = GetSoundID("DemonActive");
-	sound_attack = GetSoundID("DemonAttack");
-	sound_pain = GetSoundID("DemonPain");
-	sound_death = GetSoundID("DemonDeath");
-	generic_mobj_start(this, mthing);
-}
+};
 
 //==========================================================================
 //
@@ -570,38 +542,36 @@ void misc_SHADOWS::OnMapSpawn(mthing_t *mthing)
 
 class misc_CACODEMON:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_CACODEMON::OnMapSpawn(mthing_t *mthing)
-{
-	if (nomonsters)
+	void OnMapSpawn(mthing_t *mthing)
 	{
-		RemoveMobjThinker(this);
-		return;
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
+		health = 400;
+		spawnhealth = health;
+		radius = 31.0;
+		height = 56.0;
+		mass = 400.0;
+		speed = 280.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		painchance = 128;
+		flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT|MF_COUNTKILL;
+		spawnstate = S_HEAD_STND;
+		seestate = S_HEAD_RUN1;
+		missilestate = S_HEAD_ATK1;
+		painstate = S_HEAD_PAIN;
+		deathstate = S_HEAD_DIE1;
+		raisestate = S_HEAD_RAISE1;
+		sound_sight = GetSoundID("CacoSight");
+		sound_active = GetSoundID("DemonActive");
+		sound_pain = GetSoundID("DemonPain");
+		sound_death = GetSoundID("CacoDeath");
+		generic_mobj_start(this, mthing);
 	}
-	health = 400;
-	spawnhealth = health;
-	radius = 31.0;
-	height = 56.0;
-	mass = 400.0;
-	speed = 280.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	painchance = 128;
-	flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT|MF_COUNTKILL;
-	spawnstate = S_HEAD_STND;
-	seestate = S_HEAD_RUN1;
-	missilestate = S_HEAD_ATK1;
-	painstate = S_HEAD_PAIN;
-	deathstate = S_HEAD_DIE1;
-	raisestate = S_HEAD_RAISE1;
-	sound_sight = GetSoundID("CacoSight");
-	sound_active = GetSoundID("DemonActive");
-	sound_pain = GetSoundID("DemonPain");
-	sound_death = GetSoundID("CacoDeath");
-	generic_mobj_start(this, mthing);
-}
+};
 
 //==========================================================================
 //
@@ -611,39 +581,37 @@ void misc_CACODEMON::OnMapSpawn(mthing_t *mthing)
 
 class misc_BARON_OF_HELL:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_BARON_OF_HELL::OnMapSpawn(mthing_t *mthing)
-{
-	if (nomonsters)
+	void OnMapSpawn(mthing_t *mthing)
 	{
-		RemoveMobjThinker(this);
-		return;
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
+		health = 1000;
+		spawnhealth = health;
+		radius = 24.0;
+		height = 64.0;
+		mass = 1000.0;
+		speed = 280.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		painchance = 50;
+		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		spawnstate = S_BOSS_STND;
+		seestate = S_BOSS_RUN1;
+		meleestate = S_BOSS_ATK1;
+		missilestate = S_BOSS_ATK1;
+		painstate = S_BOSS_PAIN;
+		deathstate = S_BOSS_DIE1;
+		raisestate = S_BOSS_RAISE1;
+		sound_sight = GetSoundID("BaronSight");
+		sound_active = GetSoundID("DemonActive");
+		sound_pain = GetSoundID("DemonPain");
+		sound_death = GetSoundID("BaronDeath");
+		generic_mobj_start(this, mthing);
 	}
-	health = 1000;
-	spawnhealth = health;
-	radius = 24.0;
-	height = 64.0;
-	mass = 1000.0;
-	speed = 280.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	painchance = 50;
-	flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-	spawnstate = S_BOSS_STND;
-	seestate = S_BOSS_RUN1;
-	meleestate = S_BOSS_ATK1;
-	missilestate = S_BOSS_ATK1;
-	painstate = S_BOSS_PAIN;
-	deathstate = S_BOSS_DIE1;
-	raisestate = S_BOSS_RAISE1;
-	sound_sight = GetSoundID("BaronSight");
-	sound_active = GetSoundID("DemonActive");
-	sound_pain = GetSoundID("DemonPain");
-	sound_death = GetSoundID("BaronDeath");
-	generic_mobj_start(this, mthing);
-}
+};
 
 //==========================================================================
 //
@@ -653,29 +621,27 @@ void misc_BARON_OF_HELL::OnMapSpawn(mthing_t *mthing)
 
 class misc_BRUISERSHOT:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		translucency = 33;
+		health = 1000;
+		spawnhealth = health;
+		radius = 6.0;
+		height = 8.0;
+		mass = 100.0;
+		speed = 525.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		damage = 8;
+		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		spawnstate = S_BRBALL1;
+		deathstate = S_BRBALLX1;
+		sound_sight = GetSoundID("FireballShoot");
+		sound_death = GetSoundID("FireballExplode");
+		effects = EF_DL_GBALL;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_BRUISERSHOT::OnMapSpawn(mthing_t *mthing)
-{
-	translucency = 33;
-	health = 1000;
-	spawnhealth = health;
-	radius = 6.0;
-	height = 8.0;
-	mass = 100.0;
-	speed = 525.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	damage = 8;
-	flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-	spawnstate = S_BRBALL1;
-	deathstate = S_BRBALLX1;
-	sound_sight = GetSoundID("FireballShoot");
-	sound_death = GetSoundID("FireballExplode");
-	effects = EF_DL_GBALL;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -685,39 +651,37 @@ void misc_BRUISERSHOT::OnMapSpawn(mthing_t *mthing)
 
 class misc_HELL_KNIGHT:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_HELL_KNIGHT::OnMapSpawn(mthing_t *mthing)
-{
-	if (nomonsters)
+	void OnMapSpawn(mthing_t *mthing)
 	{
-		RemoveMobjThinker(this);
-		return;
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
+		health = 500;
+		spawnhealth = health;
+		radius = 24.0;
+		height = 64.0;
+		mass = 1000.0;
+		speed = 280.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		painchance = 50;
+		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		spawnstate = S_BOS2_STND;
+		seestate = S_BOS2_RUN1;
+		meleestate = S_BOS2_ATK1;
+		missilestate = S_BOS2_ATK1;
+		painstate = S_BOS2_PAIN;
+		deathstate = S_BOS2_DIE1;
+		raisestate = S_BOS2_RAISE1;
+		sound_sight = GetSoundID("KnightSight");
+		sound_active = GetSoundID("DemonActive");
+		sound_pain = GetSoundID("DemonPain");
+		sound_death = GetSoundID("KnightDeath");
+		generic_mobj_start(this, mthing);
 	}
-	health = 500;
-	spawnhealth = health;
-	radius = 24.0;
-	height = 64.0;
-	mass = 1000.0;
-	speed = 280.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	painchance = 50;
-	flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-	spawnstate = S_BOS2_STND;
-	seestate = S_BOS2_RUN1;
-	meleestate = S_BOS2_ATK1;
-	missilestate = S_BOS2_ATK1;
-	painstate = S_BOS2_PAIN;
-	deathstate = S_BOS2_DIE1;
-	raisestate = S_BOS2_RAISE1;
-	sound_sight = GetSoundID("KnightSight");
-	sound_active = GetSoundID("DemonActive");
-	sound_pain = GetSoundID("DemonPain");
-	sound_death = GetSoundID("KnightDeath");
-	generic_mobj_start(this, mthing);
-}
+};
 
 //==========================================================================
 //
@@ -727,40 +691,38 @@ void misc_HELL_KNIGHT::OnMapSpawn(mthing_t *mthing)
 
 class misc_LOST_SOUL:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_LOST_SOUL::OnMapSpawn(mthing_t *mthing)
-{
-	if (nomonsters)
+	void OnMapSpawn(mthing_t *mthing)
 	{
-		RemoveMobjThinker(this);
-		return;
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
+		translucency = 33;
+		health = 100;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 56.0;
+		mass = 50.0;
+		speed = 280.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		painchance = 256;
+		damage = 3;
+		flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT;
+		spawnstate = S_SKULL_STND;
+		seestate = S_SKULL_RUN1;
+		missilestate = S_SKULL_ATK1;
+		painstate = S_SKULL_PAIN;
+		deathstate = S_SKULL_DIE1;
+		sound_active = GetSoundID("DemonActive");
+		sound_attack = GetSoundID("LostSoulAttack");
+		sound_pain = GetSoundID("DemonPain");
+		sound_death = GetSoundID("FireballExplode");
+		effects = EF_DL_MISSILE;
+		generic_mobj_start(this, mthing);
 	}
-	translucency = 33;
-	health = 100;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 56.0;
-	mass = 50.0;
-	speed = 280.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	painchance = 256;
-	damage = 3;
-	flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT;
-	spawnstate = S_SKULL_STND;
-	seestate = S_SKULL_RUN1;
-	missilestate = S_SKULL_ATK1;
-	painstate = S_SKULL_PAIN;
-	deathstate = S_SKULL_DIE1;
-	sound_active = GetSoundID("DemonActive");
-	sound_attack = GetSoundID("LostSoulAttack");
-	sound_pain = GetSoundID("DemonPain");
-	sound_death = GetSoundID("FireballExplode");
-	effects = EF_DL_MISSILE;
-	generic_mobj_start(this, mthing);
-}
+};
 
 //==========================================================================
 //
@@ -770,38 +732,36 @@ void misc_LOST_SOUL::OnMapSpawn(mthing_t *mthing)
 
 class misc_THE_SPIDER_MASTERMIND:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_THE_SPIDER_MASTERMIND::OnMapSpawn(mthing_t *mthing)
-{
-	if (nomonsters)
+	void OnMapSpawn(mthing_t *mthing)
 	{
-		RemoveMobjThinker(this);
-		return;
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
+		health = 3000;
+		spawnhealth = health;
+		radius = 128.0;
+		height = 100.0;
+		mass = 1000.0;
+		speed = 420.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		painchance = 40;
+		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		spawnstate = S_SPID_STND;
+		seestate = S_SPID_RUN1;
+		missilestate = S_SPID_ATK1;
+		painstate = S_SPID_PAIN;
+		deathstate = S_SPID_DIE1;
+		sound_sight = GetSoundID("SpiderSight");
+		sound_active = GetSoundID("DemonActive");
+		sound_attack = GetSoundID("ShotgunFire");
+		sound_pain = GetSoundID("DemonPain");
+		sound_death = GetSoundID("SpiderDeath");
+		generic_mobj_start(this, mthing);
 	}
-	health = 3000;
-	spawnhealth = health;
-	radius = 128.0;
-	height = 100.0;
-	mass = 1000.0;
-	speed = 420.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	painchance = 40;
-	flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-	spawnstate = S_SPID_STND;
-	seestate = S_SPID_RUN1;
-	missilestate = S_SPID_ATK1;
-	painstate = S_SPID_PAIN;
-	deathstate = S_SPID_DIE1;
-	sound_sight = GetSoundID("SpiderSight");
-	sound_active = GetSoundID("DemonActive");
-	sound_attack = GetSoundID("ShotgunFire");
-	sound_pain = GetSoundID("DemonPain");
-	sound_death = GetSoundID("SpiderDeath");
-	generic_mobj_start(this, mthing);
-}
+};
 
 //==========================================================================
 //
@@ -811,38 +771,36 @@ void misc_THE_SPIDER_MASTERMIND::OnMapSpawn(mthing_t *mthing)
 
 class misc_ARACHNOTRON:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_ARACHNOTRON::OnMapSpawn(mthing_t *mthing)
-{
-	if (nomonsters)
+	void OnMapSpawn(mthing_t *mthing)
 	{
-		RemoveMobjThinker(this);
-		return;
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
+		health = 500;
+		spawnhealth = health;
+		radius = 64.0;
+		height = 64.0;
+		mass = 600.0;
+		speed = 420.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		painchance = 128;
+		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		spawnstate = S_BSPI_STND;
+		seestate = S_BSPI_SIGHT;
+		missilestate = S_BSPI_ATK1;
+		painstate = S_BSPI_PAIN;
+		deathstate = S_BSPI_DIE1;
+		raisestate = S_BSPI_RAISE1;
+		sound_sight = GetSoundID("BabySight");
+		sound_active = GetSoundID("BabyActive");
+		sound_pain = GetSoundID("DemonPain");
+		sound_death = GetSoundID("BabyDeath");
+		generic_mobj_start(this, mthing);
 	}
-	health = 500;
-	spawnhealth = health;
-	radius = 64.0;
-	height = 64.0;
-	mass = 600.0;
-	speed = 420.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	painchance = 128;
-	flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-	spawnstate = S_BSPI_STND;
-	seestate = S_BSPI_SIGHT;
-	missilestate = S_BSPI_ATK1;
-	painstate = S_BSPI_PAIN;
-	deathstate = S_BSPI_DIE1;
-	raisestate = S_BSPI_RAISE1;
-	sound_sight = GetSoundID("BabySight");
-	sound_active = GetSoundID("BabyActive");
-	sound_pain = GetSoundID("DemonPain");
-	sound_death = GetSoundID("BabyDeath");
-	generic_mobj_start(this, mthing);
-}
+};
 
 //==========================================================================
 //
@@ -852,37 +810,35 @@ void misc_ARACHNOTRON::OnMapSpawn(mthing_t *mthing)
 
 class misc_THE_CYBERDEMON:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_THE_CYBERDEMON::OnMapSpawn(mthing_t *mthing)
-{
-	if (nomonsters)
+	void OnMapSpawn(mthing_t *mthing)
 	{
-		RemoveMobjThinker(this);
-		return;
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
+		health = 4000;
+		spawnhealth = health;
+		radius = 40.0;
+		height = 110.0;
+		mass = 1000.0;
+		speed = 560.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		painchance = 20;
+		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		spawnstate = S_CYBER_STND;
+		seestate = S_CYBER_RUN1;
+		missilestate = S_CYBER_ATK1;
+		painstate = S_CYBER_PAIN;
+		deathstate = S_CYBER_DIE1;
+		sound_sight = GetSoundID("CyberSight");
+		sound_active = GetSoundID("DemonActive");
+		sound_pain = GetSoundID("DemonPain");
+		sound_death = GetSoundID("CyberDeath");
+		generic_mobj_start(this, mthing);
 	}
-	health = 4000;
-	spawnhealth = health;
-	radius = 40.0;
-	height = 110.0;
-	mass = 1000.0;
-	speed = 560.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	painchance = 20;
-	flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-	spawnstate = S_CYBER_STND;
-	seestate = S_CYBER_RUN1;
-	missilestate = S_CYBER_ATK1;
-	painstate = S_CYBER_PAIN;
-	deathstate = S_CYBER_DIE1;
-	sound_sight = GetSoundID("CyberSight");
-	sound_active = GetSoundID("DemonActive");
-	sound_pain = GetSoundID("DemonPain");
-	sound_death = GetSoundID("CyberDeath");
-	generic_mobj_start(this, mthing);
-}
+};
 
 //==========================================================================
 //
@@ -892,38 +848,36 @@ void misc_THE_CYBERDEMON::OnMapSpawn(mthing_t *mthing)
 
 class misc_PAIN_ELEMENTAL:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_PAIN_ELEMENTAL::OnMapSpawn(mthing_t *mthing)
-{
-	if (nomonsters)
+	void OnMapSpawn(mthing_t *mthing)
 	{
-		RemoveMobjThinker(this);
-		return;
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
+		health = 400;
+		spawnhealth = health;
+		radius = 31.0;
+		height = 56.0;
+		mass = 400.0;
+		speed = 280.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		painchance = 128;
+		flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT|MF_COUNTKILL;
+		spawnstate = S_PAIN_STND;
+		seestate = S_PAIN_RUN1;
+		missilestate = S_PAIN_ATK1;
+		painstate = S_PAIN_PAIN;
+		deathstate = S_PAIN_DIE1;
+		raisestate = S_PAIN_RAISE1;
+		sound_sight = GetSoundID("PainElementalSight");
+		sound_active = GetSoundID("DemonActive");
+		sound_pain = GetSoundID("PainElementalPain");
+		sound_death = GetSoundID("PainElementalDeath");
+		generic_mobj_start(this, mthing);
 	}
-	health = 400;
-	spawnhealth = health;
-	radius = 31.0;
-	height = 56.0;
-	mass = 400.0;
-	speed = 280.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	painchance = 128;
-	flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT|MF_COUNTKILL;
-	spawnstate = S_PAIN_STND;
-	seestate = S_PAIN_RUN1;
-	missilestate = S_PAIN_ATK1;
-	painstate = S_PAIN_PAIN;
-	deathstate = S_PAIN_DIE1;
-	raisestate = S_PAIN_RAISE1;
-	sound_sight = GetSoundID("PainElementalSight");
-	sound_active = GetSoundID("DemonActive");
-	sound_pain = GetSoundID("PainElementalPain");
-	sound_death = GetSoundID("PainElementalDeath");
-	generic_mobj_start(this, mthing);
-}
+};
 
 //==========================================================================
 //
@@ -933,40 +887,38 @@ void misc_PAIN_ELEMENTAL::OnMapSpawn(mthing_t *mthing)
 
 class misc_WOLFSS:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_WOLFSS::OnMapSpawn(mthing_t *mthing)
-{
-	if (nomonsters)
+	void OnMapSpawn(mthing_t *mthing)
 	{
-		RemoveMobjThinker(this);
-		return;
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
+		health = 50;
+		spawnhealth = health;
+		gibshealth = -50;
+		radius = 20.0;
+		height = 56.0;
+		mass = 100.0;
+		speed = 280.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		painchance = 170;
+		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
+		spawnstate = S_SSWV_STND;
+		seestate = S_SSWV_RUN1;
+		missilestate = S_SSWV_ATK1;
+		painstate = S_SSWV_PAIN;
+		deathstate = S_SSWV_DIE1;
+		xdeathstate = S_SSWV_XDIE1;
+		raisestate = S_SSWV_RAISE1;
+		sound_sight = GetSoundID("SSNaziSight");
+		sound_active = GetSoundID("ZombieActive");
+		sound_pain = GetSoundID("ZombiePain");
+		sound_death = GetSoundID("SSNaziDeath");
+		generic_mobj_start(this, mthing);
 	}
-	health = 50;
-	spawnhealth = health;
-	gibshealth = -50;
-	radius = 20.0;
-	height = 56.0;
-	mass = 100.0;
-	speed = 280.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	painchance = 170;
-	flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
-	spawnstate = S_SSWV_STND;
-	seestate = S_SSWV_RUN1;
-	missilestate = S_SSWV_ATK1;
-	painstate = S_SSWV_PAIN;
-	deathstate = S_SSWV_DIE1;
-	xdeathstate = S_SSWV_XDIE1;
-	raisestate = S_SSWV_RAISE1;
-	sound_sight = GetSoundID("SSNaziSight");
-	sound_active = GetSoundID("ZombieActive");
-	sound_pain = GetSoundID("ZombiePain");
-	sound_death = GetSoundID("SSNaziDeath");
-	generic_mobj_start(this, mthing);
-}
+};
 
 //==========================================================================
 //
@@ -976,32 +928,30 @@ void misc_WOLFSS::OnMapSpawn(mthing_t *mthing)
 
 class misc_KEEN:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_KEEN::OnMapSpawn(mthing_t *mthing)
-{
-	if (nomonsters)
+	void OnMapSpawn(mthing_t *mthing)
 	{
-		RemoveMobjThinker(this);
-		return;
+		if (nomonsters)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
+		health = 100;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 72.0;
+		mass = 10000000.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		painchance = 256;
+		flags = MF_SOLID|MF_SHOOTABLE|MF_SPAWNCEILING|MF_NOGRAVITY|MF_COUNTKILL;
+		spawnstate = S_KEENSTND;
+		painstate = S_KEENPAIN;
+		deathstate = S_COMMKEEN;
+		sound_pain = GetSoundID("KeenPain");
+		sound_death = GetSoundID("KeenDeath");
+		generic_mobj_start(this, mthing);
 	}
-	health = 100;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 72.0;
-	mass = 10000000.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	painchance = 256;
-	flags = MF_SOLID|MF_SHOOTABLE|MF_SPAWNCEILING|MF_NOGRAVITY|MF_COUNTKILL;
-	spawnstate = S_KEENSTND;
-	painstate = S_KEENPAIN;
-	deathstate = S_COMMKEEN;
-	sound_pain = GetSoundID("KeenPain");
-	sound_death = GetSoundID("KeenDeath");
-	generic_mobj_start(this, mthing);
-}
+};
 
 //==========================================================================
 //
@@ -1011,27 +961,25 @@ void misc_KEEN::OnMapSpawn(mthing_t *mthing)
 
 class misc_BOSSBRAIN:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 250;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 16.0;
+		mass = 10000000.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		painchance = 255;
+		flags = MF_SOLID|MF_SHOOTABLE;
+		spawnstate = S_BRAIN;
+		painstate = S_BRAIN_PAIN;
+		deathstate = S_BRAIN_DIE1;
+		sound_pain = GetSoundID("BossPain");
+		sound_death = GetSoundID("BossDeath");
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_BOSSBRAIN::OnMapSpawn(mthing_t *mthing)
-{
-	health = 250;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 16.0;
-	mass = 10000000.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	painchance = 255;
-	flags = MF_SOLID|MF_SHOOTABLE;
-	spawnstate = S_BRAIN;
-	painstate = S_BRAIN_PAIN;
-	deathstate = S_BRAIN_DIE1;
-	sound_pain = GetSoundID("BossPain");
-	sound_death = GetSoundID("BossDeath");
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1041,23 +989,21 @@ void misc_BOSSBRAIN::OnMapSpawn(mthing_t *mthing)
 
 class misc_BOSSSPIT:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 32.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_NOSECTOR|MF_NOBLOCKMAP;
+		spawnstate = S_BRAINEYE;
+		seestate = S_BRAINEYESEE;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_BOSSSPIT::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 32.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_NOSECTOR|MF_NOBLOCKMAP;
-	spawnstate = S_BRAINEYE;
-	seestate = S_BRAINEYESEE;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1067,21 +1013,19 @@ void misc_BOSSSPIT::OnMapSpawn(mthing_t *mthing)
 
 class misc_BOSSTARGET:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 32.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_NOSECTOR|MF_NOBLOCKMAP;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_BOSSTARGET::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 32.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_NOSECTOR|MF_NOBLOCKMAP;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1091,26 +1035,24 @@ void misc_BOSSTARGET::OnMapSpawn(mthing_t *mthing)
 
 class misc_SPAWNSHOT:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 6.0;
+		height = 32.0;
+		mass = 100.0;
+		speed = 350.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		damage = 3;
+		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_NOCLIP|MF_MISSILE;
+		spawnstate = S_SPAWN1;
+		sound_sight = GetSoundID("BossFire");
+		sound_death = GetSoundID("FireballExplode");
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_SPAWNSHOT::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 6.0;
-	height = 32.0;
-	mass = 100.0;
-	speed = 350.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	damage = 3;
-	flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_NOCLIP|MF_MISSILE;
-	spawnstate = S_SPAWN1;
-	sound_sight = GetSoundID("BossFire");
-	sound_death = GetSoundID("FireballExplode");
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1120,24 +1062,22 @@ void misc_SPAWNSHOT::OnMapSpawn(mthing_t *mthing)
 
 class misc_SPAWNFIRE:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		translucency = 33;
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		spawnstate = S_SPAWNFIRE1;
+		effects = EF_DL_MISSILE;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_SPAWNFIRE::OnMapSpawn(mthing_t *mthing)
-{
-	translucency = 33;
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-	spawnstate = S_SPAWNFIRE1;
-	effects = EF_DL_MISSILE;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1147,24 +1087,22 @@ void misc_SPAWNFIRE::OnMapSpawn(mthing_t *mthing)
 
 class misc_BARREL:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 20;
+		spawnhealth = health;
+		radius = 10.0;
+		height = 42.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID|MF_SHOOTABLE|MF_NOBLOOD;
+		spawnstate = S_BAR1;
+		deathstate = S_BEXP;
+		sound_death = GetSoundID("BarrelExplode");
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_BARREL::OnMapSpawn(mthing_t *mthing)
-{
-	health = 20;
-	spawnhealth = health;
-	radius = 10.0;
-	height = 42.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID|MF_SHOOTABLE|MF_NOBLOOD;
-	spawnstate = S_BAR1;
-	deathstate = S_BEXP;
-	sound_death = GetSoundID("BarrelExplode");
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1174,29 +1112,27 @@ void misc_BARREL::OnMapSpawn(mthing_t *mthing)
 
 class misc_TROOPSHOT:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		translucency = 33;
+		health = 1000;
+		spawnhealth = health;
+		radius = 6.0;
+		height = 8.0;
+		mass = 100.0;
+		speed = 350.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		damage = 3;
+		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		spawnstate = S_TBALL1;
+		deathstate = S_TBALLX1;
+		sound_sight = GetSoundID("FireballShoot");
+		sound_death = GetSoundID("FireballExplode");
+		effects = EF_DL_RBALL;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_TROOPSHOT::OnMapSpawn(mthing_t *mthing)
-{
-	translucency = 33;
-	health = 1000;
-	spawnhealth = health;
-	radius = 6.0;
-	height = 8.0;
-	mass = 100.0;
-	speed = 350.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	damage = 3;
-	flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-	spawnstate = S_TBALL1;
-	deathstate = S_TBALLX1;
-	sound_sight = GetSoundID("FireballShoot");
-	sound_death = GetSoundID("FireballExplode");
-	effects = EF_DL_RBALL;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1206,29 +1142,27 @@ void misc_TROOPSHOT::OnMapSpawn(mthing_t *mthing)
 
 class misc_HEADSHOT:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		translucency = 33;
+		health = 1000;
+		spawnhealth = health;
+		radius = 6.0;
+		height = 8.0;
+		mass = 100.0;
+		speed = 350.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		damage = 5;
+		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		spawnstate = S_RBALL1;
+		deathstate = S_RBALLX1;
+		sound_sight = GetSoundID("FireballShoot");
+		sound_death = GetSoundID("FireballExplode");
+		effects = EF_DL_RBALL;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_HEADSHOT::OnMapSpawn(mthing_t *mthing)
-{
-	translucency = 33;
-	health = 1000;
-	spawnhealth = health;
-	radius = 6.0;
-	height = 8.0;
-	mass = 100.0;
-	speed = 350.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	damage = 5;
-	flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-	spawnstate = S_RBALL1;
-	deathstate = S_RBALLX1;
-	sound_sight = GetSoundID("FireballShoot");
-	sound_death = GetSoundID("FireballExplode");
-	effects = EF_DL_RBALL;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1238,28 +1172,26 @@ void misc_HEADSHOT::OnMapSpawn(mthing_t *mthing)
 
 class misc_ROCKET:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 11.0;
+		height = 8.0;
+		mass = 100.0;
+		speed = 700.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		damage = 20;
+		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		spawnstate = S_ROCKET;
+		deathstate = S_EXPLODE1;
+		sound_sight = GetSoundID("LauncherFire");
+		sound_death = GetSoundID("BarrelExplode");
+		effects = EF_DL_MISSILE | EF_ROCKET;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_ROCKET::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 11.0;
-	height = 8.0;
-	mass = 100.0;
-	speed = 700.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	damage = 20;
-	flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-	spawnstate = S_ROCKET;
-	deathstate = S_EXPLODE1;
-	sound_sight = GetSoundID("LauncherFire");
-	sound_death = GetSoundID("BarrelExplode");
-	effects = EF_DL_MISSILE | EF_ROCKET;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1269,29 +1201,27 @@ void misc_ROCKET::OnMapSpawn(mthing_t *mthing)
 
 class misc_PLASMA:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		translucency = 33;
+		health = 1000;
+		spawnhealth = health;
+		radius = 13.0;
+		height = 8.0;
+		mass = 100.0;
+		speed = 875.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		damage = 5;
+		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		spawnstate = S_PLASBALL;
+		deathstate = S_PLASEXP;
+		sound_sight = GetSoundID("PlasmaFire");
+		sound_death = GetSoundID("FireballExplode");
+		effects = EF_DL_PLASMA;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_PLASMA::OnMapSpawn(mthing_t *mthing)
-{
-	translucency = 33;
-	health = 1000;
-	spawnhealth = health;
-	radius = 13.0;
-	height = 8.0;
-	mass = 100.0;
-	speed = 875.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	damage = 5;
-	flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-	spawnstate = S_PLASBALL;
-	deathstate = S_PLASEXP;
-	sound_sight = GetSoundID("PlasmaFire");
-	sound_death = GetSoundID("FireballExplode");
-	effects = EF_DL_PLASMA;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1301,28 +1231,26 @@ void misc_PLASMA::OnMapSpawn(mthing_t *mthing)
 
 class misc_BFG:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		translucency = 33;
+		health = 1000;
+		spawnhealth = health;
+		radius = 13.0;
+		height = 8.0;
+		mass = 100.0;
+		speed = 875.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		damage = 100;
+		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		spawnstate = S_BFGSHOT;
+		deathstate = S_BFGLAND;
+		sound_death = GetSoundID("RocketExplode");
+		effects = EF_DL_GBALL;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_BFG::OnMapSpawn(mthing_t *mthing)
-{
-	translucency = 33;
-	health = 1000;
-	spawnhealth = health;
-	radius = 13.0;
-	height = 8.0;
-	mass = 100.0;
-	speed = 875.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	damage = 100;
-	flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-	spawnstate = S_BFGSHOT;
-	deathstate = S_BFGLAND;
-	sound_death = GetSoundID("RocketExplode");
-	effects = EF_DL_GBALL;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1332,29 +1260,27 @@ void misc_BFG::OnMapSpawn(mthing_t *mthing)
 
 class misc_ARACHPLAZ:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		translucency = 33;
+		health = 1000;
+		spawnhealth = health;
+		radius = 13.0;
+		height = 8.0;
+		mass = 100.0;
+		speed = 875.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		damage = 5;
+		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
+		spawnstate = S_ARACH_PLAZ;
+		deathstate = S_ARACH_PLEX;
+		sound_sight = GetSoundID("PlasmaFire");
+		sound_death = GetSoundID("FireballExplode");
+		effects = EF_DL_MISSILE;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_ARACHPLAZ::OnMapSpawn(mthing_t *mthing)
-{
-	translucency = 33;
-	health = 1000;
-	spawnhealth = health;
-	radius = 13.0;
-	height = 8.0;
-	mass = 100.0;
-	speed = 875.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	damage = 5;
-	flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
-	spawnstate = S_ARACH_PLAZ;
-	deathstate = S_ARACH_PLEX;
-	sound_sight = GetSoundID("PlasmaFire");
-	sound_death = GetSoundID("FireballExplode");
-	effects = EF_DL_MISSILE;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1364,23 +1290,21 @@ void misc_ARACHPLAZ::OnMapSpawn(mthing_t *mthing)
 
 class misc_PUFF:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		translucency = 33;
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		spawnstate = S_PUFF1;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_PUFF::OnMapSpawn(mthing_t *mthing)
-{
-	translucency = 33;
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-	spawnstate = S_PUFF1;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1390,23 +1314,21 @@ void misc_PUFF::OnMapSpawn(mthing_t *mthing)
 
 class misc_BLOOD:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		translucency = 33;
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_NOBLOCKMAP;
+		spawnstate = S_BLOOD1;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_BLOOD::OnMapSpawn(mthing_t *mthing)
-{
-	translucency = 33;
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_NOBLOCKMAP;
-	spawnstate = S_BLOOD1;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1416,23 +1338,21 @@ void misc_BLOOD::OnMapSpawn(mthing_t *mthing)
 
 class misc_TFOG:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		translucency = 33;
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		spawnstate = S_TFOG;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_TFOG::OnMapSpawn(mthing_t *mthing)
-{
-	translucency = 33;
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-	spawnstate = S_TFOG;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1442,23 +1362,21 @@ void misc_TFOG::OnMapSpawn(mthing_t *mthing)
 
 class misc_IFOG:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		translucency = 33;
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		spawnstate = S_IFOG;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_IFOG::OnMapSpawn(mthing_t *mthing)
-{
-	translucency = 33;
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-	spawnstate = S_IFOG;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1468,21 +1386,19 @@ void misc_IFOG::OnMapSpawn(mthing_t *mthing)
 
 class misc_TELEPORTMAN:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_NOSECTOR|MF_NOBLOCKMAP;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_TELEPORTMAN::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_NOSECTOR|MF_NOBLOCKMAP;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1492,23 +1408,21 @@ void misc_TELEPORTMAN::OnMapSpawn(mthing_t *mthing)
 
 class misc_EXTRABFG:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		translucency = 33;
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
+		spawnstate = S_BFGEXP;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_EXTRABFG::OnMapSpawn(mthing_t *mthing)
-{
-	translucency = 33;
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
-	spawnstate = S_BFGEXP;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1518,22 +1432,20 @@ void misc_EXTRABFG::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC0:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_ARM1;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC0::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_ARM1;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1543,22 +1455,20 @@ void misc_MISC0::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC1:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_ARM2;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC1::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_ARM2;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1568,23 +1478,21 @@ void misc_MISC1::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC2:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		translucency = 33;
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL|MF_COUNTITEM;
+		spawnstate = S_BON1;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC2::OnMapSpawn(mthing_t *mthing)
-{
-	translucency = 33;
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL|MF_COUNTITEM;
-	spawnstate = S_BON1;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1594,22 +1502,20 @@ void misc_MISC2::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC3:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL|MF_COUNTITEM;
+		spawnstate = S_BON2;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC3::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL|MF_COUNTITEM;
-	spawnstate = S_BON2;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1619,27 +1525,25 @@ void misc_MISC3::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC4:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_MISC4::OnMapSpawn(mthing_t *mthing)
-{
-	if (deathmatch)
+	void OnMapSpawn(mthing_t *mthing)
 	{
-		RemoveMobjThinker(this);
-		return;
+		if (deathmatch)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_BKEY;
+		generic_mobj_start(this, mthing);
 	}
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_BKEY;
-	generic_mobj_start(this, mthing);
-}
+};
 
 //==========================================================================
 //
@@ -1649,27 +1553,25 @@ void misc_MISC4::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC5:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_MISC5::OnMapSpawn(mthing_t *mthing)
-{
-	if (deathmatch)
+	void OnMapSpawn(mthing_t *mthing)
 	{
-		RemoveMobjThinker(this);
-		return;
+		if (deathmatch)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_RKEY;
+		generic_mobj_start(this, mthing);
 	}
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_RKEY;
-	generic_mobj_start(this, mthing);
-}
+};
 
 //==========================================================================
 //
@@ -1679,27 +1581,25 @@ void misc_MISC5::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC6:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_MISC6::OnMapSpawn(mthing_t *mthing)
-{
-	if (deathmatch)
+	void OnMapSpawn(mthing_t *mthing)
 	{
-		RemoveMobjThinker(this);
-		return;
+		if (deathmatch)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_YKEY;
+		generic_mobj_start(this, mthing);
 	}
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_YKEY;
-	generic_mobj_start(this, mthing);
-}
+};
 
 //==========================================================================
 //
@@ -1709,27 +1609,25 @@ void misc_MISC6::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC7:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_MISC7::OnMapSpawn(mthing_t *mthing)
-{
-	if (deathmatch)
+	void OnMapSpawn(mthing_t *mthing)
 	{
-		RemoveMobjThinker(this);
-		return;
+		if (deathmatch)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_YSKULL;
+		generic_mobj_start(this, mthing);
 	}
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_YSKULL;
-	generic_mobj_start(this, mthing);
-}
+};
 
 //==========================================================================
 //
@@ -1739,27 +1637,25 @@ void misc_MISC7::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC8:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_MISC8::OnMapSpawn(mthing_t *mthing)
-{
-	if (deathmatch)
+	void OnMapSpawn(mthing_t *mthing)
 	{
-		RemoveMobjThinker(this);
-		return;
+		if (deathmatch)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_RSKULL;
+		generic_mobj_start(this, mthing);
 	}
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_RSKULL;
-	generic_mobj_start(this, mthing);
-}
+};
 
 //==========================================================================
 //
@@ -1769,27 +1665,25 @@ void misc_MISC8::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC9:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_MISC9::OnMapSpawn(mthing_t *mthing)
-{
-	if (deathmatch)
+	void OnMapSpawn(mthing_t *mthing)
 	{
-		RemoveMobjThinker(this);
-		return;
+		if (deathmatch)
+		{
+			RemoveMobjThinker(this);
+			return;
+		}
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_BSKULL;
+		generic_mobj_start(this, mthing);
 	}
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_BSKULL;
-	generic_mobj_start(this, mthing);
-}
+};
 
 //==========================================================================
 //
@@ -1799,22 +1693,20 @@ void misc_MISC9::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC10:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_STIM;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC10::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_STIM;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1824,22 +1716,20 @@ void misc_MISC10::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC11:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_MEDI;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC11::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_MEDI;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1849,23 +1739,21 @@ void misc_MISC11::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC12:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		translucency = 33;
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL|MF_COUNTITEM;
+		spawnstate = S_SOUL;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC12::OnMapSpawn(mthing_t *mthing)
-{
-	translucency = 33;
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL|MF_COUNTITEM;
-	spawnstate = S_SOUL;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1875,23 +1763,21 @@ void misc_MISC12::OnMapSpawn(mthing_t *mthing)
 
 class misc_INV:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		translucency = 33;
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL|MF_COUNTITEM;
+		spawnstate = S_PINV;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_INV::OnMapSpawn(mthing_t *mthing)
-{
-	translucency = 33;
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL|MF_COUNTITEM;
-	spawnstate = S_PINV;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1901,22 +1787,20 @@ void misc_INV::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC13:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL|MF_COUNTITEM;
+		spawnstate = S_PSTR;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC13::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL|MF_COUNTITEM;
-	spawnstate = S_PSTR;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1926,23 +1810,21 @@ void misc_MISC13::OnMapSpawn(mthing_t *mthing)
 
 class misc_INS:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		translucency = 33;
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL|MF_COUNTITEM;
+		spawnstate = S_PINS;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_INS::OnMapSpawn(mthing_t *mthing)
-{
-	translucency = 33;
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL|MF_COUNTITEM;
-	spawnstate = S_PINS;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1952,22 +1834,20 @@ void misc_INS::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC14:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_SUIT;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC14::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_SUIT;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -1977,22 +1857,20 @@ void misc_MISC14::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC15:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL|MF_COUNTITEM;
+		spawnstate = S_PMAP;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC15::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL|MF_COUNTITEM;
-	spawnstate = S_PMAP;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2002,22 +1880,20 @@ void misc_MISC15::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC16:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL|MF_COUNTITEM;
+		spawnstate = S_PVIS;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC16::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL|MF_COUNTITEM;
-	spawnstate = S_PVIS;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2027,23 +1903,21 @@ void misc_MISC16::OnMapSpawn(mthing_t *mthing)
 
 class misc_MEGA:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		translucency = 33;
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL|MF_COUNTITEM;
+		spawnstate = S_MEGA;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MEGA::OnMapSpawn(mthing_t *mthing)
-{
-	translucency = 33;
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL|MF_COUNTITEM;
-	spawnstate = S_MEGA;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2053,22 +1927,20 @@ void misc_MEGA::OnMapSpawn(mthing_t *mthing)
 
 class misc_CLIP:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_CLIP;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_CLIP::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_CLIP;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2078,22 +1950,20 @@ void misc_CLIP::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC17:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_AMMO;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC17::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_AMMO;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2103,22 +1973,20 @@ void misc_MISC17::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC18:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_ROCK;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC18::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_ROCK;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2128,22 +1996,20 @@ void misc_MISC18::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC19:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_BROK;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC19::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_BROK;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2153,22 +2019,20 @@ void misc_MISC19::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC20:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_CELL;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC20::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_CELL;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2178,22 +2042,20 @@ void misc_MISC20::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC21:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_CELP;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC21::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_CELP;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2203,22 +2065,20 @@ void misc_MISC21::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC22:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_SHEL;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC22::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_SHEL;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2228,22 +2088,20 @@ void misc_MISC22::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC23:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_SBOX;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC23::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_SBOX;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2253,22 +2111,20 @@ void misc_MISC23::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC24:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_BPAK;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC24::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_BPAK;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2278,22 +2134,20 @@ void misc_MISC24::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC25:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_BFUG;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC25::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_BFUG;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2303,22 +2157,20 @@ void misc_MISC25::OnMapSpawn(mthing_t *mthing)
 
 class misc_CHAINGUN:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_MGUN;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_CHAINGUN::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_MGUN;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2328,22 +2180,20 @@ void misc_CHAINGUN::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC26:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_CSAW;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC26::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_CSAW;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2353,22 +2203,20 @@ void misc_MISC26::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC27:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_LAUN;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC27::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_LAUN;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2378,22 +2226,20 @@ void misc_MISC27::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC28:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_PLAS;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC28::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_PLAS;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2403,22 +2249,20 @@ void misc_MISC28::OnMapSpawn(mthing_t *mthing)
 
 class misc_SHOTGUN:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_SHOT;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_SHOTGUN::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_SHOT;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2428,22 +2272,20 @@ void misc_SHOTGUN::OnMapSpawn(mthing_t *mthing)
 
 class misc_SUPERSHOTGUN:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPECIAL;
+		spawnstate = S_SHOT2;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_SUPERSHOTGUN::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPECIAL;
-	spawnstate = S_SHOT2;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2453,24 +2295,22 @@ void misc_SUPERSHOTGUN::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC29:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_MISC29::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 72.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_TECHLAMP;
-	generic_mobj_start(this, mthing);
-	AddStaticLight(origin + vector(0.0, 0.0, 64.0),
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 72.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_TECHLAMP;
+		generic_mobj_start(this, mthing);
+		AddStaticLight(origin + vector(0.0, 0.0, 64.0),
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);
-}
+	}
+};
 
 //==========================================================================
 //
@@ -2480,24 +2320,22 @@ void misc_MISC29::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC30:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_MISC30::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 56.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_TECH2LAMP;
-	generic_mobj_start(this, mthing);
-	AddStaticLight(origin + vector(0.0, 0.0, 48.0),
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 56.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_TECH2LAMP;
+		generic_mobj_start(this, mthing);
+		AddStaticLight(origin + vector(0.0, 0.0, 48.0),
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);
-}
+	}
+};
 
 //==========================================================================
 //
@@ -2507,24 +2345,22 @@ void misc_MISC30::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC31:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_MISC31::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 48.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_COLU;
-	generic_mobj_start(this, mthing);
-	AddStaticLight(origin + vector(0.0, 0.0, 32.0),
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 48.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_COLU;
+		generic_mobj_start(this, mthing);
+		AddStaticLight(origin + vector(0.0, 0.0, 32.0),
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);
-}
+	}
+};
 
 //==========================================================================
 //
@@ -2534,22 +2370,20 @@ void misc_MISC31::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC32:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 52.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_TALLGRNCOL;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC32::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 52.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_TALLGRNCOL;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2559,22 +2393,20 @@ void misc_MISC32::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC33:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 40.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_SHRTGRNCOL;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC33::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 40.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_SHRTGRNCOL;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2584,22 +2416,20 @@ void misc_MISC33::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC34:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 52.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_TALLREDCOL;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC34::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 52.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_TALLREDCOL;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2609,22 +2439,20 @@ void misc_MISC34::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC35:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 40.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_SHRTREDCOL;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC35::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 40.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_SHRTREDCOL;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2634,22 +2462,20 @@ void misc_MISC35::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC36:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 40.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_SKULLCOL;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC36::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 40.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_SKULLCOL;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2659,22 +2485,20 @@ void misc_MISC36::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC37:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 40.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_HEARTCOL;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC37::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 40.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_HEARTCOL;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2684,24 +2508,22 @@ void misc_MISC37::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC38:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_MISC38::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_EVILEYE;
-	generic_mobj_start(this, mthing);
-	AddStaticLight(origin + vector(0.0, 0.0, 32.0),
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_EVILEYE;
+		generic_mobj_start(this, mthing);
+		AddStaticLight(origin + vector(0.0, 0.0, 32.0),
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 128.0);
-}
+	}
+};
 
 //==========================================================================
 //
@@ -2711,22 +2533,20 @@ void misc_MISC38::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC39:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 48.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_FLOATSKULL;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC39::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 48.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_FLOATSKULL;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2736,22 +2556,20 @@ void misc_MISC39::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC40:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 64.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_TORCHTREE;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC40::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 64.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_TORCHTREE;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2761,24 +2579,22 @@ void misc_MISC40::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC41:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_MISC41::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 64.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_BLUETORCH;
-	generic_mobj_start(this, mthing);
-	AddStaticLightRGB(origin + vector(0.0, 0.0, 32.0),
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 64.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_BLUETORCH;
+		generic_mobj_start(this, mthing);
+		AddStaticLightRGB(origin + vector(0.0, 0.0, 32.0),
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(0, 0, 255));
-}
+	}
+};
 
 //==========================================================================
 //
@@ -2788,24 +2604,22 @@ void misc_MISC41::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC42:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_MISC42::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 64.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_GREENTORCH;
-	generic_mobj_start(this, mthing);
-	AddStaticLightRGB(origin + vector(0.0, 0.0, 32.0),
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 64.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_GREENTORCH;
+		generic_mobj_start(this, mthing);
+		AddStaticLightRGB(origin + vector(0.0, 0.0, 32.0),
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(0, 255, 0));
-}
+	}
+};
 
 //==========================================================================
 //
@@ -2815,24 +2629,22 @@ void misc_MISC42::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC43:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_MISC43::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 64.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_REDTORCH;
-	generic_mobj_start(this, mthing);
-	AddStaticLightRGB(origin + vector(0.0, 0.0, 32.0),
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 64.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_REDTORCH;
+		generic_mobj_start(this, mthing);
+		AddStaticLightRGB(origin + vector(0.0, 0.0, 32.0),
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(255, 0, 0));
-}
+	}
+};
 
 //==========================================================================
 //
@@ -2842,24 +2654,22 @@ void misc_MISC43::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC44:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_MISC44::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 40.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_BTORCHSHRT;
-	generic_mobj_start(this, mthing);
-	AddStaticLightRGB(origin + vector(0.0, 0.0, 16.0),
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 40.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_BTORCHSHRT;
+		generic_mobj_start(this, mthing);
+		AddStaticLightRGB(origin + vector(0.0, 0.0, 16.0),
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(0, 0, 255));
-}
+	}
+};
 
 //==========================================================================
 //
@@ -2869,24 +2679,22 @@ void misc_MISC44::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC45:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_MISC45::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 40.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_GTORCHSHRT;
-	generic_mobj_start(this, mthing);
-	AddStaticLightRGB(origin + vector(0.0, 0.0, 16.0),
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 40.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_GTORCHSHRT;
+		generic_mobj_start(this, mthing);
+		AddStaticLightRGB(origin + vector(0.0, 0.0, 16.0),
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(0, 255, 0));
-}
+	}
+};
 
 //==========================================================================
 //
@@ -2896,24 +2704,22 @@ void misc_MISC45::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC46:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_MISC46::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 40.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_RTORCHSHRT;
-	generic_mobj_start(this, mthing);
-	AddStaticLightRGB(origin + vector(0.0, 0.0, 16.0),
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 40.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_RTORCHSHRT;
+		generic_mobj_start(this, mthing);
+		AddStaticLightRGB(origin + vector(0.0, 0.0, 16.0),
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(255, 0, 0));
-}
+	}
+};
 
 //==========================================================================
 //
@@ -2923,22 +2729,20 @@ void misc_MISC46::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC47:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 40.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_STALAGTITE;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC47::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 40.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_STALAGTITE;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2948,22 +2752,20 @@ void misc_MISC47::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC48:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 120.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_TECHPILLAR;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC48::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 120.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_TECHPILLAR;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -2973,22 +2775,20 @@ void misc_MISC48::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC49:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		spawnstate = S_CANDLESTIK;
+		generic_mobj_start(this, mthing);
+		AddStaticLight(origin, mthing->arg1 ? itof(mthing->arg1) * 8.0 : 64.0);
+	}
 };
-
-void misc_MISC49::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	spawnstate = S_CANDLESTIK;
-	generic_mobj_start(this, mthing);
-	AddStaticLight(origin, mthing->arg1 ? itof(mthing->arg1) * 8.0 : 64.0);
-}
 
 //==========================================================================
 //
@@ -2998,24 +2798,22 @@ void misc_MISC49::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC50:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
-};
-
-void misc_MISC50::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 56.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_CANDELABRA;
-	generic_mobj_start(this, mthing);
-	AddStaticLight(origin + vector(0.0, 0.0, 32.0),
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 56.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_CANDELABRA;
+		generic_mobj_start(this, mthing);
+		AddStaticLight(origin + vector(0.0, 0.0, 32.0),
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 128.0);
-}
+	}
+};
 
 //==========================================================================
 //
@@ -3025,22 +2823,20 @@ void misc_MISC50::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC51:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 68.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
+		spawnstate = S_BLOODYTWITCH;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC51::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 68.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
-	spawnstate = S_BLOODYTWITCH;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3050,22 +2846,20 @@ void misc_MISC51::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC52:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 84.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
+		spawnstate = S_MEAT2;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC52::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 84.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
-	spawnstate = S_MEAT2;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3075,22 +2869,20 @@ void misc_MISC52::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC53:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 84.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
+		spawnstate = S_MEAT3;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC53::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 84.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
-	spawnstate = S_MEAT3;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3100,22 +2892,20 @@ void misc_MISC53::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC54:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 68.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
+		spawnstate = S_MEAT4;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC54::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 68.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
-	spawnstate = S_MEAT4;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3125,22 +2915,20 @@ void misc_MISC54::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC55:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 52.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
+		spawnstate = S_MEAT5;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC55::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 52.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
-	spawnstate = S_MEAT5;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3150,22 +2938,20 @@ void misc_MISC55::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC56:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 84.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPAWNCEILING|MF_NOGRAVITY;
+		spawnstate = S_MEAT2;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC56::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 84.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPAWNCEILING|MF_NOGRAVITY;
-	spawnstate = S_MEAT2;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3175,22 +2961,20 @@ void misc_MISC56::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC57:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 68.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPAWNCEILING|MF_NOGRAVITY;
+		spawnstate = S_MEAT4;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC57::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 68.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPAWNCEILING|MF_NOGRAVITY;
-	spawnstate = S_MEAT4;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3200,22 +2984,20 @@ void misc_MISC57::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC58:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 52.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPAWNCEILING|MF_NOGRAVITY;
+		spawnstate = S_MEAT3;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC58::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 52.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPAWNCEILING|MF_NOGRAVITY;
-	spawnstate = S_MEAT3;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3225,22 +3007,20 @@ void misc_MISC58::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC59:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 52.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPAWNCEILING|MF_NOGRAVITY;
+		spawnstate = S_MEAT5;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC59::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 52.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPAWNCEILING|MF_NOGRAVITY;
-	spawnstate = S_MEAT5;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3250,22 +3030,20 @@ void misc_MISC59::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC60:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 68.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SPAWNCEILING|MF_NOGRAVITY;
+		spawnstate = S_BLOODYTWITCH;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC60::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 68.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SPAWNCEILING|MF_NOGRAVITY;
-	spawnstate = S_BLOODYTWITCH;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3275,21 +3053,19 @@ void misc_MISC60::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC61:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		spawnstate = S_HEAD_DIE6;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC61::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	spawnstate = S_HEAD_DIE6;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3299,21 +3075,19 @@ void misc_MISC61::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC62:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		spawnstate = S_PLAY_DIE7;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC62::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	spawnstate = S_PLAY_DIE7;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3323,21 +3097,19 @@ void misc_MISC62::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC63:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		spawnstate = S_POSS_DIE5;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC63::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	spawnstate = S_POSS_DIE5;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3347,21 +3119,19 @@ void misc_MISC63::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC64:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		spawnstate = S_SARG_DIE6;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC64::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	spawnstate = S_SARG_DIE6;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3371,21 +3141,19 @@ void misc_MISC64::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC65:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		spawnstate = S_SKULL_DIE6;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC65::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	spawnstate = S_SKULL_DIE6;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3395,21 +3163,19 @@ void misc_MISC65::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC66:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		spawnstate = S_TROO_DIE5;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC66::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	spawnstate = S_TROO_DIE5;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3419,21 +3185,19 @@ void misc_MISC66::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC67:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		spawnstate = S_SPOS_DIE5;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC67::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	spawnstate = S_SPOS_DIE5;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3443,21 +3207,19 @@ void misc_MISC67::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC68:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		spawnstate = S_PLAY_XDIE9;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC68::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	spawnstate = S_PLAY_XDIE9;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3467,21 +3229,19 @@ void misc_MISC68::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC69:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		spawnstate = S_PLAY_XDIE9;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC69::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	spawnstate = S_PLAY_XDIE9;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3491,22 +3251,20 @@ void misc_MISC69::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC70:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 64.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_HEADSONSTICK;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC70::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 64.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_HEADSONSTICK;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3516,21 +3274,19 @@ void misc_MISC70::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC71:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		spawnstate = S_GIBS;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC71::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	spawnstate = S_GIBS;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3540,22 +3296,20 @@ void misc_MISC71::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC72:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 56.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_HEADONASTICK;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC72::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 56.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_HEADONASTICK;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3565,22 +3319,20 @@ void misc_MISC72::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC73:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 48.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_HEADCANDLES;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC73::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 48.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_HEADCANDLES;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3590,22 +3342,20 @@ void misc_MISC73::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC74:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 64.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_DEADSTICK;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC74::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 64.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_DEADSTICK;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3615,22 +3365,20 @@ void misc_MISC74::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC75:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 64.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_LIVESTICK;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC75::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 64.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_LIVESTICK;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3640,22 +3388,20 @@ void misc_MISC75::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC76:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 32.0;
+		height = 96.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_BIGTREE;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC76::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 32.0;
-	height = 96.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_BIGTREE;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3665,22 +3411,20 @@ void misc_MISC76::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC77:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 32.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID;
+		spawnstate = S_BBAR1;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC77::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 32.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID;
-	spawnstate = S_BBAR1;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3690,22 +3434,20 @@ void misc_MISC77::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC78:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 88.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
+		spawnstate = S_HANGNOGUTS;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC78::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 88.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
-	spawnstate = S_HANGNOGUTS;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3715,22 +3457,20 @@ void misc_MISC78::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC79:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 88.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
+		spawnstate = S_HANGBNOBRAIN;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC79::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 88.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
-	spawnstate = S_HANGBNOBRAIN;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3740,22 +3480,20 @@ void misc_MISC79::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC80:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 64.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
+		spawnstate = S_HANGTLOOKDN;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC80::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 64.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
-	spawnstate = S_HANGTLOOKDN;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3765,22 +3503,20 @@ void misc_MISC80::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC81:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 64.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
+		spawnstate = S_HANGTSKULL;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC81::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 64.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
-	spawnstate = S_HANGTSKULL;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3790,22 +3526,20 @@ void misc_MISC81::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC82:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 64.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
+		spawnstate = S_HANGTLOOKUP;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC82::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 64.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
-	spawnstate = S_HANGTLOOKUP;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3815,22 +3549,20 @@ void misc_MISC82::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC83:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 16.0;
+		height = 64.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
+		spawnstate = S_HANGTNOBRAIN;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC83::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 16.0;
-	height = 64.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
-	spawnstate = S_HANGTNOBRAIN;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3840,22 +3572,20 @@ void misc_MISC83::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC84:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_NOBLOCKMAP;
+		spawnstate = S_COLONGIBS;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC84::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_NOBLOCKMAP;
-	spawnstate = S_COLONGIBS;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3865,22 +3595,20 @@ void misc_MISC84::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC85:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_NOBLOCKMAP;
+		spawnstate = S_SMALLPOOL;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC85::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_NOBLOCKMAP;
-	spawnstate = S_SMALLPOOL;
-	generic_mobj_start(this, mthing);
-}
 
 //==========================================================================
 //
@@ -3890,22 +3618,20 @@ void misc_MISC85::OnMapSpawn(mthing_t *mthing)
 
 class misc_MISC86:mobj_t
 {
-	void OnMapSpawn(mthing_t *);
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		health = 1000;
+		spawnhealth = health;
+		radius = 20.0;
+		height = 16.0;
+		mass = 100.0;
+		if (gameskill != sk_nightmare)
+			reactiontime = 8;
+		flags = MF_NOBLOCKMAP;
+		spawnstate = S_BRAINSTEM;
+		generic_mobj_start(this, mthing);
+	}
 };
-
-void misc_MISC86::OnMapSpawn(mthing_t *mthing)
-{
-	health = 1000;
-	spawnhealth = health;
-	radius = 20.0;
-	height = 16.0;
-	mass = 100.0;
-	if (gameskill != sk_nightmare)
-		reactiontime = 8;
-	flags = MF_NOBLOCKMAP;
-	spawnstate = S_BRAINSTEM;
-	generic_mobj_start(this, mthing);
-}
 
 __mobjinfo__
 {
@@ -4051,9 +3777,12 @@ __mobjinfo__
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/02 17:42:37  dj_jl
+//	Possibility to declare function's code inside class declaration
+//
 //	Revision 1.5  2001/09/27 17:08:19  dj_jl
 //	Removed spawn functions, added mobj classes
-//
+//	
 //	Revision 1.4  2001/09/20 16:19:59  dj_jl
 //	Start using object-oriented stuff, beautification
 //	
