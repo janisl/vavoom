@@ -145,11 +145,7 @@ void Cmd_SaveConfiguration(void)
 
 COMMAND(Version)
 {
-#ifdef RANGECHECK
-	con << "VAVOOM version " << VERSION << " +R.\n";
-#else
-	con << "VAVOOM version " << VERSION << ".\n";
-#endif
+	con << "VAVOOM version " << VERSION_TEXT << ".\n";
 	con << "Compiled "__DATE__" "__TIME__".\n";
 }
 
@@ -382,7 +378,7 @@ void Host_Frame(void)
 	//	Keep the random time dependent
 	rand();
 
-#ifdef RANGECHECK
+#ifdef PARANOID
 	Z_CheckHeap();
 #endif
 
@@ -597,9 +593,12 @@ COMMAND(Quit)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/08/31 17:28:00  dj_jl
+//	Removed RANGECHECK
+//
 //	Revision 1.6  2001/08/30 17:46:21  dj_jl
 //	Removed game dependency
-//
+//	
 //	Revision 1.5  2001/08/21 17:41:33  dj_jl
 //	Removed -devmaps option
 //	

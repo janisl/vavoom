@@ -78,7 +78,7 @@ static float		bottomslope;  // slopes to top and bottom of target
 static int PlaneSide2(const TVec &point, const TPlane* plane)
 {
 	float dot = DotProduct(point, plane->normal) - plane->dist;
-    return dot ? dot < 0 : 2;
+	return dot ? dot < 0 : 2;
 }
 
 //==========================================================================
@@ -163,16 +163,16 @@ static bool CheckPlanes(sector_t *sec)
 
 static boolean CheckLine(seg_t* seg)
 {
-    line_t*			line;
-    int				s1;
-    int				s2;
-    sector_t*		front;
-    sector_t*		back;
-    float			opentop;
-    float			openbottom;
-    float			frac;
+	line_t*			line;
+	int				s1;
+	int				s2;
+	sector_t*		front;
+	sector_t*		back;
+	float			opentop;
+	float			openbottom;
+	float			frac;
 #ifndef LINE_SIGHT
-    float			slope;
+	float			slope;
 #endif
 	float			num;
 	float			den;
@@ -184,8 +184,8 @@ static boolean CheckLine(seg_t* seg)
 
 	// allready checked other side?
 	if (line->validcount == validcount)
-	    return true;
-	
+		return true;
+
 	line->validcount = validcount;
 
 	s1 = PlaneSide2(*line->v1, &strace);
@@ -193,19 +193,19 @@ static boolean CheckLine(seg_t* seg)
 
 	// line isn't crossed?
 	if (s1 == s2)
-	    return true;
+		return true;
 
 	s1 = PlaneSide2(sightstart, line);
 	s2 = PlaneSide2(sightend, line);
 
 	// line isn't crossed?
 	if (s1 == s2)
-    	return true;
+		return true;
 
 	// stop because it is not two sided anyway
 	if (!(line->flags & ML_TWOSIDED))
-	    return false;
-	
+		return false;
+
 	// crosses a two sided line
 	if (s1 == 0)
 	{
@@ -221,7 +221,7 @@ static boolean CheckLine(seg_t* seg)
 	// Intercept vector.
 	// Don't need to check if den == 0, because then planes are paralel
 	// (they will never cross) or it's the same plane (also rejected)
-    den = DotProduct(sdelta, line->normal);
+	den = DotProduct(sdelta, line->normal);
 	num = line->dist - DotProduct(sightstart, line->normal);
 	frac = num / den;
 	hit_point = sightstart + frac * sdelta;
@@ -240,30 +240,30 @@ static boolean CheckLine(seg_t* seg)
 
 	// no wall to block sight with?
 	if (frontfloorz == backfloorz && frontceilz == backceilz)
-	    return true;
+		return true;
 
 	// possible occluder
 	// because of ceiling height differences
 	if (frontceilz < backceilz)
-	    opentop = frontceilz;
+		opentop = frontceilz;
 	else
-	    opentop = backceilz;
+		opentop = backceilz;
 
 	// because of ceiling height differences
 	if (frontfloorz > backfloorz)
-    	openbottom = frontfloorz;
+		openbottom = frontfloorz;
 	else
-	    openbottom = backfloorz;
-		
+		openbottom = backfloorz;
+
 	// quick test for totally closed doors
 	if (openbottom >= opentop)
-    	return false;		// stop
+		return false;		// stop
 
 	if (hit_point.z >= openbottom && hit_point.z <= opentop)
 	{
 		return true;
 	}
-    return false;		// stop
+	return false;		// stop
 #else
 	float frontfloorz = front->floor.GetPointZ(hit_point);
 	float frontceilz = front->ceiling.GetPointZ(hit_point);
@@ -272,41 +272,41 @@ static boolean CheckLine(seg_t* seg)
 
 	// no wall to block sight with?
 	if (frontfloorz == backfloorz && frontceilz == backceilz)
-	    return true;
+		return true;
 
 	// possible occluder
 	// because of ceiling height differences
 	if (frontceilz < backceilz)
-	    opentop = frontceilz;
+		opentop = frontceilz;
 	else
-	    opentop = backceilz;
+		opentop = backceilz;
 
 	// because of ceiling height differences
 	if (frontfloorz > backfloorz)
-    	openbottom = frontfloorz;
+		openbottom = frontfloorz;
 	else
-	    openbottom = backfloorz;
-		
+		openbottom = backfloorz;
+
 	// quick test for totally closed doors
 	if (openbottom >= opentop)
-    	return false;		// stop
+		return false;		// stop
 
 	if (frontfloorz != backfloorz)
 	{
-    	slope = (openbottom - sightstart.z) / frac;
-	    if (slope > bottomslope)
+		slope = (openbottom - sightstart.z) / frac;
+		if (slope > bottomslope)
 			bottomslope = slope;
 	}
-		
+
 	if (frontceilz != backceilz)
 	{
-	    slope = (opentop - sightstart.z) / frac;
-    	if (slope < topslope)
+		slope = (opentop - sightstart.z) / frac;
+		if (slope < topslope)
 			topslope = slope;
 	}
-		
+
 	if (topslope <= bottomslope)
-	    return false;		// stop
+		return false;		// stop
 
 	return true;
 #endif
@@ -322,19 +322,19 @@ static boolean CheckLine(seg_t* seg)
 
 static boolean CrossSubsector(int num)
 {
-    subsector_t*	sub;
-    int				count;
-    seg_t*			seg;
+	subsector_t*	sub;
+	int				count;
+	seg_t*			seg;
 	int 			polyCount;
 	seg_t**			polySeg;
 
-#ifdef RANGECHECK
-    if (num >= level.numsubsectors)
+#ifdef PARANOID
+	if (num >= level.numsubsectors)
 		Sys_Error("CrossSubsector: ss %i with numss = %i", num, level.numsubsectors);
 #endif
 
-    sub = &level.subsectors[num];
-    
+	sub = &level.subsectors[num];
+
 	if (sub->poly)
 	{
 		// Check the polyobj in the subsector first
@@ -343,25 +343,25 @@ static boolean CrossSubsector(int num)
 		while (polyCount--)
 		{
 			if (!CheckLine(*polySeg++))
-            {
-            	return false;
-            }
+			{
+				return false;
+			}
 		}
 	}
 
-    // check lines
-    count = sub->numlines;
-    seg = &level.segs[sub->firstline];
+	// check lines
+	count = sub->numlines;
+	seg = &level.segs[sub->firstline];
 
-    for ( ; count ; seg++, count--)
-    {
-    	if (!CheckLine(seg))
-        {
-        	return false;
-        }
-    }
-    // passed the subsector ok
-    return true;		
+	for ( ; count ; seg++, count--)
+	{
+		if (!CheckLine(seg))
+		{
+			return false;
+		}
+	}
+	// passed the subsector ok
+	return true;		
 }
 
 //==========================================================================
@@ -374,37 +374,37 @@ static boolean CrossSubsector(int num)
 
 static boolean CrossBSPNode(int bspnum)
 {
-    node_t*	bsp;
-    int		side;
+	node_t*	bsp;
+	int		side;
 
-    if (bspnum & NF_SUBSECTOR)
-    {
+	if (bspnum & NF_SUBSECTOR)
+	{
 		if (bspnum == -1)
-		    return CrossSubsector(0);
+			return CrossSubsector(0);
 		else
-		    return CrossSubsector(bspnum & (~NF_SUBSECTOR));
-    }
-		
-    bsp = &level.nodes[bspnum];
-    
-    // decide which side the start point is on
-    side = PlaneSide2(sightstart, bsp);
-    if (side == 2)
+			return CrossSubsector(bspnum & (~NF_SUBSECTOR));
+	}
+
+	bsp = &level.nodes[bspnum];
+
+	// decide which side the start point is on
+	side = PlaneSide2(sightstart, bsp);
+	if (side == 2)
 		side = 0;	// an "on" should cross both sides
 
-    // cross the starting side
-    if (!CrossBSPNode(bsp->children[side]))
+	// cross the starting side
+	if (!CrossBSPNode(bsp->children[side]))
 		return false;
-	
-    // the partition plane is crossed here
-    if (side == PlaneSide2(sightend, bsp))
-    {
+
+	// the partition plane is crossed here
+	if (side == PlaneSide2(sightend, bsp))
+	{
 		// the line doesn't touch the other side
 		return true;
-    }
-    
-    // cross the ending side		
-    return CrossBSPNode(bsp->children[side^1]);
+	}
+
+	// cross the ending side		
+	return CrossBSPNode(bsp->children[side^1]);
 }
 
 //==========================================================================
@@ -419,10 +419,10 @@ boolean P_CheckSight(mobj_t* t1, mobj_t* t2)
 {
 	int			s1;
 	int			s2;
-    int			pnum;
-    
-    //	Determine subsector entries in GL_PVS table.
-    //	First check for trivial rejection.
+	int			pnum;
+	
+	//	Determine subsector entries in GL_PVS table.
+	//	First check for trivial rejection.
 	byte *vis = LeafPVS(level, t1->subsector);
 	s2 = t2->subsector - level.subsectors;
 	if (!(vis[s2 >> 3] & (1 << (s2 & 7))))
@@ -431,22 +431,22 @@ boolean P_CheckSight(mobj_t* t1, mobj_t* t2)
 		return false;
 	}
 
-    //	Determine subsector entries in REJECT table.
-    //	We must do this because REJECT can have some special effects like
+	//	Determine subsector entries in REJECT table.
+	//	We must do this because REJECT can have some special effects like
 	// "safe sectors"
-    s1 = t1->subsector->sector - level.sectors;
-    s2 = t2->subsector->sector - level.sectors;
+	s1 = t1->subsector->sector - level.sectors;
+	s2 = t2->subsector->sector - level.sectors;
 	pnum = s1 * level.numsectors + s2;
-    // Check in REJECT table.
-    if (level.rejectmatrix[pnum >> 3] & (1 << (pnum & 7)))
-    {
+	// Check in REJECT table.
+	if (level.rejectmatrix[pnum >> 3] & (1 << (pnum & 7)))
+	{
 		// can't possibly be connected
 		return false;
-    }
+	}
 
-    // An unobstructed LOS is possible.
-    // Now look from eyes of t1 to any part of t2.
-    validcount++;
+	// An unobstructed LOS is possible.
+	// Now look from eyes of t1 to any part of t2.
+	validcount++;
 
 	sightstart = t1->origin;
 	sightstart.z += t1->height * 0.75;
@@ -454,29 +454,32 @@ boolean P_CheckSight(mobj_t* t1, mobj_t* t2)
 	sightend.z += t2->height * 0.5;
 
 #ifndef LINE_SIGHT
-    topslope =    t2->origin.z + t2->height - sightstart.z;
-    bottomslope = t2->origin.z - sightstart.z;
+	topslope =    t2->origin.z + t2->height - sightstart.z;
+	bottomslope = t2->origin.z - sightstart.z;
 #endif
 
 	sdelta = sightend - sightstart;
 	strace.SetPointDir(t1->origin, sdelta);
 
 	linestart = sightstart;
-    // the head node is the last node output
-    if (!CrossBSPNode(level.numnodes - 1))
+	// the head node is the last node output
+	if (!CrossBSPNode(level.numnodes - 1))
 	{
 		return false;
 	}
 	lineend = sightend;
-    return CheckPlanes(t2->subsector->sector);
+	return CheckPlanes(t2->subsector->sector);
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/31 17:28:00  dj_jl
+//	Removed RANGECHECK
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

@@ -37,7 +37,6 @@
 #define MAX_PROG_STACK	10000
 #define STACK_ID		0x45f6cd4b
 
-#ifdef RANGECHECK
 # define CHECK_STACK_OVERFLOW
 # define CHECK_PARM_COUNT
 //# define CHECK_RUNAWAY
@@ -47,7 +46,6 @@
 //# define CHECK_VALID_OPCODE
 # define CHECK_FOR_EMPTY_STACK
 //# define CHECK_VALID_VAR_NUM
-#endif
 
 // TYPES -------------------------------------------------------------------
 
@@ -1595,10 +1593,13 @@ void TProgs::DumpProfile(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/31 17:28:00  dj_jl
+//	Removed RANGECHECK
+//
 //	Revision 1.4  2001/08/21 17:40:24  dj_jl
 //	Real string pointers in progs
 //	In devgame mode look for progs in <gamedir>/progs
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	
