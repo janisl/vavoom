@@ -254,22 +254,33 @@ int S_GetSoundID(char *name)
 //
 //==========================================================================
 
-void S_LoadSound(int sound_id)
+bool S_LoadSound(int sound_id)
 {
 	guard(S_LoadSound);
 	if (!S_sfx[sound_id].snd_ptr)
 	{
 		if (UseSndScript)
 		{
-			M_ReadFile(va("%s%s.lmp", ArchivePath, S_sfx[sound_id].lumpname),
-				(byte **)&S_sfx[sound_id].snd_ptr);
+			char *FName = va("%s%s.lmp", ArchivePath, S_sfx[sound_id].lumpname);
+			if (!Sys_FileExists(FName))
+			{
+				GCon->Logf(NAME_Dev, "Sound file %s not found", FName);
+				return false;
+			}
+			M_ReadFile(FName, (byte **)&S_sfx[sound_id].snd_ptr);
 		}
 		else
 		{
 		  	// get lumpnum if necessary
 			if (S_sfx[sound_id].lumpnum < 0)
 			{
-				S_sfx[sound_id].lumpnum = W_GetNumForName(S_sfx[sound_id].lumpname);
+				S_sfx[sound_id].lumpnum = W_CheckNumForName(S_sfx[sound_id].lumpname);
+				if (S_sfx[sound_id].lumpnum < 0)
+				{
+					GCon->Logf(NAME_Dev, "Sound lump %s not found",
+						S_sfx[sound_id].lumpname);
+					return false;
+				}
 			}
 			S_sfx[sound_id].snd_ptr = W_CacheLumpNum(S_sfx[sound_id].lumpnum,
 				PU_SOUND);
@@ -281,6 +292,7 @@ void S_LoadSound(int sound_id)
 		S_sfx[sound_id].data = rawdata->data;
 	}
 	S_sfx[sound_id].usecount++;
+	return true;
 	unguard;
 }
 
@@ -342,9 +354,12 @@ void S_Init(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/07/20 14:50:24  dj_jl
+//	Missing sound data will not crash game anymore.
+//
 //	Revision 1.7  2002/01/12 18:05:00  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.6  2002/01/11 08:11:05  dj_jl
 //	Changes in sound list
 //	Added guard macros
