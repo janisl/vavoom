@@ -1,2 +1,2 @@
-base basev/doom2
+game basev/doom2
 end

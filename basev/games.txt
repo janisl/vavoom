@@ -1,0 +1,78 @@
+// Default game detection configuration file
+//NOTE Games are detected in backwards order
+
+// Default case when IWAD is already set up
+game basev/doom2
+end
+
+// Shareware Doom
+game basev/doom1
+iwad doom1.wad
+param -doom
+end
+
+// Doom / Ultimate Doom
+game basev/doom1
+iwad doom.wad
+param -doom
+end
+
+// Alternate name for Ultimate Doom
+game basev/doom1
+iwad doomu.wad
+param -doom
+end
+
+// Doom II: Hell On Earth
+game basev/doom2
+iwad doom2.wad
+param -doom2
+end
+
+// Doom II: Hell On Earth, french ???
+game basev/doom2
+iwad doom2f.wad
+param -doom2
+end
+
+// Doom II:TNT Evilution
+game basev/tnt
+iwad tnt.wad
+param -tnt
+end
+
+// Doom II:The Plutonia Experiment
+game basev/plutonia
+iwad plutonia.wad
+param -plutonia
+end
+
+// Shareware Heretic
+game basev/heretic
+iwad heretic1.wad
+param -heretic
+end
+
+// Heretic
+game basev/heretic
+iwad heretic.wad
+param -heretic
+end
+
+// Hexen
+game basev/hexen
+iwad hexen.wad
+param -hexen
+end
+
+// Teaser Strife
+game basev/strife
+iwad strife0.wad
+param -strife
+end
+
+// Strife
+game basev/strife
+iwad strife1.wad
+param -strife
+end
