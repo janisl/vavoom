@@ -25,8 +25,8 @@
 
 //  Since version 1.5 compiler defines PROG_VERSION, so we can check that
 // progs are compiled with the right version of compiler
-#if !defined PROG_VERSION || PROG_VERSION != 12
-#error These are version 12 progs
+#if !defined PROG_VERSION || PROG_VERSION != 13
+#error These are version 13 progs
 #endif
 
 enum
@@ -282,6 +282,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/06/14 15:42:05  dj_jl
+//  Changed version number.
+//
 //  Revision 1.14  2002/03/28 18:17:16  dj_jl
 //  Updated version.
 //
