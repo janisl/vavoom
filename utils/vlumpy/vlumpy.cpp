@@ -574,9 +574,16 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	for (int i = 1; i < argc; i++)
+	try
 	{
-		ParseScript(argv[i]);
+		for (int i = 1; i < argc; i++)
+		{
+			ParseScript(argv[i]);
+		}
+	}
+	catch (WadLibError &E)
+	{
+		Error("%s", E.message);
 	}
 	return 0;
 }
@@ -584,9 +591,12 @@ int main(int argc, char *argv[])
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/03/20 19:12:56  dj_jl
+//	Added catching of wad errors.
+//
 //	Revision 1.5  2002/01/07 12:31:36  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2001/09/24 17:31:02  dj_jl
 //	Beautification
 //	
