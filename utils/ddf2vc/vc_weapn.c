@@ -3,6 +3,9 @@
 #include "ddf_main.h"
 #include "vc.h"
 
+//	Not included in headers.
+extern int num_disabled_mobjinfo;
+
 char *AmmoName[] =
 {
 	"am_noammo",
@@ -28,14 +31,14 @@ void VC_WriteWeapons(void)
 	int best;
 	char fname[256];
 
-	sprintf(fname, "%s/wpninfo.vc", outdir);
+	sprintf(fname, "%s/wpninfo.vc", progsdir);
 	f = fopen(fname, "w");
 	cur_file = f;
 	for (i = num_disabled_weapons; i < numweapons; i++)
 	{
 		fprintf(f, "class Weapon%d;\n", i);
 	}
-	fprintf(f, "\nclassid WeaponClasses[] = {\n");
+	fprintf(f, "\nclassid WeaponClasses[NUMWEAPONS] = {\n");
 	for (i = num_disabled_weapons; i < numweapons; i++)
 	{
 		fprintf(f, "\tWeapon%d,\n", i);
@@ -48,7 +51,7 @@ void VC_WriteWeapons(void)
 	fprintf(f, "};\n");
 	fclose(f);
 
-	sprintf(fname, "%s/weapons.vc", outdir);
+	sprintf(fname, "%s/weapons.vc", progsdir);
 	f = fopen(fname, "w");
 	cur_file = f;
 	for (i = num_disabled_weapons; i < numweapons; i++)
@@ -60,7 +63,7 @@ void VC_WriteWeapons(void)
 		fprintf(f, "//\t%s\n", w->ddf.name);
 		fprintf(f, "//\n");
 		fprintf(f, "//**************************************************************************\n");
-		fprintf(f, "\nclass Weapon%d:DDFWeapon\n{\n\n", i);
+		fprintf(f, "\nclass Weapon%d:Weapon\n{\n\n", i);
 
 		fprintf(f, "__states__\n");
 		fprintf(f, "{\n");
@@ -78,11 +81,13 @@ void VC_WriteWeapons(void)
 			else
 				fprintf(f, ", %d.0 / 35.0, ", (int)s->tics);
 			if (s->nextstate)
-				fprintf(f, "S_%d) { ", s->nextstate);
+				fprintf(f, "S_%d)", s->nextstate);
 			else
-				fprintf(f, "S_NULL) { ");
+				fprintf(f, "S_NULL)");
 			if (s->action)
 				s->action((mobj_t *)s);
+			else
+				fprintf(f, " { ");
 			fprintf(f, "}\n");
 		}
 		fprintf(f, "}\n");
@@ -91,54 +96,26 @@ void VC_WriteWeapons(void)
 		fprintf(f, "defaultproperties\n");
 		fprintf(f, "{\n");
 
-/*
-// -AJA- 2000/01/12: Weapon special flags
-typedef enum
-{
-  // monsters cannot hear this weapon (doesn't wake them up)
-  WPSP_SilentToMonsters = 0x0001
-}
-weapon_flag_e;
-
-// Weapon info: sprite frames, ammunition use.
-typedef struct weaponinfo_s
-{
-  // Weapon's name, etc...
-  ddf_base_t ddf;
-
-  // Attack type used.
-  struct attacktype_s *attack;
-*/
+		PrintAttack(f, w->attack, "Attack");
 		fprintf(f, "\tAmmo = %s;\n", GetAmmoName(w->ammo));
+		if (w->ammopershot)
+			fprintf(f, "\tAmmoPerShot = %d;\n", w->ammopershot);
+		if (w->clip != 1)
+			fprintf(f, "\tClip = %d;\n", w->clip);
+		if (w->autofire)
+			fprintf(f, "\tbAutoFire = true;\n");
+		if (w->kick)
+			fprintf(f, "\tKick = %f;\n", w->kick);
 
-/*
-  // Ammo used per shot.
-  int ammopershot;
-  
-  // Amount of shots in a clip
-  int clip;
-  
-  // If true, this is an automatic weapon.  If false it is semiautomatic.
-  boolean_t autofire;
-  
-  // Amount of kick this weapon gives
-  float_t kick;
-  
-  // Second attack type.
-  struct attacktype_s *sa_attack;
-  
-  // Type of ammo for second attack.
-  ammotype_t sa_ammo;
-  
-  // Ammo used per second attack shot.
-  int sa_ammopershot;
-
-  // Amount of shots in a second attack clip
-  int sa_clip;
-  
-  // Second attack is automatic ?
-  boolean_t sa_autofire;
-*/
+		PrintAttack(f, w->sa_attack, "SAAttack");
+		if (w->sa_ammo != AM_NoAmmo)
+			fprintf(f, "\tSAAmmo = %s;\n", GetAmmoName(w->sa_ammo));
+		if (w->sa_ammopershot)
+			fprintf(f, "\tSAAmmoPerShot = %d;\n", w->sa_ammopershot);
+		if (w->sa_clip != 1)
+			fprintf(f, "\tSAClip = %d;\n", w->sa_clip);
+		if (w->sa_autofire)
+			fprintf(f, "\tbSAAutoFire = true;\n");
 
 		if (w->up_state)
 			fprintf(f, "\tUpState = S_%d;\n", w->up_state);
@@ -148,92 +125,79 @@ typedef struct weaponinfo_s
 			fprintf(f, "\tReadyState = S_%d;\n", w->ready_state);
 		if (w->attack_state)
 			fprintf(f, "\tAttackState = S_%d;\n", w->attack_state);
-/*
-  // State showing the weapon being reloaded
-  int reload_state;
-*/
+		if (w->reload_state)
+			fprintf(f, "\tReloadState = S_%d;\n", w->reload_state);
 		if (w->flash_state)
 			fprintf(f, "\tFlashState = S_%d;\n", w->flash_state);
-/*
-  // State showing the second attack firing
-  int sa_attack_state;
-  
-  // State showing the second attack reloading
-  int sa_reload_state;
-
-  // State showing the second attack muzzle flash
-  int sa_flash_state;
-  
-  // Crosshair states
-  int crosshair;
-  
-  // State showing viewfinder when zoomed.  Can be zero
-  int zoom_state;
-
-  // This weapon gives feedback on hit (chainsaw)
-  boolean_t feedback;
-  
-  // This weapon upgrades a previous one. (Berserk -> Fist)
-  int upgraded_weap;
- 
-  // This affects how it will be selected if out of ammo.  Also
-  // determines the cycling order when on the same key.  Dangerous
-  // weapons are not auto-selected when out of ammo.
-  int priority;
-  boolean_t dangerous;
- 
-  // Attack type for the WEAPON_EJECT code pointer.
-  struct attacktype_s *eject_attack;
-  
-  // Sounds.
-  // Played at the start of every readystate
-  sfx_t *idle;
-  
-  // Played while the trigger is held (chainsaw)
-  sfx_t *engaged;
-  
-  // Played while the trigger is held and it is pointed at a target.
-  sfx_t *hit;
-  
-  // Played when the weapon is selected
-  sfx_t *start;
-  
-  // Misc sounds
-  sfx_t *sound1;
-  sfx_t *sound2;
-  sfx_t *sound3;
-  
-  // This close combat weapon should not push the target away (chainsaw)
-  boolean_t nothrust;
-  
-  // which number key this weapon is bound to, or -1 for none
-  int bind_key;
-  
-  // -AJA- 2000/01/12: weapon special flags
-  weapon_flag_e special_flags;
-
-  // -AJA- 2000/03/18: when > 0, this weapon can zoom
-  angle_t zoom_fov;
-
-  // -AJA- 2000/05/23: weapon loses accuracy when refired.
-  boolean_t refire_inacc;
-
-  // -AJA- 2000/10/20: show current clip in status bar (not total)
-  boolean_t show_clip;
-
-  // controls for weapon bob (up & down) and sway (left & right).
-  // Given as percentages in DDF.
-  percent_t bobbing;
-  percent_t swaying;
-}
-weaponinfo_t;
-*/
+		if (w->sa_attack_state)
+			fprintf(f, "\tSAAttackState = S_%d;\n", w->sa_attack_state);
+		if (w->sa_reload_state)
+			fprintf(f, "\tSAReloadState = S_%d;\n", w->sa_reload_state);
+		if (w->sa_flash_state)
+			fprintf(f, "\tSAFlashState = S_%d;\n", w->sa_flash_state);
+		if (w->crosshair)
+			fprintf(f, "\tCrosshair = %d;\n", w->crosshair);
+		if (w->zoom_state)
+			fprintf(f, "\tZoomState = S_%d;\n", w->zoom_state);
+		if (w->feedback)
+			fprintf(f, "\tbFeedBack = true;\n");
+		if (w->upgraded_weap != -1)
+			fprintf(f, "\tUpgradedWeap = %d;\n", w->upgraded_weap);
+		if (w->priority)
+			fprintf(f, "\tPriority = %d;\n", w->priority);
+		if (w->dangerous)
+			fprintf(f, "\tbDangerous = true;\n");
+		PrintAttack(f, w->eject_attack, "EjectAttack");
+		if (w->idle)
+			fprintf(f, "\tIdleSound = \'%s\';\n", SFX(w->idle));
+		if (w->engaged)
+			fprintf(f, "\tEngagedSound = \'%s\';\n", SFX(w->engaged));
+		if (w->hit)
+			fprintf(f, "\tHitSound = \'%s\';\n", SFX(w->hit));
+		if (w->start)
+			fprintf(f, "\tStartSound = \'%s\';\n", SFX(w->start));
+		if (w->sound1)
+			fprintf(f, "\tSound1 = \'%s\';\n", SFX(w->sound1));
+		if (w->sound2)
+			fprintf(f, "\tSound2 = \'%s\';\n", SFX(w->sound2));
+		if (w->sound3)
+			fprintf(f, "\tSound3 = \'%s\';\n", SFX(w->sound3));
+		if (w->nothrust)
+			fprintf(f, "\tbNoThrust = true;\n");
+		if (w->bind_key != -1)
+			fprintf(f, "\tBindKey = %d;\n", w->bind_key);
+		if (w->special_flags & WPSP_SilentToMonsters)
+			fprintf(f, "\tbSilentToMonsters = true;\n");
+		if (w->zoom_fov)
+			fprintf(f, "\tZoomFov = %1.1f;\n", (double)w->zoom_fov * 90.0 / (double)ANG90);
+		if (w->refire_inacc)
+			fprintf(f, "\tbRefireInacc = true;\n");
+		if (w->show_clip)
+			fprintf(f, "\tbShowClip = true;\n");
+		if (w->bobbing != 1.0f)
+			fprintf(f, "\tBobbing = %1.2f;\n", w->bobbing);
+		if (w->swaying != 1.0f)
+			fprintf(f, "\tSwaying = %1.2f;\n", w->swaying);
 		fprintf(f, "}\n");
 		fprintf(f, "\n}\n\n");
 	}
 
+	fprintf(f, "//==========================================================================\n");
+    fprintf(f, "//\n");
+    fprintf(f, "//\tSetInitialWeapons\n");
+    fprintf(f, "//\n");
+    fprintf(f, "//==========================================================================\n");
+    fprintf(f, "\n");
 	fprintf(f, "void SetInitialWeapons(player_t *player)\n");
 	fprintf(f, "{\n");
+	for (i = num_disabled_mobjinfo; i < num_mobjinfo; i++)
+	{
+		if (mobjinfo[i]->playernum == 1)
+		{
+			WriteInitialBenefits(f, mobjinfo[i]->initial_benefits);
+			break;
+		}
+	}
 	best = 0;
 	for (i = num_disabled_weapons; i < numweapons; i++)
 	{

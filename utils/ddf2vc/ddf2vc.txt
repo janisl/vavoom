@@ -1,0 +1,110 @@
+                           **********************
+                             DDF2VC version 1.0
+                           **********************
+
+============================================================================
+    Introduction
+============================================================================
+
+  DDF2VC is a DDF to VavoomC converted.
+
+============================================================================
+    Using DDF2VC
+============================================================================
+
+Follow the following steps:
+
+1. Create a game directory (see vavmref.txt for all steps required).
+2. Copy edge.wad here and rename it to wad0.wad.
+3. Create directory named "baseddf" in your game directory and copy all
+original EDGE DDF files here.
+4. Create directory named "ddf" in your game directory and copy your custom
+DDF files here.
+5. Create directory named "progs" in your game directory and copy contents
+of directory progs/ddf from Vavoom sources or progs sources into this
+directory.
+6. Create directory named "scripts" in your game directory.
+7. Run ddf2vc from your game directory. This should create some .vc files in
+directory "progs" and some .txt files in directory "scripts".
+8. Compile progs (use compile.bat or run make).
+9. Run Vavoom using -devgame option to specify your game directory.
+
+============================================================================
+    Option Descriptions
+============================================================================
+
+The following options are recognised:
+
+    -game      changes game directory, by default it's current directory.
+
+    -baseddf   specifies directory with original EDGE DDF files, by default
+               it's <gamedir>/baseddf.
+
+    -ddf       specifies directory with custom DDF files, by default it's
+               <gamedir>/ddf.
+
+    -progs     specifies directory where VavoomC files will be placed, by
+               default it's <gamedir>/progs.
+
+    -scripts   specifies directory where .txt script files will be placed,
+               by default it's <gamedir>/scripts.
+
+============================================================================
+    Status
+============================================================================
+
+  The current version of DDF2VC is 1.0. Currently it supports export of
+things and weapons.
+
+============================================================================
+    Compiling DDF2VC
+============================================================================
+
+  DDF2VC has been written and testen with DJGPP 2.03. Ports to other
+platforms currently are not supported.
+  To compile, open RHIDE project file and build it.
+
+============================================================================
+    Copyright
+============================================================================
+
+  DDF2VC is Copyright (C) 2002 JÆnis Legzdi·ý. DDF2VC uses a lots of code
+from EDGE 1.26, Copyright (c) 1999-2001 The EDGE Team.
+  All trademarks are the propriety of their owners.
+
+============================================================================
+    License
+============================================================================
+
+  DDF2VC is under the GNU General Public License (GPL). See the file
+`COPYING' for the full text.
+
+============================================================================
+    Contact
+============================================================================
+
+  Questions, bug reports, suggestsions, etc... about DDF2VC should be posted
+on Vavoom forums:
+    http://forums.vavoom-engine.com/
+or sent to:
+    vavoom@vavoom-engine.com
+
+============================================================================
+    Links
+============================================================================
+
+  The Vavoom homepage can be found here:
+    http://www.vavoom-engine.com/
+
+  The EDGE homepage can be found here:
+    http://edge.sourceforge.net/
+
+============================================================================
+    Acknowledgements
+============================================================================
+
+  EDGE team for EDGE.
+
+  Lionel Hutz and Roy Patterson for requesting such an utility.
+
+  ... and everyone else who deserves it !

@@ -34,6 +34,7 @@
 #include "i_defs.h"
 
 #include "m_misc.h"
+#include "m_argv.h"
 #include "z_zone.h"
 #include "vc.h"
 
@@ -43,8 +44,10 @@ const char *gammamsg[5];
 
 const mapstuff_t *currentmap;
 
-char *ddfdir = "ddf";
-char *outdir = "../../progs/ddf";
+char *gamedir;
+char *ddfdir;
+char *progsdir;
+char *scriptsdir;
 
 default_t defaults[] =
 {
@@ -98,11 +101,6 @@ void I_Warning(const char *warning,...)
 	va_end(args);
 }
 
-const char *M_GetParm(const char *check)
-{
-	return NULL;
-}
-
 int W_CheckNumForName2(const char *name)
 {
 	return -1;
@@ -146,16 +144,140 @@ int strncasecmpwild(const char *s1, const char *s2, int n)
   return s1[i] - s2[i];
 }
 
-int main(int argc, char *argv[])
+boolean_t I_Access(const char *fname)
 {
+	FILE *f = fopen(fname, "rb");
+	if (f)
+	{
+		fclose(f);
+		return true;
+	}
+	return false;
+}
+
+//
+// Prepares the end of the path name, so it will be possible to concatenate
+// a DIRSEPARATOR and a file name to it.
+// Allocates and returns the new string.
+//
+char *I_PreparePath(const char *path)
+{
+  int len = strlen(path);
+  char *s;
+
+  if (len == 0)
+  {
+    // empty string means ".\"
+    return Z_StrDup(".");
+  }
+
+  if (path[0] >= 'A' && path[0] <= 'z' && path[1] == ':' && len == 2)
+  {
+    // special case: "c:" turns into "c:."
+    s = Z_Malloc(4);
+    s[0] = path[0];
+    s[1] = path[1];
+    s[2] = '.';
+    s[3] = 0;
+    return s;
+  }
+
+  if (path[len - 1] == '\\' || path[len - 1] == '/')
+  {
+    // cut off the last separator
+    s = Z_Malloc(len);
+    memcpy(s, path, len - 1);
+    s[len - 1] = 0;
+
+    return s;
+  }
+
+  return Z_StrDup(path);
+}
+
+int main(int argc, const char *argv[])
+{
+	M_InitArguments(argc, argv);
 	// Start memory allocation system at the very start
 	Z_Init();
 
+	gamedir = ".";
+	if (M_GetParm("-game"))
+	{
+		gamedir = I_PreparePath(M_GetParm("-game"));
+	}
+	if (M_GetParm("-progs"))
+	{
+		progsdir = I_PreparePath(M_GetParm("-progs"));
+	}
+	else
+	{
+		char tmp[256];
+
+		sprintf(tmp, "%s/progs", gamedir);
+		progsdir = Z_StrDup(tmp);
+	}
+	if (M_GetParm("-scripts"))
+	{
+		scriptsdir = I_PreparePath(M_GetParm("-scripts"));
+	}
+	else
+	{
+		char tmp[256];
+
+		sprintf(tmp, "%s/scripts", gamedir);
+		scriptsdir = Z_StrDup(tmp);
+	}
+
+	//
+	// Base DDF-s
+	//
+	if (M_GetParm("-baseddf"))
+	{
+		ddfdir = I_PreparePath(M_GetParm("-baseddf"));
+	}
+	else
+	{
+		char tmp[256];
+
+		sprintf(tmp, "%s/baseddf", gamedir);
+		ddfdir = Z_StrDup(tmp);
+	}
 	DDF_MainInit();
+
+	//
+	//	Additional ddf-s
+	//
+	if (M_GetParm("-ddf"))
+	{
+		ddfdir = I_PreparePath(M_GetParm("-ddf"));
+	}
+	else
+	{
+		char tmp[256];
+
+		sprintf(tmp, "%s/ddf", gamedir);
+		ddfdir = Z_StrDup(tmp);
+	}
+	DDF_ReadLangs(NULL, 0);
+	DDF_ReadSFX(NULL, 0);
+	DDF_ReadColourMaps(NULL, 0);
+	DDF_ReadAtks(NULL, 0);
+	DDF_ReadWeapons(NULL, 0);
+	DDF_ReadThings(NULL, 0);
+	DDF_ReadLines(NULL, 0);
+	DDF_ReadSectors(NULL, 0);
+	DDF_ReadSW(NULL, 0);
+	DDF_ReadAnims(NULL, 0);
+	DDF_ReadGames(NULL, 0);
+	DDF_ReadLevels(NULL, 0);
+	DDF_ReadMusicPlaylist(NULL, 0);
+
 	DDF_MainCleanUp();
 
 	VC_WriteMobjs();
 	VC_WriteWeapons();
+	WriteSoundScript();
 
 	return 0;
 }

@@ -18,10 +18,112 @@ static const char *dlight_types[] =
 	"DLITE_Quadratic"
 };
 
-static char *GetClassName(const mobjinfo_t *m)
+static damage_t default_damage =
+{
+	0,      // nominal
+	-1,     // linear_max
+	-1,     // error
+	0,      // delay time
+	NULL_LABEL, NULL_LABEL, NULL_LABEL,  // override labels
+	false   // no_armour
+};
+static damage_t default_choke_damage =
+{
+	6,      // nominal
+	14,     // linear_max
+	-1,     // error
+	2 * 35,      // delay time
+	NULL_LABEL, NULL_LABEL, NULL_LABEL,  // override labels
+	true   // no_armour
+};
+static damage_t default_attack_damage =
+{
+	0,      // nominal
+	-1,     // linear_max
+	-1,     // error
+	0,      // delay time
+	NULL_LABEL, NULL_LABEL, NULL_LABEL,  // override labels
+	false   // no_armour
+};
+
+static const char *GetClassName(const mobjinfo_t *m)
 {
 	static char name[256];
 	int i;
+
+	// Player
+	if (m->playernum == 1)
+	{
+		return "DoomPlayer";
+	}
+
+	// Misc stuff
+	if (!stricmp(m->ddf.name, "PUFF"))
+	{
+		return "Puff";
+	}
+	if (!stricmp(m->ddf.name, "BLOOD"))
+	{
+		return "Blood";
+	}
+	if (!stricmp(m->ddf.name, "TELEPORT FLASH"))
+	{
+		return "TeleportFog";
+	}
+	if (!stricmp(m->ddf.name, "RESPAWN FLASH"))
+	{
+		return "ItemRespawnFog";
+	}
+
+	// Boss brain stuff
+	if (!stricmp(m->ddf.name, "BRAIN DEATH MISSILE"))
+	{
+		return "BrainDeathMissile";
+	}
+	if (!stricmp(m->ddf.name, "IMP"))
+	{
+		return "Imp";
+	}
+	if (!stricmp(m->ddf.name, "DEMON"))
+	{
+		return "Demon";
+	}
+	if (!stricmp(m->ddf.name, "SPECTRE"))
+	{
+		return "Shadows";
+	}
+	if (!stricmp(m->ddf.name, "PAIN ELEMENTAL"))
+	{
+		return "PainElemental";
+	}
+	if (!stricmp(m->ddf.name, "CACODEMON"))
+	{
+		return "Cacodemon";
+	}
+	if (!stricmp(m->ddf.name, "ARCHVILE"))
+	{
+		return "ArchVile";
+	}
+	if (!stricmp(m->ddf.name, "REVENANT"))
+	{
+		return "Revenant";
+	}
+	if (!stricmp(m->ddf.name, "ARACHNOTRON"))
+	{
+		return "Arachnotron";
+	}
+	if (!stricmp(m->ddf.name, "MANCUBUS"))
+	{
+		return "Mancubus";
+	}
+	if (!stricmp(m->ddf.name, "HELL KNIGHT"))
+	{
+		return "HellKnight";
+	}
+	if (!stricmp(m->ddf.name, "BARON OF HELL"))
+	{
+		return "BaronOfHell";
+	}
 
 	for (i = num_disabled_mobjinfo; i < num_mobjinfo; i++)
 	{
@@ -37,7 +139,7 @@ const char *SFX(sfx_t *s)
 	return S_sfx[s->sounds[0]]->ddf.name;
 }
 
-void PrintDamage(FILE *f, const char *name, damage_t *d, damage_t *def)
+void PrintDamage(FILE *f, const char *name, const damage_t *d, const damage_t *def)
 {
 	if (d->nominal != def->nominal)
 		fprintf(f, "\t%s = %d;\n", name, (int)d->nominal);
@@ -63,25 +165,211 @@ void PrintDamage(FILE *f, const char *name, damage_t *d, damage_t *def)
 		fprintf(f, "\t%sNoArmour = true;\n", name);
 }
 
-static damage_t default_damage =
+void PrintAttack(FILE *f, const attacktype_t *a, const char *Name)
 {
-	0,      // nominal
-	-1,     // linear_max
-	-1,     // error
-	0,      // delay time
-	NULL_LABEL, NULL_LABEL, NULL_LABEL,  // override labels
-	false   // no_armour
+	static const char *AttackTypes[] =
+	{
+		"ATK_Projectile",
+		"ATK_Spawner",
+		"ATK_TripleSpawner",
+		"ATK_Spreader",
+		"ATK_RandomSpread",
+		"ATK_Shot",
+		"ATK_Tracker",
+		"ATK_CloseCombat",
+		"ATK_ShootToSpot",
+		"ATK_SkullFly",
+		"ATK_SmartPpojectile",
+		"ATK_Spray",
+	};
+	char tmp[128];
+
+	if (!a)
+	{
+		return;
+	}
+	fprintf(f, "\t// %s\n", a->ddf.name);
+	fprintf(f, "\t%s.AttackStyle = %s;\n", Name, AttackTypes[a->attackstyle]);
+	if (a->flags & AF_TraceSmoke)
+		fprintf(f, "\t%s.bTraceSmoke = true;\n", Name);
+	if (a->flags & AF_KillFailedSpawn)
+		fprintf(f, "\t%s.bKillFailedSpawn = true;\n", Name);
+	if (a->flags & AF_PrestepSpawn)
+		fprintf(f, "\t%s.bPrestepSpawn = true;\n", Name);
+	if (a->flags & AF_SpawnTelefrags)
+		fprintf(f, "\t%s.bSpawnTelefrags = true;\n", Name);
+	if (a->flags & AF_NeedSight)
+		fprintf(f, "\t%s.bNeedSight = true;\n", Name);
+	if (a->flags & AF_FaceTarget)
+		fprintf(f, "\t%s.bFaceTarget = true;\n", Name);
+	if (a->flags & AF_Player)
+		fprintf(f, "\t%s.bPlayer = true;\n", Name);
+	if (a->flags & AF_ForceAim)
+		fprintf(f, "\t%s.bForceAim = true;\n", Name);
+	if (a->flags & AF_AngledSpawn)
+		fprintf(f, "\t%s.bAngledSpawn = true;\n", Name);
+	if (a->flags & AF_NoTriggerLines)
+		fprintf(f, "\t%s.bNoTriggerLines = true;\n", Name);
+	if (a->initsound)
+		fprintf(f, "\t%s.InitSound = \'%s\';\n", Name, SFX(a->initsound));
+	if (a->sound)
+		fprintf(f, "\t%s.Sound = \'%s\';\n", Name, SFX(a->sound));
+	if (a->accuracy_slope)
+		fprintf(f, "\t%s.AccuracySlope = %1.1f;\n", Name, a->accuracy_slope);
+	if (a->accuracy_angle)
+		fprintf(f, "\t%s.AccuracyAngle = %1.1f;\n", Name, (double)a->accuracy_angle * 90.0 / (double)ANG90);
+	if (a->xoffset)
+		fprintf(f, "\t%s.XOffset = %1.1f;\n", Name, a->xoffset);
+	if (a->yoffset)
+		fprintf(f, "\t%s.YOffset = %1.1f;\n", Name, a->yoffset);
+	if (a->angle_offset)
+		fprintf(f, "\t%s.AngleOffset = %1.1f;\n", Name, (double)a->angle_offset * 90.0 / (double)ANG90);
+	if (a->slope_offset)
+		fprintf(f, "\t%s.SlopeOffset = %1.1f;\n", Name, a->slope_offset);
+	if (a->assault_speed)
+		fprintf(f, "\t%s.AssaultSpeed = %1.1f;\n", Name, a->assault_speed);
+	if (a->height)
+		fprintf(f, "\t%s.Height = %1.1f;\n", Name, a->height);
+	if (a->range)
+		fprintf(f, "\t%s.Range = %1.1f;\n", Name, a->range);
+	if (a->count)
+		fprintf(f, "\t%s.Count = %d;\n", Name, a->count);
+	if (a->tooclose)
+		fprintf(f, "\t%s.TooClose = %d;\n", Name, a->tooclose);
+	sprintf(tmp, "%s.Damage", Name);
+	PrintDamage(f, tmp, &a->damage, &default_attack_damage);
+	if (a->attack_class)
+		fprintf(f, "\t%s.AttackClass = 0x%08x;\n", Name, a->attack_class);
+	if (a->objinitstate)
+		fprintf(f, "\t%s.ObjInitState = S_%d;\t// %s\n", Name, a->objinitstate, a->objinitstate_ref);
+	if (a->notracechance)
+		fprintf(f, "\t%s.NoTraceChance = %1.2f;\n", Name, a->notracechance);
+	if (a->keepfirechance)
+		fprintf(f, "\t%s.KeepFireChance = %1.2f;\n", Name, a->keepfirechance);
+	if (a->atk_mobj)
+		fprintf(f, "\t%s.AtkMobj = %s;\n", Name, GetClassName(a->atk_mobj));
+	if (a->spawnedobj)
+		fprintf(f, "\t%s.SpawnedObj = %s;\t// %s\n", Name, GetClassName(a->spawnedobj), a->spawnedobj_ref);
+	if (a->puff)
+		fprintf(f, "\t%s.Puff = %s;\t// %s\n", Name, GetClassName(a->puff), a->puff_ref);
+}
+
+const char *GetKeyName(int mask)
+{
+	switch (mask)
+	{
+	case 0x0001: return "it_bluecard";
+	case 0x0002: return "it_yellowcard";
+	case 0x0004: return "it_redcard";
+/*
+  KF_GreenCard   = (1 << 3),
+*/
+	case 0x0010: return "it_blueskull";
+	case 0x0020: return "it_yellowskull";
+	case 0x0040: return "it_redskull";
+/*
+  KF_GreenSkull  = (1 << 7),
+
+  // -AJA- 2001/06/30: ten new keys (these + Green ones)
+  KF_GoldKey     = (1 << 8),
+  KF_SilverKey   = (1 << 9),
+  KF_BrassKey    = (1 << 10),
+  KF_CopperKey   = (1 << 11),
+  KF_SteelKey    = (1 << 12),
+  KF_WoodenKey   = (1 << 13),
+  KF_FireKey     = (1 << 14),
+  KF_WaterKey    = (1 << 15),
+*/
+	}
+	return "";
+}
+const char *PowerNames[] = {
+	"pw_invulnerability",
+	"pw_strength",
+	"pw_invisibility",
+	"pw_ironfeet",
+	"",
+	"pw_infrared",
+
+	"0",//PW_Jetpack
+	"0",//PW_NightVision
+	"0",//PW_Scuba
 };
 
-static damage_t default_choke_damage =
+static void WritePickupBenefits(FILE *f, benefit_t *list)
 {
-	6,      // nominal
-	14,     // linear_max
-	-1,     // error
-	2 * 35,      // delay time
-	NULL_LABEL, NULL_LABEL, NULL_LABEL,  // override labels
-	true   // no_armour
-};
+	benefit_t *b;
+
+	for (b = list; b; b = b->next)
+	{
+		switch (b->type)
+		{
+		case BENEFIT_None:
+			break;
+		case BENEFIT_Ammo:
+			fprintf(f, "\tif (Toucher.GiveAmmo(%s, %d))\n", GetAmmoName(b->subtype), (int)b->amount);
+			fprintf(f, "\t\tret = true;\n");
+			break;
+		case BENEFIT_AmmoLimit:
+			fprintf(f, "\tif (Toucher.Player->MaxAmmo[%s] < %d)\n", GetAmmoName(b->subtype), (int)b->amount);
+			fprintf(f, "\t{\n");
+			fprintf(f, "\t\tToucher.Player->MaxAmmo[%s] = %d;\n", GetAmmoName(b->subtype), (int)b->amount);
+			fprintf(f, "\t\tret = true;\n");
+			fprintf(f, "\t}\n");
+			break;
+		case BENEFIT_Weapon:
+			fprintf(f, "\tif (Toucher.GiveWeapon(%d, bDropped))\n", b->subtype - num_disabled_weapons);
+			fprintf(f, "\t\tret = true;\n");
+			break;
+		case BENEFIT_Key:
+			fprintf(f, "\tif (Toucher.GiveCard(%s))\n", GetKeyName(b->subtype));
+			fprintf(f, "\t\tret = true;\n");
+			break;
+		case BENEFIT_Health:
+			fprintf(f, "\tif (Toucher.GiveBody(%d, %d))\n", (int)b->amount, (int)b->limit);
+			fprintf(f, "\t\tret = true;\n");
+			break;
+		case BENEFIT_Armour:
+			fprintf(f, "\tif (Toucher.GiveArmor2(%d, %d, %d))\n", b->subtype + 1, (int)b->amount, (int)b->limit);
+			fprintf(f, "\t\tret = true;\n");
+			break;
+		case BENEFIT_Powerup:
+			if (b->subtype == PW_AllMap)
+				fprintf(f, "\tif (Toucher.GiveItem(IT_ALL_MAP))\n");
+			else
+				fprintf(f, "\tif (Toucher.GivePower2(%s, %1.1f, %1.1f))\n", PowerNames[b->subtype], b->amount, b->limit);
+			fprintf(f, "\t\tret = true;\n");
+			break;
+		}
+	}
+}
+void WriteInitialBenefits(FILE *f, benefit_t *list)
+{
+	benefit_t *b;
+
+	for (b = list; b; b = b->next)
+	{
+		switch (b->type)
+		{
+		case BENEFIT_None:
+			break;
+		case BENEFIT_Ammo:
+			fprintf(f, "\tplayer->Ammo[%s] = %d;\n", GetAmmoName(b->subtype), (int)b->amount);
+			break;
+		case BENEFIT_AmmoLimit:
+			fprintf(f, "\tplayer->MaxAmmo[%s] = %d;\n", GetAmmoName(b->subtype), (int)b->amount);
+			break;
+		case BENEFIT_Weapon:
+			fprintf(f, "\tplayer->WeaponOwned[%d] = true;\n", b->subtype);
+			break;
+		case BENEFIT_Key:
+			fprintf(f, "\tplayer->Keys |= 1 << %s\n", GetKeyName(b->subtype));
+			break;
+		default:
+			fprintf(stderr, "Unsupported initial benefit\n");
+		}
+	}
+}
 
 void VC_WriteMobjs(void)
 {
@@ -90,7 +378,7 @@ void VC_WriteMobjs(void)
 	FILE *f;
 	char fname[256];
 
-	sprintf(fname, "%s/things.vc", outdir);
+	sprintf(fname, "%s/things.vc", progsdir);
 	f = fopen(fname, "w");
 	cur_file = f;
 	fprintf(f, "// Forward declarations.\n");
@@ -108,10 +396,26 @@ void VC_WriteMobjs(void)
 		fprintf(f, "// %s\n", m->ddf.name);
 		fprintf(f, "//\n");
 		fprintf(f, "//**************************************************************************\n");
-		fprintf(f, "\nclass %s:DDFActor\n", GetClassName(m));
+		if (m->playernum == 1)
+			fprintf(f, "\nclass %s:PlayerPawn\n", GetClassName(m));
+		else
+			fprintf(f, "\nclass %s:Actor\n", GetClassName(m));
 		if (m->ddf.number)
 			fprintf(f, "\t__mobjinfo__(%d)\n", m->ddf.number);
 		fprintf(f, "{\n\n");
+
+		if (m->lose_benefits || m->pickup_benefits)
+		{
+			fprintf(f, "boolean HandlePickup(Actor Toucher)\n");
+			fprintf(f, "{\n");
+			fprintf(f, "\tboolean ret = false;\n");
+			fprintf(f, "\n");
+			//WritePickupBenefits(f, m->lose_benefits);
+			WritePickupBenefits(f, m->pickup_benefits);
+			fprintf(f, "\treturn ret;\n");
+			fprintf(f, "}\n");
+			fprintf(f, "\n");
+		}
 
 		fprintf(f, "__states__\n");
 		fprintf(f, "{\n");
@@ -129,11 +433,13 @@ void VC_WriteMobjs(void)
 			else
 				fprintf(f, ", %d.0 / 35.0, ", (int)s->tics);
 			if (s->nextstate)
-				fprintf(f, "S_%d) { ", s->nextstate);
+				fprintf(f, "S_%d)", s->nextstate);
 			else
-				fprintf(f, "S_NULL) { ");
+				fprintf(f, "S_NULL)");
 			if (s->action)
 				s->action((mobj_t *)s);
+			else
+				fprintf(f, " { ");
 			fprintf(f, "}\n");
 		}
 		fprintf(f, "}\n");
@@ -178,7 +484,10 @@ void VC_WriteMobjs(void)
 		if (m->painchance)
 			fprintf(f, "\tPainChance = %d;\n", (int)(m->painchance * 255));
 		if (m->spawnhealth != 1000)
+		{
 			fprintf(f, "\tHealth = %d;\n", (int)m->spawnhealth);
+			fprintf(f, "\tGibsHealth = -%d;\n", (int)m->spawnhealth);
+		}
 		if (m->speed)
 		{
 			if (m->extendedflags & EF_MONSTER)
@@ -320,17 +629,8 @@ void VC_WriteMobjs(void)
 			fprintf(f, "\tbGibbed = true;\n");
 
 		PrintDamage(f, "ExplodeDamage", &m->damage, &default_damage);
-/*// linked list of losing benefits, or NULL
-  benefit_t *lose_benefits;
-  
-  // linked list of pickup benefits, or NULL
-  benefit_t *pickup_benefits;*/
-
 		if (m->pickup_message)
 			fprintf(f, "\tPickupMessage = \"%s\";\n", DDF_LanguageLookup(m->pickup_message));
-
-/*  // linked list of initial benefits for players, or NULL if none
-  benefit_t *initial_benefits;*/
 
 		if (m->castorder)
 			fprintf(f, "\tCastOrder = %d;\n", m->castorder);
@@ -414,11 +714,10 @@ void VC_WriteMobjs(void)
 
 		if (m->immunity)
 			fprintf(f, "\tImmunity = 0x%08x;\n", m->immunity);
-/*
-  const struct attacktype_s *closecombat;
-  const struct attacktype_s *rangeattack;
-  const struct attacktype_s *spareattack;
-*/
+
+		PrintAttack(f, m->closecombat, "CloseCombat");
+		PrintAttack(f, m->rangeattack, "RangeAttack");
+		PrintAttack(f, m->spareattack, "SpareAttack");
 
 		if (m->halo.height != -1)
 			fprintf(f, "\tHaloHeight = %1.1f;\n", m->halo.height);
