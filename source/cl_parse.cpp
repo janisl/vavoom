@@ -254,10 +254,11 @@ static void CalcSecMinMaxs(sector_t *sector)
 {
 	float	minz;
 	float	maxz;
+	int		i;
 
 	minz = 99999.0;
 	maxz = -99999.0;
-	for (int i = 0; i < sector->linecount; i++)
+	for (i = 0; i < sector->linecount; i++)
 	{
 		float z;
 		z = sector->floor.GetPointZ(*sector->lines[i]->v1);
@@ -271,7 +272,7 @@ static void CalcSecMinMaxs(sector_t *sector)
 
 	minz = 99999.0;
 	maxz = -99999.0;
-	for (int i = 0; i < sector->linecount; i++)
+	for (i = 0; i < sector->linecount; i++)
 	{
 		float z;
 		z = sector->ceiling.GetPointZ(*sector->lines[i]->v1);
@@ -1034,9 +1035,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2001/12/01 17:51:46  dj_jl
+//	Little changes to compile with MSVC
+//
 //	Revision 1.14  2001/11/09 14:28:23  dj_jl
 //	Fixed parsing of sound starting
-//
+//	
 //	Revision 1.13  2001/10/27 07:51:27  dj_jl
 //	Beautification
 //	

@@ -206,7 +206,7 @@ static surface_t *SubdivideFace(surface_t *f, const TVec &axis, const TVec *next
 	float mins = 99999.0;
 	float maxs = -99999.0;
 
-	for (int i = 0; i < f->count; i++)
+	for (i = 0; i < f->count; i++)
 	{
 		dot = DotProduct(f->verts[i], axis);
 		if (dot < mins)
@@ -499,7 +499,7 @@ static surface_t *SubdivideSeg(surface_t *surf, const TVec &axis, const TVec *ne
 	float mins = 99999.0;
 	float maxs = -99999.0;
 
-	for (int i = 0; i < surf->count; i++)
+	for (i = 0; i < surf->count; i++)
 	{
 		dot = DotProduct(surf->verts[i], axis);
 		if (dot < mins)
@@ -1746,9 +1746,12 @@ void R_UpdateWorld(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/12/01 17:51:46  dj_jl
+//	Little changes to compile with MSVC
+//
 //	Revision 1.5  2001/10/08 17:34:57  dj_jl
 //	A lots of small changes and cleanups
-//
+//	
 //	Revision 1.4  2001/08/30 17:36:47  dj_jl
 //	Faster compares
 //	
