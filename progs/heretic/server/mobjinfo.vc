@@ -37,15 +37,14 @@
 
 class MT_MISC0:Actor
 {
-	MT_MISC0(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL;
 		flags2 = MF2_FLOATBOB;
 		spawnstate = S_ITEM_PTN1_1;
@@ -60,15 +59,14 @@ class MT_MISC0:Actor
 
 class MT_ITEMSHIELD1:Actor
 {
-	MT_ITEMSHIELD1(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL;
 		flags2 = MF2_FLOATBOB;
 		spawnstate = S_ITEM_SHLD1;
@@ -83,15 +81,14 @@ class MT_ITEMSHIELD1:Actor
 
 class MT_ITEMSHIELD2:Actor
 {
-	MT_ITEMSHIELD2(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL;
 		flags2 = MF2_FLOATBOB;
 		spawnstate = S_ITEM_SHD2_1;
@@ -106,15 +103,14 @@ class MT_ITEMSHIELD2:Actor
 
 class MT_MISC1:Actor
 {
-	MT_MISC1(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL|MF_COUNTITEM;
 		flags2 = MF2_FLOATBOB;
 		spawnstate = S_ITEM_BAGH1;
@@ -129,15 +125,14 @@ class MT_MISC1:Actor
 
 class MT_MISC2:Actor
 {
-	MT_MISC2(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL|MF_COUNTITEM;
 		flags2 = MF2_FLOATBOB;
 		spawnstate = S_ITEM_SPMP1;
@@ -152,15 +147,14 @@ class MT_MISC2:Actor
 
 class MT_ARTIINVISIBILITY:Actor
 {
-	MT_ARTIINVISIBILITY(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		translucency = 33;
 		flags = MF_SPECIAL|MF_COUNTITEM;
 		flags2 = MF2_FLOATBOB;
@@ -176,15 +170,14 @@ class MT_ARTIINVISIBILITY:Actor
 
 class MT_MISC3:Actor
 {
-	MT_MISC3(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL|MF_COUNTITEM;
 		flags2 = MF2_FLOATBOB;
 		spawnstate = S_ARTI_PTN2_1;
@@ -199,15 +192,14 @@ class MT_MISC3:Actor
 
 class MT_ARTIFLY:Actor
 {
-	MT_ARTIFLY(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL|MF_COUNTITEM;
 		flags2 = MF2_FLOATBOB;
 		spawnstate = S_ARTI_SOAR1;
@@ -222,15 +214,14 @@ class MT_ARTIFLY:Actor
 
 class MT_ARTIINVULNERABILITY:Actor
 {
-	MT_ARTIINVULNERABILITY(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL|MF_COUNTITEM;
 		flags2 = MF2_FLOATBOB;
 		spawnstate = S_ARTI_INVU1;
@@ -245,15 +236,14 @@ class MT_ARTIINVULNERABILITY:Actor
 
 class MT_ARTITOMEOFPOWER:Actor
 {
-	MT_ARTITOMEOFPOWER(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL|MF_COUNTITEM;
 		flags2 = MF2_FLOATBOB;
 		spawnstate = S_ARTI_PWBK1;
@@ -268,15 +258,14 @@ class MT_ARTITOMEOFPOWER:Actor
 
 class MT_ARTIEGG:Actor
 {
-	MT_ARTIEGG(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL|MF_COUNTITEM;
 		flags2 = MF2_FLOATBOB;
 		spawnstate = S_ARTI_EGGC1;
@@ -291,7 +280,7 @@ class MT_ARTIEGG:Actor
 
 class MT_EGGFX:Missile
 {
-	MT_EGGFX(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -299,8 +288,7 @@ class MT_EGGFX:Missile
 		height = 8.0;
 		mass = 100.0;
 		speed = 630.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 1;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT;
@@ -317,15 +305,14 @@ class MT_EGGFX:Missile
 
 class MT_ARTISUPERHEAL:Actor
 {
-	MT_ARTISUPERHEAL(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL|MF_COUNTITEM;
 		flags2 = MF2_FLOATBOB;
 		spawnstate = S_ARTI_SPHL1;
@@ -340,15 +327,14 @@ class MT_ARTISUPERHEAL:Actor
 
 class MT_MISC4:Actor
 {
-	MT_MISC4(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL|MF_COUNTITEM;
 		flags2 = MF2_FLOATBOB;
 		spawnstate = S_ARTI_TRCH1;
@@ -363,15 +349,14 @@ class MT_MISC4:Actor
 
 class MT_MISC5:Actor
 {
-	MT_MISC5(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL|MF_COUNTITEM;
 		flags2 = MF2_FLOATBOB;
 		spawnstate = S_ARTI_FBMB1;
@@ -386,15 +371,14 @@ class MT_MISC5:Actor
 
 class MT_FIREBOMB:Actor
 {
-	MT_FIREBOMB(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		translucency = 33;
 		flags = MF_NOGRAVITY;
 		spawnstate = S_FIREBOMB1;
@@ -410,15 +394,14 @@ class MT_FIREBOMB:Actor
 
 class MT_ARTITELEPORT:Actor
 {
-	MT_ARTITELEPORT(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL|MF_COUNTITEM;
 		flags2 = MF2_FLOATBOB;
 		spawnstate = S_ARTI_ATLP1;
@@ -433,15 +416,14 @@ class MT_ARTITELEPORT:Actor
 
 class MT_POD:Actor
 {
-	MT_POD(void)
+	defaultproperties
 	{
 		health = 45;
 		spawnhealth = health;
 		radius = 16.0;
 		height = 54.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		painchance = 255;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_NOBLOOD;
 		flags2 = MF2_WINDTHRUST|MF2_PUSHABLE|MF2_SLIDE|MF2_PASSMOBJ|MF2_TELESTOMP;
@@ -460,15 +442,14 @@ class MT_POD:Actor
 
 class MT_PODGOO:Missile
 {
-	MT_PODGOO(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 2.0;
 		height = 4.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_CANNOTPUSH;
 		spawnstate = S_PODGOO1;
@@ -484,15 +465,14 @@ class MT_PODGOO:Missile
 
 class MT_PODGENERATOR:Actor
 {
-	MT_PODGENERATOR(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOSECTOR|MF_NOBLOCKMAP;
 		spawnstate = S_PODGENERATOR;
 	}
@@ -506,15 +486,14 @@ class MT_PODGENERATOR:Actor
 
 class MT_SPLASH:Missile
 {
-	MT_SPLASH(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 2.0;
 		height = 4.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_CANNOTPUSH;
 		spawnstate = S_SPLASH1;
@@ -530,15 +509,14 @@ class MT_SPLASH:Missile
 
 class MT_SPLASHBASE:Actor
 {
-	MT_SPLASHBASE(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_SPLASHBASE1;
 	}
@@ -552,15 +530,14 @@ class MT_SPLASHBASE:Actor
 
 class MT_LAVASPLASH:Actor
 {
-	MT_LAVASPLASH(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_LAVASPLASH1;
 	}
@@ -574,15 +551,14 @@ class MT_LAVASPLASH:Actor
 
 class MT_LAVASMOKE:Actor
 {
-	MT_LAVASMOKE(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		translucency = 33;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_LAVASMOKE1;
@@ -597,15 +573,14 @@ class MT_LAVASMOKE:Actor
 
 class MT_SLUDGECHUNK:Missile
 {
-	MT_SLUDGECHUNK(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 2.0;
 		height = 4.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_CANNOTPUSH;
 		spawnstate = S_SLUDGECHUNK1;
@@ -621,15 +596,14 @@ class MT_SLUDGECHUNK:Missile
 
 class MT_SLUDGESPLASH:Actor
 {
-	MT_SLUDGESPLASH(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_SLUDGESPLASH1;
 	}
@@ -643,15 +617,14 @@ class MT_SLUDGESPLASH:Actor
 
 class MT_SKULLHANG70:Actor
 {
-	MT_SKULLHANG70(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 70.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_SKULLHANG70_1;
 	}
@@ -665,15 +638,14 @@ class MT_SKULLHANG70:Actor
 
 class MT_SKULLHANG60:Actor
 {
-	MT_SKULLHANG60(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 60.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_SKULLHANG60_1;
 	}
@@ -687,15 +659,14 @@ class MT_SKULLHANG60:Actor
 
 class MT_SKULLHANG45:Actor
 {
-	MT_SKULLHANG45(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 45.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_SKULLHANG45_1;
 	}
@@ -709,15 +680,14 @@ class MT_SKULLHANG45:Actor
 
 class MT_SKULLHANG35:Actor
 {
-	MT_SKULLHANG35(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 35.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_SKULLHANG35_1;
 	}
@@ -731,15 +701,14 @@ class MT_SKULLHANG35:Actor
 
 class MT_CHANDELIER:Actor
 {
-	MT_CHANDELIER(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 60.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_CHANDELIER1;
 	}
@@ -760,15 +729,14 @@ class MT_CHANDELIER:Actor
 
 class MT_SERPTORCH:Actor
 {
-	MT_SERPTORCH(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 12.0;
 		height = 54.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_SERPTORCH1;
 	}
@@ -789,15 +757,14 @@ class MT_SERPTORCH:Actor
 
 class MT_SMALLPILLAR:Actor
 {
-	MT_SMALLPILLAR(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 16.0;
 		height = 34.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_SMALLPILLAR;
 	}
@@ -811,15 +778,14 @@ class MT_SMALLPILLAR:Actor
 
 class MT_STALAGMITESMALL:Actor
 {
-	MT_STALAGMITESMALL(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 8.0;
 		height = 32.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_STALAGMITESMALL;
 	}
@@ -833,15 +799,14 @@ class MT_STALAGMITESMALL:Actor
 
 class MT_STALAGMITELARGE:Actor
 {
-	MT_STALAGMITELARGE(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 12.0;
 		height = 64.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_STALAGMITELARGE;
 	}
@@ -855,15 +820,14 @@ class MT_STALAGMITELARGE:Actor
 
 class MT_STALACTITESMALL:Actor
 {
-	MT_STALACTITESMALL(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 8.0;
 		height = 36.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_STALACTITESMALL;
 	}
@@ -877,15 +841,14 @@ class MT_STALACTITESMALL:Actor
 
 class MT_STALACTITELARGE:Actor
 {
-	MT_STALACTITELARGE(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 12.0;
 		height = 68.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_STALACTITELARGE;
 	}
@@ -899,15 +862,14 @@ class MT_STALACTITELARGE:Actor
 
 class MT_MISC6:Actor
 {
-	MT_MISC6(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 16.0;
 		height = 44.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_FIREBRAZIER1;
 	}
@@ -928,15 +890,14 @@ class MT_MISC6:Actor
 
 class MT_BARREL:Actor
 {
-	MT_BARREL(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 12.0;
 		height = 32.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_BARREL;
 	}
@@ -950,15 +911,14 @@ class MT_BARREL:Actor
 
 class MT_MISC7:Actor
 {
-	MT_MISC7(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 14.0;
 		height = 128.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_BRPILLAR;
 	}
@@ -972,15 +932,14 @@ class MT_MISC7:Actor
 
 class MT_MISC8:Actor
 {
-	MT_MISC8(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 23.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_MOSS1;
 	}
@@ -994,15 +953,14 @@ class MT_MISC8:Actor
 
 class MT_MISC9:Actor
 {
-	MT_MISC9(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 27.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_MOSS2;
 	}
@@ -1016,15 +974,14 @@ class MT_MISC9:Actor
 
 class MT_MISC10:Actor
 {
-	MT_MISC10(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOGRAVITY;
 		spawnstate = S_WALLTORCH1;
 	}
@@ -1045,15 +1002,14 @@ class MT_MISC10:Actor
 
 class MT_MISC11:Actor
 {
-	MT_MISC11(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 8.0;
 		height = 104.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_HANGINGCORPSE;
 	}
@@ -1067,15 +1023,14 @@ class MT_MISC11:Actor
 
 class MT_KEYGIZMOBLUE:Actor
 {
-	MT_KEYGIZMOBLUE(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 16.0;
 		height = 50.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_KEYGIZMO1;
 	}
@@ -1089,15 +1044,14 @@ class MT_KEYGIZMOBLUE:Actor
 
 class MT_KEYGIZMOGREEN:Actor
 {
-	MT_KEYGIZMOGREEN(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 16.0;
 		height = 50.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_KEYGIZMO1;
 	}
@@ -1111,15 +1065,14 @@ class MT_KEYGIZMOGREEN:Actor
 
 class MT_KEYGIZMOYELLOW:Actor
 {
-	MT_KEYGIZMOYELLOW(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 16.0;
 		height = 50.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_KEYGIZMO1;
 	}
@@ -1133,15 +1086,14 @@ class MT_KEYGIZMOYELLOW:Actor
 
 class MT_KEYGIZMOFLOAT:Actor
 {
-	MT_KEYGIZMOFLOAT(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 16.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SOLID|MF_NOGRAVITY;
 		spawnstate = S_KGZ_START;
 	}
@@ -1155,15 +1107,14 @@ class MT_KEYGIZMOFLOAT:Actor
 
 class MT_MISC12:Actor
 {
-	MT_MISC12(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 12.0;
 		height = 20.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_VOLCANO1;
 	}
@@ -1177,7 +1128,7 @@ class MT_MISC12:Actor
 
 class MT_VOLCANOBLAST:Missile
 {
-	MT_VOLCANOBLAST(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -1185,8 +1136,7 @@ class MT_VOLCANOBLAST:Missile
 		height = 8.0;
 		mass = 100.0;
 		speed = 70.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 2;
 		flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_FIREDAMAGE;
@@ -1205,7 +1155,7 @@ class MT_VOLCANOBLAST:Missile
 
 class MT_VOLCANOTBLAST:Missile
 {
-	MT_VOLCANOTBLAST(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -1213,8 +1163,7 @@ class MT_VOLCANOTBLAST:Missile
 		height = 6.0;
 		mass = 100.0;
 		speed = 70.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 1;
 		flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_FIREDAMAGE;
@@ -1232,15 +1181,14 @@ class MT_VOLCANOTBLAST:Missile
 
 class MT_TELEGLITGEN:Actor
 {
-	MT_TELEGLITGEN(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOSECTOR|MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_TELEGLITGEN1;
 	}
@@ -1254,15 +1202,14 @@ class MT_TELEGLITGEN:Actor
 
 class MT_TELEGLITGEN2:Actor
 {
-	MT_TELEGLITGEN2(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOSECTOR|MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_TELEGLITGEN2;
 	}
@@ -1276,15 +1223,14 @@ class MT_TELEGLITGEN2:Actor
 
 class MT_TELEGLITTER:Missile
 {
-	MT_TELEGLITTER(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE;
 		spawnstate = S_TELEGLITTER1_1;
 	}
@@ -1298,15 +1244,14 @@ class MT_TELEGLITTER:Missile
 
 class MT_TELEGLITTER2:Missile
 {
-	MT_TELEGLITTER2(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE;
 		spawnstate = S_TELEGLITTER2_1;
 	}
@@ -1320,15 +1265,14 @@ class MT_TELEGLITTER2:Missile
 
 class MT_TFOG:Actor
 {
-	MT_TFOG(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_TFOG1;
 	}
@@ -1342,15 +1286,14 @@ class MT_TFOG:Actor
 
 class MT_TELEPORTMAN:Actor
 {
-	MT_TELEPORTMAN(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOSECTOR|MF_NOBLOCKMAP;
 	}
 };
@@ -1363,15 +1306,14 @@ class MT_TELEPORTMAN:Actor
 
 class MT_STAFFPUFF:Actor
 {
-	MT_STAFFPUFF(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_STAFFPUFF1;
 		sound_attack = GetSoundID("StaffHit");
@@ -1386,15 +1328,14 @@ class MT_STAFFPUFF:Actor
 
 class MT_STAFFPUFF2:Actor
 {
-	MT_STAFFPUFF2(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_STAFFPUFF2_1;
 		sound_attack = GetSoundID("StaffHit2");
@@ -1409,15 +1350,14 @@ class MT_STAFFPUFF2:Actor
 
 class MT_BEAKPUFF:Actor
 {
-	MT_BEAKPUFF(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_STAFFPUFF1;
 		sound_attack = GetSoundID("ChickenAttack");
@@ -1432,15 +1372,14 @@ class MT_BEAKPUFF:Actor
 
 class MT_MISC13:Actor
 {
-	MT_MISC13(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_WGNT;
 	}
@@ -1454,15 +1393,14 @@ class MT_MISC13:Actor
 
 class MT_GAUNTLETPUFF1:Actor
 {
-	MT_GAUNTLETPUFF1(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		translucency = 33;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_GAUNTLETPUFF1_1;
@@ -1477,15 +1415,14 @@ class MT_GAUNTLETPUFF1:Actor
 
 class MT_GAUNTLETPUFF2:Actor
 {
-	MT_GAUNTLETPUFF2(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		translucency = 33;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_GAUNTLETPUFF2_1;
@@ -1500,15 +1437,14 @@ class MT_GAUNTLETPUFF2:Actor
 
 class MT_MISC14:Actor
 {
-	MT_MISC14(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_BLSR;
 	}
@@ -1522,7 +1458,7 @@ class MT_MISC14:Actor
 
 class MT_BLASTERFX1:Missile
 {
-	MT_BLASTERFX1(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -1530,8 +1466,7 @@ class MT_BLASTERFX1:Missile
 		height = 8.0;
 		mass = 100.0;
 		speed = 6440.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 2;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT;
@@ -1550,15 +1485,14 @@ class MT_BLASTERFX1:Missile
 
 class MT_BLASTERSMOKE:Actor
 {
-	MT_BLASTERSMOKE(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		translucency = 33;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		flags2 = MF2_NOTELEPORT|MF2_CANNOTPUSH;
@@ -1574,7 +1508,7 @@ class MT_BLASTERSMOKE:Actor
 
 class MT_RIPPER:Missile
 {
-	MT_RIPPER(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -1582,8 +1516,7 @@ class MT_RIPPER:Missile
 		height = 6.0;
 		mass = 100.0;
 		speed = 490.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 1;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT|MF2_RIP;
@@ -1601,15 +1534,14 @@ class MT_RIPPER:Missile
 
 class MT_BLASTERPUFF1:Actor
 {
-	MT_BLASTERPUFF1(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_BLASTERPUFF1_1;
 	}
@@ -1623,15 +1555,14 @@ class MT_BLASTERPUFF1:Actor
 
 class MT_BLASTERPUFF2:Actor
 {
-	MT_BLASTERPUFF2(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_BLASTERPUFF2_1;
 	}
@@ -1645,15 +1576,14 @@ class MT_BLASTERPUFF2:Actor
 
 class MT_WMACE:Actor
 {
-	MT_WMACE(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_WMCE;
 	}
@@ -1667,7 +1597,7 @@ class MT_WMACE:Actor
 
 class MT_MACEFX1:Missile
 {
-	MT_MACEFX1(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -1675,8 +1605,7 @@ class MT_MACEFX1:Missile
 		height = 6.0;
 		mass = 100.0;
 		speed = 700.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 2;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_NOTELEPORT;
@@ -1694,7 +1623,7 @@ class MT_MACEFX1:Missile
 
 class MT_MACEFX2:Missile
 {
-	MT_MACEFX2(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -1702,8 +1631,7 @@ class MT_MACEFX2:Missile
 		height = 6.0;
 		mass = 100.0;
 		speed = 350.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 6;
 		flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_LOGRAV|MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_NOTELEPORT;
@@ -1720,7 +1648,7 @@ class MT_MACEFX2:Missile
 
 class MT_MACEFX3:Missile
 {
-	MT_MACEFX3(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -1728,8 +1656,7 @@ class MT_MACEFX3:Missile
 		height = 6.0;
 		mass = 100.0;
 		speed = 245.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 4;
 		flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_LOGRAV|MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_NOTELEPORT;
@@ -1746,7 +1673,7 @@ class MT_MACEFX3:Missile
 
 class MT_MACEFX4:Missile
 {
-	MT_MACEFX4(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -1754,8 +1681,7 @@ class MT_MACEFX4:Missile
 		height = 6.0;
 		mass = 100.0;
 		speed = 245.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 18;
 		flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_LOGRAV|MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_TELESTOMP;
@@ -1772,15 +1698,14 @@ class MT_MACEFX4:Missile
 
 class MT_WSKULLROD:Actor
 {
-	MT_WSKULLROD(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_WSKL;
 	}
@@ -1794,7 +1719,7 @@ class MT_WSKULLROD:Actor
 
 class MT_HORNRODFX1:Missile
 {
-	MT_HORNRODFX1(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -1802,8 +1727,7 @@ class MT_HORNRODFX1:Missile
 		height = 8.0;
 		mass = 100.0;
 		speed = 770.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 3;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT;
@@ -1823,7 +1747,7 @@ class MT_HORNRODFX1:Missile
 
 class MT_HORNRODFX2:Missile
 {
-	MT_HORNRODFX2(void)
+	defaultproperties
 	{
 		health = 140;
 		spawnhealth = health;
@@ -1831,8 +1755,7 @@ class MT_HORNRODFX2:Missile
 		height = 8.0;
 		mass = 100.0;
 		speed = 770.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 10;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT;
@@ -1852,7 +1775,7 @@ class MT_HORNRODFX2:Missile
 
 class MT_RAINPLR1:Missile
 {
-	MT_RAINPLR1(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -1860,8 +1783,7 @@ class MT_RAINPLR1:Missile
 		height = 12.0;
 		mass = 100.0;
 		speed = 420.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 5;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT;
@@ -1878,7 +1800,7 @@ class MT_RAINPLR1:Missile
 
 class MT_RAINPLR2:Missile
 {
-	MT_RAINPLR2(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -1886,8 +1808,7 @@ class MT_RAINPLR2:Missile
 		height = 12.0;
 		mass = 100.0;
 		speed = 420.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 5;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT;
@@ -1904,7 +1825,7 @@ class MT_RAINPLR2:Missile
 
 class MT_RAINPLR3:Missile
 {
-	MT_RAINPLR3(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -1912,8 +1833,7 @@ class MT_RAINPLR3:Missile
 		height = 12.0;
 		mass = 100.0;
 		speed = 420.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 5;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT;
@@ -1930,7 +1850,7 @@ class MT_RAINPLR3:Missile
 
 class MT_RAINPLR4:Missile
 {
-	MT_RAINPLR4(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -1938,8 +1858,7 @@ class MT_RAINPLR4:Missile
 		height = 12.0;
 		mass = 100.0;
 		speed = 420.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 5;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT;
@@ -1956,7 +1875,7 @@ class MT_RAINPLR4:Missile
 
 class MT_GOLDWANDFX1:Missile
 {
-	MT_GOLDWANDFX1(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -1964,8 +1883,7 @@ class MT_GOLDWANDFX1:Missile
 		height = 6.0;
 		mass = 100.0;
 		speed = 770.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 2;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT;
@@ -1984,7 +1902,7 @@ class MT_GOLDWANDFX1:Missile
 
 class MT_GOLDWANDFX2:Missile
 {
-	MT_GOLDWANDFX2(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -1992,8 +1910,7 @@ class MT_GOLDWANDFX2:Missile
 		height = 6.0;
 		mass = 100.0;
 		speed = 630.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 1;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT;
@@ -2011,15 +1928,14 @@ class MT_GOLDWANDFX2:Missile
 
 class MT_GOLDWANDPUFF1:Actor
 {
-	MT_GOLDWANDPUFF1(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_GWANDPUFF1_1;
 	}
@@ -2033,15 +1949,14 @@ class MT_GOLDWANDPUFF1:Actor
 
 class MT_GOLDWANDPUFF2:Actor
 {
-	MT_GOLDWANDPUFF2(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_GWANDFXI1_1;
 	}
@@ -2055,15 +1970,14 @@ class MT_GOLDWANDPUFF2:Actor
 
 class MT_WPHOENIXROD:Actor
 {
-	MT_WPHOENIXROD(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_WPHX;
 	}
@@ -2077,7 +1991,7 @@ class MT_WPHOENIXROD:Actor
 
 class MT_PHOENIXFX1:Missile
 {
-	MT_PHOENIXFX1(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -2085,8 +1999,7 @@ class MT_PHOENIXFX1:Missile
 		height = 8.0;
 		mass = 100.0;
 		speed = 700.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 20;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_THRUGHOST|MF2_NOTELEPORT;
@@ -2106,15 +2019,14 @@ class MT_PHOENIXFX1:Missile
 
 class MT_PHOENIXPUFF:Actor
 {
-	MT_PHOENIXPUFF(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		translucency = 33;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		flags2 = MF2_NOTELEPORT|MF2_CANNOTPUSH;
@@ -2130,7 +2042,7 @@ class MT_PHOENIXPUFF:Actor
 
 class MT_PHOENIXFX2:Missile
 {
-	MT_PHOENIXFX2(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -2138,8 +2050,7 @@ class MT_PHOENIXFX2:Missile
 		height = 8.0;
 		mass = 100.0;
 		speed = 350.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 2;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE;
@@ -2157,15 +2068,14 @@ class MT_PHOENIXFX2:Missile
 
 class MT_MISC15:Actor
 {
-	MT_MISC15(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_WBOW;
 	}
@@ -2179,7 +2089,7 @@ class MT_MISC15:Actor
 
 class MT_CRBOWFX1:Missile
 {
-	MT_CRBOWFX1(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -2187,8 +2097,7 @@ class MT_CRBOWFX1:Missile
 		height = 8.0;
 		mass = 100.0;
 		speed = 1050.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 10;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT;
@@ -2207,7 +2116,7 @@ class MT_CRBOWFX1:Missile
 
 class MT_CRBOWFX2:Missile
 {
-	MT_CRBOWFX2(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -2215,8 +2124,7 @@ class MT_CRBOWFX2:Missile
 		height = 8.0;
 		mass = 100.0;
 		speed = 1120.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 6;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT;
@@ -2236,7 +2144,7 @@ class MT_CRBOWFX2:Missile
 
 class MT_CRBOWFX3:Missile
 {
-	MT_CRBOWFX3(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -2244,8 +2152,7 @@ class MT_CRBOWFX3:Missile
 		height = 8.0;
 		mass = 100.0;
 		speed = 700.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 2;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_WINDTHRUST|MF2_THRUGHOST|MF2_NOTELEPORT;
@@ -2264,15 +2171,14 @@ class MT_CRBOWFX3:Missile
 
 class MT_CRBOWFX4:Actor
 {
-	MT_CRBOWFX4(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		flags2 = MF2_LOGRAV;
 		spawnstate = S_CRBOWFX4_1;
@@ -2287,15 +2193,14 @@ class MT_CRBOWFX4:Actor
 
 class MT_BLOOD:Actor
 {
-	MT_BLOOD(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_BLOOD1;
 	}
@@ -2309,15 +2214,14 @@ class MT_BLOOD:Actor
 
 class MT_BLOODSPLATTER:Missile
 {
-	MT_BLOODSPLATTER(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 2.0;
 		height = 4.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT|MF2_CANNOTPUSH;
 		spawnstate = S_BLOODSPLATTER1;
@@ -2333,7 +2237,7 @@ class MT_BLOODSPLATTER:Missile
 
 class MT_PLAYER:Actor
 {
-	MT_PLAYER(void)
+	defaultproperties
 	{
 		health = 100;
 		spawnhealth = health;
@@ -2363,15 +2267,14 @@ class MT_PLAYER:Actor
 
 class MT_BLOODYSKULL:Actor
 {
-	MT_BLOODYSKULL(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 4.0;
 		height = 4.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_DROPOFF;
 		flags2 = MF2_LOGRAV|MF2_CANNOTPUSH;
 		spawnstate = S_BLOODYSKULL1;
@@ -2386,7 +2289,7 @@ class MT_BLOODYSKULL:Actor
 
 class MT_CHICPLAYER:Actor
 {
-	MT_CHICPLAYER(void)
+	defaultproperties
 	{
 		health = 100;
 		spawnhealth = health;
@@ -2414,7 +2317,7 @@ class MT_CHICPLAYER:Actor
 
 class MT_CHICKEN:Actor
 {
-	MT_CHICKEN(void)
+	defaultproperties
 	{
 		health = 10;
 		spawnhealth = health;
@@ -2422,8 +2325,7 @@ class MT_CHICKEN:Actor
 		height = 22.0;
 		mass = 40.0;
 		speed = 140.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		painchance = 200;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_COUNTKILL;
 		flags2 = MF2_WINDTHRUST|MF2_FOOTCLIP|MF2_PASSMOBJ;
@@ -2458,15 +2360,14 @@ class MT_CHICKEN:Actor
 
 class MT_FEATHER:Missile
 {
-	MT_FEATHER(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 2.0;
 		height = 4.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_LOGRAV|MF2_WINDTHRUST|MF2_NOTELEPORT|MF2_CANNOTPUSH;
 		spawnstate = S_FEATHER1;
@@ -2482,7 +2383,7 @@ class MT_FEATHER:Missile
 
 class MT_MUMMY:Actor
 {
-	MT_MUMMY(void)
+	defaultproperties
 	{
 		health = 80;
 		spawnhealth = health;
@@ -2490,8 +2391,7 @@ class MT_MUMMY:Actor
 		height = 62.0;
 		mass = 75.0;
 		speed = 420.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		painchance = 128;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
 		flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ;
@@ -2526,7 +2426,7 @@ class MT_MUMMY:Actor
 
 class MT_MUMMYLEADER:Actor
 {
-	MT_MUMMYLEADER(void)
+	defaultproperties
 	{
 		health = 100;
 		spawnhealth = health;
@@ -2534,8 +2434,7 @@ class MT_MUMMYLEADER:Actor
 		height = 62.0;
 		mass = 75.0;
 		speed = 420.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		painchance = 64;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
 		flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ;
@@ -2571,7 +2470,7 @@ class MT_MUMMYLEADER:Actor
 
 class MT_MUMMYGHOST:Actor
 {
-	MT_MUMMYGHOST(void)
+	defaultproperties
 	{
 		health = 80;
 		spawnhealth = health;
@@ -2579,8 +2478,7 @@ class MT_MUMMYGHOST:Actor
 		height = 62.0;
 		mass = 75.0;
 		speed = 420.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		painchance = 128;
 		translucency = 33;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
@@ -2616,7 +2514,7 @@ class MT_MUMMYGHOST:Actor
 
 class MT_MUMMYLEADERGHOST:Actor
 {
-	MT_MUMMYLEADERGHOST(void)
+	defaultproperties
 	{
 		health = 100;
 		spawnhealth = health;
@@ -2624,8 +2522,7 @@ class MT_MUMMYLEADERGHOST:Actor
 		height = 62.0;
 		mass = 75.0;
 		speed = 420.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		painchance = 64;
 		translucency = 33;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
@@ -2662,15 +2559,14 @@ class MT_MUMMYLEADERGHOST:Actor
 
 class MT_MUMMYSOUL:Actor
 {
-	MT_MUMMYSOUL(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_MUMMY_SOUL1;
 	}
@@ -2684,7 +2580,7 @@ class MT_MUMMYSOUL:Actor
 
 class MT_MUMMYFX1:Missile
 {
-	MT_MUMMYFX1(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -2692,8 +2588,7 @@ class MT_MUMMYFX1:Missile
 		height = 14.0;
 		mass = 100.0;
 		speed = 315.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 4;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT;
@@ -2711,7 +2606,7 @@ class MT_MUMMYFX1:Missile
 
 class MT_BEAST:Actor
 {
-	MT_BEAST(void)
+	defaultproperties
 	{
 		health = 220;
 		spawnhealth = health;
@@ -2720,8 +2615,7 @@ class MT_BEAST:Actor
 		height = 74.0;
 		mass = 200.0;
 		speed = 490.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		painchance = 100;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
 		flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ;
@@ -2757,7 +2651,7 @@ class MT_BEAST:Actor
 
 class MT_BEASTBALL:Missile
 {
-	MT_BEASTBALL(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -2765,8 +2659,7 @@ class MT_BEASTBALL:Missile
 		height = 8.0;
 		mass = 100.0;
 		speed = 420.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 4;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT;
@@ -2784,7 +2677,7 @@ class MT_BEASTBALL:Missile
 
 class MT_BURNBALL:Missile
 {
-	MT_BURNBALL(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -2792,8 +2685,7 @@ class MT_BURNBALL:Missile
 		height = 8.0;
 		mass = 100.0;
 		speed = 350.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 2;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT;
@@ -2811,7 +2703,7 @@ class MT_BURNBALL:Missile
 
 class MT_BURNBALLFB:Missile
 {
-	MT_BURNBALLFB(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -2819,8 +2711,7 @@ class MT_BURNBALLFB:Missile
 		height = 8.0;
 		mass = 100.0;
 		speed = 350.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 2;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT;
@@ -2838,7 +2729,7 @@ class MT_BURNBALLFB:Missile
 
 class MT_PUFFY:Missile
 {
-	MT_PUFFY(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -2846,8 +2737,7 @@ class MT_PUFFY:Missile
 		height = 8.0;
 		mass = 100.0;
 		speed = 350.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 2;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT;
@@ -2864,7 +2754,7 @@ class MT_PUFFY:Missile
 
 class MT_SNAKE:Actor
 {
-	MT_SNAKE(void)
+	defaultproperties
 	{
 		health = 280;
 		spawnhealth = health;
@@ -2872,8 +2762,7 @@ class MT_SNAKE:Actor
 		height = 70.0;
 		mass = 100.0;
 		speed = 350.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		painchance = 48;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
 		flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ;
@@ -2908,7 +2797,7 @@ class MT_SNAKE:Actor
 
 class MT_SNAKEPRO_A:Missile
 {
-	MT_SNAKEPRO_A(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -2916,8 +2805,7 @@ class MT_SNAKEPRO_A:Missile
 		height = 8.0;
 		mass = 100.0;
 		speed = 490.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 1;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT;
@@ -2935,7 +2823,7 @@ class MT_SNAKEPRO_A:Missile
 
 class MT_SNAKEPRO_B:Missile
 {
-	MT_SNAKEPRO_B(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -2943,8 +2831,7 @@ class MT_SNAKEPRO_B:Missile
 		height = 8.0;
 		mass = 100.0;
 		speed = 490.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 3;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT;
@@ -2962,7 +2849,7 @@ class MT_SNAKEPRO_B:Missile
 
 class MT_HEAD:Actor
 {
-	MT_HEAD(void)
+	defaultproperties
 	{
 		health = 700;
 		spawnhealth = health;
@@ -2970,8 +2857,7 @@ class MT_HEAD:Actor
 		height = 72.0;
 		mass = 325.0;
 		speed = 210.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		painchance = 32;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_NOBLOOD|MF_COUNTKILL;
 		flags2 = MF2_PASSMOBJ;
@@ -3006,7 +2892,7 @@ class MT_HEAD:Actor
 
 class MT_HEADFX1:Missile
 {
-	MT_HEADFX1(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3014,8 +2900,7 @@ class MT_HEADFX1:Missile
 		height = 6.0;
 		mass = 100.0;
 		speed = 455.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 1;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_THRUGHOST|MF2_NOTELEPORT;
@@ -3033,7 +2918,7 @@ class MT_HEADFX1:Missile
 
 class MT_HEADFX2:Missile
 {
-	MT_HEADFX2(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3041,8 +2926,7 @@ class MT_HEADFX2:Missile
 		height = 6.0;
 		mass = 100.0;
 		speed = 280.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 3;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT;
@@ -3060,7 +2944,7 @@ class MT_HEADFX2:Missile
 
 class MT_HEADFX3:Missile
 {
-	MT_HEADFX3(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3068,8 +2952,7 @@ class MT_HEADFX3:Missile
 		height = 12.0;
 		mass = 100.0;
 		speed = 350.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 5;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT;
@@ -3087,7 +2970,7 @@ class MT_HEADFX3:Missile
 
 class MT_WHIRLWIND:Missile
 {
-	MT_WHIRLWIND(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3095,8 +2978,7 @@ class MT_WHIRLWIND:Missile
 		height = 74.0;
 		mass = 100.0;
 		speed = 350.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 1;
 		translucency = 33;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
@@ -3114,7 +2996,7 @@ class MT_WHIRLWIND:Missile
 
 class MT_CLINK:Actor
 {
-	MT_CLINK(void)
+	defaultproperties
 	{
 		health = 150;
 		spawnhealth = health;
@@ -3122,8 +3004,7 @@ class MT_CLINK:Actor
 		height = 64.0;
 		mass = 75.0;
 		speed = 490.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		painchance = 32;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_NOBLOOD|MF_COUNTKILL;
 		flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ;
@@ -3158,7 +3039,7 @@ class MT_CLINK:Actor
 
 class MT_WIZARD:Actor
 {
-	MT_WIZARD(void)
+	defaultproperties
 	{
 		health = 180;
 		spawnhealth = health;
@@ -3166,8 +3047,7 @@ class MT_WIZARD:Actor
 		height = 68.0;
 		mass = 100.0;
 		speed = 420.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		painchance = 64;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT|MF_COUNTKILL;
 		flags2 = MF2_PASSMOBJ;
@@ -3202,7 +3082,7 @@ class MT_WIZARD:Actor
 
 class MT_WIZFX1:Missile
 {
-	MT_WIZFX1(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3210,8 +3090,7 @@ class MT_WIZFX1:Missile
 		height = 6.0;
 		mass = 100.0;
 		speed = 630.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 3;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT;
@@ -3229,7 +3108,7 @@ class MT_WIZFX1:Missile
 
 class MT_IMP:Actor
 {
-	MT_IMP(void)
+	defaultproperties
 	{
 		health = 40;
 		spawnhealth = health;
@@ -3238,8 +3117,7 @@ class MT_IMP:Actor
 		height = 36.0;
 		mass = 50.0;
 		speed = 350.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		painchance = 200;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT|MF_COUNTKILL;
 		flags2 = MF2_SPAWNFLOAT|MF2_PASSMOBJ;
@@ -3277,7 +3155,7 @@ class MT_IMP:Actor
 
 class MT_IMPLEADER:Actor
 {
-	MT_IMPLEADER(void)
+	defaultproperties
 	{
 		health = 80;
 		spawnhealth = health;
@@ -3286,8 +3164,7 @@ class MT_IMPLEADER:Actor
 		height = 36.0;
 		mass = 50.0;
 		speed = 350.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		painchance = 200;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_FLOAT|MF_COUNTKILL;
 		flags2 = MF2_SPAWNFLOAT|MF2_PASSMOBJ;
@@ -3324,15 +3201,14 @@ class MT_IMPLEADER:Actor
 
 class MT_IMPCHUNK1:Actor
 {
-	MT_IMPCHUNK1(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_IMP_CHUNKA1;
 	}
@@ -3346,15 +3222,14 @@ class MT_IMPCHUNK1:Actor
 
 class MT_IMPCHUNK2:Actor
 {
-	MT_IMPCHUNK2(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_IMP_CHUNKB1;
 	}
@@ -3368,7 +3243,7 @@ class MT_IMPCHUNK2:Actor
 
 class MT_IMPBALL:Missile
 {
-	MT_IMPBALL(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3376,8 +3251,7 @@ class MT_IMPBALL:Missile
 		height = 8.0;
 		mass = 100.0;
 		speed = 350.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 1;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT;
@@ -3395,7 +3269,7 @@ class MT_IMPBALL:Missile
 
 class MT_KNIGHT:Actor
 {
-	MT_KNIGHT(void)
+	defaultproperties
 	{
 		health = 200;
 		spawnhealth = health;
@@ -3403,8 +3277,7 @@ class MT_KNIGHT:Actor
 		height = 78.0;
 		mass = 150.0;
 		speed = 420.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		painchance = 100;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
 		flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ;
@@ -3440,7 +3313,7 @@ class MT_KNIGHT:Actor
 
 class MT_KNIGHTGHOST:Actor
 {
-	MT_KNIGHTGHOST(void)
+	defaultproperties
 	{
 		health = 200;
 		spawnhealth = health;
@@ -3448,8 +3321,7 @@ class MT_KNIGHTGHOST:Actor
 		height = 78.0;
 		mass = 150.0;
 		speed = 420.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		painchance = 100;
 		translucency = 33;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
@@ -3486,7 +3358,7 @@ class MT_KNIGHTGHOST:Actor
 
 class MT_KNIGHTAXE:Missile
 {
-	MT_KNIGHTAXE(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3494,8 +3366,7 @@ class MT_KNIGHTAXE:Missile
 		height = 8.0;
 		mass = 100.0;
 		speed = 315.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 2;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_WINDTHRUST|MF2_THRUGHOST|MF2_NOTELEPORT;
@@ -3514,7 +3385,7 @@ class MT_KNIGHTAXE:Missile
 
 class MT_REDAXE:Missile
 {
-	MT_REDAXE(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3522,8 +3393,7 @@ class MT_REDAXE:Missile
 		height = 8.0;
 		mass = 100.0;
 		speed = 315.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 7;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_THRUGHOST|MF2_NOTELEPORT;
@@ -3542,7 +3412,7 @@ class MT_REDAXE:Missile
 
 class MT_SORCERER1:Actor
 {
-	MT_SORCERER1(void)
+	defaultproperties
 	{
 		health = 2000;
 		spawnhealth = health;
@@ -3550,8 +3420,7 @@ class MT_SORCERER1:Actor
 		height = 100.0;
 		mass = 800.0;
 		speed = 560.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		painchance = 56;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL;
 		flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ|MF2_BOSS;
@@ -3586,7 +3455,7 @@ class MT_SORCERER1:Actor
 
 class MT_SRCRFX1:Missile
 {
-	MT_SRCRFX1(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3594,8 +3463,7 @@ class MT_SRCRFX1:Missile
 		height = 10.0;
 		mass = 100.0;
 		speed = 700.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 10;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE;
@@ -3613,7 +3481,7 @@ class MT_SRCRFX1:Missile
 
 class MT_SORCERER2:Actor
 {
-	MT_SORCERER2(void)
+	defaultproperties
 	{
 		health = 3500;
 		spawnhealth = health;
@@ -3621,8 +3489,7 @@ class MT_SORCERER2:Actor
 		height = 70.0;
 		mass = 300.0;
 		speed = 490.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		painchance = 32;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_COUNTKILL;
 		flags2 = MF2_FOOTCLIP|MF2_PASSMOBJ|MF2_BOSS;
@@ -3656,7 +3523,7 @@ class MT_SORCERER2:Actor
 
 class MT_SOR2FX1:Missile
 {
-	MT_SOR2FX1(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3664,8 +3531,7 @@ class MT_SOR2FX1:Missile
 		height = 6.0;
 		mass = 100.0;
 		speed = 700.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 1;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT;
@@ -3683,15 +3549,14 @@ class MT_SOR2FX1:Missile
 
 class MT_SOR2FXSPARK:Actor
 {
-	MT_SOR2FXSPARK(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		flags2 = MF2_NOTELEPORT|MF2_CANNOTPUSH;
 		spawnstate = S_SOR2FXSPARK1;
@@ -3706,7 +3571,7 @@ class MT_SOR2FXSPARK:Actor
 
 class MT_SOR2FX2:Missile
 {
-	MT_SOR2FX2(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3714,8 +3579,7 @@ class MT_SOR2FX2:Missile
 		height = 6.0;
 		mass = 100.0;
 		speed = 210.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 10;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT;
@@ -3733,15 +3597,14 @@ class MT_SOR2FX2:Missile
 
 class MT_SOR2TELEFADE:Actor
 {
-	MT_SOR2TELEFADE(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_SOR2TELEFADE1;
 	}
@@ -3755,7 +3618,7 @@ class MT_SOR2TELEFADE:Actor
 
 class MT_MINOTAUR:Actor
 {
-	MT_MINOTAUR(void)
+	defaultproperties
 	{
 		health = 3000;
 		spawnhealth = health;
@@ -3763,8 +3626,7 @@ class MT_MINOTAUR:Actor
 		height = 100.0;
 		mass = 800.0;
 		speed = 560.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		painchance = 25;
 		damage = 7;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_DROPOFF|MF_COUNTKILL;
@@ -3801,7 +3663,7 @@ class MT_MINOTAUR:Actor
 
 class MT_MNTRFX1:Missile
 {
-	MT_MNTRFX1(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3809,8 +3671,7 @@ class MT_MNTRFX1:Missile
 		height = 6.0;
 		mass = 100.0;
 		speed = 700.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 3;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE;
@@ -3828,7 +3689,7 @@ class MT_MNTRFX1:Missile
 
 class MT_MNTRFX2:Missile
 {
-	MT_MNTRFX2(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
@@ -3836,8 +3697,7 @@ class MT_MNTRFX2:Missile
 		height = 12.0;
 		mass = 100.0;
 		speed = 490.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 4;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE;
@@ -3856,15 +3716,14 @@ class MT_MNTRFX2:Missile
 
 class MT_MNTRFX3:Missile
 {
-	MT_MNTRFX3(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 8.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		damage = 4;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE;
@@ -3883,15 +3742,14 @@ class MT_MNTRFX3:Missile
 
 class MT_AKYY:Actor
 {
-	MT_AKYY(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_AKYY1;
 	}
@@ -3905,15 +3763,14 @@ class MT_AKYY:Actor
 
 class MT_BKYY:Actor
 {
-	MT_BKYY(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_BKYY1;
 	}
@@ -3927,15 +3784,14 @@ class MT_BKYY:Actor
 
 class MT_CKEY:Actor
 {
-	MT_CKEY(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_CKYY1;
 	}
@@ -3949,15 +3805,14 @@ class MT_CKEY:Actor
 
 class MT_AMGWNDWIMPY:Actor
 {
-	MT_AMGWNDWIMPY(void)
+	defaultproperties
 	{
 		health = 10;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_AMG1;
 	}
@@ -3971,15 +3826,14 @@ class MT_AMGWNDWIMPY:Actor
 
 class MT_AMGWNDHEFTY:Actor
 {
-	MT_AMGWNDHEFTY(void)
+	defaultproperties
 	{
 		health = 50;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_AMG2_1;
 	}
@@ -3993,15 +3847,14 @@ class MT_AMGWNDHEFTY:Actor
 
 class MT_AMMACEWIMPY:Actor
 {
-	MT_AMMACEWIMPY(void)
+	defaultproperties
 	{
 		health = 20;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_AMM1;
 	}
@@ -4015,15 +3868,14 @@ class MT_AMMACEWIMPY:Actor
 
 class MT_AMMACEHEFTY:Actor
 {
-	MT_AMMACEHEFTY(void)
+	defaultproperties
 	{
 		health = 100;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_AMM2;
 	}
@@ -4037,15 +3889,14 @@ class MT_AMMACEHEFTY:Actor
 
 class MT_AMCBOWWIMPY:Actor
 {
-	MT_AMCBOWWIMPY(void)
+	defaultproperties
 	{
 		health = 5;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_AMC1;
 	}
@@ -4059,15 +3910,14 @@ class MT_AMCBOWWIMPY:Actor
 
 class MT_AMCBOWHEFTY:Actor
 {
-	MT_AMCBOWHEFTY(void)
+	defaultproperties
 	{
 		health = 20;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_AMC2_1;
 	}
@@ -4081,15 +3931,14 @@ class MT_AMCBOWHEFTY:Actor
 
 class MT_AMSKRDWIMPY:Actor
 {
-	MT_AMSKRDWIMPY(void)
+	defaultproperties
 	{
 		health = 20;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_AMS1_1;
 	}
@@ -4103,15 +3952,14 @@ class MT_AMSKRDWIMPY:Actor
 
 class MT_AMSKRDHEFTY:Actor
 {
-	MT_AMSKRDHEFTY(void)
+	defaultproperties
 	{
 		health = 100;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_AMS2_1;
 	}
@@ -4125,15 +3973,14 @@ class MT_AMSKRDHEFTY:Actor
 
 class MT_AMPHRDWIMPY:Actor
 {
-	MT_AMPHRDWIMPY(void)
+	defaultproperties
 	{
 		health = 1;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_AMP1_1;
 	}
@@ -4147,15 +3994,14 @@ class MT_AMPHRDWIMPY:Actor
 
 class MT_AMPHRDHEFTY:Actor
 {
-	MT_AMPHRDHEFTY(void)
+	defaultproperties
 	{
 		health = 10;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_AMP2_1;
 	}
@@ -4169,15 +4015,14 @@ class MT_AMPHRDHEFTY:Actor
 
 class MT_AMBLSRWIMPY:Actor
 {
-	MT_AMBLSRWIMPY(void)
+	defaultproperties
 	{
 		health = 10;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_AMB1_1;
 	}
@@ -4191,15 +4036,14 @@ class MT_AMBLSRWIMPY:Actor
 
 class MT_AMBLSRHEFTY:Actor
 {
-	MT_AMBLSRHEFTY(void)
+	defaultproperties
 	{
 		health = 25;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_AMB2_1;
 	}
@@ -4213,15 +4057,14 @@ class MT_AMBLSRHEFTY:Actor
 
 class MT_SOUNDWIND:Actor
 {
-	MT_SOUNDWIND(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOSECTOR|MF_NOBLOCKMAP;
 		spawnstate = S_SND_WIND;
 	}
@@ -4235,15 +4078,14 @@ class MT_SOUNDWIND:Actor
 
 class MT_SOUNDWATERFALL:Actor
 {
-	MT_SOUNDWATERFALL(void)
+	defaultproperties
 	{
 		health = 1000;
 		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
-		if (gameskill != sk_nightmare)
-			reactiontime = 8;
+		reactiontime = 8;
 		flags = MF_NOSECTOR|MF_NOBLOCKMAP;
 		spawnstate = S_SND_WATERFALL;
 	}
@@ -4336,9 +4178,12 @@ __mobjinfo__
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/12/04 18:25:36  dj_jl
+//	Replaced constructors with defaultproperties
+//
 //	Revision 1.8  2001/11/09 14:37:53  dj_jl
 //	Using constructors
-//
+//	
 //	Revision 1.7  2001/10/22 17:23:12  dj_jl
 //	Floatification of angles
 //	
