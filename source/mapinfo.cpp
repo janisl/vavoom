@@ -262,17 +262,6 @@ static int QualifyMap(int map)
 //
 //==========================================================================
 
-void P_GetMapInfo(int map, mapInfo_t &info)
-{
-	info = MapInfo[QualifyMap(map)];
-}
-
-//==========================================================================
-//
-//	P_GetMapInfo
-//
-//==========================================================================
-
 void P_GetMapInfo(const char *map, mapInfo_t &info)
 {
 	for (int i = 1; i < 99; i++)
@@ -303,10 +292,12 @@ char* P_GetMapName(int map)
 //
 //==========================================================================
 
+/*
 int P_GetMapCluster(int map)
 {
 	return MapInfo[QualifyMap(map)].cluster;
 }
+*/
 
 //==========================================================================
 //
@@ -314,10 +305,12 @@ int P_GetMapCluster(int map)
 //
 //==========================================================================
 
+/*
 int P_GetMapWarpTrans(int map)
 {
 	return MapInfo[QualifyMap(map)].warpTrans;
 }
+*/
 
 //==========================================================================
 //
@@ -327,20 +320,20 @@ int P_GetMapWarpTrans(int map)
 //
 //==========================================================================
 
-int P_TranslateMap(int map)
+/*int P_TranslateMap(int map)
 {
 	int i;
 
-	for(i = 1; i < 99; i++) // Make this a macro
+	for (i = 1; i < 99; i++) // Make this a macro
 	{
-		if(MapInfo[i].warpTrans == map)
+		if (MapInfo[i].warpTrans == map)
 		{
 			return i;
 		}
 	}
 	// Not found
 	return -1;
-}
+}*/
 
 //==========================================================================
 //
@@ -348,7 +341,7 @@ int P_TranslateMap(int map)
 //
 //==========================================================================
 
-void P_PutMapSongLump(int map, char *lumpName)
+void P_PutMapSongLump(int map, const char *lumpName)
 {
 	if (map >= 1 && map <= MapCount)
 	{
@@ -434,9 +427,12 @@ int P_GetCDTitleTrack(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.1  2001/10/08 17:30:23  dj_jl
+//	Renamed to mapinfo.*
+//
 //	Revision 1.4  2001/08/04 17:27:39  dj_jl
 //	Added consts to script functions
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	
