@@ -34,7 +34,7 @@ public:
 	// FArchive interface.
 	virtual ~FArchive()
 	{}
-	virtual void Serialize(void* V, int Length)
+	virtual void Serialize(void*, int)
 	{}
 	/*virtual void SerializeBits(void* V, int LengthBits)
 	{
@@ -122,9 +122,12 @@ protected:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2002/02/15 19:12:53  dj_jl
+//	Got rid of warnings
+//
 //	Revision 1.2  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.1  2001/12/18 19:03:16  dj_jl
 //	A lots of work on VObject
 //	
