@@ -1890,10 +1890,10 @@ void BotPlayer::Died(Entity killer)
 //
 //==========================================================================
 
-#define NUMTOTALBOTS	4
-#define	NUMBOTTYPES		4
+#define NUMTOTALBOTS	30
+#define	NUMBOTTYPES		30
 
-botinfo_t botinfo[4] =
+botinfo_t botinfo[30] =
 {
 	{
 		"bot1",
@@ -1911,7 +1911,7 @@ botinfo_t botinfo[4] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot2\\color\\1\\class\\0\\model\\doomguy\\skin\\bluef.pcx"
+		"\\name\\bot2\\color\\0\\class\\0\\model\\doomguy\\skin\\greenf.pcx"
 	},
 	{
 		"bot3",
@@ -1920,7 +1920,7 @@ botinfo_t botinfo[4] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot3\\color\\2\\class\\0\\model\\doomguy\\skin\\pinkf.pcx"
+		"\\name\\bot3\\color\\0\\class\\0\\model\\doomguy\\skin\\camo.pcx"
 	},
 	{
 		"bot4",
@@ -1929,7 +1929,241 @@ botinfo_t botinfo[4] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot4\\color\\3\\class\\0\\model\\doomguy\\skin\\camo.pcx"
+		"\\name\\bot4\\color\\0\\class\\0\\model\\doomguy\\skin\\camof.pcx"
+	},
+	{
+		"bot5",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot5\\color\\1\\class\\0\\model\\doomguy\\skin\\black.pcx"
+	},
+	{
+		"bot6",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot6\\color\\1\\class\\0\\model\\doomguy\\skin\\blackf.pcx"
+	},
+	{
+		"bot7",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot7\\color\\1\\class\\0\\model\\doomguy\\skin\\white.pcx"
+	},
+	{
+		"bot8",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot8\\color\\1\\class\\0\\model\\doomguy\\skin\\whitef.pcx"
+	},
+	{
+		"bot9",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot9\\color\\2\\class\\0\\model\\doomguy\\skin\\brown.pcx"
+	},
+	{
+		"bot10",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot10\\color\\2\\class\\0\\model\\doomguy\\skin\\brownf.pcx"
+	},
+	{
+		"bot11",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot11\\color\\3\\class\\0\\model\\doomguy\\skin\\red.pcx"
+	},
+	{
+		"bot12",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot12\\color\\3\\class\\0\\model\\doomguy\\skin\\redf.pcx"
+	},
+	{
+		"bot13",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot13\\color\\4\\class\\0\\model\\doomguy\\skin\\pink.pcx"
+	},
+	{
+		"bot14",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot14\\color\\4\\class\\0\\model\\doomguy\\skin\\pinkf.pcx"
+	},
+	{
+		"bot15",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot15\\color\\5\\class\\0\\model\\doomguy\\skin\\blue.pcx"
+	},
+	{
+		"bot16",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot16\\color\\5\\class\\0\\model\\doomguy\\skin\\bluef.pcx"
+	},
+	{
+		"bot17",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot17\\color\\5\\class\\0\\model\\doomguy\\skin\\lgtblue.pcx"
+	},
+	{
+		"bot18",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot18\\color\\5\\class\\0\\model\\doomguy\\skin\\lgtbluef.pcx"
+	},
+	{
+		"bot19",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot19\\color\\5\\class\\0\\model\\doomguy\\skin\\navy.pcx"
+	},
+	{
+		"bot20",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot20\\color\\5\\class\\0\\model\\doomguy\\skin\\navyf.pcx"
+	},
+	{
+		"bot21",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot21\\color\\5\\class\\0\\model\\doomguy\\skin\\indigo.pcx"
+	},
+	{
+		"bot22",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot22\\color\\5\\class\\0\\model\\doomguy\\skin\\indigof.pcx"
+	},
+	{
+		"bot23",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot23\\color\\6\\class\\0\\model\\doomguy\\skin\\violet.pcx"
+	},
+	{
+		"bot24",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot24\\color\\6\\class\\0\\model\\doomguy\\skin\\violetf.pcx"
+	},
+	{
+		"bot25",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot25\\color\\6\\class\\0\\model\\doomguy\\skin\\purple.pcx"
+	},
+	{
+		"bot26",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot26\\color\\6\\class\\0\\model\\doomguy\\skin\\purplef.pcx"
+	},
+	{
+		"bot27",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot27\\color\\7\\class\\0\\model\\doomguy\\skin\\orange.pcx"
+	},
+	{
+		"bot28",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot28\\color\\7\\class\\0\\model\\doomguy\\skin\\orangef.pcx"
+	},
+	{
+		"bot29",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot29\\color\\7\\class\\0\\model\\doomguy\\skin\\yellow.pcx"
+	},
+	{
+		"bot30",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot30\\color\\7\\class\\0\\model\\doomguy\\skin\\yellowf.pcx"
 	}
 };
 
@@ -2017,6 +2251,9 @@ void BotPlayer::OnSpawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/01/04 18:22:58  dj_jl
+//  All posible skins and models
+//
 //  Revision 1.4  2002/01/03 18:33:04  dj_jl
 //  Beautification
 //
