@@ -1,5 +1,304 @@
 //==========================================================================
+//
+//  Player sounds
+//
+//==========================================================================
+
+PlayerPain                      dsplpain
+PlayerDeath                     dspldeth
+PlayerExtremeDeath              dsplxdth
+MaskActive                      dsmask
+PlayerLand                      dsoof
+Blocked                         dsnoway
+
+PickupWeapon                    dswpnup
+Yeah                            dsyeah
+PickupItem                      dsitemup
+Chat                            dsradio
+
+//==========================================================================
+//
+//  Player weapon sounds
+//
+//==========================================================================
+
+// Punch
+
+PunchMiss                       dsswish
+PunchHitMeat                    dsmeatht
+PunchHitMetal                   dsmtalht
+
+// Crossbow
+
+CrossbowFire                    dsxbow
+ElectricArrowExplode            dsfirxpl
+
+// Assault gun
+
+AssaultGunFire                  dsrifle
+
+// Mini missile launcher
+
+FireMissile                     dsrlaunc
+MissileExplode                  dsmislht
+
+// Grenade launcher
+
+FireGrenade                     dsphoot
+
+// Flame thrower
+
+FlameThrowerFire                dsflburn
+FlameThrowerIdle                dsflidl
+
+// Mauler
+
+MaulerTorpedoOn                 dsproton
+MaulerTorpedoFire               dsprotfl
+
+// Sigil
+
+SigilFire                       dssigil
+SigilHit                        dssglhit
+SigilUp                         dssiglup
+
+//==========================================================================
+//
+//  NPC / Monster sounds
+//
+//==========================================================================
+
+// Peasant
+
+PeasantPain                     dspespna
+PeasantPain2                    dspespnb
+PeasantPain3                    dspespnc
+PeasantPain4                    dspespnd
+PeasantDeath                    dspsdtha
+PeasantDeath2                   dspsdthb // UNUSED Doom sound
+PeasantDeath3                   dspsdthc // UNUSED Doom sound
+
+// Bar keep
+
+BarKeepActive                   dsambppl
+BarKeepPain                     dsambbar
+
+// Rebel
+
+RebelActive                     dsrebact
+RebelDeath                      dsrebdth
+
+// Acolyte
+
+AcolyteSight                    dsagrsee
+AcolyteActive1                  dsagrac1
+AcolyteActive2                  dsagrac2
+AcolyteActive3                  dsagrac3
+AcolyteActive4                  dsagrac4
+AcolytePain                     dsagrdpn
+AcolyteDeath                    dsagrdth
+
+// Stalker
+
+StalkerSight                    dsspisit
+StalkerWalk                     dsspdwlk
+StalkerDeath                    dsspidth
+StalkerAttack                   dsspdatk
+
+// Sentinel
+
+SentinelSight                   dssntsee
+SentinelDeath                   dssntdth
+SentinelActive                  dssntact
+SentinelFire                    dsplasma
+
+// Templar
+
+TemplarAttack                   dspgrdat
+TemplarSight                    dspgrsee
+TemplarPain                     dspgrdpn
+TemplarDeath                    dspgrdth
+TemplarActive                   dspgract
+
+// Reaver
+
+ReaverSight                     dsrevsee
+ReaverActive                    dsrevact
+ReaverBlade                     dsrevbld
+ReaverAttack                    dsreavat
+ReaverPain                      dsreavpn
+ReaverDeath                     dsrevdth
+
+// Crusader
+
+CrusaderSight                   dsrb2see
+CrusaderActive                  dsrb2act
+CrusaderPain                    dsrb2pn
+CrusaderDeath                   dsrb2dth
+
+// Inquisitor
+
+InquisitorDeath                 dsinqdth
+InquisitorActive                dsinqact
+InquisitorSight                 dsinqsee
+InquisitorJump                  dsinqjmp
+
+// Programmer
+
+ProgrammerPain                  dsprgpn
+ProgrammerActive                dsprogac
+
+// Loremaster
+
+LoremasterSight                 dslorsee
+LoremasterActive                dstend
+LoremasterChain                 dschain
+LoremasterPain                  dslorpn
+
+// Specter
+
+SpecterSight                    dsalnsee
+SpecterActive                   dsalnact
+SpecterPain                     dsalnpn
+SpecterDeath                    dsalndth
+
+// Entity
+
+EntitySight                     dsmnalse
+EntityDeath                     dsmnaldt
+
+// Kneeling guy
+
+Chant                           dschant
+
+// Rat
+
+RatActive                       dsratact
+
+//==========================================================================
+//
+//  Ambience sounds
+//
+//==========================================================================
+
+// Alarm
+
+Alarm                           dsalarm
+
+// Water
+
+RiverFlow                       dswriver
+Waterfall                       dswfall
+WaterDrip                       dswdrip
+WaterSplash                     dswsplsh
+
+// Reactor or something ???
+
+ReactorActive2                  dsrflite
+
+// Alien spaceship
+
+AlienShipAmbience1              dsamaln1
+AlienShipAmbience2              dsamaln2
+AlienShipAmbience3              dsamaln3
+AlienShipAmbience4              dsamaln4
+AlienShipAmbience5              dsamaln5
+AlienShipAmbience6              dsamaln6
+
+// Power crystal
+
+ReactorActive                   dsreactr
+
+//==========================================================================
+//
+//  Misc sounds
+//
+//==========================================================================
+
+// Shared by player and others
+
+PCrush                          dspcrush
+Slop                            dsslop
+HumanBurning                    dsburnme
+Disrupt                         dsdsrptr
+
+// World objects
+
+BarrelExplode                   dsbarexp
+WoodBarrelDeath                 dswbrldt
+Explode                         dsexplod
+LargeFire                       dslgfire
+SmallFire                       dssmfire
+
+// Effects
+
+Teleport                        dstelept
+ItemRespawn                     dsitmbk
+
+// What's that?
+
+Static                          dsstatic
+
+//==========================================================================
+//
+//  World sounds
+//
+//==========================================================================
+
+// Switches
+
+Switch                          dsswtchn
+BreakGlass                      dsbglass
+SwitchPullChain                 dspulchn
+SwitchKnob                      dsswknob
+SwitchKeyCard                   dskeycrd
+SwitchStone                     dsswston
+SwitchBolt                      dsswbolt
+SwitchScanner                   dsswscan
+SwitchFool                      dsdifool
+SwitchValve                     dsvalve
+
+// Doors
+
+DoorLongMovementOpen            dsdrlmto
+DoorLongMovementClose           dsdrlmtc
+DoorOpen                        dsdrsmto // FIXME
+DoorClose                       dsdrsmtc // FIXME
+DoorLongWood                    dsdrlwud
+DoorShortWood                   dsdrswud
+DoorStone                       dsdrston
+BlazeDoorOpen                   dsbdopn
+BlazeDoorClose                  dsbdcls
+Airlock                         dsairlck
+DoorChainedOpen                 dsdrchno
+DoorChainedClose                dsdrchnc
+
+// Platforms
+
+PlatformStart                   dspstart
+PlatformStop                    dspstop
+StoneMoving                     dsstnmov
+
+//==========================================================================
+//
+//  Menu
+//
+//==========================================================================
+
+MenuActivate                    dsswtchn
+MenuMove                        dspstop
+MenuSelect                      dsswknob
+MenuSwitch                      dsstnmov
+MenuPrevious                    dsswtchn
+MenuClose                       dsmtalht
+
+//==========================================================================
+//
 //  Quit messages
+//
+//  These reffer to voices, not regulat sounds.
+//  FIXME remove these.
+//
 //==========================================================================
 
 TeaserQuitMessage1              voc100
@@ -16,154 +315,3 @@ QuitMessage5                    qfmrm5
 QuitMessage6                    qfmrm6
 QuitMessage7                    qfmrm7
 QuitMessage8                    qfmrm8
-
-//==========================================================================
-//  Menu
-//==========================================================================
-
-MenuActivate                    dsswtchn
-MenuMove                        dspstop
-MenuSelect                      dsswknob
-MenuSwitch                      dsstnmov
-MenuPrevious                    dsswtchn
-MenuClose                       dsmtalht
-
-//==========================================================================
-//  Misc sounds
-//==========================================================================
-
-PunchMiss dsswish
-PunchHitMeat dsmeatht
-PunchHitMetal dsmtalht
-PickupWeapon dswpnup
-AssaultGunFire dsrifle
-MissileExplode dsmislht
-Sound7 dsbarexp
-Sound8 dsflburn
-Sound9 dsflidl
-AcolyteSight dsagrsee
-PlayerPain dsplpain
-Sound12 dspcrush
-PeasantPain dspespna
-Sound14 dspespnb
-Sound15 dspespnc
-Sound16 dspespnd
-AcolytePain dsagrdpn
-PlayerDeath dspldeth
-PlayerExtremeDeath dsplxdth
-Slop dsslop
-RebelDeath dsrebdth
-AcolyteDeath dsagrdth
-Sound23 dslgfire
-Sound24 dssmfire
-Sound25 dsalarm
-Sound26 dsdrlmto
-Sound27 dsdrlmtc
-Sound28 dsdrsmto
-Sound29 dsdrsmtc
-Sound30 dsdrlwud
-Sound31 dsdrswud
-Sound32 dsdrston
-Sound33 dsbdopn
-Sound34 dsbdcls
-Switch dsswtchn
-SwitchBolt dsswbolt
-SwitchScanner dsswscan
-Sound38 dsyeah
-Sound39 dsmask
-Sound40 dspstart
-Sound41 dspstop
-Sound42 dsitemup
-BreakGlass dsbglass
-Sound44 dswriver
-Sound45 dswfall
-Sound46 dswdrip
-Sound47 dswsplsh
-RebelActive dsrebact
-AcolyteActive1 dsagrac1
-AcolyteActive2 dsagrac2
-AcolyteActive3 dsagrac3
-AcolyteActive4 dsagrac4
-BarKeepActive dsambppl
-BarKeepPain dsambbar
-Sound55 dstelept
-RatActive dsratact
-Sound57 dsitmbk
-Sound58 dsxbow
-Sound59 dsburnme
-Sound60 dsoof
-Sound61 dswbrldt
-PeasantDeath dspsdtha
-Sound63 dspsdthb
-Sound64 dspsdthc
-CrusaderPain dsrb2pn
-CrusaderDeath dsrb2dth
-CrusaderSight dsrb2see
-CrusaderActive dsrb2act
-Sound69 dsfirxpl
-Sound70 dsstnmov
-Sound71 dsnoway
-Sound72 dsrlaunc
-Sound73 dsrflite
-Sound74 dsradio
-SwitchPullChain dspulchn
-SwitchKnob dsswknob
-SwitchKeyCard dskeycrd
-SwitchStone dsswston
-SentinelSight dssntsee
-SentinelDeath dssntdth
-SentinelActive dssntact
-Sound82 dspgrdat
-TemplarSight dspgrsee
-TemplarPain dspgrdpn
-TemplarDeath dspgrdth
-TemplarActive dspgract
-Sound87 dsproton
-Sound88 dsprotfl
-Sound89 dsplasma
-Sound90 dsdsrptr
-Sound91 dsreavat
-ReaverBlade dsrevbld
-ReaverSight dsrevsee
-ReaverPain dsreavpn
-ReaverDeath dsrevdth
-ReaverActive dsrevact
-StalkerSight dsspisit
-StalkerWalk dsspdwlk
-StalkerDeath dsspidth
-StalkerAttack dsspdatk
-Chant dschant
-Static dsstatic
-Sound103 dschain
-LoremasterActive dstend
-Sound105 dsphoot
-Sound106 dsexplod
-Sound107 dssigil
-Sound108 dssglhit
-Sound109 dssiglup
-ProgrammerPain dsprgpn
-ProgrammerActive dsprogac
-LoremasterPain dslorpn
-LoremasterSight dslorsee
-SwitchFool dsdifool
-InquisitorDeath dsinqdth
-InquisitorActive dsinqact
-InquisitorSight dsinqsee
-Sound118 dsinqjmp
-Sound119 dsamaln1
-Sound120 dsamaln2
-Sound121 dsamaln3
-Sound122 dsamaln4
-Sound123 dsamaln5
-Sound124 dsamaln6
-EntitySight dsmnalse
-SpecterSight dsalnsee
-SpecterPain dsalnpn
-SpecterActive dsalnact
-SpecterDeath dsalndth
-EntityDeath dsmnaldt
-Sound131 dsreactr
-Sound132 dsairlck
-Sound133 dsdrchno
-Sound134 dsdrchnc
-SwitchValve dsvalve

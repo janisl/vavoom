@@ -66,5 +66,4 @@ ALIEN04     ALIEN05     Switch
 CITADL04    CITADL05    Switch
 SWITE03     SWITE04     Switch
 SWTELP01    SWTELP02    Switch
-
-BRNSCN01    BRNSCN05    Sound69
+BRNSCN01    BRNSCN05    ElectricArrowExplode
