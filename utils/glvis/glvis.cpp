@@ -29,6 +29,7 @@
 
 // HEADER FILES ------------------------------------------------------------
 
+#include <string.h>
 #include <stdarg.h>
 #include <iostream.h>
 #include <time.h>
@@ -263,9 +264,12 @@ int main(int argc, char *argv[])
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/11/09 18:15:02  dj_jl
+//	Added missing include
+//
 //	Revision 1.7  2001/10/18 17:41:47  dj_jl
 //	Added reject building
-//
+//	
 //	Revision 1.6  2001/09/20 16:38:05  dj_jl
 //	Moved TGLVis out of namespace
 //	
