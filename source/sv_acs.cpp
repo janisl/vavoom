@@ -518,7 +518,9 @@ class VACS : public VThinker
 	int 				number;
 	acsInfo_t*			info;
 	float				DelayTime;
-	int*				LocalVars;
+	//FIXME	Needs proper serialisation to be a pointer
+	//int*				LocalVars;
+	int					LocalVars[256];
 	int*				ip;
 	FACScriptsObject*	activeObject;
 
@@ -580,7 +582,8 @@ static VACS* SpawnScript(acsInfo_t* Info, FACScriptsObject* Object,
 	script->Activator = Activator;
 	script->line = Line;
 	script->side = Side;
-	script->LocalVars = (int*)Z_Malloc(Info->VarCount * 4, PU_LEVSPEC, 0);
+	//FIXME Temporarely disabled until serialisation is fixed.
+	//script->LocalVars = (int*)Z_Malloc(Info->VarCount * 4, PU_LEVSPEC, 0);
 	script->LocalVars[0] = Arg1;
 	script->LocalVars[1] = Arg2;
 	script->LocalVars[2] = Arg3;
@@ -2048,7 +2051,9 @@ void P_SerialiseScripts(FArchive& Ar)
 
 void VACS::Tick(float DeltaTime)
 {
+	guard(VACS::Tick);
 	RunScript(DeltaTime);
+	unguard;
 }
 
 //==========================================================================
@@ -2066,6 +2071,7 @@ inline int getbyte(int*& pc)
 
 int VACS::RunScript(float DeltaTime)
 {
+	guard(VACS::RunScript);
 	int cmd;
 	int action;
 	int SpecArgs[8];
@@ -2077,7 +2083,8 @@ int VACS::RunScript(float DeltaTime)
 		info->state = ASTE_INACTIVE;
 		FACScriptsObject::StaticScriptFinished(number);
 		ConditionalDestroy();
-		Z_Free(LocalVars);
+		//FIXME Temporarely disabled until serialisation is fixed.
+		//Z_Free(LocalVars);
 		return resultValue;
 	}
 	if (info->state != ASTE_RUNNING)
@@ -4354,9 +4361,11 @@ int VACS::RunScript(float DeltaTime)
 		info->state = ASTE_INACTIVE;
 		FACScriptsObject::StaticScriptFinished(number);
 		ConditionalDestroy();
-		Z_Free(LocalVars);
+		//FIXME Temporarely disabled until serialisation is fixed.
+		//Z_Free(LocalVars);
 	}
 	return resultValue;
+	unguard;
 }
 
 //==========================================================================
@@ -4627,9 +4636,12 @@ static void strbin(char *str)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.33  2005/03/28 07:29:24  dj_jl
+//	Temporary fix for save/load of local vars.
+//
 //	Revision 1.32  2005/01/24 12:56:30  dj_jl
 //	Fixed inc/dec of map variables.
-//
+//	
 //	Revision 1.31  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
 //	

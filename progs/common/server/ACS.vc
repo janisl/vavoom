@@ -26,15 +26,17 @@
 class ACS : Thinker
 	native;
 
-Entity Activator;
-line_t* Line;
-int Side;
-int Number;
-int Info;
-float DelayTime;
-int* Vars;
-int* IP;
-int* activeObject;
+Entity		Activator;
+line_t*		Line;
+int			Side;
+int			Number;
+int			Info;
+float		DelayTime;
+//FIXME	Needs proper serialisation to be a pointer
+//int*		LocalVars;
+int			LocalVars[256];
+int*		IP;
+int*		activeObject;
 
 native void Archive();
 native void Unarchive();
@@ -46,6 +48,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/03/28 07:29:53  dj_jl
+//  Temporary fix for save/load of local vars.
+//
 //  Revision 1.3  2004/12/22 07:54:40  dj_jl
 //  More extended ACS support, more linedef flags.
 //
