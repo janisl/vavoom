@@ -710,7 +710,11 @@ void *Z_Malloc(int size, int tag, void** user)
 		}
 		else if (tag != PU_VIDEO)
 		{
-			Z_FreeMemory();
+			ofstream f(va("%s/heapdump.txt", fl_gamedir));
+			mainzone->DumpHeap(f);
+			f << endl;
+			minizone->DumpHeap(f);
+			f.close();
     		Sys_Error("Z_Malloc: failed on allocation of %d bytes", size);
 		}
 	}
@@ -843,9 +847,12 @@ COMMAND(DumpHeap)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/30 17:44:45  dj_jl
+//	Print heap dump on Z_Malloc failure
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
