@@ -112,12 +112,18 @@
  externdef _rshift
  externdef _gshift
  externdef _bshift
+ externdef _roffs
+ externdef _goffs
+ externdef _boffs
  externdef _fadetable
  externdef _fadetable16
  externdef _fadetable16r
  externdef _fadetable16g
  externdef _fadetable16b
  externdef _fadetable32
+ externdef _fadetable32r
+ externdef _fadetable32g
+ externdef _fadetable32b
  externdef _pr_globals
  externdef _pr_stackPtr
  externdef _pr_statements

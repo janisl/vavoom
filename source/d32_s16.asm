@@ -149,58 +149,48 @@ LClampHighOrLow1:
  xor edx,edx
  jmp LClampReentry1
 LClampLow2:
- mov ebp,2048
+ mov ebp,4096
  jmp LClampReentry2
 LClampHigh2:
  mov ebp,ds:dword ptr[_bbextents]
  jmp LClampReentry2
 LClampLow3:
- mov ecx,2048
+ mov ecx,4096
  jmp LClampReentry3
 LClampHigh3:
  mov ecx,ds:dword ptr[_bbextentt]
  jmp LClampReentry3
 LClampLow4:
- mov eax,2048
+ mov eax,4096
  jmp LClampReentry4
 LClampHigh4:
  mov eax,ds:dword ptr[_bbextents]
  jmp LClampReentry4
 LClampLow5:
- mov ebx,2048
+ mov ebx,4096
  jmp LClampReentry5
 LClampHigh5:
  mov ebx,ds:dword ptr[_bbextentt]
  jmp LClampReentry5
  align 4
- public _D_DrawSpriteSpans_32
-_D_DrawSpriteSpans_32:
+ public _D_DrawSpans16_32
+_D_DrawSpans16_32:
  push ebp
  push edi
  push esi
  push ebx
  fld ds:dword ptr[_d_sdivzstepu]
- fmul ds:dword ptr[fp_8]
+ fmul ds:dword ptr[fp_16]
  mov edx,ds:dword ptr[_cacheblock]
  fld ds:dword ptr[_d_tdivzstepu]
- fmul ds:dword ptr[fp_8]
+ fmul ds:dword ptr[fp_16]
  mov ebx,ds:dword ptr[4+16+esp]
  fld ds:dword ptr[_d_zistepu]
- fmul ds:dword ptr[fp_8]
+ fmul ds:dword ptr[fp_16]
  mov ds:dword ptr[pbase],edx
- fld ds:dword ptr[_d_zistepu]
- fmul ds:dword ptr[fp_64kx64k]
- fxch st(3)
- fstp ds:dword ptr[sdivz8stepu]
- fstp ds:dword ptr[zi8stepu]
- fstp ds:dword ptr[tdivz8stepu]
- fistp ds:dword ptr[izistep]
- mov eax,ds:dword ptr[izistep]
- ror eax,16
- mov ecx,ds:dword ptr[8+ebx]
- mov ds:dword ptr[izistep],eax
- cmp ecx,0
- jle LNextSpan
+ fstp ds:dword ptr[zi16stepu]
+ fstp ds:dword ptr[tdivz16stepu]
+ fstp ds:dword ptr[sdivz16stepu]
 LSpanLoop:
  fild ds:dword ptr[4+ebx]
  fild ds:dword ptr[0+ebx]
@@ -230,32 +220,17 @@ LSpanLoop:
  fld ds:dword ptr[fp_64k]
  fxch st(1)
  fadd ds:dword ptr[_d_ziorigin]
- fld st(0)
- fmul ds:dword ptr[fp_64kx64k]
- fxch st(1)
- fdiv st(2),st(0)
- fxch st(1)
- fistp ds:dword ptr[izi]
- mov ebp,ds:dword ptr[izi]
- ror ebp,16
+ fdiv st(1),st(0)
+ mov ecx,ds:dword ptr[_scrn]
  mov eax,ds:dword ptr[4+ebx]
- mov ds:dword ptr[izi],ebp
- mov ebp,ds:dword ptr[0+ebx]
- mov eax,ds:dword ptr[_ylookup+eax*4]
- add eax,ebp
- shl eax,1
- add eax,ds:dword ptr[_zbuffer]
- mov ds:dword ptr[pz],eax
- mov ebp,ds:dword ptr[_scrn]
- mov eax,ds:dword ptr[4+ebx]
- push ebx
+ mov ds:dword ptr[pspantemp],ebx
  mov edx,ds:dword ptr[_tadjust]
  mov esi,ds:dword ptr[_sadjust]
  mov edi,ds:dword ptr[_ylookup+eax*4]
  add edi,ds:dword ptr[0+ebx]
- shl edi,2
- add edi,ebp
- cmp ecx,8
+ lea edi,ds:dword ptr[ecx+edi*4]
+ mov ecx,ds:dword ptr[8+ebx]
+ cmp ecx,16
  ja LSetupNotLast1
  dec ecx
  jz LCleanup1
@@ -304,11 +279,11 @@ LSetupNotLast1:
  fxch st(1)
  fistp ds:dword ptr[s]
  fistp ds:dword ptr[t]
- fadd ds:dword ptr[zi8stepu]
+ fadd ds:dword ptr[zi16stepu]
  fxch st(2)
- fadd ds:dword ptr[sdivz8stepu]
+ fadd ds:dword ptr[sdivz16stepu]
  fxch st(2)
- fld ds:dword ptr[tdivz8stepu]
+ fld ds:dword ptr[tdivz16stepu]
  faddp st(2),st(0)
  fld ds:dword ptr[fp_64k]
  fdiv st(0),st(1)
@@ -334,12 +309,11 @@ LClampReentry1:
  sar esi,16
  mov ds:dword ptr[tfracf],edx
  sar eax,16
- sal esi,2
- add esi,ebx
- imul eax,ds:dword ptr[_cachewidth]
- sal eax,2
+ mov edx,ds:dword ptr[_cachewidth]
+ imul eax,edx
  add esi,eax
- cmp ecx,8
+ lea esi,ds:dword ptr[ebx+esi*4]
+ cmp ecx,16
  jna LLastSegment
 LNotLastSegment:
  fld st(0)
@@ -351,20 +325,22 @@ LNotLastSegment:
  fistp ds:dword ptr[tnext]
  mov eax,ds:dword ptr[snext]
  mov edx,ds:dword ptr[tnext]
- sub ecx,8
+ mov ebx,ds:dword ptr[esi]
+ sub ecx,16
  mov ebp,ds:dword ptr[_sadjust]
- push ecx
+ mov ds:dword ptr[counttemp],ecx
  mov ecx,ds:dword ptr[_tadjust]
+ mov ds:dword ptr[edi],ebx
  add ebp,eax
  add ecx,edx
  mov eax,ds:dword ptr[_bbextents]
  mov edx,ds:dword ptr[_bbextentt]
- cmp ebp,2048
+ cmp ebp,4096
  jl LClampLow2
  cmp ebp,eax
  ja LClampHigh2
 LClampReentry2:
- cmp ecx,2048
+ cmp ecx,4096
  jl LClampLow3
  cmp ecx,edx
  ja LClampHigh3
@@ -375,111 +351,97 @@ LClampReentry3:
  sub ecx,ds:dword ptr[t]
  mov eax,ecx
  mov edx,ebp
- sar edx,19
- sal edx,2
+ sar eax,20
+ jz LZero
+ sar edx,20
  mov ebx,ds:dword ptr[_cachewidth]
- sal ebx,2
- sar eax,19
- jz LIsZero
+ shl ebx,2
  imul eax,ebx
-LIsZero:
- add eax,edx
+ jmp LSetUp1
+LZero:
+ sar edx,20
+ mov ebx,ds:dword ptr[_cachewidth]
+ shl ebx,2
+LSetUp1:
+ lea eax,ds:dword ptr[eax+edx*4]
  mov edx,ds:dword ptr[tfracf]
  mov ds:dword ptr[advancetable+8],eax
  mov ds:dword ptr[advancetable+12],eax
  add eax,ebx
- shl ebp,13
- mov ds:dword ptr[sstep],ebp
+ shl ebp,12
  mov ebx,ds:dword ptr[sfracf]
- shl ecx,13
+ shl ecx,12
  mov ds:dword ptr[advancetable],eax
  mov ds:dword ptr[advancetable+4],eax
- mov ds:dword ptr[tstep],ecx
  add ds:dword ptr[advancetable+4],4
  add ds:dword ptr[advancetable+12],4
- mov ecx,ds:dword ptr[pz]
- mov ebp,ds:dword ptr[izi]
- cmp bp,ds:word ptr[ecx]
- jl Lp1
- mov eax,ds:dword ptr[esi]
- test eax,eax
- jz Lp1
- mov ds:word ptr[ecx],bp
- mov ds:dword ptr[edi],eax
-Lp1:
- add ebp,ds:dword ptr[izistep]
- adc ebp,0
+ mov ds:dword ptr[tstep],ecx
+ add edx,ecx
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
  add edx,ds:dword ptr[tstep]
- sbb eax,eax
- add ebx,ds:dword ptr[sstep]
- adc eax,eax
- add esi,ds:dword ptr[advancetable+8+eax*4]
- cmp bp,ds:word ptr[2+ecx]
- jl Lp2
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
  mov eax,ds:dword ptr[esi]
- test eax,eax
- jz Lp2
- mov ds:word ptr[2+ecx],bp
  mov ds:dword ptr[4+edi],eax
-Lp2:
- add ebp,ds:dword ptr[izistep]
- adc ebp,0
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
  add edx,ds:dword ptr[tstep]
- sbb eax,eax
- add ebx,ds:dword ptr[sstep]
- adc eax,eax
- add esi,ds:dword ptr[advancetable+8+eax*4]
- cmp bp,ds:word ptr[4+ecx]
- jl Lp3
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
  mov eax,ds:dword ptr[esi]
- test eax,eax
- jz Lp3
- mov ds:word ptr[4+ecx],bp
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
  mov ds:dword ptr[8+edi],eax
-Lp3:
- add ebp,ds:dword ptr[izistep]
- adc ebp,0
- add edx,ds:dword ptr[tstep]
- sbb eax,eax
- add ebx,ds:dword ptr[sstep]
- adc eax,eax
- add esi,ds:dword ptr[advancetable+8+eax*4]
- cmp bp,ds:word ptr[6+ecx]
- jl Lp4
  mov eax,ds:dword ptr[esi]
- test eax,eax
- jz Lp4
- mov ds:word ptr[6+ecx],bp
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
  mov ds:dword ptr[12+edi],eax
-Lp4:
- add ebp,ds:dword ptr[izistep]
- adc ebp,0
- add edx,ds:dword ptr[tstep]
- sbb eax,eax
- add ebx,ds:dword ptr[sstep]
- adc eax,eax
- add esi,ds:dword ptr[advancetable+8+eax*4]
- cmp bp,ds:word ptr[8+ecx]
- jl Lp5
  mov eax,ds:dword ptr[esi]
- test eax,eax
- jz Lp5
- mov ds:word ptr[8+ecx],bp
- mov ds:dword ptr[16+edi],eax
-Lp5:
- add ebp,ds:dword ptr[izistep]
- adc ebp,0
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
  add edx,ds:dword ptr[tstep]
- sbb eax,eax
- add ebx,ds:dword ptr[sstep]
- adc eax,eax
- add esi,ds:dword ptr[advancetable+8+eax*4]
- pop eax
- cmp eax,8
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ mov ds:dword ptr[16+edi],eax
+ mov eax,ds:dword ptr[esi]
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+ mov ds:dword ptr[20+edi],eax
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ mov eax,ds:dword ptr[esi]
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ mov ds:dword ptr[24+edi],eax
+ mov eax,ds:dword ptr[esi]
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+ mov ds:dword ptr[28+edi],eax
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ mov eax,ds:dword ptr[esi]
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ mov ecx,ds:dword ptr[counttemp]
+ cmp ecx,16
  ja LSetupNotLast2
- dec eax
+ dec ecx
  jz LFDIVInFlight2
- mov ds:dword ptr[spancountminus1],eax
+ mov ds:dword ptr[spancountminus1],ecx
  fild ds:dword ptr[spancountminus1]
  fld ds:dword ptr[_d_zistepu]
  fmul st(0),st(1)
@@ -498,73 +460,75 @@ Lp5:
  jmp LFDIVInFlight2
  align 4
 LSetupNotLast2:
- fadd ds:dword ptr[zi8stepu]
+ fadd ds:dword ptr[zi16stepu]
  fxch st(2)
- fadd ds:dword ptr[sdivz8stepu]
+ fadd ds:dword ptr[sdivz16stepu]
  fxch st(2)
- fld ds:dword ptr[tdivz8stepu]
+ fld ds:dword ptr[tdivz16stepu]
  faddp st(2),st(0)
  fld ds:dword ptr[fp_64k]
  fdiv st(0),st(1)
 LFDIVInFlight2:
- push eax
- cmp bp,ds:word ptr[10+ecx]
- jl Lp6
- mov eax,ds:dword ptr[esi]
- test eax,eax
- jz Lp6
- mov ds:word ptr[10+ecx],bp
- mov ds:dword ptr[20+edi],eax
-Lp6:
- add ebp,ds:dword ptr[izistep]
- adc ebp,0
+ mov ds:dword ptr[counttemp],ecx
  add edx,ds:dword ptr[tstep]
- sbb eax,eax
- add ebx,ds:dword ptr[sstep]
- adc eax,eax
- add esi,ds:dword ptr[advancetable+8+eax*4]
- cmp bp,ds:word ptr[12+ecx]
- jl Lp7
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ mov ds:dword ptr[32+edi],eax
  mov eax,ds:dword ptr[esi]
- test eax,eax
- jz Lp7
- mov ds:word ptr[12+ecx],bp
- mov ds:dword ptr[24+edi],eax
-Lp7:
- add ebp,ds:dword ptr[izistep]
- adc ebp,0
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
  add edx,ds:dword ptr[tstep]
- sbb eax,eax
- add ebx,ds:dword ptr[sstep]
- adc eax,eax
- add esi,ds:dword ptr[advancetable+8+eax*4]
- cmp bp,ds:word ptr[14+ecx]
- jl Lp8
+ mov ds:dword ptr[36+edi],eax
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
  mov eax,ds:dword ptr[esi]
- test eax,eax
- jz Lp8
- mov ds:word ptr[14+ecx],bp
- mov ds:dword ptr[28+edi],eax
-Lp8:
- add ebp,ds:dword ptr[izistep]
- adc ebp,0
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
  add edx,ds:dword ptr[tstep]
- sbb eax,eax
- add ebx,ds:dword ptr[sstep]
- adc eax,eax
- add esi,ds:dword ptr[advancetable+8+eax*4]
- add edi,32
- add ecx,16
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ mov ds:dword ptr[40+edi],eax
+ mov eax,ds:dword ptr[esi]
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+ mov ds:dword ptr[44+edi],eax
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ mov eax,ds:dword ptr[esi]
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ mov ds:dword ptr[48+edi],eax
+ mov eax,ds:dword ptr[esi]
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+ mov ds:dword ptr[52+edi],eax
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ mov eax,ds:dword ptr[esi]
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ mov ds:dword ptr[56+edi],eax
+ mov eax,ds:dword ptr[esi]
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edi,64
  mov ds:dword ptr[tfracf],edx
  mov edx,ds:dword ptr[snext]
  mov ds:dword ptr[sfracf],ebx
  mov ebx,ds:dword ptr[tnext]
  mov ds:dword ptr[s],edx
  mov ds:dword ptr[t],ebx
- mov ds:dword ptr[pz],ecx
- mov ds:dword ptr[izi],ebp
- pop ecx
- cmp ecx,8
+ mov ecx,ds:dword ptr[counttemp]
+ cmp ecx,16
+ mov ds:dword ptr[-4+edi],eax
  ja LNotLastSegment
 LLastSegment:
  test ecx,ecx
@@ -576,19 +540,21 @@ LLastSegment:
  fxch st(1)
  fistp ds:dword ptr[snext]
  fistp ds:dword ptr[tnext]
+ mov eax,ds:dword ptr[esi]
  mov ebx,ds:dword ptr[_tadjust]
+ mov ds:dword ptr[edi],eax
  mov eax,ds:dword ptr[_sadjust]
  add eax,ds:dword ptr[snext]
  add ebx,ds:dword ptr[tnext]
  mov ebp,ds:dword ptr[_bbextents]
  mov edx,ds:dword ptr[_bbextentt]
- cmp eax,2048
+ cmp eax,4096
  jl LClampLow4
  cmp eax,ebp
  ja LClampHigh4
 LClampReentry4:
  mov ds:dword ptr[snext],eax
- cmp ebx,2048
+ cmp ebx,4096
  jl LClampLow5
  cmp ebx,edx
  ja LClampHigh5
@@ -604,19 +570,16 @@ LClampReentry5:
  mov eax,ebx
  imul ds:dword ptr[reciprocal_table-8+ecx*4]
 LSetEntryvec:
- mov ebx,ds:dword ptr[LEntryVecTable+ecx*4]
+ mov ebx,ds:dword ptr[entryvec_table_16+ecx*4]
  mov eax,edx
- push ebx
+ mov ds:dword ptr[jumptemp],ebx
  mov ecx,ebp
- sar ecx,16
- sal ecx,2
- mov ebx,ds:dword ptr[_cachewidth]
- sal ebx,2
  sar edx,16
- jz LIsZeroLast
+ mov ebx,ds:dword ptr[_cachewidth]
+ shl ebx,2
+ sar ecx,16
  imul edx,ebx
-LIsZeroLast:
- add edx,ecx
+ lea edx,ds:dword ptr[edx+ecx*4]
  mov ecx,ds:dword ptr[tfracf]
  mov ds:dword ptr[advancetable+8],edx
  mov ds:dword ptr[advancetable+12],edx
@@ -629,15 +592,16 @@ LIsZeroLast:
  add ds:dword ptr[advancetable+4],4
  add ds:dword ptr[advancetable+12],4
  mov ds:dword ptr[tstep],eax
- mov ds:dword ptr[sstep],ebp
  mov edx,ecx
- mov ecx,ds:dword ptr[pz]
- mov ebp,ds:dword ptr[izi]
- ret
+ add edx,eax
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ jmp dword ptr[jumptemp]
 LNoSteps:
- mov ecx,ds:dword ptr[pz]
- sub edi,28
- sub ecx,14
+ mov eax,ds:dword ptr[esi]
+ sub edi,60
  jmp LEndSpan
 LOnlyOneStep:
  sub eax,ds:dword ptr[s]
@@ -645,171 +609,266 @@ LOnlyOneStep:
  mov ebp,eax
  mov edx,ebx
  jmp LSetEntryvec
-LEntryVecTable:
- dd 0
- dd LEntry2
- dd LEntry3
- dd LEntry4
- dd LEntry5
- dd LEntry6
- dd LEntry7
- dd LEntry8
-LEntry2:
+entryvec_table_16: dd 0, Entry2_16, Entry3_16, Entry4_16
+ dd Entry5_16, Entry6_16, Entry7_16, Entry8_16
+ dd Entry9_16, Entry10_16, Entry11_16, Entry12_16
+ dd Entry13_16, Entry14_16, Entry15_16, Entry16_16
+Entry2_16:
+ sub edi,56
+ mov eax,ds:dword ptr[esi]
+ jmp LEntry2_16
+Entry3_16:
+ sub edi,52
+ add edx,eax
+ mov eax,ds:dword ptr[esi]
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ jmp LEntry3_16
+Entry4_16:
+ sub edi,48
+ add edx,eax
+ mov eax,ds:dword ptr[esi]
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+ jmp LEntry4_16
+Entry5_16:
+ sub edi,44
+ add edx,eax
+ mov eax,ds:dword ptr[esi]
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+ jmp LEntry5_16
+Entry6_16:
+ sub edi,40
+ add edx,eax
+ mov eax,ds:dword ptr[esi]
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+ jmp LEntry6_16
+Entry7_16:
+ sub edi,36
+ add edx,eax
+ mov eax,ds:dword ptr[esi]
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+ jmp LEntry7_16
+Entry8_16:
+ sub edi,32
+ add edx,eax
+ mov eax,ds:dword ptr[esi]
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+ jmp LEntry8_16
+Entry9_16:
+ sub edi,28
+ add edx,eax
+ mov eax,ds:dword ptr[esi]
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+ jmp LEntry9_16
+Entry10_16:
  sub edi,24
- sub ecx,12
+ add edx,eax
  mov eax,ds:dword ptr[esi]
- jmp LLEntry2
-LEntry3:
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+ jmp LEntry10_16
+Entry11_16:
  sub edi,20
- sub ecx,10
- jmp LLEntry3
-LEntry4:
+ add edx,eax
+ mov eax,ds:dword ptr[esi]
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+ jmp LEntry11_16
+Entry12_16:
  sub edi,16
- sub ecx,8
- jmp LLEntry4
-LEntry5:
+ add edx,eax
+ mov eax,ds:dword ptr[esi]
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+ jmp LEntry12_16
+Entry13_16:
  sub edi,12
- sub ecx,6
- jmp LLEntry5
-LEntry6:
+ add edx,eax
+ mov eax,ds:dword ptr[esi]
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+ jmp LEntry13_16
+Entry14_16:
  sub edi,8
- sub ecx,4
- jmp LLEntry6
-LEntry7:
+ add edx,eax
+ mov eax,ds:dword ptr[esi]
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+ jmp LEntry14_16
+Entry15_16:
  sub edi,4
- sub ecx,2
- jmp LLEntry7
-LEntry8:
- cmp bp,ds:word ptr[ecx]
- jl Lp9
+ add edx,eax
  mov eax,ds:dword ptr[esi]
- test eax,eax
- jz Lp9
- mov ds:word ptr[ecx],bp
- mov ds:dword ptr[edi],eax
-Lp9:
- add ebp,ds:dword ptr[izistep]
- adc ebp,0
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
  add edx,ds:dword ptr[tstep]
- sbb eax,eax
- add ebx,ds:dword ptr[sstep]
- adc eax,eax
- add esi,ds:dword ptr[advancetable+8+eax*4]
-LLEntry7:
- cmp bp,ds:word ptr[2+ecx]
- jl Lp10
+ jmp LEntry15_16
+Entry16_16:
+ add edx,eax
  mov eax,ds:dword ptr[esi]
- test eax,eax
- jz Lp10
- mov ds:word ptr[2+ecx],bp
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
  mov ds:dword ptr[4+edi],eax
-Lp10:
- add ebp,ds:dword ptr[izistep]
- adc ebp,0
- add edx,ds:dword ptr[tstep]
- sbb eax,eax
- add ebx,ds:dword ptr[sstep]
- adc eax,eax
- add esi,ds:dword ptr[advancetable+8+eax*4]
-LLEntry6:
- cmp bp,ds:word ptr[4+ecx]
- jl Lp11
  mov eax,ds:dword ptr[esi]
- test eax,eax
- jz Lp11
- mov ds:word ptr[4+ecx],bp
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+LEntry15_16:
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
  mov ds:dword ptr[8+edi],eax
-Lp11:
- add ebp,ds:dword ptr[izistep]
- adc ebp,0
- add edx,ds:dword ptr[tstep]
- sbb eax,eax
- add ebx,ds:dword ptr[sstep]
- adc eax,eax
- add esi,ds:dword ptr[advancetable+8+eax*4]
-LLEntry5:
- cmp bp,ds:word ptr[6+ecx]
- jl Lp12
  mov eax,ds:dword ptr[esi]
- test eax,eax
- jz Lp12
- mov ds:word ptr[6+ecx],bp
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+LEntry14_16:
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
  mov ds:dword ptr[12+edi],eax
-Lp12:
- add ebp,ds:dword ptr[izistep]
- adc ebp,0
- add edx,ds:dword ptr[tstep]
- sbb eax,eax
- add ebx,ds:dword ptr[sstep]
- adc eax,eax
- add esi,ds:dword ptr[advancetable+8+eax*4]
-LLEntry4:
- cmp bp,ds:word ptr[8+ecx]
- jl Lp13
  mov eax,ds:dword ptr[esi]
- test eax,eax
- jz Lp13
- mov ds:word ptr[8+ecx],bp
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+LEntry13_16:
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
  mov ds:dword ptr[16+edi],eax
-Lp13:
- add ebp,ds:dword ptr[izistep]
- adc ebp,0
- add edx,ds:dword ptr[tstep]
- sbb eax,eax
- add ebx,ds:dword ptr[sstep]
- adc eax,eax
- add esi,ds:dword ptr[advancetable+8+eax*4]
-LLEntry3:
- cmp bp,ds:word ptr[10+ecx]
- jl Lp14
  mov eax,ds:dword ptr[esi]
- test eax,eax
- jz Lp14
- mov ds:word ptr[10+ecx],bp
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+LEntry12_16:
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
  mov ds:dword ptr[20+edi],eax
-Lp14:
- add ebp,ds:dword ptr[izistep]
- adc ebp,0
- add edx,ds:dword ptr[tstep]
- sbb eax,eax
- add ebx,ds:dword ptr[sstep]
- adc eax,eax
- add esi,ds:dword ptr[advancetable+8+eax*4]
-LLEntry2:
- cmp bp,ds:word ptr[12+ecx]
- jl Lp15
  mov eax,ds:dword ptr[esi]
- test eax,eax
- jz Lp15
- mov ds:word ptr[12+ecx],bp
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+LEntry11_16:
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
  mov ds:dword ptr[24+edi],eax
-Lp15:
- add ebp,ds:dword ptr[izistep]
- adc ebp,0
- add edx,ds:dword ptr[tstep]
- sbb eax,eax
- add ebx,ds:dword ptr[sstep]
- adc eax,eax
- add esi,ds:dword ptr[advancetable+8+eax*4]
-LEndSpan:
- cmp bp,ds:word ptr[14+ecx]
- jl Lp16
  mov eax,ds:dword ptr[esi]
- test eax,eax
- jz Lp16
- mov ds:word ptr[14+ecx],bp
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+LEntry10_16:
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
  mov ds:dword ptr[28+edi],eax
-Lp16:
+ mov eax,ds:dword ptr[esi]
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+LEntry9_16:
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ mov ds:dword ptr[32+edi],eax
+ mov eax,ds:dword ptr[esi]
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+LEntry8_16:
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ mov ds:dword ptr[36+edi],eax
+ mov eax,ds:dword ptr[esi]
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+LEntry7_16:
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ mov ds:dword ptr[40+edi],eax
+ mov eax,ds:dword ptr[esi]
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+LEntry6_16:
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ mov ds:dword ptr[44+edi],eax
+ mov eax,ds:dword ptr[esi]
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+LEntry5_16:
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ mov ds:dword ptr[48+edi],eax
+ mov eax,ds:dword ptr[esi]
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+ add edx,ds:dword ptr[tstep]
+LEntry4_16:
+ sbb ecx,ecx
+ add ebx,ebp
+ adc ecx,ecx
+ mov ds:dword ptr[52+edi],eax
+ mov eax,ds:dword ptr[esi]
+ add esi,ds:dword ptr[advancetable+8+ecx*4]
+LEntry3_16:
+ mov ds:dword ptr[56+edi],eax
+ mov eax,ds:dword ptr[esi]
+LEntry2_16:
+LEndSpan:
  fstp st(0)
  fstp st(0)
  fstp st(0)
- pop ebx
-LNextSpan:
- add ebx,12 
- mov ecx,ds:dword ptr[8+ebx]
- cmp ecx,0
- jg LSpanLoop
- jz LNextSpan
+ mov ebx,ds:dword ptr[pspantemp]
+ mov ebx,ds:dword ptr[12+ebx]
+ test ebx,ebx
+ mov ds:dword ptr[60+edi],eax
+ jnz LSpanLoop
  pop ebx
  pop esi
  pop edi
