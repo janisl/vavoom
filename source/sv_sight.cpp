@@ -56,6 +56,7 @@ static TVec			sightstart;
 static TVec			sightend;
 static TVec			sdelta;
 static TPlane		strace;			// from t1 to t2
+static bool			SightEarlyOut;
 
 static TVec			linestart;
 static TVec			lineend;
@@ -204,7 +205,10 @@ static boolean CheckLine(seg_t* seg)
 
 	// stop because it is not two sided anyway
 	if (!(line->flags & ML_TWOSIDED))
+	{
+		SightEarlyOut = true;
 		return false;
+	}
 
 	// crosses a two sided line
 	if (s1 == 0)
@@ -487,10 +491,15 @@ boolean P_CheckSight(VMapObject* t1, VMapObject* t2)
 	sightend.z += t2->Height * 0.5;
 
 #ifdef LINE_SIGHT
+	SightEarlyOut = false;
 	//	Check middle
 	if (SightTraceLine(t2->Sector))
 	{
 		return true;
+	}
+	if (SightEarlyOut)
+	{
+		return false;
 	}
 
 	//	Check head
@@ -519,9 +528,12 @@ boolean P_CheckSight(VMapObject* t1, VMapObject* t2)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/03/09 18:02:53  dj_jl
+//	Added early out when one-sided line is crossed
+//
 //	Revision 1.9  2002/03/02 17:31:55  dj_jl
 //	Improved sight checking with 3 rays.
-//
+//	
 //	Revision 1.8  2002/02/15 19:12:04  dj_jl
 //	Property namig style change
 //	
