@@ -30,17 +30,10 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include <allegro.h>
+#include <xalleg.h>
 #include <dlfcn.h>
 #include "gl_local.h"
 #include <GL/glx.h>
-// Here you see 2 bugs in Allegro headers
-#include <allegro/aintern.h>
-#define private fucked_private
-#include <allegro/aintunix.h>
-#undef private
-#undef AL_METHOD
-#define AL_METHOD(a, b, c)	AL_FUNCPTR(a, b, c)
-#include <xalleg.h>
 
 #ifdef ALLEGRO_XWINDOWS_WITH_XF86DGA
 #define USE_FULLSCREEN
@@ -460,9 +453,12 @@ void TOpenGLDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/09/20 16:22:51  dj_jl
+//	Removed workarounds for Allegro bugs that are now fixed
+//
 //	Revision 1.6  2001/08/23 17:46:18  dj_jl
 //	Better integrity with Allegro, fixed crashes on exit, mouse
-//
+//	
 //	Revision 1.5  2001/08/17 17:43:40  dj_jl
 //	LINUX fixes
 //
