@@ -408,6 +408,11 @@ void Sys_Shutdown(void)
 {
 	CoUninitialize();
 	ShowCursor(TRUE);
+
+	if (tevent)
+	{
+		CloseHandle(tevent);
+	}
 }
 
 //==========================================================================
@@ -427,9 +432,6 @@ void Sys_Quit(void)
 
     // Shutdown system
 	Host_Shutdown();
-
-	if (tevent)
-		CloseHandle(tevent);
 
 	// Exit
 	SendMessage(hwnd, WM_CLOSE, 0, 0);
@@ -806,18 +808,31 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 	}
 	catch (VavoomError &e)
 	{
+		char *tmp_msg;
+
 		Host_Shutdown();
 
 		dprintf("\n\nERROR: %s\n", e.message);
-		MessageBox(hwnd, e.message, "Error", MB_OK);
+		tmp_msg = new char[strlen(e.message) + strlen(host_error_string) + 4];
+		sprintf(tmp_msg, "%s\n\n%s", e.message, host_error_string);
+		MessageBox(hwnd, tmp_msg, "Error", MB_OK);
+		delete tmp_msg;
 
 		SendMessage(hwnd, WM_CLOSE, 0, 0);
 		return 1;
 	}
 	catch (...)
 	{
+		char *tmp_msg;
+
 		Host_Shutdown();
 		dprintf("\n\nExiting due to external exception\n");
+
+		tmp_msg = new char[strlen(host_error_string) + 32];
+		sprintf(tmp_msg, "Received external exception\n\n%s", host_error_string);
+		MessageBox(hwnd, tmp_msg, "Error", MB_OK);
+		delete tmp_msg;
+
 		throw;
 	}
 }
@@ -825,9 +840,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/01/03 18:38:25  dj_jl
+//	Added guard macros and core dumps
+//
 //	Revision 1.11  2001/12/12 19:28:49  dj_jl
 //	Some little changes, beautification
-//
+//	
 //	Revision 1.10  2001/12/04 18:11:59  dj_jl
 //	Fixes for compiling with MSVC
 //	

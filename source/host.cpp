@@ -81,6 +81,8 @@ int				host_framecount;
 
 boolean			host_initialized = false;
 
+char			*host_error_string;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static TCvarF	host_framerate("framerate", "0");
@@ -515,6 +517,39 @@ COMMAND(Quit)
 
 //==========================================================================
 //
+//	Host_CoreDump
+//
+//==========================================================================
+
+void Host_CoreDump(const char *fmt, ...)
+{
+	if (!host_error_string)
+	{
+		host_error_string = new char[32];
+		strcpy(host_error_string, "Stack trace: ");
+
+		PR_Traceback();
+	}
+
+	va_list argptr;
+	char string[1024];
+	
+	va_start(argptr, fmt);
+	vsprintf(string, fmt, argptr);
+	va_end(argptr);
+
+	dprintf("- %s\n", string);
+
+	char *new_string = new char[strlen(host_error_string) + strlen(string) + 6];
+	strcpy(new_string, host_error_string);
+	strcat(new_string, " <- ");
+	strcat(new_string, string);
+	delete host_error_string;
+	host_error_string = new_string;
+}
+
+//==========================================================================
+//
 //	Host_Shutdown
 //
 //	Return to default system state
@@ -532,26 +567,30 @@ void Host_Shutdown(void)
 	}
 	shutting_down = true;
 
-	NET_Shutdown();
+#define SAFE_SHUTDOWN(name, args) \
+	try { name args; } catch (...) { con << #name" failed\n"; }
+
+	SAFE_SHUTDOWN(NET_Shutdown, ())
 #ifdef CLIENT
-	IN_Shutdown();
-	V_Shutdown();
-	S_Shutdown();
+	SAFE_SHUTDOWN(IN_Shutdown, ())
+	SAFE_SHUTDOWN(V_Shutdown, ())
+	SAFE_SHUTDOWN(S_Shutdown, ())
 #endif
-	Sys_Shutdown();
+	SAFE_SHUTDOWN(Sys_Shutdown, ())
 
-	PR_Traceback();
-
-	VObject::StaticExit();
-	FName::StaticExit();
+	SAFE_SHUTDOWN(VObject::StaticExit, ())
+	SAFE_SHUTDOWN(FName::StaticExit, ())
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2002/01/03 18:38:25  dj_jl
+//	Added guard macros and core dumps
+//
 //	Revision 1.15  2001/12/27 17:37:42  dj_jl
 //	Added garbage collection
-//
+//	
 //	Revision 1.14  2001/12/18 19:05:03  dj_jl
 //	Made TCvar a pure C++ class
 //	

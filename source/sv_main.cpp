@@ -153,6 +153,7 @@ static int		pg_frametime;
 
 void SV_Init(void)
 {
+	guard(SV_Init);
 	svs.max_clients = 1;
 
     svpr.Load("svprogs");
@@ -171,6 +172,7 @@ void SV_Init(void)
 
 	P_InitSwitchList();
 	P_InitTerrainTypes();
+	unguard;
 }
 
 //==========================================================================
@@ -2556,32 +2558,26 @@ COMMAND(MaxPlayers)
 
 void ServerFrame(int realtics)
 {
-	try
-	{
-		SV_ClearDatagram();
+	guard(ServerFrame);
+	SV_ClearDatagram();
 
-		SV_CheckForNewClients();
+	SV_CheckForNewClients();
 
 #ifndef REAL_TIME
-	    // run the count dics
-    	while (realtics--)
+    // run the count dics
+   	while (realtics--)
 #endif
-	    {
-			SV_Ticker();
-		}
-
-		if (mapteleport_issued)
-		{
-			SV_MapTeleport(sv_next_map);
-		}
-
-		SV_SendClientMessages();
+    {
+		SV_Ticker();
 	}
-	catch (...)
+
+	if (mapteleport_issued)
 	{
-		dprintf("- ServerFrame\n");
-		throw;
+		SV_MapTeleport(sv_next_map);
 	}
+
+	SV_SendClientMessages();
+	unguard;
 }
 
 //==========================================================================
@@ -2666,9 +2662,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2002/01/03 18:38:25  dj_jl
+//	Added guard macros and core dumps
+//
 //	Revision 1.26  2001/12/28 16:26:39  dj_jl
 //	Temporary fix for map teleport
-//
+//	
 //	Revision 1.25  2001/12/27 17:33:29  dj_jl
 //	Removed thinker list
 //	

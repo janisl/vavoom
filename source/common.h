@@ -69,6 +69,34 @@ typedef unsigned long	 	dword;
 
 //==========================================================================
 //
+//	Guard macros
+//
+//==========================================================================
+
+#ifdef DO_GUARD
+#define guard(name)		static const char *__FUNC_NAME__ = #name; try {
+#define unguard			} catch (RecoverableError &e) { throw e; } \
+	catch (...) { Host_CoreDump(__FUNC_NAME__); throw; }
+#define unguardf(msg)	} catch (RecoverableError &e) { throw e; } \
+	catch (...) { Host_CoreDump(__FUNC_NAME__); Host_CoreDump msg; throw; }
+#else
+#define guard(name)		static const char *__FUNC_NAME__ = #name; {
+#define unguard			}
+#define unguardf(msg)	}
+#endif
+
+#ifdef PARANOID
+#define guardSlow(name)		guard(name)
+#define unguardSlow			unguard
+#define unguardfSlow(msg)	unguardf(msg)
+#else
+#define guardSlow(name)		{
+#define unguardSlow			}
+#define unguardfSlow(msg)	}
+#endif
+
+//==========================================================================
+//
 //	Errors
 //
 //==========================================================================
@@ -96,9 +124,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/01/03 18:38:25  dj_jl
+//	Added guard macros and core dumps
+//
 //	Revision 1.5  2001/12/12 19:27:08  dj_jl
 //	Added some macros
-//
+//	
 //	Revision 1.4  2001/10/08 17:26:17  dj_jl
 //	Started to use exceptions
 //	

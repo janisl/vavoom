@@ -38,6 +38,7 @@ void Host_EndGame(const char *message, ...)
 	__attribute__((noreturn, format(printf, 1, 2)));
 void Host_Error(const char *error, ...)
 	__attribute__((noreturn, format(printf, 1, 2)));
+void Host_CoreDump(const char *fmt, ...);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
@@ -51,12 +52,17 @@ extern double		host_time;
 extern double		realtime;
 extern int			host_framecount;
 
+extern char			*host_error_string;
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/01/03 18:38:25  dj_jl
+//	Added guard macros and core dumps
+//
 //	Revision 1.7  2001/08/31 17:26:48  dj_jl
 //	Attribute syntax change
-//
+//	
 //	Revision 1.6  2001/08/30 17:46:21  dj_jl
 //	Removed game dependency
 //	

@@ -56,11 +56,12 @@
 // will not be compiled
 //#define PARANOID
 //#define DEVELOPER
+#define DO_GUARD
 
 #define VERSION_MAJOR	1
 #define VERSION_MINOR	11
-#define VERSION_RELEASE	0
-#define VERSION_TEXT	"1.11"
+#define VERSION_RELEASE	1
+#define VERSION_TEXT	"1.11.1"
 
 //==========================================================================
 //
@@ -118,9 +119,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2002/01/03 18:38:25  dj_jl
+//	Added guard macros and core dumps
+//
 //	Revision 1.14  2001/12/27 17:41:09  dj_jl
 //	Switched to release
-//
+//	
 //	Revision 1.13  2001/12/18 19:07:46  dj_jl
 //	Added global name subsystem
 //	

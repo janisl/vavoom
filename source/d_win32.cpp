@@ -43,10 +43,6 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-dword						mmx_mask4 = 0;
-dword						mmx_mask8 = 0;
-dword						mmx_mask16 = 0;
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static LPDIRECTDRAW			DDraw = NULL;
@@ -54,7 +50,7 @@ static LPDIRECTDRAWSURFACE	PrimarySurface = NULL;
 static LPDIRECTDRAWPALETTE	Palette = NULL;
 static PALETTEENTRY			PaletteEntries[256];
 
-static boolean				new_palette = false;
+static bool					new_palette = false;
 
 // CODE --------------------------------------------------------------------
 
@@ -68,6 +64,7 @@ static boolean				new_palette = false;
 
 void TSoftwareDrawer::Init(void)
 {
+	guard(TSoftwareDrawer::Init);
 	HRESULT			result;
 
 	// Create DirectDraw object
@@ -92,6 +89,7 @@ void TSoftwareDrawer::Init(void)
 		PaletteEntries, &Palette, NULL);
 	if (result != DD_OK)
 		Sys_Error("I_InitGraphics: Failed to create palette");
+	unguard;
 }
 
 //==========================================================================
@@ -104,6 +102,7 @@ void TSoftwareDrawer::Init(void)
 
 bool TSoftwareDrawer::SetResolution(int Width, int Height, int BPP)
 {
+	guard(TSoftwareDrawer::SetResolution);
 	if (!Width || !Height)
 	{
 		//	Set default mode for Windows
@@ -123,7 +122,7 @@ bool TSoftwareDrawer::SetResolution(int Width, int Height, int BPP)
 
 	if (BPP == 15)
 		BPP = 16;
-	if (BPP != 8 && BPP != 16)
+	if (BPP != 8 && BPP != 16 && BPP != 32)
 		return false;
 
 	if (DDraw->SetDisplayMode(Width, Height, BPP) != DD_OK)
@@ -200,6 +199,7 @@ bool TSoftwareDrawer::SetResolution(int Width, int Height, int BPP)
 	ScreenBPP = BPP;
 
 	return true;
+	unguard;
 }
 
 //==========================================================================
@@ -212,6 +212,7 @@ bool TSoftwareDrawer::SetResolution(int Width, int Height, int BPP)
 
 void TSoftwareDrawer::SetPalette8(byte *palette)
 {
+	guard(TSoftwareDrawer::SetPalette8);
   	int				i;
 
 	for (i = 0; i < 256; i++)
@@ -222,6 +223,7 @@ void TSoftwareDrawer::SetPalette8(byte *palette)
 		PaletteEntries[i].peFlags = 0;
 	}
 	new_palette = true;
+	unguard;
 }
 
 //==========================================================================
@@ -234,6 +236,7 @@ void TSoftwareDrawer::SetPalette8(byte *palette)
 
 void TSoftwareDrawer::Update(void)
 {
+	guard(TSoftwareDrawer::Update);
 	DDSURFACEDESC	ddsd;
 
 	// Check for lost surface
@@ -268,6 +271,7 @@ void TSoftwareDrawer::Update(void)
 
 	if (PrimarySurface->Unlock(NULL) != DD_OK)
 		Sys_Error("UnlockBuf: Failed to unlock screen");
+	unguard;
 }
 
 //==========================================================================
@@ -300,9 +304,12 @@ void TSoftwareDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/01/03 18:38:25  dj_jl
+//	Added guard macros and core dumps
+//
 //	Revision 1.5  2001/10/27 07:47:52  dj_jl
 //	Public gamma variables
-//
+//	
 //	Revision 1.4  2001/10/04 17:23:29  dj_jl
 //	Got rid of some warnings
 //	

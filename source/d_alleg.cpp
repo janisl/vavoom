@@ -50,10 +50,6 @@ BEGIN_COLOR_DEPTH_LIST
 	COLOR_DEPTH_32
 END_COLOR_DEPTH_LIST
 
-dword				mmx_mask4 = 0;
-dword				mmx_mask8 = 0;
-dword				mmx_mask16 = 0;
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static BITMAP		*gamebitmap = NULL;
@@ -68,12 +64,6 @@ static BITMAP		*gamebitmap = NULL;
 
 void TSoftwareDrawer::Init(void)
 {
-	if (cpu_mmx)
-	{
-		mmx_mask4 = ~3;
-		mmx_mask8 = ~7;
-		mmx_mask16 = ~15;
-	}
 }
 
 //==========================================================================
@@ -86,6 +76,7 @@ void TSoftwareDrawer::Init(void)
 
 static BITMAP *my_create_bitmap_ex(int color_depth, int width, int height)
 {
+	guard(my_create_bitmap_ex);
 	GFX_VTABLE *vtable;
 	BITMAP *bitmap;
 	int i;
@@ -120,6 +111,7 @@ static BITMAP *my_create_bitmap_ex(int color_depth, int width, int height)
 		system_driver->created_bitmap(bitmap);
 
 	return bitmap;
+	unguard;
 }
 
 //==========================================================================
@@ -132,6 +124,7 @@ static BITMAP *my_create_bitmap_ex(int color_depth, int width, int height)
 
 bool TSoftwareDrawer::SetResolution(int Width, int Height, int bpp)
 {
+	guard(TSoftwareDrawer::SetResolution);
 	if (!Width || !Height)
 	{
 		//	Set defaults
@@ -191,6 +184,7 @@ bool TSoftwareDrawer::SetResolution(int Width, int Height, int bpp)
 	}
 
 	return true;
+	unguard;
 }
 
 //==========================================================================
@@ -203,6 +197,7 @@ bool TSoftwareDrawer::SetResolution(int Width, int Height, int bpp)
 
 void TSoftwareDrawer::SetPalette8(byte *palette)
 {
+	guard(TSoftwareDrawer::SetPalette8);
   	int 	i;
 	byte	*table;
 
@@ -233,6 +228,7 @@ void TSoftwareDrawer::SetPalette8(byte *palette)
 	set_palette(pal);
 
 #endif
+	unguard;
 }
 
 //==========================================================================
@@ -279,6 +275,7 @@ static void Blit_Banked(void)
 
 void TSoftwareDrawer::Update(void)
 {
+	guard(TSoftwareDrawer::Update);
 #ifdef DJGPP
 	if (is_linear_bitmap(screen))
 	{
@@ -295,6 +292,7 @@ void TSoftwareDrawer::Update(void)
 	}
 #endif
 	blit(gamebitmap, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H);
+	unguard;
 }
 
 //==========================================================================
@@ -313,9 +311,12 @@ void TSoftwareDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/01/03 18:38:25  dj_jl
+//	Added guard macros and core dumps
+//
 //	Revision 1.7  2001/12/01 17:41:33  dj_jl
 //	Changes for Allegro 3.9.40
-//
+//	
 //	Revision 1.6  2001/10/27 07:47:52  dj_jl
 //	Public gamma variables
 //	

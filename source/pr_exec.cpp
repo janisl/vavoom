@@ -141,8 +141,9 @@ extern "C" void PR_Profile2_end(void){}
 void PR_Traceback(void)
 {
 	if (current_func)
-		cond << "\nCurrently running PROG function  (" <<
-			current_func->name << ")\n\n";
+	{
+		Host_CoreDump("(%s)", current_func->name);
+	}
 }
 
 //==========================================================================
@@ -164,6 +165,7 @@ static void PF_Fixme(void)
 
 void TProgs::Load(const char *AName)
 {
+	guard(TProgs::Load);
 	int		i;
 	int		len;
 	char	progfilename[256];
@@ -379,6 +381,12 @@ void TProgs::Load(const char *AName)
 			Statements[i + 1] = (int)(Globals + Globaldefs[Statements[i + 1]].ofs);
 			break;
 		case OPC_CALL:
+			if (i > 68638 && i < 68668)
+			{
+				con << "Call statement " << i << " of function "
+					<< Statements[i + 1] << ' ' << Functions[Statements[i + 1]].name
+					<< ' ' << (void *)Functions[Statements[i + 1]].first_statement << endl;
+			}
 		    Statements[i + 1] = (int)(Functions + Statements[i + 1]);
 			break;
 		}
@@ -388,6 +396,7 @@ void TProgs::Load(const char *AName)
 	//	Execute initialization function
 	Exec("main");
 	Z_Free(ClassList);
+	unguard;
 }
 
 //==========================================================================
@@ -522,6 +531,7 @@ static void RunFunction(dfunction_t *func)
 	int			*sp;
 	int			*local_vars;
 
+	guardSlow(RunFunction);
     current_func = func;
 
 	if (func->flags & FUNC_Native)
@@ -1301,6 +1311,7 @@ static void RunFunction(dfunction_t *func)
 	}
 
     goto func_loop;
+	unguardfSlow(("(%s)", func->name));
 }
 
 #endif
@@ -1313,6 +1324,7 @@ static void RunFunction(dfunction_t *func)
 
 int TProgs::ExecuteFunction(int fnum)
 {
+	guard(TProgs::ExecuteFunction);
 	dfunction_t		*prev_func;
 	int				ret = 0;
 	dfunction_t		*func = (dfunction_t *)fnum;
@@ -1355,6 +1367,7 @@ int TProgs::ExecuteFunction(int fnum)
 
 	//	All done
 	return ret;
+	unguardf(("(%s)", ((dfunction_t *)fnum)->name));
 }
 
 //==========================================================================
@@ -1661,9 +1674,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2002/01/03 18:38:25  dj_jl
+//	Added guard macros and core dumps
+//
 //	Revision 1.14  2001/12/27 17:39:10  dj_jl
 //	Added method count to VClass
-//
+//	
 //	Revision 1.13  2001/12/18 19:03:16  dj_jl
 //	A lots of work on VObject
 //	
