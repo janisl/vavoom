@@ -409,6 +409,27 @@ static boolean CrossBSPNode(int bspnum)
 
 //==========================================================================
 //
+//	SightTraceLine
+//
+//==========================================================================
+
+static bool	SightTraceLine(sector_t *sec)
+{
+	sdelta = sightend - sightstart;
+	strace.SetPointDir(sightstart, sdelta);
+
+	linestart = sightstart;
+	// the head node is the last node output
+	if (!CrossBSPNode(level.numnodes - 1))
+	{
+		return false;
+	}
+	lineend = sightend;
+	return CheckPlanes(sec);
+}
+
+//==========================================================================
+//
 //	P_CheckSight
 //
 //	Returns true if a straight line between t1 and t2 is unobstructed.
@@ -465,31 +486,45 @@ boolean P_CheckSight(VMapObject* t1, VMapObject* t2)
 	sightend = t2->Origin;
 	sightend.z += t2->Height * 0.5;
 
-#ifndef LINE_SIGHT
+#ifdef LINE_SIGHT
+	//	Check middle
+	if (SightTraceLine(t2->Sector))
+	{
+		return true;
+	}
+
+	//	Check head
+	validcount++;
+	sightend = t2->Origin;
+	sightend.z += t2->Height;
+	if (SightTraceLine(t2->Sector))
+	{
+		return true;
+	}
+
+	//	Check feats
+	validcount++;
+	sightend = t2->Origin;
+	sightend.z -= t2->FloorClip;
+	return SightTraceLine(t2->Sector);
+#else
 	topslope =    t2->Origin.z + t2->Height - sightstart.z;
 	bottomslope = t2->Origin.z - sightstart.z;
+
+	return SightTraceLine(t2->Sector);
 #endif
-
-	sdelta = sightend - sightstart;
-	strace.SetPointDir(t1->Origin, sdelta);
-
-	linestart = sightstart;
-	// the head node is the last node output
-	if (!CrossBSPNode(level.numnodes - 1))
-	{
-		return false;
-	}
-	lineend = sightend;
-	return CheckPlanes(t2->Sector);
 	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/03/02 17:31:55  dj_jl
+//	Improved sight checking with 3 rays.
+//
 //	Revision 1.8  2002/02/15 19:12:04  dj_jl
 //	Property namig style change
-//
+//	
 //	Revision 1.7  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	
