@@ -79,10 +79,11 @@ class Window:Object
 int WindowType;			// Contains window type
 
 // Booleans
-bool bIsVisible;		// TRUE if the window is visible
-bool bIsSensitive;		// TRUE if the window can take input
-bool bTickEnabled;		// TRUE if Tick() event should be called
-bool bIsInitialized;	// TRUE if the window has been initialized
+bool bIsVisible;		// True if the window is visible
+bool bIsSensitive;		// True if the window can take input
+bool bIsSelectable;		// True if the window can have keyboard focus
+bool bTickEnabled;		// True if Tick() event should be called
+bool bIsInitialized;	// True if the window has been initialized
 
 // Destructor information
 bool bBeingDestroyed;	// TRUE if this window is going bye-bye
@@ -115,6 +116,7 @@ native void SetSensitivity(boolean bNewSensitivity);
 native void Enable(void);
 native void Disable(void);
 native boolean IsSensitive(void);
+native void SetSelectability(boolean bNewSelectability);
 
 native RootWindow GetRootWindow(void);
 native ModalWindow GetModalWindow(void);
@@ -334,6 +336,9 @@ RootWindow GRoot;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2002/07/27 18:12:30  dj_jl
+//  Added Selectability flag.
+//
 //  Revision 1.2  2002/06/14 15:46:45  dj_jl
 //  Added modal window class.
 //

@@ -40,13 +40,14 @@ class VWindow:public VObject
 	int WindowType;				// Contains window type
 
 	// Booleans
-	dword bIsVisible:1;			// TRUE if the window is visible
-	dword bIsSensitive:1;		// TRUE if the window can take input
-	dword bTickEnabled:1;		// TRUE if () event should be called
-	dword bIsInitialized:1;		// TRUE if the window has been initialized
+	dword bIsVisible:1;			// True if the window is visible
+	dword bIsSensitive:1;		// True if the window can take input
+	dword bIsSelectable:1;		// True if the window can have keyboard focus
+	dword bTickEnabled:1;		// True if () event should be called
+	dword bIsInitialized:1;		// True if the window has been initialized
 
 	// Destructor information
-	dword bBeingDestroyed:1;	// TRUE if this window is going bye-bye
+	dword bBeingDestroyed:1;	// True if this window is going bye-bye
 
 	int X;
 	int Y;
@@ -130,6 +131,12 @@ public:
 		else
 			return bIsSensitive;
 	}
+
+	// Selectability routines
+	void SetSelectability(bool NewSelectability);
+	bool IsSelectable(void) { return bIsSelectable; }
+	//bool IsTraversable(bool bCheckModal = true);
+	//bool IsFocusWindow(void);
 
 	//	Reconfiguration routines.
 	void SetPos(int NewX, int NewY);
@@ -227,6 +234,7 @@ public:
 	DECLARE_FUNCTION(Enable)
 	DECLARE_FUNCTION(Disable)
 	DECLARE_FUNCTION(IsSensitive)
+	DECLARE_FUNCTION(SetSelectability)
 	
 	DECLARE_FUNCTION(GetRootWindow)
 	DECLARE_FUNCTION(GetModalWindow)
@@ -249,9 +257,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2002/07/27 18:12:14  dj_jl
+//	Added Selectability flag.
+//
 //	Revision 1.2  2002/06/14 15:39:22  dj_jl
 //	Some fixes for Borland.
-//
+//	
 //	Revision 1.1  2002/05/29 16:51:50  dj_jl
 //	Started a work on native Window classes.
 //	

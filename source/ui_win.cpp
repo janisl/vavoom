@@ -350,6 +350,29 @@ void VWindow::SetSensitivity(bool NewSensitivity)
 
 //==========================================================================
 //
+//	VWindow::SetSelectability
+//
+//==========================================================================
+
+void VWindow::SetSelectability(bool NewSelectability)
+{
+	guard(VWindow::SetSelectability);
+	if (!!bIsSelectable != NewSelectability)
+	{
+		bIsSelectable = NewSelectability;
+/*		if (bIsVisible && bIsSensitive)
+		{
+			if (bIsSelectable)
+				GetModalWindow()->AddWindowToTables(this);
+			else
+				GetModalWindow()->RemoveWindowFromTables(this);
+		}*/
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VWindow::SetPos
 //
 //==========================================================================
@@ -670,6 +693,12 @@ IMPLEMENT_FUNCTION(VWindow, IsSensitive)
 	VWindow *Self = PR_PopWin();
 	PR_Push(Self->IsSensitive());
 }
+IMPLEMENT_FUNCTION(VWindow, SetSelectability)
+{
+	bool bNewSelectability = !!PR_Pop();
+	VWindow *Self = PR_PopWin();
+	Self->SetSelectability(bNewSelectability);
+}
 
 IMPLEMENT_FUNCTION(VWindow, GetRootWindow)
 {
@@ -763,9 +792,12 @@ IMPLEMENT_FUNCTION(VWindow, DestroyAllChildren)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2002/07/27 18:12:14  dj_jl
+//	Added Selectability flag.
+//
 //	Revision 1.2  2002/06/14 15:39:22  dj_jl
 //	Some fixes for Borland.
-//
+//	
 //	Revision 1.1  2002/05/29 16:51:50  dj_jl
 //	Started a work on native Window classes.
 //	
