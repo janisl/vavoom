@@ -23,3 +23,20 @@ $(OUTDIR)/clprogs.dat: *.vc client/*.vc $(COMMON_DIR)/*.vc
 $(OUTDIR)/svprogs.dat: *.vc server/*.vc $(COMMON_DIR)/*.vc
 	$(VCC) -I$(COMMON_DIR) server/svprogs.vc $@
 
+#---------------------------------------
+# Debugging
+#---------------------------------------
+
+debug: client/clprogs.dat server/svprogs.dat
+debugcl: client/clprogs.dat
+debugsv: server/svprogs.dat
+
+deldebug:
+	rm client/clprogs.dat server/svprogs.dat
+
+client/clprogs.dat: *.vc client/*.vc $(COMMON_DIR)/*.vc
+	$(VCC) -I$(COMMON_DIR) client/clprogs.vc $@ -dclient/debug.txt $(DUMP_ASM)
+
+server/svprogs.dat: *.vc server/*.vc $(COMMON_DIR)/*.vc
+	$(VCC) -I$(COMMON_DIR) server/svprogs.vc $@ -dserver/debug.txt $(DUMP_ASM)
+

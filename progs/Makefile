@@ -12,3 +12,17 @@ del:
 	$(MAKE) -C hexen del OUTDIR=../../basev/hexen/progs
 	$(MAKE) -C strife del OUTDIR=../../basev/strife/progs
 
+debug:
+	$(MAKE) -C doom debug
+	$(MAKE) -C doom2 debug
+	$(MAKE) -C heretic debug
+	$(MAKE) -C hexen debug
+	$(MAKE) -C strife debug
+
+deldebug:
+	$(MAKE) -C doom deldebug
+	$(MAKE) -C doom2 deldebug
+	$(MAKE) -C heretic deldebug
+	$(MAKE) -C hexen deldebug
+	$(MAKE) -C strife deldebug
+
