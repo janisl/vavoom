@@ -105,7 +105,7 @@ class MenuScreenPlayerSetup:MenuScreen
 		R_InstallSprite("MAGE", 502);
 
 		Anim = MenuSpriteAnim(AddItem(MenuSpriteAnim));
-		Anim.SetPos(200, 120);
+		Anim.SetPos(260, 120);
 		Anim.SprDef = 500;
 		Anim.Speed = 8;
 		Anim.NumFrames = 4;
@@ -154,6 +154,7 @@ class MenuChoice_Color:MenuChoiceEnum
 	defaultproperties
 	{
 		Text = "Color";
+		bLeftAlign = true;
 		EnumNames[0] = "blue";
 		EnumNames[1] = "red";
 		EnumNames[2] = "gold";
@@ -194,6 +195,7 @@ class MenuChoice_PClass:MenuChoiceEnum
 	defaultproperties
 	{
 		Text = "Class";
+		bLeftAlign = true;
 		EnumNames[0] = "fighter";
 		EnumNames[1] = "cleric";
 		EnumNames[2] = "mage";
@@ -208,6 +210,9 @@ void menu_psetup(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/02/26 17:46:50  dj_jl
+//  Fixes for menus.
+//
 //  Revision 1.8  2002/01/23 17:54:23  dj_jl
 //  Object-oriented menus, got rid of C-style type casting.
 //

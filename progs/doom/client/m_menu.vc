@@ -1235,7 +1235,7 @@ class MenuSaveSlot:MenuChoice
 //**
 //**************************************************************************
 
-class MenuInputLine:MenuObject
+class MenuInputLine:MenuChoice
 {
 	string Text;
 	int Value[32 / 4];
@@ -1462,6 +1462,9 @@ class MenuSList:MenuChoice
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/26 17:46:50  dj_jl
+//  Fixes for menus.
+//
 //  Revision 1.19  2002/02/06 17:22:16  dj_jl
 //  Some fixes for the menus.
 //

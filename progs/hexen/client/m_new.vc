@@ -244,10 +244,7 @@ class MenuScreenNewNetGame:MenuScreen
 		CmdBuf_AddText("DeathMatch %d\n", DeathMatch.Value);
 		CmdBuf_AddText("TimeLimit %d\n", TimeLimit.Value * 5);
 		CmdBuf_AddText("Skill %d\n", Skill.Value);
-		if (Level.Value + 1 < 10)
-			CmdBuf_AddText("Map MAP0%d\n", Level.Value + 1);
-		else
-			CmdBuf_AddText("Map MAP%d\n", Level.Value + 1);
+		CmdBuf_AddText("Map %s\n", P_GetMapLumpName(Level.Value + 1));
 	}
 
 	defaultproperties
@@ -286,6 +283,9 @@ void menu_new_game(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/02/26 17:46:50  dj_jl
+//  Fixes for menus.
+//
 //  Revision 1.7  2002/01/23 17:54:23  dj_jl
 //  Object-oriented menus, got rid of C-style type casting.
 //

@@ -1202,7 +1202,7 @@ class MenuSaveSlot:MenuChoice
 //**
 //**************************************************************************
 
-class MenuInputLine:MenuObject
+class MenuInputLine:MenuChoice
 {
 	string Text;
 	int Value[32 / 4];
@@ -1312,7 +1312,7 @@ class MenuSList:MenuChoice
 		x = (320 - w) / 2;
 		y = (200 - h) / 2;
 
-		R_FillRectWithFlat(x, y, w, h, "FLAT20");
+		R_FillRectWithFlat(x, y, w, h, "FLOOR04");
 		DrawBorder(x, y, w, h);
 
 		T_DrawText(160, 100, text);
@@ -1429,6 +1429,9 @@ class MenuSList:MenuChoice
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/26 17:46:50  dj_jl
+//  Fixes for menus.
+//
 //  Revision 1.18  2002/02/09 18:09:57  dj_jl
 //  Fixed sliders
 //

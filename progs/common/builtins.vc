@@ -317,6 +317,7 @@ native void LocalSoundTillDone(name Name);
 native int TranslateKey(int c);
 
 native string P_GetMapName(int map);
+native string P_GetMapLumpName(int map);
 native string P_TranslateMap(int map);
 native boolean SV_GetSaveString(int i, string buf);
 native void StartSearch(void);
@@ -458,9 +459,6 @@ native sector_t *SectorToNum(sector_t * sector);
 native sector_t *NumToSector(sector_t * sector);
 native void MobjToNum(void *mobj);
 native void NumToMobj(void *mobj);
-native classid ClassIDToNum(classid cid);
-native classid NumToClassID(classid cid);
-native name UnarchiveName(name Name);
 
 native void G_ExitLevel(void);
 native void G_SecretExitLevel(void);
@@ -487,6 +485,9 @@ native void MSG_SelectClientMsg(int msgtype, player_t * client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.32  2002/02/26 17:46:47  dj_jl
+//  Fixes for menus.
+//
 //  Revision 1.31  2002/02/22 18:00:04  dj_jl
 //  A lots of the renaming, beautification.
 //
