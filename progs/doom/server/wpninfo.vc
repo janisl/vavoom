@@ -110,7 +110,7 @@ class WeaponPistol:Weapon
 		AttackState = S_PISTOL1;
 		HoldAttackState = S_NULL;
 		FlashState = S_PISTOLFLASH;
-		ThirdPersonModel = "weapons/g_pistol.md2";
+		ThirdPersonModel = 'weapons/g_pistol.md2';
 	}
 }
 
@@ -131,7 +131,7 @@ class WeaponShotgun:Weapon
 		AttackState = S_SGUN1;
 		HoldAttackState = S_NULL;
 		FlashState = S_SGUNFLASH1;
-		ThirdPersonModel = "weapons/g_shotg.md2";
+		ThirdPersonModel = 'weapons/g_shotg.md2';
 	}
 }
 
@@ -152,7 +152,7 @@ class WeaponChaingun:Weapon
 		AttackState = S_CHAIN1;
 		HoldAttackState = S_NULL;
 		FlashState = S_CHAINFLASH1;
-		ThirdPersonModel = "weapons/g_chain.md2";
+		ThirdPersonModel = 'weapons/g_chain.md2';
 	}
 }
 
@@ -173,7 +173,7 @@ class WeaponMissile:Weapon
 		AttackState = S_MISSILE1;
 		HoldAttackState = S_NULL;
 		FlashState = S_MISSILEFLASH1;
-		ThirdPersonModel = "weapons/g_launch.md2";
+		ThirdPersonModel = 'weapons/g_launch.md2';
 	}
 }
 
@@ -194,7 +194,7 @@ class WeaponPlasma:Weapon
 		AttackState = S_PLASMA1;
 		HoldAttackState = S_NULL;
 		FlashState = S_PLASMAFLASH1;
-		ThirdPersonModel = "weapons/g_plasma.md2";
+		ThirdPersonModel = 'weapons/g_plasma.md2';
 	}
 }
 
@@ -215,7 +215,7 @@ class WeaponBFG:Weapon
 		AttackState = S_BFG1;
 		HoldAttackState = S_NULL;
 		FlashState = S_BFGFLASH1;
-		ThirdPersonModel = "weapons/g_bfg.md2";
+		ThirdPersonModel = 'weapons/g_bfg.md2';
 	}
 }
 
@@ -236,7 +236,7 @@ class WeaponChainsaw:Weapon
 		AttackState = S_SAW1;
 		HoldAttackState = S_NULL;
 		FlashState = S_NULL;
-		ThirdPersonModel = "weapons/g_saw.md2";
+		ThirdPersonModel = 'weapons/g_saw.md2';
 	}
 }
 
@@ -257,16 +257,19 @@ class WeaponSuperShotgun:Weapon
 		AttackState = S_DSGUN1;
 		HoldAttackState = S_NULL;
 		FlashState = S_DSGUNFLASH1;
-		ThirdPersonModel = "weapons/g_super.md2";
+		ThirdPersonModel = 'weapons/g_super.md2';
 	}
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/03/28 18:24:07  dj_jl
+//	Changed third person model names to type name.
+//
 //	Revision 1.10  2002/03/02 17:35:55  dj_jl
 //	Weapon classes
-//
+//	
 //	Revision 1.9  2002/02/22 18:00:15  dj_jl
 //	A lots of the renaming, beautification.
 //	
