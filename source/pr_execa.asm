@@ -379,6 +379,8 @@ LOPCODE_TABLE:
  dd LOPC_CASE_GOTO_CLASSID
  dd LOPC_PUSHNAME
  dd LOPC_CASE_GOTO_NAME
+ dd LOPC_PUSHBOOL
+ dd LOPC_ASSIGNBOOL
  align 4
 LINC_STATEMENT_POINTER:
  add edi,4
@@ -1615,6 +1617,39 @@ LOPC_DYNAMIC_CAST:
  call eax
  mov dword ptr[-4+esi],eax
  add esp,8
+ mov eax,dword ptr[edi]
+ add edi,4
+ jmp  dword ptr[LOPCODE_TABLE+eax*4]
+ align 4
+LOPC_PUSHBOOL:
+ mov eax,dword ptr[edi]
+ mov edx,dword ptr[-4+esi]
+ add edi,4
+ test dword ptr[edx],eax
+ setne al
+ and eax,1
+ mov dword ptr[-4+esi],eax
+ mov eax,dword ptr[edi]
+ add edi,4
+ jmp  dword ptr[LOPCODE_TABLE+eax*4]
+ align 4
+LOPC_ASSIGNBOOL:
+ mov edx,dword ptr[edi]
+ add esi,offset -4
+ add edi,4
+ cmp dword ptr[esi],0
+ je LABOOL_FALSE
+ mov eax,dword ptr[-4+esi]
+ or dword ptr[eax],edx
+ add esi,offset -4
+ mov eax,dword ptr[edi]
+ add edi,4
+ jmp  dword ptr[LOPCODE_TABLE+eax*4]
+LABOOL_FALSE:
+ mov eax,dword ptr[-4+esi]
+ xor edx,offset -1
+ and dword ptr[eax],edx
+ add esi,offset -4
  mov eax,dword ptr[edi]
  add edi,4
  jmp  dword ptr[LOPCODE_TABLE+eax*4]

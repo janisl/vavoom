@@ -163,6 +163,8 @@ enum
 	DECLARE_OPC(CASE_GOTO_CLASSID, 2),
 	DECLARE_OPC(PUSHNAME, 1),
 	DECLARE_OPC(CASE_GOTO_NAME, 2),
+	DECLARE_OPC(PUSHBOOL, 1),
+	DECLARE_OPC(ASSIGNBOOL, 1),
 
 #undef DECLARE_OPC
 #ifndef OPCODE_INFO
@@ -237,9 +239,12 @@ struct dclassinfo_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/02/16 16:29:26  dj_jl
+//	Added support for bool variables
+//
 //	Revision 1.11  2002/01/11 08:07:17  dj_jl
 //	Added names to progs
-//
+//	
 //	Revision 1.10  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

@@ -78,6 +78,7 @@ enum
 	ev_class,
 	ev_method,
 	ev_classid,
+	ev_bool,
 
 	NUM_BASIC_TYPES
 };
@@ -169,6 +170,7 @@ enum Keyword
 	KW_STATES = 1,
 	KW_MOBJINFO,
 	KW_ADDFIELDS,
+	KW_BOOL,
 	KW_BREAK,
 	KW_CASE,
 	KW_CLASS,
@@ -251,17 +253,140 @@ enum Punctuation
 	PU_RBRACE,
 };
 
+// Define private default constructor.
+#define NO_DEFAULT_CONSTRUCTOR(cls) \
+	protected: cls() {} public:
+
+// Declare the base VObject class.
+#define DECLARE_BASE_CLASS(TClass, TSuperClass) \
+public: \
+	/* Identification */ \
+	typedef TSuperClass Super;\
+	typedef TClass ThisClass;
+
+//
+// The base class of all objects.
+//
+class FField
+{
+	// Friends.
+//	friend template<class T> class TFieldIterator;
+
+private:
+	// Internal per-object variables.
+//	int						Index;				// Index of object into table.
+//	FField*					Outer;				// Object this object resides in.
+//	FName					Name;				// Name of the object.
+
+	// Private systemwide variables.
+//	static bool				GObjInitialized;
+//	static TArray<VObject*>	GObjObjects;		// List of all objects.
+//	static TArray<int>		GObjAvailable;		// Available object indices.
+
+public:
+	FName		Name;
+/*	// Constructors.
+	VObject();
+
+	// Destructors.
+	virtual ~VObject();
+
+	// VObject interface.
+	virtual void Register(void);
+	virtual void Destroy(void);
+	virtual void Serialize(FArchive &Ar);
+
+	// Systemwide functions.
+	static void StaticInit(void);
+	static void StaticExit(void);
+	static VObject *StaticSpawnObject(VClass *, VObject *, int);
+	static void CollectGarbage(void);
+	static VObject *GetIndexObject(int Index);
+	static int GetObjectsCount(void);
+
+	// Functions.
+	bool IsA(VClass *SomeBaseClass) const;
+	bool IsIn(VObject *SomeOuter) const;
+
+	// Accessors.
+	VClass* GetClass(void) const
+	{
+		return Class;
+	}
+	dword GetFlags(void) const
+	{
+		return ObjectFlags;
+	}
+	void SetFlags(dword NewFlags)
+	{
+		ObjectFlags |= NewFlags;
+	}
+	void ClearFlags(dword NewFlags)
+	{
+		ObjectFlags &= ~NewFlags;
+	}
+	const char *GetName(void) const
+	{
+		return *Name;
+	}
+	const FName GetFName(void) const
+	{
+		return Name;
+	}
+	VObject *GetOuter(void) const
+	{
+		return Outer;
+	}
+	dword GetIndex(void) const
+	{
+		return Index;
+	}*/
+};
+
+/*//
+// Class for iterating through all objects which inherit from a
+// specified base class.
+//
+template<class T> class TFieldIterator
+{
+public:
+	TFieldIterator()
+	:	Index(-1)
+	{
+		++*this;
+	}
+	void operator++()
+	{
+		while (++Index < FField::GFields.Num() &&
+			(!FField::GFields[Index] ||
+				!dynamic_cast<t>(FField::GFields[Index])));
+	}
+	T* operator*()
+	{
+		return (T*)FField::GFields[Index];
+	}
+	T* operator->()
+	{
+		return (T*)FField::GFields[Index];
+	}
+	operator bool()
+	{
+		return Index < FField::GFields.Num();
+	}
+protected:
+	int Index;
+};*/
+
 class TType;
 
-struct field_t
+struct field_t:public FField
 {
-	FName		Name;
 	int			ofs;
 	TType		*type;
 	int			func_num;	// Method's function
 };
 
-class TType
+class TType:public FField
 {
 public:
 	TType(void) {}
@@ -269,7 +394,6 @@ public:
 		type(Atype), next(Anext), aux_type(Aaux_type), size(Asize)
 	{ }
 
-	FName		Name;
 	int			type;
 	TType		*next;
 	TType		*aux_type;
@@ -293,10 +417,9 @@ public:
 	TType		*param_types[MAX_PARAMS];
 };
 
-class TFunction
+class TFunction:public FField
 {
 public:
-	FName		Name;
 	TType		*OuterClass;
 	int			first_statement;	//	NegatØvi skaitõi ir iebÝvñtÆs funkcijas
 	int			num_locals;
@@ -304,24 +427,21 @@ public:
 	TType		*type;
 };
 
-class TGlobalDef
+class TGlobalDef:public FField
 {
 public:
-	FName		Name;
 	int			ofs;
 	TType		*type;
 };
 
-struct localvardef_t
+struct localvardef_t:public FField
 {
-	FName		Name;
 	int			ofs;
 	TType		*type;
 };
 
-struct constant_t
+struct constant_t:public FField
 {
-	FName		Name;
 	int			value;
 	constant_t	*HashNext;
 };
@@ -459,6 +579,7 @@ extern TType			type_vector;
 extern TType			type_classid;
 extern TType			type_class;
 extern TType			type_none_ref;
+extern TType			type_bool;
 
 extern int				numclasses;
 
@@ -531,9 +652,12 @@ inline bool TK_Check(Punctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2002/02/16 16:28:36  dj_jl
+//	Added support for bool variables
+//
 //	Revision 1.20  2002/02/02 19:23:02  dj_jl
 //	Natives declared inside class declarations.
-//
+//	
 //	Revision 1.19  2002/01/17 18:19:53  dj_jl
 //	New style of adding to mobjinfo, some fixes
 //	

@@ -265,6 +265,10 @@ int* AddStatement(int statement)
 			statement = OPC_FDIVVAR_DROP;
 			break;
 
+		 case OPC_ASSIGNBOOL:
+//FIXME
+		 	return &CodeBuffer[CodeBufferSize - 1];
+
 		 default:
 			break;
 		}
@@ -593,6 +597,10 @@ static void DumpAsmFunction(int num)
 				//  Sibolu virkne
 				dprintf("(%s)", strings + CodeBuffer[s]);
 			}
+			else if (st == OPC_PUSHBOOL || st == OPC_ASSIGNBOOL)
+			{
+				dprintf("(%x)", CodeBuffer[s]);
+			}
 			s++;
 		}
 		if (StatementInfo[st].params >= 2)
@@ -657,9 +665,12 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2002/02/16 16:28:36  dj_jl
+//	Added support for bool variables
+//
 //	Revision 1.15  2002/01/11 08:17:31  dj_jl
 //	Added name subsystem, removed support for unsigned ints
-//
+//	
 //	Revision 1.14  2002/01/07 12:31:36  dj_jl
 //	Changed copyright year
 //	

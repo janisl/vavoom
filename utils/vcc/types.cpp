@@ -65,8 +65,9 @@ TType		type_vector(ev_vector, &type_void_ptr, NULL, 12);
 TType		type_classid(ev_classid, &type_vector, NULL, 4);
 TType		type_class(ev_class, &type_classid, NULL, -1);
 TType		type_none_ref(ev_reference, &type_class, &type_class, 4);
+TType		type_bool(ev_bool, &type_none_ref, NULL, 4);
 
-TType		*types = &type_none_ref;
+TType		*types = &type_bool;
 
 TType		**classtypes;
 
@@ -87,6 +88,7 @@ void InitTypes(void)
 	type_state.Name = "state_t";
 	type_mobjinfo.Name = "mobjinfo_t";
 	type_class.Name = "Object";
+	type_bool.params_size = 1;
 }
 
 //==========================================================================
@@ -216,6 +218,10 @@ TType *CheckForTypeKeyword(void)
 	if (TK_Check(KW_CLASSID))
 	{
 		return &type_classid;
+	}
+	if (TK_Check(KW_BOOL))
+	{
+		return &type_bool;
 	}
 	return NULL;
 }
@@ -440,8 +446,8 @@ void TypeCheck3(TType *t1, TType *t2)
 			}
 		}
 	}
-	ParseError(ERR_EXPR_TYPE_MISTMATCH, " Types %s and %s are not compatible",
-		*t1->Name, *t2->Name);
+	ParseError(ERR_EXPR_TYPE_MISTMATCH, " Types %s and %s are not compatible %d %d",
+		*t1->Name, *t2->Name, t1->type, t2->type);
 }
 
 //==========================================================================
@@ -569,6 +575,22 @@ void ParseStruct(void)
 			fi = &fields[num_fields];
 			fi->Name = tk_Name;
 			TK_NextToken();
+			if (t->type == ev_bool && num_fields)
+			{
+				field_t &prevbool = fields[num_fields - 1];
+				if (prevbool.type->type == ev_bool &&
+					(dword)prevbool.type->params_size != 0x80000000)
+				{
+					TType btype;
+
+					memcpy(&btype, t, sizeof(TType));
+					btype.params_size = prevbool.type->params_size << 1;
+					fi->type = FindType(&btype);
+					fi->ofs = prevbool.ofs;
+					num_fields++;
+					continue;
+				}
+			}
 			fi->ofs = size;
 			if (t->type == ev_class)
 			{
@@ -677,6 +699,22 @@ void AddFields(void)
 			fi = &fields[num_fields];
 			fi->Name = tk_Name;
 			TK_NextToken();
+			if (t->type == ev_bool && num_fields)
+			{
+				field_t &prevbool = fields[num_fields - 1];
+				if (prevbool.type->type == ev_bool &&
+					(dword)prevbool.type->params_size != 0x80000000)
+				{
+					TType btype;
+
+					memcpy(&btype, t, sizeof(TType));
+					btype.params_size = prevbool.type->params_size << 1;
+					fi->type = FindType(&btype);
+					fi->ofs = prevbool.ofs;
+					num_fields++;
+					continue;
+				}
+			}
 			fi->ofs = ofs;
 			if (t->type == ev_class)
 			{
@@ -996,6 +1034,22 @@ class_type->fields = &fields[0];
 			if (t == &type_void)
 			{
 				ParseError("Field cannot have void type.");
+			}
+			if (t->type == ev_bool && fields.Num() > 1)
+			{
+				field_t &prevbool = fields[fields.Num() - 2];
+				if (prevbool.type->type == ev_bool &&
+					(dword)prevbool.type->params_size != 0x80000000)
+				{
+					TType btype;
+
+					memcpy(&btype, t, sizeof(TType));
+					btype.params_size = prevbool.type->params_size << 1;
+					fi->type = FindType(&btype);
+					fi->ofs = prevbool.ofs;
+					class_type->numfields++;
+					continue;
+				}
 			}
 			fi->ofs = size;
 			if (t->type == ev_class)
@@ -1380,9 +1434,12 @@ void AddVirtualTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2002/02/16 16:28:36  dj_jl
+//	Added support for bool variables
+//
 //	Revision 1.21  2002/02/02 19:23:02  dj_jl
 //	Natives declared inside class declarations.
-//
+//	
 //	Revision 1.20  2002/01/21 18:23:09  dj_jl
 //	Constructors with no names
 //	

@@ -237,6 +237,8 @@ LOPCODE_TABLE:
 	.long	LOPC_CASE_GOTO_CLASSID
 	.long	LOPC_PUSHNAME
 	.long	LOPC_CASE_GOTO_NAME
+	.long	LOPC_PUSHBOOL
+	.long	LOPC_ASSIGNBOOL
 
 	Align4
 LINC_STATEMENT_POINTER:
@@ -1797,6 +1799,44 @@ LOPC_DYNAMIC_CAST:
 	addl	$4,%edi
 	jmp		*LOPCODE_TABLE(,%eax,4)
 
+	Align4
+LOPC_PUSHBOOL:
+	movl	(%edi),%eax
+	movl	-4(%esi),%edx
+	addl	$4,%edi
+	testl	%eax,(%edx)
+	setne	%al
+	andl	$1,%eax
+	movl	%eax,-4(%esi)
+	//	Go to the next statement
+	movl	(%edi),%eax
+	addl	$4,%edi
+	jmp		*LOPCODE_TABLE(,%eax,4)
+
+	Align4
+LOPC_ASSIGNBOOL:
+	movl	(%edi),%edx
+	addl	$-4,%esi
+	addl	$4,%edi
+	cmpl	$0,(%esi)
+	je		LABOOL_FALSE
+	movl	-4(%esi),%eax
+	orl		%edx,(%eax)
+	addl	$-4,%esi
+	//	Go to the next statement
+	movl	(%edi),%eax
+	addl	$4,%edi
+	jmp		*LOPCODE_TABLE(,%eax,4)
+LABOOL_FALSE:
+	movl	-4(%esi),%eax
+	xorl	$-1,%edx
+	andl	%edx,(%eax)
+	addl	$-4,%esi
+	//	Go to the next statement
+	movl	(%edi),%eax
+	addl	$4,%edi
+	jmp		*LOPCODE_TABLE(,%eax,4)
+
 LEND_RUN_FUNCTION:
 	popl	%ebx
 	popl	%esi
@@ -1809,9 +1849,12 @@ LEND_RUN_FUNCTION:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/02/16 16:29:26  dj_jl
+//	Added support for bool variables
+//
 //	Revision 1.10  2002/01/11 08:07:17  dj_jl
 //	Added names to progs
-//
+//	
 //	Revision 1.9  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

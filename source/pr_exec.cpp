@@ -1299,6 +1299,25 @@ static void RunFunction(FFunction *func)
 		sp[-1] = (int)PR_DynamicCast((VObject *)sp[-1], (VClass *)*current_statement++);
 		break;
 
+	 case OPC_PUSHBOOL:
+		{
+			int mask = *current_statement++;
+			sp[-1] = !!(*(int*)sp[-1] & mask);
+		}
+		break;
+
+	 case OPC_ASSIGNBOOL:
+		{
+			int mask = *current_statement++;
+	        sp--;
+			if (*sp)
+				*(int*)sp[-1] |= mask;
+			else
+				*(int*)sp[-1] &= ~mask;
+			sp--;
+		}
+		break;
+
 	 default:
 #ifdef CHECK_VALID_OPCODE
 		Sys_Error("Invalid opcode %d", current_statement[-1]);
@@ -1669,9 +1688,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2002/02/16 16:29:26  dj_jl
+//	Added support for bool variables
+//
 //	Revision 1.22  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
-//
+//	
 //	Revision 1.21  2002/01/28 18:44:44  dj_jl
 //	Fixed dynamic cast
 //	

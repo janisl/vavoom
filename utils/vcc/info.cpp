@@ -227,7 +227,6 @@ void ParseStates(TType *class_type)
 			if (i == num_sprite_names)
 			{
 			   	sprite_names[i] = tk_Name;
-				AddConstant(va("SPR_%s", *tk_Name), num_sprite_names);
 				num_sprite_names++;
 			}
 			s.sprite = i;
@@ -421,9 +420,12 @@ void AddInfoTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2002/02/16 16:28:36  dj_jl
+//	Added support for bool variables
+//
 //	Revision 1.15  2002/01/17 18:19:52  dj_jl
 //	New style of adding to mobjinfo, some fixes
-//
+//	
 //	Revision 1.14  2002/01/12 18:06:34  dj_jl
 //	New style of state functions, some other changes
 //	

@@ -155,12 +155,12 @@ class VMapObject:public VThinker
 	int				ValidCount;
 
 	//	Flags
-	boolean			bSolid;			// Blocks.
-	boolean			bNoClient;		// don't update to clients
+	dword			bSolid:1;		// Blocks.
+	dword			bNoClient:1;	// don't update to clients
 									// (invisible but touchable)
-	boolean			bNoBlockmap;	// don't use the blocklinks
+	dword			bNoBlockmap:1;	// don't use the blocklinks
 									// (inert but displayable)
-	boolean			bIsPlayer;		// Player or player-bot
+	dword			bIsPlayer:1;	// Player or player-bot
 
 	int				Health;
 
@@ -461,9 +461,12 @@ inline subsector_t* SV_PointInSubsector(float x, float y)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2002/02/16 16:29:26  dj_jl
+//	Added support for bool variables
+//
 //	Revision 1.20  2002/02/15 19:12:04  dj_jl
 //	Property namig style change
-//
+//	
 //	Revision 1.19  2002/02/14 19:23:58  dj_jl
 //	Beautification
 //	

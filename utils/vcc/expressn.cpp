@@ -163,6 +163,7 @@ public:
 	};
 
 	TType *type;
+	TType *RealType;
 	TOperator *oper;
 };
 
@@ -207,7 +208,13 @@ class TOp2 : public	TTree
 	{
 		if (child1) child1->Code();
 		if (child2) child2->Code();
-		if (oper) AddStatement(oper->opcode);
+		if (oper)
+ 		{
+			if (oper->opcode == OPC_ASSIGNBOOL)
+				AddStatement(oper->opcode, type->params_size);
+			else
+	 			AddStatement(oper->opcode);
+		}
 	}
 };
 
@@ -298,11 +305,21 @@ class TOpPushPointed : public  TTree
 		{
 			type = child1->type->aux_type;
 		}
+		RealType = type;
+		if (type->type == ev_bool)
+		{
+			type = &type_int;
+		}
 	}
 	TOpPushPointed(TTree *Aop, TType *Atype)
 	{
 		child1 = Aop;
 		type = Atype;
+		RealType = type;
+		if (type->type == ev_bool)
+		{
+			type = &type_int;
+		}
 	}
 	void Code(void)
 	{
@@ -310,6 +327,10 @@ class TOpPushPointed : public  TTree
 		if (type->type == ev_vector)
 		{
 			AddStatement(OPC_VPUSHPOINTED);
+		}
+		else if (RealType->type == ev_bool)
+		{
+			AddStatement(OPC_PUSHBOOL, RealType->params_size);
 		}
 		else
 		{
@@ -662,6 +683,7 @@ static TOperator	Assign_ptr_ptr(TOperator::ID_ASSIGN, &type_void_ptr, &type_void
 static TOperator	Assign_vec_vec(TOperator::ID_ASSIGN, &type_vector, &type_vector, &type_vector, OPC_VASSIGN);
 static TOperator	Assign_cid_cid(TOperator::ID_ASSIGN, &type_classid, &type_classid, &type_classid, OPC_ASSIGN);
 static TOperator	Assign_ref_ref(TOperator::ID_ASSIGN, &type_none_ref, &type_none_ref, &type_none_ref, OPC_ASSIGN);
+static TOperator	Assign_bool_int(TOperator::ID_ASSIGN, &type_bool, &type_bool, &type_int, OPC_ASSIGNBOOL);
 
 static TOperator	AddVar_int_int(TOperator::ID_ADDVAR, &type_int, &type_int, &type_int, OPC_ADDVAR);
 static TOperator	AddVar_float_float(TOperator::ID_ADDVAR, &type_float, &type_float, &type_float, OPC_FADDVAR);
@@ -717,6 +739,10 @@ TOperator::TOperator(id_t Aopid, TType* Atype, TType* Atype1, TType* Atype2, int
 bool TypeCmp(TType *type1, TType *type2)
 {
 	if (type1 == type2)
+	{
+		return true;
+	}
+	if (type1->type == ev_bool && type2->type == ev_bool)
 	{
 		return true;
 	}
@@ -1751,11 +1777,11 @@ static TTree* ParseExpressionPriority14(void)
    	{
 		if (TK_Check(AssignOps[i].punct))
 		{
-			type = op1->type;
+			type = op1->RealType;
 			op1 = op1->GetAddress();
    			op2 = ParseExpressionPriority14();
 			oper = FindOperator(AssignOps[i].opid, type, op2->type);
-			TypeCheck3(op2->type, type);
+//			TypeCheck3(op2->type, type);
 		   	op1 = new TOp2(op1, op2, oper);
 			op1->type = type;
 			return op1;
@@ -1787,9 +1813,12 @@ TType *ParseExpression(bool bLocals)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2002/02/16 16:28:36  dj_jl
+//	Added support for bool variables
+//
 //	Revision 1.19  2002/01/23 17:56:28  dj_jl
 //	Removed support for C-style type casting.
-//
+//	
 //	Revision 1.18  2002/01/21 18:23:09  dj_jl
 //	Constructors with no names
 //	

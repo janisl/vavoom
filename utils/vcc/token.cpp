@@ -87,6 +87,7 @@ static char* Keywords[] =
 	"__states__",
 	"__mobjinfo__",
 	"addfields",
+	"bool",
 	"break",
 	"case",
 	"class",
@@ -494,7 +495,12 @@ static void ProcessLetterToken(void)
 		break;
 
 	case 'b':
-		if (!strcmp(tk_String, "break"))
+		if (!strcmp(tk_String, "bool"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_BOOL;
+		}
+		else if (!strcmp(tk_String, "break"))
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_BREAK;
@@ -1171,9 +1177,12 @@ void TK_Expect(Punctuation punct, error_t error)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2002/02/16 16:28:36  dj_jl
+//	Added support for bool variables
+//
 //	Revision 1.15  2002/01/17 18:19:52  dj_jl
 //	New style of adding to mobjinfo, some fixes
-//
+//	
 //	Revision 1.14  2002/01/15 18:29:36  dj_jl
 //	no message
 //	
