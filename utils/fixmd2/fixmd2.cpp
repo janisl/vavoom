@@ -22,9 +22,12 @@
 //**  GNU General Public License for more details.
 //**
 //**	$Log$
+//**	Revision 1.3  2001/07/31 17:03:38  dj_jl
+//**	Added checks for model file
+//**
 //**	Revision 1.2  2001/07/27 14:27:55  dj_jl
 //**	Update with Id-s and Log-s, some fixes
-//**
+//**	
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
@@ -62,6 +65,10 @@ static mmdl_t		*model;
 static void LoadModel(void)
 {
 	LoadFile(filename, (void**)&model);
+	if (model->ident != IDPOLY2HEADER)
+		Error("Not a model");
+	if (model->version != ALIAS_VERSION)
+		Error("Bad version");
 }
 
 //==========================================================================
@@ -125,7 +132,7 @@ static void ShiftModel(double x, double y, double z)
 static void FixModelSkin(const char *name)
 {
 	mskin_t *skin = (mskin_t*)((byte*)model + model->ofsskins);
-	strcpy(skin->name, name);
+	strncpy(skin->name, name, sizeof(skin->name));
 }
 
 //==========================================================================
