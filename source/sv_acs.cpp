@@ -27,7 +27,6 @@
 
 #include "gamedefs.h"
 #include "sv_local.h"
-#include "moflags.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -1274,60 +1273,7 @@ static int CmdThingCountDirect(void)
 
 static void ThingCount(int type, int tid)
 {
-	int count;
-	int searcher;
-	mobj_t *mobj;
-	int moType;
-	thinker_t *think;
-
-	if(!(type+tid))
-	{ // Nothing to count
-		return;
-	}
-	moType = svpr.GetGlobal(svpr.GlobalNumForName("TranslateThingType") + type);
-	count = 0;
-	searcher = -1;
-	if(tid)
-	{ // Count TID things
-		while((mobj = P_FindMobjFromTID(tid, &searcher)) != NULL)
-		{
-			if(type == 0)
-			{ // Just count TIDs
-				count++;
-			}
-			else if(moType == mobj->type)
-			{
-				if(mobj->flags&MF_COUNTKILL && mobj->health <= 0)
-				{ // Don't count dead monsters
-					continue;
-				}
-				count++;
-			}
-		}
-	}
-	else
-	{ // Count only types
-		for(think = level.thinkers.next; think != &level.thinkers;
-			think = think->next)
-		{
-			if (!SV_CanCast(think, cid_mobj))
-			{
-				// Not a mobj thinker
-				continue;
-			}
-			mobj = (mobj_t *)think;
-			if(mobj->type != moType)
-			{ // Doesn't match
-				continue;
-			}
-			if(mobj->flags&MF_COUNTKILL && mobj->health <= 0)
-			{ // Don't count dead monsters
-				continue;
-			}
-			count++;
-		}
-	}
-	Push(count);
+	Push(svpr.Exec("ThingCount", type, tid));
 }
 
 static int CmdTagWait(void)
@@ -1776,9 +1722,12 @@ static int CmdSetLineSpecial(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/10/09 17:28:41  dj_jl
+//	Moved thing counting to progs
+//
 //	Revision 1.6  2001/10/02 17:43:50  dj_jl
 //	Added addfields to lines, sectors and polyobjs
-//
+//	
 //	Revision 1.5  2001/09/20 16:30:28  dj_jl
 //	Started to use object-oriented stuff in progs
 //	
