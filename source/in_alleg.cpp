@@ -51,7 +51,7 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static boolean 			    keyboard_started = false;
+static boolean 				keyboard_started = false;
 static byte					keyboardque[KBDQUESIZE];
 static int 					kbdtail = 0;
 static int					kbdhead = 0;
@@ -116,17 +116,17 @@ END_OF_FUNCTION(KeyboardHandler)
 //
 //==========================================================================
 
-static void ReadKeyboard(void)
+static void ReadKeyboard()
 {
 	guard(ReadKeyboard);
-    unsigned char 	ch;
+	unsigned char 	ch;
 
-    if (!keyboard_started)
-    	return;
+	if (!keyboard_started)
+		return;
 
 	while (kbdtail < kbdhead)
 	{
-	    ch = keyboardque[kbdtail & (KBDQUESIZE - 1)];
+		ch = keyboardque[kbdtail & (KBDQUESIZE - 1)];
 		kbdtail++;
 
 		IN_KeyEvent(scantokey[ch & 0x7f], !(ch & 0x80));
@@ -142,19 +142,19 @@ static void ReadKeyboard(void)
 //
 //==========================================================================
 
-static void StartupKeyboard(void)
+static void StartupKeyboard()
 {
 	guard(StartupKeyboard);
-    LOCK_FUNCTION((void*)KeyboardHandler);
-    LOCK_DATA(keyboardque, sizeof(keyboardque));
-    LOCK_VARIABLE(kbdhead);
+	LOCK_FUNCTION((void*)KeyboardHandler);
+	LOCK_DATA(keyboardque, sizeof(keyboardque));
+	LOCK_VARIABLE(kbdhead);
 
-    if (install_keyboard())
-    {
+	if (install_keyboard())
+	{
 		Sys_Error("Failed to initialize keyboard");
-    }
-    keyboard_lowlevel_callback = KeyboardHandler;
-    keyboard_started = true;
+	}
+	keyboard_lowlevel_callback = KeyboardHandler;
+	keyboard_started = true;
 	unguard;
 }
 
@@ -166,12 +166,12 @@ static void StartupKeyboard(void)
 //
 //==========================================================================
 
-static void ShutdownKeyboard(void)
+static void ShutdownKeyboard()
 {
 	guard(ShutdownKeyboard);
 	if (keyboard_started)
-    {
-	    remove_keyboard();
+	{
+		remove_keyboard();
 	}
 	unguard;
 }
@@ -190,20 +190,20 @@ static void ShutdownKeyboard(void)
 //
 //==========================================================================
 
-static void StartupMouse(void)
+static void StartupMouse()
 {
 	guard(StartupMouse);
-    int		buts;
-    
-    if (M_CheckParm("-nomouse"))
-    	return;
+	int		buts;
 
-    buts = install_mouse();
-    if (buts == -1)
-    {
+	if (M_CheckParm("-nomouse"))
 		return;
-    }
-    mouse_started = true;
+
+	buts = install_mouse();
+	if (buts == -1)
+	{
+		return;
+	}
+	mouse_started = true;
 	unguard;
 }
 
@@ -215,24 +215,24 @@ static void StartupMouse(void)
 //
 //==========================================================================
 
-static void ReadMouse(void)
+static void ReadMouse()
 {
 	guard(ReadMouse);
 	int			i;
-    event_t 	event;
-    int 		xmickeys;
-    int			ymickeys;
-    int			mouse_x;
-    int			mouse_y;
-    int			buttons;
-    static int 	lastbuttons = 0;
+	event_t 	event;
+	int 		xmickeys;
+	int			ymickeys;
+	int			mouse_x;
+	int			mouse_y;
+	int			buttons;
+	static int 	lastbuttons = 0;
 
-    if (!mouse_started)
+	if (!mouse_started)
 		return;
 
-    poll_mouse();
-    get_mouse_mickeys(&xmickeys, &ymickeys);
-    buttons = mouse_b;
+	poll_mouse();
+	get_mouse_mickeys(&xmickeys, &ymickeys);
+	buttons = mouse_b;
 
 	if (m_filter == 2)
 	{
@@ -256,23 +256,23 @@ static void ReadMouse(void)
 		old_mouse_y = 0;
 	}
 
-    if (mouse_x || mouse_y)
-    {
-      	event.type  = ev_mouse;
-      	event.data1 = 0;
-      	event.data2 = mouse_x;
-      	event.data3 = -mouse_y;
+	if (mouse_x || mouse_y)
+	{
+		event.type  = ev_mouse;
+		event.data1 = 0;
+		event.data2 = mouse_x;
+		event.data3 = -mouse_y;
 
-      	IN_PostEvent(&event);
-    }
+		IN_PostEvent(&event);
+	}
 	for (i = 0; i < 3; i++)
-    {
-	    if ((buttons ^ lastbuttons) & (1 << i))
-    	{
-    		IN_KeyEvent(K_MOUSE1 + i, buttons & (1 << i));
-	    }
-    }
-  	lastbuttons = buttons;
+	{
+		if ((buttons ^ lastbuttons) & (1 << i))
+		{
+			IN_KeyEvent(K_MOUSE1 + i, buttons & (1 << i));
+		}
+	}
+	lastbuttons = buttons;
 	unguard;
 }
 
@@ -282,12 +282,12 @@ static void ReadMouse(void)
 //
 //==========================================================================
 
-static void ShutdownMouse(void)
+static void ShutdownMouse()
 {
 	guard(ShutdownMouse);
-    if (!mouse_started)
-    	return;
-    remove_mouse();
+	if (!mouse_started)
+		return;
+	remove_mouse();
 	unguard;
 }
 
@@ -305,11 +305,11 @@ static void ShutdownMouse(void)
 //
 //==========================================================================
 
-static void StartupJoystick(void)
+static void StartupJoystick()
 {
 	guard(StartupJoystick);
 	if (M_CheckParm("-nojoy"))
-    	return;
+		return;
 
 	//	Detect the joystick type
 	if (install_joystick(JOY_TYPE_AUTODETECT))
@@ -324,10 +324,10 @@ static void StartupJoystick(void)
 	}
 
 	//	When initialising joystick, it must be centered, so we have to remove
-    // it, give a message to center joystick, wait for keypress and then
-    // reinitialize it.
+	// it, give a message to center joystick, wait for keypress and then
+	// reinitialize it.
 	if (joy[0].flags & JOYFLAG_CALIBRATE)
-    {
+	{
 		remove_joystick();
 
 		printf("CENTER the joystick and press a key:\n");
@@ -338,13 +338,13 @@ static void StartupJoystick(void)
 		{
 			Sys_Error("Error initialising joystick\n%s\n", allegro_error);
 		}
-    }
+	}
 
 	//	Calibrate joystick
 	while (joy[0].flags & JOYFLAG_CALIBRATE)
 	{
-	   	printf("%s and press a key:\n", calibrate_joystick_name(0));
-	    IN_ReadKey();
+		printf("%s and press a key:\n", calibrate_joystick_name(0));
+		IN_ReadKey();
 
 		if (calibrate_joystick(0))
 		{
@@ -352,7 +352,7 @@ static void StartupJoystick(void)
 		}
 	}
 
-    joystick_started = true;
+	joystick_started = true;
 	memset(joy_oldb, 0, sizeof(joy_oldb));
 	unguard;
 }
@@ -363,35 +363,35 @@ static void StartupJoystick(void)
 //
 //==========================================================================
 
-static void ReadJoystick(void)
+static void ReadJoystick()
 {
 	guard(ReadJoystick);
 	int			i;
-    event_t 	event;
+	event_t		event;
 
-    if (!joystick_started)
-    	return;
+	if (!joystick_started)
+		return;
 
-    poll_joystick();
+	poll_joystick();
 
-    if ((joy_oldx != joy_x) || (joy_oldy != joy_y))
-    {
+	if ((joy_oldx != joy_x) || (joy_oldy != joy_y))
+	{
 		event.type = ev_joystick;
 		event.data1 = 0;
 		event.data2 = (abs(joy_x) < 4)? 0 : joy_x;
 		event.data3 = (abs(joy_y) < 4)? 0 : joy_y;
 		IN_PostEvent(&event);
 
-	    joy_oldx = joy_x;
-    	joy_oldy = joy_y;
-    }
-    for (i = 0; i < joy[0].num_buttons; i++)
-    {
+		joy_oldx = joy_x;
+		joy_oldy = joy_y;
+	}
+	for (i = 0; i < joy[0].num_buttons; i++)
+	{
 		if (joy[0].button[i].b != joy_oldb[i])
-    	{
-        	IN_KeyEvent(K_JOY1 + i, joy[0].button[i].b);
-            joy_oldb[i] = joy[0].button[i].b;
-    	}
+		{
+			IN_KeyEvent(K_JOY1 + i, joy[0].button[i].b);
+			joy_oldb[i] = joy[0].button[i].b;
+		}
 	}
 	unguard;
 }
@@ -402,13 +402,13 @@ static void ReadJoystick(void)
 //
 //==========================================================================
 
-static void ShutdownJoystick(void)
+static void ShutdownJoystick()
 {
 	guard(ShutdownJoystick);
 	if (joystick_started)
-    {
-    	remove_joystick();
-    }
+	{
+		remove_joystick();
+	}
 	unguard;
 }
 
@@ -418,10 +418,10 @@ static void ShutdownJoystick(void)
 //
 //==========================================================================
 
-void IN_Init(void)
+void IN_Init()
 {
 	StartupKeyboard();
-    StartupMouse();
+	StartupMouse();
 	StartupJoystick();
 }
 
@@ -438,7 +438,7 @@ void IN_Init(void)
 
 void IN_ReadInput()
 {
-    ReadKeyboard();
+	ReadKeyboard();
 	ReadMouse();
 	ReadJoystick();
 }
@@ -449,19 +449,22 @@ void IN_ReadInput()
 //
 //==========================================================================
 
-void IN_Shutdown(void)
+void IN_Shutdown()
 {
-    ShutdownJoystick();
-    ShutdownMouse();
-    ShutdownKeyboard();
+	ShutdownJoystick();
+	ShutdownMouse();
+	ShutdownKeyboard();
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2005/03/01 15:58:28  dj_jl
+//	Beautification.
+//
 //	Revision 1.9  2002/11/16 17:13:09  dj_jl
 //	Some compatibility changes.
-//
+//	
 //	Revision 1.8  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
 //	
