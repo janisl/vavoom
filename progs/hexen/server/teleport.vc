@@ -277,9 +277,122 @@ boolean EV_Teleport(int tid, mobj_t * thing, boolean fog)
 	return P_Teleport(thing, mo->Origin.x, mo->Origin.y, mo->Angles.yaw, fog);
 }
 
+//==========================================================================
+//
+//	EV_SilentLineTeleport
+//
+// Silent linedef-based TELEPORTATION, by Lee Killough
+// Primarily for rooms-over-rooms etc.
+// This is the complete player-preserving kind of teleporter.
+// It has advantages over the teleporter with thing exits.
+//
+// [RH] Modified to support different source and destination ids.
+//
+//==========================================================================
+
+boolean EV_SilentLineTeleport(line_t *line, int side, Actor *thing, int id,
+							boolean reverse)
+{
+	int searcher;
+	line_t *l;
+
+	if (side || thing->bNoTeleport || !line)
+	{
+		return false;
+	}
+
+	searcher = -1;
+	for (l = P_FindLine(id, &searcher); l; l = P_FindLine(id, &searcher))
+	{
+		if (l == line || !l->backsector)
+		{
+			continue;
+		}
+		TVec SrcXAxis;
+		TVec SrcYAxis;
+		TVec DstXAxis;
+		TVec DstYAxis;
+		TVec newPos;
+		TVec TempV;
+		TAVec TempA;
+		float pos;
+		float TempX;
+		float TempY;
+
+		// Get the thing's position along the source linedef
+		SrcXAxis = Normalize(*line->v2 - *line->v1);
+		SrcYAxis = -line->normal;
+		pos = DotProduct(SrcXAxis, thing->Origin - *line->v1);
+
+		// Interpolate position across the exit linedef
+		if (reverse)
+		{
+			DstXAxis = Normalize(*l->v2 - *l->v1);
+			DstYAxis = -l->normal;
+			newPos = *l->v1 + pos * DstXAxis;
+			newPos.z = thing->Origin.z - GetPlanePointZ(
+				line->frontsector->botregion->floor, thing->Origin) +
+				GetPlanePointZ(l->frontsector->botregion->floor, newPos);
+		}
+		else
+		{
+			DstXAxis = Normalize(*l->v1 - *l->v2);
+			DstYAxis = l->normal;
+			newPos = *l->v2 + pos * DstXAxis;
+			newPos.z = thing->Origin.z - GetPlanePointZ(
+				line->frontsector->botregion->floor, thing->Origin) +
+				GetPlanePointZ(l->backsector->botregion->floor, newPos);
+		}
+
+		// Attempt to teleport, aborting if blocked
+		//if (!P_TeleportMove(thing, newPos.x, newPos.y, newPos.z, false))
+		if (!P_TeleportMove(thing, newPos.x, newPos.y))
+		{
+			return false;
+		}
+		thing->Origin.z = newPos.z;
+
+		// Rotate thing's orientation according to difference in linedef angles
+		TempV.x = DotProduct(DstXAxis, SrcXAxis);
+		TempV.y = DotProduct(DstYAxis, SrcXAxis);
+		TempV.z = 0.0;
+		VectorAngles(&TempV, &TempA);
+		thing->Angles.yaw = AngleMod360(thing->Angles.yaw - TempA.yaw);
+
+		// Rotate thing's momentum to come out of exit just like it entered
+		TempX = DotProduct(thing->Velocity, SrcXAxis);
+		TempY = DotProduct(thing->Velocity, SrcYAxis);
+		thing->Velocity.x = TempX * DstXAxis.x + TempY * DstYAxis.x;
+		thing->Velocity.y = TempX * DstXAxis.y + TempY * DstYAxis.y;
+
+		// Adjust a player's view, in case there has been a height change
+		if (thing->bIsPlayer)
+		{
+			// Save the current deltaviewheight, used in stepping
+			float deltaviewheight = thing->Player->deltaviewheight;
+
+			// Clear deltaviewheight, since we don't want any changes now
+			thing->Player->deltaviewheight = 0.0;
+
+			// Set player's view according to the newly set parameters
+			CalcHeight(thing->Player);
+
+			// Reset the delta to have the same dynamics as before
+			thing->Player->deltaviewheight = deltaviewheight;
+
+			thing->Player->fixangle = true;
+		}
+		return true;
+	}
+	return false;
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/16 16:21:49  dj_jl
+//  Added line teleporters
+//
 //  Revision 1.15  2002/02/14 19:20:59  dj_jl
 //  Renamed Entity properties to new naming style
 //
