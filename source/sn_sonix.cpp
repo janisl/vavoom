@@ -48,7 +48,7 @@
 
 // TYPES -------------------------------------------------------------------
 
-typedef enum
+enum sscmds_t
 {
 	SS_CMD_NONE,
 	SS_CMD_PLAY,
@@ -60,14 +60,14 @@ typedef enum
 	SS_CMD_VOLUME,
 	SS_CMD_STOPSOUND,
 	SS_CMD_END
-} sscmds_t;
+};
 
-typedef struct
+struct seq_info_t
 {
 	char	name[SS_SEQUENCE_NAME_LENGTH];
 	int		*data;
 	int		stopSound;
-} seq_info_t;
+};
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -102,10 +102,12 @@ static int			NumSequences;
 
 static void VerifySequencePtr(int *base, int *ptr)
 {
-	if (ptr-base > SS_TEMPBUFFER_SIZE)
+	guard(VerifySequencePtr);
+	if (ptr - base > SS_TEMPBUFFER_SIZE)
 	{
 		Sys_Error("VerifySequencePtr:  tempPtr >= %d\n", SS_TEMPBUFFER_SIZE);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -116,17 +118,17 @@ static void VerifySequencePtr(int *base, int *ptr)
 
 static int GetSoundOffset(char *name)
 {
-	int i;
-	
-	for (i = 0; i < NumSfx; i++)
+	guard(GetSoundOffset);
+	for (TArray<sfxinfo_t>::TIterator It(S_sfx); It; ++It)
 	{
-		if (!stricmp(name, S_sfx[i].tagName))
+		if (!stricmp(name, *It->tagName))
 		{
-			return i;
+			return It.GetIndex();
 		}
 	}
 	SC_ScriptError("GetSoundOffset:  Unknown sound name\n");
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -137,6 +139,7 @@ static int GetSoundOffset(char *name)
 
 void SN_InitSequenceScript(void)
 {
+	guard(SN_InitSequenceScript);
 	boolean		inSequence;
 	int 		*tempDataStart = NULL;
 	int 		*tempDataPtr = NULL;
@@ -250,6 +253,7 @@ void SN_InitSequenceScript(void)
 			SC_ScriptError("SN_InitSequenceScript:  Unknown commmand.\n");
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -260,6 +264,7 @@ void SN_InitSequenceScript(void)
 
 void SN_StartSequence(int origin_id, const TVec &origin, int sequence)
 {
+	guard(SN_StartSequence);
 	seqnode_t *node;
 
 	SN_StopSequence(origin_id); // Stop any previous sequence
@@ -285,7 +290,7 @@ void SN_StartSequence(int origin_id, const TVec &origin, int sequence)
 		SequenceListHead = node;
 	}
 	ActiveSequences++;
-	return;
+	unguard;
 }
 
 //==========================================================================
@@ -296,6 +301,7 @@ void SN_StartSequence(int origin_id, const TVec &origin, int sequence)
 
 void SN_StartSequenceName(int origin_id, const TVec &origin, char *name)
 {
+	guard(SN_StartSequenceName);
 	int i;
 
 	for (i = 0; i < NumSequences; i++)
@@ -306,6 +312,7 @@ void SN_StartSequenceName(int origin_id, const TVec &origin, char *name)
 			return;
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -316,6 +323,7 @@ void SN_StartSequenceName(int origin_id, const TVec &origin, char *name)
 
 void SN_StopSequence(int origin_id)
 {
+	guard(SN_StopSequence);
 	seqnode_t *node;
 
 	for(node = SequenceListHead; node; node = node->next)
@@ -344,6 +352,7 @@ void SN_StopSequence(int origin_id)
 			ActiveSequences--;
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -354,6 +363,7 @@ void SN_StopSequence(int origin_id)
 
 void SN_UpdateActiveSequences(void)
 {
+	guard(SN_UpdateActiveSequences);
 	seqnode_t *node;
 	boolean sndPlaying;
 
@@ -420,6 +430,7 @@ void SN_UpdateActiveSequences(void)
 				break;
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -430,6 +441,7 @@ void SN_UpdateActiveSequences(void)
 
 void SN_StopAllSequences(void)
 {
+	guard(SN_StopAllSequences);
 	seqnode_t *node;
 
 	for(node = SequenceListHead; node; node = node->next)
@@ -437,6 +449,7 @@ void SN_StopAllSequences(void)
 		node->stopSound = 0; // don't play any stop sounds
 		SN_StopSequence(node->origin_id);
 	}
+	unguard;
 }
 	
 //==========================================================================
@@ -447,7 +460,9 @@ void SN_StopAllSequences(void)
 
 int SN_GetSequenceOffset(int sequence, int *sequencePtr)
 {
+	guard(SN_GetSequenceOffset);
 	return (sequencePtr - SeqInfo[sequence].data);
+	unguard;
 }
 
 //==========================================================================
@@ -460,6 +475,7 @@ int SN_GetSequenceOffset(int sequence, int *sequencePtr)
 void SN_ChangeNodeData(int nodeNum, int seqOffset, int delayTics, int volume,
 	int currentSoundID)
 {
+	guard(SN_ChangeNodeData);
 	int i;
 	seqnode_t *node;
 
@@ -478,14 +494,19 @@ void SN_ChangeNodeData(int nodeNum, int seqOffset, int delayTics, int volume,
 	node->volume = volume;
 	node->sequencePtr += seqOffset;
 	node->currentSoundID = currentSoundID;
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/01/11 08:11:05  dj_jl
+//	Changes in sound list
+//	Added guard macros
+//
 //	Revision 1.5  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2001/08/30 17:41:42  dj_jl
 //	Added entity sound channels
 //	

@@ -55,8 +55,7 @@ struct raw_sound_t
 boolean				UseSndScript;
 char				ArchivePath[128];
 
-sfxinfo_t			*S_sfx;
-int					NumSfx;
+TArray<sfxinfo_t>	S_sfx;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -72,6 +71,7 @@ int					NumSfx;
 
 void S_InitScript(void)
 {
+	guard(S_InitScript);
 	int p;
 	int i;
 
@@ -79,9 +79,8 @@ void S_InitScript(void)
     //	Allocate memory for sound info
     //
 
-	S_sfx = (sfxinfo_t*)Z_Malloc(sizeof(sfxinfo_t), PU_STATIC, 0);
-	memset(S_sfx, 0, sizeof(sfxinfo_t));
-	NumSfx = 1;
+	S_sfx.SetTag(PU_STATIC);
+	S_sfx.AddZeroed();
 
     //
     //	Load script SFXINFO
@@ -91,29 +90,27 @@ void S_InitScript(void)
 
 	while (SC_GetString())
 	{
-		Z_Resize((void**)&S_sfx, (NumSfx + 1) * sizeof(*S_sfx));
-		strncpy(S_sfx[NumSfx].tagName, sc_String, 32);
+		i =	S_sfx.AddZeroed();
+		S_sfx[i].tagName = sc_String;
 
 		SC_MustGetString();
 		if (*sc_String != '?')
 		{
-			strcpy(S_sfx[NumSfx].lumpname, sc_String);
+			strcpy(S_sfx[i].lumpname, sc_String);
 		}
         else
         {
-			S_sfx[NumSfx].lumpname[0] = 0;
+			S_sfx[i].lumpname[0] = 0;
 		}
 
 		SC_MustGetNumber();
-		S_sfx[NumSfx].priority = sc_Number;
+		S_sfx[i].priority = sc_Number;
 
 		SC_MustGetNumber();
-		S_sfx[NumSfx].numchannels = sc_Number;
+		S_sfx[i].numchannels = sc_Number;
 
 		SC_MustGetNumber();
-		S_sfx[NumSfx].changePitch = sc_Number;
-
-       	NumSfx++;
+		S_sfx[i].changePitch = sc_Number;
 	}
 	SC_Close();
 
@@ -156,19 +153,20 @@ void S_InitScript(void)
 		}
 		else
 		{
-			for (i = 0; i < NumSfx; i++)
+			i = 0;
+			for (TArray<sfxinfo_t>::TIterator It(S_sfx); It; ++It)
 			{
-				if (!strcmp(S_sfx[i].tagName, sc_String))
+				if (!strcmp(*It->tagName, sc_String))
 				{
+					i = It.GetIndex();
 					break;
 				}
 			}
-			if (i == NumSfx)
+			if (!i)
 			{
             	//	Not found - add it
-            	NumSfx++;
-                Z_Resize((void**)&S_sfx, NumSfx * sizeof(*S_sfx));
-				strncpy(S_sfx[i].tagName, sc_String, 32);
+                i = S_sfx.AddZeroed();
+				S_sfx[i].tagName = sc_String;
                 //	Default values
                 S_sfx[i].priority = 127;
                 S_sfx[i].numchannels = -1;
@@ -188,19 +186,43 @@ void S_InitScript(void)
 	}
 	SC_Close();
 
+	S_sfx.Shrink();
+
 	//
     //	Set "default" sound for empty sounds
     //
 
-	for (i = 0; i < NumSfx; i++)
+	for (TArray<sfxinfo_t>::TIterator It(S_sfx); It; ++It)
 	{
-		if (!S_sfx[i].lumpname[0])
+		if (!It->lumpname[0])
 		{
-			strcpy(S_sfx[i].lumpname, "default");
+			strcpy(It->lumpname, "default");
 		}
-        S_sfx[i].snd_ptr = NULL;
-        S_sfx[i].lumpnum = -1;
+        It->snd_ptr = NULL;
+        It->lumpnum = -1;
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	S_GetSoundID
+//
+//==========================================================================
+
+int S_GetSoundID(FName Name)
+{
+	guard(S_GetSoundID);
+	for (TArray<sfxinfo_t>::TIterator It(S_sfx); It; ++It)
+	{
+		if (It->tagName == Name)
+		{
+			return It.GetIndex();
+		}
+	}
+	con << "WARNING! Can't find sound \"" << *Name << "\".\n";
+	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -211,17 +233,18 @@ void S_InitScript(void)
 
 int S_GetSoundID(char *name)
 {
-	int i;
-
-	for (i = 0; i < NumSfx; i++)
+	guard(S_GetSoundID);
+	for (TArray<sfxinfo_t>::TIterator It(S_sfx); It; ++It)
 	{
-		if (!strcmp(S_sfx[i].tagName, name))
+//FIXME really case sensitive? What about ACS?
+		if (!strcmp(*It->tagName, name))
 		{
-			return i;
+			return It.GetIndex();
 		}
 	}
 	con << "WARNING! Can't find sound named \"" << name << "\".\n";
 	return 0;
+	unguard;
 }
 
 #ifdef CLIENT
@@ -234,6 +257,7 @@ int S_GetSoundID(char *name)
 
 void S_LoadSound(int sound_id)
 {
+	guard(S_LoadSound);
 	if (!S_sfx[sound_id].snd_ptr)
 	{
 		if (UseSndScript)
@@ -258,6 +282,7 @@ void S_LoadSound(int sound_id)
 		S_sfx[sound_id].data = rawdata->data;
 	}
 	S_sfx[sound_id].usecount++;
+	unguard;
 }
 
 //==========================================================================
@@ -268,7 +293,7 @@ void S_LoadSound(int sound_id)
 
 void S_DoneWithLump(int sound_id)
 {
-	int i;
+	guard(S_DoneWithLump);
 	void *ptr;
 
 	if (!S_sfx[sound_id].snd_ptr || !S_sfx[sound_id].usecount)
@@ -287,9 +312,9 @@ void S_DoneWithLump(int sound_id)
 	ptr = S_sfx[sound_id].snd_ptr;
 	S_sfx[sound_id].snd_ptr = NULL;
 
-	for (i = 0; i < NumSfx; i++)
+	for (TArray<sfxinfo_t>::TIterator It(S_sfx); It; ++It)
 	{
-		if (S_sfx[i].snd_ptr == ptr)
+		if (It->snd_ptr == ptr)
 		{
 			//	Another active sound uses this lump
 			return;
@@ -297,6 +322,7 @@ void S_DoneWithLump(int sound_id)
 	}
 	//	Make lump cachable
 	Z_ChangeTag(ptr, PU_CACHE);
+	unguard;
 }
 
 #endif
@@ -317,9 +343,13 @@ void S_Init(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/01/11 08:11:05  dj_jl
+//	Changes in sound list
+//	Added guard macros
+//
 //	Revision 1.5  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2001/10/12 17:31:13  dj_jl
 //	no message
 //	

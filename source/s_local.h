@@ -39,7 +39,7 @@
 //
 struct sfxinfo_t
 {
-	char	tagName[32];	// Name, by whitch sound is recognised in script
+	FName	tagName;		// Name, by whitch sound is recognised in script
 	char	lumpname[12];	// Only need 9 bytes, but padded out to be dword aligned
 	int		priority;		// Higher priority takes precendence
 	int 	numchannels;	// total number of channels a sound type may occupy
@@ -88,8 +88,7 @@ extern boolean		UseSndScript;
 extern char			ArchivePath[128];
 
 // the complete set of sound effects
-extern int			NumSfx;
-extern sfxinfo_t*	S_sfx;
+extern TArray<sfxinfo_t>	S_sfx;
 
 extern TCvarI		sfx_volume;
 extern TCvarI		music_volume;
@@ -100,9 +99,13 @@ extern TCvarI		swap_stereo;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/01/11 08:11:05  dj_jl
+//	Changes in sound list
+//	Added guard macros
+//
 //	Revision 1.5  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2001/08/29 17:55:42  dj_jl
 //	Added sound channels
 //	
