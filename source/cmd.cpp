@@ -394,7 +394,7 @@ void Cmd_WriteAlias(FILE *f)
 
 COMMAND(Echo)
 {
-	GCon->Log(Args());
+	C_NotifyMessage(Args());
 }
 
 //==========================================================================
@@ -633,9 +633,12 @@ void Cmd_ForwardToServer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2003/10/31 07:49:52  dj_jl
+//	echo uses notify messages
+//
 //	Revision 1.9  2003/10/22 06:24:35  dj_jl
 //	Access to the arguments vector
-//
+//	
 //	Revision 1.8  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
 //	
