@@ -304,51 +304,51 @@ void WriteMobjInfo(void)
 		fprintf(f, "\t{\n");
 
 		if (mobjinfo[i].classname)
-	    	fprintf(f, "\t\tclassname = \"%s\";\n", mobjinfo[i].classname);
+	    	fprintf(f, "\t\tClassName = \"%s\";\n", mobjinfo[i].classname);
 
 		//	Misc params
 		if (mobjinfo[i].spawnhealth)
-			fprintf(f, "\t\thealth = %d;\n", mobjinfo[i].spawnhealth);
+			fprintf(f, "\t\tHealth = %d;\n", mobjinfo[i].spawnhealth);
 		if (mobjinfo[i].spawnhealth && mobjinfo[i].xdeathstate)
 #ifdef NODEH
-			fprintf(f, "\t\tgibshealth = -%d;\n", mobjinfo[i].spawnhealth >> 1);
+			fprintf(f, "\t\tGibsHealth = -%d;\n", mobjinfo[i].spawnhealth >> 1);
 #else
-			fprintf(f, "\t\tgibshealth = -%d;\n", mobjinfo[i].spawnhealth);
+			fprintf(f, "\t\tGibsHealth = -%d;\n", mobjinfo[i].spawnhealth);
 #endif
 		if (mobjinfo[i].radius)
-			fprintf(f, "\t\tradius = %.1f;\n", (float)mobjinfo[i].radius / (float)FRACUNIT);
+			fprintf(f, "\t\tRadius = %.1f;\n", (float)mobjinfo[i].radius / (float)FRACUNIT);
 		if (mobjinfo[i].height)
-			fprintf(f, "\t\theight = %.1f;\n", (float)mobjinfo[i].height / (float)FRACUNIT);
+			fprintf(f, "\t\tHeight = %.1f;\n", (float)mobjinfo[i].height / (float)FRACUNIT);
 		if (mobjinfo[i].mass)
-			fprintf(f, "\t\tmass = %.1f;\n", mobjinfo[i].mass == 0x7fffffff ? 99999.0 : (float)mobjinfo[i].mass);
+			fprintf(f, "\t\tMass = %.1f;\n", mobjinfo[i].mass == 0x7fffffff ? 99999.0 : (float)mobjinfo[i].mass);
 		if (mobjinfo[i].speed)
-			fprintf(f, "\t\tspeed = %.1f;\n", 35.0 * (mobjinfo[i].speed < 100 ? (float)mobjinfo[i].speed : (float)mobjinfo[i].speed / (float)FRACUNIT));
+			fprintf(f, "\t\tSpeed = %.1f;\n", 35.0 * (mobjinfo[i].speed < 100 ? (float)mobjinfo[i].speed : (float)mobjinfo[i].speed / (float)FRACUNIT));
 		if (mobjinfo[i].reactiontime)
         {
-			fprintf(f, "\t\treactiontime = %d;\n", mobjinfo[i].reactiontime);
+			fprintf(f, "\t\tReactionCount = %d;\n", mobjinfo[i].reactiontime);
 		}
 		if (mobjinfo[i].painchance)
-			fprintf(f, "\t\tpainchance = %d;\n", mobjinfo[i].painchance);
+			fprintf(f, "\t\tPainChance = %d;\n", mobjinfo[i].painchance);
 		if (mobjinfo[i].damage)
-			fprintf(f, "\t\tdamage = %d;\n", mobjinfo[i].damage);
+			fprintf(f, "\t\tMissileDamage = %d;\n", mobjinfo[i].damage);
 
         //	Flag replacements
 		if (flags2 & MF2_DONTDRAW)
-			fprintf(f, "\t\ttranslucency = 100;\n");
+			fprintf(f, "\t\tTranslucency = 100;\n");
 		else if (flags & MF_SHADOW)
-			fprintf(f, "\t\ttranslucency = %d;\n", shadow);
+			fprintf(f, "\t\tTranslucency = %d;\n", shadow);
 		else if (flags & MF_ALTSHADOW && altshadow)
-			fprintf(f, "\t\ttranslucency = %d;\n", altshadow);
+			fprintf(f, "\t\tTranslucency = %d;\n", altshadow);
 #ifndef STRIFE
 		else if (flags & MF_TRANSLUCENT)
-			fprintf(f, "\t\ttranslucency = 33;\n");
+			fprintf(f, "\t\tTranslucency = 33;\n");
 #endif
 #ifdef STRIFE
         if (flags & 0x70000000)
-			fprintf(f, "\t\ttranslation = %d;\n", (flags >> 28) & 7);
+			fprintf(f, "\t\tTranslation = %d;\n", (flags >> 28) & 7);
 #else
         if (flags & MF_TRANSLATION)
-			fprintf(f, "\t\ttranslation = %d;\n", (flags & MF_TRANSLATION) >> MF_TRANSSHIFT);
+			fprintf(f, "\t\tTranslation = %d;\n", (flags & MF_TRANSLATION) >> MF_TRANSSHIFT);
 #endif
 
 		//	Clear replaced flags
@@ -364,7 +364,7 @@ void WriteMobjInfo(void)
         //	Flags
 		if (flags)
         {
-			fprintf(f, "\t\tflags = ");
+			fprintf(f, "\t\tFlags = ");
 			firstflag = 1;
     	    for (j=0; j<32; j++)
         	{
@@ -382,7 +382,7 @@ void WriteMobjInfo(void)
 		}
 		if (flags2)
         {
-			fprintf(f, "\t\tflags2 = ");
+			fprintf(f, "\t\tFlags2 = ");
 			firstflag = 1;
     	    for (j=0; j<32; j++)
         	{
@@ -401,23 +401,23 @@ void WriteMobjInfo(void)
 
 		//	States
         if (mobjinfo[i].spawnstate)
-			fprintf(f, "\t\tspawnstate = %s;\n", statename[mobjinfo[i].spawnstate]);
+			fprintf(f, "\t\tSpawnState = %s;\n", statename[mobjinfo[i].spawnstate]);
         if (mobjinfo[i].seestate)
-			fprintf(f, "\t\tseestate = %s;\n", statename[mobjinfo[i].seestate]);
+			fprintf(f, "\t\tSeeState = %s;\n", statename[mobjinfo[i].seestate]);
         if (mobjinfo[i].meleestate)
-			fprintf(f, "\t\tmeleestate = %s;\n", statename[mobjinfo[i].meleestate]);
+			fprintf(f, "\t\tMeleeState = %s;\n", statename[mobjinfo[i].meleestate]);
         if (mobjinfo[i].missilestate)
-			fprintf(f, "\t\tmissilestate = %s;\n", statename[mobjinfo[i].missilestate]);
+			fprintf(f, "\t\tMissileState = %s;\n", statename[mobjinfo[i].missilestate]);
         if (mobjinfo[i].painstate)
-			fprintf(f, "\t\tpainstate = %s;\n", statename[mobjinfo[i].painstate]);
+			fprintf(f, "\t\tPainState = %s;\n", statename[mobjinfo[i].painstate]);
         if (mobjinfo[i].crashstate)
-			fprintf(f, "\t\tcrashstate = %s;\n", statename[mobjinfo[i].crashstate]);
+			fprintf(f, "\t\tCrashState = %s;\n", statename[mobjinfo[i].crashstate]);
         if (mobjinfo[i].deathstate)
-			fprintf(f, "\t\tdeathstate = %s;\n", statename[mobjinfo[i].deathstate]);
+			fprintf(f, "\t\tDeathState = %s;\n", statename[mobjinfo[i].deathstate]);
         if (mobjinfo[i].xdeathstate)
-			fprintf(f, "\t\txdeathstate = %s;\n", statename[mobjinfo[i].xdeathstate]);
+			fprintf(f, "\t\tGibsDeathState = %s;\n", statename[mobjinfo[i].xdeathstate]);
         if (mobjinfo[i].raisestate)
-			fprintf(f, "\t\traisestate = %s;\n", statename[mobjinfo[i].raisestate]);
+			fprintf(f, "\t\tRaiseState = %s;\n", statename[mobjinfo[i].raisestate]);
 
 		//	Sounds
         if (mobjinfo[i].seesound)
@@ -433,7 +433,7 @@ void WriteMobjInfo(void)
 
 		//  Effects
 		if (mobjinfo[i].effects)
-			fprintf(f, "\t\teffects = %s;\n", mobjinfo[i].effects);
+			fprintf(f, "\t\tEffects = %s;\n", mobjinfo[i].effects);
 
 		fprintf(f, "\t}\n");
 
@@ -741,9 +741,12 @@ int main(int argc, char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2002/01/15 18:28:58  dj_jl
+//	Some property names with logical words starting with capital letter.
+//
 //	Revision 1.14  2002/01/12 18:06:34  dj_jl
 //	New style of state functions, some other changes
-//
+//	
 //	Revision 1.13  2002/01/11 18:21:49  dj_jl
 //	Started to use names in progs
 //	
