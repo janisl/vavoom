@@ -63,6 +63,7 @@ void Cmd_WriteAlias(FILE *f);
 
 void Cmd_TokenizeString(const char *str);
 int Cmd_Argc(void);
+char **Cmd_Argv();
 char *Cmd_Argv(int parm);
 char *Cmd_Args(void);
 int Cmd_CheckParm(const char *check);
@@ -106,9 +107,12 @@ class TCommand
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2003/10/22 06:24:35  dj_jl
+//	Access to the arguments vector
+//
 //	Revision 1.6  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.5  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	

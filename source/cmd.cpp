@@ -246,6 +246,17 @@ int Cmd_Argc(void)
 //
 //==========================================================================
 
+char **Cmd_Argv()
+{
+	return cmd_argv;
+}
+
+//==========================================================================
+//
+//  Cmd_Argv
+//
+//==========================================================================
+
 char *Cmd_Argv(int parm)
 {
 	static char		null_string[] = "";
@@ -622,9 +633,12 @@ void Cmd_ForwardToServer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2003/10/22 06:24:35  dj_jl
+//	Access to the arguments vector
+//
 //	Revision 1.8  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.7  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	
