@@ -1,0 +1,553 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+void P_RemoveMobj(mobj_t* mobj);
+
+//==========================================================================
+//
+//	abs
+//
+//==========================================================================
+
+int abs(int val)
+{
+	return (val < 0) ? -val : val;
+}
+
+//==========================================================================
+//
+//	fabs
+//
+//==========================================================================
+
+float fabs(float val)
+{
+	return (val < 0.0) ? -val : val;
+}
+
+//==========================================================================
+//
+//	HITDICE
+//
+//	Most damage in HERETIC and HEXEN defined using HITDICE
+//
+//==========================================================================
+
+int HITDICE(int a)
+{
+	return (1 + (P_Random() & 7)) * a;
+}
+
+//==========================================================================
+//
+//  SetMobjState
+//
+//	Returns true if the mobj is still present.
+//
+//==========================================================================
+
+boolean SetMobjState(mobj_t* mobj, int state)
+{
+    state_t*	st;
+
+    do
+    {
+		if (!state)
+		{
+			// Remove mobj
+	    	mobj->statenum = 0;
+		    P_RemoveMobj(mobj);
+		    return false;
+		}
+
+		st = &states[state];
+		mobj->time = st->time;
+		mobj->sprite = st->sprite;
+		mobj->frame = st->frame;
+		mobj->model_index = st->model_index;
+		mobj->alias_frame = st->model_frame;
+		mobj->statenum = st->statenum;
+		mobj->nextstate = st->nextstate;
+
+		// Modified handling.
+		// Call action functions when the state is set
+		if (st->function)
+        {
+			st->function(mobj);
+		}
+
+		state = st->nextstate;
+    } while (!mobj->time);
+    return true;
+}
+
+//==========================================================================
+//
+//  SetMobjStateNF
+//
+//	Same as SetMobjState, but does not call the state function.
+//
+//==========================================================================
+
+boolean SetMobjStateNF(mobj_t *mobj, int state)
+{
+	state_t *st;
+
+    do
+    {
+		if (!state)
+		{
+			// Remove mobj
+	    	mobj->statenum = 0;
+			P_RemoveMobj(mobj);
+			return false;
+		}
+		st = &states[state];
+		mobj->time = st->time;
+		mobj->sprite = st->sprite;
+		mobj->frame = st->frame;
+		mobj->model_index = st->model_index;
+		mobj->alias_frame = st->model_frame;
+		mobj->statenum = st->statenum;
+		mobj->nextstate = st->nextstate;
+
+		state = st->nextstate;
+    } while (!mobj->time);
+	return true;
+}
+
+//===========================================================================
+//
+//  SetPsprite
+//
+//===========================================================================
+
+void SetPsprite(player_t *player, int position, int stnum)
+{
+    pspdef_t	*psp;
+    state_t		*state;
+
+	psp = &player->psprites[position];
+	do
+	{
+		if (!stnum)
+		{
+			// Object removed itself.
+			psp->statenum = 0;
+			break;
+		}
+		state = &states[stnum];
+		psp->time = state->time; // could be 0
+		psp->sprite = state->sprite;
+		psp->frame = state->frame;
+		psp->model_index = state->model_index;
+		psp->alias_frame = state->model_frame;
+		psp->statenum = state->statenum;
+		psp->nextstate = state->nextstate;
+		if (state->misc1)
+		{
+			// Set coordinates.
+			psp->sx = state->misc1;
+//			psp->sy = state->misc2;//	Was in DOOM and HERETIC
+		}
+		if (state->misc2)
+		{
+        	//	In DOOM and HERETIC this was set if misc1 != 0. In HEXEN it
+            // is moved outside. This will not affect anything in DOOM and
+            // HERETIC, because there they are not used.
+			psp->sy = state->misc2;
+		}
+		if (state->function)
+		{
+			// Call action routine.
+			state->function(player->mo);
+			if (!psp->statenum)
+			{
+				break;
+			}
+		}
+		stnum = psp->nextstate;
+	} while (!psp->time); // An initial state of 0 could cycle through.
+}
+
+//==========================================================================
+//
+//  SetPspriteNF
+//
+//	Identical to SetPsprite, without calling the action function
+//
+//==========================================================================
+
+void SetPspriteNF(player_t *player, int position, int stnum)
+{
+	pspdef_t *psp;
+	state_t *state;
+
+	psp = &player->psprites[position];
+	do
+	{
+		if (!stnum)
+		{ // Object removed itself.
+			psp->statenum = 0;
+			break;
+		}
+		state = &states[stnum];
+		psp->time = state->time; // could be 0
+		psp->sprite = state->sprite;
+		psp->frame = state->frame;
+		psp->model_index = state->model_index;
+		psp->alias_frame = state->model_frame;
+		psp->statenum = state->statenum;
+		psp->nextstate = state->nextstate;
+		if (state->misc1)
+		{ // Set coordinates.
+			psp->sx = state->misc1;
+		}
+		if (state->misc2)
+		{
+			psp->sy = state->misc2;
+		}
+		stnum = psp->nextstate;
+	} while (!psp->time); // An initial state of 0 could cycle through.
+}
+
+//==========================================================================
+//
+//	MapBlock
+//
+//==========================================================================
+
+int MapBlock(float val)
+{
+    return ftoi(val) >> 7;
+}
+
+//==========================================================================
+//
+//	MobjDist
+//
+//==========================================================================
+
+float MobjDist(mobj_t *mo1, mobj_t *mo2)
+{
+	TVec		o1;
+	TVec		o2;
+	TVec		dir;
+
+	CopyMobjCenter(mo1, o1);
+	CopyMobjCenter(mo2, o2);
+	vsub(o2, o1, dir);
+	return vlen(dir);
+}
+
+//==========================================================================
+//
+//	MobjDist2
+//
+//==========================================================================
+
+float MobjDist2(mobj_t *mo1, mobj_t *mo2)
+{
+	TVec		dir;
+
+	vsub(mo2->origin, mo1->origin, dir);
+	dir.z = 0.0;
+	return vlen(dir);
+}
+
+//==========================================================================
+//
+//	GetPlanePointZ
+//
+//	Get z of point with given x and y coords
+// Don't try to use it on a vertical plane
+//
+//==========================================================================
+
+float GetPlanePointZ(TPlane *plane,	TVec point)
+{
+	return (plane->dist - plane->normal.x * point.x - plane->normal.y * point.y) / plane->normal.z;
+}
+
+//==========================================================================
+//
+//	PointOnPlaneSide
+//
+//	Returns side 0 (front) or 1 (back).
+//
+//==========================================================================
+
+int PointOnPlaneSide(TVec point, TPlane* plane)
+{
+	return DotProduct(point, plane->normal) - plane->dist < 0.0;
+}
+
+//**************************************************************************
+//
+//	TRACE A LINE
+//
+//**************************************************************************
+
+TVec		trace_start;
+TVec		trace_end;
+TVec		trace_plane_normal;
+
+TVec		linestart;
+TVec		lineend;
+
+//==========================================================================
+//
+//	TraceHitPlane
+//
+//==========================================================================
+
+boolean TraceHitPlane(sec_plane_t *plane)
+{
+	float		org_dist;
+	float		hit_dist;
+
+	if (plane->flags & SPF_NOBLOCKING)
+	{
+		//	Doesn't block
+		return true;
+	}
+	org_dist = DotProduct(linestart, plane->normal) - plane->dist;
+	if (org_dist < 0.0)
+	{
+		//	Back side
+		return true;
+	}
+	hit_dist = DotProduct(lineend, plane->normal) - plane->dist;
+	if (hit_dist >= 0.0)
+	{
+		//	Didn't hit plane
+		return true;
+	}
+
+	//	Hit plane
+	lineend -= (lineend - linestart) * hit_dist / (hit_dist - org_dist);
+	trace_plane_normal = plane->normal;
+
+	// don't go any farther
+	return false;
+}
+
+//==========================================================================
+//
+//	TraceCheckPlanes
+//
+//==========================================================================
+
+boolean	TraceCheckPlanes(sector_t *sec)
+{
+	sec_region_t	*reg;
+	sec_region_t	*startreg;
+
+	startreg = PointInRegion(sec, linestart);
+	for (reg = startreg; reg; reg = reg->next)
+	{
+		if (!TraceHitPlane(reg->floor))
+		{
+			//	Hit floor
+			return false;
+		}
+		if (!TraceHitPlane(reg->ceiling))
+		{
+			//	Hit ceiling
+			return false;
+		}
+	}
+	for (reg = startreg->prev; reg; reg = reg->prev)
+	{
+		if (!TraceHitPlane(reg->floor))
+		{
+			//	Hit floor
+			return false;
+		}
+		if (!TraceHitPlane(reg->ceiling))
+		{
+			//	Hit ceiling
+			return false;
+		}
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  TraceTraverse
+//
+//==========================================================================
+
+boolean TraceTraverse(intercept_t* in)
+{
+	TVec		hit_point;
+	line_t		*li;
+	sector_t	*sec;
+
+    if (!in->isaline)
+    {
+		Error("TraceLine: Not a line?");
+	}
+
+	li = in->line;
+	hit_point = trace_start + in->frac * (trace_end - trace_start);
+	if (li->flags & ML_TWOSIDED && PointOnPlaneSide(trace_start, li))
+	{
+		sec = li->backsector;
+	}
+	else
+	{
+		sec = li->frontsector;
+	}
+
+	lineend = hit_point;
+	if (!TraceCheckPlanes(sec))
+	{
+		return false;
+	}
+	linestart = lineend;
+
+	if (li->flags & ML_TWOSIDED)
+	{
+		// crosses a two sided line
+		opening_t	*open;
+
+		open = LineOpenings(li, hit_point);
+		while (open)
+		{
+		    if (open->bottom <= hit_point.z && open->top >= hit_point.z)
+			{
+				return true;
+			}
+			open = open->next;
+		}
+	}
+	//	Hit line
+	if (PointOnPlaneSide(trace_start, li))
+	{
+		trace_plane_normal = -li->normal;
+	}
+	else
+	{
+		trace_plane_normal = li->normal;
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//	TraceLine
+//
+//==========================================================================
+
+boolean TraceLine(TVec start, TVec end)
+{
+	trace_start = start;
+	trace_end = end;
+
+	linestart = trace_start;
+    if (P_PathTraverse(start.x, start.y, end.x, end.y, PT_ADDLINES, TraceTraverse))
+	{
+		lineend = end;
+		return TraceCheckPlanes(PointInSubsector(end.x, end.y)->sector);
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//	AddStaticLight
+//
+//==========================================================================
+
+void AddStaticLight(TVec origin, float radius)
+{
+	MSG_Select(MSG_SV_SIGNON, NULL);
+	MSG_WriteByte(svc_static_light);
+	MSG_WriteShort(ftoi(origin.x));
+	MSG_WriteShort(ftoi(origin.y));
+	MSG_WriteShort(ftoi(origin.z));
+	MSG_WriteByte(ftoi(radius / 8.0));
+}
+
+//==========================================================================
+//
+//	AddStaticLightRGB
+//
+//==========================================================================
+
+void AddStaticLightRGB(TVec origin, float radius, int color)
+{
+	MSG_Select(MSG_SV_SIGNON, NULL);
+	MSG_WriteByte(svc_static_light_rgb);
+	MSG_WriteShort(ftoi(origin.x));
+	MSG_WriteShort(ftoi(origin.y));
+	MSG_WriteShort(ftoi(origin.z));
+	MSG_WriteByte(ftoi(radius / 8.0));
+	MSG_WriteLong(color);
+}
+
+//==========================================================================
+//
+//	misc_static_light
+//
+//==========================================================================
+
+void misc_static_light(mobj_t *self, mthing_t *mthing)
+{
+	float		l;
+
+	RemoveMobjThinker(self);
+	if (!mthing->arg1)
+		l = 200.0;
+	else
+		l =	itof(mthing->arg1) * 8.0;
+	AddStaticLight(vector(mthing->x, mthing->y, mthing->height), l);
+}
+
+//==========================================================================
+//
+//	misc_static_rgb_light
+//
+//==========================================================================
+
+void misc_static_rgb_light(mobj_t *self, mthing_t *mthing)
+{
+	float		l;
+
+	RemoveMobjThinker(self);
+	if (!mthing->arg1)
+		l = 200.0;
+	else
+		l =	itof(mthing->arg1) * 8.0;
+	AddStaticLightRGB(vector(mthing->x, mthing->y, mthing->height), l,
+		RGB(mthing->arg2, mthing->arg3, mthing->arg4));
+}
+
+__mobjinfo__
+{
+	MT_STATIC_LIGHT { 1502, misc_static_light }
+	MT_STATIC_RGB_LIGHT { 1503, misc_static_rgb_light }
+}
+

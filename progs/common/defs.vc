@@ -1,0 +1,295 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+//	Since version 1.5 compiler defines PROG_VERSION, so we can check that
+// progs are compiled with the right version of compiler
+#if !defined PROG_VERSION || PROG_VERSION != 8
+#error These are version 8 progs
+#endif
+
+enum
+{
+	false,
+	true
+};
+
+#define MAX_INFO_STRING		1024
+
+#define MININT      0x80000000
+#define MAXINT      0x7fffffff
+
+#define TICRATE				35
+
+#define MAXPLAYERS			8
+
+#define NUM_CSHIFTS			8
+#define CSHIFT(r, g, b, a)	(((a) << 24) | ((r) << 16) | ((g) << 8) | (b))
+
+// Binary Angle Measument, BAM.
+#define ANG1				(ANG45 / 45)
+#define ANG45				0x20000000
+#define ANG90				0x40000000
+#define ANG180				0x80000000
+#define ANG60				(ANG180 / 3)
+#define ANG270				0xc0000000
+
+// Difficulty/skill settings/filters.
+enum
+{
+    sk_baby,
+    sk_easy,
+    sk_medium,
+    sk_hard,
+    sk_nightmare
+};
+
+enum
+{
+	SPR_VP_PARALLEL_UPRIGHT,
+		//	Generate the sprite's axes, with sprup straight up in worldspace,
+		// and sprright parallel to the viewplane.
+	SPR_FACING_UPRIGHT,
+		//	Generate the sprite's axes, with sprup straight up in worldspace,
+		// and sprright perpendicular to sprorigin.
+	SPR_VP_PARALLEL,
+		//	Generate the sprite's axes, completely parallel to the viewplane.
+	SPR_ORIENTED,
+		//	Generate the sprite's axes, according to the sprite's world
+		// orientation
+	SPR_VP_PARALLEL_ORIENTED,
+		//	Generate the sprite's axes, parallel to the viewplane, but
+		// rotated in that plane around the center according to the sprite
+		// entity's roll angle. So sprforward stays the same, but sprright
+		// and sprup rotate
+	SPR_VP_PARALLEL_UPRIGHT_ORIENTED
+		//	Generate the sprite's axes, with sprup straight up in worldspace,
+		// and sprright parallel to the viewplane and then rotated in that
+		// plane around the center according to the sprite entity's roll
+		// angle. So sprforward stays the same, but sprright and sprup rotate
+};
+
+//
+//      Frame flags:
+//      handles maximum brightness (torches, muzzle flare, light sources)
+//
+#define FF_FULLBRIGHT   0x80	// flag in thing->frame
+#define FF_FRAMEMASK    0x7f
+
+enum
+{
+    ps_weapon,
+    ps_flash,
+    NUMPSPRITES
+};
+
+//
+// Button/action code definitions.
+//
+#define	BT_ATTACK		1	// Press "Fire".
+#define	BT_USE			2	// Use button, to open doors, activate switches.
+#define BT_JUMP			4
+
+//
+// Player states.
+//
+enum
+{
+    // Playing or camping.
+    PST_LIVE,
+    // Dead on the ground, view follows killer.
+    PST_DEAD,
+    // Ready to restart/respawn???
+    PST_REBORN		
+};
+
+#define TOCENTER		-128
+
+//
+//  Bounding box
+//
+enum
+{
+    BOXTOP,
+    BOXBOTTOM,
+    BOXLEFT,
+    BOXRIGHT
+};
+
+enum
+{
+	DI_EAST,
+	DI_NORTHEAST,
+	DI_NORTH,
+	DI_NORTHWEST,
+	DI_WEST,
+	DI_SOUTHWEST,
+	DI_SOUTH,
+	DI_SOUTHEAST,
+	DI_NODIR,
+	NUMDIRS
+};
+
+enum
+{
+	RES_OK,
+	RES_CRUSHED,
+	RES_PASTDEST
+};
+
+#define MAXDEATHMATCHSTARTS		16
+#define MAX_PLAYER_STARTS 		8
+
+//
+// LineDef attributes.
+//
+#define	ML_BLOCKING			0x0001  // Solid, is an obstacle.
+#define	ML_BLOCKMONSTERS	0x0002  // Blocks monsters only.
+#define	ML_TWOSIDED			0x0004	// Backside will not be present at all
+#define	ML_DONTPEGTOP		0x0008  // upper texture unpegged
+#define	ML_DONTPEGBOTTOM	0x0010  // lower texture unpegged
+#define ML_SECRET			0x0020	// don't map as two sided: IT'S A SECRET!
+#define ML_SOUNDBLOCK		0x0040	// don't let sound cross two of these
+#define	ML_DONTDRAW			0x0080	// don't draw on the automap
+#define	ML_MAPPED			0x0100	// set if already drawn in automap
+#define ML_REPEAT_SPECIAL	0x0200	// special is repeatable
+#define ML_SPAC_SHIFT		10
+#define ML_SPAC_MASK		0x1c00
+#define GET_SPAC(_flags_)	(((_flags_) & ML_SPAC_MASK) >> ML_SPAC_SHIFT)
+
+//
+// Special activation types
+//
+#define SPAC_CROSS		0	// when player crosses line
+#define SPAC_USE		1	// when player uses line
+#define SPAC_MCROSS		2	// when monster crosses line
+#define SPAC_IMPACT		3	// when projectile hits line
+#define SPAC_PUSH		4	// when player/monster pushes line
+#define SPAC_PCROSS		5	// when projectile crosses line
+
+//
+//	SECTOR PLANE FLAGS
+//
+
+#define SPF_NOBLOCKING		1
+#define SPF_NOBLOCKSIGHT	2
+#define SPF_NOBLOCKSHOOT	4
+
+//
+//	Player items
+//
+#define IT_ALL_MAP			1
+
+enum
+{
+	MSG_SV_DATAGRAM,
+	MSG_SV_RELIABLE,
+	MSG_SV_SIGNON,
+	MSG_SV_CLIENT,
+	MSG_CL_MESSAGE
+};
+
+#define RGB(r, g, b)		(0xff000000 + ((r) << 16) + ((g) << 8) + (b))
+#define RGBA(r, g, b, a)	((a) + ((r) << 16) + ((g) << 8) + (b))
+
+//**************************************************************************
+//**
+//**	CLIENT DEFINES
+//**
+//**************************************************************************
+
+#ifdef CLIENT
+
+//
+//	Types of graphics
+//
+
+enum
+{
+	PIC_PATCH,
+	PIC_RAW
+};
+
+//
+// Fonts
+//
+enum
+{
+ 	font_small,
+	font_yellow,
+    font_big,
+
+    NUMFONTTYPES
+};
+
+//
+// Horisontal text alignement
+//
+enum
+{
+ 	hleft,		//Left
+    hcenter,	//Centred
+    hright		//Right
+};
+
+//
+// Vertical text alignement
+//
+enum
+{
+ 	vtop,		//Top
+    vcenter,	//Center
+    vbottom		//Bottom
+};
+
+//
+//	STATUS BAR DEFS
+//
+
+enum
+{
+	SBW_PATCH,
+	SBW_PATCHI,
+    SBW_NUMBER,
+    SBW_INUMBER,
+    SBW_MNUMBER,
+    SBW_NUMBER9,
+    SBW_NUMBER12,
+    SBW_SHADE
+};
+
+enum
+{
+ 	SB_STYLE_NORMAL,
+    SB_STYLE_TRANSLUCENT,
+    SB_STYLE_SHADOWED
+};
+
+enum
+{
+	SB_VIEW_NORMAL,
+    SB_VIEW_AUTOMAP,
+    SB_VIEW_FULLSCREEN
+};
+
+#endif
+

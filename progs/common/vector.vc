@@ -1,0 +1,78 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+#define vset(vec, vx, vy, vz)		(vec = vector(vx, vy, vz))
+#define vcpy(src, dst)				(dst = src);
+#define CopyMobjCenter(mobj, vec)\
+	(vec = mobj->origin + vector(0.0, 0.0, mobj->height * 0.5 - mobj->floorclip))
+#define MobjCenter(mobj)\
+	(mobj->origin + vector(0.0, 0.0, mobj->height * 0.5 - mobj->floorclip))
+#define vneg(vec)					(vec = -vec)
+#define vadd(v1, v2, dst)			(dst = v1 + v2)
+#define vsub(v1, v2, dst)			(dst = v1 - v2)
+#define vscale(src, scale, dst)		(dst = (scale) * src)
+#define vma(v1, v2, scale, dst)		(dst = v1 + v2 * (scale))
+
+#define vlen(vec)	Length(vec)
+#define vnorm(vec)	vec = Normalize(vec)
+
+#define avset(angles, apitch, ayaw, aroll)\
+{\
+	angles.pitch = apitch;\
+	angles.yaw = ayaw;\
+	angles.roll = aroll;\
+}
+
+#define avcpy(src, dst)\
+{\
+	dst.pitch = src.pitch;\
+	dst.yaw = src.yaw;\
+	dst.roll = src.roll;\
+}
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	VectorRotateAroundZ
+//
+//==========================================================================
+
+void VectorRotateAroundZ(TVec *vec, angle_t angle)
+{
+	float dstx = vec->x * cos(angle) - vec->y * sin(angle);
+	float dsty = vec->x * sin(angle) + vec->y * cos(angle);
+	vec->x = dstx;
+	vec->y = dsty;
+}
+
