@@ -35,9 +35,6 @@ void Actor::A_26(void)
 void Actor::A_27(void)
 {
 }
-void Actor::A_Explode2(void)
-{
-}
 void Actor::A_29(void)
 {
 }
@@ -93,12 +90,6 @@ void Actor::A_Unknown55(void)
 {
 }
 void Actor::A_Unknown56(void)
-{
-}
-void Actor::A_CheckRefire(void)
-{
-}
-void Actor::A_RiffleAttack(void)
 {
 }
 void Actor::A_MacilDeath(void)
@@ -258,6 +249,9 @@ void Actor::A_112(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2002/05/03 17:14:33  dj_jl
+//  Added rifle attack and refire.
+//
 //  Revision 1.2  2002/04/27 17:04:55  dj_jl
 //  Merged all creatures.
 //
