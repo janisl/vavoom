@@ -287,13 +287,13 @@ boolean Actor::StepMove(void)
 	tryx = Origin.x + StepSpeed * xspeed[MoveDir];
 	tryy = Origin.y + StepSpeed * yspeed[MoveDir];
 
-	if (!TryMove(tryx, tryy))
+	if (!TryMove(vector(tryx, tryy, Origin.z)))
 	{
 		// open any specials
-		if (bFloat && floatok)
+		if (bFloat && tmtrace->FloatOk)
 		{
 			// must adjust height
-			if (Origin.z < saved_tmfloorz)
+			if (Origin.z < tmtrace->FloorZ)
 				Origin.z += FLOATSPEED * frametime;
 			else
 				Origin.z -= FLOATSPEED * frametime;
@@ -472,6 +472,9 @@ void Actor::NewChaseDir(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/04/11 16:52:14  dj_jl
+//  Made TryMove native.
+//
 //  Revision 1.24  2002/03/28 18:15:34  dj_jl
 //  Renamed mo in player_t to MO.
 //

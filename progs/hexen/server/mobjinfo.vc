@@ -5087,6 +5087,7 @@ class LightningFloor:Actor
 		SpawnState = S_LIGHTNING_FLOOR1;
 		DeathState = S_LIGHTNING_F_X1;
 		Effects = EF_DL_BLUE;
+		MaxStepHeight = 99999.0;
 	}
 };
 
@@ -5974,6 +5975,8 @@ class MinotaurFloorFire1:Actor
 		SpawnState = S_MNTRFX2_1;
 		DeathState = S_MNTRFXI2_1;
 		Effects = EF_DL_WHITE;
+		// The Minotaur floor fire can step up any amount
+		MaxStepHeight = 99999.0;
 	}
 };
 
@@ -7330,9 +7333,12 @@ class Bat:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2002/04/11 16:52:16  dj_jl
+//	Made TryMove native.
+//
 //	Revision 1.28  2002/03/16 17:47:47  dj_jl
 //	Got rid of mobj_t and some other legacy.
-//
+//	
 //	Revision 1.27  2002/03/12 19:19:16  dj_jl
 //	Pickup classes
 //	

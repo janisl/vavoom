@@ -74,7 +74,7 @@ void Actor::A_PainShootSkull(float angle)
 		prestep * cos(angle), prestep * sin(angle), 8.0));
 
 	// Check for movements.
-	if (!newmobj.TryMove(newmobj.Origin.x, newmobj.Origin.y))
+	if (!newmobj.TryMove(newmobj.Origin))
 	{
 		// kill it immediately
 		newmobj.Damage(self, self, 10000);
@@ -135,6 +135,9 @@ void Actor::A_PainDie(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/04/11 16:52:14  dj_jl
+//  Made TryMove native.
+//
 //  Revision 1.19  2002/03/20 19:07:43  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

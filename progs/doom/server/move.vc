@@ -106,123 +106,31 @@ boolean Actor::Touch(MapObject InOther)
 	return !Other.bSolid;
 }
 
-boolean floatok;	// if true, move would be ok if
-					// within tmtrace.FloorZ - tmtrace.CeilingZ
-float saved_tmfloorz;
-
 //==========================================================================
 //
-//  Actor::TryMove
-//
-//  Attempt to move to a new position, crossing special lines unless
-// MF_TELEPORT is set.
+//	Actor::CrossSpecialLine
 //
 //==========================================================================
 
-boolean Actor::TryMove(float x, float y)
+void Actor::CrossSpecialLine(line_t *ld, int side)
 {
-	boolean check;
-	TVec oldorg;
-	int side;
-	int oldside;
-	line_t *ld;
-
-	check = CheckRelPosition(vector(x, y, Origin.z));
-	saved_tmfloorz = tmtrace->FloorZ;
-	floatok = false;
-	if (!check)
+	if (bIsPlayer)
 	{
-		if (!tmtrace->BlockingMobj || tmtrace->BlockingMobj.bIsPlayer ||
-			!bIsPlayer || tmtrace->BlockingMobj.Origin.z +
-			tmtrace->BlockingMobj.Height - Origin.z > 24.0 ||
-			(tmtrace->BlockingMobj.Sector->ceilingheight -
-				(tmtrace->BlockingMobj.Origin.z +
-				tmtrace->BlockingMobj.Height) < Height) ||
-		   	(tmtrace->CeilingZ - (tmtrace->BlockingMobj.Origin.z +
-			   	tmtrace->BlockingMobj.Height) < Height))
-		{
-			return false;
-		}
+		P_ActivateLine(ld, self, side, SPAC_CROSS);
 	}
-
-	if (bColideWithWorld)
+	else if (bActivateMCross)
 	{
-		if (tmtrace->CeilingZ - tmtrace->FloorZ < Height)
-		{
-			// Doesn't fit
-			return false;
-		}
-
-		floatok = true;
-
-		if (!bTeleport &&
-			tmtrace->CeilingZ - Origin.z < Height)
-		{
-			// mobj must lower itself to fit
-			return false;
-		}
-
-		if (!bTeleport && tmtrace->FloorZ - Origin.z > 24.0)
-			return false;	// too big a step up
-
-		if (!bDropOff && !bFloat &&
-			tmtrace->FloorZ - tmtrace->DropOffZ > 24.0)
-			return false;	// don't stand over a dropoff
+		P_ActivateLine(ld, self, side, SPAC_MCROSS);
 	}
-
-	// the move is ok,
-	// so link the thing into its new position
-	P_UnsetThingPosition(self);
-
-	oldorg = Origin;
-	Origin.x = x;
-	Origin.y = y;
-
-	P_SetThingPosition(self);
-	FloorZ = tmtrace->FloorZ;
-	CeilingZ = tmtrace->CeilingZ;
-	Floor = tmtrace->Floor;
-	Ceiling = tmtrace->Ceiling;
-
-	//
-	// if any special lines were hit, do the effect
-	//
-	if (!bTeleport && bColideWithWorld)
+	else if (bActivatePCross)
 	{
-		while (tmtrace->NumSpecHit > 0)
-		{
-			tmtrace->NumSpecHit--;
-			// see if the line was crossed
-			ld = tmtrace->SpecHit[tmtrace->NumSpecHit];
-			side = PointOnPlaneSide(Origin, ld);
-			oldside = PointOnPlaneSide(oldorg, ld);
-			if (side != oldside)
-			{
-				if (ld->special)
-				{
-					if (bIsPlayer)
-					{
-						P_ActivateLine(ld, self, oldside, SPAC_CROSS);
-					}
-					else if (bActivateMCross)
-					{
-						P_ActivateLine(ld, self, oldside, SPAC_MCROSS);
-					}
-					else if (bActivatePCross)
-					{
-						P_ActivateLine(ld, self, oldside, SPAC_PCROSS);
-					}
-					else if (ld->special == 70)
-					{
-						//	Teleport hack
-						P_ActivateLine(ld, self, oldside, SPAC_MCROSS);
-					}
-				}
-			}
-		}
+		P_ActivateLine(ld, self, side, SPAC_PCROSS);
 	}
-
-	return true;
+	else if (ld->special == 70)
+	{
+		//	Teleport hack
+		P_ActivateLine(ld, self, side, SPAC_MCROSS);
+	}
 }
 
 //==========================================================================
@@ -240,6 +148,9 @@ void Actor::Thrust(float angle, float move)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/04/11 16:52:13  dj_jl
+//  Made TryMove native.
+//
 //  Revision 1.25  2002/03/20 19:07:43  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

@@ -175,7 +175,7 @@ boolean Actor::Teleport(float x, float y, float angle)
 		ReactionTime = 0.5;
 	}
 	Angles.yaw = angle;
-	if (bFootClip && GetFloorType() != FLOOR_SOLID)
+	if (bFloorClip && GetFloorType() != FLOOR_SOLID)
 	{
 		FloorClip = FOOTCLIPSIZE;
 	}
@@ -331,6 +331,9 @@ boolean EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/04/11 16:52:15  dj_jl
+//  Made TryMove native.
+//
 //  Revision 1.23  2002/03/20 19:07:47  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

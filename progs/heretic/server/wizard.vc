@@ -148,7 +148,7 @@ defaultproperties
 	PainChance = 64;
 	bNoGravity = true;
 	bFloat = true;
-	bFootClip = false;
+	bFloorClip = false;
 	SpawnState = S_WIZARD_LOOK1;
 	SeeState = S_WIZARD_WALK1;
 	MissileState = S_WIZARD_ATK1;
@@ -166,6 +166,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/04/11 16:52:15  dj_jl
+//  Made TryMove native.
+//
 //  Revision 1.21  2002/03/20 19:07:47  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

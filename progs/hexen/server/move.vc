@@ -395,10 +395,6 @@ void Actor::BlockedByLine(line_t * ld)
 	CheckForPushSpecial(ld, 0);
 }
 
-boolean floatok;	// if true, move would be ok if
-					// within tmtrace.FloorZ - tmtrace.CeilingZ
-float saved_tmfloorz;
-
 //==========================================================================
 //
 //  Actor::PushLine
@@ -431,107 +427,34 @@ void Actor::PushLine(void)
 
 //==========================================================================
 //
-//  Actor::TryMove
-//
-//  Attempt to move to a new position, crossing special lines.
+//	Actor::CrossSpecialLine
 //
 //==========================================================================
 
-boolean Actor::TryMove(float x, float y)
+void Actor::CrossSpecialLine(line_t *ld, int side)
 {
-	boolean check;
-	TVec oldorg;
-	int side;
-	int oldside;
-	line_t *ld;
-
-	check = CheckRelPosition(vector(x, y, Origin.z));
-	floatok = false;
-	saved_tmfloorz = tmtrace->FloorZ;
-	if (!check)
+	if (bIsPlayer)
 	{
-		if (!tmtrace->BlockingMobj || tmtrace->BlockingMobj.bIsPlayer ||
-			!bIsPlayer || tmtrace->BlockingMobj.Origin.z +
-			tmtrace->BlockingMobj.Height - Origin.z > 24.0
-			|| (tmtrace->BlockingMobj.Sector->ceilingheight -
-		   (tmtrace->BlockingMobj.Origin.z + tmtrace->BlockingMobj.Height) < Height)
-			|| (tmtrace->CeilingZ - (tmtrace->BlockingMobj.Origin.z + tmtrace->BlockingMobj.Height) <
-				Height))
-		{
-			PushLine();
-			return false;
-		}
+		P_ActivateLine(ld, self, side, SPAC_CROSS);
 	}
-
-	if (bColideWithWorld)
+	else if (bActivateMCross)
 	{
-		if (tmtrace->CeilingZ - tmtrace->FloorZ < Height)
-		{
-			// Doesn't fit
-			PushLine();
-			return false;
-		}
-
-		floatok = true;
-
-		if (tmtrace->CeilingZ - Origin.z < Height &&
-			Class != LightningCeiling && !bFly)
-		{
-			// mobj must lower itself to fit
-			PushLine();
-			return false;
-		}
-		if (bFly)
-		{
-			if (Origin.z + Height > tmtrace->CeilingZ)
-			{
-				Velocity.z = -8.0 * 35.0;
-				PushLine();
-				return false;
-			}
-			else if (Origin.z < tmtrace->FloorZ
-				&& tmtrace->FloorZ - tmtrace->DropOffZ > 24.0)
-			{
-				Velocity.z = 8.0 * 35.0;
-				PushLine();
-				return false;
-			}
-		}
-		// The Minotaur floor fire (MinotaurFloorFire1) can step up any amount
-		if (Class != MinotaurFloorFire1 && Class != LightningFloor &&
-			tmtrace->FloorZ - Origin.z > 24.0)
-		{
-			PushLine();
-			return false;
-		}
-		if (!bDropOff && !bFloat &&
-			(tmtrace->FloorZ - tmtrace->DropOffZ > 24.0) && !bBlasted)
-		{
-			// Can't move over a dropoff unless it's been blasted
-			return false;
-		}
-		if (bCantLeaveFloorpic && (tmtrace->Floor->pic != Floor->pic
-				|| tmtrace->FloorZ != Origin.z))
-		{
-			// must stay within a sector of a certain floor type
-			return false;
-		}
+		P_ActivateLine(ld, self, side, SPAC_MCROSS);
 	}
+	else if (bActivatePCross)
+	{
+		P_ActivateLine(ld, self, side, SPAC_PCROSS);
+	}
+}
 
-	// the move is ok,
-	// so link the thing into its new position
-	P_UnsetThingPosition(self);
+//==========================================================================
+//
+//	Actor::HandleFloorclip
+//
+//==========================================================================
 
-	oldorg = Origin;
-	Origin.x = x;
-	Origin.y = y;
-
-	P_SetThingPosition(self);
-	Floor = tmtrace->Floor;
-	Ceiling = tmtrace->Ceiling;
-	FloorZ = tmtrace->FloorZ;
-	CeilingZ = tmtrace->CeilingZ;
-
+void Actor::HandleFloorclip(void)
+{
 	if (bFloorClip)
 	{
 		if (Origin.z == Sector->floorheight &&
@@ -544,46 +467,14 @@ boolean Actor::TryMove(float x, float y)
 			FloorClip = 0.0;
 		}
 	}
-
-	//
-	// if any special lines were hit, do the effect
-	//
-	if (bColideWithWorld)
-	{
-		while (tmtrace->NumSpecHit > 0)
-		{
-			tmtrace->NumSpecHit--;
-			// see if the line was crossed
-			ld = tmtrace->SpecHit[tmtrace->NumSpecHit];
-			side = PointOnPlaneSide(Origin, ld);
-			oldside = PointOnPlaneSide(oldorg, ld);
-			if (side != oldside)
-			{
-				if (ld->special)
-				{
-					if (bIsPlayer)
-					{
-						P_ActivateLine(ld, self, oldside, SPAC_CROSS);
-					}
-					else if (bActivateMCross)
-					{
-						P_ActivateLine(ld, self, oldside, SPAC_MCROSS);
-					}
-					else if (bActivatePCross)
-					{
-						P_ActivateLine(ld, self, oldside, SPAC_PCROSS);
-					}
-				}
-			}
-		}
-	}
-
-	return true;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2002/04/11 16:52:16  dj_jl
+//  Made TryMove native.
+//
 //  Revision 1.28  2002/03/28 18:32:51  dj_jl
 //  Little renaming, some bug fixes.
 //

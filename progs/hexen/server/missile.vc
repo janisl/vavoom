@@ -49,7 +49,7 @@ boolean Actor::CheckMissileSpawn(void)
 	// move a little forward so an angle can be computed if it
 	// immediately explodes
 	Origin += Velocity * 0.0142857143;
-	if (!TryMove(Origin.x, Origin.y))
+	if (!TryMove(Origin))
 	{
 		ExplodeMissile();
 		return false;
@@ -377,7 +377,7 @@ Actor PlayerPawn::SpawnPlayerMissile(classid type)
 		// Normal missile
 		MissileMobj.Origin += MissileMobj.Velocity * frametime / 2.0;
 	}
-	if (!MissileMobj.TryMove(MissileMobj.Origin.x, MissileMobj.Origin.y))
+	if (!MissileMobj.TryMove(MissileMobj.Origin))
 	{
 		// Exploded immediately
 		MissileMobj.ExplodeMissile();
@@ -521,6 +521,9 @@ boolean Actor::ExplodeMissile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/04/11 16:52:16  dj_jl
+//  Made TryMove native.
+//
 //  Revision 1.25  2002/03/28 18:32:51  dj_jl
 //  Little renaming, some bug fixes.
 //

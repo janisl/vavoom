@@ -454,7 +454,7 @@ void Actor::CheckMissileSpawn(void)
 	// be computed if it immediately explodes
 	Origin = Origin + Velocity * 0.0142857143;
 
-	if (!TryMove(Origin.x, Origin.y))
+	if (!TryMove(Origin))
 		ExplodeMissile();
 }
 
@@ -865,6 +865,9 @@ void P_NoiseAlert(Actor target, Actor emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.40  2002/04/11 16:52:13  dj_jl
+//  Made TryMove native.
+//
 //  Revision 1.39  2002/03/28 18:11:24  dj_jl
 //  Changed hiding of specials like in Raven games.
 //

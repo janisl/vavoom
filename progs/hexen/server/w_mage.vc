@@ -708,7 +708,7 @@ void Actor::A_MStaffWeave(void)
 	weaveXY = (weaveXY + 6) & 63;
 	newX += cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	newY += sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
-	TryMove(newX, newY);
+	TryMove(vector(newX, newY, Origin.z));
 	Origin.z -= FloatBobOffsets[weaveZ] * 2.0;
 	weaveZ = (weaveZ + 3) & 63;
 	Origin.z += FloatBobOffsets[weaveZ] * 2.0;
@@ -737,6 +737,9 @@ void Actor::A_MStaffTrack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/04/11 16:52:16  dj_jl
+//  Made TryMove native.
+//
 //  Revision 1.25  2002/03/28 18:15:35  dj_jl
 //  Renamed mo in player_t to MO.
 //

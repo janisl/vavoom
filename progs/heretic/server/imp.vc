@@ -100,7 +100,7 @@ void A_ImpMsAttack(void)
 void A_ImpDeath(void)
 {
 	bSolid = false;
-	bFootClip = true;
+	bFloorClip = true;
 	if (Origin.z <= FloorZ)
 	{
 		SetState(CrashState);
@@ -117,7 +117,7 @@ void A_ImpXDeath1(void)
 {
 	bSolid = false;
 	bNoGravity = true;
-	bFootClip = true;
+	bFloorClip = true;
 	Special1 = 666;	// Flag the crash routine
 }
 
@@ -214,7 +214,7 @@ defaultproperties
 	bNoGravity = true;
 	bFloat = true;
 	bSpawnFloat = true;
-	bFootClip = false;
+	bFloorClip = false;
 	SpawnState = S_IMP_LOOK1;
 	SeeState = S_IMP_FLY1;
 	MeleeState = S_IMP_MEATK1;
@@ -289,6 +289,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/04/11 16:52:14  dj_jl
+//  Made TryMove native.
+//
 //  Revision 1.22  2002/03/20 19:07:46  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

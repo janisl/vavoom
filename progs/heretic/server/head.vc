@@ -137,7 +137,7 @@ defaultproperties
 	StepSpeed = 6.0;
 	PainChance = 32;
 	bNoBlood = true;
-	bFootClip = false;
+	bFloorClip = false;
 	SpawnState = S_HEAD_LOOK;
 	SeeState = S_HEAD_FLOAT;
 	MissileState = S_HEAD_ATK1;
@@ -227,6 +227,9 @@ void Actor::A_WhirlwindSeek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/04/11 16:52:14  dj_jl
+//  Made TryMove native.
+//
 //  Revision 1.22  2002/03/20 19:07:46  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

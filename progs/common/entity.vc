@@ -41,9 +41,16 @@ class Entity:MapObject
 	bool bColideWithWorld;
 	bool bCheckLineBlocking;
 	bool bCheckLineBlockMonsters;
+	bool bDropOff;		// allow jumps from high places
+	bool bFloat;		// allow moves to any height, no gravity
+	bool bFly;			// fly mode is active
+	bool bBlasted;		// missile will pass through ghosts
+	bool bCantLeaveFloorpic;	// stay within a certain floor type
+	bool bFloorClip;	// if feet are allowed to be clipped
 
 	//  Params
 	float Mass;
+	float MaxStepHeight;
 
 	//  Water
 	int WaterLevel;
@@ -56,6 +63,7 @@ native void PlayFullVolumeSound(name SoundName, int Channel);
 
 native boolean CheckPosition(TVec Pos);
 native boolean CheckRelPosition(TVec Pos);
+native boolean TryMove(TVec newPos);
 
 native boolean CheckWater(void);
 
@@ -88,6 +96,36 @@ boolean Touch(MapObject Other)
 //==========================================================================
 
 void BlockedByLine(line_t * ld)
+{
+}
+
+//==========================================================================
+//
+//	PushLine
+//
+//==========================================================================
+
+void PushLine(void)
+{
+}
+
+//==========================================================================
+//
+//	HandleFloorclip
+//
+//==========================================================================
+
+void HandleFloorclip(void)
+{
+}
+
+//==========================================================================
+//
+//	CrossSpecialLine
+//
+//==========================================================================
+
+void CrossSpecialLine(line_t *ld, int side)
 {
 }
 
@@ -132,6 +170,9 @@ struct tmtrace_t
 	sec_plane_t *Floor;
 	sec_plane_t *Ceiling;
 
+	boolean FloatOk;	// if true, move would be ok if
+						// within tmtrace.FloorZ - tmtrace.CeilingZ
+
 	// keep track of the line that lowers the ceiling,
 	// so missiles don't explode against sky hack walls
 	line_t *CeilingLine;
@@ -150,6 +191,9 @@ tmtrace_t *tmtrace;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/04/11 16:52:17  dj_jl
+//  Made TryMove native.
+//
 //  Revision 1.12  2002/03/28 18:20:11  dj_jl
 //  Got rid of SetStateNF.
 //

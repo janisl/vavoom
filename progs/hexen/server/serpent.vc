@@ -146,7 +146,7 @@ void A_SerpentChase(void)
 	}
 	if (Sector->floor.pic != oldFloor)
 	{
-		TryMove(oldX, oldY);
+		TryMove(vector(oldX, oldY, Origin.z));
 		NewChaseDir();
 	}
 
@@ -773,6 +773,9 @@ void Actor::A_DelayGib(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/04/11 16:52:16  dj_jl
+//  Made TryMove native.
+//
 //  Revision 1.23  2002/03/28 18:32:51  dj_jl
 //  Little renaming, some bug fixes.
 //

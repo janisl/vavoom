@@ -499,7 +499,7 @@ void Actor::A_CStaffMissileSlither(void)
 	weaveXY = (weaveXY + 3) & 63;
 	newX += cos(angle) * FloatBobOffsets[weaveXY];
 	newY += sin(angle) * FloatBobOffsets[weaveXY];
-	TryMove(newX, newY);
+	TryMove(vector(newX, newY, Origin.z));
 	_Special2 = weaveXY;
 }
 
@@ -783,7 +783,7 @@ void Actor::CHolyWeave(void)
 	weaveXY = (weaveXY + (P_Random() % 5)) & 63;
 	newX += cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	newY += sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
-	TryMove(newX, newY);
+	TryMove(vector(newX, newY, Origin.z));
 	Origin.z -= FloatBobOffsets[weaveZ] * 2.0;
 	weaveZ = (weaveZ + (P_Random() % 5)) & 63;
 	Origin.z += FloatBobOffsets[weaveZ] * 2.0;
@@ -856,8 +856,8 @@ void Actor::CHolyTailFollow(float dist)
 		an = atan2(child.Origin.y - Origin.y,
 			Origin.x - child.Origin.x);
 		oldDistance = MobjDist(child, self);
-		if (child.TryMove(Origin.x + dist * cos(an),
-				Origin.y + dist * sin(an)))
+		if (child.TryMove(vector(Origin.x + dist * cos(an),
+				Origin.y + dist * sin(an), child.Origin.z)))
 		{
 			newDistance = MobjDist2(child, self) - 1.0;
 			if (oldDistance < 1.0)
@@ -916,9 +916,9 @@ void Actor::A_CHolyTail(void)
 			CHolyTailRemove();
 			return;
 		}
-		else if (TryMove(
+		else if (TryMove(vector(
 				parent.Origin.x - 14.0 * cos(parent.Angles.yaw),
-				parent.Origin.y - 14.0 * sin(parent.Angles.yaw)))
+				parent.Origin.y - 14.0 * sin(parent.Angles.yaw), Origin.z)))
 		{
 			Origin.z = parent.Origin.z - 5.0;
 		}
@@ -940,6 +940,9 @@ void Actor::A_CHolySpawnPuff(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/04/11 16:52:16  dj_jl
+//  Made TryMove native.
+//
 //  Revision 1.25  2002/03/28 18:15:35  dj_jl
 //  Renamed mo in player_t to MO.
 //

@@ -88,7 +88,7 @@ void Actor::SetOrigin2(TVec origin)
 			Origin.z = FloorZ;
 		}
 	}
-	if (bFootClip && GetFloorType() != FLOOR_SOLID &&
+	if (bFloorClip && GetFloorType() != FLOOR_SOLID &&
 		FloorZ == Sector->floorheight)
 	{
 		FloorClip = FOOTCLIPSIZE;
@@ -1420,6 +1420,9 @@ void Actor::NightmareRespawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.40  2002/04/11 16:52:14  dj_jl
+//  Made TryMove native.
+//
 //  Revision 1.39  2002/03/28 18:15:34  dj_jl
 //  Renamed mo in player_t to MO.
 //

@@ -313,7 +313,7 @@ void Actor::A_BishopMissileWeave(void)
 	weaveXY = (weaveXY + 2) & 63;
 	newX += cos(angle) * FloatBobOffsets[weaveXY] * 2.0;
 	newY += sin(angle) * FloatBobOffsets[weaveXY] * 2.0;
-	TryMove(newX, newY);
+	TryMove(vector(newX, newY, Origin.z));
 	Origin.z -= FloatBobOffsets[weaveZ];
 	weaveZ = (weaveZ + 2) & 63;
 	Origin.z += FloatBobOffsets[weaveZ];
@@ -334,6 +334,9 @@ void Actor::A_BishopMissileSeek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/04/11 16:52:15  dj_jl
+//  Made TryMove native.
+//
 //  Revision 1.22  2002/03/28 18:32:51  dj_jl
 //  Little renaming, some bug fixes.
 //
