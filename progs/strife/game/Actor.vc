@@ -1105,7 +1105,7 @@ bool Physics()
 	{
 		// Handle Z momentum and gravity
 		onmo = Actor(CheckOnmobj());
-		if (!onmo)
+		if (!onmo || bMissile)
 		{
 			ZMovement();
 			if (bIsPlayer && bOnMobj)
@@ -1563,6 +1563,34 @@ bool LookForPlayers(bool allaround)
 
 //==========================================================================
 //
+//  TossUpObject
+//
+//==========================================================================
+
+Actor TossUpObject(classid type)
+{
+	Actor		A;
+	float		an;
+	float		randomspeed;
+
+	randomspeed = Random() * 8.0 - 6.0;
+
+	A = Spawn(type, MobjCenter(self));
+	if (A)
+	{
+		an = AngleMod360(Angles.yaw + Random() * 360.0);
+		A.Angles.yaw = an;
+		A.Enemy = Enemy;
+		A.Instigator = self;
+		A.Velocity.x = randomspeed * cos(an) * 35.0;
+		A.Velocity.y = randomspeed * sin(an) * 35.0;
+		A.Velocity.z = (12.0 + Random() / 8.0) * 35.0;
+	}
+	return A;
+}
+
+//==========================================================================
+//
 //  A_Look
 //
 //  Stay in state until a player is sighted
@@ -1919,6 +1947,32 @@ Actor SpawnSubMissile(classid type)
 	return other;
 }
 
+//==========================================================================
+//
+//	A_CheckAlarm
+//
+//	Stay in state untill alarm is triggered.
+//
+//==========================================================================
+
+void A_CheckAlarm()
+{
+	Actor targ;
+	int sound;
+
+	targ = Actor(Sector->SoundTarget);
+	if (targ && targ.bShootable)
+	{
+		Enemy = targ;
+		// go into chase state
+		if (SightSound)
+		{
+			PlaySound(SightSound, CHAN_VOICE);
+		}
+		SetState(SeeState);
+	}
+}
+
 void A_Unknown24()
 {
 }
@@ -1926,9 +1980,6 @@ void A_Unknown27()
 {
 }
 void A_Unknown31()
-{
-}
-void A_CheckAlarm()
 {
 }
 
@@ -1986,6 +2037,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2004/10/14 06:22:38  dj_jl
+//  Implemented several objects amd monsters.
+//
 //  Revision 1.10  2004/10/13 06:37:33  dj_jl
 //  Implemented items also giving quests.
 //

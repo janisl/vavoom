@@ -274,7 +274,7 @@ bool StepMove()
 		bInFloat = false;
 	}
 
-	if (!bFloat)
+	if (!bFloat && !bNoGravity)
 	{
 		Origin.z = FloorZ;
 	}
@@ -879,16 +879,57 @@ void A_Burn()
 {
 }
 
+//==========================================================================
+//
+//	A_Unknown72
+//
+//	This most likely is boss death.
+//
+//==========================================================================
+
 void A_Unknown72()
 {
+	int args[5];
+
+	if (Class == Programmer)
+	{
+		//	Call death script.
+		args[0] = 0;
+		args[1] = 0;
+		args[2] = 0;
+		StartACS(254, 0, &args[0], self, NULL, 0);
+	}
 }
 
 void A_SpecterMelee()
 {
 }
 
+//==========================================================================
+//
+//	A_SpecterAttack
+//
+//	Used by Specter1 and Programmer.
+//
+//==========================================================================
+
 void A_SpecterAttack()
 {
+	Actor		A;
+
+	if (!Enemy)
+		return;
+
+	A_FaceTarget();
+
+	A = Spawn(SigilFloor, Enemy.Origin);
+	A.Origin.z = A.FloorZ;
+	A.Velocity = vector(0.0, 0.0, 0.0);
+	A.Instigator = self;
+	if (A.SightSound)
+	{
+		A.PlaySound(A.SightSound, CHAN_VOICE);
+	}
 }
 
 void A_SpecterDying()
@@ -959,6 +1000,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/10/14 06:22:38  dj_jl
+//  Implemented several objects amd monsters.
+//
 //  Revision 1.2  2004/01/30 17:45:33  dj_jl
 //  Implemented many action functions.
 //
