@@ -984,6 +984,7 @@ void A_BossDeath()
 	}
 	else if (Class == Specter1)
 	{
+		//	Specter in ruined temple.
 		EV_DoFloor(999, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
 		Enemy.Player.SetObjectives(95);
 		MSG_Select(MSG_SV_RELIABLE);
@@ -992,6 +993,7 @@ void A_BossDeath()
 	}
 	else if (Class == Specter2)
 	{
+		//	Bishop's specter
 		if (!Enemy)
 			return;
 
@@ -1005,18 +1007,19 @@ void A_BossDeath()
 	}
 	else if (Class == Specter3)
 	{
+		//	Oracle's specter
 		if (!Enemy)
 			return;
 
 		Enemy.Player.GiveSigilPiece();
 		cprint(Enemy.Player, "You've Killed The Oracle!");
 		Enemy.Player.GiveQuest(QUEST_KilledOracle);
-		if (Enemy.Player.Quests & QUEST_KilledBishop)
+		if (Enemy.Player.Quests & (1 << QUEST_KilledBishop))
 		{
 			//	If the Bishop is dead, set quest item 22
 			Enemy.Player.GiveQuest(QUEST_KillMacil);
 		}
-		if (Enemy.Player.Quests & QUEST_Factory)
+		if (Enemy.Player.Quests & (1 << QUEST_KilledLoremaster))
 		{
 			Enemy.Player.SetObjectives(85);
 			MSG_Select(MSG_SV_RELIABLE);
@@ -1034,13 +1037,14 @@ void A_BossDeath()
 	}
 	else if (Class == Specter4)
 	{
+		//	Macil's specter
 		if (!Enemy)
 			return;
 
 		Enemy.Player.GiveSigilPiece();
 		Enemy.Player.GiveQuest(QUEST_KilledMacil);
 		cprint(Enemy.Player, "You've Killed Macil!");
-		if (Enemy.Player.Quests & QUEST_Factory)
+		if (Enemy.Player.Quests & (1 << QUEST_Factory))
 		{
 			Enemy.Player.SetObjectives(106);
 			MSG_Select(MSG_SV_RELIABLE);
@@ -1057,6 +1061,7 @@ void A_BossDeath()
 	}
 	else if (Class == Specter5)
 	{
+		//	Loremaster's specter
 		if (!Enemy)
 			return;
 
@@ -1065,6 +1070,7 @@ void A_BossDeath()
 		cprint(Enemy.Player, "You've Killed The LoreMaster!");
 		Enemy.Player.Accuracy += 10;
 		Enemy.Player.Stamina += 10;
+		Enemy.Player.GiveBody(200);
 		if (Enemy.Player.Sigil == 4)
 		{
 			Enemy.Player.SetObjectives(85);
@@ -1086,8 +1092,7 @@ void A_BossDeath()
 		if (!Enemy)
 			return;
 
-		if ((Enemy.Player.Quests & QUEST_Factory) ||
-			(Enemy.Player.Quests & QUEST_BlownUpComputer))
+		if (Enemy.Player.Quests & (1 << QUEST_Factory))
 		{
 			MSG_Select(MSG_SV_RELIABLE);
 			MSG_WriteByte(svc_finale_type);
@@ -1319,6 +1324,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2005/04/04 07:36:37  dj_jl
+//  Several fixes of quests.
+//
 //  Revision 1.11  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

@@ -60,7 +60,7 @@ void Died(Actor source)
 	MSG_Select(MSG_SV_RELIABLE);
 	MSG_WriteByte(svc_voice);
 	MSG_WriteShort(13);
-	Enemy.Player.SetObjectives(13);
+	svvars->Players[i].SetObjectives(13);
 	Spawn(BrokenPowerCoupling, Origin);
 }
 
@@ -90,6 +90,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/04/04 07:36:38  dj_jl
+//  Several fixes of quests.
+//
 //  Revision 1.2  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //
