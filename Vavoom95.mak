@@ -32,8 +32,8 @@ OBJFILES = obj\chat.obj obj\cheats.obj \
     \
     obj\in_input.obj obj\in_win32.obj \
     \
-    obj\cd_win32.obj obj\s_data.obj obj\s_sound.obj obj\s_win32.obj \
-    obj\s_win32m.obj obj\sn_sonix.obj \
+    obj\cd_win32.obj obj\s_al.obj obj\s_data.obj obj\s_eaxutl.obj \
+    obj\s_sound.obj obj\s_win32.obj obj\s_win32m.obj obj\sn_sonix.obj \
     \
     obj\am_map.obj obj\menu.obj obj\sbar.obj obj\screen.obj obj\text.obj \
     obj\finale.obj obj\iline.obj obj\imission.obj obj\console.obj \
@@ -71,7 +71,8 @@ CFLAGS = $(CFLAGS) -DNOASM
 !endif
 
 RESFILES = obj\vavoom.res
-LIBRARIES = utils\glbsp\plugin\libglbsp.lib utils\glvis\glvis.lib
+LIBRARIES = utils\glbsp\plugin\libglbsp.lib utils\glvis\glvis.lib \
+        $(BCB)\lib\openal32.lib
 # ---------------------------------------------------------------------------
 .autodepend
 # ---------------------------------------------------------------------------
@@ -79,6 +80,7 @@ LIBRARIES = utils\glbsp\plugin\libglbsp.lib utils\glvis\glvis.lib
 .PATH.ASM = source
 .PATH.RC  = source
 .PATH.S   = source
+.PATH.DLL = .;$(WINDIR)/system;$(WINDIR)/system32
 # ---------------------------------------------------------------------------
 $(PROJECT): $(OBJFILES) $(RESFILES) $(LIBRARIES)
     ilink32 @&&!
@@ -100,4 +102,6 @@ $(PROJECT): $(OBJFILES) $(RESFILES) $(LIBRARIES)
     source\gas2tasm.exe < obj\temp.i > $@
     del obj\temp.i > nul
 
+.dll.lib:
+    implib -a $@ $<
 # ---------------------------------------------------------------------------
