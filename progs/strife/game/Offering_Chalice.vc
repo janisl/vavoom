@@ -37,16 +37,19 @@ defaultproperties
 	PickupString = "Offering Chalice";
 	Radius = 10.0;
 	Height = 8.0;
-	StepSpeed = 2.0;
-	bUnknown5 = true;
 	bDropped = true;
 	IdleState = S_CHALICE;
 	ItemType = ITEM_OfferingChalice;
+	bGiveQuest = true;
+	QuestID = QUEST_StoleChalice;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/10/13 06:36:30  dj_jl
+//  Implemented items also giving quests.
+//
 //  Revision 1.2  2003/10/02 17:15:47  dj_jl
 //  Inventory items.
 //

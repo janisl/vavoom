@@ -26,7 +26,6 @@
 class QuestInfo : Pickup
 	abstract;
 
-int QuestID;
 string QuestMessage;
 
 //==========================================================================
@@ -37,7 +36,6 @@ string QuestMessage;
 
 bool HandlePickup(Actor Toucher)
 {
-	Toucher.Player.GiveQuest(QuestID);
 	return true;
 }
 
@@ -45,11 +43,15 @@ defaultproperties
 {
 	IdleState = S_TOKENS;
 	bSpecial = false;
+	bGiveQuest = true;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2004/10/13 06:36:30  dj_jl
+//  Implemented items also giving quests.
+//
 //  Revision 1.4  2004/10/12 06:39:07  dj_jl
 //  Various improvements.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ItemPrisonKey:KeyPickup;
+class ItemPrisonKey : KeyPickup;
 
 __states__
 {
@@ -34,15 +34,18 @@ defaultproperties
 {
 	ConversationID = 137;
 	PickupString = "Prison Key";
-	StepSpeed = 11.0;
-	bUnknown5 = true;
 	IdleState = S_PRISON_KEY;
 	KeyType = KEY_PrisonKey;
+	bGiveQuest = true;
+	QuestID = QUEST_GotPrisonKey;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/10/13 06:36:30  dj_jl
+//  Implemented items also giving quests.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

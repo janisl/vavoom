@@ -195,24 +195,24 @@ enum
 
 enum
 {
-	QUEST_1,
+	QUEST_KilledBeldin,
 	QUEST_StoleChalice,
-	QUEST_WasInFrontBase,
+	QUEST_Prison,
 	QUEST_GovPowerCoupling,
 	QUEST_GovDerwin,
 	QUEST_6,
 	QUEST_7,
 	QUEST_8,
-	QUEST_9,
-	QUEST_10,
-	QUEST_11,
-	QUEST_12,
+	QUEST_GotDerwinsEar,
+	QUEST_GotPrisonPass,
+	QUEST_GotPrisonKey,
+	QUEST_GotSeveredHand,
 	QUEST_FreedPrisoners,
 	QUEST_BlownUpCrystal,
-	QUEST_15,
+	QUEST_GotGuardUniform,
 	QUEST_BlownUpGates,
 	QUEST_17,
-	QUEST_18,
+	QUEST_GotOraclePass,
 	QUEST_DestroyComputer,
 	QUEST_20,
 	QUEST_KilledBishop,
@@ -222,7 +222,7 @@ enum
 	QUEST_Factory,
 	QUEST_KilledLoremaster,
 	QUEST_BlownUpComputer,
-	QUEST_28,
+	QUEST_GotCatacombKey,
 	QUEST_FreedWorkers,
 	QUEST_30,
 	QUEST_31,
@@ -263,6 +263,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.47  2004/10/13 06:36:38  dj_jl
+//  Implemented items also giving quests.
+//
 //  Revision 1.46  2004/02/04 07:32:05  dj_jl
 //  Implemented many action functions
 //

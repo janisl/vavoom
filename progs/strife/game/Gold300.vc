@@ -29,17 +29,20 @@ defaultproperties
 {
 	ConversationID = 172;
 	PickupString = "300 gold";
-	StepSpeed = 3.0;
-	bUnknown5 = true;
 	bDropped = true;
 	IdleState = S_TOKENS;
 	ItemType = ITEM_Coin;
 	ItemAmount = 300;
+	bGiveQuest = true;
+	QuestID = QUEST_Prison;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/10/13 06:36:30  dj_jl
+//  Implemented items also giving quests.
+//
 //  Revision 1.2  2003/10/02 17:09:19  dj_jl
 //  Inventory items.
 //

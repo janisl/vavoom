@@ -1931,15 +1931,6 @@ void A_Unknown31()
 void A_CheckAlarm()
 {
 }
-void A_Unknown110()
-{
-	// This function does a lot more than just this
-	if (DeathSound)
-	{
-		PlaySound(DeathSound, CHAN_VOICE);
-		PlaySound(DeathSound, 6);
-	}
-}
 
 __states__
 {
@@ -1995,6 +1986,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2004/10/13 06:37:33  dj_jl
+//  Implemented items also giving quests.
+//
 //  Revision 1.9  2004/08/23 19:24:01  dj_jl
 //  Moved weapon utilites to player class.
 //

@@ -918,7 +918,10 @@ bool GivePower(int power)
 
 void GiveQuest(int QuestID)
 {
+	if (Quests & (1 << QuestID))
+		cprint(self, "Already have quest %d", QuestID);
 	Quests |= 1 << QuestID;
+	cprint(self, "Got quest %d, quests %x", QuestID, Quests);
 }
 
 //==========================================================================
@@ -1888,6 +1891,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2004/10/13 06:36:30  dj_jl
+//  Implemented items also giving quests.
+//
 //  Revision 1.5  2004/10/12 06:39:07  dj_jl
 //  Various improvements.
 //

@@ -28,12 +28,15 @@ class Quest28 : QuestInfo;
 defaultproperties
 {
 	ConversationID = 339;
-	QuestID = QUEST_28;
+	QuestID = QUEST_GotCatacombKey;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/10/13 06:36:30  dj_jl
+//  Implemented items also giving quests.
+//
 //  Revision 1.2  2003/10/02 17:11:55  dj_jl
 //  Quest items.
 //

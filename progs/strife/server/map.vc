@@ -273,7 +273,7 @@ bool CheckChoice(RogueConChoice *Choice)
 		if (ItemType != classidNone)
 		{
 			Item = Pickup(Spawn(ItemType, vector(0.0, 0.0, 0.0)));
-			Item.HandlePickup(CurrentSpeakingTo);
+			Item.GiveItemTo(CurrentSpeakingTo);
 			Item.Remove();
 		}
 		//	Several items actually give more items
@@ -281,7 +281,7 @@ bool CheckChoice(RogueConChoice *Choice)
 		if (ItemType != classidNone)
 		{
 			Item = Pickup(Spawn(ItemType, vector(0.0, 0.0, 0.0)));
-			Item.HandlePickup(CurrentSpeakingTo);
+			Item.GiveItemTo(CurrentSpeakingTo);
 			Item.Remove();
 		}
 	}
@@ -441,9 +441,6 @@ classid GetExtraClassFromID(int ID)
 {
 	switch (ID)
 	{
-	case 134:	return Quest3;		//	ItemGovsKey;
-	case 176:	return Quest1;		//	Communicator;
-	case 304:	return Quest10;		//	Prison_pass;
 	case 309:	return Accuracy;	//	Toughness;
 	}
 	return classidNone;
@@ -1189,6 +1186,9 @@ bool PIT_RadiusAttack(Entity Other)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.35  2004/10/13 06:36:38  dj_jl
+//  Implemented items also giving quests.
+//
 //  Revision 1.34  2004/10/12 06:39:08  dj_jl
 //  Various improvements.
 //
