@@ -749,7 +749,7 @@ void TDirect3DDrawer::ResampleTexture(int widthin, int heightin,
 	else
 		sy = float(heightin - 1);
 
-#define POINT_SAMPLE
+//#define POINT_SAMPLE
 #ifdef POINT_SAMPLE
 	for (i = 0; i < heightout; i++)
 	{
@@ -1033,9 +1033,12 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureNoMip(int width, int height, 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/08/30 17:37:39  dj_jl
+//	Using linear texture resampling
+//
 //	Revision 1.7  2001/08/24 17:03:57  dj_jl
 //	Added mipmapping, removed bumpmap test code
-//
+//	
 //	Revision 1.6  2001/08/23 17:47:57  dj_jl
 //	Started work on mipmapping
 //	

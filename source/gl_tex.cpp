@@ -736,7 +736,7 @@ void TOpenGLDrawer::ResampleTexture(int widthin, int heightin,
 	else
 		sy = float(heightin - 1);
 
-#define POINT_SAMPLE
+//#define POINT_SAMPLE
 #ifdef POINT_SAMPLE
 	for (i = 0; i < heightout; i++)
 	{
@@ -988,9 +988,12 @@ void TOpenGLDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/08/30 17:37:39  dj_jl
+//	Using linear texture resampling
+//
 //	Revision 1.7  2001/08/24 17:05:44  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.6  2001/08/23 17:51:12  dj_jl
 //	My own mipmap creation code, glu not used anymore
 //	
