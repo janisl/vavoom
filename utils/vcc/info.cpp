@@ -104,17 +104,23 @@ static int				gv_mobj_info;
 void InitInfoTables(void)
 {
 	sprite_names = new int[MAX_SPRITE_NAMES];
+	memset(sprite_names, 0, MAX_SPRITE_NAMES * 4);
 	num_sprite_names = 0;
 
 	models = new int[MAX_MODELS];
+	memset(models, 0, MAX_MODELS * 4);
 	num_models = 1; // 0 indicates no-model
 
 	states = new state_t[MAX_STATES];
+	memset(states, 0, MAX_STATES * sizeof(state_t));
 	state_name = new ident_t[MAX_STATES];
+	memset(state_name, 0, MAX_STATES * sizeof(ident_t));
 	nextstate_name = new ident_t[MAX_STATES];
+	memset(nextstate_name, 0, MAX_STATES * sizeof(ident_t));
 	num_states = 0;
 
 	mobj_info = new mobjinfo_t[MAX_MOBJ_TYPES];
+	memset(mobj_info, 0, MAX_MOBJ_TYPES * sizeof(mobjinfo_t));
 	num_mobj_types = 0;
 
 	globaldefs[numglobaldefs].s_name = FindString("num_sprite_names");
@@ -169,8 +175,8 @@ void ParseStates(void)
 	int		i;
 	int		j;
 
-	TK_Expect("{", ERR_MISSING_LBRACE);
-	while (!TK_Check("}"))
+	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+	while (!TK_Check(PU_RBRACE))
 	{
 		if (num_states >= MAX_STATES)
 		{
@@ -184,7 +190,7 @@ void ParseStates(void)
 		strcpy(state_name[num_states], tk_String);
 		TK_AddConstant(tk_String, num_states);
 		TK_NextToken();
-		TK_Expect("{", ERR_MISSING_LBRACE);
+		TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 		//	Nummurs
 		states[num_states].statenum = num_states;
 		//	Spraita vÆrds
@@ -222,10 +228,10 @@ void ParseStates(void)
 			states[num_states].sprite = 0;
 		}
 		TK_NextToken();
-		TK_Expect(",", ERR_NONE);
+		TK_Expect(PU_COMMA, ERR_NONE);
 		//  Kadrs
 		states[num_states].frame = EvalConstExpression(ev_int);
-		TK_Expect(",", ERR_NONE);
+		TK_Expect(PU_COMMA, ERR_NONE);
 		if (tk_Token == TK_STRING)
 		{
 			//	Modelis
@@ -244,10 +250,10 @@ void ParseStates(void)
 			}
 			states[num_states].model_index = i;
 			TK_NextToken();
-			TK_Expect(",", ERR_NONE);
+			TK_Expect(PU_COMMA, ERR_NONE);
 			//  Kadrs
 			states[num_states].model_frame = EvalConstExpression(ev_int);
-			TK_Expect(",", ERR_NONE);
+			TK_Expect(PU_COMMA, ERR_NONE);
 		}
 		else
 		{
@@ -256,10 +262,10 @@ void ParseStates(void)
 		}
 		//  Taktis
 		states[num_states].time = ConstFloatExpression();
-		TK_Expect(",", ERR_NONE);
+		TK_Expect(PU_COMMA, ERR_NONE);
 		//	Funkcija
 		states[num_states].function = EvalConstExpression(ev_function);
-		TK_Expect(",", ERR_NONE);
+		TK_Expect(PU_COMMA, ERR_NONE);
 		//  NÆkoýais stÆvoklis
 		if (tk_Token != TK_IDENTIFIER)
 		{
@@ -267,11 +273,11 @@ void ParseStates(void)
 		}
 		strcpy(nextstate_name[num_states], tk_String);
 		TK_NextToken();
-		if (TK_Check(","))
+		if (TK_Check(PU_COMMA))
 		{
 			//	Misc1
 			states[num_states].misc1 = ConstFloatExpression();
-			TK_Expect(",", ERR_NONE);
+			TK_Expect(PU_COMMA, ERR_NONE);
 			//	Misc2
 			states[num_states].misc2 = ConstFloatExpression();
 		}
@@ -280,7 +286,7 @@ void ParseStates(void)
 			states[num_states].misc1 = 0.0;
 			states[num_states].misc2 = 0.0;
 		}
-		TK_Expect("}", ERR_NONE);
+		TK_Expect(PU_RBRACE, ERR_NONE);
 
 		num_states++;
 	}
@@ -294,8 +300,8 @@ void ParseStates(void)
 
 void ParseMobjInfo(void)
 {
-	TK_Expect("{", ERR_MISSING_LBRACE);
-	while (!TK_Check("}"))
+	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+	while (!TK_Check(PU_RBRACE))
 	{
 		if (num_mobj_types >= MAX_MOBJ_TYPES)
 		{
@@ -307,14 +313,14 @@ void ParseMobjInfo(void)
 		}
 		TK_AddConstant(tk_String, num_mobj_types);
 		TK_NextToken();
-		TK_Expect("{", ERR_MISSING_LBRACE);
+		TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 		//	doomednum
 		mobj_info[num_mobj_types].doomednum = EvalConstExpression(ev_int);
-		TK_Expect(",", ERR_NONE);
+		TK_Expect(PU_COMMA, ERR_NONE);
 		//	class_id
 		mobj_info[num_mobj_types].class_id = EvalConstExpression(ev_classid);
 		//	Beigas
-		TK_Expect("}", ERR_MISSING_RBRACE);
+		TK_Expect(PU_RBRACE, ERR_MISSING_RBRACE);
 		num_mobj_types++;
 	}
 }
@@ -397,9 +403,12 @@ void AddInfoTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/02 17:44:52  dj_jl
+//	Some optimizations
+//
 //	Revision 1.4  2001/09/27 17:05:57  dj_jl
 //	Removed spawn functions, added mobj classes
-//
+//	
 //	Revision 1.3  2001/08/21 17:52:54  dj_jl
 //	Added support for real string pointers, beautification
 //	

@@ -29,6 +29,8 @@
 
 // MACROS ------------------------------------------------------------------
 
+//#define COUNT_UNSIGNED_OPS
+
 #define CODE_BUFFER_SIZE		(256 * 1024)
 #define	MAX_GLOBALS				(256 * 1024)
 #define MAX_STRINGS				4096
@@ -68,6 +70,7 @@ static int		undoSize;
 static int		StringInfo[MAX_STRINGS];
 static int 		StringCount;
 
+#ifdef COUNT_UNSIGNED_OPS
 static int		udiv = 0;
 static int		umod = 0;
 static int		ult = 0;
@@ -78,6 +81,7 @@ static int		urshift = 0;
 static int		udiva = 0;
 static int		umoda = 0;
 static int		urshifta = 0;
+#endif
 
 static struct
 {
@@ -231,18 +235,24 @@ static struct
 void PC_Init(void)
 {
 	CodeBuffer = new int[CODE_BUFFER_SIZE];
+	memset(CodeBuffer, 0, CODE_BUFFER_SIZE * 4);
 	CodeBufferSize = 1;
 	globals = new int[MAX_GLOBALS];
+	memset(globals, 0, MAX_GLOBALS * 4);
 	globalinfo = new byte[MAX_GLOBALS];
+	memset(globalinfo, 0, MAX_GLOBALS);
 	numglobals = 1;
 	globaldefs = new TGlobalDef[MAX_GLOBALS];
+	memset(globaldefs, 0, MAX_GLOBALS * sizeof(TGlobalDef));
 	numglobaldefs = 1;
 	globaldefs[0].type = &type_void;
 	functions = new TFunction[MAX_FUNCTIONS];
+	memset(functions, 0, MAX_FUNCTIONS * sizeof(TFunction));
 	numfunctions = 1;
 	numbuiltins = 1;
 	functions[0].type = &type_function;
 	strings = new char[MAX_STRINGS_BUF];
+	memset(strings, 0, MAX_STRINGS_BUF);
 	//	1. simbolu virkne ir tukýa
 	StringCount = 1;
 	strofs = 4;
@@ -435,6 +445,7 @@ int* AddStatement(int statement)
 
 	CodeBuffer[CodeBufferSize++] = statement;
 
+#ifdef COUNT_UNSIGNED_OPS
 	if (statement == OPC_UDIVIDE) udiv++;
 	if (statement == OPC_UMODULUS) umod++;
 	if (statement == OPC_ULT) ult++;
@@ -445,6 +456,7 @@ int* AddStatement(int statement)
 	if (statement == OPC_UDIVVAR) udiva++;
 	if (statement == OPC_UMODVAR) umoda++;
 	if (statement == OPC_URSHIFTVAR) urshifta++;
+#endif
 	return &CodeBuffer[CodeBufferSize - 1];
 }
 
@@ -621,8 +633,10 @@ void PC_WriteObject(char *name)
 	fwrite(&progs, 1, sizeof(progs), f);
 
 	fclose(f);
+#ifdef COUNT_UNSIGNED_OPS
 	dprintf("%d %d %d %d %d %d %d %d %d %d\n", udiv, umod, ult, ule,
 		ugt, uge, urshift, udiva, umoda, urshifta);
+#endif
 }
 
 //==========================================================================
@@ -708,9 +722,12 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/02 17:44:52  dj_jl
+//	Some optimizations
+//
 //	Revision 1.5  2001/09/27 17:05:24  dj_jl
 //	Increased strings limit
-//
+//	
 //	Revision 1.4  2001/09/20 16:09:55  dj_jl
 //	Added basic object-oriented support
 //	

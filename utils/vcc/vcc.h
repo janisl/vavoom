@@ -193,6 +193,89 @@ enum tokenType_t
 	TK_FLOAT,			//	peldoýÆ komata skaitlis, vñrtØba: tk_Float
 };
 
+enum Keyword
+{
+	KW_STATES,
+	KW_MOBJINFO,
+	KW_ADDFIELDS,
+	KW_BREAK,
+	KW_CASE,
+	KW_CLASS,
+	KW_CLASSID,
+	KW_CONTINUE,
+	KW_DEFAULT,
+	KW_DO,
+	KW_ELSE,
+	KW_ENUM,
+	KW_EXTERN,
+	KW_FLOAT,
+	KW_FOR,
+	KW_FUNCTION,
+	KW_IF,
+   	KW_INT,
+	KW_RETURN,
+	KW_STRING,
+	KW_STRUCT,
+	KW_SWITCH,
+	KW_THIS,
+	KW_TYPEDEF,
+   	KW_UINT,
+	KW_VECTOR,
+   	KW_VOID,
+	KW_WHILE,
+};
+
+enum Punctuation
+{
+	PU_VARARGS,
+	PU_LSHIFT_ASSIGN,
+	PU_RSHIFT_ASSIGN,
+	PU_ADD_ASSIGN,
+	PU_MINUS_ASSIGN,
+	PU_MULTIPLY_ASSIGN,
+	PU_DIVIDE_ASSIGN,
+	PU_MOD_ASSIGN,
+	PU_AND_ASSIGN,
+	PU_OR_ASSIGN,
+	PU_XOR_ASSIGN,
+	PU_EQ,
+	PU_NE,
+	PU_LE,
+	PU_GE,
+	PU_AND_LOG,
+	PU_OR_LOG,
+	PU_LSHIFT,
+	PU_RSHIFT,
+	PU_INC,
+	PU_DEC,
+	PU_MINUS_GT,
+	PU_DCOLON,
+	PU_LT,
+	PU_GT,
+	PU_QUEST,
+	PU_AND,
+	PU_OR,
+	PU_XOR,
+	PU_TILDE,
+	PU_NOT,
+	PU_PLUS,
+	PU_MINUS,
+	PU_ASTERISK,
+	PU_SLASH,
+	PU_PERCENT,
+	PU_LPAREN,
+	PU_RPAREN,
+	PU_DOT,
+	PU_COMMA,
+	PU_SEMICOLON,
+	PU_COLON,
+	PU_ASSIGN,
+	PU_LINDEX,
+	PU_RINDEX,
+	PU_LBRACE,
+	PU_RBRACE,
+};
+
 class TFunction
 {
  public:
@@ -239,11 +322,13 @@ void ERR_RemoveErrorFile(void);
 int dprintf(const char *text, ...);
 
 void TK_Init(void);
-void TK_OpenSource(char *fileName);
+void TK_OpenSource(void *buf, size_t size);
 void TK_CloseSource(void);
 void TK_NextToken(void);
-boolean TK_Check(char *string);
-void TK_Expect(char *string, error_t error);
+bool TK_Check(const char *string);
+void TK_Expect(const char *string, error_t error);
+void TK_Expect(Keyword kwd, error_t error);
+void TK_Expect(Punctuation punct, error_t error);
 void TK_AddConstant(char* name, int value);
 
 void PC_Init(void);
@@ -295,6 +380,8 @@ extern int				tk_Line;
 extern int				tk_Number;
 extern float			tk_Float;
 extern char*			tk_String;
+extern Keyword			tk_Keyword;
+extern Punctuation		tk_Punct;
 
 extern int*				CodeBuffer;
 extern int				CodeBufferSize;
@@ -360,14 +447,37 @@ inline int PassFloat(float f)
     return v.i;
 }
 
+inline bool TK_Check(Keyword kwd)
+{
+	if (tk_Token == TK_KEYWORD && tk_Keyword == kwd)
+	{
+		TK_NextToken();
+		return true;
+	}
+	return false;
+}
+
+inline bool TK_Check(Punctuation punct)
+{
+	if (tk_Token == TK_PUNCT && tk_Punct == punct)
+	{
+		TK_NextToken();
+		return true;
+	}
+	return false;
+}
+
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/10/02 17:44:52  dj_jl
+//	Some optimizations
+//
 //	Revision 1.6  2001/09/24 17:31:38  dj_jl
 //	Some fixes
-//
+//	
 //	Revision 1.5  2001/09/20 16:09:55  dj_jl
 //	Added basic object-oriented support
 //	

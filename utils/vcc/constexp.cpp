@@ -64,12 +64,12 @@ static int ConstExprFactor(void)
 			break;
 
 		case TK_PUNCT:
-			if (TK_Check("("))
+			if (TK_Check(PU_LPAREN))
 			{
 				ret = EvalConstExpression(ev_int);
-				TK_Expect(")", ERR_BAD_CONST_EXPR);
+				TK_Expect(PU_RPAREN, ERR_BAD_CONST_EXPR);
 			}
-			else if (TK_Check("!"))
+			else if (TK_Check(PU_NOT))
 			{
 				ret = !ConstExprFactor();
 			}
@@ -106,7 +106,7 @@ static int CExprLevJ(void)
 	int		ret;
 
 	unaryMinus = false;
-	if (TK_Check("-"))
+	if (TK_Check(PU_MINUS))
 	{
 		unaryMinus = true;
 	}
@@ -117,15 +117,15 @@ static int CExprLevJ(void)
 	}
 	do
 	{
-		if (TK_Check("*"))
+		if (TK_Check(PU_ASTERISK))
 		{
 			ret *= ConstExprFactor();
 		}
-		else if (TK_Check("/"))
+		else if (TK_Check(PU_SLASH))
 		{
 			ret /= ConstExprFactor();
 		}
-		else if (TK_Check("%"))
+		else if (TK_Check(PU_PERCENT))
 		{
 			ret %= ConstExprFactor();
 		}
@@ -144,11 +144,11 @@ static int CExprLevI(void)
 	ret = CExprLevJ();
 	do
 	{
-		if (TK_Check("+"))
+		if (TK_Check(PU_PLUS))
 		{
 			ret += CExprLevJ();
 		}
-		else if (TK_Check("-"))
+		else if (TK_Check(PU_MINUS))
 		{
 			ret -= CExprLevJ();
 		}
@@ -167,11 +167,11 @@ static int CExprLevH(void)
 	ret = CExprLevI();
 	do
 	{
-		if (TK_Check("<<"))
+		if (TK_Check(PU_LSHIFT))
 		{
 			ret <<= CExprLevI();
 		}
-		else if (TK_Check(">>"))
+		else if (TK_Check(PU_RSHIFT))
 		{
 			ret >>= CExprLevI();
 		}
@@ -190,19 +190,19 @@ static int CExprLevG(void)
 	ret = CExprLevH();
 	do
 	{
-		if (TK_Check("<"))
+		if (TK_Check(PU_LT))
 		{
 			ret = ret < CExprLevH();
 		}
-		else if (TK_Check("<="))
+		else if (TK_Check(PU_LE))
 		{
 			ret = ret <= CExprLevH();
 		}
-		else if (TK_Check(">"))
+		else if (TK_Check(PU_GT))
 		{
 			ret = ret > CExprLevH();
 		}
-		else if (TK_Check(">="))
+		else if (TK_Check(PU_GE))
 		{
 			ret = ret >= CExprLevH();
 		}
@@ -221,11 +221,11 @@ static int CExprLevF(void)
 	ret = CExprLevG();
 	do
 	{
-		if (TK_Check("=="))
+		if (TK_Check(PU_EQ))
 		{
 			ret = ret == CExprLevG();
 		}
-		else if (TK_Check("!="))
+		else if (TK_Check(PU_NE))
 		{
 			ret = ret != CExprLevG();
 		}
@@ -242,7 +242,7 @@ static int CExprLevE(void)
 	int		ret;
 
 	ret = CExprLevF();
-	while (TK_Check("&"))
+	while (TK_Check(PU_AND))
 	{
 		ret &= CExprLevF();
 	}
@@ -255,7 +255,7 @@ static int CExprLevD(void)
 	int		ret;
 
 	ret = CExprLevE();
-	while (TK_Check("^"))
+	while (TK_Check(PU_XOR))
 	{
 		ret ^= CExprLevE();
 	}
@@ -268,7 +268,7 @@ static int CExprLevC(void)
 	int		ret;
 
 	ret = CExprLevD();
-	while (TK_Check("|"))
+	while (TK_Check(PU_OR))
 	{
 		ret |= CExprLevD();
 	}
@@ -281,7 +281,7 @@ static int CExprLevB(void)
 	int		ret;
 
 	ret = CExprLevC();
-	while (TK_Check("&&"))
+	while (TK_Check(PU_AND_LOG))
 	{
 		ret = ret && CExprLevC();
 	}
@@ -294,7 +294,7 @@ static int CExprLevA(void)
 	int		ret;
 
 	ret = CExprLevB();
-	while (TK_Check("||"))
+	while (TK_Check(PU_OR_LOG))
 	{
 		ret = ret || CExprLevB();
 	}
@@ -318,10 +318,10 @@ static float FConstExprFactor(void)
 			TK_NextToken();
 			break;
 		case TK_PUNCT:
-			if (TK_Check("("))
+			if (TK_Check(PU_LPAREN))
 			{
 				ret = EvalConstExpression(ev_float);
-				TK_Expect(")", ERR_BAD_CONST_EXPR);
+				TK_Expect(PU_RPAREN, ERR_BAD_CONST_EXPR);
 			}
 			else
 			{
@@ -342,7 +342,7 @@ static float FCExprLevJ(void)
 	float	ret;
 
 	unaryMinus = false;
-	if (TK_Check("-"))
+	if (TK_Check(PU_MINUS))
 	{
 		unaryMinus = true;
 	}
@@ -353,11 +353,11 @@ static float FCExprLevJ(void)
 	}
 	do
 	{
-		if (TK_Check("*"))
+		if (TK_Check(PU_ASTERISK))
 		{
 			ret *= FConstExprFactor();
 		}
-		else if (TK_Check("/"))
+		else if (TK_Check(PU_SLASH))
 		{
 			ret /= FConstExprFactor();
 		}
@@ -376,11 +376,11 @@ static float FCExprLevI(void)
 	ret = FCExprLevJ();
 	do
 	{
-		if (TK_Check("+"))
+		if (TK_Check(PU_PLUS))
 		{
 			ret += FCExprLevJ();
 		}
-		else if (TK_Check("-"))
+		else if (TK_Check(PU_MINUS))
 		{
 			ret -= FCExprLevJ();
 		}
@@ -469,9 +469,12 @@ float ConstFloatExpression(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/02 17:44:52  dj_jl
+//	Some optimizations
+//
 //	Revision 1.4  2001/09/20 16:09:55  dj_jl
 //	Added basic object-oriented support
-//
+//	
 //	Revision 1.3  2001/08/21 17:52:54  dj_jl
 //	Added support for real string pointers, beautification
 //	

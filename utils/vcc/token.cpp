@@ -63,6 +63,8 @@ tokenType_t 		tk_Token;
 char*				tk_String;
 int 				tk_Number;
 float				tk_Float;
+Keyword				tk_Keyword;
+Punctuation			tk_Punct;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -107,25 +109,6 @@ static char* Keywords[] =
 	"vector",
    	"void",
 	"while",
-};
-
-static char* Punctuations[] =
-{
-	//  Gar∆kiem simboliem j∆but pirms ÿs∆kiem
-	"...", "<<=", ">>=",
-
-	"+=", "-=", "*=", "/=", "%=", "&=", "|=", "^=",
-	"==", "!=", "<=", ">=",
-	"&&", "||",
-	"<<", ">>",
-	"++", "--",
-	"->", "::",
-
-	"<", ">" , "?",
-	"&" , "|", "^", "~", "!",
-	"+", "-", "*", "/", "%", "(", ")",
-	".", ",", ";", ":",
-	"=", "[", "]", "{", "}"
 };
 
 // CODE --------------------------------------------------------------------
@@ -187,16 +170,14 @@ void TK_Init(void)
 //
 //==========================================================================
 
-void TK_OpenSource(char *fileName)
+void TK_OpenSource(void *buf, size_t size)
 {
-	int 	size;
-
 	//	Princip∆ nav vajadzÿgs aizvÒrt
 	TK_CloseSource();
 
 	//	Iel∆dÒ failu un sagatavojas kompil∆cijai
-	size = LoadFile(fileName, (void **)&FileStart);
 	SourceOpen = true;
+	FileStart = (char *)buf;
 	FileEnd = FileStart + size;
 	FilePtr = FileStart;
 	tk_Line = 1;
@@ -431,7 +412,6 @@ static void ProcessSingleQuoteToken(void)
 
 static void ProcessLetterToken(void)
 {
-	int 	i;
 	int		len;
 
 	tk_Token = TK_IDENTIFIER;
@@ -449,13 +429,189 @@ static void ProcessLetterToken(void)
 	}
 	TokenStringBuffer[len] = 0;
 
-	for (i=0; i < (int)(sizeof(Keywords) / sizeof(Keywords[0])); i++)
+	switch (TokenStringBuffer[0])
 	{
-		if (!strcmp(tk_String, Keywords[i]))
+	case '_':
+		if (!strcmp(tk_String, "__states__"))
 		{
 			tk_Token = TK_KEYWORD;
-			return;
+			tk_Keyword = KW_STATES;
 		}
+		else if (!strcmp(tk_String, "__mobjinfo__"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_MOBJINFO;
+		}
+		break;
+
+	case 'a':
+		if (!strcmp(tk_String, "addfields"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_ADDFIELDS;
+		}
+		break;
+
+	case 'b':
+		if (!strcmp(tk_String, "break"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_BREAK;
+		}
+		break;
+
+	case 'c':
+		if (!strcmp(tk_String, "case"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_CASE;
+		}
+		else if (!strcmp(tk_String, "class"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_CLASS;
+		}
+		else if (!strcmp(tk_String, "classid"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_CLASSID;
+		}
+		else if (!strcmp(tk_String, "continue"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_CONTINUE;
+		}
+		break;
+
+	case 'd':
+		if (!strcmp(tk_String, "default"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_DEFAULT;
+		}
+		else if (!strcmp(tk_String, "do"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_DO;
+		}
+		break;
+
+	case 'e':
+		if (!strcmp(tk_String, "else"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_ELSE;
+		}
+		else if (!strcmp(tk_String, "enum"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_ENUM;
+		}
+		else if (!strcmp(tk_String, "extern"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_EXTERN;
+		}
+		break;
+
+	case 'f':
+		if (!strcmp(tk_String, "float"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_FLOAT;
+		}
+		else if (!strcmp(tk_String, "for"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_FOR;
+		}
+		else if (!strcmp(tk_String, "function_t"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_FUNCTION;
+		}
+		break;
+
+	case 'i':
+		if (!strcmp(tk_String, "if"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_IF;
+		}
+		else if (!strcmp(tk_String, "int"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_INT;
+		}
+		break;
+
+	case 'r':
+		if (!strcmp(tk_String, "return"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_RETURN;
+		}
+		break;
+
+	case 's':
+		if (!strcmp(tk_String, "string"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_STRING;
+		}
+		else if (!strcmp(tk_String, "struct"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_STRUCT;
+		}
+		else if (!strcmp(tk_String, "switch"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_SWITCH;
+		}
+		break;
+
+	case 't':
+		if (!strcmp(tk_String, "this"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_THIS;
+		}
+		else if (!strcmp(tk_String, "typedef"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_TYPEDEF;
+		}
+		break;
+
+	case 'u':
+		if (!strcmp(tk_String, "uint"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_UINT;
+		}
+		break;
+
+	case 'v':
+		if (!strcmp(tk_String, "vector"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_VECTOR;
+		}
+		else if (!strcmp(tk_String, "void"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_VOID;
+		}
+		break;
+
+	case 'w':
+		if (!strcmp(tk_String, "while"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_WHILE;
+		}
+		break;
 	}
 }
 
@@ -467,25 +623,274 @@ static void ProcessLetterToken(void)
 
 static void ProcessSpecialToken(void)
 {
-	int		i;
-	int		len;
-
+	char c = Chr;
+   	NextChr();
 	tk_Token = TK_PUNCT;
-	FilePtr--;
-	for (i=0 ; i < (int)(sizeof(Punctuations) / sizeof(Punctuations[1])) ; i++)
+	switch (c)
 	{
-		len = strlen(Punctuations[i]);
-		if (!strncmp(Punctuations[i], FilePtr, len))
+	case '+':
+		if (Chr == '=')
 		{
-			strcpy(TokenStringBuffer, Punctuations[i]);
-			FilePtr += len;
-		   	NextChr();
-			return;
+			tk_Punct = PU_ADD_ASSIGN;
+			NextChr();
 		}
-	}
-   	FilePtr++;
+		else if (Chr == '+')
+		{
+			tk_Punct = PU_INC;
+			NextChr();
+		}
+		else
+		{
+			tk_Punct = PU_PLUS;
+		}
+		break;
 
-	ERR_Exit(ERR_BAD_CHARACTER, true, "Unknown punctuation \'%c\'", Chr);
+	case '-':
+		if (Chr == '=')
+		{
+			tk_Punct = PU_MINUS_ASSIGN;
+			NextChr();
+		}
+		else if (Chr == '-')
+		{
+			tk_Punct = PU_DEC;
+			NextChr();
+		}
+		else if (Chr == '>')
+		{
+			tk_Punct = PU_MINUS_GT;
+			NextChr();
+		}
+		else
+		{
+			tk_Punct = PU_MINUS;
+		}
+		break;
+
+	case '*':
+		if (Chr == '=')
+		{
+			tk_Punct = PU_MULTIPLY_ASSIGN;
+			NextChr();
+		}
+		else
+		{
+			tk_Punct = PU_ASTERISK;
+		}
+		break;
+
+	case '/':
+		if (Chr == '=')
+		{
+			tk_Punct = PU_DIVIDE_ASSIGN;
+			NextChr();
+		}
+		else
+		{
+			tk_Punct = PU_SLASH;
+		}
+		break;
+
+	case '%':
+		if (Chr == '=')
+		{
+			tk_Punct = PU_MOD_ASSIGN;
+			NextChr();
+		}
+		else
+		{
+			tk_Punct = PU_PERCENT;
+		}
+		break;
+
+	case '=':
+		if (Chr == '=')
+		{
+			tk_Punct = PU_EQ;
+			NextChr();
+		}
+		else
+		{
+			tk_Punct = PU_ASSIGN;
+		}
+		break;
+
+	case '<':
+		if (Chr == '<')
+		{
+			NextChr();
+			if (Chr == '=')
+			{
+				tk_Punct = PU_LSHIFT_ASSIGN;
+				NextChr();
+			}
+			else
+			{
+				tk_Punct = PU_LSHIFT;
+			}
+		}
+		else if (Chr == '=')
+		{
+			tk_Punct = PU_LE;
+			NextChr();
+		}
+		else
+		{
+			tk_Punct = PU_LT;
+		}
+		break;
+
+	case '>':
+		if (Chr == '>')
+		{
+			NextChr();
+			if (Chr == '=')
+			{
+				tk_Punct = PU_RSHIFT_ASSIGN;
+				NextChr();
+			}
+			else
+			{
+				tk_Punct = PU_RSHIFT;
+			}
+		}
+		else if (Chr == '=')
+		{
+			tk_Punct = PU_GE;
+			NextChr();
+		}
+		else
+		{
+			tk_Punct = PU_GT;
+		}
+		break;
+
+	case '!':
+		if (Chr == '=')
+		{
+			tk_Punct = PU_NE;
+			NextChr();
+		}
+		else
+		{
+			tk_Punct = PU_NOT;
+		}
+		break;
+
+	case '&':
+		if (Chr == '=')
+		{
+			tk_Punct = PU_AND_ASSIGN;
+			NextChr();
+		}
+		else if (Chr == '&')
+		{
+			tk_Punct = PU_AND_LOG;
+			NextChr();
+		}
+		else
+		{
+			tk_Punct = PU_AND;
+		}
+		break;
+
+	case '|':
+		if (Chr == '=')
+		{
+			tk_Punct = PU_OR_ASSIGN;
+			NextChr();
+		}
+		else if (Chr == '|')
+		{
+			tk_Punct = PU_OR_LOG;
+			NextChr();
+		}
+		else
+		{
+			tk_Punct = PU_OR;
+		}
+		break;
+
+	case '^':
+		if (Chr == '=')
+		{
+			tk_Punct = PU_XOR_ASSIGN;
+			NextChr();
+		}
+		else
+		{
+			tk_Punct = PU_XOR;
+		}
+		break;
+
+	case '.':
+		if (Chr == '.' && FilePtr[0] == '.')
+		{
+			tk_Punct = PU_VARARGS;
+			NextChr();
+			NextChr();
+		}
+		else
+		{
+			tk_Punct = PU_DOT;
+		}
+		break;
+
+	case ':':
+		if (Chr == ':')
+		{
+			tk_Punct = PU_DCOLON;
+			NextChr();
+		}
+		else
+		{
+			tk_Punct = PU_COLON;
+		}
+		break;
+
+	case '(':
+		tk_Punct = PU_LPAREN;
+		break;
+
+	case ')':
+		tk_Punct = PU_RPAREN;
+		break;
+
+	case '?':
+		tk_Punct = PU_QUEST;
+		break;
+
+	case '~':
+		tk_Punct = PU_TILDE;
+		break;
+
+	case ',':
+		tk_Punct = PU_COMMA;
+		break;
+
+	case ';':
+		tk_Punct = PU_SEMICOLON;
+		break;
+
+	case '[':
+		tk_Punct = PU_LINDEX;
+		break;
+
+	case ']':
+		tk_Punct = PU_RINDEX;
+		break;
+
+	case '{':
+		tk_Punct = PU_LBRACE;
+		break;
+
+	case '}':
+		tk_Punct = PU_RBRACE;
+		break;
+
+	default:
+		ERR_Exit(ERR_BAD_CHARACTER, true, "Unknown punctuation \'%c\'", Chr);
+	}
 }
 
 //==========================================================================
@@ -574,7 +979,7 @@ void TK_NextToken(void)
 //
 //==========================================================================
 
-boolean TK_Check(char *string)
+bool TK_Check(const char *string)
 {
 	if (tk_Token != TK_IDENTIFIER && tk_Token != TK_KEYWORD &&
 		tk_Token != TK_PUNCT)
@@ -599,7 +1004,7 @@ boolean TK_Check(char *string)
 //
 //==========================================================================
 
-void TK_Expect(char *string, error_t error)
+void TK_Expect(const char *string, error_t error)
 {
 	if (tk_Token != TK_IDENTIFIER && tk_Token != TK_KEYWORD &&
 		tk_Token != TK_PUNCT)
@@ -613,12 +1018,55 @@ void TK_Expect(char *string, error_t error)
 	TK_NextToken();
 }
 
+//==========================================================================
+//
+//	TK_Expect
+//
+//  Izdod kı›du, ja teko˝ais gabals nesakrÿt ar string.
+//  Pa∑em n∆ko˝o gabalu
+//
+//==========================================================================
+
+void TK_Expect(Keyword kwd, error_t error)
+{
+	if (tk_Token != TK_KEYWORD)
+	{
+		ERR_Exit(error, true, "invalid token type");
+	}
+	if (tk_Keyword != kwd)
+	{
+		ERR_Exit(error, true, "expected %s, found %s", Keywords[kwd], TokenStringBuffer);
+	}
+	TK_NextToken();
+}
+
+//==========================================================================
+//
+//	TK_Expect
+//
+//  Izdod kı›du, ja teko˝ais gabals nesakrÿt ar string.
+//  Pa∑em n∆ko˝o gabalu
+//
+//==========================================================================
+
+void TK_Expect(Punctuation punct, error_t error)
+{
+	if (tk_Token != TK_PUNCT || tk_Punct != punct)
+	{
+		ERR_Exit(error, true, NULL);
+	}
+	TK_NextToken();
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/02 17:44:52  dj_jl
+//	Some optimizations
+//
 //	Revision 1.4  2001/09/20 16:09:55  dj_jl
 //	Added basic object-oriented support
-//
+//	
 //	Revision 1.3  2001/08/21 17:52:54  dj_jl
 //	Added support for real string pointers, beautification
 //	
