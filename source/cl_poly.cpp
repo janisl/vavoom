@@ -89,8 +89,8 @@ static void MovePolyobj(int num, float x, float y)
 	polyobj_t *po;
 
 	po = &cl_level.polyobjs[num];
-	x -= po->startSpot.origin.x;
-	y -= po->startSpot.origin.y;
+	x -= po->startSpot.x;
+	y -= po->startSpot.y;
 	if (!x && !y)
 		return;
 
@@ -111,8 +111,8 @@ static void MovePolyobj(int num, float x, float y)
 			(*segList)->v1->y += y;
 		}
 	}
-	po->startSpot.origin.x += x;
-	po->startSpot.origin.y += y;
+	po->startSpot.x += x;
+	po->startSpot.y += y;
 	UpdatePolySegs(po);
 }
 
@@ -158,7 +158,7 @@ static void RotatePolyobj(int num, angle_t angle)
 	for (count = po->numsegs; count; count--, segList++, originalPts++)
 	{
 		*(*segList)->v1 = *originalPts;
-		RotatePt(angle, *(*segList)->v1, po->startSpot.origin);
+		RotatePt(angle, *(*segList)->v1, po->startSpot);
 	}
 
 	po->angle = angle;
@@ -231,8 +231,8 @@ void CL_PO_SpawnPolyobj(float x, float y, int tag)
     }
 	memset(&cl_level.polyobjs[index], 0, sizeof(polyobj_t));
 
-	cl_level.polyobjs[index].startSpot.origin.x = x;
-	cl_level.polyobjs[index].startSpot.origin.y = y;
+	cl_level.polyobjs[index].startSpot.x = x;
+	cl_level.polyobjs[index].startSpot.y = y;
 	for(i = 0; i < cl_level.numsegs; i++)
 	{
 		if (!cl_level.segs[i].linedef)
@@ -384,8 +384,8 @@ void CL_PO_TranslateToStartSpot(float originX, float originY, int tag)
 		Sys_Error("TranslateToStartSpot:  Anchor point located without a StartSpot point: %d\n", tag);
 	}
 	po->originalPts = (vertex_t*)Z_Malloc(po->numsegs*sizeof(vertex_t), PU_LEVEL, 0);
-	deltaX = originX - po->startSpot.origin.x;
-	deltaY = originY - po->startSpot.origin.y;
+	deltaX = originX - po->startSpot.x;
+	deltaY = originY - po->startSpot.y;
 
 	tempSeg = po->segs;
 	tempPt = po->originalPts;
@@ -410,7 +410,7 @@ void CL_PO_TranslateToStartSpot(float originX, float originY, int tag)
 		avg.y += (*tempSeg)->v1->y;
 		// the original Pts are based off the startSpot Pt, and are
 		// unique to each seg, not each linedef
-		*tempPt = *(*tempSeg)->v1 - po->startSpot.origin;
+		*tempPt = *(*tempSeg)->v1 - po->startSpot;
 	}
 	avg.x /= po->numsegs;
 	avg.y /= po->numsegs;
@@ -441,9 +441,12 @@ void CL_PO_Update(int i, float x, float y, angle_t angle)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/20 16:27:02  dj_jl
+//	Removed degenmobj
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

@@ -864,8 +864,8 @@ static void GroupLines(level_t &loadlevel)
 		if (linebuffer - sector->lines != sector->linecount)
 			Sys_Error("GroupLines: miscounted");
 
-		// set the degenmobj_t to the middle of the bounding box
-		sector->soundorg.origin = TVec((bbox[BOXRIGHT] + bbox[BOXLEFT]) / 2.0,
+		// set the soundorg to the middle of the bounding box
+		sector->soundorg = TVec((bbox[BOXRIGHT] + bbox[BOXLEFT]) / 2.0,
 			(bbox[BOXTOP] + bbox[BOXBOTTOM]) / 2.0, 0);
 
 		// adjust bounding box to map blocks
@@ -1044,12 +1044,12 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 	sector_t *src;
 
 	src = line->frontsector;
-	float floorz = src->floor.GetPointZ(dst->soundorg.origin);
-	float ceilz = src->ceiling.GetPointZ(dst->soundorg.origin);
+	float floorz = src->floor.GetPointZ(dst->soundorg);
+	float ceilz = src->ceiling.GetPointZ(dst->soundorg);
 	for (inregion = dst->botregion; inregion; inregion = inregion->next)
 	{
-		float infloorz = inregion->floor->GetPointZ(dst->soundorg.origin);
-		float inceilz = inregion->ceiling->GetPointZ(dst->soundorg.origin);
+		float infloorz = inregion->floor->GetPointZ(dst->soundorg);
+		float inceilz = inregion->ceiling->GetPointZ(dst->soundorg);
 		if (infloorz <= ceilz && inceilz >= floorz)
 		{
 			region = Z_CNew<sec_region_t>(PU_LEVEL, 0);
@@ -1079,6 +1079,9 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2001/09/20 16:27:02  dj_jl
+//  Removed degenmobj
+//
 //  Revision 1.8  2001/09/14 16:52:14  dj_jl
 //  Added dynamic build of GWA file
 //

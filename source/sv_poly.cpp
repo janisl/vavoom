@@ -230,8 +230,8 @@ boolean PO_MovePolyobj(int num, float x, float y)
 		LinkPolyobj(po);
 		return false;
 	}
-	po->startSpot.origin.x += x;
-	po->startSpot.origin.y += y;
+	po->startSpot.x += x;
+	po->startSpot.y += y;
 	LinkPolyobj(po);
 	return true;
 }
@@ -295,7 +295,7 @@ boolean PO_RotatePolyobj(int num, angle_t angle)
 		(*segList)->v1->x = originalPts->x;
 		(*segList)->v1->y = originalPts->y;
 		RotatePt(an, &(*segList)->v1->x, &(*segList)->v1->y,
-			po->startSpot.origin.x, po->startSpot.origin.y);
+			po->startSpot.x, po->startSpot.y);
 	}
 	UpdatePolySegs(po);
 	segList = po->segs;
@@ -634,8 +634,8 @@ void PO_SpawnPolyobj(float x, float y, int tag, int crush)
     }
 	memset(&level.polyobjs[index], 0, sizeof(polyobj_t));
 
-	level.polyobjs[index].startSpot.origin.x = x;
-	level.polyobjs[index].startSpot.origin.y = y;
+	level.polyobjs[index].startSpot.x = x;
+	level.polyobjs[index].startSpot.y = y;
 	for (i = 0; i < level.numsegs; i++)
 	{
 		if (!level.segs[i].linedef)
@@ -822,8 +822,8 @@ static void TranslateToStartSpot(float originX, float originY, int tag)
 	}
 	po->originalPts = (vertex_t*)Z_Malloc(po->numsegs*sizeof(vertex_t), PU_LEVEL, 0);
 	po->prevPts = (vertex_t*)Z_Malloc(po->numsegs*sizeof(vertex_t), PU_LEVEL, 0);
-	deltaX = originX - po->startSpot.origin.x;
-	deltaY = originY - po->startSpot.origin.y;
+	deltaX = originX - po->startSpot.x;
+	deltaY = originY - po->startSpot.y;
 
 	tempSeg = po->segs;
 	tempPt = po->originalPts;
@@ -848,8 +848,8 @@ static void TranslateToStartSpot(float originX, float originY, int tag)
 		avg.y += (*tempSeg)->v1->y;
 		// the original Pts are based off the startSpot Pt, and are
 		// unique to each seg, not each linedef
-		tempPt->x = (*tempSeg)->v1->x - po->startSpot.origin.x;
-		tempPt->y = (*tempSeg)->v1->y - po->startSpot.origin.y;
+		tempPt->x = (*tempSeg)->v1->x - po->startSpot.x;
+		tempPt->y = (*tempSeg)->v1->y - po->startSpot.y;
 		tempPt->z = 0;
 	}
 	UpdatePolySegs(po);
@@ -863,8 +863,8 @@ static void TranslateToStartSpot(float originX, float originY, int tag)
 	sub->poly = po;
 	po->subsector = sub;
 
-	po->base_x = po->startSpot.origin.x;
-	po->base_y = po->startSpot.origin.y;
+	po->base_x = po->startSpot.x;
+	po->base_y = po->startSpot.y;
 	po->base_angle = po->angle;
 }
 
@@ -922,9 +922,12 @@ boolean PO_Busy(int polyobj)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/20 16:27:02  dj_jl
+//	Removed degenmobj
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
