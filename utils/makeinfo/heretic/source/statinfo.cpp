@@ -1236,12 +1236,20 @@ state_t	states[] = {
 {SPR2_AMG1,0,85,SA2_ESound,S2_SND_WATERFALL,0,0}	// S2_SND_WATERFALL
 };
 
+void MarkSpecialWeaponStates(void)
+{
+	MarkWeaponState(S2_LIGHTDONE);
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/12/12 19:20:31  dj_jl
+//	States using methods
+//
 //	Revision 1.6  2001/10/27 07:53:44  dj_jl
 //	Added new models
-//
+//	
 //	Revision 1.5  2001/09/25 17:02:52  dj_jl
 //	Renamed some models
 //	

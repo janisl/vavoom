@@ -3966,14 +3966,26 @@ void FixupHeights(void)
 	mobjinfo[MT1_MISC75].height = 64*FRACUNIT;
 	mobjinfo[MT1_MISC76].height = 96*FRACUNIT;
 	mobjinfo[MT1_MISC77].height = 32*FRACUNIT;
+
+	// Mark these unused super shotgun states
+	MarkWeaponState(S1_DSNR1);
+}
+
+void MarkSpecialWeaponStates(void)
+{
+	MarkWeaponState(S1_CHAINFLASH2);
+	MarkWeaponState(S1_PLASMAFLASH2);
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/12/12 19:20:31  dj_jl
+//	States using methods
+//
 //	Revision 1.4  2001/09/27 17:04:39  dj_jl
 //	Effects and static lights in mobjinfo, mobj classes
-//
+//	
 //	Revision 1.3  2001/09/20 16:33:14  dj_jl
 //	Beautification
 //	

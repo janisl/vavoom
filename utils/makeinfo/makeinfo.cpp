@@ -26,6 +26,7 @@
 #include "makeinfo.h"
 
 void ProcessDehackedFiles(int argc, char** argv);
+void MarkSpecialWeaponStates(void);
 
 extern char*				sprnames[];
 extern char* 				statename[];
@@ -59,6 +60,44 @@ extern int					megasphere_health;
 extern int					god_health;
 extern int					shadow;
 extern int					altshadow;
+
+//==========================================================================
+//
+//	MarkWeaponState
+//
+//==========================================================================
+
+void MarkWeaponState(int num)
+{
+	if (num && !states[num].weapon_state)
+	{
+		states[num].weapon_state = true;
+		MarkWeaponState(states[num].nextstate);
+	}
+}
+
+//==========================================================================
+//
+//	MarkWeaponStates
+//
+//==========================================================================
+
+void MarkWeaponStates(void)
+{
+	int			i;
+
+	for (i = 0; i < numweapons; i++)
+    {
+		MarkWeaponState(weaponinfo[i].upstate);
+		MarkWeaponState(weaponinfo[i].downstate);
+		MarkWeaponState(weaponinfo[i].readystate);
+		MarkWeaponState(weaponinfo[i].atkstate);
+		MarkWeaponState(weaponinfo[i].holdatkstate);
+		MarkWeaponState(weaponinfo[i].flashstate);
+	}
+	// Mark states set by code
+	MarkSpecialWeaponStates();
+}
 
 //==========================================================================
 //
@@ -135,24 +174,42 @@ void WriteStates(void)
     fprintf(f, "//**************************************************************************\n");
 	fprintf(f, "\n");
 
+	fprintf(f, "class Actor:Entity\n{\n");
     for (i=1; StateActionInfo[i].fname; i++)
     {
-#if 0
-    	if (StateActionInfo[i].weapon_action)
+    	if (!StateActionInfo[i].weapon_action)
         {
-			fprintf(f, "void %s(player_t *player, pspdef_t *psp);\n", StateActionInfo[i].fname);
-        }
-		else
-#endif
-        {
-			fprintf(f, "void %s(mobj_t *actor);\n", StateActionInfo[i].fname);
+			fprintf(f, "\tvoid %s(void);\n", StateActionInfo[i].fname);
         }
     }
+	fprintf(f, "}\n\n");
 
-	fprintf(f, "\n__states__\n{\n");
+	fprintf(f, "class Weapon:ViewEntity\n{\n");
+    for (i=1; StateActionInfo[i].fname; i++)
+    {
+    	if (StateActionInfo[i].weapon_action)
+        {
+			fprintf(f, "\tvoid %s(void);\n", StateActionInfo[i].fname);
+        }
+    }
+	fprintf(f, "}\n");
+
+	fprintf(f, "\n__states__(Actor)\n{\n");
+	bool in_weapon = false;
 //	fprintf(f, "\tS_NULL {\"\", 0, -1, NULL, S_NULL}\n");//- Dehacked fails
 	for (i=0; i<numstates; i++)
     {
+		if (in_weapon && !states[i].weapon_state)
+		{
+			fprintf(f, "}\n__states__(Actor)\n{\n");
+			in_weapon = false;
+		}
+		if (!in_weapon && states[i].weapon_state)
+		{
+			fprintf(f, "}\n__states__(Weapon)\n{\n");
+			in_weapon = true;
+		}
+
 		fprintf(f, "\t%s {\"%s\", %d",
 			statename[i], sprnames[states[i].sprite],
 			states[i].frame & 0x7fff);
@@ -232,9 +289,11 @@ void WriteMobjInfo(void)
         flags2 = mobjinfo[i].flags2;
 
 		//  ------------- Class declaration ------------
+#if 0
 		if (flags & MF_MISSILE)
 			parent = "Missile";
 		else
+#endif
 			parent = "Actor";
 		fprintf(f, "class %s:%s\n", mt_names[i], parent);
 		fprintf(f, "{\n");
@@ -662,6 +721,7 @@ int main(int argc, char** argv)
 #ifndef NODEH
 	ProcessDehackedFiles(argc, argv);
 #endif
+	MarkWeaponStates();
 	WriteStates();
     WriteMobjInfo();
     WriteWeaponInfo();
@@ -677,9 +737,12 @@ int main(int argc, char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/12/12 19:20:30  dj_jl
+//	States using methods
+//
 //	Revision 1.9  2001/12/03 19:28:41  dj_jl
 //	Using defaultproperties, not constructors
-//
+//	
 //	Revision 1.8  2001/11/09 14:40:32  dj_jl
 //	Initialization in constructors
 //	

@@ -2877,12 +2877,25 @@ state_t	states[NUMHEXENSTATES] = {
 {SPR3_ABAT,0,2,SA3_NULL,S3_NULL,0,0}	// S3_BAT_DEATH
 };
 
+void MarkSpecialWeaponStates(void)
+{
+	MarkWeaponState(S3_LIGHTDONE);
+    MarkWeaponState(S3_FAXEREADY_G);
+    MarkWeaponState(S3_FAXEDOWN_G);
+    MarkWeaponState(S3_FAXEUP_G);
+    MarkWeaponState(S3_FAXEATK_G1);
+    MarkWeaponState(S3_CSTAFFBLINK1);
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/12/12 19:20:31  dj_jl
+//	States using methods
+//
 //	Revision 1.6  2001/11/02 18:36:59  dj_jl
 //	no message
-//
+//	
 //	Revision 1.5  2001/10/27 07:53:44  dj_jl
 //	Added new models
 //	

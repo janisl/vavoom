@@ -134,6 +134,7 @@ typedef struct
     int		misc2;
 	char	*model_name;
 	int		model_frame;
+	int		weapon_state;
 } state_t;
 
 typedef struct
@@ -207,12 +208,17 @@ struct map_info_t
     char	song[12];
 };
 
+void MarkWeaponState(int num);
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/12/12 19:20:30  dj_jl
+//	States using methods
+//
 //	Revision 1.4  2001/09/27 17:04:39  dj_jl
 //	Effects and static lights in mobjinfo, mobj classes
-//
+//	
 //	Revision 1.3  2001/09/20 16:33:14  dj_jl
 //	Beautification
 //	

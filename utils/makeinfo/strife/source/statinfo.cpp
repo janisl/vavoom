@@ -1596,12 +1596,46 @@ state_t states[] =
 	{ 257, 5, -1, 0, 0 }, // S_1564
 };
 
+void MarkSpecialWeaponStates(void)
+{
+	MarkWeaponState(2);
+	MarkWeaponState(6);
+	MarkWeaponState(10);
+	MarkWeaponState(11);
+	MarkWeaponState(12);
+	MarkWeaponState(31);
+	MarkWeaponState(34);
+	MarkWeaponState(35);
+	MarkWeaponState(36);
+	MarkWeaponState(37);
+	MarkWeaponState(82);
+	MarkWeaponState(86);
+	MarkWeaponState(87);
+	MarkWeaponState(88);
+	MarkWeaponState(104);
+	MarkWeaponState(105);
+	MarkWeaponState(106);
+	MarkWeaponState(107);
+	MarkWeaponState(108);
+	MarkWeaponState(109);
+	MarkWeaponState(114);
+	MarkWeaponState(115);
+	MarkWeaponState(116);
+	MarkWeaponState(118);
+	MarkWeaponState(119);
+	MarkWeaponState(120);
+	MarkWeaponState(121);
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/12/12 19:20:31  dj_jl
+//	States using methods
+//
 //	Revision 1.3  2001/09/20 16:35:58  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:56  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
