@@ -23,451 +23,10 @@
 //**
 //**************************************************************************
 
-//***************************************************************************
-//
-//  WEAPON UTILITES
-//
-//***************************************************************************
-
-//==========================================================================
-//
-//	SetWeapon
-//
-//==========================================================================
-
-void SetWeapon(player_t * player, int NewWeapon)
-{
-	player->ReadyWeapon = NewWeapon;
-	player->PendingWeapon = wp_nochange;
-	if (player->ViewEnts[ps_weapon])
-	{
-		player->ViewEnts[ps_weapon].Destroy();
-	}
-	player->ViewEnts[ps_weapon] = SpawnObject(WeaponClasses[NewWeapon], none);
-	player->ViewEnts[ps_weapon].Player = player;
-}
-
-//===========================================================================
-//
-//  SetPsprite
-//
-//===========================================================================
-
-void SetPsprite(player_t * player, int position, int stnum)
-{
-	player->ViewEnts[position].SetState(stnum);
-}
-
-//===========================================================================
-//
-//  BringUpWeapon
-//
-//  Starts bringing the pending weapon up from the bottom of the screen.
-// Uses player
-//
-//===========================================================================
-
-void BringUpWeapon(player_t * player)
-{
-	player->PendingWeapon = wp_nochange;
-	player->ViewEnts[ps_weapon].SY = WEAPONBOTTOM;
-
-	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).UpState);
-}
-
-//==========================================================================
-//
-//  ChangeWeapon
-//
-//  The actual changing of the weapon is done when the weapon psprite can
-// do it (read: not in the middle of an attack).
-//
-//==========================================================================
-
-void ChangeWeapon(player_t * player, int newweapon)
-{
-	if (player->WeaponOwned[newweapon] && newweapon != player->ReadyWeapon)
-	{
-		// Do not go to ??? in shareware, even if cheated.
-//FIXME     if ((newweapon != wp_plasma && newweapon != wp_bfg) || !shareware)
-		{
-			player->PendingWeapon = newweapon;
-		}
-	}
-}
-
-//===========================================================================
-//
-//  DropWeapon
-//
-//  Player died, so put the weapon away.
-//
-//===========================================================================
-
-void DropWeapon(player_t * player)
-{
-	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).DownState);
-}
-
-//===========================================================================
-//
-//  SetupPsprites
-//
-//  Called at start of level for each player.
-//
-//===========================================================================
-
-void SetupPsprites(player_t * player)
-{
-	int i;
-
-	// remove all  ViewEnts
-	for (i = 0; i < NUMPSPRITES; i++)
-	{
-		player->ViewEnts[i].StateNum = 0;
-	}
-
-	// spawn the gun
-	BringUpWeapon(player);
-}
-
-//==========================================================================
-//
-//  MovePsprites
-//
-//  Called every tic by player thinking routine.
-//
-//==========================================================================
-
-void MovePsprites(player_t * player)
-{
-	int i;
-	ViewEntity e;
-
-	for (i = 0; i < NUMPSPRITES; i++)
-	{
-		e = player->ViewEnts[i];
-		// a null state means not active
-		if (e.StateNum)
-		{
-			// drop tic count and possibly change state
-
-			// a -1 tic count never changes
-			if (e.StateTime != -1.0)
-			{
-				e.StateTime -= frametime;
-				if (e.StateTime <= 0.0)
-				{
-					e.StateTime = 0.0;
-					SetPsprite(player, i, e.NextState);
-				}
-			}
-		}
-	}
-
-	player->ViewEnts[ps_flash].SX = player->ViewEnts[ps_weapon].SX;
-	player->ViewEnts[ps_flash].SY = player->ViewEnts[ps_weapon].SY;
-}
-
-//==========================================================================
-//
-//  CheckAmmo
-//
-//  Returns true if there is enough ammo to shoot.
-// If not, selects the next weapon to use.
-//
-//==========================================================================
-
-int CheckAmmo(player_t * player)
-{
-	int ammo;
-	int count;
-
-	ammo = Weapon(player->ViewEnts[ps_weapon]).Ammo;
-
-	// Minimal amount for one shot varies.
-#ifdef FIXME
-	if (player->ReadyWeapon == wp_bfg)
-		count = BFGCELLS;
-	else
-#endif
-		count = 1;	// Regular.
-
-	// Some do not need ammunition anyway.
-	// Return if current ammunition sufficient.
-	if (ammo == am_noammo || player->Ammo[ammo] >= count)
-		return true;
-
-	// Out of ammo, pick a weapon to change to.
-	// Preferences are set here.
-	do
-	{
-		if (player->WeaponOwned[wp_flame] && player->Ammo[am_cell])
-		{
-			player->PendingWeapon = wp_flame;
-		}
-		else if (player->WeaponOwned[wp_riffle] && player->Ammo[am_clip])
-		{
-			player->PendingWeapon = wp_riffle;
-		}
-		else if (player->WeaponOwned[wp_crossbow]
-			&& player->Ammo[am_electric_arrow])
-		{
-			player->PendingWeapon = wp_crossbow;
-		}
-		else if (player->WeaponOwned[wp_missile] && player->Ammo[am_misl])
-		{
-			player->PendingWeapon = wp_missile;
-		}
-		else
-		{
-			// If everything fails.
-			player->PendingWeapon = wp_fist;
-		}
-	}
-	while (player->PendingWeapon == wp_nochange);
-
-	// Now set appropriate weapon overlay.
-	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).DownState);
-
-	return false;
-}
-
-//===========================================================================
-//
-//  FireWeapon
-//
-//===========================================================================
-
-void FireWeapon(player_t * player)
-{
-	if (!CheckAmmo(player))
-	{
-		return;
-	}
-
-	player->MO.SetState(player->MO.MissileState);
-	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).AttackState);
-	P_NoiseAlert(player->MO, player->MO);
-}
-
-//***************************************************************************
-//
-//  WEAPON ACTIONS
-//
-//***************************************************************************
-
-//===========================================================================
-//
-//  Weapon::A_WeaponReady
-//
-//  The player can fire the weapon or change to another weapon at this time.
-// Follows after getting weapon up, or after previous attack/fire sequence.
-//
-//===========================================================================
-
-void Weapon::A_WeaponReady(void)
-{
-	float angle;
-
-	// get out of attack state
-	if (Player->MO.StateNum == Player->MO.MissileState ||
-		Player->MO.StateNum == PlayerPawn(Player->MO).Attack2State)
-	{
-		Player->MO.SetState(Player->MO.IdleState);
-	}
-
-/*	if (Player->ReadyWeapon == wp_chainsaw && StateNum == S_SAW)
-	{
-		StartSoundName(Player->mo, "ChainsawIdle");
-	}*/
-
-	// check for change
-	//  if player is dead, put the weapon away
-	if (Player->PendingWeapon != wp_nochange || !Player->Health)
-	{
-		// change weapon
-		//  (pending weapon should allready be validated)
-		SetPsprite(Player, ps_weapon, DownState);
-		return;
-	}
-
-	// check for fire
-	//  the missile launcher and bfg do not auto fire
-	if (Player->Buttons & BT_ATTACK)
-	{
-		if (!Player->bAttackDown || (Player->ReadyWeapon != wp_missile))
-		{
-			Player->bAttackDown = true;
-			FireWeapon(Player);
-			return;
-		}
-	}
-	else
-		Player->bAttackDown = false;
-
-	// bob the weapon based on movement speed
-	angle = AngleMod360(180.0 * level->time);
-	SX = 1.0 + Player->Bob * cos(angle);
-	if (angle >= 180.0)
-	{
-		angle -= 180.0;
-	}
-	SY = WEAPONTOP + Player->Bob * sin(angle);
-}
-
-//===========================================================================
-//
-//  Weapon::A_Lower
-//
-//  Lowers current weapon, and changes weapon at bottom.
-//
-//===========================================================================
-
-void Weapon::A_Lower(void)
-{
-	SY += LOWERSPEED;
-
-	// Is already down.
-	if (SY < WEAPONBOTTOM)
-		return;
-
-	// Player is dead.
-	if (Player->PlayerState == PST_DEAD)
-	{
-		SY = WEAPONBOTTOM;
-
-		// don't bring weapon back up
-		return;
-	}
-
-	// The old weapon has been lowered off the screen,
-	// so change the weapon and start raising it
-	if (!Player->Health)
-	{
-		// Player is dead, so keep the weapon off screen.
-		SetPsprite(Player, ps_weapon, S_NULL);
-		return;
-	}
-
-	SetWeapon(Player, Player->PendingWeapon);
-
-	BringUpWeapon(Player);
-}
-
-//===========================================================================
-//
-//  Weapon::A_Raise
-//
-//===========================================================================
-
-void Weapon::A_Raise(void)
-{
-	SY -= RAISESPEED;
-
-	if (SY > WEAPONTOP)
-	{
-		return;
-	}
-
-	SY = WEAPONTOP;
-
-	// The weapon has been raised all the way,
-	//  so change to the ready state.
-	SetPsprite(Player, ps_weapon, ReadyState);
-}
-
-//===========================================================================
-//
-//  Weapon::A_ReFire
-//
-//  The player can re-fire the weapon without lowering it entirely.
-//
-//===========================================================================
-
-void Weapon::A_ReFire(void)
-{
-	// check for fire
-	//  (if a weaponchange is pending, let it go through instead)
-	if ((Player->Buttons & BT_ATTACK)
-		&& Player->PendingWeapon == wp_nochange && Player->Health)
-	{
-		Player->Refire++;
-		FireWeapon(Player);
-	}
-	else
-	{
-		Player->Refire = 0;
-		CheckAmmo(Player);
-	}
-}
-
-//===========================================================================
-//
-//  Weapon::A_CheckReload
-//
-//===========================================================================
-
-void Weapon::A_CheckReload(void)
-{
-	CheckAmmo(Player);
-}
-
-//===========================================================================
-//
-//  Weapon::A_GunFlash
-//
-//===========================================================================
-
-void Weapon::A_GunFlash(void)
-{
-	Player->MO.SetState(PlayerPawn(Player->MO).Attack2State);
-	SetPsprite(Player, ps_flash, Weapon(Player->ViewEnts[ps_weapon]).FlashState);
-}
-
-//===========================================================================
-//
-//  Weapon::A_Light0
-//
-//===========================================================================
-
-void Weapon::A_Light0(void)
-{
-	Player->ExtraLight = 0;
-}
-
-//===========================================================================
-//
-//  Weapon::A_Light1
-//
-//===========================================================================
-
-void Weapon::A_Light1(void)
-{
-	Player->ExtraLight = 1;
-}
-
-//===========================================================================
-//
-//  Weapon::A_Light2
-//
-//===========================================================================
-
-void Weapon::A_Light2(void)
-{
-	Player->ExtraLight = 2;
-}
-
-void Weapon::A_7(void)
-{
-}
-
-//**************************************************************************
 //**************************************************************************
 //
 //	WeaponPunch
 //
-//**************************************************************************
 //**************************************************************************
 
 class WeaponPunch:Weapon
@@ -543,24 +102,94 @@ defaultproperties
 }
 
 //**************************************************************************
+//
+//	ElectricArrow
+//
+//**************************************************************************
+
+class ElectricArrow:Projectile
+{
+
+__states__
+{
+	S_ARROW1('AROW', 0, 10.0 / 35.0, S_ARROW1) { A_ActiveSound(); }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 10.0;
+	Speed = 1050.0;
+	MissileDamage = 10;
+	IdleState = S_ARROW1;
+	DeathState = S_ZAP1_0;
+	SightSound = 'PunchMiss';
+	ActiveSound = 'PunchMiss';
+	DeathSound = 'ElectricArrowExplode';
+}
+
+}
+
+//**************************************************************************
+//
+//	PoisonArrow
+//
+//**************************************************************************
+
+class PoisonArrow:Projectile
+{
+
+__states__
+{
+	S_ARROW2('ARWP', 0, 10.0 / 35.0, S_ARROW2) { A_ActiveSound(); }
+	S_ARROW2_X('AROW', 0, 1.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 10.0;
+	Speed = 1050.0;
+	MissileDamage = 500;
+	IdleState = S_ARROW2;
+	DeathState = S_ARROW2_X;
+	SightSound = 'PunchMiss';
+	ActiveSound = 'PunchMiss';
+}
+
+}
+
 //**************************************************************************
 //
 //	WeaponCrossbow
 //
 //**************************************************************************
-//**************************************************************************
 
 class WeaponCrossbow:Weapon
 {
 
+//==========================================================================
+//
+//	A_FireElectricArrow
+//
+//==========================================================================
+
 void A_FireElectricArrow(void)
 {
-//	Player->Ammo[Ammo]--;
-//	PlayerPawn(Player->MO).SpawnPlayerMissile(ElectricArrow);
+	Player->Ammo[Ammo]--;
+	PlayerPawn(Player->MO).SpawnPlayerMissile(ElectricArrow);
 }
+
+//==========================================================================
+//
+//	A_FirePoisonArrow
+//
+//==========================================================================
 
 void A_FirePoisonArrow(void)
 {
+	Player->Ammo[Ammo]--;//FIXME
+	PlayerPawn(Player->MO).SpawnPlayerMissile(PoisonArrow);
 }
 
 __states__
@@ -603,18 +232,46 @@ defaultproperties
 }
 
 //**************************************************************************
-//**************************************************************************
 //
 //	WeaponAssaultGun
 //
-//**************************************************************************
 //**************************************************************************
 
 class WeaponAssaultGun:Weapon
 {
 
+//==========================================================================
+//
+//	A_FireRiffle
+//
+//==========================================================================
+
 void A_FireRiffle(void)
 {
+	TVec dir;
+	int damage;
+
+	Player->MO.PlaySound('AssaultGunFire', CHAN_WEAPON);
+
+	if (!Player->Ammo[Ammo])
+		return;
+
+	Player->MO.SetState(Player->MO.MissileState);
+	Player->Ammo[Ammo]--;
+
+	dir = Aim(Player->MO, 16.0 * 64.0);
+	if (Player->Refire)
+	{
+		TAVec angles;
+
+		VectorAngles(&dir, &angles);
+		angles.yaw = AngleMod360(angles.yaw +
+			(Random() - Random()) * 45.0 / 8.0);
+		AngleVector(&angles, &dir);
+	}
+	damage = 5 * (P_Random() % 3 + 1);
+	LineAttack(Player->MO, dir, MISSILERANGE, damage);
+	//Player->MO.Effects |= EF_DL_MUZZLEFLASH;
 }
 
 __states__
@@ -642,18 +299,47 @@ defaultproperties
 }
 
 //**************************************************************************
+//
+//	MiniMissile
+//
+//**************************************************************************
+
+class MiniMissile:Projectile
+{
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 14.0;
+	Speed = 700.0;
+	MissileDamage = 10;
+	IdleState = S_MINI_MISSILE;
+	DeathState = S_MISSILE_X1;
+	SightSound = 'FireMissile';
+	DeathSound = 'MissileExplode';
+}
+
+}
+
 //**************************************************************************
 //
 //	WeaponMissileLauncher
 //
 //**************************************************************************
-//**************************************************************************
 
 class WeaponMissileLauncher:Weapon
 {
 
+//==========================================================================
+//
+//	A_FireMissile
+//
+//==========================================================================
+
 void A_FireMissile(void)
 {
+	Player->Ammo[Ammo]--;
+	PlayerPawn(Player->MO).SpawnPlayerMissile(MiniMissile);
 }
 
 __states__
@@ -682,18 +368,139 @@ defaultproperties
 }
 
 //**************************************************************************
+//
+//	HEGrenade
+//
+//**************************************************************************
+
+class HEGrenade:Projectile
+{
+
+__states__
+{
+	S_GRENADE_HE_1('GRAP', 0, 3.0 / 35.0, S_GRENADE_HE_2) { A_DecReactionCount(); }
+	S_GRENADE_HE_2('GRAP', 1, 3.0 / 35.0, S_GRENADE_HE_1) { A_DecReactionCount(); }
+	S_GRENADE_HE_X1('BNG4', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_GRENADE_HE_X2) { A_Unknown27(); }
+	S_GRENADE_HE_X2('BNG4', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X3) { }
+	S_GRENADE_HE_X3('BNG4', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X4) { }
+	S_GRENADE_HE_X4('BNG4', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X5) { }
+	S_GRENADE_HE_X5('BNG4', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X6) { }
+	S_GRENADE_HE_X6('BNG4', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X7) { }
+	S_GRENADE_HE_X7('BNG4', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X8) { }
+	S_GRENADE_HE_X8('BNG4', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X9) { }
+	S_GRENADE_HE_X9('BNG4', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X10) { }
+	S_GRENADE_HE_X10('BNG4', 9 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X11) { }
+	S_GRENADE_HE_X11('BNG4', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X12) { }
+	S_GRENADE_HE_X12('BNG4', 11 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X13) { }
+	S_GRENADE_HE_X13('BNG4', 12 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X14) { }
+	S_GRENADE_HE_X14('BNG4', 13 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 13.0;
+	Height = 13.0;
+	Mass = 20.0;
+	Speed = 525.0;
+	ReactionCount = 30;
+	MissileDamage = 1;
+	bNoGravity = false;
+	IdleState = S_GRENADE_HE_1;
+	DeathState = S_GRENADE_HE_X1;
+	SightSound = 'FireGrenade';
+	DeathSound = 'Explode';
+}
+
+}
+
+//**************************************************************************
+//
+//	FireGrenade
+//
+//**************************************************************************
+
+class FireGrenade:Projectile
+{
+
+__states__
+{
+	S_GRENADE_FIRE_1('GRIN', 0, 3.0 / 35.0, S_GRENADE_FIRE_2) { A_DecReactionCount(); }
+	S_GRENADE_FIRE_2('GRIN', 1, 3.0 / 35.0, S_GRENADE_FIRE_1) { A_DecReactionCount(); }
+	S_GRENADE_FIRE_X1('BNG3', 0, 1.0 / 35.0, S_NULL) { A_FireGrenadeExplode(); }
+}
+
+defaultproperties
+{
+	Radius = 13.0;
+	Height = 13.0;
+	Mass = 20.0;
+	Speed = 525.0;
+	ReactionCount = 40;
+	MissileDamage = 1;
+	bNoGravity = false;
+	IdleState = S_GRENADE_FIRE_1;
+	DeathState = S_GRENADE_FIRE_X1;
+	SightSound = 'FireGrenade';
+	DeathSound = 'Explode';
+}
+
+}
+
+#ifdef TEASER
+//**************************************************************************
+//
+//	GasGrenade
+//
+//**************************************************************************
+
+class GasGrenade:Projectile
+{
+
+__states__
+{
+	S_GRENADE_GAS_1('GASG', 1, 3.0 / 35.0, S_GRENADE_GAS_2) { A_DecReactionCount(); }
+	S_GRENADE_GAS_2('GASG', 2, 3.0 / 35.0, S_GRENADE_GAS_1) { A_DecReactionCount(); }
+	S_GRENADE_GAS_X1('GASS', 0, 1.0 / 35.0, S_NULL) { A_GasGrenadeExplode(); }
+}
+
+defaultproperties
+{
+	Radius = 13.0;
+	Height = 13.0;
+	Mass = 20.0;
+	Speed = 525.0;
+	ReactionCount = 40;
+	MissileDamage = 1;
+	bNoGravity = false;
+	IdleState = S_GRENADE_GAS_1;
+	DeathState = S_GRENADE_GAS_X1;
+	SightSound = 'FireGrenade';
+	DeathSound = 'Explode';
+}
+
+}
+#endif
+
 //**************************************************************************
 //
 //	WeaponGrenadeLauncher
 //
 //**************************************************************************
-//**************************************************************************
 
 class WeaponGrenadeLauncher:Weapon
 {
 
+//==========================================================================
+//
+//	A_FireGrenade
+//
+//==========================================================================
+
 void A_FireGrenade(void)
 {
+	// FIXME absolutely wrong
+	Player->Ammo[Ammo]--;
+	PlayerPawn(Player->MO).SpawnPlayerMissile(HEGrenade);
 }
 
 __states__
@@ -735,18 +542,52 @@ defaultproperties
 }
 
 //**************************************************************************
+//
+//	FlameFX1
+//
+//**************************************************************************
+
+class FlameFX1:Projectile
+{
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 11.0;
+	Mass = 10.0;
+	Speed = 525.0;
+#ifdef TEASER
+	MissileDamage = 3;
+#else
+	MissileDamage = 4;
+#endif
+	bNoGravity = false;
+	IdleState = S_FLAMEFX_1;
+	DeathState = S_FLAMEFX_X1;
+	SightSound = 'FlameThrowerFire';
+}
+
+}
+
 //**************************************************************************
 //
 //	WeaponFlamethrower
 //
 //**************************************************************************
-//**************************************************************************
 
 class WeaponFlamethrower:Weapon
 {
 
+//==========================================================================
+//
+//	A_FireFlamethrower
+//
+//==========================================================================
+
 void A_FireFlamethrower(void)
 {
+	Player->Ammo[Ammo]--;
+	PlayerPawn(Player->MO).SpawnPlayerMissile(FlameFX1);
 }
 
 __states__
@@ -772,11 +613,9 @@ defaultproperties
 }
 
 //**************************************************************************
-//**************************************************************************
 //
 //	WeaponMauler
 //
-//**************************************************************************
 //**************************************************************************
 
 class WeaponMauler:Weapon
@@ -837,11 +676,9 @@ defaultproperties
 }
 
 //**************************************************************************
-//**************************************************************************
 //
 //	WeaponSigil
 //
-//**************************************************************************
 //**************************************************************************
 
 class WeaponSigil:Weapon
@@ -893,9 +730,18 @@ defaultproperties
 
 }
 
+#ifdef TEASER
+#else
+#endif
+
+#ifndef TEASER
+#endif
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/06/29 15:59:28  dj_jl
+//  Split out items, projectiles and decorations.
+//
 //  Revision 1.22  2002/06/14 15:48:49  dj_jl
 //  Beautification.
 //

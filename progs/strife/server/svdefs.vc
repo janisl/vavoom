@@ -138,7 +138,7 @@ enum
 	KEY_Passcard,
 	KEY_IDBadge,
 	KEY_PrisonKey,
-	KEY_SeveredKey,
+	KEY_SeveredHand,
 	KEY_Power1Key,
 	KEY_Power2Key,
 	KEY_GoldKey,
@@ -159,6 +159,7 @@ enum
 	KEY_MaulerKey,
 	KEY_FactoryKey,
 	KEY_MineKey,
+	KEY_NewKey5,
 
 	NUMKEYS
 };
@@ -261,7 +262,7 @@ class Actor:Entity
 	//  Params
 	float Speed;
 	float StepSpeed;
-	int PainChance;
+	float PainChance;
 	int SpawnHealth;
 	int GibsHealth;
 	name ClassName;
@@ -338,16 +339,16 @@ class Actor:Entity
 #ifdef TEASER
 	// Action functions
 	void A_24(void);
-	void A_25(void);
+	void A_DecReactionCount(void);
 	void A_Unknown27(void);
-	void A_27(void);
+	void A_FireGrenadeExplode(void);
 	void A_Explode2(void);
 	void A_29(void);
-	void A_30(void);
+	void A_GasGrenadeExplode(void);
 	void A_Unknown24(void);
 	void A_Unknown31(void);
 	void A_33(void);
-	void A_34(void);
+	void A_SpawnPuff(void);
 	void A_35(void);
 	void A_ActiveSound(void);
 	void A_37(void);
@@ -399,7 +400,7 @@ class Actor:Entity
 	void A_Specter5Attack(void);
 	void A_EntityAttack(void);
 	void A_EntityDeath(void);
-	void A_88(void);
+	void A_EntityBossRaise(void);
 	void A_89(void);
 	void A_90(void);
 	void A_91(void);
@@ -416,25 +417,25 @@ class Actor:Entity
 	void A_InquisitorJump(void);
 	void A_ProgrammerMelee(void);
 	void A_ProgrammerDeath(void);
-	void A_105(void);
+	void A_FlameFXExplode(void);
 	void A_CheckAlarm(void);
-	void A_107(void);
-	void A_108(void);
-	void A_109(void);
-	void A_110(void);
-	void A_111(void);
+	void A_AlarmActive(void);
+	void A_Unknown110(void);
+	void A_Unknown112(void);
+	void A_Unknown114(void);
+	void A_Unknown113(void);
 	void A_SummonRebel(void);
 #else
 	void A_Unknown24(void);
 	void A_25(void);
-	void A_26(void);
+	void A_DecReactionCount(void);
 	void A_Unknown27(void);
-	void A_28(void);
+	void A_FireGrenadeExplode(void);
 	void A_Explode2(void);
 	void A_30(void);
 	void A_Unknown31(void);
 	void A_32(void);
-	void A_33(void);
+	void A_RocketTrail(void);
 	void A_34(void);
 	void A_ActiveSound(void);
 	void A_36(void);
@@ -488,7 +489,7 @@ class Actor:Entity
 	void A_Specter5Attack(void);
 	void A_EntityAttack(void);
 	void A_EntityDeath(void);
-	void A_89(void);
+	void A_EntityBossRaise(void);
 	void A_90(void);
 	void A_91(void);
 	void A_92(void);
@@ -506,20 +507,25 @@ class Actor:Entity
 	void A_InquisitorDropArms(void);
 	void A_ProgrammerMelee(void);
 	void A_ProgrammerDeath(void);
-	void A_107(void);
+	void A_FlameFXExplode(void);
 	void A_CheckAlarm(void);
-	void A_109(void);
-	void A_110(void);
-	void A_111(void);
-	void A_112(void);
-	void A_113(void);
-	void A_114(void);
+	void A_AlarmActive(void);
+	void A_Unknown110(void);
+	void A_SpawnPuff(void);
+	void A_Unknown112(void);
+	void A_Unknown113(void);
+	void A_Unknown114(void);
 	void A_SummonRebel(void);
 #endif
 
 	defaultproperties
 	{
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
 		MaxStepHeight = 16.0;
+		ReactionCount = 8;
 	}
 }
 
@@ -532,7 +538,10 @@ class Pawn:Actor
 
 	defaultproperties
 	{
-		ReactionCount = 8;
+		Health = 0;
+		Radius = 0.0;
+		Height = 0.0;
+		Mass = 0.0;
 		bSolid = true;
 		bShootable = true;
 		bCountKill = true;
@@ -544,8 +553,6 @@ class Pawn:Actor
 class PlayerPawn:Pawn
 	abstract
 {
-	int Attack2State;
-
 	boolean GiveAmmo(int ammo, int num);
 	boolean GiveWeapon(int weapon, boolean dropped);
 	boolean GiveBody(int num);
@@ -593,14 +600,31 @@ class Pickup:Actor
 
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
 		Height = 8.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		bSpecial = true;
 		PickupSound = 'PickupItem';
 		PickupString = "Item";
+	}
+}
+
+class Projectile:Actor
+	abstract
+{
+	defaultproperties
+	{
+		bMissile = true;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bActivateMCross = true;
+	}
+}
+
+class Decoration:Actor
+	abstract
+{
+	defaultproperties
+	{
 	}
 }
 
@@ -712,6 +736,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.35  2002/06/29 15:59:26  dj_jl
+//  Split out items, projectiles and decorations.
+//
 //  Revision 1.34  2002/06/22 07:18:44  dj_jl
 //  Seperated all pickup items.
 //

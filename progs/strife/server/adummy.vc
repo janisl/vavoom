@@ -29,13 +29,13 @@ void Actor::A_Unknown24(void)
 void Actor::A_25(void)
 {
 }
-void Actor::A_26(void)
+void Actor::A_DecReactionCount(void)
 {
 }
 void Actor::A_Unknown27(void)
 {
 }
-void Actor::A_28(void)
+void Actor::A_FireGrenadeExplode(void)
 {
 }
 void Actor::A_30(void)
@@ -47,7 +47,7 @@ void Actor::A_Unknown31(void)
 void Actor::A_32(void)
 {
 }
-void Actor::A_33(void)
+void Actor::A_RocketTrail(void)
 {
 }
 void Actor::A_34(void)
@@ -173,7 +173,7 @@ void Actor::A_EntityAttack(void)
 void Actor::A_EntityDeath(void)
 {
 }
-void Actor::A_89(void)
+void Actor::A_EntityBossRaise(void)
 {
 }
 void Actor::A_90(void)
@@ -227,28 +227,28 @@ void Actor::A_ProgrammerMelee(void)
 void Actor::A_ProgrammerDeath(void)
 {
 }
-void Actor::A_107(void)
+void Actor::A_FlameFXExplode(void)
 {
 }
 void Actor::A_CheckAlarm(void)
 {
 }
-void Actor::A_109(void)
+void Actor::A_AlarmActive(void)
 {
 }
-void Actor::A_110(void)
+void Actor::A_Unknown110(void)
 {
 }
-void Actor::A_111(void)
+void Actor::A_SpawnPuff(void)
 {
 }
-void Actor::A_112(void)
+void Actor::A_Unknown112(void)
 {
 }
-void Actor::A_113(void)
+void Actor::A_Unknown113(void)
 {
 }
-void Actor::A_114(void)
+void Actor::A_Unknown114(void)
 {
 }
 void Actor::A_SummonRebel(void)
@@ -258,6 +258,9 @@ void Actor::A_SummonRebel(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/06/29 15:59:26  dj_jl
+//  Split out items, projectiles and decorations.
+//
 //  Revision 1.13  2002/06/22 07:18:43  dj_jl
 //  Seperated all pickup items.
 //

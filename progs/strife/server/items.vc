@@ -25,11 +25,136 @@
 
 //**************************************************************************
 //
+//	InventoryItem
+//
+//**************************************************************************
+
+class InventoryItem:Pickup
+	abstract
+{
+
+defaultproperties
+{
+}
+
+}
+
+//**************************************************************************
+//
+//	KeyPickup
+//
+//**************************************************************************
+
+class KeyPickup:Pickup
+	abstract
+{
+
+int KeyType;
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+boolean HandlePickup(Actor Toucher)
+{
+	return PlayerPawn(Toucher).GiveKey(KeyType);
+}
+
+defaultproperties
+{
+}
+
+}
+
+//**************************************************************************
+//
+//	MoneyPickup
+//
+//**************************************************************************
+
+class MoneyPickup:Pickup
+	abstract
+{
+
+defaultproperties
+{
+}
+
+}
+
+//**************************************************************************
+//
+//	AmmoPickup
+//
+//**************************************************************************
+
+class AmmoPickup:Pickup
+	abstract
+{
+
+int AmmoType;
+int NumClips;
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+boolean HandlePickup(Actor Toucher)
+{
+	return PlayerPawn(Toucher).GiveAmmo(AmmoType, bDropped ? 0 : NumClips);
+}
+
+defaultproperties
+{
+	NumClips = 1;
+}
+
+}
+
+//**************************************************************************
+//
+//	WeaponPickup
+//
+//**************************************************************************
+
+class WeaponPickup:Pickup
+	abstract
+{
+
+int WeaponType;
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+boolean HandlePickup(Actor Toucher)
+{
+	return PlayerPawn(Toucher).GiveWeapon(WeaponType, bDropped);
+}
+
+defaultproperties
+{
+	PickupSound = 'PickupWeapon';
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+
+//**************************************************************************
+//
 //	MedPatch
 //
 //**************************************************************************
 
-class MedPatch:Pickup
+class MedPatch:InventoryItem
 	__mobjinfo__(2011)
 {
 
@@ -54,7 +179,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class MedicalKit:Pickup
+class MedicalKit:InventoryItem
 	__mobjinfo__(2012)
 {
 
@@ -79,7 +204,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class SurgeryKit:Pickup
+class SurgeryKit:InventoryItem
 	__mobjinfo__(83)
 {
 
@@ -109,7 +234,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class DegninOre:Pickup
+class DegninOre:InventoryItem
 	__mobjinfo__(59)
 {
 
@@ -160,7 +285,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class MetalArmor:Pickup
+class MetalArmor:InventoryItem
 	__mobjinfo__(2019)
 {
 
@@ -185,7 +310,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class LeatherArmor:Pickup
+class LeatherArmor:InventoryItem
 	__mobjinfo__(2018)
 {
 
@@ -206,11 +331,11 @@ defaultproperties
 
 //**************************************************************************
 //
-//	Base_Key
+//	ItemBaseKey
 //
 //**************************************************************************
 
-class Base_Key:Pickup
+class ItemBaseKey:KeyPickup
 #ifndef TEASER
 	__mobjinfo__(230)
 #endif
@@ -226,24 +351,25 @@ __states__
 defaultproperties
 {
 	ConversationID = 133;//132
-	ClassName = 'Base_Key';
+	PickupString = "Base Key";
 #ifdef TEASER
 	IdleState = S_TOKENS;
 #else
 	bNoDeathmatch = true;
 	IdleState = S_BASE_KEY;
 #endif
+	KeyType = KEY_BaseKey;
 }
 
 }
 
 //**************************************************************************
 //
-//	Govs_Key
+//	ItemGovsKey
 //
 //**************************************************************************
 
-class Govs_Key:Pickup
+class ItemGovsKey:KeyPickup
 {
 
 #ifndef TEASER
@@ -257,23 +383,24 @@ defaultproperties
 {
 	ConversationID = 134;//133
 #ifdef TEASER
-	ClassName = 'Rebel_Key';
+	PickupString = "Rebel Key";
 	IdleState = S_TOKENS;
 #else
-	ClassName = 'Govs_Key';
+	PickupString = "Govs Key";
 	IdleState = S_GOVS_KEY;
 #endif
+	KeyType = KEY_GovsKey;
 }
 
 }
 
 //**************************************************************************
 //
-//	Passcard
+//	ItemPasscard
 //
 //**************************************************************************
 
-class Passcard:Pickup
+class ItemPasscard:KeyPickup
 	__mobjinfo__(185)
 {
 
@@ -285,20 +412,21 @@ __states__
 defaultproperties
 {
 	ConversationID = 135;//134
-	ClassName = 'Passcard';
+	PickupString = "Passcard";
 	bNoDeathmatch = true;
 	IdleState = S_PASSCARD;
+	KeyType = KEY_Passcard;
 }
 
 }
 
 //**************************************************************************
 //
-//	ID_Badge
+//	ItemIDBadge
 //
 //**************************************************************************
 
-class ID_Badge:Pickup
+class ItemIDBadge:KeyPickup
 	__mobjinfo__(184)
 {
 
@@ -310,20 +438,21 @@ __states__
 defaultproperties
 {
 	ConversationID = 136;//135
-	ClassName = 'ID_Badge';
+	PickupString = "ID Badge";
 	bNoDeathmatch = true;
 	IdleState = S_ID_BADGE;
+	KeyType = KEY_IDBadge;
 }
 
 }
 
 //**************************************************************************
 //
-//	Prison_Key
+//	ItemPrisonKey
 //
 //**************************************************************************
 
-class Prison_Key:Pickup
+class ItemPrisonKey:KeyPickup
 {
 
 __states__
@@ -334,52 +463,54 @@ __states__
 defaultproperties
 {
 	ConversationID = 137;//136
-	ClassName = 'Prison_Key';
+	PickupString = "Prison Key";
 #ifndef TEASER
 	StepSpeed = 11.0;
 	bUnknown5 = true;
 #endif
 	IdleState = S_PRISON_KEY;
+	KeyType = KEY_PrisonKey;
 }
 
 }
 
 //**************************************************************************
 //
-//	Severed_Hand
+//	ItemSeveredHand
 //
 //**************************************************************************
 
-class Severed_Hand:Pickup
+class ItemSeveredHand:KeyPickup
 	__mobjinfo__(91)
 {
 
 __states__
 {
-	S_SEVERED_KEY('HAND', 0, -1.0, S_NULL) { }
+	S_SEVERED_HAND('HAND', 0, -1.0, S_NULL) { }
 }
 
 defaultproperties
 {
 	ConversationID = 138;//137
-	ClassName = 'Severed_Hand';
+	PickupString = "Severed Hand";
 #ifndef TEASER
 	StepSpeed = 12.0;
 	bUnknown5 = true;
 #endif
 	bNoDeathmatch = true;
-	IdleState = S_SEVERED_KEY;
+	IdleState = S_SEVERED_HAND;
+	KeyType = KEY_SeveredHand;
 }
 
 }
 
 //**************************************************************************
 //
-//	Power1_Key
+//	ItemPower1Key
 //
 //**************************************************************************
 
-class Power1_Key:Pickup
+class ItemPower1Key:KeyPickup
 {
 
 __states__
@@ -390,19 +521,20 @@ __states__
 defaultproperties
 {
 	ConversationID = 139;//138
-	ClassName = 'Power1_Key';
+	PickupString = "Power1 Key";
 	IdleState = S_POWER1_KEY;
+	KeyType = KEY_Power1Key;
 }
 
 }
 
 //**************************************************************************
 //
-//	Power2_Key
+//	ItemPower2Key
 //
 //**************************************************************************
 
-class Power2_Key:Pickup
+class ItemPower2Key:KeyPickup
 {
 
 __states__
@@ -413,19 +545,20 @@ __states__
 defaultproperties
 {
 	ConversationID = 140;//139
-	ClassName = 'Power2_Key';
+	PickupString = "Power2 Key";
 	IdleState = S_POWER2_KEY;
+	KeyType = KEY_Power2Key;
 }
 
 }
 
 //**************************************************************************
 //
-//	Power3_Key
+//	ItemPower3Key
 //
 //**************************************************************************
 
-class Power3_Key:Pickup
+class ItemPower3Key:KeyPickup
 {
 
 __states__
@@ -436,19 +569,20 @@ __states__
 defaultproperties
 {
 	ConversationID = 141;//140
-	ClassName = 'Power3_Key';
+	PickupString = "Power3 Key";
 	IdleState = S_POWER3_KEY;
+	KeyType = KEY_Power3Key;
 }
 
 }
 
 //**************************************************************************
 //
-//	Gold_Key
+//	ItemGoldKey
 //
 //**************************************************************************
 
-class Gold_Key:Pickup
+class ItemGoldKey:KeyPickup
 	__mobjinfo__(40)
 {
 
@@ -460,20 +594,21 @@ __states__
 defaultproperties
 {
 	ConversationID = 142;//141
-	ClassName = 'Gold_Key';
+	PickupString = "Gold Key";
 	bNoDeathmatch = true;
 	IdleState = S_GOLD_KEY;
+	KeyType = KEY_GoldKey;
 }
 
 }
 
 //**************************************************************************
 //
-//	ID_Card
+//	ItemIDCard
 //
 //**************************************************************************
 
-class ID_Card:Pickup
+class ItemIDCard:KeyPickup
 	__mobjinfo__(13)
 {
 
@@ -485,20 +620,21 @@ __states__
 defaultproperties
 {
 	ConversationID = 143;//142
-	ClassName = 'ID_Card';
+	PickupString = "ID Card";
 	bNoDeathmatch = true;
 	IdleState = S_ID_CARD;
+	KeyType = KEY_IDCard;
 }
 
 }
 
 //**************************************************************************
 //
-//	Silver_Key
+//	ItemSilverKey
 //
 //**************************************************************************
 
-class Silver_Key:Pickup
+class ItemSilverKey:KeyPickup
 	__mobjinfo__(38)
 {
 
@@ -510,20 +646,21 @@ __states__
 defaultproperties
 {
 	ConversationID = 144;//143
-	ClassName = 'Silver_Key';
+	PickupString = "Silver Key";
 	bNoDeathmatch = true;
 	IdleState = S_SILVER_KEY;
+	KeyType = KEY_SilverKey;
 }
 
 }
 
 //**************************************************************************
 //
-//	Oracle_Key
+//	ItemOracleKey
 //
 //**************************************************************************
 
-class Oracle_Key:Pickup
+class ItemOracleKey:KeyPickup
 	__mobjinfo__(61)
 {
 
@@ -535,20 +672,21 @@ __states__
 defaultproperties
 {
 	ConversationID = 145;//144
-	ClassName = 'Oracle_Key';
+	PickupString = "Oracle Key";
 	bNoDeathmatch = true;
 	IdleState = S_ORACLE_KEY;
+	KeyType = KEY_OracleKey;
 }
 
 }
 
 //**************************************************************************
 //
-//	Military_ID
+//	ItemMilitaryID
 //
 //**************************************************************************
 
-class Military_ID:Pickup
+class ItemMilitaryID:KeyPickup
 {
 
 __states__
@@ -559,19 +697,20 @@ __states__
 defaultproperties
 {
 	ConversationID = 146;//145
-	ClassName = 'Military_ID';
+	PickupString = "Military ID";
 	IdleState = S_MILITARY_ID;
+	KeyType = KEY_MilitaryID;
 }
 
 }
 
 //**************************************************************************
 //
-//	Order_Key
+//	ItemOrderKey
 //
 //**************************************************************************
 
-class Order_Key:Pickup
+class ItemOrderKey:KeyPickup
 	__mobjinfo__(86)
 {
 
@@ -583,20 +722,21 @@ __states__
 defaultproperties
 {
 	ConversationID = 147;//146
-	ClassName = 'Order_Key';
+	PickupString = "Order Key";
 	bNoDeathmatch = true;
 	IdleState = S_ORDER_KEY;
+	KeyType = KEY_OrderKey;
 }
 
 }
 
 //**************************************************************************
 //
-//	Warehouse_Key
+//	ItemWarehouseKey
 //
 //**************************************************************************
 
-class Warehouse_Key:Pickup
+class ItemWarehouseKey:KeyPickup
 	__mobjinfo__(166)
 {
 
@@ -608,20 +748,21 @@ __states__
 defaultproperties
 {
 	ConversationID = 148;//147
-	ClassName = 'Warehouse_Key';
+	PickupString = "Warehouse Key";
 	bNoDeathmatch = true;
 	IdleState = S_WAREHOUSE_KEY;
+	KeyType = KEY_WarehouseKey;
 }
 
 }
 
 //**************************************************************************
 //
-//	Brass_Key
+//	ItemBrassKey
 //
 //**************************************************************************
 
-class Brass_Key:Pickup
+class ItemBrassKey:KeyPickup
 	__mobjinfo__(39)
 {
 
@@ -633,20 +774,21 @@ __states__
 defaultproperties
 {
 	ConversationID = 149;//148
-	ClassName = 'Brass_Key';
+	PickupString = "Brass Key";
 	bNoDeathmatch = true;
 	IdleState = S_BRASS_KEY;
+	KeyType = KEY_BrassKey;
 }
 
 }
 
 //**************************************************************************
 //
-//	Red_Crystal_Key
+//	ItemRedCrystalKey
 //
 //**************************************************************************
 
-class Red_Crystal_Key:Pickup
+class ItemRedCrystalKey:KeyPickup
 	__mobjinfo__(192)
 {
 
@@ -662,20 +804,21 @@ __states__
 defaultproperties
 {
 	ConversationID = 150;//149
-	ClassName = 'Red_Crystal_Key';
+	PickupString = "Red Crystal Key";
 	bNoDeathmatch = true;
 	IdleState = S_RED_CRYSTAL_KEY;
+	KeyType = KEY_RedCrystalKey;
 }
 
 }
 
 //**************************************************************************
 //
-//	Blue_Crystal_Key
+//	ItemBlueCrystalKey
 //
 //**************************************************************************
 
-class Blue_Crystal_Key:Pickup
+class ItemBlueCrystalKey:KeyPickup
 	__mobjinfo__(193)
 {
 
@@ -691,20 +834,21 @@ __states__
 defaultproperties
 {
 	ConversationID = 151;//150
-	ClassName = 'Blue_Crystal_Key';
+	PickupString = "Blue Crystal Key";
 	bNoDeathmatch = true;
 	IdleState = S_BLUE_CRYSTAL_KEY;
+	KeyType = KEY_BlueCrystalKey;
 }
 
 }
 
 //**************************************************************************
 //
-//	Chapel_Key
+//	ItemChapelKey
 //
 //**************************************************************************
 
-class Chapel_Key:Pickup
+class ItemChapelKey:KeyPickup
 	__mobjinfo__(195)
 {
 
@@ -716,20 +860,21 @@ __states__
 defaultproperties
 {
 	ConversationID = 152;//151
-	ClassName = 'Chapel_Key';
+	PickupString = "Chapel Key";
 	bNoDeathmatch = true;
 	IdleState = S_CHAPEL_KEY;
+	KeyType = KEY_ChapelKey;
 }
 
 }
 
 //**************************************************************************
 //
-//	Catacomb_Key
+//	ItemCatacombKey
 //
 //**************************************************************************
 
-class Catacomb_Key:Pickup
+class ItemCatacombKey:KeyPickup
 {
 
 __states__
@@ -741,24 +886,25 @@ defaultproperties
 {
 	ConversationID = 153;//152
 #ifdef TEASER
-	ClassName = 'Tunnel_Key';
+	PickupString = "Tunnel Key";
 #else
-	ClassName = 'Catacomb_Key';
+	PickupString = "Catacomb Key";
 	StepSpeed = 28.0;
 	bUnknown5 = true;
 #endif
 	IdleState = S_CATACOMB_KEY;
+	KeyType = KEY_CatacombKey;
 }
 
 }
 
 //**************************************************************************
 //
-//	Security_Key
+//	ItemSecurityKey
 //
 //**************************************************************************
 
-class Security_Key:Pickup
+class ItemSecurityKey:KeyPickup
 {
 
 #ifndef TEASER
@@ -771,23 +917,24 @@ __states__
 defaultproperties
 {
 	ConversationID = 154;//153
-	ClassName = 'Security_Key';
+	PickupString = "Security Key";
 #ifdef TEASER
 	IdleState = S_MAULER_KEY;
 #else
 	IdleState = S_SECURITY_KEY;
 #endif
+	KeyType = KEY_SecurityKey;
 }
 
 }
 
 //**************************************************************************
 //
-//	Core_Key
+//	ItemCoreKey
 //
 //**************************************************************************
 
-class Core_Key:Pickup
+class ItemCoreKey:KeyPickup
 #ifndef TEASER
 	__mobjinfo__(236)
 #endif
@@ -804,24 +951,25 @@ defaultproperties
 {
 	ConversationID = 155;//154
 #ifdef TEASER
-	ClassName = 'New_Key1';
+	PickupString = "New Key1";
 	IdleState = S_MAULER_KEY;
 #else
-	ClassName = 'Core_Key';
+	PickupString = "Core Key";
 	bNoDeathmatch = true;
 	IdleState = S_CORE_KEY;
 #endif
+	KeyType = KEY_CoreKey;
 }
 
 }
 
 //**************************************************************************
 //
-//	Mauler_Key
+//	ItemMaulerKey
 //
 //**************************************************************************
 
-class Mauler_Key:Pickup
+class ItemMaulerKey:KeyPickup
 #ifndef TEASER
 	__mobjinfo__(233)
 #endif
@@ -836,23 +984,24 @@ defaultproperties
 {
 	ConversationID = 156;//155
 #ifdef TEASER
-	ClassName = 'New_Key2';
+	PickupString = "New Key2";
 #else
-	ClassName = 'Mauler_Key';
+	PickupString = "Mauler Key";
 	bNoDeathmatch = true;
 #endif
 	IdleState = S_MAULER_KEY;
+	KeyType = KEY_MaulerKey;
 }
 
 }
 
 //**************************************************************************
 //
-//	Factory_Key
+//	ItemFactoryKey
 //
 //**************************************************************************
 
-class Factory_Key:Pickup
+class ItemFactoryKey:KeyPickup
 	__mobjinfo__(234)
 {
 
@@ -867,24 +1016,25 @@ defaultproperties
 {
 	ConversationID = 157;//156
 #ifdef TEASER
-	ClassName = 'New_Key3';
+	PickupString = "New Key3";
 	IdleState = S_MAULER_KEY;
 #else
-	ClassName = 'Factory_Key';
+	PickupString = "Factory Key";
 	bNoDeathmatch = true;
 	IdleState = S_FACTORY_KEY;
 #endif
+	KeyType = KEY_FactoryKey;
 }
 
 }
 
 //**************************************************************************
 //
-//	Mine_Key
+//	ItemMineKey
 //
 //**************************************************************************
 
-class Mine_Key:Pickup
+class ItemMineKey:KeyPickup
 #ifndef TEASER
 	__mobjinfo__(235)
 #endif
@@ -901,31 +1051,33 @@ defaultproperties
 {
 	ConversationID = 158;//157
 #ifdef TEASER
-	ClassName = 'New_Key4';
+	PickupString = "New Key4";
 	IdleState = S_MAULER_KEY;
 #else
-	ClassName = 'MINE_KEY';
+	PickupString = "Minre Key";
 	bNoDeathmatch = true;
 	IdleState = S_MINE_KEY;
 #endif
+	KeyType = KEY_MineKey;
 }
 
 }
 
 //**************************************************************************
 //
-//	New_Key5
+//	ItemNewKey5
 //
 //**************************************************************************
 
-class New_Key5:Pickup
+class ItemNewKey5:KeyPickup
 {
 
 defaultproperties
 {
 	ConversationID = 159;//158
-	ClassName = 'New_Key5';
+	PickupString = "New Key5";
 	IdleState = S_MAULER_KEY;
+	KeyType = KEY_NewKey5;
 }
 
 }
@@ -936,7 +1088,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class Shadow_armor:Pickup
+class Shadow_armor:InventoryItem
 	__mobjinfo__(2024)
 {
 
@@ -964,7 +1116,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class Environmental_Suit:Pickup
+class Environmental_Suit:InventoryItem
 	__mobjinfo__(2025)
 {
 
@@ -989,7 +1141,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class Guard_Uniform:Pickup
+class Guard_Uniform:InventoryItem
 	__mobjinfo__(90)
 {
 
@@ -1017,7 +1169,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class Officers_Uniform:Pickup
+class Officers_Uniform:InventoryItem
 	__mobjinfo__(52)
 {
 
@@ -1042,7 +1194,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class Map:Pickup
+class Map:InventoryItem
 	__mobjinfo__(2026)
 {
 
@@ -1071,7 +1223,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class Scanner:Pickup
+class Scanner:InventoryItem
 	__mobjinfo__(2027)
 {
 
@@ -1101,7 +1253,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class Teleporter_Beacon:Pickup
+class Teleporter_Beacon:InventoryItem
 	__mobjinfo__(10)
 {
 
@@ -1137,7 +1289,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class Targeter:Pickup
+class Targeter:InventoryItem
 	__mobjinfo__(207)
 {
 
@@ -1164,7 +1316,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class Coin:Pickup
+class Coin:MoneyPickup
 	__mobjinfo__(93)
 {
 
@@ -1193,7 +1345,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class Gold10:Pickup
+class Gold10:MoneyPickup
 	__mobjinfo__(138)
 {
 
@@ -1221,7 +1373,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class Gold25:Pickup
+class Gold25:MoneyPickup
 	__mobjinfo__(139)
 {
 
@@ -1249,7 +1401,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class Gold50:Pickup
+class Gold50:MoneyPickup
 	__mobjinfo__(140)
 {
 
@@ -1278,7 +1430,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class Gold300:Pickup
+class Gold300:MoneyPickup
 {
 
 defaultproperties
@@ -1300,7 +1452,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class Ring:Pickup
+class Ring:InventoryItem
 {
 
 __states__
@@ -1327,7 +1479,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class Offering_Chalice:Pickup
+class Offering_Chalice:InventoryItem
 	__mobjinfo__(205)
 {
 
@@ -1358,7 +1510,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class Ear:Pickup
+class Ear:InventoryItem
 {
 
 __states__
@@ -1406,11 +1558,11 @@ defaultproperties
 
 //**************************************************************************
 //
-//	HEGrenade_Rounds
+//	ItemAmmoHEGrenadeRounds
 //
 //**************************************************************************
 
-class HEGrenade_Rounds:Pickup
+class ItemAmmoHEGrenadeRounds:AmmoPickup
 	__mobjinfo__(152)
 {
 
@@ -1422,19 +1574,20 @@ __states__
 defaultproperties
 {
 	ConversationID = 177;//174
-	ClassName = 'HE-Grenade_Rounds';
+	PickupString = "HE-Grenade Rounds";
 	IdleState = S_GRENADE_HE;
+	AmmoType = am_grenade1;
 }
 
 }
 
 //**************************************************************************
 //
-//	PhosphorusGrenade_Rounds
+//	ItemAmmoPhosphorusGrenadeRounds
 //
 //**************************************************************************
 
-class PhosphorusGrenade_Rounds:Pickup
+class ItemAmmoPhosphorusGrenadeRounds:AmmoPickup
 	__mobjinfo__(153)
 {
 
@@ -1447,11 +1600,12 @@ defaultproperties
 {
 	ConversationID = 178;//175
 #ifdef TEASER
-	ClassName = 'Fire-Grenade_Rounds';
+	PickupString = "Fire-Grenade Rounds";
 #else
-	ClassName = 'Phosphorus-Grenade_Rounds';
+	PickupString = "Phosphorus-Grenade Rounds";
 #endif
 	IdleState = S_GRENADE_FIRE;
+	AmmoType = am_grenade2;
 }
 
 }
@@ -1459,11 +1613,11 @@ defaultproperties
 #ifdef TEASER
 //**************************************************************************
 //
-//	GasGrenade_Rounds
+//	ItemAmmoGasGrenadeRounds
 //
 //**************************************************************************
 
-class GasGrenade_Rounds:Pickup
+class ItemAmmoGasGrenadeRounds:AmmoPickup
 	__mobjinfo__(84)
 {
 
@@ -1475,8 +1629,9 @@ __states__
 defaultproperties
 {
 	ConversationID = 176;
-	ClassName = 'Gas-Grenade_Rounds';
+	PickupString = "Gas-Grenade Rounds";
 	IdleState = S_GRENADE_GAS;
+	AmmoType = am_grenade2;
 }
 
 }
@@ -1484,11 +1639,11 @@ defaultproperties
 
 //**************************************************************************
 //
-//	Clip_of_bullets
+//	ItemAmmoClipOfBullets
 //
 //**************************************************************************
 
-class Clip_of_bullets:Pickup
+class ItemAmmoClipOfBullets:AmmoPickup
 	__mobjinfo__(2007)
 {
 
@@ -1501,22 +1656,23 @@ defaultproperties
 {
 	ConversationID = 179;//177
 #ifdef TEASER
-	ClassName = 'bullets';
+	PickupString = "bullets";
 #else
-	ClassName = 'clip_of_bullets';
+	PickupString = "clip of bullets";
 #endif
 	IdleState = S_BULLETS;
+	AmmoType = am_clip;
 }
 
 }
 
 //**************************************************************************
 //
-//	Ammo1
+//	ItemAmmoBoxOfBullets
 //
 //**************************************************************************
 
-class Ammo1:Pickup
+class ItemAmmoBoxOfBullets:AmmoPickup
 	__mobjinfo__(2048)
 {
 
@@ -1528,19 +1684,21 @@ __states__
 defaultproperties
 {
 	ConversationID = 180;//178
-	ClassName = 'ammo';
+	PickupString = "ammo";
 	IdleState = S_AMMO;
+	AmmoType = am_clip;
+	NumClips = 4;
 }
 
 }
 
 //**************************************************************************
 //
-//	Mini_missiles
+//	ItemAmmoMiniMissiles
 //
 //**************************************************************************
 
-class Mini_missiles:Pickup
+class ItemAmmoMiniMissiles:AmmoPickup
 	__mobjinfo__(2010)
 {
 
@@ -1553,22 +1711,23 @@ defaultproperties
 {
 	ConversationID = 181;//179
 #ifdef TEASER
-	ClassName = 'rocket';
+	PickupString = "rocket";
 #else
-	ClassName = 'mini_missiles';
+	PickupString = "mini_missiles";
 #endif
 	IdleState = S_MINI_MISSILES;
+	AmmoType = am_misl;
 }
 
 }
 
 //**************************************************************************
 //
-//	Crate_of_missiles
+//	ItemAmmoCrateOfMissiles
 //
 //**************************************************************************
 
-class Crate_of_missiles:Pickup
+class ItemAmmoCrateOfMissiles:AmmoPickup
 	__mobjinfo__(2046)
 {
 
@@ -1581,22 +1740,24 @@ defaultproperties
 {
 	ConversationID = 182;//180
 #ifdef TEASER
-	ClassName = 'box_of_rockets';
+	PickupString = "box of rockets";
 #else
-	ClassName = 'crate_of_missiles';
+	PickupString = "crate of missiles";
 #endif
 	IdleState = S_CRATE_OF_MISSILES;
+	AmmoType = am_misl;
+	NumClips = 4;
 }
 
 }
 
 //**************************************************************************
 //
-//	Energy_pod
+//	ItemAmmoEnergyPod
 //
 //**************************************************************************
 
-class Energy_pod:Pickup
+class ItemAmmoEnergyPod:AmmoPickup
 	__mobjinfo__(2047)
 {
 
@@ -1609,19 +1770,20 @@ __states__
 defaultproperties
 {
 	ConversationID = 183;//181
-	ClassName = 'energy_pod';
+	PickupString = "energy pod";
 	IdleState = S_ENERGY_POD_1;
+	AmmoType = am_cell;
 }
 
 }
 
 //**************************************************************************
 //
-//	Energy_pack
+//	ItemAmmoEnergyPack
 //
 //**************************************************************************
 
-class Energy_pack:Pickup
+class ItemAmmoEnergyPack:AmmoPickup
 	__mobjinfo__(17)
 {
 
@@ -1634,19 +1796,21 @@ __states__
 defaultproperties
 {
 	ConversationID = 184;//182
-	ClassName = 'energy_pack';
+	PickupString = "energy pack";
 	IdleState = S_ENERGY_PACK_1;
+	AmmoType = am_cell;
+	NumClips = 4;
 }
 
 }
 
 //**************************************************************************
 //
-//	Poison_bolts
+//	ItemAmmoPoisonBolts
 //
 //**************************************************************************
 
-class Poison_bolts:Pickup
+class ItemAmmoPoisonBolts:AmmoPickup
 	__mobjinfo__(115)
 {
 
@@ -1659,22 +1823,23 @@ defaultproperties
 {
 	ConversationID = 185;//183
 #ifdef TEASER
-	ClassName = 'poison_arrows';
+	PickupString = "poison arrows";
 #else
-	ClassName = 'poison_bolts';
+	PickupString = "poison bolts";
 #endif
 	IdleState = S_ARROWS_POISON;
+	AmmoType = am_poison_arrow;
 }
 
 }
 
 //**************************************************************************
 //
-//	Electric_bolts
+//	ItemAmmoElectricBolts
 //
 //**************************************************************************
 
-class Electric_bolts:Pickup
+class ItemAmmoElectricBolts:AmmoPickup
 	__mobjinfo__(114)
 {
 
@@ -1687,11 +1852,12 @@ defaultproperties
 {
 	ConversationID = 186;//184
 #ifdef TEASER
-	ClassName = 'electric_arrows';
+	PickupString = "electric arrows";
 #else
-	ClassName = 'electric_bolts';
+	PickupString = "electric bolts";
 #endif
 	IdleState = S_ARROWS_ELECTRIC;
+	AmmoType = am_electric_arrow;
 }
 
 }
@@ -1726,11 +1892,11 @@ defaultproperties
 
 //**************************************************************************
 //
-//	Assault_gun
+//	ItemWeaponAssaultGun
 //
 //**************************************************************************
 
-class Assault_gun:Pickup
+class ItemWeaponAssaultGun:WeaponPickup
 	__mobjinfo__(2002)
 {
 
@@ -1742,19 +1908,20 @@ __states__
 defaultproperties
 {
 	ConversationID = 188;//186
-	ClassName = 'assault_gun';
+	PickupString = "assault gun";
 	IdleState = S_ASSAULT_GUN1;
+	WeaponType = wp_riffle;
 }
 
 }
 
 //**************************************************************************
 //
-//	Assault_gun2
+//	ItemWeaponAssaultGun2
 //
 //**************************************************************************
 
-class Assault_gun2:Pickup
+class ItemWeaponAssaultGun2:WeaponPickup
 	__mobjinfo__(2006)
 {
 
@@ -1767,22 +1934,23 @@ defaultproperties
 {
 	ConversationID = 189;//187
 #ifdef TEASER
-	ClassName = 'pulse_rifle';
+	PickupString = "pulse rifle";
 #else
-	ClassName = 'assault_gun';
+	PickupString = "assault gun";
 #endif
 	IdleState = S_ASSAULT_GUN2;
+	WeaponType = wp_riffle;
 }
 
 }
 
 //**************************************************************************
 //
-//	Flame_thrower
+//	ItemWeaponFlameThrower
 //
 //**************************************************************************
 
-class Flame_thrower:Pickup
+class ItemWeaponFlameThrower:WeaponPickup
 	__mobjinfo__(2005)
 {
 
@@ -1794,8 +1962,9 @@ __states__
 defaultproperties
 {
 	ConversationID = 190;//188
-	ClassName = 'flame_thrower';
+	PickupString = "flame thrower";
 	IdleState = S_FLAME_THROWER;
+	WeaponType = wp_flame;
 }
 
 }
@@ -1806,7 +1975,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class Flame_thrower_Parts:Pickup
+class Flame_thrower_Parts:InventoryItem
 {
 
 __states__
@@ -1829,11 +1998,11 @@ defaultproperties
 
 //**************************************************************************
 //
-//	Mini_missile_launcher
+//	ItemWeaponMiniMissileLauncher
 //
 //**************************************************************************
 
-class Mini_missile_launcher:Pickup
+class ItemWeaponMiniMissileLauncher:WeaponPickup
 	__mobjinfo__(2003)
 {
 
@@ -1846,22 +2015,23 @@ defaultproperties
 {
 	ConversationID = 192;//190
 #ifdef TEASER
-	ClassName = 'missile_gun';
+	PickupString = "missile gun";
 #else
-	ClassName = 'mini_missile_launcher';
+	PickupString = "mini missile launcher";
 #endif
 	IdleState = S_MISSILE_LAUNCHER;
+	WeaponType = wp_missile;
 }
 
 }
 
 //**************************************************************************
 //
-//	Mauler
+//	ItemWeaponMauler
 //
 //**************************************************************************
 
-class Mauler:Pickup
+class ItemWeaponMauler:WeaponPickup
 	__mobjinfo__(2004)
 {
 
@@ -1874,22 +2044,23 @@ defaultproperties
 {
 	ConversationID = 193;//191
 #ifdef TEASER
-	ClassName = 'blaster';
+	PickupString = "blaster";
 #else
-	ClassName = 'mauler';
+	PickupString = "mauler";
 #endif
 	IdleState = S_MAULER;
+	WeaponType = wp_blaster;
 }
 
 }
 
 //**************************************************************************
 //
-//	Crossbow
+//	ItemWeaponCrossbow
 //
 //**************************************************************************
 
-class Crossbow:Pickup
+class ItemWeaponCrossbow:WeaponPickup
 	__mobjinfo__(2001)
 {
 
@@ -1901,19 +2072,20 @@ __states__
 defaultproperties
 {
 	ConversationID = 194;//192
-	ClassName = 'crossbow';
+	PickupString = "crossbow";
 	IdleState = S_CROSSBOW;
+	WeaponType = wp_crossbow;
 }
 
 }
 
 //**************************************************************************
 //
-//	Grenade_launcher
+//	ItemWeaponGrenadeLauncher
 //
 //**************************************************************************
 
-class Grenade_launcher:Pickup
+class ItemWeaponGrenadeLauncher:WeaponPickup
 	__mobjinfo__(154)
 {
 
@@ -1925,19 +2097,20 @@ __states__
 defaultproperties
 {
 	ConversationID = 195;//193
-	ClassName = 'Grenade_launcher';
+	PickupString = "Grenade launcher";
 	IdleState = S_GRENADE_LAUNCHER;
+	WeaponType = wp_grenade;
 }
 
 }
 
 //**************************************************************************
 //
-//	Sigil1
+//	ItemWeaponSigil1
 //
 //**************************************************************************
 
-class Sigil1:Pickup
+class ItemWeaponSigil1:WeaponPickup
 	__mobjinfo__(77)
 {
 
@@ -1949,19 +2122,20 @@ __states__
 defaultproperties
 {
 	ConversationID = 196;//194
-	ClassName = 'SIGIL';
+	PickupString = "SIGIL";
 	IdleState = S_SIGIL_1;
+	WeaponType = wp_sigil;
 }
 
 }
 
 //**************************************************************************
 //
-//	Sigil2
+//	ItemWeaponSigil2
 //
 //**************************************************************************
 
-class Sigil2:Pickup
+class ItemWeaponSigil2:WeaponPickup
 	__mobjinfo__(78)
 {
 
@@ -1973,19 +2147,20 @@ __states__
 defaultproperties
 {
 	ConversationID = 197;//195
-	ClassName = 'SIGIL';
+	PickupString = "SIGIL";
 	IdleState = S_SIGIL_2;
+	WeaponType = wp_sigil;
 }
 
 }
 
 //**************************************************************************
 //
-//	Sigil3
+//	ItemWeaponSigil3
 //
 //**************************************************************************
 
-class Sigil3:Pickup
+class ItemWeaponSigil3:WeaponPickup
 	__mobjinfo__(79)
 {
 
@@ -1997,19 +2172,20 @@ __states__
 defaultproperties
 {
 	ConversationID = 198;//196
-	ClassName = 'SIGIL';
+	PickupString = "SIGIL";
 	IdleState = S_SIGIL_3;
+	WeaponType = wp_sigil;
 }
 
 }
 
 //**************************************************************************
 //
-//	Sigil4
+//	ItemWeaponSigil4
 //
 //**************************************************************************
 
-class Sigil4:Pickup
+class ItemWeaponSigil4:WeaponPickup
 	__mobjinfo__(80)
 {
 
@@ -2021,19 +2197,20 @@ __states__
 defaultproperties
 {
 	ConversationID = 199;//197
-	ClassName = 'SIGIL';
+	PickupString = "SIGIL";
 	IdleState = S_SIGIL_4;
+	WeaponType = wp_sigil;
 }
 
 }
 
 //**************************************************************************
 //
-//	Sigil5
+//	ItemWeaponSigil5
 //
 //**************************************************************************
 
-class Sigil5:Pickup
+class ItemWeaponSigil5:WeaponPickup
 	__mobjinfo__(81)
 {
 
@@ -2045,8 +2222,9 @@ __states__
 defaultproperties
 {
 	ConversationID = 200;//198
-	ClassName = 'SIGIL';
+	PickupString = "SIGIL";
 	IdleState = S_SIGIL_5;
+	WeaponType = wp_sigil;
 }
 
 }
@@ -2057,13 +2235,14 @@ defaultproperties
 //
 //**************************************************************************
 
-class BrokenPowerCoupling:Pickup
+class BrokenPowerCoupling:InventoryItem
 	__mobjinfo__(226)
 {
 
 __states__
 {
-	S_BROKEN_POWER_COUPLING('COUP', 2, -1.0, S_1232) { }
+	// FIXME
+	S_BROKEN_POWER_COUPLING('COUP', 2, -1.0, S_COUPLING_2) { }
 }
 
 defaultproperties
@@ -2200,7 +2379,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class Prison_pass:Pickup
+class Prison_pass:InventoryItem
 {
 
 defaultproperties
@@ -2275,7 +2454,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class Report:Pickup
+class Report:InventoryItem
 {
 
 defaultproperties
@@ -2293,7 +2472,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class Toughness:Pickup
+class Toughness:InventoryItem
 {
 
 __states__
@@ -2316,7 +2495,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class Accuracy:Pickup
+class Accuracy:InventoryItem
 {
 
 __states__
@@ -2339,7 +2518,7 @@ defaultproperties
 //
 //**************************************************************************
 
-class Oracle_Pass:Pickup
+class Oracle_Pass:InventoryItem
 {
 
 #ifndef TEASER
@@ -2383,15 +2562,12 @@ defaultproperties
 }
 #endif
 
-#ifdef TEASER
-#else
-#endif
-
-#ifndef TEASER
-#endif
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2002/06/29 15:59:26  dj_jl
+//  Split out items, projectiles and decorations.
+//
 //  Revision 1.1  2002/06/22 07:18:43  dj_jl
 //  Seperated all pickup items.
 //

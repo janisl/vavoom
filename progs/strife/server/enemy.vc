@@ -215,7 +215,7 @@ void Actor::A_ActiveSound(void)
 {
 	if (ActiveSound)
 	{
-		PlaySound(ActiveSound, CHAN_AUTO);
+		PlaySound(ActiveSound, CHAN_VOICE);
 	}
 }
 
@@ -370,6 +370,9 @@ void Actor::A_CheckRefire(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/06/29 15:59:26  dj_jl
+//  Split out items, projectiles and decorations.
+//
 //  Revision 1.22  2002/05/18 17:00:01  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

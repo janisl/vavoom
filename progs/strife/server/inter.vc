@@ -142,30 +142,6 @@ void Pickup::TouchSpecial(Actor Toucher)
 	Toucher.PlaySound(PickupSound, CHAN_ITEM);
 }
 
-class AmmoPickup:Pickup
-	abstract
-{
-
-int AmmoType;
-int AmmoCount;
-
-//==========================================================================
-//
-//	HandlePickup
-//
-//==========================================================================
-
-boolean HandlePickup(Actor Toucher)
-{
-	return true;
-}
-
-defaultproperties
-{
-}
-
-}
-
 //**************************************************************************
 //**************************************************************************
 
@@ -765,6 +741,9 @@ void Actor::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/06/29 15:59:26  dj_jl
+//  Split out items, projectiles and decorations.
+//
 //  Revision 1.17  2002/05/18 17:00:01  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

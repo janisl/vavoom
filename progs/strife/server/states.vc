@@ -69,7 +69,7 @@ __states__(Actor)
 	S_151('POW3', 6, 3.0 / 35.0, S_152) { }
 	S_152('POW3', 7, 3.0 / 35.0, S_NULL) { }
 	S_153('ZAP1', 1, 3.0 / 35.0, S_155) { A_Unknown24(); }
-	S_154('ZAP1', 0, 3.0 / 35.0, S_155) { A_25(); }
+	S_ZAP1_0('ZAP1', 0, 3.0 / 35.0, S_155) { A_25(); }
 	S_155('ZAP1', 1, 3.0 / 35.0, S_156) { }
 	S_156('ZAP1', 2, 3.0 / 35.0, S_157) { }
 	S_157('ZAP1', 3, 3.0 / 35.0, S_158) { }
@@ -98,12 +98,8 @@ __states__(Actor)
 	S_180('SHT1', 1, 4.0 / 35.0, S_179) { }
 	S_181('SHT2', 0, 5.0 / 35.0, S_182) { }
 	S_182('SHT2', 1, 5.0 / 35.0, S_131) { }
-	S_183('GRIN', 0, 3.0 / 35.0, S_184) { A_26(); }
-	S_184('GRIN', 1, 3.0 / 35.0, S_183) { A_26(); }
-	S_185('GRAP', 0, 3.0 / 35.0, S_186) { A_26(); }
-	S_186('GRAP', 1, 3.0 / 35.0, S_185) { A_26(); }
-	S_187('UBAM', 0, 3.0 / 35.0, S_188) { A_26(); }
-	S_188('UBAM', 1, 3.0 / 35.0, S_187) { A_26(); }
+	S_187('UBAM', 0, 3.0 / 35.0, S_188) { A_DecReactionCount(); }
+	S_188('UBAM', 1, 3.0 / 35.0, S_187) { A_DecReactionCount(); }
 	S_189('BNG2', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_190) { A_Unknown27(); }
 	S_190('BNG2', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_191) { }
 	S_191('BNG2', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_192) { }
@@ -113,29 +109,14 @@ __states__(Actor)
 	S_195('BNG2', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_196) { }
 	S_196('BNG2', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_197) { }
 	S_197('BNG2', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
-	S_198('BNG4', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_199) { A_Unknown27(); }
-	S_199('BNG4', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_200) { }
-	S_200('BNG4', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_201) { }
-	S_201('BNG4', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_202) { }
-	S_202('BNG4', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_203) { }
-	S_203('BNG4', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_204) { }
-	S_204('BNG4', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_205) { }
-	S_205('BNG4', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_206) { }
-	S_206('BNG4', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_207) { }
-	S_207('BNG4', 9 | FF_FULLBRIGHT, 3.0 / 35.0, S_208) { }
-	S_208('BNG4', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_209) { }
-	S_209('BNG4', 11 | FF_FULLBRIGHT, 3.0 / 35.0, S_210) { }
-	S_210('BNG4', 12 | FF_FULLBRIGHT, 3.0 / 35.0, S_211) { }
-	S_211('BNG4', 13 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
-	S_220('BNG3', 0, 1.0 / 35.0, S_NULL) { A_28(); }
 	S_221('BNG3', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_222) { A_Explode2(); }
-	S_222('BNG3', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_223) { A_26(); }
+	S_222('BNG3', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_223) { A_DecReactionCount(); }
 	S_223('FLBE', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_224) { A_30(); }
-	S_224('FLBE', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_225) { A_26(); }
+	S_224('FLBE', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_225) { A_DecReactionCount(); }
 	S_225('FLBE', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_226) { A_Explode2(); }
-	S_226('FLBE', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_227) { A_26(); }
+	S_226('FLBE', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_227) { A_DecReactionCount(); }
 	S_227('FLBE', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_228) { A_Explode2(); }
-	S_228('FLBE', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_229) { A_26(); }
+	S_228('FLBE', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_229) { A_DecReactionCount(); }
 	S_229('FLBE', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_226) { A_30(); }
 	S_230('FLBE', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_231) { }
 	S_231('FLBE', 8 | FF_FULLBRIGHT, 2.0 / 35.0, S_232) { A_30(); }
@@ -145,12 +126,9 @@ __states__(Actor)
 	S_235('OCLW', 0, 2.0 / 35.0, S_235) { A_32(); }
 	S_236('CCLW', 0, 6.0 / 35.0, S_NULL) { }
 	S_237('TEND', 0, 20.0 / 35.0, S_NULL) { }
-	S_238('MICR', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_238) { A_33(); }
-	S_239('MISS', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_240) { A_33(); }
+	S_MINI_MISSILE('MICR', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_MINI_MISSILE) { A_RocketTrail(); }
+	S_239('MISS', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_240) { A_RocketTrail(); }
 	S_240('MISS', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_239) { A_34(); }
-	S_241('AROW', 0, 10.0 / 35.0, S_241) { A_ActiveSound(); }
-	S_242('ARWP', 0, 10.0 / 35.0, S_242) { A_ActiveSound(); }
-	S_243('AROW', 0, 1.0 / 35.0, S_NULL) { }
 	S_244('TORP', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_245) { }
 	S_245('TORP', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_246) { }
 	S_246('TORP', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_247) { }
@@ -163,14 +141,14 @@ __states__(Actor)
 	S_253('TWAV', 0 | FF_FULLBRIGHT, 9.0 / 35.0, S_254) { }
 	S_254('TWAV', 1 | FF_FULLBRIGHT, 9.0 / 35.0, S_255) { }
 	S_255('TWAV', 2 | FF_FULLBRIGHT, 9.0 / 35.0, S_NULL) { }
-	S_256('MISL', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_258) { }
-	S_257('MISL', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_258) { A_Explode(); }
-	S_258('MISL', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_259) { }
-	S_259('MISL', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_260) { }
-	S_260('MISL', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_261) { }
-	S_261('MISL', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_262) { }
-	S_262('MISL', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_263) { }
-	S_263('MISL', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_NULL) { }
+	S_MISSILE_NO_EXPLODE('MISL', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_MISSILE_X2) { }
+	S_MISSILE_X1('MISL', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_MISSILE_X2) { A_Explode(); }
+	S_MISSILE_X2('MISL', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_MISSILE_X3) { }
+	S_MISSILE_X3('MISL', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_MISSILE_X4) { }
+	S_MISSILE_X4('MISL', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE_X5) { }
+	S_MISSILE_X5('MISL', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE_X6) { }
+	S_MISSILE_X6('MISL', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE_X7) { }
+	S_MISSILE_X7('MISL', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_NULL) { }
 	S_TFOG1('TFOG', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG2) { }
 	S_TFOG2('TFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG3) { }
 	S_TFOG3('TFOG', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG4) { }
@@ -244,25 +222,6 @@ __states__(Actor)
 	S_PEASANT2_STAND('PEAS', 0, 5.0 / 35.0, S_PEASANT2_STAND) { A_ResetHealth(); }
 	S_PEASANT2_PAIN('AGRD', 0, 5.0 / 35.0, S_PEASANT2_PAIN) { A_ResetHealth(); }
 	S_422('PLAY', 0, 175.0 / 35.0, S_422) { A_54(); }
-	S_423('SACR', 0, -1.0, S_NULL) { }
-	S_424('TNK1', 0, 15.0 / 35.0, S_425) { }
-	S_425('TNK1', 1, 11.0 / 35.0, S_426) { }
-	S_426('TNK1', 2, 40.0 / 35.0, S_424) { }
-	S_427('TNK2', 0, 15.0 / 35.0, S_428) { }
-	S_428('TNK2', 1, 11.0 / 35.0, S_429) { }
-	S_429('TNK2', 2, 40.0 / 35.0, S_427) { }
-	S_430('TNK3', 0, 15.0 / 35.0, S_431) { }
-	S_431('TNK3', 1, 11.0 / 35.0, S_432) { }
-	S_432('TNK3', 2, 40.0 / 35.0, S_430) { }
-	S_433('TNK4', 0, 15.0 / 35.0, S_434) { }
-	S_434('TNK4', 1, 11.0 / 35.0, S_435) { }
-	S_435('TNK4', 2, 40.0 / 35.0, S_433) { }
-	S_436('TNK5', 0, 15.0 / 35.0, S_437) { }
-	S_437('TNK5', 1, 11.0 / 35.0, S_438) { }
-	S_438('TNK5', 2, 40.0 / 35.0, S_436) { }
-	S_439('TNK6', 0, 15.0 / 35.0, S_440) { }
-	S_440('TNK6', 1, 11.0 / 35.0, S_441) { }
-	S_441('TNK6', 2, 40.0 / 35.0, S_439) { }
 	S_REBEL_DIE8('HMN1', 13, -1.0, S_NULL) { }
 	S_560('PUFY', 1, 4.0 / 35.0, S_561) { }
 	S_561('PUFY', 2, 4.0 / 35.0, S_562) { }
@@ -305,13 +264,6 @@ __states__(Actor)
 	S_849('MTHD', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_850) { }
 	S_850('MTHD', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_851) { }
 	S_851('MTHD', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
-	S_958('NEST', 0, -1.0, S_NULL) { }
-	S_959('PODD', 0, 60.0 / 35.0, S_959) { A_Look(); }
-	S_960('PODD', 0, 360.0 / 35.0, S_961) { }
-	S_961('PODD', 1, 9.0 / 35.0, S_962) { A_Fall(); }
-	S_962('PODD', 2, 9.0 / 35.0, S_963) { }
-	S_963('PODD', 3, 9.0 / 35.0, S_964) { A_89(); }
-	S_964('PODD', 4, -1.0, S_NULL) { }
 	S_965('ZAP6', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_966) { }
 	S_966('ZAP6', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_967) { A_90(); }
 	S_967('ZAP6', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_965) { A_90(); }
@@ -333,10 +285,10 @@ __states__(Actor)
 	S_983('ZOT1', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_984) { }
 	S_984('ZOT1', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_985) { }
 	S_985('ZOT1', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_981) { }
-	S_986('ZAP5', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_987) { A_26(); }
+	S_986('ZAP5', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_987) { A_DecReactionCount(); }
 	S_987('ZAP5', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_988) { A_92(); }
-	S_988('ZAP5', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_989) { A_26(); }
-	S_989('ZAP5', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_986) { A_26(); }
+	S_988('ZAP5', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_989) { A_DecReactionCount(); }
+	S_989('ZAP5', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_986) { A_DecReactionCount(); }
 	S_990('ZOT2', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_991) { A_34(); }
 	S_991('ZOT2', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_992) { A_34(); }
 	S_992('ZOT2', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_993) { A_34(); }
@@ -353,87 +305,15 @@ __states__(Actor)
 	S_1132('BASE', 5, 5.0 / 35.0, S_1133) { }
 	S_1133('BASE', 6, 5.0 / 35.0, S_1134) { }
 	S_1134('BASE', 7, -1.0, S_NULL) { }
-	S_1135('FRBL', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_1136) { }
-	S_1136('FRBL', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_1137) { }
-	S_1137('FRBL', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_1135) { A_26(); }
-	S_1138('FRBL', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_1139) { A_107(); }
-	S_1139('FRBL', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_1140) { }
-	S_1140('FRBL', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_1141) { }
-	S_1141('FRBL', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_1142) { }
-	S_1142('FRBL', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_1143) { }
-	S_1143('FRBL', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
-	S_1144('KLAX', 0, 5.0 / 35.0, S_1144) { A_CheckAlarm(); }
-	S_1145('KLAX', 1, 6.0 / 35.0, S_1146) { A_109(); }
-	S_1146('KLAX', 2, 60.0 / 35.0, S_1145) { }
-	S_1158('PSTN', 0, 8.0 / 35.0, S_1159) { }
-	S_1159('PSTN', 1, 8.0 / 35.0, S_1158) { }
-	S_1160('PSTN', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_1161) { A_Scream(); }
-	S_1161('PSTN', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_1162) { A_Fall(); }
-	S_1162('PSTN', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_1163) { A_110(); }
-	S_1163('PSTN', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_1164) { A_111(); }
-	S_1164('PSTN', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_1165) { A_XDying(); }
-	S_1165('PSTN', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_1166) { }
-	S_1166('PSTN', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_1167) { A_111(); }
-	S_1167('PSTN', 7, 4.0 / 35.0, S_1168) { }
-	S_1168('PSTN', 8, -1.0, S_NULL) { }
-	S_1169('SECR', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_1170) { }
-	S_1170('SECR', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_1171) { }
-	S_1171('SECR', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_1172) { }
-	S_1172('SECR', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_1169) { }
-	S_1173('SECR', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_1174) { A_111(); }
-	S_1174('SECR', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_1175) { A_Fall(); }
-	S_1175('SECR', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_1176) { A_110(); }
-	S_1176('SECR', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_1177) { A_XDying(); }
-	S_1177('SECR', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_1178) { A_111(); }
-	S_1178('SECR', 9, 5.0 / 35.0, S_1179) { }
-	S_1179('SECR', 10, 5.0 / 35.0, S_1180) { A_111(); }
-	S_1180('SECR', 11, 5.0 / 35.0, S_1181) { }
-	S_1181('SECR', 12, 5.0 / 35.0, S_1182) { A_111(); }
-	S_1182('SECR', 13, 5.0 / 35.0, S_1183) { }
-	S_1183('SECR', 14, 5.0 / 35.0, S_1184) { A_111(); }
-	S_1184('SECR', 15, -1.0, S_NULL) { }
-	S_1191('BOOM', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_1192) { A_112(); }
-	S_1192('BOOM', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_1193) { A_110(); }
-	S_1193('BOOM', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_1194) { A_113(); }
-	S_1194('BOOM', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_1195) { A_111(); }
-	S_1195('BOOM', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_1196) { }
-	S_1196('BOOM', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_1197) { }
-	S_1197('BOOM', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_1198) { A_111(); }
-	S_1198('BOOM', 7 | FF_FULLBRIGHT, 1.0 / 35.0, S_1199) { A_112(); }
-	S_1199('BOOM', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_1200) { }
-	S_1200('BOOM', 9 | FF_FULLBRIGHT, 3.0 / 35.0, S_1201) { A_111(); }
-	S_1201('BOOM', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_1202) { A_111(); }
-	S_1202('BOOM', 11 | FF_FULLBRIGHT, 3.0 / 35.0, S_1203) { A_111(); }
-	S_1203('BOOM', 12 | FF_FULLBRIGHT, 3.0 / 35.0, S_1204) { }
-	S_1204('BOOM', 13 | FF_FULLBRIGHT, 3.0 / 35.0, S_1205) { }
-	S_1205('BOOM', 14 | FF_FULLBRIGHT, 3.0 / 35.0, S_1206) { A_111(); }
-	S_1206('BOOM', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_1207) { }
-	S_1207('BOOM', 16 | FF_FULLBRIGHT, 3.0 / 35.0, S_1208) { }
-	S_1208('BOOM', 17 | FF_FULLBRIGHT, 3.0 / 35.0, S_1209) { }
-	S_1209('BOOM', 18 | FF_FULLBRIGHT, 3.0 / 35.0, S_1210) { }
-	S_1210('BOOM', 19 | FF_FULLBRIGHT, 3.0 / 35.0, S_1211) { }
-	S_1211('BOOM', 20 | FF_FULLBRIGHT, 3.0 / 35.0, S_1212) { A_114(); }
-	S_1212('BOOM', 21 | FF_FULLBRIGHT, 3.0 / 35.0, S_1213) { }
-	S_1213('BOOM', 22 | FF_FULLBRIGHT, 3.0 / 35.0, S_1214) { }
-	S_1214('BOOM', 23 | FF_FULLBRIGHT, 3.0 / 35.0, S_1215) { }
-	S_1215('BOOM', 24 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
-	S_1223('HOGN', 0, 2.0 / 35.0, S_1223) { A_ResetHealth(); }
-	S_1224('HOGN', 1, 1.0 / 35.0, S_1225) { A_ResetHealth(); }
-	S_1225('HOGN', 2, 1.0 / 35.0, S_1223) { A_Pain(); }
-	S_1226('DEAD', 0, -1.0, S_NULL) { }
-	S_1227('SBAN', 0, -1.0, S_NULL) { }
-	S_1228('BOTR', 0, -1.0, S_NULL) { }
-	S_1229('HATR', 0, -1.0, S_NULL) { }
-	S_1230('TOPR', 0, -1.0, S_NULL) { }
-	S_1231('COUP', 0, 5.0 / 35.0, S_1232) { }
-	S_1232('COUP', 1, 5.0 / 35.0, S_1231) { }
-	S_1234('BUBB', 0, 4.0 / 35.0, S_1234) { A_ActiveSound(); }
-	S_1235('BUBF', 0, 4.0 / 35.0, S_1235) { A_ActiveSound(); }
-	S_1236('BUBC', 0, 4.0 / 35.0, S_1236) { A_ActiveSound(); }
-	S_1237('ASPR', 0, 4.0 / 35.0, S_1237) { A_ActiveSound(); }
-	S_1238('SPDL', 0, 5.0 / 35.0, S_1239) { A_ActiveSound(); }
-	S_1239('SPDL', 1, 5.0 / 35.0, S_1240) { A_ActiveSound(); }
-	S_1240('SPDL', 2, 5.0 / 35.0, S_1238) { A_ActiveSound(); }
+	S_FLAMEFX_1('FRBL', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEFX_2) { }
+	S_FLAMEFX_2('FRBL', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEFX_3) { }
+	S_FLAMEFX_3('FRBL', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEFX_1) { A_DecReactionCount(); }
+	S_FLAMEFX_X1('FRBL', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X2) { A_FlameFXExplode(); }
+	S_FLAMEFX_X2('FRBL', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X3) { }
+	S_FLAMEFX_X3('FRBL', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X4) { }
+	S_FLAMEFX_X4('FRBL', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X5) { }
+	S_FLAMEFX_X5('FRBL', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X6) { }
+	S_FLAMEFX_X6('FRBL', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
 	S_TOKENS('TOKN', 0, -1.0, S_NULL) { }
 	S_MEAT_1('MEAT', 0, 700.0 / 35.0, S_NULL) { }
 	S_MEAT_2('MEAT', 1, 700.0 / 35.0, S_NULL) { }
@@ -480,165 +360,18 @@ __states__(Actor)
 	S_1289('FFOT', 2, 9.0 / 35.0, S_1290) { }
 	S_1290('FFOT', 3, 9.0 / 35.0, S_NULL) { }
 	S_1291('DIE1', 0, -1.0, S_NULL) { }
-	S_1297('BARW', 0, -1.0, S_NULL) { }
-	S_1298('BARW', 1, 2.0 / 35.0, S_1299) { A_Scream(); }
-	S_1299('BARW', 2, 2.0 / 35.0, S_1300) { }
-	S_1300('BARW', 3, 2.0 / 35.0, S_1301) { A_Fall(); }
-	S_1301('BARW', 4, 2.0 / 35.0, S_1302) { }
-	S_1302('BARW', 5, 2.0 / 35.0, S_1303) { }
-	S_1303('BARW', 6, 2.0 / 35.0, S_1304) { }
-	S_1304('BARW', 7, -1.0, S_NULL) { }
-	S_1305('BART', 0, -1.0, S_NULL) { }
-	S_1306('BART', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_1307) { A_Scream(); }
-	S_1307('BART', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_1308) { }
-	S_1308('BART', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_1309) { }
-	S_1309('BART', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_1310) { A_Fall(); }
-	S_1310('BART', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_1311) { A_Explode(); }
-	S_1311('BART', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_1312) { }
-	S_1312('BART', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_1313) { }
-	S_1313('BART', 8 | FF_FULLBRIGHT, 2.0 / 35.0, S_1314) { }
-	S_1314('BART', 9 | FF_FULLBRIGHT, 3.0 / 35.0, S_1315) { }
-	S_1315('BART', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_1316) { }
-	S_1316('BART', 11, -1.0, S_NULL) { }
-	S_1317('LAMP', 0, -1.0, S_NULL) { }
-	S_1318('LANT', 0, -1.0, S_NULL) { }
-	S_1319('BARL', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_1320) { }
-	S_1320('BARL', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_1321) { }
-	S_1321('BARL', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_1322) { }
-	S_1322('BARL', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_1319) { }
-	S_1323('BOWL', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_1324) { }
-	S_1324('BOWL', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_1325) { }
-	S_1325('BOWL', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_1326) { }
-	S_1326('BOWL', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_1323) { }
-	S_1327('BRAZ', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_1328) { }
-	S_1328('BRAZ', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_1329) { }
-	S_1329('BRAZ', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_1330) { }
-	S_1330('BRAZ', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_1327) { }
-	S_1331('TRCH', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_1332) { }
-	S_1332('TRCH', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_1333) { }
-	S_1333('TRCH', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_1334) { }
-	S_1334('TRCH', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_1331) { }
-	S_1335('LTRH', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_1336) { }
-	S_1336('LTRH', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_1337) { }
-	S_1337('LTRH', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_1338) { }
-	S_1338('LTRH', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_1335) { }
-	S_1339('LMPC', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_1340) { }
-	S_1340('LMPC', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_1341) { }
-	S_1341('LMPC', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_1342) { }
-	S_1342('LMPC', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_1339) { }
-	S_1343('LOGS', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_1344) { }
-	S_1344('LOGS', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_1345) { }
-	S_1345('LOGS', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_1346) { }
-	S_1346('LOGS', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_1343) { }
-	S_1347('TRHO', 0, -1.0, S_NULL) { }
-	S_1348('WATR', 0, -1.0, S_NULL) { }
-	S_1349('MUGG', 0, -1.0, S_NULL) { }
-	S_1358('CRYS', 0, 16.0 / 35.0, S_1359) { A_ActiveSound(); }
-	S_1359('CRYS', 1, 5.0 / 35.0, S_1360) { A_ActiveSound(); }
-	S_1360('CRYS', 2, 4.0 / 35.0, S_1361) { A_ActiveSound(); }
-	S_1361('CRYS', 3, 4.0 / 35.0, S_1362) { A_ActiveSound(); }
-	S_1362('CRYS', 4, 4.0 / 35.0, S_1363) { A_ActiveSound(); }
-	S_1363('CRYS', 5, 4.0 / 35.0, S_1358) { A_ActiveSound(); }
 	S_1381('ANKH', 0, -1.0, S_NULL) { }
-	S_1427('LITE', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
-	S_1428('CNDL', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
-	S_1429('CLBR', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
-	S_1430('LITS', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
-	S_1431('LITB', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
-	S_1432('LITG', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
-	S_1433('ROK1', 0, -1.0, S_NULL) { }
-	S_1434('ROK2', 0, -1.0, S_NULL) { }
-	S_1435('ROK3', 0, -1.0, S_NULL) { }
-	S_1436('ROK4', 0, -1.0, S_NULL) { }
-	S_1437('LOGG', 0, 5.0 / 35.0, S_1438) { A_ActiveSound(); }
-	S_1438('LOGG', 1, 5.0 / 35.0, S_1439) { A_ActiveSound(); }
-	S_1439('LOGG', 2, 5.0 / 35.0, S_1440) { A_ActiveSound(); }
-	S_1440('LOGG', 3, 5.0 / 35.0, S_1437) { A_ActiveSound(); }
-	S_1441('RUB1', 0, -1.0, S_NULL) { }
-	S_1442('RUB2', 0, -1.0, S_NULL) { }
-	S_1443('RUB3', 0, -1.0, S_NULL) { }
-	S_1444('RUB4', 0, -1.0, S_NULL) { }
-	S_1445('RUB5', 0, -1.0, S_NULL) { }
-	S_1446('RUB6', 0, -1.0, S_NULL) { }
-	S_1447('RUB7', 0, -1.0, S_NULL) { }
-	S_1448('RUB8', 0, -1.0, S_NULL) { }
-	S_1449('CHAN', 0, -1.0, S_NULL) { }
-	S_1450('STAT', 0, -1.0, S_NULL) { }
-	S_1451('DSTA', 0, -1.0, S_NULL) { }
-	S_1452('CRAB', 0, -1.0, S_NULL) { }
-	S_1453('CAGE', 0, -1.0, S_NULL) { }
-	S_1454('TREE', 0, -1.0, S_NULL) { }
-	S_1455('TREE', 1, -1.0, S_NULL) { }
-	S_1456('TREE', 2, -1.0, S_NULL) { }
-	S_1457('TRE1', 0, -1.0, S_NULL) { }
-	S_1458('BUSH', 0, -1.0, S_NULL) { }
-	S_1459('SHRB', 0, -1.0, S_NULL) { }
-	S_1460('STAK', 0, -1.0, S_NULL) { }
-	S_1461('BAR1', 0, -1.0, S_NULL) { }
-	S_1462('VASE', 0, -1.0, S_NULL) { }
-	S_1463('VASE', 1, -1.0, S_NULL) { }
-	S_1464('STOL', 0, -1.0, S_NULL) { }
-	S_1465('POT1', 0, -1.0, S_NULL) { }
-	S_1466('TUB1', 0, -1.0, S_NULL) { }
-	S_1467('ANVL', 0, -1.0, S_NULL) { }
-	S_1468('TLMP', 0, -1.0, S_NULL) { }
-	S_1469('TLMP', 1, -1.0, S_NULL) { }
-	S_1470('TRAY', 0, -1.0, S_NULL) { }
-	S_1471('APOW', 0, 4.0 / 35.0, S_1471) { A_ActiveSound(); }
-	S_1472('AFED', 0, -1.0, S_NULL) { }
-	S_1473('DRIP', 0, 6.0 / 35.0, S_1474) { A_ActiveSound(); }
-	S_1474('DRIP', 1, 4.0 / 35.0, S_1475) { }
-	S_1475('DRIP', 2, 4.0 / 35.0, S_1476) { }
-	S_1476('DRIP', 3, 4.0 / 35.0, S_1477) { A_ActiveSound(); }
-	S_1477('DRIP', 4, 4.0 / 35.0, S_1478) { }
-	S_1478('DRIP', 5, 4.0 / 35.0, S_1479) { }
-	S_1479('DRIP', 6, 4.0 / 35.0, S_1480) { A_ActiveSound(); }
-	S_1480('DRIP', 7, 4.0 / 35.0, S_1473) { }
-	S_1481('CDRP', 0, 10.0 / 35.0, S_1482) { }
-	S_1482('CDRP', 1, 8.0 / 35.0, S_1483) { }
-	S_1483('CDRP', 2, 8.0 / 35.0, S_1484) { }
-	S_1484('CDRP', 3, 8.0 / 35.0, S_1481) { }
-	S_1485('SPLH', 0, 4.0 / 35.0, S_1486) { }
-	S_1486('SPLH', 1, 4.0 / 35.0, S_1487) { }
-	S_1487('SPLH', 2, 4.0 / 35.0, S_1488) { }
-	S_1488('SPLH', 3, 8.0 / 35.0, S_1489) { }
-	S_1489('SPLH', 4, 4.0 / 35.0, S_1490) { }
-	S_1490('SPLH', 5, 4.0 / 35.0, S_1491) { }
-	S_1491('SPLH', 6, 4.0 / 35.0, S_1492) { }
-	S_1492('SPLH', 7, 4.0 / 35.0, S_1485) { A_ActiveSound(); }
-	S_1493('WTFT', 0, 4.0 / 35.0, S_1494) { }
-	S_1494('WTFT', 1, 4.0 / 35.0, S_1495) { }
-	S_1495('WTFT', 2, 4.0 / 35.0, S_1496) { }
-	S_1496('WTFT', 3, 4.0 / 35.0, S_1493) { A_ActiveSound(); }
-	S_1497('HERT', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_1498) { }
-	S_1498('HERT', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_1499) { }
-	S_1499('HERT', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_1497) { }
-	S_1500('TELP', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_1501) { }
-	S_1501('TELP', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_1502) { }
-	S_1502('TELP', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_1503) { }
-	S_1503('TELP', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_1500) { }
-	S_1504('MONI', 0, -1.0, S_NULL) { }
-	S_1505('STEL', 0, -1.0, S_NULL) { }
-	S_1506('STLA', 0, -1.0, S_NULL) { }
-	S_1507('STLE', 0, -1.0, S_NULL) { }
-	S_1508('HUGE', 0, 4.0 / 35.0, S_1509) { }
-	S_1509('HUGE', 1, 5.0 / 35.0, S_1510) { }
-	S_1510('HUGE', 2, 5.0 / 35.0, S_1511) { }
-	S_1511('HUGE', 3, 5.0 / 35.0, S_1508) { }
-	S_1512('STLG', 0, -1.0, S_NULL) { }
-	S_1513('STLG', 1, -1.0, S_NULL) { }
-	S_1514('STLG', 2, -1.0, S_NULL) { }
-	S_1515('STLG', 3, -1.0, S_NULL) { }
-	S_1516('STLG', 4, -1.0, S_NULL) { }
-	S_1517('STLG', 5, -1.0, S_NULL) { }
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/06/29 15:59:26  dj_jl
+//	Split out items, projectiles and decorations.
+//
 //	Revision 1.12  2002/06/22 07:18:44  dj_jl
 //	Seperated all pickup items.
-//
+//	
 //	Revision 1.11  2002/05/03 17:12:52  dj_jl
 //	S_NULL defined in Entity.
 //	

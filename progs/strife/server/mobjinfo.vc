@@ -44,7 +44,6 @@ class Thing0:Actor
 		Radius = 2.0;
 		Height = 1.0;
 		Mass = 10000.0;
-		ReactionCount = 8;
 		bShootable = true;
 		bHidden = true;
 		bUnknown4 = true;
@@ -94,144 +93,14 @@ class Thing30:Actor
 	defaultproperties
 	{
 		Health = 20;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		bShootable = true;
 		bHidden = true;
 		IdleState = S_422;
-		ActiveSound = 'Sound55';
+		ActiveSound = 'Teleport';
 	}
 };
 
-//**************************************************************************
-//
-//	Thing31
-//
-//**************************************************************************
-
-class Thing31:Actor
-	__mobjinfo__(209)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 192.0;
-		Mass = 50000.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_424;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing32
-//
-//**************************************************************************
-
-class Thing32:Actor
-	__mobjinfo__(210)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 192.0;
-		Mass = 50000.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_427;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing33
-//
-//**************************************************************************
-
-class Thing33:Actor
-	__mobjinfo__(211)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 192.0;
-		Mass = 50000.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_430;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing34
-//
-//**************************************************************************
-
-class Thing34:Actor
-	__mobjinfo__(213)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 56.0;
-		Mass = 50000.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_433;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing35
-//
-//**************************************************************************
-
-class Thing35:Actor
-	__mobjinfo__(214)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 56.0;
-		Mass = 50000.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_436;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing36
-//
-//**************************************************************************
-
-class Thing36:Actor
-	__mobjinfo__(229)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 56.0;
-		Mass = 50000.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_439;
-	}
-};
-
-class Prayer;
+class KneelingGyu;
 class Beggar;
 class Beggar2;
 class Beggar3;
@@ -255,16 +124,11 @@ class Thing51:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		IdleState = S_560;
-		SightSound = 'Sound73';
+		SightSound = 'ReactorActive2';
 	}
 };
 
@@ -294,11 +158,6 @@ class Thing68:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
@@ -316,11 +175,6 @@ class Thing69:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
@@ -336,77 +190,23 @@ class EntityBoss;
 class SubEntity;
 //**************************************************************************
 //
-//	Thing76
-//
-//**************************************************************************
-
-class Thing76:Actor
-	__mobjinfo__(26)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 84.0;
-		Height = 47.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		bNoDeathmatch = true;
-		IdleState = S_958;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing77
-//
-//**************************************************************************
-
-class Thing77:Actor
-	__mobjinfo__(198)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 25.0;
-		Height = 91.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		bNoDeathmatch = true;
-		IdleState = S_959;
-		SeeState = S_960;
-		SightSound = 'Slop';
-	}
-};
-
-//**************************************************************************
-//
 //	Thing78
 //
 //**************************************************************************
 
-class Thing78:Actor
+class Thing78:Projectile
 {
 	defaultproperties
 	{
-		Health = 1000;
 		Radius = 8.0;
 		Height = 16.0;
-		Mass = 100.0;
 		Speed = 1050.0;
-		ReactionCount = 8;
 		MissileDamage = 70;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bMissile = true;
 		bUnknown3 = true;
-		bActivateMCross = true;
 		IdleState = S_965;
 		DeathState = S_153;
-		SightSound = 'Sound107';
-		DeathSound = 'Sound108';
+		SightSound = 'SigilFire';
+		DeathSound = 'SigilHit';
 	}
 };
 
@@ -416,27 +216,19 @@ class Thing78:Actor
 //
 //**************************************************************************
 
-class Thing79:Actor
+class Thing79:Projectile
 {
 	defaultproperties
 	{
-		Health = 1000;
 		Radius = 8.0;
 		Height = 16.0;
-		Mass = 100.0;
 		Speed = 1050.0;
-		ReactionCount = 8;
 		MissileDamage = 20;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bMissile = true;
 		bUnknown3 = true;
-		bActivateMCross = true;
 		IdleState = S_965;
 		DeathState = S_153;
-		SightSound = 'Sound107';
-		DeathSound = 'Sound108';
+		SightSound = 'SigilFire';
+		DeathSound = 'SigilHit';
 	}
 };
 
@@ -446,27 +238,19 @@ class Thing79:Actor
 //
 //**************************************************************************
 
-class Thing80:Actor
+class Thing80:Projectile
 {
 	defaultproperties
 	{
-		Health = 1000;
 		Radius = 8.0;
 		Height = 16.0;
-		Mass = 100.0;
 		Speed = 1050.0;
-		ReactionCount = 8;
 		MissileDamage = 70;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bMissile = true;
 		bUnknown3 = true;
-		bActivateMCross = true;
 		IdleState = S_968;
 		DeathState = S_153;
-		SightSound = 'Sound107';
-		DeathSound = 'Sound108';
+		SightSound = 'SigilFire';
+		DeathSound = 'SigilHit';
 	}
 };
 
@@ -476,27 +260,19 @@ class Thing80:Actor
 //
 //**************************************************************************
 
-class Thing81:Actor
+class Thing81:Projectile
 {
 	defaultproperties
 	{
-		Health = 1000;
 		Radius = 8.0;
 		Height = 16.0;
-		Mass = 100.0;
 		Speed = 1050.0;
-		ReactionCount = 8;
 		MissileDamage = 20;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bMissile = true;
 		bUnknown3 = true;
-		bActivateMCross = true;
 		IdleState = S_968;
 		DeathState = S_153;
-		SightSound = 'Sound107';
-		DeathSound = 'Sound108';
+		SightSound = 'SigilFire';
+		DeathSound = 'SigilHit';
 	}
 };
 
@@ -506,27 +282,19 @@ class Thing81:Actor
 //
 //**************************************************************************
 
-class Thing82:Actor
+class Thing82:Projectile
 {
 	defaultproperties
 	{
-		Health = 1000;
 		Radius = 8.0;
 		Height = 16.0;
-		Mass = 100.0;
 		Speed = 1050.0;
-		ReactionCount = 8;
 		MissileDamage = 10;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bMissile = true;
 		bUnknown3 = true;
-		bActivateMCross = true;
 		IdleState = S_965;
 		DeathState = S_153;
-		SightSound = 'Sound107';
-		DeathSound = 'Sound108';
+		SightSound = 'SigilFire';
+		DeathSound = 'SigilHit';
 	}
 };
 
@@ -540,11 +308,6 @@ class Thing83:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
@@ -558,27 +321,19 @@ class Thing83:Actor
 //
 //**************************************************************************
 
-class Thing84:Actor
+class Thing84:Projectile
 {
 	defaultproperties
 	{
-		Health = 1000;
 		Radius = 20.0;
 		Height = 40.0;
-		Mass = 100.0;
 		Speed = 630.0;
-		ReactionCount = 8;
 		MissileDamage = 130;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bMissile = true;
 		bUnknown3 = true;
-		bActivateMCross = true;
 		IdleState = S_976;
 		DeathState = S_155;
-		SightSound = 'Sound107';
-		DeathSound = 'Sound108';
+		SightSound = 'SigilFire';
+		DeathSound = 'SigilHit';
 	}
 };
 
@@ -588,27 +343,19 @@ class Thing84:Actor
 //
 //**************************************************************************
 
-class Thing85:Actor
+class Thing85:Projectile
 {
 	defaultproperties
 	{
-		Health = 1000;
 		Radius = 20.0;
 		Height = 40.0;
-		Mass = 100.0;
 		Speed = 630.0;
-		ReactionCount = 8;
 		MissileDamage = 30;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bMissile = true;
 		bUnknown3 = true;
-		bActivateMCross = true;
 		IdleState = S_976;
 		DeathState = S_155;
-		SightSound = 'Sound107';
-		DeathSound = 'Sound108';
+		SightSound = 'SigilFire';
+		DeathSound = 'SigilHit';
 	}
 };
 
@@ -618,27 +365,19 @@ class Thing85:Actor
 //
 //**************************************************************************
 
-class Thing86:Actor
+class Thing86:Projectile
 {
 	defaultproperties
 	{
-		Health = 1000;
 		Radius = 8.0;
 		Height = 24.0;
-		Mass = 100.0;
 		Speed = 770.0;
-		ReactionCount = 8;
 		MissileDamage = 100;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bMissile = true;
 		bUnknown3 = true;
-		bActivateMCross = true;
 		IdleState = S_981;
 		DeathState = S_159;
-		SightSound = 'Sound107';
-		DeathSound = 'Sound108';
+		SightSound = 'SigilFire';
+		DeathSound = 'SigilHit';
 	}
 };
 
@@ -648,27 +387,19 @@ class Thing86:Actor
 //
 //**************************************************************************
 
-class Thing87:Actor
+class Thing87:Projectile
 {
 	defaultproperties
 	{
-		Health = 1000;
 		Radius = 8.0;
 		Height = 24.0;
-		Mass = 100.0;
 		Speed = 770.0;
-		ReactionCount = 8;
 		MissileDamage = 50;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bMissile = true;
 		bUnknown3 = true;
-		bActivateMCross = true;
 		IdleState = S_981;
 		DeathState = S_159;
-		SightSound = 'Sound107';
-		DeathSound = 'Sound108';
+		SightSound = 'SigilFire';
+		DeathSound = 'SigilHit';
 	}
 };
 
@@ -682,16 +413,12 @@ class Thing88:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
 		Speed = 630.0;
 		ReactionCount = 70;
 		Translucency = 66;
 		bNoBlockmap = true;
 		IdleState = S_986;
-		DeathState = S_154;
+		DeathState = S_ZAP1_0;
 	}
 };
 
@@ -701,27 +428,19 @@ class Thing88:Actor
 //
 //**************************************************************************
 
-class Thing89:Actor
+class Thing89:Projectile
 {
 	defaultproperties
 	{
-		Health = 1000;
 		Radius = 8.0;
 		Height = 16.0;
-		Mass = 100.0;
 		Speed = 980.0;
-		ReactionCount = 8;
 		MissileDamage = 120;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bMissile = true;
 		bUnknown3 = true;
-		bActivateMCross = true;
 		IdleState = S_990;
-		DeathState = S_154;
-		SightSound = 'Sound107';
-		DeathSound = 'Sound108';
+		DeathState = S_ZAP1_0;
+		SightSound = 'SigilFire';
+		DeathSound = 'SigilHit';
 	}
 };
 
@@ -731,27 +450,19 @@ class Thing89:Actor
 //
 //**************************************************************************
 
-class Thing90:Actor
+class Thing90:Projectile
 {
 	defaultproperties
 	{
-		Health = 1000;
 		Radius = 8.0;
 		Height = 16.0;
-		Mass = 100.0;
 		Speed = 980.0;
-		ReactionCount = 8;
 		MissileDamage = 60;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bMissile = true;
 		bUnknown3 = true;
-		bActivateMCross = true;
 		IdleState = S_990;
-		DeathState = S_154;
-		SightSound = 'Sound107';
-		DeathSound = 'Sound108';
+		DeathState = S_ZAP1_0;
+		SightSound = 'SigilFire';
+		DeathSound = 'SigilHit';
 	}
 };
 
@@ -768,12 +479,7 @@ class Thing94:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
 		StepSpeed = 25.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
@@ -793,11 +499,6 @@ class Thing96:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
@@ -812,25 +513,17 @@ class Thing96:Actor
 //
 //**************************************************************************
 
-class Thing97:Actor
+class Thing97:Projectile
 {
 	defaultproperties
 	{
-		Health = 1000;
 		Radius = 10.0;
 		Height = 14.0;
-		Mass = 100.0;
 		Speed = 700.0;
-		ReactionCount = 8;
 		MissileDamage = 2;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bMissile = true;
-		bActivateMCross = true;
 		IdleState = S_235;
 		DeathState = S_236;
-		SightSound = 'Sound103';
+		SightSound = 'LoremasterChain';
 		ActiveSound = 'PunchMiss';
 	}
 };
@@ -845,11 +538,6 @@ class Thing98:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		IdleState = S_237;
@@ -859,58 +547,21 @@ class Thing98:Actor
 
 //**************************************************************************
 //
-//	Thing99
-//
-//**************************************************************************
-
-class Thing99:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 10.0;
-		Height = 14.0;
-		Mass = 100.0;
-		Speed = 700.0;
-		ReactionCount = 8;
-		MissileDamage = 10;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bMissile = true;
-		bActivateMCross = true;
-		IdleState = S_238;
-		DeathState = S_257;
-		SightSound = 'Sound72';
-		DeathSound = 'MissileExplode';
-	}
-};
-
-//**************************************************************************
-//
 //	Thing100
 //
 //**************************************************************************
 
-class Thing100:Actor
+class Thing100:Projectile
 {
 	defaultproperties
 	{
-		Health = 1000;
 		Radius = 10.0;
 		Height = 14.0;
-		Mass = 100.0;
 		Speed = 700.0;
-		ReactionCount = 8;
 		MissileDamage = 7;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bMissile = true;
-		bActivateMCross = true;
-		IdleState = S_238;
-		DeathState = S_256;
-		SightSound = 'Sound72';
+		IdleState = S_MINI_MISSILE;
+		DeathState = S_MISSILE_NO_EXPLODE;
+		SightSound = 'FireMissile';
 		DeathSound = 'MissileExplode';
 	}
 };
@@ -921,85 +572,18 @@ class Thing100:Actor
 //
 //**************************************************************************
 
-class Thing101:Actor
+class Thing101:Projectile
 {
 	defaultproperties
 	{
-		Health = 1000;
 		Radius = 10.0;
 		Height = 14.0;
-		Mass = 100.0;
 		Speed = 700.0;
-		ReactionCount = 8;
 		MissileDamage = 10;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bMissile = true;
-		bActivateMCross = true;
 		IdleState = S_239;
-		DeathState = S_257;
-		SightSound = 'Sound72';
+		DeathState = S_MISSILE_X1;
+		SightSound = 'FireMissile';
 		DeathSound = 'MissileExplode';
-	}
-};
-
-//**************************************************************************
-//
-//	Thing102
-//
-//**************************************************************************
-
-class Thing102:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 10.0;
-		Height = 10.0;
-		Mass = 100.0;
-		Speed = 1050.0;
-		ReactionCount = 8;
-		MissileDamage = 10;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bMissile = true;
-		bActivateMCross = true;
-		IdleState = S_241;
-		DeathState = S_154;
-		SightSound = 'PunchMiss';
-		ActiveSound = 'PunchMiss';
-		DeathSound = 'Sound69';
-	}
-};
-
-//**************************************************************************
-//
-//	Thing103
-//
-//**************************************************************************
-
-class Thing103:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 10.0;
-		Height = 10.0;
-		Mass = 100.0;
-		Speed = 1050.0;
-		ReactionCount = 8;
-		MissileDamage = 500;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bMissile = true;
-		bActivateMCross = true;
-		IdleState = S_242;
-		DeathState = S_243;
-		SightSound = 'PunchMiss';
-		ActiveSound = 'PunchMiss';
 	}
 };
 
@@ -1009,21 +593,13 @@ class Thing103:Actor
 //
 //**************************************************************************
 
-class Thing104:Actor
+class Thing104:Projectile
 {
 	defaultproperties
 	{
-		Health = 1000;
 		Radius = 10.0;
 		Height = 8.0;
-		Mass = 100.0;
 		Speed = 1400.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bMissile = true;
-		bActivateMCross = true;
 		IdleState = S_179;
 		DeathState = S_140;
 	}
@@ -1035,81 +611,17 @@ class Thing104:Actor
 //
 //**************************************************************************
 
-class Thing105:Actor
+class Thing105:Projectile
 {
 	defaultproperties
 	{
-		Health = 1000;
 		Radius = 10.0;
 		Height = 8.0;
-		Mass = 100.0;
 		Speed = 1400.0;
-		ReactionCount = 8;
 		MissileDamage = 1;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bMissile = true;
-		bActivateMCross = true;
 		IdleState = S_179;
 		DeathState = S_136;
-		SightSound = 'Sound89';
-	}
-};
-
-//**************************************************************************
-//
-//	Thing106
-//
-//**************************************************************************
-
-class Thing106:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 13.0;
-		Height = 13.0;
-		Mass = 20.0;
-		Speed = 525.0;
-		ReactionCount = 30;
-		MissileDamage = 1;
-		bNoBlockmap = true;
-		bDropOff = true;
-		bMissile = true;
-		bActivateMCross = true;
-		IdleState = S_185;
-		DeathState = S_198;
-		SightSound = 'Sound105';
-		DeathSound = 'Explode';
-	}
-};
-
-//**************************************************************************
-//
-//	Thing107
-//
-//**************************************************************************
-
-class Thing107:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 13.0;
-		Height = 13.0;
-		Mass = 20.0;
-		Speed = 525.0;
-		ReactionCount = 40;
-		MissileDamage = 1;
-		bNoBlockmap = true;
-		bDropOff = true;
-		bMissile = true;
-		bActivateMCross = true;
-		IdleState = S_183;
-		DeathState = S_220;
-		SightSound = 'Sound105';
-		DeathSound = 'Explode';
+		SightSound = 'SentinelFire';
 	}
 };
 
@@ -1119,23 +631,19 @@ class Thing107:Actor
 //
 //**************************************************************************
 
-class Thing108:Actor
+class Thing108:Projectile
 {
 	defaultproperties
 	{
-		Health = 1000;
 		Radius = 13.0;
 		Height = 13.0;
 		Mass = 15.0;
 		Speed = 875.0;
 		ReactionCount = 15;
-		bNoBlockmap = true;
-		bDropOff = true;
-		bMissile = true;
-		bActivateMCross = true;
+		bNoGravity = false;
 		IdleState = S_187;
 		DeathState = S_189;
-		SightSound = 'Sound105';
+		SightSound = 'FireGrenade';
 		DeathSound = 'Explode';
 	}
 };
@@ -1150,10 +658,6 @@ class Thing109:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
 		ReactionCount = 120;
 		bNoBlockmap = true;
 		IdleState = S_221;
@@ -1167,25 +671,17 @@ class Thing109:Actor
 //
 //**************************************************************************
 
-class Thing110:Actor
+class Thing110:Projectile
 {
 	defaultproperties
 	{
-		Health = 1000;
 		Radius = 13.0;
 		Height = 8.0;
-		Mass = 100.0;
 		Speed = 700.0;
-		ReactionCount = 8;
 		MissileDamage = 1;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bMissile = true;
-		bActivateMCross = true;
 		IdleState = S_244;
 		DeathState = S_248;
-		SightSound = 'Sound88';
+		SightSound = 'MaulerTorpedoFire';
 		DeathSound = 'Explode';
 	}
 };
@@ -1196,22 +692,14 @@ class Thing110:Actor
 //
 //**************************************************************************
 
-class Thing111:Actor
+class Thing111:Projectile
 {
 	defaultproperties
 	{
-		Health = 1000;
 		Radius = 13.0;
 		Height = 13.0;
-		Mass = 100.0;
 		Speed = 1225.0;
-		ReactionCount = 8;
 		MissileDamage = 10;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bMissile = true;
-		bActivateMCross = true;
 		IdleState = S_253;
 		DeathState = S_255;
 	}
@@ -1219,55 +707,23 @@ class Thing111:Actor
 
 //**************************************************************************
 //
-//	Thing112
+//	FlameFX2
 //
 //**************************************************************************
 
-class Thing112:Actor
+class FlameFX2:Projectile
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 8.0;
-		Height = 11.0;
-		Mass = 10.0;
-		Speed = 525.0;
-		ReactionCount = 8;
-		MissileDamage = 4;
-		bNoBlockmap = true;
-		bDropOff = true;
-		bMissile = true;
-		bActivateMCross = true;
-		IdleState = S_1135;
-		DeathState = S_1138;
-		SightSound = 'Sound8';
-	}
-};
-
-//**************************************************************************
-//
-//	Thing113
-//
-//**************************************************************************
-
-class Thing113:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
 		Radius = 8.0;
 		Height = 11.0;
 		Mass = 50.0;
 		Speed = 1225.0;
-		ReactionCount = 8;
 		MissileDamage = 1;
-		bNoBlockmap = true;
-		bDropOff = true;
-		bMissile = true;
-		bActivateMCross = true;
-		IdleState = S_1135;
-		DeathState = S_1138;
-		SightSound = 'Sound8';
+		bNoGravity = false;
+		IdleState = S_FLAMEFX_1;
+		DeathState = S_FLAMEFX_X1;
+		SightSound = 'FlameThrowerFire';
 	}
 };
 
@@ -1281,11 +737,6 @@ class Thing114:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		IdleState = S_181;
@@ -1302,11 +753,6 @@ class Puff:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -1324,11 +770,6 @@ class Thing116:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		IdleState = S_145;
@@ -1345,11 +786,6 @@ class Thing117:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		IdleState = S_165;
 	}
@@ -1365,11 +801,6 @@ class TeleportFog:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -1387,11 +818,6 @@ class ItemRespawnFog:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -1410,2141 +836,13 @@ class TeleportSpot:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		bHidden = true;
 		bNoBlockmap = true;
 	}
 };
 
-//**************************************************************************
-//
-//	Thing121
-//
-//**************************************************************************
-
-class Thing121:Actor
-	__mobjinfo__(24)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 60;
-		bNoBlockmap = true;
-		bAmbush = true;
-		bSpawnCeiling = true;
-		bNoGravity = true;
-		IdleState = S_1144;
-		SeeState = S_1145;
-	}
-};
-
 class Turret;
-//**************************************************************************
-//
-//	Thing123
-//
-//**************************************************************************
-
-class Thing123:Actor
-	__mobjinfo__(45)
-{
-	defaultproperties
-	{
-		Health = 100;
-		Radius = 20.0;
-		Height = 76.0;
-		Mass = 10000000.0;
-		StepSpeed = 16.0;
-		ReactionCount = 8;
-		bSolid = true;
-		bShootable = true;
-		bUnknown5 = true;
-		bUnknown4 = true;
-		bNoBlood = true;
-		IdleState = S_1158;
-		DeathState = S_1160;
-		DeathSound = 'Explode';
-	}
-};
-
-//**************************************************************************
-//
-//	Thing124
-//
-//**************************************************************************
-
-class Thing124:Actor
-	__mobjinfo__(182)
-{
-	defaultproperties
-	{
-		Health = 80;
-		Radius = 26.0;
-		Height = 128.0;
-		Mass = 100000.0;
-		StepSpeed = 27.0;
-		ReactionCount = 8;
-		bSolid = true;
-		bShootable = true;
-		bUnknown5 = true;
-		bUnknown4 = true;
-		bNoBlood = true;
-		IdleState = S_1169;
-		DeathState = S_1173;
-		DeathSound = 'Explode';
-	}
-};
-
-//**************************************************************************
-//
-//	Thing131
-//
-//**************************************************************************
-
-class Thing131:Actor
-	__mobjinfo__(2014)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		IdleState = S_1348;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing132
-//
-//**************************************************************************
-
-class Thing132:Actor
-	__mobjinfo__(164)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		IdleState = S_1349;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing201
-//
-//**************************************************************************
-
-class Thing201:Actor
-	__mobjinfo__(92)
-{
-	defaultproperties
-	{
-		Health = 50;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 99999999.0;
-		StepSpeed = 14.0;
-		ReactionCount = 8;
-		bSolid = true;
-		bShootable = true;
-		bNoGravity = true;
-		bUnknown5 = true;
-		bNoBlood = true;
-		IdleState = S_1358;
-		DeathState = S_1191;
-		ActiveSound = 'Sound131';
-		DeathSound = 'Explode';
-	}
-};
-
 class Rat;
-//**************************************************************************
-//
-//	Thing203
-//
-//**************************************************************************
-
-class Thing203:Actor
-	__mobjinfo__(82)
-{
-	defaultproperties
-	{
-		Health = 10;
-		Radius = 10.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		bShootable = true;
-		bUnknown4 = true;
-		bNoBlood = true;
-		IdleState = S_1297;
-		DeathState = S_1298;
-		DeathSound = 'Sound61';
-	}
-};
-
-//**************************************************************************
-//
-//	Thing204
-//
-//**************************************************************************
-
-class Thing204:Actor
-	__mobjinfo__(94)
-{
-	defaultproperties
-	{
-		Health = 30;
-		Radius = 10.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		bShootable = true;
-		bUnknown4 = true;
-		bNoBlood = true;
-		IdleState = S_1305;
-		DeathState = S_1306;
-		DeathSound = 'Sound7';
-	}
-};
-
-//**************************************************************************
-//
-//	Thing205
-//
-//**************************************************************************
-
-class Thing205:Actor
-	__mobjinfo__(208)
-{
-	defaultproperties
-	{
-		Health = 99999999;
-		Radius = 10.0;
-		Height = 72.0;
-		Mass = 9999999.0;
-		ReactionCount = 8;
-		PainChance = 255;
-		bSolid = true;
-		bShootable = true;
-		bUnknown4 = true;
-		bNoBlood = true;
-		IdleState = S_1223;
-		PainState = S_1224;
-		PainSound = 'PunchHitMetal';
-	}
-};
-
-//**************************************************************************
-//
-//	Thing206
-//
-//**************************************************************************
-
-class Thing206:Actor
-	__mobjinfo__(95)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 4.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		IdleState = S_1430;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing207
-//
-//**************************************************************************
-
-class Thing207:Actor
-	__mobjinfo__(96)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 4.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		IdleState = S_1431;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing208
-//
-//**************************************************************************
-
-class Thing208:Actor
-	__mobjinfo__(97)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 4.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		IdleState = S_1432;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing209
-//
-//**************************************************************************
-
-class Thing209:Actor
-	__mobjinfo__(2028)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1427;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing210
-//
-//**************************************************************************
-
-class Thing210:Actor
-	__mobjinfo__(48)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 128.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1504;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing211
-//
-//**************************************************************************
-
-class Thing211:Actor
-	__mobjinfo__(54)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 128.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1505;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing212
-//
-//**************************************************************************
-
-class Thing212:Actor
-	__mobjinfo__(55)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 80.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1506;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing213
-//
-//**************************************************************************
-
-class Thing213:Actor
-	__mobjinfo__(56)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 40.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1507;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing214
-//
-//**************************************************************************
-
-class Thing214:Actor
-	__mobjinfo__(57)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 24.0;
-		Height = 192.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1508;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing215
-//
-//**************************************************************************
-
-class Thing215:Actor
-	__mobjinfo__(227)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 24.0;
-		Height = 192.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1471;
-		ActiveSound = 'Sound120';
-	}
-};
-
-//**************************************************************************
-//
-//	Thing216
-//
-//**************************************************************************
-
-class Thing216:Actor
-	__mobjinfo__(98)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 54.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		bSpawnCeiling = true;
-		bNoGravity = true;
-		IdleState = S_1514;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing217
-//
-//**************************************************************************
-
-class Thing217:Actor
-	__mobjinfo__(161)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 40.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		bSpawnCeiling = true;
-		bNoGravity = true;
-		IdleState = S_1512;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing218
-//
-//**************************************************************************
-
-class Thing218:Actor
-	__mobjinfo__(160)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 40.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1513;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing219
-//
-//**************************************************************************
-
-class Thing219:Actor
-	__mobjinfo__(159)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 128.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		bSpawnCeiling = true;
-		bNoGravity = true;
-		IdleState = S_1515;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing220
-//
-//**************************************************************************
-
-class Thing220:Actor
-	__mobjinfo__(162)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 128.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1516;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing221
-//
-//**************************************************************************
-
-class Thing221:Actor
-	__mobjinfo__(163)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 25.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1517;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing222
-//
-//**************************************************************************
-
-class Thing222:Actor
-	__mobjinfo__(34)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		IdleState = S_1428;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing223
-//
-//**************************************************************************
-
-class Thing223:Actor
-	__mobjinfo__(35)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 40.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1429;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing224
-//
-//**************************************************************************
-
-class Thing224:Actor
-	__mobjinfo__(103)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		IdleState = S_1473;
-		ActiveSound = 'Sound46';
-	}
-};
-
-//**************************************************************************
-//
-//	Thing225
-//
-//**************************************************************************
-
-class Thing225:Actor
-	__mobjinfo__(104)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		IdleState = S_1485;
-		ActiveSound = 'Sound45';
-	}
-};
-
-//**************************************************************************
-//
-//	Thing226
-//
-//**************************************************************************
-
-class Thing226:Actor
-	__mobjinfo__(53)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 1.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		bSpawnCeiling = true;
-		bNoGravity = true;
-		IdleState = S_1481;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing227
-//
-//**************************************************************************
-
-class Thing227:Actor
-	__mobjinfo__(112)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		IdleState = S_1493;
-		ActiveSound = 'Sound47';
-	}
-};
-
-//**************************************************************************
-//
-//	Thing228
-//
-//**************************************************************************
-
-class Thing228:Actor
-	__mobjinfo__(113)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 56.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1497;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing229
-//
-//**************************************************************************
-
-class Thing229:Actor
-	__mobjinfo__(23)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		Translucency = 66;
-		bNoBlockmap = true;
-		IdleState = S_1500;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing230
-//
-//**************************************************************************
-
-class Thing230:Actor
-	__mobjinfo__(22)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		IdleState = S_CRUSADER_DIE9;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing231
-//
-//**************************************************************************
-
-class Thing231:Actor
-	__mobjinfo__(15)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		IdleState = S_PLAY_DIE10;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing232
-//
-//**************************************************************************
-
-class Thing232:Actor
-	__mobjinfo__(18)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		IdleState = S_PEASANT_DIE11;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing233
-//
-//**************************************************************************
-
-class Thing233:Actor
-	__mobjinfo__(21)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		IdleState = S_ACOLYTE_DIE8;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing234
-//
-//**************************************************************************
-
-class Thing234:Actor
-	__mobjinfo__(20)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		IdleState = S_REAVER_DIE9;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing235
-//
-//**************************************************************************
-
-class Thing235:Actor
-	__mobjinfo__(19)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		IdleState = S_REBEL_DIE8;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing236
-//
-//**************************************************************************
-
-class Thing236:Actor
-	__mobjinfo__(212)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		IdleState = S_423;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing237
-//
-//**************************************************************************
-
-class Thing237:Actor
-	__mobjinfo__(54)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		IdleState = S_1226;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing238
-//
-//**************************************************************************
-
-class Thing238:Actor
-	__mobjinfo__(70)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 48.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1319;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing239
-//
-//**************************************************************************
-
-class Thing239:Actor
-	__mobjinfo__(105)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1323;
-		ActiveSound = 'Sound24';
-	}
-};
-
-//**************************************************************************
-//
-//	Thing240
-//
-//**************************************************************************
-
-class Thing240:Actor
-	__mobjinfo__(106)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 10.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1327;
-		ActiveSound = 'Sound24';
-	}
-};
-
-//**************************************************************************
-//
-//	Thing241
-//
-//**************************************************************************
-
-class Thing241:Actor
-	__mobjinfo__(107)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 0.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		IdleState = S_1331;
-		ActiveSound = 'Sound24';
-	}
-};
-
-//**************************************************************************
-//
-//	Thing242
-//
-//**************************************************************************
-
-class Thing242:Actor
-	__mobjinfo__(108)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 0.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		IdleState = S_1347;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing243
-//
-//**************************************************************************
-
-class Thing243:Actor
-	__mobjinfo__(109)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 93.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		bSpawnCeiling = true;
-		bNoGravity = true;
-		IdleState = S_1449;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing244
-//
-//**************************************************************************
-
-class Thing244:Actor
-	__mobjinfo__(28)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 3.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		bSpawnCeiling = true;
-		bNoGravity = true;
-		IdleState = S_1453;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing245
-//
-//**************************************************************************
-
-class Thing245:Actor
-	__mobjinfo__(110)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 64.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1450;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing246
-//
-//**************************************************************************
-
-class Thing246:Actor
-	__mobjinfo__(44)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 56.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1451;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing247
-//
-//**************************************************************************
-
-class Thing247:Actor
-	__mobjinfo__(111)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 4.0;
-		Height = 72.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1335;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing248
-//
-//**************************************************************************
-
-class Thing248:Actor
-	__mobjinfo__(43)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 3.0;
-		Height = 80.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1317;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing249
-//
-//**************************************************************************
-
-class Thing249:Actor
-	__mobjinfo__(46)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 3.0;
-		Height = 80.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1318;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing250
-//
-//**************************************************************************
-
-class Thing250:Actor
-	__mobjinfo__(99)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		IdleState = S_1433;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing251
-//
-//**************************************************************************
-
-class Thing251:Actor
-	__mobjinfo__(100)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		IdleState = S_1434;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing252
-//
-//**************************************************************************
-
-class Thing252:Actor
-	__mobjinfo__(101)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		IdleState = S_1435;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing253
-//
-//**************************************************************************
-
-class Thing253:Actor
-	__mobjinfo__(102)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		IdleState = S_1436;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing254
-//
-//**************************************************************************
-
-class Thing254:Actor
-	__mobjinfo__(215)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		IdleState = S_1437;
-		ActiveSound = 'Sound44';
-	}
-};
-
-//**************************************************************************
-//
-//	Thing255
-//
-//**************************************************************************
-
-class Thing255:Actor
-	__mobjinfo__(29)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		bColideWithThings = false;
-		bColideWithWorld = false;
-		IdleState = S_1441;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing256
-//
-//**************************************************************************
-
-class Thing256:Actor
-	__mobjinfo__(30)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		bColideWithThings = false;
-		bColideWithWorld = false;
-		IdleState = S_1442;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing257
-//
-//**************************************************************************
-
-class Thing257:Actor
-	__mobjinfo__(31)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		bColideWithThings = false;
-		bColideWithWorld = false;
-		IdleState = S_1443;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing258
-//
-//**************************************************************************
-
-class Thing258:Actor
-	__mobjinfo__(32)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		bColideWithThings = false;
-		bColideWithWorld = false;
-		IdleState = S_1444;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing259
-//
-//**************************************************************************
-
-class Thing259:Actor
-	__mobjinfo__(36)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		bColideWithThings = false;
-		bColideWithWorld = false;
-		IdleState = S_1445;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing260
-//
-//**************************************************************************
-
-class Thing260:Actor
-	__mobjinfo__(37)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		bColideWithThings = false;
-		bColideWithWorld = false;
-		IdleState = S_1446;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing261
-//
-//**************************************************************************
-
-class Thing261:Actor
-	__mobjinfo__(41)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		bColideWithThings = false;
-		bColideWithWorld = false;
-		IdleState = S_1447;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing262
-//
-//**************************************************************************
-
-class Thing262:Actor
-	__mobjinfo__(42)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		bColideWithThings = false;
-		bColideWithWorld = false;
-		IdleState = S_1448;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing263
-//
-//**************************************************************************
-
-class Thing263:Actor
-	__mobjinfo__(117)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		bSpawnCeiling = true;
-		bNoGravity = true;
-		IdleState = S_1452;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing264
-//
-//**************************************************************************
-
-class Thing264:Actor
-	__mobjinfo__(47)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 10.0;
-		Height = 72.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1339;
-		ActiveSound = 'Sound24';
-	}
-};
-
-//**************************************************************************
-//
-//	Thing265
-//
-//**************************************************************************
-
-class Thing265:Actor
-	__mobjinfo__(50)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 10.0;
-		Height = 80.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1343;
-		ActiveSound = 'Sound24';
-	}
-};
-
-//**************************************************************************
-//
-//	Thing266
-//
-//**************************************************************************
-
-class Thing266:Actor
-	__mobjinfo__(51)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 15.0;
-		Height = 109.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1454;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing267
-//
-//**************************************************************************
-
-class Thing267:Actor
-	__mobjinfo__(202)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 15.0;
-		Height = 109.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1455;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing268
-//
-//**************************************************************************
-
-class Thing268:Actor
-	__mobjinfo__(203)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 15.0;
-		Height = 64.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1456;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing269
-//
-//**************************************************************************
-
-class Thing269:Actor
-	__mobjinfo__(33)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 15.0;
-		Height = 80.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1457;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing270
-//
-//**************************************************************************
-
-class Thing270:Actor
-	__mobjinfo__(60)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 15.0;
-		Height = 40.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1458;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing271
-//
-//**************************************************************************
-
-class Thing271:Actor
-	__mobjinfo__(62)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 64.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1459;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing272
-//
-//**************************************************************************
-
-class Thing272:Actor
-	__mobjinfo__(63)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 64.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1460;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing273
-//
-//**************************************************************************
-
-class Thing273:Actor
-	__mobjinfo__(69)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 128.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1461;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing274
-//
-//**************************************************************************
-
-class Thing274:Actor
-	__mobjinfo__(165)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 12.0;
-		Height = 24.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1462;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing275
-//
-//**************************************************************************
-
-class Thing275:Actor
-	__mobjinfo__(188)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 12.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1463;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing276
-//
-//**************************************************************************
-
-class Thing276:Actor
-	__mobjinfo__(189)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 6.0;
-		Height = 24.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1464;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing277
-//
-//**************************************************************************
-
-class Thing277:Actor
-	__mobjinfo__(190)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		IdleState = S_1465;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing278
-//
-//**************************************************************************
-
-class Thing278:Actor
-	__mobjinfo__(191)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		IdleState = S_1466;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing279
-//
-//**************************************************************************
-
-class Thing279:Actor
-	__mobjinfo__(194)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1467;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing280
-//
-//**************************************************************************
-
-class Thing280:Actor
-	__mobjinfo__(196)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 11.0;
-		Height = 64.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1468;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing281
-//
-//**************************************************************************
-
-class Thing281:Actor
-	__mobjinfo__(197)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 8.0;
-		Height = 64.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1469;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing282
-//
-//**************************************************************************
-
-class Thing282:Actor
-	__mobjinfo__(68)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 24.0;
-		Height = 40.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1470;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing283
-//
-//**************************************************************************
-
-class Thing283:Actor
-	__mobjinfo__(228)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 12.0;
-		Height = 24.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1472;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing284
-//
-//**************************************************************************
-
-class Thing284:Actor
-	__mobjinfo__(216)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 24.0;
-		Height = 96.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		IdleState = S_1227;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing285
-//
-//**************************************************************************
-
-class Thing285:Actor
-	__mobjinfo__(217)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		IdleState = S_1228;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing286
-//
-//**************************************************************************
-
-class Thing286:Actor
-	__mobjinfo__(218)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		IdleState = S_1229;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing287
-//
-//**************************************************************************
-
-class Thing287:Actor
-	__mobjinfo__(219)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		IdleState = S_1230;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing288
-//
-//**************************************************************************
-
-class Thing288:Actor
-	__mobjinfo__(220)
-{
-	defaultproperties
-	{
-		Health = 40;
-		Radius = 17.0;
-		Height = 64.0;
-		Mass = 999999.0;
-		StepSpeed = 6.0;
-		ReactionCount = 8;
-		bSolid = true;
-		bShootable = true;
-		bUnknown5 = true;
-		bUnknown4 = true;
-		bDropped = true;
-		bNoBlood = true;
-		bNoDeathmatch = true;
-		IdleState = S_1231;
-	}
-};
-
-//**************************************************************************
-//
-//	Thing290
-//
-//**************************************************************************
-
-class Thing290:Actor
-	__mobjinfo__(221)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 128.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1234;
-		ActiveSound = 'Sound123';
-	}
-};
-
-//**************************************************************************
-//
-//	Thing291
-//
-//**************************************************************************
-
-class Thing291:Actor
-	__mobjinfo__(222)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 72.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1235;
-		ActiveSound = 'Sound124';
-	}
-};
-
-//**************************************************************************
-//
-//	Thing292
-//
-//**************************************************************************
-
-class Thing292:Actor
-	__mobjinfo__(223)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 72.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		bSpawnCeiling = true;
-		bNoGravity = true;
-		IdleState = S_1235;
-		ActiveSound = 'Sound122';
-	}
-};
-
-//**************************************************************************
-//
-//	Thing293
-//
-//**************************************************************************
-
-class Thing293:Actor
-	__mobjinfo__(224)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 16.0;
-		Height = 128.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1237;
-		ActiveSound = 'Sound121';
-	}
-};
-
-//**************************************************************************
-//
-//	Thing294
-//
-//**************************************************************************
-
-class Thing294:Actor
-	__mobjinfo__(225)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 32.0;
-		Height = 56.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		IdleState = S_1238;
-		ActiveSound = 'Sound119';
-	}
-};
-
 //**************************************************************************
 //
 //	Thing295
@@ -3555,11 +853,6 @@ class Thing295:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
@@ -3577,11 +870,6 @@ class Thing296:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
@@ -3599,11 +887,6 @@ class Thing297:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bColideWithThings = false;
 		bColideWithWorld = false;
@@ -3621,11 +904,6 @@ class Thing312:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -3640,11 +918,6 @@ class Thing313:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -3659,11 +932,6 @@ class Thing314:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -3679,11 +947,6 @@ class Quest4:Actor
 	defaultproperties
 	{
 		ClassName = 'quest4';
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -3699,11 +962,6 @@ class Quest5:Actor
 	defaultproperties
 	{
 		ClassName = 'quest5';
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -3719,11 +977,6 @@ class Quest6:Actor
 	defaultproperties
 	{
 		ClassName = 'quest6';
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -3738,11 +991,6 @@ class Thing318:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -3757,11 +1005,6 @@ class Thing319:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -3776,11 +1019,6 @@ class Thing320:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -3795,11 +1033,6 @@ class Thing321:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -3814,11 +1047,6 @@ class Thing322:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -3833,11 +1061,6 @@ class Thing323:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -3852,11 +1075,6 @@ class Thing324:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -3872,11 +1090,6 @@ class Youve_Blown_Up_the_Crystal:Actor
 	defaultproperties
 	{
 		ClassName = 'You\'ve_Blown_Up_the_Crystal';
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -3891,11 +1104,6 @@ class Thing326:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -3911,11 +1119,6 @@ class Youve_Blown_Up_the_Gates:Actor
 	defaultproperties
 	{
 		ClassName = 'You\'ve_Blown_Up_the_Gates';
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -3930,11 +1133,6 @@ class Thing328:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -3949,11 +1147,6 @@ class Thing329:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -3968,11 +1161,6 @@ class Thing330:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -3987,11 +1175,6 @@ class Thing331:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -4007,11 +1190,6 @@ class You_Killed_the_Bishop:Actor
 	defaultproperties
 	{
 		ClassName = 'You_Killed_the_Bishop!';
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -4026,11 +1204,6 @@ class Thing333:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -4046,11 +1219,6 @@ class Youve_Killed_The_Oracle:Actor
 	defaultproperties
 	{
 		ClassName = 'You\'ve_Killed_The_Oracle!';
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -4066,11 +1234,6 @@ class You_Killed_Macil:Actor
 	defaultproperties
 	{
 		ClassName = 'You_Killed_Macil!';
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -4085,11 +1248,6 @@ class Thing336:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -4105,11 +1263,6 @@ class Youve_Killed_The_Loremaster:Actor
 	defaultproperties
 	{
 		ClassName = 'You\'ve_Killed_The_Loremaster!';
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -4125,11 +1278,6 @@ class Youve_Blown_Up_the_Computer:Actor
 	defaultproperties
 	{
 		ClassName = 'You\'ve_Blown_Up_the_Computer';
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -4144,11 +1292,6 @@ class Thing339:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -4163,11 +1306,6 @@ class Thing340:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -4182,11 +1320,6 @@ class Thing341:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -4201,11 +1334,6 @@ class Thing342:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
 		IdleState = S_TOKENS;
 	}
 };
@@ -4213,9 +1341,12 @@ class Thing342:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.31  2002/06/29 15:59:26  dj_jl
+//	Split out items, projectiles and decorations.
+//
 //	Revision 1.30  2002/06/22 07:18:43  dj_jl
 //	Seperated all pickup items.
-//
+//	
 //	Revision 1.29  2002/05/18 17:00:01  dj_jl
 //	Renamed SpawnState to IdleState, other changes.
 //	

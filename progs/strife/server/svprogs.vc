@@ -67,7 +67,7 @@
 #include "teleport.vc"
 #include "usersubs.vc"
 #include "ai_subs.vc"
-#include "weapons.vc"
+#include "wpnbase.vc"
 #include "enemy.vc"
 #include "cheat.vc"
 
@@ -76,6 +76,8 @@
 #else
 #include "adummy.vc"
 #endif
+
+#include "weapons.vc"
 
 #include "player.vc"
 #include "merchant.vc"
@@ -102,12 +104,16 @@
 #include "prayer.vc"
 
 #include "items.vc"
+#include "decorat.vc"
 
 #include "svmain.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/06/29 15:59:27  dj_jl
+//  Split out items, projectiles and decorations.
+//
 //  Revision 1.15  2002/05/03 17:17:32  dj_jl
 //  Started work on weapons and items.
 //
