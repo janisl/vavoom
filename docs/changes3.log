@@ -232,3 +232,46 @@
 21-10-2003
   Speletaja ierocu spraiti tiek zimeti dazados atalumos lai nebutu problemu
  ar to parklasanos.
+05-11-2003
+  Speletaja struktura parveidota par klasi.
+22-12-2003
+  Ieviesu risinajumu "feet in ground" problemai.
+
+******************************************************************************
+                            VERSIJA 1.15.1
+******************************************************************************
+
+09-01-2004
+  Apdeitoju uz jaunako glbsp versiju.
+  Izlaboju atkartojosos balsu kludu.
+  Implementeju comm unita un teksturu skrollinga liniju specialus.
+  Saku parnest no ZDoom Strife stavoklu funkcijas.
+13-01-2004
+  Parnesu praktiski visas pieejamas Strife stavoklu funkcijas. Alternativie
+ ieroci.
+23-01-2004
+  Parnesu daudzas Strife stavoklu funkcijas pec to piederibas.
+27-01-2004
+  Izlaboju kludu limena ielade.
+  Labaks minzone izmers.
+11-02-2004
+  Salaboju botu tikla mesidzus.
+  Implementeju Strife ammo satchel.
+  Sarunu uzsaksanai augstuma parbaude.
+12-02-2004
+  Salaboju atkartotu menu izsauksanu.
+27-02-2004
+  Speletaja starta punktu augstums.
+24-03-2004
+  Speciala darbiba nogalinot monstru.
+  Salaboju augstumu floutojosajiem itemiem.
+  Salaboju TGA failu paletes ieladi.
+
+******************************************************************************
+                            VERSIJA 1.15.2
+******************************************************************************
+
+07-04-2004
+  Loga rezims visiem Windows renderiem.
+15-04-2004
+  Campers ieteica paris labojumus un atbalstu peles rullitim.
