@@ -1,5 +1,5 @@
-../../progs/hexen/clprogs.dat
-../../progs/hexen/svprogs.dat
+progs/clprogs.dat
+progs/svprogs.dat
 
 switches.txt
 terrains.txt

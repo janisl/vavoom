@@ -1,5 +1,5 @@
-../../progs/strife/clprogs.dat
-../../progs/strife/svprogs.dat
+progs/clprogs.dat
+progs/svprogs.dat
 
 mapinfo.txt
 animdefs.txt

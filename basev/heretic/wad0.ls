@@ -1,5 +1,5 @@
-../../progs/heretic/clprogs.dat
-../../progs/heretic/svprogs.dat
+progs/clprogs.dat
+progs/svprogs.dat
 
 mapinfo.txt
 

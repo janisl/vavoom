@@ -1,5 +1,5 @@
-../../progs/doom2/clprogs.dat
-../../progs/doom2/svprogs.dat
+progs/clprogs.dat
+progs/svprogs.dat
 
 mapinfo.txt
 fin1text.txt
