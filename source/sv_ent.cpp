@@ -65,9 +65,16 @@ class VEntity:public VMapObject
 	dword bColideWithWorld:1;
 	dword bCheckLineBlocking:1;
 	dword bCheckLineBlockMonsters:1;
+	dword bDropOff:1;		// allow jumps from high places
+	dword bFloat:1;			// allow moves to any height, no gravity
+	dword bFly:1;			// fly mode is active
+	dword bBlasted:1;		// missile will pass through ghosts
+	dword bCantLeaveFloorpic:1;	// stay within a certain floor type
+	dword bFloorClip:1;		// if feet are allowed to be clipped
 
 	//  Params
 	float Mass;
+	float MaxStepHeight;
 
 	//  Water
 	int WaterLevel;
@@ -77,6 +84,9 @@ class VEntity:public VMapObject
 	static int FIndex_Touch;
 	static int FIndex_BlockedByLine;
 	static int FIndex_ApplyFriction;
+	static int FIndex_PushLine;
+	static int FIndex_HandleFloorclip;
+	static int FIndex_CrossSpecialLine;
 
 	void eventRemove(void)
 	{
@@ -94,12 +104,25 @@ class VEntity:public VMapObject
 	{
 		svpr.Exec(GetVFunction(FIndex_ApplyFriction), (int)this);
 	}
+	void eventPushLine(void)
+	{
+		svpr.Exec(GetVFunction(FIndex_PushLine), (int)this);
+	}
+	void eventHandleFloorclip(void)
+	{
+		svpr.Exec(GetVFunction(FIndex_HandleFloorclip), (int)this);
+	}
+	void eventCrossSpecialLine(line_t *ld, int side)
+	{
+		svpr.Exec(GetVFunction(FIndex_CrossSpecialLine), (int)this, (int)ld, side);
+	}
 
 	boolean SetState(int state);
 
 	boolean CheckWater(void);
 	boolean CheckPosition(TVec Pos);
 	boolean CheckRelPosition(TVec Pos);
+	boolean TryMove(TVec newPos);
 	void UpdateVelocity(void);
 	void FakeZMovement(void);
 	VEntity *CheckOnmobj(void);
@@ -110,6 +133,7 @@ class VEntity:public VMapObject
 	DECLARE_FUNCTION(CheckWater)
 	DECLARE_FUNCTION(CheckPosition)
 	DECLARE_FUNCTION(CheckRelPosition)
+	DECLARE_FUNCTION(TryMove)
 	DECLARE_FUNCTION(UpdateVelocity)
 	DECLARE_FUNCTION(CheckOnmobj)
 };
@@ -133,6 +157,9 @@ int VEntity::FIndex_Touch;
 int VEntity::FIndex_BlockedByLine;
 int VEntity::FIndex_ApplyFriction;
 int VEntity::FIndex_Remove;
+int VEntity::FIndex_PushLine;
+int VEntity::FIndex_HandleFloorclip;
+int VEntity::FIndex_CrossSpecialLine;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -474,6 +501,9 @@ struct tmtrace_t
 	sec_plane_t *Floor;
 	sec_plane_t *Ceiling;
 
+	boolean FloatOk;	// if true, move would be ok if
+						// within tmtrace.FloorZ - tmtrace.CeilingZ
+
 	// keep track of the line that lowers the ceiling,
 	// so missiles don't explode against sky hack walls
 	line_t *CeilingLine;
@@ -761,6 +791,144 @@ boolean VEntity::CheckRelPosition(TVec Pos)
 
 //==========================================================================
 //
+//  VEntity::TryMove
+//
+//  Attempt to move to a new position, crossing special lines.
+//
+//==========================================================================
+
+boolean VEntity::TryMove(TVec newPos)
+{
+	boolean check;
+	TVec oldorg;
+	int side;
+	int oldside;
+	line_t *ld;
+
+	check = CheckRelPosition(newPos);
+	tmtrace.FloatOk = false;
+	if (!check)
+	{
+		VMapObject *O = tmtrace.BlockingMobj;
+		if (!O || O->bIsPlayer || !bIsPlayer || 
+			O->Origin.z + O->Height - Origin.z > MaxStepHeight ||
+			O->CeilingZ - (O->Origin.z + O->Height) < Height ||
+		   	tmtrace.CeilingZ - (O->Origin.z + O->Height) < Height)
+		{
+			eventPushLine();
+			return false;
+		}
+	}
+
+	if (bColideWithWorld)
+	{
+		if (tmtrace.CeilingZ - tmtrace.FloorZ < Height)
+		{
+			// Doesn't fit
+			eventPushLine();
+			return false;
+		}
+
+		tmtrace.FloatOk = true;
+
+		if (tmtrace.CeilingZ - Origin.z < Height && !bFly
+//			&& Class != LightningCeiling
+		)
+		{
+			// mobj must lower itself to fit
+			eventPushLine();
+			return false;
+		}
+		if (bFly)
+		{
+			if (Origin.z + Height > tmtrace.CeilingZ)
+			{
+				Velocity.z = -8.0 * 35.0;
+				eventPushLine();
+				return false;
+			}
+			else if (Origin.z < tmtrace.FloorZ
+				&& tmtrace.FloorZ - tmtrace.DropOffZ > MaxStepHeight)
+			{
+				Velocity.z = 8.0 * 35.0;
+				eventPushLine();
+				return false;
+			}
+		}
+		if (tmtrace.FloorZ - Origin.z > MaxStepHeight)
+		{
+			// Too big a step up
+			eventPushLine();
+			return false;
+		}
+// Only Heretic
+//		if (bMissile && tmtrace->FloorZ > Origin.z)
+//		{
+//			eventPushLine();
+//		}
+		if (!bDropOff && !bFloat && !bBlasted &&
+			(tmtrace.FloorZ - tmtrace.DropOffZ > MaxStepHeight))
+		{
+			// Can't move over a dropoff unless it's been blasted
+			return false;
+		}
+		if (bCantLeaveFloorpic && (tmtrace.Floor->pic != Floor->pic
+				|| tmtrace.FloorZ != Origin.z))
+		{
+			// must stay within a sector of a certain floor type
+			return false;
+		}
+	}
+
+	// the move is ok,
+	// so link the thing into its new position
+	SV_UnlinkFromWorld(this);
+
+	oldorg = Origin;
+	Origin = newPos;
+
+	SV_LinkToWorld(this);
+	FloorZ = tmtrace.FloorZ;
+	CeilingZ = tmtrace.CeilingZ;
+	Floor = tmtrace.Floor;
+	Ceiling = tmtrace.Ceiling;
+
+	if (bFloorClip)
+	{
+		eventHandleFloorclip();
+	}
+	else
+	{
+		FloorClip = 0.0;
+	}
+
+	//
+	// if any special lines were hit, do the effect
+	//
+	if (bColideWithWorld)
+	{
+		while (tmtrace.NumSpecHit > 0)
+		{
+			tmtrace.NumSpecHit--;
+			// see if the line was crossed
+			ld = tmtrace.SpecHit[tmtrace.NumSpecHit];
+			side = ld->PointOnSide(Origin);
+			oldside = ld->PointOnSide(oldorg);
+			if (side != oldside)
+			{
+				if (ld->special)
+				{
+					eventCrossSpecialLine(ld, oldside);
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
+//==========================================================================
+//
 //  VEntity::UpdateVelocity
 //
 //==========================================================================
@@ -1042,6 +1210,22 @@ IMPLEMENT_FUNCTION(VEntity, CheckRelPosition)
 
 //==========================================================================
 //
+//	Entity.TryMove
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VEntity, TryMove)
+{
+	VEntity	*Self;
+	TVec	Pos;
+
+	Pos = PR_Popv();
+	Self = (VEntity *)PR_Pop();
+	PR_Push(Self->TryMove(Pos));
+}
+
+//==========================================================================
+//
 //	Entity.UpdateVelocity
 //
 //==========================================================================
@@ -1138,6 +1322,12 @@ void EntInit(void)
 		VEntity::StaticClass()->GetFunctionIndex("BlockedByLine");
 	VEntity::FIndex_ApplyFriction = 
 		VEntity::StaticClass()->GetFunctionIndex("ApplyFriction");
+	VEntity::FIndex_PushLine =
+		VEntity::StaticClass()->GetFunctionIndex("PushLine");
+	VEntity::FIndex_HandleFloorclip =
+		VEntity::StaticClass()->GetFunctionIndex("HandleFloorclip");
+	VEntity::FIndex_CrossSpecialLine =
+		VEntity::StaticClass()->GetFunctionIndex("CrossSpecialLine");
 }
 
 //==========================================================================
@@ -1149,9 +1339,12 @@ void EntInit(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2002/04/11 16:46:06  dj_jl
+//	Made TryMove native.
+//
 //	Revision 1.2  2002/03/16 17:55:12  dj_jl
 //	Some small changes.
-//
+//	
 //	Revision 1.1  2002/03/09 18:06:25  dj_jl
 //	Made Entity class and most of it's functions native
 //	
