@@ -44,11 +44,6 @@ void P_SpawnPlayer(mthing_t * mthing);
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-mthing_t itemrespawnque[ITEMQUESIZE];
-int itemrespawntime[ITEMQUESIZE];
-int iquehead;
-int iquetail;
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -675,90 +670,6 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 
 //==========================================================================
 //
-//  Actor::Remove
-//
-//==========================================================================
-
-void Actor::Remove(void)
-{
-	if (bSpecial && !bDropped)
-	{
-		CopyMThing(&SpawnSpot, &itemrespawnque[iquehead]);
-		itemrespawntime[iquehead] = level->tictime;
-		iquehead = (iquehead + 1) & (ITEMQUESIZE - 1);
-
-		// lose one off the end?
-		if (iquehead == iquetail)
-			iquetail = (iquetail + 1) & (ITEMQUESIZE - 1);
-	}
-
-	// free block
-	::Remove();
-}
-
-//==========================================================================
-//
-//  P_RespawnSpecials
-//
-//==========================================================================
-
-void P_RespawnSpecials(void)
-{
-	float x;
-	float y;
-	float z;
-
-	Actor A;
-	mthing_t *mthing;
-
-	int i;
-
-	// only respawn items in deathmatch
-	if ((deathmatch != 2) && (deathmatch != 3))
-		return;	//
-
-	// nothing left to respawn?
-	if (iquehead == iquetail)
-		return;
-
-	// wait at least 30 seconds
-	if (level->tictime - itemrespawntime[iquetail] < 30 * 35)
-		return;
-
-	mthing = &itemrespawnque[iquetail];
-
-	x = mthing->x;
-	y = mthing->y;
-
-	// spawn a teleport fog at the new spot
-	A = Spawn(ItemRespawnFog, vector(x, y, ONFLOORZ));
-	A.PlaySound('ItemRespawn', CHAN_VOICE);
-
-	// find which type to spawn
-	for (i = 0; i < num_mobj_types; i++)
-	{
-		if (mthing->type == mobjinfo[i].doomednum)
-			break;
-	}
-
-	// spawn it
-#ifdef FIXME
-	if (mobjinfo[i].Flags & MF_SPAWNCEILING)
-		z = ONCEILINGZ;
-	else
-#endif
-		z = ONFLOORZ;
-
-	A = Spawn(mobjinfo[i].class_id, vector(x, y, z));
-	CopyMThing(mthing, &A.SpawnSpot);
-	A.Angles.yaw = itof(45 * (mthing->angle / 45));
-
-	// pull it from the que
-	iquetail = (iquetail + 1) & (ITEMQUESIZE - 1);
-}
-
-//==========================================================================
-//
 //  Actor::NightmareRespawn
 //
 //==========================================================================
@@ -905,6 +816,9 @@ void Actor::Thrust(float angle, float move)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.38  2002/03/28 18:11:24  dj_jl
+//  Changed hiding of specials like in Raven games.
+//
 //  Revision 1.37  2002/03/20 19:07:47  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

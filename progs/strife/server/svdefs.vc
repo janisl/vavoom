@@ -273,6 +273,7 @@ class Actor:Entity
 	int MoveDir;	// 0-7
 	int MoveCount;	// when 0, select a new dir
 
+	void HideSpecial(void);
 	void TouchSpecial(Actor Toucher);
 
 	boolean Touch(MapObject Other);
@@ -287,7 +288,6 @@ class Actor:Entity
 	Actor SpawnMissile(Actor dest, classid type);
 	void Died(Actor source);
 	void Damage(Actor inflictor, Actor source, int damage);
-	void Remove(void);
 	void NightmareRespawn(void);
 
 	boolean TeleportMove(TVec org);
@@ -563,6 +563,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/03/28 18:11:24  dj_jl
+//  Changed hiding of specials like in Raven games.
+//
 //  Revision 1.27  2002/03/20 19:07:47  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

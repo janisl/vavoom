@@ -32,6 +32,8 @@ int clipammo[] = { 10, 4, 20, 1 };
 
 #define BONUSADD	6
 
+Actor Spawn(classid type, TVec AOrigin);
+
 //==========================================================================
 //
 //  PlayerPawn::GiveAmmo
@@ -300,6 +302,46 @@ boolean PlayerPawn::GivePower(int power)
 
 	Player->Powers[power] = 1;
 	return true;
+}
+
+//==========================================================================
+//
+//	Actor::HideSpecial
+//
+//==========================================================================
+
+__states__(Actor)
+{
+	S_HIDDEN_SPECIAL1('', 0, 30.0, S_HIDDEN_SPECIAL2)
+	{
+		bHidden = true;
+		bSpecial = false;
+	}
+	S_HIDDEN_SPECIAL2('', 0, -1.0, S_NULL)
+	{
+		Actor A;
+
+		bHidden = false;
+		bSpecial = true;
+
+		// spawn a teleport fog at the new spot
+		A = Spawn(ItemRespawnFog, Origin);
+		A.PlaySound('ItemRespawn', CHAN_VOICE);
+	}
+}
+
+void Actor::HideSpecial(void)
+{
+	// only respawn items in deathmatch
+	if ((deathmatch == 2 || deathmatch == 3) &&
+		!bDropped)
+	{
+		SetState(S_HIDDEN_SPECIAL1);
+	}
+	else
+	{
+		Remove();
+	}
 }
 
 //==========================================================================
@@ -608,6 +650,9 @@ void Actor::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/03/28 18:11:24  dj_jl
+//  Changed hiding of specials like in Raven games.
+//
 //  Revision 1.14  2002/03/20 19:07:47  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

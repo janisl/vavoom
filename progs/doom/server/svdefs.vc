@@ -244,6 +244,7 @@ class Actor:Entity
 	boolean GiveCard(int card);
 	boolean GiveItem(int item);
 	boolean GivePower(int power);
+	void HideSpecial(void);
 	void TouchSpecial(Actor Toucher);
 
 	boolean Touch(MapObject Other);
@@ -263,7 +264,6 @@ class Actor:Entity
 	void RadiusAttack(int damage, int distance, boolean damageSource);
 
 	void Think(void);
-	void Remove(void);
 	void OnMapSpawn(mthing_t *mthing);
 
 	void Damage(Actor inflictor, Actor source, int damage);
@@ -383,7 +383,7 @@ class Weapon:ViewEntity
 	int AttackState;
 	int HoldAttackState;
 	int FlashState;
-	string ThirdPersonModel;
+	name ThirdPersonModel;
 
 	void A_Light0(void);
 	void A_WeaponReady(void);
@@ -715,6 +715,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2002/03/28 18:11:24  dj_jl
+//  Changed hiding of specials like in Raven games.
+//
 //  Revision 1.28  2002/03/20 19:07:44  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

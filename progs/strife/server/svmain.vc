@@ -92,9 +92,6 @@ void StartLevelLoading(void)
 
 void EndLevelLoading(void)
 {
-	// clear special respawning que
-	iquehead = 0;
-	iquetail = 0;
 }
 
 //==========================================================================
@@ -111,6 +108,9 @@ void main(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/03/28 18:11:24  dj_jl
+//  Changed hiding of specials like in Raven games.
+//
 //  Revision 1.4  2002/02/26 17:49:49  dj_jl
 //  no message
 //

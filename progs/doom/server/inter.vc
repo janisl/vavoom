@@ -29,6 +29,8 @@
 
 #define BONUSADD	6
 
+Actor Spawn(classid type, TVec AOrigin);
+
 //==========================================================================
 //
 //	Actor::GiveAmmo
@@ -308,6 +310,48 @@ boolean Actor::GivePower(int power)
 
 //==========================================================================
 //
+//	Actor::HideSpecial
+//
+//==========================================================================
+
+__states__(Actor)
+{
+	S_DORMANT_PICKUP1('', 0, 30.0, S_DORMANT_PICKUP2)
+	{
+		bHidden = true;
+		bSpecial = false;
+	}
+	S_DORMANT_PICKUP2('', 0, -1.0, S_NULL)
+	{
+		Actor A;
+
+		bHidden = false;
+		bSpecial = true;
+		SetState(SpawnState);
+
+		// spawn a teleport fog at the new spot
+		A = Spawn(ItemRespawnFog, Origin);
+		A.PlaySound('ItemRespawn', CHAN_ITEM);
+	}
+}
+
+void Actor::HideSpecial(void)
+{
+	// only respawn items in deathmatch
+	if ((deathmatch == 2 || deathmatch == 3) &&
+		!bDropped && (Class != ItemInvulnerability) &&
+		(Class != ItemInvisibility))
+	{
+		SetState(S_DORMANT_PICKUP1);
+	}
+	else
+	{
+		Remove();
+	}
+}
+
+//==========================================================================
+//
 //	Actor::TouchSpecial
 //
 //==========================================================================
@@ -368,7 +412,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		Toucher.Player->Health += SOULSPHERE_HEALTH;
 		if (Toucher.Player->Health > SOULSPHERE_MAX)
 			Toucher.Player->Health = SOULSPHERE_MAX;
-		Toucher.Player->mo->Health = Toucher.Player->Health;
+		Toucher.Player->MO.Health = Toucher.Player->Health;
 		cprint(Toucher.Player, GOTSUPER);
 		sound = 'PickupPower';
 		break;
@@ -620,7 +664,7 @@ void Actor::TouchSpecial(Actor Toucher)
 
 	if (bCountItem)
 		Toucher.Player->ItemCount++;
-	Remove();
+	HideSpecial();
 	Toucher.Player->BonusCount += BONUSADD;
 	Toucher.PlaySound(sound, CHAN_ITEM);
 }
@@ -628,6 +672,9 @@ void Actor::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/03/28 18:11:24  dj_jl
+//  Changed hiding of specials like in Raven games.
+//
 //  Revision 1.16  2002/03/20 19:07:43  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //
