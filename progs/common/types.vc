@@ -556,7 +556,7 @@ struct player_t
 
 	int userinfo[MAX_INFO_STRING / 4];
 
-	int name[MAXNAME / 4];
+	int Name[MAXNAME / 4];
 	int baseclass;
 	int pclass;	// player class type
 	int color;
@@ -611,7 +611,7 @@ struct player_t
 	int palette;
 
 	//  color shifts for damage, powerups and content types
-	uint cshifts[NUM_CSHIFTS];
+	int cshifts[NUM_CSHIFTS];
 
 	// Overlay view sprites (gun, etc).
 	ViewEntity ViewEnts[NUMPSPRITES];
@@ -805,8 +805,8 @@ struct client_state_t
 	//  can be set to REDCOLORMAP for pain, etc.
 	int palette;
 
-	uint cshifts[NUM_CSHIFTS];	//  color shifts for damage,
-	uint prev_cshifts[NUM_CSHIFTS];	// powerups and content types
+	int cshifts[NUM_CSHIFTS];	//  color shifts for damage,
+	int prev_cshifts[NUM_CSHIFTS];	// powerups and content types
 
 	// Overlay view sprites (gun, etc).
 	cl_pspdef_t psprites[NUMPSPRITES];
@@ -856,7 +856,7 @@ struct TILine
 
 struct hostcache_t
 {
-	int name[16 / 4];
+	int Name[16 / 4];
 	int map[16 / 4];
 	int cname[32 / 4];
 	int wadfiles[20][16 / 4];
@@ -876,7 +876,7 @@ typedef void (*mb_func_t) (int key);
 
 struct scores_t
 {
-	int name[64 / 4];
+	int Name[64 / 4];
 	boolean active;
 	int frags[MAXPLAYERS];
 	int killcount;
@@ -956,6 +956,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/01/11 08:03:09  dj_jl
+//  Renamed 'name' to "Name'
+//
 //  Revision 1.22  2002/01/07 12:19:56  dj_jl
 //  Changed copyright year
 //

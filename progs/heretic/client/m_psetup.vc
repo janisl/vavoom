@@ -36,7 +36,7 @@
 struct psetup_menu_t
 {
 	menu_t menu;
-	menuinputline_t name;
+	menuinputline_t Name;
 	menuswitch_t color;
 	menuspriteanim_t anim;
 	menutext_t title;
@@ -70,7 +70,7 @@ void psetup_func(menucommon_t * item, int msg)
 	switch (item->id)
 	{
 	case 1:
-		SetCvarS("name", ARR2STR(PSetupMenu.name.value));
+		SetCvarS("Name", ARR2STR(PSetupMenu.Name.value));
 		break;
 
 	case 2:
@@ -87,11 +87,11 @@ void menu_psetup(void)
 
 	InitMenu(&PSetupMenu.menu);
 
-	MenuInputLine_Init(&PSetupMenu.name, x, y, "Name", TEXT_SMALLL, 1);
-	PSetupMenu.name.callback = psetup_func;
-	PSetupMenu.name.id = 1;
-	strcpy(ARR2STR(PSetupMenu.name.value), GetCvarS("name"));
-	AddMenuItem(&PSetupMenu.menu, &PSetupMenu.name);
+	MenuInputLine_Init(&PSetupMenu.Name, x, y, "Name", TEXT_SMALLL, 1);
+	PSetupMenu.Name.callback = psetup_func;
+	PSetupMenu.Name.id = 1;
+	strcpy(ARR2STR(PSetupMenu.Name.value), GetCvarS("Name"));
+	AddMenuItem(&PSetupMenu.menu, &PSetupMenu.Name);
 	y += 20;
 
 	MenuSwitch_Init(&PSetupMenu.color, x, y, "Color", TEXT_SMALLL,
@@ -116,6 +116,9 @@ void menu_psetup(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/01/11 08:03:12  dj_jl
+//  Renamed 'name' to "Name'
+//
 //  Revision 1.5  2002/01/07 12:23:17  dj_jl
 //  Changed copyright year
 //

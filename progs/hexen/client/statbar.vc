@@ -130,7 +130,7 @@ void SB_StartMap(void)
 {
 	int i;
 	int namebuf[3];
-	string name = ARR2STR(namebuf);
+	string Name = ARR2STR(namebuf);
 	picinfo_t info;
 	int pclass;
 
@@ -155,8 +155,8 @@ void SB_StartMap(void)
 		}
 		else
 		{
-			sprint(name, "LIFEGMF%d", cl->clientnum);
-			pic_lifegem = R_RegisterPic(name, PIC_PATCH);
+			sprint(Name, "LIFEGMF%d", cl->clientnum);
+			pic_lifegem = R_RegisterPic(Name, PIC_PATCH);
 		}
 		break;
 	case PCLASS_CLERIC:
@@ -168,8 +168,8 @@ void SB_StartMap(void)
 		}
 		else
 		{
-			sprint(name, "LIFEGMC%d", cl->clientnum);
-			pic_lifegem = R_RegisterPic(name, PIC_PATCH);
+			sprint(Name, "LIFEGMC%d", cl->clientnum);
+			pic_lifegem = R_RegisterPic(Name, PIC_PATCH);
 		}
 		break;
 	case PCLASS_MAGE:
@@ -181,8 +181,8 @@ void SB_StartMap(void)
 		}
 		else
 		{
-			sprint(name, "LIFEGMM%d", cl->clientnum);
-			pic_lifegem = R_RegisterPic(name, PIC_PATCH);
+			sprint(Name, "LIFEGMM%d", cl->clientnum);
+			pic_lifegem = R_RegisterPic(Name, PIC_PATCH);
 		}
 		break;
 	}
@@ -191,14 +191,14 @@ void SB_StartMap(void)
 
 	for (i = 0; i < 10; i++)
 	{
-		sprint(name, "IN%d", i);
-		pic_innum[0][i] = R_RegisterPic(name, PIC_PATCH);
-		sprint(name, "INRED%d", i);
-		pic_innum[1][i] = R_RegisterPic(name, PIC_PATCH);
-		sprint(name, "SMALLIN%d", i);
-		pic_smallinnum[i] = R_RegisterPic(name, PIC_PATCH);
-		sprint(name, "FONTB%d", 16 + i);
-		pic_bignum[i] = R_RegisterPic(name, PIC_PATCH);
+		sprint(Name, "IN%d", i);
+		pic_innum[0][i] = R_RegisterPic(Name, PIC_PATCH);
+		sprint(Name, "INRED%d", i);
+		pic_innum[1][i] = R_RegisterPic(Name, PIC_PATCH);
+		sprint(Name, "SMALLIN%d", i);
+		pic_smallinnum[i] = R_RegisterPic(Name, PIC_PATCH);
+		sprint(Name, "FONTB%d", 16 + i);
+		pic_bignum[i] = R_RegisterPic(Name, PIC_PATCH);
 		R_GetPicInfo(pic_bignum[i], &info);
 		bignumwidth[i] = info.width;
 	}
@@ -266,13 +266,13 @@ void SB_StartMap(void)
 	pic_keybar = R_RegisterPic("KEYBAR", PIC_PATCH);
 	for (i = 0; i < NUMKEYS; i++)
 	{
-		sprint(name, "KEYSLOT%x", i + 1);
-		pic_key[i] = R_RegisterPic(name, PIC_PATCH);
+		sprint(Name, "KEYSLOT%x", i + 1);
+		pic_key[i] = R_RegisterPic(Name, PIC_PATCH);
 	}
 	for (i = 0; i < NUMARMOR; i++)
 	{
-		sprint(name, "ARMSLOT%d", i + 1);
-		pic_armor[i] = R_RegisterPic(name, PIC_PATCH);
+		sprint(Name, "ARMSLOT%d", i + 1);
+		pic_armor[i] = R_RegisterPic(Name, PIC_PATCH);
 	}
 
 	//
@@ -290,14 +290,14 @@ void SB_StartMap(void)
 	//
 	for (i = 0; i < 16; i++)
 	{
-		sprint(name, "SPFLY%d", i);
-		pic_fly[i] = R_RegisterPic(name, PIC_PATCH);
-		sprint(name, "SPMINO%d", i);
-		pic_mino[i] = R_RegisterPic(name, PIC_PATCH);
-		sprint(name, "SPBOOT%d", i);
-		pic_boot[i] = R_RegisterPic(name, PIC_PATCH);
-		sprint(name, "SPSHLD%d", i);
-		pic_shld[i] = R_RegisterPic(name, PIC_PATCH);
+		sprint(Name, "SPFLY%d", i);
+		pic_fly[i] = R_RegisterPic(Name, PIC_PATCH);
+		sprint(Name, "SPMINO%d", i);
+		pic_mino[i] = R_RegisterPic(Name, PIC_PATCH);
+		sprint(Name, "SPBOOT%d", i);
+		pic_boot[i] = R_RegisterPic(Name, PIC_PATCH);
+		sprint(Name, "SPSHLD%d", i);
+		pic_shld[i] = R_RegisterPic(Name, PIC_PATCH);
 	}
 
 	pic_paused = R_RegisterPic("PAUSED", PIC_PATCH);
@@ -867,6 +867,9 @@ void SB_UpdateWidgets(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/11 08:03:13  dj_jl
+//  Renamed 'name' to "Name'
+//
 //  Revision 1.7  2002/01/07 12:25:57  dj_jl
 //  Changed copyright year
 //

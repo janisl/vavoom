@@ -87,7 +87,7 @@ void SB_StartMap(void)
 {
 	int i;
 	int namebuf[3];
-	string name = ARR2STR(namebuf);
+	string Name = ARR2STR(namebuf);
 	picinfo_t info;
 
 	pic_barback = R_RegisterPic("BARBACK", PIC_PATCH);
@@ -103,8 +103,8 @@ void SB_StartMap(void)
 	}
 	else
 	{
-		sprint(name, "LIFEGEM%d", cl->clientnum);
-		pic_lifegem = R_RegisterPic(name, PIC_PATCH);
+		sprint(Name, "LIFEGEM%d", cl->clientnum);
+		pic_lifegem = R_RegisterPic(Name, PIC_PATCH);
 	}
 	pic_ltface = R_RegisterPic("LTFACE", PIC_PATCH);
 	pic_rtface = R_RegisterPic("RTFACE", PIC_PATCH);
@@ -119,12 +119,12 @@ void SB_StartMap(void)
 	}
 	for (i = 0; i < 10; i++)
 	{
-		sprint(name, "IN%d", i);
-		pic_innum[i] = R_RegisterPic(name, PIC_PATCH);
-		sprint(name, "SMALLIN%d", i);
-		pic_smallinnum[i] = R_RegisterPic(name, PIC_PATCH);
-		sprint(name, "FONTB%d", 16 + i);
-		pic_bignum[i] = R_RegisterPic(name, PIC_PATCH);
+		sprint(Name, "IN%d", i);
+		pic_innum[i] = R_RegisterPic(Name, PIC_PATCH);
+		sprint(Name, "SMALLIN%d", i);
+		pic_smallinnum[i] = R_RegisterPic(Name, PIC_PATCH);
+		sprint(Name, "FONTB%d", 16 + i);
+		pic_bignum[i] = R_RegisterPic(Name, PIC_PATCH);
 		R_GetPicInfo(pic_bignum[i], &info);
 		bignumwidth[i] = info.width;
 	}
@@ -164,10 +164,10 @@ void SB_StartMap(void)
 
 	for (i = 0; i < 16; i++)
 	{
-		sprint(name, "SPFLY%d", i);
-		pic_flight[i] = R_RegisterPic(name, PIC_PATCH);
-		sprint(name, "SPINBK%d", i);
-		pic_book[i] = R_RegisterPic(name, PIC_PATCH);
+		sprint(Name, "SPFLY%d", i);
+		pic_flight[i] = R_RegisterPic(Name, PIC_PATCH);
+		sprint(Name, "SPINBK%d", i);
+		pic_book[i] = R_RegisterPic(Name, PIC_PATCH);
 	}
 
 	pic_paused = R_RegisterPic("PAUSED", PIC_PATCH);
@@ -591,6 +591,9 @@ void SB_UpdateWidgets(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/11 08:03:12  dj_jl
+//  Renamed 'name' to "Name'
+//
 //  Revision 1.7  2002/01/07 12:23:17  dj_jl
 //  Changed copyright year
 //

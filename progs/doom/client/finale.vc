@@ -600,7 +600,7 @@ void F_CastDrawer(void)
 #if 0
 	T_SetFont(font_small);
 	T_SetAlign(hcenter, vtop);
-//  T_DrawText(160, 180, castorder[castnum].name);
+//  T_DrawText(160, 180, castorder[castnum].Name);
 	T_DrawText(160, 180,
 		svpr.GetString(mobjinfo[castorder[castnum]].message));
 
@@ -659,6 +659,9 @@ boolean F_Responder(event_t * event)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/01/11 08:03:10  dj_jl
+//  Renamed 'name' to "Name'
+//
 //  Revision 1.5  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

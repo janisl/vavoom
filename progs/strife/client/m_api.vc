@@ -37,7 +37,7 @@
 
 struct menulist_t
 {
-	string name;
+	string Name;
 	menufunc_t func;
 };
 
@@ -133,13 +133,13 @@ boolean MN_Active(void)
 //
 //==========================================================================
 
-void MN_SetMenu(string name)
+void MN_SetMenu(string Name)
 {
 	int i;
 
 	for (i = 0; i < NUM_MENUS; i++)
 	{
-		if (!stricmp(name, menulist[i].name))
+		if (!stricmp(Name, menulist[i].Name))
 		{
 			menulist[i].func();
 			return;
@@ -151,6 +151,9 @@ void MN_SetMenu(string name)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2002/01/11 08:03:13  dj_jl
+//  Renamed 'name' to "Name'
+//
 //  Revision 1.3  2002/01/07 12:27:41  dj_jl
 //  Changed copyright year
 //

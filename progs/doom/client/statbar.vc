@@ -199,7 +199,7 @@ int pic_pause;
 void SB_StartMap(void)
 {
 	int namebuf[3];
-	string name = ARR2STR(namebuf);
+	string Name = ARR2STR(namebuf);
 	int i;
 
 	pic_bar = R_RegisterPic("STBAR", PIC_PATCH);
@@ -207,43 +207,43 @@ void SB_StartMap(void)
 
 	for (i = 0; i < 10; i++)
 	{
-		sprint(name, "STTNUM%d", i);
-		pic_tallnum[i] = R_RegisterPic(name, PIC_PATCH);
-		sprint(name, "STYSNUM%d", i);
-		pic_yellownum[i] = R_RegisterPic(name, PIC_PATCH);
-		sprint(name, "STGNUM%d", i);
-		pic_graynum[i] = R_RegisterPic(name, PIC_PATCH);
+		sprint(Name, "STTNUM%d", i);
+		pic_tallnum[i] = R_RegisterPic(Name, PIC_PATCH);
+		sprint(Name, "STYSNUM%d", i);
+		pic_yellownum[i] = R_RegisterPic(Name, PIC_PATCH);
+		sprint(Name, "STGNUM%d", i);
+		pic_graynum[i] = R_RegisterPic(Name, PIC_PATCH);
 	}
 	pic_minus = R_RegisterPic("STTMINUS", PIC_PATCH);
 	pic_percent = R_RegisterPic("STTPRCNT", PIC_PATCH);
 
-	sprint(name, "STFB%d", cl->clientnum);
-	pic_faceback = R_RegisterPic(name, PIC_PATCH);
+	sprint(Name, "STFB%d", cl->clientnum);
+	pic_faceback = R_RegisterPic(Name, PIC_PATCH);
 
 	for (i = 0; i < 6; i++)
 	{
-		sprint(name, "STKEYS%d", i);
-		pic_keys[i] = R_RegisterPic(name, PIC_PATCH);
+		sprint(Name, "STKEYS%d", i);
+		pic_keys[i] = R_RegisterPic(Name, PIC_PATCH);
 	}
 
 	for (i = 0; i < ST_NUMPAINFACES; i++)
 	{
-		sprint(name, "STFST%d0", i);
-		pic_faces[i * ST_FACESTRIDE] = R_RegisterPic(name, PIC_PATCH);
-		sprint(name, "STFST%d1", i);
-		pic_faces[i * ST_FACESTRIDE + 1] = R_RegisterPic(name, PIC_PATCH);
-		sprint(name, "STFST%d2", i);
-		pic_faces[i * ST_FACESTRIDE + 2] = R_RegisterPic(name, PIC_PATCH);
-		sprint(name, "STFTR%d0", i);
-		pic_faces[i * ST_FACESTRIDE + 3] = R_RegisterPic(name, PIC_PATCH);
-		sprint(name, "STFTL%d0", i);
-		pic_faces[i * ST_FACESTRIDE + 4] = R_RegisterPic(name, PIC_PATCH);
-		sprint(name, "STFOUCH%d", i);
-		pic_faces[i * ST_FACESTRIDE + 5] = R_RegisterPic(name, PIC_PATCH);
-		sprint(name, "STFEVL%d", i);
-		pic_faces[i * ST_FACESTRIDE + 6] = R_RegisterPic(name, PIC_PATCH);
-		sprint(name, "STFKILL%d", i);
-		pic_faces[i * ST_FACESTRIDE + 7] = R_RegisterPic(name, PIC_PATCH);
+		sprint(Name, "STFST%d0", i);
+		pic_faces[i * ST_FACESTRIDE] = R_RegisterPic(Name, PIC_PATCH);
+		sprint(Name, "STFST%d1", i);
+		pic_faces[i * ST_FACESTRIDE + 1] = R_RegisterPic(Name, PIC_PATCH);
+		sprint(Name, "STFST%d2", i);
+		pic_faces[i * ST_FACESTRIDE + 2] = R_RegisterPic(Name, PIC_PATCH);
+		sprint(Name, "STFTR%d0", i);
+		pic_faces[i * ST_FACESTRIDE + 3] = R_RegisterPic(Name, PIC_PATCH);
+		sprint(Name, "STFTL%d0", i);
+		pic_faces[i * ST_FACESTRIDE + 4] = R_RegisterPic(Name, PIC_PATCH);
+		sprint(Name, "STFOUCH%d", i);
+		pic_faces[i * ST_FACESTRIDE + 5] = R_RegisterPic(Name, PIC_PATCH);
+		sprint(Name, "STFEVL%d", i);
+		pic_faces[i * ST_FACESTRIDE + 6] = R_RegisterPic(Name, PIC_PATCH);
+		sprint(Name, "STFKILL%d", i);
+		pic_faces[i * ST_FACESTRIDE + 7] = R_RegisterPic(Name, PIC_PATCH);
 	}
 	pic_faces[ST_GODFACE] = R_RegisterPic("STFGOD0", PIC_PATCH);
 	pic_faces[ST_DEADFACE] = R_RegisterPic("STFDEAD0", PIC_PATCH);
@@ -722,6 +722,9 @@ void SB_UpdateWidgets(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/11 08:03:10  dj_jl
+//  Renamed 'name' to "Name'
+//
 //  Revision 1.8  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

@@ -635,11 +635,11 @@ void MenuBitmap_Draw(menucommon_t * aitem)
 //==========================================================================
 
 void MenuBitmap_Init(menubitmap_t * item, int x, int y, int flags,
-	string name, int type)
+	string Name, int type)
 {
 	MenuCommon_Init(item, x, y, flags);
 	item->drawer = MenuBitmap_Draw;
-	item->handle = R_RegisterPic(name, type);
+	item->handle = R_RegisterPic(Name, type);
 }
 
 //**************************************************************************
@@ -1233,7 +1233,7 @@ void MenuControl_Draw(menucommon_t * aitem)
 	int key1;
 	int key2;
 	int name_buf[32 / 4];
-	string name = ARR2STR(name_buf);
+	string Name = ARR2STR(name_buf);
 
 	int x = item->x;
 	int y = item->y;
@@ -1254,8 +1254,8 @@ void MenuControl_Draw(menucommon_t * aitem)
 	T_SetAlign(hleft, vtop);
 	if (key1 >= 0)
 	{
-		KeyNameForNum(key1, name);
-		T_DrawText(x + 10, y, name);
+		KeyNameForNum(key1, Name);
+		T_DrawText(x + 10, y, Name);
 	}
 	else
 	{
@@ -1263,8 +1263,8 @@ void MenuControl_Draw(menucommon_t * aitem)
 	}
 	if (key2 >= 0)
 	{
-		KeyNameForNum(key2, name);
-		T_DrawText(x + 100, y, name);
+		KeyNameForNum(key2, Name);
+		T_DrawText(x + 100, y, Name);
 	}
 	else
 	{
@@ -1694,7 +1694,7 @@ void MenuSlist_Draw(menucommon_t * aitem)
 	T_SetAlign(hleft, vtop);
 	for (i = 0; i < slist->count; i++)
 	{
-		T_DrawText(16, 32 + 10 * i, ARR2STR(slist->cache[i].name));
+		T_DrawText(16, 32 + 10 * i, ARR2STR(slist->cache[i].Name));
 		T_DrawText(16 + 128, 32 + 10 * i, ARR2STR(slist->cache[i].map));
 		if (slist->cache[i].maxusers)
 		{
@@ -1884,6 +1884,9 @@ class MenuBigTextButton:MenuTextButton
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/01/11 08:03:10  dj_jl
+//  Renamed 'name' to "Name'
+//
 //  Revision 1.13  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

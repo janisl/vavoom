@@ -635,14 +635,14 @@ bool B_Chat (skullb_s *bot)
 */
 
 // Returns true if a given bot name is valid
-BOOL B_CheckName (char *name)
+BOOL B_CheckName (char *Name)
 {
-	if (!name)
+	if (!Name)
 		return true;
 	else
 	{
 		for (int i=0; i<NUMTOTALBOTS; i++)
-			if (!stricmp (botinfo[i].name, name))
+			if (!stricmp (botinfo[i].Name, Name))
 				return true;
 		return false;
 	}
@@ -1902,7 +1902,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot1\\color\\0\\class\\0\\model\\doomguy\\skin\\green.pcx"
+		"\\Name\\bot1\\color\\0\\class\\0\\model\\doomguy\\skin\\green.pcx"
 	},
 	{
 		"bot2",
@@ -1911,7 +1911,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot2\\color\\0\\class\\0\\model\\doomguy\\skin\\greenf.pcx"
+		"\\Name\\bot2\\color\\0\\class\\0\\model\\doomguy\\skin\\greenf.pcx"
 	},
 	{
 		"bot3",
@@ -1920,7 +1920,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot3\\color\\0\\class\\0\\model\\doomguy\\skin\\camo.pcx"
+		"\\Name\\bot3\\color\\0\\class\\0\\model\\doomguy\\skin\\camo.pcx"
 	},
 	{
 		"bot4",
@@ -1929,7 +1929,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot4\\color\\0\\class\\0\\model\\doomguy\\skin\\camof.pcx"
+		"\\Name\\bot4\\color\\0\\class\\0\\model\\doomguy\\skin\\camof.pcx"
 	},
 	{
 		"bot5",
@@ -1938,7 +1938,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot5\\color\\1\\class\\0\\model\\doomguy\\skin\\black.pcx"
+		"\\Name\\bot5\\color\\1\\class\\0\\model\\doomguy\\skin\\black.pcx"
 	},
 	{
 		"bot6",
@@ -1947,7 +1947,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot6\\color\\1\\class\\0\\model\\doomguy\\skin\\blackf.pcx"
+		"\\Name\\bot6\\color\\1\\class\\0\\model\\doomguy\\skin\\blackf.pcx"
 	},
 	{
 		"bot7",
@@ -1956,7 +1956,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot7\\color\\1\\class\\0\\model\\doomguy\\skin\\white.pcx"
+		"\\Name\\bot7\\color\\1\\class\\0\\model\\doomguy\\skin\\white.pcx"
 	},
 	{
 		"bot8",
@@ -1965,7 +1965,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot8\\color\\1\\class\\0\\model\\doomguy\\skin\\whitef.pcx"
+		"\\Name\\bot8\\color\\1\\class\\0\\model\\doomguy\\skin\\whitef.pcx"
 	},
 	{
 		"bot9",
@@ -1974,7 +1974,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot9\\color\\2\\class\\0\\model\\doomguy\\skin\\brown.pcx"
+		"\\Name\\bot9\\color\\2\\class\\0\\model\\doomguy\\skin\\brown.pcx"
 	},
 	{
 		"bot10",
@@ -1983,7 +1983,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot10\\color\\2\\class\\0\\model\\doomguy\\skin\\brownf.pcx"
+		"\\Name\\bot10\\color\\2\\class\\0\\model\\doomguy\\skin\\brownf.pcx"
 	},
 	{
 		"bot11",
@@ -1992,7 +1992,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot11\\color\\3\\class\\0\\model\\doomguy\\skin\\red.pcx"
+		"\\Name\\bot11\\color\\3\\class\\0\\model\\doomguy\\skin\\red.pcx"
 	},
 	{
 		"bot12",
@@ -2001,7 +2001,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot12\\color\\3\\class\\0\\model\\doomguy\\skin\\redf.pcx"
+		"\\Name\\bot12\\color\\3\\class\\0\\model\\doomguy\\skin\\redf.pcx"
 	},
 	{
 		"bot13",
@@ -2010,7 +2010,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot13\\color\\4\\class\\0\\model\\doomguy\\skin\\pink.pcx"
+		"\\Name\\bot13\\color\\4\\class\\0\\model\\doomguy\\skin\\pink.pcx"
 	},
 	{
 		"bot14",
@@ -2019,7 +2019,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot14\\color\\4\\class\\0\\model\\doomguy\\skin\\pinkf.pcx"
+		"\\Name\\bot14\\color\\4\\class\\0\\model\\doomguy\\skin\\pinkf.pcx"
 	},
 	{
 		"bot15",
@@ -2028,7 +2028,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot15\\color\\5\\class\\0\\model\\doomguy\\skin\\blue.pcx"
+		"\\Name\\bot15\\color\\5\\class\\0\\model\\doomguy\\skin\\blue.pcx"
 	},
 	{
 		"bot16",
@@ -2037,7 +2037,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot16\\color\\5\\class\\0\\model\\doomguy\\skin\\bluef.pcx"
+		"\\Name\\bot16\\color\\5\\class\\0\\model\\doomguy\\skin\\bluef.pcx"
 	},
 	{
 		"bot17",
@@ -2046,7 +2046,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot17\\color\\5\\class\\0\\model\\doomguy\\skin\\lgtblue.pcx"
+		"\\Name\\bot17\\color\\5\\class\\0\\model\\doomguy\\skin\\lgtblue.pcx"
 	},
 	{
 		"bot18",
@@ -2055,7 +2055,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot18\\color\\5\\class\\0\\model\\doomguy\\skin\\lgtbluef.pcx"
+		"\\Name\\bot18\\color\\5\\class\\0\\model\\doomguy\\skin\\lgtbluef.pcx"
 	},
 	{
 		"bot19",
@@ -2064,7 +2064,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot19\\color\\5\\class\\0\\model\\doomguy\\skin\\navy.pcx"
+		"\\Name\\bot19\\color\\5\\class\\0\\model\\doomguy\\skin\\navy.pcx"
 	},
 	{
 		"bot20",
@@ -2073,7 +2073,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot20\\color\\5\\class\\0\\model\\doomguy\\skin\\navyf.pcx"
+		"\\Name\\bot20\\color\\5\\class\\0\\model\\doomguy\\skin\\navyf.pcx"
 	},
 	{
 		"bot21",
@@ -2082,7 +2082,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot21\\color\\5\\class\\0\\model\\doomguy\\skin\\indigo.pcx"
+		"\\Name\\bot21\\color\\5\\class\\0\\model\\doomguy\\skin\\indigo.pcx"
 	},
 	{
 		"bot22",
@@ -2091,7 +2091,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot22\\color\\5\\class\\0\\model\\doomguy\\skin\\indigof.pcx"
+		"\\Name\\bot22\\color\\5\\class\\0\\model\\doomguy\\skin\\indigof.pcx"
 	},
 	{
 		"bot23",
@@ -2100,7 +2100,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot23\\color\\6\\class\\0\\model\\doomguy\\skin\\violet.pcx"
+		"\\Name\\bot23\\color\\6\\class\\0\\model\\doomguy\\skin\\violet.pcx"
 	},
 	{
 		"bot24",
@@ -2109,7 +2109,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot24\\color\\6\\class\\0\\model\\doomguy\\skin\\violetf.pcx"
+		"\\Name\\bot24\\color\\6\\class\\0\\model\\doomguy\\skin\\violetf.pcx"
 	},
 	{
 		"bot25",
@@ -2118,7 +2118,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot25\\color\\6\\class\\0\\model\\doomguy\\skin\\purple.pcx"
+		"\\Name\\bot25\\color\\6\\class\\0\\model\\doomguy\\skin\\purple.pcx"
 	},
 	{
 		"bot26",
@@ -2127,7 +2127,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot26\\color\\6\\class\\0\\model\\doomguy\\skin\\purplef.pcx"
+		"\\Name\\bot26\\color\\6\\class\\0\\model\\doomguy\\skin\\purplef.pcx"
 	},
 	{
 		"bot27",
@@ -2136,7 +2136,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot27\\color\\7\\class\\0\\model\\doomguy\\skin\\orange.pcx"
+		"\\Name\\bot27\\color\\7\\class\\0\\model\\doomguy\\skin\\orange.pcx"
 	},
 	{
 		"bot28",
@@ -2145,7 +2145,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot28\\color\\7\\class\\0\\model\\doomguy\\skin\\orangef.pcx"
+		"\\Name\\bot28\\color\\7\\class\\0\\model\\doomguy\\skin\\orangef.pcx"
 	},
 	{
 		"bot29",
@@ -2154,7 +2154,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot29\\color\\7\\class\\0\\model\\doomguy\\skin\\yellow.pcx"
+		"\\Name\\bot29\\color\\7\\class\\0\\model\\doomguy\\skin\\yellow.pcx"
 	},
 	{
 		"bot30",
@@ -2163,7 +2163,7 @@ botinfo_t botinfo[30] =
 		bsk_medium,
 		bsk_medium,
 		bsk_medium,
-		"\\name\\bot30\\color\\7\\class\\0\\model\\doomguy\\skin\\yellowf.pcx"
+		"\\Name\\bot30\\color\\7\\class\\0\\model\\doomguy\\skin\\yellowf.pcx"
 	}
 };
 
@@ -2174,11 +2174,11 @@ void BotPlayer::OnBeginPlay(void)
 	botinfo_t *binfo;
 	int i;
 
-	if (strcmp(ARR2STR(player->name), ""))
+	if (strcmp(ARR2STR(player->Name), ""))
 	{
 		for (i = 0; i < NUMTOTALBOTS; i++)
 		{
-			if (!stricmp(botinfo[i].name, ARR2STR(player->name)))
+			if (!stricmp(botinfo[i].Name, ARR2STR(player->Name)))
 			{
 				bottype = i;
 				break;
@@ -2251,6 +2251,9 @@ void BotPlayer::OnSpawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/11 08:03:10  dj_jl
+//  Renamed 'name' to "Name'
+//
 //  Revision 1.6  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

@@ -1947,7 +1947,7 @@ void DisconnectClient(player_t * player)
 			player->ViewEnts[i] = none;
 		}
 	}
-	bprint("%s left the game\n", ARR2STR(player->name));
+	bprint("%s left the game\n", ARR2STR(player->Name));
 	StartSoundName(NULL, "Chat", CHAN_AUTO);
 }
 
@@ -1969,6 +1969,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/01/11 08:03:13  dj_jl
+//  Renamed 'name' to "Name'
+//
 //  Revision 1.17  2002/01/07 12:25:58  dj_jl
 //  Changed copyright year
 //

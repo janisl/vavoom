@@ -440,7 +440,7 @@ enum
 
 struct botinfo_t
 {
-	string name;		// Bot's name*/
+	string Name;		// Bot's name*/
 	int accuracy;		// Accuracy with "instant" weapons (this includes "leading")
 	int intelect;		// Accuracy with "missile" weapons (rocket launcher, etc.)
 	int evade;			// Ability to dodge incoming missiles
@@ -766,6 +766,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/11 08:03:12  dj_jl
+//  Renamed 'name' to "Name'
+//
 //  Revision 1.10  2002/01/07 12:23:18  dj_jl
 //  Changed copyright year
 //

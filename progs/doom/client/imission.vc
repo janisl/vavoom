@@ -1655,7 +1655,7 @@ void IM_UpdateStats(void)
 //==========================================================================
 
 #ifndef DOOM2
-void FindEpisodeAndMap(string name, int *epi, int *map)
+void FindEpisodeAndMap(string Name, int *epi, int *map)
 {
 	int e;
 	int m;
@@ -1664,7 +1664,7 @@ void FindEpisodeAndMap(string name, int *epi, int *map)
 	{
 		for (m = 1; m <= 9; m++)
 		{
-			if (!strcmp(name, va("E%dM%d", e, m)))
+			if (!strcmp(Name, va("E%dM%d", e, m)))
 			{
 				*epi = e;
 				*map = m;
@@ -1733,6 +1733,9 @@ void IM_Start(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/01/11 08:03:10  dj_jl
+//  Renamed 'name' to "Name'
+//
 //  Revision 1.4  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //
