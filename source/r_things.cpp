@@ -145,6 +145,8 @@ static TCvarI			r_draw_psprites("r_draw_psprites", "1", CVAR_ARCHIVE);
 static TCvarI			r_models("r_models", "1", CVAR_ARCHIVE);
 static TCvarI			r_view_models("r_view_models", "1", CVAR_ARCHIVE);
 static TCvarI			r_sort_sprites("r_sort_sprites", "0");
+static TCvarI			r_fix_sprite_offsets("r_fix_sprite_offsets", "0", CVAR_ARCHIVE);
+static TCvarI			r_sprite_fix_delta("r_sprite_fix_delta", "-3", CVAR_ARCHIVE);
 static TCvarI			croshair("croshair", "0", CVAR_ARCHIVE);
 static TCvarI			croshair_trans("croshair_trans", "0", CVAR_ARCHIVE);
 
@@ -637,8 +639,14 @@ static void RenderSprite(clmobj_t *thing)
 	TVec start = -spriteoffset[lump] * sprright;
 	TVec end = (spritewidth[lump] - spriteoffset[lump]) * sprright;
 
-	TVec topdelta = spritetopoffset[lump] * sprup;
-	TVec botdelta = (spritetopoffset[lump] - spriteheight[lump]) * sprup;
+	float TopOffs = spritetopoffset[lump];
+	if (r_fix_sprite_offsets && TopOffs < spriteheight[lump] &&
+		2 * TopOffs + r_sprite_fix_delta >= spriteheight[lump])
+	{
+		TopOffs = spriteheight[lump];
+	}
+	TVec topdelta = TopOffs * sprup;
+	TVec botdelta = (TopOffs - spriteheight[lump]) * sprup;
 
 	sv[0] = sprorigin + start + botdelta;
 	sv[1] = sprorigin + start + topdelta;
@@ -1182,9 +1190,12 @@ void R_DrawModelFrame(const TVec &origin, float angle, model_t *model,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2003/12/23 07:15:43  dj_jl
+//	Sprite offset fix
+//
 //	Revision 1.17  2003/10/23 06:36:47  dj_jl
 //	PSprites drawn at different depths
-//
+//	
 //	Revision 1.16  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
 //	
