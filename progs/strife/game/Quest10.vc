@@ -23,16 +23,20 @@
 //**
 //**************************************************************************
 
-class Quest10:QuestInfo;
+class Quest10 : QuestInfo;
 
 defaultproperties
 {
 	ConversationID = 321;
+	QuestID = QUEST_10;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/10/02 17:10:48  dj_jl
+//  Quest items.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //
