@@ -497,9 +497,69 @@ boolean EV_ThingDestroy(int tid)
 	return success;
 }
 
+int ThingCount(int type, int tid)
+{
+	int count;
+	int searcher;
+	mobj_t *mobj;
+	int moType;
+
+	if (!(type + tid))
+	{
+		// Nothing to count
+		return 0;
+	}
+	moType = TranslateThingType[type];
+	count = 0;
+	searcher = -1;
+	if (tid)
+	{
+		// Count TID things
+		while ((mobj = P_FindMobjFromTID(tid, &searcher)) != NULL)
+		{
+			if (type == 0)
+			{
+				// Just count TIDs
+				count++;
+			}
+			else if (moType == mobj->type)
+			{
+				if (mobj->flags & MF_COUNTKILL && mobj->health <= 0)
+				{
+					// Don't count dead monsters
+					continue;
+				}
+				count++;
+			}
+		}
+	}
+	else
+	{
+		// Count only types
+		FOREACH(mobj_t, mobj)
+		{
+			if (mobj->type != moType)
+			{
+				// Doesn't match
+				continue;
+			}
+			if (mobj->flags & MF_COUNTKILL && mobj->health <= 0)
+			{
+				// Don't count dead monsters
+				continue;
+			}
+			count++;
+		}
+	}
+	return count;
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/09 17:40:38  dj_jl
+//  Moved thing counting to progs
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //
