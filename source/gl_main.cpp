@@ -279,6 +279,7 @@ void TOpenGLDrawer::StartUpdate(void)
 
 void TOpenGLDrawer::BeginDirectUpdate(void)
 {
+	glFinish();
 	glDrawBuffer(GL_FRONT);
 }
 
@@ -439,9 +440,12 @@ void TOpenGLDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/09/14 16:53:17  dj_jl
+//	Added glFinish to direct update
+//
 //	Revision 1.10  2001/09/12 17:31:27  dj_jl
 //	Rectangle drawing and direct update for plugins
-//
+//	
 //	Revision 1.9  2001/09/05 12:21:42  dj_jl
 //	Release changes
 //	
