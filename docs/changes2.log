@@ -1,0 +1,103 @@
+
+29-06-2001
+  Pñc relØzes es spñlñju Desperados - Wanted dead or alive. Izieıana prasØja
+ diezgan ilgu laiku. Pa vidu paspñju veikt prog÷u failu paplaıinÆjuma mai·u
+ no .c uz .vc.
+  Izveidoju 3D grØdu caurredzamØbu.
+30-06-2001
+  vlumpy atbrØvojos no Allegro izmantoıanas.
+  Izveidoju speciÆlu clienta versiju lØme·a objekta struktİrai. AtbrØvojos
+ no sektoru linkiem.
+  Izveidoju subsektoru linkus, sektora redzamØbas pÆrbaudei serveris tagad
+ izmanto vis datus. No klienta/servera neizdarØtajÆm lietÆm palicis ir tikai
+ mainØto tekstİru informÆcijas sİtØıana jauniem klientiem.
+  Salaboju spraitu zØmñıanu 2D gadØjumiem.
+  SÆku mñÖinÆt ieviest Quake modeõus.
+02-07-2001
+  Turpinu darbu pie modeõiem. Portñju zØmñıanu, bet vñl neiet kÆ gribñtos.
+  Ğodien ir diezgan lielas pÆrmai·as, es nopirku GeForce2 un man tagd ir Østs
+ akselerÆtors. LielÆko dienas daõu pavadØju izmñÖinot da÷Ædas ar OpenGL un
+ Direct3D akselerñtÆs spñles. ×paıi priecñ akselerñtais OpenGL. AtklÆjÆs arØ
+ viens OpenGL bags - caurspØdØgie spraiti vispÆr nav redzami. IzskatÆs ka
+ karte veic alfas testu galØgajam pikselim, nevis izejas tekstİrai.
+03-07-2001
+  KautkÆ salaboju caurspØdØgos spraitus.
+  Ğo to pielaboju pie modeõiem, nestrÆdÆ kÆ vajag.
+04-07-2001
+  PilnØbÆ salaboju caurspØdØgos spraitus.
+  Half-Life: Opposing Force ar akselerÆtoru beidzot iet spñlñjamÆ ÆtrumÆ, bİs
+ jÆiziet.
+10-07-2001
+  IzgÆju Half-Life:Opposing Force - baigi labais.
+  Izveidoju mipmaping iekı OpenGL, Ætruma pieaugums ir jİtams.
+11-07-2001
+  Uzlaboju alfa testu Direct3D. Testñju Dot3 bumpmapingu, izskatÆs soloıi,
+ bet tas prasØs diezgan lielu darbu, tÆkÆ es ıaubos vai kautkas bİs.
+12-07-2001
+  Izveidoju "lens flares", tÆs ir no visiem gaismas objektiem, tÆpñc tÆs vñl
+ nebİs pieejamas. ArØ redzamØbas pÆrbaudi vajag labÆku.
+13-07-2001
+  SÆku veidot jaunu lØmeni, ieviesu statisku gaismu izstarojoıiem objektiem
+ iespñju definñt gaismas rÆdiusu.
+14-07-2001
+  Dabİju DirectX 8 SDK. Ir diezgan lielas izmai·as. No jaunajÆm Direct3D
+ ØpaıØbÆm man vislabÆk patØk Vertex shaders un Pixel shaders - ar dzelzi kas
+ tos atbalsta iespñjas pieaug manÆmi. Diem÷ñl mana jaunÆ GeForce2 neatbalsta
+ tos.
+17-07-2001
+  Sa·ñmu vñstuli no puiıa kurı testñja OpenGL uz LINUX. KÆ jau varñja saprast
+ viss strÆdÆ normÆli. Toties ir problñmas ar krÆsu dziõumu lielÆku par 16 bitu
+ krÆsÆm, cerams ka izveidoju 32 bitu krÆsu atbalstu LINUX OpenGL versijai.
+  Salaboju automapu priekı OpenGL un Direct3D.
+  No lØme·a ielÆdñıanas izmetu ÆrÆ lieko, jo tagad vienmñr jÆbİt GL nodiem.
+18-07-2001
+  AtkÆrtoti mñÖinu ieviest modeõu atbalstu. Ğoreiz veiksmØgi. PamazÆm sÆku
+ pÆriet uz md2 formÆta atbalstu.
+19-07-2001
+  AtbrØvojos no onseam un facesfront, iekıñji pÆrveidoju uz md2 formÆtu, t.i.
+ tiek atbalstØts md2 formÆts. Pievienoju md2 formÆta modeõu ielÆdñıanu, viss
+ strÆdÆ normÆli. Pñc nelielÆm pÆrdomÆm vecais mdl formÆts tika izmests ÆrÆ.
+ Netaisos atbalstØt mdl formÆtu, jo to elementÆri var konvertñt md2 formÆtÆ.
+ Un tÆ ir softa atbalsts md2 modeõiem. Paılaik tikai 8 bitu krÆsÆm, bet tÆ
+ nav problñma. TÆpat ar OpenGL un Direct3D arØ nebİs problñmu.
+20-07-2001
+  Vispirms es izmetu ÆrÆ "subdivision" modeõu rendñıanu. Iespñjams ka vñlÆk
+ es to pievienoıu atpakaõ. PagaidÆm jÆtiek galÆ ar parasto rendñıanu. Ieviesu
+ atbalstu 16 un 32 bitu krÆsÆm. TÆkÆ viss ir kÆrtØbÆ, modeõu rendñıana tia
+ pievienota pie TDrawer un ieviestas OpenGL un Direct3D versijas.
+  Izmetu ÆrÆ "lens flares". NedomÆju ka ir vñrts to darØt, jo pat Quake3 to
+ pñc noklusñıanas nedara. Un arØ reÆlajÆ dzØvñ normÆli tÆs nav redzamas.
+  AtklÆjÆs liela kõİda - softÆ modeõi tiek zØmñti spoguõatñlÆ. Bİs darbi·ı
+ rØtdienai.
+21-07-2001
+  Salaboju modeõu zØmñıanu softÆ.
+  Apgreidoju Allegro uz jaunÆko versiju.
+  OpenGL un Direct3D izveidoju teksturñtas partikles, izskatÆs nedaudz labÆk.
+  Pievienoju visu nepiecieıamo modeõu atbalstam pievienojot jaunus laukus
+ objektu struktİrÆs, attiecØgÆs izmai·as tØkla protokolÆ. Modeõus definñ
+ prog÷os stÆvokõu tabulÆ aiz spraita kadra nummura, bet tas nav obligÆti -
+ ja seko simbolu virkne, tad tas ir modelis, citÆdi stÆvoklin modeõa nav.
+23-07-2001
+  Izveidoju utilØtu modeõu salaboıanai Vavoom vajadzØbÆm.
+  Pabeidzu izmai·as protokolÆ.
+  Ja nav atni·as skrØnıotam, programma nebeigs darbu ar kõİdu, bet gan tikai
+ izmetØs pazi·ojumu konsolñ. SkrØnıotu faili tagad sauksies shot$$$$.pcx.
+  Spñles datu direktorija tika pÆrdñvñta uz basev, wad failu inicializÆcija
+ pÆrnesta uz failu moduli.
+24-07-2001
+  Nedaudz uzlaboju ievadu.
+  KÆdu laiku atpakaõ es Allegro sorceforge.net lapÆ pastÆstØju par problñmÆm
+ ar xalleg.h, kuras tika izlabotas.
+  SÆku interesñties par sourceforge.net. PiereÖistrñjos kÆ lietotÆjs, kÆ arØ
+ pieteicu Vavoom projektu. SÆku interesñties par CVS.
+25-07-2001
+  Pievienoju carspØdØbu modeõiem OpenGL un Direct3D versijÆs. Kas gan tik
+ nav vajadzØgs softa rendñıanai - krÆsainais apgaismojums, caurspØdØba un abi
+ kopÆ. Darba pietiek. Tas nozØmñ, ka otrs plÆnotais mñróis ıai versijai -
+ VavoomC valodas padarØıana par objekt-orientñtu valodu - netiks realizñts
+ ıajÆ versijÆ, tÆpñc nemaz neko neuzsÆkıu.
+  Direct3D izmetu ÆrÆ visu, kas bija vajadzØgs priekı S3 Trio3D, kad man ir
+ GeForce2, man tas vairs nav vajadzØgs, tÆpat kÆ jebkurai normÆlai 3D kartei.
+  SÆku pievienot modeõus.
+  sourceforge.net projekts ir pie·emts. Sagatavoju aploudot iekı CVS.
+  
