@@ -540,11 +540,16 @@ void AddStaticLightRGB(TVec origin, float radius, int color)
 //
 //==========================================================================
 
-void misc_static_light(mobj_t * self, mthing_t * mthing)
+class misc_static_light:mobj_t
+{
+	void OnMapSpawn(mthing_t *);
+};
+
+void misc_static_light::OnMapSpawn(mthing_t * mthing)
 {
 	float l;
 
-	RemoveMobjThinker(self);
+	RemoveMobjThinker(this);
 	if (!mthing->arg1)
 		l = 200.0;
 	else
@@ -558,11 +563,16 @@ void misc_static_light(mobj_t * self, mthing_t * mthing)
 //
 //==========================================================================
 
-void misc_static_rgb_light(mobj_t * self, mthing_t * mthing)
+class misc_static_rgb_light:mobj_t
+{
+	void OnMapSpawn(mthing_t *);
+};
+
+void misc_static_rgb_light::OnMapSpawn(mthing_t * mthing)
 {
 	float l;
 
-	RemoveMobjThinker(self);
+	RemoveMobjThinker(this);
 	if (!mthing->arg1)
 		l = 200.0;
 	else
@@ -573,12 +583,8 @@ void misc_static_rgb_light(mobj_t * self, mthing_t * mthing)
 
 __mobjinfo__
 {
-	MT_STATIC_LIGHT
-	{
-	1502, misc_static_light}
-	MT_STATIC_RGB_LIGHT
-	{
-	1503, misc_static_rgb_light}
+	MT_STATIC_LIGHT { 1502, misc_static_light }
+	MT_STATIC_RGB_LIGHT { 1503, misc_static_rgb_light }
 }
 
 //==========================================================================
@@ -621,6 +627,9 @@ void UnarchiveThinker(Thinker * th)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/09/27 17:08:19  dj_jl
+//  Removed spawn functions, added mobj classes
+//
 //  Revision 1.6  2001/09/25 17:13:50  dj_jl
 //  Beautification
 //

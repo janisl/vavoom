@@ -285,10 +285,10 @@ mobj_t *P_SpawnMobj(float x, float y, float z, int type)
 {
 	mobj_t *mobj;
 
-	mobj = NewMobjThinker();
+	mobj = NewMobjThinker(mobjinfo[type].class_id);
 	mobj->type = type;
 	mobj->origin = vector(x, y, z);
-	mobjinfo[type].spawnfunc(mobj, NULL);
+	mobj->OnMapSpawn(NULL);
 	return mobj;
 }
 
@@ -404,7 +404,7 @@ int P_HitFloor(mobj_t * thing)
 		StartSoundName(mo, "LavaSizzle", CHAN_VOICE);
 		if (thing->player && level->tictime & 31)
 		{
-			DamageMobj(thing, &LavaInflictor, NULL, 5);
+			DamageMobj(thing, LavaInflictor, NULL, 5);
 		}
 		return FLOOR_LAVA;
 	case FLOOR_SLUDGE:
@@ -2124,9 +2124,9 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 	{
 		if (mthing->type == mobjinfo[i].doomednum)
 		{
-			mobj = NewMobjThinker();
+			mobj = NewMobjThinker(mobjinfo[i].class_id);
 			mobj->type = i;
-			mobjinfo[i].spawnfunc(mobj, mthing);
+			mobj->OnMapSpawn(mthing);
 			return;
 		}
 	}
@@ -2354,6 +2354,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2001/09/27 17:08:19  dj_jl
+//  Removed spawn functions, added mobj classes
+//
 //  Revision 1.8  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

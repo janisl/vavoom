@@ -385,7 +385,7 @@ extern sec_region_t *AddExtraFloor(line_t * line, sector_t * dst);
 //  Mobj utilites
 //
 
-extern mobj_t *NewMobjThinker(void);
+extern mobj_t *NewMobjThinker(classid cid);
 extern void RemoveMobjThinker(mobj_t * mobj);
 extern void P_SetThingPosition(mobj_t * thing);
 extern void P_UnsetThingPosition(mobj_t * thing);
@@ -480,6 +480,9 @@ extern void Destroy(void *ptr);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2001/09/27 17:08:19  dj_jl
+//  Removed spawn functions, added mobj classes
+//
 //  Revision 1.9  2001/09/25 17:13:50  dj_jl
 //  Beautification
 //

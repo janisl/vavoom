@@ -177,10 +177,10 @@ mobj_t *P_SpawnMobj(float x, float y, float z, int type)
 {
 	mobj_t *mobj;
 
-	mobj = NewMobjThinker();
+	mobj = NewMobjThinker(mobjinfo[type].class_id);
 	mobj->type = type;
 	mobj->origin = vector(x, y, z);
-	mobjinfo[type].spawnfunc(mobj, NULL);
+	mobj->OnMapSpawn(NULL);
 	return mobj;
 }
 
@@ -246,9 +246,9 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 		if (mthing->type == mobjinfo[i].doomednum)
 		{
 			// spawn it
-			mobj = NewMobjThinker();
+			mobj = NewMobjThinker(mobjinfo[i].class_id);
 			mobj->type = i;
-			mobjinfo[i].spawnfunc(mobj, mthing);
+			mobj->OnMapSpawn(mthing);
 			return;
 		}
 	}
@@ -850,6 +850,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/09/27 17:08:20  dj_jl
+//  Removed spawn functions, added mobj classes
+//
 //  Revision 1.6  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

@@ -26,7 +26,6 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "vcc.h"
-#include "info.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -36,6 +35,26 @@
 #define MAX_MOBJ_TYPES			1024
 
 // TYPES -------------------------------------------------------------------
+
+struct state_t
+{
+	int		sprite;
+	int		frame;
+	int		model_index;
+	int		model_frame;
+	float	time;
+	int		statenum;
+	int		nextstate;
+	float	misc1;
+    float	misc2;
+	int		function;
+};
+
+struct mobjinfo_t
+{
+    int		doomednum;
+	int		class_id;
+};
 
 typedef char ident_t[MAX_IDENTIFIER_LENGTH];
 
@@ -292,8 +311,8 @@ void ParseMobjInfo(void)
 		//	doomednum
 		mobj_info[num_mobj_types].doomednum = EvalConstExpression(ev_int);
 		TK_Expect(",", ERR_NONE);
-		//	spawnfunc
-		mobj_info[num_mobj_types].spawnfunc = EvalConstExpression(ev_function);
+		//	class_id
+		mobj_info[num_mobj_types].class_id = EvalConstExpression(ev_classid);
 		//	Beigas
 		TK_Expect("}", ERR_MISSING_RBRACE);
 		num_mobj_types++;
@@ -378,9 +397,12 @@ void AddInfoTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/27 17:05:57  dj_jl
+//	Removed spawn functions, added mobj classes
+//
 //	Revision 1.3  2001/08/21 17:52:54  dj_jl
 //	Added support for real string pointers, beautification
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:56  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

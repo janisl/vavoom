@@ -404,7 +404,6 @@ struct level_t
 struct player_t;
 
 typedef void (*mobj_func_t) (mobj_t *);
-typedef void (*spawnfunc_t) (mobj_t *, mthing_t *);
 typedef boolean(*thing_iter_func_t) (mobj_t *);
 typedef boolean(*line_iter_func_t) (line_t *);
 
@@ -510,15 +509,15 @@ struct state_t
 
 struct mobjinfo_t
 {
-	spawnfunc_t spawnfunc;
 	int doomednum;
+	classid class_id;
 };
 
 // Map Object definition.
 class mobj_t:Thinker
 {
 	// Info for drawing: position.==============================================s
-		TVec origin;
+	TVec origin;
 
 	// Momentums, used to update position.
 	TVec velocity;
@@ -589,6 +588,7 @@ class mobj_t:Thinker
 	void Think(void);
 	void Archive(void);
 	void Unarchive(void);
+	void OnMapSpawn(mthing_t *);
 };
 
 void P_MobjThinker(mobj_t * mobj);
@@ -596,6 +596,10 @@ void P_MobjThinker(mobj_t * mobj);
 void mobj_t::Think(void)
 {
 	P_MobjThinker(this);
+}
+
+void mobj_t::OnMapSpawn(mthing_t *mthing)
+{
 }
 
 addfields mobj_t
@@ -990,6 +994,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2001/09/27 17:08:19  dj_jl
+//  Removed spawn functions, added mobj classes
+//
 //  Revision 1.9  2001/09/25 17:13:50  dj_jl
 //  Beautification
 //
