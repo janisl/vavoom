@@ -389,6 +389,7 @@ static void CL_ParseStartSound(void)
 	float		y = 0.0;
 	float		z = 0.0;
 	byte		volume;
+	int			channel;
 
 	net_msg	>> sound_id
 			>> origin_id;
@@ -400,16 +401,23 @@ static void CL_ParseStartSound(void)
 	}
 	net_msg	>> volume;
 
-	S_StartSound(sound_id, TVec(x, y, z), TVec(0, 0, 0), origin_id, volume);
+	channel = origin_id >> 13;
+	origin_id &= 0x1fff;
+
+	S_StartSound(sound_id, TVec(x, y, z), TVec(0, 0, 0), origin_id, channel, volume);
 }
 
 static void CL_ParseStopSound(void)
 {
 	word	origin_id;
+	int		channel;
 
 	net_msg >> origin_id;
 
-	S_StopSound(origin_id);
+	channel = origin_id >> 13;
+	origin_id &= 0x1fff;
+
+	S_StopSound(origin_id, channel);
 }
 
 static void CL_ParseStartSeq(void)
@@ -1041,9 +1049,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/29 17:55:42  dj_jl
+//	Added sound channels
+//
 //	Revision 1.5  2001/08/15 17:24:02  dj_jl
 //	Improved object update on packet overflows
-//
+//	
 //	Revision 1.4  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
 //	

@@ -250,8 +250,8 @@ struct mobj_base_t
 	int			effects;		// dynamic lights, trails
 };
 
-void SV_StartSound(mobj_t * origin, int sound_id, int volume);
-void SV_StopSound(mobj_t *origin);
+void SV_StartSound(mobj_t * origin, int sound_id, int, int volume);
+void SV_StopSound(mobj_t *origin, int);
 void SV_StartSequence(mobj_t *mobj, char *name);
 void SV_StopSequence(mobj_t *origin);
 void SV_BroadcastPrintf(const char *s, ...);
@@ -315,9 +315,12 @@ inline subsector_t* SV_PointInSubsector(float x, float y)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/29 17:56:11  dj_jl
+//	Added sound channels
+//
 //	Revision 1.5  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
-//
+//	
 //	Revision 1.4  2001/08/04 17:25:14  dj_jl
 //	Moved title / demo loop to progs
 //	Removed shareware / ExtendedWAD from engine

@@ -1677,7 +1677,7 @@ static int CmdSectorSound(void)
 		mobj = (mobj_t *)&ACScript->line->frontsector->soundorg;
 	}
 	volume = Pop();
-	SV_StartSound(mobj, S_GetSoundID(ACStrings[Pop()]), volume);
+	SV_StartSound(mobj, S_GetSoundID(ACStrings[Pop()]), 0, volume);
 	return SCRIPT_CONTINUE;
 }
 
@@ -1695,7 +1695,7 @@ static int CmdThingSound(void)
 	searcher = -1;
 	while((mobj = P_FindMobjFromTID(tid, &searcher)) != NULL)
 	{
-		SV_StartSound(mobj, sound, volume);
+		SV_StartSound(mobj, sound, 0, volume);
 	}
 	return SCRIPT_CONTINUE;
 }
@@ -1705,7 +1705,7 @@ static int CmdAmbientSound(void)
 	int volume;
 
 	volume = Pop();
-	SV_StartSound(NULL, S_GetSoundID(ACStrings[Pop()]), volume);
+	SV_StartSound(NULL, S_GetSoundID(ACStrings[Pop()]), 0, volume);
 	return SCRIPT_CONTINUE;
 }
 
@@ -1790,9 +1790,12 @@ static int CmdSetLineSpecial(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/29 17:55:42  dj_jl
+//	Added sound channels
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

@@ -33,7 +33,7 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define	MAX_CHANNELS			256
+#define	MAX_VOICES				256
 
 #define MAX_SND_DIST			2025
 #define PRIORITY_MAX_ADJUST		10
@@ -80,9 +80,9 @@ static void StopChannel(int chan_num);
 
 static int			snd_MaxVolume = -1;      // maximum volume for sound
 
-static channel_t	Channel[MAX_CHANNELS];
+static channel_t	Channel[MAX_VOICES];
 static int			snd_Channels = 0;   // number of channels available
-static free_buf_t	free_buffers[MAX_CHANNELS];
+static free_buf_t	free_buffers[MAX_VOICES];
 
 static byte*		SoundCurve;
 
@@ -221,8 +221,8 @@ void S_InitSfx(void)
 			con << "No HW channels available\n";
 			snd_Channels = 8;
 		}
-		if (snd_Channels > MAX_CHANNELS)
-			snd_Channels = MAX_CHANNELS;
+		if (snd_Channels > MAX_VOICES)
+			snd_Channels = MAX_VOICES;
 
 		// Free all channels for use
 		memset(Channel, 0, sizeof(Channel));
@@ -476,7 +476,7 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id)
 	//	Check, that sound lump is loaded
 	S_LoadSound(sound_id);
 
-	for (i = 0; i < MAX_CHANNELS; i++)
+	for (i = 0; i < MAX_VOICES; i++)
 	{
 		if (free_buffers[i].sound_id == sound_id)
 		{
@@ -534,7 +534,7 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id)
 		int		best = -1;
 		double	least_time = 999999999.0;
 
-		for (i = 0; i < MAX_CHANNELS; i++)
+		for (i = 0; i < MAX_VOICES; i++)
 		{
 			if (free_buffers[i].sound_id && 
 				free_buffers[i].free_time < least_time)
@@ -590,7 +590,7 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id)
 //==========================================================================
 
 void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
-	int origin_id, int volume)
+	int origin_id, int channel, int volume)
 {
 	int 					dist;
 	int 					priority;
@@ -914,7 +914,7 @@ static void StopChannel(int chan_num)
 		//	Stop buffer
 		dsbuffer->Stop();
 
-		for (i = 0; i < MAX_CHANNELS; i++)
+		for (i = 0; i < MAX_VOICES; i++)
 		{
 			if (!free_buffers[i].sound_id)
 			{
@@ -924,7 +924,7 @@ static void StopChannel(int chan_num)
 				break;
 			}
 		}
-		if (i == MAX_CHANNELS)
+		if (i == MAX_VOICES)
 		{
 			dsbuffer->Release();
 		}
@@ -1013,9 +1013,12 @@ boolean S_GetSoundPlayingInfo(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/29 17:55:42  dj_jl
+//	Added sound channels
+//
 //	Revision 1.4  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

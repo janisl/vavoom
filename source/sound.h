@@ -62,10 +62,13 @@ void S_Shutdown(void);
 //
 //	Sound playback
 //
-void S_StartSound(int sound_id, const TVec &origin = TVec(0, 0, 0),
-	const TVec &velocity = TVec(0, 0, 0), int origin_id = 0, int volume = 127);
-void S_PlayTillDone(char *sound);
-void S_StopSound(int origin_id);
+void S_StartSound(int, const TVec&, const TVec&, int, int, int);
+inline void S_StartSound(int sound_id)
+{
+	S_StartSound(sound_id, TVec(0, 0, 0), TVec(0, 0, 0), 0, 0, 127);
+}
+void S_PlayTillDone(char *);
+void S_StopSound(int, int);
 void S_StopAllSound(void);
 boolean S_GetSoundPlayingInfo(int origin_id, int sound_id);
 
@@ -90,9 +93,12 @@ extern seqnode_t	*SequenceListHead;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/29 17:55:42  dj_jl
+//	Added sound channels
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

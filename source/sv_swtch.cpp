@@ -208,7 +208,7 @@ void P_ChangeSwitchTexture(line_t* line, int useAgain)
 		if (switchlist[i] == texTop)
 		{
 			SV_StartSound((mobj_t *)&line->frontsector->soundorg,
-				switch_sound[i / 2], 127);
+				switch_sound[i / 2], 0, 127);
 			SV_SetLineTexture(line->sidenum[0], 0, switchlist[i ^ 1]);
 
 		    if (useAgain)
@@ -220,7 +220,7 @@ void P_ChangeSwitchTexture(line_t* line, int useAgain)
 		else if (switchlist[i] == texMid)
 	    {
 			SV_StartSound((mobj_t *)&line->frontsector->soundorg,
-				switch_sound[i / 2], 127);
+				switch_sound[i / 2], 0, 127);
 			SV_SetLineTexture(line->sidenum[0], 1, switchlist[i ^ 1]);
 
 			if (useAgain)
@@ -232,7 +232,7 @@ void P_ChangeSwitchTexture(line_t* line, int useAgain)
 	    else if (switchlist[i] == texBot)
 		{
 			SV_StartSound((mobj_t *)&line->frontsector->soundorg,
-				switch_sound[i / 2], 127);
+				switch_sound[i / 2], 0, 127);
 			SV_SetLineTexture(line->sidenum[0], 2, switchlist[i ^ 1]);
 
 		    if (useAgain)
@@ -341,9 +341,12 @@ int SV_TerrainType(int pic)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/29 17:55:42  dj_jl
+//	Added sound channels
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
