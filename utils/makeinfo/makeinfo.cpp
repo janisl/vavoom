@@ -231,7 +231,7 @@ void WriteMobjInfo(void)
         flags = mobjinfo[i].flags;
         flags2 = mobjinfo[i].flags2;
 
-		//  Class declaration
+		//  ------------- Class declaration ------------
 		if (flags & MF_MISSILE)
 			parent = "Missile";
 		else
@@ -239,21 +239,39 @@ void WriteMobjInfo(void)
 		fprintf(f, "class %s:%s\n", mt_names[i], parent);
 		fprintf(f, "{\n");
 
-        //	Start of function
-        fprintf(f, "\tvoid OnMapSpawn(mthing_t *mthing)\n");
-        fprintf(f, "\t{\n");
-
-		if (flags & MF_NOTDMATCH && mobjinfo[i].doomednum != -1)
-        	fprintf(f, "\t\tif (deathmatch)\n\t\t{\n\t\t\tRemoveMobjThinker(this);\n\t\t\treturn;\n\t\t}\n");
-#ifdef NODEH
-		if (flags & MF_COUNTKILL)
-#else
-		if (flags & MF_COUNTKILL || mobjinfo[i].doomednum == 3006)
-#endif
-        	fprintf(f, "\t\tif (nomonsters)\n\t\t{\n\t\t\tRemoveMobjThinker(this);\n\t\t\treturn;\n\t\t}\n");
+		//  ------------ Constructor -------------
+		fprintf(f, "\t%s(void)\n", mt_names[i]);
+		fprintf(f, "\t{\n");
 
 		if (mobjinfo[i].classname)
 	    	fprintf(f, "\t\tclassname = \"%s\";\n", mobjinfo[i].classname);
+
+		//	Misc params
+		if (mobjinfo[i].spawnhealth)
+			fprintf(f, "\t\thealth = %d;\n\t\tspawnhealth = health;\n", mobjinfo[i].spawnhealth);
+		if (mobjinfo[i].spawnhealth && mobjinfo[i].xdeathstate)
+#ifdef NODEH
+			fprintf(f, "\t\tgibshealth = -%d;\n", mobjinfo[i].spawnhealth >> 1);
+#else
+			fprintf(f, "\t\tgibshealth = -%d;\n", mobjinfo[i].spawnhealth);
+#endif
+		if (mobjinfo[i].radius)
+			fprintf(f, "\t\tradius = %.1f;\n", (float)mobjinfo[i].radius / (float)FRACUNIT);
+		if (mobjinfo[i].height)
+			fprintf(f, "\t\theight = %.1f;\n", (float)mobjinfo[i].height / (float)FRACUNIT);
+		if (mobjinfo[i].mass)
+			fprintf(f, "\t\tmass = %.1f;\n", mobjinfo[i].mass == 0x7fffffff ? 99999.0 : (float)mobjinfo[i].mass);
+		if (mobjinfo[i].speed)
+			fprintf(f, "\t\tspeed = %.1f;\n", 35.0 * (mobjinfo[i].speed < 100 ? (float)mobjinfo[i].speed : (float)mobjinfo[i].speed / (float)FRACUNIT));
+		if (mobjinfo[i].reactiontime)
+        {
+        	fprintf(f, "\t\tif (gameskill != sk_nightmare)\n");
+			fprintf(f, "\t\t\treactiontime = %d;\n", mobjinfo[i].reactiontime);
+		}
+		if (mobjinfo[i].painchance)
+			fprintf(f, "\t\tpainchance = %d;\n", mobjinfo[i].painchance);
+		if (mobjinfo[i].damage)
+			fprintf(f, "\t\tdamage = %d;\n", mobjinfo[i].damage);
 
         //	Flag replacements
 		if (flags2 & MF2_DONTDRAW)
@@ -283,33 +301,6 @@ void WriteMobjInfo(void)
 		flags &= ~(MF_TRANSLUCENT|MF_TRANSLATION);
 #endif
         flags2 &= ~(MF2_DONTDRAW);
-
-		//	Misc params
-		if (mobjinfo[i].spawnhealth)
-			fprintf(f, "\t\thealth = %d;\n\t\tspawnhealth = health;\n", mobjinfo[i].spawnhealth);
-		if (mobjinfo[i].spawnhealth && mobjinfo[i].xdeathstate)
-#ifdef NODEH
-			fprintf(f, "\t\tgibshealth = -%d;\n", mobjinfo[i].spawnhealth >> 1);
-#else
-			fprintf(f, "\t\tgibshealth = -%d;\n", mobjinfo[i].spawnhealth);
-#endif
-		if (mobjinfo[i].radius)
-			fprintf(f, "\t\tradius = %.1f;\n", (float)mobjinfo[i].radius / (float)FRACUNIT);
-		if (mobjinfo[i].height)
-			fprintf(f, "\t\theight = %.1f;\n", (float)mobjinfo[i].height / (float)FRACUNIT);
-		if (mobjinfo[i].mass)
-			fprintf(f, "\t\tmass = %.1f;\n", mobjinfo[i].mass == 0x7fffffff ? 99999.0 : (float)mobjinfo[i].mass);
-		if (mobjinfo[i].speed)
-			fprintf(f, "\t\tspeed = %.1f;\n", 35.0 * (mobjinfo[i].speed < 100 ? (float)mobjinfo[i].speed : (float)mobjinfo[i].speed / (float)FRACUNIT));
-		if (mobjinfo[i].reactiontime)
-        {
-        	fprintf(f, "\t\tif (gameskill != sk_nightmare)\n");
-			fprintf(f, "\t\t\treactiontime = %d;\n", mobjinfo[i].reactiontime);
-		}
-		if (mobjinfo[i].painchance)
-			fprintf(f, "\t\tpainchance = %d;\n", mobjinfo[i].painchance);
-		if (mobjinfo[i].damage)
-			fprintf(f, "\t\tdamage = %d;\n", mobjinfo[i].damage);
 
         //	Flags
 		if (flags)
@@ -385,15 +376,36 @@ void WriteMobjInfo(void)
 		if (mobjinfo[i].effects)
 			fprintf(f, "\t\teffects = %s;\n", mobjinfo[i].effects);
 
-		//	Calling of start function
-		fprintf(f, "\t\t::OnMapSpawn(mthing);\n");
+		fprintf(f, "\t}\n");
 
-		//	Static lights
-		if (mobjinfo[i].extra)
-			fprintf(f, "\t\t%s\n", mobjinfo[i].extra);
+        //  ------------ OnMapSpawn method -----------
+		bool no_deathmatch = flags & MF_NOTDMATCH && mobjinfo[i].doomednum != -1;
+#ifdef NODEH
+		bool no_monsters = flags & MF_COUNTKILL;
+#else
+		bool no_monsters = flags & MF_COUNTKILL || mobjinfo[i].doomednum == 3006;
+#endif
+		if (no_deathmatch || no_monsters || mobjinfo[i].extra)
+		{
+			fprintf(f, "\n");
+    	    fprintf(f, "\tvoid OnMapSpawn(mthing_t *mthing)\n");
+        	fprintf(f, "\t{\n");
 
-        //	End of function
-        fprintf(f, "\t}\n");
+			if (no_deathmatch)
+    	    	fprintf(f, "\t\tif (deathmatch)\n\t\t{\n\t\t\tRemoveMobjThinker(this);\n\t\t\treturn;\n\t\t}\n");
+			if (no_monsters)
+        		fprintf(f, "\t\tif (nomonsters)\n\t\t{\n\t\t\tRemoveMobjThinker(this);\n\t\t\treturn;\n\t\t}\n");
+
+			//	Calling of start function
+			fprintf(f, "\t\t::OnMapSpawn(mthing);\n");
+
+			//	Static lights
+			if (mobjinfo[i].extra)
+				fprintf(f, "\t\t%s\n", mobjinfo[i].extra);
+
+	        //	End of function
+    	    fprintf(f, "\t}\n");
+		}
 
 		//  End of class
 		fprintf(f, "};\n");
@@ -666,9 +678,12 @@ int main(int argc, char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/11/09 14:40:32  dj_jl
+//	Initialization in constructors
+//
 //	Revision 1.7  2001/10/22 17:28:02  dj_jl
 //	Removed mobjinfo index constants
-//
+//	
 //	Revision 1.6  2001/10/18 17:42:19  dj_jl
 //	Seperate class for missiles
 //	
