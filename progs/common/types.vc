@@ -413,8 +413,6 @@ class Thinker
 //
 //==========================================================================
 
-#define mobj_t	Actor
-
 struct player_t;
 class mobj_t;
 
@@ -942,6 +940,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2001/10/12 17:26:06  dj_jl
+//  Removed Actor define
+//
 //  Revision 1.14  2001/10/09 17:38:36  dj_jl
 //  Got rid of mobj addfields
 //
