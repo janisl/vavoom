@@ -104,6 +104,7 @@ byte			*r_source, *r_sourcemax;
 
 miptexture_t	*dsky_mt1;
 miptexture_t	*dsky_mt2;
+int				dsky_toffs;
 int				dsky_offs1;
 int				dsky_offs2;
 int				dsky_cachewidth;
@@ -390,6 +391,7 @@ surfcache_t *VSoftwareDrawer::CacheSkySurface(surface_t *surface, int texture1,
 	dsky_cachewidth = surfwidth;
 	dsky_cacheheight = surfheight;
 	dsky_cachedest = (byte*)cache->data;
+	dsky_toffs = surface->texturemins[1];
 
 	Drawer->SetSkyTexture(texture1, false);
 	dsky_mt1 = miptexture;
@@ -2012,7 +2014,7 @@ void D_DrawSkySurf_8(void)
 
 	for (t = 0; t < dsky_cacheheight; t++)
 	{
-		src = &basesrc[(t % texheight) * texwidth];
+		src = &basesrc[((dsky_toffs + t) % texheight) * texwidth];
 
 		texs = dsky_offs1;
 
@@ -2047,7 +2049,7 @@ void D_DrawSkySurf_16(void)
 
 	for (t = 0; t < dsky_cacheheight; t++)
 	{
-		src = &basesrc[(t % texheight) * texwidth];
+		src = &basesrc[((dsky_toffs + t) % texheight) * texwidth];
 
 		texs = dsky_offs1;
 
@@ -2082,7 +2084,7 @@ void D_DrawSkySurf_32(void)
 
 	for (t = 0; t < dsky_cacheheight; t++)
 	{
-		src = &basesrc[(t % texheight) * texwidth];
+		src = &basesrc[((dsky_toffs + t) % texheight) * texwidth];
 
 		texs = dsky_offs1;
 
@@ -2124,8 +2126,8 @@ void D_DrawDoubleSkySurf_8(void)
 
 	for (t = 0; t < dsky_cacheheight; t++)
 	{
-		src1 = &basesrc1[(t % texheight1) * texwidth1];
-		src2 = &basesrc2[(t % texheight2) * texwidth2];
+		src1 = &basesrc1[((dsky_toffs + t) % texheight1) * texwidth1];
+		src2 = &basesrc2[((dsky_toffs + t) % texheight2) * texwidth2];
 
 		texs1 = dsky_offs1;
 		texs2 = dsky_offs2;
@@ -2176,8 +2178,8 @@ void D_DrawDoubleSkySurf_16(void)
 
 	for (t = 0; t < dsky_cacheheight; t++)
 	{
-		src1 = &basesrc1[(t % texheight1) * texwidth1];
-		src2 = &basesrc2[(t % texheight2) * texwidth2];
+		src1 = &basesrc1[((dsky_toffs + t) % texheight1) * texwidth1];
+		src2 = &basesrc2[((dsky_toffs + t) % texheight2) * texwidth2];
 
 		texs1 = dsky_offs1;
 		texs2 = dsky_offs2;
@@ -2228,8 +2230,8 @@ void D_DrawDoubleSkySurf_32(void)
 
 	for (t = 0; t < dsky_cacheheight; t++)
 	{
-		src1 = &basesrc1[(t % texheight1) * texwidth1];
-		src2 = &basesrc2[(t % texheight2) * texwidth2];
+		src1 = &basesrc1[((dsky_toffs + t) % texheight1) * texwidth1];
+		src2 = &basesrc2[((dsky_toffs + t) % texheight2) * texwidth2];
 
 		texs1 = dsky_offs1;
 		texs2 = dsky_offs2;
@@ -2253,9 +2255,12 @@ void D_DrawDoubleSkySurf_32(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2004/10/08 12:37:47  dj_jl
+//	Better rendering of old skies.
+//
 //	Revision 1.13  2002/11/16 17:11:15  dj_jl
 //	Improving software driver class.
-//
+//	
 //	Revision 1.12  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
 //	

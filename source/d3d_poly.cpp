@@ -775,7 +775,22 @@ void VDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 	guard(VDirect3DDrawer::DrawSkyPolygon);
 	MyD3DVertex		out[256];
 	int				i;
+	int				sidx[4];
 
+	sidx[0] = 0;
+	sidx[1] = 1;
+	sidx[2] = 2;
+	sidx[3] = 3;
+	if (cv[1].z > 0)
+	{
+		sidx[1] = 0;
+		sidx[2] = 3;
+	}
+	else
+	{
+		sidx[0] = 1;
+		sidx[3] = 2;
+	}
 	texinfo_t *tex = r_surface->texinfo;
 	if (maxMultiTex >= 2 && texture2)
 	{
@@ -790,9 +805,9 @@ void VDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 		for (i = 0; i < count; i++)
 		{
 			out[i] = MyD3DVertex(cv[i] + vieworg, 0xffffffff,
-				(DotProduct(cv[i], tex->saxis) + tex->soffs - offs1) * tex_iw,
+				(DotProduct(cv[sidx[i]], tex->saxis) + tex->soffs - offs1) * tex_iw,
 				(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih,
-				(DotProduct(cv[i], tex->saxis) + tex->soffs - offs2) * tex_iw,
+				(DotProduct(cv[sidx[i]], tex->saxis) + tex->soffs - offs2) * tex_iw,
 				(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
 		}
 #if DIRECT3D_VERSION >= 0x0800
@@ -810,7 +825,7 @@ void VDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 		for (i = 0; i < count; i++)
 		{
 			out[i] = MyD3DVertex(cv[i] + vieworg, 0xffffffff,
-				(DotProduct(cv[i], tex->saxis) + tex->soffs - offs1) * tex_iw,
+				(DotProduct(cv[sidx[i]], tex->saxis) + tex->soffs - offs1) * tex_iw,
 				(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
 		}
 #if DIRECT3D_VERSION >= 0x0800
@@ -825,7 +840,7 @@ void VDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 			for (i = 0; i < count; i++)
 			{
 				out[i] = MyD3DVertex(cv[i] + vieworg, 0xffffffff,
-					(DotProduct(cv[i], tex->saxis) + tex->soffs - offs2) * tex_iw,
+					(DotProduct(cv[sidx[i]], tex->saxis) + tex->soffs - offs2) * tex_iw,
 					(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
 			}
 			RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
@@ -1236,9 +1251,12 @@ void VDirect3DDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2004/10/08 12:37:39  dj_jl
+//	Better rendering of old skies.
+//
 //	Revision 1.25  2004/02/09 17:29:26  dj_jl
 //	Old blocks free fix
-//
+//	
 //	Revision 1.24  2003/10/22 06:13:52  dj_jl
 //	Freeing old blocks on overflow
 //	

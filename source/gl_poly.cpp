@@ -698,7 +698,22 @@ void VOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 {
 	guard(VOpenGLDrawer::DrawSkyPolygon);
 	int		i;
+	int		sidx[4];
 
+	sidx[0] = 0;
+	sidx[1] = 1;
+	sidx[2] = 2;
+	sidx[3] = 3;
+	if (cv[1].z > 0)
+	{
+		sidx[1] = 0;
+		sidx[2] = 3;
+	}
+	else
+	{
+		sidx[0] = 1;
+		sidx[3] = 2;
+	}
 	texinfo_t *tex = r_surface->texinfo;
 	if (mtexable && texture2)
 	{
@@ -714,10 +729,10 @@ void VOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 		for (i = 0; i < count; i++)
 		{
 			MultiTexCoord(0, 
-				(DotProduct(cv[i], tex->saxis) + tex->soffs - offs1) * tex_iw,
+				(DotProduct(cv[sidx[i]], tex->saxis) + tex->soffs - offs1) * tex_iw,
 				(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
 			MultiTexCoord(1, 
-				(DotProduct(cv[i], tex->saxis) + tex->soffs - offs2) * tex_iw,
+				(DotProduct(cv[sidx[i]], tex->saxis) + tex->soffs - offs2) * tex_iw,
 				(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
 			glVertex(cv[i]);
 		}
@@ -735,7 +750,7 @@ void VOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 		for (i = 0; i < count; i++)
 		{
 			glTexCoord2f(
-				(DotProduct(cv[i], tex->saxis) + tex->soffs - offs1) * tex_iw,
+				(DotProduct(cv[sidx[i]], tex->saxis) + tex->soffs - offs1) * tex_iw,
 				(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
 			glVertex(cv[i]);
 		}
@@ -750,7 +765,7 @@ void VOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 			for (i = 0; i < count; i++)
 			{
 				glTexCoord2f(
-					(DotProduct(cv[i], tex->saxis) + tex->soffs - offs2) * tex_iw,
+					(DotProduct(cv[sidx[i]], tex->saxis) + tex->soffs - offs2) * tex_iw,
 					(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
 				glVertex(cv[i]);
 			}
@@ -1110,9 +1125,12 @@ void VOpenGLDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2004/10/08 12:37:47  dj_jl
+//	Better rendering of old skies.
+//
 //	Revision 1.24  2004/02/09 17:29:26  dj_jl
 //	Old blocks free fix
-//
+//	
 //	Revision 1.23  2003/10/22 06:13:52  dj_jl
 //	Freeing old blocks on overflow
 //	

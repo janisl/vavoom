@@ -98,7 +98,8 @@ static int			NextLightningFlash;
 static int			LightningFlash;
 static int			*LightningLightLevels;
 
-static sky_t		sky[6];
+static sky_t		sky[1280];
+static int			NumSkySurfs;
 
 // CODE --------------------------------------------------------------------
 
@@ -213,77 +214,104 @@ static void R_InitOldSky(const mapInfo_t &info)
 	}
 	skybot = skytop - skyheight;
 
-	sky[0].surf.verts[0] = TVec(128, 128, skybot);
-	sky[0].surf.verts[1] = TVec(128, 128, skytop);
-	sky[0].surf.verts[2] = TVec(128, -128, skytop);
-	sky[0].surf.verts[3] = TVec(128, -128, skybot);
+#define VDIVS		8
+#define HDIVS		16
+#define RADIUS		128.0
+	for (int j = 0; j < VDIVS; j++)
+	{
+		float va0 = 90.0 - j * (180.0 / VDIVS);
+		float va1 = 90.0 - (j + 1) * (180.0 / VDIVS);
+		float vsina0 = msin(va0);
+		float vcosa0 = mcos(va0);
+		float vsina1 = msin(va1);
+		float vcosa1 = mcos(va1);
 
-	sky[1].surf.verts[0] = TVec(128, -128, skybot);
-	sky[1].surf.verts[1] = TVec(128, -128, skytop);
-	sky[1].surf.verts[2] = TVec(-128, -128, skytop);
-	sky[1].surf.verts[3] = TVec(-128, -128, skybot);
+//		float theight = skytop;
+//		float bheight = skybot;
+		float theight = vsina0 * RADIUS;
+		float bheight = vsina1 * RADIUS;
+//		float tradius = RADIUS;
+//		float vradius = RADIUS;
+		float tradius = vcosa0 * RADIUS;
+		float vradius = vcosa1 * RADIUS;
+		for (int i = 0; i < HDIVS; i++)
+		{
+			sky_t& s = sky[j * HDIVS + i];
+			float a0 = 45 - i * (360.0 / HDIVS);
+			float a1 = 45 - (i + 1) * (360.0 / HDIVS);
+			float sina0 = msin(a0);
+			float cosa0 = mcos(a0);
+			float sina1 = msin(a1);
+			float cosa1 = mcos(a1);
 
-	sky[2].surf.verts[0] = TVec(-128, -128, skybot);
-	sky[2].surf.verts[1] = TVec(-128, -128, skytop);
-	sky[2].surf.verts[2] = TVec(-128, 128, skytop);
-	sky[2].surf.verts[3] = TVec(-128, 128, skybot);
+			s.surf.verts[0] = TVec(cosa0 * vradius, sina0 * vradius, bheight);
+			s.surf.verts[1] = TVec(cosa0 * tradius, sina0 * tradius, theight);
+			s.surf.verts[2] = TVec(cosa1 * tradius, sina1 * tradius, theight);
+			s.surf.verts[3] = TVec(cosa1 * vradius, sina1 * vradius, bheight);
 
-	sky[3].surf.verts[0] = TVec(-128, 128, skybot);
-	sky[3].surf.verts[1] = TVec(-128, 128, skytop);
-	sky[3].surf.verts[2] = TVec(128, 128, skytop);
-	sky[3].surf.verts[3] = TVec(128, 128, skybot);
+			TVec hdir = j < VDIVS / 2 ? s.surf.verts[3] - s.surf.verts[0] :
+				s.surf.verts[2] - s.surf.verts[1];
+			TVec vdir = s.surf.verts[0] - s.surf.verts[1];
+			TVec normal = Normalize(CrossProduct(vdir, hdir));
+			s.plane.Set(normal, DotProduct(s.surf.verts[1], normal));
 
-	sky[4].surf.verts[0] = TVec(128.0, 128.0, skytop);
-	sky[4].surf.verts[1] = TVec(-128.0, 128.0, skytop);
-	sky[4].surf.verts[2] = TVec(-128.0, -128.0, skytop);
-	sky[4].surf.verts[3] = TVec(128.0, -128.0, skytop);
+			s.texinfo.saxis = hdir * (1024 / HDIVS / DotProduct(hdir, hdir));
+float tk = skyheight / RADIUS;
+			s.texinfo.taxis = TVec(0, 0, -tk);
+			s.texinfo.soffs = -DotProduct(s.surf.verts[j < VDIVS / 2 ? 0 : 1],
+				s.texinfo.saxis);
+			s.texinfo.toffs = skyheight;
 
-	sky[5].surf.verts[0] = TVec(128, 128, skybot);
-	sky[5].surf.verts[1] = TVec(128, -128, skybot);
-	sky[5].surf.verts[2] = TVec(-128, -128, skybot);
-	sky[5].surf.verts[3] = TVec(-128, 128, skybot);
+			float mins = DotProduct(s.surf.verts[j < VDIVS / 2 ? 0 : 1], s.texinfo.saxis) + s.texinfo.soffs;
+			float maxs = DotProduct(s.surf.verts[j < VDIVS / 2 ? 3 : 2], s.texinfo.saxis) + s.texinfo.soffs;
+			int bmins = (int)floor(mins / 16);
+			int bmaxs = (int)ceil(maxs / 16);
+			s.surf.texturemins[0] = bmins * 16;
+			s.surf.extents[0] = (bmaxs - bmins) * 16;
+			//s.surf.extents[0] = 256;
+			mins = DotProduct(s.surf.verts[1], s.texinfo.taxis) + s.texinfo.toffs;
+			maxs = DotProduct(s.surf.verts[0], s.texinfo.taxis) + s.texinfo.toffs;
+			bmins = (int)floor(mins / 16);
+			bmaxs = (int)ceil(maxs / 16);
+			s.surf.texturemins[1] = bmins * 16;
+			s.surf.extents[1] = (bmaxs - bmins) * 16;
+			//s.surf.extents[1] = skyheight;
 
-	sky[0].plane.Set(TVec(-1, 0, 0), -128);
-	sky[0].texinfo.saxis = TVec(0, -1.0, 0);
-	sky[0].texinfo.taxis = TVec(0, 0, -1.0);
-	sky[0].texinfo.soffs = 128;
-	sky[0].texinfo.toffs = skytop;
+			s.columnOffset1 = s.columnOffset2 = -i * (1024 / HDIVS);
+		}
+	}
 
-	sky[1].plane.Set(TVec(0, 1, 0), -128);
-	sky[1].texinfo.saxis = TVec(-1.0, 0, 0);
-	sky[1].texinfo.taxis = TVec(0, 0, -1.0);
-	sky[1].texinfo.soffs = 128;
-	sky[1].texinfo.toffs = skytop;
+	sky[VDIVS * HDIVS].surf.verts[0] = TVec(128.0, 128.0, skytop);
+	sky[VDIVS * HDIVS].surf.verts[1] = TVec(-128.0, 128.0, skytop);
+	sky[VDIVS * HDIVS].surf.verts[2] = TVec(-128.0, -128.0, skytop);
+	sky[VDIVS * HDIVS].surf.verts[3] = TVec(128.0, -128.0, skytop);
+	sky[VDIVS * HDIVS].plane.Set(TVec(0, 0, -1), -skytop);
+	sky[VDIVS * HDIVS].texinfo.saxis = TVec(0, -1.0, 0);
+	sky[VDIVS * HDIVS].texinfo.taxis = TVec(1.0, 0, 0);
+	sky[VDIVS * HDIVS].texinfo.soffs = 128;
+	sky[VDIVS * HDIVS].texinfo.toffs = 128;
+	sky[VDIVS * HDIVS].texinfo.taxis *= skyheight / 256.0;
+	sky[VDIVS * HDIVS].texinfo.toffs *= skyheight / 256.0;
+	sky[VDIVS * HDIVS].surf.extents[0] = 256;
+	sky[VDIVS * HDIVS].surf.extents[1] = skyheight;
 
-	sky[2].plane.Set(TVec(1, 0, 0), -128);
-	sky[2].texinfo.saxis = TVec(0, 1.0, 0);
-	sky[2].texinfo.taxis = TVec(0, 0, -1.0);
-	sky[2].texinfo.soffs = 128;
-	sky[2].texinfo.toffs = skytop;
+	sky[VDIVS * HDIVS + 1].surf.verts[0] = TVec(128, 128, skybot);
+	sky[VDIVS * HDIVS + 1].surf.verts[1] = TVec(128, -128, skybot);
+	sky[VDIVS * HDIVS + 1].surf.verts[2] = TVec(-128, -128, skybot);
+	sky[VDIVS * HDIVS + 1].surf.verts[3] = TVec(-128, 128, skybot);
+	sky[VDIVS * HDIVS + 1].plane.Set(TVec(0, 0, 1), skybot);
+	sky[VDIVS * HDIVS + 1].texinfo.saxis = TVec(0, -1.0, 0);
+	sky[VDIVS * HDIVS + 1].texinfo.taxis = TVec(1.0, 0, 0);
+	sky[VDIVS * HDIVS + 1].texinfo.soffs = 128;
+	sky[VDIVS * HDIVS + 1].texinfo.toffs = 128;
+	sky[VDIVS * HDIVS + 1].texinfo.taxis *= skyheight / 256.0;
+	sky[VDIVS * HDIVS + 1].texinfo.toffs *= skyheight / 256.0;
+	sky[VDIVS * HDIVS + 1].surf.extents[0] = 256;
+	sky[VDIVS * HDIVS + 1].surf.extents[1] = skyheight;
 
-	sky[3].plane.Set(TVec(0, -1, 0), -128);
-	sky[3].texinfo.saxis = TVec(1.0, 0, 0);
-	sky[3].texinfo.taxis = TVec(0, 0, -1.0);
-	sky[3].texinfo.soffs = 128;
-	sky[3].texinfo.toffs = skytop;
+	NumSkySurfs = VDIVS * HDIVS;// + 2;
 
-	sky[4].plane.Set(TVec(0, 0, -1), -skytop);
-	sky[4].texinfo.saxis = TVec(0, -1.0, 0);
-	sky[4].texinfo.taxis = TVec(1.0, 0, 0);
-	sky[4].texinfo.soffs = 128;
-	sky[4].texinfo.toffs = 128;
-
-	sky[5].plane.Set(TVec(0, 0, 1), skybot);
-	sky[5].texinfo.saxis = TVec(0, -1.0, 0);
-	sky[5].texinfo.taxis = TVec(1.0, 0, 0);
-	sky[5].texinfo.soffs = 128;
-	sky[5].texinfo.toffs = 128;
-
-	sky[1].columnOffset1 = sky[1].columnOffset2 = 256;
-	sky[2].columnOffset1 = sky[2].columnOffset2 = 512;
-	sky[3].columnOffset1 = sky[3].columnOffset2 = 768;
-
-	for (int j = 0; j < 6; j++)
+	for (int j = 0; j < NumSkySurfs; j++)
 	{
 		sky[j].baseTexture1 = info.sky1Texture;
 		sky[j].baseTexture2 = info.sky2Texture;
@@ -302,14 +330,7 @@ static void R_InitOldSky(const mapInfo_t &info)
 		sky[j].surf.plane = &sky[j].plane;
 		sky[j].surf.texinfo = &sky[j].texinfo;
 		sky[j].surf.count = 4;
-		sky[j].surf.extents[0] = 256;
-		sky[j].surf.extents[1] = skyheight;
 	}
-
-	sky[4].texinfo.taxis *= skyheight / 256.0;
-	sky[4].texinfo.toffs *= skyheight / 256.0;
-	sky[5].texinfo.taxis *= skyheight / 256.0;
-	sky[5].texinfo.toffs *= skyheight / 256.0;
 
 	//	Precache textures
 	Drawer->SetSkyTexture(info.sky1Texture, info.doubleSky);
@@ -412,6 +433,7 @@ static void R_InitSkyBox(const mapInfo_t &info)
 	sky[5].texinfo.soffs = 128;
 	sky[5].texinfo.toffs = 128;
 
+	NumSkySurfs = 6;
 	for (int j = 0; j < 6; j++)
 	{
 		int smap = sky[j].texture1 & ~TEXF_SKY_MAP;
@@ -466,7 +488,7 @@ void R_AnimateSky(void)
 {
 	guard(R_AnimateSky);
 	//	Update sky column offsets
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < NumSkySurfs; i++)
 	{
 		sky[i].columnOffset1 += sky[i].scrollDelta1 * host_frametime;
 		sky[i].columnOffset2 += sky[i].scrollDelta2 * host_frametime;
@@ -537,7 +559,7 @@ static void R_LightningFlash(void)
 					tempLight++;
 				}
 			}
-			for (i = 0; i < 6; i++)
+			for (i = 0; i < NumSkySurfs; i++)
 			{
 				sky[i].texture1 = sky[i].baseTexture1;
 			}
@@ -587,7 +609,7 @@ static void R_LightningFlash(void)
 	}
 	if (foundSec)
 	{
-		for (i = 0; i < 6; i++)
+		for (i = 0; i < NumSkySurfs; i++)
 		{
 			sky[i].texture1 = sky[i].baseTexture2; // set alternate sky
 		}
@@ -640,7 +662,7 @@ void R_DrawSky(void)
 	guard(R_DrawSky);
 	Drawer->BeginSky();
 
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < NumSkySurfs; i++)
 	{
 		r_normal = sky[i].plane.normal;
 		r_dist = sky[i].plane.dist;
@@ -659,9 +681,12 @@ void R_DrawSky(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2004/10/08 12:37:47  dj_jl
+//	Better rendering of old skies.
+//
 //	Revision 1.12  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.11  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
 //	
