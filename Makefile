@@ -7,6 +7,9 @@
 # Uncomment to compile a debug version
 #DEBUG = 1
 
+# Uncomment to compile using SDL
+#USE_SDL = 1
+
 # Uncomment to compile without OpenGL driver
 #NOGL = 1
 
@@ -32,8 +35,10 @@ endif
 #---------------------------------------
 
 ifdef DJGPP
+#-- DOS --
 SYS_OBJS = \
 	obj/cd_dos.o \
+	obj/d_alleg.o \
 	obj/in_dos.o \
 	obj/mplib.o \
 	obj/mplpc.o \
@@ -42,21 +47,43 @@ SYS_OBJS = \
 	obj/net_ipx.o \
 	obj/net_mp.o \
 	obj/npxsetup.o \
+	obj/s_alleg.o \
+	obj/s_allegm.o \
 	obj/sys_i386.o \
 	obj/sys_dos.o
 GL_SYS_OBJ = obj/gl_alleg.o
 LIBS := -lalleg -lstdcxx
 else
+ifdef USE_SDL
+#-- Linux with SDL --
 SYS_OBJS = \
 	obj/cd_linux.o \
+	obj/d_sdl.o \
+	obj/in_sdl.o \
+	obj/net_bsd.o \
+	obj/net_udp.o \
+	obj/s_sdl.o \
+	obj/s_sdlm.o \
+	obj/sys_i386.o \
+	obj/sys_sdl.o
+GL_SYS_OBJ = obj/gl_sdl.o
+LIBS := `sdl-config --libs` -lSDL_mixer -lm -lstdc++
+else
+#-- Linux with Allegro --
+SYS_OBJS = \
+	obj/cd_linux.o \
+	obj/d_alleg.o \
 	obj/in_alleg.o \
 	obj/net_bsd.o \
 	obj/net_udp.o \
+	obj/s_alleg.o \
+	obj/s_allegm.o \
 	obj/sys_i386.o \
 	obj/sys_lin.o
 GL_SYS_OBJ = obj/gl_x.o
 LIBS := `allegro-config --libs` -lm -lstdc++
 #LIBS := `allegro-config --static` -lm -lstdc++ -static
+endif
 endif
 
 OBJ_FILES = $(SYS_OBJS) \
@@ -75,7 +102,6 @@ OBJ_FILES = $(SYS_OBJS) \
 	obj/cvar.o \
 	obj/d_aclip.o \
 	obj/d_alias.o \
-	obj/d_alleg.o \
 	obj/d_data.o \
 	obj/d_draw.o \
 	obj/d_edge.o \
@@ -143,8 +169,6 @@ OBJ_FILES = $(SYS_OBJS) \
 	obj/r_surf.o \
 	obj/r_tex.o \
 	obj/r_things.o \
-	obj/s_alleg.o \
-	obj/s_allegm.o \
 	obj/s_data.o \
 	obj/s_sound.o \
 	obj/sbar.o \
@@ -216,6 +240,7 @@ SV_OBJ_FILES = $(SV_SYS_OBJS) \
 	obj/sv/files.o \
 	obj/sv/host.o \
 	obj/sv/infostr.o \
+	obj/sv/mapinfo.o \
 	obj/sv/maths.o \
 	obj/sv/message.o \
 	obj/sv/misc.o \
@@ -224,7 +249,6 @@ SV_OBJ_FILES = $(SV_SYS_OBJS) \
 	obj/sv/net_loop.o \
 	obj/sv/net_main.o \
 	obj/sv/net_null.o \
-	obj/sv/p_info.o \
 	obj/sv/p_setup.o \
 	obj/sv/pr_cmds.o \
 	obj/sv/pr_exec.o \
