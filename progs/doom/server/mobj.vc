@@ -359,7 +359,7 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 void SpawnPuff(float x, float y, float z)
 {
 #if 1
-	MSG_Select(MSG_SV_DATAGRAM, NULL);
+	MSG_Select(MSG_SV_DATAGRAM);
 	MSG_WriteByte(svc_gun_shot);
 	MSG_WriteShort(ftoi(x));
 	MSG_WriteShort(ftoi(y));
@@ -396,7 +396,7 @@ void P_SpawnBlood(float x, float y, float z, int damage)
 	mobj_t *th;
 #endif
 
-	MSG_Select(MSG_SV_DATAGRAM, NULL);
+	MSG_Select(MSG_SV_DATAGRAM);
 	MSG_WriteByte(svc_blood);
 	MSG_WriteShort(ftoi(x));
 	MSG_WriteShort(ftoi(y));
@@ -442,7 +442,7 @@ void P_ExplodeMissile(mobj_t * mo)
 
 	if (mo->deathstate != S_EXPLODE1 && (mo->effects & EF_DLIGHT_MASK))
 	{
-		MSG_Select(MSG_SV_DATAGRAM, NULL);
+		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion2);
 		MSG_WriteByte(mo->effects & EF_DLIGHT_MASK);
 		MSG_WriteShort(ftoi(mo->origin.x));
@@ -966,6 +966,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2001/12/01 18:14:08  dj_jl
+//  Changed MSG_Select, beautification
+//
 //  Revision 1.12  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

@@ -323,26 +323,7 @@ int CheckAmmo(player_t * player)
 
 void BulletSlope(mobj_t * mo, TAVec * angles)
 {
-	// see which target is to be aimed at
-	angles->pitch = mo->angles.pitch;
-	angles->yaw = mo->angles.yaw;
-	angles->roll = mo->angles.roll;
-
-	AimLineAttack(mo, angles, 16.0 * 64.0);
-	if (!linetarget)
-	{
-		angles->yaw = AngleMod360(angles->yaw + 45.0 / 8.0);
-		AimLineAttack(mo, angles, 16.0 * 64.0);
-		if (!linetarget)
-		{
-			angles->yaw = AngleMod360(angles->yaw - 45.0 / 4.0);
-			AimLineAttack(mo, angles, 16.0 * 64.0);
-			if (!linetarget)
-			{
-				angles->yaw = AngleMod360(angles->yaw + 45.0 / 8.0);
-			}
-		}
-	}
+	*angles = Aim(mo, 16.0 * 64.0);
 }
 
 //===========================================================================
@@ -929,26 +910,11 @@ void A_FireGrenade(mobj_t * actor)
 	player->ammo[player->w_ammo]--;
 
 	angles = actor->angles;
-
 	if (!angles.pitch)
 	{
 		//  See which target is to be aimed at
 		//  Don't aim, if not looking forwards (using freelook)
-		AimLineAttack(actor, &angles, 16.0 * 64.0);
-		if (!linetarget)
-		{
-			angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
-			AimLineAttack(actor, &angles, 16.0 * 64.0);
-			if (!linetarget)
-			{
-				angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
-				AimLineAttack(actor, &angles, 16.0 * 64.0);
-				if (!linetarget)
-				{
-					angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
-				}
-			}
-		}
+		angles = Aim(actor, 16.0 * 64.0);
 	}
 	angles.pitch = AngleMod180(angles.pitch - 30.0);
 
@@ -1044,7 +1010,7 @@ void A_BFGSpray(mobj_t * mo)
 		emo = P_SpawnMobj(linetarget->origin.x, linetarget->origin.y,
 			linetarget->origin.z + linetarget->height / 4.0, MT_EXTRABFG);
 
-		MSG_Select(MSG_SV_DATAGRAM, NULL);
+		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion2);
 		MSG_WriteByte(EF_DL_GBALL);
 		MSG_WriteShort(ftoi(emo->origin.x));
@@ -1062,6 +1028,9 @@ void A_BFGSpray(mobj_t * mo)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2001/12/01 18:14:08  dj_jl
+//  Changed MSG_Select, beautification
+//
 //  Revision 1.8  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

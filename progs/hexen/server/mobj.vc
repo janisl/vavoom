@@ -1995,6 +1995,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 	p->extralight = 0;
 	p->fixedcolormap = 0;
 	p->viewheight = VIEWHEIGHT;
+	p->fixangle = true;
 	SetupPsprites(p);
 	if (deathmatch)
 	{
@@ -2379,6 +2380,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2001/12/01 18:14:09  dj_jl
+//  Changed MSG_Select, beautification
+//
 //  Revision 1.15  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

@@ -482,6 +482,40 @@ void AimLineAttack(mobj_t * t1, TAVec * angles, float distance)
 	}
 }
 
+//===========================================================================
+//
+//	Aim
+//
+//  Sets a slope so a near miss is at aproximately the height of the
+// intended target
+//
+//===========================================================================
+
+TAVec Aim(mobj_t * mo, float distance)
+{
+	TAVec an;
+
+	// see which target is to be aimed at
+	an = mo->angles;
+
+	AimLineAttack(mo, &an, distance);
+	if (!linetarget)
+	{
+		an.yaw = AngleMod360(an.yaw + 45.0 / 8.0);
+		AimLineAttack(mo, &an, distance);
+		if (!linetarget)
+		{
+			an.yaw = AngleMod360(an.yaw - 45.0 / 4.0);
+			AimLineAttack(mo, &an, distance);
+			if (!linetarget)
+			{
+				an.yaw = AngleMod360(an.yaw + 45.0 / 8.0);
+			}
+		}
+	}
+	return an;
+}
+
 //**************************************************************************
 //
 //  SHOOTING
@@ -823,6 +857,9 @@ void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage, int distance,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2001/12/01 18:14:08  dj_jl
+//  Changed MSG_Select, beautification
+//
 //  Revision 1.8  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

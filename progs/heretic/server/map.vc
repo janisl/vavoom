@@ -716,7 +716,7 @@ boolean PTR_ShootTraverse(intercept_t * in)
 	{
 		if (!(th->flags & MF_NOBLOOD) && P_Random() < 192)
 		{
-			MSG_Select(MSG_SV_DATAGRAM, NULL);
+			MSG_Select(MSG_SV_DATAGRAM);
 			MSG_WriteByte(svc_blood);
 			MSG_WriteShort(ftoi(hit_point.x));
 			MSG_WriteShort(ftoi(hit_point.y));
@@ -858,6 +858,9 @@ void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage, int distance,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2001/12/01 18:14:09  dj_jl
+//  Changed MSG_Select, beautification
+//
 //  Revision 1.8  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

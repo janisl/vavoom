@@ -534,7 +534,7 @@ boolean P_ExplodeMissile(mobj_t * mo)
 	}
 	if (mo->effects & EF_DLIGHT_MASK)
 	{
-		MSG_Select(MSG_SV_DATAGRAM, NULL);
+		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion);
 		MSG_WriteByte(mo->effects & EF_DLIGHT_MASK);
 		MSG_WriteShort(ftoi(mo->origin.x));
@@ -548,6 +548,9 @@ boolean P_ExplodeMissile(mobj_t * mo)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/12/01 18:14:09  dj_jl
+//  Changed MSG_Select, beautification
+//
 //  Revision 1.7  2001/10/22 17:23:13  dj_jl
 //  Floatification of angles
 //

@@ -292,7 +292,7 @@ void A_Explode(mobj_t * thingy)
 	P_RadiusAttack(thingy, thingy->target, 128, 0, 0);
 
 	//  Spawn explosion effects - dynamic light and particles
-	MSG_Select(MSG_SV_DATAGRAM, NULL);
+	MSG_Select(MSG_SV_DATAGRAM);
 	MSG_WriteByte(svc_explosion);
 	MSG_WriteShort(ftoi(thingy->origin.x));
 	MSG_WriteShort(ftoi(thingy->origin.y));
@@ -576,6 +576,9 @@ void A_BossDeath(mobj_t * mo)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/01 18:14:07  dj_jl
+//  Changed MSG_Select, beautification
+//
 //  Revision 1.5  2001/10/22 17:23:11  dj_jl
 //  Floatification of angles
 //

@@ -336,7 +336,7 @@ void A_Explode(mobj_t * actor)
 	P_HitFloor(actor);
 	if (actor->type == MT_FIREBOMB)
 	{
-		MSG_Select(MSG_SV_DATAGRAM, NULL);
+		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion);
 		MSG_WriteByte(EF_DL_WHITE);
 		MSG_WriteShort(ftoi(actor->origin.x));
@@ -345,7 +345,7 @@ void A_Explode(mobj_t * actor)
 	}
 	if (actor->type == MT_POD)
 	{
-		MSG_Select(MSG_SV_DATAGRAM, NULL);
+		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion);
 		MSG_WriteByte(EF_DL_GREEN);
 		MSG_WriteShort(ftoi(actor->origin.x));
@@ -633,6 +633,9 @@ void A_ContMobjSound(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/01 18:14:09  dj_jl
+//  Changed MSG_Select, beautification
+//
 //  Revision 1.5  2001/10/22 17:23:12  dj_jl
 //  Floatification of angles
 //

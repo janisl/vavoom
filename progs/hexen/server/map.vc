@@ -878,7 +878,7 @@ boolean PTR_ShootTraverse(intercept_t * in)
 			}
 			if (P_Random() < 192)
 			{
-				MSG_Select(MSG_SV_DATAGRAM, NULL);
+				MSG_Select(MSG_SV_DATAGRAM);
 				MSG_WriteByte(svc_blood);
 				MSG_WriteShort(ftoi(hit_point.x));
 				MSG_WriteShort(ftoi(hit_point.y));
@@ -1101,6 +1101,9 @@ void PIT_ThrustSpike(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2001/12/01 18:14:09  dj_jl
+//  Changed MSG_Select, beautification
+//
 //  Revision 1.9  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //
