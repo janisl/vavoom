@@ -2631,9 +2631,9 @@ void SV_ConnectBot(const char *name)
 	sv_player->Message.Clear();
 	SV_RunClientCommand("PreSpawn\n");
 	sv_player->Message.Clear();
+	SV_SetUserInfo(sv_player->UserInfo);
 	SV_RunClientCommand("Spawn\n");
 	sv_player->Message.Clear();
-	SV_SetUserInfo(sv_player->UserInfo);
 	SV_RunClientCommand("Begin\n");
 	sv_player->Message.Clear();
 	unguard;
@@ -2873,9 +2873,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.58  2004/04/15 07:08:05  dj_jl
+//	Fixed bot spawning at first time
+//
 //	Revision 1.57  2004/02/09 17:28:45  dj_jl
 //	Bots fix
-//
+//	
 //	Revision 1.56  2003/11/12 16:47:40  dj_jl
 //	Changed player structure into a class
 //	
