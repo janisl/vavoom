@@ -72,45 +72,6 @@ void Remove(void)
 
 //==========================================================================
 //
-//  SetStateNF
-//
-//  Same as SetState, but does not call the state function.
-//
-//==========================================================================
-
-boolean SetStateNF(int state)
-{
-	state_t *st;
-
-	do
-	{
-		if (!state)
-		{
-			// Remove mobj
-			StateNum = 0;
-			Remove();
-			return false;
-		}
-
-		st = &states[state];
-		StateTime = st->time;
-		SpriteIndex = st->sprite;
-		SpriteName = sprite_names[st->sprite];
-		SpriteFrame = st->frame;
-		if (!bFixedModel)
-			ModelIndex = st->model_index;
-		ModelFrame = st->model_frame;
-		StateNum = st->statenum;
-		NextState = st->nextstate;
-
-		state = st->nextstate;
-	}
-	while (!StateTime);
-	return true;
-}
-
-//==========================================================================
-//
 //	Touch
 //
 //==========================================================================
@@ -189,6 +150,9 @@ tmtrace_t *tmtrace;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/03/28 18:20:11  dj_jl
+//  Got rid of SetStateNF.
+//
 //  Revision 1.11  2002/03/16 17:51:16  dj_jl
 //  Added function Remove to the Entity class.
 //

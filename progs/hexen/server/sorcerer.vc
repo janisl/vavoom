@@ -104,15 +104,15 @@ void A_SorcSpinBalls(void)
 	ball = Spawn(SorcererBall1, org);
 	if (ball)
 	{
-		ball.Owner = self;
+		ball.Instigator = self;
 		ball._Special2 = SORCFX4_RAPIDFIRE_TIME;
 	}
 	ball = Spawn(SorcererBall2, org);
 	if (ball)
-		ball.Owner = self;
+		ball.Instigator = self;
 	ball = Spawn(SorcererBall3, org);
 	if (ball)
-		ball.Owner = self;
+		ball.Instigator = self;
 }
 
 //============================================================================
@@ -290,7 +290,7 @@ defaultproperties
 
 void Actor::A_AccelBalls(void)
 {
-	Actor sorc = Owner;
+	Actor sorc = Instigator;
 
 	if (sorc.Args[4] < sorc.Args[2])
 	{
@@ -317,7 +317,7 @@ void Actor::A_AccelBalls(void)
 
 void Actor::A_DecelBalls(void)
 {
-	Actor sorc = Owner;
+	Actor sorc = Instigator;
 
 	if (sorc.Args[4] > sorc.Args[2])
 	{
@@ -341,7 +341,7 @@ void Actor::A_SorcUpdateBallAngle(void)
 {
 	if (Class == SorcererBall1)
 	{
-		Owner.Special1f = AngleMod360(Owner.Special1f + itof(Owner.Args[4]));
+		Instigator.Special1f = AngleMod360(Instigator.Special1f + itof(Instigator.Args[4]));
 	}
 }
 
@@ -360,19 +360,19 @@ void Actor::A_SorcOffense1(void)
 
 	ang1 = AngleMod360(Angles.yaw + 70.0);
 	ang2 = AngleMod360(Angles.yaw - 70.0);
-	mo = Owner.SpawnMissileAngle(SorcererFX1, ang1, 0.0);
+	mo = Instigator.SpawnMissileAngle(SorcererFX1, ang1, 0.0);
 	if (mo)
 	{
-		mo.Owner = Owner;
-		mo.Target = Owner.Target;
+		mo.Instigator = Instigator;
+		mo.Enemy = Instigator.Enemy;
 		mo.Args[4] = BOUNCE_TIME_UNIT;
 		mo.Args[3] = 15;	// Bounce time in seconds
 	}
-	mo = Owner.SpawnMissileAngle(SorcererFX1, ang2, 0.0);
+	mo = Instigator.SpawnMissileAngle(SorcererFX1, ang2, 0.0);
 	if (mo)
 	{
-		mo.Owner = Owner;
-		mo.Target = Owner.Target;
+		mo.Instigator = Instigator;
+		mo.Enemy = Instigator.Enemy;
 		mo.Args[4] = BOUNCE_TIME_UNIT;
 		mo.Args[3] = 15;	// Bounce time in seconds
 	}
@@ -397,15 +397,15 @@ void Actor::A_SorcOffense2(void)
 	Args[4] = (Args[4] + 15) & 0xff;
 	delta = sin(index) * SORCFX4_SPREAD_ANGLE;
 	ang1 = AngleMod360(Angles.yaw + delta);
-	mo = Owner.SpawnMissileAngle(SorcererFX4, ang1, 0.0);
+	mo = Instigator.SpawnMissileAngle(SorcererFX4, ang1, 0.0);
 	if (mo)
 	{
 		mo._Special2 = 35 * 5 / 2;	// 5 seconds
-		dist = MobjDist2(Owner.Target, mo);
+		dist = MobjDist2(Instigator.Enemy, mo);
 		dist = dist / mo.Speed;
 		if (dist < 1.0)
 			dist = 1.0;
-		mo.Velocity.z = (Owner.Target.Origin.z - mo.Origin.z) / dist;
+		mo.Velocity.z = (Instigator.Enemy.Origin.z - mo.Origin.z) / dist;
 	}
 }
 
@@ -426,8 +426,8 @@ void Actor::A_CastSorcererSpell(void)
 	PlayFullVolumeSound('SorcererSpellCast', CHAN_VOICE);
 
 	// Put sorcerer into throw spell animation
-	if (Owner.Health > 0)
-		Owner.SetStateNF(S_SORC_ATTACK4);
+	if (Instigator.Health > 0)
+		Instigator.SetState(S_SORC_ATTACK4);
 
 	switch (Class)
 	{
@@ -435,13 +435,13 @@ void Actor::A_CastSorcererSpell(void)
 		A_SorcOffense1();
 		break;
 	case SorcererBall2:	// Defensive
-		z = Owner.Origin.z - Owner.FloorClip + SORC_DEFENSE_HEIGHT;
+		z = Instigator.Origin.z - Instigator.FloorClip + SORC_DEFENSE_HEIGHT;
 		mo = Spawn(SorcererFX2, vector(Origin.x, Origin.y, z));
-		Owner.bInvulnerable = true;
-		Owner.bReflective = true;
-		Owner.Args[0] = SORC_DEFENSE_TIME;
+		Instigator.bInvulnerable = true;
+		Instigator.bReflective = true;
+		Instigator.Args[0] = SORC_DEFENSE_TIME;
 		if (mo)
-			mo.Owner = Owner;
+			mo.Instigator = Instigator;
 		break;
 	case SorcererBall3:	// Reinforcements
 		ang1 = AngleMod360(Angles.yaw - 45.0);
@@ -449,20 +449,20 @@ void Actor::A_CastSorcererSpell(void)
 		if (Health < (SpawnHealth / 3))
 		{
 			// Spawn 2 at a time
-			mo = Owner.SpawnMissileAngle(SorcererFX3, ang1, 4.0);
+			mo = Instigator.SpawnMissileAngle(SorcererFX3, ang1, 4.0);
 			if (mo)
-				mo.Owner = Owner;
-			mo = Owner.SpawnMissileAngle(SorcererFX3, ang2, 4.0);
+				mo.Instigator = Instigator;
+			mo = Instigator.SpawnMissileAngle(SorcererFX3, ang2, 4.0);
 			if (mo)
-				mo.Owner = Owner;
+				mo.Instigator = Instigator;
 		}
 		else
 		{
 			if (P_Random() < 128)
 				ang1 = ang2;
-			mo = Owner.SpawnMissileAngle(SorcererFX3, ang1, 4.0);
+			mo = Instigator.SpawnMissileAngle(SorcererFX3, ang1, 4.0);
 			if (mo)
-				mo.Owner = Owner;
+				mo.Instigator = Instigator;
 		}
 		break;
 	default:
@@ -480,14 +480,14 @@ void Actor::A_SorcBallOrbit(void)
 {
 	float x, y;
 	float angle, baseangle;
-	int mode = Owner.Args[3];
-	float dist = Owner.Radius - (Radius * 2.0);
+	int mode = Instigator.Args[3];
+	float dist = Instigator.Radius - (Radius * 2.0);
 	float prevangle = Special1f;
 
-	if (Owner.Health <= 0)
+	if (Instigator.Health <= 0)
 		SetState(PainState);
 
-	baseangle = Owner.Special1f;
+	baseangle = Instigator.Special1f;
 	switch (Class)
 	{
 	case SorcererBall1:
@@ -519,27 +519,27 @@ void Actor::A_SorcBallOrbit(void)
 		A_SorcUpdateBallAngle();
 		break;
 	case SORC_STOPPING:	// Balls stopping
-		if ((Owner.SpecialCID == Class) &&
-			(Owner.Args[1] > SORCBALL_SPEED_ROTATIONS) &&
-			(fabs(AngleMod180(angle - Owner.Angles.yaw)) <
+		if ((Instigator.SpecialCID == Class) &&
+			(Instigator.Args[1] > SORCBALL_SPEED_ROTATIONS) &&
+			(fabs(AngleMod180(angle - Instigator.Angles.yaw)) <
 			15.0 * 45.0 / 16.0))
 		{
 			// Can stop now
-			Owner.Args[3] = SORC_FIRESPELL;
-			Owner.Args[4] = 0;
+			Instigator.Args[3] = SORC_FIRESPELL;
+			Instigator.Args[4] = 0;
 			// Set angle so ball angle == sorcerer angle
 			switch (Class)
 			{
 			case SorcererBall1:
-				Owner.Special1f = AngleMod360(Owner.Angles.yaw -
+				Instigator.Special1f = AngleMod360(Instigator.Angles.yaw -
 					BALL1_ANGLEOFFSET);
 				break;
 			case SorcererBall2:
-				Owner.Special1f = AngleMod360(Owner.Angles.yaw -
+				Instigator.Special1f = AngleMod360(Instigator.Angles.yaw -
 					BALL2_ANGLEOFFSET);
 				break;
 			case SorcererBall3:
-				Owner.Special1f = AngleMod360(Owner.Angles.yaw -
+				Instigator.Special1f = AngleMod360(Instigator.Angles.yaw -
 					BALL3_ANGLEOFFSET);
 				break;
 			default:
@@ -552,36 +552,36 @@ void Actor::A_SorcBallOrbit(void)
 		}
 		break;
 	case SORC_FIRESPELL:	// Casting spell
-		if (Owner.SpecialCID == Class)
+		if (Instigator.SpecialCID == Class)
 		{
 			// Put sorcerer into special throw spell anim
-			if (Owner.Health > 0)
-				Owner.SetStateNF(S_SORC_ATTACK1);
+			if (Instigator.Health > 0)
+				Instigator.SetState(S_SORC_ATTACK1);
 
 			if (Class == SorcererBall1 && P_Random() < 200)
 			{
 				PlayFullVolumeSound('SorcererSpellCast', CHAN_VOICE);
 				_Special2 = SORCFX4_RAPIDFIRE_TIME;
 				Args[4] = 128;
-				Owner.Args[3] = SORC_FIRING_SPELL;
+				Instigator.Args[3] = SORC_FIRING_SPELL;
 			}
 			else
 			{
 				A_CastSorcererSpell();
-				Owner.Args[3] = SORC_STOPPED;
+				Instigator.Args[3] = SORC_STOPPED;
 			}
 		}
 		break;
 	case SORC_FIRING_SPELL:
-		if (Owner.SpecialCID == Class)
+		if (Instigator.SpecialCID == Class)
 		{
 			if (_Special2-- <= 0)
 			{
 				// Done rapid firing 
-				Owner.Args[3] = SORC_STOPPED;
+				Instigator.Args[3] = SORC_STOPPED;
 				// Back to orbit balls
-				if (Owner.Health > 0)
-					Owner.SetStateNF(S_SORC_ATTACK4);
+				if (Instigator.Health > 0)
+					Instigator.SetState(S_SORC_ATTACK4);
 			}
 			else
 			{
@@ -595,18 +595,18 @@ void Actor::A_SorcBallOrbit(void)
 		break;
 	}
 
-	if ((angle < prevangle) && (Owner.Args[4] == SORCBALL_TERMINAL_SPEED))
+	if ((angle < prevangle) && (Instigator.Args[4] == SORCBALL_TERMINAL_SPEED))
 	{
-		Owner.Args[1]++;	// Bump rotation counter
+		Instigator.Args[1]++;	// Bump rotation counter
 		// Completed full rotation - make woosh sound
 		PlayFullVolumeSound('SorcererBallWoosh', CHAN_VOICE);
 	}
 	Special1f = angle;	// Set previous angle
-	x = Owner.Origin.x + dist * cos(angle);
-	y = Owner.Origin.y + dist * sin(angle);
+	x = Instigator.Origin.x + dist * cos(angle);
+	y = Instigator.Origin.y + dist * sin(angle);
 	Origin.x = x;
 	Origin.y = y;
-	Origin.z = Owner.Origin.z - Owner.FloorClip + Owner.Height;
+	Origin.z = Instigator.Origin.z - Instigator.FloorClip + Instigator.Height;
 }
 
 //============================================================================
@@ -704,18 +704,18 @@ void Actor::A_SorcFX2Split(void)
 	A = Spawn(SorcererFX2, Origin);
 	if (A)
 	{
-		A.Owner = Owner;
+		A.Instigator = Instigator;
 		A.Args[0] = 0;	// CW
 		A.Special1f = Angles.yaw;	// Set angle
-		A.SetStateNF(S_SORCFX2_ORBIT1);
+		A.SetState(S_SORCFX2_ORBIT1_NF);
 	}
 	A = Spawn(SorcererFX2, Origin);
 	if (A)
 	{
-		A.Owner = Owner;
+		A.Instigator = Instigator;
 		A.Args[0] = 1;	// CCW
 		A.Special1f = Angles.yaw;	// Set angle
-		A.SetStateNF(S_SORCFX2_ORBIT1);
+		A.SetState(S_SORCFX2_ORBIT1_NF);
 	}
 	SetState(S_NULL);
 }
@@ -732,22 +732,22 @@ void Actor::A_SorcFX2Orbit(void)
 {
 	float angle;
 	float x, y, z;
-	float dist = Owner.Radius;
+	float dist = Instigator.Radius;
 
-	if ((Owner.Health <= 0) ||	// Sorcerer is dead
-		(!Owner.Args[0]))	// Time expired
+	if ((Instigator.Health <= 0) ||	// Sorcerer is dead
+		(!Instigator.Args[0]))	// Time expired
 	{
-		SetStateNF(DeathState);
-		Owner.Args[0] = 0;
-		Owner.bReflective = false;
-		Owner.bInvulnerable = false;
+		SetState(DeathState);
+		Instigator.Args[0] = 0;
+		Instigator.bReflective = false;
+		Instigator.bInvulnerable = false;
 	}
 
-	if (Args[0] && (Owner.Args[0]-- <= 0))	// Time expired
+	if (Args[0] && (Instigator.Args[0]-- <= 0))	// Time expired
 	{
-		SetStateNF(DeathState);
-		Owner.Args[0] = 0;
-		Owner.bReflective = false;
+		SetState(DeathState);
+		Instigator.Args[0] = 0;
+		Instigator.bReflective = false;
 	}
 
 	// Move to new position based on angle
@@ -755,9 +755,9 @@ void Actor::A_SorcFX2Orbit(void)
 	{
 		Special1f = AngleMod360(Special1f + 10.0);
 		angle = Special1f;
-		x = Owner.Origin.x + dist * cos(angle);
-		y = Owner.Origin.y + dist * sin(angle);
-		z = Owner.Origin.z - Owner.FloorClip + SORC_DEFENSE_HEIGHT;
+		x = Instigator.Origin.x + dist * cos(angle);
+		y = Instigator.Origin.y + dist * sin(angle);
+		z = Instigator.Origin.z - Instigator.FloorClip + SORC_DEFENSE_HEIGHT;
 		z += 15.0 * cos(angle);
 		// Spawn trailer
 		Spawn(SorcererFX2_T1, vector(x, y, z));
@@ -766,9 +766,9 @@ void Actor::A_SorcFX2Orbit(void)
 	{
 		Special1f = AngleMod360(Special1f - 10.0);
 		angle = Special1f;
-		x = Owner.Origin.x + dist * cos(angle);
-		y = Owner.Origin.y + dist * sin(angle);
-		z = Owner.Origin.z - Owner.FloorClip + SORC_DEFENSE_HEIGHT;
+		x = Instigator.Origin.x + dist * cos(angle);
+		y = Instigator.Origin.y + dist * sin(angle);
+		z = Instigator.Origin.z - Instigator.FloorClip + SORC_DEFENSE_HEIGHT;
 		z += 20.0 * sin(angle);
 		// Spawn trailer
 		Spawn(SorcererFX2_T1, vector(x, y, z));
@@ -826,13 +826,16 @@ void Actor::A_SorcFX4Check(void)
 {
 	if (_Special2-- <= 0)
 	{
-		SetStateNF(DeathState);
+		SetState(DeathState);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/03/28 18:20:11  dj_jl
+//  Got rid of SetStateNF.
+//
 //  Revision 1.24  2002/03/16 17:47:47  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

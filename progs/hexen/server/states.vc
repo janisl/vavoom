@@ -1504,6 +1504,7 @@ __states__(Actor)
 	S_SORCFX1_D2('FHFX', 18 | FF_FULLBRIGHT, 6.0 / 35.0, S_SORCFX1_D3) { }
 	S_SORCFX1_D3('FHFX', 18 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
 	S_SORCFX2_SPLIT1('SBS2', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SORCFX2_SPLIT1) { A_SorcFX2Split(); }
+	S_SORCFX2_ORBIT1_NF('SBS2', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX2_ORBIT2) { }
 	S_SORCFX2_ORBIT1('SBS2', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX2_ORBIT2) { A_SorcFX2Orbit(); }
 	S_SORCFX2_ORBIT2('SBS2', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX2_ORBIT3) { A_SorcFX2Orbit(); }
 	S_SORCFX2_ORBIT3('SBS2', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX2_ORBIT4) { A_SorcFX2Orbit(); }
@@ -1593,9 +1594,12 @@ __states__(Actor)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/03/28 18:20:11  dj_jl
+//	Got rid of SetStateNF.
+//
 //	Revision 1.16  2002/03/20 19:07:47  dj_jl
 //	Got rid of a lots of legacy, beautification.
-//
+//	
 //	Revision 1.15  2002/03/12 19:19:17  dj_jl
 //	Pickup classes
 //	
