@@ -44,12 +44,14 @@
 void main(void)
 {
 	shareware = !WadLumpPresent("MAP01");
-	CreateCvar("con_num", "27", 0);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2003/09/11 17:15:59  dj_jl
+//  Removed unused cvar
+//
 //  Revision 1.3  2002/07/27 18:08:12  dj_jl
 //  Implementing Strife conversations.
 //
