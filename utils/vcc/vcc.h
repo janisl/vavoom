@@ -323,6 +323,7 @@ struct constant_t
 {
 	FName		Name;
 	int			value;
+	constant_t	*HashNext;
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -399,8 +400,8 @@ void AddVirtualTables(void);
 
 void InitInfoTables(void);
 void ParseStates(TType *class_type);
-void ParseMobjInfo(void);
 void AddInfoTables(void);
+void AddToMobjInfo(int Index, int ClassID);
 
 TType *ParseExpression(bool = false);
 
@@ -531,9 +532,12 @@ inline bool TK_Check(Punctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2002/01/17 18:19:53  dj_jl
+//	New style of adding to mobjinfo, some fixes
+//
 //	Revision 1.18  2002/01/12 18:06:34  dj_jl
 //	New style of state functions, some other changes
-//
+//	
 //	Revision 1.17  2002/01/11 08:17:31  dj_jl
 //	Added name subsystem, removed support for unsigned ints
 //	

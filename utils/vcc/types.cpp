@@ -889,6 +889,13 @@ void ParseClass(void)
 		}
 	}
 
+	if (TK_Check(KW_MOBJINFO))
+	{
+		TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+		AddToMobjInfo(EvalConstExpression(ev_int), class_type->classid);
+		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+	}
+
    	class_type->available_size = 0;
    	class_type->available_ofs = 0;
 	class_type->fields = &fields[0];
@@ -1359,9 +1366,12 @@ void AddVirtualTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2002/01/17 18:19:52  dj_jl
+//	New style of adding to mobjinfo, some fixes
+//
 //	Revision 1.18  2002/01/15 18:29:36  dj_jl
 //	no message
-//
+//	
 //	Revision 1.17  2002/01/11 08:17:31  dj_jl
 //	Added name subsystem, removed support for unsigned ints
 //	

@@ -318,29 +318,15 @@ void ParseStates(TType *class_type)
 
 //==========================================================================
 //
-//	ParseMobjInfo
+//	AddToMobjInfo
 //
 //==========================================================================
 
-void ParseMobjInfo(void)
+void AddToMobjInfo(int Index, int ClassID)
 {
-	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-	while (!TK_Check(PU_RBRACE))
-	{
-		if (num_mobj_types >= MAX_MOBJ_TYPES)
-		{
-			ERR_Exit(ERR_NONE, true, "Mobj types overflow.");
-		}
-		TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-		//	doomednum
-		mobj_info[num_mobj_types].doomednum = EvalConstExpression(ev_int);
-		TK_Expect(PU_COMMA, ERR_NONE);
-		//	class_id
-		mobj_info[num_mobj_types].class_id = EvalConstExpression(ev_classid);
-		//	Beigas
-		TK_Expect(PU_RBRACE, ERR_MISSING_RBRACE);
-		num_mobj_types++;
-	}
+	mobj_info[num_mobj_types].doomednum = Index;
+	mobj_info[num_mobj_types].class_id = ClassID;
+	num_mobj_types++;
 }
 
 //==========================================================================
@@ -426,17 +412,21 @@ void AddInfoTables(void)
 	}
 	AddInfoData(gv_mobj_info, mobj_info, num_mobj_types * sizeof(*mobj_info), false);
 
-	dprintf("Num sprite names: %d, num states: %d\n",
-				num_sprite_names, num_states);
-	dprintf("Num mobj types: %d\n", num_mobj_types);
+	dprintf("Num sprite names: %d, num models: %d\n",
+				num_sprite_names, num_models);
+	dprintf("Num states: %d, num mobj types: %d\n",
+				num_states, num_mobj_types);
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2002/01/17 18:19:52  dj_jl
+//	New style of adding to mobjinfo, some fixes
+//
 //	Revision 1.14  2002/01/12 18:06:34  dj_jl
 //	New style of state functions, some other changes
-//
+//	
 //	Revision 1.13  2002/01/11 18:21:49  dj_jl
 //	Started to use names in progs
 //	

@@ -65,6 +65,7 @@ localvardef_t			localdefs[MAX_LOCAL_DEFS];
 
 constant_t				Constants[MAX_CONSTANTS];
 int						numconstants;
+constant_t				*ConstantsHash[256];
 
 TType					*ThisType;
 TType					*SelfType;
@@ -158,6 +159,16 @@ int CheckForLocalVar(FName Name)
 
 int CheckForConstant(FName Name)
 {
+#if 1
+	for (constant_t *C = ConstantsHash[GetTypeHash(Name) & 255];
+		C; C = C->HashNext)
+	{
+		if (C->Name == Name)
+		{
+			return C - Constants;
+		}
+	}
+#else
 	for (int i = 0; i < numconstants; i++)
 	{
 		if (Constants[i].Name == Name)
@@ -165,6 +176,7 @@ int CheckForConstant(FName Name)
 			return i;
 		}
 	}
+#endif
 	return -1;
 }
 
@@ -1357,6 +1369,9 @@ void AddConstant(FName Name, int value)
 	}
 	Constants[numconstants].Name = Name;
 	Constants[numconstants].value = value;
+	int hash = GetTypeHash(Name) & 255;
+	Constants[numconstants].HashNext = ConstantsHash[hash];
+	ConstantsHash[hash] = &Constants[numconstants];
 	numconstants++;
 }
 
@@ -1469,10 +1484,6 @@ void PA_Parse(void)
 				{
 				   	ParseStates(NULL);
 				}
-				else if (TK_Check(KW_MOBJINFO))
-				{
-				   	ParseMobjInfo();
-				}
 				else
 				{
 					ERR_Exit(ERR_INVALID_DECLARATOR, true, "Symbol \"%s\"", tk_String);
@@ -1524,9 +1535,12 @@ void PA_Parse(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2002/01/17 18:19:52  dj_jl
+//	New style of adding to mobjinfo, some fixes
+//
 //	Revision 1.19  2002/01/12 18:06:34  dj_jl
 //	New style of state functions, some other changes
-//
+//	
 //	Revision 1.18  2002/01/11 08:17:31  dj_jl
 //	Added name subsystem, removed support for unsigned ints
 //	

@@ -362,6 +362,8 @@ static void ProcessChar(void)
 		}
 		if (Chr == 'n')
 			Chr = '\n';
+		else if (Chr == '\'')
+			Chr = '\'';
 		else if (Chr == '"')
 			Chr = '"';
 		else if (Chr == 't')
@@ -1169,9 +1171,12 @@ void TK_Expect(Punctuation punct, error_t error)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2002/01/17 18:19:52  dj_jl
+//	New style of adding to mobjinfo, some fixes
+//
 //	Revision 1.14  2002/01/15 18:29:36  dj_jl
 //	no message
-//
+//	
 //	Revision 1.13  2002/01/11 08:17:31  dj_jl
 //	Added name subsystem, removed support for unsigned ints
 //	
