@@ -34,7 +34,7 @@
 #include "../doomdefs.vc"
 
 #ifndef DOOM2
-boolean ExtendedWAD;
+bool ExtendedWAD;
 #endif
 
 #include "effects.vc"
@@ -48,24 +48,9 @@ boolean ExtendedWAD;
 #include "msgbox.vc"
 
 #include "m_menu.vc"
-#include "m_main.vc"
-#include "m_single.vc"
-#include "m_epi.vc"
-#include "m_skill.vc"
-#include "m_load.vc"
-#include "m_save.vc"
-#include "m_multi.vc"
-#include "m_new.vc"
-#include "m_join.vc"
-#include "m_psetup.vc"
-#include "m_option.vc"
-#include "m_ctrl.vc"
-#include "m_mouse.vc"
-#include "m_resol.vc"
-#include "m_video.vc"
-#include "m_sound.vc"
-#include "m_help.vc"
-#include "m_quit.vc"
+
+#include "../cgame/classes.vc"
+
 #include "m_api.vc"
 
 #include "statbar.vc"
@@ -77,6 +62,9 @@ boolean ExtendedWAD;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2005/04/04 07:40:02  dj_jl
+//  Fixed dehacked support.
+//
 //  Revision 1.7  2002/06/14 15:53:12  dj_jl
 //  Fixed DeHackEd support.
 //

@@ -605,10 +605,12 @@ void GunShot(Actor A, int accurate, TVec dir)
 	LineAttack(A, dir, MISSILERANGE, damage);
 }
 
+#ifndef NO_BOTS
 __states__
 {
 	S_LIGHTDONE('SHTG', 4, 0.0 / 35.0, S_NULL) { A_Light0(); }
 }
+#endif
 
 defaultproperties
 {
@@ -633,6 +635,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/04/04 07:39:59  dj_jl
+//  Fixed dehacked support.
+//
 //  Revision 1.3  2004/08/23 19:23:42  dj_jl
 //  Moved weapon utilites to player class.
 //

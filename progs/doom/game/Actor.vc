@@ -3993,10 +3993,12 @@ void P_ActCheckBlood(void) { }
 void P_ActCheckMoving(void) { }
 #endif
 
+#ifndef NO_BOTS
 __states__
 {
 	S_GIBS('POL5', 0, 'gibs/gibs.md2', 0, -1.0, S_NULL) { }
 }
+#endif
 
 defaultproperties
 {
@@ -4051,6 +4053,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2005/04/04 07:39:59  dj_jl
+//  Fixed dehacked support.
+//
 //  Revision 1.13  2005/03/28 07:34:31  dj_jl
 //  Some Boom line specials and other improvements.
 //
