@@ -228,16 +228,7 @@
  externdef _d_pzbasestep
  externdef _a_spans
  externdef _adivtab
- externdef _pr_strings
- externdef _pr_globals
- externdef _pr_stackPtr
- externdef _pr_statements
- externdef _pr_functions
- externdef _pr_globaldefs
- externdef _pr_builtins
- externdef _current_func
  externdef _D_DrawZSpan
- externdef _PR_RFInvalidOpcode
 _DATA SEGMENT
  align 4
 Lfp_near_clip dd 0.01

@@ -378,27 +378,19 @@
 .extern	C(a_spans)
 .extern	C(adivtab)
 
-//	External variables for progs
-.extern	C(pr_strings)
-.extern	C(pr_globals)
-.extern	C(pr_stackPtr)
-.extern	C(pr_statements)
-.extern	C(pr_functions)
-.extern	C(pr_globaldefs)
-.extern	C(pr_builtins)
-.extern	C(current_func)
-
 .extern	C(D_DrawZSpan)
-.extern	C(PR_RFInvalidOpcode)
 
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/12/18 18:54:43  dj_jl
+//	Found a workaround for calling a C++ function, progs code patching
+//
 //	Revision 1.10  2001/11/02 18:35:54  dj_jl
 //	Sky optimizations
-//
+//	
 //	Revision 1.9  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	

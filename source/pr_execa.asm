@@ -228,18 +228,12 @@
  externdef _d_pzbasestep
  externdef _a_spans
  externdef _adivtab
- externdef _pr_strings
- externdef _pr_globals
- externdef _pr_stackPtr
- externdef _pr_statements
- externdef _pr_functions
- externdef _pr_globaldefs
- externdef _pr_builtins
- externdef _current_func
  externdef _D_DrawZSpan
+ externdef _pr_stackPtr
+ externdef _current_func
  externdef _PR_RFInvalidOpcode
  externdef _PR_DynamicCast
- externdef _PR_Test
+ externdef _TestFunction
 _TEXT SEGMENT
  align 4
  public _RunFunction
@@ -250,17 +244,9 @@ _RunFunction:
  push ebx
  mov edi,dword ptr[4+16+esp]
  mov dword ptr[_current_func],edi
- sal edi,4
- add edi,dword ptr[_pr_functions]
- call _PR_Profile1
- mov eax,dword ptr[4+edi]
- test eax,eax
- jge LINTERPRET_FUNCTION
- sal eax,2
- mov edx,dword ptr[_pr_builtins]
- sub edx,eax
- mov eax,dword ptr[edx]
- call eax
+ test word ptr[14+edi],00001h
+ jz LINTERPRET_FUNCTION
+ call  dword ptr[4+edi]
  jmp LEND_RUN_FUNCTION
  align 4
 LINTERPRET_FUNCTION:
@@ -273,8 +259,6 @@ LINTERPRET_FUNCTION:
  mov ebp,esi
  add esi,edx
  mov edi,dword ptr[4+edi]
- sal edi,2
- add edi,dword ptr[_pr_statements]
  mov eax,dword ptr[edi]
  add edi,4
  jmp  dword ptr[LOPCODE_TABLE+eax*4]
@@ -402,6 +386,8 @@ LOPCODE_TABLE:
  dd LOPC_PUSHSTRING
  dd LOPC_COPY
  dd LOPC_SWAP3
+ dd LOPC_PUSHFUNCTION
+ dd LOPC_PUSHCLASSID
  dd LOPC_DYNAMIC_CAST
  align 4
 LINC_STATEMENT_POINTER:
@@ -411,13 +397,18 @@ LINC_STATEMENT_POINTER:
  jmp  dword ptr[LOPCODE_TABLE+eax*4]
  align 4
 LOPC_DONE:
- call _PR_RFInvalidOpcode
+ mov eax,offset _PR_RFInvalidOpcode
+ call eax
  align 4
 LOPC_RETURN:
  mov dword ptr[_pr_stackPtr],ebp
  jmp LEND_RUN_FUNCTION
  align 4
 LOPC_PUSHNUMBER:
+LOPC_GLOBALADDRESS:
+LOPC_PUSHSTRING:
+LOPC_PUSHFUNCTION:
+LOPC_PUSHCLASSID:
  mov eax,dword ptr[edi]
  mov dword ptr[esi],eax
  add edi,4
@@ -437,19 +428,6 @@ LOPC_PUSHPOINTED:
 LOPC_LOCALADDRESS:
  mov eax,dword ptr[edi]
  lea eax,dword ptr[ebp+eax*4]
- mov dword ptr[esi],eax
- add edi,4
- add esi,4
- mov eax,dword ptr[edi]
- add edi,4
- jmp  dword ptr[LOPCODE_TABLE+eax*4]
- align 4
-LOPC_GLOBALADDRESS:
- mov eax,dword ptr[edi]
- mov edx,dword ptr[_pr_globaldefs]
- movzx eax,word ptr[2+edx+eax*8]
- sal eax,2
- add eax,dword ptr[_pr_globals]
  mov dword ptr[esi],eax
  add edi,4
  add esi,4
@@ -735,11 +713,10 @@ LOPC_BITINVERSE:
  align 4
 LOPC_CALL:
  mov dword ptr[_pr_stackPtr],esi
- add esp,offset -12
  push dword ptr[edi]
  add edi,4
  call _RunFunction
- add esp,16
+ add esp,4
  mov eax,dword ptr[4+16+esp]
  mov dword ptr[_current_func],eax
  mov esi,dword ptr[_pr_stackPtr]
@@ -749,8 +726,6 @@ LOPC_CALL:
  align 4
 LOPC_GOTO:
  mov edi,dword ptr[edi]
- sal edi,2
- add edi,dword ptr[_pr_statements]
  mov eax,dword ptr[edi]
  add edi,4
  jmp  dword ptr[LOPCODE_TABLE+eax*4]
@@ -760,8 +735,6 @@ LOPC_IFGOTO:
  cmp dword ptr[esi],0
  je LINC_STATEMENT_POINTER
  mov edi,dword ptr[edi]
- sal edi,2
- add edi,dword ptr[_pr_statements]
  mov eax,dword ptr[edi]
  add edi,4
  jmp  dword ptr[LOPCODE_TABLE+eax*4]
@@ -771,8 +744,6 @@ LOPC_IFNOTGOTO:
  cmp dword ptr[esi],0
  jne LINC_STATEMENT_POINTER
  mov edi,dword ptr[edi]
- sal edi,2
- add edi,dword ptr[_pr_statements]
  mov eax,dword ptr[edi]
  add edi,4
  jmp  dword ptr[LOPCODE_TABLE+eax*4]
@@ -784,8 +755,6 @@ LOPC_CASEGOTO:
  jne LINC_STATEMENT_POINTER
  mov edi,dword ptr[edi]
  sub esi,4
- sal edi,2
- add edi,dword ptr[_pr_statements]
  mov eax,dword ptr[edi]
  add edi,4
  jmp  dword ptr[LOPCODE_TABLE+eax*4]
@@ -993,8 +962,6 @@ LOPC_IFTOPGOTO:
  cmp dword ptr[-4+esi],0
  je LINC_STATEMENT_POINTER
  mov edi,dword ptr[edi]
- sal edi,2
- add edi,dword ptr[_pr_statements]
  mov eax,dword ptr[edi]
  add edi,4
  jmp  dword ptr[LOPCODE_TABLE+eax*4]
@@ -1003,8 +970,6 @@ LOPC_IFNOTTOPGOTO:
  cmp dword ptr[-4+esi],0
  jne LINC_STATEMENT_POINTER
  mov edi,dword ptr[edi]
- sal edi,2
- add edi,dword ptr[_pr_statements]
  mov eax,dword ptr[edi]
  add edi,4
  jmp  dword ptr[LOPCODE_TABLE+eax*4]
@@ -1399,11 +1364,10 @@ LOPC_SWAP:
  align 4
 LOPC_ICALL:
  sub esi,4
- add esp,offset -12
  push dword ptr[esi]
  mov dword ptr[_pr_stackPtr],esi
  call _RunFunction
- add esp,16
+ add esp,4
  mov eax,dword ptr[4+16+esp]
  mov dword ptr[_current_func],eax
  mov esi,dword ptr[_pr_stackPtr]
@@ -1768,16 +1732,6 @@ LOPC_RETURNV:
  mov dword ptr[_pr_stackPtr],esi
  jmp LEND_RUN_FUNCTION
  align 4
-LOPC_PUSHSTRING:
- mov eax,dword ptr[edi]
- add eax,dword ptr[_pr_strings]
- mov dword ptr[esi],eax
- add edi,4
- add esi,4
- mov eax,dword ptr[edi]
- add edi,4
- jmp  dword ptr[LOPCODE_TABLE+eax*4]
- align 4
 LOPC_COPY:
  mov eax,dword ptr[-4+esi]
  mov dword ptr[esi],eax
@@ -1805,7 +1759,8 @@ LOPC_DYNAMIC_CAST:
  push eax
  push edx
  add edi,4
- call _PR_DynamicCast
+ mov eax,offset _PR_DynamicCast
+ call eax
  mov dword ptr[-4+esi],eax
  add esp,8
  mov eax,dword ptr[edi]

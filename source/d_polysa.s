@@ -48,8 +48,6 @@ Ltemp:	.long	0
 //
 //==========================================================================
 
-#ifndef GAS2TASM
-
 .globl C(D_DrawNonSubdiv)
 C(D_DrawNonSubdiv):
 	pushl	%ebp
@@ -160,8 +158,12 @@ LTriangleLoop:
 
 	fstps	C(d_denom)
 
-	call	C(D_PolysetSetEdgeTable)
-	call	C(D_RasterizeAliasPolySmooth)
+	//  We must use indirect call. because in Windows (both Borland and MSVC)
+	// direct call causes a segfault
+	movl	$C(D_PolysetSetEdgeTable),%eax
+	call	*%eax
+	movl	$C(D_RasterizeAliasPolySmooth),%eax
+	call	*%eax
 
 LNextTriangle:
 	subl	$12,%ebp
@@ -172,8 +174,6 @@ LNextTriangle:
 	popl	%edi
 	popl	%ebp
 	ret
-
-#endif
 
 //==========================================================================
 //
@@ -771,9 +771,12 @@ LSkip2:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/12/18 18:54:44  dj_jl
+//	Found a workaround for calling a C++ function, progs code patching
+//
 //	Revision 1.4  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.3  2001/09/05 12:21:42  dj_jl
 //	Release changes
 //	

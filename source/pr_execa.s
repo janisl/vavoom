@@ -27,14 +27,20 @@
 //**	
 //**************************************************************************
 
-#define PROGS_PROFILE
+//#define PROGS_PROFILE
 
 #include "asm_i386.h"
 
 #ifdef USEASM
 
+//	External variables for progs
+.extern	C(pr_stackPtr)
+.extern	C(current_func)
+
+.extern	C(PR_RFInvalidOpcode)
 .extern	C(PR_DynamicCast)
-.extern	C(PR_Test)
+
+.extern	C(TestFunction)
 
 //==========================================================================
 //
@@ -46,7 +52,7 @@
 //
 //==========================================================================
 
-#define OFFS_FUNC_NUM		4+16
+#define OFFS_FUNC		4+16
 
 .text
 
@@ -60,25 +66,18 @@ C(RunFunction):
 	pushl	%ebx
 
 	//	Set current function num
-	movl	OFFS_FUNC_NUM(%esp),%edi
+	movl	OFFS_FUNC(%esp),%edi
 	movl	%edi,C(current_func)
-	sall	$4,%edi
-	addl	C(pr_functions),%edi
 #ifdef PROGS_PROFILE
 	call	C(PR_Profile1)
 #endif
 
     //	Check for builtin
-	movl	4(%edi),%eax
-	testl	%eax,%eax
-	jge		LINTERPRET_FUNCTION
+	testw	$0x0001,14(%edi)
+	jz		LINTERPRET_FUNCTION
 
     //	Builtin function call
-	sall	$2,%eax
-	movl	C(pr_builtins),%edx
-	subl	%eax,%edx
-	movl	(%edx),%eax
-	call	*%eax
+	call	*4(%edi)
 	jmp		LEND_RUN_FUNCTION
 
 	//---------------------------------
@@ -103,8 +102,6 @@ LINTERPRET_FUNCTION:
 
     //	Set up statement pointer and jump to the first statement
 	movl	4(%edi),%edi
-	sall	$2,%edi
-	addl	C(pr_statements),%edi
 	movl	(%edi),%eax
 	addl	$4,%edi
 	jmp		*LOPCODE_TABLE(,%eax,4)
@@ -248,7 +245,10 @@ LOPCODE_TABLE:
 
 	.long	LOPC_COPY
 	.long	LOPC_SWAP3
+	.long	LOPC_PUSHFUNCTION
+	.long	LOPC_PUSHCLASSID
 	.long	LOPC_DYNAMIC_CAST
+	.long	LOPC_CASE_GOTO_CLASSID
 
 	Align4
 LINC_STATEMENT_POINTER:
@@ -261,7 +261,8 @@ LINC_STATEMENT_POINTER:
     //	Empty function or invalid opcode
 	Align4
 LOPC_DONE:
-	call	C(PR_RFInvalidOpcode)
+	movl	$C(PR_RFInvalidOpcode),%eax
+	call	*%eax
 
     //	Return from void function
 	Align4
@@ -272,6 +273,10 @@ LOPC_RETURN:
 	//	Push number
 	Align4
 LOPC_PUSHNUMBER:
+LOPC_GLOBALADDRESS:		// Patched
+LOPC_PUSHSTRING:		// Patched
+LOPC_PUSHFUNCTION:
+LOPC_PUSHCLASSID:
 	movl	(%edi),%eax
 	movl	%eax,(%esi)
 	addl	$4,%edi
@@ -297,22 +302,6 @@ LOPC_PUSHPOINTED:
 LOPC_LOCALADDRESS:
 	movl	(%edi),%eax
 	leal	(%ebp,%eax,4),%eax
-	movl	%eax,(%esi)
-	addl	$4,%edi
-	addl	$4,%esi
-	//	Go to the next statement
-	movl	(%edi),%eax
-	addl	$4,%edi
-	jmp		*LOPCODE_TABLE(,%eax,4)
-
-    //	Push address of a global variable
-	Align4
-LOPC_GLOBALADDRESS:
-	movl	(%edi),%eax
-	movl	C(pr_globaldefs),%edx
-	movzwl	2(%edx,%eax,8),%eax
-	sall	$2,%eax
-	addl	C(pr_globals),%eax
 	movl	%eax,(%esi)
 	addl	$4,%edi
 	addl	$4,%esi
@@ -687,12 +676,11 @@ LOPC_BITINVERSE:
 	Align4
 LOPC_CALL:
 	movl	%esi,C(pr_stackPtr)
-	addl	$-12,%esp
 	pushl	(%edi)
 	addl	$4,%edi
 	call	C(RunFunction)
-	addl	$16,%esp
-	movl	OFFS_FUNC_NUM(%esp),%eax
+	addl	$4,%esp
+	movl	OFFS_FUNC(%esp),%eax
 	movl	%eax,C(current_func)
 	movl	C(pr_stackPtr),%esi
 	//	Go to the next statement
@@ -704,9 +692,7 @@ LOPC_CALL:
 	Align4
 LOPC_GOTO:
 	movl	(%edi),%edi
-	//	Set and go to the next statement
-	sall	$2,%edi
-	addl	C(pr_statements),%edi
+	//	Go to the next statement
 	movl	(%edi),%eax
 	addl	$4,%edi
 	jmp		*LOPCODE_TABLE(,%eax,4)
@@ -718,9 +704,7 @@ LOPC_IFGOTO:
 	cmpl	$0,(%esi)
 	je		LINC_STATEMENT_POINTER
 	movl	(%edi),%edi
-	//	Set and go to the next statement
-	sall	$2,%edi
-	addl	C(pr_statements),%edi
+	//	Go to the next statement
 	movl	(%edi),%eax
 	addl	$4,%edi
 	jmp		*LOPCODE_TABLE(,%eax,4)
@@ -732,9 +716,7 @@ LOPC_IFNOTGOTO:
 	cmpl	$0,(%esi)
 	jne		LINC_STATEMENT_POINTER
 	movl	(%edi),%edi
-	//	Set and go to the next statement
-	sall	$2,%edi
-	addl	C(pr_statements),%edi
+	//	Go to the next statement
 	movl	(%edi),%eax
 	addl	$4,%edi
 	jmp		*LOPCODE_TABLE(,%eax,4)
@@ -742,15 +724,14 @@ LOPC_IFNOTGOTO:
     //	Case goto
 	Align4
 LOPC_CASEGOTO:
+LOPC_CASE_GOTO_CLASSID:
 	movl	(%edi),%eax
 	addl	$4,%edi
 	cmpl	-4(%esi),%eax
 	jne		LINC_STATEMENT_POINTER
 	movl	(%edi),%edi
 	subl	$4,%esi
-	//	Set and go to the next statement
-	sall	$2,%edi
-	addl	C(pr_statements),%edi
+	//	Go to the next statement
 	movl	(%edi),%eax
 	addl	$4,%edi
 	jmp		*LOPCODE_TABLE(,%eax,4)
@@ -1017,9 +998,7 @@ LOPC_IFTOPGOTO:
 	cmpl	$0,-4(%esi)
 	je		LINC_STATEMENT_POINTER
 	movl	(%edi),%edi
-	//	Set and go to the next statement
-	sall	$2,%edi
-	addl	C(pr_statements),%edi
+	//	Go to the next statement
 	movl	(%edi),%eax
 	addl	$4,%edi
 	jmp		*LOPCODE_TABLE(,%eax,4)
@@ -1030,9 +1009,7 @@ LOPC_IFNOTTOPGOTO:
 	cmpl	$0,-4(%esi)
 	jne		LINC_STATEMENT_POINTER
 	movl	(%edi),%edi
-	//	Set and go to the next statement
-	sall	$2,%edi
-	addl	C(pr_statements),%edi
+	//	Go to the next statement
 	movl	(%edi),%eax
 	addl	$4,%edi
 	jmp		*LOPCODE_TABLE(,%eax,4)
@@ -1525,12 +1502,11 @@ LOPC_SWAP:
 	Align4
 LOPC_ICALL:
 	subl	$4,%esi
-	addl	$-12,%esp
 	pushl	(%esi)
 	movl	%esi,C(pr_stackPtr)
 	call	C(RunFunction)
-	addl	$16,%esp
-	movl	OFFS_FUNC_NUM(%esp),%eax
+	addl	$4,%esp
+	movl	OFFS_FUNC(%esp),%eax
 	movl	%eax,C(current_func)
 	movl	C(pr_stackPtr),%esi
 	//	Go to the next statement
@@ -1967,19 +1943,6 @@ LOPC_RETURNV:
 
 //**************************************************************************
 
-	//	Push string
-	Align4
-LOPC_PUSHSTRING:
-	movl	(%edi),%eax
-	addl	C(pr_strings),%eax
-	movl	%eax,(%esi)
-	addl	$4,%edi
-	addl	$4,%esi
-	//	Go to the next statement
-	movl	(%edi),%eax
-	addl	$4,%edi
-	jmp		*LOPCODE_TABLE(,%eax,4)
-
 	//	Copy top of the stack
 	Align4
 LOPC_COPY:
@@ -2015,7 +1978,8 @@ LOPC_DYNAMIC_CAST:
 	pushl	%eax
 	pushl	%edx
 	addl	$4,%edi
-	call	C(PR_DynamicCast)
+	movl	$C(PR_DynamicCast),%eax	// In Windows (Borland and MSVC) calling
+	call	*%eax				// a C++ function directly causes segfault
 	movl	%eax,-4(%esi)
 	addl	$8,%esp
 	//	Go to the next statement
@@ -2035,9 +1999,12 @@ LEND_RUN_FUNCTION:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/12/18 18:54:44  dj_jl
+//	Found a workaround for calling a C++ function, progs code patching
+//
 //	Revision 1.7  2001/12/12 19:27:46  dj_jl
 //	Added dynamic cast
-//
+//	
 //	Revision 1.6  2001/12/03 19:21:45  dj_jl
 //	Added swaping with vector
 //	

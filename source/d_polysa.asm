@@ -228,16 +228,7 @@
  externdef _d_pzbasestep
  externdef _a_spans
  externdef _adivtab
- externdef _pr_strings
- externdef _pr_globals
- externdef _pr_stackPtr
- externdef _pr_statements
- externdef _pr_functions
- externdef _pr_globaldefs
- externdef _pr_builtins
- externdef _current_func
  externdef _D_DrawZSpan
- externdef _PR_RFInvalidOpcode
  externdef _D_PolysetSetEdgeTable
  externdef _D_RasterizeAliasPolySmooth
 _DATA SEGMENT
@@ -249,6 +240,115 @@ p11_minus_p21 dd 0
 Ltemp dd 0
 _DATA ENDS
 _TEXT SEGMENT
+ public _D_DrawNonSubdiv
+_D_DrawNonSubdiv:
+ push ebp
+ push edi
+ push esi
+ push ebx
+ mov ebp,dword ptr[_d_affinetridesc+24]
+ lea ebp,dword ptr[ebp+ebp*2]
+ shl ebp,2
+LTriangleLoop:
+ mov edx,dword ptr[_d_affinetridesc+12]
+ mov ebx,dword ptr[_d_affinetridesc+16]
+ mov esi,dword ptr[_d_affinetridesc+16]
+ mov edi,dword ptr[_d_affinetridesc+16]
+ movsx eax,word ptr[0-12+edx+ebp]
+ sal eax,5
+ add ebx,eax
+ movsx eax,word ptr[0+2-12+edx+ebp]
+ sal eax,5
+ add esi,eax
+ movsx eax,word ptr[0+4-12+edx+ebp]
+ sal eax,5
+ add edi,eax
+ mov eax,dword ptr[0+ebx]
+ mov edx,dword ptr[4+ebx]
+ sub eax,dword ptr[0+edi]
+ sub edx,dword ptr[4+esi]
+ imul edx,eax
+ mov eax,dword ptr[0+ebx]
+ mov ecx,dword ptr[4+ebx]
+ sub eax,dword ptr[0+esi]
+ sub ecx,dword ptr[4+edi]
+ imul eax,ecx
+ sub edx,eax
+ test edx,edx
+ jle LNextTriangle
+ mov dword ptr[_d_denom],edx
+ fild dword ptr[_d_denom]
+ fld1
+ fdivrp st(1),st(0)
+ mov eax,dword ptr[0+ebx]
+ mov edx,dword ptr[4+ebx]
+ mov dword ptr[_r_p0],eax
+ mov dword ptr[_r_p0+4],edx
+ mov eax,dword ptr[8+ebx]
+ mov edx,dword ptr[12+ebx]
+ mov dword ptr[_r_p0+16],eax
+ mov dword ptr[_r_p0+20],edx
+ mov eax,dword ptr[16+ebx]
+ mov edx,dword ptr[20+ebx]
+ mov dword ptr[_r_p0+24],eax
+ mov dword ptr[_r_p0+28],edx
+ mov eax,dword ptr[0+esi]
+ mov edx,dword ptr[4+esi]
+ mov dword ptr[_r_p1],eax
+ mov dword ptr[_r_p1+4],edx
+ mov eax,dword ptr[8+esi]
+ mov edx,dword ptr[12+esi]
+ mov dword ptr[_r_p1+16],eax
+ mov dword ptr[_r_p1+20],edx
+ mov eax,dword ptr[16+esi]
+ mov edx,dword ptr[20+esi]
+ mov dword ptr[_r_p1+24],eax
+ mov dword ptr[_r_p1+28],edx
+ mov ecx,dword ptr[_d_affinetridesc+12]
+ mov eax,dword ptr[0+edi]
+ mov edx,dword ptr[4+edi]
+ mov dword ptr[_r_p2],eax
+ mov dword ptr[_r_p2+4],edx
+ mov eax,dword ptr[8+edi]
+ mov edx,dword ptr[12+edi]
+ mov dword ptr[_r_p2+16],eax
+ mov dword ptr[_r_p2+20],edx
+ mov eax,dword ptr[16+edi]
+ mov edx,dword ptr[20+edi]
+ mov dword ptr[_r_p2+24],eax
+ mov dword ptr[_r_p2+28],edx
+ mov edx,dword ptr[_d_affinetridesc+20]
+ movsx ebx,word ptr[6-12+ecx+ebp]
+ movsx esi,word ptr[6+2-12+ecx+ebp]
+ movsx edi,word ptr[6+4-12+ecx+ebp]
+ lea ebx,dword ptr[edx+ebx*8]
+ lea esi,dword ptr[edx+esi*8]
+ lea edi,dword ptr[edx+edi*8]
+ mov eax,dword ptr[0+ebx]
+ mov edx,dword ptr[4+ebx]
+ mov dword ptr[_r_p0+8],eax
+ mov dword ptr[_r_p0+12],edx
+ mov eax,dword ptr[0+esi]
+ mov edx,dword ptr[4+esi]
+ mov dword ptr[_r_p1+8],eax
+ mov dword ptr[_r_p1+12],edx
+ mov eax,dword ptr[0+edi]
+ mov edx,dword ptr[4+edi]
+ mov dword ptr[_r_p2+8],eax
+ mov dword ptr[_r_p2+12],edx
+ fstp dword ptr[_d_denom]
+ mov eax,offset _D_PolysetSetEdgeTable
+ call eax
+ mov eax,offset _D_RasterizeAliasPolySmooth
+ call eax
+LNextTriangle:
+ sub ebp,12
+ jnz LTriangleLoop
+ pop ebx
+ pop esi
+ pop edi
+ pop ebp
+ ret
  public _D_PolysetCalcGradients
 _D_PolysetCalcGradients:
  fild dword ptr[_r_p0]
