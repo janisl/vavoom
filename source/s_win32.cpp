@@ -792,17 +792,17 @@ void S_UpdateSfx(void)
 		return;
 	}
 
-	if (sfx_volume.value != snd_MaxVolume)
+	if (sfx_volume != snd_MaxVolume)
     {
-	    if (sfx_volume.value < 0)
+	    if (sfx_volume < 0)
 	    {
 			sfx_volume = 0;
 		}
-	    if (sfx_volume.value > 15)
+	    if (sfx_volume > 15)
 	    {
 			sfx_volume = 15;
 		}
-	    snd_MaxVolume = sfx_volume.value;
+	    snd_MaxVolume = sfx_volume;
 		PrimarySoundBuffer->SetVolume((snd_MaxVolume - 15) * 300);
 		if (!snd_MaxVolume)
 		{
@@ -1017,9 +1017,12 @@ boolean S_GetSoundPlayingInfo(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/12/18 19:06:36  dj_jl
+//	Made TCvar a pure C++ class
+//
 //	Revision 1.7  2001/09/05 12:21:42  dj_jl
 //	Release changes
-//
+//	
 //	Revision 1.6  2001/08/30 17:41:42  dj_jl
 //	Added entity sound channels
 //	

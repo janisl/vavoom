@@ -99,8 +99,8 @@ int WIPX_Init(void)
 	// determine my name & address
 	if (gethostname(buff, MAXHOSTNAMELEN) == 0)
 	{
-		// if the quake hostname isn't set, set it to the machine name
-		if (strcmp(hostname.string, "UNNAMED") == 0)
+		// if the Vavoom hostname isn't set, set it to the machine name
+		if (strcmp(hostname, "UNNAMED") == 0)
 		{
 			// see if it's a text IP address (well, close enough)
 			for (p = buff; *p; p++)
@@ -524,9 +524,12 @@ int WIPX_SetSocketPort(sockaddr_t *addr, int port)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/12/18 19:05:03  dj_jl
+//	Made TCvar a pure C++ class
+//
 //	Revision 1.4  2001/10/09 17:28:12  dj_jl
 //	no message
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

@@ -358,7 +358,7 @@ bool TDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
 
 	D3DCAPS8 DeviceCaps;
 	RenderDevice->GetDeviceCaps(&DeviceCaps);
-//	Cvar_Set("r_sort_sprites", int((DeviceCaps.DevCaps & D3DDEVCAPS_SORTINCREASINGZ) != 0));
+//	TCvar::Set("r_sort_sprites", int((DeviceCaps.DevCaps & D3DDEVCAPS_SORTINCREASINGZ) != 0));
 	square_textures = (DeviceCaps.TextureCaps & D3DPTEXTURECAPS_SQUAREONLY) != 0;
 	maxTexSize = MAX(DeviceCaps.MaxTextureWidth, DeviceCaps.MaxTextureHeight);
 	if (square_textures)
@@ -481,7 +481,7 @@ bool TDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
 
 	D3DDEVICEDESC7	DeviceDesc;
 	RenderDevice->GetCaps(&DeviceDesc);
-	Cvar_Set("r_sort_sprites", int((DeviceDesc.dwDevCaps & D3DDEVCAPS_SORTINCREASINGZ) != 0));
+	TCvar::Set("r_sort_sprites", int((DeviceDesc.dwDevCaps & D3DDEVCAPS_SORTINCREASINGZ) != 0));
 	square_textures = (DeviceDesc.dpcTriCaps.dwTextureCaps & D3DPTEXTURECAPS_SQUAREONLY) != 0;
 	// needed?
 	//minTexSize = MAX(DeviceDesc.dwMinTextureWidth, DeviceDesc.dwMinTextureHeight);
@@ -1104,9 +1104,12 @@ void TDirect3DDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2001/12/18 19:05:03  dj_jl
+//	Made TCvar a pure C++ class
+//
 //	Revision 1.17  2001/11/09 14:18:40  dj_jl
 //	Added specular highlights
-//
+//	
 //	Revision 1.16  2001/10/27 07:45:01  dj_jl
 //	Added gamma controls
 //	

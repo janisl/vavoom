@@ -95,7 +95,6 @@ void Cmd_Init(void)
 #endif
 
 	CmdBuf.Init();
-	Cvar_Init();
 
 	//	Add configuration file execution
     CmdBuf << "exec startup.vs\n";
@@ -581,7 +580,7 @@ void Cmd_ExecuteString(const char *Acmd, cmd_source_t src)
     //
     //	Cvar
     //
-    if (Cvar_Command(cmd_argc, cmd_argv))
+    if (TCvar::Command(cmd_argc, (const char **)cmd_argv))
     	return;
 
     //
@@ -624,9 +623,12 @@ void Cmd_ForwardToServer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/12/18 19:05:03  dj_jl
+//	Made TCvar a pure C++ class
+//
 //	Revision 1.5  2001/10/04 17:20:25  dj_jl
 //	Saving config using streams
-//
+//	
 //	Revision 1.4  2001/08/29 17:50:09  dj_jl
 //	Renamed command Commands to CmdList
 //	

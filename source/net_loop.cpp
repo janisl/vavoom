@@ -91,10 +91,10 @@ void Loop_SearchForHosts(boolean)
 		return;
 
 	hostCacheCount = 1;
-	if (strcmp(hostname.string, "UNNAMED") == 0)
+	if (strcmp(hostname, "UNNAMED") == 0)
 		strcpy(hostcache[0].name, "local");
 	else
-		strcpy(hostcache[0].name, hostname.string);
+		strcpy(hostcache[0].name, hostname);
 	strncpy(hostcache[0].map, level.mapname, 15);
 	hostcache[0].users = svs.num_connected;
 	hostcache[0].maxusers = svs.max_clients;
@@ -345,9 +345,12 @@ void Loop_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/12/18 19:05:03  dj_jl
+//	Made TCvar a pure C++ class
+//
 //	Revision 1.4  2001/12/01 17:40:41  dj_jl
 //	Added support for bots
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

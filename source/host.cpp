@@ -30,8 +30,6 @@
 
 //#define REAL_TIME
 
-#define PROGS_PROFILE
-
 void CL_Init(void);
 void SV_Init(void);
 void CL_SendMove(void);
@@ -123,6 +121,10 @@ void Host_Init(void)
 	base = Sys_ZoneBase(&size);
 	Z_Init(base, size);
 
+	FName::StaticInit();
+	VObject::StaticInit();
+
+	TCvar::Init();
 	Cmd_Init();
 
 	FL_Init();
@@ -481,7 +483,7 @@ void Host_SaveConfiguration(void)
 	s << "//\n// Aliases\n//\n";
 	Cmd_WriteAlias(s);
 	s << "//\n// Variables\n//\n";
-	Cvar_Write(s);
+	TCvar::WriteVariables(s);
 
 	s.close();
 }
@@ -537,20 +539,19 @@ void Host_Shutdown(void)
 
 	PR_Traceback();
 
-#ifdef PROGS_PROFILE
-	con << "\nClient progs profile:\n\n";
-	clpr.DumpProfile();
-	con << "\nServer progs profile:\n\n";
-	svpr.DumpProfile();
-#endif
+	VObject::StaticExit();
+	FName::StaticExit();
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2001/12/18 19:05:03  dj_jl
+//	Made TCvar a pure C++ class
+//
 //	Revision 1.13  2001/12/12 19:28:49  dj_jl
 //	Some little changes, beautification
-//
+//	
 //	Revision 1.12  2001/11/09 14:22:09  dj_jl
 //	R_InitTexture now called from Host_init
 //	

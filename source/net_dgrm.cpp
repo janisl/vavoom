@@ -611,7 +611,7 @@ static qsocket_t *_Datagram_CheckNewConnections(void)
 		// save space for the header, filled in later
    		net_msg << 0
 				<< (byte)CCREP_SERVER_INFO
-				<< hostname.string
+				<< (char *)hostname
 				<< level.mapname
 				<< (byte)svs.num_connected
             	<< (byte)svs.max_clients
@@ -1223,9 +1223,12 @@ COMMAND(NetStats)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/12/18 19:05:03  dj_jl
+//	Made TCvar a pure C++ class
+//
 //	Revision 1.4  2001/08/30 17:46:21  dj_jl
 //	Removed game dependency
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

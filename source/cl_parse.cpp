@@ -503,7 +503,7 @@ static void CL_ParseTime()
 
 static void CL_ReadFromServerInfo(void)
 {
-	Cvar_SetCheating(!!atoi(Info_ValueForKey(cl.serverinfo, "sv_cheats")));
+	TCvar::SetCheating(!!atoi(Info_ValueForKey(cl.serverinfo, "sv_cheats")));
 }
 
 //==========================================================================
@@ -645,7 +645,7 @@ static void CL_ParseModel(void)
 			}
 		}
 	}
-	else if (Cvar_Value("r_models"))
+	else if (TCvar::Value("r_models"))
 	{
 		con << "Can't find " << name << endl;
 	}
@@ -1021,9 +1021,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2001/12/18 19:05:03  dj_jl
+//	Made TCvar a pure C++ class
+//
 //	Revision 1.17  2001/12/12 19:28:49  dj_jl
 //	Some little changes, beautification
-//
+//	
 //	Revision 1.16  2001/12/04 18:16:28  dj_jl
 //	Player models and skins handled by server
 //	

@@ -23,10 +23,6 @@
 //**
 //**************************************************************************
 
-// HEADER FILES ------------------------------------------------------------
-
-// MACROS ------------------------------------------------------------------
-
 #define CVAR_ARCHIVE		1	//	Set to cause it to be saved to vavoom.cfg
 #define	CVAR_USERINFO		2	//	Added to userinfo  when changed
 #define	CVAR_SERVERINFO		4	//	Added to serverinfo when changed
@@ -37,17 +33,12 @@
 #define CVAR_CHEAT			64	//	Can not be changed if cheats are disabled
 #define CVAR_MODIFIED		128	//	Set each time the cvar is changed
 
-// TYPES -------------------------------------------------------------------
-
+//
+//	Console variable
+//
 class TCvar
 {
- public:
-	TCvar(const char *AName, const char *ADefault, int AFlags = 0);
-	void Init(void);
-	void Set(int value);
-	void Set(float value);
-	void Set(const char *value);
-
+protected:
 	const char	*name;				//	Variable's name
 	const char	*default_string;	//	Default value
 	char		*string;			//	Current value
@@ -57,17 +48,45 @@ class TCvar
 	TCvar		*next;				//	For linked list if variables
 	char		*latched_string;	//	For CVAR_LATCH variables
 
- private:
+public:
+	TCvar(const char *AName, const char *ADefault, int AFlags = 0);
+	void Register(void);
+	void Set(int value);
+	void Set(float value);
+	void Set(const char *value);
+
+	static void Init(void);
+
+	static int Value(const char *var_name);
+	static float Float(const char *var_name);
+	static char *String(const char *var_name);
+
+	static void Set(const char *var_name, int value);
+	static void Set(const char *var_name, float value);
+	static void Set(const char *var_name, const char *value);
+
+	static bool Command(int argc, const char **argv);
+	static void WriteVariables(ostream &strm);
+
+	static void Unlatch(void);
+	static void SetCheating(bool);
+
+	friend class TCmdCvarList;
+
+private:
 	void DoSet(const char *value);
 
-	friend void Cvar_Unlatch(void);
-	friend void Cvar_SetCheating(bool);
+	static TCvar	*Variables;
+	static bool		Initialized;
+	static bool		Cheating;
+
+	static TCvar *FindVariable(const char* name);
 };
 
 //	Cvar, that can be used as int variable
 class TCvarI : public TCvar
 {
- public:
+public:
 	TCvarI(const char *AName, const char *ADefault, int AFlags = 0)
 		: TCvar(AName, ADefault, AFlags)
 	{
@@ -88,7 +107,7 @@ class TCvarI : public TCvar
 //	Cvar, that can be used as float variable
 class TCvarF : public TCvar
 {
- public:
+public:
 	TCvarF(const char *AName, const char *ADefault, int AFlags = 0)
 		: TCvar(AName, ADefault, AFlags)
 	{
@@ -109,7 +128,7 @@ class TCvarF : public TCvar
 //	Cvar, that can be used as char* variable
 class TCvarS : public TCvar
 {
- public:
+public:
 	TCvarS(const char *AName, const char *ADefault, int AFlags = 0)
 		: TCvar(AName, ADefault, AFlags)
 	{
@@ -127,23 +146,9 @@ class TCvarS : public TCvar
 	}
 };
 
-// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
-
-void Cvar_Init(void);
-
-int Cvar_Value(const char *var_name);
-float Cvar_Float(const char *var_name);
-char *Cvar_String(const char *var_name);
-
-void Cvar_Set(const char *var_name, int value);
-void Cvar_Set(const char *var_name, float value);
-void Cvar_Set(const char *var_name, char *value);
-
-boolean Cvar_Command(int argc, char **argv);
-void Cvar_Write(ostream &strm);
-
-// PUBLIC DATA DECLARATIONS ------------------------------------------------
-
+//
+//  Stream operators
+//
 inline ostream &operator << (ostream &strm, const TCvarI &var)
 {
 	return strm << (int)var;
@@ -162,9 +167,12 @@ inline ostream &operator << (ostream &strm, const TCvarS &var)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/12/18 19:05:03  dj_jl
+//	Made TCvar a pure C++ class
+//
 //	Revision 1.6  2001/10/04 17:18:23  dj_jl
 //	Implemented the rest of cvar flags
-//
+//	
 //	Revision 1.5  2001/09/05 12:21:42  dj_jl
 //	Release changes
 //	

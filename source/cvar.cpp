@@ -47,10 +47,9 @@ void C_AddToAutoComplete(const char* string);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static TCvar	*cvars = NULL;
-static char		*cvar_null_string = "";
-static bool		cvar_initialized = false;
-static bool		cvar_cheating;
+TCvar	*TCvar::Variables = NULL;
+bool	TCvar::Initialized = false;
+bool	TCvar::Cheating;
 
 // CODE --------------------------------------------------------------------
 
@@ -68,7 +67,7 @@ TCvar::TCvar(const char *AName, const char *ADefault, int AFlags)
 	string = NULL;
 
 	TCvar *prev = NULL;
-	for (TCvar *var = cvars; var; var = var->next)
+	for (TCvar *var = Variables; var; var = var->next)
 	{
 		if (stricmp(var->name, name) < 0)
 		{
@@ -83,23 +82,23 @@ TCvar::TCvar(const char *AName, const char *ADefault, int AFlags)
 	}
 	else
 	{
-		next = cvars;
-		cvars = this;
+		next = Variables;
+		Variables = this;
 	}
 
-	if (cvar_initialized)
+	if (Initialized)
 	{
-		Init();
+		Register();
 	}
 }
 
 //==========================================================================
 //
-//  TCvar::Init
+//  TCvar::Register
 //
 //==========================================================================
 
-void TCvar::Init(void)
+void TCvar::Register(void)
 {
 #ifdef CLIENT
     C_AddToAutoComplete(name);
@@ -145,7 +144,7 @@ void TCvar::Set(const char *AValue)
 		return;
 	}
 
-	if (flags & CVAR_CHEAT && !cvar_cheating)
+	if (flags & CVAR_CHEAT && !Cheating)
 	{
 		con << name << "cannot be changed while cheating is disabled\n";
 		return;
@@ -204,45 +203,28 @@ void TCvar::DoSet(const char *AValue)
 
 //==========================================================================
 //
-//	COMMAND CvarList
+//	TCvar::Init
 //
 //==========================================================================
 
-COMMAND(CvarList)
+void TCvar::Init(void)
 {
-	int count = 0;
-	for (TCvar *cvar = cvars; cvar; cvar = cvar->next)
+	for (TCvar *var = Variables; var; var = var->next)
     {
-		con << cvar->name << " - \"" << cvar->string << "\"\n";
-		count++;
+       	var->Register();
     }
-	con << count << " variables.\n";
+	Initialized = true;
 }
 
 //==========================================================================
 //
-//	Cvar_Init
+//	TCvar::Unlatch
 //
 //==========================================================================
 
-void Cvar_Init(void)
+void TCvar::Unlatch(void)
 {
-	for (TCvar *var = cvars; var; var = var->next)
-    {
-       	var->Init();
-    }
-	cvar_initialized = true;
-}
-
-//==========================================================================
-//
-//	Cvar_Unlatch
-//
-//==========================================================================
-
-void Cvar_Unlatch(void)
-{
-	for (TCvar* cvar = cvars; cvar; cvar = cvar->next)
+	for (TCvar* cvar = Variables; cvar; cvar = cvar->next)
     {
 		if (cvar->latched_string)
 		{
@@ -255,16 +237,16 @@ void Cvar_Unlatch(void)
 
 //==========================================================================
 //
-//	Cvar_SetCheating
+//	TCvar::SetCheating
 //
 //==========================================================================
 
-void Cvar_SetCheating(bool new_state)
+void TCvar::SetCheating(bool new_state)
 {
-	cvar_cheating = new_state;
-	if (!cvar_cheating)
+	Cheating = new_state;
+	if (!Cheating)
 	{
-		for (TCvar *cvar = cvars; cvar; cvar = cvar->next)
+		for (TCvar *cvar = Variables; cvar; cvar = cvar->next)
 		{
 			if (cvar->flags & CVAR_CHEAT)
 			{
@@ -276,15 +258,15 @@ void Cvar_SetCheating(bool new_state)
 
 //==========================================================================
 //
-//  FindVar
+//  TCvar::FindVariable
 //
 //==========================================================================
 
-static TCvar *FindVar(const char* name)
+TCvar *TCvar::FindVariable(const char* name)
 {
 	TCvar	*cvar;
 
-	for (cvar = cvars; cvar; cvar = cvar->next)
+	for (cvar = Variables; cvar; cvar = cvar->next)
     {
 		if (!stricmp(name, cvar->name))
 		{
@@ -296,15 +278,15 @@ static TCvar *FindVar(const char* name)
 
 //==========================================================================
 //
-//  Cvar_Value
+//  TCvar::Value
 //
 //==========================================================================
 
-int Cvar_Value(const char *var_name)
+int TCvar::Value(const char *var_name)
 {
 	TCvar	*var;
 	
-	var = FindVar(var_name);
+	var = FindVariable(var_name);
 	if (!var)
 		return 0;
 	return var->value;
@@ -312,15 +294,15 @@ int Cvar_Value(const char *var_name)
 
 //==========================================================================
 //
-//  Cvar_Float
+//  TCvar::Float
 //
 //==========================================================================
 
-float Cvar_Float(const char *var_name)
+float TCvar::Float(const char *var_name)
 {
 	TCvar	*var;
 	
-	var = FindVar(var_name);
+	var = FindVariable(var_name);
 	if (!var)
 		return 0;
 	return var->fvalue;
@@ -328,31 +310,33 @@ float Cvar_Float(const char *var_name)
 
 //==========================================================================
 //
-//  Cvar_String
+//  TCvar::String
 //
 //==========================================================================
 
-char *Cvar_String(const char *var_name)
+char *TCvar::String(const char *var_name)
 {
 	TCvar	*var;
 	
-	var = FindVar(var_name);
+	var = FindVariable(var_name);
 	if (!var)
-		return cvar_null_string;
+	{
+		return "";
+	}
 	return var->string;
 }
 
 //==========================================================================
 //
-//  Cvar_Set
+//  TCvar::Set
 //
 //==========================================================================
 
-void Cvar_Set(const char *var_name, int value)
+void TCvar::Set(const char *var_name, int value)
 {
 	TCvar	*var;
 	
-	var = FindVar(var_name);
+	var = FindVariable(var_name);
 	if (!var)
 	{
 		Sys_Error("Cvar_Set: variable %s not found\n", var_name);
@@ -362,15 +346,15 @@ void Cvar_Set(const char *var_name, int value)
 
 //==========================================================================
 //
-//  Cvar_Set
+//  TCvar::Set
 //
 //==========================================================================
 
-void Cvar_Set(const char *var_name, float value)
+void TCvar::Set(const char *var_name, float value)
 {
 	TCvar	*var;
 	
-	var = FindVar(var_name);
+	var = FindVariable(var_name);
 	if (!var)
 	{
 		Sys_Error("Cvar_Set: variable %s not found\n", var_name);
@@ -380,15 +364,15 @@ void Cvar_Set(const char *var_name, float value)
 
 //==========================================================================
 //
-//  Cvar_Set
+//  TCvar::Set
 //
 //==========================================================================
 
-void Cvar_Set(const char *var_name, /*const*/ char *value)
+void TCvar::Set(const char *var_name, const char *value)
 {
 	TCvar	*var;
 	
-	var = FindVar(var_name);
+	var = FindVariable(var_name);
 	if (!var)
 	{
 		Sys_Error("Cvar_SetString: variable %s not found\n", var_name);
@@ -398,15 +382,15 @@ void Cvar_Set(const char *var_name, /*const*/ char *value)
 
 //==========================================================================
 //
-//	Cvar_Command
+//	TCvar::Command
 //
 //==========================================================================
 
-boolean Cvar_Command(int argc, char **argv)
+bool TCvar::Command(int argc, const char **argv)
 {
     TCvar			*cvar;
 
-    cvar = FindVar(argv[0]);
+    cvar = FindVariable(argv[0]);
     if (cvar)
     {
 		// perform a variable print or set
@@ -438,13 +422,13 @@ boolean Cvar_Command(int argc, char **argv)
 
 //==========================================================================
 //
-//	Cvar_Write
+//	TCvar::WriteVariables
 //
 //==========================================================================
 
-void Cvar_Write(ostream &strm)
+void TCvar::WriteVariables(ostream &strm)
 {
-	for (TCvar *cvar = cvars; cvar; cvar = cvar->next)
+	for (TCvar *cvar = Variables; cvar; cvar = cvar->next)
     {
     	if (cvar->flags & CVAR_ARCHIVE)
         {
@@ -453,12 +437,32 @@ void Cvar_Write(ostream &strm)
     }
 }
 
+//==========================================================================
+//
+//	COMMAND CvarList
+//
+//==========================================================================
+
+COMMAND(CvarList)
+{
+	int count = 0;
+	for (TCvar *cvar = TCvar::Variables; cvar; cvar = cvar->next)
+    {
+		con << cvar->name << " - \"" << cvar->string << "\"\n";
+		count++;
+    }
+	con << count << " variables.\n";
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/12/18 19:05:03  dj_jl
+//	Made TCvar a pure C++ class
+//
 //	Revision 1.5  2001/10/04 17:18:23  dj_jl
 //	Implemented the rest of cvar flags
-//
+//	
 //	Revision 1.4  2001/08/29 17:50:42  dj_jl
 //	Implemented CVAR_LATCH
 //	
