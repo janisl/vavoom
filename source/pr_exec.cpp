@@ -321,6 +321,17 @@ void TProgs::Load(const char *AName)
 #endif
     }
 
+	//  Setup parent virtual tables
+	for (i = 0; i < Progs->num_classinfo; i++)
+	{
+		if (ClassInfo[i].parent)
+		{
+			int *vtable = Globals + ClassInfo[i].vtable;
+			int *pvtable = Globals + ClassInfo[ClassInfo[i].parent].vtable;
+			vtable[2] = (int)pvtable;
+		}
+	}
+
 	Profile1 = (dword*)Z_Calloc(Progs->num_functions * 4);
 	Profile2 = (dword*)Z_Calloc(Progs->num_functions * 4);
 
@@ -1678,9 +1689,12 @@ bool TProgs::CanCast(int fromid, int cid)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/09/25 17:06:22  dj_jl
+//	Added parent's vtable to vtable
+//
 //	Revision 1.6  2001/09/20 16:30:28  dj_jl
 //	Started to use object-oriented stuff in progs
-//
+//	
 //	Revision 1.5  2001/08/31 17:28:00  dj_jl
 //	Removed RANGECHECK
 //	
