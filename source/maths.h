@@ -98,16 +98,58 @@ inline float matan(float y, float x)
 //
 //==========================================================================
 
+enum
+{
+	PLANE_X,
+	PLANE_Y,
+	PLANE_Z,
+	PLANE_NEG_X,
+	PLANE_NEG_Y,
+	PLANE_NEG_Z,
+	PLANE_ANY
+};
+
 class TPlane
 {
  public:
 	TVec		normal;
 	float		dist;
+	int			type;
+	int			signbits;
+	int			reserved1;
+	int			reserved2;
+
+	void CalcBits(void)
+	{
+		if (normal.x == 1.0)
+			type = PLANE_X;
+		else if (normal.y == 1.0)
+			type = PLANE_Y;
+		else if (normal.z == 1.0)
+			type = PLANE_Z;
+		else if (normal.x == -1.0)
+			type = PLANE_NEG_X;
+		else if (normal.y == -1.0)
+			type = PLANE_NEG_Y;
+		else if (normal.z == -1.0)
+			type = PLANE_NEG_Z;
+		else
+			type = PLANE_ANY;
+
+		signbits = 0;
+		if (normal.x < 0.0)
+			signbits |= 1;
+		if (normal.y < 0.0)
+			signbits |= 2;
+		if (normal.z < 0.0)
+			signbits |= 4;
+	}
 
 	void Set(const TVec &Anormal, float Adist)
 	{
 		normal = Anormal;
 		dist = Adist;
+		CalcBits();
 	}
 
 	//	Initializes vertical plane from point and direction
@@ -115,6 +157,7 @@ class TPlane
 	{
 		normal = Normalize(TVec(dir.y, -dir.x, 0));
 		dist = DotProduct(point, normal);
+		CalcBits();
 	}
 
 	//	Initializes vertical plane from 2 points
@@ -145,9 +188,12 @@ class TPlane
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/12/01 17:45:16  dj_jl
+//	Added additional fields to TPlane
+//
 //	Revision 1.5  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
-//
+//	
 //	Revision 1.4  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	
