@@ -45,8 +45,8 @@ boolean PIT_StompThing(MapObject Other)
 
 	blockdist = Other.Radius + teleport_thing->Radius;
 
-	if (fabs(Other.origin.x - teleport_x) >= blockdist
-		|| fabs(Other.origin.y - teleport_y) >= blockdist)
+	if (fabs(Other.origin.x - teleport_x) >= blockdist ||
+		fabs(Other.origin.y - teleport_y) >= blockdist)
 	{
 		// didn't hit it
 		return true;
@@ -199,7 +199,7 @@ boolean P_Teleport(mobj_t * thing, float x, float y, float angle)
 	{
 		thing->velocity.x = thing->velocity.y = thing->velocity.z = 0.0;
 	}
-	return (true);
+	return true;
 }
 
 //==========================================================================
@@ -213,6 +213,7 @@ boolean EV_Teleport(int tag, mobj_t * thing, boolean usefog)
 	int i;
 	Actor m;
 
+print("Teleport to %d\n", tag);
 	if (thing->bNoTeleport)
 	{
 		return false;
@@ -224,6 +225,7 @@ boolean EV_Teleport(int tag, mobj_t * thing, boolean usefog)
 			// Not a teleportman
 			continue;
 		}
+print("Check %d\n", m.tid);
 		if (m.tid != tag)
 		{
 			// Wrong sector
@@ -231,12 +233,16 @@ boolean EV_Teleport(int tag, mobj_t * thing, boolean usefog)
 		}
 		return P_Teleport(thing, m.origin.x, m.origin.y, m.angles.yaw);
 	}
+print("No spots\n");
 	return false;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/09 18:15:42  dj_jl
+//  Beautification
+//
 //  Revision 1.15  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //
