@@ -62,7 +62,9 @@
 #define CF_GODMODE		2	// No damage, no health loss.
 
 #define MELEERANGE		64.0
+#define PUNCHRANGE		80.0
 #define MISSILERANGE	(32.0 * 64.0)
+#define MAULERRANGE		(33.0 * 64.0)
 
 #define LOWERSPEED		6.0
 #define RAISESPEED		6.0
@@ -261,6 +263,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.46  2004/02/04 07:32:05  dj_jl
+//  Implemented many action functions
+//
 //  Revision 1.45  2003/11/12 16:51:33  dj_jl
 //  Changed player structure into a class
 //

@@ -24,8 +24,62 @@
 //**************************************************************************
 // 201
 
-class PowerCrystal:Decoration
+class PowerCrystal : Decoration
 	__mobjinfo__(92);
+
+//==========================================================================
+//
+//	A_Unknown112
+//
+//==========================================================================
+
+void A_Unknown112()
+{
+	//sys25768 (self, self->target, 512);
+	if (Enemy && Enemy.bIsPlayer)
+	{
+		// Store 5 in the dword at offset 0x307 in the player struct
+	}
+}
+
+//==========================================================================
+//
+//	A_LightGoesOut
+//
+//==========================================================================
+
+void A_LightGoesOut()
+{
+	int i;
+	Actor foo;
+
+	Sector->params.lightlevel = 0;
+	Sector->floor.dist = FindLowestFloorSurrounding(Sector);
+	for (i = 0; i < 8; i++)
+	{
+		foo = Spawn(Rub1, Origin);
+		if (foo)
+		{
+			foo.Velocity.x = (Random() * 16.0 - Random() * 8.0) * 35.0;
+			foo.Velocity.y = (Random() - Random()) * 8.0 * 35.0;
+			foo.Velocity.z = (7.0 + Random() * 4.0) * 35.0;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	A_Unknown114
+//
+//==========================================================================
+
+void A_Unknown114()
+{
+	if (Enemy && Enemy.bIsPlayer)
+	{
+		// Store 0 in the dword at offset 0x307 in the player struct
+	}
+}
 
 __states__
 {
@@ -37,7 +91,7 @@ __states__
 	S_CRYSTAL_6('CRYS', 5, 4.0 / 35.0, S_CRYSTAL_1) { A_ActiveSound(); }
 	S_CRYSTAL_X1('BOOM', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_CRYSTAL_X2) { A_Unknown112(); }
 	S_CRYSTAL_X2('BOOM', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X3) { A_Unknown110(); }
-	S_CRYSTAL_X3('BOOM', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_CRYSTAL_X4) { A_Unknown113(); }
+	S_CRYSTAL_X3('BOOM', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_CRYSTAL_X4) { A_LightGoesOut(); }
 	S_CRYSTAL_X4('BOOM', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X5) { A_SpawnPuff(); }
 	S_CRYSTAL_X5('BOOM', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X6) { }
 	S_CRYSTAL_X6('BOOM', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X7) { }
@@ -81,6 +135,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/02/04 07:32:58  dj_jl
+//  Implemented many action functions
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

@@ -23,17 +23,43 @@
 //**
 //**************************************************************************
 
-class AcolyteArmor:AcolyteBase
+class AcolyteArmor : AcolyteBase
 	__mobjinfo__(201);
 
-void A_AcolyteArmorPain(void)
+//============================================================================
+//
+// A_HideDecepticon
+//
+// Hide the Acolyte-to-be							->
+// Hide the guy transforming into an Acolyte		->
+// Hide the transformer								->
+// Transformers are Autobots and Decepticons, and
+// Decepticons are the bad guys, so...				->
+//
+// Hide the Decepticon!
+//
+//============================================================================
+
+void A_HideDecepticon()
 {
+	int args[5];
+
+	args[0] = 999;
+	args[1] = 64;
+	args[2] = 0;
+	args[3] = 0;
+	args[4] = 0;
+	EV_DoDoor(NULL, &args[0], doorClose);
+	if (Enemy && Enemy.bIsPlayer)
+	{
+		P_NoiseAlert(Enemy, self);
+	}
 }
 
 __states__
 {
 	S_ACOLYTEARM_STAND('ARMR', 0, -1.0, S_NULL) { }
-	S_ACOLYTEARM_PAIN('ARMR', 0, -1.0, S_NULL) { A_AcolyteArmorPain(); }
+	S_ACOLYTEARM_PAIN('ARMR', 0, -1.0, S_NULL) { A_HideDecepticon(); }
 }
 
 defaultproperties
@@ -52,6 +78,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/02/04 07:32:58  dj_jl
+//  Implemented many action functions
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //
