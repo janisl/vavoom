@@ -398,6 +398,7 @@ LOPCODE_TABLE:
  dd LOPC_RETURNV
  dd LOPC_PUSHSTRING
  dd LOPC_COPY
+ dd LOPC_SWAP3
  align 4
 LINC_STATEMENT_POINTER:
  add edi,4
@@ -1777,6 +1778,19 @@ LOPC_COPY:
  mov eax,dword ptr[-4+esi]
  mov dword ptr[esi],eax
  add esi,4
+ mov eax,dword ptr[edi]
+ add edi,4
+ jmp  dword ptr[LOPCODE_TABLE+eax*4]
+ align 4
+LOPC_SWAP3:
+ mov eax,dword ptr[-16+esi]
+ mov edx,dword ptr[-12+esi]
+ mov dword ptr[-16+esi],edx
+ mov edx,dword ptr[-8+esi]
+ mov dword ptr[-12+esi],edx
+ mov edx,dword ptr[-4+esi]
+ mov dword ptr[-8+esi],edx
+ mov dword ptr[-4+esi],eax
  mov eax,dword ptr[edi]
  add edi,4
  jmp  dword ptr[LOPCODE_TABLE+eax*4]

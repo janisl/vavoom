@@ -244,6 +244,7 @@ LOPCODE_TABLE:
 	.long	LOPC_PUSHSTRING
 
 	.long	LOPC_COPY
+	.long	LOPC_SWAP3
 
 	Align4
 LINC_STATEMENT_POINTER:
@@ -1986,6 +1987,22 @@ LOPC_COPY:
 	addl	$4,%edi
 	jmp		*LOPCODE_TABLE(,%eax,4)
 
+	//	Swap element with vector on top of the stack
+	Align4
+LOPC_SWAP3:
+	movl	-16(%esi),%eax
+	movl	-12(%esi),%edx
+	movl	%edx,-16(%esi)
+	movl	-8(%esi),%edx
+	movl	%edx,-12(%esi)
+	movl	-4(%esi),%edx
+	movl	%edx,-8(%esi)
+	movl	%eax,-4(%esi)
+	//	Go to the next statement
+	movl	(%edi),%eax
+	addl	$4,%edi
+	jmp		*LOPCODE_TABLE(,%eax,4)
+
 LEND_RUN_FUNCTION:
 	popl	%ebx
 	popl	%esi
@@ -1998,9 +2015,12 @@ LEND_RUN_FUNCTION:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/12/03 19:21:45  dj_jl
+//	Added swaping with vector
+//
 //	Revision 1.5  2001/09/20 16:30:28  dj_jl
 //	Started to use object-oriented stuff in progs
-//
+//	
 //	Revision 1.4  2001/08/21 17:39:22  dj_jl
 //	Real string pointers in progs
 //	

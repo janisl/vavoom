@@ -170,6 +170,7 @@ enum
 	OPC_PUSHSTRING,
 
 	OPC_COPY,
+	OPC_SWAP3,
 
 	NUM_OPCODES
 };
@@ -234,9 +235,12 @@ struct dclassinfo_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/12/03 19:21:45  dj_jl
+//	Added swaping with vector
+//
 //	Revision 1.5  2001/09/20 16:30:28  dj_jl
 //	Started to use object-oriented stuff in progs
-//
+//	
 //	Revision 1.4  2001/08/21 17:39:22  dj_jl
 //	Real string pointers in progs
 //	

@@ -1257,6 +1257,16 @@ static void RunFunction(int fnum)
 		sp++;
 		break;
 
+	 case OPC_SWAP3:
+		{
+			int tmp = sp[-4];
+			sp[-4] = sp[-3];
+			sp[-3] = sp[-2];
+			sp[-2] = sp[-1];
+			sp[-1] = tmp;
+		}
+		break;
+
 	 default:
 #ifdef CHECK_VALID_OPCODE
 		Sys_Error("Invalid opcode %d", current_statement[-1]);
@@ -1734,9 +1744,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/12/03 19:21:45  dj_jl
+//	Added swaping with vector
+//
 //	Revision 1.10  2001/12/01 17:43:13  dj_jl
 //	Renamed ClassBase to VObject
-//
+//	
 //	Revision 1.9  2001/10/27 07:48:25  dj_jl
 //	Added constructors and destructors
 //	
