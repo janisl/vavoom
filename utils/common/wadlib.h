@@ -52,13 +52,13 @@ class TIWadFile
 	}
 	void Open(const char* filename);
 	int LumpNumForName(const char* name);
-	char* LumpName(int lump)
+	const char* LumpName(int lump)
 	{
-		return lumpinfo[lump].name;
+		return lump >= numlumps ? "" : lumpinfo[lump].name;
 	}
 	int LumpSize(int lump)
 	{
-		return lumpinfo[lump].size;
+		return lump >= numlumps ? 0 : lumpinfo[lump].size;
 	}
 	void* GetLump(int lump);
 	void* GetLumpName(const char* name)
@@ -123,9 +123,12 @@ inline void CleanupName(const char *src, char *dst)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/30 17:47:47  dj_jl
+//	Overflow protection
+//
 //	Revision 1.3  2001/08/24 17:08:34  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:55  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

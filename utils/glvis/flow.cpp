@@ -613,7 +613,7 @@ static void CalcPortalVis(void)
 	{
 		if (show_progress && (!i || (numportals - i) % 10 == 0))
 		{
-			fprintf(stderr, "%04d\b\b\b\b", numportals - i);
+			fprintf(stderr, "%05d\b\b\b\b\b", numportals - i);
 		}
 
 		p = GetNextPortal();
@@ -729,9 +729,12 @@ void BuildPVS(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/30 17:47:47  dj_jl
+//	Overflow protection
+//
 //	Revision 1.3  2001/08/24 17:08:34  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:55  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

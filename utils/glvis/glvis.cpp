@@ -81,6 +81,11 @@ static char		specified_maps[100][16];
 
 static bool	IsLevelName(int lump)
 {
+	if (lump + 4 >= glwad->numlumps)
+	{
+		return false;
+	}
+
 	const char	*name = glwad->LumpName(lump);
 
 	if (name[0] != 'G' || name[1] != 'L' || name[2] != '_')
@@ -274,9 +279,12 @@ int main(int argc, char *argv[])
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/30 17:47:47  dj_jl
+//	Overflow protection
+//
 //	Revision 1.3  2001/08/24 17:09:22  dj_jl
 //	Recognizes maps by checking GL lump names
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:55  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
