@@ -49,6 +49,7 @@ VClass VObject::PrivateStaticClass
 );
 VClass* autoclassVObject = VObject::StaticClass();
 
+bool				VObject::GObjInitialized;
 TArray<VObject*>	VObject::GObjObjects;
 TArray<int>			VObject::GObjAvailable;
 VObject*			VObject::GObjAutoRegister;
@@ -87,6 +88,11 @@ VObject::VObject(ENativeConstructor, VClass* AClass, const char *AName, dword AF
 
 VObject::~VObject(void)
 {
+	guard(VObject::~VObject);
+	if (!GObjInitialized)
+	{
+		return;
+	}
 	UnhashObject();
 	if (Index == GObjObjects.Num() - 1)
 	{
@@ -97,6 +103,7 @@ VObject::~VObject(void)
 		GObjObjects[Index] = NULL;
 		GObjAvailable.AddItem(Index);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -107,11 +114,14 @@ VObject::~VObject(void)
 
 void VObject::StaticInit(void)
 {
+	guard(VObject::StaticInit);
 	for (VObject *c = GObjAutoRegister; c; c = c->HashNext)
 	{
 		c->Name = FName(*(char **)&c->Name);
 		c->Register();
 	}
+	GObjInitialized = true;
+	unguard;
 }
 
 //==========================================================================
@@ -122,6 +132,7 @@ void VObject::StaticInit(void)
 
 void VObject::StaticExit(void)
 {
+	GObjInitialized = false;
 }
 
 //==========================================================================
@@ -132,34 +143,27 @@ void VObject::StaticExit(void)
 
 VObject *VObject::StaticSpawnObject(VClass *AClass, VObject *AOuter, int tag)
 {
-	try
+	guard(VObject::StaticSpawnObject);
+	VObject *Obj = (VObject *)Z_Calloc(AClass->ClassSize, tag, 0);
+	VClass *NativeClass = AClass;
+	while (NativeClass && !(NativeClass->GetFlags() & OF_Native))
 	{
-		VObject *Obj = (VObject *)Z_Calloc(AClass->ClassSize, tag, 0);
-		VClass *NativeClass = AClass;
-		while (NativeClass && !(NativeClass->GetFlags() & OF_Native))
-		{
-			NativeClass = NativeClass->GetSuperClass();
-		}
-		if (!NativeClass)
-		{
-			Sys_Error("No native base class");
-		}
-		NativeClass->ClassConstructor(Obj);
-		Obj->Class = AClass;
-		Obj->Outer = AOuter;
-		Obj->vtable = AClass->ClassVTable;
-		if (Obj->vtable)
-		{
-			TProgs::Exec(Obj->vtable[0], (int)Obj);
-		}
-		return Obj;
+		NativeClass = NativeClass->GetSuperClass();
 	}
-	catch (...)
+	if (!NativeClass)
 	{
-		dprintf("- VObject::StaticSpawnObject\n");
-		dprintf("%p - %s\n", AClass, AClass->GetName());
-		throw;
+		Sys_Error("No native base class");
 	}
+	NativeClass->ClassConstructor(Obj);
+	Obj->Class = AClass;
+	Obj->Outer = AOuter;
+	Obj->vtable = AClass->ClassVTable;
+	if (Obj->vtable)
+	{
+		TProgs::Exec(Obj->vtable[0], (int)Obj);
+	}
+	return Obj;
+	unguardf(("%s", AClass->GetName()));
 }
 
 //==========================================================================
@@ -170,6 +174,7 @@ VObject *VObject::StaticSpawnObject(VClass *AClass, VObject *AOuter, int tag)
 
 void VObject::Register(void)
 {
+	guard(VObject::Register);
 	if (GObjAvailable.Num())
 	{
 		Index = GObjAvailable.Pop();
@@ -180,6 +185,7 @@ void VObject::Register(void)
 		Index = GObjObjects.AddItem(this);
 	}
 	HashObject();
+	unguard;
 }
 
 //==========================================================================
@@ -295,6 +301,7 @@ bool VObject::IsIn(VObject *SomeOuter) const
 
 void VObject::CollectGarbage(void)
 {
+	guard(VObject::CollectGarbage);
 	for (int i = 0; i < GObjObjects.Num(); i++)
 	{
 		if (!GObjObjects[i])
@@ -307,6 +314,7 @@ void VObject::CollectGarbage(void)
 			delete Obj;
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -334,9 +342,12 @@ int VObject::GetObjectsCount(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2002/01/03 18:36:40  dj_jl
+//	Added GObjInitialized
+//
 //	Revision 1.2  2001/12/27 17:35:42  dj_jl
 //	Split VClass in seperate module
-//
+//	
 //	Revision 1.1  2001/12/18 19:03:17  dj_jl
 //	A lots of work on VObject
 //	

@@ -154,6 +154,7 @@ private:
 	VClass*					Class;	  			// Class the object belongs to.
 
 	// Private systemwide variables.
+	static bool				GObjInitialized;
 	static TArray<VObject*>	GObjObjects;		// List of all objects.
 	static TArray<int>		GObjAvailable;		// Available object indices.
 	static VObject*			GObjAutoRegister;	// Objects to automatically register.
@@ -300,9 +301,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/01/03 18:36:40  dj_jl
+//	Added GObjInitialized
+//
 //	Revision 1.4  2001/12/27 17:35:42  dj_jl
 //	Split VClass in seperate module
-//
+//	
 //	Revision 1.3  2001/12/18 19:03:17  dj_jl
 //	A lots of work on VObject
 //	
