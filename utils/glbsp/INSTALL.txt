@@ -2,12 +2,15 @@
 Compiling glBSP
 ===============
 
-by Andrew Apted.  Last updated: 8th June 2001.
+by Andrew Apted.  Last updated: 18th December 2001.
 
 
 glBSP has been written with portability in mind.  It is purely ANSI C,
 with one minor exception: I use // comments instead of the more
 traditional /* */ comments.
+
+As always, it's a good idea to open the makefile (or batch file, as
+the case may be) and check the various settings near the top.
 
 glBSP has been known to compile and work on the following platforms:
 
@@ -17,7 +20,9 @@ glBSP has been known to compile and work on the following platforms:
 
    +  MSDOS 6.22, with DJGPP 2.02.
 
-   +  Win32, with Borland C++Builder 5.5.
+   +  Win32, with Borland C++ 5.5 (free command line tools).
+
+   +  Win32, with MinGW 1.0.
 
 
 Linux
@@ -45,6 +50,10 @@ compiling under Win32 with Borland C++Builder 5.5.  Assuming BCC is
 configured properly (the ".cfg" files it needs have been setup),
 typing `make -f makefile.bcc' should create the glbsp.exe executable.
 
+For MinGW compilation, edit the "makeming.bat" file and set the
+`MINGW' variable (at the top) to the correct directory.  Then simply
+run the "makeming.bat" batch file.
+
 
 Plugin
 ------
@@ -55,7 +64,24 @@ the plugin are similiar to the above, but CD into the `plugin'
 directory instead.  The result is a library file: libglbsp.a under
 Linux and MSDOS, libglbsp.lib under Win32.
 
-NOTE: since glBSP is under the GNU General Public License (GPL), it
-can only be incorporated into other programs that are also under the
-GPL.  See the file COPYING.txt for the full details.
+NOTE WELL: since glBSP is under the GNU General Public License (GPL),
+it can only be incorporated into other programs that are also under
+the GPL.  See the file COPYING.txt for the full details.
+
+
+Compiling glBSPX
+================
+
+glBSPX is the GUI version of glBSP, written in C++ and requires the
+FLTK toolkit, version 1.1 (see http://www.fltk.org).  Assuming the
+FLTK static library has been built, first CD into the fltk directory
+(in glbsp sources).
+
+For Linux: 
+    Just running "make" should do the trick.
+
+For Win32 with MinGW: 
+    First edit the "makeming.bat" file and set the the `FLTK' and
+    `MINGW' variables (at the top) to the correct directories.  Then
+    just run the "makeming.bat" batch file.
 

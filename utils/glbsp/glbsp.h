@@ -2,7 +2,7 @@
 // GLBSP.H : Interface to Node Builder
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2001 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2002 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -22,7 +22,7 @@
 #define __GLBSP_GLBSP_H__
 
 
-#define GLBSP_VER  "1.95"
+#define GLBSP_VER  "1.96"
 
 
 // certain GCC attributes can be useful

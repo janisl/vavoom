@@ -2,12 +2,13 @@
 TODO
 ====
 
-+  finish off FLTK version:
+*  website: reorganise !!
 
-   +  Fix modal windows not having close buttons in Win32.
++  website: organise files/ dir better.
 
-   N  Finish Manual.
-   N  Implement SaveLog menu.
-   N  Copy/paste from output box.
-   N  Implement better file chooser.
- 
++  website: "STATUS" paragraph.
+
+<  Put CHANGES.txt on website.
+
+-  glBSPX: Fix modal windows not having close buttons in Win32.
+

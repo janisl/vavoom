@@ -2,7 +2,7 @@
 // REJECT : Generate the reject table
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2001 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2002 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //

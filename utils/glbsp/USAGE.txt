@@ -238,7 +238,7 @@ A node builder works like this: say you are looking at your level in
 the automap or in the level editor.  The node builder needs to pick a
 line (stretching to infinity) that divides the whole map in two halves
 (can be rough).  Now cover up one half with your hand, and repeat the
-process on the remaining half.  The nodes builder keeps doing this
+process on the remaining half.  The node builder keeps doing this
 until the areas that remain are convex (i.e. none of the walls can
 block the view of any other walls when you are inside that area).
 
@@ -296,7 +296,7 @@ changed or abandoned.  Features that are different:
 
   +  glBSP has a much more modular architecture.
 
-  +  The GUI version, glbspX, is completely new.
+  +  The GUI version, glBSPX, is completely new.
  
 
 

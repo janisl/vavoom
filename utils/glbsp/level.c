@@ -2,7 +2,7 @@
 // LEVEL : Level structure read/write functions.
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2001 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2002 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -464,9 +464,6 @@ void GetLinedefsHexen(void)
     // read specials
     for (j=0; j < 5; j++)
       line->specials[j] = UINT8(raw->specials[j]);
-
-    // -JL- Added missing twosided flag handling that caused a broken reject
-    line->two_sided = (line->flags & LINEFLAG_TWO_SIDED) ? TRUE : FALSE;
 
     line->right = (SINT16(raw->sidedef1) < 0) ? NULL :
         LookupSidedef(SINT16(raw->sidedef1));
@@ -1858,8 +1855,10 @@ void SaveLevel(node_t *root_node)
     PutSegs();
     PutSubsecs("SSECTORS", FALSE);
     PutNodes("NODES", FALSE, root_node);
+  }
 
-    // -JL- Don't touch blockmap and reject if not doing normal nodes
+  if (!cur_info->gwa_mode)
+  {
     PutBlockmap();
 
     if (!cur_info->no_reject || !FindLevelLump("REJECT"))
