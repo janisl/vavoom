@@ -1469,6 +1469,11 @@ static void G_DoCompleted(void)
 	{
 		return;
 	}
+	if (!netgame && !players[0].spawned)
+	{
+		//FIXME Some ACS left from previous visit of the level
+		return;
+	}
 	sv.intermission = 1;
 	sv.intertime = 0;
 
@@ -2661,9 +2666,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2001/12/28 16:26:39  dj_jl
+//	Temporary fix for map teleport
+//
 //	Revision 1.25  2001/12/27 17:33:29  dj_jl
 //	Removed thinker list
-//
+//	
 //	Revision 1.24  2001/12/18 19:03:16  dj_jl
 //	A lots of work on VObject
 //	
