@@ -417,6 +417,11 @@ char *Sys_ConsoleInput(void)
 void Sys_Shutdown(void)
 {
 	allegro_exit();
+
+#ifdef PROGS_PROFILE
+	svpr.DumpProfile();
+	clpr.DumpProfile();
+#endif
 }
 
 //==========================================================================
@@ -705,9 +710,12 @@ int main(int argc,char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/01/25 18:06:53  dj_jl
+//	Little changes for progs profiling
+//
 //	Revision 1.11  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.10  2001/12/18 19:08:12  dj_jl
 //	Beautification
 //	

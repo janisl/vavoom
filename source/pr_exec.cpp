@@ -1608,7 +1608,6 @@ int TProgs::Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
 
 void TProgs::DumpProfile(void)
 {
-#if 0
 	#define MAX_PROF	100
 	int i;
 	int profsort[MAX_PROF];
@@ -1616,15 +1615,15 @@ void TProgs::DumpProfile(void)
 	memset(profsort, 0, sizeof(profsort));
 	for (i = 1; i < Progs->num_functions; i++)
 	{
-		if (!Profile1[i])
+		if (!Functions[i].Profile1)
 		{
 			//	Never called
 			continue;
 		}
 		for (int j = 0; j < MAX_PROF; j++)
 		{
-			totalcount += Profile2[i];
-			if (Profile2[profsort[j]] <= Profile2[i])
+			totalcount += Functions[i].Profile2;
+			if (Functions[profsort[j]].Profile2 <= Functions[i].Profile2)
 			{
 				for (int k = MAX_PROF - 1; k > j; k--)
 				{
@@ -1643,10 +1642,10 @@ void TProgs::DumpProfile(void)
 	{
 		int fnum = profsort[i];
 		con << va("%3.2f%% (%9d) %9d %s\n",
-			(double)Profile2[fnum] * 100.0 / (double)totalcount,
-			(int)Profile2[fnum], (int)Profile1[fnum], FuncName(fnum));
+			(double)Functions[fnum].Profile2 * 100.0 / (double)totalcount,
+			(int)Functions[fnum].Profile2, (int)Functions[fnum].Profile1,
+			*Functions[fnum].Name);
 	}
-#endif
 }
 
 //==========================================================================
@@ -1670,9 +1669,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2002/01/25 18:06:53  dj_jl
+//	Little changes for progs profiling
+//
 //	Revision 1.19  2002/01/17 18:21:40  dj_jl
 //	Fixed Hexen class bug
-//
+//	
 //	Revision 1.18  2002/01/11 08:07:17  dj_jl
 //	Added names to progs
 //	
