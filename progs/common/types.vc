@@ -508,12 +508,12 @@ class MapObject:Thinker
 	int ValidCount;
 
 	//	Flags
-	boolean bSolid;			// Blocks.
-	boolean bNoClient;		// don't update to clients
+	bool bSolid;			// Blocks.
+	bool bNoClient;		// don't update to clients
 							// (invisible but touchable)
-	boolean bNoBlockmap;	// don't use the blocklinks
+	bool bNoBlockmap;	// don't use the blocklinks
 							// (inert but displayable)
-	boolean bIsPlayer;		// PLayer or player-bot
+	bool bIsPlayer;		// PLayer or player-bot
 
 	int Health;
 
@@ -982,6 +982,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.31  2002/02/16 16:27:44  dj_jl
+//  Added bool variables
+//
 //  Revision 1.30  2002/02/14 19:20:54  dj_jl
 //  Renamed Entity properties to new naming style
 //

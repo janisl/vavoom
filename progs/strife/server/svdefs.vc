@@ -255,45 +255,38 @@ class Actor:Entity
 	name PainSound;
 	name DeathSound;
 
-	//  Sound IDs
-	int sound_sight;
-	int sound_active;
-	int sound_attack;
-	int sound_pain;
-	int sound_death;
-
 	//	Flags
-	boolean bSpecial;		// call P_SpecialThing when touched
-	boolean bShootable;		// Can be hit.
-	boolean bAmbush;
-	boolean bJustHit;		// try to attack right back
-	boolean bJustAttacked;	// take at least one step before attacking
-	boolean bSpawnCeiling;	// hang from ceiling instead of floor
-	boolean bNoGravity;		// don't apply gravity every tic
+	bool bSpecial;			// call P_SpecialThing when touched
+	bool bShootable;		// Can be hit.
+	bool bAmbush;
+	bool bJustHit;			// try to attack right back
+	bool bJustAttacked;		// take at least one step before attacking
+	bool bSpawnCeiling;		// hang from ceiling instead of floor
+	bool bNoGravity;		// don't apply gravity every tic
 	// movement flags
-	boolean bDropOff;		// allow jumps from high places
-	boolean bPickUp;		// for players to pick up items
-	boolean bNoClip;		// player cheat
-	boolean bSlide;			// keep info about sliding along walls
-	boolean bFloat;			// allow moves to any height, no gravity
-	boolean bTeleport;		// don't cross lines or look at heights
-	boolean bMissile;		// don't hit same species, explode on block
-	boolean bDropped;		// dropped by a demon, not level spawned
-	boolean bNoBlood;		// don't bleed when shot (use puff)
-	boolean bCorpse;		// don't stop moving halfway off a step
-	boolean bInFloat;		// floating to a height for a move, don't
+	bool bDropOff;			// allow jumps from high places
+	bool bPickUp;			// for players to pick up items
+	bool bNoClip;			// player cheat
+	bool bSlide;			// keep info about sliding along walls
+	bool bFloat;			// allow moves to any height, no gravity
+	bool bTeleport;			// don't cross lines or look at heights
+	bool bMissile;			// don't hit same species, explode on block
+	bool bDropped;			// dropped by a demon, not level spawned
+	bool bNoBlood;			// don't bleed when shot (use puff)
+	bool bCorpse;			// don't stop moving halfway off a step
+	bool bInFloat;			// floating to a height for a move, don't
 							// auto float to target's height
-	boolean bCountKill;		// count towards intermission kill total
-	boolean bCountItem;		// count towards intermission item total
-	boolean bSkullFly;		// skull in flight
-	boolean bUnknown1;
-	boolean bUnknown2;
-	boolean bUnknown3;
-	boolean bOnMobj;
-	boolean bActivateMCross;	// can activate monster cross lines
-	boolean bActivatePCross;	// can activate projectile cross lines
-	boolean bDormant;		// thing is dormant
-	boolean bWaterJump;
+	bool bCountKill;		// count towards intermission kill total
+	bool bCountItem;		// count towards intermission item total
+	bool bSkullFly;			// skull in flight
+	bool bUnknown1;
+	bool bUnknown2;
+	bool bUnknown3;
+	bool bOnMobj;
+	bool bActivateMCross;	// can activate monster cross lines
+	bool bActivatePCross;	// can activate projectile cross lines
+	bool bDormant;			// thing is dormant
+	bool bWaterJump;
 
 	//  Params
 	float Mass;
@@ -358,6 +351,8 @@ class Actor:Entity
 	Actor CheckOnmobj(void);
 	void PlayerLandedOnThing(void);
 	boolean Physics(void);
+
+	void A_Chase(void);
 
 	// Action functions
 	void A_24(void);
@@ -567,6 +562,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/16 16:27:44  dj_jl
+//  Added bool variables
+//
 //  Revision 1.19  2002/02/14 19:21:00  dj_jl
 //  Renamed Entity properties to new naming style
 //

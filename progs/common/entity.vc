@@ -29,13 +29,13 @@ class Entity:MapObject
 	float StateTime;	// state tic counter
 	int StateNum;
 	int NextState;
-	boolean bFixedModel;
+	bool bFixedModel;
 
-	boolean bNoPassMobj;	// Disable z block checking.  If on,
-							// this flag will prevent the mobj
-							// from passing over/under other mobjs.
-	boolean bCheckLineBlocking;
-	boolean bCheckLineBlockMonsters;
+	bool bNoPassMobj;	// Disable z block checking.  If on,
+						// this flag will prevent the mobj
+						// from passing over/under other mobjs.
+	bool bCheckLineBlocking;
+	bool bCheckLineBlockMonsters;
 
 //==========================================================================
 //
@@ -369,6 +369,9 @@ boolean CheckPosition(Entity thing, TVec Pos)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/02/16 16:27:44  dj_jl
+//  Added bool variables
+//
 //  Revision 1.4  2002/02/14 19:20:53  dj_jl
 //  Renamed Entity properties to new naming style
 //
