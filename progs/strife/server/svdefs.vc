@@ -316,11 +316,6 @@ class Entity:MapObject
 	// also the originator for missiles.
 	mobj_t *target;
 
-	// Thing being chased/attacked for tracers.
-	mobj_t *tracer;
-
-	classid type;
-
 	int damage;	// For missiles
 
 	// Player number last looked for.
@@ -457,6 +452,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/12/27 17:52:24  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.7  2001/12/18 18:29:22  dj_jl
 //  Added Hexen action specials
 //

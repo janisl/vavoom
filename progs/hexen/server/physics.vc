@@ -439,7 +439,7 @@ void Entity::UpdateVelocity(void)
 		!(flags2 & MF2_FLY) && !(flags2 & MF2_ONMOBJ))
 	{
 		// No friction when falling
-		if (type != MT_BLASTEFFECT)
+		if (Class != MT_BLASTEFFECT)
 			return;
 	}
 
@@ -556,7 +556,7 @@ boolean Entity::HitMobj(void)
 				origin.x - BlockingMobj->origin.x);
 
 			// Change angle for delflection/reflection
-			switch (BlockingMobj->type)
+			switch (BlockingMobj->Class)
 			{
 			case MT_CENTAUR:
 			case MT_CENTAURLEADER:
@@ -566,7 +566,7 @@ boolean Entity::HitMobj(void)
 					explode = true;
 					break;
 				}
-				if (type == MT_HOLY_FX)
+				if (Class == MT_HOLY_FX)
 				{
 					explode = true;
 					break;
@@ -647,7 +647,7 @@ boolean Entity::HitLine(void)
 		{
 			// Struck a wall
 			BounceWall();
-			switch (type)
+			switch (Class)
 			{
 			case MT_SORCBALL1:
 			case MT_SORCBALL2:
@@ -669,12 +669,12 @@ boolean Entity::HitLine(void)
 			&& ceilingline->backsector->ceiling.pic == skyflatnum)
 		{
 			// Hack to prevent missiles exploding against the sky
-			if (type == MT_BLOODYSKULL)
+			if (Class == MT_BLOODYSKULL)
 			{
 				velocity.x = velocity.y = 0.0;
 				velocity.z = -1.0 * 35.0;
 			}
-			else if (type == MT_HOLY_FX)
+			else if (Class == MT_HOLY_FX)
 			{
 				if (!P_ExplodeMissile(this))
 				{
@@ -981,14 +981,14 @@ boolean Entity::HitFloor(void)
 			P_FloorBounceMissile(this);
 			return true;
 		}
-		else if (type == MT_HOLY_FX)
+		else if (Class == MT_HOLY_FX)
 		{
 			// The spirit struck the ground
 			velocity.z = 0.0;
 			P_HitFloor(this);
 			return true;
 		}
-		else if (type == MT_MNTRFX2 || type == MT_LIGHTNING_FLOOR)
+		else if (Class == MT_MNTRFX2 || Class == MT_LIGHTNING_FLOOR)
 		{
 			// Minotaur floor fire can go up steps
 			return true;
@@ -1066,7 +1066,7 @@ boolean Entity::HitFloor(void)
 //FIXME				player->centering = true;
 			}
 		}
-		else if (type == MT_POTTERY1 || type == MT_POTTERY2 || type == MT_POTTERY3)
+		else if (Class == MT_POTTERY1 || Class == MT_POTTERY2 || Class == MT_POTTERY3)
 		{
 			Damage(NULL, NULL, 25);
 		}
@@ -1120,18 +1120,18 @@ boolean Entity::HitCeiling(void)
 			}
 			return true;
 		}
-		if (type == MT_LIGHTNING_CEILING)
+		if (Class == MT_LIGHTNING_CEILING)
 		{
 			return true;
 		}
 		if (ceiling->pic == skyflatnum)
 		{
-			if (type == MT_BLOODYSKULL)
+			if (Class == MT_BLOODYSKULL)
 			{
 				velocity.x = velocity.y = 0.0;
 				velocity.z = -1.0 * 35.0;
 			}
-			else if (type == MT_HOLY_FX)
+			else if (Class == MT_HOLY_FX)
 			{
 				return P_ExplodeMissile(this);
 			}
@@ -1314,7 +1314,7 @@ boolean Entity::BlasterPhysics(void)
 			}
 			if (changexy)
 			{
-				if (type == MT_MWAND_MISSILE && (P_Random() < 128))
+				if (Class == MT_MWAND_MISSILE && (P_Random() < 128))
 				{
 					z = origin.z - 8.0;
 					if (z < floorz)
@@ -1323,7 +1323,7 @@ boolean Entity::BlasterPhysics(void)
 					}
 					P_SpawnMobj(origin.x, origin.y, z, MT_MWANDSMOKE);
 				}
-				else if (type != MT_MWAND_MISSILE && !--special1)
+				else if (Class != MT_MWAND_MISSILE && !--special1)
 				{
 					special1 = 4;
 					z = origin.z - 12.0;
@@ -1480,6 +1480,9 @@ void Entity::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2001/12/27 17:52:23  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.12  2001/12/01 18:08:53  dj_jl
 //  Physics functions as methods, started to use class references
 //

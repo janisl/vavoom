@@ -90,7 +90,7 @@ int UpdateMorphedMonster(mobj_t * actor, int tics)
 	args[2] = actor->args[2];
 	args[3] = actor->args[3];
 	args[4] = actor->args[4];
-	pig_type = actor->type;
+	pig_type = actor->Class;
 
 	P_RemoveMobjFromTIDList(actor);
 	SetMobjState(actor, S_FREETARGMOBJ);
@@ -203,6 +203,9 @@ void Actor::A_PigPain(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/12/27 17:52:23  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.7  2001/12/12 18:57:42  dj_jl
 //  State functions now are methods of Actor and Weapon classes
 //

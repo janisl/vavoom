@@ -33,7 +33,7 @@
 
 void Actor::A_RestoreSpecialThing1(void)
 {
-	if (type == MT_WMACE)
+	if (Class == MT_WMACE)
 	{
 		// Do random mace placement
 		RepositionMace(this);
@@ -100,7 +100,7 @@ void Actor::A_InitKeyGizmo(void)
 	mobj_t *mo;
 	int state;
 
-	switch (type)
+	switch (Class)
 	{
 	case MT_KEYGIZMOBLUE:
 		state = S_KGZ_BLUEFLOAT1;
@@ -128,7 +128,7 @@ void Actor::A_ESound(void)
 {
 	string sound = "";
 
-	switch (type)
+	switch (Class)
 	{
 	case MT_SOUNDWATERFALL:
 		sound = "Waterfall";
@@ -143,6 +143,9 @@ void Actor::A_ESound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/27 17:52:22  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.5  2001/12/12 18:57:41  dj_jl
 //  State functions now are methods of Actor and Weapon classes
 //

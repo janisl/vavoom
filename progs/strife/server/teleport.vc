@@ -184,7 +184,7 @@ int EV_Teleport(int tag, mobj_t * thing, boolean usefog)
 	for (m = NextMobj(NULL); m; m = NextMobj(m))
 	{
 		// not a teleportman
-		if (m->type != MT_TELEPORTMAN)
+		if (m->Class != MT_TELEPORTMAN)
 			continue;
 
 		// wrong sector
@@ -199,6 +199,9 @@ int EV_Teleport(int tag, mobj_t * thing, boolean usefog)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/12/27 17:52:24  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.7  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

@@ -235,16 +235,16 @@ boolean BotPlayer::CheckItem(Entity item)
 			return false;
 	}
 
-	if (item.type == MT_MISC0 && (botmo.health >= MAXHEALTH))
+	if (item.Class == MT_MISC0 && (botmo.health >= MAXHEALTH))
 		return false;
 #if 0
-	if ((item.type == MT_MISC12 || item.type == MT_MEGA) &&
+	if ((item.Class == MT_MISC12 || item.Class == MT_MEGA) &&
 		(botmo.health >= 2 * MAXHEALTH))
 		return false;
 #endif
-	if (item.type == MT_ITEMSHIELD1 && (player->armorpoints >= 100))
+	if (item.Class == MT_ITEMSHIELD1 && (player->armorpoints >= 100))
 		return false;
-	if (item.type == MT_ITEMSHIELD2 && (player->armorpoints >= 200))
+	if (item.Class == MT_ITEMSHIELD2 && (player->armorpoints >= 200))
 		return false;
 #if 0
 	if (teamgame.value && item->flags3 & MF3_KEY && !(item->flags & MF_DROPPED))
@@ -330,14 +330,14 @@ void BotPlayer::CheckStuff(void)
 {
 	if (item)
 	{
-		if (!(item.flags & MF_SPECIAL) || item.destroyed || // somebody picked
+		if (!(item.flags & MF_SPECIAL) || item.IsDestroyed() || // somebody picked
 				!CheckTo(item.origin)) // Can't reach
 			item = none;
 	}
 
 	if (missile)
 	{
-		if (!(missile.flags & MF_MISSILE) || missile.destroyed)
+		if (!(missile.flags & MF_MISSILE) || missile.IsDestroyed())
 			missile = none;
 	}
 
@@ -520,25 +520,25 @@ void BotPlayer::Scan(void)
 				// Note: Debug messages are fun!
 				if (players[consoleplayer].camera == mo)
 					Printf (PRINT_HIGH, "Spotted a node\n");
-				if (actor->type == MT_BOTPATH || actor->type == MT_BOTSNIPE)
+				if (actor->Class == MT_BOTPATH || actor->Class == MT_BOTSNIPE)
 					bot->node = actor;
 				else if (teamgame.value && bot->player->team != TM_NONE)
 				{
 					if (bot->player->team == TM_BLUE)
 					{
-						if (bot->state == BST_DEFENSE && ((int)actor->type == (int)MT_BOTBLUEGUARD))
+						if (bot->state == BST_DEFENSE && ((int)actor->Class == (int)MT_BOTBLUEGUARD))
 						{
 							if (players[consoleplayer].camera == mo)
 								Printf (PRINT_HIGH, "Blue defense node\n");
 							bot->node = actor;
 						}
-						else if (bot->state == BST_OFFENSE && ((int)actor->type == (int)MT_BOTBLUEPATH))
+						else if (bot->state == BST_OFFENSE && ((int)actor->Class == (int)MT_BOTBLUEPATH))
 						{
 							if (players[consoleplayer].camera == mo)
 								Printf (PRINT_HIGH, "Blue offense node\n");
 							bot->node = actor;
 						}
-						else if (bot->state == BST_RETURN && actor->type == MT_BOTBLUEGOAL)
+						else if (bot->state == BST_RETURN && actor->Class == MT_BOTBLUEGOAL)
 						{
 							if (players[consoleplayer].camera == mo)
 								Printf (PRINT_HIGH, "Blue return node\n");
@@ -547,20 +547,20 @@ void BotPlayer::Scan(void)
 					}
 					if (bot->player->team == TM_RED)
 					{
-						if (bot->state == BST_DEFENSE && ((int)actor->type == (int)MT_BOTREDGUARD))
+						if (bot->state == BST_DEFENSE && ((int)actor->Class == (int)MT_BOTREDGUARD))
 	
 						{
 							if (players[consoleplayer].camera == mo)
 								Printf (PRINT_HIGH, "Red defense node\n");
 							bot->node = actor;
 						}
-						else if (bot->state == BST_OFFENSE && ((int)actor->type == MT_BOTREDPATH))
+						else if (bot->state == BST_OFFENSE && ((int)actor->Class == MT_BOTREDPATH))
 						{
 							if (players[consoleplayer].camera == mo)
 								Printf (PRINT_HIGH, "Red offense node\n");
 							bot->node = actor;
 						}
-						else if (bot->state == BST_RETURN && ((int)actor->type == MT_BOTREDGOAL))
+						else if (bot->state == BST_RETURN && ((int)actor->Class == MT_BOTREDGOAL))
 						{
 							if (players[consoleplayer].camera == mo)
 								Printf (PRINT_HIGH, "Red return node\n");
@@ -731,7 +731,7 @@ float BotPlayer::GetAngle(void)
 
 int BotPlayer::WeapFromItem(Entity item)
 {
-	switch (item.type)
+	switch (item.Class)
 	{
 	case MT_MISC13:
 		return wp_gauntlets;
@@ -760,7 +760,7 @@ int BotPlayer::WeapFromItem(Entity item)
 
 int BotPlayer::AmmoFromItem(Entity item)
 {
-	switch (item.type)
+	switch (item.Class)
 	{
 	case MT_AMGWNDWIMPY:
 	case MT_AMGWNDHEFTY:
@@ -1041,12 +1041,12 @@ void B_SetGoal (skullb_s *bot)
 	{
 		if (bot->state == BST_OFFENSE)
 		{
-			if (actor->type == teams[bot->player->team].theirs)
+			if (actor->Class == teams[bot->player->team].theirs)
 				bot->goal = actor;
 		}
 		else if (bot->state == BST_RETURN)
 		{
-			if (actor->type == teams[bot->player->team].ours)
+			if (actor->Class == teams[bot->player->team].ours)
 				bot->goal = actor;
 		}
 	}
@@ -2001,6 +2001,9 @@ void BotPlayer::OnSpawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2001/12/27 17:52:22  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.1  2001/12/04 18:36:42  dj_jl
 //  Bots, directly from SkullTag!
 //

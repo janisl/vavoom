@@ -268,7 +268,7 @@ boolean ActivateThing(mobj_t * mobj)
 		}
 		return false;
 	}
-	switch (mobj->type)
+	switch (mobj->Class)
 	{
 	case MT_ZTWINEDTORCH:
 	case MT_ZTWINEDTORCH_UNLIT:
@@ -375,7 +375,7 @@ boolean DeactivateThing(mobj_t * mobj)
 		}
 		return false;
 	}
-	switch (mobj->type)
+	switch (mobj->Class)
 	{
 	case MT_ZTWINEDTORCH:
 	case MT_ZTWINEDTORCH_UNLIT:
@@ -460,7 +460,7 @@ boolean EV_ThingRemove(int tid)
 	searcher = -1;
 	while ((mobj = P_FindMobjFromTID(tid, &searcher)) != NULL)
 	{
-		if (mobj->type == MT_BRIDGE)
+		if (mobj->Class == MT_BRIDGE)
 		{
 			A_BridgeRemove(mobj);
 			return true;
@@ -527,7 +527,7 @@ int ThingCount(int type, int tid)
 				// Just count TIDs
 				count++;
 			}
-			else if (moType == mobj->type)
+			else if (moType == mobj->Class)
 			{
 				if (mobj->flags & MF_COUNTKILL && mobj->health <= 0)
 				{
@@ -543,7 +543,7 @@ int ThingCount(int type, int tid)
 		// Count only types
 		FOREACH(mobj_t, mobj)
 		{
-			if (mobj->type != moType)
+			if (mobj->Class != moType)
 			{
 				// Doesn't match
 				continue;
@@ -562,6 +562,9 @@ int ThingCount(int type, int tid)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2001/12/27 17:52:24  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.8  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

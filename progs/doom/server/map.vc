@@ -804,7 +804,7 @@ boolean PIT_RadiusAttack(mobj_t * thing)
 
 	// Boss spider and cyborg
 	// take no damage from concussion.
-	if (thing->type == MT_CYBORG || thing->type == MT_SPIDER)
+	if (thing->Class == MT_CYBORG || thing->Class == MT_SPIDER)
 		return true;
 
 	dist = Length(MobjCenter(thing) - MobjCenter(bombspot)) - thing->radius;
@@ -862,6 +862,9 @@ void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage, int distance,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2001/12/27 17:52:22  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.10  2001/12/12 19:15:27  dj_jl
 //  Some little changes for state methods
 //

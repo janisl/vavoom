@@ -200,7 +200,7 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 	MissileMobj->angles = angles;
 	AngleVector(&angles, &vforward);
 	MissileMobj->velocity = vforward * MissileMobj->speed;
-	if (MissileMobj->type == MT_BLASTERFX1)
+	if (MissileMobj->Class == MT_BLASTERFX1)
 	{
 		// Ultra-fast ripper spawning missile
 		MissileMobj->origin += MissileMobj->velocity * 0.00357;
@@ -334,6 +334,9 @@ boolean P_SeekerMissile(mobj_t * actor, float thresh, float turnMax)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/12/27 17:52:23  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.7  2001/10/22 17:23:12  dj_jl
 //  Floatification of angles
 //

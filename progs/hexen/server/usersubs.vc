@@ -68,7 +68,7 @@ int PStateAttackEnd[NUMCLASSES] = {
 void InitLava(void)
 {
 	LavaInflictor = NewMobjThinker(TLavaInflictor);
-	LavaInflictor->type = MT_CIRCLEFLAME;
+//	LavaInflictor->type = MT_CIRCLEFLAME;
 	LavaInflictor->flags = MF_NOSECTOR | MF_NOBLOCKMAP;
 	LavaInflictor->flags2 = MF2_FIREDAMAGE | MF2_NODMGTHRUST;
 }
@@ -136,7 +136,7 @@ boolean UndoPlayerMorph(player_t * player)
 	weapon = pmo->special1;
 	oldFlags = pmo->flags;
 	oldFlags2 = pmo->flags2;
-	oldBeast = pmo->type;
+	oldBeast = pmo->Class;
 	SetMobjState(pmo, S_FREETARGMOBJ);
 	switch (player->baseclass)
 	{
@@ -223,7 +223,7 @@ void DeathPlayerThink(player_t * player)
 
 	onground = (player->mo->origin.z <= player->mo->floorz);
 
-	if (player->mo->type == MT_BLOODYSKULL || player->mo->type == MT_ICECHUNK)
+	if (player->mo->Class == MT_BLOODYSKULL || player->mo->Class == MT_ICECHUNK)
 	{
 		// Flying bloody skull or flying ice chunk
 		player->viewheight = 6.0;
@@ -495,7 +495,7 @@ void BlastMobj(mobj_t * source, mobj_t * victim, float strength)
 	{
 		if (victim->flags & MF_MISSILE)
 		{
-			switch (victim->type)
+			switch (victim->Class)
 			{
 			case MT_SORCBALL1:	// don't blast sorcerer balls
 			case MT_SORCBALL2:
@@ -510,7 +510,7 @@ void BlastMobj(mobj_t * source, mobj_t * victim, float strength)
 				break;
 			}
 		}
-		if (victim->type == MT_HOLY_FX)
+		if (victim->Class == MT_HOLY_FX)
 		{
 			if (victim->specialmobj1 == source)
 			{
@@ -580,8 +580,8 @@ void ArtiBlastRadius(player_t * player)
 			// Not a valid monster
 			continue;
 		}
-		if ((mo->type == MT_POISONCLOUD) ||	// poison cloud
-			(mo->type == MT_HOLY_FX) ||	// holy fx
+		if ((mo->Class == MT_POISONCLOUD) ||	// poison cloud
+			(mo->Class == MT_HOLY_FX) ||	// holy fx
 			(mo->flags & MF_ICECORPSE))	// frozen corpse
 		{
 			// Let these special cases go
@@ -600,15 +600,15 @@ void ArtiBlastRadius(player_t * player)
 		{
 			continue;	// no dormant creatures
 		}
-		if ((mo->type == MT_WRAITHB) && (mo->translucency >= 100))
+		if ((mo->Class == MT_WRAITHB) && (mo->translucency >= 100))
 		{
 			continue;	// no underground wraiths
 		}
-		if ((mo->type == MT_SPLASHBASE) || (mo->type == MT_SPLASH))
+		if ((mo->Class == MT_SPLASHBASE) || (mo->Class == MT_SPLASH))
 		{
 			continue;
 		}
-		if (mo->type == MT_SERPENT || mo->type == MT_SERPENTLEADER)
+		if (mo->Class == MT_SERPENT || mo->Class == MT_SERPENTLEADER)
 		{
 			continue;
 		}
@@ -675,6 +675,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2001/12/27 17:52:24  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.8  2001/10/22 17:23:13  dj_jl
 //  Floatification of angles
 //

@@ -62,7 +62,7 @@ void A_PainShootSkull(mobj_t * actor, float angle)
 	mo = NULL;
 	while (mo = NextMobj(mo))
 	{
-		if (mo->type == MT_SKULL)
+		if (mo->Class == MT_SKULL)
 			count++;
 	}
 
@@ -142,6 +142,9 @@ void Actor::A_PainDie(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/12/27 17:52:22  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.6  2001/12/12 18:57:40  dj_jl
 //  State functions now are methods of Actor and Weapon classes
 //

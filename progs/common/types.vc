@@ -37,9 +37,12 @@ struct subsector_t;
 
 class Object
 {
-	int ObjectInternal[8];
+	int ObjectInternal[7];
+	classid Class;
 
 	void Destroy(void);
+	boolean IsA(classid cid);
+	boolean IsDestroyed(void);
 }
 
 //==========================================================================
@@ -358,10 +361,6 @@ typedef boolean(*line_iter_func_t) (line_t *);
 
 class Thinker:Object
 {
-	void *__prev;
-	void *__next;
-	boolean destroyed;
-
 	void Think(void)
 	{
 	}
@@ -675,9 +674,6 @@ struct sv_level_t:base_level_t
 	mthing_t deathmatchstarts[MAXDEATHMATCHSTARTS];	// Player spawn spots for deathmatch.
 	int numdeathmatchstarts;
 	mthing_t playerstarts[MAX_PLAYER_STARTS * MAXPLAYERS];	// Player spawn spots.
-
-	int __thinkerHead;	// the head of the thinker list
-	int __thinkerTail;	// the tail of the thinker list
 };
 
 //==========================================================================
@@ -960,6 +956,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2001/12/27 17:52:19  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.20  2001/12/18 18:38:11  dj_jl
 //  Base object got some new fields, new thinker list
 //

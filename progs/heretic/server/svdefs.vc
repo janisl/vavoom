@@ -286,8 +286,6 @@ class Entity:MapObject
 	mobj_t *specialmobj2;
 	classid specialcid;
 
-	classid type;
-
 	int damage;	// For missiles
 
 	boolean blaster;
@@ -768,6 +766,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2001/12/27 17:52:23  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.8  2001/12/18 18:29:22  dj_jl
 //  Added Hexen action specials
 //

@@ -154,7 +154,7 @@ void Actor::A_MinotaurLook(void)
 				continue;
 			if ((mo == master) || (mo == this))
 				continue;
-			if ((mo->type == MT_MINOTAUR) &&
+			if ((mo->Class == MT_MINOTAUR) &&
 				(mo->specialmobj1 == specialmobj1)) continue;
 			target = mo;
 			break;	// Found mobj to attack
@@ -511,6 +511,9 @@ void Actor::A_SmokePuffExit(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2001/12/27 17:52:23  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.9  2001/12/12 18:57:42  dj_jl
 //  State functions now are methods of Actor and Weapon classes
 //

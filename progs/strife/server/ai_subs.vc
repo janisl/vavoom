@@ -143,7 +143,7 @@ int P_FindOther(mobj_t * mo)
 	mo2 = NULL;
 	while ((mo2 = NextMobj(mo2)))
 	{
-		if (mo2 != mo && mo2->type == mo->type && mo2->health > 0)
+		if (mo2 != mo && mo2->Class == mo->Class && mo2->health > 0)
 		{
 			// other mobj of the same type not dead
 			return true;
@@ -172,7 +172,7 @@ boolean P_LookForMonsters(mobj_t * actor, boolean allaround)
 		if (mo == actor)
 			continue;
 
-		if ((mo->type != MT_PLAYER) && !(mo->flags & MF_COUNTKILL))
+		if ((mo->Class != MT_PLAYER) && !(mo->flags & MF_COUNTKILL))
 			continue;
 
 		if (!P_CheckSight(actor, mo))
@@ -489,6 +489,9 @@ void P_NewChaseDir(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/12/27 17:52:24  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.4  2001/10/22 17:23:13  dj_jl
 //  Floatification of angles
 //

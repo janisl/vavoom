@@ -238,7 +238,7 @@ void Actor::A_SoAExplode(void)
 
 void Actor::A_ContMobjSound(void)
 {
-	switch (type)
+	switch (Class)
 	{
 	case MT_SERPENTFX:
 		StartSoundName(this, "SerpentFXContinuous", CHAN_VOICE);
@@ -262,7 +262,7 @@ void Actor::A_ContMobjSound(void)
 
 void Actor::A_ESound(void)
 {
-	switch (type)
+	switch (Class)
 	{
 	case MT_SOUNDWIND:
 		StartSoundName(this, "Wind", CHAN_VOICE);
@@ -295,6 +295,9 @@ void Actor::A_UnSetInvulnerable(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/27 17:52:23  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.5  2001/12/12 18:57:42  dj_jl
 //  State functions now are methods of Actor and Weapon classes
 //

@@ -166,7 +166,7 @@ void Actor::A_SerpentChase(void)
 
 void Actor::A_SerpentHumpDecide(void)
 {
-	if (type == MT_SERPENTLEADER)
+	if (Class == MT_SERPENTLEADER)
 	{
 		if (P_Random() > 30)
 		{
@@ -186,7 +186,7 @@ void Actor::A_SerpentHumpDecide(void)
 	if (!CheckMeleeRange(this))
 	{
 		// The hump shouldn't occur when within melee range
-		if (type == MT_SERPENTLEADER && P_Random() < 128)
+		if (Class == MT_SERPENTLEADER && P_Random() < 128)
 		{
 			SetMobjState(this, S_SERPENT_SURFACE1);
 		}
@@ -293,7 +293,7 @@ void Actor::A_SerpentCheckForAttack(void)
 	{
 		return;
 	}
-	if (type == MT_SERPENTLEADER)
+	if (Class == MT_SERPENTLEADER)
 	{
 		if (!CheckMeleeRange(this))
 		{
@@ -444,7 +444,7 @@ void Actor::A_SerpentChooseAttack(void)
 	{
 		return;
 	}
-	if (type == MT_SERPENTLEADER)
+	if (Class == MT_SERPENTLEADER)
 	{
 		SetMobjState(this, S_SERPENT_MISSILE1);
 	}
@@ -598,6 +598,9 @@ void Actor::A_DelayGib(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/12/27 17:52:24  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.7  2001/12/12 18:57:42  dj_jl
 //  State functions now are methods of Actor and Weapon classes
 //

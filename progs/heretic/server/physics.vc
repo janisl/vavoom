@@ -629,7 +629,7 @@ void Entity::XYMovement(void)
 					ceilingline->backsector->ceiling.pic == skyflatnum)
 				{
 					// Hack to prevent missiles exploding against the sky
-					if (type == MT_BLOODYSKULL)
+					if (Class == MT_BLOODYSKULL)
 					{
 						velocity.x = velocity.y = 0.0;
 						velocity.z = -1.0 * 35.0;
@@ -880,7 +880,7 @@ void Entity::ZMovement(void)
 				P_FloorBounceMissile(this);
 				return;
 			}
-			else if (type == MT_MNTRFX2)
+			else if (Class == MT_MNTRFX2)
 			{
 				// Minotaur floor fire can go up steps
 				return;
@@ -935,7 +935,7 @@ void Entity::ZMovement(void)
 		{
 			if (subsector->sector->ceiling.pic == skyflatnum)
 			{
-				if (type == MT_BLOODYSKULL)
+				if (Class == MT_BLOODYSKULL)
 				{
 					velocity.x = velocity.y = 0.0;
 					velocity.z = -1.0 * 35.0;
@@ -985,7 +985,7 @@ boolean Entity::BlasterPhysics(void)
 				{
 					// Blocked move
 					P_ExplodeMissile(this);
-					return !destroyed;
+					return !IsDestroyed();
 				}
 			}
 			origin.z += zfrac;
@@ -995,14 +995,14 @@ boolean Entity::BlasterPhysics(void)
 				origin.z = floorz;
 				P_HitFloor(this);
 				P_ExplodeMissile(this);
-				return !destroyed;
+				return !IsDestroyed();
 			}
 			if (origin.z + height > ceilingz)
 			{
 				// Hit the ceiling
 				origin.z = ceilingz - height;
 				P_ExplodeMissile(this);
-				return !destroyed;
+				return !IsDestroyed();
 			}
 			if (changexy && (P_Random() < 64))
 			{
@@ -1043,7 +1043,7 @@ boolean Entity::Physics(void)
 	if (velocity.x || velocity.y || (flags & MF_SKULLFLY))
 	{
 		XYMovement();
-		if (destroyed)
+		if (IsDestroyed())
 		{
 			// mobj was removed
 			return false;
@@ -1070,7 +1070,7 @@ boolean Entity::Physics(void)
 					flags2 |= MF2_ONMOBJ;
 					velocity.z = 0.0;
 				}
-				if (player && (onmo.player || onmo.type == MT_POD))
+				if (player && (onmo.player || onmo.Class == MT_POD))
 				{
 					velocity.x = onmo.velocity.x;
 					velocity.y = onmo.velocity.y;
@@ -1093,7 +1093,7 @@ boolean Entity::Physics(void)
 		{
 			ZMovement();
 		}
-		if (destroyed)
+		if (IsDestroyed())
 		{
 			// mobj was removed
 			return false;
@@ -1166,6 +1166,9 @@ void Entity::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2001/12/27 17:52:23  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.10  2001/12/01 18:08:53  dj_jl
 //  Physics functions as methods, started to use class references
 //

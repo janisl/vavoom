@@ -195,11 +195,11 @@ void Actor::A_Chase(void)
 	// make active sound
 	if (sound_active && P_Random() < 3)
 	{
-		if (type == MT_WIZARD && P_Random() < 128)
+		if (Class == MT_WIZARD && P_Random() < 128)
 		{
 			StartSound(this, sound_sight, CHAN_VOICE);
 		}
-		else if (type == MT_SORCERER2)
+		else if (Class == MT_SORCERER2)
 		{
 			StartSound(NULL, sound_active, CHAN_VOICE);
 		}
@@ -270,7 +270,7 @@ void Actor::A_FreeTargMobj(void)
 
 void Actor::A_Scream(void)
 {
-	switch (type)
+	switch (Class)
 	{
 	case MT_CHICPLAYER:
 	case MT_SORCERER1:
@@ -316,7 +316,7 @@ void Actor::A_Explode(void)
 	int damage;
 
 	damage = 128;
-	switch (type)
+	switch (Class)
 	{
 	case MT_FIREBOMB:	// Time Bombs
 		origin.z += 32.0;
@@ -333,7 +333,7 @@ void Actor::A_Explode(void)
 	}
 	P_RadiusAttack(this, target, damage, 0, 0);
 	P_HitFloor(this);
-	if (type == MT_FIREBOMB)
+	if (Class == MT_FIREBOMB)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion);
@@ -342,7 +342,7 @@ void Actor::A_Explode(void)
 		MSG_WriteShort(ftoi(origin.y));
 		MSG_WriteShort(ftoi(origin.z));
 	}
-	if (type == MT_POD)
+	if (Class == MT_POD)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion);
@@ -386,7 +386,7 @@ void Actor::A_NoBlocking(void)
 {
 	flags &= ~MF_SOLID;
 	// Check for monsters dropping things
-	switch (type)
+	switch (Class)
 	{
 	case MT_MUMMY:
 	case MT_MUMMYLEADER:
@@ -540,7 +540,7 @@ void Actor::A_BossDeath(void)
 
 	if (!strcmp(mapname, "E1M8"))
 	{
-		if (type != MT_HEAD)
+		if (Class != MT_HEAD)
 		{
 			// Not considered a boss in this episode
 			return;
@@ -548,7 +548,7 @@ void Actor::A_BossDeath(void)
 	}
 	else if (!strcmp(mapname, "E2M8"))
 	{
-		if (type != MT_MINOTAUR)
+		if (Class != MT_MINOTAUR)
 		{
 			// Not considered a boss in this episode
 			return;
@@ -556,7 +556,7 @@ void Actor::A_BossDeath(void)
 	}
 	else if (!strcmp(mapname, "E3M8"))
 	{
-		if (type != MT_SORCERER2)
+		if (Class != MT_SORCERER2)
 		{
 			// Not considered a boss in this episode
 			return;
@@ -564,7 +564,7 @@ void Actor::A_BossDeath(void)
 	}
 	else if (!strcmp(mapname, "E4M8"))
 	{
-		if (type != MT_HEAD)
+		if (Class != MT_HEAD)
 		{
 			// Not considered a boss in this episode
 			return;
@@ -572,7 +572,7 @@ void Actor::A_BossDeath(void)
 	}
 	else if (!strcmp(mapname, "E5M8"))
 	{
-		if (type != MT_MINOTAUR)
+		if (Class != MT_MINOTAUR)
 		{
 			// Not considered a boss in this episode
 			return;
@@ -587,7 +587,7 @@ void Actor::A_BossDeath(void)
 	// Make sure all bosses are dead
 	for (mo = NextMobj(NULL); mo; mo = NextMobj(mo))
 	{
-		if ((mo != this) && (mo->type == type) && (mo->health > 0))
+		if ((mo != this) && (mo->Class == Class) && (mo->health > 0))
 		{
 			// Found a living boss
 			return;
@@ -611,7 +611,7 @@ void Actor::A_BossDeath(void)
 
 void Actor::A_ContMobjSound(void)
 {
-	switch (type)
+	switch (Class)
 	{
 	case MT_KNIGHTAXE:
 		StartSoundName(this, "KnightAttack1", CHAN_VOICE);
@@ -627,6 +627,9 @@ void Actor::A_ContMobjSound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/12/27 17:52:22  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.7  2001/12/12 18:57:41  dj_jl
 //  State functions now are methods of Actor and Weapon classes
 //

@@ -163,12 +163,13 @@ void Entity::OnMapSpawn(mthing_t * mthing)
 {
 	state_t *st;
 
+	spawnhealth = health;
+
 	if (gameskill == sk_nightmare)
 	{
 		reactiontime = 0;
 	}
 
-	spawnhealth = health;
 	lastlook = P_Random() % MAXPLAYERS;
 	// do not set the state with P_SetMobjState,
 	// because action routines can not be called yet
@@ -242,7 +243,6 @@ mobj_t *P_SpawnMobj(float x, float y, float z, classid type)
 	mobj_t *mobj;
 
 	mobj = NewMobjThinker(type);
-	mobj->type = type;
 	mobj->origin = vector(x, y, z);
 	mobj->OnMapSpawn(NULL);
 	return mobj;
@@ -343,7 +343,6 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 		{
 			// spawn it
 			mobj = NewMobjThinker(mobjinfo[i].class_id);
-			mobj->type = mobjinfo[i].class_id;
 			mobj->OnMapSpawn(mthing);
 			return;
 		}
@@ -827,7 +826,7 @@ void P_NightmareRespawn(mobj_t * mobj)
 		z = ONFLOORZ;
 
 	// inherit attributes from deceased one
-	mo = P_SpawnMobj(x, y, z, mobj->type);
+	mo = P_SpawnMobj(x, y, z, mobj->Class);
 	CopyMThing(&mobj->spawnpoint, &mo->spawnpoint);
 	mo->angles.yaw = itof(45 * (mthing->angle / 45));
 
@@ -943,6 +942,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2001/12/27 17:52:24  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.15  2001/12/18 18:34:09  dj_jl
 //  Fixed crash, added some missing things
 //

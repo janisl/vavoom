@@ -104,8 +104,8 @@ boolean PIT_CheckThing(mobj_t * thing)
 	if (tmthing->flags2 & MF2_PASSMOBJ)
 	{
 		// check if a mobj passed over/under another object
-		if ((tmthing->type == MT_IMP || tmthing->type == MT_WIZARD)
-			&& (thing->type == MT_IMP || thing->type == MT_WIZARD))
+		if ((tmthing->Class == MT_IMP || tmthing->Class == MT_WIZARD)
+			&& (thing->Class == MT_IMP || thing->Class == MT_WIZARD))
 		{
 			// don't let imps/wizards fly over other imps/wizards
 			return false;
@@ -148,7 +148,7 @@ boolean PIT_CheckThing(mobj_t * thing)
 		if (tmthing->origin.z + tmthing->height < thing->origin.z)
 			return true;	// underneath
 
-		if (tmthing->target && tmthing->target->type == thing->type)
+		if (tmthing->target && tmthing->target->Class == thing->Class)
 		{
 			// Don't hit same species as originator
 			if (thing == tmthing->target)
@@ -156,7 +156,7 @@ boolean PIT_CheckThing(mobj_t * thing)
 				// Don't missile self
 				return true;
 			}
-			if (thing->type != MT_PLAYER)
+			if (thing->Class != MT_PLAYER)
 			{
 				// Hit same species as originator, explode, no damage
 				return false;
@@ -274,7 +274,7 @@ boolean PIT_CheckLine(line_t * ld)
 		}
 
 		if (!tmthing->player && ld->flags & ML_BLOCKMONSTERS
-			&& tmthing->type != MT_POD)
+			&& tmthing->Class != MT_POD)
 		{
 			// Block monsters only
 			return false;
@@ -528,7 +528,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 		}
 		if (!(thing->flags & MF_TELEPORT)
 			// The Minotaur floor fire (MT_MNTRFX2) can step up any amount
-			&& thing->type != MT_MNTRFX2 && tmfloorz - thing->origin.z > 24.0)
+			&& thing->Class != MT_MNTRFX2 && tmfloorz - thing->origin.z > 24.0)
 		{
 			// Too big a step up
 			PushLine(thing);
@@ -687,6 +687,9 @@ boolean P_Move(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/27 17:52:23  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.5  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

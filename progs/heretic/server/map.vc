@@ -399,7 +399,7 @@ boolean PTR_AimTraverse(intercept_t * in)
 	if (!(th->flags & MF_SHOOTABLE))
 		return true;	// corpse or something
 
-	if (th->type == MT_POD)
+	if (th->Class == MT_POD)
 	{
 		// Can't auto-aim at pods
 		return true;
@@ -789,8 +789,8 @@ boolean PIT_RadiusAttack(mobj_t * thing)
 	if (!(thing->flags & MF_SHOOTABLE))
 		return true;
 
-	if (thing->type == MT_MINOTAUR ||
-		thing->type == MT_SORCERER1 || thing->type == MT_SORCERER2)
+	if (thing->Class == MT_MINOTAUR ||
+		thing->Class == MT_SORCERER1 || thing->Class == MT_SORCERER2)
 	{
 		// Episode 2 and 3 bosses take no damage from PIT_RadiusAttack
 		return true;
@@ -840,7 +840,7 @@ void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage, int distance,
 	xh = MapBlock(spot->origin.x + dist - level->bmaporgx);
 	xl = MapBlock(spot->origin.x - dist - level->bmaporgx);
 	bombspot = spot;
-	if (spot->type == MT_POD && spot->target)
+	if (spot->Class == MT_POD && spot->target)
 	{
 		bombsource = spot->target;
 	}
@@ -858,6 +858,9 @@ void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage, int distance,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2001/12/27 17:52:23  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.9  2001/12/01 18:14:09  dj_jl
 //  Changed MSG_Select, beautification
 //

@@ -164,6 +164,8 @@ void Entity::OnMapSpawn(mthing_t * mthing)
 {
 	state_t *st;
 
+	spawnhealth = health;
+
 	if (gameskill == sk_nightmare)
 	{
 		reactiontime = 0;
@@ -242,7 +244,6 @@ mobj_t *P_SpawnMobj(float x, float y, float z, classid type)
 	mobj_t *mobj;
 
 	mobj = NewMobjThinker(type);
-	mobj->type = type;
 	mobj->origin = vector(x, y, z);
 	mobj->OnMapSpawn(NULL);
 	return mobj;
@@ -360,7 +361,6 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 		{
 			// spawn it
 			mobj = NewMobjThinker(mobjinfo[i].class_id);
-			mobj->type = mobjinfo[i].class_id;
 			mobj->OnMapSpawn(mthing);
 			return;
 		}
@@ -543,7 +543,7 @@ void KillMobj(mobj_t * source, mobj_t * target)
 
 	target->flags &= ~(MF_SHOOTABLE | MF_FLOAT | MF_SKULLFLY);
 
-	if (target->type != MT_SKULL)
+	if (target->Class != MT_SKULL)
 		target->flags &= ~MF_NOGRAVITY;
 
 	target->flags |= MF_CORPSE | MF_DROPOFF;
@@ -617,7 +617,7 @@ void KillMobj(mobj_t * source, mobj_t * target)
 	// Drop stuff.
 	// This determines the kind of object spawned
 	// during the death frame of a thing.
-	switch (target->type)
+	switch (target->Class)
 	{
 	case MT_WOLFSS:
 	case MT_POSSESSED:
@@ -743,8 +743,8 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 
 	reactiontime = 0;	// we're awake now...   
 
-	if ((!threshold || type == MT_VILE)
-		&& source && source != this && source->type != MT_VILE)
+	if ((!threshold || Class == MT_VILE)
+		&& source && source != this && source->Class != MT_VILE)
 	{
 		// if not intent on another player,
 		// chase after this one
@@ -767,7 +767,7 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 void P_RemoveMobj(mobj_t * mobj)
 {
 	if ((mobj->flags & MF_SPECIAL) && !(mobj->flags & MF_DROPPED)
-		&& (mobj->type != MT_INV) && (mobj->type != MT_INS))
+		&& (mobj->Class != MT_INV) && (mobj->Class != MT_INS))
 	{
 		CopyMThing(&mobj->spawnpoint, &itemrespawnque[iquehead]);
 		itemrespawntime[iquehead] = level->tictime;
@@ -888,7 +888,7 @@ void P_NightmareRespawn(mobj_t * mobj)
 		z = ONFLOORZ;
 
 	// inherit attributes from deceased one
-	mo = P_SpawnMobj(x, y, z, mobj->type);
+	mo = P_SpawnMobj(x, y, z, mobj->Class);
 	CopyMThing(&mobj->spawnpoint, &mo->spawnpoint);
 	mo->angles.yaw = itof(45 * (mthing->angle / 45));
 
@@ -909,7 +909,7 @@ void P_NightmareRespawn(mobj_t * mobj)
 
 int CanActivateCross(mobj_t * thing)
 {
-	switch (thing->type)
+	switch (thing->Class)
 	{
 	case MT_ROCKET:
 	case MT_PLASMA:
@@ -1002,6 +1002,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2001/12/27 17:52:22  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.16  2001/12/18 18:35:26  dj_jl
 //  Added polyobjs
 //

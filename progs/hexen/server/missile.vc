@@ -379,8 +379,8 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 	avcpy(angles, MissileMobj->angles);
 	AngleVector(&angles, &vforward);
 	MissileMobj->velocity = vforward * MissileMobj->speed;
-	if (MissileMobj->type == MT_MWAND_MISSILE ||
-		MissileMobj->type == MT_CFLAME_MISSILE)
+	if (MissileMobj->Class == MT_MWAND_MISSILE ||
+		MissileMobj->Class == MT_CFLAME_MISSILE)
 	{
 		// Ultra-fast ripper spawning missile
 		MissileMobj->origin.x += MissileMobj->velocity.x * frametime / 8.0;
@@ -515,7 +515,7 @@ boolean P_ExplodeMissile(mobj_t * mo)
 	//mo->tics -= P_Random()&3;
 	mo->flags &= ~MF_MISSILE;
 
-	switch (mo->type)
+	switch (mo->Class)
 	{
 	case MT_SORCBALL1:
 	case MT_SORCBALL2:
@@ -548,6 +548,9 @@ boolean P_ExplodeMissile(mobj_t * mo)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2001/12/27 17:52:23  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.8  2001/12/01 18:14:09  dj_jl
 //  Changed MSG_Select, beautification
 //

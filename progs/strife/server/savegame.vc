@@ -52,7 +52,6 @@ void UnarchivePlayer(player_t * player)
 
 void mobj_t::Archive(void)
 {
-	tracer = MobjToNum(tracer);
 	target = MobjToNum(target);
 }
 
@@ -64,13 +63,15 @@ void mobj_t::Archive(void)
 
 void mobj_t::Unarchive(void)
 {
-	tracer = NumToMobj(tracer);
 	target = NumToMobj(target);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/27 17:52:24  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.5  2001/09/25 17:12:09  dj_jl
 //  Switched to Hexen map format, special thinker classes
 //

@@ -256,17 +256,17 @@ void Actor::A_LightningClip(void)
 	mobj_t *targ;
 	int zigZag;
 
-	if (type == MT_LIGHTNING_FLOOR)
+	if (Class == MT_LIGHTNING_FLOOR)
 	{
 		origin.z = floorz;
 		targ = specialmobj2->specialmobj1;
 	}
-	else if (type == MT_LIGHTNING_CEILING)
+	else if (Class == MT_LIGHTNING_CEILING)
 	{
 		origin.z = ceilingz - height;
 		targ = specialmobj1;
 	}
-	if (type == MT_LIGHTNING_FLOOR)
+	if (Class == MT_LIGHTNING_FLOOR)
 	{
 		// floor lightning zig-zags, and forces the ceiling lightning to mimic
 		cMo = specialmobj2;
@@ -326,7 +326,7 @@ void Actor::A_LightningZap(void)
 		SetMobjState(this, deathstate);
 		return;
 	}
-	if (type == MT_LIGHTNING_FLOOR)
+	if (Class == MT_LIGHTNING_FLOOR)
 	{
 		deltaZ = 10.0;
 	}
@@ -343,7 +343,7 @@ void Actor::A_LightningZap(void)
 		mo->velocity.x = velocity.x;
 		mo->velocity.y = velocity.y;
 		mo->target = target;
-		if (type == MT_LIGHTNING_FLOOR)
+		if (Class == MT_LIGHTNING_FLOOR)
 		{
 			mo->velocity.z = 20.0 * 35.0;
 		}
@@ -352,7 +352,7 @@ void Actor::A_LightningZap(void)
 			mo->velocity.z = -20.0 * 35.0;
 		}
 	}
-	if (type == MT_LIGHTNING_FLOOR && P_Random() < 160)
+	if (Class == MT_LIGHTNING_FLOOR && P_Random() < 160)
 	{
 		StartSoundName(this, "MageLightningContinuous", CHAN_VOICE);
 	}
@@ -531,6 +531,9 @@ void Actor::A_MStaffTrack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2001/12/27 17:52:24  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.8  2001/12/12 18:57:42  dj_jl
 //  State functions now are methods of Actor and Weapon classes
 //

@@ -55,7 +55,7 @@ void Actor::A_KnightAttack(void)
 	}
 	// Throw axe
 	StartSound(this, sound_attack, CHAN_WEAPON);
-	if (type == MT_KNIGHTGHOST || P_Random() < 40)
+	if (Class == MT_KNIGHTGHOST || P_Random() < 40)
 	{
 		// Red axe
 		SpawnMissile(this, target, MT_REDAXE);
@@ -85,6 +85,9 @@ void Actor::A_DripBlood(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/12/27 17:52:23  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.6  2001/12/12 18:57:41  dj_jl
 //  State functions now are methods of Actor and Weapon classes
 //

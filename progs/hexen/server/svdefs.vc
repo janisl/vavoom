@@ -308,8 +308,6 @@ class Entity:MapObject
 	Entity *specialmobj2;
 	classid specialcid;
 
-	classid type;
-
 	int damage;	// For missiles
 
 	boolean blaster;
@@ -530,6 +528,9 @@ string door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2001/12/27 17:52:24  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.8  2001/12/18 18:31:49  dj_jl
 //  Beautification
 //

@@ -52,7 +52,7 @@ class TLavaInflictor:mobj_t
 void InitLava(void)
 {
 	LavaInflictor = NewMobjThinker(TLavaInflictor);
-	LavaInflictor->type = MT_PHOENIXFX2;
+//	LavaInflictor->type = MT_PHOENIXFX2;
 	LavaInflictor->flags = MF_NOSECTOR | MF_NOBLOCKMAP;
 	LavaInflictor->flags2 = MF2_FIREDAMAGE | MF2_NODMGTHRUST;
 }
@@ -204,7 +204,7 @@ void DeathPlayerThink(player_t * player)
 
 	onground = (player->mo->origin.z <= player->mo->floorz);
 
-	if (player->mo->type == MT_BLOODYSKULL)
+	if (player->mo->Class == MT_BLOODYSKULL)
 	{
 		// Flying bloody skull
 		player->viewheight = 6.0;
@@ -378,8 +378,8 @@ void ArtiFireBomb(player_t * player)
 void P_SetDormantArtifact(mobj_t * arti)
 {
 	arti->flags &= ~MF_SPECIAL;
-	if (deathmatch && (arti->type != MT_ARTIINVULNERABILITY)
-		&& (arti->type != MT_ARTIINVISIBILITY))
+	if (deathmatch && (arti->Class != MT_ARTIINVULNERABILITY)
+		&& (arti->Class != MT_ARTIINVISIBILITY))
 	{
 		SetMobjState(arti, S_DORMANTARTI1);
 	}
@@ -457,6 +457,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2001/12/27 17:52:23  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.9  2001/12/12 19:15:27  dj_jl
 //  Some little changes for state methods
 //

@@ -172,7 +172,7 @@ int P_CheckMissileRange(mobj_t * actor)
 		// No melee attack, so fire more frequently
 		dist -= 128.0;
 	}
-	if (actor->type == MT_IMP)
+	if (actor->Class == MT_IMP)
 	{
 		// Imp's fly attack from far away
 		dist /= 2.0;
@@ -526,6 +526,9 @@ void P_NewChaseDir(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/12/27 17:52:22  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.7  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

@@ -226,9 +226,9 @@ boolean P_LookForMonsters(mobj_t * actor)
 		{	// Out of sight
 			continue;
 		}
-		if (actor->type == MT_MINOTAUR)
+		if (actor->Class == MT_MINOTAUR)
 		{
-			if ((mo->type == MT_MINOTAUR) &&
+			if ((mo->Class == MT_MINOTAUR) &&
 				(mo->target != actor->specialmobj1))
 			{
 				continue;
@@ -310,7 +310,7 @@ boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
 				return false;
 			}
 		}
-		if (actor->type == MT_MINOTAUR)
+		if (actor->Class == MT_MINOTAUR)
 		{
 			if (actor->specialmobj1 == player->mo)
 			{
@@ -486,7 +486,7 @@ mobj_t *RoughBlockCheck(mobj_t * mo, int index)
 					link = link->bnext;
 					continue;
 				}
-				if ((link->type == MT_MINOTAUR) &&
+				if ((link->Class == MT_MINOTAUR) &&
 					((link->specialmobj1) == mo))
 				{
 					link = link->bnext;
@@ -504,7 +504,7 @@ mobj_t *RoughBlockCheck(mobj_t * mo, int index)
 			}
 			link = link->bnext;
 		}
-		else if (mo->type == MT_MINOTAUR)	// looking around minotaur
+		else if (mo->Class == MT_MINOTAUR)	// looking around minotaur
 		{
 			master = mo->specialmobj1;
 			if ((link->flags & MF_COUNTKILL) ||
@@ -520,7 +520,7 @@ mobj_t *RoughBlockCheck(mobj_t * mo, int index)
 					link = link->bnext;
 					continue;
 				}
-				if ((link->type == MT_MINOTAUR) &&
+				if ((link->Class == MT_MINOTAUR) &&
 					(link->specialmobj1 == mo->specialmobj1))
 				{
 					link = link->bnext;
@@ -538,7 +538,7 @@ mobj_t *RoughBlockCheck(mobj_t * mo, int index)
 			}
 			link = link->bnext;
 		}
-		else if (mo->type == MT_MSTAFF_FX2)	// bloodscourge
+		else if (mo->Class == MT_MSTAFF_FX2)	// bloodscourge
 		{
 			if ((link->flags & MF_COUNTKILL ||
 					(link->player && link != mo->target))
@@ -722,6 +722,9 @@ mobj_t *P_RoughMonsterSearch(mobj_t * mo, int distance)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/27 17:52:23  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.5  2001/10/22 17:23:12  dj_jl
 //  Floatification of angles
 //

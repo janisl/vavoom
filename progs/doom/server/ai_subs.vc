@@ -97,21 +97,21 @@ int P_CheckMissileRange(mobj_t * actor)
 	if (!actor->meleestate)
 		dist -= 128.0;	// no melee attack, so fire more
 
-	if (actor->type == MT_VILE)
+	if (actor->Class == MT_VILE)
 	{
 		if (dist > 14.0 * 64.0)
 			return false;	// too far away
 	}
 
-	if (actor->type == MT_UNDEAD)
+	if (actor->Class == MT_UNDEAD)
 	{
 		if (dist < 196.0)
 			return false;	// close for fist attack
 		dist /= 2.0;
 	}
 
-	if (actor->type == MT_CYBORG ||
-		actor->type == MT_SPIDER || actor->type == MT_SKULL)
+	if (actor->Class == MT_CYBORG ||
+		actor->Class == MT_SPIDER || actor->Class == MT_SKULL)
 	{
 		dist /= 2.0;
 	}
@@ -119,7 +119,7 @@ int P_CheckMissileRange(mobj_t * actor)
 	if (dist > 200.0)
 		dist = 200.0;
 
-	if (actor->type == MT_CYBORG && dist > 160.0)
+	if (actor->Class == MT_CYBORG && dist > 160.0)
 		dist = 160.0;
 
 	if (Random() * 256.0 < dist)
@@ -141,9 +141,9 @@ int P_FindOther(mobj_t * mo)
 	mo2 = NULL;
 	while ((mo2 = NextMobj(mo2)))
 	{
-		if (mo2 != mo && mo2->type == mo->type && mo2->health > 0)
+		if (mo2 != mo && mo2->Class == mo->Class && mo2->health > 0)
 		{
-			// other mobj of the same type not dead
+			// other mobj of the same Class not dead
 			return true;
 		}
 	}
@@ -170,7 +170,7 @@ boolean P_LookForMonsters(mobj_t * actor, boolean allaround)
 		if (mo == actor)
 			continue;
 
-		if ((mo->type != MT_SKULL) && (mo->type != MT_PLAYER)
+		if ((mo->Class != MT_SKULL) && (mo->Class != MT_PLAYER)
 			&& !(mo->flags & MF_COUNTKILL))
 			continue;
 
@@ -225,7 +225,7 @@ boolean P_LookForMonsters2(mobj_t * actor, boolean allaround)
 		if (mo == actor)
 			continue;	// self
 
-		if ((mo->type != MT_SKULL) && !(mo->flags & MF_COUNTKILL))
+		if ((mo->Class != MT_SKULL) && !(mo->flags & MF_COUNTKILL))
 			continue;	// not a monster
 
 		if (!P_CheckSight(actor, mo))
@@ -488,6 +488,9 @@ void P_NewChaseDir(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/12/27 17:52:22  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.4  2001/10/22 17:23:11  dj_jl
 //  Floatification of angles
 //

@@ -60,7 +60,7 @@ void Actor::A_DemonAttack2(void)
 	mobj_t *mo;
 	classid fireBall;
 
-	if (type == MT_DEMON)
+	if (IsA(MT_DEMON))
 	{
 		fireBall = MT_DEMONFX1;
 	}
@@ -195,6 +195,9 @@ void Actor::A_Demon2Death(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/12/27 17:52:23  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.7  2001/12/12 18:57:42  dj_jl
 //  State functions now are methods of Actor and Weapon classes
 //

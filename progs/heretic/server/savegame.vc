@@ -53,6 +53,9 @@ void UnarchivePlayer(player_t * player)
 void mobj_t::Archive(void)
 {
 	target = MobjToNum(target);
+	specialmobj1 = MobjToNum(specialmobj1);
+	specialmobj2 = MobjToNum(specialmobj2);
+	specialcid = ClassIDToNum(specialcid);
 }
 
 //==========================================================================
@@ -64,11 +67,17 @@ void mobj_t::Archive(void)
 void mobj_t::Unarchive(void)
 {
 	target = NumToMobj(target);
+	specialmobj1 = NumToMobj(specialmobj1);
+	specialmobj2 = NumToMobj(specialmobj2);
+	specialcid = NumToClassID(specialcid);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/12/27 17:52:23  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.4  2001/09/24 17:16:18  dj_jl
 //  Created thinker classes
 //

@@ -222,7 +222,7 @@ void A_DecelBalls(mobj_t * actor)
 
 void A_SorcUpdateBallAngle(mobj_t * actor)
 {
-	if (actor->type == MT_SORCBALL1)
+	if (actor->Class == MT_SORCBALL1)
 	{
 		actor->target->special1f = AngleMod360(actor->target->special1f +
 			itof(actor->target->args[4]));
@@ -307,7 +307,7 @@ void A_SorcOffense2(mobj_t * actor)
 void A_CastSorcererSpell(mobj_t * actor)
 {
 	mobj_t *mo;
-	classid spell = actor->type;
+	classid spell = actor->Class;
 	float ang1, ang2;
 	float z;
 	mobj_t *parent = actor->target;
@@ -376,7 +376,7 @@ void Actor::A_SorcBallOrbit(void)
 		SetMobjState(this, painstate);
 
 	baseangle = parent->special1f;
-	switch (type)
+	switch (Class)
 	{
 	case MT_SORCBALL1:
 		angle = AngleMod360(baseangle + BALL1_ANGLEOFFSET);
@@ -407,7 +407,7 @@ void Actor::A_SorcBallOrbit(void)
 		A_SorcUpdateBallAngle(this);
 		break;
 	case SORC_STOPPING:	// Balls stopping
-		if ((parent->specialcid == type) &&
+		if ((parent->specialcid == Class) &&
 			(parent->args[1] > SORCBALL_SPEED_ROTATIONS) &&
 			(fabs(AngleMod180(angle - parent->angles.yaw)) <
 			15.0 * 45.0 / 16.0))
@@ -416,7 +416,7 @@ void Actor::A_SorcBallOrbit(void)
 			target->args[3] = SORC_FIRESPELL;
 			target->args[4] = 0;
 			// Set angle so ball angle == sorcerer angle
-			switch (type)
+			switch (Class)
 			{
 			case MT_SORCBALL1:
 				parent->special1f = AngleMod360(parent->angles.yaw -
@@ -440,13 +440,13 @@ void Actor::A_SorcBallOrbit(void)
 		}
 		break;
 	case SORC_FIRESPELL:	// Casting spell
-		if (parent->specialcid == type)
+		if (parent->specialcid == Class)
 		{
 			// Put sorcerer into special throw spell anim
 			if (parent->health > 0)
 				SetMobjStateNF(parent, S_SORC_ATTACK1);
 
-			if (type == MT_SORCBALL1 && P_Random() < 200)
+			if (Class == MT_SORCBALL1 && P_Random() < 200)
 			{
 				StartSoundName(NULL, "SorcererSpellCast", CHAN_VOICE);
 				special2 = SORCFX4_RAPIDFIRE_TIME;
@@ -461,7 +461,7 @@ void Actor::A_SorcBallOrbit(void)
 		}
 		break;
 	case SORC_FIRING_SPELL:
-		if (parent->specialcid == type)
+		if (parent->specialcid == Class)
 		{
 			if (special2-- <= 0)
 			{
@@ -579,7 +579,7 @@ void Actor::A_BounceCheck(void)
 		if (args[3]-- <= 0)
 		{
 			SetMobjState(this, deathstate);
-			switch (type)
+			switch (Class)
 			{
 			case MT_SORCBALL1:
 			case MT_SORCBALL2:
@@ -770,6 +770,9 @@ void Actor::A_SorcFX4Check(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/12/27 17:52:24  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.7  2001/12/12 18:57:42  dj_jl
 //  State functions now are methods of Actor and Weapon classes
 //

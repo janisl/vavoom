@@ -221,7 +221,7 @@ boolean EV_Teleport(int tag, mobj_t * thing, boolean usefog)
 	}
 	for (m = NextMobj(NULL); m; m = NextMobj(m))
 	{
-		if (m->type != MT_TELEPORTMAN)
+		if (m->Class != MT_TELEPORTMAN)
 		{
 			// Not a teleportman
 			continue;
@@ -239,6 +239,9 @@ boolean EV_Teleport(int tag, mobj_t * thing, boolean usefog)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/12/27 17:52:23  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.6  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

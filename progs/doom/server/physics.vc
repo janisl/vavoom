@@ -481,7 +481,7 @@ boolean Entity::XYMovement(void)
 							StartSound(this, sound_pain, CHAN_VOICE);
 						}
 					}
-					if (destroyed)
+					if (IsDestroyed())
 					{
 						return false;	// mobj was removed
 					}
@@ -508,7 +508,7 @@ boolean Entity::XYMovement(void)
 		}
 	}
 	while (xmove || ymove);
-	if (destroyed)
+	if (IsDestroyed())
 	{
 		return false;	// mobj was removed
 	}
@@ -948,7 +948,7 @@ boolean Entity::Physics(void)
 				}
 			}
 		}
-		if (destroyed)
+		if (IsDestroyed())
 		{
 			return false;	// entity was removed
 		}
@@ -1037,6 +1037,9 @@ void Entity::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2001/12/27 17:52:22  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.10  2001/12/01 18:08:52  dj_jl
 //  Physics functions as methods, started to use class references
 //

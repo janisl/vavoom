@@ -59,7 +59,7 @@ void Actor::A_BrainAwake(void)
 	m = NULL;
 	while ((m = NextMobj(m)))
 	{
-		if (m->type == MT_BOSSTARGET)
+		if (m->Class == MT_BOSSTARGET)
 		{
 			braintargets[numbraintargets] = m;
 			numbraintargets++;
@@ -313,6 +313,9 @@ void Actor::A_SpawnFly(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/12/27 17:52:22  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.6  2001/12/12 18:57:40  dj_jl
 //  State functions now are methods of Actor and Weapon classes
 //

@@ -111,7 +111,7 @@ boolean PIT_CheckThing(mobj_t * thing)
 	if (tmthing->flags2 & MF2_PASSMOBJ)
 	{
 		// check if a mobj passed over/under another object
-		if (tmthing->type == MT_BISHOP && thing->type == MT_BISHOP)
+		if (tmthing->Class == MT_BISHOP && thing->Class == MT_BISHOP)
 		{
 			// don't let bishops fly over other bishops
 			return false;
@@ -131,7 +131,7 @@ boolean PIT_CheckThing(mobj_t * thing)
 	// Check for skulls slamming into things
 	if (tmthing->flags & MF_SKULLFLY)
 	{
-		if (tmthing->type == MT_MINOTAUR)
+		if (tmthing->Class == MT_MINOTAUR)
 		{
 			// Slamming minotaurs shouldn't move non-creatures
 			if (!(thing->flags & MF_COUNTKILL))
@@ -139,7 +139,7 @@ boolean PIT_CheckThing(mobj_t * thing)
 				return false;
 			}
 		}
-		else if (tmthing->type == MT_HOLY_FX)
+		else if (tmthing->Class == MT_HOLY_FX)
 		{
 			if (thing->flags & MF_SHOOTABLE && thing != tmthing->target)
 			{
@@ -178,9 +178,9 @@ boolean PIT_CheckThing(mobj_t * thing)
 							&& !GetSoundPlayingInfo(thing,
 								GetSoundID("PuppyBeat")))
 						{
-							if ((thing->type == MT_CENTAUR) ||
-								(thing->type == MT_CENTAURLEADER) ||
-								(thing->type == MT_ETTIN))
+							if ((thing->Class == MT_CENTAUR) ||
+								(thing->Class == MT_CENTAURLEADER) ||
+								(thing->Class == MT_ETTIN))
 							{
 								StartSoundName(thing, "PuppyBeat",
 									CHAN_VOICE);
@@ -248,8 +248,8 @@ boolean PIT_CheckThing(mobj_t * thing)
 				return false;
 			}
 		}
-		if (tmthing->type == MT_LIGHTNING_FLOOR
-			|| tmthing->type == MT_LIGHTNING_CEILING)
+		if (tmthing->Class == MT_LIGHTNING_FLOOR
+			|| tmthing->Class == MT_LIGHTNING_CEILING)
 		{
 			if (thing->flags & MF_SHOOTABLE && thing != tmthing->target)
 			{
@@ -261,8 +261,8 @@ boolean PIT_CheckThing(mobj_t * thing)
 				if ((!thing->player && !(thing->flags2 & MF2_BOSS))
 					|| !(level->tictime & 1))
 				{
-					if (thing->type == MT_CENTAUR
-						|| thing->type == MT_CENTAURLEADER)
+					if (thing->Class == MT_CENTAUR
+						|| thing->Class == MT_CENTAURLEADER)
 					{	// Lightning does more damage to centaurs
 						thing->Damage(tmthing, tmthing->target, 9);
 					}
@@ -280,9 +280,9 @@ boolean PIT_CheckThing(mobj_t * thing)
 						&& !GetSoundPlayingInfo(thing,
 							GetSoundID("PuppyBeat")))
 					{
-						if ((thing->type == MT_CENTAUR) ||
-							(thing->type == MT_CENTAURLEADER) ||
-							(thing->type == MT_ETTIN))
+						if ((thing->Class == MT_CENTAUR) ||
+							(thing->Class == MT_CENTAURLEADER) ||
+							(thing->Class == MT_ETTIN))
 						{
 							StartSoundName(thing, "PuppyBeat", CHAN_VOICE);
 						}
@@ -293,7 +293,7 @@ boolean PIT_CheckThing(mobj_t * thing)
 				{
 					return false;
 				}
-				if (tmthing->type == MT_LIGHTNING_FLOOR)
+				if (tmthing->Class == MT_LIGHTNING_FLOOR)
 				{
 					if (tmthing->specialmobj2 &&
 						!tmthing->specialmobj2->specialmobj1)
@@ -308,7 +308,7 @@ boolean PIT_CheckThing(mobj_t * thing)
 			}
 			return true;	// lightning zaps through all sprites
 		}
-		else if (tmthing->type == MT_LIGHTNING_ZAP)
+		else if (tmthing->Class == MT_LIGHTNING_ZAP)
 		{
 			mobj_t *lmo;
 
@@ -317,7 +317,7 @@ boolean PIT_CheckThing(mobj_t * thing)
 				lmo = tmthing->specialmobj2;
 				if (lmo)
 				{
-					if (lmo->type == MT_LIGHTNING_FLOOR)
+					if (lmo->Class == MT_LIGHTNING_FLOOR)
 					{
 						if (lmo->specialmobj2 &&
 							!lmo->specialmobj2->specialmobj1)
@@ -336,11 +336,11 @@ boolean PIT_CheckThing(mobj_t * thing)
 				}
 			}
 		}
-		else if (tmthing->type == MT_MSTAFF_FX2 && thing != tmthing->target)
+		else if (tmthing->Class == MT_MSTAFF_FX2 && thing != tmthing->target)
 		{
 			if (!thing->player && !(thing->flags2 & MF2_BOSS))
 			{
-				switch (thing->type)
+				switch (thing->Class)
 				{
 				case MT_FIGHTER_BOSS:	// these not flagged boss
 				case MT_CLERIC_BOSS:	// so they can be blasted
@@ -353,7 +353,7 @@ boolean PIT_CheckThing(mobj_t * thing)
 				}
 			}
 		}
-		if (tmthing->target && tmthing->target->type == thing->type)
+		if (tmthing->target && tmthing->target->Class == thing->Class)
 		{
 			// Don't hit same species as originator
 			if (thing == tmthing->target)
@@ -399,11 +399,11 @@ boolean PIT_CheckThing(mobj_t * thing)
 			if (!(thing->flags & MF_NOBLOOD) &&
 				!(thing->flags2 & MF2_REFLECTIVE) &&
 				!(thing->flags2 & MF2_INVULNERABLE) &&
-				!(tmthing->type == MT_TELOTHER_FX1) &&
-				!(tmthing->type == MT_TELOTHER_FX2) &&
-				!(tmthing->type == MT_TELOTHER_FX3) &&
-				!(tmthing->type == MT_TELOTHER_FX4) &&
-				!(tmthing->type == MT_TELOTHER_FX5) && (P_Random() < 192))
+				!(tmthing->Class == MT_TELOTHER_FX1) &&
+				!(tmthing->Class == MT_TELOTHER_FX2) &&
+				!(tmthing->Class == MT_TELOTHER_FX3) &&
+				!(tmthing->Class == MT_TELOTHER_FX4) &&
+				!(tmthing->Class == MT_TELOTHER_FX5) && (P_Random() < 192))
 			{
 				P_BloodSplatter(tmthing->origin.x, tmthing->origin.y,
 					tmthing->origin.z, thing);
@@ -763,7 +763,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 
 		if (!(thing->flags & MF_TELEPORT) &&
 			tmceilingz - thing->origin.z < thing->height &&
-			thing->type != MT_LIGHTNING_CEILING && !(thing->flags2 & MF2_FLY))
+			thing->Class != MT_LIGHTNING_CEILING && !(thing->flags2 & MF2_FLY))
 		{
 			// mobj must lower itself to fit
 			PushLine(thing);
@@ -787,7 +787,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 		}
 		if (!(thing->flags & MF_TELEPORT)
 			// The Minotaur floor fire (MT_MNTRFX2) can step up any amount
-			&& thing->type != MT_MNTRFX2 && thing->type != MT_LIGHTNING_FLOOR
+			&& thing->Class != MT_MNTRFX2 && thing->Class != MT_LIGHTNING_FLOOR
 			&& tmfloorz - thing->origin.z > 24.0)
 		{
 			PushLine(thing);
@@ -954,6 +954,9 @@ boolean P_Move(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/12/27 17:52:23  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.6  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

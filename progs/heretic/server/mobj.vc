@@ -200,13 +200,15 @@ void CopyMThing(mthing_t * from, mthing_t * to)
 
 //==========================================================================
 //
-//  generic_mobj_start
+//	Entity::OnMapSpawn
 //
 //==========================================================================
 
-void mobj_t::OnMapSpawn(mthing_t * mthing)
+void Entity::OnMapSpawn(mthing_t * mthing)
 {
 	state_t *st;
+
+	spawnhealth = health;
 
 	if (gameskill == sk_nightmare)
 	{
@@ -304,7 +306,6 @@ mobj_t *P_SpawnMobj(float x, float y, float z, classid type)
 
 	mobj = NewMobjThinker(type);
 
-	mobj->type = type;
 	mobj->origin = vector(x, y, z);
 	mobj->OnMapSpawn(NULL);
 	return mobj;
@@ -410,7 +411,7 @@ boolean P_TestMobjLocation(mobj_t * mobj)
 
 void P_ExplodeMissile(mobj_t * mo)
 {
-	if (mo->type == MT_WHIRLWIND)
+	if (mo->Class == MT_WHIRLWIND)
 	{
 		if (++mo->special2 < 60)
 		{
@@ -664,7 +665,7 @@ boolean P_ChickenMorph(mobj_t * actor)
 	{
 		return false;
 	}
-	moType = actor->type;
+	moType = actor->Class;
 	switch (moType)
 	{
 	case MT_POD:
@@ -818,7 +819,7 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 	}
 	if (flags & MF_SKULLFLY)
 	{
-		if (type == MT_MINOTAUR)
+		if (Class == MT_MINOTAUR)
 		{
 			// Minotaur is invulnerable during charge attack
 			return;
@@ -833,7 +834,7 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 	// Special damage types
 	if (inflictor)
 	{
-		switch (inflictor->type)
+		switch (inflictor->Class)
 		{
 		case MT_EGGFX:
 			if (player)
@@ -857,7 +858,7 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 			}
 			break;
 		case MT_MACEFX4:	// Death ball
-			if ((flags2 & MF2_BOSS) || type == MT_HEAD)
+			if ((flags2 & MF2_BOSS) || Class == MT_HEAD)
 			{
 				// Don't allow cheap boss kills
 				break;
@@ -897,7 +898,7 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 			break;
 		case MT_HORNRODFX2:
 		case MT_PHOENIXFX1:
-			if (type == MT_SORCERER2 && P_Random() < 96)
+			if (Class == MT_SORCERER2 && P_Random() < 96)
 			{
 				// D'Sparil teleports away
 				DSparilTeleport(this);
@@ -906,7 +907,7 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 			break;
 		case MT_BLASTERFX1:
 		case MT_RIPPER:
-			if (type == MT_HEAD)
+			if (Class == MT_HEAD)
 			{
 				// Less damage to Ironlich bosses
 				damage = P_Random() & 1;
@@ -1004,7 +1005,7 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 	{
 		// Death
 		special1 = damage;
-		if (type == MT_POD && source && source->type != MT_POD)
+		if (Class == MT_POD && source && source->Class != MT_POD)
 		{
 			// Make sure players get frags for chain-reaction kills
 			target = source;
@@ -1013,7 +1014,7 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 		{
 			// Check for flame death
 			if ((inflictor->flags2 & MF2_FIREDAMAGE)
-				|| ((inflictor->type == MT_PHOENIXFX1)
+				|| ((inflictor->Class == MT_PHOENIXFX1)
 					&& (health > -50) && (damage > 25)))
 			{
 				flags2 |= MF2_FIREDAMAGE;
@@ -1029,7 +1030,7 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 	}
 	reactiontime = 0;	// we're awake now...
 	if (!threshold && source && !(source->flags2 & MF2_BOSS)
-		&& !(type == MT_SORCERER2 && source->type == MT_WIZARD))
+		&& !(Class == MT_SORCERER2 && source->Class == MT_WIZARD))
 	{
 		// Target actor is not intent on another actor,
 		// so make him chase after source
@@ -1334,7 +1335,6 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 	}
 
 	mobj = NewMobjThinker(mobjinfo[i].class_id);
-	mobj->type = mobjinfo[i].class_id;
 	mobj->OnMapSpawn(mthing);
 }
 
@@ -1528,7 +1528,7 @@ void P_NightmareRespawn(mobj_t * mobj)
 		z = ONCEILINGZ;
 	else
 		z = ONFLOORZ;
-	mo = P_SpawnMobj(x, y, z, mobj->type);
+	mo = P_SpawnMobj(x, y, z, mobj->Class);
 	CopyMThing(&mobj->spawnpoint, &mo->spawnpoint);
 	mo->angles.yaw = itof(45 * (mthing->angle / 45));
 	if (mthing->options & MTF_AMBUSH)
@@ -1543,6 +1543,9 @@ void P_NightmareRespawn(mobj_t * mobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2001/12/27 17:52:23  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.16  2001/12/18 18:35:26  dj_jl
 //  Added polyobjs
 //

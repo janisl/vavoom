@@ -196,11 +196,11 @@ void Actor::A_Chase(void)
 	// make active sound
 	if (sound_active && P_Random() < 3)
 	{
-		if (type == MT_BISHOP && P_Random() < 128)
+		if (Class == MT_BISHOP && P_Random() < 128)
 		{
 			StartSound(this, sound_sight, CHAN_VOICE);
 		}
-		else if (type == MT_PIG)
+		else if (Class == MT_PIG)
 		{
 			StartSound(this, GetSoundID("PigActive1") + (P_Random() & 1),
 				CHAN_VOICE);
@@ -375,7 +375,7 @@ void Actor::A_Explode(void)
 	damage = 128;
 	distance = 128.0;
 	damageSelf = true;
-	switch (type)
+	switch (Class)
 	{
 	case MT_FIREBOMB:	// Time Bombs
 		origin.z += 32.0;
@@ -442,7 +442,7 @@ void Actor::A_Explode(void)
 		break;
 	}
 	P_RadiusAttack(this, target, damage, distance, damageSelf);
-	if (origin.z <= floorz + distance && type != MT_POISONCLOUD)
+	if (origin.z <= floorz + distance && Class != MT_POISONCLOUD)
 	{
 		P_HitFloor(this);
 	}
@@ -785,7 +785,7 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 		if (mo->flags & MF_ICECORPSE)
 			continue;	// Not ice corpses
 		// Only corpses that call A_QueueCorpse from death routine
-		switch (mo->type)
+		switch (mo->Class)
 		{
 		case MT_CENTAUR:
 		case MT_CENTAURLEADER:
@@ -821,6 +821,9 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/12/27 17:52:23  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.7  2001/12/12 18:57:42  dj_jl
 //  State functions now are methods of Actor and Weapon classes
 //

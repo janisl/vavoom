@@ -133,17 +133,17 @@ boolean PIT_CheckThing(mobj_t * thing)
 	// missiles can hit other things
 	if (tmthing->flags & MF_MISSILE)
 	{
-		if (tmthing->target && (tmthing->target->type == thing->type ||
-				(tmthing->target->type == MT_KNIGHT
-					&& thing->type == MT_BRUISER)
-				|| (tmthing->target->type == MT_BRUISER
-					&& thing->type == MT_KNIGHT)))
+		if (tmthing->target && (tmthing->target->Class == thing->Class ||
+				(tmthing->target->Class == MT_KNIGHT
+					&& thing->Class == MT_BRUISER)
+				|| (tmthing->target->Class == MT_BRUISER
+					&& thing->Class == MT_KNIGHT)))
 		{
 			// Don't hit same species as originator.
 			if (thing == tmthing->target)
 				return true;
 
-			if (thing->type != MT_PLAYER)
+			if (thing->Class != MT_PLAYER)
 			{
 				// Explode, but do no damage.
 				// Let players missile other players.
@@ -581,6 +581,9 @@ boolean P_Move(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/12/27 17:52:22  dj_jl
+//  Removed Entity property type, replaced with Object property Class
+//
 //  Revision 1.4  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //
