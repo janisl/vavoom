@@ -37,24 +37,27 @@ OBJFILES = obj\chat.obj obj\cheats.obj \
     obj\cd_win32.obj obj\s_data.obj obj\s_sound.obj obj\s_win32.obj \
     obj\s_win32m.obj obj\sn_sonix.obj \
     \
-    obj\am_map.obj obj\menu.obj obj\msgbox.obj obj\sbar.obj obj\screen.obj \
-    obj\text.obj obj\v_draw.obj obj\model.obj \
+    obj\am_map.obj obj\menu.obj obj\sbar.obj obj\screen.obj obj\text.obj \
+    obj\v_draw.obj obj\model.obj \
         \
-    obj\r_bsp.obj obj\r_border.obj obj\r_light.obj obj\r_main.obj \
-    obj\r_sky.obj obj\r_surf.obj obj\r_tex.obj obj\r_things.obj \
+    obj\r_bsp.obj obj\r_light.obj obj\r_main.obj obj\r_sky.obj \
+    obj\r_surf.obj obj\r_tex.obj obj\r_things.obj \
     \
     obj\d_aclip.obj obj\d_alias.obj obj\d_data.obj obj\d_draw.obj \
     obj\d_edge.obj obj\d_main.obj obj\d_part.obj obj\d_polyse.obj \
     obj\d_scache.obj obj\d_span.obj obj\d_sprite.obj obj\d_surf.obj \
-    obj\d_tex.obj obj\d_win32.obj obj\d_wipe.obj \
+    obj\d_tex.obj obj\d_win32.obj \
+    obj\d_aclipa.obj obj\d_aliasa.obj obj\d_edgea.obj obj\d_polysa.obj \
     obj\d_varsa.obj obj\d_zspan.obj \
-    obj\d8_part.obj obj\d8_s16.obj obj\d8_span.obj obj\d8_spr.obj \
-    obj\d8_surf.obj \
-    obj\d16_part.obj obj\d16_s16.obj obj\d16_span.obj obj\d16_spr.obj \
-    obj\d16_surf.obj \
-    obj\d32_part.obj obj\d32_span.obj obj\d32_spr.obj obj\d32_surf.obj \
+    obj\d8_part.obj obj\d8_poly.obj obj\d8_s16.obj obj\d8_span.obj \
+    obj\d8_spr.obj obj\d8_surf.obj \
+    obj\d16_part.obj obj\d16_poly.obj obj\d16_s16.obj obj\d16_span.obj \
+    obj\d16_spr.obj obj\d16_surf.obj \
+    obj\d32_part.obj obj\d32_poly.obj obj\d32_s16.obj obj\d32_span.obj \
+    obj\d32_spr.obj obj\d32_surf.obj \
     \
-    obj\d3d_draw.obj obj\d3d_main.obj obj\d3d_poly.obj obj\d3d_tex.obj \
+    obj\d3d_draw.obj obj\d3d_info.obj obj\d3d_main.obj obj\d3d_poly.obj \
+    obj\d3d_tex.obj \
     \
     obj\gl_draw.obj obj\gl_main.obj obj\gl_poly.obj obj\gl_tex.obj \
     obj\gl_win32.obj
@@ -76,10 +79,10 @@ PATHPAS = .;
 PATHRC = .;
 DEBUGLIBPATH = $(BCB)\lib\debug
 RELEASELIBPATH = $(BCB)\lib\release
-USERDEFINES = NDEBUG;_RWSTD_NO_EXCEPTIONS
-SYSDEFINES = _NO_VCL;_ASSERTE;NO_STRICT
-INCLUDEPATH = source;"c:\mssdk\include\"
-LIBPATH = source;$(BCB)\lib;"c:\mssdk\lib\borland\"
+USERDEFINES = _RWSTD_NO_EXCEPTIONS
+SYSDEFINES = _NO_VCL
+INCLUDEPATH = "c:\mssdk\include\"
+LIBPATH = $(BCB)\lib
 WARNINGS= -w-par -w-8027 -w-8026
 # ---------------------------------------------------------------------------
 CFLAG1 = -O2 -x- -RT- -X- -a4 -4 -b -k- -vi -q -c
@@ -92,7 +95,7 @@ LFLAGS = -Iobj -D"" -aa -Tpe -x -Gn -w -q
 # ---------------------------------------------------------------------------
 ALLOBJ = c0w32.obj $(OBJFILES)
 ALLRES = $(RESFILES)
-ALLLIB = $(LIBFILES) $(LIBRARIES) DXGUID.LIB import32.lib cw32.lib
+ALLLIB = $(LIBFILES) $(LIBRARIES) import32.lib cw32.lib
 # ---------------------------------------------------------------------------
 !ifdef IDEOPTIONS
 

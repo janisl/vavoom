@@ -44,9 +44,7 @@ SYS_OBJS = \
 	obj/npxsetup.o \
 	obj/sys_i386.o \
 	obj/sys_dos.o
-ifndef NOGL
-SYS_OBJS += obj/gl_alleg.o
-endif
+GL_SYS_OBJ = obj/gl_alleg.o
 LIBS := -lalleg -lstdcxx
 else
 SYS_OBJS = \
@@ -56,9 +54,7 @@ SYS_OBJS = \
 	obj/net_udp.o \
 	obj/sys_i386.o \
 	obj/sys_lin.o
-ifndef NOGL
-SYS_OBJS += obj/gl_x.o
-endif
+GL_SYS_OBJ = obj/gl_x.o
 LIBS := `allegro-config --libs` -lm -lstdc++
 #LIBS := `allegro-config --static` -lm -lstdc++ -static
 endif
@@ -91,20 +87,27 @@ OBJ_FILES = $(SYS_OBJS) \
 	obj/d_sprite.o \
 	obj/d_surf.o \
 	obj/d_tex.o \
-	obj/d_wipe.o \
+	obj/d_aclipa.o \
+	obj/d_aliasa.o \
+	obj/d_edgea.o \
+	obj/d_polysa.o \
 	obj/d_varsa.o \
 	obj/d_zspan.o \
 	obj/d8_part.o \
+	obj/d8_poly.o \
 	obj/d8_s16.o \
 	obj/d8_span.o \
 	obj/d8_spr.o \
 	obj/d8_surf.o \
 	obj/d16_part.o \
+	obj/d16_poly.o \
 	obj/d16_s16.o \
 	obj/d16_span.o \
 	obj/d16_spr.o \
 	obj/d16_surf.o \
 	obj/d32_part.o \
+	obj/d32_poly.o \
+	obj/d32_s16.o \
 	obj/d32_span.o \
 	obj/d32_spr.o \
 	obj/d32_surf.o \
@@ -121,7 +124,6 @@ OBJ_FILES = $(SYS_OBJS) \
 	obj/message.o \
 	obj/misc.o \
 	obj/model.o \
-	obj/msgbox.o \
 	obj/net_dgrm.o \
 	obj/net_loop.o \
 	obj/net_main.o \
@@ -130,7 +132,6 @@ OBJ_FILES = $(SYS_OBJS) \
 	obj/pr_cmds.o \
 	obj/pr_exec.o \
 	obj/pr_execa.o \
-	obj/r_border.o \
 	obj/r_bsp.o \
 	obj/r_light.o \
 	obj/r_main.o \
@@ -163,15 +164,18 @@ OBJ_FILES = $(SYS_OBJS) \
 
 ifndef NOGL
 OBJ_FILES += \
+	$(GL_SYS_OBJ) \
 	obj/gl_draw.o \
 	obj/gl_main.o \
 	obj/gl_poly.o \
 	obj/gl_tex.o
 ifdef MESAGL
-LIBS := -lMesaGL -lMesaGLU $(LIBS)
+LIBS := -lMesaGL $(LIBS)
 else
-LIBS := -lGL -lGLU $(LIBS)
+LIBS := -lGL $(LIBS)
 endif
+# Somehow in latest Allegro it's missing
+LIBS := -L/usr/X11R6/lib $(LIBS)
 endif
 
 #---------------------------------------
@@ -249,6 +253,22 @@ WAD_FILES = \
 	basev/hexen/wad0.wad \
 	basev/strife/wad0.wad
 
+#---------------------------------------
+#
+#	Install files
+#
+#---------------------------------------
+
+ifndef INSTALL_DIR
+INSTALL_DIR = /usr/local/games/Vavoom
+endif
+
+ifndef INSTALL_EXE
+INSTALL_EXE = Vavoom$(EXE)
+endif
+
+INSTALL_FILES = $(INSTALL_EXE) $(WAD_FILES) basev/default.cfg basev/startup.vs
+
 # ---------------------------------------
 
 C_ARGS   = -c -W -Wall -mpentiumpro -ffast-math
@@ -300,6 +320,14 @@ obj/%.o : source/%.s source/asm_i386.h
 
 # ---------------------------------------
 
+install: $(INSTALL_DIR)
+	ginstall -d $(INSTALL_FILES) $(INSTALL_DIR)
+
+$(INSTALL_DIR):
+	md $(INSTALL_DIR)
+
+# ---------------------------------------
+
 sv: svexe data
 
 svexe: VavoomSV$(EXE)
@@ -342,11 +370,11 @@ utils/vcc/vcc$(EXE):
 utils/vlumpy/vlumpy$(EXE):
 	$(MAKE) -C utils/vlumpy
 
-basev/doom1/wad0.wad : progs/doom/clprogs.dat progs/doom/svprogs.dat
-basev/doom/wad0.wad : progs/doom2/clprogs.dat progs/doom2/svprogs.dat
-basev/heretic/wad0.wad : progs/heretic/clprogs.dat progs/heretic/svprogs.dat
-basev/hexen/wad0.wad : progs/hexen/clprogs.dat progs/hexen/svprogs.dat
-basev/strife/wad0.wad : progs/strife/clprogs.dat progs/strife/svprogs.dat
+basev/doom1/wad0.wad : basev/doom1/progs/clprogs.dat basev/doom1/progs/svprogs.dat
+basev/doom2/wad0.wad : basev/doom2/progs/clprogs.dat basev/doom2/progs/svprogs.dat
+basev/heretic/wad0.wad : basev/heretic/progs/clprogs.dat basev/heretic/progs/svprogs.dat
+basev/hexen/wad0.wad : basev/hexen/progs/clprogs.dat basev/hexen/progs/svprogs.dat
+basev/strife/wad0.wad : basev/strife/progs/clprogs.dat basev/strife/progs/svprogs.dat
 
 # ---------------------------------------
 
@@ -360,19 +388,27 @@ clean:
 # ---------------------------------------
 
 ASM_FILES = \
+	source/d_aclipa.asm \
+	source/d_aliasa.asm \
+	source/d_edgea.asm \
+	source/d_polysa.asm \
 	source/d_zspan.asm \
 	source/d_varsa.asm \
 	source/d8_part.asm \
+	source/d8_poly.asm \
 	source/d8_s16.asm \
 	source/d8_span.asm \
 	source/d8_spr.asm \
 	source/d8_surf.asm \
 	source/d16_part.asm \
+	source/d16_poly.asm \
 	source/d16_s16.asm \
 	source/d16_span.asm \
 	source/d16_spr.asm \
 	source/d16_surf.asm \
 	source/d32_part.asm \
+	source/d32_poly.asm \
+	source/d32_s16.asm \
 	source/d32_span.asm \
 	source/d32_spr.asm \
 	source/d32_surf.asm \
