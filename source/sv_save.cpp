@@ -52,7 +52,7 @@
    	sprintf(_name, "%s/saves/%s.vs%d", fl_gamedir, _map, _slot)
 
 #define SAVE_DESCRIPTION_LENGTH		24
-#define SAVE_VERSION_TEXT			"Version 1.11"
+#define SAVE_VERSION_TEXT			"Version 1.13"
 #define SAVE_VERSION_TEXT_LENGTH	16
 
 // TYPES -------------------------------------------------------------------
@@ -1223,6 +1223,7 @@ void SV_LoadGame(int slot)
 		// Bad version
 		Loader->Close();
 		delete Loader;
+		con << "Savegame is from incompatible version\n";
 		return;
 	}
 
@@ -1470,9 +1471,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2002/06/14 15:36:35  dj_jl
+//	Changed version number.
+//
 //	Revision 1.25  2002/05/18 16:56:35  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.24  2002/05/03 17:06:23  dj_jl
 //	Mangling of string pointers.
 //	
