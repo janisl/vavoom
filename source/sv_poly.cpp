@@ -368,8 +368,8 @@ static void UnLinkPolyobj(polyobj_t *po)
 
 static void LinkPolyobj(polyobj_t *po)
 {
-	float	leftX, rightX;
-	float	topY, bottomY;
+	float leftX, rightX;
+	float topY, bottomY;
 	seg_t **tempSeg;
 	polyblock_t **link;
 	polyblock_t *tempLink;
@@ -522,45 +522,15 @@ static boolean CheckMobjBlocking(seg_t *seg, polyobj_t *po)
 static void InitBlockMap(void)
 {
 	int		i;
-	int		j;
-	seg_t	**segList;
-	int		area;
-	float	leftX, rightX;
-	float	topY, bottomY;
 
-	level.PolyBlockMap = (polyblock_t**)Z_Malloc(level.bmapwidth*level.bmapheight*sizeof(polyblock_t *),
-		PU_LEVEL, 0);
-	memset(level.PolyBlockMap, 0, level.bmapwidth * level.bmapheight * sizeof(polyblock_t *));
+	level.PolyBlockMap = (polyblock_t**)Z_Malloc(level.bmapwidth *
+		level.bmapheight * sizeof(polyblock_t *), PU_LEVEL, 0);
+	memset(level.PolyBlockMap, 0, level.bmapwidth * level.bmapheight *
+		sizeof(polyblock_t *));
 
 	for (i = 0; i < level.numpolyobjs; i++)
 	{
 		LinkPolyobj(&level.polyobjs[i]);
-
-		// calculate a rough area
-		// right now, working like shit...gotta fix this...
-		segList = level.polyobjs[i].segs;
-		leftX = rightX = (*segList)->v1->x;
-		topY = bottomY = (*segList)->v1->y;
-		for (j = 0; j < level.polyobjs[i].numsegs; j++, segList++)
-		{
-			if ((*segList)->v1->x < leftX)
-			{
-				leftX = (*segList)->v1->x;
-			}
-			if ((*segList)->v1->x > rightX)
-			{
-				rightX = (*segList)->v1->x;
-			}
-			if ((*segList)->v1->y < bottomY)
-			{
-				bottomY = (*segList)->v1->y;
-			}
-			if ((*segList)->v1->y > topY)
-			{
-				topY = (*segList)->v1->y;
-			}
-		}
-		area = ((int)rightX - (int)leftX) * ((int)topY - (int)bottomY);
 	}
 }
 
@@ -912,9 +882,12 @@ boolean PO_Busy(int polyobj)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/04 17:16:54  dj_jl
+//	Removed some unused code
+//
 //	Revision 1.5  2001/10/02 17:43:50  dj_jl
 //	Added addfields to lines, sectors and polyobjs
-//
+//	
 //	Revision 1.4  2001/09/20 16:27:02  dj_jl
 //	Removed degenmobj
 //	
