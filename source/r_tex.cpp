@@ -550,7 +550,7 @@ float R_TextureHeight(int pic)
 //
 //==========================================================================
 
-static bool FlatFunc(int lump, const char* name, int, EWadNamespace NS)
+static bool FlatFunc(int lump, const char*, int, EWadNamespace NS)
 {
 	guard(FlatFunc);
 	if (NS == WADNS_Flats)
@@ -636,7 +636,7 @@ int R_FlatNumForName(const char* name)
 //
 //==========================================================================
 
-static bool	SpriteCallback(int lump, const char *name, int, EWadNamespace NS)
+static bool SpriteCallback(int lump, const char*, int, EWadNamespace NS)
 {
 	guard(SpriteCallback);
 	if (NS == WADNS_Sprites)
@@ -1065,6 +1065,12 @@ int R_RegisterPic(const char *name, int type)
 	if (type == PIC_PATCH || type == PIC_RAW)
 	{
 		W_CleanupName(name, tmpName);
+		if (W_CheckNumForName(tmpName) < 0 &&
+			W_CheckNumForName(tmpName, WADNS_Sprites) < 0)
+		{
+			GCon->Logf("R_RegisterPic: Pic %s not found", tmpName);
+			return -1;
+		}
 	}
 	else
 	{
@@ -1102,6 +1108,12 @@ int R_RegisterPicPal(const char *name, int type, const char *palname)
 	if (type == PIC_PATCH || type == PIC_RAW)
 	{
 		W_CleanupName(name, tmpName);
+		if (W_CheckNumForName(tmpName) < 0 &&
+			W_CheckNumForName(tmpName, WADNS_Sprites) < 0)
+		{
+			GCon->Logf("R_RegisterPic: Pic %s not found", tmpName);
+			return -1;
+		}
 	}
 	else
 	{
@@ -1284,9 +1296,12 @@ void R_ShadeRect(int x, int y, int width, int height, int shade)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2004/12/22 07:51:52  dj_jl
+//	Warning about non-existing graphics.
+//
 //	Revision 1.23  2004/11/23 12:43:10  dj_jl
 //	Wad file lump namespaces.
-//
+//	
 //	Revision 1.22  2004/08/18 18:05:47  dj_jl
 //	Support for higher virtual screen resolutions.
 //	
