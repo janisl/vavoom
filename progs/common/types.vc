@@ -219,7 +219,11 @@ struct sector_t
 	int linecount;
 	line_t **lines;	// [linecount] size
 
-	addfields 7;
+	//	Flags.
+	bool		bHasExtrafloors;	//	This sector has extrafloors.
+	bool		bExtrafloorSource;	//	This sector is a source of an extrafloor.
+
+	addfields 6;
 };
 
 //
@@ -758,6 +762,9 @@ struct ClipRect
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.48  2003/07/03 18:13:45  dj_jl
+//  Moving extrafloors
+//
 //  Revision 1.47  2003/03/08 16:01:44  dj_jl
 //  A little multiplayer fix.
 //

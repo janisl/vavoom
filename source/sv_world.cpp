@@ -1049,6 +1049,10 @@ bool P_ChangeSector(sector_t * sector, int crunch)
 {
 	int x;
 	int y;
+	int i;
+	bool ret;
+	sector_t* sec2;
+	sec_region_t* reg;
 
 	CalcSecMinMaxs(sector);
 
@@ -1060,15 +1064,38 @@ bool P_ChangeSector(sector_t * sector, int crunch)
 		for (y = sector->blockbox[BOXBOTTOM]; y <= sector->blockbox[BOXTOP]; y++)
 			SV_BlockThingsIterator(x, y, PIT_ChangeSector, NULL);
 
-	return nofit;
+	ret = nofit;
+	if (sector->bExtrafloorSource)
+	{
+		for (i = 0; i < GLevel->NumSectors; i++)
+		{
+			sec2 = &GLevel->Sectors[i];
+			if (sec2->bHasExtrafloors && sec2 != sector)
+			{
+				for (reg = sec2->botregion; reg; reg = reg->next)
+				{
+					if (reg->floor == &sector->floor ||
+						reg->ceiling == &sector->ceiling)
+					{
+						ret |= P_ChangeSector(sec2, crunch);
+						break;
+					}
+				}
+			}
+		}
+	}
+	return ret;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2003/07/03 18:11:13  dj_jl
+//	Moving extrafloors
+//
 //	Revision 1.18  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.17  2002/08/28 16:41:10  dj_jl
 //	Merged VMapObject with VEntity, some natives.
 //	

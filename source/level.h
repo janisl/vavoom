@@ -270,7 +270,11 @@ struct sector_t
 	int			linecount;
 	line_t		**lines;  // [linecount] size
 
-	int			user_fields[7];
+	//	Flags.
+	dword		bHasExtrafloors:1;		//	This sector has extrafloors.
+	dword		bExtrafloorSource:1;	//	This sector is a source of an extrafloor.
+
+	int			user_fields[6];
 };
 
 //
@@ -580,9 +584,12 @@ extern VLevel*			GClLevel;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2003/07/03 18:11:13  dj_jl
+//	Moving extrafloors
+//
 //	Revision 1.25  2003/03/08 11:33:39  dj_jl
 //	Got rid of some warnings.
-//
+//	
 //	Revision 1.24  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
 //	

@@ -904,7 +904,7 @@ void SV_UpdateLevel(TMessage &msg)
 		sector_t	*sec;
 
 		sec = &GLevel->Sectors[i];
-		if (!SV_SecCheckFatPVS(sec))
+		if (!SV_SecCheckFatPVS(sec) && !sec->bExtrafloorSource)
 			continue;
 
 		bits = 0;
@@ -2833,9 +2833,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.53  2003/07/03 18:11:13  dj_jl
+//	Moving extrafloors
+//
 //	Revision 1.52  2003/03/08 16:02:53  dj_jl
 //	A little multiplayer fix.
-//
+//	
 //	Revision 1.51  2003/03/08 11:33:39  dj_jl
 //	Got rid of some warnings.
 //	
