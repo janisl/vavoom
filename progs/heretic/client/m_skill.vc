@@ -137,12 +137,15 @@ void menu_skill(void)
 	AddMenuItem(&SkillMenu.menu, &SkillMenu.title);
 
 	PushMenu(&SkillMenu.menu);
-	Menu_SetCursorToItem(&SkillMenu.menu, &SkillMenu.skill[2]);
+	Menu_SetCursor(&SkillMenu.menu, 2);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/01 18:04:24  dj_jl
+//  Started reworking menus
+//
 //  Revision 1.5  2001/09/25 17:11:04  dj_jl
 //  Seperated menu API
 //
