@@ -84,6 +84,8 @@
 #include "files.h"
 #include "wad.h"		//	WAD file I/O routines
 #include "scripts.h"	//	Script parsing
+#include "name.h"
+#include "names.h"
 #include "vobject.h"
 #include "progs.h"		//	Progs
 #include "input.h"		//	Input from keyboard, mouse and joystick
@@ -94,7 +96,6 @@
 #include "automap.h"
 #include "level.h"		//	Level data
 #include "mapinfo.h"
-#include "player.h"
 #include "host.h"
 #include "render.h"
 #include "text.h"
@@ -116,9 +117,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/12/18 19:07:46  dj_jl
+//	Added global name subsystem
+//
 //	Revision 1.12  2001/12/12 19:26:40  dj_jl
 //	Added dynamic arrays
-//
+//	
 //	Revision 1.11  2001/12/01 17:39:26  dj_jl
 //	Back to work
 //	
