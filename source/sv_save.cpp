@@ -831,6 +831,91 @@ static void UnarchiveWorld(void)
 
 //==========================================================================
 //
+//	MangleVObject
+//
+//==========================================================================
+
+void MangleVObject(VObject *Obj, VClass *InClass)
+{
+	if (InClass->GetFlags() & OF_Native)
+	{
+		return;
+	}
+	if (InClass->GetSuperClass())
+	{
+		MangleVObject(Obj, InClass->GetSuperClass());
+	}
+	for (int i = 0; i < InClass->NumPropertyInfo; i++)
+	{
+		int *p = (int *)((byte *)Obj + InClass->PropertyInfo[i].Offset);
+		switch (InClass->PropertyInfo[i].Type)
+		{
+		case PROPTYPE_Reference:
+			*p = GetMobjNum((VMapObject *)*p);
+			break;
+
+		case PROPTYPE_ClassID:
+			if (*p)
+			{
+				*p = ((VClass *)*p)->GetFName().GetIndex();
+			}
+			else
+			{
+				*p = -1;
+			}
+			break;
+
+		case PROPTYPE_Name:
+			break;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	UnMangleVObject
+//
+//==========================================================================
+
+void UnMangleVObject(VObject *Obj, VClass *InClass)
+{
+	if (InClass->GetFlags() & OF_Native)
+	{
+		return;
+	}
+	if (InClass->GetSuperClass())
+	{
+		UnMangleVObject(Obj, InClass->GetSuperClass());
+	}
+	for (int i = 0; i < InClass->NumPropertyInfo; i++)
+	{
+		int *p = (int *)((byte *)Obj + InClass->PropertyInfo[i].Offset);
+		switch (InClass->PropertyInfo[i].Type)
+		{
+		case PROPTYPE_Reference:
+			*p = (int)SetMobjPtr(*p);
+			break;
+
+		case PROPTYPE_ClassID:
+			if (*p == -1)
+			{
+				*p = 0;
+			}
+			else
+			{
+				*p = (int)SV_GetClass(*p);
+			}
+			break;
+
+		case PROPTYPE_Name:
+			*p = UnarchiveName(*p).GetIndex();
+			break;
+		}
+	}
+}
+
+//==========================================================================
+//
 // ArchiveThinkers
 //
 //==========================================================================
@@ -864,6 +949,7 @@ static void ArchiveThinkers(void)
 		}
 
 		svpr.Exec(pf_archive_thinker, (int)th);
+		MangleVObject(th, th->GetClass());
 
 		StreamOutByte(1);
 		WriteVObject(th);
@@ -913,6 +999,7 @@ static void UnarchiveThinkers(void)
 	for (TObjectIterator<VThinker> It; It; ++It)
 	{
 		svpr.Exec(pf_unarchive_thinker, (int)*It);
+		UnMangleVObject(*It, It->GetClass());
 	}
 
 	svpr.Exec("AfterUnarchiveThinkers");
@@ -1483,9 +1570,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2002/02/26 17:54:26  dj_jl
+//	Importing special property info from progs and using it in saving.
+//
 //	Revision 1.22  2002/02/15 19:12:04  dj_jl
 //	Property namig style change
-//
+//	
 //	Revision 1.21  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
 //	

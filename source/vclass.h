@@ -23,6 +23,19 @@
 //**
 //**************************************************************************
 
+enum
+{
+	PROPTYPE_Reference,
+	PROPTYPE_ClassID,
+	PROPTYPE_Name,
+};
+
+struct FPropertyInfo
+{
+	int			Type;
+	int			Offset;
+};
+
 //==========================================================================
 //
 //	VClass
@@ -41,7 +54,9 @@ class VClass:public VObject
 	void (*ClassConstructor)(void*);
 
 	int			ClassNumMethods;
-	byte*		PropretiesInfo;
+
+	int				NumPropertyInfo;
+	FPropertyInfo	*PropertyInfo;
 
 	static VClass *FindClass(const char *);
 
@@ -71,9 +86,12 @@ class VClass:public VObject
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/02/26 17:54:26  dj_jl
+//	Importing special property info from progs and using it in saving.
+//
 //	Revision 1.4  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
-//
+//	
 //	Revision 1.3  2002/01/11 08:15:40  dj_jl
 //	Removed FFunction
 //	

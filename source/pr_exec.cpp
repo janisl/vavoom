@@ -285,6 +285,8 @@ void TProgs::Load(const char *AName)
 		ClassInfo[i].size = LittleShort(ClassInfo[i].size);
 		ClassInfo[i].num_methods = LittleShort(ClassInfo[i].num_methods);
 		ClassInfo[i].parent = LittleLong(ClassInfo[i].parent);
+		ClassInfo[i].num_properties = LittleLong(ClassInfo[i].num_properties);
+		ClassInfo[i].ofs_properties = LittleLong(ClassInfo[i].ofs_properties);
 	}
 
 	//	Setup classes
@@ -303,6 +305,11 @@ void TProgs::Load(const char *AName)
 		{
 			ClassList[i]->ClassNumMethods = ClassInfo[i].num_methods;
 			ClassList[i]->ClassVTable = (FFunction **)(Globals + ClassInfo[i].vtable);
+		}
+		if (!ClassList[i]->PropertyInfo)
+		{
+			ClassList[i]->NumPropertyInfo = ClassInfo[i].num_properties;
+			ClassList[i]->PropertyInfo = (FPropertyInfo *)(Globals + ClassInfo[i].ofs_properties);
 		}
 	}
 	for (i = 0; i < Progs->num_classinfo; i++)
@@ -1688,9 +1695,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2002/02/26 17:54:26  dj_jl
+//	Importing special property info from progs and using it in saving.
+//
 //	Revision 1.23  2002/02/16 16:29:26  dj_jl
 //	Added support for bool variables
-//
+//	
 //	Revision 1.22  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
 //	

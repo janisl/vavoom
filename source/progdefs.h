@@ -228,6 +228,14 @@ struct dclassinfo_t
 	short	size;
 	short	num_methods;
 	int		parent;
+	int		num_properties;
+	int		ofs_properties;
+};
+
+struct dfield_t
+{
+	int		type;
+	int		ofs;
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -239,9 +247,12 @@ struct dclassinfo_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/02/26 17:54:26  dj_jl
+//	Importing special property info from progs and using it in saving.
+//
 //	Revision 1.12  2002/02/16 16:29:26  dj_jl
 //	Added support for bool variables
-//
+//	
 //	Revision 1.11  2002/01/11 08:07:17  dj_jl
 //	Added names to progs
 //	
