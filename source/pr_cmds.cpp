@@ -56,14 +56,12 @@ enum
 
 int GetMobjNum(VMapObject *mobj);
 VMapObject* SetMobjPtr(int archiveNum);
-FName UnarchiveName(int Index);
 
 VMapObject *SV_SpawnMobj(VClass *Class);
 void SV_RemoveMobj(VMapObject *mobj);
 void SV_ForceLightning(void);
 void SV_SetFloorPic(int i, int texture);
 void SV_SetCeilPic(int i, int texture);
-VClass *SV_GetClass(int NameIndex);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -2140,62 +2138,6 @@ static void PF_NumToMobj(void)
 
 //==========================================================================
 //
-//  PF_ClassIDToNum
-//
-//==========================================================================
-
-PF(ClassIDToNum)
-{
-	VClass	*Class;
-
-	Class = (VClass *)Pop();
-	if (Class)
-	{
-		Push(Class->GetFName().GetIndex());
-	}
-	else
-	{
-		Push(-1);
-	}
-}
-
-//==========================================================================
-//
-//  PF_NumToClassID
-//
-//==========================================================================
-
-PF(NumToClassID)
-{
-	int		archiveNum;
-
-	archiveNum = Pop();
-	if (archiveNum == -1)
-	{
-		Push(0);
-	}
-	else
-	{
-		Push((int)SV_GetClass(archiveNum));
-	}
-}
-
-//==========================================================================
-//
-//	UnarchiveName
-//
-//==========================================================================
-
-PF(UnarchiveName)
-{
-	int Index;
-
-	Index = Pop();
-	PushName(UnarchiveName(Index));
-}
-
-//==========================================================================
-//
 //	PF_ClearPlayer
 //
 //==========================================================================
@@ -3000,6 +2942,7 @@ PF(WadLumpPresent)
 struct slist_t;
 
 char* P_GetMapName(int map);
+char* P_GetMapLumpName(int map);
 char *P_TranslateMap(int map);
 void KeyNameForNum(int KeyNr, char* NameString);
 
@@ -3012,6 +2955,14 @@ PF(P_GetMapName)
 
 	map = Pop();
 	Push((int)P_GetMapName(map));
+}
+
+PF(P_GetMapLumpName)
+{
+	int		map;
+
+	map = Pop();
+	Push((int)P_GetMapLumpName(map));
 }
 
 PF(P_TranslateMap)
@@ -3193,6 +3144,7 @@ builtin_info_t BuiltinInfo[] =
 
 #ifdef CLIENT
 	_(P_GetMapName),
+	_(P_GetMapLumpName),
 	_(P_TranslateMap),
 	_(KeyNameForNum),
 	_(IN_GetBindingKeys),
@@ -3306,9 +3258,6 @@ builtin_info_t BuiltinInfo[] =
     _(NumToSector),
     _(NumToMobj),
     _(MobjToNum),
-	_(ClassIDToNum),
-	_(NumToClassID),
-	_(UnarchiveName),
 
     _(G_ExitLevel),
     _(G_SecretExitLevel),
@@ -3334,9 +3283,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.34  2002/02/26 17:53:08  dj_jl
+//	Fixes for menus.
+//
 //	Revision 1.33  2002/02/22 18:09:52  dj_jl
 //	Some improvements, beautification.
-//
+//	
 //	Revision 1.32  2002/02/15 19:12:03  dj_jl
 //	Property namig style change
 //	
