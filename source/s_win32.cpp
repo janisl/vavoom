@@ -25,18 +25,11 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#define USE_EAX
-
 #include "winlocal.h"
 #include <dsound.h>
-#ifdef USE_EAX
 #include <eax.h>
-#endif
 
 #include "gamedefs.h"
-#ifdef USE_EAX
-#include "cl_local.h"
-#endif
 #include "s_local.h"
 
 // MACROS ------------------------------------------------------------------
@@ -57,7 +50,7 @@ struct channel_t
 	TVec		velocity;
 	int			sound_id;
 	int			priority;
-	int			volume;
+	float		volume;
 
 	LPDIRECTSOUNDBUFFER		buf;
 };
@@ -67,6 +60,23 @@ struct free_buf_t
 	LPDIRECTSOUNDBUFFER		buf;
 	int						sound_id;
 	double					free_time;
+};
+
+class VDefaultSoundDevice:public VSoundDevice
+{
+	DECLARE_CLASS(VDefaultSoundDevice, VSoundDevice, 0);
+	NO_DEFAULT_CONSTRUCTOR(VDefaultSoundDevice);
+
+	void Tick(float DeltaTime);
+
+	void Init(void);
+	void Shutdown(void);
+	void PlaySound(int sound_id, const TVec &origin, const TVec &velocity,
+		int origin_id, int channel, float volume);
+	void PlaySoundTillDone(char *sound);
+	void StopSound(int origin_id, int channel);
+	void StopAllSound(void);
+	bool IsSoundPlaying(int origin_id, int sound_id);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -81,13 +91,11 @@ static char* DS_Error(HRESULT result);
 
 static void StopChannel(int chan_num);
 
-#ifdef USE_EAX
-static float EAX_CalcEnvSize(void);
-#endif
-
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
+
+IMPLEMENT_CLASS(VDefaultSoundDevice);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -101,16 +109,12 @@ static byte*		SoundCurve;
 
 static int 			sndcount = 0;
 static bool			sound3D = false;
-#ifdef USE_EAX
 static bool			supportEAX = false;
-#endif
 
 static LPDIRECTSOUND			DSound = NULL;
 static LPDIRECTSOUNDBUFFER		PrimarySoundBuffer = NULL;
 static LPDIRECTSOUND3DLISTENER	Listener;
-#ifdef USE_EAX
 static IKsPropertySet	*PropertySet;
-#endif
 
 static TVec			listener_forward;
 static TVec			listener_right;
@@ -121,24 +125,21 @@ static TCvarF		s3d_doppler_factor("s3d_doppler_factor", "1.0", CVAR_ARCHIVE);
 static TCvarF		s3d_rolloff_factor("s3d_rolloff_factor", "1.0", CVAR_ARCHIVE);
 static TCvarF		s3d_min_distance("s3d_min_distance", "64.0", CVAR_ARCHIVE);
 static TCvarF		s3d_max_distance("s3d_max_distance", "2024.0", CVAR_ARCHIVE);
-
-#ifdef USE_EAX
 static TCvarI		eax_environment("eax_environment", "0");
-#endif
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//  S_InitSfx
+//  VDefaultSoundDevice::Init
 //
 // 	Inits sound
 //
 //==========================================================================
 
-void S_InitSfx(void)
+void VDefaultSoundDevice::Init(void)
 {
-	guard(S_InitSfx);
+	guard(VDefaultSoundDevice::Init);
 	HRESULT			result;
 	DSBUFFERDESC	dsbdesc;
 	WAVEFORMATEX	wfx;
@@ -226,7 +227,6 @@ void S_InitSfx(void)
 				Sys_Error("Failed to get Listener");
 			}
 
-#ifdef USE_EAX
 			LPDIRECTSOUNDBUFFER		tempBuffer;
 		    PCMWAVEFORMAT			pcmwf;
 
@@ -279,7 +279,6 @@ void S_InitSfx(void)
 				}
 				tempBuffer->Release();
 			}
-#endif
 
 			Listener->SetDistanceFactor(1.0 / s3d_distance_unit, DS3D_IMMEDIATE);
 			Listener->SetDopplerFactor(s3d_doppler_factor, DS3D_IMMEDIATE);
@@ -322,13 +321,13 @@ void S_InitSfx(void)
 
 //==========================================================================
 //
-//	S_ShutdownSfx
+//	VDefaultSoundDevice::Shutdown
 //
 //==========================================================================
 
-void S_ShutdownSfx(void)
+void VDefaultSoundDevice::Shutdown(void)
 {
-	guard(S_ShutdownSfx);
+	guard(VDefaultSoundDevice::Shutdown);
 	//	Shutdown sound
 	if (DSound)
 	{
@@ -523,9 +522,9 @@ static int CalcPriority(int sound_id, int dist)
 //
 //==========================================================================
 
-static int CalcVol(int volume, int dist)
+static int CalcVol(float volume, int dist)
 {
-	return SoundCurve[dist] * volume / 5 - 3225;
+	return SoundCurve[dist] * 127 * volume / 5 - 3225;
 }
 
 //==========================================================================
@@ -585,7 +584,11 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id)
 	}
 
 	//	Check, that sound lump is loaded
-	S_LoadSound(sound_id);
+	if (!S_LoadSound(sound_id))
+	{
+		//	Missing sound.
+		return NULL;
+	}
 
     // Set up wave format structure.
 	memset(&pcmwf, 0, sizeof(PCMWAVEFORMAT));
@@ -668,17 +671,17 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id)
 
 //==========================================================================
 //
-//	S_StartSound
+//	VDefaultSoundDevice::PlaySound
 //
 // 	This function adds a sound to the list of currently active sounds, which
 // is maintained as a given number of internal channels.
 //
 //==========================================================================
 
-void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
-	int origin_id, int channel, int volume)
+void VDefaultSoundDevice::PlaySound(int sound_id, const TVec &origin,
+	const TVec &velocity, int origin_id, int channel, float volume)
 {
-	guard(S_StartSound);
+	guard(VDefaultSoundDevice::PlaySound);
 	int 					dist;
 	int 					priority;
 	int						chan;
@@ -727,7 +730,7 @@ void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
 	{
 		LPDIRECTSOUND3DBUFFER	Buf3D; 
 
-	    Channel[chan].buf->SetVolume((Channel[chan].volume - 127) << 5);
+	    Channel[chan].buf->SetVolume(4096.0 * (Channel[chan].volume - 1.0));
 
 		result = Channel[chan].buf->QueryInterface(
 			IID_IDirectSound3DBuffer, (LPVOID *)&Buf3D); 
@@ -790,13 +793,13 @@ void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
 
 //==========================================================================
 //
-//	S_PlayTillDone
+//	VDefaultSoundDevice::PlaySoundTillDone
 //
 //==========================================================================
 
-void S_PlayTillDone(char *sound)
+void VDefaultSoundDevice::PlaySoundTillDone(char *sound)
 {
-	guard(S_PlayTillDone);
+	guard(VDefaultSoundDevice::PlaySoundTillDone);
     int						sound_id;
 	double					start;
     HRESULT					result;
@@ -868,16 +871,16 @@ void S_PlayTillDone(char *sound)
 
 //==========================================================================
 //
-//  S_UpdateSfx
+//  VDefaultSoundDevice::Tick
 //
 // 	Update the sound parameters. Used to control volume and pan
 // changes such as when a player turns.
 //
 //==========================================================================
 
-void S_UpdateSfx(void)
+void VDefaultSoundDevice::Tick(float DeltaTime)
 {
-	guard(S_UpdateSfx);
+	guard(VDefaultSoundDevice::Tick);
 	int 		i;
 	int			dist;
     DWORD		Status;
@@ -940,6 +943,9 @@ void S_UpdateSfx(void)
 			continue;
 		}
 
+		//	Move sound
+		Channel[i].origin += Channel[i].velocity * DeltaTime;
+
 		dist = CalcDist(Channel[i].origin);
 		if (dist >= MAX_SND_DIST)
 		{
@@ -991,7 +997,6 @@ void S_UpdateSfx(void)
 		Listener->SetDopplerFactor(s3d_doppler_factor, DS3D_DEFERRED);
 		Listener->SetRolloffFactor(s3d_rolloff_factor, DS3D_DEFERRED);
 
-#ifdef USE_EAX
 		if (supportEAX)
 		{
 			DWORD envId = eax_environment;
@@ -1006,7 +1011,6 @@ void S_UpdateSfx(void)
 				DSPROPERTY_EAXLISTENER_ENVIRONMENTSIZE |
 				DSPROPERTY_EAXLISTENER_DEFERRED, NULL, 0, &envSize, sizeof(float));
 		}
-#endif
 
 		Listener->CommitDeferredSettings();
 	}
@@ -1058,13 +1062,13 @@ static void StopChannel(int chan_num)
 
 //==========================================================================
 //
-//	S_StopSound
+//	VDefaultSoundDevice::StopSound
 //
 //==========================================================================
 
-void S_StopSound(int origin_id, int channel)
+void VDefaultSoundDevice::StopSound(int origin_id, int channel)
 {
-	guard(S_StopSound);
+	guard(VDefaultSoundDevice::StopSound);
 	int i;
 
     for (i = 0; i < snd_Channels; i++)
@@ -1080,13 +1084,13 @@ void S_StopSound(int origin_id, int channel)
 
 //==========================================================================
 //
-// S_StopAllSound
+//	VDefaultSoundDevice::StopAllSound
 //
 //==========================================================================
 
-void S_StopAllSound(void)
+void VDefaultSoundDevice::StopAllSound(void)
 {
-	guard(S_StopAllSound);
+	guard(VDefaultSoundDevice::StopAllSound);
 	int i;
 
 	//	stop all sounds
@@ -1099,13 +1103,13 @@ void S_StopAllSound(void)
 
 //==========================================================================
 //
-// S_GetSoundPlayingInfo
+//	VDefaultSoundDevice::IsSoundPlaying
 //
 //==========================================================================
 
-boolean S_GetSoundPlayingInfo(int origin_id, int sound_id)
+bool VDefaultSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 {
-	guard(S_GetSoundPlayingInfo);
+	guard(VDefaultSoundDevice::IsSoundPlaying);
 	int i;
 
 	for (i = 0; i < snd_Channels; i++)
@@ -1127,393 +1131,15 @@ boolean S_GetSoundPlayingInfo(int origin_id, int sound_id)
 	unguard;
 }
 
-#ifdef USE_EAX
-
-extern int			cl_validcount;
-
-static TVec			trace_start;
-static TVec			trace_end;
-static TVec			trace_delta;
-static TPlane		trace;			// from t1 to t2
-
-static TVec			linestart;
-static TVec			lineend;
-
-//==========================================================================
-//
-//	PlaneSide2
-//
-//	Returns side 0 (front), 1 (back), or 2 (on).
-//
-//==========================================================================
-
-static int PlaneSide2(const TVec &point, const TPlane* plane)
-{
-	float dot = DotProduct(point, plane->normal) - plane->dist;
-    return dot < -0.1 ? 1 : dot > 0.1 ? 0 : 2;
-}
-
-//==========================================================================
-//
-//	CheckPlane
-//
-//==========================================================================
-
-static bool CheckPlane(const sec_plane_t *plane)
-{
-	float		org_dist;
-	float		hit_dist;
-
-	if (plane->flags & SPF_NOBLOCKSIGHT)
-	{
-		//	Plane doesn't block sight
-		return true;
-	}
-	org_dist = DotProduct(linestart, plane->normal) - plane->dist;
-	if (org_dist < -0.1)
-	{
-		//	Ignore back side
-		return true;
-	}
-	hit_dist = DotProduct(lineend, plane->normal) - plane->dist;
-	if (hit_dist >= -0.1)
-	{
-		//	Didn't cross plane
-		return true;
-	}
-
-	if (plane->pic == skyflatnum)
-	{
-		//	Hit sky, don't clip
-		return false;
-	}
-
-	// Intercept vector.
-	// Don't need to check if den == 0, because then planes are paralel
-	// (they will never cross) or it's the same plane (also rejected)
-    float den = DotProduct(trace_delta, plane->normal);
-	float frac = org_dist / den;
-	lineend = trace_start - frac * trace_delta;
-
-	//	Crosses plane
-	return false;
-}
-
-//==========================================================================
-//
-//	CheckPlanes
-//
-//==========================================================================
-
-static bool CheckPlanes(sector_t *sec)
-{
-	sec_region_t	*reg;
-
-	for (reg = sec->topregion; reg; reg = reg->prev)
-	{
-		if (!CheckPlane(reg->floor))
-		{
-			//	Hit floor
-			return false;
-		}
-		if (!CheckPlane(reg->ceiling))
-		{
-			//	Hit ceiling
-			return false;
-		}
-	}
-	return true;
-}
-
-//==========================================================================
-//
-//	CheckLine
-//
-//==========================================================================
-
-static bool CheckLine(seg_t* seg)
-{
-    line_t*			line;
-    int				s1;
-    int				s2;
-    sector_t*		front;
-    float			opentop;
-    float			openbottom;
-    float			frac;
-	float			num;
-	float			den;
-	TVec			hit_point;
-
-	line = seg->linedef;
-	if (!line)
-		return true;
-
-	// allready checked other side?
-	if (line->validcount == cl_validcount)
-	    return true;
-	
-	line->validcount = cl_validcount;
-
-	s1 = PlaneSide2(*line->v1, &trace);
-	s2 = PlaneSide2(*line->v2, &trace);
-
-	// line isn't crossed?
-	if (s1 == s2)
-	    return true;
-
-	s1 = PlaneSide2(trace_start, line);
-	s2 = PlaneSide2(trace_end, line);
-
-	// line isn't crossed?
-	if (s1 == s2 || (s1 == 2 && s2 == 0))
-    	return true;
-
-	// crosses a two sided line
-	if (s1 == 0)
-	{
-		front = line->frontsector;
-	}
-	else
-	{
-		front = line->backsector;
-	}
-
-	// Intercept vector.
-	// Don't need to check if den == 0, because then planes are paralel
-	// (they will never cross) or it's the same plane (also rejected)
-    den = DotProduct(trace_delta, line->normal);
-	num = line->dist - DotProduct(trace_start, line->normal);
-	frac = num / den;
-	hit_point = trace_start + frac * trace_delta;
-
-	lineend = hit_point;
-
-	// stop because it is not two sided anyway
-	if (!(line->flags & ML_TWOSIDED))
-	    return false;
-	
-	if (!CheckPlanes(front))
-	{
-		return false;
-	}
-	linestart = lineend;
-
-	sec_region_t	*frontreg;
-	sec_region_t	*backreg;
-	float			frontfloorz;
-	float			backfloorz;
-	float			frontceilz;
-	float			backceilz;
-
-	frontreg = line->frontsector->botregion;
-	backreg = line->backsector->botregion;
-
-	while (frontreg && backreg)
-	{
-		frontfloorz = frontreg->floor->GetPointZ(hit_point);
-		backfloorz = backreg->floor->GetPointZ(hit_point);
-		frontceilz = frontreg->ceiling->GetPointZ(hit_point);
-		backceilz = backreg->ceiling->GetPointZ(hit_point);
-		if (frontfloorz >= backceilz)
-		{
-			backreg = backreg->next;
-			continue;
-		}
-		if (backfloorz >= frontceilz)
-		{
-			frontreg = frontreg->next;
-			continue;
-		}
-
-		if (frontfloorz > backfloorz)
-		{
-			openbottom = frontfloorz;
-		}
-		else
-		{
-			openbottom = backfloorz;
-		}
-		if (frontceilz < backceilz)
-		{
-			opentop = frontceilz;
-			frontreg = frontreg->next;
-		}
-		else
-		{
-			opentop = backceilz;
-			backreg = backreg->next;
-		}
-		if (hit_point.z >= openbottom && hit_point.z <= opentop)
-		{
-			return true;
-		}
-	}
-
-    return false;		// stop
-}
-
-//==========================================================================
-//
-//	CrossSubsector
-//
-//	Returns true if trace crosses the given subsector successfully.
-//
-//==========================================================================
-
-static bool CrossSubsector(int num)
-{
-    subsector_t*	sub;
-    int				count;
-    seg_t*			seg;
-	int 			polyCount;
-	seg_t**			polySeg;
-
-    sub = &cl_level.subsectors[num];
-    
-	if (sub->poly)
-	{
-		// Check the polyobj in the subsector first
-		polyCount = sub->poly->numsegs;
-		polySeg = sub->poly->segs;
-		while (polyCount--)
-		{
-			if (!CheckLine(*polySeg++))
-            {
-            	return false;
-            }
-		}
-	}
-
-    // check lines
-    count = sub->numlines;
-    seg = &cl_level.segs[sub->firstline];
-
-    for ( ; count ; seg++, count--)
-    {
-    	if (!CheckLine(seg))
-        {
-        	return false;
-        }
-    }
-    // passed the subsector ok
-    return true;		
-}
-
-//==========================================================================
-//
-//	CrossBSPNode
-//
-//	Returns true if trace crosses the given node successfully.
-//
-//==========================================================================
-
-static bool CrossBSPNode(int bspnum)
-{
-    node_t*	bsp;
-    int		side;
-
-    if (bspnum & NF_SUBSECTOR)
-    {
-		if (bspnum == -1)
-		    return CrossSubsector(0);
-		else
-		    return CrossSubsector(bspnum & (~NF_SUBSECTOR));
-    }
-		
-    bsp = &cl_level.nodes[bspnum];
-    
-    // decide which side the start point is on
-    side = PlaneSide2(trace_start, bsp);
-    if (side == 2)
-		side = 0;	// an "on" should cross both sides
-
-    // cross the starting side
-    if (!CrossBSPNode(bsp->children[side]))
-		return false;
-	
-    // the partition plane is crossed here
-    if (side == PlaneSide2(trace_end, bsp))
-    {
-		// the line doesn't touch the other side
-		return true;
-    }
-    
-    // cross the ending side		
-    return CrossBSPNode(bsp->children[side^1]);
-}
-
-//==========================================================================
-//
-//	EAXTraceLine
-//
-//==========================================================================
-
-static float EAXTraceLine(const TVec &start, const TVec &end)
-{
-	cl_validcount++;
-
-	trace_start = start;
-	trace_end = end;
-
-	trace_delta = trace_end - trace_start;
-	trace.SetPointDir(start, trace_delta);
-
-	linestart = trace_start;
-
-    // the head node is the last node output
-    if (CrossBSPNode(cl_level.numnodes - 1))
-	{
-		lineend = trace_end;
-	    CheckPlanes(CL_PointInSubsector(end.x, end.y)->sector);
-	}
-	return Length(lineend - start);
-}
-
-//==========================================================================
-//
-//	CalcDirSize
-//
-//==========================================================================
-
-static float CalcDirSize(const TVec &dir)
-{
-	float len = EAXTraceLine(cl.vieworg, cl.vieworg + dir) +
-		EAXTraceLine(cl.vieworg, cl.vieworg - dir);
-	len /= s3d_distance_unit;
-	if (len > 100)
-		len = 100;
-	if (len < 1)
-		len = 1;
-	return len;
-}
-
-//==========================================================================
-//
-//	EAX_CalcEnvSize
-//
-//==========================================================================
-
-static float EAX_CalcEnvSize(void)
-{
-	if (cls.state != ca_connected)
-	{
-		return 7.5;
-	}
-
-	float len = 0;
-	len += CalcDirSize(TVec(3200, 0, 0));
-	len += CalcDirSize(TVec(0, 3200, 0));
-	len += CalcDirSize(TVec(0, 0, 3200));
-	return len / 3.0;
-}
-#endif
-
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2002/07/20 14:49:41  dj_jl
+//	Implemented sound drivers.
+//
 //	Revision 1.14  2002/05/18 16:57:17  dj_jl
 //	Added EAX support.
-//
+//	
 //	Revision 1.13  2002/02/22 18:09:52  dj_jl
 //	Some improvements, beautification.
 //	

@@ -42,6 +42,8 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+IMPLEMENT_CLASS(VSoundDevice);
+
 TCvarI				sfx_volume("sfx_volume", "8", CVAR_ARCHIVE);
 TCvarI				music_volume("music_volume", "8", CVAR_ARCHIVE);
 TCvarI				swap_stereo("swap_stereo", "0", CVAR_ARCHIVE);
@@ -53,6 +55,8 @@ static int			mapCDTrack;
 
 static TCvarI		cd_music("use_cd_music", "0", CVAR_ARCHIVE);
 static boolean		CDMusic = false;
+
+static VSoundDevice	*GSoundDevice;
 
 // CODE --------------------------------------------------------------------
 
@@ -69,7 +73,27 @@ static boolean		CDMusic = false;
 void S_Init(void)
 {
 	guard(S_Init);
-	S_InitSfx();
+	VClass *DeviceClass;
+	if (M_CheckParm("-openal"))
+	{
+		DeviceClass = VClass::FindClass("OpenALDevice");
+		if (!DeviceClass)
+		{
+			Sys_Error("OpenAL driver not available");
+		}
+	}
+	else
+	{
+		DeviceClass = VClass::FindClass("DefaultSoundDevice");
+		if (!DeviceClass)
+		{
+			//	No sound driver, use no-sound driver.
+			DeviceClass = VSoundDevice::StaticClass();
+		}
+	}
+	GSoundDevice = (VSoundDevice *)VObject::StaticSpawnObject(DeviceClass, NULL, PU_STATIC);
+
+	GSoundDevice->Init();
 	S_InitMusic();
 	CD_Init();
 
@@ -91,8 +115,70 @@ void S_Shutdown(void)
 	guard(S_Shutdown);
 	CD_Shutdown();
 	S_ShutdownMusic();
-	S_ShutdownSfx();
+	if (GSoundDevice)
+	{
+		GSoundDevice->Shutdown();
+		GSoundDevice->Destroy();
+		GSoundDevice = NULL;
+	}
 	unguard;
+}
+
+//==========================================================================
+//
+//	S_StartSound
+//
+//==========================================================================
+
+void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
+	int origin_id, int channel, int volume)
+{
+	GSoundDevice->PlaySound(sound_id, origin, velocity, origin_id, channel,
+		float(volume) / 127.0);
+}
+
+//==========================================================================
+//
+//	S_PlayTillDone
+//
+//==========================================================================
+
+void S_PlayTillDone(char *sound)
+{
+	GSoundDevice->PlaySoundTillDone(sound);
+}
+
+//==========================================================================
+//
+//	S_StopSound
+//
+//==========================================================================
+
+void S_StopSound(int origin_id, int channel)
+{
+	GSoundDevice->StopSound(origin_id, channel);
+}
+
+//==========================================================================
+//
+//	S_StopAllSound
+//
+//==========================================================================
+
+void S_StopAllSound(void)
+{
+	GSoundDevice->StopAllSound();
+}
+
+//==========================================================================
+//
+//	S_GetSoundPlayingInfo
+//
+//==========================================================================
+
+boolean S_GetSoundPlayingInfo(int origin_id, int sound_id)
+{
+	return GSoundDevice->IsSoundPlaying(origin_id, sound_id);
 }
 
 //==========================================================================
@@ -221,7 +307,7 @@ void S_UpdateSounds(void)
 	// Update any Sequences
 	SN_UpdateActiveSequences();
 
-	S_UpdateSfx();
+	GSoundDevice->Tick(host_frametime);
 	S_UpdateMusic();
 	CD_Update();
 	unguard;
@@ -230,9 +316,12 @@ void S_UpdateSounds(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/07/20 14:49:41  dj_jl
+//	Implemented sound drivers.
+//
 //	Revision 1.5  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
-//
+//	
 //	Revision 1.4  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

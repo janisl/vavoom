@@ -52,21 +52,41 @@ struct sfxinfo_t
 	int		usecount;
 };
 
+//
+//	VSoundDevice
+//
+//	Sound device interface. This class implements dummy driver.
+//
+class VSoundDevice:public VSubsystem
+{
+	DECLARE_CLASS(VSoundDevice, VSubsystem, 0);
+	NO_DEFAULT_CONSTRUCTOR(VSoundDevice);
+
+	//	VSoundDevice interface.
+	virtual void Init(void)
+	{}
+	virtual void Shutdown(void)
+	{}
+	virtual void PlaySound(int, const TVec &, const TVec &, int, int, float)
+	{}
+	virtual void PlaySoundTillDone(char *)
+	{}
+	virtual void StopSound(int, int)
+	{}
+	virtual void StopAllSound(void)
+	{}
+	virtual bool IsSoundPlaying(int, int)
+	{ return false; }
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 //
 //	Data
 //
 void S_InitScript(void);
-void S_LoadSound(int sound_id);
+bool S_LoadSound(int sound_id);
 void S_DoneWithLump(int sound_id);
-
-//
-//  SFX I/O
-//
-void S_InitSfx(void);
-void S_UpdateSfx(void);
-void S_ShutdownSfx(void);
 
 //
 //  MUSIC I/O
@@ -81,6 +101,11 @@ void S_ShutdownMusic(void);
 void CD_Init(void);
 void CD_Update(void);
 void CD_Shutdown(void);
+
+//
+//	EAX utilites
+//
+float EAX_CalcEnvSize(void);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
@@ -99,10 +124,13 @@ extern TCvarI		swap_stereo;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/07/20 14:49:41  dj_jl
+//	Implemented sound drivers.
+//
 //	Revision 1.6  2002/01/11 08:11:05  dj_jl
 //	Changes in sound list
 //	Added guard macros
-//
+//	
 //	Revision 1.5  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

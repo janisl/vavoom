@@ -49,10 +49,27 @@ struct channel_t
 	TVec		velocity;
 	int			sound_id;
 	int			priority;
-	int			volume;
+	float		volume;
 
 	SAMPLE		spl;
 	int			voice;
+};
+
+class VDefaultSoundDevice:public VSoundDevice
+{
+	DECLARE_CLASS(VDefaultSoundDevice, VSoundDevice, 0);
+	NO_DEFAULT_CONSTRUCTOR(VDefaultSoundDevice);
+
+	void Tick(float DeltaTime);
+
+	void Init(void);
+	void Shutdown(void);
+	void PlaySound(int sound_id, const TVec &origin, const TVec &velocity,
+		int origin_id, int channel, float volume);
+	void PlaySoundTillDone(char *sound);
+	void StopSound(int origin_id, int channel);
+	void StopAllSound(void);
+	bool IsSoundPlaying(int origin_id, int sound_id);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -66,6 +83,8 @@ static void StopChannel(int chan_num);
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
+
+IMPLEMENT_CLASS(VDefaultSoundDevice);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -86,15 +105,15 @@ static TVec			listener_up;
 
 //==========================================================================
 //
-//  S_InitSfx
+//  VDefaultSoundDevice::Init
 //
 // 	Inits sound
 //
 //==========================================================================
 
-void S_InitSfx(void)
+void VDefaultSoundDevice::Init(void)
 {
-	guard(S_InitSfx);
+	guard(VDefaultSoundDevice::Init);
 	int		sound_card;
     int		music_card;
 	int		i;
@@ -134,13 +153,13 @@ void S_InitSfx(void)
 
 //==========================================================================
 //
-//	S_ShutdownSfx
+//	VDefaultSoundDevice::Shutdown
 //
 //==========================================================================
 
-void S_ShutdownSfx(void)
+void VDefaultSoundDevice::Shutdown(void)
 {
-	guard(S_ShutdownSfx);
+	guard(VDefaultSoundDevice::Shutdown);
 	remove_sound();
 	unguard;
 }
@@ -263,9 +282,9 @@ static int CalcPriority(int sound_id, int dist)
 //
 //==========================================================================
 
-static int CalcVol(int volume, int dist)
+static int CalcVol(float volume, int dist)
 {
-	return (SoundCurve[dist] * volume) >> 6;
+	return int(SoundCurve[dist] * 2 * volume);
 }
 
 //==========================================================================
@@ -312,17 +331,17 @@ static int CalcPitch(int freq, int sound_id)
 
 //==========================================================================
 //
-//	S_StartSound
+//	VDefaultSoundDevice::PlaySound
 //
 // 	This function adds a sound to the list of currently active sounds, which
 // is maintained as a given number of internal channels.
 //
 //==========================================================================
 
-void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
-	int origin_id, int channel, int volume)
+void VDefaultSoundDevice::PlaySound(int sound_id, const TVec &origin,
+	const TVec &velocity, int origin_id, int channel, float volume)
 {
-	guard(S_StartSound);
+	guard(VDefaultSoundDevice::PlaySound);
 	SAMPLE*		spl;
 	int 		dist;
 	int 		priority;
@@ -360,7 +379,11 @@ void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
 		Sys_Error("I_StartSound: Previous sound not stoped");
     }
 
-	S_LoadSound(sound_id);
+	if (!S_LoadSound(sound_id))
+	{
+		//	Missing sound.
+		return;
+	}
 
 	//	Converts raw 11khz, 8-bit data to a SAMPLE* that allegro uses.
 	spl = &Channel[chan].spl;
@@ -410,13 +433,13 @@ void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
 
 //==========================================================================
 //
-//	S_PlayTillDone
+//	VDefaultSoundDevice::PlaySoundTillDone
 //
 //==========================================================================
 
-void S_PlayTillDone(char *sound)
+void VDefaultSoundDevice::PlaySoundTillDone(char *sound)
 {
-	guard(S_PlayTillDone);
+	guard(VDefaultSoundDevice::PlaySoundTillDone);
     int			sound_id;
 	double		start;
 	SAMPLE		spl;
@@ -431,7 +454,11 @@ void S_PlayTillDone(char *sound)
 	//	All sounds must be stoped
 	S_StopAllSound();
 
-	S_LoadSound(sound_id);
+	if (!S_LoadSound(sound_id))
+	{
+		//	Missing sound.
+		return;
+	}
 
 	//	Converts raw 11khz, 8-bit data to a SAMPLE* that allegro uses.
 	spl.bits 		= 8;
@@ -478,16 +505,16 @@ void S_PlayTillDone(char *sound)
 
 //==========================================================================
 //
-//  S_UpdateSfx
+//  VDefaultSoundDevice::Tick
 //
 // 	Update the sound parameters. Used to control volume, pan, and pitch
 // changes such as when a player turns.
 //
 //==========================================================================
 
-void S_UpdateSfx(void)
+void VDefaultSoundDevice::Tick(float DeltaTime)
 {
-	guard(S_UpdateSfx);
+	guard(VDefaultSoundDevice::Tick);
 	int 		i;
 	int			dist;
 	int			vol;
@@ -547,6 +574,9 @@ void S_UpdateSfx(void)
 			continue;
 		}
 
+		//	Move sound
+		Channel[i].origin += Channel[i].velocity * DeltaTime;
+
 		dist = CalcDist(Channel[i].origin);
 		if (dist >= MAX_SND_DIST)
 		{
@@ -591,13 +621,13 @@ static void StopChannel(int chan_num)
 
 //==========================================================================
 //
-//	S_StopSound
+//	VDefaultSoundDevice::StopSound
 //
 //==========================================================================
 
-void S_StopSound(int origin_id, int channel)
+void VDefaultSoundDevice::StopSound(int origin_id, int channel)
 {
-	guard(S_StopSound);
+	guard(VDefaultSoundDevice::StopSound);
 	int i;
 
     for (i = 0; i < snd_Channels; i++)
@@ -613,13 +643,13 @@ void S_StopSound(int origin_id, int channel)
 
 //==========================================================================
 //
-// S_StopAllSound
+//	VDefaultSoundDevice::StopAllSound
 //
 //==========================================================================
 
-void S_StopAllSound(void)
+void VDefaultSoundDevice::StopAllSound(void)
 {
-	guard(S_StopAllSound);
+	guard(VDefaultSoundDevice::StopAllSound);
 	int i;
 
 	//	stop all sounds
@@ -632,13 +662,13 @@ void S_StopAllSound(void)
 
 //==========================================================================
 //
-// S_GetSoundPlayingInfo
+//	VDefaultSoundDevice::IsSoundPlaying
 //
 //==========================================================================
 
-boolean S_GetSoundPlayingInfo(int origin_id, int sound_id)
+bool VDefaultSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 {
-	guard(S_GetSoundPlayingInfo);
+	guard(VDefaultSoundDevice::IsSoundPlaying);
 	int i;
 
 	for (i = 0; i < snd_Channels; i++)
@@ -660,9 +690,12 @@ boolean S_GetSoundPlayingInfo(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/07/20 14:49:41  dj_jl
+//	Implemented sound drivers.
+//
 //	Revision 1.8  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
-//
+//	
 //	Revision 1.7  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

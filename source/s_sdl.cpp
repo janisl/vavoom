@@ -46,10 +46,27 @@ struct channel_t
 	TVec		velocity;
 	int			sound_id;
 	int			priority;
-	int			volume;
+	float		volume;
 
 	Mix_Chunk	*chunk;
 	int			voice;
+};
+
+class VDefaultSoundDevice:public VSoundDevice
+{
+	DECLARE_CLASS(VDefaultSoundDevice, VSoundDevice, 0);
+	NO_DEFAULT_CONSTRUCTOR(VDefaultSoundDevice);
+
+	void Tick(float DeltaTime);
+
+	void Init(void);
+	void Shutdown(void);
+	void PlaySound(int sound_id, const TVec &origin, const TVec &velocity,
+		int origin_id, int channel, float volume);
+	void PlaySoundTillDone(char *sound);
+	void StopSound(int origin_id, int channel);
+	void StopAllSound(void);
+	bool IsSoundPlaying(int origin_id, int sound_id);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -61,6 +78,8 @@ struct channel_t
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
+
+IMPLEMENT_CLASS(VDefaultSoundDevice);
 
 static TCvarI mix_frequency		("mix_frequency", "22050", CVAR_ARCHIVE);
 static TCvarI mix_bits			("mix_bits",      "16",    CVAR_ARCHIVE);
@@ -216,9 +235,9 @@ static int GetChannel(int sound_id, int origin_id, int channel, int priority)
 	return -1;
 }
 
-static int CalcVol(int volume, int dist)
+static int CalcVol(float volume, int dist)
 {
-	return (SoundCurve[dist] * volume) >> 7;
+	return int(SoundCurve[dist] * volume);
 }
 
 static int CalcSep(const TVec &origin)
@@ -255,15 +274,15 @@ static int CalcPitch(int freq, int sound_id)
 
 //==========================================================================
 //
-//  S_InitSfx
+//  VDefaultSoundDevice::Init
 //
 // 	Inits sound
 //
 //==========================================================================
 
-void S_InitSfx(void)
+void VDefaultSoundDevice::Init(void)
 {
-	guard(S_InitSfx);
+	guard(VDefaultSoundDevice::Init);
 	int i;
 	int    freq;
 	Uint16 fmt;
@@ -332,13 +351,13 @@ void S_InitSfx(void)
 
 //==========================================================================
 //
-//	S_ShutdownSfx
+//	VDefaultSoundDevice::Shutdown
 //
 //==========================================================================
 
-void S_ShutdownSfx(void)
+void VDefaultSoundDevice::Shutdown(void)
 {
-	guard(S_ShutdownSfx);
+	guard(VDefaultSoundDevice::Shutdown);
 	if (sound)
 	{
 		Mix_CloseAudio();
@@ -350,17 +369,17 @@ void S_ShutdownSfx(void)
 
 //==========================================================================
 //
-//	S_StartSound
+//	VDefaultSoundDevice::PlaySound
 //
 // 	This function adds a sound to the list of currently active sounds, which
 // is maintained as a given number of internal channels.
 //
 //==========================================================================
 
-void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
-		  int origin_id, int channel, int volume)
+void VDefaultSoundDevice::PlaySound(int sound_id, const TVec &origin,
+	const TVec &velocity, int origin_id, int channel, float volume)
 {
-	guard(S_StartSound);
+	guard(VDefaultSoundDevice::PlaySound);
 	Mix_Chunk *chunk;
 	int dist;
 	int priority;
@@ -398,7 +417,11 @@ void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
 		Sys_Error("I_StartSound: Previous sound not stoped");
 	}
 
-	S_LoadSound(sound_id);
+	if (!S_LoadSound(sound_id))
+	{
+		//	Missing sound.
+		return;
+	}
 
 	// copy the lump to a SDL_Mixer chunk...
 	chunk = Mix_LoadRAW_RW(SDL_RWFromMem((void*)S_sfx[sound_id].data, 
@@ -440,13 +463,13 @@ void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
 
 //==========================================================================
 //
-//	S_PlayTillDone
+//	VDefaultSoundDevice::PlaySoundTillDone
 //
 //==========================================================================
 
-void S_PlayTillDone(char *sound)
+void VDefaultSoundDevice::PlaySoundTillDone(char *sound)
 {
-	guard(S_PlayTillDone);
+	guard(VDefaultSoundDevice::PlaySoundTillDone);
 	int    sound_id;
 	double start;
 	int    voice;
@@ -461,7 +484,11 @@ void S_PlayTillDone(char *sound)
 	//	All sounds must be stoped
 	S_StopAllSound();
 
-	S_LoadSound(sound_id);
+	if (!S_LoadSound(sound_id))
+	{
+		//	Missing sound.
+		return;
+	}
 
 	chunk = Mix_LoadRAW_RW(SDL_RWFromMem((void*)S_sfx[sound_id].data,
 		S_sfx[sound_id].len), 0, S_sfx[sound_id].freq, AUDIO_U8, 1);
@@ -499,20 +526,20 @@ void S_PlayTillDone(char *sound)
 
 //==========================================================================
 //
-//  S_UpdateSfx
+//  VDefaultSoundDevice::Tick
 //
 // 	Update the sound parameters. Used to control volume and pan
 // changes such as when a player turns.
 //
 //==========================================================================
 
-void S_UpdateSfx(void)
+void VDefaultSoundDevice::Tick(float DeltaTime)
 {
-	guard(S_UpdateSfx);
-	int i;
-	int dist;
-	int vol;
-	int sep;
+	guard(VDefaultSoundDevice::Tick);
+	int		i;
+	int		dist;
+	int		vol;
+	int		sep;
 
 	if (sfx_volume < 0)
 	{
@@ -568,6 +595,9 @@ void S_UpdateSfx(void)
 			continue;
 		}
 
+		//	Move sound
+		Channel[i].origin += Channel[i].velocity * DeltaTime;
+
 		dist = CalcDist(channels[i].origin);
 		if (dist >= MAX_SND_DIST)
 		{
@@ -590,13 +620,13 @@ void S_UpdateSfx(void)
 
 //==========================================================================
 //
-//	S_StopSound
+//	VDefaultSoundDevice::StopSound
 //
 //==========================================================================
 
-void S_StopSound(int origin_id, int channel)
+void VDefaultSoundDevice::StopSound(int origin_id, int channel)
 {
-	guard(S_StopSound);
+	guard(VDefaultSoundDevice::StopSound);
 	int i;
 
 	for (i = 0; i < mix_voices; i++)
@@ -612,13 +642,13 @@ void S_StopSound(int origin_id, int channel)
 
 //==========================================================================
 //
-// S_StopAllSound
+//	VDefaultSoundDevice::StopAllSound
 //
 //==========================================================================
 
-void S_StopAllSound(void)
+void VDefaultSoundDevice::StopAllSound(void)
 {
-	guard(S_StopAllSound);
+	guard(VDefaultSoundDevice::StopAllSound);
 	int i;
 
 	//	stop all sounds
@@ -631,13 +661,13 @@ void S_StopAllSound(void)
 
 //==========================================================================
 //
-// S_GetSoundPlayingInfo
+//	VDefaultSoundDevice::IsSoundPlaying
 //
 //==========================================================================
 
-boolean S_GetSoundPlayingInfo(int origin_id, int sound_id)
+bool VDefaultSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 {
-	guard(S_GetSoundPlayingInfo);
+	guard(VDefaultSoundDevice::IsSoundPlaying);
 	int i;
 
 	for (i = 0; i < mix_voices; i++)
@@ -659,9 +689,12 @@ boolean S_GetSoundPlayingInfo(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2002/07/20 14:49:41  dj_jl
+//	Implemented sound drivers.
+//
 //	Revision 1.3  2002/01/21 18:27:48  dj_jl
 //	Fixed volume
-//
+//	
 //	Revision 1.2  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	
