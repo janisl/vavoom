@@ -57,10 +57,17 @@
 //	Extensions
 //
 
-#if !GL_ARB_multitexture
+#ifndef GL_ARB_multitexture
 
 #define GL_TEXTURE0_ARB						0x84c0
 #define GL_TEXTURE1_ARB						0x84c1
+
+#endif
+
+#ifndef GL_EXT_texture_filter_anisotropic
+
+#define GL_TEXTURE_MAX_ANISOTROPY_EXT		0x84FE
+#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT	0x84FF
 
 #endif
 
@@ -242,9 +249,12 @@ class TOpenGLDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/08/31 17:25:38  dj_jl
+//	Anisotropy filtering
+//
 //	Revision 1.9  2001/08/23 17:51:12  dj_jl
 //	My own mipmap creation code, glu not used anymore
-//
+//	
 //	Revision 1.8  2001/08/21 17:47:51  dj_jl
 //	Localized GL/glu.h
 //	

@@ -58,7 +58,7 @@ static TOpenGLDrawer	OpenGLDrawer;
 //==========================================================================
 
 TOpenGLDrawer::TOpenGLDrawer(void) :
-	tex_linear("gl_tex_linear", "1", CVAR_ARCHIVE),
+	tex_linear("gl_tex_linear", "2", CVAR_ARCHIVE),
 	clear("gl_clear", "0", CVAR_ARCHIVE)
 {
 	_OpenGLDrawer = this;
@@ -106,6 +106,15 @@ void TOpenGLDrawer::InitResolution(void)
 			con << "Symbol not found, disabled.\n";
 			mtexable = false;
 		}
+	}
+	if (CheckExtension("GL_EXT_texture_filter_anisotropic"))
+	{
+		GLfloat		max_anisotropy;
+
+		con << "Found GL_EXT_texture_filter_anisotropic...\n";
+
+		glGetFloatv(GLenum(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT), &max_anisotropy);
+		glTexParameterfv(GL_TEXTURE_2D, GLenum(GL_TEXTURE_MAX_ANISOTROPY_EXT), &max_anisotropy);
 	}
 
 	glClearColor(0.0, 0.0, 0.0, 0.0);	// Black Background
@@ -178,11 +187,11 @@ void TOpenGLDrawer::Setup2D(void)
 	glViewport(0, 0, ScreenWidth, ScreenHeight);
 
 	glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
+	glLoadIdentity();
 	glOrtho(0, ScreenWidth, ScreenHeight, 0, -99999, 99999);
 
 	glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+	glLoadIdentity();
 
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
 
@@ -375,9 +384,12 @@ void TOpenGLDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/08/31 17:25:38  dj_jl
+//	Anisotropy filtering
+//
 //	Revision 1.7  2001/08/23 17:50:15  dj_jl
 //	Texture filtering mode set in globals
-//
+//	
 //	Revision 1.6  2001/08/15 17:15:55  dj_jl
 //	Drawer API changes, removed wipes
 //	

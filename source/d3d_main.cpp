@@ -56,7 +56,7 @@ static TDirect3DDrawer		Direct3DDrawer;
 TDirect3DDrawer::TDirect3DDrawer(void) :
 	device("d3d_device", "0", CVAR_ARCHIVE),
 	clear("d3d_clear", "0", CVAR_ARCHIVE),
-	tex_linear("d3d_tex_linear", "1", CVAR_ARCHIVE),
+	tex_linear("d3d_tex_linear", "2", CVAR_ARCHIVE),
 	dither("d3d_dither", "0", CVAR_ARCHIVE),
 	IdentityMatrix(	1, 0, 0, 0,
 					0, 1, 0, 0,
@@ -325,15 +325,15 @@ bool TDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
 	ddsd.dwSize = sizeof(ddsd);
 	ddsd.dwFlags = DDSD_WIDTH | DDSD_HEIGHT | DDSD_CAPS;
 	ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_3DDEVICE | SurfaceMemFlag;
-    ddsd.dwWidth  = Width;
-    ddsd.dwHeight = Height;
+	ddsd.dwWidth  = Width;
+	ddsd.dwHeight = Height;
  
-    //	Create the back buffer.
+	//	Create the back buffer.
 	if (FAILED(DDraw->CreateSurface(&ddsd, &RenderSurface, NULL)))
 		return false;
 
-    //	Create the z-buffer
-    DDPIXELFORMAT ddpfZBuffer;
+	//	Create the z-buffer
+	DDPIXELFORMAT ddpfZBuffer;
 	memset(&ddpfZBuffer, 0, sizeof(ddpfZBuffer));
 	Direct3D->EnumZBufferFormats(DeviceGUID,
 		EnumZBufferCallback, (VOID*)&ddpfZBuffer);
@@ -353,7 +353,7 @@ bool TDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
 
 	// Create the depth-buffer.
 	if (FAILED(DDraw->CreateSurface(&ddsd, &ZBuffer, NULL)))
-        return false;
+		return false;
 
 	// Attach the z-buffer to the back buffer.
 	if (FAILED(RenderSurface->AddAttachedSurface(ZBuffer)))
@@ -364,7 +364,7 @@ bool TDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
 		RenderSurface, &RenderDevice)))
 	{
 		return false;
-    }
+	}
 
 	D3DDEVICEDESC7	DeviceDesc;
 	RenderDevice->GetCaps(&DeviceDesc);
@@ -384,6 +384,7 @@ bool TDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
 		//	In software actually can be only one texture
 		maxMultiTex = 1;
 	}
+	RenderDevice->SetTextureStageState(0, D3DTSS_MAXANISOTROPY, DeviceDesc.dwMaxAnisotropy);
 
 	memset(&PixelFormat, 0, sizeof(PixelFormat));
 	RenderDevice->EnumTextureFormats(EnumPixelFormatsCallback, &PixelFormat);
@@ -545,7 +546,7 @@ void TDirect3DDrawer::Setup2D(void)
 	view2D.dwHeight = ScreenHeight;
 	view2D.dvMinZ = 0.0f;
 	view2D.dvMaxZ = 1.0f;
-    RenderDevice->SetViewport(&view2D);
+	RenderDevice->SetViewport(&view2D);
 
 	//	Setup projection
 	D3DMATRIX proj2D = IdentityMatrix;
@@ -585,7 +586,7 @@ void TDirect3DDrawer::SetupView(const refdef_t *rd)
 	viewData.dwHeight = rd->height;
 	viewData.dvMinZ = 0;
 	viewData.dvMaxZ = 1;
-    RenderDevice->SetViewport(&viewData);
+	RenderDevice->SetViewport(&viewData);
 
 	//	Setup projection
 	memset(&matProj, 0, sizeof(D3DMATRIX));
@@ -594,8 +595,8 @@ void TDirect3DDrawer::SetupView(const refdef_t *rd)
 	float zFar = 8192.0;
 	float zNear = 1.0;
 	float Q = zFar / (zFar - zNear);
-    matProj(2, 2) = Q;
-    matProj(3, 2) = -Q * zNear;
+	matProj(2, 2) = Q;
+	matProj(3, 2) = -Q * zNear;
 	matProj(2, 3) = 1;
 	RenderDevice->SetTransform(D3DTRANSFORMSTATE_PROJECTION, &matProj);
 
@@ -789,9 +790,12 @@ void TDirect3DDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/08/31 17:25:38  dj_jl
+//	Anisotropy filtering
+//
 //	Revision 1.9  2001/08/29 17:47:55  dj_jl
 //	Added texture filtering variables
-//
+//	
 //	Revision 1.8  2001/08/24 17:03:57  dj_jl
 //	Added mipmapping, removed bumpmap test code
 //	
