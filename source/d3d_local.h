@@ -137,8 +137,8 @@ class TDirect3DDrawer : public TDrawer
 	int ToPowerOf2(int);
 	LPDIRECTDRAWSURFACE7 CreateSurface(int, int, int);
 	word *LockSurface(LPDIRECTDRAWSURFACE7);
-	void DrawColumnInCache(column_t*, word*, int, int, int, int);
-	void GenerateTexture(int);
+	void DrawColumnInCache(column_t*, rgba_t*, int, int, int, int, bool);
+	void GenerateTexture(int, bool);
 	void GenerateFlat(int);
 	void GenerateSprite(int);
 	void GenerateTranslatedSprite(int, int, int);
@@ -146,6 +146,11 @@ class TDirect3DDrawer : public TDrawer
 	void GeneratePicFromPatch(int);
 	void GeneratePicFromRaw(int);
 	void SetSkin(const char*);
+	LPDIRECTDRAWSURFACE7 UploadTextureImage(int, int, rgba_t*);
+	void ResampleTexture(int, int, const byte*, int, int, byte*);
+	void MipMap(int, int, byte*);
+	LPDIRECTDRAWSURFACE7 UploadTexture(int, int, rgba_t*);
+	LPDIRECTDRAWSURFACE7 UploadTextureNoMip(int, int, rgba_t*);
 
 	void FlushCaches(bool);
 	surfcache_t	*AllocBlock(int width, int height);
@@ -154,6 +159,13 @@ class TDirect3DDrawer : public TDrawer
 	word MakeCol16(byte r, byte g, byte b)
 	{
 		return amask |
+			((r >> (8 - rbits)) << rshift) |
+			((g >> (8 - gbits)) << gshift) |
+			((b >> (8 - bbits)) << bshift);
+	}
+	word MakeCol16(byte r, byte g, byte b, byte a)
+	{
+		return ((a << 8) & amask) |
 			((r >> (8 - rbits)) << rshift) |
 			((g >> (8 - gbits)) << gshift) |
 			((b >> (8 - bbits)) << bshift);
@@ -256,9 +268,12 @@ class TDirect3DDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/08/23 17:47:57  dj_jl
+//	Started work on mipmapping
+//
 //	Revision 1.7  2001/08/15 17:15:55  dj_jl
 //	Drawer API changes, removed wipes
-//
+//	
 //	Revision 1.6  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
 //	

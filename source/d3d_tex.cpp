@@ -194,14 +194,14 @@ void TDirect3DDrawer::ReleaseTextures(void)
 //
 //==========================================================================
 
-void TDirect3DDrawer::DrawColumnInCache(column_t* column, word* cache,
-	int originx, int originy, int cachewidth, int cacheheight)
+void TDirect3DDrawer::DrawColumnInCache(column_t* column, rgba_t* cache,
+	int originx, int originy, int cachewidth, int cacheheight, bool dsky)
 {
     int		count;
     int		position;
 	byte*	source;
-	word*	dest;
-	
+	rgba_t*	dest;
+
 	// step through the posts in a column
     while (column->topdelta != 0xff)
     {
@@ -224,7 +224,7 @@ void TDirect3DDrawer::DrawColumnInCache(column_t* column, word* cache,
 
     	while (count-- > 0)
     	{
-			*dest = pal8_to16[*source];
+			*dest = r_palette[0][*source || dsky ? *source : r_black_color[0]];
 			source++;
 			dest += cachewidth;
     	}
@@ -242,9 +242,9 @@ void TDirect3DDrawer::DrawColumnInCache(column_t* column, word* cache,
 //
 //==========================================================================
 
-void TDirect3DDrawer::GenerateTexture(int texnum)
+void TDirect3DDrawer::GenerateTexture(int texnum, bool dsky)
 {
-    word*			block;
+    rgba_t*			block;
     texdef_t*		texture;
     texpatch_t*		patch;	
     patch_t*		realpatch;
@@ -253,55 +253,13 @@ void TDirect3DDrawer::GenerateTexture(int texnum)
     int				x2;
     int				i;
     column_t*		patchcol;
-	int				wtimes;
-	int				htimes;
-	int				texture_width;
-	int				workw;
-	int				workh;
 
     texture = textures[texnum];
 
-	texture_width = texture->width;
-	if (texture_width > 256)
-	{
-		cond << "JL in trouble - texture " << texture->name
-			<< " haves width " << texture_width << " greater than 256\n";
-		texture_width = 256;
-	}
-	if (texture_width & (texture_width - 1))
-	{
-		//	This will happen only with Doom's dummy texture
-		con << "Texture width is not a power of 2\n";
-		texture_width = 16;
-	}
-	workw = texture_width;
-	if (texture->height & (texture->height - 1))
-	{
-		//	Texture height is not a power of 2, use 256
-		workh = 256;
-	}
-	else
-	{
-		workh = texture->height;
-	}
-	if (square_textures)
-	{
-		workw = workh = MAX(workw, workh);
-	}
-
-	textureiw[texnum] = 1.0 / (float)workw;
-	textureih[texnum] = 1.0 / (float)workh;
-	texturedata[texnum] = CreateSurface(workw, workh, 16);
-	if (!texturedata[texnum])
-		return;
-	block = LockSurface(texturedata[texnum]);
-	memset(block, 0, workw * workh * 2);
+	block = (rgba_t*)Z_Calloc(texture->width * texture->height * 4);
 
     // Composite the columns together.
     patch = texture->patches;
-
-	wtimes = workw / texture_width;
-	htimes = workh / texture->height;
 
     for (i = 0; i < texture->patchcount; i++, patch++)
     {
@@ -314,26 +272,22 @@ void TDirect3DDrawer::GenerateTexture(int texnum)
 		else
 	    	x = x1;
 	
-		if (x2 > texture_width)
-	    	x2 = texture_width;
+		if (x2 > texture->width)
+	    	x2 = texture->width;
 
 		for ( ; x < x2; x++)
 		{
 	    	patchcol = (column_t *)((byte *)realpatch
 				    + LittleLong(realpatch->columnofs[x - x1]));
-			for (int ht = 0; ht < htimes; ht++)
-			{
-				for (int wt = 0; wt < wtimes; wt++)
-				{
-			    	DrawColumnInCache(patchcol, block + wt * texture_width +
-			    		ht * texture->height * workw, x, patch->originy,
-			    		workw, texture->height);
-				}
-			}
+	    	DrawColumnInCache(patchcol, block, x, patch->originy,
+	    		texture->width, texture->height, dsky);
 		}
     }
 
-	texturedata[texnum]->Unlock(NULL);
+	textureiw[texnum] = 1.0 / (float)texture->width;
+	textureih[texnum] = 1.0 / (float)texture->height;
+	texturedata[texnum] = UploadTexture(texture->width, texture->height, block);
+	Z_Free(block);
 }
 
 //==========================================================================
@@ -357,10 +311,12 @@ void TDirect3DDrawer::SetTexture(int tex)
 
 	tex = R_TextureAnimation(tex);
 
-    if (!texturedata[tex])
-		GenerateTexture(tex);
+	if (!texturedata[tex])
+	{
+		GenerateTexture(tex, false);
+	}
 
-    RenderDevice->SetTexture(0, texturedata[tex]);
+	RenderDevice->SetTexture(0, texturedata[tex]);
 	tex_iw = textureiw[tex];
 	tex_ih = textureih[tex];
 }
@@ -374,19 +330,20 @@ void TDirect3DDrawer::SetTexture(int tex)
 void TDirect3DDrawer::SetSkyTexture(int tex, bool double_sky)
 {
 	if (!RenderDevice)
+	{
 		return;
+	}
 
-	word saved;
-	if (double_sky)
+	tex = R_TextureAnimation(tex);
+
+	if (!texturedata[tex])
 	{
-		saved = pal8_to16[0];
-		pal8_to16[0] = 0;
+		GenerateTexture(tex, double_sky);
 	}
-	SetTexture(tex);
-	if (double_sky)
-	{
-		pal8_to16[0] = saved;
-	}
+
+	RenderDevice->SetTexture(0, texturedata[tex]);
+	tex_iw = textureiw[tex];
+	tex_ih = textureih[tex];
 }
 
 //==========================================================================
@@ -858,12 +815,329 @@ void TDirect3DDrawer::SetSkin(const char *name)
 	RenderDevice->SetTexture(0, skin_data[avail]);
 }
 
+//==========================================================================
+//
+//	TDirect3DDrawer::UploadTextureImage
+//
+//==========================================================================
+
+LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureImage(int width,
+	int height, rgba_t *data)
+{
+	LPDIRECTDRAWSURFACE7 surf = CreateSurface(width, height, 16);
+	if (!surf)
+		return NULL;
+
+	word *block = LockSurface(surf);
+	rgba_t *in = data;
+	word *out = block;
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++, in++, out++)
+		{
+			*out = MakeCol16(in->r, in->g, in->b, in->a);
+		}
+	}
+	surf->Unlock(NULL);
+	return surf;
+}
+
+//==========================================================================
+//
+//	TDirect3DDrawer::ResampleTexture
+//
+//	Resizes	texture.
+//	This is a simplified version of gluScaleImage from sources of MESA 3.0
+//
+//==========================================================================
+
+void TDirect3DDrawer::ResampleTexture(int widthin, int heightin,
+	const byte *datain, int widthout, int heightout, byte *dataout)
+{
+	int i, j, k;
+
+//#define POINT_SAMPLE
+#ifdef POINT_SAMPLE
+	for (i = 0; i < heightout; i++)
+	{
+		int ii = int(i * sy);
+		for (j = 0; j < widthout; j++)
+		{
+			int jj = int(j * sx);
+
+			const byte *src = datain + (ii * widthin + jj) * 4;
+			byte *dst = dataout + (i * widthout + j) * 4;
+
+			for (k = 0; k < 4; k++)
+			{
+				*dst++ = *src++;
+			}
+		}
+	}
+#else
+	float sx, sy;
+
+	if (widthout > 1)
+		sx = float(widthin - 1) / float(widthout - 1);
+	else
+		sx = float(widthin - 1);
+	if (heightout > 1)
+		sy = float(heightin - 1) / float(heightout - 1);
+	else
+		sy = float(heightin - 1);
+
+	if (sx < 1.0 && sy < 1.0)
+	{
+		/* magnify both width and height:  use weighted sample of 4 pixels */
+		int i0, i1, j0, j1;
+		float alpha, beta;
+		const byte *src00, *src01, *src10, *src11;
+		float s1, s2;
+		byte *dst;
+
+		for (i = 0; i < heightout; i++)
+		{
+			i0 = int(i * sy);
+			i1 = i0 + 1;
+			if (i1 >= heightin) i1 = heightin-1;
+			alpha = i * sy - i0;
+			for (j = 0; j < widthout; j++)
+			{
+				j0 = int(j * sx);
+				j1 = j0 + 1;
+				if (j1 >= widthin) j1 = widthin-1;
+				beta = j * sx - j0;
+
+				/* compute weighted average of pixels in rect (i0,j0)-(i1,j1) */
+				src00 = datain + (i0 * widthin + j0) * 4;
+				src01 = datain + (i0 * widthin + j1) * 4;
+				src10 = datain + (i1 * widthin + j0) * 4;
+				src11 = datain + (i1 * widthin + j1) * 4;
+
+				dst = dataout + (i * widthout + j) * 4;
+
+				for (k = 0; k < 4; k++)
+				{
+					s1 = *src00++ * (1.0-beta) + *src01++ * beta;
+					s2 = *src10++ * (1.0-beta) + *src11++ * beta;
+					*dst++ = byte(s1 * (1.0-alpha) + s2 * alpha);
+				}
+			}
+		}
+	}
+	else
+	{
+		/* shrink width and/or height:  use an unweighted box filter */
+		int i0, i1;
+		int j0, j1;
+		int ii, jj;
+		int sum;
+		byte *dst;
+
+		for (i = 0; i < heightout; i++)
+		{
+			i0 = int(i * sy);
+			i1 = i0 + 1;
+			if (i1 >= heightin) i1 = heightin-1;
+			for (j = 0; j < widthout; j++)
+			{
+				j0 = int(j * sx);
+				j1 = j0 + 1;
+				if (j1 >= widthin) j1 = widthin-1;
+
+				dst = dataout + (i * widthout + j) * 4;
+
+				/* compute average of pixels in the rectangle (i0,j0)-(i1,j1) */
+				for (k = 0; k < 4; k++)
+				{
+					sum = 0;
+					for (ii = i0; ii <= i1; ii++)
+					{
+						for (jj = j0; jj <= j1; jj++)
+						{
+							sum += *(datain + (ii * widthin + jj) * 4 + k);
+						}
+					}
+					sum /= (j1-j0+1) * (i1-i0+1);
+					*dst++ = sum;
+				}
+			}
+		}
+	}
+#endif
+}
+
+//==========================================================================
+//
+//	TDirect3DDrawer::MipMap
+//
+//	Scales image down for next mipmap level, operates in place
+//
+//==========================================================================
+
+void TDirect3DDrawer::MipMap(int width, int height, byte *in)
+{
+	int		i, j;
+	byte	*out = in;
+
+	if (width == 1 || height == 1)
+	{
+		//	Special case when only one dimension is scaled
+		int total = width * height / 2;
+		for (i = 0; i < total; i++, in += 8, out += 4)
+		{
+			out[0] = (in[0] + in[4]) >> 1;
+			out[1] = (in[1] + in[5]) >> 1;
+			out[2] = (in[2] + in[6]) >> 1;
+			out[3] = (in[3] + in[7]) >> 1;
+		}
+		return;
+	}
+
+	//	Scale down in both dimensions
+	width <<= 2;
+	height >>= 1;
+	for (i = 0; i < height; i++, in += width)
+	{
+		for (j = 0; j < width; j += 8, in += 8, out += 4)
+		{
+			out[0] = (in[0] + in[4] + in[width + 0] + in[width + 4]) >> 2;
+			out[1] = (in[1] + in[5] + in[width + 1] + in[width + 5]) >> 2;
+			out[2] = (in[2] + in[6] + in[width + 2] + in[width + 6]) >> 2;
+			out[3] = (in[3] + in[7] + in[width + 3] + in[width + 7]) >> 2;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	TDirect3DDrawer::UploadTexture
+//
+//==========================================================================
+
+LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTexture(int width, int height, rgba_t *data)
+{
+	int		w, h;
+	byte	*image;
+	int		level;
+	byte	stackbuf[256 * 128 * 4];
+	LPDIRECTDRAWSURFACE7	surf;
+
+	w = ToPowerOf2(width);
+	if (w > maxTexSize)
+	{
+		w = maxTexSize;
+	}
+	h = ToPowerOf2(height);
+	if (h > maxTexSize)
+	{
+		h = maxTexSize;
+	}
+	if (square_textures)
+	{
+		w = h = MAX(w, h);
+	}
+
+	if (w * h * 4 <= int(sizeof(stackbuf)))
+	{
+		image = stackbuf;
+	}
+	else
+	{
+		image = (byte*)Z_Malloc(w * h * 4, PU_HIGH, 0);
+	}
+	if (w != width || h != height)
+	{
+		/* must rescale image to get "top" mipmap texture image */
+		ResampleTexture(width, height, (byte*)data, w, h, image);
+	}
+	else
+	{
+		memcpy(image, data, w * h * 4);
+	}
+	surf = UploadTextureImage(w, h, (rgba_t*)image);
+
+	for (level = 1; w > 1 || h > 1; level++)
+	{
+		MipMap(w, h, image);
+		if (w > 1)
+			w >>= 1;
+		if (h > 1)
+			h >>= 1;
+#if 0
+		UploadTextureImage(w, h, (rgba_t*)image);
+#endif
+	}
+
+	if (image != stackbuf)
+	{
+		Z_Free(image);
+	}
+	return surf;
+}
+
+//==========================================================================
+//
+//	TDirect3DDrawer::UploadTextureNoMip
+//
+//==========================================================================
+
+LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
+{
+	int		w, h;
+	byte	*image;
+	byte	stackbuf[64 * 1024];
+	LPDIRECTDRAWSURFACE7	surf;
+
+	w = ToPowerOf2(width);
+	if (w > maxTexSize)
+	{
+		w = maxTexSize;
+	}
+	h = ToPowerOf2(height);
+	if (h > maxTexSize)
+	{
+		h = maxTexSize;
+	}
+	if (square_textures)
+	{
+		w = h = MAX(w, h);
+	}
+
+	if (w != width || h != height)
+	{
+		/* must rescale image to get "top" mipmap texture image */
+		if (w * h * 4 <= int(sizeof(stackbuf)))
+		{
+			image = stackbuf;
+		}
+		else
+		{
+			image = (byte*)Z_Malloc(w * h * 4, PU_HIGH, 0);
+		}
+		ResampleTexture(width, height, (byte*)data, w, h, image);
+		surf = UploadTextureImage(w, h, (rgba_t*)image);
+		if (image != stackbuf)
+		{
+			Z_Free(image);
+		}
+	}
+	else
+	{
+		surf = UploadTextureImage(w, h, data);
+	}
+	return surf;
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/23 17:47:57  dj_jl
+//	Started work on mipmapping
+//
 //	Revision 1.5  2001/08/21 17:46:08  dj_jl
 //	Added R_TextureAnimation, made SetTexture recognize flats
-//
+//	
 //	Revision 1.4  2001/08/02 17:47:44  dj_jl
 //	Support skins with non-power of 2 dimensions
 //	
