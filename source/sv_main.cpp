@@ -914,7 +914,7 @@ void SV_UpdateLevel(TMessage &msg)
 			cond << "UpdateLevel: secs overflow\n";
 			return;
 		}
-
+		
 		if (i > 255)
 			bits |= SUB_BIG_NUM;
 		msg << (byte)svc_sec_update
@@ -1073,9 +1073,15 @@ void SV_SendNop(player_t *client)
 
 void SV_SendClientDatagram(void)
 {
-	byte		buf[MAX_DATAGRAM];
+	byte		buf[4096];
 	TMessage	msg(buf, MAX_DATAGRAM);
 
+	if (!netgame)
+	{
+		//	HACK!!!!!
+		//	Make a bigger buffer for single player.
+		msg.MaxSize = 4096;
+	}
 	for (int i = 0; i < svs.max_clients; i++)
 	{
 		if (!players[i].bActive)
@@ -1814,6 +1820,35 @@ int SV_FindModel(const char *name)
 	sv_reliable << (byte)svc_model
 				<< (short)i
 				<< name;
+	return i;
+}
+
+//==========================================================================
+//
+//	SV_GetModelIndex
+//
+//==========================================================================
+
+int SV_GetModelIndex(const FName &Name)
+{
+	int i;
+
+	if (Name == NAME_None)
+	{
+		return 0;
+	}
+	for (i = 0; i < nummodels; i++)
+	{
+		if (!stricmp(*Name, models[i]))
+		{
+			return i;
+		}
+	}
+	strcpy(models[i], *Name);
+	nummodels++;
+	sv_reliable << (byte)svc_model
+				<< (short)i
+				<< *Name;
 	return i;
 }
 
@@ -2701,9 +2736,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.41  2002/03/28 18:03:24  dj_jl
+//	Hack for single player, added SV_GetModelIndex
+//
 //	Revision 1.40  2002/03/12 19:21:55  dj_jl
 //	No need for linefeed in client-printing
-//
+//	
 //	Revision 1.39  2002/03/09 18:06:25  dj_jl
 //	Made Entity class and most of it's functions native
 //	
