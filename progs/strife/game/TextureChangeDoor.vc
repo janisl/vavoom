@@ -103,7 +103,6 @@ void Tick(float deltaTime)
 	{
 	case 0:
 		// WAITING
-		print("Top time %d", ftoi(toptime * 35.0));
 		NewMidTexture = 0;
 		switch (ftoi(toptime * 7.0))
 		{
@@ -221,6 +220,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/10/18 06:36:11  dj_jl
+//  Beautification.
+//
 //  Revision 1.1  2004/10/13 06:41:13  dj_jl
 //  Implemented animated doors.
 //
