@@ -137,7 +137,7 @@ class TDrawer
 	virtual void FillRectWithFlat(int, int, int, int, const char*) = 0;
 	virtual void ShadeRect(int, int, int, int, int) = 0;
 	virtual void DrawConsoleBackground(int) = 0;
-	virtual void DrawSpriteLump(int, int, int, int, boolean) = 0;
+	virtual void DrawSpriteLump(float, float, float, float, int, int, boolean) = 0;
 
 	//	Automap
 	virtual void StartAutomap(void) = 0;
@@ -157,9 +157,12 @@ extern TDrawer			*_Direct3DDrawer;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/01 17:42:22  dj_jl
+//	Fixed sprite lump drawing in player setup menu, beautification
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
