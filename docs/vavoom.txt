@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                    version 1.12
+                                                    version 1.13
 
 Contents:
     0. Disclaimer
@@ -115,7 +115,7 @@ and change into it:
 
   2. Unpack the Vavoom source package:
 
-        unzip v111_src.zip
+        unzip v113_src.zip
 
   3. Run fixunix.sh to convert text files to UNIX format:
 
@@ -202,6 +202,7 @@ For Windows you need:
     in Builder but some headers needed by DirectMusic are missing. In Allogro
     website (http://alleg.sourceforge.net) you will find a minimal version of
     DirectX 7 SDK.
+      * EAX 2.0 SDK (http://developer.soundblaster.com/).
 
   The Makefile-s are for DOS and LINUX, for Windows the makefiles are files
 with extension .mak. For DOS there's also RHIDE project files, for Windows
@@ -264,7 +265,7 @@ understand all clients are dropped.
 *****************************************************************************
 
   All console commands can be specified at command line by prefixing them
-with symbol +, they will be executed after executing jl/startup.vs.
+with symbol +, they will be executed after executing basev/startup.vs.
   Some examples:
     +SetResolution 640 480 16
     +Exec myconfig.cfg
@@ -799,6 +800,14 @@ VavoomC:
  32 bit integer so it's a good idea to group them together.
 * Changed states syntax. Function pointer replaced with state code.
 * Some other changes.
+
+==============================================================================
+Version 1.13
+==============================================================================
+
+* EAX Support.
+* Slighty improved Strife support.
+* A working version of the DDF to VavoomC converter.
 
 *****************************************************************************
 8. Licencing

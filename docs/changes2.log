@@ -913,4 +913,116 @@
   Pñdñjais kas bija palicis no pÆrdñvñjamajiem laukiem - mo player_t struktİrÆ
  tika pÆrdñvñts.
   Tika izlabotas vñl pÆris kõİdas.
+
+******************************************************************************
+                            VERSIJA 1.12
+******************************************************************************
+
+08-04-2002
+  vlumpy pievienoju tga atbalstu un 15 bitu vpic veidoıanu.
+11-04-2002
+  Tick funkcija.
+  TryMove iebİvñta.
+19-04-2002
+  SÆku darbu pie Strife datu tabulu apvienoıanas. Dati tika ienesti makeinfo
+ utilØtÆ.
+20-04-2002
+  SÆku darbu pie skripta. Ir viss nepiecieıamais lai kompilñtu.
+22-04-2002
+  Ieviesti lØdz ıim lietotie stÆvokõu, priekımetu un ska·u vÆrdi.
+  Apvienoti ieroÒi. NekÆdu atıóirØbu.
+23-04-2002
+  Atradu iemeslu problñmai ar klipingu. VienÆdØbai var bİt õoti liela nozØme.
+  SÆku apvienoıanu un sadalØıanu pa failiem. Salaboju pÆrdevñju spraitu krÆsu
+ mai·u. AtdalØti zemnieki.
+24-04-2002
+  Pabeidzu ar zemniekiem, atdalØju pÆrdevñjus, ubagus un rebelus.
+25-04-2002
+  AtdalØti sargi, Macils.
+26-04-2002
+  AtdalØti roboti.
+27-04-2002
+  Visi Strife monstri tÆkÆ bİtu atdalØti.
+29-04-2002
+  Hexen bija sajaukti İdens tipi.
+  SakÆrtota Strife mİzika, ceru ka pareizi.
+  Strife ieviesu Pickup klasi.
+  Simbola virk·u, pareizÆk sakot ofsetu, saglabÆıana.
+02-05-2002
+  S_NULL tiek definñts klasñ Entity.
+  SÆku pÆrkÆrtot Doom objektus. Visi objekti jau ir sadalØti failos.
+03-05-2002
+  Turpinu darbu ar Doom objektiem. VairÆkas kopñjas funkcijas tiek dublñtas.
+ ArØ lØóu stÆvokõi tiek dublñti.
+14-05-2002
+  Doom nebiju nomainØjis PlayerPawn bÆzes klasi uz Pawn, kÆ dñõ spñlñtÆjs
+ nebija noıaujams.
+  SÆku eksperimentñt ar EAX.
+15-05-2002
+  EAX tiek aprñóinÆts telpas izmñrs.
+  SÆku piestrÆdÆt pie DDF atbalsta.
+  PÆrkÆrtoju klases lai nebİtu nepiecieıamØba tÆs iepriekı pieteikt.
+  PÆrdñvñju SpawnState uz IdleState.
+16-05-2002
+  Ar papildus flagiem atbrØvojos no skripta pamatkoda atkarØbas no monstru un
+ citÆm klasñm.
+17-05-2002
+  DDF tiek eksportñti ieroÒi.
+  PiestrÆdÆju pie FArchive klases. Tagad tÆ ir globÆla, var tikt izmantota
+ failu lasØıanai.
+18-05-2002
+  DDF korekti sÆkuma ieroÒi.
+  FArchive tiek izmantots demo ierakstØıanai un lasØıanai.
+  SpeciÆla funkcija spñles pazi·ojumu drukÆıanai, tie vairs nav konsoles
+ pazi·ojumi un var netikt drukÆti konsolñ. Pievienoju klasi FOutputDevice,
+ kurai vajadzñtu aizvietot iostream izveidoıanu.
+21-05-2002
+  DDF ieviestas noklusñtÆs vñrtØbas samazinot izmñrus. Ir gandrØz visi DDF
+ priekımetu parametri.
+24-05-2002
+  Nolñmu sÆkt veidot logu sistñmu.
+25-05-2002
+  Izveodoju primitØvu GC klasi, pÆrnesu menu zØmñıanu caur ıo klasi. PamazÆm
+ veidoju Window klasi, kautkas baigi karÆs un es nevaru saprast kÆpñc.
+27-05-2002
+  Atradu kÆpñc kÆrÆs. Ieviesu logu linkoto listu.
+28-05-2002
+  Pievienoju logu tipu, clipinga taisnstİri, kurı pagaidÆm tiek izmantots
+ tikai zØñınas pozØcijÆm. Pievienoju RootWindow. ZØmñıanu veic dzinis.
+29-05-2002
+  Logiem pievienoju Tick funkciju, atbrØvojos no menu laika.
+30-05-2002
+  Pievienoju logu jİtØbu.
+31-05-2002
+  Pievienoju ModalWindow klasi.
+06-05-2002
+  No DDF tiek eksportñti uzbrukumu tipi un gandrØz visi ieroÒu parametri.
+07-05-2002
+  PÆrnesti visi parametri no DDFActor uz Actor, jo tie ir vajadzØgi arØ
+ priekı PlayerPawn. Eksportñju benefitus. StrÆdÆjoıi uzbrukumi. VispÆr viss
+ konvertñtais pamazÆm sÆk strÆdÆt.
+  PÆrstrÆdÆju priekımetu pacelıanu.
+08-06-2002
+  PamatØgi pÆrstÆdÆti pa·emamie priekımeti. Tie tiek ieviesti DDF.
+10-06-2002
+  DDF priekımeti strÆdÆ. Atbalsts stÆvokõiem at citu uzbrukuma objektu.
+11-06-2002
+  StÆvokõi iekõauj sevØ vÆrdu, tos var atrast pñc vÆrda.
+  Priekı DDF implementñtas kaudze funkciju.
+  Salabots DeHackEd atbalsts.
+  Hexen atdalØti raóeıu objekti.
+  Windows versijÆ GUID-i tiek definñti iekı sys_win.cpp.
+12-06-2002
+  Pievienotas vñl pÆris funkciju priekı DDF.
+13-06-2002
+  Vñl pÆris lietas priekı DDF - ieroÒu pÆrslñgıana, pÆrlÆdñıana, un vñl pÆris
+ sØkumu.
+  KompilÆtora eksportñtajÆ klasu informÆcijÆ tiek ·emti vñrÆ arØ masØvi un
+ struktİras.
+14-06-2002
+  Pirms relØzes ir vñl pÆris sØki labojumi.
+
+******************************************************************************
+                            VERSIJA 1.13
+******************************************************************************
   

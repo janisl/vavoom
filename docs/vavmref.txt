@@ -180,7 +180,7 @@ and color. R is red, G - green and B - blue component of color.
 
   Vavoom uses all Hexen scripts, extends them and adds some new ones.
 
-  
+
 4.1 The MAPINFO script
 ======================
 
@@ -337,11 +337,11 @@ Example:
 
   Prog sources are included in following archives:
 
-    v111_prog.zip - This archive contains prog sources and compiler binaries.
+    v113_prog.zip - This archive contains prog sources and compiler binaries.
                    Mod makers working in DOS or Windows most likely will
                    choose this package.
 
-    v111_src.zip  - Full Vavoom source code with progs as part of it. In LINUX
+    v113_src.zip  - Full Vavoom source code with progs as part of it. In LINUX
                    progs are compiled as part of the build process.
 
   The latest prog sources can be found in Vavoom CVS repository.

@@ -1,7 +1,6 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.78 [en] (Win98; U) [Netscape]">
    <title>VavoomC Language Reference</title>
 </head>
 <body link="#0000FF" vlink="#800080">
@@ -12,7 +11,7 @@ VavoomC Language Reference</h1>
 <address>
 Janis Legzdinsh</address>
 
-<br>vavoom@vavoom-engine.com
+<br><a href="mailto:vavoom@vavoom-engine.com">vavoom@vavoom-engine.com</a>
 <br><a href="http://www.vavoom-engine.com/">http://www.vavoom-engine.com/</a>
 <p>$Id$
 <h2>
@@ -21,13 +20,13 @@ Variables</h2>
 <h3>
 Simple Variables</h3>
 Here are some examples of instance variable declarations in VavoomC:
-<pre>int a; // Declare an integer variable named "a".</pre>
+<pre>int a; // Declare an integer variable named "a".
 
-<pre>float f; // Declare a floating-point variable named "f".
+float f; // Declare a floating-point variable named "f".
 
-int Table[64]; // Declare an array of 64 integers named "Table".</pre>
+int Table[64]; // Declare an array of 64 integers named "Table".
 
-<pre>int *p; // Declare a pointer to int named "p".
+int *p; // Declare a pointer to int named "p".
 
 string PlayerName; // Declare a string pointer.
 
@@ -109,17 +108,11 @@ Enumerations exist in VavoomC as a convenient way to declare a bunch of
 keywords.
 <p>Here is sample code that declares enumerations.
 <pre>// Declare an enumeration, with three values.
-
 enum
-
 {
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CO_Red,
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CO_Green,
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CO_Blue
-
+    CO_Red,
+    CO_Green,
+    CO_Blue
 };</pre>
 
 <h3>
@@ -128,84 +121,56 @@ An Vavoom struct is a way of cramming a bunch of variables together into
 a new kind of super-variable called a struct. VavoomC structs are just
 like C structs, in that they can contain any simple variables or arrays.
 <p>You can declare a struct as follows:
-<pre>// A structure describing a plane</pre>
-
-<pre>struct TPlane</pre>
-
-<pre>{</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; TVec normal;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; float dist;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; int __type;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; int __signbits;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; int __reserved1;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; int __reserved2;</pre>
-
-<pre>};</pre>
+<pre>// A structure describing a plane
+struct TPlane
+{
+    TVec normal;
+    float dist;
+    int __type;
+    int __signbits;
+    int __reserved1;
+    int __reserved2;
+};</pre>
 In VavoomC structures can have a parent structure, just like classes. For
 example:
-<br>&nbsp;
-<pre>struct sec_plane_t:TPlane</pre>
-
-<pre>{</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; float minz;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; float maxz;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; int pic;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; int __base_pic;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; float xoffs;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; float yoffs;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; int flags;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; int translucency;</pre>
-
-<pre>};</pre>
+<br>
+<pre>struct sec_plane_t:TPlane
+{
+    float minz;
+    float maxz;
+    int pic;
+    int __base_pic;
+    float xoffs;
+    float yoffs;
+    int flags;
+    int translucency;
+};</pre>
 
 <p><br>Once you declare a struct, you are ready to start declaring specific
 variables of that struct type:
-<pre>// Declare a pointer variable of type TPlane.</pre>
+<pre>// Declare a pointer variable of type TPlane.
+sec_plane_t *floor;</pre>
 
-<pre>sec_plane_t *floor;</pre>
 To access a component of a struct, use code like the following.
-<pre>void MyFunction(void)</pre>
-
-<pre>{</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; // Scroll texture</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; floor->xoffs += 8.0;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; floor->yoffs += 4.0;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; // Pass floor to a function.</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; SomeFunction(floor);</pre>
-
-<pre>}</pre>
+<pre>void MyFunction(void)
+{
+    // Scroll texture
+    floor->xoffs += 8.0;
+    floor->yoffs += 4.0;
+    // Pass floor to a function.
+    SomeFunction(floor);
+}</pre>
 
 <h3>
 Classes</h3>
 A class is declared like this:
-<pre>class MyClass:MyParentClass</pre>
 
-<pre>&nbsp;&nbsp;&nbsp; // Class specifiers.</pre>
+<pre>class MyClass:MyParentClass
+    // Class specifiers.
+{
+    // Declaration of class variables and functions goes here
+}</pre>
 
-<pre>{</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; // Declaration of class variables and functions goes here</pre>
-
-<pre>}</pre>
 Here I am declaring a new class named "MyClass", which inherets the functionality
 of "MyParentClass".
 <p>Object is the parent class of all objects in Vavoom. Object is an abstract
@@ -278,27 +243,20 @@ i.e. the object whose script is executing.</li>
 <h3>
 Expressions</h3>
 To assign a value to a variable, use "=" like this:
-<pre>void Test(void)</pre>
+<pre>void Test(void)
+{
+    int i;
+    float f;
+    string s;
+    name n;
+    TVec v, q;
 
-<pre>{</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; int i;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; float f;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; string s;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; TVec v, q;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; i = 10; // Assign a value to integer variable i.</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; f = 2.7; // Assign a value to floating-point variable f.</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; s = "Hello!"; // Assign a value to string variable s.</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; v = q; // Copy value of vector q to v.</pre>
-
-<pre>}</pre>
+    i = 10; // Assign a value to integer variable i.
+    f = 2.7; // Assign a value to floating-point variable f.
+    s = "Hello!"; // Assign a value to string variable s.
+    n = 'John'; // Assign a value to name variable n.
+    v = q; // Copy value of vector q to v.
+}</pre>
 VavoomC is strongly typed language, that means that attempts to assign
 a value of incompatible type will result in compiler error.
 <h2>
@@ -315,47 +273,30 @@ optionally return a value. The parameter and return value type mus be of
 size 4 (i.e. integers, floats, pointers, references) or vectors. Some functions
 are implemented in C++, they are called builtin functions.
 <p>Here are some simple function declarations:
-<pre>float fabs(float val)</pre>
+<pre>float fabs(float val)
+{
+    return (val &lt; 0.0) ? -val : val;
+}
 
-<pre>{</pre>
+class MyClass:MyParentClass
+{
+    int MyVariable;
+    int GetMyVariable(void)
+    {
+        return MyVariable;
+    }
+}
 
-<pre>&nbsp;&nbsp;&nbsp; return (val &lt; 0.0) ? -val : val;</pre>
+class SomeOtherClass:SomeOtherBase
+{
+    int OtherVariable;
+    int GetOtherVariable(void);
+}
 
-<pre>}</pre>
-
-<pre>class MyClass:MyParentClass</pre>
-
-<pre>{</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; int MyVariable;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; int GetMyVariable(void)</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; {</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return MyVariable;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; }</pre>
-
-<pre>}</pre>
-
-<pre>class SomeOtherClass:SomeOtherBase</pre>
-
-<pre>{</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; int OtherVariable;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; int GetOtherVariable(void);</pre>
-
-<pre>}</pre>
-
-<pre>int SomeOtherClass::GetOtherVariable(void)</pre>
-
-<pre>{</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; return OtherVariable;</pre>
-
-<pre>}</pre>
+int SomeOtherClass::GetOtherVariable(void)
+{
+    return OtherVariable;
+}</pre>
 
 <p><br>When a function is called, the code within the brackets is executed.
 Inside the function, you can declare local variables, and execute any VavoomC
@@ -364,36 +305,26 @@ return a value.
 <p>WARNING! Local variables you declare in a function are not initialized.
 <p>Function calls can be recursive. For example, the following function
 computes the factorial of a number:
-<pre>// Function to compute the factorial of a number.</pre>
-
-<pre>int Factorial(int Number)</pre>
-
-<pre>{</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; if (Number &lt;= 0)</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 1;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; else</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return Number * Factorial( Number – 1 );</pre>
-
-<pre>}</pre>
+<pre>// Function to compute the factorial of a number.
+int Factorial(int Number)
+{
+    if (Number &lt;= 0)
+        return 1;
+    else
+        return Number * Factorial(Number - 1);
+}</pre>
 
 <h3>
 Function prototypes</h3>
 VavoomC Compiler is one-pass compiler, that means that all functions must
 be already declared or prototyped before they can be used. Function prototypes
 lloks like this:
-<pre>float fabs(float val);</pre>
+<pre>float fabs(float val);
 
-<pre>class MyClass:MyParentClass</pre>
-
-<pre>{</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; int MyFunction(void);</pre>
-
-<pre>}</pre>
+class MyClass:MyParentClass
+{
+    int MyFunction(void);
+}</pre>
 
 <h3>
 Function overriding</h3>
@@ -402,29 +333,20 @@ a subclass.
 <p>To override a function, just cut and paste the function definition from
 the parent class into your new class. For example, for OnMapSpawn, you
 could add this to your Demon class.
-<pre>// New Demon class version of the OnMapSpawn function.</pre>
 
-<pre>void OnMapSpawn(mthing_t *mthing)</pre>
+<pre>// New Demon class version of the OnMapSpawn function.
+void OnMapSpawn(mthing_t *mthing)
+{
+    // If monsters are disabled, then destroy this actor immediately
+    if (nomonsters)
+    {
+        RemoveMobjThinker(this);
+        return;
+    }
+    // Call parent class version of OnMapSpawn
+    ::OnMapSpawn(mthing);
+}</pre>
 
-<pre>{</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; // If monsters are disabled, then destroy this actor immediately</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; if (nomonsters)</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; {</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RemoveMobjThinker(this);</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; }</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; // Call parent class version of OnMapSpawn</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; ::OnMapSpawn(mthing);</pre>
-
-<pre>}</pre>
 Function overriding is the key to creating new VavoomC classes efficiently.
 You can create a new class that expands on an existing class. Then, all
 you need to do is override the functions which you want to be handled differently.
@@ -444,38 +366,23 @@ VavoomC supports all the standard flow-control statements of C/C++/Java:
 For Loops</h3>
 "for" loops let you cycle through a loop as long as some condition is met.
 For example:
-<pre>// Example of "for" loop.</pre>
-
-<pre>void ForExample(void)</pre>
-
-<pre>{</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; int i;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; print("Demonstrating the for loop");</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; for (i = 0; i &lt; 4; i++)</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; {</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; print("The value of i is %d\n", i);</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; }</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; print("Completed with i=%d\n", i);</pre>
-
-<pre>}</pre>
+<pre>// Example of "for" loop.
+void ForExample(void)
+{
+    int i;
+    print("Demonstrating the for loop");
+    for (i = 0; i &lt; 4; i++)
+    {
+        print("The value of i is %d\n", i);
+    }
+    print("Completed with i=%d\n", i);
+}</pre>
 The output of this loop is:
 <pre>Demonstrating the for loop
-
 The value of i is 0
-
 The value of i is 1
-
 The value of i is 2
-
 The value of i is 3
-
 Completed with i=4</pre>
 In a for loop, you must specify three expressions separated by semicolons.
 The first expression is for initializing a variable to its starting value.
@@ -488,207 +395,124 @@ use "for" loops for more advanced things like traversing linked lists,
 by using the appropriate initialization, termination, and increment expressions.
 <p>In all of the flow control statements, you can either execute a single
 statement, without brackets, as follows:
-<pre>for (i = 0; i &lt; 4; i++)</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; print("The value of i is %d", i);</pre>
+<pre>for (i = 0; i &lt; 4; i++)
+    print("The value of i is %d", i);</pre>
 Or you can execute multiple statements, surrounded by brackets, like this:
-<pre>for (i = 0; i &lt; 4; i++)</pre>
-
-<pre>{</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; print("The value of i is");</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; print("%d\n", i);</pre>
-
-<pre>}</pre>
+<pre>for (i = 0; i &lt; 4; i++)
+{
+    print("The value of i is");
+    print("%d\n", i);
+}</pre>
 
 <h3>
 Do-While Loops</h3>
 "do"-"whilel" loops let you cycle through a loop while some ending expression
 is true.
-<pre>// Example of "do" loop.</pre>
-
-<pre>void DoExample(void)</pre>
-
-<pre>{</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; int i;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; print("Demonstrating the do loop");</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; i = 0;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; do</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; {</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; print("The value of i is %d\n", i);</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; i = i + 1;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; } while (i &lt; 4);</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; print("Completed with i=%d\n", i);</pre>
-
-<pre>}</pre>
+<pre>// Example of "do" loop.
+void DoExample(void)
+{
+    int i;
+    print("Demonstrating the do loop");
+    i = 0;
+    do
+    {
+        print("The value of i is %d\n", i);
+        i = i + 1;
+    } while (i &lt; 4);
+    print("Completed with i=%d\n", i);
+}</pre>
 The output of this loop is:
 <pre>Demonstrating the do loop
-
 The value of i is 0
-
 The value of i is 1
-
 The value of i is 2
-
 The value of i is 3
-
 Completed with i=4</pre>
-
 <h3>
 While Loops</h3>
 "While" loops let you cycle through a loop while some starting expression
 is true.
 <pre>// Example of "while" loop.
-
 void WhileExample(void)
-
 {
+    int i = 0;
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int i = 0;
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; print("Demonstrating the while loop");
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; while (i &lt; 4)
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; print( "The value of i is %d\n", i);
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; i = i + 1;
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; print("Completed with i=%d\n", i);
-
+    print("Demonstrating the while loop");
+    while (i &lt; 4)
+    {
+        print( "The value of i is %d\n", i);
+        i = i + 1;
+    }
+    print("Completed with i=%d\n", i);
 }</pre>
 The output of this loop is:
 <pre>Demonstrating the do loop
-
 The value of i is 0
-
 The value of i is 1
-
 The value of i is 2
-
 The value of i is 3
-
 Completed with i=4</pre>
-
 <h3>
 Break</h3>
 The "break" command exits out of the nearest loop ("for", "do", or "while").
 <pre>// Example of "while" loop.
-
-void WhileExample(void)</pre>
-
-<pre>{</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; int i;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; print("Demonstrating break");</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; for (i = 0; i &lt; 10; i++)</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; {</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (i == 3)</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; break;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; print("The value of i is %d\n", i);</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; }</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; print("Completed with i=%d\n", i);</pre>
-
-<pre>}</pre>
+void WhileExample(void)
+{
+    int i;
+    
+    print("Demonstrating break");
+    for (i = 0; i &lt; 10; i++)
+    {
+        if (i == 3)
+            break;
+        print("The value of i is %d\n", i);
+    }
+    print("Completed with i=%d\n", i);
+}</pre>
 The output of this loop is:
 <pre>Demonstrating break
-
 The value of i is 0
-
 The value of i is 1
-
 The value of i is 2
-
 Completed with i=3</pre>
-
 <h3>
 Conditional Statements</h3>
 "if" and "else" let you execute code if certain conditions are met.
-<pre>// Example of simple "if".</pre>
+<pre>// Example of simple "if".
+if (LightBrightness &lt; 20)
+    print("My light is dim\n");
 
-<pre>if (LightBrightness &lt; 20)</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; print("My light is dim\n");
-
-&nbsp;
-
-// Example of "if-else".</pre>
-
-<pre>if (LightBrightness &lt; 20)</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; print("My light is dim\n");</pre>
-
-<pre>else</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; print("My light is bright\n");</pre>
+// Example of "if-else".
+if (LightBrightness &lt; 20)
+    print("My light is dim\n");
+else
+    print("My light is bright\n");</pre>
 
 <h3>
 Case Statements</h3>
 "switch", "case", "default", and "break" let you handle lists of conditions
 easily.
-<pre>// Example of switch-case.</pre>
-
-<pre>void TestSwitch(void)</pre>
-
-<pre>{</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; // Executed one of the case statements below, based on</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; // the value in LightType.</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; switch (LightType)</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; {</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; case LT_None:</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; print("There is no lighting\n");</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; break;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; case LT_Steady:</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; print("There is steady lighting\n");</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; break;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; case LT_Backdrop:</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; print("There is backdrop lighting\n");</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; break;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; default:</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; print("There is dynamic\n");</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; break;</pre>
-
-<pre>&nbsp;&nbsp;&nbsp; }</pre>
-
-<pre>}</pre>
+<pre>// Example of switch-case.
+void TestSwitch(void)
+{
+    // Executed one of the case statements below, based on
+    // the value in LightType.
+    switch (LightType)
+    {
+    case LT_None:
+        print("There is no lighting\n");
+        break;
+    case LT_Steady:
+        print("There is steady lighting\n");
+        break;
+    case LT_Backdrop:
+        print("There is backdrop lighting\n");
+        break;
+    default:
+        print("There is dynamic\n");
+        break;
+    }
+}</pre>
 A "switch" statement consists of one or more "case" statements, and an
 optional "default" statement. After a switch statement, execution goes
 to the matching "case" statement if there is one; otherwise execution goes
