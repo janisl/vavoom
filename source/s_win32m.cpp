@@ -25,8 +25,13 @@
 
 // HEADER FILES ------------------------------------------------------------
 
+#define TEST_MP3
+
 #include "winlocal.h"
 #include <dmusici.h>
+#ifdef TEST_MP3
+#include <fmod.h>
+#endif
 
 #include "gamedefs.h"
 #include "s_local.h"
@@ -68,6 +73,12 @@ static void*			Mus_SndPtr  = NULL;
 static boolean			MusicPaused = false;
 static int				MusVolume = -1;
 
+#ifdef TEST_MP3
+static bool				fmodAvailable;
+static FSOUND_STREAM*	fmodStream;
+static int				fmodChannel;
+#endif
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -78,6 +89,21 @@ static int				MusVolume = -1;
 
 void S_InitMusic(void)
 {
+#ifdef TEST_MP3
+	if (FSOUND_GetVersion() < FMOD_VERSION)
+	{
+		GCon->Log(NAME_Init, "Wrong fmod.DLL version!");
+	}
+	else if (!FSOUND_Init(44100, 32, 0))
+	{
+		GCon->Log(NAME_Init, "fmod init failed");
+		FSOUND_Close();
+	}
+	else
+	{
+		fmodAvailable = true;
+	}
+#endif
 }
 
 //==========================================================================
@@ -149,6 +175,18 @@ void S_ShutdownMusic(void)
 		Performance = NULL;
 		music_started = false;
 	}
+#ifdef TEST_MP3
+	if (fmodAvailable)
+	{
+		if (fmodStream)
+		{
+			FSOUND_Stream_Close(fmodStream);
+			fmodStream = NULL;
+		}
+		FSOUND_Close();
+		fmodAvailable = false;
+	}
+#endif
 	unguard;
 }
 
@@ -209,6 +247,13 @@ static void PlaySong(void* data, int length, int looping)
 
 static void PauseSong(void)
 {
+#ifdef TEST_MP3
+	if (fmodStream)
+	{
+		FSOUND_SetPaused(fmodChannel, true);
+		return;
+	}
+#endif
 	if (!Segment)
 		return;
 
@@ -237,6 +282,13 @@ static void PauseSong(void)
 
 static void ResumeSong(void)
 {
+#ifdef TEST_MP3
+	if (fmodStream)
+	{
+		FSOUND_SetPaused(fmodChannel, false);
+		return;
+	}
+#endif
 	if (!Segment)
 		return;
 
@@ -308,6 +360,12 @@ void S_UpdateMusic(void)
 
 static int QrySongPlaying(void)
 {
+#ifdef TEST_MP3
+	if (fmodStream)
+	{
+		return true;
+	}
+#endif
 	if (!Segment)
 		return 0;
 
@@ -322,6 +380,13 @@ static int QrySongPlaying(void)
 
 static void StopSong(void)
 {
+#ifdef TEST_MP3
+	if (fmodStream)
+	{
+		FSOUND_Stream_Close(fmodStream);
+		fmodStream = NULL;
+	}
+#endif
 	if (!Segment)
 		return;
 
@@ -339,6 +404,13 @@ static void StopSong(void)
 
 static void StopMidiSong(void)
 {
+#ifdef TEST_MP3
+	if (fmodStream)
+	{
+		FSOUND_Stream_Close(fmodStream);
+		fmodStream = NULL;
+	}
+#endif
 	if (Mus_SndPtr)
 	{
 		if (MusicPaused)
@@ -381,6 +453,32 @@ static void StartMidiSong(char* song, boolean loop)
 		return;
 	}
 
+#ifdef TEST_MP3
+	char RealName[MAX_OSPATH];
+	if (FL_FindFile(va("music/%s.mp3", song), RealName) ||
+		FL_FindFile(va("music/%s.ogg", song), RealName))
+	{
+		StopMidiSong();
+		fmodStream = FSOUND_Stream_OpenFile(RealName, FSOUND_NORMAL, 0);
+		if (!fmodStream)
+		{
+			GCon->Logf("Couldn't open %s", RealName);
+		}
+		else
+		{
+			fmodChannel = FSOUND_Stream_Play(FSOUND_FREE, fmodStream);
+			if (fmodChannel == -1)
+			{
+				GCon->Log("fmod play failed");
+				StopMidiSong();
+			}
+			else
+			{
+				return;
+			}
+		}
+	}
+#endif
 	if (UseSndScript)
 	{
 		char	*name;
@@ -991,9 +1089,12 @@ static int qmus2mid(char *mus, char *mid, int length)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/08/24 14:49:20  dj_jl
+//	Added MP3 test.
+//
 //	Revision 1.8  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.7  2002/07/20 14:53:02  dj_jl
 //	Got rid of warnings.
 //	
