@@ -83,6 +83,11 @@ typedef void (APIENTRY*PointParameterfv_t)(GLenum, const GLfloat *);
 #define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT	0x84FF
 #endif
 
+// SGIS_texture_edge_clamp
+#ifndef GL_SGIS_texture_edge_clamp
+#define GL_CLAMP_TO_EDGE_SGIS				0x812F
+#endif
+
 struct surfcache_t
 {
 	int			s;			// position in light surface
@@ -224,6 +229,7 @@ private:
 	GLenum		maxfilter;
 	GLenum		minfilter;
 	GLenum		mipfilter;
+	GLenum		ClampToEdge;
 
 	rgba_t		pal8_to24[256];
 
@@ -302,9 +308,12 @@ private:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2005/01/24 12:53:54  dj_jl
+//	Skybox fixes.
+//
 //	Revision 1.26  2004/08/21 17:22:15  dj_jl
 //	Changed rendering driver declaration.
-//
+//	
 //	Revision 1.25  2004/02/09 17:29:58  dj_jl
 //	Increased block count
 //	

@@ -144,6 +144,18 @@ void VOpenGLDrawer::InitResolution(void)
 		GCon->Logf(NAME_Init, "Max anisotropy %f", max_anisotropy);
 	}
 
+	//	Clamp to edge extension
+	if (CheckExtension("GL_SGIS_texture_edge_clamp") ||
+		CheckExtension("GL_EXT_texture_edge_clamp"))
+	{
+		GCon->Log(NAME_Init, "Clamp to edge extension found.");
+		ClampToEdge = GL_CLAMP_TO_EDGE_SGIS;
+	}
+	else
+	{
+		ClampToEdge = GL_CLAMP;
+	}
+
 	glClearColor(0.0, 0.0, 0.0, 0.0);	// Black Background
 	glClearDepth(1.0);					// Depth Buffer Setup
 
@@ -474,9 +486,12 @@ void VOpenGLDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2005/01/24 12:53:54  dj_jl
+//	Skybox fixes.
+//
 //	Revision 1.22  2004/08/21 17:22:15  dj_jl
 //	Changed rendering driver declaration.
-//
+//	
 //	Revision 1.21  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
 //	

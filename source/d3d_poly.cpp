@@ -781,15 +781,18 @@ void VDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 	sidx[1] = 1;
 	sidx[2] = 2;
 	sidx[3] = 3;
-	if (cv[1].z > 0)
+	if (!cl_level.skybox[0])
 	{
-		sidx[1] = 0;
-		sidx[2] = 3;
-	}
-	else
-	{
-		sidx[0] = 1;
-		sidx[3] = 2;
+		if (cv[1].z > 0)
+		{
+			sidx[1] = 0;
+			sidx[2] = 3;
+		}
+		else
+		{
+			sidx[0] = 1;
+			sidx[3] = 2;
+		}
 	}
 	texinfo_t *tex = r_surface->texinfo;
 	if (maxMultiTex >= 2 && texture2)
@@ -1251,9 +1254,12 @@ void VDirect3DDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2005/01/24 12:53:54  dj_jl
+//	Skybox fixes.
+//
 //	Revision 1.26  2004/10/08 12:37:39  dj_jl
 //	Better rendering of old skies.
-//
+//	
 //	Revision 1.25  2004/02/09 17:29:26  dj_jl
 //	Old blocks free fix
 //	

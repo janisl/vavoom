@@ -429,8 +429,8 @@ void VOpenGLDrawer::SetSkyTexture(int tex, bool double_sky)
 			{
 				UploadTexture(SkinWidth, SkinHeight, (rgba_t *)SkinData);
 			}
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, ClampToEdge);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, ClampToEdge);
 			Z_Free(SkinData);
 			skymap_sent[tex] = true;
 			skymaps[tex].width = SkinWidth;
@@ -1301,9 +1301,12 @@ void VOpenGLDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2005/01/24 12:53:54  dj_jl
+//	Skybox fixes.
+//
 //	Revision 1.22  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.21  2004/11/30 07:19:00  dj_jl
 //	Support for high resolution textures.
 //	
