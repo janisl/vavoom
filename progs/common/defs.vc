@@ -25,8 +25,8 @@
 
 //  Since version 1.5 compiler defines PROG_VERSION, so we can check that
 // progs are compiled with the right version of compiler
-#if !defined PROG_VERSION || PROG_VERSION != 16
-#error These are version 16 progs
+#if !defined PROG_VERSION || PROG_VERSION != 17
+#error These are version 17 progs
 #endif
 
 enum
@@ -433,8 +433,9 @@ enum
 	LNSPEC_PillarOpen,// 30
 	LNSPEC_StairsBuildDownSync,
 	LNSPEC_StairsBuildUpSync,
-
-	LNSPEC_FloorRaiseByValueTimes8 = 35,
+	LNSPEC_ForceField,
+	LNSPEC_ClearForceField,
+	LNSPEC_FloorRaiseByValueTimes8,
 	LNSPEC_FloorLowerByValueTimes8,
 
 	LNSPEC_CeilingWaggle = 38,
@@ -516,6 +517,7 @@ enum
 	LNSPEC_Contents,
 
 	LNSPEC_PlaneUpNearestWaitDownStay = 172,
+	LNSPEC_NoiseAlert,
 
 	LNSPEC_PlaneAlign = 181,
 
@@ -531,15 +533,27 @@ enum
 	LNSPEC_CeilingGeneric,
 	LNSPEC_DoorGeneric,
 	LNSPEC_PlatGeneric,
-
-	LNSPEC_CeilingGenericCrush = 205,
+	LNSPEC_StairsGeneric,
+	LNSPEC_CeilingGenericCrush,
 	LNSPEC_PlatDownWaitUpStayLip,
 	LNSPEC_PlatPerpetualRaiseLip,
 	LNSPEC_LineTranslucent,
 
-	LNSPEC_TeleportLine = 215,
+	LNSPEC_TransferFloorLight = 210,// 210
+	LNSPEC_TransferCeilingLight,
 
-	LNSPEC_ScrollTextureOffsets = 225,
+	LNSPEC_SectorSetDamage = 214,
+	LNSPEC_TeleportLine,
+
+	LNSPEC_StairsBuildUpDoom = 217,
+
+	LNSPEC_SectorSetFriction = 219,
+
+	LNSPEC_ScrollTextureBoth = 221,
+	LNSPEC_ScrollTextureModel,
+	LNSPEC_ScrollFloor,
+	LNSPEC_ScrollCeiling,
+	LNSPEC_ScrollTextureOffsets,
 	LNSPEC_ACSExecuteAlways,
 
 	LNSPEC_FloorRaiseToNearestChange = 228,
@@ -579,6 +593,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2005/03/28 07:48:33  dj_jl
+//  Some Boom line specials.
+//
 //  Revision 1.25  2005/03/16 15:04:10  dj_jl
 //  More work on line specials.
 //

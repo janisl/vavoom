@@ -153,6 +153,8 @@ struct sec_plane_t:TPlane
 
 	int flags;
 	int translucency;
+
+	int LightSourceSector;
 };
 
 struct sec_params_t
@@ -223,7 +225,7 @@ struct sector_t
 	bool		bHasExtrafloors;	//	This sector has extrafloors.
 	bool		bExtrafloorSource;	//	This sector is a source of an extrafloor.
 
-	addfields 6;
+	addfields 16;
 };
 
 //
@@ -445,15 +447,20 @@ struct intercept_t
 addfields sector_t
 {
 	// 0 = untraversed, 1,2 = sndlines -1
-	int soundtraversed;
+	int			soundtraversed;
 
 	// thing that made a sound (or null)
-	Entity SoundTarget;
+	Entity		SoundTarget;
 
 	// Thinker for reversable actions
 	Thinker		FloorData;
 	Thinker		CeilingData;
 	Thinker		LightingData;
+
+	int			Damage;
+
+	float		Friction;
+	float		MoveFactor;
 };
 
 #define GRAVITY			1225.0
@@ -702,6 +709,9 @@ struct ClipRect
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.53  2005/03/28 07:48:33  dj_jl
+//  Some Boom line specials.
+//
 //  Revision 1.52  2005/03/01 14:39:22  dj_jl
 //  Big update of line specials.
 //

@@ -1024,7 +1024,7 @@ sector_t* FindModelFloorSector(sector_t* sec, float height)
 			(GetPlanePointZ(&other->floor, *check->v1) == height ||
 			GetPlanePointZ(&other->floor, *check->v2) == height))
 		{
-			return sec;
+			return other;
 		}
 	}
 	return NULL;
@@ -1064,7 +1064,7 @@ sector_t* FindModelCeilingSector(sector_t* sec, float height)
 			(GetPlanePointZ(&other->ceiling, *check->v1) == height ||
 			GetPlanePointZ(&other->ceiling, *check->v2) == height))
 		{
-			return sec;
+			return other;
 		}
 	}
 	return NULL;
@@ -1395,6 +1395,9 @@ int MovePlane(sector_t* sector, float amount, float dest, int crush,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.36  2005/03/28 07:48:33  dj_jl
+//  Some Boom line specials.
+//
 //  Revision 1.35  2005/03/01 14:39:23  dj_jl
 //  Big update of line specials.
 //

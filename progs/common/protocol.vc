@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-#define PROTOCOL_VERSION	9
+#define PROTOCOL_VERSION	10
 
 enum
 {
@@ -95,6 +95,8 @@ enum
 
 	svc_change_sky,
 	svc_change_music,
+	svc_set_floor_light_sec,
+	svc_set_ceil_light_sec,
 
 	USER_PROTOCOL_START = 128
 };
@@ -138,6 +140,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2005/03/28 07:48:33  dj_jl
+//  Some Boom line specials.
+//
 //  Revision 1.10  2004/12/27 12:23:09  dj_jl
 //  Multiple small changes for version 1.16
 //

@@ -190,6 +190,7 @@ native float TextureHeight(int pic);
 //
 
 native void MSG_Select(int msgtype);
+native bool MSG_CheckSpace(int Size);
 native void MSG_WriteByte(int data);
 native void MSG_WriteShort(int data);
 native void MSG_WriteLong(int data);
@@ -475,6 +476,8 @@ native void SetLineTransluc(line_t * line, int trans);
 native void SendFloorSlope(sector_t * sector);
 native void SendCeilingSlope(sector_t * sector);
 native void SetSecLightColor(sector_t * sector, int Color);
+native void SetFloorLightSector(sector_t* Sector, sector_t* SrcSector);
+native void SetCeilingLightSector(sector_t* Sector, sector_t* SrcSector);
 native int FindModel(string Name);
 native int GetModelIndex(name Name);
 native int FindSkin(string Name);
@@ -486,6 +489,9 @@ native void MSG_SelectClientMsg(int msgtype, BasePlayer client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.48  2005/03/28 07:48:33  dj_jl
+//  Some Boom line specials.
+//
 //  Revision 1.47  2005/03/16 15:04:10  dj_jl
 //  More work on line specials.
 //
