@@ -43,32 +43,7 @@
 #include <iomanip.h>
 #include <fstream.h>
 
-#if !defined CLIENT && !defined SERVER
-#define CLIENT
-#define SERVER
-#endif
-
-#if (defined __i386__ || defined _M_IX86) && !defined NOASM
-#define USEASM
-#endif
-
-// if rangecheck is undefined, most parameter validation debugging code
-// will not be compiled
-//#define PARANOID
-//#define DEVELOPER
-#define DO_GUARD
-
-#define VERSION_MAJOR	1
-#define VERSION_MINOR	12
-#define VERSION_RELEASE	0
-#define VERSION_TEXT	"1.12"
-
-//==========================================================================
-//
-//	SUBSYSTEMS
-//
-//==========================================================================
-
+#include "build.h"		//	Build settings
 #include "common.h"		//	Common types
 #include "misc.h"		//	Misc utilites
 #include "vector.h"
@@ -119,9 +94,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2002/04/11 16:39:21  dj_jl
+//	Seperated build setings.
+//
 //	Revision 1.19  2002/03/28 18:06:11  dj_jl
 //	Updated version.
-//
+//	
 //	Revision 1.18  2002/03/09 18:05:33  dj_jl
 //	Added support for defining native functions outside pr_cmds
 //	
