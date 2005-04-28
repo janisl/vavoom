@@ -425,6 +425,17 @@ void PlayerExitMap(bool clusterChange)
 {
 	int i;
 
+	for (i = 0; i < InventorySlotNum; i++)
+	{
+		Inventory[i].count = 1;
+	}
+	ArtifactCount = InventorySlotNum;
+
+	if (!deathmatch)
+	{
+		PlayerUseArtifact(arti_fly);
+	}
+
 	for (i = 0; i < NUMPOWERS; i++)
 	{
 		Powers[i] = 0.0;
@@ -447,20 +458,6 @@ void PlayerExitMap(bool clusterChange)
 	BonusFlash = 0.0;
 	Rain1 = none;
 	Rain2 = none;
-
-	for (i = 0; i < InventorySlotNum; i++)
-	{
-		Inventory[i].count = 1;
-	}
-	ArtifactCount = InventorySlotNum;
-
-	if (!deathmatch)
-	{
-		for (i = 0; i < 16; i++)
-		{
-			PlayerUseArtifact(arti_fly);
-		}
-	}
 }
 
 //==========================================================================
@@ -2943,6 +2940,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2005/04/28 06:56:24  dj_jl
+//  Fixed removing of wings.
+//
 //  Revision 1.9  2005/03/28 07:43:29  dj_jl
 //  Some Boom line specials and other improvements.
 //
