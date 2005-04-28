@@ -920,10 +920,11 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump,
 //==========================================================================
 
 void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
-	model_t *model, int frame, const char *skin, dword light,
+	model_t *model, int InFrame, const char *skin, dword light,
 	int translucency, bool is_view_model)
 {
 	guard(VOpenGLDrawer::DrawAliasModel);
+	int frame = InFrame;
 	mmdl_t		*pmdl;
 	mframe_t	*framedesc;
 	mskin_t		*pskindesc;
@@ -1128,9 +1129,12 @@ void VOpenGLDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2005/04/28 07:16:15  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.26  2005/01/24 12:53:54  dj_jl
 //	Skybox fixes.
-//
+//	
 //	Revision 1.25  2004/10/08 12:37:47  dj_jl
 //	Better rendering of old skies.
 //	

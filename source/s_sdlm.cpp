@@ -25,8 +25,8 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#include <SDL/SDL.h>
-#include <SDL/SDL_mixer.h>
+#include <SDL.h>
+#include <SDL_mixer.h>
 
 #include "gamedefs.h"
 #include "s_local.h"
@@ -864,9 +864,12 @@ static void FreeTracks(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2005/04/28 07:16:15  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.4  2004/10/11 06:49:57  dj_jl
 //	SDL patches.
-//
+//	
 //	Revision 1.3  2002/01/11 08:13:13  dj_jl
 //	Added command Music
 //	

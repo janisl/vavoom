@@ -157,9 +157,10 @@ static void	SetupSky(void)
 //
 //==========================================================================
 
-static void InitSurfs(surface_t *surfs, texinfo_t *texinfo, TPlane *plane)
+static void InitSurfs(surface_t* InSurfs, texinfo_t *texinfo, TPlane *plane)
 {
 	guard(InitSurfs);
+	surface_t* surfs = InSurfs;
 	int i;
 	float dot;
 	float mins;
@@ -226,9 +227,10 @@ static void InitSurfs(surface_t *surfs, texinfo_t *texinfo, TPlane *plane)
 //
 //==========================================================================
 
-static void FlushSurfCaches(surface_t *surfs)
+static void FlushSurfCaches(surface_t* InSurfs)
 {
 	guard(FlushSurfCaches);
+	surface_t* surfs = InSurfs;
 	while (surfs)
 	{
 		for (int i = 0; i < 4; i++)
@@ -249,9 +251,11 @@ static void FlushSurfCaches(surface_t *surfs)
 //
 //==========================================================================
 
-static surface_t *SubdivideFace(surface_t *f, const TVec &axis, const TVec *nextaxis)
+static surface_t* SubdivideFace(surface_t* InF, const TVec &axis,
+	const TVec *nextaxis)
 {
 	guard(SubdivideFace);
+	surface_t* f = InF;
 	int i;
 	float dot;
 	float mins = 99999.0;
@@ -382,9 +386,10 @@ static surface_t *SubdivideFace(surface_t *f, const TVec &axis, const TVec *next
 //
 //==========================================================================
 
-static sec_surface_t *CreateSecSurface(subsector_t *sub, sec_plane_t *splane)
+static sec_surface_t *CreateSecSurface(subsector_t* sub, sec_plane_t* InSplane)
 {
 	guard(CreateSecSurface);
+	sec_plane_t* splane = InSplane;
 	sec_surface_t	*ssurf;
 	surface_t		*surf;
 
@@ -526,9 +531,10 @@ static surface_t *NewWSurf(void)
 //
 //==========================================================================
 
-static void	FreeWSurfs(surface_t *surfs)
+static void	FreeWSurfs(surface_t* InSurfs)
 {
 	guard(FreeWSurfs);
+	surface_t* surfs = InSurfs;
 	FlushSurfCaches(surfs);
 	while (surfs)
 	{
@@ -550,9 +556,10 @@ static void	FreeWSurfs(surface_t *surfs)
 //
 //==========================================================================
 
-static surface_t *SubdivideSeg(surface_t *surf, const TVec &axis, const TVec *nextaxis)
+static surface_t *SubdivideSeg(surface_t* InSurf, const TVec &axis, const TVec *nextaxis)
 {
 	guard(SubdivideSeg);
+	surface_t* surf = InSurf;
 	int i;
 	float dot;
 	float mins = 99999.0;
@@ -1864,9 +1871,12 @@ void R_UpdateWorld(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2005/04/28 07:16:15  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.13  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.12  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
 //	

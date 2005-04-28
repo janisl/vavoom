@@ -32,6 +32,9 @@
 #include <unistd.h>
 #include <signal.h>
 #include <dirent.h>
+#include <locale.h>
+#include <iconv.h>
+#include <langinfo.h>
 #include <allegro.h>
 
 #include "gamedefs.h"
@@ -210,7 +213,7 @@ int Sys_OpenDir(const char *path)
 //
 //==========================================================================
 
-const char *Sys_ReadDir(void)
+const char *Sys_ReadDir()
 {
 	struct dirent *de = readdir(current_dir);
 	if (de)
@@ -226,7 +229,7 @@ const char *Sys_ReadDir(void)
 //
 //==========================================================================
 
-void Sys_CloseDir(void)
+void Sys_CloseDir()
 {
 	closedir(current_dir);
 }
@@ -281,7 +284,7 @@ void Sys_MakeCodeWriteable(unsigned long startaddr, unsigned long length)
 //
 //==========================================================================
 
-double Sys_Time(void)
+double Sys_Time()
 {
     timeval		tp;
     struct timezone	tzp;
@@ -304,7 +307,7 @@ double Sys_Time(void)
 //
 //==========================================================================
 
-void Sys_Shutdown(void)
+void Sys_Shutdown()
 {
 	allegro_exit();
 }
@@ -325,10 +328,11 @@ void Sys_Shutdown(void)
 static void PutEndText(const char *name)
 {
 	int i, j;
-	int att = 0;
+	int att = -1;
 	int nlflag = 0;
 	char *text;
 	char *col;
+	iconv_t cd;
 
 	/* if option -noendtxt is set, don't print the text */
 	if (M_CheckParm("-noendtxt"))
@@ -345,6 +349,9 @@ static void PutEndText(const char *name)
 	/* get the lump with the text */
 	text = (char*)W_CacheLumpName(name, PU_CACHE);
 
+	setlocale(LC_CTYPE, "");
+	cd = iconv_open(va("%s//TRANSLIT", nl_langinfo(CODESET)), "cp437");
+
 	/* print 80x25 text and deal with the attributes too */
 	for (i = 1; i <= 80 * 25; i++, text += 2)
 	{
@@ -353,133 +360,34 @@ static void PutEndText(const char *name)
 		j = (byte)text[1];
 		if (j != att)
 		{
+			static const char map[] = "04261537";
 			/* save current attribute */
 			att = j;
-			/* set new attribute, forground color first */
-			printf("\033[");
-			switch (j & 0x0f)
-			{
-			case 0:		/* black */
-				printf("30");
-				break;
-			case 1:		/* blue */
-				printf("34");
-				break;
-			case 2:		/* green */
-				printf("32");
-				break;
-			case 3:		/* cyan */
-				printf("36");
-				break;
-			case 4:		/* red */
-				printf("31");
-				break;
-			case 5:		/* magenta */
-				printf("35");
-				break;
-			case 6:		/* brown */
-				printf("33");
-				break;
-			case 7:		/* bright grey */
-				printf("37");
-				break;
-			case 8:		/* dark grey */
-				printf("1;30");
-				break;
-			case 9:		/* bright blue */
-				printf("1;34");
-				break;
-			case 10:	/* bright green */
-				printf("1;32");
-				break;
-			case 11:	/* bright cyan */
-				printf("1;36");
-				break;
-			case 12:	/* bright red */
-				printf("1;31");
-				break;
-			case 13:	/* bright magenta */
-				printf("1;35");
-				break;
-			case 14:	/* yellow */
-				printf("1;33");
-				break;
-			case 15:	/* white */
-				printf("1;37");
-				break;
-			}
-			printf("m");
-			/* now background color */
-			printf("\033[");
-			switch ((j >> 4) & 0x0f)
-			{
-			case 0:		/* black */
-				printf("40");
-				break;
-			case 1:		/* blue */
-				printf("44");
-				break;
-			case 2:		/* green */
-				printf("42");
-				break;
-			case 3:		/* cyan */
-				printf("46");
-				break;
-			case 4:		/* red */
-				printf("41");
-				break;
-			case 5:		/* magenta */
-				printf("45");
-				break;
-			case 6:		/* brown */
-				printf("43");
-				break;
-			case 7:		/* bright grey */
-				printf("47");
-				break;
-			case 8:		/* dark grey */
-				printf("1;40");
-				break;
-			case 9:		/* bright blue */
-				printf("1;44");
-				break;
-			case 10:	/* bright green */
-				printf("1;42");
-				break;
-			case 11:	/* bright cyan */
-				printf("1;46");
-				break;
-			case 12:	/* bright red */
-				printf("1;41");
-				break;
-			case 13:	/* bright magenta */
-				printf("1;45");
-				break;
-			case 14:	/* yellow */
-				printf("1;43");
-				break;
-			case 15:	/* white */
-				printf("1;47");
-				break;
-			}
-			printf("m");
+			/* set new attribute: bright, foreground, background
+			 * (we don't have bright background) */
+			printf("\033[0;%s3%c;4%cm", (j & 0x88) ? "1;" : "", map[j & 7],
+				map[(j & 0x70) >> 4]);
 		}
 
 		/* now the text */
-		if (*text < 32)
+		if (*text >= 0 && *text < 32)
 			putchar('.');
 		else
-			putchar(*text);
+		{
+			char buf[8];
+			char *in = text;
+			char *out = buf;
+			size_t inbytes = 1;
+			size_t outbytes = 8;
+			iconv(cd, &in, &inbytes, &out, &outbytes);
+			fwrite(buf, 1, out - buf, stdout);
+		}
 
 		/* do we need a nl? */
-		if (nlflag)
+		if (nlflag && !(i % 80))
 		{
-			if (!(i % 80))
-			{
-				printf("\033[0m");
-				att = 0;
-				printf("\n");
-			}
+			att = 0;
+			puts("\033[0m");
 		}
 	}
 	/* all attributes off */
@@ -498,7 +406,7 @@ static void PutEndText(const char *name)
 //
 //==========================================================================
 
-void Sys_Quit(void)
+void Sys_Quit()
 {
     // Shutdown system
 	Host_Shutdown();
@@ -518,7 +426,7 @@ void Sys_Quit(void)
 	}
     else
     {
-		printf("\nHexen: Beyound Heretic");
+		printf("\nHexen: Beyound Heretic\n");
 	}
 
     // Exit
@@ -549,7 +457,7 @@ void Sys_Quit(void)
 		continue_stack_trace = false; \
 	}
 
-static void stack_trace(void)
+static void stack_trace()
 {
 	FILE			*fff;
 	int				i;
@@ -618,7 +526,7 @@ static void stack_trace(void)
 		// dump stack frame
 		for (i = (MAX_STACK_ADDR - 1); i >= 0 ; i--)
 		{
-			fprintf(fff,"%x\n", stack_addr[i]);
+			fprintf(fff,"%x\n", (int)stack_addr[i]);
 		}
 		fclose(fff);
 	}
@@ -836,9 +744,12 @@ END_OF_MAIN()	//	For Allegro
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2005/04/28 07:16:16  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.13  2004/10/11 06:53:16  dj_jl
 //	In end text characters below space are replaced with dots.
-//
+//	
 //	Revision 1.12  2003/10/22 06:15:00  dj_jl
 //	Safer handling of signals in Linux
 //	

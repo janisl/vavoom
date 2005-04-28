@@ -873,9 +873,10 @@ void R_AnimateSurfaces(void)
 //
 //==========================================================================
 
-int R_TextureAnimation(int tex)
+int R_TextureAnimation(int InTex)
 {
 	guard(R_TextureAnimation);
+	int tex = InTex;
 	if (tex & TEXF_SKY_MAP)
 		return tex;
 	if (tex & TEXF_FLAT)
@@ -1296,9 +1297,12 @@ void R_ShadeRect(int x, int y, int width, int height, int shade)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2005/04/28 07:16:15  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.24  2004/12/22 07:51:52  dj_jl
 //	Warning about non-existing graphics.
-//
+//	
 //	Revision 1.23  2004/11/23 12:43:10  dj_jl
 //	Wad file lump namespaces.
 //	

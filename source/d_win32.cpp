@@ -63,7 +63,7 @@ static bool					new_palette = false;
 //
 //==========================================================================
 
-void VSoftwareDrawer::Init(void)
+void VSoftwareDrawer::Init()
 {
 	guard(VSoftwareDrawer::Init);
 	HRESULT			result;
@@ -104,9 +104,12 @@ void VSoftwareDrawer::Init(void)
 //
 //==========================================================================
 
-bool VSoftwareDrawer::SetResolution(int Width, int Height, int BPP)
+bool VSoftwareDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 {
 	guard(VSoftwareDrawer::SetResolution);
+	int Width = InWidth;
+	int Height = InHeight;
+	int BPP = InBPP;
 	if (!Width || !Height)
 	{
 		//	Set default mode for Windows
@@ -247,16 +250,16 @@ bool VSoftwareDrawer::SetResolution(int Width, int Height, int BPP)
 //
 //==========================================================================
 
-void VSoftwareDrawer::SetPalette8(byte *palette)
+void VSoftwareDrawer::SetPalette8(byte* palette)
 {
 	guard(VSoftwareDrawer::SetPalette8);
-  	int				i;
-
-	for (i = 0; i < 256; i++)
+	byte* table = gammatable[usegamma];
+	byte* p = palette;
+	for (int i = 0; i < 256; i++)
 	{
-		PaletteEntries[i].peRed = gammatable[usegamma][*palette++];
-		PaletteEntries[i].peGreen = gammatable[usegamma][*palette++];
-		PaletteEntries[i].peBlue = gammatable[usegamma][*palette++];
+		PaletteEntries[i].peRed = table[*p++];
+		PaletteEntries[i].peGreen = table[*p++];
+		PaletteEntries[i].peBlue = table[*p++];
 		PaletteEntries[i].peFlags = 0;
 	}
 	new_palette = true;
@@ -352,9 +355,12 @@ void VSoftwareDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2005/04/28 07:16:15  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.10  2004/04/08 15:19:40  dj_jl
 //	Windowed mode
-//
+//	
 //	Revision 1.9  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
 //	

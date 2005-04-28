@@ -227,7 +227,7 @@ void IN_PostEvent(event_t* ev)
 {
 	guard(IN_PostEvent);
     events[eventhead] = *ev;
-    eventhead = (++eventhead) & (MAXEVENTS - 1);
+    eventhead = (eventhead + 1) & (MAXEVENTS - 1);
 	unguard;
 }
 
@@ -250,7 +250,7 @@ void IN_KeyEvent(int key, int press)
     events[eventhead].data1 = key;
     events[eventhead].data2 = 0;
     events[eventhead].data3 = 0;
-    eventhead = (++eventhead) & (MAXEVENTS - 1);
+    eventhead = (eventhead + 1) & (MAXEVENTS - 1);
 	unguard;
 }
 
@@ -270,7 +270,7 @@ void IN_ProcessEvents(void)
 
    	IN_ReadInput();
 
-    for ( ; eventtail != eventhead ; eventtail = (++eventtail)&(MAXEVENTS-1))
+    for (; eventtail != eventhead; eventtail = (eventtail + 1) & (MAXEVENTS - 1))
     {
 		ev = &events[eventtail];
 
@@ -393,7 +393,7 @@ int IN_ReadKey(void)
             {
                 ret = events[eventtail].data1;
             }
-			eventtail = (++eventtail) & (MAXEVENTS - 1);
+			eventtail = (eventtail + 1) & (MAXEVENTS - 1);
         }
     } while (!ret);
 
@@ -682,20 +682,19 @@ void IN_GetBindingKeys(const char *binding, int &key1, int &key2)
 int IN_TranslateKey(int ch)
 {
 	guard(IN_TranslateKey);
-   	if (shiftdown)
-	{
-		ch = shiftxform[ch];
-	}
-	return ch;
+	return shiftdown ? shiftxform[ch] : ch;
 	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2005/04/28 07:16:15  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.12  2004/04/16 06:25:52  dj_jl
 //	Added mousewheel key codes
-//
+//	
 //	Revision 1.11  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
 //	

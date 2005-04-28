@@ -243,10 +243,11 @@ void VSoftwareDrawer::MakeMips(miptexture_t *mip)
 //
 //==========================================================================
 
-void VSoftwareDrawer::DrawColumnInCache(column_t* column, byte* cache,
+void VSoftwareDrawer::DrawColumnInCache(column_t* InColumn, byte* cache,
 	int originx, int originy, int cachewidth, int cacheheight, bool dsky)
 {
 	guard(VSoftwareDrawer::DrawColumnInCache);
+	column_t* column = InColumn;
     int		count;
     int		position;
     byte*	source;
@@ -1009,9 +1010,12 @@ byte* VSoftwareDrawer::SetPic(int handle)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2005/04/28 07:16:12  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.12  2004/11/23 12:43:10  dj_jl
 //	Wad file lump namespaces.
-//
+//	
 //	Revision 1.11  2002/11/16 17:11:15  dj_jl
 //	Improving software driver class.
 //	

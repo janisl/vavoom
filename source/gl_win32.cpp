@@ -71,9 +71,12 @@ void VOpenGLDrawer::Init(void)
 //
 //==========================================================================
 
-bool VOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
+bool VOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 {
 	guard(VOpenGLDrawer::SetResolution);
+	int Width = InWidth;
+	int Height = InHeight;
+	int BPP = InBPP;
 	int			pixelformat;
 	MSG			msg;
 
@@ -317,9 +320,12 @@ void VOpenGLDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2005/04/28 07:16:15  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.13  2004/09/24 10:54:11  dj_jl
 //	MinGW support.
-//
+//	
 //	Revision 1.12  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
 //	

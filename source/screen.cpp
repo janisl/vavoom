@@ -414,9 +414,12 @@ static void DrawFPS(void)
 //
 //==========================================================================
 
-static void ChangeResolution(int width, int height, int bpp)
+static void ChangeResolution(int InWidth, int InHeight, int InBpp)
 {
 	guard(ChangeResolution);
+	int width = InWidth;
+	int height = InHeight;
+	int bpp = InBpp;
 	if (width > MAXSCREENWIDTH)
 		width = MAXSCREENWIDTH;
 	if (height > MAXSCREENHEIGHT)
@@ -726,9 +729,12 @@ void SCR_SetVirtualScreen(int Width, int Height)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2005/04/28 07:16:15  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.24  2005/04/04 07:45:45  dj_jl
 //	Palette flash state fix.
-//
+//	
 //	Revision 1.23  2004/12/03 16:15:47  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
 //	

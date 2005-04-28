@@ -228,10 +228,11 @@ int VOpenGLDrawer::ToPowerOf2(int val)
 //
 //==========================================================================
 
-void VOpenGLDrawer::DrawColumnInCache(column_t* column, rgba_t* cache,
+void VOpenGLDrawer::DrawColumnInCache(column_t* InColumn, rgba_t* cache,
 	int originx, int originy, int cachewidth, int cacheheight)
 {
 	guard(VOpenGLDrawer::DrawColumnInCache);
+	column_t* column = InColumn;
 	int		count;
 	int		position;
 	byte*	source;
@@ -1147,9 +1148,10 @@ void VOpenGLDrawer::ResampleTexture(int widthin, int heightin,
 //
 //==========================================================================
 
-void VOpenGLDrawer::MipMap(int width, int height, byte *in)
+void VOpenGLDrawer::MipMap(int width, int height, byte* InIn)
 {
 	guard(VOpenGLDrawer::MipMap);
+	byte* in = InIn;
 	int		i, j;
 	byte	*out = in;
 
@@ -1301,9 +1303,12 @@ void VOpenGLDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2005/04/28 07:16:15  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.24  2005/03/28 07:25:40  dj_jl
 //	Changed location of hi-res 2D graphics.
-//
+//	
 //	Revision 1.23  2005/01/24 12:53:54  dj_jl
 //	Skybox fixes.
 //	

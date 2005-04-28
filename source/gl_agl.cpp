@@ -72,9 +72,12 @@ void VOpenGLDrawer::Init()
 //
 //==========================================================================
 
-bool VOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
+bool VOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 {
 	guard(VOpenGLDrawer::SetResolution);
+	int Width = InWidth;
+	int Height = InHeight;
+	int BPP = InBPP;
 	bool default_mode = false;
 	if (!Width || !Height)
 	{
@@ -181,7 +184,10 @@ void VOpenGLDrawer::Shutdown()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2005/04/28 07:16:15  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.1  2005/03/28 07:26:54  dj_jl
 //	New OpenGL driver for Allegro.
-//
+//	
 //**************************************************************************

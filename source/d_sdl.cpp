@@ -25,7 +25,7 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 #include "d_local.h"
 
 // MACROS ------------------------------------------------------------------
@@ -58,7 +58,7 @@ static bool			new_palette = false;
 //
 //==========================================================================
 
-void VSoftwareDrawer::Init(void)
+void VSoftwareDrawer::Init()
 {
 }
 
@@ -70,9 +70,12 @@ void VSoftwareDrawer::Init(void)
 //
 //==========================================================================
 
-bool VSoftwareDrawer::SetResolution(int Width, int Height, int BPP)
+bool VSoftwareDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 {
 	guard(VSoftwareDrawer::SetResolution);
+	int Width = InWidth;
+	int Height = InHeight;
+	int BPP = InBPP;
 	Uint32 flags = 0;
 
 	if (!Width || !Height)
@@ -159,13 +162,13 @@ bool VSoftwareDrawer::SetResolution(int Width, int Height, int BPP)
 void VSoftwareDrawer::SetPalette8(byte *palette)
 {
 	guard(VSoftwareDrawer::SetPalette8);
-	int i;
-
-	for (i = 0; i < hw_palette.ncolors; i++)
+	byte* table = gammatable[usegamma];
+	byte* p = palette;
+	for (int i = 0; i < hw_palette.ncolors; i++)
 	{
-		hw_palette.colors[i].r      = gammatable[usegamma][*palette++];
-		hw_palette.colors[i].g      = gammatable[usegamma][*palette++];
-		hw_palette.colors[i].b      = gammatable[usegamma][*palette++];
+		hw_palette.colors[i].r = table[*p++];
+		hw_palette.colors[i].g = table[*p++];
+		hw_palette.colors[i].b = table[*p++];
 		hw_palette.colors[i].unused = 0;
 	}
 	new_palette = true;
@@ -239,9 +242,12 @@ void VSoftwareDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2005/04/28 07:16:12  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.4  2004/10/08 12:39:01  dj_jl
 //	Added windowing mode.
-//
+//	
 //	Revision 1.3  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
 //	

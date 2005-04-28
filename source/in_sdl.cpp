@@ -25,7 +25,7 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 #include "gamedefs.h"
 
 // MACROS ------------------------------------------------------------------
@@ -368,9 +368,12 @@ void IN_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2005/04/28 07:16:15  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.4  2004/10/18 06:36:45  dj_jl
 //	Some fixes.
-//
+//	
 //	Revision 1.3  2004/10/11 06:49:57  dj_jl
 //	SDL patches.
 //	

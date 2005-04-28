@@ -97,10 +97,11 @@ static void R_SetUpFrustumIndexes(void)
 //
 //==========================================================================
 
-static void DrawSurfaces(surface_t *surfs, texinfo_t *texinfo, int clipflags,
+static void DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo, int clipflags,
 	int LightSourceSector = -1)
 {
 	guard(DrawSurfaces);
+	surface_t* surfs = InSurfs;
 	if (!surfs)
 	{
 		return;
@@ -319,9 +320,10 @@ static void RenderSubsector(int num, int clipflags)
 //
 //==========================================================================
 
-static void RenderBSPNode(int bspnum, float *bbox, int clipflags)
+static void RenderBSPNode(int bspnum, float *bbox, int InClipflags)
 {
 	guard(RenderBSPNode);
+	int clipflags = InClipflags;
 	// cull the clipping planes if not trivial accept
 	if (clipflags)
 	{
@@ -419,9 +421,12 @@ void R_RenderWorld(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2005/04/28 07:16:15  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.13  2005/03/28 07:28:19  dj_jl
 //	Transfer lighting and other BOOM stuff.
-//
+//	
 //	Revision 1.12  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
 //	

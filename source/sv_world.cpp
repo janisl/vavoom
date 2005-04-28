@@ -588,41 +588,43 @@ static boolean PIT_AddThingIntercepts(VEntity* thing)
 //
 //==========================================================================
 
-boolean SV_PathTraverse(float x1, float y1, float x2, float y2,
+boolean SV_PathTraverse(float InX1, float InY1, float x2, float y2,
 		int flags, boolean(*trav)(intercept_t *), FFunction *prtrav)
 {
 	guard(SV_PathTraverse);
+	float x1 = InX1;
+	float y1 = InY1;
 	int			xt1;
 	int			yt1;
 	int			xt2;
 	int			yt2;
-    
+
 	float		xstep;
 	float		ystep;
-    
+
 	float		partial;
-    
+
 	float		xintercept;
 	float		yintercept;
-    
-    int			mapx;
-    int			mapy;
-    
-    int			mapxstep;
-    int			mapystep;
 
-    int			count;
-		
-    earlyout = flags & PT_EARLYOUT;
-		
-    validcount++;
-    intercept_p = intercepts;
+	int			mapx;
+	int			mapy;
+
+	int			mapxstep;
+	int			mapystep;
+
+	int			count;
+
+	earlyout = flags & PT_EARLYOUT;
+
+	validcount++;
+	intercept_p = intercepts;
 	memset(intercepts, 0, sizeof(intercepts));
 
 	if (((FX(x1 - GLevel->BlockMapOrgX)) & (MAPBLOCKSIZE - 1)) == 0)
 //	if (fmod(x1 - GLevel->BlockMapOrgX, MAPBLOCKSIZE) == 0.0)
 		x1 += 1.0;	// don't side exactly on a line
-    
+
 	if (((FX(y1 - GLevel->BlockMapOrgY)) & (MAPBLOCKSIZE - 1)) == 0)
 //	if (fmod(y1 - GLevel->BlockMapOrgY, MAPBLOCKSIZE) == 0.0)
 		y1 += 1.0;	// don't side exactly on a line
@@ -789,9 +791,10 @@ boolean SV_PathTraverse(float x1, float y1, float x2, float y2,
 //
 //==========================================================================
 
-sec_region_t *SV_FindThingGap(sec_region_t *gaps, const TVec &point, float z1, float z2)
+sec_region_t *SV_FindThingGap(sec_region_t* InGaps, const TVec &point, float z1, float z2)
 {
 	guard(SV_FindThingGap);
+	sec_region_t* gaps = InGaps;
 	float dist;
 
 	int fit_num = 0;
@@ -893,9 +896,10 @@ sec_region_t *SV_FindThingGap(sec_region_t *gaps, const TVec &point, float z1, f
 //
 //==========================================================================
 
-opening_t *SV_FindOpening(opening_t *gaps, float z1, float z2)
+opening_t *SV_FindOpening(opening_t* InGaps, float z1, float z2)
 {
 	guard(SV_FindOpening);
+	opening_t* gaps = InGaps;
 	float dist;
 
 	int fit_num = 0;
@@ -1090,9 +1094,12 @@ bool P_ChangeSector(sector_t * sector, int crunch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2005/04/28 07:16:16  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.20  2004/12/27 12:23:17  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.19  2003/07/03 18:11:13  dj_jl
 //	Moving extrafloors
 //	

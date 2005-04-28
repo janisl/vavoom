@@ -122,15 +122,18 @@ static BITMAP *my_create_bitmap_ex(int color_depth, int width, int height)
 //
 //==========================================================================
 
-bool VSoftwareDrawer::SetResolution(int Width, int Height, int bpp)
+bool VSoftwareDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 {
 	guard(VSoftwareDrawer::SetResolution);
+	int Width = InWidth;
+	int Height = InHeight;
+	int BPP = InBPP;
 	if (!Width || !Height)
 	{
 		//	Set defaults
 		Width = 320;
 		Height = 200;
-		bpp = 8;
+		BPP = 8;
 	}
 
 	if (gamebitmap)
@@ -140,7 +143,7 @@ bool VSoftwareDrawer::SetResolution(int Width, int Height, int bpp)
 	}
 	FreeMemory();
 
-	set_color_depth(bpp);
+	set_color_depth(BPP);
 	if (set_gfx_mode(M_CheckParm("-window") ? GFX_AUTODETECT_WINDOWED :
 		GFX_AUTODETECT, Width, Height, 0, 0))
 	{
@@ -149,11 +152,11 @@ bool VSoftwareDrawer::SetResolution(int Width, int Height, int bpp)
 		return false;
 	}
 
-	if (!AllocMemory(SCREEN_W, SCREEN_H, bpp))
+	if (!AllocMemory(SCREEN_W, SCREEN_H, BPP))
 	{
 		return false;
 	}
-	gamebitmap = my_create_bitmap_ex(bpp, SCREEN_W, SCREEN_H);
+	gamebitmap = my_create_bitmap_ex(BPP, SCREEN_W, SCREEN_H);
 	if (!gamebitmap)
 	{
 		GCon->Log(NAME_Init, "Failed to create game bitmap:");
@@ -162,9 +165,9 @@ bool VSoftwareDrawer::SetResolution(int Width, int Height, int bpp)
 
 	ScreenWidth = SCREEN_W;
 	ScreenHeight = SCREEN_H;
-	ScreenBPP = bpp;
+	ScreenBPP = BPP;
 
-	memset(scrn, 0, SCREEN_W * SCREEN_H * ((bpp + 7) >> 3));
+	memset(scrn, 0, SCREEN_W * SCREEN_H * ((BPP + 7) >> 3));
 
 	if (ScreenBPP == 15)
 	{
@@ -200,13 +203,11 @@ bool VSoftwareDrawer::SetResolution(int Width, int Height, int bpp)
 void VSoftwareDrawer::SetPalette8(byte *palette)
 {
 	guard(VSoftwareDrawer::SetPalette8);
-	int		i;
-	byte	*table;
-
 	if (ScreenBPP != 8)
 		return;
 
-	table = gammatable[usegamma];
+	byte* table = gammatable[usegamma];
+	byte* p = palette;
 
 #if defined DJGPP
 
@@ -215,17 +216,17 @@ void VSoftwareDrawer::SetPalette8(byte *palette)
 	while ((inportb(0x3da) & 8) == 8);
 
 	outportb(0x3c8, 0);
-	for (i = 0; i < 768; i++)
-		outportb(0x3c9, table[*palette++] >> 2);
+	for (int i = 0; i < 768; i++)
+		outportb(0x3c9, table[*p++] >> 2);
 
 #else
 
 	PALETTE		pal;
-	for (i = 0; i < 256; i++)
+	for (int i = 0; i < 256; i++)
 	{
-		pal[i].r = table[*palette++] >> 2;
-		pal[i].g = table[*palette++] >> 2;
-		pal[i].b = table[*palette++] >> 2;
+		pal[i].r = table[*p++] >> 2;
+		pal[i].g = table[*p++] >> 2;
+		pal[i].b = table[*p++] >> 2;
 	}
 	set_palette(pal);
 
@@ -314,9 +315,12 @@ void VSoftwareDrawer::Shutdown()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2005/04/28 07:16:11  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.11  2005/03/01 15:56:54  dj_jl
 //	Windowed mode, beautification.
-//
+//	
 //	Revision 1.10  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
 //	

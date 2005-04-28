@@ -970,10 +970,11 @@ void Mod_LoadSkin(const char *name, void **bufptr)
 //
 //==========================================================================
 
-void R_PositionWeaponModel(clmobj_t &wpent, model_t *wpmodel, int frame)
+void R_PositionWeaponModel(clmobj_t &wpent, model_t *wpmodel, int InFrame)
 {
 	guard(R_PositionWeaponModel);
 	mmdl_t *pmdl = (mmdl_t*)Mod_Extradata(wpmodel);
+	int frame = InFrame;
 	if ((frame >= pmdl->numframes) || (frame < 0))
 	{
 		frame = 0;
@@ -1003,9 +1004,12 @@ void R_PositionWeaponModel(clmobj_t &wpent, model_t *wpmodel, int frame)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2005/04/28 07:16:15  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.11  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.10  2004/12/03 16:15:47  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
 //	

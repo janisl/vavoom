@@ -87,9 +87,10 @@ int VEntity::FIndex_GetSigilPieces;
 //
 //==========================================================================
 
-boolean VEntity::SetState(int state)
+boolean VEntity::SetState(int InState)
 {
 	guard(VEntity::SetState);
+	int state = InState;
 	state_t *st;
 
 	do
@@ -1714,9 +1715,10 @@ IMPLEMENT_FUNCTION(VEntity, RoughMonsterSearch)
 //
 //===========================================================================
 
-void VViewEntity::SetState(int stnum)
+void VViewEntity::SetState(int InStnum)
 {
 	guard(VViewEntity::SetState);
+	int stnum = InStnum;
 	state_t *state;
 
 	do
@@ -1802,9 +1804,12 @@ void EntInit(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2005/04/28 07:16:16  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.12  2004/12/22 07:49:13  dj_jl
 //	More extended ACS support, more linedef flags.
-//
+//	
 //	Revision 1.11  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
 //	

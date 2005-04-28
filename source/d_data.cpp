@@ -240,9 +240,10 @@ static void CalcFadetable32(rgb_t *pal)
 //
 //==========================================================================
 
-void VSoftwareDrawer::SetPalette(int num)
+void VSoftwareDrawer::SetPalette(int InNum)
 {
 	guard(VSoftwareDrawer::SetPalette);
+	int num = InNum;
 	if (num < 0 || num >= 32)
 	{
 		GCon->Logf(NAME_Dev, "Invalid palette num %d", num);
@@ -467,9 +468,12 @@ void VSoftwareDrawer::NewMap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2005/04/28 07:16:12  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.11  2002/11/16 17:11:15  dj_jl
 //	Improving software driver class.
-//
+//	
 //	Revision 1.10  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
 //	

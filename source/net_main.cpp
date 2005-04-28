@@ -577,9 +577,10 @@ COMMAND(Slist)
 //
 //==========================================================================
 
-qsocket_t *NET_Connect(char *host)
+qsocket_t *NET_Connect(char* InHost)
 {
 	guard(NET_Connect);
+	char* host = InHost;
 	qsocket_t	*ret;
 	int			numdrivers = net_numdrivers;
 	int			n;
@@ -934,9 +935,12 @@ slist_t * GetSlist(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2005/04/28 07:16:15  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.12  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.11  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
 //	

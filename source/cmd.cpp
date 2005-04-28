@@ -467,6 +467,16 @@ TCommand::TCommand(const char *name)
 #endif
 }
 
+//==========================================================================
+//
+//  TCommand::~TCommand
+//
+//==========================================================================
+
+TCommand::~TCommand()
+{
+}
+
 //**************************************************************************
 //
 //	Command buffer
@@ -637,9 +647,12 @@ void Cmd_ForwardToServer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2005/04/28 07:16:11  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.11  2003/12/19 17:36:58  dj_jl
 //	Dedicated server fix
-//
+//	
 //	Revision 1.10  2003/10/31 07:49:52  dj_jl
 //	echo uses notify messages
 //	

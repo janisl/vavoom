@@ -234,7 +234,10 @@ void VOpenALDevice::Shutdown(void)
 	//	Destroy context.
 	if (Context)
 	{
+#ifndef __linux__
+		// This causes a freeze in Linux
 		alcMakeContextCurrent(NULL);
+#endif
 		alcDestroyContext(Context);
 		Context = NULL;
 	}
@@ -830,9 +833,12 @@ bool VOpenALDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2005/04/28 07:16:15  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.8  2004/11/30 07:17:16  dj_jl
 //	Made string pointers const.
-//
+//	
 //	Revision 1.7  2004/08/21 19:10:44  dj_jl
 //	Changed sound driver declaration.
 //	

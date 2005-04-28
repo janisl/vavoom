@@ -80,10 +80,11 @@ class TCommand
 {
  public:
 	TCommand(const char *name);
+	virtual ~TCommand();
 
-	virtual void Run(void) = 0;
+	virtual void Run() = 0;
 
-	int Argc(void)
+	int Argc()
 	{
 		return Cmd_Argc();
 	}
@@ -91,7 +92,7 @@ class TCommand
 	{
 		return Cmd_Argv(parm);
 	}
-	char *Args(void)
+	char *Args()
 	{
 		return Cmd_Args();
 	}
@@ -107,9 +108,12 @@ class TCommand
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2005/04/28 07:16:11  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.7  2003/10/22 06:24:35  dj_jl
 //	Access to the arguments vector
-//
+//	
 //	Revision 1.6  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
 //	

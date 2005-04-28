@@ -60,7 +60,7 @@ static AMesaContext		RenderContext = NULL;
 //
 //==========================================================================
 
-void VOpenGLDrawer::Init(void)
+void VOpenGLDrawer::Init()
 {
 }
 
@@ -72,9 +72,12 @@ void VOpenGLDrawer::Init(void)
 //
 //==========================================================================
 
-bool VOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
+bool VOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 {
 	guard(VOpenGLDrawer::SetResolution);
+	int Width = InWidth;
+	int Height = InHeight;
+	int BPP = InBPP;
 	if (!Width || !Height)
 	{
 		//	Set defaults
@@ -178,9 +181,12 @@ void VOpenGLDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2005/04/28 07:16:15  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.7  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
-//
+//	
 //	Revision 1.6  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
 //	

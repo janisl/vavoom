@@ -25,7 +25,7 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 #include "gl_local.h"
 
 // MACROS ------------------------------------------------------------------
@@ -68,9 +68,12 @@ void VOpenGLDrawer::Init(void)
 //
 //==========================================================================
 
-bool VOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
+bool VOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 {
 	guard(VOpenGLDrawer::SetResolution);
+	int Width = InWidth;
+	int Height = InHeight;
+	int BPP = InBPP;
 	if (!Width || !Height)
 	{
 		// Set defaults
@@ -157,9 +160,12 @@ void VOpenGLDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2005/04/28 07:16:15  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.4  2004/10/08 12:39:01  dj_jl
 //	Added windowing mode.
-//
+//	
 //	Revision 1.3  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
 //	

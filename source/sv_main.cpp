@@ -1756,9 +1756,11 @@ void G_SecretExitLevel(int Position)
 //
 //==========================================================================
 
-void G_Completed(int Map, int Position, int SaveAngle)
+void G_Completed(int InMap, int InPosition, int SaveAngle)
 {
 	guard(G_Completed);
+	int Map = InMap;
+	int Position = InPosition;
 	if (Map == -1 && Position == -1)
 	{
 		if (!deathmatch)
@@ -2999,9 +3001,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.65  2005/04/28 07:16:16  dj_jl
+//	Fixed some warnings, other minor fixes.
+//
 //	Revision 1.64  2005/04/04 07:48:05  dj_jl
 //	Fix for loading level variables.
-//
+//	
 //	Revision 1.63  2005/03/28 07:24:36  dj_jl
 //	Saving a net game.
 //	
