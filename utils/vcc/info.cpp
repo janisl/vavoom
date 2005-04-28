@@ -94,6 +94,10 @@ static int				gv_mobj_info;
 
 void InitInfoTables(void)
 {
+	//	For some strange reason when compiling with gcc, data field contains
+	// some garbage already at the start of the program.
+	memset(&mobj_info, 0, sizeof(mobj_info));
+
 	sprite_names.Empty(64);
 	models.Empty(64);
 	states.Empty(1024);
@@ -454,9 +458,12 @@ void AddToMobjInfo(int Index, int ClassID)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2005/04/28 07:00:40  dj_jl
+//	Temporary fix for crash with optimisations.
+//
 //	Revision 1.22  2003/10/22 06:42:55  dj_jl
 //	Added function name
-//
+//	
 //	Revision 1.21  2003/03/08 12:47:52  dj_jl
 //	Code cleanup.
 //	
