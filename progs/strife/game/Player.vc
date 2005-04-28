@@ -2324,7 +2324,7 @@ void Cheat_Gimme()
 	{
 		for (i = 0; i < NUMAMMO; i++)
 		{
-			Ammo[i] = maxammo[i];
+			Ammo[i] = maxammo[i] * (Backpack ? 2 : 1);
 		}
 	}
 
@@ -2337,8 +2337,8 @@ void Cheat_Gimme()
 	// Health
 	if (Cmd_CheckParm("Health"))
 	{
-		Health = 100;
-		MO.Health = 100;
+		Health = MAXHEALTH + Stamina;
+		MO.Health = MAXHEALTH + Stamina;
 	}
 
 	// Comm unit
@@ -2383,6 +2383,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2005/04/28 06:57:05  dj_jl
+//  Some cheat fixes.
+//
 //  Revision 1.14  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //
