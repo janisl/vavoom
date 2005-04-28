@@ -1,0 +1,510 @@
+#---------------------------------------
+#
+#	Configure script output
+#
+#---------------------------------------
+
+CC=@CC@
+CFLAGS=@CFLAGS@
+CXX=@CXX@
+CXXFLAGS=@CXXFLAGS@
+EXEEXT=@EXEEXT@
+INSTALL=@INSTALL@
+LDFLAGS=@LDFLAGS@
+LIB_GL=@LIB_GL@
+LIB_STDCXX=@LIB_STDCXX@
+MAIN_CFLAGS=@MAIN_CFLAGS@
+MAIN_EXE=@MAIN_EXE@
+MAIN_PLATFORM=@MAIN_PLATFORM@
+OBJEXT=@OBJEXT@
+SERVER_EXE=@SERVER_EXE@
+SV_PLATFORM=@SV_PLATFORM@
+prefix=@prefix@
+
+OBJ_FILES = @OBJ_FILES@
+LIBS = @MAIN_LIBS@
+LIB_FILES = @LIB_FILES@
+
+C_ARGS   = -c -W -Wall $(CFLAGS)
+CPP_ARGS = -c -W -Wall $(CXXFLAGS) $(MAIN_CFLAGS)
+ASM_ARGS = -c -W -Wall -x assembler-with-cpp
+LINK_ARGS = -Wall $(LDFLAGS)
+
+INSTALL_DIR ?= $(prefix)/games/Vavoom
+INSTALL_GROUP?=root
+INSTALL_OWNER?=root
+
+ifdef INSTALL_GROUP_ONLY
+INSTALL_PARMS=-g $(INSTALL_GROUP) -o $(INSTALL_OWNER) -m 0750
+INSTALL_EXEPARMS=-g $(INSTALL_GROUP) -o $(INSTALL_OWNER) -m 4750
+INSTALL_DIRPARMS=-g $(INSTALL_GROUP) -o $(INSTALL_OWNER) -m 0770 -d
+else
+INSTALL_PARMS=-g $(INSTALL_GROUP) -o $(INSTALL_OWNER) -m 0755
+INSTALL_EXEPARMS=-g $(INSTALL_GROUP) -o $(INSTALL_OWNER) -m 4755
+INSTALL_DIRPARMS=-g $(INSTALL_GROUP) -o $(INSTALL_OWNER) -m 0777 -d
+endif
+
+#---------------------------------------
+#
+#	Main executable objects and libs
+#
+#---------------------------------------
+
+#-- Common files --
+COMMON_OBJS = \
+	obj/am_map.$(OBJEXT) \
+	obj/chat.$(OBJEXT) \
+	obj/cheats.$(OBJEXT) \
+	obj/cl_demo.$(OBJEXT) \
+	obj/cl_input.$(OBJEXT) \
+	obj/cl_main.$(OBJEXT) \
+	obj/cl_parse.$(OBJEXT) \
+	obj/cl_poly.$(OBJEXT) \
+	obj/cl_trace.$(OBJEXT) \
+	obj/cmd.$(OBJEXT) \
+	obj/console.$(OBJEXT) \
+	obj/crc.$(OBJEXT) \
+	obj/cvar.$(OBJEXT) \
+	obj/d_aclip.$(OBJEXT) \
+	obj/d_alias.$(OBJEXT) \
+	obj/d_data.$(OBJEXT) \
+	obj/d_draw.$(OBJEXT) \
+	obj/d_edge.$(OBJEXT) \
+	obj/d_main.$(OBJEXT) \
+	obj/d_part.$(OBJEXT) \
+	obj/d_polyse.$(OBJEXT) \
+	obj/d_scache.$(OBJEXT) \
+	obj/d_span.$(OBJEXT) \
+	obj/d_sprite.$(OBJEXT) \
+	obj/d_surf.$(OBJEXT) \
+	obj/d_tex.$(OBJEXT) \
+	obj/d_aclipa.$(OBJEXT) \
+	obj/d_aliasa.$(OBJEXT) \
+	obj/d_edgea.$(OBJEXT) \
+	obj/d_polysa.$(OBJEXT) \
+	obj/d_varsa.$(OBJEXT) \
+	obj/d_zspan.$(OBJEXT) \
+	obj/d8_part.$(OBJEXT) \
+	obj/d8_poly.$(OBJEXT) \
+	obj/d8_s16.$(OBJEXT) \
+	obj/d8_span.$(OBJEXT) \
+	obj/d8_spr.$(OBJEXT) \
+	obj/d8_surf.$(OBJEXT) \
+	obj/d16_part.$(OBJEXT) \
+	obj/d16_poly.$(OBJEXT) \
+	obj/d16_s16.$(OBJEXT) \
+	obj/d16_span.$(OBJEXT) \
+	obj/d16_spr.$(OBJEXT) \
+	obj/d16_surf.$(OBJEXT) \
+	obj/d32_part.$(OBJEXT) \
+	obj/d32_poly.$(OBJEXT) \
+	obj/d32_s16.$(OBJEXT) \
+	obj/d32_span.$(OBJEXT) \
+	obj/d32_spr.$(OBJEXT) \
+	obj/d32_surf.$(OBJEXT) \
+	obj/debug.$(OBJEXT) \
+	obj/finale.$(OBJEXT) \
+	obj/files.$(OBJEXT) \
+	obj/host.$(OBJEXT) \
+	obj/iline.$(OBJEXT) \
+	obj/imission.$(OBJEXT) \
+	obj/in_input.$(OBJEXT) \
+	obj/infostr.$(OBJEXT) \
+	obj/l_glbsp.$(OBJEXT) \
+	obj/l_glvis.$(OBJEXT) \
+	obj/level.$(OBJEXT) \
+	obj/mapinfo.$(OBJEXT) \
+	obj/maths.$(OBJEXT) \
+	obj/menu.$(OBJEXT) \
+	obj/message.$(OBJEXT) \
+	obj/misc.$(OBJEXT) \
+	obj/name.$(OBJEXT) \
+	obj/net_dgrm.$(OBJEXT) \
+	obj/net_loop.$(OBJEXT) \
+	obj/net_main.$(OBJEXT) \
+	obj/net_null.$(OBJEXT) \
+	obj/p_setup.$(OBJEXT) \
+	obj/pr_cmds.$(OBJEXT) \
+	obj/pr_exec.$(OBJEXT) \
+	obj/pr_execa.$(OBJEXT) \
+	obj/r_bsp.$(OBJEXT) \
+	obj/r_light.$(OBJEXT) \
+	obj/r_main.$(OBJEXT) \
+	obj/r_model.$(OBJEXT) \
+	obj/r_sky.$(OBJEXT) \
+	obj/r_surf.$(OBJEXT) \
+	obj/r_tex.$(OBJEXT) \
+	obj/r_things.$(OBJEXT) \
+	obj/s_data.$(OBJEXT) \
+	obj/s_eaxutl.$(OBJEXT) \
+	obj/s_sound.$(OBJEXT) \
+	obj/sbar.$(OBJEXT) \
+	obj/sc_man.$(OBJEXT) \
+	obj/screen.$(OBJEXT) \
+	obj/sizebuf.$(OBJEXT) \
+	obj/sn_sonix.$(OBJEXT) \
+	obj/sv_acs.$(OBJEXT) \
+	obj/sv_ent.$(OBJEXT) \
+	obj/sv_main.$(OBJEXT) \
+	obj/sv_poly.$(OBJEXT) \
+	obj/sv_save.$(OBJEXT) \
+	obj/sv_sight.$(OBJEXT) \
+	obj/sv_swtch.$(OBJEXT) \
+	obj/sv_tick.$(OBJEXT) \
+	obj/sv_user.$(OBJEXT) \
+	obj/sv_world.$(OBJEXT) \
+	obj/text.$(OBJEXT) \
+	obj/ui_gc.$(OBJEXT) \
+	obj/ui_modal.$(OBJEXT) \
+	obj/ui_root.$(OBJEXT) \
+	obj/ui_win.$(OBJEXT) \
+	obj/vclass.$(OBJEXT) \
+	obj/vobject.$(OBJEXT) \
+	obj/wad.$(OBJEXT) \
+	obj/zone.$(OBJEXT)
+
+#-- Common OpenGL files --
+GL_OBJS = \
+	obj/gl_draw.$(OBJEXT) \
+	obj/gl_main.$(OBJEXT) \
+	obj/gl_poly.$(OBJEXT) \
+	obj/gl_tex.$(OBJEXT)
+
+#-- OpenAL files --
+AL_OBJS = \
+	obj/s_al.$(OBJEXT)
+
+#-- DOS --
+SYS_OBJS_DJGPP = \
+	obj/cd_dos.$(OBJEXT) \
+	obj/d_alleg.$(OBJEXT) \
+	obj/in_dos.$(OBJEXT) \
+	obj/mplib.$(OBJEXT) \
+	obj/mplpc.$(OBJEXT) \
+	obj/net_bw.$(OBJEXT) \
+	obj/net_dos.$(OBJEXT) \
+	obj/net_ipx.$(OBJEXT) \
+	obj/net_mp.$(OBJEXT) \
+	obj/npxsetup.$(OBJEXT) \
+	obj/s_alleg.$(OBJEXT) \
+	obj/s_allegm.$(OBJEXT) \
+	obj/sys_i386.$(OBJEXT) \
+	obj/sys_dos.$(OBJEXT)
+GL_SYS_OBJ_DJGPP = obj/gl_alleg.$(OBJEXT)
+LIBS_DJGPP = -lalleg -lpng -lz $(LIB_STDCXX)
+GL_SYS_LIB_DJGPP =
+
+#-- Linux with Allegro --
+SYS_OBJS_UNIX_ALLEGRO = \
+	obj/d_alleg.$(OBJEXT) \
+	obj/in_alleg.$(OBJEXT) \
+	obj/net_bsd.$(OBJEXT) \
+	obj/net_udp.$(OBJEXT) \
+	obj/s_alleg.$(OBJEXT) \
+	obj/s_allegm.$(OBJEXT) \
+	obj/sys_i386.$(OBJEXT) \
+	obj/sys_lin.$(OBJEXT)
+GL_SYS_OBJ_UNIX_ALLEGRO = obj/gl_agl.$(OBJEXT)
+LIBS_UNIX_ALLEGRO = `allegro-config --libs` -lXxf86dga -lpng -lz -lm $(LIB_STDCXX)
+GL_SYS_LIB_UNIX_ALLEGRO = -lagl -lGLU
+
+#-- Linux with SDL --
+SYS_OBJS_UNIX_SDL = \
+	obj/d_sdl.$(OBJEXT) \
+	obj/in_sdl.$(OBJEXT) \
+	obj/net_bsd.$(OBJEXT) \
+	obj/net_udp.$(OBJEXT) \
+	obj/s_sdl.$(OBJEXT) \
+	obj/s_sdlm.$(OBJEXT) \
+	obj/sys_i386.$(OBJEXT) \
+	obj/sys_sdl.$(OBJEXT)
+GL_SYS_OBJ_UNIX_SDL = obj/gl_sdl.$(OBJEXT)
+LIBS_UNIX_SDL = `sdl-config --libs` -lSDL_mixer -lpng -lz -lm $(LIB_STDCXX)
+GL_SYS_LIB_UNIX_SDL =
+
+#-- CD audio drivers for various UNIX platforms --
+CDAUDIO_OBJ_LINUX = obj/cd_linux.$(OBJEXT)
+CDAUDIO_OBJ_BSD = obj/cd_bsd.$(OBJEXT)
+CDAUDIO_OBJ_NONE = obj/cd_none.$(OBJEXT)
+
+#-- Windows --
+SYS_OBJS_WIN32 = \
+	obj/cd_win32.$(OBJEXT) \
+	obj/d_win32.$(OBJEXT) \
+	obj/in_win32.$(OBJEXT) \
+	obj/net_win.$(OBJEXT) \
+	obj/net_wins.$(OBJEXT) \
+	obj/net_wipx.$(OBJEXT) \
+	obj/s_win32.$(OBJEXT) \
+	obj/s_win32m.$(OBJEXT) \
+	obj/sys_i386.$(OBJEXT) \
+	obj/sys_win.$(OBJEXT)
+GL_SYS_OBJ_WIN32 = obj/gl_win32.$(OBJEXT)
+LIBS_WIN32 = -lgdi32 -lole32 -lwsock32 -lwinmm $(LIB_STDCXX)
+GL_SYS_LIB_WIN32 =
+
+GL_SYS_OBJ = $(GL_SYS_OBJ_$(MAIN_PLATFORM))
+GL_SYS_LIB = $(GL_SYS_LIB_$(MAIN_PLATFORM))
+
+#---------------------------------------
+#
+#	Dedicated server objcts and libs
+#
+#---------------------------------------
+
+SV_SYS_OBJS_DJGPP = \
+	obj/sv/mplib.$(OBJEXT) \
+	obj/sv/mplpc.$(OBJEXT) \
+	obj/sv/net_bw.$(OBJEXT) \
+	obj/sv/net_dos.$(OBJEXT) \
+	obj/sv/net_ipx.$(OBJEXT) \
+	obj/sv/net_mp.$(OBJEXT) \
+	obj/sv/npxsetup.$(OBJEXT) \
+	obj/sv/sys_bsd.$(OBJEXT)
+SV_LIBS_DJGPP = $(LIB_STDCXX)
+
+SV_SYS_OBJS_UNIX = \
+	obj/sv/net_bsd.$(OBJEXT) \
+	obj/sv/net_udp.$(OBJEXT) \
+	obj/sv/sys_bsd.$(OBJEXT)
+SV_LIBS_UNIX = -lm $(LIB_STDCXX)
+
+SV_SYS_OBJS_WIN32 = \
+	obj/sv/net_win.$(OBJEXT) \
+	obj/sv/net_wins.$(OBJEXT) \
+	obj/sv/net_wipx.$(OBJEXT) \
+	obj/sv/sys_wind.$(OBJEXT)
+SV_LIBS_WIN32 = -lwsock32 -lm $(LIB_STDCXX)
+
+SV_SYS_OBJS = $(SV_SYS_OBJS_$(SV_PLATFORM))
+SV_LIBS = $(SV_LIBS_$(SV_PLATFORM))
+
+SV_OBJ_FILES = $(SV_SYS_OBJS) \
+	obj/sv/cmd.$(OBJEXT) \
+	obj/sv/crc.$(OBJEXT) \
+	obj/sv/cvar.$(OBJEXT) \
+	obj/sv/debug.$(OBJEXT) \
+	obj/sv/files.$(OBJEXT) \
+	obj/sv/host.$(OBJEXT) \
+	obj/sv/infostr.$(OBJEXT) \
+	obj/sv/level.$(OBJEXT) \
+	obj/sv/mapinfo.$(OBJEXT) \
+	obj/sv/maths.$(OBJEXT) \
+	obj/sv/message.$(OBJEXT) \
+	obj/sv/misc.$(OBJEXT) \
+	obj/sv/name.$(OBJEXT) \
+	obj/sv/net_dgrm.$(OBJEXT) \
+	obj/sv/net_loop.$(OBJEXT) \
+	obj/sv/net_main.$(OBJEXT) \
+	obj/sv/net_null.$(OBJEXT) \
+	obj/sv/p_setup.$(OBJEXT) \
+	obj/sv/pr_cmds.$(OBJEXT) \
+	obj/sv/pr_exec.$(OBJEXT) \
+	obj/sv/pr_execa.$(OBJEXT) \
+	obj/sv/r_tex.$(OBJEXT) \
+	obj/sv/s_data.$(OBJEXT) \
+	obj/sv/sc_man.$(OBJEXT) \
+	obj/sv/sizebuf.$(OBJEXT) \
+	obj/sv/sv_acs.$(OBJEXT) \
+	obj/sv/sv_ent.$(OBJEXT) \
+	obj/sv/sv_main.$(OBJEXT) \
+	obj/sv/sv_poly.$(OBJEXT) \
+	obj/sv/sv_save.$(OBJEXT) \
+	obj/sv/sv_sight.$(OBJEXT) \
+	obj/sv/sv_swtch.$(OBJEXT) \
+	obj/sv/sv_tick.$(OBJEXT) \
+	obj/sv/sv_user.$(OBJEXT) \
+	obj/sv/sv_world.$(OBJEXT) \
+	obj/sv/vclass.$(OBJEXT) \
+	obj/sv/vobject.$(OBJEXT) \
+	obj/sv/wad.$(OBJEXT) \
+	obj/sv/zone.$(OBJEXT)
+
+#---------------------------------------
+#
+#	WAD files
+#
+#---------------------------------------
+
+WAD_FILES = \
+	basev/doom/wad0.wad \
+	basev/doom1/wad0.wad \
+	basev/doom2/wad0.wad \
+	basev/tnt/wad0.wad \
+	basev/plutonia/wad0.wad \
+	basev/heretic/wad0.wad \
+	basev/hexen/wad0.wad \
+	basev/strife/wad0.wad
+
+# ---------------------------------------
+
+.PHONY: all exe suid crash sv svexe utils progs data clean install
+
+# ---------------------------------------
+
+all: exe utils data
+
+exe: $(MAIN_EXE)
+
+$(MAIN_EXE): $(OBJ_FILES) $(LIB_FILES)
+	$(CXX) $(LINK_ARGS) -o $@ $^ $(LIBS)
+
+suid:
+	chown root.root Vavoom
+	chmod 4755 Vavoom
+
+crash:
+	addr2line -e Vavoom -f < crash.txt >> basev/debug.txt
+
+obj/%.$(OBJEXT) : source/%.c
+	$(CC) $(C_ARGS) -o $@ $<
+
+obj/%.$(OBJEXT) : source/%.cpp source/*.h
+	$(CXX) $(CPP_ARGS) -o $@ $<
+
+obj/%.$(OBJEXT) : source/%.s source/asm_i386.h
+	$(CC) $(ASM_ARGS) -o $@ $<
+
+# ---------------------------------------
+
+utils/glbsp/libglbsp.a:
+	$(MAKE) -C utils/glbsp -f Plugin.mak
+
+utils/glvis/libglvis.a:
+	$(MAKE) -C utils/glvis libglvis.a
+
+# ---------------------------------------
+
+sv: svexe data
+
+svexe: $(SERVER_EXE)
+
+$(SERVER_EXE): $(SV_OBJ_FILES)
+	$(CXX) $(LINK_ARGS) -o $@ $(SV_OBJ_FILES) $(SV_LIBS)
+
+obj/sv/%.$(OBJEXT) : source/%.c
+	$(CC) $(C_ARGS) -DSERVER -o $@ $<
+
+obj/sv/%.$(OBJEXT) : source/%.cpp source/*.h
+	$(CXX) $(CPP_ARGS) -DSERVER -o $@ $<
+
+obj/sv/%.$(OBJEXT) : source/%.s
+	$(CC) $(ASM_ARGS) -DSERVER -o $@ $<
+
+# ---------------------------------------
+
+utils:
+	$(MAKE) -C utils/acc
+	$(MAKE) -C utils/vcc
+	$(MAKE) -C utils/vlumpy
+	$(MAKE) -C utils/glvis
+
+progs: utils/bin/vcc$(EXEEXT)
+	$(MAKE) VCC=../../utils/bin/vcc$(EXEEXT) OUTDIR=../../basev/doom1/progs -C progs/doom
+	$(MAKE) VCC=../../utils/bin/vcc$(EXEEXT) OUTDIR=../../basev/doom2/progs -C progs/doom2
+	$(MAKE) VCC=../../utils/bin/vcc$(EXEEXT) OUTDIR=../../basev/heretic/progs -C progs/heretic
+	$(MAKE) VCC=../../utils/bin/vcc$(EXEEXT) OUTDIR=../../basev/hexen/progs -C progs/hexen
+	$(MAKE) VCC=../../utils/bin/vcc$(EXEEXT) OUTDIR=../../basev/strife/progs -C progs/strife
+
+data: progs $(WAD_FILES)
+
+basev/%/wad0.wad: basev/%/wad0.ls utils/bin/vlumpy$(EXEEXT)
+	utils/bin/vlumpy$(EXEEXT) $<
+
+basev/strife/strfhelp.o: utils/editing/acs/*.acs utils/bin/acc$(EXEEXT)
+	utils/bin/acc$(EXEEXT) utils/editing/acs/strfhelp.acs basev/strife/strfhelp.o
+
+utils/bin/acc$(EXEEXT):
+	$(MAKE) -C utils/acc
+
+utils/bin/vcc$(EXEEXT):
+	$(MAKE) -C utils/vcc
+
+utils/bin/vlumpy$(EXEEXT):
+	$(MAKE) -C utils/vlumpy
+
+basev/doom1/wad0.wad : basev/doom1/progs/clprogs.dat basev/doom1/progs/svprogs.dat
+basev/doom2/wad0.wad : basev/doom2/progs/clprogs.dat basev/doom2/progs/svprogs.dat
+basev/heretic/wad0.wad : basev/heretic/progs/clprogs.dat basev/heretic/progs/svprogs.dat
+basev/hexen/wad0.wad : basev/hexen/progs/clprogs.dat basev/hexen/progs/svprogs.dat
+basev/strife/wad0.wad : basev/strife/progs/clprogs.dat basev/strife/progs/svprogs.dat basev/strife/strfhelp.o
+
+# ---------------------------------------
+
+INSTALL_DIRS = $(INSTALL_DIR) \
+		$(INSTALL_DIR)/basev \
+		$(INSTALL_DIR)/basev/doom \
+		$(INSTALL_DIR)/basev/doom1 \
+		$(INSTALL_DIR)/basev/doom2 \
+		$(INSTALL_DIR)/basev/tnt \
+		$(INSTALL_DIR)/basev/plutonia \
+		$(INSTALL_DIR)/basev/heretic \
+		$(INSTALL_DIR)/basev/hexen \
+		$(INSTALL_DIR)/basev/strife
+
+install: installdata
+	$(INSTALL) $(INSTALL_EXEPARMS) Vavoom$(EXEEXT) $(INSTALL_DIR)
+
+installsv: installdata
+	$(INSTALL) $(INSTALL_PARMS) VavoomSV$(EXEEXT) $(INSTALL_DIR)
+
+installdata:
+	$(INSTALL) $(INSTALL_DIRPARMS) $(INSTALL_DIRS)
+	$(INSTALL) $(INSTALL_PARMS) basev/default.cfg basev/startup.vs basev/games.txt $(INSTALL_DIR)/basev
+	$(INSTALL) $(INSTALL_PARMS) basev/doom/wad0.wad $(INSTALL_DIR)/basev/doom
+	$(INSTALL) $(INSTALL_PARMS) basev/doom1/wad0.wad basev/doom1/base.txt $(INSTALL_DIR)/basev/doom1
+	$(INSTALL) $(INSTALL_PARMS) basev/doom2/wad0.wad basev/doom2/base.txt $(INSTALL_DIR)/basev/doom2
+	$(INSTALL) $(INSTALL_PARMS) basev/tnt/wad0.wad basev/tnt/base.txt $(INSTALL_DIR)/basev/tnt
+	$(INSTALL) $(INSTALL_PARMS) basev/plutonia/wad0.wad basev/plutonia/base.txt $(INSTALL_DIR)/basev/plutonia
+	$(INSTALL) $(INSTALL_PARMS) basev/heretic/wad0.wad $(INSTALL_DIR)/basev/heretic
+	$(INSTALL) $(INSTALL_PARMS) basev/hexen/wad0.wad $(INSTALL_DIR)/basev/hexen
+	$(INSTALL) $(INSTALL_PARMS) basev/strife/wad0.wad $(INSTALL_DIR)/basev/strife
+
+# ---------------------------------------
+
+clean:
+	-rm obj/{,cl/,sv/}*.{o,obj} *.tds \
+		utils/{acc,fixmd2,glbsp,glvis,vcc{,/vcpp},vlumpy}/*.{o,obj,a,lib,tds} \
+		basev/{doom{,1,2},heretic,hexen,plutonia,strife,tnt}/{progs/*.dat,wad0.wad}
+
+# ---------------------------------------
+#
+#	Generation of asm files for Windows
+#
+# ---------------------------------------
+
+ASM_FILES = \
+	source/d_aclipa.asm \
+	source/d_aliasa.asm \
+	source/d_edgea.asm \
+	source/d_polysa.asm \
+	source/d_zspan.asm \
+	source/d_varsa.asm \
+	source/d8_part.asm \
+	source/d8_poly.asm \
+	source/d8_s16.asm \
+	source/d8_span.asm \
+	source/d8_spr.asm \
+	source/d8_surf.asm \
+	source/d16_part.asm \
+	source/d16_poly.asm \
+	source/d16_s16.asm \
+	source/d16_span.asm \
+	source/d16_spr.asm \
+	source/d16_surf.asm \
+	source/d32_part.asm \
+	source/d32_poly.asm \
+	source/d32_s16.asm \
+	source/d32_span.asm \
+	source/d32_spr.asm \
+	source/d32_surf.asm \
+	source/pr_execa.asm \
+	source/sys_i386.asm
+
+asm: $(ASM_FILES)
+
+source/%.asm : source/%.s source/asm_i386.h source/gas2tasm.exe
+	$(CC) -x assembler-with-cpp -E -P -DGAS2TASM $< -o - | source/gas2tasm.exe > $@
+
+source/gas2tasm.exe : source/gas2tasm.c
+	$(CC) -O3 -ffast-math -fomit-frame-pointer -s -o $@ $<

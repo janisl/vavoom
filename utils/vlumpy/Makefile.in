@@ -1,0 +1,26 @@
+CXX=@CXX@
+CXXFLAGS=@CXXFLAGS@
+EXEEXT=@EXEEXT@
+LIB_STDCXX=@LIB_STDCXX@
+OBJEXT=@OBJEXT@
+
+LIBS=-lm $(LIB_STDCXX)
+
+CXXFLAGS += -Wall
+
+OBJS = cmdlib.$(OBJEXT) \
+	imglib.$(OBJEXT) \
+	scrlib.$(OBJEXT) \
+	wadlib.$(OBJEXT) \
+	vlumpy.$(OBJEXT)
+
+all: ../bin/vlumpy$(EXEEXT)
+
+../bin/vlumpy$(EXEEXT): $(OBJS)
+	$(CXX) -s -o $@ $(OBJS) $(LIBS)
+
+%.$(OBJEXT): %.cpp ../common/*.h
+	$(CXX) $(CXXFLAGS) -I../common -c -o $@ $<
+
+%.$(OBJEXT): ../common/%.cpp ../common/*.h
+	$(CXX) $(CXXFLAGS) -c -o $@ $<

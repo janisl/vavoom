@@ -1,0 +1,30 @@
+AR=@AR@
+CXX=@CXX@
+CXXFLAGS=@CXXFLAGS@
+EXEEXT=@EXEEXT@
+LIB_STDCXX=@LIB_STDCXX@
+OBJEXT=@OBJEXT@
+RANLIB=@RANLIB@
+
+CXXFLAGS += -Wall
+LIB_OBJS = cmdlib.$(OBJEXT) \
+	wadlib.$(OBJEXT) \
+	level.$(OBJEXT) \
+	flow.$(OBJEXT)
+OBJS = glvis.$(OBJEXT)
+LIBS = -lm $(LIB_STDCXX)
+
+all: ../bin/glvis$(EXEEXT)
+
+../bin/glvis$(EXEEXT): $(OBJS) libglvis.a
+	$(CXX) -s -o $@ $^ $(LIBS)
+
+libglvis.a: $(LIB_OBJS)
+	$(AR) rc $@ $^
+	$(RANLIB) $@
+
+%.$(OBJEXT): %.cpp *.h ../common/*.h
+	$(CXX) $(CXXFLAGS) -I../common -c -o $@ $<
+
+%.$(OBJEXT): ../common/%.cpp ../common/*.h
+	$(CXX) $(CXXFLAGS) -c -o $@ $<

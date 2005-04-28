@@ -1,0 +1,41 @@
+#
+# glBSP Makefile for Plugin
+#
+
+CC=@CC@
+CFLAGS=@CFLAGS@
+OBJEXT=@OBJEXT@
+RANLIB=@RANLIB@
+AR=@AR@
+
+MAIN=.
+
+OUTNAME=libglbsp.a
+
+CFLAGS+=-Wall -DGLBSP_PLUGIN -DUNIX -DINLINE_G=inline
+
+OBJS=$(MAIN)/analyze.$(OBJEXT)  \
+     $(MAIN)/blockmap.$(OBJEXT) \
+     $(MAIN)/glbsp.$(OBJEXT)    \
+     $(MAIN)/level.$(OBJEXT)    \
+     $(MAIN)/node.$(OBJEXT)     \
+     $(MAIN)/reject.$(OBJEXT)   \
+     $(MAIN)/seg.$(OBJEXT)      \
+     $(MAIN)/system.$(OBJEXT)   \
+     $(MAIN)/util.$(OBJEXT)     \
+     $(MAIN)/wad.$(OBJEXT)
+
+
+# ----- TARGETS ------------------------------------------------------
+
+all:    $(OUTNAME)
+
+clean:
+	rm -f $(OUTNAME) $(MAIN)/*.$(OBJEXT)
+
+$(OUTNAME): $(OBJS)
+	$(AR) rc $(OUTNAME) $(OBJS)
+	$(RANLIB) $(OUTNAME)
+
+.PHONY: all clean
+
