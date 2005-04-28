@@ -22,7 +22,7 @@ void doinclude(Tokenrow * trp)
 	if (trp->tp->type == STRING)
 	{
 		len = trp->tp->len - 2;
-		if (len > sizeof(fname) - 1)
+		if (len > (int)sizeof(fname) - 1)
 			len = sizeof(fname) - 1;
 		strncpy(fname, (char *)trp->tp->t + 1, len);
 		angled = 0;

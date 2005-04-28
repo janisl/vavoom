@@ -573,7 +573,7 @@ void ParseVector(void)
 
 void ParseClass(void)
 {
-	field_t		*fi;
+	field_t		*fi = NULL;
 	field_t		*otherfield;
 	int			i;
 	TType		*t;
@@ -1840,9 +1840,12 @@ field_t* CheckForField(FName Name, TType *t, bool check_aux)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.31  2005/04/28 07:14:03  dj_jl
+//	Fixed some warnings.
+//
 //	Revision 1.30  2003/03/08 12:47:52  dj_jl
 //	Code cleanup.
-//
+//	
 //	Revision 1.29  2002/11/02 17:11:13  dj_jl
 //	New style classes.
 //	

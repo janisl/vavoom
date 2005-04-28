@@ -477,7 +477,7 @@ Tokenrow *stringify(Tokenrow * vp)
 		}
 		if (tp->wslen && (tp->flag & XPWS) == 0)
 			*sp++ = ' ';
-		for (i = 0, cp = tp->t; i < tp->len; i++)
+		for (i = 0, cp = tp->t; i < (int)tp->len; i++)
 		{
 			if (instring && (*cp == '"' || *cp == '\\'))
 				*sp++ = '\\';

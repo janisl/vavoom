@@ -73,7 +73,7 @@ static void *DefaultMalloc(size_t size)
 	void *ptr = malloc(size);
 	if (!ptr)
 	{
-		Error("Couldn't alloc %ld bytes", size);
+		Error("Couldn't alloc %d bytes", (int)size);
 	}
 	memset(ptr, 0, size);
 	return ptr;
@@ -90,7 +90,7 @@ static void *DefaultRealloc(void *data, size_t size)
 	void *ptr = realloc(data, size);
 	if (!ptr)
 	{
-		Error("Couldn't realloc %ld bytes", size);
+		Error("Couldn't realloc %d bytes", (int)size);
 	}
 	return ptr;
 }
@@ -384,9 +384,12 @@ int LoadFile(const char *name, void **bufferptr)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2005/04/28 07:14:03  dj_jl
+//	Fixed some warnings.
+//
 //	Revision 1.7  2002/01/07 12:30:04  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.6  2001/12/27 17:42:07  dj_jl
 //	Added FixupPath
 //	

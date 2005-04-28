@@ -41,7 +41,7 @@
 
 class GLVisError
 {
- public:
+public:
 	GLVisError(const char *, ...) __attribute__((format(printf, 2, 3)));
 
 	char message[256];
@@ -49,11 +49,12 @@ class GLVisError
 
 class TGLVis
 {
- public:
-	TGLVis(void) : Malloc(NULL), Free(NULL), fastvis(false), verbose(false),
+public:
+	TGLVis() : Malloc(NULL), Free(NULL), fastvis(false), verbose(false),
 		no_reject(false), testlevel(2), num_specified_maps(0)
-	{
-	}
+	{}
+	virtual ~TGLVis()
+	{}
 
 	void Build(const char *srcfile);
 	virtual void DisplayMessage(const char *text, ...)
@@ -85,9 +86,12 @@ class TGLVis
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2005/04/28 07:14:03  dj_jl
+//	Fixed some warnings.
+//
 //	Revision 1.8  2004/10/11 06:49:04  dj_jl
 //	Added support for version 3.0 GL nodes.
-//
+//	
 //	Revision 1.7  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
 //	

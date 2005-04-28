@@ -23,25 +23,27 @@ struct kwtab
 }
 kwtab[] =
 {
-	"if", KIF, ISKW,
-		"ifdef", KIFDEF, ISKW,
-		"ifndef", KIFNDEF, ISKW,
-		"elif", KELIF, ISKW,
-		"else", KELSE, ISKW,
-		"endif", KENDIF, ISKW,
-		"include", KINCLUDE, ISKW,
-		"define", KDEFINE, ISKW,
-		"undef", KUNDEF, ISKW,
-		"line", KLINE, ISKW,
-		"error", KERROR, ISKW,
-		"pragma", KPRAGMA, ISKW,
-		"eval", KEVAL, ISKW,
-		"defined", KDEFINED, ISDEFINED + ISUNCHANGE,
-		"__LINE__", KLINENO, ISMAC + ISUNCHANGE,
-		"__FILE__", KFILE, ISMAC + ISUNCHANGE,
-		"__DATE__", KDATE, ISMAC + ISUNCHANGE,
-		"__TIME__", KTIME, ISMAC + ISUNCHANGE,
-		"__STDC__", KSTDC, ISUNCHANGE, NULL};
+	{"if", KIF, ISKW},
+	{"ifdef", KIFDEF, ISKW},
+	{"ifndef", KIFNDEF, ISKW},
+	{"elif", KELIF, ISKW},
+	{"else", KELSE, ISKW},
+	{"endif", KENDIF, ISKW},
+	{"include", KINCLUDE, ISKW},
+	{"define", KDEFINE, ISKW},
+	{"undef", KUNDEF, ISKW},
+	{"line", KLINE, ISKW},
+	{"error", KERROR, ISKW},
+	{"pragma", KPRAGMA, ISKW},
+	{"eval", KEVAL, ISKW},
+	{"defined", KDEFINED, ISDEFINED + ISUNCHANGE},
+	{"__LINE__", KLINENO, ISMAC + ISUNCHANGE},
+	{"__FILE__", KFILE, ISMAC + ISUNCHANGE},
+	{"__DATE__", KDATE, ISMAC + ISUNCHANGE},
+	{"__TIME__", KTIME, ISMAC + ISUNCHANGE},
+	{"__STDC__", KSTDC, ISUNCHANGE}, 
+	{NULL}
+};
 
 unsigned long namebit[077 + 1];
 Nlist *np;
@@ -84,7 +86,7 @@ Nlist *lookup(Token * tp, int install)
 	np = nlist[h];
 	while (np)
 	{
-		if (*tp->t == *np->name && tp->len == np->len
+		if (*tp->t == *np->name && (int)tp->len == np->len
 			&& strncmp((char *)tp->t, (char *)np->name, tp->len) == 0)
 			return np;
 		np = np->next;

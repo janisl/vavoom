@@ -157,9 +157,9 @@ void TK_Init(void)
 	{
 		ASCIIToChrCode[i] = CHR_LETTER;
 	}
-	ASCIIToChrCode['\"'] = CHR_QUOTE;
-	ASCIIToChrCode['\''] = CHR_SINGLE_QUOTE;
-	ASCIIToChrCode['_'] = CHR_LETTER;
+	ASCIIToChrCode[(int)'\"'] = CHR_QUOTE;
+	ASCIIToChrCode[(int)'\''] = CHR_SINGLE_QUOTE;
+	ASCIIToChrCode[(int)'_'] = CHR_LETTER;
 	ASCIIToChrCode[0] = CHR_EOF;
 	ASCIIToChrCode[EOF_CHARACTER] = CHR_EOF;
 	tk_String = TokenStringBuffer;
@@ -1169,9 +1169,12 @@ void TK_Expect(EPunctuation punct, ECompileError error)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2005/04/28 07:14:03  dj_jl
+//	Fixed some warnings.
+//
 //	Revision 1.19  2003/03/08 12:47:52  dj_jl
 //	Code cleanup.
-//
+//	
 //	Revision 1.18  2002/09/07 16:36:38  dj_jl
 //	Support bool in function args and return type.
 //	Removed support for typedefs.

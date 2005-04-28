@@ -367,6 +367,7 @@ int evalop(struct pri pri)
 
 	rv2 = 0;
 	rtype = 0;
+	memset(&v2, 0, sizeof(v2));
 	while (pri.priority < priority[op[-1]].priority)
 	{
 		oper = *--op;
@@ -436,16 +437,16 @@ int evalop(struct pri pri)
 			rv1 = rv1 > rv2;
 			break;
 		case LEQ | UNSMARK:
-			rv1 = (unsigned long)rv1 <= rv2;
+			rv1 = (unsigned long)rv1 <= (unsigned long)rv2;
 			break;
 		case GEQ | UNSMARK:
-			rv1 = (unsigned long)rv1 >= rv2;
+			rv1 = (unsigned long)rv1 >= (unsigned long)rv2;
 			break;
 		case LT | UNSMARK:
-			rv1 = (unsigned long)rv1 < rv2;
+			rv1 = (unsigned long)rv1 < (unsigned long)rv2;
 			break;
 		case GT | UNSMARK:
-			rv1 = (unsigned long)rv1 > rv2;
+			rv1 = (unsigned long)rv1 > (unsigned long)rv2;
 			break;
 		case LSH:
 			rv1 <<= rv2;
@@ -674,7 +675,7 @@ struct value tokval(Token * tp)
 			{
 				static char cvcon[] = "b\bf\fn\nr\rt\tv\v''\"\"??\\\\";
 
-				for (i = 0; i < sizeof(cvcon); i += 2)
+				for (i = 0; i < (int)sizeof(cvcon); i += 2)
 				{
 					if (*p == cvcon[i])
 					{
@@ -683,7 +684,7 @@ struct value tokval(Token * tp)
 					}
 				}
 				p += 1;
-				if (i >= sizeof(cvcon))
+				if (i >= (int)sizeof(cvcon))
 					error(WARNING, "Undefined escape in character constant");
 			}
 		}
