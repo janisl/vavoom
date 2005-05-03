@@ -1,0 +1,23 @@
+CXX=@CXX@
+CXXFLAGS=@CXXFLAGS@
+EXEEXT=@EXEEXT@
+LIB_STDCXX=@LIB_STDCXX@
+OBJEXT=@OBJEXT@
+
+LIBS=$(LIB_STDCXX)
+
+CXXFLAGS += -Wall
+
+OBJS = cmdlib.$(OBJEXT) \
+	fixmd2.$(OBJEXT)
+
+all: ../bin/fixmd2$(EXEEXT)
+
+../bin/fixmd2$(EXEEXT): $(OBJS)
+	$(CXX) -s -o $@ $(OBJS) $(LIBS)
+
+%.$(OBJEXT): %.cpp ../common/*.h
+	$(CXX) $(CXXFLAGS) -I../common -c -o $@ $<
+
+%.$(OBJEXT): ../common/%.cpp ../common/*.h
+	$(CXX) $(CXXFLAGS) -c -o $@ $<

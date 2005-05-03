@@ -209,14 +209,14 @@ int main(int argc, char *argv[])
 {
 	if (argc < 2)
 	{
-		cerr << "Usage: fixmd2 <model> [options]\n";
-		cerr << "Options are:\n";
-		cerr << "  s<scale>  - scale model by scale\n";
-		cerr << "  i<iscale> - scale model by 1/iscale\n";
-		cerr << "  x<shift>  - shift origin on x\n";
-		cerr << "  y<shift>  - shift origin on y\n";
-		cerr << "  z<shift>  - shift origin on z\n";
-		cerr << "  /<name>   - set skin\n";
+		fprintf(stderr, "Usage: fixmd2 <model> [options]\n");
+		fprintf(stderr, "Options are:\n");
+		fprintf(stderr, "  s<scale>  - scale model by scale\n");
+		fprintf(stderr, "  i<iscale> - scale model by 1/iscale\n");
+		fprintf(stderr, "  x<shift>  - shift origin on x\n");
+		fprintf(stderr, "  y<shift>  - shift origin on y\n");
+		fprintf(stderr, "  z<shift>  - shift origin on z\n");
+		fprintf(stderr, "  /<name>   - set skin\n");
 		return -1;
 	}
 	strcpy(filename, argv[1]);
@@ -267,9 +267,12 @@ int main(int argc, char *argv[])
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2005/05/03 15:02:52  dj_jl
+//	Added fixmd2 to the build system.
+//
 //	Revision 1.7  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.6  2001/11/02 18:36:59  dj_jl
 //	no message
 //	

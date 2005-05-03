@@ -11,19 +11,18 @@ CXXFLAGS=@CXXFLAGS@
 EXEEXT=@EXEEXT@
 INSTALL=@INSTALL@
 LDFLAGS=@LDFLAGS@
-LIB_GL=@LIB_GL@
 LIB_STDCXX=@LIB_STDCXX@
 MAIN_CFLAGS=@MAIN_CFLAGS@
 MAIN_EXE=@MAIN_EXE@
-MAIN_PLATFORM=@MAIN_PLATFORM@
 OBJEXT=@OBJEXT@
 SERVER_EXE=@SERVER_EXE@
-SV_PLATFORM=@SV_PLATFORM@
 prefix=@prefix@
 
 OBJ_FILES = @OBJ_FILES@
 LIBS = @MAIN_LIBS@
 LIB_FILES = @LIB_FILES@
+SV_LIBS = @SV_LIBS@
+SV_OBJ_FILES = @SV_OBJ_FILES@
 
 C_ARGS   = -c -W -Wall $(CFLAGS)
 CPP_ARGS = -c -W -Wall $(CXXFLAGS) $(MAIN_CFLAGS)
@@ -191,8 +190,6 @@ SYS_OBJS_DJGPP = \
 	obj/sys_i386.$(OBJEXT) \
 	obj/sys_dos.$(OBJEXT)
 GL_SYS_OBJ_DJGPP = obj/gl_alleg.$(OBJEXT)
-LIBS_DJGPP = -lalleg -lpng -lz $(LIB_STDCXX)
-GL_SYS_LIB_DJGPP =
 
 #-- Linux with Allegro --
 SYS_OBJS_UNIX_ALLEGRO = \
@@ -205,8 +202,6 @@ SYS_OBJS_UNIX_ALLEGRO = \
 	obj/sys_i386.$(OBJEXT) \
 	obj/sys_lin.$(OBJEXT)
 GL_SYS_OBJ_UNIX_ALLEGRO = obj/gl_agl.$(OBJEXT)
-LIBS_UNIX_ALLEGRO = `allegro-config --libs` -lXxf86dga -lpng -lz -lm $(LIB_STDCXX)
-GL_SYS_LIB_UNIX_ALLEGRO = -lagl -lGLU
 
 #-- Linux with SDL --
 SYS_OBJS_UNIX_SDL = \
@@ -219,8 +214,6 @@ SYS_OBJS_UNIX_SDL = \
 	obj/sys_i386.$(OBJEXT) \
 	obj/sys_sdl.$(OBJEXT)
 GL_SYS_OBJ_UNIX_SDL = obj/gl_sdl.$(OBJEXT)
-LIBS_UNIX_SDL = `sdl-config --libs` -lSDL_mixer -lpng -lz -lm $(LIB_STDCXX)
-GL_SYS_LIB_UNIX_SDL =
 
 #-- CD audio drivers for various UNIX platforms --
 CDAUDIO_OBJ_LINUX = obj/cd_linux.$(OBJEXT)
@@ -240,11 +233,6 @@ SYS_OBJS_WIN32 = \
 	obj/sys_i386.$(OBJEXT) \
 	obj/sys_win.$(OBJEXT)
 GL_SYS_OBJ_WIN32 = obj/gl_win32.$(OBJEXT)
-LIBS_WIN32 = -lgdi32 -lole32 -lwsock32 -lwinmm $(LIB_STDCXX)
-GL_SYS_LIB_WIN32 =
-
-GL_SYS_OBJ = $(GL_SYS_OBJ_$(MAIN_PLATFORM))
-GL_SYS_LIB = $(GL_SYS_LIB_$(MAIN_PLATFORM))
 
 #---------------------------------------
 #
@@ -252,34 +240,7 @@ GL_SYS_LIB = $(GL_SYS_LIB_$(MAIN_PLATFORM))
 #
 #---------------------------------------
 
-SV_SYS_OBJS_DJGPP = \
-	obj/sv/mplib.$(OBJEXT) \
-	obj/sv/mplpc.$(OBJEXT) \
-	obj/sv/net_bw.$(OBJEXT) \
-	obj/sv/net_dos.$(OBJEXT) \
-	obj/sv/net_ipx.$(OBJEXT) \
-	obj/sv/net_mp.$(OBJEXT) \
-	obj/sv/npxsetup.$(OBJEXT) \
-	obj/sv/sys_bsd.$(OBJEXT)
-SV_LIBS_DJGPP = $(LIB_STDCXX)
-
-SV_SYS_OBJS_UNIX = \
-	obj/sv/net_bsd.$(OBJEXT) \
-	obj/sv/net_udp.$(OBJEXT) \
-	obj/sv/sys_bsd.$(OBJEXT)
-SV_LIBS_UNIX = -lm $(LIB_STDCXX)
-
-SV_SYS_OBJS_WIN32 = \
-	obj/sv/net_win.$(OBJEXT) \
-	obj/sv/net_wins.$(OBJEXT) \
-	obj/sv/net_wipx.$(OBJEXT) \
-	obj/sv/sys_wind.$(OBJEXT)
-SV_LIBS_WIN32 = -lwsock32 -lm $(LIB_STDCXX)
-
-SV_SYS_OBJS = $(SV_SYS_OBJS_$(SV_PLATFORM))
-SV_LIBS = $(SV_LIBS_$(SV_PLATFORM))
-
-SV_OBJ_FILES = $(SV_SYS_OBJS) \
+SV_COMMON_OBJ_FILES = \
 	obj/sv/cmd.$(OBJEXT) \
 	obj/sv/crc.$(OBJEXT) \
 	obj/sv/cvar.$(OBJEXT) \
@@ -319,6 +280,27 @@ SV_OBJ_FILES = $(SV_SYS_OBJS) \
 	obj/sv/vobject.$(OBJEXT) \
 	obj/sv/wad.$(OBJEXT) \
 	obj/sv/zone.$(OBJEXT)
+
+SV_SYS_OBJS_DJGPP = \
+	obj/sv/mplib.$(OBJEXT) \
+	obj/sv/mplpc.$(OBJEXT) \
+	obj/sv/net_bw.$(OBJEXT) \
+	obj/sv/net_dos.$(OBJEXT) \
+	obj/sv/net_ipx.$(OBJEXT) \
+	obj/sv/net_mp.$(OBJEXT) \
+	obj/sv/npxsetup.$(OBJEXT) \
+	obj/sv/sys_bsd.$(OBJEXT)
+
+SV_SYS_OBJS_UNIX = \
+	obj/sv/net_bsd.$(OBJEXT) \
+	obj/sv/net_udp.$(OBJEXT) \
+	obj/sv/sys_bsd.$(OBJEXT)
+
+SV_SYS_OBJS_WIN32 = \
+	obj/sv/net_win.$(OBJEXT) \
+	obj/sv/net_wins.$(OBJEXT) \
+	obj/sv/net_wipx.$(OBJEXT) \
+	obj/sv/sys_wind.$(OBJEXT)
 
 #---------------------------------------
 #
@@ -398,6 +380,7 @@ utils:
 	$(MAKE) -C utils/vcc
 	$(MAKE) -C utils/vlumpy
 	$(MAKE) -C utils/glvis
+	$(MAKE) -C utils/fixmd2
 
 progs: utils/bin/vcc$(EXEEXT)
 	$(MAKE) VCC=../../utils/bin/vcc$(EXEEXT) OUTDIR=../../basev/doom1/progs -C progs/doom
