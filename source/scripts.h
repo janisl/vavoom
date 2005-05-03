@@ -33,17 +33,19 @@
 
 void SC_Open(const char *name);
 void SC_OpenLump(const char *name);
+void SC_OpenLumpNum(int LumpNum);
 void SC_OpenFile(const char *name);
-void SC_Close(void);
-boolean SC_GetString(void);
-void SC_MustGetString(void);
+void SC_Close();
+boolean SC_GetString();
+void SC_MustGetString();
 void SC_MustGetStringName(const char *name);
-boolean SC_GetNumber(void);
-void SC_MustGetNumber(void);
-boolean SC_GetFloat(void);
-void SC_MustGetFloat(void);
-void SC_UnGet(void);
-//boolean SC_Check(void);
+boolean SC_CheckNumber();
+boolean SC_GetNumber();
+void SC_MustGetNumber();
+boolean SC_CheckFloat();
+boolean SC_GetFloat();
+void SC_MustGetFloat();
+void SC_UnGet();
 boolean SC_Compare(const char *text);
 int SC_MatchString(const char **strings);
 int SC_MustMatchString(const char **strings);
@@ -63,9 +65,12 @@ extern char 	*sc_ScriptsDir;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2005/05/03 15:00:11  dj_jl
+//	Moved switch list, animdefs enhancements.
+//
 //	Revision 1.5  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2001/08/04 17:27:39  dj_jl
 //	Added consts to script functions
 //	

@@ -44,6 +44,13 @@ struct picinfo_t
 	int		yoffset;
 };
 
+struct TSwitch
+{
+	int Tex1;
+	int Tex2;
+	int Sound;
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // r_main
@@ -87,12 +94,18 @@ extern int				validcount;
 
 extern int				skyflatnum;
 
+//	Switches
+extern TArray<TSwitch>	Switches;
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2005/05/03 15:00:11  dj_jl
+//	Moved switch list, animdefs enhancements.
+//
 //	Revision 1.7  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.6  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

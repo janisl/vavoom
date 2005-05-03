@@ -34,6 +34,7 @@
 #define ASCII_QUOTE (34)
 #define LUMP_SCRIPT 1
 #define FILE_ZONE_SCRIPT 2
+#define LUMP_NUM_SCRIPT 3
 
 // TYPES -------------------------------------------------------------------
 
@@ -44,7 +45,7 @@
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 static void CheckOpen(void);
-static void OpenScript(const char *name, int type);
+static void OpenScript(const char *name, int LumpNum, int type);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -78,6 +79,7 @@ static boolean 	AlreadyGot = false;
 
 void SC_Open(const char *name)
 {
+	guard(SC_Open);
 	char filename[MAX_OSPATH];
 
 	if (fl_devmode && FL_FindFile(va("scripts/%s.txt", name), filename))
@@ -88,6 +90,7 @@ void SC_Open(const char *name)
 	{
 		SC_OpenLump(name);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -100,7 +103,24 @@ void SC_Open(const char *name)
 
 void SC_OpenLump(const char *name)
 {
-	OpenScript(name, LUMP_SCRIPT);
+	guard(SC_OpenLump);
+	OpenScript(name, -1, LUMP_SCRIPT);
+	unguard;
+}
+
+//==========================================================================
+//
+// SC_OpenLumpNum
+//
+// Loads a script (from the WAD files) and prepares it for parsing.
+//
+//==========================================================================
+
+void SC_OpenLumpNum(int LumpNum)
+{
+	guard(SC_OpenLumpNum);
+	OpenScript(W_LumpName(LumpNum), LumpNum, LUMP_SCRIPT);
+	unguard;
 }
 
 //==========================================================================
@@ -114,7 +134,9 @@ void SC_OpenLump(const char *name)
 
 void SC_OpenFile(const char *name)
 {
-	OpenScript(name, FILE_ZONE_SCRIPT);
+	guard(SC_OpenFile);
+	OpenScript(name, -1, FILE_ZONE_SCRIPT);
+	unguard;
 }
 
 //==========================================================================
@@ -123,14 +145,22 @@ void SC_OpenFile(const char *name)
 //
 //==========================================================================
 
-static void OpenScript(const char *name, int type)
+static void OpenScript(const char *name, int LumpNum, int type)
 {
+	guard(OpenScript);
 	SC_Close();
 	if (type == LUMP_SCRIPT)
 	{
 		// Lump script
 		ScriptBuffer = (char *)W_CacheLumpName(name, PU_HIGH);
 		ScriptSize = W_LumpLength(W_GetNumForName(name));
+		strcpy(ScriptName, name);
+	}
+	else if (type == LUMP_NUM_SCRIPT)
+	{
+		// Lump num script
+		ScriptBuffer = (char*)W_CacheLumpNum(LumpNum, PU_HIGH);
+		ScriptSize = W_LumpLength(LumpNum);
 		strcpy(ScriptName, name);
 	}
 	else if (type == FILE_ZONE_SCRIPT)
@@ -146,6 +176,7 @@ static void OpenScript(const char *name, int type)
 	ScriptOpen = true;
 	sc_String = StringBuffer;
 	AlreadyGot = false;
+	unguard;
 }
 
 //==========================================================================
@@ -156,11 +187,13 @@ static void OpenScript(const char *name, int type)
 
 void SC_Close(void)
 {
+	guard(SC_Close);
 	if (ScriptOpen)
 	{
 		Z_Free(ScriptBuffer);
 		ScriptOpen = false;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -171,6 +204,7 @@ void SC_Close(void)
 
 boolean SC_GetString(void)
 {
+	guard(SC_GetString);
 	char 	*text;
 	boolean foundToken;
 
@@ -260,6 +294,7 @@ boolean SC_GetString(void)
 	}
 	*text = 0;
 	return true;
+	unguard;
 }
 
 //==========================================================================
@@ -270,10 +305,12 @@ boolean SC_GetString(void)
 
 void SC_MustGetString(void)
 {
+	guard(SC_MustGetString);
 	if (SC_GetString() == false)
 	{
 		SC_ScriptError("Missing string.");
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -284,11 +321,42 @@ void SC_MustGetString(void)
 
 void SC_MustGetStringName(const char *name)
 {
+	guard(SC_MustGetStringName);
 	SC_MustGetString();
 	if (SC_Compare(name) == false)
 	{
 		SC_ScriptError(NULL);
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	SC_CheckNumber
+//
+//==========================================================================
+
+boolean SC_CheckNumber(void)
+{
+	guard(SC_CheckNumber);
+	char *stopper;
+
+	CheckOpen();
+	if (SC_GetString())
+	{
+		sc_Number = strtol(sc_String, &stopper, 0);
+		if (*stopper != 0)
+		{
+			SC_UnGet();
+			return false;
+		}
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+	unguard;
 }
 
 //==========================================================================
@@ -299,6 +367,7 @@ void SC_MustGetStringName(const char *name)
 
 boolean SC_GetNumber(void)
 {
+	guard(SC_GetNumber);
 	char *stopper;
 
 	CheckOpen();
@@ -316,6 +385,7 @@ boolean SC_GetNumber(void)
 	{
 		return false;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -326,10 +396,41 @@ boolean SC_GetNumber(void)
 
 void SC_MustGetNumber(void)
 {
+	guard(SC_MustGetNumber);
 	if (SC_GetNumber() == false)
 	{
 		SC_ScriptError("Missing integer.");
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	SC_CheckFloat
+//
+//==========================================================================
+
+boolean SC_CheckFloat(void)
+{
+	guard(SC_CheckFloat);
+	char *stopper;
+
+	CheckOpen();
+	if (SC_GetString())
+	{
+		sc_Float = strtod(sc_String, &stopper);
+		if (*stopper != 0)
+		{
+			SC_UnGet();
+			return false;
+		}
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+	unguard;
 }
 
 //==========================================================================
@@ -340,6 +441,7 @@ void SC_MustGetNumber(void)
 
 boolean SC_GetFloat(void)
 {
+	guard(SC_GetFloat);
 	char *stopper;
 
 	CheckOpen();
@@ -357,6 +459,7 @@ boolean SC_GetFloat(void)
 	{
 		return false;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -367,10 +470,12 @@ boolean SC_GetFloat(void)
 
 void SC_MustGetFloat(void)
 {
+	guard(SC_MustGetFloat);
 	if (SC_GetFloat() == false)
 	{
 		SC_ScriptError("Missing float.");
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -383,7 +488,9 @@ void SC_MustGetFloat(void)
 
 void SC_UnGet(void)
 {
+	guard(SC_UnGet);
 	AlreadyGot = true;
+	unguard;
 }
 
 //==========================================================================
@@ -436,6 +543,7 @@ boolean SC_Check(void)
 
 int SC_MatchString(const char **strings)
 {
+	guard(SC_MatchString);
 	int i;
 
 	for (i = 0; *strings != NULL; i++)
@@ -445,6 +553,7 @@ int SC_MatchString(const char **strings)
 			return i;
 		}
 	}
+	unguard;
 	return -1;
 }
 
@@ -456,6 +565,7 @@ int SC_MatchString(const char **strings)
 
 int SC_MustMatchString(const char **strings)
 {
+	guard(SC_MustMatchString);
 	int i;
 
 	i = SC_MatchString(strings);
@@ -464,6 +574,7 @@ int SC_MustMatchString(const char **strings)
 		SC_ScriptError(NULL);
 	}
 	return i;
+	unguard;
 }
 
 //==========================================================================
@@ -474,7 +585,9 @@ int SC_MustMatchString(const char **strings)
 
 boolean SC_Compare(const char *text)
 {
+	guard(SC_Compare);
 	return !stricmp(text, sc_String);
+	unguard;
 }
 
 //==========================================================================
@@ -485,12 +598,11 @@ boolean SC_Compare(const char *text)
 
 void SC_ScriptError(const char *message)
 {
-	if (message == NULL)
-	{
-		message = "Bad syntax.";
-	}
+	guard(SC_ScriptError)
+	const char* Msg = message ? message : "Bad syntax.";
 	Sys_Error("Script error, \"%s\" line %d: %s", ScriptName,
-		sc_Line, message);
+		sc_Line, Msg);
+	unguard;
 }
 
 //==========================================================================
@@ -501,18 +613,23 @@ void SC_ScriptError(const char *message)
 
 static void CheckOpen(void)
 {
+	guard(CheckOpen);
 	if (ScriptOpen == false)
 	{
 		Sys_Error("SC_ call before SC_Open().");
 	}
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2005/05/03 15:00:11  dj_jl
+//	Moved switch list, animdefs enhancements.
+//
 //	Revision 1.6  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.5  2001/10/12 17:31:13  dj_jl
 //	no message
 //	

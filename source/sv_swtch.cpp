@@ -22,7 +22,7 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
-//**	
+//**
 //**	Switches, buttons. Two-state animation. Exits.
 //**
 //**************************************************************************
@@ -51,13 +51,6 @@ enum EBWhere
 	SWITCH_BOTTOM
 };
 
-struct TSwitch
-{
-	int Tex1;
-	int Tex2;
-	int Sound;
-};
-
 struct TButton
 {
     int		Side;
@@ -84,9 +77,6 @@ struct TTerrainType
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-//	Switches
-static TArray<TSwitch>		Switches;
-
 //	Buttons
 static TArray<TButton>		ButtonList;
 
@@ -94,41 +84,6 @@ static TArray<TButton>		ButtonList;
 static TArray<TTerrainType>	TerrainTypes;
 
 // CODE --------------------------------------------------------------------
-
-//==========================================================================
-//
-//	P_InitSwitchList
-//
-//	Only called at game initialization.
-//
-//==========================================================================
-
-void P_InitSwitchList(void)
-{
-	guard(P_InitSwitchList);
-	int t1;
-	int t2;
-
-	SC_Open("switches");
-	while (SC_GetString())
-	{
-		t1 = R_CheckTextureNumForName(sc_String);
-		SC_MustGetString();
-		t2 = R_CheckTextureNumForName(sc_String);
-		SC_MustGetString();
-    	if ((t1 < 0) || (t2 < 0))
-		{
-			continue;
-		}
-		TSwitch *sw = new(Switches) TSwitch;
-		sw->Sound = S_GetSoundID(sc_String);
-    	sw->Tex1 = t1;
-    	sw->Tex2 = t2;
-	}
-	SC_Close();
-	Switches.Shrink();
-	unguard;
-}
 
 //==========================================================================
 //
@@ -329,9 +284,12 @@ int SV_TerrainType(int pic)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2005/05/03 15:00:11  dj_jl
+//	Moved switch list, animdefs enhancements.
+//
 //	Revision 1.9  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.8  2002/07/13 07:50:58  dj_jl
 //	Added guarding.
 //	

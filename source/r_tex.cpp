@@ -68,16 +68,13 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define ANIM_SCRIPT_NAME	"ANIMDEFS"
-#define ANIM_FLAT 			0
-#define ANIM_TEXTURE 		1
-#define SCI_FLAT 			"flat"
-#define SCI_TEXTURE 		"texture"
-#define SCI_PIC 			"pic"
-#define SCI_TICS 			"tics"
-#define SCI_RAND 			"rand"
-
 // TYPES -------------------------------------------------------------------
+
+enum
+{
+	ANIM_FLAT,
+	ANIM_TEXTURE,
+};
 
 struct frameDef_t
 {
@@ -88,12 +85,15 @@ struct frameDef_t
 
 struct animDef_t
 {
-	int type;
-	int index;
-	float time;
-	int currentFrameDef;
-	int startFrameDef;
-	int endFrameDef;
+	int		type;
+	int		index;
+	float	time;
+	int		currentFrameDef;
+	int		startFrameDef;
+	int		endFrameDef;
+	bool	IsRange;
+	bool	Backwards;
+	int		CurrentRangeFrame;
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -144,6 +144,9 @@ pic_info_t		pic_list[MAX_PICS];
 rgba_t			r_palette[MAX_PALETTES][256];
 byte			r_black_color[MAX_PALETTES];
 
+//	Switches
+TArray<TSwitch>	Switches;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static TArray<animDef_t>	AnimDefs;
@@ -159,7 +162,7 @@ static float*				textureheight;	// needed for texture pegging
 //
 //==========================================================================
 
-static bool IsStrifeTexture(void)
+static bool IsStrifeTexture()
 {
 	guard(IsStrifeTexture);
 	int *plump = (int*)W_CacheLumpName("TEXTURE1", PU_STATIC);
@@ -186,43 +189,43 @@ static bool IsStrifeTexture(void)
 //
 //==========================================================================
 
-static void InitTextures(void)
+static void InitTextures()
 {
 	guard(InitTextures);
 	maptexture_t*	mtexture;
 	texdef_t*		texture;
 	texpatch_t*		patch;
 
-    int				i;
-    int				j;
+	int				i;
+	int				j;
 
-    int*			maptex;
-    int*			maptex2;
-    int*			maptex1;
-    
-    char			name[9];
-    char*			names;
-    char*			name_p;
-    
-    int*			patchlookup;
-    
-    int				nummappatches;
-    int				offset;
-    int				maxoff;
-    int				maxoff2;
-    int				numtextures1;
-    int				numtextures2;
+	int*			maptex;
+	int*			maptex2;
+	int*			maptex1;
 
-    int*			directory;
-    
-    // Load the patch names from pnames.lmp.
-    name[8] = 0;
-    names = (char*)W_CacheLumpName("PNAMES", PU_STATIC);
-    nummappatches = LittleLong(*((int *)names));
-    name_p = names + 4;
-    patchlookup = (int*)Z_Malloc(nummappatches*sizeof(*patchlookup), PU_HIGH, 0);
+	char			name[9];
+	char*			names;
+	char*			name_p;
 
-    for (i = 0; i < nummappatches; i++)
+	int*			patchlookup;
+
+	int				nummappatches;
+	int				offset;
+	int				maxoff;
+	int				maxoff2;
+	int				numtextures1;
+	int				numtextures2;
+
+	int*			directory;
+
+	// Load the patch names from pnames.lmp.
+	name[8] = 0;
+	names = (char*)W_CacheLumpName("PNAMES", PU_STATIC);
+	nummappatches = LittleLong(*((int *)names));
+	name_p = names + 4;
+	patchlookup = (int*)Z_Malloc(nummappatches*sizeof(*patchlookup), PU_HIGH, 0);
+
+	for (i = 0; i < nummappatches; i++)
 	{
 		strncpy(name, name_p + i * 8, 8);
 		patchlookup[i] = W_CheckNumForName(name);
@@ -230,58 +233,58 @@ static void InitTextures(void)
 		if (patchlookup[i] < 0)
 			patchlookup[i] = W_CheckNumForName(name, WADNS_Sprites);
 	}
-    Z_Free(names);
+	Z_Free(names);
 
-    // Load the map texture definitions from textures.lmp.
-    // The data is contained in one or two lumps,
-    //  TEXTURE1 for shareware, plus TEXTURE2 for commercial.
-    maptex = maptex1 = (int*)W_CacheLumpName("TEXTURE1", PU_HIGH);
-    numtextures1 = LittleLong(*maptex);
-    maxoff = W_LumpLength(W_GetNumForName("TEXTURE1"));
-    directory = maptex+1;
-	
-    if (W_CheckNumForName("TEXTURE2") != -1)
-    {
+	// Load the map texture definitions from textures.lmp.
+	// The data is contained in one or two lumps,
+	//  TEXTURE1 for shareware, plus TEXTURE2 for commercial.
+	maptex = maptex1 = (int*)W_CacheLumpName("TEXTURE1", PU_HIGH);
+	numtextures1 = LittleLong(*maptex);
+	maxoff = W_LumpLength(W_GetNumForName("TEXTURE1"));
+	directory = maptex+1;
+
+	if (W_CheckNumForName("TEXTURE2") != -1)
+	{
 		maptex2 = (int*)W_CacheLumpName("TEXTURE2", PU_HIGH);
 		numtextures2 = LittleLong(*maptex2);
 		maxoff2 = W_LumpLength(W_GetNumForName ("TEXTURE2"));
-    }
-    else
-    {
+	}
+	else
+	{
 		maptex2 = NULL;
 		numtextures2 = 0;
 		maxoff2 = 0;
-    }
-    numtextures = numtextures1 + numtextures2;
+	}
+	numtextures = numtextures1 + numtextures2;
 
-    textures = (texdef_t**)Z_Calloc(numtextures * 4);
-    textureheight = (float*)Z_Calloc(numtextures * 4);
-    texturetranslation = (int*)Z_Calloc((numtextures + 1) * 4);
+	textures = (texdef_t**)Z_Calloc(numtextures * 4);
+	textureheight = (float*)Z_Calloc(numtextures * 4);
+	texturetranslation = (int*)Z_Calloc((numtextures + 1) * 4);
 
-    for (i=0 ; i<numtextures ; i++, directory++)
-    {
+	for (i=0 ; i<numtextures ; i++, directory++)
+	{
 		if (i == numtextures1)
 		{
-	    	// Start looking in second texture file.
-	    	maptex = maptex2;
-	    	maxoff = maxoff2;
-	    	directory = maptex+1;
+			// Start looking in second texture file.
+			maptex = maptex2;
+			maxoff = maxoff2;
+			directory = maptex+1;
 		}
-		
+	
 		offset = LittleLong(*directory);
 
 		if (offset > maxoff)
 		{
-	    	Sys_Error("InitTextures: bad texture directory");
+			Sys_Error("InitTextures: bad texture directory");
 		}
-	
+
 		mtexture = (maptexture_t*)((byte *)maptex + offset);
 
 		texture = textures[i] =
-	    	(texdef_t*)Z_Malloc(sizeof(texdef_t)
-		      + sizeof(texpatch_t) * (LittleShort(mtexture->patchcount) - 1),
-		      PU_STATIC, 0);
-	
+			(texdef_t*)Z_Malloc(sizeof(texdef_t)
+				+ sizeof(texpatch_t) * (LittleShort(mtexture->patchcount) - 1),
+				PU_STATIC, 0);
+
 		texture->width = LittleShort(mtexture->width);
 		texture->height = LittleShort(mtexture->height);
 		texture->patchcount = LittleShort(mtexture->patchcount);
@@ -293,14 +296,14 @@ static void InitTextures(void)
 
 		for (j = 0; j < texture->patchcount; j++, patch++)
 		{
-	    	patch->originx = LittleShort(mtexture->patches[j].originx);
-	    	patch->originy = LittleShort(mtexture->patches[j].originy);
-	    	patch->patch = patchlookup[LittleShort(mtexture->patches[j].patch)];
-	    	if (patch->patch == -1)
-	    	{
+			patch->originx = LittleShort(mtexture->patches[j].originx);
+			patch->originy = LittleShort(mtexture->patches[j].originy);
+			patch->patch = patchlookup[LittleShort(mtexture->patches[j].patch)];
+			if (patch->patch == -1)
+			{
 				Sys_Error("InitTextures: Missing patch in texture %s",
-			 		texture->name);
-	    	}
+					texture->name);
+			}
 		}
 
 		//	Fix sky texture heights for Heretic, but it can also be used
@@ -316,14 +319,14 @@ static void InitTextures(void)
 		}
 
 		textureheight[i] = texture->height / texture->TScale;
-		
-    	// Create translation table for global animation.
+	
+		// Create translation table for global animation.
 		texturetranslation[i] = i;
-    }
+	}
 
 	Z_Free(patchlookup);
-    Z_Free(maptex1);
-    if (maptex2)
+	Z_Free(maptex1);
+	if (maptex2)
 		Z_Free(maptex2);
 	unguard;
 }
@@ -337,43 +340,43 @@ static void InitTextures(void)
 //
 //==========================================================================
 
-static void InitTextures2(void)
+static void InitTextures2()
 {
 	guard(InitTextures);
 	maptexture_strife_t	*mtexture;
 	texdef_t*			texture;
 	texpatch_t*			patch;
 
-    int				i;
-    int				j;
+	int				i;
+	int				j;
 
-    int*			maptex;
-    int*			maptex2;
-    int*			maptex1;
-    
-    char			name[9];
-    char*			names;
-    char*			name_p;
-    
-    int*			patchlookup;
-    
-    int				nummappatches;
-    int				offset;
-    int				maxoff;
-    int				maxoff2;
-    int				numtextures1;
-    int				numtextures2;
+	int*			maptex;
+	int*			maptex2;
+	int*			maptex1;
 
-    int*			directory;
-    
-    // Load the patch names from pnames.lmp.
-    name[8] = 0;
-    names = (char*)W_CacheLumpName("PNAMES", PU_STATIC);
-    nummappatches = LittleLong(*((int *)names));
-    name_p = names + 4;
-    patchlookup = (int*)Z_Malloc(nummappatches*sizeof(*patchlookup), PU_HIGH, 0);
+	char			name[9];
+	char*			names;
+	char*			name_p;
 
-    for (i = 0; i < nummappatches; i++)
+	int*			patchlookup;
+
+	int				nummappatches;
+	int				offset;
+	int				maxoff;
+	int				maxoff2;
+	int				numtextures1;
+	int				numtextures2;
+
+	int*			directory;
+
+	// Load the patch names from pnames.lmp.
+	name[8] = 0;
+	names = (char*)W_CacheLumpName("PNAMES", PU_STATIC);
+	nummappatches = LittleLong(*((int *)names));
+	name_p = names + 4;
+	patchlookup = (int*)Z_Malloc(nummappatches*sizeof(*patchlookup), PU_HIGH, 0);
+
+	for (i = 0; i < nummappatches; i++)
 	{
 		strncpy(name, name_p + i * 8, 8);
 		patchlookup[i] = W_CheckNumForName(name);
@@ -381,57 +384,56 @@ static void InitTextures2(void)
 		if (patchlookup[i] < 0)
 			patchlookup[i] = W_CheckNumForName(name, WADNS_Sprites);
 	}
-    Z_Free(names);
+	Z_Free(names);
 
-    // Load the map texture definitions from textures.lmp.
-    // The data is contained in one or two lumps,
-    //  TEXTURE1 for shareware, plus TEXTURE2 for commercial.
-    maptex = maptex1 = (int*)W_CacheLumpName("TEXTURE1", PU_HIGH);
-    numtextures1 = LittleLong(*maptex);
-    maxoff = W_LumpLength(W_GetNumForName("TEXTURE1"));
-    directory = maptex+1;
-	
-    if (W_CheckNumForName("TEXTURE2") != -1)
-    {
+	// Load the map texture definitions from textures.lmp.
+	// The data is contained in one or two lumps,
+	//  TEXTURE1 for shareware, plus TEXTURE2 for commercial.
+	maptex = maptex1 = (int*)W_CacheLumpName("TEXTURE1", PU_HIGH);
+	numtextures1 = LittleLong(*maptex);
+	maxoff = W_LumpLength(W_GetNumForName("TEXTURE1"));
+	directory = maptex+1;
+
+	if (W_CheckNumForName("TEXTURE2") != -1)
+	{
 		maptex2 = (int*)W_CacheLumpName("TEXTURE2", PU_HIGH);
 		numtextures2 = LittleLong(*maptex2);
 		maxoff2 = W_LumpLength(W_GetNumForName ("TEXTURE2"));
-    }
-    else
-    {
+	}
+	else
+	{
 		maptex2 = NULL;
 		numtextures2 = 0;
 		maxoff2 = 0;
-    }
-    numtextures = numtextures1 + numtextures2;
+	}
+	numtextures = numtextures1 + numtextures2;
 
-    textures = (texdef_t**)Z_Calloc(numtextures * 4);
-    textureheight = (float*)Z_Calloc(numtextures * 4);
-    texturetranslation = (int*)Z_Calloc((numtextures + 1) * 4);
+	textures = (texdef_t**)Z_Calloc(numtextures * 4);
+	textureheight = (float*)Z_Calloc(numtextures * 4);
+	texturetranslation = (int*)Z_Calloc((numtextures + 1) * 4);
 
-    for (i=0 ; i<numtextures ; i++, directory++)
-    {
+	for (i=0 ; i<numtextures ; i++, directory++)
+	{
 		if (i == numtextures1)
 		{
-	    	// Start looking in second texture file.
-	    	maptex = maptex2;
-	    	maxoff = maxoff2;
-	    	directory = maptex+1;
+			// Start looking in second texture file.
+			maptex = maptex2;
+			maxoff = maxoff2;
+			directory = maptex+1;
 		}
-		
+
 		offset = LittleLong(*directory);
 
 		if (offset > maxoff)
 		{
-	    	Sys_Error("InitTextures: bad texture directory");
+			Sys_Error("InitTextures: bad texture directory");
 		}
 	
 		mtexture = (maptexture_strife_t*)((byte *)maptex + offset);
 
-		texture = textures[i] =
-	    	(texdef_t*)Z_Malloc(sizeof(texdef_t)
-		      + sizeof(texpatch_t) * (LittleShort(mtexture->patchcount) - 1),
-		      PU_STATIC, 0);
+		texture = textures[i] = (texdef_t*)Z_Malloc(sizeof(texdef_t) +
+				sizeof(texpatch_t) * (LittleShort(mtexture->patchcount) - 1),
+				PU_STATIC, 0);
 	
 		texture->width = LittleShort(mtexture->width);
 		texture->height = LittleShort(mtexture->height);
@@ -444,14 +446,14 @@ static void InitTextures2(void)
 
 		for (j = 0; j < texture->patchcount; j++, patch++)
 		{
-	    	patch->originx = LittleShort(mtexture->patches[j].originx);
-	    	patch->originy = LittleShort(mtexture->patches[j].originy);
-	    	patch->patch = patchlookup[LittleShort(mtexture->patches[j].patch)];
-	    	if (patch->patch == -1)
-	    	{
+			patch->originx = LittleShort(mtexture->patches[j].originx);
+			patch->originy = LittleShort(mtexture->patches[j].originy);
+			patch->patch = patchlookup[LittleShort(mtexture->patches[j].patch)];
+			if (patch->patch == -1)
+			{
 				Sys_Error("InitTextures: Missing patch in texture %s",
-			 		texture->name);
-	    	}
+					texture->name);
+			}
 		}
 
 		//	Fix sky texture heights for Heretic, but it can also be used
@@ -467,14 +469,14 @@ static void InitTextures2(void)
 		}
 
 		textureheight[i] = texture->height;
-		
-    	// Create translation table for global animation.
+
+		// Create translation table for global animation.
 		texturetranslation[i] = i;
-    }
+	}
 
 	Z_Free(patchlookup);
-    Z_Free(maptex1);
-    if (maptex2)
+	Z_Free(maptex1);
+	if (maptex2)
 		Z_Free(maptex2);
 	unguard;
 }
@@ -490,17 +492,17 @@ static void InitTextures2(void)
 int	R_CheckTextureNumForName(const char *name)
 {
 	guard(R_CheckTextureNumForName);
-    int		i;
+	int		i;
 
-    // "NoTexture" marker.
-    if (name[0] == '-')		
+	// "NoTexture" marker.
+	if (name[0] == '-')		
 		return 0;
-		
-    for (i=0 ; i<numtextures ; i++)
+
+	for (i=0 ; i<numtextures ; i++)
 		if (!strnicmp(textures[i]->name, name, 8))
-	    	return i;
-		
-    return -1;
+			return i;
+
+	return -1;
 	unguard;
 }
 
@@ -515,15 +517,15 @@ int	R_CheckTextureNumForName(const char *name)
 int	R_TextureNumForName(const char* name)
 {
 	guard(R_TextureNumForName);
-    int		i;
-	
-    i = R_CheckTextureNumForName (name);
+	int		i;
 
-    if (i==-1)
-    {
+	i = R_CheckTextureNumForName (name);
+
+	if (i==-1)
+	{
 		Host_Error("R_TextureNumForName: %s not found", name);
-    }
-    return i;
+	}
+	return i;
 	unguard;
 }
 
@@ -570,17 +572,17 @@ static bool FlatFunc(int lump, const char*, int, EWadNamespace NS)
 //
 //==========================================================================
 
-static void InitFlats(void)
+static void InitFlats()
 {
 	guard(InitFlats);
 	flatlumps = (int*)Z_Malloc(1, PU_STATIC, 0);
-    numflats = 0;
+	numflats = 0;
 
 	W_ForEachLump(FlatFunc);
 
-    // Create translation table for global animation.
-    flattranslation = (int*)Z_Malloc((numflats + 1) * 4, PU_STATIC, 0);
-    for (int i = 0; i < numflats; i++)
+	// Create translation table for global animation.
+	flattranslation = (int*)Z_Malloc((numflats + 1) * 4, PU_STATIC, 0);
+	for (int i = 0; i < numflats; i++)
 		flattranslation[i] = i;
 	unguard;
 }
@@ -616,17 +618,17 @@ int R_CheckFlatNumForName(const char* name)
 int R_FlatNumForName(const char* name)
 {
 	guard(R_FlatNumForName);
-    char	namet[9];
-    int		i;
+	char	namet[9];
+	int		i;
 
 	i = R_CheckFlatNumForName(name);
-    if (i == -1)
-    {
+	if (i == -1)
+	{
 		namet[8] = 0;
 		memcpy(namet, name,8);
 		Host_Error("R_FlatNumForName: %s not found",namet);
-    }
-    return i;
+	}
+	return i;
 	unguard;
 }
 
@@ -656,22 +658,22 @@ static bool SpriteCallback(int lump, const char*, int, EWadNamespace NS)
 //
 //==========================================================================
 
-static void InitSpriteLumps(void)
+static void InitSpriteLumps()
 {
 	guard(InitSpriteLumps);
-    int			i;
+	int			i;
 
 	spritelumps = (int*)Z_Malloc (1, PU_STATIC, 0);
-    numspritelumps = 0;
+	numspritelumps = 0;
 
 	W_ForEachLump(SpriteCallback);
 
-    spritewidth = (int*)Z_Malloc(numspritelumps * 4, PU_STATIC, 0);
-    spriteheight = (int*)Z_Malloc(numspritelumps * 4, PU_STATIC, 0);
-    spriteoffset = (int*)Z_Malloc(numspritelumps * 4, PU_STATIC, 0);
-    spritetopoffset = (int*)Z_Malloc(numspritelumps * 4, PU_STATIC, 0);
-	
-    for (i = 0; i < numspritelumps; i++)
+	spritewidth = (int*)Z_Malloc(numspritelumps * 4, PU_STATIC, 0);
+	spriteheight = (int*)Z_Malloc(numspritelumps * 4, PU_STATIC, 0);
+	spriteoffset = (int*)Z_Malloc(numspritelumps * 4, PU_STATIC, 0);
+	spritetopoffset = (int*)Z_Malloc(numspritelumps * 4, PU_STATIC, 0);
+
+	for (i = 0; i < numspritelumps; i++)
 	{
 		spritewidth[i] = -1;
 		spriteheight[i] = -1;
@@ -687,11 +689,317 @@ static void InitSpriteLumps(void)
 //
 //==========================================================================
 
-static void InitTranslationTables(void)
+static void InitTranslationTables()
 {
 	guard(InitTranslationTables);
 	translationtables = (byte*)W_CacheLumpName("TRANSLAT", PU_STATIC);
 	unguard;
+}
+
+//==========================================================================
+//
+//	P_InitAnimated
+//
+// Load the table of animation definitions, checking for existence of
+// the start and end of each frame. If the start doesn't exist the sequence
+// is skipped, if the last doesn't exist, BOOM exits.
+//
+// Wall/Flat animation sequences, defined by name of first and last frame,
+// The full animation sequence is given using all lumps between the start
+// and end entry, in the order found in the WAD file.
+//
+// This routine modified to read its data from a predefined lump or
+// PWAD lump called ANIMATED rather than a static table in this module to
+// allow wad designers to insert or modify animation sequences.
+//
+// Lump format is an array of byte packed animdef_t structures, terminated
+// by a structure with istexture == -1. The lump can be generated from a
+// text source file using SWANTBLS.EXE, distributed with the BOOM utils.
+// The standard list of switches and animations is contained in the example
+// source text file DEFSWANI.DAT also in the BOOM util distribution.
+//
+// [RH] Rewritten to support BOOM ANIMATED lump but also make absolutely
+//		no assumptions about how the compiler packs the animdefs array.
+//
+//==========================================================================
+
+void P_InitAnimated()
+{
+	animDef_t 	ad;
+	frameDef_t	fd;
+
+	if (W_CheckNumForName("ANIMATED") < 0)
+	{
+		return;
+	}
+
+	char *animdefs = (char*)W_CacheLumpName("ANIMATED", PU_STRING);
+	char *anim_p;
+	int pic1, pic2;
+
+	for (anim_p = animdefs; *anim_p != -1; anim_p += 23)
+	{
+		if (*anim_p & 1)
+		{
+			pic1 = R_CheckTextureNumForName(anim_p + 10);
+			pic2 = R_CheckTextureNumForName(anim_p + 1);
+			// different episode ?
+			if (pic1 == -1 || pic2 == -1)
+				continue;		
+		}
+		else
+		{
+			pic1 = R_CheckFlatNumForName(anim_p + 10);
+			pic2 = R_CheckFlatNumForName(anim_p + 1);
+			if (pic1 == -1 || pic2 == -1)
+				continue;
+		}
+
+		memset(&ad, 0, sizeof(ad));
+		memset(&fd, 0, sizeof(fd));
+
+		ad.startFrameDef = FrameDefs.Num();
+		ad.IsRange = true;
+
+		// [RH] Allow for either forward or backward animations.
+		if (pic1 < pic2)
+		{
+			ad.index = pic1;
+			fd.index = pic2;
+		}
+		else
+		{
+			ad.index = pic2;
+			fd.index = pic1;
+			ad.Backwards = true;
+		}
+
+		if (fd.index - ad.index < 1)
+			Sys_Error("P_InitPicAnims: bad cycle from %s to %s", anim_p + 10,
+				anim_p + 1);
+		
+		fd.baseTime = (anim_p[19] << 0) | (anim_p[20] << 8) |
+					(anim_p[21] << 16) | (anim_p[22] << 24);
+		fd.randomRange = 0;
+		FrameDefs.AddItem(fd);
+
+		ad.endFrameDef = FrameDefs.Num() - 1;
+		ad.CurrentRangeFrame = FrameDefs[ad.startFrameDef].index - ad.index;
+		ad.currentFrameDef = ad.endFrameDef;
+		ad.time = 0.01; // Force 1st game tic to animate
+		AnimDefs.AddItem(ad);
+	}
+	Z_Free(animdefs);
+}
+
+//==========================================================================
+//
+//	ParseFTAnim
+//
+//	Parse flat or texture animation.
+//
+//==========================================================================
+
+static void ParseFTAnim(int AnimType)
+{
+	animDef_t 	ad;
+	frameDef_t	fd;
+	bool 		ignore;
+	bool		optional;
+
+	memset(&ad, 0, sizeof(ad));
+	ad.type = AnimType;
+
+	//	Optional flag.
+	optional = false;
+	SC_MustGetString();
+	if (SC_Compare("optional"))
+	{
+		optional = true;
+		SC_MustGetString();
+	}
+
+	//	Name
+	ignore = false;
+	if (AnimType == ANIM_FLAT)
+	{
+		//	Flat
+		ad.index = R_CheckFlatNumForName(sc_String);
+		if (ad.index != -1)
+		{
+			ad.index &= ~TEXF_FLAT;
+		}
+	}
+	else
+	{
+		//	Texture
+		ad.index = R_CheckTextureNumForName(sc_String);
+	}
+	if (ad.index == -1)
+	{
+		ignore = true;
+		if (!optional)
+		{
+			GCon->Logf("ANIMDEFS: Can't find %s", sc_String);
+		}
+	}
+	bool missing = ignore && optional;
+
+	bool HadPic = false;
+	ad.startFrameDef = FrameDefs.Num();
+	while (SC_GetString())
+	{
+		if (SC_Compare ("allowdecals"))
+		{
+			//	Since we don't have decals yet, ignore it.
+			continue;
+		}
+
+		if (SC_Compare("pic"))
+		{
+			if (ad.IsRange)
+			{
+				SC_ScriptError ("You cannot use pic together with range.");
+			}
+			HadPic = true;
+		}
+		else if (SC_Compare ("range"))
+		{
+			if (ad.IsRange)
+			{
+				SC_ScriptError("You can only use range once in a single animation.");
+			}
+			if (HadPic)
+			{
+				SC_ScriptError("You cannot use range together with pic.");
+			}
+			ad.IsRange = true;
+		}
+		else
+		{
+			SC_UnGet();
+			break;
+		}
+
+		memset(&fd, 0, sizeof(fd));
+		if (SC_CheckNumber())
+		{
+			fd.index = ad.index + sc_Number - 1;
+		}
+		else
+		{
+			SC_MustGetString();
+			if (AnimType == ANIM_FLAT)
+			{
+				fd.index = R_CheckFlatNumForName(sc_String);
+				if (fd.index != -1)
+				{
+					fd.index &= ~TEXF_FLAT;
+				}
+			}
+			else
+			{
+				fd.index = R_CheckTextureNumForName(sc_String);
+			}
+			if (fd.index == -1 && !missing)
+			{
+				SC_ScriptError(va("Unknown texture %s", sc_String));
+			}
+		}
+		SC_MustGetString();
+		if (SC_Compare("tics"))
+		{
+			SC_MustGetNumber();
+			fd.baseTime = sc_Number;
+			fd.randomRange = 0;
+		}
+		else if (SC_Compare("rand"))
+		{
+			SC_MustGetNumber();
+			fd.baseTime = sc_Number;
+			SC_MustGetNumber();
+			fd.randomRange = sc_Number - fd.baseTime + 1;
+		}
+		else
+		{
+			SC_ScriptError(NULL);
+		}
+		if (ad.IsRange)
+		{
+			if (fd.index < ad.index)
+			{
+				int tmp = ad.index;
+				ad.index = fd.index;
+				fd.index = tmp;
+				ad.Backwards = true;
+			}
+		}
+		if (ignore == false)
+		{
+			FrameDefs.AddItem(fd);
+		}
+	}
+
+	if ((ignore == false) && !ad.IsRange &&
+		(FrameDefs.Num() - ad.startFrameDef < 2))
+	{
+		Sys_Error("P_InitFTAnims: AnimDef has framecount < 2.");
+	}
+
+	if (ignore == false)
+	{
+		ad.endFrameDef = FrameDefs.Num() - 1;
+		ad.CurrentRangeFrame = FrameDefs[ad.startFrameDef].index - ad.index;
+		ad.currentFrameDef = ad.endFrameDef;
+		ad.time = 0.01; // Force 1st game tic to animate
+		AnimDefs.AddItem(ad);
+	}
+}
+
+//==========================================================================
+//
+//	ParseFTAnims
+//
+//	Initialize flat and texture animation lists.
+//
+//==========================================================================
+
+static void ParseFTAnims()
+{
+	guard(ParseFTAnims);
+	while (SC_GetString())
+	{
+		if (SC_Compare("flat"))
+		{
+			ParseFTAnim(ANIM_FLAT);
+		}
+		else if (SC_Compare("texture"))
+		{
+			ParseFTAnim(ANIM_TEXTURE);
+		}
+		else
+		{
+			SC_ScriptError(NULL);
+		}
+	}
+	SC_Close();
+	unguard;
+}
+
+//==========================================================================
+//
+//	AnimsCallback
+//
+//==========================================================================
+
+static bool AnimsCallback(int lump, const char* name, int, EWadNamespace NS)
+{
+	if (NS == WADNS_Global && !strcmp(name, "animdefs"))
+	{
+		SC_OpenLumpNum(lump);
+		ParseFTAnims();
+	}
+	return true;
 }
 
 //==========================================================================
@@ -702,121 +1010,61 @@ static void InitTranslationTables(void)
 //
 //==========================================================================
 
-static void InitFTAnims(void)
+static void InitFTAnims()
 {
 	guard(InitFTAnims);
-	int 		base;
-	int 		mod;
-	animDef_t 	ad;
-	frameDef_t	fd;
-	bool 		ignore;
-	bool	 	done;
+	char filename[MAX_OSPATH];
 
-	SC_Open(ANIM_SCRIPT_NAME);
-	while (SC_GetString())
+	//	Process all animdefs lumps.
+	W_ForEachLump(AnimsCallback);
+
+	//	Optionally parse script file.
+	if (fl_devmode && FL_FindFile("scripts/animdefs.txt", filename))
 	{
-		memset(&ad, 0, sizeof(ad));
-		if (SC_Compare(SCI_FLAT))
-		{
-			ad.type = ANIM_FLAT;
-		}
-		else if (SC_Compare(SCI_TEXTURE))
-		{
-			ad.type = ANIM_TEXTURE;
-		}
-		else
-		{
-			SC_ScriptError(NULL);
-		}
-		SC_MustGetString(); // Name
-		ignore = false;
-		if (ad.type == ANIM_FLAT)
-		{
-			if (R_CheckFlatNumForName(sc_String) == -1)
-			{
-				ignore = true;
-			}
-			else
-			{
-				ad.index = R_FlatNumForName(sc_String) & ~TEXF_FLAT;
-			}
-		}
-		else
-		{ // Texture
-			if (R_CheckTextureNumForName(sc_String) == -1)
-			{
-				ignore = true;
-			}
-			else
-			{
-				ad.index = R_TextureNumForName(sc_String);
-			}
-		}
-		ad.startFrameDef = FrameDefs.Num();
-		done = false;
-		while (done == false)
-		{
-			if (SC_GetString())
-			{
-				if (SC_Compare(SCI_PIC))
-				{
-					SC_MustGetNumber();
-					fd.index = ad.index + sc_Number - 1;
-					SC_MustGetString();
-					if (SC_Compare(SCI_TICS))
-					{
-						SC_MustGetNumber();
-						fd.baseTime = sc_Number;
-						fd.randomRange = 0;
-						if (ignore == false)
-						{
-							FrameDefs.AddItem(fd);
-						}
-					}
-					else if (SC_Compare(SCI_RAND))
-					{
-						SC_MustGetNumber();
-						base = sc_Number;
-						SC_MustGetNumber();
-						fd.baseTime = base;
-						mod = sc_Number - base + 1;
-						fd.randomRange = mod;
-						if (ignore == false)
-						{
-							FrameDefs.AddItem(fd);
-						}
-					}
-					else
-					{
-						SC_ScriptError(NULL);
-					}
-				}
-				else
-				{
-					SC_UnGet();
-					done = true;
-				}
-			}
-			else
-			{
-				done = true;
-			}
-		}
-		if ((ignore == false) && (FrameDefs.Num() - ad.startFrameDef < 2))
-		{
-			Sys_Error("P_InitFTAnims: AnimDef has framecount < 2.");
-		}
-		if (ignore == false)
-		{
-			ad.endFrameDef = FrameDefs.Num() - 1;
-			ad.currentFrameDef = ad.endFrameDef;
-			ad.time = 0.01; // Force 1st game tic to animate
-			AnimDefs.AddItem(ad);
-		}
+		SC_OpenFile(filename);
+		ParseFTAnims();
 	}
-	SC_Close();
+
+	//	Read Boom's animated lump if present.
+	P_InitAnimated();
+
 	FrameDefs.Shrink();
 	AnimDefs.Shrink();
+	unguard;
+}
+
+//==========================================================================
+//
+//	P_InitSwitchList
+//
+//	Only called at game initialization.
+//
+//==========================================================================
+
+void P_InitSwitchList()
+{
+	guard(P_InitSwitchList);
+	int t1;
+	int t2;
+
+	SC_Open("switches");
+	while (SC_GetString())
+	{
+		t1 = R_CheckTextureNumForName(sc_String);
+		SC_MustGetString();
+		t2 = R_CheckTextureNumForName(sc_String);
+		SC_MustGetString();
+		if ((t1 < 0) || (t2 < 0))
+		{
+			continue;
+		}
+		TSwitch *sw = new(Switches) TSwitch;
+		sw->Sound = S_GetSoundID(sc_String);
+		sw->Tex1 = t1;
+		sw->Tex2 = t2;
+	}
+	SC_Close();
+	Switches.Shrink();
 	unguard;
 }
 
@@ -827,7 +1075,7 @@ static void InitFTAnims(void)
 //==========================================================================
 
 #ifdef CLIENT
-void R_AnimateSurfaces(void)
+void R_AnimateSurfaces()
 {
 	guard(R_AnimateSurfaces);
 	//	Animate flats and textures
@@ -836,13 +1084,16 @@ void R_AnimateSurfaces(void)
 		ad->time -= host_frametime;
 		if (ad->time <= 0.0)
 		{
-			if (ad->currentFrameDef == ad->endFrameDef)
+			if (!ad->IsRange)
 			{
-				ad->currentFrameDef = ad->startFrameDef;
-			}
-			else
-			{
-				ad->currentFrameDef++;
+				if (ad->currentFrameDef == ad->endFrameDef)
+				{
+					ad->currentFrameDef = ad->startFrameDef;
+				}
+				else
+				{
+					ad->currentFrameDef++;
+				}
 			}
 			frameDef_t fd = FrameDefs[ad->currentFrameDef];
 			ad->time = fd.baseTime / 35.0;
@@ -851,14 +1102,44 @@ void R_AnimateSurfaces(void)
 				// Random tics
 				ad->time += Random() * (fd.randomRange / 35.0);
 			}
-			if (ad->type == ANIM_FLAT)
+			if (!ad->IsRange)
 			{
-				flattranslation[ad->index] = fd.index;
+				if (ad->type == ANIM_FLAT)
+				{
+					flattranslation[ad->index] = fd.index;
+				}
+				else
+				{ 
+					// Texture
+					texturetranslation[ad->index] = fd.index;
+				}
 			}
 			else
-			{ 
-				// Texture
-				texturetranslation[ad->index] = fd.index;
+			{
+				int Range = fd.index - ad->index + 1;
+				if (ad->CurrentRangeFrame >= Range - 1)
+				{
+					ad->CurrentRangeFrame = 0;
+				}
+				else
+				{
+					ad->CurrentRangeFrame++;
+				}
+				for (int i = 0; i < Range; i++)
+				{
+					int TexNum = ad->index + ad->Backwards ? 
+						(Range - 1 - (ad->CurrentRangeFrame + i) % Range) :
+						((ad->CurrentRangeFrame + i) % Range);
+					if (ad->type == ANIM_FLAT)
+					{
+						flattranslation[ad->index + i] = TexNum;
+					}
+					else
+					{ 
+						// Texture
+						texturetranslation[ad->index + i] = TexNum;
+					}
+				}
 			}
 		}
 	}
@@ -893,7 +1174,7 @@ int R_TextureAnimation(int InTex)
 //
 //==========================================================================
 
-void R_InitTexture(void)
+void R_InitTexture()
 {
 	guard(R_InitTexture);
 	if (IsStrifeTexture())
@@ -973,7 +1254,7 @@ void R_SetupPalette(int palnum, const char *name)
 //
 //==========================================================================
 
-void R_InitData(void)
+void R_InitData()
 {
 	guard(R_InitData);
 	R_SetupPalette(0, "PLAYPAL");
@@ -988,14 +1269,14 @@ void R_InitData(void)
 //
 //==========================================================================
 
-void R_PrecacheLevel(void)
+void R_PrecacheLevel()
 {
 	guard(R_PrecacheLevel);
 	int			i;
-    
+
 	if (cls.demoplayback)
 		return;
-    
+
 #ifdef __GNUC__
 	char flatpresent[numflats];
 	char texturepresent[numtextures];
@@ -1297,9 +1578,12 @@ void R_ShadeRect(int x, int y, int width, int height, int shade)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2005/05/03 15:00:11  dj_jl
+//	Moved switch list, animdefs enhancements.
+//
 //	Revision 1.25  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.24  2004/12/22 07:51:52  dj_jl
 //	Warning about non-existing graphics.
 //	
