@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class TorchRed:Decoration
+class TorchRed : Decoration
 	__mobjinfo__(46);
 
 void OnMapSpawn(mthing_t *mthing)
@@ -31,6 +31,12 @@ void OnMapSpawn(mthing_t *mthing)
 	::OnMapSpawn(mthing);
 	AddStaticLightRGB(Origin + vector(0.0, 0.0, 32.0),
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(255, 0, 0));
+}
+
+void Tick(float DeltaTime)
+{
+	ModelSkinIndex = ftoi(level->time * 32.0) & 7;
+	::Tick(DeltaTime);
 }
 
 __states__
@@ -52,6 +58,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/05/03 15:03:49  dj_jl
+//  Models updated.
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

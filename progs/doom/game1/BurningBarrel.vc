@@ -23,14 +23,21 @@
 //**
 //**************************************************************************
 
-class BurningBarrel:Decoration
+class BurningBarrel : Decoration
 	__mobjinfo__(70);
 
 __states__
 {
-	S_BBAR1('FCAN', 0 | FF_FULLBRIGHT, 'lights/fbarrel.md2', 0, 4.0 / 35.0, S_BBAR2) { }
-	S_BBAR2('FCAN', 1 | FF_FULLBRIGHT, 'lights/fbarrel.md2', 1, 4.0 / 35.0, S_BBAR3) { }
-	S_BBAR3('FCAN', 2 | FF_FULLBRIGHT, 'lights/fbarrel.md2', 2, 4.0 / 35.0, S_BBAR1) { }
+	S_BBAR1('FCAN', 0 | FF_FULLBRIGHT, 'lights/fbarrel1.md2', 0, 1.5 / 35.0, S_BBAR2) { }
+	S_BBAR2('FCAN', 0 | FF_FULLBRIGHT, 'lights/fbarrel2.md2', 0, 1.5 / 35.0, S_BBAR3) { }
+	S_BBAR3('FCAN', 0 | FF_FULLBRIGHT, 'lights/fbarrel3.md2', 0, 1.0 / 35.0, S_BBAR4) { }
+	S_BBAR4('FCAN', 1 | FF_FULLBRIGHT, 'lights/fbarrel3.md2', 0, 0.5 / 35.0, S_BBAR5) { }
+	S_BBAR5('FCAN', 1 | FF_FULLBRIGHT, 'lights/fbarrel4.md2', 0, 1.5 / 35.0, S_BBAR6) { }
+	S_BBAR6('FCAN', 1 | FF_FULLBRIGHT, 'lights/fbarrel5.md2', 0, 1.5 / 35.0, S_BBAR7) { }
+	S_BBAR7('FCAN', 1 | FF_FULLBRIGHT, 'lights/fbarrel6.md2', 0, 0.5 / 35.0, S_BBAR8) { }
+	S_BBAR8('FCAN', 2 | FF_FULLBRIGHT, 'lights/fbarrel6.md2', 0, 1.0 / 35.0, S_BBAR9) { }
+	S_BBAR9('FCAN', 2 | FF_FULLBRIGHT, 'lights/fbarrel7.md2', 0, 1.5 / 35.0, S_BBAR10) { }
+	S_BBAR10('FCAN', 2 | FF_FULLBRIGHT, 'lights/fbarrel8.md2', 0, 1.5 / 35.0, S_BBAR1) { }
 }
 
 defaultproperties
@@ -44,6 +51,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/05/03 15:03:49  dj_jl
+//  Models updated.
+//
 //  Revision 1.1  2002/10/26 16:32:19  dj_jl
 //  New style of defining classes.
 //

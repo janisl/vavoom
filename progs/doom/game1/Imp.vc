@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Imp:Pawn
+class Imp : Pawn
 	__mobjinfo__(3001);
 
 //==========================================================================
@@ -34,7 +34,7 @@ class Imp:Pawn
 //
 //==========================================================================
 
-void A_TroopAttack(void)
+void A_TroopAttack()
 {
 	int damage;
 
@@ -58,19 +58,19 @@ __states__
 {
 	S_TROO_STND('TROO', 0, 'monsters/imp/base.md2', 0, 10.0 / 35.0, S_TROO_STND2) { A_Look(); }
 	S_TROO_STND2('TROO', 1, 'monsters/imp/base.md2', 1, 10.0 / 35.0, S_TROO_STND) { A_Look(); }
-	S_TROO_RUN1('TROO', 0, 'monsters/imp/base.md2', 8, 3.0 / 35.0, S_TROO_RUN2) { A_Chase(); }
-	S_TROO_RUN2('TROO', 0, 'monsters/imp/base.md2', 9, 3.0 / 35.0, S_TROO_RUN3) { A_Chase(); }
-	S_TROO_RUN3('TROO', 1, 'monsters/imp/base.md2', 10, 3.0 / 35.0, S_TROO_RUN4) { A_Chase(); }
-	S_TROO_RUN4('TROO', 1, 'monsters/imp/base.md2', 11, 3.0 / 35.0, S_TROO_RUN5) { A_Chase(); }
-	S_TROO_RUN5('TROO', 2, 'monsters/imp/base.md2', 12, 3.0 / 35.0, S_TROO_RUN6) { A_Chase(); }
-	S_TROO_RUN6('TROO', 2, 'monsters/imp/base.md2', 13, 3.0 / 35.0, S_TROO_RUN7) { A_Chase(); }
-	S_TROO_RUN7('TROO', 3, 'monsters/imp/base.md2', 14, 3.0 / 35.0, S_TROO_RUN8) { A_Chase(); }
-	S_TROO_RUN8('TROO', 3, 'monsters/imp/base.md2', 15, 3.0 / 35.0, S_TROO_RUN1) { A_Chase(); }
-	S_TROO_ATK1('TROO', 4, 'monsters/imp/base.md2', 16, 8.0 / 35.0, S_TROO_ATK2) { A_FaceTarget(); }
-	S_TROO_ATK2('TROO', 5, 'monsters/imp/base.md2', 17, 8.0 / 35.0, S_TROO_ATK3) { A_FaceTarget(); }
-	S_TROO_ATK3('TROO', 6, 'monsters/imp/base.md2', 18, 6.0 / 35.0, S_TROO_RUN1) { A_TroopAttack(); }
-	S_TROO_PAIN('TROO', 7, 'monsters/imp/base.md2', 19, 2.0 / 35.0, S_TROO_PAIN2) { }
-	S_TROO_PAIN2('TROO', 7, 'monsters/imp/base.md2', 20, 2.0 / 35.0, S_TROO_RUN1) { A_Pain(); }
+	S_TROO_RUN1('TROO', 0, 'monsters/imp/base.md2', 2, 3.0 / 35.0, S_TROO_RUN2) { A_Chase(); }
+	S_TROO_RUN2('TROO', 0, 'monsters/imp/base.md2', 3, 3.0 / 35.0, S_TROO_RUN3) { A_Chase(); }
+	S_TROO_RUN3('TROO', 1, 'monsters/imp/base.md2', 4, 3.0 / 35.0, S_TROO_RUN4) { A_Chase(); }
+	S_TROO_RUN4('TROO', 1, 'monsters/imp/base.md2', 5, 3.0 / 35.0, S_TROO_RUN5) { A_Chase(); }
+	S_TROO_RUN5('TROO', 2, 'monsters/imp/base.md2', 6, 3.0 / 35.0, S_TROO_RUN6) { A_Chase(); }
+	S_TROO_RUN6('TROO', 2, 'monsters/imp/base.md2', 7, 3.0 / 35.0, S_TROO_RUN7) { A_Chase(); }
+	S_TROO_RUN7('TROO', 3, 'monsters/imp/base.md2', 8, 3.0 / 35.0, S_TROO_RUN8) { A_Chase(); }
+	S_TROO_RUN8('TROO', 3, 'monsters/imp/base.md2', 9, 3.0 / 35.0, S_TROO_RUN1) { A_Chase(); }
+	S_TROO_ATK1('TROO', 4, 'monsters/imp/base.md2', 10, 8.0 / 35.0, S_TROO_ATK2) { A_FaceTarget(); }
+	S_TROO_ATK2('TROO', 5, 'monsters/imp/base.md2', 11, 8.0 / 35.0, S_TROO_ATK3) { A_FaceTarget(); }
+	S_TROO_ATK3('TROO', 6, 'monsters/imp/base.md2', 12, 6.0 / 35.0, S_TROO_RUN1) { A_TroopAttack(); }
+	S_TROO_PAIN('TROO', 7, 'monsters/imp/base.md2', 13, 2.0 / 35.0, S_TROO_PAIN2) { }
+	S_TROO_PAIN2('TROO', 7, 'monsters/imp/base.md2', 14, 2.0 / 35.0, S_TROO_RUN1) { A_Pain(); }
 	S_TROO_DIE1('TROO', 8, 'monsters/imp/death.md2', 0, 8.0 / 35.0, S_TROO_DIE2) { }
 	S_TROO_DIE2('TROO', 9, 'monsters/imp/death.md2', 1, 8.0 / 35.0, S_TROO_DIE3) { A_Scream(); }
 	S_TROO_DIE3('TROO', 10, 'monsters/imp/death.md2', 2, 6.0 / 35.0, S_TROO_DIE4) { }
@@ -117,6 +117,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/05/03 15:03:49  dj_jl
+//  Models updated.
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

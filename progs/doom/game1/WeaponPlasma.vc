@@ -43,8 +43,15 @@ __states__
 	S_PLASMA('PLSG', 0, 'weapons/v_plasma.md2', 0, 1.0 / 35.0, S_PLASMA) { A_WeaponReady(); }
 	S_PLASMADOWN('PLSG', 0, 'weapons/v_plasma.md2', 1, 1.0 / 35.0, S_PLASMADOWN) { A_Lower(); }
 	S_PLASMAUP('PLSG', 0, 'weapons/v_plasma.md2', 2, 1.0 / 35.0, S_PLASMAUP) { A_Raise(); }
-	S_PLASMA1('PLSG', 0, 'weapons/v_plasma.md2', 3, 3.0 / 35.0, S_PLASMA2) { A_FirePlasma(); }
-	S_PLASMA2('PLSG', 1, 'weapons/v_plasma.md2', 4, 20.0 / 35.0, S_PLASMA) { A_ReFire(); }
+	S_PLASMA1('PLSG', 0, 'weapons/v_plasma.md2', 3, 2.0 / 35.0, S_PLASMA2) { A_FirePlasma(); }
+	S_PLASMA2('PLSG', 0, 'weapons/v_plasma.md2', 4, 1.0 / 35.0, S_PLASMA3) { }
+	S_PLASMA3('PLSG', 1, 'weapons/v_plasma.md2', 5, 2.0 / 35.0, S_PLASMA4) { A_ReFire(); }
+	S_PLASMA4('PLSG', 1, 'weapons/v_plasma.md2', 6, 2.0 / 35.0, S_PLASMA5) { }
+	S_PLASMA5('PLSG', 1, 'weapons/v_plasma.md2', 7, 2.0 / 35.0, S_PLASMA6) { }
+	S_PLASMA6('PLSG', 1, 'weapons/v_plasma.md2', 8, 8.0 / 35.0, S_PLASMA7) { }
+	S_PLASMA7('PLSG', 1, 'weapons/v_plasma.md2', 9, 2.0 / 35.0, S_PLASMA8) { }
+	S_PLASMA8('PLSG', 1, 'weapons/v_plasma.md2', 10, 2.0 / 35.0, S_PLASMA9) { }
+	S_PLASMA9('PLSG', 1, 'weapons/v_plasma.md2', 11, 2.0 / 35.0, S_PLASMA) { }
 	S_PLASMAFLASH1('PLSF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE) { A_Light1(); }
 	S_PLASMAFLASH2('PLSF', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE) { A_Light1(); }
 }
@@ -63,6 +70,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/05/03 15:03:49  dj_jl
+//  Models updated.
+//
 //  Revision 1.4  2004/08/23 19:23:54  dj_jl
 //  Moved weapon utilites to player class.
 //

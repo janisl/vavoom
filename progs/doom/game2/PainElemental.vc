@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PainElemental:Pawn
+class PainElemental : Pawn
 	__mobjinfo__(71);
 
 //==========================================================================
@@ -79,7 +79,7 @@ void A_PainShootSkull(float angle)
 // 
 //==========================================================================
 
-void A_PainAttack(void)
+void A_PainAttack()
 {
 	if (!Enemy)
 		return;
@@ -96,7 +96,7 @@ void A_PainAttack(void)
 //
 //==========================================================================
 
-void A_PainDie(void)
+void A_PainDie()
 {
 	A_Fall();
 	A_PainShootSkull(Angles.yaw + 90.0);
@@ -113,18 +113,18 @@ __states__
 	S_PAIN_RUN4('PAIN', 1, 'monsters/pain/base.md2', 4, 3.0 / 35.0, S_PAIN_RUN5) { A_Chase(); }
 	S_PAIN_RUN5('PAIN', 2, 'monsters/pain/base.md2', 5, 3.0 / 35.0, S_PAIN_RUN6) { A_Chase(); }
 	S_PAIN_RUN6('PAIN', 2, 'monsters/pain/base.md2', 6, 3.0 / 35.0, S_PAIN_RUN1) { A_Chase(); }
-	S_PAIN_ATK1('PAIN', 3, 'monsters/pain/attack.md2', 0, 5.0 / 35.0, S_PAIN_ATK2) { A_FaceTarget(); }
-	S_PAIN_ATK2('PAIN', 4, 'monsters/pain/attack.md2', 1, 5.0 / 35.0, S_PAIN_ATK3) { A_FaceTarget(); }
-	S_PAIN_ATK3('PAIN', 5 | FF_FULLBRIGHT, 'monsters/pain/attack.md2', 2, 5.0 / 35.0, S_PAIN_ATK4) { A_FaceTarget(); }
-	S_PAIN_ATK4('PAIN', 5 | FF_FULLBRIGHT, 'monsters/pain/attack.md2', 2, 0.0 / 35.0, S_PAIN_RUN1) { A_PainAttack(); }
+	S_PAIN_ATK1('PAIN', 3, 'monsters/pain/attack1.md2', 0, 5.0 / 35.0, S_PAIN_ATK2) { A_FaceTarget(); }
+	S_PAIN_ATK2('PAIN', 4, 'monsters/pain/attack1.md2', 1, 5.0 / 35.0, S_PAIN_ATK3) { A_FaceTarget(); }
+	S_PAIN_ATK3('PAIN', 5 | FF_FULLBRIGHT, 'monsters/pain/attack2.md2', 0, 5.0 / 35.0, S_PAIN_ATK4) { A_FaceTarget(); }
+	S_PAIN_ATK4('PAIN', 5 | FF_FULLBRIGHT, 'monsters/pain/attack2.md2', 0, 0.0 / 35.0, S_PAIN_RUN1) { A_PainAttack(); }
 	S_PAIN_PAIN('PAIN', 6, 'monsters/pain/base.md2', 7, 6.0 / 35.0, S_PAIN_PAIN2) { }
 	S_PAIN_PAIN2('PAIN', 6, 'monsters/pain/base.md2', 8, 6.0 / 35.0, S_PAIN_RUN1) { A_Pain(); }
-	S_PAIN_DIE1('PAIN', 7 | FF_FULLBRIGHT, 8.0 / 35.0, S_PAIN_DIE2) { }
-	S_PAIN_DIE2('PAIN', 8 | FF_FULLBRIGHT, 8.0 / 35.0, S_PAIN_DIE3) { A_Scream(); }
-	S_PAIN_DIE3('PAIN', 9 | FF_FULLBRIGHT, 8.0 / 35.0, S_PAIN_DIE4) { }
-	S_PAIN_DIE4('PAIN', 10 | FF_FULLBRIGHT, 8.0 / 35.0, S_PAIN_DIE5) { }
-	S_PAIN_DIE5('PAIN', 11 | FF_FULLBRIGHT, 8.0 / 35.0, S_PAIN_DIE6) { A_PainDie(); }
-	S_PAIN_DIE6('PAIN', 12 | FF_FULLBRIGHT, 8.0 / 35.0, S_NULL) { }
+	S_PAIN_DIE1('PAIN', 7 | FF_FULLBRIGHT, 'monsters/pain/death1.md2', 0, 8.0 / 35.0, S_PAIN_DIE2) { }
+	S_PAIN_DIE2('PAIN', 8 | FF_FULLBRIGHT, 'monsters/pain/death2.md2', 0, 8.0 / 35.0, S_PAIN_DIE3) { A_Scream(); }
+	S_PAIN_DIE3('PAIN', 9 | FF_FULLBRIGHT, 'monsters/pain/death3.md2', 0, 8.0 / 35.0, S_PAIN_DIE4) { }
+	S_PAIN_DIE4('PAIN', 10 | FF_FULLBRIGHT, 'monsters/pain/death4.md2', 0, 8.0 / 35.0, S_PAIN_DIE5) { }
+	S_PAIN_DIE5('PAIN', 11 | FF_FULLBRIGHT, 'monsters/pain/death5.md2', 0, 8.0 / 35.0, S_PAIN_DIE6) { A_PainDie(); }
+	S_PAIN_DIE6('PAIN', 12 | FF_FULLBRIGHT, 'monsters/pain/death6.md2', 0, 8.0 / 35.0, S_NULL) { }
 	S_PAIN_RAISE1('PAIN', 12, 8.0 / 35.0, S_PAIN_RAISE2) { }
 	S_PAIN_RAISE2('PAIN', 11, 8.0 / 35.0, S_PAIN_RAISE3) { }
 	S_PAIN_RAISE3('PAIN', 10, 8.0 / 35.0, S_PAIN_RAISE4) { }
@@ -158,6 +158,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/05/03 15:03:50  dj_jl
+//  Models updated.
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

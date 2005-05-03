@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ArchVile:Pawn
+class ArchVile : Pawn
 	__mobjinfo__(64);
 
 int HealState;
@@ -36,7 +36,7 @@ int HealState;
 //
 //==========================================================================
 
-void A_VileChase(void)
+void A_VileChase()
 {
 	int xl;
 	int xh;
@@ -105,7 +105,7 @@ void A_VileChase(void)
 //
 //==========================================================================
 
-void A_VileStart(void)
+void A_VileStart()
 {
 	PlaySound('ArchVileAttack', CHAN_WEAPON);
 }
@@ -118,7 +118,7 @@ void A_VileStart(void)
 //
 //==========================================================================
 
-void A_VileTarget(void)
+void A_VileTarget()
 {
 	Actor fog;
 
@@ -143,7 +143,7 @@ void A_VileTarget(void)
 //
 //==========================================================================
 
-void A_VileAttack(void)
+void A_VileAttack()
 {
 	Actor fire;
 
@@ -197,8 +197,8 @@ __states__
 	S_VILE_ATK9('VILE', 13 | FF_FULLBRIGHT, 'monsters/vile/attack.md2', 7, 8.0 / 35.0, S_VILE_ATK10) { A_FaceTarget(); }
 	S_VILE_ATK10('VILE', 14 | FF_FULLBRIGHT, 'monsters/vile/attack.md2', 8, 8.0 / 35.0, S_VILE_ATK11) { A_VileAttack(); }
 	S_VILE_ATK11('VILE', 15 | FF_FULLBRIGHT, 'monsters/vile/attack.md2', 9, 20.0 / 35.0, S_VILE_RUN1) { }
-	S_VILE_PAIN('VILE', 16, 'monsters/vile/base.md2', 17, 5.0 / 35.0, S_VILE_PAIN2) { }
-	S_VILE_PAIN2('VILE', 16, 'monsters/vile/base.md2', 18, 5.0 / 35.0, S_VILE_RUN1) { A_Pain(); }
+	S_VILE_PAIN('VILE', 16, 'monsters/vile/base.md2', 14, 5.0 / 35.0, S_VILE_PAIN2) { }
+	S_VILE_PAIN2('VILE', 16, 'monsters/vile/base.md2', 15, 5.0 / 35.0, S_VILE_RUN1) { A_Pain(); }
 	S_VILE_DIE1('VILE', 16, 'monsters/vile/death.md2', 0, 7.0 / 35.0, S_VILE_DIE2) { }
 	S_VILE_DIE2('VILE', 17, 'monsters/vile/death.md2', 1, 7.0 / 35.0, S_VILE_DIE3) { A_Scream(); }
 	S_VILE_DIE3('VILE', 18, 'monsters/vile/death.md2', 2, 7.0 / 35.0, S_VILE_DIE4) { A_Fall(); }
@@ -209,9 +209,9 @@ __states__
 	S_VILE_DIE8('VILE', 23, 'monsters/vile/death.md2', 7, 5.0 / 35.0, S_VILE_DIE9) { }
 	S_VILE_DIE9('VILE', 24, 'monsters/vile/death.md2', 8, 5.0 / 35.0, S_VILE_DIE10) { }
 	S_VILE_DIE10('VILE', 25, 'monsters/vile/death.md2', 9, -1.0, S_NULL) { }
-	S_VILE_HEAL1('VILE', 26 | FF_FULLBRIGHT, 'monsters/vile/base.md2', 14, 10.0 / 35.0, S_VILE_HEAL2) { }
-	S_VILE_HEAL2('VILE', 27 | FF_FULLBRIGHT, 'monsters/vile/base.md2', 15, 10.0 / 35.0, S_VILE_HEAL3) { }
-	S_VILE_HEAL3('VILE', 28 | FF_FULLBRIGHT, 'monsters/vile/base.md2', 16, 10.0 / 35.0, S_VILE_RUN1) { }
+	S_VILE_HEAL1('VILE', 26 | FF_FULLBRIGHT, 'monsters/vile/heal.md2', 0, 10.0 / 35.0, S_VILE_HEAL2) { }
+	S_VILE_HEAL2('VILE', 27 | FF_FULLBRIGHT, 'monsters/vile/heal.md2', 1, 10.0 / 35.0, S_VILE_HEAL3) { }
+	S_VILE_HEAL3('VILE', 28 | FF_FULLBRIGHT, 'monsters/vile/heal.md2', 2, 10.0 / 35.0, S_VILE_RUN1) { }
 }
 
 defaultproperties
@@ -240,6 +240,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/05/03 15:03:49  dj_jl
+//  Models updated.
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //
