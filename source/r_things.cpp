@@ -403,7 +403,7 @@ void R_DrawTranslucentPoly(TVec *sv, int count, int lump,
 		if (spr.type == 2)
 		{
 			Drawer->DrawAliasModel(spr.dv[0], ((TAVec *)spr.dv)[1],
-				(model_t*)spr.surf, spr.lump, spr.skin,
+				(model_t*)spr.surf, spr.lump, spr.count, spr.skin,
 				spr.light, spr.translucency - 1, false);
 		}
 		else if (spr.type)
@@ -697,7 +697,7 @@ static void RenderSprite(clmobj_t *thing)
 //
 //==========================================================================
 
-void RenderTranslucentAliasModel(model_t *model, char *skin, dword light, clmobj_t *mobj)
+void RenderTranslucentAliasModel(clmobj_t *mobj, dword light)
 {
 	guard(RenderTranslucentAliasModel);
 	int i;
@@ -713,13 +713,14 @@ void RenderTranslucentAliasModel(model_t *model, char *skin, dword light, clmobj
 			spr.dv = trans_sprite_verts + 4 * i;
 			spr.dv[0] = mobj->origin;
 			((TAVec *)spr.dv)[1] = mobj->angles;
-			spr.surf = (surface_t*)model;
-			spr.lump = mobj->alias_frame;
+			spr.surf = (surface_t*)mobj->AliasModel;
+			spr.lump = mobj->AliasFrame;
+			spr.count = mobj->AliasSkinIndex;
 			spr.light = light;
 			spr.translucency = mobj->translucency + 1;
 			spr.dist = dist;
 			spr.type = 2;
-			spr.skin = skin;
+			spr.skin = mobj->Skin;
 			return;
 		}
 		if (spr.dist > best_dist)
@@ -741,7 +742,7 @@ void RenderTranslucentAliasModel(model_t *model, char *skin, dword light, clmobj
 		if (spr.type == 2)
 		{
 			Drawer->DrawAliasModel(spr.dv[0], ((TAVec *)spr.dv)[1],
-				(model_t*)spr.surf, spr.lump, spr.skin,
+				(model_t*)spr.surf, spr.lump, spr.count, spr.skin,
 				spr.light, spr.translucency - 1, false);
 		}
 		else if (spr.type)
@@ -759,17 +760,19 @@ void RenderTranslucentAliasModel(model_t *model, char *skin, dword light, clmobj
 		spr.dv = trans_sprite_verts + 4 * i;
 		spr.dv[0] = mobj->origin;
 		((TAVec *)spr.dv)[1] = mobj->angles;
-		spr.surf = (surface_t*)model;
-		spr.lump = mobj->alias_frame;
+		spr.surf = (surface_t*)mobj->AliasModel;
+		spr.lump = mobj->AliasFrame;
+		spr.count = mobj->AliasSkinIndex;
 		spr.light = light;
 		spr.translucency = mobj->translucency + 1;
-		spr.skin = skin;
+		spr.skin = mobj->Skin;
 		spr.dist = dist;
 		spr.type = 2;
 		return;
 	}
-	Drawer->DrawAliasModel(mobj->origin, mobj->angles, model,
-		mobj->alias_frame, skin, light, mobj->translucency, false);
+	Drawer->DrawAliasModel(mobj->origin, mobj->angles, mobj->AliasModel,
+		mobj->AliasFrame, mobj->AliasSkinIndex, mobj->Skin, light,
+		mobj->translucency, false);
 	unguard;
 }
 
@@ -809,12 +812,13 @@ static void RenderAliasModel(clmobj_t *mobj)
 	//	Draw it
 	if (mobj->translucency)
 	{
-		RenderTranslucentAliasModel(mobj->alias_model, mobj->skin, light, mobj);
+		RenderTranslucentAliasModel(mobj, light);
 	}
 	else
 	{
-		Drawer->DrawAliasModel(mobj->origin, mobj->angles, mobj->alias_model,
-			mobj->alias_frame, mobj->skin, light, 0, false);
+		Drawer->DrawAliasModel(mobj->origin, mobj->angles, mobj->AliasModel,
+			mobj->AliasFrame, mobj->AliasSkinIndex, mobj->Skin, light, 0,
+			false);
 	}
 	unguard;
 }
@@ -839,7 +843,7 @@ void R_RenderMobjs(void)
 	{
 		if (cl_mobjs[i].in_use)
 		{
-			if (cl_mobjs[i].alias_model && r_models)
+			if (cl_mobjs[i].AliasModel && r_models)
 			{
 				RenderAliasModel(&cl_mobjs[i]);
 			}
@@ -854,7 +858,7 @@ void R_RenderMobjs(void)
 	{
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
-			if (cl_weapon_mobjs[i].in_use && cl_weapon_mobjs[i].alias_model)
+			if (cl_weapon_mobjs[i].in_use && cl_weapon_mobjs[i].AliasModel)
 			{
 				RenderAliasModel(&cl_weapon_mobjs[i]);
 			}
@@ -902,7 +906,7 @@ void R_DrawTranslucentPolys(void)
 			if (spr.type == 2)
 			{
 				Drawer->DrawAliasModel(spr.dv[0], ((TAVec *)spr.dv)[1],
-					(model_t*)spr.surf, spr.lump, spr.skin,
+					(model_t*)spr.surf, spr.lump, spr.count, spr.skin,
 					spr.light, spr.translucency - 1, false);
 			}
 			else if (spr.type)
@@ -1049,7 +1053,7 @@ static void RenderViewModel(cl_pspdef_t *psp)
 	}
 
 	Drawer->DrawAliasModel(origin, cl.viewangles, psp->alias_model,
-		psp->alias_frame, NULL, light, cl.translucency, true);
+		psp->alias_frame, 0, NULL, light, cl.translucency, true);
 	unguard;
 }
 
@@ -1181,7 +1185,8 @@ void R_DrawModelFrame(const TVec &origin, float angle, model_t *model,
 	angles.yaw = angle;
 	angles.pitch = 0;
 	angles.roll = 0;
-	Drawer->DrawAliasModel(origin, angles, model, frame, skin, 0xffffffff, 0, false);
+	Drawer->DrawAliasModel(origin, angles, model, frame, 0, skin,
+		0xffffffff, 0, false);
 
 	Drawer->EndView();
 	unguard;
@@ -1190,9 +1195,12 @@ void R_DrawModelFrame(const TVec &origin, float angle, model_t *model,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2005/05/03 14:57:06  dj_jl
+//	Added support for specifying skin index.
+//
 //	Revision 1.20  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.19  2004/11/22 07:33:17  dj_jl
 //	Always check for valid sprite numbers and frames.
 //	

@@ -200,7 +200,7 @@ public:
 	void EndSky(void);
 	void DrawMaskedPolygon(TVec*, int, int, int);
 	void DrawSpritePolygon(TVec*, int, int, int, dword);
-	void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, const char*, dword, int, bool);
+	void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, int, const char*, dword, int, bool);
 
 	//	Particles
 	void StartParticles(void);
@@ -447,9 +447,12 @@ private:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2005/05/03 14:57:00  dj_jl
+//	Added support for specifying skin index.
+//
 //	Revision 1.26  2004/08/21 17:22:15  dj_jl
 //	Changed rendering driver declaration.
-//
+//	
 //	Revision 1.25  2004/02/09 17:29:58  dj_jl
 //	Increased block count
 //	

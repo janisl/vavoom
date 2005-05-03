@@ -60,10 +60,11 @@ struct clmobj_t
 	int			sprite;	// used to find patch_t and flip value
 	int			frame;	// might be ORed with FF_FULLBRIGHT
 
-	int			model_index;
-	model_t		*alias_model;
-	int			alias_frame;
-	char		skin[64];
+	int			ModelIndex;
+	model_t*	AliasModel;
+	int			AliasFrame;
+	int			AliasSkinIndex;
+	char		Skin[64];
 
 	int			translucency;
 	int			translation;
@@ -137,9 +138,12 @@ extern dlight_t			cl_dlights[MAX_DLIGHTS];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2005/05/03 14:56:58  dj_jl
+//	Added support for specifying skin index.
+//
 //	Revision 1.14  2004/08/18 18:05:46  dj_jl
 //	Support for higher virtual screen resolutions.
-//
+//	
 //	Revision 1.13  2002/09/07 16:31:50  dj_jl
 //	Added Level class.
 //	

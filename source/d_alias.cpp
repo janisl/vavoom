@@ -123,8 +123,8 @@ static aedge_t aedges[12] =
 //==========================================================================
 
 void VSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
-	model_t *model, int frame, const char *skin, dword light, int translucency,
-	bool is_view_model)
+	model_t *model, int frame, int skin_index, const char *skin, dword light,
+	int translucency, bool is_view_model)
 {
 	guard(VSoftwareDrawer::DrawAliasModel);
 	modelorg = vieworg - origin;
@@ -156,7 +156,7 @@ void VSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	// Hack to make sure that skin loading doesn't free model
 	Z_ChangeTag(pmdl, PU_STATIC);
 
-	AliasSetupSkin(skin);
+	AliasSetupSkin(skin_index, skin);
 	AliasSetUpTransform(angles, frame, a_trivial_accept);
 	AliasSetupLighting(light);
 	AliasSetupFrame(frame);
@@ -409,7 +409,7 @@ void VSoftwareDrawer::AliasSetUpTransform(const TAVec &angles, int frame, int tr
 //
 //==========================================================================
 
-void VSoftwareDrawer::AliasSetupSkin(const char *skin)
+void VSoftwareDrawer::AliasSetupSkin(int skin_index, const char *skin)
 {
 	mskin_t		*pskins;
 
@@ -420,7 +420,10 @@ void VSoftwareDrawer::AliasSetupSkin(const char *skin)
 	else
 	{
 		pskins = (mskin_t *)((byte *)pmdl + pmdl->ofsskins);
-		d_affinetridesc.pskin = SetSkin(pskins[0].name);
+		if (skin_index < 0 || skin_index > pmdl->numskins)
+			d_affinetridesc.pskin = SetSkin(pskins[0].name);
+		else
+			d_affinetridesc.pskin = SetSkin(pskins[skin_index].name);
 	}
 	d_affinetridesc.skinwidth = pmdl->skinwidth;
 	d_affinetridesc.skinheight = pmdl->skinheight;
@@ -800,9 +803,12 @@ extern "C" void D_AliasProjectFinalVert(finalvert_t *fv, auxvert_t *av)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2005/05/03 14:57:00  dj_jl
+//	Added support for specifying skin index.
+//
 //	Revision 1.14  2002/11/16 17:11:15  dj_jl
 //	Improving software driver class.
-//
+//	
 //	Revision 1.13  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
 //	

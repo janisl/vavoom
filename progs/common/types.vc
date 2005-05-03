@@ -680,10 +680,11 @@ struct clmobj_t
 	int sprite;	// used to find patch_t and flip value
 	int frame;	// might be ORed with FF_FULLBRIGHT
 
-	int model_index;
-	model_t *__alias_model;
-	int alias_frame;
-	int skin[64 / 4];
+	int ModelIndex;
+	model_t *__AliasModel;
+	int AliasFrame;
+	int AliasSkinIndex;
+	int Skin[64 / 4];
 
 	int translucency;
 	int translation;
@@ -710,6 +711,9 @@ struct ClipRect
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.55  2005/05/03 14:55:03  dj_jl
+//  Added support for specifying skin index.
+//
 //  Revision 1.54  2005/04/04 07:35:15  dj_jl
 //  Palette flash state fix.
 //

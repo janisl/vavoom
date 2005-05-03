@@ -94,6 +94,7 @@ int SpriteFrame;	// might be ORed with FF_FULLBRIGHT
 
 int ModelIndex;
 int ModelFrame;
+int ModelSkinIndex;
 int ModelSkinNum;
 
 int Translucency;
@@ -472,6 +473,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/05/03 14:54:38  dj_jl
+//  Added support for specifying skin index.
+//
 //  Revision 1.4  2004/12/22 07:54:40  dj_jl
 //  More extended ACS support, more linedef flags.
 //

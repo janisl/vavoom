@@ -920,8 +920,8 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump,
 //==========================================================================
 
 void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
-	model_t *model, int InFrame, const char *skin, dword light,
-	int translucency, bool is_view_model)
+	model_t *model, int InFrame, int skin_index, const char *skin,
+	dword light, int translucency, bool is_view_model)
 {
 	guard(VOpenGLDrawer::DrawAliasModel);
 	int frame = InFrame;
@@ -994,7 +994,10 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	else
 	{
 		pskindesc = (mskin_t *)((byte *)pmdl + pmdl->ofsskins);
-		SetSkin(pskindesc->name);
+		if (skin_index < 0 || skin_index > pmdl->numskins)
+			SetSkin(pskindesc[0].name);
+		else
+			SetSkin(pskindesc[skin_index].name);
 	}
 
 	glShadeModel(GL_SMOOTH);
@@ -1129,9 +1132,12 @@ void VOpenGLDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2005/05/03 14:57:06  dj_jl
+//	Added support for specifying skin index.
+//
 //	Revision 1.27  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.26  2005/01/24 12:53:54  dj_jl
 //	Skybox fixes.
 //	

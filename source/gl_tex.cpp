@@ -587,8 +587,8 @@ void VOpenGLDrawer::GenerateSprite(int lump)
 	// Generate The Texture
 	UploadTexture(w, h, block);
 	sprite_sent[lump] = true;
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, ClampToEdge);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, ClampToEdge);
 
 	Z_Free(block);
 	Z_ChangeTag(patch, PU_CACHE);
@@ -651,8 +651,8 @@ void VOpenGLDrawer::GenerateTranslatedSprite(int lump, int slot, int translation
 
 	// Generate The Texture
 	UploadTexture(w, h, block);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, ClampToEdge);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, ClampToEdge);
 
 	Z_Free(block);
 	Z_ChangeTag(patch, PU_CACHE);
@@ -790,8 +790,8 @@ void VOpenGLDrawer::GeneratePicFromPatch(int handle)
 			UploadTextureNoMip(SkinWidth, SkinHeight, (rgba_t *)SkinData);
 		}
 		Z_Free(SkinData);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, ClampToEdge);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, ClampToEdge);
 		pic_iw[handle] = 1.0 / float(w);
 		pic_ih[handle] = 1.0 / float(h);
 		pic_sent[handle] = true;
@@ -838,8 +838,8 @@ void VOpenGLDrawer::GeneratePicFromPatch(int handle)
 	Z_Free(block);
 	Z_ChangeTag(patch, PU_CACHE);
 
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, ClampToEdge);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, ClampToEdge);
 
 	pic_iw[handle] = 1.0 / float(w);
 	pic_ih[handle] = 1.0 / float(h);
@@ -890,8 +890,8 @@ void VOpenGLDrawer::GeneratePicFromRaw(int handle)
 		}
 		else
 		{
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, ClampToEdge);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, ClampToEdge);
 		}
 		pic_iw[handle] = 1.0 / 320.0;
 		pic_ih[handle] = 1.0 / float(h);
@@ -922,8 +922,8 @@ void VOpenGLDrawer::GeneratePicFromRaw(int handle)
 	}
 	else
 	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, ClampToEdge);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, ClampToEdge);
 	}
 
 	pic_iw[handle] = 1.0 / float(320);
@@ -986,8 +986,8 @@ void VOpenGLDrawer::SetSkin(const char *name)
 		{
 			UploadTexture(SkinWidth, SkinHeight, (rgba_t *)SkinData);
 		}
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, ClampToEdge);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, ClampToEdge);
 		Z_Free(SkinData);
 	}
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
@@ -1303,9 +1303,12 @@ void VOpenGLDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2005/05/03 14:57:06  dj_jl
+//	Added support for specifying skin index.
+//
 //	Revision 1.25  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.24  2005/03/28 07:25:40  dj_jl
 //	Changed location of hi-res 2D graphics.
 //	

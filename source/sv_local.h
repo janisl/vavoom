@@ -127,6 +127,7 @@ class VEntity : public VThinker
 
 	int				ModelIndex;
 	int				ModelFrame;
+	int				ModelSkinIndex;
 	int				ModelSkinNum;
 
 	int				Translucency;
@@ -613,9 +614,12 @@ inline int SV_GetPlayerNum(VBasePlayer* player)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.36  2005/05/03 14:57:07  dj_jl
+//	Added support for specifying skin index.
+//
 //	Revision 1.35  2005/03/16 15:04:44  dj_jl
 //	More work on line specials.
-//
+//	
 //	Revision 1.34  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
 //	

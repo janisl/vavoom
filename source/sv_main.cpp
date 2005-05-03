@@ -301,7 +301,7 @@ int	SV_GetMobjBits(VEntity &mobj, mobj_base_t &base)
 		bits |= MOB_EFFECTS;
 	if (base.ModelIndex != mobj.ModelIndex)
 		bits |= MOB_MODEL;
-	if (mobj.ModelIndex && mobj.ModelSkinNum)
+	if (mobj.ModelIndex && (mobj.ModelSkinIndex || mobj.ModelSkinNum))
 		bits |= MOB_SKIN;
 	if (mobj.ModelIndex && base.ModelFrame != mobj.ModelFrame)
 		bits |= MOB_FRAME;
@@ -343,8 +343,10 @@ void SV_WriteMobj(int bits, VEntity &mobj, TMessage &msg)
 		msg << (byte)mobj.Effects;
 	if (bits & MOB_MODEL)
 		msg << (word)mobj.ModelIndex;
-	if (bits & MOB_SKIN)
-		msg << (byte)mobj.ModelSkinNum;
+	if ((bits & MOB_SKIN) && mobj.ModelSkinNum)
+		msg << (byte)0 << (byte)mobj.ModelSkinNum;
+	else if (bits & MOB_SKIN)
+		msg << (byte)mobj.ModelSkinIndex;
 	if (mobj.ModelIndex && (bits & MOB_FRAME))
 		msg << (byte)mobj.ModelFrame;
 	if (bits & MOB_WEAPON)
@@ -3001,9 +3003,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.66  2005/05/03 14:57:07  dj_jl
+//	Added support for specifying skin index.
+//
 //	Revision 1.65  2005/04/28 07:16:16  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.64  2005/04/04 07:48:05  dj_jl
 //	Fix for loading level variables.
 //	

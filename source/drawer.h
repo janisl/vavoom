@@ -117,7 +117,7 @@ public:
 	virtual void EndSky(void) = 0;
 	virtual void DrawMaskedPolygon(TVec*, int, int, int) = 0;
 	virtual void DrawSpritePolygon(TVec*, int, int, int, dword) = 0;
-	virtual void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, const char*, dword, int, bool) = 0;
+	virtual void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, int, const char*, dword, int, bool) = 0;
 
 	//	Particles
 	virtual void StartParticles(void) = 0;
@@ -178,9 +178,12 @@ extern VDrawer			*Drawer;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2005/05/03 14:57:06  dj_jl
+//	Added support for specifying skin index.
+//
 //	Revision 1.17  2004/08/21 17:22:15  dj_jl
 //	Changed rendering driver declaration.
-//
+//	
 //	Revision 1.16  2003/03/08 12:08:04  dj_jl
 //	Beautification.
 //	

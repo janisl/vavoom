@@ -999,8 +999,8 @@ void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump,
 //==========================================================================
 
 void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
-	model_t *model, int frame, const char *skin, dword light, int translucency,
-	bool is_view_model)
+	model_t *model, int frame, int skin_index, const char *skin, dword light,
+	int translucency, bool is_view_model)
 {
 	guard(VDirect3DDrawer::DrawAliasModel);
 	mmdl_t				*pmdl;
@@ -1096,7 +1096,10 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	else
 	{
 		pskindesc = (mskin_t *)((byte *)pmdl + pmdl->ofsskins);
-		SetSkin(pskindesc->name);
+		if (skin_index < 0 || skin_index > pmdl->numskins)
+			SetSkin(pskindesc[0].name);
+		else
+			SetSkin(pskindesc[skin_index].name);
 	}
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_SHADEMODE, D3DSHADE_GOURAUD);
@@ -1254,9 +1257,12 @@ void VDirect3DDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2005/05/03 14:57:00  dj_jl
+//	Added support for specifying skin index.
+//
 //	Revision 1.27  2005/01/24 12:53:54  dj_jl
 //	Skybox fixes.
-//
+//	
 //	Revision 1.26  2004/10/08 12:37:39  dj_jl
 //	Better rendering of old skies.
 //	

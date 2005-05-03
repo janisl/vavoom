@@ -182,7 +182,7 @@ public:
 	void EndSky(void);
 	void DrawMaskedPolygon(TVec*, int, int, int);
 	void DrawSpritePolygon(TVec*, int, int, int, dword);
-	void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, const char*, dword, int, bool);
+	void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, int, const char*, dword, int, bool);
 
 	//	Particles
 	void StartParticles(void);
@@ -262,7 +262,7 @@ private:
 	//	Drawing of the aliased models, i.e. md2
 	bool AliasCheckBBox(model_t *model, const TAVec &angles, int frame);
 	void AliasSetUpTransform(const TAVec &angles, int frame, int trivial_accept);
-	void AliasSetupSkin(const char *skin);
+	void AliasSetupSkin(int skin_index, const char *skin);
 	void AliasSetupLighting(dword light);
 	void AliasSetupFrame(int frame);
 	void AliasPrepareUnclippedPoints(void);
@@ -645,9 +645,12 @@ inline byte GetColB(dword col)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2005/05/03 14:57:06  dj_jl
+//	Added support for specifying skin index.
+//
 //	Revision 1.24  2004/08/21 17:22:15  dj_jl
 //	Changed rendering driver declaration.
-//
+//	
 //	Revision 1.23  2003/03/08 12:08:04  dj_jl
 //	Beautification.
 //	

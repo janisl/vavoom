@@ -170,22 +170,35 @@ static void CL_ReadMobj(int bits, clmobj_t &mobj, const clmobjbase_t &base)
 		mobj.effects = base.effects;
 	if (bits & MOB_MODEL)
 	{
-		mobj.model_index = net_msg.ReadShort();
-		mobj.alias_model = model_precache[mobj.model_index];
+		mobj.ModelIndex = net_msg.ReadShort();
+		mobj.AliasModel = model_precache[mobj.ModelIndex];
 	}
 	else
 	{
-		mobj.model_index = base.model_index;
-		mobj.alias_model = model_precache[mobj.model_index];
+		mobj.ModelIndex = base.model_index;
+		mobj.AliasModel = model_precache[mobj.ModelIndex];
 	}
 	if (bits & MOB_SKIN)
-		strcpy(mobj.skin, skin_list[net_msg.ReadByte()]);
+	{
+		mobj.AliasSkinIndex = net_msg.ReadByte();
+		if (!mobj.AliasSkinIndex)
+		{
+			strcpy(mobj.Skin, skin_list[net_msg.ReadByte()]);
+		}
+		else
+		{
+			mobj.Skin[0] = 0;
+		}
+	}
 	else
-		mobj.skin[0] = 0;
-	if (mobj.model_index && (bits & MOB_FRAME))
-		mobj.alias_frame = net_msg.ReadByte();
+	{
+		mobj.AliasSkinIndex = 0;
+		mobj.Skin[0] = 0;
+	}
+	if (mobj.ModelIndex && (bits & MOB_FRAME))
+		mobj.AliasFrame = net_msg.ReadByte();
 	else
-		mobj.alias_frame = base.alias_frame;
+		mobj.AliasFrame = base.alias_frame;
 }
 
 static void CL_ParseUpdateMobj(void)
@@ -208,8 +221,8 @@ static void CL_ParseUpdateMobj(void)
 	//	Marking mobj in use
 	cl_mobjs[i].in_use = 2;
 
-	if (bits & MOB_WEAPON && cl_mobjs[i].alias_model &&
-		weapon_model_precache[cl_mobjs[i].model_index])
+	if (bits & MOB_WEAPON && cl_mobjs[i].AliasModel &&
+		weapon_model_precache[cl_mobjs[i].ModelIndex])
 	{
 		clmobj_t &ent = cl_mobjs[i];
 		clmobj_t &wpent = cl_weapon_mobjs[i];
@@ -217,12 +230,12 @@ static void CL_ParseUpdateMobj(void)
 		wpent.in_use = true;
 		wpent.origin = ent.origin;
 		wpent.angles = ent.angles;
-		wpent.alias_model = model_precache[net_msg.ReadShort()];
-		wpent.alias_frame = 1;
+		wpent.AliasModel = model_precache[net_msg.ReadShort()];
+		wpent.AliasFrame = 1;
 		wpent.translucency = ent.translucency;
 
-		R_PositionWeaponModel(wpent, weapon_model_precache[ent.model_index],
-			ent.alias_frame);
+		R_PositionWeaponModel(wpent, weapon_model_precache[ent.ModelIndex],
+			ent.AliasFrame);
 	}
 	else if (bits & MOB_WEAPON)
 	{
@@ -1020,9 +1033,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.34  2005/05/03 14:56:59  dj_jl
+//	Added support for specifying skin index.
+//
 //	Revision 1.33  2005/03/28 07:28:19  dj_jl
 //	Transfer lighting and other BOOM stuff.
-//
+//	
 //	Revision 1.32  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
 //	
