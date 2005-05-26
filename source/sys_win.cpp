@@ -26,7 +26,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #define INITGUID
-#include "WinLocal.h"
+#include "winlocal.h"
 #include <objbase.h>
 #include <mmsystem.h>
 #include "gamedefs.h"
@@ -873,9 +873,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2005/05/26 16:59:45  dj_jl
+//	Lowercased include
+//
 //	Revision 1.20  2002/11/02 17:09:55  dj_jl
 //	Some debugging stuff.
-//
+//	
 //	Revision 1.19  2002/07/23 13:12:00  dj_jl
 //	Some compatibility fixes, beautification.
 //	
