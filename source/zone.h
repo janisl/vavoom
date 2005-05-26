@@ -148,12 +148,20 @@ template<class T> T* Z_CNew(int elem_count, int tag, void** owner)
 	return (T*)Z_Calloc(elem_count * sizeof(T), tag, owner);
 }
 
+inline void* operator new(size_t Size, EZoneTag Tag)
+{
+	return Z_Malloc(Size, Tag, NULL);
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2005/05/26 16:56:26  dj_jl
+//	Added operator new
+//
 //	Revision 1.8  2003/03/08 12:08:05  dj_jl
 //	Beautification.
-//
+//	
 //	Revision 1.7  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	
