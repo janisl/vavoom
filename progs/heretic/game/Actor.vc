@@ -1683,14 +1683,14 @@ void ZMovement(void)
 			{
 				Player.DeltaViewHeight = vdot / 8.0;
 				PlaySound('PlayerLand', CHAN_BODY);
-//FIXME             Player.centering = true;
+//FIXME				Player.centering = true;
 			}
 			Velocity -= vdot * Floor->normal;
 		}
 		if (bSkullFly)
 		{
 			// The skull slammed into something
-			Velocity -= vdot * Floor->normal * 2.0;
+			Velocity -= vdot * Floor->normal / 2.0;
 		}
 		if (CrashState && bCorpse)
 		{
@@ -1882,7 +1882,7 @@ bool Physics(void)
 			}
 			else if (bIsPlayer)
 			{
-				if (Velocity.z < -GRAVITY * 0.25)
+				if (Velocity.z < -GRAVITY * 0.25 && !bFly)
 				{
 					PlayerLandedOnThing();
 				}
@@ -3025,6 +3025,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2005/05/26 17:04:11  dj_jl
+//  Some fixes
+//
 //  Revision 1.12  2005/03/28 07:43:29  dj_jl
 //  Some Boom line specials and other improvements.
 //

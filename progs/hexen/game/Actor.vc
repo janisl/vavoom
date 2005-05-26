@@ -3093,7 +3093,7 @@ bool Teleport(TVec pos, float angle, bool DstFog, bool SrcFog, bool KeepDir)
 		Velocity.x = Speed * cos(angle);
 		Velocity.y = Speed * sin(angle);
 	}
-	else if (KeepDir)	// no fog doesn't alter the player's momentums
+	else if (!KeepDir)	// no fog doesn't alter the player's momentums
 	{
 		Velocity = vector(0.0, 0.0, 0.0);
 	}
@@ -3854,6 +3854,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2005/05/26 17:04:12  dj_jl
+//  Some fixes
+//
 //  Revision 1.14  2005/03/28 07:44:09  dj_jl
 //  Some Boom line specials and other improvements.
 //

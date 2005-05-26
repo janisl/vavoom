@@ -1534,27 +1534,27 @@ bool Physics(void)
 	if ((Origin.z != FloorZ) || Velocity.z || tmtrace->BlockingMobj)
 	{
 		// Handle Z momentum and gravity
-		onmo = Actor(CheckOnmobj());
-		if (!onmo)
+		if (!bNoPassMobj && !bMissile)
 		{
-			ZMovement();
-			if (bIsPlayer && bOnMobj)
+			onmo = Actor(CheckOnmobj());
+			if (!onmo)
 			{
-				bOnMobj = false;
+				ZMovement();
+				if (bIsPlayer && bOnMobj)
+				{
+					bOnMobj = false;
+				}
 			}
-		}
-		else
-		{
-			if (bIsPlayer)
+			else if (bIsPlayer)
 			{
-				if (Velocity.z < -GRAVITY * 0.25)
+				if (Velocity.z < -GRAVITY * 0.25 && !bFly)
 				{
 					PlayerLandedOnThing();
 				}
 				if (onmo.Origin.z + onmo.Height - Origin.z <= MaxStepHeight)
 				{
-					Player.ViewHeight -= onmo.Origin.z + onmo.Height
-						- Origin.z;
+					Player.ViewHeight -=
+						onmo.Origin.z + onmo.Height - Origin.z;
 					Player.DeltaViewHeight =
 						(VIEWHEIGHT - Player.ViewHeight) * 4.0;
 					Origin.z = onmo.Origin.z + onmo.Height;
@@ -1567,6 +1567,10 @@ bool Physics(void)
 					Velocity.z = 0.0;
 				}
 			}
+		}
+		else
+		{
+			ZMovement();
 		}
 		if (IsDestroyed())
 		{
@@ -4053,6 +4057,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2005/05/26 17:04:11  dj_jl
+//  Some fixes
+//
 //  Revision 1.14  2005/04/04 07:39:59  dj_jl
 //  Fixed dehacked support.
 //
