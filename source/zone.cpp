@@ -863,6 +863,22 @@ int Z_FreeMemory(void)
 
 //==========================================================================
 //
+//	COMMAND FreeMemory
+//
+//==========================================================================
+
+COMMAND(FreeMemory)
+{
+	guard(COMMAND FreeMemory);
+	GCon->Log("-- Main zone --");
+	mainzone->FreeMemory();
+	GCon->Log("-- Mini zone --");
+	minizone->FreeMemory();
+	unguard;
+}
+
+//==========================================================================
+//
 //	COMMAND DumpHeap
 //
 //==========================================================================
@@ -879,9 +895,12 @@ COMMAND(DumpHeap)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2005/05/26 16:57:25  dj_jl
+//	Added "free memory" console command
+//
 //	Revision 1.13  2004/01/30 17:33:36  dj_jl
 //	Better minzone size
-//
+//	
 //	Revision 1.12  2003/12/19 17:37:33  dj_jl
 //	Got rid of new header
 //	
