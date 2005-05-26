@@ -265,7 +265,7 @@ static int CalcPitch(int freq, int sound_id)
 {
 	if (S_sfx[sound_id].changePitch)
 	{
-		return freq + ((freq * ((rand() & 7) - (rand() & 7))) >> 7);
+		return freq;// + ((freq * ((rand() & 7) - (rand() & 7))) >> 7);
 	}
 	else
 	{
@@ -846,9 +846,12 @@ bool VSDLSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2005/05/26 17:00:14  dj_jl
+//	Disabled pitching
+//
 //	Revision 1.13  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.12  2004/11/30 07:17:17  dj_jl
 //	Made string pointers const.
 //	
