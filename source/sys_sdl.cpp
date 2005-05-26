@@ -578,7 +578,7 @@ void* Sys_ZoneBase(int* size)
 			maxzone = MAXIMUM_HEAP_SIZE;
 	}
 
-	heap = 0x2010000;
+	heap = maxzone + 0x10000;
 
 	do
 	{
@@ -768,9 +768,12 @@ int main(int argc,char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2005/05/26 16:59:21  dj_jl
+//	Initial heap size
+//
 //	Revision 1.6  2005/04/28 07:16:16  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.5  2004/12/27 12:23:17  dj_jl
 //	Multiple small changes for version 1.16
 //	

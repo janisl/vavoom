@@ -574,7 +574,7 @@ void* Sys_ZoneBase(int* size)
 			maxzone = MAXIMUM_HEAP_SIZE;
 	}
 
-	heap = 0x2010000;
+	heap = maxzone + 0x10000;
 
 	do
 	{
@@ -744,9 +744,12 @@ END_OF_MAIN()	//	For Allegro
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2005/05/26 16:59:21  dj_jl
+//	Initial heap size
+//
 //	Revision 1.14  2005/04/28 07:16:16  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.13  2004/10/11 06:53:16  dj_jl
 //	In end text characters below space are replaced with dots.
 //	
