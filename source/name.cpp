@@ -112,9 +112,21 @@ FNameEntry* AllocateNameEntry(const char* Name, dword Index,
 
 FName::FName(const char* Name, EFindName FindType)
 {
+	char		Name8Buf[12];
+
 	if (!Name || !*Name)
 	{
-		Name = "None";
+		Index = NAME_None;
+		return;
+	}
+	if (FindType == FNAME_AddLower8)
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			Name8Buf[i] = tolower(Name[i]);
+		}
+		Name8Buf[8] = 0;
+		Name = Name8Buf;
 	}
 	Index = 0;
 	int HashIndex = GetTypeHash(Name) & 4095;
@@ -130,7 +142,7 @@ FName::FName(const char* Name, EFindName FindType)
 	}
 	if (!TempHash)
 	{
-		if (FindType == FNAME_Add)
+		if (FindType == FNAME_Add || FindType == FNAME_AddLower8)
 		{
 			if (Available.Num())
 			{
@@ -234,9 +246,12 @@ void FName::DeleteEntry(int i)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2005/05/26 16:49:14  dj_jl
+//	Added lowercased max 8 chars names.
+//
 //	Revision 1.6  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.5  2004/12/03 16:15:47  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
 //	

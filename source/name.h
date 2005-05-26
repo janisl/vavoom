@@ -42,7 +42,7 @@ enum EFindName
 {
 	FNAME_Find,			// Find a name; return 0 if it doesn't exist.
 	FNAME_Add,			// Find a name or add it if it doesn't exist.
-	FNAME_Intrinsic,	// Find a name or add it intrinsically if it doesn't exist.
+	FNAME_AddLower8,	// Find or add lowercased max length 8 name.
 };
 
 /*----------------------------------------------------------------------------
@@ -168,9 +168,12 @@ inline dword GetTypeHash(const FName N)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2005/05/26 16:49:14  dj_jl
+//	Added lowercased max 8 chars names.
+//
 //	Revision 1.3  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.2  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	
