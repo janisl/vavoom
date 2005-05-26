@@ -71,6 +71,7 @@ public:
 	void Close(void);
 	int CheckNumForName(const char* name, EWadNamespace NS);
 	void ReadLump(int lump, void* dest);
+	void ReadFromLump(int lump, void* dest, int pos, int size);
 	void* CacheLumpNum(int lump, int tag);
 	void InitNamespaces();
 	void InitNamespace(EWadNamespace NS, const char* Start, const char* End,
@@ -645,6 +646,49 @@ void W_ReadLump(int lump, void* dest)
 
 //==========================================================================
 //
+//  WadFile::ReadFromLump
+//
+//  Loads part of the lump into the given buffer.
+//
+//==========================================================================
+
+void WadFile::ReadFromLump(int lump, void* dest, int pos, int size)
+{
+	if ((dword)lump >= (dword)NumLumps)
+	{
+		Sys_Error("WadFile::ReadFromLump: %i >= numlumps", lump);
+	}
+
+	lumpinfo_t &l = LumpInfo[lump];
+
+	if (pos >= l.size)
+	{
+		return;
+	}
+
+	Sys_FileSeek(Handle, l.position + pos);
+	Sys_FileRead(Handle, dest, size);
+}
+
+//==========================================================================
+//
+//  W_ReadFromLump
+//
+//==========================================================================
+
+void W_ReadFromLump(int lump, void* dest, int pos, int size)
+{
+	if (FILE_INDEX(lump) >= num_wad_files)
+	{
+		Sys_Error("W_ReadFromLump: %i >= num_wad_files", FILE_INDEX(lump));
+	}
+
+	WadFile &w = GET_LUMP_FILE(lump);
+	w.ReadFromLump(LUMP_INDEX(lump), dest, pos, size);
+}
+
+//==========================================================================
+//
 //  WadFile::CacheLumpNum
 //
 //==========================================================================
@@ -800,6 +844,32 @@ bool W_ForEachLump(bool (*func)(int, const char*, int, EWadNamespace))
 
 //==========================================================================
 //
+//  W_IterateNS
+//
+//==========================================================================
+
+int W_IterateNS(int Prev, EWadNamespace NS)
+{
+	guard(W_IterateNS);
+	int wi = FILE_INDEX((Prev + 1));
+	int li = LUMP_INDEX((Prev + 1));
+	for (; wi < num_wad_files; wi++, li = 0)
+	{
+		WadFile &w = wad_files[wi];
+		for (; li < w.NumLumps; li++)
+		{
+			if (w.LumpInfo[li].Namespace == NS)
+			{
+				return MAKE_HANDLE(wi, li);
+			}
+		}
+	}
+	return -1;
+	unguard;
+}
+
+//==========================================================================
+//
 //  WadFile::InitNamespaces
 //
 //==========================================================================
@@ -926,6 +996,9 @@ void W_Profile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2005/05/26 16:55:43  dj_jl
+//  New lump namespace iterator
+//
 //  Revision 1.14  2004/12/03 16:15:47  dj_jl
 //  Implemented support for extended ACS format scripts, functions, libraries and more.
 //
