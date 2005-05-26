@@ -112,7 +112,6 @@ void R_DrawSky();
 //	R_Tex
 //
 void R_PrecacheLevel();
-float R_TextureHeight(int pic);
 
 //
 //	R_Surf
@@ -143,14 +142,23 @@ extern refdef_t			refdef;
 
 extern TCvarI			old_aspect;
 
+extern int				SkinWidth;
+extern int				SkinHeight;
+extern int				SkinBPP;
+extern byte*			SkinData;
+extern rgba_t			SkinPal[256];
+
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2005/05/26 16:50:14  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.11  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.10  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
 //	

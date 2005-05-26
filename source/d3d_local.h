@@ -47,7 +47,6 @@
 // MACROS ------------------------------------------------------------------
 
 #define MAX_TRANSLATED_SPRITES		256
-#define MAX_SKIN_CACHE				256
 
 #define BLOCK_WIDTH					128
 #define BLOCK_HEIGHT				128
@@ -166,46 +165,44 @@ public:
 class VDirect3DDrawer : public VDrawer
 {
 public:
-	VDirect3DDrawer(void);
-	void Init(void);
-	void InitData(void);
+	VDirect3DDrawer();
+	void Init();
+	void InitData();
 	bool SetResolution(int, int, int);
-	void InitResolution(void);
-	void NewMap(void);
+	void InitResolution();
+	void NewMap();
 	void SetPalette(int);
-	void StartUpdate(void);
-	void Update(void);
-	void BeginDirectUpdate(void);
-	void EndDirectUpdate(void);
-	void Shutdown(void);
+	void StartUpdate();
+	void Update();
+	void BeginDirectUpdate();
+	void EndDirectUpdate();
+	void Shutdown();
 	void* ReadScreen(int*, bool*);
 	void FreeSurfCache(surfcache_t*);
 
 	//	Rendering stuff
 	void SetupView(const refdef_t*);
-	void WorldDrawing(void);
-	void EndView(void);
+	void WorldDrawing();
+	void EndView();
 
 	//	Texture stuff
-	void InitTextures(void);
+	void InitTextures();
 	void SetTexture(int);
-	void SetSkyTexture(int, bool);
-	void SetFlat(int);
 	void SetSpriteLump(int, int);
 
 	//	Polygon drawing
 	void DrawPolygon(TVec*, int, int, int);
-	void BeginSky(void);
+	void BeginSky();
 	void DrawSkyPolygon(TVec*, int, int, float, int, float);
-	void EndSky(void);
+	void EndSky();
 	void DrawMaskedPolygon(TVec*, int, int, int);
 	void DrawSpritePolygon(TVec*, int, int, int, dword);
 	void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, int, const char*, dword, int, bool);
 
 	//	Particles
-	void StartParticles(void);
+	void StartParticles();
 	void DrawParticle(particle_t *);
-	void EndParticles(void);
+	void EndParticles();
 
 	//	Drawing
 	void DrawPic(float, float, float, float, float, float, float, float, int, int);
@@ -217,29 +214,23 @@ public:
 	void DrawSpriteLump(float, float, float, float, int, int, boolean);
 
 	//	Automap
-	void StartAutomap(void);
+	void StartAutomap();
 	void DrawLine(int, int, dword, int, int, dword);
-	void EndAutomap(void);
+	void EndAutomap();
 
 private:
-	void Setup2D(void);
-	void FlushTextures(void);
-	void ReleaseTextures(void);
-	int ToPowerOf2(int);
+	void Setup2D();
+	void FlushTextures();
+	void ReleaseTextures();
+	static int ToPowerOf2(int);
 #if DIRECT3D_VERSION >= 0x0800
 	LPDIRECT3DTEXTURE8 CreateSurface(int, int, int, bool);
 #else
 	LPDIRECTDRAWSURFACE7 CreateSurface(int, int, int, bool);
 #endif
-	void DrawColumnInCache(column_t*, rgba_t*, int, int, int, int, bool);
-	void GenerateTexture(int, bool);
-	void GenerateFlat(int);
-	void GenerateSprite(int);
-	void GenerateTranslatedSprite(int, int, int);
 	void SetPic(int);
-	void GeneratePicFromPatch(int);
-	void GeneratePicFromRaw(int);
-	void SetSkin(const char*);
+	void GenerateTexture(int);
+	void GenerateTranslatedSprite(int, int, int);
 #if DIRECT3D_VERSION >= 0x0800
 	void UploadTextureImage(LPDIRECT3DTEXTURE8, int, int, int, rgba_t*);
 #else
@@ -249,11 +240,11 @@ private:
 	void ResampleTexture(int, int, const byte*, int, int, byte*);
 	void MipMap(int, int, byte*);
 #if DIRECT3D_VERSION >= 0x0800
+	LPDIRECT3DTEXTURE8 UploadTexture8(int, int, byte*, rgba_t*);
 	LPDIRECT3DTEXTURE8 UploadTexture(int, int, rgba_t*);
-	LPDIRECT3DTEXTURE8 UploadTextureNoMip(int, int, rgba_t*);
 #else
+	LPDIRECTDRAWSURFACE7 UploadTexture8(int, int, byte*, rgba_t*);
 	LPDIRECTDRAWSURFACE7 UploadTexture(int, int, rgba_t*);
-	LPDIRECTDRAWSURFACE7 UploadTextureNoMip(int, int, rgba_t*);
 #endif
 
 	void FlushCaches(bool);
@@ -320,6 +311,7 @@ private:
 	bool						square_textures;
 	int							maxTexSize;
 	int							maxMultiTex;
+	int							TexStage;
 
 	int							abits;
 	int							ashift;
@@ -340,14 +332,7 @@ private:
 
 	int							lastgamma;
 
-#if DIRECT3D_VERSION >= 0x0800
-	LPDIRECT3DTEXTURE8			*texturesurfaces;
-#else
-	LPDIRECTDRAWSURFACE7		*texturesurfaces;
-#endif
-	int							numsurfaces;
-	int							tscount;
-
+	//	Texture filters.
 #if DIRECT3D_VERSION >= 0x0800
 	D3DTEXTUREFILTERTYPE		magfilter;
 	D3DTEXTUREFILTERTYPE		minfilter;
@@ -358,53 +343,19 @@ private:
 	D3DTEXTUREMIPFILTER			mipfilter;
 #endif
 
-#if DIRECT3D_VERSION >= 0x0800
-	LPDIRECT3DTEXTURE8			*texturedata;
-#else
-	LPDIRECTDRAWSURFACE7		*texturedata;
-#endif
-	float						*textureiw;
-	float						*textureih;
-#if DIRECT3D_VERSION >= 0x0800
-	LPDIRECT3DTEXTURE8			*flatdata;
-	LPDIRECT3DTEXTURE8			*skymapdata;
-	LPDIRECT3DTEXTURE8			*spritedata;
-#else
-	LPDIRECTDRAWSURFACE7		*flatdata;
-	LPDIRECTDRAWSURFACE7		*skymapdata;
-	LPDIRECTDRAWSURFACE7		*spritedata;
-#endif
-	float						*spriteiw;
-	float						*spriteih;
+	//	Textures.
 #if DIRECT3D_VERSION >= 0x0800
 	LPDIRECT3DTEXTURE8			*trsprdata;
+	LPDIRECT3DTEXTURE8			particle_texture;
 #else
 	LPDIRECTDRAWSURFACE7		*trsprdata;
+	LPDIRECTDRAWSURFACE7		particle_texture;
 #endif
 	int							trsprlump[MAX_TRANSLATED_SPRITES];
 	int							trsprtnum[MAX_TRANSLATED_SPRITES];
-	float						trspriw[MAX_TRANSLATED_SPRITES];
-	float						trsprih[MAX_TRANSLATED_SPRITES];
-#if DIRECT3D_VERSION >= 0x0800
-	LPDIRECT3DTEXTURE8			*skin_data;
-#else
-	LPDIRECTDRAWSURFACE7		*skin_data;
-#endif
-	char						skin_name[MAX_SKIN_CACHE][64];
-#if DIRECT3D_VERSION >= 0x0800
-	LPDIRECT3DTEXTURE8			particle_texture;
-#else
-	LPDIRECTDRAWSURFACE7		particle_texture;
-#endif
+	int							tscount;
 
-#if DIRECT3D_VERSION >= 0x0800
-	LPDIRECT3DTEXTURE8			*picdata;
-#else
-	LPDIRECTDRAWSURFACE7		*picdata;
-#endif
-	float						piciw[MAX_PICS];
-	float						picih[MAX_PICS];
-
+	//	Lightmaps.
 #if DIRECT3D_VERSION >= 0x0800
 	LPDIRECT3DTEXTURE8			*light_surf;
 #else
@@ -414,6 +365,7 @@ private:
 	bool						block_changed[NUM_BLOCK_SURFS];
 	surfcache_t					*light_chain[NUM_BLOCK_SURFS];
 
+	//	Specular lightmaps.
 #if DIRECT3D_VERSION >= 0x0800
 	LPDIRECT3DTEXTURE8			*add_surf;
 #else
@@ -423,6 +375,7 @@ private:
 	bool						add_changed[NUM_BLOCK_SURFS];
 	surfcache_t					*add_chain[NUM_BLOCK_SURFS];
 
+	//	Surface cache.
 	surfcache_t					*freeblocks;
 	surfcache_t					*cacheblocks[NUM_BLOCK_SURFS];
 	surfcache_t					blockbuf[NUM_CACHE_BLOCKS];
@@ -447,9 +400,12 @@ private:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2005/05/26 16:50:14  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.27  2005/05/03 14:57:00  dj_jl
 //	Added support for specifying skin index.
-//
+//	
 //	Revision 1.26  2004/08/21 17:22:15  dj_jl
 //	Changed rendering driver declaration.
 //	

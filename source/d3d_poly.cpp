@@ -803,8 +803,10 @@ void VDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 		RenderDevice->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
 		RenderDevice->SetTextureStageState(1, D3DTSS_TEXCOORDINDEX, 1);
 
-		SetSkyTexture(texture1, false);
-		SetSkyTexture(texture2, true);
+		SetTexture(texture1);
+		TexStage = 1;
+		SetTexture(texture2);
+		TexStage = 0;
 		for (i = 0; i < count; i++)
 		{
 			out[i] = MyD3DVertex(cv[i] + vieworg, 0xffffffff,
@@ -824,7 +826,7 @@ void VDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 	}
 	else
 	{
-		SetSkyTexture(texture1, false);
+		SetTexture(texture1);
 		for (i = 0; i < count; i++)
 		{
 			out[i] = MyD3DVertex(cv[i] + vieworg, 0xffffffff,
@@ -839,7 +841,7 @@ void VDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 
 		if (texture2)
 		{
-			SetSkyTexture(texture2, true);
+			SetTexture(texture2);
 			for (i = 0; i < count; i++)
 			{
 				out[i] = MyD3DVertex(cv[i] + vieworg, 0xffffffff,
@@ -1091,15 +1093,15 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 	if (skin && *skin)
 	{
-		SetSkin(skin);
+		SetPic(GTextureManager.AddFileTexture(FName(skin), TEXTYPE_Skin));
 	}
 	else
 	{
 		pskindesc = (mskin_t *)((byte *)pmdl + pmdl->ofsskins);
 		if (skin_index < 0 || skin_index > pmdl->numskins)
-			SetSkin(pskindesc[0].name);
+			SetPic(GTextureManager.AddFileTexture(FName(pskindesc[0].name), TEXTYPE_Skin));
 		else
-			SetSkin(pskindesc[skin_index].name);
+			SetPic(GTextureManager.AddFileTexture(FName(pskindesc[skin_index].name), TEXTYPE_Skin));
 	}
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_SHADEMODE, D3DSHADE_GOURAUD);
@@ -1257,9 +1259,12 @@ void VDirect3DDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2005/05/26 16:50:14  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.28  2005/05/03 14:57:00  dj_jl
 //	Added support for specifying skin index.
-//
+//	
 //	Revision 1.27  2005/01/24 12:53:54  dj_jl
 //	Skybox fixes.
 //	

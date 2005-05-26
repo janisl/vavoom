@@ -1654,8 +1654,8 @@ void VSoftwareDrawer::SpriteCaclulateGradients(int lump)
 	tadjust = (fixed_t)(DotProduct(vieworg - r_texorg, r_taxis) * 0x10000 + 0.5) - spr_texturemins[1];
 
 	// -1 (-epsilon) so we never wander off the edge of the texture
-	bbextents = (spritewidth[lump] << 16) - 1;
-	bbextentt = (spriteheight[lump] << 16) - 1;
+	bbextents = (GTextureManager.Textures[lump]->GetWidth() << 16) - 1;
+	bbextentt = (GTextureManager.Textures[lump]->GetHeight() << 16) - 1;
 }
 
 //==========================================================================
@@ -1860,9 +1860,12 @@ void VSoftwareDrawer::DrawSpritePolygon(TVec *cv, int lump,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2005/05/26 16:50:14  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.9  2002/11/16 17:11:15  dj_jl
 //	Improving software driver class.
-//
+//	
 //	Revision 1.8  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
 //	

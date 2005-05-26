@@ -73,9 +73,6 @@ static int			c_subdivides;
 static surface_t	*free_wsurfs;
 static int			c_seg_div;
 
-TCvarF		TS("ts", "1.0");
-TCvarF		TT("tt", "1.0");
-
 // CODE --------------------------------------------------------------------
 
 //**************************************************************************
@@ -92,15 +89,7 @@ TCvarF		TT("tt", "1.0");
 
 inline float TextureSScale(int pic)
 {
-	if (!(pic & TEXF_FLAT))
-	{
-#if 1
-		return textures[pic]->SScale;
-#else
-		return TS;
-#endif
-	}
-	return 1.0;
+	return GTextureManager.Textures[pic]->SScale;
 }
 
 //==========================================================================
@@ -111,15 +100,7 @@ inline float TextureSScale(int pic)
 
 inline float TextureTScale(int pic)
 {
-	if (!(pic & TEXF_FLAT))
-	{
-#if 1
-		return textures[pic]->TScale;
-#else
-		return TT;
-#endif
-	}
-	return 1.0;
+	return GTextureManager.Textures[pic]->TScale;
 }
 
 //**************************************************************************
@@ -803,7 +784,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
         {
        	    //	bottom of texture at bottom
 			sp->texinfo.toffs = MIN(botz1, botz2) +
-				R_TextureHeight(sidedef->midtexture);
+				GTextureManager.TextureHeight(sidedef->midtexture);
        	}
 		else if (linedef->flags & ML_DONTPEGTOP)
 		{
@@ -900,7 +881,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		{
 			// bottom of texture
 			sp->texinfo.toffs = back_topz1 +
-				R_TextureHeight(sidedef->toptexture);
+				GTextureManager.TextureHeight(sidedef->toptexture);
 		}
 		sp->texinfo.toffs -= offshdelta;
 		sp->texinfo.toffs *= TextureTScale(sidedef->toptexture);
@@ -1006,7 +987,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		if (sidedef->midtexture)
 		{
 			// masked midtexture
-			float texh = R_TextureHeight(sidedef->midtexture);
+			float texh = GTextureManager.TextureHeight(sidedef->midtexture);
 			hdelta = midtopz2 - midtopz1;
 			offshdelta = hdelta * seg->offset / seg->length;
 
@@ -1185,7 +1166,7 @@ static void UpdateDrawSeg(drawseg_t* dseg)
         	{
     	   	    //	bottom of texture at bottom
 				sp->texinfo.toffs = MIN(botz1, botz2) +
-					R_TextureHeight(sidedef->midtexture);
+					GTextureManager.TextureHeight(sidedef->midtexture);
        		}
 			else if (linedef->flags & ML_DONTPEGTOP)
 			{
@@ -1294,7 +1275,7 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 			{
 				// bottom of texture
 				sp->texinfo.toffs = back_topz1 +
-					R_TextureHeight(sidedef->toptexture);
+					GTextureManager.TextureHeight(sidedef->toptexture);
 			}
 			sp->texinfo.toffs -= offshdelta;
 			sp->texinfo.toffs *= TextureTScale(sidedef->midtexture);
@@ -1463,7 +1444,7 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 				float midbotz1 = MAX(botz1, back_botz1);
 				float midbotz2 = MAX(botz2, back_botz2);
 
-				float texh = R_TextureHeight(sidedef->midtexture);
+				float texh = GTextureManager.TextureHeight(sidedef->midtexture);
 				float hdelta = midtopz2 - midtopz1;
 				float offshdelta = hdelta * seg->offset / seg->length;
 
@@ -1871,9 +1852,12 @@ void R_UpdateWorld(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2005/05/26 16:50:15  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.14  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.13  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
 //	

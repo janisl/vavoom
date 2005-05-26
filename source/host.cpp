@@ -145,6 +145,7 @@ void Host_Init(void)
 #endif
 
 	S_Init();
+	R_InitTexture();
 #ifdef CLIENT
 	SCR_Init();
 	T_Init();
@@ -159,7 +160,6 @@ void Host_Init(void)
 	SB_Init();
 #endif
 
-	R_InitTexture();
 	InitMapInfo();
 
 #ifdef CLIENT
@@ -612,9 +612,12 @@ void Host_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2005/05/26 16:54:21  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.26  2003/03/08 12:08:04  dj_jl
 //	Beautification.
-//
+//	
 //	Revision 1.25  2002/08/28 16:42:04  dj_jl
 //	Configurable entity limit.
 //	

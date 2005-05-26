@@ -90,9 +90,6 @@ static void R_LightningFlash(void);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-skymap_t			*skymaps;
-int					numskymaps;
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static skyboxinfo_t	*skyboxinfo;
@@ -110,29 +107,6 @@ static int			NumSkySurfs;
 
 //==========================================================================
 //
-//	FindSkyMap
-//
-//==========================================================================
-
-static int FindSkyMap(const char *name)
-{
-	guard(FindSkyMap);
-	for (int i = 0; i < numskymaps; i++)
-	{
-		if (!strcmp(skymaps[i].name, name))
-		{
-			return i | TEXF_SKY_MAP;
-		}
-	}
-	numskymaps++;
-	Z_Resize((void **)&skymaps, numskymaps * sizeof(skymap_t));
-	strcpy(skymaps[numskymaps - 1].name, name);
-	return (numskymaps - 1) | TEXF_SKY_MAP;
-	unguard;
-}
-
-//==========================================================================
-//
 //	R_InitSkyBoxes
 //
 //==========================================================================
@@ -142,8 +116,6 @@ void R_InitSkyBoxes()
 	guard(R_InitSkyBoxes);
 	SC_Open("skyboxes");
 
-	skymaps = (skymap_t *)Z_StrMalloc(1);
-	numskymaps = 0;
 	skyboxinfo = (skyboxinfo_t *)Z_StrMalloc(1);
 	numskyboxes = 0;
 	while (SC_GetString())
@@ -160,7 +132,8 @@ void R_InitSkyBoxes()
 			SC_MustGetStringName("{");
 			SC_MustGetStringName("map");
 			SC_MustGetString();
-			info.surfs[i].texture = FindSkyMap(sc_String);
+			info.surfs[i].texture = GTextureManager.AddFileTexture(
+				FName(sc_String), TEXTYPE_SkyMap);
 			SC_MustGetStringName("}");
 		}
 		SC_MustGetStringName("}");
@@ -206,7 +179,7 @@ static void R_InitOldSky()
 		}
 	}
 
-	int skyheight = textures[cl_level.sky1Texture]->height;
+	int skyheight = GTextureManager.Textures[cl_level.sky1Texture]->GetHeight();
 	float skytop;
 	float skybot;
 	int j;
@@ -312,8 +285,8 @@ float tk = skyh / RADIUS;
 	}
 
 	//	Precache textures
-	Drawer->SetSkyTexture(cl_level.sky1Texture, cl_level.doubleSky);
-	Drawer->SetSkyTexture(cl_level.sky2Texture, false);
+	Drawer->SetTexture(cl_level.sky1Texture);
+	Drawer->SetTexture(cl_level.sky2Texture);
 	unguard;
 }
 
@@ -415,22 +388,22 @@ static void R_InitSkyBox()
 	NumSkySurfs = 6;
 	for (int j = 0; j < 6; j++)
 	{
-		int smap = sky[j].texture1 & ~TEXF_SKY_MAP;
-
 		sky[j].texture1 = sinfo.surfs[j].texture;
 		sky[j].surf.plane = &sky[j].plane;
 		sky[j].surf.texinfo = &sky[j].texinfo;
 		sky[j].surf.count = 4;
 
 		//	Precache texture
-		Drawer->SetSkyTexture(sky[j].texture1, false);
+		Drawer->SetTexture(sky[j].texture1);
 
-		sky[j].surf.extents[0] = skymaps[smap].width;
-		sky[j].surf.extents[1] = skymaps[smap].height;
-		sky[j].texinfo.saxis *= skymaps[smap].width / 256.0;
-		sky[j].texinfo.soffs *= skymaps[smap].width / 256.0;
-		sky[j].texinfo.taxis *= skymaps[smap].height / 256.0;
-		sky[j].texinfo.toffs *= skymaps[smap].height / 256.0;
+		TTexture* STex = GTextureManager.Textures[sky[j].texture1];
+
+		sky[j].surf.extents[0] = STex->GetWidth();
+		sky[j].surf.extents[1] = STex->GetHeight();
+		sky[j].texinfo.saxis *= STex->GetWidth() / 256.0;
+		sky[j].texinfo.soffs *= STex->GetWidth() / 256.0;
+		sky[j].texinfo.taxis *= STex->GetHeight() / 256.0;
+		sky[j].texinfo.toffs *= STex->GetHeight() / 256.0;
 	}
 	unguard;
 }
@@ -487,8 +460,8 @@ void R_SkyChanged()
 	}
 
 	//	Precache textures
-	Drawer->SetSkyTexture(cl_level.sky1Texture, cl_level.doubleSky);
-	Drawer->SetSkyTexture(cl_level.sky2Texture, false);
+	Drawer->SetTexture(cl_level.sky1Texture);
+	Drawer->SetTexture(cl_level.sky2Texture);
 	unguard;
 }
 
@@ -698,9 +671,12 @@ void R_DrawSky()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2005/05/26 16:50:15  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.15  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.14  2004/11/22 07:36:29  dj_jl
 //	Implemented all sector specials in all games.
 //	

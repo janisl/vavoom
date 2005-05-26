@@ -44,7 +44,6 @@
 // MACROS ------------------------------------------------------------------
 
 #define MAX_TRANSLATED_SPRITES		256
-#define MAX_SKIN_CACHE				256
 
 #define BLOCK_WIDTH					128
 #define BLOCK_HEIGHT				128
@@ -114,46 +113,43 @@ public:
 	//
 	// VDrawer interface
 	//
-	void Init(void);
-	void InitData(void);
+	void Init();
+	void InitData();
 	bool SetResolution(int, int, int);
-	void InitResolution(void);
-	void NewMap(void);
+	void InitResolution();
+	void NewMap();
 	void SetPalette(int);
-	void StartUpdate(void);
-	void Setup2D(void);
-	void Update(void);
-	void BeginDirectUpdate(void);
-	void EndDirectUpdate(void);
-	void Shutdown(void);
+	void StartUpdate();
+	void Setup2D();
+	void Update();
+	void BeginDirectUpdate();
+	void EndDirectUpdate();
+	void Shutdown();
 	void* ReadScreen(int*, bool*);
 	void FreeSurfCache(surfcache_t*);
 
 	//	Rendering stuff
 	void SetupView(const refdef_t*);
-	void WorldDrawing(void);
-	void EndView(void);
+	void WorldDrawing();
+	void EndView();
 
 	//	Texture stuff
-	void InitTextures(void);
+	void InitTextures();
 	void SetTexture(int);
-	void SetSkyTexture(int, bool);
-	void SetFlat(int);
-	void SetSpriteLump(int, int);
 
 	//	Polygon drawing
 	void DrawPolygon(TVec*, int, int, int);
-	void BeginSky(void);
+	void BeginSky();
 	void DrawSkyPolygon(TVec*, int, int, float, int, float);
-	void EndSky(void);
+	void EndSky();
 	void DrawMaskedPolygon(TVec*, int, int, int);
 	void DrawSpritePolygon(TVec*, int, int, int, dword);
 	void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, int, const char*, dword, int, bool);
 
 	//	Particles
-	void StartParticles(void);
+	void StartParticles();
 	void DrawParticle(particle_t *);
-	void EndParticles(void);
+	void EndParticles();
 
 	//	Drawing
 	void DrawPic(float, float, float, float, float, float, float, float, int, int);
@@ -165,46 +161,20 @@ public:
 	void DrawSpriteLump(float, float, float, float, int, int, boolean);
 
 	//	Automap
-	void StartAutomap(void);
+	void StartAutomap();
 	void DrawLine(int, int, dword, int, int, dword);
-	void EndAutomap(void);
+	void EndAutomap();
 
 private:
 	GLint		maxTexSize;
 	bool		texturesGenerated;
 
-	GLuint		*texture_id;
-	bool		*texture_sent;
-	float		*texture_iw;
-	float		*texture_ih;
-
-	GLuint		*flat_id;
-	bool		*flat_sent;
-
-	GLuint		*skymap_id;
-	bool		*skymap_sent;
-
-	GLuint		*sprite_id;
-	bool		*sprite_sent;
-	float		*spriteiw;
-	float		*spriteih;
-
 	GLuint		trspr_id[MAX_TRANSLATED_SPRITES];
 	bool		trspr_sent[MAX_TRANSLATED_SPRITES];
 	int			trspr_lump[MAX_TRANSLATED_SPRITES];
 	int			trspr_tnum[MAX_TRANSLATED_SPRITES];
-	float		trspriw[MAX_TRANSLATED_SPRITES];
-	float		trsprih[MAX_TRANSLATED_SPRITES];
-
-	GLuint		skin_id[MAX_SKIN_CACHE];
-	char		skin_name[MAX_SKIN_CACHE][64];
 
 	GLuint		particle_texture;
-
-	GLuint		pic_id[MAX_PICS];
-	bool		pic_sent[MAX_PICS];
-	float		pic_iw[MAX_PICS];
-	float		pic_ih[MAX_PICS];
 
 	GLuint		lmap_id[NUM_BLOCK_SURFS];
 	rgba_t		light_block[NUM_BLOCK_SURFS][BLOCK_WIDTH * BLOCK_HEIGHT];
@@ -231,8 +201,6 @@ private:
 	GLenum		mipfilter;
 	GLenum		ClampToEdge;
 
-	rgba_t		pal8_to24[256];
-
 	//
 	//	Console variables
 	//
@@ -256,24 +224,19 @@ private:
 	surfcache_t	*FreeBlock(surfcache_t*, bool);
 	void CacheSurface(surface_t*);
 
-	int ToPowerOf2(int val);
-	void GenerateTextures(void);
-	void FlushTextures(void);
-	void DeleteTextures(void);
-	void DrawColumnInCache(column_t*, rgba_t*, int, int, int, int);
-	void GenerateTexture(int);
-	void GenerateFlat(int);
-	void GenerateSprite(int);
-	void GenerateTranslatedSprite(int, int, int);
+	static int ToPowerOf2(int val);
+	void GenerateTextures();
+	void FlushTextures();
+	void DeleteTextures();
+	void SetSpriteLump(int, int);
 	void SetPic(int);
-	void GeneratePicFromPatch(int);
-	void GeneratePicFromRaw(int);
-	void SetSkin(const char*);
+	void GenerateTexture(int);
+	void GenerateTranslatedSprite(int, int, int);
 	void AdjustGamma(rgba_t *, int);
 	void ResampleTexture(int, int, const byte*, int, int, byte*);
 	void MipMap(int, int, byte*);
+	void UploadTexture8(int, int, byte*, rgba_t*);
 	void UploadTexture(int, int, rgba_t*);
-	void UploadTextureNoMip(int, int, rgba_t*);
 
 	bool				mtexable;
 	MultiTexCoord2f_t	p_MultiTexCoord2f;
@@ -292,7 +255,7 @@ private:
 	PointParameterf_t	p_PointParameterf;
 	PointParameterfv_t	p_PointParameterfv;
 
-	void SetColor(dword c)
+	static void SetColor(dword c)
 	{
 		glColor4ub(byte((c >> 16) & 0xff), byte((c >> 8) & 0xff),
 			byte(c & 0xff), byte(c >> 24));
@@ -308,9 +271,12 @@ private:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2005/05/26 16:50:14  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.28  2005/05/03 14:57:06  dj_jl
 //	Added support for specifying skin index.
-//
+//	
 //	Revision 1.27  2005/01/24 12:53:54  dj_jl
 //	Skybox fixes.
 //	

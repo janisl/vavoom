@@ -168,10 +168,11 @@ static void InstallSpriteLump(int lumpnr, int frame, int rotation, bool flipped)
 	guard(InstallSpriteLump);
 	int			r;
 
+	TTexture* Tex = GTextureManager.Textures[lumpnr];
 	if ((dword)frame >= 30 || (dword)rotation > 8)
 	{
-		Sys_Error("InstallSpriteLump: "
-				"Bad frame characters in lump %i", spritelumps[lumpnr]);
+		Sys_Error("InstallSpriteLump: Bad frame characters in lump %s",
+			*Tex->Name);
 	}
 
 	if (frame > maxframe)
@@ -226,7 +227,6 @@ void R_InstallSprite(const char *name, int index)
 {
 	guard(R_InstallSprite);
 	int			intname;
-	int			l;
 	int			frame;
 	int			rotation;
 
@@ -241,24 +241,26 @@ void R_InstallSprite(const char *name, int index)
     // scan all the lump names for each of the names,
     //  noting the highest frame letter.
     // Just compare 4 characters as ints
-	intname = *(int *)spritename;
+	intname = *(int*)*FName(spritename, FNAME_AddLower8);
 
 	// scan the lumps, filling in the frames for whatever is found
-	for (l = 0; l < numspritelumps; l++)
+	for (int l = 0; l < GTextureManager.Textures.Num(); l++)
 	{
-		const char *lumpname;
-		lumpname = W_LumpName(spritelumps[l]);
-		if (*(int *)lumpname == intname)
+		if (GTextureManager.Textures[l]->Type == TEXTYPE_Sprite)
 		{
-			frame = lumpname[4] - 'A';
-			rotation = lumpname[5] - '0';
-			InstallSpriteLump(l, frame, rotation, false);
-
-			if (lumpname[6])
+			const char* lumpname = *GTextureManager.Textures[l]->Name;
+			if (*(int*)lumpname == intname)
 			{
-				frame = lumpname[6] - 'A';
-				rotation = lumpname[7] - '0';
-				InstallSpriteLump(l, frame, rotation, true);
+				frame = toupper(lumpname[4]) - 'A';
+				rotation = lumpname[5] - '0';
+				InstallSpriteLump(l, frame, rotation, false);
+
+				if (lumpname[6])
+				{
+					frame = toupper(lumpname[6]) - 'A';
+					rotation = lumpname[7] - '0';
+					InstallSpriteLump(l, frame, rotation, true);
+				}
 			}
 		}
 	}
@@ -310,24 +312,6 @@ void R_InstallSprite(const char *name, int index)
 	sprites[index].spriteframes = (spriteframe_t*)
 		Z_StrMalloc(maxframe * sizeof(spriteframe_t));
 	memcpy(sprites[index].spriteframes, sprtemp, maxframe * sizeof(spriteframe_t));
-	unguard;
-}
-
-//==========================================================================
-//
-//	GetSpriteParams
-//
-//==========================================================================
-
-static void	GetSpriteParams(int lump)
-{
-	guard(GetSpriteParams);
-    patch_t	*patch = (patch_t*)W_CacheLumpNum(spritelumps[lump], PU_TEMP);
-
-	spritewidth[lump] = LittleShort(patch->width);
-	spriteheight[lump] = LittleShort(patch->height);
-	spriteoffset[lump] = LittleShort(patch->leftoffset);
-	spritetopoffset[lump] = LittleShort(patch->topoffset);
 	unguard;
 }
 
@@ -629,24 +613,24 @@ static void RenderSprite(clmobj_t *thing)
 		flip = (boolean)sprframe->flip[0];
 	}
 
-	if (spritewidth[lump] == -1.0)
-	{
-		GetSpriteParams(lump);
-	}
+	TTexture* Tex = GTextureManager.Textures[lump];
+	int TexWidth = Tex->GetWidth();
+	int TexHeight = Tex->GetHeight();
+	int TexSOffset = Tex->SOffset;
+	int TexTOffset = Tex->TOffset;
 
 	TVec	sv[4];
 
-	TVec start = -spriteoffset[lump] * sprright;
-	TVec end = (spritewidth[lump] - spriteoffset[lump]) * sprright;
+	TVec start = -TexSOffset * sprright;
+	TVec end = (TexWidth - TexSOffset) * sprright;
 
-	float TopOffs = spritetopoffset[lump];
-	if (r_fix_sprite_offsets && TopOffs < spriteheight[lump] &&
-		2 * TopOffs + r_sprite_fix_delta >= spriteheight[lump])
+	if (r_fix_sprite_offsets && TexTOffset < TexHeight &&
+		2 * TexTOffset + r_sprite_fix_delta >= TexHeight)
 	{
-		TopOffs = spriteheight[lump];
+		TexTOffset = TexHeight;
 	}
-	TVec topdelta = TopOffs * sprup;
-	TVec botdelta = (TopOffs - spriteheight[lump]) * sprup;
+	TVec topdelta = TexTOffset * sprup;
+	TVec botdelta = (TexTOffset - TexHeight) * sprup;
 
 	sv[0] = sprorigin + start + botdelta;
 	sv[1] = sprorigin + start + topdelta;
@@ -962,19 +946,20 @@ static void RenderPSprite(cl_pspdef_t* psp, float PSP_DIST)
 
 	lump = sprframe->lump[0];
 	flip = (boolean)sprframe->flip[0];
+	TTexture* Tex = GTextureManager.Textures[lump];
 
-	if (spritewidth[lump] == -1.0)
-	{
-		GetSpriteParams(lump);
-	}
+	int TexWidth = Tex->GetWidth();
+	int TexHeight = Tex->GetHeight();
+	int TexSOffset = Tex->SOffset;
+	int TexTOffset = Tex->TOffset;
 
 	TVec	dv[4];
 
 	float PSP_DISTI = 1.0 / PSP_DIST;
 	TVec sprorigin = vieworg + PSP_DIST * viewforward;
 
-	float sprx = 160.0 - psp->sx + spriteoffset[lump];
-	float spry = 100.0 - psp->sy + spritetopoffset[lump];
+	float sprx = 160.0 - psp->sx + TexSOffset;
+	float spry = 100.0 - psp->sy + TexTOffset;
 	if (refdef.height == ScreenHeight)
 	{
 		spry -= cl.pspriteSY;
@@ -982,11 +967,11 @@ static void RenderPSprite(cl_pspdef_t* psp, float PSP_DIST)
 
 	//	1 / 160 = 0.00625
 	TVec start = sprorigin - (sprx * PSP_DIST * 0.00625) * viewright;
-	TVec end = start + (spritewidth[lump] * PSP_DIST * 0.00625) * viewright;
+	TVec end = start + (TexWidth * PSP_DIST * 0.00625) * viewright;
 
 	//	1 / 160.0 * 120 / 100 =	0.0075
 	TVec topdelta = (spry * PSP_DIST * 0.0075) * viewup;
-	TVec botdelta = topdelta - (spriteheight[lump] * PSP_DIST * 0.0075) * viewup;
+	TVec botdelta = topdelta - (TexHeight * PSP_DIST * 0.0075) * viewup;
 	if (old_aspect)
 	{
 		topdelta *= 100.0 / 120.0;
@@ -1111,7 +1096,8 @@ void R_DrawCroshair(void)
 			cy = (200 - sb_height) / 2;
 		else
 			cy = 100;
-		int handle = R_RegisterPic(va("CROSHAI%i", (int)croshair), PIC_PATCH);
+		int handle = GTextureManager.AddPatch(FName(va("CROSHAI%i",
+			(int)croshair), FNAME_AddLower8), TEXTYPE_Pic);
 		R_DrawPic(160, cy, handle, croshair_trans);
 	}
 	unguard;
@@ -1126,22 +1112,20 @@ void R_DrawCroshair(void)
 void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot, int translation)
 {
 	guard(R_DrawSpritePatch);
-    boolean			flip;
+	boolean			flip;
 	int				lump;
 
-    spriteframe_t *sprframe = &sprites[sprite].spriteframes[frame & FF_FRAMEMASK];
-    flip = (boolean)sprframe->flip[rot];
+	spriteframe_t *sprframe = &sprites[sprite].spriteframes[frame & FF_FRAMEMASK];
+	flip = (boolean)sprframe->flip[rot];
 	lump = sprframe->lump[rot];
+	TTexture* Tex = GTextureManager.Textures[lump];
 
-	if (spritewidth[lump] == -1.0)
-	{
-		GetSpriteParams(lump);
-	}
+	Tex->GetWidth();
 
-	float x1 = x - spriteoffset[lump];
-	float y1 = y - spritetopoffset[lump];
-	float x2 = x1 + spritewidth[lump];
-	float y2 = y1 + spriteheight[lump];
+	float x1 = x - Tex->SOffset;
+	float y1 = y - Tex->TOffset;
+	float x2 = x1 + Tex->GetWidth();
+	float y2 = y1 + Tex->GetHeight();
 
 	x1 *= fScaleX;
 	y1 *= fScaleY;
@@ -1195,9 +1179,12 @@ void R_DrawModelFrame(const TVec &origin, float angle, model_t *model,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2005/05/26 16:50:15  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.21  2005/05/03 14:57:06  dj_jl
 //	Added support for specifying skin index.
-//
+//	
 //	Revision 1.20  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
 //	

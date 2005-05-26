@@ -1571,8 +1571,10 @@ void SV_SetCeilPic(int i, int texture)
 void SV_ChangeSky(const char* Sky1, const char* Sky2)
 {
 	guard(SV_ChangeSky);
-	level.sky1Texture = R_TextureNumForName(Sky1);
-	level.sky2Texture = R_TextureNumForName(Sky2);
+	level.sky1Texture = GTextureManager.NumForName(FName(Sky1,
+		FNAME_AddLower8), TEXTYPE_Wall, true, false);
+	level.sky2Texture = GTextureManager.NumForName(FName(Sky2,
+		FNAME_AddLower8), TEXTYPE_Wall, true, false);
 	sv_reliable << (byte)svc_change_sky
 				<< (word)level.sky1Texture
 				<< (word)level.sky2Texture;
@@ -3003,9 +3005,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.67  2005/05/26 16:55:00  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.66  2005/05/03 14:57:07  dj_jl
 //	Added support for specifying skin index.
-//
+//	
 //	Revision 1.65  2005/04/28 07:16:16  dj_jl
 //	Fixed some warnings, other minor fixes.
 //	

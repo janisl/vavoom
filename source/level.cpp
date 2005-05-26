@@ -431,14 +431,12 @@ void VLevel::LoadSideDefsPass2(int Lump)
 		{
 		case LNSPEC_LineTranslucent:
 			//	In BOOM midtexture can be translucency table lump name.
-			sd->midtexture = R_CheckTextureNumForName(msd->midtexture);
+			sd->midtexture = GTextureManager.CheckNumForName(
+				FName(msd->midtexture, FNAME_AddLower8),
+				TEXTYPE_Wall, true, true);
 			if (sd->midtexture == -1)
 			{
-				sd->midtexture = R_CheckFlatNumForName(msd->midtexture);
-				if (sd->midtexture == -1)
-				{
-					sd->midtexture = 0;
-				}
+				sd->midtexture = 0;
 			}
 			sd->toptexture = TFNumForName(msd->toptexture);
 			sd->bottomtexture = TFNumForName(msd->bottomtexture);
@@ -1005,24 +1003,16 @@ void VLevel::LoadThings2(int Lump)
 int VLevel::FTNumForName(const char *name) const
 {
 	guard(VLevel::FTNumForName);
-	char namet[9];
-	int i;
-
-	i = R_CheckFlatNumForName(name);
+	FName Name(name, FNAME_AddLower8);
+	int i = GTextureManager.CheckNumForName(Name, TEXTYPE_Flat, true, true);
 	if (i == -1)
 	{
-		i = R_CheckTextureNumForName(name);
-		if (i == -1)
+		if (ignore_missing_textures)
 		{
-			namet[8] = 0;
-			memcpy(namet, name, 8);
-			if (ignore_missing_textures)
-			{
-				GCon->Logf("FTNumForName: %s not found", namet);
-				return 0;
-			}
-			Host_Error("FTNumForName: %s not found", namet);
+			GCon->Logf("FTNumForName: %s not found", *Name);
+			return 0;
 		}
+		Host_Error("FTNumForName: %s not found", *Name);
 	}
 	return i;
 	unguard;
@@ -1039,24 +1029,16 @@ int VLevel::FTNumForName(const char *name) const
 int VLevel::TFNumForName(const char *name) const
 {
 	guard(VLevel::TFNumForName);
-	char namet[9];
-	int i;
-
-	i = R_CheckTextureNumForName(name);
+	FName Name(name, FNAME_AddLower8);
+	int i = GTextureManager.CheckNumForName(Name, TEXTYPE_Wall, true, true);
 	if (i == -1)
 	{
-		i = R_CheckFlatNumForName(name);
-		if (i == -1)
+		if (ignore_missing_textures)
 		{
-			namet[8] = 0;
-			memcpy(namet, name, 8);
-			if (ignore_missing_textures)
-			{
-				GCon->Logf("TFNumForName: %s not found", namet);
-				return 0;
-			}
-			Host_Error("TFNumForName: %s not found", namet);
+			GCon->Logf("TFNumForName: %s not found", *Name);
+			return 0;
 		}
+		Host_Error("TFNumForName: %s not found", *Name);
 	}
 	return i;
 	unguard;
@@ -1073,16 +1055,11 @@ int VLevel::TFNumForName(const char *name) const
 int VLevel::CMapTFNumForName(const char *name) const
 {
 	guard(VLevel::CMapTFNumForName);
-	int i;
-
-	i = R_CheckTextureNumForName(name);
+	int i = GTextureManager.CheckNumForName(FName(name, FNAME_AddLower8),
+		TEXTYPE_Wall, true, true);
 	if (i == -1)
 	{
-		i = R_CheckFlatNumForName(name);
-		if (i == -1)
-		{
-			return 0;
-		}
+		return 0;
 	}
 	return i;
 	unguard;
@@ -1336,9 +1313,12 @@ IMPLEMENT_FUNCTION(VLevel, PointInSector)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2005/05/26 16:52:29  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.5  2005/03/28 07:28:19  dj_jl
 //	Transfer lighting and other BOOM stuff.
-//
+//	
 //	Revision 1.4  2004/12/03 16:15:46  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
 //	

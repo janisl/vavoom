@@ -443,7 +443,7 @@ void VSoftwareDrawer::NewMap(void)
 		fadetable = colormaps;
 	}
 
-	//	Remap color 0 to alternate balck color
+	//	Remap colour 0 to alternate balck colour
 	for (int i = 0; i < 32 * 256; i++)
 	{
 		if (!(i & 0xff))
@@ -452,7 +452,7 @@ void VSoftwareDrawer::NewMap(void)
 		}
 		else if (!colormaps[i])
 		{
-			fadetable[i] = r_black_color[0];
+			fadetable[i] = r_black_colour;
 		}
 	}
 
@@ -468,9 +468,12 @@ void VSoftwareDrawer::NewMap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2005/05/26 16:50:14  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.12  2005/04/28 07:16:12  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.11  2002/11/16 17:11:15  dj_jl
 //	Improving software driver class.
 //	

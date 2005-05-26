@@ -140,8 +140,10 @@ static void T_LoadFont(font_e FontNr, const char* Name, int SpaceW, int SpaceH)
 		sprintf(buffer, "%s%02d", Name, i);
 		if (W_CheckNumForName(buffer) >= 0)
 		{
-			Fonts[FontNr]->Pics[i] = R_RegisterPic(buffer, PIC_PATCH);
-			R_GetPicInfo(Fonts[FontNr]->Pics[i], &Fonts[FontNr]->PicInfo[i]);
+			Fonts[FontNr]->Pics[i] = GTextureManager.AddPatch(FName(buffer,
+				FNAME_AddLower8), TEXTYPE_Pic);
+			GTextureManager.GetTextureInfo(Fonts[FontNr]->Pics[i],
+				&Fonts[FontNr]->PicInfo[i]);
 			if ((i + 32 >= 'a') && (i + 32 <= 'z') &&
 				Fonts[FontNr]->Pics[i + 'A' - 'a'] < 0)
 			{
@@ -183,8 +185,10 @@ static void T_LoadFont2(font_e FontNr, const char* Name, int SpaceW, int SpaceH)
 		sprintf(buffer, "%s%03d", Name, i + 32);
 		if (W_CheckNumForName(buffer) >= 0)
 		{
-			Fonts[FontNr]->Pics[i] = R_RegisterPic(buffer, PIC_PATCH);
-			R_GetPicInfo(Fonts[FontNr]->Pics[i], &Fonts[FontNr]->PicInfo[i]);
+			Fonts[FontNr]->Pics[i] = GTextureManager.AddPatch(FName(buffer,
+				FNAME_AddLower8), TEXTYPE_Pic);
+			GTextureManager.GetTextureInfo(Fonts[FontNr]->Pics[i],
+				&Fonts[FontNr]->PicInfo[i]);
 			if ((i + 32 >= 'a') && (i + 32 <= 'z') &&
 				Fonts[FontNr]->Pics[i + 'A' - 'a'] < 0)
 			{
@@ -656,9 +660,12 @@ void T_DrawString8(int x, int y, const char* String)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2005/05/26 16:52:29  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.14  2004/08/18 18:05:47  dj_jl
 //	Support for higher virtual screen resolutions.
-//
+//	
 //	Revision 1.13  2003/09/26 16:58:42  dj_jl
 //	Wrapped text printing
 //	

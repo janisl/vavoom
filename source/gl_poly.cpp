@@ -720,11 +720,11 @@ void VOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 	texinfo_t *tex = r_surface->texinfo;
 	if (mtexable && texture2)
 	{
-		SetSkyTexture(texture1, false);
+		SetTexture(texture1);
 		SelectTexture(1);
 		glEnable(GL_TEXTURE_2D);
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-		SetSkyTexture(texture2, true);
+		SetTexture(texture2);
 		SelectTexture(0);
 
 		glColor4f(1, 1, 1, 1);
@@ -747,7 +747,7 @@ void VOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 	}
 	else
 	{
-		SetSkyTexture(texture1, false);
+		SetTexture(texture1);
 		glBegin(GL_POLYGON);
 		glColor4f(1, 1, 1, 1);
 		for (i = 0; i < count; i++)
@@ -761,7 +761,7 @@ void VOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 
 		if (texture2)
 		{
-			SetSkyTexture(texture2, true);
+			SetTexture(texture2);
 			glEnable(GL_BLEND);
 			glBegin(GL_POLYGON);
 			glColor4f(1, 1, 1, 1);
@@ -989,15 +989,15 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 	if (skin && *skin)
 	{
-		SetSkin(skin);
+		SetPic(GTextureManager.AddFileTexture(FName(skin), TEXTYPE_Skin));
 	}
 	else
 	{
 		pskindesc = (mskin_t *)((byte *)pmdl + pmdl->ofsskins);
 		if (skin_index < 0 || skin_index > pmdl->numskins)
-			SetSkin(pskindesc[0].name);
+			SetPic(GTextureManager.AddFileTexture(FName(pskindesc[0].name), TEXTYPE_Skin));
 		else
-			SetSkin(pskindesc[skin_index].name);
+			SetPic(GTextureManager.AddFileTexture(FName(pskindesc[skin_index].name), TEXTYPE_Skin));
 	}
 
 	glShadeModel(GL_SMOOTH);
@@ -1132,9 +1132,12 @@ void VOpenGLDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2005/05/26 16:50:14  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.28  2005/05/03 14:57:06  dj_jl
 //	Added support for specifying skin index.
-//
+//	
 //	Revision 1.27  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
 //	

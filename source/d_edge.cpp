@@ -547,7 +547,8 @@ void VSoftwareDrawer::DrawSkyPolygon(TVec *cv, int count,
 	surface_p->key = r_currentkey++;
 	surface_p->last_u = 0;
 	surface_p->spanstate = 0;
-	surface_p->flags = texture1 & TEXF_SKY_MAP ? SURF_SKY_BOX : SURF_SKY;
+	surface_p->flags = GTextureManager.Textures[texture1]->Type ==
+		TEXTYPE_SkyMap ? SURF_SKY_BOX : SURF_SKY;
 	surface_p->nearzi = r_nearzi;
 
 	surface_p->texture1 = texture1;
@@ -974,7 +975,7 @@ void VSoftwareDrawer::DrawSurfaces(void)
 		else if (surf->flags & SURF_SKY_BOX)
 		{
 			D_CalcGradients(surf->surf, 0, TVec(0, 0, 0));
-			SetSkyTexture(surf->texture1, false);
+			SetTexture(surf->texture1);
 			D_DrawSpans(surf->spans);
 			d_ziorigin = 0;
 			d_zistepv = 0;
@@ -1095,9 +1096,12 @@ void VSoftwareDrawer::WorldDrawing(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2005/05/26 16:50:14  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.14  2002/11/16 17:11:15  dj_jl
 //	Improving software driver class.
-//
+//	
 //	Revision 1.13  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
 //	

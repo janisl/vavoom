@@ -64,17 +64,12 @@
 
 #include "gamedefs.h"
 #include "ftexdefs.h"
+#include "fgfxdefs.h"
 #include "r_local.h"
 
 // MACROS ------------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
-
-enum
-{
-	ANIM_FLAT,
-	ANIM_TEXTURE,
-};
 
 struct frameDef_t
 {
@@ -85,7 +80,6 @@ struct frameDef_t
 
 struct animDef_t
 {
-	int		type;
 	int		index;
 	float	time;
 	int		currentFrameDef;
@@ -94,6 +88,117 @@ struct animDef_t
 	bool	IsRange;
 	bool	Backwards;
 	int		CurrentRangeFrame;
+};
+
+//	A maptexturedef_t describes a rectangular texture, which is composed of
+// one or more mappatch_t structures that arrange graphic patches
+
+struct texpatch_t
+{
+	// Block origin (allways UL),
+	// which has allready accounted
+	// for the internal origin of the patch.
+	short		XOrigin;
+	short		YOrigin;
+	TTexture*	Tex;
+};
+
+class TDummyTexture : public TTexture
+{
+public:
+	TDummyTexture();
+	byte* GetPixels();
+	void MakePurgable();
+	void Unload();
+};
+
+class TPatchTexture : public TTexture
+{
+public:
+	int			LumpNum;
+	byte*		Pixels;
+
+	TPatchTexture(int InType, int InLumpNum);
+	void GetDimensions();
+	byte* GetPixels();
+	void MakePurgable();
+	void Unload();
+};
+
+class TMultiPatchTexture : public TTexture
+{
+public:
+	// All the patches[patchcount]
+	//are drawn back to front into the cached texture.
+	short		PatchCount;
+	texpatch_t*	Patches;
+	byte*		Pixels;
+
+	TMultiPatchTexture(FName InName, int InWidth, int InHeight,
+		float InSScale, float InTScale, int InPatchCount);
+	void SetFrontSkyLayer();
+	byte* GetPixels();
+	void MakePurgable();
+	void Unload();
+};
+
+class TFlatTexture : public TTexture
+{
+public:
+	int			LumpNum;
+	byte*		Pixels;
+
+	TFlatTexture(int InLumpNum);
+	byte* GetPixels();
+	void MakePurgable();
+	void Unload();
+};
+
+class TRawPicTexture : public TTexture
+{
+public:
+	int			LumpNum;
+	int			PalLumpNum;
+	byte*		Pixels;
+	rgba_t*		Palette;
+
+	TRawPicTexture(int InLumpNum, int InPalLumpNum);
+	byte* GetPixels();
+	rgba_t* GetPalette();
+	void MakePurgable();
+	void Unload();
+};
+
+class TFileTexture : public TTexture
+{
+public:
+	byte*		Pixels;
+	rgba_t*		Palette;
+
+	TFileTexture(int InType, FName InName);
+	void GetDimensions();
+	byte* GetPixels();
+	rgba_t* GetPalette();
+	void MakePurgable();
+	void Unload();
+};
+
+class TPcxFileTexture : public TFileTexture
+{
+public:
+	TPcxFileTexture(int InType, FName InName);
+};
+
+class TTgaFileTexture : public TFileTexture
+{
+public:
+	TTgaFileTexture(int InType, FName InName);
+};
+
+class TPngFileTexture : public TFileTexture
+{
+public:
+	TPngFileTexture(int InType, FName InName);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -107,64 +212,353 @@ struct animDef_t
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 //
-// Texture data
+//	Texture manager
 //
-int				numtextures;
-texdef_t**		textures;
-int*			texturetranslation; // Animation
+TTextureManager		GTextureManager;
 
 //
 // Flats data
 //
-int				numflats;
-int*			flatlumps;
-int*			flattranslation;    // Animation
-int				skyflatnum;			// sky mapping
-
-//
-// Sprite lumps data
-//
-int				numspritelumps;
-int*			spritelumps;
-int*			spritewidth;		// needed for pre rendering
-int*			spriteheight;
-int*			spriteoffset;
-int*			spritetopoffset;
+int					skyflatnum;			// sky mapping
 
 //
 //	Translation tables
 //
-byte*			translationtables;
+byte*				translationtables;
 
 //
-//	2D graphics
+//	Main palette
 //
-pic_info_t		pic_list[MAX_PICS];
-
-rgba_t			r_palette[MAX_PALETTES][256];
-byte			r_black_color[MAX_PALETTES];
+rgba_t				r_palette[256];
+byte				r_black_colour;
 
 //	Switches
-TArray<TSwitch>	Switches;
+TArray<TSwitch>		Switches;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static TArray<animDef_t>	AnimDefs;
 static TArray<frameDef_t>	FrameDefs;
 
-static float*				textureheight;	// needed for texture pegging
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	IsStrifeTexture
+//	TTextureManager::TTextureManager
 //
 //==========================================================================
 
-static bool IsStrifeTexture()
+TTextureManager::TTextureManager()
 {
-	guard(IsStrifeTexture);
+}
+
+//==========================================================================
+//
+//	TTextureManager::Init
+//
+//==========================================================================
+
+void TTextureManager::Init()
+{
+	guard(TTextureManager::Init);
+	//	Add a dummy texture.
+	AddTexture(new(PU_STATIC) TDummyTexture);
+
+	//	Initialise wall textures.
+	if (IsStrifeTexture())
+	{
+		GCon->Log(NAME_Init, "Strife textures detected");
+		InitTextures2();
+	}
+	else
+	{
+		InitTextures();
+	}
+
+	//	Initialise flats.
+	InitFlats();
+
+	//	Initialise overloaded textures.
+	InitOverloads();
+
+	//	Initialise sprites.
+	InitSpriteLumps();
+
+	//	Find sky flat number.
+	skyflatnum = CheckNumForName(FName("F_SKY", FNAME_AddLower8),
+		TEXTYPE_Flat, true, false);
+	if (skyflatnum < 0)
+	    skyflatnum = CheckNumForName(FName("F_SKY001", FNAME_AddLower8),
+			TEXTYPE_Flat, true, false);
+	if (skyflatnum < 0)
+	    skyflatnum = NumForName(FName("F_SKY1", FNAME_AddLower8),
+			TEXTYPE_Flat, true, false);
+	unguard;
+}
+
+//==========================================================================
+//
+//	TTextureManager::AddTexture
+//
+//==========================================================================
+
+int TTextureManager::AddTexture(TTexture* Tex)
+{
+	guard(TTextureManager::AddTexture);
+	Textures.AddItem(Tex);
+	Tex->TextureTranslation = Textures.Num() - 1;
+	return Textures.Num() - 1;
+	unguard;
+}
+
+//==========================================================================
+//
+//  TTextureManager::CheckNumForName
+//
+// 	Check whether texture is available. Filter out NoTexture indicator.
+//
+//==========================================================================
+
+int	TTextureManager::CheckNumForName(FName Name, int Type, bool bOverload,
+	bool bCheckAny)
+{
+	guard(TTextureManager::CheckNumForName);
+	//	Check for "NoTexture" marker.
+	if ((*Name)[0] == '-' && (*Name)[1] == 0)
+		return 0;
+
+	for (int i = Textures.Num() - 1; i >= 0; i--)
+	{
+		if (Textures[i]->Name != Name)
+			continue;
+
+		if (bCheckAny || Textures[i]->Type == Type ||
+			(bOverload && Textures[i]->Type == TEXTYPE_Overload))
+		{
+			return i;
+		}
+	}
+
+	return -1;
+	unguard;
+}
+
+//==========================================================================
+//
+// 	TTextureManager::NumForName
+//
+// 	Calls R_CheckTextureNumForName, aborts with error message.
+//
+//==========================================================================
+
+int	TTextureManager::NumForName(FName Name, int Type, bool bOverload,
+	bool bCheckAny)
+{
+	guard(TTextureManager::NumForName);
+	int i = CheckNumForName(Name, Type, bOverload, bCheckAny);
+	if (i == -1)
+	{
+		Host_Error("TTextureManager::NumForName: %s not found", *Name);
+	}
+	return i;
+	unguard;
+}
+
+//==========================================================================
+//
+//	TTextureManager::TextureHeight
+//
+//==========================================================================
+
+float TTextureManager::TextureHeight(int TexNum)
+{
+	guard(TTextureManager::TextureHeight);
+	return Textures[TexNum]->GetHeight() / Textures[TexNum]->TScale;
+	unguard;
+}
+
+//==========================================================================
+//
+//	TTextureManager::TextureAnimation
+//
+//==========================================================================
+
+int TTextureManager::TextureAnimation(int InTex)
+{
+	guard(TTextureManager::TextureAnimation);
+	return Textures[InTex]->TextureTranslation;
+	unguard;
+}
+
+//==========================================================================
+//
+//	TTextureManager::SetFrontSkyLayer
+//
+//==========================================================================
+
+void TTextureManager::SetFrontSkyLayer(int tex)
+{
+	guard(TTextureManager::SetFrontSkyLayer);
+	Textures[tex]->SetFrontSkyLayer();
+	unguard;
+}
+
+//==========================================================================
+//
+//	TTextureManager::GetTextureInfo
+//
+//==========================================================================
+
+void TTextureManager::GetTextureInfo(int TexNum, picinfo_t* info)
+{
+	guard(TTextureManager::GetTextureInfo);
+	if (TexNum < 0)
+	{
+		memset(info, 0, sizeof(*info));
+	}
+	else
+	{
+		TTexture* Tex = Textures[TexNum];
+		info->width = Tex->GetWidth();
+		info->height = Tex->GetHeight();
+		info->xoffset = Tex->SOffset;
+		info->yoffset = Tex->TOffset;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	TTextureManager::AddPatch
+//
+//==========================================================================
+
+int TTextureManager::AddPatch(FName Name, int Type)
+{
+	guard(TTextureManager::AddPatch);
+	int LumpNum = W_CheckNumForName(*Name);
+	if (LumpNum < 0)
+		LumpNum = W_CheckNumForName(*Name, WADNS_Sprites);
+	if (LumpNum < 0)
+	{
+		GCon->Logf("TTextureManager::AddPatch: Pic %s not found", *Name);
+		return -1;
+	}
+	int i = CheckNumForName(Name, Type);
+	if (i >= 0)
+	{
+		return i;
+	}
+
+	return CreatePatch(Type, LumpNum);
+	unguard;
+}
+
+//==========================================================================
+//
+//	TTextureManager::CreatePatch
+//
+//==========================================================================
+
+int TTextureManager::CreatePatch(int Type, int LumpNum)
+{
+	guard(TTextureManager::CreatePatch);
+	if (W_LumpLength(LumpNum) != 64000)
+	{
+		return AddTexture(new(PU_STATIC) TPatchTexture(Type, LumpNum));
+	}
+	else
+	{
+		return AddTexture(new(PU_STATIC) TRawPicTexture(LumpNum, -1));
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	TTextureManager::AddRawWithPal
+//
+//	Adds a raw image with custom palette lump. It's here to support
+// Heretic's episode 2 finale pic.
+//
+//==========================================================================
+
+int TTextureManager::AddRawWithPal(FName Name, FName PalName)
+{
+	guard(TTextureManager::AddRawWithPal);
+	int LumpNum = W_CheckNumForName(*Name);
+	if (LumpNum < 0)
+	{
+		GCon->Logf("TTextureManager::AddRawWithPal: %s not found", *Name);
+		return -1;
+	}
+	//	Check if lump's size to see if it really is a raw image. If not,
+	// load it as regular image.
+	if (W_LumpLength(LumpNum) != 64000)
+	{
+		GCon->Logf("TTextureManager::AddRawWithPal: %s doesn't appear to be"
+			" a raw image", *Name);
+		return AddPatch(Name, TEXTYPE_Pic);
+	}
+
+	int i = CheckNumForName(Name, TEXTYPE_Pic);
+	if (i >= 0)
+	{
+		return i;
+	}
+
+	return AddTexture(new(PU_STATIC) TRawPicTexture(LumpNum,
+		W_GetNumForName(*PalName)));
+	unguard;
+}
+
+//==========================================================================
+//
+//	TTextureManager::AddFileTexture
+//
+//==========================================================================
+
+int TTextureManager::AddFileTexture(FName Name, int Type)
+{
+	guard(TTextureManager::AddFileTexture)
+	char Ext[8];
+
+	int i = CheckNumForName(Name, Type);
+	if (i >= 0)
+	{
+		return i;
+	}
+
+	FL_ExtractFileExtension(*Name, Ext);
+	if (!strcmp(Ext, "pcx"))
+	{
+		return AddTexture(new(PU_STATIC) TPcxFileTexture(Type, Name));
+	}
+	else if (!strcmp(Ext, "tga"))
+	{
+		return AddTexture(new(PU_STATIC) TTgaFileTexture(Type, Name));
+	}
+	else if (!strcmp(Ext, "png"))
+	{
+		return AddTexture(new(PU_STATIC) TPngFileTexture(Type, Name));
+	}
+	else
+	{
+		Sys_Error("Unsupported texture type.");
+		return -1;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	TTextureManager::IsStrifeTexture
+//
+//==========================================================================
+
+bool TTextureManager::IsStrifeTexture()
+{
+	guard(TTextureManager::IsStrifeTexture);
 	int *plump = (int*)W_CacheLumpName("TEXTURE1", PU_STATIC);
 	int numtex = LittleLong(*plump);
 	int *texdir = plump + 1;
@@ -183,17 +577,16 @@ static bool IsStrifeTexture()
 
 //==========================================================================
 //
-//	InitTextures
+//	TTextureManager::InitTextures
 //
 // 	Initializes the texture list with the textures from the world map.
 //
 //==========================================================================
 
-static void InitTextures()
+void TTextureManager::InitTextures()
 {
-	guard(InitTextures);
+	guard(TTextureManager::InitTextures);
 	maptexture_t*	mtexture;
-	texdef_t*		texture;
 	texpatch_t*		patch;
 
 	int				i;
@@ -206,8 +599,6 @@ static void InitTextures()
 	char			name[9];
 	char*			names;
 	char*			name_p;
-
-	int*			patchlookup;
 
 	int				nummappatches;
 	int				offset;
@@ -223,15 +614,20 @@ static void InitTextures()
 	names = (char*)W_CacheLumpName("PNAMES", PU_STATIC);
 	nummappatches = LittleLong(*((int *)names));
 	name_p = names + 4;
-	patchlookup = (int*)Z_Malloc(nummappatches*sizeof(*patchlookup), PU_HIGH, 0);
+	TTexture** patchtexlookup = (TTexture**)Z_Malloc(nummappatches * sizeof(*patchtexlookup), PU_HIGH, 0);
 
 	for (i = 0; i < nummappatches; i++)
 	{
 		strncpy(name, name_p + i * 8, 8);
-		patchlookup[i] = W_CheckNumForName(name);
+		int LumpNum = W_CheckNumForName(name);
 		//	Sprites also can be used as patches.
-		if (patchlookup[i] < 0)
-			patchlookup[i] = W_CheckNumForName(name, WADNS_Sprites);
+		if (LumpNum < 0)
+			LumpNum = W_CheckNumForName(name, WADNS_Sprites);
+
+		if (LumpNum < 0)
+			patchtexlookup[i] = NULL;
+		else
+			patchtexlookup[i] = Textures[CreatePatch(TEXTYPE_WallPatch, LumpNum)];
 	}
 	Z_Free(names);
 
@@ -255,13 +651,9 @@ static void InitTextures()
 		numtextures2 = 0;
 		maxoff2 = 0;
 	}
-	numtextures = numtextures1 + numtextures2;
+	int numtextures = numtextures1 + numtextures2;
 
-	textures = (texdef_t**)Z_Calloc(numtextures * 4);
-	textureheight = (float*)Z_Calloc(numtextures * 4);
-	texturetranslation = (int*)Z_Calloc((numtextures + 1) * 4);
-
-	for (i=0 ; i<numtextures ; i++, directory++)
+	for (i = 0; i < numtextures; i++, directory++)
 	{
 		if (i == numtextures1)
 		{
@@ -280,51 +672,41 @@ static void InitTextures()
 
 		mtexture = (maptexture_t*)((byte *)maptex + offset);
 
-		texture = textures[i] =
-			(texdef_t*)Z_Malloc(sizeof(texdef_t)
-				+ sizeof(texpatch_t) * (LittleShort(mtexture->patchcount) - 1),
-				PU_STATIC, 0);
+		TMultiPatchTexture* Tex = new(PU_STATIC) TMultiPatchTexture(
+			FName(mtexture->name, FNAME_AddLower8),
+			LittleShort(mtexture->width),
+			LittleShort(mtexture->height),
+			mtexture->sscale ? mtexture->sscale / 8.0 : 1.0,
+			mtexture->tscale ? mtexture->tscale / 8.0 : 1.0,
+			LittleShort(mtexture->patchcount));
+		AddTexture(Tex);
 
-		texture->width = LittleShort(mtexture->width);
-		texture->height = LittleShort(mtexture->height);
-		texture->patchcount = LittleShort(mtexture->patchcount);
-		texture->SScale = mtexture->sscale ? mtexture->sscale / 8.0 : 1.0;
-		texture->TScale = mtexture->tscale ? mtexture->tscale / 8.0 : 1.0;
+		patch = Tex->Patches;
 
-		memcpy(texture->name, mtexture->name, sizeof(texture->name));
-		patch = texture->patches;
-
-		for (j = 0; j < texture->patchcount; j++, patch++)
+		for (j = 0; j < Tex->PatchCount; j++, patch++)
 		{
-			patch->originx = LittleShort(mtexture->patches[j].originx);
-			patch->originy = LittleShort(mtexture->patches[j].originy);
-			patch->patch = patchlookup[LittleShort(mtexture->patches[j].patch)];
-			if (patch->patch == -1)
+			patch->XOrigin = LittleShort(mtexture->patches[j].originx);
+			patch->YOrigin = LittleShort(mtexture->patches[j].originy);
+			patch->Tex = patchtexlookup[LittleShort(mtexture->patches[j].patch)];
+			if (!patch->Tex)
 			{
 				Sys_Error("InitTextures: Missing patch in texture %s",
-					texture->name);
+					*Tex->Name);
 			}
 		}
 
 		//	Fix sky texture heights for Heretic, but it can also be used
 		// for Doom and Strife
-		if (!strnicmp(texture->name, "SKY", 3) && texture->height == 128)
+		if (!strnicmp(*Tex->Name, "SKY", 3) && Tex->Height == 128)
 		{
-			patch_t *realpatch = (patch_t*)W_CacheLumpNum(
-				texture->patches[0].patch, PU_TEMP);
-			if (LittleShort(realpatch->height) > texture->height)
+			if (Tex->Patches[0].Tex->GetHeight() > Tex->Height)
 			{
-				texture->height = LittleShort(realpatch->height);
+				Tex->Height = Tex->Patches[0].Tex->GetHeight();
 			}
 		}
-
-		textureheight[i] = texture->height / texture->TScale;
-	
-		// Create translation table for global animation.
-		texturetranslation[i] = i;
 	}
 
-	Z_Free(patchlookup);
+	Z_Free(patchtexlookup);
 	Z_Free(maptex1);
 	if (maptex2)
 		Z_Free(maptex2);
@@ -333,19 +715,18 @@ static void InitTextures()
 
 //==========================================================================
 //
-//	InitTextures2
+//	TTextureManager::InitTextures2
 //
 // 	Initializes the texture list with the textures from the world map.
 //	Strife texture format version.
 //
 //==========================================================================
 
-static void InitTextures2()
+void TTextureManager::InitTextures2()
 {
-	guard(InitTextures);
+	guard(TTextureManager::InitTextures2);
 	maptexture_strife_t	*mtexture;
-	texdef_t*			texture;
-	texpatch_t*			patch;
+	texpatch_t*		patch;
 
 	int				i;
 	int				j;
@@ -357,8 +738,6 @@ static void InitTextures2()
 	char			name[9];
 	char*			names;
 	char*			name_p;
-
-	int*			patchlookup;
 
 	int				nummappatches;
 	int				offset;
@@ -374,15 +753,20 @@ static void InitTextures2()
 	names = (char*)W_CacheLumpName("PNAMES", PU_STATIC);
 	nummappatches = LittleLong(*((int *)names));
 	name_p = names + 4;
-	patchlookup = (int*)Z_Malloc(nummappatches*sizeof(*patchlookup), PU_HIGH, 0);
+	TTexture** patchtexlookup = (TTexture**)Z_Malloc(nummappatches * sizeof(*patchtexlookup), PU_HIGH, 0);
 
 	for (i = 0; i < nummappatches; i++)
 	{
 		strncpy(name, name_p + i * 8, 8);
-		patchlookup[i] = W_CheckNumForName(name);
+		int LumpNum = W_CheckNumForName(name);
 		//	Sprites also can be used as patches.
-		if (patchlookup[i] < 0)
-			patchlookup[i] = W_CheckNumForName(name, WADNS_Sprites);
+		if (LumpNum < 0)
+			LumpNum = W_CheckNumForName(name, WADNS_Sprites);
+
+		if (LumpNum < 0)
+			patchtexlookup[i] = NULL;
+		else
+			patchtexlookup[i] = Textures[CreatePatch(TEXTYPE_WallPatch, LumpNum)];
 	}
 	Z_Free(names);
 
@@ -406,11 +790,7 @@ static void InitTextures2()
 		numtextures2 = 0;
 		maxoff2 = 0;
 	}
-	numtextures = numtextures1 + numtextures2;
-
-	textures = (texdef_t**)Z_Calloc(numtextures * 4);
-	textureheight = (float*)Z_Calloc(numtextures * 4);
-	texturetranslation = (int*)Z_Calloc((numtextures + 1) * 4);
+	int numtextures = numtextures1 + numtextures2;
 
 	for (i=0 ; i<numtextures ; i++, directory++)
 	{
@@ -431,50 +811,39 @@ static void InitTextures2()
 	
 		mtexture = (maptexture_strife_t*)((byte *)maptex + offset);
 
-		texture = textures[i] = (texdef_t*)Z_Malloc(sizeof(texdef_t) +
-				sizeof(texpatch_t) * (LittleShort(mtexture->patchcount) - 1),
-				PU_STATIC, 0);
-	
-		texture->width = LittleShort(mtexture->width);
-		texture->height = LittleShort(mtexture->height);
-		texture->patchcount = LittleShort(mtexture->patchcount);
-		texture->SScale = 1.0;
-		texture->TScale = 1.0;
+		TMultiPatchTexture* Tex = new(PU_STATIC) TMultiPatchTexture(
+			FName(mtexture->name, FNAME_AddLower8),
+			LittleShort(mtexture->width),
+			LittleShort(mtexture->height), 1.0, 1.0,
+			LittleShort(mtexture->patchcount));
+		AddTexture(Tex);
 
-		memcpy(texture->name, mtexture->name, sizeof(texture->name));
-		patch = texture->patches;
+		patch = Tex->Patches;
 
-		for (j = 0; j < texture->patchcount; j++, patch++)
+		for (j = 0; j < Tex->PatchCount; j++, patch++)
 		{
-			patch->originx = LittleShort(mtexture->patches[j].originx);
-			patch->originy = LittleShort(mtexture->patches[j].originy);
-			patch->patch = patchlookup[LittleShort(mtexture->patches[j].patch)];
-			if (patch->patch == -1)
+			patch->XOrigin = LittleShort(mtexture->patches[j].originx);
+			patch->YOrigin = LittleShort(mtexture->patches[j].originy);
+			patch->Tex = patchtexlookup[LittleShort(mtexture->patches[j].patch)];
+			if (!patch->Tex)
 			{
 				Sys_Error("InitTextures: Missing patch in texture %s",
-					texture->name);
+					*Tex->Name);
 			}
 		}
 
 		//	Fix sky texture heights for Heretic, but it can also be used
 		// for Doom and Strife
-		if (!strnicmp(texture->name, "SKY", 3) && texture->height == 128)
+		if (!strnicmp(*Tex->Name, "SKY", 3) && Tex->Height == 128)
 		{
-			patch_t *realpatch = (patch_t*)W_CacheLumpNum(
-				texture->patches[0].patch, PU_TEMP);
-			if (LittleShort(realpatch->height) > texture->height)
+			if (Tex->Patches[0].Tex->GetHeight() > Tex->Height)
 			{
-				texture->height = LittleShort(realpatch->height);
+				Tex->Height = Tex->Patches[0].Tex->GetHeight();
 			}
 		}
-
-		textureheight[i] = texture->height;
-
-		// Create translation table for global animation.
-		texturetranslation[i] = i;
 	}
 
-	Z_Free(patchlookup);
+	Z_Free(patchtexlookup);
 	Z_Free(maptex1);
 	if (maptex2)
 		Z_Free(maptex2);
@@ -483,217 +852,917 @@ static void InitTextures2()
 
 //==========================================================================
 //
-//  R_CheckTextureNumForName
-//
-// 	Check whether texture is available. Filter out NoTexture indicator.
+//	TTextureManager::InitFlats
 //
 //==========================================================================
 
-int	R_CheckTextureNumForName(const char *name)
+void TTextureManager::InitFlats()
 {
-	guard(R_CheckTextureNumForName);
-	int		i;
-
-	// "NoTexture" marker.
-	if (name[0] == '-')		
-		return 0;
-
-	for (i=0 ; i<numtextures ; i++)
-		if (!strnicmp(textures[i]->name, name, 8))
-			return i;
-
-	return -1;
-	unguard;
-}
-
-//==========================================================================
-//
-// 	R_TextureNumForName
-//
-// 	Calls R_CheckTextureNumForName, aborts with error message.
-//
-//==========================================================================
-
-int	R_TextureNumForName(const char* name)
-{
-	guard(R_TextureNumForName);
-	int		i;
-
-	i = R_CheckTextureNumForName (name);
-
-	if (i==-1)
+	guard(TTextureManager::InitFlats);
+	for (int Lump = W_IterateNS(-1, WADNS_Flats); Lump >= 0;
+		Lump = W_IterateNS(Lump, WADNS_Flats))
 	{
-		Host_Error("R_TextureNumForName: %s not found", name);
+		AddTexture(new(PU_STATIC) TFlatTexture(Lump));
 	}
-	return i;
 	unguard;
 }
 
 //==========================================================================
 //
-//	R_TextureHeight
+//	TTextureManager::InitOverloads
 //
 //==========================================================================
 
-float R_TextureHeight(int pic)
+void TTextureManager::InitOverloads()
 {
-	guard(R_TextureHeight);
-	if (pic & TEXF_FLAT)
+	guard(TTextureManager::InitOverloads);
+	for (int Lump = W_IterateNS(-1, WADNS_NewTextures); Lump >= 0;
+		Lump = W_IterateNS(Lump, WADNS_NewTextures))
 	{
-		return 64.0;
+		CreatePatch(TEXTYPE_Overload, Lump);
 	}
-	return textureheight[pic];
 	unguard;
 }
 
 //==========================================================================
 //
-//	FlatFunc
+//	TTextureManager::InitSpriteLumps
 //
 //==========================================================================
 
-static bool FlatFunc(int lump, const char*, int, EWadNamespace NS)
+void TTextureManager::InitSpriteLumps()
 {
-	guard(FlatFunc);
-	if (NS == WADNS_Flats)
+	guard(TTextureManager::InitSpriteLumps);
+	for (int Lump = W_IterateNS(-1, WADNS_Sprites); Lump >= 0;
+		Lump = W_IterateNS(Lump, WADNS_Sprites))
 	{
-		//	Add flat
-		numflats++;
-		Z_Resize((void**)&flatlumps, numflats * 4);
-		flatlumps[numflats - 1] = lump;
+		CreatePatch(TEXTYPE_Sprite, Lump);
 	}
-	return true;	//	Continue
 	unguard;
 }
 
 //==========================================================================
 //
-//	InitFlats
+//	TTexture::TTexture
 //
 //==========================================================================
 
-static void InitFlats()
+TTexture::TTexture()
+: Type(TEXTYPE_Any)
+, Format(TEXFMT_8)
+, Name(NAME_None)
+, Width(-1)
+, Height(-1)
+, SOffset(0)
+, TOffset(0)
+, bNoRemap0(false)
+, SScale(1)
+, TScale(1)
+, TextureTranslation(0)
+, DriverHandle(0)
 {
-	guard(InitFlats);
-	flatlumps = (int*)Z_Malloc(1, PU_STATIC, 0);
-	numflats = 0;
-
-	W_ForEachLump(FlatFunc);
-
-	// Create translation table for global animation.
-	flattranslation = (int*)Z_Malloc((numflats + 1) * 4, PU_STATIC, 0);
-	for (int i = 0; i < numflats; i++)
-		flattranslation[i] = i;
-	unguard;
 }
 
 //==========================================================================
 //
-//  R_CheckFlatNumForName
+//	TTexture::~TTexture
 //
 //==========================================================================
 
-int R_CheckFlatNumForName(const char* name)
+TTexture::~TTexture()
 {
-	guard(R_CheckFlatNumForName);
-	for (int i = numflats - 1; i >= 0; i--)
+}
+
+//==========================================================================
+//
+//	TTexture::GetDimensions
+//
+//==========================================================================
+
+void TTexture::GetDimensions()
+{
+	guardSlow(TTexture::GetDimensions);
+	Width = 0;
+	Height = 0;
+	unguardSlow;
+}
+
+//==========================================================================
+//
+//	TTexture::SetFrontSkyLayer
+//
+//==========================================================================
+
+void TTexture::SetFrontSkyLayer()
+{
+	guardSlow(TTexture::SetFrontSkyLayer);
+	bNoRemap0 = true;
+	unguardSlow;
+}
+
+//==========================================================================
+//
+//	TTexture::GetPixels8
+//
+//==========================================================================
+
+byte* TTexture::GetPixels8()
+{
+	guard(TTexture::GetPixels8);
+	static byte* RGBTable = 0;
+
+	byte* Pixels = GetPixels();
+	if (Format == TEXFMT_8Pal)
 	{
-		if (!strnicmp(name, W_LumpName(flatlumps[i]), 8))
+		//	Remap to game palette
+		if (!RGBTable)
 		{
-			return i | TEXF_FLAT;
+			RGBTable = (byte*)W_CacheLumpName("RGBTABLE", PU_STATIC);
+		}
+		int NumPixels = Width * Height;
+		rgba_t* Pal = GetPalette();
+		byte Remap[256];
+		Remap[0] = 0;
+		for (int i = 1; i < 256; i++)
+		{
+			Remap[i] = RGBTable[((Pal[i].r << 7) & 0x7c00) +
+				((Pal[i].g << 2) & 0x3e0) + ((Pal[i].b >> 3) & 0x1f)];
+		}
+
+		byte* pPix = Pixels;
+		for (int i = 0; i < NumPixels; i++, pPix++)
+		{
+			*pPix = Remap[*pPix];
+		}
+		Format = TEXFMT_8;
+	}
+	else if (Format == TEXFMT_RGBA)
+	{
+		if (!RGBTable)
+		{
+			RGBTable = (byte*)W_CacheLumpName("RGBTABLE", PU_STATIC);
+		}
+		int NumPixels = Width * Height;
+		rgba_t* pSrc = (rgba_t*)Pixels;
+		byte* pDst = Pixels;
+		for (int i = 0; i < NumPixels; i++, pSrc++, pDst++)
+		{
+			if (pSrc->a < 128)
+				*pDst = 0;
+			else
+				*pDst = RGBTable[((pSrc->r << 7) & 0x7c00) +
+					((pSrc->g << 2) & 0x3e0) + ((pSrc->b >> 3) & 0x1f)];
+		}
+		Z_Resize((void**)&Pixels, Width * Height);
+		Format = TEXFMT_8;
+	}
+	return Pixels;
+	unguard;
+}
+
+//==========================================================================
+//
+//	TTexture::GetPalette
+//
+//==========================================================================
+
+rgba_t* TTexture::GetPalette()
+{
+	guardSlow(TTexture::GetPalette);
+	return r_palette;
+	unguardSlow;
+}
+
+//==========================================================================
+//
+//	TTexture::GetHighResPixels
+//
+//==========================================================================
+
+rgba_t* TTexture::GetHighResPixels(int& HRWidth, int& HRHeight)
+{
+	guard(TTexture::GetHighResPixels);
+#ifdef CLIENT
+	const char* DirName;
+	switch (Type)
+	{
+	case TEXTYPE_Wall:
+		DirName = "walls";
+		break;
+	case TEXTYPE_Flat:
+		DirName = "flats";
+		break;
+	case TEXTYPE_Pic:
+		DirName = "pics";
+		break;
+	default:
+		return NULL;
+	}
+	char HighResName[80];
+	sprintf(HighResName, "textures/%s/%s.png", DirName, *Name);
+	if (!FL_FindFile(HighResName, NULL))
+	{
+		return NULL;
+	}
+	Mod_LoadSkin(HighResName, 0);
+	HRWidth = SkinWidth;
+	HRHeight = SkinHeight;
+	if (SkinBPP == 8)
+	{
+		rgba_t *buf = (rgba_t*)Z_Malloc(SkinWidth * SkinHeight * 4);
+		for (int i = 0; i < SkinWidth * SkinHeight; i++)
+		{
+			buf[i] = SkinPal[SkinData[i]];
+		}
+		Z_Free(SkinData);
+		SkinData = (byte*)buf;
+	}
+	return (rgba_t*)SkinData;
+#else
+	return NULL;
+#endif
+	unguard;
+}
+
+//==========================================================================
+//
+//	TDummyTexture::TDummyTexture
+//
+//==========================================================================
+
+TDummyTexture::TDummyTexture()
+{
+	Type = TEXTYPE_Any;
+	Format = TEXFMT_8;
+}
+
+//==========================================================================
+//
+//	TDummyTexture::GetPixels
+//
+//==========================================================================
+
+byte* TDummyTexture::GetPixels()
+{
+	return NULL;
+}
+
+//==========================================================================
+//
+//	TDummyTexture::MakePurgable
+//
+//==========================================================================
+
+void TDummyTexture::MakePurgable()
+{
+}
+
+//==========================================================================
+//
+//	TDummyTexture::Unload
+//
+//==========================================================================
+
+void TDummyTexture::Unload()
+{
+}
+
+//==========================================================================
+//
+//	TPatchTexture::TPatchTexture
+//
+//==========================================================================
+
+TPatchTexture::TPatchTexture(int InType, int InLumpNum)
+: LumpNum(InLumpNum)
+, Pixels(0)
+{
+	Type = InType;
+	Name = FName(W_LumpName(InLumpNum), FNAME_AddLower8);
+	Format = TEXFMT_8;
+}
+
+//==========================================================================
+//
+//	TPatchTexture::GetDimensions
+//
+//==========================================================================
+
+void TPatchTexture::GetDimensions()
+{
+	guard(TPatchTexture::GetDimensions);
+	patch_t* patch = (patch_t*)W_CacheLumpNum(LumpNum, PU_CACHE);
+	Width = LittleShort(patch->width);
+	Height = LittleShort(patch->height);
+	SOffset = LittleShort(patch->leftoffset);
+	TOffset = LittleShort(patch->topoffset);
+	unguard;
+}
+
+//==========================================================================
+//
+//	TPatchTexture::GetPixels
+//
+//==========================================================================
+
+byte* TPatchTexture::GetPixels()
+{
+	guard(TPatchTexture::GetPixels);
+	if (Pixels)
+	{
+		Z_ChangeTag(Pixels, PU_STATIC);
+		return Pixels;
+	}
+
+	patch_t *patch = (patch_t*)W_CacheLumpNum(LumpNum, PU_STATIC);
+	Width = LittleShort(patch->width);
+	Height = LittleShort(patch->height);
+	SOffset = LittleShort(patch->leftoffset);
+	TOffset = LittleShort(patch->topoffset);
+	Pixels = (byte*)Z_Calloc(Width * Height, PU_STATIC, (void**)&Pixels);
+	int black = r_black_colour;
+	for (int x = 0; x < Width; x++)
+	{
+		column_t* column = (column_t*)((byte*)patch +
+			LittleLong(patch->columnofs[x]));
+		// step through the posts in a column
+		int top = -1;	//	DeepSea tall patches support
+		while (column->topdelta != 0xff)
+		{
+			if (column->topdelta <= top)
+			{
+				top += column->topdelta;
+			}
+			else
+			{
+				top = column->topdelta;
+			}
+			byte* source = (byte*)column + 3;
+			byte* dest = Pixels + x + top * Width;
+			int count = column->length;
+			while (count--)
+			{
+				*dest = *source || bNoRemap0 ? *source : black;
+				source++;
+				dest += Width;
+			}
+			column = (column_t*)((byte*)column + column->length + 4);
 		}
 	}
-	return -1;
+	Z_ChangeTag(patch, PU_CACHE);
+	return Pixels;
 	unguard;
 }
 
 //==========================================================================
 //
-//	R_FlatNumForName
-//
-//	Retrieval, get a flat number for a flat name.
+//	TPatchTexture::MakePurgable
 //
 //==========================================================================
 
-int R_FlatNumForName(const char* name)
+void TPatchTexture::MakePurgable()
 {
-	guard(R_FlatNumForName);
-	char	namet[9];
-	int		i;
-
-	i = R_CheckFlatNumForName(name);
-	if (i == -1)
-	{
-		namet[8] = 0;
-		memcpy(namet, name,8);
-		Host_Error("R_FlatNumForName: %s not found",namet);
-	}
-	return i;
-	unguard;
+	guardSlow(TPatchTexture::MakePurgable);
+	Z_ChangeTag(Pixels, PU_CACHE);
+	unguardSlow;
 }
 
 //==========================================================================
 //
-//	SpriteCallback
+//	TPatchTexture::Unload
 //
 //==========================================================================
 
-static bool SpriteCallback(int lump, const char*, int, EWadNamespace NS)
+void TPatchTexture::Unload()
 {
-	guard(SpriteCallback);
-	if (NS == WADNS_Sprites)
+	guard(TPatchTexture::Unload);
+	if (Pixels)
 	{
-		//	Add sprite lump
-		numspritelumps++;
-		Z_Resize((void**)&spritelumps, numspritelumps * 4);
-		spritelumps[numspritelumps - 1] = lump;
-	}
-	return true;	//	Continue
-	unguard;
-}
-
-//==========================================================================
-//
-//	InitSpriteLumps
-//
-//==========================================================================
-
-static void InitSpriteLumps()
-{
-	guard(InitSpriteLumps);
-	int			i;
-
-	spritelumps = (int*)Z_Malloc (1, PU_STATIC, 0);
-	numspritelumps = 0;
-
-	W_ForEachLump(SpriteCallback);
-
-	spritewidth = (int*)Z_Malloc(numspritelumps * 4, PU_STATIC, 0);
-	spriteheight = (int*)Z_Malloc(numspritelumps * 4, PU_STATIC, 0);
-	spriteoffset = (int*)Z_Malloc(numspritelumps * 4, PU_STATIC, 0);
-	spritetopoffset = (int*)Z_Malloc(numspritelumps * 4, PU_STATIC, 0);
-
-	for (i = 0; i < numspritelumps; i++)
-	{
-		spritewidth[i] = -1;
-		spriteheight[i] = -1;
-		spriteoffset[i] = -1;
-		spritetopoffset[i] = -1;
+		Z_Free(Pixels);
+		Pixels = NULL;
 	}
 	unguard;
 }
 
 //==========================================================================
 //
-// 	InitTranslationTables
+//	TMultiPatchTexture
 //
 //==========================================================================
 
-static void InitTranslationTables()
+TMultiPatchTexture::TMultiPatchTexture(FName InName, int InWidth,
+	int InHeight, float InSScale, float InTScale, int InPatchCount)
+: Pixels(0)
 {
-	guard(InitTranslationTables);
-	translationtables = (byte*)W_CacheLumpName("TRANSLAT", PU_STATIC);
+	Type = TEXTYPE_Wall;
+	Format = TEXFMT_8;
+	Name = InName;
+	Width = InWidth;
+	Height = InHeight;
+	SScale = InSScale;
+	TScale = InTScale;
+	PatchCount = InPatchCount;
+	Patches = (texpatch_t*)Z_Calloc(PatchCount * sizeof(texpatch_t));
+}
+
+//==========================================================================
+//
+//	TMultiPatchTexture::SetFrontSkyLayer
+//
+//==========================================================================
+
+void TMultiPatchTexture::SetFrontSkyLayer()
+{
+	guard(TMultiPatchTexture::SetFrontSkyLayer);
+	for (int i = 0; i < PatchCount; i++)
+	{
+		Patches[i].Tex->SetFrontSkyLayer();
+	}
+	bNoRemap0 = true;
 	unguard;
+}
+
+//==========================================================================
+//
+//	TMultiPatchTexture::GetPixels
+//
+// 	Using the texture definition, the composite texture is created from the
+// patches, and each column is cached.
+//
+//==========================================================================
+
+byte* TMultiPatchTexture::GetPixels()
+{
+	guard(TMultiPatchTexture::GetPixels);
+	if (Pixels)
+	{
+		Z_ChangeTag(Pixels, PU_STATIC);
+		return Pixels;
+	}
+
+	Pixels = (byte*)Z_Calloc(Width * Height, PU_STATIC, (void**)&Pixels);
+
+	// Composite the columns together.
+	texpatch_t* patch = Patches;
+	for (int i = 0; i < PatchCount; i++, patch++)
+	{
+		TTexture* PatchTex = patch->Tex;
+		byte* PatchPixels = PatchTex->GetPixels8();
+		int x1 = patch->XOrigin;
+		int x2 = x1 + PatchTex->GetWidth();
+		if (x2 > Width)
+			x2 = Width;
+		int y1 = patch->YOrigin;
+		int y2 = y1 + PatchTex->GetHeight();
+		if (y2 > Height)
+			y2 = Height;
+		for (int y = y1 < 0 ? 0 : y1; y < y2; y++)
+		{
+			for (int x = x1 < 0 ? 0 : x1; x < x2; x++)
+			{
+				int PIdx = (x - x1) + (y - y1) * PatchTex->GetWidth();
+				if (PatchPixels[PIdx])
+					Pixels[x + y * Width] = PatchPixels[PIdx];
+			}
+		}
+		PatchTex->MakePurgable();
+	}
+	return Pixels;
+	unguard;
+}
+
+//==========================================================================
+//
+//	TMultiPatchTexture::MakePurgable
+//
+//==========================================================================
+
+void TMultiPatchTexture::MakePurgable()
+{
+	guard(TMultiPatchTexture::MakePurgable);
+	Z_ChangeTag(Pixels, PU_CACHE);
+	unguard;
+}
+
+//==========================================================================
+//
+//	TMultiPatchTexture::Unload
+//
+//==========================================================================
+
+void TMultiPatchTexture::Unload()
+{
+	guard(TMultiPatchTexture::Unload);
+	if (Pixels)
+	{
+		Z_Free(Pixels);
+		Pixels = NULL;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	TFlatTexture
+//
+//==========================================================================
+
+TFlatTexture::TFlatTexture(int InLumpNum)
+: Pixels(0)
+{
+	Type = TEXTYPE_Flat;
+	Format = TEXFMT_8;
+	Name = FName(W_LumpName(InLumpNum), FNAME_AddLower8);
+	Width = 64;
+	Height = 64;
+	LumpNum = InLumpNum;
+}
+
+//==========================================================================
+//
+//	TFlatTexture::GetPixels
+//
+//==========================================================================
+
+byte* TFlatTexture::GetPixels()
+{
+	guard(TFlatTexture::GetPixels);
+	if (Pixels)
+	{
+		Z_ChangeTag(Pixels, PU_STATIC);
+		return Pixels;
+	}
+
+	Pixels = (byte*)Z_Malloc(64 * 64, PU_STATIC, (void**)&Pixels);
+	byte* data = (byte*)W_CacheLumpNum(LumpNum, PU_TEMP);
+	for (int i = 0; i < 64 * 64; i++)
+	{
+		Pixels[i] = data[i] ? data[i] : r_black_colour;
+	}
+	return Pixels;
+	unguard;
+}
+
+//==========================================================================
+//
+//	TFlatTexture::MakePurgable
+//
+//==========================================================================
+
+void TFlatTexture::MakePurgable()
+{
+	guard(TFlatTexture::MakePurgable);
+	Z_ChangeTag(Pixels, PU_CACHE);
+	unguard;
+}
+
+//==========================================================================
+//
+//	TFlatTexture::Unload
+//
+//==========================================================================
+
+void TFlatTexture::Unload()
+{
+	guard(TFlatTexture::Unload);
+	if (Pixels)
+	{
+		Z_Free(Pixels);
+		Pixels = NULL;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	TRawPicTexture::TRawPicTexture
+//
+//==========================================================================
+
+TRawPicTexture::TRawPicTexture(int InLumpNum, int InPalLumpNum)
+: LumpNum(InLumpNum)
+, PalLumpNum(InPalLumpNum)
+, Pixels(0)
+{
+	Type = TEXTYPE_Pic;
+	Name = FName(W_LumpName(InLumpNum), FNAME_AddLower8);
+	Width = 320;
+	Height = W_LumpLength(InLumpNum) / 320;
+	Format = PalLumpNum >= 0 ? TEXFMT_8Pal : TEXFMT_8;
+}
+
+//==========================================================================
+//
+//	TRawPicTexture::GetPixels
+//
+//==========================================================================
+
+byte* TRawPicTexture::GetPixels()
+{
+	guard(TRawPicTexture::GetPixels);
+	if (Pixels)
+	{
+		Z_ChangeTag(Pixels, PU_STATIC);
+		return Pixels;
+	}
+
+	int len = W_LumpLength(LumpNum);
+	Height = len / 320;
+
+	Pixels = (byte*)Z_Calloc(len, PU_STATIC, (void**)&Pixels);
+	byte *raw = (byte*)W_CacheLumpNum(LumpNum, PU_STATIC);
+
+	//	Set up palette.
+	int black;
+	if (PalLumpNum < 0)
+	{
+		black = r_black_colour;
+	}
+	else
+	{
+		//	Load palette and find black colour for remaping.
+		Palette = (rgba_t*)Z_Malloc(256 * 4, PU_STATIC, (void**)&Palette);
+		byte *psrc = (byte*)W_CacheLumpNum(PalLumpNum, PU_TEMP);
+		int best_dist = 0x10000;
+		black = 0;
+		for (int i = 0; i < 256; i++)
+		{
+			Palette[i].r = *psrc++;
+			Palette[i].g = *psrc++;
+			Palette[i].b = *psrc++;
+			if (i == 0)
+			{
+				Palette[i].a = 0;
+			}
+			else
+			{
+				Palette[i].a = 255;
+				int dist = Palette[i].r * Palette[i].r + Palette[i].g *
+					Palette[i].g + Palette[i].b * Palette[i].b;
+				if (dist < best_dist)
+				{
+					black = i;
+					best_dist = dist;
+				}
+			}
+		}
+	}
+
+	byte *src = raw;
+	byte *dst = Pixels;
+	for (int i = 0; i < len; i++, src++, dst++)
+	{
+		*dst = *src ? *src : black;
+	}
+	Z_Free(raw);
+	return Pixels;
+	unguard;
+}
+
+//==========================================================================
+//
+//	TRawPicTexture::GetPalette
+//
+//==========================================================================
+
+rgba_t* TRawPicTexture::GetPalette()
+{
+	guardSlow(TRawPicTexture::GetPalette);
+	return Palette ? Palette : r_palette;
+	unguardSlow;
+}
+
+//==========================================================================
+//
+//	TRawPicTexture::MakePurgable
+//
+//==========================================================================
+
+void TRawPicTexture::MakePurgable()
+{
+	guard(TRawPicTexture::MakePurgable);
+	Z_ChangeTag(Pixels, PU_CACHE);
+	if (Palette)
+	{
+		Z_ChangeTag(Palette, PU_CACHE);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	TRawPicTexture::Unload
+//
+//==========================================================================
+
+void TRawPicTexture::Unload()
+{
+	guard(TRawPicTexture::Unload);
+	if (Pixels)
+	{
+		Z_Free(Pixels);
+		Pixels = NULL;
+	}
+	if (Palette)
+	{
+		Z_Free(Palette);
+		Palette = NULL;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	TFileTexture::TFileTexture
+//
+//==========================================================================
+
+TFileTexture::TFileTexture(int InType, FName InName)
+: Pixels(0)
+, Palette(0)
+{
+	Type = InType;
+	Name = InName;
+}
+
+//==========================================================================
+//
+//	TFileTexture::GetDimensions
+//
+//==========================================================================
+
+void TFileTexture::GetDimensions()
+{
+	guard(TFileTexture::GetDimensions);
+	GetPixels();
+	MakePurgable();
+	unguard;
+}
+
+//==========================================================================
+//
+//	TFileTexture::GetPixels
+//
+//==========================================================================
+
+byte* TFileTexture::GetPixels()
+{
+	guard(TFileTexture::GetPixels);
+#ifdef CLIENT
+	//	If this is 8 bit texture and we have pixels but palette is missing,
+	// then also discard pixels.
+	if (Pixels && Format == TEXFMT_8Pal && !Palette)
+	{
+		Z_Free(Pixels);
+	}
+
+	//	If we already have loaded pixels, return them.
+	if (Pixels)
+	{
+		//	Make them non-cachable.
+		Z_ChangeTag(Pixels, PU_STATIC);
+		if (Palette)
+		{
+			Z_ChangeTag(Palette, PU_STATIC);
+		}
+		return Pixels;
+	}
+
+	//	Discard palette if it's still present.
+	if (Palette)
+	{
+		Z_Free(Palette);
+	}
+
+	//	Load texture.
+	Mod_LoadSkin(*Name, (void**)&Pixels);
+	Width = SkinWidth;
+	Height = SkinHeight;
+	Format = SkinBPP == 8 ? TEXFMT_8Pal : TEXFMT_RGBA;
+
+	//	For 8-bit textures create a local copy of the palette and remap
+	// colour 0.
+	if (Format == TEXFMT_8Pal)
+	{
+		Palette = (rgba_t*)Z_Malloc(256 * 4, PU_STATIC, (void**)&Palette);
+		memcpy(Palette, SkinPal, 256 * 4);
+
+		//	Find black colour for remaping.
+		int black = 0;
+		int best_dist = 0x10000;
+		for (int i = 1; i < 256; i++)
+		{
+			int dist = Palette[i].r * Palette[i].r + Palette[i].g *
+				Palette[i].g + Palette[i].b * Palette[i].b;
+			if (dist < best_dist && Palette[i].a == 255)
+			{
+				black = i;
+				best_dist = dist;
+			}
+		}
+		for (int i = 0; i < Width * Height; i++)
+		{
+			if (Palette[Pixels[i]].a == 0)
+				Pixels[i] = 0;
+			else if (!Pixels[i])
+				Pixels[i] = black;
+		}
+		Palette[0].r = 0;
+		Palette[0].g = 0;
+		Palette[0].b = 0;
+		Palette[0].a = 0;
+	}
+	return Pixels;
+#else
+	return NULL;
+#endif
+	unguard;
+}
+
+//==========================================================================
+//
+//	TFileTexture::GetPalette
+//
+//==========================================================================
+
+rgba_t* TFileTexture::GetPalette()
+{
+	guardSlow(TFileTexture::GetPalette);
+	return Palette;
+	unguardSlow;
+}
+
+//==========================================================================
+//
+//	TFileTexture::MakePurgable
+//
+//==========================================================================
+
+void TFileTexture::MakePurgable()
+{
+	guard(TFileTexture::MakePurgable);
+	//	Make pixels and palette cacheable.
+	Z_ChangeTag(Pixels, PU_CACHE);
+	if (Palette)
+	{
+		Z_ChangeTag(Palette, PU_CACHE);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	TFileTexture::Unload
+//
+//==========================================================================
+
+void TFileTexture::Unload()
+{
+	guard(TFileTexture::Unload);
+	if (Pixels)
+	{
+		Z_Free(Pixels);
+		Pixels = NULL;
+	}
+	if (Palette)
+	{
+		Z_Free(Palette);
+		Palette = NULL;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	TPcxFileTexture::TPcxFileTexture
+//
+//==========================================================================
+
+TPcxFileTexture::TPcxFileTexture(int InType, FName InName)
+: TFileTexture(InType, InName)
+{
+}
+
+//==========================================================================
+//
+//	TTgaFileTexture::TTgaFileTexture
+//
+//==========================================================================
+
+TTgaFileTexture::TTgaFileTexture(int InType, FName InName)
+: TFileTexture(InType, InName)
+{
+}
+
+//==========================================================================
+//
+//	TPngFileTexture::TPngFileTexture
+//
+//==========================================================================
+
+TPngFileTexture::TPngFileTexture(int InType, FName InName)
+: TFileTexture(InType, InName)
+{
 }
 
 //==========================================================================
@@ -741,19 +1810,21 @@ void P_InitAnimated()
 	{
 		if (*anim_p & 1)
 		{
-			pic1 = R_CheckTextureNumForName(anim_p + 10);
-			pic2 = R_CheckTextureNumForName(anim_p + 1);
-			// different episode ?
-			if (pic1 == -1 || pic2 == -1)
-				continue;		
+			pic1 = GTextureManager.CheckNumForName(FName(anim_p + 10,
+				FNAME_AddLower8), TEXTYPE_Wall, true, false);
+			pic2 = GTextureManager.CheckNumForName(FName(anim_p + 1,
+				FNAME_AddLower8), TEXTYPE_Wall, true, false);
 		}
 		else
 		{
-			pic1 = R_CheckFlatNumForName(anim_p + 10);
-			pic2 = R_CheckFlatNumForName(anim_p + 1);
-			if (pic1 == -1 || pic2 == -1)
-				continue;
+			pic1 = GTextureManager.CheckNumForName(FName(anim_p + 10,
+				FNAME_AddLower8), TEXTYPE_Flat, true, false);
+			pic2 = GTextureManager.CheckNumForName(FName(anim_p + 1,
+				FNAME_AddLower8), TEXTYPE_Flat, true, false);
 		}
+		// different episode ?
+		if (pic1 == -1 || pic2 == -1)
+			continue;		
 
 		memset(&ad, 0, sizeof(ad));
 		memset(&fd, 0, sizeof(fd));
@@ -800,7 +1871,7 @@ void P_InitAnimated()
 //
 //==========================================================================
 
-static void ParseFTAnim(int AnimType)
+static void ParseFTAnim(int IsFlat)
 {
 	animDef_t 	ad;
 	frameDef_t	fd;
@@ -808,7 +1879,6 @@ static void ParseFTAnim(int AnimType)
 	bool		optional;
 
 	memset(&ad, 0, sizeof(ad));
-	ad.type = AnimType;
 
 	//	Optional flag.
 	optional = false;
@@ -821,20 +1891,8 @@ static void ParseFTAnim(int AnimType)
 
 	//	Name
 	ignore = false;
-	if (AnimType == ANIM_FLAT)
-	{
-		//	Flat
-		ad.index = R_CheckFlatNumForName(sc_String);
-		if (ad.index != -1)
-		{
-			ad.index &= ~TEXF_FLAT;
-		}
-	}
-	else
-	{
-		//	Texture
-		ad.index = R_CheckTextureNumForName(sc_String);
-	}
+	ad.index = GTextureManager.CheckNumForName(FName(sc_String,
+		FNAME_AddLower8), IsFlat ? TEXTYPE_Flat : TEXTYPE_Wall, true, true);
 	if (ad.index == -1)
 	{
 		ignore = true;
@@ -889,18 +1947,8 @@ static void ParseFTAnim(int AnimType)
 		else
 		{
 			SC_MustGetString();
-			if (AnimType == ANIM_FLAT)
-			{
-				fd.index = R_CheckFlatNumForName(sc_String);
-				if (fd.index != -1)
-				{
-					fd.index &= ~TEXF_FLAT;
-				}
-			}
-			else
-			{
-				fd.index = R_CheckTextureNumForName(sc_String);
-			}
+			fd.index = GTextureManager.CheckNumForName(FName(sc_String,
+				FNAME_AddLower8), IsFlat ? TEXTYPE_Flat : TEXTYPE_Wall, true, true);
 			if (fd.index == -1 && !missing)
 			{
 				SC_ScriptError(va("Unknown texture %s", sc_String));
@@ -971,11 +2019,11 @@ static void ParseFTAnims()
 	{
 		if (SC_Compare("flat"))
 		{
-			ParseFTAnim(ANIM_FLAT);
+			ParseFTAnim(true);
 		}
 		else if (SC_Compare("texture"))
 		{
-			ParseFTAnim(ANIM_TEXTURE);
+			ParseFTAnim(false);
 		}
 		else
 		{
@@ -1050,9 +2098,11 @@ void P_InitSwitchList()
 	SC_Open("switches");
 	while (SC_GetString())
 	{
-		t1 = R_CheckTextureNumForName(sc_String);
+		t1 = GTextureManager.CheckNumForName(FName(sc_String,
+			FNAME_AddLower8), TEXTYPE_Wall, true, false);
 		SC_MustGetString();
-		t2 = R_CheckTextureNumForName(sc_String);
+		t2 = GTextureManager.CheckNumForName(FName(sc_String,
+			FNAME_AddLower8), TEXTYPE_Wall, true, false);
 		SC_MustGetString();
 		if ((t1 < 0) || (t2 < 0))
 		{
@@ -1104,15 +2154,7 @@ void R_AnimateSurfaces()
 			}
 			if (!ad->IsRange)
 			{
-				if (ad->type == ANIM_FLAT)
-				{
-					flattranslation[ad->index] = fd.index;
-				}
-				else
-				{ 
-					// Texture
-					texturetranslation[ad->index] = fd.index;
-				}
+				GTextureManager.Textures[ad->index]->TextureTranslation = fd.index;
 			}
 			else
 			{
@@ -1127,43 +2169,16 @@ void R_AnimateSurfaces()
 				}
 				for (int i = 0; i < Range; i++)
 				{
-					int TexNum = ad->index + ad->Backwards ? 
+					GTextureManager.Textures[ad->index + i]->TextureTranslation = ad->index +
+						(ad->Backwards ?
 						(Range - 1 - (ad->CurrentRangeFrame + i) % Range) :
-						((ad->CurrentRangeFrame + i) % Range);
-					if (ad->type == ANIM_FLAT)
-					{
-						flattranslation[ad->index + i] = TexNum;
-					}
-					else
-					{ 
-						// Texture
-						texturetranslation[ad->index + i] = TexNum;
-					}
+						((ad->CurrentRangeFrame + i) % Range));
 				}
 			}
 		}
 	}
 
 	R_AnimateSky();
-	unguard;
-}
-
-//==========================================================================
-//
-//	R_TextureAnimation
-//
-//==========================================================================
-
-int R_TextureAnimation(int InTex)
-{
-	guard(R_TextureAnimation);
-	int tex = InTex;
-	if (tex & TEXF_SKY_MAP)
-		return tex;
-	if (tex & TEXF_FLAT)
-		return TEXF_FLAT | flattranslation[tex & ~TEXF_FLAT];
-	else
-		return texturetranslation[tex];
 	unguard;
 }
 #endif
@@ -1177,410 +2192,20 @@ int R_TextureAnimation(int InTex)
 void R_InitTexture()
 {
 	guard(R_InitTexture);
-	if (IsStrifeTexture())
-	{
-		GCon->Log(NAME_Init, "Strife textures detected");
-		InitTextures2();
-	}
-	else
-	{
-		InitTextures();
-	}
-	InitFlats();
-	InitSpriteLumps();
-	InitTranslationTables();
+	GTextureManager.Init();
 	InitFTAnims(); // Init flat and texture animations
-
-    skyflatnum = R_CheckFlatNumForName("F_SKY");
-	if (skyflatnum < 0)
-	    skyflatnum = R_CheckFlatNumForName("F_SKY001");
-	if (skyflatnum < 0)
-	    skyflatnum = R_FlatNumForName("F_SKY1");
 	unguard;
 }
-
-#ifdef CLIENT
-
-//==========================================================================
-//
-//	R_SetupPalette
-//
-//==========================================================================
-
-void R_SetupPalette(int palnum, const char *name)
-{
-	guard(R_SetupPalette);
-	byte *psrc = (byte*)W_CacheLumpName(name, PU_TEMP);
-	rgba_t *pal = r_palette[palnum];
-	//	We use color 0 as transparent color, so we must find an alternate
-	// index for black color. In Doom, Heretic and Strife there is another
-	// black color, in Hexen it's almost black.
-	//	I think that originaly Doom uses color 255 as transparent color, but
-	// utilites created by others uses the alternate black color and these
-	// graphics can contain pixels of color 255.
-	//	Heretic and Hexen also uses color 255 as transparent, even more - in
-	// colormaps it's maped to color 0. Posibly this can cause problems with
-	// modified graphics.
-	//	Strife uses color 0 as transparent. I already had problems with fact
-	// that color 255 is normal color, now there shouldn't be any problems.
-	int best_dist = 0x10000;
-	for (int i = 0; i < 256; i++)
-	{
-		pal[i].r = *psrc++;
-		pal[i].g = *psrc++;
-		pal[i].b = *psrc++;
-		if (i == 0)
-		{
-			pal[i].a = 0;
-		}
-		else
-		{
-			pal[i].a = 255;
-			int dist = pal[i].r * pal[i].r + pal[i].g * pal[i].g +
-				pal[i].b * pal[i].b;
-			if (dist < best_dist)
-			{
-				r_black_color[palnum] = i;
-				best_dist = dist;
-			}
-		}
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	R_InitData
-//
-//==========================================================================
-
-void R_InitData()
-{
-	guard(R_InitData);
-	R_SetupPalette(0, "PLAYPAL");
-	unguard;
-}
-
-//==========================================================================
-//
-// 	R_PrecacheLevel
-//
-// 	Preloads all relevant graphics for the level.
-//
-//==========================================================================
-
-void R_PrecacheLevel()
-{
-	guard(R_PrecacheLevel);
-	int			i;
-
-	if (cls.demoplayback)
-		return;
-
-#ifdef __GNUC__
-	char flatpresent[numflats];
-	char texturepresent[numtextures];
-#else
-	char* flatpresent = (char*)Z_StrMalloc(numflats);
-	char* texturepresent = (char*)Z_StrMalloc(numtextures);
-#endif
-	memset(flatpresent, 0, numflats);
-	memset(texturepresent, 0, numtextures);
-
-#define MARK(tex) \
-if (tex & TEXF_FLAT)\
-{\
-	flatpresent[tex & ~TEXF_FLAT] = true;\
-}\
-else\
-{\
-	texturepresent[tex] = true;\
-}
-	for (i = 0; i < GClLevel->NumSectors; i++)
-	{
-		MARK(GClLevel->Sectors[i].floor.pic)
-		MARK(GClLevel->Sectors[i].ceiling.pic)
-	}
-	
-	for (i = 0; i < GClLevel->NumSides; i++)
-	{
-		MARK(GClLevel->Sides[i].toptexture)
-		MARK(GClLevel->Sides[i].midtexture)
-		MARK(GClLevel->Sides[i].bottomtexture)
-	}
-
-	// Precache flats.
-	for (i = 0; i < numflats; i++)
-	{
-		if (flatpresent[i])
-		{
-			Drawer->SetFlat(i);
-		}
-	}
-
-	// Precache textures.
-	for (i = 0; i < numtextures; i++)
-	{
-		if (texturepresent[i])
-		{
-			Drawer->SetTexture(i);
-		}
-	}
-
-#ifndef __GNUC__
-	Z_Free(flatpresent);
-	Z_Free(texturepresent);
-#endif
-	unguard;
-}
-
-//==========================================================================
-//
-//	R_RegisterPic
-//
-//==========================================================================
-
-int R_RegisterPic(const char *name, int type)
-{
-	guard(R_RegisterPic);
-	char tmpName[MAX_VPATH];
-	if (type == PIC_PATCH || type == PIC_RAW)
-	{
-		W_CleanupName(name, tmpName);
-		if (W_CheckNumForName(tmpName) < 0 &&
-			W_CheckNumForName(tmpName, WADNS_Sprites) < 0)
-		{
-			GCon->Logf("R_RegisterPic: Pic %s not found", tmpName);
-			return -1;
-		}
-	}
-	else
-	{
-		strcpy(tmpName, name);
-	}
-	for (int i = 0; i < MAX_PICS; i++)
-	{
-		if (!pic_list[i].name[0])
-		{
-			strcpy(pic_list[i].name, tmpName);
-			pic_list[i].type = type;
-			pic_list[i].palnum = 0;
-			return i;
-		}
-		if (!stricmp(pic_list[i].name, tmpName))
-		{
-			return i;
-		}
-	}
-	GCon->Log(NAME_Dev, "R_RegisterPic: No more free slots");
-	return -1;
-	unguard;
-}
-
-//==========================================================================
-//
-//	R_RegisterPicPal
-//
-//==========================================================================
-
-int R_RegisterPicPal(const char *name, int type, const char *palname)
-{
-	guard(R_RegisterPicPal);
-	char tmpName[MAX_VPATH];
-	if (type == PIC_PATCH || type == PIC_RAW)
-	{
-		W_CleanupName(name, tmpName);
-		if (W_CheckNumForName(tmpName) < 0 &&
-			W_CheckNumForName(tmpName, WADNS_Sprites) < 0)
-		{
-			GCon->Logf("R_RegisterPic: Pic %s not found", tmpName);
-			return -1;
-		}
-	}
-	else
-	{
-		strcpy(tmpName, name);
-	}
-	for (int i = 0; i < MAX_PICS; i++)
-	{
-		if (!pic_list[i].name[0])
-		{
-			strcpy(pic_list[i].name, tmpName);
-			pic_list[i].type = type;
-			pic_list[i].palnum = 1;
-			R_SetupPalette(1, palname);
-			return i;
-		}
-		if (!stricmp(pic_list[i].name, tmpName))
-		{
-			return i;
-		}
-	}
-	GCon->Log(NAME_Dev, "R_RegisterPic: No more free slots");
-	return -1;
-	unguard;
-}
-
-//==========================================================================
-//
-//	R_GetPicInfo
-//
-//==========================================================================
-
-void R_GetPicInfo(int handle, picinfo_t *info)
-{
-	guard(R_GetPicInfo);
-	if (handle < 0)
-	{
-		memset(info, 0, sizeof(*info));
-	}
-	else
-	{
-		if (!pic_list[handle].width)
-		{
-			int LumpNum;
-			patch_t *patch;
-
-			switch (pic_list[handle].type)
-			{
-			case PIC_PATCH:
-				LumpNum = W_CheckNumForName(pic_list[handle].name);
-				//	Some inventory pics are inside sprites.
-				if (LumpNum < 0)
-					LumpNum = W_GetNumForName(pic_list[handle].name, 
-						WADNS_Sprites);
-				patch = (patch_t*)W_CacheLumpNum(LumpNum, PU_CACHE);
-				pic_list[handle].width = LittleShort(patch->width);
-				pic_list[handle].height = LittleShort(patch->height);
-				pic_list[handle].xoffset = LittleShort(patch->leftoffset);
-				pic_list[handle].yoffset = LittleShort(patch->topoffset);
-				break;
-
-			case PIC_RAW:
-				pic_list[handle].width = 320;
-				pic_list[handle].height = 200;
-				pic_list[handle].xoffset = 0;
-				pic_list[handle].yoffset = 0;
-				break;
-			}
-		}
-		info->width = pic_list[handle].width;
-		info->height = pic_list[handle].height;
-		info->xoffset = pic_list[handle].xoffset;
-		info->yoffset = pic_list[handle].yoffset;
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	R_DrawPic
-//
-//==========================================================================
-
-void R_DrawPic(int x, int y, int handle, int trans)
-{
-	guard(R_DrawPic);
-	picinfo_t	info;
-
-	if (handle < 0)
-	{
-		return;
-	}
-
-	R_GetPicInfo(handle, &info);
-	x -= info.xoffset;
-	y -= info.yoffset;
-	Drawer->DrawPic(fScaleX * x, fScaleY * y,
-		fScaleX * (x + info.width), fScaleY * (y + info.height),
-		0, 0, info.width, info.height, handle, trans);
-	unguard;
-}
-
-//==========================================================================
-//
-//	R_DrawShadowedPic
-//
-//==========================================================================
-
-void R_DrawShadowedPic(int x, int y, int handle)
-{
-	guard(R_DrawShadowedPic);
-	picinfo_t	info;
-
-	if (handle < 0)
-	{
-		return;
-	}
-
-	R_GetPicInfo(handle, &info);
-	x -= info.xoffset;
-	y -= info.yoffset;
-	Drawer->DrawPicShadow(fScaleX * (x + 2), fScaleY * (y + 2),
-		fScaleX * (x + 2 + info.width), fScaleY * (y + 2 + info.height),
-		0, 0, info.width, info.height, handle, 160);
-	Drawer->DrawPic(fScaleX * x, fScaleY * y,
-		fScaleX * (x + info.width), fScaleY * (y + info.height),
-		0, 0, info.width, info.height, handle, 0);
-	unguard;
-}
-
-//==========================================================================
-//
-//  R_FillRectWithFlat
-//
-// 	Fills rectangle with flat.
-//
-//==========================================================================
-
-void R_FillRectWithFlat(int DestX, int DestY, int width, int height, const char* fname)
-{
-	guard(R_FillRectWithFlat);
-	Drawer->FillRectWithFlat(fScaleX * DestX, fScaleY * DestY,
-		fScaleX * (DestX + width), fScaleY * (DestY + height),
-		0, 0, width, height, fname);
-	unguard;
-}
-
-//==========================================================================
-//
-//	V_DarkenScreen
-//
-//  Fade all the screen buffer, so that the menu is more readable,
-// especially now that we use the small hufont in the menus...
-//
-//==========================================================================
-
-void V_DarkenScreen(int darkening)
-{
-	guard(V_DarkenScreen);
-	Drawer->ShadeRect(0, 0, ScreenWidth, ScreenHeight, darkening);
-	unguard;
-}
-
-//==========================================================================
-//
-//	R_ShadeRect
-//
-//==========================================================================
-
-void R_ShadeRect(int x, int y, int width, int height, int shade)
-{
-	guard(R_ShadeRect);
-	Drawer->ShadeRect((int)(x * fScaleX), (int)(y * fScaleY),
-		(int)((x + width) * fScaleX) - (int)(x * fScaleX),
-		(int)((y + height) * fScaleY) - (int)(y * fScaleY), shade);
-	unguard;
-}
-
-#endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2005/05/26 16:50:15  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.26  2005/05/03 15:00:11  dj_jl
 //	Moved switch list, animdefs enhancements.
-//
+//	
 //	Revision 1.25  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
 //	

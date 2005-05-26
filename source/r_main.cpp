@@ -619,6 +619,236 @@ void R_RenderPlayerView(void)
 
 //==========================================================================
 //
+//	R_DrawPic
+//
+//==========================================================================
+
+void R_DrawPic(int x, int y, int handle, int trans)
+{
+	guard(R_DrawPic);
+	picinfo_t	info;
+
+	if (handle < 0)
+	{
+		return;
+	}
+
+	GTextureManager.GetTextureInfo(handle, &info);
+	x -= info.xoffset;
+	y -= info.yoffset;
+	Drawer->DrawPic(fScaleX * x, fScaleY * y,
+		fScaleX * (x + info.width), fScaleY * (y + info.height),
+		0, 0, info.width, info.height, handle, trans);
+	unguard;
+}
+
+//==========================================================================
+//
+//	R_DrawShadowedPic
+//
+//==========================================================================
+
+void R_DrawShadowedPic(int x, int y, int handle)
+{
+	guard(R_DrawShadowedPic);
+	picinfo_t	info;
+
+	if (handle < 0)
+	{
+		return;
+	}
+
+	GTextureManager.GetTextureInfo(handle, &info);
+	x -= info.xoffset;
+	y -= info.yoffset;
+	Drawer->DrawPicShadow(fScaleX * (x + 2), fScaleY * (y + 2),
+		fScaleX * (x + 2 + info.width), fScaleY * (y + 2 + info.height),
+		0, 0, info.width, info.height, handle, 160);
+	Drawer->DrawPic(fScaleX * x, fScaleY * y,
+		fScaleX * (x + info.width), fScaleY * (y + info.height),
+		0, 0, info.width, info.height, handle, 0);
+	unguard;
+}
+
+//==========================================================================
+//
+//  R_FillRectWithFlat
+//
+// 	Fills rectangle with flat.
+//
+//==========================================================================
+
+void R_FillRectWithFlat(int DestX, int DestY, int width, int height, const char* fname)
+{
+	guard(R_FillRectWithFlat);
+	Drawer->FillRectWithFlat(fScaleX * DestX, fScaleY * DestY,
+		fScaleX * (DestX + width), fScaleY * (DestY + height),
+		0, 0, width, height, fname);
+	unguard;
+}
+
+//==========================================================================
+//
+//	V_DarkenScreen
+//
+//  Fade all the screen buffer, so that the menu is more readable,
+// especially now that we use the small hufont in the menus...
+//
+//==========================================================================
+
+void V_DarkenScreen(int darkening)
+{
+	guard(V_DarkenScreen);
+	Drawer->ShadeRect(0, 0, ScreenWidth, ScreenHeight, darkening);
+	unguard;
+}
+
+//==========================================================================
+//
+//	R_ShadeRect
+//
+//==========================================================================
+
+void R_ShadeRect(int x, int y, int width, int height, int shade)
+{
+	guard(R_ShadeRect);
+	Drawer->ShadeRect((int)(x * fScaleX), (int)(y * fScaleY),
+		(int)((x + width) * fScaleX) - (int)(x * fScaleX),
+		(int)((y + height) * fScaleY) - (int)(y * fScaleY), shade);
+	unguard;
+}
+
+//==========================================================================
+//
+// 	R_PrecacheLevel
+//
+// 	Preloads all relevant graphics for the level.
+//
+//==========================================================================
+
+void R_PrecacheLevel()
+{
+	guard(R_PrecacheLevel);
+	int			i;
+
+	if (cls.demoplayback)
+		return;
+
+#ifdef __GNUC__
+	char texturepresent[GTextureManager.Textures.Num()];
+#else
+	char* texturepresent = (char*)Z_StrMalloc(GTextureManager.Textures.Num());
+#endif
+	memset(texturepresent, 0, GTextureManager.Textures.Num());
+
+	for (i = 0; i < GClLevel->NumSectors; i++)
+	{
+		texturepresent[GClLevel->Sectors[i].floor.pic] = true;
+		texturepresent[GClLevel->Sectors[i].ceiling.pic] = true;
+	}
+	
+	for (i = 0; i < GClLevel->NumSides; i++)
+	{
+		texturepresent[GClLevel->Sides[i].toptexture] = true;
+		texturepresent[GClLevel->Sides[i].midtexture] = true;
+		texturepresent[GClLevel->Sides[i].bottomtexture] = true;
+	}
+
+	// Precache textures.
+	for (i = 1; i < GTextureManager.Textures.Num(); i++)
+	{
+		if (texturepresent[i])
+		{
+			Drawer->SetTexture(i);
+		}
+	}
+
+#ifndef __GNUC__
+	Z_Free(texturepresent);
+#endif
+	unguard;
+}
+
+//==========================================================================
+//
+// 	InitTranslationTables
+//
+//==========================================================================
+
+static void InitTranslationTables()
+{
+	guard(InitTranslationTables);
+	int Lump = W_GetNumForName("TRANSLAT");
+	translationtables = (byte*)W_CacheLumpNum(Lump, PU_STATIC);
+	int TabLen = W_LumpLength(Lump);
+	for (int i = 0; i < TabLen; i++)
+	{
+		if ((i & 0xff) == 0)
+		{
+			//	Make sure that 0 always maps to 0.
+			translationtables[i] = 0;
+		}
+		else
+		{
+			//	Make sure that normal colours doesn't map to colour 0.
+			if (translationtables[i] == 0)
+				translationtables[i] = r_black_colour;
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	R_InitData
+//
+//==========================================================================
+
+void R_InitData()
+{
+	guard(R_InitData);
+	//	We use colour 0 as transparent colour, so we must find an alternate
+	// index for black colour. In Doom, Heretic and Strife there is another
+	// black colour, in Hexen it's almost black.
+	//	I think that originaly Doom uses colour 255 as transparent color,
+	// but utilites created by others uses the alternate black colour and
+	// these graphics can contain pixels of color 255.
+	//	Heretic and Hexen also uses color 255 as transparent, even more - in
+	// colourmaps it's maped to colour 0. Posibly this can cause problems
+	// with modified graphics.
+	//	Strife uses color 0 as transparent. I already had problems with fact
+	// that colour 255 is normal color, now there shouldn't be any problems.
+	byte* psrc = (byte*)W_CacheLumpName("PLAYPAL", PU_TEMP);
+	rgba_t* pal = r_palette;
+	int best_dist = 0x10000;
+	for (int i = 0; i < 256; i++)
+	{
+		pal[i].r = *psrc++;
+		pal[i].g = *psrc++;
+		pal[i].b = *psrc++;
+		if (i == 0)
+		{
+			pal[i].a = 0;
+		}
+		else
+		{
+			pal[i].a = 255;
+			int dist = pal[i].r * pal[i].r + pal[i].g * pal[i].g +
+				pal[i].b * pal[i].b;
+			if (dist < best_dist)
+			{
+				r_black_colour = i;
+				best_dist = dist;
+			}
+		}
+	}
+
+	InitTranslationTables();
+	unguard;
+}
+
+//==========================================================================
+//
 //	COMMAND TimeRefresh
 //
 //	For program optimization
@@ -629,11 +859,13 @@ COMMAND(TimeRefresh)
 {
 	guard(COMMAND TimeRefresh);
 	int			i;
-	double		start, stop, time;
+	double		start, stop, time, RenderTime, UpdateTime;
 	float		startangle;
 
 	startangle = cl.viewangles.yaw;
-	
+
+	RenderTime = 0;
+	UpdateTime = 0;
 	start = Sys_Time();
 	for (i = 0; i < 128; i++)
 	{
@@ -641,14 +873,19 @@ COMMAND(TimeRefresh)
 
 		Drawer->StartUpdate();
 
+		RenderTime -= Sys_Time();
 		R_RenderPlayerView();
+		RenderTime += Sys_Time();
 
+		UpdateTime -= Sys_Time();
 		Drawer->Update();
+		UpdateTime += Sys_Time();
 	}
 	stop = Sys_Time();
 	time = stop - start;
-	GCon->Logf("%f seconds (%f fps)\n", time, 128 / time);
-	
+	GCon->Logf("%f seconds (%f fps)", time, 128 / time);
+	GCon->Logf("Render time %f, update time %f", RenderTime, UpdateTime);
+
 	cl.viewangles.yaw = startangle;
 	unguard;
 }
@@ -705,9 +942,12 @@ void V_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2005/05/26 16:50:14  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.27  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.26  2004/08/21 17:22:15  dj_jl
 //	Changed rendering driver declaration.
 //	

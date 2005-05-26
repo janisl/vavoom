@@ -54,7 +54,6 @@ enum
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void T_DrawTextW(int x, int y, const char* String, int w);
 VEntity *SV_SpawnMobj(VClass *Class);
 void SV_ForceLightning(void);
 void SV_SetFloorPic(int i, int texture);
@@ -865,7 +864,8 @@ PF(CheckTextureNumForName)
 	int		name;
 
 	name = Pop();
-	Push(R_CheckTextureNumForName((char*)name));
+	Push(GTextureManager.CheckNumForName(FName((char*)name, FNAME_AddLower8),
+		TEXTYPE_Wall, true, false));
 }
 
 //==========================================================================
@@ -879,7 +879,8 @@ PF(TextureNumForName)
 	int		name;
 
 	name = Pop();
-	Push(R_TextureNumForName((char*)name));
+	Push(GTextureManager.NumForName(FName((char*)name, FNAME_AddLower8),
+		TEXTYPE_Wall, true, false));
 }
 
 //==========================================================================
@@ -893,7 +894,8 @@ PF(CheckFlatNumForName)
 	int		name;
 
 	name = Pop();
-	Push(R_CheckFlatNumForName((char*)name));
+	Push(GTextureManager.CheckNumForName(FName((char*)name,
+		FNAME_AddLower8), TEXTYPE_Flat, true, false));
 }
 
 //==========================================================================
@@ -907,7 +909,8 @@ PF(FlatNumForName)
 	int		name;
 
 	name = Pop();
-	Push(R_FlatNumForName((char*)name));
+	Push(GTextureManager.NumForName(FName((char*)name, FNAME_AddLower8),
+		TEXTYPE_Flat, true, false));
 }
 
 //==========================================================================
@@ -921,7 +924,7 @@ PF(TextureHeight)
 	int			pic;
 
 	pic = Pop();
-	Pushf(R_TextureHeight(pic));
+	Pushf(GTextureManager.TextureHeight(pic));
 }
 
 //**************************************************************************
@@ -2343,7 +2346,8 @@ PF(R_RegisterPic)
 
 	type = Pop();
 	name = Pop();
-	Push(R_RegisterPic((char*)name, type));
+	Push(GTextureManager.AddPatch(FName((char*)name, FNAME_AddLower8),
+		TEXTYPE_Pic));
 }
 
 //==========================================================================
@@ -2361,7 +2365,8 @@ PF(R_RegisterPicPal)
 	palname = Pop();
 	type = Pop();
 	name = Pop();
-	Push(R_RegisterPicPal((char*)name, type, (char*)palname));
+	Push(GTextureManager.AddRawWithPal(FName((char*)name, FNAME_AddLower8),
+		FName((char*)palname, FNAME_AddLower8)));
 }
 
 //==========================================================================
@@ -2377,7 +2382,7 @@ PF(R_GetPicInfo)
 
 	info = (picinfo_t*)Pop();
 	handle = Pop();
-	R_GetPicInfo(handle, info);
+	GTextureManager.GetTextureInfo(handle, info);
 }
 
 //==========================================================================
@@ -3232,9 +3237,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.55  2005/05/26 16:53:59  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.54  2005/03/28 07:28:19  dj_jl
 //	Transfer lighting and other BOOM stuff.
-//
+//	
 //	Revision 1.53  2005/03/16 15:04:44  dj_jl
 //	More work on line specials.
 //	

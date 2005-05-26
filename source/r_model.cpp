@@ -469,7 +469,7 @@ static void LoadTGA(const char *filename, void **bufptr)
 	else
 	{
 		SkinBPP = 32;
-		SkinData = (byte*)Z_Malloc(SkinWidth * SkinHeight * 4, PU_HIGH, NULL);
+		SkinData = (byte*)Z_Malloc(SkinWidth * SkinHeight * 4, PU_HIGH, bufptr);
 	}
 
 	if (hdr->img_type == 1 && hdr->bpp == 8 && hdr->pal_type == 1)
@@ -852,7 +852,7 @@ static void MyPNGReadFunc(png_structp png_ptr, png_bytep data, png_size_t length
 //
 //==========================================================================
 
-static void LoadPNG(const char *filename, void**)
+static void LoadPNG(const char *filename, void** bufptr)
 {
 	guard(LoadPNG);
 	void*		SrcData;
@@ -917,7 +917,7 @@ static void LoadPNG(const char *filename, void**)
 
 	//	Set up unpacking buffer and row pointers.
 	SkinBPP = 32;
-	SkinData = (byte*)Z_Malloc(SkinWidth * SkinHeight * 4, PU_HIGH, NULL);
+	SkinData = (byte*)Z_Malloc(SkinWidth * SkinHeight * 4, PU_HIGH, bufptr);
 	png_bytep* RowPtrs = (png_bytep*)Z_Malloc(SkinHeight * 4, PU_HIGH, NULL);
 	for (i = 0; i < SkinHeight; i++)
 		RowPtrs[i] = SkinData + i * SkinWidth * 4;
@@ -1004,9 +1004,12 @@ void R_PositionWeaponModel(clmobj_t &wpent, model_t *wpmodel, int InFrame)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2005/05/26 16:50:14  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.12  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.11  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
 //	

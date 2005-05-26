@@ -32,62 +32,15 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#include "fgfxdefs.h"
 #include "fmd2defs.h"
 
 // MACROS ------------------------------------------------------------------
 
-#define MAX_PICS		512
-
-#define MAX_PALETTES	8
-
-//	Flag in texture number indicating that this texture is a flat. This
-// allows to use wall textures on floors / ceilings and flats on walls
-#define TEXF_FLAT		0x8000
-#define TEXF_SKY_MAP	0x10000		// External sky graphic
-
 // TYPES -------------------------------------------------------------------
-
-//	A maptexturedef_t describes a rectangular texture, which is composed of
-// one or more mappatch_t structures that arrange graphic patches
-
-struct texpatch_t
-{
-    // Block origin (allways UL),
-    // which has allready accounted
-    // for the internal origin of the patch.
-    short		originx;
-    short		originy;
-    int			patch;
-};
-
-struct texdef_t
-{
-    // Keep name for switch changing, etc.
-    char		name[12];
-    short		width;
-    short		height;
-
-	//	Scaling
-	float		SScale;
-	float		TScale;
-
-    // All the patches[patchcount]
-    //are drawn back to front into the cached texture.
-    short		patchcount;
-    texpatch_t	patches[1];
-};
-
-struct skymap_t
-{
-	char name[128];
-	int width;
-	int height;
-};
 
 class TClipPlane : public TPlane
 {
- public:
+public:
 	TClipPlane		*next;
 
 	int				clipflag;
@@ -95,17 +48,6 @@ class TClipPlane : public TPlane
 	TVec			exit;
 	boolean			entered;
 	boolean			exited;
-};
-
-struct pic_info_t
-{
-	char	name[MAX_VPATH];
-	int		type;
-	int		palnum;
-	int		width;
-	int		height;
-	int		xoffset;
-	int		yoffset;
 };
 
 struct texinfo_t
@@ -137,33 +79,60 @@ struct surface_t
 	TVec			verts[1];
 };
 
+enum
+{
+	TEXFMT_8,		//	Paletised texture in main palette.
+	TEXFMT_8Pal,	//	Paletised texture with custom palette.
+	TEXFMT_RGBA,	//	Truecolor texture.
+};
+
+class TTexture
+{
+public:
+	int			Type;
+	int			Format;
+	FName		Name;
+	int			Width;
+	int			Height;
+	int			SOffset;
+	int			TOffset;
+	bool		bNoRemap0;
+	float		SScale;				//	Scaling
+	float		TScale;
+	int			TextureTranslation;	// Animation
+	union
+	{
+		dword	DriverHandle;
+		void*	DriverData;
+	};
+
+	TTexture();
+	virtual ~TTexture();
+
+	int GetWidth() { if (Width == -1) GetDimensions(); return Width; }
+	int GetHeight() { if (Width == -1) GetDimensions(); return Height; }
+	virtual void GetDimensions();
+	virtual void SetFrontSkyLayer();
+	virtual byte* GetPixels() = 0;
+	virtual byte* GetPixels8();
+	virtual rgba_t* GetPalette();
+	virtual void MakePurgable() = 0;
+	virtual void Unload() = 0;
+	rgba_t* GetHighResPixels(int& HRWidth, int& HRHeight);
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void R_DrawViewBorder(void);
 
 bool R_BuildLightMap(surface_t*, int);
 
-int R_TextureAnimation(int);
-
 void *Mod_Extradata(model_t *mod);	// handles caching
 void Mod_LoadSkin(const char *name, void **bufptr);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-extern int				numtextures;
-extern texdef_t**		textures;
-extern int				numflats;
-extern int*				flatlumps;
-extern int				numspritelumps;
-extern int*				spritelumps;
-extern int*				spritewidth;
-extern int*				spriteheight;
-extern int*				spriteoffset;
-extern int*				spritetopoffset;
 extern byte*			translationtables;
-extern pic_info_t		pic_list[MAX_PICS];
-extern skymap_t			*skymaps;
-extern int				numskymaps;
 
 //
 // POV related.
@@ -210,14 +179,8 @@ extern dword			blockaddlightsr[18 * 18];
 extern dword			blockaddlightsg[18 * 18];
 extern dword			blockaddlightsb[18 * 18];
 
-extern rgba_t			r_palette[MAX_PALETTES][256];
-extern byte				r_black_color[MAX_PALETTES];
-
-extern int				SkinWidth;
-extern int				SkinHeight;
-extern int				SkinBPP;
-extern byte				*SkinData;
-extern rgba_t			SkinPal[256];
+extern rgba_t			r_palette[256];
+extern byte				r_black_colour;
 
 extern int				usegamma;
 extern byte				gammatable[5][256];
@@ -229,9 +192,12 @@ extern float			PixelAspect;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2005/05/26 16:50:15  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.17  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
-//
+//	
 //	Revision 1.16  2002/03/28 17:58:02  dj_jl
 //	Added support for scaled textures.
 //	

@@ -507,12 +507,14 @@ static void AM_loadPics(void)
     {
 	    for (i = 0; i < 10; i++)
     	{
-			marknums[i] = R_RegisterPic(va("AMMNUM%d", i), PIC_PATCH);
+			marknums[i] = GTextureManager.AddPatch(FName(va("AMMNUM%d", i),
+				FNAME_AddLower8), TEXTYPE_Pic);
     	}
 		use_marks = true;
 	}
 
-	mappic = R_RegisterPic("AUTOPAGE", PIC_RAW);
+	mappic = GTextureManager.AddPatch(FName("AUTOPAGE", FNAME_AddLower8),
+		TEXTYPE_Pic);
 	mapheight = W_LumpLength(W_GetNumForName("AUTOPAGE")) / 320;
 }
 
@@ -1523,9 +1525,12 @@ void AM_Drawer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2005/05/26 16:52:29  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.15  2003/07/11 16:45:19  dj_jl
 //	Made array of players with pointers
-//
+//	
 //	Revision 1.14  2002/09/07 16:31:50  dj_jl
 //	Added Level class.
 //	

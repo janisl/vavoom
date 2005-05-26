@@ -895,7 +895,8 @@ void VSoftwareDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, const char* fname)
 {
 	guard(VSoftwareDrawer::FillRectWithFlat);
-	SetFlat(R_FlatNumForName(fname));
+	SetTexture(GTextureManager.NumForName(FName(fname, FNAME_AddLower8),
+		TEXTYPE_Flat, true, true));
 	picsource = (byte*)cacheblock;
 	if (ScreenBPP == 8)
 	{
@@ -989,8 +990,8 @@ void VSoftwareDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 	int lump, int translation, boolean flip)
 {
 	guard(VSoftwareDrawer::DrawSpriteLump);
-	float w = spritewidth[lump];
-	float h = spriteheight[lump];
+	float w = GTextureManager.Textures[lump]->GetWidth();
+	float h = GTextureManager.Textures[lump]->GetHeight();
 
 	SetSpriteLump(lump, 0xffffffff, translation);
 	picsource = (byte*)cacheblock;
@@ -1312,9 +1313,12 @@ void VSoftwareDrawer::EndAutomap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2005/05/26 16:50:14  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.14  2002/11/16 17:11:15  dj_jl
 //	Improving software driver class.
-//
+//	
 //	Revision 1.13  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
 //	

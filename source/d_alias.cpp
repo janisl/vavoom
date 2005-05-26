@@ -411,20 +411,20 @@ void VSoftwareDrawer::AliasSetUpTransform(const TAVec &angles, int frame, int tr
 
 void VSoftwareDrawer::AliasSetupSkin(int skin_index, const char *skin)
 {
-	mskin_t		*pskins;
-
+	int SkinID;
 	if (skin && *skin)
 	{
-		d_affinetridesc.pskin = SetSkin(skin);
+		SkinID = GTextureManager.AddFileTexture(FName(skin), TEXTYPE_Skin);
 	}
 	else
 	{
-		pskins = (mskin_t *)((byte *)pmdl + pmdl->ofsskins);
+		mskin_t* pskins = (mskin_t *)((byte *)pmdl + pmdl->ofsskins);
 		if (skin_index < 0 || skin_index > pmdl->numskins)
-			d_affinetridesc.pskin = SetSkin(pskins[0].name);
+			SkinID = GTextureManager.AddFileTexture(FName(pskins[0].name), TEXTYPE_Skin);
 		else
-			d_affinetridesc.pskin = SetSkin(pskins[skin_index].name);
+			SkinID = GTextureManager.AddFileTexture(FName(pskins[skin_index].name), TEXTYPE_Skin);
 	}
+	d_affinetridesc.pskin = SetPic(SkinID);
 	d_affinetridesc.skinwidth = pmdl->skinwidth;
 	d_affinetridesc.skinheight = pmdl->skinheight;
 }
@@ -803,9 +803,12 @@ extern "C" void D_AliasProjectFinalVert(finalvert_t *fv, auxvert_t *av)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2005/05/26 16:50:14  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.15  2005/05/03 14:57:00  dj_jl
 //	Added support for specifying skin index.
-//
+//	
 //	Revision 1.14  2002/11/16 17:11:15  dj_jl
 //	Improving software driver class.
 //	

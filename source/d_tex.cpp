@@ -30,7 +30,6 @@
 // MACROS ------------------------------------------------------------------
 
 #define SPRITE_CACHE_SIZE	256
-#define	MAX_SKIN_CACHE		256
 
 // TYPES -------------------------------------------------------------------
 
@@ -40,12 +39,6 @@ struct sprite_cache_t
 	dword		light;
 	int			lump;
 	int			tnum;
-};
-
-struct skincache_t
-{
-	char		name[64];
-	void		*data;
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -62,17 +55,8 @@ miptexture_t		*miptexture;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static miptexture_t**	texturedata;
-static miptexture_t**	flatdata;
-static void**			skymapdata;
-
 static sprite_cache_t	sprite_cache[SPRITE_CACHE_SIZE];
 static int				sprite_cache_count;
-
-static skincache_t		skincache[MAX_SKIN_CACHE];
-
-static byte				*picdata[MAX_PICS];
-static int				picwidth[MAX_PICS];
 
 // CODE --------------------------------------------------------------------
 
@@ -82,19 +66,8 @@ static int				picwidth[MAX_PICS];
 //
 //==========================================================================
 
-void VSoftwareDrawer::InitTextures(void)
+void VSoftwareDrawer::InitTextures()
 {
-	guard(VSoftwareDrawer::InitTextures);
-	//	Textures
-	texturedata = Z_CNew<miptexture_t*>(numtextures);
-	//	Flats
-	flatdata = Z_CNew<miptexture_t*>(numflats);
-	//	Skyboxes
-	if (numskymaps)
-	{
-		skymapdata = Z_CNew<void *>(numskymaps);
-	}
-	unguard;
 }
 
 //==========================================================================
@@ -103,7 +76,7 @@ void VSoftwareDrawer::InitTextures(void)
 //
 //==========================================================================
 
-void VSoftwareDrawer::FlushTextureCaches(void)
+void VSoftwareDrawer::FlushTextureCaches()
 {
 	guard(VSoftwareDrawer::FlushTextureCaches);
 	int		i;
@@ -116,13 +89,156 @@ void VSoftwareDrawer::FlushTextureCaches(void)
 		}
 	}
 
-	for (i = 0; i < numskymaps; i++)
+	for (i = 0; i < GTextureManager.Textures.Num(); i++)
 	{
-		if (skymapdata[i])
+		if (GTextureManager.Textures[i]->Type == TEXTYPE_SkyMap &&
+			GTextureManager.Textures[i]->DriverData)
 		{
-			Z_Free(skymapdata[i]);
+			Z_Free(GTextureManager.Textures[i]->DriverData);
+			GTextureManager.Textures[i]->DriverData = NULL;
 		}
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+// 	VSoftwareDrawer::SetTexture
+//
+//==========================================================================
+
+void VSoftwareDrawer::SetTexture(int tex)
+{
+	guard(VSoftwareDrawer::SetTexture);
+	if ((dword)tex >= (dword)GTextureManager.Textures.Num())
+		Sys_Error("Invalid texture num %d\n", tex);
+
+	if (GTextureManager.Textures[tex]->Type == TEXTYPE_SkyMap)
+	{
+		if (!GTextureManager.Textures[tex]->DriverData)
+		{
+			LoadSkyMap(tex);
+		}
+		cacheblock = (byte*)GTextureManager.Textures[tex]->DriverData;
+		cachewidth = GTextureManager.Textures[tex]->GetWidth();
+		return;
+	}
+
+	if (!GTextureManager.Textures[tex]->DriverData)
+	{
+		GenerateTexture(tex);
+	}
+
+	miptexture = (miptexture_t*)GTextureManager.Textures[tex]->DriverData;
+	cacheblock = (byte*)miptexture + miptexture->offsets[0];
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSoftwareDrawer::SetSpriteLump
+//
+//==========================================================================
+
+void VSoftwareDrawer::SetSpriteLump(int lump, dword light, int translation)
+{
+	guard(VSoftwareDrawer::SetSpriteLump);
+	light &= 0xf8f8f8f8;
+
+	int i;
+	int avail = -1;
+	for (i = 0; i <	SPRITE_CACHE_SIZE; i++)
+	{
+		if (sprite_cache[i].data)
+		{
+			if (sprite_cache[i].lump == lump &&
+				sprite_cache[i].light == light &&
+				sprite_cache[i].tnum == translation)
+			{
+				cacheblock = (byte*)sprite_cache[i].data;
+				cachewidth = GTextureManager.Textures[lump]->GetWidth();
+				return;
+			}
+		}
+		else
+		{
+			if (avail < 0)
+				avail = i;
+		}
+	}
+	if (avail < 0)
+	{
+		Z_Free(sprite_cache[sprite_cache_count].data);
+		avail = sprite_cache_count;
+		sprite_cache_count = (sprite_cache_count + 1) % SPRITE_CACHE_SIZE;
+	}
+
+	GenerateSprite(lump, avail, light, translation);
+	cacheblock = (byte*)sprite_cache[avail].data;
+	cachewidth = GTextureManager.Textures[lump]->GetWidth();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSoftwareDrawer::SetPic
+//
+//==========================================================================
+
+byte* VSoftwareDrawer::SetPic(int handle)
+{
+	guard(VSoftwareDrawer::SetPic);
+	if (!GTextureManager.Textures[handle]->DriverData)
+	{
+		GeneratePic(handle);
+	}
+	cachewidth = GTextureManager.Textures[handle]->GetWidth();
+	return (byte*)GTextureManager.Textures[handle]->DriverData;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSoftwareDrawer::GenerateTexture
+//
+//==========================================================================
+
+void VSoftwareDrawer::GenerateTexture(int texnum)
+{
+	guard(VSoftwareDrawer::GenerateTexture);
+	TTexture* Tex = GTextureManager.Textures[texnum];
+
+	byte* block = Tex->GetPixels8();
+
+	int mipw = (Tex->GetWidth() + 15) & ~15;
+	int miph = (Tex->GetHeight() + 15) & ~15;
+	miptexture_t* mip = (miptexture_t*)Z_Calloc(sizeof(miptexture_t) +
+		mipw * miph / 64 * 85, PU_STATIC, &Tex->DriverData);
+	mip->width = mipw;
+	mip->height = miph;
+	if (Tex->GetWidth() < 16 || Tex->GetHeight() < 16)
+	{
+		byte* pSrc = block;
+		byte* pDst = (byte*)mip + sizeof(miptexture_t);
+		for (int y = 0; y < miph; y++)
+		{
+			for (int x = 0; x < mipw; x++)
+			{
+				pDst[x + y * mipw] = pSrc[x % Tex->GetWidth() +
+					(y % Tex->GetHeight()) * Tex->GetWidth()];
+			}
+		}
+	}
+	else
+	{
+		memcpy((byte*)mip + sizeof(miptexture_t), block, mipw * miph);
+	}
+	Tex->MakePurgable();
+	MakeMips(mip);
+
+	// Now that the texture has been built in column cache,
+	//  it is purgable from zone memory.
+	Z_ChangeTag(mip, PU_CACHE);
 	unguard;
 }
 
@@ -135,9 +251,6 @@ void VSoftwareDrawer::FlushTextureCaches(void)
 void VSoftwareDrawer::MakeMips(miptexture_t *mip)
 {
 	guard(VSoftwareDrawer::MakeMips);
-	//	Get palette.
-	rgb_t* pal = (rgb_t*)W_CacheLumpName("playpal", PU_CACHE);
-
 	//	Calc offsets.
 	mip->offsets[0] = sizeof(miptexture_t);
 	mip->offsets[1] = mip->offsets[0] + mip->width * mip->height;
@@ -168,9 +281,9 @@ void VSoftwareDrawer::MakeMips(miptexture_t *mip)
 				}
 				else
 				{
-					r += pal[psrc[0]].r;
-					g += pal[psrc[0]].g;
-					b += pal[psrc[0]].b;
+					r += r_palette[psrc[0]].r;
+					g += r_palette[psrc[0]].g;
+					b += r_palette[psrc[0]].b;
 				}
 
 				//	Pixel 2.
@@ -180,9 +293,9 @@ void VSoftwareDrawer::MakeMips(miptexture_t *mip)
 				}
 				else
 				{
-					r += pal[psrc[1]].r;
-					g += pal[psrc[1]].g;
-					b += pal[psrc[1]].b;
+					r += r_palette[psrc[1]].r;
+					g += r_palette[psrc[1]].g;
+					b += r_palette[psrc[1]].b;
 				}
 
 				//	Pixel 3.
@@ -192,9 +305,9 @@ void VSoftwareDrawer::MakeMips(miptexture_t *mip)
 				}
 				else
 				{
-					r += pal[psrc[srcrow]].r;
-					g += pal[psrc[srcrow]].g;
-					b += pal[psrc[srcrow]].b;
+					r += r_palette[psrc[srcrow]].r;
+					g += r_palette[psrc[srcrow]].g;
+					b += r_palette[psrc[srcrow]].b;
 				}
 
 				//	Pixel 4.
@@ -204,9 +317,9 @@ void VSoftwareDrawer::MakeMips(miptexture_t *mip)
 				}
 				else
 				{
-					r += pal[psrc[srcrow + 1]].r;
-					g += pal[psrc[srcrow + 1]].g;
-					b += pal[psrc[srcrow + 1]].b;
+					r += r_palette[psrc[srcrow + 1]].r;
+					g += r_palette[psrc[srcrow + 1]].g;
+					b += r_palette[psrc[srcrow + 1]].b;
 				}
 
 				//	Get color.
@@ -232,201 +345,35 @@ void VSoftwareDrawer::MakeMips(miptexture_t *mip)
 
 //==========================================================================
 //
-//	VSoftwareDrawer::DrawColumnInCache
-//
-// 	Clip and draw a column from a patch into a flat buffer.
-//
-//		column - column to draw
-//		cache - buffer
-//		originx, originy - position of column in the buffer
-//		cachewidth, cacheheight - size of the cache
-//
-//==========================================================================
-
-void VSoftwareDrawer::DrawColumnInCache(column_t* InColumn, byte* cache,
-	int originx, int originy, int cachewidth, int cacheheight, bool dsky)
-{
-	guard(VSoftwareDrawer::DrawColumnInCache);
-	column_t* column = InColumn;
-    int		count;
-    int		position;
-    byte*	source;
-    byte*	dest;
-	int		top = -1;	//	DeepSea tall patches support
-	
-	// step through the posts in a column
-    while (column->topdelta != 0xff)
-    {
-		if (column->topdelta <= top)
-		{
-			top += column->topdelta;
-		}
-		else
-		{
-			top = column->topdelta;
-		}
-		source = (byte *)column + 3;
-		count = column->length;
-		position = originy + top;
-
-		//	Clip position
-		if (position < 0)
-		{
-	    	count += position;
-			source -= position;
-	    	position = 0;
-		}
-		if (position + count > cacheheight)
-		{
-	    	count = cacheheight - position;
-		}
-    	dest = cache + originx + position * cachewidth;
-
-    	while (count-- > 0)
-    	{
-			*dest = *source || dsky ? *source : r_black_color[0];
-			source++;
-			dest += cachewidth;
-    	}
-		
-		column = (column_t *)((byte *)column + column->length + 4);
-    }
-	unguard;
-}
-
-//==========================================================================
-//
-//	VSoftwareDrawer::GenerateTexture
-//
-// 	Using the texture definition, the composite texture is created from the
-// patches, and each column is cached.
-//
-//==========================================================================
-
-void VSoftwareDrawer::GenerateTexture(int texnum, bool double_sky)
-{
-	guard(VSoftwareDrawer::GenerateTexture);
-	miptexture_t	*mip;
-    byte*			block;
-    texdef_t*		texture;
-    texpatch_t*		patch;	
-    patch_t*		realpatch;
-    int				x;
-    int				x1;
-    int				x2;
-    int				i;
-    column_t*		patchcol;
-	int				mipw;
-	int				miph;
-	int				htimes, wtimes, ht, wt;
-
-    texture = textures[texnum];
-
-	mipw = (texture->width + 15) & ~15;
-	miph = (texture->height + 15) & ~15;
-	mip = (miptexture_t*)Z_Calloc(sizeof(miptexture_t) + mipw * miph / 64 * 85,
-		PU_STATIC, (void**)&texturedata[texnum]);
-	mip->width = mipw;
-	mip->height = miph;
-	block = (byte*)mip + sizeof(miptexture_t);
-
-    // Composite the columns together.
-    patch = texture->patches;
-	wtimes = texture->width < 16 ? 16 / texture->width : 1;
-	htimes = texture->height < 16 ? 16 / texture->height : 1;
-
-    for (i = 0; i < texture->patchcount; i++, patch++)
-    {
-		realpatch = (patch_t*)W_CacheLumpNum(patch->patch, PU_TEMP);
-		x1 = patch->originx;
-		x2 = x1 + LittleShort(realpatch->width);
-
-		if (x1 < 0)
-	    	x = 0;
-		else
-	    	x = x1;
-	
-		if (x2 > texture->width)
-	    	x2 = texture->width;
-
-		for ( ; x < x2; x++)
-		{
-	    	patchcol = (column_t *)((byte *)realpatch
-				    + LittleLong(realpatch->columnofs[x - x1]));
-			for (ht = 0; ht < htimes; ht++)
-			{
-				for (wt = 0; wt < wtimes; wt++)
-				{
-		    		DrawColumnInCache(patchcol, block + wt * texture->width +
-		    			ht * mipw * texture->height,
-			    		x, patch->originy, mipw, texture->height, double_sky);
-				}
-			}
-		}
-    }
-
-	MakeMips(mip);
-
-    // Now that the texture has been built in column cache,
-    //  it is purgable from zone memory.
-    Z_ChangeTag(mip, PU_CACHE);
-	unguard;
-}
-
-//==========================================================================
-//
-// 	VSoftwareDrawer::SetTexture
-//
-//==========================================================================
-
-void VSoftwareDrawer::SetTexture(int tex)
-{
-	guard(VSoftwareDrawer::SetTexture);
-	if (tex & TEXF_FLAT)
-	{
-		SetFlat(tex);
-		return;
-	}
-
-	if ((dword)tex >= (dword)numtextures)
-		Sys_Error("Invalid texture num %d\n", tex);
-
-	if (!texturedata[tex])
-		GenerateTexture(tex, false);
-
-	miptexture = texturedata[tex];
-	cacheblock = (byte*)miptexture + miptexture->offsets[0];
-	unguard;
-}
-
-//==========================================================================
-//
 //	VSoftwareDrawer::LoadSkyMap
 //
 //==========================================================================
 
-void VSoftwareDrawer::LoadSkyMap(const char *name, void **dataptr)
+void VSoftwareDrawer::LoadSkyMap(int texnum)
 {
 	guard(VSoftwareDrawer::LoadSkyMap);
+	TTexture* Tex = GTextureManager.Textures[texnum];
 	int j;
 
-	Mod_LoadSkin(name, NULL);
-	Z_Malloc(SkinWidth * SkinHeight * PixelBytes, PU_STATIC, dataptr);
-	if (SkinBPP == 8)
+	byte* Pixels = Tex->GetPixels();
+	int NumPixels = Tex->GetWidth() * Tex->GetHeight();
+	Z_Malloc(NumPixels * PixelBytes, PU_STATIC, &Tex->DriverData);
+	if (Tex->Format == TEXFMT_8 || Tex->Format == TEXFMT_8Pal)
 	{
 		// Load paletted skymap
+		rgba_t* Pal = Tex->GetPalette();
 		if (ScreenBPP == 8)
 		{
 			byte remap[256];
 
 			for (j = 0; j < 256; j++)
 			{
-				remap[j] = MakeCol8(SkinPal[j].r, SkinPal[j].g, SkinPal[j].b);
+				remap[j] = MakeCol8(Pal[j].r, Pal[j].g, Pal[j].b);
 			}
 
-			byte *psrc = (byte *)SkinData;
-			byte *pdst = (byte *)*dataptr;
-			for (j = 0; j < SkinWidth * SkinHeight; j++, psrc++, pdst++)
+			byte *psrc = (byte*)Pixels;
+			byte *pdst = (byte*)Tex->DriverData;
+			for (j = 0; j < NumPixels; j++, psrc++, pdst++)
 			{
 				*pdst = remap[*psrc];
 			}
@@ -437,12 +384,12 @@ void VSoftwareDrawer::LoadSkyMap(const char *name, void **dataptr)
 
 			for (j = 0; j < 256; j++)
 			{
-				remap[j] = MakeCol16(SkinPal[j].r, SkinPal[j].g, SkinPal[j].b);
+				remap[j] = MakeCol16(Pal[j].r, Pal[j].g, Pal[j].b);
 			}
 
-			byte *psrc = (byte *)SkinData;
-			word *pdst = (word *)*dataptr;
-			for (j = 0; j < SkinWidth * SkinHeight; j++, psrc++, pdst++)
+			byte *psrc = (byte*)Pixels;
+			word *pdst = (word*)Tex->DriverData;
+			for (j = 0; j < NumPixels; j++, psrc++, pdst++)
 			{
 				*pdst = remap[*psrc];
 			}
@@ -453,12 +400,12 @@ void VSoftwareDrawer::LoadSkyMap(const char *name, void **dataptr)
 
 			for (j = 0; j < 256; j++)
 			{
-				remap[j] = MakeCol32(SkinPal[j].r, SkinPal[j].g, SkinPal[j].b);
+				remap[j] = MakeCol32(Pal[j].r, Pal[j].g, Pal[j].b);
 			}
 
-			byte *psrc = (byte *)SkinData;
-			dword *pdst = (dword *)*dataptr;
-			for (j = 0; j < SkinWidth * SkinHeight; j++, psrc++, pdst++)
+			byte *psrc = (byte *)Pixels;
+			dword *pdst = (dword *)Tex->DriverData;
+			for (j = 0; j < NumPixels; j++, psrc++, pdst++)
 			{
 				*pdst = remap[*psrc];
 			}
@@ -468,126 +415,34 @@ void VSoftwareDrawer::LoadSkyMap(const char *name, void **dataptr)
 	{
 		if (ScreenBPP == 8)
 		{
-			rgba_t *src = (rgba_t *)SkinData;
-			byte *dst = (byte *)*dataptr;
-			for (j = 0; j < SkinWidth * SkinHeight; j++, src++, dst++)
+			rgba_t *src = (rgba_t*)Pixels;
+			byte *dst = (byte*)Tex->DriverData;
+			for (j = 0; j < NumPixels; j++, src++, dst++)
 			{
 				*dst = MakeCol8(src->r, src->g, src->b);
 			}
 		}
 		else if (ScreenBPP == 15 || ScreenBPP == 16)
 		{
-			rgba_t *src = (rgba_t *)SkinData;
-			word *dst = (word *)*dataptr;
-			for (j = 0; j < SkinWidth * SkinHeight; j++, src++, dst++)
+			rgba_t *src = (rgba_t*)Pixels;
+			word *dst = (word*)Tex->DriverData;
+			for (j = 0; j < NumPixels; j++, src++, dst++)
 			{
 				*dst = MakeCol16(src->r, src->g, src->b);
 			}
 		}
 		else
 		{
-			rgba_t *src = (rgba_t *)SkinData;
-			dword *dst = (dword *)*dataptr;
-			for (j = 0; j < SkinWidth * SkinHeight; j++, src++, dst++)
+			rgba_t *src = (rgba_t*)Pixels;
+			dword *dst = (dword*)Tex->DriverData;
+			for (j = 0; j < NumPixels; j++, src++, dst++)
 			{
 				*dst = MakeCol32(src->r, src->g, src->b);
 			}
 		}
 	}
-	Z_ChangeTag(*dataptr, PU_CACHE);
-	Z_Free(SkinData);
-	unguard;
-}
-
-//==========================================================================
-//
-// 	VSoftwareDrawer::SetSkyTexture
-//
-//==========================================================================
-
-void VSoftwareDrawer::SetSkyTexture(int tex, bool double_sky)
-{
-	guard(VSoftwareDrawer::SetSkyTexture);
-	if (tex & TEXF_SKY_MAP)
-	{
-		tex &= ~TEXF_SKY_MAP;
-		if (!skymapdata[tex])
-		{
-			LoadSkyMap(skymaps[tex].name, &skymapdata[tex]);
-			skymaps[tex].width = SkinWidth;
-			skymaps[tex].height = SkinHeight;
-		}
-		cacheblock = (byte *)skymapdata[tex];
-		cachewidth = skymaps[tex].width;
-		return;
-	}
-
-	if (tex & TEXF_FLAT)
-	{
-		SetFlat(tex);
-	}
-	else
-	{
-		if (!texturedata[tex])
-			GenerateTexture(tex, double_sky);
-
-		miptexture = texturedata[tex];
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VSoftwareDrawer::GenerateFlat
-//
-//==========================================================================
-
-void VSoftwareDrawer::GenerateFlat(int num)
-{
-	guard(VSoftwareDrawer::GenerateFlat);
-	miptexture_t	*mip;
-	byte			*block, *data;
-
-	mip = (miptexture_t*)Z_Malloc(85 * 64 + sizeof(miptexture_t),
-		PU_STATIC, (void**)&flatdata[num]);
-
-	mip->width = 64;
-	mip->height = 64;
-
-	block = (byte*)mip + sizeof(miptexture_t);
-	data = (byte*)W_CacheLumpNum(flatlumps[num], PU_TEMP);
-	for (int j = 0; j < 64; j++)
-	{
-		for (int i = 0; i < 64; i++)
-		{
-			byte pix = data[(j << 6) + i];
-			block[(j << 6) + i] = pix ? pix : r_black_color[0];
-		}
-	}
-
-	MakeMips(mip);
-	Z_ChangeTag(mip, PU_CACHE);
-	unguard;
-}
-
-//==========================================================================
-//
-//	VSoftwareDrawer::SetFlat
-//
-//==========================================================================
-
-void VSoftwareDrawer::SetFlat(int num)
-{
-	guard(VSoftwareDrawer::SetFlat);
-	num &= ~TEXF_FLAT;
-
-	if (!flatdata[num])
-	{
-		GenerateFlat(num);
-	}
-
-    miptexture = flatdata[num];
-    cacheblock = (byte*)miptexture + miptexture->offsets[0];
+	Z_ChangeTag(Tex->DriverData, PU_CACHE);
+	Tex->MakePurgable();
 	unguard;
 }
 
@@ -600,10 +455,12 @@ void VSoftwareDrawer::SetFlat(int num)
 void VSoftwareDrawer::GenerateSprite(int lump, int slot, dword light, int translation)
 {
 	guard(VSoftwareDrawer::GenerateSprite);
-    patch_t	*patch = (patch_t*)W_CacheLumpNum(spritelumps[lump], PU_STATIC);
+	TTexture* Tex = GTextureManager.Textures[lump];
 
-	int w = LittleShort(patch->width);
-	int h = LittleShort(patch->height);
+	int w = Tex->GetWidth();
+	int h = Tex->GetHeight();
+
+	byte* SrcBlock = Tex->GetPixels8();
 
     void *block = (byte*)Z_Calloc(w * h * PixelBytes, PU_CACHE,
     	&sprite_cache[slot].data);
@@ -645,374 +502,122 @@ void VSoftwareDrawer::GenerateSprite(int lump, int slot, dword light, int transl
 
 	byte *trtab = translationtables + translation * 256;
 
-	for (int x = 0; x < w; x++)
+	int count =  w * h;
+	byte* source = SrcBlock;
+	if (ScreenBPP == 8 && colored)
 	{
-    	column_t *column = (column_t *)((byte *)patch + LittleLong(patch->columnofs[x]));
-
-		// step through the posts in a column
-		int top = -1;	//	DeepSea tall patches support
-	    while (column->topdelta != 0xff)
-	    {
-			if (column->topdelta <= top)
-			{
-				top += column->topdelta;
-			}
-			else
-			{
-				top = column->topdelta;
-			}
-		    byte* source = (byte *)column + 3;
-			int count = column->length;
-
-			if (ScreenBPP == 8 && colored)
-			{
-			    byte* dest = ((byte*)block) + x + top * w;
-		    	while (count--)
-	    		{
-					int itmp = trtab[*source ? *source : r_black_color[0]];
-					*dest = d_rgbtable[(((word*)cmapr)[itmp]) |
-						(((word*)cmapg)[itmp]) | (((word*)cmapb)[itmp])];
-					source++;
-					dest += w;
-		    	}
-			}
-			else if (ScreenBPP == 8)
-			{
-			    byte* dest = ((byte*)block) + x + top * w;
-		    	while (count--)
-	    		{
-					*dest = ((byte*)cmap)[trtab[*source ? *source : r_black_color[0]]];
-					source++;
-					dest += w;
-		    	}
-			}
-			else if (PixelBytes == 2 && colored)
-			{
-			    word* dest = ((word*)block) + x + top * w;
-		    	while (count--)
-	    		{
-					int itmp = trtab[*source ? *source : r_black_color[0]];
-					*dest = (((word*)cmapr)[itmp]) |
-						(((word*)cmapg)[itmp]) | (((word*)cmapb)[itmp]);
-					if (!*dest) *dest = 1;
-					source++;
-					dest += w;
-		    	}
-			}
-			else if (PixelBytes == 2)
-			{
-			    word* dest = ((word*)block) + x + top * w;
-		    	while (count--)
-	    		{
-					*dest = ((word*)cmap)[trtab[*source ? *source : r_black_color[0]]];
-					source++;
-					dest += w;
-		    	}
-			}
-			else if (colored)
-			{
-			    dword* dest = ((dword*)block) + x + top * w;
-		    	while (count--)
-	    		{
-					int itmp = trtab[*source ? *source : r_black_color[0]];
-					*dest = MakeCol32(((byte*)cmapr)[itmp],
-						((byte*)cmapg)[itmp], ((byte*)cmapb)[itmp]);
-					if (!*dest) *dest = 1;
-					source++;
-					dest += w;
-		    	}
-			}
-			else
-			{
-			    dword* dest = ((dword*)block) + x + top * w;
-		    	while (count--)
-	    		{
-					*dest = ((dword*)cmap)[trtab[*source ? *source : r_black_color[0]]];
-					source++;
-					dest += w;
-		    	}
-			}
-			column = (column_t *)((byte *)column + column->length + 4);
-	    }
-	}
-
-	Z_ChangeTag(patch, PU_CACHE);
-	unguard;
-}
-
-//==========================================================================
-//
-//	VSoftwareDrawer::SetSpriteLump
-//
-//==========================================================================
-
-void VSoftwareDrawer::SetSpriteLump(int lump, dword light, int translation)
-{
-	guard(VSoftwareDrawer::SetSpriteLump);
-	light &= 0xf8f8f8f8;
-
-	int i;
-	int avail = -1;
-	for (i = 0; i <	SPRITE_CACHE_SIZE; i++)
-	{
-		if (sprite_cache[i].data)
+		byte* dest = (byte*)block;
+		while (count--)
 		{
-			if (sprite_cache[i].lump == lump &&
-				sprite_cache[i].light == light &&
-				sprite_cache[i].tnum == translation)
+			if (*source)
 			{
-				cacheblock = (byte*)sprite_cache[i].data;
-				cachewidth = spritewidth[lump];
-				return;
+				int itmp = trtab[*source];
+				*dest = d_rgbtable[(((word*)cmapr)[itmp]) |
+					(((word*)cmapg)[itmp]) | (((word*)cmapb)[itmp])];
 			}
-		}
-		else
-		{
-			if (avail < 0)
-				avail = i;
+			source++;
+			dest++;
 		}
 	}
-	if (avail < 0)
+	else if (ScreenBPP == 8)
 	{
-		Z_Free(sprite_cache[sprite_cache_count].data);
-		avail = sprite_cache_count;
-		sprite_cache_count = (sprite_cache_count + 1) % SPRITE_CACHE_SIZE;
-	}
-
-	GenerateSprite(lump, avail, light, translation);
-	cacheblock = (byte*)sprite_cache[avail].data;
-	cachewidth = spritewidth[lump];
-	unguard;
-}
-
-//==========================================================================
-//
-//	VSoftwareDrawer::LoadImage
-//
-//==========================================================================
-
-void VSoftwareDrawer::LoadImage(const char *name, void **dataptr)
-{
-	guard(D_LoadImage);
-	int j;
-
-	Mod_LoadSkin(name, dataptr);
-	if (SkinBPP == 8)
-	{
-		// Remap to game palette
-		byte remap[256];
-		byte *tmp;
-
-		for (j = 0; j < 256; j++)
+		byte* dest = (byte*)block;
+		while (count--)
 		{
-			remap[j] = MakeCol8(SkinPal[j].r, SkinPal[j].g, SkinPal[j].b);
+			if (*source)
+				*dest = ((byte*)cmap)[trtab[*source]];
+			source++;
+			dest++;
 		}
-
-		tmp = (byte *)SkinData;
-		for (j = 0; j < SkinWidth * SkinHeight; j++, tmp++)
+	}
+	else if (PixelBytes == 2 && colored)
+	{
+		word* dest = (word*)block;
+		while (count--)
 		{
-			*tmp = remap[*tmp];
+			if (*source)
+			{
+				int itmp = trtab[*source];
+				*dest = (((word*)cmapr)[itmp]) |
+					(((word*)cmapg)[itmp]) | (((word*)cmapb)[itmp]);
+				if (!*dest)
+					*dest = 1;
+			}
+			source++;
+			dest++;
+		}
+	}
+	else if (PixelBytes == 2)
+	{
+		word* dest = (word*)block;
+		while (count--)
+		{
+			if (*source)
+				*dest = ((word*)cmap)[trtab[*source]];
+			source++;
+			dest++;
+		}
+	}
+	else if (colored)
+	{
+		dword* dest = (dword*)block;
+		while (count--)
+		{
+			if (*source)
+			{
+				int itmp = trtab[*source];
+				*dest = MakeCol32(((byte*)cmapr)[itmp],
+					((byte*)cmapg)[itmp], ((byte*)cmapb)[itmp]);
+				if (!*dest)
+					*dest = 1;
+			}
+			source++;
+			dest++;
 		}
 	}
 	else
 	{
-		byte *tmp = (byte *)Z_Malloc(SkinWidth * SkinHeight, PU_STATIC,
-			dataptr);
-		rgba_t *src = (rgba_t *)SkinData;
-		for (j = 0; j < SkinWidth * SkinHeight; j++, tmp++, src++)
+		dword* dest = (dword*)block;
+		while (count--)
 		{
-			*tmp = MakeCol8(src->r, src->g, src->b);
+			if (*source)
+				*dest = ((dword*)cmap)[trtab[*source]];
+			source++;
+			dest++;
 		}
-		Z_Free(SkinData);
 	}
+	Tex->MakePurgable();
 	unguard;
 }
 
 //==========================================================================
 //
-//	VSoftwareDrawer::SetSkin
+//	VSoftwareDrawer::GeneratePic
 //
 //==========================================================================
 
-void* VSoftwareDrawer::SetSkin(const char *name)
+void VSoftwareDrawer::GeneratePic(int texnum)
 {
-	guard(SetSkin);
-	int i;
-	int avail;
-
-	avail = -1;
-	for (i = 0; i < MAX_SKIN_CACHE; i++)
-	{
-		if (skincache[i].data)
-		{
-			if (!strcmp(skincache[i].name, name))
-			{
-				break;
-			}
-		}
-		else
-		{
-			if (avail < 0)
-				avail = i;
-		}
-	}
-
-	if (i == MAX_SKIN_CACHE)
-	{
-		// Not in cache, load it
-		if (avail < 0)
-		{
-			avail = 0;
-			Z_Free(skincache[avail].data);
-		}
-		i = avail;
-		strcpy(skincache[i].name, name);
-		LoadImage(name, &skincache[i].data);
-	}
-
-	return skincache[i].data;
+	guard(GeneratePic);
+	TTexture* Tex = GTextureManager.Textures[texnum];
+	byte* Pixels = Tex->GetPixels8();
+	int NumPixels = Tex->GetWidth() * Tex->GetHeight();
+	byte* Block = (byte*)Z_Malloc(NumPixels, PU_STATIC, &Tex->DriverData);
+	memcpy(Block, Pixels, NumPixels);
+	Tex->MakePurgable();
+	Z_ChangeTag(Block, PU_CACHE);
 	unguard;
-}
-
-//==========================================================================
-//
-//	VSoftwareDrawer::GeneratePicFromPatch
-//
-//==========================================================================
-
-void VSoftwareDrawer::GeneratePicFromPatch(int handle)
-{
-	guard(GeneratePicFromPatch);
-	int LumpNum = W_CheckNumForName(pic_list[handle].name);
-	//	Some inventory pics are inside sprites.
-	if (LumpNum < 0)
-		LumpNum = W_GetNumForName(pic_list[handle].name, WADNS_Sprites);
-	patch_t *patch = (patch_t*)W_CacheLumpNum(LumpNum, PU_TEMP);
-	int w = LittleShort(patch->width);
-	int h = LittleShort(patch->height);
-	byte *block = (byte*)Z_Calloc(w * h, PU_CACHE, (void**)&picdata[handle]);
-	picdata[handle] = block;
-	picwidth[handle] = w;
-	int black = r_black_color[pic_list[handle].palnum];
-
-	for (int x = 0; x < w; x++)
-	{
-    	column_t *column = (column_t *)((byte *)patch + LittleLong(patch->columnofs[x]));
-
-		// step through the posts in a column
-		int top = -1;	//	DeepSea tall patches support
-	    while (column->topdelta != 0xff)
-	    {
-			if (column->topdelta <= top)
-			{
-				top += column->topdelta;
-			}
-			else
-			{
-				top = column->topdelta;
-			}
-		    byte* source = (byte *)column + 3;
-		    byte* dest = block + x + top * w;
-			int count = column->length;
-
-	    	while (count--)
-	    	{
-				*dest = *source ? *source : black;
-				source++;
-				dest += w;
-	    	}
-			column = (column_t *)((byte *)column + column->length + 4);
-	    }
-	}
-
-	if (pic_list[handle].palnum)
-	{
-		byte remap[256];
-		rgba_t *pal = r_palette[pic_list[handle].palnum];
-
-		remap[0] = 0;
-		for (int pali = 1; pali < 256; pali++)
-		{
-			remap[pali] = MakeCol8(pal[pali].r, pal[pali].g, pal[pali].b);
-		}
-		for (int i = 0; i < w * h; i++)
-		{
-			block[i] = remap[block[i]];
-		}
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VSoftwareDrawer::GeneratePicFromRaw
-//
-//==========================================================================
-
-void VSoftwareDrawer::GeneratePicFromRaw(int handle)
-{
-	guard(GeneratePicFromRaw);
-	picdata[handle] = (byte*)Z_Malloc(320 * 200, PU_CACHE, (void**)&picdata[handle]);
-	W_ReadLump(W_GetNumForName(pic_list[handle].name), picdata[handle]);
-
-	byte remap[256];
-	if (pic_list[handle].palnum)
-	{
-		rgba_t *pal = r_palette[pic_list[handle].palnum];
-
-		for (int pali = 0; pali < 256; pali++)
-		{
-			remap[pali] = MakeCol8(pal[pali].r, pal[pali].g, pal[pali].b);
-		}
-	}
-	else
-	{
-		remap[0] = r_black_color[pic_list[handle].palnum];
-		for (int pali = 1; pali < 256; pali++)
-		{
-			remap[pali] = pali;
-		}
-	}
-
-	for (int i = 0; i < 320 * 200; i++)
-	{
-		picdata[handle][i] = remap[picdata[handle][i]];
-	}
-	picwidth[handle] = 320;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VSoftwareDrawer::SetPic
-//
-//==========================================================================
-
-byte* VSoftwareDrawer::SetPic(int handle)
-{
-	if (!picdata[handle])
-	{
-		switch (pic_list[handle].type)
- 		{
-	 	 case PIC_PATCH:
-			GeneratePicFromPatch(handle);
-			break;
-
-		 case PIC_RAW:
-			GeneratePicFromRaw(handle);
-			break;
-		}
-	}
-	cachewidth = picwidth[handle];
-	return picdata[handle];
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2005/05/26 16:50:14  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.13  2005/04/28 07:16:12  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.12  2004/11/23 12:43:10  dj_jl
 //	Wad file lump namespaces.
 //	

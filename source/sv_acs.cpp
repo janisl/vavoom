@@ -2544,7 +2544,9 @@ int VACS::RunScript(float DeltaTime)
 				int flat;
 				int sectorIndex;
 
-				flat = R_FlatNumForName(FACScriptsObject::StaticGetString(stack[stackPtr - 1]));
+				flat = GTextureManager.NumForName(FName(
+					FACScriptsObject::StaticGetString(stack[stackPtr - 1]),
+					FNAME_AddLower8), TEXTYPE_Flat, true, true);
 				tag = stack[stackPtr - 2];
 				stackPtr -= 2;
 				sectorIndex = -1;
@@ -2562,7 +2564,9 @@ int VACS::RunScript(float DeltaTime)
 				int sectorIndex;
 			
 				tag = PC_GET_INT;
-				flat = R_FlatNumForName(FACScriptsObject::StaticGetString(PC_GET_INT));
+				flat = GTextureManager.NumForName(FName(
+					FACScriptsObject::StaticGetString(PC_GET_INT),
+					FNAME_AddLower8), TEXTYPE_Flat, true, true);
 				sectorIndex = -1;
 				while ((sectorIndex = FindSectorFromTag(tag, sectorIndex)) >= 0)
 				{
@@ -2577,7 +2581,9 @@ int VACS::RunScript(float DeltaTime)
 				int flat;
 				int sectorIndex;
 			
-				flat = R_FlatNumForName(FACScriptsObject::StaticGetString(stack[stackPtr - 1]));
+				flat = GTextureManager.NumForName(FName(
+					FACScriptsObject::StaticGetString(stack[stackPtr - 1]),
+					FNAME_AddLower8), TEXTYPE_Flat, true, true);
 				tag = stack[stackPtr - 2];
 				stackPtr -= 2;
 				sectorIndex = -1;
@@ -2595,7 +2601,9 @@ int VACS::RunScript(float DeltaTime)
 				int sectorIndex;
 			
 				tag = PC_GET_INT;
-				flat = R_FlatNumForName(FACScriptsObject::StaticGetString(PC_GET_INT));
+				flat = GTextureManager.NumForName(FName(
+					FACScriptsObject::StaticGetString(PC_GET_INT),
+					FNAME_AddLower8), TEXTYPE_Flat, true, true);
 				sectorIndex = -1;
 				while ((sectorIndex = FindSectorFromTag(tag, sectorIndex)) >= 0)
 				{
@@ -2836,7 +2844,9 @@ int VACS::RunScript(float DeltaTime)
 				int texture;
 				int searcher;
 			
-				texture = R_TextureNumForName(FACScriptsObject::StaticGetString(stack[stackPtr - 1]));
+				texture = GTextureManager.NumForName(FName(
+					FACScriptsObject::StaticGetString(stack[stackPtr - 1]),
+					FNAME_AddLower8), TEXTYPE_Wall, true, true);
 				position = stack[stackPtr - 2];
 				side = stack[stackPtr - 3];
 				lineTag = stack[stackPtr - 4];
@@ -4636,9 +4646,12 @@ static void strbin(char *str)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.34  2005/05/26 16:53:59  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.33  2005/03/28 07:29:24  dj_jl
 //	Temporary fix for save/load of local vars.
-//
+//	
 //	Revision 1.32  2005/01/24 12:56:30  dj_jl
 //	Fixed inc/dec of map variables.
 //	

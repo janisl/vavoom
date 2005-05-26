@@ -176,7 +176,7 @@ surfcache_t *VSoftwareDrawer::CacheSurface(surface_t *surface, int miplevel)
 	//
 	// if the surface is animating or flashing, flush the cache
 	//
-	texture = R_TextureAnimation(surface->texinfo->pic);
+	texture = GTextureManager.TextureAnimation(surface->texinfo->pic);
 	
 	//
 	// see if the cache holds apropriate data
@@ -346,8 +346,8 @@ surfcache_t *VSoftwareDrawer::CacheSkySurface(surface_t *surface, int texture1,
 	//
 	// if the surface is animating flush the cache
 	//
-	texture1 = R_TextureAnimation(texture1);
-	texture2 = R_TextureAnimation(texture2);
+	texture1 = GTextureManager.TextureAnimation(texture1);
+	texture2 = GTextureManager.TextureAnimation(texture2);
 	
 	//
 	// see if the cache holds apropriate data
@@ -393,7 +393,7 @@ surfcache_t *VSoftwareDrawer::CacheSkySurface(surface_t *surface, int texture1,
 	dsky_cachedest = (byte*)cache->data;
 	dsky_toffs = surface->texturemins[1];
 
-	Drawer->SetSkyTexture(texture1, false);
+	SetTexture(texture1);
 	dsky_mt1 = miptexture;
 	dsky_offs1 = (-(int)offs1) & (dsky_mt1->width - 1);
 
@@ -402,7 +402,7 @@ surfcache_t *VSoftwareDrawer::CacheSkySurface(surface_t *surface, int texture1,
 		// Make sure that texture will be not freed
 		Z_ChangeTag(dsky_mt1, PU_STATIC);
 
-		Drawer->SetSkyTexture(texture2, true);
+		SetTexture(texture2);
 		dsky_mt2 = miptexture;
 		dsky_offs2 = (-(int)offs2) & (dsky_mt2->width - 1);
 
@@ -2255,9 +2255,12 @@ void D_DrawDoubleSkySurf_32(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2005/05/26 16:50:14  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.14  2004/10/08 12:37:47  dj_jl
 //	Better rendering of old skies.
-//
+//	
 //	Revision 1.13  2002/11/16 17:11:15  dj_jl
 //	Improving software driver class.
 //	

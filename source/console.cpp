@@ -782,7 +782,7 @@ void C_DrawCenterMessage(void)
 	{
 		T_SetFont(font_small);
 	    T_SetAlign(hcenter, vcenter);
-		T_DrawText(160, 100, center_message);
+		T_DrawTextW(160, 150, center_message, 300);
 		center_time -= host_frametime;
 		if (center_time < 0.0)
 		{
@@ -794,9 +794,12 @@ void C_DrawCenterMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2005/05/26 16:53:59  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.22  2004/12/03 16:15:46  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
-//
+//	
 //	Revision 1.21  2004/08/18 18:05:46  dj_jl
 //	Support for higher virtual screen resolutions.
 //	

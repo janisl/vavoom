@@ -660,13 +660,14 @@ void SCR_Update(void)
 //
 //==========================================================================
 
-void Draw_TeleportIcon(void)
+void Draw_TeleportIcon()
 {
 	guard(Draw_TeleportIcon);
 	if (W_CheckNumForName("teleicon") >= 0)
 	{
 		Drawer->BeginDirectUpdate();
-		R_DrawPic(100, 68, R_RegisterPic("teleicon", PIC_PATCH));
+		R_DrawPic(100, 68, GTextureManager.AddPatch(FName("teleicon",
+			FNAME_AddLower8), TEXTYPE_Pic));
 		Drawer->EndDirectUpdate();
 	}
 	unguard;
@@ -678,13 +679,14 @@ void Draw_TeleportIcon(void)
 //
 //==========================================================================
 
-void Draw_SaveIcon(void)
+void Draw_SaveIcon()
 {
 	guard(Draw_SaveIcon);
 	if (W_CheckNumForName("saveicon") >= 0)
 	{
 		Drawer->BeginDirectUpdate();
-		R_DrawPic(100, 68, R_RegisterPic("saveicon", PIC_PATCH));
+		R_DrawPic(100, 68, GTextureManager.AddPatch(FName("saveicon",
+			FNAME_AddLower8), TEXTYPE_Pic));
 		Drawer->EndDirectUpdate();
 	}
 	unguard;
@@ -696,13 +698,14 @@ void Draw_SaveIcon(void)
 //
 //==========================================================================
 
-void Draw_LoadIcon(void)
+void Draw_LoadIcon()
 {
 	guard(Draw_LoadIcon);
 	if (W_CheckNumForName("loadicon") >= 0)
 	{
 		Drawer->BeginDirectUpdate();
-		R_DrawPic(100, 68, R_RegisterPic("loadicon", PIC_PATCH));
+		R_DrawPic(100, 68, GTextureManager.AddPatch(FName("loadicon",
+			FNAME_AddLower8), TEXTYPE_Pic));
 		Drawer->EndDirectUpdate();
 	}
 	unguard;
@@ -729,9 +732,12 @@ void SCR_SetVirtualScreen(int Width, int Height)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2005/05/26 16:53:59  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.25  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.24  2005/04/04 07:45:45  dj_jl
 //	Palette flash state fix.
 //	

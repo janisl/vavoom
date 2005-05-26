@@ -85,44 +85,42 @@ public:
 	void operator delete(void* Object, size_t)
 	{ Z_Free(Object); }
 
-	virtual void Init(void) = 0;
-	virtual void InitData(void) = 0;
+	virtual void Init() = 0;
+	virtual void InitData() = 0;
 	virtual bool SetResolution(int, int, int) = 0;
-	virtual void InitResolution(void) = 0;
-	virtual void NewMap(void) = 0;
+	virtual void InitResolution() = 0;
+	virtual void NewMap() = 0;
 	virtual void SetPalette(int) = 0;
-	virtual void StartUpdate(void) = 0;
-	virtual void Update(void) = 0;
-	virtual void BeginDirectUpdate(void) = 0;
-	virtual void EndDirectUpdate(void) = 0;
-	virtual void Shutdown(void) = 0;
+	virtual void StartUpdate() = 0;
+	virtual void Update() = 0;
+	virtual void BeginDirectUpdate() = 0;
+	virtual void EndDirectUpdate() = 0;
+	virtual void Shutdown() = 0;
 	virtual void* ReadScreen(int*, bool*) = 0;
 	virtual void FreeSurfCache(surfcache_t*) = 0;
 
 	//	Rendring stuff
 	virtual void SetupView(const refdef_t*) = 0;
-	virtual void WorldDrawing(void) = 0;
-	virtual void EndView(void) = 0;
+	virtual void WorldDrawing() = 0;
+	virtual void EndView() = 0;
 
 	//	Texture stuff
-	virtual void InitTextures(void) = 0;
+	virtual void InitTextures() = 0;
 	virtual void SetTexture(int) = 0;
-	virtual void SetSkyTexture(int, bool) = 0;
-	virtual void SetFlat(int) = 0;
 
 	//	Polygon drawing
 	virtual void DrawPolygon(TVec*, int, int, int) = 0;
-	virtual void BeginSky(void) = 0;
+	virtual void BeginSky() = 0;
 	virtual void DrawSkyPolygon(TVec*, int, int, float, int, float) = 0;
-	virtual void EndSky(void) = 0;
+	virtual void EndSky() = 0;
 	virtual void DrawMaskedPolygon(TVec*, int, int, int) = 0;
 	virtual void DrawSpritePolygon(TVec*, int, int, int, dword) = 0;
 	virtual void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, int, const char*, dword, int, bool) = 0;
 
 	//	Particles
-	virtual void StartParticles(void) = 0;
+	virtual void StartParticles() = 0;
 	virtual void DrawParticle(particle_t *) = 0;
-	virtual void EndParticles(void) = 0;
+	virtual void EndParticles() = 0;
 
 	//	Drawing
 	virtual void DrawPic(float, float, float, float, float, float, float, float, int, int) = 0;
@@ -134,9 +132,9 @@ public:
 	virtual void DrawSpriteLump(float, float, float, float, int, int, boolean) = 0;
 
 	//	Automap
-	virtual void StartAutomap(void) = 0;
+	virtual void StartAutomap() = 0;
 	virtual void DrawLine(int, int, dword, int, int, dword) = 0;
-	virtual void EndAutomap(void) = 0;
+	virtual void EndAutomap() = 0;
 };
 
 //	Drawer types, menu system uses these numbers.
@@ -178,9 +176,12 @@ extern VDrawer			*Drawer;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2005/05/26 16:50:15  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.18  2005/05/03 14:57:06  dj_jl
 //	Added support for specifying skin index.
-//
+//	
 //	Revision 1.17  2004/08/21 17:22:15  dj_jl
 //	Changed rendering driver declaration.
 //	

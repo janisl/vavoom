@@ -129,7 +129,8 @@ void VOpenGLDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, const char* fname)
 {
 	guard(VOpenGLDrawer::FillRectWithFlat);
-	SetFlat(R_FlatNumForName(fname));
+	SetTexture(GTextureManager.NumForName(FName(fname, FNAME_AddLower8),
+		TEXTYPE_Flat, true, false));
 
 	glColor4f(1, 1, 1, 1);
 	glBegin(GL_QUADS);
@@ -238,18 +239,19 @@ void VOpenGLDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 	guard(VOpenGLDrawer::DrawSpriteLump);
 	SetSpriteLump(lump, translation);
 
+	TTexture* Tex = GTextureManager.Textures[lump];
 	float s1, s2;
 	if (flip)
 	{
-		s1 = spritewidth[lump] * tex_iw;
+		s1 = Tex->GetWidth() * tex_iw;
 		s2 = 0;
 	}
 	else
 	{
 		s1 = 0;
-		s2 = spritewidth[lump] * tex_iw;
+		s2 = Tex->GetWidth() * tex_iw;
 	}
-	float texh = spriteheight[lump] * tex_ih;
+	float texh = Tex->GetHeight() * tex_ih;
 
 	glColor4f(1, 1, 1, 1);
 	glBegin(GL_QUADS);
@@ -321,9 +323,12 @@ void VOpenGLDrawer::EndAutomap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2005/05/26 16:50:14  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.12  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
-//
+//	
 //	Revision 1.11  2002/01/11 18:24:44  dj_jl
 //	Added guard macros
 //	

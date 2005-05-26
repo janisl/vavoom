@@ -138,9 +138,13 @@ void InitMapInfo(void)
 	info->warpTrans = 0;
 	strcpy(info->nextMap, "MAP01"); // Always go to map 1 if not specified
 	info->cdTrack = 1;
-	info->sky1Texture = R_CheckTextureNumForName(DEFAULT_SKY_NAME);
+	info->sky1Texture = GTextureManager.CheckNumForName(
+		FName(DEFAULT_SKY_NAME, FNAME_AddLower8),
+		TEXTYPE_Wall, true, false);
 	if (info->sky1Texture < 0)
-		info->sky1Texture = R_CheckTextureNumForName("SKYMNT02");
+		info->sky1Texture = GTextureManager.CheckNumForName(
+			FName("SKYMNT02", FNAME_AddLower8),
+			TEXTYPE_Wall, true, false);
 	info->sky2Texture = info->sky1Texture;
 	info->sky1ScrollDelta = 0.0;
 	info->sky2ScrollDelta = 0.0;
@@ -253,13 +257,17 @@ void InitMapInfo(void)
 					break;
 				case MCMD_SKY1:
 					SC_MustGetString();
-					info->sky1Texture = R_CheckTextureNumForName(sc_String);
+					info->sky1Texture = GTextureManager.CheckNumForName(
+						FName(sc_String, FNAME_AddLower8),
+						TEXTYPE_Wall, true, false);
 					SC_MustGetNumber();
 					info->sky1ScrollDelta = (float)sc_Number * 35.0 / 256.0;
 					break;
 				case MCMD_SKY2:
 					SC_MustGetString();
-					info->sky2Texture = R_CheckTextureNumForName(sc_String);
+					info->sky2Texture = GTextureManager.CheckNumForName(
+						FName(sc_String, FNAME_AddLower8),
+						TEXTYPE_Wall, true, false);
 					SC_MustGetNumber();
 					info->sky2ScrollDelta = (float)sc_Number * 35.0 / 256.0;
 					break;
@@ -300,6 +308,8 @@ void InitMapInfo(void)
 					break;
 			}
 		}
+		if (info->doubleSky)
+			GTextureManager.SetFrontSkyLayer(info->sky2Texture);
 	}
 	SC_Close();
 
@@ -521,9 +531,12 @@ COMMAND(MapList)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2005/05/26 16:52:29  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.11  2004/10/11 06:50:54  dj_jl
 //	ACS helper scripts lump.
-//
+//	
 //	Revision 1.10  2002/07/27 18:10:11  dj_jl
 //	Implementing Strife conversations.
 //	

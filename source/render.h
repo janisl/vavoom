@@ -36,6 +36,19 @@ enum
 	PIC_IMAGE	// External graphic image file
 };
 
+enum
+{
+	TEXTYPE_Any,
+	TEXTYPE_WallPatch,
+	TEXTYPE_Wall,
+	TEXTYPE_Flat,
+	TEXTYPE_Overload,
+	TEXTYPE_Sprite,
+	TEXTYPE_SkyMap,
+	TEXTYPE_Skin,
+	TEXTYPE_Pic,
+};
+
 struct picinfo_t
 {
 	int		width;
@@ -51,6 +64,38 @@ struct TSwitch
 	int Sound;
 };
 
+class TTexture;
+
+class TTextureManager
+{
+public:
+	TArray<TTexture*>	Textures;
+
+	TTextureManager();
+	void Init();
+	int AddTexture(TTexture* Tex);
+	int	CheckNumForName(FName Name, int Type, bool bOverload = false,
+		bool bCheckAny = false);
+	int	NumForName(FName Name, int Type, bool bOverload = false,
+		bool bCheckAny = false);
+	float TextureHeight(int TexNum);
+	int TextureAnimation(int InTex);
+	void SetFrontSkyLayer(int tex);
+	void GetTextureInfo(int TexNum, picinfo_t* info);
+	int AddPatch(FName Name, int Type);
+	int CreatePatch(int Type, int LumpNum);
+	int AddRawWithPal(FName Name, FName PalName);
+	int AddFileTexture(FName Name, int Type);
+
+private:
+	bool IsStrifeTexture();
+	void InitTextures();
+	void InitTextures2();
+	void InitFlats();
+	void InitOverloads();
+	void InitSpriteLumps();
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // r_main
@@ -61,11 +106,6 @@ void R_RenderPlayerView();
 
 // r_tex
 void R_InitTexture();
-int R_TextureNumForName(const char *name);
-int R_CheckTextureNumForName(const char *name);
-int R_FlatNumForName(const char* name);
-int R_CheckFlatNumForName(const char* name);
-float R_TextureHeight(int pic);
 void R_AnimateSurfaces();
 
 // r_surf
@@ -81,14 +121,13 @@ void R_ForceLightning();
 void R_SkyChanged();
 
 //	2D graphics
-int R_RegisterPic(const char *name, int type);
-int R_RegisterPicPal(const char *name, int type, const char*);
-void R_GetPicInfo(int handle, picinfo_t *info);
 void R_DrawPic(int x, int y, int handle, int trans = 0);
 void R_DrawShadowedPic(int x, int y, int handle);
 void R_FillRectWithFlat(int DestX,int DestY,int width,int height,const char* fname);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
+
+extern TTextureManager	GTextureManager;
 
 extern int				validcount;
 
@@ -100,9 +139,12 @@ extern TArray<TSwitch>	Switches;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2005/05/26 16:50:15  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.8  2005/05/03 15:00:11  dj_jl
 //	Moved switch list, animdefs enhancements.
-//
+//	
 //	Revision 1.7  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
 //	

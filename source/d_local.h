@@ -150,44 +150,42 @@ typedef void (*picspanfunc_t)(fixed_t, fixed_t, fixed_t, int, byte*, void*);
 class VSoftwareDrawer : public VDrawer
 {
 public:
-	void Init(void);
-	void InitData(void);
+	void Init();
+	void InitData();
 	bool SetResolution(int, int, int);
-	void InitResolution(void);
-	void NewMap(void);
+	void InitResolution();
+	void NewMap();
 	void SetPalette(int);
-	void StartUpdate(void);
-	void Update(void);
-	void BeginDirectUpdate(void);
-	void EndDirectUpdate(void);
-	void Shutdown(void);
+	void StartUpdate();
+	void Update();
+	void BeginDirectUpdate();
+	void EndDirectUpdate();
+	void Shutdown();
 	void* ReadScreen(int*, bool*);
 	void FreeSurfCache(surfcache_t*);
 
 	//	Rendering stuff
 	void SetupView(const refdef_t*);
-	void WorldDrawing(void);
-	void EndView(void);
+	void WorldDrawing();
+	void EndView();
 
 	//	Texture stuff
-	void InitTextures(void);
+	void InitTextures();
 	void SetTexture(int);
-	void SetSkyTexture(int, bool);
-	void SetFlat(int);
 
 	//	Polygon drawing
 	void DrawPolygon(TVec*, int, int, int);
-	void BeginSky(void);
+	void BeginSky();
 	void DrawSkyPolygon(TVec*, int, int, float, int, float);
-	void EndSky(void);
+	void EndSky();
 	void DrawMaskedPolygon(TVec*, int, int, int);
 	void DrawSpritePolygon(TVec*, int, int, int, dword);
 	void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, int, const char*, dword, int, bool);
 
 	//	Particles
-	void StartParticles(void);
+	void StartParticles();
 	void DrawParticle(particle_t *);
-	void EndParticles(void);
+	void EndParticles();
 
 	//	Drawing
 	void DrawPic(float, float, float, float, float, float, float, float, int, int);
@@ -199,46 +197,40 @@ public:
 	void DrawSpriteLump(float, float, float, float, int, int, boolean);
 
 	//	Automap
-	void StartAutomap(void);
+	void StartAutomap();
 	void DrawLine(int, int, dword, int, int, dword);
-	void EndAutomap(void);
+	void EndAutomap();
 
 private:
 	//	Main.
 	bool AllocMemory(int, int, int);
-	void FreeMemory(void);
+	void FreeMemory();
 	void InitViewBorder(const refdef_t *rd);
 	void VideoErase(unsigned ofs, int count);
 	void EraseViewBorder(const refdef_t *rd);
 
 	//	Palette and color lookup table management.
 	void SetPalette8(byte*);
-	void UpdatePalette(void);
+	void UpdatePalette();
 
 	//	Textures.
-	void FlushTextureCaches(void);
-	static void	MakeMips(miptexture_t *mip);
-	static void DrawColumnInCache(column_t* column, byte* cache,
-		int originx, int originy, int cachewidth, int cacheheight, bool dsky);
-	void GenerateTexture(int texnum, bool double_sky);
-	void LoadSkyMap(const char *name, void **dataptr);
-	void GenerateFlat(int num);
-	void GenerateSprite(int lump, int slot, dword light, int translation);
+	void FlushTextureCaches();
 	void SetSpriteLump(int, dword, int);
-	void LoadImage(const char *name, void **dataptr);
-	void* SetSkin(const char *name);
-	void GeneratePicFromPatch(int handle);
-	void GeneratePicFromRaw(int handle);
-	byte* SetPic(int handle);
+	byte* SetPic(int);
+	void GenerateTexture(int);
+	static void	MakeMips(miptexture_t*);
+	void LoadSkyMap(int);
+	void GenerateSprite(int, int, dword, int);
+	void GeneratePic(int);
 
 	//	Edge drawing.
-	void BeginEdgeFrame(void);
-	void DrawSurfaces(void);
+	void BeginEdgeFrame();
+	void DrawSurfaces();
 
 	//	Surface cache memory management.
 	int SurfaceCacheForRes(int, int, int);
-	void CheckCacheGuard(void);
-	void ClearCacheGuard(void);
+	void CheckCacheGuard();
+	void ClearCacheGuard();
 	void InitCaches(void*, int);
 	void FlushCaches(bool);
 	surfcache_t *SCAlloc(int, int);
@@ -269,7 +261,7 @@ private:
 	void AliasPreparePoints(void);
 	void AliasClipTriangle(mtriangle_t *ptri);
 	void PolysetSetupDrawer(int);
-	void PolysetDraw(void);
+	void PolysetDraw();
 
 	//	Drawing of onscreen graphics.
 	static void DrawPicSpan_8(fixed_t s, fixed_t t, 
@@ -645,9 +637,12 @@ inline byte GetColB(dword col)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2005/05/26 16:50:14  dj_jl
+//	Created texture manager class
+//
 //	Revision 1.25  2005/05/03 14:57:06  dj_jl
 //	Added support for specifying skin index.
-//
+//	
 //	Revision 1.24  2004/08/21 17:22:15  dj_jl
 //	Changed rendering driver declaration.
 //	
