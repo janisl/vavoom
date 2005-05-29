@@ -1286,7 +1286,8 @@ int MovePlane(sector_t* sector, float amount, float dest, int crush,
 			// UP
 			// jff 02/04/98 keep floor from moving thru ceilings
 			// [RH] not so easy with arbitrary planes
-			if (!sector->ceiling.normal.x && !sector->ceiling.normal.y &&
+			if (!sector->bExtrafloorSource &&
+				!sector->ceiling.normal.x && !sector->ceiling.normal.y &&
 				!sector->floor.normal.x && !sector->floor.normal.y &&
 				dest > -sector->ceiling.dist)
 			{
@@ -1331,7 +1332,8 @@ int MovePlane(sector_t* sector, float amount, float dest, int crush,
 			// DOWN
 			// jff 02/04/98 keep ceiling from moving thru floors
 			// [RH] not so easy with arbitrary planes
-			if (!sector->ceiling.normal.x && !sector->ceiling.normal.y &&
+			if (!sector->bExtrafloorSource &&
+				!sector->ceiling.normal.x && !sector->ceiling.normal.y &&
 				sector->floor.normal.x && !sector->floor.normal.y &&
 				-dest < sector->floor.dist)
 			{
@@ -1395,6 +1397,9 @@ int MovePlane(sector_t* sector, float amount, float dest, int crush,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.37  2005/05/29 11:29:29  dj_jl
+//  Fixed moving extrafloors
+//
 //  Revision 1.36  2005/03/28 07:48:33  dj_jl
 //  Some Boom line specials.
 //
