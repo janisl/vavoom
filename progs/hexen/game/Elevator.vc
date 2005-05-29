@@ -149,7 +149,7 @@ void Tick(float DeltaTime)
 	if (Res == RES_PASTDEST)	// if destination height acheived
 	{
 		// make floor stop sound
-		//SN_StopSequence(Sector);
+		SectorStopSequence(Sector);
 		Finished();		// remove elevator from actives
 	}
 }
@@ -161,6 +161,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/05/29 11:28:27  dj_jl
+//  Fixed stopping of sound sequence
+//
 //  Revision 1.1  2005/03/16 15:04:39  dj_jl
 //  More work on line specials.
 //
