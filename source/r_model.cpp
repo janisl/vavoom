@@ -935,6 +935,88 @@ static void LoadPNG(const char *filename, void** bufptr)
 
 //==========================================================================
 //
+//	LoadPNGLump
+//
+//==========================================================================
+
+void LoadPNGLump(int LumpNum, void** bufptr)
+{
+	guard(LoadPNG);
+	void*		SrcData;
+	void*		ReadPtr;
+	int			i;
+
+	//	Read lump.
+	SrcData = W_CacheLumpNum(LumpNum, PU_HIGH);
+
+	//	Create reading structure.
+	png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING,
+		NULL, NULL, NULL);
+	if (!png_ptr)
+		Sys_Error("Couldn't create png_ptr");
+
+	//	Create info structure.
+	png_infop info_ptr = png_create_info_struct(png_ptr);
+	if (!info_ptr)
+		Sys_Error("Couldn't create info_ptr");
+
+	//	Create end info structure.
+	png_infop end_info = png_create_info_struct(png_ptr);
+	if (!end_info)
+		Sys_Error("Couldn't create end_info");
+
+	//	Set up error handling.
+	if (setjmp(png_jmpbuf(png_ptr)))
+		Sys_Error("Error reading PNG file");
+
+	//	Set my read function.
+	ReadPtr = SrcData;
+	png_set_read_fn(png_ptr, &ReadPtr, MyPNGReadFunc);
+
+	//	Read image info.
+	png_read_info(png_ptr, info_ptr);
+	SkinWidth = png_get_image_width(png_ptr, info_ptr);
+	SkinHeight = png_get_image_height(png_ptr, info_ptr);
+	int BitDepth = png_get_bit_depth(png_ptr, info_ptr);
+	int ColorType = png_get_color_type(png_ptr, info_ptr);
+
+	//	Set up transformations.
+	if (ColorType == PNG_COLOR_TYPE_PALETTE)
+		png_set_palette_to_rgb(png_ptr);
+	if (ColorType == PNG_COLOR_TYPE_GRAY && BitDepth < 8)
+		png_set_gray_1_2_4_to_8(png_ptr);
+	if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
+		png_set_tRNS_to_alpha(png_ptr);
+	if (BitDepth == 16)
+		png_set_strip_16(png_ptr);
+	if (ColorType == PNG_COLOR_TYPE_PALETTE ||
+		ColorType == PNG_COLOR_TYPE_RGB ||
+		ColorType == PNG_COLOR_TYPE_GRAY)
+		png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
+	if (ColorType == PNG_COLOR_TYPE_GRAY ||
+		ColorType == PNG_COLOR_TYPE_GRAY_ALPHA)
+		png_set_gray_to_rgb(png_ptr);
+
+	//	Set up unpacking buffer and row pointers.
+	SkinBPP = 32;
+	SkinData = (byte*)Z_Malloc(SkinWidth * SkinHeight * 4, PU_HIGH, bufptr);
+	png_bytep* RowPtrs = (png_bytep*)Z_Malloc(SkinHeight * 4, PU_HIGH, NULL);
+	for (i = 0; i < SkinHeight; i++)
+		RowPtrs[i] = SkinData + i * SkinWidth * 4;
+	png_read_image(png_ptr, RowPtrs);
+
+	//	Finish reading.
+	png_read_end(png_ptr, end_info);
+	png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
+
+	//	Free memory.
+	Z_Free(SrcData);
+	Z_Free(RowPtrs);
+	unguard;
+}
+
+//==========================================================================
+//
 //	Mod_LoadSkin
 //
 //==========================================================================
@@ -1004,9 +1086,12 @@ void R_PositionWeaponModel(clmobj_t &wpent, model_t *wpmodel, int InFrame)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2005/05/30 18:34:03  dj_jl
+//	Added support for IMGZ and PNG lump textures
+//
 //	Revision 1.13  2005/05/26 16:50:14  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.12  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
 //	

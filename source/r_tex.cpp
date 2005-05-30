@@ -90,6 +90,22 @@ struct animDef_t
 	int		CurrentRangeFrame;
 };
 
+//
+//	ZDoom's IMGZ grapnics.
+// [RH] Just a format I invented to avoid WinTex's palette remapping
+// when I wanted to insert some alpha maps.
+//
+struct TIMGZHeader
+{
+	byte	Magic[4];
+	word	Width;
+	word	Height;
+	short	LeftOffset;
+	short	TopOffset;
+	byte	Compression;
+	byte	Reserved[11];
+};
+
 //	A maptexturedef_t describes a rectangular texture, which is composed of
 // one or more mappatch_t structures that arrange graphic patches
 
@@ -103,6 +119,9 @@ struct texpatch_t
 	TTexture*	Tex;
 };
 
+//
+//	A dummy texture.
+//
 class TDummyTexture : public TTexture
 {
 public:
@@ -112,6 +131,9 @@ public:
 	void Unload();
 };
 
+//
+//	A standard Doom patch.
+//
 class TPatchTexture : public TTexture
 {
 public:
@@ -125,6 +147,9 @@ public:
 	void Unload();
 };
 
+//
+//	A texture defined in TEXTURE1/TEXTURE2 lumps.
+//
 class TMultiPatchTexture : public TTexture
 {
 public:
@@ -142,6 +167,9 @@ public:
 	void Unload();
 };
 
+//
+//	A standard Doom flat.
+//
 class TFlatTexture : public TTexture
 {
 public:
@@ -154,6 +182,9 @@ public:
 	void Unload();
 };
 
+//
+//	Raven's raw screens.
+//
 class TRawPicTexture : public TTexture
 {
 public:
@@ -169,6 +200,43 @@ public:
 	void Unload();
 };
 
+//
+//	ZDoom's IMGZ image.
+//
+class TImgzTexture : public TTexture
+{
+public:
+	int			LumpNum;
+	byte*		Pixels;
+
+	TImgzTexture(int InType, int InLumpNum);
+	void GetDimensions();
+	byte* GetPixels();
+	void MakePurgable();
+	void Unload();
+};
+
+//
+//	An PNG file in a lump.
+//
+class TPngLumpTexture : public TTexture
+{
+public:
+	int			LumpNum;
+	byte*		Pixels;
+	rgba_t*		Palette;
+
+	TPngLumpTexture(int InType, int InLumpNum);
+	void GetDimensions();
+	byte* GetPixels();
+	rgba_t* GetPalette();
+	void MakePurgable();
+	void Unload();
+};
+
+//
+//	Base class for textures loaded from files, not lumps.
+//
 class TFileTexture : public TTexture
 {
 public:
@@ -183,18 +251,27 @@ public:
 	void Unload();
 };
 
+//
+//	A PCX file.
+//
 class TPcxFileTexture : public TFileTexture
 {
 public:
 	TPcxFileTexture(int InType, FName InName);
 };
 
+//
+//	A TGA file.
+//
 class TTgaFileTexture : public TFileTexture
 {
 public:
 	TTgaFileTexture(int InType, FName InName);
 };
 
+//
+//	A PNG file.
+//
 class TPngFileTexture : public TFileTexture
 {
 public:
@@ -436,6 +513,7 @@ void TTextureManager::GetTextureInfo(int TexNum, picinfo_t* info)
 int TTextureManager::AddPatch(FName Name, int Type)
 {
 	guard(TTextureManager::AddPatch);
+	//	Find the lump number.
 	int LumpNum = W_CheckNumForName(*Name);
 	if (LumpNum < 0)
 		LumpNum = W_CheckNumForName(*Name, WADNS_Sprites);
@@ -444,12 +522,15 @@ int TTextureManager::AddPatch(FName Name, int Type)
 		GCon->Logf("TTextureManager::AddPatch: Pic %s not found", *Name);
 		return -1;
 	}
+
+	//	Check if it's already registered.
 	int i = CheckNumForName(Name, Type);
 	if (i >= 0)
 	{
 		return i;
 	}
 
+	//	Create new patch texture.
 	return CreatePatch(Type, LumpNum);
 	unguard;
 }
@@ -463,14 +544,30 @@ int TTextureManager::AddPatch(FName Name, int Type)
 int TTextureManager::CreatePatch(int Type, int LumpNum)
 {
 	guard(TTextureManager::CreatePatch);
-	if (W_LumpLength(LumpNum) != 64000)
+	//	Read lump header and see what type of lump it is.
+	byte LumpHeader[16];
+	W_ReadFromLump(LumpNum, LumpHeader, 0, 16);
+
+	//	Check for ZDoom's IMGZ image.
+	if (LumpHeader[0] == 'I' && LumpHeader[1] == 'M' &&
+		LumpHeader[2] == 'G' && LumpHeader[3] == 'Z')
 	{
-		return AddTexture(new(PU_STATIC) TPatchTexture(Type, LumpNum));
+		return AddTexture(new(PU_STATIC) TImgzTexture(Type, LumpNum));
 	}
-	else
+
+	//	Check for PNG image.
+	if (LumpHeader[0] == 137 && LumpHeader[1] == 'P' &&
+		LumpHeader[2] == 'N' && LumpHeader[3] == 'G')
+	{
+		return AddTexture(new(PU_STATIC) TPngLumpTexture(Type, LumpNum));
+	}
+
+	if (W_LumpLength(LumpNum) == 64000)
 	{
 		return AddTexture(new(PU_STATIC) TRawPicTexture(LumpNum, -1));
 	}
+
+	return AddTexture(new(PU_STATIC) TPatchTexture(Type, LumpNum));
 	unguard;
 }
 
@@ -901,6 +998,10 @@ void TTextureManager::InitSpriteLumps()
 	unguard;
 }
 
+//**************************************************************************
+//	TTexture
+//**************************************************************************
+
 //==========================================================================
 //
 //	TTexture::TTexture
@@ -1084,6 +1185,10 @@ rgba_t* TTexture::GetHighResPixels(int& HRWidth, int& HRHeight)
 	unguard;
 }
 
+//**************************************************************************
+//	TDummyTexture
+//**************************************************************************
+
 //==========================================================================
 //
 //	TDummyTexture::TDummyTexture
@@ -1126,6 +1231,10 @@ void TDummyTexture::MakePurgable()
 void TDummyTexture::Unload()
 {
 }
+
+//**************************************************************************
+//	TPatchTexture
+//**************************************************************************
 
 //==========================================================================
 //
@@ -1244,9 +1353,13 @@ void TPatchTexture::Unload()
 	unguard;
 }
 
+//**************************************************************************
+//	TMultiPatchTexture
+//**************************************************************************
+
 //==========================================================================
 //
-//	TMultiPatchTexture
+//	TMultiPatchTexture::TMultiPatchTexture
 //
 //==========================================================================
 
@@ -1361,9 +1474,13 @@ void TMultiPatchTexture::Unload()
 	unguard;
 }
 
+//**************************************************************************
+//	TFlatTexture
+//**************************************************************************
+
 //==========================================================================
 //
-//	TFlatTexture
+//	TFlatTexture::TFlatTexture
 //
 //==========================================================================
 
@@ -1432,6 +1549,10 @@ void TFlatTexture::Unload()
 	}
 	unguard;
 }
+
+//**************************************************************************
+//	TRawPicTexture
+//**************************************************************************
 
 //==========================================================================
 //
@@ -1570,6 +1691,316 @@ void TRawPicTexture::Unload()
 	}
 	unguard;
 }
+
+//**************************************************************************
+//	TImgzTexture
+//**************************************************************************
+
+//==========================================================================
+//
+//	TImgzTexture::TImgzTexture
+//
+//==========================================================================
+
+TImgzTexture::TImgzTexture(int InType, int InLumpNum)
+: LumpNum(InLumpNum)
+, Pixels(0)
+{
+	Type = InType;
+	Name = FName(W_LumpName(InLumpNum), FNAME_AddLower8);
+	Format = TEXFMT_8;
+}
+
+//==========================================================================
+//
+//	TImgzTexture::GetDimensions
+//
+//==========================================================================
+
+void TImgzTexture::GetDimensions()
+{
+	guard(TImgzTexture::GetDimensions);
+	TIMGZHeader* Hdr = (TIMGZHeader*)W_CacheLumpNum(LumpNum, PU_CACHE);
+	Width = LittleShort(Hdr->Width);
+	Height = LittleShort(Hdr->Height);
+	SOffset = LittleShort(Hdr->LeftOffset);
+	TOffset = LittleShort(Hdr->TopOffset);
+	unguard;
+}
+
+//==========================================================================
+//
+//	TImgzTexture::GetPixels
+//
+//==========================================================================
+
+byte* TImgzTexture::GetPixels()
+{
+	guard(TImgzTexture::GetPixels);
+	if (Pixels)
+	{
+		Z_ChangeTag(Pixels, PU_STATIC);
+		return Pixels;
+	}
+
+	TIMGZHeader* Hdr = (TIMGZHeader*)W_CacheLumpNum(LumpNum, PU_STATIC);
+	Width = LittleShort(Hdr->Width);
+	Height = LittleShort(Hdr->Height);
+	SOffset = LittleShort(Hdr->LeftOffset);
+	TOffset = LittleShort(Hdr->TopOffset);
+	Pixels = (byte*)Z_Calloc(Width * Height, PU_STATIC, (void**)&Pixels);
+	if (!Hdr->Compression)
+	{
+		memcpy(Pixels, &Hdr[1], Width * Height);
+	}
+	else
+	{
+		//	IMGZ compression is the same RLE used by IFF ILBM files
+		byte* pSrc = (byte*)&Hdr[1];
+		byte* pDst = Pixels;
+		int runlen = 0, setlen = 0;
+		byte setval = 0;  // Shut up, GCC
+
+		for (int y = Height; y != 0; --y)
+		{
+			for (int x = Width; x != 0; )
+			{
+				if (runlen != 0)
+				{
+					byte color = *pSrc;
+					*pDst = color;
+					pDst++;
+					pSrc++;
+					x--;
+					runlen--;
+				}
+				else if (setlen != 0)
+				{
+					*pDst = setval;
+					pDst++;
+					x--;
+					setlen--;
+				}
+				else
+				{
+					char code = *pSrc++;
+					if (code >= 0)
+					{
+						runlen = code + 1;
+					}
+					else if (code != -128)
+					{
+						setlen = (-code) + 1;
+						setval = *pSrc++;
+					}
+				}
+			}
+		}
+	}
+	Z_ChangeTag(Hdr, PU_CACHE);
+	return Pixels;
+	unguard;
+}
+
+//==========================================================================
+//
+//	TImgzTexture::MakePurgable
+//
+//==========================================================================
+
+void TImgzTexture::MakePurgable()
+{
+	guardSlow(TImgzTexture::MakePurgable);
+	Z_ChangeTag(Pixels, PU_CACHE);
+	unguardSlow;
+}
+
+//==========================================================================
+//
+//	TImgzTexture::Unload
+//
+//==========================================================================
+
+void TImgzTexture::Unload()
+{
+	guard(TImgzTexture::Unload);
+	if (Pixels)
+	{
+		Z_Free(Pixels);
+		Pixels = NULL;
+	}
+	unguard;
+}
+
+//**************************************************************************
+//	TPngLumpTexture
+//**************************************************************************
+
+//==========================================================================
+//
+//	TPngLumpTexture::TPngLumpTexture
+//
+//==========================================================================
+
+TPngLumpTexture::TPngLumpTexture(int InType, int InLumpNum)
+: LumpNum(InLumpNum)
+, Pixels(0)
+, Palette(0)
+{
+	Type = InType;
+	Name = FName(W_LumpName(InLumpNum), FNAME_AddLower8);
+	Format = TEXFMT_8;
+}
+
+//==========================================================================
+//
+//	TPngLumpTexture::GetDimensions
+//
+//==========================================================================
+
+void TPngLumpTexture::GetDimensions()
+{
+	guard(TPngLumpTexture::GetDimensions);
+	GetPixels();
+	MakePurgable();
+	unguard;
+}
+
+//==========================================================================
+//
+//	TPngLumpTexture::GetPixels
+//
+//==========================================================================
+
+byte* TPngLumpTexture::GetPixels()
+{
+	guard(TPngLumpTexture::GetPixels);
+#ifdef CLIENT
+	//	If this is 8 bit texture and we have pixels but palette is missing,
+	// then also discard pixels.
+	if (Pixels && Format == TEXFMT_8Pal && !Palette)
+	{
+		Z_Free(Pixels);
+	}
+
+	//	If we already have loaded pixels, return them.
+	if (Pixels)
+	{
+		//	Make them non-cachable.
+		Z_ChangeTag(Pixels, PU_STATIC);
+		if (Palette)
+		{
+			Z_ChangeTag(Palette, PU_STATIC);
+		}
+		return Pixels;
+	}
+
+	//	Discard palette if it's still present.
+	if (Palette)
+	{
+		Z_Free(Palette);
+	}
+
+	//	Load texture.
+	LoadPNGLump(LumpNum, (void**)&Pixels);
+	Width = SkinWidth;
+	Height = SkinHeight;
+	Format = SkinBPP == 8 ? TEXFMT_8Pal : TEXFMT_RGBA;
+
+	//	For 8-bit textures create a local copy of the palette and remap
+	// colour 0.
+	if (Format == TEXFMT_8Pal)
+	{
+		Palette = (rgba_t*)Z_Malloc(256 * 4, PU_STATIC, (void**)&Palette);
+		memcpy(Palette, SkinPal, 256 * 4);
+
+		//	Find black colour for remaping.
+		int black = 0;
+		int best_dist = 0x10000;
+		for (int i = 1; i < 256; i++)
+		{
+			int dist = Palette[i].r * Palette[i].r + Palette[i].g *
+				Palette[i].g + Palette[i].b * Palette[i].b;
+			if (dist < best_dist && Palette[i].a == 255)
+			{
+				black = i;
+				best_dist = dist;
+			}
+		}
+		for (int i = 0; i < Width * Height; i++)
+		{
+			if (Palette[Pixels[i]].a == 0)
+				Pixels[i] = 0;
+			else if (!Pixels[i])
+				Pixels[i] = black;
+		}
+		Palette[0].r = 0;
+		Palette[0].g = 0;
+		Palette[0].b = 0;
+		Palette[0].a = 0;
+	}
+	return Pixels;
+#else
+	return NULL;
+#endif
+	unguard;
+}
+
+//==========================================================================
+//
+//	TPngLumpTexture::GetPalette
+//
+//==========================================================================
+
+rgba_t* TPngLumpTexture::GetPalette()
+{
+	guardSlow(TPngLumpTexture::GetPalette);
+	return Palette;
+	unguardSlow;
+}
+
+//==========================================================================
+//
+//	TPngLumpTexture::MakePurgable
+//
+//==========================================================================
+
+void TPngLumpTexture::MakePurgable()
+{
+	guardSlow(TPngLumpTexture::MakePurgable);
+	Z_ChangeTag(Pixels, PU_CACHE);
+	if (Palette)
+	{
+		Z_ChangeTag(Palette, PU_CACHE);
+	}
+	unguardSlow;
+}
+
+//==========================================================================
+//
+//	TPngLumpTexture::Unload
+//
+//==========================================================================
+
+void TPngLumpTexture::Unload()
+{
+	guard(TPngLumpTexture::Unload);
+	if (Pixels)
+	{
+		Z_Free(Pixels);
+		Pixels = NULL;
+	}
+	if (Palette)
+	{
+		Z_Free(Palette);
+		Palette = NULL;
+	}
+	unguard;
+}
+
+//**************************************************************************
+//	TFileTexture
+//**************************************************************************
 
 //==========================================================================
 //
@@ -1732,6 +2163,10 @@ void TFileTexture::Unload()
 	unguard;
 }
 
+//**************************************************************************
+//	TPcxFileTexture
+//**************************************************************************
+
 //==========================================================================
 //
 //	TPcxFileTexture::TPcxFileTexture
@@ -1743,6 +2178,10 @@ TPcxFileTexture::TPcxFileTexture(int InType, FName InName)
 {
 }
 
+//**************************************************************************
+//	TTgaFileTexture
+//**************************************************************************
+
 //==========================================================================
 //
 //	TTgaFileTexture::TTgaFileTexture
@@ -1753,6 +2192,10 @@ TTgaFileTexture::TTgaFileTexture(int InType, FName InName)
 : TFileTexture(InType, InName)
 {
 }
+
+//**************************************************************************
+//	TPngFileTexture
+//**************************************************************************
 
 //==========================================================================
 //
@@ -2200,9 +2643,12 @@ void R_InitTexture()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2005/05/30 18:34:03  dj_jl
+//	Added support for IMGZ and PNG lump textures
+//
 //	Revision 1.27  2005/05/26 16:50:15  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.26  2005/05/03 15:00:11  dj_jl
 //	Moved switch list, animdefs enhancements.
 //	

@@ -92,6 +92,11 @@ struct subregion_t
 void R_RenderWorld();
 
 //
+//	r_model
+//
+void LoadPNGLump(int LumpNum, void** bufptr);
+
+//
 // R_Things
 //
 void R_RenderMobjs();
@@ -153,9 +158,12 @@ extern rgba_t			SkinPal[256];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2005/05/30 18:34:03  dj_jl
+//	Added support for IMGZ and PNG lump textures
+//
 //	Revision 1.12  2005/05/26 16:50:14  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.11  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
 //	
