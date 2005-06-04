@@ -59,6 +59,9 @@
 #include "StaticLightSource.vc"
 #include "StaticRGBLightSource.vc"
 #include "PlaneWatcher.vc"
+#include "PointPusher.vc"
+#include "PointPuller.vc"
+#include "Pusher.vc"
 
 #include "LavaInflictor.vc"
 
@@ -500,6 +503,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2005/06/04 13:49:47  dj_jl
+//  Added pusher specials.
+//
 //  Revision 1.7  2005/03/28 07:44:09  dj_jl
 //  Some Boom line specials and other improvements.
 //

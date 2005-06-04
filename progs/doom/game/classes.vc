@@ -67,10 +67,16 @@
 #include "StaticRGBLightSource.vc"
 #include "SecurityCamera.vc"
 #include "PlaneWatcher.vc"
+#include "PointPusher.vc"
+#include "PointPuller.vc"
+#include "Pusher.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2005/06/04 13:46:48  dj_jl
+//  Added pusher specials.
+//
 //  Revision 1.8  2005/03/28 07:34:49  dj_jl
 //  Some Boom line specials and other improvements.
 //

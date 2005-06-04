@@ -691,9 +691,17 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		buttonSuccess = EV_BuildStairsOld(Arg1, Arg2, Arg3, Arg4, Arg5,
 			false, line);
 		break;
+	case LNSPEC_SectorSetWind:
+		buttonSuccess = AdjustPusher(Arg1, Arg2, Arg3, Arg4, Arg5, line,
+			PUSHER_Wind);
+		break;
 	case LNSPEC_SectorSetFriction:
 		SetSectorFriction(Arg1, Arg2, true);
 		buttonSuccess = true;
+		break;
+	case LNSPEC_SectorSetCurrent:
+		buttonSuccess = AdjustPusher(Arg1, Arg2, Arg3, Arg4, Arg5, line,
+			PUSHER_Current);
 		break;
 	case LNSPEC_ACSExecuteAlways:
 		buttonSuccess = StartACS(Arg1, Arg2, Arg3, Arg4, Arg5, A, line, side,
@@ -803,15 +811,17 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	// LNSPEC_ScrollTextureUp:
 	// LNSPEC_ScrollTextureDown:
 	// LNSPEC_LineSetIdentification:
-	// LNSPEC_LineTranslucent:
 	// LNSPEC_3DFloor:
 	// LNSPEC_Contents:
 	// LNSPEC_PlaneAlign:
+	// LNSPEC_LineTranslucent:
+	// LNSPEC_TransferHeights:
 	// LNSPEC_ScrollTextureBoth:
 	// LNSPEC_ScrollTextureModel:
 	// LNSPEC_ScrollFloor:
 	// LNSPEC_ScrollCeiling:
 	// LNSPEC_ScrollTextureOffsets:
+	// LNSPEC_PointPushSetForce:
 
 	// Inert Line specials
 	default:
@@ -1057,6 +1067,7 @@ void P_SpawnSpecials(bool spawn_thinkers)
 				break;
 			}
 		}
+		P_SpawnPushers();
 	}
 }
 
@@ -1245,6 +1256,9 @@ void StartPlaneWatcher(Actor it, line_t* line, int lineSide, bool ceiling,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.31  2005/06/04 13:48:47  dj_jl
+//  Added pusher specials.
+//
 //  Revision 1.30  2005/03/28 07:43:30  dj_jl
 //  Some Boom line specials and other improvements.
 //

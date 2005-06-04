@@ -538,25 +538,25 @@ enum
 	LNSPEC_PlatDownWaitUpStayLip,
 	LNSPEC_PlatPerpetualRaiseLip,
 	LNSPEC_LineTranslucent,
-
-	LNSPEC_TransferFloorLight = 210,// 210
+	LNSPEC_TransferHeights,
+	LNSPEC_TransferFloorLight,// 210
 	LNSPEC_TransferCeilingLight,
 
 	LNSPEC_SectorSetDamage = 214,
 	LNSPEC_TeleportLine,
 
 	LNSPEC_StairsBuildUpDoom = 217,
-
-	LNSPEC_SectorSetFriction = 219,
-
-	LNSPEC_ScrollTextureBoth = 221,
+	LNSPEC_SectorSetWind,
+	LNSPEC_SectorSetFriction,
+	LNSPEC_SectorSetCurrent,// 220
+	LNSPEC_ScrollTextureBoth,
 	LNSPEC_ScrollTextureModel,
 	LNSPEC_ScrollFloor,
 	LNSPEC_ScrollCeiling,
 	LNSPEC_ScrollTextureOffsets,
 	LNSPEC_ACSExecuteAlways,
-
-	LNSPEC_FloorRaiseToNearestChange = 228,
+	LNSPEC_PointPushSetForce,
+	LNSPEC_FloorRaiseToNearestChange,
 
 	LNSPEC_FloorRaiseByValueChangeTex = 230,// 230
 	LNSPEC_PlatToggle,
@@ -593,6 +593,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2005/06/04 13:46:07  dj_jl
+//  Added pusher specials.
+//
 //  Revision 1.26  2005/03/28 07:48:33  dj_jl
 //  Some Boom line specials.
 //

@@ -35,6 +35,14 @@ enum
 	SCROLLEV_Carry
 };
 
+enum
+{
+	PUSHER_Push,
+	PUSHER_Pull,
+	PUSHER_Wind,
+	PUSHER_Current
+};
+
 // TYPES -------------------------------------------------------------------
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
@@ -175,9 +183,216 @@ void SpawnScrollTextureModel(line_t* Line)
 	}
 }
 
+//==========================================================================
+//
+//	PIT_PushThing
+//
+// PIT_PushThing determines the angle and magnitude of the effect.
+// The object's x and y momentum values are changed.
+//
+// tmpusher belongs to the point source (MT_PUSH/MT_PULL).
+//
+//==========================================================================
+
+class Pusher;
+
+Pusher tmpusher; // pusher structure for blockmap searches
+
+bool PIT_PushThing(Actor thing)
+{
+	float sx;
+	float sy;
+	float dist;
+	float speed;
+	float pushangle;
+
+	if (thing.bWindThrust && thing.bColideWithWorld)
+	{
+		sx = tmpusher.X;
+		sy = tmpusher.Y;
+		dist = Length(vector(thing.Origin.x - sx, thing.Origin.y - sy, 0.0));
+		speed = itof(tmpusher.Magnitude - (ftoi(dist) >> 1)) / (2.0 * tmpusher.PUSH_FACTOR);
+
+		// If speed <= 0, you're outside the effective radius. You also have
+		// to be able to see the push/pull source point.
+
+		if ((speed > 0.0) && thing.CanSee(tmpusher.Source))
+		{
+			pushangle = atan2(sy - thing.Origin.y, sx - thing.Origin.x);
+			if (PointPusher(tmpusher.Source))
+				pushangle += 180.0;    // away
+			thing.Velocity.x += speed * cos(pushangle) * 35.0 * frametime;
+			thing.Velocity.y += speed * sin(pushangle) * 35.0 * frametime;
+		}
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//	P_GetPushThing
+//
+//	Returns a pointer to an MT_PUSH or MT_PULL thing, NULL otherwise.
+//
+//==========================================================================
+
+Actor P_GetPushThing(int s)
+{
+	Actor		thing;
+	sector_t*	sec;
+
+	sec = &GLevel.Sectors[s];
+	FOREACH(Actor, thing)
+	{
+		if (PointPusher(thing) || PointPuller(thing))
+		{
+			return thing;
+		}
+	}
+	return none;
+}
+
+//==========================================================================
+//
+//	P_SpawnPushers
+//
+//	Initialise the sectors where pushers are present
+//
+//==========================================================================
+
+void P_SpawnPushers()
+{
+	int			i;
+	line_t*		l;
+	int			s;
+	Pusher		P;
+	Actor		thing;
+	int			searcher;
+
+	for (i = 0; i < GLevel.NumLines; i++)
+	{
+		l = &GLevel.Lines[i];
+		switch (l->special)
+		{
+		case LNSPEC_SectorSetWind: // wind
+			for (s = FindSectorFromTag(l->arg1, -1); s >= 0; s = FindSectorFromTag(l->arg1, s))
+			{
+				P = Pusher(NewSpecialThinker(Pusher));
+				P.Init(PUSHER_Wind, l->arg4 ? l : NULL, l->arg2, l->arg3, none, s);
+			}
+			break;
+
+		case LNSPEC_SectorSetCurrent: // current
+			for (s = FindSectorFromTag(l->arg1, -1); s >= 0; s = FindSectorFromTag(l->arg1, s))
+			{
+				P = Pusher(NewSpecialThinker(Pusher));
+				P.Init(PUSHER_Current, l->arg4 ? l : NULL, l->arg2, l->arg3, none, s);
+			}
+			break;
+
+		case LNSPEC_PointPushSetForce: // push/pull
+			if (l->arg1)
+			{
+				// [RH] Find thing by sector
+				for (s = FindSectorFromTag(l->arg1, -1); s >= 0;
+					s = FindSectorFromTag(l->arg1, s))
+				{
+					thing = P_GetPushThing(s);
+					if (thing)
+					{
+						// No MT_P* means no effect
+						// [RH] Allow narrowing it down by tid
+						if (!l->arg2 || l->arg2 == thing.TID)
+						{
+							P = Pusher(NewSpecialThinker(Pusher));
+							P.Init(PUSHER_Push, l->arg4 ? l : NULL, l->arg3,
+								0, thing, s);
+						}
+					}
+				}
+			}
+			else
+			{
+				// [RH] Find thing by tid
+				searcher = -1;
+				for (thing = Actor(FindMobjFromTID(l->arg2, &searcher)); thing;
+					thing = Actor(FindMobjFromTID(l->arg2, &searcher)))
+				{
+					if (PointPuller(thing) || PointPusher(thing))
+					{
+						for (s = 0; s < GLevel.NumSectors; s++)
+							if (&GLevel.Sectors[s] == thing.Sector)
+								break;
+						P = Pusher(NewSpecialThinker(Pusher));
+						P.Init(PUSHER_Push, l->arg4 ? l : NULL, l->arg3, 0,
+							thing, s);
+					}
+				}
+			}
+			break;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	AdjustPusher
+//
+//==========================================================================
+
+bool AdjustPusher(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
+	line_t* Line, int Type)
+{
+	int		tag;
+	int		magnitude;
+	int		angle;
+	Pusher	Collection;
+	Pusher	P;
+	int		secnum;
+
+	if (Line || Arg4)
+	{
+		return false;
+	}
+	tag = Arg1;
+	magnitude = Arg2;
+	angle = Arg3;
+	Collection = none;
+	// Find pushers already attached to the sector, and change their parameters.
+	FOREACH(Pusher, P)
+	{
+		if (P.CheckForSectorMatch(Type, tag) >= 0)
+		{
+			P.ChangeValues(magnitude, angle);
+			P.AdjustLink = Collection;
+			Collection = P;
+		}
+	}
+
+	// Now create pushers for any sectors that don't already have them.
+	for (secnum = FindSectorFromTag(tag, -1); secnum >= 0;
+		secnum = FindSectorFromTag(tag, secnum))
+	{
+		for (P = Collection; P; P = P.AdjustLink)
+		{
+			if (P.Affectee == secnum)
+				break;
+		}
+		if (!P)
+		{
+			P = Pusher(NewSpecialThinker(Pusher));
+			P.Init(Type, NULL, magnitude, angle, none, secnum);
+		}
+	}
+	return true;
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/06/04 13:48:47  dj_jl
+//  Added pusher specials.
+//
 //  Revision 1.4  2005/03/28 07:43:30  dj_jl
 //  Some Boom line specials and other improvements.
 //

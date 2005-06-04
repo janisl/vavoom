@@ -1,0 +1,309 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//
+// PUSH/PULL EFFECT
+//
+// phares 3/20/98: Start of push/pull effects
+//
+// This is where push/pull effects are applied to objects in the sectors.
+//
+// There are four kinds of push effects
+//
+// 1) Pushing Away
+//
+//    Pushes you away from a point source defined by the location of an
+//    MT_PUSH Thing. The force decreases linearly with distance from the
+//    source. This force crosses sector boundaries and is felt w/in a circle
+//    whose center is at the MT_PUSH. The force is felt only if the point
+//    MT_PUSH can see the target object.
+//
+// 2) Pulling toward
+//
+//    Same as Pushing Away except you're pulled toward an MT_PULL point
+//    source. This force crosses sector boundaries and is felt w/in a circle
+//    whose center is at the MT_PULL. The force is felt only if the point
+//    MT_PULL can see the target object.
+//
+// 3) Wind
+//
+//    Pushes you in a constant direction. Full force above ground, half
+//    force on the ground, nothing if you're below it (water).
+//
+// 4) Current
+//
+//    Pushes you in a constant direction. No force above ground, full
+//    force if on the ground or below it (water).
+//
+// The magnitude of the force is controlled by the length of a controlling
+// linedef. The force vector for types 3 & 4 is determined by the angle
+// of the linedef, and is constant.
+//
+// For each sector where these effects occur, the sector special type has
+// to have the PUSH_MASK bit set. If this bit is turned off by a switch
+// at run-time, the effect will not occur. The controlling sector for
+// types 1 & 2 is the sector containing the MT_PUSH/MT_PULL Thing.
+//
+//**************************************************************************
+
+class Pusher : Thinker;
+
+int			Type;
+Actor		Source;			// Point source if point pusher
+int			Xmag;			// X Strength
+int			Ymag;			// Y Strength
+int			Magnitude;		// Vector strength for point pusher
+float		Radius;			// Effective radius for point pusher
+float		X;				// X of point source if point pusher
+float		Y;				// Y of point source if point pusher
+int			Affectee;		// Number of affected sector
+float		PUSH_FACTOR;
+Pusher		AdjustLink;
+
+//==========================================================================
+//
+//	Init
+//
+//	Add a push thinker to the thinker list
+//
+//==========================================================================
+
+void Init(int InType, line_t* l, int magnitude, int angle, Actor source,
+	int affectee)
+{
+	Source = source;
+	Type = InType;
+	if (l)
+	{
+		Xmag = ftoi(l->v2->x - l->v1->x);
+		Ymag = ftoi(l->v2->y - l->v1->y);
+		Magnitude = ftoi(Length(vector(itof(Xmag), itof(Ymag), 0.0)));
+	}
+	else
+	{
+		// [RH] Allow setting magnitude and angle with parameters
+		ChangeValues(magnitude, angle);
+	}
+	if (source) // point source exist?
+	{
+		Radius = itof(Magnitude * 2); // where force goes to zero
+		X = Source.Origin.x;
+		Y = Source.Origin.y;
+	}
+	Affectee = affectee;
+}
+
+//==========================================================================
+//
+//	CheckForSectorMatch
+//
+//==========================================================================
+
+int CheckForSectorMatch(int type, int tag)
+{
+	if (Type == type && XLevel.Sectors[Affectee].tag == tag)
+		return Affectee;
+	else
+		return -1;
+}
+
+//==========================================================================
+//
+//	ChangeValues
+//
+//==========================================================================
+
+void ChangeValues(int magnitude, int angle)
+{
+	float ang;
+
+	ang = itof(angle) * 360.0 / 256.0;
+	Xmag = ftoi(itof(magnitude) * cos(ang));
+	Ymag = ftoi(itof(magnitude) * sin(ang));
+	Magnitude = magnitude;
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//	Looks for all objects that are inside the radius of the effect.
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	sector_t*		sec;
+	Actor			thing;
+	int				xspeed, yspeed;
+	int				xl, xh, yl, yh, bx, by;
+	float			ht;
+	sec_plane_t*	floor;
+
+//	if (!var_pushers)
+//		return;
+
+	sec = &XLevel.Sectors[Affectee];
+
+	// Be sure the special sector type is still turned on. If so, proceed.
+	// Else, bail out; the sector type has been changed on us.
+
+	if (!(sec->special & SECSPEC_PUSH_MASK))
+		return;
+
+	// For constant pushers (wind/current) there are 3 situations:
+	//
+	// 1) Affected Thing is above the floor.
+	//
+	//    Apply the full force if wind, no force if current.
+	//
+	// 2) Affected Thing is on the ground.
+	//
+	//    Apply half force if wind, full force if current.
+	//
+	// 3) Affected Thing is below the ground (underwater effect).
+	//
+	//    Apply no force if wind, full force if current.
+	//
+	// Apply the effect to clipped players only for now.
+	//
+	// In Phase II, you can apply these effects to Things other than players.
+	// [RH] No Phase II, but it works with anything having MF2_WINDTHRUST now.
+
+	if (Type == PUSHER_Push)
+	{
+		// Seek out all pushable things within the force radius of this
+		// point pusher. Crosses sectors, so use blockmap.
+		tmpusher = self; // MT_PUSH/MT_PULL point source
+
+		xl = MapBlock(X - Radius - XLevel.BlockMapOrgX - MAXRADIUS);
+		xh = MapBlock(X + Radius - XLevel.BlockMapOrgX + MAXRADIUS);
+		yl = MapBlock(Y - Radius - XLevel.BlockMapOrgY - MAXRADIUS);
+		yh = MapBlock(Y + Radius - XLevel.BlockMapOrgY + MAXRADIUS);
+
+		for (bx = xl; bx <= xh; bx++)
+			for (by = yl; by <= yh; by++)
+				P_BlockThingsIterator(bx, by, 'PIT_PushThing');
+		return;
+	}
+
+	// constant pushers p_wind and p_current
+
+	// things touching this sector
+	FOREACH(Actor, thing)
+	{
+		if (thing.Sector != sec)
+			continue;
+		if (!thing.bWindThrust || !thing.bColideWithWorld)
+			continue;
+		if (Type == PUSHER_Wind)
+		{
+			if (thing.WaterLevel > 2) // underwater
+			{
+				xspeed = 0;
+				yspeed = 0; // no force
+			}
+			else if (thing.WaterLevel) // wading in water
+			{
+				xspeed = Xmag >> 1; // half force
+				yspeed = Ymag >> 1;
+			}
+			else if (!sec->heightsec || sec->heightsec->bIgnoreHeightSec)
+			{
+				// NOT special water sector
+				if (thing.Origin.z > thing.FloorZ) // above ground
+				{
+					xspeed = Xmag; // full force
+					yspeed = Ymag;
+				}
+				else // on ground
+				{
+					xspeed = Xmag >> 1; // half force
+					yspeed = Ymag >> 1;
+				}
+			}
+			else // special water sector
+			{
+				ht = GetPlanePointZ(&sec->heightsec->floor, thing.Origin);
+				if (thing.Origin.z > ht) // above ground
+				{
+					xspeed = Xmag; // full force
+					yspeed = Ymag;
+				}
+				else if (thing.bIsPlayer &&
+					thing.Origin.z + thing.Player.ViewHeight < ht) // underwater
+				{
+					xspeed = 0;
+					yspeed = 0; // no force
+				}
+				else // wading in water
+				{
+					xspeed = Xmag >> 1; // half force
+					yspeed = Ymag >> 1;
+				}
+			}
+		}
+		else // PUSHER_Current
+		{
+			if (!sec->heightsec || sec->heightsec->bIgnoreHeightSec)
+			{
+				// NOT special water sector
+				floor = &sec->floor;
+			}
+			else
+			{
+				// special water sector
+				floor = &sec->heightsec->floor;
+			}
+			if (!thing.WaterLevel &&
+				thing.Origin.z > GetPlanePointZ(floor, thing.Origin))
+			{	
+				// above ground
+				xspeed = 0;
+				yspeed = 0; // no force
+			}
+			else
+			{
+				// on ground/underwater
+				xspeed = Xmag; // full force
+				yspeed = Ymag;
+			}
+		}
+		thing.Velocity.x += itof(xspeed) / PUSH_FACTOR * 35.0 * DeltaTime;
+		thing.Velocity.y += itof(yspeed) / PUSH_FACTOR * 35.0 * DeltaTime;
+	}
+}
+
+defaultproperties
+{
+	PUSH_FACTOR = 128.0;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2005/06/04 13:51:07  dj_jl
+//  Added pusher specials.
+//
+//**************************************************************************
