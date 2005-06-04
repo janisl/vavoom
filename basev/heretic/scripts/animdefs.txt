@@ -1,50 +1,23 @@
 ; Water
-flat FLTWAWA1 
-pic 1 tics 8
-pic 2 tics 8
-pic 3 tics 8
+flat optional FLTWAWA1 range FLTWAWA3 tics 8
 
 ; Sludge
-flat FLTSLUD1
-pic 1 tics 8
-pic 2 tics 8
-pic 3 tics 8
+flat optional FLTSLUD1 range FLTSLUD3 tics 8
 
 ; Teleport
-flat FLTTELE1
-pic 1 tics 6
-pic 2 tics 6
-pic 3 tics 6
-pic 4 tics 6
+flat optional FLTTELE1 range FLTTELE4 tics 6
 
 ; River - West
-flat FLTFLWW1
-pic 1 tics 9
-pic 2 tics 9
-pic 3 tics 9
+flat optional FLTFLWW1 range FLTFLWW3 tics 9
 
 ; Lava
-flat FLTLAVA1
-pic 1 tics 8
-pic 2 tics 8
-pic 3 tics 8
-pic 4 tics 8
+flat optional FLTLAVA1 range FLTLAVA4 tics 8
 
 ; Super Lava
-flat FLATHUH1
-pic 1 tics 8
-pic 2 tics 8
-pic 3 tics 8
-pic 4 tics 8
+flat optional FLATHUH1 range FLATHUH4 tics 8
 
 ; Texture: Lavaflow
-texture LAVAFL1
-pic 1 tics 6
-pic 2 tics 6
-pic 3 tics 6
+texture optional LAVAFL1 range LAVAFL3 tics 6
 
 ; Texture: Waterfall
-texture WATRWAL1
-pic 1 tics 4
-pic 2 tics 4
-pic 3 tics 4
+texture optional WATRWAL1 range WATRWAL3 tics 4
