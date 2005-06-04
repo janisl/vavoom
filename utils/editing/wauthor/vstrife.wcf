@@ -211,19 +211,26 @@ LightingInc=0
 
 [Specials.Types]
 
+; Special
+0x021	1	ForceField( -, -, -, -, - )
+0x022	1	ClearForceField( tag, -, -, -, - )
 0x078	1	Earthquake( intensity, duration, damrad, tremrad, tag )
 0x079	1	Line_SetIdentification( line, -, -, -, - )
 0x081	1	UsePuzzleItem( item, script, sArg0, sArg1, sArg2 )
 0x08c	1	Sector_ChangeSound( tag, sound, -, -, - )
 0x0a0	1	3d floor( tag, -, -, -, - )
 0x0a1	1	Contents( type, trans, flags, -, - )
+0x0ad	1	NoiseAlert( source, target, -, -, - )
 0x0b5	1	Plane_Align( floor, ceiling, line_id, -, - )
 0x0d0	1	TranslucentLine( line, amount, -, -, - )
+0x0d1	1	Transfer_Heights( tag, flags, -, -, - )
 0x0d2	1	Transfer_FloorLight( tag, -, -, -, - )
 0x0d3	1	Transfer_CeilingLight( tag, -, -, -, - )
 0x0d6	1	Sector_SetDamage( tag, damage, mod, -, - )
+0x0dc	1	Sector_SetWind( tag, strength, angle, line_vector, - )
 0x0db	1	Sector_SetFriction( tag, amount, -, -, - )
-0x0ad	1	NoiseAlert( source, target, -, -, - )
+0x0de	1	Sector_SetCurrent( tag, strength, angle, line_vector, - )
+0x0de	1	PointPush_SetForce( tag, tid, strength, line_vector, - )
 
 ; Door
 0x00a	2	Door_Close( tag, speed, light_tag, -, - )

@@ -2269,6 +2269,27 @@ PF(SetCeilingLightSector)
 
 //==========================================================================
 //
+//	PF_SetHeightSector
+//
+//==========================================================================
+
+PF(SetHeightSector)
+{
+	sector_t	*Sector;
+	sector_t	*SrcSector;
+	int			Flags;
+
+	Flags = Pop();
+	SrcSector = (sector_t*)Pop();
+	Sector = (sector_t*)Pop();
+	sv_signon << (byte)svc_set_heightsec
+			<< (word)(Sector - GLevel->Sectors)
+			<< (word)(SrcSector - GLevel->Sectors)
+			<< (byte)Flags;
+}
+
+//==========================================================================
+//
 //	PF_FindModel
 //
 //==========================================================================
@@ -3226,6 +3247,7 @@ builtin_info_t BuiltinInfo[] =
 	_(SetSecLightColor),
 	_(SetFloorLightSector),
 	_(SetCeilingLightSector),
+	_(SetHeightSector),
 	_(FindModel),
 	_(GetModelIndex),
 	_(FindSkin),
@@ -3237,9 +3259,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.56  2005/06/04 13:59:02  dj_jl
+//	Adding support for Boom fake sectors.
+//
 //	Revision 1.55  2005/05/26 16:53:59  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.54  2005/03/28 07:28:19  dj_jl
 //	Transfer lighting and other BOOM stuff.
 //	

@@ -221,11 +221,19 @@ struct sector_t
 	int linecount;
 	line_t **lines;	// [linecount] size
 
+	//	Boom's fake floors.
+	sector_t* heightsec;
+
 	//	Flags.
 	bool		bHasExtrafloors;	//	This sector has extrafloors.
 	bool		bExtrafloorSource;	//	This sector is a source of an extrafloor.
+	bool		bFakeFloorOnly;		//	When used as heightsec in R_FakeFlat, only copies floor
+	bool		bClipFakePlanes;	//	As a heightsec, clip planes to target sector's planes
+	bool		bNoFakeLight;		//	heightsec does not change lighting
+	bool		bIgnoreHeightSec;	//	heightsec is only for triggering sector actions
+	bool		bUnderWater;		//	Sector is underwater
 
-	addfields 16;
+	addfields 15;
 };
 
 //
@@ -711,6 +719,9 @@ struct ClipRect
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.56  2005/06/04 13:56:07  dj_jl
+//  Adding support for Boom fake sectors.
+//
 //  Revision 1.55  2005/05/03 14:55:03  dj_jl
 //  Added support for specifying skin index.
 //

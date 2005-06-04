@@ -478,6 +478,7 @@ native void SendCeilingSlope(sector_t * sector);
 native void SetSecLightColor(sector_t * sector, int Color);
 native void SetFloorLightSector(sector_t* Sector, sector_t* SrcSector);
 native void SetCeilingLightSector(sector_t* Sector, sector_t* SrcSector);
+native void SetHeightSector(sector_t* Sector, sector_t* SrcSector, int Flags);
 native int FindModel(string Name);
 native int GetModelIndex(name Name);
 native int FindSkin(string Name);
@@ -489,6 +490,9 @@ native void MSG_SelectClientMsg(int msgtype, BasePlayer client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.49  2005/06/04 13:56:07  dj_jl
+//  Adding support for Boom fake sectors.
+//
 //  Revision 1.48  2005/03/28 07:48:33  dj_jl
 //  Some Boom line specials.
 //

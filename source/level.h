@@ -272,11 +272,19 @@ struct sector_t
 	int			linecount;
 	line_t		**lines;  // [linecount] size
 
+	//	Boom's fake floors.
+	sector_t*	heightsec;
+
 	//	Flags.
 	dword		bHasExtrafloors:1;		//	This sector has extrafloors.
 	dword		bExtrafloorSource:1;	//	This sector is a source of an extrafloor.
+	dword		bFakeFloorOnly:1;		//	When used as heightsec in R_FakeFlat, only copies floor
+	dword		bClipFakePlanes:1;		//	As a heightsec, clip planes to target sector's planes
+	dword		bNoFakeLight:1;			//	heightsec does not change lighting
+	dword		bIgnoreHeightSec:1;		//	heightsec is only for triggering sector actions
+	dword		bUnderWater:1;			//	Sector is underwater
 
-	int			user_fields[16];
+	int			user_fields[15];
 };
 
 //
@@ -602,9 +610,12 @@ extern VLevel*			GClLevel;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.31  2005/06/04 13:59:02  dj_jl
+//	Adding support for Boom fake sectors.
+//
 //	Revision 1.30  2005/03/28 07:28:19  dj_jl
 //	Transfer lighting and other BOOM stuff.
-//
+//	
 //	Revision 1.29  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
 //	

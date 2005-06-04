@@ -333,7 +333,7 @@
  and Programmer. Killing Programmer informs helper ACS about death so that
  map traversals to new and abandoned front base work fine.
 15.10.2004
-  Upgraded to latest SDL. Amyways there's some delay till sound is played.
+  Upgraded to latest SDL. Anyways there's some delay till sound is played.
 17.10.2004
   Working on Strife monsters. Implemented templar, inquisitor, Bishop, Macil,
  Oracle, Loremaster, specters, Entity. Also implemented sigil.
@@ -515,7 +515,7 @@
   Added windowed mode to Allegro drivers. There have been some changes in
  Allegro since now mouse doesn't work properly with OpenGL driver where I'm
  recreating the window - a BIG hack.
-.03.2005
+02.03.2005
   Exit specials now take posittion argument.
   Added new ACS specials to all games.
   Started working on lighting specials.
@@ -585,7 +585,7 @@
   Stats upgrade when killed Loremaster also gives health.
 31.03.2005
   In Strife fixed wrong voices when killed boses.
-01.03.2005
+01.04.2005
   A fix when loading a savegame having palette effect.
   When loading savegame server info is sent after loading level data from file
  so clients have loaded data.
@@ -593,3 +593,113 @@
 ******************************************************************************
                             VERSION 1.17
 ******************************************************************************
+
+04.04.2005
+  Fixed DeHackEd support.
+  Fixed reseting of velocity after teleport in Hexen.
+19.04.2005
+  Fixed crash with stairs.
+  Fixed removal of wings in Heretic.
+  Fixed some Strife cheats.
+  Several fixes by someone - fixes freeze in OpenAL driver on Linux, better
+ support for UTF-8 console for end text.
+25.04.2005
+  Started work on autoconf generated configure script.
+26.04.2005
+  I installed gcc 4.0.0 and it now warns about classes having virtual functions
+ but no virtual destructor.
+  Already usable configure script with system detection.
+  Temporary fix in vcc when compiled with optimisations, fixed warnings.
+27.04.2005
+  Fixed most of the compiler warnings.
+  All configurable stuff is now in configure. Added CD driver detection.
+28.04.2005
+  Added automatic detection of Allegro or SDL.
+  Started work on updating MD2 models. Created Makefile for fixmd2 and added it
+ to build process. Had to increase maximal vertex count, mostly because mm3d
+ doesn't merge ST vertexes.
+29.04.2005
+  Continued to update MD2 models.
+30.04.2005
+  Continued to update MD2 models. Lost soul's animated fire animation was real
+ pain. I need a better way to do this.
+01.05.2005
+  Continued to update MD2 models. Added support for specifying a skin index.
+ This allowed me to make a very easy torch fire animation. Must update lost
+ soul, burning barrel and maybe other models to take advantage of this. This
+ will also make very easy to add support for damaged skins.
+02.05.2005
+  Updated animdefs script to support range animations and to recognise other
+ ZDooom specific keywords. Added support for BOOM's animated lump. Moved switch
+ list to r_tex, since they will be defined by animdefs.
+03.05.2005
+  Started a work on texture classes. For each texture format there will be a
+ class that supports it. This will make drivers completely independent from
+ formats. I started by creating a texture list. Texture class currently has
+ type and index of corresponding type texture. Wall and flat textures now use
+ index in new texture list, drivers doesn't have arrays for flat data anymore.
+  To names list added adding of names, that should be lowercased and no longer
+ than 8 characters. This will be used by texture list and wad files.
+04.05.2005
+  Some fixed by Firebrand.
+  Added to texture list sprites and skybox textures. In OpenGL and Direct3D
+ drivers removed inversed width and height arrays. Fixed possible bug with sky
+ box textures.
+05.05.2005
+  Made cnter messages to be drawn much lower and to drawn with wrapping in a
+ case of a long messages.
+  Added skins and 2D images to texture list. Since these are added dynamicly,
+ I had to add a function to drivers that updates driver's texture data lists.
+ Lists of all registered skins now is in r_tex. And both of them doesn't have
+ limitations anymore.
+06.05.2005
+  Removed SetFlat from all drivers since SetTexture can detect if it's a flat.
+ Removed textureheight array since it can be easely calculated. Changed texture
+ animation to one common array.
+07.05.2005
+  Added width, height and offset texture properties. Also added wall patches to
+ the texture list. Created classes for different texture formats.
+  Changed OpenGL and Direct3D drivers to load textures as 8 bit and convert
+ when uploading.
+08.05.2005
+  To all texture classes added function Getpixels that loads the texture. After
+ this all drivers became independent from texture formats. Some functions that
+ generates texture can be merged into one. All of the properties of different
+ texture types now are in texture classes, old lists were removed, with this
+ the TypeIndex property. Also added function GetHighResPixels that, depending
+ on usage type loads high-resolution version.
+  For front sky layers of double-skies now there's a flag intexture.
+10.05.2005
+  Added DriverData to textures where drivers can keep driver specific data.
+  Added texture data format attribute, which can be 8-bit, 8-bit with custom
+ palette or true-color. Loading of skins and sky box texture use texture API.
+ Textures now have a GetPalette function that returns the palette of texture.
+ Moved texture animation to texture class.
+  Finally installed TiMidity patched for SDL_mixer. And it turned out that
+ conversion of MUS to MIDI didn't produce a valid MIDI file. After replacing it
+ with original qmus2mid I got working MIDI music.
+11.05.2005
+  Added function GetPixels8 to texture class that converts texture to 8-bit if
+ texture is in another format. It's primarily for software renderer, but there
+ may be other uses if it. Moved PalNum from texture base class to subclasses
+ that needs it. Some oteher fixes if texture loading.
+14.05.2005
+  Changed multiple palettes array to a single main palette. Removed support for
+ custom palette from patch texture since it's needed only by Heretic episode 2
+ fnale pic which is a raw image.
+  Added support for overloaded textures.
+15.05.2005
+  In OpenGL and Direct3D all textures now have mipmaps.
+  Added remapping of color 0 for file textures.
+17.05.2005
+  Created texture manager class. Added a function for simpler iteration of a
+ wad file lumps in fixed namespace, used to init sprites and flats. All texture
+ functions moved to texture manager class.
+18.05.2005
+  Moved texture list to texture manager class.
+  Added function to read a part of a wad file lump, will be used by texture
+ type detection code.
+29.05.2005
+  Fixed bug with moving 3D floors.
+30.05.2005
+  Added support for IMGZ and PNG lump textures.

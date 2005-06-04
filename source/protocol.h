@@ -102,6 +102,8 @@ enum
 	svc_set_floor_light_sec,
 	svc_set_ceil_light_sec,
 
+	svc_set_heightsec,
+
 	USER_PROTOCOL_START = 128
 };
 
@@ -150,9 +152,12 @@ enum
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2005/06/04 13:59:02  dj_jl
+//	Adding support for Boom fake sectors.
+//
 //	Revision 1.11  2005/03/28 07:28:19  dj_jl
 //	Transfer lighting and other BOOM stuff.
-//
+//	
 //	Revision 1.10  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
 //	

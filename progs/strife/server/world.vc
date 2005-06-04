@@ -603,11 +603,54 @@ void SetSectorFriction(int tag, int amount, bool alterFlag)
 
 //==========================================================================
 //
+//  MakeHeightSec
+//
+//	killough 3/7/98:
+//	support for drawn heights coming from different sector
+//
+//==========================================================================
+
+void MakeHeightSec(line_t* Line)
+{
+	sector_t*	Sec;
+	int			s;
+
+	Sec = Line->frontsector;
+	if (Line->arg2 & 2)
+	{
+		Sec->bFakeFloorOnly = true;
+	}
+	if (Line->arg2 & 4)
+	{
+		Sec->bClipFakePlanes = true;
+	}
+	if (Line->arg2 & 8)
+	{
+		Sec->bUnderWater = true;
+	}
+	if (Line->arg2 & 16)
+	{
+		Sec->bIgnoreHeightSec = true;
+	}
+	if (Line->arg2 & 32)
+	{
+		Sec->bNoFakeLight = true;
+	}
+	for (s = FindSectorFromTag(Line->arg1, -1); s  >= 0;
+		s = FindSectorFromTag(Line->arg1, s))
+	{
+		GLevel.Sectors[s].heightsec = Sec;
+		SetHeightSector(&GLevel.Sectors[s], Sec, Line->arg2);
+	}
+}
+
+//==========================================================================
+//
 //  SpawnWorld
 //
 //==========================================================================
 
-void SpawnWorld(void)
+void SpawnWorld()
 {
 	int			i;
 	int			length;
@@ -697,6 +740,10 @@ void SpawnWorld(void)
 			SetSectorFriction(GLevel.Lines[i].arg1, length, false);
 			GLevel.Lines[i].special = 0;
 			break;
+
+		case LNSPEC_TransferHeights:
+			MakeHeightSec(&GLevel.Lines[i]);
+			break;
 		}
 	}
 }
@@ -704,6 +751,9 @@ void SpawnWorld(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2005/06/04 13:58:13  dj_jl
+//  Adding support for Boom fake sectors.
+//
 //  Revision 1.10  2005/03/28 07:45:30  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

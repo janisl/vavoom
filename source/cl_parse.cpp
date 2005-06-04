@@ -680,6 +680,41 @@ static void CL_ParseExtraFloor(void)
 
 //==========================================================================
 //
+//	CL_ParseHeightSec
+//
+//==========================================================================
+
+static void CL_ParseHeightSec()
+{
+	sector_t* ToSec = &GClLevel->Sectors[(word)net_msg.ReadShort()];
+	sector_t* HeightSec = &GClLevel->Sectors[(word)net_msg.ReadShort()];
+	int flags = net_msg.ReadByte();
+
+	ToSec->heightsec = HeightSec;
+	if (flags & 2)
+	{
+		HeightSec->bFakeFloorOnly = true;
+	}
+	if (flags & 4)
+	{
+		HeightSec->bClipFakePlanes = true;
+	}
+	if (flags & 8)
+	{
+		HeightSec->bUnderWater = true;
+	}
+	if (flags & 16)
+	{
+		HeightSec->bIgnoreHeightSec = true;
+	}
+	if (flags & 32)
+	{
+		HeightSec->bNoFakeLight = true;
+	}
+}
+
+//==========================================================================
+//
 //	CL_ParseServerMessage
 //
 //==========================================================================
@@ -1012,6 +1047,10 @@ void CL_ParseServerMessage(void)
 			GClLevel->Sectors[i].ceiling.LightSourceSector = net_msg.ReadShort();
 			break;
 
+		case svc_set_heightsec:
+			CL_ParseHeightSec();
+			break;
+
 		default:
 			if (clpr.Exec(pf_ParseServerCommand, cmd_type))
 			{
@@ -1033,9 +1072,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.35  2005/06/04 13:59:02  dj_jl
+//	Adding support for Boom fake sectors.
+//
 //	Revision 1.34  2005/05/03 14:56:59  dj_jl
 //	Added support for specifying skin index.
-//
+//	
 //	Revision 1.33  2005/03/28 07:28:19  dj_jl
 //	Transfer lighting and other BOOM stuff.
 //	
