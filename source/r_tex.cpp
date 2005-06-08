@@ -562,6 +562,12 @@ int TTextureManager::CreatePatch(int Type, int LumpNum)
 		return AddTexture(new(PU_STATIC) TPngLumpTexture(Type, LumpNum));
 	}
 
+	//	Check for automap background.
+	if (!strcmp(W_LumpName(LumpNum), "AUTOPAGE"))
+	{
+		return AddTexture(new(PU_STATIC) TRawPicTexture(LumpNum, -1));
+	}
+
 	if (W_LumpLength(LumpNum) == 64000)
 	{
 		return AddTexture(new(PU_STATIC) TRawPicTexture(LumpNum, -1));
@@ -1564,6 +1570,7 @@ TRawPicTexture::TRawPicTexture(int InLumpNum, int InPalLumpNum)
 : LumpNum(InLumpNum)
 , PalLumpNum(InPalLumpNum)
 , Pixels(0)
+, Palette(0)
 {
 	Type = TEXTYPE_Pic;
 	Name = FName(W_LumpName(InLumpNum), FNAME_AddLower8);
@@ -2643,9 +2650,12 @@ void R_InitTexture()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2005/06/08 22:52:16  dj_jl
+//	Fixed automap background.
+//
 //	Revision 1.28  2005/05/30 18:34:03  dj_jl
 //	Added support for IMGZ and PNG lump textures
-//
+//	
 //	Revision 1.27  2005/05/26 16:50:15  dj_jl
 //	Created texture manager class
 //	
