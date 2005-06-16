@@ -460,7 +460,7 @@ void SB_DrawFullscreenStats(void)
 	if (cl->ArmorPoints)
 	{
 		SB_DrawTallNum(ST_TDARMORX, ST_TDARMORY, cl->ArmorPoints, 40, false);
-		R_DrawPic(90, 195, pic_armor2);
+		R_DrawPic(80, 195, pic_armor2);
 	}
 
 	// ready weapon ammo with icon
@@ -485,29 +485,29 @@ void SB_DrawFullscreenStats(void)
 	// keys
 	if (cl->Stats.flags & SBF_BLUE_SKULL)
 	{
-		R_DrawPic(240, 190, pic_keys[3]);
+		R_DrawPic(230, 190, pic_keys[3]);
 	}
 	else if (cl->Stats.flags & SBF_BLUE_CARD)
 	{
-		R_DrawPic(240, 190, pic_keys[0]);
+		R_DrawPic(230, 190, pic_keys[0]);
 	}
 
 	if (cl->Stats.flags & SBF_YELLOW_SKULL)
 	{
-		R_DrawPic(230, 190, pic_keys[4]);
+		R_DrawPic(220, 190, pic_keys[4]);
 	}
 	else if (cl->Stats.flags & SBF_YELLOW_CARD)
 	{
-		R_DrawPic(230, 190, pic_keys[1]);
+		R_DrawPic(220, 190, pic_keys[1]);
 	}
 
 	if (cl->Stats.flags & SBF_RED_SKULL)
 	{
-		R_DrawPic(220, 190, pic_keys[5]);
+		R_DrawPic(210, 190, pic_keys[5]);
 	}
 	else if (cl->Stats.flags & SBF_RED_CARD)
 	{
-		R_DrawPic(220, 190, pic_keys[2]);
+		R_DrawPic(210, 190, pic_keys[2]);
 	}
 
 	if (deathmatch)
@@ -764,6 +764,9 @@ void SB_UpdateWidgets(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2005/06/16 17:42:44  dj_jl
+//  Fixeds from Firebrand.
+//
 //  Revision 1.14  2005/04/04 07:44:03  dj_jl
 //  Improved fullscreen statusbar.
 //
