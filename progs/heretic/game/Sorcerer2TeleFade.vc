@@ -27,12 +27,12 @@ class Sorcerer2TeleFade:Effect;
 
 __states__
 {
-	S_SOR2TELEFADE1('SOR2', 6, 8.0 / 35.0, S_SOR2TELEFADE2) { }
-	S_SOR2TELEFADE2('SOR2', 7, 6.0 / 35.0, S_SOR2TELEFADE3) { }
-	S_SOR2TELEFADE3('SOR2', 8, 6.0 / 35.0, S_SOR2TELEFADE4) { }
-	S_SOR2TELEFADE4('SOR2', 9, 6.0 / 35.0, S_SOR2TELEFADE5) { }
-	S_SOR2TELEFADE5('SOR2', 10, 6.0 / 35.0, S_SOR2TELEFADE6) { }
-	S_SOR2TELEFADE6('SOR2', 11, 6.0 / 35.0, S_NULL) { }
+	S_SOR2TELEFADE1('SOR2', 6, 'monsters/dsparil/base2.md2', 57, 8.0 / 35.0, S_SOR2TELEFADE2) { }
+	S_SOR2TELEFADE2('SOR2', 7, 'monsters/dsparil/base2.md2', 58, 6.0 / 35.0, S_SOR2TELEFADE3) { }
+	S_SOR2TELEFADE3('SOR2', 8, 'monsters/dsparil/base2.md2', 59, 6.0 / 35.0, S_SOR2TELEFADE4) { }
+	S_SOR2TELEFADE4('SOR2', 9, 'monsters/dsparil/base2.md2', 60, 6.0 / 35.0, S_SOR2TELEFADE5) { }
+	S_SOR2TELEFADE5('SOR2', 10, 'monsters/dsparil/base2.md2', 61, 6.0 / 35.0, S_SOR2TELEFADE6) { }
+	S_SOR2TELEFADE6('SOR2', 11, 'monsters/dsparil/base2.md2', 62, 6.0 / 35.0, S_NULL) { }
 }
 
 defaultproperties
@@ -44,6 +44,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/06/16 17:46:39  dj_jl
+//  Added model definitions.
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //

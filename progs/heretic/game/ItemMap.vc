@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class ItemMap:Pickup
+class ItemMap : Pickup
 	__mobjinfo__(35);
 
 __states__
 {
-	S_ITEM_SPMP1('SPMP', 0, -1.0, S_NULL) { }
+	S_ITEM_SPMP1('SPMP', 0, 'items/map.md2', 0, -1.0, S_NULL) { }
 }
 
 defaultproperties
@@ -41,6 +41,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/06/16 17:46:39  dj_jl
+//  Added model definitions.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

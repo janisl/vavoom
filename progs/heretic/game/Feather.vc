@@ -23,19 +23,19 @@
 //**
 //**************************************************************************
 
-class Feather:ProjEffect;
+class Feather : ProjEffect;
 
 __states__
 {
-	S_FEATHER1('CHKN', 12, 3.0 / 35.0, S_FEATHER2) { }
-	S_FEATHER2('CHKN', 13, 3.0 / 35.0, S_FEATHER3) { }
-	S_FEATHER3('CHKN', 14, 3.0 / 35.0, S_FEATHER4) { }
-	S_FEATHER4('CHKN', 15, 3.0 / 35.0, S_FEATHER5) { }
-	S_FEATHER5('CHKN', 16, 3.0 / 35.0, S_FEATHER6) { }
-	S_FEATHER6('CHKN', 15, 3.0 / 35.0, S_FEATHER7) { }
-	S_FEATHER7('CHKN', 14, 3.0 / 35.0, S_FEATHER8) { }
-	S_FEATHER8('CHKN', 13, 3.0 / 35.0, S_FEATHER1) { }
-	S_FEATHERX('CHKN', 13, 6.0 / 35.0, S_NULL) { }
+	S_FEATHER1('CHKN', 12, 'monsters/chicken/feather.md2', 0, 3.0 / 35.0, S_FEATHER2) { }
+	S_FEATHER2('CHKN', 13, 'monsters/chicken/feather.md2', 1, 3.0 / 35.0, S_FEATHER3) { }
+	S_FEATHER3('CHKN', 14, 'monsters/chicken/feather.md2', 2, 3.0 / 35.0, S_FEATHER4) { }
+	S_FEATHER4('CHKN', 15, 'monsters/chicken/feather.md2', 3, 3.0 / 35.0, S_FEATHER5) { }
+	S_FEATHER5('CHKN', 16, 'monsters/chicken/feather.md2', 4, 3.0 / 35.0, S_FEATHER6) { }
+	S_FEATHER6('CHKN', 15, 'monsters/chicken/feather.md2', 5, 3.0 / 35.0, S_FEATHER7) { }
+	S_FEATHER7('CHKN', 14, 'monsters/chicken/feather.md2', 6, 3.0 / 35.0, S_FEATHER8) { }
+	S_FEATHER8('CHKN', 13, 'monsters/chicken/feather.md2', 7, 3.0 / 35.0, S_FEATHER1) { }
+	S_FEATHERX('CHKN', 13, 'monsters/chicken/feather.md2', 8, 6.0 / 35.0, S_NULL) { }
 }
 
 defaultproperties
@@ -53,6 +53,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/06/16 17:46:38  dj_jl
+//  Added model definitions.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

@@ -23,15 +23,15 @@
 //**
 //**************************************************************************
 
-class FireBomb:Actor;
+class FireBomb : Actor;
 
 __states__
 {
-	S_FIREBOMB1('FBMB', 0, 10.0 / 35.0, S_FIREBOMB2) { }
-	S_FIREBOMB2('FBMB', 1, 10.0 / 35.0, S_FIREBOMB3) { }
-	S_FIREBOMB3('FBMB', 2, 10.0 / 35.0, S_FIREBOMB4) { }
-	S_FIREBOMB4('FBMB', 3, 10.0 / 35.0, S_FIREBOMB5) { }
-	S_FIREBOMB5('FBMB', 4, 6.0 / 35.0, S_FIREBOMB6) { A_Scream(); }
+	S_FIREBOMB1('FBMB', 0, 'artifact/bomb.md2', 0, 10.0 / 35.0, S_FIREBOMB2) { }
+	S_FIREBOMB2('FBMB', 1, 'artifact/bomb.md2', 1, 10.0 / 35.0, S_FIREBOMB3) { }
+	S_FIREBOMB3('FBMB', 2, 'artifact/bomb.md2', 2, 10.0 / 35.0, S_FIREBOMB4) { }
+	S_FIREBOMB4('FBMB', 3, 'artifact/bomb.md2', 3, 10.0 / 35.0, S_FIREBOMB5) { }
+	S_FIREBOMB5('FBMB', 4, 'artifact/bomb.md2', 4, 6.0 / 35.0, S_FIREBOMB6) { A_Scream(); }
 	S_FIREBOMB6('XPL1', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBOMB7) { A_Explode(); }
 	S_FIREBOMB7('XPL1', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBOMB8) { }
 	S_FIREBOMB8('XPL1', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBOMB9) { }
@@ -57,6 +57,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/06/16 17:46:38  dj_jl
+//  Added model definitions.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

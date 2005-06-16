@@ -23,14 +23,14 @@
 //**
 //**************************************************************************
 
-class KeyGizmoFloat:Decoration;
+class KeyGizmoFloat : Decoration;
 
 __states__
 {
-	S_KGZ_START('KGZB', 0, 1.0 / 35.0, S_KGZ_START) { }
-	S_KGZ_BLUEFLOAT1('KGZB', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
-	S_KGZ_GREENFLOAT1('KGZG', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
-	S_KGZ_YELLOWFLOAT1('KGZY', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
+	S_KGZ_START('KGZB', 0, 'objects/orbblue.md2', 0, 1.0 / 35.0, S_KGZ_START) { }
+	S_KGZ_BLUEFLOAT1('KGZB', 0 | FF_FULLBRIGHT, 'objects/orbblue.md2', 0, -1.0, S_NULL) { }
+	S_KGZ_GREENFLOAT1('KGZG', 0 | FF_FULLBRIGHT, 'objects/orbgreen.md2', 0, -1.0, S_NULL) { }
+	S_KGZ_YELLOWFLOAT1('KGZY', 0 | FF_FULLBRIGHT, 'objects/orbyel.md2', 0, -1.0, S_NULL) { }
 }
 
 defaultproperties
@@ -45,6 +45,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/06/16 17:46:39  dj_jl
+//  Added model definitions.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ItemWeaponMace:WeaponPickup
+class ItemWeaponMace : WeaponPickup
 	__mobjinfo__(2002);
 
 //==========================================================================
@@ -34,7 +34,7 @@ class ItemWeaponMace:WeaponPickup
 //
 //==========================================================================
 
-void A_RestoreSpecialThing1(void)
+void A_RestoreSpecialThing1()
 {
 	int spot;
 
@@ -51,7 +51,7 @@ void A_RestoreSpecialThing1(void)
 
 __states__
 {
-	S_WMCE('WMCE', 0, -1.0, S_NULL) { }
+	S_WMCE('WMCE', 0, 'weapons/g_mace.md2', 0, -1.0, S_NULL) { }
 }
 
 defaultproperties
@@ -63,6 +63,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/06/16 17:46:39  dj_jl
+//  Added model definitions.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

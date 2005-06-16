@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Clink:Pawn
+class Clink : Pawn
 	__mobjinfo__(90);
 
 //==========================================================================
@@ -32,7 +32,7 @@ class Clink:Pawn
 //
 //==========================================================================
 
-void DropStuff(void)
+void DropStuff()
 {
 	DropItem(ItemAmmoSkullRodWimpy, 20, 0.328125);
 }
@@ -43,7 +43,7 @@ void DropStuff(void)
 //
 //==========================================================================
 
-void A_ClinkAttack(void)
+void A_ClinkAttack()
 {
 	int damage;
 
@@ -111,8 +111,8 @@ __states__
 	S_CLINK_DIE9('CLNK', 12, 'monsters/clink/death.md2', 4, 0.1, S_CLINK_DIE10) { }
 	S_CLINK_DIE10('CLNK', 12, 'monsters/clink/death.md2', 5, 0.1, S_CLINK_DIE11) { }
 	S_CLINK_DIE11('CLNK', 13, 'monsters/clink/death.md2', 6, 0.1, S_CLINK_DIE12) { }
-	S_CLINK_DIE12('CLNK', 13, 'monsters/clink/death.md2', 7, 0.1, S_CLINK_DIE12) { }
-	S_CLINK_DIE13('CLNK', 14, 'monsters/clink/death.md2', 8, 0.1, S_CLINK_DIE13) { }
+	S_CLINK_DIE12('CLNK', 13, 'monsters/clink/death.md2', 7, 0.1, S_CLINK_DIE13) { }
+	S_CLINK_DIE13('CLNK', 14, 'monsters/clink/death.md2', 8, 0.1, S_CLINK_DIE14) { }
 	S_CLINK_DIE14('CLNK', 14, 'monsters/clink/death.md2', 9, -1.0, S_NULL) { }
 }
 
@@ -140,6 +140,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/06/16 17:46:38  dj_jl
+//  Added model definitions.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

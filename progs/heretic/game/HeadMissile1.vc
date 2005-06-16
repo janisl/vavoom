@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HeadMissile1:Projectile;
+class HeadMissile1 : Projectile;
 
 //==========================================================================
 //
@@ -31,7 +31,7 @@ class HeadMissile1:Projectile;
 //
 //==========================================================================
 
-void A_HeadIceImpact(void)
+void A_HeadIceImpact()
 {
 	int i;
 	float angle;
@@ -52,9 +52,9 @@ void A_HeadIceImpact(void)
 
 __states__
 {
-	S_HEADFX1_1('FX05', 0, 6.0 / 35.0, S_HEADFX1_2) { }
-	S_HEADFX1_2('FX05', 1, 6.0 / 35.0, S_HEADFX1_3) { }
-	S_HEADFX1_3('FX05', 2, 6.0 / 35.0, S_HEADFX1_1) { }
+	S_HEADFX1_1('FX05', 0, 'monsters/head/fx_ice.md2', 0, 6.0 / 35.0, S_HEADFX1_2) { }
+	S_HEADFX1_2('FX05', 1, 'monsters/head/fx_ice.md2', 1, 6.0 / 35.0, S_HEADFX1_3) { }
+	S_HEADFX1_3('FX05', 2, 'monsters/head/fx_ice.md2', 2, 6.0 / 35.0, S_HEADFX1_1) { }
 	S_HEADFXI1_1('FX05', 3, 5.0 / 35.0, S_HEADFXI1_2) { A_HeadIceImpact(); }
 	S_HEADFXI1_2('FX05', 4, 5.0 / 35.0, S_HEADFXI1_3) { }
 	S_HEADFXI1_3('FX05', 5, 5.0 / 35.0, S_HEADFXI1_4) { }
@@ -76,6 +76,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/06/16 17:46:38  dj_jl
+//  Added model definitions.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

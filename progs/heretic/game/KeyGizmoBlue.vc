@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class KeyGizmoBlue:Decoration
+class KeyGizmoBlue : Decoration
 	__mobjinfo__(94);
 
 int GizmoFloatState;
@@ -44,9 +44,9 @@ void A_InitKeyGizmo(void)
 
 __states__
 {
-	S_KEYGIZMO1('KGZ1', 0, 1.0 / 35.0, S_KEYGIZMO2) { }
-	S_KEYGIZMO2('KGZ1', 0, 1.0 / 35.0, S_KEYGIZMO3) { A_InitKeyGizmo(); }
-	S_KEYGIZMO3('KGZ1', 0, -1.0, S_NULL) { }
+	S_KEYGIZMO1('KGZ1', 0, 'objects/plrdoor.md2', 0, 1.0 / 35.0, S_KEYGIZMO2) { }
+	S_KEYGIZMO2('KGZ1', 0, 'objects/plrdoor.md2', 0, 1.0 / 35.0, S_KEYGIZMO3) { A_InitKeyGizmo(); }
+	S_KEYGIZMO3('KGZ1', 0, 'objects/plrdoor.md2', 0, -1.0, S_NULL) { }
 }
 
 defaultproperties
@@ -61,6 +61,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/06/16 17:46:39  dj_jl
+//  Added model definitions.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

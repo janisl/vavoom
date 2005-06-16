@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class SkullHang70:Decoration
+class SkullHang70 : Decoration
 	__mobjinfo__(17);
 
 __states__
 {
-	S_SKULLHANG70_1('SKH1', 0, -1.0, S_NULL) { }
+	S_SKULLHANG70_1('SKH1', 0, 'objects/skull1.md2', 0, -1.0, S_NULL) { }
 }
 
 defaultproperties
@@ -43,6 +43,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/06/16 17:46:39  dj_jl
+//  Added model definitions.
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //

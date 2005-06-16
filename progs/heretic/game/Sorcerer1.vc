@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Sorcerer1:Pawn
+class Sorcerer1 : Pawn
 	__mobjinfo__(7);
 
 int ReAttackState;
@@ -34,7 +34,7 @@ int ReAttackState;
 //
 //==========================================================================
 
-void A_Sor1Chase(void)
+void A_Sor1Chase()
 {
 	if (Special1)
 	{
@@ -52,7 +52,7 @@ void A_Sor1Chase(void)
 //
 //==========================================================================
 
-void A_Srcr1Attack(void)
+void A_Srcr1Attack()
 {
 	Actor A;
 	TAVec ang;
@@ -110,7 +110,7 @@ void A_Srcr1Attack(void)
 //
 //==========================================================================
 
-void A_Sor1Pain(void)
+void A_Sor1Pain()
 {
 	Special1 = 20;	// Number of steps to walk fast
 	A_Pain();
@@ -122,7 +122,7 @@ void A_Sor1Pain(void)
 //
 //==========================================================================
 
-void A_SorZap(void)
+void A_SorZap()
 {
 	PlayFullVolumeSound('SorcererZap', CHAN_BODY);
 }
@@ -133,7 +133,7 @@ void A_SorZap(void)
 //
 //==========================================================================
 
-void A_SorcererRise(void)
+void A_SorcererRise()
 {
 	Sorcerer2 S2;
 
@@ -146,37 +146,47 @@ void A_SorcererRise(void)
 
 __states__
 {
-	S_SRCR1_LOOK1('SRCR', 0, 10.0 / 35.0, S_SRCR1_LOOK2) { A_Look(); }
-	S_SRCR1_LOOK2('SRCR', 1, 10.0 / 35.0, S_SRCR1_LOOK1) { A_Look(); }
-	S_SRCR1_WALK1('SRCR', 0, 5.0 / 35.0, S_SRCR1_WALK2) { A_Sor1Chase(); }
-	S_SRCR1_WALK2('SRCR', 1, 5.0 / 35.0, S_SRCR1_WALK3) { A_Sor1Chase(); }
-	S_SRCR1_WALK3('SRCR', 2, 5.0 / 35.0, S_SRCR1_WALK4) { A_Sor1Chase(); }
-	S_SRCR1_WALK4('SRCR', 3, 5.0 / 35.0, S_SRCR1_WALK1) { A_Sor1Chase(); }
-	S_SRCR1_PAIN1('SRCR', 16, 6.0 / 35.0, S_SRCR1_WALK1) { A_Sor1Pain(); }
-	S_SRCR1_ATK1('SRCR', 16, 7.0 / 35.0, S_SRCR1_ATK2) { A_FaceTarget(); }
-	S_SRCR1_ATK2('SRCR', 17, 6.0 / 35.0, S_SRCR1_ATK3) { A_FaceTarget(); }
-	S_SRCR1_ATK3('SRCR', 18, 10.0 / 35.0, S_SRCR1_WALK1) { A_Srcr1Attack(); }
-	S_SRCR1_ATK4('SRCR', 18, 10.0 / 35.0, S_SRCR1_ATK5) { A_FaceTarget(); }
-	S_SRCR1_ATK5('SRCR', 16, 7.0 / 35.0, S_SRCR1_ATK6) { A_FaceTarget(); }
-	S_SRCR1_ATK6('SRCR', 17, 6.0 / 35.0, S_SRCR1_ATK7) { A_FaceTarget(); }
-	S_SRCR1_ATK7('SRCR', 18, 10.0 / 35.0, S_SRCR1_WALK1) { A_Srcr1Attack(); }
-	S_SRCR1_DIE1('SRCR', 4, 7.0 / 35.0, S_SRCR1_DIE2) { }
-	S_SRCR1_DIE2('SRCR', 5, 7.0 / 35.0, S_SRCR1_DIE3) { A_Scream(); }
-	S_SRCR1_DIE3('SRCR', 6, 7.0 / 35.0, S_SRCR1_DIE4) { }
-	S_SRCR1_DIE4('SRCR', 7, 6.0 / 35.0, S_SRCR1_DIE5) { }
-	S_SRCR1_DIE5('SRCR', 8, 6.0 / 35.0, S_SRCR1_DIE6) { }
-	S_SRCR1_DIE6('SRCR', 9, 6.0 / 35.0, S_SRCR1_DIE7) { }
-	S_SRCR1_DIE7('SRCR', 10, 6.0 / 35.0, S_SRCR1_DIE8) { }
-	S_SRCR1_DIE8('SRCR', 11, 25.0 / 35.0, S_SRCR1_DIE9) { A_SorZap(); }
-	S_SRCR1_DIE9('SRCR', 12, 5.0 / 35.0, S_SRCR1_DIE10) { }
-	S_SRCR1_DIE10('SRCR', 13, 5.0 / 35.0, S_SRCR1_DIE11) { }
-	S_SRCR1_DIE11('SRCR', 14, 4.0 / 35.0, S_SRCR1_DIE12) { }
-	S_SRCR1_DIE12('SRCR', 11, 20.0 / 35.0, S_SRCR1_DIE13) { A_SorZap(); }
-	S_SRCR1_DIE13('SRCR', 12, 5.0 / 35.0, S_SRCR1_DIE14) { }
-	S_SRCR1_DIE14('SRCR', 13, 5.0 / 35.0, S_SRCR1_DIE15) { }
-	S_SRCR1_DIE15('SRCR', 14, 4.0 / 35.0, S_SRCR1_DIE16) { }
-	S_SRCR1_DIE16('SRCR', 11, 12.0 / 35.0, S_SRCR1_DIE17) { }
-	S_SRCR1_DIE17('SRCR', 15, -1.0, S_NULL) { A_SorcererRise(); }
+	S_SRCR1_LOOK1('SRCR', 0, 'monsters/dsparil/base1.md2', 0, 2.5 / 35.0, S_SRCR1_LOOK2) { A_Look(); }
+	S_SRCR1_LOOK2('SRCR', 0, 'monsters/dsparil/base1.md2', 1, 2.5 / 35.0, S_SRCR1_LOOK3) { }
+	S_SRCR1_LOOK3('SRCR', 0, 'monsters/dsparil/base1.md2', 2, 2.5 / 35.0, S_SRCR1_LOOK4) { }
+	S_SRCR1_LOOK4('SRCR', 0, 'monsters/dsparil/base1.md2', 3, 2.5 / 35.0, S_SRCR1_LOOK5) { }
+	S_SRCR1_LOOK5('SRCR', 1, 'monsters/dsparil/base1.md2', 4, 2.5 / 35.0, S_SRCR1_LOOK6) { A_Look(); }
+	S_SRCR1_LOOK6('SRCR', 1, 'monsters/dsparil/base1.md2', 5, 2.5 / 35.0, S_SRCR1_LOOK7) { }
+	S_SRCR1_LOOK7('SRCR', 1, 'monsters/dsparil/base1.md2', 6, 2.5 / 35.0, S_SRCR1_LOOK8) { }
+	S_SRCR1_LOOK8('SRCR', 1, 'monsters/dsparil/base1.md2', 7, 2.5 / 35.0, S_SRCR1_LOOK1) { }
+	S_SRCR1_WALK1('SRCR', 0, 'monsters/dsparil/base1.md2', 8, 2.5 / 35.0, S_SRCR1_WALK2) { A_Sor1Chase(); }
+	S_SRCR1_WALK2('SRCR', 0, 'monsters/dsparil/base1.md2', 9, 2.5 / 35.0, S_SRCR1_WALK3) { }
+	S_SRCR1_WALK3('SRCR', 1, 'monsters/dsparil/base1.md2', 10, 2.5 / 35.0, S_SRCR1_WALK4) { A_Sor1Chase(); }
+	S_SRCR1_WALK4('SRCR', 1, 'monsters/dsparil/base1.md2', 11, 2.5 / 35.0, S_SRCR1_WALK5) { }
+	S_SRCR1_WALK5('SRCR', 2, 'monsters/dsparil/base1.md2', 12, 2.5 / 35.0, S_SRCR1_WALK6) { A_Sor1Chase(); }
+	S_SRCR1_WALK6('SRCR', 2, 'monsters/dsparil/base1.md2', 13, 2.5 / 35.0, S_SRCR1_WALK7) { }
+	S_SRCR1_WALK7('SRCR', 3, 'monsters/dsparil/base1.md2', 14, 2.5 / 35.0, S_SRCR1_WALK8) { A_Sor1Chase(); }
+	S_SRCR1_WALK8('SRCR', 3, 'monsters/dsparil/base1.md2', 15, 2.5 / 35.0, S_SRCR1_WALK1) { }
+	S_SRCR1_ATK1('SRCR', 16, 'monsters/dsparil/base1.md2', 16, 7.0 / 35.0, S_SRCR1_ATK2) { A_FaceTarget(); }
+	S_SRCR1_ATK2('SRCR', 17, 'monsters/dsparil/base1.md2', 17, 6.0 / 35.0, S_SRCR1_ATK3) { A_FaceTarget(); }
+	S_SRCR1_ATK3('SRCR', 18, 'monsters/dsparil/base1.md2', 18, 10.0 / 35.0, S_SRCR1_WALK1) { A_Srcr1Attack(); }
+	S_SRCR1_ATK4('SRCR', 18, 'monsters/dsparil/base1.md2', 19, 10.0 / 35.0, S_SRCR1_ATK5) { A_FaceTarget(); }
+	S_SRCR1_ATK5('SRCR', 16, 'monsters/dsparil/base1.md2', 20, 7.0 / 35.0, S_SRCR1_ATK6) { A_FaceTarget(); }
+	S_SRCR1_ATK6('SRCR', 17, 'monsters/dsparil/base1.md2', 21, 6.0 / 35.0, S_SRCR1_ATK7) { A_FaceTarget(); }
+	S_SRCR1_ATK7('SRCR', 18, 'monsters/dsparil/base1.md2', 22, 10.0 / 35.0, S_SRCR1_WALK1) { A_Srcr1Attack(); }
+	S_SRCR1_PAIN1('SRCR', 16, 'monsters/dsparil/base1.md2', 23, 6.0 / 35.0, S_SRCR1_WALK1) { A_Sor1Pain(); }
+	S_SRCR1_DIE1('SRCR', 4, 'monsters/dsparil/base1.md2', 24, 7.0 / 35.0, S_SRCR1_DIE2) { }
+	S_SRCR1_DIE2('SRCR', 5, 'monsters/dsparil/base1.md2', 25, 7.0 / 35.0, S_SRCR1_DIE3) { A_Scream(); }
+	S_SRCR1_DIE3('SRCR', 6, 'monsters/dsparil/base1.md2', 26, 7.0 / 35.0, S_SRCR1_DIE4) { }
+	S_SRCR1_DIE4('SRCR', 7, 'monsters/dsparil/base1.md2', 27, 6.0 / 35.0, S_SRCR1_DIE5) { }
+	S_SRCR1_DIE5('SRCR', 8, 'monsters/dsparil/base1.md2', 28, 6.0 / 35.0, S_SRCR1_DIE6) { }
+	S_SRCR1_DIE6('SRCR', 9, 'monsters/dsparil/base1.md2', 29, 6.0 / 35.0, S_SRCR1_DIE7) { }
+	S_SRCR1_DIE7('SRCR', 10, 'monsters/dsparil/base1.md2', 30, 6.0 / 35.0, S_SRCR1_DIE8) { }
+	S_SRCR1_DIE8('SRCR', 11, 'monsters/dsparil/base1.md2', 31, 25.0 / 35.0, S_SRCR1_DIE9) { A_SorZap(); }
+	S_SRCR1_DIE9('SRCR', 12, 'monsters/dsparil/base1.md2', 32, 5.0 / 35.0, S_SRCR1_DIE10) { }
+	S_SRCR1_DIE10('SRCR', 13, 'monsters/dsparil/base1.md2', 33, 5.0 / 35.0, S_SRCR1_DIE11) { }
+	S_SRCR1_DIE11('SRCR', 14, 'monsters/dsparil/base1.md2', 34, 4.0 / 35.0, S_SRCR1_DIE12) { }
+	S_SRCR1_DIE12('SRCR', 11, 'monsters/dsparil/base1.md2', 35, 20.0 / 35.0, S_SRCR1_DIE13) { A_SorZap(); }
+	S_SRCR1_DIE13('SRCR', 12, 'monsters/dsparil/base1.md2', 36, 5.0 / 35.0, S_SRCR1_DIE14) { }
+	S_SRCR1_DIE14('SRCR', 13, 'monsters/dsparil/base1.md2', 37, 5.0 / 35.0, S_SRCR1_DIE15) { }
+	S_SRCR1_DIE15('SRCR', 14, 'monsters/dsparil/base1.md2', 38, 4.0 / 35.0, S_SRCR1_DIE16) { }
+	S_SRCR1_DIE16('SRCR', 11, 'monsters/dsparil/base1.md2', 39, 12.0 / 35.0, S_SRCR1_DIE17) { }
+	S_SRCR1_DIE17('SRCR', 15, 'monsters/dsparil/base1.md2', 40, -1.0, S_NULL) { A_SorcererRise(); }
 }
 
 defaultproperties
@@ -204,6 +214,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/06/16 17:46:39  dj_jl
+//  Added model definitions.
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //

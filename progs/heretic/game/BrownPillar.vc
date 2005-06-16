@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class BrownPillar:Decoration
+class BrownPillar : Decoration
 	__mobjinfo__(47);
 
 __states__
 {
-	S_BRPILLAR('BRPL', 0, -1.0, S_NULL) { }
+	S_BRPILLAR('BRPL', 0, 'objects/plrbig.md2', 0, -1.0, S_NULL) { }
 }
 
 defaultproperties
@@ -42,6 +42,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/06/16 17:46:38  dj_jl
+//  Added model definitions.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

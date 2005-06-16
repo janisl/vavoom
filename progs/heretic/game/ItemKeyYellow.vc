@@ -23,8 +23,14 @@
 //**
 //**************************************************************************
 
-class ItemKeyYellow:Key
+class ItemKeyYellow : Key
 	__mobjinfo__(80);
+
+void Tick(float FrameTime)
+{
+	Angles.yaw = AngleMod360(Angles.yaw + FrameTime * 180.0);
+	::Tick(FrameTime);
+}
 
 __states__
 {
@@ -48,6 +54,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/06/16 17:46:39  dj_jl
+//  Added model definitions.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //
