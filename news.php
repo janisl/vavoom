@@ -112,15 +112,8 @@ for($i = 0; $i < $total_posts; $i++)
     //
     $message = str_replace("\n", "\n<br />\n", $message);
 
-    //
-    // Again this will be handled by the templating
-    // code at some point
-    //
-    $row_color = ( !($i % 2) ) ? $theme['td_color1'] : $theme['td_color2'];
-    $row_class = ( !($i % 2) ) ? $theme['td_class1'] : $theme['td_class2'];
-
     echo("<div class=\"date\">$post_subject</div><div>Posted by $poster $post_date<br/><br/>$message<br/><br/>
-    <a href=\"http://forums.vavoom-engine.com/viewtopic.php?t=$topic_id\">$topic_replies comments</a></div><br />");
+    <a href=\"http://www.vavoom-engine.com/forums/viewtopic.php?t=$topic_id\">$topic_replies comments</a></div><br />");
 }
 
 ?>
