@@ -1070,22 +1070,22 @@ for($i = 0; $i < $total_posts; $i++)
     // output
     //
 
-    //
-    // If the board has HTML off but the post has HTML
-    // on then we process it, else leave it alone
-    //
-    if ( !$board_config['allow_html'] )
-    {
-        if ( $user_sig != '' && $userdata['user_allowhtml'] )
-        {
-            $user_sig = preg_replace('#(<)([\/]?.*?)(>)#is', "&lt;\\2&gt;", $user_sig);
-        }
+	//
+	// If the board has HTML off but the post has HTML
+	// on then we process it, else leave it alone
+	//
+	if ( !$board_config['allow_html'] || !$userdata['user_allowhtml'])
+	{
+		if ( $user_sig != '' )
+		{
+			$user_sig = preg_replace('#(<)([\/]?.*?)(>)#is', "&lt;\\2&gt;", $user_sig);
+		}
 
-        if ( $postrow[$i]['enable_html'] )
-        {
-            $message = preg_replace('#(<)([\/]?.*?)(>)#is', "&lt;\\2&gt;", $message);
-        }
-    }
+		if ( $postrow[$i]['enable_html'] )
+		{
+			$message = preg_replace('#(<)([\/]?.*?)(>)#is', "&lt;\\2&gt;", $message);
+		}
+	}
 
     //
     // Parse message and/or sig for BBCode if reqd
@@ -1135,20 +1135,20 @@ for($i = 0; $i < $total_posts; $i++)
         $message = str_replace('\"', '"', substr(@preg_replace('#(\>(((?>([^><]+|(?R)))*)\<))#se', "@preg_replace('#\b(" . $highlight_match . ")\b#i', '<span style=\"color:#" . $theme['fontcolor3'] . "\"><b>\\\\1</b></span>', '\\0')", '>' . $message . '<'), 1, -1));
     }
 
-    //
-    // Replace naughty words
-    //
-    if (count($orig_word))
-    {
-        $post_subject = preg_replace($orig_word, $replacement_word, $post_subject);
+	//
+	// Replace naughty words
+	//
+	if (count($orig_word))
+	{
+		$post_subject = preg_replace($orig_word, $replacement_word, $post_subject);
 
-        if ($user_sig != '')
-        {
-            $user_sig = str_replace('\"', '"', substr(preg_replace('#(\>(((?>([^><]+|(?R)))*)\<))#se', "preg_replace(\$orig_word, \$replacement_word, '\\0')", '>' . $user_sig . '<'), 1, -1));
-        }
+		if ($user_sig != '')
+		{
+			$user_sig = str_replace('\"', '"', substr(@preg_replace('#(\>(((?>([^><]+|(?R)))*)\<))#se', "@preg_replace(\$orig_word, \$replacement_word, '\\0')", '>' . $user_sig . '<'), 1, -1));
+		}
 
-        $message = str_replace('\"', '"', substr(preg_replace('#(\>(((?>([^><]+|(?R)))*)\<))#se', "preg_replace(\$orig_word, \$replacement_word, '\\0')", '>' . $message . '<'), 1, -1));
-    }
+		$message = str_replace('\"', '"', substr(@preg_replace('#(\>(((?>([^><]+|(?R)))*)\<))#se', "@preg_replace(\$orig_word, \$replacement_word, '\\0')", '>' . $message . '<'), 1, -1));
+	}
 
     //
     // Replace newlines (we use this rather than nl2br because

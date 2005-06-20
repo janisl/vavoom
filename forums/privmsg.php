@@ -555,45 +555,45 @@ else if ( $mode == 'read' )
     $private_message = $privmsg['privmsgs_text'];
     $bbcode_uid = $privmsg['privmsgs_bbcode_uid'];
 
-    if ( $board_config['allow_sig'] )
-    {
-        $user_sig = ( $privmsg['privmsgs_from_userid'] == $userdata['user_id'] ) ? $userdata['user_sig'] : $privmsg['user_sig'];
-    }
-    else
-    {
-        $user_sig = '';
-    }
+	if ( $board_config['allow_sig'] )
+	{
+		$user_sig = ( $privmsg['privmsgs_from_userid'] == $userdata['user_id'] ) ? $userdata['user_sig'] : $privmsg['user_sig'];
+	}
+	else
+	{
+		$user_sig = '';
+	}
 
-    $user_sig_bbcode_uid = ( $privmsg['privmsgs_from_userid'] == $userdata['user_id'] ) ? $userdata['user_sig_bbcode_uid'] : $privmsg['user_sig_bbcode_uid'];
+	$user_sig_bbcode_uid = ( $privmsg['privmsgs_from_userid'] == $userdata['user_id'] ) ? $userdata['user_sig_bbcode_uid'] : $privmsg['user_sig_bbcode_uid'];
 
-    //
-    // If the board has HTML off but the post has HTML
-    // on then we process it, else leave it alone
-    //
-    if ( !$board_config['allow_html'] )
-    {
-        if ( $user_sig != '' && $privmsg['privmsgs_enable_sig'] && $userdata['user_allowhtml'] )
-        {
-            $user_sig = preg_replace('#(<)([\/]?.*?)(>)#is', "&lt;\\2&gt;", $user_sig);
-        }
+	//
+	// If the board has HTML off but the post has HTML
+	// on then we process it, else leave it alone
+	//
+	if ( !$board_config['allow_html'] || !$userdata['user_allowhtml'])
+	{
+		if ( $user_sig != '')
+		{
+			$user_sig = preg_replace('#(<)([\/]?.*?)(>)#is', "&lt;\\2&gt;", $user_sig);
+		}
 
-        if ( $privmsg['privmsgs_enable_html'] )
-        {
-            $private_message = preg_replace('#(<)([\/]?.*?)(>)#is', "&lt;\\2&gt;", $private_message);
-        }
-    }
+		if ( $privmsg['privmsgs_enable_html'] )
+		{
+			$private_message = preg_replace('#(<)([\/]?.*?)(>)#is', "&lt;\\2&gt;", $private_message);
+		}
+	}
 
-    if ( $user_sig != '' && $privmsg['privmsgs_attach_sig'] && $user_sig_bbcode_uid != '' )
-    {
-        $user_sig = ( $board_config['allow_bbcode'] ) ? bbencode_second_pass($user_sig, $user_sig_bbcode_uid) : preg_replace('/\:[0-9a-z\:]+\]/si', ']', $user_sig);
-    }
+	if ( $user_sig != '' && $privmsg['privmsgs_attach_sig'] && $user_sig_bbcode_uid != '' )
+	{
+		$user_sig = ( $board_config['allow_bbcode'] ) ? bbencode_second_pass($user_sig, $user_sig_bbcode_uid) : preg_replace('/\:[0-9a-z\:]+\]/si', ']', $user_sig);
+	}
 
-    if ( $bbcode_uid != '' )
-    {
-        $private_message = ( $board_config['allow_bbcode'] ) ? bbencode_second_pass($private_message, $bbcode_uid) : preg_replace('/\:[0-9a-z\:]+\]/si', ']', $private_message);
-    }
+	if ( $bbcode_uid != '' )
+	{
+		$private_message = ( $board_config['allow_bbcode'] ) ? bbencode_second_pass($private_message, $bbcode_uid) : preg_replace('/\:[0-9a-z\:]+\]/si', ']', $private_message);
+	}
 
-    $private_message = make_clickable($private_message);
+	$private_message = make_clickable($private_message);
 
     if ( $privmsg['privmsgs_attach_sig'] && $user_sig != '' )
     {
@@ -1536,26 +1536,26 @@ else if ( $submit || $refresh || $mode != '' )
         $preview_message = stripslashes(prepare_message($privmsg_message, $html_on, $bbcode_on, $smilies_on, $bbcode_uid));
         $privmsg_message = stripslashes(preg_replace($html_entities_match, $html_entities_replace, $privmsg_message));
 
-        //
-        // Finalise processing as per viewtopic
-        //
-        if ( !$html_on )
-        {
-            if ( $user_sig != '' || !$userdata['user_allowhtml'] )
-            {
-                $user_sig = preg_replace('#(<)([\/]?.*?)(>)#is', "&lt;\\2&gt;", $user_sig);
-            }
-        }
+		//
+		// Finalise processing as per viewtopic
+		//
+		if ( !$html_on || !$board_config['allow_html'] || !$userdata['user_allowhtml'] )
+		{
+			if ( $user_sig != '' )
+			{
+				$user_sig = preg_replace('#(<)([\/]?.*?)(>)#is', "&lt;\\2&gt;", $user_sig);
+			}
+		}
 
-        if ( $attach_sig && $user_sig != '' && $userdata['user_sig_bbcode_uid'] )
-        {
-            $user_sig = bbencode_second_pass($user_sig, $userdata['user_sig_bbcode_uid']);
-        }
+		if ( $attach_sig && $user_sig != '' && $userdata['user_sig_bbcode_uid'] )
+		{
+			$user_sig = bbencode_second_pass($user_sig, $userdata['user_sig_bbcode_uid']);
+		}
 
-        if ( $bbcode_on )
-        {
-            $preview_message = bbencode_second_pass($preview_message, $bbcode_uid);
-        }
+		if ( $bbcode_on )
+		{
+			$preview_message = bbencode_second_pass($preview_message, $bbcode_uid);
+		}
 
         if ( $attach_sig && $user_sig != '' )
         {
