@@ -1,0 +1,15 @@
+a.button
+{
+	width: 100%;
+	color: #FFFF00;
+	font-family: Verdana;
+	font-size: 11pt;
+	font-weight: bold;
+	text-decoration: none;
+	outline-style: none;
+}
+
+a.button:hover
+{
+	color: #FFFF00;
+}

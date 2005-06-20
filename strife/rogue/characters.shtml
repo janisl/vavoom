@@ -1,0 +1,182 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.73 [en] (Win98; I) [Netscape]">
+   <title>Strife Product Page</title>
+<script language="JavaScript" type="text/javascript"><!--
+bName = navigator.appName; //detect for Netscape 3+ or IE 4+
+bVer = parseInt(navigator.appVersion);
+if ((bName == "Netscape" && bVer >= 3) ||
+        (bName == "Microsoft Internet Explorer" && bVer >=4)) br = "n3";
+else br = "n2";
+// Create image objects, preload all active and inactive images.
+if (br== "n3") {
+
+    img01on = new Image();
+    img01on.src = "../../pages/products/games/strife/b1.gif";
+    img01off = new Image();
+    img01off.src = "../../pages/products/games/strife/b.gif";
+    img015on = new Image();
+    img015on.src = "../../pages/products/games/strife/c1.gif";
+    img015off = new Image();
+    img015off.src = "../../pages/products/games/strife/c.gif";
+    img02on = new Image();
+    img02on.src = "../../pages/products/games/strife/e1.gif";
+    img02off = new Image();
+    img02off.src = "../../pages/products/games/strife/e.gif";
+    img03on = new Image();
+    img03on.src = "../../pages/products/games/strife/i1.gif";
+    img03off = new Image();
+    img03off.src = "../../pages/products/games/strife/i.gif";
+    img04on = new Image();
+    img04on.src = "../../pages/products/games/strife/j1.gif";
+    img04off = new Image();
+    img04off.src = "../../pages/products/games/strife/j.gif";
+    img05on = new Image();
+    img05on.src = "../../pages/products/games/strife/k1.gif";
+    img05off = new Image();
+    img05off.src = "../../pages/products/games/strife/k.gif";
+    img06on = new Image();
+    img06on.src = "../../pages/products/games/strife/a.gif";
+    img06off = new Image();
+    img06off.src = "../../pages/products/games/strife/a.gif";
+
+    img01info = "Downloads";
+    img015info = "Press";
+    img02info = "Help";
+    img03info = "Characters";
+    img04info = "Weapons";
+    img05info = "Screenshots";
+    img06info = "Strife Info";
+}
+
+function imgAct(imgName) {
+    if (br == "n3") {
+	document[imgName].src = eval(imgName + "on.src");
+	window.status = eval(imgName+"info");
+    }
+}
+
+function imgInact(imgName) {
+    if (br == "n3") {
+	document[imgName].src = eval(imgName + "off.src");
+	window.status = " ";
+    }
+}
+
+//-->
+</script>
+</head>
+<body text="#F5F5DC" bgcolor="#000000" link="#00FF00" vlink="#32CD32" alink="#008000">
+&nbsp;
+<center><table BORDER=0 CELLSPACING=0 CELLPADDING=0 BGCOLOR="#000000" >
+<tr>
+<td WIDTH="15"><img SRC="dot.gif" height=1 width=15></td>
+
+<td WIDTH="124"><img SRC="dot.gif" height=1 width=124></td>
+
+<td WIDTH="58"><img SRC="dot.gif" height=1 width=58></td>
+
+<td WIDTH="32"><img SRC="dot.gif" height=1 width=32></td>
+
+<td WIDTH="79"><img SRC="dot.gif" height=1 width=79></td>
+
+<td WIDTH="143"><img SRC="dot.gif" height=1 width=143></td>
+
+<td WIDTH="15"><img SRC="dot.gif" height=1 width=15></td>
+</tr>
+
+<tr>
+<td COLSPAN="3" ROWSPAN="4"><a href="http://www.rogue-ent.com/products/strife/main.shtml"><img SRC="a.gif" BORDER=0 height=85 width=197></a></td>
+
+<td COLSPAN="2"><a href="http://www.rogue-ent.com/products/strife/downloads.shtml" onmouseover="imgAct('img01');return true" onmouseout="imgInact('img01')"><img SRC="b.gif" NAME="img01" BORDER=0 height=21 width=111></a></td>
+
+<td COLSPAN="2" ROWSPAN="3"><img SRC="f.gif" BORDER=0 height=62 width=158></td>
+</tr>
+
+<tr>
+<td COLSPAN="2"><a href="http://www.rogue-ent.com/products/strife/press.shtml" onmouseover="imgAct('img015');return true" onmouseout="imgInact('img015')"><img SRC="c.gif" NAME="img015" BORDER=0 height=19 width=111></a></td>
+</tr>
+
+<tr>
+<td ROWSPAN="2"><img SRC="d.gif" BORDER=0 height=45 width=32></td>
+
+<td><a href="http://www.rogue-ent.com/products/strife/help.shtml" onmouseover="imgAct('img02');return true" onmouseout="imgInact('img02')"><img SRC="e.gif" NAME="img02" BORDER=0 height=22 width=79></a></td>
+</tr>
+
+<tr>
+<td COLSPAN="3"><img SRC="g.gif" BORDER=0 height=23 width=237></td>
+</tr>
+
+<tr>
+<td COLSPAN="2"><img SRC="h.gif" BORDER=0 height=28 width=139></td>
+
+<td COLSPAN="2" ROWSPAN="3"><img SRC="l.gif" BORDER=0 height=67 width=90></td>
+
+<td COLSPAN="3" ROWSPAN="3"><img SRC="m-characters.gif" BORDER=0 height=67 width=237></td>
+</tr>
+
+<tr>
+<td COLSPAN="2"><img SRC="i1.gif" BORDER=0 height=19 width=139></td>
+</tr>
+
+<tr>
+<td COLSPAN="2"><a href="http://www.rogue-ent.com/products/strife/weapons.shtml" onmouseover="imgAct('img04');return true" onmouseout="imgInact('img04')"><img SRC="j.gif" NAME="img04" BORDER=0 height=20 width=139></a></td>
+</tr>
+
+<tr>
+<td COLSPAN="2"><a href="http://www.rogue-ent.com/products/strife/screen.shtml" onmouseover="imgAct('img05');return true" onmouseout="imgInact('img05')"><img SRC="k.gif" NAME="img05" BORDER=0 height=22 width=139></a></td>
+
+<td COLSPAN="5"><img SRC="n.gif" height=22 width=327></td>
+</tr>
+
+<tr>
+<td WIDTH="15" BACKGROUND="o1.gif"><img SRC="tdot.gif" height=1 width=15></td>
+
+<td COLSPAN="5" WIDTH="436" BACKGROUND="o.gif">
+<p>Strife's world is teaming with life. There are the good guys, bad guys
+and plenty of those that are simply out to tear your torso apart at the
+joints. Pretty picture, eh? Just remember, not everybody in Strife has
+it in for you. Interact with Non Player Character's (NPC's) to gather information
+and clues to your role in this hostile land. Oh...speaking of, wait until
+you get a load of the Rat King. You're gonna love him. And the Stalkers,
+Crusaders, the Governor and...well...you get the point.
+<p>Oh, let us bring up one more: "Blackbird! Mmmmmm." Curious?
+<p>Below you'll find a few of the inhabitants you'll encounter in the game.
+We can't show you all of them; it would spoil the fun. Enjoy!
+<p><img SRC="mrgtb0.gif" BORDER=0 height=118 width=74 align=LEFT><b><i><font face="sans-serif"><font color="#8FBC8F">The
+Merchant</font></font></i></b>
+<br>Your primary source for supplies
+<br>&nbsp;
+<div align=right><img SRC="peasa1.gif" BORDER=0 height=110 width=52 align=RIGHT><b><i><font face="sans-serif"><font color="#8FBC8F">The
+Peasant</font></font></i></b>
+<br>Typical members of the society</div>
+
+<p><br><img SRC="hmn1a1.gif" BORDER=0 height=116 width=68 align=LEFT><b><i><font face="sans-serif"><font color="#8FBC8F">Soldier</font></font></i></b>
+<br>The only people you can really trust.
+<div align=right><img SRC="armgu.gif" BORDER=0 height=128 width=64 align=RIGHT><b><i><font face="sans-serif"><font color="#8FBC8F">The
+Acolyte</font></font></i></b>
+<br>The Order's main guards.</div>
+
+<p><br><img SRC="sewrc1.gif" BORDER=0 height=106 width=95 align=LEFT><b><i><font face="sans-serif"><font color="#8FBC8F">The
+Sentinel</font></font></i></b>
+<br>Designed to hunt down people like you.
+<center>
+<p><img SRC="rob2f8.gif" BORDER=0 height=130 width=242>
+<br><b><i><font face="sans-serif"><font color="#8FBC8F">The Crusader</font></font></i></b>
+<br>To be brief, a <b>Death Machine</b>. Be careful.
+<br>&nbsp;
+<p>Many more characters await you in the Registered version of Strife.
+Here's a sneak peak of one of the more powerful foes you will encounter.
+<p><img SRC="prog.gif" BORDER=0 height=176 width=384>
+<br>&nbsp;
+<p>&nbsp;</center>
+</td>
+
+<td WIDTH="15" BACKGROUND="o1.gif"><img SRC="tdot.gif" height=1 width=15></td>
+</tr>
+</table></center>
+
+</body>
+</html>

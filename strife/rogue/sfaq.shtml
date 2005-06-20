@@ -1,0 +1,290 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html>
+<head>
+<title>Strife Product Page</title>
+<script language="JavaScript" type="text/javascript"><!--
+bName = navigator.appName; //detect for Netscape 3+ or IE 4+
+bVer = parseInt(navigator.appVersion);
+if ((bName == "Netscape" && bVer >= 3) ||
+        (bName == "Microsoft Internet Explorer" && bVer >=4)) br = "n3";
+else br = "n2";
+// Create image objects, preload all active and inactive images.
+if (br== "n3") {
+
+    img01on = new Image();
+    img01on.src = "../../pages/products/games/strife/b1.gif";
+    img01off = new Image();
+    img01off.src = "../../pages/products/games/strife/b.gif";
+    img015on = new Image();
+    img015on.src = "../../pages/products/games/strife/c1.gif";
+    img015off = new Image();
+    img015off.src = "../../pages/products/games/strife/c.gif";
+    img02on = new Image();
+    img02on.src = "../../pages/products/games/strife/e1.gif";
+    img02off = new Image();
+    img02off.src = "../../pages/products/games/strife/e.gif";
+    img03on = new Image();
+    img03on.src = "../../pages/products/games/strife/i1.gif";
+    img03off = new Image();
+    img03off.src = "../../pages/products/games/strife/i.gif";
+    img04on = new Image();
+    img04on.src = "../../pages/products/games/strife/j1.gif";
+    img04off = new Image();
+    img04off.src = "../../pages/products/games/strife/j.gif";
+    img05on = new Image();
+    img05on.src = "../../pages/products/games/strife/k1.gif";
+    img05off = new Image();
+    img05off.src = "../../pages/products/games/strife/k.gif";
+    img06on = new Image();
+    img06on.src = "../../pages/products/games/strife/a.gif";
+    img06off = new Image();
+    img06off.src = "../../pages/products/games/strife/a.gif";
+
+    img01info = "Downloads";
+    img015info = "Press";
+    img02info = "Help";
+    img03info = "Characters";
+    img04info = "Weapons";
+    img05info = "Screenshots";
+    img06info = "Strife Info";
+}
+
+function imgAct(imgName) {
+    if (br == "n3") {
+	document[imgName].src = eval(imgName + "on.src");
+	window.status = eval(imgName+"info");
+    }
+}
+
+function imgInact(imgName) {
+    if (br == "n3") {
+	document[imgName].src = eval(imgName + "off.src");
+	window.status = " ";
+    }
+}
+
+//-->
+</script>
+
+</head>
+<body bgcolor="black" text="beige" link="lime" vlink="limegreen" alink="green">
+<center>
+<table bgcolor="black" border=0 cellpadding=0 cellspacing=0>
+
+<tr>
+<td width=15><img src="../../dot.gif" width=15 height=1></td>
+<td width=124><img src="../../dot.gif" width=124 height=1></td>
+<td width=58><img src="../../dot.gif" width=58 height=1></td>
+<td width=32><img src="../../dot.gif" width=32 height=1></td>
+<td width=79><img src="../../dot.gif" width=79 height=1></td>
+<td width=143><img src="../../dot.gif" width=143 height=1></td>
+<td width=15><img src="../../dot.gif" width=15 height=1></td>
+</tr>
+
+<tr>
+
+<td colspan=3 rowspan=4><a href="main.shtml"><img src="../../pages/products/games/strife/a.gif" width=197 height=85 border=0></a></td>
+
+
+
+<td colspan=2><a href="downloads.shtml" onmouseover="imgAct('img01');return true" onmouseout="imgInact('img01')"><img src="../../pages/products/games/strife/b.gif" width=111 height=21 border=0 name="img01"></a></td>
+
+
+<td colspan=2 rowspan=3><img src="../../pages/products/games/strife/f.gif" width=158 height=62 border=0></td>
+</tr>
+
+<tr>
+
+<td colspan=2><a href="press.shtml" onmouseover="imgAct('img015');return true" onmouseout="imgInact('img015')"><img src="../../pages/products/games/strife/c.gif" width=111 height=19 border=0 name="img015"></a></td>
+
+</tr>
+
+<tr>
+<td rowspan=2><img src="../../pages/products/games/strife/d.gif" width=32 height=45 border=0></td>
+
+
+<td><img src="../../pages/products/games/strife/e1.gif" width=79 height=22 border=0></td>
+
+</tr>
+
+<tr>
+<td colspan=3><img src="../../pages/products/games/strife/g.gif" width=237 height=23 border=0></td>
+</tr>
+
+<tr>
+<td colspan=2><img src="../../pages/products/games/strife/h.gif" width=139 height=28 border=0></td>
+<td rowspan=3 colspan=2><img src="../../pages/products/games/strife/l.gif" width=90 height=67 border=0></td>
+<td rowspan=3 colspan=3><img src="../../pages/products/games/strife/m-help.gif" width=237 height=67 border=0></td>
+</tr>
+
+<tr>
+
+<td colspan=2><a href="characters.shtml" onmouseover="imgAct('img03');return true" onmouseout="imgInact('img03')"><img src="../../pages/products/games/strife/i.gif" width=139 height=19 border=0 name="img03"></a></td>
+
+</tr>
+
+<tr>
+
+<td colspan=2><a href="weapons.shtml" onmouseover="imgAct('img04');return true" onmouseout="imgInact('img04')"><img src="../../pages/products/games/strife/j.gif" width=139 height=20 border=0 name="img04"></a></td>
+
+</tr>
+
+<tr>
+
+<td colspan=2><a href="screen.shtml" onmouseover="imgAct('img05');return true" onmouseout="imgInact('img05')"><img src="../../pages/products/games/strife/k.gif" width=139 height=22 border=0 name="img05"></a></td>
+
+<td colspan=5><img src="../../pages/products/games/strife/n.gif" width=327 height=22></td>
+</tr>
+
+<tr>
+<td background="../../pages/products/games/strife/o1.gif" width=15><img src="../../tdot.gif" width=15 height=1></td>
+<td colspan=5 background="../../pages/products/games/strife/o.gif" width=436>
+&nbsp;<br>
+&nbsp;<br>
+<font face="sans-serif" size=+2><b><i>Strife</i></b></font>
+<p>
+<font face="sans-serif" size=+1><b><i>Frequently Asked Questions</i></b></font>
+<p>
+Questions and comments to:  <a href="mailto:strife@rogue-ent.com">strife@rogue-ent.com</a>
+<p>
+<font face="sans-serif"><i><b>General Info</b></i></font>
+<p>
+<dl>
+<dt><b>[Q]</b> Is the registered version of Strife out?
+<dd><b>[A]</b> Yes! If your local computer store still is plugging Doom II as the
+	"Latest Hot Title", then try Cyberian Outpost at http://www.cybout.com/.<p>
+<dt><b>[Q]</b> Is Strife available on Floppy Disk?
+<dd><b>[A]</b> No. Due to the storage requirements of Strife, it's not practical for Velocity to produce and distribute it on floppy.
+</dl>
+<p>
+
+<font face="sans-serif"><i><b>Setup / Configuration</b></i></font>
+<p>
+<dl>
+<dt><b>[Q]</b> Can I run Strife under QEMM?
+<dd><b>[A]</b> No. It's best to run Strife with as little loaded on your machine
+	as possible. You can make yourself a boot disk, or if you're more
+	inclined, a multiple configuration CONFIG.SYS (under later versions
+	of DOS only).
+<p>
+<dt><b>[Q]</b> What TSRs and drivers should I have installed?
+<dd><b>[A]</b> You need very few things for Strife to run properly.
+<ol>
+<li>Most sound cards are supported directly through Strife's sound code, so drivers for your sound card may not be necessary.
+<li>You do need a mouse driver installed if you intend on using a mouse to play Strife.
+<li>You will see a bit of a performance improvement from a disk cache program (SMARTDRV, etc.). However, don't go overboard on the amount of memory to dedicate to it. There doesn't seem to be much of a reason to give it more than about 512k. In general, the more memory Strife has to play with, the better.
+<li>You will need your network drivers installed if you intend on playing Strife over an IPX network.
+</ol>
+<p>
+<dt><b>[Q]</b> Is there a way to save a game in more than one slot? 
+<dd><b>[A]</b> No, there is no way to save to more than one slot. We limited it
+	to one slot due to the size of save games in the later episodes.
+	Don't forget that you do have the auto-save slot that the game 
+	makes when you transition levels. If you start a level, or each 
+	time you return to that level, the game does an auto-save. If you 
+	mess up, or save accidently, you can die, then hit the spacebar 
+	to re-start at the last entry point.
+<p>
+<dt><b>[Q]</b> Does Strife have a co-op mode?
+<dd><b>[A]</b> No, Strife does not have co-op per se. Multiplayer in Strife consists
+	of starting a deathmatch game and then having all players try and
+	fight their way to the next level. There are no co-op start points,
+	so all of your players will wind up on deathmatch points, possibly
+	in the middle of a bunch of bad guys.
+<p>
+<dt><b>[Q]</b> Does Strife run under OS/2?
+<dd><b>[A]</b> Strife has not been tested under OS/2 by either Rogue or Velocity.
+	However, it should run as well as Doom did. If you can find the
+	settings for Doom, you can use them for Strife with one exception.
+	Remember, Strife requires 7MB of free DPMI memory to run properly,
+	so you will need to make sure that much is being allocated. If
+	you can spare it, give Strife 8-8.5 MB of DPMI memory, and it will
+	use that extra memory. Giving Strife more than 8.5 MB of memory 
+	will be a waste as the Doom engine only asks for 8 MB.
+</dl>
+<p>
+<font face="sans-serif"><i><b>Other Stuff</b></i></font>
+
+<dl>
+<dt><b>[Q]</b> Are there any guides out yet, with maps and so forth?
+<dd><b>[A]</b> No. There aren't any clue books out yet, but some are in the works.
+<p>
+<dt><b>[Q]</b> Is there a patch for Strife 1.0 shareware?
+<dd><b>[A]</b> No. The current version of the Strife Demo (a.k.a. shareware) is version
+	1.1. This includes the multiplayer options omitted from Demo 1.0.
+<p>
+<dt><b>[Q]</b> Is there a patch for Registered Strife?
+<dd><b>[A]</b> Yes. The current version of Strife is v1.2. This fixes a problem in
+	multiplayer that we didn't quite nail down until a few days after the
+	registered version shipped to manufacturing. It also contains a few minor
+	tweaks to clean up the wad file (mis-aligned textures and such). It is
+	available at http://www.gamers.org/~rogue/strife.html and on 
+	http://www.velocitygames.com/
+<p>
+<dt><b>[Q]</b> Are there any Strife Editors?
+<dd><b>[A]</b> To an extent, yes. DeeP and WinTex (and probably others) are starting to support
+	Strife. Here are a few points to find out more:
+	http://www.wolfenet.com/~sbs/index.html - For info on DeeP
+	http://www.cybernet.dk/users/jensh/doom/wintex/wintex.html - For info on WinTex
+</dl>
+<p>
+<font face="sans-serif"><i><b>Gameplay</b></i></font>
+<p>
+WARNING: CONTAINS SPOILERS. READ AT YOUR OWN DISCRETION.
+<p>
+<dl>
+<dt><b>[Q]</b> What are the cheat codes for Strife???
+<dd><b>[A]</b> We're generally not handing them out, hoping people will play
+	through the game as intended. However, people have figured them
+	out and posted them on the UseNet
+<p>
+<dt><b>[Q]</b> I can't find Richter!
+<dd><b>[A]</b> Richter is in the Commons. The Commons are located inside of the
+	Borderlands. In the Borderlands, if you go to the right once inside
+	of the walled-in area, you'll see the entrance to the Commons. Go
+	through there. Once in the Commons, turn to your right and walk along 
+	the pathway and go right off the ledge near the waterfall. Stop. Look 
+	to your left. You'll see a set of stairs and a doorway. Go through the
+	door. Go up the stairs and there will be a door on your right. He's 
+	inside the room through that doorway. Good luck.
+<p>
+<dt><b>[Q]</b> I just killed someone, and a giant blob appeared above him. I can't seem to
+	hurt it, and it kicks my ass. Help!
+<dd><b>[A]</b> What you need to do is use the Sigil. The Sigil is the only weapon that
+	will harm the 'blob'. The Sigil is weapon #8, but be careful, when you
+	fire it, it will drain part of your health.
+</dl>
+<p>
+<cite>
+19 August 1996<br>
+HTMLized 09 July 1999<br>
+Maintained by:<br>
+Peter Mack and Patrick Magruder<br>
+</cite>
+
+&nbsp;<br>
+&nbsp;<br>
+</td>
+<td background="../../pages/products/games/strife/o1.gif" width=15><img src="../../tdot.gif" width=15 height=1></td>
+</tr>
+</table>
+</center>
+
+</body>
+</html>

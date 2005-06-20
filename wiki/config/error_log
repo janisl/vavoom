@@ -1,0 +1,2 @@
+[03-Dec-2004 03:05:39] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/vavoom/public_html/wiki/config/index.php:32) in Unknown on line 0
+[03-Dec-2004 03:05:39] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/vavoom/public_html/wiki/config/index.php:32) in Unknown on line 0

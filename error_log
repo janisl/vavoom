@@ -1,0 +1,24 @@
+[21-Jul-2004 13:09:42] PHP Warning:  upload_max_filesize of 2097152 bytes exceeded - file [userfile=C:\Program Files\Kazaa\My Shared Folder\hehe\Blink 182 - Down.mp3] not saved in Unknown on line 0
+[27-Jul-2004 02:03:03] PHP Parse error:  parse error, unexpected T_VARIABLE in /home/vavoom/public_html/tst.php on line 32
+[27-Jul-2004 02:03:04] PHP Parse error:  parse error, unexpected T_VARIABLE in /home/vavoom/public_html/tst.php on line 32
+[27-Jul-2004 02:03:40] PHP Warning:  copy(c:/xxx/tst.jpg): failed to open stream: No such file or directory in /home/vavoom/public_html/tst.php on line 37
+[07-Aug-2004 04:44:43] PHP Parse error:  parse error, unexpected T_LNUMBER in /home/vavoom/public_html/projects.php on line 22
+[07-Aug-2004 04:46:51] PHP Parse error:  parse error, unexpected T_STRING in /home/vavoom/public_html/projects.php on line 24
+[07-Aug-2004 04:52:24] PHP Parse error:  parse error, unexpected T_ECHO in /home/vavoom/public_html/projects.php on line 77
+[16-Aug-2004 07:39:29] PHP Parse error:  parse error, unexpected T_STRING in /home/vavoom/public_html/tst.php on line 26
+[16-Aug-2004 07:44:22] PHP Parse error:  parse error, unexpected T_STRING in /home/vavoom/public_html/tst.php on line 26
+[16-Aug-2004 07:44:46] PHP Parse error:  parse error, unexpected T_STRING in /home/vavoom/public_html/tst.php on line 26
+[16-Aug-2004 08:01:39] PHP Parse error:  parse error, unexpected '/' in /home/vavoom/public_html/tst.php on line 27
+[16-Aug-2004 08:36:40] PHP Parse error:  parse error, unexpected ';' in /home/vavoom/public_html/tst.php on line 38
+[20-Sep-2004 06:16:35] PHP Fatal error:  Call to a member function on a non-object in /home/vavoom/public_html/news_new.php on line 61
+[20-Sep-2004 06:53:16] PHP Parse error:  parse error, unexpected T_LNUMBER in /home/vavoom/public_html/news_new.php on line 157
+[20-Sep-2004 06:59:42] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/vavoom/public_html/news_new.php:4) in /home/vavoom/public_html/forums/includes/sessions.php on line 305
+[20-Sep-2004 06:59:42] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/vavoom/public_html/news_new.php:4) in /home/vavoom/public_html/forums/includes/sessions.php on line 306
+[20-Sep-2004 07:00:47] PHP Fatal error:  Call to a member function on a non-object in /home/vavoom/public_html/forums/includes/bbcode.php on line 46
+[20-Sep-2004 07:02:24] PHP Fatal error:  Call to a member function on a non-object in /home/vavoom/public_html/forums/includes/bbcode.php on line 46
+[20-Sep-2004 07:04:12] PHP Fatal error:  Call to a member function on a non-object in /home/vavoom/public_html/forums/includes/bbcode.php on line 46
+[20-Sep-2004 07:49:11] PHP Fatal error:  Call to a member function on a non-object in /home/vavoom/public_html/forums/includes/bbcode.php on line 46
+[20-Sep-2004 07:49:19] PHP Fatal error:  Call to a member function on a non-object in /home/vavoom/public_html/forums/includes/bbcode.php on line 46
+[22-Sep-2004 08:57:16] PHP Warning:  main(forums/attach_mod/attachment_modphp): failed to open stream: No such file or directory in /home/vavoom/public_html/forums/common.php on line 213
+[22-Sep-2004 08:57:16] PHP Warning:  main(forums/attach_mod/attachment_modphp): failed to open stream: No such file or directory in /home/vavoom/public_html/forums/common.php on line 213
+[22-Sep-2004 08:57:16] PHP Warning:  main(): Failed opening 'forums/attach_mod/attachment_modphp' for inclusion (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/vavoom/public_html/forums/common.php on line 213
