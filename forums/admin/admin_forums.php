@@ -230,43 +230,44 @@ function renumber_order($mode, $cat = 0)
 //
 if( isset($HTTP_POST_VARS['addforum']) || isset($HTTP_POST_VARS['addcategory']) )
 {
-    $mode = ( isset($HTTP_POST_VARS['addforum']) ) ? "addforum" : "addcat";
+	$mode = ( isset($HTTP_POST_VARS['addforum']) ) ? "addforum" : "addcat";
 
-    if( $mode == "addforum" )
-    {
-        list($cat_id) = each($HTTP_POST_VARS['addforum']);
-        //
-        // stripslashes needs to be run on this because slashes are added when the forum name is posted
-        //
-        $forumname = stripslashes($HTTP_POST_VARS['forumname'][$cat_id]);
-    }
+	if( $mode == "addforum" )
+	{
+		list($cat_id) = each($HTTP_POST_VARS['addforum']);
+		$cat_id = intval($cat_id);
+		//
+		// stripslashes needs to be run on this because slashes are added when the forum name is posted
+		//
+		$forumname = stripslashes($HTTP_POST_VARS['forumname'][$cat_id]);
+	}
 }
 
 if( !empty($mode) )
 {
-    switch($mode)
-    {
-        case 'addforum':
-        case 'editforum':
-            //
-            // Show form to create/modify a forum
-            //
-            if ($mode == 'editforum')
-            {
-                // $newmode determines if we are going to INSERT or UPDATE after posting?
+	switch($mode)
+	{
+		case 'addforum':
+		case 'editforum':
+			//
+			// Show form to create/modify a forum
+			//
+			if ($mode == 'editforum')
+			{
+				// $newmode determines if we are going to INSERT or UPDATE after posting?
 
-                $l_title = $lang['Edit_forum'];
-                $newmode = 'modforum';
-                $buttonvalue = $lang['Update'];
+				$l_title = $lang['Edit_forum'];
+				$newmode = 'modforum';
+				$buttonvalue = $lang['Update'];
 
-                $forum_id = intval($HTTP_GET_VARS[POST_FORUM_URL]);
+				$forum_id = intval($HTTP_GET_VARS[POST_FORUM_URL]);
 
-                $row = get_info('forum', $forum_id);
+				$row = get_info('forum', $forum_id);
 
-                $cat_id = $row['cat_id'];
-                $forumname = $row['forum_name'];
-                $forumdesc = $row['forum_desc'];
-                $forumstatus = $row['forum_status'];
+				$cat_id = $row['cat_id'];
+				$forumname = $row['forum_name'];
+				$forumdesc = $row['forum_desc'];
+				$forumstatus = $row['forum_status'];
 
                 //
                 // start forum prune stuff.
