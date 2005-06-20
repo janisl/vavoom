@@ -1062,13 +1062,13 @@ for($i = 0; $i < $total_posts; $i++)
     $message = $postrow[$i]['post_text'];
     $bbcode_uid = $postrow[$i]['bbcode_uid'];
 
-    $user_sig = ( $postrow[$i]['enable_sig'] && $postrow[$i]['user_sig'] != '' && $board_config['allow_sig'] ) ? $postrow[$i]['user_sig'] : '';
-    $user_sig_bbcode_uid = $postrow[$i]['user_sig_bbcode_uid'];
+	$user_sig = ( $postrow[$i]['enable_sig'] && $postrow[$i]['user_sig'] != '' && $board_config['allow_sig'] ) ? $postrow[$i]['user_sig'] : '';
+	$user_sig_bbcode_uid = $postrow[$i]['user_sig_bbcode_uid'];
 
-    //
-    // Note! The order used for parsing the message _is_ important, moving things around could break any
-    // output
-    //
+	//
+	// Note! The order used for parsing the message _is_ important, moving things around could break any
+	// output
+	//
 
 	//
 	// If the board has HTML off but the post has HTML
@@ -1087,53 +1087,53 @@ for($i = 0; $i < $total_posts; $i++)
 		}
 	}
 
-    //
-    // Parse message and/or sig for BBCode if reqd
-    //
-    if ( $board_config['allow_bbcode'] )
-    {
-        if ( $user_sig != '' && $user_sig_bbcode_uid != '' )
-        {
-            $user_sig = ( $board_config['allow_bbcode'] ) ? bbencode_second_pass($user_sig, $user_sig_bbcode_uid) : preg_replace('/\:[0-9a-z\:]+\]/si', ']', $user_sig);
-        }
+	//
+	// Parse message and/or sig for BBCode if reqd
+	//
+	if ( $board_config['allow_bbcode'] )
+	{
+		if ( $user_sig != '' && $user_sig_bbcode_uid != '' )
+		{
+			$user_sig = ( $board_config['allow_bbcode'] ) ? bbencode_second_pass($user_sig, $user_sig_bbcode_uid) : preg_replace('/\:[0-9a-z\:]+\]/si', ']', $user_sig);
+		}
 
-        if ( $bbcode_uid != '' )
-        {
-            $message = ( $board_config['allow_bbcode'] ) ? bbencode_second_pass($message, $bbcode_uid) : preg_replace('/\:[0-9a-z\:]+\]/si', ']', $message);
-        }
-    }
+		if ( $bbcode_uid != '' )
+		{
+			$message = ( $board_config['allow_bbcode'] ) ? bbencode_second_pass($message, $bbcode_uid) : preg_replace('/\:[0-9a-z\:]+\]/si', ']', $message);
+		}
+	}
 
-    if ( $user_sig != '' )
-    {
-        $user_sig = make_clickable($user_sig);
-    }
-    $message = make_clickable($message);
+	if ( $user_sig != '' )
+	{
+		$user_sig = make_clickable($user_sig);
+	}
+	$message = make_clickable($message);
 
-    //
-    // Parse smilies
-    //
-    if ( $board_config['allow_smilies'] )
-    {
-        if ( $postrow[$i]['user_allowsmile'] && $user_sig != '' )
-        {
-            $user_sig = smilies_pass($user_sig);
-        }
+	//
+	// Parse smilies
+	//
+	if ( $board_config['allow_smilies'] )
+	{
+		if ( $postrow[$i]['user_allowsmile'] && $user_sig != '' )
+		{
+			$user_sig = smilies_pass($user_sig);
+		}
+	
+		if ( $postrow[$i]['enable_smilies'] )
+		{
+			$message = smilies_pass($message);
+		}
+	}
 
-        if ( $postrow[$i]['enable_smilies'] )
-        {
-            $message = smilies_pass($message);
-        }
-    }
-
-    //
-    // Highlight active words (primarily for search)
-    //
-    if ($highlight_match)
-    {
-        // This was shamelessly 'borrowed' from volker at multiartstudio dot de
-        // via php.net's annotated manual
-        $message = str_replace('\"', '"', substr(@preg_replace('#(\>(((?>([^><]+|(?R)))*)\<))#se', "@preg_replace('#\b(" . $highlight_match . ")\b#i', '<span style=\"color:#" . $theme['fontcolor3'] . "\"><b>\\\\1</b></span>', '\\0')", '>' . $message . '<'), 1, -1));
-    }
+	//
+	// Highlight active words (primarily for search)
+	//
+	if ($highlight_match)
+	{
+		// This was shamelessly 'borrowed' from volker at multiartstudio dot de
+		// via php.net's annotated manual
+		$message = str_replace('\"', '"', substr(@preg_replace('#(\>(((?>([^><]+|(?R)))*)\<))#se', "@preg_replace('#\b(" . str_replace('\\', '\\\\', $highlight_match) . ")\b#i', '<span style=\"color:#" . $theme['fontcolor3'] . "\"><b>\\\\1</b></span>', '\\0')", '>' . $message . '<'), 1, -1));
+	}
 
 	//
 	// Replace naughty words

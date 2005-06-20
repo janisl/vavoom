@@ -304,87 +304,87 @@ else if ( isset($HTTP_POST_VARS['joingroup']) && $group_id )
 }
 else if ( isset($HTTP_POST_VARS['unsub']) || isset($HTTP_POST_VARS['unsubpending']) && $group_id )
 {
-    //
-    // Second, unsubscribing from a group
-    // Check for confirmation of unsub.
-    //
-    if ( $cancel )
-    {
-        redirect(append_sid("groupcp.$phpEx", true));
-    }
-    elseif ( !$userdata['session_logged_in'] )
-    {
-        redirect(append_sid("login.$phpEx?redirect=groupcp.$phpEx&" . POST_GROUPS_URL . "=$group_id", true));
-    }
+	//
+	// Second, unsubscribing from a group
+	// Check for confirmation of unsub.
+	//
+	if ( $cancel )
+	{
+		redirect(append_sid("groupcp.$phpEx", true));
+	}
+	elseif ( !$userdata['session_logged_in'] )
+	{
+		redirect(append_sid("login.$phpEx?redirect=groupcp.$phpEx&" . POST_GROUPS_URL . "=$group_id", true));
+	}
 
-    if ( $confirm )
-    {
-        $sql = "DELETE FROM " . USER_GROUP_TABLE . "
-            WHERE user_id = " . $userdata['user_id'] . "
-                AND group_id = $group_id";
-        if ( !($result = $db->sql_query($sql)) )
-        {
-            message_die(GENERAL_ERROR, 'Could not delete group memebership data', '', __LINE__, __FILE__, $sql);
-        }
+	if ( $confirm )
+	{
+		$sql = "DELETE FROM " . USER_GROUP_TABLE . "
+			WHERE user_id = " . $userdata['user_id'] . "
+				AND group_id = $group_id";
+		if ( !($result = $db->sql_query($sql)) )
+		{
+			message_die(GENERAL_ERROR, 'Could not delete group memebership data', '', __LINE__, __FILE__, $sql);
+		}
 
-        if ( $userdata['user_level'] != ADMIN && $userdata['user_level'] == MOD )
-        {
-            $sql = "SELECT COUNT(auth_mod) AS is_auth_mod
-                FROM " . AUTH_ACCESS_TABLE . " aa, " . USER_GROUP_TABLE . " ug
-                WHERE ug.user_id = " . $userdata['user_id'] . "
-                    AND aa.group_id = ug.group_id
-                    AND aa.auth_mod = 1";
-            if ( !($result = $db->sql_query($sql)) )
-            {
-                message_die(GENERAL_ERROR, 'Could not obtain moderator status', '', __LINE__, __FILE__, $sql);
-            }
+		if ( $userdata['user_level'] != ADMIN && $userdata['user_level'] == MOD )
+		{
+			$sql = "SELECT COUNT(auth_mod) AS is_auth_mod
+				FROM " . AUTH_ACCESS_TABLE . " aa, " . USER_GROUP_TABLE . " ug
+				WHERE ug.user_id = " . $userdata['user_id'] . "
+					AND aa.group_id = ug.group_id
+					AND aa.auth_mod = 1";
+			if ( !($result = $db->sql_query($sql)) )
+			{
+				message_die(GENERAL_ERROR, 'Could not obtain moderator status', '', __LINE__, __FILE__, $sql);
+			}
 
-            if ( !($row = $db->sql_fetchrow($result)) )
-            {
-                $sql = "UPDATE " . USERS_TABLE . "
-                    SET user_level = " . USER . "
-                    WHERE user_id = " . $userdata['user_id'];
-                if ( !($result = $db->sql_query($sql)) )
-                {
-                    message_die(GENERAL_ERROR, 'Could not update user level', '', __LINE__, __FILE__, $sql);
-                }
-            }
-        }
+			if ( !($row = $db->sql_fetchrow($result)) || $row['is_auth_mod'] == 0 )
+			{
+				$sql = "UPDATE " . USERS_TABLE . "
+					SET user_level = " . USER . "
+					WHERE user_id = " . $userdata['user_id'];
+				if ( !($result = $db->sql_query($sql)) )
+				{
+					message_die(GENERAL_ERROR, 'Could not update user level', '', __LINE__, __FILE__, $sql);
+				}
+			}
+		}
 
-        $template->assign_vars(array(
-            'META' => '<meta http-equiv="refresh" content="3;url=' . append_sid("index.$phpEx") . '">')
-        );
+		$template->assign_vars(array(
+			'META' => '<meta http-equiv="refresh" content="3;url=' . append_sid("index.$phpEx") . '">')
+		);
 
-        $message = $lang['Unsub_success'] . '<br /><br />' . sprintf($lang['Click_return_group'], '<a href="' . append_sid("groupcp.$phpEx?" . POST_GROUPS_URL . "=$group_id") . '">', '</a>') . '<br /><br />' . sprintf($lang['Click_return_index'], '<a href="' . append_sid("index.$phpEx") . '">', '</a>');
+		$message = $lang['Unsub_success'] . '<br /><br />' . sprintf($lang['Click_return_group'], '<a href="' . append_sid("groupcp.$phpEx?" . POST_GROUPS_URL . "=$group_id") . '">', '</a>') . '<br /><br />' . sprintf($lang['Click_return_index'], '<a href="' . append_sid("index.$phpEx") . '">', '</a>');
 
-        message_die(GENERAL_MESSAGE, $message);
-    }
-    else
-    {
-        $unsub_msg = ( isset($HTTP_POST_VARS['unsub']) ) ? $lang['Confirm_unsub'] : $lang['Confirm_unsub_pending'];
+		message_die(GENERAL_MESSAGE, $message);
+	}
+	else
+	{
+		$unsub_msg = ( isset($HTTP_POST_VARS['unsub']) ) ? $lang['Confirm_unsub'] : $lang['Confirm_unsub_pending'];
 
-        $s_hidden_fields = '<input type="hidden" name="' . POST_GROUPS_URL . '" value="' . $group_id . '" /><input type="hidden" name="unsub" value="1" />';
+		$s_hidden_fields = '<input type="hidden" name="' . POST_GROUPS_URL . '" value="' . $group_id . '" /><input type="hidden" name="unsub" value="1" />';
 
-        $page_title = $lang['Group_Control_Panel'];
-        include($phpbb_root_path . 'includes/page_header.'.$phpEx);
+		$page_title = $lang['Group_Control_Panel'];
+		include($phpbb_root_path . 'includes/page_header.'.$phpEx);
 
-        $template->set_filenames(array(
-            'confirm' => 'confirm_body.tpl')
-        );
+		$template->set_filenames(array(
+			'confirm' => 'confirm_body.tpl')
+		);
 
-        $template->assign_vars(array(
-            'MESSAGE_TITLE' => $lang['Confirm'],
-            'MESSAGE_TEXT' => $unsub_msg,
-            'L_YES' => $lang['Yes'],
-            'L_NO' => $lang['No'],
-            'S_CONFIRM_ACTION' => append_sid("groupcp.$phpEx"),
-            'S_HIDDEN_FIELDS' => $s_hidden_fields)
-        );
+		$template->assign_vars(array(
+			'MESSAGE_TITLE' => $lang['Confirm'],
+			'MESSAGE_TEXT' => $unsub_msg,
+			'L_YES' => $lang['Yes'],
+			'L_NO' => $lang['No'],
+			'S_CONFIRM_ACTION' => append_sid("groupcp.$phpEx"),
+			'S_HIDDEN_FIELDS' => $s_hidden_fields)
+		);
 
-        $template->pparse('confirm');
+		$template->pparse('confirm');
 
-        include($phpbb_root_path . 'includes/page_tail.'.$phpEx);
-    }
+		include($phpbb_root_path . 'includes/page_tail.'.$phpEx);
+	}
 
 }
 else if ( $group_id )
