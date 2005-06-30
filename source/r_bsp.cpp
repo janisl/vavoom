@@ -373,21 +373,21 @@ static void RenderBSPNode(int bspnum, float *bbox, int InClipflags)
 		    RenderSubsector(bspnum & (~NF_SUBSECTOR), clipflags);
 		return;
     }
-		
+
 	node_t* bsp = &GClLevel->Nodes[bspnum];
-    
+
 	if (bsp->VisFrame != r_visframecount)
- 	{
+	{
 		return;
 	}
 
     // Decide which side the view point is on.
 	int side = bsp->PointOnSide(vieworg);
 
-   	// Recursively divide front space.
-    RenderBSPNode(bsp->children[side], bsp->bbox[side], clipflags);
+	// Recursively divide front space.
+	RenderBSPNode(bsp->children[side], bsp->bbox[side], clipflags);
 
-   	// Divide back space.
+	// Divide back space.
 	RenderBSPNode(bsp->children[side ^ 1], bsp->bbox[side ^ 1], clipflags);
 	unguard;
 }
@@ -421,9 +421,12 @@ void R_RenderWorld(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2005/06/30 20:20:54  dj_jl
+//	Implemented rendering of Boom fake flats.
+//
 //	Revision 1.14  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.13  2005/03/28 07:28:19  dj_jl
 //	Transfer lighting and other BOOM stuff.
 //	

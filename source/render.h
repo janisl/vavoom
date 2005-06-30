@@ -111,6 +111,7 @@ void R_AnimateSurfaces();
 // r_surf
 void R_PreRender();
 void R_SegMoved(seg_t *seg);
+void R_SetupFakeFloors(sector_t* Sec);
 
 // r_things
 void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot, int = 0);
@@ -139,9 +140,12 @@ extern TArray<TSwitch>	Switches;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2005/06/30 20:20:55  dj_jl
+//	Implemented rendering of Boom fake flats.
+//
 //	Revision 1.9  2005/05/26 16:50:15  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.8  2005/05/03 15:00:11  dj_jl
 //	Moved switch list, animdefs enhancements.
 //	

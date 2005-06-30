@@ -1607,7 +1607,7 @@ void R_SegMoved(seg_t *seg)
 //
 //==========================================================================
 
-void R_PreRender(void)
+void R_PreRender()
 {
 	guard(R_PreRender);
 	int				i, j;
@@ -1731,20 +1731,20 @@ void R_PreRender(void)
 static void UpdateSubRegion(subregion_t *region)
 {
 	guard(UpdateSubRegion);
-    int				count;
+	int				count;
 	int 			polyCount;
 	seg_t**			polySeg;
 
 	r_floor = region->floorplane;
 	r_ceiling = region->ceilplane;
 
-    count = r_sub->numlines;
-    drawseg_t *ds = region->lines;
-    while (count--)
-    {
+	count = r_sub->numlines;
+	drawseg_t *ds = region->lines;
+	while (count--)
+	{
 		UpdateDrawSeg(ds);
 		ds++;
-    }
+	}
 
 	UpdateSecSurface(region->floor);
 	UpdateSecSurface(region->ceil);
@@ -1777,11 +1777,11 @@ static void UpdateSubRegion(subregion_t *region)
 static void UpdateSubsector(int num, float *bbox)
 {
 	guard(UpdateSubsector);
-    r_sub = &GClLevel->Subsectors[num];
-    frontsector = r_sub->sector;
+	r_sub = &GClLevel->Subsectors[num];
+	frontsector = r_sub->sector;
 
 	if (r_sub->VisFrame != r_visframecount)
- 	{
+	{
 		return;
 	}
 
@@ -1810,27 +1810,295 @@ static void UpdateSubsector(int num, float *bbox)
 static void UpdateBSPNode(int bspnum, float *bbox)
 {
 	guard(UpdateBSPNode);
-    // Found a subsector?
-    if (bspnum & NF_SUBSECTOR)
-    {
+	// Found a subsector?
+	if (bspnum & NF_SUBSECTOR)
+	{
 		if (bspnum == -1)
 		    UpdateSubsector(0, bbox);
 		else
 		    UpdateSubsector(bspnum & (~NF_SUBSECTOR), bbox);
 		return;
-    }
-		
+	}
+
 	node_t* bsp = &GClLevel->Nodes[bspnum];
-    
+
 	if (bsp->VisFrame != r_visframecount)
- 	{
+	{
 		return;
 	}
 
 	UpdateBSPNode(bsp->children[0], bsp->bbox[0]);
-    UpdateBSPNode(bsp->children[1], bsp->bbox[1]);
+	UpdateBSPNode(bsp->children[1], bsp->bbox[1]);
 	bbox[2] = MIN(bsp->bbox[0][2], bsp->bbox[1][2]);
 	bbox[5] = MAX(bsp->bbox[0][5], bsp->bbox[1][5]);
+	unguard;
+}
+
+//==========================================================================
+//
+//	CopyPlaneIfValid
+//
+//==========================================================================
+
+static bool CopyPlaneIfValid(sec_plane_t* dest, const sec_plane_t* source,
+	const sec_plane_t* opp)
+{
+	guard(CopyPlaneIfValid);
+	bool copy = false;
+
+	// If the planes do not have matching slopes, then always copy them
+	// because clipping would require creating new sectors.
+	if (source->normal != dest->normal)
+	{
+		copy = true;
+	}
+	else if (opp->normal != -dest->normal)
+	{
+		if (source->dist < dest->dist)
+		{
+			copy = true;
+		}
+	}
+	else if (source->dist < dest->dist && source->dist > -opp->dist)
+	{
+		copy = true;
+	}
+
+	if (copy)
+	{
+		*(TPlane*)dest = *(TPlane*)source;
+	}
+
+	return copy;
+	unguard;
+}
+
+//==========================================================================
+//
+//	UpdateFakeFlats
+//
+// killough 3/7/98: Hack floor/ceiling heights for deep water etc.
+//
+// If player's view height is underneath fake floor, lower the
+// drawn ceiling to be just under the floor height, and replace
+// the drawn floor and ceiling textures, and light level, with
+// the control sector's.
+//
+// Similar for ceiling, only reflected.
+//
+// killough 4/11/98, 4/13/98: fix bugs, add 'back' parameter
+//
+//==========================================================================
+
+void UpdateFakeFlats(sector_t* sec)
+{
+	guard(UpdateFakeFlats);
+	const sector_t *s = sec->heightsec;
+	sector_t *heightsec = r_viewleaf->sector->heightsec;
+	bool underwater = /*r_fakingunderwater ||*/
+		(heightsec && vieworg.z <= heightsec->floor.GetPointZ(vieworg));
+	bool doorunderwater = false;
+	int diffTex = s->bClipFakePlanes;
+
+	// Replace sector being drawn with a copy to be hacked
+	fakefloor_t* ff = sec->fakefloors;
+	ff->floorplane = sec->floor;
+	ff->ceilplane = sec->ceiling;
+	ff->params = sec->params;
+
+	// Replace floor and ceiling height with control sector's heights.
+	if (diffTex)
+	{
+		if (CopyPlaneIfValid(&ff->floorplane, &s->floor, &sec->ceiling))
+		{
+			ff->floorplane.pic = s->floor.pic;
+		}
+		else if (s->bFakeFloorOnly)
+		{
+			if (underwater)
+			{
+//				tempsec->ColorMap = s->ColorMap;
+				if (!s->bNoFakeLight)
+				{
+					ff->params.lightlevel = s->params.lightlevel;
+
+/*					if (floorlightlevel != NULL)
+					{
+						*floorlightlevel = GetFloorLight (s);
+					}
+
+					if (ceilinglightlevel != NULL)
+					{
+						*ceilinglightlevel = GetFloorLight (s);
+					}*/
+				}
+				return;
+			}
+			return;
+		}
+	}
+	else
+	{
+		ff->floorplane.normal = s->floor.normal;
+		ff->floorplane.dist = s->floor.dist;
+	}
+
+	if (!s->bFakeFloorOnly)
+	{
+		if (diffTex)
+		{
+			if (CopyPlaneIfValid(&ff->ceilplane, &s->ceiling, &sec->floor))
+			{
+				ff->ceilplane.pic = s->ceiling.pic;
+			}
+		}
+		else
+		{
+			ff->ceilplane.normal = s->ceiling.normal;
+			ff->ceilplane.dist = s->ceiling.dist;
+		}
+	}
+
+//	float refflorz = s->floor.GetPointZ(viewx, viewy);
+	float refceilz = s->ceiling.GetPointZ(vieworg);
+//	float orgflorz = sec->floor.GetPointZ(viewx, viewy);
+	float orgceilz = sec->ceiling.GetPointZ(vieworg);
+
+#if 0//1
+	// [RH] Allow viewing underwater areas through doors/windows that
+	// are underwater but not in a water sector themselves.
+	// Only works if you cannot see the top surface of any deep water
+	// sectors at the same time.
+	if (back && !r_fakingunderwater && curline->frontsector->heightsec == NULL)
+	{
+		if (rw_frontcz1 <= s->floorplane.ZatPoint (curline->v1->x, curline->v1->y) &&
+			rw_frontcz2 <= s->floorplane.ZatPoint (curline->v2->x, curline->v2->y))
+		{
+			// Check that the window is actually visible
+			for (int z = WallSX1; z < WallSX2; ++z)
+			{
+				if (floorclip[z] > ceilingclip[z])
+				{
+					doorunderwater = true;
+					r_fakingunderwater = true;
+					break;
+				}
+			}
+		}
+	}
+#endif
+
+	if (underwater || doorunderwater)
+	{
+		ff->floorplane.normal = sec->floor.normal;
+		ff->floorplane.dist = sec->floor.dist;
+		ff->ceilplane.normal = -s->floor.normal;
+		ff->ceilplane.dist = -s->floor.dist/* + 1*/;
+//		ff->ColorMap = s->ColorMap;
+	}
+
+	// killough 11/98: prevent sudden light changes from non-water sectors:
+	if ((underwater/* && !back*/) || doorunderwater)
+	{
+		// head-below-floor hack
+		ff->floorplane.pic			= diffTex ? sec->floor.pic : s->floor.pic;
+		ff->floorplane.xoffs		= s->floor.xoffs;
+		ff->floorplane.yoffs		= s->floor.yoffs;
+//		tempsec->floor_xscale		= s->floor_xscale;
+//		tempsec->floor_yscale		= s->floor_yscale;
+//		tempsec->floor_angle		= s->floor_angle;
+//		tempsec->base_floor_angle	= s->base_floor_angle;
+//		tempsec->base_floor_yoffs	= s->base_floor_yoffs;
+
+		ff->ceilplane.normal		= -s->floor.normal;
+		ff->ceilplane.dist			= -s->floor.dist/* + 1*/;
+		if (s->ceiling.pic == skyflatnum)
+		{
+			ff->floorplane.normal	= -ff->ceilplane.normal;
+			ff->floorplane.dist		= -ff->ceilplane.dist/* + 1*/;
+			ff->ceilplane.pic		= ff->floorplane.pic;
+			ff->ceilplane.xoffs		= ff->floorplane.xoffs;
+			ff->ceilplane.yoffs		= ff->floorplane.yoffs;
+//			ff->ceilplane.xscale	= ff->floorplane.xscale;
+//			ff->ceilplane.yscale	= ff->floorplane.yscale;
+//			ff->ceilplane.angle		= ff->floorplane.angle;
+//			ff->base_ceiling_angle	= ff->base_floor_angle;
+//			ff->base_ceiling_yoffs	= ff->base_floor_yoffs;
+		}
+		else
+		{
+			ff->ceilplane.pic		= diffTex ? s->floor.pic : s->ceiling.pic;
+			ff->ceilplane.xoffs		= s->ceiling.xoffs;
+			ff->ceilplane.yoffs		= s->ceiling.yoffs;
+//			ff->ceilplane.xscale	= s->ceiling.xscale;
+//			ff->ceilplane.yscale	= s->ceiling.yscale;
+//			ff->ceilplane.angle		= s->ceiling.angle;
+//			ff->base_ceiling_angle	= s->base_ceiling_angle;
+//			ff->base_ceiling_yoffs	= s->base_ceiling_yoffs;
+		}
+
+		if (!s->bNoFakeLight)
+		{
+			ff->params.lightlevel = s->params.lightlevel;
+
+/*			if (floorlightlevel != NULL)
+			{
+				*floorlightlevel = GetFloorLight (s);
+			}
+
+			if (ceilinglightlevel != NULL)
+			{
+				*ceilinglightlevel = GetFloorLight (s);
+			}*/
+		}
+	}
+	else if (heightsec && orgceilz > refceilz && !s->bFakeFloorOnly &&
+		vieworg.z >= heightsec->ceiling.GetPointZ(vieworg))
+	{
+		// Above-ceiling hack
+		ff->ceilplane.normal	= s->ceiling.normal;
+		ff->ceilplane.dist		= s->ceiling.dist;
+		ff->floorplane.normal	= -s->ceiling.normal;
+		ff->floorplane.dist		= -s->ceiling.dist/* + 1*/;
+//		ff->ColorMap			= s->ColorMap;
+
+		ff->ceilplane.pic = diffTex ? sec->ceiling.pic : s->ceiling.pic;
+		ff->floorplane.pic									= s->ceiling.pic;
+		ff->floorplane.xoffs	= ff->ceilplane.xoffs		= s->ceiling.xoffs;
+		ff->floorplane.yoffs	= ff->ceilplane.yoffs		= s->ceiling.yoffs;
+//		ff->floorplane.xscale	= ff->ceilplane.xscale		= s->ceiling.xscale;
+//		ff->floorplane.yscale	= ff->ceilplane.yscale		= s->ceiling.yscale;
+//		ff->floorplane.angle	= ff->ceilplane.angle		= s->ceiling.angle;
+//		ff->base_floor_angle	= ff->base_ceiling_angle	= s->base_ceiling_angle;
+//		ff->base_floor_yoffs	= ff->base_ceiling_yoffs	= s->base_ceiling_yoffs;
+
+		if (s->floor.pic != skyflatnum)
+		{
+			ff->ceilplane.normal	= sec->ceiling.normal;
+			ff->ceilplane.dist		= sec->ceiling.dist;
+			ff->floorplane.pic		= s->floor.pic;
+			ff->floorplane.xoffs	= s->floor.xoffs;
+			ff->floorplane.yoffs	= s->floor.yoffs;
+//			ff->floorplane.xscale	= s->floor.xscale;
+//			ff->floorplane.yscale	= s->floor.yscale;
+//			ff->floorplane.angle	= s->floor.angle;
+		}
+
+		if (!s->bNoFakeLight)
+		{
+			ff->params.lightlevel  = s->params.lightlevel;
+
+/*			if (floorlightlevel != NULL)
+			{
+				*floorlightlevel = GetFloorLight (s);
+			}
+
+			if (ceilinglightlevel != NULL)
+			{
+				*ceilinglightlevel = GetCeilingLight (s);
+			}*/
+		}
+	}
 	unguard;
 }
 
@@ -1840,21 +2108,59 @@ static void UpdateBSPNode(int bspnum, float *bbox)
 //
 //==========================================================================
 
-void R_UpdateWorld(void)
+void R_UpdateWorld()
 {
 	guard(R_UpdateWorld);
 	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 9999, 99999};
+
+	//	Update fake sectors.
+	for (int i = 0; i < GClLevel->NumSectors; i++)
+	{
+		if (GClLevel->Sectors[i].heightsec &&
+			!GClLevel->Sectors[i].heightsec->bIgnoreHeightSec)
+		{
+			UpdateFakeFlats(&GClLevel->Sectors[i]);
+		}
+	}
 
 	UpdateBSPNode(GClLevel->NumNodes - 1, dummy_bbox);	// head node is the last node output
 	unguard;
 }
 
+//==========================================================================
+//
+//	R_SetupFakeFloors
+//
+//==========================================================================
+
+void R_SetupFakeFloors(sector_t* Sec)
+{
+	sector_t* HeightSec = Sec->heightsec;
+
+	if (HeightSec->bIgnoreHeightSec)
+	{
+		return;
+	}
+
+	Sec->fakefloors = (fakefloor_t*)Z_Calloc(sizeof(fakefloor_t), PU_LEVEL, NULL);
+	Sec->fakefloors->floorplane = Sec->floor;
+	Sec->fakefloors->ceilplane = Sec->ceiling;
+	Sec->fakefloors->params = Sec->params;
+
+	Sec->botregion->floor = &Sec->fakefloors->floorplane;
+	Sec->topregion->ceiling = &Sec->fakefloors->ceilplane;
+	Sec->topregion->params = &Sec->fakefloors->params;
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2005/06/30 20:20:55  dj_jl
+//	Implemented rendering of Boom fake flats.
+//
 //	Revision 1.15  2005/05/26 16:50:15  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.14  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
 //	

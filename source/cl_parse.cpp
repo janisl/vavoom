@@ -711,6 +711,7 @@ static void CL_ParseHeightSec()
 	{
 		HeightSec->bNoFakeLight = true;
 	}
+	R_SetupFakeFloors(ToSec);
 }
 
 //==========================================================================
@@ -1072,9 +1073,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.36  2005/06/30 20:20:54  dj_jl
+//	Implemented rendering of Boom fake flats.
+//
 //	Revision 1.35  2005/06/04 13:59:02  dj_jl
 //	Adding support for Boom fake sectors.
-//
+//	
 //	Revision 1.34  2005/05/03 14:56:59  dj_jl
 //	Added support for specifying skin index.
 //	

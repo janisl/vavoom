@@ -80,6 +80,13 @@ struct subregion_t
 	drawseg_t		*lines;
 };
 
+struct fakefloor_t
+{
+	sec_plane_t		floorplane;
+	sec_plane_t		ceilplane;
+	sec_params_t	params;
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 //
@@ -158,9 +165,12 @@ extern rgba_t			SkinPal[256];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2005/06/30 20:20:55  dj_jl
+//	Implemented rendering of Boom fake flats.
+//
 //	Revision 1.13  2005/05/30 18:34:03  dj_jl
 //	Added support for IMGZ and PNG lump textures
-//
+//	
 //	Revision 1.12  2005/05/26 16:50:14  dj_jl
 //	Created texture manager class
 //	

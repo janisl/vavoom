@@ -216,13 +216,14 @@ struct sector_t
 
 	// list of subsectors in sector
 	// used to check if client can see this sector (it needs to be updated)
-	void *__subsectors;
+	void* __subsectors;
 
 	int linecount;
 	line_t **lines;	// [linecount] size
 
 	//	Boom's fake floors.
 	sector_t* heightsec;
+	void* fakefloorinfo;			//	Info for rendering.
 
 	//	Flags.
 	bool		bHasExtrafloors;	//	This sector has extrafloors.
@@ -233,7 +234,7 @@ struct sector_t
 	bool		bIgnoreHeightSec;	//	heightsec is only for triggering sector actions
 	bool		bUnderWater;		//	Sector is underwater
 
-	addfields 15;
+	addfields 14;
 };
 
 //
@@ -719,6 +720,9 @@ struct ClipRect
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.57  2005/06/30 20:22:35  dj_jl
+//  Implemented rendering of Boom fake flats.
+//
 //  Revision 1.56  2005/06/04 13:56:07  dj_jl
 //  Adding support for Boom fake sectors.
 //

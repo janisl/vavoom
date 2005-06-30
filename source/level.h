@@ -233,6 +233,7 @@ struct sec_region_t
 //	The SECTORS record, at runtime.
 //	Stores things/mobjs.
 //
+struct fakefloor_t;
 struct sector_t
 {
 	sec_plane_t		floor;
@@ -274,6 +275,7 @@ struct sector_t
 
 	//	Boom's fake floors.
 	sector_t*	heightsec;
+	fakefloor_t*	fakefloors;			//	Info for rendering.
 
 	//	Flags.
 	dword		bHasExtrafloors:1;		//	This sector has extrafloors.
@@ -284,7 +286,7 @@ struct sector_t
 	dword		bIgnoreHeightSec:1;		//	heightsec is only for triggering sector actions
 	dword		bUnderWater:1;			//	Sector is underwater
 
-	int			user_fields[15];
+	int			user_fields[14];
 };
 
 //
@@ -610,9 +612,12 @@ extern VLevel*			GClLevel;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.32  2005/06/30 20:20:54  dj_jl
+//	Implemented rendering of Boom fake flats.
+//
 //	Revision 1.31  2005/06/04 13:59:02  dj_jl
 //	Adding support for Boom fake sectors.
-//
+//	
 //	Revision 1.30  2005/03/28 07:28:19  dj_jl
 //	Transfer lighting and other BOOM stuff.
 //	
