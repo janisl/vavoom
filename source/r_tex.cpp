@@ -2456,6 +2456,93 @@ static void ParseFTAnim(int IsFlat)
 
 //==========================================================================
 //
+//	ParseSwitchDef
+//
+//==========================================================================
+
+static void ParseSwitchDef()
+{
+	SC_MustGetString();
+
+	//	Skip game specifier.
+	if (SC_Compare("doom"))
+	{
+		SC_MustGetNumber();
+		SC_MustGetString();
+	}
+	else if (SC_Compare ("heretic"))
+	{
+		SC_MustGetString();
+	}
+	else if (SC_Compare ("hexen"))
+	{
+		SC_MustGetString();
+	}
+	else if (SC_Compare ("strife"))
+	{
+		SC_MustGetString();
+	}
+	else if (SC_Compare ("any"))
+	{
+		SC_MustGetString();
+	}
+
+	//	Switch texture
+	int t1 = GTextureManager.CheckNumForName(FName(sc_String,
+		FNAME_AddLower8), TEXTYPE_Wall, true, false);
+	int t2 = -1;
+	char SndName[64];
+	strcpy(SndName, "Switch");
+
+	//	Currently only basic switch definition is supported.
+	while (SC_GetString())
+	{
+		if (SC_Compare("quest"))
+		{
+		}
+		else if (SC_Compare("on"))
+		{
+			while (SC_GetString())
+			{
+				if (SC_Compare("sound"))
+				{
+					SC_MustGetString();
+					strcpy(SndName, sc_String);
+				}
+				else if (SC_Compare("pic"))
+				{
+					SC_MustGetString();
+					t2 = GTextureManager.CheckNumForName(FName(sc_String,
+						FNAME_AddLower8), TEXTYPE_Wall, true, false);
+					SC_MustGetStringName("tics");
+					SC_MustGetStringName("0");
+				}
+				else
+				{
+					SC_UnGet();
+					break;
+				}
+			}
+		}
+		else
+		{
+			SC_UnGet();
+			break;
+		}
+	}
+
+	if (t1 < 0 || t2 < 0)
+	{
+		return;
+	}
+	TSwitch *sw = new(Switches) TSwitch;
+	sw->Sound = S_GetSoundID(SndName);
+	sw->Tex1 = t1;
+	sw->Tex2 = t2;
+}
+
+//==========================================================================
+//
 //	ParseFTAnims
 //
 //	Initialize flat and texture animation lists.
@@ -2475,6 +2562,10 @@ static void ParseFTAnims()
 		{
 			ParseFTAnim(false);
 		}
+		else if (SC_Compare("switch"))
+		{
+			ParseSwitchDef();
+		}
 		else
 		{
 			SC_ScriptError(NULL);
@@ -2492,7 +2583,7 @@ static void ParseFTAnims()
 
 static bool AnimsCallback(int lump, const char* name, int, EWadNamespace NS)
 {
-	if (NS == WADNS_Global && !strcmp(name, "animdefs"))
+	if (NS == WADNS_Global && !stricmp(name, "animdefs"))
 	{
 		SC_OpenLumpNum(lump);
 		ParseFTAnims();
@@ -2504,7 +2595,7 @@ static bool AnimsCallback(int lump, const char* name, int, EWadNamespace NS)
 //
 //	InitFTAnims
 //
-//	Initialize flat and texture animation lists.
+//	Initialise flat and texture animation lists.
 //
 //==========================================================================
 
@@ -2536,34 +2627,42 @@ static void InitFTAnims()
 //	P_InitSwitchList
 //
 //	Only called at game initialization.
+//	Parse BOOM style switches lump.
 //
 //==========================================================================
 
 void P_InitSwitchList()
 {
 	guard(P_InitSwitchList);
-	int t1;
-	int t2;
-
-	SC_Open("switches");
-	while (SC_GetString())
+	int lump = W_CheckNumForName("SWITCHES");
+	if (lump != -1)
 	{
-		t1 = GTextureManager.CheckNumForName(FName(sc_String,
-			FNAME_AddLower8), TEXTYPE_Wall, true, false);
-		SC_MustGetString();
-		t2 = GTextureManager.CheckNumForName(FName(sc_String,
-			FNAME_AddLower8), TEXTYPE_Wall, true, false);
-		SC_MustGetString();
-		if ((t1 < 0) || (t2 < 0))
+		const char* alphSwitchList = (const char*)W_CacheLumpNum(lump, PU_STATIC);
+		const char* list_p;
+
+		for (list_p = alphSwitchList; list_p[18] || list_p[19]; list_p += 20)
 		{
-			continue;
+			// Check for switches that aren't really switches
+			if (!stricmp(list_p, list_p + 9))
+			{
+				GCon->Logf(NAME_Init, "Switch %s in SWITCHES has the same 'on' state", list_p);
+				continue;
+			}
+			int t1 = GTextureManager.CheckNumForName(FName(list_p,
+				FNAME_AddLower8), TEXTYPE_Wall, true, false);
+			int t2 = GTextureManager.CheckNumForName(FName(list_p + 9,
+				FNAME_AddLower8), TEXTYPE_Wall, true, false);
+			if (t1 < 0 || t2 < 0)
+			{
+				continue;
+			}
+			TSwitch *sw = new(Switches) TSwitch;
+			sw->Sound = S_GetSoundID("Switch");
+			sw->Tex1 = t1;
+			sw->Tex2 = t2;
 		}
-		TSwitch *sw = new(Switches) TSwitch;
-		sw->Sound = S_GetSoundID(sc_String);
-		sw->Tex1 = t1;
-		sw->Tex2 = t2;
+		Z_Free((void*)alphSwitchList);
 	}
-	SC_Close();
 	Switches.Shrink();
 	unguard;
 }
@@ -2650,9 +2749,13 @@ void R_InitTexture()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2005/07/03 12:06:56  dj_jl
+//	Moved switches to animdefs lump.
+//	Added support for BOOM switches lump.
+//
 //	Revision 1.29  2005/06/08 22:52:16  dj_jl
 //	Fixed automap background.
-//
+//	
 //	Revision 1.28  2005/05/30 18:34:03  dj_jl
 //	Added support for IMGZ and PNG lump textures
 //	
