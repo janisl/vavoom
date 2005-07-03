@@ -8,7 +8,6 @@ $label A_END
 scripts/mapinfo.txt
 scripts/skyboxes.txt
 scripts/animdefs.txt
-scripts/switches.txt
 scripts/terrains.txt
 scripts/sfxinfo.txt
 scripts/sndinfo.txt

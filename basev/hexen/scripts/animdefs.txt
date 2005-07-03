@@ -1,0 +1,11 @@
+//	Switches
+switch SW_1_UP  on pic SW_1_DN  tics 0 sound Switch1
+switch SW_2_UP  on pic SW_2_DN  tics 0 sound Switch1
+switch VALVE1   on pic VALVE2   tics 0 sound ValveTurn
+switch SW51_OFF on pic SW51_ON  tics 0 sound Switch2
+switch SW52_OFF on pic SW52_ON  tics 0 sound Switch2
+switch SW53_UP  on pic SW53_DN  tics 0 sound RopePull
+switch PUZZLE5  on pic PUZZLE9  tics 0 sound Switch1
+switch PUZZLE6  on pic PUZZLE10 tics 0 sound Switch1
+switch PUZZLE7  on pic PUZZLE11 tics 0 sound Switch1
+switch PUZZLE8  on pic PUZZLE12 tics 0 sound Switch1

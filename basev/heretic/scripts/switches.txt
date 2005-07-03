@@ -1,6 +1,0 @@
-//  Switch list
-//
-//  <texture1> <texture2> <sound>
-
-SW1OFF      SW1ON       Switch
-SW2OFF      SW2ON       Switch

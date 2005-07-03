@@ -21,3 +21,7 @@ texture optional LAVAFL1 range LAVAFL3 tics 6
 
 ; Texture: Waterfall
 texture optional WATRWAL1 range WATRWAL3 tics 4
+
+//  Switch list
+switch SW1OFF on pic SW1ON tics 0 sound Switch
+switch SW2OFF on pic SW2ON tics 0 sound Switch

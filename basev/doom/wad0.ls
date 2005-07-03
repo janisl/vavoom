@@ -2,7 +2,6 @@ scripts/animdefs.txt
 scripts/sfxinfo.txt
 scripts/sndinfo.txt
 scripts/sndseq.txt
-scripts/switches.txt
 scripts/terrains.txt
 scripts/skyboxes.txt
 

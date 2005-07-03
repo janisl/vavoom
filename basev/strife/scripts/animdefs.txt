@@ -1,36 +1,107 @@
-//  Flat and texture animations
-
+//	Flat animations
 flat optional F_SCANR5 range F_SCANR8 tics 4
 flat optional F_WATR01 range F_WATR03 tics 8
 flat optional F_PWATR1 range F_PWATR3 tics 11
 flat optional F_SCANR1 range F_SCANR4 tics 4
 flat optional P_VWATR1 range F_VWATR3 tics 4
 flat optional F_HWATR1 range F_HWATR3 tics 4
-flat optional F_TELE1 range F_TELE2 tics 4
-flat optional F_FAN1 range F_FAN2 tics 4
+flat optional F_TELE1  range F_TELE2  tics 4
+flat optional F_FAN1   range F_FAN2   tics 4
 flat optional F_CONVY1 range F_CONVY2 tics 4
 flat optional F_RDALN1 range F_RDALN4 tics 4
 
-texture optional SCAN05 range SCAN08 tics 4
+//	Texture animations
+texture optional SCAN05   range SCAN08   tics 4
 texture optional SWTRMG01 range SWTRMG03 tics 4
-texture optional SCAN01 range SCAN04 tics 4
-texture optional COMP01 range COMP04 tics 4
-texture optional COMP05 range COMP08 tics 6
-texture optional COMP09 range COMP12 tics 11
-texture optional COMP13 range COMP16 tics 12
-texture optional COMP17 range COMP20 tics 12
-texture optional COMP21 range COMP24 tics 12
-texture optional COMP25 range COMP28 tics 12
-texture optional COMP29 range COMP32 tics 12
-texture optional COMP33 range COMP37 tics 12
-texture optional COMP38 range COMP41 tics 12
-texture optional COMP42 range COMP49 tics 10
+texture optional SCAN01   range SCAN04   tics 4
+texture optional COMP01   range COMP04   tics 4
+texture optional COMP05   range COMP08   tics 6
+texture optional COMP09   range COMP12   tics 11
+texture optional COMP13   range COMP16   tics 12
+texture optional COMP17   range COMP20   tics 12
+texture optional COMP21   range COMP24   tics 12
+texture optional COMP25   range COMP28   tics 12
+texture optional COMP29   range COMP32   tics 12
+texture optional COMP33   range COMP37   tics 12
+texture optional COMP38   range COMP41   tics 12
+texture optional COMP42   range COMP49   tics 10
 texture optional BRKGRY13 range BRKGRY16 tics 10
 texture optional BRNSCN01 range BRNSCN04 tics 10
 texture optional CONCRT09 range CONCRT12 tics 11
 texture optional CONCRT22 range CONCRT25 tics 11
 texture optional WALPMP01 range WALPMP02 tics 16
 texture optional WALTEK16 range WALTEK17 tics 8
-texture optional FORCE01 range FORCE04 tics 4
-texture optional FORCE05 range FORCE08 tics 4
-texture optional FAN01 range FAN02 tics 4
+texture optional FORCE01  range FORCE04  tics 4
+texture optional FORCE05  range FORCE08  tics 4
+texture optional FAN01    range FAN02    tics 4
+
+//	Switches
+switch GLASS01  on pic GLASS02  tics 0 sound BreakGlass
+switch GLASS03  on pic GLASS04  tics 0 sound BreakGlass
+switch GLASS05  on pic GLASS06  tics 0 sound BreakGlass
+switch GLASS07  on pic GLASS08  tics 0 sound BreakGlass
+switch GLASS17  on pic GLASS18  tics 0 sound BreakGlass
+switch GLASS19  on pic GLASS20  tics 0 sound BreakGlass
+switch SWKNOB01 on pic SWKNOB02 tics 0 sound SwitchKnob
+switch SWLITE01 on pic SWLITE02 tics 0 sound Switch
+switch SWCHN01  on pic SWCHN02  tics 0 sound SwitchPullChain
+switch COMP01   on pic COMP04B  tics 0 sound BreakGlass
+switch COMP05   on pic COMP12B  tics 0 sound BreakGlass
+switch COMP09   on pic COMP12B  tics 0 sound BreakGlass
+switch COMP12   on pic COMP04B  tics 0 sound BreakGlass
+switch COMP13   on pic COMP12B  tics 0 sound BreakGlass
+switch COMP17   on pic COMP20B  tics 0 sound BreakGlass
+switch COMP21   on pic COMP28B  tics 0 sound BreakGlass
+switch WALTEK09 on pic WALTEKB1 tics 0 sound BreakGlass
+switch WALTEK10 on pic WALTEKB1 tics 0 sound BreakGlass
+switch WALTEK15 on pic WALTEKB1 tics 0 sound BreakGlass
+switch SWFORC01 on pic SWFORC02 tics 0 sound Switch
+switch SWEXIT01 on pic SWEXIT02 tics 0 sound Switch
+switch DORSBK01 on pic DORSBK02 tics 0 sound SwitchStone
+switch SWSLD01  on pic SWSLD02  tics 0 sound Switch
+switch DORWS04  on pic DORWS05  tics 0 sound SwitchBolt
+switch SWIRON01 on pic SWIRON02 tics 0 sound Switch
+switch GLASS09  on pic GLASS10  tics 0 sound BreakGlass
+switch GLASS11  on pic GLASS12  tics 0 sound BreakGlass
+switch GLASS13  on pic GLASS14  tics 0 sound BreakGlass
+switch GLASS15  on pic GLASS16  tics 0 sound BreakGlass
+switch SWFORC03 on pic SWFORC04 tics 0 sound Switch
+switch SWCIT01  on pic SWCIT02  tics 0 sound Switch
+switch SWTRMG01 on pic SWTRMG04 tics 0 sound Switch
+switch SWMETL01 on pic SWMETL02 tics 0 sound Switch
+switch SWWOOD01 on pic SWWOOD02 tics 0 sound Switch
+switch SWTKBL01 on pic SWTKBL02 tics 0 sound Switch
+switch AZWAL21  on pic AZWAL22  tics 0 sound BreakGlass
+switch SWINDT01 on pic SWINDT02 tics 0 sound Switch
+switch SWRUST01 on pic SWRUST02 tics 0 sound Switch
+switch SWCHAP01 on pic SWCHAP02 tics 0 sound Switch
+switch SWALIN01 on pic SWALIN02 tics 0 sound Switch
+switch SWWALG01 on pic SWWALG02 tics 0 sound Switch
+switch SWWALG03 on pic SWWALG04 tics 0 sound Switch
+switch SWTRAM01 on pic SWTRAM02 tics 0 sound Switch
+switch SWTRAM03 on pic SWTRAM04 tics 0 sound Switch
+switch SWORC01  on pic SWORC02  tics 0 sound Switch
+switch SWBRIK01 on pic SWBRIK02 tics 0 sound Switch
+switch SWIRON03 on pic SWIRON04 tics 0 sound Switch
+switch SWIRON05 on pic SWIRON06 tics 0 sound Switch
+switch SWIRON07 on pic SWIRON08 tics 0 sound Switch
+switch SWCARD01 on pic SWCARD02 tics 0 sound SwitchKeyCard
+switch SWSIGN01 on pic SWSIGN02 tics 0 sound Switch
+switch SWLEV01  on pic SWLEV02  tics 0 sound Switch
+switch SWLEV03  on pic SWLEV04  tics 0 sound Switch
+switch SWLEV05  on pic SWLEV06  tics 0 sound Switch
+switch SWBRN01  on pic SWBRN02  tics 0 sound SwitchKeyCard
+switch SWPIP01  on pic SWPIP02  tics 0 sound SwitchValve
+switch SWPALM01 on pic SWPALM02 tics 0 sound SwitchScanner
+switch SWKNOB03 on pic SWKNOB04 tics 0 sound SwitchKnob
+switch ALTSW01  on pic ALTSW02  tics 0 sound Switch
+switch COMP25   on pic COMP28B  tics 0 sound BreakGlass
+switch COMP29   on pic COMP20B  tics 0 sound BreakGlass
+switch COMP33   on pic COMP50   tics 0 sound BreakGlass
+switch COMP42   on pic COMP51   tics 0 sound BreakGlass
+switch GODSCRN1 on pic GODSCRN2 tics 0 sound SwitchFool
+switch ALIEN04  on pic ALIEN05  tics 0 sound Switch
+switch CITADL04 on pic CITADL05 tics 0 sound Switch
+switch SWITE03  on pic SWITE04  tics 0 sound Switch
+switch SWTELP01 on pic SWTELP02 tics 0 sound Switch
+switch BRNSCN01 on pic BRNSCN05 tics 0 sound ElectricArrowExplode quest

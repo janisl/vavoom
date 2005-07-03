@@ -1,7 +1,7 @@
 progs/clprogs.dat
 progs/svprogs.dat
 
-scripts/switches.txt
+scripts/animdefs.txt
 scripts/terrains.txt
 scripts/sfxinfo.txt
 scripts/skyboxes.txt
