@@ -1090,14 +1090,15 @@ byte* TTexture::GetPixels8()
 		rgba_t* Pal = GetPalette();
 		byte Remap[256];
 		Remap[0] = 0;
-		for (int i = 1; i < 256; i++)
+		int i;
+		for (i = 1; i < 256; i++)
 		{
 			Remap[i] = RGBTable[((Pal[i].r << 7) & 0x7c00) +
 				((Pal[i].g << 2) & 0x3e0) + ((Pal[i].b >> 3) & 0x1f)];
 		}
 
 		byte* pPix = Pixels;
-		for (int i = 0; i < NumPixels; i++, pPix++)
+		for (i = 0; i < NumPixels; i++, pPix++)
 		{
 			*pPix = Remap[*pPix];
 		}
@@ -1922,9 +1923,10 @@ byte* TPngLumpTexture::GetPixels()
 		memcpy(Palette, SkinPal, 256 * 4);
 
 		//	Find black colour for remaping.
+		int i;
 		int black = 0;
 		int best_dist = 0x10000;
-		for (int i = 1; i < 256; i++)
+		for (i = 1; i < 256; i++)
 		{
 			int dist = Palette[i].r * Palette[i].r + Palette[i].g *
 				Palette[i].g + Palette[i].b * Palette[i].b;
@@ -1934,7 +1936,7 @@ byte* TPngLumpTexture::GetPixels()
 				best_dist = dist;
 			}
 		}
-		for (int i = 0; i < Width * Height; i++)
+		for (i = 0; i < Width * Height; i++)
 		{
 			if (Palette[Pixels[i]].a == 0)
 				Pixels[i] = 0;
@@ -2086,9 +2088,10 @@ byte* TFileTexture::GetPixels()
 		memcpy(Palette, SkinPal, 256 * 4);
 
 		//	Find black colour for remaping.
+		int i;
 		int black = 0;
 		int best_dist = 0x10000;
-		for (int i = 1; i < 256; i++)
+		for (i = 1; i < 256; i++)
 		{
 			int dist = Palette[i].r * Palette[i].r + Palette[i].g *
 				Palette[i].g + Palette[i].b * Palette[i].b;
@@ -2098,7 +2101,7 @@ byte* TFileTexture::GetPixels()
 				best_dist = dist;
 			}
 		}
-		for (int i = 0; i < Width * Height; i++)
+		for (i = 0; i < Width * Height; i++)
 		{
 			if (Palette[Pixels[i]].a == 0)
 				Pixels[i] = 0;
@@ -2749,10 +2752,13 @@ void R_InitTexture()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.31  2005/07/05 22:52:10  dj_jl
+//	Fixes to compile under M$VC
+//
 //	Revision 1.30  2005/07/03 12:06:56  dj_jl
 //	Moved switches to animdefs lump.
 //	Added support for BOOM switches lump.
-//
+//	
 //	Revision 1.29  2005/06/08 22:52:16  dj_jl
 //	Fixed automap background.
 //	

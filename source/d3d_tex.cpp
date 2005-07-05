@@ -363,7 +363,7 @@ void VDirect3DDrawer::SetPic(int handle)
 		return;
 	}
 
-	tex = GTextureManager.TextureAnimation(tex);
+	handle = GTextureManager.TextureAnimation(handle);
 
 	if (!GTextureManager.Textures[handle]->DriverData)
 	{
@@ -869,9 +869,12 @@ LPDIRECTDRAWSURFACE7 VDirect3DDrawer::UploadTexture(int width, int height, rgba_
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2005/07/05 22:52:10  dj_jl
+//	Fixes to compile under M$VC
+//
 //	Revision 1.26  2005/05/26 16:50:14  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.25  2005/03/28 07:25:40  dj_jl
 //	Changed location of hi-res 2D graphics.
 //	
