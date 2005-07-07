@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PolyobjDoor:PolyobjThinker;
+class PolyobjDoor : PolyobjThinker;
 
 int type;
 int polyobj;
@@ -62,6 +62,10 @@ void Tick(float deltaTime)
 	{
 	case PODOOR_SLIDE:
 		move = speed * deltaTime;
+		if (fabs(move) > dist)
+		{
+			move = (move < 0.0 ? -1.0 : 1.0) * dist;
+		}
 		if (PO_MovePolyobj(polyobj, move * xSpeed, move * ySpeed))
 		{
 			dist -= fabs(move);
@@ -110,6 +114,10 @@ void Tick(float deltaTime)
 
 	case PODOOR_SWING:
 		move = speed * deltaTime;
+		if (fabs(move) > dist)
+		{
+			move = (move < 0.0 ? -1.0 : 1.0) * dist;
+		}
 		if (PO_RotatePolyobj(polyobj, move))
 		{
 			dist -= fabs(move);
@@ -166,6 +174,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/07/07 17:35:36  dj_jl
+//  Polyobj door distance fix.
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //
