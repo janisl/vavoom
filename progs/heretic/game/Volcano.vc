@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Volcano:Decoration
+class Volcano : Decoration
 	__mobjinfo__(87);
 
 //==========================================================================
@@ -32,7 +32,7 @@ class Volcano:Decoration
 //
 //==========================================================================
 
-void A_VolcanoSet(void)
+void A_VolcanoSet()
 {
 	StateTime = 3.0 + Random() * 3.5;
 }
@@ -43,7 +43,7 @@ void A_VolcanoSet(void)
 //
 //==========================================================================
 
-void A_VolcanoBlast(void)
+void A_VolcanoBlast()
 {
 	int i;
 	int count;
@@ -59,7 +59,7 @@ void A_VolcanoBlast(void)
 		blast.Angles.yaw = angle;
 		blast.Velocity.x = cos(angle) * 35.0;
 		blast.Velocity.y = sin(angle) * 35.0;
-		blast.Velocity.z = (2.5 + Random() * 4.0) * 35.0;
+		blast.Velocity.z = (7.5 + Random() * 12.0) * 35.0;
 		blast.PlaySound('VolcanoBlast', CHAN_VOICE);
 		blast.CheckMissileSpawn();
 	}
@@ -89,6 +89,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/07/07 17:55:51  dj_jl
+//  More vertical velocity for volcano projectiles.
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //

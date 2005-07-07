@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class VolcanoBlast:Projectile;
+class VolcanoBlast : Projectile;
 
 //==========================================================================
 //
@@ -31,7 +31,7 @@ class VolcanoBlast:Projectile;
 //
 //==========================================================================
 
-void A_BeastPuff(void)
+void A_BeastPuff()
 {
 	TVec org;
 
@@ -50,7 +50,7 @@ void A_BeastPuff(void)
 //
 //==========================================================================
 
-void A_VolcBallImpact(void)
+void A_VolcBallImpact()
 {
 	int i;
 	Actor tiny;
@@ -70,7 +70,7 @@ void A_VolcBallImpact(void)
 		tiny.Angles.yaw = angle;
 		tiny.Velocity.x = 0.7 * cos(angle) * 35.0;
 		tiny.Velocity.y = 0.7 * sin(angle) * 35.0;
-		tiny.Velocity.z = (1.0 + Random() * 2.0) * 35.0;
+		tiny.Velocity.z = (3.0 + Random() * 6.0) * 35.0;
 		tiny.CheckMissileSpawn();
 	}
 }
@@ -104,6 +104,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/07/07 17:55:51  dj_jl
+//  More vertical velocity for volcano projectiles.
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //
