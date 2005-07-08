@@ -1036,8 +1036,8 @@ void SV_UpdateLevel(TMessage &msg)
 
 		msg << (byte)svc_poly_update
 			<< (byte)i
-			<< (word)po->startSpot.x
-			<< (word)po->startSpot.y
+			<< (word)round(po->startSpot.x)
+			<< (word)round(po->startSpot.y)
 			<< (byte)(AngleToByte(po->angle));
 	}
 
@@ -3005,9 +3005,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.68  2005/07/08 17:49:47  dj_jl
+//	Rounding of polyobj position.
+//
 //	Revision 1.67  2005/05/26 16:55:00  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.66  2005/05/03 14:57:07  dj_jl
 //	Added support for specifying skin index.
 //	
