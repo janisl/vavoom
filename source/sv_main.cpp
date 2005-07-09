@@ -1036,8 +1036,8 @@ void SV_UpdateLevel(TMessage &msg)
 
 		msg << (byte)svc_poly_update
 			<< (byte)i
-			<< (word)round(po->startSpot.x)
-			<< (word)round(po->startSpot.y)
+			<< (word)floor(po->startSpot.x + 0.5)
+			<< (word)floor(po->startSpot.y + 0.5)
 			<< (byte)(AngleToByte(po->angle));
 	}
 
@@ -3005,9 +3005,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.69  2005/07/09 12:18:52  dj_jl
+//	Changed rounding for win compatibility.
+//
 //	Revision 1.68  2005/07/08 17:49:47  dj_jl
 //	Rounding of polyobj position.
-//
+//	
 //	Revision 1.67  2005/05/26 16:55:00  dj_jl
 //	Created texture manager class
 //	
