@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Scroller : Thinker;
+class Scroller : SectorThinker;
 
 int				Type;
 int				Affectee;
@@ -34,6 +34,8 @@ float			VDY;
 bool			bAccel;
 int				Control;
 float			LastHeight;
+float			CarryScrollX;
+float			CarryScrollY;
 
 //==========================================================================
 //
@@ -45,6 +47,7 @@ void InitFloor(sector_t* InSector, int XDir, int YDir, int InSpeed)
 {
 	int		i;
 
+	Sector = InSector;
 	for (i = 0; i < XLevel.NumSectors; i++)
 	{
 		if (&XLevel.Sectors[i] == InSector)
@@ -66,6 +69,7 @@ void InitFloor(sector_t* InSector, int XDir, int YDir, int InSpeed)
 
 void InitWall(line_t* Line, int XDir, int YDir)
 {
+	Sector = Line->frontsector;
 	Type = SCROLLEV_Side;
 	Affectee = Line->sidenum[0];
 	XSpeed = itof(XDir * Line->arg1) * 35.0 / 64.0;
@@ -80,6 +84,7 @@ void InitWall(line_t* Line, int XDir, int YDir)
 
 void InitWallOffsets(line_t* Line)
 {
+	Sector = Line->frontsector;
 	Type = SCROLLEV_Side;
 	Affectee = Line->sidenum[0];
 	XSpeed = -XLevel.Sides[Affectee].textureoffset * 35.0;
@@ -94,6 +99,7 @@ void InitWallOffsets(line_t* Line)
 
 void InitTextureBoth(line_t* Line)
 {
+	Sector = Line->frontsector;
 	Type = SCROLLEV_Side;
 	Affectee = Line->sidenum[0];
 	XSpeed = itof(Line->arg2 - Line->arg3) * 35.0 / 64.0;
@@ -124,6 +130,7 @@ void InitTextureModel(line_t* Line, line_t* SrcLine)
 	float		d;
 	int			i;
 
+	Sector = Line->frontsector;
 	// The line housing the special controls the
 	// direction and speed of scrolling.
 	dx = (SrcLine->v2->x - SrcLine->v1->x) / 32.0;
@@ -202,6 +209,7 @@ void InitGen(int InType, line_t* SrcLine, int InAffectee)
 
 	Type = InType;
 	Affectee = InAffectee;
+	Sector = &XLevel.Sectors[Affectee];
 	if (SrcLine->arg2 & 4)
 	{
 		//	The line housing the special controls the
@@ -218,7 +226,7 @@ void InitGen(int InType, line_t* SrcLine, int InAffectee)
 
 	if (Type == SCROLLEV_Carry)
 	{
-		//level.AddScroller (this, affectee);
+		AddAffector();
 		//XSpeed *= CARRYFACTOR;
 		//YSpeed *= CARRYFACTOR;
 	}
@@ -289,6 +297,9 @@ void Tick(float DeltaTime)
 		VDY = YDelta / DeltaTime;
 	}
 
+	CarryScrollX = 0.0;
+	CarryScrollY = 0.0;
+
 	if (!XDelta && !YDelta)		// no-op if both (x,y) offsets are 0
 		return;
 
@@ -310,7 +321,8 @@ void Tick(float DeltaTime)
 		break;
 
 	case SCROLLEV_Carry:
-		//FIXME
+		CarryScrollX = XDelta * 3.0;
+		CarryScrollY = YDelta * 3.0;
 		break;
 	}
 }
@@ -323,6 +335,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/07/09 13:55:47  dj_jl
+//  Scrolers carrying objects.
+//
 //  Revision 1.1  2005/03/28 07:44:09  dj_jl
 //  Some Boom line specials and other improvements.
 //

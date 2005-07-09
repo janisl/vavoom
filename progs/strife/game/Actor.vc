@@ -1635,7 +1635,61 @@ void PlayerLandedOnThing()
 
 bool Physics()
 {
-	Actor onmo;
+	Actor			onmo;
+	SectorThinker	SecThink;
+	float			scrollx;
+	float			scrolly;
+	float			height;
+	float			waterheight;	// killough 4/4/98: add waterheight
+
+	if (Sector->AffectorData && bColideWithWorld)
+	{
+
+		// killough 3/7/98: Carry things on floor
+		// killough 3/20/98: use new sector list which reflects true members
+		// killough 3/27/98: fix carrier bug
+		// killough 4/4/98: Underwater, carry things even w/o gravity
+
+		// Move objects only if on floor or underwater,
+		// non-floating, and clipped.
+
+		for (SecThink = SectorThinker(Sector->AffectorData); SecThink;
+			SecThink = SecThink.NextAffector)
+		{
+			if (!Scroller(SecThink))
+			{
+				continue;
+			}
+			scrollx = Scroller(SecThink).CarryScrollX;
+			scrolly = Scroller(SecThink).CarryScrollY;
+			if (!scrollx && !scrolly)
+			{
+				continue;
+			}
+			if (bNoGravity && (!Sector->heightsec ||
+				(Sector->heightsec->bIgnoreHeightSec)))
+			{
+				continue;
+			}
+			height = GetPlanePointZ(&Sector->floor, Origin);
+			if (Origin.z > height)
+			{
+				if (!Sector->heightsec || (Sector->heightsec->bIgnoreHeightSec))
+				{
+					continue;
+				}
+
+				waterheight = GetPlanePointZ(&Sector->heightsec->floor, Origin);
+				if (waterheight > height && Origin.z >= waterheight)
+				{
+					continue;
+				}
+			}
+
+			Velocity.x += scrollx;
+			Velocity.y += scrolly;
+		}
+	}
 
 	CheckWater();
 	UpdateVelocity();
@@ -2705,6 +2759,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2005/07/09 13:55:47  dj_jl
+//  Scrolers carrying objects.
+//
 //  Revision 1.17  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

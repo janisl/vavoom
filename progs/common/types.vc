@@ -465,6 +465,7 @@ addfields sector_t
 	Thinker		FloorData;
 	Thinker		CeilingData;
 	Thinker		LightingData;
+	Thinker		AffectorData;
 
 	int			Damage;
 
@@ -720,6 +721,9 @@ struct ClipRect
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.58  2005/07/09 13:55:29  dj_jl
+//  Scrolers carrying objects.
+//
 //  Revision 1.57  2005/06/30 20:22:35  dj_jl
 //  Implemented rendering of Boom fake flats.
 //

@@ -27,6 +27,7 @@ class SectorThinker : Thinker;
 
 sector_t*		Sector;
 int				ThinkerState;
+SectorThinker	NextAffector;
 
 //==========================================================================
 //
@@ -44,6 +45,8 @@ void Archive()
 		ThinkerState |= 2;
 	if (Sector->LightingData == self)
 		ThinkerState |= 4;
+	if (Sector->AffectorData == self)
+		ThinkerState |= 8;
 
 	Sector = SectorToNum(Sector);
 }
@@ -63,6 +66,63 @@ void Unarchive()
 		Sector->CeilingData = self;
 	if (ThinkerState & 4)
 		Sector->LightingData = self;
+	if (ThinkerState & 8)
+		Sector->AffectorData = self;
+}
+
+//==========================================================================
+//
+//	AddAffector
+//
+//==========================================================================
+
+void AddAffector()
+{
+	SectorThinker		Tmp;
+
+	if (!Sector->AffectorData)
+	{
+		Sector->AffectorData = self;
+	}
+	else
+	{
+		Tmp = SectorThinker(Sector->AffectorData);
+		while (Tmp.NextAffector)
+		{
+			Tmp = Tmp.NextAffector;
+		}
+		Tmp.NextAffector = self;
+	}
+	NextAffector = none;
+}
+
+//==========================================================================
+//
+//	RemoveAffector
+//
+//==========================================================================
+
+void RemoveAffector()
+{
+	SectorThinker		Tmp;
+
+	if (Sector->AffectorData == self)
+	{
+		Sector->AffectorData = NextAffector;
+	}
+	else
+	{
+		Tmp = SectorThinker(Sector->AffectorData);
+		while (Tmp && Tmp.NextAffector != self)
+		{
+			Tmp = Tmp.NextAffector;
+		}
+		if (Tmp && Tmp.NextAffector == self)
+		{
+			Tmp.NextAffector = NextAffector;
+		}
+	}
+	NextAffector = none;
 }
 
 defaultproperties
@@ -72,6 +132,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/07/09 13:55:46  dj_jl
+//  Scrolers carrying objects.
+//
 //  Revision 1.2  2005/03/01 14:39:31  dj_jl
 //  Big update of line specials.
 //
