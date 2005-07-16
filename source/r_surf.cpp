@@ -433,7 +433,7 @@ static sec_surface_t *CreateSecSurface(subsector_t* sub, sec_plane_t* InSplane)
 //
 //==========================================================================
 
-static void UpdateSecSurface(sec_surface_t *ssurf)
+static void UpdateSecSurface(sec_surface_t *ssurf, sec_plane_t* RealPlane)
 {
 	guard(UpdateSecSurface);
 	sec_plane_t		*plane = ssurf->secplane;
@@ -441,6 +441,27 @@ static void UpdateSecSurface(sec_surface_t *ssurf)
 	if (!plane->pic)
 	{
 		return;
+	}
+
+	if (plane != RealPlane)
+	{
+		//	Check for sky changes.
+		if (plane->pic == skyflatnum && RealPlane->pic != skyflatnum)
+		{
+			ssurf->secplane = RealPlane;
+			plane = RealPlane;
+			if (!ssurf->surfs->extents[0])
+			{
+				ssurf->surfs = SubdivideFace(ssurf->surfs,
+					ssurf->texinfo.saxis, &ssurf->texinfo.taxis);
+				InitSurfs(ssurf->surfs, &ssurf->texinfo, plane);
+			}
+		}
+		else if (plane->pic != skyflatnum && RealPlane->pic == skyflatnum)
+		{
+			ssurf->secplane = &sky_plane;
+			plane = &sky_plane;
+		}
 	}
 
 	if (FASI(ssurf->dist) != FASI(plane->dist))
@@ -1746,8 +1767,8 @@ static void UpdateSubRegion(subregion_t *region)
 		ds++;
 	}
 
-	UpdateSecSurface(region->floor);
-	UpdateSecSurface(region->ceil);
+	UpdateSecSurface(region->floor, region->floorplane);
+	UpdateSecSurface(region->ceil, region->ceilplane);
 
 	if (r_sub->poly)
 	{
@@ -2155,9 +2176,12 @@ void R_SetupFakeFloors(sector_t* Sec)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2005/07/16 11:00:46  dj_jl
+//	Added fix for ceiling texture change to/from sky texture.
+//
 //	Revision 1.16  2005/06/30 20:20:55  dj_jl
 //	Implemented rendering of Boom fake flats.
-//
+//	
 //	Revision 1.15  2005/05/26 16:50:15  dj_jl
 //	Created texture manager class
 //	
