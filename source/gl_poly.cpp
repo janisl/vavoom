@@ -979,7 +979,7 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 	if ((frame >= pmdl->numframes) || (frame < 0))
 	{
-		GCon->Logf(NAME_Dev, "no such frame %d", frame);
+		GCon->Logf(NAME_Dev, "no such frame %d in %s", frame, model->name);
 		frame = 0;
 	}
 	framedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
@@ -1132,9 +1132,12 @@ void VOpenGLDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2005/07/16 10:17:34  dj_jl
+//	Print which model has missing frame.
+//
 //	Revision 1.29  2005/05/26 16:50:14  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.28  2005/05/03 14:57:06  dj_jl
 //	Added support for specifying skin index.
 //	
