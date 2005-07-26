@@ -581,6 +581,10 @@ else if ( $mode == 'read' )
 		{
 			$private_message = preg_replace('#(<)([\/]?.*?)(>)#is', "&lt;\\2&gt;", $private_message);
 		}
+		else
+		{
+			$privmsg_subject = $privmsg_message = '';
+		}
 	}
 
 	if ( $user_sig != '' && $privmsg['privmsgs_attach_sig'] && $user_sig_bbcode_uid != '' )
@@ -702,145 +706,156 @@ else if ( ( $delete && $mark_list ) || $delete_all )
 
         include($phpbb_root_path . 'includes/page_tail.'.$phpEx);
 
-    }
-    else if ( $confirm )
-    {
-        if ( $delete_all )
-        {
-            switch($folder)
-            {
-                case 'inbox':
-                    $delete_type = "privmsgs_to_userid = " . $userdata['user_id'] . " AND (
-                    privmsgs_type = " . PRIVMSGS_READ_MAIL . " OR privmsgs_type = " . PRIVMSGS_NEW_MAIL . " OR privmsgs_type = " . PRIVMSGS_UNREAD_MAIL . " )";
-                    break;
+	}
+	else if ( $confirm )
+	{
+		$delete_sql_id = '';
 
-                case 'outbox':
-                    $delete_type = "privmsgs_from_userid = " . $userdata['user_id'] . " AND ( privmsgs_type = " . PRIVMSGS_NEW_MAIL . " OR privmsgs_type = " . PRIVMSGS_UNREAD_MAIL . " )";
-                    break;
+		if (!$delete_all)
+		{
+			for ($i = 0; $i < count($mark_list); $i++)
+			{
+				$delete_sql_id .= (($delete_sql_id != '') ? ', ' : '') . intval($mark_list[$i]);
+			}
+			$delete_sql_id = "AND privmsgs_id IN ($delete_sql_id)";
+		}
 
-                case 'sentbox':
-                    $delete_type = "privmsgs_from_userid = " . $userdata['user_id'] . " AND privmsgs_type = " . PRIVMSGS_SENT_MAIL;
-                    break;
+		switch($folder)
+		{
+			case 'inbox':
+				$delete_type = "privmsgs_to_userid = " . $userdata['user_id'] . " AND (
+				privmsgs_type = " . PRIVMSGS_READ_MAIL . " OR privmsgs_type = " . PRIVMSGS_NEW_MAIL . " OR privmsgs_type = " . PRIVMSGS_UNREAD_MAIL . " )";
+				break;
 
-                case 'savebox':
-                    $delete_type = "( ( privmsgs_from_userid = " . $userdata['user_id'] . "
-                        AND privmsgs_type = " . PRIVMSGS_SAVED_OUT_MAIL . " )
-                    OR ( privmsgs_to_userid = " . $userdata['user_id'] . "
-                        AND privmsgs_type = " . PRIVMSGS_SAVED_IN_MAIL . " ) )";
-                    break;
-            }
+			case 'outbox':
+				$delete_type = "privmsgs_from_userid = " . $userdata['user_id'] . " AND ( privmsgs_type = " . PRIVMSGS_NEW_MAIL . " OR privmsgs_type = " . PRIVMSGS_UNREAD_MAIL . " )";
+				break;
 
-            $sql = "SELECT privmsgs_id
-                FROM " . PRIVMSGS_TABLE . "
-                WHERE $delete_type";
-            if ( !($result = $db->sql_query($sql)) )
-            {
-                message_die(GENERAL_ERROR, 'Could not obtain id list to delete all messages', '', __LINE__, __FILE__, $sql);
-            }
+			case 'sentbox':
+				$delete_type = "privmsgs_from_userid = " . $userdata['user_id'] . " AND privmsgs_type = " . PRIVMSGS_SENT_MAIL;
+				break;
 
-            while ( $row = $db->sql_fetchrow($result) )
-            {
-                $mark_list[] = $row['privmsgs_id'];
-            }
+			case 'savebox':
+				$delete_type = "( ( privmsgs_from_userid = " . $userdata['user_id'] . " 
+					AND privmsgs_type = " . PRIVMSGS_SAVED_OUT_MAIL . " ) 
+				OR ( privmsgs_to_userid = " . $userdata['user_id'] . " 
+					AND privmsgs_type = " . PRIVMSGS_SAVED_IN_MAIL . " ) )";
+				break;
+		}
 
-            unset($delete_type);
-        }
+		$sql = "SELECT privmsgs_id
+			FROM " . PRIVMSGS_TABLE . "
+			WHERE $delete_type $delete_sql_id";
 
-        $attachment_mod['pm']->delete_all_pm_attachments($mark_list);
+		if ( !($result = $db->sql_query($sql)) )
+		{
+			message_die(GENERAL_ERROR, 'Could not obtain id list to delete messages', '', __LINE__, __FILE__, $sql);
+		}
 
-        if ( count($mark_list) )
-        {
-            $delete_sql_id = '';
-            for ($i = 0; $i < sizeof($mark_list); $i++)
-            {
-                $delete_sql_id .= (($delete_sql_id != '') ? ', ' : '') . intval($mark_list[$i]);
-            }
+		$mark_list = array();
+		while ( $row = $db->sql_fetchrow($result) )
+		{
+			$mark_list[] = $row['privmsgs_id'];
+		}
 
-            if ($folder == 'inbox' || $folder == 'outbox')
-            {
-                switch ($folder)
-                {
-                    case 'inbox':
-                        $sql = "privmsgs_to_userid = " . $userdata['user_id'];
-                        break;
-                    case 'outbox':
-                        $sql = "privmsgs_from_userid = " . $userdata['user_id'];
-                        break;
-                }
+		unset($delete_type);
 
-                // Get information relevant to new or unread mail
-                // so we can adjust users counters appropriately
-                $sql = "SELECT privmsgs_to_userid, privmsgs_type
-                    FROM " . PRIVMSGS_TABLE . "
-                    WHERE privmsgs_id IN ($delete_sql_id)
-                        AND $sql
-                        AND privmsgs_type IN (" . PRIVMSGS_NEW_MAIL . ", " . PRIVMSGS_UNREAD_MAIL . ")";
-                if ( !($result = $db->sql_query($sql)) )
-                {
-                    message_die(GENERAL_ERROR, 'Could not obtain user id list for outbox messages', '', __LINE__, __FILE__, $sql);
-                }
 
-                if ( $row = $db->sql_fetchrow($result))
-                {
-                    $update_users = $update_list = array();
+		$attachment_mod['pm']->delete_all_pm_attachments($mark_list);
 
-                    do
-                    {
-                        switch ($row['privmsgs_type'])
-                        {
-                            case PRIVMSGS_NEW_MAIL:
-                                $update_users['new'][$row['privmsgs_to_userid']]++;
-                                break;
+		if ( count($mark_list) )
+		{
+			$delete_sql_id = '';
+			for ($i = 0; $i < sizeof($mark_list); $i++)
+			{
+				$delete_sql_id .= (($delete_sql_id != '') ? ', ' : '') . intval($mark_list[$i]);
+			}
 
-                            case PRIVMSGS_UNREAD_MAIL:
-                                $update_users['unread'][$row['privmsgs_to_userid']]++;
-                                break;
-                        }
-                    }
-                    while ($row = $db->sql_fetchrow($result));
+			if ($folder == 'inbox' || $folder == 'outbox')
+			{
+				switch ($folder)
+				{
+					case 'inbox':
+						$sql = "privmsgs_to_userid = " . $userdata['user_id'];
+						break;
+					case 'outbox':
+						$sql = "privmsgs_from_userid = " . $userdata['user_id'];
+						break;
+				}
 
-                    if (sizeof($update_users))
-                    {
-                        while (list($type, $users) = each($update_users))
-                        {
-                            while (list($user_id, $dec) = each($users))
-                            {
-                                $update_list[$type][$dec][] = $user_id;
-                            }
-                        }
-                        unset($update_users);
+				// Get information relevant to new or unread mail
+				// so we can adjust users counters appropriately
+				$sql = "SELECT privmsgs_to_userid, privmsgs_type
+					FROM " . PRIVMSGS_TABLE . "
+					WHERE privmsgs_id IN ($delete_sql_id)
+						AND $sql
+						AND privmsgs_type IN (" . PRIVMSGS_NEW_MAIL . ", " . PRIVMSGS_UNREAD_MAIL . ")";
+				if ( !($result = $db->sql_query($sql)) )
+				{
+					message_die(GENERAL_ERROR, 'Could not obtain user id list for outbox messages', '', __LINE__, __FILE__, $sql);
+				}
 
-                        while (list($type, $dec_ary) = each($update_list))
-                        {
-                            switch ($type)
-                            {
-                                case 'new':
-                                    $type = "user_new_privmsg";
-                                    break;
+				if ( $row = $db->sql_fetchrow($result))
+				{
+					$update_users = $update_list = array();
 
-                                case 'unread':
-                                    $type = "user_unread_privmsg";
-                                    break;
-                            }
+					do
+					{
+						switch ($row['privmsgs_type'])
+						{
+							case PRIVMSGS_NEW_MAIL:
+								$update_users['new'][$row['privmsgs_to_userid']]++;
+								break;
 
-                            while (list($dec, $user_ary) = each($dec_ary))
-                            {
-                                $user_ids = implode(', ', $user_ary);
+							case PRIVMSGS_UNREAD_MAIL:
+								$update_users['unread'][$row['privmsgs_to_userid']]++;
+								break;
+						}
+					}
+					while ($row = $db->sql_fetchrow($result));
 
-                                $sql = "UPDATE " . USERS_TABLE . "
-                                    SET $type = $type - $dec
-                                    WHERE user_id IN ($user_ids)";
-                                if ( !$db->sql_query($sql) )
-                                {
-                                    message_die(GENERAL_ERROR, 'Could not update user pm counters', '', __LINE__, __FILE__, $sql);
-                                }
-                            }
-                        }
-                        unset($update_list);
-                    }
-                }
-                $db->sql_freeresult($result);
-            }
+					if (sizeof($update_users))
+					{
+						while (list($type, $users) = each($update_users))
+						{
+							while (list($user_id, $dec) = each($users))
+							{
+								$update_list[$type][$dec][] = $user_id;
+							}
+						}
+						unset($update_users);
+
+						while (list($type, $dec_ary) = each($update_list))
+						{
+							switch ($type)
+							{
+								case 'new':
+									$type = "user_new_privmsg";
+									break;
+
+								case 'unread':
+									$type = "user_unread_privmsg";
+									break;
+							}
+
+							while (list($dec, $user_ary) = each($dec_ary))
+							{
+								$user_ids = implode(', ', $user_ary);
+
+								$sql = "UPDATE " . USERS_TABLE . "
+									SET $type = $type - $dec
+									WHERE user_id IN ($user_ids)";
+								if ( !$db->sql_query($sql) )
+								{
+									message_die(GENERAL_ERROR, 'Could not update user pm counters', '', __LINE__, __FILE__, $sql);
+								}
+							}
+						}
+						unset($update_list);
+					}
+				}
+				$db->sql_freeresult($result);
+			}
 
             // Delete the messages
             $delete_text_sql = "DELETE FROM " . PRIVMSGS_TEXT_TABLE . "
@@ -2011,27 +2026,31 @@ $post_pm = '<a href="' . $post_pm . '">' . $lang['Post_new_pm'] . '</a>';
 //
 if ( $folder != 'outbox' )
 {
-    $inbox_limit_pct = ( $board_config['max_' . $folder . '_privmsgs'] > 0 ) ? round(( $pm_all_total / $board_config['max_' . $folder . '_privmsgs'] ) * 100) : 100;
-    $inbox_limit_img_length = ( $board_config['max_' . $folder . '_privmsgs'] > 0 ) ? round(( $pm_all_total / $board_config['max_' . $folder . '_privmsgs'] ) * $board_config['privmsg_graphic_length']) : $board_config['privmsg_graphic_length'];
-    $inbox_limit_remain = ( $board_config['max_' . $folder . '_privmsgs'] > 0 ) ? $board_config['max_' . $folder . '_privmsgs'] - $pm_all_total : 0;
+	$inbox_limit_pct = ( $board_config['max_' . $folder . '_privmsgs'] > 0 ) ? round(( $pm_all_total / $board_config['max_' . $folder . '_privmsgs'] ) * 100) : 100;
+	$inbox_limit_img_length = ( $board_config['max_' . $folder . '_privmsgs'] > 0 ) ? round(( $pm_all_total / $board_config['max_' . $folder . '_privmsgs'] ) * $board_config['privmsg_graphic_length']) : $board_config['privmsg_graphic_length'];
+	$inbox_limit_remain = ( $board_config['max_' . $folder . '_privmsgs'] > 0 ) ? $board_config['max_' . $folder . '_privmsgs'] - $pm_all_total : 0;
 
-    $template->assign_block_vars('switch_box_size_notice', array());
+	$template->assign_block_vars('switch_box_size_notice', array());
 
-    switch( $folder )
-    {
-        case 'inbox':
-            $l_box_size_status = sprintf($lang['Inbox_size'], $inbox_limit_pct);
-            break;
-        case 'sentbox':
-            $l_box_size_status = sprintf($lang['Sentbox_size'], $inbox_limit_pct);
-            break;
-        case 'savebox':
-            $l_box_size_status = sprintf($lang['Savebox_size'], $inbox_limit_pct);
-            break;
-        default:
-            $l_box_size_status = '';
-            break;
-    }
+	switch( $folder )
+	{
+		case 'inbox':
+			$l_box_size_status = sprintf($lang['Inbox_size'], $inbox_limit_pct);
+			break;
+		case 'sentbox':
+			$l_box_size_status = sprintf($lang['Sentbox_size'], $inbox_limit_pct);
+			break;
+		case 'savebox':
+			$l_box_size_status = sprintf($lang['Savebox_size'], $inbox_limit_pct);
+			break;
+		default:
+			$l_box_size_status = '';
+			break;
+	}
+}
+else
+{
+	$inbox_limit_img_length = $inbox_limit_pct = $l_box_size_status = '';
 }
 
 //
