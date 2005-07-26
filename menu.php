@@ -21,7 +21,7 @@
 	<tr><td align="center"><a class="button" href="download.php" target="main">Download</a></td></tr>
 	<tr><td align="center"><a class="button" href="tutorials.php" target="main">Tutorials</a></td></tr>
 	<tr><td align="center"><a class="button" href="projects.php" target="main">Projects</a></td></tr>
-	<tr><td align="center"><a class="button" href="http://forums.vavoom-engine.com" target="_blank">Forums</a></td></tr>
+	<tr><td align="center"><a class="button" href="forums" target="_blank">Forums</a></td></tr>
 	<tr><td align="center"><a class="button" href="wiki" target="_blank">Wiki</a></td></tr>
 	<tr><td align="center"><a class="button" href="faq.php" target="main">FAQ</a></td></tr>
 	<tr><td align="center"><a class="button" href="glvis.php" target="main">glVIS</a></td></tr>
@@ -29,10 +29,6 @@
 	</table>
 
 	<table border="0" cellspacing="3" width="100%">
-	<tr><td align="center"><span class="small">sponsored by
-		<a href="http://www.ravengames.com" target="_blank"><img
-		src="images/affiliatebuttons/ravengames.gif"
-		width="88" height="30" border="0"></a></span></td></tr>
 	<tr><td align="center"><a href="http://www.korax-heritage.com" target="_blank"><img
 		src="images/affiliatebuttons/korax-heritage.gif"
 		width="88" height="31" border="0"></a></td></tr>
@@ -42,22 +38,22 @@
 	<tr><td align="center"><a href="http://www.opengl.org/" target="_blank"><img
 		src="images/affiliatebuttons/OGLonBlackSm.jpg" border="0" alt="OpenGL Logo" /></a></td></tr>
 	<tr><td align="center">
-<!-- begin: LiveCounter Classic CGI counter -->
-               <IMG 
-               SRC="http://www.vavoom-engine.com/cgi-bin/livecntr.pl?0+6+english" 
-               WIDTH=15 HEIGHT=20><IMG 
-               SRC="http://www.vavoom-engine.com/cgi-bin/livecntr.pl?1+6+english" 
-               WIDTH=15 HEIGHT=20><IMG 
-               SRC="http://www.vavoom-engine.com/cgi-bin/livecntr.pl?2+6+english" 
-               WIDTH=15 HEIGHT=20><IMG 
-               SRC="http://www.vavoom-engine.com/cgi-bin/livecntr.pl?3+6+english" 
-               WIDTH=15 HEIGHT=20><IMG 
-               SRC="http://www.vavoom-engine.com/cgi-bin/livecntr.pl?4+6+english" 
-               WIDTH=15 HEIGHT=20><IMG 
-               SRC="http://www.vavoom-engine.com/cgi-bin/livecntr.pl?5+6+english" 
-               WIDTH=15 HEIGHT=20>
-               <!-- end: LiveCounter Classic CGI counter -->
-</td></tr>
+		<!-- begin: LiveCounter Classic CGI counter -->
+		<IMG 
+		SRC="http://vavoom-engine.com/cgi-bin/livecntr.pl?0+6+english" 
+		WIDTH=15 HEIGHT=20><IMG 
+		SRC="http://vavoom-engine.com/cgi-bin/livecntr.pl?1+6+english" 
+		WIDTH=15 HEIGHT=20><IMG 
+		SRC="http://vavoom-engine.com/cgi-bin/livecntr.pl?2+6+english" 
+		WIDTH=15 HEIGHT=20><IMG 
+		SRC="http://vavoom-engine.com/cgi-bin/livecntr.pl?3+6+english" 
+		WIDTH=15 HEIGHT=20><IMG 
+		SRC="http://vavoom-engine.com/cgi-bin/livecntr.pl?4+6+english" 
+		WIDTH=15 HEIGHT=20><IMG 
+		SRC="http://vavoom-engine.com/cgi-bin/livecntr.pl?5+6+english" 
+		WIDTH=15 HEIGHT=20>
+		<!-- end: LiveCounter Classic CGI counter -->
+	</td></tr>
 	</table>
 </td>
 </tr>
