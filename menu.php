@@ -20,7 +20,7 @@
 	<tr><td align="center"><a class="button" href="shots.php" target="main">Screenshots</a></td></tr>
 	<tr><td align="center"><a class="button" href="download.php" target="main">Download</a></td></tr>
 	<tr><td align="center"><a class="button" href="tutorials.php" target="main">Tutorials</a></td></tr>
-	<tr><td align="center"><a class="button" href="projects.php" target="main">Projects</a></td></tr>
+	<tr><td align="center"><a class="button" href="wiki/index.php?title=Projects" target="main">Projects</a></td></tr>
 	<tr><td align="center"><a class="button" href="forums" target="_blank">Forums</a></td></tr>
 	<tr><td align="center"><a class="button" href="wiki" target="_blank">Wiki</a></td></tr>
 	<tr><td align="center"><a class="button" href="faq.php" target="main">FAQ</a></td></tr>
