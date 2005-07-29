@@ -104,16 +104,17 @@ static void M_FindResponseFile(void)
 		fseek(handle, 0, SEEK_END);
 		int size = ftell(handle);
 		fseek(handle, 0, SEEK_SET);
-		char *file = (char*)malloc(size);
+		char *file = (char*)malloc(size + 1);
 		fread(file, size, 1, handle);
 		fclose(handle);
-			
+		file[size] = 0;
+
 		//	Keep all other cmdline args
 		char **oldargv = myargv;
-			
+
 		myargv = (char**)malloc(sizeof(char *) * MAXARGVS);
 		memset(myargv, 0, sizeof(char *) * MAXARGVS);
-		
+
 		//	Keep args before response file
 		int indexinfile;
 		for (indexinfile = 0; indexinfile < i; indexinfile++)
@@ -124,15 +125,53 @@ static void M_FindResponseFile(void)
 		//	Read response file
 		char *infile = file;
 		int k = 0;
-		do
+		while (k < size)
 		{
-			myargv[indexinfile++] = infile + k;
-			while (k < size && ((*(infile + k) > ' ') && (*(infile + k) <= 'z')))
+			//	Skip whitespace.
+			if (infile[k] <= ' ')
+			{
 				k++;
-			*(infile + k) = 0;
-			while (k < size && ((*(infile + k) <= ' ') || (*(infile + k) > 'z')))
+				continue;
+			}
+
+			if (infile[k] == '\"')
+			{
+				//	Parse quoted string.
 				k++;
-		} while (k < size);
+				myargv[indexinfile++] = infile + k;
+				char CurChar;
+				char* OutBuf = infile + k;
+				do
+				{
+					CurChar = infile[k];
+					if (CurChar == '\\' && infile[k + 1] == '\"')
+					{
+						CurChar = '\"';
+						k++;
+					}
+					else if (CurChar == '\"')
+					{
+						CurChar = 0;
+					}
+					else if (CurChar == 0)
+					{
+						k--;
+					}
+					*OutBuf = CurChar;
+					k++;
+					OutBuf++;
+				} while (CurChar);
+				*(infile + k) = 0;
+			}
+			else
+			{
+				//	Parse unquoted string.
+				myargv[indexinfile++] = infile + k;
+				while (k < size && infile[k] > ' ' && infile[k] != '\"')
+					k++;
+				*(infile + k) = 0;
+			}
+		}
 
 		//	Keep args following response file
 		for (k = i + 1; k < myargc; k++)
@@ -385,9 +424,12 @@ int PassFloat(float f)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2005/07/29 17:50:19  dj_jl
+//	Support for quoted strings in response file.
+//
 //	Revision 1.10  2002/02/15 19:10:32  dj_jl
 //	Added GBigEndian
-//
+//	
 //	Revision 1.9  2002/01/28 18:41:16  dj_jl
 //	Fixed response files
 //	
