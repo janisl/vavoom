@@ -320,7 +320,7 @@ void VDirect3DDrawer::SetSpriteLump(int lump, int translation)
 		}
 		if (avail < 0)
 		{
-			Z_Free(trsprdata[0]);
+			SAFE_RELEASE(trsprdata[0]);
 			avail = 0;
 		}
 		GenerateTranslatedSprite(lump, avail, translation);
@@ -869,9 +869,12 @@ LPDIRECTDRAWSURFACE7 VDirect3DDrawer::UploadTexture(int width, int height, rgba_
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2005/08/13 14:17:45  dj_jl
+//	Fixed freeing of translated sprite.
+//
 //	Revision 1.27  2005/07/05 22:52:10  dj_jl
 //	Fixes to compile under M$VC
-//
+//	
 //	Revision 1.26  2005/05/26 16:50:14  dj_jl
 //	Created texture manager class
 //	
