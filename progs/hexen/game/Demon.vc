@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Demon:Pawn
+class Demon : Pawn
 	__mobjinfo__(31);
 
 classid FireBallType;
@@ -34,7 +34,7 @@ classid FireBallType;
 //
 //============================================================================
 
-void A_DemonAttack1(void)
+void A_DemonAttack1()
 {
 	if (CheckMeleeRange())
 	{
@@ -48,7 +48,7 @@ void A_DemonAttack1(void)
 //
 //============================================================================
 
-void A_DemonAttack2(void)
+void A_DemonAttack2()
 {
 	Actor M;
 
@@ -66,7 +66,7 @@ void A_DemonAttack2(void)
 //
 //============================================================================
 
-void A_DemonDeath(void)
+void A_DemonDeath()
 {
 	Actor A;
 	float angle;
@@ -120,40 +120,50 @@ void A_DemonDeath(void)
 
 __states__
 {
-	S_DEMN_LOOK1('DEMN', 0, 10.0 / 35.0, S_DEMN_LOOK2) { A_Look(); }
-	S_DEMN_LOOK2('DEMN', 0, 10.0 / 35.0, S_DEMN_LOOK1) { A_Look(); }
-	S_DEMN_CHASE1('DEMN', 0, 4.0 / 35.0, S_DEMN_CHASE2) { A_Chase(); }
-	S_DEMN_CHASE2('DEMN', 1, 4.0 / 35.0, S_DEMN_CHASE3) { A_Chase(); }
-	S_DEMN_CHASE3('DEMN', 2, 4.0 / 35.0, S_DEMN_CHASE4) { A_Chase(); }
-	S_DEMN_CHASE4('DEMN', 3, 4.0 / 35.0, S_DEMN_CHASE1) { A_Chase(); }
-	S_DEMN_ATK1_1('DEMN', 4, 6.0 / 35.0, S_DEMN_ATK1_2) { A_FaceTarget(); }
-	S_DEMN_ATK1_2('DEMN', 5, 8.0 / 35.0, S_DEMN_ATK1_3) { A_FaceTarget(); }
-	S_DEMN_ATK1_3('DEMN', 6, 6.0 / 35.0, S_DEMN_CHASE1) { A_DemonAttack1(); }
-	S_DEMN_ATK2_1('DEMN', 4, 5.0 / 35.0, S_DEMN_ATK2_2) { A_FaceTarget(); }
-	S_DEMN_ATK2_2('DEMN', 5, 6.0 / 35.0, S_DEMN_ATK2_3) { A_FaceTarget(); }
-	S_DEMN_ATK2_3('DEMN', 6, 5.0 / 35.0, S_DEMN_CHASE1) { A_DemonAttack2(); }
-	S_DEMN_PAIN1('DEMN', 4, 4.0 / 35.0, S_DEMN_PAIN2) { }
-	S_DEMN_PAIN2('DEMN', 4, 4.0 / 35.0, S_DEMN_CHASE1) { A_Pain(); }
-	S_DEMN_DEATH1('DEMN', 7, 6.0 / 35.0, S_DEMN_DEATH2) { }
-	S_DEMN_DEATH2('DEMN', 8, 6.0 / 35.0, S_DEMN_DEATH3) { }
-	S_DEMN_DEATH3('DEMN', 9, 6.0 / 35.0, S_DEMN_DEATH4) { A_Scream(); }
-	S_DEMN_DEATH4('DEMN', 10, 6.0 / 35.0, S_DEMN_DEATH5) { A_NoBlocking(); }
-	S_DEMN_DEATH5('DEMN', 11, 6.0 / 35.0, S_DEMN_DEATH6) { A_QueueCorpse(); }
-	S_DEMN_DEATH6('DEMN', 12, 6.0 / 35.0, S_DEMN_DEATH7) { }
-	S_DEMN_DEATH7('DEMN', 13, 6.0 / 35.0, S_DEMN_DEATH8) { }
-	S_DEMN_DEATH8('DEMN', 14, 6.0 / 35.0, S_DEMN_DEATH9) { }
-	S_DEMN_DEATH9('DEMN', 15, -1.0, S_NULL) { }
-	S_DEMN_XDEATH1('DEMN', 7, 6.0 / 35.0, S_DEMN_XDEATH2) { }
-	S_DEMN_XDEATH2('DEMN', 8, 6.0 / 35.0, S_DEMN_XDEATH3) { A_DemonDeath(); }
-	S_DEMN_XDEATH3('DEMN', 9, 6.0 / 35.0, S_DEMN_XDEATH4) { A_Scream(); }
-	S_DEMN_XDEATH4('DEMN', 10, 6.0 / 35.0, S_DEMN_XDEATH5) { A_NoBlocking(); }
-	S_DEMN_XDEATH5('DEMN', 11, 6.0 / 35.0, S_DEMN_XDEATH6) { A_QueueCorpse(); }
-	S_DEMN_XDEATH6('DEMN', 12, 6.0 / 35.0, S_DEMN_XDEATH7) { }
-	S_DEMN_XDEATH7('DEMN', 13, 6.0 / 35.0, S_DEMN_XDEATH8) { }
-	S_DEMN_XDEATH8('DEMN', 14, 6.0 / 35.0, S_DEMN_XDEATH9) { }
-	S_DEMN_XDEATH9('DEMN', 15, -1.0, S_NULL) { }
-	S_DEMON_ICE('DEMN', 16, 5.0 / 35.0, S_DEMON_ICE2) { A_FreezeDeath(); }
-	S_DEMON_ICE2('DEMN', 16, 1.0 / 35.0, S_DEMON_ICE2) { A_FreezeDeathChunks(); }
+	S_DEMN_LOOK1('DEMN', 0, 'monsters/demon/base.md2', 0, 5.0 / 35.0, S_DEMN_LOOK2) { A_Look(); }
+	S_DEMN_LOOK2('DEMN', 0, 'monsters/demon/base.md2', 1, 5.0 / 35.0, S_DEMN_LOOK3) { }
+	S_DEMN_LOOK3('DEMN', 0, 'monsters/demon/base.md2', 2, 5.0 / 35.0, S_DEMN_LOOK4) { A_Look(); }
+	S_DEMN_LOOK4('DEMN', 0, 'monsters/demon/base.md2', 3, 5.0 / 35.0, S_DEMN_LOOK5) { }
+	S_DEMN_LOOK5('DEMN', 0, 'monsters/demon/base.md2', 4, 5.0 / 35.0, S_DEMN_LOOK6) { A_Look(); }
+	S_DEMN_LOOK6('DEMN', 0, 'monsters/demon/base.md2', 5, 5.0 / 35.0, S_DEMN_LOOK7) { }
+	S_DEMN_LOOK7('DEMN', 0, 'monsters/demon/base.md2', 6, 5.0 / 35.0, S_DEMN_LOOK8) { A_Look(); }
+	S_DEMN_LOOK8('DEMN', 0, 'monsters/demon/base.md2', 7, 5.0 / 35.0, S_DEMN_LOOK1) { }
+	S_DEMN_CHASE1('DEMN', 0, 'monsters/demon/base.md2', 8, 2.0 / 35.0, S_DEMN_CHASE2) { A_Chase(); }
+	S_DEMN_CHASE2('DEMN', 0, 'monsters/demon/base.md2', 9, 2.0 / 35.0, S_DEMN_CHASE3) { }
+	S_DEMN_CHASE3('DEMN', 1, 'monsters/demon/base.md2', 10, 2.0 / 35.0, S_DEMN_CHASE4) { A_Chase(); }
+	S_DEMN_CHASE4('DEMN', 1, 'monsters/demon/base.md2', 11, 2.0 / 35.0, S_DEMN_CHASE5) { }
+	S_DEMN_CHASE5('DEMN', 2, 'monsters/demon/base.md2', 12, 2.0 / 35.0, S_DEMN_CHASE6) { A_Chase(); }
+	S_DEMN_CHASE6('DEMN', 2, 'monsters/demon/base.md2', 13, 2.0 / 35.0, S_DEMN_CHASE7) { }
+	S_DEMN_CHASE7('DEMN', 3, 'monsters/demon/base.md2', 14, 2.0 / 35.0, S_DEMN_CHASE8) { A_Chase(); }
+	S_DEMN_CHASE8('DEMN', 3, 'monsters/demon/base.md2', 15, 2.0 / 35.0, S_DEMN_CHASE1) { }
+	S_DEMN_ATK1_1('DEMN', 4, 'monsters/demon/base.md2', 16, 6.0 / 35.0, S_DEMN_ATK1_2) { A_FaceTarget(); }
+	S_DEMN_ATK1_2('DEMN', 5, 'monsters/demon/base.md2', 17, 8.0 / 35.0, S_DEMN_ATK1_3) { A_FaceTarget(); }
+	S_DEMN_ATK1_3('DEMN', 6, 'monsters/demon/base.md2', 18, 6.0 / 35.0, S_DEMN_CHASE1) { A_DemonAttack1(); }
+	S_DEMN_ATK2_1('DEMN', 4, 'monsters/demon/base.md2', 19, 5.0 / 35.0, S_DEMN_ATK2_2) { A_FaceTarget(); }
+	S_DEMN_ATK2_2('DEMN', 5, 'monsters/demon/base.md2', 20, 6.0 / 35.0, S_DEMN_ATK2_3) { A_FaceTarget(); }
+	S_DEMN_ATK2_3('DEMN', 6, 'monsters/demon/base.md2', 21, 5.0 / 35.0, S_DEMN_CHASE1) { A_DemonAttack2(); }
+	S_DEMN_PAIN1('DEMN', 4, 'monsters/demon/base.md2', 22, 4.0 / 35.0, S_DEMN_PAIN2) { }
+	S_DEMN_PAIN2('DEMN', 4, 'monsters/demon/base.md2', 23, 4.0 / 35.0, S_DEMN_CHASE1) { A_Pain(); }
+	S_DEMN_DEATH1('DEMN', 7, 'monsters/demon/base.md2', 24, 6.0 / 35.0, S_DEMN_DEATH2) { }
+	S_DEMN_DEATH2('DEMN', 8, 'monsters/demon/base.md2', 25, 6.0 / 35.0, S_DEMN_DEATH3) { }
+	S_DEMN_DEATH3('DEMN', 9, 'monsters/demon/base.md2', 26, 6.0 / 35.0, S_DEMN_DEATH4) { A_Scream(); }
+	S_DEMN_DEATH4('DEMN', 10, 'monsters/demon/base.md2', 27, 6.0 / 35.0, S_DEMN_DEATH5) { A_NoBlocking(); }
+	S_DEMN_DEATH5('DEMN', 11, 'monsters/demon/base.md2', 28, 6.0 / 35.0, S_DEMN_DEATH6) { A_QueueCorpse(); }
+	S_DEMN_DEATH6('DEMN', 12, 'monsters/demon/base.md2', 29, 6.0 / 35.0, S_DEMN_DEATH7) { }
+	S_DEMN_DEATH7('DEMN', 13, 'monsters/demon/base.md2', 30, 6.0 / 35.0, S_DEMN_DEATH8) { }
+	S_DEMN_DEATH8('DEMN', 14, 'monsters/demon/base.md2', 31, 6.0 / 35.0, S_DEMN_DEATH9) { }
+	S_DEMN_DEATH9('DEMN', 15, 'monsters/demon/base.md2', 32, -1.0, S_NULL) { }
+	S_DEMN_XDEATH1('DEMN', 7, 'monsters/demon/base.md2', 24, 6.0 / 35.0, S_DEMN_XDEATH2) { }
+	S_DEMN_XDEATH2('DEMN', 8, 'monsters/demon/base.md2', 25, 6.0 / 35.0, S_DEMN_XDEATH3) { A_DemonDeath(); }
+	S_DEMN_XDEATH3('DEMN', 9, 'monsters/demon/base.md2', 26, 6.0 / 35.0, S_DEMN_XDEATH4) { A_Scream(); }
+	S_DEMN_XDEATH4('DEMN', 10, 'monsters/demon/base.md2', 27, 6.0 / 35.0, S_DEMN_XDEATH5) { A_NoBlocking(); }
+	S_DEMN_XDEATH5('DEMN', 11, 'monsters/demon/base.md2', 28, 6.0 / 35.0, S_DEMN_XDEATH6) { A_QueueCorpse(); }
+	S_DEMN_XDEATH6('DEMN', 12, 'monsters/demon/base.md2', 29, 6.0 / 35.0, S_DEMN_XDEATH7) { }
+	S_DEMN_XDEATH7('DEMN', 13, 'monsters/demon/base.md2', 30, 6.0 / 35.0, S_DEMN_XDEATH8) { }
+	S_DEMN_XDEATH8('DEMN', 14, 'monsters/demon/base.md2', 31, 6.0 / 35.0, S_DEMN_XDEATH9) { }
+	S_DEMN_XDEATH9('DEMN', 15, 'monsters/demon/base.md2', 32, -1.0, S_NULL) { }
+	S_DEMON_ICE('DEMN', 16, 'monsters/demon/ice.md2', 0, 5.0 / 35.0, S_DEMON_ICE2) { A_FreezeDeath(); }
+	S_DEMON_ICE2('DEMN', 16, 'monsters/demon/ice.md2', 0, 1.0 / 35.0, S_DEMON_ICE2) { A_FreezeDeathChunks(); }
 }
 
 defaultproperties
@@ -185,6 +195,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/08/13 15:38:49  dj_jl
+//  Models added.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

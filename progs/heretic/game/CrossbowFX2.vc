@@ -45,7 +45,7 @@ void A_BoltSpark()
 
 __states__
 {
-	S_CRBOWFX2('FX03', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_CRBOWFX2) { A_BoltSpark(); }
+	S_CRBOWFX2('FX03', 1 | FF_FULLBRIGHT, 'missiles/arrows.md2', 0, 1.0 / 35.0, S_CRBOWFX2) { A_BoltSpark(); }
 }
 
 defaultproperties
@@ -58,6 +58,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/08/13 15:38:22  dj_jl
+//  Models added.
+//
 //  Revision 1.2  2005/03/28 07:36:10  dj_jl
 //  Player missiles can activate impact lines.
 //

@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class WeaponMStaffPiece2:WeaponPiece
+class WeaponMStaffPiece2 : WeaponPiece
 	__mobjinfo__(22);
 
 __states__
 {
-	S_MSTAFF2('WMS2', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
+	S_MSTAFF2('WMS2', 0 | FF_FULLBRIGHT, 'weapons/g_mstaf2.md2', 0, -1.0, S_NULL) { }
 }
 
 defaultproperties
@@ -41,6 +41,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/08/13 15:38:49  dj_jl
+//  Models added.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

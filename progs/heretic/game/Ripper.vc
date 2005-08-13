@@ -27,8 +27,8 @@ class Ripper : Projectile;
 
 __states__
 {
-	S_RIPPER1('FX18', 12, 4.0 / 35.0, S_RIPPER2) { }
-	S_RIPPER2('FX18', 13, 5.0 / 35.0, S_RIPPER1) { }
+	S_RIPPER1('FX18', 12, 'missiles/ripper.md2', 0, 4.0 / 35.0, S_RIPPER2) { }
+	S_RIPPER2('FX18', 13, 'missiles/ripper.md2', 1, 5.0 / 35.0, S_RIPPER1) { }
 	S_RIPPERX1('FX18', 14 | FF_FULLBRIGHT, 4.0 / 35.0, S_RIPPERX2) { }
 	S_RIPPERX2('FX18', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_RIPPERX3) { }
 	S_RIPPERX3('FX18', 16 | FF_FULLBRIGHT, 4.0 / 35.0, S_RIPPERX4) { }
@@ -52,6 +52,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/08/13 15:38:22  dj_jl
+//  Models added.
+//
 //  Revision 1.2  2005/03/28 07:36:10  dj_jl
 //  Player missiles can activate impact lines.
 //

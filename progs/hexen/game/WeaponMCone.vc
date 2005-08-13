@@ -23,14 +23,14 @@
 //**
 //**************************************************************************
 
-class WeaponMCone:WeaponPickup
+class WeaponMCone : WeaponPickup
 	__mobjinfo__(53);
 
 __states__
 {
-	S_COS1('WMCS', 0 | FF_FULLBRIGHT, 8.0 / 35.0, S_COS2) { }
-	S_COS2('WMCS', 1 | FF_FULLBRIGHT, 8.0 / 35.0, S_COS3) { }
-	S_COS3('WMCS', 2 | FF_FULLBRIGHT, 8.0 / 35.0, S_COS1) { }
+	S_COS1('WMCS', 0 | FF_FULLBRIGHT, 'weapons/g_cone.md2', 0, 8.0 / 35.0, S_COS2) { }
+	S_COS2('WMCS', 1 | FF_FULLBRIGHT, 'weapons/g_cone.md2', 0, 8.0 / 35.0, S_COS3) { }
+	S_COS3('WMCS', 2 | FF_FULLBRIGHT, 'weapons/g_cone.md2', 0, 8.0 / 35.0, S_COS1) { }
 }
 
 defaultproperties
@@ -43,6 +43,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/08/13 15:38:49  dj_jl
+//  Models added.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //
