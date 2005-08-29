@@ -28,7 +28,7 @@ class MedPatch : InventoryItem
 
 __states__
 {
-	S_MED_PATCH('STMP', 0, -1.0, S_NULL) { }
+	S_MED_PATCH('STMP', 0, 'items/stimpack.md2', 0, -1.0, S_NULL) { }
 }
 
 defaultproperties
@@ -43,6 +43,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/08/29 22:27:51  dj_jl
+//  Added models.
+//
 //  Revision 1.2  2003/10/02 17:14:05  dj_jl
 //  Inventory items.
 //

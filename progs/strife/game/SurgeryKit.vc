@@ -28,8 +28,8 @@ class SurgeryKit : InventoryItem
 
 __states__
 {
-	S_FULL_HEALTH('FULL', 0, 35.0 / 35.0, S_FULL_HEALTH2) { }
-	S_FULL_HEALTH2('FULL', 1, 35.0 / 35.0, S_FULL_HEALTH) { }
+	S_FULL_HEALTH('FULL', 0, 'items/surgkit.md2', 0, 35.0 / 35.0, S_FULL_HEALTH2) { }
+	S_FULL_HEALTH2('FULL', 1, 'items/surgkit2.md2', 0, 35.0 / 35.0, S_FULL_HEALTH) { }
 }
 
 defaultproperties
@@ -44,6 +44,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/08/29 22:27:51  dj_jl
+//  Added models.
+//
 //  Revision 1.2  2003/10/02 17:17:21  dj_jl
 //  Inventory items.
 //
