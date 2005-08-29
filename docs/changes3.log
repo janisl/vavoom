@@ -756,8 +756,10 @@
   Added Strife's inventory drop to controls menu.
 27.08.2005
   Started adding support for network packet compression.
-28.08.2005
+29.08.2005
   Implemented network packet compression using zlib.
+  Some fixes in SDL sound code.
+  Added Strife models.
 
 ******************************************************************************
                             VERSION 1.18
