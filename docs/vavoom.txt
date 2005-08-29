@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                    version 1.17
+                                                    version 1.18
 
 Contents:
     0. Disclaimer
@@ -115,60 +115,55 @@ Optional:
 Step by step:
 -------------
 
-  1. Create a new directory 'vavoom' somewhere where you will compile Vavoom
-and change into it:
+  1. Unpack the Vavoom source package:
 
-        md vavoom
-        cd vavoom
+    tar xvjf vavoom-1.18.tar.bz2
 
-  2. Unpack the Vavoom source package:
+  If you got zip file instead of tarball then you must run fixunix.sh to
+convert text files to UNIX format:
 
-        unzip v117_src.zip
+    ./fixunix.sh
 
-  3. If you got zip file then you must run fixunix.sh to convert text files
-to UNIX format:
+  2. Run configure script:
 
-        ./fixunix.sh
+    ./configure
 
-  4. If you don't have OpenGL or have problems with compiling OpenGL driver
-you can disable it by editing Makefile configuration part.
+  Here are some configure parameters you may want to use:
 
-  If you want to use SDL library, it must be enabled by editing Makefile
-configuration part (at the beginning).
+    --prefix=PATH       - specify prefix of installation. Vavoom will be
+                        installed in {prefix}/games/Vavoom. Default is
+                        /usr/local
+    --with-allegro      - use Allegro for hardware API. This is the default.
+    --with-sdl          - use SDL for hardware API.
+    --without-opengl    - compile without OpenGL support.
+    --without-openal    - compile without OpenAL support.
 
-  In the same way OpenAL is enabled.
+  3. Run make in the main directory.
 
-  5. Run make in the main directory.
-
-        make
+    make
 
   This will compile Vavoom executable, utilites, progs and will build
 additional wad files.
 
-  6. Then you install it:
+  4. Then you install it:
 
-        su -c "make install"
+    su -c "make install"
 
-  If you don't have ginstall programm, you most likely will have install
-programm. In that case use the following command:
+  This will install Vavoom into {prefix}/games/Vavoom.
 
-        su -c "make INSTALL=install install"
-
-  This will install Vavoom into /usr/local/games/Vavoom.
-
-  7. Change to this directory and copy the main .wad file here or create
+  5. Change to this directory and copy the main .wad file here or create
 a symbolic link to it:
 
-        cd /usr/local/games/Vavoom
+        cd {prefix}/games/Vavoom
         cp <where-your-wad-file-is> .
    or:
-        cd /usr/local/games/Vavoom
+        cd {prefix}/games/Vavoom
         ln -s <where-your-wad-file-is> .
 
   Also make sure that the file/symbolic link name is in lower case.
 
-  8. Run Allegro setup utility, setup your sound and music card, save changes
-and then copy allegro.cfg into Vavoom directory.
+  6. If using allegro, run Allegro setup utility, setup your sound and music
+card, save changes and then copy allegro.cfg into Vavoom directory.
 
 ==============================================================================
 3.3 Compiling LINUX / UNIX dedicated server
@@ -177,17 +172,14 @@ and then copy allegro.cfg into Vavoom directory.
 Compiler and tools:
     * GNU C++ Compiler, GNU make
 
-  First run fixunix.sh to convert text files to UNIX format:
+  Compilation of dedicated server is similar to normal installation, except
+you compile it with:
 
-        ./fixunix.sh
+    make sv
 
-  Then you compile it:
+  And then you install it with:
 
-        make sv
-
-  Then you install it:
-
-        su -c "make installsv"
+    su -c "make installsv"
 
 ==============================================================================
 3.4 Other source code compiling information for developers
@@ -922,6 +914,19 @@ Version 1.17
 * Fixed multiple Strife bugs and made some other improvements.
 * Saving a network game.
 
+==============================================================================
+Version 1.18
+==============================================================================
+
+* autoconf's configure script.
+* Updated models.
+* New texture manager.
+* Added support for overloaded textures.
+* Suuport for PNG files in WAD file.
+* More complete Boom support.
+* Basic network packet compression.
+* Other small fixes.
+
 *****************************************************************************
 8. Licencing
 *****************************************************************************
@@ -936,7 +941,7 @@ Version 1.17
     http://www.vavoom-engine.com/
 
   Vavoom forums:
-    http://forums.vavoom-engine.com/
+    http://www.vavoom-engine.com/forums/
 
   Vavoom wiki:
     http://www.vavoom-engine.com/wiki/
@@ -975,7 +980,7 @@ Version 1.17
     http://www.korax-heritage.com/
 
   All questions, bug reports, etc. should be posted on Vavoom forums:
-    http://forums.vavoom-engine.com/
+    http://www.vavoom-engine.com/forums/
   or sent to:
     vavoom@vavoom-engine.com
 

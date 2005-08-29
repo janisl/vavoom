@@ -703,3 +703,62 @@
   Fixed bug with moving 3D floors.
 30.05.2005
   Added support for IMGZ and PNG lump textures.
+02.06.2005
+  Added push specials.
+03.06.2005
+  Split spawning of height sectors in a separate function.
+05.06.2005
+  Updating models.
+06.06.2005
+  More models updated.
+08.06.2005
+  Models update.
+  Fixed automap background.
+11.06.2005
+  Multiple new Hertic models added.
+16.06.2005
+  Fixed Doom fullscreen statusbar positions.
+28.06.2005
+  Initial implementation of rendering of fake floors. Doesn't work properly.
+29.06.2005
+  Redesigned rendering of fake floors by having a fake floors and ceilngs for
+ rendering.
+30.06.2005
+  Fully implemented rendering of fake flats.
+03.07.2005
+  Added parsing of simple switch definition on animdefs script. All switch
+ definitions moved to animdefs. Old switches script support has been removed.
+ Added support for Boom style switches lump.
+  Fixed animdefs scripts not being parsed at all.
+05.07.2005
+  Windows compilation fixes.
+07.07.2005
+  Fixed polyobj door movement distance in last tic.
+  Added Firebrand's fixes for Heretic volcanos.
+08.07.2005
+  Rounding of polyobj positions when sending over network.
+09.07.2005
+  Implemented Boom style scrollers carrying things.
+15.07.2005
+  Added printing of more info in which model a frame is missing.
+16.07.2005
+  In Hexen increased jump speed.
+  Fix for fake ceiling changing from and to sky texture.
+29.07.2005
+  Added support for quoted strings in response files.
+10.08.2005
+  Added some new models to Heretic and Hexen.
+13.08.2005
+  Fixed freeing of translated sprite.
+  More models added.
+14.08.2005
+  Some Hexen model fixes.
+  Added Strife's inventory drop to controls menu.
+27.08.2005
+  Started adding support for network packet compression.
+28.08.2005
+  Implemented network packet compression using zlib.
+
+******************************************************************************
+                            VERSION 1.18
+******************************************************************************
