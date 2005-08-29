@@ -28,14 +28,14 @@ class WeaponMLightning : WeaponPickup
 
 __states__
 {
-	S_MW_LIGHTNING1('WMLG', 0 | FF_FULLBRIGHT, 'models/g_lghtng.md2', 0, 4.0 / 35.0, S_MW_LIGHTNING2) { }
-	S_MW_LIGHTNING2('WMLG', 1 | FF_FULLBRIGHT, 'models/g_lghtng.md2', 0, 4.0 / 35.0, S_MW_LIGHTNING3) { }
-	S_MW_LIGHTNING3('WMLG', 2 | FF_FULLBRIGHT, 'models/g_lghtng.md2', 0, 4.0 / 35.0, S_MW_LIGHTNING4) { }
-	S_MW_LIGHTNING4('WMLG', 3 | FF_FULLBRIGHT, 'models/g_lghtng.md2', 0, 4.0 / 35.0, S_MW_LIGHTNING5) { }
-	S_MW_LIGHTNING5('WMLG', 4 | FF_FULLBRIGHT, 'models/g_lghtng.md2', 0, 4.0 / 35.0, S_MW_LIGHTNING6) { }
-	S_MW_LIGHTNING6('WMLG', 5 | FF_FULLBRIGHT, 'models/g_lghtng.md2', 0, 4.0 / 35.0, S_MW_LIGHTNING7) { }
-	S_MW_LIGHTNING7('WMLG', 6 | FF_FULLBRIGHT, 'models/g_lghtng.md2', 0, 4.0 / 35.0, S_MW_LIGHTNING8) { }
-	S_MW_LIGHTNING8('WMLG', 7 | FF_FULLBRIGHT, 'models/g_lghtng.md2', 0, 4.0 / 35.0, S_MW_LIGHTNING1) { }
+	S_MW_LIGHTNING1('WMLG', 0 | FF_FULLBRIGHT, 'weapons/g_lghtng.md2', 0, 4.0 / 35.0, S_MW_LIGHTNING2) { }
+	S_MW_LIGHTNING2('WMLG', 1 | FF_FULLBRIGHT, 'weapons/g_lghtng.md2', 0, 4.0 / 35.0, S_MW_LIGHTNING3) { }
+	S_MW_LIGHTNING3('WMLG', 2 | FF_FULLBRIGHT, 'weapons/g_lghtng.md2', 0, 4.0 / 35.0, S_MW_LIGHTNING4) { }
+	S_MW_LIGHTNING4('WMLG', 3 | FF_FULLBRIGHT, 'weapons/g_lghtng.md2', 0, 4.0 / 35.0, S_MW_LIGHTNING5) { }
+	S_MW_LIGHTNING5('WMLG', 4 | FF_FULLBRIGHT, 'weapons/g_lghtng.md2', 0, 4.0 / 35.0, S_MW_LIGHTNING6) { }
+	S_MW_LIGHTNING6('WMLG', 5 | FF_FULLBRIGHT, 'weapons/g_lghtng.md2', 0, 4.0 / 35.0, S_MW_LIGHTNING7) { }
+	S_MW_LIGHTNING7('WMLG', 6 | FF_FULLBRIGHT, 'weapons/g_lghtng.md2', 0, 4.0 / 35.0, S_MW_LIGHTNING8) { }
+	S_MW_LIGHTNING8('WMLG', 7 | FF_FULLBRIGHT, 'weapons/g_lghtng.md2', 0, 4.0 / 35.0, S_MW_LIGHTNING1) { }
 }
 
 defaultproperties
@@ -49,6 +49,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/08/29 19:40:09  dj_jl
+//  Fixed model name.
+//
 //  Revision 1.2  2005/08/13 15:38:49  dj_jl
 //  Models added.
 //
