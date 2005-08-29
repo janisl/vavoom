@@ -63,6 +63,7 @@
 #include "gamedefs.h"
 #include "net_loc.h"
 #include "net_dgrm.h"
+#include "zlib.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -72,9 +73,12 @@
 #define IPPORT_USERRESERVED		26000
 
 //	NetHeader flags
-#define NETFLAG_CRC_MASK		0x0000ffff
+#define NETFLAG_COMPR_LEN_MASK	0x000007ff
+#define NETFLAG_COMPR_MODE_MASK	0x0000f800
 #define NETFLAG_LENGTH_MASK		0x07ff0000
 #define NETFLAG_FLAGS_MASK		0xf8000000
+#define NETFLAG_COMPR_NONE		0x00000000
+#define NETFLAG_COMPR_ZIP		0x00000800
 #define NETFLAG_EOM				0x08000000
 #define NETFLAG_ACK				0x10000000
 #define NETFLAG_DATA			0x20000000
@@ -123,6 +127,7 @@ static struct
 {
 	dword		length;
 	dword		sequence;
+	word		crc;
 	byte		data[MAX_DATAGRAM];
 } packetBuffer;
 
@@ -786,16 +791,20 @@ int Datagram_GetMessage(qsocket_t *sock)
 	dword		sequence;
 	dword		length;
 	dword		flags;
+	dword		comprLength;
+	dword		comprMethod;
 	sockaddr_t	readaddr;
 	int			ret = 0;
 	dword		crc;
 	dword		count;
 
+	//	Resend message if needed.
 	if (!sock->canSend && (net_time - sock->lastSendTime) > 1.0)
 		ReSendMessage(sock);
 
 	while(1)
-	{	
+	{
+		//	Read message.
 		length = sfunc.Read(sock->socket, (byte *)&packetBuffer, NET_DATAGRAMSIZE, &readaddr);
 
 //		if ((rand() & 255) > 220)
@@ -833,25 +842,45 @@ int Datagram_GetMessage(qsocket_t *sock)
 //		}
 
 		length = BigLong(packetBuffer.length);
+		comprLength = length & NETFLAG_COMPR_LEN_MASK;
+		comprMethod = length & NETFLAG_COMPR_MODE_MASK;
 		flags = length & NETFLAG_FLAGS_MASK;
-		crc = length & NETFLAG_CRC_MASK;
 		length = (length & NETFLAG_LENGTH_MASK) >> 16;
 
 		if (flags & NETFLAG_CTL)
 			continue;
 
 		sequence = BigLong(packetBuffer.sequence);
+		crc = BigShort(packetBuffer.crc);
 		packetsReceived++;
+
+		if (flags & (NETFLAG_UNRELIABLE | NETFLAG_DATA))
+		{
+			//	Check if checksum is OK.
+			word buf_crc = NetbufferChecksum(packetBuffer.data, length - NET_HEADERSIZE);
+			if (buf_crc != crc)
+			{
+				GCon->Logf(NAME_DevNet, "bad packet checksum %04x %04d", buf_crc, crc);
+				continue;
+			}
+
+			if (comprMethod == NETFLAG_COMPR_ZIP)
+			{
+				byte CompressedData[MAX_DATAGRAM];
+				memcpy(CompressedData, packetBuffer.data, length - NET_HEADERSIZE);
+				uLongf DecomprLength = comprLength;
+				if (uncompress(packetBuffer.data, &DecomprLength,
+					CompressedData, length - NET_HEADERSIZE) != Z_OK)
+				{
+					GCon->Logf(NAME_DevNet, "Decompression failed");
+					continue;
+				}
+				length = comprLength + NET_HEADERSIZE;
+			}
+		}
 
 		if (flags & NETFLAG_UNRELIABLE)
 		{
-			word buf_crc = NetbufferChecksum(packetBuffer.data, length - NET_HEADERSIZE);
-		    if (buf_crc != crc)
-		    {
-		    	GCon->Logf(NAME_DevNet, "bad packet checksum %04x %04d", buf_crc, crc);
-				continue;
-		    }
-
 			if (sequence < sock->unreliableReceiveSequence)
 			{
 				GCon->Log(NAME_DevNet, "Got a stale datagram");
@@ -911,15 +940,9 @@ int Datagram_GetMessage(qsocket_t *sock)
 
 		if (flags & NETFLAG_DATA)
 		{
-			word buf_crc = NetbufferChecksum(packetBuffer.data, length - NET_HEADERSIZE);
-		    if (buf_crc != crc)
-		    {
-		    	GCon->Logf(NAME_DevNet, "bad packet checksum %04x %04x", buf_crc, crc);
-				continue;
-		    }
-
 			packetBuffer.length = BigLong(NETFLAG_ACK | (NET_HEADERSIZE << 16));
 			packetBuffer.sequence = BigLong(sequence);
+			packetBuffer.crc = 0;
 			sfunc.Write(sock->socket, (byte *)&packetBuffer, NET_HEADERSIZE, &readaddr);
 
 			if (sequence != sock->receiveSequence)
@@ -957,6 +980,44 @@ int Datagram_GetMessage(qsocket_t *sock)
 
 //==========================================================================
 //
+//	BuildNetPacket
+//
+//==========================================================================
+
+static int BuildNetPacket(dword Flags, dword Sequence, byte* Data,
+	dword DataLen)
+{
+	dword OutDataLen = DataLen;
+	dword ComprLength = DataLen;
+	dword ComprMethod = NETFLAG_COMPR_NONE;
+
+	//	Try to compress
+	uLongf ZipLen = MAX_DATAGRAM;
+	if (compress(packetBuffer.data, &ZipLen, Data, DataLen) == Z_OK)
+	{
+		if (ZipLen < DataLen)
+		{
+			ComprMethod = NETFLAG_COMPR_ZIP;
+		}
+	}
+
+	//	Just copy data if it cannot be compressed.
+	if (ComprMethod == NETFLAG_COMPR_NONE)
+	{
+		memcpy(packetBuffer.data, Data, DataLen);
+	}
+
+	dword PacketLen = NET_HEADERSIZE + OutDataLen;
+	word CRC = NetbufferChecksum(packetBuffer.data, OutDataLen);
+	packetBuffer.length = BigLong(ComprLength | ComprMethod |
+		(PacketLen << 16) | Flags);
+	packetBuffer.sequence = BigLong(Sequence);
+	packetBuffer.crc = BigShort(CRC);
+	return PacketLen;
+}
+
+//==========================================================================
+//
 //	Datagram_SendMessage
 //
 //==========================================================================
@@ -967,7 +1028,6 @@ int Datagram_SendMessage(qsocket_t *sock, TSizeBuf *data)
 	dword		packetLen;
 	dword		dataLen;
 	dword		eom;
-	word		crc;
 
 #ifdef DEBUG
 	if (data->CurSize == 0)
@@ -993,12 +1053,8 @@ int Datagram_SendMessage(qsocket_t *sock, TSizeBuf *data)
 		dataLen = MAX_DATAGRAM;
 		eom = 0;
 	}
-	packetLen = NET_HEADERSIZE + dataLen;
-	crc = NetbufferChecksum(data->Data, dataLen);
-
-    packetBuffer.length = BigLong((packetLen << 16) | crc | NETFLAG_DATA | eom);
-	packetBuffer.sequence = BigLong(sock->sendSequence);
-	memcpy(packetBuffer.data, sock->sendMessage, dataLen);
+	packetLen = BuildNetPacket(NETFLAG_DATA | eom, sock->sendSequence,
+		sock->sendMessage, dataLen);
 
 	sock->sendSequence++;
 	sock->canSend = false;
@@ -1024,7 +1080,6 @@ static int SendMessageNext(qsocket_t *sock)
 	dword		packetLen;
 	dword		dataLen;
 	dword		eom;
-	word		crc;
 
 	if (sock->sendMessageLength <= MAX_DATAGRAM)
 	{
@@ -1036,12 +1091,8 @@ static int SendMessageNext(qsocket_t *sock)
 		dataLen = MAX_DATAGRAM;
 		eom = 0;
 	}
-	packetLen = NET_HEADERSIZE + dataLen;
-	crc = NetbufferChecksum(sock->sendMessage, dataLen);
-
-	packetBuffer.length = BigLong((packetLen << 16) | crc | NETFLAG_DATA | eom);
-	packetBuffer.sequence = BigLong(sock->sendSequence);
-	memcpy(packetBuffer.data, sock->sendMessage, dataLen);
+	packetLen = BuildNetPacket(NETFLAG_DATA | eom, sock->sendSequence,
+		sock->sendMessage, dataLen);
 
 	sock->sendSequence++;
 	sock->sendNext = false;
@@ -1067,7 +1118,6 @@ static int ReSendMessage(qsocket_t *sock)
 	dword		packetLen;
 	dword		dataLen;
 	dword		eom;
-	word		crc;
 
 	if (sock->sendMessageLength <= MAX_DATAGRAM)
 	{
@@ -1079,12 +1129,8 @@ static int ReSendMessage(qsocket_t *sock)
 		dataLen = MAX_DATAGRAM;
 		eom = 0;
 	}
-	packetLen = NET_HEADERSIZE + dataLen;
-	crc = NetbufferChecksum(sock->sendMessage, dataLen);
-
-	packetBuffer.length = BigLong((packetLen << 16) | crc | NETFLAG_DATA | eom);
-	packetBuffer.sequence = BigLong(sock->sendSequence - 1);
-	memcpy(packetBuffer.data, sock->sendMessage, dataLen);
+	packetLen = BuildNetPacket(NETFLAG_DATA | eom, sock->sendSequence - 1,
+		sock->sendMessage, dataLen);
 
 	sock->sendNext = false;
 
@@ -1107,7 +1153,6 @@ int Datagram_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *data)
 {
 	guard(Datagram_SendUnreliableMessage);
 	dword		packetLen;
-	word		crc;
 
 #ifdef PARANOID
 	if (data->CurSize == 0)
@@ -1117,12 +1162,8 @@ int Datagram_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *data)
 		Sys_Error("Datagram_SendUnreliableMessage: message too big %u\n", data->CurSize);
 #endif
 
-	packetLen = NET_HEADERSIZE + data->CurSize;
-	crc = NetbufferChecksum(data->Data, data->CurSize);
-
-	packetBuffer.length = BigLong((packetLen << 16) | crc | NETFLAG_UNRELIABLE);
-	packetBuffer.sequence = BigLong(sock->unreliableSendSequence++);
-	memcpy(packetBuffer.data, data->Data, data->CurSize);
+	packetLen = BuildNetPacket(NETFLAG_UNRELIABLE,
+		sock->unreliableSendSequence++, data->Data, data->CurSize);
 
 	if (sfunc.Write(sock->socket, (byte *)&packetBuffer, packetLen, &sock->addr) == -1)
 		return -1;
@@ -1261,9 +1302,12 @@ COMMAND(NetStats)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2005/08/29 19:29:36  dj_jl
+//	Implemented network packet compression.
+//
 //	Revision 1.8  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.7  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	

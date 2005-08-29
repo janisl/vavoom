@@ -32,8 +32,6 @@
 
 #define	NET_NAMELEN			64
 #define NET_MAXMESSAGE		8192
-#define NET_HEADERSIZE		(2 * sizeof(unsigned int))
-#define NET_DATAGRAMSIZE	(MAX_DATAGRAM + NET_HEADERSIZE)
 
 // TYPES -------------------------------------------------------------------
 
@@ -105,9 +103,12 @@ extern TMessage		net_msg;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2005/08/29 19:29:37  dj_jl
+//	Implemented network packet compression.
+//
 //	Revision 1.5  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2001/10/08 17:27:53  dj_jl
 //	Moved slist menu builtins here
 //	

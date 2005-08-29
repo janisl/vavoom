@@ -34,6 +34,9 @@
 
 #define HOSTCACHESIZE		8
 
+#define NET_HEADERSIZE		(2 * sizeof(unsigned int) + sizeof(unsigned short))
+#define NET_DATAGRAMSIZE	(MAX_DATAGRAM + NET_HEADERSIZE)
+
 // TYPES -------------------------------------------------------------------
 
 struct net_driver_t
@@ -136,9 +139,12 @@ extern int				unreliableMessagesReceived;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2005/08/29 19:29:37  dj_jl
+//	Implemented network packet compression.
+//
 //	Revision 1.5  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2001/10/08 17:27:53  dj_jl
 //	Moved slist menu builtins here
 //	
