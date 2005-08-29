@@ -35,8 +35,8 @@
 #define IDPOLY2HEADER		(('2'<<24)+('P'<<16)+('D'<<8)+'I')
 #define ALIAS_VERSION		8
 
-#define MAXALIASVERTS		8000	// TODO: tune this
-#define MAXALIASSTVERTS		8000	// TODO: tune this
+#define MAXALIASVERTS		16000	// TODO: tune this
+#define MAXALIASSTVERTS		16000	// TODO: tune this
 
 // TYPES -------------------------------------------------------------------
 
@@ -102,9 +102,12 @@ struct trivertx_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2005/08/29 19:39:03  dj_jl
+//	Increased limits.
+//
 //	Revision 1.4  2005/05/03 14:57:06  dj_jl
 //	Added support for specifying skin index.
-//
+//	
 //	Revision 1.3  2004/10/11 06:52:36  dj_jl
 //	Packing pragmas.
 //	
