@@ -31,7 +31,7 @@ OBJFILES = obj\sv\zone.obj obj\sv\crc.obj obj\sv\cvar.obj obj\sv\debug.obj \
 $(PROJECT): $(OBJFILES)
     ilink32 @&&!
     $(LFLAGS) -L$(BCB)\lib c0x32.obj $(OBJFILES), $(PROJECT),, +
-    import32.lib cw32.lib
+    zlib.lib import32.lib cw32.lib
 !
 # ---------------------------------------------------------------------------
 .cpp.obj:
