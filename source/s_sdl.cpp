@@ -91,6 +91,10 @@ static TCvarI mix_swapstereo	("mix_swapstereo","0",     CVAR_ARCHIVE);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
+int cur_format;
+int cur_channels;
+int cur_frequency;
+
 static int sound;
 static byte *SoundCurve;
 static int sndcount;
@@ -280,7 +284,7 @@ static Mix_Chunk * LoadRaw(Uint8 *data, int len, int freq)
 	SDL_AudioCVT cvt;
 
 	if ( SDL_BuildAudioCVT(&cvt, AUDIO_U8, 1, freq,
-			mix_format, mix_channels, mix_frequency) < 0 ) {
+			cur_format, cur_channels, cur_frequency) < 0 ) {
 		return(NULL);
 	}
 
@@ -391,10 +395,10 @@ void VSDLSoundDevice::Init(void)
 		mix_voices = 0;
 	}
 
-	mix_frequency = freq;
+	cur_frequency = freq;
 	mix_bits = fmt & 0xFF;
-	mix_channels = ch;
-	mix_format = fmt;
+	cur_channels = ch;
+	cur_format = fmt;
 
 	channels = Z_CNew<channel_t>(mix_voices);
 	for (i = 0; i < mix_voices; i++)
@@ -408,7 +412,7 @@ void VSDLSoundDevice::Init(void)
 	sndcount = 0;
 	snd_MaxVolume = -1;
 
-	GCon->Logf(NAME_Init, "Configured audio device for %d channels, format %04X.", (int)mix_channels, mix_format);
+	GCon->Logf(NAME_Init, "Configured audio device for %d channels, format %04X.", (int)cur_channels, cur_format);
 	GCon->Logf(NAME_Init, "Driver   : %s", SDL_AudioDriverName(dname, 32));
 
 	unguard;
@@ -506,6 +510,7 @@ void VSDLSoundDevice::PlaySound(int sound_id, const TVec &origin,
 		return;
 	}
 
+	Mix_Volume(voice, vol);
 	if (dist)
 	{
 		sep = CalcSep(origin);
@@ -582,6 +587,8 @@ void VSDLSoundDevice::PlayVoice(const char *Name)
 		return;
 	}
 
+	Mix_Volume(voice, 127);
+
 	channels[chan].origin_id = 0;
 	channels[chan].origin    = TVec(0, 0, 0);
 	channels[chan].channel   = 1;
@@ -640,6 +647,7 @@ void VSDLSoundDevice::PlaySoundTillDone(const char *sound)
 	{
 		return;
 	}
+	Mix_Volume(voice, 127);
 
 	start = Sys_Time();
 	while (1)
@@ -846,9 +854,12 @@ bool VSDLSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2005/09/04 14:43:45  dj_jl
+//	Some fixes.
+//
 //	Revision 1.14  2005/05/26 17:00:14  dj_jl
 //	Disabled pitching
-//
+//	
 //	Revision 1.13  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
 //	
