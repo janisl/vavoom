@@ -409,11 +409,16 @@ int	TTextureManager::CheckNumForName(FName Name, int Type, bool bOverload,
 		if (Textures[i]->Name != Name)
 			continue;
 
-		if (bCheckAny || Textures[i]->Type == Type ||
+		if (Type == TEXTYPE_Any || Textures[i]->Type == Type ||
 			(bOverload && Textures[i]->Type == TEXTYPE_Overload))
 		{
 			return i;
 		}
+	}
+
+	if (bCheckAny)
+	{
+		return CheckNumForName(Name, TEXTYPE_Any, bOverload, false);
 	}
 
 	return -1;
@@ -2752,9 +2757,12 @@ void R_InitTexture()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.32  2005/09/04 14:57:24  dj_jl
+//	Fixed check for any texture.
+//
 //	Revision 1.31  2005/07/05 22:52:10  dj_jl
 //	Fixes to compile under M$VC
-//
+//	
 //	Revision 1.30  2005/07/03 12:06:56  dj_jl
 //	Moved switches to animdefs lump.
 //	Added support for BOOM switches lump.
