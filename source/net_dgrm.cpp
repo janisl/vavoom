@@ -998,6 +998,7 @@ static int BuildNetPacket(dword Flags, dword Sequence, byte* Data,
 		if (ZipLen < DataLen)
 		{
 			ComprMethod = NETFLAG_COMPR_ZIP;
+			OutDataLen = ZipLen;
 		}
 	}
 
@@ -1302,9 +1303,12 @@ COMMAND(NetStats)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2005/09/11 13:34:58  dj_jl
+//	Compressed packet size fix.
+//
 //	Revision 1.9  2005/08/29 19:29:36  dj_jl
 //	Implemented network packet compression.
-//
+//	
 //	Revision 1.8  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
 //	
