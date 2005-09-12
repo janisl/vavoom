@@ -23,28 +23,31 @@
 //**
 //**************************************************************************
 
-class MenuChoice_SoundVolume:MenuChoiceSlider;
+class MenuChoice_SoundVolume : MenuChoiceSlider;
 
-float GetInitialValue(void)
+float GetInitialValue()
 {
-	return itof(GetCvar("sfx_volume"));
+	return GetCvarF("sfx_volume");
 }
 
 bool SetNewValue(float newValue)
 {
-	SetCvar("sfx_volume", ftoi(newValue));
+	SetCvarF("sfx_volume", newValue);
 	return true;
 }
 
 defaultproperties
 {
 	Text = "Sound volume";
-	MaxValue = 15.0;
+	ValueDelta = 0.1;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/09/12 19:48:19  dj_jl
+//  Changed sound volumes to be floats.
+//
 //  Revision 1.1  2002/10/26 16:32:24  dj_jl
 //  New style of defining classes.
 //
