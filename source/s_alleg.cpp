@@ -86,9 +86,11 @@ static void StopChannel(int chan_num);
 IMPLEMENT_SOUND_DEVICE(VAllegroSoundDevice, SNDDRV_Default, "Default",
 	"Allegro sound device", NULL);
 
+bool				allegro_sound_initialised;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static int			snd_MaxVolume = -1;      // maximum volume for sound
+static float		snd_MaxVolume = -1;      // maximum volume for sound
 
 static channel_t	Channel[DIGI_VOICES];
 static int			snd_Channels = 0;   // number of channels available
@@ -115,7 +117,7 @@ void VAllegroSoundDevice::Init(void)
 {
 	guard(VAllegroSoundDevice::Init);
 	int		sound_card;
-    int		music_card;
+	int		music_card;
 	int		i;
 
 	// Default settings
@@ -125,19 +127,20 @@ void VAllegroSoundDevice::Init(void)
 	// Check parametters
 	if (M_CheckParm("-nosound") || M_CheckParm("-nosfx"))
 		sound_card = DIGI_NONE;
- 	if (M_CheckParm("-nosound") || M_CheckParm("-nomusic"))
+	if (M_CheckParm("-nosound") || M_CheckParm("-nomusic"))
 		music_card = MIDI_NONE;
 
 	// Init sound device
 	if (install_sound(sound_card, music_card, NULL) == -1)
-    {
+	{
 		Sys_Error("ALLEGRO SOUND INIT ERROR!!!!\n%s\n", allegro_error);
-    }
+	}
+	allegro_sound_initialised = true;
 
 	snd_Channels = digi_driver->voices;
 
 	// Free all channels for use
-    memset(Channel, 0, sizeof(Channel));
+	memset(Channel, 0, sizeof(Channel));
 	for (i = 0; i < snd_Channels; i++)
 	{
 		Channel[i].voice = -1;
@@ -157,7 +160,7 @@ void VAllegroSoundDevice::Init(void)
 //
 //==========================================================================
 
-void VAllegroSoundDevice::Shutdown(void)
+void VAllegroSoundDevice::Shutdown()
 {
 	guard(VAllegroSoundDevice::Shutdown);
 	remove_sound();
@@ -200,7 +203,7 @@ static int GetChannel(int sound_id, int origin_id, int channel, int priority)
 		}
 
 		if (found >= numchannels)
-        {
+		{
 			if (lp == -1)
 			{// other sounds have greater priority
 				return -1; // don't replace any sounds
@@ -211,7 +214,7 @@ static int GetChannel(int sound_id, int origin_id, int channel, int priority)
 
 	//	Only one sound per channel
 	if (origin_id && channel)
-    {
+	{
 		for (i = 0; i < snd_Channels; i++)
 		{
 			if (Channel[i].origin_id == origin_id &&
@@ -250,7 +253,7 @@ static int GetChannel(int sound_id, int origin_id, int channel, int priority)
 		}
 	}
 
-    //	no free channels.
+	//	no free channels.
 	return -1;
 }
 
@@ -346,7 +349,7 @@ void VAllegroSoundDevice::PlaySound(int sound_id, const TVec &origin,
 	SAMPLE*		spl;
 	int 		dist;
 	int 		priority;
-    int			chan;
+	int			chan;
 	int			voice;
 	int 		vol;
 	int 		sep;
@@ -364,7 +367,7 @@ void VAllegroSoundDevice::PlaySound(int sound_id, const TVec &origin,
 		dist = CalcDist(origin);
 	if (dist >= MAX_SND_DIST)
 	{
-	  	return; // sound is beyond the hearing range...
+		return; // sound is beyond the hearing range...
 	}
 
 	priority = CalcPriority(sound_id, dist);
@@ -375,10 +378,10 @@ void VAllegroSoundDevice::PlaySound(int sound_id, const TVec &origin,
 		return; //no free channels.
 	}
 
-    if (Channel[chan].voice >= 0)
-    {
+	if (Channel[chan].voice >= 0)
+	{
 		Sys_Error("I_StartSound: Previous sound not stoped");
-    }
+	}
 
 	if (!S_LoadSound(sound_id))
 	{
@@ -405,7 +408,7 @@ void VAllegroSoundDevice::PlaySound(int sound_id, const TVec &origin,
 	if (voice < 0)
 	{
 		S_DoneWithLump(sound_id);
-    	return;
+		return;
 	}
 
 	vol = CalcVol(volume, dist);
@@ -443,7 +446,7 @@ void VAllegroSoundDevice::PlayVoice(const char *Name)
 	guard(VAllegroSoundDevice::PlayVoice);
 	SAMPLE*		spl;
 	int 		priority;
-    int			chan;
+	int			chan;
 	int			voice;
 
 	if (!snd_Channels || !*Name || !snd_MaxVolume)
@@ -459,10 +462,10 @@ void VAllegroSoundDevice::PlayVoice(const char *Name)
 		return; //no free channels.
 	}
 
-    if (Channel[chan].voice >= 0)
-    {
+	if (Channel[chan].voice >= 0)
+	{
 		Sys_Error("I_StartSound: Previous sound not stoped");
-    }
+	}
 
 	if (!S_LoadSound(VOICE_SOUND_ID, Name))
 	{
@@ -489,7 +492,7 @@ void VAllegroSoundDevice::PlayVoice(const char *Name)
 	if (voice < 0)
 	{
 		S_DoneWithLump(VOICE_SOUND_ID);
-    	return;
+		return;
 	}
 
 	voice_set_playmode(voice, PLAYMODE_PLAY);
@@ -516,7 +519,7 @@ void VAllegroSoundDevice::PlayVoice(const char *Name)
 void VAllegroSoundDevice::PlaySoundTillDone(const char *sound)
 {
 	guard(VAllegroSoundDevice::PlaySoundTillDone);
-    int			sound_id;
+	int			sound_id;
 	double		start;
 	SAMPLE		spl;
 	int			voice;
@@ -552,7 +555,7 @@ void VAllegroSoundDevice::PlaySoundTillDone(const char *sound)
 
 	if (voice < 0)
 	{
-    	return;
+		return;
 	}
 
 	voice_set_playmode(voice, PLAYMODE_PLAY);
@@ -561,19 +564,19 @@ void VAllegroSoundDevice::PlaySoundTillDone(const char *sound)
 
 	start = Sys_Time();
 	while (1)
-    {
+	{
 		if (voice_check(voice) != &spl)
 		{
-        	//	Sound stoped
+			//	Sound stoped
 			break;
 		}
 
-        if (Sys_Time() > start + 10.0)
-        {
+		if (Sys_Time() > start + 10.0)
+		{
 			//	Don't play longer than 10 seconds
-        	break;
+			break;
 		}
-    }
+	}
 
 	deallocate_voice(voice);
 	unguard;
@@ -596,28 +599,28 @@ void VAllegroSoundDevice::Tick(float DeltaTime)
 	int			vol;
 	int 		sep;
 
-    if (sfx_volume < 0)
-    {
-       	sfx_volume = 0;
+	if (sfx_volume < 0.0)
+	{
+		sfx_volume = 0.0;
 	}
-    if (sfx_volume > 15)
-    {
-       	sfx_volume = 15;
+	if (sfx_volume > 1.0)
+	{
+		sfx_volume = 1.0;
 	}
 
 	if (sfx_volume != snd_MaxVolume)
-    {
-	    snd_MaxVolume = sfx_volume;
-		set_volume(snd_MaxVolume * 17, -1);
+	{
+		snd_MaxVolume = sfx_volume;
+		set_volume(int(snd_MaxVolume * 255), -1);
 		if (!snd_MaxVolume)
-        {
-        	S_StopAllSound();
-        }
-    }
+		{
+			S_StopAllSound();
+		}
+	}
 
 	if (!snd_MaxVolume)
 	{
-    	//	Silence
+		//	Silence
 		return;
 	}
 
@@ -634,7 +637,7 @@ void VAllegroSoundDevice::Tick(float DeltaTime)
 		if (voice_check(Channel[i].voice) != &Channel[i].spl)
 		{
 			//	Sound playback done
-        	StopChannel(i);
+			StopChannel(i);
 			continue;
 		}
 
@@ -669,7 +672,7 @@ void VAllegroSoundDevice::Tick(float DeltaTime)
 		voice_set_pan(Channel[i].voice, sep);
 
 		Channel[i].priority = CalcPriority(Channel[i].sound_id, dist);
-    }
+	}
 	unguard;
 }
 
@@ -686,12 +689,12 @@ void VAllegroSoundDevice::Tick(float DeltaTime)
 static void StopChannel(int chan_num)
 {
 	if (Channel[chan_num].voice >= 0)
-    {
+	{
 		deallocate_voice(Channel[chan_num].voice);
 		S_DoneWithLump(Channel[chan_num].sound_id);
 		Channel[chan_num].voice = -1;
 		Channel[chan_num].origin_id = 0;
-        Channel[chan_num].sound_id = 0;
+		Channel[chan_num].sound_id = 0;
 	}
 }
 
@@ -706,14 +709,14 @@ void VAllegroSoundDevice::StopSound(int origin_id, int channel)
 	guard(VAllegroSoundDevice::StopSound);
 	int i;
 
-    for (i = 0; i < snd_Channels; i++)
-    {
+	for (i = 0; i < snd_Channels; i++)
+	{
 		if (Channel[i].origin_id == origin_id &&
 			(!channel || Channel[i].channel == channel))
 		{
-        	StopChannel(i);
+			StopChannel(i);
 		}
-    }
+	}
 	unguard;
 }
 
@@ -766,9 +769,12 @@ bool VAllegroSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2005/09/12 19:45:16  dj_jl
+//	Created midi device class.
+//
 //	Revision 1.16  2004/11/30 07:17:16  dj_jl
 //	Made string pointers const.
-//
+//	
 //	Revision 1.15  2004/08/21 19:10:44  dj_jl
 //	Changed sound driver declaration.
 //	

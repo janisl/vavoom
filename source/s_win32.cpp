@@ -80,8 +80,6 @@ public:
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void S_InitDirectMusic(LPDIRECTSOUND DSound);
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -97,10 +95,12 @@ static void StopChannel(int chan_num);
 IMPLEMENT_SOUND_DEVICE(VDirectSoundDevice, SNDDRV_Default, "Default",
 	"DirectSound sound device", NULL);
 
+LPDIRECTSOUND		DSound = NULL;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static long			prev_sndVol;
-static int			snd_MaxVolume = -1;      // maximum volume for sound
+static float		snd_MaxVolume = -1;      // maximum volume for sound
 
 static channel_t	Channel[MAX_VOICES];
 static int			snd_Channels = 0;   // number of channels available
@@ -112,7 +112,6 @@ static int 			sndcount = 0;
 static bool			sound3D = false;
 static bool			supportEAX = false;
 
-static LPDIRECTSOUND			DSound = NULL;
 static LPDIRECTSOUNDBUFFER		PrimarySoundBuffer = NULL;
 static LPDIRECTSOUND3DLISTENER	Listener;
 static IKsPropertySet	*PropertySet;
@@ -138,7 +137,7 @@ static TCvarI		eax_environment("eax_environment", "0");
 //
 //==========================================================================
 
-void VDirectSoundDevice::Init(void)
+void VDirectSoundDevice::Init()
 {
 	guard(VDirectSoundDevice::Init);
 	HRESULT			result;
@@ -146,181 +145,173 @@ void VDirectSoundDevice::Init(void)
 	WAVEFORMATEX	wfx;
 	DSCAPS			caps;
 
-	dprintf("WF  %d\n", sizeof(WAVEFORMAT));
-	dprintf("WFP %d\n", sizeof(PCMWAVEFORMAT));
-	dprintf("WFX %d\n", sizeof(WAVEFORMATEX));
-	if (M_CheckParm("-nosound") ||
-		(M_CheckParm("-nosfx") && M_CheckParm("-nomusic")))
+	if (M_CheckParm("-nosound") || M_CheckParm("-nosfx"))
 	{
 		return;
 	}
 
-	//	Setup sound
-	if (!M_CheckParm("-nosfx"))
+	GCon->Log(NAME_Init, "======================================");
+	GCon->Log(NAME_Init, "Initialising DirectSound driver.");
+
+	// Create DirectSound object
+	result = CoCreateInstance(CLSID_DirectSound, NULL,
+		CLSCTX_INPROC_SERVER, IID_IDirectSound, (void**)&DSound);
+	if (result != DS_OK)
+		Sys_Error("Failed to create DirectSound object");
+
+	result = DSound->Initialize(NULL);
+	if (result == DSERR_NODRIVER)
 	{
-	    // Create DirectSound object
-		result = CoCreateInstance(CLSID_DirectSound, NULL,
-			CLSCTX_INPROC_SERVER, IID_IDirectSound, (void**)&DSound);
-		if (result != DS_OK)
-			Sys_Error("I_InitSound: Failed to create DirectSound object");
+		//	User don't have a sound card
+		DSound->Release();
+		DSound = NULL;
+		GCon->Log(NAME_Init, "Sound driver not found");
+		return;
+	}
+	if (result != DS_OK)
+		Sys_Error("Failed to initialise DirectSound object\n%s", DS_Error(result));
 
-		result = DSound->Initialize(NULL);
-		if (result == DSERR_NODRIVER)
+	// Set the cooperative level
+	result = DSound->SetCooperativeLevel(hwnd, DSSCL_EXCLUSIVE);
+	if (result != DS_OK)
+		Sys_Error("Failed to set sound cooperative level\n%s", DS_Error(result));
+
+	//	Check for 3D sound hardware
+	memset(&caps, 0, sizeof(caps));
+	caps.dwSize = sizeof(caps);
+	DSound->GetCaps(&caps);
+	if (caps.dwFreeHw3DStaticBuffers && caps.dwFreeHwMixingStaticBuffers && 
+		!M_CheckParm("-no3dsound"))
+	{
+		sound3D = true;
+		GCon->Log(NAME_Init, "3D sound on");
+	}
+
+	//	Create primary buffer
+	memset(&dsbdesc, 0, sizeof(DSBUFFERDESC));  
+	dsbdesc.dwSize        = sizeof(DSBUFFERDESC);
+	dsbdesc.dwFlags       = DSBCAPS_PRIMARYBUFFER | DSBCAPS_CTRLVOLUME;
+	dsbdesc.dwBufferBytes = 0;
+	dsbdesc.lpwfxFormat   = NULL;
+	if (sound3D)
+	{
+		dsbdesc.dwFlags |= DSBCAPS_CTRL3D;
+	}
+
+	result = DSound->CreateSoundBuffer(&dsbdesc, &PrimarySoundBuffer, NULL);
+	if (result != DS_OK)
+		Sys_Error("Failed to create primary sound buffer\n%s", DS_Error(result));
+
+	// Set up wave format
+	memset(&wfx, 0, sizeof(WAVEFORMATEX));
+	wfx.wFormatTag		= WAVE_FORMAT_PCM;
+	wfx.wBitsPerSample	= WORD(caps.dwFlags & DSCAPS_PRIMARY16BIT ? 16 : 8);
+	wfx.nChannels		= caps.dwFlags & DSCAPS_PRIMARYSTEREO ? 2 : 1;
+	//wfx.nSamplesPerSec	= 11025;
+	wfx.nSamplesPerSec	= 44100;
+	wfx.nBlockAlign		= WORD(wfx.wBitsPerSample / 8 * wfx.nChannels);
+	wfx.nAvgBytesPerSec	= wfx.nSamplesPerSec * wfx.nBlockAlign;
+	wfx.cbSize			= 0;
+
+	result = PrimarySoundBuffer->SetFormat(&wfx);
+	if (result != DS_OK)
+		Sys_Error("I_InitSound: Failed to set wave format of primary buffer\n%s", DS_Error(result));
+	PrimarySoundBuffer->GetVolume(&prev_sndVol);
+
+	// Get listener interface
+	if (sound3D)
+	{
+		result = PrimarySoundBuffer->QueryInterface(IID_IDirectSound3DListener, (LPVOID *)&Listener);
+		if (FAILED(result))
 		{
-			//	User don't have a sound card
-			DSound->Release();
-			DSound = NULL;
-			GCon->Log(NAME_Init, "I_StartupSound: Sound driver not found");
-			return;
-		}
-		if (result != DS_OK)
-			Sys_Error("I_InitSound: Failed to initialize DirectSound object\n%s", DS_Error(result));
-
-		// Set the cooperative level
-		result = DSound->SetCooperativeLevel(hwnd, DSSCL_EXCLUSIVE);
-		if (result != DS_OK)
-			Sys_Error("Failed to set sound cooperative level\n%s", DS_Error(result));
-
-		//	Check for 3D sound hardware
-		memset(&caps, 0, sizeof(caps));
-		caps.dwSize = sizeof(caps);
-		DSound->GetCaps(&caps);
-		if (caps.dwFreeHw3DStaticBuffers && caps.dwFreeHwMixingStaticBuffers && 
-			!M_CheckParm("-no3dsound"))
-		{
-			sound3D = true;
-			GCon->Log(NAME_Init, "3D sound on");
+			Sys_Error("Failed to get Listener");
 		}
 
-		//	Create primary buffer
-		memset(&dsbdesc, 0, sizeof(DSBUFFERDESC));  
+		LPDIRECTSOUNDBUFFER		tempBuffer;
+		WAVEFORMATEX			pcmwf;
+
+		// Set up wave format structure.
+		memset(&pcmwf, 0, sizeof(WAVEFORMATEX));
+		pcmwf.wFormatTag      = WAVE_FORMAT_PCM;      
+		pcmwf.nChannels       = 1;
+		pcmwf.nSamplesPerSec  = 44100;
+		pcmwf.wBitsPerSample  = WORD(8);
+		pcmwf.nBlockAlign     = WORD(pcmwf.wBitsPerSample / 8 * pcmwf.nChannels);
+		pcmwf.nAvgBytesPerSec = pcmwf.nSamplesPerSec * pcmwf.nBlockAlign;
+
+		// Set up DSBUFFERDESC structure.
+		memset(&dsbdesc, 0, sizeof(DSBUFFERDESC));  // Zero it out.
 		dsbdesc.dwSize        = sizeof(DSBUFFERDESC);
-		dsbdesc.dwFlags       = DSBCAPS_PRIMARYBUFFER | DSBCAPS_CTRLVOLUME;
-		dsbdesc.dwBufferBytes = 0;
-		dsbdesc.lpwfxFormat   = NULL;
-		if (sound3D)
+		dsbdesc.dwFlags       = DSBCAPS_CTRLVOLUME | 
+			DSBCAPS_CTRLFREQUENCY | DSBCAPS_STATIC | 
+			DSBCAPS_CTRL3D | DSBCAPS_LOCHARDWARE;
+		dsbdesc.dwBufferBytes = 44100;
+		dsbdesc.lpwfxFormat   = &pcmwf;
+
+		if (SUCCEEDED(DSound->CreateSoundBuffer(&dsbdesc, &tempBuffer, NULL)))
 		{
-			dsbdesc.dwFlags |= DSBCAPS_CTRL3D;
-		}
-
-		result = DSound->CreateSoundBuffer(&dsbdesc, &PrimarySoundBuffer, NULL);
-		if (result != DS_OK)
-			Sys_Error("I_InitSound: Failed to create primary sound buffer\n%s", DS_Error(result));
-
-		// Set up wave format
-		memset(&wfx, 0, sizeof(WAVEFORMATEX));
-		wfx.wFormatTag		= WAVE_FORMAT_PCM;
-		wfx.wBitsPerSample	= WORD(caps.dwFlags & DSCAPS_PRIMARY16BIT ? 16 : 8);
-		wfx.nChannels		= caps.dwFlags & DSCAPS_PRIMARYSTEREO ? 2 : 1;
-//		wfx.nSamplesPerSec	= 11025;
-		wfx.nSamplesPerSec	= 44100;
-		wfx.nBlockAlign		= WORD(wfx.wBitsPerSample / 8 * wfx.nChannels);
-		wfx.nAvgBytesPerSec	= wfx.nSamplesPerSec * wfx.nBlockAlign;
-		wfx.cbSize			= 0;
-
-		result = PrimarySoundBuffer->SetFormat(&wfx);
-		if (result != DS_OK)
-			Sys_Error("I_InitSound: Failed to set wave format of primary buffer\n%s", DS_Error(result));
-		PrimarySoundBuffer->GetVolume(&prev_sndVol);
-
-		// Get listener interface
-		if (sound3D)
-		{
-			result = PrimarySoundBuffer->QueryInterface(IID_IDirectSound3DListener, (LPVOID *)&Listener);
-			if FAILED(result)
+			if (FAILED(tempBuffer->QueryInterface(IID_IKsPropertySet, 
+				(void **)&PropertySet)))
 			{
-				Sys_Error("Failed to get Listener");
+				GCon->Log(NAME_Init, "IKsPropertySet failed");
 			}
-
-			LPDIRECTSOUNDBUFFER		tempBuffer;
-		    WAVEFORMATEX			pcmwf;
-
-		    // Set up wave format structure.
-			memset(&pcmwf, 0, sizeof(WAVEFORMATEX));
-		    pcmwf.wFormatTag      = WAVE_FORMAT_PCM;      
-			pcmwf.nChannels       = 1;
-			pcmwf.nSamplesPerSec  = 44100;
-		    pcmwf.wBitsPerSample  = WORD(8);
-			pcmwf.nBlockAlign     = WORD(pcmwf.wBitsPerSample / 8 * pcmwf.nChannels);
-			pcmwf.nAvgBytesPerSec = pcmwf.nSamplesPerSec * pcmwf.nBlockAlign;
-
-		    // Set up DSBUFFERDESC structure.
-		    memset(&dsbdesc, 0, sizeof(DSBUFFERDESC));  // Zero it out.
-		    dsbdesc.dwSize        = sizeof(DSBUFFERDESC);
-		    dsbdesc.dwFlags       = DSBCAPS_CTRLVOLUME | 
-				DSBCAPS_CTRLFREQUENCY | DSBCAPS_STATIC | 
-				DSBCAPS_CTRL3D | DSBCAPS_LOCHARDWARE;
-		    dsbdesc.dwBufferBytes = 44100;
-		    dsbdesc.lpwfxFormat   = &pcmwf;
-
-			if SUCCEEDED(DSound->CreateSoundBuffer(&dsbdesc, &tempBuffer, NULL))
+			else
 			{
-				if FAILED(tempBuffer->QueryInterface(IID_IKsPropertySet, 
-					(void **)&PropertySet))
+				GCon->Log(NAME_Init, "IKsPropertySet acquired");
+
+				ULONG Support;
+				result = PropertySet->QuerySupport(
+					DSPROPSETID_EAX_ListenerProperties, 
+					DSPROPERTY_EAXLISTENER_ALLPARAMETERS, &Support);
+				if (FAILED(result) || 
+					(Support & (KSPROPERTY_SUPPORT_GET|KSPROPERTY_SUPPORT_SET)) !=
+					(KSPROPERTY_SUPPORT_GET|KSPROPERTY_SUPPORT_SET))
 				{
-					GCon->Log(NAME_Init, "IKsPropertySet failed");
+					GCon->Log(NAME_Init, "EAX 2.0 not supported");
+					PropertySet->Release();
+					PropertySet = NULL;
 				}
 				else
 				{
-					GCon->Log(NAME_Init, "IKsPropertySet acquired");
-
-					ULONG Support;
-					result = PropertySet->QuerySupport(
-						DSPROPSETID_EAX_ListenerProperties, 
-						DSPROPERTY_EAXLISTENER_ALLPARAMETERS, &Support);
-					if (FAILED(result) || 
-						(Support & (KSPROPERTY_SUPPORT_GET|KSPROPERTY_SUPPORT_SET)) !=
-						(KSPROPERTY_SUPPORT_GET|KSPROPERTY_SUPPORT_SET))
-					{
-						GCon->Log(NAME_Init, "EAX 2.0 not supported");
-						PropertySet->Release();
-						PropertySet = NULL;
-					}
-					else
-					{
-						GCon->Log(NAME_Init, "EAX 2.0 supported");
-						supportEAX = true;
-					}
+					GCon->Log(NAME_Init, "EAX 2.0 supported");
+					supportEAX = true;
 				}
-				tempBuffer->Release();
 			}
-
-			Listener->SetDistanceFactor(1.0 / s3d_distance_unit, DS3D_IMMEDIATE);
-			Listener->SetDopplerFactor(s3d_doppler_factor, DS3D_IMMEDIATE);
-			Listener->SetRolloffFactor(s3d_rolloff_factor, DS3D_IMMEDIATE);
+			tempBuffer->Release();
 		}
+
+		Listener->SetDistanceFactor(1.0 / s3d_distance_unit, DS3D_IMMEDIATE);
+		Listener->SetDopplerFactor(s3d_doppler_factor, DS3D_IMMEDIATE);
+		Listener->SetRolloffFactor(s3d_rolloff_factor, DS3D_IMMEDIATE);
 	}
 
 	//	Init music
-	S_InitDirectMusic(DSound);
+	GMidiDevice->Init();
 
-	if (DSound)
+	//	Get amout of free buffers after initialising music.
+	memset(&caps, 0, sizeof(caps));
+	caps.dwSize = sizeof(caps);
+	DSound->GetCaps(&caps);
+
+	if (sound3D)
+		snd_Channels = caps.dwFreeHw3DStaticBuffers;
+	else
+		snd_Channels = caps.dwFreeHwMixingStaticBuffers;
+	if (!snd_Channels)
 	{
-		//	Get amout of free buffers after initializing music.
-		memset(&caps, 0, sizeof(caps));
-		caps.dwSize = sizeof(caps);
-		DSound->GetCaps(&caps);
-
-		if (sound3D)
-			snd_Channels = caps.dwFreeHw3DStaticBuffers;
-		else
-			snd_Channels = caps.dwFreeHwMixingStaticBuffers;
-		if (!snd_Channels)
-		{
-			GCon->Log(NAME_Init, "No HW channels available");
-			snd_Channels = 8;
-		}
-		if (snd_Channels > MAX_VOICES)
-			snd_Channels = MAX_VOICES;
-
-		// Free all channels for use
-		memset(Channel, 0, sizeof(Channel));
-		memset(free_buffers, 0, sizeof(free_buffers));
-
-		SoundCurve = (byte*)W_CacheLumpName("SNDCURVE", PU_STATIC);
-
-		GCon->Logf(NAME_Init, "Using %d sound buffers", snd_Channels);
+		GCon->Log(NAME_Init, "No HW channels available");
+		snd_Channels = 8;
 	}
+	if (snd_Channels > MAX_VOICES)
+		snd_Channels = MAX_VOICES;
+
+	// Free all channels for use
+	memset(Channel, 0, sizeof(Channel));
+	memset(free_buffers, 0, sizeof(free_buffers));
+
+	SoundCurve = (byte*)W_CacheLumpName("SNDCURVE", PU_STATIC);
+
+	GCon->Logf(NAME_Init, "Using %d sound buffers", snd_Channels);
 	unguard;
 }
 
@@ -330,7 +321,7 @@ void VDirectSoundDevice::Init(void)
 //
 //==========================================================================
 
-void VDirectSoundDevice::Shutdown(void)
+void VDirectSoundDevice::Shutdown()
 {
 	guard(VDirectSoundDevice::Shutdown);
 	//	Shutdown sound
@@ -351,62 +342,62 @@ void VDirectSoundDevice::Shutdown(void)
 
 static char* DS_Error(HRESULT result)
 {
-    static char	errmsg[128];
+	static char	errmsg[128];
 
 	switch(result)
-       {
-        case DS_OK:
-             return "The request completed successfully.";
+	{
+	case DS_OK:
+		return "The request completed successfully.";
 
-        case DSERR_ALLOCATED:
-             return "The request failed because resources, such as a priority level, were already in use by another caller.";
+	case DSERR_ALLOCATED:
+		return "The request failed because resources, such as a priority level, were already in use by another caller.";
 
-        case DSERR_ALREADYINITIALIZED:
-             return "The object is already initialized.";
+	case DSERR_ALREADYINITIALIZED:
+		return "The object is already initialised.";
 
-        case DSERR_BADFORMAT:
-             return "The specified wave format is not supported.";
+	case DSERR_BADFORMAT:
+		return "The specified wave format is not supported.";
 
-        case DSERR_BUFFERLOST:
-             return "The buffer memory has been lost and must be restored.";
+	case DSERR_BUFFERLOST:
+		return "The buffer memory has been lost and must be restored.";
 
-        case DSERR_CONTROLUNAVAIL:
-             return "The control (volume, pan, and so forth) requested by the caller is not available.";
+	case DSERR_CONTROLUNAVAIL:
+		return "The control (volume, pan, and so forth) requested by the caller is not available.";
 
-        case DSERR_GENERIC:
-			 return "An undetermined error occurred inside the DirectSound subsystem.";
+	case DSERR_GENERIC:
+		return "An undetermined error occurred inside the DirectSound subsystem.";
 
-        case DSERR_INVALIDCALL:
-             return "This function is not valid for the current state of this object.";
+	case DSERR_INVALIDCALL:
+		return "This function is not valid for the current state of this object.";
 
-        case DSERR_INVALIDPARAM:
-             return "An invalid parameter was passed to the returning function.";
+	case DSERR_INVALIDPARAM:
+		return "An invalid parameter was passed to the returning function.";
 
-        case DSERR_NOAGGREGATION:
-             return "The object does not support aggregation.";
+	case DSERR_NOAGGREGATION:
+		return "The object does not support aggregation.";
 
-        case DSERR_NODRIVER:
-             return "No sound driver is available for use.";
+	case DSERR_NODRIVER:
+		return "No sound driver is available for use.";
 
-        case DSERR_OTHERAPPHASPRIO:
-             return "This value is obsolete and is not used.";
+	case DSERR_OTHERAPPHASPRIO:
+		return "This value is obsolete and is not used.";
 
-        case DSERR_OUTOFMEMORY:
-             return "The DirectSound subsystem could not allocate sufficient memory to complete the caller's request.";
+	case DSERR_OUTOFMEMORY:
+		return "The DirectSound subsystem could not allocate sufficient memory to complete the caller's request.";
 
-        case DSERR_PRIOLEVELNEEDED:
-			 return "The caller does not have the priority level required for the function to succeed.";
+	case DSERR_PRIOLEVELNEEDED:
+		return "The caller does not have the priority level required for the function to succeed.";
 
-        case DSERR_UNINITIALIZED:
-             return "The IDirectSound::Initialize method has not been called or has not been called successfully before other methods were called.";
+	case DSERR_UNINITIALIZED:
+		return "The IDirectSound::Initialise method has not been called or has not been called successfully before other methods were called.";
 
-        case DSERR_UNSUPPORTED:
-             return "The function called is not supported at this time.";
+	case DSERR_UNSUPPORTED:
+		return "The function called is not supported at this time.";
 
-        default:
-             sprintf(errmsg,"Unknown Error Code: %04X", result);
-			 return errmsg;
-       }
+	default:
+		sprintf(errmsg,"Unknown Error Code: %04X", result);
+		return errmsg;
+	}
 }
 
 //==========================================================================
@@ -456,7 +447,7 @@ static int GetChannel(int sound_id, int origin_id, int channel, int priority)
 
 	//	Mobjs can have only one sound
 	if (origin_id && channel)
-    {
+	{
 		for (i = 0; i < snd_Channels; i++)
 		{
 			if (Channel[i].origin_id == origin_id &&
@@ -496,7 +487,7 @@ static int GetChannel(int sound_id, int origin_id, int channel, int priority)
 		}
 	}
 
-    //	no free channels.
+	//	no free channels.
 	return -1;
 }
 
@@ -558,13 +549,13 @@ static int CalcSep(const TVec &origin)
 
 static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id, const char *VoiceName)
 {
-    HRESULT					result;
+	HRESULT					result;
 	LPDIRECTSOUNDBUFFER		dsbuffer;
-    DSBUFFERDESC			dsbdesc;
-    WAVEFORMATEX			pcmwf;
-    void					*buffer;
+	DSBUFFERDESC			dsbdesc;
+	WAVEFORMATEX			pcmwf;
+	void					*buffer;
 	void					*buff2;
-    DWORD					size1;
+	DWORD					size1;
 	DWORD					size2;
 	int						i;
 
@@ -581,10 +572,10 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id, const char *VoiceName)
 
 				pitch = S_sfx[sound_id].freq +
 					S_sfx[sound_id].freq * (rand() & 7 - rand() & 7) / 128;
-			    dsbuffer->SetFrequency(pitch);
+				dsbuffer->SetFrequency(pitch);
 			}
 
-		    dsbuffer->SetCurrentPosition(0);
+			dsbuffer->SetCurrentPosition(0);
 
 			return dsbuffer;
 		}
@@ -598,35 +589,35 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id, const char *VoiceName)
 	}
 	sfxinfo_t &sfx = VoiceName ? S_VoiceInfo : S_sfx[sound_id];
 
-    // Set up wave format structure.
+	// Set up wave format structure.
 	memset(&pcmwf, 0, sizeof(WAVEFORMATEX));
-    pcmwf.wFormatTag      = WAVE_FORMAT_PCM;      
-    pcmwf.nChannels       = 1;
+	pcmwf.wFormatTag      = WAVE_FORMAT_PCM;      
+	pcmwf.nChannels       = 1;
 	pcmwf.nSamplesPerSec  = sfx.freq;
-    pcmwf.wBitsPerSample  = WORD(8);
-    pcmwf.nBlockAlign     = WORD(pcmwf.wBitsPerSample / 8 * pcmwf.nChannels);
-    pcmwf.nAvgBytesPerSec = pcmwf.nSamplesPerSec * pcmwf.nBlockAlign;
+	pcmwf.wBitsPerSample  = WORD(8);
+	pcmwf.nBlockAlign     = WORD(pcmwf.wBitsPerSample / 8 * pcmwf.nChannels);
+	pcmwf.nAvgBytesPerSec = pcmwf.nSamplesPerSec * pcmwf.nBlockAlign;
 
-    // Set up DSBUFFERDESC structure.
-    memset(&dsbdesc, 0, sizeof(DSBUFFERDESC));  // Zero it out.
-    dsbdesc.dwSize        = sizeof(DSBUFFERDESC);
-    dsbdesc.dwFlags       = 
+	// Set up DSBUFFERDESC structure.
+	memset(&dsbdesc, 0, sizeof(DSBUFFERDESC));  // Zero it out.
+	dsbdesc.dwSize        = sizeof(DSBUFFERDESC);
+	dsbdesc.dwFlags       = 
 		DSBCAPS_CTRLVOLUME | 
 		DSBCAPS_CTRLFREQUENCY |
 		DSBCAPS_STATIC;
-    dsbdesc.dwBufferBytes = sfx.len;
-    dsbdesc.lpwfxFormat   = &pcmwf;
+	dsbdesc.dwBufferBytes = sfx.len;
+	dsbdesc.lpwfxFormat   = &pcmwf;
 	if (sound3D)
 	{
 		dsbdesc.dwFlags |= DSBCAPS_CTRL3D | DSBCAPS_LOCHARDWARE;
 	}
 	else
 	{
-	    dsbdesc.dwFlags |= DSBCAPS_CTRLPAN;
+		dsbdesc.dwFlags |= DSBCAPS_CTRLPAN;
 	}
 
 	result = DSound->CreateSoundBuffer(&dsbdesc, &dsbuffer, NULL);
-    if (result != DS_OK)
+	if (result != DS_OK)
 	{
 		int		best = -1;
 		double	least_time = 999999999.0;
@@ -648,29 +639,29 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id, const char *VoiceName)
 		}
 	}
 
-    if (result != DS_OK)
+	if (result != DS_OK)
 	{
 		GCon->Log(NAME_Dev, "Failed to create sound buffer");
 		GCon->Log(NAME_Dev, DS_Error(result));
-
+	
 		//	We don't need to keep lump static
 		S_DoneWithLump(sound_id);
-
+	
 		return NULL;
 	}
 
-    dsbuffer->Lock(0, sfx.len,
+	dsbuffer->Lock(0, sfx.len,
 		&buffer, &size1, &buff2, &size2, DSBLOCK_ENTIREBUFFER);
 	memcpy(buffer, sfx.data, sfx.len);
 	dsbuffer->Unlock(buffer, sfx.len, buff2, size2);
-
+	
 	if (sfx.changePitch)
 	{
 		dsbuffer->SetFrequency(sfx.freq +
 			S_sfx[sound_id].freq * (rand() & 7 - rand() & 7) / 128);
 	}
 
-    dsbuffer->SetCurrentPosition(0);
+	dsbuffer->SetCurrentPosition(0);
 
 	//	We don't need to keep lump static
 	S_DoneWithLump(sound_id);
@@ -739,11 +730,11 @@ void VDirectSoundDevice::PlaySound(int sound_id, const TVec &origin,
 	{
 		LPDIRECTSOUND3DBUFFER	Buf3D; 
 
-	    Channel[chan].buf->SetVolume(4096.0 * (Channel[chan].volume - 1.0));
+		Channel[chan].buf->SetVolume(4096.0 * (Channel[chan].volume - 1.0));
 
 		result = Channel[chan].buf->QueryInterface(
 			IID_IDirectSound3DBuffer, (LPVOID *)&Buf3D); 
-		if FAILED(result)
+		if (FAILED(result))
 		{
 			Sys_Error("Failed to get 3D buffer");
 		}
@@ -787,7 +778,7 @@ void VDirectSoundDevice::PlaySound(int sound_id, const TVec &origin,
 			sep = CalcSep(Channel[chan].origin);
 
 			Channel[chan].buf->SetVolume(vol);
-		    Channel[chan].buf->SetPan(sep);
+			Channel[chan].buf->SetPan(sep);
 		}
 	}
 
@@ -849,7 +840,7 @@ void VDirectSoundDevice::PlayVoice(const char *Name)
 
 		result = Channel[chan].buf->QueryInterface(
 			IID_IDirectSound3DBuffer, (LPVOID *)&Buf3D); 
-		if FAILED(result)
+		if (FAILED(result))
 		{
 			Sys_Error("Failed to get 3D buffer");
 		}
@@ -876,9 +867,9 @@ void VDirectSoundDevice::PlayVoice(const char *Name)
 void VDirectSoundDevice::PlaySoundTillDone(const char *sound)
 {
 	guard(VDirectSoundDevice::PlaySoundTillDone);
-    int						sound_id;
+	int						sound_id;
 	double					start;
-    HRESULT					result;
+	HRESULT					result;
 	LPDIRECTSOUNDBUFFER		dsbuffer;
 
 	//	Get sound ID
@@ -906,7 +897,7 @@ void VDirectSoundDevice::PlaySoundTillDone(const char *sound)
 		LPDIRECTSOUND3DBUFFER	Buf3D; 
 
 		result = dsbuffer->QueryInterface(IID_IDirectSound3DBuffer, (LPVOID *)&Buf3D);
-		if FAILED(result)
+		if (FAILED(result))
 		{
 			Sys_Error("Failed to get 3D buffer");
 		}
@@ -915,17 +906,17 @@ void VDirectSoundDevice::PlaySoundTillDone(const char *sound)
 	}
 
 	//	Play it
-    result = dsbuffer->Play(0, 0, 0);
-    if (result != DS_OK)
+	result = dsbuffer->Play(0, 0, 0);
+	if (result != DS_OK)
 		Sys_Error("Failed to play channel\n%s", DS_Error(result));
 
 	//	Start wait
 	start = Sys_Time();
 	while (1)
-    {
-	    DWORD	Status;
+	{
+		DWORD	Status;
 
-	    dsbuffer->GetStatus(&Status);
+		dsbuffer->GetStatus(&Status);
 		if (!(Status & DSBSTATUS_PLAYING))
 		{
 			//	Playback done
@@ -937,7 +928,7 @@ void VDirectSoundDevice::PlaySoundTillDone(const char *sound)
 			//	Time out
 			break;
 		}
-    }
+	}
 
 	//	Stop and release buffer
 	dsbuffer->Stop();
@@ -959,30 +950,31 @@ void VDirectSoundDevice::Tick(float DeltaTime)
 	guard(VDirectSoundDevice::Tick);
 	int 		i;
 	int			dist;
-    DWORD		Status;
+	DWORD		Status;
 
 	if (!snd_Channels)
 	{
 		return;
 	}
 
+	if (sfx_volume < 0.0)
+	{
+		sfx_volume = 0.0;
+	}
+	if (sfx_volume > 1.0)
+	{
+		sfx_volume = 1.0;
+	}
+
 	if (sfx_volume != snd_MaxVolume)
-    {
-	    if (sfx_volume < 0)
-	    {
-			sfx_volume = 0;
-		}
-	    if (sfx_volume > 15)
-	    {
-			sfx_volume = 15;
-		}
-	    snd_MaxVolume = sfx_volume;
-		PrimarySoundBuffer->SetVolume((snd_MaxVolume - 15) * 300);
+	{
+		snd_MaxVolume = sfx_volume;
+		PrimarySoundBuffer->SetVolume(int((snd_MaxVolume - 1) * 5000));
 		if (!snd_MaxVolume)
 		{
 			S_StopAllSound();
 		}
-    }
+	}
 
 	if (!snd_MaxVolume)
 	{
@@ -999,11 +991,11 @@ void VDirectSoundDevice::Tick(float DeltaTime)
 			continue;
 		}
 
-	    Channel[i].buf->GetStatus(&Status);
+		Channel[i].buf->GetStatus(&Status);
 		if (!(Status & DSBSTATUS_PLAYING))
 		{
 			//	Playback done
-        	StopChannel(i);
+			StopChannel(i);
 			continue;
 		}
 
@@ -1040,7 +1032,7 @@ void VDirectSoundDevice::Tick(float DeltaTime)
 			sep = CalcSep(Channel[i].origin);
 
 			Channel[i].buf->SetVolume(vol);
-		    Channel[i].buf->SetPan(sep);
+			Channel[i].buf->SetPan(sep);
 		}
 
 		Channel[i].priority = CalcPriority(Channel[i].sound_id, dist);
@@ -1109,7 +1101,7 @@ static void StopChannel(int chan_num)
 	int						i;
 
 	if (Channel[chan_num].buf)
-    {
+	{
 		dsbuffer = Channel[chan_num].buf;
 		//	Stop buffer
 		dsbuffer->Stop();
@@ -1133,7 +1125,7 @@ static void StopChannel(int chan_num)
 		//	Clear channel data
 		Channel[chan_num].buf = NULL;
 		Channel[chan_num].origin_id = 0;
-        Channel[chan_num].sound_id = 0;
+		Channel[chan_num].sound_id = 0;
 	}
 }
 
@@ -1146,16 +1138,14 @@ static void StopChannel(int chan_num)
 void VDirectSoundDevice::StopSound(int origin_id, int channel)
 {
 	guard(VDirectSoundDevice::StopSound);
-	int i;
-
-    for (i = 0; i < snd_Channels; i++)
-    {
+	for (int i = 0; i < snd_Channels; i++)
+	{
 		if (Channel[i].origin_id == origin_id &&
 			(!channel || Channel[i].channel == channel))
 		{
-        	StopChannel(i);
+			StopChannel(i);
 		}
-    }
+	}
 	unguard;
 }
 
@@ -1168,10 +1158,8 @@ void VDirectSoundDevice::StopSound(int origin_id, int channel)
 void VDirectSoundDevice::StopAllSound(void)
 {
 	guard(VDirectSoundDevice::StopAllSound);
-	int i;
-
 	//	stop all sounds
-	for (i = 0; i < snd_Channels; i++)
+	for (int i = 0; i < snd_Channels; i++)
 	{
 		StopChannel(i);
 	}
@@ -1187,16 +1175,14 @@ void VDirectSoundDevice::StopAllSound(void)
 bool VDirectSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 {
 	guard(VDirectSoundDevice::IsSoundPlaying);
-	int i;
-
-	for (i = 0; i < snd_Channels; i++)
+	for (int i = 0; i < snd_Channels; i++)
 	{
 		if (Channel[i].buf && Channel[i].sound_id == sound_id && 
 			Channel[i].origin_id == origin_id)
 		{
-		    DWORD	Status;
+			DWORD	Status;
 
-		    Channel[i].buf->GetStatus(&Status);
+			Channel[i].buf->GetStatus(&Status);
 
 			if (Status & DSBSTATUS_PLAYING)
 			{
@@ -1211,9 +1197,12 @@ bool VDirectSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2005/09/12 19:45:16  dj_jl
+//	Created midi device class.
+//
 //	Revision 1.25  2004/11/30 07:17:17  dj_jl
 //	Made string pointers const.
-//
+//	
 //	Revision 1.24  2004/08/21 19:10:44  dj_jl
 //	Changed sound driver declaration.
 //	

@@ -633,18 +633,19 @@ void VOpenALDevice::Tick(float DeltaTime)
 		return;
 	}
 
+	if (sfx_volume < 0.0)
+	{
+		sfx_volume = 0.0;
+	}
+	if (sfx_volume > 1.0)
+	{
+		sfx_volume = 1.0;
+	}
+
 	if (sfx_volume != snd_MaxVolume)
     {
-	    if (sfx_volume < 0)
-	    {
-			sfx_volume = 0;
-		}
-	    if (sfx_volume > 15)
-	    {
-			sfx_volume = 15;
-		}
 	    snd_MaxVolume = sfx_volume;
-		alListenerf(AL_GAIN, snd_MaxVolume / 15.0);
+		alListenerf(AL_GAIN, snd_MaxVolume);
 		if (!snd_MaxVolume)
 		{
 			StopAllSound();
@@ -833,9 +834,12 @@ bool VOpenALDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2005/09/12 19:45:16  dj_jl
+//	Created midi device class.
+//
 //	Revision 1.9  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.8  2004/11/30 07:17:16  dj_jl
 //	Made string pointers const.
 //	

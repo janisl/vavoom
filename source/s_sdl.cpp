@@ -81,6 +81,8 @@ public:
 IMPLEMENT_SOUND_DEVICE(VSDLSoundDevice, SNDDRV_Default, "Default",
 	"SDL sound device", NULL);
 
+bool							sdl_mixer_initialised;
+
 static TCvarI mix_frequency		("mix_frequency", "22050", CVAR_ARCHIVE);
 static TCvarI mix_bits			("mix_bits",      "16",    CVAR_ARCHIVE);
 static TCvarI mix_channels		("mix_channels",  "2",     CVAR_ARCHIVE);
@@ -91,33 +93,31 @@ static TCvarI mix_swapstereo	("mix_swapstereo","0",     CVAR_ARCHIVE);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-int cur_format;
-int cur_channels;
-int cur_frequency;
+static int			cur_format;
+static int			cur_channels;
+static int			cur_frequency;
 
-static int sound;
-static byte *SoundCurve;
-static int sndcount;
-static int snd_MaxVolume;
+static int			sound;
+static byte*		SoundCurve;
+static int			sndcount;
+static float		snd_MaxVolume;
 
-static int frequencies[] = { 11025, 22050, 44100, 0 };
+static const int	frequencies[] = { 11025, 22050, 44100, 0 };
 // see SDL/SDL_audio.h for these...
-static int chunksizes[] = {  512,  1024,  2048, 4096, 8192, 0};
-static int voices[] = {        4,     8,    16,   32,   64, 0};
+static const int	chunksizes[] = {  512,  1024,  2048, 4096, 8192, 0};
+static const int	voices[] = {        4,     8,    16,   32,   64, 0};
 
-static channel_t *channels;
+static channel_t*	channels;
 
-static TVec listener_forward;
-static TVec listener_right;
-static TVec listener_up;
-
-static Uint16 mix_format;
+static TVec			listener_forward;
+static TVec			listener_right;
+static TVec			listener_up;
 
 // CODE --------------------------------------------------------------------
 
 ////// PRIVATE /////////////////////////////////////////////////////////////
 
-static int know_value(int val, int *vals)
+static int know_value(int val, const int* vals)
 {
 	int i;
 
@@ -378,9 +378,10 @@ void VSDLSoundDevice::Init(void)
 
 	if (Mix_OpenAudio(freq,fmt,ch,cksz) < 0)
 	{
-			sound = 0;
-			return;
+		sound = 0;
+		return;
 	}
+	sdl_mixer_initialised = true;
 
 	sound = 1;
 
@@ -462,6 +463,8 @@ void VSDLSoundDevice::PlaySound(int sound_id, const TVec &origin,
 	{
 		return;
 	}
+
+	volume *= snd_MaxVolume;
 
 	// calculate the distance before other stuff so that we can throw out
 	// sounds that are beyond the hearing range.
@@ -691,13 +694,13 @@ void VSDLSoundDevice::Tick(float DeltaTime)
 		return;
 	}
 
-	if (sfx_volume < 0)
+	if (sfx_volume < 0.0)
 	{
-		sfx_volume = 0;
+		sfx_volume = 0.0;
 	}
-	if (sfx_volume > 15)
+	if (sfx_volume > 1.0)
 	{
-		sfx_volume = 15;
+		sfx_volume = 1.0;
 	}
 
 	if (sfx_volume != snd_MaxVolume)
@@ -854,9 +857,12 @@ bool VSDLSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2005/09/12 19:45:16  dj_jl
+//	Created midi device class.
+//
 //	Revision 1.15  2005/09/04 14:43:45  dj_jl
 //	Some fixes.
-//
+//	
 //	Revision 1.14  2005/05/26 17:00:14  dj_jl
 //	Disabled pitching
 //	
