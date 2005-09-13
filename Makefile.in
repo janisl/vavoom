@@ -218,7 +218,6 @@ GL_SYS_OBJ_UNIX_SDL = obj/gl_sdl.$(OBJEXT)
 #-- CD audio drivers for various UNIX platforms --
 CDAUDIO_OBJ_LINUX = obj/cd_linux.$(OBJEXT)
 CDAUDIO_OBJ_BSD = obj/cd_bsd.$(OBJEXT)
-CDAUDIO_OBJ_NONE = obj/cd_none.$(OBJEXT)
 
 #-- Windows --
 SYS_OBJS_WIN32 = \

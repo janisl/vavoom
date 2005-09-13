@@ -113,8 +113,6 @@ dnl ---------------- Other *NIX platforms ----------------
 		OBJ_FILES="$OBJ_FILES \$(CDAUDIO_OBJ_LINUX)"
 	], [AC_CHECK_HEADER([sys/cdrom.h], [
 		OBJ_FILES="$OBJ_FILES \$(CDAUDIO_OBJ_BSD)"
-	], [
-		OBJ_FILES="$OBJ_FILES \$(CDAUDIO_OBJ_NONE)"
 	])])
 
 	if test "x$with_opengl" != "xno"; then
