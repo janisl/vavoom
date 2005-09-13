@@ -41,62 +41,57 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VLinuxCDAudioDevice : public VCDAudioDevice
+{
+public:
+	int			CDFile;
+
+	void Init();
+	void Update();
+	void Shutdown();
+	void GetInfo();
+	void Play(int, bool);
+	void Pause();
+	void Resume();
+	void Stop();
+	void OpenDoor();
+	void CloseDoor();
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static void CD_GetInfo(void);
-static void CD_Play(int track, boolean looping);
-static void CD_Pause(void);
-static void CD_Resume(void);
-static void CD_Stop(void);
-static void CD_OpenDoor(void);
-static void CD_CloseDoor(void);
-
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
+
+IMPLEMENT_CD_AUDIO_DEVICE(VLinuxCDAudioDevice, CDDRV_Default, "Default",
+	"Linux CD audio device", NULL);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static char			cd_dev[64] = "/dev/cdrom";
-static boolean		cd_started = false;
-static boolean		enabled = false;
-static boolean		cdValid = false;
-static int			cdfile = -1;
-static boolean		playing = false;
-static boolean		wasPlaying = false;
-static int			playTrack;
-static int			maxTrack;
-static boolean		playLooping = false;
-static int		 	remap[100];
-
 // CODE --------------------------------------------------------------------
 
-//**************************************************************************
-//
-//	Main part
-//
-//**************************************************************************
-
 //==========================================================================
 //
-//  CD_Init
+//	VLinuxCDAudioDevice::Init
 //
 //==========================================================================
 
-void CD_Init(void)
+void VLinuxCDAudioDevice::Init()
 {
-	guard(CD_Init);
+	guard(VLinuxCDAudioDevice::Init);
 	int i;
 
-    if (M_CheckParm("-nosound") || M_CheckParm("-nocdaudio"))
-    {
-    	return;
+	if (M_CheckParm("-nosound") || M_CheckParm("-nocdaudio"))
+	{
+		return;
 	}
 
+	char cd_dev[64] = "/dev/cdrom";
 	i = M_CheckParm("-cddev");
 	if (i && i < myargc - 1)
 	{
@@ -104,64 +99,64 @@ void CD_Init(void)
 		cd_dev[sizeof(cd_dev) - 1] = 0;
 	}
 
-    cdfile = open(cd_dev, O_RDONLY);
-	if (cdfile == -1)
+	CDFile = open(cd_dev, O_RDONLY);
+	if (CDFile == -1)
 	{
 		GCon->Logf(NAME_Init, "CD_Init: open of \"%s\" failed (%d)",
 			cd_dev, errno);
-		cdfile = -1;
+		CDFile = -1;
 		return;
 	}
 
 	for (i = 0; i < 100; i++)
-		remap[i] = i;
-	cd_started = true;
-	enabled = true;
+		Remap[i] = i;
+	Initialised = true;
+	Enabled = true;
 
-    CD_GetInfo();
-	if (!cdValid)
+	GetInfo();
+	if (!CDValid)
 	{
 		GCon->Log(NAME_Init, "CD_Init: No CD in player.");
 	}
 
-	GCon->Log(NAME_Init, "CD Audio Initialized");
+	GCon->Log(NAME_Init, "CD Audio Initialised");
 	unguard;
 }
 
 //==========================================================================
 //
-//	CD_Update
+//	VLinuxCDAudioDevice::Update
 //
 //==========================================================================
 
-void CD_Update(void)
+void VLinuxCDAudioDevice::Update()
 {
-	guard(CD_Update);
+	guard(VLinuxCDAudioDevice::Update);
 	struct cdrom_subchnl	subchnl;
 	static time_t			lastchk;
 
-	if (!cd_started)
+	if (!Initialised)
 		return;
 
-	if (!enabled)
+	if (!Enabled)
 		return;
 
-	if (playing && lastchk < time(NULL))
+	if (Playing && lastchk < time(NULL))
 	{
 		lastchk = time(NULL) + 2; //two seconds between chks
 		subchnl.cdsc_format = CDROM_MSF;
-		if (ioctl(cdfile, CDROMSUBCHNL, &subchnl) == -1 )
+		if (ioctl(CDFile, CDROMSUBCHNL, &subchnl) == -1 )
 		{
 			GCon->Log(NAME_Dev, "ioctl cdromsubchnl failed");
-			playing = false;
+			Playing = false;
 			return;
 		}
 		if (subchnl.cdsc_audiostatus != CDROM_AUDIO_PLAY &&
 			subchnl.cdsc_audiostatus != CDROM_AUDIO_PAUSED)
 		{
-			playing = false;
-			if (playLooping)
-				CD_Play(playTrack, true);
+			Playing = false;
+			if (PlayLooping)
+				Play(PlayTrack, true);
 		}
 	}
 	unguard;
@@ -169,183 +164,41 @@ void CD_Update(void)
 
 //==========================================================================
 //
-//  CD_Shutdown
+//	VLinuxCDAudioDevice::Shutdown
 //
 //==========================================================================
 
-void CD_Shutdown(void)
+void VLinuxCDAudioDevice::Shutdown()
 {
-	guard(CD_Shutdown);
-	if (!cd_started)
+	guard(VLinuxCDAudioDevice::Shutdown);
+	if (!Initialised)
 		return;
 
-	CD_Stop();
-	close(cdfile);
-	cdfile = -1;
-	cd_started = false;
+	Stop();
+	close(CDFile);
+	CDFile = -1;
+	Initialised = false;
 	unguard;
 }
 
 //==========================================================================
 //
-//	CD_f
+//	VLinuxCDAudioDevice::GetInfo
 //
 //==========================================================================
 
-COMMAND(CD)
+void VLinuxCDAudioDevice::GetInfo()
 {
-	guard(COMMAND CD);
-	char	*command;
-
-	if (!cd_started)
-		return;
-
-	if (Argc() < 2)
-		return;
-
-	command = Argv(1);
-
-	if (!stricmp(command, "on"))
-	{
-		enabled = true;
-		return;
-	}
-
-	if (!stricmp(command, "off"))
-	{
-		if (playing)
-			CD_Stop();
-		enabled = false;
-		return;
-	}
-
-	if (!stricmp(command, "reset"))
-	{
-    	int		n;
-
-		enabled = true;
-		if (playing)
-			CD_Stop();
-		for (n = 0; n < 100; n++)
-			remap[n] = n;
-		CD_GetInfo();
-		return;
-	}
-
-	if (!stricmp(command, "remap"))
-	{
-    	int		n;
-        int		ret;
-
-		ret = Argc() - 2;
-		if (ret <= 0)
-		{
-			for (n = 1; n < 100; n++)
-				if (remap[n] != n)
-					GCon->Logf("%d -> %d", n, remap[n]);
-			return;
-		}
-		for (n = 1; n <= ret; n++)
-			remap[n] = atoi(Argv(n + 1));
-		return;
-	}
-
-	if (!enabled)
-    {
-    	return;
-    }
-
-	if (!stricmp(command, "eject"))
-	{
-		if (playing)
-			CD_Stop();
-    	CD_OpenDoor();
-		cdValid = false;
-		return;
-	}
-
-	if (!stricmp(command, "close"))
-	{
-		CD_CloseDoor();
-		return;
-	}
-
-	if (!cdValid)
-	{
-		CD_GetInfo();
-		if (!cdValid)
-		{
-			GCon->Log("No CD in player.");
-			return;
-		}
-	}
-
-	if (!stricmp(command, "play"))
-	{
-		CD_Play(atoi(Argv(2)), false);
-		return;
-	}
-
-	if (!stricmp(command, "loop"))
-	{
-		CD_Play(atoi(Argv(2)), true);
-		return;
-	}
-
-	if (!stricmp(command, "pause"))
-	{
-		CD_Pause();
-		return;
-	}
-
-	if (!stricmp(command, "resume"))
-	{
-		CD_Resume();
-		return;
-	}
-
-	if (!stricmp(command, "stop"))
-	{
-		CD_Stop();
-		return;
-	}
-
-	if (!stricmp(command, "info"))
-	{
-		GCon->Logf("%d tracks", maxTrack);
-		if (playing || wasPlaying)
-        {
-			GCon->Logf("%s %s track %d", playing ? "Currently" : "Paused",
-				playLooping ? "looping" : "playing", playTrack);
-        }
-		return;
-	}
-	unguard;
-}
-
-//**************************************************************************
-//
-//  Command execution
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//	CD_GetInfo
-//
-//==========================================================================
-
-static void CD_GetInfo(void)
-{
+	guard(VLinuxCDAudioDevice::GetInfo);
 	struct cdrom_tochdr		tochdr;
 
-	cdValid = false;
+	CDValid = false;
 
-	if (ioctl(cdfile, CDROMREADTOCHDR, &tochdr) == -1)
-    {
+	if (ioctl(CDFile, CDROMREADTOCHDR, &tochdr) == -1)
+	{
 		GCon->Log(NAME_Dev, "ioctl cdromreadtochdr failed");
 		return;
-    }
+	}
 
 	if (tochdr.cdth_trk0 < 1)
 	{
@@ -353,31 +206,33 @@ static void CD_GetInfo(void)
 		return;
 	}
 
-	cdValid = true;
-	maxTrack = tochdr.cdth_trk1;
+	CDValid = true;
+	MaxTrack = tochdr.cdth_trk1;
+	unguard;
 }
 
 //==========================================================================
 //
-//	CD_Play
+//	VLinuxCDAudioDevice::Play
 //
 //==========================================================================
 
-static void CD_Play(int track, boolean looping)
+void VLinuxCDAudioDevice::Play(int track, bool looping)
 {
+	guard(VLinuxCDAudioDevice::Play);
 	struct cdrom_tocentry	entry;
 	struct cdrom_ti			ti;
 
-	if (!cdValid)
+	if (!CDValid)
 	{
-		CD_GetInfo();
-		if (!cdValid)
+		GetInfo();
+		if (!CDValid)
 			return;
 	}
 
-	track = remap[track];
+	track = Remap[track];
 
-	if (track < 1 || track > maxTrack)
+	if (track < 1 || track > MaxTrack)
 	{
 		GCon->Logf(NAME_Dev, "CDAudio: Bad track number %d.", track);
 		return;
@@ -386,7 +241,7 @@ static void CD_Play(int track, boolean looping)
 	// don't try to play a non-audio track
 	entry.cdte_track = track;
 	entry.cdte_format = CDROM_MSF;
-    if (ioctl(cdfile, CDROMREADTOCENTRY, &entry) == -1)
+	if (ioctl(CDFile, CDROMREADTOCENTRY, &entry) == -1)
 	{
 		GCon->Log(NAME_Dev, "ioctl cdromreadtocentry failed");
 		return;
@@ -397,11 +252,11 @@ static void CD_Play(int track, boolean looping)
 		return;
 	}
 
-	if (playing)
+	if (Playing)
 	{
-		if (playTrack == track)
+		if (PlayTrack == track)
 			return;
-		CD_Stop();
+		Stop();
 	}
 
 	ti.cdti_trk0 = track;
@@ -409,103 +264,117 @@ static void CD_Play(int track, boolean looping)
 	ti.cdti_ind0 = 1;
 	ti.cdti_ind1 = 99;
 
-	if (ioctl(cdfile, CDROMPLAYTRKIND, &ti) == -1)
-    {
+	if (ioctl(CDFile, CDROMPLAYTRKIND, &ti) == -1)
+	{
 		GCon->Log(NAME_Dev, "ioctl cdromplaytrkind failed");
 		return;
-    }
+	}
 
-	if (ioctl(cdfile, CDROMRESUME) == -1)
+	if (ioctl(CDFile, CDROMRESUME) == -1)
 		GCon->Log(NAME_Dev, "ioctl cdromresume failed");
 
-	playLooping = looping;
-	playTrack = track;
-	playing = true;
+	PlayLooping = looping;
+	PlayTrack = track;
+	Playing = true;
+	unguard;
 }
 
 //==========================================================================
 //
-//  CD_Pause
+//	VLinuxCDAudioDevice::Pause
 //
 //==========================================================================
 
-static void CD_Pause(void)
+void VLinuxCDAudioDevice::Pause()
 {
-	if (!playing)
+	guard(VLinuxCDAudioDevice::Pause);
+	if (!Playing)
 		return;
 
-	if (ioctl(cdfile, CDROMPAUSE) == -1)
+	if (ioctl(CDFile, CDROMPAUSE) == -1)
 		GCon->Log(NAME_Dev, "ioctl cdrompause failed");
 
-	wasPlaying = playing;
-	playing = false;
+	WasPlaying = Playing;
+	Playing = false;
+	unguard;
 }
 
 //==========================================================================
 //
-//  CD_Resume
+//	VLinuxCDAudioDevice::Resume
 //
 //==========================================================================
 
-static void CD_Resume(void)
+void VLinuxCDAudioDevice::Resume()
 {
-	if (!wasPlaying)
+	guard(VLinuxCDAudioDevice::Resume);
+	if (!WasPlaying)
 		return;
-	
-	if (ioctl(cdfile, CDROMRESUME) == -1)
+
+	if (ioctl(CDFile, CDROMRESUME) == -1)
 		GCon->Log(NAME_Dev, "ioctl cdromresume failed");
 
-	playing = true;
+	Playing = true;
+	unguard;
 }
 
 //==========================================================================
 //
-//  CD_Stop
+//	VLinuxCDAudioDevice::Stop
 //
 //==========================================================================
 
-static void CD_Stop(void)
+void VLinuxCDAudioDevice::Stop()
 {
-	if (!playing)
+	guard(VLinuxCDAudioDevice::Stop);
+	if (!Playing)
 		return;
 
-	if (ioctl(cdfile, CDROMSTOP) == -1)
+	if (ioctl(CDFile, CDROMSTOP) == -1)
 		GCon->Log(NAME_Dev, "ioctl cdromstop failed");
 
-	wasPlaying = false;
-	playing = false;
+	WasPlaying = false;
+	Playing = false;
+	unguard;
 }
 
 //==========================================================================
 //
-//  CD_OpenDoor
+//	VLinuxCDAudioDevice::OpenDoor
 //
 //==========================================================================
 
-static void CD_OpenDoor(void)
+void VLinuxCDAudioDevice::OpenDoor()
 {
-	if (ioctl(cdfile, CDROMEJECT) == -1)
+	guard(VLinuxCDAudioDevice::OpenDoor);
+	if (ioctl(CDFile, CDROMEJECT) == -1)
 		GCon->Log(NAME_Dev, "ioctl cdromeject failed");
+	unguard;
 }
 
 //==========================================================================
 //
-//  CD_CloseDoor
+//	VLinuxCDAudioDevice::CloseDoor
 //
 //==========================================================================
 
-static void CD_CloseDoor(void)
+void VLinuxCDAudioDevice::CloseDoor()
 {
-	if (ioctl(cdfile, CDROMCLOSETRAY) == -1)
+	guard(VLinuxCDAudioDevice::CloseDoor);
+	if (ioctl(CDFile, CDROMCLOSETRAY) == -1)
 		GCon->Log(NAME_Dev, "ioctl cdromclosetray failed");
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2005/09/13 17:32:45  dj_jl
+//	Created CD audio device class.
+//
 //	Revision 1.6  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.5  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
 //	

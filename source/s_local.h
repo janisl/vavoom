@@ -54,6 +54,15 @@ enum
 	MIDIDRV_MAX
 };
 
+//	CD audio device types.
+enum
+{
+	CDDRV_Default,
+	CDDRV_Null,
+
+	CDDRV_MAX
+};
+
 // TYPES -------------------------------------------------------------------
 
 //
@@ -195,6 +204,84 @@ VMidiDevice* Create##TClass() \
 } \
 FMidiDeviceDesc TClass##Desc(Type, Name, Description, CmdLineArg, Create##TClass);
 
+//
+//	VCDAudioDevice
+//
+//	CD player device interface. This class implements dummy driver.
+//
+class VCDAudioDevice
+{
+public:
+	bool		Initialised;
+	bool		Enabled;
+	bool		CDValid;
+	bool		Playing;
+	bool		WasPlaying;
+	bool		PlayLooping;
+	int			PlayTrack;
+	int			MaxTrack;
+	int		 	Remap[100];
+
+	void* operator new(size_t Size, int Tag)
+	{ return Z_Calloc(Size, Tag, 0); }
+	void operator delete(void* Object, size_t)
+	{ Z_Free(Object); }
+	VCDAudioDevice()
+	: Initialised(false)
+	, Enabled(false)
+	, CDValid(false)
+	, Playing(false)
+	, WasPlaying(false)
+	, PlayLooping(false)
+	, PlayTrack(0)
+	, MaxTrack(0)
+	{}
+	virtual ~VCDAudioDevice()
+	{}
+
+	//	VCDAudioDevice interface.
+	virtual void Init()
+	{}
+	virtual void Update()
+	{}
+	virtual void Shutdown()
+	{}
+	virtual void GetInfo()
+	{}
+	virtual void Play(int, bool)
+	{}
+	virtual void Pause()
+	{}
+	virtual void Resume()
+	{}
+	virtual void Stop()
+	{}
+	virtual void OpenDoor()
+	{}
+	virtual void CloseDoor()
+	{}
+};
+
+//	Describtion of a CD driver.
+struct FCDAudioDeviceDesc
+{
+	const char*		Name;
+	const char*		Description;
+	const char*		CmdLineArg;
+	VCDAudioDevice*	(*Creator)();
+
+	FCDAudioDeviceDesc(int Type, const char* AName, const char* ADescription,
+		const char* ACmdLineArg, VCDAudioDevice* (*ACreator)());
+};
+
+//	CD audio device registration helper.
+#define IMPLEMENT_CD_AUDIO_DEVICE(TClass, Type, Name, Description, CmdLineArg) \
+VCDAudioDevice* Create##TClass() \
+{ \
+	return new(PU_STATIC) TClass(); \
+} \
+FCDAudioDeviceDesc TClass##Desc(Type, Name, Description, CmdLineArg, Create##TClass);
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 //
@@ -203,13 +290,6 @@ FMidiDeviceDesc TClass##Desc(Type, Name, Description, CmdLineArg, Create##TClass
 void S_InitScript();
 bool S_LoadSound(int sound_id, const char *VoiceName = NULL);
 void S_DoneWithLump(int sound_id);
-
-//
-//	CD MUSIC
-//
-void CD_Init();
-void CD_Update();
-void CD_Shutdown();
 
 //
 //	EAX utilites
@@ -229,8 +309,9 @@ extern TCvarF				sfx_volume;
 extern TCvarF				music_volume;
 extern TCvarI				swap_stereo;
 
-extern VSoundDevice			*GSoundDevice;
-extern VMidiDevice			*GMidiDevice;
+extern VSoundDevice*		GSoundDevice;
+extern VMidiDevice*			GMidiDevice;
+extern VCDAudioDevice*		GCDAudioDevice;
 
 //**************************************************************************
 //
@@ -272,9 +353,12 @@ int qmus2mid(const char *mus, char *mid, int length);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2005/09/13 17:32:45  dj_jl
+//	Created CD audio device class.
+//
 //	Revision 1.13  2005/09/12 19:45:16  dj_jl
 //	Created midi device class.
-//
+//	
 //	Revision 1.12  2004/11/30 07:17:17  dj_jl
 //	Made string pointers const.
 //	

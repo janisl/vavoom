@@ -43,28 +43,33 @@
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 IMPLEMENT_SOUND_DEVICE(VSoundDevice, SNDDRV_Null, "Null",
-	"Null sound device", "-nosound");
+	"Null sound device", "-nosfx");
 
 IMPLEMENT_MIDI_DEVICE(VMidiDevice, MIDIDRV_Null, "Null",
-	"Null midi device", "-nosound");
+	"Null midi device", "-nomusic");
+
+IMPLEMENT_CD_AUDIO_DEVICE(VCDAudioDevice, CDDRV_Null, "Null",
+	"Null CD audio device", "-nocdaudio");
 
 TCvarF					sfx_volume("sfx_volume", "0.5", CVAR_ARCHIVE);
 TCvarF					music_volume("music_volume", "0.5", CVAR_ARCHIVE);
 TCvarI					swap_stereo("swap_stereo", "0", CVAR_ARCHIVE);
 
-VSoundDevice			*GSoundDevice;
-VMidiDevice				*GMidiDevice;
+VSoundDevice*			GSoundDevice;
+VMidiDevice*			GMidiDevice;
+VCDAudioDevice*			GCDAudioDevice;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static char				mapSong[12];
-static int				mapCDTrack;
+static char					mapSong[12];
+static int					mapCDTrack;
 
-static TCvarI			cd_music("use_cd_music", "0", CVAR_ARCHIVE);
-static boolean			CDMusic = false;
+static TCvarI				cd_music("use_cd_music", "0", CVAR_ARCHIVE);
+static boolean				CDMusic = false;
 
-static FSoundDeviceDesc	*SoundDeviceList[SNDDRV_MAX];
-static FMidiDeviceDesc	*MidiDeviceList[MIDIDRV_MAX];
+static FSoundDeviceDesc*	SoundDeviceList[SNDDRV_MAX];
+static FMidiDeviceDesc*		MidiDeviceList[MIDIDRV_MAX];
+static FCDAudioDeviceDesc*	CDAudioDeviceList[CDDRV_MAX];
 
 // CODE --------------------------------------------------------------------
 
@@ -104,6 +109,23 @@ FMidiDeviceDesc::FMidiDeviceDesc(int Type, const char* AName,
 
 //==========================================================================
 //
+//	FCDAudioDeviceDesc::FCDAudioDeviceDesc
+//
+//==========================================================================
+
+FCDAudioDeviceDesc::FCDAudioDeviceDesc(int Type, const char* AName,
+	const char* ADescription, const char* ACmdLineArg,
+	VCDAudioDevice* (*ACreator)())
+: Name(AName)
+, Description(ADescription)
+, CmdLineArg(ACmdLineArg)
+, Creator(ACreator)
+{
+	CDAudioDeviceList[Type] = this;
+}
+
+//==========================================================================
+//
 //	S_Init
 //
 // 	Initializes sound stuff, including volume
@@ -122,6 +144,7 @@ void S_Init()
 	S_InitScript();
 	SN_InitSequenceScript();
 
+	//	Find sound driver to use.
 	int SIdx = -1;
 	for (i = 0; i < SNDDRV_MAX; i++)
 	{
@@ -138,6 +161,7 @@ void S_Init()
 	GCon->Logf(NAME_Init, "Selected %s", SoundDeviceList[SIdx]->Description);
 	GSoundDevice = SoundDeviceList[SIdx]->Creator();
 
+	//	Find MIDI driver to use.
 	int MIdx = -1;
 	for (i = 0; i < MIDIDRV_MAX; i++)
 	{
@@ -154,9 +178,27 @@ void S_Init()
 	GCon->Logf(NAME_Init, "Selected %s", MidiDeviceList[MIdx]->Description);
 	GMidiDevice = MidiDeviceList[MIdx]->Creator();
 
+	//	Find CD audio driver to use.
+	int CDIdx = -1;
+	for (i = 0; i < CDDRV_MAX; i++)
+	{
+		if (!CDAudioDeviceList[i])
+			continue;
+		//	Default to first available non-null CD audio device.
+		if (CDIdx == -1)
+			CDIdx = i;
+		//	Check for user selection.
+		if (CDAudioDeviceList[i]->CmdLineArg &&
+			M_CheckParm(CDAudioDeviceList[i]->CmdLineArg))
+			CDIdx = i;
+	}
+	GCon->Logf(NAME_Init, "Selected %s", CDAudioDeviceList[CDIdx]->Description);
+	GCDAudioDevice = CDAudioDeviceList[CDIdx]->Creator();
+
+	//	Initialise devices.
 	GSoundDevice->Init();
 	GMidiDevice->Init();
-	CD_Init();
+	GCDAudioDevice->Init();
 	unguard;
 }
 
@@ -171,7 +213,12 @@ void S_Init()
 void S_Shutdown()
 {
 	guard(S_Shutdown);
-	CD_Shutdown();
+	if (GCDAudioDevice)
+	{
+		GCDAudioDevice->Shutdown();
+		delete GCDAudioDevice;
+		GCDAudioDevice = NULL;
+	}
 	if (GMidiDevice)
 	{
 		GMidiDevice->Shutdown();
@@ -399,7 +446,7 @@ void S_UpdateSounds(void)
 
 	GSoundDevice->Tick(host_frametime);
 	GMidiDevice->Tick(host_frametime);
-	CD_Update();
+	GCDAudioDevice->Update();
 	unguard;
 }
 
@@ -972,12 +1019,152 @@ int qmus2mid(const char *mus, char *mid, int length)
 	return mid_file - mid;
 }
 
+//==========================================================================
+//
+//	CD_f
+//
+//==========================================================================
+
+COMMAND(CD)
+{
+	guard(COMMAND CD);
+	char	*command;
+
+	if (!GCDAudioDevice->Initialised)
+		return;
+
+	if (Argc() < 2)
+		return;
+
+	command = Argv(1);
+
+	if (!stricmp(command, "on"))
+	{
+		GCDAudioDevice->Enabled = true;
+		return;
+	}
+
+	if (!stricmp(command, "off"))
+	{
+		if (GCDAudioDevice->Playing)
+			GCDAudioDevice->Stop();
+		GCDAudioDevice->Enabled = false;
+		return;
+	}
+
+	if (!stricmp(command, "reset"))
+	{
+		int		n;
+
+		GCDAudioDevice->Enabled = true;
+		if (GCDAudioDevice->Playing)
+			GCDAudioDevice->Stop();
+		for (n = 0; n < 100; n++)
+			GCDAudioDevice->Remap[n] = n;
+		GCDAudioDevice->GetInfo();
+		return;
+	}
+
+	if (!stricmp(command, "remap"))
+	{
+		int		n;
+		int		ret;
+
+		ret = Argc() - 2;
+		if (ret <= 0)
+		{
+			for (n = 1; n < 100; n++)
+				if (GCDAudioDevice->Remap[n] != n)
+					GCon->Logf("%d -> %d", n, GCDAudioDevice->Remap[n]);
+			return;
+		}
+		for (n = 1; n <= ret; n++)
+			GCDAudioDevice->Remap[n] = atoi(Argv(n + 1));
+		return;
+	}
+
+	if (!GCDAudioDevice->Enabled)
+	{
+		return;
+	}
+
+	if (!stricmp(command, "eject"))
+	{
+		if (GCDAudioDevice->Playing)
+			GCDAudioDevice->Stop();
+		GCDAudioDevice->OpenDoor();
+		GCDAudioDevice->CDValid = false;
+		return;
+	}
+
+	if (!stricmp(command, "close"))
+	{
+		GCDAudioDevice->CloseDoor();
+		return;
+	}
+
+	if (!GCDAudioDevice->CDValid)
+	{
+		GCDAudioDevice->GetInfo();
+		if (!GCDAudioDevice->CDValid)
+		{
+			GCon->Log("No CD in player.");
+			return;
+		}
+	}
+
+	if (!stricmp(command, "play"))
+	{
+		GCDAudioDevice->Play(atoi(Argv(2)), false);
+		return;
+	}
+
+	if (!stricmp(command, "loop"))
+	{
+		GCDAudioDevice->Play(atoi(Argv(2)), true);
+		return;
+	}
+
+	if (!stricmp(command, "pause"))
+	{
+		GCDAudioDevice->Pause();
+		return;
+	}
+
+	if (!stricmp(command, "resume"))
+	{
+		GCDAudioDevice->Resume();
+		return;
+	}
+
+	if (!stricmp(command, "stop"))
+	{
+		GCDAudioDevice->Stop();
+		return;
+	}
+
+	if (!stricmp(command, "info"))
+	{
+		GCon->Logf("%d tracks", GCDAudioDevice->MaxTrack);
+		if (GCDAudioDevice->Playing || GCDAudioDevice->WasPlaying)
+		{
+			GCon->Logf("%s %s track %d", GCDAudioDevice->Playing ? "Currently" : "Paused",
+				GCDAudioDevice->PlayLooping ? "looping" : "playing", GCDAudioDevice->PlayTrack);
+		}
+		return;
+	}
+	unguard;
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2005/09/13 17:32:45  dj_jl
+//	Created CD audio device class.
+//
 //	Revision 1.14  2005/09/12 19:45:16  dj_jl
 //	Created midi device class.
-//
+//	
 //	Revision 1.13  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
 //	

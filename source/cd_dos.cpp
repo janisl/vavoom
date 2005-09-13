@@ -32,139 +32,140 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VDosCDAudioDevice : public VCDAudioDevice
+{
+public:
+	int			CDVolume;
+
+	void Init();
+	void Update();
+	void Shutdown();
+	void GetInfo();
+	void Play(int, bool);
+	void Pause();
+	void Resume();
+	void Stop();
+	void OpenDoor();
+	void CloseDoor();
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static void CD_GetInfo(void);
-static void CD_Play(int track, boolean looping);
-static void CD_Pause(void);
-static void CD_Resume(void);
-static void CD_Stop(void);
-static void CD_OpenDoor(void);
-static void CD_CloseDoor(void);
+static int bcd_open();
+static void bcd_close();
 
-static int bcd_open(void);
-static void bcd_close(void);
+static void bcd_open_door();
+static void bcd_close_door();
 
-static void bcd_open_door(void);
-static void bcd_close_door(void);
+static int bcd_audio_busy();
 
-static int bcd_audio_busy(void);
-
-static int bcd_get_audio_info(void);
+static int bcd_get_audio_info();
 static int bcd_track_is_audio(int trackno);
 static void bcd_play_track(int tracknum);
 static void bcd_set_volume(int);
-static void bcd_stop(void);
+static void bcd_stop();
 #define bcd_pause bcd_stop
-static void bcd_resume(void);
+static void bcd_resume();
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+IMPLEMENT_CD_AUDIO_DEVICE(VDosCDAudioDevice, CDDRV_Default, "Default",
+	"DOS CD audio device", NULL);
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static boolean		cd_started = false;
-static boolean		enabled = false;
-static boolean		cdValid = false;
-static boolean		playing = false;
-static boolean		wasPlaying = false;
-static int			playTrack;
-static int			maxTrack;
-static boolean		playLooping = false;
-static int		 	remap[100];
-static int			cdvolume = 255;
 static TCvarI		cd_volume("cd_volume", "255", CVAR_ARCHIVE);
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//  CD_Init
+//	VDosCDAudioDevice::Init
 //
 //==========================================================================
 
-void CD_Init(void)
+void VDosCDAudioDevice::Init()
 {
-	guard(CD_Init);
- 	int		i;
-
-    if (M_CheckParm("-nosound") || M_CheckParm("-nocdaudio"))
-    {
-    	return;
+	guard(VDosCDAudioDevice::Init);
+	if (M_CheckParm("-nosound") || M_CheckParm("-nocdaudio"))
+	{
+		return;
 	}
 
-    if (!bcd_open())
-    {
-   		return;
+	if (!bcd_open())
+	{
+		return;
 	}
 
-	for (i = 0; i < 100; i++)
-		remap[i] = i;
-    cd_started = true;
-	enabled = true;
+	for (int i = 0; i < 100; i++)
+		Remap[i] = i;
+	CDVolume = 255;
+	Initialised = true;
+	Enabled = true;
 
-    CD_GetInfo();
-	if (!cdValid)
+	GetInfo();
+	if (!CDValid)
 	{
 		GCon->Log(NAME_Init, "CDAudio_Init: No CD in player.");
 	}
 
-	GCon->Log(NAME_Init, "CD Audio Initialized");
+	GCon->Log(NAME_Init, "CD Audio Initialised");
 	unguard;
 }
 
 //==========================================================================
 //
-//	CD_Update
+//	VDosCDAudioDevice::Update
 //
 //==========================================================================
 
-void CD_Update(void)
+void VDosCDAudioDevice::Update()
 {
-	guard(CD_Update);
+	guard(VDosCDAudioDevice::Update);
 	static double	lastUpdate = 0;
 	double			nowTime;
 
-	if (!cd_started || !enabled)
+	if (!Initialised || !Enabled)
 	{
-    	return;
+		return;
 	}
 
 	if (cd_volume < 0)
 	{
-       	cd_volume = 0;
+		cd_volume = 0;
 	}
 
-   	if (cd_volume > 255)
+	if (cd_volume > 255)
 	{
-       	cd_volume = 255;
+		cd_volume = 255;
 	}
 
-	if (cd_volume != cdvolume)
-    {
-		cdvolume = cd_volume;
-		bcd_set_volume(cdvolume);
+	if (cd_volume != CDVolume)
+	{
+		CDVolume = cd_volume;
+		bcd_set_volume(CDVolume);
 	}
 
 	nowTime = Sys_Time();
 	if (nowTime - lastUpdate < 0.5)
-    {
-    	return;
-    }
+	{
+		return;
+	}
 	lastUpdate = nowTime;
 
-	if (playing)
+	if (Playing)
 	{
 		if (!bcd_audio_busy())
 		{
-			playing = false;
-			if (playLooping)
-				CD_Play(playTrack, true);
+			Playing = false;
+			if (PlayLooping)
+				Play(PlayTrack, true);
 		}
 	}
 	unguard;
@@ -172,204 +173,64 @@ void CD_Update(void)
 
 //==========================================================================
 //
-//  CD_Shutdown
+//	VDosCDAudioDevice::Shutdown
 //
 //==========================================================================
 
-void CD_Shutdown(void)
+void VDosCDAudioDevice::Shutdown()
 {
-	guard(CD_Shutdown);
-	if (!cd_started)
+	guard(VDosCDAudioDevice::Shutdown);
+	if (!Initialised)
 		return;
 
-	CD_Stop();
- 	bcd_close();
-    cd_started = false;
+	Stop();
+	bcd_close();
+	Initialised = false;
 	unguard;
 }
 
 //==========================================================================
 //
-//	CD_f
+//	VDosCDAudioDevice::GetInfo
 //
 //==========================================================================
 
-COMMAND(CD)
+void VDosCDAudioDevice::GetInfo()
 {
-	guard(COMMAND CD);
-	char	*command;
+	guard(VDosCDAudioDevice::GetInfo);
+	CDValid = false;
 
-	if (!cd_started)
-		return;
+	MaxTrack = bcd_get_audio_info();
 
-	if (Argc() < 2)
-		return;
-
-	command = Argv(1);
-
-	if (!stricmp(command, "on"))
+	if (MaxTrack == 0)
 	{
-		enabled = true;
+		GCon->Log(NAME_Dev, "CDAudio: no music tracks");
 		return;
 	}
 
-	if (!stricmp(command, "off"))
-	{
-		if (playing)
-			CD_Stop();
-		enabled = false;
-		return;
-	}
-
-	if (!stricmp(command, "reset"))
-	{
-    	int		n;
-
-		enabled = true;
-		if (playing)
-			CD_Stop();
-		for (n = 0; n < 100; n++)
-			remap[n] = n;
-		CD_GetInfo();
-		return;
-	}
-
-	if (!stricmp(command, "remap"))
-	{
-    	int		n;
-        int		ret;
-
-		ret = Argc() - 2;
-		if (ret <= 0)
-		{
-			for (n = 1; n < 100; n++)
-				if (remap[n] != n)
-					GCon->Logf("%d -> %d", n, remap[n]);
-			return;
-		}
-		for (n = 1; n <= ret; n++)
-			remap[n] = atoi(Argv(n + 1));
-		return;
-	}
-
-	if (!enabled)
-    {
-    	return;
-    }
-
-	if (!stricmp(command, "eject"))
-	{
-		if (playing)
-			CD_Stop();
-    	CD_OpenDoor();
-		cdValid = false;
-		return;
-	}
-
-	if (!stricmp(command, "close"))
-	{
-		CD_CloseDoor();
-		return;
-	}
-
-	if (!cdValid)
-	{
-		CD_GetInfo();
-		if (!cdValid)
-		{
-			GCon->Log("No CD in player.");
-			return;
-		}
-	}
-
-	if (!stricmp(command, "play"))
-	{
-		CD_Play(atoi(Argv(2)), false);
-		return;
-	}
-
-	if (!stricmp(command, "loop"))
-	{
-		CD_Play(atoi(Argv(2)), true);
-		return;
-	}
-
-	if (!stricmp(command, "pause"))
-	{
-		CD_Pause();
-		return;
-	}
-
-	if (!stricmp(command, "resume"))
-	{
-		CD_Resume();
-		return;
-	}
-
-	if (!stricmp(command, "stop"))
-	{
-		CD_Stop();
-		return;
-	}
-
-	if (!stricmp(command, "info"))
-	{
-		GCon->Logf("&d tracks", maxTrack);
-		if (playing)
-        {
-			GCon->Logf("Currently %s track %d",
-				playLooping ? "looping" : "playing", playTrack);
-		}
-		else if (wasPlaying)
-        {
-			GCon->Logf("Paused %s track %d",
-				playLooping ? "looping" : "playing", playTrack);
-		}
-		GCon->Logf("Volume is %d", cdvolume);
-		return;
-	}
+	CDValid = true;
 	unguard;
 }
 
 //==========================================================================
 //
-//	CD_GetInfo
+//	VDosCDAudioDevice::Play
 //
 //==========================================================================
 
-static void CD_GetInfo(void)
+void VDosCDAudioDevice::Play(int track, bool looping)
 {
-	cdValid = false;
-
-	maxTrack = bcd_get_audio_info();
-
-	if (maxTrack == 0)
-    {
-    	GCon->Log(NAME_Dev, "CDAudio: no music tracks");
-		return;
-	}
-
-	cdValid = true;
-}
-
-//==========================================================================
-//
-//	CD_Play
-//
-//==========================================================================
-
-static void CD_Play(int track, boolean looping)
-{
-	if (!cdValid)
+	guard(VDosCDAudioDevice::Play);
+	if (!CDValid)
 	{
-		CD_GetInfo();
-		if (!cdValid)
+		GetInfo();
+		if (!CDValid)
 			return;
 	}
 
-	track = remap[track];
+	track = Remap[track];
 
-	if (track < 1 || track > maxTrack)
+	if (track < 1 || track > MaxTrack)
 	{
 		GCon->Logf(NAME_Dev, "CDAudio: Bad track number %d.", track);
 		return;
@@ -382,95 +243,106 @@ static void CD_Play(int track, boolean looping)
 		return;
 	}
 
-	if (playing)
+	if (Playing)
 	{
-		if (playTrack == track)
+		if (PlayTrack == track)
 			return;
-		CD_Stop();
+		Stop();
 	}
-    else
-    {
-    	if (bcd_audio_busy())
+	else
+	{
+		if (bcd_audio_busy())
 			bcd_stop();
-    }
+	}
 
-    bcd_play_track(track);
+	bcd_play_track(track);
 
-	playLooping = looping;
-	playTrack = track;
-	playing = true;
+	PlayLooping = looping;
+	PlayTrack = track;
+	Playing = true;
+	unguard;
 }
 
 //==========================================================================
 //
-//  CD_Pause
+//	VDosCDAudioDevice::Pause
 //
 //==========================================================================
 
-static void CD_Pause(void)
+void VDosCDAudioDevice::Pause()
 {
-	if (!playing)
-    	return;
+	guard(VDosCDAudioDevice::Pause);
+	if (!Playing)
+		return;
 
 	bcd_pause();
 
-	wasPlaying = playing;
-	playing = false;
+	WasPlaying = Playing;
+	Playing = false;
+	unguard;
 }
 
 //==========================================================================
 //
-//  CD_Resume
+//	VDosCDAudioDevice::Resume
 //
 //==========================================================================
 
-static void CD_Resume(void)
+void VDosCDAudioDevice::Resume()
 {
-	if (!wasPlaying)
+	guard(VDosCDAudioDevice::Resume);
+	if (!WasPlaying)
 		return;
-	
-    bcd_resume();
 
-	playing = true;
+	bcd_resume();
+
+	Playing = true;
+	unguard;
 }
 
 //==========================================================================
 //
-//  CD_Stop
+//	VDosCDAudioDevice::Stop
 //
 //==========================================================================
 
-static void CD_Stop(void)
+void VDosCDAudioDevice::Stop()
 {
-	if (!playing)
-    	return;
+	guard(VDosCDAudioDevice::Stop);
+	if (!Playing)
+		return;
 
-    bcd_stop();
+	bcd_stop();
 
-	wasPlaying = false;
-	playing = false;
+	WasPlaying = false;
+	Playing = false;
+	unguard;
 }
 
 //==========================================================================
 //
-//  CD_OpenDoor
+//	VDosCDAudioDevice::OpenDoor
 //
 //==========================================================================
 
-static void CD_OpenDoor(void)
+void VDosCDAudioDevice::OpenDoor()
 {
-    bcd_open_door();
+	guard(VDosCDAudioDevice::OpenDoor);
+	bcd_open_door();
+	unguard;
 }
 
 //==========================================================================
 //
-//  CD_CloseDoor
+//	VDosCDAudioDevice::CloseDoor
 //
 //==========================================================================
 
-static void CD_CloseDoor(void)
+void VDosCDAudioDevice::CloseDoor()
 {
-    bcd_close_door();
+	guard(VDosCDAudioDevice::CloseDoor);
+	bcd_close_door();
+	unguard;
 }
 
 //**************************************************************************
@@ -638,13 +510,13 @@ static const char *errorcodes[] =
 
 //==========================================================================
 //
-//  bcd_open
+//	bcd_open
 //
 //	handles the setup for CD-ROM audio interface
 //
 //==========================================================================
 
-static int bcd_open(void)
+static int bcd_open()
 {
 	__dpmi_regs	regs;
 
@@ -692,13 +564,13 @@ static int bcd_open(void)
 
 //==========================================================================
 //
-//  bcd_close
+//	bcd_close
 //
 //	Shuts down CD-ROM audio interface
 //
 //==========================================================================
 
-static void bcd_close(void)
+static void bcd_close()
 {
 	if (dos_mem_selector != -1)
 	{
@@ -709,7 +581,7 @@ static void bcd_close(void)
 
 //==========================================================================
 //
-//  bcd_ioctl
+//	bcd_ioctl
 //
 //	DOS IOCTL w/ command block
 //
@@ -748,13 +620,13 @@ static int bcd_ioctl(IOCTLI *ioctli, void *command, int len, char *act)
 	}
 	else
 	{
-        return 0;
+		return 0;
 	}
 }
 
 //==========================================================================
 //
-//  bcd_ioctl2
+//	bcd_ioctl2
 //
 //	no command block
 //
@@ -778,7 +650,7 @@ static void bcd_ioctl2(void *cmd, int len)
 
 //==========================================================================
 //
-//  red2hsg
+//	red2hsg
 //
 //==========================================================================
 
@@ -789,11 +661,11 @@ static int red2hsg(byte *r)
 
 //==========================================================================
 //
-//  bcd_open_door
+//	bcd_open_door
 //
 //==========================================================================
 
-static void bcd_open_door(void)
+static void bcd_open_door()
 {
 	IOCTLI	ioctli;
 	char	eject = 0;
@@ -807,11 +679,11 @@ static void bcd_open_door(void)
 
 //==========================================================================
 //
-//  bcd_close_door
+//	bcd_close_door
 //
 //==========================================================================
 
-static void bcd_close_door(void)
+static void bcd_close_door()
 {
 	IOCTLI	ioctli;
 	char	closeit = 5;
@@ -825,7 +697,7 @@ static void bcd_close_door(void)
 
 //==========================================================================
 //
-//  bcd_get_track_info
+//	bcd_get_track_info
 //
 //	Internal function to get track info
 //
@@ -856,7 +728,7 @@ static void bcd_get_track_info(int n, Track *t)
 //
 //==========================================================================
 
-static int bcd_get_audio_info(void)
+static int bcd_get_audio_info()
 {
 	IOCTLI		ioctli;
 	DiskInfo	disk_info;
@@ -870,8 +742,8 @@ static int bcd_get_audio_info(void)
 	ioctli.len = 7;
 	disk_info.control = 10;
 	if (bcd_ioctl(&ioctli, &disk_info, sizeof disk_info, "get audio info"))
-    {
-    	return 0;
+	{
+		return 0;
 	}
 
 	lowest_track = disk_info.lowest;
@@ -881,7 +753,7 @@ static int bcd_get_audio_info(void)
 	/* get track starts */
 	for (i = lowest_track; i <= highest_track; i++)
 		bcd_get_track_info(i, tracks+i);
- 
+
 	/* figure out track ends */
 	for (i = lowest_track; i < highest_track; i++)
 		tracks[i].end = tracks[i + 1].start - 1;
@@ -894,7 +766,7 @@ static int bcd_get_audio_info(void)
 
 //==========================================================================
 //
-//  bcd_track_is_audio
+//	bcd_track_is_audio
 //
 //==========================================================================
 
@@ -905,7 +777,7 @@ static int bcd_track_is_audio(int trackno)
 
 //==========================================================================
 //
-//  bcd_play_track
+//	bcd_play_track
 //
 //==========================================================================
 
@@ -924,11 +796,11 @@ static void bcd_play_track(int trackno)
 
 //==========================================================================
 //
-//  bcd_stop
+//	bcd_stop
 //
 //==========================================================================
 
-static void bcd_stop(void)
+static void bcd_stop()
 {
 	StopRequest	cmd;
 
@@ -940,11 +812,11 @@ static void bcd_stop(void)
 
 //==========================================================================
 //
-//  bcd_resume
+//	bcd_resume
 //
 //==========================================================================
 
-static void bcd_resume(void)
+static void bcd_resume()
 {
 	ResumeRequest	cmd;
 
@@ -956,7 +828,7 @@ static void bcd_resume(void)
 
 //==========================================================================
 //
-//  bcd_set_volume
+//	bcd_set_volume
 //
 //==========================================================================
 
@@ -986,18 +858,18 @@ static void bcd_set_volume(int volume)
 
 //==========================================================================
 //
-//  bcd_audio_busy
+//	bcd_audio_busy
 //
 //==========================================================================
 
-static int bcd_audio_busy(void)
+static int bcd_audio_busy()
 {
 	IOCTLI			ioctli;
 	DiskInfo		disk_info;
 	StatusRequest	req;
 
 	/* If the door is open, then the head is busy, and so the busy bit is
-     on. It is not, however, playing audio. */
+		on. It is not, however, playing audio. */
 	memset(&ioctli, 0, sizeof ioctli);
 	memset(&req, 0, sizeof req);
 	ioctli.request_header.len = sizeof ioctli; // ok
@@ -1006,7 +878,7 @@ static int bcd_audio_busy(void)
 	req.control = 6;
 	bcd_ioctl(&ioctli, &req, sizeof req, "status");
 	if (req.status & BCD_DOOR_OPEN)
-    {
+	{
 		return 0;
 	}
 
@@ -1019,11 +891,11 @@ static int bcd_audio_busy(void)
 	ioctli.len = 7;
 	disk_info.control = 10;
 	if (bcd_ioctl(&ioctli, &disk_info, sizeof disk_info, "get status word"))
-    {
-    	return 0;
+	{
+		return 0;
 	}
 	if (!(_status & BUSY_BIT))
-    {
+	{
 		return 0;
 	}
 
@@ -1033,9 +905,12 @@ static int bcd_audio_busy(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2005/09/13 17:32:45  dj_jl
+//	Created CD audio device class.
+//
 //	Revision 1.6  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.5  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
 //	

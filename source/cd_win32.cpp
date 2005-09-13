@@ -35,49 +35,52 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VWin32CDAudioDevice : public VCDAudioDevice, public VWinMessageHandler
+{
+public:
+	DWORD		CDDevice;
+
+	void Init();
+	void Update();
+	void Shutdown();
+	void GetInfo();
+	void Play(int, bool);
+	void Pause();
+	void Resume();
+	void Stop();
+	void OpenDoor();
+	void CloseDoor();
+
+	LONG OnMessage(HWND, UINT, WPARAM, LPARAM);
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static void CD_GetInfo(void);
-static void CD_Play(int track, boolean looping);
-static void CD_Pause(void);
-static void CD_Resume(void);
-static void CD_Stop(void);
-static void CD_OpenDoor(void);
-static void CD_CloseDoor(void);
-
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-// PRIVATE DATA DEFINITIONS ------------------------------------------------
+IMPLEMENT_CD_AUDIO_DEVICE(VWin32CDAudioDevice, CDDRV_Default, "Default",
+	"Windows CD audio device", NULL);
 
-static boolean		cd_started = false;
-static boolean		enabled = false;
-static boolean		cdValid = false;
-static DWORD		CDDevice;
-static boolean		playing = false;
-static boolean		wasPlaying = false;
-static int			playTrack;
-static int			maxTrack;
-static boolean		playLooping = false;
-static int		 	remap[100];
+// PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//  CD_Init
+//	VWin32CDAudioDevice::Init
 //
 //==========================================================================
 
-void CD_Init(void)
+void VWin32CDAudioDevice::Init()
 {
-	guard(CD_Init);
-    MCI_OPEN_PARMS		open;
+	guard(VWin32CDAudioDevice::Init);
+	MCI_OPEN_PARMS		open;
 	MCI_SET_PARMS		set;
 	DWORD				result;
 	int					i;
@@ -87,75 +90,76 @@ void CD_Init(void)
 		return;
 	}
 
-    open.dwCallback       = (DWORD)hwnd;
-    open.lpstrDeviceType  = "cdaudio";
+	open.dwCallback       = (DWORD)hwnd;
+	open.lpstrDeviceType  = "cdaudio";
 	result = mciSendCommand(0, MCI_OPEN, MCI_OPEN_TYPE | MCI_OPEN_SHAREABLE, (DWORD)&open);
 	if (result)
 	{
 		GCon->Log(NAME_Init, "CDAudio_Init: MCI_OPEN failed");
 		return;
 	}
-    CDDevice = open.wDeviceID;
+	CDDevice = open.wDeviceID;
 
-    // Set the time format to track/minute/second/frame (TMSF).
+	// Set the time format to track/minute/second/frame (TMSF).
 	set.dwTimeFormat = MCI_FORMAT_TMSF;
 	result = mciSendCommand(CDDevice, MCI_SET, MCI_SET_TIME_FORMAT, (DWORD)&set);
-    if (result)
-    {
+	if (result)
+	{
 		GCon->Log(NAME_Init, "MCI_SET_TIME_FORMAT failed");
-        mciSendCommand(CDDevice, MCI_CLOSE, 0, (DWORD)NULL);
+		mciSendCommand(CDDevice, MCI_CLOSE, 0, (DWORD)NULL);
 		return;
-    }
+	}
 
+	GCDMsgHandler = this;
 	for (i = 0; i < 100; i++)
-		remap[i] = i;
-    cd_started = true;
-    enabled = true;
+		Remap[i] = i;
+	Initialised = true;
+	Enabled = true;
 
-    CD_GetInfo();
-	if (!cdValid)
+	GetInfo();
+	if (!CDValid)
 	{
 		GCon->Log(NAME_Init, "CDAudio_Init: No CD in player.");
 	}
 
-	GCon->Log(NAME_Init, "CD Audio Initialized");
+	GCon->Log(NAME_Init, "CD Audio Initialised");
 	unguard;
 }
 
 //==========================================================================
 //
-//  CD_MessageHandler
+//  VWin32CDAudioDevice::OnMessage
 //
 //==========================================================================
 
-LONG CD_MessageHandler(HWND, UINT, WPARAM wParam, LPARAM lParam)
+LONG VWin32CDAudioDevice::OnMessage(HWND, UINT, WPARAM wParam, LPARAM lParam)
 {
-	guard(CD_MessageHandler);
-	if (lParam != (LPARAM)CDDevice)
+	guard(VWin32CDAudioDevice::OnMessage);
+	if ((DWORD)lParam != CDDevice)
 		return 1;
 
 	switch (wParam)
 	{
-	 case MCI_NOTIFY_SUCCESSFUL:
-		if (playing)
+	case MCI_NOTIFY_SUCCESSFUL:
+		if (Playing)
 		{
-			playing = false;
-			if (playLooping)
-				CD_Play(playTrack, true);
+			Playing = false;
+			if (PlayLooping)
+				Play(PlayTrack, true);
 		}
 		break;
 
-	 case MCI_NOTIFY_ABORTED:
-	 case MCI_NOTIFY_SUPERSEDED:
+	case MCI_NOTIFY_ABORTED:
+	case MCI_NOTIFY_SUPERSEDED:
 		break;
 
-	 case MCI_NOTIFY_FAILURE:
+	case MCI_NOTIFY_FAILURE:
 		GCon->Log(NAME_Dev, "MCI_NOTIFY_FAILURE");
-		CD_Stop();
-		cdValid = false;
+		Stop();
+		CDValid = false;
 		break;
 
-	 default:
+	default:
 		GCon->Logf(NAME_Dev, "Unexpected MM_MCINOTIFY type (%d)", wParam);
 		return 1;
 	}
@@ -166,188 +170,53 @@ LONG CD_MessageHandler(HWND, UINT, WPARAM wParam, LPARAM lParam)
 
 //==========================================================================
 //
-//	CD_Update
+//	VWin32CDAudioDevice::Update
 //
 //==========================================================================
 
-void CD_Update(void)
+void VWin32CDAudioDevice::Update()
 {
 }
 
 //==========================================================================
 //
-//  CD_Shutdown
+//	VWin32CDAudioDevice::Shutdown
 //
 //==========================================================================
 
-void CD_Shutdown(void)
+void VWin32CDAudioDevice::Shutdown()
 {
-	guard(CD_Shutdown);
-	if (!cd_started)
+	guard(VWin32CDAudioDevice::Shutdown);
+	if (!Initialised)
 	{
-    	return;
+		return;
 	}
 
-	CD_Stop();
+	Stop();
 	if (mciSendCommand(CDDevice, MCI_CLOSE, MCI_WAIT, (DWORD)NULL))
 		GCon->Log(NAME_Dev, "CD_Shutdown: MCI_CLOSE failed");
-	cd_started = false;
+	GCDMsgHandler = NULL;
+	Initialised = false;
 	unguard;
 }
 
 //==========================================================================
 //
-//	CD_f
+//	VWin32CDAudioDevice::GetInfo
 //
 //==========================================================================
 
-COMMAND(CD)
+void VWin32CDAudioDevice::GetInfo()
 {
-	guard(COMMAND CD);
-	char	*command;
-
-	if (!cd_started)
-		return;
-
-	if (Argc() < 2)
-		return;
-
-	command = Argv(1);
-
-	if (!stricmp(command, "on"))
-	{
-		enabled = true;
-		return;
-	}
-
-	if (!stricmp(command, "off"))
-	{
-		if (playing)
-			CD_Stop();
-		enabled = false;
-		return;
-	}
-
-	if (!stricmp(command, "reset"))
-	{
-		int		n;
-
-		enabled = true;
-		if (playing)
-			CD_Stop();
-		for (n = 0; n < 100; n++)
-			remap[n] = n;
-		CD_GetInfo();
-		return;
-	}
-
-	if (!stricmp(command, "remap"))
-	{
-    	int		n;
-        int		ret;
-
-		ret = Argc() - 2;
-		if (ret <= 0)
-		{
-			for (n = 1; n < 100; n++)
-				if (remap[n] != n)
-					GCon->Logf("%d -> %d", n, remap[n]);
-			return;
-		}
-		for (n = 1; n <= ret; n++)
-			remap[n] = atoi(Argv(n + 1));
-		return;
-	}
-
-	if (!enabled)
-    {
-    	return;
-    }
-
-	if (!stricmp(command, "eject"))
-	{
-		if (playing)
-			CD_Stop();
-    	CD_OpenDoor();
-		cdValid = false;
-		return;
-	}
-
-	if (!stricmp(command, "close"))
-	{
-		CD_CloseDoor();
-		return;
-	}
-
-	if (!cdValid)
-	{
-		CD_GetInfo();
-		if (!cdValid)
-		{
-			GCon->Log("No CD in player.");
-			return;
-		}
-	}
-
-	if (!stricmp(command, "play"))
-	{
-		CD_Play(atoi(Argv(2)), false);
-		return;
-	}
-
-	if (!stricmp(command, "loop"))
-	{
-		CD_Play(atoi(Argv(2)), true);
-		return;
-	}
-
-	if (!stricmp(command, "pause"))
-	{
-		CD_Pause();
-		return;
-	}
-
-	if (!stricmp(command, "resume"))
-	{
-		CD_Resume();
-		return;
-	}
-
-	if (!stricmp(command, "stop"))
-	{
-		CD_Stop();
-		return;
-	}
-
-	if (!stricmp(command, "info"))
-	{
-		GCon->Logf("%d tracks", maxTrack);
-		if (playing || wasPlaying)
-        {
-			GCon->Logf("%s %s track %d", playing ? "Currently" : "Paused",
-				playLooping ? "looping" : "playing", playTrack);
-        }
-		return;
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	CD_GetInfo
-//
-//==========================================================================
-
-static void CD_GetInfo(void)
-{
+	guard(VWin32CDAudioDevice::GetInfo);
 	DWORD				result;
 	MCI_STATUS_PARMS	parms;
 
-	cdValid = false;
+	CDValid = false;
 
-    parms.dwCallback = (DWORD)hwnd;
+	parms.dwCallback = (DWORD)hwnd;
 	parms.dwItem = MCI_STATUS_READY;
-    result = mciSendCommand(CDDevice, MCI_STATUS, MCI_STATUS_ITEM | MCI_WAIT, (DWORD)&parms);
+	result = mciSendCommand(CDDevice, MCI_STATUS, MCI_STATUS_ITEM | MCI_WAIT, (DWORD)&parms);
 	if (result)
 	{
 		GCon->Log(NAME_Dev, "CDAudio: drive ready test - get status failed");
@@ -360,7 +229,7 @@ static void CD_GetInfo(void)
 	}
 
 	parms.dwItem = MCI_STATUS_NUMBER_OF_TRACKS;
-    result = mciSendCommand(CDDevice, MCI_STATUS, MCI_STATUS_ITEM | MCI_WAIT, (DWORD)&parms);
+	result = mciSendCommand(CDDevice, MCI_STATUS, MCI_STATUS_ITEM | MCI_WAIT, (DWORD)&parms);
 	if (result)
 	{
 		GCon->Log(NAME_Dev, "CDAudio: get tracks - status failed");
@@ -372,32 +241,34 @@ static void CD_GetInfo(void)
 		return;
 	}
 
-	cdValid = true;
-	maxTrack = parms.dwReturn;
+	CDValid = true;
+	MaxTrack = parms.dwReturn;
+	unguard;
 }
 
 //==========================================================================
 //
-//	CD_Play
+//	VWin32CDAudioDevice::Play
 //
 //==========================================================================
 
-static void CD_Play(int track, boolean looping)
+void VWin32CDAudioDevice::Play(int track, bool looping)
 {
+	guard(VWin32CDAudioDevice::Play);
 	MCI_STATUS_PARMS	status;
-    MCI_PLAY_PARMS		play;
+	MCI_PLAY_PARMS		play;
 	DWORD				result;
 
-	if (!cdValid)
+	if (!CDValid)
 	{
-		CD_GetInfo();
-		if (!cdValid)
+		GetInfo();
+		if (!CDValid)
 			return;
 	}
 
-	track = remap[track];
+	track = Remap[track];
 
-	if (track < 1 || track > maxTrack)
+	if (track < 1 || track > MaxTrack)
 	{
 		GCon->Logf(NAME_Dev, "CDAudio: Bad track number %d.", track);
 		return;
@@ -406,8 +277,8 @@ static void CD_Play(int track, boolean looping)
 	// don't try to play a non-audio track
 	status.dwItem = MCI_CDA_STATUS_TYPE_TRACK;
 	status.dwTrack = track;
-    result = mciSendCommand(CDDevice, MCI_STATUS, MCI_STATUS_ITEM |
-    	MCI_TRACK | MCI_WAIT, (DWORD)&status);
+	result = mciSendCommand(CDDevice, MCI_STATUS, MCI_STATUS_ITEM |
+		MCI_TRACK | MCI_WAIT, (DWORD)&status);
 	if (result)
 	{
 		GCon->Log(NAME_Dev, "MCI_STATUS failed");
@@ -422,22 +293,22 @@ static void CD_Play(int track, boolean looping)
 	// get the length of the track to be played
 	status.dwItem = MCI_STATUS_LENGTH;
 	status.dwTrack = track;
-    result = mciSendCommand(CDDevice, MCI_STATUS, MCI_STATUS_ITEM | MCI_TRACK | MCI_WAIT, (DWORD)&status);
+	result = mciSendCommand(CDDevice, MCI_STATUS, MCI_STATUS_ITEM | MCI_TRACK | MCI_WAIT, (DWORD)&status);
 	if (result)
 	{
 		GCon->Log(NAME_Dev, "MCI_STATUS failed");
 		return;
 	}
 
-	if (playing)
+	if (Playing)
 	{
-		if (playTrack == track)
+		if (PlayTrack == track)
 			return;
-		CD_Stop();
+		Stop();
 	}
 
-    play.dwCallback = (DWORD)hwnd;
-    play.dwFrom = MCI_MAKE_TMSF(track, 0, 0, 0);
+	play.dwCallback = (DWORD)hwnd;
+	play.dwFrom = MCI_MAKE_TMSF(track, 0, 0, 0);
 	play.dwTo = (status.dwReturn << 8) | track;
 
 	result = mciSendCommand(CDDevice, MCI_PLAY, MCI_NOTIFY | MCI_FROM | MCI_TO, (DWORD)&play);
@@ -448,50 +319,54 @@ static void CD_Play(int track, boolean looping)
 		return;
 	}
 
-	playLooping = looping;
-	playTrack = track;
-	playing = true;
+	PlayLooping = looping;
+	PlayTrack = track;
+	Playing = true;
+	unguard;
 }
 
 //==========================================================================
 //
-//  CD_Pause
+//	VWin32CDAudioDevice::Pause
 //
 //==========================================================================
 
-static void CD_Pause(void)
+void VWin32CDAudioDevice::Pause()
 {
+	guard(VWin32CDAudioDevice::Pause);
 	MCI_GENERIC_PARMS	parms;
 	DWORD				result;
 
-	if (!playing)
+	if (!Playing)
 		return;
 
 	parms.dwCallback = (DWORD)hwnd;
 
-    result = mciSendCommand(CDDevice, MCI_PAUSE, 0, (DWORD)&parms);
+	result = mciSendCommand(CDDevice, MCI_PAUSE, 0, (DWORD)&parms);
 
-    if (result)
+	if (result)
 		GCon->Log(NAME_Dev, "MCI_PAUSE failed");
 
-	wasPlaying = playing;
-	playing = false;
+	WasPlaying = Playing;
+	Playing = false;
+	unguard;
 }
 
 //==========================================================================
 //
-//  CD_Resume
+//	VWin32CDAudioDevice::Resume
 //
 //==========================================================================
 
-static void CD_Resume(void)
+void VWin32CDAudioDevice::Resume()
 {
+	guard(VWin32CDAudioDevice::Resume);
 	MCI_GENERIC_PARMS	parms;
 	DWORD				result;
 
-	if (!wasPlaying)
+	if (!WasPlaying)
 		return;
-	
+
 	parms.dwCallback = (DWORD)hwnd;
 	result = mciSendCommand(CDDevice, MCI_RESUME, 0, (DWORD)&parms);
 
@@ -501,58 +376,64 @@ static void CD_Resume(void)
 		return;
 	}
 
-	playing = true;
+	Playing = true;
+	unguard;
 }
 
 //==========================================================================
 //
-//  CD_Stop
+//	VWin32CDAudioDevice::Stop
 //
 //==========================================================================
 
-static void CD_Stop(void)
+void VWin32CDAudioDevice::Stop()
 {
+	guard(VWin32CDAudioDevice::Stop);
 	DWORD				result;
 
-	if (!playing)
+	if (!Playing)
 		return;
 
 	result = mciSendCommand(CDDevice, MCI_STOP, 0, (DWORD)NULL);
 
-    if (result)
+	if (result)
 		GCon->Log(NAME_Dev, "MCI_STOP failed");
 
-	wasPlaying = false;
-	playing = false;
+	WasPlaying = false;
+	Playing = false;
+	unguard;
 }
 
 //==========================================================================
 //
-//  CD_OpenDoor
+//	VWin32CDAudioDevice::OpenDoor
 //
 //==========================================================================
 
-static void CD_OpenDoor(void)
+void VWin32CDAudioDevice::OpenDoor()
 {
+	guard(VWin32CDAudioDevice::OpenDoor);
 	MCI_SET_PARMS		parms;
 	DWORD				result;
 
 	parms.dwCallback = (DWORD)hwnd;
 
-    result = mciSendCommand(CDDevice, MCI_SET, MCI_SET_DOOR_OPEN, (DWORD)&parms);
+	result = mciSendCommand(CDDevice, MCI_SET, MCI_SET_DOOR_OPEN, (DWORD)&parms);
 
-    if (result)
+	if (result)
 		GCon->Log(NAME_Dev, "MCI_SET_DOOR_OPEN failed");
+	unguard;
 }
 
 //==========================================================================
 //
-//  CD_CloseDoor
+//	VWin32CDAudioDevice::CloseDoor
 //
 //==========================================================================
 
-static void CD_CloseDoor(void)
+void VWin32CDAudioDevice::CloseDoor()
 {
+	guard(VWin32CDAudioDevice::CloseDoor);
 	MCI_SET_PARMS		parms;
 	DWORD				result;
 
@@ -560,16 +441,20 @@ static void CD_CloseDoor(void)
 
 	result = mciSendCommand(CDDevice, MCI_SET, MCI_SET_DOOR_CLOSED, (DWORD)&parms);
 
-    if (result)
+	if (result)
 		GCon->Log(NAME_Dev, "MCI_SET_DOOR_CLOSED failed");
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2005/09/13 17:32:45  dj_jl
+//	Created CD audio device class.
+//
 //	Revision 1.6  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.5  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
 //	
