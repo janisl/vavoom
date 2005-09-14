@@ -51,24 +51,32 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VWinMessageHandler
+{
+	virtual LONG OnMessage(HWND, UINT, WPARAM, LPARAM) = 0;
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-LONG CD_MessageHandler(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void IN_SetActiveWindow(HWND window);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern HWND					hwnd;
 extern HINSTANCE			hInst;
+extern VWinMessageHandler*	GCDMsgHandler;
 
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2005/09/14 11:58:48  dj_jl
+//	Created CD audio device class.
+//
 //	Revision 1.6  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.5  2001/10/04 17:26:10  dj_jl
 //	Moved SAFE_RELEASE here
 //	
