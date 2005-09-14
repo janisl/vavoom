@@ -77,6 +77,7 @@ void Sys_PopFPCW(void);
 
 HWND				hwnd;	//	Needed for all DirectX interfaces
 HINSTANCE			hInst;	//	Needed for DirectInput
+VWinMessageHandler*	GCDMsgHandler;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -625,7 +626,9 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg,
 		return 0;
 
 	 case MM_MCINOTIFY:
-		return CD_MessageHandler(hwnd, iMsg, wParam, lParam);
+		if (GCDMsgHandler)
+			return GCDMsgHandler->OnMessage(hwnd, iMsg, wParam, lParam);
+		break;
 
 	 case WM_SYSCOMMAND:
 		// Check for maximize being hit
@@ -873,9 +876,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2005/09/14 12:04:21  dj_jl
+//	Created CD audio device class.
+//
 //	Revision 1.21  2005/05/26 16:59:45  dj_jl
 //	Lowercased include
-//
+//	
 //	Revision 1.20  2002/11/02 17:09:55  dj_jl
 //	Some debugging stuff.
 //	
