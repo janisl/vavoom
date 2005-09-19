@@ -117,6 +117,23 @@ public:
 	{}
 	virtual bool IsSoundPlaying(int, int)
 	{ return false; }
+
+	virtual bool OpenStream()
+	{ return false; }
+	virtual void CloseStream()
+	{}
+	virtual int GetStreamAvailable()
+	{ return 0; }
+	virtual short* GetStreamBuffer()
+	{ return NULL; }
+	virtual void SetStreamData(short*, int)
+	{}
+	virtual void SetStreamVolume(float)
+	{}
+	virtual void PauseStream()
+	{}
+	virtual void ResumeSteam()
+	{}
 };
 
 //	Describtion of a sound driver.
@@ -353,9 +370,12 @@ int qmus2mid(const char *mus, char *mid, int length);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2005/09/19 23:00:19  dj_jl
+//	Streaming support.
+//
 //	Revision 1.14  2005/09/13 17:32:45  dj_jl
 //	Created CD audio device class.
-//
+//	
 //	Revision 1.13  2005/09/12 19:45:16  dj_jl
 //	Created midi device class.
 //	

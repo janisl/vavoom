@@ -76,6 +76,15 @@ public:
 	void StopSound(int origin_id, int channel);
 	void StopAllSound(void);
 	bool IsSoundPlaying(int origin_id, int sound_id);
+
+	bool OpenStream();
+	void CloseStream();
+	int GetStreamAvailable();
+	short* GetStreamBuffer();
+	void SetStreamData(short* Data, int Len);
+	void SetStreamVolume(float);
+	void PauseStream();
+	void ResumeSteam();
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -1194,12 +1203,219 @@ bool VDirectSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 	unguard;
 }
 
+//==========================================================================
+//
+//	VDirectSoundDevice::OpenStream
+//
+//==========================================================================
+
+#define STRM_LEN		(8 * 1024)
+
+LPDIRECTSOUNDBUFFER		StrmBuffer;
+int						StrmNextUpdatePart;
+void*					StrmLockBuffer1;
+void*					StrmLockBuffer2;
+DWORD					StrmLockSize1;
+DWORD					StrmLockSize2;
+
+bool VDirectSoundDevice::OpenStream()
+{
+	guard(VDirectSoundDevice::OpenStream);
+	HRESULT					result;
+	DSBUFFERDESC			dsbdesc;
+	WAVEFORMATEX			pcmwf;
+	int						i;
+
+	// Set up wave format structure.
+	memset(&pcmwf, 0, sizeof(WAVEFORMATEX));
+	pcmwf.wFormatTag      = WAVE_FORMAT_PCM;      
+	pcmwf.nChannels       = 2;
+	pcmwf.nSamplesPerSec  = 44100;
+	pcmwf.wBitsPerSample  = WORD(16);
+	pcmwf.nBlockAlign     = WORD(pcmwf.wBitsPerSample / 8 * pcmwf.nChannels);
+	pcmwf.nAvgBytesPerSec = pcmwf.nSamplesPerSec * pcmwf.nBlockAlign;
+
+	// Set up DSBUFFERDESC structure.
+	memset(&dsbdesc, 0, sizeof(DSBUFFERDESC));  // Zero it out.
+	dsbdesc.dwSize        = sizeof(DSBUFFERDESC);
+	dsbdesc.dwFlags       = 
+		DSBCAPS_GETCURRENTPOSITION2 |
+		DSBCAPS_CTRLVOLUME |
+		DSBCAPS_STATIC;
+	dsbdesc.dwBufferBytes = STRM_LEN * 4;
+	dsbdesc.lpwfxFormat   = &pcmwf;
+//	if (sound3D)
+//	{
+//		dsbdesc.dwFlags |= DSBCAPS_CTRL3D;
+//	}
+
+	result = DSound->CreateSoundBuffer(&dsbdesc, &StrmBuffer, NULL);
+	if (result != DS_OK)
+	{
+		int		best = -1;
+		double	least_time = 999999999.0;
+
+		for (i = 0; i < MAX_VOICES; i++)
+		{
+			if (free_buffers[i].sound_id && 
+				free_buffers[i].free_time < least_time)
+			{
+				best = i;
+				least_time = free_buffers[i].free_time;
+			}
+		}
+		if (best != -1)
+		{
+			free_buffers[best].buf->Release();
+			free_buffers[best].sound_id = 0;
+			result = DSound->CreateSoundBuffer(&dsbdesc, &StrmBuffer, NULL);
+		}
+	}
+	if (result != DS_OK)
+	{
+		GCon->Log(NAME_Dev, "Failed to create sound buffer");
+		GCon->Log(NAME_Dev, DS_Error(result));
+		return false;
+	}
+	return true;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VDirectSoundDevice::CloseStream
+//
+//==========================================================================
+
+void VDirectSoundDevice::CloseStream()
+{
+	guard(VDirectSoundDevice::CloseStream);
+	if (StrmBuffer)
+	{
+		StrmBuffer->Stop();
+		StrmBuffer->Release();
+		StrmBuffer = NULL;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VDirectSoundDevice::GetStreamAvailable
+//
+//==========================================================================
+
+int VDirectSoundDevice::GetStreamAvailable()
+{
+	guard(VDirectSoundDevice::GetStreamAvailable);
+	DWORD	Status;
+	DWORD	PlayPos;
+	DWORD	WritePos;
+
+	StrmBuffer->GetStatus(&Status);
+	if (!(Status & DSBSTATUS_PLAYING))
+	{
+		//	Not playing, lock entire buffer.
+		StrmBuffer->Lock(0, STRM_LEN * 4, &StrmLockBuffer1, &StrmLockSize1,
+			&StrmLockBuffer2, &StrmLockSize2, DSBLOCK_ENTIREBUFFER);
+		return StrmLockSize1 / 4;
+	}
+	StrmBuffer->GetCurrentPosition(&PlayPos, &WritePos);
+	int PlayPart = PlayPos / (STRM_LEN);
+	if (PlayPart != StrmNextUpdatePart)
+	{
+		StrmBuffer->Lock(StrmNextUpdatePart * STRM_LEN, STRM_LEN,
+			&StrmLockBuffer1, &StrmLockSize1, &StrmLockBuffer2,
+			&StrmLockSize2, 0);
+		return StrmLockSize1 / 4;
+	}
+	return 0;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VDirectSoundDevice::SetStreamData
+//
+//==========================================================================
+
+short* VDirectSoundDevice::GetStreamBuffer()
+{
+	guard(VDirectSoundDevice::GetStreamBuffer);
+	return (short*)StrmLockBuffer1;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VDirectSoundDevice::SetStreamData
+//
+//==========================================================================
+
+void VDirectSoundDevice::SetStreamData(short*, int)
+{
+	guard(VDirectSoundDevice::SetStreamData);
+	DWORD	Status;
+
+	StrmBuffer->Unlock(StrmLockBuffer1, StrmLockSize1, StrmLockBuffer2, StrmLockSize2);
+	StrmBuffer->GetStatus(&Status);
+	if (!(Status & DSBSTATUS_PLAYING))
+	{
+		StrmBuffer->SetCurrentPosition(0);
+		StrmBuffer->Play(0, 0, DSBPLAY_LOOPING);
+	}
+	StrmNextUpdatePart = (StrmNextUpdatePart + 1) & 3;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VDirectSoundDevice::SetStreamVolume
+//
+//==========================================================================
+
+void VDirectSoundDevice::SetStreamVolume(float Volume)
+{
+	guard(VDirectSoundDevice::SetStreamVolume);
+	StrmBuffer->SetVolume(int(4000 * (Volume - 1.0)));
+	unguard;
+}
+
+//==========================================================================
+//
+//	VDirectSoundDevice::PauseStream
+//
+//==========================================================================
+
+void VDirectSoundDevice::PauseStream()
+{
+	guard(VDirectSoundDevice::PauseStream);
+	StrmBuffer->Stop();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VDirectSoundDevice::ResumeSteam
+//
+//==========================================================================
+
+void VDirectSoundDevice::ResumeSteam()
+{
+	guard(VDirectSoundDevice::ResumeSteam);
+	StrmBuffer->Play(0, 0, DSBPLAY_LOOPING);
+	unguard;
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2005/09/19 23:00:19  dj_jl
+//	Streaming support.
+//
 //	Revision 1.26  2005/09/12 19:45:16  dj_jl
 //	Created midi device class.
-//
+//	
 //	Revision 1.25  2004/11/30 07:17:17  dj_jl
 //	Made string pointers const.
 //	

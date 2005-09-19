@@ -61,6 +61,9 @@ private:
 	enum { PRIORITY_MAX_ADJUST = 10 };
 	enum { DIST_ADJUST = MAX_SND_DIST / PRIORITY_MAX_ADJUST };
 
+	enum { NUM_STRM_BUFFERS = 8 };
+	enum { STRM_BUFFER_SIZE = 1024 };
+
 	ALCdevice*	Device;
 	ALCcontext*	Context;
 	ALuint*		Buffers;
@@ -80,6 +83,12 @@ private:
 	TVec		listener_forward;
 	TVec		listener_right;
 	TVec		listener_up;
+
+	ALuint		StrmBuffers[NUM_STRM_BUFFERS];
+	ALuint		StrmAvailableBuffers[NUM_STRM_BUFFERS];
+	int			StrmNumAvailableBuffers;
+	ALuint		StrmSource;
+	short		StrmDataBuffer[STRM_BUFFER_SIZE * 2];
 
 	static TCvarF		doppler_factor;
 	static TCvarF		doppler_velocity;
@@ -102,6 +111,15 @@ public:
 	void StopSound(int origin_id, int channel);
 	void StopAllSound(void);
 	bool IsSoundPlaying(int origin_id, int sound_id);
+
+	bool OpenStream();
+	void CloseStream();
+	int GetStreamAvailable();
+	short* GetStreamBuffer();
+	void SetStreamData(short* Data, int Len);
+	void SetStreamVolume(float);
+	void PauseStream();
+	void ResumeSteam();
 
 private:
 	int GetChannel(int sound_id, int origin_id, int channel, int priority);
@@ -831,12 +849,165 @@ bool VOpenALDevice::IsSoundPlaying(int origin_id, int sound_id)
 	unguard;
 }
 
+//==========================================================================
+//
+//	VOpenALDevice::OpenStream
+//
+//==========================================================================
+
+bool VOpenALDevice::OpenStream()
+{
+	guard(VOpenALDevice::OpenStream);
+	alGetError();	//	Clear error code.
+	alGenSources(1, &StrmSource);
+	if (alGetError() != AL_NO_ERROR)
+	{
+		GCon->Log(NAME_Dev, "Failed to gen source");
+		return false;
+	}
+	alSourcei(StrmSource, AL_SOURCE_RELATIVE, AL_TRUE);
+	alGenBuffers(NUM_STRM_BUFFERS, StrmBuffers);
+	alSourceQueueBuffers(StrmSource, NUM_STRM_BUFFERS, StrmBuffers);
+	alSourcePlay(StrmSource);
+	StrmNumAvailableBuffers = 0;
+	return true;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenALDevice::CloseStream
+//
+//==========================================================================
+
+void VOpenALDevice::CloseStream()
+{
+	guard(VOpenALDevice::CloseStream);
+	if (StrmSource)
+	{
+		alDeleteBuffers(NUM_STRM_BUFFERS, StrmBuffers);
+		alDeleteSources(1, &StrmSource);
+		StrmSource = 0;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenALDevice::GetStreamAvailable
+//
+//==========================================================================
+
+int VOpenALDevice::GetStreamAvailable()
+{
+	guard(VOpenALDevice::GetStreamAvailable);
+	if (!StrmSource)
+		return 0;
+
+	ALint NumProc;
+	alGetSourcei(StrmSource, AL_BUFFERS_PROCESSED, &NumProc);
+	if (NumProc > 0)
+	{
+		alSourceUnqueueBuffers(StrmSource, NumProc,
+			StrmAvailableBuffers + StrmNumAvailableBuffers);
+		StrmNumAvailableBuffers += NumProc;
+	}
+	return StrmNumAvailableBuffers > 0 ? STRM_BUFFER_SIZE : 0;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenALDevice::SetStreamData
+//
+//==========================================================================
+
+short* VOpenALDevice::GetStreamBuffer()
+{
+	guard(VOpenALDevice::GetStreamBuffer);
+	return StrmDataBuffer;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenALDevice::SetStreamData
+//
+//==========================================================================
+
+void VOpenALDevice::SetStreamData(short* Data, int Len)
+{
+	guard(VOpenALDevice::SetStreamData);
+	ALuint Buf;
+	ALint State;
+
+	Buf = StrmAvailableBuffers[StrmNumAvailableBuffers - 1];
+	StrmNumAvailableBuffers--;
+	alBufferData(Buf, AL_FORMAT_STEREO16, Data, Len * 4, 44100);
+	alSourceQueueBuffers(StrmSource, 1, &Buf);
+	alGetSourcei(StrmSource, AL_SOURCE_STATE, &State);
+	if (State != AL_PLAYING)
+		alSourcePlay(StrmSource);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenALDevice::SetStreamVolume
+//
+//==========================================================================
+
+void VOpenALDevice::SetStreamVolume(float Vol)
+{
+	guard(VOpenALDevice::SetStreamVolume);
+	if (StrmSource)
+	{
+	    alSourcef(StrmSource, AL_GAIN, Vol);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenALDevice::PauseStream
+//
+//==========================================================================
+
+void VOpenALDevice::PauseStream()
+{
+	guard(VOpenALDevice::PauseStream);
+	if (StrmSource)
+	{
+		alSourcePause(StrmSource);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenALDevice::ResumeSteam
+//
+//==========================================================================
+
+void VOpenALDevice::ResumeSteam()
+{
+	guard(VOpenALDevice::ResumeSteam);
+	if (StrmSource)
+	{
+		alSourcePlay(StrmSource);
+	}
+	unguard;
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2005/09/19 23:00:19  dj_jl
+//	Streaming support.
+//
 //	Revision 1.10  2005/09/12 19:45:16  dj_jl
 //	Created midi device class.
-//
+//	
 //	Revision 1.9  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
 //	

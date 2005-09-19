@@ -36,6 +36,8 @@
 #define MAX_SND_DIST		2025
 #define PRIORITY_MAX_ADJUST	10
 
+#define STRM_LEN		(16 * 1024)
+
 // TYPES -------------------------------------------------------------------
 
 struct channel_t
@@ -66,6 +68,15 @@ public:
 	void StopSound(int origin_id, int channel);
 	void StopAllSound(void);
 	bool IsSoundPlaying(int origin_id, int sound_id);
+
+	bool OpenStream();
+	void CloseStream();
+	int GetStreamAvailable();
+	short* GetStreamBuffer();
+	void SetStreamData(short* Data, int Len);
+	void SetStreamVolume(float);
+	void PauseStream();
+	void ResumeSteam();
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -73,6 +84,8 @@ public:
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
+
+static void StrmCallback(void*, Uint8* stream, int len);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -112,6 +125,11 @@ static channel_t*	channels;
 static TVec			listener_forward;
 static TVec			listener_right;
 static TVec			listener_up;
+
+static SDL_AudioCVT	StrmCvt;
+static byte*		StrmBuffer;
+static int			StrmBufferUsed;
+static float		StrmVol = 1;
 
 // CODE --------------------------------------------------------------------
 
@@ -854,12 +872,181 @@ bool VSDLSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 	unguard;
 }
 
+//==========================================================================
+//
+//	VSDLSoundDevice::OpenStream
+//
+//==========================================================================
+
+bool VSDLSoundDevice::OpenStream()
+{
+	guard(VSDLSoundDevice::OpenStream);
+	//	Build converter struct.
+	if (SDL_BuildAudioCVT(&StrmCvt, AUDIO_S16, 2, 44100,
+		cur_format, cur_channels, cur_frequency) < 0 )
+	{
+		return false;
+	}
+
+	//	Set up buffer.
+	StrmBuffer = (byte*)Z_Malloc(STRM_LEN * 4 * StrmCvt.len_mult);
+	StrmBufferUsed = 0;
+
+	//	Set up music callback.
+	Mix_HookMusic(StrmCallback, this);
+	return true;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSDLSoundDevice::CloseStream
+//
+//==========================================================================
+
+void VSDLSoundDevice::CloseStream()
+{
+	guard(VSDLSoundDevice::CloseStream);
+	Mix_HookMusic(NULL, NULL);
+	if (StrmBuffer)
+	{
+		Z_Free(StrmBuffer);
+		StrmBuffer = NULL;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSDLSoundDevice::GetStreamAvailable
+//
+//==========================================================================
+
+int VSDLSoundDevice::GetStreamAvailable()
+{
+	guard(VSDLSoundDevice::GetStreamAvailable);
+	if (StrmBufferUsed < (STRM_LEN * 4 * StrmCvt.len_mult) * 3 / 4)
+		return STRM_LEN / 4;
+	return 0;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSDLSoundDevice::SetStreamData
+//
+//==========================================================================
+
+short* VSDLSoundDevice::GetStreamBuffer()
+{
+	guard(VSDLSoundDevice::GetStreamBuffer);
+	return (short*)(StrmBuffer + StrmBufferUsed);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSDLSoundDevice::SetStreamData
+//
+//==========================================================================
+
+void VSDLSoundDevice::SetStreamData(short* Data, int Len)
+{
+	guard(VSDLSoundDevice::SetStreamData);
+	//	Apply volume.
+	for (int i = 0; i < Len * 2; i++)
+	{
+		Data[i] = short(Data[i] * StrmVol);
+	}
+
+	SDL_LockAudio();
+	//	Check if data has been used while decoding.
+	if (StrmBuffer + StrmBufferUsed != (byte*)Data)
+	{
+		memmove(StrmBuffer + StrmBufferUsed, Data, Len * 4);
+	}
+
+	//	Run the audio converter
+	StrmCvt.len = Len * 4;
+	StrmCvt.buf = StrmBuffer + StrmBufferUsed;
+	SDL_ConvertAudio(&StrmCvt);
+	StrmBufferUsed += StrmCvt.len_cvt;
+	SDL_UnlockAudio();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSDLSoundDevice::SetStreamVolume
+//
+//==========================================================================
+
+void VSDLSoundDevice::SetStreamVolume(float Vol)
+{
+	guard(VSDLSoundDevice::SetStreamVolume);
+	StrmVol = Vol;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSDLSoundDevice::PauseStream
+//
+//==========================================================================
+
+void VSDLSoundDevice::PauseStream()
+{
+	guard(VSDLSoundDevice::PauseStream);
+	Mix_PauseMusic();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSDLSoundDevice::ResumeSteam
+//
+//==========================================================================
+
+void VSDLSoundDevice::ResumeSteam()
+{
+	guard(VSDLSoundDevice::ResumeSteam);
+	Mix_ResumeMusic();
+	unguard;
+}
+
+//==========================================================================
+//
+//	StrmCallback
+//
+//==========================================================================
+
+static void StrmCallback(void*, Uint8* stream, int len)
+{
+	guard(StrmCallback);
+	if (StrmBufferUsed >= len)
+	{
+		memcpy(stream, StrmBuffer, len);
+		memmove(StrmBuffer, StrmBuffer + len, StrmBufferUsed - len);
+		StrmBufferUsed -= len;
+	}
+	else
+	{
+		memcpy(stream, StrmBuffer, StrmBufferUsed);
+		memset(stream + StrmBufferUsed, 0, len - StrmBufferUsed);
+		StrmBufferUsed = 0;
+	}
+	unguard;
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2005/09/19 23:00:19  dj_jl
+//	Streaming support.
+//
 //	Revision 1.16  2005/09/12 19:45:16  dj_jl
 //	Created midi device class.
-//
+//	
 //	Revision 1.15  2005/09/04 14:43:45  dj_jl
 //	Some fixes.
 //	

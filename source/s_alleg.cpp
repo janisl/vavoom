@@ -69,6 +69,15 @@ public:
 	void StopSound(int origin_id, int channel);
 	void StopAllSound(void);
 	bool IsSoundPlaying(int origin_id, int sound_id);
+
+	bool OpenStream();
+	void CloseStream();
+	int GetStreamAvailable();
+	short* GetStreamBuffer();
+	void SetStreamData(short* Data, int Len);
+	void SetStreamVolume(float);
+	void PauseStream();
+	void ResumeSteam();
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -102,6 +111,9 @@ static int 			sndcount = 0;
 static TVec			listener_forward;
 static TVec			listener_right;
 static TVec			listener_up;
+
+static AUDIOSTREAM*	Strm;
+static void*		StrmBuf;
 
 // CODE --------------------------------------------------------------------
 
@@ -766,12 +778,147 @@ bool VAllegroSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 	unguard;
 }
 
+//==========================================================================
+//
+//	VAllegroSoundDevice::OpenStream
+//
+//==========================================================================
+
+#define STRM_LEN		(8 * 1024)
+
+bool VAllegroSoundDevice::OpenStream()
+{
+	guard(VAllegroSoundDevice::OpenStream);
+	Strm = play_audio_stream(STRM_LEN, 16, 1, 44100, 255, 127);
+	if (!Strm)
+	{
+		GCon->Log("Can't open stream");
+	}
+	return !!Strm;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAllegroSoundDevice::CloseStream
+//
+//==========================================================================
+
+void VAllegroSoundDevice::CloseStream()
+{
+	guard(VAllegroSoundDevice::CloseStream);
+	if (Strm)
+	{
+		stop_audio_stream(Strm);
+		Strm = NULL;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAllegroSoundDevice::GetStreamAvailable
+//
+//==========================================================================
+
+int VAllegroSoundDevice::GetStreamAvailable()
+{
+	guard(VAllegroSoundDevice::GetStreamAvailable);
+	if (!Strm)
+		return 0;
+	StrmBuf = get_audio_stream_buffer(Strm);
+	return StrmBuf ? STRM_LEN : 0;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAllegroSoundDevice::SetStreamData
+//
+//==========================================================================
+
+short* VAllegroSoundDevice::GetStreamBuffer()
+{
+	guard(VAllegroSoundDevice::GetStreamBuffer);
+	return (short*)StrmBuf;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAllegroSoundDevice::SetStreamData
+//
+//==========================================================================
+
+void VAllegroSoundDevice::SetStreamData(short* Data, int Len)
+{
+	guard(VAllegroSoundDevice::SetStreamData);
+	//	Copy data converting to unsigned format.
+	for (int i = 0; i < Len * 2; i++)
+	{
+		((word*)StrmBuf)[i] = (word)(Data[i] + 0x7fff);
+	}
+	free_audio_stream_buffer(Strm);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAllegroSoundDevice::SetStreamVolume
+//
+//==========================================================================
+
+void VAllegroSoundDevice::SetStreamVolume(float Vol)
+{
+	guard(VAllegroSoundDevice::SetStreamVolume);
+	if (Strm)
+	{
+		voice_set_volume(Strm->voice, int(Vol * 255));
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAllegroSoundDevice::PauseStream
+//
+//==========================================================================
+
+void VAllegroSoundDevice::PauseStream()
+{
+	guard(VAllegroSoundDevice::PauseStream);
+	if (Strm)
+	{
+		voice_stop(Strm->voice);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAllegroSoundDevice::ResumeSteam
+//
+//==========================================================================
+
+void VAllegroSoundDevice::ResumeSteam()
+{
+	guard(VAllegroSoundDevice::ResumeSteam);
+	if (Strm)
+	{
+		voice_start(Strm->voice);
+	}
+	unguard;
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2005/09/19 23:00:19  dj_jl
+//	Streaming support.
+//
 //	Revision 1.17  2005/09/12 19:45:16  dj_jl
 //	Created midi device class.
-//
+//	
 //	Revision 1.16  2004/11/30 07:17:16  dj_jl
 //	Made string pointers const.
 //	
