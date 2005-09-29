@@ -52,16 +52,18 @@ TVec useDir;
 
 bool PTR_UseTraverse(intercept_t * in)
 {
+	line_t* line;
 	name sound;
 	float pheight;
 	TVec hit_point;
 	opening_t *open;
 
-	if (!in->line->special || (GET_SPAC(in->line->flags) != SPAC_USE &&
-		GET_SPAC(in->line->flags) != SPAC_USETHROUGH))
+	line = in->line;
+	if (!line->special || (GET_SPAC(line->flags) != SPAC_USE &&
+		GET_SPAC(line->flags) != SPAC_USETHROUGH))
 	{
 		hit_point = usething.Origin + (USERANGE * in->frac) * useDir;
-		open = LineOpenings(in->line, hit_point);
+		open = LineOpenings(line, hit_point);
 		open = FindOpening(open, hit_point.z + usething.Height / 2.0,
 			hit_point.z + usething.Height);
 		if (!open)
@@ -119,17 +121,17 @@ bool PTR_UseTraverse(intercept_t * in)
 		return true;	// not a special line, but keep checking
 	}
 
-	if (PointOnPlaneSide(usething.Origin, in->line) == 1)
+	if (PointOnPlaneSide(usething.Origin, line) == 1)
 	{
 		//	Don't use back side unless it's a two-sided line.
-		return in->line->backsector != NULL;
+		return line->backsector != NULL;
 	}
 
-	P_ActivateLine(in->line, usething, 0, SPAC_USE);
+	P_ActivateLine(line, usething, 0, SPAC_USE);
 
 	//WAS can't use more than one special line in a row
 	//jff 3/21/98 NOW multiple use allowed with enabling line flag
-	return GET_SPAC(in->line->flags) == SPAC_USETHROUGH;
+	return GET_SPAC(line->flags) == SPAC_USETHROUGH;
 }
 
 //==========================================================================
@@ -884,6 +886,9 @@ void PIT_ThrustSpike(Actor actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.35  2005/09/29 17:17:22  dj_jl
+//  Fix for using a puzzle item.
+//
 //  Revision 1.34  2005/03/28 07:44:09  dj_jl
 //  Some Boom line specials and other improvements.
 //
