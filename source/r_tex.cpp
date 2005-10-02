@@ -638,15 +638,15 @@ int TTextureManager::AddFileTexture(FName Name, int Type)
 	}
 
 	FL_ExtractFileExtension(*Name, Ext);
-	if (!strcmp(Ext, "pcx"))
+	if (!stricmp(Ext, "pcx"))
 	{
 		return AddTexture(new(PU_STATIC) TPcxFileTexture(Type, Name));
 	}
-	else if (!strcmp(Ext, "tga"))
+	else if (!stricmp(Ext, "tga"))
 	{
 		return AddTexture(new(PU_STATIC) TTgaFileTexture(Type, Name));
 	}
-	else if (!strcmp(Ext, "png"))
+	else if (!stricmp(Ext, "png"))
 	{
 		return AddTexture(new(PU_STATIC) TPngFileTexture(Type, Name));
 	}
@@ -2757,9 +2757,12 @@ void R_InitTexture()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.33  2005/10/02 23:14:47  dj_jl
+//	Case insensitive extension check.
+//
 //	Revision 1.32  2005/09/04 14:57:24  dj_jl
 //	Fixed check for any texture.
-//
+//	
 //	Revision 1.31  2005/07/05 22:52:10  dj_jl
 //	Fixes to compile under M$VC
 //	
