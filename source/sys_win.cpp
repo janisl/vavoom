@@ -41,7 +41,6 @@
 #include <dinput.h>
 #include <d3d.h>
 #include <dsound.h>
-#include <dmusici.h>
 #include "eax.h"
 
 // MACROS ------------------------------------------------------------------
@@ -876,9 +875,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2005/10/02 23:13:22  dj_jl
+//	New Windows MIDI driver.
+//
 //	Revision 1.22  2005/09/14 12:04:21  dj_jl
 //	Created CD audio device class.
-//
+//	
 //	Revision 1.21  2005/05/26 16:59:45  dj_jl
 //	Lowercased include
 //	
