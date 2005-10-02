@@ -131,8 +131,8 @@ bool VSoftwareDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 	if (!Width || !Height)
 	{
 		//	Set defaults
-		Width = 320;
-		Height = 200;
+		Width = 640;
+		Height = 480;
 		BPP = 8;
 	}
 
@@ -315,9 +315,12 @@ void VSoftwareDrawer::Shutdown()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2005/10/02 23:15:44  dj_jl
+//	Changed default resolution.
+//
 //	Revision 1.12  2005/04/28 07:16:11  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.11  2005/03/01 15:56:54  dj_jl
 //	Windowed mode, beautification.
 //	
