@@ -53,6 +53,7 @@
 
 class VWinMessageHandler
 {
+public:
 	virtual LONG OnMessage(HWND, UINT, WPARAM, LPARAM) = 0;
 };
 
@@ -71,9 +72,12 @@ extern VWinMessageHandler*	GCDMsgHandler;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2005/10/02 23:13:54  dj_jl
+//	Callback fix.
+//
 //	Revision 1.7  2005/09/14 11:58:48  dj_jl
 //	Created CD audio device class.
-//
+//	
 //	Revision 1.6  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	
