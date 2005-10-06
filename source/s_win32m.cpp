@@ -43,11 +43,6 @@ public:
 	//	Number and size of playback buffers to keep around
 	enum { C_MIDI_BUFFERS = 4 };
 	enum { CB_MIDI_BUFFERS = 1024 };
-	enum { C_TEMPO_MAP_CHK = 16 };
-
-	//	NOTE: This is arbitrary and only used if there is a tempo map but no
-	// entry at tick 0.
-	enum { MIDI_DEFAULT_TEMPO = 500000 };
 
 	enum
 	{
@@ -112,14 +107,7 @@ public:
 		dword			Delta;
 		byte			Event[3];
 		dword			ParmCount;
-		byte*			Parm;
-	};
-
-	struct FTempoMapEntry
-	{
-		dword			TempoTick;
-		dword			MsBase;
-		dword			Tempo;
+		const byte*		Parm;
 	};
 
 	struct FTrack
@@ -129,8 +117,8 @@ public:
 
 		dword			Position;
 		dword			BytesLeft;
-		BYTE*			ImagePtr;
-		BYTE			RunningStatus;
+		const byte*		ImagePtr;
+		byte			RunningStatus;
 
 		dword			TrackFlags;
 	};
@@ -140,7 +128,7 @@ public:
 	bool			MusicPaused;
 	float			MusVolume;
 
-	byte*			MidiImage;
+	const byte*		MidiImage;
 	dword			MidiImageSize;
 
 	int				State;				//	Sequencer state (SEQ_S_xxx)
@@ -151,19 +139,14 @@ public:
 	dword			SeqFlags;			//	Various sequencer flags
 
 	dword			MidiPosition;
-	dword			LengthTicks;
 	dword			Format;
 	dword			NumTracks;
 	dword			TimeDivision;
 	dword			SmfFlags;
 
-	dword			TempoMapSize;
-	dword			TempoMapAlloc;
-	FTempoMapEntry*	TempoMap;
-
 	dword			PendingUserEvent;
 	dword			PendingUserEventCount;
-	byte*			PendingUserEvents;
+	const byte*		PendingUserEvents;
 
 	FTrack			Tracks[MAX_TRACKS];
 
@@ -188,7 +171,7 @@ public:
 	void SeekStart();
 	bool BuildFileIndex();
 	EResult GetNextEvent(FEvent&);
-	DWORD GetVDword(BYTE*, DWORD, DWORD&);
+	static dword GetVDword(const byte*, dword, dword&);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -321,10 +304,6 @@ void VMMSystemMidiDevice::Play(void* Data, int len, const char* song, bool loop)
 
 	//	Open new file
 	SmfFlags = 0;
-	LengthTicks = 0;
-	TempoMap = NULL;
-	TempoMapSize = 0;
-	TempoMapAlloc = 0;
 	PendingUserEvent = 0;
 	PendingUserEventCount = 0;
 	PendingUserEvents = NULL;
@@ -492,12 +471,6 @@ void VMMSystemMidiDevice::Stop()
 				midiOutUnprepareHeader(hMidi, lpmh, sizeof(*lpmh));
 		}
 
-		if (TempoMap)
-		{
-			Z_Free(TempoMap);
-			TempoMap = NULL;
-		}
-
 		//	Close midi stream.	
 		if (hMidi)
 		{
@@ -505,7 +478,7 @@ void VMMSystemMidiDevice::Stop()
 			hMidi = NULL;
 		}
 		State = STATE_NoFile;
-		Z_Free(MidiImage);
+		Z_Free((void*)MidiImage);
 		MidiImage = NULL;
 		CurrSong = NAME_None;
 	}
@@ -523,7 +496,7 @@ void VMMSystemMidiDevice::Stop()
 MMRESULT VMMSystemMidiDevice::Preroll()
 {
 	guard(VMMSystemMidiDevice::Preroll);
-	EResult			smfrc;
+	EResult				smfrc;
 	MMRESULT			mmrc = MMSYSERR_NOERROR;
 	MIDIPROPTIMEDIV		mptd;
 	LPMIDIHDR			lpmh = NULL;
@@ -735,7 +708,7 @@ void PASCAL VMMSystemMidiDevice::StaticCallback(HMIDISTRM,
 VMMSystemMidiDevice::EResult VMMSystemMidiDevice::ReadEvents(LPMIDIHDR lpmh)
 {
 	guard(VMMSystemMidiDevice::ReadEvents);
-	EResult		smfrc;
+	EResult			smfrc;
 	FEvent			event;
 	LPDWORD			lpdw;
 	DWORD			Tempo;
@@ -927,7 +900,7 @@ void VMMSystemMidiDevice::SeekStart()
 {
 	guard(VMMSystemMidiDevice::SeekStart);
 	FTrack*					ptrk;
-	DWORD                   idxTrack;
+	dword                   idxTrack;
 
 	MidiPosition = 0;
 	SmfFlags &= ~SMFF_Eof;
@@ -962,18 +935,16 @@ void VMMSystemMidiDevice::SeekStart()
 bool VMMSystemMidiDevice::BuildFileIndex()
 {
 	guard(VMMSystemMidiDevice::BuildFileIndex);
-	EResult				smfrc;
-	UNALIGNED FChunkHdr*	pCh;
-	FMidiFileHdr*			pFh;
-	DWORD					idx;
+	EResult					smfrc;
+	const FChunkHdr*		pCh;
+	const FMidiFileHdr*		pFh;
+	dword					idx;
 	FTrack*					pTrk;
-	DWORD					dwLeft;
-	BYTE*					hpbImage;
-	DWORD					idxTrack;
+	dword					dwLeft;
+	const byte*				hpbImage;
+	dword					idxTrack;
 	FEvent					event;
-	bool					fFirst = false;
-	DWORD					dwLength;
-	FTempoMapEntry*			pTempo;
+	dword					dwLength;
 
 	//	Validate MIDI header
 	dwLeft   = MidiImageSize;
@@ -1039,8 +1010,6 @@ bool VMMSystemMidiDevice::BuildFileIndex()
 	}
 
 	//	File looks OK. Now preparse, doing the following:
-	// (1) Build tempo map so we can convert to/from ticks quickly
-	// (2) Determine actual tick length of file
 	// (3) Validate all events in all tracks
 	MidiPosition = 0;
 	SmfFlags &= ~SMFF_Eof;
@@ -1056,73 +1025,10 @@ bool VMMSystemMidiDevice::BuildFileIndex()
 
 	while (RES_Success == (smfrc = GetNextEvent(event)))
 	{
-		if (MIDI_Meta == event.Event[0] && MIDI_MetaTempo == event.Event[1])
-		{
-			if (3 != event.ParmCount)
-			{
-				return false;
-			}
-
-			if (TempoMapSize == TempoMapAlloc)
-			{
-				TempoMapAlloc += C_TEMPO_MAP_CHK;
-				fFirst = false;
-				if (!TempoMapSize)
-				{
-					TempoMap = (FTempoMapEntry*)Z_Malloc(TempoMapAlloc *
-						sizeof(FTempoMapEntry), PU_MUSIC, NULL);
-					fFirst = true;
-				}
-				else
-				{
-					Z_Resize((void**)TempoMap, TempoMapAlloc *
-						sizeof(FTempoMapEntry));
-				}
-			}
-
-			if (fFirst && MidiPosition != 0)
-			{
-				//	Inserting first event and the absolute time is zero.
-				// Use defaults of 500,000 uSec/qn from MIDI spec
-				pTempo = &TempoMap[TempoMapSize++];
-				pTempo->TempoTick = 0;
-				pTempo->MsBase = 0;
-				pTempo->Tempo = MIDI_DEFAULT_TEMPO;
-				fFirst = false;
-			}
-
-			pTempo = &TempoMap[TempoMapSize++];
-
-			pTempo->TempoTick = MidiPosition;
-			if (fFirst)
-				pTempo->MsBase = 0;
-			else
-			{
-				//	NOTE: Better not be here unless we're q/n format!
-				pTempo->MsBase = (pTempo-1)->MsBase +
-					MulDiv(pTempo->TempoTick - ((pTempo - 1)->TempoTick),
-					(pTempo - 1)->Tempo, 1000 * TimeDivision);
-			}
-			pTempo->Tempo = (((DWORD)event.Parm[0]) << 16) |
-							(((DWORD)event.Parm[1]) << 8) |
-							((DWORD)event.Parm[2]);
-		}
-	}
-
-	if (!TempoMapSize)
-	{
-		TempoMap = (FTempoMapEntry*)Z_Malloc(sizeof(FTempoMapEntry), PU_MUSIC, 0);
-		TempoMapSize = 1;
-		TempoMapAlloc = 1;
-
-		TempoMap->TempoTick = 0;
-		TempoMap->MsBase = 0;
-		TempoMap->Tempo = MIDI_DEFAULT_TEMPO;
 	}
 
 	if (RES_EndOfFile == smfrc || RES_Success == smfrc)
 	{
-		LengthTicks = MidiPosition;
 		smfrc = RES_Success;
 	}
 
@@ -1199,14 +1105,14 @@ VMMSystemMidiDevice::EResult VMMSystemMidiDevice::GetNextEvent(FEvent& Event)
 	guard(VMMSystemMidiDevice::GetNextEvent);
 	FTrack*		pTrk;
 	FTrack*		pTrkFound;
-	DWORD		idxTrack;
+	dword		idxTrack;
 	dword		tkEventDelta;
 	dword		tkRelTime;
 	dword		tkMinRelTime;
-	BYTE		bEvent;
-	DWORD		dwGotTotal;
-	DWORD		dwGot;
-	DWORD		cbEvent;
+	byte		bEvent;
+	dword		dwGotTotal;
+	dword		dwGot;
+	dword		cbEvent;
 
 	if (SmfFlags & SMFF_Eof)
 	{
@@ -1348,11 +1254,12 @@ VMMSystemMidiDevice::EResult VMMSystemMidiDevice::GetNextEvent(FEvent& Event)
 //
 //==========================================================================
 
-DWORD VMMSystemMidiDevice::GetVDword(BYTE* ImagePtr, DWORD Left, DWORD& Out)
+dword VMMSystemMidiDevice::GetVDword(const byte* ImagePtr, dword Left,
+	dword& Out)
 {
 	guard(VMMSystemMidiDevice::GetVDword);
-	BYTE		b;
-	DWORD		NumUsed = 0;
+	byte		b;
+	dword		NumUsed = 0;
 
 	Out = 0;
 	do
@@ -1376,9 +1283,12 @@ DWORD VMMSystemMidiDevice::GetVDword(BYTE* ImagePtr, DWORD Left, DWORD& Out)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2005/10/06 23:09:20  dj_jl
+//	Some cleanup.
+//
 //	Revision 1.13  2005/10/02 23:12:51  dj_jl
 //	New Windows MIDI driver.
-//
+//	
 //	Revision 1.12  2005/09/12 19:45:16  dj_jl
 //	Created midi device class.
 //	
