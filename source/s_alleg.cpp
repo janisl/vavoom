@@ -77,7 +77,7 @@ public:
 	void SetStreamData(short* Data, int Len);
 	void SetStreamVolume(float);
 	void PauseStream();
-	void ResumeSteam();
+	void ResumeStream();
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -896,13 +896,13 @@ void VAllegroSoundDevice::PauseStream()
 
 //==========================================================================
 //
-//	VAllegroSoundDevice::ResumeSteam
+//	VAllegroSoundDevice::ResumeStream
 //
 //==========================================================================
 
-void VAllegroSoundDevice::ResumeSteam()
+void VAllegroSoundDevice::ResumeStream()
 {
-	guard(VAllegroSoundDevice::ResumeSteam);
+	guard(VAllegroSoundDevice::ResumeStream);
 	if (Strm)
 	{
 		voice_start(Strm->voice);
@@ -913,9 +913,12 @@ void VAllegroSoundDevice::ResumeSteam()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2005/10/18 20:53:04  dj_jl
+//	Implemented basic support for streamed music.
+//
 //	Revision 1.18  2005/09/19 23:00:19  dj_jl
 //	Streaming support.
-//
+//	
 //	Revision 1.17  2005/09/12 19:45:16  dj_jl
 //	Created midi device class.
 //	

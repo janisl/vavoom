@@ -84,7 +84,7 @@ public:
 	void SetStreamData(short* Data, int Len);
 	void SetStreamVolume(float);
 	void PauseStream();
-	void ResumeSteam();
+	void ResumeStream();
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -1396,13 +1396,13 @@ void VDirectSoundDevice::PauseStream()
 
 //==========================================================================
 //
-//	VDirectSoundDevice::ResumeSteam
+//	VDirectSoundDevice::ResumeStream
 //
 //==========================================================================
 
-void VDirectSoundDevice::ResumeSteam()
+void VDirectSoundDevice::ResumeStream()
 {
-	guard(VDirectSoundDevice::ResumeSteam);
+	guard(VDirectSoundDevice::ResumeStream);
 	StrmBuffer->Play(0, 0, DSBPLAY_LOOPING);
 	unguard;
 }
@@ -1410,9 +1410,12 @@ void VDirectSoundDevice::ResumeSteam()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2005/10/18 20:53:04  dj_jl
+//	Implemented basic support for streamed music.
+//
 //	Revision 1.27  2005/09/19 23:00:19  dj_jl
 //	Streaming support.
-//
+//	
 //	Revision 1.26  2005/09/12 19:45:16  dj_jl
 //	Created midi device class.
 //	

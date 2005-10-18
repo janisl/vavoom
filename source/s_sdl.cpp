@@ -76,7 +76,7 @@ public:
 	void SetStreamData(short* Data, int Len);
 	void SetStreamVolume(float);
 	void PauseStream();
-	void ResumeSteam();
+	void ResumeStream();
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -1003,13 +1003,13 @@ void VSDLSoundDevice::PauseStream()
 
 //==========================================================================
 //
-//	VSDLSoundDevice::ResumeSteam
+//	VSDLSoundDevice::ResumeStream
 //
 //==========================================================================
 
-void VSDLSoundDevice::ResumeSteam()
+void VSDLSoundDevice::ResumeStream()
 {
-	guard(VSDLSoundDevice::ResumeSteam);
+	guard(VSDLSoundDevice::ResumeStream);
 	Mix_ResumeMusic();
 	unguard;
 }
@@ -1041,9 +1041,12 @@ static void StrmCallback(void*, Uint8* stream, int len)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2005/10/18 20:53:04  dj_jl
+//	Implemented basic support for streamed music.
+//
 //	Revision 1.17  2005/09/19 23:00:19  dj_jl
 //	Streaming support.
-//
+//	
 //	Revision 1.16  2005/09/12 19:45:16  dj_jl
 //	Created midi device class.
 //	

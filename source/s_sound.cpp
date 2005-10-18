@@ -32,6 +32,33 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VStreamMusicPlayer
+{
+public:
+	bool			StrmOpened;
+	VAudioCodec*	Codec;
+	//	Current playing song info.
+	bool			CurrLoop;
+	FName			CurrSong;
+
+	VStreamMusicPlayer()
+	: StrmOpened(false)
+	, Codec(NULL)
+	, CurrLoop(false)
+	{}
+	~VStreamMusicPlayer()
+	{}
+
+	void Init();
+	void Shutdown();
+	void Tick(float);
+	void Play(VAudioCodec* InCodec, const char* InName, bool InLoop);
+	void Pause();
+	void Resume();
+	void Stop();
+	bool IsPlaying();
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -58,6 +85,7 @@ TCvarI					swap_stereo("swap_stereo", "0", CVAR_ARCHIVE);
 VSoundDevice*			GSoundDevice;
 VMidiDevice*			GMidiDevice;
 VCDAudioDevice*			GCDAudioDevice;
+FAudioCodecDesc*		FAudioCodecDesc::List;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -70,6 +98,9 @@ static boolean				CDMusic = false;
 static FSoundDeviceDesc*	SoundDeviceList[SNDDRV_MAX];
 static FMidiDeviceDesc*		MidiDeviceList[MIDIDRV_MAX];
 static FCDAudioDeviceDesc*	CDAudioDeviceList[CDDRV_MAX];
+
+static bool					StreamPlaying;
+static VStreamMusicPlayer	GStreamMusicPlayer;
 
 // CODE --------------------------------------------------------------------
 
@@ -199,6 +230,7 @@ void S_Init()
 	GSoundDevice->Init();
 	GMidiDevice->Init();
 	GCDAudioDevice->Init();
+	GStreamMusicPlayer.Init();
 	unguard;
 }
 
@@ -213,6 +245,7 @@ void S_Init()
 void S_Shutdown()
 {
 	guard(S_Shutdown);
+	GStreamMusicPlayer.Shutdown();
 	if (GCDAudioDevice)
 	{
 		GCDAudioDevice->Shutdown();
@@ -444,6 +477,7 @@ void S_UpdateSounds(void)
 	// Update any Sequences
 	SN_UpdateActiveSequences();
 
+	GStreamMusicPlayer.Tick(host_frametime);
 	GSoundDevice->Tick(host_frametime);
 	GMidiDevice->Tick(host_frametime);
 	GCDAudioDevice->Update();
@@ -463,61 +497,88 @@ static void PlaySong(const char* Song, bool Loop)
 	{
 		return;
 	}
-	if (!stricmp(Song, *GMidiDevice->CurrSong) && GMidiDevice->IsPlaying())
+	if ((StreamPlaying && !stricmp(Song, *GStreamMusicPlayer.CurrSong) &&
+		GStreamMusicPlayer.IsPlaying()) || (!StreamPlaying && !stricmp(Song,
+		*GMidiDevice->CurrSong) && GMidiDevice->IsPlaying()))
 	{
 		// don't replay an old song if it is still playing
 		return;
 	}
 
-	char RealName[MAX_OSPATH];
-	void* Data;
-	int Length;
-
-	if (fl_devmode && (
-		FL_FindFile(va("music/%s.mid", Song), RealName) ||
-		FL_FindFile(va("music/%s.mus", Song), RealName)))
-	{
-		GMidiDevice->Stop();
-		Length = M_ReadFile(RealName, (byte**)&Data);
-	}
+	if (StreamPlaying)
+		GStreamMusicPlayer.Stop();
 	else
+		GMidiDevice->Stop();
+	StreamPlaying = false;
+
+	//	Find the song.
+	FArchive* StrmAr = FL_OpenFileRead(va("music/%s.ogg", Song));
+	if (!StrmAr)
+		StrmAr = FL_OpenFileRead(va("music/%s.mp3", Song));
+	if (!StrmAr)
+		StrmAr = FL_OpenFileRead(va("music/%s.wav", Song));
+	if (!StrmAr)
+		StrmAr = FL_OpenFileRead(va("music/%s.mid", Song));
+	if (!StrmAr)
+		StrmAr = FL_OpenFileRead(va("music/%s.mus", Song));
+	if (!StrmAr)
 	{
-		int Lump = W_CheckNumForName(Song);
-		if (Lump < 0)
+		if (W_CheckNumForName(Song) < 0)
 		{
 			GCon->Logf("Can't find song %s", Song);
 			return;
 		}
-		GMidiDevice->Stop();
-		Data = W_CacheLumpNum(Lump, PU_MUSIC);
-		Length = W_LumpLength(Lump);
+		StrmAr = W_CreateLumpReader(Song);
 	}
 
-	if (!memcmp(Data, MUSMAGIC, 4))
+	//	Try to create audio codec.
+	VAudioCodec* Codec = NULL;
+	for (FAudioCodecDesc* Desc = FAudioCodecDesc::List; Desc && !Codec; Desc = Desc->Next)
 	{
-		// convert mus to mid with a wanderfull function
-		// thanks to S.Bacquet for the source of qmus2mid
-		char* Buf = (char*)Z_Malloc(256 * 1024, PU_STATIC, 0);
-		int MidLength = qmus2mid((char*)Data, Buf, Length);
-		if (!MidLength)
-		{
-			Z_Free(Buf);
-			return;
-		}
-		Z_Resize((void**)&Data, MidLength);
-		memcpy(Data, Buf, MidLength);
-		Z_Free(Buf);
-		Length = MidLength;
+		Codec = Desc->Creator(StrmAr);
 	}
 
-	if (!memcmp(Data, MIDIMAGIC, 4))
+	if (Codec)
 	{
-		GMidiDevice->Play(Data, Length, Song, Loop);
+		//	Start playing streamed music.
+		GStreamMusicPlayer.Play(Codec, "test", false);
+		StreamPlaying = true;
 	}
 	else
 	{
-		GCon->Log("Not a MUS or MIDI file");
-		Z_Free(Data);
+		int Length = StrmAr->TotalSize();
+		void* Data = Z_Malloc(Length, PU_MUSIC, NULL);
+		StrmAr->Seek(0);
+		StrmAr->Serialise(Data, Length);
+		StrmAr->Close();
+		delete StrmAr;
+
+		if (!memcmp(Data, MUSMAGIC, 4))
+		{
+			// convert mus to mid with a wanderfull function
+			// thanks to S.Bacquet for the source of qmus2mid
+			char* Buf = (char*)Z_Malloc(256 * 1024, PU_STATIC, 0);
+			int MidLength = qmus2mid((char*)Data, Buf, Length);
+			if (!MidLength)
+			{
+				Z_Free(Buf);
+				return;
+			}
+			Z_Resize((void**)&Data, MidLength);
+			memcpy(Data, Buf, MidLength);
+			Z_Free(Buf);
+			Length = MidLength;
+		}
+
+		if (!memcmp(Data, MIDIMAGIC, 4))
+		{
+			GMidiDevice->Play(Data, Length, Song, Loop);
+		}
+		else
+		{
+			GCon->Log("Not a MUS or MIDI file");
+			Z_Free(Data);
+		}
 	}
 	unguard;
 }
@@ -552,6 +613,7 @@ COMMAND(Music)
 	if (!stricmp(command, "off"))
 	{
 		GMidiDevice->Stop();
+		GStreamMusicPlayer.Stop();
 		GMidiDevice->Enabled = false;
 		return;
 	}
@@ -563,37 +625,51 @@ COMMAND(Music)
 
 	if (!stricmp(command, "play"))
 	{
-		PlaySong(Argv(2), false);
+		PlaySong(*FName(Argv(2), FNAME_AddLower8), false);
 		return;
 	}
 
 	if (!stricmp(command, "loop"))
 	{
-		PlaySong(Argv(2), true);
+		PlaySong(*FName(Argv(2), FNAME_AddLower8), true);
 		return;
 	}
 
 	if (!stricmp(command, "pause"))
 	{
-		GMidiDevice->Pause();
+		if (StreamPlaying)
+			GStreamMusicPlayer.Pause();
+		else
+			GMidiDevice->Pause();
 		return;
 	}
 
 	if (!stricmp(command, "resume"))
 	{
-		GMidiDevice->Resume();
+		if (StreamPlaying)
+			GStreamMusicPlayer.Resume();
+		else
+			GMidiDevice->Resume();
 		return;
 	}
 
 	if (!stricmp(command, "stop"))
 	{
-		GMidiDevice->Stop();
+		if (StreamPlaying)
+			GStreamMusicPlayer.Stop();
+		else
+			GMidiDevice->Stop();
 		return;
 	}
 
 	if (!stricmp(command, "info"))
 	{
-		if (GMidiDevice->IsPlaying())
+		if (StreamPlaying && GStreamMusicPlayer.IsPlaying())
+		{
+			GCon->Logf("Currently %s %s.", GStreamMusicPlayer.CurrLoop ?
+				"looping" : "playing", *GStreamMusicPlayer.CurrSong);
+		}
+		else if (!StreamPlaying && GMidiDevice->IsPlaying())
 		{
 			GCon->Logf("Currently %s %s.", GMidiDevice->CurrLoop ?
 				"looping" : "playing", *GMidiDevice->CurrSong);
@@ -601,6 +677,144 @@ COMMAND(Music)
 		else
 		{
 			GCon->Log("No song currently playing");
+		}
+		return;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	COMMAND CD
+//
+//==========================================================================
+
+COMMAND(CD)
+{
+	guard(COMMAND CD);
+	char	*command;
+
+	if (!GCDAudioDevice->Initialised)
+		return;
+
+	if (Argc() < 2)
+		return;
+
+	command = Argv(1);
+
+	if (!stricmp(command, "on"))
+	{
+		GCDAudioDevice->Enabled = true;
+		return;
+	}
+
+	if (!stricmp(command, "off"))
+	{
+		if (GCDAudioDevice->Playing)
+			GCDAudioDevice->Stop();
+		GCDAudioDevice->Enabled = false;
+		return;
+	}
+
+	if (!stricmp(command, "reset"))
+	{
+		int		n;
+
+		GCDAudioDevice->Enabled = true;
+		if (GCDAudioDevice->Playing)
+			GCDAudioDevice->Stop();
+		for (n = 0; n < 100; n++)
+			GCDAudioDevice->Remap[n] = n;
+		GCDAudioDevice->GetInfo();
+		return;
+	}
+
+	if (!stricmp(command, "remap"))
+	{
+		int		n;
+		int		ret;
+
+		ret = Argc() - 2;
+		if (ret <= 0)
+		{
+			for (n = 1; n < 100; n++)
+				if (GCDAudioDevice->Remap[n] != n)
+					GCon->Logf("%d -> %d", n, GCDAudioDevice->Remap[n]);
+			return;
+		}
+		for (n = 1; n <= ret; n++)
+			GCDAudioDevice->Remap[n] = atoi(Argv(n + 1));
+		return;
+	}
+
+	if (!GCDAudioDevice->Enabled)
+	{
+		return;
+	}
+
+	if (!stricmp(command, "eject"))
+	{
+		if (GCDAudioDevice->Playing)
+			GCDAudioDevice->Stop();
+		GCDAudioDevice->OpenDoor();
+		GCDAudioDevice->CDValid = false;
+		return;
+	}
+
+	if (!stricmp(command, "close"))
+	{
+		GCDAudioDevice->CloseDoor();
+		return;
+	}
+
+	if (!GCDAudioDevice->CDValid)
+	{
+		GCDAudioDevice->GetInfo();
+		if (!GCDAudioDevice->CDValid)
+		{
+			GCon->Log("No CD in player.");
+			return;
+		}
+	}
+
+	if (!stricmp(command, "play"))
+	{
+		GCDAudioDevice->Play(atoi(Argv(2)), false);
+		return;
+	}
+
+	if (!stricmp(command, "loop"))
+	{
+		GCDAudioDevice->Play(atoi(Argv(2)), true);
+		return;
+	}
+
+	if (!stricmp(command, "pause"))
+	{
+		GCDAudioDevice->Pause();
+		return;
+	}
+
+	if (!stricmp(command, "resume"))
+	{
+		GCDAudioDevice->Resume();
+		return;
+	}
+
+	if (!stricmp(command, "stop"))
+	{
+		GCDAudioDevice->Stop();
+		return;
+	}
+
+	if (!stricmp(command, "info"))
+	{
+		GCon->Logf("%d tracks", GCDAudioDevice->MaxTrack);
+		if (GCDAudioDevice->Playing || GCDAudioDevice->WasPlaying)
+		{
+			GCon->Logf("%s %s track %d", GCDAudioDevice->Playing ?
+				"Currently" : "Paused", GCDAudioDevice->PlayLooping ?
+				"looping" : "playing", GCDAudioDevice->PlayTrack);
 		}
 		return;
 	}
@@ -1019,149 +1233,152 @@ int qmus2mid(const char *mus, char *mid, int length)
 	return mid_file - mid;
 }
 
+//**************************************************************************
+//**************************************************************************
+
 //==========================================================================
 //
-//	CD_f
+//	VStreamMusicPlayer::Init
 //
 //==========================================================================
 
-COMMAND(CD)
+void VStreamMusicPlayer::Init()
 {
-	guard(COMMAND CD);
-	char	*command;
+}
 
-	if (!GCDAudioDevice->Initialised)
-		return;
+//==========================================================================
+//
+//	VStreamMusicPlayer::Shutdown
+//
+//==========================================================================
 
-	if (Argc() < 2)
-		return;
+void VStreamMusicPlayer::Shutdown()
+{
+	guard(VStreamMusicPlayer::Shutdown);
+	Stop();
+	unguard;
+}
 
-	command = Argv(1);
+//==========================================================================
+//
+//	VStreamMusicPlayer::Tick
+//
+//==========================================================================
 
-	if (!stricmp(command, "on"))
+void VStreamMusicPlayer::Tick(float)
+{
+	guard(VStreamMusicPlayer::Tick);
+	for (int Len = GSoundDevice->GetStreamAvailable(); Len;
+		Len = GSoundDevice->GetStreamAvailable())
 	{
-		GCDAudioDevice->Enabled = true;
-		return;
-	}
-
-	if (!stricmp(command, "off"))
-	{
-		if (GCDAudioDevice->Playing)
-			GCDAudioDevice->Stop();
-		GCDAudioDevice->Enabled = false;
-		return;
-	}
-
-	if (!stricmp(command, "reset"))
-	{
-		int		n;
-
-		GCDAudioDevice->Enabled = true;
-		if (GCDAudioDevice->Playing)
-			GCDAudioDevice->Stop();
-		for (n = 0; n < 100; n++)
-			GCDAudioDevice->Remap[n] = n;
-		GCDAudioDevice->GetInfo();
-		return;
-	}
-
-	if (!stricmp(command, "remap"))
-	{
-		int		n;
-		int		ret;
-
-		ret = Argc() - 2;
-		if (ret <= 0)
+		short* Data = GSoundDevice->GetStreamBuffer();
+		Codec->Decode(Data, Len);
+		GSoundDevice->SetStreamData(Data, Len);
+		if (Codec->Finished())
 		{
-			for (n = 1; n < 100; n++)
-				if (GCDAudioDevice->Remap[n] != n)
-					GCon->Logf("%d -> %d", n, GCDAudioDevice->Remap[n]);
-			return;
-		}
-		for (n = 1; n <= ret; n++)
-			GCDAudioDevice->Remap[n] = atoi(Argv(n + 1));
-		return;
-	}
-
-	if (!GCDAudioDevice->Enabled)
-	{
-		return;
-	}
-
-	if (!stricmp(command, "eject"))
-	{
-		if (GCDAudioDevice->Playing)
-			GCDAudioDevice->Stop();
-		GCDAudioDevice->OpenDoor();
-		GCDAudioDevice->CDValid = false;
-		return;
-	}
-
-	if (!stricmp(command, "close"))
-	{
-		GCDAudioDevice->CloseDoor();
-		return;
-	}
-
-	if (!GCDAudioDevice->CDValid)
-	{
-		GCDAudioDevice->GetInfo();
-		if (!GCDAudioDevice->CDValid)
-		{
-			GCon->Log("No CD in player.");
-			return;
+			if (CurrLoop)
+				Codec->Restart();
+			else
+			{
+				Stop();
+				return;
+			}
 		}
 	}
+	GSoundDevice->SetStreamVolume(music_volume);
+	unguard;
+}
 
-	if (!stricmp(command, "play"))
-	{
-		GCDAudioDevice->Play(atoi(Argv(2)), false);
-		return;
-	}
+//==========================================================================
+//
+//	VStreamMusicPlayer::Play
+//
+//==========================================================================
 
-	if (!stricmp(command, "loop"))
-	{
-		GCDAudioDevice->Play(atoi(Argv(2)), true);
+void VStreamMusicPlayer::Play(VAudioCodec* InCodec, const char* InName, bool InLoop)
+{
+	guard(VStreamMusicPlayer::Play);
+	StrmOpened = GSoundDevice->OpenStream();
+	if (!StrmOpened)
 		return;
-	}
+	Codec = InCodec;
+	CurrSong = InName;
+	CurrLoop = InLoop;
+	unguard;
+}
 
-	if (!stricmp(command, "pause"))
-	{
-		GCDAudioDevice->Pause();
-		return;
-	}
+//==========================================================================
+//
+//	VStreamMusicPlayer::Pause
+//
+//==========================================================================
 
-	if (!stricmp(command, "resume"))
-	{
-		GCDAudioDevice->Resume();
+void VStreamMusicPlayer::Pause()
+{
+	guard(VStreamMusicPlayer::Pause);
+	if (!StrmOpened)
 		return;
-	}
+	GSoundDevice->PauseStream();
+	unguard;
+}
 
-	if (!stricmp(command, "stop"))
-	{
-		GCDAudioDevice->Stop();
-		return;
-	}
+//==========================================================================
+//
+//	VStreamMusicPlayer::Resume
+//
+//==========================================================================
 
-	if (!stricmp(command, "info"))
-	{
-		GCon->Logf("%d tracks", GCDAudioDevice->MaxTrack);
-		if (GCDAudioDevice->Playing || GCDAudioDevice->WasPlaying)
-		{
-			GCon->Logf("%s %s track %d", GCDAudioDevice->Playing ? "Currently" : "Paused",
-				GCDAudioDevice->PlayLooping ? "looping" : "playing", GCDAudioDevice->PlayTrack);
-		}
+void VStreamMusicPlayer::Resume()
+{
+	guard(VStreamMusicPlayer::Resume);
+	if (!StrmOpened)
 		return;
-	}
+	GSoundDevice->ResumeStream();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VStreamMusicPlayer::Stop
+//
+//==========================================================================
+
+void VStreamMusicPlayer::Stop()
+{
+	guard(VStreamMusicPlayer::Stop);
+	if (!StrmOpened)
+		return;
+	delete Codec;
+	Codec = NULL;
+	GSoundDevice->CloseStream();
+	StrmOpened = false;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VStreamMusicPlayer::IsPlaying
+//
+//==========================================================================
+
+bool VStreamMusicPlayer::IsPlaying()
+{
+	guard(VStreamMusicPlayer::IsPlaying);
+	if (!StrmOpened)
+		return false;
+	return false;
 	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2005/10/18 20:53:04  dj_jl
+//	Implemented basic support for streamed music.
+//
 //	Revision 1.15  2005/09/13 17:32:45  dj_jl
 //	Created CD audio device class.
-//
+//	
 //	Revision 1.14  2005/09/12 19:45:16  dj_jl
 //	Created midi device class.
 //	

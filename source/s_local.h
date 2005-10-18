@@ -132,7 +132,7 @@ public:
 	{}
 	virtual void PauseStream()
 	{}
-	virtual void ResumeSteam()
+	virtual void ResumeStream()
 	{}
 };
 
@@ -299,6 +299,39 @@ VCDAudioDevice* Create##TClass() \
 } \
 FCDAudioDeviceDesc TClass##Desc(Type, Name, Description, CmdLineArg, Create##TClass);
 
+//	Streamed audio decoder interface.
+class VAudioCodec
+{
+public:
+	virtual ~VAudioCodec()
+	{}
+	virtual int Decode(short*, int) = 0;
+	virtual bool Finished() = 0;
+	virtual void Restart() = 0;
+};
+
+//	Description of an audio codec.
+struct FAudioCodecDesc
+{
+	const char*					Description;
+	VAudioCodec*				(*Creator)(FArchive*);
+	FAudioCodecDesc*			Next;
+
+	static FAudioCodecDesc*		List;
+
+	FAudioCodecDesc(const char* InDescription, VAudioCodec* (*InCreator)(FArchive*))
+	: Description(InDescription)
+	, Creator(InCreator)
+	{
+		Next = List;
+		List = this;
+	}
+};
+
+//	Audio codec registration helper.
+#define IMPLEMENT_AUDIO_CODEC(TClass, Description) \
+FAudioCodecDesc		TClass##Desc(Description, TClass::Create);
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 //
@@ -370,9 +403,12 @@ int qmus2mid(const char *mus, char *mid, int length);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2005/10/18 20:53:04  dj_jl
+//	Implemented basic support for streamed music.
+//
 //	Revision 1.15  2005/09/19 23:00:19  dj_jl
 //	Streaming support.
-//
+//	
 //	Revision 1.14  2005/09/13 17:32:45  dj_jl
 //	Created CD audio device class.
 //	

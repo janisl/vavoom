@@ -119,7 +119,7 @@ public:
 	void SetStreamData(short* Data, int Len);
 	void SetStreamVolume(float);
 	void PauseStream();
-	void ResumeSteam();
+	void ResumeStream();
 
 private:
 	int GetChannel(int sound_id, int origin_id, int channel, int priority);
@@ -985,13 +985,13 @@ void VOpenALDevice::PauseStream()
 
 //==========================================================================
 //
-//	VOpenALDevice::ResumeSteam
+//	VOpenALDevice::ResumeStream
 //
 //==========================================================================
 
-void VOpenALDevice::ResumeSteam()
+void VOpenALDevice::ResumeStream()
 {
-	guard(VOpenALDevice::ResumeSteam);
+	guard(VOpenALDevice::ResumeStream);
 	if (StrmSource)
 	{
 		alSourcePlay(StrmSource);
@@ -1002,9 +1002,12 @@ void VOpenALDevice::ResumeSteam()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2005/10/18 20:53:04  dj_jl
+//	Implemented basic support for streamed music.
+//
 //	Revision 1.11  2005/09/19 23:00:19  dj_jl
 //	Streaming support.
-//
+//	
 //	Revision 1.10  2005/09/12 19:45:16  dj_jl
 //	Created midi device class.
 //	

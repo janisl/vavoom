@@ -815,7 +815,7 @@ FArchive* W_CreateLumpReader(const char* name, int tag, EWadNamespace NS)
 		UseTag = PU_STATIC;
 	}
 	int LumpNum = W_GetNumForName(name, NS);
-	return new FArchiveLumpReader((byte *)W_CacheLumpNum(LumpNum, tag), 
+	return new FArchiveLumpReader((byte *)W_CacheLumpNum(LumpNum, UseTag),
 		W_LumpLength(LumpNum), tag);
 }
 
@@ -996,6 +996,9 @@ void W_Profile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2005/10/18 20:53:04  dj_jl
+//  Implemented basic support for streamed music.
+//
 //  Revision 1.15  2005/05/26 16:55:43  dj_jl
 //  New lump namespace iterator
 //
