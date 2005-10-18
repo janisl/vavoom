@@ -316,8 +316,30 @@ static void R_InitSkyBox()
 
 	memset(sky, 0, sizeof(sky));
 
+	// Check if the level is a lightning level
 	LevelHasLightning = false;
 	LightningFlash = 0;
+	if (cl_level.lightning)
+	{
+		int secCount = 0;
+		for (int i = 0; i < GClLevel->NumSectors; i++)
+		{
+			if (GClLevel->Sectors[i].ceiling.pic == skyflatnum ||
+				GClLevel->Sectors[i].special == LIGHTNING_OUTDOOR ||
+				GClLevel->Sectors[i].special == LIGHTNING_SPECIAL ||
+				GClLevel->Sectors[i].special == LIGHTNING_SPECIAL2)
+			{
+				secCount++;
+			}
+		}
+		if (secCount)
+		{
+			LevelHasLightning = true;
+			LightningLightLevels = (int *)Z_Malloc(secCount * sizeof(int),
+				PU_LEVEL, NULL);
+			NextLightningFlash = ((rand() & 15) + 5) * 35; // don't flash at level start
+		}
+	}
 
 	sky[0].surf.verts[0] = TVec(128, 128, -128);
 	sky[0].surf.verts[1] = TVec(128, 128, 128);
@@ -548,9 +570,13 @@ static void R_LightningFlash()
 					tempLight++;
 				}
 			}
-			for (i = 0; i < NumSkySurfs; i++)
+			// Check if we aren't using a skybox
+			if (!cl_level.skybox[0])
 			{
-				sky[i].texture1 = sky[i].baseTexture1;
+				for (i = 0; i < NumSkySurfs; i++)
+				{
+					sky[i].texture1 = sky[i].baseTexture1;
+				}
 			}
 		}
 		return;
@@ -599,9 +625,13 @@ static void R_LightningFlash()
 	}
 	if (foundSec)
 	{
-		for (i = 0; i < NumSkySurfs; i++)
+		// Check if we aren't using a skybox
+		if (!cl_level.skybox[0])
 		{
-			sky[i].texture1 = sky[i].baseTexture2; // set alternate sky
+			for (i = 0; i < NumSkySurfs; i++)
+			{
+				sky[i].texture1 = sky[i].baseTexture2; // set alternate sky
+			}
 		}
 		S_StartSoundName("ThunderCrash");
 	}
@@ -671,9 +701,12 @@ void R_DrawSky()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2005/10/18 21:09:49  dj_jl
+//	Fixed levels with lightning and skybox.
+//
 //	Revision 1.16  2005/05/26 16:50:15  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.15  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
 //	
