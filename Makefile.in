@@ -137,6 +137,7 @@ COMMON_OBJS = \
 	obj/s_data.$(OBJEXT) \
 	obj/s_eaxutl.$(OBJEXT) \
 	obj/s_sound.$(OBJEXT) \
+	obj/s_wav.$(OBJEXT) \
 	obj/sbar.$(OBJEXT) \
 	obj/sc_man.$(OBJEXT) \
 	obj/screen.$(OBJEXT) \
@@ -172,6 +173,10 @@ GL_OBJS = \
 #-- OpenAL files --
 AL_OBJS = \
 	obj/s_al.$(OBJEXT)
+
+#-- Vorbis files --
+VORBIS_OBJS = \
+	obj/s_vorbis.$(OBJEXT)
 
 #-- DOS --
 SYS_OBJS_DJGPP = \

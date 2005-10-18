@@ -6,6 +6,7 @@ AC_CANONICAL_HOST
 
 AC_PROG_CC
 AC_PROG_CXX
+AC_PROG_CPP
 AC_PROG_RANLIB
 AC_PROG_INSTALL
 
@@ -42,7 +43,7 @@ dnl ---------------- DJGPP ----------------
 	SV_LIBS='-lstdcxx'
 	;;
 
-dnl ---------------- WIndows ----------------
+dnl ---------------- Windows ----------------
 *-*-mingw32* | *-*-cygwin* | *-*-windows*)
 	CFLAGS="-mno-cygwin $CFLAGS"
 	CXXFLAGS="-mno-cygwin $CXXFLAGS"
@@ -144,6 +145,14 @@ if test "x$with_external_glbsp" = "xyes"; then
 	LIB_FILES="utils/glvis/libglvis.a"
 else
 	LIB_FILES="utils/glbsp/libglbsp.a utils/glvis/libglvis.a"
+fi
+
+AC_ARG_WITH([vorbis], AS_HELP_STRING([--enable-vorbis], [Enable Vorbis support]))
+if test "x$with_vorbis" != "xno"; then
+	AC_CHECK_HEADER([vorbis/codec.h], [
+		OBJ_FILES="$OBJ_FILES \$(VORBIS_OBJS)"
+		MAIN_LIBS="-lvorbis -logg $MAIN_LIBS"
+	])
 fi
 
 AC_SUBST([LIB_STDCXX])
