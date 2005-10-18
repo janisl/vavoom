@@ -796,9 +796,8 @@ boolean VEntity::TryMove(TVec newPos)
 
 		tmtrace.bFloatOk = true;
 
-		if (tmtrace.CeilingZ - Origin.z < Height && !bFly
-//			&& Class != LightningCeiling
-		)
+		if (tmtrace.CeilingZ - Origin.z < Height && !bFly &&
+			!bIgnoreCeilingStep)
 		{
 			// mobj must lower itself to fit
 			eventPushLine();
@@ -1804,9 +1803,12 @@ void EntInit(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2005/10/18 21:33:13  dj_jl
+//	Fixed ceiling lightninfg.
+//
 //	Revision 1.13  2005/04/28 07:16:16  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.12  2004/12/22 07:49:13  dj_jl
 //	More extended ACS support, more linedef flags.
 //	

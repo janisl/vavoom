@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class LightningCeiling:LightningMissile;
+class LightningCeiling : LightningMissile;
 
 __states__
 {
@@ -56,11 +56,15 @@ defaultproperties
 {
 	IdleState = S_LIGHTNING_CEILING1;
 	DeathState = S_LIGHTNING_C_X1;
+	bIgnoreCeilingStep = true;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/10/18 21:34:08  dj_jl
+//  Fixed ceiling lightninfg.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

@@ -200,6 +200,7 @@ class VEntity : public VThinker
 	dword bBlasted:1;		// missile will pass through ghosts
 	dword bCantLeaveFloorpic:1;	// stay within a certain floor type
 	dword bFloorClip:1;		// if feet are allowed to be clipped
+	dword bIgnoreCeilingStep:1;	// continue walk without lowering itself
 
 	//  Params
 	float Mass;
@@ -614,9 +615,12 @@ inline int SV_GetPlayerNum(VBasePlayer* player)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.37  2005/10/18 21:33:13  dj_jl
+//	Fixed ceiling lightninfg.
+//
 //	Revision 1.36  2005/05/03 14:57:07  dj_jl
 //	Added support for specifying skin index.
-//
+//	
 //	Revision 1.35  2005/03/16 15:04:44  dj_jl
 //	More work on line specials.
 //	
