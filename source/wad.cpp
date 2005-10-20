@@ -797,6 +797,7 @@ public:
 			Z_ChangeTag(Data, Tag);
 		else
 			Z_Free(Data);
+		Data = NULL;
 		return !ArIsError;
 	}
 
@@ -996,6 +997,9 @@ void W_Profile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2005/10/20 22:22:39  dj_jl
+//  Fixed double destruction of reader archive.
+//
 //  Revision 1.16  2005/10/18 20:53:04  dj_jl
 //  Implemented basic support for streamed music.
 //
