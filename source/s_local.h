@@ -348,9 +348,6 @@ float EAX_CalcEnvSize();
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-extern boolean				UseSndScript;
-extern char					ArchivePath[128];
-
 // the complete set of sound effects
 extern TArray<sfxinfo_t>	S_sfx;
 extern sfxinfo_t			S_VoiceInfo;
@@ -403,9 +400,12 @@ int qmus2mid(const char *mus, char *mid, int length);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2005/10/20 22:31:27  dj_jl
+//	Removed Hexen's devsnd support.
+//
 //	Revision 1.16  2005/10/18 20:53:04  dj_jl
 //	Implemented basic support for streamed music.
-//
+//	
 //	Revision 1.15  2005/09/19 23:00:19  dj_jl
 //	Streaming support.
 //	

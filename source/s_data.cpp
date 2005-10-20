@@ -30,8 +30,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define DEFAULT_ARCHIVEPATH		"o:/sound/archive/"
-
 // TYPES -------------------------------------------------------------------
 
 struct raw_sound_t
@@ -51,9 +49,6 @@ struct raw_sound_t
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
-
-boolean				UseSndScript;
-char				ArchivePath[128];
 
 TArray<sfxinfo_t>	S_sfx;
 sfxinfo_t			S_VoiceInfo;
@@ -76,15 +71,15 @@ void S_InitScript(void)
 	int p;
 	int i;
 
-    //
-    //	Allocate memory for sound info
-    //
+	//
+	//	Allocate memory for sound info
+	//
 
 	S_sfx.AddZeroed();
 
-    //
-    //	Load script SFXINFO
-    //
+	//
+	//	Load script SFXINFO
+	//
 
 	SC_Open("sfxinfo");
 
@@ -98,8 +93,8 @@ void S_InitScript(void)
 		{
 			strcpy(S_sfx[i].lumpname, sc_String);
 		}
-        else
-        {
+		else
+		{
 			S_sfx[i].lumpname[0] = 0;
 		}
 
@@ -115,21 +110,10 @@ void S_InitScript(void)
 	SC_Close();
 
 	//
-    //	Load script SNDINFO
-    //
+	//	Load script SNDINFO
+	//
 
-	strcpy(ArchivePath, DEFAULT_ARCHIVEPATH);
-	p = M_CheckParm("-devsnd");
-	if (!p)
-	{
-		UseSndScript = false;
-		SC_Open("sndinfo");
-	}
-	else
-	{
-		UseSndScript = true;
-		SC_OpenFile(myargv[p + 1]);
-	}
+	SC_Open("sndinfo");
 
 	while (SC_GetString())
 	{
@@ -137,8 +121,8 @@ void S_InitScript(void)
 		{
 			if (!stricmp(sc_String, "$ARCHIVEPATH"))
 			{
+				//	Ignored.
 				SC_MustGetString();
-				strcpy(ArchivePath, sc_String);
 			}
 			else if (!stricmp(sc_String, "$MAP"))
 			{
@@ -164,13 +148,13 @@ void S_InitScript(void)
 			}
 			if (!i)
 			{
-            	//	Not found - add it
-                i = S_sfx.AddZeroed();
+				//	Not found - add it
+				i = S_sfx.AddZeroed();
 				S_sfx[i].tagName = sc_String;
-                //	Default values
-                S_sfx[i].priority = 127;
-                S_sfx[i].numchannels = -1;
-                S_sfx[i].changePitch = 1;
+				//	Default values
+				S_sfx[i].priority = 127;
+				S_sfx[i].numchannels = -1;
+				S_sfx[i].changePitch = 1;
 			}
 
 			SC_MustGetString();
@@ -181,7 +165,7 @@ void S_InitScript(void)
 			else
 			{
 				strcpy(S_sfx[i].lumpname, "default");
-            }
+			}
 		}
 	}
 	SC_Close();
@@ -189,16 +173,16 @@ void S_InitScript(void)
 	S_sfx.Shrink();
 
 	//
-    //	Set "default" sound for empty sounds
-    //
+	//	Set "default" sound for empty sounds
+	//
 	for (TArray<sfxinfo_t>::TIterator It(S_sfx); It; ++It)
 	{
 		if (!It->lumpname[0])
 		{
 			strcpy(It->lumpname, "default");
 		}
-        It->snd_ptr = NULL;
-        It->lumpnum = -1;
+		It->snd_ptr = NULL;
+		It->lumpnum = -1;
 	}
 
 	//
@@ -272,26 +256,13 @@ bool S_LoadSound(int sound_id, const char *VoiceName)
 			GCon->Log(NAME_Dev, "WARNING! Voice is still used");
 		}
 
-		if (UseSndScript)
+		S_VoiceInfo.lumpnum = W_CheckNumForName(VoiceName, WADNS_Voices);
+		if (S_VoiceInfo.lumpnum < 0)
 		{
-			char *FName = va("%s%s.lmp", ArchivePath, VoiceName);
-			if (!Sys_FileExists(FName))
-			{
-				GCon->Logf(NAME_Dev, "Voice %s not found", FName);
-				return false;
-			}
-			M_ReadFile(FName, (byte **)&S_VoiceInfo.snd_ptr);
+			GCon->Logf(NAME_Dev, "Voice %s not found", VoiceName);
+			return false;
 		}
-		else
-		{
-			S_VoiceInfo.lumpnum = W_CheckNumForName(VoiceName, WADNS_Voices);
-			if (S_VoiceInfo.lumpnum < 0)
-			{
-				GCon->Logf(NAME_Dev, "Voice %s not found", VoiceName);
-				return false;
-			}
-			S_VoiceInfo.snd_ptr = W_CacheLumpNum(S_VoiceInfo.lumpnum, PU_SOUND);
-		}
+		S_VoiceInfo.snd_ptr = W_CacheLumpNum(S_VoiceInfo.lumpnum, PU_SOUND);
 
 		raw_sound_t *rawdata = (raw_sound_t *)S_VoiceInfo.snd_ptr;
 	    S_VoiceInfo.freq = LittleShort(rawdata->freq);
@@ -303,37 +274,24 @@ bool S_LoadSound(int sound_id, const char *VoiceName)
 
 	if (!S_sfx[sound_id].snd_ptr)
 	{
-		if (UseSndScript)
+		// get lumpnum if necessary
+		if (S_sfx[sound_id].lumpnum < 0)
 		{
-			char *FName = va("%s%s.lmp", ArchivePath, S_sfx[sound_id].lumpname);
-			if (!Sys_FileExists(FName))
-			{
-				GCon->Logf(NAME_Dev, "Sound file %s not found", FName);
-				return false;
-			}
-			M_ReadFile(FName, (byte **)&S_sfx[sound_id].snd_ptr);
-		}
-		else
-		{
-		  	// get lumpnum if necessary
+			S_sfx[sound_id].lumpnum = W_CheckNumForName(
+				S_sfx[sound_id].lumpname);
+			//FIXME Strife quit sounds are voices.
+			if (S_sfx[sound_id].lumpnum < 0)
+				S_sfx[sound_id].lumpnum = W_CheckNumForName(
+					S_sfx[sound_id].lumpname, WADNS_Voices);
 			if (S_sfx[sound_id].lumpnum < 0)
 			{
-				S_sfx[sound_id].lumpnum = W_CheckNumForName(
+				GCon->Logf(NAME_Dev, "Sound lump %s not found",
 					S_sfx[sound_id].lumpname);
-				//FIXME Strife quit sounds are voices.
-				if (S_sfx[sound_id].lumpnum < 0)
-					S_sfx[sound_id].lumpnum = W_CheckNumForName(
-						S_sfx[sound_id].lumpname, WADNS_Voices);
-				if (S_sfx[sound_id].lumpnum < 0)
-				{
-					GCon->Logf(NAME_Dev, "Sound lump %s not found",
-						S_sfx[sound_id].lumpname);
-					return false;
-				}
+				return false;
 			}
-			S_sfx[sound_id].snd_ptr = W_CacheLumpNum(S_sfx[sound_id].lumpnum,
-				PU_SOUND);
 		}
+		S_sfx[sound_id].snd_ptr = W_CacheLumpNum(S_sfx[sound_id].lumpnum,
+			PU_SOUND);
 
 		raw_sound_t *rawdata = (raw_sound_t *)S_sfx[sound_id].snd_ptr;
 	    S_sfx[sound_id].freq = LittleShort(rawdata->freq);
@@ -404,9 +362,12 @@ void S_Init(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2005/10/20 22:31:27  dj_jl
+//	Removed Hexen's devsnd support.
+//
 //	Revision 1.12  2004/11/30 07:17:17  dj_jl
 //	Made string pointers const.
-//
+//	
 //	Revision 1.11  2004/11/23 12:43:10  dj_jl
 //	Wad file lump namespaces.
 //	
