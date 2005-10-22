@@ -40,11 +40,14 @@ public:
 	//	Current playing song info.
 	bool			CurrLoop;
 	FName			CurrSong;
+	bool			Stopping;
+	double			FinishTime;
 
 	VStreamMusicPlayer()
 	: StrmOpened(false)
 	, Codec(NULL)
 	, CurrLoop(false)
+	, Stopping(false)
 	{}
 	~VStreamMusicPlayer()
 	{}
@@ -541,7 +544,7 @@ static void PlaySong(const char* Song, bool Loop)
 	if (Codec)
 	{
 		//	Start playing streamed music.
-		GStreamMusicPlayer.Play(Codec, "test", false);
+		GStreamMusicPlayer.Play(Codec, Song, Loop);
 		StreamPlaying = true;
 	}
 	else
@@ -1268,22 +1271,51 @@ void VStreamMusicPlayer::Shutdown()
 void VStreamMusicPlayer::Tick(float)
 {
 	guard(VStreamMusicPlayer::Tick);
+	if (!StrmOpened)
+		return;
+	if (Stopping && FinishTime + 1.0 < Sys_Time())
+	{
+		//	Finish playback.
+		Stop();
+		return;
+	}
 	for (int Len = GSoundDevice->GetStreamAvailable(); Len;
 		Len = GSoundDevice->GetStreamAvailable())
 	{
 		short* Data = GSoundDevice->GetStreamBuffer();
-		Codec->Decode(Data, Len);
-		GSoundDevice->SetStreamData(Data, Len);
-		if (Codec->Finished())
+		int StartPos = 0;
+		while (!Stopping && StartPos < Len)
 		{
-			if (CurrLoop)
-				Codec->Restart();
-			else
+			int SamplesDecoded = Codec->Decode(Data + StartPos * 2, Len - StartPos);
+			StartPos += SamplesDecoded;
+			if (Codec->Finished())
 			{
-				Stop();
-				return;
+				//	Stream ended.
+				if (CurrLoop)
+				{
+					//	Restart stream.
+					Codec->Restart();
+				}
+				else
+				{
+					//	We'll wait for 1 second to finish playing.
+					Stopping = true;
+					FinishTime = Sys_Time();
+				}
+			}
+			else if (StartPos < Len)
+			{
+				//	Should never happen.
+				GCon->Log("Stream decoded less but is not finished");
+				Stopping = true;
+				FinishTime = Sys_Time();
 			}
 		}
+		if (Stopping)
+		{
+			memset(Data + StartPos * 2, 0, (Len - StartPos) * 4);
+		}
+		GSoundDevice->SetStreamData(Data, Len);
 	}
 	GSoundDevice->SetStreamVolume(music_volume);
 	unguard;
@@ -1304,6 +1336,7 @@ void VStreamMusicPlayer::Play(VAudioCodec* InCodec, const char* InName, bool InL
 	Codec = InCodec;
 	CurrSong = InName;
 	CurrLoop = InLoop;
+	Stopping = false;
 	unguard;
 }
 
@@ -1373,9 +1406,12 @@ bool VStreamMusicPlayer::IsPlaying()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2005/10/22 11:30:07  dj_jl
+//	Fixed looping of streams.
+//
 //	Revision 1.16  2005/10/18 20:53:04  dj_jl
 //	Implemented basic support for streamed music.
-//
+//	
 //	Revision 1.15  2005/09/13 17:32:45  dj_jl
 //	Created CD audio device class.
 //	
