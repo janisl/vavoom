@@ -147,11 +147,19 @@ else
 	LIB_FILES="utils/glbsp/libglbsp.a utils/glvis/libglvis.a"
 fi
 
-AC_ARG_WITH([vorbis], AS_HELP_STRING([--enable-vorbis], [Enable Vorbis support]))
+AC_ARG_WITH([vorbis], AS_HELP_STRING([--with-vorbis], [Enable Vorbis support]))
 if test "x$with_vorbis" != "xno"; then
 	AC_CHECK_HEADER([vorbis/codec.h], [
 		OBJ_FILES="$OBJ_FILES \$(VORBIS_OBJS)"
 		MAIN_LIBS="-lvorbis -logg $MAIN_LIBS"
+	])
+fi
+
+AC_ARG_WITH([libmad], AS_HELP_STRING([--with-libmad], [Enable MP3 support]))
+if test "x$with_libmad" != "xno"; then
+	AC_CHECK_HEADER([mad.h], [
+		OBJ_FILES="$OBJ_FILES \$(MP3_OBJS)"
+		MAIN_LIBS="-lmad $MAIN_LIBS"
 	])
 fi
 

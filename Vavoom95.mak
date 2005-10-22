@@ -33,8 +33,8 @@ OBJFILES = obj\chat.obj obj\cheats.obj \
 	obj\in_input.obj obj\in_win32.obj \
 	\
 	obj\cd_win32.obj obj\s_al.obj obj\s_data.obj obj\s_eaxutl.obj \
-	obj\s_sound.obj obj\s_vorbis.obj obj\s_wav.obj obj\s_win32.obj \
-	obj\s_win32m.obj obj\sn_sonix.obj \
+	obj\s_mp3.obj obj\s_sound.obj obj\s_vorbis.obj obj\s_wav.obj \
+	obj\s_win32.obj obj\s_win32m.obj obj\sn_sonix.obj \
 	\
 	obj\am_map.obj obj\menu.obj obj\sbar.obj obj\screen.obj obj\text.obj \
 	obj\finale.obj obj\iline.obj obj\imission.obj obj\console.obj \
@@ -86,7 +86,7 @@ LIBRARIES = utils\glbsp\libglbsp.lib utils\glvis\glvis.lib \
 $(PROJECT): $(OBJFILES) $(RESFILES) $(LIBRARIES)
 	ilink32 @&&!
 	$(LFLAGS) -L$(BCB)\lib c0w32.obj $(OBJFILES), +
-	$(PROJECT),,$(LIBRARIES) libpng.lib zlib.lib ogg_static.lib +
+	$(PROJECT),,$(LIBRARIES) libpng.lib zlib.lib libmad.lib ogg_static.lib +
 	vorbis_static.lib import32.lib cw32.lib,, +
 	$(RESFILES)
 !

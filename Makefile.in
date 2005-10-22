@@ -178,6 +178,10 @@ AL_OBJS = \
 VORBIS_OBJS = \
 	obj/s_vorbis.$(OBJEXT)
 
+#-- Vorbis files --
+MP3_OBJS = \
+	obj/s_mp3.$(OBJEXT)
+
 #-- DOS --
 SYS_OBJS_DJGPP = \
 	obj/cd_dos.$(OBJEXT) \
