@@ -68,6 +68,8 @@ public:
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
+static int qmus2mid(FArchive& Ar, byte* mid);
+
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
@@ -489,6 +491,64 @@ void S_UpdateSounds(void)
 
 //==========================================================================
 //
+//	FArchiveMemoryReader
+//
+//==========================================================================
+
+class FArchiveMemoryReader : public FArchive
+{
+public:
+	FArchiveMemoryReader(byte* InData, int InSize)
+		: Data(InData), Pos(0), Size(InSize)
+	{
+		ArIsLoading = true;
+		ArIsPersistent = true;
+	}
+	~FArchiveMemoryReader()
+	{
+		if (Data)
+			Close();
+	}
+	void Serialise(void* V, int Length)
+	{
+		if (Length > Size - Pos)
+		{
+			ArIsError = true;
+		}
+		memcpy(V, Data + Pos, Length);
+		Pos += Length;
+	}
+	int Tell()
+	{
+		return Pos;
+	}
+	int TotalSize()
+	{
+		return Size;
+	}
+	bool AtEnd()
+	{
+		return Pos >= Size;
+	}
+	void Seek(int InPos)
+	{
+		Pos = InPos;
+	}
+	bool Close()
+	{
+		Z_Free(Data);
+		Data = NULL;
+		return !ArIsError;
+	}
+
+protected:
+	byte *Data;
+	int Pos;
+	int Size;
+};
+
+//==========================================================================
+//
 //	PlaySong
 //
 //==========================================================================
@@ -534,6 +594,25 @@ static void PlaySong(const char* Song, bool Loop)
 		StrmAr = W_CreateLumpReader(Song);
 	}
 
+	byte Hdr[4];
+	StrmAr->Serialise(Hdr, 4);
+	if (!memcmp(Hdr, MUSMAGIC, 4))
+	{
+		// convert mus to mid with a wanderfull function
+		// thanks to S.Bacquet for the source of qmus2mid
+		StrmAr->Seek(0);
+		byte* Buf = (byte*)Z_Malloc(256 * 1024, PU_STATIC, 0);
+		int MidLength = qmus2mid(*StrmAr, Buf);
+		StrmAr->Close();
+		delete StrmAr;
+		if (!MidLength)
+		{
+			Z_Free(Buf);
+			return;
+		}
+		StrmAr = new FArchiveMemoryReader(Buf, MidLength);
+	}
+
 	//	Try to create audio codec.
 	VAudioCodec* Codec = NULL;
 	for (FAudioCodecDesc* Desc = FAudioCodecDesc::List; Desc && !Codec; Desc = Desc->Next)
@@ -555,23 +634,6 @@ static void PlaySong(const char* Song, bool Loop)
 		StrmAr->Serialise(Data, Length);
 		StrmAr->Close();
 		delete StrmAr;
-
-		if (!memcmp(Data, MUSMAGIC, 4))
-		{
-			// convert mus to mid with a wanderfull function
-			// thanks to S.Bacquet for the source of qmus2mid
-			char* Buf = (char*)Z_Malloc(256 * 1024, PU_STATIC, 0);
-			int MidLength = qmus2mid((char*)Data, Buf, Length);
-			if (!MidLength)
-			{
-				Z_Free(Buf);
-				return;
-			}
-			Z_Resize((void**)&Data, MidLength);
-			memcpy(Data, Buf, MidLength);
-			Z_Free(Buf);
-			Length = MidLength;
-		}
 
 		if (!memcmp(Data, MIDIMAGIC, 4))
 		{
@@ -845,7 +907,7 @@ struct Track
 	char*		data; 	   /* Primary data */
 };
 
-static char				*mid_file;
+static byte*			mid_file;
 
 static struct Track		tracks[32];
 static word				TrackCnt = 0;
@@ -970,17 +1032,18 @@ static void TWriteVarLen(int tracknum, dword value)
 //
 //==========================================================================
 
-static dword ReadTime(const char** file)
+static dword ReadTime(FArchive& Ar)
 {
 	dword 		time = 0;
-	int 		data;
+	byte		data;
 
+	if (Ar.AtEnd())
+		return 0;
 	do
 	{
-		data = *(*file)++;
-		if (data != EOF)
-			time = (time << 7) + (data & 0x7F);
-	} while ((data != EOF) && (data & 0x80));
+		Ar << data;
+		time = (time << 7) + (data & 0x7F);
+	} while (!Ar.AtEnd() && (data & 0x80));
 
 	return time;
 }
@@ -991,21 +1054,20 @@ static dword ReadTime(const char** file)
 //
 //==========================================================================
 
-static bool convert(const char *mus, int length)
+static bool convert(FArchive& Ar)
 {
-	const char*			mus_ptr;
 	byte				et;
 	int					MUSchannel;
 	int					MIDIchannel;
 	int					MIDItrack = 0;
 	int					NewEvent;
 	int 				i;
-	int					event;
-	int					data;
+	byte				event;
+	byte				data;
 	dword				DeltaTime;
 	byte				MIDIchan2track[16];
 	bool 				ouch = false;
-	MUSheader*			MUSh;
+	FMusHeader			MUSh;
 
 	for (i = 0; i < 16; i++)
 	{
@@ -1020,20 +1082,20 @@ static bool convert(const char *mus, int length)
 		tracks[i].data = NULL;
 	}
 
-	MUSh = (MUSheader*)mus;
-	if (strncmp(MUSh->ID, MUSMAGIC, 4))
+	Ar.Serialise(&MUSh, sizeof(FMusHeader));
+	if (strncmp(MUSh.ID, MUSMAGIC, 4))
 	{
 		GCon->Log("Not a MUS file");
 		return false;
 	}
 
-	if (MUSh->channels > 15)	 /* <=> MUSchannels+drums > 16 */
+	if ((word)LittleShort(MUSh.NumChannels) > 15)	 /* <=> MUSchannels+drums > 16 */
 	{
 		GCon->Log(NAME_Dev,"Too many channels");
 		return false;
 	}
 
-	mus_ptr = mus + MUSh->ScoreStart;
+	Ar.Seek((word)LittleShort(MUSh.ScoreStart));
 
 	tracks[0].data = (char*)Z_Malloc(TRACKBUFFERSIZE, PU_MUSIC, 0);
 	TWriteBuf(0, midikey, 6);
@@ -1041,10 +1103,10 @@ static bool convert(const char *mus, int length)
 
 	TrackCnt = 1;	//	Music starts here
 
-	event = *(mus_ptr++);
+	Ar << event;
 	et = event_type(event);
 	MUSchannel = channel(event);
-	while ((et != 6) && mus_ptr - mus < length && (event != EOF))
+	while ((et != 6) && !Ar.AtEnd())
 	{
 		if (MUS2MIDchannel[MUSchannel] == -1)
 		{
@@ -1066,7 +1128,7 @@ static bool convert(const char *mus, int length)
 			NewEvent = 0x90 | MIDIchannel;
 			TWriteByte(MIDItrack, NewEvent);
 			tracks[MIDItrack].LastEvent = NewEvent;
-			data = *(mus_ptr++);
+			Ar << data;
 			TWriteByte(MIDItrack, data);
 			TWriteByte(MIDItrack, 0);
 			break;
@@ -1074,17 +1136,20 @@ static bool convert(const char *mus, int length)
 			NewEvent = 0x90 | MIDIchannel;
 			TWriteByte(MIDItrack, NewEvent);
 			tracks[MIDItrack].LastEvent = NewEvent;
-			data = *(mus_ptr++);
+			Ar << data;
 			TWriteByte(MIDItrack, data & 0x7F);
 			if (data & 0x80)
-				tracks[MIDItrack].vel = *(mus_ptr++);
+			{
+				Ar << data;
+				tracks[MIDItrack].vel = data;
+			}
 			TWriteByte(MIDItrack, tracks[MIDItrack].vel);
 			break;
 		case 2:
 			NewEvent = 0xE0 | MIDIchannel;
 			TWriteByte(MIDItrack, NewEvent);
 			tracks[MIDItrack].LastEvent = NewEvent;
-			data = *(mus_ptr++);
+			Ar << data;
 			TWriteByte(MIDItrack, (data & 1) << 6);
 			TWriteByte(MIDItrack, data >> 1);
 			break;
@@ -1092,15 +1157,15 @@ static bool convert(const char *mus, int length)
 			NewEvent = 0xB0 | MIDIchannel;
 			TWriteByte(MIDItrack, NewEvent);
 			tracks[MIDItrack].LastEvent = NewEvent;
-			data = *(mus_ptr++) ;
+			Ar << data;
 			TWriteByte(MIDItrack, MUS2MIDcontrol[data]);
 			if (data == 12)
-				TWriteByte(MIDItrack, MUSh->channels + 1);
+				TWriteByte(MIDItrack, LittleShort(MUSh.NumChannels) + 1);
 			else
 				TWriteByte(MIDItrack, 0);
 			break;
 		case 4:
-			data = *(mus_ptr++);
+			Ar << data;
 			if (data)
 			{
 				NewEvent = 0xB0 | MIDIchannel;
@@ -1114,7 +1179,7 @@ static bool convert(const char *mus, int length)
 				TWriteByte(MIDItrack, NewEvent);
 				tracks[MIDItrack].LastEvent = NewEvent;
 			}
-			data = *(mus_ptr++);
+			Ar << data;
 			TWriteByte(MIDItrack, data);
 			break;
 		case 5:
@@ -1126,13 +1191,13 @@ static bool convert(const char *mus, int length)
 		}
 		if (last(event))
 		{
-			DeltaTime = ReadTime(&mus_ptr);
+			DeltaTime = ReadTime(Ar);
 			for (i = 0; i < (int)TrackCnt; i++)
 				tracks[i].DeltaTime += DeltaTime;
 		}
-		event = *(mus_ptr++);
-		if (event != EOF)
+		if (!Ar.AtEnd())
 		{
+			Ar << event;
 			et = event_type(event);
 			MUSchannel = channel(event);
 		}
@@ -1223,11 +1288,11 @@ static void FreeTracks()
 //
 //==========================================================================
 
-int qmus2mid(const char *mus, char *mid, int length)
+static int qmus2mid(FArchive& Ar, byte* mid)
 {
 	mid_file = mid;
 
-	if (convert(mus, length))
+	if (convert(Ar))
 	{
 		WriteMIDIFile();
 	}
@@ -1406,9 +1471,12 @@ bool VStreamMusicPlayer::IsPlaying()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2005/10/28 17:50:01  dj_jl
+//	Added Timidity driver.
+//
 //	Revision 1.17  2005/10/22 11:30:07  dj_jl
 //	Fixed looping of streams.
-//
+//	
 //	Revision 1.16  2005/10/18 20:53:04  dj_jl
 //	Implemented basic support for streamed music.
 //	

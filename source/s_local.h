@@ -362,7 +362,7 @@ extern VCDAudioDevice*		GCDAudioDevice;
 
 //**************************************************************************
 //
-//  Quick MUS->MID ! by S.Bacquet
+//  MIDI and MUS file header structures.
 //
 //**************************************************************************
 
@@ -371,38 +371,39 @@ extern VCDAudioDevice*		GCDAudioDevice;
 
 #pragma pack(1)
 
-typedef struct
+struct FMusHeader
 {
-	char		ID[4];			/* identifier "MUS" 0x1A */
-	word		ScoreLength;
+	char		ID[4];			// identifier "MUS" 0x1A
+	word		ScoreSize;
 	word		ScoreStart;
-	word		channels; 		/* count of primary channels */
-	word		SecChannels;	/* count of secondary channels (?) */
-	word		InstrCnt;
-	word		dummy;
-} MUSheader;
+	word		NumChannels; 	// count of primary channels
+	word		NumSecChannels;	// count of secondary channels (?)
+	word		InstrumentCount;
+	word		Dummy;
+};
 
-typedef struct
+struct MIDheader
 {
 	char		ID[4];
-	dword		hdr_size;//size;
-	word		type;//file_type;
+	dword		hdr_size;
+	word		type;
 	word		num_tracks;
 	word		divisions;
-} MIDheader;//MIDI_Header_t;
+};
 
 #pragma pack()
-
-int qmus2mid(const char *mus, char *mid, int length);
 
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2005/10/28 17:50:01  dj_jl
+//	Added Timidity driver.
+//
 //	Revision 1.17  2005/10/20 22:31:27  dj_jl
 //	Removed Hexen's devsnd support.
-//
+//	
 //	Revision 1.16  2005/10/18 20:53:04  dj_jl
 //	Implemented basic support for streamed music.
 //	

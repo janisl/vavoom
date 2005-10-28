@@ -137,6 +137,7 @@ COMMON_OBJS = \
 	obj/s_data.$(OBJEXT) \
 	obj/s_eaxutl.$(OBJEXT) \
 	obj/s_sound.$(OBJEXT) \
+	obj/s_tmidty.$(OBJEXT) \
 	obj/s_wav.$(OBJEXT) \
 	obj/sbar.$(OBJEXT) \
 	obj/sc_man.$(OBJEXT) \
@@ -356,6 +357,9 @@ obj/%.$(OBJEXT) : source/%.s source/asm_i386.h
 	$(CC) $(ASM_ARGS) -o $@ $<
 
 # ---------------------------------------
+
+source/timidity/libtimidity.a: source/timidity/*.c source/timidity/*.h
+	$(MAKE) -C source/timidity
 
 utils/glbsp/libglbsp.a:
 	$(MAKE) -C utils/glbsp -f Plugin.mak

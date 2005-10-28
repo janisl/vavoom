@@ -1,0 +1,18 @@
+AR=@AR@
+CC = @CC@
+CFLAGS = @CFLAGS@
+OBJEXT=@OBJEXT@
+RANLIB=@RANLIB@
+
+OBJS = common.$(OBJEXT) controls.$(OBJEXT) filter.$(OBJEXT) instrum.$(OBJEXT) \
+	mix.$(OBJEXT) output.$(OBJEXT) playmidi.$(OBJEXT) readmidi.$(OBJEXT) \
+	resample.$(OBJEXT) tables.$(OBJEXT) timidity.$(OBJEXT)
+
+all: libtimidity.a
+
+libtimidity.a: $(OBJS)
+	$(AR) rc $@ $^
+	$(RANLIB) $@
+
+%.$(OBJEXT): %.c *.h
+	$(CC) $(CFLAGS) -c -o $@ $<

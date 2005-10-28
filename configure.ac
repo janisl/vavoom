@@ -139,12 +139,13 @@ dnl ---------------- Other *NIX platforms ----------------
 	;;
 esac
 
+LIB_FILES="source/timidity/libtimidity.a utils/glvis/libglvis.a"
+
 AC_ARG_WITH([external-glbsp], AS_HELP_STRING([--with-external-glbsp], [use external glBSP library]))
 if test "x$with_external_glbsp" = "xyes"; then
 	MAIN_LIBS="-lglbsp $MAIN_LIBS"
-	LIB_FILES="utils/glvis/libglvis.a"
 else
-	LIB_FILES="utils/glbsp/libglbsp.a utils/glvis/libglvis.a"
+	LIB_FILES="$LIB_FILES utils/glbsp/libglbsp.a"
 fi
 
 AC_ARG_WITH([vorbis], AS_HELP_STRING([--with-vorbis], [Enable Vorbis support]))
@@ -175,6 +176,7 @@ AC_SUBST([SV_LIBS])
 
 AC_OUTPUT([
 	Makefile
+	source/timidity/Makefile
 	utils/acc/Makefile
 	utils/fixmd2/Makefile
 	utils/glbsp/Plugin.mak
