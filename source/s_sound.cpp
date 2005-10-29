@@ -585,6 +585,42 @@ static void PlaySong(const char* Song, bool Loop)
 	if (!StrmAr)
 		StrmAr = FL_OpenFileRead(va("music/%s.mus", Song));
 	if (!StrmAr)
+		StrmAr = FL_OpenFileRead(va("music/%s.669", Song));
+	if (!StrmAr)
+		StrmAr = FL_OpenFileRead(va("music/%s.amf", Song));
+	if (!StrmAr)
+		StrmAr = FL_OpenFileRead(va("music/%s.dsm", Song));
+	if (!StrmAr)
+		StrmAr = FL_OpenFileRead(va("music/%s.far", Song));
+	if (!StrmAr)
+		StrmAr = FL_OpenFileRead(va("music/%s.gdm", Song));
+	if (!StrmAr)
+		StrmAr = FL_OpenFileRead(va("music/%s.imf", Song));
+	if (!StrmAr)
+		StrmAr = FL_OpenFileRead(va("music/%s.it", Song));
+	if (!StrmAr)
+		StrmAr = FL_OpenFileRead(va("music/%s.m15", Song));
+	if (!StrmAr)
+		StrmAr = FL_OpenFileRead(va("music/%s.med", Song));
+	if (!StrmAr)
+		StrmAr = FL_OpenFileRead(va("music/%s.mod", Song));
+	if (!StrmAr)
+		StrmAr = FL_OpenFileRead(va("music/%s.mtm", Song));
+	if (!StrmAr)
+		StrmAr = FL_OpenFileRead(va("music/%s.okt", Song));
+	if (!StrmAr)
+		StrmAr = FL_OpenFileRead(va("music/%s.s3m", Song));
+	if (!StrmAr)
+		StrmAr = FL_OpenFileRead(va("music/%s.stm", Song));
+	if (!StrmAr)
+		StrmAr = FL_OpenFileRead(va("music/%s.stx", Song));
+	if (!StrmAr)
+		StrmAr = FL_OpenFileRead(va("music/%s.ult", Song));
+	if (!StrmAr)
+		StrmAr = FL_OpenFileRead(va("music/%s.uni", Song));
+	if (!StrmAr)
+		StrmAr = FL_OpenFileRead(va("music/%s.xm", Song));
+	if (!StrmAr)
 	{
 		if (W_CheckNumForName(Song) < 0)
 		{
@@ -1471,9 +1507,12 @@ bool VStreamMusicPlayer::IsPlaying()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2005/10/29 15:05:13  dj_jl
+//	Added MikMod driver.
+//
 //	Revision 1.18  2005/10/28 17:50:01  dj_jl
 //	Added Timidity driver.
-//
+//	
 //	Revision 1.17  2005/10/22 11:30:07  dj_jl
 //	Fixed looping of streams.
 //	

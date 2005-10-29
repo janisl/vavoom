@@ -164,6 +164,16 @@ if test "x$with_libmad" != "xno"; then
 	])
 fi
 
+AC_ARG_WITH([mikmod], AS_HELP_STRING([--with-mikmod], [Enable MikMod support]))
+if test "x$with_mikmod" != "xno"; then
+	AC_PATH_PROG([LIBMIKMOD_CONFIG], [libmikmod-config])
+	if test "x$LIBMIKMOD_CONFIG" != "x"; then
+		OBJ_FILES="$OBJ_FILES \$(MIKMOD_OBJS)"
+		MAIN_CFLAGS="$MAIN_CFLAGS `$LIBMIKMOD_CONFIG --cflags`"
+		MAIN_LIBS="`$LIBMIKMOD_CONFIG --libs` $MAIN_LIBS"
+	fi
+fi
+
 AC_SUBST([LIB_STDCXX])
 AC_SUBST([MAIN_EXE])
 AC_SUBST([SERVER_EXE])
