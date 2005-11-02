@@ -283,7 +283,7 @@ void SB_DrawTallNum(int x, int y, int num, int trans, bool perc)
 
 	if (perc)
 	{
-		R_DrawPic2(ST_HEALTHX, ST_HEALTHY, pic_percent, trans);
+		R_DrawPic2(x, y, pic_percent, trans);
 	}
 
 	R_GetPicInfo(pic_tallnum[0], &info);
@@ -356,7 +356,7 @@ void SB_DrawSmallNum(int x, int y, int num)
 //
 //==========================================================================
 
-void SB_DrawMainBar(void)
+void SB_DrawMainBar()
 {
 	int i;
 
@@ -764,6 +764,9 @@ void SB_UpdateWidgets(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2005/11/02 22:34:59  dj_jl
+//  Fixed percent sign.
+//
 //  Revision 1.15  2005/06/16 17:42:44  dj_jl
 //  Fixeds from Firebrand.
 //
