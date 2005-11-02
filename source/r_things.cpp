@@ -145,7 +145,7 @@ static TCvarI			r_draw_psprites("r_draw_psprites", "1", CVAR_ARCHIVE);
 static TCvarI			r_models("r_models", "1", CVAR_ARCHIVE);
 static TCvarI			r_view_models("r_view_models", "1", CVAR_ARCHIVE);
 static TCvarI			r_sort_sprites("r_sort_sprites", "0");
-static TCvarI			r_fix_sprite_offsets("r_fix_sprite_offsets", "0", CVAR_ARCHIVE);
+static TCvarI			r_fix_sprite_offsets("r_fix_sprite_offsets", "1", CVAR_ARCHIVE);
 static TCvarI			r_sprite_fix_delta("r_sprite_fix_delta", "-3", CVAR_ARCHIVE);
 static TCvarI			croshair("croshair", "0", CVAR_ARCHIVE);
 static TCvarI			croshair_trans("croshair_trans", "0", CVAR_ARCHIVE);
@@ -1179,9 +1179,12 @@ void R_DrawModelFrame(const TVec &origin, float angle, model_t *model,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2005/11/02 22:29:26  dj_jl
+//	Offset fix enabled by default.
+//
 //	Revision 1.22  2005/05/26 16:50:15  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.21  2005/05/03 14:57:06  dj_jl
 //	Added support for specifying skin index.
 //	
