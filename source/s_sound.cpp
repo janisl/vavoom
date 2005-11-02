@@ -621,6 +621,8 @@ static void PlaySong(const char* Song, bool Loop)
 	if (!StrmAr)
 		StrmAr = FL_OpenFileRead(va("music/%s.xm", Song));
 	if (!StrmAr)
+		StrmAr = FL_OpenFileRead(va("music/%s.flac", Song));
+	if (!StrmAr)
 	{
 		if (W_CheckNumForName(Song) < 0)
 		{
@@ -1507,9 +1509,12 @@ bool VStreamMusicPlayer::IsPlaying()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2005/11/02 22:28:09  dj_jl
+//	Added support for FLAC music.
+//
 //	Revision 1.19  2005/10/29 15:05:13  dj_jl
 //	Added MikMod driver.
-//
+//	
 //	Revision 1.18  2005/10/28 17:50:01  dj_jl
 //	Added Timidity driver.
 //	
