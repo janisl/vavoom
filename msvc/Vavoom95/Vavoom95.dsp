@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W4 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
+# ADD CPP /nologo /MT /W4 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x426 /d "NDEBUG"
@@ -53,7 +53,8 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib ole32.lib winmm.lib opengl32.lib openal32.lib wsock32.lib libpng.lib /nologo /subsystem:windows /machine:I386
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib ole32.lib winmm.lib opengl32.lib openal32.lib wsock32.lib libpng.lib zlib.lib libmad.lib vorbis_static.lib ogg_static.lib mikmod.lib /nologo /subsystem:windows /machine:I386 /nodefaultlib:"libc.lib" /nodefaultlib:"msvcrt.lib" /nodefaultlib:"libcd.lib" /nodefaultlib:"libcmtd.lib" /nodefaultlib:"msvcrtd.lib" /libpath:"C:\Gamma\Microsoft Visual C++ Toolkit 2003\lib"
+# SUBTRACT LINK32 /pdb:none
 
 !ELSEIF  "$(CFG)" == "Vavoom95 - Win32 Debug"
 
@@ -79,8 +80,8 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib ole32.lib winmm.lib opengl32.lib openal32.lib wsock32.lib libpng.lib /nologo /subsystem:windows /debug /machine:I386
-# SUBTRACT LINK32 /profile
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib ole32.lib winmm.lib opengl32.lib openal32.lib wsock32.lib libpng.lib fmodvc.lib zlib.lib /nologo /subsystem:windows /debug /machine:I386
+# SUBTRACT LINK32 /pdb:none
 
 !ENDIF 
 
@@ -369,6 +370,10 @@ SOURCE=..\..\source\vavoom.rc
 # Begin Source File
 
 SOURCE=..\..\source\vavoom_2.ico
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\vavoom_3.ico
 # End Source File
 # End Group
 # Begin Group "Assembler Files"
@@ -1652,11 +1657,6 @@ SOURCE=..\..\source\eax.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\source\qmus2mid.cpp
-# PROP Exclude_From_Build 1
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\source\s_al.cpp
 # End Source File
 # Begin Source File
@@ -1684,6 +1684,14 @@ SOURCE=..\..\source\s_local.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\source\s_mikmod.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\s_mp3.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\source\s_sdl.cpp
 # PROP Exclude_From_Build 1
 # End Source File
@@ -1696,6 +1704,14 @@ SOURCE=..\..\source\s_sdlm.cpp
 
 SOURCE=..\..\source\s_sound.cpp
 # ADD CPP /W4
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\s_tmidty.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\s_vorbis.cpp
 # End Source File
 # Begin Source File
 
@@ -2091,6 +2107,102 @@ SOURCE=..\..\source\system.h
 # Begin Source File
 
 SOURCE=..\..\source\winlocal.h
+# End Source File
+# End Group
+# Begin Group "Timidity Driver"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\..\source\timidity\common.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\timidity\common.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\timidity\config.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\timidity\controls.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\timidity\controls.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\timidity\filter.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\timidity\filter.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\timidity\instrum.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\timidity\instrum.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\timidity\mix.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\timidity\mix.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\timidity\output.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\timidity\output.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\timidity\playmidi.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\timidity\playmidi.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\timidity\readmidi.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\timidity\readmidi.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\timidity\resample.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\timidity\resample.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\timidity\tables.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\timidity\tables.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\timidity\timidity.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\timidity\timidity.h
 # End Source File
 # End Group
 # End Target
