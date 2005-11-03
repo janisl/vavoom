@@ -35,14 +35,38 @@
 class VWavAudioCodec : public VAudioCodec
 {
 public:
+#pragma pack(1)
+	struct FChunkHeader
+	{
+		char		ID[4];
+		dword		Size;
+	};
+
+	struct FWavFormatDesc
+	{
+		word		Format;
+		word		Channels;
+		dword		Rate;
+		dword		BytesPerSec;
+		word		BlockAlign;
+		word		Bits;
+	};
+#pragma pack()
+
 	FArchive*		Ar;
 	int				SamplesLeft;
+
+	int				WavChannels;
+	int				WavBits;
+	int				BlockAlign;
 
 	VWavAudioCodec(FArchive* InAr);
 	~VWavAudioCodec();
 	int Decode(short* Data, int NumSamples);
 	bool Finished();
 	void Restart();
+	int FindChunk(char* ID);
+
 	static VAudioCodec* Create(FArchive* InAr);
 };
 
@@ -70,10 +94,34 @@ IMPLEMENT_AUDIO_CODEC(VWavAudioCodec, "Wav");
 
 VWavAudioCodec::VWavAudioCodec(FArchive* InAr)
 : Ar(InAr)
+, SamplesLeft(-1)
 {
 	guard(VWavAudioCodec::VWavAudioCodec);
-	Ar->Seek(44);
-	SamplesLeft = (Ar->TotalSize() - 44) / 4;
+	int FmtSize = FindChunk("fmt ");
+	if (FmtSize < 16)
+	{
+		//	Format not found or too small.
+		return;
+	}
+	FWavFormatDesc Fmt;
+	Ar->Serialise(&Fmt, 16);
+	if (LittleShort(Fmt.Format) != 1)
+	{
+		//	Not a PCM format.
+		return;
+	}
+	SampleRate = LittleLong(Fmt.Rate);
+	WavChannels = LittleShort(Fmt.Channels);
+	WavBits = LittleShort(Fmt.Bits);
+	BlockAlign = LittleShort(Fmt.BlockAlign);
+
+	SamplesLeft = FindChunk("data");
+	if (SamplesLeft == -1)
+	{
+		//	Data not found
+		return;
+	}
+	SamplesLeft /= BlockAlign;
 	unguard;
 }
 
@@ -86,9 +134,12 @@ VWavAudioCodec::VWavAudioCodec(FArchive* InAr)
 VWavAudioCodec::~VWavAudioCodec()
 {
 	guard(VWavAudioCodec::~VWavAudioCodec);
-	Ar->Close();
-	delete Ar;
-	Ar = NULL;
+	if (SamplesLeft != -1)
+	{
+		Ar->Close();
+		delete Ar;
+		Ar = NULL;
+	}
 	unguard;
 }
 
@@ -101,11 +152,41 @@ VWavAudioCodec::~VWavAudioCodec()
 int VWavAudioCodec::Decode(short* Data, int NumSamples)
 {
 	guard(VWavAudioCodec::Decode);
-	if (NumSamples > SamplesLeft)
-		NumSamples = SamplesLeft;
-	Ar->Serialise(Data, NumSamples * 4);
-	SamplesLeft -= NumSamples;
-	return NumSamples;
+	int CurSample = 0;
+	byte Buf[1024];
+	while (SamplesLeft && CurSample < NumSamples)
+	{
+		int ReadSamples = 1024 / BlockAlign;
+		if (ReadSamples > NumSamples - CurSample)
+			ReadSamples = NumSamples - CurSample;
+		if (ReadSamples > SamplesLeft)
+			ReadSamples = SamplesLeft;
+		Ar->Serialise(Buf, ReadSamples * BlockAlign);
+		for (int i = 0; i < 2; i++)
+		{
+			byte* pSrc = Buf;
+			if (i && WavChannels > 1)
+				pSrc += WavBits / 8;
+			short* pDst = Data + CurSample * 2 + i;
+			if (WavBits == 8)
+			{
+				for (int j = 0; j < ReadSamples; j++, pSrc += BlockAlign, pDst += 2)
+				{
+					*pDst = (*pSrc - 127) << 8;
+				}
+			}
+			else
+			{
+				for (int j = 0; j < ReadSamples; j++, pSrc += BlockAlign, pDst += 2)
+				{
+					*pDst = LittleShort(*(short*)pSrc);
+				}
+			}
+		}
+		SamplesLeft -= ReadSamples;
+		CurSample += ReadSamples;
+	}
+	return CurSample;
 	unguard;
 }
 
@@ -129,8 +210,39 @@ bool VWavAudioCodec::Finished()
 void VWavAudioCodec::Restart()
 {
 	guard(VWavAudioCodec::Restart);
-	Ar->Seek(44);
-	SamplesLeft = (Ar->TotalSize() - 44) / 4;
+	SamplesLeft = FindChunk("data") / BlockAlign;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWavAudioCodec::FindChunk
+//
+//==========================================================================
+
+int VWavAudioCodec::FindChunk(char* ID)
+{
+	guard(VWavAudioCodec::FindChunk);
+	Ar->Seek(12);
+	int EndPos = Ar->TotalSize();
+	while (Ar->Tell() + 8 <= EndPos)
+	{
+		FChunkHeader ChunkHdr;
+		Ar->Serialise(&ChunkHdr, 8);
+		int ChunkSize = LittleLong(ChunkHdr.Size);
+		if (!memcmp(ChunkHdr.ID, ID, 4))
+		{
+			//	Found chunk.
+			return ChunkSize;
+		}
+		if (Ar->Tell() + ChunkSize > EndPos)
+		{
+			//	Chunk goes beyound end of file.
+			break;
+		}
+		Ar->Seek(Ar->Tell() + ChunkSize);
+	}
+	return -1;
 	unguard;
 }
 
@@ -148,7 +260,14 @@ VAudioCodec* VWavAudioCodec::Create(FArchive* InAr)
 	InAr->Serialise(Header, 12);
 	if (!memcmp(Header, "RIFF", 4) && !memcmp(Header + 8, "WAVE", 4))
 	{
-		return new VWavAudioCodec(InAr);
+		//	It's a WAVE file.
+		VWavAudioCodec* Codec = new VWavAudioCodec(InAr);
+		if (Codec->SamplesLeft != -1)
+		{
+			return Codec;
+		}
+		//	File seams to be broken.
+		delete Codec;
 	}
 	return NULL;
 	unguard;
@@ -157,7 +276,10 @@ VAudioCodec* VWavAudioCodec::Create(FArchive* InAr)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2005/11/03 23:59:15  dj_jl
+//	Properly implemented wave reading.
+//
 //	Revision 1.1  2005/10/18 20:53:04  dj_jl
 //	Implemented basic support for streamed music.
-//
+//	
 //**************************************************************************
