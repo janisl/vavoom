@@ -55,12 +55,6 @@
 #define ONFLOORZ		-99999.0
 #define ONCEILINGZ		99999.0
 
-//
-// Player internal flags, for cheats and debug.
-//
-#define CF_NOCLIP		1	// No clipping, walk through barriers.
-#define CF_GODMODE		2	// No damage, no health loss.
-
 #define MELEERANGE		64.0
 #define PUNCHRANGE		80.0
 #define MISSILERANGE	(32.0 * 64.0)
@@ -231,7 +225,7 @@ enum
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-int num_stats = NUMAMMO + NUMWEAPONS + NUMINVITEMS + 11;
+int num_stats = NUMAMMO + NUMWEAPONS + NUMINVITEMS + 12;
 bool respawnmonsters;
 
 float FloatBobOffsets[64] = {
@@ -258,6 +252,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.52  2005/11/03 22:49:51  dj_jl
+//  Implemented health bars and ammo type icons.
+//
 //  Revision 1.51  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

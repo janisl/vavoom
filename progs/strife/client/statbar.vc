@@ -59,6 +59,7 @@ int pic_blaster;
 int pic_sigil[5];
 int pic_i_comm;
 int pic_key[NUMKEYS];
+int pic_ammo[NUMAMMO];
 
 int LoadedLog;
 int LogText[1024 / 4];
@@ -164,7 +165,7 @@ string KeyNames[NUMKEYS] =
 //
 //==========================================================================
 
-void SB_StartMap(void)
+void SB_StartMap()
 {
 	int namebuf[3];
 	string Name = ARR2STR(namebuf);
@@ -209,6 +210,13 @@ void SB_StartMap(void)
 	pic_sigil[3] = R_RegisterPic("I_SGL4", PIC_PATCH);
 	pic_sigil[4] = R_RegisterPic("I_SGL5", PIC_PATCH);
 	pic_i_comm = R_RegisterPic("I_COMM", PIC_PATCH);
+	pic_ammo[am_clip] = R_RegisterPic("BLITA0", PIC_PATCH);
+	pic_ammo[am_electric_arrow] = R_RegisterPic("PQRLA0", PIC_PATCH);
+	pic_ammo[am_poison_arrow] = R_RegisterPic("XQRLA0", PIC_PATCH);
+	pic_ammo[am_cell] = R_RegisterPic("CPACA0", PIC_PATCH);
+	pic_ammo[am_misl] = R_RegisterPic("MSSLA0", PIC_PATCH);
+	pic_ammo[am_grenade1] = R_RegisterPic("GRN1A0", PIC_PATCH);
+	pic_ammo[am_grenade2] = R_RegisterPic("GRN2A0", PIC_PATCH);
 
 	pic_pause = R_RegisterPic("M_PAUSE", PIC_PATCH);
 }
@@ -253,7 +261,7 @@ void SB_DrawSmallNum(int x, int y, int num)
 //
 //==========================================================================
 
-void SB_DrawMainBar(void)
+void SB_DrawMainBar()
 {
 	int Idx;
 	int i;
@@ -265,6 +273,25 @@ void SB_DrawMainBar(void)
 
 	// health percentage
 	SB_DrawSmallNum(76, 162, cl->health);
+
+	if (cl->Cheats & CF_GODMODE)
+	{
+		R_FillRect(49, 172, 200, 2, 0xffffff00);
+		R_FillRect(49, 175, 200, 2, 0xffffff00);
+	}
+	else if (cl->health > 100)
+	{
+		i = 20000 / cl->health;
+		R_FillRect(49, 172, i, 2, 0xff00ff00);
+		R_FillRect(49, 175, i, 2, 0xff00ff00);
+		R_FillRect(49 + i, 172, 200 - i, 2, 0xff7f7fff);
+		R_FillRect(49 + i, 175, 200 - i, 2, 0xff7f7fff);
+	}
+	else
+	{
+		R_FillRect(49, 172, cl->health * 2, 2, 0xff00ff00);
+		R_FillRect(49, 175, cl->health * 2, 2, 0xff00ff00);
+	}
 
 	// armor percentage
 	if (cl->ArmorPoints > 0)
@@ -300,9 +327,10 @@ void SB_DrawMainBar(void)
 		R_DrawPic(253, 175, pic_sigil[cl->Sigil]);
 	}
 
-	if (cl->ReadyAmmo != 1994)
+	if (cl->ReadyAmmo != am_noammo)
 	{
-		SB_DrawSmallNum(310, 162, cl->ReadyAmmo);
+		SB_DrawSmallNum(310, 162, cl->Ammo[cl->ReadyAmmo]);
+		R_DrawPic(302, 192, pic_ammo[cl->ReadyAmmo]);
 	}
 
 	if (bShowWeapons)
@@ -395,7 +423,7 @@ void SB_DrawMainBar(void)
 //
 //==========================================================================
 
-void SB_DrawPause(void)
+void SB_DrawPause()
 {
 	if (cl->bPaused && GetCvar("draw_pause"))
 	{
@@ -426,7 +454,7 @@ void SB_Drawer(int sb_view)
 //
 //==========================================================================
 
-void SB_UpdateWidgets(void)
+void SB_UpdateWidgets()
 {
 	if (bShowKeys && !GetCvar("sb_show_keys"))
 	{
@@ -440,6 +468,9 @@ void SB_UpdateWidgets(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2005/11/03 22:49:03  dj_jl
+//  Implemented health bars and ammo type icons.
+//
 //  Revision 1.12  2004/12/22 07:56:47  dj_jl
 //  Fully working Strife support.
 //

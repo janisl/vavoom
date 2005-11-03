@@ -53,6 +53,10 @@ int Objectives;
 int ArmorType;
 int ArmorPoints;
 
+// Bit flags, for cheats and debug.
+// See cheat_t, above.
+int Cheats;
+
 //
 //  ----------
 //
@@ -64,10 +68,6 @@ int ReadyWeapon;
 // For screen flashing (red or bright).
 float DamageFlash;
 float BonusFlash;
-
-// Bit flags, for cheats and debug.
-// See cheat_t, above.
-int Cheats;
 
 // Power ups. invinc and invis are timers.
 float Powers[NUMPOWERS];
@@ -1909,7 +1909,7 @@ void PaletteFlash()
 
 		Palette += STARTBONUSPALS;
 	}
-	else if (Powers[pw_ironfeet] > 4.0 ||
+	else if (HazardTime > 0.0 || Powers[pw_ironfeet] > 4.0 ||
 		ftoi(4.0 * Powers[pw_ironfeet]) & 1)
 		Palette = RADIATIONPAL;
 	else
@@ -1938,12 +1938,9 @@ void SetViewPos()
 
 	ViewAngles = MO.Angles;
 
-	PaletteFlash();
+	ReadyAmmo = Weapon(ViewEnts[ps_weapon]).Ammo;
 
-	if (Weapon(ViewEnts[ps_weapon]).Ammo == am_noammo)
-		ReadyAmmo = 1994;	// means "n/a"
-	else
-		ReadyAmmo = Ammo[Weapon(ViewEnts[ps_weapon]).Ammo];
+	PaletteFlash();
 }
 
 //==========================================================================
@@ -2383,6 +2380,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2005/11/03 22:49:20  dj_jl
+//  Implemented health bars and ammo type icons.
+//
 //  Revision 1.15  2005/04/28 06:57:05  dj_jl
 //  Some cheat fixes.
 //

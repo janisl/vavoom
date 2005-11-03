@@ -136,6 +136,12 @@ enum
 	NUMINVITEMS
 };
 
+//
+// Player internal flags, for cheats and debug.
+//
+#define CF_NOCLIP		1	// No clipping, walk through barriers.
+#define CF_GODMODE		2	// No damage, no health loss.
+
 #ifdef CLIENT
 
 addfields client_state_t
@@ -167,6 +173,9 @@ addfields client_state_t
 	// Armor type is 0-2.
 	int ArmorType;
 	int ArmorPoints;
+
+	// Bit flags, for cheats and debug.
+	int Cheats;
 };
 
 #endif
@@ -176,6 +185,9 @@ int maxammo[] = { 250, 50, 25, 400, 100, 30, 16 };
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2005/11/03 22:50:07  dj_jl
+//  Implemented health bars and ammo type icons.
+//
 //  Revision 1.15  2004/12/22 07:56:48  dj_jl
 //  Fully working Strife support.
 //
