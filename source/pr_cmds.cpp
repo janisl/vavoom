@@ -2591,6 +2591,29 @@ PF(R_ShadeRect)
 	R_ShadeRect(x, y, width, height, shade);
 }
 
+//==========================================================================
+//
+//	PF_R_FillRect
+//
+//==========================================================================
+
+PF(R_FillRect)
+{
+	int		x;
+	int		y;
+	int		width;
+	int		height;
+	int		coulor;
+
+	coulor = Pop();
+	height = Pop();
+	width = Pop();
+	y = Pop();
+	x = Pop();
+	Drawer->FillRect(x * fScaleX, y * fScaleY, (x + width) * fScaleX,
+		(y + height) * fScaleY, coulor);
+}
+
 //**************************************************************************
 //
 //	Text
@@ -3151,6 +3174,7 @@ builtin_info_t BuiltinInfo[] =
 	_(R_DrawModelFrame),
 	_(R_FillRectWithFlat),
 	_(R_ShadeRect),
+	_(R_FillRect),
 
 	//	Text
 	_(T_SetFont),
@@ -3259,9 +3283,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.57  2005/11/03 22:47:17  dj_jl
+//	Builtin for drawing coloured rectangles.
+//
 //	Revision 1.56  2005/06/04 13:59:02  dj_jl
 //	Adding support for Boom fake sectors.
-//
+//	
 //	Revision 1.55  2005/05/26 16:53:59  dj_jl
 //	Created texture manager class
 //	

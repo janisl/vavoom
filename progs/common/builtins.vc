@@ -277,6 +277,9 @@ native void R_FillRectWithFlat(int x, int y, int width, int height,
 //  Darkens a screen region
 native void R_ShadeRect(int x, int y, int w, int h, int shade);
 
+//  Draws a coloured rectangle
+native void R_FillRect(int x, int y, int w, int h, int colour);
+
 //
 //  Text
 //
@@ -490,6 +493,9 @@ native void MSG_SelectClientMsg(int msgtype, BasePlayer client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.50  2005/11/03 22:47:36  dj_jl
+//  Builtin for drawing coloured rectangles.
+//
 //  Revision 1.49  2005/06/04 13:56:07  dj_jl
 //  Adding support for Boom fake sectors.
 //
