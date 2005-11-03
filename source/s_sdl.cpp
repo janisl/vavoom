@@ -69,7 +69,7 @@ public:
 	void StopAllSound(void);
 	bool IsSoundPlaying(int origin_id, int sound_id);
 
-	bool OpenStream();
+	bool OpenStream(int, int, int);
 	void CloseStream();
 	int GetStreamAvailable();
 	short* GetStreamBuffer();
@@ -878,12 +878,12 @@ bool VSDLSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //
 //==========================================================================
 
-bool VSDLSoundDevice::OpenStream()
+bool VSDLSoundDevice::OpenStream(int Rate, int Bits, int Channels)
 {
 	guard(VSDLSoundDevice::OpenStream);
 	//	Build converter struct.
-	if (SDL_BuildAudioCVT(&StrmCvt, AUDIO_S16, 2, 44100,
-		cur_format, cur_channels, cur_frequency) < 0 )
+	if (SDL_BuildAudioCVT(&StrmCvt, Bits == 8 ? AUDIO_U8 : AUDIO_S16,
+		Channels, Rate, cur_format, cur_channels, cur_frequency) < 0)
 	{
 		return false;
 	}
@@ -1041,9 +1041,12 @@ static void StrmCallback(void*, Uint8* stream, int len)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2005/11/03 22:46:35  dj_jl
+//	Support for any bitrate streams.
+//
 //	Revision 1.18  2005/10/18 20:53:04  dj_jl
 //	Implemented basic support for streamed music.
-//
+//	
 //	Revision 1.17  2005/09/19 23:00:19  dj_jl
 //	Streaming support.
 //	

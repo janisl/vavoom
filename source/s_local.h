@@ -118,7 +118,7 @@ public:
 	virtual bool IsSoundPlaying(int, int)
 	{ return false; }
 
-	virtual bool OpenStream()
+	virtual bool OpenStream(int, int, int)
 	{ return false; }
 	virtual void CloseStream()
 	{}
@@ -303,6 +303,15 @@ FCDAudioDeviceDesc TClass##Desc(Type, Name, Description, CmdLineArg, Create##TCl
 class VAudioCodec
 {
 public:
+	int			SampleRate;
+	int			SampleBits;
+	int			NumChannels;
+
+	VAudioCodec()
+	: SampleRate(44100)
+	, SampleBits(16)
+	, NumChannels(2)
+	{}
 	virtual ~VAudioCodec()
 	{}
 	virtual int Decode(short*, int) = 0;
@@ -398,9 +407,12 @@ struct MIDheader
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2005/11/03 22:46:35  dj_jl
+//	Support for any bitrate streams.
+//
 //	Revision 1.18  2005/10/28 17:50:01  dj_jl
 //	Added Timidity driver.
-//
+//	
 //	Revision 1.17  2005/10/20 22:31:27  dj_jl
 //	Removed Hexen's devsnd support.
 //	

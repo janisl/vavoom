@@ -39,6 +39,8 @@
 #define MAX_SND_DIST			2025
 #define PRIORITY_MAX_ADJUST		10
 
+#define STRM_LEN				(8 * 1024)
+
 // TYPES -------------------------------------------------------------------
 
 struct channel_t
@@ -58,10 +60,9 @@ struct channel_t
 class VAllegroSoundDevice : public VSoundDevice
 {
 public:
-	void Tick(float DeltaTime);
-
 	void Init(void);
 	void Shutdown(void);
+	void Tick(float DeltaTime);
 	void PlaySound(int sound_id, const TVec &origin, const TVec &velocity,
 		int origin_id, int channel, float volume);
 	void PlayVoice(const char *Name);
@@ -70,7 +71,7 @@ public:
 	void StopAllSound(void);
 	bool IsSoundPlaying(int origin_id, int sound_id);
 
-	bool OpenStream();
+	bool OpenStream(int, int, int);
 	void CloseStream();
 	int GetStreamAvailable();
 	short* GetStreamBuffer();
@@ -784,12 +785,10 @@ bool VAllegroSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //
 //==========================================================================
 
-#define STRM_LEN		(8 * 1024)
-
-bool VAllegroSoundDevice::OpenStream()
+bool VAllegroSoundDevice::OpenStream(int Rate, int Bits, int Channels)
 {
 	guard(VAllegroSoundDevice::OpenStream);
-	Strm = play_audio_stream(STRM_LEN, 16, 1, 44100, 255, 127);
+	Strm = play_audio_stream(STRM_LEN, Bits, Channels == 2, Rate, 255, 127);
 	if (!Strm)
 	{
 		GCon->Log("Can't open stream");
@@ -913,9 +912,12 @@ void VAllegroSoundDevice::ResumeStream()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2005/11/03 22:46:35  dj_jl
+//	Support for any bitrate streams.
+//
 //	Revision 1.19  2005/10/18 20:53:04  dj_jl
 //	Implemented basic support for streamed music.
-//
+//	
 //	Revision 1.18  2005/09/19 23:00:19  dj_jl
 //	Streaming support.
 //	

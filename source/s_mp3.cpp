@@ -70,9 +70,9 @@ public:
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_AUDIO_CODEC(VMp3AudioCodec, "MP3");
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
+
+IMPLEMENT_AUDIO_CODEC(VMp3AudioCodec, "MP3");
 
 // CODE --------------------------------------------------------------------
 
@@ -167,6 +167,7 @@ bool VMp3AudioCodec::Init()
 	HaveFrame = true;
 
 	//	Everything's OK.
+	SampleRate = Frame.header.samplerate;
 	Initialised = true;
 	return true;
 	unguard;
@@ -354,7 +355,10 @@ VAudioCodec* VMp3AudioCodec::Create(FArchive* InAr)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2005/11/03 22:46:35  dj_jl
+//	Support for any bitrate streams.
+//
 //	Revision 1.1  2005/10/22 09:53:55  dj_jl
 //	Added MP3 decoder.
-//
+//	
 //**************************************************************************

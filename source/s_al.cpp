@@ -84,6 +84,8 @@ private:
 	TVec		listener_right;
 	TVec		listener_up;
 
+	ALuint		StrmSampleRate;
+	ALuint		StrmFormat;
 	ALuint		StrmBuffers[NUM_STRM_BUFFERS];
 	ALuint		StrmAvailableBuffers[NUM_STRM_BUFFERS];
 	int			StrmNumAvailableBuffers;
@@ -112,7 +114,7 @@ public:
 	void StopAllSound(void);
 	bool IsSoundPlaying(int origin_id, int sound_id);
 
-	bool OpenStream();
+	bool OpenStream(int, int, int);
 	void CloseStream();
 	int GetStreamAvailable();
 	short* GetStreamBuffer();
@@ -855,9 +857,14 @@ bool VOpenALDevice::IsSoundPlaying(int origin_id, int sound_id)
 //
 //==========================================================================
 
-bool VOpenALDevice::OpenStream()
+bool VOpenALDevice::OpenStream(int Rate, int Bits, int Channels)
 {
 	guard(VOpenALDevice::OpenStream);
+	StrmSampleRate = Rate;
+	StrmFormat = Channels == 2 ?
+		Bits == 8 ? AL_FORMAT_STEREO8 : AL_FORMAT_STEREO16 :
+		Bits == 8 ? AL_FORMAT_MONO8 : AL_FORMAT_MONO16;
+
 	alGetError();	//	Clear error code.
 	alGenSources(1, &StrmSource);
 	if (alGetError() != AL_NO_ERROR)
@@ -943,7 +950,7 @@ void VOpenALDevice::SetStreamData(short* Data, int Len)
 
 	Buf = StrmAvailableBuffers[StrmNumAvailableBuffers - 1];
 	StrmNumAvailableBuffers--;
-	alBufferData(Buf, AL_FORMAT_STEREO16, Data, Len * 4, 44100);
+	alBufferData(Buf, StrmFormat, Data, Len * 4, StrmSampleRate);
 	alSourceQueueBuffers(StrmSource, 1, &Buf);
 	alGetSourcei(StrmSource, AL_SOURCE_STATE, &State);
 	if (State != AL_PLAYING)
@@ -1002,9 +1009,12 @@ void VOpenALDevice::ResumeStream()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2005/11/03 22:46:35  dj_jl
+//	Support for any bitrate streams.
+//
 //	Revision 1.12  2005/10/18 20:53:04  dj_jl
 //	Implemented basic support for streamed music.
-//
+//	
 //	Revision 1.11  2005/09/19 23:00:19  dj_jl
 //	Streaming support.
 //	

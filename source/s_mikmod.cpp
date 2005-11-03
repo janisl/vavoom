@@ -28,9 +28,10 @@
 #ifdef _WIN32
 #include "winlocal.h"
 #endif
+#include <mikmod.h>
+
 #include "gamedefs.h"
 #include "s_local.h"
-#include <mikmod.h>
 
 // MACROS ------------------------------------------------------------------
 
@@ -378,7 +379,10 @@ VAudioCodec* VMikModAudioCodec::Create(FArchive* InAr)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2005/11/03 22:46:35  dj_jl
+//	Support for any bitrate streams.
+//
 //	Revision 1.1  2005/10/29 15:05:13  dj_jl
 //	Added MikMod driver.
-//
+//	
 //**************************************************************************

@@ -25,9 +25,10 @@
 
 // HEADER FILES ------------------------------------------------------------
 
+#include <FLAC++/decoder.h>
+
 #include "gamedefs.h"
 #include "s_local.h"
-#include <FLAC++/decoder.h>
 
 // MACROS ------------------------------------------------------------------
 
@@ -88,9 +89,9 @@ public:
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_AUDIO_CODEC(VFlacAudioCodec, "FLAC");
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
+
+IMPLEMENT_AUDIO_CODEC(VFlacAudioCodec, "FLAC");
 
 // CODE --------------------------------------------------------------------
 
@@ -103,6 +104,7 @@ IMPLEMENT_AUDIO_CODEC(VFlacAudioCodec, "FLAC");
 VFlacAudioCodec::VFlacAudioCodec(FStream* InStream)
 : Stream(InStream)
 {
+	SampleRate = Stream->SampleRate;
 }
 
 //==========================================================================
@@ -396,7 +398,10 @@ VAudioCodec* VFlacAudioCodec::Create(FArchive* InAr)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2005/11/03 22:46:35  dj_jl
+//	Support for any bitrate streams.
+//
 //	Revision 1.1  2005/11/02 22:28:09  dj_jl
 //	Added support for FLAC music.
-//
+//	
 //**************************************************************************

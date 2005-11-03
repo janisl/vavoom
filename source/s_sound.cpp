@@ -1430,10 +1430,12 @@ void VStreamMusicPlayer::Tick(float)
 //
 //==========================================================================
 
-void VStreamMusicPlayer::Play(VAudioCodec* InCodec, const char* InName, bool InLoop)
+void VStreamMusicPlayer::Play(VAudioCodec* InCodec, const char* InName,
+	bool InLoop)
 {
 	guard(VStreamMusicPlayer::Play);
-	StrmOpened = GSoundDevice->OpenStream();
+	StrmOpened = GSoundDevice->OpenStream(InCodec->SampleRate,
+		InCodec->SampleBits, InCodec->NumChannels);
 	if (!StrmOpened)
 		return;
 	Codec = InCodec;
@@ -1509,9 +1511,12 @@ bool VStreamMusicPlayer::IsPlaying()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2005/11/03 22:46:35  dj_jl
+//	Support for any bitrate streams.
+//
 //	Revision 1.20  2005/11/02 22:28:09  dj_jl
 //	Added support for FLAC music.
-//
+//	
 //	Revision 1.19  2005/10/29 15:05:13  dj_jl
 //	Added MikMod driver.
 //	

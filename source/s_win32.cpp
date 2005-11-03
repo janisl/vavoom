@@ -40,6 +40,8 @@
 #define PRIORITY_MAX_ADJUST		10
 #define DIST_ADJUST 			(MAX_SND_DIST/PRIORITY_MAX_ADJUST)
 
+#define STRM_LEN				(8 * 1024)
+
 // TYPES -------------------------------------------------------------------
 
 struct channel_t
@@ -77,7 +79,7 @@ public:
 	void StopAllSound(void);
 	bool IsSoundPlaying(int origin_id, int sound_id);
 
-	bool OpenStream();
+	bool OpenStream(int, int, int);
 	void CloseStream();
 	int GetStreamAvailable();
 	short* GetStreamBuffer();
@@ -128,6 +130,13 @@ static IKsPropertySet	*PropertySet;
 static TVec			listener_forward;
 static TVec			listener_right;
 static TVec			listener_up;
+
+static LPDIRECTSOUNDBUFFER	StrmBuffer;
+static int					StrmNextUpdatePart;
+static void*				StrmLockBuffer1;
+static void*				StrmLockBuffer2;
+static DWORD				StrmLockSize1;
+static DWORD				StrmLockSize2;
 
 static TCvarF		s3d_distance_unit("s3d_distance_unit", "32.0", CVAR_ARCHIVE);
 static TCvarF		s3d_doppler_factor("s3d_doppler_factor", "1.0", CVAR_ARCHIVE);
@@ -1209,16 +1218,7 @@ bool VDirectSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //
 //==========================================================================
 
-#define STRM_LEN		(8 * 1024)
-
-LPDIRECTSOUNDBUFFER		StrmBuffer;
-int						StrmNextUpdatePart;
-void*					StrmLockBuffer1;
-void*					StrmLockBuffer2;
-DWORD					StrmLockSize1;
-DWORD					StrmLockSize2;
-
-bool VDirectSoundDevice::OpenStream()
+bool VDirectSoundDevice::OpenStream(int Rate, int Bits, int Channels)
 {
 	guard(VDirectSoundDevice::OpenStream);
 	HRESULT					result;
@@ -1229,9 +1229,9 @@ bool VDirectSoundDevice::OpenStream()
 	// Set up wave format structure.
 	memset(&pcmwf, 0, sizeof(WAVEFORMATEX));
 	pcmwf.wFormatTag      = WAVE_FORMAT_PCM;      
-	pcmwf.nChannels       = 2;
-	pcmwf.nSamplesPerSec  = 44100;
-	pcmwf.wBitsPerSample  = WORD(16);
+	pcmwf.nChannels       = Channels;
+	pcmwf.nSamplesPerSec  = Rate;
+	pcmwf.wBitsPerSample  = WORD(Bits);
 	pcmwf.nBlockAlign     = WORD(pcmwf.wBitsPerSample / 8 * pcmwf.nChannels);
 	pcmwf.nAvgBytesPerSec = pcmwf.nSamplesPerSec * pcmwf.nBlockAlign;
 
@@ -1410,9 +1410,12 @@ void VDirectSoundDevice::ResumeStream()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2005/11/03 22:46:35  dj_jl
+//	Support for any bitrate streams.
+//
 //	Revision 1.28  2005/10/18 20:53:04  dj_jl
 //	Implemented basic support for streamed music.
-//
+//	
 //	Revision 1.27  2005/09/19 23:00:19  dj_jl
 //	Streaming support.
 //	

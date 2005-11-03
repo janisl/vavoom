@@ -27,14 +27,14 @@
 
 #include "gamedefs.h"
 #include "s_local.h"
+
 extern "C" {
 #include "timidity/timidity.h"
 #include "timidity/config.h"
 #include "timidity/output.h"
 #include "timidity/controls.h"
+#include "timidity/common.h"
 };
-
-#define clogf		GCon->Logf
 
 // MACROS ------------------------------------------------------------------
 
@@ -43,14 +43,37 @@ extern "C" {
 class VTimidityAudioCodec : public VAudioCodec
 {
 public:
-	FArchive*		Ar;
-	MidiSong*		Song;
+	MidiSong*			Song;
 
-	VTimidityAudioCodec(FArchive* InAr);
+	static bool			TimidityInitialised;
+	static ControlMode	MyControlMode;
+	static PlayMode		MyPlayMode;
+
+	VTimidityAudioCodec(MidiSong* InSong);
 	~VTimidityAudioCodec();
 	int Decode(short* Data, int NumSamples);
 	bool Finished();
 	void Restart();
+
+	//	Control mode functions.
+	static void ctl_refresh();
+	static void ctl_total_time(int);
+	static void ctl_master_volume(int);
+	static void ctl_file_name(char*);
+	static void ctl_current_time(int);
+	static void ctl_note(int);
+	static void ctl_program(int, int);
+	static void ctl_volume(int, int);
+	static void ctl_expression(int, int);
+	static void ctl_panning(int, int);
+	static void ctl_sustain(int, int);
+	static void ctl_pitch_bend(int, int);
+	static void ctl_reset();
+	static int ctl_open(int, int);
+	static void ctl_close();
+	static int ctl_read(int32*);
+	static int ctl_msg(int, int, char*, ...);
+
 	static VAudioCodec* Create(FArchive* InAr);
 };
 
@@ -64,119 +87,46 @@ public:
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_AUDIO_CODEC(VTimidityAudioCodec, "Timidity");
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static TCvarI		s_timidity("s_timidity", "0", CVAR_ARCHIVE);
+IMPLEMENT_AUDIO_CODEC(VTimidityAudioCodec, "Timidity");
 
-static bool			timidity_initialised;
-
-// CODE --------------------------------------------------------------------
-
-//==========================================================================
-//
-//	Minimal control mode -- no interaction, just stores messages.
-//
-//==========================================================================
-
-static void ctl_refresh(void);
-static void ctl_total_time(int tt);
-static void ctl_master_volume(int mv);
-static void ctl_file_name(char *name);
-static void ctl_current_time(int ct);
-static void ctl_note(int v);
-static void ctl_program(int ch, int val);
-static void ctl_volume(int channel, int val);
-static void ctl_expression(int channel, int val);
-static void ctl_panning(int channel, int val);
-static void ctl_sustain(int channel, int val);
-static void ctl_pitch_bend(int channel, int val);
-static void ctl_reset(void);
-static int ctl_open(int using_stdin, int using_stdout);
-static void ctl_close(void);
-static int ctl_read(int32 *valp);
-static int cmsg(int type, int verbosity_level, char *fmt, ...);
-
-/**********************************/
-/* export the interface functions */
-
-ControlMode vavoom_control_mode = 
+bool			VTimidityAudioCodec::TimidityInitialised;
+ControlMode		VTimidityAudioCodec::MyControlMode =
 {
-	"Vavoom interface", 's',
-	1,0,0,
-	ctl_open,NULL, ctl_close, ctl_read, cmsg,
-	ctl_refresh, ctl_reset, ctl_file_name, ctl_total_time, ctl_current_time, 
-	ctl_note, 
-	ctl_master_volume, ctl_program, ctl_volume, 
-	ctl_expression, ctl_panning, ctl_sustain, ctl_pitch_bend
+	"Vavoom interface", 's', 0, 0, 0,
+	VTimidityAudioCodec::ctl_open,
+	NULL,
+	VTimidityAudioCodec::ctl_close,
+	VTimidityAudioCodec::ctl_read,
+	VTimidityAudioCodec::ctl_msg,
+	VTimidityAudioCodec::ctl_refresh,
+	VTimidityAudioCodec::ctl_reset,
+	VTimidityAudioCodec::ctl_file_name,
+	VTimidityAudioCodec::ctl_total_time,
+	VTimidityAudioCodec::ctl_current_time,
+	VTimidityAudioCodec::ctl_note,
+	VTimidityAudioCodec::ctl_master_volume,
+	VTimidityAudioCodec::ctl_program,
+	VTimidityAudioCodec::ctl_volume,
+	VTimidityAudioCodec::ctl_expression,
+	VTimidityAudioCodec::ctl_panning,
+	VTimidityAudioCodec::ctl_sustain,
+	VTimidityAudioCodec::ctl_pitch_bend
 };
-
-static int ctl_open(int, int)
-{
-  vavoom_control_mode.opened = 1;
-  return 0;
-}
-
-static void ctl_close()
-{ 
-  vavoom_control_mode.opened = 0;
-}
-
-static int ctl_read(int32*)
-{
-  return RC_NONE;
-}
-
-static int cmsg(int type, int verbosity_level, char *fmt, ...)
-{
-	va_list ap;
-	if ((type == CMSG_TEXT || type == CMSG_INFO || type == CMSG_WARNING) &&
-		vavoom_control_mode.verbosity < verbosity_level)
-		return 0;
-	va_start(ap, fmt);
-	vsprintf(timidity_error, fmt, ap);
-	GCon->Log(timidity_error);
-	va_end(ap);
-	return 0;
-}
-
-static void ctl_refresh() { }
-
-static void ctl_total_time(int) {}
-
-static void ctl_master_volume(int) {}
-
-static void ctl_file_name(char*) {}
-
-static void ctl_current_time(int) {}
-
-static void ctl_note(int) {}
-
-static void ctl_program(int, int) {}
-
-static void ctl_volume(int, int) {}
-
-static void ctl_expression(int, int) {}
-
-static void ctl_panning(int, int) {}
-
-static void ctl_sustain(int, int) {}
-
-static void ctl_pitch_bend(int, int) {}
-
-static void ctl_reset() {}
-
-//==========================================================================
-//
-//	Functions to output RIFF WAVE format data to a file or stdout.
-//
-//==========================================================================
-
-PlayMode vavoom_play_mode =
+PlayMode		VTimidityAudioCodec::MyPlayMode =
 {
 	DEFAULT_RATE, PE_16BIT | PE_SIGNED, "Vavoom audio"
 };
+
+static TCvarI	s_timidity("s_timidity", "0", CVAR_ARCHIVE);
+#if defined(DJGPP) || defined(_WIN32)
+static TCvarS	s_timidity_patches("s_timidity_patches", "\\TIMIDITY", CVAR_ARCHIVE);
+#else
+static TCvarS	s_timidity_patches("s_timidity_patches", "/usr/share/timidity", CVAR_ARCHIVE);
+#endif
+
+// CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
@@ -184,21 +134,12 @@ PlayMode vavoom_play_mode =
 //
 //==========================================================================
 
-VTimidityAudioCodec::VTimidityAudioCodec(FArchive* InAr)
-: Ar(InAr)
+VTimidityAudioCodec::VTimidityAudioCodec(MidiSong* InSong)
+: Song(InSong)
 {
 	guard(VTimidityAudioCodec::VTimidityAudioCodec);
-	int Size = Ar->TotalSize();
-	void* Data = Z_Malloc(Size);
-	Ar->Seek(0);
-	Ar->Serialise(Data, Size);
-	Song = Timidity_LoadSong(Data, Size);
-	Z_Free(Data);
-	if (!Song)
-		clogf("Failed to load song");
 	Timidity_SetVolume(100);
 	Timidity_Start(Song);
-	clogf("Timidity initialised");
 	unguard;
 }
 
@@ -213,9 +154,6 @@ VTimidityAudioCodec::~VTimidityAudioCodec()
 	guard(VTimidityAudioCodec::~VTimidityAudioCodec);
 	Timidity_Stop();
 	Timidity_FreeSong(Song);
-	Ar->Close();
-	delete Ar;
-	Ar = NULL;
 	unguard;
 }
 
@@ -258,6 +196,67 @@ void VTimidityAudioCodec::Restart()
 
 //==========================================================================
 //
+//	Minimal control mode -- no interaction, just stores messages.
+//
+//==========================================================================
+
+int VTimidityAudioCodec::ctl_open(int, int)
+{
+  MyControlMode.opened = 1;
+  return 0;
+}
+
+void VTimidityAudioCodec::ctl_close()
+{ 
+  MyControlMode.opened = 0;
+}
+
+int VTimidityAudioCodec::ctl_read(int32*)
+{
+  return RC_NONE;
+}
+
+int VTimidityAudioCodec::ctl_msg(int type, int verbosity_level, char *fmt, ...)
+{
+	va_list ap;
+	if ((type == CMSG_TEXT || type == CMSG_INFO || type == CMSG_WARNING) &&
+		MyControlMode.verbosity < verbosity_level)
+		return 0;
+	va_start(ap, fmt);
+	vsprintf(timidity_error, fmt, ap);
+	GCon->Log(timidity_error);
+	va_end(ap);
+	return 0;
+}
+
+void VTimidityAudioCodec::ctl_refresh() {}
+
+void VTimidityAudioCodec::ctl_total_time(int) {}
+
+void VTimidityAudioCodec::ctl_master_volume(int) {}
+
+void VTimidityAudioCodec::ctl_file_name(char*) {}
+
+void VTimidityAudioCodec::ctl_current_time(int) {}
+
+void VTimidityAudioCodec::ctl_note(int) {}
+
+void VTimidityAudioCodec::ctl_program(int, int) {}
+
+void VTimidityAudioCodec::ctl_volume(int, int) {}
+
+void VTimidityAudioCodec::ctl_expression(int, int) {}
+
+void VTimidityAudioCodec::ctl_panning(int, int) {}
+
+void VTimidityAudioCodec::ctl_sustain(int, int) {}
+
+void VTimidityAudioCodec::ctl_pitch_bend(int, int) {}
+
+void VTimidityAudioCodec::ctl_reset() {}
+
+//==========================================================================
+//
 //	VTimidityAudioCodec::Create
 //
 //==========================================================================
@@ -278,31 +277,51 @@ VAudioCodec* VTimidityAudioCodec::Create(FArchive* InAr)
 		return NULL;
 	}
 
-	play_mode_list[0] = &vavoom_play_mode;
-	play_mode = &vavoom_play_mode;
-	ctl_list[0] = &vavoom_control_mode;
-	ctl = &vavoom_control_mode;
+	//	Register our play and control modes.
+	play_mode_list[0] = &MyPlayMode;
+	play_mode = &MyPlayMode;
+	ctl_list[0] = &MyControlMode;
+	ctl = &MyControlMode;
 
 	//	Initialise Timidity.
-	if (!timidity_initialised)
+	if (!TimidityInitialised)
 	{
+		add_to_pathlist(s_timidity_patches);
 		if (Timidity_Init(44100, 16, 2, 2 * 1024))
 		{
-			clogf("Timidity init failed");
+			GCon->Logf("Timidity init failed");
 			return NULL;
 		}
-		timidity_initialised = true;
+		TimidityInitialised = true;
 	}
 
+	//	Load song.
+	int Size = InAr->TotalSize();
+	void* Data = Z_Malloc(Size);
+	InAr->Seek(0);
+	InAr->Serialise(Data, Size);
+	MidiSong* Song = Timidity_LoadSong(Data, Size);
+	Z_Free(Data);
+	if (!Song)
+	{
+		GCon->Logf("Failed to load MIDI song");
+		return NULL;
+	}
+	InAr->Close();
+	delete InAr;
+
 	//	Create codec.
-	return new VTimidityAudioCodec(InAr);
+	return new VTimidityAudioCodec(Song);
 	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2005/11/03 22:46:35  dj_jl
+//	Support for any bitrate streams.
+//
 //	Revision 1.1  2005/10/28 17:50:01  dj_jl
 //	Added Timidity driver.
-//
+//	
 //**************************************************************************
