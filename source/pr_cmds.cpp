@@ -2852,6 +2852,17 @@ PF(LocalSoundTillDone)
 
 //==========================================================================
 //
+//	PF_StopLocalSounds
+//
+//==========================================================================
+
+PF(StopLocalSounds)
+{
+	S_StopSound(0, 0);
+}
+
+//==========================================================================
+//
 //	PF_InputLine_SetValue
 //
 //==========================================================================
@@ -3230,6 +3241,7 @@ builtin_info_t BuiltinInfo[] =
 	//	Client side sound
 	_(LocalSound),
 	_(LocalSoundTillDone),
+	_(StopLocalSounds),
 
 	_(TranslateKey),
 #endif
@@ -3321,9 +3333,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.59  2005/11/05 16:01:32  dj_jl
+//	Added builtin to stop local sounds.
+//
 //	Revision 1.58  2005/11/05 15:50:07  dj_jl
 //	Voices played as normal sounds.
-//
+//	
 //	Revision 1.57  2005/11/03 22:47:17  dj_jl
 //	Builtin for drawing coloured rectangles.
 //	
