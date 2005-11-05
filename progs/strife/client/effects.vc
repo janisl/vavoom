@@ -134,7 +134,7 @@ bool ParseServerCommand(int cmd_type)
 		break;
 
 	case svc_voice:
-		PlayVoice(va("VOC%d", MSG_ReadShort()));
+		LocalSound(StrToName(va("svox/voc%d", MSG_ReadShort())));
 		break;
 
 	case svc_slideshow1:
@@ -168,6 +168,9 @@ void CL_UpdateMobj(clmobj_t * mobj, int i)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2005/11/05 15:50:55  dj_jl
+//  Voices played as normal sounds.
+//
 //  Revision 1.9  2004/12/22 07:56:47  dj_jl
 //  Fully working Strife support.
 //

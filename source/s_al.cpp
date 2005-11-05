@@ -108,7 +108,6 @@ public:
 	void Shutdown(void);
 	void PlaySound(int sound_id, const TVec &origin, const TVec &velocity,
 		int origin_id, int channel, float volume);
-	void PlayVoice(const char *Name);
 	void PlaySoundTillDone(const char *sound);
 	void StopSound(int origin_id, int channel);
 	void StopAllSound(void);
@@ -284,7 +283,7 @@ int VOpenALDevice::GetChannel(int sound_id, int origin_id, int channel, int prio
 	int			lp; //least priority
 	int			found;
 	int			prior;
-	int numchannels = sound_id == VOICE_SOUND_ID ? 1 : S_sfx[sound_id].numchannels;
+	int numchannels = S_sfx[sound_id].numchannels;
 
 	if (numchannels != -1)
 	{
@@ -474,81 +473,6 @@ void VOpenALDevice::PlaySound(int sound_id, const TVec &origin,
 	Channel[chan].sound_id = sound_id;
 	Channel[chan].priority = priority;
 	Channel[chan].volume = volume;
-	Channel[chan].source = src;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VOpenALDevice::PlayVoice
-//
-//==========================================================================
-
-void VOpenALDevice::PlayVoice(const char *Name)
-{
-	guard(VOpenALDevice::PlayVoice);
-	if (!snd_Channels || !*Name || !snd_MaxVolume)
-	{
-		return;
-	}
-
-	int priority = 255 * PRIORITY_MAX_ADJUST;
-
-	int chan = GetChannel(VOICE_SOUND_ID, 0, 1, priority);
-	if (chan == -1)
-	{
-		return; //no free channels.
-	}
-
-	//	Check, that sound lump is loaded
-	if (!S_LoadSound(VOICE_SOUND_ID, Name))
-	{
-		//	Missing sound.
-		return;
-	}
-
-	alGetError();	//	Clear error code.
-	if (!VoiceBuffer)
-	{
-		alGenBuffers(1, &VoiceBuffer);
-		if (alGetError() != AL_NO_ERROR)
-		{
-			GCon->Log(NAME_Dev, "Failed to gen buffer");
-			S_DoneWithLump(VOICE_SOUND_ID);
-			return;
-		}
-	}
-	alBufferData(VoiceBuffer, AL_FORMAT_MONO8,
-		S_VoiceInfo.data, S_VoiceInfo.len, S_VoiceInfo.freq);
-	if (alGetError() != AL_NO_ERROR)
-	{
-		GCon->Log(NAME_Dev, "Failed to load buffer data");
-		S_DoneWithLump(VOICE_SOUND_ID);
-		return;
-	}
-
-	//	We don't need to keep lump static
-	S_DoneWithLump(VOICE_SOUND_ID);
-
-	ALuint src;
-	alGenSources(1, &src);
-	if (alGetError() != AL_NO_ERROR)
-	{
-		GCon->Log(NAME_Dev, "Failed to gen source");
-		return;
-	}
-
-	alSourcei(src, AL_BUFFER, VoiceBuffer);
-	alSourcei(src, AL_SOURCE_RELATIVE, AL_TRUE);
-	alSourcePlay(src);
-
-	Channel[chan].origin_id = 0;
-	Channel[chan].channel = 1;
-	Channel[chan].origin = TVec(0, 0, 0);
-	Channel[chan].velocity = TVec(0, 0, 0);
-	Channel[chan].sound_id = VOICE_SOUND_ID;
-	Channel[chan].priority = priority;
-	Channel[chan].volume = 1.0;
 	Channel[chan].source = src;
 	unguard;
 }
@@ -1009,9 +933,12 @@ void VOpenALDevice::ResumeStream()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2005/11/05 15:50:07  dj_jl
+//	Voices played as normal sounds.
+//
 //	Revision 1.13  2005/11/03 22:46:35  dj_jl
 //	Support for any bitrate streams.
-//
+//	
 //	Revision 1.12  2005/10/18 20:53:04  dj_jl
 //	Implemented basic support for streamed music.
 //	

@@ -65,7 +65,6 @@ public:
 	void Tick(float DeltaTime);
 	void PlaySound(int sound_id, const TVec &origin, const TVec &velocity,
 		int origin_id, int channel, float volume);
-	void PlayVoice(const char *Name);
 	void PlaySoundTillDone(const char *sound);
 	void StopSound(int origin_id, int channel);
 	void StopAllSound(void);
@@ -194,7 +193,7 @@ static int GetChannel(int sound_id, int origin_id, int channel, int priority)
 	int			lp; //least priority
 	int			found;
 	int			prior;
-	int numchannels = sound_id == VOICE_SOUND_ID ? 1 : S_sfx[sound_id].numchannels;
+	int numchannels = S_sfx[sound_id].numchannels;
 
 	if (numchannels != -1)
 	{
@@ -444,81 +443,6 @@ void VAllegroSoundDevice::PlaySound(int sound_id, const TVec &origin,
 	Channel[chan].sound_id = sound_id;
 	Channel[chan].priority = priority;
 	Channel[chan].volume = volume;
-	Channel[chan].voice = voice;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VAllegroSoundDevice::PlayVoice
-//
-//==========================================================================
-
-void VAllegroSoundDevice::PlayVoice(const char *Name)
-{
-	guard(VAllegroSoundDevice::PlayVoice);
-	SAMPLE*		spl;
-	int 		priority;
-	int			chan;
-	int			voice;
-
-	if (!snd_Channels || !*Name || !snd_MaxVolume)
-	{
-		return;
-	}
-
-	priority = 255 * PRIORITY_MAX_ADJUST;
-
-	chan = GetChannel(VOICE_SOUND_ID, 0, 1, priority);
-	if (chan == -1)
-	{
-		return; //no free channels.
-	}
-
-	if (Channel[chan].voice >= 0)
-	{
-		Sys_Error("I_StartSound: Previous sound not stoped");
-	}
-
-	if (!S_LoadSound(VOICE_SOUND_ID, Name))
-	{
-		//	Missing sound.
-		return;
-	}
-
-	//	Converts raw 11khz, 8-bit data to a SAMPLE* that allegro uses.
-	spl = &Channel[chan].spl;
-
-	spl->bits 		= 8;
-	spl->stereo 	= 0;
-	spl->freq 		= S_VoiceInfo.freq;
-	spl->priority 	= 255;
-	spl->len 		= S_VoiceInfo.len;
-	spl->loop_start = 0;
-	spl->loop_end 	= S_VoiceInfo.len;
-	spl->param 		= 0xffffffff;
-	spl->data 		= S_VoiceInfo.data;
-
-	// Start the sound
-	voice = allocate_voice(spl);
-
-	if (voice < 0)
-	{
-		S_DoneWithLump(VOICE_SOUND_ID);
-		return;
-	}
-
-	voice_set_playmode(voice, PLAYMODE_PLAY);
-	voice_start(voice);
-	release_voice(voice);
-
-	Channel[chan].origin_id = 0;
-	Channel[chan].origin = TVec(0 , 0, 0);
-	Channel[chan].channel = 1;
-	Channel[chan].velocity = TVec(0, 0, 0);
-	Channel[chan].sound_id = VOICE_SOUND_ID;
-	Channel[chan].priority = priority;
-	Channel[chan].volume = 1.0;
 	Channel[chan].voice = voice;
 	unguard;
 }
@@ -912,9 +836,12 @@ void VAllegroSoundDevice::ResumeStream()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2005/11/05 15:50:07  dj_jl
+//	Voices played as normal sounds.
+//
 //	Revision 1.20  2005/11/03 22:46:35  dj_jl
 //	Support for any bitrate streams.
-//
+//	
 //	Revision 1.19  2005/10/18 20:53:04  dj_jl
 //	Implemented basic support for streamed music.
 //	

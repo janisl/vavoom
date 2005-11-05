@@ -103,21 +103,21 @@ void F_PlayPage()
 	case 0:
 		CmdBuf_AddText("music loop D_HAPPY\n");
 		FinalePic = R_RegisterPic("SS4F1", PIC_PATCH);
-		PlayVoice("rie01");
+		LocalSound('svox/rie01');
 		FinaleTimer = 13.0;
 		FinalePage = 1;
 		break;
 
 	case 1:
 		FinalePic = R_RegisterPic("SS4F2", PIC_PATCH);
-		PlayVoice("bbx01");
+		LocalSound('svox/bbx01');
 		FinaleTimer = 11.0;
 		FinalePage = 2;
 		break;
 
 	case 2:
 		FinalePic = R_RegisterPic("SS4F3", PIC_PATCH);
-		PlayVoice("bbx02");
+		LocalSound('svox/bbx02');
 		FinaleTimer = 14.0;
 		FinalePage = 3;
 		break;
@@ -132,21 +132,21 @@ void F_PlayPage()
 	case 10:
 		CmdBuf_AddText("music loop D_SAD\n");
 		FinalePic = R_RegisterPic("SS5F1", PIC_PATCH);
-		PlayVoice("ss501b");
+		LocalSound('svox/ss501b');
 		FinaleTimer = 11.0;
 		FinalePage = 11;
 		break;
 
 	case 11:
 		FinalePic = R_RegisterPic("SS5F2", PIC_PATCH);
-		PlayVoice("ss502b");
+		LocalSound('svox/ss502b');
 		FinaleTimer = 10.0;
 		FinalePage = 12;
 		break;
 
 	case 12:
 		FinalePic = R_RegisterPic("SS5F3", PIC_PATCH);
-		PlayVoice("ss503b");
+		LocalSound('svox/ss503b');
 		FinaleTimer = 11.0;
 		FinalePage = -1;
 		break;
@@ -155,21 +155,21 @@ void F_PlayPage()
 	case 20:
 		CmdBuf_AddText("music loop D_END\n");
 		FinalePic = R_RegisterPic("SS6F1", PIC_PATCH);
-		PlayVoice("ss601a");
+		LocalSound('svox/ss601a');
 		FinaleTimer = 8.0;
 		FinalePage = 21;
 		break;
 
 	case 21:
 		FinalePic = R_RegisterPic("SS6F2", PIC_PATCH);
-		PlayVoice("ss602a");
+		LocalSound('svox/ss602a');
 		FinaleTimer = 8.0;
 		FinalePage = 22;
 		break;
 
 	case 22:
 		FinalePic = R_RegisterPic("SS6F3", PIC_PATCH);
-		PlayVoice("ss603a");
+		LocalSound('svox/ss603a');
 		FinaleTimer = 9.0;
 		FinalePage = -1;
 		break;
@@ -179,6 +179,9 @@ void F_PlayPage()
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2005/11/05 15:50:55  dj_jl
+//  Voices played as normal sounds.
+//
 //  Revision 1.6  2004/12/22 07:56:47  dj_jl
 //  Fully working Strife support.
 //

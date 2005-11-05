@@ -85,23 +85,25 @@ mode_t modes[9] = {
 };
 int depths[4] = { 8, 16, 24, 32 };
 
-name TeaserQuitSounds[5] = {
-	'TeaserQuitMessage1',
-	'TeaserQuitMessage2',
-	'TeaserQuitMessage3',
-	'TeaserQuitMessage4',
-	'TeaserQuitMessage5',
+name TeaserQuitSounds[5] =
+{
+	'svox/voc100',
+	'svox/voc101',
+	'svox/voc102',
+	'svox/voc103',
+	'svox/voc104',
 };
 
-name QuitSounds[8] = {
-	'QuitMessage1',
-	'QuitMessage2',
-	'QuitMessage3',
-	'QuitMessage4',
-	'QuitMessage5',
-	'QuitMessage6',
-	'QuitMessage7',
-	'QuitMessage8',
+name QuitSounds[8] =
+{
+	'svox/qfmrm1',
+	'svox/qfmrm2',
+	'svox/qfmrm3',
+	'svox/qfmrm4',
+	'svox/qfmrm5',
+	'svox/qfmrm6',
+	'svox/qfmrm7',
+	'svox/qfmrm8',
 };
 
 // CODE --------------------------------------------------------------------
@@ -325,6 +327,9 @@ void menu_quit(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.32  2005/11/05 15:50:55  dj_jl
+//  Voices played as normal sounds.
+//
 //  Revision 1.31  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

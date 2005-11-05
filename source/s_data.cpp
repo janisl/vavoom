@@ -46,12 +46,13 @@ struct raw_sound_t
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
+static void S_ParseSndinfo();
+
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 TArray<sfxinfo_t>	S_sfx;
-sfxinfo_t			S_VoiceInfo;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -68,9 +69,6 @@ sfxinfo_t			S_VoiceInfo;
 void S_InitScript(void)
 {
 	guard(S_InitScript);
-	int p;
-	int i;
-
 	//
 	//	Allocate memory for sound info
 	//
@@ -85,8 +83,10 @@ void S_InitScript(void)
 
 	while (SC_GetString())
 	{
-		i =	S_sfx.AddZeroed();
-		S_sfx[i].tagName = sc_String;
+		int i =	S_sfx.AddZeroed();
+		S_sfx[i].TagName = sc_String;
+		S_sfx[i].snd_ptr = NULL;
+		S_sfx[i].lumpnum = -1;
 
 		SC_MustGetString();
 		if (*sc_String != '?')
@@ -109,12 +109,67 @@ void S_InitScript(void)
 	}
 	SC_Close();
 
+	//	Add Strife voices.
+	for (int Lump = W_IterateNS(-1, WADNS_Voices); Lump >= 0;
+		Lump = W_IterateNS(Lump, WADNS_Voices))
+	{
+		char SndName[16];
+		sprintf(SndName, "svox/%s", *FName(W_LumpName(Lump), FNAME_AddLower8));
+
+		int i = S_sfx.AddZeroed();
+		S_sfx[i].TagName = SndName;
+		strcpy(S_sfx[i].lumpname, W_LumpName(Lump));
+		S_sfx[i].lumpnum = Lump;
+		S_sfx[i].snd_ptr = NULL;
+		//	Default values
+		S_sfx[i].priority = 127;
+		S_sfx[i].numchannels = 1;
+		S_sfx[i].changePitch = 0;
+	}
+
 	//
 	//	Load script SNDINFO
 	//
+	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
+		Lump = W_IterateNS(Lump, WADNS_Global))
+	{
+		if (!stricmp(W_LumpName(Lump), "sndinfo"))
+		{
+			SC_OpenLumpNum(Lump);
+			S_ParseSndinfo();
+		}
+	}
+	//	Optionally parse script file.
+	char filename[MAX_OSPATH];
+	if (fl_devmode && FL_FindFile("scripts/sndinfo.txt", filename))
+	{
+		SC_OpenFile(filename);
+		S_ParseSndinfo();
+	}
 
-	SC_Open("sndinfo");
+	S_sfx.Shrink();
 
+	//
+	//	Set "default" sound for empty sounds
+	//
+	for (TArray<sfxinfo_t>::TIterator It(S_sfx); It; ++It)
+	{
+		if (!It->lumpname[0])
+		{
+			strcpy(It->lumpname, "default");
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	S_ParseSndinfo
+//
+//==========================================================================
+
+static void S_ParseSndinfo()
+{
 	while (SC_GetString())
 	{
 		if (*sc_String == '$')
@@ -137,10 +192,10 @@ void S_InitScript(void)
 		}
 		else
 		{
-			i = 0;
+			int i = 0;
 			for (TArray<sfxinfo_t>::TIterator It(S_sfx); It; ++It)
 			{
-				if (!strcmp(*It->tagName, sc_String))
+				if (!strcmp(*It->TagName, sc_String))
 				{
 					i = It.GetIndex();
 					break;
@@ -150,7 +205,9 @@ void S_InitScript(void)
 			{
 				//	Not found - add it
 				i = S_sfx.AddZeroed();
-				S_sfx[i].tagName = sc_String;
+				S_sfx[i].TagName = sc_String;
+				S_sfx[i].snd_ptr = NULL;
+				S_sfx[i].lumpnum = -1;
 				//	Default values
 				S_sfx[i].priority = 127;
 				S_sfx[i].numchannels = -1;
@@ -169,29 +226,6 @@ void S_InitScript(void)
 		}
 	}
 	SC_Close();
-
-	S_sfx.Shrink();
-
-	//
-	//	Set "default" sound for empty sounds
-	//
-	for (TArray<sfxinfo_t>::TIterator It(S_sfx); It; ++It)
-	{
-		if (!It->lumpname[0])
-		{
-			strcpy(It->lumpname, "default");
-		}
-		It->snd_ptr = NULL;
-		It->lumpnum = -1;
-	}
-
-	//
-	//	Prepare slot for voices
-	//
-	S_VoiceInfo.priority = 255;
-	S_VoiceInfo.numchannels = -1;
-	S_VoiceInfo.changePitch = false;
-	unguard;
 }
 
 //==========================================================================
@@ -205,7 +239,7 @@ int S_GetSoundID(FName Name)
 	guard(S_GetSoundID);
 	for (TArray<sfxinfo_t>::TIterator It(S_sfx); It; ++It)
 	{
-		if (It->tagName == Name)
+		if (It->TagName == Name)
 		{
 			return It.GetIndex();
 		}
@@ -227,7 +261,7 @@ int S_GetSoundID(const char *name)
 	for (TArray<sfxinfo_t>::TIterator It(S_sfx); It; ++It)
 	{
 //FIXME really case sensitive? What about ACS?
-		if (!strcmp(*It->tagName, name))
+		if (!strcmp(*It->TagName, name))
 		{
 			return It.GetIndex();
 		}
@@ -245,33 +279,9 @@ int S_GetSoundID(const char *name)
 //
 //==========================================================================
 
-bool S_LoadSound(int sound_id, const char *VoiceName)
+bool S_LoadSound(int sound_id)
 {
 	guard(S_LoadSound);
-	if (VoiceName)
-	{
-		//	Load voice.
-		if (S_VoiceInfo.snd_ptr)
-		{
-			GCon->Log(NAME_Dev, "WARNING! Voice is still used");
-		}
-
-		S_VoiceInfo.lumpnum = W_CheckNumForName(VoiceName, WADNS_Voices);
-		if (S_VoiceInfo.lumpnum < 0)
-		{
-			GCon->Logf(NAME_Dev, "Voice %s not found", VoiceName);
-			return false;
-		}
-		S_VoiceInfo.snd_ptr = W_CacheLumpNum(S_VoiceInfo.lumpnum, PU_SOUND);
-
-		raw_sound_t *rawdata = (raw_sound_t *)S_VoiceInfo.snd_ptr;
-	    S_VoiceInfo.freq = LittleShort(rawdata->freq);
-		S_VoiceInfo.len = LittleLong(rawdata->len);
-		S_VoiceInfo.data = rawdata->data;
-		S_VoiceInfo.usecount++;
-		return true;
-	}
-
 	if (!S_sfx[sound_id].snd_ptr)
 	{
 		// get lumpnum if necessary
@@ -279,10 +289,6 @@ bool S_LoadSound(int sound_id, const char *VoiceName)
 		{
 			S_sfx[sound_id].lumpnum = W_CheckNumForName(
 				S_sfx[sound_id].lumpname);
-			//FIXME Strife quit sounds are voices.
-			if (S_sfx[sound_id].lumpnum < 0)
-				S_sfx[sound_id].lumpnum = W_CheckNumForName(
-					S_sfx[sound_id].lumpname, WADNS_Voices);
 			if (S_sfx[sound_id].lumpnum < 0)
 			{
 				GCon->Logf(NAME_Dev, "Sound lump %s not found",
@@ -314,7 +320,7 @@ void S_DoneWithLump(int sound_id)
 	guard(S_DoneWithLump);
 	void *ptr;
 
-	sfxinfo_t &sfx = sound_id == VOICE_SOUND_ID ? S_VoiceInfo : S_sfx[sound_id];
+	sfxinfo_t &sfx = S_sfx[sound_id];
 	if (!sfx.snd_ptr || !sfx.usecount)
 	{
 		Sys_Error("S_DoneWithLump: Empty lump");
@@ -362,9 +368,12 @@ void S_Init(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2005/11/05 15:50:07  dj_jl
+//	Voices played as normal sounds.
+//
 //	Revision 1.13  2005/10/20 22:31:27  dj_jl
 //	Removed Hexen's devsnd support.
-//
+//	
 //	Revision 1.12  2004/11/30 07:17:17  dj_jl
 //	Made string pointers const.
 //	

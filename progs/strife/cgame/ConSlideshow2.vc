@@ -53,28 +53,28 @@ void PlayPage()
 	{
 	case 0:
 		BackPic.Handle = R_RegisterPic("SS3F1", PIC_PATCH);
-		PlayVoice("mac16");
+		LocalSound('svox/mac16');
 		PicTimer = 10.0;
 		PageNum = 1;
 		break;
 
 	case 1:
 		BackPic.Handle = R_RegisterPic("SS3F2", PIC_PATCH);
-		PlayVoice("mac17");
+		LocalSound('svox/mac17');
 		PicTimer = 12.0;
 		PageNum = 2;
 		break;
 
 	case 2:
 		BackPic.Handle = R_RegisterPic("SS3F3", PIC_PATCH);
-		PlayVoice("mac18");
+		LocalSound('svox/mac18');
 		PicTimer = 12.0;
 		PageNum = 3;
 		break;
 
 	case 3:
 		BackPic.Handle = R_RegisterPic("SS3F4", PIC_PATCH);
-		PlayVoice("mac19");
+		LocalSound('svox/mac19');
 		PicTimer = 11.0;
 		PageNum = -1;
 		break;
@@ -107,6 +107,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/05 15:51:27  dj_jl
+//  Voices played as normal sounds.
+//
 //  Revision 1.1  2004/12/22 07:56:46  dj_jl
 //  Fully working Strife support.
 //

@@ -73,7 +73,6 @@ public:
 	void Shutdown(void);
 	void PlaySound(int sound_id, const TVec &origin, const TVec &velocity,
 		int origin_id, int channel, float volume);
-	void PlayVoice(const char *Name);
 	void PlaySoundTillDone(const char *sound);
 	void StopSound(int origin_id, int channel);
 	void StopAllSound(void);
@@ -432,7 +431,7 @@ static int GetChannel(int sound_id, int origin_id, int channel, int priority)
 	int			lp; //least priority
 	int			found;
 	int			prior;
-	int numchannels = sound_id == VOICE_SOUND_ID ? 1 : S_sfx[sound_id].numchannels;
+	int numchannels = S_sfx[sound_id].numchannels;
 
 	if (numchannels != -1)
 	{
@@ -812,72 +811,6 @@ void VDirectSoundDevice::PlaySound(int sound_id, const TVec &origin,
 
 //==========================================================================
 //
-//	VDirectSoundDevice::PlayVoice
-//
-//==========================================================================
-
-void VDirectSoundDevice::PlayVoice(const char *Name)
-{
-	guard(VDirectSoundDevice::PlayVoice);
-	int 					priority;
-	int						chan;
-	HRESULT					result;
-	LPDIRECTSOUNDBUFFER		dsbuffer;
-
-	if (!snd_Channels || !*Name || !snd_MaxVolume)
-	{
-		return;
-	}
-
-	priority = 255 * PRIORITY_MAX_ADJUST;
-
-	chan = GetChannel(VOICE_SOUND_ID, 0, 1, priority);
-	if (chan == -1)
-	{
-		return; //no free channels.
-	}
-
-	dsbuffer = CreateBuffer(VOICE_SOUND_ID, Name);
-	if (!dsbuffer)
-	{
-		return;
-	}
-
-	Channel[chan].origin_id = 0;
-	Channel[chan].channel = 1;
-	Channel[chan].origin = TVec(0, 0, 0);
-	Channel[chan].velocity = TVec(0, 0, 0);
-	Channel[chan].sound_id = VOICE_SOUND_ID;
-	Channel[chan].priority = priority;
-	Channel[chan].volume = 1.0;
-	Channel[chan].buf = dsbuffer;
-
-	if (sound3D)
-	{
-		LPDIRECTSOUND3DBUFFER	Buf3D; 
-
-		result = Channel[chan].buf->QueryInterface(
-			IID_IDirectSound3DBuffer, (LPVOID *)&Buf3D); 
-		if (FAILED(result))
-		{
-			Sys_Error("Failed to get 3D buffer");
-		}
-		Buf3D->SetMode(DS3DMODE_DISABLE, DS3D_IMMEDIATE);
-		Buf3D->Release();
-	}
-
-	result = dsbuffer->Play(0, 0, 0);
-	if (result != DS_OK)
-	{
-		GCon->Log(NAME_Dev, "Failed to play channel");
-		GCon->Log(NAME_Dev, DS_Error(result));
-		StopChannel(chan);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
 //	VDirectSoundDevice::PlaySoundTillDone
 //
 //==========================================================================
@@ -1126,8 +1059,7 @@ static void StopChannel(int chan_num)
 
 		for (i = 0; i < MAX_VOICES; i++)
 		{
-			if (!free_buffers[i].sound_id &&
-				Channel[chan_num].sound_id != VOICE_SOUND_ID)
+			if (!free_buffers[i].sound_id)
 			{
 				free_buffers[i].buf = dsbuffer;
 				free_buffers[i].sound_id = Channel[chan_num].sound_id;
@@ -1410,9 +1342,12 @@ void VDirectSoundDevice::ResumeStream()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2005/11/05 15:50:07  dj_jl
+//	Voices played as normal sounds.
+//
 //	Revision 1.29  2005/11/03 22:46:35  dj_jl
 //	Support for any bitrate streams.
-//
+//	
 //	Revision 1.28  2005/10/18 20:53:04  dj_jl
 //	Implemented basic support for streamed music.
 //	

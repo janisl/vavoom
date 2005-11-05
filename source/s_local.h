@@ -32,8 +32,6 @@
 
 #define MAX_CHANNELS		8
 
-enum { VOICE_SOUND_ID = -1 };
-
 //	Sound device types.
 //??? Should Default be replaced with all default drivers?
 enum
@@ -70,14 +68,14 @@ enum
 //
 struct sfxinfo_t
 {
-	FName	tagName;		// Name, by whitch sound is recognised in script
+	FName	TagName;		// Name, by whitch sound is recognised in script
 	char	lumpname[12];	// Only need 9 bytes, but padded out to be dword aligned
 	int		priority;		// Higher priority takes precendence
 	int 	numchannels;	// total number of channels a sound type may occupy
-	boolean	changePitch;
+	bool	changePitch;
 	void*	snd_ptr;
-    int		lumpnum;        // lump number of sfx
-    dword	freq;			// from sound lump
+	int		lumpnum;        // lump number of sfx
+	dword	freq;			// from sound lump
 	dword	len;
 	void*	data;			// points in snd_lump
 	int		usecount;
@@ -106,8 +104,6 @@ public:
 	virtual void Tick(float)
 	{}
 	virtual void PlaySound(int, const TVec &, const TVec &, int, int, float)
-	{}
-	virtual void PlayVoice(const char *)
 	{}
 	virtual void PlaySoundTillDone(const char *)
 	{}
@@ -347,7 +343,7 @@ FAudioCodecDesc		TClass##Desc(Description, TClass::Create);
 //	Data
 //
 void S_InitScript();
-bool S_LoadSound(int sound_id, const char *VoiceName = NULL);
+bool S_LoadSound(int sound_id);
 void S_DoneWithLump(int sound_id);
 
 //
@@ -359,7 +355,6 @@ float EAX_CalcEnvSize();
 
 // the complete set of sound effects
 extern TArray<sfxinfo_t>	S_sfx;
-extern sfxinfo_t			S_VoiceInfo;
 
 extern TCvarF				sfx_volume;
 extern TCvarF				music_volume;
@@ -407,9 +402,12 @@ struct MIDheader
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2005/11/05 15:50:07  dj_jl
+//	Voices played as normal sounds.
+//
 //	Revision 1.19  2005/11/03 22:46:35  dj_jl
 //	Support for any bitrate streams.
-//
+//	
 //	Revision 1.18  2005/10/28 17:50:01  dj_jl
 //	Added Timidity driver.
 //	

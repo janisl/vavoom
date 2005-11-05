@@ -153,6 +153,12 @@ native void strclr(string s);
 //  Append string to string
 native void strcat(string s1, string s2);
 
+//  Convert string to lowercase
+native void strlwr(string s);
+
+//  Convert string to uppercase
+native void strupr(string s);
+
 //  Print into a string
 native void sprint(string dest, string format, ...);
 
@@ -164,6 +170,9 @@ native int atoi(string str);
 
 //  Converts string to float
 native float atof(string str);
+
+//  Converts string to name
+native name StrToName(string Str);
 
 //
 //  Printing to console
@@ -320,9 +329,6 @@ native void T_DrawCursor(void);
 
 //  Plays a sound
 native void LocalSound(name Name);
-
-//	Play Strife's voice
-native void PlayVoice(string Name);
 
 //  Plays a sound and waits untill it finishes
 native void LocalSoundTillDone(name Name);
@@ -493,6 +499,9 @@ native void MSG_SelectClientMsg(int msgtype, BasePlayer client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.51  2005/11/05 15:52:06  dj_jl
+//  Voices played as normal sounds.
+//
 //  Revision 1.50  2005/11/03 22:47:36  dj_jl
 //  Builtin for drawing coloured rectangles.
 //

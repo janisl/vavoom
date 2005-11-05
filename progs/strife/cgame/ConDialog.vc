@@ -47,6 +47,7 @@ void SetSpeech(int SpeechNum)
 	RogueConSpeech *Speech;
 	int TempBuffer[80];
 	string TempStr = ARR2STR(TempBuffer);
+	string VoiceName;
 
 	if (!SpeechNum)
 		return;
@@ -125,7 +126,10 @@ void SetSpeech(int SpeechNum)
 
 	if (Speech->Voice[0])
 	{
-		PlayVoice(ARR2STR(Speech->Voice));
+//		PlayVoice(ARR2STR(Speech->Voice));
+		VoiceName = va("svox/%s", ARR2STR(Speech->Voice));
+		strlwr(VoiceName);
+		LocalSound(StrToName(VoiceName));
 	}
 
 	SetDefaultChoice();
@@ -223,6 +227,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/11/05 15:51:48  dj_jl
+//  Voices played as normal sounds.
+//
 //  Revision 1.4  2004/12/22 07:56:46  dj_jl
 //  Fully working Strife support.
 //

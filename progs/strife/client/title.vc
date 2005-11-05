@@ -65,37 +65,37 @@ void AdvanceDemo(void)
 	case 1:
 		pagetime = 7.0;
 		page_pic = R_RegisterPic("PANEL1", PIC_PATCH);
-		PlayVoice("PRO1");
+		LocalSound('svox/pro1');
 		break;
 
 	case 2:
 		pagetime = 9.0;
 		page_pic = R_RegisterPic("PANEL2", PIC_PATCH);
-		PlayVoice("PRO2");
+		LocalSound('svox/pro2');
 		break;
 
 	case 3:
 		pagetime = 12.0;
 		page_pic = R_RegisterPic("PANEL3", PIC_PATCH);
-		PlayVoice("PRO3");
+		LocalSound('svox/pro3');
 		break;
 
 	case 4:
 		pagetime = 11.0;
 		page_pic = R_RegisterPic("PANEL4", PIC_PATCH);
-		PlayVoice("PRO4");
+		LocalSound('svox/pro4');
 		break;
 
 	case 5:
 		pagetime = 10.0;
 		page_pic = R_RegisterPic("PANEL5", PIC_PATCH);
-		PlayVoice("PRO5");
+		LocalSound('svox/pro5');
 		break;
 
 	case 6:
 		pagetime = 16.0;
 		page_pic = R_RegisterPic("PANEL6", PIC_PATCH);
-		PlayVoice("PRO6");
+		LocalSound('svox/pro6');
 		break;
 
 	case 7:
@@ -177,6 +177,9 @@ void StopDemoLoop(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2005/11/05 15:50:55  dj_jl
+//  Voices played as normal sounds.
+//
 //  Revision 1.6  2002/07/27 18:08:12  dj_jl
 //  Implementing Strife conversations.
 //

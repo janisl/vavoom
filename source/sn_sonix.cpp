@@ -121,7 +121,7 @@ static int GetSoundOffset(const char *name)
 	guard(GetSoundOffset);
 	for (TArray<sfxinfo_t>::TIterator It(S_sfx); It; ++It)
 	{
-		if (!stricmp(name, *It->tagName))
+		if (!stricmp(name, *It->TagName))
 		{
 			return It.GetIndex();
 		}
@@ -500,9 +500,12 @@ void SN_ChangeNodeData(int nodeNum, int seqOffset, int delayTics, int volume,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2005/11/05 15:50:07  dj_jl
+//	Voices played as normal sounds.
+//
 //	Revision 1.8  2004/11/30 07:17:17  dj_jl
 //	Made string pointers const.
-//
+//	
 //	Revision 1.7  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
 //	

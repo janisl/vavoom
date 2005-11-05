@@ -69,7 +69,6 @@ inline void S_StartSound(int sound_id)
 {
 	S_StartSound(sound_id, TVec(0, 0, 0), TVec(0, 0, 0), 0, 0, 127);
 }
-void S_PlayVoice(const char *);
 void S_PlayTillDone(const char *);
 void S_StopSound(int, int);
 void S_StopAllSound(void);
@@ -96,9 +95,12 @@ extern seqnode_t	*SequenceListHead;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2005/11/05 15:50:07  dj_jl
+//	Voices played as normal sounds.
+//
 //	Revision 1.9  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.8  2004/11/30 07:17:17  dj_jl
 //	Made string pointers const.
 //	

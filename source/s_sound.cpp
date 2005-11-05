@@ -287,17 +287,6 @@ void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
 
 //==========================================================================
 //
-//	S_PlayVoice
-//
-//==========================================================================
-
-void S_PlayVoice(const char *Name)
-{
-	GSoundDevice->PlayVoice(Name);
-}
-
-//==========================================================================
-//
 //	S_PlayTillDone
 //
 //==========================================================================
@@ -1511,9 +1500,12 @@ bool VStreamMusicPlayer::IsPlaying()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2005/11/05 15:50:07  dj_jl
+//	Voices played as normal sounds.
+//
 //	Revision 1.21  2005/11/03 22:46:35  dj_jl
 //	Support for any bitrate streams.
-//
+//	
 //	Revision 1.20  2005/11/02 22:28:09  dj_jl
 //	Added support for FLAC music.
 //	

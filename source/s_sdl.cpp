@@ -63,7 +63,6 @@ public:
 	void Shutdown(void);
 	void PlaySound(int sound_id, const TVec &origin, const TVec &velocity,
 		int origin_id, int channel, float volume);
-	void PlayVoice(const char *Name);
 	void PlaySoundTillDone(const char *sound);
 	void StopSound(int origin_id, int channel);
 	void StopAllSound(void);
@@ -184,7 +183,7 @@ static int GetChannel(int sound_id, int origin_id, int channel, int priority)
 	int lp; // least priority
 	int found;
 	int prior;
-	int numchannels = sound_id == VOICE_SOUND_ID ? 1 : S_sfx[sound_id].numchannels;
+	int numchannels = S_sfx[sound_id].numchannels;
 
 	if (numchannels != -1)
 	{
@@ -550,73 +549,6 @@ void VSDLSoundDevice::PlaySound(int sound_id, const TVec &origin,
 	channels[chan].sound_id  = sound_id;
 	channels[chan].priority  = priority;
 	channels[chan].volume    = volume;
-	channels[chan].voice     = voice;
-	channels[chan].chunk     = chunk;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VSDLSoundDevice::PlayVoice
-//
-//==========================================================================
-
-void VSDLSoundDevice::PlayVoice(const char *Name)
-{
-	guard(VSDLSoundDevice::PlayVoice);
-	Mix_Chunk *chunk;
-	int priority;
-	int chan;
-	int voice;
-
-	if (!mix_voices || !*Name || !snd_MaxVolume)
-	{
-		return;
-	}
-
-	priority = 255 * PRIORITY_MAX_ADJUST;
-
-	chan = GetChannel(VOICE_SOUND_ID, 0, 1, priority);
-	if (chan == -1)
-	{
-		return; //no free channels.
-	}
-
-	if (channels[chan].voice >= 0)
-	{
-		Sys_Error("I_StartSound: Previous sound not stoped");
-	}
-
-	if (!S_LoadSound(VOICE_SOUND_ID, Name))
-	{
-		//	Missing sound.
-		return;
-	}
-
-
-	// copy the lump to a SDL_Mixer chunk...
-	chunk = LoadRaw((Uint8 *)S_VoiceInfo.data, S_VoiceInfo.len, S_VoiceInfo.freq);
-
-	if (chunk == NULL)
-		Sys_Error("Mix_LoadRAW_RW() failed!\n");
-
-	voice = Mix_PlayChannelTimed(-1, chunk, 0, -1);
-
-	if (voice < 0)
-	{
-		S_DoneWithLump(VOICE_SOUND_ID);
-		return;
-	}
-
-	Mix_Volume(voice, 127);
-
-	channels[chan].origin_id = 0;
-	channels[chan].origin    = TVec(0, 0, 0);
-	channels[chan].channel   = 1;
-	channels[chan].velocity  = TVec(0, 0, 0);
-	channels[chan].sound_id  = VOICE_SOUND_ID;
-	channels[chan].priority  = priority;
-	channels[chan].volume    = 1.0;
 	channels[chan].voice     = voice;
 	channels[chan].chunk     = chunk;
 	unguard;
@@ -1041,9 +973,12 @@ static void StrmCallback(void*, Uint8* stream, int len)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2005/11/05 15:50:07  dj_jl
+//	Voices played as normal sounds.
+//
 //	Revision 1.19  2005/11/03 22:46:35  dj_jl
 //	Support for any bitrate streams.
-//
+//	
 //	Revision 1.18  2005/10/18 20:53:04  dj_jl
 //	Implemented basic support for streamed music.
 //	
