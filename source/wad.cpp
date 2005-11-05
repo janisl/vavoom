@@ -182,6 +182,11 @@ void WadFile::Open(const char *filename, bool FixVoices)
 	//	Set up namespaces.
 	InitNamespaces();
 
+	if (FixVoices)
+	{
+		FixVoiceNamespaces();
+	}
+
 	// set up caching
 	LumpCache = Z_CNew<void*>(NumLumps);
 }
@@ -982,6 +987,9 @@ void W_Profile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2005/11/05 15:49:14  dj_jl
+//  Putting Strife shareware voices in correct namespace.
+//
 //  Revision 1.18  2005/11/05 14:57:36  dj_jl
 //  Putting Strife shareware voices in correct namespace.
 //
