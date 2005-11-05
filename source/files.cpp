@@ -45,6 +45,7 @@ struct version_t
 	FString			GameDir;
 	TArray<FString>	AddFiles;
 	int				ParmFound;
+	bool			FixVoices;
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -69,6 +70,7 @@ char	fl_mainwad[MAX_OSPATH];
 static search_path_t	*searchpaths;
 
 const char				*wadfiles[MAXWADFILES];
+static bool				fl_fixvoices;
 
 // CODE --------------------------------------------------------------------
 
@@ -143,6 +145,7 @@ static void ParseBase(const char *name)
 	{
 		version_t &dst = *new(games, 0) version_t;
 		dst.ParmFound = 0;
+		dst.FixVoices = false;
 		if (!SC_Compare("game"))
 		{
 			SC_ScriptError(NULL);
@@ -172,6 +175,11 @@ static void ParseBase(const char *name)
 			}
 			SC_MustGetString();
 		}
+		if (SC_Compare("fixvoices"))
+		{
+			dst.FixVoices = true;
+			SC_MustGetString();
+		}
 		if (!SC_Compare("end"))
 		{
 			SC_ScriptError(NULL);
@@ -179,11 +187,11 @@ static void ParseBase(const char *name)
 	}
 	SC_Close();
 
-    for (TArray<version_t>::TIterator GIt(games); GIt; ++GIt)
-    {
-    	if (select_game && !GIt->ParmFound)
-        {
-        	continue;
+	for (TArray<version_t>::TIterator GIt(games); GIt; ++GIt)
+	{
+		if (select_game && !GIt->ParmFound)
+		{
+			continue;
 		}
 		if (fl_mainwad[0])
 		{
@@ -194,7 +202,8 @@ static void ParseBase(const char *name)
 					FL_AddFile(**It);
 				}
 				SetupGameDir(*GIt->GameDir);
-		      	return;
+				fl_fixvoices = GIt->FixVoices;
+				return;
 			}
 			continue;
 		}
@@ -202,8 +211,8 @@ static void ParseBase(const char *name)
 		{
 			continue;
 		}
-	    if (Sys_FileExists(*GIt->MainWad))
-	    {
+		if (Sys_FileExists(*GIt->MainWad))
+		{
 			strcpy(fl_mainwad, *GIt->MainWad);
 			FL_AddFile(fl_mainwad);
 			for (TArray<FString>::TIterator It(GIt->AddFiles); It; ++It)
@@ -211,14 +220,15 @@ static void ParseBase(const char *name)
 				FL_AddFile(**It);
 			}
 			SetupGameDir(*GIt->GameDir);
-	      	return;
-	    }
-    }
+			fl_fixvoices = GIt->FixVoices;
+			return;
+		}
+	}
 
 	if (select_game)
 		Sys_Error("Main wad file not found.");
 	else
-	    Sys_Error("Game mode indeterminate.");
+		Sys_Error("Game mode indeterminate.");
 }
 
 //==========================================================================
@@ -285,6 +295,13 @@ void FL_Init(void)
 		{
 			FL_AddFile(myargv[p]);
 		}
+	}
+
+	const char** filenames = wadfiles;
+	// open all the files, load headers, and count lumps
+	for ( ; *filenames ; filenames++)
+	{
+		W_AddFile(*filenames, fl_fixvoices);
 	}
 }
 
@@ -759,9 +776,12 @@ FArchive* FL_OpenFileWrite(const char *Name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2005/11/05 14:57:36  dj_jl
+//	Putting Strife shareware voices in correct namespace.
+//
 //	Revision 1.16  2004/12/03 16:15:46  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
-//
+//	
 //	Revision 1.15  2003/03/08 12:08:04  dj_jl
 //	Beautification.
 //	

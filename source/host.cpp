@@ -60,8 +60,6 @@ void G_DoLoadGame(void);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern const char	*wadfiles[];
-
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 #ifdef DEVELOPER
@@ -135,8 +133,6 @@ void Host_Init(void)
 	Cmd_Init();
 
 	FL_Init();
-
-	W_InitMultipleFiles(wadfiles);
 
 	PR_Init();
 
@@ -612,9 +608,12 @@ void Host_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2005/11/05 14:57:36  dj_jl
+//	Putting Strife shareware voices in correct namespace.
+//
 //	Revision 1.27  2005/05/26 16:54:21  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.26  2003/03/08 12:08:04  dj_jl
 //	Beautification.
 //	

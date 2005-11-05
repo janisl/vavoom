@@ -64,7 +64,7 @@ public:
 		NumLumps(0), LumpInfo(NULL), LumpCache(NULL)
 	{
 	}
-	void Open(const char *filename);
+	void Open(const char *filename, bool FixVoices);
 	void OpenSingleLump(const char *filename);
 	void CloseFile(void);
 	bool CanClose(void);
@@ -74,6 +74,7 @@ public:
 	void ReadFromLump(int lump, void* dest, int pos, int size);
 	void* CacheLumpNum(int lump, int tag);
 	void InitNamespaces();
+	void FixVoiceNamespaces();
 	void InitNamespace(EWadNamespace NS, const char* Start, const char* End,
 		bool AltMarkers);
 };
@@ -125,7 +126,7 @@ void W_CleanupName(const char *src, char *dst)
 //
 //==========================================================================
 
-void WadFile::Open(const char *filename)
+void WadFile::Open(const char *filename, bool FixVoices)
 {
 	wadinfo_t		header;
 	lumpinfo_t*		lump_p;
@@ -291,7 +292,7 @@ void WadFile::Close(void)
 //
 //==========================================================================
 
-static void W_AddFile(const char *filename)
+void W_AddFile(const char *filename, bool FixVoices)
 {
 	int wadtime;
 	char ext[8];
@@ -309,7 +310,7 @@ static void W_AddFile(const char *filename)
 	}
 	else
 	{
-		wad_files[num_wad_files].Open(filename);
+		wad_files[num_wad_files].Open(filename, FixVoices);
 	}
 
 	num_wad_files++;
@@ -323,7 +324,7 @@ static void W_AddFile(const char *filename)
 		strcat(gl_name, ".gwa");
 		if (Sys_FileTime(gl_name) >= wadtime)
 		{
-			W_AddFile(gl_name);
+			W_AddFile(gl_name, false);
 		}
 		else
 		{
@@ -331,52 +332,6 @@ static void W_AddFile(const char *filename)
 			num_wad_files++;
 		}
 	}
-}
-
-//==========================================================================
-//
-//  W_InitMultipleFiles
-//
-//  Pass a null terminated list of files to use. All files are optional,
-// but at least one file must be found. Files with a .wad extension are
-// idlink files with multiple lumps. Other files are single lumps with the
-// base filename for the lump name. Lump names can appear multiple times.
-// The name searcher looks backwards, so a later file does override all
-// earlier ones.
-//
-//==========================================================================
-
-void W_InitMultipleFiles(const char** filenames)
-{	
-	// open all the files, load headers, and count lumps
-	num_wad_files = 0;
-
-	for ( ; *filenames ; filenames++)
-	{
-		W_AddFile(*filenames);
-	}
-
-	if (!num_wad_files)
-	{
-		Sys_Error ("W_InitFiles: no files found");
-	}
-}
-
-//==========================================================================
-//
-//  W_InitFile
-//
-//  Just initialize from a single file.
-//
-//==========================================================================
-
-void W_InitFile(const char* filename)
-{
-	const char*	names[2];
-
-	names[0] = filename;
-	names[1] = NULL;
-	W_InitMultipleFiles(names);
 }
 
 //==========================================================================
@@ -391,7 +346,7 @@ void W_OpenAuxiliary(const char *filename)
 
 	AuxiliaryIndex = num_wad_files;
 
-	W_AddFile(filename);
+	W_AddFile(filename, false);
 }
 
 //==========================================================================
@@ -452,7 +407,7 @@ void W_BuildGLNodes(int lump)
 	// Add GWA file
 	FL_StripExtension(name);
 	strcat(name, ".gwa");
-	wad_files[fi + 1].Open(name);
+	wad_files[fi + 1].Open(name, false);
 }
 
 //==========================================================================
@@ -485,7 +440,7 @@ void W_BuildPVS(int lump, int gllump)
 	GLVis_BuildPVS(name);
 
 	// Add GWA file
-	wad_files[glfi].Open(glname);
+	wad_files[glfi].Open(glname, false);
 }
 
 #endif
@@ -930,6 +885,36 @@ void WadFile::InitNamespace(EWadNamespace NS, const char* Start,
 
 //==========================================================================
 //
+//  WadFile::FixVoiceNamespaces
+//
+//==========================================================================
+
+void WadFile::FixVoiceNamespaces()
+{
+	guard(WadFile::FixVoiceNamespaces);
+	for (int i = 0; i < NumLumps; i++)
+	{
+		lumpinfo_t& L = LumpInfo[i];
+
+		//	Skip if lump is already in other namespace.
+		if (L.Namespace != WADNS_Global)
+			continue;
+
+		if (L.name[0] == 'V' && L.name[1] == 'O' && L.name[2] == 'C' &&
+			L.name[3] >= '0' && L.name[3] <= '9' &&
+			(L.name[4] == 0 || (L.name[4] >= '0' && L.name[4] <= '9' &&
+			(L.name[5] == 0 || (L.name[5] >= '0' && L.name[5] <= '9' &&
+			(L.name[6] == 0 || (L.name[6] >= '0' && L.name[6] <= '9' &&
+			(L.name[7] == 0 || (L.name[7] >= '0' && L.name[7] <= '9')))))))))
+		{
+			L.Namespace = WADNS_Voices;
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //  W_Profile
 //
 //==========================================================================
@@ -997,6 +982,9 @@ void W_Profile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2005/11/05 14:57:36  dj_jl
+//  Putting Strife shareware voices in correct namespace.
+//
 //  Revision 1.17  2005/10/20 22:22:39  dj_jl
 //  Fixed double destruction of reader archive.
 //

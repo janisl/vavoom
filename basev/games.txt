@@ -69,6 +69,7 @@ end
 game basev/strife
 iwad strife0.wad
 param -strife
+fixvoices
 end
 
 // Strife

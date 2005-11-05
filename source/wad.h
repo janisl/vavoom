@@ -47,8 +47,7 @@ enum EWadNamespace
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void W_InitMultipleFiles(const char** filenames);
-void W_InitFile(const char* filename);
+void W_AddFile(const char *filename, bool FixVoices);
 
 void W_OpenAuxiliary(const char *filename);
 void W_CloseAuxiliaryFile(void);
@@ -81,9 +80,12 @@ void W_CleanupName(const char *src, char *dst);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2005/11/05 14:57:36  dj_jl
+//	Putting Strife shareware voices in correct namespace.
+//
 //	Revision 1.8  2005/05/26 16:55:43  dj_jl
 //	New lump namespace iterator
-//
+//	
 //	Revision 1.7  2004/11/23 12:43:11  dj_jl
 //	Wad file lump namespaces.
 //	
