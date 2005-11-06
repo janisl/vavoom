@@ -133,7 +133,7 @@ private:
 
 	int CalcPriority(int sound_id, int dist)
 	{
-		return S_sfx[sound_id].priority *
+		return S_sfx[sound_id].Priority *
 			(PRIORITY_MAX_ADJUST - (dist / DIST_ADJUST));
 	}
 };
@@ -283,7 +283,7 @@ int VOpenALDevice::GetChannel(int sound_id, int origin_id, int channel, int prio
 	int			lp; //least priority
 	int			found;
 	int			prior;
-	int numchannels = S_sfx[sound_id].numchannels;
+	int numchannels = S_sfx[sound_id].NumChannels;
 
 	if (numchannels != -1)
 	{
@@ -414,8 +414,9 @@ void VOpenALDevice::PlaySound(int sound_id, const TVec &origin,
 			S_DoneWithLump(sound_id);
 			return;
 		}
-		alBufferData(Buffers[sound_id], AL_FORMAT_MONO8,
-			S_sfx[sound_id].data, S_sfx[sound_id].len, S_sfx[sound_id].freq);
+		alBufferData(Buffers[sound_id], S_sfx[sound_id].SampleBits == 8 ?
+			AL_FORMAT_MONO8 : AL_FORMAT_MONO16, S_sfx[sound_id].Data,
+			S_sfx[sound_id].DataSize, S_sfx[sound_id].SampleRate);
 		if (alGetError() != AL_NO_ERROR)
 		{
 			GCon->Log(NAME_Dev, "Failed to load buffer data");
@@ -460,7 +461,7 @@ void VOpenALDevice::PlaySound(int sound_id, const TVec &origin,
 		alSourcef(src, AL_REFERENCE_DISTANCE, reference_distance);
 		alSourcef(src, AL_MAX_DISTANCE, max_distance);
 	} 
-	if (S_sfx[sound_id].changePitch)
+	if (S_sfx[sound_id].ChangePitch)
 	{
 		alSourcef(src, AL_PITCH, 1.0 + (Random() - Random()) / 16.0);
 	}
@@ -509,8 +510,9 @@ void VOpenALDevice::PlaySoundTillDone(const char *sound)
 		}
 
 		alGenBuffers(1, &Buffers[sound_id]);
-		alBufferData(Buffers[sound_id], AL_FORMAT_MONO8,
-			S_sfx[sound_id].data, S_sfx[sound_id].len, S_sfx[sound_id].freq);
+		alBufferData(Buffers[sound_id], S_sfx[sound_id].SampleBits == 8 ?
+			AL_FORMAT_MONO8 : AL_FORMAT_MONO16, S_sfx[sound_id].Data,
+			S_sfx[sound_id].DataSize, S_sfx[sound_id].SampleRate);
 
 		//	We don't need to keep lump static
 		S_DoneWithLump(sound_id);
@@ -933,9 +935,12 @@ void VOpenALDevice::ResumeStream()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2005/11/06 15:27:09  dj_jl
+//	Added support for 16 bit sounds.
+//
 //	Revision 1.14  2005/11/05 15:50:07  dj_jl
 //	Voices played as normal sounds.
-//
+//	
 //	Revision 1.13  2005/11/03 22:46:35  dj_jl
 //	Support for any bitrate streams.
 //	

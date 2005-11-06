@@ -193,7 +193,7 @@ static int GetChannel(int sound_id, int origin_id, int channel, int priority)
 	int			lp; //least priority
 	int			found;
 	int			prior;
-	int numchannels = S_sfx[sound_id].numchannels;
+	int numchannels = S_sfx[sound_id].NumChannels;
 
 	if (numchannels != -1)
 	{
@@ -288,7 +288,7 @@ static int CalcDist(const TVec &origin)
 
 static int CalcPriority(int sound_id, int dist)
 {
-	return S_sfx[sound_id].priority *
+	return S_sfx[sound_id].Priority *
 		(PRIORITY_MAX_ADJUST - PRIORITY_MAX_ADJUST * dist / MAX_SND_DIST);
 }
 
@@ -335,7 +335,7 @@ static int CalcSep(const TVec &origin)
 
 static int CalcPitch(int freq, int sound_id)
 {
-	if (S_sfx[sound_id].changePitch)
+	if (S_sfx[sound_id].ChangePitch)
 	{
 		return freq + ((freq * ((rand() & 7) - (rand() & 7))) >> 7);
 	}
@@ -401,18 +401,28 @@ void VAllegroSoundDevice::PlaySound(int sound_id, const TVec &origin,
 		return;
 	}
 
-	//	Converts raw 11khz, 8-bit data to a SAMPLE* that allegro uses.
+	//	Create SAMPLE* that Allegro uses.
 	spl = &Channel[chan].spl;
 
-	spl->bits 		= 8;
+	int SfxSize = S_sfx[sound_id].DataSize;
+	if ((S_sfx[sound_id].SampleBits & 0xff) == 16)
+		SfxSize >>= 1;
+	if (S_sfx[sound_id].SampleBits == 16)
+	{
+		//	Convert 16 bit sound to unsigned format.
+		short* pData = (short*)S_sfx[sound_id].Data;
+		for (int i = 0; i < SfxSize; i++, pData++)
+			*pData ^= 0x8000;
+	}
+	spl->bits 		= S_sfx[sound_id].SampleBits & 0xff;
 	spl->stereo 	= 0;
-	spl->freq 		= S_sfx[sound_id].freq;
+	spl->freq 		= S_sfx[sound_id].SampleRate;
 	spl->priority 	= MID(0, priority / PRIORITY_MAX_ADJUST, 255);
-	spl->len 		= S_sfx[sound_id].len;
+	spl->len 		= SfxSize;
 	spl->loop_start = 0;
-	spl->loop_end 	= S_sfx[sound_id].len;
+	spl->loop_end 	= SfxSize;
 	spl->param 		= 0xffffffff;
-	spl->data 		= S_sfx[sound_id].data;
+	spl->data 		= S_sfx[sound_id].Data;
 
 	// Start the sound
 	voice = allocate_voice(spl);
@@ -476,16 +486,25 @@ void VAllegroSoundDevice::PlaySoundTillDone(const char *sound)
 		return;
 	}
 
-	//	Converts raw 11khz, 8-bit data to a SAMPLE* that allegro uses.
-	spl.bits 		= 8;
-	spl.stereo 		= 0;
-	spl.freq 		= S_sfx[sound_id].freq;
-	spl.priority 	= 255;
-	spl.len 		= S_sfx[sound_id].len;
+	int SfxSize = S_sfx[sound_id].DataSize;
+	if ((S_sfx[sound_id].SampleBits & 0xff) == 16)
+		SfxSize >>= 1;
+	if (S_sfx[sound_id].SampleBits == 16)
+	{
+		//	Convert 16 bit sound to unsigned format.
+		short* pData = (short*)S_sfx[sound_id].Data;
+		for (int i = 0; i < SfxSize; i++, pData++)
+			*pData ^= 0x8000;
+	}
+	spl.bits		= S_sfx[sound_id].SampleBits & 0xff;
+	spl.stereo		= 0;
+	spl.freq		= S_sfx[sound_id].SampleRate;
+	spl.priority	= 255;
+	spl.len			= SfxSize;
 	spl.loop_start	= 0;
-	spl.loop_end 	= S_sfx[sound_id].len;
-	spl.param 		= 0xffffffff;
-	spl.data 		= S_sfx[sound_id].data;
+	spl.loop_end	= SfxSize;
+	spl.param		= 0xffffffff;
+	spl.data		= S_sfx[sound_id].Data;
 
 	// Start the sound
 	voice = allocate_voice(&spl);
@@ -836,9 +855,12 @@ void VAllegroSoundDevice::ResumeStream()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2005/11/06 15:27:09  dj_jl
+//	Added support for 16 bit sounds.
+//
 //	Revision 1.21  2005/11/05 15:50:07  dj_jl
 //	Voices played as normal sounds.
-//
+//	
 //	Revision 1.20  2005/11/03 22:46:35  dj_jl
 //	Support for any bitrate streams.
 //	

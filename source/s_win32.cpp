@@ -431,7 +431,7 @@ static int GetChannel(int sound_id, int origin_id, int channel, int priority)
 	int			lp; //least priority
 	int			found;
 	int			prior;
-	int numchannels = S_sfx[sound_id].numchannels;
+	int numchannels = S_sfx[sound_id].NumChannels;
 
 	if (numchannels != -1)
 	{
@@ -527,7 +527,7 @@ static int CalcDist(const TVec &origin)
 
 static int CalcPriority(int sound_id, int dist)
 {
-	return S_sfx[sound_id].priority *
+	return S_sfx[sound_id].Priority *
 		(PRIORITY_MAX_ADJUST - (dist / DIST_ADJUST));
 }
 
@@ -564,7 +564,7 @@ static int CalcSep(const TVec &origin)
 //
 //==========================================================================
 
-static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id, const char *VoiceName)
+static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id)
 {
 	HRESULT					result;
 	LPDIRECTSOUNDBUFFER		dsbuffer;
@@ -583,12 +583,12 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id, const char *VoiceName)
 			dsbuffer = free_buffers[i].buf;
 			free_buffers[i].sound_id = 0;
 
-			if (S_sfx[sound_id].changePitch)
+			if (S_sfx[sound_id].ChangePitch)
 			{
 				int			pitch;
 
-				pitch = S_sfx[sound_id].freq +
-					S_sfx[sound_id].freq * (rand() & 7 - rand() & 7) / 128;
+				pitch = S_sfx[sound_id].SampleRate +
+					S_sfx[sound_id].SampleRate * (rand() & 7 - rand() & 7) / 128;
 				dsbuffer->SetFrequency(pitch);
 			}
 
@@ -604,14 +604,14 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id, const char *VoiceName)
 		//	Missing sound.
 		return NULL;
 	}
-	sfxinfo_t &sfx = VoiceName ? S_VoiceInfo : S_sfx[sound_id];
+	sfxinfo_t &sfx = S_sfx[sound_id];
 
 	// Set up wave format structure.
 	memset(&pcmwf, 0, sizeof(WAVEFORMATEX));
 	pcmwf.wFormatTag      = WAVE_FORMAT_PCM;      
 	pcmwf.nChannels       = 1;
-	pcmwf.nSamplesPerSec  = sfx.freq;
-	pcmwf.wBitsPerSample  = WORD(8);
+	pcmwf.nSamplesPerSec  = sfx.SampleRate;
+	pcmwf.wBitsPerSample  = WORD(sfx.SampleBits);
 	pcmwf.nBlockAlign     = WORD(pcmwf.wBitsPerSample / 8 * pcmwf.nChannels);
 	pcmwf.nAvgBytesPerSec = pcmwf.nSamplesPerSec * pcmwf.nBlockAlign;
 
@@ -622,7 +622,7 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id, const char *VoiceName)
 		DSBCAPS_CTRLVOLUME | 
 		DSBCAPS_CTRLFREQUENCY |
 		DSBCAPS_STATIC;
-	dsbdesc.dwBufferBytes = sfx.len;
+	dsbdesc.dwBufferBytes = sfx.DataSize;
 	dsbdesc.lpwfxFormat   = &pcmwf;
 	if (sound3D)
 	{
@@ -667,15 +667,15 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id, const char *VoiceName)
 		return NULL;
 	}
 
-	dsbuffer->Lock(0, sfx.len,
+	dsbuffer->Lock(0, sfx.DataSize,
 		&buffer, &size1, &buff2, &size2, DSBLOCK_ENTIREBUFFER);
-	memcpy(buffer, sfx.data, sfx.len);
-	dsbuffer->Unlock(buffer, sfx.len, buff2, size2);
+	memcpy(buffer, sfx.Data, sfx.DataSize);
+	dsbuffer->Unlock(buffer, sfx.DataSize, buff2, size2);
 	
-	if (sfx.changePitch)
+	if (sfx.ChangePitch)
 	{
-		dsbuffer->SetFrequency(sfx.freq +
-			S_sfx[sound_id].freq * (rand() & 7 - rand() & 7) / 128);
+		dsbuffer->SetFrequency(sfx.SampleRate +
+			S_sfx[sound_id].SampleRate * (rand() & 7 - rand() & 7) / 128);
 	}
 
 	dsbuffer->SetCurrentPosition(0);
@@ -728,7 +728,7 @@ void VDirectSoundDevice::PlaySound(int sound_id, const TVec &origin,
 		return; //no free channels.
 	}
 
-	dsbuffer = CreateBuffer(sound_id, NULL);
+	dsbuffer = CreateBuffer(sound_id);
 	if (!dsbuffer)
 	{
 		return;
@@ -836,7 +836,7 @@ void VDirectSoundDevice::PlaySoundTillDone(const char *sound)
 	S_StopAllSound();
 
 	//	Create buffer
-	dsbuffer = CreateBuffer(sound_id, NULL);
+	dsbuffer = CreateBuffer(sound_id);
 	if (!dsbuffer)
 	{
 		return;
@@ -1342,9 +1342,12 @@ void VDirectSoundDevice::ResumeStream()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.31  2005/11/06 15:27:09  dj_jl
+//	Added support for 16 bit sounds.
+//
 //	Revision 1.30  2005/11/05 15:50:07  dj_jl
 //	Voices played as normal sounds.
-//
+//	
 //	Revision 1.29  2005/11/03 22:46:35  dj_jl
 //	Support for any bitrate streams.
 //	

@@ -172,7 +172,7 @@ static int CalcDist(const TVec &origin)
 
 static int CalcPriority(int sound_id, int dist)
 {
-	return S_sfx[sound_id].priority * (PRIORITY_MAX_ADJUST - PRIORITY_MAX_ADJUST * dist / MAX_SND_DIST);
+	return S_sfx[sound_id].Priority * (PRIORITY_MAX_ADJUST - PRIORITY_MAX_ADJUST * dist / MAX_SND_DIST);
 }
 
 static int GetChannel(int sound_id, int origin_id, int channel, int priority)
@@ -183,7 +183,7 @@ static int GetChannel(int sound_id, int origin_id, int channel, int priority)
 	int lp; // least priority
 	int found;
 	int prior;
-	int numchannels = S_sfx[sound_id].numchannels;
+	int numchannels = S_sfx[sound_id].NumChannels;
 
 	if (numchannels != -1)
 	{
@@ -284,7 +284,7 @@ static int CalcSep(const TVec &origin)
 
 static int CalcPitch(int freq, int sound_id)
 {
-	if (S_sfx[sound_id].changePitch)
+	if (S_sfx[sound_id].ChangePitch)
 	{
 		return freq;// + ((freq * ((rand() & 7) - (rand() & 7))) >> 7);
 	}
@@ -295,12 +295,12 @@ static int CalcPitch(int freq, int sound_id)
 }
 
 /* Load raw data -- this is a hacked version of Mix_LoadWAV_RW (gl) */
-static Mix_Chunk * LoadRaw(Uint8 *data, int len, int freq)
+static Mix_Chunk * LoadRaw(Uint8 *data, int len, int freq, int bits)
 {
 	Mix_Chunk *chunk;
 	SDL_AudioCVT cvt;
 
-	if ( SDL_BuildAudioCVT(&cvt, AUDIO_U8, 1, freq,
+	if ( SDL_BuildAudioCVT(&cvt, bits == 8 ? AUDIO_U8 : AUDIO_S16, 1, freq,
 			cur_format, cur_channels, cur_frequency) < 0 ) {
 		return(NULL);
 	}
@@ -512,10 +512,11 @@ void VSDLSoundDevice::PlaySound(int sound_id, const TVec &origin,
 		return;
 	}
 
-	pitch = CalcPitch(S_sfx[sound_id].freq, sound_id);
+	pitch = CalcPitch(S_sfx[sound_id].SampleRate, sound_id);
 
 	// copy the lump to a SDL_Mixer chunk...
-	chunk = LoadRaw((Uint8 *)S_sfx[sound_id].data, S_sfx[sound_id].len, pitch);
+	chunk = LoadRaw((Uint8 *)S_sfx[sound_id].Data, S_sfx[sound_id].DataSize, pitch,
+		S_sfx[sound_id].SampleBits);
 
 	if (chunk == NULL)
 		Sys_Error("LoadRaw() failed!\n");
@@ -589,7 +590,8 @@ void VSDLSoundDevice::PlaySoundTillDone(const char *sound)
 		return;
 	}
 
-	chunk = LoadRaw((Uint8 *)S_sfx[sound_id].data, S_sfx[sound_id].len, S_sfx[sound_id].freq);
+	chunk = LoadRaw((Uint8 *)S_sfx[sound_id].Data, S_sfx[sound_id].DataSize,
+		S_sfx[sound_id].SampleRate, S_sfx[sound_id].SampleBits);
 
 	if (chunk == NULL)
 		Sys_Error("Mix_LoadRAW_RW() failed!\n");
@@ -973,9 +975,12 @@ static void StrmCallback(void*, Uint8* stream, int len)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2005/11/06 15:27:09  dj_jl
+//	Added support for 16 bit sounds.
+//
 //	Revision 1.20  2005/11/05 15:50:07  dj_jl
 //	Voices played as normal sounds.
-//
+//	
 //	Revision 1.19  2005/11/03 22:46:35  dj_jl
 //	Support for any bitrate streams.
 //	

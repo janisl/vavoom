@@ -32,12 +32,19 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct raw_sound_t
+class VRawSampleLoader : public VSampleLoader
 {
-	word	unkn1;
-    word	freq;
-	dword	len;
-	byte	data[1];
+public:
+#pragma pack(1)
+	struct FRawSoundHeader
+	{
+		word	Unknown;
+		word	SampleRate;
+		dword	DataSize;
+	};
+#pragma pack()
+
+	void Load(sfxinfo_t&, FArchive&);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -54,7 +61,11 @@ static void S_ParseSndinfo();
 
 TArray<sfxinfo_t>	S_sfx;
 
+VSampleLoader*		VSampleLoader::List;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
+
+static VRawSampleLoader		RawSampleLoader;
 
 // CODE --------------------------------------------------------------------
 
@@ -85,27 +96,27 @@ void S_InitScript(void)
 	{
 		int i =	S_sfx.AddZeroed();
 		S_sfx[i].TagName = sc_String;
-		S_sfx[i].snd_ptr = NULL;
-		S_sfx[i].lumpnum = -1;
+		S_sfx[i].Data = NULL;
+		S_sfx[i].LumpNum = -1;
 
 		SC_MustGetString();
 		if (*sc_String != '?')
 		{
-			strcpy(S_sfx[i].lumpname, sc_String);
+			strcpy(S_sfx[i].LumpName, sc_String);
 		}
 		else
 		{
-			S_sfx[i].lumpname[0] = 0;
+			S_sfx[i].LumpName[0] = 0;
 		}
 
 		SC_MustGetNumber();
-		S_sfx[i].priority = sc_Number;
+		S_sfx[i].Priority = sc_Number;
 
 		SC_MustGetNumber();
-		S_sfx[i].numchannels = sc_Number;
+		S_sfx[i].NumChannels = sc_Number;
 
 		SC_MustGetNumber();
-		S_sfx[i].changePitch = sc_Number;
+		S_sfx[i].ChangePitch = sc_Number;
 	}
 	SC_Close();
 
@@ -118,13 +129,13 @@ void S_InitScript(void)
 
 		int i = S_sfx.AddZeroed();
 		S_sfx[i].TagName = SndName;
-		strcpy(S_sfx[i].lumpname, W_LumpName(Lump));
-		S_sfx[i].lumpnum = Lump;
-		S_sfx[i].snd_ptr = NULL;
+		strcpy(S_sfx[i].LumpName, W_LumpName(Lump));
+		S_sfx[i].LumpNum = Lump;
+		S_sfx[i].Data = NULL;
 		//	Default values
-		S_sfx[i].priority = 127;
-		S_sfx[i].numchannels = 1;
-		S_sfx[i].changePitch = 0;
+		S_sfx[i].Priority = 127;
+		S_sfx[i].NumChannels = 1;
+		S_sfx[i].ChangePitch = 0;
 	}
 
 	//
@@ -154,9 +165,9 @@ void S_InitScript(void)
 	//
 	for (TArray<sfxinfo_t>::TIterator It(S_sfx); It; ++It)
 	{
-		if (!It->lumpname[0])
+		if (!It->LumpName[0])
 		{
-			strcpy(It->lumpname, "default");
+			strcpy(It->LumpName, "default");
 		}
 	}
 	unguard;
@@ -206,22 +217,22 @@ static void S_ParseSndinfo()
 				//	Not found - add it
 				i = S_sfx.AddZeroed();
 				S_sfx[i].TagName = sc_String;
-				S_sfx[i].snd_ptr = NULL;
-				S_sfx[i].lumpnum = -1;
+				S_sfx[i].Data = NULL;
+				S_sfx[i].LumpNum = -1;
 				//	Default values
-				S_sfx[i].priority = 127;
-				S_sfx[i].numchannels = -1;
-				S_sfx[i].changePitch = 1;
+				S_sfx[i].Priority = 127;
+				S_sfx[i].NumChannels = -1;
+				S_sfx[i].ChangePitch = 1;
 			}
 
 			SC_MustGetString();
 			if (*sc_String != '?')
 			{
-				strcpy(S_sfx[i].lumpname, sc_String);
+				strcpy(S_sfx[i].LumpName, sc_String);
 			}
 			else
 			{
-				strcpy(S_sfx[i].lumpname, "default");
+				strcpy(S_sfx[i].LumpName, "default");
 			}
 		}
 	}
@@ -282,29 +293,41 @@ int S_GetSoundID(const char *name)
 bool S_LoadSound(int sound_id)
 {
 	guard(S_LoadSound);
-	if (!S_sfx[sound_id].snd_ptr)
+	if (!S_sfx[sound_id].Data)
 	{
-		// get lumpnum if necessary
-		if (S_sfx[sound_id].lumpnum < 0)
+		FArchive* Ar = FL_OpenFileRead(va("sound/%s", S_sfx[sound_id].LumpName));
+		if (!Ar)
+			Ar = FL_OpenFileRead(va("sound/%s.wav", S_sfx[sound_id].LumpName));
+		if (!Ar)
+			Ar = FL_OpenFileRead(va("sound/%s.flac", S_sfx[sound_id].LumpName));
+		if (!Ar)
+			Ar = FL_OpenFileRead(va("sound/%s.raw", S_sfx[sound_id].LumpName));
+		if (!Ar)
 		{
-			S_sfx[sound_id].lumpnum = W_CheckNumForName(
-				S_sfx[sound_id].lumpname);
-			if (S_sfx[sound_id].lumpnum < 0)
+			// get LumpNum if necessary
+			if (S_sfx[sound_id].LumpNum < 0)
 			{
-				GCon->Logf(NAME_Dev, "Sound lump %s not found",
-					S_sfx[sound_id].lumpname);
-				return false;
+				S_sfx[sound_id].LumpNum = W_CheckNumForName(
+					S_sfx[sound_id].LumpName);
+				if (S_sfx[sound_id].LumpNum < 0)
+				{
+					GCon->Logf(NAME_Dev, "Sound lump %s not found",
+						S_sfx[sound_id].LumpName);
+					return false;
+				}
 			}
+			Ar = W_CreateLumpReader(S_sfx[sound_id].LumpNum);
 		}
-		S_sfx[sound_id].snd_ptr = W_CacheLumpNum(S_sfx[sound_id].lumpnum,
-			PU_SOUND);
 
-		raw_sound_t *rawdata = (raw_sound_t *)S_sfx[sound_id].snd_ptr;
-	    S_sfx[sound_id].freq = LittleShort(rawdata->freq);
-		S_sfx[sound_id].len = LittleLong(rawdata->len);
-		S_sfx[sound_id].data = rawdata->data;
+		for (VSampleLoader* Ldr = VSampleLoader::List;
+			!S_sfx[sound_id].Data; Ldr = Ldr->Next)
+		{
+			Ldr->Load(S_sfx[sound_id], *Ar);
+		}
+		delete Ar;
 	}
-	S_sfx[sound_id].usecount++;
+	Z_ChangeTag(S_sfx[sound_id].Data, PU_SOUND);
+	S_sfx[sound_id].UseCount++;
 	return true;
 	unguard;
 }
@@ -318,35 +341,49 @@ bool S_LoadSound(int sound_id)
 void S_DoneWithLump(int sound_id)
 {
 	guard(S_DoneWithLump);
-	void *ptr;
-
 	sfxinfo_t &sfx = S_sfx[sound_id];
-	if (!sfx.snd_ptr || !sfx.usecount)
+	if (!sfx.Data || !sfx.UseCount)
 	{
 		Sys_Error("S_DoneWithLump: Empty lump");
 	}
 
-	sfx.usecount--;
-	if (sfx.usecount)
+	sfx.UseCount--;
+	if (sfx.UseCount)
 	{
 		//	still used
 		return;
 	}
 
-	//	Mark as not loaded
-	ptr = sfx.snd_ptr;
-	sfx.snd_ptr = NULL;
+	//	Make data cachable
+	Z_ChangeTag(sfx.Data, PU_CACHE);
+	unguard;
+}
 
-	for (TArray<sfxinfo_t>::TIterator It(S_sfx); It; ++It)
+//==========================================================================
+//
+//	VRawSampleLoader::Load
+//
+//==========================================================================
+
+void VRawSampleLoader::Load(sfxinfo_t& Sfx, FArchive& Ar)
+{
+	guard(VRawSampleLoader::Load);
+	//	Read header and see if it's a valid raw sample.
+	FRawSoundHeader Hdr;
+	Ar.Seek(0);
+	Ar.Serialise(&Hdr, 8);
+	int Rate = LittleShort(Hdr.SampleRate);
+	if ((Rate != 11025 && Rate != 22050 && Rate != 44100) ||
+		LittleLong(Hdr.DataSize) != Ar.TotalSize() - 8)
 	{
-		if (It->snd_ptr == ptr)
-		{
-			//	Another active sound uses this lump
-			return;
-		}
+		return;
 	}
-	//	Make lump cachable
-	Z_ChangeTag(ptr, PU_CACHE);
+
+	Sfx.SampleBits = 8;
+	Sfx.SampleRate = LittleShort(Hdr.SampleRate);
+	Sfx.DataSize = LittleLong(Hdr.DataSize);
+	Sfx.Data = Z_Malloc(Sfx.DataSize, PU_SOUND, &Sfx.Data);
+	Ar.Serialise(Sfx.Data, Sfx.DataSize);
 	unguard;
 }
 
@@ -368,9 +405,12 @@ void S_Init(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2005/11/06 15:27:09  dj_jl
+//	Added support for 16 bit sounds.
+//
 //	Revision 1.14  2005/11/05 15:50:07  dj_jl
 //	Voices played as normal sounds.
-//
+//	
 //	Revision 1.13  2005/10/20 22:31:27  dj_jl
 //	Removed Hexen's devsnd support.
 //	

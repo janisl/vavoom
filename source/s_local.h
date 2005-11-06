@@ -69,16 +69,16 @@ enum
 struct sfxinfo_t
 {
 	FName	TagName;		// Name, by whitch sound is recognised in script
-	char	lumpname[12];	// Only need 9 bytes, but padded out to be dword aligned
-	int		priority;		// Higher priority takes precendence
-	int 	numchannels;	// total number of channels a sound type may occupy
-	bool	changePitch;
-	void*	snd_ptr;
-	int		lumpnum;        // lump number of sfx
-	dword	freq;			// from sound lump
-	dword	len;
-	void*	data;			// points in snd_lump
-	int		usecount;
+	char	LumpName[12];	// Only need 9 bytes, but padded out to be dword aligned
+	int		Priority;		// Higher priority takes precendence
+	int 	NumChannels;	// total number of channels a sound type may occupy
+	bool	ChangePitch;
+	int		LumpNum;        // lump number of sfx
+	int		UseCount;
+	dword	SampleRate;
+	int		SampleBits;
+	dword	DataSize;
+	void*	Data;
 };
 
 //
@@ -295,6 +295,24 @@ VCDAudioDevice* Create##TClass() \
 } \
 FCDAudioDeviceDesc TClass##Desc(Type, Name, Description, CmdLineArg, Create##TClass);
 
+//	Loader of sound samples.
+class VSampleLoader
+{
+public:
+	VSampleLoader*			Next;
+
+	static VSampleLoader*	List;
+
+	VSampleLoader()
+	{
+		Next = List;
+		List = this;
+	}
+	virtual ~VSampleLoader()
+	{}
+	virtual void Load(sfxinfo_t&, FArchive&) = 0;
+};
+
 //	Streamed audio decoder interface.
 class VAudioCodec
 {
@@ -402,9 +420,12 @@ struct MIDheader
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2005/11/06 15:27:09  dj_jl
+//	Added support for 16 bit sounds.
+//
 //	Revision 1.20  2005/11/05 15:50:07  dj_jl
 //	Voices played as normal sounds.
-//
+//	
 //	Revision 1.19  2005/11/03 22:46:35  dj_jl
 //	Support for any bitrate streams.
 //	
