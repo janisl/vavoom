@@ -32,27 +32,33 @@
 
 // TYPES -------------------------------------------------------------------
 
+#pragma pack(1)
+struct FRiffChunkHeader
+{
+	char		ID[4];
+	dword		Size;
+};
+
+struct FWavFormatDesc
+{
+	word		Format;
+	word		Channels;
+	dword		Rate;
+	dword		BytesPerSec;
+	word		BlockAlign;
+	word		Bits;
+};
+#pragma pack()
+
+class VWaveSampleLoader : public VSampleLoader
+{
+public:
+	void Load(sfxinfo_t&, FArchive&);
+};
+
 class VWavAudioCodec : public VAudioCodec
 {
 public:
-#pragma pack(1)
-	struct FChunkHeader
-	{
-		char		ID[4];
-		dword		Size;
-	};
-
-	struct FWavFormatDesc
-	{
-		word		Format;
-		word		Channels;
-		dword		Rate;
-		dword		BytesPerSec;
-		word		BlockAlign;
-		word		Bits;
-	};
-#pragma pack()
-
 	FArchive*		Ar;
 	int				SamplesLeft;
 
@@ -65,7 +71,6 @@ public:
 	int Decode(short* Data, int NumSamples);
 	bool Finished();
 	void Restart();
-	int FindChunk(char* ID);
 
 	static VAudioCodec* Create(FArchive* InAr);
 };
@@ -80,15 +85,134 @@ public:
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_AUDIO_CODEC(VWavAudioCodec, "Wav");
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
+
+static VWaveSampleLoader		WaveSampleLoader;
+
+IMPLEMENT_AUDIO_CODEC(VWavAudioCodec, "Wav");
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	VVorbisAudioCodec::VVorbisAudioCodec
+//	FindChunk
+//
+//==========================================================================
+
+static int FindRiffChunk(FArchive& Ar, char* ID)
+{
+	guard(VWavAudioCodec::FindChunk);
+	Ar.Seek(12);
+	int EndPos = Ar.TotalSize();
+	while (Ar.Tell() + 8 <= EndPos)
+	{
+		FRiffChunkHeader ChunkHdr;
+		Ar.Serialise(&ChunkHdr, 8);
+		int ChunkSize = LittleLong(ChunkHdr.Size);
+		if (!memcmp(ChunkHdr.ID, ID, 4))
+		{
+			//	Found chunk.
+			return ChunkSize;
+		}
+		if (Ar.Tell() + ChunkSize > EndPos)
+		{
+			//	Chunk goes beyound end of file.
+			break;
+		}
+		Ar.Seek(Ar.Tell() + ChunkSize);
+	}
+	return -1;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWaveSampleLoader::Load
+//
+//==========================================================================
+
+void VWaveSampleLoader::Load(sfxinfo_t& Sfx, FArchive& Ar)
+{
+	guard(VWaveSampleLoader::Load);
+	//	Check header to see if it's a wave file.
+	char Header[12];
+	Ar.Seek(0);
+	Ar.Serialise(Header, 12);
+	if (memcmp(Header, "RIFF", 4) || memcmp(Header + 8, "WAVE", 4))
+	{
+		//	Not a WAVE.
+		return;
+	}
+
+	//	Get format settings.
+	int FmtSize = FindRiffChunk(Ar, "fmt ");
+	if (FmtSize < 16)
+	{
+		//	Format not found or too small.
+		return;
+	}
+	FWavFormatDesc Fmt;
+	Ar.Serialise(&Fmt, 16);
+	if (LittleShort(Fmt.Format) != 1)
+	{
+		//	Not a PCM format.
+		return;
+	}
+	int SampleRate = LittleLong(Fmt.Rate);
+	int WavChannels = LittleShort(Fmt.Channels);
+	int WavBits = LittleShort(Fmt.Bits);
+	int BlockAlign = LittleShort(Fmt.BlockAlign);
+	if (WavChannels != 1)
+	{
+		GCon->Logf("A stereo sample, taking left channel");
+	}
+
+	//	Find data chunk.
+	int DataSize = FindRiffChunk(Ar, "data");
+	if (DataSize == -1)
+	{
+		//	Data not found
+		return;
+	}
+
+	//	Fill in sample info and allocate data.
+	Sfx.SampleRate = SampleRate;
+	Sfx.SampleBits = WavBits;
+	Sfx.DataSize = (DataSize / BlockAlign) * (WavBits/ 8);
+	Sfx.Data = Z_Malloc(Sfx.DataSize, PU_SOUND, &Sfx.Data);
+
+	//	Read wav data.
+	void* WavData = Z_Malloc(DataSize);
+	Ar.Serialise(WavData, DataSize);
+
+	//	Copy sample data.
+	DataSize /= BlockAlign;
+	if (WavBits == 8)
+	{
+		byte* pSrc = (byte*)WavData;
+		byte* pDst = (byte*)Sfx.Data;
+		for (int i = 0; i < DataSize; i++, pSrc += BlockAlign, pDst++)
+		{
+			*pDst = *pSrc;
+		}
+	}
+	else
+	{
+		byte* pSrc = (byte*)WavData;
+		short* pDst = (short*)Sfx.Data;
+		for (int i = 0; i < DataSize; i++, pSrc += BlockAlign, pDst++)
+		{
+			*pDst = LittleShort(*(short*)pSrc);
+		}
+	}
+	Z_Free(WavData);
+
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWavAudioCodec::VWavAudioCodec
 //
 //==========================================================================
 
@@ -97,7 +221,7 @@ VWavAudioCodec::VWavAudioCodec(FArchive* InAr)
 , SamplesLeft(-1)
 {
 	guard(VWavAudioCodec::VWavAudioCodec);
-	int FmtSize = FindChunk("fmt ");
+	int FmtSize = FindRiffChunk(*Ar, "fmt ");
 	if (FmtSize < 16)
 	{
 		//	Format not found or too small.
@@ -115,7 +239,7 @@ VWavAudioCodec::VWavAudioCodec(FArchive* InAr)
 	WavBits = LittleShort(Fmt.Bits);
 	BlockAlign = LittleShort(Fmt.BlockAlign);
 
-	SamplesLeft = FindChunk("data");
+	SamplesLeft = FindRiffChunk(*Ar, "data");
 	if (SamplesLeft == -1)
 	{
 		//	Data not found
@@ -127,7 +251,7 @@ VWavAudioCodec::VWavAudioCodec(FArchive* InAr)
 
 //==========================================================================
 //
-//	VVorbisAudioCodec::VVorbisAudioCodec
+//	VWavAudioCodec::~VWavAudioCodec
 //
 //==========================================================================
 
@@ -210,39 +334,7 @@ bool VWavAudioCodec::Finished()
 void VWavAudioCodec::Restart()
 {
 	guard(VWavAudioCodec::Restart);
-	SamplesLeft = FindChunk("data") / BlockAlign;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VWavAudioCodec::FindChunk
-//
-//==========================================================================
-
-int VWavAudioCodec::FindChunk(char* ID)
-{
-	guard(VWavAudioCodec::FindChunk);
-	Ar->Seek(12);
-	int EndPos = Ar->TotalSize();
-	while (Ar->Tell() + 8 <= EndPos)
-	{
-		FChunkHeader ChunkHdr;
-		Ar->Serialise(&ChunkHdr, 8);
-		int ChunkSize = LittleLong(ChunkHdr.Size);
-		if (!memcmp(ChunkHdr.ID, ID, 4))
-		{
-			//	Found chunk.
-			return ChunkSize;
-		}
-		if (Ar->Tell() + ChunkSize > EndPos)
-		{
-			//	Chunk goes beyound end of file.
-			break;
-		}
-		Ar->Seek(Ar->Tell() + ChunkSize);
-	}
-	return -1;
+	SamplesLeft = FindRiffChunk(*Ar, "data") / BlockAlign;
 	unguard;
 }
 
@@ -276,9 +368,12 @@ VAudioCodec* VWavAudioCodec::Create(FArchive* InAr)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2005/11/06 15:27:46  dj_jl
+//	Added support for wave format sounds.
+//
 //	Revision 1.2  2005/11/03 23:59:15  dj_jl
 //	Properly implemented wave reading.
-//
+//	
 //	Revision 1.1  2005/10/18 20:53:04  dj_jl
 //	Implemented basic support for streamed music.
 //	
