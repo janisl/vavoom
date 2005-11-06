@@ -67,8 +67,8 @@ void W_ReadFromLump(int lump, void *dest, int pos, int size);
 void* W_CacheLumpNum(int lump, int tag);
 void* W_CacheLumpName(const char* name, int tag,
 	EWadNamespace NS = WADNS_Global);
-FArchive* W_CreateLumpReader(const char* name, int tag = 0,
-	EWadNamespace NS = WADNS_Global);
+FArchive* W_CreateLumpReader(int lump);
+FArchive* W_CreateLumpReader(const char* name, EWadNamespace NS = WADNS_Global);
 
 bool W_ForEachLump(bool (*func)(int, const char*, int, EWadNamespace));
 int W_IterateNS(int Prev, EWadNamespace NS);
@@ -80,9 +80,12 @@ void W_CleanupName(const char *src, char *dst);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2005/11/06 15:28:40  dj_jl
+//	Some cleanup.
+//
 //	Revision 1.9  2005/11/05 14:57:36  dj_jl
 //	Putting Strife shareware voices in correct namespace.
-//
+//	
 //	Revision 1.8  2005/05/26 16:55:43  dj_jl
 //	New lump namespace iterator
 //	

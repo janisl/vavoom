@@ -109,6 +109,7 @@ static WadFile			wad_files[MAX_WAD_FILES];
 
 void W_CleanupName(const char *src, char *dst)
 {
+	guard(W_CleanupName);
 	int i;
 	for (i = 0; i < 8 && src[i]; i++)
 	{
@@ -118,6 +119,7 @@ void W_CleanupName(const char *src, char *dst)
 	{
 		dst[i] = 0;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -128,6 +130,7 @@ void W_CleanupName(const char *src, char *dst)
 
 void WadFile::Open(const char *filename, bool FixVoices)
 {
+	guard(WadFile::Open);
 	wadinfo_t		header;
 	lumpinfo_t*		lump_p;
 	int				i;
@@ -189,6 +192,7 @@ void WadFile::Open(const char *filename, bool FixVoices)
 
 	// set up caching
 	LumpCache = Z_CNew<void*>(NumLumps);
+	unguard;
 }
 
 //==========================================================================
@@ -199,6 +203,7 @@ void WadFile::Open(const char *filename, bool FixVoices)
 
 void WadFile::OpenSingleLump(const char *filename)
 {
+	guard(WadFile::OpenSingleLump);
 	// open the file and add to directory
 	Handle = Sys_FileOpenRead(filename);
 	if (Handle == -1)
@@ -221,6 +226,7 @@ void WadFile::OpenSingleLump(const char *filename)
 	
 	// set up caching
 	LumpCache = Z_CNew<void*>();
+	unguard;
 }
 
 //==========================================================================
@@ -229,13 +235,15 @@ void WadFile::OpenSingleLump(const char *filename)
 //
 //==========================================================================
 
-void WadFile::CloseFile(void)
+void WadFile::CloseFile()
 {
+	guard(WadFile::CloseFile);
 	if (Handle > 0)
 	{
 		Sys_FileClose(Handle);
 		Handle = -1;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -244,8 +252,9 @@ void WadFile::CloseFile(void)
 //
 //==========================================================================
 
-bool WadFile::CanClose(void)
+bool WadFile::CanClose()
 {
+	guard(WadFile::CanClose);
 	for (int i = 0; i < NumLumps; i++)
 	{
 		if (LumpCache[i])
@@ -254,6 +263,7 @@ bool WadFile::CanClose(void)
 		}
 	}
 	return true;
+	unguard;
 }
 
 //==========================================================================
@@ -262,8 +272,9 @@ bool WadFile::CanClose(void)
 //
 //==========================================================================
 
-void WadFile::Close(void)
+void WadFile::Close()
 {
+	guard(WadFile::Close);
 	if (LumpCache)
 	{
 		for (int i = 0; i < NumLumps; i++)
@@ -284,6 +295,7 @@ void WadFile::Close(void)
 	NumLumps = 0;
 	Name[0] = 0;
 	CloseFile();
+	unguard;
 }
 
 //==========================================================================
@@ -299,6 +311,7 @@ void WadFile::Close(void)
 
 void W_AddFile(const char *filename, bool FixVoices)
 {
+	guard(W_AddFile);
 	int wadtime;
 	char ext[8];
 
@@ -337,6 +350,7 @@ void W_AddFile(const char *filename, bool FixVoices)
 			num_wad_files++;
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -347,11 +361,13 @@ void W_AddFile(const char *filename, bool FixVoices)
 
 void W_OpenAuxiliary(const char *filename)
 {
+	guard(W_OpenAuxiliary);
 	W_CloseAuxiliary();
 
 	AuxiliaryIndex = num_wad_files;
 
 	W_AddFile(filename, false);
+	unguard;
 }
 
 //==========================================================================
@@ -360,8 +376,9 @@ void W_OpenAuxiliary(const char *filename)
 //
 //==========================================================================
 
-void W_CloseAuxiliary(void)
+void W_CloseAuxiliary()
 {
+	guard(W_CloseAuxiliary);
 	if (AuxiliaryIndex)
 	{
 		wad_files[AuxiliaryIndex].Close();
@@ -369,6 +386,7 @@ void W_CloseAuxiliary(void)
 		num_wad_files = AuxiliaryIndex;
 		AuxiliaryIndex = 0;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -380,10 +398,12 @@ void W_CloseAuxiliary(void)
 //
 //==========================================================================
 
-void W_CloseAuxiliaryFile(void)
+void W_CloseAuxiliaryFile()
 {
+	guard(W_CloseAuxiliaryFile);
 	wad_files[AuxiliaryIndex].CloseFile();
 	wad_files[AuxiliaryIndex + 1].CloseFile();
+	unguard;
 }
 
 #ifdef CLIENT
@@ -396,6 +416,7 @@ void W_CloseAuxiliaryFile(void)
 
 void W_BuildGLNodes(int lump)
 {
+	guard(W_BuildGLNodes);
 	int fi = FILE_INDEX(lump);
 	char name[MAX_OSPATH];
 	strcpy(name, wad_files[fi].Name);
@@ -413,6 +434,7 @@ void W_BuildGLNodes(int lump)
 	FL_StripExtension(name);
 	strcat(name, ".gwa");
 	wad_files[fi + 1].Open(name, false);
+	unguard;
 }
 
 //==========================================================================
@@ -423,6 +445,7 @@ void W_BuildGLNodes(int lump)
 
 void W_BuildPVS(int lump, int gllump)
 {
+	guard(W_BuildPVS);
 	int fi = FILE_INDEX(lump);
 	char name[MAX_OSPATH];
 	strcpy(name, wad_files[fi].Name);
@@ -446,6 +469,7 @@ void W_BuildPVS(int lump, int gllump)
 
 	// Add GWA file
 	wad_files[glfi].Open(glname, false);
+	unguard;
 }
 
 #endif
@@ -460,6 +484,7 @@ void W_BuildPVS(int lump, int gllump)
 
 int WadFile::CheckNumForName(const char* name, EWadNamespace NS)
 {
+	guard(WadFile::CheckNumForName);
 	for (int i = NumLumps - 1; i >= 0; i--)
 	{
 		if (LumpInfo[i].Namespace == NS && !strcmp(name, LumpInfo[i].name))
@@ -470,6 +495,7 @@ int WadFile::CheckNumForName(const char* name, EWadNamespace NS)
 
 	// Not found.
 	return -1;
+	unguard;
 }
 
 //==========================================================================
@@ -482,6 +508,7 @@ int WadFile::CheckNumForName(const char* name, EWadNamespace NS)
 
 int W_CheckNumForName(const char* name, EWadNamespace NS)
 {
+	guard(W_CheckNumForName);
 	char cleaned[12];
 	W_CleanupName(name, cleaned);
 	for (int wi = num_wad_files - 1; wi >= 0; wi--)
@@ -495,6 +522,7 @@ int W_CheckNumForName(const char* name, EWadNamespace NS)
 
 	// Not found.
 	return -1;
+	unguard;
 }
 
 //==========================================================================
@@ -507,6 +535,7 @@ int W_CheckNumForName(const char* name, EWadNamespace NS)
 
 int W_GetNumForName(const char* name, EWadNamespace NS)
 {
+	guard(W_GetNumForName);
 	int	i;
 
 	i = W_CheckNumForName(name, NS);
@@ -517,6 +546,7 @@ int W_GetNumForName(const char* name, EWadNamespace NS)
 	}
 
 	return i;
+	unguard;
 }
 
 //==========================================================================
@@ -529,6 +559,7 @@ int W_GetNumForName(const char* name, EWadNamespace NS)
 
 int W_LumpLength(int lump)
 {
+	guard(W_LumpLength);
 	if (FILE_INDEX(lump) >= num_wad_files)
 	{
 		Sys_Error("W_LumpLength: %i >= num_wad_files", FILE_INDEX(lump));
@@ -536,6 +567,7 @@ int W_LumpLength(int lump)
 	WadFile &w = GET_LUMP_FILE(lump);
 	int lumpindex = LUMP_INDEX(lump);
 	return w.LumpInfo[lumpindex].size;
+	unguard;
 }
 
 //==========================================================================
@@ -546,6 +578,7 @@ int W_LumpLength(int lump)
 
 const char *W_LumpName(int lump)
 {
+	guard(W_LumpName);
 	static char empty_string[4] = "";
 	if (FILE_INDEX(lump) >= num_wad_files)
 	{
@@ -558,6 +591,7 @@ const char *W_LumpName(int lump)
 		return empty_string;
 	}
 	return w.LumpInfo[lumpindex].name;
+	unguard;
 }
 
 //==========================================================================
@@ -570,6 +604,7 @@ const char *W_LumpName(int lump)
 
 void WadFile::ReadLump(int lump, void* dest)
 {
+	guard(WadFile::ReadLump);
 	if ((dword)lump >= (dword)NumLumps)
 	{
 		Sys_Error("WadFile::ReadLump: %i >= numlumps", lump);
@@ -585,6 +620,7 @@ void WadFile::ReadLump(int lump, void* dest)
 		Sys_Error("W_ReadLump: only read %i of %i on lump %i",
 			c, l.size, lump);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -595,6 +631,7 @@ void WadFile::ReadLump(int lump, void* dest)
 
 void W_ReadLump(int lump, void* dest)
 {
+	guard(W_ReadLump);
 	if (FILE_INDEX(lump) >= num_wad_files)
 	{
 		Sys_Error("W_ReadLump: %i >= num_wad_files", FILE_INDEX(lump));
@@ -602,6 +639,7 @@ void W_ReadLump(int lump, void* dest)
 
 	WadFile &w = GET_LUMP_FILE(lump);
 	w.ReadLump(LUMP_INDEX(lump), dest);
+	unguard;
 }
 
 //==========================================================================
@@ -614,6 +652,7 @@ void W_ReadLump(int lump, void* dest)
 
 void WadFile::ReadFromLump(int lump, void* dest, int pos, int size)
 {
+	guard(WadFile::ReadFromLump);
 	if ((dword)lump >= (dword)NumLumps)
 	{
 		Sys_Error("WadFile::ReadFromLump: %i >= numlumps", lump);
@@ -628,6 +667,7 @@ void WadFile::ReadFromLump(int lump, void* dest, int pos, int size)
 
 	Sys_FileSeek(Handle, l.position + pos);
 	Sys_FileRead(Handle, dest, size);
+	unguard;
 }
 
 //==========================================================================
@@ -638,6 +678,7 @@ void WadFile::ReadFromLump(int lump, void* dest, int pos, int size)
 
 void W_ReadFromLump(int lump, void* dest, int pos, int size)
 {
+	guard(W_ReadFromLump);
 	if (FILE_INDEX(lump) >= num_wad_files)
 	{
 		Sys_Error("W_ReadFromLump: %i >= num_wad_files", FILE_INDEX(lump));
@@ -645,6 +686,7 @@ void W_ReadFromLump(int lump, void* dest, int pos, int size)
 
 	WadFile &w = GET_LUMP_FILE(lump);
 	w.ReadFromLump(LUMP_INDEX(lump), dest, pos, size);
+	unguard;
 }
 
 //==========================================================================
@@ -655,6 +697,7 @@ void W_ReadFromLump(int lump, void* dest, int pos, int size)
 
 void* WadFile::CacheLumpNum(int lump, int tag)
 {
+	guard(WadFile::CacheLumpNum);
 	if ((unsigned)lump >= (unsigned)NumLumps)
 	{
 		Sys_Error("W_CacheLumpNum: %i >= numlumps", lump);
@@ -675,6 +718,7 @@ void* WadFile::CacheLumpNum(int lump, int tag)
 	}
 	
 	return LumpCache[lump];
+	unguard;
 }
 
 //==========================================================================
@@ -685,6 +729,7 @@ void* WadFile::CacheLumpNum(int lump, int tag)
 
 void* W_CacheLumpNum(int lump, int tag)
 {
+	guard(W_CacheLumpNum);
 	if (FILE_INDEX(lump) >= num_wad_files)
 	{
 		Sys_Error("W_CacheLumpNum: %i >= num_wad_files", FILE_INDEX(lump));
@@ -693,6 +738,7 @@ void* W_CacheLumpNum(int lump, int tag)
 	WadFile &w = GET_LUMP_FILE(lump);
 	int lumpindex = LUMP_INDEX(lump);
 	return w.CacheLumpNum(lumpindex, tag);
+	unguard;
 }
 
 //==========================================================================
@@ -703,20 +749,22 @@ void* W_CacheLumpNum(int lump, int tag)
 
 void* W_CacheLumpName(const char* name,int tag, EWadNamespace NS)
 {
+	guard(W_CacheLumpName);
 	return W_CacheLumpNum(W_GetNumForName(name, NS), tag);
+	unguard;
 }
 
 //==========================================================================
 //
-//	W_CreateLumpReader
+//	FArchiveLumpReader
 //
 //==========================================================================
 
 class FArchiveLumpReader : public FArchive
 {
 public:
-	FArchiveLumpReader(byte* InData, int InSize, int InTag)
-		: Data(InData), Pos(0), Size(InSize), Tag(InTag)
+	FArchiveLumpReader(byte* InData, int InSize)
+		: Data(InData), Pos(0), Size(InSize)
 	{
 		ArIsLoading = true;
 		ArIsPersistent = true;
@@ -753,10 +801,7 @@ public:
 	}
 	bool Close(void)
 	{
-		if (Tag)
-			Z_ChangeTag(Data, Tag);
-		else
-			Z_Free(Data);
+		Z_Free(Data);
 		Data = NULL;
 		return !ArIsError;
 	}
@@ -765,19 +810,33 @@ protected:
 	byte *Data;
 	int Pos;
 	int Size;
-	int Tag;
 };
 
-FArchive* W_CreateLumpReader(const char* name, int tag, EWadNamespace NS)
+//==========================================================================
+//
+//  W_CreateLumpReader
+//
+//==========================================================================
+
+FArchive* W_CreateLumpReader(int lump)
 {
-	int UseTag = tag;
-	if (UseTag == 0 || UseTag == PU_CACHE)
-	{
-		UseTag = PU_STATIC;
-	}
-	int LumpNum = W_GetNumForName(name, NS);
-	return new FArchiveLumpReader((byte *)W_CacheLumpNum(LumpNum, UseTag),
-		W_LumpLength(LumpNum), tag);
+	guard(W_CreateLumpReader);
+	return new FArchiveLumpReader((byte *)W_CacheLumpNum(lump, PU_STATIC),
+		W_LumpLength(lump));
+	unguard;
+}
+
+//==========================================================================
+//
+//  W_CreateLumpReader
+//
+//==========================================================================
+
+FArchive* W_CreateLumpReader(const char* name, EWadNamespace NS)
+{
+	guard(W_CreateLumpReader);
+	return W_CreateLumpReader(W_GetNumForName(name, NS));
+	unguard;
 }
 
 //==========================================================================
@@ -788,6 +847,7 @@ FArchive* W_CreateLumpReader(const char* name, int tag, EWadNamespace NS)
 
 bool W_ForEachLump(bool (*func)(int, const char*, int, EWadNamespace))
 {
+	guard(W_ForEachLump);
 	for (int wi = 0; wi < num_wad_files; wi++)
 	{
 		WadFile &w = wad_files[wi];
@@ -801,6 +861,7 @@ bool W_ForEachLump(bool (*func)(int, const char*, int, EWadNamespace))
 		}
 	}
 	return true;
+	unguard;
 }
 
 //==========================================================================
@@ -837,12 +898,14 @@ int W_IterateNS(int Prev, EWadNamespace NS)
 
 void WadFile::InitNamespaces()
 {
+	guard(WadFile::InitNamespaces);
 	InitNamespace(WADNS_Sprites, "S_START", "S_END", true);
 	InitNamespace(WADNS_Flats, "F_START", "F_END", true);
 	InitNamespace(WADNS_ColorMaps, "C_START", "C_END", true);
 	InitNamespace(WADNS_ACSLibrary, "A_START", "A_END", true);
 	InitNamespace(WADNS_NewTextures, "TX_START", "TX_END", false);
 	InitNamespace(WADNS_Voices, "V_START", "V_END", true);
+	unguard;
 }
 
 //==========================================================================
@@ -854,6 +917,7 @@ void WadFile::InitNamespaces()
 void WadFile::InitNamespace(EWadNamespace NS, const char* Start,
 	const char* End, bool AltMarkers)
 {
+	guard(WadFile::InitNamespace);
 	bool InNS = false;
 	for (int i = 0; i < NumLumps; i++)
 	{
@@ -886,6 +950,7 @@ void WadFile::InitNamespace(EWadNamespace NS, const char* Start,
 			}
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -987,6 +1052,9 @@ void W_Profile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2005/11/06 15:28:40  dj_jl
+//  Some cleanup.
+//
 //  Revision 1.19  2005/11/05 15:49:14  dj_jl
 //  Putting Strife shareware voices in correct namespace.
 //
