@@ -413,6 +413,8 @@ void VAllegroSoundDevice::PlaySound(int sound_id, const TVec &origin,
 		short* pData = (short*)S_sfx[sound_id].Data;
 		for (int i = 0; i < SfxSize; i++, pData++)
 			*pData ^= 0x8000;
+		//	Mark as converted.
+		S_sfx[sound_id].SampleBits |= 0x80000000;
 	}
 	spl->bits 		= S_sfx[sound_id].SampleBits & 0xff;
 	spl->stereo 	= 0;
@@ -495,6 +497,8 @@ void VAllegroSoundDevice::PlaySoundTillDone(const char *sound)
 		short* pData = (short*)S_sfx[sound_id].Data;
 		for (int i = 0; i < SfxSize; i++, pData++)
 			*pData ^= 0x8000;
+		//	Mark as converted.
+		S_sfx[sound_id].SampleBits |= 0x80000000;
 	}
 	spl.bits		= S_sfx[sound_id].SampleBits & 0xff;
 	spl.stereo		= 0;
@@ -855,9 +859,12 @@ void VAllegroSoundDevice::ResumeStream()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2005/11/06 15:31:32  dj_jl
+//	Fix for 16 bit sound conversion.
+//
 //	Revision 1.22  2005/11/06 15:27:09  dj_jl
 //	Added support for 16 bit sounds.
-//
+//	
 //	Revision 1.21  2005/11/05 15:50:07  dj_jl
 //	Voices played as normal sounds.
 //	
