@@ -219,6 +219,9 @@ void SB_StartMap()
 	pic_ammo[am_grenade2] = R_RegisterPic("GRN2A0", PIC_PATCH);
 
 	pic_pause = R_RegisterPic("M_PAUSE", PIC_PATCH);
+
+	LoadedLog = 0;
+	strcpy(ARR2STR(LogText), "Find help");
 }
 
 //==========================================================================
@@ -287,10 +290,20 @@ void SB_DrawMainBar()
 		R_FillRect(49 + i, 172, 200 - i, 2, 0xff7f7fff);
 		R_FillRect(49 + i, 175, 200 - i, 2, 0xff7f7fff);
 	}
-	else
+	else if (cl->health > 20)
 	{
 		R_FillRect(49, 172, cl->health * 2, 2, 0xff00ff00);
 		R_FillRect(49, 175, cl->health * 2, 2, 0xff00ff00);
+	}
+	else if (cl->health > 10)
+	{
+		R_FillRect(49, 172, cl->health * 2, 2, 0xffffff00);
+		R_FillRect(49, 175, cl->health * 2, 2, 0xffffff00);
+	}
+	else
+	{
+		R_FillRect(49, 172, cl->health * 2, 2, 0xffff0000);
+		R_FillRect(49, 175, cl->health * 2, 2, 0xffff0000);
 	}
 
 	// armor percentage
@@ -403,17 +416,14 @@ void SB_DrawMainBar()
 	{
 		R_DrawPic2(0, 56, pic_invpbak2, 33);
 		R_DrawPic(0, 56, pic_invpop2);
-		if (cl->Objectives)
+		if (LoadedLog != cl->Objectives)
 		{
-			if (LoadedLog != cl->Objectives)
-			{
-				LoadTextLump(va("LOG%d", cl->Objectives), &LogText[0], 1024);
-				LoadedLog = cl->Objectives;
-			}
-			T_SetFont(font_yellow);
-			T_SetAlign(hleft, vtop);
-			T_DrawTextW(20, 60, ARR2STR(LogText), 280);
+			LoadTextLump(va("LOG%d", cl->Objectives), &LogText[0], 1024);
+			LoadedLog = cl->Objectives;
 		}
+		T_SetFont(font_yellow);
+		T_SetAlign(hleft, vtop);
+		T_DrawTextW(20, 60, ARR2STR(LogText), 280);
 	}
 }
 
@@ -468,6 +478,9 @@ void SB_UpdateWidgets()
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2005/11/06 19:11:13  dj_jl
+//  Fixed default objectives text.
+//
 //  Revision 1.13  2005/11/03 22:49:03  dj_jl
 //  Implemented health bars and ammo type icons.
 //
