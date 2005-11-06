@@ -34,6 +34,36 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VFlacSampleLoader : public VSampleLoader
+{
+public:
+	class FStream : public FLAC::Decoder::Stream
+	{
+	public:
+		FArchive&			Ar;
+		size_t				BytesLeft;
+		int					SampleBits;
+		int					SampleRate;
+		void*				Data;
+		size_t				DataSize;
+
+		FStream(FArchive& InAr);
+		void StrmWrite(const FLAC__int32* const Buf[], size_t Offs,
+			size_t Len);
+
+	protected:
+		//	FLAC decoder callbacks.
+		::FLAC__StreamDecoderReadStatus read_callback(FLAC__byte buffer[],
+			unsigned *bytes);
+		::FLAC__StreamDecoderWriteStatus write_callback(
+			const ::FLAC__Frame *frame, const FLAC__int32 * const buffer[]);
+		void metadata_callback(const ::FLAC__StreamMetadata *metadata);
+		void error_callback(::FLAC__StreamDecoderErrorStatus status);
+	};
+
+	void Load(sfxinfo_t&, FArchive&);
+};
+
 class VFlacAudioCodec : public VAudioCodec
 {
 public:
@@ -91,9 +121,173 @@ public:
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
+VFlacSampleLoader		FlacSampleLoader;
+
 IMPLEMENT_AUDIO_CODEC(VFlacAudioCodec, "FLAC");
 
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	VFlacSampleLoader::Load
+//
+//==========================================================================
+
+void VFlacSampleLoader::Load(sfxinfo_t& Sfx, FArchive& Ar)
+{
+	guard(VFlacSampleLoader::Load);
+	//	Create reader sream.
+	FStream* Strm = new FStream(Ar);
+	Strm->Data = Z_Malloc(1, PU_SOUND, &Sfx.Data);
+	Strm->init();
+	Strm->process_until_end_of_metadata();
+	if (!Strm->SampleRate)
+	{
+		Z_Free(Strm->Data);
+		Sfx.Data = NULL;
+		delete Strm;
+		return;
+	}
+	if (!Strm->process_until_end_of_stream())
+	{
+		GCon->Logf("Failed to process FLAC file");
+		Z_Free(Strm->Data);
+		Sfx.Data = NULL;
+		delete Strm;
+		return;
+	}
+	Sfx.SampleRate = Strm->SampleRate;
+	Sfx.SampleBits = Strm->SampleBits;
+	Sfx.DataSize = Strm->DataSize;
+	Sfx.Data = Strm->Data;
+	delete Strm;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFlacSampleLoader::FStream::FStream
+//
+//==========================================================================
+
+VFlacSampleLoader::FStream::FStream(FArchive& InAr)
+: Ar(InAr)
+, SampleBits(0)
+, SampleRate(0)
+, Data(0)
+, DataSize(0)
+{
+	guard(VFlacSampleLoader::FStream::FStream);
+	Ar.Seek(0);
+	BytesLeft = Ar.TotalSize();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFlacSampleLoader::FStream::read_callback
+//
+//==========================================================================
+
+::FLAC__StreamDecoderReadStatus VFlacSampleLoader::FStream::read_callback(
+	FLAC__byte buffer[], unsigned* bytes)
+{
+	guard(VFlacSampleLoader::FStream::read_callback);
+	if (*bytes > 0)
+	{
+		if (!BytesLeft)
+		{
+			return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
+		}
+		else
+		{
+			if (*bytes > BytesLeft)
+			{
+				*bytes = BytesLeft;
+			}
+			Ar.Serialise(buffer, *bytes);
+			BytesLeft -= *bytes;
+			return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
+		}
+	}
+	else
+	{
+		return FLAC__STREAM_DECODER_READ_STATUS_ABORT;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFlacSampleLoader::FStream::write_callback
+//
+//==========================================================================
+
+::FLAC__StreamDecoderWriteStatus VFlacSampleLoader::FStream::write_callback(
+	const ::FLAC__Frame* frame, const FLAC__int32* const buffer[])
+{
+	guard(VFlacSampleLoader::FStream::write_callback);
+	Z_Resize(&Data, DataSize + frame->header.blocksize * SampleBits / 8);
+	const FLAC__int32* pSrc = buffer[0];
+	if (SampleBits == 8)
+	{
+		byte* pDst = (byte*)Data + DataSize;
+		for (size_t j = 0; j < frame->header.blocksize; j++, pSrc++, pDst++)
+		{
+			*pDst = byte(*pSrc) ^ 0x80;
+		}
+	}
+	else
+	{
+		short* pDst = (short*)((byte*)Data + DataSize);
+		for (size_t j = 0; j < frame->header.blocksize; j++, pSrc++, pDst++)
+		{
+			*pDst = short(*pSrc);
+		}
+	}
+	DataSize += frame->header.blocksize * SampleBits / 8;
+	return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFlacSampleLoader::FStream::metadata_callback
+//
+//==========================================================================
+
+void VFlacSampleLoader::FStream::metadata_callback(
+	const ::FLAC__StreamMetadata* metadata)
+{
+	guard(VFlacSampleLoader::FStream::metadata_callback);
+	if (metadata->type == FLAC__METADATA_TYPE_STREAMINFO)
+	{
+		if (metadata->data.stream_info.bits_per_sample != 8 &&
+			metadata->data.stream_info.bits_per_sample != 16)
+		{
+			GCon->Log("Only 8 and 16 bit FLAC files are supported");
+			return;
+		}
+		if (metadata->data.stream_info.channels != 1)
+		{
+			GCon->Log("Stereo FLAC, taking left channel");
+		}
+		SampleRate = metadata->data.stream_info.sample_rate;
+		SampleBits = metadata->data.stream_info.bits_per_sample;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFlacSampleLoader::FStream::error_callback
+//
+//==========================================================================
+
+void VFlacSampleLoader::FStream::error_callback(
+	::FLAC__StreamDecoderErrorStatus)
+{
+}
 
 //==========================================================================
 //
@@ -398,9 +592,12 @@ VAudioCodec* VFlacAudioCodec::Create(FArchive* InAr)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2005/11/06 15:28:16  dj_jl
+//	Added support for FLAC format sounds.
+//
 //	Revision 1.2  2005/11/03 22:46:35  dj_jl
 //	Support for any bitrate streams.
-//
+//	
 //	Revision 1.1  2005/11/02 22:28:09  dj_jl
 //	Added support for FLAC music.
 //	
