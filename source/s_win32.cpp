@@ -599,7 +599,7 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id)
 	}
 
 	//	Check, that sound lump is loaded
-	if (!S_LoadSound(sound_id, VoiceName))
+	if (!S_LoadSound(sound_id))
 	{
 		//	Missing sound.
 		return NULL;
@@ -1342,9 +1342,12 @@ void VDirectSoundDevice::ResumeStream()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.32  2005/11/07 22:57:09  dj_jl
+//	Some M$VC fixes.
+//
 //	Revision 1.31  2005/11/06 15:27:09  dj_jl
 //	Added support for 16 bit sounds.
-//
+//	
 //	Revision 1.30  2005/11/05 15:50:07  dj_jl
 //	Voices played as normal sounds.
 //	

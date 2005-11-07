@@ -80,6 +80,8 @@ static VRawSampleLoader		RawSampleLoader;
 void S_InitScript(void)
 {
 	guard(S_InitScript);
+	int Lump;
+
 	//
 	//	Allocate memory for sound info
 	//
@@ -121,7 +123,7 @@ void S_InitScript(void)
 	SC_Close();
 
 	//	Add Strife voices.
-	for (int Lump = W_IterateNS(-1, WADNS_Voices); Lump >= 0;
+	for (Lump = W_IterateNS(-1, WADNS_Voices); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Voices))
 	{
 		char SndName[16];
@@ -141,7 +143,7 @@ void S_InitScript(void)
 	//
 	//	Load script SNDINFO
 	//
-	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
+	for (Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Global))
 	{
 		if (!stricmp(W_LumpName(Lump), "sndinfo"))
@@ -405,9 +407,12 @@ void S_Init(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2005/11/07 22:57:09  dj_jl
+//	Some M$VC fixes.
+//
 //	Revision 1.15  2005/11/06 15:27:09  dj_jl
 //	Added support for 16 bit sounds.
-//
+//	
 //	Revision 1.14  2005/11/05 15:50:07  dj_jl
 //	Voices played as normal sounds.
 //	
