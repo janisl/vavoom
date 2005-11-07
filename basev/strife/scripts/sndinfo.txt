@@ -291,27 +291,3 @@ MenuSelect                      dsswknob
 MenuSwitch                      dsstnmov
 MenuPrevious                    dsswtchn
 MenuClose                       dsmtalht
-
-//==========================================================================
-//
-//  Quit messages
-//
-//  These reffer to voices, not regulat sounds.
-//  FIXME remove these.
-//
-//==========================================================================
-
-TeaserQuitMessage1              voc100
-TeaserQuitMessage2              voc101
-TeaserQuitMessage3              voc102
-TeaserQuitMessage4              voc103
-TeaserQuitMessage5              voc104
-
-QuitMessage1                    qfmrm1
-QuitMessage2                    qfmrm2
-QuitMessage3                    qfmrm3
-QuitMessage4                    qfmrm4
-QuitMessage5                    qfmrm5
-QuitMessage6                    qfmrm6
-QuitMessage7                    qfmrm7
-QuitMessage8                    qfmrm8
