@@ -1347,7 +1347,8 @@ static void RunFunction(FFunction *func)
 		break;
 
 	 case OPC_PUSH_VFUNC:
-		*sp++ = (int)((VObject *)sp[-1])->GetVFunction(*current_statement++);
+		*sp = (int)((VObject*)sp[-1])->GetVFunction(*current_statement++);
+		sp++;
 		break;
 
 	 default:
@@ -2010,9 +2011,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.34  2005/11/07 23:00:24  dj_jl
+//	Fixed a compiler warning.
+//
 //	Revision 1.33  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.32  2004/12/22 07:37:21  dj_jl
 //	Increased argument count limit.
 //	
