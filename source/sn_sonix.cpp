@@ -75,6 +75,7 @@ struct seq_info_t
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
+static void ParseSequenceScript();
 static void VerifySequencePtr(int *base, int *ptr);
 static int GetSoundOffset(const char *name);
 
@@ -137,18 +138,44 @@ static int GetSoundOffset(const char *name)
 //
 //==========================================================================
 
-void SN_InitSequenceScript(void)
+void SN_InitSequenceScript()
 {
 	guard(SN_InitSequenceScript);
-	boolean		inSequence;
-	int 		*tempDataStart = NULL;
-	int 		*tempDataPtr = NULL;
-
-	inSequence = false;
 	ActiveSequences = 0;
 	NumSequences = 0;
 	memset(SeqInfo, 0, sizeof(SeqInfo));
-	SC_Open(SS_SCRIPT_NAME);
+	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
+		Lump = W_IterateNS(Lump, WADNS_Global))
+	{
+		if (!stricmp(W_LumpName(Lump), SS_SCRIPT_NAME))
+		{
+			SC_OpenLumpNum(Lump);
+			ParseSequenceScript();
+		}
+	}
+	//	Optionally parse script file.
+	char filename[MAX_OSPATH];
+	if (fl_devmode && FL_FindFile("scripts/sndseq.txt", filename))
+	{
+		SC_OpenFile(filename);
+		ParseSequenceScript();
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	ParseSequenceScript
+//
+//==========================================================================
+
+static void ParseSequenceScript()
+{
+	guard(ParseSequenceScript);
+	int 		*tempDataStart = NULL;
+	int 		*tempDataPtr = NULL;
+	bool		inSequence = false;
+
 	while (SC_GetString())
 	{
 		if (*sc_String == ':')
@@ -253,6 +280,7 @@ void SN_InitSequenceScript(void)
 			SC_ScriptError("SN_InitSequenceScript:  Unknown commmand.\n");
 		}
 	}
+	SC_Close();
 	unguard;
 }
 
@@ -500,9 +528,12 @@ void SN_ChangeNodeData(int nodeNum, int seqOffset, int delayTics, int volume,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2005/11/08 18:38:01  dj_jl
+//	Parse all sequence scripts.
+//
 //	Revision 1.9  2005/11/05 15:50:07  dj_jl
 //	Voices played as normal sounds.
-//
+//	
 //	Revision 1.8  2004/11/30 07:17:17  dj_jl
 //	Made string pointers const.
 //	
