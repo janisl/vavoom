@@ -2838,16 +2838,16 @@ PF(LocalSound)
 
 //==========================================================================
 //
-//	PF_LocalSoundTillDone
+//	PF_IsLocalSoundPlaying
 //
 //==========================================================================
 
-PF(LocalSoundTillDone)
+PF(IsLocalSoundPlaying)
 {
 	FName	name;
 
 	name = PopName();
-	S_PlayTillDone(const_cast<char*>(*name));
+	Push(S_GetSoundPlayingInfo(0, S_GetSoundID(*name)));
 }
 
 //==========================================================================
@@ -3240,7 +3240,7 @@ builtin_info_t BuiltinInfo[] =
 
 	//	Client side sound
 	_(LocalSound),
-	_(LocalSoundTillDone),
+	_(IsLocalSoundPlaying),
 	_(StopLocalSounds),
 
 	_(TranslateKey),
@@ -3333,9 +3333,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.60  2005/11/08 20:57:15  dj_jl
+//	Removed playing sound till done.
+//
 //	Revision 1.59  2005/11/05 16:01:32  dj_jl
 //	Added builtin to stop local sounds.
-//
+//	
 //	Revision 1.58  2005/11/05 15:50:07  dj_jl
 //	Voices played as normal sounds.
 //	

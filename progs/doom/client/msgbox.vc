@@ -88,7 +88,7 @@ void MB_StartMessage(string text, int type, bool input)
 //
 //==========================================================================
 
-void MB_Drawer(void)
+void MB_Drawer()
 {
 	// Horiz. & Vertically center string and print it.
 	if (messageToPrint)
@@ -98,6 +98,11 @@ void MB_Drawer(void)
 		T_SetFont(font_small);
 		T_SetAlign(hcenter, vcenter);
 		T_DrawText(160, 100, ARR2STR(messageString));
+	}
+
+	if (WaitForQuit && !IsLocalSoundPlaying(QuitSound))
+	{
+		CmdBuf_AddText("Quit\n");
 	}
 }
 
@@ -109,6 +114,11 @@ void MB_Drawer(void)
 
 bool MB_Responder(event_t * event)
 {
+	if (WaitForQuit)
+	{
+		return true;
+	}
+
 	// Take care of any messages that need input
 	if (messageToPrint && event->type == ev_keydown)
 	{
@@ -155,7 +165,7 @@ bool MB_Responder(event_t * event)
 //
 //==========================================================================
 
-bool MB_Active(void)
+bool MB_Active()
 {
 	return messageToPrint;
 }
@@ -163,6 +173,9 @@ bool MB_Active(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2005/11/08 20:56:24  dj_jl
+//  Removed playing sound till done.
+//
 //  Revision 1.8  2002/10/26 16:32:19  dj_jl
 //  New style of defining classes.
 //

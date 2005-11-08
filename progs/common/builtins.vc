@@ -330,8 +330,8 @@ native void T_DrawCursor(void);
 //  Plays a sound
 native void LocalSound(name Name);
 
-//  Plays a sound and waits untill it finishes
-native void LocalSoundTillDone(name Name);
+//  Checks if sound is still playing.
+native bool IsLocalSoundPlaying(name Name);
 
 //  Stops all local sounds.
 native void StopLocalSounds();
@@ -502,6 +502,9 @@ native void MSG_SelectClientMsg(int msgtype, BasePlayer client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.53  2005/11/08 20:56:05  dj_jl
+//  Removed playing sound till done.
+//
 //  Revision 1.52  2005/11/05 16:00:24  dj_jl
 //  Added builtin to stop local sounds.
 //

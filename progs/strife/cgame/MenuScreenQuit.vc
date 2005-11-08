@@ -26,13 +26,19 @@
 class MenuScreenQuit : MenuScreen;
 
 MenuHelpPage	Page;
-bool			bPageShown;
+name			QuitSound;
 
 void CreateChoices()
 {
 	::CreateChoices();
 	Page = MenuHelpPage(NewChild(MenuHelpPage));
 	Page.SetPage("PANEL7");
+
+	if (shareware)
+		QuitSound = TeaserQuitSounds[P_Random() % 5];
+	else
+		QuitSound = QuitSounds[P_Random() % 8];
+	LocalSound(QuitSound);
 }
 
 bool Key(int key)
@@ -42,19 +48,10 @@ bool Key(int key)
 
 void Tick(float DeltaTime)
 {
-	//	Wait till next frame to make sure the page has been drawn.
-	if (!bPageShown)
+	if (!IsLocalSoundPlaying(QuitSound))
 	{
-		bPageShown = true;
-		return;
+		CmdBuf_AddText("Quit\n");
 	}
-
-	if (shareware)
-		LocalSoundTillDone(TeaserQuitSounds[P_Random() % 5]);
-	else
-		LocalSoundTillDone(QuitSounds[P_Random() % 8]);
-
-	CmdBuf_AddText("Quit\n");
 }
 
 defaultproperties
@@ -65,6 +62,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/08 20:56:53  dj_jl
+//  Removed playing sound till done.
+//
 //  Revision 1.1  2005/03/28 07:47:40  dj_jl
 //  Added quit game screen.
 //
