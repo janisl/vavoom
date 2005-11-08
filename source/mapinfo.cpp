@@ -77,6 +77,8 @@ char *P_TranslateMap(int map);
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
+static void ParseMapInfo();
+
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
@@ -124,11 +126,10 @@ static TArray<FMapSongInfo>		MapSongList;
 //
 //==========================================================================
 
-void InitMapInfo(void)
+void InitMapInfo()
 {
-	int 		mcmdValue;
+	guard(InitMapInfo);
 	mapInfo_t 	*info;
-	int			NumMapAlias;
 
 	MapCount = 1;
 
@@ -153,7 +154,46 @@ void InitMapInfo(void)
 	strcpy(info->fadetable, DEFAULT_FADE_TABLE);
 	strcpy(info->name, UNKNOWN_MAP_NAME);
 
-	SC_Open(MAPINFO_SCRIPT_NAME);
+	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
+		Lump = W_IterateNS(Lump, WADNS_Global))
+	{
+		if (!stricmp(W_LumpName(Lump), MAPINFO_SCRIPT_NAME))
+		{
+			SC_OpenLumpNum(Lump);
+			ParseMapInfo();
+		}
+	}
+	//	Optionally parse script file.
+	char filename[MAX_OSPATH];
+	if (fl_devmode && FL_FindFile("scripts/mapinfo.txt", filename))
+	{
+		SC_OpenFile(filename);
+		ParseMapInfo();
+	}
+
+	for (int i = 1; i < MapCount; i++)
+	{
+		if (MapInfo[i].nextMap[0] >= '0' && MapInfo[i].nextMap[0] <= '9')
+		{
+			strcpy(MapInfo[i].nextMap, P_TranslateMap(atoi(MapInfo[i].nextMap)));
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	ParseMapInfo
+//
+//==========================================================================
+
+static void ParseMapInfo()
+{
+	guard(ParseMapInfo);
+	mapInfo_t 	*info;
+	int 		mcmdValue;
+	int			NumMapAlias;
+
 	while(SC_GetString())
 	{
 		if (SC_Compare("MAP") == false)
@@ -312,14 +352,7 @@ void InitMapInfo(void)
 			GTextureManager.SetFrontSkyLayer(info->sky2Texture);
 	}
 	SC_Close();
-
-	for (int i = 1; i < MapCount; i++)
-	{
-		if (MapInfo[i].nextMap[0] >= '0' && MapInfo[i].nextMap[0] <= '9')
-		{
-			strcpy(MapInfo[i].nextMap, P_TranslateMap(atoi(MapInfo[i].nextMap)));
-		}
-	}
+	unguard;
 }
 
 //==========================================================================
@@ -341,6 +374,7 @@ static int QualifyMap(int map)
 
 void P_GetMapInfo(const char *map, mapInfo_t &info)
 {
+	guard(P_GetMapInfo);
 	for (int i = 1; i < MAX_MAPS; i++)
 	{
 		if (!stricmp(map, MapInfo[i].lumpname))
@@ -350,6 +384,7 @@ void P_GetMapInfo(const char *map, mapInfo_t &info)
 		}
 	}
 	info = MapInfo[0];
+	unguard;
 }
 
 //==========================================================================
@@ -410,6 +445,7 @@ int P_GetMapWarpTrans(int map)
 
 char *P_TranslateMap(int map)
 {
+	guard(P_TranslateMap);
 	int i;
 
 	for (i = 1; i < MAX_MAPS; i++)
@@ -421,6 +457,7 @@ char *P_TranslateMap(int map)
 	}
 	// Not found
 	return MapInfo[1].lumpname;
+	unguard;
 }
 
 //==========================================================================
@@ -431,9 +468,11 @@ char *P_TranslateMap(int map)
 
 void P_PutMapSongLump(int map, const char *lumpName)
 {
+	guard(P_PutMapSongLump);
 	int i = MapSongList.Add();
 	sprintf(MapSongList[i].MapName, "MAP%02d", map);
 	strcpy(MapSongList[i].SongName, lumpName);
+	unguard;
 }
 
 //==========================================================================
@@ -510,6 +549,7 @@ int P_GetCDTitleTrack(void)
 
 COMMAND(MapList)
 {
+	guard(COMMAND MapList);
 	for (int i = 0; i < MapCount; i++)
 	{
 		if (W_CheckNumForName(MapInfo[i].lumpname) >= 0)
@@ -517,6 +557,7 @@ COMMAND(MapList)
 			GCon->Logf("%s - %s", MapInfo[i].lumpname, MapInfo[i].name);
 		}
 	}
+	unguard;
 }
 
 /*
@@ -531,9 +572,12 @@ COMMAND(MapList)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2005/11/08 18:36:43  dj_jl
+//	Parse all mapinfo scripts.
+//
 //	Revision 1.12  2005/05/26 16:52:29  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.11  2004/10/11 06:50:54  dj_jl
 //	ACS helper scripts lump.
 //	
