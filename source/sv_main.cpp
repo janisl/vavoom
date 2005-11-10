@@ -2795,7 +2795,7 @@ COMMAND(Map)
 
 	if (Argc() != 2)
 	{
-		GCon->Log("map <mapname> : cange level");
+		GCon->Log("map <mapname> : change level");
 	 	return;
 	}
 	strcpy(mapname, Argv(1));
@@ -3005,9 +3005,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.70  2005/11/10 12:51:45  dj_jl
+//	Fixed spelling mistake.
+//
 //	Revision 1.69  2005/07/09 12:18:52  dj_jl
 //	Changed rounding for win compatibility.
-//
+//	
 //	Revision 1.68  2005/07/08 17:49:47  dj_jl
 //	Rounding of polyobj position.
 //	
