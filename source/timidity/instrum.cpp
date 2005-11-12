@@ -37,6 +37,9 @@
 #include "tables.h"
 #include "filter.h"
 
+namespace LibTimidity
+{
+
 /* Some functions get aggravated if not even the standard banks are 
    available. */
 static ToneBank standard_tonebank, standard_drumset;
@@ -679,7 +682,7 @@ static InstrumentLayer *load_instrument(char *name, int font_type, int percussio
         {
 	  goto fail;
 	}
-      sp->data = safe_malloc(sp->data_length + 1);
+      sp->data = (sample_t*)safe_malloc(sp->data_length + 1);
       lp->size += sp->data_length + 1;
 
       if (1 != fread(sp->data, sp->data_length, 1, fp))
@@ -690,7 +693,7 @@ static InstrumentLayer *load_instrument(char *name, int font_type, int percussio
 	  int32 i=sp->data_length;
 	  uint8 *cp=(uint8 *)(sp->data);
 	  uint16 *tmp,*newdta;
-	  tmp=newdta=safe_malloc(sp->data_length*2 + 2);
+	  tmp=newdta=(uint16*)safe_malloc(sp->data_length*2 + 2);
 	  while (i--)
 	    *tmp++ = (uint16)(*cp++) << 8;
 	  cp=(uint8 *)(sp->data);
@@ -1017,3 +1020,5 @@ int set_default_instrument(char *name)
   default_program=SPECIAL_PROGRAM;
   return 0;
 }
+
+};

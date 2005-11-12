@@ -31,6 +31,9 @@
 #include "output.h"
 #include "controls.h"
 
+namespace LibTimidity
+{
+
 /* I guess "rb" should be right for any libc */
 #define OPEN_MODE "rb"
 
@@ -164,8 +167,10 @@ void *safe_malloc(size_t count)
 /* This adds a directory to the path list */
 void add_to_pathlist(char *s)
 {
-  PathList *plp=safe_malloc(sizeof(PathList));
-  strcpy((plp->path=safe_malloc(strlen(s)+1)),s);
+  PathList *plp=(PathList*)safe_malloc(sizeof(PathList));
+  strcpy((plp->path=(char*)safe_malloc(strlen(s)+1)),s);
   plp->next=pathlist;
   pathlist=plp;
 }
+
+};

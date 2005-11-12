@@ -33,6 +33,9 @@
 #include "tables.h"
 #include "resample.h"
 
+namespace LibTimidity
+{
+
 #ifdef LINEAR_INTERPOLATION
 # if defined(LOOKUP_HACK) && defined(LOOKUP_INTERPOLATION)
 #   define RESAMPLATION \
@@ -707,7 +710,7 @@ void pre_resample(Sample * sp)
   if (a <= 0) return;
   newlen = (int32)(sp->data_length / a);
   if (newlen < 0 || (newlen >> FRACTION_BITS) > MAX_SAMPLE_SIZE) return;
-  dest = newdata = safe_malloc(newlen >> (FRACTION_BITS - 1));
+  dest = newdata = (resample_t*)safe_malloc(newlen >> (FRACTION_BITS - 1));
 
   count = (newlen >> FRACTION_BITS) - 1;
   ofs = incr = (sp->data_length - (1 << FRACTION_BITS)) / count;
@@ -746,3 +749,5 @@ void pre_resample(Sample * sp)
   sp->data = (sample_t *) newdata;
   sp->sample_rate = 0;
 }
+
+};

@@ -20,6 +20,9 @@
     tables.h
 */
 
+namespace LibTimidity
+{
+
 #ifdef LOOKUP_SINE
 extern FLOAT_T sine(int x);
 #else
@@ -48,3 +51,4 @@ extern void init_tables(void);
 #define XMAPMAX 800
 extern int xmap[XMAPMAX][5];
 
+};

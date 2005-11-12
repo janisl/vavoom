@@ -32,10 +32,12 @@
 #include "output.h"
 #include "controls.h"
 
-int32 quietchannels=0;
+namespace LibTimidity
+{
+
+static int32 quietchannels=0;
 
 static int midi_port_number;
-char midi_name[FILENAME_MAX+1];
 
 static int track_info, curr_track, curr_title_track;
 static char title[128];
@@ -277,7 +279,7 @@ static int sysex(uint32 len, uint8 *syschan, uint8 *sysa, uint8 *sysb)
    or unprintable characters will be converted to periods. */
 static int dumpstring(int32 len, char *label)
 {
-  signed char *s=safe_malloc(len+1);
+  signed char *s=(signed char *)safe_malloc(len+1);
   if (len != (int32)midi_read(s, len))
     {
       free(s);
@@ -295,10 +297,10 @@ static int dumpstring(int32 len, char *label)
 }
 
 #define MIDIEVENT(at,t,ch,pa,pb) \
-  new=safe_malloc(sizeof(MidiEventList)); \
-  new->event.time=at; new->event.type=t; new->event.channel=ch; \
-  new->event.a=pa; new->event.b=pb; new->next=0;\
-  return new;
+  new_ev=(MidiEventList *)safe_malloc(sizeof(MidiEventList)); \
+  new_ev->event.time=at; new_ev->event.type=t; new_ev->event.channel=ch; \
+  new_ev->event.a=pa; new_ev->event.b=pb; new_ev->next=0;\
+  return new_ev;
 
 #define MAGIC_EOT ((MidiEventList *)(-1))
 
@@ -310,7 +312,7 @@ static MidiEventList *read_midi_event(void)
   static uint8 nrpn=0, rpn_msb[16], rpn_lsb[16]; /* one per channel */
   uint8 me, type, a,b,c;
   int32 len;
-  MidiEventList *new;
+  MidiEventList *new_ev;
 
   for (;;)
     {
@@ -356,8 +358,7 @@ static MidiEventList *read_midi_event(void)
 		    if(midi_port_number == EOF)
 		    {
 			    ctl->cmsg(CMSG_ERROR, VERB_NORMAL,
-				      "Warning: \"%s\": Short midi file.",
-				      midi_name);
+				      "Warning: Short midi file.");
 			    return 0;
 		    }
 		    midi_port_number &= 0x0f;
@@ -549,7 +550,7 @@ static MidiEventList *read_midi_event(void)
 	}
     }
   
-  return new;
+  return new_ev;
 }
 
 #undef MIDIEVENT
@@ -559,7 +560,7 @@ static MidiEventList *read_midi_event(void)
 static int read_track(int append)
 {
   MidiEventList *meep;
-  MidiEventList *next, *new;
+  MidiEventList *next, *new_ev;
   int32 len;
   char tmp[4];
 
@@ -592,26 +593,26 @@ static int read_track(int append)
 
   for (;;)
     {
-      if (!(new=read_midi_event())) /* Some kind of error  */
+      if (!(new_ev=read_midi_event())) /* Some kind of error  */
 	return -2;
 
-      if (new==MAGIC_EOT) /* End-of-track Hack. */
+      if (new_ev==MAGIC_EOT) /* End-of-track Hack. */
 	{
 	  return 0;
 	}
 
       next=meep->next;
-      while (next && (next->event.time < new->event.time))
+      while (next && (next->event.time < new_ev->event.time))
 	{
 	  meep=next;
 	  next=meep->next;
 	}
 	  
-      new->next=next;
-      meep->next=new;
+      new_ev->next=next;
+      meep->next=new_ev;
 
       event_count++; /* Count the event. (About one?) */
-      meep=new;
+      meep=new_ev;
     }
 }
 
@@ -684,7 +685,7 @@ static MidiEvent *groom_list(int32 divisions,int32 *eventsp,int32 *samplesp)
   compute_sample_increment(tempo, divisions);
 
   /* This may allocate a bit more than we need */
-  groomed_list=lp=safe_malloc(sizeof(MidiEvent) * (event_count+1));
+  groomed_list=lp=(MidiEvent*)safe_malloc(sizeof(MidiEvent) * (event_count+1));
   meep=evlist;
 
   our_event_count=0;
@@ -962,7 +963,7 @@ static MidiEvent *groom_list(int32 divisions,int32 *eventsp,int32 *samplesp)
   return groomed_list;
 }
 
-MidiEvent *read_midi_file(void *mimage, int msize, int32 *count, int32 *sp)
+MidiEvent *read_midi_mem(void *mimage, int msize, int32 *count, int32 *sp)
 {
   int32 len, divisions;
   int16 format, tracks, divisions_tmp;
@@ -1052,7 +1053,7 @@ past_riff:
        "Format: %d  Tracks: %d  Divisions: %d", format, tracks, divisions);
 
   /* Put a do-nothing event first in the list for easier processing */
-  evlist=safe_malloc(sizeof(MidiEventList));
+  evlist=(MidiEventList*)safe_malloc(sizeof(MidiEventList));
   evlist->event.time=0;
   evlist->event.type=ME_NONE;
   evlist->next=0;
@@ -1090,3 +1091,5 @@ past_riff:
     }
   return groom_list(divisions, count, sp);
 }
+
+};

@@ -22,6 +22,9 @@
 
 /* Return values for ControlMode.read */
 
+namespace LibTimidity
+{
+
 #define RC_ERROR -1
 #define RC_NONE 0
 #define RC_QUIT 1
@@ -86,3 +89,5 @@ typedef struct {
 
 extern ControlMode *ctl_list[], *ctl; 
 extern char timidity_error[];
+
+};

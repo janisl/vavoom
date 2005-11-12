@@ -9,7 +9,7 @@ OBJS=common.obj controls.obj filter.obj instrum.obj \
     mix.obj output.obj playmidi.obj readmidi.obj \
     resample.obj tables.obj timidity.obj
 
-.c.obj:
+.cpp.obj:
     bcc32 -c -O2 -q {$< }
 
 timidity.lib: $(OBJS)

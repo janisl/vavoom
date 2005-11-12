@@ -21,6 +21,9 @@
 
 */
 
+namespace LibTimidity
+{
+
 /* Data format encoding bits */
 
 #define PE_MONO 	0x01  /* versus stereo */
@@ -73,3 +76,5 @@ extern void s32toulaw(void *dp, int32 *lp, int32 c);
 #define s32tos16l s32tos16x
 #define s32tos16b s32tos16
 #endif
+
+};

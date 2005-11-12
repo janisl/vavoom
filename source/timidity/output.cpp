@@ -27,6 +27,9 @@
 #include "tables.h"
 
 
+namespace LibTimidity
+{
+
 PlayMode *play_mode_list[] = {
   0,
   0
@@ -127,3 +130,5 @@ void s32toulaw(void *dp, int32 *lp, int32 c)
       *up++ = _l2u[l];
     }
 }
+
+};

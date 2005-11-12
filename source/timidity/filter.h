@@ -24,6 +24,9 @@
 
    */
 
+namespace LibTimidity
+{
+
 /* Order of the FIR filter = 20 should be enough ! */
 #define ORDER 20
 #define ORDER2 ORDER/2
@@ -33,3 +36,5 @@
 #endif
 
 extern void antialiasing(Sample *sp, int32 output_rate);
+
+};

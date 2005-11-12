@@ -14,5 +14,5 @@ libtimidity.a: $(OBJS)
 	$(AR) rc $@ $^
 	$(RANLIB) $@
 
-%.$(OBJEXT): %.c *.h
+%.$(OBJEXT): %.cpp *.h
 	$(CC) $(CFLAGS) -c -o $@ $<

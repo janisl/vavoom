@@ -17,6 +17,9 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+namespace LibTimidity
+{
+
 /* This is for use with the SDL library */
 #define SDL
 #if (defined(WIN32) || defined(_WIN32)) && !defined(__WIN32__)
@@ -281,3 +284,5 @@ typedef int16 resample_t;
 #  define PATH_SEP '/'
 #  define PATH_STRING "/"
 #endif
+
+};

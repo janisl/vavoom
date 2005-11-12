@@ -21,6 +21,9 @@
    common.h
 */
 
+namespace LibTimidity
+{
+
 extern char *program_name, current_filename[];
 
 extern FILE *msgfp;
@@ -30,10 +33,11 @@ extern int num_ochannels;
 #define MULTICHANNEL_OUT
 #define MAX_OUT_CHANNELS 6
 
-typedef struct {
+struct PathList
+{
   char *path;
-  void *next;
-} PathList;
+  PathList *next;
+};
 
 /* Noise modes for open_file */
 #define OF_SILENT	0
@@ -45,3 +49,5 @@ extern void add_to_pathlist(char *s);
 extern void close_file(FILE *fp);
 extern void skip(FILE *fp, size_t len);
 extern void *safe_malloc(size_t count);
+
+};

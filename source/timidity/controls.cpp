@@ -24,9 +24,14 @@
 #include "config.h"
 #include "controls.h"
 
+namespace LibTimidity
+{
+
 ControlMode *ctl_list[]={
   0,
   0
 };
 
 ControlMode *ctl;
+
+};

@@ -36,6 +36,9 @@
 #include "tables.h"
 #include "instrum.h"
 
+namespace LibTimidity
+{
+
 int32 freq_table[128]=
 {
  8176, 8662, 9177, 9723, 
@@ -1133,4 +1136,6 @@ int xmap[XMAPMAX][5] = {
 { XGDRUM, 40, 63, 40, 102 },
 { XGDRUM, 40, 64, 40, 103 },
 { XGDRUM, 40, 87, 40, 87 }
+};
+
 };

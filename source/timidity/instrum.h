@@ -22,6 +22,9 @@
    */
 
 
+namespace LibTimidity
+{
+
 typedef struct {
   int32
     loop_start, loop_end, data_length,
@@ -181,3 +184,4 @@ extern int current_patch_memory;
 extern int xmap[XMAPMAX][5];
 extern void pcmap(int *b, int *v, int *p, int *drums);
 
+};

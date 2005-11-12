@@ -2114,7 +2114,7 @@ SOURCE=..\..\source\winlocal.h
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\..\source\timidity\common.c
+SOURCE=..\..\source\timidity\common.cpp
 # End Source File
 # Begin Source File
 
@@ -2126,7 +2126,7 @@ SOURCE=..\..\source\timidity\config.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\source\timidity\controls.c
+SOURCE=..\..\source\timidity\controls.cpp
 # End Source File
 # Begin Source File
 
@@ -2134,7 +2134,7 @@ SOURCE=..\..\source\timidity\controls.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\source\timidity\filter.c
+SOURCE=..\..\source\timidity\filter.cpp
 # End Source File
 # Begin Source File
 
@@ -2142,7 +2142,7 @@ SOURCE=..\..\source\timidity\filter.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\source\timidity\instrum.c
+SOURCE=..\..\source\timidity\instrum.cpp
 # End Source File
 # Begin Source File
 
@@ -2150,7 +2150,7 @@ SOURCE=..\..\source\timidity\instrum.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\source\timidity\mix.c
+SOURCE=..\..\source\timidity\mix.cpp
 # End Source File
 # Begin Source File
 
@@ -2158,7 +2158,7 @@ SOURCE=..\..\source\timidity\mix.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\source\timidity\output.c
+SOURCE=..\..\source\timidity\output.cpp
 # End Source File
 # Begin Source File
 
@@ -2166,7 +2166,7 @@ SOURCE=..\..\source\timidity\output.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\source\timidity\playmidi.c
+SOURCE=..\..\source\timidity\playmidi.cpp
 # End Source File
 # Begin Source File
 
@@ -2174,7 +2174,7 @@ SOURCE=..\..\source\timidity\playmidi.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\source\timidity\readmidi.c
+SOURCE=..\..\source\timidity\readmidi.cpp
 # End Source File
 # Begin Source File
 
@@ -2182,7 +2182,7 @@ SOURCE=..\..\source\timidity\readmidi.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\source\timidity\resample.c
+SOURCE=..\..\source\timidity\resample.cpp
 # End Source File
 # Begin Source File
 
@@ -2190,7 +2190,7 @@ SOURCE=..\..\source\timidity\resample.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\source\timidity\tables.c
+SOURCE=..\..\source\timidity\tables.cpp
 # End Source File
 # Begin Source File
 
@@ -2198,7 +2198,7 @@ SOURCE=..\..\source\timidity\tables.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\source\timidity\timidity.c
+SOURCE=..\..\source\timidity\timidity.cpp
 # End Source File
 # Begin Source File
 

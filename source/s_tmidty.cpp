@@ -28,13 +28,13 @@
 #include "gamedefs.h"
 #include "s_local.h"
 
-extern "C" {
 #include "timidity/timidity.h"
 #include "timidity/config.h"
 #include "timidity/output.h"
 #include "timidity/controls.h"
 #include "timidity/common.h"
-};
+
+using namespace LibTimidity;
 
 // MACROS ------------------------------------------------------------------
 
@@ -300,7 +300,7 @@ VAudioCodec* VTimidityAudioCodec::Create(FArchive* InAr)
 	void* Data = Z_Malloc(Size);
 	InAr->Seek(0);
 	InAr->Serialise(Data, Size);
-	MidiSong* Song = Timidity_LoadSong(Data, Size);
+	MidiSong* Song = Timidity_LoadSongMem(Data, Size);
 	Z_Free(Data);
 	if (!Song)
 	{
@@ -318,9 +318,12 @@ VAudioCodec* VTimidityAudioCodec::Create(FArchive* InAr)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2005/11/12 09:47:54  dj_jl
+//	Created LibTimidity namespace to avoid conflicts.
+//
 //	Revision 1.2  2005/11/03 22:46:35  dj_jl
 //	Support for any bitrate streams.
-//
+//	
 //	Revision 1.1  2005/10/28 17:50:01  dj_jl
 //	Added Timidity driver.
 //	

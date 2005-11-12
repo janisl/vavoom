@@ -21,13 +21,15 @@
    
    */
 
-typedef struct {
+namespace LibTimidity
+{
+
+struct MidiEventList
+{
   MidiEvent event;
-  void *next;
-} MidiEventList;
+  MidiEventList* next;
+};
 
-extern int32 quietchannels;
+MidiEvent *read_midi_mem(void *mimage, int msize, int32 *count, int32 *sp);
 
-extern MidiEvent *read_midi_file(void *mimage, int msize, int32 *count, int32 *sp);
-
-extern char midi_name[FILENAME_MAX+1];
+};

@@ -35,6 +35,9 @@
 #include "resample.h"
 #include "mix.h"
 
+namespace LibTimidity
+{
+
 /* Returns 1 if envelope runs out */
 int recompute_envelope(int v)
 {
@@ -864,3 +867,5 @@ void mix_voice(int32 *buf, int v, int32 c)
 	}
     }
 }
+
+};

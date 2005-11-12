@@ -38,6 +38,9 @@
 #include "tables.h"
 
 
+namespace LibTimidity
+{
+
 static int dont_cspline=0;
 static int opt_dry = 1;
 static int opt_expression_curve = 2;
@@ -1677,7 +1680,7 @@ void Timidity_SetVolume(int volume)
   ctl->master_volume(amplification);
 }
 
-MidiSong *Timidity_LoadSong(void* data, int size)
+MidiSong *Timidity_LoadSongMem(void* data, int size)
 {
 	MidiSong *song;
 	int32 events;
@@ -1687,7 +1690,7 @@ MidiSong *Timidity_LoadSong(void* data, int size)
 	memset(song, 0, sizeof(*song));
 
 	/* Open the file */
-	song->events=read_midi_file(data, size, &events, &song->samples);
+	song->events=read_midi_mem(data, size, &events, &song->samples);
 
 	/* Make sure everything is okay */
 	if (!song->events)
@@ -1729,3 +1732,4 @@ void Timidity_FreeSong(MidiSong *song)
   free(song);
 }
 
+};

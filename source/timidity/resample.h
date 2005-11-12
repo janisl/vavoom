@@ -20,5 +20,10 @@
     resample.h
 */
 
+namespace LibTimidity
+{
+
 extern resample_t *resample_voice(int v, int32 *countptr);
 extern void pre_resample(Sample *sp);
+
+};
