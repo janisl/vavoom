@@ -330,7 +330,8 @@ VAudioCodec* VMikModAudioCodec::Create(FArchive* InAr)
 	{
 		//	Register our driver and all the loaders.
 		MikMod_RegisterDriver(&Driver);
-		MikMod_RegisterAllLoaders();
+		if (!MikMod_InfoLoader())
+			MikMod_RegisterAllLoaders();
 		MikModInitialised = true;
 	}
 
@@ -379,9 +380,12 @@ VAudioCodec* VMikModAudioCodec::Create(FArchive* InAr)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2005/11/12 09:43:35  dj_jl
+//	Fixed conflict with SDL mixer.
+//
 //	Revision 1.2  2005/11/03 22:46:35  dj_jl
 //	Support for any bitrate streams.
-//
+//	
 //	Revision 1.1  2005/10/29 15:05:13  dj_jl
 //	Added MikMod driver.
 //	
