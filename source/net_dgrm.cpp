@@ -795,7 +795,7 @@ int Datagram_GetMessage(qsocket_t *sock)
 	dword		comprMethod;
 	sockaddr_t	readaddr;
 	int			ret = 0;
-	dword		crc;
+	word		crc;
 	dword		count;
 
 	//	Resend message if needed.
@@ -1303,9 +1303,12 @@ COMMAND(NetStats)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2005/11/12 11:59:02  dj_jl
+//	Little fix for checksumms.
+//
 //	Revision 1.10  2005/09/11 13:34:58  dj_jl
 //	Compressed packet size fix.
-//
+//	
 //	Revision 1.9  2005/08/29 19:29:36  dj_jl
 //	Implemented network packet compression.
 //	
