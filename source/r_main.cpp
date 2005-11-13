@@ -76,6 +76,8 @@ TCvarF					r_fog_start("r_fog_start", "1.0");
 TCvarF					r_fog_end("r_fog_end", "2048.0");
 TCvarF					r_fog_density("r_fog_density", "0.5");
 
+TCvarI					r_draw_particles("r_draw_particles", "1", CVAR_ARCHIVE);
+
 TCvarI					old_aspect("r_old_aspect_ratio", "0", CVAR_ARCHIVE);
 
 VDrawer					*Drawer;
@@ -532,17 +534,15 @@ particle_t *R_NewParticle(void)
 
 //==========================================================================
 //
-//	R_DrawParticles
+//	R_UpdateParticles
 //
 //==========================================================================
 
-void R_DrawParticles(void)
+void R_UpdateParticles()
 {
-	guard(R_DrawParticles);
+	guard(R_UpdateParticles);
 	particle_t		*p, *kill;
 	float			frametime;
-
-	Drawer->StartParticles();
 
 //	frametime = cl.time - cl.oldtime;
 	frametime = host_frametime;
@@ -568,13 +568,31 @@ void R_DrawParticles(void)
 			kill = p->next;
 		}
 
-		Drawer->DrawParticle(p);
-
 		p->org += p->vel * frametime;
 
 		clpr.Exec(pf_UpdateParticle, (int)p);
 	}
+	unguard;
+}
 
+//==========================================================================
+//
+//	R_DrawParticles
+//
+//==========================================================================
+
+void R_DrawParticles()
+{
+	guard(R_DrawParticles);
+	if (!r_draw_particles)
+	{
+		return;
+	}
+	Drawer->StartParticles();
+	for (particle_t* p = active_particles; p; p = p->next)
+	{
+		Drawer->DrawParticle(p);
+	}
 	Drawer->EndParticles();
 	unguard;
 }
@@ -585,10 +603,12 @@ void R_DrawParticles(void)
 //
 //==========================================================================
 
-void R_RenderPlayerView(void)
+void R_RenderPlayerView()
 {
 	guard(R_RenderPlayerView);
-    R_SetupFrame();
+	R_UpdateParticles();
+
+	R_SetupFrame();
 
 	R_MarkLeaves();
 
@@ -604,7 +624,7 @@ void R_RenderPlayerView(void)
 
 	R_DrawTranslucentPolys();
 
-    // draw the psprites on top of everything
+	// draw the psprites on top of everything
 	if (fov <= 90.0)
 	{
 		R_DrawPlayerSprites();
@@ -942,9 +962,12 @@ void V_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2005/11/13 18:44:55  dj_jl
+//	CVar to disable drawing of particles.
+//
 //	Revision 1.28  2005/05/26 16:50:14  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.27  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
 //	
