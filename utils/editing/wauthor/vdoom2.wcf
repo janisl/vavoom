@@ -261,7 +261,7 @@ LightingInc=0
 0x0ca	2	Generic_Door( tag, speed, kind, delay, lock )
 
 ; Ceiling
-0x026	5	Ceiling_Waggle( tag, height, freq, offset, duration )
+0x026	3	Ceiling_Waggle( tag, height, freq, offset, duration )
 0x028	3	Ceiling_LowerByValue( tag, speed, height, -, - )
 0x029	3	Ceiling_RaiseByValue( tag, speed, height, -, - )
 0x02a	3	Ceiling_CrushAndRaise( tag, speed, crush, -, - )
