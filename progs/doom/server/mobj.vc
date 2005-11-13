@@ -228,35 +228,31 @@ void P_SpawnMapThing(mthing_t * mthing, bool spawn_thinkers)
 //
 //==========================================================================
 
-void SpawnPuff(float x, float y, float z)
+void SpawnPuff(TVec Org, float Range)
 {
-#if 1
+	Actor A;
+
 	MSG_Select(MSG_SV_DATAGRAM);
 	if (MSG_CheckSpace(7))
 	{
 		MSG_WriteByte(svc_gun_shot);
-		MSG_WriteShort(ftoi(x));
-		MSG_WriteShort(ftoi(y));
-		MSG_WriteShort(ftoi(z));
+		MSG_WriteShort(ftoi(Org.x));
+		MSG_WriteShort(ftoi(Org.y));
+		MSG_WriteShort(ftoi(Org.z));
 	}
-#else
-	Actor A;
 
-	z += (Random() - Random()) * 4.0;
+	Org.z += (Random() - Random()) * 4.0;
 
-	A = P_SpawnMobj(Puff, vector(x, y, z));
+	A = Spawn(Puff, Org);
 	A.Velocity.z = 1.0 * 35.0;
-	A.time -= Random() * 0.1;
+	A.StateTime -= Random() * 0.1;
 
-	if (A.time < 0.1)
-		A.time = 0.1;
+	if (A.StateTime < 0.1)
+		A.StateTime = 0.1;
 
-#ifdef FIXME
 	// don't make punches spark on the wall
-	if (attackrange == MELEERANGE)
+	if (Range == MELEERANGE)
 		A.SetState(S_PUFF3);
-#endif
-#endif
 }
 
 //==========================================================================
@@ -265,32 +261,29 @@ void SpawnPuff(float x, float y, float z)
 // 
 //==========================================================================
 
-void P_SpawnBlood(float x, float y, float z, int damage)
+void P_SpawnBlood(TVec Org, int damage)
 {
-#if 0
 	Actor A;
-#endif
 
 	MSG_Select(MSG_SV_DATAGRAM);
 	MSG_WriteByte(svc_blood);
-	MSG_WriteShort(ftoi(x));
-	MSG_WriteShort(ftoi(y));
-	MSG_WriteShort(ftoi(z));
+	MSG_WriteShort(ftoi(Org.x));
+	MSG_WriteShort(ftoi(Org.y));
+	MSG_WriteShort(ftoi(Org.z));
 	MSG_WriteByte(damage > 255 ? 255 : damage);
-#if 0
-	z += (Random() - Random()) * 4.0;
-	A = Spawn(Blood, vector(x, y, z));
+
+	Org.z += (Random() - Random()) * 4.0;
+	A = Spawn(Blood, Org);
 	A.Velocity.z = 2.0 * 35.0;
 	A.StateTime -= Random() * 0.1;
 
 	if (A.StateTime < 0.1)
-		A.AtateTime = 0.1;
+		A.StateTime = 0.1;
 
 	if (damage <= 12 && damage >= 9)
 		A.SetState(S_BLOOD2);
 	else if (damage < 9)
 		A.SetState(S_BLOOD3);
-#endif
 }
 
 //**************************************************************************
@@ -444,6 +437,9 @@ int P_Massacre()
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.57  2005/11/13 18:22:52  dj_jl
+//  Restored old blood and puffs.
+//
 //  Revision 1.56  2005/03/28 07:34:49  dj_jl
 //  Some Boom line specials and other improvements.
 //

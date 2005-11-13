@@ -359,7 +359,7 @@ bool ShootHitPlane(sec_plane_t * plane)
 	lineend += 4.0 * plane->normal;
 
 	// Spawn bullet puffs.
-	SpawnPuff(lineend.x, lineend.y, lineend.z);
+	SpawnPuff(lineend, shoot_range);
 
 	// don't go any farther
 	return false;
@@ -485,7 +485,7 @@ bool PTR_ShootTraverse(intercept_t * in)
 		hit_point -= 4.0 * shoot_dir;
 
 		// Spawn bullet puffs.
-		SpawnPuff(hit_point.x, hit_point.y, hit_point.z);
+		SpawnPuff(hit_point, shoot_range);
 
 		// don't go any farther
 		return false;
@@ -516,9 +516,9 @@ bool PTR_ShootTraverse(intercept_t * in)
 	// Spawn bullet puffs or blod spots,
 	// depending on target type.
 	if (th.bNoBlood)
-		SpawnPuff(hit_point.x, hit_point.y, hit_point.z);
+		SpawnPuff(hit_point, shoot_range);
 	else
-		P_SpawnBlood(hit_point.x, hit_point.y, hit_point.z, la_damage);
+		P_SpawnBlood(hit_point, la_damage);
 
 	if (la_damage)
 		th.Damage(shoot_thing, shoot_thing, la_damage);
@@ -658,6 +658,9 @@ bool PIT_VileCheck(Entity Other)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.36  2005/11/13 18:22:52  dj_jl
+//  Restored old blood and puffs.
+//
 //  Revision 1.35  2005/03/28 07:34:49  dj_jl
 //  Some Boom line specials and other improvements.
 //
