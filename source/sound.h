@@ -53,7 +53,7 @@ struct seqnode_t
 void S_Init();
 void S_Start();
 void S_MusicChanged();
-void S_StartSong(const char* name, int track, boolean loop);
+void S_StartSong(FName name, int track, boolean loop);
 void S_PauseSound();
 void S_ResumeSound();
 void S_UpdateSounds();
@@ -94,9 +94,12 @@ extern seqnode_t	*SequenceListHead;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2005/11/13 14:36:22  dj_jl
+//	Moved common sound functions to main sound module.
+//
 //	Revision 1.11  2005/11/08 20:57:15  dj_jl
 //	Removed playing sound till done.
-//
+//	
 //	Revision 1.10  2005/11/05 15:50:07  dj_jl
 //	Voices played as normal sounds.
 //	

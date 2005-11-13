@@ -47,6 +47,7 @@ public:
 	VAllegroMidiDevice();
 	void Init();
 	void Shutdown();
+	void SetVolume(float);
 	void Tick(float);
 	void Play(void*, int, const char*, bool);
 	void Pause();
@@ -101,9 +102,6 @@ VAllegroMidiDevice::VAllegroMidiDevice()
 void VAllegroMidiDevice::Init()
 {
 	guard(VAllegroMidiDevice::Init);
-	if (M_CheckParm("-nosound") || M_CheckParm("-nomusic"))
-		return;
-
 	if (!allegro_sound_initialised)
 	{
 		// Init sound device
@@ -115,45 +113,6 @@ void VAllegroMidiDevice::Init()
 		DidInitAllegro = true;
 	}
 	Initialised = true;
-	Enabled = true;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VAllegroMidiDevice::Tick
-//
-//==========================================================================
-
-void VAllegroMidiDevice::Tick(float)
-{
-	guard(VAllegroMidiDevice::Tick);
-	if (!Initialised)
-		return;
-
-	//	Update volume
-	if (music_volume < 0.0)
-	{
-		music_volume = 0.0;
-	}
-	if (music_volume > 1.0)
-	{
-		music_volume = 1.0;
-	}
-
-	if (music_volume != MusVolume)
-	{
-		if (!MusVolume && (float)music_volume && !MusicPaused)
-		{
-			midi_resume();
-		}
-		if (MusVolume && !(float)music_volume)
-		{
-			midi_pause();
-		}
-		MusVolume = music_volume;
-		set_volume(-1, int(MusVolume * 255));
-	}
 	unguard;
 }
 
@@ -175,6 +134,33 @@ void VAllegroMidiDevice::Shutdown()
 		}
 	}
 	unguard;
+}
+
+//==========================================================================
+//
+//	VAllegroMidiDevice::SetVolume
+//
+//==========================================================================
+
+void VAllegroMidiDevice::SetVolume(float Volume)
+{
+	guard(VAllegroMidiDevice::SetVolume);
+	if (Volume != MusVolume)
+	{
+		MusVolume = Volume;
+		set_volume(-1, int(MusVolume * 255));
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAllegroMidiDevice::Tick
+//
+//==========================================================================
+
+void VAllegroMidiDevice::Tick(float)
+{
 }
 
 //==========================================================================
@@ -350,9 +336,12 @@ bool VAllegroMidiDevice::IsPlaying()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2005/11/13 14:36:22  dj_jl
+//	Moved common sound functions to main sound module.
+//
 //	Revision 1.7  2005/09/12 19:45:16  dj_jl
 //	Created midi device class.
-//
+//	
 //	Revision 1.6  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
 //	

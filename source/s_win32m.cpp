@@ -123,8 +123,6 @@ public:
 		dword			TrackFlags;
 	};
 
-	bool			InitCalled;
-
 	bool			MusicPaused;
 	float			MusVolume;
 
@@ -155,6 +153,7 @@ public:
 	VMMSystemMidiDevice();
 	void Init();
 	void Shutdown();
+	void SetVolume(float);
 	void Tick(float);
 	void Play(void*, int, const char*, bool);
 	void Pause();
@@ -218,8 +217,7 @@ const int VMMSystemMidiDevice::ChanMsgLen[] =
 //==========================================================================
 
 VMMSystemMidiDevice::VMMSystemMidiDevice()
-: InitCalled(false)
-, MidiImage(NULL)
+: MidiImage(NULL)
 , MusicPaused(false)
 , MusVolume(-1)
 {
@@ -234,18 +232,6 @@ VMMSystemMidiDevice::VMMSystemMidiDevice()
 void VMMSystemMidiDevice::Init()
 {
 	guard(VMMSystemMidiDevice::Init);
-	//	We are also calling Init from DirectSound driver.
-	if (InitCalled)
-	{
-		return;
-	}
-	InitCalled = true;
-
-	if (M_CheckParm("-nosound") || M_CheckParm("-nomusic"))
-	{
-		return;
-	}
-
 	State = STATE_NoFile;
 	FreeBuffers = NULL;
 	hMidi = NULL;
@@ -269,7 +255,6 @@ void VMMSystemMidiDevice::Init()
 	}
 
 	Initialised = true;
-	Enabled = true;
 	unguard;
 }
 
@@ -288,6 +273,33 @@ void VMMSystemMidiDevice::Shutdown()
 		Initialised = false;
 	}
 	unguard;
+}
+
+//==========================================================================
+//
+//	VMMSystemMidiDevice::SetVolume
+//
+//==========================================================================
+
+void VMMSystemMidiDevice::SetVolume(float Volume)
+{
+	guard(VMMSystemMidiDevice::SetVolume);
+	if (Volume != MusVolume)
+	{
+		MusVolume = Volume;
+		//FIXME set volume.
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VMMSystemMidiDevice::Tick
+//
+//==========================================================================
+
+void VMMSystemMidiDevice::Tick(float)
+{
 }
 
 //==========================================================================
@@ -372,44 +384,6 @@ void VMMSystemMidiDevice::Resume()
 	State = STATE_Playing;
 	midiStreamRestart((HMIDISTRM)hMidi);
 	MusicPaused = false;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VMMSystemMidiDevice::Tick
-//
-//==========================================================================
-
-void VMMSystemMidiDevice::Tick(float)
-{
-	guard(VMMSystemMidiDevice::Tick);
-	if (!Initialised)
-		return;
-
-	//	Update volume
-	if (music_volume < 0.0)
-	{
-		music_volume = 0.0;
-	}
-	if (music_volume > 1.0)
-	{
-		music_volume = 1.0;
-	}
-
-	if (music_volume != MusVolume)
-	{
-		if (!MusVolume && (int)music_volume && !MusicPaused)
-		{
-			Resume();
-		}
-		if (MusVolume && !(int)music_volume)
-		{
-			Pause();
-		}
-		MusVolume = music_volume;
-		//FIXME set volume.
-	}
 	unguard;
 }
 
@@ -523,7 +497,7 @@ MMRESULT VMMSystemMidiDevice::Preroll()
 	{
 		uDeviceID = 0;
 		if ((mmrc = midiStreamOpen((HMIDISTRM*)&hMidi, &uDeviceID, 1,
-			(DWORD)StaticCallback, 0, CALLBACK_FUNCTION)) != MMSYSERR_NOERROR)
+			(DWORD)StaticCallback, (DWORD)this, CALLBACK_FUNCTION)) != MMSYSERR_NOERROR)
 		{
 			hMidi = NULL;
 			goto seq_Preroll_Cleanup;
@@ -692,9 +666,9 @@ void VMMSystemMidiDevice::Callback(UINT uMsg, DWORD dw1)
 //==========================================================================
 
 void PASCAL VMMSystemMidiDevice::StaticCallback(HMIDISTRM,
-	UINT uMsg, DWORD, DWORD dw1, DWORD)
+	UINT uMsg, DWORD inst, DWORD dw1, DWORD)
 {
-	((VMMSystemMidiDevice*)GMidiDevice)->Callback(uMsg, dw1);
+	((VMMSystemMidiDevice*)inst)->Callback(uMsg, dw1);
 }
 
 //==========================================================================
@@ -1283,9 +1257,12 @@ dword VMMSystemMidiDevice::GetVDword(const byte* ImagePtr, dword Left,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2005/11/13 14:36:22  dj_jl
+//	Moved common sound functions to main sound module.
+//
 //	Revision 1.14  2005/10/06 23:09:20  dj_jl
 //	Some cleanup.
-//
+//	
 //	Revision 1.13  2005/10/02 23:12:51  dj_jl
 //	New Windows MIDI driver.
 //	

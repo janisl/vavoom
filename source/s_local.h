@@ -30,15 +30,12 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define MAX_CHANNELS		8
-
 //	Sound device types.
 //??? Should Default be replaced with all default drivers?
 enum
 {
 	SNDDRV_Default,
 	SNDDRV_OpenAL,
-	SNDDRV_Null,
 
 	SNDDRV_MAX
 };
@@ -47,7 +44,6 @@ enum
 enum
 {
 	MIDIDRV_Default,
-	MIDIDRV_Null,
 
 	MIDIDRV_MAX
 };
@@ -56,7 +52,6 @@ enum
 enum
 {
 	CDDRV_Default,
-	CDDRV_Null,
 
 	CDDRV_MAX
 };
@@ -89,47 +84,40 @@ struct sfxinfo_t
 class VSoundDevice
 {
 public:
+	bool		Sound3D;
+
 	void* operator new(size_t Size, int Tag)
 	{ return Z_Calloc(Size, Tag, 0); }
 	void operator delete(void* Object, size_t)
 	{ Z_Free(Object); }
+	VSoundDevice()
+	: Sound3D(false)
+	{}
 	virtual ~VSoundDevice()
 	{}
 
 	//	VSoundDevice interface.
-	virtual void Init()
-	{}
-	virtual void Shutdown()
-	{}
-	virtual void Tick(float)
-	{}
-	virtual void PlaySound(int, const TVec &, const TVec &, int, int, float)
-	{}
-	virtual void PlaySoundTillDone(const char *)
-	{}
-	virtual void StopSound(int, int)
-	{}
-	virtual void StopAllSound(void)
-	{}
-	virtual bool IsSoundPlaying(int, int)
-	{ return false; }
+	virtual bool Init() = 0;
+	virtual int SetChannels(int) = 0;
+	virtual void Shutdown() = 0;
+	virtual void Tick(float) = 0;
+	virtual int PlaySound(int, float, float, float, bool) = 0;
+	virtual int PlaySound3D(int, const TVec&, const TVec&, float, float, bool) = 0;
+	virtual void UpdateChannel(int, float, float) = 0;
+	virtual void UpdateChannel3D(int, const TVec&, const TVec&) = 0;
+	virtual bool IsChannelPlaying(int) = 0;
+	virtual void StopChannel(int) = 0;
+	virtual void UpdateListener(const TVec&, const TVec&, const TVec&,
+		const TVec&, const TVec&) = 0;
 
-	virtual bool OpenStream(int, int, int)
-	{ return false; }
-	virtual void CloseStream()
-	{}
-	virtual int GetStreamAvailable()
-	{ return 0; }
-	virtual short* GetStreamBuffer()
-	{ return NULL; }
-	virtual void SetStreamData(short*, int)
-	{}
-	virtual void SetStreamVolume(float)
-	{}
-	virtual void PauseStream()
-	{}
-	virtual void ResumeStream()
-	{}
+	virtual bool OpenStream(int, int, int) = 0;
+	virtual void CloseStream() = 0;
+	virtual int GetStreamAvailable() = 0;
+	virtual short* GetStreamBuffer() = 0;
+	virtual void SetStreamData(short*, int) = 0;
+	virtual void SetStreamVolume(float) = 0;
+	virtual void PauseStream() = 0;
+	virtual void ResumeStream() = 0;
 };
 
 //	Describtion of a sound driver.
@@ -161,7 +149,6 @@ class VMidiDevice
 {
 public:
 	bool		Initialised;
-	bool		Enabled;
 	//	Current playing song info.
 	bool		CurrLoop;
 	FName		CurrSong;
@@ -172,29 +159,21 @@ public:
 	{ Z_Free(Object); }
 	VMidiDevice()
 	: Initialised(false)
-	, Enabled(false)
 	, CurrLoop(false)
 	{}
 	virtual ~VMidiDevice()
 	{}
 
 	//	VMidiDevice interface.
-	virtual void Init()
-	{}
-	virtual void Shutdown()
-	{}
-	virtual void Tick(float)
-	{}
-	virtual void Play(void*, int, const char*, bool)
-	{}
-	virtual void Pause()
-	{}
-	virtual void Resume()
-	{}
-	virtual void Stop()
-	{}
-	virtual bool IsPlaying()
-	{ return false; }
+	virtual void Init() = 0;
+	virtual void Shutdown() = 0;
+	virtual void SetVolume(float) = 0;
+	virtual void Tick(float) = 0;
+	virtual void Play(void*, int, const char*, bool) = 0;
+	virtual void Pause() = 0;
+	virtual void Resume() = 0;
+	virtual void Stop() = 0;
+	virtual bool IsPlaying() = 0;
 };
 
 //	Describtion of a midi driver.
@@ -253,26 +232,16 @@ public:
 	{}
 
 	//	VCDAudioDevice interface.
-	virtual void Init()
-	{}
-	virtual void Update()
-	{}
-	virtual void Shutdown()
-	{}
-	virtual void GetInfo()
-	{}
-	virtual void Play(int, bool)
-	{}
-	virtual void Pause()
-	{}
-	virtual void Resume()
-	{}
-	virtual void Stop()
-	{}
-	virtual void OpenDoor()
-	{}
-	virtual void CloseDoor()
-	{}
+	virtual void Init() = 0;
+	virtual void Update() = 0;
+	virtual void Shutdown() = 0;
+	virtual void GetInfo() = 0;
+	virtual void Play(int, bool) = 0;
+	virtual void Pause() = 0;
+	virtual void Resume() = 0;
+	virtual void Stop() = 0;
+	virtual void OpenDoor() = 0;
+	virtual void CloseDoor() = 0;
 };
 
 //	Describtion of a CD driver.
@@ -374,14 +343,6 @@ float EAX_CalcEnvSize();
 // the complete set of sound effects
 extern TArray<sfxinfo_t>	S_sfx;
 
-extern TCvarF				sfx_volume;
-extern TCvarF				music_volume;
-extern TCvarI				swap_stereo;
-
-extern VSoundDevice*		GSoundDevice;
-extern VMidiDevice*			GMidiDevice;
-extern VCDAudioDevice*		GCDAudioDevice;
-
 //**************************************************************************
 //
 //  MIDI and MUS file header structures.
@@ -420,9 +381,12 @@ struct MIDheader
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2005/11/13 14:36:22  dj_jl
+//	Moved common sound functions to main sound module.
+//
 //	Revision 1.21  2005/11/06 15:27:09  dj_jl
 //	Added support for 16 bit sounds.
-//
+//	
 //	Revision 1.20  2005/11/05 15:50:07  dj_jl
 //	Voices played as normal sounds.
 //	

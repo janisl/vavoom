@@ -34,58 +34,62 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define	MAX_VOICES				256
-
-#define MAX_SND_DIST			2025
-#define PRIORITY_MAX_ADJUST		10
-#define DIST_ADJUST 			(MAX_SND_DIST/PRIORITY_MAX_ADJUST)
-
-#define STRM_LEN				(8 * 1024)
-
 // TYPES -------------------------------------------------------------------
-
-struct channel_t
-{
-	int			origin_id;
-	int			channel;
-	TVec		origin;
-	TVec		velocity;
-	int			sound_id;
-	int			priority;
-	float		volume;
-
-	LPDIRECTSOUNDBUFFER		buf;
-};
-
-struct free_buf_t
-{
-	LPDIRECTSOUNDBUFFER		buf;
-	int						sound_id;
-	double					free_time;
-};
 
 class VDirectSoundDevice : public VSoundDevice
 {
 public:
-	void Tick(float DeltaTime);
+	enum { STRM_LEN = 8 * 1024 };
 
-	void Init(void);
-	void Shutdown(void);
-	void PlaySound(int sound_id, const TVec &origin, const TVec &velocity,
-		int origin_id, int channel, float volume);
-	void PlaySoundTillDone(const char *sound);
-	void StopSound(int origin_id, int channel);
-	void StopAllSound(void);
-	bool IsSoundPlaying(int origin_id, int sound_id);
+	struct FBuffer
+	{
+		bool					Playing;	//	Is buffer taken.
+		int						SoundID;	//	Sound loaded in buffer.
+		LPDIRECTSOUNDBUFFER		Buffer;		//	DirectSound buffer.
+		double					FreeTime;	//	Time buffer was stopped.
+	};
+
+	bool					SupportEAX;
+
+	LPDIRECTSOUND			DSound;
+	LPDIRECTSOUNDBUFFER		PrimarySoundBuffer;
+	LPDIRECTSOUND3DLISTENER	Listener;
+	IKsPropertySet*			PropertySet;
+
+	FBuffer*				Buffers;
+	int						NumBuffers;		// number of buffers available
+
+	LPDIRECTSOUNDBUFFER		StrmBuffer;
+	int						StrmNextUpdatePart;
+	void*					StrmLockBuffer1;
+	void*					StrmLockBuffer2;
+	DWORD					StrmLockSize1;
+	DWORD					StrmLockSize2;
+
+	bool Init();
+	int SetChannels(int);
+	void Shutdown();
+	void Tick(float);
+	int PlaySound(int, float, float, float, bool);
+	int PlaySound3D(int, const TVec&, const TVec&, float, float, bool);
+	void UpdateChannel(int, float, float);
+	void UpdateChannel3D(int, const TVec&, const TVec&);
+	bool IsChannelPlaying(int);
+	void StopChannel(int);
+	void UpdateListener(const TVec&, const TVec&, const TVec&, const TVec&, const TVec&);
 
 	bool OpenStream(int, int, int);
 	void CloseStream();
 	int GetStreamAvailable();
 	short* GetStreamBuffer();
-	void SetStreamData(short* Data, int Len);
+	void SetStreamData(short*, int);
 	void SetStreamVolume(float);
 	void PauseStream();
 	void ResumeStream();
+
+	const char* DS_Error(HRESULT);
+
+	int CreateBuffer(int);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -94,10 +98,6 @@ public:
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static char* DS_Error(HRESULT result);
-
-static void StopChannel(int chan_num);
-
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
@@ -105,37 +105,7 @@ static void StopChannel(int chan_num);
 IMPLEMENT_SOUND_DEVICE(VDirectSoundDevice, SNDDRV_Default, "Default",
 	"DirectSound sound device", NULL);
 
-LPDIRECTSOUND		DSound = NULL;
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
-
-static long			prev_sndVol;
-static float		snd_MaxVolume = -1;      // maximum volume for sound
-
-static channel_t	Channel[MAX_VOICES];
-static int			snd_Channels = 0;   // number of channels available
-static free_buf_t	free_buffers[MAX_VOICES];
-
-static byte*		SoundCurve;
-
-static int 			sndcount = 0;
-static bool			sound3D = false;
-static bool			supportEAX = false;
-
-static LPDIRECTSOUNDBUFFER		PrimarySoundBuffer = NULL;
-static LPDIRECTSOUND3DLISTENER	Listener;
-static IKsPropertySet	*PropertySet;
-
-static TVec			listener_forward;
-static TVec			listener_right;
-static TVec			listener_up;
-
-static LPDIRECTSOUNDBUFFER	StrmBuffer;
-static int					StrmNextUpdatePart;
-static void*				StrmLockBuffer1;
-static void*				StrmLockBuffer2;
-static DWORD				StrmLockSize1;
-static DWORD				StrmLockSize2;
 
 static TCvarF		s3d_distance_unit("s3d_distance_unit", "32.0", CVAR_ARCHIVE);
 static TCvarF		s3d_doppler_factor("s3d_doppler_factor", "1.0", CVAR_ARCHIVE);
@@ -154,7 +124,7 @@ static TCvarI		eax_environment("eax_environment", "0");
 //
 //==========================================================================
 
-void VDirectSoundDevice::Init()
+bool VDirectSoundDevice::Init()
 {
 	guard(VDirectSoundDevice::Init);
 	HRESULT			result;
@@ -162,10 +132,15 @@ void VDirectSoundDevice::Init()
 	WAVEFORMATEX	wfx;
 	DSCAPS			caps;
 
-	if (M_CheckParm("-nosound") || M_CheckParm("-nosfx"))
-	{
-		return;
-	}
+	Buffers = NULL;
+	NumBuffers = 0;
+	SupportEAX = false;
+	DSound = NULL;
+	PrimarySoundBuffer = NULL;
+	Listener = NULL;
+	PropertySet = NULL;
+	StrmBuffer = NULL;
+	StrmNextUpdatePart = 0;
 
 	GCon->Log(NAME_Init, "======================================");
 	GCon->Log(NAME_Init, "Initialising DirectSound driver.");
@@ -183,7 +158,7 @@ void VDirectSoundDevice::Init()
 		DSound->Release();
 		DSound = NULL;
 		GCon->Log(NAME_Init, "Sound driver not found");
-		return;
+		return false;
 	}
 	if (result != DS_OK)
 		Sys_Error("Failed to initialise DirectSound object\n%s", DS_Error(result));
@@ -200,7 +175,7 @@ void VDirectSoundDevice::Init()
 	if (caps.dwFreeHw3DStaticBuffers && caps.dwFreeHwMixingStaticBuffers && 
 		!M_CheckParm("-no3dsound"))
 	{
-		sound3D = true;
+		Sound3D = true;
 		GCon->Log(NAME_Init, "3D sound on");
 	}
 
@@ -210,7 +185,7 @@ void VDirectSoundDevice::Init()
 	dsbdesc.dwFlags       = DSBCAPS_PRIMARYBUFFER | DSBCAPS_CTRLVOLUME;
 	dsbdesc.dwBufferBytes = 0;
 	dsbdesc.lpwfxFormat   = NULL;
-	if (sound3D)
+	if (Sound3D)
 	{
 		dsbdesc.dwFlags |= DSBCAPS_CTRL3D;
 	}
@@ -233,10 +208,9 @@ void VDirectSoundDevice::Init()
 	result = PrimarySoundBuffer->SetFormat(&wfx);
 	if (result != DS_OK)
 		Sys_Error("I_InitSound: Failed to set wave format of primary buffer\n%s", DS_Error(result));
-	PrimarySoundBuffer->GetVolume(&prev_sndVol);
 
 	// Get listener interface
-	if (sound3D)
+	if (Sound3D)
 	{
 		result = PrimarySoundBuffer->QueryInterface(IID_IDirectSound3DListener, (LPVOID *)&Listener);
 		if (FAILED(result))
@@ -291,7 +265,7 @@ void VDirectSoundDevice::Init()
 				else
 				{
 					GCon->Log(NAME_Init, "EAX 2.0 supported");
-					supportEAX = true;
+					SupportEAX = true;
 				}
 			}
 			tempBuffer->Release();
@@ -301,34 +275,42 @@ void VDirectSoundDevice::Init()
 		Listener->SetDopplerFactor(s3d_doppler_factor, DS3D_IMMEDIATE);
 		Listener->SetRolloffFactor(s3d_rolloff_factor, DS3D_IMMEDIATE);
 	}
+	return true;
+	unguard;
+}
 
-	//	Init music
-	GMidiDevice->Init();
+//==========================================================================
+//
+//	VDirectSoundDevice::SetChannels
+//
+//==========================================================================
 
-	//	Get amout of free buffers after initialising music.
+int VDirectSoundDevice::SetChannels(int InNumChannels)
+{
+	guard(VDirectSoundDevice::SetChannels);
+	DSCAPS caps;
 	memset(&caps, 0, sizeof(caps));
 	caps.dwSize = sizeof(caps);
 	DSound->GetCaps(&caps);
 
-	if (sound3D)
-		snd_Channels = caps.dwFreeHw3DStaticBuffers;
+	if (Sound3D)
+		NumBuffers = caps.dwFreeHw3DStaticBuffers;
 	else
-		snd_Channels = caps.dwFreeHwMixingStaticBuffers;
-	if (!snd_Channels)
+		NumBuffers = caps.dwFreeHwMixingStaticBuffers;
+	if (!NumBuffers)
 	{
 		GCon->Log(NAME_Init, "No HW channels available");
-		snd_Channels = 8;
+		NumBuffers = 8;
 	}
-	if (snd_Channels > MAX_VOICES)
-		snd_Channels = MAX_VOICES;
+	Buffers = Z_CNew<FBuffer>(NumBuffers);
+	GCon->Logf(NAME_Init, "Using %d sound buffers", NumBuffers);
 
-	// Free all channels for use
-	memset(Channel, 0, sizeof(Channel));
-	memset(free_buffers, 0, sizeof(free_buffers));
-
-	SoundCurve = (byte*)W_CacheLumpName("SNDCURVE", PU_STATIC);
-
-	GCon->Logf(NAME_Init, "Using %d sound buffers", snd_Channels);
+	int Ret = InNumChannels;
+	if (Ret > NumBuffers)
+	{
+		Ret = NumBuffers;
+	}
+	return Ret;
 	unguard;
 }
 
@@ -344,20 +326,34 @@ void VDirectSoundDevice::Shutdown()
 	//	Shutdown sound
 	if (DSound)
 	{
-		PrimarySoundBuffer->SetVolume(prev_sndVol);
 		DSound->Release();
 		DSound = NULL;
+	}
+	if (Buffers)
+	{
+		Z_Free(Buffers);
+		Buffers = NULL;
 	}
 	unguard;
 }
 
 //==========================================================================
 //
-//	DS_Error
+//  VDirectSoundDevice::Tick
 //
 //==========================================================================
 
-static char* DS_Error(HRESULT result)
+void VDirectSoundDevice::Tick(float)
+{
+}
+
+//==========================================================================
+//
+//	VDirectSoundDevice::DS_Error
+//
+//==========================================================================
+
+const char* VDirectSoundDevice::DS_Error(HRESULT result)
 {
 	static char	errmsg[128];
 
@@ -419,152 +415,11 @@ static char* DS_Error(HRESULT result)
 
 //==========================================================================
 //
-//	GetChannel
+//	VDirectSoundDevice::CreateBuffer
 //
 //==========================================================================
 
-static int GetChannel(int sound_id, int origin_id, int channel, int priority)
-{
-	int 		chan;
-	int			i;
-
-	int			lp; //least priority
-	int			found;
-	int			prior;
-	int numchannels = S_sfx[sound_id].NumChannels;
-
-	if (numchannels != -1)
-	{
-		lp = -1; //denote the argument sound_id
-		found = 0;
-		prior = priority;
-		for (i=0; i<snd_Channels; i++)
-		{
-			if (Channel[i].sound_id == sound_id && Channel[i].buf)
-			{
-				found++; //found one.  Now, should we replace it??
-				if (prior >= Channel[i].priority)
-				{
-					// if we're gonna kill one, then this'll be it
-					lp = i;
-					prior = Channel[i].priority;
-				}
-			}
-		}
-
-		if (found >= numchannels)
-		{
-			if (lp == -1)
-			{// other sounds have greater priority
-				return -1; // don't replace any sounds
-			}
-			StopChannel(lp);
-		}
-	}
-
-	//	Mobjs can have only one sound
-	if (origin_id && channel)
-	{
-		for (i = 0; i < snd_Channels; i++)
-		{
-			if (Channel[i].origin_id == origin_id &&
-				Channel[i].channel == channel)
-			{
-				// only allow other mobjs one sound
-				StopChannel(i);
-				return i;
-			}
-		}
-	}
-
-	//	Look for a free channel
-	for (i = 0; i < snd_Channels; i++)
-	{
-		if (!Channel[i].buf)
-		{
-			return i;
-		}
-	}
-
-	//	Look for a lower priority sound to replace.
-	sndcount++;
-	if (sndcount >= snd_Channels)
-	{
-		sndcount = 0;
-	}
-
-	for (chan = 0; chan < snd_Channels; chan++)
-	{
-		i = (sndcount + chan) % snd_Channels;
-		if (priority >= Channel[i].priority)
-		{
-			//replace the lower priority sound.
-			StopChannel(i);
-			return i;
-		}
-	}
-
-	//	no free channels.
-	return -1;
-}
-
-//==========================================================================
-//
-//	CalcDist
-//
-//==========================================================================
-
-static int CalcDist(const TVec &origin)
-{
-	return (int)Length(origin - cl.vieworg);
-}
-
-//==========================================================================
-//
-//	CalcPriority
-//
-//==========================================================================
-
-static int CalcPriority(int sound_id, int dist)
-{
-	return S_sfx[sound_id].Priority *
-		(PRIORITY_MAX_ADJUST - (dist / DIST_ADJUST));
-}
-
-//==========================================================================
-//
-//	CalcVol
-//
-//==========================================================================
-
-static int CalcVol(float volume, int dist)
-{
-	return SoundCurve[dist] * 127 * volume / 5 - 3225;
-}
-
-//==========================================================================
-//
-//	CalcSep
-//
-//==========================================================================
-
-static int CalcSep(const TVec &origin)
-{
-	int sep = (int)DotProduct(origin - cl.vieworg, listener_right);
-	if (swap_stereo)
-	{
-		sep = -sep;
-	}
-	return sep;
-}
-
-//==========================================================================
-//
-//	CreateBuffer
-//
-//==========================================================================
-
-static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id)
+int VDirectSoundDevice::CreateBuffer(int sound_id)
 {
 	HRESULT					result;
 	LPDIRECTSOUNDBUFFER		dsbuffer;
@@ -576,25 +431,11 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id)
 	DWORD					size2;
 	int						i;
 
-	for (i = 0; i < MAX_VOICES; i++)
+	for (i = 0; i < NumBuffers; i++)
 	{
-		if (free_buffers[i].sound_id == sound_id)
+		if (!Buffers[i].Playing && Buffers[i].SoundID == sound_id)
 		{
-			dsbuffer = free_buffers[i].buf;
-			free_buffers[i].sound_id = 0;
-
-			if (S_sfx[sound_id].ChangePitch)
-			{
-				int			pitch;
-
-				pitch = S_sfx[sound_id].SampleRate +
-					S_sfx[sound_id].SampleRate * (rand() & 7 - rand() & 7) / 128;
-				dsbuffer->SetFrequency(pitch);
-			}
-
-			dsbuffer->SetCurrentPosition(0);
-
-			return dsbuffer;
+			return i;
 		}
 	}
 
@@ -602,29 +443,27 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id)
 	if (!S_LoadSound(sound_id))
 	{
 		//	Missing sound.
-		return NULL;
+		return -1;
 	}
 	sfxinfo_t &sfx = S_sfx[sound_id];
 
 	// Set up wave format structure.
 	memset(&pcmwf, 0, sizeof(WAVEFORMATEX));
-	pcmwf.wFormatTag      = WAVE_FORMAT_PCM;      
-	pcmwf.nChannels       = 1;
-	pcmwf.nSamplesPerSec  = sfx.SampleRate;
-	pcmwf.wBitsPerSample  = WORD(sfx.SampleBits);
-	pcmwf.nBlockAlign     = WORD(pcmwf.wBitsPerSample / 8 * pcmwf.nChannels);
+	pcmwf.wFormatTag = WAVE_FORMAT_PCM;
+	pcmwf.nChannels = 1;
+	pcmwf.nSamplesPerSec = sfx.SampleRate;
+	pcmwf.wBitsPerSample = WORD(sfx.SampleBits);
+	pcmwf.nBlockAlign = WORD(pcmwf.wBitsPerSample / 8 * pcmwf.nChannels);
 	pcmwf.nAvgBytesPerSec = pcmwf.nSamplesPerSec * pcmwf.nBlockAlign;
 
 	// Set up DSBUFFERDESC structure.
 	memset(&dsbdesc, 0, sizeof(DSBUFFERDESC));  // Zero it out.
-	dsbdesc.dwSize        = sizeof(DSBUFFERDESC);
-	dsbdesc.dwFlags       = 
-		DSBCAPS_CTRLVOLUME | 
-		DSBCAPS_CTRLFREQUENCY |
+	dsbdesc.dwSize = sizeof(DSBUFFERDESC);
+	dsbdesc.dwFlags = DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLFREQUENCY |
 		DSBCAPS_STATIC;
 	dsbdesc.dwBufferBytes = sfx.DataSize;
-	dsbdesc.lpwfxFormat   = &pcmwf;
-	if (sound3D)
+	dsbdesc.lpwfxFormat = &pcmwf;
+	if (Sound3D)
 	{
 		dsbdesc.dwFlags |= DSBCAPS_CTRL3D | DSBCAPS_LOCHARDWARE;
 	}
@@ -633,26 +472,40 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id)
 		dsbdesc.dwFlags |= DSBCAPS_CTRLPAN;
 	}
 
+	int Handle;
+	for (Handle = 0; Handle < NumBuffers; Handle++)
+	{
+		if (!Buffers[Handle].SoundID)
+			break;
+	}
 	result = DSound->CreateSoundBuffer(&dsbdesc, &dsbuffer, NULL);
-	if (result != DS_OK)
+	if (Handle == NumBuffers || result != DS_OK)
 	{
 		int		best = -1;
 		double	least_time = 999999999.0;
 
-		for (i = 0; i < MAX_VOICES; i++)
+		for (i = 0; i < NumBuffers; i++)
 		{
-			if (free_buffers[i].sound_id && 
-				free_buffers[i].free_time < least_time)
+			if (Buffers[i].SoundID && !Buffers[i].Playing &&
+				Buffers[i].FreeTime < least_time)
 			{
 				best = i;
-				least_time = free_buffers[i].free_time;
+				least_time = Buffers[i].FreeTime;
 			}
 		}
 		if (best != -1)
 		{
-			free_buffers[best].buf->Release();
-			free_buffers[best].sound_id = 0;
-			result = DSound->CreateSoundBuffer(&dsbdesc, &dsbuffer, NULL);
+			Buffers[best].Buffer->Release();
+			Buffers[best].SoundID = 0;
+			if (Handle == NumBuffers)
+				Handle = best;
+			if (result != DS_OK)
+				result = DSound->CreateSoundBuffer(&dsbdesc, &dsbuffer, NULL);
+		}
+		else
+		{
+			//	All channels are busy.
+			return -1;
 		}
 	}
 
@@ -660,30 +513,24 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id)
 	{
 		GCon->Log(NAME_Dev, "Failed to create sound buffer");
 		GCon->Log(NAME_Dev, DS_Error(result));
-	
+
 		//	We don't need to keep lump static
 		S_DoneWithLump(sound_id);
-	
-		return NULL;
+
+		return -1;
 	}
 
 	dsbuffer->Lock(0, sfx.DataSize,
 		&buffer, &size1, &buff2, &size2, DSBLOCK_ENTIREBUFFER);
 	memcpy(buffer, sfx.Data, sfx.DataSize);
 	dsbuffer->Unlock(buffer, sfx.DataSize, buff2, size2);
-	
-	if (sfx.ChangePitch)
-	{
-		dsbuffer->SetFrequency(sfx.SampleRate +
-			S_sfx[sound_id].SampleRate * (rand() & 7 - rand() & 7) / 128);
-	}
-
-	dsbuffer->SetCurrentPosition(0);
 
 	//	We don't need to keep lump static
 	S_DoneWithLump(sound_id);
 
-	return dsbuffer;
+	Buffers[Handle].Buffer = dsbuffer;
+	Buffers[Handle].SoundID = sound_id;
+	return Handle;
 }
 
 //==========================================================================
@@ -695,350 +542,188 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id)
 //
 //==========================================================================
 
-void VDirectSoundDevice::PlaySound(int sound_id, const TVec &origin,
-	const TVec &velocity, int origin_id, int channel, float volume)
+int VDirectSoundDevice::PlaySound(int sound_id, float vol, float sep,
+	float pitch, bool Loop)
 {
 	guard(VDirectSoundDevice::PlaySound);
-	int 					dist;
-	int 					priority;
-	int						chan;
 	HRESULT					result;
-	LPDIRECTSOUNDBUFFER		dsbuffer;
 
-	if (!snd_Channels || !sound_id || !snd_MaxVolume || !volume)
+	int Handle = CreateBuffer(sound_id);
+	if (Handle == -1)
 	{
-		return;
+		return -1;
 	}
+	Buffers[Handle].Buffer->SetFrequency((DWORD)(S_sfx[sound_id].SampleRate * pitch));
+	Buffers[Handle].Buffer->SetCurrentPosition(0);
 
-	// calculate the distance before other stuff so that we can throw out
-	// sounds that are beyond the hearing range.
-	dist = 0;
-	if (origin_id && origin_id != cl.clientnum + 1)
-		dist = CalcDist(origin);
-	if (dist >= MAX_SND_DIST)
-	{
-		return; // sound is beyond the hearing range...
-	}
-
-	priority = CalcPriority(sound_id, dist);
-
-	chan = GetChannel(sound_id, origin_id, channel, priority);
-	if (chan == -1)
-	{
-		return; //no free channels.
-	}
-
-	dsbuffer = CreateBuffer(sound_id);
-	if (!dsbuffer)
-	{
-		return;
-	}
-
-	Channel[chan].origin_id = origin_id;
-	Channel[chan].channel = channel;
-	Channel[chan].origin = origin;
-	Channel[chan].velocity = velocity;
-	Channel[chan].sound_id = sound_id;
-	Channel[chan].priority = priority;
-	Channel[chan].volume = volume;
-	Channel[chan].buf = dsbuffer;
-
-	if (sound3D)
+	if (Sound3D)
 	{
 		LPDIRECTSOUND3DBUFFER	Buf3D; 
 
-		Channel[chan].buf->SetVolume(4096.0 * (Channel[chan].volume - 1.0));
+		Buffers[Handle].Buffer->SetVolume((LONG)(4096.0 * (vol - 1.0)));
 
-		result = Channel[chan].buf->QueryInterface(
+		result = Buffers[Handle].Buffer->QueryInterface(
 			IID_IDirectSound3DBuffer, (LPVOID *)&Buf3D); 
 		if (FAILED(result))
 		{
 			Sys_Error("Failed to get 3D buffer");
 		}
 
-		if (!Channel[chan].origin_id)
-		{
-			Buf3D->SetMode(DS3DMODE_DISABLE, DS3D_IMMEDIATE);
-		}
-		else if (Channel[chan].origin_id == cl.clientnum + 1)
-		{
-			Buf3D->SetMode(DS3DMODE_HEADRELATIVE, DS3D_IMMEDIATE);
-			Buf3D->SetPosition(0.0, -16.0, 0.0, DS3D_IMMEDIATE);
-			Buf3D->SetMinDistance(s3d_min_distance, DS3D_IMMEDIATE);
-			Buf3D->SetMaxDistance(s3d_max_distance, DS3D_IMMEDIATE);
-		}
-		else
-		{
-			Buf3D->SetPosition(
-				Channel[chan].origin.x,
-				Channel[chan].origin.z,
-				Channel[chan].origin.y,
-				DS3D_IMMEDIATE);
-			Buf3D->SetVelocity(
-				Channel[chan].velocity.x,
-				Channel[chan].velocity.z,
-				Channel[chan].velocity.y,
-				DS3D_IMMEDIATE);
-			Buf3D->SetMinDistance(s3d_min_distance, DS3D_IMMEDIATE);
-			Buf3D->SetMaxDistance(s3d_max_distance, DS3D_IMMEDIATE);
-		} 
+		Buf3D->SetMode(DS3DMODE_HEADRELATIVE, DS3D_IMMEDIATE);
+		Buf3D->SetPosition(0.0, -16.0, 0.0, DS3D_IMMEDIATE);
+		Buf3D->SetMinDistance(s3d_min_distance, DS3D_IMMEDIATE);
+		Buf3D->SetMaxDistance(s3d_max_distance, DS3D_IMMEDIATE);
 		Buf3D->Release();
 	}
 	else
 	{
-		if (dist)
-		{
-			int 					vol;
-			int 					sep;
-
-			vol = CalcVol(Channel[chan].volume, dist);
-			sep = CalcSep(Channel[chan].origin);
-
-			Channel[chan].buf->SetVolume(vol);
-			Channel[chan].buf->SetPan(sep);
-		}
+		Buffers[Handle].Buffer->SetVolume((int)(vol * 3000) - 3000);
+		Buffers[Handle].Buffer->SetPan((int)(sep * 2000));
 	}
 
-	result = dsbuffer->Play(0, 0, 0);
+	result = Buffers[Handle].Buffer->Play(0, 0, Loop ? DSBPLAY_LOOPING : 0);
 	if (result != DS_OK)
 	{
-		GCon->Log(NAME_Dev, "Failed to play channel");
+		GCon->Log(NAME_Dev, "Failed to play buffer");
 		GCon->Log(NAME_Dev, DS_Error(result));
-		StopChannel(chan);
+	}
+	Buffers[Handle].Playing = true;
+	return Handle;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VDirectSoundDevice::PlaySound3D
+//
+// 	This function adds a sound to the list of currently active sounds, which
+// is maintained as a given number of internal channels.
+//
+//==========================================================================
+
+int VDirectSoundDevice::PlaySound3D(int sound_id, const TVec &origin,
+	const TVec &velocity, float volume, float pitch, bool Loop)
+{
+	guard(VDirectSoundDevice::PlaySound3D);
+	HRESULT					result;
+	LPDIRECTSOUND3DBUFFER	Buf3D; 
+
+	int Handle = CreateBuffer(sound_id);
+	if (Handle == -1)
+	{
+		return -1;
+	}
+	Buffers[Handle].Buffer->SetFrequency((DWORD)(S_sfx[sound_id].SampleRate * pitch));
+	Buffers[Handle].Buffer->SetCurrentPosition(0);
+
+	Buffers[Handle].Buffer->SetVolume((LONG)(4096.0 * (volume - 1.0)));
+
+	result = Buffers[Handle].Buffer->QueryInterface(
+		IID_IDirectSound3DBuffer, (LPVOID *)&Buf3D); 
+	if (FAILED(result))
+	{
+		Sys_Error("Failed to get 3D buffer");
+	}
+
+	Buf3D->SetPosition(origin.x, origin.z, origin.y, DS3D_IMMEDIATE);
+	Buf3D->SetVelocity(velocity.x, velocity.z, velocity.y, DS3D_IMMEDIATE);
+	Buf3D->SetMinDistance(s3d_min_distance, DS3D_IMMEDIATE);
+	Buf3D->SetMaxDistance(s3d_max_distance, DS3D_IMMEDIATE);
+	Buf3D->Release();
+
+	result = Buffers[Handle].Buffer->Play(0, 0, Loop ? DSBPLAY_LOOPING : 0);
+	if (result != DS_OK)
+	{
+		GCon->Log(NAME_Dev, "Failed to play buffer");
+		GCon->Log(NAME_Dev, DS_Error(result));
+	}
+	Buffers[Handle].Playing = true;
+	return Handle;
+	unguard;
+}
+
+//==========================================================================
+//
+//  VDirectSoundDevice::UpdateChannel
+//
+//==========================================================================
+
+void VDirectSoundDevice::UpdateChannel(int Handle, float vol, float sep)
+{
+	guard(VDirectSoundDevice::UpdateChannel);
+	if (Handle == -1)
+	{
+		return;
+	}
+	//	Update params
+	if (!Sound3D)
+	{
+		Buffers[Handle].Buffer->SetVolume((int)(vol * 3000) - 3000);
+		Buffers[Handle].Buffer->SetPan((int)(sep * 2000));
 	}
 	unguard;
 }
 
 //==========================================================================
 //
-//	VDirectSoundDevice::PlaySoundTillDone
+//	VDirectSoundDevice::UpdateChannel3D
 //
 //==========================================================================
 
-void VDirectSoundDevice::PlaySoundTillDone(const char *sound)
+void VDirectSoundDevice::UpdateChannel3D(int Handle, const TVec& Org,
+	const TVec& Vel)
 {
-	guard(VDirectSoundDevice::PlaySoundTillDone);
-	int						sound_id;
-	double					start;
+	guard(VDirectSoundDevice::PlaySound3D);
 	HRESULT					result;
-	LPDIRECTSOUNDBUFFER		dsbuffer;
+	LPDIRECTSOUND3DBUFFER	Buf3D; 
 
-	//	Get sound ID
-	sound_id = S_GetSoundID(sound);
-
-	//	Maybe don't play it?
-	if (!snd_Channels || !sound_id || !snd_MaxVolume)
+	if (Handle == -1)
 	{
 		return;
 	}
-
-	//	Silence please
-	S_StopAllSound();
-
-	//	Create buffer
-	dsbuffer = CreateBuffer(sound_id);
-	if (!dsbuffer)
+	result = Buffers[Handle].Buffer->QueryInterface(
+		IID_IDirectSound3DBuffer, (LPVOID *)&Buf3D);
+	if (FAILED(result))
 	{
 		return;
 	}
+	Buf3D->SetPosition(Org.x, Org.z, Org.y, DS3D_DEFERRED);
+	Buf3D->SetVelocity(Vel.x, Vel.z, Vel.y, DS3D_DEFERRED);
+	Buf3D->Release();
+	unguard;
+}
 
-	//	Set mode for 3D sound
-	if (sound3D)
+//==========================================================================
+//
+//	VDirectSoundDevice::IsChannelPlaying
+//
+//==========================================================================
+
+bool VDirectSoundDevice::IsChannelPlaying(int Handle)
+{
+	guard(VDirectSoundDevice::IsChannelPlaying);
+	if (Handle == -1)
 	{
-		LPDIRECTSOUND3DBUFFER	Buf3D; 
-
-		result = dsbuffer->QueryInterface(IID_IDirectSound3DBuffer, (LPVOID *)&Buf3D);
-		if (FAILED(result))
-		{
-			Sys_Error("Failed to get 3D buffer");
-		}
-		Buf3D->SetMode(DS3DMODE_DISABLE, DS3D_IMMEDIATE);
-		Buf3D->Release();
+		return false;
 	}
-
-	//	Play it
-	result = dsbuffer->Play(0, 0, 0);
-	if (result != DS_OK)
-		Sys_Error("Failed to play channel\n%s", DS_Error(result));
-
-	//	Start wait
-	start = Sys_Time();
-	while (1)
+	if (Buffers[Handle].Buffer)
 	{
 		DWORD	Status;
 
-		dsbuffer->GetStatus(&Status);
-		if (!(Status & DSBSTATUS_PLAYING))
-		{
-			//	Playback done
-			break;
-		}
+		Buffers[Handle].Buffer->GetStatus(&Status);
 
-		if (Sys_Time() - start > 10.0)
+		if (Status & DSBSTATUS_PLAYING)
 		{
-			//	Time out
-			break;
+			return true;
 		}
 	}
-
-	//	Stop and release buffer
-	dsbuffer->Stop();
-	dsbuffer->Release();
+	return false;
 	unguard;
 }
 
 //==========================================================================
 //
-//  VDirectSoundDevice::Tick
-//
-// 	Update the sound parameters. Used to control volume and pan
-// changes such as when a player turns.
-//
-//==========================================================================
-
-void VDirectSoundDevice::Tick(float DeltaTime)
-{
-	guard(VDirectSoundDevice::Tick);
-	int 		i;
-	int			dist;
-	DWORD		Status;
-
-	if (!snd_Channels)
-	{
-		return;
-	}
-
-	if (sfx_volume < 0.0)
-	{
-		sfx_volume = 0.0;
-	}
-	if (sfx_volume > 1.0)
-	{
-		sfx_volume = 1.0;
-	}
-
-	if (sfx_volume != snd_MaxVolume)
-	{
-		snd_MaxVolume = sfx_volume;
-		PrimarySoundBuffer->SetVolume(int((snd_MaxVolume - 1) * 5000));
-		if (!snd_MaxVolume)
-		{
-			S_StopAllSound();
-		}
-	}
-
-	if (!snd_MaxVolume)
-	{
-		return;
-	}
-
-	AngleVectors(cl.viewangles, listener_forward, listener_right, listener_up);
-
-	for (i = 0; i < snd_Channels; i++)
-	{
-		if (!Channel[i].buf)
-		{
-			//	Nothing on this channel
-			continue;
-		}
-
-		Channel[i].buf->GetStatus(&Status);
-		if (!(Status & DSBSTATUS_PLAYING))
-		{
-			//	Playback done
-			StopChannel(i);
-			continue;
-		}
-
-		if (!Channel[i].origin_id)
-		{
-			//	Full volume sound
-			continue;
-		}
-
-		if (Channel[i].origin_id == cl.clientnum + 1)
-		{
-			//	Client sound
-			continue;
-		}
-
-		//	Move sound
-		Channel[i].origin += Channel[i].velocity * DeltaTime;
-
-		dist = CalcDist(Channel[i].origin);
-		if (dist >= MAX_SND_DIST)
-		{
-			//	Too far away
-			StopChannel(i);
-			continue;
-		}
-
-		//	Update params
-		if (!sound3D)
-		{
-			int 					vol;
-			int 					sep;
-
-			vol = CalcVol(Channel[i].volume, dist);
-			sep = CalcSep(Channel[i].origin);
-
-			Channel[i].buf->SetVolume(vol);
-			Channel[i].buf->SetPan(sep);
-		}
-
-		Channel[i].priority = CalcPriority(Channel[i].sound_id, dist);
-	}
-
-	if (sound3D)
-	{
-		Listener->SetPosition(
-			cl.vieworg.x,
-			cl.vieworg.z,
-			cl.vieworg.y,
-			DS3D_DEFERRED);
-
-//		Listener->SetVelocity(
-//			(float)listener->mo->momx,
-//			(float)listener->mo->momz,
-//			(float)listener->mo->momy,
-//			DS3D_DEFERRED);
-
-		Listener->SetOrientation(
-			listener_forward.x,
-			listener_forward.z,
-			listener_forward.y,
-			listener_up.x,
-			listener_up.z,
-			listener_up.y,
-			DS3D_DEFERRED);
-
-		Listener->SetDistanceFactor(1.0 / s3d_distance_unit, DS3D_DEFERRED);
-		Listener->SetDopplerFactor(s3d_doppler_factor, DS3D_DEFERRED);
-		Listener->SetRolloffFactor(s3d_rolloff_factor, DS3D_DEFERRED);
-
-		if (supportEAX)
-		{
-			DWORD envId = eax_environment;
-			if (envId < 0 || envId >= EAX_ENVIRONMENT_COUNT)
-				envId = EAX_ENVIRONMENT_GENERIC;
-			PropertySet->Set(DSPROPSETID_EAX_ListenerProperties,
-				DSPROPERTY_EAXLISTENER_ENVIRONMENT |
-				DSPROPERTY_EAXLISTENER_DEFERRED, NULL, 0, &envId, sizeof(DWORD));
-
-			float envSize = EAX_CalcEnvSize();
-			PropertySet->Set(DSPROPSETID_EAX_ListenerProperties,
-				DSPROPERTY_EAXLISTENER_ENVIRONMENTSIZE |
-				DSPROPERTY_EAXLISTENER_DEFERRED, NULL, 0, &envSize, sizeof(float));
-		}
-
-		Listener->CommitDeferredSettings();
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//  StopChannel
+//  VDirectSoundDevice::StopChannel
 //
 //	Stop the sound. Necessary to prevent runaway chainsaw, and to stop
 // rocket launches when an explosion occurs.
@@ -1046,101 +731,59 @@ void VDirectSoundDevice::Tick(float DeltaTime)
 //
 //==========================================================================
 
-static void StopChannel(int chan_num)
+void VDirectSoundDevice::StopChannel(int Handle)
 {
-	LPDIRECTSOUNDBUFFER		dsbuffer;
-	int						i;
-
-	if (Channel[chan_num].buf)
+	if (Handle == -1)
 	{
-		dsbuffer = Channel[chan_num].buf;
-		//	Stop buffer
-		dsbuffer->Stop();
-
-		for (i = 0; i < MAX_VOICES; i++)
-		{
-			if (!free_buffers[i].sound_id)
-			{
-				free_buffers[i].buf = dsbuffer;
-				free_buffers[i].sound_id = Channel[chan_num].sound_id;
-				free_buffers[i].free_time = Sys_Time();
-				break;
-			}
-		}
-		if (i == MAX_VOICES)
-		{
-			dsbuffer->Release();
-		}
-
-		//	Clear channel data
-		Channel[chan_num].buf = NULL;
-		Channel[chan_num].origin_id = 0;
-		Channel[chan_num].sound_id = 0;
+		return;
 	}
+
+	//	Stop buffer
+	Buffers[Handle].Buffer->Stop();
+
+	//	Mark buffer as not playing for reuse.
+	Buffers[Handle].FreeTime = Sys_Time();
+	Buffers[Handle].Playing = false;
 }
 
 //==========================================================================
 //
-//	VDirectSoundDevice::StopSound
+//	VDirectSoundDevice::UpdateListener
 //
 //==========================================================================
 
-void VDirectSoundDevice::StopSound(int origin_id, int channel)
+void VDirectSoundDevice::UpdateListener(const TVec& org, const TVec& vel,
+	const TVec& fwd, const TVec&, const TVec& up)
 {
-	guard(VDirectSoundDevice::StopSound);
-	for (int i = 0; i < snd_Channels; i++)
+	guard(VDirectSoundDevice::UpdateListener);
+	//	Set position, velocity and orientation.
+	Listener->SetPosition(org.x, org.z, org.y, DS3D_DEFERRED);
+	Listener->SetVelocity(vel.x, vel.z, vel.y, DS3D_DEFERRED);
+	Listener->SetOrientation(fwd.x, fwd.z, fwd.y, up.x, up.z, up.y, DS3D_DEFERRED);
+
+	//	Set factor values.
+	Listener->SetDistanceFactor(1.0 / s3d_distance_unit, DS3D_DEFERRED);
+	Listener->SetDopplerFactor(s3d_doppler_factor, DS3D_DEFERRED);
+	Listener->SetRolloffFactor(s3d_rolloff_factor, DS3D_DEFERRED);
+
+	if (SupportEAX)
 	{
-		if (Channel[i].origin_id == origin_id &&
-			(!channel || Channel[i].channel == channel))
-		{
-			StopChannel(i);
-		}
+		//	Set environment properties.
+		DWORD envId = eax_environment;
+		if (envId < 0 || envId >= EAX_ENVIRONMENT_COUNT)
+			envId = EAX_ENVIRONMENT_GENERIC;
+		PropertySet->Set(DSPROPSETID_EAX_ListenerProperties,
+			DSPROPERTY_EAXLISTENER_ENVIRONMENT |
+			DSPROPERTY_EAXLISTENER_DEFERRED, NULL, 0, &envId, sizeof(DWORD));
+
+		float envSize = EAX_CalcEnvSize();
+		PropertySet->Set(DSPROPSETID_EAX_ListenerProperties,
+			DSPROPERTY_EAXLISTENER_ENVIRONMENTSIZE |
+			DSPROPERTY_EAXLISTENER_DEFERRED, NULL, 0, &envSize, sizeof(float));
 	}
-	unguard;
-}
 
-//==========================================================================
-//
-//	VDirectSoundDevice::StopAllSound
-//
-//==========================================================================
-
-void VDirectSoundDevice::StopAllSound(void)
-{
-	guard(VDirectSoundDevice::StopAllSound);
-	//	stop all sounds
-	for (int i = 0; i < snd_Channels; i++)
-	{
-		StopChannel(i);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VDirectSoundDevice::IsSoundPlaying
-//
-//==========================================================================
-
-bool VDirectSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
-{
-	guard(VDirectSoundDevice::IsSoundPlaying);
-	for (int i = 0; i < snd_Channels; i++)
-	{
-		if (Channel[i].buf && Channel[i].sound_id == sound_id && 
-			Channel[i].origin_id == origin_id)
-		{
-			DWORD	Status;
-
-			Channel[i].buf->GetStatus(&Status);
-
-			if (Status & DSBSTATUS_PLAYING)
-			{
-				return true;
-			}
-		}
-	}
-	return false;
+	//	Commit settings.
+	Listener->CommitDeferredSettings();
 	unguard;
 }
 
@@ -1160,26 +803,20 @@ bool VDirectSoundDevice::OpenStream(int Rate, int Bits, int Channels)
 
 	// Set up wave format structure.
 	memset(&pcmwf, 0, sizeof(WAVEFORMATEX));
-	pcmwf.wFormatTag      = WAVE_FORMAT_PCM;      
-	pcmwf.nChannels       = Channels;
-	pcmwf.nSamplesPerSec  = Rate;
-	pcmwf.wBitsPerSample  = WORD(Bits);
-	pcmwf.nBlockAlign     = WORD(pcmwf.wBitsPerSample / 8 * pcmwf.nChannels);
+	pcmwf.wFormatTag = WAVE_FORMAT_PCM;
+	pcmwf.nChannels = Channels;
+	pcmwf.nSamplesPerSec = Rate;
+	pcmwf.wBitsPerSample = WORD(Bits);
+	pcmwf.nBlockAlign = WORD(pcmwf.wBitsPerSample / 8 * pcmwf.nChannels);
 	pcmwf.nAvgBytesPerSec = pcmwf.nSamplesPerSec * pcmwf.nBlockAlign;
 
 	// Set up DSBUFFERDESC structure.
 	memset(&dsbdesc, 0, sizeof(DSBUFFERDESC));  // Zero it out.
-	dsbdesc.dwSize        = sizeof(DSBUFFERDESC);
-	dsbdesc.dwFlags       = 
-		DSBCAPS_GETCURRENTPOSITION2 |
-		DSBCAPS_CTRLVOLUME |
+	dsbdesc.dwSize = sizeof(DSBUFFERDESC);
+	dsbdesc.dwFlags = DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_CTRLVOLUME |
 		DSBCAPS_STATIC;
 	dsbdesc.dwBufferBytes = STRM_LEN * 4;
-	dsbdesc.lpwfxFormat   = &pcmwf;
-//	if (sound3D)
-//	{
-//		dsbdesc.dwFlags |= DSBCAPS_CTRL3D;
-//	}
+	dsbdesc.lpwfxFormat = &pcmwf;
 
 	result = DSound->CreateSoundBuffer(&dsbdesc, &StrmBuffer, NULL);
 	if (result != DS_OK)
@@ -1187,19 +824,19 @@ bool VDirectSoundDevice::OpenStream(int Rate, int Bits, int Channels)
 		int		best = -1;
 		double	least_time = 999999999.0;
 
-		for (i = 0; i < MAX_VOICES; i++)
+		for (i = 0; i < NumBuffers; i++)
 		{
-			if (free_buffers[i].sound_id && 
-				free_buffers[i].free_time < least_time)
+			if (Buffers[i].SoundID && !Buffers[i].Playing &&
+				Buffers[i].FreeTime < least_time)
 			{
 				best = i;
-				least_time = free_buffers[i].free_time;
+				least_time = Buffers[i].FreeTime;
 			}
 		}
 		if (best != -1)
 		{
-			free_buffers[best].buf->Release();
-			free_buffers[best].sound_id = 0;
+			Buffers[best].Buffer->Release();
+			Buffers[best].SoundID = 0;
 			result = DSound->CreateSoundBuffer(&dsbdesc, &StrmBuffer, NULL);
 		}
 	}
@@ -1342,9 +979,12 @@ void VDirectSoundDevice::ResumeStream()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.33  2005/11/13 14:36:22  dj_jl
+//	Moved common sound functions to main sound module.
+//
 //	Revision 1.32  2005/11/07 22:57:09  dj_jl
 //	Some M$VC fixes.
-//
+//	
 //	Revision 1.31  2005/11/06 15:27:09  dj_jl
 //	Added support for 16 bit sounds.
 //	

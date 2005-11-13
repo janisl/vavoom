@@ -39,27 +39,10 @@
 #include "gamedefs.h"
 #include "s_local.h"
 
-struct FALChannel
-{
-	int			origin_id;
-	int			channel;
-	TVec		origin;
-	TVec		velocity;
-	int			sound_id;
-	int			priority;
-	float		volume;
-
-	ALuint		source;
-};
-
 class VOpenALDevice : public VSoundDevice
 {
 private:
 	enum { MAX_VOICES = 256 };
-
-	enum { MAX_SND_DIST = 2025 };
-	enum { PRIORITY_MAX_ADJUST = 10 };
-	enum { DIST_ADJUST = MAX_SND_DIST / PRIORITY_MAX_ADJUST };
 
 	enum { NUM_STRM_BUFFERS = 8 };
 	enum { STRM_BUFFER_SIZE = 1024 };
@@ -67,22 +50,10 @@ private:
 	ALCdevice*	Device;
 	ALCcontext*	Context;
 	ALuint*		Buffers;
-	ALuint		VoiceBuffer;
 
-	int			snd_MaxVolume;	// maximum volume for sound
-
-	FALChannel	Channel[MAX_VOICES];
-	int			snd_Channels;	// number of channels available
-
-	int 		sndcount;
 	bool		supportEAX;
-
 	EAXGet		pEAXGet;
 	EAXSet		pEAXSet;
-
-	TVec		listener_forward;
-	TVec		listener_right;
-	TVec		listener_up;
 
 	ALuint		StrmSampleRate;
 	ALuint		StrmFormat;
@@ -100,42 +71,29 @@ private:
 	static TCvarI		eax_environment;
 
 public:
-	//	VSubsystem interface.
-	void Tick(float DeltaTime);
-
 	//	VSoundDevice interface.
-	void Init(void);
-	void Shutdown(void);
-	void PlaySound(int sound_id, const TVec &origin, const TVec &velocity,
-		int origin_id, int channel, float volume);
-	void PlaySoundTillDone(const char *sound);
-	void StopSound(int origin_id, int channel);
-	void StopAllSound(void);
-	bool IsSoundPlaying(int origin_id, int sound_id);
+	bool Init();
+	int SetChannels(int);
+	void Shutdown();
+	void Tick(float);
+	int PlaySound(int, float, float, float, bool);
+	int PlaySound3D(int, const TVec&, const TVec&, float, float, bool);
+	void UpdateChannel(int, float, float);
+	void UpdateChannel3D(int, const TVec&, const TVec&);
+	bool IsChannelPlaying(int);
+	void StopChannel(int);
+	void UpdateListener(const TVec&, const TVec&, const TVec&, const TVec&, const TVec&);
 
 	bool OpenStream(int, int, int);
 	void CloseStream();
 	int GetStreamAvailable();
 	short* GetStreamBuffer();
-	void SetStreamData(short* Data, int Len);
+	void SetStreamData(short*, int);
 	void SetStreamVolume(float);
 	void PauseStream();
 	void ResumeStream();
 
-private:
-	int GetChannel(int sound_id, int origin_id, int channel, int priority);
-	void StopChannel(int chan_num);
-
-	int CalcDist(const TVec &origin)
-	{
-		return (int)Length(origin - cl.vieworg);
-	}
-
-	int CalcPriority(int sound_id, int dist)
-	{
-		return S_sfx[sound_id].Priority *
-			(PRIORITY_MAX_ADJUST - (dist / DIST_ADJUST));
-	}
+	bool LoadSound(int);
 };
 
 IMPLEMENT_SOUND_DEVICE(VOpenALDevice, SNDDRV_OpenAL, "OpenAL",
@@ -156,74 +114,76 @@ TCvarI VOpenALDevice::eax_environment("al_eax_environment", "0");
 //
 //==========================================================================
 
-void VOpenALDevice::Init(void)
+bool VOpenALDevice::Init()
 {
 	guard(VOpenALDevice::Init);
 	ALenum E;
 
-	if (M_CheckParm("-nosound") ||
-		(M_CheckParm("-nosfx") && M_CheckParm("-nomusic")))
+	//	Connect to a device.
+	Device = alcOpenDevice(NULL);
+	if (!Device)
 	{
-		return;
+		GCon->Log(NAME_Init, "Couldn't open OpenAL device");
+		return false;
 	}
-
-	//	Setup sound
-	if (!M_CheckParm("-nosfx"))
-	{
-		//	Connect to a device.
-		Device = alcOpenDevice(NULL);
-		if (!Device)
-		{
-			GCon->Log(NAME_Init, "Couldn't open OpenAL device");
-			return;
-		}
-		//	In Linux it's not implemented.
+	//	In Linux it's not implemented.
 #ifdef ALC_DEVICE_SPECIFIER
-		GCon->Logf(NAME_Init, "Opened OpenAL device %s", alcGetString(Device, ALC_DEVICE_SPECIFIER));
+	GCon->Logf(NAME_Init, "Opened OpenAL device %s", alcGetString(Device, ALC_DEVICE_SPECIFIER));
 #endif
 
-		//	Create a context and make it current.
-		Context = alcCreateContext(Device, NULL);
-		if (!Context)
-		{
-			Sys_Error("Failed to create OpenAL context");
-		}
-		alcMakeContextCurrent(Context);
-		E = alGetError();
-		if (E != AL_NO_ERROR)
-		{
-			Sys_Error("OpenAL error: %s", alGetString(E));
-		}
-
-		//	Print some information.
-		GCon->Logf(NAME_Init, "AL_VENDOR: %s", alGetString(AL_VENDOR));
-		GCon->Logf(NAME_Init, "AL_RENDERER: %s", alGetString(AL_RENDERER));
-		GCon->Logf(NAME_Init, "AL_VERSION: %s", alGetString(AL_VERSION));
-		GCon->Log(NAME_Init, "AL_EXTENSIONS:");
-		char *sbuf = Z_StrDup((char*)alGetString(AL_EXTENSIONS));
-		for (char *s = strtok(sbuf, " "); s; s = strtok(NULL, " "))
-		{
-			GCon->Logf(NAME_Init, "- %s", s);
-		}
-		Z_Free(sbuf);
-
-		if (alIsExtensionPresent((ALubyte *)"EAX"))
-		{
-			GCon->Log(NAME_Init, "EAX 2.0 supported");
-			pEAXSet = (EAXSet)alGetProcAddress((ALubyte *)"EAXSet");
-			pEAXGet = (EAXGet)alGetProcAddress((ALubyte *)"EAXGet");
-			supportEAX = true;
-		}
-
-		//	Allocate array for buffers.
-		Buffers = Z_CNew<ALuint>(S_sfx.Num());
-
-		//	Free all channels for use.
-		snd_Channels = MAX_VOICES;
-		memset(Channel, 0, sizeof(Channel));
-
-		snd_MaxVolume = -1;
+	//	Create a context and make it current.
+	Context = alcCreateContext(Device, NULL);
+	if (!Context)
+	{
+		Sys_Error("Failed to create OpenAL context");
 	}
+	alcMakeContextCurrent(Context);
+	E = alGetError();
+	if (E != AL_NO_ERROR)
+	{
+		Sys_Error("OpenAL error: %s", alGetString(E));
+	}
+
+	//	Print some information.
+	GCon->Logf(NAME_Init, "AL_VENDOR: %s", alGetString(AL_VENDOR));
+	GCon->Logf(NAME_Init, "AL_RENDERER: %s", alGetString(AL_RENDERER));
+	GCon->Logf(NAME_Init, "AL_VERSION: %s", alGetString(AL_VERSION));
+	GCon->Log(NAME_Init, "AL_EXTENSIONS:");
+	char *sbuf = Z_StrDup((char*)alGetString(AL_EXTENSIONS));
+	for (char *s = strtok(sbuf, " "); s; s = strtok(NULL, " "))
+	{
+		GCon->Logf(NAME_Init, "- %s", s);
+	}
+	Z_Free(sbuf);
+
+	if (alIsExtensionPresent((ALubyte *)"EAX"))
+	{
+		GCon->Log(NAME_Init, "EAX 2.0 supported");
+		pEAXSet = (EAXSet)alGetProcAddress((ALubyte *)"EAXSet");
+		pEAXGet = (EAXGet)alGetProcAddress((ALubyte *)"EAXGet");
+		supportEAX = true;
+	}
+
+	//	Allocate array for buffers.
+	Buffers = Z_CNew<ALuint>(S_sfx.Num());
+	Sound3D = true;
+	return true;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenALDevice::SetChannels
+//
+//==========================================================================
+
+int VOpenALDevice::SetChannels(int InNumChannels)
+{
+	guard(VOpenALDevice::SetChannels);
+	int NumChannels = MAX_VOICES;
+	if (NumChannels > InNumChannels)
+		NumChannels = InNumChannels;
+	return NumChannels;
 	unguard;
 }
 
@@ -233,11 +193,9 @@ void VOpenALDevice::Init(void)
 //
 //==========================================================================
 
-void VOpenALDevice::Shutdown(void)
+void VOpenALDevice::Shutdown()
 {
 	guard(VOpenALDevice::Shutdown);
-	//	Stop playback of all sounds.
-	StopAllSound();
 	//	Delete buffers.
 	if (Buffers)
 	{
@@ -245,11 +203,7 @@ void VOpenALDevice::Shutdown(void)
 		Z_Free(Buffers);
 		Buffers = NULL;
 	}
-	if (VoiceBuffer)
-	{
-		alDeleteBuffers(1, &VoiceBuffer);
-		VoiceBuffer = 0;
-	}
+
 	//	Destroy context.
 	if (Context)
 	{
@@ -271,93 +225,61 @@ void VOpenALDevice::Shutdown(void)
 
 //==========================================================================
 //
-//	VOpenALDevice::GetChannel
+//  VOpenALDevice::Tick
 //
 //==========================================================================
 
-int VOpenALDevice::GetChannel(int sound_id, int origin_id, int channel, int priority)
+void VOpenALDevice::Tick(float)
 {
-	guard(VOpenALDevice::GetChannel);
-	int 		chan;
-	int			i;
-	int			lp; //least priority
-	int			found;
-	int			prior;
-	int numchannels = S_sfx[sound_id].NumChannels;
+}
 
-	if (numchannels != -1)
+//==========================================================================
+//
+//	VOpenALDevice::LoadSound
+//
+//==========================================================================
+
+bool VOpenALDevice::LoadSound(int sound_id)
+{
+	guard(VOpenALDevice::LoadSound);
+	if (Buffers[sound_id])
 	{
-		lp = -1; //denote the argument sound_id
-		found = 0;
-		prior = priority;
-		for (i=0; i<snd_Channels; i++)
-		{
-			if (Channel[i].sound_id == sound_id)
-			{
-				found++; //found one.  Now, should we replace it??
-				if (prior >= Channel[i].priority)
-				{
-					// if we're gonna kill one, then this'll be it
-					lp = i;
-					prior = Channel[i].priority;
-				}
-			}
-		}
-
-		if (found >= numchannels)
-		{
-			if (lp == -1)
-			{// other sounds have greater priority
-				return -1; // don't replace any sounds
-			}
-			StopChannel(lp);
-		}
+		return true;
 	}
 
-	//	Mobjs can have only one sound
-	if (origin_id && channel)
-    {
-		for (i = 0; i < snd_Channels; i++)
-		{
-			if (Channel[i].origin_id == origin_id &&
-				Channel[i].channel == channel)
-			{
-				// only allow other mobjs one sound
-				StopChannel(i);
-				return i;
-			}
-		}
-	}
-
-	//	Look for a free channel
-	for (i = 0; i < snd_Channels; i++)
+	//	Check, that sound lump is loaded
+	if (!S_LoadSound(sound_id))
 	{
-		if (!Channel[i].sound_id)
-		{
-			return i;
-		}
+		//	Missing sound.
+		return false;
 	}
 
-	//	Look for a lower priority sound to replace.
-	sndcount++;
-	if (sndcount >= snd_Channels)
+	//	Clear error code.
+	alGetError();
+
+	//	Create buffer.
+	alGenBuffers(1, &Buffers[sound_id]);
+	if (alGetError() != AL_NO_ERROR)
 	{
-		sndcount = 0;
+		GCon->Log(NAME_Dev, "Failed to gen buffer");
+		S_DoneWithLump(sound_id);
+		return false;
 	}
 
-	for (chan = 0; chan < snd_Channels; chan++)
+	//	Load buffer data.
+	alBufferData(Buffers[sound_id], S_sfx[sound_id].SampleBits == 8 ?
+		AL_FORMAT_MONO8 : AL_FORMAT_MONO16, S_sfx[sound_id].Data,
+		S_sfx[sound_id].DataSize, S_sfx[sound_id].SampleRate);
+	if (alGetError() != AL_NO_ERROR)
 	{
-		i = (sndcount + chan) % snd_Channels;
-		if (priority >= Channel[i].priority)
-		{
-			//replace the lower priority sound.
-			StopChannel(i);
-			return i;
-		}
+		GCon->Log(NAME_Dev, "Failed to load buffer data");
+		S_DoneWithLump(sound_id);
+		return false;
 	}
 
-    //	no free channels.
-	return -1;
+	//	We don't need to keep lump static
+	S_DoneWithLump(sound_id);
+	return true;
 	unguard;
 }
 
@@ -370,62 +292,13 @@ int VOpenALDevice::GetChannel(int sound_id, int origin_id, int channel, int prio
 //
 //==========================================================================
 
-void VOpenALDevice::PlaySound(int sound_id, const TVec &origin,
-	const TVec &velocity, int origin_id, int channel, float volume)
+int VOpenALDevice::PlaySound(int sound_id, float volume, float, float pitch,
+	bool Loop)
 {
 	guard(VOpenALDevice::PlaySound);
-	if (!snd_Channels || !sound_id || !snd_MaxVolume || !volume)
+	if (!LoadSound(sound_id))
 	{
-		return;
-	}
-
-	// calculate the distance before other stuff so that we can throw out
-	// sounds that are beyond the hearing range.
-	int dist = 0;
-	if (origin_id && origin_id != cl.clientnum + 1)
-		dist = CalcDist(origin);
-	if (dist >= MAX_SND_DIST)
-	{
-		return; // sound is beyond the hearing range...
-	}
-
-	int priority = CalcPriority(sound_id, dist);
-
-	int chan = GetChannel(sound_id, origin_id, channel, priority);
-	if (chan == -1)
-	{
-		return; //no free channels.
-	}
-
-	if (!Buffers[sound_id])
-	{
-		//	Check, that sound lump is loaded
-		if (!S_LoadSound(sound_id))
-		{
-			//	Missing sound.
-			return;
-		}
-
-		alGetError();	//	Clear error code.
-		alGenBuffers(1, &Buffers[sound_id]);
-		if (alGetError() != AL_NO_ERROR)
-		{
-			GCon->Log(NAME_Dev, "Failed to gen buffer");
-			S_DoneWithLump(sound_id);
-			return;
-		}
-		alBufferData(Buffers[sound_id], S_sfx[sound_id].SampleBits == 8 ?
-			AL_FORMAT_MONO8 : AL_FORMAT_MONO16, S_sfx[sound_id].Data,
-			S_sfx[sound_id].DataSize, S_sfx[sound_id].SampleRate);
-		if (alGetError() != AL_NO_ERROR)
-		{
-			GCon->Log(NAME_Dev, "Failed to load buffer data");
-			S_DoneWithLump(sound_id);
-			return;
-		}
-
-		//	We don't need to keep lump static
-		S_DoneWithLump(sound_id);
+		return -1;
 	}
 
 	ALuint src;
@@ -434,233 +307,150 @@ void VOpenALDevice::PlaySound(int sound_id, const TVec &origin,
 	if (alGetError() != AL_NO_ERROR)
 	{
 		GCon->Log(NAME_Dev, "Failed to gen source");
-		return;
+		return -1;
 	}
 
 	alSourcei(src, AL_BUFFER, Buffers[sound_id]);
 
     alSourcef(src, AL_GAIN, volume);
 	alSourcef(src, AL_ROLLOFF_FACTOR, rolloff_factor);
-	if (!origin_id)
-	{
-		alSourcei(src, AL_SOURCE_RELATIVE, AL_TRUE);
-	}
-	else if (origin_id == cl.clientnum + 1)
-	{
-		alSourcei(src, AL_SOURCE_RELATIVE, AL_TRUE);
-		alSource3f(src, AL_POSITION, 0.0, 0.0, -16.0);
-		alSourcef(src, AL_REFERENCE_DISTANCE, reference_distance);
-		alSourcef(src, AL_MAX_DISTANCE, max_distance);
-	}
-	else
-	{
-		alSource3f(src, AL_POSITION,
-			origin.x, origin.y, origin.z);
-		alSource3f(src, AL_VELOCITY,
-			velocity.x, velocity.y, velocity.z);
-		alSourcef(src, AL_REFERENCE_DISTANCE, reference_distance);
-		alSourcef(src, AL_MAX_DISTANCE, max_distance);
-	} 
-	if (S_sfx[sound_id].ChangePitch)
-	{
-		alSourcef(src, AL_PITCH, 1.0 + (Random() - Random()) / 16.0);
-	}
+	alSourcei(src, AL_SOURCE_RELATIVE, AL_TRUE);
+	alSource3f(src, AL_POSITION, 0.0, 0.0, -16.0);
+	alSourcef(src, AL_REFERENCE_DISTANCE, reference_distance);
+	alSourcef(src, AL_MAX_DISTANCE, max_distance);
+	alSourcef(src, AL_PITCH, pitch);
+	if (Loop)
+		alSourcei(src, AL_LOOPING, AL_TRUE);
 	alSourcePlay(src);
-
-	Channel[chan].origin_id = origin_id;
-	Channel[chan].channel = channel;
-	Channel[chan].origin = origin;
-	Channel[chan].velocity = velocity;
-	Channel[chan].sound_id = sound_id;
-	Channel[chan].priority = priority;
-	Channel[chan].volume = volume;
-	Channel[chan].source = src;
+	return src;
 	unguard;
 }
 
 //==========================================================================
 //
-//	VOpenALDevice::PlaySoundTillDone
+//	VOpenALDevice::PlaySound3D
 //
 //==========================================================================
 
-void VOpenALDevice::PlaySoundTillDone(const char *sound)
+int VOpenALDevice::PlaySound3D(int sound_id, const TVec &origin,
+	const TVec &velocity, float volume, float pitch, bool Loop)
 {
-	guard(VOpenALDevice::PlaySoundTillDone);
-	//	Get sound ID
-	int sound_id = S_GetSoundID(sound);
-
-	//	Maybe don't play it?
-	if (!snd_Channels || !sound_id || !snd_MaxVolume)
+	guard(VOpenALDevice::PlaySound3D);
+	if (!LoadSound(sound_id))
 	{
-		return;
+		return -1;
 	}
 
-	//	Silence please
-	S_StopAllSound();
-
-	//	Create buffer
-	if (!Buffers[sound_id])
-	{
-		//	Check, that sound lump is loaded
-		if (!S_LoadSound(sound_id))
-		{
-			//	Missing sound.
-			return;
-		}
-
-		alGenBuffers(1, &Buffers[sound_id]);
-		alBufferData(Buffers[sound_id], S_sfx[sound_id].SampleBits == 8 ?
-			AL_FORMAT_MONO8 : AL_FORMAT_MONO16, S_sfx[sound_id].Data,
-			S_sfx[sound_id].DataSize, S_sfx[sound_id].SampleRate);
-
-		//	We don't need to keep lump static
-		S_DoneWithLump(sound_id);
-	}
-
-	//	Create source.
 	ALuint src;
 	alGetError();	//	Clear error code.
 	alGenSources(1, &src);
 	if (alGetError() != AL_NO_ERROR)
 	{
 		GCon->Log(NAME_Dev, "Failed to gen source");
-		return;
+		return -1;
 	}
 
 	alSourcei(src, AL_BUFFER, Buffers[sound_id]);
-	alSourcei(src, AL_SOURCE_RELATIVE, AL_TRUE);
 
-	//	Play it
-    alSourcePlay(src);
-
-	//	Start wait
-	double start = Sys_Time();
-	while (1)
-    {
-	    ALint Status;
-
-		alGetSourcei(src, AL_SOURCE_STATE, &Status);
-		if (Status == AL_STOPPED)
-		{
-			//	Playback done
-			break;
-		}
-
-		if (Sys_Time() - start > 10.0)
-		{
-			//	Time out
-			break;
-		}
-    }
-
-	//	Stop and release buffer
-	alSourceStop(src);
-	alDeleteSources(1, &src);
+    alSourcef(src, AL_GAIN, volume);
+	alSourcef(src, AL_ROLLOFF_FACTOR, rolloff_factor);
+	alSource3f(src, AL_POSITION, origin.x, origin.y, origin.z);
+	alSource3f(src, AL_VELOCITY, velocity.x, velocity.y, velocity.z);
+	alSourcef(src, AL_REFERENCE_DISTANCE, reference_distance);
+	alSourcef(src, AL_MAX_DISTANCE, max_distance);
+	alSourcef(src, AL_PITCH, pitch);
+	if (Loop)
+		alSourcei(src, AL_LOOPING, AL_TRUE);
+	alSourcePlay(src);
+	return src;
 	unguard;
 }
 
 //==========================================================================
 //
-//  VOpenALDevice::Tick
-//
-// 	Update the sound parameters. Used to control volume and pan
-// changes such as when a player turns.
+//  VOpenALDevice::UpdateChannel
 //
 //==========================================================================
 
-void VOpenALDevice::Tick(float DeltaTime)
+void VOpenALDevice::UpdateChannel(int, float, float)
 {
-	guard(VOpenALDevice::Tick);
-	int 		i;
+}
 
-	if (!snd_Channels)
+//==========================================================================
+//
+//	VOpenALDevice::UpdateChannel3D
+//
+//==========================================================================
+
+void VOpenALDevice::UpdateChannel3D(int Handle, const TVec& Org,
+	const TVec& Vel)
+{
+	guard(VOpenALDevice::UpdateChannel3D);
+	if (Handle == -1)
 	{
 		return;
 	}
+	alSource3f(Handle, AL_POSITION, Org.x, Org.y, Org.z);
+	alSource3f(Handle, AL_VELOCITY, Vel.x, Vel.y, Vel.z);
+	unguard;
+}
 
-	if (sfx_volume < 0.0)
+//==========================================================================
+//
+//	VOpenALDevice::IsChannelPlaying
+//
+//==========================================================================
+
+bool VOpenALDevice::IsChannelPlaying(int Handle)
+{
+	guard(VOpenALDevice::IsChannelPlaying);
+	if (Handle == -1)
 	{
-		sfx_volume = 0.0;
+		return false;
 	}
-	if (sfx_volume > 1.0)
-	{
-		sfx_volume = 1.0;
-	}
+	ALint State;
+	alGetSourcei(Handle, AL_SOURCE_STATE, &State);
+	return State == AL_PLAYING;
+	unguard;
+}
 
-	if (sfx_volume != snd_MaxVolume)
-    {
-	    snd_MaxVolume = sfx_volume;
-		alListenerf(AL_GAIN, snd_MaxVolume);
-		if (!snd_MaxVolume)
-		{
-			StopAllSound();
-		}
-    }
+//==========================================================================
+//
+//  VOpenALDevice::StopChannel
+//
+//	Stop the sound. Necessary to prevent runaway chainsaw, and to stop
+// rocket launches when an explosion occurs.
+//	All sounds MUST be stopped;
+//
+//==========================================================================
 
-	if (!snd_MaxVolume)
+void VOpenALDevice::StopChannel(int Handle)
+{
+	guard(VOpenALDevice::StopChannel);
+	if (Handle == -1)
 	{
 		return;
 	}
+	//	Stop buffer
+	alSourceStop(Handle);
+	alDeleteSources(1, (ALuint*)&Handle);
+	unguard;
+}
 
-	AngleVectors(cl.viewangles, listener_forward, listener_right, listener_up);
+//==========================================================================
+//
+//	VOpenALDevice::UpdateListener
+//
+//==========================================================================
 
-	for (i = 0; i < snd_Channels; i++)
-	{
-		if (!Channel[i].sound_id)
-		{
-			//	Nothing on this channel
-			continue;
-		}
-		ALint State;
-	    alGetSourcei(Channel[i].source, AL_SOURCE_STATE, &State);
-		if (State == AL_STOPPED)
-		{
-			//	Playback done
-        	StopChannel(i);
-			continue;
-		}
+void VOpenALDevice::UpdateListener(const TVec& org, const TVec& vel,
+	const TVec& fwd, const TVec&, const TVec& up)
+{
+	guard(VOpenALDevice::UpdateListener);
+	alListener3f(AL_POSITION, org.x, org.y, org.z);
+	alListener3f(AL_VELOCITY, vel.x, vel.y, vel.z);
 
-		if (!Channel[i].origin_id)
-		{
-			//	Full volume sound
-			continue;
-		}
-
-		if (Channel[i].origin_id == cl.clientnum + 1)
-		{
-			//	Client sound
-			continue;
-		}
-
-		//	Move sound
-		Channel[i].origin += Channel[i].velocity * DeltaTime;
-
-		int dist = CalcDist(Channel[i].origin);
-		if (dist >= MAX_SND_DIST)
-		{
-			//	Too far away
-			StopChannel(i);
-			continue;
-		}
-
-		Channel[i].priority = CalcPriority(Channel[i].sound_id, dist);
-	}
-
-	alListener3f(AL_POSITION, cl.vieworg.x, cl.vieworg.y, cl.vieworg.z);
-
-//	alListener3f(AL_VELOCITY,
-//		(float)listener->mo->momx,
-//		(float)listener->mo->momy,
-//		(float)listener->mo->momz);
-
-	ALfloat orient[6] = {
-		listener_forward.x,
-		listener_forward.y,
-		listener_forward.z,
-		listener_up.x,
-		listener_up.y,
-		listener_up.z};
+	ALfloat orient[6] = { fwd.x, fwd.y, fwd.z, up.x, up.y, up.z};
 	alListenerfv(AL_ORIENTATION, orient);
 
 	alDopplerFactor(doppler_factor);
@@ -678,102 +468,6 @@ void VOpenALDevice::Tick(float DeltaTime)
 		pEAXSet(&DSPROPSETID_EAX_ListenerProperties,
 			DSPROPERTY_EAXLISTENER_ENVIRONMENTSIZE, 0, &envSize, sizeof(float));
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//  VOpenALDevice::StopChannel
-//
-//	Stop the sound. Necessary to prevent runaway chainsaw, and to stop
-// rocket launches when an explosion occurs.
-//	All sounds MUST be stopped;
-//
-//==========================================================================
-
-void VOpenALDevice::StopChannel(int chan_num)
-{
-	if (Channel[chan_num].sound_id)
-    {
-		//	Stop buffer
-		alSourceStop(Channel[chan_num].source);
-		alDeleteSources(1, &Channel[chan_num].source);
-
-		//	Clear channel data
-		Channel[chan_num].source = 0;
-		Channel[chan_num].origin_id = 0;
-        Channel[chan_num].sound_id = 0;
-	}
-}
-
-//==========================================================================
-//
-//	VOpenALDevice::StopSound
-//
-//==========================================================================
-
-void VOpenALDevice::StopSound(int origin_id, int channel)
-{
-	guard(VOpenALDevice::StopSound);
-	int i;
-
-    for (i = 0; i < snd_Channels; i++)
-    {
-		if (Channel[i].origin_id == origin_id &&
-			(!channel || Channel[i].channel == channel))
-		{
-        	StopChannel(i);
-		}
-    }
-	unguard;
-}
-
-//==========================================================================
-//
-//	VOpenALDevice::StopAllSound
-//
-//==========================================================================
-
-void VOpenALDevice::StopAllSound(void)
-{
-	guard(VOpenALDevice::StopAllSound);
-	int i;
-
-	//	stop all sounds
-	for (i = 0; i < snd_Channels; i++)
-	{
-		StopChannel(i);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VOpenALDevice::IsSoundPlaying
-//
-//==========================================================================
-
-bool VOpenALDevice::IsSoundPlaying(int origin_id, int sound_id)
-{
-	guard(VOpenALDevice::IsSoundPlaying);
-	int i;
-
-	for (i = 0; i < snd_Channels; i++)
-	{
-		if (Channel[i].sound_id == sound_id &&
-			Channel[i].origin_id == origin_id)
-		{
-		    ALint State;
-
-		    alGetSourcei(Channel[i].source, AL_SOURCE_STATE, &State);
-
-			if (State == AL_PLAYING)
-			{
-				return true;
-			}
-		}
-	}
-	return false;
 	unguard;
 }
 
@@ -935,9 +629,12 @@ void VOpenALDevice::ResumeStream()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2005/11/13 14:36:22  dj_jl
+//	Moved common sound functions to main sound module.
+//
 //	Revision 1.15  2005/11/06 15:27:09  dj_jl
 //	Added support for 16 bit sounds.
-//
+//	
 //	Revision 1.14  2005/11/05 15:50:07  dj_jl
 //	Voices played as normal sounds.
 //	

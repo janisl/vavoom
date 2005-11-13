@@ -48,6 +48,7 @@ public:
 	VSDLMidiDevice();
 	void Init();
 	void Shutdown();
+	void SetVolume(float);
 	void Tick(float);
 	void Play(void*, int, const char*, bool);
 	void Pause();
@@ -99,11 +100,6 @@ VSDLMidiDevice::VSDLMidiDevice()
 void VSDLMidiDevice::Init()
 {
 	guard(VSDLMidiDevice::Init);
-	if (M_CheckParm("-nosound") || M_CheckParm("-nomusic"))
-	{
-		return;
-	}
-	
 	if (!sdl_mixer_initialised)
 	{
 		//	Currently I failed to make OpenAL work with SDL music.
@@ -120,7 +116,6 @@ void VSDLMidiDevice::Init()
 #endif
 	}
 	Initialised = true;
-	Enabled = true;
 	unguard;
 }
 
@@ -146,40 +141,29 @@ void VSDLMidiDevice::Shutdown()
 
 //==========================================================================
 //
+//	VSDLMidiDevice::SetVolume
+//
+//==========================================================================
+
+void VSDLMidiDevice::SetVolume(float Volume)
+{
+	guard(VSDLMidiDevice::SetVolume);
+	if (Volume != MusVolume)
+	{
+		MusVolume = Volume;
+		Mix_VolumeMusic(int(MusVolume * 255));
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //  VSDLMidiDevice::Tick
 //
 //==========================================================================
 
 void VSDLMidiDevice::Tick(float)
 {
-	guard(VSDLMidiDevice::Tick);
-	if (!Initialised)
-		return;
-
-	//	Update volume
-	if (music_volume < 0.0)
-	{
-		music_volume = 0.0;
-	}
-	if (music_volume > 1.0)
-	{
-		music_volume = 1.0;
-	}
-
-	if (music_volume != MusVolume)
-	{
-		if (!MusVolume && (float)music_volume && !MusicPaused)
-		{
-			Mix_ResumeMusic();
-		}
-		if (MusVolume && !(float)music_volume)
-		{
-			Mix_PauseMusic();
-		}
-		MusVolume = music_volume;
-		Mix_VolumeMusic(int(MusVolume * 255));
-	}
-	unguard;
 }
 
 //==========================================================================
@@ -288,9 +272,12 @@ bool VSDLMidiDevice::IsPlaying()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2005/11/13 14:36:22  dj_jl
+//	Moved common sound functions to main sound module.
+//
 //	Revision 1.7  2005/09/12 19:45:16  dj_jl
 //	Created midi device class.
-//
+//	
 //	Revision 1.6  2005/05/26 17:00:46  dj_jl
 //	Working MUS to MID conversion
 //	
