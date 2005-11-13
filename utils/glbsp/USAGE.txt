@@ -2,22 +2,22 @@
 USING glBSP
 ===========
 
-by Andrew Apted.  18th September 2004.
+by Andrew Apted.  13th September 2005.
 
 
 Running glBSP
 -------------
 
-There are now two versions of glBSP: normal `glbsp' (the text
-version), and `glBSPX' (offering a graphical interface).  This
-documentation applies to the text version only.  Under Windows, the
-text version must be run from the DOS box.
+There are now two versions of glBSP: normal 'glbsp' (the text
+version), and 'glBSPX' (offering a graphical interface).  This
+documentation applies to the text version only.  Under Windows,
+the text version must be run from the command shell.
 
 There are two main ways of using glBSP:
 
   1. Create the GL nodes and store them in a separate file with the
      GWA extension.  This is called "GWA mode".
-  
+
   2. Create the GL nodes and store them in the WAD file itself, just
      like how a normal node builder works.
 
@@ -37,20 +37,21 @@ and then glBSP will create the file "foo.gwa".  A compliant OpenGL
 DOOM port (such as EDGE) will notice the GWA file automatically and
 load it appropriately.  Nothing more needs to be done.
 
-You can also specify multiple wads here.  [This is a new feature in
-version 2.05].  Even wildcards should work.  For example:
+You can also specify multiple wads here, even wildcards should
+work.  For example:
 
-   glbsp foo.wad fred.wad simon*.wad 
+   glbsp foo.wad fred.wad simon*.wad
 
-Note !  You should not specify these GWA files on the command line
-of the OpenGL DOOM port (i.e. with the -file option), doing so will
-confuse it and it may crash.
+Note !  You should not give these GWA files to the DOOM port using
+the command line (i.e. with the -file option), doing so will confuse
+it and it'll probably crash.  The port will notice the GWA file
+automatically.
 
 Note 2: when using GWA mode, the output file does not contain any
 information for things, linedefs, sidedefs, sectors, reject, or
-blockmap, all it contains is the GL node information.  This is where
-the name "GWA" comes from, it is short for "GL WAD" (in case you were
-wondering).
+blockmap, all it contains is the GL node information.  This is
+where the name "GWA" comes from, it is short for "GL WAD" (in
+case you were wondering).
 
 
 2. Non-GWA Mode
@@ -67,36 +68,42 @@ and then glBSP will build the GL nodes and output the new file
 information if it is absent.
 
 
+Response Files
+--------------
+
+New in version 2.20 is support for response files.  These are
+files containing a list of options.  You specify the response
+file by prefixing it with '@'.  For example:
+
+   glbsp @arg_list.rsp
+
+The "@arg_list.rsp" on the command line will be replaced with
+the contents of that file.  New-line characters are treated like
+spaces.  Recursion (using '@' inside a response file) is not
+supported.
+
+
 Option Descriptions
 -------------------
 
 The following options are recognised:
 
-  -q / -quiet  Quieter output.  Information about each level (like
+  -q           Quieter output.  Information about each level (like
                the number of linedefs, blockmap size, etc) is not
                displayed when this option is given, and a few other
                messages are skipped.  Important messages, like
                failure to build a certain level, are still shown.
 
-  -factor <num> 
-               Changes the cost assigned to seg splits.  Factor can
-               be any number greater than 0, larger values make seg
-               splits more costly (and thus glBSP tries harder to
-               avoid them), but smaller values produce better BSP
-               trees.  See the section below for more info.  The
-               default value is known to be a good compromise.
-
-  -fast        Starting with version 2.00, glBSP can cheat a bit and
-               re-use the original node information to create the GL
-               nodes, doing it *much* faster.  Use this option to
-               enable this feature.  The message "Using original nodes
-               to speed things up" will be displayed.
+  -fast        Lets glBSP can cheat a bit and re-use the original node
+               information to create the GL nodes, doing it much faster.
+               Use this option to enable this feature.  The message
+               "Using original nodes to speed things up" will be shown.
 
                The downside to reusing the original nodes is that they
                may not be as good as the ones glBSP normally creates,
                e.g. the special checks to minimise slime-trails don't
-               kick in, and the -factor value doesn't have much effect.
-  
+               kick in, and the -factor value doesn't have any effect.
+
   -warn        Shows extra warning messages, which detail various
                non-serious problems that glBSP has while analysing the
                level structure.  Often these warnings show a real
@@ -104,37 +111,43 @@ The following options are recognised:
                invalid sidedef), so they are worth checking now and
                then.
 
+  -normal      glBSP usually detects if the normal node info (i.e.
+               the non-GL variety) is present: when yes, it is left
+               untouched, otherwise glBSP creates it.  This option
+               forces glBSP to replace the normal node data with
+               newly constructed nodes.
+
+  -factor <num>
+               Changes the cost assigned to seg splits.  Factor can
+               be any number greater than 0, larger values make seg
+               splits more costly (and thus glBSP tries harder to
+               avoid them), but smaller values produce better BSP
+               trees.  See the section below for more info.  The
+               default value is known to be a good compromise.
+
+  -pack        Pack sidedefs, by detecting which sidedefs are
+               identical and removing the duplicates, producing a
+               smaller PWAD.
+
+               NOTE: this will make your level a lot harder to edit!
+               Therefore this is most useful when producing your final
+               WAD for public release.
+
   -noreject    Normally glBSP will create an simple REJECT map for
                each level.  This options prevents any existing
                REJECT map, such as one time-consumingly built by
                a dedicated reject builder, from being clobbered.
 
-  -noprog      Turn off the progress indicator.
+These options are rarely needed:
 
-  -normal      glBSP usually detects if the normal node info (i.e.
-               the non-GL variety) is present, and leave it untouched
-               when it is, otherwise create it.  This option forces
-               glBSP to recreate the normal node info.
-               
-  -packsides   Pack sidedefs, by detecting which sidedefs are
-               identical and removing the duplicates, producing a
-               smaller PWAD.
-               
-               NOTE: this may make your level a lot harder to edit !
-               Therefore this option is most useful when producing
-               the final WAD for public release.
- 
-These next set of options normally don't need to be used, but they are
-provided to allow complete control or for special circumstances:
+  -v1 .. -v5   Specify the version of the "GL Nodes" spec to use.
+               The default is -v2.  Using -v1 produces an obsolete
+               format.  Giving -v3 or -v5 will force certain lumps
+               to use the new formats, but is only useful for testing
+               since glBSP will automatically switch to V5 format
+               when certain limits are exceeded.
 
-  -v1 .. -v3   Specify the version of the "GL Nodes" spec to use.
-               Using -v1 provides backwards compatibility.  The
-               default is -v2.  Giving -v3 will force certain lumps
-               to use the new V3.0 formats, but is only useful for
-               testing since glBSP will automatically switch to these
-               formats when certain limits are exceeded.
-
-  -loadall     glBSP will normally try to copy lumps from the input
+  -loadall     glBSP normally tries to copy lumps from the input
                WAD file to the output file instead of loading them
                into memory.  This allows you to run glBSP on very
                large WADS (e.g. 15 MB for DOOM II) on a low memory
@@ -146,27 +159,29 @@ provided to allow complete control or for special circumstances:
                recommend _against_ it: you could lose your original
                WAD if something goes wrong (and you know Murphy...).
 
+  -noprog      Turn off the progress indicator.
+
   -nonormal    Forces glBSP to not create the normal node information
                when it detects that it is absent.
- 
+
   -forcegwa    Normally glBSP will automatically use GWA mode if the
                output filename is missing (i.e. no -o option) or if
                the output filename has the ".gwa" extension.  This
                option forces glBSP into GWA mode.
- 
-  -keepsect    Prevents unused sectors that are found in the level
-               from being removed.  This is important for anything
-               that refers to sector numbers directly (e.g. certain
-               obsolete RTS commands in EDGE), since pruning unused
-               sectors can make their numbers (as seen in an editor)
-               different.
- 
-  -noprune     Disables all pruning of unused vertices, sidedefs,
-               linedefs and sectors from levels.  Pruning only occurs
-               when normal nodes are being built (i.e. it is
-               automatically disabled when in GWA mode).
- 
-  -maxblock <num> 
+
+  -prunesec    Removes any unused sectors found in the level.  Only
+               works when normal nodes are being built.  This is
+               not done by default since some scripting languages
+               (Fragglescript, old versions of RTS) refer directly
+               to the sector numbers and removing even one will
+               change all the numbering.
+
+  -mergevert   Merge duplicate vertices at the same location into a
+               single vertex.  This is usually safe, but is not done
+               by default because some engines (e.g. Risen3D) need the
+               duplicate vertices to stay separate for special effect.
+
+  -maxblock <num>
                Sets the limit of the number of blocks the BLOCKMAP may
                contain before we truncate it.  Default is 44000.  When
                the level is too large to fit, glBSP will truncate the
@@ -177,15 +192,19 @@ provided to allow complete control or for special circumstances:
                don't hit anything.  On very large but sparse levels,
                using a larger value (e.g. 60000) may help.
 
-               A more serious problem is when the blockmap overflows
-               (glBSP will show a message about this).  The blockmap
-               created is invalid, and could crash the DOOM engine
-               when used.  Setting a lower limit (e.g. 20000 or less)
-               may help prevent crashes -- at the expense of the
-               no-collision problem popping up.  Some DOOM engines
-               (e.g. BOOM and MBF) have a "-blockmap" option that
-               generates their own blockmap internally, fixing these
-               problems.
+               A more serious problem is when the blockmap overflows.
+               The blockmap created would be invalid, and could crash
+               the DOOM engine when used.  glBSP will create an empty
+               blockmap instead, causing modern ports to build their
+               own blockmap.
+
+
+ZDBSP Format Nodes
+------------------
+
+When the normal nodes overflow, older versions of glBSP would simply
+write out the invalid node data.  glBSP 2.20 will write out the node
+data in the ZDBSP format (originally created for the ZDoom engine).
 
 
 Interaction with other tools
@@ -199,9 +218,9 @@ everything goes pear shaped.
 When using a reject building tool (such as RMB), you need to give
 the -noreject to glBSP to prevent the good REJECT data from being
 overwritten.
- 
+
 *** DO NOT: ***
-  
+
   + Run DSHRINK on your map WADs at any time!
 
   + Run CLEANWAD on your map WADs *after* you have compiled your GL
@@ -243,8 +262,8 @@ can be gauged by the output line that reads:
 
    Heights of left and right subtrees = (12,24)
 
-Lower values are better (the BSP tree is smaller), and values that are
-closer together are also better (the BSP is more balanced).
+Lower values are better (the BSP tree is smaller), and values that
+are closer together are also better (the BSP is more balanced).
 
 
 Differences to BSP 2.3
@@ -267,16 +286,16 @@ were changed or abandoned.  Features that are different:
 
   +  The "just for a grin" special feature where a linedef with tag
      999 would cause an angle adjustment was removed.
- 
+
   +  glBSP has Hexen support.
- 
+
   +  glBSP packs the blockmap, and can merge identical sidedefs.
 
   +  glBSP has a much more modular architecture, and can even serve as
      a plug-in for other programs.
 
   +  The GUI version, glBSPX, is completely new.
- 
+
 
 
 ---------------------------------------------------------------------------

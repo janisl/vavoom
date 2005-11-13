@@ -2,9 +2,9 @@
 // SYSTEM : System specific code
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2004 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2005 Andrew Apted
 //
-//  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
+//  Based on 'BSP 2.3' by Colin Reed, Lee Killough and others.
 //
 //  This program is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU General Public License
@@ -109,7 +109,13 @@ void PrintVerbose(const char *str, ...)
   }
 
 #if DEBUG_ENABLED
-  PrintDebug(">>> %s", message_buf);
+  {
+    va_start(args, str);
+    vsprintf(message_buf, str, args);
+    va_end(args);
+
+    PrintDebug(">>> %s", message_buf);
+  }
 #endif
 }
 

@@ -2,9 +2,9 @@
 // UTILITY : general purpose functions
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2004 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2005 Andrew Apted
 //
-//  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
+//  Based on 'BSP 2.3' by Colin Reed, Lee Killough and others.
 //
 //  This program is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU General Public License
@@ -61,6 +61,9 @@ void UtilFree(void *data);
 // compare two strings case insensitively.
 int UtilStrCaseCmp(const char *A, const char *B);
 
+// return a string for the current data and time
+const char *UtilTimeString(void);
+
 // round a positive value up to the nearest power of two.
 int UtilRoundPOW2(int x);
 
@@ -81,5 +84,10 @@ angle_g UtilComputeAngle(float_g dx, float_g dy);
 
 // check if the file exists.
 int UtilFileExists(const char *filename);
+
+// checksum functions
+void Adler32_Begin(uint32_g *crc);
+void Adler32_AddBlock(uint32_g *crc, const uint8_g *data, int length);
+void Adler32_Finish(uint32_g *crc);
 
 #endif /* __GLBSP_UTIL_H__ */

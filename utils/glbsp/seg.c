@@ -2,9 +2,9 @@
 // SEG : Choose the best Seg to use for a node line.
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2004 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2005 Andrew Apted
 //
-//  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
+//  Based on 'BSP 2.3' by Colin Reed, Lee Killough and others.
 //
 //  This program is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU General Public License
@@ -122,7 +122,7 @@ void FreeQuickAllocCuts(void)
 //
 // RecomputeSeg
 //
-// Fill in the fields `angle', `len', `pdx', `pdy', etc...
+// Fill in the fields 'angle', 'len', 'pdx', 'pdy', etc...
 //
 void RecomputeSeg(seg_t *seg)
 {
@@ -279,7 +279,7 @@ static INLINE_G void ComputeIntersection(seg_t *cur, seg_t *part,
 // AddIntersection
 //
 static void AddIntersection(intersection_t ** cut_list,
-    vertex_t *vert, seg_t *part)
+    vertex_t *vert, seg_t *part, boolean_g self_ref)
 {
   intersection_t *cut;
   intersection_t *after;
@@ -296,13 +296,11 @@ static void AddIntersection(intersection_t ** cut_list,
 
   cut->vertex = vert;
   cut->along_dist = UtilParallelDist(part, vert->x, vert->y);
-  
-  cut->l.open = VertexCheckOpen(vert, -part->pdx, -part->pdy,
-      &cut->l.right, &cut->l.left);
-
-  cut->r.open = VertexCheckOpen(vert, part->pdx, part->pdy,
-      &cut->r.left, &cut->r.right);
-  
+  cut->self_ref = self_ref;
+ 
+  cut->before = VertexCheckOpen(vert, -part->pdx, -part->pdy);
+  cut->after  = VertexCheckOpen(vert,  part->pdx,  part->pdy);
+ 
   /* enqueue the new intersection into the list */
 
   for (after=(*cut_list); after && after->next; after=after->next)
@@ -490,7 +488,7 @@ static int EvalPartitionWorker(superblock_t *seg_list, seg_t *part,
       else
         qnty = IFFY_LEN / -MAX(a, b);
 
-      info->cost += (int) (100 * factor * (qnty * qnty - 1.0));
+      info->cost += (int) (70 * factor * (qnty * qnty - 1.0));
       continue;
     }
 
@@ -521,7 +519,7 @@ static int EvalPartitionWorker(superblock_t *seg_list, seg_t *part,
 
       // the closer to the end, the higher the cost
       qnty = IFFY_LEN / MIN(fa, fb);
-      info->cost += (int) (100 * factor * (qnty * qnty - 1.0));
+      info->cost += (int) (140 * factor * (qnty * qnty - 1.0));
     }
   }
 
@@ -545,7 +543,7 @@ static int EvalPartitionWorker(superblock_t *seg_list, seg_t *part,
 //
 // -AJA- Evaluate a partition seg & determine the cost, taking into
 //       account the number of splits, difference between left &
-//       right, and linedefs that are tagged `precious'.
+//       right, and linedefs that are tagged 'precious'.
 //
 // Returns the computed cost, or a negative value if the seg should be
 // skipped altogether.
@@ -850,14 +848,16 @@ void DivideOneSeg(seg_t *cur, seg_t *part,
   float_g a = UtilPerpDist(part, cur->psx, cur->psy);
   float_g b = UtilPerpDist(part, cur->pex, cur->pey);
 
+  boolean_g self_ref = cur->linedef ? cur->linedef->self_ref : FALSE;
+
   if (cur->source_line == part->source_line)
     a = b = 0;
 
   /* check for being on the same line */
   if (fabs(a) <= DIST_EPSILON && fabs(b) <= DIST_EPSILON)
   {
-    AddIntersection(cut_list, cur->start, part);
-    AddIntersection(cut_list, cur->end, part);
+    AddIntersection(cut_list, cur->start, part, self_ref);
+    AddIntersection(cut_list, cur->end,   part, self_ref);
 
     // this seg runs along the same line as the partition.  check
     // whether it goes in the same direction or the opposite.
@@ -878,9 +878,9 @@ void DivideOneSeg(seg_t *cur, seg_t *part,
   if (a > -DIST_EPSILON && b > -DIST_EPSILON)
   {
     if (a < DIST_EPSILON)
-      AddIntersection(cut_list, cur->start, part);
+      AddIntersection(cut_list, cur->start, part, self_ref);
     else if (b < DIST_EPSILON)
-      AddIntersection(cut_list, cur->end, part);
+      AddIntersection(cut_list, cur->end, part, self_ref);
 
     AddSegToSuper(right_list, cur);
     return;
@@ -890,9 +890,9 @@ void DivideOneSeg(seg_t *cur, seg_t *part,
   if (a < DIST_EPSILON && b < DIST_EPSILON)
   {
     if (a > -DIST_EPSILON)
-      AddIntersection(cut_list, cur->start, part);
+      AddIntersection(cut_list, cur->start, part, self_ref);
     else if (b > -DIST_EPSILON)
-      AddIntersection(cut_list, cur->end, part);
+      AddIntersection(cut_list, cur->end, part, self_ref);
 
     AddSegToSuper(left_list, cur);
     return;
@@ -905,7 +905,7 @@ void DivideOneSeg(seg_t *cur, seg_t *part,
 
   new_seg = SplitSeg(cur, x, y);
 
-  AddIntersection(cut_list, cur->end, part);
+  AddIntersection(cut_list, cur->end, part, self_ref);
 
   if (a < 0)
   {
@@ -1016,90 +1016,149 @@ void AddMinisegs(seg_t *part,
   intersection_t *cur, *next;
   seg_t *seg, *buddy;
 
+  if (! cut_list)
+    return;
+
 # if DEBUG_CUTLIST
   PrintDebug("CUT LIST:\n");
+  PrintDebug("PARTITION: (%1.1f,%1.1f) += (%1.1f,%1.1f)\n",
+      part->psx, part->psy, part->pdx, part->pdy);
+
   for (cur=cut_list; cur; cur=cur->next)
   {
-    PrintDebug("  %s-%s  Vertex %04X  Along %1.2f  Left %d/%d  Right %d/%d\n", 
-        cur->l.open ? "O" : "C", cur->r.open ? "O" : "C", 
-        cur->vertex->index, cur->along_dist,
-        cur->l.left ? cur->l.left->index : -1,
-        cur->l.right ? cur->l.right->index : -1,
-        cur->r.left ? cur->r.left->index : -1,
-        cur->r.right ? cur->r.right->index : -1);
+    PrintDebug("  Vertex %8X (%1.1f,%1.1f)  Along %1.2f  [%d/%d]  %s\n", 
+        cur->vertex->index, cur->vertex->x, cur->vertex->y,
+        cur->along_dist,
+        cur->before ? cur->before->index : -1,
+        cur->after ? cur->after->index : -1,
+        cur->self_ref ? "SELFREF" : "");
   }
 # endif
 
-  // scan the intersection list...
+  // STEP 1: fix problems the intersection list...
 
-  for (cur=cut_list; cur && cur->next; cur=cur->next)
+  cur  = cut_list;
+  next = cur->next;
+
+  while (cur && next)
+  {
+    float_g len = next->along_dist - cur->along_dist;
+
+    if (len < -0.1)
+      InternalError("Bad order in intersect list: %1.3f > %1.3f\n",
+          cur->along_dist, next->along_dist);
+
+    if (len > 0.2)
+    {
+      cur  = next;
+      next = cur->next;
+      continue;
+    }
+
+    if (len > DIST_EPSILON)
+    {
+      PrintMiniWarn("Skipping very short seg (len=%1.3f) near (%1.1f,%1.1f)\n",
+          len, cur->vertex->x, cur->vertex->y);
+    }
+
+    // merge the two intersections into one
+
+# if DEBUG_CUTLIST
+    PrintDebug("Merging cut (%1.0f,%1.0f) [%d/%d] with %p (%1.0f,%1.0f) [%d/%d]\n",
+        cur->vertex->x, cur->vertex->y,
+        cur->before ? cur->before->index : -1,
+        cur->after ? cur->after->index : -1,
+        next->vertex->x, next->vertex->y,
+        next->before ? next->before->index : -1,
+        next->after ? next->after->index : -1);
+# endif
+
+    if (cur->self_ref && !next->self_ref)
+    {
+      if (cur->before && next->before)
+        cur->before = next->before;
+
+      if (cur->after && next->after)
+        cur->after = next->after;
+
+      cur->self_ref = FALSE;
+    }
+
+    if (!cur->before && next->before)
+      cur->before = next->before;
+
+    if (!cur->after && next->after)
+      cur->after = next->after;
+
+# if DEBUG_CUTLIST
+    PrintDebug("---> merged (%1.0f,%1.0f) [%d/%d] %s\n",
+        cur->vertex->x, cur->vertex->y,
+        cur->before ? cur->before->index : -1,
+        cur->after ? cur->after->index : -1,
+        cur->self_ref ? "SELFREF" : "");
+# endif
+
+    // free the unused cut
+
+    cur->next = next->next;
+
+    next->next = quick_alloc_cuts;
+    quick_alloc_cuts = next;
+
+    next = cur->next;
+  }
+
+  // STEP 2: find connections in the intersection list...
+
+  for (cur = cut_list; cur && cur->next; cur = cur->next)
   {
     next = cur->next;
     
-    if (!cur->r.open && !next->l.open)
+    if (!cur->after && !next->before)
       continue;
-    
-    // ignore identical intersection points, which can happen when two
-    // or more segs originate from the same vertex.
-
-    if (fabs(cur->along_dist - next->along_dist) < DIST_EPSILON)
-      continue;
-
-    // check for cuts that are too short.
-    if (fabs(cur->along_dist - next->along_dist) < 0.2)
-    {
-      PrintMiniWarn("Skipping very short seg (len=%1.3f) near (%1.1f,%1.1f)\n",
-          ABS(cur->along_dist - next->along_dist),
-          cur->vertex->x, cur->vertex->y);
-      continue;
-    }
  
     // check for some nasty OPEN/CLOSED or CLOSED/OPEN cases
-    if ((cur->r.open && !next->l.open) ||
-        (!cur->r.open && next->l.open))
+    if (cur->after && !next->before)
     {
-      if (cur->r.open && cur->r.right)
+      if (!cur->self_ref && !cur->after->warned_unclosed)
       {
-        PrintMiniWarn("Sector #%d is unclosed near (%1.1f,%1.1f) -> (%1.1f,%1.1f)\n",
-            cur->r.right->index, cur->vertex->x, cur->vertex->y,
-            next->vertex->x, next->vertex->y);
+        PrintMiniWarn("Sector #%d is unclosed near (%1.1f,%1.1f)\n",
+            cur->after->index,
+            (cur->vertex->x + next->vertex->x) / 2.0,
+            (cur->vertex->y + next->vertex->y) / 2.0);
+        cur->after->warned_unclosed = 1;
       }
-      else if (cur->r.open && cur->r.left)
+      continue;
+    }
+    else if (!cur->after && next->before)
+    {
+      if (!next->self_ref && !next->before->warned_unclosed)
       {
-        PrintMiniWarn("Sector #%d is unclosed near (%1.1f,%1.1f) -> (%1.1f,%1.1f)\n",
-            cur->r.left->index, cur->vertex->x, cur->vertex->y,
-            next->vertex->x, next->vertex->y);
+        PrintMiniWarn("Sector #%d is unclosed near (%1.1f,%1.1f)\n",
+            next->before->index,
+            (cur->vertex->x + next->vertex->x) / 2.0,
+            (cur->vertex->y + next->vertex->y) / 2.0);
+        next->before->warned_unclosed = 1;
       }
-      else if (next->l.open && next->l.right)
-      {
-        PrintMiniWarn("Sector #%d is unclosed near (%1.1f,%1.1f) -> (%1.1f,%1.1f)\n",
-            next->l.right->index, next->vertex->x, next->vertex->y,
-            cur->vertex->x, cur->vertex->y);
-      }
-      else if (next->l.open && next->l.left)
-      {
-        PrintMiniWarn("Sector #%d is unclosed near (%1.1f,%1.1f) -> (%1.1f,%1.1f)\n",
-            next->l.left->index, next->vertex->x, next->vertex->y,
-            cur->vertex->x, cur->vertex->y);
-      }
-      else
-      {
-        PrintMiniWarn("Unclosed sector found between (%1.1f,%1.1f) -> (%1.1f,%1.1f)\n",
-            cur->vertex->x, cur->vertex->y,
-            next->vertex->x, next->vertex->y);
-      }
-
       continue;
     }
 
-    // righteo, here we have definite open space.  Do a sanity check
-    // on the sectors (just for good measure).
+    // righteo, here we have definite open space.
+    // do a sanity check on the sectors (just for good measure).
 
-    if (cur->r.right != next->l.right || cur->r.left != next->l.left)
+    if (cur->after != next->before)
     {
-      PrintMiniWarn("Sector mismatch between (%1.1f,%1.1f) -> (%1.1f,%1.1f)\n",
-          cur->vertex->x, cur->vertex->y,
-          next->vertex->x, next->vertex->y);
+      if (!cur->self_ref && !next->self_ref)
+        PrintMiniWarn("Sector mismatch: #%d (%1.1f,%1.1f) != #%d (%1.1f,%1.1f)\n",
+            cur->after->index, next->before->index,
+            cur->vertex->x, cur->vertex->y,
+            next->vertex->x, next->vertex->y);
+
+      // choose the non-self-referencing sector when we can
+      if (cur->self_ref && !next->self_ref)
+      {
+        cur->after = next->before;
+      }
     }
 
     // create the miniseg pair
@@ -1115,11 +1174,10 @@ void AddMinisegs(seg_t *part,
     buddy->start = next->vertex;
     buddy->end   = cur->vertex;
 
-    // leave `linedef' field as NULL.
-    // leave `side' as zero too (not needed for minisegs).
+    // leave 'linedef' field as NULL.
+    // leave 'side' as zero too (not needed for minisegs).
 
-    seg->sector = cur->r.right;
-    buddy->sector = next->l.left;
+    seg->sector = buddy->sector = cur->after;
 
     seg->index = buddy->index = -1;
 

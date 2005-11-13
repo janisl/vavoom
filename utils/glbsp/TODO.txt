@@ -6,11 +6,7 @@ TODO
 LATER / IDEAS
 =============
 
-+  simplify callback interface.
-
--  convert into C++.
-
--  MacOS X: Project builder setup for glBSPX.
-
+-  simplify callback interface.
 -  Autoconf / Automake.
+-  MacOS X: Project builder setup for glBSPX.
 

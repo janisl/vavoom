@@ -2,7 +2,7 @@
 Compiling glBSP
 ===============
 
-by Andrew Apted.  27th September 2004.
+by Andrew Apted.  13th September 2005.
 
 
 glBSP comes in three flavours: a text/command-line utility "glbsp",
@@ -16,10 +16,11 @@ all systems except for glBSPX and the plugin under DOS.
 There are two compiling methods: using a makefile, and using an IDE.
 Currently the Unix, MacOS X and DOS versions all use makefiles, and
 under Windows there are project files for Dev-C++ (see the "Links"
-below) and for Microsoft MSVC.NET 2002.
+below) and for Microsoft MSVC.NET 2002, as well as makefiles for
+MinGW + MingwSYS.
 
 The GUI version (glBSPX) requires a graphical toolkit called FLTK
-(Fast Light Tool Kit) version 1.1.4.  Other versions may work, but
+(Fast Light Tool Kit) version 1.1.6.  Other versions may work, but
 you're on your own there.  See the "Links" section below if you
 need to download it.  
 
@@ -36,6 +37,8 @@ MacOS X:    make -f Makefile.osx
 
 MSDOS with DJGPP: make -f Makefile.dj
 
+Windows with MinGW: mingw32-make -f Makefile.w32
+
 Windows with Dev-C++:  open the Cmdline.dev project file.
 Windows with MSVC.NET: open the Cmdline.vcproj project file.
 
@@ -47,8 +50,10 @@ The plugin version of glBSP is a special version that can be used
 within other programs, e.g. a DOOM engine.  The result of the build 
 is a library file: libglbsp.a (libglbsp.lib for VC++ under Win32).
 
-Unix/Linux: make -f Plugin.mak
+Unix/Linux: make -f Plugin_unx.mak
 MacOS X:    make -f Plugin_osx.mak
+
+Windows with MinGW: mingw32-make -f Plugin_w32.mak
 
 Windows with Dev-C++:  open the Plugin.dev project file.
 Windows with MSVC.NET: open the Plugin.vcproj project file.
@@ -63,17 +68,19 @@ Graphical version: glBSPX
 -------------------------
 
 glBSPX is the GUI version of glBSP, written in C++ and requires the
-FLTK toolkit, version 1.1.4.  FLTK needs to be built before trying
+FLTK toolkit, version 1.1.6.  FLTK needs to be built before trying
 to build glBSPX: see the next section for some guidelines.
 
-Unix/Linux: make -f GUI.mak
+Unix/Linux: make -f GUI_unx.mak
 MacOS X:    make -f GUI_osx.mak
+
+Windows with MinGW: mingw32-make -f GUI_w32.mak
 
 Windows with Dev-C++: open the GUI.dev project file.
 
 
-Building FLTK
--------------
+Building FLTK 1.1.6
+-------------------
 
 Unix / Linux:
 
@@ -86,20 +93,19 @@ MacOS X:
     Similar, but should use "./configure --prefix=$HOME" (that's where the
     glBSPX makefile expects to find it).  Edit fltk/makefile.osx if it has
     been installed somewhere else.  Also I've only tested the static
-    library.  After configuring FLTK you must apply the glBSP patch in
-    patches/FLTK_MACOSX.diff (to get the Fl_Sys_Menu_Bar class built).
+    library.
+    
+Windows:
 
-Windows with Dev-C++:
+    Using MinGW: copy the makefiles/makeinclude.mingw31 file to be
+    ./makeinclude, and copy makefiles/config.h to top level.  I then
+    edit config.h to remove OpenGL, PNG and JPEG support.  You may
+    need to changes some / characters to \ in makeinclude and in
+    src/Makefile.  Ignore the top level Makefile, cd into src and
+    invoke mingw32-make.
 
-    Note that the glBSPX project file (GUI.dev) assumes that fltk-1.1.4
-    and glbsp-2.10 are in the same directory.
-
-    First copy the files from the glbsp "patches/fltk_win32" directory
-    into the fltk-1.1.4 directory.  (Copy "devcpp" whole, and copy
-    "src/Fl_Win32.cxx" into fltk-1.1.4/src and overwrite the
-    existing one).  Then you can build FLTK with the Dev-C++ IDE by
-    using the project files in the fltk-1.1.4/devcpp directory
-    (both fltk.lib.dev and fltkimages.lib.dev).
+    Note that the glBSPX project/make files assume that fltk-1.1.6
+    and glbsp-2.20 are in the same directory.
 
 
 Success Stories
@@ -127,6 +133,9 @@ Links
 
 Dev-C++ (an open source IDE for Windows) home page:
     http://dev-cpp.sourceforge.net
+
+Minimum GNU Windows compiler:
+    http://www.mingw.org
 
 Fast Light Toolkit home page:
     http://www.fltk.org

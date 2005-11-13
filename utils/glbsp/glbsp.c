@@ -2,9 +2,9 @@
 // MAIN : Main program for glBSP
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2004 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2005 Andrew Apted
 //
-//  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
+//  Based on 'BSP 2.3' by Colin Reed, Lee Killough and others.
 //
 //  This program is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU General Public License
@@ -67,8 +67,9 @@ const nodebuildinfo_t default_buildinfo =
   FALSE,   // no_normal
   FALSE,   // force_normal
   FALSE,   // gwa_mode
-  FALSE,   // keep_sect
+  FALSE,   // prune_sect
   FALSE,   // no_prune
+  FALSE,   // merge_vert
 
   DEFAULT_BLOCK_LIMIT,   // block_limit
 
@@ -180,7 +181,7 @@ glbsp_ret_e GlbspParseArgs(nodebuildinfo_t *info,
 
     opt_str = &argv[0][1];
 
-    // handle GNU style options beginning with `--'
+    // handle GNU style options beginning with '--'
     if (opt_str[0] == '-')
       opt_str++;
 
@@ -254,30 +255,32 @@ glbsp_ret_e GlbspParseArgs(nodebuildinfo_t *info,
       continue;
     }
 
-    HANDLE_BOOLEAN("quiet",       quiet)
+    HANDLE_BOOLEAN("q",           quiet)
     HANDLE_BOOLEAN("fast",        fast)
     HANDLE_BOOLEAN("noreject",    no_reject)
     HANDLE_BOOLEAN("noprog",      no_progress)
     HANDLE_BOOLEAN("warn",        mini_warnings)
-    HANDLE_BOOLEAN("packsides",   pack_sides)
+    HANDLE_BOOLEAN("pack",        pack_sides)
     HANDLE_BOOLEAN("normal",      force_normal)
 
     HANDLE_BOOLEAN("loadall",     load_all)
     HANDLE_BOOLEAN("nonormal",    no_normal)
     HANDLE_BOOLEAN("forcegwa",    gwa_mode)
-    HANDLE_BOOLEAN("keepsect",    keep_sect)
+    HANDLE_BOOLEAN("prunesec",    prune_sect)
     HANDLE_BOOLEAN("noprune",     no_prune)
+    HANDLE_BOOLEAN("mergevert",   merge_vert)
 
     // to err is human...
     HANDLE_BOOLEAN("noprogress",  no_progress)
-    HANDLE_BOOLEAN("q",           quiet)
-    HANDLE_BOOLEAN("pack",        pack_sides)
-    HANDLE_BOOLEAN("keepsec",     keep_sect)
-    HANDLE_BOOLEAN("keepsectors", keep_sect)
+    HANDLE_BOOLEAN("quiet",       quiet)
+    HANDLE_BOOLEAN("packsides",   pack_sides)
+    HANDLE_BOOLEAN("prunesect",   prune_sect)
 
     // ignore these options for backwards compatibility
     if (UtilStrCaseCmp(opt_str, "fresh") == 0 ||
-        UtilStrCaseCmp(opt_str, "keepdummy") == 0)
+        UtilStrCaseCmp(opt_str, "keepdummy") == 0 ||
+        UtilStrCaseCmp(opt_str, "keepsec") == 0 ||
+        UtilStrCaseCmp(opt_str, "keepsect") == 0)
     {
       argv++; argc--;
       continue;
@@ -370,10 +373,16 @@ glbsp_ret_e GlbspCheckInfo(nodebuildinfo_t *info,
     return GLBSP_E_BadInfoFixed;
   }
 
-  if (info->spec_version <= 0 || info->spec_version > 3)
+  if (info->spec_version <= 0 || info->spec_version > 5)
   {
     info->spec_version = 2;
     SetErrorMsg("Bad GL-Nodes version number !");
+    return GLBSP_E_BadInfoFixed;
+  }
+  else if (info->spec_version == 4)
+  {
+    info->spec_version = 5;
+    SetErrorMsg("V4 GL-Nodes is not supported");
     return GLBSP_E_BadInfoFixed;
   }
 

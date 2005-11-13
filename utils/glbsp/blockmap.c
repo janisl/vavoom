@@ -2,9 +2,9 @@
 // BLOCKMAP : Generate the blockmap
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2004 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2005 Andrew Apted
 //
-//  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
+//  Based on 'BSP 2.3' by Colin Reed, Lee Killough and others.
 //
 //  This program is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU General Public License
@@ -54,6 +54,7 @@ static uint16_g *block_ptrs;
 static uint16_g *block_dups;
 
 static int block_compression;
+static int block_overflowed;
 
 #define DUMMY_DUP  0xFFFF
 
@@ -385,7 +386,9 @@ static void CompressBlockmap(void)
 
   if (cur_offset > 65535)
   {
-    MarkHardFailure(LIMIT_BLOCKMAP);
+    MarkSoftFailure(LIMIT_BLOCKMAP);
+    block_overflowed = TRUE;
+    return;
   }
 
 # if DEBUG_BLOCKMAP
@@ -413,6 +416,10 @@ static void WriteBlockmap(void)
   uint16_g m_zero = 0x0000;
   uint16_g m_neg1 = 0xFFFF;
   
+  // leave empty if the blockmap overflowed
+  if (block_overflowed)
+    return;
+
   // fill in header
   header.x_origin = UINT16(block_x);
   header.y_origin = UINT16(block_y);
@@ -577,6 +584,8 @@ void InitBlockmap(void)
 //
 void PutBlockmap(void)
 {
+  block_overflowed = FALSE;
+
   // truncate blockmap if too large.  We're limiting the number of
   // blocks to around 44000 (user changeable), this leaves about 20K
   // of shorts for the actual line lists.
@@ -599,8 +608,11 @@ void PutBlockmap(void)
 
   WriteBlockmap();
 
-  PrintVerbose("Completed blockmap building (compression: %d%%)\n",
-      block_compression);
+  if (block_overflowed)
+    PrintVerbose("Blockmap overflowed (lump will be empty)\n");
+  else
+    PrintVerbose("Completed blockmap building (compression: %d%%)\n",
+        block_compression);
 
   FreeBlockmap();
 }

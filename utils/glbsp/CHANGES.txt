@@ -2,6 +2,61 @@
 CHANGELOG
 =========
 
+Changes in V2.20  (14th September 2005)
+---------------------------------------
+
+ - support for response files, which work the same as Doom: use a
+   filename prefixed with '@' (e.g. @list.rsp) and the contents of
+   the response file are inserted into the command line.
+
+ - create an empty BLOCKMAP lump when the blockmap overflows (force
+   the engine to generate it).
+
+ - support V5 GL-Nodes (removes all limits), which is now the default
+   format when limits overflow (e.g. too many GL segs).
+
+ - support for writing ZDBSP format for regular nodes.  This kicks
+   in whenever V5 is used: either explicitly (the -v5 option), or
+   implicitly when the limits overflow.
+
+ - store keyword/value pairs in the GL level marker lump.  This
+   includes a checksum over the plain level data (CHECKSUM keyword),
+   as well as the BUILDER and TIME keywords.
+
+ - allow level names longer than 5 characters, using the special GL
+   level marker "GL_LEVEL" and the LEVEL keyword (inside the lump).
+
+ - significantly decreased number of mini warnings, firstly by not
+   showing mismatch warnings for self-referencing linedefs, and
+   secondly by limiting the number of certain warnings to only one
+   per sector.
+
+ - duplicate vertices are no longer merged (request from Graham
+   Jackson), unless the new -mergevert option is given.
+
+ - unused sectors are no longer removed by default (to prevent
+   problems with sector numbers used in scripts, e.g. Doom Legacy).
+   The old option -keepsect option is now ignored (for backwards
+   compatibility), replaced by the new -prunesec option.
+
+ - increased default -factor to 11 (advice from Jack Vermeulen,
+   although he suggested an even higher default).
+
+ - handle some cases (like Hexen MAP02) where two vertices at the
+   same spot could suppress a miniseg where it was needed.  The code
+   for creating intersections is a lot simpler now.
+
+ - added code to detect the 'One-Sided Window' effect, where a
+   one-sided linedef can be looked through from behind (e.g. MAP07
+   in 10SECTO2.WAD).  When found, a miniseg is added along the back
+   side of the wall.
+
+ - fixed a bug with the overlapping linedef detection.
+
+ - fixed the sint8_g typedef, it was missing the 'signed' qualifier
+   (needed on some platforms where plain 'char' is unsigned).
+
+
 Changes in V2.10  (27th September 2004)
 ---------------------------------------
 
@@ -159,7 +214,7 @@ Changes in V1.95  (24th September 2001)
  - improved wad.c to return error values instead of doing
    FatalError(), setting up the comms->message appropriately.
  
- - removed `display_setText' function from nodebuildfuncs API.
+ - removed 'display_setText' function from nodebuildfuncs API.
 
  - fixed the memory semantics for the glbsp API, with new functions
    GlbspStrDup() and GlbspFree().

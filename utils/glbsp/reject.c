@@ -2,9 +2,9 @@
 // REJECT : Generate the reject table
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2004 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2005 Andrew Apted
 //
-//  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
+//  Based on 'BSP 2.3' by Colin Reed, Lee Killough and others.
 //
 //  This program is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU General Public License
@@ -97,7 +97,7 @@ static void GroupSectors(void)
     // group.  This is based on the assumption that sector numbers in
     // wads will generally increase over the set of linedefs, and so
     // (by swapping) we'll tend to add small groups into larger
-    // groups, thereby minimising the updates to `rej_group' fields
+    // groups, thereby minimising the updates to 'rej_group' fields
     // that is required when merging.
 
     if (sec1->rej_group > sec2->rej_group)

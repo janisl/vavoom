@@ -2,9 +2,9 @@
 // LEVEL : Level structure read/write functions.
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2004 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2005 Andrew Apted
 //
-//  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
+//  Based on 'BSP 2.3' by Colin Reed, Lee Killough and others.
 //
 //  This program is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU General Public License
@@ -16,6 +16,10 @@
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU General Public License for more details.
 //
+//------------------------------------------------------------------------
+//
+//  ZDBSP format support based on code (C) 2002,2003 Randy Heit
+// 
 //------------------------------------------------------------------------
 
 #include "system.h"
@@ -51,8 +55,8 @@
 boolean_g lev_doing_normal;
 boolean_g lev_doing_hexen;
 
-static boolean_g lev_v3_segs;
-static boolean_g lev_v3_subsecs;
+static boolean_g lev_force_v3;
+static boolean_g lev_force_v5;
 
 
 #define LEVELARRAY(TYPE, BASEVAR, NUMVAR)  \
@@ -314,6 +318,8 @@ void GetSectors(void)
     /* sector indices never change */
     sector->index = i;
 
+    sector->warned_facing = -1;
+
     /* Note: rej_* fields are handled completely in reject.c */
   }
 }
@@ -523,6 +529,9 @@ void GetLinedefs(void)
       line->left->on_special |= (line->type > 0) ? 1 : 0;
     }
 
+    line->self_ref = (line->left && line->right &&
+        (line->left->sector == line->right->sector));
+
     line->index = i;
   }
 }
@@ -583,8 +592,7 @@ void GetLinedefsHexen(void)
     line->right = SafeLookupSidedef(UINT16(raw->sidedef1));
     line->left  = SafeLookupSidedef(UINT16(raw->sidedef2));
 
-    // -JL- Added missing sidedef handling that caused all sidedefs to be
-    //      pruned.
+    // -JL- Added missing sidedef handling that caused all sidedefs to be pruned
     if (line->right)
     {
       line->right->ref_count++;
@@ -645,12 +653,12 @@ void GetStaleNodes(void)
     
     /* Note: we ignore the subsector references */
      
-    if ((UINT16(raw->right) & 0x8000) == 0)
+    if ((UINT16(raw->right) & 0x8000U) == 0)
     {
       nd->r.node = LookupStaleNode(UINT16(raw->right));
     }
 
-    if ((UINT16(raw->left) & 0x8000) == 0)
+    if ((UINT16(raw->left) & 0x8000U) == 0)
     {
       nd->l.node = LookupStaleNode(UINT16(raw->left));
     }
@@ -658,7 +666,6 @@ void GetStaleNodes(void)
     /* we also ignore the bounding boxes -- not needed */
   }
 }
-
 
 
 static INLINE_G int TransformSegDist(const seg_t *seg)
@@ -700,6 +707,7 @@ static int SegCompare(const void *p1, const void *p2)
 
 static const uint8_g *lev_v2_magic = (uint8_g *) "gNd2";
 static const uint8_g *lev_v3_magic = (uint8_g *) "gNd3";
+static const uint8_g *lev_v5_magic = (uint8_g *) "gNd5";
 
 void PutVertices(char *name, int do_gl)
 {
@@ -741,7 +749,7 @@ void PutVertices(char *name, int do_gl)
     MarkSoftFailure(do_gl ? LIMIT_GL_VERT : LIMIT_VERTEXES);
 }
 
-void PutV2Vertices(void)
+void PutV2Vertices(int do_v5)
 {
   int count, i;
   lump_t *lump;
@@ -750,7 +758,10 @@ void PutV2Vertices(void)
 
   lump = CreateGLLump("GL_VERT");
 
-  AppendLevelLump(lump, lev_v2_magic, 4);
+  if (do_v5)
+      AppendLevelLump(lump, lev_v5_magic, 4);
+  else
+      AppendLevelLump(lump, lev_v2_magic, 4);
 
   for (i=0, count=0; i < num_vertices; i++)
   {
@@ -906,9 +917,17 @@ void PutLinedefsHexen(void)
 static INLINE_G uint16_g VertexIndex16Bit(const vertex_t *v)
 {
   if (v->index & IS_GL_VERTEX)
-    return (uint16_g) ((v->index & ~IS_GL_VERTEX) | 0x8000);
+    return (uint16_g) ((v->index & ~IS_GL_VERTEX) | 0x8000U);
 
   return (uint16_g) v->index;
+}
+
+static INLINE_G uint32_g VertexIndex32BitV5(const vertex_t *v)
+{
+  if (v->index & IS_GL_VERTEX)
+    return (uint32_g) ((v->index & ~IS_GL_VERTEX) | 0x80000000U);
+
+  return (uint32_g) v->index;
 }
 
 void PutSegs(void)
@@ -1015,12 +1034,13 @@ void PutGLSegs(void)
     MarkSoftFailure(LIMIT_GL_SEGS);
 }
 
-void PutV3Segs(void)
+void PutV3Segs(int do_v5)
 {
   int i, count;
   lump_t *lump = CreateGLLump("GL_SEGS");
 
-  AppendLevelLump(lump, lev_v3_magic, 4);
+  if (! do_v5)
+      AppendLevelLump(lump, lev_v3_magic, 4);
 
   DisplayTicker();
 
@@ -1032,15 +1052,22 @@ void PutV3Segs(void)
     raw_v3_seg_t raw;
     seg_t *seg = segs[i];
 
-    int flags = (seg->side == 1) ? V3SEG_F_LEFT : 0;
-
     // ignore degenerate segs
     if (seg->degenerate)
       continue;
 
-    raw.start = UINT32(seg->start->index);
-    raw.end   = UINT32(seg->end->index);
-    raw.flags = UINT16(flags);
+    if (do_v5)
+    {
+      raw.start = UINT32(VertexIndex32BitV5(seg->start));
+      raw.end   = UINT32(VertexIndex32BitV5(seg->end));
+    }
+    else
+    {
+      raw.start = UINT32(seg->start->index);
+      raw.end   = UINT32(seg->end->index);
+    }
+
+    raw.side  = UINT16(seg->side);
 
     if (seg->linedef)
       raw.linedef = UINT16(seg->linedef->index);
@@ -1101,7 +1128,7 @@ void PutSubsecs(char *name, int do_gl)
     MarkHardFailure(do_gl ? LIMIT_GL_SSECT : LIMIT_SSECTORS);
 }
 
-void PutV3Subsecs(void)
+void PutV3Subsecs(int do_v5)
 {
   int i;
   lump_t *lump;
@@ -1110,7 +1137,8 @@ void PutV3Subsecs(void)
 
   lump = CreateGLLump("GL_SSECT");
 
-  AppendLevelLump(lump, lev_v3_magic, 4);
+  if (! do_v5)
+      AppendLevelLump(lump, lev_v3_magic, 4);
 
   for (i=0; i < num_subsecs; i++)
   {
@@ -1128,7 +1156,7 @@ void PutV3Subsecs(void)
 #   endif
   }
 
-  if (num_subsecs > 32767)
+  if (!do_v5 && num_subsecs > 32767)
     MarkHardFailure(LIMIT_GL_SSECT);
 }
 
@@ -1185,7 +1213,58 @@ static void PutOneNode(node_t *node, lump_t *lump)
 # endif
 }
 
-void PutNodes(char *name, int do_gl, node_t *root)
+static void PutOneV5Node(node_t *node, lump_t *lump)
+{
+  raw_v5_node_t raw;
+
+  if (node->r.node)
+    PutOneV5Node(node->r.node, lump);
+
+  if (node->l.node)
+    PutOneV5Node(node->l.node, lump);
+
+  node->index = node_cur_index++;
+
+  raw.x  = SINT16(node->x);
+  raw.y  = SINT16(node->y);
+  raw.dx = SINT16(node->dx / (node->too_long ? 2 : 1));
+  raw.dy = SINT16(node->dy / (node->too_long ? 2 : 1));
+
+  raw.b1.minx = SINT16(node->r.bounds.minx);
+  raw.b1.miny = SINT16(node->r.bounds.miny);
+  raw.b1.maxx = SINT16(node->r.bounds.maxx);
+  raw.b1.maxy = SINT16(node->r.bounds.maxy);
+
+  raw.b2.minx = SINT16(node->l.bounds.minx);
+  raw.b2.miny = SINT16(node->l.bounds.miny);
+  raw.b2.maxx = SINT16(node->l.bounds.maxx);
+  raw.b2.maxy = SINT16(node->l.bounds.maxy);
+
+  if (node->r.node)
+    raw.right = UINT32(node->r.node->index);
+  else if (node->r.subsec)
+    raw.right = UINT32(node->r.subsec->index | 0x80000000U);
+  else
+    InternalError("Bad right child in V5 node %d", node->index);
+
+  if (node->l.node)
+    raw.left = UINT32(node->l.node->index);
+  else if (node->l.subsec)
+    raw.left = UINT32(node->l.subsec->index | 0x80000000U);
+  else
+    InternalError("Bad left child in V5 node %d", node->index);
+
+  AppendLevelLump(lump, &raw, sizeof(raw));
+
+# if DEBUG_BSP
+  PrintDebug("PUT V5 NODE %08X  Left %08X  Right %08X  "
+    "(%d,%d) -> (%d,%d)\n", node->index, UINT32(raw.left),
+    UINT32(raw.right), node->x, node->y,
+    node->x + node->dx, node->y + node->dy);
+# endif
+}
+
+void PutNodes(char *name, int do_gl, int do_v5, node_t *root)
 {
   lump_t *lump;
 
@@ -1199,14 +1278,242 @@ void PutNodes(char *name, int do_gl, node_t *root)
   node_cur_index = 0;
 
   if (root)
-    PutOneNode(root, lump);
-  
+  {
+    if (do_v5)
+      PutOneV5Node(root, lump);
+    else
+      PutOneNode(root, lump);
+  }
+
   if (node_cur_index != num_nodes)
     InternalError("PutNodes miscounted (%d != %d)",
       node_cur_index, num_nodes);
 
-  if (node_cur_index > 32767)
+  if (!do_v5 && node_cur_index > 32767)
     MarkHardFailure(LIMIT_NODES);
+}
+
+
+/* ----- ZDBSP format writing --------------------------- */
+
+static const uint8_g *lev_ZD_magic = (uint8_g *) "ZNOD";
+
+void PutZVertices(void)
+{
+  int count, i;
+
+  uint32_g orgverts = UINT32(num_normal_vert);
+  uint32_g newverts = UINT32(num_gl_vert);
+
+  ZLibAppendLump(&orgverts, 4);
+  ZLibAppendLump(&newverts, 4);
+
+  DisplayTicker();
+
+  for (i=0, count=0; i < num_vertices; i++)
+  {
+    raw_v2_vertex_t raw;
+    vertex_t *vert = lev_vertices[i];
+
+    if (! (vert->index & IS_GL_VERTEX))
+      continue;
+
+    raw.x = SINT32((int)(vert->x * 65536.0));
+    raw.y = SINT32((int)(vert->y * 65536.0));
+
+    ZLibAppendLump(&raw, sizeof(raw));
+
+    count++;
+  }
+
+  if (count != num_gl_vert)
+    InternalError("PutZVertices miscounted (%d != %d)",
+        count, num_gl_vert);
+}
+
+void PutZSubsecs(void)
+{
+  int i;
+  int count;
+  uint32_g raw_num = UINT32(num_subsecs);
+
+  int cur_seg_index = 0;
+
+  ZLibAppendLump(&raw_num, 4);
+  DisplayTicker();
+
+  for (i=0; i < num_subsecs; i++)
+  {
+    subsec_t *sub = subsecs[i];
+    seg_t *seg;
+
+    raw_num = UINT32(sub->seg_count);
+
+    ZLibAppendLump(&raw_num, 4);
+
+    // sanity check the seg index values
+    count = 0;
+    for (seg = sub->seg_list; seg; seg = seg->next, cur_seg_index++)
+    {
+      // ignore minisegs and degenerate segs
+      if (! seg->linedef || seg->degenerate)
+        continue;
+
+      if (cur_seg_index != seg->index)
+        InternalError("PutZSubsecs: seg index mismatch in sub %d (%d != %d)\n",
+            i, cur_seg_index, seg->index);
+      
+      count++;
+    }
+
+    if (count != sub->seg_count)
+      InternalError("PutZSubsecs: miscounted segs in sub %d (%d != %d)\n",
+          i, count, sub->seg_count);
+  }
+
+  if (cur_seg_index != num_complete_seg)
+    InternalError("PutZSubsecs miscounted segs (%d != %d)",
+        cur_seg_index, num_complete_seg);
+}
+
+void PutZSegs(void)
+{
+  int i, count;
+  uint32_g raw_num = UINT32(num_complete_seg);
+
+  ZLibAppendLump(&raw_num, 4);
+  DisplayTicker();
+
+  for (i=0, count=0; i < num_segs; i++)
+  {
+    seg_t *seg = segs[i];
+
+    // ignore minisegs and degenerate segs
+    if (! seg->linedef || seg->degenerate)
+      continue;
+
+    if (count != seg->index)
+      InternalError("PutZSegs: seg index mismatch (%d != %d)\n",
+          count, seg->index);
+
+    {
+      uint32_g v1 = UINT32(VertexIndex32BitV5(seg->start));
+      uint32_g v2 = UINT32(VertexIndex32BitV5(seg->end));
+
+      uint16_g line = UINT16(seg->linedef->index);
+      uint8_g  side = seg->side;
+
+      ZLibAppendLump(&v1,   4);
+      ZLibAppendLump(&v2,   4);
+      ZLibAppendLump(&line, 2);
+      ZLibAppendLump(&side, 1);
+    }
+
+    count++;
+  }
+
+  if (count != num_complete_seg)
+    InternalError("PutZSegs miscounted (%d != %d)",
+        count, num_complete_seg);
+}
+
+static void PutOneZNode(node_t *node)
+{
+  raw_v5_node_t raw;
+
+  if (node->r.node)
+    PutOneZNode(node->r.node);
+
+  if (node->l.node)
+    PutOneZNode(node->l.node);
+
+  node->index = node_cur_index++;
+
+  raw.x  = SINT16(node->x);
+  raw.y  = SINT16(node->y);
+  raw.dx = SINT16(node->dx / (node->too_long ? 2 : 1));
+  raw.dy = SINT16(node->dy / (node->too_long ? 2 : 1));
+
+  ZLibAppendLump(&raw.x,  2);
+  ZLibAppendLump(&raw.y,  2);
+  ZLibAppendLump(&raw.dx, 2);
+  ZLibAppendLump(&raw.dy, 2);
+
+  raw.b1.minx = SINT16(node->r.bounds.minx);
+  raw.b1.miny = SINT16(node->r.bounds.miny);
+  raw.b1.maxx = SINT16(node->r.bounds.maxx);
+  raw.b1.maxy = SINT16(node->r.bounds.maxy);
+
+  raw.b2.minx = SINT16(node->l.bounds.minx);
+  raw.b2.miny = SINT16(node->l.bounds.miny);
+  raw.b2.maxx = SINT16(node->l.bounds.maxx);
+  raw.b2.maxy = SINT16(node->l.bounds.maxy);
+
+  ZLibAppendLump(&raw.b1, sizeof(raw.b1));
+  ZLibAppendLump(&raw.b2, sizeof(raw.b2));
+
+  if (node->r.node)
+    raw.right = UINT32(node->r.node->index);
+  else if (node->r.subsec)
+    raw.right = UINT32(node->r.subsec->index | 0x80000000U);
+  else
+    InternalError("Bad right child in V5 node %d", node->index);
+
+  if (node->l.node)
+    raw.left = UINT32(node->l.node->index);
+  else if (node->l.subsec)
+    raw.left = UINT32(node->l.subsec->index | 0x80000000U);
+  else
+    InternalError("Bad left child in V5 node %d", node->index);
+
+  ZLibAppendLump(&raw.right, 4);
+  ZLibAppendLump(&raw.left,  4);
+
+# if DEBUG_BSP
+  PrintDebug("PUT Z NODE %08X  Left %08X  Right %08X  "
+    "(%d,%d) -> (%d,%d)\n", node->index, UINT32(raw.left),
+    UINT32(raw.right), node->x, node->y,
+    node->x + node->dx, node->y + node->dy);
+# endif
+}
+
+void PutZNodes(node_t *root)
+{
+  uint32_g raw_num = UINT32(num_nodes);
+
+  ZLibAppendLump(&raw_num, 4);
+  DisplayTicker();
+
+  node_cur_index = 0;
+
+  if (root)
+    PutOneZNode(root);
+
+  if (node_cur_index != num_nodes)
+    InternalError("PutZNodes miscounted (%d != %d)",
+      node_cur_index, num_nodes);
+}
+
+void SaveZDFormat(node_t *root_node)
+{
+  lump_t *lump;
+
+  // leave SEGS and SSECTORS empty
+  CreateLevelLump("SEGS");
+  CreateLevelLump("SSECTORS");
+
+  lump = CreateLevelLump("NODES");
+ 
+  AppendLevelLump(lump, lev_ZD_magic, 4);
+
+  ZLibBeginLump(lump);
+
+  PutZVertices();
+  PutZSubsecs();
+  PutZSegs();
+  PutZNodes(root_node);
+
+  ZLibFinishLump();
 }
 
 
@@ -1228,9 +1535,6 @@ void LoadLevel(void)
 
   // -JL- Identify Hexen mode by presence of BEHAVIOR lump
   lev_doing_hexen = (FindLevelLump("BEHAVIOR") != NULL);
-
-  lev_v3_segs = (cur_info->spec_version == 3) ? TRUE : FALSE;
-  lev_v3_subsecs = lev_v3_segs;
 
   if (lev_doing_normal)
     sprintf(message, "Building normal and GL nodes on %s", level_name);
@@ -1273,18 +1577,27 @@ void LoadLevel(void)
     GetStaleNodes();
   }
  
-  if (lev_doing_normal && !cur_info->no_prune)
+  if (lev_doing_normal)
   {
-    DetectDuplicateVertices();
+    // NOTE: order here is critical
 
     if (cur_info->pack_sides)
       DetectDuplicateSidedefs();
 
-    PruneLinedefs();
+    if (cur_info->merge_vert)
+      DetectDuplicateVertices();
+
+    if (!cur_info->no_prune)
+      PruneLinedefs();
+
+    // always prune vertices (ignore -noprune), otherwise all the
+    // unused vertices from seg splits would keep accumulating.
     PruneVertices();
-    PruneSidedefs();
-    
-    if (!cur_info->keep_sect)
+
+    if (!cur_info->no_prune)
+      PruneSidedefs();
+
+    if (cur_info->prune_sect)
       PruneSectors();
   }
  
@@ -1297,6 +1610,7 @@ void LoadLevel(void)
   }
 
   DetectOverlappingLines();
+  DetectWindowEffects();
 }
 
 //
@@ -1317,12 +1631,43 @@ void FreeLevel(void)
 }
 
 //
+// PutGLChecksum
+//
+void PutGLChecksum(void)
+{
+  uint32_g crc;
+  lump_t *lump;
+  char num_buf[32];
+
+  Adler32_Begin(&crc);
+
+  lump = FindLevelLump("VERTEXES");
+
+  if (lump && lump->length > 0)
+    Adler32_AddBlock(&crc, lump->data, lump->length);
+
+  lump = FindLevelLump("LINEDEFS");
+
+  if (lump && lump->length > 0)
+    Adler32_AddBlock(&crc, lump->data, lump->length);
+
+  Adler32_Finish(&crc);
+
+  sprintf(num_buf, "0x%08x", crc);
+
+  AddGLTextLine("CHECKSUM", num_buf);
+}
+
+//
 // SaveLevel
 //
 void SaveLevel(node_t *root_node)
 {
-  // Note: RoundOffBspTree will covert the GL vertices in segs to their
-  // normal counterparts (pointer change: use normal_dup).
+  lev_force_v3 = (cur_info->spec_version == 3) ? TRUE : FALSE;
+  lev_force_v5 = (cur_info->spec_version == 5) ? TRUE : FALSE;
+  
+  // Note: RoundOffBspTree will convert the GL vertices in segs to
+  // their normal counterparts (pointer change: use normal_dup).
 
   if (cur_info->spec_version == 1)
     RoundOffBspTree(root_node);
@@ -1331,32 +1676,47 @@ void SaveLevel(node_t *root_node)
   {
     if (num_normal_vert > 32767 || num_gl_vert > 32767)
     {
-      lev_v3_segs = TRUE;
-      MarkV3Switch(LIMIT_VERTEXES | LIMIT_GL_SEGS);
+      if (cur_info->spec_version < 3)
+      {
+        lev_force_v5 = TRUE;
+        MarkV5Switch(LIMIT_VERTEXES | LIMIT_GL_SEGS);
+      }
     }
 
     if (num_segs > 65534)
     {
-      lev_v3_subsecs = lev_v3_segs = TRUE;
-      MarkV3Switch(LIMIT_GL_SSECT | LIMIT_GL_SEGS);
+      if (cur_info->spec_version < 3)
+      {
+        lev_force_v5 = TRUE;
+        MarkV5Switch(LIMIT_GL_SSECT | LIMIT_GL_SEGS);
+      }
+    }
+
+    if (num_nodes > 32767)
+    {
+      if (cur_info->spec_version < 5)
+      {
+        lev_force_v5 = TRUE;
+        MarkV5Switch(LIMIT_GL_NODES);
+      }
     }
 
     if (cur_info->spec_version == 1)
       PutVertices("GL_VERT", TRUE);
     else
-      PutV2Vertices();
+      PutV2Vertices(lev_force_v5);
 
-    if (lev_v3_segs)
-      PutV3Segs();
+    if (lev_force_v3 || lev_force_v5)
+      PutV3Segs(lev_force_v5);
     else
       PutGLSegs();
 
-    if (lev_v3_subsecs)
-      PutV3Subsecs();
+    if (lev_force_v3 || lev_force_v5)
+      PutV3Subsecs(lev_force_v5);
     else
       PutSubsecs("GL_SSECT", TRUE);
 
-    PutNodes("GL_NODES", TRUE, root_node);
+    PutNodes("GL_NODES", TRUE, lev_force_v5, root_node);
 
     // -JL- Add empty PVS lump
     CreateGLLump("GL_PVS");
@@ -1378,9 +1738,20 @@ void SaveLevel(node_t *root_node)
     else
       PutLinedefs();
  
-    PutSegs();
-    PutSubsecs("SSECTORS", FALSE);
-    PutNodes("NODES", FALSE, root_node);
+    if (lev_force_v5)
+    {
+      // don't report a problem when -v5 was explicitly given
+      if (cur_info->spec_version < 5)
+        MarkZDSwitch();
+
+      SaveZDFormat(root_node);
+    }
+    else
+    {
+      PutSegs();
+      PutSubsecs("SSECTORS", FALSE);
+      PutNodes("NODES", FALSE, FALSE, root_node);
+    }
 
     // -JL- Don't touch blockmap and reject if not doing normal nodes
     PutBlockmap();
@@ -1388,5 +1759,17 @@ void SaveLevel(node_t *root_node)
     if (!cur_info->no_reject || !FindLevelLump("REJECT"))
       PutReject();
   }
+
+  // keyword support (v5.0 of the specs)
+  AddGLTextLine("BUILDER", "glBSP " GLBSP_VER);
+  {
+    const char *time_str = UtilTimeString();
+    if (time_str)
+      AddGLTextLine("TIME", time_str);
+  }
+
+  // this must be done _after_ the normal nodes have been built,
+  // so that we use the new VERTEXES lump in the checksum.
+  PutGLChecksum();
 }
 

@@ -2,9 +2,9 @@
 // NODE : Recursively create nodes and return the pointers.
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2004 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2005 Andrew Apted
 //
-//  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
+//  Based on 'BSP 2.3' by Colin Reed, Lee Killough and others.
 //
 //  This program is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU General Public License
@@ -195,7 +195,7 @@ void FreeSuper(superblock_t *block)
   quick_alloc_supers = block;
 }
 
-#if 0
+#if 0 // DEBUGGING CODE
 static void TestSuperWorker(superblock_t *block, int *real, int *mini)
 {
   seg_t *cur;
@@ -455,6 +455,30 @@ superblock_t *CreateSegs(void)
             line->index);
         line->two_sided = 0;
       }
+
+      // handle the 'One-Sided Window' trick
+      if (line->window_effect)
+      {
+        seg_t *left = NewSeg();
+
+        left->start   = line->end;
+        left->end     = line->start;
+        left->side    = 1;
+        left->linedef = NULL; // miniseg
+        left->sector  = NULL; //
+
+        left->source_line = line;
+        left->index = -1;
+
+        RecomputeSeg(left);
+
+        AddSegToSuper(block, left);
+
+        // setup partner info (it's very strange to have a miniseg
+        // and a normal seg partnered together).
+        left->partner = right;
+        right->partner = left;
+      }
     }
   }
 
@@ -482,14 +506,6 @@ static void DetermineMiddle(subsec_t *sub)
 
   sub->mid_x = mid_x / total;
   sub->mid_y = mid_y / total;
-}
-
-static int LinedefSelfRef(const linedef_t *L)
-{
-  if (! L->left || ! L->right)
-    return FALSE;
-
-  return (L->left->sector == L->right->sector) ? TRUE : FALSE;
 }
 
 //
@@ -571,7 +587,7 @@ static void ClockwiseOrder(subsec_t *sub)
 
     if (! array[i]->linedef)
       cur_score = 0;
-    else if (LinedefSelfRef(array[i]->linedef))
+    else if (array[i]->linedef->self_ref)
       cur_score = 1;
 
     if (cur_score > score)
@@ -678,6 +694,12 @@ static void SanityCheckSameSector(subsec_t *sub)
     // "special" with sector tag >= 900. Original idea, Lee Killough
     if (cur->sector->coalesce)
       continue;
+
+    // prevent excessive number of warnings
+    if (compare->sector->warned_facing == cur->sector->index)
+      continue;
+
+    compare->sector->warned_facing = cur->sector->index;
 
     if (cur->linedef)
       PrintMiniWarn("Sector #%d has sidedef facing #%d (line #%d) "

@@ -1,36 +1,35 @@
 #
-# glBSP Makefile for MacOSX Plugin
+# glBSP Plugin Makefile for MacOSX
 #
 
-MAIN=.
-
-OUTNAME=libglbsp.a
+BIN=libglbsp.a
 
 CC=gcc
-CFLAGS=-O3 -Wall -DGLBSP_PLUGIN -DMACOSX -DINLINE_G=inline
+CFLAGS=-O2 -Wall -DGLBSP_PLUGIN -DMACOSX -DINLINE_G=inline
 
-OBJS=$(MAIN)/analyze.o  \
-     $(MAIN)/blockmap.o \
-     $(MAIN)/glbsp.o    \
-     $(MAIN)/level.o    \
-     $(MAIN)/node.o     \
-     $(MAIN)/reject.o   \
-     $(MAIN)/seg.o      \
-     $(MAIN)/system.o   \
-     $(MAIN)/util.o     \
-     $(MAIN)/wad.o
+# ----- OBJECTS ------------------------------------------------------
 
+OBJS=analyze.o  \
+     blockmap.o \
+     glbsp.o    \
+     level.o    \
+     node.o     \
+     reject.o   \
+     seg.o      \
+     system.o   \
+     util.o     \
+     wad.o
 
 # ----- TARGETS ------------------------------------------------------
 
-all:    $(OUTNAME)
+all:    $(BIN)
 
 clean:
-	rm -f $(OUTNAME) $(MAIN)/*.o
+	rm -f $(BIN) *.o
 
-$(OUTNAME): $(OBJS)
-	libtool -static -o $(OUTNAME) - $(OBJS)
-	ranlib $(OUTNAME)
+$(BIN): $(OBJS)
+	libtool -static -o $(BIN) - $(OBJS)
+	ranlib $(BIN)
 
 .PHONY: all clean
 

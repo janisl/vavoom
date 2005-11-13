@@ -2,7 +2,7 @@
 README for glBSP
 ================
 
-by Andrew Apted.  18th September 2004.
+by Andrew Apted.  13th September 2005.
 
 
 Introduction
@@ -15,22 +15,22 @@ very easy for an OpenGL DOOM engine to compute the polygons needed for
 drawing the levels.
 
 There are many DOOM ports that understand the GL Nodes which glBSP
-creates, including: EDGE, the Doomsday engine (JDOOM), Doom3D, PrBoom,
-and Vavoom.  See the links below.
+creates, including: EDGE, Doomsday (JDOOM), ZDoomGL, Vavoom, Doom3D
+and PrBoom.  See the links below.
 
 
 Status
 ------
 
-The current version of glBSP is 2.10.  It has been tested and known to
-work on numerous large wads, including DOOM I, DOOM II, TeamTNT's Eternal III,
-Fanatic's QDOOM, and many others.
+The current version of glBSP is 2.20.  It has been tested and known to
+work on numerous large wads, including DOOM I, DOOM II, TeamTNT's
+Eternal III, Fanatic's QDOOM, and many others.
 
 
 Copyright
 ---------
 
-glBSP is Copyright (C) 2000-2004 Andrew Apted.  It was originally
+glBSP is Copyright (C) 2000-2005 Andrew Apted.  It was originally
 based on "BSP 2.3" (C) Colin Reed and Lee Killough, which was created
 from the basic theory stated in DEU5 (OBJECTS.C) by Raphael Quinet.
 
@@ -45,7 +45,7 @@ License
 
 Thanks to Lee Killough and André Majorel (former maintainer of BSP,
 and former Miss Venezuela, respectively), glBSP is under the GNU
-General Public License (GPL).  See the file `COPYING.txt' in the
+General Public License (GPL).  See the file 'COPYING.txt' in the
 source package (or go to http://www.gnu.org) for the full text, but
 to summarise:
 
@@ -66,7 +66,7 @@ Links
 The homepage for glBSP can be found here:
    http://glbsp.sourceforge.net/
 
-The "GL Friendly Nodes" specifications can be found here:
+The "GL Friendly Nodes" specifications is here:
    http://glbsp.sourceforge.net/glnodes.html
 
 The EDGE homepage can be found here:
@@ -75,14 +75,17 @@ The EDGE homepage can be found here:
 The DoomsDay (JDOOM) homepage is here:
    http://www.doomsdayhq.com/
 
+ZDoomGL is known to hang out around here:
+   http://zdoomgl.mancubus.net/
+
+The Vavoom site is here:
+   http://www.vavoom-engine.com/
+
 The Doom3D site can be found here:
    http://doomworld.com/doom3d/
 
 Look here for PrBOOM:
    http://prboom.sourceforge.net/
-
-The Vavoom site is here:
-   http://www.vavoom-engine.com/
 
 
 Acknowledgements
@@ -103,13 +106,13 @@ Nodes" specification.
 The authors of FLTK (Fast Light Tool Kit), for a nice LGPL C++ GUI
 toolkit that even I can get working on both Linux and Win32.
 
-Marc Rousseau (author of ZenNode 1.0), Robert Fenske Jr (author of
-Warm 1.6), L.M. Witek (author of Reject 1.1), and others, for
-releasing the source code to their WAD utilities, and giving me lots
-of ideas to "borrow" :), like blockmap packing.
+Marc Rousseau (author of ZenNode 1.0), Robert Fenske Jr (author
+of Warm 1.6), L.M. Witek (author of Reject 1.1), and others, for
+releasing the source code to their WAD utilities, and giving me
+lots of ideas to "borrow" :), like blockmap packing.
 
-Colin Reed and Lee Killough (and others), who wrote the original BSP
-2.3 which glBSP was based on.
+Lee Killough and Colin Reed (and others), who wrote the original
+BSP 2.3 which glBSP was based on.
 
 Matt Fell, for the Doom Specs v1.666.
 

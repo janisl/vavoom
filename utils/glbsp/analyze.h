@@ -2,9 +2,9 @@
 // ANALYZE : Analyzing level structures
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2004 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2005 Andrew Apted
 //
-//  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
+//  Based on 'BSP 2.3' by Colin Reed, Lee Killough and others.
 //
 //  This program is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU General Public License
@@ -29,6 +29,7 @@ void DetectDuplicateVertices(void);
 void DetectDuplicateSidedefs(void);
 void DetectPolyobjSectors(void);
 void DetectOverlappingLines(void);
+void DetectWindowEffects(void);
 
 // pruning routines
 void PruneLinedefs(void);
@@ -52,11 +53,9 @@ vertex_t *NewVertexFromSplitSeg(seg_t *seg, float_g x, float_g y);
 vertex_t *NewVertexDegenerate(vertex_t *start, vertex_t *end);
 
 // check whether a line with the given delta coordinates and beginning
-// at this vertex is open.  Returns 1 if open, or 0 if closed.  The
-// sectors that lie on the left & right side of the given line are
-// also determined (NULL if the area is void space).
+// at this vertex is open.  Returns a sector reference if it's open,
+// or NULL if closed (void space or directly along a linedef).
 //
-int VertexCheckOpen(vertex_t *vert, float_g dx, float_g dy,
-    sector_t ** left_sec, sector_t ** right_sec);
+sector_t * VertexCheckOpen(vertex_t *vert, float_g dx, float_g dy);
 
 #endif /* __GLBSP_ANALYZE_H__ */

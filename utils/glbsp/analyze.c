@@ -2,9 +2,9 @@
 // ANALYZE : Analyzing level structures
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2004 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2005 Andrew Apted
 //
-//  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
+//  Based on 'BSP 2.3' by Colin Reed, Lee Killough and others.
 //
 //  This program is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU General Public License
@@ -40,8 +40,9 @@
 #include "wad.h"
 
 
-#define DEBUG_WALLTIPS  0
-#define DEBUG_POLYOBJ   0
+#define DEBUG_WALLTIPS   0
+#define DEBUG_POLYOBJ    0
+#define DEBUG_WINDOW_FX  0   
 
 #define POLY_BOX_SZ  10
 
@@ -295,32 +296,6 @@ void DetectPolyobjSectors(void)
     MarkPolyobjPoint(x, y);
   }
 }
-
-#if 0
-//
-// BoxContainsThing
-//
-static int BoxContainsThing(const bbox_t *bbox)
-{
-  int i;
-
-  for (i = 0; i < num_things; i++)
-  {
-    thing_t *T = LookupThing(i);
-
-    if (T->x < bbox->minx || T->x > bbox->maxx)
-      continue;
-
-    if (T->y < bbox->miny || T->y > bbox->maxy)
-      continue;
-
-    return TRUE;
-  }
-
-  return FALSE;
-}
-#endif
-
 
 /* ----- analysis routines ----------------------------- */
 
@@ -707,8 +682,9 @@ static int LineEndCompare(const void *p1, const void *p2)
 void DetectOverlappingLines(void)
 {
   // Algorithm:
-  //   Sort all lines by left-most vertex (for vertical lines, bottom-most).
-  //   Overlapping lines will then be contiguous in this set.
+  //   Sort all lines by left-most vertex.
+  //   Overlapping lines will then be near each other in this set.
+  //   Note: does not detect partially overlapping lines.
 
   int i;
   int *array = UtilCalloc(num_linedefs * sizeof(int));
@@ -724,16 +700,23 @@ void DetectOverlappingLines(void)
 
   for (i=0; i < num_linedefs - 1; i++)
   {
-    if (LineStartCompare(array + i, array + i+1) == 0 &&
-          LineEndCompare(array + i, array + i+1) == 0)
+    int j;
+
+    for (j = i+1; j < num_linedefs; j++)
     {
-      linedef_t *A = lev_linedefs[array[i]];
-      linedef_t *B = lev_linedefs[array[i+1]];
+      if (LineStartCompare(array + i, array + j) != 0)
+        break;
 
-      // found an overlap !
-      B->overlap = A->overlap ? A->overlap : A;
+      if (LineEndCompare(array + i, array + j) == 0)
+      {
+        linedef_t *A = lev_linedefs[array[i]];
+        linedef_t *B = lev_linedefs[array[j]];
 
-      count++;
+        // found an overlap !
+        B->overlap = A->overlap ? A->overlap : A;
+
+        count++;
+      }
     }
   }
 
@@ -743,6 +726,163 @@ void DetectOverlappingLines(void)
   }
 
   UtilFree(array);
+}
+
+static void CountWallTips(vertex_t *vert, int *one_sided, int *two_sided)
+{
+    wall_tip_t *tip;
+
+    *one_sided = 0;
+    *two_sided = 0;
+
+    for (tip=vert->tip_set; tip; tip=tip->next)
+    {
+      if (!tip->left || !tip->right)
+        (*one_sided) += 1;
+      else
+        (*two_sided) += 1;
+    }
+}
+
+void TestForWindowEffect(linedef_t *L)
+{
+  // cast a line horizontally or vertically and see what we hit.
+  // OUCH, we have to iterate over all linedefs.
+
+  int i;
+
+  float_g mx = (L->start->x + L->end->x) / 2.0;
+  float_g my = (L->start->y + L->end->y) / 2.0;
+
+  float_g dx = L->end->x - L->start->x;
+  float_g dy = L->end->y - L->start->y;
+
+  int cast_horiz = fabs(dx) < fabs(dy) ? 1 : 0;
+
+  float_g best_dist = 999999.0;
+  boolean_g best_open = FALSE;
+  int best_line = -1;
+
+  for (i=0; i < num_linedefs; i++)
+  {
+    linedef_t *N = lev_linedefs[i];
+
+    float_g dist;
+    sidedef_t *hit_side;
+
+    float_g dx2, dy2;
+
+    if (N == L || N->zero_len || N->overlap)
+      continue;
+
+    if (cast_horiz)
+    {
+      dx2 = N->end->x - N->start->x;
+      dy2 = N->end->y - N->start->y;
+
+      if (fabs(dy2) < DIST_EPSILON)
+        continue;
+
+      if ((MAX(N->start->y, N->end->y) < my - DIST_EPSILON) ||
+          (MIN(N->start->y, N->end->y) > my + DIST_EPSILON))
+        continue;
+
+      dist = (N->start->x + (my - N->start->y) * dx2 / dy2) - mx;
+
+      if ((dy > 0) == (dist > 0))
+        continue;
+
+      dist = fabs(dist);
+      if (dist < DIST_EPSILON)  // too close (overlapping lines ?)
+        continue;
+
+      hit_side = ((dy > 0) == (dy2 > 0)) ? N->right : N->left;
+    }
+    else  /* vert */
+    {
+      dx2 = N->end->x - N->start->x;
+      dy2 = N->end->y - N->start->y;
+
+      if (fabs(dx2) < DIST_EPSILON)
+        continue;
+
+      if ((MAX(N->start->x, N->end->x) < mx - DIST_EPSILON) ||
+          (MIN(N->start->x, N->end->x) > mx + DIST_EPSILON))
+        continue;
+
+      dist = (N->start->y + (mx - N->start->x) * dy2 / dx2) - my;
+
+      if ((dx > 0) != (dist > 0))
+        continue;
+
+      dist = fabs(dist);
+      if (dist < DIST_EPSILON)  // too close (overlapping lines ?)
+        continue;
+
+      hit_side = ((dx > 0) == (dx2 > 0)) ? N->right : N->left;
+    }
+
+    if (dist < best_dist)
+    {
+      best_dist = dist;
+      best_open = (hit_side && hit_side->sector) ? TRUE : FALSE;
+      best_line = i;
+    }
+  }
+
+#if DEBUG_WINDOW_FX
+  PrintDebug("best line: %d  best dist: %1.1f  best_open: %s\n",
+      best_line, best_dist, best_open ? "OPEN" : "CLOSED");
+#endif
+
+  if (best_open)
+  {
+    L->window_effect = 1;
+    PrintMiniWarn("Linedef %d is one-sided but faces into a sector.\n", L->index);
+  }
+}
+
+void DetectWindowEffects(void)
+{
+  // Algorithm:
+  //   Scan the linedef list looking for possible candidates,
+  //   checking for an odd number of one-sided linedefs connected
+  //   to a single vertex.  This idea courtesy of Graham Jackson.
+
+  int i;
+  int one_siders;
+  int two_siders;
+
+  for (i=0; i < num_linedefs; i++)
+  {
+    linedef_t *L = lev_linedefs[i];
+
+    if (L->two_sided || L->zero_len || L->overlap || !L->right)
+      continue;
+
+    CountWallTips(L->start, &one_siders, &two_siders);
+
+    if ((one_siders % 2) == 1 && (one_siders + two_siders) > 1)
+    {
+#if DEBUG_WINDOW_FX
+      PrintDebug("FUNNY LINE %d : start vertex %d has odd number of one-siders\n",
+          i, L->start->index);
+#endif
+      TestForWindowEffect(L);
+      continue;
+    }
+
+    CountWallTips(L->end, &one_siders, &two_siders);
+
+    if ((one_siders % 2) == 1 && (one_siders + two_siders) > 1)
+    {
+#if DEBUG_WINDOW_FX
+      PrintDebug("FUNNY LINE %d : end vertex %d has odd number of one-siders\n",
+          i, L->end->index);
+#endif
+      TestForWindowEffect(L);
+    }
+  }
 }
 
 
@@ -837,15 +977,15 @@ vertex_t *NewVertexFromSplitSeg(seg_t *seg, float_g x, float_g y)
 
   vert->ref_count = seg->partner ? 4 : 2;
 
-  if (! (cur_info->spec_version == 1 && lev_doing_normal))
-  {
-    vert->index = num_gl_vert | IS_GL_VERTEX;
-    num_gl_vert++;
-  }
-  else
+  if (lev_doing_normal && cur_info->spec_version == 1)
   {
     vert->index = num_normal_vert;
     num_normal_vert++;
+  }
+  else
+  {
+    vert->index = num_gl_vert | IS_GL_VERTEX;
+    num_gl_vert++;
   }
 
   // compute wall_tip info
@@ -922,14 +1062,11 @@ vertex_t *NewVertexDegenerate(vertex_t *start, vertex_t *end)
 //
 // VertexCheckOpen
 //
-int VertexCheckOpen(vertex_t *vert, float_g dx, float_g dy,
-    sector_t ** left_sec, sector_t ** right_sec)
+sector_t * VertexCheckOpen(vertex_t *vert, float_g dx, float_g dy)
 {
   wall_tip_t *tip;
 
   angle_g angle = UtilComputeAngle(dx, dy);
-
-  *left_sec = *right_sec = NULL;
 
   // first check whether there's a wall_tip that lies in the exact
   // direction of the given direction (which is relative to the
@@ -937,14 +1074,11 @@ int VertexCheckOpen(vertex_t *vert, float_g dx, float_g dy,
 
   for (tip=vert->tip_set; tip; tip=tip->next)
   {
-    if (fabs(tip->angle - angle) < ANG_EPSILON)
+    if (fabs(tip->angle - angle) < ANG_EPSILON ||
+        fabs(tip->angle - angle) > (360.0 - ANG_EPSILON))
     {
       // yes, found one
-
-      *left_sec  = tip->left;
-      *right_sec = tip->right;
-
-      return FALSE;
+      return NULL;
     }
   }
 
@@ -957,9 +1091,7 @@ int VertexCheckOpen(vertex_t *vert, float_g dx, float_g dy,
     if (angle + ANG_EPSILON < tip->angle)
     {
       // found it
-      *left_sec = *right_sec = tip->right;
-
-      return (tip->right != NULL);
+      return tip->right;
     }
 
     if (! tip->next)
@@ -967,12 +1099,10 @@ int VertexCheckOpen(vertex_t *vert, float_g dx, float_g dy,
       // no more tips, thus we must be on the LEFT side of the tip
       // with the largest angle.
 
-      *left_sec = *right_sec = tip->left;
-
-      return (tip->left != NULL);
+      return tip->left;
     }
   }
-  
+ 
   InternalError("Vertex %d has no tips !", vert->index);
   return FALSE;
 }

@@ -2,9 +2,9 @@
 // WAD : WAD read/write functions.
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2004 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2005 Andrew Apted
 //
-//  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
+//  Based on 'BSP 2.3' by Colin Reed, Lee Killough and others.
 //
 //  This program is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU General Public License
@@ -71,12 +71,12 @@ typedef struct level_s
   // information on overflow
   int soft_limit;
   int hard_limit;
-  int v3_switch;
+  int v5_switch;
 }
 level_t;
 
 /* this level information holds GL lumps */
-#define LEVEL_IS_GL   0x0002
+#define LEVEL_IS_GL      0x0002
 
 /* limit flags, to show what went wrong */
 #define LIMIT_VERTEXES     0x000001
@@ -96,6 +96,7 @@ level_t;
 #define LIMIT_BAD_SIDE     0x001000
 #define LIMIT_BMAP_TRUNC   0x002000
 #define LIMIT_BLOCKMAP     0x004000
+#define LIMIT_ZDBSP        0x008000
 
 
 // directory entry
@@ -154,7 +155,7 @@ int CheckExtension(const char *filename, const char *ext);
 char *ReplaceExtension(const char *filename, const char *ext);
 
 // open the input wad file and read the contents into memory.  When
-// `load_all' is false, lumps other than level info will be marked as
+// 'load_all' is false, lumps other than level info will be marked as
 // copyable instead of loaded.
 //
 // Returns GLBSP_E_OK if all went well, otherwise an error code (in
@@ -185,7 +186,7 @@ void DeleteGwaFile(const char *base_wad_name);
 int CountLevels(void);
 
 // find the next level lump in the wad directory, and store the
-// reference in `wad.current_level'.  Call this straight after
+// reference in 'wad.current_level'.  Call this straight after
 // ReadWadFile() to get the first level.  Returns 1 if found,
 // otherwise 0 if there are no more levels in the wad.
 //
@@ -215,10 +216,20 @@ lump_t *CreateGLLump(const char *name);
 //
 void AppendLevelLump(lump_t *lump, const void *data, int length);
 
+// for the current GL lump, add a keyword/value pair into the
+// level marker lump.
+void AddGLTextLine(const char *keyword, const char *value);
+
+// Zlib compression support
+void ZLibBeginLump(lump_t *lump);
+void ZLibAppendLump(const void *data, int length);
+void ZLibFinishLump(void);
+
 // mark the fact that this level failed to build.
 void MarkSoftFailure(int soft);
 void MarkHardFailure(int hard);
-void MarkV3Switch(int v3);
+void MarkV5Switch(int v5);
+void MarkZDSwitch(void);
 
 // alert the user if any levels failed to build properly.
 void ReportFailedLevels(void);
