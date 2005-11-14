@@ -124,7 +124,11 @@ void TVisBuilder::LoadVertexes(int lump, int gl_lump)
 	base_verts = mainwad->LumpSize(lump) / sizeof(mapvertex_t);
 
 	gldata = glwad->GetLump(gl_lump);
-	if (!strncmp((char*)gldata, GL_V2_MAGIC, 4))
+	if (!strncmp((char*)gldata, GL_V5_MAGIC, 4))
+	{
+		GLNodesV5 = true;
+	}
+	if (GLNodesV5 || !strncmp((char*)gldata, GL_V2_MAGIC, 4))
 	{
 		gl_verts = (glwad->LumpSize(gl_lump) - 4) / sizeof(gl_mapvertex_t);
 	}
@@ -153,7 +157,7 @@ void TVisBuilder::LoadVertexes(int lump, int gl_lump)
 	//	Save pointer to GL vertexes for seg loading
 	gl_vertexes = li;
 
-	if (!strncmp((char*)gldata, GL_V2_MAGIC, 4))
+	if (GLNodesV5 || !strncmp((char*)gldata, GL_V2_MAGIC, 4))
 	{
 		gl_mapvertex_t*		glml;
 
@@ -306,12 +310,15 @@ void TVisBuilder::LoadSegs(int lump)
 	seg_t*		li;
 
 	data = glwad->GetLump(lump);
-	if (!strncmp((char*)data, GL_V3_MAGIC, 4))
+	if (GLNodesV5 || !strncmp((char*)data, GL_V3_MAGIC, 4))
 	{
-		numsegs = (glwad->LumpSize(lump) - 4) / sizeof(mapglseg_v3_t);
+		int HdrSize = GLNodesV5 ? 0 : 4;
+		dword GLVertFlag = GLNodesV5 ? GL_VERTEX_V5 : GL_VERTEX_V3;
+
+		numsegs = (glwad->LumpSize(lump) - HdrSize) / sizeof(mapglseg_v3_t);
 		segs = New<seg_t>(numsegs);
 	
-		mapglseg_v3_t* ml = (mapglseg_v3_t*)((byte*)data + 4);
+		mapglseg_v3_t* ml = (mapglseg_v3_t*)((byte*)data + HdrSize);
 		li = segs;
 		numportals = 0;
 	
@@ -320,18 +327,18 @@ void TVisBuilder::LoadSegs(int lump)
 			dword	v1num =	LittleLong(ml->v1);
 			dword	v2num =	LittleLong(ml->v2);
 	
-			if (v1num & GL_VERTEX_V3)
+			if (v1num & GLVertFlag)
 			{
-				v1num ^= GL_VERTEX_V3;
+				v1num ^= GLVertFlag;
 				li->v1 = &gl_vertexes[v1num];
 			}
 			else
 			{
 				li->v1 = &vertexes[v1num];
 			}
-			if (v2num & GL_VERTEX_V3)
+			if (v2num & GLVertFlag)
 			{
-				v2num ^= GL_VERTEX_V3;
+				v2num ^= GLVertFlag;
 				li->v2 = &gl_vertexes[v2num];
 			}
 			else
@@ -434,13 +441,16 @@ void TVisBuilder::LoadSubsectors(int lump)
 	subsector_t*		ss;
 
 	data = glwad->GetLump(lump);
-	if (!strncmp((char*)data, GL_V3_MAGIC, 4))
+	if (GLNodesV5 || !strncmp((char*)data, GL_V3_MAGIC, 4))
 	{
-		numsubsectors = (glwad->LumpSize(lump) - 4) / 
+		int HdrSize = GLNodesV5 ? 0 : 4;
+
+		numsubsectors = (glwad->LumpSize(lump) - HdrSize) /
 			sizeof(mapglsubsector_v3_t);
 		subsectors = New<subsector_t>(numsubsectors);
 	
-		mapglsubsector_v3_t* ms = (mapglsubsector_v3_t*)((byte*)data + 4);
+		mapglsubsector_v3_t* ms = (mapglsubsector_v3_t*)((byte*)data +
+			HdrSize);
 		ss = subsectors;
 	
 		for (i = 0; i < numsubsectors; i++, ss++, ms++)
@@ -554,6 +564,7 @@ void TVisBuilder::LoadLevel(int lumpnum, int gl_lumpnum)
 	const char *levelname = mainwad->LumpName(lumpnum);
 	bool extended = !stricmp(mainwad->LumpName(lumpnum + ML_BEHAVIOR), "BEHAVIOR");
 
+	GLNodesV5 = false;
 	LoadVertexes(lumpnum + ML_VERTEXES, gl_lumpnum + ML_GL_VERT);
 	LoadSectors(lumpnum + ML_SECTORS);
 	LoadSideDefs(lumpnum + ML_SIDEDEFS);
@@ -701,8 +712,32 @@ void TVisBuilder::BuildGWA(void)
 	{
 		if (IsGLLevelName(i))
 		{
-			const char *name = glwad->LumpName(i);
-			LoadLevel(mainwad->LumpNumForName(name + 3), i);
+			const char* name = glwad->LumpName(i);
+			char LevName[12];
+			if (!stricmp(name, "GL_LEVEL"))
+			{
+				char* Ptr = (char*)glwad->GetLump(i);
+				int Len = glwad->LumpSize(i);
+				if (Len < 12 || memcmp(Ptr, "LEVEL=", 6))
+				{
+					Free(Ptr);
+					throw GLVisError("Bad GL_LEVEL format");
+				}
+				int EndCh = 12;
+				while (EndCh < Len && EndCh < 14 &&
+					Ptr[EndCh] != '\n' && Ptr[EndCh] != '\r')
+				{
+					EndCh++;
+				}
+				memcpy(LevName, Ptr + 6, EndCh - 6);
+				LevName[EndCh - 6] = 0;
+				Free(Ptr);
+			}
+			else
+			{
+				strcpy(LevName, name + 3);
+			}
+			LoadLevel(mainwad->LumpNumForName(LevName), i);
 			BuildPVS();
 
 			//	Write lumps
@@ -740,8 +775,48 @@ void TVisBuilder::BuildWAD(void)
 	{
 		if (IsLevelName(i))
 		{
-			const char *name = glwad->LumpName(i);
-			int gl_lump = mainwad->LumpNumForName(va("GL_%s", name));
+			const char* name = glwad->LumpName(i);
+			int gl_lump;
+			if (strlen(name) < 6)
+			{
+				gl_lump = mainwad->LumpNumForName(va("GL_%s", name));
+			}
+			else
+			{
+				gl_lump = -1;
+				for (int gli = 0; gli < mainwad->numlumps; gli++)
+				{
+					if (!stricmp(mainwad->LumpName(gli), "GL_LEVEL"))
+					{
+						char* Ptr = (char*)mainwad->GetLump(gli);
+						int Len = mainwad->LumpSize(gli);
+						if (Len < 12 || memcmp(Ptr, "LEVEL=", 6))
+						{
+							Free(Ptr);
+							throw GLVisError("Bad GL_LEVEL format");
+						}
+						int EndCh = 12;
+						while (EndCh < Len && EndCh < 14 &&
+							Ptr[EndCh] != '\n' && Ptr[EndCh] != '\r')
+						{
+							EndCh++;
+						}
+						char LevName[12];
+						memcpy(LevName, Ptr + 6, EndCh - 6);
+						LevName[EndCh - 6] = 0;
+						if (!stricmp(LevName, name))
+						{
+							gl_lump = gli;
+							break;
+						}
+						Free(Ptr);
+					}
+				}
+				if (gl_lump == -1)
+				{
+					gl_lump = mainwad->LumpNumForName(va("GL_%s", name));
+				}
+			}
 
 			LoadLevel(i, gl_lump);
 			BuildPVS();
@@ -894,9 +969,12 @@ void TGLVis::Build(const char *srcfile)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2005/11/14 19:03:18  dj_jl
+//	Added support for version 5 GL nodes.
+//
 //	Revision 1.10  2004/10/11 06:49:04  dj_jl
 //	Added support for version 3.0 GL nodes.
-//
+//	
 //	Revision 1.9  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
 //	

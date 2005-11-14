@@ -44,7 +44,7 @@ namespace VavoomUtils {
 //
 // Indicate a leaf.
 //
-#define	NF_SUBSECTOR	0x8000
+#define	NF_SUBSECTOR	0x80000000
 
 // TYPES -------------------------------------------------------------------
 
@@ -125,6 +125,8 @@ class TVisBuilder
 
 	TIWadFile *mainwad;
 	TIWadFile *glwad;
+
+	bool GLNodesV5;
 
 	int numvertexes;
 	vertex_t *vertexes;
@@ -211,9 +213,12 @@ class TVisBuilder
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2005/11/14 19:03:18  dj_jl
+//	Added support for version 5 GL nodes.
+//
 //	Revision 1.4  2004/12/27 12:23:18  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.3  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
 //	

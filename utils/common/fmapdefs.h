@@ -37,11 +37,13 @@
 // Indicates a GL-specific vertex
 #define	GL_VERTEX			0x8000
 #define	GL_VERTEX_V3		0x40000000
+#define	GL_VERTEX_V5		0x80000000
 
 #define GL_SEG_FLAG_SIDE	0x0001
 
 #define GL_V2_MAGIC			"gNd2"
 #define GL_V3_MAGIC			"gNd3"
+#define GL_V5_MAGIC			"gNd5"
 
 // Lump order in a map WAD: each map needs a couple of lumps
 // to provide a complete scene geometry description.
@@ -202,6 +204,24 @@ struct mapnode_t
 	unsigned short	children[2];
 };
 
+// BSP node structure.
+struct mapglnode_v5_t
+{
+	// Partition line from (x,y) to (x+dx,y+dy)
+	short		x;
+	short		y;
+	short		dx;
+	short		dy;
+
+	// Bounding box for each child,
+	// clip against view frustum.
+	short		bbox[2][4];
+
+	// If NF_SUBSECTOR its a subsector,
+	// else it's a node of another subtree.
+	unsigned int	children[2];
+};
+
 // Thing definition, position, orientation and type,
 // plus skill/visibility flags and attributes.
 // 	Doom and Heretic thing
@@ -237,9 +257,12 @@ struct mapthing2_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2005/11/14 19:02:38  dj_jl
+//	Added support for version 5 GL nodes.
+//
 //	Revision 1.5  2004/10/11 06:48:51  dj_jl
 //	Added support for version 3.0 GL nodes.
-//
+//	
 //	Revision 1.4  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
 //	
