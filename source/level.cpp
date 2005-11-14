@@ -99,33 +99,32 @@ void VLevel::LoadMap(const char *mapname)
 	{
 		Host_Error("Map %s not found\n", mapname);
 	}
-	int gl_lumpnum = W_CheckNumForName(va("GL_%s", mapname));
+	int gl_lumpnum = FindGLNodes(mapname);
 #ifdef CLIENT
 	if (gl_lumpnum < lumpnum)
 	{
 		W_BuildGLNodes(lumpnum);
-		gl_lumpnum = W_GetNumForName(va("GL_%s", mapname));
+		gl_lumpnum = FindGLNodes(mapname);
 	}
 	else if (strcmp(W_LumpName(gl_lumpnum + ML_GL_PVS), "GL_PVS") ||
 		W_LumpLength(gl_lumpnum + ML_GL_PVS) == 0)
 	{
 		W_BuildPVS(lumpnum, gl_lumpnum);
 		lumpnum = W_GetNumForName(mapname);
-		gl_lumpnum = W_GetNumForName(va("GL_%s", mapname));
-	}
-#else
-	if (gl_lumpnum < lumpnum)
-	{
-		// Dedicated servers doesn't have plugins
-		Host_Error("Map %s is missing GL-Nodes\n", mapname);
+		gl_lumpnum = FindGLNodes(mapname);
 	}
 #endif
+	if (gl_lumpnum < lumpnum)
+	{
+		Host_Error("Map %s is missing GL-Nodes\n", mapname);
+	}
 	bExtended = !strcmp(W_LumpName(lumpnum + ML_BEHAVIOR), "BEHAVIOR");
 
 	//
 	// Begin processing map lumps
 	// Note: most of this ordering is important
 	//
+	bGLNodesV5 = false;
 	LoadVertexes(lumpnum + ML_VERTEXES, gl_lumpnum + ML_GL_VERT);
 	LoadSectors(lumpnum + ML_SECTORS);
 	LoadSideDefsPass1(lumpnum + ML_SIDEDEFS);
@@ -211,6 +210,60 @@ void VLevel::LoadMap(const char *mapname)
 
 //==========================================================================
 //
+//  VLevel::FindGLNodes
+//
+//==========================================================================
+
+int VLevel::FindGLNodes(const char* name) const
+{
+	guard(VLevel::FindGLNodes);
+	if (strlen(name) < 6)
+	{
+		return W_CheckNumForName(va("GL_%s", name));
+	}
+
+	//	Long map name, check GL_LEVEL lumps.
+	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
+		Lump = W_IterateNS(Lump, WADNS_Global))
+	{
+		if (stricmp(W_LumpName(Lump), "GL_LEVEL"))
+		{
+			continue;
+		}
+		if (W_LumpLength(Lump) < 12)
+		{
+			//	Lump is too short.
+			continue;
+		}
+		char* Ptr = (char*)W_CacheLumpNum(Lump, PU_STATIC);
+		if (memcmp(Ptr, "LEVEL=", 6))
+		{
+			//	LEVEL keyword expected, but missing.
+			Z_Free(Ptr);
+			continue;
+		}
+		for (int i = 11; i < 14; i++)
+		{
+			if (Ptr[i] == '\n' || Ptr[i] == '\r')
+			{
+				Ptr[i] = 0;
+				break;
+			}
+		}
+		Ptr[14] = 0;
+		if (!stricmp(Ptr + 6, name))
+		{
+			Z_Free(Ptr);
+			return Lump;
+		}
+		Z_Free(Ptr);
+	}
+	return -1;
+	unguard;
+}
+
+//==========================================================================
+//
 //  VLevel::LoadVertexes
 //
 //==========================================================================
@@ -253,10 +306,16 @@ void VLevel::LoadVertexes(int Lump, int GLLump)
 
    	// Load data into cache.
 	Data = W_CacheLumpNum(GLLump, PU_STATIC);
-	if (!strncmp((char*)Data, GL_V2_MAGIC, 4))
+	if (!strncmp((char*)Data, GL_V2_MAGIC, 4) ||
+		!strncmp((char*)Data, GL_V5_MAGIC, 4))
 	{
 		gl_mapvertex_t *pGLSrc;
 
+		if (!strncmp((char*)Data, GL_V5_MAGIC, 4))
+		{
+GCon->Logf("Version5 nodes");
+			bGLNodesV5 = true;
+		}
 		NumGLVerts = (W_LumpLength(GLLump) - 4) / sizeof(gl_mapvertex_t);
 		NumVertexes = NumBaseVerts + NumGLVerts;
 		Z_Resize((void**)&Vertexes, NumVertexes * sizeof(vertex_t));
@@ -620,41 +679,44 @@ void VLevel::LoadGLSegs(int Lump)
 	Segs = Z_CNew<seg_t>(NumSegs, PU_LEVEL, 0);
 	data = W_CacheLumpNum(Lump, PU_STATIC);
 
-	if (!strncmp((char*)data, GL_V3_MAGIC, 4))
+	if (bGLNodesV5 || !strncmp((char*)data, GL_V3_MAGIC, 4))
 	{
-		NumSegs = (W_LumpLength(Lump) - 4) / sizeof(mapglseg_v3_t);
+		int HdrSize = bGLNodesV5 ? 0 : 4;
+		dword GLVertFlag = bGLNodesV5 ? GL_VERTEX_V5 : GL_VERTEX_V3;
+
+		NumSegs = (W_LumpLength(Lump) - HdrSize) / sizeof(mapglseg_v3_t);
 		Z_Resize((void**)&Segs, NumSegs * sizeof(seg_t));
 
-		mapglseg_v3_t* ml = (mapglseg_v3_t *)((byte*)data + 4);
+		mapglseg_v3_t* ml = (mapglseg_v3_t*)((byte*)data + HdrSize);
 		li = Segs;
-	
+
 		for (i = 0; i < NumSegs; i++, li++, ml++)
 		{
 			dword	v1num =	LittleLong(ml->v1);
 			dword	v2num =	LittleLong(ml->v2);
 	
-			if (v1num & GL_VERTEX_V3)
+			if (v1num & GLVertFlag)
 			{
-				v1num ^= GL_VERTEX_V3;
+				v1num ^= GLVertFlag;
 				li->v1 = &gl_vertexes[v1num];
 			}
 			else
 			{
 				li->v1 = &Vertexes[v1num];
 			}
-			if (v2num & GL_VERTEX_V3)
+			if (v2num & GLVertFlag)
 			{
-				v2num ^= GL_VERTEX_V3;
+				v2num ^= GLVertFlag;
 				li->v2 = &gl_vertexes[v2num];
 			}
 			else
 			{
 				li->v2 = &Vertexes[v2num];
 			}
-	
+
 			linedef = LittleShort(ml->linedef);
 			side = LittleShort(ml->flags) & GL_SEG_FLAG_SIDE;
-	
+
 			if (linedef >= 0)
 			{
 				ldef = &Lines[linedef];
@@ -672,9 +734,9 @@ void VLevel::LoadGLSegs(int Lump)
 				li->length = Length(*li->v2 - *li->v1);
 				li->side = side;
 			}
-	
+
 			//	Partner is not used
-	
+
 			//	Calc seg's plane params
 			CalcSeg(li);
 		}
@@ -683,12 +745,12 @@ void VLevel::LoadGLSegs(int Lump)
 	{
 		mapglseg_t* ml = (mapglseg_t *)data;
 		li = Segs;
-	
+
 		for (i = 0; i < NumSegs; i++, li++, ml++)
 		{
 			word	v1num =	LittleShort(ml->v1);
 			word	v2num =	LittleShort(ml->v2);
-	
+
 			if (v1num & GL_VERTEX)
 			{
 				v1num ^= GL_VERTEX;
@@ -707,7 +769,7 @@ void VLevel::LoadGLSegs(int Lump)
 			{
 				li->v2 = &Vertexes[v2num];
 			}
-	
+
 			linedef = LittleShort(ml->linedef);
 			side = LittleShort(ml->side);
 	
@@ -717,10 +779,10 @@ void VLevel::LoadGLSegs(int Lump)
 				li->linedef = ldef;
 				li->sidedef = &Sides[ldef->sidenum[side]];
 				li->frontsector = Sides[ldef->sidenum[side]].sector;
-	
+
 				if (ldef->flags & ML_TWOSIDED)
 					li->backsector = Sides[ldef->sidenum[side^1]].sector;
-	
+
 				if (side)
 					li->offset = Length(*li->v1 - *ldef->v2);
 				else
@@ -728,9 +790,9 @@ void VLevel::LoadGLSegs(int Lump)
 				li->length = Length(*li->v2 - *li->v1);
 				li->side = side;
 			}
-	
+
 			//	Partner is not used
-	
+
 			//	Calc seg's plane params
 			CalcSeg(li);
 		}
@@ -759,12 +821,16 @@ void VLevel::LoadSubsectors(int Lump)
 	Subsectors = Z_CNew<subsector_t>(NumSubsectors, PU_LEVEL, 0);
 	data = W_CacheLumpNum(Lump, PU_STATIC);
 
-	if (!strncmp((char*)data, GL_V3_MAGIC, 4))
+	if (bGLNodesV5 || !strncmp((char*)data, GL_V3_MAGIC, 4))
 	{
-		NumSubsectors = (W_LumpLength(Lump) - 4) / sizeof(mapglsubsector_v3_t);
+		int HdrSize = bGLNodesV5 ? 0 : 4;
+
+		NumSubsectors = (W_LumpLength(Lump) - HdrSize) /
+			sizeof(mapglsubsector_v3_t);
 		Z_Resize((void**)&Subsectors, NumSubsectors * sizeof(subsector_t));
 
-		mapglsubsector_v3_t* ms = (mapglsubsector_v3_t*)((byte*)data + 4);
+		mapglsubsector_v3_t* ms = (mapglsubsector_v3_t*)((byte*)data +
+			HdrSize);
 		ss = Subsectors;
 	
 		for (i = 0; i < NumSubsectors; i++, ss++, ms++)
@@ -829,32 +895,61 @@ void VLevel::LoadNodes(int Lump)
 {
 	guard(VLevel::LoadNodes);
 	byte *data;
-	int i;
-	int j;
-	mapnode_t *mn;
 	node_t *no;
 
-	NumNodes = W_LumpLength(Lump) / sizeof(mapnode_t);
-	Nodes = Z_CNew<node_t>(NumNodes, PU_LEVEL, 0);
-	data = (byte*)W_CacheLumpNum(Lump, PU_STATIC);
-
-	mn = (mapnode_t *)data;
-	no = Nodes;
-
-	for (i = 0; i < NumNodes; i++, no++, mn++)
+	if (bGLNodesV5)
 	{
-		no->SetPointDir(TVec(LittleShort(mn->x), LittleShort(mn->y), 0),
-			TVec(LittleShort(mn->dx), LittleShort(mn->dy), 0));
+		NumNodes = W_LumpLength(Lump) / sizeof(mapglnode_v5_t);
+		Nodes = Z_CNew<node_t>(NumNodes, PU_LEVEL, 0);
+		data = (byte*)W_CacheLumpNum(Lump, PU_STATIC);
+		mapglnode_v5_t* mn = (mapglnode_v5_t*)data;
+		no = Nodes;
 
-		for (j = 0; j < 2; j++)
+		for (int i = 0; i < NumNodes; i++, no++, mn++)
 		{
-			no->children[j] = LittleShort(mn->children[j]);
-			no->bbox[j][0] = LittleShort(mn->bbox[j][BOXLEFT]);
-			no->bbox[j][1] = LittleShort(mn->bbox[j][BOXBOTTOM]);
-			no->bbox[j][2] = -32768.0;
-			no->bbox[j][3] = LittleShort(mn->bbox[j][BOXRIGHT]);
-			no->bbox[j][4] = LittleShort(mn->bbox[j][BOXTOP]);
-			no->bbox[j][5] = 32768.0;
+			no->SetPointDir(TVec(LittleShort(mn->x), LittleShort(mn->y), 0),
+				TVec(LittleShort(mn->dx), LittleShort(mn->dy), 0));
+
+			for (int j = 0; j < 2; j++)
+			{
+				no->children[j] = LittleLong(mn->children[j]);
+				no->bbox[j][0] = LittleShort(mn->bbox[j][BOXLEFT]);
+				no->bbox[j][1] = LittleShort(mn->bbox[j][BOXBOTTOM]);
+				no->bbox[j][2] = -32768.0;
+				no->bbox[j][3] = LittleShort(mn->bbox[j][BOXRIGHT]);
+				no->bbox[j][4] = LittleShort(mn->bbox[j][BOXTOP]);
+				no->bbox[j][5] = 32768.0;
+			}
+		}
+	}
+	else
+	{
+		NumNodes = W_LumpLength(Lump) / sizeof(mapnode_t);
+		Nodes = Z_CNew<node_t>(NumNodes, PU_LEVEL, 0);
+		data = (byte*)W_CacheLumpNum(Lump, PU_STATIC);
+		mapnode_t* mn = (mapnode_t *)data;
+		no = Nodes;
+
+		for (int i = 0; i < NumNodes; i++, no++, mn++)
+		{
+			no->SetPointDir(TVec(LittleShort(mn->x), LittleShort(mn->y), 0),
+				TVec(LittleShort(mn->dx), LittleShort(mn->dy), 0));
+
+			for (int j = 0; j < 2; j++)
+			{
+				no->children[j] = (word)LittleShort(mn->children[j]);
+				if (no->children[j] & NF_SUBSECTOR_OLD)
+				{
+					no->children[j] &= ~NF_SUBSECTOR_OLD;
+					no->children[j] |= NF_SUBSECTOR;
+				}
+				no->bbox[j][0] = LittleShort(mn->bbox[j][BOXLEFT]);
+				no->bbox[j][1] = LittleShort(mn->bbox[j][BOXBOTTOM]);
+				no->bbox[j][2] = -32768.0;
+				no->bbox[j][3] = LittleShort(mn->bbox[j][BOXRIGHT]);
+				no->bbox[j][4] = LittleShort(mn->bbox[j][BOXTOP]);
+				no->bbox[j][5] = 32768.0;
+			}
 		}
 	}
 	Z_Free(data);
@@ -1313,9 +1408,12 @@ IMPLEMENT_FUNCTION(VLevel, PointInSector)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2005/11/14 19:34:16  dj_jl
+//	Added support for version 5 GL nodes.
+//
 //	Revision 1.6  2005/05/26 16:52:29  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.5  2005/03/28 07:28:19  dj_jl
 //	Transfer lighting and other BOOM stuff.
 //	

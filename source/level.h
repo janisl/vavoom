@@ -332,7 +332,7 @@ struct node_t : public TPlane
 	float		bbox[2][6];
 
 	// If NF_SUBSECTOR its a subsector.
-	word		children[2];
+	dword		children[2];
 
 	node_t		*parent;
 	int			VisFrame;
@@ -437,6 +437,7 @@ class VLevel : public VObject
 	//	Flags.
 	dword bForServer:1;		//	True if this level belongs to the server.
 	dword bExtended:1;		//	True if level was in Hexen format.
+	dword bGLNodesV5:1;		//	True if using version 5 GL nodes.
 
 	//
 	//	MAP related Lookup tables.
@@ -528,6 +529,7 @@ private:
 	void LoadThings2(int Lump);
 
 	//	Map loading helpers.
+	int FindGLNodes(const char* name) const;
 	int FTNumForName(const char *name) const;
 	int TFNumForName(const char *name) const;
 	int CMapTFNumForName(const char *name) const;
@@ -612,9 +614,12 @@ extern VLevel*			GClLevel;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.33  2005/11/14 19:34:16  dj_jl
+//	Added support for version 5 GL nodes.
+//
 //	Revision 1.32  2005/06/30 20:20:54  dj_jl
 //	Implemented rendering of Boom fake flats.
-//
+//	
 //	Revision 1.31  2005/06/04 13:59:02  dj_jl
 //	Adding support for Boom fake sectors.
 //	

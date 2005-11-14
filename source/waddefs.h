@@ -83,7 +83,7 @@ enum
 //
 // Indicate a leaf.
 //
-#define	NF_SUBSECTOR	0x8000
+#define	NF_SUBSECTOR	0x80000000
 
 //
 // Map things flags
@@ -105,9 +105,12 @@ enum
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2005/11/14 19:34:16  dj_jl
+//	Added support for version 5 GL nodes.
+//
 //	Revision 1.5  2004/12/22 07:49:13  dj_jl
 //	More extended ACS support, more linedef flags.
-//
+//	
 //	Revision 1.4  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

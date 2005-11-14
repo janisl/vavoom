@@ -29,6 +29,7 @@ class Level:Object
 //	Flags.
 bool bForServer;	//	True if this level belongs to the server.
 bool bExtended;		//	True if level was in Hexen format.
+bool bGLNodesV5;	//	True if using version 5 GL nodes.
 
 //
 //	MAP related Lookup tables.
@@ -110,6 +111,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/14 19:34:43  dj_jl
+//  Added support for version 5 GL nodes.
+//
 //  Revision 1.2  2004/12/03 16:15:46  dj_jl
 //  Implemented support for extended ACS format scripts, functions, libraries and more.
 //
