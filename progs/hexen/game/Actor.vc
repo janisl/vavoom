@@ -3903,11 +3903,15 @@ __states__
 defaultproperties
 {
 	MaxStepHeight = 24.0;
+	SoundClass = 'fighter';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2005/11/17 18:55:04  dj_jl
+//  Implemented support for sndinfo extensions.
+//
 //  Revision 1.16  2005/07/09 13:55:47  dj_jl
 //  Scrolers carrying objects.
 //

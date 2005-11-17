@@ -3,7 +3,7 @@ progs/svprogs.dat
 
 scripts/animdefs.txt
 scripts/terrains.txt
-scripts/sfxinfo.txt
+scripts/sndinfo.txt
 scripts/skyboxes.txt
 
 $wad hexendat.wad

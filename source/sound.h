@@ -59,6 +59,7 @@ void S_ResumeSound();
 void S_UpdateSounds();
 int S_GetSoundID(FName Name);
 int S_GetSoundID(const char *name);
+int S_ResolveEntitySound(FName, FName, FName);
 void S_Shutdown();
 
 //
@@ -94,9 +95,12 @@ extern seqnode_t	*SequenceListHead;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2005/11/17 18:53:21  dj_jl
+//	Implemented support for sndinfo extensions.
+//
 //	Revision 1.12  2005/11/13 14:36:22  dj_jl
 //	Moved common sound functions to main sound module.
-//
+//	
 //	Revision 1.11  2005/11/08 20:57:15  dj_jl
 //	Removed playing sound till done.
 //	

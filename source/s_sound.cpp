@@ -355,6 +355,7 @@ void S_Shutdown()
 
 static void S_StopChannel(int chan_num)
 {
+	guard(S_StopChannel);
 	if (Channel[chan_num].sound_id)
 	{
 		GSoundDevice->StopChannel(Channel[chan_num].handle);
@@ -362,6 +363,7 @@ static void S_StopChannel(int chan_num)
 		Channel[chan_num].origin_id = 0;
 		Channel[chan_num].sound_id = 0;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -380,7 +382,7 @@ static int GetChannel(int sound_id, int origin_id, int channel, int priority)
 	int			prior;
 	int numchannels = S_sfx[sound_id].NumChannels;
 
-	if (numchannels != -1)
+	if (numchannels > 0)
 	{
 		lp = -1; //denote the argument sound_id
 		found = 0;
@@ -389,6 +391,11 @@ static int GetChannel(int sound_id, int origin_id, int channel, int priority)
 		{
 			if (Channel[i].sound_id == sound_id)
 			{
+				if (S_sfx[sound_id].bSingular)
+				{
+					// This sound is already playing, so don't start it again.
+					return -1;
+				}
 				found++; //found one.  Now, should we replace it??
 				if (prior >= Channel[i].priority)
 				{
@@ -465,15 +472,19 @@ static int GetChannel(int sound_id, int origin_id, int channel, int priority)
 //
 //==========================================================================
 
-void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
+void S_StartSound(int InSoundId, const TVec &origin, const TVec &velocity,
 	int origin_id, int channel, int InVolume)
 {
+	guard(S_StartSound);
 	float volume = InVolume / 127.0;
 
-	if (!GSoundDevice || !sound_id || !snd_MaxVolume || !volume)
+	if (!GSoundDevice || !InSoundId || !snd_MaxVolume || !volume)
 	{
 		return;
 	}
+
+	//	Find actual sound ID to use.
+	int sound_id = S_ResolveSound(InSoundId);
 
 	//	Apply sound volume.
 	volume *= snd_MaxVolume;
@@ -500,7 +511,7 @@ void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
 	float pitch = 1.0;
 	if (S_sfx[sound_id].ChangePitch)
 	{
-		pitch = 1.0 + (Random() - Random()) / 16.0;
+		pitch = 1.0 + (Random() - Random()) * S_sfx[sound_id].ChangePitch;
 	}
 	int handle;
 	bool is3D;
@@ -535,6 +546,7 @@ void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
 	Channel[chan].volume = volume;
 	Channel[chan].handle = handle;
 	Channel[chan].is3D = is3D;
+	unguard;
 }
 
 //==========================================================================
@@ -545,6 +557,7 @@ void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
 
 void S_StopSound(int origin_id, int channel)
 {
+	guard(S_StopSound);
 	for (int i = 0; i < NumChannels; i++)
 	{
 		if (Channel[i].origin_id == origin_id &&
@@ -553,6 +566,7 @@ void S_StopSound(int origin_id, int channel)
 			S_StopChannel(i);
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -563,11 +577,13 @@ void S_StopSound(int origin_id, int channel)
 
 void S_StopAllSound()
 {
+	guard(S_StopAllSound);
 	//	stop all sounds
 	for (int i = 0; i < NumChannels; i++)
 	{
 		S_StopChannel(i);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -576,8 +592,10 @@ void S_StopAllSound()
 //
 //==========================================================================
 
-boolean S_GetSoundPlayingInfo(int origin_id, int sound_id)
+boolean S_GetSoundPlayingInfo(int origin_id, int InSoundId)
 {
+	guard(S_GetSoundPlayingInfo);
+	int sound_id = S_ResolveSound(InSoundId);
 	for (int i = 0; i < NumChannels; i++)
 	{
 		if (Channel[i].sound_id == sound_id &&
@@ -588,6 +606,7 @@ boolean S_GetSoundPlayingInfo(int origin_id, int sound_id)
 		}
 	}
 	return false;
+	unguard;
 }
 
 //==========================================================================
@@ -601,6 +620,7 @@ boolean S_GetSoundPlayingInfo(int origin_id, int sound_id)
 
 void S_UpdateSfx()
 {
+	guard(S_UpdateSfx);
 	if (!GSoundDevice || !NumChannels)
 	{
 		return;
@@ -687,6 +707,7 @@ void S_UpdateSfx()
 	}
 
 	GSoundDevice->Tick(host_frametime);
+	unguard;
 }
 
 //==========================================================================
@@ -1369,6 +1390,7 @@ static const byte		miditempo[] =
 
 static int FirstChannelAvailable()
 {
+	guard(FirstChannelAvailable);
 	int 	old15 = MUS2MIDchannel[15];
 	int		max = -1;
 
@@ -1383,6 +1405,7 @@ static int FirstChannelAvailable()
 	MUS2MIDchannel[15] = old15;
 
 	return (max == 8 ? 10 : max + 1);
+	unguard;
 }
 
 //==========================================================================
@@ -1393,6 +1416,7 @@ static int FirstChannelAvailable()
 
 static void TWriteByte(int MIDItrack, char data)
 {
+	guard(TWriteByte);
 	if (tracks[MIDItrack].current < TRACKBUFFERSIZE)
 	{
 		tracks[MIDItrack].data[tracks[MIDItrack].current] = data;
@@ -1402,6 +1426,7 @@ static void TWriteByte(int MIDItrack, char data)
 		Sys_Error("qmus2mid: Track buffer full.");
 	}
 	tracks[MIDItrack].current++;
+	unguard;
 }
 
 //==========================================================================
@@ -1412,10 +1437,12 @@ static void TWriteByte(int MIDItrack, char data)
 
 static void TWriteBuf(int MIDItrack, const byte* buf, int size)
 {
+	guard(TWriteBuf);
 	for (int i = 0; i < size; i++)
 	{
 		TWriteByte(MIDItrack, buf[i]);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -1426,6 +1453,7 @@ static void TWriteBuf(int MIDItrack, const byte* buf, int size)
 
 static void TWriteVarLen(int tracknum, dword value)
 {
+	guard(TWriteVarLen);
 	dword buffer = value & 0x7f;
 	while ((value >>= 7))
 	{
@@ -1441,6 +1469,7 @@ static void TWriteVarLen(int tracknum, dword value)
 		else
 			break;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -1451,6 +1480,7 @@ static void TWriteVarLen(int tracknum, dword value)
 
 static dword ReadTime(FArchive& Ar)
 {
+	guard(ReadTime);
 	dword 		time = 0;
 	byte		data;
 
@@ -1463,6 +1493,7 @@ static dword ReadTime(FArchive& Ar)
 	} while (!Ar.AtEnd() && (data & 0x80));
 
 	return time;
+	unguard;
 }
 
 //==========================================================================
@@ -1473,6 +1504,7 @@ static dword ReadTime(FArchive& Ar)
 
 static bool convert(FArchive& Ar)
 {
+	guard(convert);
 	byte				et;
 	int					MUSchannel;
 	int					MIDIchannel;
@@ -1636,6 +1668,7 @@ static bool convert(FArchive& Ar)
 	}
 
 	return true;
+	unguard;
 }
 
 //==========================================================================
@@ -1646,8 +1679,10 @@ static bool convert(FArchive& Ar)
 
 static void WriteBuf(const void* p, int size)
 {
+	guard(WriteBuf);
 	memcpy(mid_file, p, size);
 	mid_file += size;
+	unguard;
 }
 
 //==========================================================================
@@ -1658,6 +1693,7 @@ static void WriteBuf(const void* p, int size)
 
 static void WriteMIDIFile()
 {
+	guard(WriteMIDIFile);
 	int				i;
 	dword			size;
 	MIDheader*		hdr;
@@ -1679,6 +1715,7 @@ static void WriteMIDIFile()
 		WriteBuf(&size, 4);
 		WriteBuf(tracks[i].data, tracks[i].current);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -1689,6 +1726,7 @@ static void WriteMIDIFile()
 
 static void FreeTracks()
 {
+	guard(FreeTracks);
 	for (int i = 0; i < 16; i++)
 	{
 		if (tracks[i].data)
@@ -1697,6 +1735,7 @@ static void FreeTracks()
 			tracks[i].data = NULL;
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -1707,6 +1746,7 @@ static void FreeTracks()
 
 static int qmus2mid(FArchive& Ar, byte* mid)
 {
+	guard(qmus2mid);
 	mid_file = mid;
 
 	if (convert(Ar))
@@ -1716,6 +1756,7 @@ static int qmus2mid(FArchive& Ar, byte* mid)
 	FreeTracks();
 
 	return mid_file - mid;
+	unguard;
 }
 
 //**************************************************************************
@@ -1890,9 +1931,12 @@ bool VStreamMusicPlayer::IsPlaying()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2005/11/17 18:53:21  dj_jl
+//	Implemented support for sndinfo extensions.
+//
 //	Revision 1.23  2005/11/13 14:36:22  dj_jl
 //	Moved common sound functions to main sound module.
-//
+//	
 //	Revision 1.22  2005/11/05 15:50:07  dj_jl
 //	Voices played as normal sounds.
 //	

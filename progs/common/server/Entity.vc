@@ -175,6 +175,10 @@ float MaxStepHeight;
 int WaterLevel;
 int WaterType;
 
+//   For player sounds.
+name SoundClass;
+name SoundGender;
+
 //
 //	Natives
 //
@@ -469,11 +473,16 @@ defaultproperties
 {
 	bColideWithThings = true;
 	bColideWithWorld = true;
+	SoundClass = 'player';
+	SoundGender = 'male';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2005/11/17 18:55:04  dj_jl
+//  Implemented support for sndinfo extensions.
+//
 //  Revision 1.6  2005/10/18 21:33:47  dj_jl
 //  Fixed ceiling lightninfg.
 //

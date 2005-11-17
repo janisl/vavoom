@@ -1,0 +1,56 @@
+//==========================================================================
+//
+//  Engine sounds
+//
+//==========================================================================
+
+MenuMove                        hamwal1
+MenuActivate                    dorstp1b
+MenuSelect                      dorstp4
+MenuSwitch                      keys2a
+MenuPrevious                    keys2a
+MenuClose                       dorstp4
+
+$limit PlayerFighterFailedUse   1
+$limit PlayerClericFailedUse    1
+$limit PlayerMageFailedUse      1
+
+$limit SorcererBallWoosh        4
+$limit SorcererBallBounce       3
+$limit SorcererBallExplode      3
+$limit SorcererBigBallExplode   3
+
+$limit Ambient1                 1
+$limit Ambient2                 1
+$limit Ambient3                 1
+$limit Ambient4                 1
+$limit Ambient5                 1
+$limit Ambient6                 1
+$limit Ambient7                 1
+$limit Ambient8                 1
+$limit Ambient9                 1
+$limit Ambient10                1
+$limit Ambient11                1
+$limit Ambient12                1
+$limit Ambient13                1
+$limit Ambient14                1
+$limit Ambient15                1
+
+$limit MysticIncant             4
+
+$pitchshift PlayerMageNormalDeath       0
+$pitchshift PlayerMageCrazyDeath        0
+$pitchshift PlayerMageExtreme1Death     0
+$pitchshift PlayerMageExtreme2Death     0
+$pitchshift PlayerMageExtreme3Death     0
+$pitchshift PlayerMageBurnDeath         0
+$pitchshift PlayerMagePain              0
+$pitchshift PlayerMageGrunt             0
+$pitchshift PlayerMageFallingScream     0
+$pitchshift PlayerMageFailedUse         0
+
+$pitchshift PickupWeapon                0
+$pitchshift PickupPiece                 0
+$pitchshift WeaponBuild                 0
+
+$pitchshift BellRing                    0

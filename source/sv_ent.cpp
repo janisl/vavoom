@@ -1534,7 +1534,8 @@ IMPLEMENT_FUNCTION(VEntity, PlaySound)
 	int Channel = PR_Pop();
 	FName SoundName = PR_PopName();
 	VEntity *Self = (VEntity *)PR_Pop();
-	SV_StartSound(Self, S_GetSoundID(SoundName), Channel, 127);
+	SV_StartSound(Self, S_ResolveEntitySound(Self->SoundClass,
+		Self->SoundGender, SoundName), Channel, 127);
 }
 
 //==========================================================================
@@ -1548,7 +1549,8 @@ IMPLEMENT_FUNCTION(VEntity, PlayFullVolumeSound)
 	int Channel = PR_Pop();
 	FName SoundName = PR_PopName();
 	VEntity *Self = (VEntity *)PR_Pop();
-	SV_StartSound(NULL, S_GetSoundID(SoundName), Channel, 127);
+	SV_StartSound(NULL, S_ResolveEntitySound(Self->SoundClass,
+		Self->SoundGender, SoundName), Channel, 127);
 }
 
 //==========================================================================
@@ -1803,9 +1805,12 @@ void EntInit(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2005/11/17 18:53:21  dj_jl
+//	Implemented support for sndinfo extensions.
+//
 //	Revision 1.14  2005/10/18 21:33:13  dj_jl
 //	Fixed ceiling lightninfg.
-//
+//	
 //	Revision 1.13  2005/04/28 07:16:16  dj_jl
 //	Fixed some warnings, other minor fixes.
 //	

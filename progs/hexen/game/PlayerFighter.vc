@@ -105,11 +105,15 @@ defaultproperties
 	GibsDeathState = S_FPLAY_XDIE1;
 	IceDeathState = S_FPLAY_ICE;
 	PainSound = 'PlayerFighterPain';
+	SoundClass = 'fighter';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/17 18:55:04  dj_jl
+//  Implemented support for sndinfo extensions.
+//
 //  Revision 1.2  2003/11/12 16:50:47  dj_jl
 //  Changed player structure into a class
 //

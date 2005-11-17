@@ -1,3 +1,5 @@
+$pitchshiftrange 2
+
 //==========================================================================
 //
 //  Player sounds
@@ -34,6 +36,14 @@ StaffHit2                       stfpow
 StaffActive                     stfcrk
 BlasterFire                     blssht
 BlasterHit                      blshit
+
+$limit GauntletFull             0
+$limit GauntletHit              0
+$limit GauntletHit2             0
+$limit GauntletActive           0
+$limit GauntletUse              0
+$limit PhoenixHit               0
+$limit PhoenixHit2              1
 
 //==========================================================================
 //
@@ -169,6 +179,12 @@ Wind                            wind
 RipSlop                         ripslop
 Respawn                         respawn
 
+$limit PodNew                   0
+$limit PodExplode               0
+$limit Splash                   1
+$limit Wind                     1
+$limit Respawn                  1
+
 //  Ambient sounds
 Ambient1                        amb1
 Ambient2                        amb2
@@ -181,6 +197,18 @@ Ambient8                        amb8
 Ambient9                        amb9
 Ambient10                       amb10
 Ambient11                       amb11
+
+$limit Ambient1                 1
+$limit Ambient2                 1
+$limit Ambient3                 1
+$limit Ambient4                 1
+$limit Ambient5                 1
+$limit Ambient6                 1
+$limit Ambient7                 1
+$limit Ambient8                 1
+$limit Ambient9                 1
+$limit Ambient10                1
+$limit Ambient11                1
 
 //==========================================================================
 //
@@ -195,6 +223,9 @@ PickupKey                       keyup
 UseArtifact                     artiuse
 Frag                            gfrag
 
+$limit UseArtifact              1
+$limit Frag                     1
+
 //==========================================================================
 //
 //  Engine sounds
@@ -202,6 +233,8 @@ Frag                            gfrag
 //==========================================================================
 
 Chat                            chat
+
+$limit Chat                     1
 
 MenuActivate                    dorcls
 MenuMove                        switch

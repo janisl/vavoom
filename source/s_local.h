@@ -64,12 +64,19 @@ enum
 struct sfxinfo_t
 {
 	FName	TagName;		// Name, by whitch sound is recognised in script
-	char	LumpName[12];	// Only need 9 bytes, but padded out to be dword aligned
+	int		LumpNum;        // lump number of sfx
+
 	int		Priority;		// Higher priority takes precendence
 	int 	NumChannels;	// total number of channels a sound type may occupy
-	bool	ChangePitch;
-	int		LumpNum;        // lump number of sfx
+	float	ChangePitch;
 	int		UseCount;
+	int		Link;
+	int*	Sounds;			// For random sounds, Link is count.
+
+	int		bRandomHeader:1;
+	int		bPlayerReserve:1;
+	int		bSingular:1;
+
 	dword	SampleRate;
 	int		SampleBits;
 	dword	DataSize;
@@ -330,8 +337,9 @@ FAudioCodecDesc		TClass##Desc(Description, TClass::Create);
 //	Data
 //
 void S_InitScript();
-bool S_LoadSound(int sound_id);
-void S_DoneWithLump(int sound_id);
+int S_ResolveSound(int);
+bool S_LoadSound(int);
+void S_DoneWithLump(int);
 
 //
 //	EAX utilites
@@ -381,9 +389,12 @@ struct MIDheader
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2005/11/17 18:53:21  dj_jl
+//	Implemented support for sndinfo extensions.
+//
 //	Revision 1.22  2005/11/13 14:36:22  dj_jl
 //	Moved common sound functions to main sound module.
-//
+//	
 //	Revision 1.21  2005/11/06 15:27:09  dj_jl
 //	Added support for 16 bit sounds.
 //	

@@ -210,6 +210,10 @@ class VEntity : public VThinker
 	int WaterLevel;
 	int WaterType;
 
+	//   For player sounds.
+	FName SoundClass;
+	FName SoundGender;
+
 	static int FIndex_Destroyed;
 	static int FIndex_Touch;
 	static int FIndex_BlockedByLine;
@@ -615,9 +619,12 @@ inline int SV_GetPlayerNum(VBasePlayer* player)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.38  2005/11/17 18:53:21  dj_jl
+//	Implemented support for sndinfo extensions.
+//
 //	Revision 1.37  2005/10/18 21:33:13  dj_jl
 //	Fixed ceiling lightninfg.
-//
+//	
 //	Revision 1.36  2005/05/03 14:57:07  dj_jl
 //	Added support for specifying skin index.
 //	

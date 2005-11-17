@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PlayerMage:PlayerPawn;
+class PlayerMage : PlayerPawn;
 
 __states__
 {
@@ -74,11 +74,15 @@ defaultproperties
 	GibsDeathState = S_MPLAY_XDIE1;
 	IceDeathState = S_MPLAY_ICE;
 	PainSound = 'PlayerMagePain';
+	SoundClass = 'mage';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/17 18:55:04  dj_jl
+//  Implemented support for sndinfo extensions.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //
