@@ -263,7 +263,7 @@ __states__
 
 		// spawn a teleport fog at the new spot
 		A = Spawn(ItemRespawnFog, Origin);
-		A.PlaySound('ItemRespawn', CHAN_ITEM);
+		A.PlaySound('misc/spawn', CHAN_ITEM);
 	}
 }
 
@@ -848,12 +848,12 @@ void NightmareRespawn(void)
 	A = Spawn(TeleportFog, vector(Origin.x, Origin.y, ONFLOORZ));
 
 	// initiate teleport sound
-	A.PlaySound('Teleport', CHAN_BODY);
+	A.PlaySound('misc/teleport', CHAN_BODY);
 
 	// spawn a teleport fog at the new spot
 	A = Spawn(TeleportFog, vector(x, y, ONFLOORZ));
 
-	A.PlaySound('Teleport', CHAN_BODY);
+	A.PlaySound('misc/teleport', CHAN_BODY);
 
 	// spawn the new monster
 	mthing = &SpawnPoint;
@@ -1350,7 +1350,7 @@ void ZMovement(void)
 				// after hitting the ground (hard),
 				// and utter appropriate sound.
 				Player.DeltaViewHeight = vdot / 8.0;
-				PlaySound('PlayerLand', CHAN_VOICE);
+				PlaySound('*land', CHAN_VOICE);
 			}
 		}
 		Origin.z = FloorZ;
@@ -1490,12 +1490,12 @@ float GetFriction()
 //
 //===========================================================================
 
-void PlayerLandedOnThing(void)
+void PlayerLandedOnThing()
 {
 	Player.DeltaViewHeight = Velocity.z / 8.0;
 	if (Velocity.z < -GRAVITY * 0.375)
 	{
-		PlaySound('PlayerLand', CHAN_VOICE);
+		PlaySound('*land', CHAN_VOICE);
 	}
 }
 
@@ -1723,7 +1723,7 @@ void Tick(float deltaTime)
 //
 //==========================================================================
 
-bool HeightClip(void)
+bool HeightClip()
 {
 	bool onfloor;
 
@@ -1914,7 +1914,7 @@ int Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog, bool KeepDir)
 #ifdef DDF
 		fog.SetState(fog.SeeState);
 #else
-		fog.PlaySound('Teleport', CHAN_VOICE);
+		fog.PlaySound('misc/teleport', CHAN_VOICE);
 #endif
 	}
 
@@ -1925,7 +1925,7 @@ int Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog, bool KeepDir)
 #ifdef DDF
 		fog.SetState(fog.SeeState);
 #else
-		fog.PlaySound('Teleport', CHAN_VOICE);
+		fog.PlaySound('misc/teleport', CHAN_VOICE);
 #endif
 	}
 
@@ -1950,7 +1950,7 @@ int Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog, bool KeepDir)
 //
 //==========================================================================
 
-bool CheckMeleeRange(void)
+bool CheckMeleeRange()
 {
 	float dist;
 
@@ -1980,7 +1980,7 @@ bool CheckMeleeRange(void)
 //
 //==========================================================================
 
-bool CheckMissileRange(void)
+bool CheckMissileRange()
 {
 	float dist;
 
@@ -2038,7 +2038,7 @@ bool CheckMissileRange(void)
 //
 //==========================================================================
 
-bool FindOther(void)
+bool FindOther()
 {
 	Actor Other;
 
@@ -2243,7 +2243,7 @@ bool LookForPlayers(bool allaround)
 //
 //==========================================================================
 
-bool StepMove(void)
+bool StepMove()
 {
 	float tryx;
 	float tryy;
@@ -2318,7 +2318,7 @@ bool StepMove(void)
 //
 //==========================================================================
 
-bool TryWalk(void)
+bool TryWalk()
 {
 	if (!StepMove())
 	{
@@ -2335,7 +2335,7 @@ bool TryWalk(void)
 //
 //==========================================================================
 
-void NewChaseDir(void)
+void NewChaseDir()
 {
 	float deltax;
 	float deltay;
@@ -2467,7 +2467,7 @@ void NewChaseDir(void)
 //
 //==========================================================================
 
-void A_Look(void)
+void A_Look()
 {
 	Actor targ;
 
@@ -2496,46 +2496,14 @@ void A_Look(void)
 	// go into chase state
 	if (SightSound)
 	{
-		name sound;
-
-		sound = SightSound;
-		if (sound == 'ZombieSight1' || sound == 'ZombieSight2' ||
-			sound == 'ZombieSight3')
-		{
-			switch (P_Random() % 3)
-			{
-			case 0:
-				sound = 'ZombieSight1';
-				break;
-			case 1:
-				sound = 'ZombieSight2';
-				break;
-			case 2:
-				sound = 'ZombieSight3';
-				break;
-			}
-		}
-		if (sound == 'ImpSight1' || sound == 'ImpSight2')
-		{
-			switch (P_Random() % 2)
-			{
-			case 0:
-				sound = 'ImpSight1';
-				break;
-			case 1:
-				sound = 'ImpSight2';
-				break;
-			}
-		}
-
 		if (bBoss)
 		{
 			// Full volume
-			PlayFullVolumeSound(sound, CHAN_VOICE);
+			PlayFullVolumeSound(SightSound, CHAN_VOICE);
 		}
 		else
 		{
-			PlaySound(sound, CHAN_VOICE);
+			PlaySound(SightSound, CHAN_VOICE);
 		}
 	}
 
@@ -2555,7 +2523,7 @@ void A_Look(void)
 //
 //==========================================================================
 
-void A_Chase(void)
+void A_Chase()
 {
 	float delta;
 
@@ -2685,7 +2653,7 @@ void A_Chase(void)
 //
 //==========================================================================
 
-void A_FaceTarget(void)
+void A_FaceTarget()
 {
 	if (!Enemy)
 		return;
@@ -2728,7 +2696,7 @@ void A_Pain(void)
 //
 //==========================================================================
 
-void A_Explode(void)
+void A_Explode()
 {
 	Translucency = 50;
 	RadiusAttack(128, 0, 0);
@@ -2752,7 +2720,7 @@ void A_Explode(void)
 //
 //==========================================================================
 
-void A_Scream(void)
+void A_Scream()
 {
 	//  Remove muzzle flash
 	if ((Effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
@@ -2762,47 +2730,15 @@ void A_Scream(void)
 
 	if (DeathSound)
 	{
-		name sound;
-
-		sound = DeathSound;
-		if (sound == 'ZombieDeath1' || sound == 'ZombieDeath2' ||
-			sound == 'ZombieDeath3')
-		{
-			switch (P_Random() % 3)
-			{
-			case 0:
-				sound = 'ZombieDeath1';
-				break;
-			case 1:
-				sound = 'ZombieDeath2';
-				break;
-			case 2:
-				sound = 'ZombieDeath3';
-				break;
-			}
-		}
-		if (sound == 'ImpDeath1' || sound == 'ImpDeath2')
-		{
-			switch (P_Random() % 2)
-			{
-			case 0:
-				sound = 'ImpDeath1';
-				break;
-			case 1:
-				sound = 'ImpDeath2';
-				break;
-			}
-		}
-
 		// Check for bosses.
 		if (bBoss)
 		{
 			// full volume
-			PlayFullVolumeSound(sound, CHAN_VOICE);
+			PlayFullVolumeSound(DeathSound, CHAN_VOICE);
 		}
 		else
 		{
-			PlaySound(sound, CHAN_VOICE);
+			PlaySound(DeathSound, CHAN_VOICE);
 		}
 	}
 }
@@ -2815,7 +2751,7 @@ void A_Scream(void)
 //
 //==========================================================================
 
-void A_XScream(void)
+void A_XScream()
 {
 	//  Remove muzzle flash
 	if ((Effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
@@ -2823,7 +2759,14 @@ void A_XScream(void)
 		Effects &= ~EF_DLIGHT_MASK;
 	}
 
-	PlaySound('Slop', CHAN_BODY);
+	if (bIsPlayer)
+	{
+		PlaySound('*gibbed', CHAN_BODY);
+	}
+	else
+	{
+		PlaySound('misc/gibbed', CHAN_BODY);
+	}
 }
 
 //==========================================================================
@@ -2834,7 +2777,7 @@ void A_XScream(void)
 //
 //==========================================================================
 
-void A_Fall(void)
+void A_Fall()
 {
 	//  Remove muzzle flash
 	if ((Effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
@@ -2857,17 +2800,17 @@ void A_Fall(void)
 //
 //==========================================================================
 
-void A_PlayerScream(void)
+void A_PlayerScream()
 {
 	// Default death sound.
-	name sound = 'PlayerDeath';
+	name sound = '*death';
 
 #ifdef DOOM2
 	if (Health < -50)
 	{
 		// IF THE PLAYER DIES
 		// LESS THAN -50% WITHOUT GIBBING
-		sound = 'PlayerExtremeDeath';
+		sound = '*xdeath';
 	}
 #endif
 
@@ -4111,6 +4054,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.16  2005/07/09 13:55:46  dj_jl
 //  Scrolers carrying objects.
 //

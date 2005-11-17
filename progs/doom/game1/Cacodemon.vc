@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Cacodemon:Pawn
+class Cacodemon : Pawn
 	__mobjinfo__(3005);
 
 //==========================================================================
@@ -34,7 +34,7 @@ class Cacodemon:Pawn
 //
 //==========================================================================
 
-void A_HeadAttack(void)
+void A_HeadAttack()
 {
 	int damage;
 
@@ -93,15 +93,18 @@ defaultproperties
 	PainState = S_HEAD_PAIN;
 	DeathState = S_HEAD_DIE1;
 	RaiseState = S_HEAD_RAISE1;
-	SightSound = 'CacoSight';
-	ActiveSound = 'DemonActive';
-	PainSound = 'DemonPain';
-	DeathSound = 'CacoDeath';
+	SightSound = 'caco/sight';
+	ActiveSound = 'caco/active';
+	PainSound = 'caco/pain';
+	DeathSound = 'caco/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/10/26 16:32:19  dj_jl
 //  New style of defining classes.
 //

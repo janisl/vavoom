@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HellKnight:BaronOfHell
+class HellKnight : BaronOfHell
 	__mobjinfo__(69);
 
 __states__
@@ -69,13 +69,18 @@ defaultproperties
 	PainState = S_BOS2_PAIN;
 	DeathState = S_BOS2_DIE1;
 	RaiseState = S_BOS2_RAISE1;
-	SightSound = 'KnightSight';
-	DeathSound = 'KnightDeath';
+	SightSound = 'knight/sight';
+	ActiveSound = 'knight/active';
+	PainSound = 'knight/pain';
+	DeathSound = 'knight/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

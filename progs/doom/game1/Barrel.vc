@@ -57,12 +57,15 @@ defaultproperties
 	bNoBlood = true;
 	IdleState = S_BAR1;
 	DeathState = S_BEXP;
-	DeathSound = 'BarrelExplode';
+	DeathSound = 'world/barrelx';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2005/06/06 19:03:24  dj_jl
 //  Models updated.
 //

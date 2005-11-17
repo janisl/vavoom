@@ -96,23 +96,23 @@ int depths[4] = { 8, 16, 24, 32 };
 
 name quitsounds[8] = {
 #ifndef DOOM2
-	'PlayerDeath',
-	'DemonPain',
-	'ZombiePain',
-	'Slop',
-	'Teleport',
-	'ZombieSight1',
-	'ZombieSight3',
-	'DemonAttack'
+	'*death',
+	'demon/pain',
+	'grunt/pain',
+	'misc/gibbed',
+	'misc/teleport',
+	'grunt/sight1',
+	'grunt/sight3',
+	'demon/melee'
 #else
-	'ArchVileActive',
-	'PickupPower',
-	'CubeFly',
-	'Slop',
-	'RavenantSwing',
-	'KnightDeath',
-	'BabyActive',
-	'DemonAttack'
+	'vile/active',
+	'misc/p_pkup',
+	'brain/cube',
+	'misc/gibbed',
+	'skeleton/swing',
+	'knight/death',
+	'baby/active',
+	'demon/melee'
 #endif
 };
 
@@ -197,7 +197,7 @@ void PushMenuScreen(MenuScreen menu)
 		}
 		C_ClearNotify();*/
 		CmdBuf_AddText("HideConsole\n");
-		LocalSound('MenuActivate');
+		LocalSound('menu/activate');
 	}
 	else
 	{
@@ -213,7 +213,7 @@ void PushMenuScreen(MenuScreen menu)
 //
 //==========================================================================
 
-void PopMenu(void)
+void PopMenu()
 {
 	menu_sp--;
 
@@ -226,12 +226,12 @@ void PopMenu(void)
 		CurrentMenuScreen = menu_stack[menu_sp - 1];
 		CurrentMenuScreen.Show();
 		CurrentMenuScreen.Raise();
-		LocalSound('MenuPrevious');
+		LocalSound('menu/backup');
 	}
 	else
 	{
 		CurrentMenuScreen = none;
-		LocalSound('MenuClose');
+		LocalSound('menu/clear');
 	}
 }
 
@@ -410,7 +410,7 @@ void QuitResponse(int ch)
 
 void menu_quit(void)
 {
-	LocalSound('Chat');
+	LocalSound('misc/chat');
 	MB_StartMessage(va("%s\n\n(press y to quit)",
 			endmsg[P_Random() % NUM_END_MESSAGES]), MB_Quit, true);
 }
@@ -418,6 +418,9 @@ void menu_quit(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.32  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.31  2005/11/08 20:56:24  dj_jl
 //  Removed playing sound till done.
 //

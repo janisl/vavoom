@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ShotgunGuy:Pawn
+class ShotgunGuy : Pawn
 	__mobjinfo__(9);
 
 //==========================================================================
@@ -34,7 +34,7 @@ class ShotgunGuy:Pawn
 //
 //==========================================================================
 
-void A_SPosAttack(void)
+void A_SPosAttack()
 {
 	int i;
 	int damage;
@@ -44,7 +44,7 @@ void A_SPosAttack(void)
 	if (!Enemy)
 		return;
 
-	PlaySound('ShotgunFire', CHAN_WEAPON);
+	PlaySound('shotguy/attack', CHAN_WEAPON);
 	A_FaceTarget();
 	aimDir = AimLineAttack(self, Angles, MISSILERANGE);
 	for (i = 0; i < 3; i++)
@@ -64,7 +64,7 @@ void A_SPosAttack(void)
 //
 //==========================================================================
 
-void DropStuff(void)
+void DropStuff()
 {
 	Actor A;
 
@@ -126,15 +126,18 @@ defaultproperties
 	DeathState = S_SPOS_DIE1;
 	GibsDeathState = S_SPOS_XDIE1;
 	RaiseState = S_SPOS_RAISE1;
-	SightSound = 'ZombieSight2';
-	ActiveSound = 'ZombieActive';
-	PainSound = 'ZombiePain';
-	DeathSound = 'ZombieDeath2';
+	SightSound = 'shotguy/sight';
+	ActiveSound = 'shotguy/active';
+	PainSound = 'shotguy/pain';
+	DeathSound = 'shotguy/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

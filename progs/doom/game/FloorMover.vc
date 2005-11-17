@@ -208,7 +208,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		SetFloorPic(Sector, Line->frontsector->floor.pic);
 		// NO MORE DAMAGE, IF APPLICABLE
 		Sector->special &= SECSPEC_SECRET_MASK;
-		SectorStartSoundName(Sector, 'StoneMoving', CHAN_VOICE);
+		SectorStartSoundName(Sector, 'plats/pt1_mid', CHAN_VOICE);
 		break;
 
 	case FLOOREV_RaiseByValueChange:
@@ -227,7 +227,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Spot.z = DestHeight;
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
 		SetFloorPic(Sector, Line->frontsector->floor.pic);
-		SectorStartSoundName(Sector, 'StoneMoving', CHAN_VOICE);
+		SectorStartSoundName(Sector, 'plats/pt1_mid', CHAN_VOICE);
 		break;
 
 	case FLOOREV_RaiseAndCrush:
@@ -508,13 +508,13 @@ void Tick(float deltaTime)
 	//FIXME sound sequence
 	if (!(level->tictime & 7))
 	{
-		SectorStartSoundName(Sector, 'StoneMoving', CHAN_VOICE);
+		SectorStartSoundName(Sector, 'plats/pt1_mid', CHAN_VOICE);
 	}
 
 	if (res == RES_PASTDEST)
 	{
 		//FIXME sound sequence
-		SectorStartSoundName(Sector, 'PlatformStop', CHAN_VOICE);
+		SectorStartSoundName(Sector, 'plats/pt1_stop', CHAN_VOICE);
 		if (Type == FLOOREV_RaiseBuildStep && ResetTime)
 		{
 			return;
@@ -547,6 +547,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.4  2005/03/28 07:34:48  dj_jl
 //  Some Boom line specials and other improvements.
 //

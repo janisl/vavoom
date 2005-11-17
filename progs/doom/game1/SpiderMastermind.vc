@@ -30,13 +30,13 @@ class SpiderMastermind : Pawn
 //
 //  A_Metal
 //
-//  Cyberdemon move with metal sound.
+//  Move with metal sound.
 //
 //==========================================================================
 
-void A_Metal(void)
+void A_Metal()
 {
-	PlaySound('CyberWalk2', CHAN_BODY);
+	PlaySound('spider/walk', CHAN_BODY);
 	A_Chase();
 }
 
@@ -48,7 +48,7 @@ void A_Metal(void)
 //
 //==========================================================================
 
-void A_SPosAttack(void)
+void A_SPosAttack()
 {
 	int i;
 	int damage;
@@ -58,7 +58,7 @@ void A_SPosAttack(void)
 	if (!Enemy)
 		return;
 
-	PlaySound('ShotgunFire', CHAN_WEAPON);
+	PlaySound('spider/attack', CHAN_WEAPON);
 	A_FaceTarget();
 	aimDir = AimLineAttack(self, Angles, MISSILERANGE);
 	for (i = 0; i < 3; i++)
@@ -80,7 +80,7 @@ void A_SPosAttack(void)
 //
 //==========================================================================
 
-void A_SpidRefire(void)
+void A_SpidRefire()
 {
 	// keep firing unless target got out of sight
 	A_FaceTarget();
@@ -102,7 +102,7 @@ void A_SpidRefire(void)
 //
 //==========================================================================
 
-void A_BossDeath(void)
+void A_BossDeath()
 {
 	string mapname;
 	int i;
@@ -193,16 +193,19 @@ defaultproperties
 	MissileState = S_SPID_ATK1;
 	PainState = S_SPID_PAIN;
 	DeathState = S_SPID_DIE1;
-	SightSound = 'SpiderSight';
-	ActiveSound = 'DemonActive';
-	AttackSound = 'ShotgunFire';
-	PainSound = 'DemonPain';
-	DeathSound = 'SpiderDeath';
+	SightSound = 'spider/sight';
+	ActiveSound = 'spider/active';
+	AttackSound = 'spider/attack';
+	PainSound = 'spider/pain';
+	DeathSound = 'spider/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.5  2005/03/16 15:04:19  dj_jl
 //  More work on line specials.
 //

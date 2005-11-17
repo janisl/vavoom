@@ -35,7 +35,7 @@ class HackedWeapon:Weapon;
 //
 //===========================================================================
 
-void A_Punch(void)
+void A_Punch()
 {
 	int damage;
 	TAVec aimAngles;
@@ -55,7 +55,7 @@ void A_Punch(void)
 	// turn to face target
 	if (linetarget)
 	{
-		Player.MO.PlaySound('Punch', CHAN_WEAPON);
+		Player.MO.PlaySound('*fist', CHAN_WEAPON);
 		Player.MO.Angles.yaw = atan2(
 			linetarget.Origin.y - Player.MO.Origin.y,
 			linetarget.Origin.x - Player.MO.Origin.x);
@@ -69,7 +69,7 @@ void A_Punch(void)
 //
 //===========================================================================
 
-void A_Saw(void)
+void A_Saw()
 {
 	float angle;
 	int damage;
@@ -87,10 +87,10 @@ void A_Saw(void)
 
 	if (!linetarget)
 	{
-		Player.MO.PlaySound('ChainsawTriggered', CHAN_WEAPON);
+		Player.MO.PlaySound('weapons/sawfull', CHAN_WEAPON);
 		return;
 	}
-	Player.MO.PlaySound('ChainsawHit', CHAN_WEAPON);
+	Player.MO.PlaySound('weapons/sawhit', CHAN_WEAPON);
 
 	// turn to face target
 	angle = atan2(linetarget.Origin.y - Player.MO.Origin.y,
@@ -120,11 +120,11 @@ void A_Saw(void)
 //
 //===========================================================================
 
-void A_FirePistol(void)
+void A_FirePistol()
 {
 	TVec dir;
 
-	Player.MO.PlaySound('PistolFire', CHAN_WEAPON);
+	Player.MO.PlaySound('weapons/pistol', CHAN_WEAPON);
 
 	Player.MO.SetState(Player.MO.MissileState);
 	Player.Ammo[Ammo]--;
@@ -142,12 +142,12 @@ void A_FirePistol(void)
 //
 //===========================================================================
 
-void A_FireShotgun(void)
+void A_FireShotgun()
 {
 	int i;
 	TVec dir;
 
-	Player.MO.PlaySound('ShotgunFire', CHAN_WEAPON);
+	Player.MO.PlaySound('weapons/shotgf', CHAN_WEAPON);
 	Player.MO.SetState(Player.MO.MissileState);
 
 	Player.Ammo[Ammo]--;
@@ -168,7 +168,7 @@ void A_FireShotgun(void)
 //
 //===========================================================================
 
-void A_FireShotgun2(void)
+void A_FireShotgun2()
 {
 	int i;
 	int damage;
@@ -176,7 +176,7 @@ void A_FireShotgun2(void)
 	TVec aimDir;
 	TVec dir;
 
-	Player.MO.PlaySound('SuperShotgunFire', CHAN_WEAPON);
+	Player.MO.PlaySound('weapons/sshotf', CHAN_WEAPON);
 	Player.MO.SetState(Player.MO.MissileState);
 
 	Player.Ammo[Ammo] -= 2;
@@ -202,9 +202,9 @@ void A_FireShotgun2(void)
 //
 //===========================================================================
 
-void A_OpenShotgun2(void)
+void A_OpenShotgun2()
 {
-	Player.MO.PlaySound('SuperShotgunOpen', CHAN_WEAPON);
+	Player.MO.PlaySound('weapons/sshoto', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -213,7 +213,7 @@ void A_OpenShotgun2(void)
 //
 //===========================================================================
 
-void A_LoadShotgun2(void)
+void A_LoadShotgun2()
 {
 	Player.MO.PlaySound('SuperShotgunLoad', CHAN_WEAPON);
 }
@@ -224,9 +224,9 @@ void A_LoadShotgun2(void)
 //
 //===========================================================================
 
-void A_CloseShotgun2(void)
+void A_CloseShotgun2()
 {
-	Player.MO.PlaySound('SuperShotgunClose', CHAN_WEAPON);
+	Player.MO.PlaySound('weapons/sshotc', CHAN_WEAPON);
 	A_ReFire();
 }
 
@@ -236,11 +236,11 @@ void A_CloseShotgun2(void)
 //
 //===========================================================================
 
-void A_FireCGun(void)
+void A_FireCGun()
 {
 	TVec dir;
 
-	Player.MO.PlaySound('PistolFire', CHAN_WEAPON);
+	Player.MO.PlaySound('weapons/chngun', CHAN_WEAPON);
 
 	if (!Player.Ammo[Ammo])
 		return;
@@ -288,9 +288,9 @@ void A_FirePlasma(void)
 //
 //===========================================================================
 
-void A_BFGsound(void)
+void A_BFGsound()
 {
-	Player.MO.PlaySound('BFGFire', CHAN_WEAPON);
+	Player.MO.PlaySound('weapons/bfgf', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -312,6 +312,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2005/04/04 07:40:02  dj_jl
 //  Fixed dehacked support.
 //

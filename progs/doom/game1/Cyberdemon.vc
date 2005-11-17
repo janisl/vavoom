@@ -36,7 +36,7 @@ class Cyberdemon : Pawn
 
 void A_Hoof()
 {
-	PlaySound('CyberWalk1', CHAN_BODY);
+	PlaySound('cyber/hoof', CHAN_BODY);
 	A_Chase();
 }
 
@@ -50,7 +50,7 @@ void A_Hoof()
 
 void A_Metal()
 {
-	PlaySound('CyberWalk2', CHAN_BODY);
+	PlaySound('cyber/walk', CHAN_BODY);
 	A_Chase();
 }
 
@@ -167,15 +167,18 @@ defaultproperties
 	MissileState = S_CYBER_ATK1;
 	PainState = S_CYBER_PAIN;
 	DeathState = S_CYBER_DIE1;
-	SightSound = 'CyberSight';
-	ActiveSound = 'DemonActive';
-	PainSound = 'DemonPain';
-	DeathSound = 'CyberDeath';
+	SightSound = 'cyber/sight';
+	ActiveSound = 'cyber/active';
+	PainSound = 'cyber/pain';
+	DeathSound = 'cyber/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.5  2005/03/16 15:04:19  dj_jl
 //  More work on line specials.
 //

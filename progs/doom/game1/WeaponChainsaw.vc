@@ -31,7 +31,7 @@ class WeaponChainsaw : Weapon;
 //
 //===========================================================================
 
-void A_Saw(void)
+void A_Saw()
 {
 	float angle;
 	int damage;
@@ -49,10 +49,10 @@ void A_Saw(void)
 
 	if (!linetarget)
 	{
-		Player.MO.PlaySound('ChainsawTriggered', CHAN_WEAPON);
+		Player.MO.PlaySound('weapons/sawfull', CHAN_WEAPON);
 		return;
 	}
-	Player.MO.PlaySound('ChainsawHit', CHAN_WEAPON);
+	Player.MO.PlaySound('weapons/sawhit', CHAN_WEAPON);
 
 	// turn to face target
 	angle = atan2(linetarget.Origin.y - Player.MO.Origin.y,
@@ -100,6 +100,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2003/11/12 16:48:33  dj_jl
 //  Changed player structure into a class
 //

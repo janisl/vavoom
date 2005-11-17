@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Demon:Pawn
+class Demon : Pawn
 	__mobjinfo__(3002);
 
 //==========================================================================
@@ -34,7 +34,7 @@ class Demon:Pawn
 //
 //==========================================================================
 
-void A_SargAttack(void)
+void A_SargAttack()
 {
 	int damage;
 
@@ -98,16 +98,19 @@ defaultproperties
 	PainState = S_SARG_PAIN;
 	DeathState = S_SARG_DIE1;
 	RaiseState = S_SARG_RAISE1;
-	SightSound = 'DemonSight';
-	ActiveSound = 'DemonActive';
-	AttackSound = 'DemonAttack';
-	PainSound = 'DemonPain';
-	DeathSound = 'DemonDeath';
+	SightSound = 'demon/sight';
+	ActiveSound = 'demon/active';
+	AttackSound = 'demon/melee';
+	PainSound = 'demon/pain';
+	DeathSound = 'demon/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/10/26 16:32:19  dj_jl
 //  New style of defining classes.
 //

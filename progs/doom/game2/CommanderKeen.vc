@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class CommanderKeen:Pawn
+class CommanderKeen : Pawn
 	__mobjinfo__(72);
 
 //==========================================================================
@@ -34,7 +34,7 @@ class CommanderKeen:Pawn
 //
 //==========================================================================
 
-void A_KeenDie(void)
+void A_KeenDie()
 {
 	A_Fall();
 
@@ -77,13 +77,16 @@ defaultproperties
 	IdleState = S_KEENSTND;
 	PainState = S_KEENPAIN;
 	DeathState = S_COMMKEEN;
-	PainSound = 'KeenPain';
-	DeathSound = 'KeenDeath';
+	PainSound = 'keen/pain';
+	DeathSound = 'keen/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2005/01/25 17:45:11  dj_jl
 //  Constants for common line specials
 //  Updated special utilites.

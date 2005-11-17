@@ -215,7 +215,7 @@ void DisconnectClient()
 		}
 	}
 	bprint("%s left the game\n", ARR2STR(PlayerName));
-	MO.PlayFullVolumeSound('Chat', CHAN_AUTO);
+	MO.PlayFullVolumeSound('misc/chat', CHAN_AUTO);
 }
 
 //==========================================================================
@@ -345,7 +345,7 @@ bool CheckSpot(mthing_t * mthing)
 
 	A = Spawn(TeleportFog, vector(x + 20.0 * cos(an), y + 20.0 * sin(an),
 		sec->floorheight));
-	A.PlaySound('Teleport', CHAN_VOICE);
+	A.PlaySound('misc/teleport', CHAN_VOICE);
 
 	return true;
 }
@@ -617,7 +617,7 @@ bool GiveWeapon(int weapon, bool dropped)
 			GiveAmmo(weapon_ammo_type[weapon], 2 * ammoCount);
 		PendingWeapon = weapon;
 
-		MO.PlaySound('PickupWeapon', CHAN_ITEM);
+		MO.PlaySound('misc/w_pkup', CHAN_ITEM);
 		return false;
 	}
 
@@ -1980,7 +1980,7 @@ void BringUpWeapon()
 		MO.PlaySound(Weapon(ViewEnts[ps_weapon]).StartSound, CHAN_WEAPON);
 #else
 	if (ReadyWeapon == wp_chainsaw)
-		MO.PlaySound('ChainsawStart', CHAN_WEAPON);
+		MO.PlaySound('weapons/sawup', CHAN_WEAPON);
 #endif
 
 	PendingWeapon = wp_nochange;
@@ -2673,6 +2673,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.9  2005/03/28 07:34:49  dj_jl
 //  Some Boom line specials and other improvements.
 //

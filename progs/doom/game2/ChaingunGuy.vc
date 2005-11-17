@@ -23,8 +23,10 @@
 //**
 //**************************************************************************
 
-class ChaingunGuy:Pawn
+class ChaingunGuy : Pawn
 	__mobjinfo__(65);
+
+name FireSound;
 
 //==========================================================================
 //
@@ -34,7 +36,7 @@ class ChaingunGuy:Pawn
 //
 //==========================================================================
 
-void A_CPosAttack(void)
+void A_CPosAttack()
 {
 	int damage;
 	TVec dir;
@@ -42,7 +44,7 @@ void A_CPosAttack(void)
 	if (!Enemy)
 		return;
 
-	PlaySound('ShotgunFire', CHAN_WEAPON);
+	PlaySound(FireSound, CHAN_WEAPON);
 	A_FaceTarget();
 	dir = AimLineAttack(self, Angles, MISSILERANGE);
 	VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
@@ -60,7 +62,7 @@ void A_CPosAttack(void)
 //
 //==========================================================================
 
-void A_CPosRefire(void)
+void A_CPosRefire()
 {
 	// keep firing unless target got out of sight
 	A_FaceTarget();
@@ -80,7 +82,7 @@ void A_CPosRefire(void)
 //
 //==========================================================================
 
-void DropStuff(void)
+void DropStuff()
 {
 	Actor A;
 
@@ -144,15 +146,19 @@ defaultproperties
 	DeathState = S_CPOS_DIE1;
 	GibsDeathState = S_CPOS_XDIE1;
 	RaiseState = S_CPOS_RAISE1;
-	SightSound = 'ZombieSight2';
-	ActiveSound = 'ZombieActive';
-	PainSound = 'ZombiePain';
-	DeathSound = 'ZombieDeath2';
+	SightSound = 'chainguy/sight';
+	ActiveSound = 'chainguy/active';
+	PainSound = 'chainguy/pain';
+	DeathSound = 'chainguy/death';
+	FireSound = 'chainguy/attack';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

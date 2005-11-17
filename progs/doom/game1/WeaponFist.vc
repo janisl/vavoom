@@ -51,7 +51,7 @@ void A_Punch(void)
 	// turn to face target
 	if (linetarget)
 	{
-		Player.MO.PlaySound('Punch', CHAN_WEAPON);
+		Player.MO.PlaySound('*fist', CHAN_WEAPON);
 		Player.MO.Angles.yaw = atan2(
 			linetarget.Origin.y - Player.MO.Origin.y,
 			linetarget.Origin.x - Player.MO.Origin.x);
@@ -83,6 +83,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2003/11/12 16:48:33  dj_jl
 //  Changed player structure into a class
 //

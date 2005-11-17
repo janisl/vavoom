@@ -39,7 +39,7 @@ bool HandlePickup(Actor Toucher)
 		Toucher.Player.Health = SOULSPHERE_MAX;
 	Toucher.Health = Toucher.Player.Health;
 	cprint(Toucher.Player, PickupMessage);
-	Toucher.PlaySound('PickupPower', CHAN_ITEM);
+	Toucher.PlaySound('misc/p_pkup', CHAN_ITEM);
 	return true;
 }
 
@@ -64,6 +64,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2003/11/12 16:48:33  dj_jl
 //  Changed player structure into a class
 //

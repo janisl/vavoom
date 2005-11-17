@@ -669,7 +669,7 @@ void IM_UpdateSingleStats(void)
 		cnt_items[0] = (scores[0].itemcount * 100) / im->totalitems;
 		cnt_secret[0] = (scores[0].secretcount * 100) / im->totalsecret;
 		cnt_time = ftoi(im->time);
-		LocalSound('BarrelExplode');
+		LocalSound('weapons/rocklx');
 		sp_state = 10;
 	}
 
@@ -678,12 +678,12 @@ void IM_UpdateSingleStats(void)
 		cnt_kills[0] += 2;
 
 		if (!(ftoi(btime * 35.0) & 3))
-			LocalSound('PistolFire');
+			LocalSound('weapons/pistol');
 
 		if (cnt_kills[0] >= (scores[0].killcount * 100) / im->totalkills)
 		{
 			cnt_kills[0] = (scores[0].killcount * 100) / im->totalkills;
-			LocalSound('BarrelExplode');
+			LocalSound('weapons/rocklx');
 			sp_state++;
 		}
 	}
@@ -692,12 +692,12 @@ void IM_UpdateSingleStats(void)
 		cnt_items[0] += 2;
 
 		if (!(ftoi(btime * 35.0) & 3))
-			LocalSound('PistolFire');
+			LocalSound('weapons/pistol');
 
 		if (cnt_items[0] >= (scores[0].itemcount * 100) / im->totalitems)
 		{
 			cnt_items[0] = (scores[0].itemcount * 100) / im->totalitems;
-			LocalSound('BarrelExplode');
+			LocalSound('weapons/rocklx');
 			sp_state++;
 		}
 	}
@@ -706,12 +706,12 @@ void IM_UpdateSingleStats(void)
 		cnt_secret[0] += 2;
 
 		if (!(ftoi(btime * 35.0) & 3))
-			LocalSound('PistolFire');
+			LocalSound('weapons/pistol');
 
 		if (cnt_secret[0] >= (scores[0].secretcount * 100) / im->totalsecret)
 		{
 			cnt_secret[0] = (scores[0].secretcount * 100) / im->totalsecret;
-			LocalSound('BarrelExplode');
+			LocalSound('weapons/rocklx');
 			sp_state++;
 		}
 	}
@@ -719,14 +719,14 @@ void IM_UpdateSingleStats(void)
 	else if (sp_state == 8)
 	{
 		if (!(ftoi(btime * 35.0) & 3))
-			LocalSound('PistolFire');
+			LocalSound('weapons/pistol');
 
 		cnt_time += 3;
 
 		if (cnt_time >= ftoi(im->time))
 		{
 			cnt_time = ftoi(im->time);
-			LocalSound('BarrelExplode');
+			LocalSound('weapons/rocklx');
 			sp_state++;
 		}
 	}
@@ -734,7 +734,7 @@ void IM_UpdateSingleStats(void)
 	{
 		if (skipintermission)
 		{
-			LocalSound('ShotgunCocking');
+			LocalSound('weapons/shotgr');
 
 #ifdef DOOM2
 			IM_InitNoState();
@@ -895,14 +895,14 @@ void IM_UpdateCooperativeStats(void)
 			cnt_secret[i] = (scores[i].secretcount * 100) / im->totalsecret;
 			cnt_frags[i] = FragSum(i);
 		}
-		LocalSound('BarrelExplode');
+		LocalSound('weapons/rocklx');
 		ng_state = 10;
 	}
 
 	if (ng_state == 2)
 	{
 		if (!(ftoi(btime * 35.0) & 3))
-			LocalSound('PistolFire');
+			LocalSound('weapons/pistol');
 
 		stillticking = false;
 
@@ -921,14 +921,14 @@ void IM_UpdateCooperativeStats(void)
 
 		if (!stillticking)
 		{
-			LocalSound('BarrelExplode');
+			LocalSound('weapons/rocklx');
 			ng_state++;
 		}
 	}
 	else if (ng_state == 4)
 	{
 		if (!(ftoi(btime * 35.0) & 3))
-			LocalSound('PistolFire');
+			LocalSound('weapons/pistol');
 
 		stillticking = false;
 
@@ -945,14 +945,14 @@ void IM_UpdateCooperativeStats(void)
 		}
 		if (!stillticking)
 		{
-			LocalSound('BarrelExplode');
+			LocalSound('weapons/rocklx');
 			ng_state++;
 		}
 	}
 	else if (ng_state == 6)
 	{
 		if (!(ftoi(btime * 35.0) & 3))
-			LocalSound('PistolFire');
+			LocalSound('weapons/pistol');
 
 		stillticking = false;
 
@@ -973,14 +973,14 @@ void IM_UpdateCooperativeStats(void)
 
 		if (!stillticking)
 		{
-			LocalSound('BarrelExplode');
+			LocalSound('weapons/rocklx');
 			ng_state += 1;
 		}
 	}
 	else if (ng_state == 8)
 	{
 		if (!(ftoi(btime * 35.0) & 3))
-			LocalSound('PistolFire');
+			LocalSound('weapons/pistol');
 
 		stillticking = false;
 
@@ -999,7 +999,7 @@ void IM_UpdateCooperativeStats(void)
 
 		if (!stillticking)
 		{
-			LocalSound('PlayerDeath');
+			LocalSound('*death');
 			ng_state++;
 		}
 	}
@@ -1007,7 +1007,7 @@ void IM_UpdateCooperativeStats(void)
 	{
 		if (skipintermission)
 		{
-			LocalSound('ShotgunCocking');
+			LocalSound('weapons/shotgr');
 #ifdef DOOM2
 			IM_InitNoState();
 #else
@@ -1163,14 +1163,14 @@ void IM_UpdateDeathmatchStats(void)
 			}
 		}
 
-		LocalSound('BarrelExplode');
+		LocalSound('weapons/rocklx');
 		dm_state = 4;
 	}
 
 	if (dm_state == 2)
 	{
 		if (!(ftoi(btime * 35.0) & 3))
-			LocalSound('PistolFire');
+			LocalSound('weapons/pistol');
 
 		stillticking = false;
 
@@ -1209,7 +1209,7 @@ void IM_UpdateDeathmatchStats(void)
 		}
 		if (!stillticking)
 		{
-			LocalSound('BarrelExplode');
+			LocalSound('weapons/rocklx');
 			dm_state++;
 		}
 
@@ -1218,7 +1218,7 @@ void IM_UpdateDeathmatchStats(void)
 	{
 		if (skipintermission)
 		{
-			LocalSound('Slop');
+			LocalSound('misc/gibbed');
 
 #ifdef DOOM2
 			IM_InitNoState();
@@ -1727,6 +1727,9 @@ void IM_Start(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.10  2002/10/26 16:32:19  dj_jl
 //  New style of defining classes.
 //

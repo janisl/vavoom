@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WolfSS:ChaingunGuy
+class WolfSS : ChaingunGuy
 	__mobjinfo__(84);
 
 //==========================================================================
@@ -32,7 +32,7 @@ class WolfSS:ChaingunGuy
 //
 //==========================================================================
 
-void DropStuff(void)
+void DropStuff()
 {
 	Actor A;
 
@@ -92,13 +92,19 @@ defaultproperties
 	DeathState = S_SSWV_DIE1;
 	GibsDeathState = S_SSWV_XDIE1;
 	RaiseState = S_SSWV_RAISE1;
-	SightSound = 'SSNaziSight';
-	DeathSound = 'SSNaziDeath';
+	SightSound = 'wolfss/sight';
+	ActiveSound = 'wolfss/active';
+	FireSound = 'wolfss/attack';
+	PainSound = 'wolfss/pain';
+	DeathSound = 'wolfss/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

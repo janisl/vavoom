@@ -31,11 +31,11 @@ class WeaponPistol : Weapon;
 //
 //===========================================================================
 
-void A_FirePistol(void)
+void A_FirePistol()
 {
 	TVec dir;
 
-	Player.MO.PlaySound('PistolFire', CHAN_WEAPON);
+	Player.MO.PlaySound('weapons/pistol', CHAN_WEAPON);
 
 	Player.MO.SetState(Player.MO.MissileState);
 	Player.Ammo[Ammo]--;
@@ -73,6 +73,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2004/08/23 19:23:54  dj_jl
 //  Moved weapon utilites to player class.
 //

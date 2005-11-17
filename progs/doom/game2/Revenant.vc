@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Revenant:Pawn
+class Revenant : Pawn
 	__mobjinfo__(66);
 
 //==========================================================================
@@ -34,12 +34,12 @@ class Revenant:Pawn
 //
 //==========================================================================
 
-void A_SkelWhoosh(void)
+void A_SkelWhoosh()
 {
 	if (!Enemy)
 		return;
 	A_FaceTarget();
-	PlaySound('RavenantSwing', CHAN_WEAPON);
+	PlaySound('skeleton/swing', CHAN_WEAPON);
 }
 
 //==========================================================================
@@ -50,7 +50,7 @@ void A_SkelWhoosh(void)
 //
 //==========================================================================
 
-void A_SkelFist(void)
+void A_SkelFist()
 {
 	int damage;
 
@@ -62,7 +62,7 @@ void A_SkelFist(void)
 	if (CheckMeleeRange())
 	{
 		damage = ((P_Random() % 10) + 1) * 6;
-		PlaySound('RavenantPunch', CHAN_WEAPON);
+		PlaySound('skeleton/melee', CHAN_WEAPON);
 		Enemy.Damage(self, self, damage);
 	}
 }
@@ -75,7 +75,7 @@ void A_SkelFist(void)
 //
 //==========================================================================
 
-void A_SkelMissile(void)
+void A_SkelMissile()
 {
 	Actor A;
 
@@ -148,15 +148,18 @@ defaultproperties
 	PainState = S_SKEL_PAIN;
 	DeathState = S_SKEL_DIE1;
 	RaiseState = S_SKEL_RAISE1;
-	SightSound = 'RavenantSight';
-	ActiveSound = 'RavenantActive';
-	PainSound = 'ZombiePain';
-	DeathSound = 'RavenantDeath';
+	SightSound = 'skeleton/sight';
+	ActiveSound = 'skeleton/active';
+	PainSound = 'skeleton/pain';
+	DeathSound = 'skeleton/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

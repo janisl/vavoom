@@ -84,7 +84,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	Tag = Arg1;
 	Speed = itof(Arg2) * 35.0 / 8.0;
 	Crush = 0;
-	StartSound = 'PlatformStart';
+	StartSound = 'plats/pt1_strt';
 	switch (Type)
 	{
 	case PLATEV_PerpetualRaise:
@@ -138,7 +138,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Wait = itof(Arg3) / 35.0;
 		Status = PLAT_Down;
 		if (Arg5)
-			StartSound = 'StoneMoving';
+			StartSound = 'plats/pt1_mid';
 		break;
 
 	case PLATEV_DownNearestWaitUpStay:
@@ -276,7 +276,7 @@ void Tick(float deltaTime)
 		{
 			Time = Wait;
 			Status = PLAT_Down;
-			SectorStartSoundName(Sector, 'PlatformStart', CHAN_VOICE);
+			SectorStartSoundName(Sector, 'plats/pt1_strt', CHAN_VOICE);
 		}
 		else if (res == RES_PASTDEST)
 		{
@@ -289,7 +289,7 @@ void Tick(float deltaTime)
 			{
 				Time = Wait;
 				Status = PLAT_Waiting;
-				SectorStartSoundName(Sector, 'PlatformStop', CHAN_VOICE);
+				SectorStartSoundName(Sector, 'plats/pt1_stop', CHAN_VOICE);
 	
 				switch (Type)
 				{
@@ -324,7 +324,7 @@ void Tick(float deltaTime)
 			{
 				Time = Wait;
 				Status = PLAT_Waiting;
-				SectorStartSoundName(Sector, 'PlatformStop', CHAN_VOICE);
+				SectorStartSoundName(Sector, 'plats/pt1_stop', CHAN_VOICE);
 				switch (Type)
 				{
 				case PLATEV_UpWaitDownStay:
@@ -348,7 +348,7 @@ void Tick(float deltaTime)
 				Status = PLAT_Up;
 			else
 				Status = PLAT_Down;
-			SectorStartSoundName(Sector, 'PlatformStart', CHAN_VOICE);
+			SectorStartSoundName(Sector, 'plats/pt1_strt', CHAN_VOICE);
 		}
 		break;
 
@@ -364,6 +364,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2005/03/16 15:04:20  dj_jl
 //  More work on line specials.
 //

@@ -110,7 +110,7 @@ void A_WeaponReady(void)
 #else
 	if (Player.ReadyWeapon == wp_chainsaw && StateNum == ReadyState)
 	{
-		Player.MO.PlaySound('ChainsawIdle', CHAN_WEAPON);
+		Player.MO.PlaySound('weapons/sawidle', CHAN_WEAPON);
 	}
 #endif
 
@@ -635,6 +635,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.4  2005/04/04 07:39:59  dj_jl
 //  Fixed dehacked support.
 //

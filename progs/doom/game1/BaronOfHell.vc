@@ -43,7 +43,7 @@ void A_BruisAttack()
 
 	if (CheckMeleeRange())
 	{
-		PlaySound('ImpAttack', CHAN_WEAPON);
+		PlaySound('baron/melee', CHAN_WEAPON);
 		damage = (P_Random() % 8 + 1) * 10;
 		Enemy.Damage(self, self, damage);
 		return;
@@ -143,15 +143,18 @@ defaultproperties
 	PainState = S_BOSS_PAIN;
 	DeathState = S_BOSS_DIE1;
 	RaiseState = S_BOSS_RAISE1;
-	SightSound = 'BaronSight';
-	ActiveSound = 'DemonActive';
-	PainSound = 'DemonPain';
-	DeathSound = 'BaronDeath';
+	SightSound = 'baron/sight';
+	ActiveSound = 'baron/active';
+	PainSound = 'baron/pain';
+	DeathSound = 'baron/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.4  2005/03/01 14:39:31  dj_jl
 //  Big update of line specials.
 //

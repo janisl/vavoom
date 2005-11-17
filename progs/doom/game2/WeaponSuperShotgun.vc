@@ -31,7 +31,7 @@ class WeaponSuperShotgun : Weapon;
 //
 //===========================================================================
 
-void A_FireShotgun2(void)
+void A_FireShotgun2()
 {
 	int i;
 	int damage;
@@ -39,7 +39,7 @@ void A_FireShotgun2(void)
 	TVec aimDir;
 	TVec dir;
 
-	Player.MO.PlaySound('SuperShotgunFire', CHAN_WEAPON);
+	Player.MO.PlaySound('weapons/sshotf', CHAN_WEAPON);
 	Player.MO.SetState(Player.MO.MissileState);
 
 	Player.Ammo[Ammo] -= 2;
@@ -65,9 +65,9 @@ void A_FireShotgun2(void)
 //
 //===========================================================================
 
-void A_OpenShotgun2(void)
+void A_OpenShotgun2()
 {
-	Player.MO.PlaySound('SuperShotgunOpen', CHAN_WEAPON);
+	Player.MO.PlaySound('weapons/sshoto', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -76,7 +76,7 @@ void A_OpenShotgun2(void)
 //
 //===========================================================================
 
-void A_LoadShotgun2(void)
+void A_LoadShotgun2()
 {
 	Player.MO.PlaySound('SuperShotgunLoad', CHAN_WEAPON);
 }
@@ -87,9 +87,9 @@ void A_LoadShotgun2(void)
 //
 //===========================================================================
 
-void A_CloseShotgun2(void)
+void A_CloseShotgun2()
 {
-	Player.MO.PlaySound('SuperShotgunClose', CHAN_WEAPON);
+	Player.MO.PlaySound('weapons/sshotc', CHAN_WEAPON);
 	A_ReFire();
 }
 
@@ -128,6 +128,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2004/08/23 19:23:55  dj_jl
 //  Moved weapon utilites to player class.
 //

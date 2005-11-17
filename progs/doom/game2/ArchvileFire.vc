@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ArchvileFire:Effect;
+class ArchvileFire : Effect;
 
 //==========================================================================
 //
@@ -33,7 +33,7 @@ class ArchvileFire:Effect;
 //
 //==========================================================================
 
-void A_Fire(void)
+void A_Fire()
 {
 	if (!Enemy)
 		return;
@@ -57,9 +57,9 @@ void A_Fire(void)
 //
 //==========================================================================
 
-void A_StartFire(void)
+void A_StartFire()
 {
-	PlaySound('FlameStart', CHAN_VOICE);
+	PlaySound('vile/firestrt', CHAN_VOICE);
 	A_Fire();
 }
 
@@ -71,9 +71,9 @@ void A_StartFire(void)
 //
 //==========================================================================
 
-void A_FireCrackle(void)
+void A_FireCrackle()
 {
-	PlaySound('Flame', CHAN_VOICE);
+	PlaySound('vile/firecrkl', CHAN_VOICE);
 	A_Fire();
 }
 
@@ -121,6 +121,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

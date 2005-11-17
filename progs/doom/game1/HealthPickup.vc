@@ -39,7 +39,7 @@ bool HandlePickup(Actor Toucher)
 	if (!Toucher.Player.GiveBody(HealthAmount, MAXHEALTH))
 		return false;
 	cprint(Toucher.Player, PickupMessage);
-	Toucher.PlaySound('PickupItem', CHAN_ITEM);
+	Toucher.PlaySound('misc/i_pkup', CHAN_ITEM);
 	return true;
 }
 
@@ -50,6 +50,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2004/08/22 19:23:24  dj_jl
 //  Moved many functions to player class.
 //

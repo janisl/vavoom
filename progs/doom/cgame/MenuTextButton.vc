@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuTextButton:MenuChoice;
+class MenuTextButton : MenuChoice;
 
 name ActivateSound;
 string Text;
@@ -31,7 +31,7 @@ int TextFont;
 int TextHAlign;
 int TextVAlign;
 
-void ActivateEvent(void)
+void ActivateEvent()
 {
 }
 
@@ -56,12 +56,15 @@ void DrawWindow(GC gc)
 
 defaultproperties
 {
-	ActivateSound = 'MenuSelect';
+	ActivateSound = 'menu/choose';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/10/26 16:32:19  dj_jl
 //  New style of defining classes.
 //

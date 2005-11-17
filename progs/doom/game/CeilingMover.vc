@@ -370,7 +370,7 @@ void Tick(float deltaTime)
 			case CEILEV_CrushRaiseAndStaySilA:
 				break;
 			default:
-				SectorStartSoundName(Sector, 'StoneMoving', CHAN_VOICE);
+				SectorStartSoundName(Sector, 'plats/pt1_mid', CHAN_VOICE);
 				break;
 			}
 		}
@@ -385,7 +385,7 @@ void Tick(float deltaTime)
 				break;
 
 			case CEILEV_CrushAndRaiseSilA:
-				SectorStartSoundName(Sector, 'PlatformStop', CHAN_VOICE);
+				SectorStartSoundName(Sector, 'plats/pt1_stop', CHAN_VOICE);
 			case CEILEV_CrushAndRaiseA:
 				Direction = -1;
 				Speed = DnSpeed;
@@ -399,7 +399,7 @@ void Tick(float deltaTime)
 				SetCeilPic(Sector, Texture);
 			default:
 				if (Type == CEILEV_CrushRaiseAndStaySilA)
-					SectorStartSoundName(Sector, 'PlatformStop', CHAN_VOICE);
+					SectorStartSoundName(Sector, 'plats/pt1_stop', CHAN_VOICE);
 				Finished();
 				break;
 			}
@@ -419,7 +419,7 @@ void Tick(float deltaTime)
 			case CEILEV_CrushRaiseAndStaySilA:
 				break;
 			default:
-				SectorStartSoundName(Sector, 'StoneMoving', CHAN_VOICE);
+				SectorStartSoundName(Sector, 'plats/pt1_mid', CHAN_VOICE);
 				break;
 			}
 		}
@@ -436,7 +436,7 @@ void Tick(float deltaTime)
 
 			case CEILEV_CrushAndRaiseSilA:
 			case CEILEV_CrushRaiseAndStaySilA:
-				SectorStartSoundName(Sector, 'PlatformStop', CHAN_VOICE);
+				SectorStartSoundName(Sector, 'plats/pt1_stop', CHAN_VOICE);
 			case CEILEV_CrushAndRaiseA:
 			case CEILEV_CrushRaiseAndStayA:
 				Speed = UpSpeed;
@@ -480,6 +480,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2005/03/01 14:39:31  dj_jl
 //  Big update of line specials.
 //

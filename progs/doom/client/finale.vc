@@ -128,7 +128,7 @@ void F_InitBunnyScroll(void)
 //
 //==========================================================================
 
-void F_BunnyScroll(void)
+void F_BunnyScroll()
 {
 	int scrolled;
 	int stage;
@@ -166,7 +166,7 @@ void F_BunnyScroll(void)
 	}
 	if (stage > laststage)
 	{
-		LocalSound('PistolFire');
+		LocalSound('weapons/pistol');
 		laststage = stage;
 	}
 	R_DrawPic((320 - 13 * 8) / 2, (200 - 8 * 8) / 2, fend[stage]);
@@ -178,7 +178,7 @@ void F_BunnyScroll(void)
 //
 //==========================================================================
 
-void F_StartFinale(void)
+void F_StartFinale()
 {
 	cl->intermission = 2;
 	FinaleStage = 0;
@@ -222,7 +222,7 @@ void F_StartFinale(void)
 //
 //===========================================================================
 
-void F_Ticker(void)
+void F_Ticker()
 {
 	FinaleTime += frametime;
 
@@ -257,7 +257,7 @@ void F_Ticker(void)
 //
 //==========================================================================
 
-void F_Drawer(void)
+void F_Drawer()
 {
 	if (!FinaleStage)
 	{
@@ -371,7 +371,7 @@ string caststrings[] = {
 //
 //==========================================================================
 
-void F_StartCast(void)
+void F_StartCast()
 {
 #ifdef FIXME
 	S_StartSong("D_EVIL", P_GetCDEnd2Track(), true);
@@ -407,64 +407,66 @@ void CastSound(int state)
 	switch (state)
 	{
 	case S_PLAY_ATK1:
-		sfx = "SuperShotgunFire";
+		sfx = "weapons/sshotf";
 		break;
 	case S_POSS_ATK2:
-		sfx = "PistolFire";
+		sfx = "grunt/attack";
 		break;
 	case S_SPOS_ATK2:
-		sfx = "ShotgunFire";
+		sfx = "shotguy/attack";
 		break;
 	case S_VILE_ATK2:
-		sfx = "ArchVileAttack";
+		sfx = "vile/start";
 		break;
 	case S_SKEL_FIST2:
-		sfx = "RavenantSwing";
+		sfx = "skeleton/swing";
 		break;
 	case S_SKEL_FIST4:
-		sfx = "RavenantPunch";
+		sfx = "skeleton/melee";
 		break;
 	case S_SKEL_MISS2:
-		sfx = "RavenantAttack";
+		sfx = "skeleton/attack";
 		break;
 	case S_FATT_ATK8:
 	case S_FATT_ATK5:
 	case S_FATT_ATK2:
-		sfx = "FireballShoot";
+		sfx = "fatso/attack";
 		break;
 	case S_CPOS_ATK2:
 	case S_CPOS_ATK3:
 	case S_CPOS_ATK4:
-		sfx = "ShotgunFire";
+		sfx = "chainguy/attack";
 		break;
 	case S_TROO_ATK3:
-		sfx = "ImpAttack";
+		sfx = "imp/melee";
 		break;
 	case S_SARG_ATK2:
-		sfx = "DemonAttack";
+		sfx = "demon/melee";
 		break;
 	case S_BOSS_ATK2:
 	case S_BOS2_ATK2:
+		sfx = "baron/attack";
+		break;
 	case S_HEAD_ATK2:
-		sfx = "FireballShoot";
+		sfx = "caco/attack";
 		break;
 	case S_SKULL_ATK2:
-		sfx = "LostSoulAttack";
+		sfx = "skull/melee";
 		break;
 	case S_SPID_ATK2:
 	case S_SPID_ATK3:
-		sfx = "ShotgunFire";
+		sfx = "spider/attack";
 		break;
 	case S_BSPI_ATK2:
-		sfx = "PlasmaFire";
+		sfx = "baby/attack";
 		break;
 	case S_CYBER_ATK2:
 	case S_CYBER_ATK4:
 	case S_CYBER_ATK6:
-		sfx = "LauncherFire";
+		sfx = "weapons/rocklf";
 		break;
 	case S_PAIN_ATK3:
-		sfx = "LostSoulAttack";
+		sfx = "skull/melee";
 		break;
 	default:
 		sfx = "";
@@ -484,7 +486,7 @@ void CastSound(int state)
 //
 //==========================================================================
 
-void F_CastTicker(void)
+void F_CastTicker()
 {
 #if 0
 	int st;
@@ -659,6 +661,9 @@ bool F_Responder(event_t * event)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.8  2002/09/07 16:28:24  dj_jl
 //  Added Level class.
 //

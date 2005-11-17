@@ -43,7 +43,7 @@ int Idle5State;
 //
 //==========================================================================
 
-void A_IdleDecide(void)
+void A_IdleDecide()
 {
 	float R;
 
@@ -82,10 +82,10 @@ void A_IdleDecide(void)
 //
 //==========================================================================
 
-void A_FatRaise(void)
+void A_FatRaise()
 {
 	A_FaceTarget();
-	PlaySound('MancubusAttack', CHAN_WEAPON);
+	PlaySound('fatso/raiseguns', CHAN_WEAPON);
 }
 
 //==========================================================================
@@ -97,7 +97,7 @@ void A_FatRaise(void)
 //
 //==========================================================================
 
-void A_FatAttack1(void)
+void A_FatAttack1()
 {
 	Actor A;
 
@@ -119,7 +119,7 @@ void A_FatAttack1(void)
 //
 //==========================================================================
 
-void A_FatAttack2(void)
+void A_FatAttack2()
 {
 	Actor A;
 
@@ -141,7 +141,7 @@ void A_FatAttack2(void)
 //
 //==========================================================================
 
-void A_FatAttack3(void)
+void A_FatAttack3()
 {
 	Actor A;
 
@@ -391,15 +391,18 @@ defaultproperties
 	PainState = S_FATT_PAIN;
 	DeathState = S_FATT_DIE1;
 	RaiseState = S_FATT_RAISE1;
-	SightSound = 'MancubusSight';
-	ActiveSound = 'ZombieActive';
-	PainSound = 'MancubusPain';
-	DeathSound = 'MancubusDeath';
+	SightSound = 'fatso/sight';
+	ActiveSound = 'fatso/active';
+	PainSound = 'fatso/pain';
+	DeathSound = 'fatso/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.4  2005/03/01 14:39:31  dj_jl
 //  Big update of line specials.
 //

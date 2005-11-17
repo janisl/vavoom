@@ -65,7 +65,7 @@ bool CheckLock(Actor user, int lock)
 		if (!(user.Player.Keys & (1 << it_bluecard)))
 		{
 			centerprint(user.Player, "You need a blue keycard");
-			user.PlaySound('PlayerLand', CHAN_VOICE);
+			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -74,7 +74,7 @@ bool CheckLock(Actor user, int lock)
 		if (!(user.Player.Keys & (1 << it_redcard)))
 		{
 			centerprint(user.Player, "You need a red keycard");
-			user.PlaySound('PlayerLand', CHAN_VOICE);
+			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -83,7 +83,7 @@ bool CheckLock(Actor user, int lock)
 		if (!(user.Player.Keys & (1 << it_yellowcard)))
 		{
 			centerprint(user.Player, "You need a yellow keycard");
-			user.PlaySound('PlayerLand', CHAN_VOICE);
+			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -92,7 +92,7 @@ bool CheckLock(Actor user, int lock)
 		if (!(user.Player.Keys & (1 << it_blueskull)))
 		{
 			centerprint(user.Player, "You need a blue skullkey");
-			user.PlaySound('PlayerLand', CHAN_VOICE);
+			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -101,7 +101,7 @@ bool CheckLock(Actor user, int lock)
 		if (!(user.Player.Keys & (1 << it_redskull)))
 		{
 			centerprint(user.Player, "You need a red skullkey");
-			user.PlaySound('PlayerLand', CHAN_VOICE);
+			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -110,7 +110,7 @@ bool CheckLock(Actor user, int lock)
 		if (!(user.Player.Keys & (1 << it_yellowskull)))
 		{
 			centerprint(user.Player, "You need a yellow skullkey");
-			user.PlaySound('PlayerLand', CHAN_VOICE);
+			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -120,7 +120,7 @@ bool CheckLock(Actor user, int lock)
 		if (!user.Player.Keys)
 		{
 			centerprint(user.Player, "You need any key");
-			user.PlaySound('PlayerLand', CHAN_VOICE);
+			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -129,7 +129,7 @@ bool CheckLock(Actor user, int lock)
 		if (user.Player.Keys != 0x3f)
 		{
 			centerprint(user.Player, "You need all keycards and skullkeys");
-			user.PlaySound('PlayerLand', CHAN_VOICE);
+			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -138,7 +138,7 @@ bool CheckLock(Actor user, int lock)
 		if (!(user.Player.Keys & ((1 << it_bluecard) | (1 << it_blueskull))))
 		{
 			centerprint(user.Player, "You need a blue key");
-			user.PlaySound('PlayerLand', CHAN_VOICE);
+			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -147,7 +147,7 @@ bool CheckLock(Actor user, int lock)
 		if (!(user.Player.Keys & ((1 << it_redcard) | (1 << it_redskull))))
 		{
 			centerprint(user.Player, "You need a red key");
-			user.PlaySound('PlayerLand', CHAN_VOICE);
+			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -156,7 +156,7 @@ bool CheckLock(Actor user, int lock)
 		if (!(user.Player.Keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
 		{
 			centerprint(user.Player, "You need a yellow key");
-			user.PlaySound('PlayerLand', CHAN_VOICE);
+			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -167,7 +167,7 @@ bool CheckLock(Actor user, int lock)
 			!(user.Player.Keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
 		{
 			centerprint(user.Player, "You need all keys");
-			user.PlaySound('PlayerLand', CHAN_VOICE);
+			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -1357,6 +1357,9 @@ void StartPlaneWatcher(Actor it, line_t* line, int lineSide, bool ceiling,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.29  2005/06/04 13:47:21  dj_jl
 //  Added pusher specials.
 //

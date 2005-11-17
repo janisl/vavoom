@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class DoomPlayer:PlayerPawn;
+class DoomPlayer : PlayerPawn;
 
 __states__
 {
@@ -71,13 +71,16 @@ defaultproperties
 	PainState = S_PLAY_PAIN;
 	DeathState = S_PLAY_DIE1;
 	GibsDeathState = S_PLAY_XDIE1;
-	PainSound = 'PlayerPain';
-	DeathSound = 'PlayerDeath';
+	PainSound = '*pain100';
+	DeathSound = '*death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/10/26 16:32:19  dj_jl
 //  New style of defining classes.
 //

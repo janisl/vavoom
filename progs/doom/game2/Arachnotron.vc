@@ -34,9 +34,9 @@ class Arachnotron : Pawn
 //
 //==========================================================================
 
-void A_BabyMetal(void)
+void A_BabyMetal()
 {
-	PlaySound('BabyWalk', CHAN_BODY);
+	PlaySound('baby/walk', CHAN_BODY);
 	A_Chase();
 }
 
@@ -48,7 +48,7 @@ void A_BabyMetal(void)
 //
 //==========================================================================
 
-void A_BspiAttack(void)
+void A_BspiAttack()
 {
 	if (!Enemy)
 		return;
@@ -67,7 +67,7 @@ void A_BspiAttack(void)
 //
 //==========================================================================
 
-void A_SpidRefire(void)
+void A_SpidRefire()
 {
 	// keep firing unless target got out of sight
 	A_FaceTarget();
@@ -89,7 +89,7 @@ void A_SpidRefire(void)
 //
 //==========================================================================
 
-void A_BossDeath(void)
+void A_BossDeath()
 {
 	int i;
 	Actor Other;
@@ -175,15 +175,18 @@ defaultproperties
 	PainState = S_BSPI_PAIN;
 	DeathState = S_BSPI_DIE1;
 	RaiseState = S_BSPI_RAISE1;
-	SightSound = 'BabySight';
-	ActiveSound = 'BabyActive';
-	PainSound = 'DemonPain';
-	DeathSound = 'BabyDeath';
+	SightSound = 'baby/sight';
+	ActiveSound = 'baby/active';
+	PainSound = 'baby/pain';
+	DeathSound = 'baby/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.4  2005/03/01 14:39:31  dj_jl
 //  Big update of line specials.
 //

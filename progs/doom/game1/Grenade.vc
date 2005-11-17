@@ -45,14 +45,17 @@ defaultproperties
 	bBounce = true;
 	IdleState = S_GRENADE;
 	DeathState = S_EXPLODE1;
-	SightSound = 'LauncherFire';
+	SightSound = 'weapons/rocklf';
 	PainSound = 'GrenadeBounce';
-	DeathSound = 'BarrelExplode';
+	DeathSound = 'weapons/rocklx';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

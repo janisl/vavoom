@@ -75,7 +75,7 @@ void A_VileChase()
 					Enemy = temp;
 
 					SetState(HealState);
-					CorpseHit.PlaySound('Slop', CHAN_BODY);
+					CorpseHit.PlaySound('vile/raise', CHAN_BODY);
 
 					CorpseHit.SetState(CorpseHit.RaiseState);
 					CorpseHit.Height *= 4.0;
@@ -107,7 +107,7 @@ void A_VileChase()
 
 void A_VileStart()
 {
-	PlaySound('ArchVileAttack', CHAN_WEAPON);
+	PlaySound('vile/start', CHAN_WEAPON);
 }
 
 //==========================================================================
@@ -155,7 +155,7 @@ void A_VileAttack()
 	if (!CanSee(Enemy))
 		return;
 
-	PlaySound('BarrelExplode', CHAN_WEAPON);
+	PlaySound('vile/stop', CHAN_WEAPON);
 	Enemy.Damage(self, self, 20);
 	Enemy.Velocity.z = 1000.0 / Enemy.Mass * 35.0;
 
@@ -231,15 +231,18 @@ defaultproperties
 	PainState = S_VILE_PAIN;
 	DeathState = S_VILE_DIE1;
 	HealState = S_VILE_HEAL1;
-	SightSound = 'ArchVileSight';
-	ActiveSound = 'ArchVileActive';
-	PainSound = 'ArchVilePain';
-	DeathSound = 'ArchVileDeath';
+	SightSound = 'vile/sight';
+	ActiveSound = 'vile/active';
+	PainSound = 'vile/pain';
+	DeathSound = 'vile/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2005/05/03 15:03:49  dj_jl
 //  Models updated.
 //

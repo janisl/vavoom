@@ -357,7 +357,7 @@ bool EV_ThingSpawn(int *args, bool fog)
 			if (fog == true)
 			{
 				fogAct = Spawn(TeleportFog, A.Origin);
-				fogAct.PlaySound('Teleport', CHAN_VOICE);
+				fogAct.PlaySound('misc/teleport', CHAN_VOICE);
 			}
 			newAct.bDropped = true;	// Don't respawn
 //			if (newAct.bFloatBob)
@@ -536,6 +536,9 @@ int ThingCount(int type, int tid)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2005/03/16 15:04:20  dj_jl
 //  More work on line specials.
 //

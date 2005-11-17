@@ -23,47 +23,47 @@ texture optional WFALL1   range WFALL4   tics 8
 texture optional DBRAIN1  range DBRAIN4  tics 8
 
 //  Switches available in Doom shareware
-switch SW1BRCOM on pic SW2BRCOM tics 0 sound Switch
-switch SW1BRN1  on pic SW2BRN1  tics 0 sound Switch
-switch SW1BRN2  on pic SW2BRN2  tics 0 sound Switch
-switch SW1BRNGN on pic SW2BRNGN tics 0 sound Switch
-switch SW1BROWN on pic SW2BROWN tics 0 sound Switch
-switch SW1COMM  on pic SW2COMM  tics 0 sound Switch
-switch SW1COMP  on pic SW2COMP  tics 0 sound Switch
-switch SW1DIRT  on pic SW2DIRT  tics 0 sound Switch
-switch SW1EXIT  on pic SW2EXIT  tics 0 sound Switch
-switch SW1GRAY  on pic SW2GRAY  tics 0 sound Switch
-switch SW1GRAY1 on pic SW2GRAY1 tics 0 sound Switch
-switch SW1METAL on pic SW2METAL tics 0 sound Switch
-switch SW1PIPE  on pic SW2PIPE  tics 0 sound Switch
-switch SW1SLAD  on pic SW2SLAD  tics 0 sound Switch
-switch SW1STARG on pic SW2STARG tics 0 sound Switch
-switch SW1STON1 on pic SW2STON1 tics 0 sound Switch
-switch SW1STON2 on pic SW2STON2 tics 0 sound Switch
-switch SW1STONE on pic SW2STONE tics 0 sound Switch
-switch SW1STRTN on pic SW2STRTN tics 0 sound Switch
+switch SW1BRCOM on pic SW2BRCOM tics 0 sound switches/normbutn
+switch SW1BRN1  on pic SW2BRN1  tics 0 sound switches/normbutn
+switch SW1BRN2  on pic SW2BRN2  tics 0 sound switches/normbutn
+switch SW1BRNGN on pic SW2BRNGN tics 0 sound switches/normbutn
+switch SW1BROWN on pic SW2BROWN tics 0 sound switches/normbutn
+switch SW1COMM  on pic SW2COMM  tics 0 sound switches/normbutn
+switch SW1COMP  on pic SW2COMP  tics 0 sound switches/normbutn
+switch SW1DIRT  on pic SW2DIRT  tics 0 sound switches/normbutn
+switch SW1EXIT  on pic SW2EXIT  tics 0 sound switches/normbutn
+switch SW1GRAY  on pic SW2GRAY  tics 0 sound switches/normbutn
+switch SW1GRAY1 on pic SW2GRAY1 tics 0 sound switches/normbutn
+switch SW1METAL on pic SW2METAL tics 0 sound switches/normbutn
+switch SW1PIPE  on pic SW2PIPE  tics 0 sound switches/normbutn
+switch SW1SLAD  on pic SW2SLAD  tics 0 sound switches/normbutn
+switch SW1STARG on pic SW2STARG tics 0 sound switches/normbutn
+switch SW1STON1 on pic SW2STON1 tics 0 sound switches/normbutn
+switch SW1STON2 on pic SW2STON2 tics 0 sound switches/normbutn
+switch SW1STONE on pic SW2STONE tics 0 sound switches/normbutn
+switch SW1STRTN on pic SW2STRTN tics 0 sound switches/normbutn
 
 //  Switches available in Doom registered
-switch SW1BLUE  on pic SW2BLUE  tics 0 sound Switch
-switch SW1CMT   on pic SW2CMT   tics 0 sound Switch
-switch SW1GARG  on pic SW2GARG  tics 0 sound Switch
-switch SW1GSTON on pic SW2GSTON tics 0 sound Switch
-switch SW1HOT   on pic SW2HOT   tics 0 sound Switch
-switch SW1LION  on pic SW2LION  tics 0 sound Switch
-switch SW1SATYR on pic SW2SATYR tics 0 sound Switch
-switch SW1SKIN  on pic SW2SKIN  tics 0 sound Switch
-switch SW1VINE  on pic SW2VINE  tics 0 sound Switch
-switch SW1WOOD  on pic SW2WOOD  tics 0 sound Switch
+switch SW1BLUE  on pic SW2BLUE  tics 0 sound switches/normbutn
+switch SW1CMT   on pic SW2CMT   tics 0 sound switches/normbutn
+switch SW1GARG  on pic SW2GARG  tics 0 sound switches/normbutn
+switch SW1GSTON on pic SW2GSTON tics 0 sound switches/normbutn
+switch SW1HOT   on pic SW2HOT   tics 0 sound switches/normbutn
+switch SW1LION  on pic SW2LION  tics 0 sound switches/normbutn
+switch SW1SATYR on pic SW2SATYR tics 0 sound switches/normbutn
+switch SW1SKIN  on pic SW2SKIN  tics 0 sound switches/normbutn
+switch SW1VINE  on pic SW2VINE  tics 0 sound switches/normbutn
+switch SW1WOOD  on pic SW2WOOD  tics 0 sound switches/normbutn
 
 //  Switches available in Doom II
-switch SW1PANEL on pic SW2PANEL tics 0 sound Switch
-switch SW1ROCK  on pic SW2ROCK  tics 0 sound Switch
-switch SW1MET2  on pic SW2MET2  tics 0 sound Switch
-switch SW1WDMET on pic SW2WDMET tics 0 sound Switch
-switch SW1BRIK  on pic SW2BRIK  tics 0 sound Switch
-switch SW1MOD1  on pic SW2MOD1  tics 0 sound Switch
-switch SW1ZIM   on pic SW2ZIM   tics 0 sound Switch
-switch SW1STON6 on pic SW2STON6 tics 0 sound Switch
-switch SW1TEK   on pic SW2TEK   tics 0 sound Switch
-switch SW1MARB  on pic SW2MARB  tics 0 sound Switch
-switch SW1SKULL on pic SW2SKULL tics 0 sound Switch
+switch SW1PANEL on pic SW2PANEL tics 0 sound switches/normbutn
+switch SW1ROCK  on pic SW2ROCK  tics 0 sound switches/normbutn
+switch SW1MET2  on pic SW2MET2  tics 0 sound switches/normbutn
+switch SW1WDMET on pic SW2WDMET tics 0 sound switches/normbutn
+switch SW1BRIK  on pic SW2BRIK  tics 0 sound switches/normbutn
+switch SW1MOD1  on pic SW2MOD1  tics 0 sound switches/normbutn
+switch SW1ZIM   on pic SW2ZIM   tics 0 sound switches/normbutn
+switch SW1STON6 on pic SW2STON6 tics 0 sound switches/normbutn
+switch SW1TEK   on pic SW2TEK   tics 0 sound switches/normbutn
+switch SW1MARB  on pic SW2MARB  tics 0 sound switches/normbutn
+switch SW1SKULL on pic SW2SKULL tics 0 sound switches/normbutn

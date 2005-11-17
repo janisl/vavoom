@@ -149,15 +149,18 @@ defaultproperties
 	PainState = S_PAIN_PAIN;
 	DeathState = S_PAIN_DIE1;
 	RaiseState = S_PAIN_RAISE1;
-	SightSound = 'PainElementalSight';
-	ActiveSound = 'DemonActive';
-	PainSound = 'PainElementalPain';
-	DeathSound = 'PainElementalDeath';
+	SightSound = 'pain/sight';
+	ActiveSound = 'pain/active';
+	PainSound = 'pain/pain';
+	DeathSound = 'pain/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/17 23:05:22  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2005/05/03 15:03:50  dj_jl
 //  Models updated.
 //
