@@ -78,7 +78,7 @@ void A_OpenShotgun2()
 
 void A_LoadShotgun2()
 {
-	Player.MO.PlaySound('SuperShotgunLoad', CHAN_WEAPON);
+	Player.MO.PlaySound('weapons/sshotl', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -128,6 +128,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/11/18 20:17:44  dj_jl
+//  Fixed super shotgun sounds.
+//
 //  Revision 1.4  2005/11/17 23:05:22  dj_jl
 //  Renamed sounds.
 //
